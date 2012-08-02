@@ -59,7 +59,6 @@ SILE._typeset = function (lines) {
         SILE.state.cursorY += 14; // line.depth + line.height;
         SILE.state.cursorX = SILE.state.currentFrame.left()
     });
-    //SILE.cairo.showPage();
 }
 
 SILE._breakpoints_to_lines = function(bp){
