@@ -33,9 +33,9 @@ SILE._internals.leaveHmode = function() {
     // Run the KP algorithm
     var breaks = SILE.linebreak(SILE.state.nodes,[ SILE.state.currentFrame.width()/1.6 ]);
     var lines = SILE._breakpoints_to_lines(breaks);
+    
     // Push output lines into boxes and ship them to the page builder
     SILE._typeset(lines);
-    SILE.state.nodes = []; // Hack
 }
 
 SILE._typeset = function (lines) { 
@@ -71,10 +71,10 @@ SILE._breakpoints_to_lines = function(bp){
 //            if (nodes[linestart].isPenalty() && nodes[linestart].penalty == -Infinity) break;
 //            linestart++;
  //       }
-        lines.push({ ratio: point.ratio, position: point.position, 
-            nodes: nodes.slice(linestart, point.position)
+        lines.push({ ratio: point.ratio, nodes: nodes.slice(linestart, point.position)
         })
         linestart = point.position;
     });
+    SILE.state.nodes = nodes.slice(linestart,nodes.length);
     return lines;
 }
