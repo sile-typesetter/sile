@@ -20,7 +20,7 @@ SILE.shaper = {
 					nodes.push(SILE.nodefactory.newGlue({
 						width: glyph.shapedWidth /1024,
 						stretch: glyph.shapedWidth /1024,
-						shrink: glyph.shapedWidth /1024
+						shrink: 0
 					}))
 				} else {
 					nodes.push(SILE.nodefactory.newHbox({
