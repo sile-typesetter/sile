@@ -23,8 +23,8 @@ SILE.baseClass = (function() {
     state: { parindent: 11 },
     init: function() { 
         SILE.outputter.init(this); 
-        SILE.Commands.textit = function(){} // XXX hack
-        SILE.state.fontFamily = "Adobe Garamond Pro";
+        registerCommands();
+        SILE.state.fontFamily = "Gentium";
         SILE.state.fontSize = 11;
     },
     newPage: function() { 
@@ -34,6 +34,7 @@ SILE.baseClass = (function() {
         SILE.state.currentFrame = this.pageTemplate.Layers[0].Frames[0];
     },
     endPage: function() {
+        SILE._internals.leaveHmode();
         SILE.cairo.showPage();
     },
     end: function() {
