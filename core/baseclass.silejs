@@ -1,4 +1,23 @@
-SILE.baseClass = {
+SILE.baseClass = (function() { 
+    function registerCommands() { 
+        SILE.Commands.textit = function(){} // XXX hack
+        SILE.registerCommand("penalty", function(n) {
+            SILE.nodefactory.pushPenalty({ 
+                flagged: n.attr("flagged") ? n.attr("flagged").value() : 0,
+                penalty: n.attr("penalty") ? eval(n.attr("penalty").value()) : 0
+            });
+        });
+        SILE.registerCommand("glue", function(n) {
+            SILE.nodefactory.pushGlue({ 
+                width: n.attr("width") ? n.attr("width").value() : 0,
+                stretch: n.attr("stretch") ? eval(n.attr("stretch").value()) : 0,
+                shrink: n.attr("shrink") ? eval(n.attr("shrink").value()) : 0
+            });
+        });
+
+    }
+    
+    return {
     settings: {},
     pageTemplate: { Layers: [{ Frames: [ ] }]},
     state: { parindent: 11 },
@@ -36,4 +55,5 @@ SILE.baseClass = {
             }
         }
     }
-};
+    };
+    })();

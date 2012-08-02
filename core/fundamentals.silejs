@@ -19,3 +19,5 @@ SILE.state = {
 };
 SILE.error = function(x) { console.error(x); process.exit(1) };
 SILE.debug = function(x) { };
+
+SILE.registerCommand = function (n, f) { SILE.Commands[n] = f; }
