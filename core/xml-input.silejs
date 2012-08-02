@@ -1,0 +1,45 @@
+(function() {
+var libxmljs = require('libxmljs');
+var fs = require('fs');
+var data;
+try {
+  data = fs.readFileSync(SILE.file, "utf8");
+}
+catch (err) {
+  console.error("There was an error opening the file:");
+  console.log(err);
+  process.exit(1);
+}
+var xml = libxmljs.parseXmlString(data);
+var rClass = xml.root().attr("class");
+var documentClass = rClass ? rClass.value() : "plain";
+var klass = SILE.require("class/"+documentClass).class;
+xml.root().attrs().forEach(function(x) {
+    if (x.name() == "class") return;
+    if (klass.options[x.name()])
+        klass.options[x.name()].call(klass,x.value());
+});
+
+SILE.state.documentClass = klass;
+
+klass.init();
+klass.newPage();
+
+var process = function(node) {
+    var name = node.name();
+    if (node.type() === "text") {
+        SILE.typeset(node.text());
+    } else if (SILE.Commands[name]) {
+        SILE.Commands[name](node);
+    } else {
+        SILE.error("Unknown command "+name);
+    }
+    node.childNodes().forEach(process);
+};
+
+xml.root().childNodes().forEach(process);
+
+klass.end();
+
+})();
+

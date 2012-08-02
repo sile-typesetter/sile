@@ -1,0 +1,55 @@
+#!/usr/local/bin/node
+var libxmljs = require('libxmljs');
+var program = require("commander");
+function list(val) {
+  return val.split(':');
+}
+program.version("0.0.1")
+    .option("-I, --include <paths>", "Additional search path for sile classes", list)
+    .parse(process.argv);
+var fs = require('fs');
+var searchpath = ["/usr/local/sile/"];
+if (program.include) searchpath = program.include.concat(searchpath);
+if (process.env.SILE_PATH) searchpath = list(process.env.SILE_PATH).concat(searchpath);
+searchpath.unshift(".");
+var vm = require("vm");
+
+SILE = {};
+SILE.require = function (file, context) { 
+    var e = function(path) { 
+        var rv;
+        //try { rv = eval(fs.readFileSync(path, "utf8")); }
+        //catch (e) { throw("When compiling "+path+": "+ e) };
+        return require(path);
+    }
+    for (var i=0; i < searchpath.length; i++) { 
+        var f1 = searchpath[i] + "/" + file + ".silejs";
+        if (fs.existsSync(f1)) { return e(f1); }
+        var f2 = searchpath[i] + "/" + file + ".sjs";
+        if (fs.existsSync(f2)) { return e(f2); }
+    }
+    console.error("Couldn't find file "+file+" in " +searchpath.join(":")+" "+(context ? " at "+context:""));
+    process.exit(1);
+}
+
+SILE.require("core/fundamentals");
+SILE.require("core/linked-list");
+SILE.require("core/nodefactory");
+SILE.require("core/measurements");
+SILE.require("core/paperspecs");
+SILE.require("core/frame");
+SILE.require("core/knuth-plass");
+SILE.require("core/typeset");
+SILE.require("core/cairo-output");
+SILE.require("core/pango-shaper");
+
+SILE.file =  program.args[0];
+if (!SILE.file) {
+    console.error("Usage: sile file.sil");
+}
+var path = require("path");
+SILE.outputFilename = path.dirname(SILE.file)+"/"+path.basename(SILE.file,".sil") + ".pdf";
+
+
+SILE.require("core/baseclass");
+SILE.require("core/xml-input");

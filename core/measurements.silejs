@@ -1,0 +1,27 @@
+SILE.toPoints = 
+function() {
+    var in2px = function(i) { return 72.0 * i };
+    var mm2px = function(m) { return 2.8346457 * m };
+    var toPoints = {
+        "in": in2px,
+        "mm": mm2px,
+        "cm": function (c) { return mm2px(10) * c },
+        "%": function(v, dimension) {
+            return parseFloat(v) / 100 * SILE.state.paperSize[ dimension == 'w' ? 0:1];
+        }
+        // em
+        // ex
+        // en
+    }
+    return function( num, unit, dimension) {
+        if (!unit) {
+            var m;
+            if (typeof num === "string" && (m = num.match(/[a-z]+|%/i))) {
+                num = parseFloat(num);
+                unit = m[0];
+            } else { return parseFloat(num) } 
+        }
+        if (!toPoints[unit]) { SILE.error( "Unknown unit "+unit ) }
+        return toPoints[unit](num, dimension);
+    }
+}();

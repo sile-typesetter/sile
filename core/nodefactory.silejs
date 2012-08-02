@@ -1,0 +1,25 @@
+SILE.nodefactory = (function() {
+	var _box = {height: 0, depth: 0, width: 0, stretch: 0, shrink: 0};
+	_box.isGlue = function() { return this.type === "Glue" };
+	_box.isPenalty = function() { return this.type === "Penalty" };
+	_box.isBox = function () { return this.type === "HBox" };
+	var _hbox = object(_box); _hbox.type = "HBox";
+	var _glue = object(_box); _glue.type = "Glue";
+	var _penalty = object(_box); _penalty.type = "Penalty"; _penalty.flagged = 0;
+	_hbox.value = {};
+	var _new_and_spec = function (proto, spec) {
+		var o = object(proto);
+		for (e in proto) { if (spec[e]) o[e] = spec[e] }
+		return o;
+	};
+	
+	return {
+		newHbox: function(spec) { return _new_and_spec(_hbox, spec) },
+		newGlue: function(spec) { return _new_and_spec(_glue, spec) },
+		newPenalty: function(spec) { return _new_and_spec(_penalty, spec) },
+		pushHbox: function (spec) {	SILE.state.nodes.push(this.newHbox(spec)); },
+		pushGlue: function (spec) {	SILE.state.nodes.push(this.newGlue(spec)); },
+		pushPenalty: function (spec) {	SILE.state.nodes.push(this.newPenalty(spec)); },
+
+	};
+})();

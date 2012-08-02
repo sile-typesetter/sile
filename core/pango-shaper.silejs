@@ -1,0 +1,37 @@
+var pc = require("pangocairo");
+if (!Pango) Pango = pc.Pango;
+
+SILE.shaper = {
+	shape: function(text) {
+		var nodes = [];
+		var p = new Pango();
+		var PangoAttrList = pc.PangoAttrList;
+		pal = new PangoAttrList();
+		pal.insert("family", SILE.state.fontFamily);
+		pal.insert("size", SILE.state.fontSize);
+		//console.log("Shaping "+text);
+		text = text.replace(/\s+/g, " ");
+		p.itemizeAndShape(text,pal).forEach(function (run) {
+			// Because we may need to break up runs because of the
+			// justification algorithm, we pull every glyph out of the run
+			run.glyphs.forEach(function(glyph) {
+				if (glyph.glyphWidth == 0) { // Check this!
+					// Glue in disguise
+					nodes.push(SILE.nodefactory.newGlue({
+						width: glyph.shapedWidth /1024,
+						stretch: glyph.shapedWidth /1024,
+						shrink: glyph.shapedWidth /1024
+					}))
+				} else {
+					nodes.push(SILE.nodefactory.newHbox({
+						height: glyph.ascent /1024,
+						depth: glyph.depth /1024,
+						width: glyph.shapedWidth /1024,
+						value: { rawGlyph: glyph.rawGlyph, font: run.font }
+					}));
+				}
+			}); 
+		});
+		return nodes;
+	}	
+};

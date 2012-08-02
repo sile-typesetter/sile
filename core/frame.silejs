@@ -1,0 +1,61 @@
+(function() { 
+    var framePrototype = {
+        "top": function() { 
+            if (typeof this._top == "function" ) { return this._top() };
+            return this._top;
+        },
+        "left": function() {
+            if (typeof this._left == "function" ) { return this._left() };
+            return this._left;
+        },
+        "right": function() {
+            if (typeof this._right == "function" ) { return this._right() };
+            if (!this._right && this._width) {
+                return this.left() + this.width();
+            }
+            return this._right;
+        },
+        "bottom": function() {
+            if (typeof this._bottom == "function" ) { return this._bottom() };
+            if (!this._bottom && this._height) {
+                return this.top() + this.height();
+            }
+            return this._bottom;
+        },
+        "width": function() {
+            if (typeof this._width == "function" ) { return this._width() };
+            if (!this._width) { return this.right() - this.left(); }
+            return this._width;
+        },
+        "height": function() {
+            if (typeof this._height == "function" ) { return this._height() };
+            if (!this._height) { return this.bottom() - this.top(); }
+            return this._height;
+        }
+    };
+    SILE.newFrame = function(spec) {
+        var frame = object(framePrototype);
+        ["top", "bottom", "height"].forEach(function(x) {
+            if (!spec[x]) return;
+            if (typeof spec[x] != "function") { 
+                var old = spec[x];
+                // Defer relative calculations until page size is known
+                if (old.match(/%/)) { spec[x] = function() { return SILE.toPoints(old,"%", "h") } }
+                else { spec[x] = SILE.toPoints(spec[x]) };
+            }
+            frame["_"+x] = spec[x];
+        });
+        ["left", "right", "width" ].forEach(function(x) {
+            if (!spec[x]) return;
+            if (typeof spec[x] != "function") { 
+                var old = spec[x];
+                // Defer relative calculations until page size is known
+                if (old.match(/%/)) { spec[x] = function() { return SILE.toPoints(old,"%","h") } }
+                else { spec[x] = SILE.toPoints(spec[x]) };
+            }
+            frame["_"+x] = spec[x];
+        });
+        return frame;
+    };
+})();
+

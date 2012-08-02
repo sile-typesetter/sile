@@ -1,0 +1,8 @@
+var PC = require("pangocairo");
+Cairo = PC.Cairo; Pango = PC.Pango;
+
+SILE.outputter = {
+    init: function() {
+        SILE.cairo = new Cairo( SILE.state.paperSize[0], SILE.state.paperSize[1], "pdf", SILE.outputFilename);
+    }
+}

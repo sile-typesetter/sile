@@ -1,0 +1,66 @@
+(function () { 
+    var paperspecs = paperspecs();
+    SILE.paperSizes = {};
+    paperspecs.split(/\n/).map(function(l) { 
+        var fields = l.split(/\s+/);
+        SILE.paperSizes[fields[0]] = [
+            SILE.toPoints(fields[1],fields[3]), 
+            SILE.toPoints(fields[2],fields[3])
+        ];
+    });
+function paperspecs () { return "a4 210 297 mm \n\
+letter 612 792 \n\
+note 612 792 \n\
+legal 612 1008 \n\
+executive 522 756 \n\
+halfletter 396 612 \n\
+halfexecutive 378 522 \n\
+11x17 792 1224 \n\
+statement 396 612 \n\
+folio 612 936 \n\
+quarto 610 780 \n\
+10x14 720 1008 \n\
+ledger 1224 792 \n\
+tabloid 792 1224 \n\
+a0 841 1189 mm \n\
+a1 594 841 mm \n\
+a2 420 594 mm \n\
+a3 297 420 mm \n\
+a5 148 210 mm \n\
+a6 105 148 mm \n\
+a7 74 105 mm \n\
+a8 52 74 mm \n\
+a9 37 52 mm \n\
+a10 26 37 mm \n\
+b0 1000 1414 mm \n\
+b1 707 1000 mm \n\
+b2 500 707 mm \n\
+b3 353 500 mm \n\
+b4 250 353 mm \n\
+b5 176 250 mm \n\
+b6 125 176 mm \n\
+b7 88 125 mm \n\
+b8 62 88 mm \n\
+b9 44 62 mm \n\
+b10 31 44 mm \n\
+c2 458 648 mm \n\
+c3 324 458 mm \n\
+c4 229 354 mm \n\
+c5 162 229 mm \n\
+c6 114 162 mm \n\
+c7 81 114 mm \n\
+c8 57 81 mm \n\
+DL 110 220 mm \n\
+Comm10 297 684 \n\
+Monarch 279 540 \n\
+archE 2592 3456 \n\
+archD 1728 2592 \n\
+archC 1296 1728 \n\
+archB 864 1296 \n\
+archA 648 864 \n\
+flsa 612 936 \n\
+flse 612 936 \n\
+csheet 1224 1584 \n\
+dsheet 1584 2448 \n\
+esheet 2448 3168"; }
+})();

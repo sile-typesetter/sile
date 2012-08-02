@@ -1,0 +1,21 @@
+object = function (o) {
+        function F() {}
+        F.prototype = o;
+        return new F();
+}
+
+SILE.Commands = { 
+        script: function(node) {
+            //if (var src = node.attr("src")) {
+            //    http.get(src.value(), function
+            //} else {
+                eval(node.text());
+            //}
+        }
+    };
+
+SILE.state = { 
+    nodes: []
+};
+SILE.error = function(x) { console.error(x); process.exit(1) };
+SILE.debug = function(x) { };
