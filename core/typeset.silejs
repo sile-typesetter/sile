@@ -46,8 +46,9 @@ SILE._typeset = function (lines) {
     lines.forEach(function(line) {
         line.nodes.forEach(function(node) {
             if (node.isPenalty()) return;
-            if (node.isGlue()) SILE.state.cursorX += node.width + line.ratio * (line.ratio < 0 ? node.shrink : node.stretch);
-            else {
+            if (node.isGlue()) {
+                SILE.state.cursorX += node.width + line.ratio * (line.ratio < 0 ? node.shrink : line.ratio > 0 ? node.stretch : 0);
+            } else {
                 if (node.value.glyph == 0) return;
                 SILE.cairo.moveTo(SILE.state.cursorX, SILE.state.cursorY);
                 SILE.cairo.showAGlyph(node.value.font, node.value.rawGlyph);
