@@ -24,10 +24,9 @@ SILE.typeset = function (text) {
 
 SILE._internals.leaveHmode = function() {
     nl = SILE.state.nodes;
-    //console.log(nl);
-    //while (nl.length > 0 && (nl[nl.length-1].isPenalty() || nl[nl.length-1].isGlue())) {
-    //    nl.pop();
-    //}
+    while (nl.length > 0 && (nl[nl.length-1].isPenalty() || nl[nl.length-1].isGlue())) {
+        nl.pop();
+    }
     SILE.nodefactory.pushGlue({ stretch: Infinity});
     SILE.nodefactory.pushPenalty({ flagged: 1, penalty: -Infinity })
     // Run the KP algorithm
