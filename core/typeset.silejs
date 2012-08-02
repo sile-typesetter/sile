@@ -66,12 +66,10 @@ SILE._breakpoints_to_lines = function(bp){
     var lines = [];
     var nodes = SILE.state.nodes;
     bp.forEach(function(point) {
-//        while (linestart < nodes.length) {
-//            if (nodes[linestart].isPenalty() && nodes[linestart].penalty == -Infinity) break;
-//            linestart++;
- //       }
-        lines.push({ ratio: point.ratio, nodes: nodes.slice(linestart, point.position)
-        })
+        while (linestart < nodes.length && (nodes[linestart].isPenalty() && nodes[linestart].penalty == -Infinity)) {
+            linestart++;
+        }
+        lines.push({ ratio: point.ratio, nodes: nodes.slice(linestart, point.position) })
         linestart = point.position;
     });
     SILE.state.nodes = nodes.slice(linestart,nodes.length);
