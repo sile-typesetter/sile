@@ -50,7 +50,7 @@
             if (typeof spec[x] != "function") { 
                 var old = spec[x];
                 // Defer relative calculations until page size is known
-                if (old.match(/%/)) { spec[x] = function() { return SILE.toPoints(old,"%","h") } }
+                if (old.match(/%/)) { spec[x] = function() { return SILE.toPoints(old,"%","w") } }
                 else { spec[x] = SILE.toPoints(spec[x]) };
             }
             frame["_"+x] = spec[x];
