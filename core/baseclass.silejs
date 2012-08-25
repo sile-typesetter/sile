@@ -1,6 +1,19 @@
 SILE.baseClass = (function() { 
     function registerCommands() { 
         SILE.Commands.textit = function(){} // XXX hack
+        SILE.registerCommand("font", function(n) {
+            var o = SILE.state;
+            SILE.state = object( SILE.state );
+            if (n.attr("family")) {
+                SILE.state.fontFamily = n.attr("family").value();
+            }
+            if (n.attr("size")) {
+                SILE.state.fontSize = n.attr("size").value();
+            }
+            n.childNodes().forEach(SILE.process);
+            o.nodes = SILE.state.nodes;
+            SILE.state = o;
+        });
         SILE.registerCommand("penalty", function(n) {
             SILE.nodefactory.pushPenalty({ 
                 flagged: n.attr("flagged") ? n.attr("flagged").value() : 0,
