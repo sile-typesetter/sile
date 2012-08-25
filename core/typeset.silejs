@@ -29,10 +29,10 @@ SILE._internals.leaveHmode = function() {
     }
     while (nl.length >0 && nl[0].isPenalty()) nl.shift();
 
-    SILE.nodefactory.pushGlue({ width:0, stretch: Infinity });
+    SILE.nodefactory.pushGlue({ width:0, stretch: 10000 });
     SILE.nodefactory.pushPenalty({ flagged: 1, penalty: -Infinity });
     // Run the KP algorithm
-    var breaks = SILE.linebreak(SILE.state.nodes,[ SILE.state.currentFrame.width()/1.6 ]);
+    var breaks = SILE.linebreak(SILE.state.nodes,[ SILE.state.currentFrame.width() ]);
     var lines = SILE._breakpoints_to_lines(breaks);
     
     // Push output lines into boxes and ship them to the page builder
@@ -46,6 +46,8 @@ SILE._typeset = function (lines) {
     if (!SILE.state.cursorY) { SILE.state.cursorY = SILE.state.currentFrame.top() };
                 
     lines.forEach(function(line) {
+        SILE.state.cursorY += 14; // line.depth + line.height;
+        //console.log("Line: " +line.nodes.map(function(x) { return x.toS() }).join(" "));
         line.nodes.forEach(function(node) {
             if (node.isPenalty()) return;
             if (node.isGlue()) {
@@ -58,7 +60,6 @@ SILE._typeset = function (lines) {
 
             }
         })
-        SILE.state.cursorY += 14; // line.depth + line.height;
         SILE.state.cursorX = SILE.state.currentFrame.left()
     });
 }
@@ -67,13 +68,18 @@ SILE._breakpoints_to_lines = function(bp){
     var linestart = 0;
     var lines = [];
     var nodes = SILE.state.nodes;
+
     bp.forEach(function(point) {
-        while (linestart < nodes.length && (nodes[linestart].isPenalty() && nodes[linestart].penalty == -Infinity)) {
-            linestart++;
+        if (point.position == 0) return;
+        for (j = linestart; j < nodes.length; j++) {
+            if (nodes[j].isBox() || (nodes[j].isPenalty && nodes[j].penalty == -Infinity)) {
+                linestart = j; break;
+            }
         }
         lines.push({ ratio: point.ratio, nodes: nodes.slice(linestart, point.position) })
         linestart = point.position;
     });
-    SILE.state.nodes = nodes.slice(linestart,nodes.length);
+    //SILE.state.nodes = nodes.slice(linestart+1,nodes.length);
+    SILE.state.nodes = [];
     return lines;
 }
