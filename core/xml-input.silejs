@@ -25,19 +25,19 @@ SILE.state.documentClass = klass;
 klass.init();
 klass.newPage();
 
-var process = function(node) {
+SILE.process = function(node) {
     var name = node.name();
     if (node.type() === "text") {
         SILE.typeset(node.text());
+        node.childNodes().forEach(SILE.process);
     } else if (SILE.Commands[name]) {
         SILE.Commands[name](node);
     } else {
         SILE.error("Unknown command "+name);
     }
-    node.childNodes().forEach(process);
 };
 
-xml.root().childNodes().forEach(process);
+xml.root().childNodes().forEach(SILE.process);
 
 klass.end();
 
