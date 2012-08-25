@@ -4,8 +4,11 @@ SILE.nodefactory = (function() {
 	_box.isPenalty = function() { return this.type === "Penalty" };
 	_box.isBox = function () { return this.type === "HBox" };
 	var _hbox = object(_box); _hbox.type = "HBox";
+    _hbox.toS = function() { return "H<"+this.width+">" }
 	var _glue = object(_box); _glue.type = "Glue";
+    _glue.toS = function() { return "G<"+this.stretch+"|"+this.width+"|"+this.shrink+">" }
 	var _penalty = object(_box); _penalty.type = "Penalty"; _penalty.flagged = 0; _penalty.penalty = 0;
+    _penalty.toS = function() { return "P("+this.penalty+(this.flagged ? "!":"")+")" };
 	_hbox.value = {};
 	var _new_and_spec = function (proto, spec) {
 		var o = object(proto);
