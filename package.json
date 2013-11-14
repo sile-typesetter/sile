@@ -1,0 +1,13 @@
+{
+  "name": "sile",
+  "preferGlobal": true,
+  "version": "0.3.0",
+  "author": "Simon <simon@simon-cozens.org>",
+  "description": "a typesetting engine",
+  "dependencies": {
+    "libxmljs": "*",
+    "commander": "*",
+    "prototype": "*",
+    "pangocairo": "*"
+  }
+}

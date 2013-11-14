@@ -15,7 +15,12 @@ SILE.Commands = {
     };
 
 SILE.state = { 
-    nodes: []
+    nodes: [],
+    outputQueue: [],
+    frameTotals: {
+        height: 0
+    },
+    frameLines: []
 };
 SILE.error = function(x) { console.error(x); process.exit(1) };
 SILE.debug = function(x) { };

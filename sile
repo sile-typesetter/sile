@@ -1,6 +1,9 @@
 #!/usr/local/bin/node
 var libxmljs = require('libxmljs');
 var program = require("commander");
+var prototype = require("prototype");
+Object.extend(global, prototype);  
+
 function list(val) {
   return val.split(':');
 }

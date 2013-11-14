@@ -25,7 +25,7 @@ SILE.shaper = {
 				} else {
 					nodes.push(SILE.nodefactory.newHbox({
 						height: glyph.ascent /1024,
-						depth: glyph.depth /1024,
+						depth: glyph.descent /1024,
 						width: glyph.shapedWidth /1024,
 						value: { rawGlyph: glyph.rawGlyph, font: run.font }
 					}));

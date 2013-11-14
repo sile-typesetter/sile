@@ -14,8 +14,7 @@ SILE.typeset = function (text) {
     text.split(/(\n\n)/).forEach( function(t) {
     	if (t == "\n\n") {
             SILE._internals.leaveHmode();
-    		// Leave hmode
-    		// add parskip
+    		SILE.nodefactory.pushVglue({height: 0, stretch: 1});
     	} else {
     		SILE._internals.setpar(t);
 	    }
@@ -33,20 +32,67 @@ SILE._internals.leaveHmode = function() {
     SILE.nodefactory.pushPenalty({ flagged: 1, penalty: -Infinity });
     // Run the KP algorithm
     var breaks = SILE.linebreak(SILE.state.nodes,[ SILE.state.currentFrame.width() ]);
-    var lines = SILE._breakpoints_to_lines(breaks);
+    var lines = SILE._breakpointsToLines(breaks);
     
     // Push output lines into boxes and ship them to the page builder
-    SILE._typeset(lines);
+    lines.forEach(function (l, index) {
+        SILE.nodefactory.pushVbox({ nodes: l.nodes, ratio: l.ratio });
+        SILE.nodefactory.pushVpenalty({ penalty: (index == 0 ? SILE.state.documentClass.settings.widowPenalty :
+                                                  index == lines.length-1 ? SILE.state.documentClass.settings.clubPenalty : 0)});
+    });
+    SILE._pageBuilder();
+    //SILE._typeset(lines); // XXX hack
 }
+
+SILE._pageBuilder = (function () {
+    var lastBadness = Infinity;
+    return function() {
+        target = SILE.state.currentFrame.bottom() - SILE.state.currentFrame.top(); // XXX
+        var vbox;
+        while (SILE.state.outputQueue.length > 0 && (vbox = SILE.state.outputQueue.shift())) {
+            if (vbox.isVbox() || vbox.isVglue()) {
+                SILE.state.frameTotals.height += vbox.height + vbox.depth;
+            }
+            var left = target - SILE.state.frameTotals.height;
+            if (vbox.isPenalty()) {
+                var badness = left > 0 ? left * left * left : 10000;
+                var c = badness < 10000 ? vbox.penalty + badness : 10000;
+                if (c > lastBadness) {
+                    SILE.shipOut(target);
+                    lastBadness = Infinity;
+                } else {
+                    lastBadness = c;
+                }
+            }
+            SILE.state.frameLines.push(vbox);
+        }
+    }
+})();
+
+SILE.shipOut = function (target) {
+    var adjustment = SILE.state.frameTotals.height - target;
+    var glues = [];
+    SILE.state.frameLines.forEach(function (b) { 
+        if (b.isVglue()) glues.push(b);
+    });
+    var totalStretch = glues.map(function (g) { return g.stretch; }).reduce(function(a,b) { return a+b; });
+    if (adjustment > totalStretch) adjustment = totalStretch;
+    glues.map(function (g) { g.setGlue(g.stretch / totalStretch * adjustment); });
+    SILE._typeset(SILE.state.frameLines)
+    SILE.state.frameLines = [];
+    SILE.state.frameTotals.height = 0;
+    SILE.outputter.newPage(); // XXX Hack
+};
 
 SILE._typeset = function (lines) { 
     // ALL HACKS
     var thisFrame = SILE.state.currentFrame;
     if (!SILE.state.cursorX) { SILE.state.cursorX = SILE.state.currentFrame.left() };
     if (!SILE.state.cursorY) { SILE.state.cursorY = SILE.state.currentFrame.top() };
-                
+
     lines.forEach(function(line) {
-        SILE.state.cursorY += 14; // line.depth + line.height;
+        SILE.state.cursorY += line.depth + line.height;
+        if (!line.nodes) return;
         //console.log("Line: " +line.nodes.map(function(x) { return x.toS() }).join(" "));
         line.nodes.forEach(function(node) {
             if (node.isPenalty()) return;
@@ -56,7 +102,9 @@ SILE._typeset = function (lines) {
                 if (node.value.glyph == 0) return;
                 SILE.cairo.moveTo(SILE.state.cursorX, SILE.state.cursorY);
                 SILE.cairo.showAGlyph(node.value.font, node.value.rawGlyph);
-                 SILE.state.cursorX += (node.width + line.ratio * (line.ratio < 0 ? node.shrink : node.stretch));
+                SILE.state.cursorX += (node.width + line.ratio * (line.ratio < 0 ? node.shrink : node.stretch));
+                //console.log("Width: "+node.width);
+                //console.log("Ratio: "+line.ratio);
 
             }
         })
@@ -64,7 +112,7 @@ SILE._typeset = function (lines) {
     });
 }
 
-SILE._breakpoints_to_lines = function(bp){
+SILE._breakpointsToLines = function(bp){
     var linestart = 0;
     var lines = [];
     var nodes = SILE.state.nodes;

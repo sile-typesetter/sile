@@ -31,7 +31,10 @@ SILE.baseClass = (function() {
     }
     
     return {
-    settings: {},
+    settings: {
+        widowPenalty: 150,
+        clubPenalty: 150
+    },
     pageTemplate: { Layers: [{ Frames: [ ] }]},
     state: { parindent: 11 },
     init: function() { 
@@ -48,11 +51,11 @@ SILE.baseClass = (function() {
     },
     endPage: function() {
         SILE._internals.leaveHmode();
-        SILE.cairo.showPage();
+        //SILE.outputter.newPage();
     },
     end: function() {
         this.endPage();
-        SILE.cairo.finish()
+        SILE.outputter.finish()
     },
     newPar: function() {
         SILE.nodefactory.pushGlue({ width: SILE.state.documentClass.state.parindent, stretch: 0, shrink: 0});
