@@ -70,6 +70,7 @@ SILE._pageBuilder = (function () {
 })();
 
 SILE.shipOut = function (target) {
+    console.log("shipOut");
     var adjustment = SILE.state.frameTotals.height - target;
     var glues = [];
     SILE.state.frameLines.forEach(function (b) { 
@@ -81,14 +82,12 @@ SILE.shipOut = function (target) {
     SILE._typeset(SILE.state.frameLines)
     SILE.state.frameLines = [];
     SILE.state.frameTotals.height = 0;
-    SILE.outputter.newPage(); // XXX Hack
+    SILE.state.documentClass.newPage(); // XXX Hack
 };
 
 SILE._typeset = function (lines) { 
     // ALL HACKS
     var thisFrame = SILE.state.currentFrame;
-    if (!SILE.state.cursorX) { SILE.state.cursorX = SILE.state.currentFrame.left() };
-    if (!SILE.state.cursorY) { SILE.state.cursorY = SILE.state.currentFrame.top() };
 
     lines.forEach(function(line) {
         SILE.state.cursorY += line.depth + line.height;

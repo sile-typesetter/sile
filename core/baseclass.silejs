@@ -42,19 +42,27 @@ SILE.baseClass = (function() {
         registerCommands();
         SILE.state.fontFamily = "Gentium";
         SILE.state.fontSize = 11;
+                SILE.ThisPage = this.pageTemplate;
+        // XXX Hacks
+        SILE.state.currentFrame = this.pageTemplate.Layers[0].Frames[0];
+        SILE.state.cursorX = SILE.state.currentFrame.left();
+        SILE.state.cursorY = SILE.state.currentFrame.top();
     },
-    newPage: function() { 
+    newPage: function() {
+        SILE.outputter.newPage();
         // Copy default layout to SILE.ThisPage
         SILE.ThisPage = this.pageTemplate;
-        // XXX Hack
+        // XXX Hacks
         SILE.state.currentFrame = this.pageTemplate.Layers[0].Frames[0];
+        SILE.state.cursorX = SILE.state.currentFrame.left();
+        SILE.state.cursorY = SILE.state.currentFrame.top();
     },
     endPage: function() {
         SILE._internals.leaveHmode();
-        //SILE.outputter.newPage();
     },
     end: function() {
         this.endPage();
+        SILE.shipOut(0);
         SILE.outputter.finish()
     },
     newPar: function() {

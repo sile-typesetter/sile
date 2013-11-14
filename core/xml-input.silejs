@@ -23,7 +23,6 @@ xml.root().attrs().forEach(function(x) {
 SILE.state.documentClass = klass;
 
 klass.init();
-klass.newPage();
 
 SILE.process = function(node) {
     var name = node.name();
