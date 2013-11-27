@@ -6,7 +6,7 @@ SILE.nodefactory = (function() {
 	_box.isBox = function () { return this.type === "HBox" };
 	_box.isVbox = function () { return this.type === "VBox" };
 	var _hbox = object(_box); _hbox.type = "HBox";
-    _hbox.toS = function() { return "H<"+this.width+">" }
+    _hbox.toS = function() { return "H<"+this.width+">^"+this.height+"-"+this.depth+"v" }
 	var _glue = object(_box); _glue.type = "Glue";
     _glue.toS = function() { return "G<"+this.stretch+"|"+this.width+"|"+this.shrink+">" }
 	var _vglue = object(_box); _vglue.type = "VGlue";
@@ -33,8 +33,10 @@ SILE.nodefactory = (function() {
 		newVbox: function(spec) { 
 			var vbox = _new_and_spec(_vbox, spec);
 			// Compute the dimensions
+			// console.log(vbox.nodes.map(function (x) { return x.toS() }).join(""));
 			vbox.depth = vbox.nodes.select(function(n) { return n.isBox() }).max( function (n) { return n.depth });
 			vbox.height = vbox.nodes.select(function(n) { return n.isBox() }).max( function (n) { return n.height });
+			// console.log("VBOX H"+vbox.height+" D"+vbox.depth);
 			return vbox;
 		},
 		newGlue: function(spec) { return _new_and_spec(_glue, spec) },
