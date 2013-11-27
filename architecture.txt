@@ -2,3 +2,7 @@
 Programming language
 Input                   --> Frame/Layer model --> Flowing/shaping engine --> output
 
+Frame and flow:
+	Balanced/unbalanced frames
+	Absolute/relative position
+	Flowed / floated (with ID)
