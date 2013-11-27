@@ -76,7 +76,8 @@ SILE.shipOut = function (target) {
     SILE.state.frameLines.forEach(function (b) { 
         if (b.isVglue()) glues.push(b);
     });
-    var totalStretch = glues.map(function (g) { return g.stretch; }).reduce(function(a,b) { return a+b; });
+    var totalStretch = 0;
+    if (glues.length) totalStretch = glues.map(function (g) { return g.stretch; }).reduce(function(a,b) { return a+b; });
     if (adjustment > totalStretch) adjustment = totalStretch;
     glues.map(function (g) { g.setGlue(g.stretch / totalStretch * adjustment); });
     SILE._typeset(SILE.state.frameLines)
