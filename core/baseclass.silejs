@@ -35,7 +35,7 @@ SILE.baseClass = (function() {
         widowPenalty: 150,
         clubPenalty: 150
     },
-    pageTemplate: { Layers: [{ Frames: [ ] }]},
+    pageTemplate: { Frames: [ ] },
     state: { parindent: 11 },
     init: function() { 
         SILE.outputter.init(this); 
@@ -44,7 +44,7 @@ SILE.baseClass = (function() {
         SILE.state.fontSize = 11;
                 SILE.ThisPage = this.pageTemplate;
         // XXX Hacks
-        SILE.state.currentFrame = this.pageTemplate.Layers[0].Frames[0];
+        SILE.state.currentFrame = this.pageTemplate.Frames[0];
         SILE.state.cursorX = SILE.state.currentFrame.left();
         SILE.state.cursorY = SILE.state.currentFrame.top();
     },
@@ -53,7 +53,7 @@ SILE.baseClass = (function() {
         // Copy default layout to SILE.ThisPage
         SILE.ThisPage = this.pageTemplate;
         // XXX Hacks
-        SILE.state.currentFrame = this.pageTemplate.Layers[0].Frames[0];
+        SILE.state.currentFrame = this.pageTemplate.Frames[0];
         SILE.state.cursorX = SILE.state.currentFrame.left();
         SILE.state.cursorY = SILE.state.currentFrame.top();
     },
