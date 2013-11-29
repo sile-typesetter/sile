@@ -36,7 +36,15 @@ SILE._internals.leaveHmode = function() {
     
     // Push output lines into boxes and ship them to the page builder
     lines.forEach(function (l, index) {
-        SILE.nodefactory.pushVbox({ nodes: l.nodes, ratio: l.ratio });
+        var v = SILE.nodefactory.newVbox({ nodes: l.nodes, ratio: l.ratio });
+        // Insert leading
+        var d = SILE.state.documentClass.state.baselineSkip.height - v.height - SILE.state.frameTotals.prevDepth ;
+        //console.log("Leading height = "+SILE.state.documentClass.state.baselineSkip.height+ " - "+v.height + " - " + SILE.state.frameTotals.prevDepth + " = "+d) ;
+        SILE.nodefactory.pushVglue({height: d, stretch: SILE.state.documentClass.state.baselineSkip.stretch, shrink: SILE.state.documentClass.state.baselineSkip.shrink });
+        SILE.nodefactory.pushVbox(v);
+        SILE.state.frameTotals.prevDepth = v.depth;
+
+        // Insert page break penalty
         SILE.nodefactory.pushVpenalty({ penalty: (index == 0 ? SILE.state.documentClass.settings.widowPenalty :
                                                   index == lines.length-1 ? SILE.state.documentClass.settings.clubPenalty : 0)});
     });
@@ -70,21 +78,26 @@ SILE._pageBuilder = (function () {
 })();
 
 SILE.shipOut = function (target) {
-    console.log("shipOut");
+    // console.log("shipOut");
     var adjustment = SILE.state.frameTotals.height - target;
     var glues = [];
     SILE.state.frameLines.forEach(function (b) { 
         if (b.isVglue()) glues.push(b);
     });
     var totalStretch = 0;
+    // console.log("Vglues: "+glues.length)
     if (glues.length) totalStretch = glues.map(function (g) { return g.stretch; }).reduce(function(a,b) { return a+b; });
+    // console.log("Total stretch: "+totalStretch);
+    // console.log("Adjustment needed: "+adjustment);
     if (adjustment > totalStretch) adjustment = totalStretch;
-    glues.map(function (g) { g.setGlue(g.stretch / totalStretch * adjustment); });
+    if (totalStretch > 0) glues.map(function (g) { g.setGlue(g.stretch / totalStretch * adjustment); });
+    // console.log("Glues for this page adjusted by "+(totalStretch/adjustment) )
     SILE._typeset(SILE.state.frameLines)
     SILE.state.frameLines = [];
+    // XXX
     SILE.state.frameTotals.height = 0;
+    SILE.state.frameTotals.prevDepth = 0;
     if (SILE.state.currentFrame.next) {
-        console.log("There's another frame!")
         SILE.baseClass.initFrame(SILE.state.currentFrame.next); // XXX ?
     } else {
         SILE.state.documentClass.newPage(); // XXX Hack
@@ -96,7 +109,10 @@ SILE._typeset = function (lines) {
     var thisFrame = SILE.state.currentFrame;
 
     lines.forEach(function(line) {
-        SILE.state.cursorY += line.depth + line.height;
+        if (line.isVglue()) {
+            SILE.state.cursorY += line.depth + line.height;
+            return;
+        }
         if (!line.nodes) return;
         //console.log("Line: " +line.nodes.map(function(x) { return x.toS() }).join(" "));
         line.nodes.forEach(function(node) {
@@ -114,6 +130,7 @@ SILE._typeset = function (lines) {
             }
         })
         SILE.state.cursorX = SILE.state.currentFrame.left()
+        SILE.state.cursorY += line.depth + line.height;
     });
 }
 

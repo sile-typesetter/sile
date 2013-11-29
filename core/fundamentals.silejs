@@ -18,7 +18,8 @@ SILE.state = {
     nodes: [],
     outputQueue: [],
     frameTotals: {
-        height: 0
+        height: 0,
+        prevDepth: 0,
     },
     frameLines: []
 };
