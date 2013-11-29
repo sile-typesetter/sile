@@ -15,7 +15,6 @@ var searchpath = ["/usr/local/sile/"];
 if (program.include) searchpath = program.include.concat(searchpath);
 if (process.env.SILE_PATH) searchpath = list(process.env.SILE_PATH).concat(searchpath);
 searchpath.unshift(".");
-var vm = require("vm");
 
 SILE = {};
 SILE.require = function (file, context) { 
