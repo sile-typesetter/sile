@@ -83,7 +83,12 @@ SILE.shipOut = function (target) {
     SILE._typeset(SILE.state.frameLines)
     SILE.state.frameLines = [];
     SILE.state.frameTotals.height = 0;
-    SILE.state.documentClass.newPage(); // XXX Hack
+    if (SILE.state.currentFrame.next) {
+        console.log("There's another frame!")
+        SILE.baseClass.initFrame(SILE.state.currentFrame.next); // XXX ?
+    } else {
+        SILE.state.documentClass.newPage(); // XXX Hack
+    }
 };
 
 SILE._typeset = function (lines) { 

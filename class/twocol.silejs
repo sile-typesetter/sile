@@ -1,0 +1,10 @@
+twocol = object(SILE.baseClass);
+twocol.pageTemplate.Frames[0] = SILE.newFrame({
+    left: "5%", right: "47.5%", "top":"5%", bottom:"95%"
+});
+twocol.pageTemplate.Frames[1] = SILE.newFrame({
+    left: "52.5%", right: "95%", "top":"5%", bottom:"95%"
+});
+twocol.pageTemplate.Frames[0].next = twocol.pageTemplate.Frames[1];
+twocol.pageTemplate.Frames[1].previous = twocol.pageTemplate.Frames[0];
+exports.class = twocol;
