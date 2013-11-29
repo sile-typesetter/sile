@@ -4,5 +4,6 @@ Input                   --> Frame/Layer model --> Flowing/shaping engine --> out
 
 Frame and flow:
 	Balanced/unbalanced frames
+		Balanced frames are implemented by treating them as a single frame and dividing the lengths by the count
 	Absolute/relative position
 	Flowed / floated (with ID)
