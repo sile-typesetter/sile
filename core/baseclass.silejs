@@ -36,7 +36,9 @@ SILE.baseClass = (function() {
         clubPenalty: 150
     },
     pageTemplate: { Frames: [ ] },
-    state: { parindent: 11 },
+    state: { parindent: 11,
+        baselineSkip: SILE.nodefactory.newVglue({ height: 13, stretch: 0, shrink: 0}),
+    },
     init: function() { 
         SILE.outputter.init(this); 
         registerCommands();
@@ -49,7 +51,6 @@ SILE.baseClass = (function() {
         SILE.state.currentFrame = f;
         SILE.state.cursorX = SILE.state.currentFrame.left();
         SILE.state.cursorY = SILE.state.currentFrame.top();
-        console.log("Current frame is "+f);
     },
     newPage: function() {
         SILE.outputter.newPage();
