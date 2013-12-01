@@ -1,6 +1,8 @@
 Hyphenation!
-Page/frame builder
-Frame and flow / floats
-Grid
-Box native word runs
-Output routine
+Frames:
+    Check output routine/named frames/page numbes
+    Chaining frame co-ordinates ("2cm right of frame A")
+    Exposing XML/etc interface to specifying frames
+    Variable height frames
+    Changing layout during a run
+Grid - see http://www.tug.org/TUGboat/tb28-1/tb88bazargan.pdf
