@@ -15,7 +15,7 @@ SILE.shaper = {
 			// Because we may need to break up runs because of the
 			// justification algorithm, we pull every glyph out of the run
 			run.glyphs.forEach(function(glyph) {
-				if (glyph.glyphWidth == 0) { // Check this!
+				if (glyph.glyphWidth == 0 && glyph.shapedWidth != 0) { // Check this!
 					// Glue in disguise
 					nodes.push(SILE.nodefactory.newGlue({
 						width: glyph.shapedWidth /1024,
