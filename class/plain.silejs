@@ -13,7 +13,10 @@ plain.newPage = function() {
 	process.stdout.write("["+pageNo+"] ");
 	SILE.pushState();
 	SILE.baseClass.initFrame(SILE.getFrame("folio"));
-	SILE._internals.setpar("" + pageNo + "\n\n");
+	SILE.nodefactory.pushHbox({ width: 0, value: {glyph: 0} });
+	SILE.nodefactory.pushGlue({ width:0, stretch: 10000 });
+	SILE.typesetterState.nodes = SILE.typesetterState.nodes.concat(SILE.shaper.shape(""+pageNo));
+	SILE.nodefactory.pushGlue({ width:0, stretch: 10000 });
 	SILE._internals.leaveHmode();
 	SILE.shipOut(0,1);
 	SILE.popState();
