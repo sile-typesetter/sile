@@ -1,5 +1,11 @@
 plain = object(SILE.baseClass);
-plain.pageTemplate.Frames[0] = SILE.newFrame({
-    left: "5%", right: "95%", "top":"5%", bottom:"95%"
+plain.pageTemplate.firstContentFrame = SILE.newFrame({
+    left: "5%", right: "95%", "top":"5%", bottom:"90%", id: "a"
 });
+plain.pageTemplate.frames = {
+	"a": plain.pageTemplate.firstContentFrame,
+	"folio": SILE.newFrame({
+		left: "5%", right: "95%", "top":"92%", bottom:"97%", id: "folio"
+	})
+};
 exports.class = plain;
