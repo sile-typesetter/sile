@@ -14,7 +14,7 @@ SILE.Commands = {
         }
     };
 
-SILE.state = { 
+SILE.typesetterState = { 
     nodes: [],
     outputQueue: [],
     frameTotals: {
@@ -23,6 +23,26 @@ SILE.state = {
     },
     frameLines: []
 };
+SILE.documentState = {};
+
+SILE.tstatequeue = [];
+
+SILE.pushState = function() { 
+    SILE.tstatequeue.push(SILE.typesetterState);
+    SILE.typesetterState = { 
+        nodes: [],
+        outputQueue: [],
+        frameTotals: {
+            height: 0,
+            prevDepth: 0,
+        },
+        frameLines: []
+    };
+}
+SILE.popState = function () {
+    SILE.typesetterState = SILE.tstatequeue.pop();
+}
+
 SILE.error = function(x) { console.error(x); process.exit(1) };
 SILE.debug = function(x) { };
 

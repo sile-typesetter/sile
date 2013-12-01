@@ -20,7 +20,7 @@ xml.root().attrs().forEach(function(x) {
         klass.options[x.name()].call(klass,x.value());
 });
 
-SILE.state.documentClass = klass;
+SILE.documentState.documentClass = klass;
 
 klass.init();
 

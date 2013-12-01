@@ -1,4 +1,5 @@
 plain = object(SILE.baseClass);
+var pageNo = 1;
 plain.pageTemplate.firstContentFrame = SILE.newFrame({
     left: "5%", right: "95%", "top":"5%", bottom:"90%", id: "a"
 });
@@ -8,4 +9,16 @@ plain.pageTemplate.frames = {
 		left: "5%", right: "95%", "top":"92%", bottom:"97%", id: "folio"
 	})
 };
+plain.newPage = function() {
+	process.stdout.write("["+pageNo+"] ");
+	SILE.pushState();
+	SILE.baseClass.initFrame(SILE.getFrame("folio"));
+	SILE._internals.setpar("" + pageNo + "\n\n");
+	SILE._internals.leaveHmode();
+	SILE.shipOut(0,1);
+	SILE.popState();
+	pageNo++;
+	SILE.baseClass.newPage();
+
+}
 exports.class = plain;

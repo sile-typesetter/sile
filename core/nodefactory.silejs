@@ -42,12 +42,12 @@ SILE.nodefactory = (function() {
 		newGlue: function(spec) { return _new_and_spec(_glue, spec) },
 		newVglue: function(spec) { return _new_and_spec(_vglue, spec) },
 		newPenalty: function(spec) { return _new_and_spec(_penalty, spec) },
-		pushHbox: function (spec) {	return SILE.state.nodes.push(this.newHbox(spec)); },
-		pushGlue: function (spec) {	return SILE.state.nodes.push(this.newGlue(spec)); },
-		pushPenalty: function (spec) {	return SILE.state.nodes.push(this.newPenalty(spec)); },
-		pushVbox: function (spec) { var x;SILE.state.outputQueue.push(x = this.newVbox(spec)); return x; },
-		pushVglue: function (spec) { return SILE.state.outputQueue.push(this.newVglue(spec)); },
-		pushVpenalty: function (spec) {	return SILE.state.outputQueue.push(this.newPenalty(spec)); },
+		pushHbox: function (spec) {	return SILE.typesetterState.nodes.push(this.newHbox(spec)); },
+		pushGlue: function (spec) {	return SILE.typesetterState.nodes.push(this.newGlue(spec)); },
+		pushPenalty: function (spec) {	return SILE.typesetterState.nodes.push(this.newPenalty(spec)); },
+		pushVbox: function (spec) { var x;SILE.typesetterState.outputQueue.push(x = this.newVbox(spec)); return x; },
+		pushVglue: function (spec) { return SILE.typesetterState.outputQueue.push(this.newVglue(spec)); },
+		pushVpenalty: function (spec) {	return SILE.typesetterState.outputQueue.push(this.newPenalty(spec)); },
 
 	};
 })();

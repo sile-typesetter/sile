@@ -2,17 +2,18 @@ SILE.baseClass = (function() {
     function registerCommands() { 
         SILE.Commands.textit = function(){} // XXX hack
         SILE.registerCommand("font", function(n) {
-            var o = SILE.state;
-            SILE.state = object( SILE.state );
+            var o = SILE.documentState;
+            SILE.pushState();
+            SILE.documentState = object( o );
             if (n.attr("family")) {
-                SILE.state.fontFamily = n.attr("family").value();
+                SILE.documentState.fontFamily = n.attr("family").value();
             }
             if (n.attr("size")) {
-                SILE.state.fontSize = n.attr("size").value();
+                SILE.documentState.fontSize = n.attr("size").value();
             }
             n.childNodes().forEach(SILE.process);
-            o.nodes = SILE.state.nodes;
-            SILE.state = o;
+            SILE.popState();
+            SILE.documentState = o;
         });
         SILE.registerCommand("penalty", function(n) {
             SILE.nodefactory.pushPenalty({ 
@@ -42,21 +43,23 @@ SILE.baseClass = (function() {
     init: function() { 
         SILE.outputter.init(this); 
         registerCommands();
-        SILE.state.fontFamily = "Adobe Garamond Pro";
-        SILE.state.fontSize = 11;
+        SILE.documentState.fontFamily = "Adobe Garamond Pro";
+        SILE.documentState.fontSize = 11;
+
         SILE.ThisPage = this.pageTemplate;
-        SILE.baseClass.initFrame(this.pageTemplate.firstContentFrame);
+        this.initFrame(this.pageTemplate.firstContentFrame);
     },
     initFrame: function(f) {
-        SILE.state.currentFrame = f;
-        SILE.state.cursorX = SILE.state.currentFrame.left();
-        SILE.state.cursorY = SILE.state.currentFrame.top();
+        SILE.typesetterState.currentFrame = f;
+        SILE.typesetterState.cursorX = SILE.typesetterState.currentFrame.left();
+        SILE.typesetterState.cursorY = SILE.typesetterState.currentFrame.top();
+        SILE.typesetterState.frameTotals = { height: 0, prevDepth: 0 };
     },
     newPage: function() {
         SILE.outputter.newPage();
         // Copy default layout to SILE.ThisPage
         SILE.ThisPage = this.pageTemplate;
-        SILE.baseClass.initFrame(this.pageTemplate.firstContentFrame);
+        this.initFrame(this.pageTemplate.firstContentFrame);
     },
     endPage: function() {
         SILE._internals.leaveHmode();
@@ -67,15 +70,15 @@ SILE.baseClass = (function() {
         SILE.outputter.finish()
     },
     newPar: function() {
-        SILE.nodefactory.pushGlue({ width: SILE.state.documentClass.state.parindent, stretch: 0, shrink: 0});
+        SILE.nodefactory.pushGlue({ width: SILE.documentState.documentClass.state.parindent, stretch: 0, shrink: 0});
     },
     options: { 
         papersize: function(size) { 
             if(size.match(/\s+x\s+/)) {
                 var direct = size.split(/\s+x\s+/);
-                SILE.state.paperSize = direct.map(function (x) { return SILE.toPoints(x) });
+                SILE.documentState.paperSize = direct.map(function (x) { return SILE.toPoints(x) });
             } else if (SILE.paperSizes[size]) {
-                SILE.state.paperSize = SILE.paperSizes[size];
+                SILE.documentState.paperSize = SILE.paperSizes[size];
             } else {
                 SILE.error("Unknown paper size "+size);
             }

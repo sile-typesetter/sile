@@ -63,3 +63,4 @@
     };
 })();
 
+SILE.getFrame = function(id) {return SILE.documentState.documentClass.pageTemplate.frames[id]; };

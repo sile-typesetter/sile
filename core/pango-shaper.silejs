@@ -7,8 +7,8 @@ SILE.shaper = {
 		var p = new Pango();
 		var PangoAttrList = pc.PangoAttrList;
 		pal = new PangoAttrList();
-		pal.insert("family", SILE.state.fontFamily);
-		pal.insert("size", SILE.state.fontSize);
+		pal.insert("family", SILE.documentState.fontFamily);
+		pal.insert("size", SILE.documentState.fontSize);
 		//console.log("Shaping "+text);
 		text = text.replace(/\s+/g, " ");
 		p.itemizeAndShape(text,pal).forEach(function (run) {
