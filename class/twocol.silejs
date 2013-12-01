@@ -1,11 +1,31 @@
 twocol = object(SILE.baseClass);
 twocol.pageTemplate.frames["a"] = SILE.newFrame({
-    left: "5%", right: "47.5%", "top":"5%", bottom:"95%", id: "a"
+    left: "5%", right: "47.5%", "top":"5%", bottom:"90%", id: "a"
 });
 twocol.pageTemplate.frames["b"] = SILE.newFrame({
-    left: "52.5%", right: "95%", "top":"5%", bottom:"95%", id: "b"
+    left: "52.5%", right: "95%", "top":"5%", bottom:"90%", id: "b"
 });
 twocol.pageTemplate.frames["a"].next = twocol.pageTemplate.frames["b"];
 twocol.pageTemplate.frames["b"].previous = twocol.pageTemplate.frames["a"];
 twocol.pageTemplate.firstContentFrame = twocol.pageTemplate.frames["a"];
+twocol.pageTemplate.frames["folio"] = SILE.newFrame({
+		left: "5%", right: "95%", "top":"92%", bottom:"97%", id: "folio"
+	});
+var pageNo = 1;
+twocol.newPage = function() {
+	process.stdout.write("["+pageNo+"] ");
+	SILE.pushState();
+	SILE.baseClass.initFrame(SILE.getFrame("folio"));
+	SILE.nodefactory.pushHbox({ width: 0, value: {glyph: 0} });
+	SILE.nodefactory.pushGlue({ width:0, stretch: 10000 });
+	SILE.typesetterState.nodes = SILE.typesetterState.nodes.concat(SILE.shaper.shape(""+pageNo));
+	SILE.nodefactory.pushGlue({ width:0, stretch: 10000 });
+	SILE._internals.leaveHmode();
+	SILE.shipOut(0,1);
+	SILE.popState();
+	pageNo++;
+	SILE.baseClass.newPage();
+
+}
+
 exports.class = twocol;
