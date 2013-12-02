@@ -1,0 +1,8 @@
+{
+  "name": "pangocairo",
+  "preferGlobal": true,
+  "version": "0.0.1",
+  "author": "Simon <simon@simon-cozens.org>",
+  "description": "an interface to pangocairo",
+  "dependencies": { }
+}
