@@ -9,6 +9,7 @@ SILE.shaper = {
 		pal = new PangoAttrList();
 		pal.insert("family", SILE.documentState.fontFamily);
 		pal.insert("size", SILE.documentState.fontSize);
+		pal.insert("weight", SILE.documentState.fontWeight);
 		//console.log("Shaping "+text);
 		text = text.replace(/\s+/g, " ");
 		p.itemizeAndShape(text,pal).forEach(function (run) {
