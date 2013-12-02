@@ -35,7 +35,7 @@ SILE._internals.leaveHmode = function() {
     var lines = SILE._breakpointsToLines(breaks);
     
     // Push output lines into boxes and ship them to the page builder
-    console.log("Lines in this para: "+lines.length)
+    //console.log("Lines in this para: "+lines.length)
     lines.forEach(function (l, index) {
         var v = SILE.nodefactory.newVbox({ nodes: l.nodes, ratio: l.ratio });
         // Insert leading
