@@ -59,6 +59,7 @@
             }
             frame["_"+x] = spec[x];
         });
+        frame.id = spec.id;
         return frame;
     };
 })();
