@@ -35,6 +35,7 @@ SILE._internals.leaveHmode = function() {
     var lines = SILE._breakpointsToLines(breaks);
     
     // Push output lines into boxes and ship them to the page builder
+    console.log("Lines in this para: "+lines.length)
     lines.forEach(function (l, index) {
         var v = SILE.nodefactory.newVbox({ nodes: l.nodes, ratio: l.ratio });
         // Insert leading
@@ -77,19 +78,21 @@ SILE._pageBuilder = function () {
 };
 
 SILE.shipOut = function (target, independent) {
-    var adjustment = SILE.typesetterState.frameTotals.height - target;
+    //console.log("Height total is " + SILE.typesetterState.frameTotals.height);
+    //console.log("Target is "+target);
+    var adjustment = target - SILE.typesetterState.frameTotals.height;
     var glues = [];
     SILE.typesetterState.frameLines.forEach(function (b) { 
         if (b.isVglue()) glues.push(b);
     });
     var totalStretch = 0;
-    // console.log("Vglues: "+glues.length)
+    //console.log("Vglues: "+glues.length)
     if (glues.length) totalStretch = glues.map(function (g) { return g.stretch; }).reduce(function(a,b) { return a+b; });
-    // console.log("Total stretch: "+totalStretch);
-    // console.log("Adjustment needed: "+adjustment);
+    //console.log("Total stretch: "+totalStretch);
+    //console.log("Adjustment needed: "+adjustment);
     if (adjustment > totalStretch) adjustment = totalStretch;
-    if (totalStretch > 0) glues.map(function (g) { g.setGlue(g.stretch / totalStretch * adjustment); });
-    // console.log("Glues for this page adjusted by "+(totalStretch/adjustment) )
+    if (adjustment / totalStretch > 0) glues.map(function (g) { g.setGlue(g.stretch * adjustment / totalStretch); });
+    //console.log("Glues for this page adjusted by "+(adjustment/totalStretch) )
     SILE._typeset(SILE.typesetterState.frameLines)
     SILE.typesetterState.frameLines = [];
     //SILE.typesetterState.frameTotals.height = 0;
