@@ -1,6 +1,17 @@
 SILE.baseClass = (function() { 
     function registerCommands() { 
         SILE.Commands.textit = function(){} // XXX hack
+        SILE.registerCommand("define", function (n) {
+            var cmd = n.attr("command").value();
+            SILE.registerCommand(cmd, function(nodes) {
+                var o = SILE.documentState;
+                SILE.documentState = object( o );
+                SILE.registerCommand("process", function() { nodes.childNodes().forEach(SILE.process); });
+                n.childNodes().forEach(SILE.process);
+                SILE.Commands.process = null;
+                SILE.documentState = o;
+            });
+        });
         SILE.registerCommand("font", function(n) {
             var o = SILE.documentState;
             SILE.documentState = object( o );
