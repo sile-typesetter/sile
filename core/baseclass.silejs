@@ -1,17 +1,23 @@
 SILE.baseClass = (function() { 
     function registerCommands() { 
         SILE.Commands.textit = function(){} // XXX hack
+        var commandStack = [];
         SILE.registerCommand("define", function (n) {
             var cmd = n.attr("command").value();
             SILE.registerCommand(cmd, function(nodes) {
                 var o = SILE.documentState;
                 SILE.documentState = object( o );
-                SILE.registerCommand("process", function() { nodes.childNodes().forEach(SILE.process); });
+                commandStack.push(nodes.childNodes());
                 n.childNodes().forEach(SILE.process);
                 SILE.Commands.process = null;
                 SILE.documentState = o;
             });
         });
+
+        SILE.registerCommand("process", function() { 
+            commandStack.pop().forEach(SILE.process); 
+        });
+
         SILE.registerCommand("font", function(n) {
             var o = SILE.documentState;
             SILE.documentState = object( o );
@@ -29,9 +35,17 @@ SILE.baseClass = (function() {
         });
         SILE.registerCommand("glue", function(n) {
             SILE.nodefactory.pushGlue({ 
-                width: n.attr("width") ? n.attr("width").value() : 0,
-                stretch: n.attr("stretch") ? eval(n.attr("stretch").value()) : 0,
-                shrink: n.attr("shrink") ? eval(n.attr("shrink").value()) : 0
+                width: n.attr("width") ? SILE.toPoints(n.attr("width").value()) : 0,
+                stretch: n.attr("stretch") ? SILE.toPoints(n.attr("stretch").value()) : 0,
+                shrink: n.attr("shrink") ? SILE.toPoints(n.attr("shrink").value()) : 0
+            });
+        });
+        SILE.registerCommand("skip", function(n) {
+            SILE._internals.leaveHmode();
+            SILE.nodefactory.pushVglue({
+                height: n.attr("height") ? SILE.toPoints(n.attr("height").value()) : 0,
+                stretch: n.attr("stretch") ? SILE.toPoints(n.attr("stretch").value()) : 0,
+                shrink: n.attr("shrink") ? SILE.toPoints(n.attr("shrink").value()) : 0
             });
         });
 
@@ -39,8 +53,8 @@ SILE.baseClass = (function() {
     
     return {
     settings: {
-        widowPenalty: 10000,
-        clubPenalty: 10000
+        widowPenalty: 5000,
+        clubPenalty: 5000
     },
     pageTemplate: { frames: [ ], firstContentFrame: null },
     state: { parindent: 11,
