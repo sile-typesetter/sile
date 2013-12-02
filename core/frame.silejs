@@ -29,8 +29,9 @@
         },
         "height": function() {
             if (typeof this._height == "function" ) { return this._height() };
-            if (!this._height) { return this.bottom() - this.top(); }
-            return this._height;
+            if (this._height) { return this._height; }
+            if (this.bottom() && this.top()) { return this.bottom() - this.top(); }
+            return Infinity;
         },
         next: null,
         id: null,

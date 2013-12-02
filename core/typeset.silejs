@@ -59,7 +59,7 @@ SILE._internals.leaveHmode = function() {
 SILE.typesetterState.lastBadness = Infinity;
 
 SILE._pageBuilder = function () {
-    var target = SILE.typesetterState.currentFrame.bottom() - SILE.typesetterState.currentFrame.top(); // XXX Floats
+    var target = SILE.typesetterState.currentFrame.height(); // XXX Floats
     var vbox;
     while (SILE.typesetterState.outputQueue.length > 0 && (vbox = SILE.typesetterState.outputQueue.shift())) {
         //console.log("Dealing with VBox "+vbox.toS())
