@@ -14,14 +14,15 @@ SILE.typeset = function (text) {
     text.split(/(\n\n)/).forEach( function(t) {
     	if (t == "\n\n") {
             SILE._internals.leaveHmode();
-    		SILE.nodefactory.pushVglue({height: 0, stretch: 1});
+    		//SILE.nodefactory.pushVglue({height: 0, stretch: 1});
     	} else {
-    		SILE._internals.setpar(t);
+            SILE._internals.setpar(t);
 	    }
     });
 }
 
 SILE._internals.leaveHmode = function() {
+    //console.log("Leaving hmode");
     nl = SILE.typesetterState.nodes;
     while (nl.length > 0 && (nl[nl.length-1].isPenalty() || nl[nl.length-1].isGlue())) {
         nl.pop();
@@ -35,7 +36,6 @@ SILE._internals.leaveHmode = function() {
     var lines = SILE._breakpointsToLines(breaks);
     
     // Push output lines into boxes and ship them to the page builder
-    //console.log("Lines in this para: "+lines.length)
     lines.forEach(function (l, index) {
         var v = SILE.nodefactory.newVbox({ nodes: l.nodes, ratio: l.ratio });
         // Insert leading
@@ -44,10 +44,13 @@ SILE._internals.leaveHmode = function() {
         SILE.nodefactory.pushVglue({height: d, stretch: SILE.documentState.documentClass.state.baselineSkip.stretch, shrink: SILE.documentState.documentClass.state.baselineSkip.shrink });
         SILE.nodefactory.pushVbox(v);
         SILE.typesetterState.frameTotals.prevDepth = v.depth;
-
+        var pageBreakPenalty = (index == 0 ? SILE.documentState.documentClass.settings.widowPenalty :
+                                                  index == lines.length-1 ? SILE.documentState.documentClass.settings.clubPenalty : 0);
         // Insert page break penalty
-            SILE.nodefactory.pushVpenalty({ penalty: (index == 0 ? SILE.documentState.documentClass.settings.widowPenalty :
-                                                  index == lines.length-1 ? SILE.documentState.documentClass.settings.clubPenalty : 0)});
+        if (lines.length > 1)
+            SILE.nodefactory.pushVpenalty({ penalty: pageBreakPenalty});
+        else 
+            SILE.nodefactory.pushVpenalty({ penalty: 0 });
     });
     SILE._pageBuilder();
     //SILE._typeset(lines); // XXX hack
@@ -56,17 +59,21 @@ SILE._internals.leaveHmode = function() {
 SILE.typesetterState.lastBadness = Infinity;
 
 SILE._pageBuilder = function () {
-    var target = SILE.typesetterState.currentFrame.bottom() - SILE.typesetterState.currentFrame.top(); // XXX
+    var target = SILE.typesetterState.currentFrame.bottom() - SILE.typesetterState.currentFrame.top(); // XXX Floats
     var vbox;
     while (SILE.typesetterState.outputQueue.length > 0 && (vbox = SILE.typesetterState.outputQueue.shift())) {
+        //console.log("Dealing with VBox "+vbox.toS())
         if (vbox.isVbox() || vbox.isVglue()) {
             SILE.typesetterState.frameTotals.height += vbox.height + vbox.depth;
         }
         var left = target - SILE.typesetterState.frameTotals.height;
+        //console.log("I have "+left+"pts left");
         if (vbox.isPenalty()) {
             var badness = left > 0 ? left * left * left : 10000;
             var c = badness < 10000 ? vbox.penalty + badness : 10000;
+            //console.log("Badness: "+c);
             if (c > SILE.typesetterState.lastBadness) {
+                //console.log("This is worse");
                 SILE.shipOut(target);
                 SILE.typesetterState.lastBadness = Infinity;
             } else {
@@ -116,7 +123,6 @@ SILE._typeset = function (lines) {
             return;
         }
         if (!line.nodes) return;
-        //console.log("Line: " +line.nodes.map(function(x) { return x.toS() }).join(" "));
         line.nodes.forEach(function(node) {
             if (node.isPenalty()) return;
             if (node.isGlue()) {
