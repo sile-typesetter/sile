@@ -8,5 +8,10 @@ SILE.outputter = {
     newPage: function() {
     	SILE.cairo.showPage();
     },
-    finish: function() { SILE.cairo.finish(); }
+    finish: function() { SILE.cairo.finish(); },
+    debugFrame: function (f) {
+    	SILE.cairo.rectangle(f.left(), f.top(), f.width(), f.height());
+    	SILE.cairo.moveTo(f.left(), f.top());
+    	SILE.cairo.showText(f.id);
+    }
 }

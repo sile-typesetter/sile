@@ -75,6 +75,7 @@ SILE.baseClass = (function() {
         SILE.typesetterState.cursorX = SILE.typesetterState.currentFrame.left();
         SILE.typesetterState.cursorY = SILE.typesetterState.currentFrame.top();
         SILE.typesetterState.frameTotals = { height: 0, prevDepth: 0 };
+        //SILE.outputter.debugFrame(f);
     },
     newPage: function() {
         SILE.outputter.newPage();
