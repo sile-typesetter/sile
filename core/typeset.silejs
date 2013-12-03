@@ -74,8 +74,8 @@ SILE._pageBuilder = function () {
             //console.log("Badness: "+c);
             if (c > SILE.typesetterState.lastBadness) {
                 //console.log("This is worse");
-                SILE.shipOut(target);
                 SILE.typesetterState.lastBadness = Infinity;
+                SILE.shipOut(target);
             } else {
                 SILE.typesetterState.lastBadness = c;
             }
@@ -100,19 +100,35 @@ SILE.shipOut = function (target, independent) {
     if (adjustment > totalStretch) adjustment = totalStretch;
     if (adjustment / totalStretch > 0) glues.map(function (g) { g.setGlue(g.stretch * adjustment / totalStretch); });
     //console.log("Glues for this page adjusted by "+(adjustment/totalStretch) )
-    SILE._typeset(SILE.typesetterState.frameLines)
+    SILE._typeset(SILE.typesetterState.frameLines);
     SILE.typesetterState.frameLines = [];
     //SILE.typesetterState.frameTotals.height = 0;
     //SILE.typesetterState.frameTotals.prevDepth = 0;
     if (!independent) {
+        var cwidth = SILE.typesetterState.currentFrame.width();
         if (SILE.typesetterState.currentFrame.next) {
             SILE.baseClass.initFrame(SILE.getFrame(SILE.typesetterState.currentFrame.next));
         } else {
             SILE.documentState.documentClass.newPage(); // XXX Hack
         }
+        // XXX Put everything back, because the next frame may have a different shape
+        if (SILE.typesetterState.currentFrame.width() != cwidth) {
+            SILE.pushBack();
+        }
     }
 };
 
+SILE.pushBack = function () {
+    SILE.nodefactory.pushHbox({ width: 0, value: {glyph: 0} });
+    while (v = SILE.typesetterState.outputQueue.shift()) {
+        if (v.isVglue() || v.isPenalty()) { continue; }
+        SILE.typesetterState.nodes = SILE.typesetterState.nodes.concat(v.nodes);
+        // XXX Hack - end-of-glue is tossed by leaveHmode, but now the lines may
+        // end in different places. We need to add it back.
+        SILE.typesetterState.nodes = SILE.typesetterState.nodes.concat(SILE.shaper.shape(" "));
+    }
+    SILE._internals.leaveHmode();
+}
 SILE._typeset = function (lines) { 
     // ALL HACKS
     var thisFrame = SILE.typesetterState.currentFrame;

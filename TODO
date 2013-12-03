@@ -2,8 +2,5 @@ Hyphenation!
 Images
 Frames:
 	Insertions
-    Chaining frame co-ordinates ("2cm right of frame A")
-    Exposing XML/etc interface to specifying frames
     Variable height frames
-    Changing layout during a run
 Grid - see http://www.tug.org/TUGboat/tb28-1/tb88bazargan.pdf
