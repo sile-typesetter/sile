@@ -24,7 +24,7 @@ SILE.baseClass = (function() {
             n.childNodes().forEach(SILE.process);
             SILE.documentState.thisPageTemplate.firstContentFrame = SILE.getFrame(n.attr("firstContentFrame").value());
             SILE.baseClass.initFrame(SILE.documentState.thisPageTemplate.firstContentFrame);
-            console.log(SILE.documentState.thisPageTemplate);
+            //console.log(SILE.documentState.thisPageTemplate);
         });
         SILE.registerCommand("frame", function (n) {
             var id = n.attr("id").value();
