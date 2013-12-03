@@ -28,7 +28,7 @@ units
   = "mm" / "cm" / "in"
 
 percentage
-  = string:[0-9\.]+ "%" { return SILE.toPoints(string.join(""), "%"); }
+  = string:[0-9\.]+ "%" { return SILE.toPoints(string.join(""), "%", SILE.documentState._dimension); }
 
 float
   = digits:[0-9\.]+ { return parseFloat(digits.join("")); }

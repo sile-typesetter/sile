@@ -67,12 +67,8 @@
 })();
 
 SILE.getFrame = function(id) {return SILE.documentState.thisPageTemplate.frames[id]; };
+SILE._frameParser = SILE.require("core/frameparser");
 SILE.parseComplexFrameDimension = function(d, width_or_height) {
-    console.log(d);
-    if (!d.match(/[\+\(\)]/)) {
-        var p = SILE.toPoints(d, null, width_or_height);
-        return p;
-    }
-    console.error(d);
-    exit();
+    SILE.documentState._dimension = width_or_height; // ugly hack since you can't pass state to the parser
+    return SILE._frameParser.parse(d);
 }
