@@ -14,7 +14,8 @@ SILE.nodefactory = (function() {
 	var _penalty = object(_box); _penalty.type = "Penalty"; _penalty.flagged = 0; _penalty.penalty = 0;
     _penalty.toS = function() { return "P("+this.penalty+(this.flagged ? "!":"")+")" };
     var _vbox = object(_box); _vbox.type = "VBox";
-    _vbox.toS = function() { return "VB["+this.height+"]"; }
+    _vbox.toS = function() { return "VB["+this.toText()+"]"; }
+    _vbox.toText = function() {return this.nodes.map(function(v) { return v.value ? String.fromCharCode(v.value.glyph+32) : " " }).join(""); }
 	_hbox.value = {};
 	_vbox.nodes = [];
 	_vbox.ratio = 0;

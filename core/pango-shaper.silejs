@@ -28,7 +28,7 @@ SILE.shaper = {
 						height: glyph.ascent /1024,
 						depth: glyph.descent /1024,
 						width: glyph.shapedWidth /1024,
-						value: { rawGlyph: glyph.rawGlyph, font: run.font }
+						value: { rawGlyph: glyph.rawGlyph, glyph: glyph.glyph, font: run.font }
 					}));
 				}
 			}); 
