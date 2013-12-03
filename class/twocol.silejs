@@ -1,12 +1,10 @@
 twocol = object(SILE.baseClass);
 twocol.pageTemplate.frames["a"] = SILE.newFrame({
-    left: "5%", right: "47.5%", "top":"5%", bottom:"90%", id: "a"
+    left: "5%", right: "47.5%", "top":"5%", bottom:"90%", id: "a", next: "b"
 });
 twocol.pageTemplate.frames["b"] = SILE.newFrame({
     left: "52.5%", right: "95%", "top":"5%", bottom:"90%", id: "b"
 });
-twocol.pageTemplate.frames["a"].next = twocol.pageTemplate.frames["b"];
-twocol.pageTemplate.frames["b"].previous = twocol.pageTemplate.frames["a"];
 twocol.pageTemplate.firstContentFrame = twocol.pageTemplate.frames["a"];
 twocol.pageTemplate.frames["folio"] = SILE.newFrame({
 		left: "5%", right: "95%", "top":"92%", bottom:"97%", id: "folio"

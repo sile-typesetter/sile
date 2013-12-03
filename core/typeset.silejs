@@ -106,7 +106,7 @@ SILE.shipOut = function (target, independent) {
     //SILE.typesetterState.frameTotals.prevDepth = 0;
     if (!independent) {
         if (SILE.typesetterState.currentFrame.next) {
-            SILE.baseClass.initFrame(SILE.typesetterState.currentFrame.next); // XXX ?
+            SILE.baseClass.initFrame(SILE.getFrame(SILE.typesetterState.currentFrame.next));
         } else {
             SILE.documentState.documentClass.newPage(); // XXX Hack
         }
