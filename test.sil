@@ -1,4 +1,9 @@
 <sile papersize="129mm x 198mm">
+     <pagetemplate firstContentFrame="a">
+          <frame id="a" top="5%" left="7%" right="95%" bottom="37%" next="b"/>
+          <frame id="b" top="bottom(a) + 12pt" bottom="90%" left="left(a)" right="47%" next="c"/>
+          <frame id="c" top="top(b)" bottom="90%" left="52%" right="95%"/>
+     </pagetemplate>
 <define command="center">
      <glue stretch="10000"/><process/><glue stretch="10000"/>
 </define>
