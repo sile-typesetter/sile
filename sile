@@ -2,6 +2,7 @@
 var libxmljs = require('libxmljs');
 var program = require("commander");
 var prototype = require("prototype");
+var repl = require("repl");
 Object.extend(global, prototype);  
 
 function list(val) {
@@ -44,14 +45,14 @@ SILE.require("core/knuth-plass");
 SILE.require("core/typeset");
 SILE.require("core/cairo-output");
 SILE.require("core/pango-shaper");
+SILE.require("core/baseclass");
 
+console.log("This is SILE, version "+program.version());
 SILE.file =  program.args[0];
 if (!SILE.file) {
-    console.error("Usage: sile file.sil");
+    repl.start({ prompt: "sile> " });
+} else {
+    var path = require("path");
+    SILE.outputFilename = path.dirname(SILE.file)+"/"+path.basename(SILE.file,".sil") + ".pdf";
+    SILE.require("core/xml-input");    
 }
-var path = require("path");
-SILE.outputFilename = path.dirname(SILE.file)+"/"+path.basename(SILE.file,".sil") + ".pdf";
-
-
-SILE.require("core/baseclass");
-SILE.require("core/xml-input");
