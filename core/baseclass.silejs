@@ -1,5 +1,5 @@
 SILE.baseClass = (function() { 
-    function registerCommands() { 
+    var registerCommands = function() { 
         SILE.Commands.textit = function(){} // XXX hack
         var commandStack = [];
         SILE.registerCommand("define", function (n) {
@@ -14,8 +14,34 @@ SILE.baseClass = (function() {
             });
         });
 
+        SILE.registerCommand("comment", function() {});
         SILE.registerCommand("process", function() { 
             commandStack.pop().forEach(SILE.process); 
+        });
+
+        SILE.registerCommand("pagetemplate", function (n) {
+            SILE.documentState.thisPageTemplate = { frames: {} };
+            n.childNodes().forEach(SILE.process);
+            SILE.documentState.thisPageTemplate.firstContentFrame = SILE.getFrame(n.attr("firstContentFrame").value());
+            SILE.baseClass.initFrame(SILE.documentState.thisPageTemplate.firstContentFrame);
+            console.log(SILE.documentState.thisPageTemplate);
+        });
+        SILE.registerCommand("frame", function (n) {
+            var id = n.attr("id").value();
+            var spec = {
+                id: id,
+                next: (n.attr("next") ? n.attr("next").value() : null),
+                balanced: n.attr("balanced") ? parseInt(n.attr("balanced").value() || 0) : 0,
+            };
+            ["top", "left", "bottom", "right", "width", "height"].forEach(function(dim) {
+                var which = dim.match(/^(top|bottom|height)$/) ? "h" : "w";
+                var val = n.attr(dim);
+                if (!val) return
+                val = val.value();
+                if (!val) return;
+                spec[dim] = function() { return SILE.parseComplexFrameDimension(val, which); };
+            });
+            SILE.documentState.thisPageTemplate.frames[id] = SILE.newFrame(spec);
         });
 
         SILE.registerCommand("font", function(n) {

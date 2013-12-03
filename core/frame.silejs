@@ -61,8 +61,18 @@
             frame["_"+x] = spec[x];
         });
         frame.id = spec.id;
+        frame.next = spec.next;
         return frame;
     };
 })();
 
-SILE.getFrame = function(id) {return SILE.documentState.documentClass.pageTemplate.frames[id]; };
+SILE.getFrame = function(id) {return SILE.documentState.thisPageTemplate.frames[id]; };
+SILE.parseComplexFrameDimension = function(d, width_or_height) {
+    console.log(d);
+    if (!d.match(/[\+\(\)]/)) {
+        var p = SILE.toPoints(d, null, width_or_height);
+        return p;
+    }
+    console.error(d);
+    exit();
+}
