@@ -25,7 +25,7 @@ dimensioned_string
   = float:float " "* unit:units { return SILE.toPoints(float, unit) }
 
 units
-  = "mm" / "cm" / "in"
+  = "mm" / "cm" / "in" / "pt"
 
 percentage
   = string:[0-9\.]+ "%" { return SILE.toPoints(string.join(""), "%", SILE.documentState._dimension); }

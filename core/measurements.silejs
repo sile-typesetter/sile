@@ -5,6 +5,7 @@ function() {
     var toPoints = {
         "in": in2px,
         "mm": mm2px,
+        "pt": function (i) { return i },
         "cm": function (c) { return mm2px(10) * c },
         "%": function(v, dimension) {
             return parseFloat(v) / 100 * SILE.documentState.paperSize[ dimension == 'w' ? 0:1];
