@@ -140,18 +140,7 @@ SILE._typeset = function (lines) {
         }
         if (!line.nodes) return;
         line.nodes.forEach(function(node) {
-            if (node.isPenalty()) return;
-            if (node.isGlue()) {
-                SILE.typesetterState.cursorX += node.width + line.ratio * (line.ratio < 0 ? node.shrink : line.ratio > 0 ? node.stretch : 0);
-            } else {
-                if (node.value.glyph == 0) return;
-                SILE.cairo.moveTo(SILE.typesetterState.cursorX, SILE.typesetterState.cursorY);
-                SILE.cairo.showAGlyph(node.value.font, node.value.rawGlyph);
-                SILE.typesetterState.cursorX += (node.width + line.ratio * (line.ratio < 0 ? node.shrink : node.stretch));
-                //console.log("Width: "+node.width);
-                //console.log("Ratio: "+line.ratio);
-
-            }
+            node.outputYourself(line);
         })
         SILE.typesetterState.cursorX = SILE.typesetterState.currentFrame.left()
         SILE.typesetterState.cursorY += line.depth + line.height;
