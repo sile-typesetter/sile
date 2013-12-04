@@ -25,6 +25,7 @@ Cairo::Initialize(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor, "showGlyphString", ShowGlyphString);
   NODE_SET_PROTOTYPE_METHOD(constructor, "showAGlyph", ShowAGlyph);
   NODE_SET_PROTOTYPE_METHOD(constructor, "rectangle", Rectangle);
+  NODE_SET_PROTOTYPE_METHOD(constructor, "drawPNG", DrawPNG);
 
   NODE_SET_PROTOTYPE_METHOD(constructor, "showPage", ShowPage);
   NODE_SET_PROTOTYPE_METHOD(constructor, "finish", Finish);
@@ -111,9 +112,39 @@ Handle<Value>
 Cairo::Rectangle(const Arguments &args) {
   HandleScope scope;
   Cairo *cc = ObjectWrap::Unwrap<Cairo>(args.This());
+
   cairo_set_line_width(cc->_cairo, 0.5);
   cairo_rectangle(cc->_cairo, args[0]->NumberValue(), args[1]->NumberValue(),args[2]->NumberValue(), args[3]->NumberValue());
   cairo_stroke(cc->_cairo);
+  return Undefined();
+} 
+
+Handle<Value>
+Cairo::DrawPNG(const Arguments &args) {
+  HandleScope scope;
+  Cairo *cc = ObjectWrap::Unwrap<Cairo>(args.This());
+  cairo_surface_t *image = cairo_image_surface_create_from_png(*String::AsciiValue(args[0]));
+  double desired_width = args[3]->NumberValue();
+  double desired_height = args[4]->NumberValue();
+  cairo_matrix_t matrix;
+  cairo_pattern_t *p;
+  cairo_save(cc->_cairo);
+  cairo_set_source_surface(cc->_cairo, image, args[1]->NumberValue(), args[2]->NumberValue());
+  p = cairo_get_source(cc->_cairo);
+  if (desired_width || desired_height) {
+    double image_width = cairo_image_surface_get_width(image);
+    double image_height = cairo_image_surface_get_height(image);
+    double sx = 0.0;
+    double sy = 0.0;
+    if (desired_width) sx = image_width / desired_width;
+    if (desired_height) sy = image_height / desired_height;
+    cairo_matrix_init_scale(&matrix, sx ? sx : sy, sy ? sy : sx);
+  } else { 
+    cairo_matrix_init_identity(&matrix); 
+  }
+  cairo_pattern_set_matrix(p, &matrix);
+  cairo_paint(cc->_cairo);
+  cairo_restore(cc->_cairo);  
   return Undefined();
 } 
 

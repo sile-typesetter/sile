@@ -25,6 +25,7 @@ class Cairo: public ObjectWrap {
     static Handle<Value> ShowPage(const Arguments &args);
     static Handle<Value> ShowAGlyph(const Arguments &args);
     static Handle<Value> Rectangle(const Arguments &args);
+    static Handle<Value> DrawPNG(const Arguments &args);
 
     static Handle<Value> Finish(const Arguments &args);
 
