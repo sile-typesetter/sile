@@ -4,44 +4,10 @@ object = function (o) {
         return new F();
 }
 
-SILE.Commands = { 
-        script: function(node) {
-            //if (var src = node.attr("src")) {
-            //    http.get(src.value(), function
-            //} else {
-                eval(node.text());
-            //}
-        }
-    };
+SILE.Commands = {};
 
-SILE.typesetterState = { 
-    nodes: [],
-    outputQueue: [],
-    frameTotals: {
-        height: 0,
-        prevDepth: 0,
-    },
-    frameLines: []
-};
 SILE.documentState = {};
 
-SILE.tstatequeue = [];
-
-SILE.pushState = function() { 
-    SILE.tstatequeue.push(SILE.typesetterState);
-    SILE.typesetterState = { 
-        nodes: [],
-        outputQueue: [],
-        frameTotals: {
-            height: 0,
-            prevDepth: 0,
-        },
-        frameLines: []
-    };
-}
-SILE.popState = function () {
-    SILE.typesetterState = SILE.tstatequeue.pop();
-}
 
 SILE.error = function(x) { console.error(x); process.exit(1) };
 SILE.debug = function(x) { };

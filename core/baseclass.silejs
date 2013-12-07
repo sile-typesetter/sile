@@ -32,7 +32,7 @@ SILE.baseClass = (function() {
             SILE.documentState.thisPageTemplate = { frames: {} };
             n.childNodes().forEach(SILE.process);
             SILE.documentState.thisPageTemplate.firstContentFrame = SILE.getFrame(n.attr("firstContentFrame").value());
-            SILE.baseClass.initFrame(SILE.documentState.thisPageTemplate.firstContentFrame);
+            SILE.typesetter.initFrame(SILE.documentState.thisPageTemplate.firstContentFrame);
             //console.log(SILE.documentState.thisPageTemplate);
         });
         SILE.registerCommand("frame", function (n) {
@@ -63,21 +63,21 @@ SILE.baseClass = (function() {
             SILE.documentState = o;
         });
         SILE.registerCommand("penalty", function(n) {
-            SILE.nodefactory.pushPenalty({ 
+            SILE.typesetter.pushPenalty({ 
                 flagged: n.attr("flagged") ? n.attr("flagged").value() : 0,
                 penalty: n.attr("penalty") ? eval(n.attr("penalty").value()) : 0
             });
         });
         SILE.registerCommand("glue", function(n) {
-            SILE.nodefactory.pushGlue({ 
+            SILE.typesetter.pushGlue({ 
                 width: n.attr("width") ? SILE.toPoints(n.attr("width").value()) : 0,
                 stretch: n.attr("stretch") ? SILE.toPoints(n.attr("stretch").value()) : 0,
                 shrink: n.attr("shrink") ? SILE.toPoints(n.attr("shrink").value()) : 0
             });
         });
         SILE.registerCommand("skip", function(n) {
-            SILE._internals.leaveHmode();
-            SILE.nodefactory.pushVglue({
+            SILE.typesetter.leaveHmode();
+            SILE.typesetter.pushVglue({
                 height: n.attr("height") ? SILE.toPoints(n.attr("height").value()) : 0,
                 stretch: n.attr("stretch") ? SILE.toPoints(n.attr("stretch").value()) : 0,
                 shrink: n.attr("shrink") ? SILE.toPoints(n.attr("shrink").value()) : 0
@@ -93,43 +93,37 @@ SILE.baseClass = (function() {
     },
     pageTemplate: { frames: [ ], firstContentFrame: null },
     state: { parindent: 11,
-        baselineSkip: SILE.nodefactory.newVglue({ height: 13, stretch: 2, shrink: 0}),
+        baselineSkip: SILE.nodefactory.newVglue({ height: 12, stretch: 2, shrink: 0}),
+        lineSkip: SILE.nodefactory.newVglue({ height: 5, stretch: 0, shrink: 2}),
     },
     init: function() { 
         SILE.outputter.init(this); 
         registerCommands();
-        SILE.documentState.fontFamily = "Adobe Garamond Pro";
+        SILE.documentState.fontFamily = "Gentium";
         SILE.documentState.fontSize = 11;
         SILE.documentState.fontWeight = 200;
-        this.loadInitialFrame();
+        return this.initialFrame();
     },
-    loadInitialFrame: function() {
+    initialFrame: function() {
         SILE.documentState.thisPageTemplate = this.pageTemplate;
-        this.initFrame(SILE.documentState.thisPageTemplate.firstContentFrame);
-    },
-    initFrame: function(f) {
-        SILE.typesetterState.currentFrame = f;
-        SILE.typesetterState.cursorX = SILE.typesetterState.currentFrame.left();
-        SILE.typesetterState.cursorY = SILE.typesetterState.currentFrame.top();
-        SILE.typesetterState.frameTotals = { height: 0, prevDepth: 0 };
-        //SILE.outputter.debugFrame(f);
+        return SILE.documentState.thisPageTemplate.firstContentFrame;
     },
     newPage: function() {
         SILE.outputter.newPage();
-        this.loadInitialFrame();
         // Any other output-routiney things will be done here by inheritors
+        return this.initialFrame();
     },
     endPage: function() {
-        SILE._internals.leaveHmode();
+        SILE.typesetter.leaveHmode();
         // Any other output-routiney things will be done here by inheritors
     },
     end: function() {
         this.endPage();
-        SILE.shipOut(0);
+        SILE.typesetter.shipOut(0);
         SILE.outputter.finish()
     },
-    newPar: function() {
-        SILE.nodefactory.pushGlue({ width: SILE.documentState.documentClass.state.parindent, stretch: 0, shrink: 0});
+    newPar: function(typesetter) {
+        typesetter.pushGlue({ width: SILE.documentState.documentClass.state.parindent, stretch: 0, shrink: 0});
     },
     options: { 
         papersize: function(size) { 

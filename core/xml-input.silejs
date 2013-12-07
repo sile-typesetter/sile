@@ -22,12 +22,13 @@ xml.root().attrs().forEach(function(x) {
 
 SILE.documentState.documentClass = klass;
 
-klass.init();
+var firstFrame = klass.init();
 
+SILE.typesetter.init(firstFrame);
 SILE.process = function(node) {
     var name = node.name();
     if (node.type() === "text") {
-        SILE.typeset(node.text());
+        SILE.typesetter.typeset(node.text());
         node.childNodes().forEach(SILE.process);
     } else if (SILE.Commands[name]) {
         SILE.Commands[name](node);

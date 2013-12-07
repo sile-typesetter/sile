@@ -1,22 +1,34 @@
 SILE.nodefactory = (function() {
   var _box = {height: 0, depth: 0, width: 0, stretch: 0, shrink: 0};
+  _box.outputYourself = function() { throw "Special with no output routine!"; };
+  _box.toText = function () { return "<special>"; };
 
   var _hbox = object(_box); _hbox.type = "HBox";
   _hbox.toS = function() { return "H<"+this.width+">^"+this.height+"-"+this.depth+"v"; };
   _box.isBox = function () { return this.type === "HBox"; };
-  _hbox.outputYourself = function(line) {
+  _hbox.outputYourself = function(typesetter, line) {
     if (this.value.glyph === 0) return;
-    SILE.cairo.moveTo(SILE.typesetterState.cursorX, SILE.typesetterState.cursorY);
+    var scaledWidth = (this.width + line.ratio * (line.ratio < 0 ? this.shrink : this.stretch));
+    //SILE.outputter.debugHbox(this, scaledWidth);
+    SILE.cairo.moveTo(typesetter.state.cursorX, typesetter.state.cursorY);
     SILE.cairo.showAGlyph(this.value.font, this.value.rawGlyph);
-    SILE.typesetterState.cursorX += (this.width + line.ratio * (line.ratio < 0 ? this.shrink : this.stretch));
+
+    typesetter.state.cursorX += scaledWidth;
   };
+  _hbox.toText = function() {
+    // This only works for fonts with particular cmap tables. If you use
+    // Gentium for your debugging it works; maybe not otherwise.
+    return this.value ? String.fromCharCode(this.value.glyph+32) : " ";
+  }
+
 
   var _glue = object(_box); _glue.type = "Glue";
   _glue.toS = function() { return "G<"+this.stretch+"|"+this.width+"|"+this.shrink+">"; };
   _box.isGlue = function() { return this.type === "Glue"; };
-  _glue.outputYourself = function(line) {
-    SILE.typesetterState.cursorX += this.width + line.ratio * (line.ratio < 0 ? this.shrink : line.ratio > 0 ? this.stretch : 0);
+  _glue.outputYourself = function(typesetter, line) {
+    typesetter.state.cursorX += this.width + line.ratio * (line.ratio < 0 ? this.shrink : line.ratio > 0 ? this.stretch : 0);
   };
+  _glue.toText = function () { return " "; }
 
   var _vglue = object(_box); _vglue.type = "VGlue";
   _vglue.toS = function() { return "VG<"+this.stretch+"|"+this.height+"|"+this.shrink+">"; };
@@ -34,7 +46,7 @@ SILE.nodefactory = (function() {
     var _vbox = object(_box); _vbox.type = "VBox";
   _box.isVbox = function () { return this.type === "VBox" };
     _vbox.toS = function() { return "VB["+this.toText()+"]"; }
-    _vbox.toText = function() {return this.nodes.map(function(v) { return v.value ? String.fromCharCode(v.value.glyph+32) : " " }).join(""); }
+    _vbox.toText = function() {return this.nodes.map(function(v) { return v.toText() }).join("") };
   _hbox.value = {};
   _vbox.nodes = [];
   _vbox.ratio = 0;
@@ -59,12 +71,5 @@ SILE.nodefactory = (function() {
     newGlue: function(spec) { return _new_and_spec(_glue, spec) },
     newVglue: function(spec) { return _new_and_spec(_vglue, spec) },
     newPenalty: function(spec) { return _new_and_spec(_penalty, spec) },
-    pushHbox: function (spec) { return SILE.typesetterState.nodes.push(this.newHbox(spec)); },
-    pushGlue: function (spec) { return SILE.typesetterState.nodes.push(this.newGlue(spec)); },
-    pushPenalty: function (spec) {  return SILE.typesetterState.nodes.push(this.newPenalty(spec)); },
-    pushVbox: function (spec) { var x;SILE.typesetterState.outputQueue.push(x = this.newVbox(spec)); return x; },
-    pushVglue: function (spec) { return SILE.typesetterState.outputQueue.push(this.newVglue(spec)); },
-    pushVpenalty: function (spec) { return SILE.typesetterState.outputQueue.push(this.newPenalty(spec)); },
-
   };
 })();

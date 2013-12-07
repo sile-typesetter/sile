@@ -1,96 +1,136 @@
-if (!SILE._internals) SILE._internals = {}
+/* This is the default typesetter. You are, of course, welcome to create your own. */
 
-SILE._internals.setpar = function (t) {
-	t = t.replace(/\n/g, " ");
-	if (!SILE.typesetterState.nodes.length) {
-		SILE.nodefactory.pushHbox({ width: 0, value: {glyph: 0} });
-		SILE.documentState.documentClass.newPar();
-	}
-	SILE.typesetterState.nodes = SILE.typesetterState.nodes.concat(SILE.shaper.shape(t));
-}
+SILE.typesetter = {
+  /* Setup functions */
+  init: function(frame) {
+    this.initState();
+    this.stateQueue = [];
+    this.initFrame(frame);
+    return this;
+  },
+  initFrame: function(f) {
+    this.frame = f;
+    this.state.cursorX = this.frame.left();
+    this.state.cursorY = this.frame.top();
+    this.state.frameTotals = { height: 0, prevDepth: 0 };
+  },
+  initState: function() {
+    this.state = {
+      nodes: [],
+      outputQueue: [],
+      lastBadness: Infinity,
+      frameTotals: { height: 0, prevDepth: 0, },
+      frameLines: []
+    };
+  },
+  pushState: function() {
+    this.stateQueue.push(this.state);
+    this.initState();
+  },
+  popState: function() {
+    this.state = this.stateQueue.pop();
+  },
 
+  /* Boxy stuff */
+  pushHbox: function (spec) { this.state.nodes.push(SILE.nodefactory.newHbox(spec)); },
+  pushGlue: function (spec) { return this.state.nodes.push(SILE.nodefactory.newGlue(spec)); },
+  pushPenalty: function (spec) {  return this.state.nodes.push(SILE.nodefactory.newPenalty(spec)); },
+  pushVbox: function (spec) { var x;this.state.outputQueue.push(x = SILE.nodefactory.newVbox(spec)); return x; },
+  pushVglue: function (spec) { return this.state.outputQueue.push(SILE.nodefactory.newVglue(spec)); },
+  pushVpenalty: function (spec) { return this.state.outputQueue.push(SILE.nodefactory.newPenalty(spec)); },
 
-SILE.typeset = function (text) {
+  /* Actual typesetting functions */
+  typeset: function (text) {
+    var that=this;
     text.split(/(\n\n)/).forEach( function(t) {
-    	if (t == "\n\n") {
-            SILE._internals.leaveHmode();
-    		//SILE.nodefactory.pushVglue({height: 0, stretch: 1});
-    	} else {
-            SILE._internals.setpar(t);
-	    }
+      if (t == "\n\n") {
+        that.leaveHmode();
+        //that.pushVglue({height: 0, stretch: 1});
+      } else {
+        that.setpar(t);
+      }
     });
-}
-
-SILE._internals.leaveHmode = function() {
+  },
+  setpar: function (t) {
+    t = t.replace(/\n/g, " ");
+    if (!this.state.nodes.length) {
+      this.pushHbox({ width: 0, value: {glyph: 0} });
+      SILE.documentState.documentClass.newPar(this); // XXX ?
+    }
+    this.state.nodes = this.state.nodes.concat(SILE.shaper.shape(t));
+  },
+  leaveHmode: function() {
+    var that = this;
     //console.log("Leaving hmode");
-    nl = SILE.typesetterState.nodes;
+    nl = this.state.nodes;
     while (nl.length > 0 && (nl[nl.length-1].isPenalty() || nl[nl.length-1].isGlue())) {
         nl.pop();
     }
     while (nl.length >0 && nl[0].isPenalty()) nl.shift();
 
-    SILE.nodefactory.pushGlue({ width:0, stretch: 10000 });
-    SILE.nodefactory.pushPenalty({ flagged: 1, penalty: -Infinity });
+    this.pushGlue({ width:0, stretch: 10000 });
+    this.pushPenalty({ flagged: 1, penalty: -Infinity });
     // Run the KP algorithm
-    var breaks = SILE.linebreak(SILE.typesetterState.nodes,[ SILE.typesetterState.currentFrame.width() ]);
-    var lines = SILE._breakpointsToLines(breaks);
+    var breaks = SILE.linebreak(this.state.nodes,[ this.frame.width() ]);
+    var lines = this.breakpointsToLines(breaks);
     
     // Push output lines into boxes and ship them to the page builder
     lines.forEach(function (l, index) {
-        var v = SILE.nodefactory.newVbox({ nodes: l.nodes, ratio: l.ratio });
-        // Insert leading
-        var d = SILE.documentState.documentClass.state.baselineSkip.height - v.height - SILE.typesetterState.frameTotals.prevDepth ;
-        //console.log("Leading height = "+SILE.documentState.documentClass.typesetterState.baselineSkip.height+ " - "+v.height + " - " + SILE.typesetterState.frameTotals.prevDepth + " = "+d) ;
-        SILE.nodefactory.pushVglue({height: d, stretch: SILE.documentState.documentClass.state.baselineSkip.stretch, shrink: SILE.documentState.documentClass.state.baselineSkip.shrink });
-        SILE.nodefactory.pushVbox(v);
-        SILE.typesetterState.frameTotals.prevDepth = v.depth;
-        var pageBreakPenalty = (index == 0 ? SILE.documentState.documentClass.settings.widowPenalty :
-                                                  index == lines.length-1 ? SILE.documentState.documentClass.settings.clubPenalty : 0);
-        // Insert page break penalty
-        if (lines.length > 1)
-            SILE.nodefactory.pushVpenalty({ penalty: pageBreakPenalty});
-        else 
-            SILE.nodefactory.pushVpenalty({ penalty: 0 });
+      var v = SILE.nodefactory.newVbox({ nodes: l.nodes, ratio: l.ratio });
+      // Insert leading
+      var d = SILE.documentState.documentClass.state.baselineSkip.height - v.height - that.state.frameTotals.prevDepth ;
+      console.log("Leading height = "+SILE.documentState.documentClass.state.baselineSkip.height+ " - "+v.height + " - " + that.state.frameTotals.prevDepth + " = "+d) ;
+
+      that.pushVbox(v);
+      that.state.frameTotals.prevDepth = v.depth;
+      var pageBreakPenalty = (index == 0 ? SILE.documentState.documentClass.settings.widowPenalty :
+                                                index == lines.length-1 ? SILE.documentState.documentClass.settings.clubPenalty : 0);
+      // Insert page break penalty
+      if (lines.length > 1)
+          that.pushVpenalty({ penalty: pageBreakPenalty});
+      else 
+          that.pushVpenalty({ penalty: 0 });
+      if (d > SILE.documentState.documentClass.state.lineSkip.height) {
+          that.pushVglue({height: d, stretch: SILE.documentState.documentClass.state.baselineSkip.stretch, shrink: SILE.documentState.documentClass.state.baselineSkip.shrink });
+      } else {
+          that.pushVglue(SILE.documentState.documentClass.state.lineSkip);
+      }        
     });
-    SILE._pageBuilder();
-    //SILE._typeset(lines); // XXX hack
-}
-
-SILE.typesetterState.lastBadness = Infinity;
-
-SILE._pageBuilder = function () {
-    var target = SILE.typesetterState.currentFrame.height(); // XXX Floats
+    this.pageBuilder();
+  },
+  pageBuilder: function () {
+    var target = this.frame.height(); // XXX Floats
     var vbox;
-    while (SILE.typesetterState.outputQueue.length > 0 && (vbox = SILE.typesetterState.outputQueue.shift())) {
-        //console.log("Dealing with VBox "+vbox.toS())
-        if (vbox.isVbox() || vbox.isVglue()) {
-            SILE.typesetterState.frameTotals.height += vbox.height + vbox.depth;
+    while (this.state.outputQueue.length > 0 && (vbox = this.state.outputQueue.shift())) {
+      //console.log("Dealing with VBox "+vbox.toS())
+      if (vbox.isVbox() || vbox.isVglue()) {
+        this.state.frameTotals.height += vbox.height + vbox.depth;
+      }
+      var left = target - this.state.frameTotals.height;
+      //console.log("I have "+left+"pts left");
+      if (vbox.isPenalty()) {
+        var badness = left > 0 ? left * left * left : 10000;
+        var c = badness < 10000 ? vbox.penalty + badness : 10000;
+        //console.log("Badness: "+c);
+        if (c > this.state.lastBadness) {
+          //console.log("This is worse");
+          this.state.lastBadness = Infinity;
+          this.shipOut(target);
+        } else {
+          this.state.lastBadness = c;
         }
-        var left = target - SILE.typesetterState.frameTotals.height;
-        //console.log("I have "+left+"pts left");
-        if (vbox.isPenalty()) {
-            var badness = left > 0 ? left * left * left : 10000;
-            var c = badness < 10000 ? vbox.penalty + badness : 10000;
-            //console.log("Badness: "+c);
-            if (c > SILE.typesetterState.lastBadness) {
-                //console.log("This is worse");
-                SILE.typesetterState.lastBadness = Infinity;
-                SILE.shipOut(target);
-            } else {
-                SILE.typesetterState.lastBadness = c;
-            }
-        }
-        SILE.typesetterState.frameLines.push(vbox);
+      }
+      this.state.frameLines.push(vbox);
     }
-};
+  },
 
-SILE.shipOut = function (target, independent) {
-    //console.log("Height total is " + SILE.typesetterState.frameTotals.height);
+  shipOut: function (target, independent) {
+    //console.log("Height total is " + this.state.frameTotals.height);
     //console.log("Target is "+target);
-    var adjustment = target - SILE.typesetterState.frameTotals.height;
+    var adjustment = target - this.state.frameTotals.height;
     var glues = [];
-    SILE.typesetterState.frameLines.forEach(function (b) { 
-        if (b.isVglue()) glues.push(b);
+    this.state.frameLines.forEach(function (b) {
+      if (b.isVglue()) glues.push(b);
     });
     var totalStretch = 0;
     //console.log("Vglues: "+glues.length)
@@ -100,69 +140,65 @@ SILE.shipOut = function (target, independent) {
     if (adjustment > totalStretch) adjustment = totalStretch;
     if (adjustment / totalStretch > 0) glues.map(function (g) { g.setGlue(g.stretch * adjustment / totalStretch); });
     //console.log("Glues for this page adjusted by "+(adjustment/totalStretch) )
-    SILE._typeset(SILE.typesetterState.frameLines);
-    SILE.typesetterState.frameLines = [];
-    //SILE.typesetterState.frameTotals.height = 0;
-    //SILE.typesetterState.frameTotals.prevDepth = 0;
+    this.outputLinesToPage(this.state.frameLines);
+    this.state.frameLines = [];
+    //this.state.frameTotals.height = 0;
+    //this.state.frameTotals.prevDepth = 0;
     if (!independent) {
-        var cwidth = SILE.typesetterState.currentFrame.width();
-        if (SILE.typesetterState.currentFrame.next) {
-            SILE.baseClass.initFrame(SILE.getFrame(SILE.typesetterState.currentFrame.next));
+        var cwidth = this.frame.width();
+        if (this.frame.next) {
+          this.initFrame(SILE.getFrame(this.frame.next));
         } else {
-            SILE.documentState.documentClass.newPage(); // XXX Hack
+          this.initFrame(SILE.documentState.documentClass.newPage()); // XXX Hack
         }
         // XXX Put everything back, because the next frame may have a different shape
-        if (SILE.typesetterState.currentFrame.width() != cwidth) {
-            SILE.pushBack();
+        if (this.frame.width() != cwidth) {
+          this.pushBack();
         }
     }
-};
-
-SILE.pushBack = function () {
-    SILE.nodefactory.pushHbox({ width: 0, value: {glyph: 0} });
-    while (v = SILE.typesetterState.outputQueue.shift()) {
-        if (v.isVglue() || v.isPenalty()) { continue; }
-        SILE.typesetterState.nodes = SILE.typesetterState.nodes.concat(v.nodes);
-        // XXX Hack - end-of-glue is tossed by leaveHmode, but now the lines may
-        // end in different places. We need to add it back.
-        SILE.typesetterState.nodes = SILE.typesetterState.nodes.concat(SILE.shaper.shape(" "));
+  },
+  pushBack: function () {
+    this.pushHbox({ width: 0, value: {glyph: 0} });
+    while ((v = this.state.outputQueue.shift())) {
+      if (v.isVglue() || v.isPenalty()) { continue; }
+      this.state.nodes = this.state.nodes.concat(v.nodes);
+      // XXX Hack - end-of-line glue is tossed by leaveHmode, but now the lines may
+      // end in different places. We need to add it back.
+      this.state.nodes = this.state.nodes.concat(SILE.shaper.shape(" "));
     }
-    SILE._internals.leaveHmode();
-}
-SILE._typeset = function (lines) { 
-    // ALL HACKS
-    var thisFrame = SILE.typesetterState.currentFrame;
-
+    this.leaveHmode();
+  },
+  outputLinesToPage: function (lines) {
+    var that = this;
     lines.forEach(function(line) {
-        if (line.isVglue()) {
-            SILE.typesetterState.cursorY += line.depth + line.height;
-            return;
-        }
-        if (!line.nodes) return;
-        line.nodes.forEach(function(node) {
-            node.outputYourself(line);
-        })
-        SILE.typesetterState.cursorX = SILE.typesetterState.currentFrame.left()
-        SILE.typesetterState.cursorY += line.depth + line.height;
-    });
-}
+      if (line.isVglue()) {
+        that.state.cursorY += line.depth + line.height;
+        return;
+      }
+      if (!line.nodes) return;
+      that.state.cursorY += line.depth + line.height;
 
-SILE._breakpointsToLines = function(bp){
+      line.nodes.forEach(function(node) { node.outputYourself(that, line); });
+      that.state.cursorX = that.frame.left();
+    });
+  },
+  breakpointsToLines: function(bp){
     var linestart = 0;
     var lines = [];
-    var nodes = SILE.typesetterState.nodes;
+    var nodes = this.state.nodes;
 
     bp.forEach(function(point) {
-        if (point.position == 0) return;
-        for (j = linestart; j < nodes.length; j++) {
-            if (nodes[j].isBox() || (nodes[j].isPenalty && nodes[j].penalty == -Infinity)) {
-                linestart = j; break;
-            }
+      if (point.position === 0) return;
+      for (j = linestart; j < nodes.length; j++) {
+        if (nodes[j].isBox() || (nodes[j].isPenalty && nodes[j].penalty == -Infinity)) {
+          linestart = j; break;
         }
-        lines.push({ ratio: point.ratio, nodes: nodes.slice(linestart, point.position) })
-        linestart = point.position;
+      }
+      lines.push({ ratio: point.ratio, nodes: nodes.slice(linestart, point.position) });
+      linestart = point.position;
     });
-    //SILE.typesetterState.nodes = nodes.slice(linestart+1,nodes.length);
-    SILE.typesetterState.nodes = [];
+    //this.state.nodes = nodes.slice(linestart+1,nodes.length);
+    this.state.nodes = [];
     return lines;
-}
+  }
+};
