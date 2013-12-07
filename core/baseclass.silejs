@@ -93,8 +93,8 @@ SILE.baseClass = (function() {
     },
     pageTemplate: { frames: [ ], firstContentFrame: null },
     state: { parindent: 11,
-        baselineSkip: SILE.nodefactory.newVglue({ height: 12, stretch: 2, shrink: 0}),
-        lineSkip: SILE.nodefactory.newVglue({ height: 5, stretch: 0, shrink: 2}),
+        baselineSkip: SILE.nodefactory.newVglue({ height: 13, stretch: 2, shrink: 0}),
+        lineSkip: SILE.nodefactory.newVglue({ height: 2, stretch: 2, shrink: 0}),
     },
     init: function() { 
         SILE.outputter.init(this); 
