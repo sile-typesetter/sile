@@ -142,6 +142,8 @@ Cairo::DrawPNG(const Arguments &args) {
   } else { 
     cairo_matrix_init_identity(&matrix); 
   }
+  //printf("%f, %f\n", );
+  cairo_matrix_translate(&matrix, -args[1]->NumberValue(), -args[2]->NumberValue());
   cairo_pattern_set_matrix(p, &matrix);
   cairo_paint(cc->_cairo);
   cairo_restore(cc->_cairo);  
