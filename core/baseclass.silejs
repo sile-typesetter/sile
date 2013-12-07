@@ -21,7 +21,7 @@ SILE.baseClass = (function() {
         SILE.registerCommand("script", function(n) { 
             var file = n.attr("src");
             if (file && file.value()) {
-                // XXX
+                SILE.require(file.value());
             } else {
                 eval(n.text());
             }
