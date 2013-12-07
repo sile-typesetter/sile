@@ -9,7 +9,6 @@ SILE.baseClass = (function() {
                 SILE.documentState = object( o );
                 commandStack.push(nodes.childNodes());
                 n.childNodes().forEach(SILE.process);
-                SILE.Commands.process = null;
                 SILE.documentState = o;
             });
         });
