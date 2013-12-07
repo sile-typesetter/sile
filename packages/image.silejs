@@ -8,7 +8,7 @@ SILE.registerCommand("img", function(n) {
     value: n.attr("src").value(),
     outputYourself: function (typesetter, line) {
       //SILE.outputter.debugHbox(typesetter, this, this.width);
-      SILE.cairo.drawPNG(this.value, typesetter.state.cursorX, typesetter.state.cursorY, this.width,this.height);
+      SILE.cairo.drawPNG(this.value, typesetter.state.cursorX, typesetter.state.cursorY-this.height, this.width,this.height);
     }
   });
 

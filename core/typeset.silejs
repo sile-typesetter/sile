@@ -181,9 +181,10 @@ SILE.typesetter = {
         return;
       }
       if (!line.nodes) return;
+      that.state.cursorY += line.height;
       line.nodes.forEach(function(node) { node.outputYourself(that, line); });
+      that.state.cursorY += line.depth;
 
-      that.state.cursorY += line.depth + line.height;      
       that.state.cursorX = that.frame.left();
     });
   },
