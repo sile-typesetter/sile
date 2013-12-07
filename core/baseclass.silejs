@@ -122,6 +122,7 @@ SILE.baseClass = (function() {
         SILE.outputter.finish()
     },
     newPar: function(typesetter) {
+        typesetter.pushVglue({ height: 2, stretch: 2, shrink: 1 });
         typesetter.pushGlue({ width: SILE.documentState.documentClass.state.parindent, stretch: 0, shrink: 0});
     },
     options: { 
