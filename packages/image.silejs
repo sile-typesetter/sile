@@ -1,0 +1,15 @@
+SILE.registerCommand("img", function(n) {
+  var width = n.attr("width"); width = width ? width.value() : "0";
+  var height = n.attr("height"); height = height ? height.value() : "0";
+  SILE.typesetter.pushHbox({ 
+    width: SILE.parseComplexFrameDimension(width,"w"),
+    height: SILE.parseComplexFrameDimension(height,"h"),
+    depth: 0,
+    value: n.attr("src").value(),
+    outputYourself: function (typesetter, line) {
+      //SILE.outputter.debugHbox(typesetter, this, this.width);
+      SILE.cairo.drawPNG(this.value, typesetter.state.cursorX, typesetter.state.cursorY, this.width,this.height);
+    }
+  });
+
+});
