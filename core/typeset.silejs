@@ -175,8 +175,9 @@ SILE.defaultTypesetter = {
   },
   outputLinesToPage: function (lines) {
     var that = this;
+    //console.log("OUTPUTTING");
     lines.forEach(function(line) {
-
+      //console.log(line.toS());
       if (line.isVglue()) {
         that.state.cursorY += line.depth + line.height;
         return;
