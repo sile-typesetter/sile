@@ -40,15 +40,13 @@ Handle<Value>
 Cairo::New(const Arguments &args) {
   HandleScope scope;
   int width = 0, height = 0;
-  char* filename = NULL;
   canvas_type_t type = CANVAS_TYPE_IMAGE;
   if (args[0]->IsNumber()) width = args[0]->Uint32Value();
   if (args[1]->IsNumber()) height = args[1]->Uint32Value();
   if (args[2]->IsString()) type = !strcmp("pdf", *String::AsciiValue(args[2]))
     ? CANVAS_TYPE_PDF
     : CANVAS_TYPE_IMAGE;
-  if (args[3]->IsString()) filename = *String::AsciiValue(args[3]);
-  Cairo *context = new Cairo(width, height, type, filename);
+  Cairo *context = new Cairo(width, height, type, *String::AsciiValue(args[3]));
   context->Wrap(args.This());
   return args.This();
 }
@@ -58,6 +56,7 @@ Cairo::Cairo(int w, int h, canvas_type_t t, char* filename): ObjectWrap() {
   _surface = NULL;
 
   if (CANVAS_TYPE_PDF == t) {
+printf("filename: %s, width: %i, height: %i\n", filename, w, h);
     _surface = cairo_pdf_surface_create(filename, w, h);
     if (cairo_surface_status(_surface) != CAIRO_STATUS_SUCCESS) {
       ThrowException(String::New(cairo_status_to_string(cairo_surface_status(_surface))));
