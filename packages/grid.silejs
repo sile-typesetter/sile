@@ -27,7 +27,7 @@ SILE.registerCommand("grid", function(n) {
   SILE.typesetter.pushVbox = pushVbox;
 });
 SILE.registerCommand("nogrid", function (n) {
-  SILE.typesetter = SILE.typesetter._oldtypesetter;
+  SILE.typesetter = SILE.typesetter.prototype;
 });
 
 })();
