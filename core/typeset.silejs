@@ -157,10 +157,9 @@ SILE.defaultTypesetter = {
         } else {
           this.initFrame(SILE.documentState.documentClass.newPage()); // XXX Hack
         }
-        // XXX Put everything back, because the next frame may have a different shape
-        if (this.frame.width() != cwidth) {
-          this.pushBack();
-        }
+        // Always push back and recalculate. The frame may have a different shape, or
+        // we may be doing clever things like grid typesetting. CPU time is cheap.
+        this.pushBack();
     }
   },
   pushBack: function () {
