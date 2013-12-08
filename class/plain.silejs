@@ -13,15 +13,14 @@ plain.newPage = function() {
 	process.stdout.write("["+pageNo+"] ");
 	var f = SILE.getFrame("folio");
 	if (f) {
-		SILE.typesetter.pushState();
-		SILE.typesetter.initFrame(f);
-		SILE.typesetter.pushHbox({ width: 0, value: {glyph: 0} });
-		SILE.typesetter.pushGlue({ width:0, stretch: 10000 });
-		SILE.typesetter.state.nodes = SILE.typesetter.state.nodes.concat(SILE.shaper.shape(""+pageNo));
-		SILE.typesetter.pushGlue({ width:0, stretch: 10000 });
-		SILE.typesetter.leaveHmode();
-		SILE.typesetter.shipOut(0,1);
-		SILE.typesetter.popState();
+		SILE.typesetNaturally(f,
+			[
+				SILE.nodefactory.newHbox({ width: 0, value: {glyph: 0} }),
+				SILE.nodefactory.newGlue({ width:0, stretch: 10000 }),
+			].concat(SILE.shaper.shape(""+pageNo)).concat([
+				SILE.nodefactory.newGlue({ width:0, stretch: 10000 }),
+			])
+		)
 	}
 	pageNo++;
 	return SILE.baseClass.newPage();
