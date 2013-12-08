@@ -1,0 +1,33 @@
+(function() {
+  var pushVbox = function(spec) {
+    if (!this.state.frameTotals.gridCursor) {this.state.frameTotals.gridCursor = 0; }
+    this.state.frameTotals.gridCursor += spec.height + spec.depth;
+    this.prototype.pushVbox(spec);
+  };
+  var pushVglue = function(spec) {
+    if (!this.state.frameTotals.gridCursor) {this.state.frameTotals.gridCursor = 0; }
+    this.state.frameTotals.gridCursor += spec.height;
+    this.prototype.pushVglue(spec);
+  };
+
+  var gridLeading = function (v) {
+    var lead = this.state.gridSpacing - (this.state.frameTotals.gridCursor % this.state.gridSpacing);
+    if (this.state.frameTotals.gridCursor) {
+      this.pushVglue({height: lead, stretch: 0, shrink: 0});
+    }
+  };
+
+SILE.registerCommand("grid", function(n) {
+  var t = SILE.typesetter;
+  SILE.typesetter = object(SILE.typesetter);
+  SILE.typesetter.prototype = t;
+  SILE.typesetter.state.gridSpacing = SILE.parseComplexFrameDimension(n.attr("spacing").value(),"h");
+  SILE.typesetter.insertLeading = gridLeading;
+  SILE.typesetter.pushVglue = pushVglue;
+  SILE.typesetter.pushVbox = pushVbox;
+});
+SILE.registerCommand("nogrid", function (n) {
+  SILE.typesetter = SILE.typesetter._oldtypesetter;
+});
+
+})();
