@@ -1,5 +1,7 @@
 #include "PangoCairo.h"
 #include "Cairo.h"
+#include <string.h>
+#include <stdlib.h>
 
 Persistent<FunctionTemplate> Cairo::constructor;
 

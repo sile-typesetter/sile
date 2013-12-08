@@ -1,6 +1,8 @@
 #include "PangoCairo.h"
 #include "Pango.h"
 #include "PangoAttrList.h"
+#include <stdlib.h>
+#include <string.h>
 
 Persistent<FunctionTemplate> Pango::constructor;
 
