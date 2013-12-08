@@ -59,6 +59,9 @@ Cairo::Cairo(int w, int h, canvas_type_t t, char* filename): ObjectWrap() {
 
   if (CANVAS_TYPE_PDF == t) {
     _surface = cairo_pdf_surface_create(filename, w, h);
+    if (cairo_surface_status(_surface) != CAIRO_STATUS_SUCCESS) {
+      ThrowException(String::New(cairo_status_to_string(cairo_surface_status(_surface))));
+    }
   } else {
     _surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h);
     assert(_surface);
