@@ -9,7 +9,7 @@ isn't written in Pascal.
 First you will need node.js, pango and cairo installed. You will then
 need to run:
 
-* `npm install ./pangocairo`
+* `npm install ./node-pangocairo`
 * `npm install .`
 * `pegjs core/frameparser.pegjs core/frameparser.silejs`
 
