@@ -1,6 +1,6 @@
 /* This is the default typesetter. You are, of course, welcome to create your own. */
 
-SILE.typesetter = {
+SILE.defaultTypesetter = {
   /* Setup functions */
   init: function(frame) {
     this.initState();
@@ -208,3 +208,15 @@ SILE.typesetter = {
     return lines;
   }
 };
+
+SILE.typesetter = SILE.defaultTypesetter;
+
+SILE.typesetNaturally = function (frame, nodes) {
+  var newTypesetter = object(SILE.defaultTypesetter);
+  newTypesetter.init(frame);
+  newTypesetter.pushHbox
+  newTypesetter.push;
+  newTypesetter.state.nodes = nodes;
+  newTypesetter.leaveHmode();
+  newTypesetter.shipOut(0,1);  
+}
