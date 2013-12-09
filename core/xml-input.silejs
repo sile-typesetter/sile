@@ -27,7 +27,7 @@ var firstFrame = klass.init();
 SILE.typesetter.init(firstFrame);
 SILE.process = function(node) {
     var name = node.name();
-    if (node.type() === "text") {
+    if (node.type() === "text" || !node.name()) {
         SILE.typesetter.typeset(node.text());
         node.childNodes().forEach(SILE.process);
     } else if (SILE.Commands[name]) {
