@@ -1,0 +1,54 @@
+(function () {
+  if (!SILE.scratch.counters) SILE.scratch.counters = {};
+
+  var romanize = function (num) {
+    if (!+num) return false;
+    var digits = String(+num).split(""),
+    key = ["","c","cc","ccc","cd","d","dc","dcc","dccc","cm",
+           "","x","xx","xxx","xl","l","lx","lxx","lxxx","xc",
+           "","i","ii","iii","iv","v","vi","vii","viii","ix"],
+    roman = "",
+    i = 3;
+    while (i--)
+      roman = (key[+digits.pop() + (i * 10)] || "") + roman;
+    return Array(+digits.join("") + 1).join("M") + roman;
+  };
+
+  SILE.formatCounter = function(options) {
+    if (options.display == "roman") { return romanize(options.value); }
+    if (options.display == "Roman") { return romanize(options.value).toUpperCase(); }
+    return ""+options.value;
+
+  };
+  
+  SILE.registerCommand("increment-counter", function (n) {
+    var c = n.attr("id").value();
+    if (!SILE.scratch.counters[c]) {
+      SILE.scratch.counters[c] = { value: 0, display: "arabic" };
+    }
+    if (n.attr("set-to")) {
+      SILE.scratch.counters[c].value = parseInt(n.attr("set-to").value(),10);
+    } else {
+      ++SILE.scratch.counters[c].value;
+    }
+    if (n.attr("display")) { SILE.scratch.counters[c].display = n.attr("display").value(); }
+    SILE.typesetter.setpar(SILE.formatCounter(SILE.scratch.counters[c]));
+  });
+
+  
+  SILE.registerCommand("set-counter", function (n) {
+    var c = n.attr("id").value();
+    if (!SILE.scratch.counters[c]) {
+      SILE.scratch.counters[c] = { value: 0, display: "arabic" };
+    }
+    SILE.scratch.counters[c].value = parseInt(n.attr("value").value(),10);
+  });
+
+
+  SILE.registerCommand("show-counter", function (n) {
+    var c = n.attr("id").value();
+    if (!SILE.scratch.counters[c]) {SILE.scratch.counters[c] = { value: 0, display: "arabic" }; }
+    if (n.attr("display")) { SILE.scratch.counters[c].display = n.attr("display").value(); }
+    SILE.typesetter.setpar(SILE.formatCounter(SILE.scratch.counters[c]));
+  });
+})();
