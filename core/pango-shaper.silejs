@@ -2,39 +2,41 @@ var pc = require("pangocairo");
 if (!Pango) Pango = pc.Pango;
 
 SILE.shaper = {
-	shape: function(text) {
-		var nodes = [];
-		var p = new Pango();
-		var PangoAttrList = pc.PangoAttrList;
-		pal = new PangoAttrList();
-		pal.insert("family", SILE.documentState.fontFamily);
-		pal.insert("size", SILE.documentState.fontSize);
-		pal.insert("weight", SILE.documentState.fontWeight);
-		pal.insert("language", SILE.documentState.language);
-		pal.insert("style", SILE.documentState.fontStyle);
-		//console.log("Shaping "+text);
-		text = text.replace(/\s+/g, " ");
-		p.itemizeAndShape(text,pal).forEach(function (run) {
-			// Because we may need to break up runs because of the
-			// justification algorithm, we pull every glyph out of the run
-			run.glyphs.forEach(function(glyph) {
-				if (glyph.glyphWidth == 0 && glyph.shapedWidth != 0) { // Check this!
-					// Glue in disguise
-					nodes.push(SILE.nodefactory.newGlue({
-						width: glyph.shapedWidth /1024,
-						stretch: glyph.shapedWidth /1024,
-						shrink: 0
-					}))
-				} else {
-					nodes.push(SILE.nodefactory.newHbox({
-						height: glyph.ascent /1024,
-						depth: glyph.descent /1024,
-						width: glyph.shapedWidth /1024,
-						value: { rawGlyph: glyph.rawGlyph, glyph: glyph.glyph, font: run.font }
-					}));
-				}
-			}); 
-		});
-		return nodes;
-	}	
+  shape: function(text) {
+    var nodes = [];
+    var p = new Pango();
+    var PangoAttrList = pc.PangoAttrList;
+    pal = new PangoAttrList();
+    pal.insert("family", SILE.documentState.fontFamily);
+    pal.insert("size", SILE.documentState.fontSize);
+    pal.insert("weight", SILE.documentState.fontWeight);
+    pal.insert("language", SILE.documentState.language);
+    pal.insert("style", SILE.documentState.fontStyle);
+    var space = p.itemizeAndShape(" ", pal)[0].glyphs[0];
+    //console.log("Shaping "+text);
+    words = text.split(/(\s+)/);
+    words.forEach(function (w) {
+      if (w.match(/^\s+$/)) {
+        nodes.push(SILE.nodefactory.newGlue({
+          width: space.shapedWidth /1024,
+          stretch: space.shapedWidth /1024,
+          shrink: 0
+        }));
+      } else {
+        p.itemizeAndShape(w,pal).forEach(function (run) {
+          // Because we may need to break up runs because of the
+          // justification algorithm, we pull every glyph out of the run
+          run.glyphs.forEach(function(glyph) {
+            nodes.push(SILE.nodefactory.newHbox({
+              height: glyph.ascent /1024,
+              depth: glyph.descent /1024,
+              width: glyph.shapedWidth /1024,
+              value: { rawGlyph: glyph.rawGlyph, glyph: glyph.glyph, font: run.font }
+            }));
+          });
+        });
+      }
+    });
+    return nodes;
+  }
 };
