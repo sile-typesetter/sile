@@ -11,14 +11,14 @@ SILE.hyphenator = function() {
     };
     var loadPatterns = function(h, language) {
         if(!language) language = "en";
-        var languageset = SILE.Hyphenator.languages[language];
+        var languageset = SILE.hyphenator.languages[language];
         languageset.patterns.forEach(function(p) { addPattern(h, p) });
         languageset.exceptions.forEach(function(x) { 
             h.exceptions[x.replace(/-/g,"")] = [ 0 ].concat(x.split(/[^-]/).map(function(l) { return l == "-" ? 1 : 0}));
         });
     };
 
-    var hyphenate = function(word) {
+    var _hyphenate = function(word) {
         if (word.length < this.minWord) return [word];
         var points = this.exceptions[word.toLowerCase()];
         word = word.split("");
@@ -41,7 +41,7 @@ SILE.hyphenator = function() {
                 }
             }
             for (var i= 0; i < this.minPrefix + 1; i++) points[i] = 0;
-            for (var i= points.length; i > points.length-this.maxPrefix; i--) points[i] = 0;
+            for (var i= points.length-this.maxPrefix - 1; i < points.length; i++) points[i] = 0;
         }
         var pieces = [''];
         var i;
@@ -55,7 +55,7 @@ SILE.hyphenator = function() {
         this.minWord = 5; this.minPrefix = 2; this.maxPrefix = 2;
         this.trie = {};
         this.exceptions = {};
-        this.hyphenate = hyphenate;
+        this._hyphenate = _hyphenate;
         loadPatterns(this, language);
     return this;
     }

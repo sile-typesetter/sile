@@ -592,7 +592,7 @@ SILE.hyphenator.languages["en"].patterns = [".ach4", ".ad4der", ".af1t", ".al3t"
 "z1er", "ze3ro", "zet4", "2z1i", "z4il", "z4is", "5zl", "4zm", "1zo",
 "zo4m", "zo5ol", "zte4", "4z1z2", "z4zy"];
 
-SILE.Hyphenator.languages["en"].exceptions = ["as-so-ciate", "as-so-ciates",
+SILE.hyphenator.languages["en"].exceptions = ["as-so-ciate", "as-so-ciates",
 "dec-li-na-tion", "oblig-a-tory", "phil-an-thropic", "present",
 "presents", "project", "projects", "reci-procity", "re-cog-ni-zance",
 "ref-or-ma-tion", "ret-ri-bu-tion", "ta-ble"]
