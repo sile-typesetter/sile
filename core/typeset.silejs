@@ -72,14 +72,14 @@ SILE.defaultTypesetter = {
     this.pushGlue({ width:0, stretch: 10000 });
     this.pushPenalty({ flagged: 1, penalty: -Infinity });
     // Run the KP algorithm
-    var breaks = SILE.linebreak(this.state.nodes,[ this.frame.width() ]);
-    if (1 || breaks.length == 0) {
+    //var breaks = SILE.linebreak(this.state.nodes,[ this.frame.width() ]);
+    //if (1 || breaks.length == 0) {
       SILE.hyphenate(this);
-      breaks = SILE.linebreak(this.state.nodes,[ this.frame.width() ]);
+      var breaks = SILE.linebreak(this.state.nodes,[ this.frame.width() ]);
       if (breaks.length == 0) {
         SILE.error("Couldn't break :(")
       }
-    }
+    //}
     var lines = this.breakpointsToLines(breaks);
     
     // Push output lines into boxes and ship them to the page builder
