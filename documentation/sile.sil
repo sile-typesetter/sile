@@ -1,0 +1,254 @@
+<sile papersize="a4">
+<script src="packages/grid"/>
+<include src="macros.sil"/>
+<font size="12"/>
+<headline>Simon's Improved Layout Engine</headline>
+
+SILE is a new text layout engine. It takes the best ideas from TeX and friends
+(pdftex, XeTeX and so on), adds some ideas of its own, and is implemented from
+the ground up using modern technologies. SILE's focus is on extensibility and
+clean design.
+
+<section>Installing</section>
+
+SILE requires working installations of Node.js, Pango and Cairo. Once you have
+these in place through your OS's package manager, you then need to install SILE's
+prerequisite modules:
+
+<pre>
+     > npm install node-pangocairo
+
+
+     > npm install .
+</pre>
+
+Until SILE has its own working installer, you should manually copy the
+<pre>sile</pre> binary to <pre>/usr/local/bin/</pre>, and copy the <pre>class</pre>,
+<pre>core</pre>, <pre>languages</pre> and <pre>packages</pre> directories to
+<pre>/usr/local/sile</pre>. (Alternatively, you can set the <pre>SILE_PATH</pre> environment
+variable to the directory where you downloaded SILE.)
+
+<section>SILE Concepts</section>
+
+If you are familiar with TeX, most of SILE's concepts will be familar to you.
+There are a couple of new ideas:
+
+<em>Package</em>. A SILE package is a JavaScript file which extends the way SILE operates.
+It may implement new commands, change the operation of the typesetter, and so on. This is
+distinct from a SILE file, which contains text to be typeset and basic macros.
+
+<em>Frame</em>. Whereas TeX makes up pages entirely out of boxes and glue,
+SILE implements the <em>frame</em> as an additional abstraction between boxes and pages,
+and there can be multiple frames on a page. (There are two frames on this
+page: a content frame and a folio frame.) We will example frames in more
+detail later, but the basic concept should be familiar to anyone who has used
+graphical page layout tools such as InDesign or PageMaker.
+
+<section>A Basic SILE document</section>
+
+SILE documents are, by convention, XML files. <note>(They don't need to be; SILE's
+typesetting back-end component and its input front-end component know little about
+each other, and it's perfectly possible to write another front-end which reads
+files in more of a TeX-like style, if that's something you want to do. But the
+default front-end reads XML, and so that's what we'll describe in this
+manual.)</note>
+
+Here is the most basic example of a SILE document:
+
+<skip height="2pt"/>
+<pre><![CDATA[
+     <sile papersize="a4">
+
+          Hello world.
+
+          
+     </sile>
+]]></pre>
+<skip height="2pt"/>
+
+This will produce an A4 document with the text "Hello world" at the top, and the page number
+centered at the bottom. The <pre>papersize</pre> attribute is required; SILE knows about
+a number of standard paper sizes, but if you wish to use a non-standard size, you can
+specify the page size as width-by-height dimensions like so: <pre>papersize="129mm x 198mm"</pre>. <note>(SILE understands dimensions specified in mm, cm, in, pt or px. When the paper size is established, you can also specify dimensions as a percentage of the page size; horizontal dimensions will be understood as a percentage of the page width, and vertical dimensions as a percentage of the page height.)</note>
+
+SILE has a number of built-in commands which are available as XML tags.
+
+<subsection>Including things</subsection>
+
+You can include another
+SILE XML file using the <pre>&lt;include&gt;</pre> tag, like so:
+
+<skip height="2pt"/>
+<pre><![CDATA[
+     <sile papersize="a4">
+
+          Hello world.
+
+          <include src="chapter1.sil"/>
+
+          <include src="chapter2.sil"/>
+
+     </sile>
+]]></pre>
+<skip height="2pt"/>
+
+Or you can include a SILE package using the <pre>&lt;script&gt;</pre> tag:
+
+<skip height="2pt"/>
+<pre><![CDATA[
+     <sile papersize="a4">
+
+          <script src="packages/image" />
+
+
+          Hello world.
+
+          <img src="smiley.png" width="100px" height="100px"/>
+
+          
+     </sile>
+]]></pre>
+<skip height="2pt"/>
+
+The brave and foolhardy can include raw Javascript code within a <pre>&lt;script&gt;</pre> tag in a way that should be familiar to HTML programmers:
+
+<skip height="2pt"/>
+<pre><![CDATA[
+     <sile papersize="a4">
+
+          Hello world.
+
+          <script>console.log("Hello Javascript");</script>
+
+          
+     </sile>
+]]></pre>
+<skip height="2pt"/>
+
+However, it is recommended that any serious scripts go in their own package file.
+
+<subsection>Styling things</subsection>
+
+The basic way to change the way text appears is using the <pre>&lt;font&gt;</pre> tag.
+This tag takes the following attributes:
+
+<pre>family</pre>: Specifies the font family. This can be done in a CSS-like "stack", a
+comma-separated list. SILE will use the first font it can find which provides the characters
+you are trying to typeset.
+
+<pre>size</pre>: The font size in points.
+
+<pre>weight</pre>: The font weight in CSS numeric format.
+
+<pre>style</pre>: The font slant style ("oblique", "italic" or "normal").
+
+You may provide as many or as little of these attributes as required. The tag can be
+used in two ways. An empty tag changes the parameter permanently until the next tag:
+
+<skip height="2pt"/>
+<pre><![CDATA[
+     <font size="24" weight="700"/>
+
+     I am shouting here!
+
+     <font size="12" weight="400"/>
+
+     
+     I am not shouting any more.
+]]></pre>
+<skip height="2pt"/>
+
+Whereas a tag with content will only change the parameter for the content
+within the tag, restoring the previous font style afterwards:
+
+<skip height="2pt"/>
+<pre><![CDATA[SILE is <font style="italic">very</style> easy to use!]]></pre>
+<skip height="2pt"/>
+
+Of course, it would be boring to have to type <pre><![CDATA[<font style="italic"]]></pre> all the time, but we will improve that later.
+
+<subsection>Moving things</subsection>
+
+To round out the list of built-in commands, advanced users can typeset particular
+nodes directly, using the <pre>&lt;penalty&gt;</pre>, <pre>&lt;glue&gt;</pre>, and
+<pre>&lt;skip&gt;</pre> tags:
+
+<skip height="2pt"/>
+<pre><![CDATA[
+          <penalty penalty="500" flagged="1"/>
+
+          <glue width="0" shrink="0" stretch="10000"/>
+
+          <skip height="2pt" shrink="0" stretch="2pt"/>
+]]></pre>
+<skip height="2pt"/>
+
+So, for instance, you can center a line by saying:
+
+<skip height="2pt"/>
+<pre><![CDATA[
+<glue stretch="10000"/>Hello, world<glue stretch="10000"/>
+]]></pre>
+<skip height="2pt"/>
+
+<subsection>Macros</subsection>
+
+However, this gets cumbersome fast. Thankfully, SILE allows you a basic way to
+easily define your own commands. The last built-in tag you need to know about
+is the <pre>&lt;define&gt;</pre> tag. For instance, this document includes a
+macros file which starts with the following defines:
+
+<skip height="2pt"/>
+<pre><![CDATA[<define command="center"><glue stretch="10000"/><process/><glue stretch="10000"/></define>
+
+<define command="em"><font style="italic"><process/></font></define>
+
+<define command="sectionsfont">
+
+     <font family="Frutiger LT Std" weight="700"><process/></font>
+
+</define>
+]]></pre>
+<skip height="2pt"/>
+
+As you can see, we define a new command with the <pre>&lt;define&gt;</pre> tag, giving
+the command name as an attribute. When this command is used, the content inside the 
+<pre>&lt;define&gt;</pre> tag will be processed as though it appeared in that location of
+the document file. Additionally, the <pre>&lt;process&gt;</pre> instruction instructs SILE
+to process the contents of the command tag. At risk of belabouring the obvious, this means
+that:
+
+<skip height="2pt"/>
+<pre><![CDATA[SILE is <em>very</em> easy to use!]]></pre>
+<skip height="2pt"/>
+
+is now precisely equivalent to 
+
+<skip height="2pt"/>
+<pre><![CDATA[SILE is <font style="italic">very</font> easy to use!]]></pre>
+<skip height="2pt"/>
+
+Macros cannot take any parameters or attributes to modify their activity other
+than <pre>&lt;process&gt;</pre>ing their contents. If you want parameters, define a
+command using a package. Macros can, however, contain other macros, and this
+gives a certain degree of expressibility:
+
+<skip height="2pt"/>
+<pre><![CDATA[<define command="headline">
+
+<skip height="1cm"/>
+
+<sectionsfont><center><font size="20"><process/></font></center></sectionsfont>
+
+<skip height="0.5cm"/>
+
+</define>
+]]></pre>
+<skip height="2pt"/>
+
+<section>Doing more</section>
+
+<subsection>Frame and flow</subsection>
+<subsection>Using SILE packages</subsection>
+<section>SILE hacking</section>
+</sile>

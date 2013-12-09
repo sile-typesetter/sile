@@ -1,0 +1,15 @@
+<sile>
+<define command="center"><glue stretch="10000"/><process/><glue stretch="10000"/></define>
+<define command="em"><font style="italic"><process/></font></define>
+<define command="note"><font style="italic" size="10"><process/></font></define>
+<define command="sectionsfont"><font family="Frutiger LT Std" weight="700"><process/></font></define>
+<define command="headline">
+<skip height="1cm"/>
+<sectionsfont><center><font size="20"><process/></font></center></sectionsfont>
+<skip height="0.5cm"/>
+</define>
+<define command="section"><set-counter id="subsection" value="0"/><skip height="6pt"/><sectionsfont><font size="15"><increment-counter id="section"/> <process/></font></sectionsfont><skip height="6pt"/></define>
+<define command="subsection"><skip height="6pt"/><sectionsfont><font size="12"><show-counter id="section"/>.<increment-counter id="subsection"/> <process/></font></sectionsfont><skip height="6pt"/></define>
+
+<define command="pre"><font family="Monaco" size="9"><process/></font></define>
+</sile>
