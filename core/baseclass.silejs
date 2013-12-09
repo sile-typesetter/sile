@@ -1,6 +1,5 @@
 SILE.baseClass = (function() { 
     var registerCommands = function() { 
-        SILE.Commands.textit = function(){} // XXX hack
         var commandStack = [];
         SILE.registerCommand("define", function (n) {
             var cmd = n.attr("command").value();
@@ -58,6 +57,7 @@ SILE.baseClass = (function() {
             if (n.attr("family")) {SILE.documentState.fontFamily = n.attr("family").value(); }
             if (n.attr("size")) {SILE.documentState.fontSize = n.attr("size").value(); }
             if (n.attr("weight")) {SILE.documentState.fontWeight = n.attr("weight").value(); }
+            if (n.attr("style")) {SILE.documentState.fontStyle = n.attr("style").value(); }
             if (n.childNodes().length > 0) {
                 n.childNodes().forEach(SILE.process);
                 SILE.documentState = o;
@@ -103,6 +103,7 @@ SILE.baseClass = (function() {
         SILE.documentState.fontFamily = "Gentium";
         SILE.documentState.fontSize = 11;
         SILE.documentState.fontWeight = 200;
+        SILE.documentState.fontStyle = "normal";
         return this.initialFrame();
     },
     initialFrame: function() {

@@ -10,6 +10,8 @@ SILE.shaper = {
 		pal.insert("family", SILE.documentState.fontFamily);
 		pal.insert("size", SILE.documentState.fontSize);
 		pal.insert("weight", SILE.documentState.fontWeight);
+		pal.insert("language", SILE.documentState.language);
+		pal.insert("style", SILE.documentState.fontStyle);
 		//console.log("Shaping "+text);
 		text = text.replace(/\s+/g, " ");
 		p.itemizeAndShape(text,pal).forEach(function (run) {
