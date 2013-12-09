@@ -46,6 +46,8 @@ SILE.require("core/typeset");
 SILE.require("core/cairo-output");
 SILE.require("core/pango-shaper");
 SILE.require("core/baseclass");
+SILE.require("core/hyphenator-liang");
+SILE.require("languages/en");
 
 console.log("This is SILE, version "+program.version());
 SILE.file =  program.args[0];
