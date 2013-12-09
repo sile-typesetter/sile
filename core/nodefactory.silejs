@@ -30,6 +30,21 @@ SILE.nodefactory = (function() {
     this.nodes.forEach(function(n){ n.outputYourself(typesetter, line); });
   };
   _native_node.toText = function () { return this.text; }
+  _native_node.toS = function() { return "N<"+this.width+">^"+this.height+"-"+this.depth+"v("+this.toText()+")"; };
+
+  _discretionary = object(_box); _discretionary.type = "Discretionary";
+  _box.isDiscretionary = function () { return this.type == "Discretionary"; };
+  _discretionary.preBreak = [];
+  _discretionary.postBreak = [];
+  _discretionary.used = 0;
+  _discretionary.toS = function() {return "("+this.preBreak.map(function(x) { return x.toS(); }).join("")+"|"+this.postBreak.map(function(x) { return x.toS(); }).join(""); };
+  _discretionary.toText = function() { return "\\-"; };
+  _discretionary.outputYourself = function (typesetter,line) {
+    var nodes = line.nodes;
+    if (this.used == 1) {
+      this.preBreak.forEach(function(n){ n.outputYourself(typesetter, line); });
+    }
+  }
 
   var _glue = object(_box); _glue.type = "Glue";
   _glue.toS = function() { return "G<"+this.stretch+"|"+this.width+"|"+this.shrink+">"; };
@@ -69,6 +84,12 @@ SILE.nodefactory = (function() {
 
   return {
     newHbox: function(spec) { return _new_and_spec(_hbox, spec) },
+    newDiscretionary: function(spec) { 
+      var disc = _new_and_spec(_discretionary, spec);
+      disc.prebreakWidth = 0;
+      disc.preBreak.forEach(function (n) { disc.prebreakWidth += n.width; });
+      return disc;
+    },
     newVbox: function(spec) {
       var vbox = _new_and_spec(_vbox, spec);
       // Compute the dimensions

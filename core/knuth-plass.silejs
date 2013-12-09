@@ -84,6 +84,8 @@ SILE.linebreak = function (nodes, lines, settings) {
         result.width += nodes[i].width;
         result.stretch += nodes[i].stretch;
         result.shrink += nodes[i].shrink;
+      } else if(nodes[i].isDiscretionary()) {
+        result.width -= nodes[i].prebreakWidth;
       } else if (nodes[i].isBox() || (nodes[i].isPenalty() && nodes[i].penalty === -Infinity && i > breakPointIndex)) {
         break;
       }
@@ -231,6 +233,10 @@ SILE.linebreak = function (nodes, lines, settings) {
       sum.width += node.width;
       sum.stretch += node.stretch;
       sum.shrink += node.shrink;
+    } else if (node.isDiscretionary()) {
+      sum.width += node.prebreakWidth;
+      mainLoop(node, index, nodes);
+      sum.width -= node.prebreakWidth;
     } else if (node.isPenalty() && node.penalty !== Infinity) {
           SILE.debug(node.type);
 
