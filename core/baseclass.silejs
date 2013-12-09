@@ -25,7 +25,12 @@ SILE.baseClass = (function() {
                 eval(n.text());
             }
         });
-
+        SILE.registerCommand("include", function(n) { 
+            var file = n.attr("src");
+            if (file && file.value()) {
+                SILE.include(file.value());
+            }
+        });
         SILE.registerCommand("pagetemplate", function (n) {
             SILE.documentState.thisPageTemplate = { frames: {} };
             n.childNodes().forEach(SILE.process);

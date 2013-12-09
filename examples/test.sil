@@ -1,19 +1,11 @@
 <sile papersize="129mm x 198mm">
 <script src="packages/image"/>
+<include src="macros.sil"/>
      <pagetemplate firstContentFrame="a">
           <frame id="a" top="5%" left="7%" right="95%" bottom="250pt" next="b"/>
           <frame id="b" top="bottom(a) + 12pt" bottom="90%" left="left(a)" right="47%" next="c"/>
           <frame id="c" top="top(b)" bottom="90%" left="52%" right="95%"/>
      </pagetemplate>
-<define command="center">
-     <glue stretch="10000"/><process/><glue stretch="10000"/>
-</define>
-<define command="em"><font style="italic"><process/></font></define>
-<define command="headline">
-     <skip height="1cm"/>
-     <font family="Frutiger LT Std" weight="700" size="20"><center><process/></center></font>
-     <skip height="0.5cm"/>
-</define>
 <headline>A Scandal In Bohemia</headline>
 
 <center><img src="scan-04.png" width="84" height="80"/></center>

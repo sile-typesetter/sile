@@ -37,8 +37,20 @@ SILE.process = function(node) {
     }
 };
 
-xml.root().childNodes().forEach(SILE.process);
+SILE.include = function (file) {
+  try {
+    data = fs.readFileSync(file, "utf8"); // XXX Search paths
+  }
+  catch (err) {
+    console.error("There was an error opening the file:");
+    console.log(err);
+    process.exit(1);
+  }
+  var xml = libxmljs.parseXmlString(data);
+  xml.root().childNodes().forEach(SILE.process);
+}
 
+xml.root().childNodes().forEach(SILE.process);
 klass.end();
 
 })();
