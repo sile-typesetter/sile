@@ -45,9 +45,8 @@ SILE.linebreak = function (nodes, lines, settings) {
     }
 
     if (width < lineLength) {
-      // Calculate the stretch ratio
+      // Calculate the stretch ratio TeX: 878
       stretch = sum.stretch - active.totals.stretch;
-
       if (stretch > 0) {
         return (lineLength - width) / stretch;
       } else {
@@ -55,7 +54,7 @@ SILE.linebreak = function (nodes, lines, settings) {
       }
 
     } else if (width > lineLength) {
-      // Calculate the shrink ratio
+      // Calculate the shrink ratio TeX: 879
       shrink = sum.shrink - active.totals.shrink;
 
       if (shrink > 0) {
@@ -166,7 +165,7 @@ SILE.linebreak = function (nodes, lines, settings) {
           }
 
           // Add a fitness penalty to the demerits if the fitness classes of two adjacent lines
-          // differ too much.
+          // differ too much. TeX 885
           if (Math.abs(currentClass - active.data.fitnessClass) > 1) {
             demerits += options.demerits.fitness;
           }
@@ -216,11 +215,14 @@ SILE.linebreak = function (nodes, lines, settings) {
 
   // Add an active node for the start of the paragraph.
   activeNodes.push(new LinkedList.Node(breakpoint(0, 0, 0, 0, 0, undefined, null)));
+
+  // Tex: 892
   nodes.forEach(function (node, index, nodes) {
     SILE.debug(node.type);
     if (node.isBox()) {
       sum.width += node.width;
     } else if (node.isGlue()) {
+      // Tex: 894
       if (index > 0 && nodes[index - 1].isBox()) {
         SILE.debug("Entering main loop at index "+index+", sum is: ");
         SILE.debug(sum);
@@ -236,9 +238,9 @@ SILE.linebreak = function (nodes, lines, settings) {
     }
   });
 
-
+  // TeX 899
   if (activeNodes.size() !== 0) {
-    // Find the best active node (the one with the least total demerits.)
+    // TeX 900
     activeNodes.forEach(function (node) {
       if (node.data.demerits < tmp.data.demerits) {
         tmp = node;
