@@ -5,7 +5,7 @@ SILE.nodefactory = (function() {
 
   var _hbox = object(_box); _hbox.type = "HBox";
   _hbox.toS = function() { return "H<"+this.width+">^"+this.height+"-"+this.depth+"v"; };
-  _box.isBox = function () { return this.type === "HBox"; };
+  _box.isBox = function () { return this.type === "HBox" || this.type === "NNode"; };
   _hbox.outputYourself = function(typesetter, line) {
     if (this.value.glyph === 0) return;
     var scaledWidth = (this.width + line.ratio * (line.ratio < 0 ? this.shrink : this.stretch));
@@ -21,6 +21,14 @@ SILE.nodefactory = (function() {
     return this.value ? String.fromCharCode(this.value.glyph+32) : " ";
   }
 
+  var _native_node = object(_box); _native_node.type = "NNode";
+  _box.isNNode = function () { return this.type === "NNode"; };
+  _native_node.text = "";
+  _native_node.nodes = [];
+  _native_node.outputYourself = function (typesetter, line) {
+    this.nodes.forEach(function(n){ n.outputYourself(typesetter, line); });
+  };
+  _native_node.toText = function () { return this.text; }
 
   var _glue = object(_box); _glue.type = "Glue";
   _glue.toS = function() { return "G<"+this.stretch+"|"+this.width+"|"+this.shrink+">"; };
@@ -68,6 +76,17 @@ SILE.nodefactory = (function() {
       // console.log("VBOX H"+vbox.height+" D"+vbox.depth);
       return vbox;
     },
+    newNativeNode: function(spec) {
+      var nnode = _new_and_spec(_native_node, spec);
+      // Compute the dimensions
+      // console.log(nnode.nodes.map(function (x) { return x.toS() }).join(""));
+      nnode.depth = nnode.nodes.select(function(n) { return n.isBox() }).max( function (n) { return n.depth });
+      nnode.height = nnode.nodes.select(function(n) { return n.isBox() }).max( function (n) { return n.height });
+      nnode.width = 0;
+      nnode.nodes.forEach(function (n) { nnode.width += n.width; });
+      // console.log("nnode H"+nnode.height+" D"+nnode.depth);
+      return nnode;
+    },   
     newGlue: function(spec) { return _new_and_spec(_glue, spec) },
     newVglue: function(spec) { return _new_and_spec(_vglue, spec) },
     newPenalty: function(spec) { return _new_and_spec(_penalty, spec) },

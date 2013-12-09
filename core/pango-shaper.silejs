@@ -23,11 +23,12 @@ SILE.shaper = {
           shrink: 0
         }));
       } else {
+        var nnode = []
         p.itemizeAndShape(w,pal).forEach(function (run) {
           // Because we may need to break up runs because of the
           // justification algorithm, we pull every glyph out of the run
           run.glyphs.forEach(function(glyph) {
-            nodes.push(SILE.nodefactory.newHbox({
+            nnode.push(SILE.nodefactory.newHbox({
               height: glyph.ascent /1024,
               depth: glyph.descent /1024,
               width: glyph.shapedWidth /1024,
@@ -35,6 +36,10 @@ SILE.shaper = {
             }));
           });
         });
+        nodes.push(SILE.nodefactory.newNativeNode({
+          nodes: nnode,
+          text: w
+        }));
       }
     });
     return nodes;
