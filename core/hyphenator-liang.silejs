@@ -61,3 +61,29 @@ SILE.hyphenator = function() {
     }
 }();
 SILE.hyphenator.languages = [];
+
+SILE.hyphenate = function (typesetter) {
+    h = SILE.hyphenator();
+    typesetter.state.nodes.forEach(function (n, i, tNodes) {
+        if (n.isNNode() && n.text) {
+            //console.log("Breaking '"+n.text+"'");
+            breaks = h._hyphenate(n.text);
+            if (breaks.length > 1) {
+                var nodes = [];
+                while (breaks[breaks.length-1]=="") breaks.pop();
+                //console.log(breaks);
+                breaks.forEach(function (b,j,breaks) { 
+                    nodes = nodes.concat.apply(nodes, SILE.shaper.shape(b, n.pal));
+                    if (j != breaks.length -1) {
+                        nodes.push(SILE.nodefactory.newDiscretionary({
+                            preBreak: SILE.shaper.shape("-", n.pal)
+                        }));
+                        nodes.push(SILE.nodefactory.newPenalty({ flagged: 1, penalty: typesetter.state.hypenPenalty }));
+                    }
+                });
+                tNodes.splice.apply(tNodes, [i, 1].concat(nodes));
+            }
+        }
+    });
+    //console.log(typesetter.state.nodes.map(function(x) { return x.toS()}));
+};

@@ -64,19 +64,28 @@ SILE.defaultTypesetter = {
     //console.log("Leaving hmode");
     nl = this.state.nodes;
     while (nl.length > 0 && (nl[nl.length-1].isPenalty() || nl[nl.length-1].isGlue())) {
-        nl.pop();
+      nl.pop();
     }
+
     while (nl.length >0 && nl[0].isPenalty()) nl.shift();
 
     this.pushGlue({ width:0, stretch: 10000 });
     this.pushPenalty({ flagged: 1, penalty: -Infinity });
     // Run the KP algorithm
     var breaks = SILE.linebreak(this.state.nodes,[ this.frame.width() ]);
+    if (1 || breaks.length == 0) {
+      SILE.hyphenate(this);
+      breaks = SILE.linebreak(this.state.nodes,[ this.frame.width() ]);
+      if (breaks.length == 0) {
+        SILE.error("Couldn't break :(")
+      }
+    }
     var lines = this.breakpointsToLines(breaks);
     
     // Push output lines into boxes and ship them to the page builder
     lines.forEach(function (l, index) {
       var v = SILE.nodefactory.newVbox({ nodes: l.nodes, ratio: l.ratio });
+      
       that.insertLeading(v);
       //console.log(v.toS());
       that.pushVbox(v);
@@ -166,10 +175,10 @@ SILE.defaultTypesetter = {
     this.pushHbox({ width: 0, value: {glyph: 0} });
     while ((v = this.state.outputQueue.shift())) {
       if (v.isVglue() || v.isPenalty()) { continue; }
+      v.nodes.forEach(function(n){ 
+        if (n.isDiscretionary()) n.used = 0;
+      });
       this.state.nodes = this.state.nodes.concat(v.nodes);
-      // XXX Hack - end-of-line glue is tossed by leaveHmode, but now the lines may
-      // end in different places. We need to add it back.
-      this.state.nodes = this.state.nodes.concat(SILE.shaper.shape(" "));
     }
     this.leaveHmode();
   },
@@ -184,7 +193,13 @@ SILE.defaultTypesetter = {
       }
       if (!line.nodes) return;
       that.state.cursorY += line.height;
-      line.nodes.forEach(function(node) { node.outputYourself(that, line); });
+      // Ignore initial glue in a line.
+      var initial = 1;
+      line.nodes.forEach(function(node) { 
+        if ((node.isGlue() || node.isPenalty()) && initial) { return; }
+        initial = 0;
+        node.outputYourself(that, line); 
+      });
       that.state.cursorY += line.depth;
 
       that.state.cursorX = that.frame.left();
@@ -198,12 +213,20 @@ SILE.defaultTypesetter = {
     bp.forEach(function(point) {
       if (point.position === 0) return;
       for (j = linestart; j < nodes.length; j++) {
-        if (nodes[j].isBox() || (nodes[j].isPenalty && nodes[j].penalty == -Infinity)) {
+        // XXX TeX would toss initial line glue. We don't, because we'll often put it
+        // back again.
+
+        //if (nodes[j].isBox() || (nodes[j].isPenalty && nodes[j].penalty == -Infinity)) {
           linestart = j; break;
-        }
+        //}
       }
-      lines.push({ ratio: point.ratio, nodes: nodes.slice(linestart, point.position) });
-      linestart = point.position;
+      var thisLine = { ratio: point.ratio, nodes: nodes.slice(linestart, point.position +1) };
+      if (thisLine.nodes[thisLine.nodes.length-1].isDiscretionary()) {
+        thisLine.nodes[thisLine.nodes.length-1].used = 1;
+      }
+      lines.push(thisLine);
+
+      linestart = point.position+1;
     });
     //this.state.nodes = nodes.slice(linestart+1,nodes.length);
     this.state.nodes = [];
@@ -216,8 +239,6 @@ SILE.typesetter = SILE.defaultTypesetter;
 SILE.typesetNaturally = function (frame, nodes) {
   var newTypesetter = object(SILE.defaultTypesetter);
   newTypesetter.init(frame);
-  newTypesetter.pushHbox
-  newTypesetter.push;
   newTypesetter.state.nodes = nodes;
   newTypesetter.leaveHmode();
   newTypesetter.shipOut(0,1);  
