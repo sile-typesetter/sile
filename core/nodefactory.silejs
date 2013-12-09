@@ -48,6 +48,7 @@ SILE.nodefactory = (function() {
 
   var _penalty = object(_box); _penalty.type = "Penalty"; _penalty.flagged = 0; _penalty.penalty = 0;
   _penalty.toS = function() { return "P("+this.penalty+(this.flagged ? "!":"")+")"; };
+  _penalty.toText = function() { return "(!)"; };
   _penalty.outputYourself = function() {};
   _box.isPenalty = function() { return this.type === "Penalty" };
 
