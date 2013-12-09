@@ -2,16 +2,18 @@ var pc = require("pangocairo");
 if (!Pango) Pango = pc.Pango;
 
 SILE.shaper = {
-  shape: function(text) {
+  shape: function(text, pal) {
     var nodes = [];
     var p = new Pango();
     var PangoAttrList = pc.PangoAttrList;
-    pal = new PangoAttrList();
-    pal.insert("family", SILE.documentState.fontFamily);
-    pal.insert("size", SILE.documentState.fontSize);
-    pal.insert("weight", SILE.documentState.fontWeight);
-    pal.insert("language", SILE.documentState.language);
-    pal.insert("style", SILE.documentState.fontStyle);
+    if (!pal) {
+      pal = new PangoAttrList();
+      pal.insert("family", SILE.documentState.fontFamily);
+      pal.insert("size", SILE.documentState.fontSize);
+      pal.insert("weight", SILE.documentState.fontWeight);
+      pal.insert("language", SILE.documentState.language);
+      pal.insert("style", SILE.documentState.fontStyle);
+    }
     var space = p.itemizeAndShape(" ", pal)[0].glyphs[0];
     //console.log("Shaping "+text);
     words = text.split(/(\s+)/);
@@ -38,7 +40,8 @@ SILE.shaper = {
         });
         nodes.push(SILE.nodefactory.newNativeNode({
           nodes: nnode,
-          text: w
+          text: w,
+          pal: pal
         }));
       }
     });
