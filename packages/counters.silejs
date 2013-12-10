@@ -41,7 +41,8 @@
     if (!SILE.scratch.counters[c]) {
       SILE.scratch.counters[c] = { value: 0, display: "arabic" };
     }
-    SILE.scratch.counters[c].value = parseInt(n.attr("value").value(),10);
+    if (n.attr("value")) { SILE.scratch.counters[c].value = parseInt(n.attr("value").value(),10); }
+    if (n.attr("display")) { SILE.scratch.counters[c].display = n.attr("display").value(); }
   });
 
 
