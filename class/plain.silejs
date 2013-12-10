@@ -1,6 +1,6 @@
 plain = object(SILE.baseClass);
 SILE.require("packages/counters");
-SILE.scratch.counters.pageno = { value: 1, display: "arabic" };
+SILE.scratch.counters.folio = { value: 1, display: "arabic" };
 
 plain.pageTemplate.frames = {
 	"a": SILE.newFrame({ left: "5%", right: "95%", top: "5%", bottom: "90%", id: "a" }),
@@ -9,19 +9,19 @@ plain.pageTemplate.frames = {
 plain.pageTemplate.firstContentFrame = plain.pageTemplate.frames["a"];
 
 plain.newPage = function() {
-	process.stdout.write("["+SILE.formatCounter(SILE.scratch.counters.pageno)+"] ");
+	process.stdout.write("["+SILE.formatCounter(SILE.scratch.counters.folio)+"] ");
 	var f = SILE.getFrame("folio");
 	if (f) {
 		SILE.typesetNaturally(f,
 			[
 				SILE.nodefactory.newHbox({ width: 0, value: {glyph: 0} }),
 				SILE.nodefactory.newGlue({ width:0, stretch: 10000 }),
-			].concat(SILE.shaper.shape(SILE.formatCounter(SILE.scratch.counters.pageno))).concat([
+			].concat(SILE.shaper.shape(SILE.formatCounter(SILE.scratch.counters.folio))).concat([
 				SILE.nodefactory.newGlue({ width:0, stretch: 10000 }),
 			])
 		)
 	}
-	SILE.scratch.counters.pageno.value++;
+	SILE.scratch.counters.folio.value++;
 	return SILE.baseClass.newPage();
 }
 exports.class = plain;
