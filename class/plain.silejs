@@ -1,15 +1,13 @@
 plain = object(SILE.baseClass);
 SILE.require("packages/counters");
 SILE.scratch.counters.pageno = { value: 1, display: "arabic" };
-plain.pageTemplate.firstContentFrame = SILE.newFrame({
-    left: "5%", right: "95%", "top":"5%", bottom:"90%", id: "a"
-});
+
 plain.pageTemplate.frames = {
-	"a": plain.pageTemplate.firstContentFrame,
-	"folio": SILE.newFrame({
-		left: "5%", right: "95%", "top":"92%", bottom:"97%", id: "folio"
-	})
+	"a": SILE.newFrame({ left: "5%", right: "95%", top: "5%", bottom: "90%", id: "a" }),
+	"folio": SILE.newFrame({left: "5%", right: "95%", top: "92%", bottom: "97%", id: "folio"})
 };
+plain.pageTemplate.firstContentFrame = plain.pageTemplate.frames["a"];
+
 plain.newPage = function() {
 	process.stdout.write("["+SILE.formatCounter(SILE.scratch.counters.pageno)+"] ");
 	var f = SILE.getFrame("folio");
