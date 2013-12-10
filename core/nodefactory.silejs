@@ -25,6 +25,7 @@ SILE.nodefactory = (function() {
   _box.isNNode = function () { return this.type === "NNode"; };
   _native_node.text = "";
   _native_node.pal = null;
+  _native_node.language = null;
   _native_node.nodes = [];
   _native_node.outputYourself = function (typesetter, line) {
     this.nodes.forEach(function(n){ n.outputYourself(typesetter, line); });

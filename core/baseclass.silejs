@@ -34,7 +34,7 @@ SILE.baseClass = (function() {
         SILE.registerCommand("pagetemplate", function (n) {
             SILE.documentState.thisPageTemplate = { frames: {} };
             n.childNodes().forEach(SILE.process);
-            SILE.documentState.thisPageTemplate.firstContentFrame = SILE.getFrame(n.attr("firstContentFrame").value());
+            SILE.documentState.thisPageTemplate.firstContentFrame = SILE.getFrame(n.attr("first-content-frame").value());
             SILE.typesetter.initFrame(SILE.documentState.thisPageTemplate.firstContentFrame);
             //console.log(SILE.documentState.thisPageTemplate);
         });
@@ -63,6 +63,8 @@ SILE.baseClass = (function() {
             if (n.attr("size")) {SILE.documentState.fontSize = n.attr("size").value(); }
             if (n.attr("weight")) {SILE.documentState.fontWeight = n.attr("weight").value(); }
             if (n.attr("style")) {SILE.documentState.fontStyle = n.attr("style").value(); }
+            if (n.attr("language")) {SILE.documentState.language = n.attr("language").value(); }
+
             if (n.childNodes().length > 0) {
                 n.childNodes().forEach(SILE.process);
                 SILE.documentState = o;
@@ -109,6 +111,7 @@ SILE.baseClass = (function() {
         SILE.documentState.fontSize = 11;
         SILE.documentState.fontWeight = 200;
         SILE.documentState.fontStyle = "normal";
+        SILE.documentState.language = "en";
         return this.initialFrame();
     },
     initialFrame: function() {

@@ -2,10 +2,11 @@ var pc = require("pangocairo");
 if (!Pango) Pango = pc.Pango;
 
 SILE.shaper = {
-  shape: function(text, pal) {
+  shape: function(text, pal, language) {
     var nodes = [];
     var p = new Pango();
     var PangoAttrList = pc.PangoAttrList;
+    if (!language) language = SILE.documentState.language;
     if (!pal) {
       pal = new PangoAttrList();
       pal.insert("family", SILE.documentState.fontFamily);
@@ -41,7 +42,8 @@ SILE.shaper = {
         nodes.push(SILE.nodefactory.newNativeNode({
           nodes: nnode,
           text: w,
-          pal: pal
+          pal: pal,
+          language: language
         }));
       }
     });

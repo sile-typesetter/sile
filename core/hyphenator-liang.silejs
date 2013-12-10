@@ -1,4 +1,4 @@
-SILE.hyphenator = function() {
+SILE.hyphenator = function(language) {
     var addPattern = function(h, p) {
         var chars = p.split("").filter(function(x) { return x.match(/\D/) });
         var points = p.split(/\D/).map(function(x) { return parseInt(x) || 0 });
@@ -11,7 +11,9 @@ SILE.hyphenator = function() {
     };
     var loadPatterns = function(h, language) {
         if(!language) language = "en";
+        SILE.require("languages/"+language);
         var languageset = SILE.hyphenator.languages[language];
+        if (!languageset) { console.log("No patterns for language "+language); return; }
         languageset.patterns.forEach(function(p) { addPattern(h, p) });
         languageset.exceptions.forEach(function(x) { 
             h.exceptions[x.replace(/-/g,"")] = [ 0 ].concat(x.split(/[^-]/).map(function(l) { return l == "-" ? 1 : 0}));
@@ -51,29 +53,31 @@ SILE.hyphenator = function() {
         }
         return pieces;
     };
-    return function (language) {
-        this.minWord = 5; this.minPrefix = 2; this.maxPrefix = 2;
-        this.trie = {};
-        this.exceptions = {};
-        this._hyphenate = _hyphenate;
-        loadPatterns(this, language);
-    return this;
-    }
-}();
+    var f = {};
+    f.trie = {};
+    f.exceptions = {};
+    loadPatterns(f, language);
+    f.minWord = 5; f.minPrefix = 2; f.maxPrefix = 2;
+    f._hyphenate = _hyphenate;
+    
+    return f;
+};
 SILE.hyphenator.languages = [];
+SILE._hyphenators = {};
 
 SILE.hyphenate = function (typesetter) {
-    h = SILE.hyphenator();
     typesetter.state.nodes.forEach(function (n, i, tNodes) {
         if (n.isNNode() && n.text) {
-            //console.log("Breaking '"+n.text+"'");
-            breaks = h._hyphenate(n.text);
+            if (!SILE._hyphenators[n.language]) SILE._hyphenators[n.language] = SILE.hyphenator(n.language);
+            //console.log("Breaking '"+n.text+"' as language "+n.language);
+            breaks = SILE._hyphenators[n.language]._hyphenate(n.text);
+            //console.log(breaks);
             if (breaks.length > 1) {
                 var nodes = [];
                 while (breaks[breaks.length-1]=="") breaks.pop();
                 //console.log(breaks);
                 breaks.forEach(function (b,j,breaks) { 
-                    nodes = nodes.concat.apply(nodes, SILE.shaper.shape(b, n.pal));
+                    nodes = nodes.concat.apply(nodes, SILE.shaper.shape(b, n.pal, n.language));
                     if (j != breaks.length -1) {
                         nodes.push(SILE.nodefactory.newDiscretionary({
                             preBreak: SILE.shaper.shape("-", n.pal)
