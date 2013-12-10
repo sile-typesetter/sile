@@ -11,5 +11,5 @@
 <define command="section"><set-counter id="subsection" value="0"/><skip height="6pt"/><sectionsfont><font size="15"><increment-counter id="section"/> <process/></font></sectionsfont><skip height="6pt"/></define>
 <define command="subsection"><skip height="6pt"/><sectionsfont><font size="12"><show-counter id="section"/>.<increment-counter id="subsection"/> <process/></font></sectionsfont><skip height="6pt"/></define>
 
-<define command="pre"><font family="Monaco" size="9"><process/></font></define>
+<define command="pre"><font family="Monaco" size="9" style="roman" language="xx"><process/></font></define>
 </sile>

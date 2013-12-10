@@ -2,17 +2,17 @@
 <script src="packages/grid"/>
 <include src="macros.sil"/>
 <font size="12"/>
-<headline>Simon's Improved Layout Engine</headline>
+<headline>Simon’s Improved Layout Engine</headline>
 
 SILE is a new text layout engine. It takes the best ideas from TeX and friends
 (pdftex, XeTeX and so on), adds some ideas of its own, and is implemented from
-the ground up using modern technologies. SILE's focus is on extensibility and
+the ground up using modern technologies. SILE’s focus is on extensibility and
 clean design.
 
 <section>Installing</section>
 
 SILE requires working installations of Node.js, Pango and Cairo. Once you have
-these in place through your OS's package manager, you then need to install SILE's
+these in place through your OS’s package manager, you then need to install SILE’s
 prerequisite modules:
 
 <pre>
@@ -30,7 +30,7 @@ variable to the directory where you downloaded SILE.)
 
 <section>SILE Concepts</section>
 
-If you are familiar with TeX, most of SILE's concepts will be familar to you.
+If you are familiar with TeX, most of SILE’s concepts will be familar to you.
 There are a couple of new ideas:
 
 <em>Package</em>. A SILE package is a JavaScript file which extends the way SILE operates.
@@ -46,11 +46,13 @@ graphical page layout tools such as InDesign or PageMaker.
 
 <section>A Basic SILE document</section>
 
-SILE documents are, by convention, XML files. <note>(They don't need to be; SILE's
+SILE documents are, by convention, XML files. <note>(They don’t need to be; SILE’s
 typesetting back-end component and its input front-end component know little about
-each other, and it's perfectly possible to write another front-end which reads
-files in more of a TeX-like style, if that's something you want to do. But the
-default front-end reads XML, and so that's what we'll describe in this
+each other, and it’s perfectly possible to write another front-end which reads
+files in more of a TeX-like style, if that’s something you want to do. But XML
+was chosen for good technical reasons---parsers are available off the shelf, people
+understand it, unlike TeX documents you can transform it into other formats easily---and
+the default front-end reads XML, so that’s what we’ll describe in this
 manual.)</note>
 
 Here is the most basic example of a SILE document:
@@ -246,9 +248,203 @@ gives a certain degree of expressibility:
 ]]></pre>
 <skip height="2pt"/>
 
-<section>Doing more</section>
+<section>Frame and flow</section>
+     <script>SILE.outputter.debugFrame(SILE.getFrame("a"));</script>
+     <pagetemplate first-content-frame="a1">
+          <frame id="a1" top="5%" left="5%" right="47%" bottom="52%" next="b1"/>
+          <frame id="b1" top="45%" left="52%" right="95%" bottom="90%" next=""/>
+          <frame id="folio" top="92%" bottom="97%" left="5%" right="95%"/>
+     </pagetemplate>
+     
+     <script>
+          SILE.outputter.debugFrame(SILE.getFrame("b1"));
+          SILE.outputter.debugFrame(SILE.getFrame("folio"));
+     </script>
 
-<subsection>Frame and flow</subsection>
-<subsection>Using SILE packages</subsection>
+
+<note>As SILE is still in development, not all of this section is precisely true yet.</note>
+
+As mentioned above, SILE arranges your input on the page in the form of <em>frames</em>.
+The current page contains four frames, just to make things a bit more interesting. I have
+also told SILE to debug the frames by labelling them and drawing a box around them.
+
+The four frames are:
+
+<em>a</em>: the main content frame, which is the same as on every page. SILE was
+typesetting into this frame until the start of this section heading when we moved everything around.
+
+<em>a1</em>: A left column frame. We told SILE to stop typesetting into <em>a</em> at the
+start of this section and start typesetting into <em>a1</em> instead, which is why the 
+width of the text has changed.
+
+<em>b1</em>: A right column frame, which SILE will typeset into once <em>a1</em> has been completely filled up. In other words, <em>a1</em> and <em>b1</em> are connected together;
+<em>b1</em> is logically `after’ <em>a1</em> and text will flow from <em>a1</em> into <em>b1</em>. SILE calls these <em>flowed frames</em>.
+
+<em>folio</em>: This is not a flowed frame, it is a floating frame. The main body of the
+text will never run into this frame; text only gets put there explicitly. In the case of
+<em>folio</em>, the output routine which runs at the end of a page will put the current
+page number into the folio frame. (Typesetters call page numbers ‘folios’, which is why
+SILE calls the special page number frame <em>folio</em> by convention.) Other floating
+frames might be populated by footnote commands or floating images.
+
+You can set a page layout for the whole of a document, or on a page-by-page
+basis. You can even change the page layout while SILE is typesetting the
+page, as we have done in this example.
+
+<subsection>Document classes</subsection>
+
+Each document has a <em>class</em> which specifies, amongst other things, the default page layout. If you don't specify a <pre>class</pre> attribute on the <pre>&lt;sile&gt;</pre> document tag, you get the <pre>plain</pre> class. In other words, this:
+
+<skip height="2pt"/>
+<pre><![CDATA[
+     <sile papersize="a4">
+
+          Hello world.
+
+          
+     </sile>
+]]></pre>
+<skip height="2pt"/>
+
+is equivalent to
+
+<skip height="2pt"/>
+<pre><![CDATA[
+     <sile papersize="a4" class="plain">
+
+          Hello world.
+
+          
+     </sile>
+]]></pre>
+<skip height="2pt"/>
+
+In most cases you will specify a document class which will provide additional commands as well as a page layout.
+
+The plain class defines two frames; a content frame with left and right
+margins of 5% of the page's width, a top margin of 5% and a bottom margin of
+10%. It also has a folio frame. Looking at the source of the <pre>plain</pre> class
+will help you understand this:
+
+<skip height="2pt"/>
+<pre>
+plain.pageTemplate.frames = {
+
+     "a": SILE.newFrame({ left: "5%", right: "95%", top: "5%", bottom: "90%", id: "a" }),
+
+     "folio": SILE.newFrame({left: "5%", right: "95%", top: "92%", bottom: "97%", id: "folio"})
+
+};
+
+plain.pageTemplate.firstContentFrame = plain.pageTemplate.frames["a"];
+
+</pre>
+<skip height="2pt"/>
+
+We define two frames, and then specify that frame <pre>a</pre> is the first
+content frame. Ordinary document text will be flowed into this frame. To
+connect multiple flowed frames together, you can specify a <pre>next</pre> parameter with
+the ID of the next frame. We'll see this in a minute.
+
+Since not everyone wants to mess about with JavaScript, SILE also has a
+command at the XML level which allows you to specify the layout for a page.
+For instance, to set up a page with two columns and a folio frame, we could say this:
+
+<skip height="2pt"/>
+<pre><![CDATA[
+     <pagetemplate first-content-frame="lcol">
+
+          <frame id="lcol" top="5%" left="5%" right="47%" bottom="90%" next="rcol"/>
+
+          <frame id="rcol" top="top(lcol)" bottom="bottom(lcol)" left="right(lcol) + 5%" right="95%"/>
+
+          <frame id="folio" top="92%" bottom="97%" left="5%" right="90%"/>
+
+     </pagetemplate>
+]]></pre>
+<skip height="2pt"/>
+
+There are a few things to note about this declaration. First, notice that the
+<pre>first-content-frame</pre> attribute specifies where text should be
+placed. If SILE is in the middle of typesetting a frame when it sees this
+declaration, it stops working on the current frame at a convenient point
+<note>(Due to the way that SILE arranges your input into boxes---which is the
+same as the way TeX does it---that may not be exactly at the point where the
+<pre>pagetemplate</pre> command appears.)</note> and starts writing text into
+the new <pre>first-content-frame</pre>.
+
+Second, you should notice that the dimensions of frames can be given relative to
+other frames. These frames must already be defined; in other words, you cannot
+use this facility as a constraint system. However, you can use ordinary “calculator
+arithmetic” in these expressions: if you want to specify a dimension in the middle of
+two frames, you could say <pre>(bottom(a) + top(b)) / 2</pre>.
+
+• More about absolute versus relative frames here.
+
+• Insertions
+
+<section>Using SILE packages</section>
+
+SILE comes with a number of packages which provide additional functionality, and it
+is expected that other packages will be created which may or may not ship with SILE
+in the future. Those packages which ship as part of SILE are documented here.
+
+<subsection><pre>counters</pre></subsection>
+
+The <pre>counters</pre> package, which can loaded via <pre>&lt;script src="packages/counter" /&gt;</pre>, provides three new SILE commands: <pre>set-counter</pre>, <pre>show-counter</pre>, and <pre>increment-counter</pre>. They are best understood by example.
+
+<skip height="2pt"/>
+<pre><![CDATA[
+     <set-counter id="section" value="1"/>
+
+     This is section <show-counter id="section"/>. ("This is section 1.")
+
+     This is section <increment-counter id="section"/>. ("This is section 2.")
+
+     This is section <increment-counter id="section" display="roman"/>. ("This is section ii.")
+
+     This is section <increment-counter id="section" display="Roman"/>. ("This is section II.")
+]]></pre>
+<skip height="2pt"/>
+
+The plain class uses the counter <pre>folio</pre> for page numbers. We have made the
+current page number appear in Roman numbers by issuing the command
+<pre>&lt;set-counter id="folio" display="roman"/&gt;</pre>.
+
+<set-counter id="folio" display="roman"/>
+
+<subsection><pre>grid</pre></subsection>
+<script src="packages/grid"/>
+<grid spacing="18pt"/>
+
+The <pre>grid</pre> package alters the way that SILE's typesetter operates to
+implement grid-based typesetting. In other words, the baseline of each line of
+text will be aligned to fit upon a regularly-spaced grid. <note>(It is
+quite a small package, and reading the source is quite instructive for SILE hackers;
+it is a good demonstration of SILE's flexibility to see how much can be customized
+in quite a straightforward way.)</note>
+
+The <pre>grid</pre> tag takes a single attribute called <pre>spacing</pre>, which is
+a standard SILE dimension. After this empty tag, all following text until SILE sees
+a <pre>no-grid</pre> tag will be typeset on a grid. This section is typeset with 
+<pre>&lt;grid spacing="18pt"/&gt;</pre>.
+
+<no-grid/>
+
+<subsection><pre>image</pre></subsection>
+
+SILE has rudimentary support for including images. At present, those images must be
+PNG files <note>(For the technically inclined, this is because we delegate the handling
+of images to Cairo, which only supports PNG, PDF and SVG.)</note> and both their width and
+height must be specified, although SILE will handle scaling. (It will not, at present,
+scale proportionately given one dimension. <note>Or rather, it will, but the hbox will
+be the wrong size and so surrounding text will appear in the wrong place. This is
+because SILE doesn't know how big the image is until it's passed to Cairo for outputting.</note>)
+
+An image is included like so: <pre>&lt;img src="smiley.png" width="100px" height="100px"/&gt;</pre>. Yes, we tried to keep this familiar to HTML people.
+
 <section>SILE hacking</section>
+
+XXX later.
+
 </sile>
