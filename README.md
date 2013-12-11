@@ -11,10 +11,9 @@ need to run:
 
 * `npm install ./node-pangocairo`
 * `npm install .`
-* `pegjs core/frameparser.pegjs core/frameparser.silejs`
 
 (I will write a proper build step soon.)
 
 Then you should be good to go.
 
-Try `sile test.sil`
+Try `sile examples/test.sil`
