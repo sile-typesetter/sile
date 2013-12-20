@@ -11,7 +11,7 @@ SILE.nodefactory = (function() {
     var scaledWidth = (this.width + line.ratio * (line.ratio < 0 ? this.shrink : this.stretch));
     //SILE.outputter.debugHbox(typesetter, this, scaledWidth);
     SILE.cairo.moveTo(typesetter.state.cursorX, typesetter.state.cursorY);
-    SILE.cairo.showAGlyph(this.value.font, this.value.rawGlyph);
+    SILE.cairo.showGlyphString(this.value.font, this.value.rawGlyphString);
 
     typesetter.state.cursorX += scaledWidth;
   };

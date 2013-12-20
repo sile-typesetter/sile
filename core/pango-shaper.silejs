@@ -28,16 +28,21 @@ SILE.shaper = {
       } else {
         var nnode = []
         p.itemizeAndShape(w,pal).forEach(function (run) {
+          var height = 0;
+          var depth = 0;
+          var width = 0;
+
           // Because we may need to break up runs because of the
           // justification algorithm, we pull every glyph out of the run
           run.glyphs.forEach(function(glyph) {
-            nnode.push(SILE.nodefactory.newHbox({
-              height: glyph.ascent /1024,
-              depth: glyph.descent /1024,
-              width: glyph.shapedWidth /1024,
-              value: { rawGlyph: glyph.rawGlyph, glyph: glyph.glyph, font: run.font }
-            }));
+            width += glyph.shapedWidth / 1024;
+            height = height > glyph.ascent /1024 ? height : glyph.ascent /1024;
+            depth  = depth > glyph.descent /1024 ? depth : glyph.descent /1024;
           });
+          nnode.push(SILE.nodefactory.newHbox({
+            depth: depth, height: height, width: width,
+            value: { rawGlyphString: run.rawGlyphString, font: run.font  }
+          }));
         });
         nodes.push(SILE.nodefactory.newNativeNode({
           nodes: nnode,
