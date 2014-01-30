@@ -404,9 +404,7 @@ function lineBreak:postLineBreak() -- 903
   local breaks = {}
   local line  = 1
   repeat
-    print("Line ".. line .. " Ratio " .. p.ratio)
     table.insert(breaks, 1,  { position = p.curBreak, width = self.parShape and self.parShape[line] or self.params.hsize } )
-    print(self.nodes[p.curBreak-1])
     p = p.prevBreak
     line = line + 1
   until not p
