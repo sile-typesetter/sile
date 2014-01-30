@@ -43,7 +43,7 @@ SILE.defaultTypesetter = {
 
   -- Actual typesetting functions
   typeset = function (self, text)
-    for t in SU.gtoke(text,"\n\n") do
+    for t in SU.gtoke(text,"\n\n+") do
       if (t.separator) then self:leaveHmode();
       else self:setpar(t.string)
       end
@@ -51,8 +51,9 @@ SILE.defaultTypesetter = {
   end,
   setpar = function (self, t)
     t = string.gsub(t,"\n", " ");
+    t = string.gsub(t,"^%s+", "");
     if (#self.state.nodes == 0) then
-      --self:pushHbox({ width = SILE.length.new({length = 0}), value = {glyph = 0} });
+      self:pushHbox({ width = SILE.length.new({length = 0}), value = {glyph = 0} });
       SILE.documentState.documentClass.newPar(self); -- XXX ?
     end
     local newNodes = SILE.shaper.shape(t)
