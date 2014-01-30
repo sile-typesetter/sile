@@ -65,19 +65,16 @@ SILE.baseClass = {
       end
     end)
 
-  -- SILE.registerCommand("penalty", function(n) {
-  --   SILE.typesetter.pushPenalty({ 
-  --     flagged= n.attr("flagged") ? n.attr("flagged").value() = 0,
-  --     penalty: n.attr("penalty") ? eval(n.attr("penalty").value()) : 0
-  --     });
-  --   });
-  -- SILE.registerCommand("glue", function(n) {
-  --   SILE.typesetter.pushGlue({ 
-  --     width: n.attr("width") ? SILE.toPoints(n.attr("width").value()) : 0,
-  --     stretch: n.attr("stretch") ? SILE.toPoints(n.attr("stretch").value()) : 0,
-  --     shrink: n.attr("shrink") ? SILE.toPoints(n.attr("shrink").value()) : 0
-  --     });
-  --   });
+    SILE.registerCommand("penalty", function(options, content)
+      SILE.typesetter:pushPenalty({ flagged= options.flagged, penalty = options.penalty })
+    end)
+
+    SILE.registerCommand("glue", function(options, content) 
+      SILE.typesetter:pushGlue({ 
+        width = SILE.length.new({ length = options.width, stretch = options.stretch, shrink = options.shrink })
+      })
+    end)
+
     SILE.registerCommand("skip", function(options, content)
       SILE.typesetter:leaveHmode();
       SILE.typesetter:pushVglue({ height = SILE.length.new({ length = options.height, stretch = options.stretch or 0, shrink = options.shrink or 0 }) })
@@ -87,7 +84,7 @@ SILE.baseClass = {
   settings = { widowPenalty= 5000, clubPenalty= 5000 },
   pageTemplate = { frames= {}, firstContentFrame= nil },
   state = {
-    parindent = SILE.nodefactory.newGlue({ width= SILE.length.new({length = 0, stretch= 0, shrink= 0})}),
+    parindent = SILE.nodefactory.newGlue({ width= SILE.length.new({length = 11, stretch= 0, shrink= 0})}),
     baselineSkip = SILE.nodefactory.newVglue({ height= SILE.length.new({length = 13, stretch= 2, shrink= 0})}),
     lineSkip = SILE.nodefactory.newVglue({ height= SILE.length.new({length = 2, stretch= 0, shrink= 0}) }),
   },
@@ -131,8 +128,8 @@ SILE.baseClass = {
     SILE.outputter:finish()
   end,
   newPar = function(typesetter)
-    typesetter:pushVglue(SILE.documentState.documentClass.state.lineSkip);
-    --typesetter:pushGlue( SILE.documentState.documentClass.state.parindent );
+    --typesetter:pushVglue(SILE.documentState.documentClass.state.lineSkip);
+    typesetter:pushGlue( SILE.documentState.documentClass.state.parindent );
   end,
   options= { 
     papersize= function(size)
