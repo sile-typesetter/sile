@@ -1,0 +1,10 @@
+#!/usr/bin/env lua
+-- require("std")
+SILE = require("core/sile")
+io.stdout:setvbuf 'no'
+print('This is SILE '..SILE.version)
+if (...) then
+  SILE.readFile(...)
+else
+  SILE.repl()
+end
