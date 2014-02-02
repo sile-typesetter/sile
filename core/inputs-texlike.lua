@@ -8,6 +8,7 @@ local Cb= lpeg.Cb
 local Cg= lpeg.Cg
 local Cc= lpeg.Cc
 local Ct= lpeg.Ct
+local Cmt = lpeg.Cmt
 
 local V= lpeg.V
 
@@ -26,20 +27,29 @@ local parameters = (P("[") * list * P("]")) ^-1
 
 anything = C( (space^1 + (1-lpeg.S("\\{}")) )^1) * Cb("linenum") / function (a,b) return { text = a, line = b } end
 
-local check_env = function(e) if not e == Cb("environment") then die() end end
-local begin_environment = P("\\begin") * Ct(parameters) * P("{") * Cg(identifier, "environment") * P("}")
-local end_environment = P("\\end{") * (Cg(identifier) / check_env) * P("}")
+local check_env = function(text, pos, ...) 
+  print(inspect(...))
+  die()
+end
+begin_environment = P("\\begin") * Ct(parameters) * P("{") * Cg(identifier, "environment") * Cb("environment") * P("}") / function (p,i) return { params = p, environment = i } end
+end_environment = P("\\end{") * Cg(identifier) * P("}") /function (id) return { endx = id } end
 command_with = P("\\") * Cg(identifier) * Ct(parameters) * P("{") * anything^0 * P("}")
 
 texlike = lpeg.P{
-  "environment";
+  "document";
   document = setup * V("stuff") * -1,
-  stuff = Ct((V"environment" + V"command_with" + V"bracketed_stuff" + anything)^0),
+  stuff = Cg(V"environment" + anything + V"bracketed_stuff" + V"command_with" + V"command_without")^0,
   bracketed_stuff = P"{" * V"stuff" * P"}" / function (a) return a end,
-  command_with = P("\\") * Cg(identifier) * Ct(parameters) * V"bracketed_stuff" / function (i,p,n) return { command = i, parameters = p, nodes = n } end,
-  command_without = ( P("\\") * Cg(identifier) * Ct(parameters) ) / function (i,p) return { command = i, parameters = p } end,
-  environment = begin_environment * P"stuff" * end_environment
+  command_with =((P("\\") * Cg(identifier) * Ct(parameters) * V"bracketed_stuff")-P("\\end{")) / function (i,p,n) return { command = i, parameters = p, nodes = n } end,
+  command_without = (( P("\\") * Cg(identifier) * Ct(parameters) )-P("\\end{")) / function (i,p) return { command = i, parameters = p } end,
+  environment = Cmt(begin_environment * V("stuff") * end_environment, check_env) / function(i,p) return { env = i, p = p } end
 }
+
+-- texlike = lpeg.P{
+--   "stuff";
+--   environment = P("\\BEGIN") * V("stuff") * P("\\END"),
+--   stuff = (V("environment") + (1-lpeg.S("\\")))^1
+-- }
 
 function SILE.inputs.TeXlike.process(file)
 end
