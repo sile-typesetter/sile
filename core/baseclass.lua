@@ -20,11 +20,11 @@ SILE.baseClass = {
     end)
 
     SILE.registerCommand("script", function(options, content)
-      if (options["src"]) then SILE.require(options["src"]) else eval(content) end
+      if (options["src"]) then dofile(options["src"]..".lua") else loadstring(content) end
     end)
 
     SILE.registerCommand("include", function(options, content)
-        SILE.include(options["src"]);
+        SILE.readFile(options["src"]);
     end)
 
     SILE.registerCommand("pagetemplate", function (options, content) 
