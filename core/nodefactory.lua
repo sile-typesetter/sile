@@ -34,6 +34,8 @@ function _hbox:outputYourself(typesetter, line)
     elseif line.ratio > 0 and self.width.stretch > 0 then
       scaledWidth = scaledWidth + self.width.stretch * line.ratio
     end
+    if (type(typesetter.state.cursorY)) == "table" then typesetter.state.cursorY  =typesetter.state.cursorY.length end
+    if (type(typesetter.state.cursorX)) == "table" then typesetter.state.cursorX  =typesetter.state.cursorX.length end
     SILE.outputter.moveTo(typesetter.state.cursorX, typesetter.state.cursorY)
     SILE.outputter.showGlyphString(self.value.font, self.value.glyphString)
     -- XXX should be a property of the frame
@@ -127,8 +129,8 @@ function _vbox:toText() return "VB[" .. SU.concat(SU.map(function (n) return n:t
 function _vbox:init()
   d = SU.map(function (n) return tonumber(n.depth) or 0 end, self.nodes)
   h = SU.map(function (n) return tonumber(n.height) or 0 end, self.nodes)
-  self.depth = math.max(unpack(d))
-  self.height = math.max(unpack(h))
+  self.depth = SILE.length.new({length = math.max(unpack(d)) })
+  self.height = SILE.length.new({length = math.max(unpack(h)) })
 end
 
 function _vbox:outputYourself(typesetter, line)

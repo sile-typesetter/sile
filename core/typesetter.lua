@@ -114,7 +114,7 @@ SILE.defaultTypesetter = {
     self.state.frameTotals.prevDepth = v.depth;
   end,
   pageBuilder = function (self)
-    local target = self.frame:height(); -- XXX Floats
+    local target = SILE.length.new({ length = self.frame:height() }) -- XXX Floats
     local vbox;
     local function luaSucks (a) vbox = a return a end
     while #self.state.outputQueue > 0 and luaSucks(table.remove(self.state.outputQueue,1)) do 
@@ -124,7 +124,7 @@ SILE.defaultTypesetter = {
       elseif vbox:isVglue() then
         self.state.frameTotals.height = self.state.frameTotals.height + vbox.height.length;
       end
-      local left = target - self.state.frameTotals.height;
+      local left = (target - self.state.frameTotals.height).length;
      SU.debug("typesetter", "I have " .. tostring(left) .. "pts left");
       if vbox:isPenalty() then
         local badness = left > 0 and left * left * left or inf_bad;
@@ -145,7 +145,7 @@ SILE.defaultTypesetter = {
   shipOut = function (self, target, independent)
    SU.debug("typesetter", "Height total is " .. tostring(self.state.frameTotals.height));
    SU.debug("typesetter", "Target is " .. tostring(target));
-    local adjustment = target - self.state.frameTotals.height;
+    local adjustment = (target - self.state.frameTotals.height).length;
     local glues = {};
     local gTotal = SILE.length.new()
     for i,b in pairs(self.state.frameLines) do
