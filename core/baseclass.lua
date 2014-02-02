@@ -66,18 +66,18 @@ SILE.baseClass = {
     end)
 
     SILE.registerCommand("penalty", function(options, content)
-      SILE.typesetter:pushPenalty({ flagged= options.flagged, penalty = options.penalty })
+      SILE.typesetter:pushPenalty({ flagged= tonumber(options.flagged), penalty = tonumber(options.penalty) })
     end)
 
     SILE.registerCommand("glue", function(options, content) 
       SILE.typesetter:pushGlue({ 
-        width = SILE.length.new({ length = options.width, stretch = options.stretch, shrink = options.shrink })
+        width = SILE.length.new({ length = tonumber(options.width), stretch = tonumber(options.stretch), shrink = tonumber(options.shrink) })
       })
     end)
 
     SILE.registerCommand("skip", function(options, content)
       SILE.typesetter:leaveHmode();
-      SILE.typesetter:pushVglue({ height = SILE.length.new({ length = options.height, stretch = options.stretch or 0, shrink = options.shrink or 0 }) })
+      SILE.typesetter:pushVglue({ height = SILE.length.new({ length = tonumber(options.height), stretch = tonumber(options.stretch) or 0, shrink = tonumber(options.shrink) or 0 }) })
     end)
   end),
 

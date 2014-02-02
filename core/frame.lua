@@ -54,5 +54,5 @@ SILE._frameParser = require("core/frameparser")
 
 SILE.parseComplexFrameDimension = function(d, width_or_height)
     SILE.documentState._dimension = width_or_height; -- ugly hack since you can't pass state to the parser
-    return SILE._frameParser.parse(d);
+    return SILE._frameParser:match(d);
 end

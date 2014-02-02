@@ -100,10 +100,10 @@ SILE.defaultTypesetter = {
   insertLeading = function(self, v)
     -- Insert leading
    SU.debug("typesetter", "   Considering leading between self two lines");
-   SU.debug("typesetter", "   Depth of previous line was "..self.state.frameTotals.prevDepth);
+   SU.debug("typesetter", "   Depth of previous line was "..tostring(self.state.frameTotals.prevDepth));
    local d = SILE.documentState.documentClass.state.baselineSkip.height - v.height - self.state.frameTotals.prevDepth;
    d = d.length
-   SU.debug("typesetter", "   Leading height = " .. tostring(SILE.documentState.documentClass.state.baselineSkip.height) .. " - " .. v.height .. " - " .. self.state.frameTotals.prevDepth .. " = "..d) ;
+   --SU.debug("typesetter", "   Leading height = " .. tostring(SILE.documentState.documentClass.state.baselineSkip.height) .. " - " .. v.height .. " - " .. self.state.frameTotals.prevDepth .. " = "..d) ;
 
     if (d > SILE.documentState.documentClass.state.lineSkip.height.length) then
       len = SILE.length.new({ length = d, stretch = SILE.documentState.documentClass.state.baselineSkip.height.stretch, shrink = SILE.documentState.documentClass.state.baselineSkip.height.shrink })
