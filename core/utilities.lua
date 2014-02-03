@@ -51,6 +51,26 @@ function utilities.map(func, array)
   return new_array
 end
 
+function utilities.splice(array, start, stop, replacement)
+  if replacement then
+    local n = stop - start + 1
+    while n > 0 do
+      table.remove(array, start)
+      n = n - 1
+    end
+    for i,v in ipairs(replacement) do
+      table.insert(array, start+i-1, v)
+    end
+    return array
+  else
+    local res = {}
+    for i = start,stop do
+      table.insert(res, array[i])
+    end
+    return res
+  end
+end
+
 function utilities.sum(array)
   local t = 0
   for i,v in ipairs(array) do t = t + v end

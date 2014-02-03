@@ -56,12 +56,15 @@ SILE.defaultTypesetter = {
       self:pushHbox({ width = SILE.length.new({length = 0}), value = {glyph = 0} });
       SILE.documentState.documentClass.newPar(self); -- XXX ?
     end
-    local newNodes = SILE.shaper.shape(t)
-    for i=1,#newNodes do
-        self.state.nodes[#(self.state.nodes)+1] = newNodes[i]
+    for token in SU.gtoke(t, "-") do
+      local t2= token.separator and token.separator or token.string
+      local newNodes = SILE.shaper.shape(t2)
+      for i=1,#newNodes do
+          self.state.nodes[#(self.state.nodes)+1] = newNodes[i]
+      end
     end
   end,
-  leaveHmode = function(self)
+  leaveHmode = function(self, independent)
    SU.debug("typesetter", "Leaving hmode");
     local nl = self.state.nodes;
     while (#nl > 0 and (nl[#nl]:isPenalty() or nl[#nl]:isGlue())) do
@@ -86,7 +89,6 @@ SILE.defaultTypesetter = {
     for index, l in pairs(lines) do
       local v = SILE.nodefactory.newVbox({ nodes = l.nodes, ratio = l.ratio });
       self:insertLeading(v);
-      self:pushVbox(v);
       local pageBreakPenalty = 0
       if (#lines > 1 and index == 1) then
         pageBreakPenalty = SILE.documentState.documentClass.settings.widowPenalty
@@ -94,8 +96,10 @@ SILE.defaultTypesetter = {
         pageBreakPenalty = SILE.documentState.documentClass.settings.clubPenalty
       end
       self:pushVpenalty({ penalty = pageBreakPenalty})
+      self:pushVbox(v);
+
     end
-    self:pageBuilder();
+    self:pageBuilder(independent);
   end,
   insertLeading = function(self, v)
     -- Insert leading
@@ -113,7 +117,7 @@ SILE.defaultTypesetter = {
     end
     self.state.frameTotals.prevDepth = v.depth;
   end,
-  pageBuilder = function (self)
+  pageBuilder = function (self, independent)
     local target = SILE.length.new({ length = self.frame:height() }) -- XXX Floats
     local vbox;
     local function luaSucks (a) vbox = a return a end
@@ -133,7 +137,7 @@ SILE.defaultTypesetter = {
         if (c > self.state.lastBadness) then
          SU.debug("typesetter", "self is worse");
           self.state.lastBadness = awful_bad;
-          self:shipOut(target);
+          self:shipOut(target, independent);
         else
           self.state.lastBadness = c;
         end
@@ -143,8 +147,8 @@ SILE.defaultTypesetter = {
   end,
 
   shipOut = function (self, target, independent)
-   SU.debug("typesetter", "Height total is " .. tostring(self.state.frameTotals.height));
-   SU.debug("typesetter", "Target is " .. tostring(target));
+    SU.debug("typesetter", "Height total is " .. tostring(self.state.frameTotals.height));
+    SU.debug("typesetter", "Target is " .. tostring(target));
     local adjustment = (target - self.state.frameTotals.height).length;
     local glues = {};
     local gTotal = SILE.length.new()
@@ -161,6 +165,7 @@ SILE.defaultTypesetter = {
         g:setGlue(adjustment * g.length.stretch / gTotal.stretch)
       end
     end
+
    SU.debug("typesetter", "Glues for self page adjusted by "..(adjustment/gTotal.stretch) )
     self:outputLinesToPage(self.state.frameLines);
     self.state.frameLines = {};
@@ -219,7 +224,7 @@ SILE.defaultTypesetter = {
         end
 
         slice = {}
-        for j = linestart, point.position-1 do
+        for j = linestart, point.position do
           slice[#slice+1] = nodes[j]
         end
 
@@ -230,9 +235,13 @@ SILE.defaultTypesetter = {
             if node:isBox() then
               naturalTotals = naturalTotals + node.width
             end
-          elseif skipping == 0 then
+          elseif skipping == 0 and not(node:isGlue() and i == #slice) then
             naturalTotals = naturalTotals + node.width
           end
+        end
+        if (slice[#(slice)]:isDiscretionary()) then 
+         slice[#(slice)].used = 1;
+         naturalTotals = naturalTotals + slice[#slice]:prebreakWidth()
         end
         local left = (point.width - naturalTotals.length)
         if left < 0 then
@@ -241,11 +250,8 @@ SILE.defaultTypesetter = {
           left = left / naturalTotals.stretch
         end
         local thisLine = { ratio = left, nodes = slice };
-        -- if (thisLine.nodes[#(thisLine.nodes)]:isDiscretionary()) then 
-        --  thisLine.nodes[thisLine.nodes.length-1].used = 1;
-        -- end
         lines[#lines+1] = thisLine
-        linestart = point.position
+        linestart = point.position+1
       end
     end
     --self.state.nodes = nodes.slice(linestart+1,nodes.length);
@@ -260,6 +266,7 @@ SILE.typesetNaturally = function (frame, nodes)
   local newTypesetter = SU.deepCopy(SILE.defaultTypesetter);
   newTypesetter:init(frame);
   newTypesetter.state.nodes = nodes;
-  newTypesetter:leaveHmode();  
+  newTypesetter:leaveHmode(1);  
   newTypesetter:shipOut(0,1);  
+
 end;

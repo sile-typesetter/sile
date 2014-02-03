@@ -225,6 +225,15 @@ function lineBreak:recordFeasible(pi, breakType) -- 881
   end
 end
 
+function lineBreak:computeDiscBreakWidth() -- 866
+  local rep = self.nodes[self.cur_p].replacement
+  for _,n in pairs(rep) do self.breakWidth = self.breakWidth - n.width end
+  local s = self.nodes[self.cur_p].postbreak
+  for _,n in pairs(s) do self.breakWidth = self.breakWidth + n.width end
+  self.breakWidth = self.breakWidth + self.discWidth
+end
+
+
 function lineBreak:createNewActiveNodes(breakType) -- 862
   if self.no_break_yet then
     -- 863
@@ -305,6 +314,15 @@ function lineBreak:checkForLegalBreak(n) -- 892
     end
   elseif n:isDiscretionary() then
     -- 895  XXX
+    self.discWidth = 0
+    if not n.prebreak then 
+      tryBreak(self.params.hyphenPenalty, "hyphenated")
+    else
+      self.discWidth = n:prebreakWidth()
+      self.activeWidth = self.activeWidth + self.discWidth
+      self:tryBreak(self.params.hyphenPenalty, "hyphenated")
+      self.activeWidth = self.activeWidth - self.discWidth
+    end
   elseif n:isPenalty() then
     self:tryBreak(n.penalty, "unhyphenated")
   end
@@ -346,7 +364,8 @@ function lineBreak:doBreak (params)
   if not params.prevGraf then params.prevGraf = 0 end
   if not params.linePenalty then params.linePenalty = 10 end
   if not params.looseness then params.looseness = 0 end
-
+  if not params.hyphenPenalty then params.hyphenPenalty = 50 end
+  if not params.doubleHyphenDemerits then params.doubleHyphenDemerits = awful_bad end
   self.params = params
   self:init(params)
   if params.adjdemerits then self.adjdemerits = params.adjdemerits else self.adjdemerits = 10000 end
@@ -363,7 +382,9 @@ function lineBreak:doBreak (params)
   while 1 do
     SU.debug("break", "@" .. self.pass .. "pass")
     if self.threshold > inf_bad then self.threshold = inf_bad end
-    
+    if self.pass == "second" then 
+      self.nodes = SILE.hyphenate(self.nodes) 
+    end
     -- 890
     self.active.next = { type = "unhyphenated", fitness = "decent", next = self.active, breakNode = nil, lineNumber = params.prevGraf + 1, totalDemerits = 0}
 

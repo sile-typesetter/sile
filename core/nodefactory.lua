@@ -68,13 +68,26 @@ local _disc = SU.inherit(_hbox)
 _disc.type = "discretionary"
 _disc.prebreak = {}
 _disc.postbreak = {}
+_disc.replacement = {}
 _disc.used = 0
+_disc.pbw = nil
 getmetatable(_disc).__tostring = function (this) 
     return "D(" .. SU.concat(this.prebreak,"") .. "|" .. SU.concat(this.postbreak, "") .. ")";
 end
-function _disc:toText() return tostring(self) end
-function _disc:prebreakWidth() return end
-function _disc:postbreakWidth() return end
+function _disc:toText() return self.used==1 and "-" or "_" end
+function _disc:outputYourself(typesetter, line)
+  if self.used == 1 then
+    -- XXX
+    for i, n in ipairs(self.prebreak) do n:outputYourself(typesetter,line) end
+  end
+end
+function _disc:prebreakWidth()
+  -- if self.pbw then return self.pbw end
+  local l = 0
+  for _,n in pairs(self.prebreak) do l = l + n.width end
+  -- self.pbw = l
+  return l
+end
 
 -- Glue
 local _glue = SU.inherit(_box)
@@ -156,6 +169,7 @@ function nodefactory.newDisc(spec)   return SU.inherit(_disc,spec) end
 function nodefactory.newGlue(spec)   return SU.inherit(_glue,spec) end
 function nodefactory.newVglue(spec)  return SU.inherit(_vglue,spec) end
 function nodefactory.newPenalty(spec)  return SU.inherit(_penalty,spec) end
+function nodefactory.newDiscretionary(spec)  return SU.inherit(_disc,spec) end
 function nodefactory.newVbox(spec)  return SU.inherit(_vbox,spec) end
 
 return nodefactory
