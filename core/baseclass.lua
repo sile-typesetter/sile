@@ -102,7 +102,7 @@ SILE.baseClass = {
     SILE.documentState.thisPageTemplate = self.pageTemplate;
     return SILE.documentState.thisPageTemplate.firstContentFrame;
   end,
-  declareFrame = function (id, spec)
+  declareFrame = function (self, id, spec)
     local fW = function (val) return function() return SILE.parseComplexFrameDimension(val, "w"); end end
     local fH = function (val) return function() return SILE.parseComplexFrameDimension(val, "h"); end end
     self.pageTemplate.frames[id] = SILE.newFrame({
