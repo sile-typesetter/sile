@@ -53,7 +53,9 @@ local parser = std.optparse ("This is SILE "..SILE.version..[[
 _G.arg, _G.opts = parser:parse(_G.arg)
 parser:on ('--', parser.finished)
 SILE.debugFlags = {}
-for k,v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = 1 end
+if opts.debug then
+  for k,v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = 1 end
+end
 end
 
 function SILE.repl ()
