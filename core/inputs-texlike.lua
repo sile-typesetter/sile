@@ -1,55 +1,69 @@
 SILE.inputs.TeXlike = {}
-lpeg = require("lpeg")
-lpeg.locale(lpeg)
-local R= lpeg.R
-local P= lpeg.P
-local C= lpeg.C
-local Cb= lpeg.Cb
-local Cg= lpeg.Cg
-local Cc= lpeg.Cc
-local Ct= lpeg.Ct
-local Cmt = lpeg.Cmt
+local epnf = require( "epnf" )
 
-local V= lpeg.V
+texlike = epnf.define(function (_ENV)
+  local _ = WS^0
+  local sep = lpeg.S(",;") * _
+  local value = (1-lpeg.S(",;]"))^1
+  local pair = lpeg.Cg(ID * _ * "=" * _ * C(value)) * sep^-1
+  local list = lpeg.Cf(lpeg.Ct("") * pair^0, rawset)
+  local parameters = (P("[") * list * P("]")) ^-1 / function (a) return type(a)=="table" and a or {} end
+  local anything = C( (1-lpeg.S("\\{}%\r\n")) ^1) 
 
-local newline = P"\r"^-1 * "\n" / function (a) print("New"); end
-local incrementline = Cg( Cb"linenum" / function ( a ) print("NL");  return a + 1 end , "linenum" )
-local setup = Cg ( Cc ( 100) , "linenum" )
+  START "document";
+  document = V("stuff") * (-1 + E("Unexpected character at end of input"))
+  text = (anything + C(WS))^1 / function(...) return table.concat({...}, "") end
+  stuff = Cg(V"environment" + 
+    ((P("%") * anything) / function () return nil end) -- Don't bother telling me about comments
+    + V("text") + V"bracketed_stuff" + V"command")^0
+  bracketed_stuff = P"{" * V"stuff" * (P"}" + E("} expected"))
+  command =((P("\\")-P("\\begin")) * Cg(ID, "tag") * Cg(parameters,"attr") * V"bracketed_stuff"^0)-P("\\end{")
+  environment = 
+    P("\\begin") * Cg(parameters, "attr") * P("{") * Cg(ID, "tag") * P("}") 
+      * V("stuff") 
+    * (P("\\end{") * (
+      Cmt(ID * Cb("tag"), function(s,i,a,b) return a==b end) +
+      E("Environment mismatch")
+    ) * P("}") + E("Environment begun but never ended"))
+end)
 
-local identifier = (R("AZ") + R("az") + P("_") + R("09"))^1
-nl = newline * incrementline
-space = nl + lpeg.space
-local sep = lpeg.S(",;") * space^0
-local value = (1-lpeg.S(",;]"))^1
-local pair = lpeg.Cg(C(identifier) * space ^0 * "=" * space ^0 * C(value)) * sep^-1
-local list = lpeg.Cf(lpeg.Ct("") * pair^0, rawset)
-local parameters = (P("[") * list * P("]")) ^-1
+JSON = (loadfile "JSON.lua")()
 
-anything = C( (space^1 + (1-lpeg.S("\\{}")) )^1) * Cb("linenum") / function (a,b) return { text = a, line = b } end
-
-local check_env = function(text, pos, ...) 
-  print(inspect(...))
-  die()
+local function massage_ast(t)
+  if type(t) == "string" then return t end
+  if t.id == "document" then return massage_ast(t[1]) end
+  if t.id == "text" then return t[1] end
+  if t.id == "bracketed_stuff" then return massage_ast(t[1]) end
+  for k,v in ipairs(t) do
+    if v.id == "stuff" then
+      local val = massage_ast(v)
+      SU.splice(t, k,k, val)
+    else
+      t[k] = massage_ast(v)
+    end
+  end
+  return t
 end
-begin_environment = P("\\begin") * Ct(parameters) * P("{") * Cg(identifier, "environment") * Cb("environment") * P("}") / function (p,i) return { params = p, environment = i } end
-end_environment = P("\\end{") * Cg(identifier) * P("}") /function (id) return { endx = id } end
-command_with = P("\\") * Cg(identifier) * Ct(parameters) * P("{") * anything^0 * P("}")
 
-texlike = lpeg.P{
-  "document";
-  document = setup * V("stuff") * -1,
-  stuff = Cg(V"environment" + anything + V"bracketed_stuff" + V"command_with" + V"command_without")^0,
-  bracketed_stuff = P"{" * V"stuff" * P"}" / function (a) return a end,
-  command_with =((P("\\") * Cg(identifier) * Ct(parameters) * V"bracketed_stuff")-P("\\end{")) / function (i,p,n) return { command = i, parameters = p, nodes = n } end,
-  command_without = (( P("\\") * Cg(identifier) * Ct(parameters) )-P("\\end{")) / function (i,p) return { command = i, parameters = p } end,
-  environment = Cmt(begin_environment * V("stuff") * end_environment, check_env) / function(i,p) return { env = i, p = p } end
-}
+function SILE.inputs.TeXlike.process(fn)
+  local fh = io.open(fn)
+  local doc = fh:read("*all")
+  local t = epnf.parsestring(texlike, doc)
+  t = t[1][1]
+  -- a document always consists of one stuff
+  print(JSON:encode_pretty(t))
 
--- texlike = lpeg.P{
---   "stuff";
---   environment = P("\\BEGIN") * V("stuff") * P("\\END"),
---   stuff = (V("environment") + (1-lpeg.S("\\")))^1
--- }
+  t = massage_ast(t)  
+  print(JSON:encode_pretty(t))
 
-function SILE.inputs.TeXlike.process(file)
+  local root = SILE.documentState.documentClass == nil
+
+  if root then
+    if not(t.tag == "document") then error("Should begin with \\begin{document}") end
+    SILE.inputs.common.init(fn, t)
+  end
+  SILE.process(t)
+  if root then
+    SILE.documentState.documentClass:finish()
+  end  
 end
