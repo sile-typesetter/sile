@@ -67,7 +67,7 @@ function lineBreak:tryBreak(pi, breakType) -- 855
   self.prev_r = self.active
   self.old_l = 0
   self.r = nil
-  self.curActiveWidth = SU.deepCopy(self.activeWidth)
+  self.curActiveWidth = std.tree.clone(self.activeWidth)
   while true do
     while true do -- allows "break" to function as "continue"
       self.r = self.prev_r.next
@@ -174,7 +174,7 @@ function lineBreak:deactivateR() -- 886
     self.r = self.active.next
     if self.r.type == "delta" then
       self.activeWidth = self.activeWidth + self.r.width
-      self.curActiveWidth = SU.deepCopy(self.activeWidth)
+      self.curActiveWidth = std.tree.clone(self.activeWidth)
       self.active.next = self.r.next
     end
     SU.debug("break","  Deactivate, branch 1");
@@ -238,7 +238,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
   if self.no_break_yet then
     -- 863
     self.no_break_yet = false
-    self.breakWidth = SU.deepCopy(self.background)
+    self.breakWidth = std.tree.clone(self.background)
     local s = self.cur_p
     if breakType == "hyphenated" and self.nodes[self.cur_p] then self:computeDiscBreakWidth() end
     while self.nodes[s] and not self.nodes[s]:isBox() do
@@ -251,7 +251,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
   end
   -- 869 (Add a new delta node)
   if self.prev_r.type == "delta" then self.prev_r.width = self.prev_r.width - self.curActiveWidth + self.breakWidth
-  elseif self.prev_r == self.active then self.activeWidth = SU.deepCopy(self.breakWidth)
+  elseif self.prev_r == self.active then self.activeWidth = std.tree.clone(self.breakWidth)
   else
     local newDelta = { next = self.r, type = "delta", width = self.breakWidth - self.curActiveWidth}
     SU.debug("break", "Added new delta node = " .. tostring(newDelta.width))
@@ -391,7 +391,7 @@ function lineBreak:doBreak (params)
     if params.doLastLineFit then
       --1630
     end
-    self.activeWidth = SU.deepCopy(self.background)
+    self.activeWidth = std.tree.clone(self.background)
     self.passive = nil
 
     self.cur_p = 1

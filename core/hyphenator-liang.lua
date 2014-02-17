@@ -74,7 +74,7 @@ SILE.hyphenator.languages = {};
 _hyphenators = {};
 
 SILE.hyphenate = function (nodelist)
-  --local itList = SU.deepCopy(nodelist)
+  --local itList = std.tree.clone(nodelist)
   for i,n in ipairs(nodelist) do
     if (n:isNnode() and n.text) then
       if not _hyphenators[n.language] then

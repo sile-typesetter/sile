@@ -1,4 +1,4 @@
-plain = SU.deepCopy(SILE.baseClass);
+plain = std.tree.clone(SILE.baseClass);
 SILE.require("packages/counters");
 SILE.scratch.counters.folio = { value= 1, display= "arabic" };
 

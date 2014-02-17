@@ -8,12 +8,13 @@ SILE.Commands = {};
 SILE.documentState = {};
 SILE.scratch = {};
 
-
+std = require("std")
 SILE.length = require("core/length")
 require("core/frame")
 require("core/measurements")
 require("core/inputs-texlike")
 require("core/inputs-xml")
+require("core/inputs-common")
 require("core/pango-shaper")
 require("core/papersizes")
 require("core/typesetter")

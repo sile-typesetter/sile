@@ -273,7 +273,7 @@ SILE.defaultTypesetter = {
 SILE.typesetter = SILE.defaultTypesetter;
 
 SILE.typesetNaturally = function (frame, nodes)
-  local newTypesetter = SU.deepCopy(SILE.defaultTypesetter);
+  local newTypesetter = std.tree.clone(SILE.defaultTypesetter);
   newTypesetter:init(frame);
   newTypesetter.state.nodes = nodes;
   newTypesetter:leaveHmode(1);  

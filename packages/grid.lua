@@ -20,7 +20,7 @@ end
 
 SILE.registerCommand("grid", function(options, content)
   local t = SILE.typesetter;
-  SILE.typesetter = SU.deepCopy(SILE.typesetter);
+  SILE.typesetter = std.tree.clone(SILE.typesetter);
   SILE.typesetter.super = t;
   SILE.typesetter.state.gridSpacing = SILE.parseComplexFrameDimension(options.spacing,"h");
   SILE.typesetter.insertLeading = gridLeading;

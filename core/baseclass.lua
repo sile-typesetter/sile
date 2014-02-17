@@ -7,7 +7,7 @@ SILE.baseClass = {
     SILE.registerCommand("define", function (options, content)
       SILE.registerCommand(options["command"], function(o,c)
         local prevState = SILE.documentState;
-        SILE.documentState = SU.deepCopy( prevState )
+        SILE.documentState = std.tree.clone( prevState )
         table.insert(commandStack, c)
         SILE.process(content)
         SILE.documentState = prevState
@@ -57,7 +57,7 @@ SILE.baseClass = {
     SILE.registerCommand("font", function(options, content)
       local prevState = SILE.documentState;
       if (content[1]) then
-        SILE.documentState = SU.deepCopy( prevState )
+        SILE.documentState = std.tree.clone( prevState )
       end
       if (options.family)  then SILE.documentState.fontFamily = options.family end
       if (options.size)  then SILE.documentState.fontSize = options.size end

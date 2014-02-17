@@ -30,7 +30,7 @@ function framePrototype:height()
   end
 
 SILE.newFrame = function(spec)
-  local frame = SU.deepCopy(framePrototype)
+  local frame = std.tree.clone(framePrototype)
   local dims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
   for method, dimension in pairs(dims) do 
     if spec[method] then

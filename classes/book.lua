@@ -1,5 +1,5 @@
 local plain = SILE.require("classes/plain");
-local book = SU.deepCopy(plain);
+local book = std.tree.clone(plain);
 SILE.require("packages/counters");
 SILE.scratch.counters.folio = { value = 1, display = "arabic" };
 if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end

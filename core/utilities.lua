@@ -37,7 +37,7 @@ function utilities.concat(s,c)
 end
 
 function utilities.inherit (orig, spec) 
-	local new = utilities.deepCopy(orig)
+	local new = std.tree.clone(orig)
 	if spec then
 		for k,v in pairs(spec) do new[k] = v end
 	end
@@ -76,27 +76,4 @@ function utilities.sum(array)
   for i,v in ipairs(array) do t = t + v end
   return t
 end
-
--- We need to do this rather than use straight prototypical inheritance
--- because we also want to copy the content of metatables.
-
-function utilities.deepCopy(t, deep, seen)
-    seen = seen or {}
-    if t == nil then return nil end
-    if seen[t] then return seen[t] end
-    seen[t] = nt
-
-    local nt = {}
-    for k, v in pairs(t) do
-        if deep and type(v) == 'table' then
-            nt[k] = utilities.deepCopy(v, deep, seen)
-        else
-            nt[k] = v
-        end
-    end
-    setmetatable(nt, utilities.deepCopy(getmetatable(t), deep, seen))
-    return nt
-end
-
-
 return utilities
