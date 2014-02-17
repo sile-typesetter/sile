@@ -26,7 +26,10 @@ local function getPal(options)
     pal = pango.AttrList.new();
     if options.language then pal:insert(pango.Attribute.language_new(pango.Language.from_string(options.language))) end
     if options.font then pal:insert(pango.Attribute.family_new(options.font)) end
+    if options.weight then pal:insert(pango.Attribute.weight_new(tonumber(options.weight))) end
     if options.size then pal:insert(pango.Attribute.size_new(options.size * 1024)) end
+    if options.style then pal:insert(pango.Attribute.style_new(
+      options.style == "italic" and pango.Style.ITALIC or pango.Style.NORMAL)) end
     -- weight, style
   end
   if options.language then
@@ -39,9 +42,9 @@ local function measureSpace( pal )
   local spaceitem = itemize(" ",pal)[1]
   local g = (_shape(" ",spaceitem).glyphs)[1]
   local spacewidth = g.geometry.width / 1024;
-  --if SILE.documentState.documentClass.state.spaceskip then
-    --
-  --end
+  if SILE.documentState.documentClass.state.spaceskip then
+    return SILE.documentState.documentClass.state.spaceskip
+  end
   return SILE.length.new({ length = spacewidth * 1.2, shrink = spacewidth/3, stretch = spacewidth /2 }) -- XXX
 end
 
@@ -49,6 +52,9 @@ function SILE.shapers.pango.shape(text, options)
   if not options then options = {} end
   if not options.font then options.font = SILE.documentState.fontFamily end
   if not options.size then options.size = SILE.documentState.fontSize end
+  if not options.weight then options.weight = SILE.documentState.fontWeight end
+  if not options.style then options.style = SILE.documentState.fontStyle end
+
   local pal = getPal(options)
   local nodes = {}
   local gluewidth = measureSpace(pal)
