@@ -20,7 +20,12 @@ SILE.baseClass = {
     end)
 
     SILE.registerCommand("script", function(options, content)
-      if (options["src"]) then dofile(options["src"]..".lua") else loadstring(content) end
+      if (options["src"]) then 
+        dofile(options["src"]..".lua")
+      else 
+        p = loadstring(content[1])
+        p()
+      end
     end)
 
     SILE.registerCommand("include", function(options, content)
@@ -31,7 +36,7 @@ SILE.baseClass = {
       SILE.documentState.thisPageTemplate = { frames = {} };
       SILE.process(content);
       SILE.documentState.thisPageTemplate.firstContentFrame = SILE.getFrame(options["first-content-frame"]);
-      SILE.typesetter.initFrame(SILE.documentState.thisPageTemplate.firstContentFrame);
+      SILE.typesetter:initFrame(SILE.documentState.thisPageTemplate.firstContentFrame);
     end)
 
     SILE.registerCommand("frame", function (options, content)
@@ -46,7 +51,7 @@ SILE.baseClass = {
         width = options.width and function() return SILE.parseComplexFrameDimension(options.width, "w") end,
         height = options.height and function() return SILE.parseComplexFrameDimension(options.height, "h") end,
       };
-      SILE.documentState.thisPageTemplate.frames[id] = SILE.newFrame(spec);
+      SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newFrame(spec);
     end)
 
     SILE.registerCommand("font", function(options, content)
@@ -106,7 +111,7 @@ SILE.baseClass = {
     local fW = function (val) return function() return SILE.parseComplexFrameDimension(val, "w"); end end
     local fH = function (val) return function() return SILE.parseComplexFrameDimension(val, "h"); end end
     self.pageTemplate.frames[id] = SILE.newFrame({
-      id= id, next= spec.next,
+      next= spec.next,
       left= fW(spec.left),
       right= fW(spec.right),
       top= fH(spec.top),
