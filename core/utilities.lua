@@ -1,8 +1,7 @@
 local utilities = { }
 
 function utilities.debugging(category)
-  return false
-  --return category == "typesetter"
+  return SILE.debugFlags[category]
 end
 
 function utilities.gtoke(string, pattern)

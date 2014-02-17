@@ -30,6 +30,32 @@ SILE.require = function(d)
   return require(d)
 end
 
+SILE.parseArguments = function()
+local parser = std.optparse ("This is SILE "..SILE.version..[[
+
+ Usage: sile
+
+ Banner text.
+
+ Optional long description text to show when the --help
+ option is passed.
+
+ Several lines or paragraphs of long description are permitted.
+
+ Options:
+
+   -d, --debug=VALUE        debug SILE's operation
+   -I, --include=[FILE]     accept an optional argument
+       --version            display version information, then exit
+       --help               display this help, then exit
+]])
+
+_G.arg, _G.opts = parser:parse(_G.arg)
+parser:on ('--', parser.finished)
+SILE.debugFlags = {}
+for k,v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = 1 end
+end
+
 function SILE.repl ()
   local repl          = require 'repl.console'
   local has_linenoise = pcall(require, 'linenoise')
@@ -72,7 +98,7 @@ function SILE.readFile(fn)
   if sniff:find("^<") then
     SILE.inputs.XML.process(fn)
   else
-    SILE.inputs.TeXlike.process(file)
+    SILE.inputs.TeXlike.process(fn)
   end
 end
 return SILE
