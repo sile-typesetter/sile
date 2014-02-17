@@ -1,6 +1,7 @@
-<sile papersize="129mm x 198mm" >
+<sile papersize="129mm x 198mm" class="book">
 <include src="examples/macros.sil"/>
-<script src="packages/grid"/>
+<left-running-head><font style="italic">A Scandal in Bohemia</font></left-running-head>
+<right-running-head>Alexander Conan Doyle</right-running-head>
 <headline>A Scandal In Bohemia</headline>
 
 <skip height="12"/>
