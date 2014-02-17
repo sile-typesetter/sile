@@ -29,14 +29,20 @@ book.newPage = function()
 end;
 
 SILE.registerCommand("left-running-head", function(options, content)
-  SILE.process(content);
-  SILE.scratch.headers.left=SILE.typesetter.state.nodes;
-  SILE.typesetter.state.nodes = {};
+  local pi = SILE.documentState.documentClass.state.parindent
+  SILE.documentState.documentClass.state.parindent = { width= SILE.length.new({length = 0, stretch= 0, shrink= 0})}
+  SILE.process(content)
+  SILE.scratch.headers.left = SILE.typesetter.state.nodes;
+  SILE.typesetter.state.nodes = {}
+  SILE.documentState.documentClass.state.parindent = pi
 end);
 SILE.registerCommand("right-running-head", function(options, content)
+  local pi = SILE.documentState.documentClass.state.parindent
+  SILE.documentState.documentClass.state.parindent = { width= SILE.length.new({length = 0, stretch= 0, shrink= 0})}  
   SILE.process(content);
-  SILE.scratch.headers.right=SILE.typesetter.state.nodes;
-  SILE.typesetter.state.nodes = {};
+  SILE.scratch.headers.right = SILE.typesetter.state.nodes;
+  SILE.typesetter.state.nodes = {}
+  SILE.documentState.documentClass.state.parindent = pi  
 end);
 
 return book
