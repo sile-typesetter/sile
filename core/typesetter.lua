@@ -41,9 +41,11 @@ SILE.defaultTypesetter = {
   pushVglue = function (self, spec) return table.insert(self.state.outputQueue, SILE.nodefactory.newVglue(spec)); end,
   pushVpenalty = function (self, spec) return table.insert(self.state.outputQueue, SILE.nodefactory.newPenalty(spec)); end,
 
+  parSepPattern = "\n\n+",
+
   -- Actual typesetting functions
   typeset = function (self, text)
-    for t in SU.gtoke(text,"\n\n+") do
+    for t in SU.gtoke(text,self.parSepPattern) do
       if (t.separator) then self:leaveHmode();
       else self:setpar(t.string)
       end
@@ -51,7 +53,7 @@ SILE.defaultTypesetter = {
   end,
   setpar = function (self, t)
     t = string.gsub(t,"\n", " ");
-    t = string.gsub(t,"^%s+", "");
+    --t = string.gsub(t,"^%s+", "");
     if (#self.state.nodes == 0) then
       self:pushHbox({ width = SILE.length.new({length = 0}), value = {glyph = 0} });
       SILE.documentState.documentClass.newPar(self); -- XXX ?
@@ -72,7 +74,6 @@ SILE.defaultTypesetter = {
     end
 
     while (#nl >0 and nl[1]:isPenalty()) do table.remove(nl,1) end
-
     self:pushGlue({ width = SILE.length.new({ length = 0, stretch =  10000 })});
     self:pushPenalty({ flagged= 1, penalty= -inf_bad });
     -- Run the KP algorithm
@@ -206,6 +207,11 @@ SILE.defaultTypesetter = {
       line:outputYourself(self, line)
     end
   end,
+  addrskip = function (self, slice)
+    if SILE.documentState.documentClass.state.rskip then
+      table.insert(slice, SILE.documentState.documentClass.state.rskip)
+    end
+  end,
   breakpointsToLines = function(self, bp)
     local linestart = 0;
     local lines = {};
@@ -228,6 +234,8 @@ SILE.defaultTypesetter = {
           slice[#slice+1] = nodes[j]
         end
 
+        self:addrskip(slice)
+
         local naturalTotals = SILE.length.new({length =0 , stretch =0, shrink = 0})
         for i,node in ipairs(slice) do
           if (node:isBox() or (node:isPenalty() and node.penalty == -inf_bad)) then
@@ -235,7 +243,7 @@ SILE.defaultTypesetter = {
             if node:isBox() then
               naturalTotals = naturalTotals + node.width
             end
-          elseif skipping == 0 and not(node:isGlue() and i == #slice) then
+          elseif skipping == 0 then-- and not(node:isGlue() and i == #slice) then
             naturalTotals = naturalTotals + node.width
           end
         end
@@ -244,11 +252,13 @@ SILE.defaultTypesetter = {
          naturalTotals = naturalTotals + slice[#slice]:prebreakWidth()
         end
         local left = (point.width - naturalTotals.length)
+
         if left < 0 then
           left = left / naturalTotals.shrink
         else
           left = left / naturalTotals.stretch
         end
+        if left < -1 then left = -1 end
         local thisLine = { ratio = left, nodes = slice };
         lines[#lines+1] = thisLine
         linestart = point.position+1
