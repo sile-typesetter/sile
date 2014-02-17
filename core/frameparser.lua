@@ -47,7 +47,7 @@ local grammar = {
 	"additive",
 	additive =  (( V("multiplicative") * whitespace * P("+")  * whitespace * V("additive") ) / function (l,r) return l+r end)
 				+
-				(( V("multiplicative") * whitespace * P("-") * V("additive") * whitespace ) / function(l,r) return l-r end )+
+				(( V("multiplicative") * whitespace * P("-") * whitespace * V("additive") * whitespace ) / function(l,r) return l-r end )+
 				V("multiplicative")
 	,
 	primary = primary + V("bracketed"),
