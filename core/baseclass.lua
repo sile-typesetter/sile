@@ -1,7 +1,7 @@
 SILE.Commands = {}
 function SILE.registerCommand (name, f) SILE.Commands[name] = f end
 
-SILE.baseClass = {
+SILE.baseClass = std.object {
   registerCommands = (function()
     local commandStack = {};
     SILE.registerCommand("define", function (options, content)
@@ -144,7 +144,7 @@ SILE.baseClass = {
       elseif (SILE.paperSizes[size]) then
         SILE.documentState.paperSize = SILE.paperSizes[size];
       else
-        SU.error("Unknown paper size "+size);
+        error("Unknown paper size "..size);
       end
     end
   }

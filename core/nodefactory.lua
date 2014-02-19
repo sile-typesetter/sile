@@ -103,7 +103,6 @@ local _glue = _box {
   __tostring = function (this) return "G<" .. tostring(this.width) .. ">"; end,
   toText = function () return " " end,
   outputYourself = function (self,typesetter, line)
-    print("Outputting glue, line ratio is "..line.ratio)
     local scaledWidth = self.width.length
     if line.ratio < 0 and self.width.shrink > 0 then
       scaledWidth = scaledWidth + self.width.shrink * line.ratio
