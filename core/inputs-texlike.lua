@@ -5,7 +5,8 @@ texlike = epnf.define(function (_ENV)
   local _ = WS^0
   local sep = lpeg.S(",;") * _
   local value = (1-lpeg.S(",;]"))^1
-  local pair = lpeg.Cg(ID * _ * "=" * _ * C(value)) * sep^-1
+  local myID = C((ID+P("-"))^1) / function (t) return t end
+  local pair = lpeg.Cg(myID * _ * "=" * _ * C(value)) * sep^-1
   local list = lpeg.Cf(lpeg.Ct("") * pair^0, rawset)
   local parameters = (P("[") * list * P("]")) ^-1 / function (a) return type(a)=="table" and a or {} end
   local anything = C( (1-lpeg.S("\\{}%\r\n")) ^1) 
@@ -17,12 +18,12 @@ texlike = epnf.define(function (_ENV)
     ((P("%") * anything) / function () return nil end) -- Don't bother telling me about comments
     + V("text") + V"bracketed_stuff" + V"command")^0
   bracketed_stuff = P"{" * V"stuff" * (P"}" + E("} expected"))
-  command =((P("\\")-P("\\begin")) * Cg(ID, "tag") * Cg(parameters,"attr") * V"bracketed_stuff"^0)-P("\\end{")
+  command =((P("\\")-P("\\begin")) * Cg(myID, "tag") * Cg(parameters,"attr") * V"bracketed_stuff"^0)-P("\\end{")
   environment = 
-    P("\\begin") * Cg(parameters, "attr") * P("{") * Cg(ID, "tag") * P("}") 
+    P("\\begin") * Cg(parameters, "attr") * P("{") * Cg(myID, "tag") * P("}") 
       * V("stuff") 
     * (P("\\end{") * (
-      Cmt(ID * Cb("tag"), function(s,i,a,b) return a==b end) +
+      Cmt(myID * Cb("tag"), function(s,i,a,b) return a==b end) +
       E("Environment mismatch")
     ) * P("}") + E("Environment begun but never ended"))
 end)
@@ -49,12 +50,9 @@ function SILE.inputs.TeXlike.process(fn)
   local fh = io.open(fn)
   local doc = fh:read("*all")
   local t = epnf.parsestring(texlike, doc)
-  t = t[1][1]
   -- a document always consists of one stuff
-  print(JSON:encode_pretty(t))
-
+  t = t[1][1]
   t = massage_ast(t)  
-  print(JSON:encode_pretty(t))
 
   local root = SILE.documentState.documentClass == nil
 
