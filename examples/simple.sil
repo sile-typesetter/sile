@@ -1,8 +1,8 @@
-<sile papersize="140mm x 180mm"><include src="documentation/macros.sil"/><ragged-right>
-To Sherlock Holmes she is always the woman. 
-I have seldom heard him mention her
-under any other name. SILE comes with a number of packages which provide additional functionality, and it
-is expected that other packages will be created which may or may not ship with SILE
-in the future. Those packages which ship as part of SILE are documented here.
-</ragged-right>
-</sile>
+\begin[class=book,papersize=129mm x 198mm]{document}
+\include[src=documentation/macros.sil]
+\begin{ragged-right}
+I have seldom heard him mention her under any other name.
+
+SILE comes with a number of packages which provide additional functionality.
+\end{ragged-right}
+\end{document}
