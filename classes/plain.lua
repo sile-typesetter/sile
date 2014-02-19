@@ -1,6 +1,9 @@
-plain = std.tree.clone(SILE.baseClass);
 SILE.require("packages/counters");
 SILE.scratch.counters.folio = { value= 1, display= "arabic" };
+
+plain = SILE.baseClass {
+  id = "plain"
+}
 
 plain.pageTemplate.frames = {
   a = SILE.newFrame({ left = "5%", right = "95%", top = "5%", bottom = "90%", id = "a" }),
@@ -26,7 +29,7 @@ plain.newPage = function()
     SILE.typesetNaturally(f, nodes)
   end
   SILE.scratch.counters.folio.value = SILE.scratch.counters.folio.value + 1
-  return SILE.baseClass:newPage();
+  return SILE.baseClass.newPage(plain);
 end
 
 return plain;
