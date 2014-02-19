@@ -2,7 +2,7 @@
 local awful_bad = 1073741823
 local inf_bad = 10000
 
-SILE.defaultTypesetter = {
+SILE.defaultTypesetter = std.object {
   -- Setup functions
   init = function(self, frame)
     self:initState();
@@ -273,7 +273,7 @@ SILE.defaultTypesetter = {
 SILE.typesetter = SILE.defaultTypesetter;
 
 SILE.typesetNaturally = function (frame, nodes)
-  local newTypesetter = std.tree.clone(SILE.defaultTypesetter);
+  local newTypesetter = SILE.defaultTypesetter {};
   newTypesetter:init(frame);
   newTypesetter.state.nodes = nodes;
   newTypesetter:leaveHmode(1);  
