@@ -47,13 +47,13 @@ function lineBreak:setupLineLengths(params) -- 874
   if not self.parShape then
     if not params.hangIndent then
       self.lastSpecialLine = 0
-      self.secondWidth = params.hsize or error("No hsize")
+      self.secondWidth = params.hsize or SU.error("No hsize")
     else
       self.node875() -- XXX
     end
   else
     self.lastSpecialLine = #params.parShape
-    self.secondWidth = error("Oops")
+    self.secondWidth = SU.error("Oops")
   end
   if params.looseness == 0 then self.easy_line = self.lastSpecialLine else self.easy_line = awful_bad end
   -- self.easy_line = awful_bad

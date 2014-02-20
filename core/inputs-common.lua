@@ -20,7 +20,7 @@ SILE.process = function(t)
     elseif SILE.Commands[v.tag] then
       SILE.Commands[v.tag](v.attr,v)
     else
-      error("Unknown command "..(v.tag or v.id))
+      SU.error("Unknown command "..(v.tag or v.id))
     end
   end
 end

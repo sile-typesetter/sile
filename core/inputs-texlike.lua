@@ -56,7 +56,7 @@ function SILE.inputs.TeXlike.process(fn)
   local root = SILE.documentState.documentClass == nil
 
   if root then
-    if not(t.tag == "document") then error("Should begin with \\begin{document}") end
+    if not(t.tag == "document") then SU.error("Should begin with \\begin{document}") end
     SILE.inputs.common.init(fn, t)
   end
   SILE.process(t)

@@ -24,7 +24,7 @@ SILE.baseClass = std.object {
         require(options["src"])
       else 
         p,e = loadstring(content[1])
-        if not p then error(e) end
+        if not p then SU.error(e) end
         p()
       end
     end)
@@ -146,7 +146,7 @@ SILE.baseClass = std.object {
       elseif (SILE.paperSizes[size]) then
         SILE.documentState.paperSize = SILE.paperSizes[size];
       else
-        error("Unknown paper size "..size);
+        SU.error("Unknown paper size "..size);
       end
     end
   }

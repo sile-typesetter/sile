@@ -1,5 +1,10 @@
 local utilities = { }
 
+function utilities.error(message)
+  print("\n! "..message)
+  os.exit(1)
+end
+
 function utilities.debugging(category)
   return SILE.debugFlags[category]
 end

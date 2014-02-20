@@ -6,7 +6,7 @@ SILE.inputs.XML = {
     local root = SILE.documentState.documentClass == nil
     if root then
       if not(t.tag == "sile") then
-        error("This isn't a SILE document!")
+        SU.error("This isn't a SILE document!")
       end
       SILE.inputs.common.init(fn, t)
     end

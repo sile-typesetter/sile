@@ -11,7 +11,7 @@ _box = std.object {
   init = function(self) return self end
 }
 
-function _box:outputYourself () error(self.type.." with no output routine") end
+function _box:outputYourself () SU.error(self.type.." with no output routine") end
 function _box:toText ()  return self.type end
 function _box:isBox ()   return self.type=="hbox" or self.type == "nnode" end
 function _box:isNnode () return self.type=="nnode" end

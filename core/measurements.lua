@@ -16,7 +16,7 @@ SILE.toPoints = function(num, unit, dimension)
       num = tonumber(num)
     else return tonumber(num) end
   end
-  if (not toPoints[unit]) then error( "Unknown unit "..unit ) end
+  if (not toPoints[unit]) then SU.error( "Unknown unit "..unit ) end
   num =  tonumber(string.match(num, "(-?[%d%.]+)"))
   return toPoints[unit](num, dimension);
 end
