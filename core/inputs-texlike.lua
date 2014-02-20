@@ -28,8 +28,6 @@ texlike = epnf.define(function (_ENV)
     ) * P("}") + E("Environment begun but never ended"))
 end)
 
-JSON = (loadfile "JSON.lua")()
-
 local function massage_ast(t)
   if type(t) == "string" then return t end
   if t.id == "document" then return massage_ast(t[1]) end
@@ -52,6 +50,7 @@ function SILE.inputs.TeXlike.process(fn)
   local t = epnf.parsestring(texlike, doc)
   -- a document always consists of one stuff
   t = t[1][1]
+  if not t then return end
   t = massage_ast(t)  
 
   local root = SILE.documentState.documentClass == nil
