@@ -175,7 +175,7 @@ SILE.defaultTypesetter = std.object {
     if not independent then
         local cwidth = self.frame:width();
         if (self.frame.next) then
-          self:initFrame(SILE:getFrame(self.frame.next));
+          self:initFrame(SILE.getFrame(self.frame.next));
         else
           self:initFrame(SILE.documentState.documentClass:newPage()); -- XXX Hack
         end
