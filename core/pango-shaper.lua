@@ -30,11 +30,14 @@ local function getPal(options)
     if options.size then pal:insert(pango.Attribute.size_new(options.size * 1024 * 0.75)) end -- I don't know why 0.75
     if options.style then pal:insert(pango.Attribute.style_new(
       options.style == "italic" and pango.Style.ITALIC or pango.Style.NORMAL)) end
-    -- weight, style
+    if options.variant then pal:insert(pango.Attribute.variant_new(
+      options.variant == "smallcaps" and pango.Variant.SMALL_CAPS or pango.Variant.NORMAL)) end
+    
   end
   if options.language then
     pango_context:set_language(pango.Language.from_string(options.language))
   end
+  palcache[p] = pal
   return pal
 end  
 
@@ -54,6 +57,7 @@ function SILE.shapers.pango.shape(text, options)
   if not options.size then options.size = SILE.documentState.fontSize end
   if not options.weight then options.weight = SILE.documentState.fontWeight end
   if not options.style then options.style = SILE.documentState.fontStyle end
+  if not options.variant then options.variant = SILE.documentState.fontVariant end
 
   local pal = getPal(options)
   local nodes = {}
