@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+package.path = (os.getenv("SILE_PATH") and os.getenv("SILE_PATH").."/?.lua" or "") .. ';/usr/local/sile/?.lua;' .. package.path 
 SILE = require("core/sile")
 io.stdout:setvbuf 'no'
 SILE.parseArguments()
