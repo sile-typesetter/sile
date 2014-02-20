@@ -1,4 +1,4 @@
-local framePrototype = {
+local framePrototype = std.object {
   next= nil,
   id= nil,
   previous= nil,
@@ -30,7 +30,7 @@ function framePrototype:height()
   end
 
 SILE.newFrame = function(spec)
-  local frame = std.tree.clone(framePrototype)
+  local frame = framePrototype {}
   local dims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
   for method, dimension in pairs(dims) do 
     if spec[method] then
@@ -45,6 +45,8 @@ SILE.newFrame = function(spec)
     end
     frame["_"..method] = spec[method]
   end end
+  frame.id  = spec.id
+  frame.next  = spec.next
   return frame
 end
 
