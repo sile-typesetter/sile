@@ -19,9 +19,15 @@ function _shape(s, item)
   return pgs
 end
 
+local palcache = {}
+
 local function getPal(options)
   if options.pal then
     pal = options.pal
+    return pal
+  end
+  local p = std.string.pickle(options)
+  if palcache[p] then return palcache[p]
   else
     pal = pango.AttrList.new();
     if options.language then pal:insert(pango.Attribute.language_new(pango.Language.from_string(options.language))) end
