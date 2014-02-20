@@ -199,7 +199,7 @@ SILE.defaultTypesetter = std.object {
         end
       end
     end
-    self:leaveHmode();
+    -- self:leaveHmode();
   end,
   outputLinesToPage = function (self, lines)
    SU.debug("typesetter", "OUTPUTTING");
