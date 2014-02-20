@@ -27,7 +27,7 @@ local function getPal(options)
     if options.language then pal:insert(pango.Attribute.language_new(pango.Language.from_string(options.language))) end
     if options.font then pal:insert(pango.Attribute.family_new(options.font)) end
     if options.weight then pal:insert(pango.Attribute.weight_new(tonumber(options.weight))) end
-    if options.size then pal:insert(pango.Attribute.size_new(options.size * 1024)) end
+    if options.size then pal:insert(pango.Attribute.size_new(options.size * 1024 * 0.75)) end -- I don't know why 0.75
     if options.style then pal:insert(pango.Attribute.style_new(
       options.style == "italic" and pango.Style.ITALIC or pango.Style.NORMAL)) end
     -- weight, style

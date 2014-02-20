@@ -89,15 +89,15 @@ SILE.defaultTypesetter = std.object {
     -- Push output lines into boxes and ship them to the page builder
     for index, l in pairs(lines) do
       local v = SILE.nodefactory.newVbox({ nodes = l.nodes, ratio = l.ratio });
-      self:insertLeading(v);
       local pageBreakPenalty = 0
       if (#lines > 1 and index == 1) then
         pageBreakPenalty = SILE.documentState.documentClass.settings.widowPenalty
       elseif (#lines > 1 and index == #lines) then
         pageBreakPenalty = SILE.documentState.documentClass.settings.clubPenalty
       end
-      self:pushVpenalty({ penalty = pageBreakPenalty})
+      self:insertLeading(v);
       self:pushVbox(v);
+      self:pushVpenalty({ penalty = pageBreakPenalty})
 
     end
     self:pageBuilder(independent);
