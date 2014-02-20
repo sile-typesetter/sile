@@ -64,6 +64,7 @@ function SILE.shapers.pango.shape(text, options)
   if not options.weight then options.weight = SILE.documentState.fontWeight end
   if not options.style then options.style = SILE.documentState.fontStyle end
   if not options.variant then options.variant = SILE.documentState.fontVariant end
+  if not options.language then options.language = SILE.documentState.language end
 
   local pal = getPal(options)
   local nodes = {}
@@ -97,7 +98,8 @@ function SILE.shapers.pango.shape(text, options)
         nodes = nnode,
         text = token.string,
         pal = pal,
-        options = options
+        options = options,
+        language = options.language
       }))
     end
   end
