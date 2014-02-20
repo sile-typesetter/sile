@@ -82,7 +82,7 @@ SILE.defaultTypesetter = std.object {
       --SILE.hyphenate(self);
       local breaks = SILE.linebreak:doBreak({ nodes = nl, hsize = self.frame:width(), pretolerance = 400 });
       if (#breaks == 0) then
-        SILE.error("Couldn't break :(")
+        SILE.SU.error("Couldn't break :(")
       end
     --}
     local lines = self:breakpointsToLines(breaks);
@@ -131,11 +131,12 @@ SILE.defaultTypesetter = std.object {
       end
       local left = (target - self.state.frameTotals.height).length;
      SU.debug("typesetter", "I have " .. tostring(left) .. "pts left");
-      if vbox:isPenalty() then
+     if (left < -100) then print("\nCatastrophic page breaking failure!"); end 
+      if left < -100 or vbox:isPenalty() then
         local badness = left > 0 and left * left * left or inf_bad;
         local c = badness < inf_bad and vbox.penalty + badness or inf_bad;
        SU.debug("typesetter", "Badness: "..c);
-        if (c > self.state.lastBadness) then
+        if (left < -100 or c > self.state.lastBadness) then
          SU.debug("typesetter", "self is worse");
           self.state.lastBadness = awful_bad;
           self:shipOut(target, independent);
