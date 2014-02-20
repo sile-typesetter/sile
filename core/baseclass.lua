@@ -21,9 +21,10 @@ SILE.baseClass = std.object {
 
     SILE.registerCommand("script", function(options, content)
       if (options["src"]) then 
-        dofile(options["src"]..".lua")
+        require(options["src"])
       else 
-        p = loadstring(content[1])
+        p,e = loadstring(content[1])
+        if not p then error(e) end
         p()
       end
     end)
