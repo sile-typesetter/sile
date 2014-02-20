@@ -95,7 +95,7 @@ function SILE.readFile(fn)
   end
   io.write("<"..fn..">")
   -- Sniff first few bytes
-  local sniff = file:read("*l")
+  local sniff = file:read("*l") or ""
   file:seek("set", 0)
   if sniff:find("^<") then
     SILE.inputs.XML.process(fn)
