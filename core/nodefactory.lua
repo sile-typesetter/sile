@@ -149,7 +149,7 @@ local _vbox = _box {
   type = "vbox",
   nodes = {},
   __tostring = function (this) 
-      return "VB<" .. tostring(this.height) .. "|" .. this:toText() .. ")";
+      return "VB<" .. tostring(this.height) .. "|" .. this:toText() .. "v"..tostring(this.depth)..")";
   end,
   init = function (self)
     d = SU.map(function (n) return tonumber(n.depth) or 0 end, self.nodes)
