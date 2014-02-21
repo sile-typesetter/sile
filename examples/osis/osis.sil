@@ -31,19 +31,20 @@ SILE.registerCommand("verse", function(options, content)
 end)
 
 SILE.registerCommand("div", function(options, content)
-  SILE.typesetter:leaveHmode();
-  SILE.typesetter:shipOut(SILE.length.new({ length = SILE.typesetter.frame:height() }))
   if (options.type == "book") then
       SILE.documentState.thisPageTemplate = { frames = {
-  t = SILE.newFrame({left= "5%", right= "95%", top="5%", bottom="13%", id= "t", next= "l" }),
-  l = SILE.newFrame({left= "5%", right= "47.5%", top="17%", bottom="90%", id= "l", next= "r" }),
-  r = SILE.newFrame({left= "52.5%", right= "95%", top="17%", bottom="90%", id= "r" }),
+  t = SILE.newFrame({left= "5%", right= "95%", top="5%", bottom="15%", id= "t", next= "l" }),
+  l = SILE.newFrame({left= "5%", right= "47.5%", top="20%", bottom="90%", id= "l", next= "r" }),
+  r = SILE.newFrame({left= "52.5%", right= "95%", top="20%", bottom="90%", id= "r" }),
   folio = SILE.newFrame({left = "5%", right = "95%", top = "92%", bottom = "97%", id = "folio"})      
       } };
       SILE.documentState.thisPageTemplate.firstContentFrame = SILE.documentState.thisPageTemplate.frames.t
       SILE.typesetter.frame = SILE.documentState.thisPageTemplate.frames.t
   end
   SILE.process(content)
+  SILE.typesetter:pushVpenalty({penalty = -10000 })
+  SILE.typesetter:leaveHmode();
+  SILE.typesetter:shipOut(SILE.length.new({ length = SILE.typesetter.frame:height() }))
 end)
 </script>
 <define command="osisText"><process/></define>
