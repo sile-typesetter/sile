@@ -84,7 +84,7 @@ SILE.baseClass = std.object {
 
     SILE.registerCommand("skip", function(options, content)
       SILE.typesetter:leaveHmode();
-      SILE.typesetter:pushVglue({ height = SILE.length.new({ length = tonumber(options.height), stretch = tonumber(options.stretch) or 0, shrink = tonumber(options.shrink) or 0 }) })
+      SILE.typesetter:pushVglue({ height = SILE.length.new({ length = SILE.parseComplexFrameDimension(options.height, "h"), stretch = SILE.parseComplexFrameDimension(options.stretch or "0", "h") or 0, shrink = tonumber(options.shrink) or 0 }) })
     end)
   end),
 
