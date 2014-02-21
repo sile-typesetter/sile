@@ -123,20 +123,20 @@ SILE.defaultTypesetter = std.object {
     local vbox;
     local function luaSucks (a) vbox = a return a end
     while #self.state.outputQueue > 0 and luaSucks(table.remove(self.state.outputQueue,1)) do 
-     SU.debug("typesetter", "Dealing with VBox " .. vbox)
+      SU.debug("typesetter", "Dealing with VBox " .. vbox)
       if (vbox:isVbox()) then
         self.state.frameTotals.height = self.state.frameTotals.height + vbox.height + vbox.depth;
       elseif vbox:isVglue() then
         self.state.frameTotals.height = self.state.frameTotals.height + vbox.height.length;
       end
       local left = (target - self.state.frameTotals.height).length;
-     SU.debug("typesetter", "I have " .. tostring(left) .. "pts left");
-     if (left < -100) then print("\nCatastrophic page breaking failure!"); end 
-      if left < -100 or vbox:isPenalty() then
+      SU.debug("typesetter", "I have " .. tostring(left) .. "pts left");
+      -- if (left < 0) then print("\nCatastrophic page breaking failure!"); end 
+      if left < 0 or vbox:isPenalty() then
         local badness = left > 0 and left * left * left or inf_bad;
         local c = badness < inf_bad and vbox.penalty + badness or inf_bad;
        SU.debug("typesetter", "Badness: "..c);
-        if (left < -100 or c > self.state.lastBadness) then
+        if (left < 0 or c > self.state.lastBadness) then
          SU.debug("typesetter", "self is worse");
           self.state.lastBadness = awful_bad;
           self:shipOut(target, independent);
@@ -182,7 +182,7 @@ SILE.defaultTypesetter = std.object {
         end
         -- Always push back and recalculate. The frame may have a different shape, or
         -- we may be doing clever things like grid typesetting. CPU time is cheap.
-        self:pushBack();
+        -- self:pushBack();
     end
   end,
   pushBack = function (self)
@@ -220,21 +220,23 @@ SILE.defaultTypesetter = std.object {
 
     for i,point in pairs(bp) do
       if not(point.position == 0) then
-        for j = linestart, #nodes do
-          -- XXX TeX would toss initial line glue. We don't, because we'll often put it
-          -- back again. Instead we ignore it when we call the output routine. This may not be correct.
 
-          --if (nodes[j].isBox() || (nodes[j].isPenalty && nodes[j].penalty == -Infinity)) {
-            linestart = j
-          --}
-          break
-        end
+        -- Toss initial glue? XXX
+        --while(nodes[linestart] and not nodes[linestart]:isBox()) do
+        --  linestart = linestart + 1
+        --end
 
         slice = {}
+        local seenHbox = 0
+        local toss = 1
         for j = linestart, point.position do
           slice[#slice+1] = nodes[j]
+          if nodes[j] then
+            toss = 0
+            if nodes[j]:isBox() then seenHbox = 1 end
+          end
         end
-
+        if seenHbox == 0 then break end
         self:addrskip(slice)
 
         local naturalTotals = SILE.length.new({length =0 , stretch =0, shrink = 0})
