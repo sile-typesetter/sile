@@ -22,10 +22,12 @@ SILE.outputters.cairo = {
   moveTo = function (x,y)
     cr:move_to(x,y)
   end,
-  debugFrame = function (f)
-  	cr:rectangle(f.left(), f.top(), f.width(), f.height());
-  	cr:moveTo(f.left(), f.top());
-  	cr:showText(f.id);
+  debugFrame = function (self,f)
+    cr:set_line_width(0.5);
+  	cr:rectangle(f:left(), f:top(), f:width(), f:height());
+    cr:stroke();
+  	cr:move_to(f:left(), f:top());
+  	cr:show_text(f.id);
   end,
   debugHbox = function(typesetter, hbox, scaledWidth)
     cr:setSourceRGB(0.9,0.9,0.9);
