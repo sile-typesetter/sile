@@ -6,11 +6,11 @@ SILE.baseClass = std.object {
     local commandStack = {};
     SILE.registerCommand("define", function (options, content)
       SILE.registerCommand(options["command"], function(o,c)
-        local prevState = SILE.documentState;
-        SILE.documentState = std.tree.clone( prevState )
+        --local prevState = SILE.documentState;
+        --SILE.documentState = std.tree.clone( prevState )
         table.insert(commandStack, c)
         SILE.process(content)
-        SILE.documentState = prevState
+        --SILE.documentState = prevState
       end)
     end)
 
