@@ -5,10 +5,10 @@ SU = SILE.utilities
 SILE.inputs = {}
 SILE.Commands = {};
 
-SILE.documentState = {};
-SILE.scratch = {};
-
 std = require("std")
+
+SILE.documentState = std.object {};
+SILE.scratch = {};
 SILE.length = require("core/length")
 require("core/frame")
 require("core/measurements")
