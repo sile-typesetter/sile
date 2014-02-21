@@ -135,7 +135,7 @@ SILE.baseClass = std.object {
     SILE.outputter:finish()
   end,
   newPar = function(typesetter)
-    --typesetter:pushVglue(SILE.documentState.documentClass.state.lineSkip);
+    typesetter:pushVglue(SILE.documentState.documentClass.state.lineSkip);
     typesetter:pushGlue( SILE.documentState.documentClass.state.parindent );
   end,
   options= { 
