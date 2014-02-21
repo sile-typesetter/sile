@@ -1,0 +1,69 @@
+<sile>
+<font family="Cardo" size="9" language="el"/>
+<script src="packages/grid"/>
+<grid spacing="15pt"/>
+<script>
+-- Two column layout. It might be cleaner to use a two-column class but this is fine.
+SILE.documentState.documentClass.pageTemplate.frames = {
+  a = SILE.newFrame({left= "5%", right= "47.5%", top="5%", bottom="90%", id= "a", next= "b" }),
+  b = SILE.newFrame({left= "52.5%", right= "95%", top="5%", bottom="90%", id= "b" }),
+  folio = SILE.newFrame({left = "5%", right = "95%", top = "92%", bottom = "97%", id = "folio"})
+};
+SILE.documentState.documentClass.pageTemplate.firstContentFrame = SILE.documentState.documentClass.pageTemplate.frames["a"];
+
+SILE.typesetter.parSepPattern = "\n\n\n\n\n+"
+if not SILE.scratch then SILE.scratch = {} end
+
+SILE.registerCommand("verse", function(options, content)
+  if options.eID  then return end
+  local id = options.osisID
+  c,v = string.match(id, "(%d+).(%d+)$")
+  if not (c == SILE.scratch.chapter) then
+    io.write(" ("..c..") ")
+    SILE.typesetter:leaveHmode()
+    SILE.Commands["font"]({ weight = 700, size = 15}, { "Chapter ".. c })
+    SILE.typesetter:leaveHmode()
+    SILE.scratch.chapter = c
+    SILE.typesetter:pushVpenalty({penalty = 10000 })
+  end
+  SILE.Commands["font"]({ weight = 700, size = 7}, { v.." " })
+  SILE.process(content)
+end)
+
+SILE.registerCommand("div", function(options, content)
+  SILE.typesetter:leaveHmode();
+  SILE.typesetter:shipOut(SILE.length.new({ length = SILE.typesetter.frame:height() }))
+  if (options.type == "book") then
+      SILE.documentState.thisPageTemplate = { frames = {
+  t = SILE.newFrame({left= "5%", right= "95%", top="5%", bottom="13%", id= "t", next= "l" }),
+  l = SILE.newFrame({left= "5%", right= "47.5%", top="17%", bottom="90%", id= "l", next= "r" }),
+  r = SILE.newFrame({left= "52.5%", right= "95%", top="17%", bottom="90%", id= "r" }),
+  folio = SILE.newFrame({left = "5%", right = "95%", top = "92%", bottom = "97%", id = "folio"})      
+      } };
+      SILE.documentState.thisPageTemplate.firstContentFrame = SILE.documentState.thisPageTemplate.frames.t
+      SILE.typesetter.frame = SILE.documentState.thisPageTemplate.frames.t
+  end
+  SILE.process(content)
+end)
+</script>
+<define command="osisText"><process/></define>
+<define command="header"></define>
+<define command="titlePage"></define>
+<define command="center"><glue stretch="1000"/><process/><glue stretch="1000"/></define>
+<define command="title">
+<skip height="1cm"/>
+<font weight="700" size="20"><process/></font>
+<skip height="0.5cm"/>
+</define>
+<define command="p"><process/><script>SILE.typesetter:leaveHmode()</script></define>
+<define command="chapter"><process/></define>
+<define command="w"><process/></define>
+<define command="a"><process/></define>
+<define command="transChange">
+  <font style="italic"><process/></font>
+</define>
+<define command="milestone"><script>SILE.typesetter:leaveHmode()</script></define>
+<define command="note"> <font style="italic">(<process/>)</font> </define>
+<define command="seg"><process/></define>
+<define command="divineName"><font variant="smallcaps"><process/></font></define>
+</sile>
