@@ -89,7 +89,7 @@ SILE.baseClass = std.object {
   end),
 
   settings = { widowPenalty= 5000, clubPenalty= 5000 },
-  pageTemplate = { frames= {}, firstContentFrame= nil },
+  pageTemplate = std.object { frames= {}, firstContentFrame= nil },
   state = {
     parindent = SILE.nodefactory.newGlue({ width= SILE.length.new({length = 11, stretch= 0, shrink= 0})}),
     baselineSkip = SILE.nodefactory.newVglue({ height= SILE.length.new({length = 13, stretch= 2, shrink= 0})}),
@@ -106,7 +106,7 @@ SILE.baseClass = std.object {
     return self:initialFrame();
   end,
   initialFrame= function(self)
-    SILE.documentState.thisPageTemplate = self.pageTemplate;
+    SILE.documentState.thisPageTemplate = self.pageTemplate {};
     return SILE.documentState.thisPageTemplate.firstContentFrame;
   end,
   declareFrame = function (self, id, spec)
