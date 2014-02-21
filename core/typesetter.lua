@@ -1,7 +1,8 @@
 -- This is the default typesetter. You are, of course, welcome to create your own.
 local awful_bad = 1073741823
 local inf_bad = 10000
-
+local eject_penalty = -inf_bad
+local deplorable = 100000
 SILE.defaultTypesetter = std.object {
   -- Setup functions
   init = function(self, frame)
@@ -131,17 +132,26 @@ SILE.defaultTypesetter = std.object {
       end
       local left = (target - self.state.frameTotals.height).length;
       SU.debug("typesetter", "I have " .. tostring(left) .. "pts left");
-      -- if (left < 0) then print("\nCatastrophic page breaking failure!"); end 
-      if left < 0 or vbox:isPenalty() then
-        local badness = left > 0 and left * left * left or inf_bad;
-        local c = badness < inf_bad and vbox.penalty + badness or inf_bad;
+      -- if (left < -20) then SU.error("\nCatastrophic page breaking failure!"); end 
+      if vbox:isPenalty() and vbox.penalty < inf_bad then
+        local badness = left > 0 and left * left * left or awful_bad;
+        local c
+        if badness < awful_bad then 
+          if vbox.penalty <= eject_penalty then c = vbox.penalty
+          elseif badness < inf_bad then c = badness + vbox.penalty -- plus insert
+          else c = deplorable
+          end
+        else c = badness end
+
        SU.debug("typesetter", "Badness: "..c);
-        if (left < 0 or c > self.state.lastBadness) then
-         SU.debug("typesetter", "self is worse");
-          self.state.lastBadness = awful_bad;
-          self:shipOut(target, independent);
-        else
+        if (c < self.state.lastBadness) then
           self.state.lastBadness = c;
+        end
+        if c == awful_bad or vbox.penalty <= eject_penalty then
+         SU.debug("typesetter", "outputting");
+          self.state.lastBadness = awful_bad
+          self:shipOut(target, independent);
+          return
         end
       end
       table.insert(self.state.frameLines,vbox);
@@ -151,7 +161,8 @@ SILE.defaultTypesetter = std.object {
   shipOut = function (self, target, independent)
     SU.debug("typesetter", "Height total is " .. tostring(self.state.frameTotals.height));
     SU.debug("typesetter", "Target is " .. tostring(target));
-    local adjustment = (target - self.state.frameTotals.height).length;
+    local adjustment = (target - self.state.frameTotals.height)
+    if type(adjustment) == "table" then adjustment = adjustment.length end
     local glues = {};
     local gTotal = SILE.length.new()
     for i,b in pairs(self.state.frameLines) do
