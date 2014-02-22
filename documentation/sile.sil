@@ -3,6 +3,7 @@
 \script[src=packages/verbatim]
 \include[src=documentation/macros.sil]
 \font[size=12]
+
 \headline{Simon’s Improved Layout Engine}
 
 SILE is a new text layout engine. It takes the best ideas from TeX and friends
@@ -11,12 +12,15 @@ the ground up using modern technologies. SILE’s focus is on extensibility and
 clean design.
 
 \section{Installing}
+
 SILE requires working installations of Lua, Pango and Cairo. Once you have
 these in place through your OS’s package manager, you then need to install SILE’s
 prerequisite modules:
+
 \begin{verbatim}
      > luarocks install stdlib luaepnf luaexpat lgi lpeg ...
 \end{verbatim}
+
 Until SILE has its own working installer, you should manually copy the
 \code{sile} binary to \code{/usr/local/bin/}, and copy the \code{class},
 \code{core}, \code{languages} and \code{packages} directories to
@@ -24,6 +28,7 @@ Until SILE has its own working installer, you should manually copy the
 variable to the directory where you downloaded SILE.)
 
 \section{SILE Concepts}
+
 If you are familiar with TeX, most of SILE’s concepts will be familar to you.
 There are a couple of new ideas:
 
@@ -39,6 +44,7 @@ detail later, but the basic concept should be familiar to anyone who has used
 graphical page layout tools such as InDesign or PageMaker.
 
 \section{A Basic SILE document}
+
 SILE documents are, by convention, either XML files or TeX-like files.
 
 \begin{note}
@@ -51,6 +57,7 @@ End-users may wish to use the TeX-like front-end, while those generating files f
 typesetting from existing data may find it easier to emit an XML file.
 
 Here is the most basic example of a SILE document in XML style:
+
 \begin{verbatim}
      <sile papersize="a4">
           Hello world.
@@ -58,6 +65,7 @@ Here is the most basic example of a SILE document in XML style:
 \end{verbatim}
 
 And here it is in TeX-like style:
+
 \begin{verbatim}
      \\begin[papersize=a4]\{document\}
           Hello world.
@@ -77,10 +85,14 @@ The TeX-like format is sufficiently TeX-like to reassure intermediate users of T
 frustrate advanced users. It does not attempt to implement the TeX macro language to any 
 degree, but consists of the following two syntactic elements:
 
-• A command, with optional parameters and optional content: 
-\verbatim{\\command\em{[key=value,key=value]}\em{\{content\}}}.
+• A command, with optional parameters and optional content:
+
+\begin{verbatim}
+\\command\em{[key=value,key=value]}\em{\{content\}}
+\end{verbatim}
 
 • An environment, with optional parameters and required content: 
+
 \begin{verbatim}
 \\begin\em{[key=value,key=value]}\{command\}
 ...
@@ -88,10 +100,14 @@ degree, but consists of the following two syntactic elements:
 \end{verbatim}
 And that’s all. There is no difference between an environment and a command with an argument.
 
+\section{SILE Commands}
+
 SILE has a number of built-in commands.
 
 \subsection{Including things}
+
 You can include another SILE file using the \code{include} command, like so:
+
 \begin{verbatim}
      \\begin[papersize=a4]\{document\}
           Hello world.
@@ -281,16 +297,16 @@ is equivalent to
 In most cases you will specify a document class which will provide additional commands as well as a page layout.
 
 The plain class defines two frames; a content frame with left and right
-margins of 5% of the page's width, a top margin of 5% and a bottom margin of
-10%. It also has a folio frame. Looking at the source of the \code{plain} class
+margins of 5\% of the page's width, a top margin of 5\% and a bottom margin of
+10\%. It also has a folio frame. Looking at the source of the \code{plain} class
 will help you understand this:
 
 \code{
 plain.pageTemplate.frames = {
 
-     "a": SILE.newFrame({ left: "5%", right: "95%", top: "5%", bottom: "90%", id: "a" }),
+     "a": SILE.newFrame({ left: "5\%", right: "95\%", top: "5\%", bottom: "90\%", id: "a" }),
 
-     "folio": SILE.newFrame({left: "5%", right: "95%", top: "92%", bottom: "97%", id: "folio"})
+     "folio": SILE.newFrame({left: "5\%", right: "95\%", top: "92\%", bottom: "97\%", id: "folio"})
 
 };
 
