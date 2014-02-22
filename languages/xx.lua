@@ -1,0 +1,1 @@
+SILE.hyphenator.languages["xx"] = {patterns = {}, exceptions = {}};
