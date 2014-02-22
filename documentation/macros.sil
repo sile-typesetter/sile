@@ -1,6 +1,7 @@
 <sile>
 <define command="center"><glue stretch="10000"/><process/><glue stretch="10000"/></define>
 <define command="em"><font style="italic"><process/></font></define>
+<define command="%">%</define>
 <define command="\">\</define>
 <define command="{">{</define>
 <define command="}">}</define>
@@ -13,8 +14,8 @@
 </define>
 <define command="ragged-right"><script>SILE.documentState.documentClass.state.rskip = SILE.nodefactory.newGlue({width = SILE.length.new({ length = 0, stretch = 10000 }) })</script><process/><script>SILE.typesetter:leaveHmode();SILE.documentState.documentClass.state.rskip = nil</script></define>
 
-<define command="section"><set-counter id="subsection" value="0"/><skip height="3pt"/><sectionsfont><font size="15"><increment-counter id="section"/><show-counter id="section"/> <process/></font></sectionsfont><skip height="3pt"/></define>
-<define command="subsection"><skip height="3pt"/><sectionsfont><font size="12"><show-counter id="section"/>.<increment-counter id="subsection"/><show-counter id="subsection"/> <process/></font></sectionsfont><skip height="3pt"/></define>
+<define command="section"><set-counter id="subsection" value="0"/><skip height="12pt"/><sectionsfont><font size="15"><increment-counter id="section"/><show-counter id="section"/> <process/></font></sectionsfont><skip height="13pt"/></define>
+<define command="subsection"><skip height="13pt"/><sectionsfont><font size="12"><show-counter id="section"/>.<increment-counter id="subsection"/><show-counter id="subsection"/> <process/></font></sectionsfont><skip height="13pt"/></define>
 
 <define command="code"><font family="Monaco" size="9" style="roman" language="xx"><process/></font></define>
 </sile>
