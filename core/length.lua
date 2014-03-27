@@ -41,6 +41,9 @@ function _length.mt.__sub (x,y)
 	return n
 end
 
+function _length.mt.__lt (x,y) 
+	return (x-y).length < 0
+end
 function _length.mt.__tostring (x)
 	local s = tostring(x.length)
 	if not (x.stretch == 0) then s = s .. " plus "..x.stretch end

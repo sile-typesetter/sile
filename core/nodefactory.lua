@@ -127,7 +127,8 @@ local _vglue = _box {
     -- self.shrink = 0
   end,
   outputYourself = function (self,typesetter, line)
-    typesetter.state.cursorY = typesetter.state.cursorY + line.depth + line.height.length;
+    typesetter.state.cursorY = typesetter.state.cursorY + line.depth + line.height;
+    if (type(typesetter.state.cursorY)) == "table" then typesetter.state.cursorY  =typesetter.state.cursorY.length end
   end
 }
 
@@ -173,6 +174,7 @@ local _vbox = _box {
       end
     end
     typesetter.state.cursorY = typesetter.state.cursorY + line.depth;
+    if (type(typesetter.state.cursorY)) == "table" then typesetter.state.cursorY  =typesetter.state.cursorY.length end    
     typesetter.state.cursorX = typesetter.frame:left(); -- XXX bidi
   end  
 }

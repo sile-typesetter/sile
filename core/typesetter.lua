@@ -128,7 +128,7 @@ SILE.defaultTypesetter = std.object {
       if (vbox:isVbox()) then
         self.state.frameTotals.height = self.state.frameTotals.height + vbox.height + vbox.depth;
       elseif vbox:isVglue() then
-        self.state.frameTotals.height = self.state.frameTotals.height + vbox.height.length;
+        self.state.frameTotals.height = self.state.frameTotals.height + vbox.height;
       end
       local left = (target - self.state.frameTotals.height).length;
       SU.debug("typesetter", "I have " .. tostring(left) .. "pts left");
@@ -168,7 +168,7 @@ SILE.defaultTypesetter = std.object {
     for i,b in pairs(self.state.frameLines) do
       if b:isVglue() then 
         table.insert(glues,b);
-        gTotal = gTotal + b.height.length
+        gTotal = gTotal + b.height
       end
     end
 
