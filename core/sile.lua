@@ -88,6 +88,7 @@ function SILE.repl ()
 end
 
 function SILE.readFile(fn)
+  fn = SILE.resolveFile(fn)
   local file, err = io.open(fn)
   if not file then
     print("Could not open "..err)
@@ -103,4 +104,23 @@ function SILE.readFile(fn)
     SILE.inputs.TeXlike.process(fn)
   end
 end
+
+local function file_exists(name)
+   local f=io.open(name,"r")
+   if f~=nil then io.close(f) return true else return false end
+end
+
+function SILE.resolveFile(fn)
+  if file_exists(fn) then return fn end
+  if file_exists(fn..".sil") then return fn..".sil" end
+
+  for k in SU.gtoke(os.getenv("SILE_PATH"), ";") do
+    if k.string then
+      local f = std.io.catfile(k.string, fn)
+      if file_exists(f) then return f end
+      if file_exists(f..".sil") then return f..".sil" end
+    end
+  end
+end
+
 return SILE
