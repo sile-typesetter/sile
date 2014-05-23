@@ -21,6 +21,17 @@ end
 
 local palcache = {}
 
+local function setDefaultOptions(options)
+  if not options.font then options.font = SILE.documentState.fontFamily end
+  if not options.size then options.size = SILE.documentState.fontSize end
+  if not options.weight then options.weight = SILE.documentState.fontWeight end
+  if not options.style then options.style = SILE.documentState.fontStyle end
+  if not options.variant then options.variant = SILE.documentState.fontVariant end
+  if not options.language then options.language = SILE.documentState.language end
+  if not options.underline then options.underline = SILE.documentState.fontUnderline end
+  return options
+end
+
 local function getPal(options)
   if options.pal then
     pal = options.pal
@@ -38,7 +49,13 @@ local function getPal(options)
       options.style == "italic" and pango.Style.ITALIC or pango.Style.NORMAL)) end
     if options.variant then pal:insert(pango.Attribute.variant_new(
       options.variant == "smallcaps" and pango.Variant.SMALL_CAPS or pango.Variant.NORMAL)) end
-    
+    if options.underline then 
+      print("Adding underline "..options.underline)
+      pal:insert(pango.Attribute.underline_new(
+      options.underline == "single" and pango.Underline.SINGLE or
+      options.underline == "double" and pango.Underline.DOUBLE or
+      pango.Underline.ERROR))
+    end
   end
   if options.language then
     pango_context:set_language(pango.Language.from_string(options.language))
@@ -59,12 +76,7 @@ end
 
 function SILE.shapers.pango.shape(text, options)
   if not options then options = {} end
-  if not options.font then options.font = SILE.documentState.fontFamily end
-  if not options.size then options.size = SILE.documentState.fontSize end
-  if not options.weight then options.weight = SILE.documentState.fontWeight end
-  if not options.style then options.style = SILE.documentState.fontStyle end
-  if not options.variant then options.variant = SILE.documentState.fontVariant end
-  if not options.language then options.language = SILE.documentState.language end
+  options = setDefaultOptions(options)
 
   local pal = getPal(options)
   local nodes = {}
