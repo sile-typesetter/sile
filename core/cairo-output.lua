@@ -16,8 +16,14 @@ SILE.outputters.cairo = {
   end,
   finish = function() 
   end,
-  showGlyphString = function(f,pgs)
+  showGlyphString = function(f,pgs, options)
+    -- Render underlines
+    -- Render strikethroughs
+    -- Render colors
+    -- Render rises
+    if (options.rise) then cr:rel_move_to(0, -options.rise) end
     cr:show_glyph_string(f,pgs)
+    --if (options.rise) then cr:rel_move_to(0,-options.rise*1024*0.75) end
   end,
   moveTo = function (x,y)
     cr:move_to(x,y)

@@ -40,7 +40,7 @@ local _hbox = _box {
     if (type(typesetter.state.cursorY)) == "table" then typesetter.state.cursorY  =typesetter.state.cursorY.length end
     if (type(typesetter.state.cursorX)) == "table" then typesetter.state.cursorX  =typesetter.state.cursorX.length end
     SILE.outputter.moveTo(typesetter.state.cursorX, typesetter.state.cursorY)
-    SILE.outputter.showGlyphString(self.value.font, self.value.glyphString)
+    SILE.outputter.showGlyphString(self.value.font, self.value.glyphString, self.value.options)
     -- XXX should be a property of the frame
     typesetter.state.cursorX = typesetter.state.cursorX + scaledWidth
   end

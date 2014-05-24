@@ -63,6 +63,7 @@ SILE.baseClass = std.object {
       if (options.family)  then SILE.documentState.fontFamily = options.family end
       if (options.size)  then SILE.documentState.fontSize = options.size end
       if (options.weight)  then SILE.documentState.fontWeight = options.weight end
+      if (options.rise)  then SILE.documentState.fontRise = options.rise end
       if (options.style)  then SILE.documentState.fontStyle = options.style end
       if (options.variant)  then SILE.documentState.fontVariant = options.variant end
       if (options.underline)  then SILE.documentState.fontUnderline = options.underline end

@@ -24,6 +24,7 @@ local palcache = {}
 local function setDefaultOptions(options)
   if not options.font then options.font = SILE.documentState.fontFamily end
   if not options.size then options.size = SILE.documentState.fontSize end
+  if not options.rise then options.rise = SILE.documentState.fontRise end
   if not options.weight then options.weight = SILE.documentState.fontWeight end
   if not options.style then options.style = SILE.documentState.fontStyle end
   if not options.variant then options.variant = SILE.documentState.fontVariant end
@@ -45,6 +46,7 @@ local function getPal(options)
     if options.font then pal:insert(pango.Attribute.family_new(options.font)) end
     if options.weight then pal:insert(pango.Attribute.weight_new(tonumber(options.weight))) end
     if options.size then pal:insert(pango.Attribute.size_new(options.size * 1024 * 0.75)) end -- I don't know why 0.75
+    if options.rise then pal:insert(pango.Attribute.rise_new(options.rise * 1024 * 0.75)) end
     if options.style then pal:insert(pango.Attribute.style_new(
       options.style == "italic" and pango.Style.ITALIC or pango.Style.NORMAL)) end
     if options.variant then pal:insert(pango.Attribute.variant_new(
@@ -103,7 +105,7 @@ function SILE.shapers.pango.shape(text, options)
           depth = depth / 1024,
           height= height / 1024,
           width = SILE.length.new({ length= pgs:get_width() / 1024 }),
-          value = {font = font, glyphString = pgs }
+          value = {font = font, glyphString = pgs, options = options }
         }))
       end
       table.insert(nodes, SILE.nodefactory.newNnode({ 
