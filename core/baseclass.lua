@@ -68,6 +68,7 @@ SILE.baseClass = std.object {
       if (options.variant)  then SILE.documentState.fontVariant = options.variant end
       if (options.underline)  then SILE.documentState.fontUnderline = options.underline end
       if (options.language)  then SILE.documentState.language = options.language end
+      if (options.color)  then SILE.documentState.color = SILE.colorparser(options.color) end
       if (content[1]) then 
         SILE.process(content)
         SILE.documentState = prevState
@@ -112,6 +113,7 @@ SILE.baseClass = std.object {
     SILE.documentState.fontWeight = 200;
     SILE.documentState.fontStyle = "normal";
     SILE.documentState.language = "en";
+    SILE.documentState.color = "black";
     return self:initialFrame();
   end,
   initialFrame= function(self)

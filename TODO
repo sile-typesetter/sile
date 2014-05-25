@@ -1,10 +1,10 @@
-Book class improvements
 Picture
 Collect all pages before rendering to allow references/ToC
 Shift to different PDF library to allow hyperlinks etc.
 Better classes
 Bidi/upwards/tate
 Japanese
+Hebrew
 Frames:
     Insertions
     Variable height frames

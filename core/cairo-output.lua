@@ -22,6 +22,7 @@ SILE.outputters.cairo = {
     -- Render colors
     -- Render rises
     if (options.rise) then cr:rel_move_to(0, -options.rise) end
+    if (options.color) then cr:set_source_rgb(options.color.r, options.color.g, options.color.b) end
     cr:show_glyph_string(f,pgs)
     --if (options.rise) then cr:rel_move_to(0,-options.rise*1024*0.75) end
   end,

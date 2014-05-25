@@ -30,6 +30,8 @@ local function setDefaultOptions(options)
   if not options.variant then options.variant = SILE.documentState.fontVariant end
   if not options.language then options.language = SILE.documentState.language end
   if not options.underline then options.underline = SILE.documentState.fontUnderline end
+  if not options.color then options.color = SILE.documentState.color end
+
   return options
 end
 
