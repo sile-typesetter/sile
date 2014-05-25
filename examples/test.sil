@@ -1,5 +1,7 @@
 \begin[class=book,papersize=129mm x 198mm]{document}
 \include[src=examples/macros.sil]
+\script[src=packages/grid]
+\grid[spacing=13.5pt]
 \left-running-head{\font[style=italic]{A Scandal in Bohemia}}
 \right-running-head{Alexander Conan Doyle}
 \headline{A Scandal In Bohemia}

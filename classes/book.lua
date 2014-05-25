@@ -1,8 +1,5 @@
 local plain = SILE.require("classes/plain");
-local book = std.tree.clone(plain);
-SILE.require("packages/counters");
-SILE.scratch.counters.folio = { value = 1, display = "arabic" };
-if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end
+local book = plain { id = "book" };
 
 book:declareFrame("r",    {left = "8.3%",            right = "86%",            top = "11.6%",       bottom = "83.3%"        });
 book:declareFrame("l",    {left = "100% - right(r)", right = "100% - left(r)", top = "top(r)",      bottom = "bottom(r)"    });
@@ -12,19 +9,23 @@ book:declareFrame("rRH",  {left = "left(r)",         right = "right(r)",       t
 
 book.pageTemplate.firstContentFrame = book.pageTemplate.frames["r"];
 
+book:loadPackage("twoside", { oddPageFrameID = "r", evenPageFrameID = "l" });
+
+
+if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end
+
 book.newPage = function()
   if (book.pageTemplate.firstContentFrame.id == "r") then
-  --   if (SILE.scratch.headers.right) then
-  --     SILE.typesetNaturally(SILE.getFrame("rRH"), SILE.scratch.headers.right);
-  --   end
-    book.pageTemplate.firstContentFrame = book.pageTemplate.frames["l"];
+    if (SILE.scratch.headers.right) then
+      SILE.typesetNaturally(SILE.getFrame("rRH"), SILE.scratch.headers.right);
+    end
   else 
-  --   if (SILE.scratch.headers.left) then
-  --     SILE.typesetNaturally(SILE.getFrame("lRH"), SILE.scratch.headers.left);
-  --   end
-  book.pageTemplate.firstContentFrame = book.pageTemplate.frames["r"];
+    if (SILE.scratch.headers.left) then
+      SILE.typesetNaturally(SILE.getFrame("lRH"), SILE.scratch.headers.left);
+    end
   end
-  plain:newPage();
+  plain.newPage(book);
+  book:switchPage();
   return book.pageTemplate.firstContentFrame;
 end;
 
