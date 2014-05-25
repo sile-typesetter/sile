@@ -99,7 +99,7 @@ SILE.baseClass = std.object {
   },
   loadPackage = function(self, packname)
     local pack = require("packages/"..packname)
-    std.table.merge(self, pack.exports, true)
+    self:mapfields(pack.exports)
     if pack.init then
       pack.init(self)
     end
