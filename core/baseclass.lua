@@ -97,6 +97,13 @@ SILE.baseClass = std.object {
     baselineSkip = SILE.nodefactory.newVglue({ height= SILE.length.new({length = 13, stretch= 2, shrink= 0})}),
     lineSkip = SILE.nodefactory.newVglue({ height= SILE.length.new({length = 2, stretch= 0, shrink= 0}) }),
   },
+  loadPackage = function(self, packname)
+    local pack = require("packages/"..packname)
+    std.table.merge(self, pack.exports, true)
+    if pack.init then
+      pack.init(self)
+    end
+  end,
   init = function(self)
     SILE.outputter.init(self); 
     self:registerCommands();

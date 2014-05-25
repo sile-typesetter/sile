@@ -5,10 +5,10 @@ plain:declareFrame("a",     {left = "5%",  right = "95%",  top = "5%",  bottom =
 plain:declareFrame("folio", {left = "5%",  right = "95%",  top = "92%", bottom = "97%" });
 
 plain.pageTemplate.firstContentFrame = plain.pageTemplate.frames["a"];
-local folio = require("packages/folio");
+plain:loadPackage("folio");
 
 plain.newPage = function(self)
-  folio.outputFolio()
+  plain:outputFolio()
   return SILE.baseClass.newPage(self);
 end
 
