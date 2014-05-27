@@ -37,10 +37,10 @@ SILE.outputters.cairo = {
   	cr:show_text(f.id);
   end,
   debugHbox = function(typesetter, hbox, scaledWidth)
-    cr:setSourceRGB(0.9,0.9,0.9);
+    cr:set_source_rgb(0.9,0.9,0.9);
     cr:rectangle(typesetter.state.cursorX, typesetter.state.cursorY-(hbox.height), scaledWidth, hbox.height+hbox.depth);
     if (hbox.depth) then cr:rectangle(typesetter.state.cursorX, typesetter.state.cursorY-(hbox.height), scaledWidth, hbox.height); end
-    cr:setSourceRGB(0,0,0);
+    cr:set_source_rgb(0,0,0);
   end
 }
 
