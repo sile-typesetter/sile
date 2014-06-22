@@ -21,11 +21,12 @@ require("core/papersizes")
 require("core/colorparser")
 require("core/typesetter")
 require("core/hyphenator-liang")
-require("core/baseclass")
 
 SILE.nodefactory = require("core/nodefactory")
 SILE.frameParser = require("core/frameparser")
 SILE.linebreak = require("core/break")
+require("core/baseclass")
+
 require("core/frame")
 require("core/cairo-output")
 require("core/settings")

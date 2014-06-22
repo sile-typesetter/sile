@@ -93,11 +93,6 @@ SILE.baseClass = std.object {
 
   settings = { widowPenalty= 5000, clubPenalty= 5000 },
   pageTemplate = std.object { frames= {}, firstContentFrame= nil },
-  state = {
-    parindent = SILE.nodefactory.newGlue({ width= SILE.length.new({length = 11, stretch= 0, shrink= 0})}),
-    baselineSkip = SILE.nodefactory.newVglue({ height= SILE.length.new({length = 13, stretch= 2, shrink= 0})}),
-    lineSkip = SILE.nodefactory.newVglue({ height= SILE.length.new({length = 2, stretch= 0, shrink= 0}) }),
-  },
   loadPackage = function(self, packname, args)
     local pack = require("packages/"..packname)
     self:mapfields(pack.exports)

@@ -107,15 +107,16 @@ SILE.defaultTypesetter = std.object {
     -- Insert leading
    SU.debug("typesetter", "   Considering leading between self two lines");
    SU.debug("typesetter", "   Depth of previous line was "..tostring(self.state.frameTotals.prevDepth));
-   local d = SILE.documentState.documentClass.state.baselineSkip.height - v.height - self.state.frameTotals.prevDepth;
+   local bls = SILE.settings.get("document.baselineskip")
+   local d = bls.height - v.height - self.state.frameTotals.prevDepth;
    d = d.length
-   --SU.debug("typesetter", "   Leading height = " .. tostring(SILE.documentState.documentClass.state.baselineSkip.height) .. " - " .. v.height .. " - " .. self.state.frameTotals.prevDepth .. " = "..d) ;
+   --SU.debug("typesetter", "   Leading height = " .. tostring(bls.height) .. " - " .. v.height .. " - " .. self.state.frameTotals.prevDepth .. " = "..d) ;
 
-    if (d > SILE.documentState.documentClass.state.lineSkip.height.length) then
-      len = SILE.length.new({ length = d, stretch = SILE.documentState.documentClass.state.baselineSkip.height.stretch, shrink = SILE.documentState.documentClass.state.baselineSkip.height.shrink })
+    if (d > SILE.settings.get("document.lineskip").height.length) then
+      len = SILE.length.new({ length = d, stretch = bls.height.stretch, shrink = bls.height.shrink })
       self:pushVglue({height = len});
     else
-      self:pushVglue(SILE.documentState.documentClass.state.lineSkip);
+      self:pushVglue(SILE.settings.get("document.lineskip"));
     end
     self.state.frameTotals.prevDepth = v.depth;
   end,
@@ -220,9 +221,8 @@ SILE.defaultTypesetter = std.object {
     end
   end,
   addrskip = function (self, slice)
-    if SILE.documentState.documentClass.state.rskip then
-      table.insert(slice, SILE.documentState.documentClass.state.rskip)
-    end
+    local rskip = SILE.settings.get("document.rskip")
+    if rskip then table.insert(slice, rskip) end
   end,
   breakpointsToLines = function(self, bp)
     local linestart = 0;

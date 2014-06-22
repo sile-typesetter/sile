@@ -72,9 +72,8 @@ local function measureSpace( pal )
   local spaceitem = itemize(" ",pal)[1]
   local g = (_shape(" ",spaceitem).glyphs)[1]
   local spacewidth = g.geometry.width / 1024;
-  if SILE.documentState.documentClass.state.spaceskip then
-    return SILE.documentState.documentClass.state.spaceskip
-  end
+  local ss = SILE.settings.get("document.spaceskip") 
+  if ss then return ss end
   return SILE.length.new({ length = spacewidth * 1.2, shrink = spacewidth/3, stretch = spacewidth /2 }) -- XXX
 end
 

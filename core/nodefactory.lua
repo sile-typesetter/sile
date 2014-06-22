@@ -1,9 +1,10 @@
 -- Just boxes
 
 _box = std.object {
-  height= 0, 
-  depth= 0, 
-  width= 0, 
+  _type = "Box",
+  height= SILE.length.new({length = 0}), 
+  depth= SILE.length.new({length = 0}), 
+  width= SILE.length.new({length = 0}), 
   type="special", 
   value=nil,
   __tostring = function (s) return s.type end,
@@ -99,6 +100,7 @@ local _disc = _hbox {
 
 -- Glue
 local _glue = _box {
+  _type = "Glue",
   type = "glue",
   __tostring = function (this) return "G<" .. tostring(this.width) .. ">"; end,
   toText = function () return " " end,
@@ -117,6 +119,7 @@ local _glue = _box {
 -- VGlue
 local _vglue = _box {
   type = "vglue",
+  _type = "VGlue",
   __tostring = function (this) 
       return "VG<" .. tostring(this.height) .. ">";
   end,
@@ -179,15 +182,37 @@ local _vbox = _box {
   end  
 }
 
-local nodefactory = {}
+SILE.nodefactory = {}
 
-function nodefactory.newHbox(spec)   return _hbox(spec) end
-function nodefactory.newNnode(spec)  return _nnode(spec):init() end
-function nodefactory.newDisc(spec)   return _disc(spec) end
-function nodefactory.newGlue(spec)   return _glue(spec) end
-function nodefactory.newVglue(spec)  return _vglue(spec) end
-function nodefactory.newPenalty(spec)  return _penalty(spec) end
-function nodefactory.newDiscretionary(spec)  return _disc(spec) end
-function nodefactory.newVbox(spec)  return _vbox(spec):init() end
+function SILE.nodefactory.newHbox(spec)   return _hbox(spec) end
+function SILE.nodefactory.newNnode(spec)  return _nnode(spec):init() end
+function SILE.nodefactory.newDisc(spec)   return _disc(spec) end
+function SILE.nodefactory.newGlue(spec)
+  if type(spec) == "table" then return _glue(spec) end
+  if type(spec) == "string" then
+    local t = lpeg.match(SILE.nodefactory.glueParser, spec)
+    if not t then SU.error("Bad glue definition "..spec) end
+    if not t.shrink then t.shrink = 0 end
+    if not t.stretch then t.stretch = 0 end
+    return _glue({width = SILE.length.new(t)})
+  end
+  SU.error("Unparsable glue spec "..spec)
+end
+function SILE.nodefactory.newVglue(spec)
+  if type(spec) == "table" then return _vglue(spec) end
+  if type(spec) == "string" then
+    local t = lpeg.match(SILE.nodefactory.glueParser, spec)
+    if not t then SU.error("Bad glue definition "..spec) end
+    if not t.shrink then t.shrink = 0 end
+    if not t.stretch then t.stretch = 0 end
+    return _vglue({height = SILE.length.new(t)})
+  end
+  SU.error("Unparsable glue spec "..spec)
+end
+function SILE.nodefactory.newPenalty(spec)  return _penalty(spec) end
+function SILE.nodefactory.newDiscretionary(spec)  return _disc(spec) end
+function SILE.nodefactory.newVbox(spec)  return _vbox(spec):init() end
 
-return nodefactory
+SILE.nodefactory.zeroGlue = SILE.nodefactory.newGlue({})
+SILE.nodefactory.zeroVglue = SILE.nodefactory.newVglue({})
+return SILE.nodefactory
