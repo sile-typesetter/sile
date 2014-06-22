@@ -125,10 +125,12 @@ SILE.baseClass = std.object {
     local fH = function (val) return function() return SILE.parseComplexFrameDimension(val, "h"); end end
     self.pageTemplate.frames[id] = SILE.newFrame({
       next= spec.next,
-      left= fW(spec.left),
-      right= fW(spec.right),
-      top= fH(spec.top),
-      bottom= fH(spec.bottom),
+      left= spec.left and fW(spec.left),
+      right= spec.right and fW(spec.right),
+      top= spec.top and fH(spec.top),
+      bottom= spec.bottom and fH(spec.bottom),
+      height = spec.height and fH(spec.height),
+      width = spec.width and fH(spec.width),
       id = id
     });
   end,
