@@ -284,13 +284,14 @@ SILE.defaultTypesetter = std.object {
   end
 };
 
-SILE.typesetter = SILE.defaultTypesetter;
+SILE.typesetter = SILE.defaultTypesetter {};
 
 SILE.typesetNaturally = function (frame, nodes)
-  local newTypesetter = SILE.defaultTypesetter {};
-  newTypesetter:init(frame);
-  newTypesetter.state.nodes = nodes;
-  newTypesetter:leaveHmode(1);  
-  newTypesetter:shipOut(0,1);  
-
+  local saveTypesetter = SILE.typesetter
+  SILE.typesetter = SILE.defaultTypesetter {};
+  SILE.typesetter:init(frame);
+  SILE.typesetter.state.nodes = nodes;
+  SILE.typesetter:leaveHmode(1);  
+  SILE.typesetter:shipOut(0,1);  
+  SILE.typesetter = saveTypesetter
 end;
