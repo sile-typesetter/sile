@@ -4,7 +4,8 @@ local S = lpeg.S
 local P = lpeg.P
 local C = lpeg.C
 local V = lpeg.V
-
+local Cg = lpeg.Cg
+local Ct = lpeg.Ct
 local number = {}
 
 local digit = R("09")
@@ -29,6 +30,8 @@ local dimensioned_string = ( C(number.number) * whitespace * C(units) ) / functi
 local func = C(P("top") + P("left") + P("bottom") + P("right") ) * P("(") * C(identifier) * P(")") / function (dim, ident) f = SILE.getFrame(ident); return f[dim](f) end
 local percentage = ( C(number.number) * whitespace * P("%") ) / function (n) return SILE.toPoints(n, "%", SILE.documentState._dimension) end
 local primary = dimensioned_string + percentage + func + number.number
+local zero = P("0") / function(...) return 0 end
+SILE.nodefactory.glueParser = Ct(Cg(dimensioned_string + zero, "length") * whitespace * (P("plus") * whitespace * Cg(dimensioned_string + zero, "stretch"))^-1 * whitespace * (P("minus") * whitespace * Cg(dimensioned_string + zero,"shrink"))^-1)
 
 if testingSILE then
 	SILE.frameParserBits = {
