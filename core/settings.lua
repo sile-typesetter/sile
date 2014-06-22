@@ -86,8 +86,8 @@ SILE.settings.declare({
 
 SILE.settings.declare({
   name = "document.rskip",
-  type = "Glue",
-  default = SILE.nodefactory.zeroGlue,
+  type = "nil",
+  default = nil, -- XXX
   help = "Skip to be added to right side of line"
 })
 

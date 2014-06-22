@@ -2,9 +2,9 @@
 
 _box = std.object {
   _type = "Box",
-  height= SILE.length.new({length = 0}), 
-  depth= SILE.length.new({length = 0}), 
-  width= SILE.length.new({length = 0}), 
+  height= 0,
+  depth= 0,
+  width= 0,
   type="special", 
   value=nil,
   __tostring = function (s) return s.type end,
@@ -163,7 +163,7 @@ local _vbox = _box {
     return self
   end,
   toText = function (self) 
-    return "VB[" .. SU.concat(SU.map(function (n) return n:toText() end, self.nodes), "") .. "]" 
+    return "VB[" .. SU.concat(SU.map(function (n) return n.."" end, self.nodes), "") .. "]" 
   end,
   outputYourself = function(self, typesetter, line)
     typesetter.state.cursorY =  typesetter.state.cursorY + line.height
@@ -213,6 +213,6 @@ function SILE.nodefactory.newPenalty(spec)  return _penalty(spec) end
 function SILE.nodefactory.newDiscretionary(spec)  return _disc(spec) end
 function SILE.nodefactory.newVbox(spec)  return _vbox(spec):init() end
 
-SILE.nodefactory.zeroGlue = SILE.nodefactory.newGlue({})
+SILE.nodefactory.zeroGlue = SILE.nodefactory.newGlue({width = SILE.length.new({length = 0})})
 SILE.nodefactory.zeroVglue = SILE.nodefactory.newVglue({})
 return SILE.nodefactory

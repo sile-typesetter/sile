@@ -261,7 +261,7 @@ SILE.defaultTypesetter = std.object {
             naturalTotals = naturalTotals + node.width
           end
         end
-        if (slice[#(slice)]:isDiscretionary()) then 
+        if (slice[#(slice)]:isDiscretionary()) then -- This is broken by rskip. It's wrong anyway.
          slice[#(slice)].used = 1;
          naturalTotals = naturalTotals + slice[#slice]:prebreakWidth()
         end
