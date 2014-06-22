@@ -1,3 +1,29 @@
+Plain format
+Return vboxes from typesetter for storing
+Type-checked interface to setting lengths/parameters
+Clean up interface in typesetter, make methods stateless
+Better control of state stacks
+Drop caps
+    Quarter page frames etc.
+        Frame breaking
+Underlining
+Replace Cairo with something else? (What for?)
+Spin out page break algorithm
+Fix widow-orphan control in page break
+Same old issue with top-of-page vskips
+Putting things into boxes (<footer> macro is wrong)
+Macros to make:
+    Noindent
+    Centering
+
+Frames:
+    Port cassowary
+    Insertions
+    Variable height frames
+
+Plan of attack for insertions:
+  Then set maxheight, and try typesetting into frame b
+
 Picture
 Collect all pages before rendering to allow references/ToC
 Shift to different PDF library to allow hyperlinks etc.
@@ -5,6 +31,3 @@ Better classes
 Bidi/upwards/tate
 Japanese
 Hebrew
-Frames:
-    Insertions
-    Variable height frames
