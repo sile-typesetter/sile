@@ -1,4 +1,5 @@
 SILE = require("core/sile")
+assert =  require "luassert"
 describe("The node factory", function()
   it("should exist", function()
     assert.is.truthy(SILE.nodefactory)

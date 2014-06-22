@@ -1,4 +1,5 @@
 testingSILE = true
+assert = require "luassert"
 SILE = require("core/sile")
 describe("The frame parser", function()
   it("should exist", function()
