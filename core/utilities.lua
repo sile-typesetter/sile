@@ -1,5 +1,10 @@
 local utilities = { }
 
+function utilities.required(t, name, context)
+  if not t[name] then utilities.error(context.." needs a "..name.." parameter") end
+  return t[name]
+end
+
 function utilities.error(message)
   print("\n! "..message)
   os.exit(1)
