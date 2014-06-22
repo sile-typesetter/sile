@@ -4,6 +4,8 @@ SILE.utilities = require("core/utilities")
 SU = SILE.utilities
 SILE.inputs = {}
 SILE.Commands = {};
+SILE.debugFlags = {}
+testingSILE = false
 
 std = require("std")
 
