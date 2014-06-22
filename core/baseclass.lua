@@ -149,8 +149,8 @@ SILE.baseClass = std.object {
     SILE.outputter:finish()
   end,
   newPar = function(typesetter)
-    typesetter:pushVglue(SILE.documentState.documentClass.state.lineSkip);
-    typesetter:pushGlue( SILE.documentState.documentClass.state.parindent );
+    typesetter:pushVglue(SILE.settings.get("document.lineskip"))
+    typesetter:pushGlue(SILE.settings.get("document.parindent"))
   end,
   options= { 
     papersize= function(size)
