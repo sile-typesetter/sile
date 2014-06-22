@@ -12,7 +12,6 @@ std = require("std")
 SILE.documentState = std.object {};
 SILE.scratch = {};
 SILE.length = require("core/length")
-require("core/frame")
 require("core/measurements")
 require("core/inputs-texlike")
 require("core/inputs-xml")
@@ -22,11 +21,14 @@ require("core/papersizes")
 require("core/colorparser")
 require("core/typesetter")
 require("core/hyphenator-liang")
-SILE.frameParser = require("core/frameparser")
-SILE.nodefactory = require("core/nodefactory")
-SILE.linebreak = require("core/break")
-require("core/cairo-output")
 require("core/baseclass")
+
+SILE.nodefactory = require("core/nodefactory")
+SILE.frameParser = require("core/frameparser")
+SILE.linebreak = require("core/break")
+require("core/frame")
+require("core/cairo-output")
+require("core/settings")
 
 SILE.require = function(d)
   -- path?
