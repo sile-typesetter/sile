@@ -5,7 +5,11 @@ local framePrototype = std.object {
   balanced= 0
 };
 
-function framePrototype:top() if (type(self._top) == "function" ) then return self:_top() else return self._top end end
+function framePrototype:top() 
+  if (type(self._top) == "function" ) then return self:_top() end
+  if (not self._top and self._height) then return self:bottom() - self:height() end
+  return self._top
+end
 function framePrototype:left () if (type(self._left) == "function" ) then return self:_left() else return self._left end end
 function framePrototype:right ()
     if (type(self._right) == "function") then return self:_right() end
@@ -14,7 +18,7 @@ function framePrototype:right ()
   end
 function framePrototype:bottom ()
     if (type(self._bottom) == "function" ) then return self:_bottom() end
-    if (not self._bottom and self._height) then return self:top() + self:height() end
+    if (not self._top and self._height) then return self:top() + self:height() end
     return self._bottom
   end
 function framePrototype:width ()
@@ -34,17 +38,18 @@ SILE.newFrame = function(spec)
   local dims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
   for method, dimension in pairs(dims) do 
     if spec[method] then
-    if not(type(spec[method]) == "function") then
-      local old = spec[method] -- Closure me harder
-      if type(old) == "string" and string.find(old, "%%") then
-        -- Defer relative calculations until page size is known
-        spec[method] = function() return SILE.toPoints(old, "%", dimension) end
-      else
-        spec[method] = SILE.toPoints(spec[method])
+      if not(type(spec[method]) == "function") then
+        local old = spec[method] -- Closure me harder
+        if type(old) == "string" and string.find(old, "%%") then
+          -- Defer relative calculations until page size is known
+          spec[method] = function() return SILE.toPoints(old, "%", dimension) end
+        else
+          spec[method] = SILE.toPoints(spec[method])
+        end
       end
+      frame["_"..method] = spec[method]
     end
-    frame["_"..method] = spec[method]
-  end end
+  end
   frame.id  = spec.id
   frame.next  = spec.next
   return frame
