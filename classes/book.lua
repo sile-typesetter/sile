@@ -15,7 +15,7 @@ book:loadPackage("twoside", { oddPageFrameID = "r", evenPageFrameID = "l" });
 if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end
 
 book.newPage = function()
-  if (book.pageTemplate.firstContentFrame.id == "r") then
+  if (book:oddPage()) then
     if (SILE.scratch.headers.right) then
       SILE.typesetNaturally(SILE.getFrame("rRH"), SILE.scratch.headers.right);
     end
