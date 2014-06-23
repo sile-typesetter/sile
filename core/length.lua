@@ -1,63 +1,56 @@
-local _length = { length = 0, stretch = 0, shrink = 0 }
-_length.mt = {}
-function _length.mt.__add (x,y)
-	local n = SU.inherit(_length)
+_length = std.object { 
+	length = 0, 
+	stretch = 0, 
+	shrink = 0, 
+	_type = "Length",
+	fromLengthOrNumber = function (self, x)
+		if type(x) == "table" then
+			self.length = x.length
+			self.stretch = x.stretch
+			self.shrink = x.shrink
+		else
+			self.length = x
+		end
+		return self
+	end,
+	__tonumber = function(self)
+		if not(self.stretch ==0) or not(self.shrink == 0) then
+			SU.warn("tonumber called on a glue length. Bug?")
+		end
+		return self.length
+	end,
+	__tostring = function (x)	
+		local s = tostring(x.length).."pt"
+		if not (x.stretch == 0) then s = s .. " plus "..x.stretch.."pt" end
+		if not (x.shrink == 0) then s = s .. " minus "..x.shrink.."pt" end
+		return s
+	end,
+	__add = function (self, other)
+		local n = _length {}
+		n:fromLengthOrNumber(self)
+		if type(other) == "table" then
+			n.length = n.length + other.length
+			n.stretch = n.stretch + other.stretch
+			n.shrink = n.shrink + other.shrink
+		else
+			n.length = n.length + other
+		end
+		return n
+	end,
+	__sub = function (self, other)
+		local n = _length {}
+		n:fromLengthOrNumber(self)
+		if type(other) == "table" then
+			n.length = n.length - other.length
+			n.stretch = n.stretch - other.stretch
+			n.shrink = n.shrink - other.shrink
+		else
+			n.length = n.length - other
+		end
+		return n
+	end,
+	__lt = function (self, other) return (self-other).length < 0 end,
+}
 
-	if type(x) == "table" then
-		n.length = x.length
-		n.stretch = x.stretch
-		n.shrink = x.shrink
-	else
-		n.length = x
-	end
-
-	if type(y) == "table" then
-		n.length = n.length + y.length
-		n.stretch = n.stretch + y.stretch
-		n.shrink = n.shrink + y.shrink
-	else
-		n.length = n.length + y
-	end
-
-	return n
-end
-function _length.mt.__sub (x,y) 
-	local n = SU.inherit(_length)	
-	if type(x) == "table" then
-		n.length = x.length
-		n.stretch = x.stretch
-		n.shrink = x.shrink
-	else
-		n.length = x
-	end
-
-	if type(y) == "table" then
-		n.length = n.length - y.length
-		n.stretch = n.stretch - y.stretch
-		n.shrink = n.shrink - y.shrink
-	else
-		n.length = n.length - y
-	end
-	return n
-end
-
-function _length.mt.__lt (x,y) 
-	return (x-y).length < 0
-end
-function _length.mt.__tostring (x)
-	local s = tostring(x.length)
-	if not (x.stretch == 0) then s = s .. " plus "..x.stretch end
-	if not (x.shrink == 0) then s = s .. " minus "..x.shrink end
-	return s
-end
-
-function _length.mt.__tonumber (x)
-	return x.length
-end
-
-
-setmetatable(_length, _length.mt)
-
-
-length = { new = function (spec) return SU.inherit(_length, spec) end }
+length = { new = function (spec) return _length(spec or {}) end }
 return length
