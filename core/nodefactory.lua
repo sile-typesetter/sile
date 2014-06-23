@@ -163,7 +163,7 @@ local _vbox = _box {
     return self
   end,
   toText = function (self) 
-    return "VB[" .. SU.concat(SU.map(function (n) return n.."" end, self.nodes), "") .. "]" 
+    return "VB[" .. SU.concat(SU.map(function (n) return n:toText().."" end, self.nodes), "") .. "]" 
   end,
   outputYourself = function(self, typesetter, line)
     typesetter.state.cursorY =  typesetter.state.cursorY + line.height
@@ -190,7 +190,7 @@ function SILE.nodefactory.newDisc(spec)   return _disc(spec) end
 function SILE.nodefactory.newGlue(spec)
   if type(spec) == "table" then return _glue(spec) end
   if type(spec) == "string" then
-    local t = lpeg.match(SILE.nodefactory.glueParser, spec)
+    local t = lpeg.match(SILE.parserBits.length, spec)
     if not t then SU.error("Bad glue definition "..spec) end
     if not t.shrink then t.shrink = 0 end
     if not t.stretch then t.stretch = 0 end
@@ -201,7 +201,7 @@ end
 function SILE.nodefactory.newVglue(spec)
   if type(spec) == "table" then return _vglue(spec) end
   if type(spec) == "string" then
-    local t = lpeg.match(SILE.nodefactory.glueParser, spec)
+    local t = lpeg.match(SILE.parserBits.length, spec)
     if not t then SU.error("Bad glue definition "..spec) end
     if not t.shrink then t.shrink = 0 end
     if not t.stretch then t.stretch = 0 end
