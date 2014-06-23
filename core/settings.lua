@@ -30,8 +30,9 @@ SILE.settings = {
       SU.error("Undefined setting '"..name.."'")
     end
     local t = _type(value)
-    if not (t == SILE.settings.declarations[name].type) then
-      SU.error("Setting "..name.." must be of type "..SILE.settings.declarations[name].type..", not "..t.." "..value.."\n"..name..": "..SILE.settings.declarations[name].help)
+    local wantedType = SILE.settings.declarations[name].type
+    if not (string.find(wantedType, t) == 1 or string.find(wantedType, "or "..t) ) then
+      SU.error("Setting "..name.." must be of type "..wantedType..", not "..t.." "..value.."\n"..name..": "..SILE.settings.declarations[name].help)
     end
     SILE.settings.state[name] = value    
   end,
@@ -79,15 +80,15 @@ SILE.settings.declare({
 
 SILE.settings.declare({
   name = "document.spaceskip",
-  type = "nil", -- XXX
+  type = "Length or nil",
   default = nil,
-  help = "The length of a space"
+  help = "The length of a space (if nil, then measured from the font)"
 })
 
 SILE.settings.declare({
   name = "document.rskip",
-  type = "nil",
-  default = nil, -- XXX
+  type = "Glue or nil",
+  default = nil,
   help = "Skip to be added to right side of line"
 })
 
@@ -97,7 +98,7 @@ SILE.registerCommand("set", function(options, content)
   local v = SU.required(options, "value", "\\set command")
   local def = SILE.settings.declarations[p]
   if not def then SU.error("Unknown parameter "..p.." in \\set command") end
-  if def.type == "Glue" then v = SILE.nodefactory.newGlue(v) end
-  if def.type == "VGlue" then v = SILE.nodefactory.newVglue(v) end
+  if string.match(def.type, "VGlue") then v = SILE.nodefactory.newVglue(v)
+  elseif string.match(def.type, "Glue") then v = SILE.nodefactory.newGlue(v) end
   SILE.settings.set(p,v)
 end)
