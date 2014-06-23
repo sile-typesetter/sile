@@ -39,7 +39,7 @@ describe("The node factory", function()
 
   describe("Glue", function () 
     local glue = SILE.nodefactory.newGlue({ width = SILE.length.new({ length = 3, stretch = 2, shrink = 2 }) })
-    it("should stringify", function() assert.is.equal(tostring(glue), "G<3 plus 2 minus 2>") end)
+    it("should stringify", function() assert.is.equal(tostring(glue), "G<3pt plus 2pt minus 2pt>") end)
   end)
   describe("vbox", function () 
     local nnode1 = SILE.nodefactory.newNnode({ width = 20, height = 30, depth = 3, text = "one" })
