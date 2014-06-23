@@ -10,6 +10,12 @@ function utilities.error(message)
   os.exit(1)
 end
 
+function utilities.warn(message)
+  print("\n! "..message)
+  print(debug.traceback())
+  os.exit(1)
+end
+
 function utilities.debugging(category)
   return SILE.debugFlags[category]
 end
