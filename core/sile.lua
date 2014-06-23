@@ -5,13 +5,13 @@ SU = SILE.utilities
 SILE.inputs = {}
 SILE.Commands = {};
 SILE.debugFlags = {}
-testingSILE = false
 
 std = require("std")
 
 SILE.documentState = std.object {};
 SILE.scratch = {};
 SILE.length = require("core/length")
+require("core/parserbits")
 require("core/measurements")
 require("core/inputs-texlike")
 require("core/inputs-xml")
