@@ -1,6 +1,5 @@
 Plain format
 Return vboxes from typesetter for storing
-(Complete) Type-checked interface to setting lengths/parameters
 Allow em, en and ex units
 Clean up interface in typesetter, make methods stateless
 Better control of state stacks

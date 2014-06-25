@@ -5,6 +5,25 @@
 --  totalDemerits = nil }
 -- passiveNode = { prev = nil, curBreak = nil, prevBreak = nil, serial = 0 }
 
+SILE.settings.declare({ name="linebreak.rightSkip", type = "Length or nil", default = SILE.length.new()})
+SILE.settings.declare({ name="linebreak.leftSkip", type = "Length or nil", default = SILE.length.new()})
+SILE.settings.declare({ name="linebreak.parShape", type = "string or nil", default = nil}) -- unimplemented
+SILE.settings.declare({ name="linebreak.tolerance", type = "integer or nil", default = 200})
+SILE.settings.declare({ name="linebreak.pretolerance", type = "integer or nil", default = 400})
+SILE.settings.declare({ name="linebreak.hangIndent", type = "nil", default = nil}) -- unimplemented
+SILE.settings.declare({ name="linebreak.adjdemerits", type = "integer", default = 10000})
+SILE.settings.declare({ name="linebreak.looseness", type = "integer", default = 0})
+SILE.settings.declare({ name="linebreak.prevGraf", type = "integer", default = 0})
+SILE.settings.declare({ name="linebreak.emergencyStretch", type = "Length or nil", default = SILE.length.new()})
+SILE.settings.declare({ name="linebreak.doLastLineFit", type = "boolean", default = false}) -- unimplemented
+SILE.settings.declare({ name="linebreak.linePenalty", type = "integer", default = 10})
+SILE.settings.declare({ name="linebreak.hyphenPenalty", type = "integer", default = 50})
+SILE.settings.declare({ name="linebreak.doubleHyphenDemerits", type = "integer", default = 10000})
+
+-- doubleHyphenDemerits
+-- hyphenPenalty
+
+
 inspect = require("inspect")
 local passSerial = 0
 local awful_bad = 1073741823
@@ -12,7 +31,9 @@ local inf_bad = 10000
 local ejectPenalty = -inf_bad
 lineBreak = {}
 
-function lineBreak:init(params)
+local param = function(x) return SILE.settings.get("linebreak."..x) end
+
+function lineBreak:init()
   self:trimGlue() -- 842
   self.active = { type = "hyphenated", lineNumber = awful_bad, subtype = 0 } -- 846
   -- 849
@@ -21,8 +42,8 @@ function lineBreak:init(params)
   self.background = SILE.length.new()
   self.breakWidth = SILE.length.new() 
   -- 853
-  self.q = params.rightSkip or 0
-  self.r = params.leftSkip or 0
+  self.q = param("rightSkip") or 0
+  self.r = param("leftSkip") or 0
   self.background = self.background + self.q + self.r   
   -- 860
   self.minimalDemerits = { tight = awful_bad, decent = awful_bad, loose = awful_bad, veryLoose = awful_bad }
@@ -43,19 +64,19 @@ function lineBreak:trimGlue() -- 842
 end
 
 function lineBreak:setupLineLengths(params) -- 874
-  self.parShape = params.parShape
+  self.parShape = param("parShape")
   if not self.parShape then
-    if not params.hangIndent then
+    if not param("hangIndent") then
       self.lastSpecialLine = 0
-      self.secondWidth = params.hsize or SU.error("No hsize")
+      self.secondWidth = self.hsize or SU.error("No hsize")
     else
       self.node875() -- XXX
     end
   else
-    self.lastSpecialLine = #params.parShape
+    self.lastSpecialLine = #param("parShape")
     self.secondWidth = SU.error("Oops")
   end
-  if params.looseness == 0 then self.easy_line = self.lastSpecialLine else self.easy_line = awful_bad end
+  if param("looseness") == 0 then self.easy_line = self.lastSpecialLine else self.easy_line = awful_bad end
   -- self.easy_line = awful_bad
 
 end
@@ -68,6 +89,7 @@ function lineBreak:tryBreak(pi, breakType) -- 855
   self.old_l = 0
   self.r = nil
   self.curActiveWidth = std.tree.clone(self.activeWidth)
+
   while true do
     while true do -- allows "break" to function as "continue"
       self.r = self.prev_r.next
@@ -114,13 +136,12 @@ function lineBreak:tryBreak(pi, breakType) -- 855
   
 end
 
-function lineBreak:considerDemerits(pi, breakType) -- 877
+function lineBreak:considerDemerits(pi, breakType) -- 877  
   self.artificialDemerits = false
   local nodeStaysActive = false
   local shortfall = self.lineWidth - self.curActiveWidth.length
   SU.debug("break", "Considering demerits, shortfall is "..shortfall)
   if shortfall > 0 then
-
     -- 878
     -- We do not currently deal with infinities, so we don't implement the "quick" side of this
     if shortfall > 110 and self.curActiveWidth.stretch < 25 then -- Blame Knuth for the magic numbers
@@ -173,8 +194,8 @@ function lineBreak:deactivateR() -- 886
     -- 887
     self.r = self.active.next
     if self.r.type == "delta" then
-      self.activeWidth = self.activeWidth + self.r.width
-      self.curActiveWidth = std.tree.clone(self.activeWidth)
+      self.activeWidth = self.activeWidth + self.r.width      
+      self.curActiveWidth = std.tree.clone(self.activeWidth)      
       self.active.next = self.r.next
     end
     SU.debug("break","  Deactivate, branch 1");
@@ -199,13 +220,13 @@ function lineBreak:recordFeasible(pi, breakType) -- 881
   local d
   if self.artificialDemerits then d = 0
   else
-    d = self.params.linePenalty + self.b
+    d = param("linePenalty") + self.b
     if math.abs(d) >= 10000 then d = 100000000 else d = d * d end
     if not(pi == 0) then 
       if pi > 0 then d = d + pi * pi elseif pi > ejectPenalty then d = d - pi * pi end
     end
     if breakType == "hyphenated" and self.r.type == "hyphenated" then
-      if self.nodes[self.cur_p] then d = d + self.params.doubleHyphenDemerits else d = d + self.params.finalHyphenDemerits end
+      if self.nodes[self.cur_p] then d = d + param("doubleHyphenDemerits") else d = d + param("finalHyphenDemerits") end
     end
     -- XXX adjDemerits not added here
   end
@@ -302,6 +323,7 @@ function lineBreak:checkForLegalBreak(n) -- 892
   SU.debug("break", "considering node "..n);
   if n:isBox() then
     self.activeWidth = self.activeWidth + n.width
+
   elseif n:isGlue() then
     -- 894
     if self.auto_breaking then
@@ -310,18 +332,18 @@ function lineBreak:checkForLegalBreak(n) -- 892
         --self.nodes[self.prev_p]:isKern()) then
         self:tryBreak(0, "unhyphenated")
       end
-      self.activeWidth = self.activeWidth + n.width -- Length version
+      self.activeWidth = self.activeWidth + n.width -- Length version      
     end
   elseif n:isDiscretionary() then
     -- 895  XXX
     self.discWidth = 0
     if not n.prebreak then 
-      tryBreak(self.params.hyphenPenalty, "hyphenated")
+      tryBreak(param("hyphenPenalty"), "hyphenated")
     else
       self.discWidth = n:prebreakWidth()
       self.activeWidth = self.activeWidth + self.discWidth
-      self:tryBreak(self.params.hyphenPenalty, "hyphenated")
-      self.activeWidth = self.activeWidth - self.discWidth
+      self:tryBreak(param("hyphenPenalty"), "hyphenated")
+      self.activeWidth = self.activeWidth - self.discWidth      
     end
   elseif n:isPenalty() then
     self:tryBreak(n.penalty, "unhyphenated")
@@ -349,34 +371,26 @@ function lineBreak:tryFinalBreak()      -- 899
       self.r = self.r.next
     until self.r == self.active
     self.bestLine = self.bestBet.lineNumber
-    if self.params.looseness == 0 then return "done" end
+    if param("looseness") == 0 then return "done" end
     -- XXX 901
-    if (self.actualLooseness == self.params.looseness) or self.finalpass then return "done" end
+    if (self.actualLooseness == param("looseness")) or self.finalpass then return "done" end
   end
 end
 
-function lineBreak:doBreak (params)
-  self.nodes = params.nodes
+function lineBreak:doBreak (nodes, hsize)
+  self.nodes = nodes
+  self.hsize = hsize
   self.auto_breaking = 1
-  if not params.pretolerance then params.pretolerance = 0 end
-  if not params.tolerance then params.tolerance = 1000 end
-  if not params.emergencyStretch then params.emergencyStretch = 0 end
-  if not params.prevGraf then params.prevGraf = 0 end
-  if not params.linePenalty then params.linePenalty = 10 end
-  if not params.looseness then params.looseness = 0 end
-  if not params.hyphenPenalty then params.hyphenPenalty = 50 end
-  if not params.doubleHyphenDemerits then params.doubleHyphenDemerits = awful_bad end
-  self.params = params
-  self:init(params)
-  if params.adjdemerits then self.adjdemerits = params.adjdemerits else self.adjdemerits = 10000 end
-  self.threshold = params.pretolerance
+  self:init()
+  self.adjdemerits = param("adjdemerits")
+  self.threshold = param("pretolerance")
   if self.threshold >= 0 then 
     self.pass = "first"
     self.finalpass = false
   else
-    self.threshold = params.tolerance
+    self.threshold = param("tolerance")
     self.pass = "second"
-    self.finalpass = (params.emergencyStretch <= 0)
+    self.finalpass = (param("emergencyStretch") <= 0)
   end
   -- 889
   while 1 do
@@ -386,12 +400,13 @@ function lineBreak:doBreak (params)
       self.nodes = SILE.hyphenate(self.nodes) 
     end
     -- 890
-    self.active.next = { type = "unhyphenated", fitness = "decent", next = self.active, breakNode = nil, lineNumber = params.prevGraf + 1, totalDemerits = 0}
+    self.active.next = { type = "unhyphenated", fitness = "decent", next = self.active, breakNode = nil, lineNumber = param("prevGraf") + 1, totalDemerits = 0}
 
-    if params.doLastLineFit then
+    if param("doLastLineFit") then
       --1630
     end
     self.activeWidth = std.tree.clone(self.background)
+
     self.passive = nil
 
     self.cur_p = 1
@@ -407,14 +422,14 @@ function lineBreak:doBreak (params)
     -- (Not doing 891)
     if not (self.pass == "second") then
       self.pass = "second"
-      self.threshold = params.tolerance
+      self.threshold = param("tolerance")
     else
       self.pass = "emergency"
-      self.background.stretch = self.background.stretch + params.emergencyStretch
+      self.background.stretch = self.background.stretch + param("emergencyStretch").length
       self.finalpass = true
     end    
   end
-  if params.doLastLineFit then 
+  if param("doLastLineFit") then 
     -- 1638
   end
   return self:postLineBreak()
@@ -425,7 +440,7 @@ function lineBreak:postLineBreak() -- 903
   local breaks = {}
   local line  = 1
   repeat
-    table.insert(breaks, 1,  { position = p.curBreak, width = self.parShape and self.parShape[line] or self.params.hsize } )
+    table.insert(breaks, 1,  { position = p.curBreak, width = self.parShape and self.parShape[line] or self.hsize } )
     p = p.prevBreak
     line = line + 1
   until not p

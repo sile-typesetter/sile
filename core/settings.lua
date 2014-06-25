@@ -92,7 +92,6 @@ SILE.settings.declare({
   help = "Skip to be added to right side of line"
 })
 
-
 SILE.registerCommand("set", function(options, content)
   local p = SU.required(options, "parameter", "\\set command")
   local v = SU.required(options, "value", "\\set command")

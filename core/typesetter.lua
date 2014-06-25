@@ -81,7 +81,7 @@ SILE.defaultTypesetter = std.object {
     --var breaks = SILE.linebreak(self.state.nodes,[ self.frame.width() ]);
     --if (1 || breaks.length == 0) {
       --SILE.hyphenate(self);
-      local breaks = SILE.linebreak:doBreak({ nodes = nl, hsize = self.frame:width(), pretolerance = 400 });
+      local breaks = SILE.linebreak:doBreak( nl, self.frame:width() );
       if (#breaks == 0) then
         SILE.SU.error("Couldn't break :(")
       end
