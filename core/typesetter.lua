@@ -15,14 +15,14 @@ SILE.defaultTypesetter = std.object {
     self.frame = f;
     self.state.cursorX = self.frame:left(); -- XXX for bidi
     self.state.cursorY = self.frame:top();
-    self.state.frameTotals = { height= 0, prevDepth= 0 };
+    self.state.frameTotals = { height= 0 };
   end,
   initState = function(self)
     self.state = {
       nodes = {},
       outputQueue = {},
       lastBadness = awful_bad,
-      frameTotals = { height = 0, prevDepth = 0, },
+      frameTotals = { height = 0 },
       frameLines = {}
     };
   end,
@@ -52,6 +52,8 @@ SILE.defaultTypesetter = std.object {
       end
     end
   end,
+
+  -- Takes string, writes onto self.state.nodes
   setpar = function (self, t)
     t = string.gsub(t,"\n", " ");
     --t = string.gsub(t,"^%s+", "");
@@ -67,9 +69,10 @@ SILE.defaultTypesetter = std.object {
       end
     end
   end,
-  leaveHmode = function(self, independent)
-   SU.debug("typesetter", "Leaving hmode");
-    local nl = self.state.nodes;
+
+  -- Empties self.state.nodes, breaks into lines, puts lines into vbox, adds vbox to
+  -- outputqueue, calls pageBuilder
+  boxUpNodes = function (self, nl)
     while (#nl > 0 and (nl[#nl]:isPenalty() or nl[#nl]:isGlue())) do
       table.remove(nl);
     end
@@ -77,18 +80,15 @@ SILE.defaultTypesetter = std.object {
     while (#nl >0 and nl[1]:isPenalty()) do table.remove(nl,1) end
     self:pushGlue({ width = SILE.length.new({ length = 0, stretch =  10000 })});
     self:pushPenalty({ flagged= 1, penalty= -inf_bad });
-    -- Run the KP algorithm
-    --var breaks = SILE.linebreak(self.state.nodes,[ self.frame.width() ]);
-    --if (1 || breaks.length == 0) {
-      --SILE.hyphenate(self);
-      local breaks = SILE.linebreak:doBreak( nl, self.frame:width() );
-      if (#breaks == 0) then
-        SILE.SU.error("Couldn't break :(")
-      end
-    --}
+    local breaks = SILE.linebreak:doBreak( nl, self.frame:width() );
+    if (#breaks == 0) then
+      SILE.SU.error("Couldn't break :(")
+    end
     local lines = self:breakpointsToLines(breaks);
-    -- Push output lines into boxes and ship them to the page builder
-    for index, l in pairs(lines) do
+    local vboxes = {}
+    local previousVbox = nil
+    for index=1, #lines do
+      local l = lines[index]
       local v = SILE.nodefactory.newVbox({ nodes = l.nodes, ratio = l.ratio });
       local pageBreakPenalty = 0
       if (#lines > 1 and index == 1) then
@@ -96,29 +96,41 @@ SILE.defaultTypesetter = std.object {
       elseif (#lines > 1 and index == #lines) then
         pageBreakPenalty = SILE.documentState.documentClass.settings.clubPenalty
       end
-      self:insertLeading(v);
-      self:pushVbox(v);
-      self:pushVpenalty({ penalty = pageBreakPenalty})
+      vboxes[#vboxes+1] = self:leadingFor(v, previousVbox)
+      vboxes[#vboxes+1] = v
+      previousVbox = v
+      vboxes[#vboxes+1] = SILE.nodefactory.newPenalty({ penalty = pageBreakPenalty})
+    end
+    return vboxes
+  end,
 
+  leaveHmode = function(self, independent)
+    SU.debug("typesetter", "Leaving hmode");
+    local vboxlist = self:boxUpNodes(self.state.nodes)
+    self.state.nodes = {};
+    -- Push output lines into boxes and ship them to the page builder
+    for index=1, #vboxlist do
+      self.state.outputQueue[#(self.state.outputQueue)+1] = vboxlist[index]
     end
     self:pageBuilder(independent);
   end,
-  insertLeading = function(self, v)
+  leadingFor = function(self, v, previous)
     -- Insert leading
    SU.debug("typesetter", "   Considering leading between self two lines");
-   SU.debug("typesetter", "   Depth of previous line was "..tostring(self.state.frameTotals.prevDepth));
+   local prevDepth = 0
+   if previous then prevDepth = previous.depth end
+   SU.debug("typesetter", "   Depth of previous line was "..tostring(prevDepth));
    local bls = SILE.settings.get("document.baselineskip")
-   local d = bls.height - v.height - self.state.frameTotals.prevDepth;
+   local d = bls.height - v.height - prevDepth;
    d = d.length
-   --SU.debug("typesetter", "   Leading height = " .. tostring(bls.height) .. " - " .. v.height .. " - " .. self.state.frameTotals.prevDepth .. " = "..d) ;
+   SU.debug("typesetter", "   Leading height = " .. tostring(bls.height) .. " - " .. v.height .. " - " .. prevDepth .. " = "..d) ;
 
     if (d > SILE.settings.get("document.lineskip").height.length) then
       len = SILE.length.new({ length = d, stretch = bls.height.stretch, shrink = bls.height.shrink })
-      self:pushVglue({height = len});
+      return SILE.nodefactory.newVglue({height = len});
     else
-      self:pushVglue(SILE.settings.get("document.lineskip"));
+      return SILE.nodefactory.newVglue(SILE.settings.get("document.lineskip"));
     end
-    self.state.frameTotals.prevDepth = v.depth;
   end,
   pageBuilder = function (self, independent)
     local target = SILE.length.new({ length = self.frame:height() }) -- XXX Floats
@@ -279,7 +291,6 @@ SILE.defaultTypesetter = std.object {
       end
     end
     --self.state.nodes = nodes.slice(linestart+1,nodes.length);
-    self.state.nodes = {};
     return lines;
   end
 };
