@@ -12,13 +12,6 @@ local leadingFor = function(this, vbox, previous)
   return SILE.nodefactory.newVglue({height = lead});
 end
 
-local boxUpNodes = function(this, nl)
-  local vlines = SILE.typesetter.super.boxUpNodes(this, nl)
-  -- Correction for final line
-  local lastLine = vlines[#vlines-1]
-  return vlines
-end
-
 local pushVglue = function(this, spec)
   if not this.state.frameTotals.gridCursor then this.state.frameTotals.gridCursor = 0 end
   this.super.pushVglue(this, spec);
@@ -31,7 +24,6 @@ SILE.registerCommand("grid", function(options, content)
   SILE.typesetter.super = t;
   SILE.typesetter.state.gridSpacing = SILE.parseComplexFrameDimension(options.spacing,"h");
   SILE.typesetter.leadingFor = leadingFor
-  SILE.typesetter.boxUpNodes = boxUpNodes
   SILE.typesetter.pushVglue = pushVglue;
 end)
 
