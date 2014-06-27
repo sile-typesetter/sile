@@ -3,6 +3,21 @@ local awful_bad = 1073741823
 local inf_bad = 10000
 local eject_penalty = -inf_bad
 local deplorable = 100000
+
+SILE.settings.declare({
+  name = "typesetter.widowpenalty", 
+  type = "integer",
+  default = 150,
+  help = "Penalty to be applied to widow lines (at the start of a paragraph)"
+})
+
+SILE.settings.declare({
+  name = "typesetter.orphanpenalty",
+  type = "integer",
+  default = 150,
+  help = "Penalty to be applied to orphan lines (at the end of a paragraph)"
+})
+
 SILE.defaultTypesetter = std.object {
   -- Setup functions
   init = function(self, frame)
@@ -92,14 +107,16 @@ SILE.defaultTypesetter = std.object {
       local v = SILE.nodefactory.newVbox({ nodes = l.nodes, ratio = l.ratio });
       local pageBreakPenalty = 0
       if (#lines > 1 and index == 1) then
-        pageBreakPenalty = SILE.documentState.documentClass.settings.widowPenalty
-      elseif (#lines > 1 and index == #lines) then
-        pageBreakPenalty = SILE.documentState.documentClass.settings.clubPenalty
+        pageBreakPenalty = SILE.settings.get("typesetter.widowpenalty")
+      elseif (#lines > 1 and index == (#lines-1)) then
+        pageBreakPenalty = SILE.settings.get("typesetter.orphanpenalty")
       end
       vboxes[#vboxes+1] = self:leadingFor(v, previousVbox)
       vboxes[#vboxes+1] = v
       previousVbox = v
-      vboxes[#vboxes+1] = SILE.nodefactory.newPenalty({ penalty = pageBreakPenalty})
+      if pageBreakPenalty > 0 then
+        vboxes[#vboxes+1] = SILE.nodefactory.newPenalty({ penalty = pageBreakPenalty})
+      end
     end
     return vboxes
   end,
@@ -146,12 +163,16 @@ SILE.defaultTypesetter = std.object {
       local left = (target - self.state.frameTotals.height).length;
       SU.debug("typesetter", "I have " .. tostring(left) .. "pts left");
       -- if (left < -20) then SU.error("\nCatastrophic page breaking failure!"); end 
-      if vbox:isPenalty() and vbox.penalty < inf_bad then
+      local pi = 0
+      if vbox:isPenalty() then
+        pi = vbox.penalty
+      end 
+      if vbox:isPenalty() and vbox.penalty < inf_bad  or vbox:isVglue() then
         local badness = left > 0 and left * left * left or awful_bad;
         local c
         if badness < awful_bad then 
-          if vbox.penalty <= eject_penalty then c = vbox.penalty
-          elseif badness < inf_bad then c = badness + vbox.penalty -- plus insert
+          if pi <= eject_penalty then c = pi
+          elseif badness < inf_bad then c = badness + pi -- plus insert
           else c = deplorable
           end
         else c = badness end
@@ -160,7 +181,7 @@ SILE.defaultTypesetter = std.object {
         if (c < self.state.lastBadness) then
           self.state.lastBadness = c;
         end
-        if c == awful_bad or vbox.penalty <= eject_penalty then
+        if c == awful_bad or pi <= eject_penalty then
          SU.debug("typesetter", "outputting");
           self.state.lastBadness = awful_bad
           self:shipOut(target, independent);
@@ -216,9 +237,6 @@ SILE.defaultTypesetter = std.object {
 
     while luaSucks(table.remove(self.state.outputQueue,1)) do
       if not v:isVglue() and not v:isPenalty() then
-      -- v.nodes.forEach(function(n){ 
-      --   if (n.isDiscretionary()) n.used = 0;
-      -- });
         for i=1,#(v.nodes) do
             self.state.nodes[#(self.state.nodes)+1] = v.nodes[i]
         end

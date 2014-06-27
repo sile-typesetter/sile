@@ -44,20 +44,6 @@ SILE.settings = {
 }
 
 SILE.settings.declare({
-  name = "typesetter.break.widowPenalty", 
-  type = "integer",
-  default = 150,
-  help = "Penalty to be applied to widow lines (at the start of a paragraph)"
-})
-
-SILE.settings.declare({
-  name = "typesetter.break.orphanPenalty",
-  type = "integer",
-  default = 150,
-  help = "Penalty to be applied to orphan lines (at the end of a paragraph)"
-})
-
-SILE.settings.declare({
   name = "document.parindent",
   type = "Glue",
   default = SILE.nodefactory.newGlue("20pt"),
