@@ -12,4 +12,25 @@ plain.newPage = function(self)
   return SILE.baseClass.newPage(self);
 end
 
+SILE.registerCommand("noindent", function ( options, content )
+  SILE.settings.temporarily( function ()
+    SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
+    SILE.process(content)
+  end)
+end)
+
+local skips = { small= "3pt plus 1pt minus 1pt", 
+      med = "6pt plus 2pt minus 2pt",
+      big = "12pt plus 4pt minus 4pt"}
+
+for k,v in pairs(skips) do
+  SILE.settings.declare({ 
+    name = "plain."..k.."skipamount", type="VGlue", default = SILE.nodefactory.newVglue(v),
+    help = "The amount of a \\"..k.."skip"})
+  SILE.registerCommand(k.."skip", function ( options, content )
+    SILE.typesetter:leaveHmode();    
+    SILE.typesetter:pushVglue(SILE.settings.get("plain."..k.."skipamount"))
+  end)
+end
+
 return plain;
