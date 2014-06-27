@@ -52,5 +52,9 @@ _length = std.object {
 	__lt = function (self, other) return (self-other).length < 0 end,
 }
 
-length = { new = function (spec) return _length(spec or {}) end }
+local zero = _length({})
+length = { 
+	new = function (spec) return _length(spec or {}) end,
+	zero = zero 
+}
 return length
