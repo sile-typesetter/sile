@@ -246,6 +246,11 @@ SILE.defaultTypesetter = std.object {
   end,
   outputLinesToPage = function (self, lines)
    SU.debug("typesetter", "OUTPUTTING");
+   -- Suppress top-of-frame-glue/penalties. This is a slight hack.
+    while #lines > 0 and (lines[1]:isVglue() or
+      lines[1]:isPenalty()) do
+      table.remove(lines,1)
+    end
     for i,line in pairs(lines) do
       line:outputYourself(self, line)
     end
