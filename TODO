@@ -1,5 +1,4 @@
 Plain format
-Return vboxes from typesetter for storing
 Allow em, en and ex units
 Clean up interface in typesetter, make methods stateless
 Better control of state stacks
@@ -9,9 +8,6 @@ Drop caps
 Underlining
 Replace Cairo with something else? (What for?)
 Spin out page break algorithm
-Fix widow-orphan control in page break
-Same old issue with top-of-page vskips
-Putting things into boxes (<footer> macro is wrong)
 Macros to make:
     Noindent
     Centering
@@ -31,3 +27,7 @@ Better classes
 Bidi/upwards/tate
 Japanese
 Hebrew
+
+Partially fixed but unsatisfying:
+    Fix widow-orphan control in page break (Solved?)
+    Same old issue with top-of-page vskips
