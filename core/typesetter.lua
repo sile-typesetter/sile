@@ -18,6 +18,13 @@ SILE.settings.declare({
   help = "Penalty to be applied to orphan lines (at the end of a paragraph)"
 })
 
+SILE.settings.declare({
+  name = "typesetter.parfillskip",
+  type = "Glue",
+  default = SILE.nodefactory.newGlue("0pt plus 10000pt"),
+  help = "Glue added at the end of a paragraph"
+})
+
 SILE.defaultTypesetter = std.object {
   -- Setup functions
   init = function(self, frame)
@@ -40,10 +47,11 @@ SILE.defaultTypesetter = std.object {
       frameTotals = { height = 0 },
       frameLines = {}
     };
+    self:initline()
   end,
   pushState = function(self)
     table.insert(self.stateQueue, self.state);
-    self.initState();
+    self:initState();
   end,
   popState = function(self)
     self.state = table.remove(self.stateQueue);
@@ -68,12 +76,18 @@ SILE.defaultTypesetter = std.object {
     end
   end,
 
+  initline = function (self)
+    if (#self.state.nodes == 0) then
+      self:pushHbox({ width = SILE.length.new({length = 0}), value = {glyph = 0} });
+    end
+  end,
+
   -- Takes string, writes onto self.state.nodes
   setpar = function (self, t)
     t = string.gsub(t,"\n", " ");
     --t = string.gsub(t,"^%s+", "");
     if (#self.state.nodes == 0) then
-      self:pushHbox({ width = SILE.length.new({length = 0}), value = {glyph = 0} });
+      self:initline()
       SILE.documentState.documentClass.newPar(self); -- XXX ?
     end
     for token in SU.gtoke(t, "-") do
@@ -87,14 +101,16 @@ SILE.defaultTypesetter = std.object {
 
   -- Empties self.state.nodes, breaks into lines, puts lines into vbox, adds vbox to
   -- outputqueue, calls pageBuilder
-  boxUpNodes = function (self, nl)
-    while (#nl > 0 and (nl[#nl]:isPenalty() or nl[#nl]:isGlue())) do
-      table.remove(nl);
-    end
+  boxUpNodes = function (self, nl, suppressFinalGlue)
+    -- Question: If final discardables are discardable, how does "\hss foo \hss" work?
+    --while (#nl > 0 and (nl[#nl]:isPenalty() or nl[#nl]:isGlue())) do
+    --  table.remove(nl);
+    --end
 
     while (#nl >0 and nl[1]:isPenalty()) do table.remove(nl,1) end
-    self:pushGlue({ width = SILE.length.new({ length = 0, stretch =  10000 })});
+    self:pushGlue(SILE.settings.get("typesetter.parfillskip"));
     self:pushPenalty({ flagged= 1, penalty= -inf_bad });
+    SU.debug("typesetter", "Boxed up "..nl);
     local breaks = SILE.linebreak:doBreak( nl, self.frame:width() );
     if (#breaks == 0) then
       SILE.SU.error("Couldn't break :(")
