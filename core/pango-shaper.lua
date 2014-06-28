@@ -21,20 +21,6 @@ end
 
 local palcache = {}
 
-local function setDefaultOptions(options)
-  if not options.font then options.font = SILE.documentState.fontFamily end
-  if not options.size then options.size = SILE.documentState.fontSize end
-  if not options.rise then options.rise = SILE.documentState.fontRise end
-  if not options.weight then options.weight = SILE.documentState.fontWeight end
-  if not options.style then options.style = SILE.documentState.fontStyle end
-  if not options.variant then options.variant = SILE.documentState.fontVariant end
-  if not options.language then options.language = SILE.documentState.language end
-  if not options.underline then options.underline = SILE.documentState.fontUnderline end
-  if not options.color then options.color = SILE.documentState.color end
-
-  return options
-end
-
 local function getPal(options)
   if options.pal then
     pal = options.pal
@@ -79,7 +65,7 @@ end
 
 function SILE.shapers.pango.shape(text, options)
   if not options then options = {} end
-  options = setDefaultOptions(options)
+  options = SILE.font.loadDefaults(options)
 
   local pal = getPal(options)
   local nodes = {}

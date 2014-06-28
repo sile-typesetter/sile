@@ -55,26 +55,6 @@ SILE.baseClass = std.object {
       SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newFrame(spec);
     end)
 
-    SILE.registerCommand("font", function(options, content)
-      local prevState = SILE.documentState;
-      if (content[1]) then
-        SILE.documentState = std.tree.clone( prevState )
-      end
-      if (options.family)  then SILE.documentState.fontFamily = options.family end
-      if (options.size)  then SILE.documentState.fontSize = options.size end
-      if (options.weight)  then SILE.documentState.fontWeight = options.weight end
-      if (options.rise)  then SILE.documentState.fontRise = options.rise end
-      if (options.style)  then SILE.documentState.fontStyle = options.style end
-      if (options.variant)  then SILE.documentState.fontVariant = options.variant end
-      if (options.underline)  then SILE.documentState.fontUnderline = options.underline end
-      if (options.language)  then SILE.documentState.language = options.language end
-      if (options.color)  then SILE.documentState.color = SILE.colorparser(options.color) end
-      if (content[1]) then 
-        SILE.process(content)
-        SILE.documentState = prevState
-      end
-    end)
-
     SILE.registerCommand("penalty", function(options, content)
       SILE.typesetter:pushPenalty({ flagged= tonumber(options.flagged), penalty = tonumber(options.penalty) })
     end)
@@ -91,7 +71,6 @@ SILE.baseClass = std.object {
     end)
   end),
 
-  settings = { widowPenalty= 5000, clubPenalty= 5000 },
   pageTemplate = std.object { frames= {}, firstContentFrame= nil },
   loadPackage = function(self, packname, args)
     local pack = require("packages/"..packname)
@@ -103,12 +82,6 @@ SILE.baseClass = std.object {
   init = function(self)
     SILE.outputter.init(self); 
     self:registerCommands();
-    SILE.documentState.fontFamily = "Gentium";
-    SILE.documentState.fontSize = 10;
-    SILE.documentState.fontWeight = 200;
-    SILE.documentState.fontStyle = "normal";
-    SILE.documentState.language = "en";
-    SILE.documentState.color = "black";
     return self:initialFrame();
   end,
   initialFrame= function(self)

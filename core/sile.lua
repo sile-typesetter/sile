@@ -24,6 +24,7 @@ require("core/papersizes")
 require("core/colorparser")
 require("core/typesetter")
 require("core/hyphenator-liang")
+require("core/font")
 
 SILE.frameParser = require("core/frameparser")
 SILE.linebreak = require("core/break")
