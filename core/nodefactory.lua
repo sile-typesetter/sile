@@ -106,9 +106,9 @@ local _glue = _box {
   toText = function () return " " end,
   outputYourself = function (self,typesetter, line)
     local scaledWidth = self.width.length
-    if line.ratio < 0 and self.width.shrink > 0 then
+    if line.ratio and line.ratio < 0 and self.width.shrink > 0 then
       scaledWidth = scaledWidth + self.width.shrink * line.ratio
-    elseif line.ratio > 0 and self.width.stretch > 0 then
+    elseif line.ratio and line.ratio > 0 and self.width.stretch > 0 then
       scaledWidth = scaledWidth + self.width.stretch * line.ratio
     end
     typesetter.state.cursorX = typesetter.state.cursorX + scaledWidth
@@ -213,6 +213,14 @@ function SILE.nodefactory.newPenalty(spec)  return _penalty(spec) end
 function SILE.nodefactory.newDiscretionary(spec)  return _disc(spec) end
 function SILE.nodefactory.newVbox(spec)  return _vbox(spec):init() end
 
+-- This infinity needs to be smaller than an actual infinity but bigger than the infinite stretch
+-- added by the typesetter.
+local inf = 100000 
 SILE.nodefactory.zeroGlue = SILE.nodefactory.newGlue({width = SILE.length.new({length = 0})})
+SILE.nodefactory.hfillGlue = SILE.nodefactory.newGlue({width = SILE.length.new({length = 0, stretch = inf})})
+SILE.nodefactory.vfillGlue = SILE.nodefactory.newVglue({height = SILE.length.new({length = 0, stretch = inf})})
+SILE.nodefactory.hssGlue = SILE.nodefactory.newGlue({width = SILE.length.new({length = 0, stretch = inf, shrink = inf})})
+SILE.nodefactory.vssGlue = SILE.nodefactory.newVglue({height = SILE.length.new({length = 0, stretch = inf, shrink = inf})})
+
 SILE.nodefactory.zeroVglue = SILE.nodefactory.newVglue({})
 return SILE.nodefactory

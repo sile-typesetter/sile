@@ -33,4 +33,12 @@ for k,v in pairs(skips) do
   end)
 end
 
+SILE.registerCommand("hfill", function(o,c) SILE.typesetter:pushGlue(SILE.nodefactory.hfillGlue) end)
+SILE.registerCommand("vfill", function(o,c) SILE.typesetter:pushVglue(SILE.nodefactory.vfillGlue) end)
+SILE.registerCommand("hss", function(o,c) 
+  SILE.typesetter:initline()
+  SILE.typesetter:pushGlue(SILE.nodefactory.hssGlue) 
+end)
+SILE.registerCommand("vss", function(o,c) SILE.typesetter:pushVglue(SILE.nodefactory.vssGlue) end)
+
 return plain;
