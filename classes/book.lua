@@ -32,17 +32,21 @@ end;
 SILE.registerCommand("left-running-head", function(options, content)
   SILE.settings.temporarily(function()
     SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
+    SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
+    SILE.typesetter:pushState()
     SILE.process(content)
     SILE.scratch.headers.left = SILE.typesetter.state.nodes;
-    SILE.typesetter.state.nodes = {}
+    SILE.typesetter:popState()
   end);
 end);
 SILE.registerCommand("right-running-head", function(options, content)
   SILE.settings.temporarily(function()
     SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
+    SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
+    SILE.typesetter:pushState()
     SILE.process(content)
     SILE.scratch.headers.right = SILE.typesetter.state.nodes;
-    SILE.typesetter.state.nodes = {}
+    SILE.typesetter:popState()
   end);
 end);
 
