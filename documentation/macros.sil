@@ -1,5 +1,5 @@
 <sile>
-<define command="center"><glue stretch="10000"/><process/><glue stretch="10000"/></define>
+<define command="center"><hss/><process/><hss/></define>
 <define command="em"><font style="italic"><process/></font></define>
 <define command="%">%</define>
 <define command="\">\</define>
