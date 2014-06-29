@@ -29,6 +29,11 @@ SILE.outputters.cairo = {
   moveTo = function (x,y)
     cr:move_to(x,y)
   end,
+  rule = function (x,y,w,d)
+    cr:set_source_rgb(0,0,0);
+    cr:rectangle(x,y,w,d)
+    cr:fill()
+  end,
   debugFrame = function (self,f)
     cr:set_line_width(0.5);
   	cr:rectangle(f:left(), f:top(), f:width(), f:height());
