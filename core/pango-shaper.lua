@@ -20,7 +20,7 @@ function _shape(s, item)
 end
 
 local palcache = {}
-
+local spacecache = {}
 local function getPal(options)
   if options.pal then
     pal = options.pal
@@ -55,12 +55,14 @@ local function getPal(options)
 end  
 
 local function measureSpace( pal )
+  local ss = SILE.settings.get("document.spaceskip") 
+  if ss then return ss end
+  if spacecache[pal] then return spacecache[pal] end
   local spaceitem = itemize(" ",pal)[1]
   local g = (_shape(" ",spaceitem).glyphs)[1]
   local spacewidth = g.geometry.width / 1024;
-  local ss = SILE.settings.get("document.spaceskip") 
-  if ss then return ss end
-  return SILE.length.new({ length = spacewidth * 1.2, shrink = spacewidth/3, stretch = spacewidth /2 }) -- XXX
+  spacecache[pal] = SILE.length.new({ length = spacewidth * 1.2, shrink = spacewidth/3, stretch = spacewidth /2 }) -- XXX
+  return spacecache[pal]
 end
 
 function SILE.shapers.pango.shape(text, options)
