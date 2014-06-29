@@ -39,8 +39,7 @@ local function getPal(options)
       options.style == "italic" and pango.Style.ITALIC or pango.Style.NORMAL)) end
     if options.variant then pal:insert(pango.Attribute.variant_new(
       options.variant == "smallcaps" and pango.Variant.SMALL_CAPS or pango.Variant.NORMAL)) end
-    if options.underline then 
-      print("Adding underline "..options.underline)
+    if string.len(options.underline) then 
       pal:insert(pango.Attribute.underline_new(
       options.underline == "single" and pango.Underline.SINGLE or
       options.underline == "double" and pango.Underline.DOUBLE or
@@ -64,6 +63,24 @@ local function measureSpace( pal )
   spacecache[pal] = SILE.length.new({ length = spacewidth * 1.2, shrink = spacewidth/3, stretch = spacewidth /2 }) -- XXX
   return spacecache[pal]
 end
+
+local dimcache = {}
+function SILE.shapers.pango.measureDim(char)
+  local options = SILE.font.loadDefaults({})
+  local pal = getPal(options)
+  if dimcache[pal] and dimcache[pal][char] then return dimcache[pal][char] end
+  if not dimcache[pal] then dimcache[pal] = {} end
+  local charitem = itemize(char,pal)[1]
+  local g = (_shape(char,charitem).glyphs)[1]
+  if char == "x" then 
+    local font = charitem.analysis.font
+    local rect = font:get_glyph_extents(g.glyph)
+    dimcache[pal][char] = -rect.y/1024
+  else
+    dimcache[pal][char] = g.geometry.width / 1024
+  end
+  return dimcache[pal][char]
+end 
 
 function SILE.shapers.pango.shape(text, options)
   if not options then options = {} end

@@ -24,7 +24,7 @@ number.scientific =
 -- Matches all of the above
 number.number = C(number.decimal + number.scientific) / function (n) return tonumber(n) end
 local whitespace = S('\r\n\f\t ')^0
-local units = P("mm") + P("cm") + P("in") + P("pt")
+local units = P("mm") + P("cm") + P("in") + P("pt") + P("em") + P("ex") + P("en")
 local zero = P("0") / function(...) return 0 end
 local dimensioned_string = ( C(number.number) * whitespace * C(units) ) / function (x,n,u) return  SILE.toPoints(n, u) end
 
