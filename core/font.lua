@@ -1,42 +1,47 @@
 
     SILE.registerCommand("font", function(options, content)
-      local prevState = SILE.documentState;
       if (content[1]) then
-        SILE.documentState = std.tree.clone( prevState )
+        SILE.settings.pushState()  
       end
-      if (options.family)  then SILE.documentState.fontFamily = options.family end
-      if (options.size)  then SILE.documentState.fontSize = options.size end
-      if (options.weight)  then SILE.documentState.fontWeight = options.weight end
-      if (options.rise)  then SILE.documentState.fontRise = options.rise end
-      if (options.style)  then SILE.documentState.fontStyle = options.style end
-      if (options.variant)  then SILE.documentState.fontVariant = options.variant end
-      if (options.underline)  then SILE.documentState.fontUnderline = options.underline end
-      if (options.language)  then SILE.documentState.language = options.language end
-      if (options.color)  then SILE.documentState.color = SILE.colorparser(options.color) end
+      if (options.family)  then SILE.settings.set("font.family", options.family) end
+      if (options.size)  then SILE.settings.set("font.size", 0+options.size) end
+      if (options.weight)  then SILE.settings.set("font.weight", 0+options.weight) end
+      if (options.rise)  then SILE.settings.set("font.rise", options.rise) end
+      if (options.style)  then SILE.settings.set("font.style", options.style) end
+      if (options.variant)  then SILE.settings.set("font.variant", options.variant) end
+      if (options.underline)  then SILE.settings.set("font.underline", options.underline) end
+      if (options.language)  then  SILE.settings.set("document.language", options.language) end
+      if (options.color)  then  SILE.settings.set("font.color", SILE.colorparser(options.color)) end
       if (content[1]) then 
         SILE.process(content)
-        SILE.documentState = prevState
+        SILE.settings.popState()
       end
     end)
 
-SILE.documentState.fontFamily = "Gentium";
-SILE.documentState.fontSize = 10;
-SILE.documentState.fontWeight = 200;
-SILE.documentState.fontStyle = "normal";
-SILE.documentState.language = "en";
-SILE.documentState.color = "black";
+SILE.settings.declare({name = "font.family", type = "string", default = "Gentium"})
+SILE.settings.declare({name = "font.size", type = "integer", default = 10})
+SILE.settings.declare({name = "font.weight", type = "integer", default = 200})
+SILE.settings.declare({name = "font.variant", type = "string", default = "normal"})
+
+SILE.settings.declare({name = "font.style", type = "string", default = "normal"})
+SILE.settings.declare({name = "font.color", type = "string or table", default = "black"})
+SILE.settings.declare({name = "font.underline", type = "string", default = ""})
+
+SILE.settings.declare({name = "font.rise", type = "integer", default = 0})
+
+SILE.settings.declare({name = "document.language", type = "string", default = "en"})
+
 
 SILE.font = {loadDefaults = function(options)
-  if not options.font then options.font = SILE.documentState.fontFamily end
-  if not options.size then options.size = SILE.documentState.fontSize end
-  if not options.rise then options.rise = SILE.documentState.fontRise end
-  if not options.weight then options.weight = SILE.documentState.fontWeight end
-  if not options.style then options.style = SILE.documentState.fontStyle end
-  if not options.variant then options.variant = SILE.documentState.fontVariant end
-  if not options.language then options.language = SILE.documentState.language end
-  if not options.underline then options.underline = SILE.documentState.fontUnderline end
-  if not options.color then options.color = SILE.documentState.color end
-
+  if not options.font then options.font = SILE.settings.get("font.family") end
+  if not options.size then options.size = SILE.settings.get("font.size") end
+  if not options.rise then options.rise = SILE.settings.get("font.rise") end
+  if not options.weight then options.weight = SILE.settings.get("font.weight") end
+  if not options.style then options.style = SILE.settings.get("font.style") end
+  if not options.variant then options.variant = SILE.settings.get("font.variant") end
+  if not options.language then options.language = SILE.settings.get("document.language") end
+  if not options.underline then options.underline = SILE.settings.get("font.underline") end
+  if not options.color then options.color = SILE.settings.get("font.color") end
   return options
 end
 }
