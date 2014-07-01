@@ -61,8 +61,9 @@ SILE.baseClass = std.object {
 
     SILE.registerCommand("glue", function(options, content) 
       SILE.typesetter:pushGlue({ 
-        width = SILE.length.new({ length = tonumber(options.width), stretch = tonumber(options.stretch), shrink = tonumber(options.shrink) })
+        width = SILE.length.new({ length = SILE.parseComplexFrameDimension(options.width, "w"), stretch = tonumber(options.stretch), shrink = tonumber(options.shrink) })
       })
+      print(SILE.typesetter.state.nodes[#(SILE.typesetter.state.nodes)])
     end)
 
     SILE.registerCommand("skip", function(options, content)
