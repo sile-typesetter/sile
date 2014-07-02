@@ -1,3 +1,5 @@
+SILE.baseClass:loadPackage("raiselower")
+
 SILE.registerCommand("hrule", function(options, content)
   local width = options.width or 0
   local height = options.height or 0
@@ -21,3 +23,21 @@ SILE.registerCommand("hrule", function(options, content)
     end
   });
 end);
+
+SILE.registerCommand("underline", function(options, content)
+  -- This is very fragile
+  local index = #(SILE.typesetter.state.nodes)
+  SILE.process(content)
+  local l = SILE.length.new()
+  for i = index, #(SILE.typesetter.state.nodes) do
+    --if SILE.typesetter.state.nodes[i]:isBox() then
+      l = l + SILE.typesetter.state.nodes[i].width 
+    --end
+  end
+  local gl = SILE.length.new() - l
+  SILE.typesetter:pushGlue({width = gl})
+  print(l.length)
+  SILE.Commands["lower"]({height = "0.5pt"}, function()
+    SILE.Commands["hrule"]({width = l.length, height = "0.5pt"})
+  end);
+end)
