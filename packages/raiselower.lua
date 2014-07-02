@@ -1,3 +1,4 @@
+
 SILE.registerCommand("raise", function(options, content)
   local height = options.height or 0
   height = SILE.parseComplexFrameDimension(height,"h")
@@ -14,5 +15,8 @@ SILE.registerCommand("raise", function(options, content)
       typesetter.state.cursorY = typesetter.state.cursorY + height
     end
   });
-
 end);
+
+SILE.registerCommand("lower", function (options, content)
+  SILE.Commands["raise"]({height = "-"..options.height}, content)
+end)
