@@ -189,24 +189,12 @@ function SILE.nodefactory.newNnode(spec)  return _nnode(spec):init() end
 function SILE.nodefactory.newDisc(spec)   return _disc(spec) end
 function SILE.nodefactory.newGlue(spec)
   if type(spec) == "table" then return _glue(spec) end
-  if type(spec) == "string" then
-    local t = lpeg.match(SILE.parserBits.length, spec)
-    if not t then SU.error("Bad glue definition "..spec) end
-    if not t.shrink then t.shrink = 0 end
-    if not t.stretch then t.stretch = 0 end
-    return _glue({width = SILE.length.new(t)})
-  end
+  if type(spec) == "string" then return _glue({width = SILE.length.parse(spec)}) end
   SU.error("Unparsable glue spec "..spec)
 end
 function SILE.nodefactory.newVglue(spec)
   if type(spec) == "table" then return _vglue(spec) end
-  if type(spec) == "string" then
-    local t = lpeg.match(SILE.parserBits.length, spec)
-    if not t then SU.error("Bad glue definition "..spec) end
-    if not t.shrink then t.shrink = 0 end
-    if not t.stretch then t.stretch = 0 end
-    return _vglue({height = SILE.length.new(t)})
-  end
+  if type(spec) == "string" then return _vglue({height = SILE.length.parse(spec)}) end
   SU.error("Unparsable glue spec "..spec)
 end
 function SILE.nodefactory.newPenalty(spec)  return _penalty(spec) end
