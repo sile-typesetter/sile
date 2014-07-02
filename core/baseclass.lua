@@ -74,9 +74,11 @@ SILE.baseClass = std.object {
   pageTemplate = std.object { frames= {}, firstContentFrame= nil },
   loadPackage = function(self, packname, args)
     local pack = require("packages/"..packname)
-    self:mapfields(pack.exports)
-    if pack.init then
-      pack.init(self, args)
+    if type(pack) == "table" then 
+      self:mapfields(pack.exports)
+      if pack.init then
+        pack.init(self, args)
+      end
     end
   end,
   init = function(self)
