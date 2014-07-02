@@ -3,7 +3,7 @@
 <define command="em"><font style="italic"><process/></font></define>
 <define command="headline">
 <medskip/>
-<font family="Frutiger LT Std" weight="700" size="20"><center><process/></center></font>
+<font family="Frutiger LT Std" weight="700" size="20pt"><center><process/></center></font>
 <bigskip/>
 </define>
 </sile>

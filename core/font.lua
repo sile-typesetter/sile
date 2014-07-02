@@ -4,7 +4,11 @@
         SILE.settings.pushState()  
       end
       if (options.family)  then SILE.settings.set("font.family", options.family) end
-      if (options.size)  then SILE.settings.set("font.size", 0+options.size) end
+      if (options.size)  then 
+        local size = SILE.parserBits.dimensioned_string:match(options.size)
+        if not size then SU.error("Couldn't parse font size "..options.size) end
+        SILE.settings.set("font.size", size)
+      end
       if (options.weight)  then SILE.settings.set("font.weight", 0+options.weight) end
       if (options.rise)  then SILE.settings.set("font.rise", options.rise) end
       if (options.style)  then SILE.settings.set("font.style", options.style) end

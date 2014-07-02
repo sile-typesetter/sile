@@ -2,7 +2,7 @@
 \script[src=packages/grid]
 \script[src=packages/verbatim]
 \include[src=documentation/macros.sil]
-\font[size=12]
+\font[size=12pt]
 
 \headline{Simon’s Improved Layout Engine}
 

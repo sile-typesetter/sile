@@ -5,11 +5,11 @@
 <define command="\">\</define>
 <define command="{">{</define>
 <define command="}">}</define>
-<define command="note"><font style="italic" size="10"><process/></font></define>
+<define command="note"><font style="italic" size="10pt"><process/></font></define>
 <define command="sectionsfont"><font family="Frutiger LT Std" weight="700"><process/></font></define>
 <define command="headline">
 <skip height="1cm"/>
-<sectionsfont><center><font size="20"><process/></font></center></sectionsfont>
+<sectionsfont><center><font size="20pt"><process/></font></center></sectionsfont>
 <skip height="0.5cm"/>
 </define>
 <define command="ragged-right">
@@ -17,8 +17,8 @@
 <process/><script>SILE.typesetter:leaveHmode()</script>
 <set parameter="document.rskip" value="0"/></define>
 
-<define command="section"><set-counter id="subsection" value="0"/><skip height="12pt"/><sectionsfont><font size="15"><increment-counter id="section"/><show-counter id="section"/> <process/></font></sectionsfont><skip height="13pt"/></define>
-<define command="subsection"><skip height="13pt"/><sectionsfont><font size="12"><show-counter id="section"/>.<increment-counter id="subsection"/><show-counter id="subsection"/> <process/></font></sectionsfont><skip height="13pt"/></define>
+<define command="section"><set-counter id="subsection" value="0"/><skip height="12pt"/><sectionsfont><font size="15pt"><increment-counter id="section"/><show-counter id="section"/> <process/></font></sectionsfont><skip height="13pt"/></define>
+<define command="subsection"><skip height="13pt"/><sectionsfont><font size="12pt"><show-counter id="section"/>.<increment-counter id="subsection"/><show-counter id="subsection"/> <process/></font></sectionsfont><skip height="13pt"/></define>
 
-<define command="code"><font family="Monaco" size="9" style="roman" language="xx"><process/></font></define>
+<define command="code"><font family="Monaco" size="9pt" style="roman" language="xx"><process/></font></define>
 </sile>
