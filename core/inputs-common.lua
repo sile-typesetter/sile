@@ -14,6 +14,7 @@ SILE.inputs.common = {
 }
 
 SILE.process = function(t)
+  if type(t) == "function" then return t() end
   for k,v in ipairs(t) do
     if type(v) == "string" then
       SILE.typesetter:typeset(v)
