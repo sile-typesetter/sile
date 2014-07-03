@@ -1,5 +1,17 @@
 SILE.Commands = {}
-function SILE.registerCommand (name, f) SILE.Commands[name] = f end
+SILE.Help = {}
+function SILE.registerCommand (name, f, help, pack) 
+  SILE.Commands[name] = f 
+  if not pack then
+    local where = debug.getinfo(2).source
+    pack = where:match("(%w+).lua")
+  end
+  print(name .. " -> "..pack)
+    SILE.Help[name] = {
+      description = help,
+      where = pack
+    }
+end
 
 SILE.baseClass = std.object {
   registerCommands = (function()
@@ -11,13 +23,13 @@ SILE.baseClass = std.object {
         table.insert(commandStack, c)
         SILE.process(content)
         --SILE.documentState = prevState
-      end)
-    end)
+      end, options.help, SILE.currentlyProcessingFile)
+    end, "Define a new macro. \\define[command=example]{ ... \\process }")
 
-    SILE.registerCommand("comment", function(o,c) end);
+    SILE.registerCommand("comment", function(o,c) end, "Ignores any text within this command's body.");
     SILE.registerCommand("process", function()
       SILE.process(table.remove(commandStack));
-    end)
+    end, "Within a macro definition, processes the contents of the macro body.")
 
     SILE.registerCommand("script", function(options, content)
       if (options["src"]) then 
@@ -27,18 +39,18 @@ SILE.baseClass = std.object {
         if not p then SU.error(e) end
         p()
       end
-    end)
+    end, "Runs lua code. The code may be supplied either inline or using the src=... option. (Think HTML.)")
 
     SILE.registerCommand("include", function(options, content)
         SILE.readFile(options["src"]);
-    end)
+    end, "Includes a SILE file for processing.")
 
     SILE.registerCommand("pagetemplate", function (options, content) 
       SILE.documentState.thisPageTemplate = { frames = {} };
       SILE.process(content);
       SILE.documentState.thisPageTemplate.firstContentFrame = SILE.getFrame(options["first-content-frame"]);
       SILE.typesetter:initFrame(SILE.documentState.thisPageTemplate.firstContentFrame);
-    end)
+    end, "Defines a new page template for the current page and sets the typesetter to use it.")
 
     SILE.registerCommand("frame", function (options, content)
       local spec = {
@@ -53,22 +65,22 @@ SILE.baseClass = std.object {
         height = options.height and function() return SILE.parseComplexFrameDimension(options.height, "h") end,
       };
       SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newFrame(spec);
-    end)
+    end, "Declares (or re-declares) a frame on this page.")
 
     SILE.registerCommand("penalty", function(options, content)
       SILE.typesetter:pushPenalty({ flagged= tonumber(options.flagged), penalty = tonumber(options.penalty) })
-    end)
+    end, "Inserts a penalty node. Options are penalty= for the size of the penalty and flagged= if this is a flagged penalty.")
 
     SILE.registerCommand("glue", function(options, content) 
       SILE.typesetter:pushGlue({ 
-        width = SILE.length.new({ length = SILE.parseComplexFrameDimension(options.width, "w"), stretch = tonumber(options.stretch), shrink = tonumber(options.shrink) })
+        width = SILE.length.parse(options.width)
       })
-    end)
+    end, "Inserts a glue node. The width option denotes the glue dimension.")
 
     SILE.registerCommand("skip", function(options, content)
       SILE.typesetter:leaveHmode();
-      SILE.typesetter:pushVglue({ height = SILE.length.new({ length = SILE.parseComplexFrameDimension(options.height, "h"), stretch = SILE.parseComplexFrameDimension(options.stretch or "0", "h") or 0, shrink = tonumber(options.shrink) or 0 }) })
-    end)
+      SILE.typesetter:pushVglue({ height = SILE.length.parse("options.height") })
+    end, "Inserts vertical skip. The height options denotes the skip dimension.")
   end),
 
   pageTemplate = std.object { frames= {}, firstContentFrame= nil },

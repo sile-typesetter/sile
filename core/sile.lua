@@ -95,6 +95,7 @@ function SILE.repl ()
 end
 
 function SILE.readFile(fn)
+  SILE.currentlyProcessingFile = fn
   fn = SILE.resolveFile(fn)
   local file, err = io.open(fn)
   if not file then
