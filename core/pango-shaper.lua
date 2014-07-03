@@ -34,17 +34,10 @@ local function getPal(options)
     if options.font then pal:insert(pango.Attribute.family_new(options.font)) end
     if options.weight then pal:insert(pango.Attribute.weight_new(tonumber(options.weight))) end
     if options.size then pal:insert(pango.Attribute.size_new(options.size * 1024 * 0.75)) end -- I don't know why 0.75
-    if options.rise then pal:insert(pango.Attribute.rise_new(options.rise * 1024 * 0.75)) end
     if options.style then pal:insert(pango.Attribute.style_new(
       options.style == "italic" and pango.Style.ITALIC or pango.Style.NORMAL)) end
     if options.variant then pal:insert(pango.Attribute.variant_new(
       options.variant == "smallcaps" and pango.Variant.SMALL_CAPS or pango.Variant.NORMAL)) end
-    if string.len(options.underline) then 
-      pal:insert(pango.Attribute.underline_new(
-      options.underline == "single" and pango.Underline.SINGLE or
-      options.underline == "double" and pango.Underline.DOUBLE or
-      pango.Underline.ERROR))
-    end
   end
   if options.language then
     pango_context:set_language(pango.Language.from_string(options.language))
