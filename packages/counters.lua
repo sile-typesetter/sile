@@ -37,7 +37,7 @@ SILE.registerCommand("increment-counter", function (options,content)
   end
   if options.display then SILE.scratch.counters[c].display = options.display end
   -- SILE.typesetter:setpar(SILE.formatCounter(SILE.scratch.counters[c]))
-end)
+end, "Increments the counter named by the <id> option")
 
 SILE.registerCommand("set-counter", function (options, content) 
   local c = options.id;
@@ -46,7 +46,7 @@ SILE.registerCommand("set-counter", function (options, content)
   end
   if options.value then SILE.scratch.counters[c].value = tonumber(options.value) end
   if options.display then SILE.scratch.counters[c].display = options.display end
-end);
+end, "Sets the counter named by the <id> option to <value>; sets its display type (roman/Roman/arabic) to type <display>.");
 
 
 SILE.registerCommand("show-counter", function (options, content)
@@ -56,4 +56,4 @@ SILE.registerCommand("show-counter", function (options, content)
   end    
   if options.display then SILE.scratch.counters[c].display = options.display end
   SILE.typesetter:setpar(SILE.formatCounter(SILE.scratch.counters[c]));
-end);
+end, "Outputs the value of counter <id>, optionally displaying it with the <display> format.");

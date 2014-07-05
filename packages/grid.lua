@@ -27,8 +27,8 @@ SILE.registerCommand("grid", function(options, content)
   gridSpacing = SILE.parseComplexFrameDimension(options.spacing,"h");
   SILE.typesetter.leadingFor = leadingFor
   SILE.typesetter.pushVglue = pushVglue;
-end)
+end, "Begins typesetting on a grid spaced at <spacing> intervals.")
 
 SILE.registerCommand("no-grid", function (options, content)
   SILE.typesetter = SILE.typesetter.super;
-end)
+end, "Stops grid typesetting.")

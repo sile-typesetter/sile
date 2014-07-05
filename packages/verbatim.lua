@@ -22,4 +22,4 @@ SILE.registerCommand("verbatim", function(options, content)
 
   t:pushVglue({ height = SILE.length.new({ length = 15 }) })
   SILE.typesetter = t
-end)
+end, "Typesets its contents in a monospaced font.")

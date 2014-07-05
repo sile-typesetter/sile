@@ -15,8 +15,8 @@ SILE.registerCommand("raise", function(options, content)
       typesetter.state.cursorY = typesetter.state.cursorY + height
     end
   });
-end, "Raises the contents of the command by the amount specified in the height option");
+end, "Raises the contents of the command by the amount specified in the <height> option");
 
 SILE.registerCommand("lower", function (options, content)
   SILE.Commands["raise"]({height = "-"..options.height}, content)
-end, "Lowers the contents of the command by the amount specified in the height option");
+end, "Lowers the contents of the command by the amount specified in the <height> option");

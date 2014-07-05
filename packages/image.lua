@@ -11,4 +11,4 @@ SILE.registerCommand("img", function(options, content)
     }
   end);
 
-end);
+end, "Inserts the image specified with the <src> option in a box of size <width> by <height>");

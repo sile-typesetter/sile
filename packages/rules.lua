@@ -22,7 +22,7 @@ SILE.registerCommand("hrule", function(options, content)
       typesetter.state.cursorX = typesetter.state.cursorX + scaledWidth
     end
   });
-end);
+end, "Creates a line of width <width> and height <height>");
 
 SILE.registerCommand("underline", function(options, content)
   -- This is very fragile
@@ -40,4 +40,4 @@ SILE.registerCommand("underline", function(options, content)
   SILE.Commands["lower"]({height = "0.5pt"}, function()
     SILE.Commands["hrule"]({width = l.length, height = "0.5pt"})
   end);
-end)
+end, "Underlines some content (badly)")
