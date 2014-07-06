@@ -80,6 +80,11 @@ SILE.baseClass = std.object {
       SILE.typesetter:leaveHmode();
       SILE.typesetter:pushVglue({ height = SILE.length.parse("options.height") })
     end, "Inserts vertical skip. The height options denotes the skip dimension.")
+
+    SILE.registerCommand("par", function(options, content) 
+      SILE.typesetter:leaveHmode()
+    end, "Ends the current paragraph.")
+
   end),
 
   pageTemplate = std.object { frames= {}, firstContentFrame= nil },
