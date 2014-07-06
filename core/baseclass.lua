@@ -6,11 +6,10 @@ function SILE.registerCommand (name, f, help, pack)
     local where = debug.getinfo(2).source
     pack = where:match("(%w+).lua")
   end
-  print(name .. " -> "..pack)
-    SILE.Help[name] = {
-      description = help,
-      where = pack
-    }
+  SILE.Help[name] = {
+    description = help,
+    where = pack
+  }
 end
 
 SILE.baseClass = std.object {
