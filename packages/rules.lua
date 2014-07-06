@@ -36,7 +36,6 @@ SILE.registerCommand("underline", function(options, content)
   end
   local gl = SILE.length.new() - l
   SILE.typesetter:pushGlue({width = gl})
-  print(l.length)
   SILE.Commands["lower"]({height = "0.5pt"}, function()
     SILE.Commands["hrule"]({width = l.length, height = "0.5pt"})
   end);
