@@ -41,4 +41,34 @@ SILE.registerCommand("hss", function(o,c)
 end)
 SILE.registerCommand("vss", function(o,c) SILE.typesetter:pushVglue(SILE.nodefactory.vssGlue) end)
 
+
+SILE.registerCommand("hbox", function (o,c)
+  local index = #(SILE.typesetter.state.nodes)+1
+  local recentContribution = {}
+  SILE.process(c)
+  local l = SILE.length.new()
+  local h,d = 0,0
+  for i = index, #(SILE.typesetter.state.nodes) do
+    local node = SILE.typesetter.state.nodes[i]
+    recentContribution[index - i + 1] = node
+    l = l + node.width
+    h = node.height > h and node.height or h
+    d = node.depth > d and node.depth or d
+    SILE.typesetter.state.nodes[i] = nil
+  end
+  local hbox = SILE.nodefactory.newHbox({
+    height = h,
+    width = l,
+    depth = d,
+    value = recentContribution,
+    outputYourself = function (self, typesetter, line)
+      for i = 1, #(self.value) do local node = self.value[i]
+        node:outputYourself(typesetter, line)
+      end
+    end
+  })
+  table.insert(SILE.typesetter.state.nodes, hbox)
+  return hbox
+end, "Compiles all the enclosed horizontal-mode material into a single hbox")
+
 return plain;
