@@ -225,7 +225,7 @@ SILE.defaultTypesetter = std.object {
     if (adjustment > gTotal.stretch) then adjustment = gTotal.stretch end
     if (adjustment / gTotal.stretch > 0) then 
       for i,g in pairs(glues) do
-        g:setGlue(adjustment * g.length.stretch / gTotal.stretch)
+        g:setGlue(adjustment * g.height.stretch / gTotal.stretch)
       end
     end
 

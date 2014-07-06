@@ -3,7 +3,7 @@ local gridSpacing -- Should be a setting
 local leadingFor = function(this, vbox, previous)
   if not this.state.frameTotals.gridCursor then this.state.frameTotals.gridCursor = 0 end
   if not previous then 
-    return SILE.nodefactory.newVglue({height = 0});
+    return SILE.nodefactory.newVglue({height = SILE.length.new()});
   end
   this.state.frameTotals.gridCursor = this.state.frameTotals.gridCursor + previous.height.length
   if previous:isVbox() then 
@@ -11,7 +11,7 @@ local leadingFor = function(this, vbox, previous)
   end
   local lead = gridSpacing - (this.state.frameTotals.gridCursor % gridSpacing);
   this.state.frameTotals.gridCursor = this.state.frameTotals.gridCursor  + lead
-  return SILE.nodefactory.newVglue({height = lead});
+  return SILE.nodefactory.newVglue({height = SILE.length.new({ length = lead })});
 end
 
 local pushVglue = function(this, spec)
