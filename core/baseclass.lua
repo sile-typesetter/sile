@@ -103,7 +103,7 @@ SILE.baseClass = std.object {
     return self:initialFrame();
   end,
   initialFrame= function(self)
-    SILE.documentState.thisPageTemplate = self.pageTemplate {};
+    SILE.documentState.thisPageTemplate = std.tree.clone(self.pageTemplate)
     return SILE.documentState.thisPageTemplate.firstContentFrame;
   end,
   declareFrame = function (self, id, spec)

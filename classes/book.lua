@@ -24,9 +24,8 @@ book.newPage = function()
       SILE.typesetNaturally(SILE.getFrame("lRH"), SILE.scratch.headers.left);
     end
   end
-  plain.newPage(book);
   book:switchPage();
-  return book.pageTemplate.firstContentFrame;
+  return plain.newPage(book);
 end;
 
 SILE.registerCommand("left-running-head", function(options, content)
