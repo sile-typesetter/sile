@@ -33,6 +33,9 @@ function framePrototype:height()
     return Infinity
   end
 
+function framePrototype:toString()
+  return "<Frame: "..self.id..": t="..self:top()..", b="..self:bottom()..">"
+end
 SILE.newFrame = function(spec)
   local frame = framePrototype {}
   local dims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
