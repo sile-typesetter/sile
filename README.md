@@ -10,7 +10,6 @@ First you will need lua, pango and cairo installed. You will then
 need to run:
 
 * `luarocks install stdlib lgi lpeg luaexpat inspect luaepnf luarepl`
-* Currently you will need the fixed version of lgi from github: https://github.com/pavouk/lgi until 0.7.3 is released.
 
 Then you should be good to go.
 
