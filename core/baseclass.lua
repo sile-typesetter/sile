@@ -98,6 +98,12 @@ SILE.baseClass = std.object {
     end
   end,
   init = function(self)
+      SILE.settings.declare({
+      name = "current.parindent",
+      type = "Glue",
+      default = SILE.settings.get("document.parindent"),
+      help = "Glue at start of paragraph"
+    })
     SILE.outputter.init(self); 
     self:registerCommands();
     return self:initialFrame();
@@ -135,7 +141,8 @@ SILE.baseClass = std.object {
  end,
   newPar = function(typesetter)
     typesetter:pushVglue(SILE.settings.get("document.lineskip"))
-    typesetter:pushGlue(SILE.settings.get("document.parindent"))
+    typesetter:pushGlue(SILE.settings.get("current.parindent"))
+    SILE.settings.set("current.parindent", SILE.settings.get("document.parindent"))    
   end,
   options= { 
     papersize= function(size)

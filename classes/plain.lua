@@ -13,10 +13,8 @@ plain.newPage = function(self)
 end
 
 SILE.registerCommand("noindent", function ( options, content )
-  SILE.settings.temporarily( function ()
-    SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
-    SILE.process(content)
-  end)
+  SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
+  SILE.process(content)
 end)
 
 local skips = { small= "3pt plus 1pt minus 1pt", 
