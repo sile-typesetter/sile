@@ -55,6 +55,7 @@ SILE.newFrame = function(spec)
   end
   frame.id  = spec.id
   frame.next  = spec.next
+  frame.previous  = spec.previous
   return frame
 end
 

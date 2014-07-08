@@ -56,6 +56,7 @@ local zero = _length({})
 length = { 
 	new = function (spec) return _length(spec or {}) end,
 	parse =  function(spec)
+		if not spec then return zero {} end
 		local t = lpeg.match(SILE.parserBits.length, spec)
     if not t then SU.error("Bad length definition '"..spec.."'") end
     if not t.shrink then t.shrink = 0 end
