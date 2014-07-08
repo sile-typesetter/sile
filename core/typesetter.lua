@@ -182,7 +182,7 @@ SILE.defaultTypesetter = std.object {
         end
         -- Always push back and recalculate. The frame may have a different shape, or
         -- we may be doing clever things like grid typesetting. CPU time is cheap.
-        -- self:pushBack();
+        self:pushBack();
     end
   end,
 
@@ -252,12 +252,6 @@ SILE.defaultTypesetter = std.object {
 
     for i,point in pairs(bp) do
       if not(point.position == 0) then
-
-        -- Toss initial glue? XXX
-        --while(nodes[linestart] and not nodes[linestart]:isBox()) do
-        --  linestart = linestart + 1
-        --end
-
         slice = {}
         local seenHbox = 0
         local toss = 1
@@ -305,6 +299,7 @@ SILE.defaultTypesetter = std.object {
   chuck = function(self) -- emergency shipout everything
     SILE.typesetter:leaveHmode(1);
     self:outputLinesToPage(self.state.outputQueue)
+    SILE.typesetter.state.outputQueue = {}
   end
 };
 
