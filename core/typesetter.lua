@@ -137,6 +137,83 @@ SILE.defaultTypesetter = std.object {
     return vboxes
   end,
 
+  pageBuilder = function (self, independent)
+    local totalHeight = 0
+    local target = SILE.length.new({ length = self.frame:height() }) -- XXX Floats
+    local vbox;
+
+    local pageNodeList = SILE.pagebuilder.findBestBreak(self.state.outputQueue, target)
+    if not pageNodeList then -- No break yet
+      return
+    end
+
+    -- Do some sums on that list
+    local glues = {};
+    local gTotal = SILE.length.new()
+
+    for i=1,#pageNodeList do
+      totalHeight = totalHeight + pageNodeList[i].height + pageNodeList[i].depth
+      if pageNodeList[i]:isVglue() then 
+        table.insert(glues,pageNodeList[i]);
+        gTotal = gTotal + pageNodeList[i].height
+      end
+    end
+
+    local adjustment = (target - totalHeight)
+    if type(adjustment) == "table" then adjustment = adjustment.length end
+
+    if (adjustment > gTotal.stretch) then adjustment = gTotal.stretch end
+    if (adjustment / gTotal.stretch > 0) then 
+      for i,g in pairs(glues) do
+        g:setGlue(adjustment * g.height.stretch / gTotal.stretch)
+      end
+    end
+
+    SU.debug("pagebuilder", "Glues for self page adjusted by "..(adjustment/gTotal.stretch) )
+    self:outputLinesToPage(pageNodeList);
+
+    --totalHeight = 0;
+    --self.state.frameTotals.prevDepth = 0;
+    if not independent then
+        local cwidth = self.frame:width();
+        if (self.frame.next) then
+          self:initFrame(SILE.getFrame(self.frame.next));
+        else
+          self:initFrame(SILE.documentState.documentClass:newPage()); -- XXX Hack
+        end
+        -- Always push back and recalculate. The frame may have a different shape, or
+        -- we may be doing clever things like grid typesetting. CPU time is cheap.
+        -- self:pushBack();
+    end
+  end,
+
+  pushBack = function (self)
+    --self:pushHbox({ width = SILE.length.new({}), value = {glyph = 0} });
+    local v
+    local function luaSucks (a) v=a return a end
+
+    while luaSucks(table.remove(self.state.outputQueue,1)) do
+      if not v:isVglue() and not v:isPenalty() then
+        for i=1,#(v.nodes) do
+            self.state.nodes[#(self.state.nodes)+1] = v.nodes[i]
+        end
+      end
+    end
+    -- self:leaveHmode();
+  end,
+  outputLinesToPage = function (typesetter, lines)
+    SU.debug("pagebuilder", "OUTPUTTING");
+    local i
+    local pastTop = false
+    for i = 1,#lines do local l = lines[i]
+      if not pastTop and not (l:isVglue() or l:isPenalty()) then
+        pastTop = true
+      end
+      if pastTop then
+        l:outputYourself(typesetter, l)
+      end
+    end
+  end,
   leaveHmode = function(self, independent)
     SU.debug("typesetter", "Leaving hmode");
     local vboxlist = self:boxUpNodes(self.state.nodes)
@@ -164,113 +241,7 @@ SILE.defaultTypesetter = std.object {
     else
       return SILE.nodefactory.newVglue(SILE.settings.get("document.lineskip"));
     end
-  end,
-  pageBuilder = function (self, independent)
-    local target = SILE.length.new({ length = self.frame:height() }) -- XXX Floats
-    local vbox;
-    local function luaSucks (a) vbox = a return a end
-    while #self.state.outputQueue > 0 and luaSucks(table.remove(self.state.outputQueue,1)) do 
-      SU.debug("typesetter", "Dealing with VBox " .. vbox)
-      if (vbox:isVbox()) then
-        self.state.frameTotals.height = self.state.frameTotals.height + vbox.height + vbox.depth;
-      elseif vbox:isVglue() then
-        self.state.frameTotals.height = self.state.frameTotals.height + vbox.height;
-      end
-      local left = (target - self.state.frameTotals.height).length;
-      SU.debug("typesetter", "I have " .. tostring(left) .. "pts left");
-      -- if (left < -20) then SU.error("\nCatastrophic page breaking failure!"); end 
-      local pi = 0
-      if vbox:isPenalty() then
-        pi = vbox.penalty
-      end 
-      if vbox:isPenalty() and vbox.penalty < inf_bad  or vbox:isVglue() then
-        local badness = left > 0 and left * left * left or awful_bad;
-        local c
-        if badness < awful_bad then 
-          if pi <= eject_penalty then c = pi
-          elseif badness < inf_bad then c = badness + pi -- plus insert
-          else c = deplorable
-          end
-        else c = badness end
-
-       SU.debug("typesetter", "Badness: "..c);
-        if (c < self.state.lastBadness) then
-          self.state.lastBadness = c;
-        end
-        if c == awful_bad or pi <= eject_penalty then
-         SU.debug("typesetter", "outputting");
-          self.state.lastBadness = awful_bad
-          self:shipOut(target, independent);
-          return
-        end
-      end
-      table.insert(self.state.frameLines,vbox);
-    end
-  end,
-
-  shipOut = function (self, target, independent)
-    SU.debug("typesetter", "Height total is " .. tostring(self.state.frameTotals.height));
-    SU.debug("typesetter", "Target is " .. tostring(target));
-    local adjustment = (target - self.state.frameTotals.height)
-    if type(adjustment) == "table" then adjustment = adjustment.length end
-    local glues = {};
-    local gTotal = SILE.length.new()
-    for i,b in pairs(self.state.frameLines) do
-      if b:isVglue() then 
-        table.insert(glues,b);
-        gTotal = gTotal + b.height
-      end
-    end
-
-    if (adjustment > gTotal.stretch) then adjustment = gTotal.stretch end
-    if (adjustment / gTotal.stretch > 0) then 
-      for i,g in pairs(glues) do
-        g:setGlue(adjustment * g.height.stretch / gTotal.stretch)
-      end
-    end
-
-   SU.debug("typesetter", "Glues for self page adjusted by "..(adjustment/gTotal.stretch) )
-    self:outputLinesToPage(self.state.frameLines);
-    self.state.frameLines = {};
-    --self.state.frameTotals.height = 0;
-    --self.state.frameTotals.prevDepth = 0;
-    if not independent then
-        local cwidth = self.frame:width();
-        if (self.frame.next) then
-          self:initFrame(SILE.getFrame(self.frame.next));
-        else
-          self:initFrame(SILE.documentState.documentClass:newPage()); -- XXX Hack
-        end
-        -- Always push back and recalculate. The frame may have a different shape, or
-        -- we may be doing clever things like grid typesetting. CPU time is cheap.
-        -- self:pushBack();
-    end
-  end,
-  pushBack = function (self)
-    --self:pushHbox({ width = SILE.length.new({}), value = {glyph = 0} });
-    local v
-    local function luaSucks (a) v=a return a end
-
-    while luaSucks(table.remove(self.state.outputQueue,1)) do
-      if not v:isVglue() and not v:isPenalty() then
-        for i=1,#(v.nodes) do
-            self.state.nodes[#(self.state.nodes)+1] = v.nodes[i]
-        end
-      end
-    end
-    -- self:leaveHmode();
-  end,
-  outputLinesToPage = function (self, lines)
-   SU.debug("typesetter", "OUTPUTTING");
-   -- Suppress top-of-frame-glue/penalties. This is a slight hack.
-    while #lines > 0 and (lines[1]:isVglue() or
-      lines[1]:isPenalty()) do
-      table.remove(lines,1)
-    end
-    for i,line in pairs(lines) do
-      line:outputYourself(self, line)
-    end
-  end,
+    end,
   addrskip = function (self, slice)
     local rskip = SILE.settings.get("document.rskip")
     if rskip then table.insert(slice, rskip) end
@@ -331,6 +302,10 @@ SILE.defaultTypesetter = std.object {
     end
     --self.state.nodes = nodes.slice(linestart+1,nodes.length);
     return lines;
+  end,
+  chuck = function(self) -- emergency shipout everything
+    SILE.typesetter:leaveHmode(1);
+    self:outputLinesToPage(self.state.outputQueue)
   end
 };
 
@@ -341,7 +316,6 @@ SILE.typesetNaturally = function (frame, nodes)
   SILE.typesetter = SILE.defaultTypesetter {};
   SILE.typesetter:init(frame);
   SILE.typesetter.state.nodes = nodes;
-  SILE.typesetter:leaveHmode(1);  
-  SILE.typesetter:shipOut(0,1);  
+  SILE.typesetter:chuck()
   SILE.typesetter = saveTypesetter
 end;
