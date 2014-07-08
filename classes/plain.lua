@@ -51,7 +51,7 @@ SILE.registerCommand("hbox", function (o,c)
   local h,d = 0,0
   for i = index, #(SILE.typesetter.state.nodes) do
     local node = SILE.typesetter.state.nodes[i]
-    recentContribution[index - i + 1] = node
+    table.insert(recentContribution, node)
     l = l + node.width
     h = node.height > h and node.height or h
     d = node.depth > d and node.depth or d
