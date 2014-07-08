@@ -194,11 +194,14 @@ SILE.defaultTypesetter = std.object {
     while luaSucks(table.remove(self.state.outputQueue,1)) do
       if not v:isVglue() and not v:isPenalty() then
         for i=1,#(v.nodes) do
+            if v.nodes[i]:isDiscretionary() then
+              v.nodes[i].used = 0 -- HACK HACK HACK
+            end
             self.state.nodes[#(self.state.nodes)+1] = v.nodes[i]
         end
       end
     end
-    -- self:leaveHmode();
+    self:leaveHmode();
   end,
   outputLinesToPage = function (typesetter, lines)
     SU.debug("pagebuilder", "OUTPUTTING");
