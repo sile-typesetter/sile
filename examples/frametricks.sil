@@ -1,0 +1,22 @@
+\begin[papersize=129mm x 198mm]{document}
+\include[src=examples/macros.sil]
+\script[src=packages/frametricks]
+
+"Wedlock suits you," he remarked. "I think, Watson, that you have put on seven and a half pounds since I saw you."
+
+"Seven!" I answered.
+
+\breakframehorizontal\shiftframeedge[left=25mm]
+
+"Indeed, I should have thought a little more. Just a trifle more, I fancy, Watson. And in practice again, I observe. You did not tell me that you intended to go into harness."
+
+"Then, how do you know?"
+
+"I see it, I deduce it. How do I know that you have been getting yourself very wet lately, and that you have a most clumsy and careless servant girl?"
+
+\breakframehorizontal\shiftframeedge[left=-25mm]
+
+     "My dear Holmes," said I, "this is too much. You would certainly have been burned, had you lived a few centuries ago. It is true that I had a country walk on Thursday and came home in a dreadful mess, but as I have changed my clothes I can't imagine how you deduce it. As to Mary Jane, she is incorrigible, and my wife has given her notice, but there, again, I fail to see how you work it out."
+
+
+\end{document}
