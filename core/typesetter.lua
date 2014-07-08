@@ -78,7 +78,7 @@ SILE.defaultTypesetter = std.object {
 
   initline = function (self)
     if (#self.state.nodes == 0) then
-      self:pushHbox({ width = SILE.length.new({length = 0}), value = {glyph = 0} });
+      table.insert(self.state.nodes, SILE.nodefactory.zeroHbox)
     end
   end,
 
@@ -102,10 +102,9 @@ SILE.defaultTypesetter = std.object {
   -- Empties self.state.nodes, breaks into lines, puts lines into vbox, adds vbox to
   -- outputqueue, calls pageBuilder
   boxUpNodes = function (self, nl, suppressFinalGlue)
-    -- Question: If final discardables are discardable, how does "\hss foo \hss" work?
-    --while (#nl > 0 and (nl[#nl]:isPenalty() or nl[#nl]:isGlue())) do
-    --  table.remove(nl);
-    --end
+    while (#nl > 0 and (nl[#nl]:isPenalty() or nl[#nl]:isGlue())) do
+     table.remove(nl);
+    end
 
     while (#nl >0 and nl[1]:isPenalty()) do table.remove(nl,1) end
     self:pushGlue(SILE.settings.get("typesetter.parfillskip"));

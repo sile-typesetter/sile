@@ -37,7 +37,8 @@ SILE.registerCommand("hfill", function(o,c) SILE.typesetter:pushGlue(SILE.nodefa
 SILE.registerCommand("vfill", function(o,c) SILE.typesetter:pushVglue(SILE.nodefactory.vfillGlue) end)
 SILE.registerCommand("hss", function(o,c) 
   SILE.typesetter:initline()
-  SILE.typesetter:pushGlue(SILE.nodefactory.hssGlue) 
+  SILE.typesetter:pushGlue(SILE.nodefactory.hssGlue)
+  table.insert(SILE.typesetter.state.nodes, SILE.nodefactory.zeroHbox) 
 end)
 SILE.registerCommand("vss", function(o,c) SILE.typesetter:pushVglue(SILE.nodefactory.vssGlue) end)
 
