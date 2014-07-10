@@ -100,8 +100,8 @@ SILE.defaultTypesetter = std.object {
   end,
 
   -- Empties self.state.nodes, breaks into lines, puts lines into vbox, adds vbox to
-  -- outputqueue, calls pageBuilder
-  boxUpNodes = function (self, nl, suppressFinalGlue)
+  -- Turns a node list into a list of vboxes
+  boxUpNodes = function (self, nl)
     while (#nl > 0 and (nl[#nl]:isPenalty() or nl[#nl]:isGlue())) do
      table.remove(nl);
     end
@@ -143,7 +143,7 @@ SILE.defaultTypesetter = std.object {
 
     local pageNodeList = SILE.pagebuilder.findBestBreak(self.state.outputQueue, target)
     if not pageNodeList then -- No break yet
-      return
+      return false
     end
 
     -- Do some sums on that list
@@ -170,20 +170,18 @@ SILE.defaultTypesetter = std.object {
 
     SU.debug("pagebuilder", "Glues for self page adjusted by "..(adjustment/gTotal.stretch) )
     self:outputLinesToPage(pageNodeList);
+    return true
+  end,
 
-    --totalHeight = 0;
-    --self.state.frameTotals.prevDepth = 0;
-    if not independent then
-        local cwidth = self.frame:width();
-        if (self.frame.next) then
-          self:initFrame(SILE.getFrame(self.frame.next));
-        else
-          self:initFrame(SILE.documentState.documentClass:newPage()); -- XXX Hack
-        end
-        -- Always push back and recalculate. The frame may have a different shape, or
-        -- we may be doing clever things like grid typesetting. CPU time is cheap.
-        self:pushBack();
+  initNextFrame = function(self)
+    if (self.frame.next) then
+      self:initFrame(SILE.getFrame(self.frame.next));
+    else
+      self:initFrame(SILE.documentState.documentClass:newPage()); -- XXX Hack
     end
+    -- Always push back and recalculate. The frame may have a different shape, or
+    -- we may be doing clever things like grid typesetting. CPU time is cheap.
+    self:pushBack();
   end,
 
   pushBack = function (self)
@@ -224,7 +222,9 @@ SILE.defaultTypesetter = std.object {
     for index=1, #vboxlist do
       self.state.outputQueue[#(self.state.outputQueue)+1] = vboxlist[index]
     end
-    self:pageBuilder(independent);
+    if self:pageBuilder() and not independent then
+      self:initNextFrame()
+    end
   end,
   leadingFor = function(self, v, previous)
     -- Insert leading
