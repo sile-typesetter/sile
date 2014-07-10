@@ -300,9 +300,9 @@ SILE.defaultTypesetter = std.object {
     return lines;
   end,
   chuck = function(self) -- emergency shipout everything
-    SILE.typesetter:leaveHmode(1);
+    self:leaveHmode(1);
     self:outputLinesToPage(self.state.outputQueue)
-    SILE.typesetter.state.outputQueue = {}
+    self.state.outputQueue = {}
   end
 };
 
