@@ -41,15 +41,6 @@ diglot.newPage = function()
   return diglot.pageTemplate.frames["a"]
 end
 
-local pfont = function(options)      
-  if (options.family)  then SILE.documentState.fontFamily = options.family end
-  if (options.size)  then SILE.documentState.fontSize = options.size end
-  if (options.weight)  then SILE.documentState.fontWeight = options.weight end
-  if (options.style)  then SILE.documentState.fontStyle = options.style end
-  if (options.variant)  then SILE.documentState.fontVariant = options.variant end
-  if (options.language)  then SILE.documentState.language = options.language end
-end
-
 SILE.registerCommand("leftfont", function(options, content)
   SILE.scratch.diglot.leftfont = options
 end)
@@ -63,7 +54,7 @@ SILE.registerCommand("left", function(options, content)
   if (not SILE.typesetter.frame) then 
     SILE.typesetter:init(diglot.pageTemplate.frames["a"]) 
   end
-  pfont(SILE.scratch.diglot.leftfont)
+  SILE.Commands["font"](SILE.scratch.diglot.leftfont, {})
 end)
 
 SILE.registerCommand("right", function(options, content)
@@ -71,7 +62,7 @@ SILE.registerCommand("right", function(options, content)
   if (not SILE.typesetter.frame) then 
     SILE.typesetter:init(diglot.pageTemplate.frames["b"]) 
   end
-  pfont(SILE.scratch.diglot.rightfont)
+  SILE.Commands["font"](SILE.scratch.diglot.rightfont, {})
 end)
 
 
