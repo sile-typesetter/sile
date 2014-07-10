@@ -76,17 +76,17 @@ SILE.registerCommand("shiftframeedge", function(options, content)
   shiftframeedge(cFrame, options)
   SILE.typesetter:initFrame(cFrame)
   --SILE.outputter:debugFrame(cFrame)
-end)
+end, "Adjusts the edge of the frame horizontally by amounts specified in <left> and <right>")
 
 SILE.registerCommand("breakframevertical", function ( options, content )
   breakFrameVertical()
-end)
+end, "Breaks the current frame in two vertically at the current location")
 
 SILE.registerCommand("breakframehorizontal", function ( options, content )
   breakFrameHorizontalAt(SILE.length.parse(options.offset).length)
-end)
+end, "Breaks the current frame in two horizontally either at the current location or at a point <offset> below the current location")
 
-SILE.registerCommand("dropcap", function(options, content)
+SILE.registerCommand("float", function(options, content)
   SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
   local hbox = SILE.Commands["hbox"]({}, content)
   table.remove(SILE.typesetter.state.nodes) -- steal it back
@@ -103,7 +103,7 @@ SILE.registerCommand("dropcap", function(options, content)
   shiftframeedge(SILE.getFrame(SILE.typesetter.frame.next), {left = ""..(SILE.length.new() - boundary)})
   --SILE.outputter:debugFrame(SILE.typesetter.frame)
   SILE.settings.set("current.parindent", SILE.settings.get("document.parindent"))
-end)
+end, "Sets the given content in its own frame, flowing the remaining content around it")
 
 return {
   init = function () end,
