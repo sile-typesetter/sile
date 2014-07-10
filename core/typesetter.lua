@@ -177,6 +177,7 @@ SILE.defaultTypesetter = std.object {
     if (self.frame.next) then
       self:initFrame(SILE.getFrame(self.frame.next));
     else
+      SILE.documentState.documentClass:endPage()
       self:initFrame(SILE.documentState.documentClass:newPage()); -- XXX Hack
     end
     -- Always push back and recalculate. The frame may have a different shape, or

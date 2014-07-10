@@ -7,9 +7,8 @@ plain:declareFrame("folio", {left = "5%",  right = "95%",  top = "92%", bottom =
 plain.pageTemplate.firstContentFrame = plain.pageTemplate.frames["a"];
 plain:loadPackage("folio");
 
-plain.newPage = function(self)
+plain.endPage = function(self)
   plain:outputFolio()
-  return SILE.baseClass.newPage(self);
 end
 
 SILE.registerCommand("noindent", function ( options, content )
