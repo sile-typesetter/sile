@@ -1,7 +1,7 @@
 \begin[class=diglot,papersize=a5]{document}
-\leftfont[family=Cardo,size=10,language=el]
-\rightfont[family=Gentium,size=10,language=en]
-\script[src=packages/grid]
+\leftfont[family=Cardo,size=10pt,language=el]
+\rightfont[family=Gentium,size=10pt,language=en]
+
 \left Βίβλος γενέσεως Ἰησοῦ χριστοῦ υἱοῦ Δαυὶδ υἱοῦ Ἀβραάμ.
 
 \right This is the genealogy of Jesus the Messiah the son of David, the son of Abraham: 
