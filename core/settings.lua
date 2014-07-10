@@ -86,4 +86,4 @@ SILE.registerCommand("set", function(options, content)
   if string.match(def.type, "VGlue") then v = SILE.nodefactory.newVglue(v)
   elseif string.match(def.type, "Glue") then v = SILE.nodefactory.newGlue(v) end
   SILE.settings.set(p,v)
-end)
+end, "Set a SILE parameter <parameter> to value <value>")

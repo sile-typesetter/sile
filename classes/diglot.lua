@@ -48,11 +48,11 @@ end
 
 SILE.registerCommand("leftfont", function(options, content)
   SILE.scratch.diglot.leftfont = options
-end)
+end, "Set the font for the left side")
 
 SILE.registerCommand("rightfont", function(options, content)
   SILE.scratch.diglot.rightfont = options
-end)
+end, "Set the font for the right side")
 
 SILE.registerCommand("left", function(options, content)
   SILE.typesetter = diglot.leftTypesetter;
@@ -60,7 +60,7 @@ SILE.registerCommand("left", function(options, content)
     SILE.typesetter:init(diglot.pageTemplate.frames["a"]) 
   end
   SILE.Commands["font"](SILE.scratch.diglot.leftfont, {})
-end)
+end, "Begin entering text on the left side")
 
 SILE.registerCommand("right", function(options, content)
   SILE.typesetter = diglot.rightTypesetter;
@@ -68,9 +68,9 @@ SILE.registerCommand("right", function(options, content)
     SILE.typesetter:init(diglot.pageTemplate.frames["b"]) 
   end
   SILE.Commands["font"](SILE.scratch.diglot.rightfont, {})
-end)
+end, "Begin entering text on the right side")
 
 
-SILE.registerCommand("sync", sync)
+SILE.registerCommand("sync", sync, "Ensure that left and right sides are balanced")
 
 return diglot

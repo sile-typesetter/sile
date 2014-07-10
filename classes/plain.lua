@@ -14,7 +14,7 @@ end
 SILE.registerCommand("noindent", function ( options, content )
   SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
   SILE.process(content)
-end)
+end, "Do not add an indent to the start of this paragraph")
 
 local skips = { small= "3pt plus 1pt minus 1pt", 
       med = "6pt plus 2pt minus 2pt",
@@ -27,17 +27,17 @@ for k,v in pairs(skips) do
   SILE.registerCommand(k.."skip", function ( options, content )
     SILE.typesetter:leaveHmode();    
     SILE.typesetter:pushVglue(SILE.settings.get("plain."..k.."skipamount"))
-  end)
+  end, "Skip vertically by a "..k.." amount")
 end
 
-SILE.registerCommand("hfill", function(o,c) SILE.typesetter:pushGlue(SILE.nodefactory.hfillGlue) end)
-SILE.registerCommand("vfill", function(o,c) SILE.typesetter:pushVglue(SILE.nodefactory.vfillGlue) end)
+SILE.registerCommand("hfill", function(o,c) SILE.typesetter:pushGlue(SILE.nodefactory.hfillGlue) end, "Add a huge horizontal glue")
+SILE.registerCommand("vfill", function(o,c) SILE.typesetter:pushVglue(SILE.nodefactory.vfillGlue) end, "Add huge vertical glue")
 SILE.registerCommand("hss", function(o,c) 
   SILE.typesetter:initline()
   SILE.typesetter:pushGlue(SILE.nodefactory.hssGlue)
   table.insert(SILE.typesetter.state.nodes, SILE.nodefactory.zeroHbox) 
-end)
-SILE.registerCommand("vss", function(o,c) SILE.typesetter:pushVglue(SILE.nodefactory.vssGlue) end)
+end, "Add glue which stretches and shrinks horizontally (good for centering)")
+SILE.registerCommand("vss", function(o,c) SILE.typesetter:pushVglue(SILE.nodefactory.vssGlue) end, "Add glue which stretches and shrinks vertically")
 
 
 SILE.registerCommand("hbox", function (o,c)

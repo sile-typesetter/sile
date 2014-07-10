@@ -17,7 +17,7 @@
         SILE.process(content)
         SILE.settings.popState()
       end
-    end)
+    end, "Set current font family, size, weight, style, variant and language")
 
 SILE.settings.declare({name = "font.family", type = "string", default = "Gentium"})
 SILE.settings.declare({name = "font.size", type = "number or integer", default = 10})

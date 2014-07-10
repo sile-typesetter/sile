@@ -37,7 +37,7 @@ SILE.registerCommand("left-running-head", function(options, content)
     SILE.scratch.headers.left = SILE.typesetter.state.nodes;
     SILE.typesetter:popState()
   end);
-end);
+end, "Text to appear on the top of the left page");
 SILE.registerCommand("right-running-head", function(options, content)
   SILE.settings.temporarily(function()
     SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
@@ -47,6 +47,6 @@ SILE.registerCommand("right-running-head", function(options, content)
     SILE.scratch.headers.right = SILE.typesetter.state.nodes;
     SILE.typesetter:popState()
   end);
-end);
+end, "Text to appear on the top of the right page");
 
 return book
