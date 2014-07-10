@@ -16,19 +16,16 @@ diglot.leftTypesetter.parSepPattern= -1
 diglot.rightTypesetter.parSepPattern= -1
 
 local sync =   function()
-  if (diglot.rightTypesetter.state.cursorY > diglot.leftTypesetter.state.cursorY) then
-    diglot.leftTypesetter:pushVglue({ height = diglot.rightTypesetter.state.cursorY - diglot.leftTypesetter.state.cursorY })
-  elseif (diglot.rightTypesetter.state.cursorY < diglot.leftTypesetter.state.cursorY) then
-    diglot.rightTypesetter:pushVglue({ height = diglot.leftTypesetter.state.cursorY - diglot.rightTypesetter.state.cursorY })
+  local lVbox = SILE.pagebuilder.collateVboxes(diglot.leftTypesetter.state.outputQueue)
+  local rVbox = SILE.pagebuilder.collateVboxes(diglot.rightTypesetter.state.outputQueue)
+  if (rVbox.height > lVbox.height) then
+    diglot.leftTypesetter:pushVglue({ height = rVbox.height - lVbox.height })
+  elseif (rVbox.height < lVbox.height) then
+    diglot.rightTypesetter:pushVglue({ height = lVbox.height - rVbox.height })
   end
 
-  diglot.rightTypesetter:leaveHmode(1);
+  diglot.rightTypesetter:leaveHmode();
   diglot.leftTypesetter:leaveHmode();
-  diglot.rightTypesetter:shipOut(0,1)
-  diglot.leftTypesetter:shipOut(0,1)
-
-  diglot.rightTypesetter:pushBack()
-  diglot.leftTypesetter:pushBack()
 end
 
 diglot.newPage = function()
@@ -36,9 +33,17 @@ diglot.newPage = function()
   diglot.leftTypesetter:leaveHmode(1);
   diglot.leftTypesetter:init(diglot.pageTemplate.frames["a"])
   diglot.rightTypesetter:init(diglot.pageTemplate.frames["b"])
-  SILE.typesetter = diglot.leftTypesetter;
-  plain.newPage()
+  plain:newPage()
+  SILE.typesetter = diglot.rightTypesetter
   return diglot.pageTemplate.frames["a"]
+end
+
+diglot.finish = function(self)
+  diglot.leftTypesetter.frame = diglot.pageTemplate.frames["a"]
+  diglot.rightTypesetter.frame = diglot.pageTemplate.frames["b"]
+  diglot.leftTypesetter:chuck()
+  diglot.rightTypesetter:chuck()
+  diglot:endPage()
 end
 
 SILE.registerCommand("leftfont", function(options, content)
