@@ -158,8 +158,8 @@ local _vbox = _box {
   init = function (self)
     d = SU.map(function (n) return tonumber(n.depth) or 0 end, self.nodes)
     h = SU.map(function (n) return tonumber(n.height) or 0 end, self.nodes)
-    self.depth = SILE.length.new({length = math.max(unpack(d)) })
-    self.height = SILE.length.new({length = math.max(unpack(h)) })
+    self.depth = SILE.length.new({length = #d>0 and math.max(unpack(d)) or 0 })
+    self.height = SILE.length.new({length = #h>0 and math.max(unpack(h)) or 0 })
     return self
   end,
   toText = function (self) 
