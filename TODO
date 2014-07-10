@@ -1,9 +1,4 @@
 Plain format
-Make packages self-documenting
-Clean up interface in typesetter, make methods stateless
-Better control of state stacks
-Replace Cairo with something else? (What for?)
-Spin out page break algorithm
 Frames:
     Port cassowary
     Insertions
