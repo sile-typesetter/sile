@@ -37,14 +37,14 @@ SILE.defaultTypesetter = std.object {
     self.frame = f;
     self.state.cursorX = self.frame:left(); -- XXX for bidi
     self.state.cursorY = self.frame:top();
-    self.state.frameTotals = { height= 0 };
+    self.state.frameTotals = { height= 0, pastTop = false };
   end,
   initState = function(self)
     self.state = {
       nodes = {},
       outputQueue = {},
       lastBadness = awful_bad,
-      frameTotals = { height = 0 },
+      frameTotals = { height = 0, pastTop = false },
       frameLines = {}
     };
     self:initline()
@@ -202,16 +202,15 @@ SILE.defaultTypesetter = std.object {
     end
     self:leaveHmode();
   end,
-  outputLinesToPage = function (typesetter, lines)
+  outputLinesToPage = function (self, lines)
     SU.debug("pagebuilder", "OUTPUTTING");
     local i
-    local pastTop = false
     for i = 1,#lines do local l = lines[i]
-      if not pastTop and not (l:isVglue() or l:isPenalty()) then
-        pastTop = true
+      if not self.state.frameTotals.pastTop and not (l:isVglue() or l:isPenalty()) then
+        self.state.frameTotals.pastTop = true
       end
-      if pastTop then
-        l:outputYourself(typesetter, l)
+      if self.state.frameTotals.pastTop then
+        l:outputYourself(self, l)
       end
     end
   end,
