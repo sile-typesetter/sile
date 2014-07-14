@@ -91,7 +91,7 @@ SILE.hyphenate = function (nodelist)
             end
             if not (j == #breaks) then
              table.insert(newnodes, SILE.nodefactory.newDiscretionary({ prebreak = SILE.shaper.shape("-", { pal = n.pal} ) }))
-             -- table.insert(newnodes, SILE.nodefactory.newPenalty({ flagged = 1, penalty = 50 }));
+             --table.insert(newnodes, SILE.nodefactory.newPenalty({ value = SILE.settings.get("typesetter.hyphenpenalty") }))
             end
           end
         end
