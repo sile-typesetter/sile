@@ -15,8 +15,9 @@
 \define[command=pubdate]{}
 \define[command=releaseinfo]{}
 \define[command=para]{\process\par}
+\define[command=quote]{‘\process’}
 \define[command=acronym]{\font[size=10pt]{\process}}
-\define[command=quote]{\set[parameter=document.lskip,value=5em]\set[parameter=document.rskip,value=5em]\process\set[parameter=document.lskip,value=0em]\set[parameter=document.rskip,value=0em]}
+\define[command=blockquote]{\par\set[parameter=document.lskip,value=5em]\set[parameter=document.rskip,value=5em]\process\set[parameter=document.lskip,value=0em]\set[parameter=document.rskip,value=0em]}
 
 \define[command=variablelist]{\process}
 \define[command=varlistentry]{\par\noindent• \process}
@@ -27,14 +28,14 @@
 \define[command=biblioref]{}
 \define[command=xref]{???}
 \define[command=literal]{\ttfont{\font[style=normal]{\process}}}
-\define[command=note]{\quote{\font[weight=900]{Note}: \process}}
+\define[command=note]{\blockquote{\noindent\font[weight=900]{Note}: \process}}
 \define[command=phrase]{\process}
-\define[command=tip]{\quote{\process}}
-\define[command=caution]{\quote{\process}}
+\define[command=tip]{\blockquote{\process}}
+\define[command=caution]{\blockquote{\process}}
 \define[command=simplelist]{\smallskip\noindent\process\smallskip}
 \define[command=member]{\noindent\process\par}
 \define[command=userinput]{\ttfont{\font[weight=900,style=normal]{\process}}}
 \define[command=replaceable]{\ttfont{\font[style=italic]{\process}}}
 \define[command=email]{\ttfont{\process}}
-\define[command=remark]{\quote{\process}}
+\define[command=remark]{\blockquote{\process}}
 \end{document}
