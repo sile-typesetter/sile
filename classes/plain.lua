@@ -31,7 +31,9 @@ for k,v in pairs(skips) do
 end
 
 SILE.registerCommand("hfill", function(o,c) SILE.typesetter:pushGlue(SILE.nodefactory.hfillGlue) end, "Add a huge horizontal glue")
-SILE.registerCommand("vfill", function(o,c) SILE.typesetter:pushVglue(SILE.nodefactory.vfillGlue) end, "Add huge vertical glue")
+SILE.registerCommand("vfill", function(o,c) 
+  SILE.typesetter:leaveHmode()
+  SILE.typesetter:pushVglue(SILE.nodefactory.vfillGlue) end, "Add huge vertical glue")
 SILE.registerCommand("hss", function(o,c) 
   SILE.typesetter:initline()
   SILE.typesetter:pushGlue(SILE.nodefactory.hssGlue)
@@ -39,6 +41,27 @@ SILE.registerCommand("hss", function(o,c)
 end, "Add glue which stretches and shrinks horizontally (good for centering)")
 SILE.registerCommand("vss", function(o,c) SILE.typesetter:pushVglue(SILE.nodefactory.vssGlue) end, "Add glue which stretches and shrinks vertically")
 
+plain.registerCommands = function()
+  SILE.baseClass.registerCommands()
+  SILE.process(SILE.inputs.TeXlike.docToTree([[\begin{document}%
+\define[command=thinspace]{\glue[width=0.16667em]}%
+\define[command=negthinspace]{\glue[width=-0.16667em]}%
+\define[command=enspace]{\glue[width=0.5em]}%
+\define[command=enskip]{\enspace}%
+\define[command=quad]{\glue[width=1em]}%
+\define[command=qquad]{\glue[width=em]}%
+\define[command=slash]{/\penalty[penalty=50]}%
+\define[command=break]{\penalty[penalty=10000]}%
+\define[command=nobreak]{\penalty[penalty=-10000]}%
+\define[command=allowbreak]{\penalty[penalty=0]}%
+\define[command=filbreak]{\vfill\penalty[penalty=-200]}%
+\define[command=goodbreak]{\vfill\penalty[penalty=-500]}%
+\define[command=eject]{\par\break}%
+\define[command=supereject]{\par\penalty[penalty=-20000]}%
+\define[command=raggedright]{\set[parameter=document.rskip,value=0 plus 2em]}%
+\end{document}
+  ]]))
+end
 
 SILE.registerCommand("hbox", function (o,c)
   local index = #(SILE.typesetter.state.nodes)+1
