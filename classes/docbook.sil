@@ -1,0 +1,40 @@
+\begin[papersize=a4,class=docbook]{document}
+\script[src=packages/rules]
+\define[command=sectionsfont]{\font[family=Frutiger FT Std]{\process}}
+\define[command=ttfont]{\font[family=Inconsolata,size=9pt]{\process}}
+
+\define[command=info]{\process}
+\define[command=docbook-title-main]{
+\medskip
+\hss\font[size=20pt]{\sectionsfont{\process}}\hss
+\smallskip}
+\define[command=docbook-title-section]{
+\smallskip\noindent\font[size=14pt]{\sectionsfont{\show-counter[id=section] \process}}
+\smallskip}
+
+\define[command=pubdate]{}
+\define[command=releaseinfo]{}
+\define[command=para]{\process\par}
+\define[command=acronym]{\font[size=10pt]{\process}}
+\define[command=quote]{\set[parameter=document.lskip,value=5em]\set[parameter=document.rskip,value=5em]\process\set[parameter=document.lskip,value=0em]\set[parameter=document.rskip,value=0em]}
+
+\define[command=variablelist]{\process}
+\define[command=varlistentry]{\par\noindent• \process}
+\define[command=term]{\noindent\font[style=italic]{\process}}
+\define[command=listitem]{\process}
+
+\define[command=citetitle]{\font[style=italic]{\process}}
+\define[command=biblioref]{}
+\define[command=xref]{???}
+\define[command=literal]{\ttfont{\font[style=normal]{\process}}}
+\define[command=note]{\quote{\font[weight=900]{Note}: \process}}
+\define[command=phrase]{\process}
+\define[command=tip]{\quote{\process}}
+\define[command=caution]{\quote{\process}}
+\define[command=simplelist]{\smallskip\noindent\process\smallskip}
+\define[command=member]{\noindent\process\par}
+\define[command=userinput]{\ttfont{\font[weight=900,style=normal]{\process}}}
+\define[command=replaceable]{\ttfont{\font[style=italic]{\process}}}
+\define[command=email]{\ttfont{\process}}
+\define[command=remark]{\quote{\process}}
+\end{document}
