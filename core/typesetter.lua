@@ -246,9 +246,15 @@ SILE.defaultTypesetter = std.object {
     end,
   addrlskip = function (self, slice)
     local rskip = SILE.settings.get("document.rskip")
-    if rskip then table.insert(slice, rskip) end
+    if rskip then
+      table.insert(slice, rskip)
+      table.insert(slice, SILE.nodefactory.zeroHbox)
+    end
     local lskip = SILE.settings.get("document.lskip")
-    if lskip then table.insert(slice, 1, lskip) end
+    if lskip and not (lskip.width.length == 0) then 
+      table.insert(slice, 1, lskip) 
+      table.insert(slice, 1, SILE.nodefactory.zeroHbox) 
+    end
   end,
   breakpointsToLines = function(self, bp)
     local linestart = 0;
