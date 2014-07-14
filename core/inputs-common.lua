@@ -2,12 +2,15 @@ SILE.inputs.common = {
   init = function(fn, t)
     local dclass = t.attr.class or "plain"
     SILE.documentState.documentClass = SILE.require("classes/"..dclass)
+    SU.required(t.attr, "papersize", fn)
     for k,v in pairs(t.attr) do
       if SILE.documentState.documentClass.options[k] then
         SILE.documentState.documentClass.options[k](v)
       end
     end
-    SILE.outputFilename= string.gsub(fn,".sil$", ".pdf")
+    if not SILE.outputFilename then
+      SILE.outputFilename = string.gsub(arg[1],"%..-$", ".pdf")
+    end
     local ff = SILE.documentState.documentClass:init()
     SILE.typesetter:init(ff)
   end

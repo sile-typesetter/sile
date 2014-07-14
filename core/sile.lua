@@ -58,12 +58,22 @@ local parser = std.optparse ("This is SILE "..SILE.version..[[
        --help               display this help, then exit
 ]])
 
-_G.arg, _G.opts = parser:parse(_G.arg)
-parser:on ('--', parser.finished)
-SILE.debugFlags = {}
-if opts.debug then
-  for k,v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = 1 end
-end
+  _G.arg, _G.opts = parser:parse(_G.arg)
+  parser:on ('--', parser.finished)
+  SILE.debugFlags = {}
+  if opts.debug then
+    for k,v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = 1 end
+  end
+  if opts.include then
+    -- Try a .sil
+    print("Loading "..opts.include)
+    local i = SILE.resolveFile("classes/"..opts.include)
+    if i then
+      SILE.readFile(i)
+    else
+      require("classes/"..opts.include)
+    end
+  end
 end
 
 function SILE.repl ()
