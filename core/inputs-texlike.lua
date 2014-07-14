@@ -15,7 +15,7 @@ texlike = epnf.define(function (_ENV)
   document = V("stuff") * (-1 + E("Unexpected character at end of input"))
   text = (anything + C(WS))^1 / function(...) return table.concat({...}, "") end
   stuff = Cg(V"environment" + 
-    ((P("%") * (1-lpeg.S("\r\n"))^1 * lpeg.S("\r\n")^0) /function () return "" end) -- Don't bother telling me about comments
+    ((P("%") * (1-lpeg.S("\r\n"))^0 * lpeg.S("\r\n")^0) /function () return "" end) -- Don't bother telling me about comments
     + V("text") + V"bracketed_stuff" + V"command")^0
   bracketed_stuff = P"{" * V"stuff" * (P"}" + E("} expected"))
   command =((P("\\")-P("\\begin")) * Cg(myID, "tag") * Cg(parameters,"attr") * V"bracketed_stuff"^0)-P("\\end{")
