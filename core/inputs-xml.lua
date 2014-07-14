@@ -10,6 +10,9 @@ SILE.inputs.XML = {
       end
       SILE.inputs.common.init(fn, t)
     end
+    if SILE.Commands[t.tag] then
+      SILE.Commands[t.tag](t.attr,t)
+    end
     SILE.process(t)
     if root then
       SILE.documentState.documentClass:finish()
