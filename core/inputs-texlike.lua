@@ -5,7 +5,7 @@ texlike = epnf.define(function (_ENV)
   local _ = WS^0
   local sep = lpeg.S(",;") * _
   local value = (1-lpeg.S(",;]"))^1
-  local myID = C( ((ID+P("-"))^1)  + P(1) ) / function (t) return t end
+  local myID = C( ((ID+P("-")+P(":"))^1)  + P(1) ) / function (t) return t end
   local pair = lpeg.Cg(myID * _ * "=" * _ * C(value)) * sep^-1
   local list = lpeg.Cf(lpeg.Ct("") * pair^0, rawset)
   local parameters = (P("[") * list * P("]")) ^-1 / function (a) return type(a)=="table" and a or {} end
