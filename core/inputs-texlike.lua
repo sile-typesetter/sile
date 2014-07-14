@@ -47,14 +47,8 @@ end
 function SILE.inputs.TeXlike.process(fn)
   local fh = io.open(fn)
   local doc = fh:read("*all")
-  local t = epnf.parsestring(texlike, doc)
-  -- a document always consists of one stuff
-  t = t[1][1]
-  if not t then return end
-  t = massage_ast(t)  
-
+  local t = SILE.inputs.TeXlike.docToTree(doc)
   local root = SILE.documentState.documentClass == nil
-
   if root then
     if not(t.tag == "document") then SU.error("Should begin with \\begin{document}") end
     SILE.inputs.common.init(fn, t)
@@ -63,4 +57,13 @@ function SILE.inputs.TeXlike.process(fn)
   if root then
     SILE.documentState.documentClass:finish()
   end  
+end
+
+function SILE.inputs.TeXlike.docToTree(doc)
+  local t = epnf.parsestring(texlike, doc)
+  -- a document always consists of one stuff
+  t = t[1][1]
+  if not t then return end
+  t = massage_ast(t) 
+  return t
 end
