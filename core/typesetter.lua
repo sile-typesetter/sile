@@ -244,9 +244,11 @@ SILE.defaultTypesetter = std.object {
       return SILE.nodefactory.newVglue(SILE.settings.get("document.lineskip"));
     end
     end,
-  addrskip = function (self, slice)
+  addrlskip = function (self, slice)
     local rskip = SILE.settings.get("document.rskip")
     if rskip then table.insert(slice, rskip) end
+    local lskip = SILE.settings.get("document.lskip")
+    if lskip then table.insert(slice, 1, lskip) end
   end,
   breakpointsToLines = function(self, bp)
     local linestart = 0;
@@ -266,7 +268,7 @@ SILE.defaultTypesetter = std.object {
           end
         end
         if seenHbox == 0 then break end
-        self:addrskip(slice)
+        self:addrlskip(slice)
 
         local naturalTotals = SILE.length.new({length =0 , stretch =0, shrink = 0})
         for i,node in ipairs(slice) do

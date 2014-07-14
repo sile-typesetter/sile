@@ -5,13 +5,12 @@
 --  totalDemerits = nil }
 -- passiveNode = { prev = nil, curBreak = nil, prevBreak = nil, serial = 0 }
 
-SILE.settings.declare({ name="linebreak.rightSkip", type = "Length or nil", default = SILE.length.new()})
-SILE.settings.declare({ name="linebreak.leftSkip", type = "Length or nil", default = SILE.length.new()})
 SILE.settings.declare({ name="linebreak.parShape", type = "string or nil", default = nil}) -- unimplemented
 SILE.settings.declare({ name="linebreak.tolerance", type = "integer or nil", default = 200})
 SILE.settings.declare({ name="linebreak.pretolerance", type = "integer or nil", default = 400})
 SILE.settings.declare({ name="linebreak.hangIndent", type = "nil", default = nil}) -- unimplemented
-SILE.settings.declare({ name="linebreak.adjdemerits", type = "integer", default = 10000})
+SILE.settings.declare({ name="linebreak.adjdemerits", type = "integer", default = 10000,
+  help = "Additional demerits which are accumulated in the course of paragraph building when two consecutive lines are visually incompatible. In these cases, one line is built with much space for justification, and the other one with little space."})
 SILE.settings.declare({ name="linebreak.looseness", type = "integer", default = 0})
 SILE.settings.declare({ name="linebreak.prevGraf", type = "integer", default = 0})
 SILE.settings.declare({ name="linebreak.emergencyStretch", type = "Length or nil", default = SILE.length.new()})
@@ -42,8 +41,10 @@ function lineBreak:init()
   self.background = SILE.length.new()
   self.breakWidth = SILE.length.new() 
   -- 853
-  self.q = param("rightSkip") or 0
-  self.r = param("leftSkip") or 0
+  self.q = SILE.settings.get("document.rskip")
+  if type(self.q) == "table" then self.q = self.q.width else self.q = 0 end
+  self.r = SILE.settings.get("document.lskip")
+  if type(self.r) == "table" then self.r = self.r.width else self.r = 0 end
   self.background = self.background + self.q + self.r   
   -- 860
   self.minimalDemerits = { tight = awful_bad, decent = awful_bad, loose = awful_bad, veryLoose = awful_bad }
