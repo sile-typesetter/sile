@@ -6,7 +6,7 @@ function SILE.registerCommand (name, f, help, pack)
     local where = debug.getinfo(2).source
     pack = where:match("(%w+).lua")
   end
-  if not help and not pack:match(".sil") then SU.error("Could not define command '"..name.."' (in package "..pack..") - no help text" ) end
+  --if not help and not pack:match(".sil") then SU.error("Could not define command '"..name.."' (in package "..pack..") - no help text" ) end
 
   SILE.Help[name] = {
     description = help,
@@ -100,7 +100,7 @@ SILE.baseClass = std.object {
     end
   end,
   init = function(self)
-      SILE.settings.declare({
+    SILE.settings.declare({
       name = "current.parindent",
       type = "Glue",
       default = SILE.settings.get("document.parindent"),
