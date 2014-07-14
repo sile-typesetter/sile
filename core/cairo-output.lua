@@ -30,7 +30,6 @@ SILE.outputters.cairo = {
     move(cr, x,y)
   end,
   rule = function (x,y,w,d)
-    cr:set_source_rgb(0,0,0);
     cr:rectangle(x,y,w,d)
     cr:fill()
   end,
