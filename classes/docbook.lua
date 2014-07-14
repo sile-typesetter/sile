@@ -6,6 +6,8 @@ SILE.scratch.docbook = {
 SILE.registerCommand("preface", function(options, content)
 end)
 
+SILE.registerCommand("indexterm", function(options, content)
+end)
 SILE.registerCommand("section", function(options, content)
   SILE.scratch.docbook.level = "section"
   SILE.Commands["increment-counter"]({id="section"},{})

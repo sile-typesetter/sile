@@ -1,5 +1,6 @@
 \begin[papersize=a4,class=docbook]{document}
 \script[src=packages/rules]
+\script[src=packages/verbatim]
 \define[command=sectionsfont]{\font[family=Frutiger FT Std]{\process}}
 \define[command=ttfont]{\font[family=Inconsolata,size=9pt]{\process}}
 
@@ -15,16 +16,32 @@
 \define[command=pubdate]{}
 \define[command=releaseinfo]{}
 \define[command=para]{\process\par}
+\define[command=simpara]{\process\par}
+
 \define[command=quote]{‘\process’}
 \define[command=acronym]{\font[size=10pt]{\process}}
 \define[command=blockquote]{\par\set[parameter=document.lskip,value=5em]\set[parameter=document.rskip,value=5em]\process\set[parameter=document.lskip,value=0em]\set[parameter=document.rskip,value=0em]}
 
-\define[command=variablelist]{\process}
+\define[command=variablelist]{\process}% XXX
+\define[command=itemizedlist]{\process}% XXX
+\define[command=orderedlist]{\process}% XXX
+\define[command=table]{}% Punt
+
 \define[command=varlistentry]{\par\noindent• \process}
 \define[command=term]{\noindent\font[style=italic]{\process}}
+\define[command=firstterm]{\noindent\font[style=italic,weight=900]{\process}}
+\define[command=command]{\ttfont{\process}}
+\define[command=uri]{\ttfont{\process}}
+\define[command=tag]{\ttfont{\process}}
 \define[command=listitem]{\process}
+\define[command=example]{\process}
+\define[command=programlisting]{\verbatim{\process}}
+\define[command=code]{\verbatim{\process}}
 
 \define[command=citetitle]{\font[style=italic]{\process}}
+\define[command=emphasis]{\font[style=italic]{\process}}
+\define[command=glossterm]{\font[style=italic]{\process}}
+
 \define[command=biblioref]{}
 \define[command=xref]{???}
 \define[command=literal]{\ttfont{\font[style=normal]{\process}}}
