@@ -3,9 +3,14 @@ Frames:
     Port cassowary
     Insertions
     Variable height frames
+    Balanced frames
 
 Plan of attack for insertions:
   Then set maxheight, and try typesetting into frame b
+
+Plan of attack for balanced frames:
+  If total vertical list contributions > total of remaining balanced frames - full page, ship as normal
+  If vertical list contribution ends with VPenalty(MAGIC_NUMBER)
 
 Picture
 Collect all pages before rendering to allow references/ToC
