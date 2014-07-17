@@ -69,7 +69,11 @@ SILE.baseClass = std.object {
     end, "Declares (or re-declares) a frame on this page.")
 
     SILE.registerCommand("penalty", function(options, content)
-      SILE.typesetter:pushPenalty({ flagged= tonumber(options.flagged), penalty = tonumber(options.penalty) })
+      if (SILE.typesetter:vmode()) then
+        SILE.typesetter:pushVpenalty({ flagged= tonumber(options.flagged), penalty = tonumber(options.penalty) })
+      else
+        SILE.typesetter:pushPenalty({ flagged= tonumber(options.flagged), penalty = tonumber(options.penalty) })
+      end
     end, "Inserts a penalty node. Options are penalty= for the size of the penalty and flagged= if this is a flagged penalty.")
 
     SILE.registerCommand("glue", function(options, content) 
