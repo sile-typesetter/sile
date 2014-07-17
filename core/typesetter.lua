@@ -63,7 +63,21 @@ SILE.defaultTypesetter = std.object {
   popState = function(self)
     self.state = table.remove(self.stateQueue);
   end,
+  vmode = function(self)
+    return #self.state.nodes == 0
+  end,
 
+  debugState = function(self)
+    print("\n---\nI am in "..(self:vmode() and "vertical" or "horizontal").." mode")
+    print("Recent contributions: ")
+    for i = 1,#(self.state.nodes) do
+      io.write(self.state.nodes[i].. " ")
+    end
+    print("\nVertical list: ")
+    for i = 1,#(self.state.outputQueue) do
+      print("  "..self.state.outputQueue[i])
+    end
+  end,
   -- Boxy stuff
   pushHbox = function (self, spec) table.insert(self.state.nodes, SILE.nodefactory.newHbox(spec)); end,
   pushGlue = function (self, spec) return table.insert(self.state.nodes, SILE.nodefactory.newGlue(spec)); end,
