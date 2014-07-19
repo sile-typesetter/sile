@@ -52,7 +52,7 @@ SILE.pagebuilder = {
           for j=1,i-1 do
             onepage[j] = table.remove(vboxlist,1)
           end
-          return onepage
+          return onepage, pi
         end
       end
     end

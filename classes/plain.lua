@@ -52,6 +52,8 @@ plain.registerCommands = function()
 \define[command=qquad]{\glue[width=em]}%
 \define[command=slash]{/\penalty[penalty=50]}%
 \define[command=break]{\penalty[penalty=-10000]}%
+\define[command=framebreak]{\break}%
+\define[command=pagebreak]{\penalty[penalty=-20000]}%
 \define[command=nobreak]{\penalty[penalty=10000]}%
 \define[command=allowbreak]{\penalty[penalty=0]}%
 \define[command=filbreak]{\vfill\penalty[penalty=-200]}%

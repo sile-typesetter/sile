@@ -2,6 +2,7 @@
 local awful_bad = 1073741823
 local inf_bad = 10000
 local eject_penalty = -inf_bad
+local supereject_penalty = 2 * -inf_bad
 local deplorable = 100000
 
 SILE.settings.declare({
@@ -165,7 +166,8 @@ SILE.defaultTypesetter = std.object {
     local target = SILE.length.new({ length = self.frame:height() }) -- XXX Floats
     local vbox;
 
-    local pageNodeList = SILE.pagebuilder.findBestBreak(self.state.outputQueue, target)
+    local pageNodeList
+    pageNodeList, self.state.lastPenalty = SILE.pagebuilder.findBestBreak(self.state.outputQueue, target)
     if not pageNodeList then -- No break yet
       return false
     end
@@ -198,7 +200,8 @@ SILE.defaultTypesetter = std.object {
   end,
 
   initNextFrame = function(self)
-    if (self.frame.next) then
+  print(self.state.lastPenalty)
+    if (self.frame.next and not (self.state.lastPenalty <= supereject_penalty )) then
       self:initFrame(SILE.getFrame(self.frame.next));
     else
       SILE.documentState.documentClass:endPage()
