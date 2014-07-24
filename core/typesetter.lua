@@ -200,7 +200,6 @@ SILE.defaultTypesetter = std.object {
   end,
 
   initNextFrame = function(self)
-  print(self.state.lastPenalty)
     if (self.frame.next and not (self.state.lastPenalty <= supereject_penalty )) then
       self:initFrame(SILE.getFrame(self.frame.next));
     else
