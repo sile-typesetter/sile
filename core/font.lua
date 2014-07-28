@@ -1,6 +1,6 @@
 
     SILE.registerCommand("font", function(options, content)
-      if (content[1]) then
+      if (type(content)=="function" or content[1]) then
         SILE.settings.pushState()  
       end
       if (options.family)  then SILE.settings.set("font.family", options.family) end
@@ -13,7 +13,7 @@
       if (options.style)  then SILE.settings.set("font.style", options.style) end
       if (options.variant)  then SILE.settings.set("font.variant", options.variant) end
       if (options.language)  then  SILE.settings.set("document.language", options.language) end
-      if (content[1]) then 
+      if (type(content)=="function" or content[1]) then 
         SILE.process(content)
         SILE.settings.popState()
       end
