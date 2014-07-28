@@ -16,6 +16,8 @@ end
 
 SILE.baseClass = std.object {
   registerCommands = (function()
+    SILE.registerCommand("\\", function(o,c)  SILE.typesetter:typeset("\\") end)
+
     local commandStack = {};
     SILE.registerCommand("define", function (options, content)
       SILE.registerCommand(options["command"], function(o,c)
