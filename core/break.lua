@@ -6,8 +6,8 @@
 -- passiveNode = { prev = nil, curBreak = nil, prevBreak = nil, serial = 0 }
 
 SILE.settings.declare({ name="linebreak.parShape", type = "string or nil", default = nil}) -- unimplemented
-SILE.settings.declare({ name="linebreak.tolerance", type = "integer or nil", default = 200})
-SILE.settings.declare({ name="linebreak.pretolerance", type = "integer or nil", default = 400})
+SILE.settings.declare({ name="linebreak.tolerance", type = "integer or nil", default = 500})
+SILE.settings.declare({ name="linebreak.pretolerance", type = "integer or nil", default = 100})
 SILE.settings.declare({ name="linebreak.hangIndent", type = "nil", default = nil}) -- unimplemented
 SILE.settings.declare({ name="linebreak.adjdemerits", type = "integer", default = 10000,
   help = "Additional demerits which are accumulated in the course of paragraph building when two consecutive lines are visually incompatible. In these cases, one line is built with much space for justification, and the other one with little space."})
