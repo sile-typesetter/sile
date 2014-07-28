@@ -19,7 +19,7 @@
 \define[command=simpara]{\process\par}
 
 \define[command=quote]{‘\process’}
-\define[command=acronym]{\font[size=10pt]{\process}}
+\define[command=acronym]{\font[size=1.1em]{\process}}
 \define[command=blockquote]{\par\set[parameter=document.lskip,value=5em]\set[parameter=document.rskip,value=5em]\process\set[parameter=document.lskip,value=0em]\set[parameter=document.rskip,value=0em]}
 
 \define[command=variablelist]{\process}% XXX
