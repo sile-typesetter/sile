@@ -156,10 +156,14 @@ local _vbox = _box {
       return "VB<" .. tostring(this.height) .. "|" .. this:toText() .. "v"..tostring(this.depth)..")";
   end,
   init = function (self)
-    d = SU.map(function (n) return tonumber(n.depth) or 0 end, self.nodes)
-    h = SU.map(function (n) return tonumber(n.height) or 0 end, self.nodes)
-    self.depth = SILE.length.new({length = #d>0 and math.max(unpack(d)) or 0 })
-    self.height = SILE.length.new({length = #h>0 and math.max(unpack(h)) or 0 })
+    self.depth = 0
+    self.height = 0
+    for i=1,#(self.nodes) do local n = self.nodes[i]
+      self.depth = (tonumber(n.depth) and tonumber(n.depth) > self.depth) and tonumber(n.depth) or self.depth
+      self.height = (tonumber(n.height) and tonumber(n.height) > self.height) and tonumber(n.height) or self.height
+    end
+    self.depth = SILE.length.new({length = self.depth })
+    self.height = SILE.length.new({length = self.height })
     return self
   end,
   toText = function (self) 
