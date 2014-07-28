@@ -12,10 +12,6 @@
 <sectionsfont><center><font size="20pt"><process/></font></center></sectionsfont>
 <skip height="0.5cm"/>
 </define>
-<define command="ragged-right">
-<set parameter="document.rskip" value="0 plus 10000pt"/>
-<process/><script>SILE.typesetter:leaveHmode()</script>
-<set parameter="document.rskip" value="0"/></define>
 
 <define command="section"><set-counter id="subsection" value="0"/><skip height="12pt"/><sectionsfont><font size="15pt"><increment-counter id="section"/><show-counter id="section"/> <process/></font></sectionsfont><skip height="13pt"/></define>
 <define command="subsection"><skip height="13pt"/><sectionsfont><font size="12pt"><show-counter id="section"/>.<increment-counter id="subsection"/><show-counter id="subsection"/> <process/></font></sectionsfont><skip height="13pt"/></define>
