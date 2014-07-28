@@ -38,12 +38,10 @@ local _hbox = _box {
     elseif line.ratio > 0 and self.width.stretch > 0 then
       scaledWidth = scaledWidth + self.width.stretch * line.ratio
     end
-    if (type(typesetter.state.cursorY)) == "table" then typesetter.state.cursorY  =typesetter.state.cursorY.length end
-    if (type(typesetter.state.cursorX)) == "table" then typesetter.state.cursorX  =typesetter.state.cursorX.length end
-    SILE.outputter.moveTo(typesetter.state.cursorX, typesetter.state.cursorY)
+    typesetter.frame:normalize()
+    SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
     SILE.outputter.showGlyphString(self.value.font, self.value.glyphString, self.value.options)
-    -- XXX should be a property of the frame
-    typesetter.state.cursorX = typesetter.state.cursorX + scaledWidth
+    typesetter.frame:moveX(scaledWidth)
   end
 }
 
@@ -111,7 +109,7 @@ local _glue = _box {
     elseif line.ratio and line.ratio > 0 and self.width.stretch > 0 then
       scaledWidth = scaledWidth + self.width.stretch * line.ratio
     end
-    typesetter.state.cursorX = typesetter.state.cursorX + scaledWidth
+    typesetter.frame:moveX(scaledWidth)
   end
 }
 
@@ -130,8 +128,7 @@ local _vglue = _box {
     -- self.shrink = 0
   end,
   outputYourself = function (self,typesetter, line)
-    typesetter.state.cursorY = typesetter.state.cursorY + line.depth + line.height;
-    if (type(typesetter.state.cursorY)) == "table" then typesetter.state.cursorY  =typesetter.state.cursorY.length end
+    typesetter.frame:moveY(line.depth + line.height)
   end
 }
 
@@ -170,7 +167,7 @@ local _vbox = _box {
     return "VB[" .. SU.concat(SU.map(function (n) return n:toText().."" end, self.nodes), "") .. "]" 
   end,
   outputYourself = function(self, typesetter, line)
-    typesetter.state.cursorY =  typesetter.state.cursorY + line.height
+    typesetter.frame:moveY(line.height)
     local initial = true
     for i,node in pairs(self.nodes) do
       if initial and (node:isGlue() or node:isPenalty()) then
@@ -180,9 +177,8 @@ local _vbox = _box {
         node:outputYourself(typesetter, line)
       end
     end
-    typesetter.state.cursorY = typesetter.state.cursorY + line.depth;
-    if (type(typesetter.state.cursorY)) == "table" then typesetter.state.cursorY  =typesetter.state.cursorY.length end    
-    typesetter.state.cursorX = typesetter.frame:left(); -- XXX bidi
+    typesetter.frame:moveY(line.depth)
+    typesetter.frame:newLine()
   end  
 }
 

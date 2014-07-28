@@ -36,26 +36,23 @@ SILE.settings.declare({
 SILE.defaultTypesetter = std.object {
   -- Setup functions
   init = function(self, frame)
-    self:initState();
     self.stateQueue = {};
-    self:initFrame(frame);
+    self:initFrame(frame)
+    self:initState();
     return self
-  end,
-  initFrame = function(self, f)
-    self.frame = f;
-    self.state.cursorX = self.frame:left(); -- XXX for bidi
-    self.state.cursorY = self.frame:top();
-    self.state.frameTotals = { height= 0, pastTop = false };
   end,
   initState = function(self)
     self.state = {
       nodes = {},
       outputQueue = {},
-      lastBadness = awful_bad,
-      frameTotals = { height = 0, pastTop = false },
+      lastBadness = awful_bad,      
       frameLines = {}
     };
     self:initline()
+  end,
+  initFrame = function(self, frame)
+    self.frame = frame
+    self.frame:init()
   end,
   pushState = function(self)
     table.insert(self.stateQueue, self.state);
@@ -232,10 +229,10 @@ SILE.defaultTypesetter = std.object {
     SU.debug("pagebuilder", "OUTPUTTING");
     local i
     for i = 1,#lines do local l = lines[i]
-      if not self.state.frameTotals.pastTop and not (l:isVglue() or l:isPenalty()) then
-        self.state.frameTotals.pastTop = true
+      if not self.frame.state.totals.pastTop and not (l:isVglue() or l:isPenalty()) then
+        self.frame.state.totals.pastTop = true
       end
-      if self.state.frameTotals.pastTop then
+      if self.frame.state.totals.pastTop then
         l:outputYourself(self, l)
       end
     end

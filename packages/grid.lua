@@ -1,21 +1,21 @@
 local gridSpacing -- Should be a setting
 
 local leadingFor = function(this, vbox, previous)
-  if not this.state.frameTotals.gridCursor then this.state.frameTotals.gridCursor = 0 end
+  if not this.frame.state.totals.gridCursor then this.frame.state.totals.gridCursor = 0 end
   if not previous then 
     return SILE.nodefactory.newVglue({height = SILE.length.new()});
   end
-  this.state.frameTotals.gridCursor = this.state.frameTotals.gridCursor + previous.height.length
+  this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + previous.height.length
   if previous:isVbox() then 
-    this.state.frameTotals.gridCursor = this.state.frameTotals.gridCursor + previous.depth.length
+    this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + previous.depth.length
   end
-  local lead = gridSpacing - (this.state.frameTotals.gridCursor % gridSpacing);
-  this.state.frameTotals.gridCursor = this.state.frameTotals.gridCursor  + lead
+  local lead = gridSpacing - (this.frame.state.totals.gridCursor % gridSpacing);
+  this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor  + lead
   return SILE.nodefactory.newVglue({height = SILE.length.new({ length = lead })});
 end
 
 local pushVglue = function(this, spec)
-  if not this.state.frameTotals.gridCursor then this.state.frameTotals.gridCursor = 0 end
+  if not this.frame.state.totals.gridCursor then this.frame.state.totals.gridCursor = 0 end
   this.super.pushVglue(this, spec);
   this.super.pushVglue(this, leadingFor(this, nil, SILE.nodefactory.newVglue(spec)));
 end

@@ -2,7 +2,8 @@ local framePrototype = std.object {
   next= nil,
   id= nil,
   previous= nil,
-  balanced= 0
+  balanced= 0,
+  state = {}
 };
 
 function framePrototype:top() 
@@ -36,6 +37,34 @@ function framePrototype:height()
 function framePrototype:toString()
   return "<Frame: "..self.id..": t="..self:top()..", b="..self:bottom()..">"
 end
+
+function framePrototype:moveX(amount)
+  self.state.cursorX = self.state.cursorX + amount
+  self:normalize()
+end
+
+function framePrototype:moveY(amount)
+  self.state.cursorY = self.state.cursorY + amount
+  self:normalize()
+end
+
+function framePrototype:newLine()
+  self.state.cursorX = self:left(); -- XXX bidi
+end
+
+function framePrototype:init()
+  self.state = {
+    cursorX = self:left(),
+    cursorY = self:top(),
+    totals = { height= 0, pastTop = false }
+  }
+end
+
+function framePrototype:normalize()
+  if (type(self.state.cursorY)) == "table" then self.state.cursorY  =self.state.cursorY.length end
+  if (type(self.state.cursorX)) == "table" then self.state.cursorX  =self.state.cursorX.length end
+end
+
 SILE.newFrame = function(spec)
   local frame = framePrototype {}
   local dims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
