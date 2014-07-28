@@ -15,11 +15,10 @@ SILE.registerCommand("hrule", function(options, content)
       elseif line.ratio > 0 and self.width.stretch > 0 then
         scaledWidth = scaledWidth + self.width.stretch * line.ratio
       end    
-      if (type(typesetter.state.cursorY)) == "table" then typesetter.state.cursorY  =typesetter.state.cursorY.length end
-      if (type(typesetter.state.cursorX)) == "table" then typesetter.state.cursorX  =typesetter.state.cursorX.length end
+      typesetter.frame:normalize()
 
-      SILE.outputter.rule(typesetter.state.cursorX, typesetter.state.cursorY-(self.height.length), scaledWidth, self.height.length+self.depth)
-      typesetter.state.cursorX = typesetter.state.cursorX + scaledWidth
+      SILE.outputter.rule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-(self.height.length), scaledWidth, self.height.length+self.depth)
+      typesetter.frame:moveX(scaledWidth)
     end
   });
 end, "Creates a line of width <width> and height <height>");
