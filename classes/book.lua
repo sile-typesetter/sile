@@ -10,17 +10,11 @@ book:declareFrame("footnotes", { left="left(r)", right = "right(r)", top = "bott
 book.pageTemplate.firstContentFrame = book.pageTemplate.frames["r"];
 
 book:loadPackage("twoside", { oddPageFrameID = "r", evenPageFrameID = "l" });
-book:loadPackage("insertions")
 
 if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end
 
 book.init = function()
-  book:initInsertionClass("footnote", { 
-    insertInto = "footnotes",
-    stealFrom = {"l"; "r"},
-    maxHeight = SILE.length.new({length = SILE.toPoints("25", "%","h") }),
-    topSkip = SILE.length.parse("12pt")
-  })
+  book:loadPackage("footnotes", { insertInto = "footnotes", stealFrom = {"r";"l"} } )
   return plain:init()
 end
 
@@ -38,16 +32,9 @@ book.endPage = function()
   end
   book:switchPage();
   book:outputInsertions()
-  
+
   return plain.endPage(book);
 end;
-
-SILE.registerCommand("footnote", function(options, content)
-  book:insert("footnote", SILE.Commands["vbox"]({}, function()
-    SILE.Commands["font"]({size = "9pt"}, content)
-  end
-  ))
-end)
 
 SILE.registerCommand("left-running-head", function(options, content)
   SILE.settings.temporarily(function()

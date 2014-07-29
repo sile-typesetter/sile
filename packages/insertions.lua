@@ -92,8 +92,6 @@ local outputInsertions = function(self)
   for classname,vboxes in pairs(SILE.scratch.insertions.thispage) do
     local opts = SILE.scratch.insertions.classes[classname]
     local f = SILE.getFrame(opts["insertInto"])
-    SILE.outputter:debugFrame(f)
-    SILE.outputter:debugFrame(SILE.getFrame("l"))
     local t = SILE.defaultTypesetter {}
     t:init(f)
     for i = 1,#vboxes do 
