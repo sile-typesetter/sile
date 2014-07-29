@@ -88,7 +88,7 @@ SILE.newFrame = function(spec)
   return frame
 end
 
-SILE.getFrame = function(id) return SILE.documentState.thisPageTemplate.frames[id] end
+SILE.getFrame = function(id) return SILE.documentState.thisPageTemplate.frames[id] or SU.error("Couldn't get frame ID "..id) end
 
 SILE._frameParser = require("core/frameparser")
 
