@@ -6,12 +6,13 @@ local deplorable = 100000
 SILE.pagebuilder = {
   collateVboxes = function(vboxlist)
     local i
-    local output = SILE.nodefactory.newVbox({})
+    local output = SILE.nodefactory.newVbox({nodes = {} })
     local h = SILE.length.new({})
     for i=1,#vboxlist do
       table.insert(output.nodes, vboxlist[i])
       h = h + vboxlist[i].height + vboxlist[i].depth
     end
+    output.ratio = 1
     output.height = h
     output.depth = 0
     return output
