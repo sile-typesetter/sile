@@ -46,7 +46,6 @@ SILE.defaultTypesetter = std.object {
       nodes = {},
       outputQueue = {},
       lastBadness = awful_bad,      
-      frameLines = {}
     };
     self:initline()
   end,
