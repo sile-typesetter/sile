@@ -99,7 +99,6 @@ SILE.registerCommand("vbox", function (o,c)
   SILE.process(c)
   SILE.typesetter:leaveHmode()
   local vbox = SILE.pagebuilder.collateVboxes(SILE.typesetter.state.outputQueue)
-  print(vbox.nodes)
   SILE.typesetter:popState()
   return vbox
 end, "Compiles all the enclosed horizontal-mode material into a single hbox")
