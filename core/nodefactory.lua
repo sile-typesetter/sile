@@ -167,17 +167,17 @@ local _vbox = _box {
     return "VB[" .. SU.concat(SU.map(function (n) return n:toText().."" end, self.nodes), "") .. "]" 
   end,
   outputYourself = function(self, typesetter, line)
-    typesetter.frame:moveY(line.height)
+    typesetter.frame:moveY(self.height)  
     local initial = true
     for i,node in pairs(self.nodes) do
       if initial and (node:isGlue() or node:isPenalty()) then
         -- do nothing
       else
         initial = false
-        node:outputYourself(typesetter, line)
+        node:outputYourself(typesetter, self)
       end
     end
-    typesetter.frame:moveY(line.depth)
+    typesetter.frame:moveY(self.depth)
     typesetter.frame:newLine()
   end  
 }
@@ -209,6 +209,6 @@ SILE.nodefactory.hfillGlue = SILE.nodefactory.newGlue({width = SILE.length.new({
 SILE.nodefactory.vfillGlue = SILE.nodefactory.newVglue({height = SILE.length.new({length = 0, stretch = inf})})
 SILE.nodefactory.hssGlue = SILE.nodefactory.newGlue({width = SILE.length.new({length = 0, stretch = inf, shrink = inf})})
 SILE.nodefactory.vssGlue = SILE.nodefactory.newVglue({height = SILE.length.new({length = 0, stretch = inf, shrink = inf})})
-SILE.nodefactory.zeroHbox = SILE.nodefactory.newHbox({ width = SILE.length.new({length = 0}), value = {glyph = 0} });
+SILE.nodefactory.zeroHbox = SILE.nodefactory.newHbox({ width = SILE.length.new({length = 0, stretch = 0, shrink = 0}), value = {glyph = 0} });
 SILE.nodefactory.zeroVglue = SILE.nodefactory.newVglue({})
 return SILE.nodefactory
