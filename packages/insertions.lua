@@ -74,8 +74,8 @@ local insert = function (self, classname, vbox)
     end
   end
 
-  SU.debug("insertions", "Maxheight is "..thisclass["maxHeight"])
-  SU.debug("insertions", "height is "..(heightSoFar(classname) + vbox.height + vbox.depth))
+  SU.debug("insertions", "Maxheight is "..tostring(thisclass["maxHeight"]))
+  SU.debug("insertions", "height is "..tostring((heightSoFar(classname) + vbox.height + vbox.depth)))
   if heightSoFar(classname) + vbox.height + vbox.depth < thisclass["maxHeight"] and
     ( (vbox.height + vbox.depth).length < 0 or
     true -- XXX "\pagetotal plus \pagedepth minus \pageshrink plus the effective

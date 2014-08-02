@@ -130,7 +130,7 @@ SILE.defaultTypesetter = std.object {
     while (#nl >0 and nl[1]:isPenalty()) do table.remove(nl,1) end
     self:pushGlue(SILE.settings.get("typesetter.parfillskip"));
     self:pushPenalty({ flagged= 1, penalty= -inf_bad });
-    SU.debug("typesetter", "Boxed up "..nl);
+    SU.debug("typesetter", "Boxed up "..tostring(nl));
     local breaks = SILE.linebreak:doBreak( nl, self.frame:width() );
     if (#breaks == 0) then
       SILE.SU.error("Couldn't break :(")
@@ -257,7 +257,7 @@ SILE.defaultTypesetter = std.object {
    local bls = SILE.settings.get("document.baselineskip")
    local d = bls.height - v.height - prevDepth;
    d = d.length
-   SU.debug("typesetter", "   Leading height = " .. tostring(bls.height) .. " - " .. v.height .. " - " .. prevDepth .. " = "..d) ;
+   SU.debug("typesetter", "   Leading height = " .. tostring(bls.height) .. " - " .. tostring(v.height) .. " - " .. tostring(prevDepth) .. " = "..d) ;
 
     if (d > SILE.settings.get("document.lineskip").height.length) then
       len = SILE.length.new({ length = d, stretch = bls.height.stretch, shrink = bls.height.shrink })
