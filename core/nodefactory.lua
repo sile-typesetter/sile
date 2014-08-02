@@ -29,7 +29,7 @@ function _box:isKern ()  return self.type == "kern" end -- Which it never is
 
 local _hbox = _box { 
   type = "hbox",
-  __tostring = function (this) return "H<" .. tostring(this.width) .. ">^" .. this.height .. "-" .. this.depth .. "v"; end,
+  __tostring = function (this) return "H<" .. tostring(this.width) .. ">^" .. tostring(this.height) .. "-" .. tostring(this.depth) .. "v"; end,
   outputYourself = function(self,typesetter, line)
   if not self.value.glyphString then return end
     local scaledWidth = self.width.length
