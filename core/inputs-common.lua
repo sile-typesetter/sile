@@ -8,6 +8,7 @@ SILE.inputs.common = {
         SILE.documentState.documentClass.options[k](v)
       end
     end
+
     if not SILE.outputFilename then
       SILE.outputFilename = string.gsub(arg[1],"%..-$", ".pdf")
     end

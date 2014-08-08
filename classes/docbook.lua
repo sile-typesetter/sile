@@ -1,12 +1,21 @@
 local book = SILE.require("classes/book");
 docbook = book { id = "docbook" };
 SILE.scratch.docbook = {
-  level = "main"
+  level = "main",
+  index = {}
 }
 SILE.registerCommand("preface", function(options, content)
 end)
 
 SILE.registerCommand("indexterm", function(options, content)
+  print(content[1])
+  local t = {}
+  for k,v in pairs(content) do
+    if type(v) == "table" then
+      if v.tag == "primary"
+    end
+  end
+  error("foo")
 end)
 SILE.registerCommand("section", function(options, content)
   SILE.scratch.docbook.level = "section"

@@ -21,27 +21,26 @@ local reduceHeight = function(classname, amount)
   local stealPosition = opts["steal-position"] or "bottom"
   for i = 1,#reduceList do local f = SILE.getFrame(reduceList[i])
     local newHeight = f:height() - amount.length
-    f.height = function () return newHeight end
-    -- This will have to change when cassowary is implemented
+    local oldBottom = f:bottom()
     if stealPosition == "bottom" then
-      local newBottom = f:bottom() - amount.length
-      f.bottom = function () return newBottom end
+      --f:constrain("bottom", oldBottom - amount.length)
+      f:relax("bottom")
     else
-      local newTop = f:top() - amount.length
-      f.top = function () return newTop end
+      --f:constrain("top", f:top() - amount.length)
+      f:relax("top")
     end
+    f:constrain("height", newHeight)
+    
   end
   local f = SILE.getFrame(opts["insertInto"])
-  local newHeight = f:height() + amount.length
-  f.height = function () return newHeight end
+  local oldTop = f:top()
   if stealPosition == "bottom" then 
-    local newTop = f:top() - amount.length
-    f.top = function () return newTop end
+    f:constrain("top", oldTop - amount.length)
   end
 end
 
 local addInsertion = function(classname, material)
-  reduceHeight(classname, material.height + material.depth)
+  reduceHeight(classname, material.height)
   if material:isVbox() then 
     material.height = SILE.length.new({ length =  0 })
   end
@@ -67,10 +66,6 @@ local insert = function (self, classname, vbox)
     if thisclass["topSkip"] then
       local vglue = SILE.nodefactory.newVglue({ height = thisclass["topSkip"] })
       addInsertion(classname, vglue)
-      -- HACK?
-      local f = SILE.getFrame(opts["insertInto"])
-      local newTop = f:top() + vglue.height.length
-      f.top = function () return newTop end
     end
   end
 
@@ -99,6 +94,7 @@ local outputInsertions = function(self)
       vboxes[i]:outputYourself(t,vboxes[i])
     end
     SILE.scratch.insertions.thispage[classname] = SILE.scratch.insertions.nextpage[classname]
+    -- SILE.outputter:debugFrame(f)
   end
 end
 

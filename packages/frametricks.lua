@@ -20,14 +20,14 @@ local breakFrameVertical = function(after)
     right = cFrame:right(),
     next = cFrame.next,
     previous = cFrame,
-    id = cFrame.id .. "'"
+    id = cFrame.id .. "_"
   })
 
-  cFrame._height = totalHeight
+  cFrame:relax("bottom")
+  cFrame:constrain("height", totalHeight)
   cFrame.next = newFrame.id
   SILE.documentState.thisPageTemplate.frames[newFrame.id] = newFrame
-
-  newFrame._top = cFrame:top() + totalHeight
+  newFrame:constrain("top", cFrame:top() + totalHeight)
   if (after) then
     SILE.typesetter:initFrame(cFrame)
   else
@@ -46,7 +46,7 @@ local breakFrameHorizontalAt = function (offset)
     right = cFrame:right(),
     next = cFrame.next,
     previous = cFrame,
-    id = cFrame.id .. "'"
+    id = cFrame.id .. "_"
   })
   local oldLeft = cFrame:left()
   cFrame.left = (function() return oldLeft end)
@@ -58,16 +58,10 @@ end
 
 local shiftframeedge = function(frame, options)
   if options.left then 
-    local oldLeft = frame.left
-    frame.left = function()
-      return oldLeft(frame) + SILE.length.parse(options.left).length
-    end
+    frame:constrain("left", frame:left() + SILE.length.parse(options.left).length)
   end
   if options.right then 
-    local oldRight = frame.right
-    frame.right = function()
-      return oldRight(frame) + SILE.length.parse(options.right).length
-    end
+    frame:constrain("right", frame:right() + SILE.length.parse(options.right).length)
   end
 end
 

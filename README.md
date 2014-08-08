@@ -9,7 +9,7 @@ isn't written in Pascal.
 First you will need lua, pango and cairo installed. You will then
 need to run:
 
-* `luarocks install stdlib lgi lpeg luaexpat inspect luaepnf luarepl`
+* `luarocks install stdlib lgi lpeg luaexpat inspect luaepnf luarepl cassowary`
 
 Then you should be good to go.
 

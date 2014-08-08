@@ -118,21 +118,28 @@ SILE.baseClass = std.object {
   end,
   initialFrame= function(self)
     SILE.documentState.thisPageTemplate = std.tree.clone(self.pageTemplate)
-    return SILE.documentState.thisPageTemplate.firstContentFrame;
+    local p = SILE.frames.page
+    SILE.frames = {page = p}
+    for k,v in pairs(SILE.documentState.thisPageTemplate.frames) do
+      SILE.frames[k] = v
+    end
+    SILE.documentState.thisPageTemplate.firstContentFrame:invalidate()
+    return SILE.documentState.thisPageTemplate.firstContentFrame
   end,
   declareFrame = function (self, id, spec)
-    local fW = function (val) return function() return SILE.parseComplexFrameDimension(val, "w"); end end
-    local fH = function (val) return function() return SILE.parseComplexFrameDimension(val, "h"); end end
-    self.pageTemplate.frames[id] = SILE.newFrame({
-      next= spec.next,
-      left= spec.left and fW(spec.left),
-      right= spec.right and fW(spec.right),
-      top= spec.top and fH(spec.top),
-      bottom= spec.bottom and fH(spec.bottom),
-      height = spec.height and fH(spec.height),
-      width = spec.width and fH(spec.width),
-      id = id
-    });
+    -- local fW = function (val) return function() return SILE.parseComplexFrameDimension(val, "w"); end end
+    -- local fH = function (val) return function() return SILE.parseComplexFrameDimension(val, "h"); end end
+    spec.id = id
+    self.pageTemplate.frames[id] = SILE.newFrame(spec)
+    --   next= spec.next,
+    --   left= spec.left and fW(spec.left),
+    --   right= spec.right and fW(spec.right),
+    --   top= spec.top and fH(spec.top),
+    --   bottom= spec.bottom and fH(spec.bottom),
+    --   height = spec.height and fH(spec.height),
+    --   width = spec.width and fH(spec.width),
+    --   id = id
+    -- });
   end,
   newPage = function(self) 
     SILE.outputter:newPage();
@@ -162,6 +169,7 @@ SILE.baseClass = std.object {
       else
         SU.error("Unknown paper size "..size);
       end
+      SILE.newFrame({id = "page", left = 0, top = 0, right = SILE.documentState.paperSize[1], bottom = SILE.documentState.paperSize[2] })
     end
   }
 }

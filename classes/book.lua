@@ -19,19 +19,22 @@ book.init = function()
 end
 
 book.endPage = function()
+  book:outputInsertions()
+
   if (book:oddPage()) then
-    book:declareFrame("footnotes", { left="left(l)", right = "right(l)", top = "bottom(r)", bottom="bottom(r)"})
+    book:declareFrame("footnotes", { left="left(l)", right = "right(l)", top = "bottom(r)", bottom="83.3%"})
+
     if (SILE.scratch.headers.right) then
       SILE.typesetNaturally(SILE.getFrame("rRH"), SILE.scratch.headers.right);
     end
   else 
-    book:declareFrame("footnotes", { left="left(r)", right = "right(r)", top = "bottom(r)", bottom="bottom(r)"})
+    book:declareFrame("footnotes", { left="left(r)", right = "right(r)", top = "bottom(r)", bottom="83.3%"})
+
     if (SILE.scratch.headers.left) then
       SILE.typesetNaturally(SILE.getFrame("lRH"), SILE.scratch.headers.left);
     end
   end
   book:switchPage();
-  book:outputInsertions()
 
   return plain.endPage(book);
 end;

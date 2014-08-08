@@ -159,6 +159,7 @@ SILE.defaultTypesetter = std.object {
 
   pageBuilder = function (self, independent)
     local totalHeight = 0
+
     local target = SILE.length.new({ length = self.frame:height() }) -- XXX Floats
     local vbox;
 

@@ -12,8 +12,19 @@ local identifier = SILE.parserBits.identifier
 local dimensioned_string = SILE.parserBits.dimensioned_string
 local whitespace = SILE.parserBits.whitespace
 
-local func = C(P("top") + P("left") + P("bottom") + P("right") ) * P("(") * C(identifier) * P(")") / function (dim, ident) f = SILE.getFrame(ident); return f[dim](f) end
-local percentage = ( C(number.number) * whitespace * P("%") ) / function (n) return SILE.toPoints(n, "%", SILE.documentState._dimension) end
+local functionOfFrame = function (dim, ident)
+	if not SILE.frames[ident] then	
+		SILE.newFrame({id = ident})
+	end
+	return SILE.frames[ident].variables[dim]	
+end
+local func = C(P("top") + P("left") + P("bottom") + P("right") + P("width") + P("height")) * P("(") * C(identifier) * P(")") / functionOfFrame
+
+local percentage = ( C(number.number) * whitespace * P("%") ) / function (n) 
+	local dim = SILE.documentState._dimension == "w" and "width" or "height"
+	return cassowary.times(n / 100, functionOfFrame(dim, "page"))
+end
+
 local primary = dimensioned_string + percentage + func + number.number
 
 if testingSILE then
@@ -31,14 +42,14 @@ end
 
 local grammar = {
 	"additive",
-	additive =  (( V("multiplicative") * whitespace * P("+")  * whitespace * V("additive") ) / function (l,r) return l+r end)
+	additive =  (( V("multiplicative") * whitespace * P("+")  * whitespace * V("additive") ) / function (l,r) return cassowary.plus(l,r) end)
 				+
-				(( V("multiplicative") * whitespace * P("-") * whitespace * V("additive") * whitespace ) / function(l,r) return l-r end )+
+				(( V("multiplicative") * whitespace * P("-") * whitespace * V("additive") * whitespace ) / function(l,r) return cassowary.minus(l,r) end )+
 				V("multiplicative")
 	,
 	primary = primary + V("bracketed"),
-	multiplicative =  (( V("primary") * whitespace * P("*") * whitespace * V("multiplicative") ) / function (l,r) return (l*r) end)+
-				(( V("primary") * whitespace * P("/") * whitespace * V("multiplicative") ) / function(l,r) return l/r end) +
+	multiplicative =  (( V("primary") * whitespace * P("*") * whitespace * V("multiplicative") ) / function (l,r) return cassowary.times(l,r) end)+
+				(( V("primary") * whitespace * P("/") * whitespace * V("multiplicative") ) / function(l,r) return cassowary.divide(l,r) end) +
 				V("primary"),
 	bracketed = P("(") * whitespace * V("additive") * whitespace * P(")") / function (a) return a; end
 }
