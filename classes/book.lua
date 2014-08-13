@@ -41,7 +41,7 @@ end;
 
 SILE.registerCommand("left-running-head", function(options, content)
   SILE.settings.temporarily(function()
-    SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
+    SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
     SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
     SILE.typesetter:pushState()
     SILE.process(content)
@@ -51,7 +51,7 @@ SILE.registerCommand("left-running-head", function(options, content)
 end, "Text to appear on the top of the left page");
 SILE.registerCommand("right-running-head", function(options, content)
   SILE.settings.temporarily(function()
-    SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
+    SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
     SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
     SILE.typesetter:pushState()
     SILE.process(content)
@@ -60,4 +60,33 @@ SILE.registerCommand("right-running-head", function(options, content)
   end);
 end, "Text to appear on the top of the right page");
 
+SILE.registerCommand("chapter", function (options, content)
+  SILE.Commands["open-double-page"]({},{});
+  SILE.Commands["noindent"]({},{});  
+  SILE.Commands["set-counter"]({id = "section", value = 0});
+  SILE.Commands["set-counter"]({id = "footnote", value = 1});
+  SILE.Commands["increment-counter"]({id = "chapter"})
+  SILE.Commands["book:chapterfont"]({}, {"Chapter "..SILE.formatCounter(SILE.scratch.counters.chapter)});
+  SILE.typesetter:leaveHmode()
+  SILE.Commands["book:chapterfont"]({}, content);
+  SILE.Commands["left-running-head"]({}, content);
+  SILE.Commands["bigskip"]();
+  SILE.Commands["nofoliosthispage"]();
+end, "Begin a new chapter");
+
+SILE.registerCommand("book:chapterfont", function (options, content)
+  SILE.settings.temporarily(function()
+    SILE.Commands["font"]({weight=800, size="22pt"}, content)
+  end)
+end)
+SILE.registerCommand("open-double-page", function() 
+  SILE.typesetter:leaveHmode();
+  SILE.Commands["supereject"]();
+  if book:oddPage() then
+    SILE.typesetter:typeset("")
+    SILE.typesetter:leaveHmode();
+    SILE.Commands["supereject"]();
+  end
+
+end)
 return book
