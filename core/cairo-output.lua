@@ -26,6 +26,28 @@ SILE.outputters.cairo = {
   showGlyphString = function(f,pgs, options)
     sgs(cr, f,pgs)
   end,
+  drawPNG = function (src, x,y,w,h)
+    local image = cairo.ImageSurface.create_from_png(src)
+    if not image then SU.error("Could not load image "..src) end
+    local src_width = image:get_width()
+    local src_height = image:get_height()
+    if not (src_width > 0) then SU.error("Something went wrong loading image "..src) end
+    cr:save()
+    cr:set_source_surface(image, 0,0)
+    local p = cr:get_source()
+    local matrix, sx, sy
+    if w or h then 
+      if w > 0 then sx = src_width / w end
+      if h > 0 then sy = src_height / h end
+      matrix = cairo.Matrix.create_scale(sx or sy, sy or sx)
+    else
+      matrix = cairo.Matrix.create_identity()
+    end
+    matrix:translate(-x,-y)
+    p:set_matrix(matrix)
+    cr:paint()
+    cr:restore()
+  end,
   moveTo = function (x,y)
     move(cr, x,y)
   end,
