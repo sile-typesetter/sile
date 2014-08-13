@@ -1,7 +1,7 @@
 
 SILE.registerCommand("verbatim", function(options, content)
   local t = SILE.typesetter;
-  t:pushVglue({ height = SILE.length.new({ length = 15 }) })
+  t:pushVglue({ height = SILE.length.new({ length = 6 }) })
   t:leaveHmode()
   SILE.typesetter = SILE.typesetter {}
   -- Keep lines
@@ -20,6 +20,6 @@ SILE.registerCommand("verbatim", function(options, content)
     SILE.process(content)
   end)
 
-  t:pushVglue({ height = SILE.length.new({ length = 15 }) })
+  t:pushVglue({ height = SILE.length.new({ length = 6 }) })
   SILE.typesetter = t
 end, "Typesets its contents in a monospaced font.")
