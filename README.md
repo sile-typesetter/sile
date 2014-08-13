@@ -11,6 +11,15 @@ need to run:
 
 * `luarocks install stdlib lgi lpeg luaexpat inspect luaepnf luarepl cassowary`
 
-Then you should be good to go.
+Once your dependencies are installed, run
+
+* `lua install.lua`
+
+This will place the SILE libraries and executable in a sensible
+location.
 
 Try `sile examples/test.sil`
+
+## For more information
+
+Read the SILE manual in documentation/sile.pdf
