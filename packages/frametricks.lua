@@ -81,6 +81,7 @@ SILE.registerCommand("breakframehorizontal", function ( options, content )
 end, "Breaks the current frame in two horizontally either at the current location or at a point <offset> below the current location")
 
 SILE.registerCommand("float", function(options, content)
+  breakFrameVertical()
   SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
   local hbox = SILE.Commands["hbox"]({}, content)
   table.remove(SILE.typesetter.state.nodes) -- steal it back
@@ -92,7 +93,7 @@ SILE.registerCommand("float", function(options, content)
   local undoSkip = SILE.length.new({}) - SILE.settings.get("document.baselineskip").height.length + SILE.length.parse("1ex")
   undoSkip.stretch = hbox.height
   SILE.typesetter:pushHbox({value = {}})
-  SILE.typesetter:pushVglue({height = undoSkip })
+  -- SILE.typesetter:pushVglue({height = undoSkip })
   breakFrameVertical(hbox.height + SILE.length.parse(options.bottomboundary).length)
   shiftframeedge(SILE.getFrame(SILE.typesetter.frame.next), {left = ""..tostring(SILE.length.new() - boundary)})
   --SILE.outputter:debugFrame(SILE.typesetter.frame)
