@@ -61,8 +61,8 @@ SILE.registerCommand("right-running-head", function(options, content)
 end, "Text to appear on the top of the right page");
 
 SILE.registerCommand("chapter", function (options, content)
-  SILE.Commands["open-double-page"]({},{});
-  SILE.Commands["noindent"]({},{});  
+  SILE.call("open-double-page")
+  SILE.call("noindent")
   SILE.Commands["set-counter"]({id = "section", value = 0});
   SILE.Commands["set-counter"]({id = "footnote", value = 1});
   SILE.Commands["increment-counter"]({id = "chapter"})
@@ -70,8 +70,8 @@ SILE.registerCommand("chapter", function (options, content)
   SILE.typesetter:leaveHmode()
   SILE.Commands["book:chapterfont"]({}, content);
   SILE.Commands["left-running-head"]({}, content);
-  SILE.Commands["bigskip"]();
-  SILE.Commands["nofoliosthispage"]();
+  SILE.call("bigskip")
+  SILE.call("nofoliosthispage")
 end, "Begin a new chapter");
 
 SILE.registerCommand("book:chapterfont", function (options, content)

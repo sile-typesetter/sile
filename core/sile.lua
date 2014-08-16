@@ -146,4 +146,8 @@ function SILE.resolveFile(fn)
   end
 end
 
+function SILE.call(cmd,options, content)
+  SILE.Commands[cmd](options or {}, content or {})
+end
+
 return SILE
