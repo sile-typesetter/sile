@@ -5,8 +5,8 @@ local insertions = SILE.require("packages/insertions")
 SILE.scratch.counters.footnote = { value= 1, display= "arabic" };
 
 SILE.registerCommand("footnote", function(options, content)
-  SILE.Commands["raise"]({height = "1ex"}, function()
-    SILE.Commands["font"]({ size = "2ex" }, function()
+  SILE.Commands["raise"]({height = "0.7ex"}, function()
+    SILE.Commands["font"]({ size = "1.5ex" }, function()
       SILE.typesetter:typeset(SILE.scratch.counters.footnote.value)
     end)
   end)
