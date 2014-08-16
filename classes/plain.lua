@@ -61,9 +61,17 @@ plain.registerCommands = function()
 \define[command=eject]{\par\break}%
 \define[command=supereject]{\par\penalty[penalty=-20000]}%
 \define[command=raggedright]{\set[parameter=document.rskip,value=0 plus 2em]}%
+\define[command=justified]{\set[parameter=document.rskip,value=0]}%
+\define[command=em]{\font[style=italic]{\process}}%
+\define[command=nohyphenation]{\font[language=xx]{\process}}%
 \end{document}
   ]]))
 end
+
+SILE.registerCommand("{", function (o,c) SILE.typesetter:typeset("{") end)
+SILE.registerCommand("}", function (o,c) SILE.typesetter:typeset("}") end)
+SILE.registerCommand("%", function (o,c) SILE.typesetter:typeset("%") end)
+SILE.registerCommand("\\", function (o,c) SILE.typesetter:typeset("\\") end)
 
 SILE.registerCommand("hbox", function (o,c)
   local index = #(SILE.typesetter.state.nodes)+1
