@@ -10,7 +10,7 @@ SILE.inputs.common = {
     end
 
     if not SILE.outputFilename then
-      SILE.outputFilename = string.gsub(arg[1],"%..-$", ".pdf")
+      SILE.outputFilename = string.gsub(arg[1],"%..-$", "").. ".pdf"
     end
     local ff = SILE.documentState.documentClass:init()
     SILE.typesetter:init(ff)
