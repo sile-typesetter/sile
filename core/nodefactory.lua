@@ -210,5 +210,5 @@ SILE.nodefactory.vfillGlue = SILE.nodefactory.newVglue({height = SILE.length.new
 SILE.nodefactory.hssGlue = SILE.nodefactory.newGlue({width = SILE.length.new({length = 0, stretch = inf, shrink = inf})})
 SILE.nodefactory.vssGlue = SILE.nodefactory.newVglue({height = SILE.length.new({length = 0, stretch = inf, shrink = inf})})
 SILE.nodefactory.zeroHbox = SILE.nodefactory.newHbox({ width = SILE.length.new({length = 0, stretch = 0, shrink = 0}), value = {glyph = 0} });
-SILE.nodefactory.zeroVglue = SILE.nodefactory.newVglue({})
+SILE.nodefactory.zeroVglue = SILE.nodefactory.newVglue({height = SILE.length.new({length = 0, stretch = 0, shrink = 0}) })
 return SILE.nodefactory
