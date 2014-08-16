@@ -16,19 +16,21 @@ end
 
 local pushVglue = function(this, spec)
   if not this.frame.state.totals.gridCursor then this.frame.state.totals.gridCursor = 0 end
-  this.super.pushVglue(this, spec);
-  this.super.pushVglue(this, leadingFor(this, nil, SILE.nodefactory.newVglue(spec)));
+  SILE.defaultTypesetter.pushVglue(this, spec);
+  SILE.defaultTypesetter.pushVglue(this, leadingFor(this, nil, SILE.nodefactory.newVglue(spec)));
 end
 
 SILE.registerCommand("grid", function(options, content)
-  local t = SILE.typesetter;
-  SILE.typesetter = SILE.typesetter {};
-  SILE.typesetter.super = t;
+  SU.required(options, "spacing", "grid package")
+  -- t:initline()
+  -- t:leaveHmode()
   gridSpacing = SILE.parseComplexFrameDimension(options.spacing,"h");
   SILE.typesetter.leadingFor = leadingFor
   SILE.typesetter.pushVglue = pushVglue;
 end, "Begins typesetting on a grid spaced at <spacing> intervals.")
 
 SILE.registerCommand("no-grid", function (options, content)
-  SILE.typesetter = SILE.typesetter.super;
+  SILE.typesetter.leadingFor = SILE.defaultTypesetter.leadingFor
+  SILE.typesetter.pushVglue = SILE.defaultTypesetter.pushVglue
+  -- SILE.typesetter.state = t.state
 end, "Stops grid typesetting.")
