@@ -6,6 +6,13 @@ local pango_context = lgi.Pango.FontMap.create_context(fm)
 
 SILE.shapers = { pango= {} }
 
+SILE.settings.declare({
+  name = "shaper.spacepattern", 
+  type = "string",
+  default = "%s+",
+  help = "The Lua pattern used for splitting words on spaces"
+})
+
 function itemize(s, pal)
   return pango.itemize(pango_context, s, 0, string.len(s), pal, nil)
 end
@@ -82,7 +89,7 @@ function SILE.shapers.pango.shape(text, options)
   local pal = getPal(options)
   local nodes = {}
   local gluewidth = measureSpace(pal)
-  for token in SU.gtoke(text) do
+  for token in SU.gtoke(text, SILE.settings.get("shaper.spacepattern")) do
     if (token.separator) then
       table.insert(nodes, SILE.nodefactory.newGlue({ width = gluewidth }))
     else
