@@ -39,6 +39,10 @@ end
 
 local breakFrameHorizontalAt = function (offset)
   local cFrame = SILE.typesetter.frame
+  if not offset or not (offset > 0) then
+    SILE.typesetter:chuck()
+    offset = SILE.typesetter.frame.state.cursorX
+  end
   local newFrame = SILE.newFrame({ 
     bottom = cFrame:bottom(),
     top = cFrame:top(),
@@ -65,6 +69,17 @@ local shiftframeedge = function(frame, options)
   end
 end
 
+SILE.registerCommand("showframe", function(options, content)
+  local id = options.id or SILE.typesetter.frame.id
+  if id == "all" then
+    for _,f in pairs(SILE.frames) do
+      SILE.outputter:debugFrame(f)
+    end
+  else
+    SILE.outputter:debugFrame(SILE.getFrame(id))
+  end
+end)
+
 SILE.registerCommand("shiftframeedge", function(options, content)
   local cFrame = SILE.typesetter.frame
   shiftframeedge(cFrame, options)
@@ -73,12 +88,12 @@ SILE.registerCommand("shiftframeedge", function(options, content)
 end, "Adjusts the edge of the frame horizontally by amounts specified in <left> and <right>")
 
 SILE.registerCommand("breakframevertical", function ( options, content )
-  breakFrameVertical()
-end, "Breaks the current frame in two vertically at the current location")
+  breakFrameVertical(options.offset and SILE.length.parse(options.offset).length)
+end, "Breaks the current frame in two vertically at the current location or at a point <offset> below the current location")
 
 SILE.registerCommand("breakframehorizontal", function ( options, content )
-  breakFrameHorizontalAt(SILE.length.parse(options.offset).length)
-end, "Breaks the current frame in two horizontally either at the current location or at a point <offset> below the current location")
+  breakFrameHorizontalAt(options.offset and SILE.length.parse(options.offset).length)
+end, "Breaks the current frame in two horizontally either at the current location or at a point <offset> from the left of the current frame")
 
 SILE.registerCommand("float", function(options, content)
   breakFrameVertical()
