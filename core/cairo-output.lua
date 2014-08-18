@@ -56,11 +56,13 @@ SILE.outputters.cairo = {
     cr:fill()
   end,
   debugFrame = function (self,f)
+    cr:set_source_rgb(0.8,0,0)
     cr:set_line_width(0.5);
   	cr:rectangle(f:left(), f:top(), f:width(), f:height());
     cr:stroke();
-  	cr:move_to(f:left(), f:top());
+  	cr:move_to(f:left() - 10, f:top() -2);
   	cr:show_text(f.id);
+    cr:set_source_rgb(0,0,0);
   end,
   debugHbox = function(typesetter, hbox, scaledWidth)
     cr:set_source_rgb(0.9,0.9,0.9);
