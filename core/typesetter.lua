@@ -269,7 +269,7 @@ SILE.defaultTypesetter = std.object {
     end,
   addrlskip = function (self, slice)
     local rskip = SILE.settings.get("document.rskip")
-    if rskip then
+    if rskip and not (rskip.width.length == 0) then
       table.insert(slice, rskip)
       table.insert(slice, SILE.nodefactory.zeroHbox)
     end
@@ -310,9 +310,17 @@ SILE.defaultTypesetter = std.object {
             naturalTotals = naturalTotals + node.width
           end
         end
-        if (slice[#(slice)]:isDiscretionary()) then -- This is broken by rskip. It's wrong anyway.
-         slice[#(slice)].used = 1;
-         naturalTotals = naturalTotals + slice[#slice]:prebreakWidth()
+        local i = #slice
+        while i > 1 do
+          if slice[i]:isGlue() or slice[i] == SILE.nodefactory.zeroHbox then
+            -- Do nothing
+          elseif (slice[i]:isDiscretionary()) then
+            slice[#(slice)].used = 1;
+            naturalTotals = naturalTotals + slice[#slice]:prebreakWidth()
+          else
+            break
+          end
+          i = i -1
         end
         local left = (point.width - naturalTotals.length)
 
