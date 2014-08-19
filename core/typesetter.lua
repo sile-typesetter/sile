@@ -229,7 +229,10 @@ SILE.defaultTypesetter = std.object {
             if v.nodes[i]:isDiscretionary() then
               v.nodes[i].used = 0 -- HACK HACK HACK
             end
-            self.state.nodes[#(self.state.nodes)+1] = v.nodes[i]
+            -- HACK HACK HACK HACK HACK
+            if not (v.nodes[i]:isGlue() and (v.nodes[i].value == "lskip" or v.nodes[i].value == "rskip")) then
+              self.state.nodes[#(self.state.nodes)+1] = v.nodes[i]
+            end
         end
       end
     end
@@ -280,11 +283,13 @@ SILE.defaultTypesetter = std.object {
   addrlskip = function (self, slice)
     local rskip = SILE.settings.get("document.rskip")
     if rskip and not (rskip.width.length == 0) then
+      rskip.value = "rskip"
       table.insert(slice, rskip)
       table.insert(slice, SILE.nodefactory.zeroHbox)
     end
     local lskip = SILE.settings.get("document.lskip")
     if lskip and not (lskip.width.length == 0) then 
+      lskip.value = "lskip"
       table.insert(slice, 1, lskip) 
       table.insert(slice, 1, SILE.nodefactory.zeroHbox) 
     end
