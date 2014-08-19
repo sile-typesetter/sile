@@ -11,7 +11,7 @@ SILE.documentState.documentClass.pageTemplate.frames = {
 };
 SILE.documentState.documentClass.pageTemplate.firstContentFrame = SILE.documentState.documentClass.pageTemplate.frames["a"];
 
-SILE.typesetter.parSepPattern = "\n\n\n\n\n+"
+SILE.settings.set("typesetter.parseppattern", "\n\n\n\n\n+")
 if not SILE.scratch then SILE.scratch = {} end
 
 SILE.registerCommand("verse", function(options, content)

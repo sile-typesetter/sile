@@ -12,8 +12,6 @@ diglot:declareFrame("folio",{left = "left(a)",         right = "right(b)",      
 diglot.pageTemplate.firstContentFrame = diglot.pageTemplate.frames["a"];
 diglot.leftTypesetter = SILE.defaultTypesetter {};
 diglot.rightTypesetter = SILE.defaultTypesetter {};
-diglot.leftTypesetter.parSepPattern= -1
-diglot.rightTypesetter.parSepPattern= -1
 
 local sync =   function()
   local lVbox = SILE.pagebuilder.collateVboxes(diglot.leftTypesetter.state.outputQueue)
@@ -26,6 +24,8 @@ local sync =   function()
 
   diglot.rightTypesetter:leaveHmode();
   diglot.leftTypesetter:leaveHmode();
+  SILE.settings.set("typesetter.parseppattern", "\n\n+")
+
 end
 
 diglot.newPage = function()
@@ -55,6 +55,7 @@ SILE.registerCommand("rightfont", function(options, content)
 end, "Set the font for the right side")
 
 SILE.registerCommand("left", function(options, content)
+  SILE.settings.set("typesetter.parseppattern", -1)
   SILE.typesetter = diglot.leftTypesetter;
   if (not SILE.typesetter.frame) then 
     SILE.typesetter:init(diglot.pageTemplate.frames["a"]) 
@@ -63,6 +64,7 @@ SILE.registerCommand("left", function(options, content)
 end, "Begin entering text on the left side")
 
 SILE.registerCommand("right", function(options, content)
+  SILE.settings.set("typesetter.parseppattern", -1)  
   SILE.typesetter = diglot.rightTypesetter;
   if (not SILE.typesetter.frame) then 
     SILE.typesetter:init(diglot.pageTemplate.frames["b"]) 

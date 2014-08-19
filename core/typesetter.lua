@@ -13,6 +13,12 @@ SILE.settings.declare({
 })
 
 SILE.settings.declare({
+  name = "typesetter.parseppattern", 
+  type = "string or integer",
+  default = "\n\n+",
+  help = "Lua pattern used to separate paragraphs"
+})
+SILE.settings.declare({
   name = "typesetter.orphanpenalty",
   type = "integer",
   default = 150,
@@ -83,11 +89,9 @@ SILE.defaultTypesetter = std.object {
   pushVglue = function (self, spec) return table.insert(self.state.outputQueue, SILE.nodefactory.newVglue(spec)); end,
   pushVpenalty = function (self, spec) return table.insert(self.state.outputQueue, SILE.nodefactory.newPenalty(spec)); end,
 
-  parSepPattern = "\n\n+",
-
   -- Actual typesetting functions
   typeset = function (self, text)
-    for t in SU.gtoke(text,self.parSepPattern) do
+    for t in SU.gtoke(text,SILE.settings.get("typesetter.parseppattern")) do
       if (t.separator) then self:leaveHmode();
       else self:setpar(t.string)
       end
