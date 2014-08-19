@@ -155,6 +155,7 @@ SILE.baseClass = std.object {
     SILE.typesetter:chuck()
  end,
   newPar = function(typesetter)
+    typesetter:pushVglue(SILE.settings.get("document.parskip"))
     typesetter:pushGlue(SILE.settings.get("current.parindent"))
     SILE.settings.set("current.parindent", SILE.settings.get("document.parindent"))    
   end,
