@@ -53,14 +53,21 @@ SILE.settings.declare({
 SILE.settings.declare({
   name = "document.baselineskip",
   type = "VGlue",
-  default = SILE.nodefactory.newVglue("13pt plus 2pt"),
+  default = SILE.nodefactory.newVglue("13pt plus 1pt"),
   help = "Leading"
 })
 
 SILE.settings.declare({
   name = "document.lineskip",
   type = "VGlue",
-  default = SILE.nodefactory.newVglue("2pt"),
+  default = SILE.nodefactory.newVglue("1pt"),
+  help = "Leading"
+})
+
+SILE.settings.declare({
+  name = "document.parskip",
+  type = "VGlue",
+  default = SILE.nodefactory.newVglue("0pt plus 1pt"),
   help = "Leading"
 })
 
@@ -87,10 +94,12 @@ SILE.settings.declare({
 
 SILE.registerCommand("set", function(options, content)
   local p = SU.required(options, "parameter", "\\set command")
-  local v = SU.required(options, "value", "\\set command")
+  local v = options.value -- could be nil!
   local def = SILE.settings.declarations[p]
   if not def then SU.error("Unknown parameter "..p.." in \\set command") end
-  if string.match(def.type, "VGlue") then v = SILE.nodefactory.newVglue(v)
+  if     string.match(def.type, "nil") and type(v) == "nil" then -- ok
+  elseif  string.match(def.type, "Length") then v = SILE.length.parse(v)
+  elseif string.match(def.type, "VGlue") then v = SILE.nodefactory.newVglue(v)
   elseif string.match(def.type, "Glue") then v = SILE.nodefactory.newGlue(v) end
   SILE.settings.set(p,v)
 end, "Set a SILE parameter <parameter> to value <value>")

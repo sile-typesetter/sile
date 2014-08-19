@@ -156,7 +156,9 @@ SILE.defaultTypesetter = std.object {
       elseif (#lines > 1 and index == (#lines-1)) then
         pageBreakPenalty = SILE.settings.get("typesetter.orphanpenalty")
       end
-      vboxes[#vboxes+1] = self:leadingFor(v, previousVbox)
+      if index > 1 then
+        vboxes[#vboxes+1] = self:leadingFor(v, previousVbox)
+      end
       vboxes[#vboxes+1] = v
       previousVbox = v
       if pageBreakPenalty > 0 then

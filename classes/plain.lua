@@ -16,6 +16,11 @@ SILE.registerCommand("noindent", function ( options, content )
   SILE.process(content)
 end, "Do not add an indent to the start of this paragraph")
 
+SILE.registerCommand("indent", function ( options, content )
+  SILE.settings.set("current.parindent", SILE.settings.get("document.parindent"))
+  SILE.process(content)
+end, "Do add an indent to the start of this paragraph, even if previously told otherwise")
+
 local skips = { small= "3pt plus 1pt minus 1pt", 
       med = "6pt plus 2pt minus 2pt",
       big = "12pt plus 4pt minus 4pt"}
@@ -49,7 +54,7 @@ plain.registerCommands = function()
 \define[command=enspace]{\glue[width=0.5em]}%
 \define[command=enskip]{\enspace}%
 \define[command=quad]{\glue[width=1em]}%
-\define[command=qquad]{\glue[width=em]}%
+\define[command=qquad]{\glue[width=2em]}%
 \define[command=slash]{/\penalty[penalty=50]}%
 \define[command=break]{\penalty[penalty=-10000]}%
 \define[command=framebreak]{\break}%
@@ -58,11 +63,11 @@ plain.registerCommands = function()
 \define[command=novbreak]{\penalty[penalty=10000,vertical=1]}%
 \define[command=allowbreak]{\penalty[penalty=0]}%
 \define[command=filbreak]{\vfill\penalty[penalty=-200]}%
-\define[command=goodbreak]{\vfill\penalty[penalty=-500,vertical=1]}%
+\define[command=goodbreak]{\vfill\penalty[penalty=-500]}%
 \define[command=eject]{\par\break}%
 \define[command=supereject]{\par\penalty[penalty=-20000]}%
-\define[command=raggedright]{\set[parameter=document.rskip,value=0 plus 2em]}%
-\define[command=justified]{\set[parameter=document.rskip,value=0]}%
+\define[command=raggedright]{\set[parameter=document.rskip,value=0 plus 2em]\set[parameter=document.spaceskip,value=0.333em]}%
+\define[command=justified]{\set[parameter=document.rskip,value=0]\set[parameter=document.spaceskip]}%
 \define[command=em]{\font[style=italic]{\process}}%
 \define[command=nohyphenation]{\font[language=xx]{\process}}%
 \end{document}
