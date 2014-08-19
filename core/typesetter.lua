@@ -5,6 +5,7 @@ local eject_penalty = -inf_bad
 local supereject_penalty = 2 * -inf_bad
 local deplorable = 100000
 
+std.string.monkey_patch()
 SILE.settings.declare({
   name = "typesetter.widowpenalty", 
   type = "integer",
@@ -134,7 +135,11 @@ SILE.defaultTypesetter = std.object {
     while (#nl >0 and nl[1]:isPenalty()) do table.remove(nl,1) end
     self:pushGlue(SILE.settings.get("typesetter.parfillskip"));
     self:pushPenalty({ flagged= 1, penalty= -inf_bad });
-    SU.debug("typesetter", "Boxed up "..tostring(nl));
+    local listToString = function(l)
+      local rv = ""
+      for i = 1,#l do rv = rv ..l[i] end return rv
+    end
+    SU.debug("typesetter", "Boxed up "..listToString(nl));
     local breaks = SILE.linebreak:doBreak( nl, self.frame:width() );
     if (#breaks == 0) then
       SILE.SU.error("Couldn't break :(")
@@ -155,6 +160,7 @@ SILE.defaultTypesetter = std.object {
       vboxes[#vboxes+1] = v
       previousVbox = v
       if pageBreakPenalty > 0 then
+        SU.debug("typesetter", "adding penalty of "..pageBreakPenalty.." after "..v)
         vboxes[#vboxes+1] = SILE.nodefactory.newPenalty({ penalty = pageBreakPenalty})
       end
     end
@@ -230,7 +236,7 @@ SILE.defaultTypesetter = std.object {
     self:leaveHmode();
   end,
   outputLinesToPage = function (self, lines)
-    SU.debug("pagebuilder", "OUTPUTTING");
+    SU.debug("pagebuilder", "OUTPUTTING frame "..self.frame.id);
     local i
     for i = 1,#lines do local l = lines[i]
       if not self.frame.state.totals.pastTop and not (l:isVglue() or l:isPenalty()) then

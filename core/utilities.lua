@@ -13,7 +13,7 @@ end
 function utilities.warn(message)
   print("\n! "..message)
   print(debug.traceback())
-  os.exit(1)
+  --os.exit(1)
 end
 
 function utilities.debugging(category)
@@ -40,7 +40,7 @@ function utilities.gtoke(string, pattern)
 end
 
 function utilities.debug(category, messages)
-  if utilities.debugging(category) then print(messages) end
+  if utilities.debugging(category) then print("["..category.."]", messages) end
 end
 
 function utilities.concat(s,c)
