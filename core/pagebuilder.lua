@@ -21,6 +21,8 @@ SILE.pagebuilder = {
   findBestBreak = function(vboxlist, target)
     local i
     local totalHeight = 0
+    local bestBreak = nil
+    local leastC = inf_bad
     for i = 1,#vboxlist do local vbox = vboxlist[i]
       SU.debug("pagebuilder", "Dealing with VBox " .. vbox)
       if (vbox:isVbox()) then
@@ -35,7 +37,7 @@ SILE.pagebuilder = {
       if vbox:isPenalty() then
         pi = vbox.penalty
       end 
-      if vbox:isPenalty() and vbox.penalty < inf_bad  or vbox:isVglue() then
+      if vbox:isPenalty() and vbox.penalty < inf_bad  or (vbox:isVglue() and i > 1 and not vboxlist[i-1]:isDiscardable()) then
         local badness = left > 0 and left * left * left or awful_bad;
         local c
         if badness < awful_bad then 
@@ -44,19 +46,23 @@ SILE.pagebuilder = {
           else c = deplorable
           end
         else c = badness end
-
+        if c < leastC then
+          leastC = c
+          bestBreak = i
+        end
         SU.debug("pagebuilder", "Badness: "..c);
         if c == awful_bad or pi <= eject_penalty then
           SU.debug("pagebuilder", "outputting");
-          -- Best break came at i-1
           local onepage = {}
-          for j=1,i-1 do
+          if not bestBreak then bestBreak = i-1 end
+          for j=1,bestBreak do
             onepage[j] = table.remove(vboxlist,1)
           end
           return onepage, pi
         end
       end
     end
+    SU.debug("pagebuilder", "No page break here")
     return
   end,    
 }

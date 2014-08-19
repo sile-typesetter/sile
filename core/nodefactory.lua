@@ -19,7 +19,7 @@ function _box:isNnode () return self.type=="nnode" end
 function _box:isGlue ()  return self.type == "glue" end
 function _box:isVglue ()  return self.type == "vglue" end
 function _box:isVbox ()  return self.type == "vbox" end
-
+function _box:isDiscardable () return self:isGlue() or self:isPenalty() end
 function _box:isPenalty ()  return self.type == "penalty" end
 function _box:isDiscretionary ()  return self.type == "discretionary" end
 
