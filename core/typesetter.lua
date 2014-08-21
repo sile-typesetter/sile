@@ -27,13 +27,6 @@ SILE.settings.declare({
 })
 
 SILE.settings.declare({
-  name = "typesetter.hyphenpenalty",
-  type = "integer",
-  default = 50,
-  help = "Penalty for breaking after a hyphen"
-})
-
-SILE.settings.declare({
   name = "typesetter.parfillskip",
   type = "Glue",
   default = SILE.nodefactory.newGlue("0pt plus 10000pt"),
@@ -119,7 +112,7 @@ SILE.defaultTypesetter = std.object {
       for i=1,#newNodes do
           self.state.nodes[#(self.state.nodes)+1] = newNodes[i]
           if token.separator then
-            self.state.nodes[#(self.state.nodes)+1] = SILE.nodefactory.newPenalty({ value = SILE.settings.get("typesetter.hyphenpenalty") })
+            self.state.nodes[#(self.state.nodes)+1] = SILE.nodefactory.newPenalty({ value = SILE.settings.get("linebreak.hyphenPenalty") })
           end
       end
     end
