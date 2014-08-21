@@ -135,7 +135,7 @@ SILE.defaultTypesetter = std.object {
     SU.debug("typesetter", "Boxed up "..listToString(nl));
     local breaks = SILE.linebreak:doBreak( nl, self.frame:width() );
     if (#breaks == 0) then
-      SILE.SU.error("Couldn't break :(")
+      SU.error("Couldn't break :(")
     end
     local lines = self:breakpointsToLines(breaks);
     local vboxes = {}
@@ -214,6 +214,7 @@ SILE.defaultTypesetter = std.object {
   end,
 
   pushBack = function (self)
+    SU.debug("typesetter", "Pushing back "..#(self.state.outputQueue).." nodes")
     --self:pushHbox({ width = SILE.length.new({}), value = {glyph = 0} });
     local v
     local function luaSucks (a) v=a return a end
