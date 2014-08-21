@@ -1,20 +1,15 @@
 <sile>
 <script src="packages/rules"/>
 <define command="dots">…</define>
-<define command="line"><par/><skip height="5pt"/><noindent/><hrule width="450pt" height="0.3pt"/><par/><skip height="5pt"/></define>
-<define command="note">
+<define command="line"><par/><skip height="5pt"/><noindent/><hrule width="450pt" height="0.3pt"/><par/><novbreak/><skip height="5pt"/><novbreak/></define>
+<define command="note"><medskip/>
 <set parameter="document.lskip" value="24pt"/>
-<par/><noindent/><hrule width="450pt" height="0.75pt"/><par/><font style="italic" size="10pt"><process/></font><par/><noindent/><hrule width="450pt" height="0.75pt"/><par/>
-<set parameter="document.lskip" value="0pt"/>
+<par/><noindent/><hrule width="450pt" height="0.75pt"/><par/><smallskip/><font style="italic" size="10pt"><process/></font><par/><smallskip/><noindent/><hrule width="450pt" height="0.75pt"/><par/>
+<set parameter="document.lskip" value="0pt"/><medskip/>
 </define>
 <define command="sectionsfont"><font family="Helvetica Neue" weight="600"><process/></font></define>
-
-<define command="headline">
-<skip height="1cm"/>
-<sectionsfont><center><font size="20pt"><process/></font></center></sectionsfont>
-<skip height="0.5cm"/>
-</define>
-
+<define command="examplefont"><font family="Adobe Caslon Pro"><process/></font></define>
+<define command="bf"><font weight="800"><process/></font></define>
 <define command="book:chapterfont"><sectionsfont><font size="22pt"><process/></font></sectionsfont></define>
 <define command="book:sectionfont"><sectionsfont><font size="15pt"><process/></font></sectionsfont></define>
 <define command="book:subsectionfont"><sectionsfont><font size="13pt"><process/></font></sectionsfont></define>
