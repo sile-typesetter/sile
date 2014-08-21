@@ -100,11 +100,11 @@ SILE.registerCommand("float", function(options, content)
   SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
   local hbox = SILE.Commands["hbox"]({}, content)
   table.remove(SILE.typesetter.state.nodes) -- steal it back
-  local t = {}
-  t[1] = hbox
   local boundary = hbox.width.length + SILE.length.parse(options.rightboundary).length
   breakFrameHorizontalAt(boundary)
-  SILE.typesetNaturally(SILE.typesetter.frame.previous, t)
+  SILE.typesetNaturally(SILE.typesetter.frame.previous, function()
+    table.insert(SILE.typesetter.state.nodes,hbox)
+  end)
   local undoSkip = SILE.length.new({}) - SILE.settings.get("document.baselineskip").height.length + SILE.length.parse("1ex")
   undoSkip.stretch = hbox.height
   SILE.typesetter:pushHbox({value = {}})

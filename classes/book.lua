@@ -19,45 +19,40 @@ book.init = function()
 end
 
 book.endPage = function()
-  book:outputInsertions()
-
   if (book:oddPage()) then
-    book:declareFrame("footnotes", { left="left(l)", right = "right(l)", top = "bottom(r)", bottom="83.3%"})
+    book:declareFrame("footnotes", { left="left(r)", right = "right(r)", top = "bottom(r)", bottom="83.3%"})
+    book:declareFrame("folio",     { left="left(r)", right = "right(r)", top = "bottom(footnotes)+3%", bottom = "bottom(footnotes)+5%" });
 
     if (SILE.scratch.headers.right) then
-      SILE.typesetNaturally(SILE.getFrame("rRH"), SILE.scratch.headers.right);
+      SILE.typesetNaturally(SILE.getFrame("rRH"), function()
+        SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
+        SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
+        SILE.process(SILE.scratch.headers.right)
+      end)
     end
   else 
-    book:declareFrame("footnotes", { left="left(r)", right = "right(r)", top = "bottom(r)", bottom="83.3%"})
-
+    book:declareFrame("footnotes", { left="left(l)", right = "right(l)", top = "bottom(r)", bottom="83.3%"})
+    book:declareFrame("folio",     { left="left(l)", right = "right(l)", top = "bottom(footnotes)+3%", bottom = "bottom(footnotes)+5%" });
     if (SILE.scratch.headers.left) then
-      SILE.typesetNaturally(SILE.getFrame("lRH"), SILE.scratch.headers.left);
+      SILE.typesetNaturally(SILE.getFrame("lRH"), function()
+        SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
+        SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
+        SILE.process(SILE.scratch.headers.left)
+      end)
     end
   end
+  book:outputInsertions()
   book:switchPage();
 
   return plain.endPage(book);
 end;
 
 SILE.registerCommand("left-running-head", function(options, content)
-  SILE.settings.temporarily(function()
-    SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
-    SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
-    SILE.typesetter:pushState()
-    SILE.process(content)
-    SILE.scratch.headers.left = SILE.typesetter.state.nodes;
-    SILE.typesetter:popState()
-  end);
+  SILE.scratch.headers.left = content
 end, "Text to appear on the top of the left page");
+
 SILE.registerCommand("right-running-head", function(options, content)
-  SILE.settings.temporarily(function()
-    SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
-    SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
-    SILE.typesetter:pushState()
-    SILE.process(content)
-    SILE.scratch.headers.right = SILE.typesetter.state.nodes;
-    SILE.typesetter:popState()
-  end);
+  SILE.scratch.headers.right = content
 end, "Text to appear on the top of the right page");
 
 SILE.registerCommand("chapter", function (options, content)

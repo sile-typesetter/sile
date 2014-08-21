@@ -21,18 +21,15 @@ return {
       io.write("["..SILE.formatCounter(SILE.scratch.counters.folio).."] ");
       local f = SILE.getFrame("folio");
       if (f) then
-        local nodes = SILE.shaper.shape(SILE.formatCounter(SILE.scratch.counters.folio))
-        table.insert(nodes, 1,
-          SILE.nodefactory.newGlue({ width=SILE.length.new({length = 0, stretch= 10000 })})
-          )
-        table.insert(nodes, 1,
-          SILE.nodefactory.newHbox({ width=SILE.length.new({length = 0}), value = {glyph=0}})
-          )    
-
-        table.insert(nodes,
-          SILE.nodefactory.newGlue({ width=SILE.length.new({length = 0, stretch= 10000 })})
-        )
-        SILE.typesetNaturally(f, nodes)
+        SILE.typesetNaturally(f, function()
+          SILE.settings.pushState()
+          SILE.settings.reset()
+          SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
+          SILE.call("hss")
+          SILE.typesetter:typeset(SILE.formatCounter(SILE.scratch.counters.folio))
+          SILE.call("hss")
+          SILE.settings.popState()
+        end)
       end
       SILE.scratch.counters.folio.value = SILE.scratch.counters.folio.value + 1
     end

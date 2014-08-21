@@ -58,7 +58,8 @@ SILE.defaultTypesetter = std.object {
     self:initState();
   end,
   popState = function(self)
-    self.state = table.remove(self.stateQueue);
+    self.state = table.remove(self.stateQueue)
+    if not self.state then SU.error("Typesetter state queue empty") end
   end,
   vmode = function(self)
     return #self.state.nodes == 0
@@ -358,14 +359,12 @@ SILE.defaultTypesetter = std.object {
 
 SILE.typesetter = SILE.defaultTypesetter {};
 
-SILE.typesetNaturally = function (frame, nodes)
+SILE.typesetNaturally = function (frame, f)
   local saveTypesetter = SILE.typesetter
   SILE.typesetter = SILE.defaultTypesetter {};
-  SILE.settings.pushState()
-  SILE.settings.reset()
-  SILE.typesetter:init(frame);
-  SILE.typesetter.state.nodes = nodes;
+  SILE.typesetter:init(frame)
+  SILE.settings.temporarily(f)
+  SILE.typesetter:leaveHmode()
   SILE.typesetter:chuck()
-  SILE.settings.popState()
   SILE.typesetter = saveTypesetter
 end;
