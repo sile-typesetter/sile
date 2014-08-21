@@ -60,12 +60,12 @@ SILE.baseClass = std.object {
         id = options.id,
         next = options.next,
         balanced = (options.balanced or 0),
-        top = options.top and function() return SILE.parseComplexFrameDimension(options.top, "h") end,
-        bottom = options.bottom and function() return SILE.parseComplexFrameDimension(options.bottom, "h") end,
-        left = options.left and function() return SILE.parseComplexFrameDimension(options.left, "w") end,
-        right = options.right and function() return SILE.parseComplexFrameDimension(options.right, "w") end,
-        width = options.width and function() return SILE.parseComplexFrameDimension(options.width, "w") end,
-        height = options.height and function() return SILE.parseComplexFrameDimension(options.height, "h") end,
+        top = options.top,
+        bottom = options.bottom,
+        left = options.left,
+        right = options.right,
+        width = options.width,
+        height = options.height
       };
       SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newFrame(spec);
     end, "Declares (or re-declares) a frame on this page.")
