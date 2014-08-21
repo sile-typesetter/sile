@@ -87,7 +87,9 @@ SILE.defaultTypesetter = std.object {
   -- Actual typesetting functions
   typeset = function (self, text)
     for t in SU.gtoke(text,SILE.settings.get("typesetter.parseppattern")) do
-      if (t.separator) then self:leaveHmode();
+      if (t.separator) then 
+        self:leaveHmode();
+        SILE.documentState.documentClass.endPar(self)
       else self:setpar(t.string)
       end
     end
@@ -105,7 +107,7 @@ SILE.defaultTypesetter = std.object {
     --t = string.gsub(t,"^%s+", "");
     if (#self.state.nodes == 0) then
       self:initline()
-      SILE.documentState.documentClass.newPar(self); -- XXX ?
+      SILE.documentState.documentClass.newPar(self)
     end
     for token in SU.gtoke(t, "-") do
       local t2= token.separator and token.separator or token.string

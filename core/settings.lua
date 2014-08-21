@@ -74,7 +74,7 @@ SILE.settings.declare({
 SILE.settings.declare({
   name = "document.parskip",
   type = "VGlue",
-  default = SILE.nodefactory.newVglue("0pt plus 1pt"),
+  default = SILE.nodefactory.newVglue("5pt plus 1pt"),
   help = "Leading"
 })
 
