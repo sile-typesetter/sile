@@ -8,6 +8,7 @@ SILE.settings = {
   state = {},
   declarations = {},
   stateQueue = {},
+  defaults = {},
   pushState = function()
     table.insert(SILE.settings.stateQueue, SILE.settings.state);
     SILE.settings.state = std.table.clone(SILE.settings.state);
@@ -18,6 +19,12 @@ SILE.settings = {
   declare = function(t)
     SILE.settings.declarations[t.name] = t
     SILE.settings.set(t.name, t.default)
+    SILE.settings.defaults[t.name] = t.default
+  end,
+  reset = function(t)
+    for k,_ in pairs(SILE.settings.state) do
+      SILE.settings.set(k,SILE.settings.defaults[k])
+    end
   end,
   get = function(name) 
     if not SILE.settings.declarations[name] then

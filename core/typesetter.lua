@@ -361,8 +361,11 @@ SILE.typesetter = SILE.defaultTypesetter {};
 SILE.typesetNaturally = function (frame, nodes)
   local saveTypesetter = SILE.typesetter
   SILE.typesetter = SILE.defaultTypesetter {};
+  SILE.settings.pushState()
+  SILE.settings.reset()
   SILE.typesetter:init(frame);
   SILE.typesetter.state.nodes = nodes;
   SILE.typesetter:chuck()
+  SILE.settings.popState()
   SILE.typesetter = saveTypesetter
 end;
