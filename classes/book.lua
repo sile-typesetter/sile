@@ -2,14 +2,14 @@ local plain = SILE.require("classes/plain");
 local book = plain { id = "book" };
 
 book:declareFrame("r",    {left = "8.3%",            right = "86%",            top = "11.6%",       bottom = "83.3%"        });
-book:declareFrame("l",    {left = "100% - right(r)", right = "100% - left(r)", top = "top(r)",      bottom = "bottom(r)"    });
 book:declareFrame("folio",{left = "left(r)",         right = "right(r)",       top = "bottom(footnotes)+3%",bottom = "bottom(footnotes)+5%" });
 book:declareFrame("lRH",  {left = "left(l)",         right = "right(l)",       top = "top(l) - 8%", bottom = "top(l)-3%"    });
-book:declareFrame("rRH",  {left = "left(r)",         right = "right(r)",       top = "top(r) - 8%", bottom = "top(r)-3%"    });
 book:declareFrame("footnotes", { left="left(r)", right = "right(r)", top = "bottom(r)", bottom="bottom(r)"})
 book.pageTemplate.firstContentFrame = book.pageTemplate.frames["r"];
 
 book:loadPackage("twoside", { oddPageFrameID = "r", evenPageFrameID = "l" });
+book:declareMirroredFrame("l","r")
+book:declareMirroredFrame("rRH","lRH")
 
 if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end
 
