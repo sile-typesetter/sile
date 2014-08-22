@@ -26,7 +26,7 @@ return {
     insertInto = args.insertInto,
     stealFrom = args.stealFrom,
     maxHeight = SILE.length.new({length = SILE.toPoints("25", "%","h") }),
-    topSkip = SILE.length.parse("4ex")
+    topSkip = SILE.length.parse("12pt")
   })
   end,
   exports = {

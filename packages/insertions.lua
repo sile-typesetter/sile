@@ -20,10 +20,10 @@ local reduceHeight = function(classname, amount)
   if type(reduceList) == "string" then reduceList = { reduceList } end
   local stealPosition = opts["steal-position"] or "bottom"
   for i = 1,#reduceList do local f = SILE.getFrame(reduceList[i])
-    local newHeight = f:height() - (amount.length/2) -- BAD HACK
+    local newHeight = f:height() - amount.length
     local oldBottom = f:bottom()
     if stealPosition == "bottom" then
-      --f:constrain("bottom", oldBottom - amount.length)
+      f:constrain("bottom", oldBottom - amount.length)
       f:relax("bottom")
     else
       --f:constrain("top", f:top() - amount.length)
@@ -35,7 +35,7 @@ local reduceHeight = function(classname, amount)
   local f = SILE.getFrame(opts["insertInto"])
   local oldTop = f:top()
   if stealPosition == "bottom" then 
-    f:constrain("top", oldTop - (amount.length/2)) -- DOUBLE BAD HACK
+    f:constrain("top", oldTop - amount.length)
   end
 end
 
