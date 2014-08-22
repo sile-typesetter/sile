@@ -1,10 +1,10 @@
 local plain = SILE.require("classes/plain");
 local book = plain { id = "book" };
 
-book:declareFrame("r",    {left = "8.3%",            right = "86%",            top = "11.6%",       bottom = "83.3%"        });
+book:declareFrame("r",    {left = "8.3%",            right = "86%",            top = "11.6%",       bottom = "top(footnotes)"        });
 book:declareFrame("folio",{left = "left(r)",         right = "right(r)",       top = "bottom(footnotes)+3%",bottom = "bottom(footnotes)+5%" });
 book:declareFrame("rRH",  {left = "left(r)",         right = "right(r)",       top = "top(r) - 8%", bottom = "top(r)-3%"    });
-book:declareFrame("footnotes", { left="left(r)", right = "right(r)", top = "bottom(r)", bottom="bottom(r)"})
+book:declareFrame("footnotes", { left="left(r)", right = "right(r)", height = "0", bottom="83.3%"})
 book.pageTemplate.firstContentFrame = book.pageTemplate.frames["r"];
 
 book:loadPackage("twoside", { oddPageFrameID = "r", evenPageFrameID = "l" });
@@ -20,8 +20,8 @@ end
 
 book.endPage = function()
   if (book:oddPage()) then
-    book:declareFrame("footnotes", { left="left(r)", right = "right(r)", top = "bottom(r)", bottom="83.3%"})
     book:declareFrame("folio",     { left="left(r)", right = "right(r)", top = "bottom(footnotes)+3%", bottom = "bottom(footnotes)+5%" });
+    book:declareFrame("footnotes", { left="left(r)", right = "right(r)", height = "0", bottom="83.3%"})
 
     if (SILE.scratch.headers.right) then
       SILE.typesetNaturally(SILE.getFrame("rRH"), function()
@@ -31,8 +31,9 @@ book.endPage = function()
       end)
     end
   else 
-    book:declareFrame("footnotes", { left="left(l)", right = "right(l)", top = "bottom(r)", bottom="83.3%"})
     book:declareFrame("folio",     { left="left(l)", right = "right(l)", top = "bottom(footnotes)+3%", bottom = "bottom(footnotes)+5%" });
+    book:declareFrame("footnotes", { left="left(l)", right = "right(l)", height = "0", bottom="83.3%"})
+
     if (SILE.scratch.headers.left) then
       SILE.typesetNaturally(SILE.getFrame("lRH"), function()
         SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)

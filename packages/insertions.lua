@@ -23,19 +23,23 @@ local reduceHeight = function(classname, amount)
     local newHeight = f:height() - amount.length
     local oldBottom = f:bottom()
     if stealPosition == "bottom" then
-      f:constrain("bottom", oldBottom - amount.length)
+      --f:constrain("bottom", oldBottom - amount.length)
       f:relax("bottom")
     else
       --f:constrain("top", f:top() - amount.length)
       f:relax("top")
     end
+    --f:relax("height")
     f:constrain("height", newHeight)
-    
   end
+
   local f = SILE.getFrame(opts["insertInto"])
-  local oldTop = f:top()
+  local oldHeight = f:height()
+
+  --f:relax("height")
+  f:constrain("height", oldHeight + amount.length)
   if stealPosition == "bottom" then 
-    f:constrain("top", oldTop - amount.length)
+    f:relax("top")
   end
 end
 
