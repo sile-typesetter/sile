@@ -63,7 +63,7 @@ plain.registerCommands = function()
 \define[command=novbreak]{\penalty[penalty=10000,vertical=1]}%
 \define[command=allowbreak]{\penalty[penalty=0]}%
 \define[command=filbreak]{\vfill\penalty[penalty=-200]}%
-\define[command=goodbreak]{\vfill\penalty[penalty=-500]}%
+\define[command=goodbreak]{\penalty[penalty=-500]}%
 \define[command=eject]{\par\break}%
 \define[command=supereject]{\par\penalty[penalty=-20000]}%
 \define[command=raggedright]{\set[parameter=document.rskip,value=0 plus 2em]\set[parameter=document.spaceskip,value=0.333em]}%
