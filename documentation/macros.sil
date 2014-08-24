@@ -1,6 +1,7 @@
 <sile>
 <script src="packages/rules"/>
 <define command="dots">…</define>
+<define command="notehead"><noindent/><bf><process/></bf><par/><medskip/></define>
 <define command="line"><par/><skip height="5pt"/><noindent/><hrule width="450pt" height="0.3pt"/><par/><novbreak/><skip height="5pt"/><novbreak/></define>
 <define command="note"><medskip/>
 <set parameter="document.lskip" value="24pt"/>

@@ -118,7 +118,7 @@ Another thing which people use InDesign for is to turn structured data in XML
 format–catalogues, directories and the like–into print. The way you do this
 in InDesign is to declare what styling should apply to each XML element, and as the
 data is read in, InDesign formats the content according to the rules that you
-have declared.
+have declared.\supereject
 
 You can do exactly the same thing in SILE, except you have a lot more control
 over how the XML elements get styled, because you can run any SILE command you
@@ -224,7 +224,30 @@ have just typeset your first document with SILE.
 
 \section{Let’s Do Something Cool}
 
-XXX
+In \code{examples/article-template.xml}, you will find a typical DocBook 5.0
+article. Normally turning DocBook to print involves a curious dance of XSLT
+processors, format object processors and/or strange LaTeX packages. But SILE
+can read XML files and it also comes with a \code{docbook} class, which tells SILE
+how to render (admittedly, a subset of) the DocBook tags onto a page.
+
+Turning \code{examples/article-template.xml} into \code{examples/article-template.pdf}
+is now as simple as:
+
+\begin{verbatim}
+\line
+\% \em{./sile -I docbook examples/article-template.xml}
+This is SILE 0.9.0
+Loading docbook
+<classes/docbook.sil><examples/article-template.xml>[1] [2] [3]
+\line
+\end{verbatim}
+
+The \code{-I} flag loads up a \em{class} before reading the input file; after
+this has been loaded, the DocBook file can be read directly and its tags interpreted
+as SILE commands.
+
+In Chapter 10, we’ll look at how the \code{docbook} class works, and how you 
+can define processing expectations for other XML formats.
 
 \chapter{SILE’s Input Language}
 
@@ -244,14 +267,15 @@ and ends with \code{\\end\{document\}}. In between, SILE documents are made
 up of two elements: text to be typeset on the page, such as “Hello SILE!”
 in our example, and commands. 
 
-\note{\bf{Paper sizes}\par SILE knows about the ISO standard A, B and C
+\note{\notehead{Paper sizes}
+SILE knows about the ISO standard A, B and C
 series paper sizes, as well as the following traditional sizes:
   letter, note, legal, executive, halfletter, halfexecutive, statement, folio, quarto, ledger, tabloid.
 
 If you need a paper size for your document which is not one of the standards,
 then you can specify it by dimensions: \code{papersize=\em{<basic length> x <basic length>}}.
 
-\smallskip\noindent\bf{Dimensions}\par
+\smallskip\notehead{Dimensions}\par
 SILE knows a number of ways of specifying lengths. A \code{<basic length>} as
 mentioned above can be specified as a floating-point number followed by a dimension
 abbreviation. Acceptable dimensions are printer’s points (\code{pt}), 
@@ -369,7 +393,7 @@ but we’ll pretend that it is for now and get to the details in a moment.}
 \end{verbatim}
 
 The parameters to a command are enclosed in square brackets and take the form
-\code{\em{key}=\em{value}}; parameters can be repeated and separated by commas
+\code{\em{key}=\em{value}};\break multiple parameters are separated by commas
 or semicolons,
 as in \code{[key1=value1,key2=value2,\dots]} Spaces around
 the keys are not significant; we could equally write that as
@@ -899,8 +923,8 @@ function SILE.repl()
   SILE._repl:run()
 end
 \end{verbatim}
-\break
-\section{Packages usually used by other packages}
+
+\eject\section{Packages usually used by other packages}
 
 In addition, there are certain packages that you \em{probably} don’t need
 to use directly, as their main job is to provide more
@@ -947,11 +971,11 @@ So, for example, the following SILE code:
 
 \begin{verbatim}
 \line
-\\set-counter[id=myfilter, value=2]
-\\show-counter[id=myfilter]
+\\set-counter[id=mycounter, value=2]
+\\show-counter[id=mycounter]
 
-\\increment-counter[id=myfilter]
-\\show-counter[id=myfilter, display=roman]
+\\increment-counter[id=mycounter]
+\\show-counter[id=mycounter, display=roman]
 \line
 \end{verbatim}
 
@@ -960,7 +984,7 @@ produces:
 \line
 \examplefont{2
 
-iii}
+\noindent{}iii}
 \line
 
 \subsection{raiselower}
@@ -1009,16 +1033,10 @@ see, the current frame is called
 and now begins at the start of the paragraph.
 
 Similarly, the \code{\\breakframehorizontal} command breaks the frame in two
-into a left and a right frame at the current position in the line.
-The command also takes an optional argument \code{offset=<dimension>}, specifying
+into a left and a right frame.
+The command takes an optional argument \code{offset=<dimension>}, specifying
 where on the line the frame should be split. If it is not supplied, the 
 frame is split at the current position in the line.
-
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
 
 \subsection{insertions}
 
@@ -1297,7 +1315,7 @@ the text. Similarly, \code{document.rskip} adds some space to the right side of
 every line.
 
 \begin{note}
-\bf{Glue}\par A \em{glue} parameter is slightly different from an ordinary dimensioned length. Glue basically means ‘space,’ but as well as signifying a length,
+\notehead{Glue} A \em{glue} parameter is slightly different from an ordinary dimensioned length. Glue basically means ‘space,’ but as well as signifying a length,
 it also has two additional optional components: \em{stretch} and \em{skip},
 specified as \code{<dimension> plus <dimension> minus <dimension>}. The
 first dimension is the basic length; the stretch is the maximum length that
@@ -1671,16 +1689,10 @@ column.
 \line
 \end{verbatim}
 
-And now finally we can end our \code{pagetemplate}. Here’s the full code again:
+And now finally we can end our \code{pagetemplate}.
 
 \begin{verbatim}
 \line
-\\eject\\par
-\\begin[first-content-frame=leftCol]\{pagetemplate\}
-\\frame[id=gutter,width=3\%]
-\\frame[id=leftCol,left=left(r),right=left(gutter),top=top(r),bottom=bottom(r)]
-\\frame[id=rightCol,left=right(gutter),right=right(lRH),top=top(r),
-bottom=bottom(r),width=width(leftCol)]
 \\end\{pagetemplate\}
 \line
 \end{verbatim}
@@ -1703,7 +1715,7 @@ help us to create our own document class files. In the meantime, here is
 some dummy text to demonstrate the fact that text does indeed flow between
 the two columns naturally:
 
-\lorem[words=300]
+\lorem[words=500]
 
 \chapter{Designing Basic Class Files}
 
@@ -1717,9 +1729,68 @@ which merely changes the size of the margins and the textblock. We’ll call
 it \code{bringhurst.lua}, because it replicates the layout of the Hartley
 & Marks edition of Robert Bringhurst’s \em{The Elements of Typographical Style}.
 
-Book classes are Lua objects, and can (and probably should) inherit from
-other objects. We are designing a book class, and so will inherit from SILE’s
-standard \code{book.lua}:
+We are designing a book-like class, and so we will inherit from SILE’s
+standard \code{book} class, \code{classes/book.lua}.
+
+Let’s briefly have a look at \code{book.lua} to see how it works;
+after the initial class definition, we see  the following frame declarations: 
+(wrapped for legibility)
+
+\begin{verbatim}
+\line
+book:declareFrame("r",    \{left = "8.3\%",
+                            right = "86\%",
+                            top = "11.6\%",
+                            bottom = "top(footnotes)"
+                          \});
+book:declareFrame("folio",\{left = "left(r)",
+                            right = "right(r)",
+                            top = "bottom(footnotes)+3\%",
+                            bottom = "bottom(footnotes)+5\%" 
+                          \});
+book:declareFrame("rRH",  \{left = "left(r)",
+                            right = "right(r)",
+                            top = "top(r) - 8\%",
+                            bottom = "top(r)-3\%"
+                          \});
+book:declareFrame("footnotes", \{ left="left(r)", 
+                            right = "right(r)",
+                            height = "0",
+                            bottom="83.3\%"
+                          \});
+\line
+\end{verbatim}
+
+So there are four frames directly declared; the first is the 
+right-hand master frame, which by SILE convention is called
+\code{r}. Directly abutting the \code{r} frame at the bottom is
+the \code{footnotes} frame. The top of the textblock
+and the bottom of the footnote frame have fixed positions, but the
+boundary between textblock and footnote is variable. Initially
+the height of the footnotes is zero (and so the textblock takes up
+the full height of the page) but as footnotes are inserted
+into the footnote frame, its height will be adjusted; its bottom
+is fixed and therefore its top will be adjusted, and the bottom
+of the main textblock frame will also be correspondingly adjusted.
+
+The folio frame (the page number) lives below the footnotes, and the
+running headers live above the \code{r} frame.
+
+Next, we use the \code{twoside} package to mirror our right-page
+frames into left-page frames:
+
+\begin{verbatim}
+\line
+book:loadPackage("twoside", { oddPageFrameID = "r", evenPageFrameID = "l" });
+book:declareMirroredFrame("l","r")
+book:declareMirroredFrame("lRH","rRH")
+\line
+\end{verbatim}
+
+Since we will be inheriting from the book class, we will have all
+these definitions already available to us. All we need to do is set
+up our new class, and then define what is different about it. Here is
+how we set up the inheritance:
 
 \begin{verbatim}
 \line
@@ -1730,7 +1801,9 @@ return bringhurst
 \line
 \end{verbatim}
 
-Now we need to define our frames. The LaTeX memoir class’ \em{A Few Notes
+Now we need to define our frames. 
+
+The LaTeX memoir class’ \em{A Few Notes
 On Book Design} tells us that Bringhurst’s book has a spine margin one thirteenth
 of the page width; a top margin eight-fifths of the spine margin; a front margin 
 and bottom margin both sixteen-fifths of the spine margin. We can define this in SILE
@@ -1742,11 +1815,42 @@ bringhurst:declareFrame("r", \{
   left = "width(page)/13",
   top = "left(r) * 8 / 5",
   right = "100\% - 2*top(r)",
+  bottom = "top(footnotes)"
+\})
+bringhurst:declareFrame("footnotes", \{
+  left="left(r)", 
+  right = "right(r)",
+  height = "0",
   bottom = "100\% - 2*top(r)"
 \})
 \line
 \end{verbatim}
 
+We are nearly finished!
+
+If we try this class as-is, we’ll
+actually find that the running headers are too high, because the textblock is
+higher on the page than the standard book class, and the running heads are
+defined relative to them.
+
+So, we need to also declare the running header frame to bring them down a bit
+lower:
+
+\begin{verbatim}
+\line
+bringhurst:declareFrame("rRH", \{
+  left = "left(r)",
+  right = "right(r)",
+  top = "top(r) - 4\%",
+  bottom = "top(r)-2\%"
+\});
+\line
+\end{verbatim}
+
+If all we want to do in our new class is to create a different page shape, 
+this is all we need.
+
+\section{Defining Commands}
 
 \chapter{Advanced Class Files 1: SILE As An XML Processor}
 \chapter{Advanced Class Files 2: The Discovery Bible}
