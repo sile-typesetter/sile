@@ -2,8 +2,8 @@
 package.path = (os.getenv("SILE_PATH") and os.getenv("SILE_PATH").."/?.lua" or "") .. ';/usr/lib/sile/?;/usr/local/lib/sile/?.lua;' .. package.path 
 SILE = require("core/sile")
 io.stdout:setvbuf 'no'
-SILE.parseArguments()
 print('This is SILE '..SILE.version)
+SILE.parseArguments()
 if (arg and arg[1]) then
   SILE.readFile(arg[1])
 else
