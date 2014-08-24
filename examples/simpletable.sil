@@ -1,0 +1,8 @@
+\begin[papersize=a4]{document}
+\script[src=packages/simpletable]
+
+\noindent\begin{table}%
+\tr{\td{One}\td{Two}}%
+\tr{\td{Three A Very long thing}\td{Four}}%
+\end{table}
+\end{document}
