@@ -53,8 +53,9 @@ local breakFrameHorizontalAt = function (offset)
     id = cFrame.id .. "_"
   })
   local oldLeft = cFrame:left()
-  cFrame.left = (function() return oldLeft end)
-  cFrame.right = (function() return oldLeft + offset end)
+  cFrame.next = newFrame.id
+  cFrame:constrain("left", oldLeft)
+  cFrame:constrain("right", oldLeft + offset)
   -- SILE.outputter:debugFrame(cFrame)
   -- SILE.outputter:debugFrame(newFrame)
   SILE.typesetter:initFrame(newFrame)
