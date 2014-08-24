@@ -29,3 +29,13 @@ SILE.process = function(t)
     end
   end
 end
+
+-- Just a simple one-level find. We're not reimplementing XPath here.
+SILE.findInTree = function (t, tag)
+  for k,v in ipairs(t) do
+    if type(v) == "string" then
+    elseif v.tag == tag then
+      return v
+    end
+  end
+end
