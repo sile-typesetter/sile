@@ -1,8 +1,7 @@
-\begin[papersize=a4]{document}
-\script[src=packages/simpletable]
+\begin[papersize=a4,class=docbook]{document}
 
-\noindent\begin{table}%
-\tr{\td{One}\td{Two}}%
-\tr{\td{Three A Very long thing}\td{Four}}%
-\end{table}
+\noindent\begin{tgroup}%
+\row{\entry{One}\entry{Two}}%
+\row{\entry{Three A Very long thing}\entry{Four}}%
+\end{tgroup}
 \end{document}

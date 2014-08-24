@@ -1,35 +1,35 @@
+SILE.scratch.simpletable = { tables = {} }
+return {
+  exports = {},
+  init = function (class, args)
+    local tableTag = SU.required(args,"tableTag","setting up table class")
+    local trTag = SU.required(args,"trTag","setting up table class")
+    local tdTag = SU.required(args,"tdTag","setting up table class")
 
-SILE.registerCommand("table", function(options, content)
-  local tbl = {}
-
-  local processIfNot = function(tag, v, cb)
-    if type(v) == "table" then
-      if v.tag == tag then
-        cb(v)
-      else
-        SILE.Commands[v.tag](v.attr,v)
-      end
-    else
-      SILE.typesetter:typeset(v)
-    end
-  end
-
-  for _,v in ipairs(content) do
-    processIfNot("tr", v, function (tr)
+    SILE.registerCommand(trTag, function(options,content)
+      local tbl = SILE.scratch.simpletable.tables[#(SILE.scratch.simpletable.tables)]
       tbl[#tbl+1] = {}
-      for _,v in ipairs(tr) do
-        processIfNot("td", v, function (cell)
-          local row = tbl[#tbl]
-          row[#row+1] = {
-            content = cell,
-            width = (SILE.Commands["hbox"]({},cell)).width
-          }
-          SILE.typesetter.state.nodes[#(SILE.typesetter.state.nodes)] = nil
-        end)
-      end
+      SILE.process(content)
     end)
-  end
+    SILE.registerCommand(tdTag, function(options,content)
+      local tbl = SILE.scratch.simpletable.tables[#(SILE.scratch.simpletable.tables)]
+      local row = tbl[#tbl]
+      row[#row+1] = {
+        content = content,
+        width = (SILE.Commands["hbox"]({},content)).width
+      }
+      SILE.typesetter.state.nodes[#(SILE.typesetter.state.nodes)] = nil
+    end)
 
+SILE.registerCommand(tableTag, function(options, content)
+  SILE.scratch.simpletable.tables[#(SILE.scratch.simpletable.tables)+1] = {}
+  local tbl = SILE.scratch.simpletable.tables[#(SILE.scratch.simpletable.tables)]
+  SILE.settings.temporarily(function ()
+    SILE.settings.set("document.parindent", SILE.nodefactory.newGlue("0pt"))
+    SILE.settings.set("current.parindent", SILE.nodefactory.newGlue("0pt"))
+    SILE.process(content)  
+  end)
+  SILE.typesetter:leaveHmode()
   -- Look down columns and find largest thing per column
   local colwidths = {}
   local col = 1
@@ -63,7 +63,10 @@ SILE.registerCommand("table", function(options, content)
       table.insert(SILE.typesetter.state.nodes, box) -- a vbox on the hbox list!
     end
     SILE.typesetter:leaveHmode()
+    SILE.call("smallskip")
   end
   SILE.typesetter:leaveHmode()
-
+  SILE.scratch.simpletable.tables[#(SILE.scratch.simpletable.tables)] = nil
 end)
+
+end}

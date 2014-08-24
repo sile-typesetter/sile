@@ -1,58 +1,67 @@
-\begin[papersize=a4,class=docbook]{document}
-\script[src=packages/rules]
-\script[src=packages/verbatim]
-\define[command=sectionsfont]{\font[family=Frutiger FT Std]{\process}}
-\define[command=ttfont]{\font[family=Inconsolata,size=9pt]{\process}}
-
-\define[command=info]{\process}
-\define[command=docbook-title-main]{
-\medskip
-\hss\font[size=20pt]{\sectionsfont{\process}}\hss
-\smallskip}
-\define[command=docbook-title-section]{
-\smallskip\noindent\font[size=14pt]{\sectionsfont{\show-counter[id=section] \process}}
-\smallskip}
-
-\define[command=pubdate]{}
-\define[command=releaseinfo]{}
-\define[command=para]{\process\par}
-\define[command=simpara]{\process\par}
-
-\define[command=quote]{‘\process’}
-\define[command=acronym]{\font[size=1.1em]{\process}}
-\define[command=blockquote]{\par\set[parameter=document.lskip,value=5em]\set[parameter=document.rskip,value=5em]\process\set[parameter=document.lskip,value=0em]\set[parameter=document.rskip,value=0em]}
-
-\define[command=variablelist]{\process}% XXX
-\define[command=itemizedlist]{\process}% XXX
-\define[command=orderedlist]{\process}% XXX
-\define[command=table]{}% Punt
-
-\define[command=varlistentry]{\par\noindent• \process}
-\define[command=term]{\noindent\font[style=italic]{\process}}
-\define[command=firstterm]{\noindent\font[style=italic,weight=900]{\process}}
-\define[command=command]{\ttfont{\process}}
-\define[command=uri]{\ttfont{\process}}
-\define[command=tag]{\ttfont{\process}}
-\define[command=listitem]{\process}
-\define[command=example]{\process}
-\define[command=programlisting]{\verbatim{\process}}
-\define[command=code]{\verbatim{\process}}
-
-\define[command=citetitle]{\font[style=italic]{\process}}
-\define[command=emphasis]{\font[style=italic]{\process}}
-\define[command=glossterm]{\font[style=italic]{\process}}
-
-\define[command=biblioref]{}
-\define[command=xref]{???}
-\define[command=literal]{\ttfont{\font[style=normal]{\process}}}
-\define[command=note]{\blockquote{\noindent\font[weight=900]{Note}: \process}}
-\define[command=phrase]{\process}
-\define[command=tip]{\blockquote{\process}}
-\define[command=caution]{\blockquote{\process}}
-\define[command=simplelist]{\smallskip\noindent\process\smallskip}
-\define[command=member]{\noindent\process\par}
-\define[command=userinput]{\ttfont{\font[weight=900,style=normal]{\process}}}
-\define[command=replaceable]{\ttfont{\font[style=italic]{\process}}}
-\define[command=email]{\ttfont{\process}}
-\define[command=remark]{\blockquote{\process}}
-\end{document}
+\begin[papersize=a4,class=docbook]{document}%
+\script[src=packages/rules]%
+\script[src=packages/verbatim]%
+\define[command=docbook-line]{\medskip\hrule[height=0.5pt,width=50mm]\medskip}%
+\define[command=docbook-sectionsfont]{\font[family=Frutiger FT Std]{\process}}%
+\define[command=docbook-ttfont]{\font[family=Inconsolata,size=2ex]{\process}}%
+\define[command=center]{%%
+\set[parameter=document.lskip,value=20pt plus 1000pt]%%
+\set[parameter=document.rskip,value=20pt plus 1000pt]%%
+\set[parameter=typesetter.parfillskip,value=0pt]%%
+\set[parameter=document.parindent,value=0pt]%%
+\set[parameter=current.parindent,value=0pt]%%
+\noindent\process\par%%
+\set[parameter=document.lskip]%%
+\set[parameter=document.rskip]%%
+\set[parameter=document.parindent,value=20pt]%%
+\set[parameter=typesetter.parfillskip,value=0pt plus 1000pt]%%
+}%
+%%
+\define[command=docbook-article-title]{\center{\docbook-sectionsfont{\font[size=20pt]{\process}}}\bigskip}%
+\define[command=docbook-section-title]{\noindent\bigskip\docbook-sectionsfont{\process}\bigskip}%
+\define[command=docbook-main-author]{\center{\docbook-sectionsfont{\process}}\bigskip}%
+%
+\define[command=docbook-section-1-title]{\font[size=16pt]{\docbook-section-title{\process}}}%
+\define[command=docbook-section-2-title]{\font[size=12pt]{\docbook-section-title{\process}}}%
+\define[command=docbook-titling]{\noindent\docbook-sectionsfont{\process}}%
+%%
+\define[command=para]{\process\par}%
+\define[command=emphasis]{\em{\process} }%
+\define[command=replaceable]{\em{\process}}%
+\define[command=abbrev]{\font[variant=smallcaps]{\process}}%
+%%
+\define[command=personname]{\process}%
+\define[command=email]{\code{\process}}%
+\define[command=uri]{\code{\process}}%
+\define[command=personblurb]{\font[size=2ex]{\process}}%
+\define[command=affiliation]{\process}%
+\define[command=jobtitle]{\process}%
+\define[command=orgname]{\process}%
+%%
+\define[command=application]{\em{\process}}%
+\define[command=menuchoice]{“\process”}%
+%%
+\define[command=programlisting]{\verbatim{\process}}%
+\define[command=tag]{\docbook-ttfont{<\process>}}%
+\define[command=code]{\docbook-ttfont{\process}}%
+\define[command=filename]{\docbook-ttfont{\process}}%
+\define[command=guimenu]{\docbook-ttfont{\process}}%
+\define[command=guimenuitem]{ > \docbook-ttfont{\process}}%
+\define[command=guilabel]{\docbook-ttfont{\process}}%
+\define[command=guibutton]{\docbook-ttfont{\process}}%
+\define[command=computeroutput]{\docbook-ttfont{\process}}%
+%%
+\define[command=xref]{XXX}%
+\define[command=citetitle]{\em{\process}}%
+\define[command=quote]{“\process”}%
+\define[command=citation]{[\process]}%
+%%
+\define[command=thead]{\font[weight=800]{\process}}%
+\define[command=tbody]{\process}%
+\define[command=mediaobject]{\process}%
+\define[command=imageobject]{\process}%
+%%
+\define[command=bibliography]{\font[size=16pt]{\docbook-section-title{Bibliography}}\par\font[size=2ex]\process}%
+\define[command=bibliomixed]{\process\smallskip}%
+\define[command=bibliomisc]{ \process}%
+\end{document}%
