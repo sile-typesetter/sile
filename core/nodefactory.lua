@@ -156,8 +156,10 @@ local _vbox = _box {
     self.depth = 0
     self.height = 0
     for i=1,#(self.nodes) do local n = self.nodes[i]
-      self.depth = (tonumber(n.depth) and tonumber(n.depth) > self.depth) and tonumber(n.depth) or self.depth
-      self.height = (tonumber(n.height) and tonumber(n.height) > self.height) and tonumber(n.height) or self.height
+      local h = type(n.height) == "table" and n.height.length or n.height
+      local d = type(n.depth) == "table" and n.depth.length or n.depth
+      self.depth = (d > self.depth) and d or self.depth
+      self.height = (h > self.height) and h or self.height
     end
     self.depth = SILE.length.new({length = self.depth })
     self.height = SILE.length.new({length = self.height })

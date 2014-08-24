@@ -13,12 +13,6 @@ _length = std.object {
 		end
 		return self
 	end,
-	__tonumber = function(self)
-		if not(self.stretch ==0) or not(self.shrink == 0) then
-			SU.warn("tonumber called on a glue length. Bug?")
-		end
-		return self.length
-	end,
 	__tostring = function (x)	
 		local s = tostring(x.length).."pt"
 		if not (x.stretch == 0) then s = s .. " plus "..x.stretch.."pt" end
