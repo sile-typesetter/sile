@@ -14,7 +14,7 @@ _box = std.object {
 
 function _box:outputYourself () SU.error(self.type.." with no output routine") end
 function _box:toText ()  return self.type end
-function _box:isBox ()   return self.type=="hbox" or self.type == "nnode" end
+function _box:isBox ()   return self.type=="hbox" or self.type == "nnode" or self.type=="vbox" end
 function _box:isNnode () return self.type=="nnode" end
 function _box:isGlue ()  return self.type == "glue" end
 function _box:isVglue ()  return self.type == "vglue" end
