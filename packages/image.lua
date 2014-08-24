@@ -2,8 +2,8 @@ local lgi = require("lgi");
 local cairo = lgi.cairo
 
 SILE.registerCommand("img", function(options, content)
-  local width =  SILE.parseComplexFrameDimension(options.width or 0,"w")
-  local height = SILE.parseComplexFrameDimension(options.height or 0,"h")
+  local width =  SILE.parseComplexFrameDimension(options.width or 0,"w") or 0 
+  local height = SILE.parseComplexFrameDimension(options.height or 0,"h") or 0
   local src = options.src
 
   -- Wasteful but we need to know this at box construction time.

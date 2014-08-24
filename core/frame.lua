@@ -2,6 +2,12 @@ local cassowary = require("cassowary")
 SILE.frames = {}
 local solver = cassowary.SimplexSolver();
 solverNeedsReloading = true
+
+local parseFrameDef = function(d, width_or_height)
+  SILE.documentState._dimension = width_or_height; -- ugly hack since you can't pass state to the parser
+  return SILE._frameParser:match(d);
+end
+
 local framePrototype = std.object {
   next= nil,
   id= nil,
@@ -21,7 +27,7 @@ local framePrototype = std.object {
   reifyConstraint = function(self, solver, method, stay)
     if not self.constraints[method] then return end
     local dims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
-    local c = SILE.parseComplexFrameDimension(self.constraints[method], dims[method])
+    local c = parseFrameDef(self.constraints[method], dims[method])
     --print("Adding constraint "..self.id.."("..method..") = "..self.constraints[method])
     local eq = cassowary.Equation(self.variables[method],c)
     solver:addConstraint(eq)
@@ -135,6 +141,16 @@ SILE.getFrame = function(id) return SILE.frames[id] or SU.error("Couldn't get fr
 SILE._frameParser = require("core/frameparser")
 
 SILE.parseComplexFrameDimension = function(d, width_or_height)
-    SILE.documentState._dimension = width_or_height; -- ugly hack since you can't pass state to the parser
-    return SILE._frameParser:match(d);
+  SILE.documentState._dimension = width_or_height; -- ugly hack since you can't pass state to the parser
+  local v =  SILE._frameParser:match(d);
+  if type(v) == "table" then
+    local g = cassowary.Variable({ name = "t" })
+    local eq = cassowary.Equation(g,v)
+    solverNeedsReloading = true
+    solver:addConstraint(eq)
+    SILE.frames.page:solve()
+    solverNeedsReloading = true
+    return g.value
+  end
+  return v
 end
