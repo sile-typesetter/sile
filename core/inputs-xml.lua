@@ -12,8 +12,9 @@ SILE.inputs.XML = {
     end
     if SILE.Commands[t.tag] then
       SILE.Commands[t.tag](t.attr,t)
+    else
+      SILE.process(t)
     end
-    SILE.process(t)
     if root then
       SILE.documentState.documentClass:finish()
     end
