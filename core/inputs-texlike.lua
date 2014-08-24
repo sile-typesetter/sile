@@ -54,7 +54,7 @@ function SILE.inputs.TeXlike.process(fn)
     SILE.inputs.common.init(fn, t)
   end
   SILE.process(t)
-  if root then
+  if root and not SILE.preamble then
     SILE.documentState.documentClass:finish()
   end  
 end

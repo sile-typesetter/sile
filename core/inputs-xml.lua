@@ -15,7 +15,7 @@ SILE.inputs.XML = {
     else
       SILE.process(t)
     end
-    if root then
+    if root and not SILE.preamble then
       SILE.documentState.documentClass:finish()
     end
   end,
