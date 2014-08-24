@@ -19,9 +19,11 @@ book.init = function()
 end
 
 book.endPage = function()
+  book:outputInsertions() -- Have to output this before redefining the frame!
+
   if (book:oddPage()) then
     book:declareFrame("folio",     { left="left(r)", right = "right(r)", top = "bottom(footnotes)+3%", bottom = "bottom(footnotes)+5%" });
-    book:declareFrame("footnotes", { left="left(r)", right = "right(r)", height = "0", bottom="83.3%"})
+    book:declareFrame("footnotes", { left="left(l)", right = "right(l)", height = "0", bottom="83.3%"})
 
     if (SILE.scratch.headers.right) then
       SILE.typesetNaturally(SILE.getFrame("rRH"), function()
@@ -32,7 +34,7 @@ book.endPage = function()
     end
   else 
     book:declareFrame("folio",     { left="left(l)", right = "right(l)", top = "bottom(footnotes)+3%", bottom = "bottom(footnotes)+5%" });
-    book:declareFrame("footnotes", { left="left(l)", right = "right(l)", height = "0", bottom="83.3%"})
+    book:declareFrame("footnotes", { left="left(r)", right = "right(r)", height = "0", bottom="83.3%"})
 
     if (SILE.scratch.headers.left) then
       SILE.typesetNaturally(SILE.getFrame("lRH"), function()
@@ -42,7 +44,6 @@ book.endPage = function()
       end)
     end
   end
-  book:outputInsertions()
   book:switchPage();
 
   return plain.endPage(book);

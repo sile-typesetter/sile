@@ -10,6 +10,9 @@ SILE.registerCommand("footnote", function(options, content)
       SILE.typesetter:typeset(SILE.scratch.counters.footnote.value)
     end)
   end)
+  -- XXX We need to vbox the material in the context of the frame it's going to
+  -- be inserted into, not in the frame it's coming from; e.g. when a two-column
+  -- layout has a full-width footnotes frame.
   insertions.exports:insert("footnote", SILE.Commands["vbox"]({}, function()
     SILE.Commands["font"]({size = "9pt"}, function()
       SILE.typesetter:typeset(SILE.scratch.counters.footnote.value..". ")
