@@ -33,6 +33,12 @@ SILE.settings.declare({
   help = "Glue added at the end of a paragraph"
 })
 
+SILE.settings.declare({
+  name = "typesetter.breakwidth",
+  type = "Length or nil",
+  default = nil,
+  help = "Width to break lines at"
+})
 SILE.defaultTypesetter = std.object {
   -- Setup functions
   init = function(self, frame)
@@ -136,7 +142,10 @@ SILE.defaultTypesetter = std.object {
       for i = 1,#l do rv = rv ..l[i] end return rv
     end
     SU.debug("typesetter", "Boxed up "..listToString(nl));
-    local breaks = SILE.linebreak:doBreak( nl, self.frame:width() );
+
+    local breakWidth = SILE.settings.get("typesetter.breakwidth") or self.frame:width()
+    if (type(breakWidth) == "table") then breakWidth = breakWidth.length end
+    local breaks = SILE.linebreak:doBreak( nl, breakWidth);
     if (#breaks == 0) then
       SU.error("Couldn't break :(")
     end
