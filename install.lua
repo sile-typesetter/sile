@@ -3,7 +3,7 @@ local exec = "/usr/local/bin/sile"
 
 local errors = 0
 print("Testing lua dependencies..\n")
-for _,mod in ipairs({"lfs";"lgi";"lpeg"; "epnf";"std";"lxp";"cassowary";"repl"}) do
+for _,mod in ipairs({"lgi";"lpeg"; "epnf";"std";"lxp";"cassowary";"repl"}) do
     local has_mod = pcall(require, mod)
     if not has_mod then
         print("! Could not load lua module "..mod)
