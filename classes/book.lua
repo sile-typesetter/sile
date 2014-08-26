@@ -18,34 +18,34 @@ book.init = function()
   return plain:init()
 end
 
-book.endPage = function()
-  book:outputInsertions() -- Have to output this before redefining the frame!
-
+book.newPage = function()
+  book:switchPage()
   if (book:oddPage()) then
     book:declareFrame("folio",     { left="left(r)", right = "right(r)", top = "bottom(footnotes)+3%", bottom = "bottom(footnotes)+5%" });
-    book:declareFrame("footnotes", { left="left(l)", right = "right(l)", height = "0", bottom="83.3%"})
-
-    if (SILE.scratch.headers.right) then
-      SILE.typesetNaturally(SILE.getFrame("rRH"), function()
-        SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
-        SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
-        SILE.process(SILE.scratch.headers.right)
-      end)
-    end
-  else 
-    book:declareFrame("folio",     { left="left(l)", right = "right(l)", top = "bottom(footnotes)+3%", bottom = "bottom(footnotes)+5%" });
     book:declareFrame("footnotes", { left="left(r)", right = "right(r)", height = "0", bottom="83.3%"})
+  else
+    book:declareFrame("footnotes", { left="left(l)", right = "right(l)", height = "0", bottom="83.3%"})
+    book:declareFrame("folio",     { left="left(l)", right = "right(l)", top = "bottom(footnotes)+3%", bottom = "bottom(footnotes)+5%" });
+  end
+  return plain:newPage()
+end
 
-    if (SILE.scratch.headers.left) then
+book.endPage = function()
+  book:outputInsertions()
+
+  if (book:oddPage() and SILE.scratch.headers.right) then
+    SILE.typesetNaturally(SILE.getFrame("rRH"), function()
+      SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
+      SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
+      SILE.process(SILE.scratch.headers.right)
+    end)
+  elseif (not(book:oddPage()) and SILE.scratch.headers.left) then
       SILE.typesetNaturally(SILE.getFrame("lRH"), function()
         SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
         SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
         SILE.process(SILE.scratch.headers.left)
       end)
-    end
   end
-  book:switchPage();
-
   return plain.endPage(book);
 end;
 
