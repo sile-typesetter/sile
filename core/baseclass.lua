@@ -14,6 +14,11 @@ function SILE.registerCommand (name, f, help, pack)
   }
 end
 
+function SILE.doTexlike (doc)
+  doc = "\\begin{document}"..doc.."\\end{document}"
+  SILE.process(SILE.inputs.TeXlike.docToTree(doc))
+end
+
 SILE.baseClass = std.object {
   registerCommands = (function()
     SILE.registerCommand("\\", function(o,c)  SILE.typesetter:typeset("\\") end)
