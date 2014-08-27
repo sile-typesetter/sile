@@ -9,6 +9,7 @@
 <set parameter="document.lskip" value="0pt"/><medskip/>
 </define>
 <define command="sectionsfont"><font family="Helvetica Neue" weight="600"><process/></font></define>
+<define command="tableofcontents:headerfont"><font family="Helvetica Neue" weight="600" size="22pt"><process/></font></define>
 <define command="examplefont"><font family="Adobe Caslon Pro"><process/></font></define>
 <define command="bf"><font weight="800"><process/></font></define>
 <define command="book:chapterfont"><sectionsfont><font size="22pt"><process/></font></sectionsfont></define>
