@@ -4,6 +4,8 @@
 -- Check out SILE.scratch.info.thispage in your end-of-page routine and see what nodes
 -- are there.
 
+-- Exports
+--    newPageInfo (call this in endPage to empty the info node list)
 SILE.scratch.info = {
   thispage = {}
 }

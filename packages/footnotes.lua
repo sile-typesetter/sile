@@ -1,4 +1,8 @@
 -- Footnotes class
+
+-- Exports: The \footnote command
+--          outputInsertions (call this in endPage)
+
 SILE.require("packages/counters")
 SILE.require("packages/raiselower")
 local insertions = SILE.require("packages/insertions")

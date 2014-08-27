@@ -1,3 +1,19 @@
+-- A very simple table formatting class
+
+-- Calling conventions:
+-- myClass:loadPackage("simpletable", {
+--  tableTag = "a",
+--  trTag = "b",
+--  tdTag = "c"
+-- })
+
+-- Defines commands \a, \b and \c equivalent to HTML
+-- <table>, <tr> and <td> tags.
+
+-- Todo: Set a maximum width for the whole table and ensure
+-- vbox width is no greater than this. In fact, we should use
+-- the complete CSS2.1 two-pass table layout algorithm.
+
 SILE.scratch.simpletable = { tables = {} }
 return {
   exports = {},
