@@ -8,6 +8,8 @@ book:declareFrame("footnotes", { left="left(r)", right = "right(r)", height = "0
 book.pageTemplate.firstContentFrame = book.pageTemplate.frames["r"];
 
 book:loadPackage("twoside", { oddPageFrameID = "r", evenPageFrameID = "l" });
+book:loadPackage("tableofcontents")
+
 book:declareMirroredFrame("l","r")
 book:declareMirroredFrame("lRH","rRH")
 
@@ -30,9 +32,15 @@ book.newPage = function()
   return plain:newPage()
 end
 
+book.finish = function ()
+  book:writeToc()
+  return plain:finish()
+end
+
 book.endPage = function()
   book:outputInsertions()
-
+  book:moveTocNodes()
+  book:newPageInfo()
   if (book:oddPage() and SILE.scratch.headers.right) then
     SILE.typesetNaturally(SILE.getFrame("rRH"), function()
       SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
@@ -68,6 +76,7 @@ SILE.registerCommand("chapter", function (options, content)
   SILE.typesetter:leaveHmode()
   SILE.Commands["book:chapterfont"]({}, content);
   SILE.Commands["left-running-head"]({}, content);
+  SILE.call("tocentry", {level = 1}, content)
   SILE.call("bigskip")
   SILE.call("nofoliosthispage")
 end, "Begin a new chapter");
@@ -86,6 +95,7 @@ SILE.registerCommand("section", function (options, content)
     SILE.typesetter:typeset(" ")
     SILE.process(content)
   end)
+  SILE.call("tocentry", {level = 2}, content)
   if not SILE.scratch.counters.folio.off then
     SILE.Commands["right-running-head"]({}, function()
       SILE.call("hss")
