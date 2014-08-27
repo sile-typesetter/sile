@@ -101,12 +101,13 @@ SILE.baseClass = std.object {
   end),
 
   pageTemplate = std.object { frames= {}, firstContentFrame= nil },
+  deferredInit = {},
   loadPackage = function(self, packname, args)
     local pack = require("packages/"..packname)
     if type(pack) == "table" then 
       self:mapfields(pack.exports)
       if pack.init then
-        pack.init(self, args)
+        table.insert(SILE.baseClass.deferredInit, function () pack.init(self, args) end)
       end
     end
   end,
@@ -119,6 +120,8 @@ SILE.baseClass = std.object {
     })
     SILE.outputter.init(self); 
     self:registerCommands();
+    -- Call all stored package init routines
+    for i = 1,#(SILE.baseClass.deferredInit) do (SILE.baseClass.deferredInit[i])() end
     return self:initialFrame();
   end,
   initialFrame= function(self)
