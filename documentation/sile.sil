@@ -638,6 +638,12 @@ There are also some commands to increase the horizontal space in a line; from
 the smallest to the largest, \code{\\thinspace} (1/6th of an em), \code{\\enspace}
 (1 en), \code{\\quad} (1 em), and \code{\\qquad} (2em).
 
+\begin{center}
+You can center a paragraph of text by wrapping it in the \code{center} environment.
+(\code{\\begin\{center\} \dots \\end\{center\}}). This paragraph is centered on the
+page.
+\end{center}
+
 \section{Breaks}
 
 SILE automatically determines line and page breaks; in later chapters we will
@@ -730,6 +736,7 @@ text. So, for example:
   for i=1,10 do
     SILE.typesetter:typeset(i .. " x " .. i .. " = " .. i*i .. ". ")
     SILE.typesetter:leaveHmode()
+    SILE.call("smallskip")
   end
 \\end\{script\}
 \line
@@ -744,6 +751,7 @@ produces the following output:
   for i=1,10 do
     SILE.typesetter:typeset(i .. " x " .. i .. " = " .. i*i .. ". ")
     SILE.typesetter:leaveHmode()
+    SILE.call("smallskip")
   end
 \end{script}
 \line

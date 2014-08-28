@@ -68,7 +68,19 @@ plain.registerCommands = function()
 \define[command=raggedright]{\set[parameter=document.rskip,value=0 plus 2em]\set[parameter=document.spaceskip,value=0.333em]}%
 \define[command=justified]{\set[parameter=document.rskip,value=0]\set[parameter=document.spaceskip]}%
 \define[command=em]{\font[style=italic]{\process}}%
-\define[command=nohyphenation]{\font[language=xx]{\process}}]])
+\define[command=nohyphenation]{\font[language=xx]{\process}}%
+\define[command=center]{%%
+\set[parameter=document.lskip,value=20pt plus 1000pt]%%
+\set[parameter=document.rskip,value=20pt plus 1000pt]%%
+\set[parameter=typesetter.parfillskip,value=0pt]%%
+\set[parameter=document.parindent,value=0pt]%%
+\set[parameter=current.parindent,value=0pt]%%
+\noindent\process\par%%
+\set[parameter=document.lskip]%%
+\set[parameter=document.rskip]%%
+\set[parameter=document.parindent,value=20pt]%%
+\set[parameter=typesetter.parfillskip,value=0pt plus 1000pt]%%
+}]])
 end
 
 SILE.registerCommand("{", function (o,c) SILE.typesetter:typeset("{") end)
