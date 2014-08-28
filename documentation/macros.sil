@@ -17,4 +17,5 @@
 <define command="book:subsectionfont"><sectionsfont><font size="13pt"><process/></font></sectionsfont></define>
 
 <define command="code"><font family="Monaco" size="9pt" style="roman" language="xx"><process/></font></define>
+<define command="command"><code><process/></code></define>
 </sile>
