@@ -4,6 +4,7 @@
 0.9.1 Release
   Hebrew/RTL support
   Japanese/other non-whitespace-broken languages
+  Masters: sets of frames
 
 0.9.2 Release
   Balanced frames
