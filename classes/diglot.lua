@@ -3,15 +3,11 @@ local diglot = std.tree.clone(plain);
 SILE.require("packages/counters");
 SILE.scratch.counters.folio = { value = 1, display = "arabic" };
 SILE.scratch.diglot = {}
-if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end
-
 diglot:declareFrame("a",    {left = "8.3%",            right = "48%",            top = "11.6%",       bottom = "80%"        });
 diglot:declareFrame("b",    {left = "52%",             right = "100% - left(a)", top = "top(a)",      bottom = "bottom(a)"    });
 diglot:declareFrame("folio",{left = "left(a)",         right = "right(b)",       top = "bottom(a)+3%",bottom = "bottom(a)+8%" });
 diglot.leftTypesetter = SILE.defaultTypesetter {};
-diglot.leftTypesetter.which = "left"
 diglot.rightTypesetter = SILE.defaultTypesetter {};
-diglot.rightTypesetter.which = "right"
 diglot.rightTypesetter.other = diglot.leftTypesetter
 diglot.leftTypesetter.other = diglot.rightTypesetter
 
@@ -23,11 +19,9 @@ local sync =   function()
   elseif (rVbox.height < lVbox.height) then
     diglot.rightTypesetter:pushVglue({ height = lVbox.height - rVbox.height })
   end
-
   diglot.rightTypesetter:leaveHmode();
   diglot.leftTypesetter:leaveHmode();
   SILE.settings.set("typesetter.parseppattern", "\n\n+")
-
 end
 
 diglot.finish = function(self)
@@ -43,7 +37,7 @@ end
 
 diglot.newPage = function(self)
   plain.newPage(self)
-  if SILE.typesetter.which == "left" then 
+  if SILE.typesetter == diglot.leftTypesetter then
     SILE.typesetter.other:initFrame(SILE.getFrame("b"))
     return SILE.getFrame("a")
   else
