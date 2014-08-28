@@ -52,10 +52,8 @@ SILE.registerCommand("article", function (options, content)
   SILE.process(content)
   SILE.typesetter:chuck()
 end)
+
 SILE.registerCommand("info", function()end)
-SILE.registerCommand("title", function(options,content)
-  SILE.call("em",{},content)
-end)
 
 SILE.registerCommand("section", function (options, content)
   SILE.scratch.docbook.seclevel = SILE.scratch.docbook.seclevel + 1
@@ -124,19 +122,29 @@ SILE.registerCommand("itemizedlist", function(options,content)
   docbook.pop("list")
 end)
 
+
+SILE.registerCommand("orderedlist", function(options,content)
+  docbook.push("list", {type = "ordered"})
+  SILE.call("medskip")
+  -- Indentation
+  SILE.process(content)
+  SILE.call("medskip")
+  docbook.pop("list")
+end)
 SILE.registerCommand("listitem", function(options,content)
   local ctx = docbook.val("list")
-  if ctx and ctx.type == "itemized" then
+  if ctx and ctx.type == "ordered" then
     SILE.typesetter:typeset( ctx.ctr ..". ")
     ctx.ctr = ctx.ctr + 1
-  elseif ctx and ctx.type == "" then
+  elseif ctx and ctx.type == "itemized" then
     SILE.typesetter:typeset( "• ")
   elseif ctx and ctx.type == "" then
-    --
+    -- Other types?
   else
     SU.error("Listitem in outer space")
   end
-  -- Indentation
+  SILE.call("noindent")
+  for i=1, #ctx-1 do SILE.call("qquad") end -- Setting lskip better?
   SILE.process(content)
   SILE.call("medskip")
 end)

@@ -4,18 +4,6 @@
 \define[command=docbook-line]{\medskip\hrule[height=0.5pt,width=50mm]\medskip}%
 \define[command=docbook-sectionsfont]{\font[family=Frutiger FT Std]{\process}}%
 \define[command=docbook-ttfont]{\font[family=Inconsolata,size=2ex]{\process}}%
-\define[command=center]{%%
-\set[parameter=document.lskip,value=20pt plus 1000pt]%%
-\set[parameter=document.rskip,value=20pt plus 1000pt]%%
-\set[parameter=typesetter.parfillskip,value=0pt]%%
-\set[parameter=document.parindent,value=0pt]%%
-\set[parameter=current.parindent,value=0pt]%%
-\noindent\process\par%%
-\set[parameter=document.lskip]%%
-\set[parameter=document.rskip]%%
-\set[parameter=document.parindent,value=20pt]%%
-\set[parameter=typesetter.parfillskip,value=0pt plus 1000pt]%%
-}%
 %%
 \define[command=docbook-article-title]{\center{\docbook-sectionsfont{\font[size=20pt]{\process}}}\bigskip}%
 \define[command=docbook-section-title]{\noindent\bigskip\docbook-sectionsfont{\process}\bigskip}%
@@ -29,6 +17,7 @@
 \define[command=emphasis]{\em{\process} }%
 \define[command=replaceable]{\em{\process}}%
 \define[command=abbrev]{\font[variant=smallcaps]{\process}}%
+\define[command=title]{\em{\process}}%
 %%
 \define[command=personname]{\process}%
 \define[command=email]{\code{\process}}%
