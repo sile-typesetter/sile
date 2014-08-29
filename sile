@@ -5,6 +5,7 @@ io.stdout:setvbuf 'no'
 print('This is SILE '..SILE.version)
 SILE.parseArguments()
 if (arg and arg[1]) then
+  SILE.masterFileName = arg[1]
   SILE.readFile(arg[1])
 else
   SILE.repl()
