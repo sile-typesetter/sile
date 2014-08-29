@@ -1,5 +1,5 @@
 SILE = {}
-SILE.version = "0.0.1"
+SILE.version = "0.9.0"
 SILE.utilities = require("core/utilities")
 SU = SILE.utilities
 SILE.inputs = {}
@@ -68,7 +68,7 @@ local parser = std.optparse ("This is SILE "..SILE.version..[[
     SILE.preamble = true
     -- Try a .sil
     print("Loading "..opts.include)
-    local i = SILE.resolveFile("classes/"..opts.include)
+    local i = SILE.resolveFile(opts.include)
     if i then
       SILE.readFile(i)
     else
