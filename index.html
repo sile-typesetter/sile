@@ -1,68 +1,8 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Sile by simoncozens</title>
+---
+layout: default
+title: Home
+---
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <div class="wrapper">
-      <header>
-        <h1>Sile</h1>
-        <p>Simon&#39;s Improved Layout Engine</p>
-
-        <p class="view"><a href="https://github.com/simoncozens/sile">View the Project on GitHub <small>simoncozens/sile</small></a></p>
-
-
-        <ul>
-          <li><a href="https://github.com/simoncozens/sile/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/simoncozens/sile/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/simoncozens/sile">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h1>
-<a name="simons-improved-layout-engine" class="anchor" href="#simons-improved-layout-engine"><span class="octicon octicon-link"></span></a>Simon's Improved Layout Engine</h1>
-
-<p>SILE is a text formatting engine. It's sort of like TeX, except it isn't
-35 years old, doesn't use idiosyncratic font and output formats, and it
-isn't written in Pascal.</p>
-
-<h2>
-<a name="install" class="anchor" href="#install"><span class="octicon octicon-link"></span></a>Install</h2>
-
-<p>First you will need lua, pango and cairo installed. You will then
-need to run:</p>
-
-<ul>
-<li><code>luarocks install stdlib lgi lpeg luaexpat inspect luaepnf luarepl cassowary</code></li>
-</ul><p>Once your dependencies are installed, run</p>
-
-<ul>
-<li><code>lua install.lua</code></li>
-</ul><p>This will place the SILE libraries and executable in a sensible
-location.</p>
-
-<p>Try <code>sile examples/test.sil</code></p>
-
-<h2>
-<a name="for-more-information" class="anchor" href="#for-more-information"><span class="octicon octicon-link"></span></a>For more information</h2>
-
-<p>Read the SILE manual in documentation/sile.pdf</p>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/simoncozens">simoncozens</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
-    
-  </body>
-</html>
+{% assign page = site.posts.first %}
+{% assign content = page.content %}
+{% include post.html %}
