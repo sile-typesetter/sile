@@ -58,8 +58,8 @@ local parser = std.optparse ("This is SILE "..SILE.version..[[
        --help               display this help, then exit
 ]])
 
-  _G.arg, _G.opts = parser:parse(_G.arg)
   parser:on ('--', parser.finished)
+  _G.arg, _G.opts = parser:parse(_G.arg)
   SILE.debugFlags = {}
   if opts.debug then
     for k,v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = 1 end
