@@ -19,11 +19,18 @@ SILE allows you to
 
 SILE can be downloaded from [its home page][1], or directly from [the release page][2].
 
-SILE is written in the Lua programming language, so you will need a Lua installation; it also relies on the Cairo and Pango libraries.
+SILE is written in the Lua programming language, so you will need a Lua version 5.1 installation; it also relies on the Cairo and Pango libraries.
 
-You will then need to run:
+You also need to install the following Lua libraries using [luarocks][] (downloading luarocks if you do not already have it installed).
 
-* `luarocks install stdlib lgi lpeg luaexpat inspect luaepnf luarepl cassowary`
+* `stdlib`
+* `lgi` 
+* `lpeg` 
+* `luaexpat`
+* `inspect`
+* `luaepnf`
+* `luarepl`
+* `cassowary`
 
 Once your dependencies are installed, run
 
@@ -51,3 +58,4 @@ SILE is distributed under the [MIT licence][5].
 [4]: https://github.com/simoncozens/sile
 [5]: http://choosealicense.com/licenses/mit/
 [roadmap]: https://github.com/simoncozens/sile/blob/master/ROADMAP
+[luarocks]: http://luarocks.org/en/Download
