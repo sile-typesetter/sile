@@ -6,9 +6,9 @@ if not os.getenv 'LUA_REPL_RLWRAP' then
   print('This is SILE '..SILE.version)
 end
 SILE.parseArguments()
-if (arg and arg[1]) then
-  SILE.masterFileName = arg[1]
-  SILE.readFile(arg[1])
+if unparsed and unparsed[1] then
+  SILE.masterFileName = unparsed[1]
+  SILE.readFile(unparsed[1])
 else
   SILE.repl()
 end
