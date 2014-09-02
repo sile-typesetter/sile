@@ -1,8 +1,8 @@
-require("lxp.lom")
 SILE.inputs.XML = {
   process = function (fn)
+    local lom = require("lxp.lom")
     local fh = io.open(fn)
-    local t = lxp.lom.parse(fh:read("*all"))
+    local t = lom.parse(fh:read("*all"))
     local root = SILE.documentState.documentClass == nil
     if root then
       if not(t.tag == "sile") then
