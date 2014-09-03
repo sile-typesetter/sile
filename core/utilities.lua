@@ -1,4 +1,4 @@
-local utilities = { }
+local utilities = {}
 
 function utilities.required(t, name, context)
   if not t[name] then utilities.error(context.." needs a "..name.." parameter") end
@@ -23,72 +23,80 @@ end
 function utilities.gtoke(string, pattern)
   string = string and tostring(string) or ''
   pattern = pattern and tostring(pattern) or "%s+"
+  local length = #string
   return coroutine.wrap(function()
-    local index= 1
+    local index = 1
     repeat
       local first, last = string:find(pattern, index)
-      if first and last then
-        if index < first then coroutine.yield({ string = string:sub(index, first -1) }) end
+      if last then
+        if index < first then coroutine.yield({ string = string:sub(index, first - 1) }) end
         coroutine.yield({ separator = string:sub(first, last) })
         index = last + 1
       else
-        if index <= #string then coroutine.yield({ string = string:sub(index) }) end
+        if index <= length then
+          coroutine.yield({ string = string:sub(index) })
+        end
         break
       end
-    until index > #string
+    until index > length
   end)
 end
 
 function utilities.debug(category, messages)
-  if utilities.debugging(category) then print("["..category.."]", messages) end
+  if utilities.debugging(category) then
+    print("["..category.."]", messages)
+  end
 end
 
-function utilities.concat(s,c)
-    local t = { }
-    for k,v in ipairs(s) do
-        t[#t+1] = tostring(v)
-    end
-    return table.concat(t,c)
+function utilities.concat(array, c)
+  return table.concat(utilities.map(tostring, array), c)
 end
 
-function utilities.inherit (orig, spec) 
-	local new = std.tree.clone(orig)
-	if spec then
-		for k,v in pairs(spec) do new[k] = v end
-	end
-	if new.init then new:init() end
-	return new
+function utilities.inherit(orig, spec)
+  local new = std.tree.clone(orig)
+  if spec then
+    for k,v in pairs(spec) do new[k] = v end
+  end
+  if new.init then new:init() end
+  return new
 end
 
 function utilities.map(func, array)
   local new_array = {}
-  for i,v in ipairs(array) do new_array[i] = func(v) end
+  local last = #array
+  for i = 1, last do
+    new_array[i] = func(array[i])
+  end
   return new_array
 end
 
 function utilities.splice(array, start, stop, replacement)
-  if replacement then
-    local n = stop - start + 1
-    while n > 0 do
-      table.remove(array, start)
-      n = n - 1
+  local ptr = start
+  local room = stop - start + 1
+  local last = replacement and #replacement or 0
+  for i = 1, last do
+    if room > 0 then
+      room = room - 1
+      array[ptr] = replacement[i]
+    else
+      table.insert(array, ptr, replacement[i])
     end
-    for i,v in ipairs(replacement) do
-      table.insert(array, start+i-1, v)
-    end
-    return array
-  else
-    local res = {}
-    for i = start,stop do
-      table.insert(res, array[i])
-    end
-    return res
+    ptr = ptr + 1
   end
+
+  for i = 1, room do
+      table.remove(array, ptr)
+  end
+  return array
 end
 
 function utilities.sum(array)
   local t = 0
-  for i,v in ipairs(array) do t = t + v end
+  local last = #array
+  for i = 1, last do
+    t = t + array[i]
+  end
   return t
 end
+
 return utilities
