@@ -58,8 +58,8 @@ local parser = std.optparse ("This is SILE "..SILE.version..[[
        --help               display this help, then exit
 ]])
 
-  _G.arg, _G.opts = parser:parse(_G.arg)
   parser:on ('--', parser.finished)
+  _G.unparsed, _G.opts = parser:parse(_G.arg)
   SILE.debugFlags = {}
   if opts.debug then
     for k,v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = 1 end
@@ -89,13 +89,16 @@ function SILE.initRepl ()
     local has_rlwrap = os.execute('which rlwrap >/dev/null 2>/dev/null') == 0
 
     if has_rlwrap and not os.getenv 'LUA_REPL_RLWRAP' then
-      local lowest_index = -1
-
-      while arg[lowest_index] ~= nil do
-        lowest_index = lowest_index - 1
+      local command = 'LUA_REPL_RLWRAP=1 rlwrap'
+      local index = 0
+      while arg[index - 1] do
+        index = index - 1
       end
-      lowest_index = lowest_index + 1
-      os.execute(string.format('LUA_REPL_RLWRAP=1 rlwrap %q %q', arg[lowest_index], arg[0]))
+      while arg[index] do
+        command = string.format('%s %q', command, arg[index])
+        index = index + 1
+      end
+      os.execute(command)
       return
     end
   end
