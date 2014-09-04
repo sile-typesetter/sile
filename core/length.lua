@@ -1,62 +1,74 @@
-_length = std.object { 
-	length = 0, 
-	stretch = 0, 
-	shrink = 0, 
-	_type = "Length",
-	fromLengthOrNumber = function (self, x)
-		if type(x) == "table" then
-			self.length = x.length
-			self.stretch = x.stretch
-			self.shrink = x.shrink
-		else
-			self.length = x
-		end
-		return self
-	end,
-	__tostring = function (x)	
-		local s = tostring(x.length).."pt"
-		if not (x.stretch == 0) then s = s .. " plus "..x.stretch.."pt" end
-		if not (x.shrink == 0) then s = s .. " minus "..x.shrink.."pt" end
-		return s
-	end,
-	__add = function (self, other)
-		local n = _length {}
-		n:fromLengthOrNumber(self)
-		if type(other) == "table" then
-			n.length = n.length + other.length
-			n.stretch = n.stretch + other.stretch
-			n.shrink = n.shrink + other.shrink
-		else
-			n.length = n.length + other
-		end
-		return n
-	end,
-	__sub = function (self, other)
-		local n = _length {}
-		n:fromLengthOrNumber(self)
-		if type(other) == "table" then
-			n.length = n.length - other.length
-			n.stretch = n.stretch - other.stretch
-			n.shrink = n.shrink - other.shrink
-		else
-			n.length = n.length - other
-		end
-		return n
-	end,
-	__lt = function (self, other) return (self-other).length < 0 end,
+local _length
+_length = std.object {
+  length = 0,
+  stretch = 0,
+  shrink = 0,
+  _type = "Length",
+
+  fromLengthOrNumber = function (self, x)
+    if type(x) == "table" then
+      self.length = x.length
+      self.stretch = x.stretch
+      self.shrink = x.shrink
+    else
+      self.length = x
+    end
+    return self
+  end,
+
+  __tostring = function (x)
+    local s = tostring(x.length).."pt"
+    if x.stretch ~= 0 then s = s .. " plus "..x.stretch.."pt" end
+    if x.shrink ~= 0 then s = s .. " minus "..x.shrink.."pt" end
+    return s
+  end,
+
+  __add = function (self, other)
+    local result = _length {}
+    result:fromLengthOrNumber(self)
+    if type(other) == "table" then
+      result.length = result.length + other.length
+      result.stretch = result.stretch + other.stretch
+      result.shrink = result.shrink + other.shrink
+    else
+      result.length = result.length + other
+    end
+    return result
+  end,
+
+  __sub = function (self, other)
+    local result = _length {}
+    result:fromLengthOrNumber(self)
+    if type(other) == "table" then
+      result.length = result.length - other.length
+      result.stretch = result.stretch - other.stretch
+      result.shrink = result.shrink - other.shrink
+    else
+      result.length = result.length - other
+    end
+    return result
+  end,
+
+  __lt = function (self, other)
+    return (self-other).length < 0
+  end,
 }
 
-local zero = _length({})
-length = { 
-	new = function (spec) return _length(spec or {}) end,
-	parse =  function(spec)
-		if not spec then return zero {} end
-		local t = lpeg.match(SILE.parserBits.length, spec)
+local length = {
+  new = function (spec)
+    return _length(spec or {})
+  end,
+
+  parse = function (spec)
+    if not spec then return _length {} end
+    local t = lpeg.match(SILE.parserBits.length, spec)
     if not t then SU.error("Bad length definition '"..spec.."'") end
     if not t.shrink then t.shrink = 0 end
     if not t.stretch then t.stretch = 0 end
-    return SILE.length.new(t)
+    return _length(t)
   end,
-	zero = zero 
+
+  zero = _length {}
 }
+
 return length
