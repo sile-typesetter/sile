@@ -13,74 +13,99 @@ SILE.settings.declare({
   help = "The Lua pattern used for splitting words on spaces"
 })
 
-function itemize(s, pal)
-  return pango.itemize(pango_context, s, 0, string.len(s), pal, nil)
+local pango_itemize = pango.itemize
+local function itemize(s, pal)
+  return pango_itemize(pango_context, s, 0, s:len(), pal)
 end
 
-function _shape(s, item)
-  local offset = item.offset
-  local length = item.length
-  local analysis = item.analysis
+local pango_shape = pango.shape
+local function shape(s, item)
   local pgs = pango.GlyphString.new()
-  pango.shape(string.sub(s,1+offset), length, analysis, pgs)
+  pango_shape(s:sub(item.offset + 1), item.length, item.analysis, pgs)
   return pgs
 end
 
-local palcache = {}
-local spacecache = {}
-local function getPal(options)
-  if options.pal then
-    pal = options.pal
+local getPal
+do
+  local cache = {}
+  function getPal(options)
+    if options.language then
+      pango_context:set_language(pango.Language.from_string(options.language))
+    end
+
+    local pal = options.pal
+    if pal then return pal end
+
+    local hash = std.string.pickle(options)
+    pal = cache[hash]
+    if pal then return pal end
+
+    pal = pango.AttrList.new()
+    if options.language then
+      pal:insert(pango.Attribute.language_new(pango.Language.from_string(options.language)))
+    end
+    if options.font then
+      pal:insert(pango.Attribute.family_new(options.font))
+    end
+    if options.weight then
+      pal:insert(pango.Attribute.weight_new(tonumber(options.weight)))
+    end
+    if options.size then
+      pal:insert(pango.Attribute.size_new(options.size * 1024 * 0.75))
+    end -- I don't know why 0.75
+    if options.style then
+      pal:insert(pango.Attribute.style_new(options.style == "italic" and pango.Style.ITALIC or pango.Style.NORMAL))
+    end
+    if options.variant then
+      pal:insert(pango.Attribute.variant_new(options.variant == "smallcaps" and pango.Variant.SMALL_CAPS or pango.Variant.NORMAL))
+    end
+    cache[hash] = pal
     return pal
   end
-  local p = std.string.pickle(options)
-  if palcache[p] then return palcache[p]
-  else
-    pal = pango.AttrList.new();
-    if options.language then pal:insert(pango.Attribute.language_new(pango.Language.from_string(options.language))) end
-    if options.font then pal:insert(pango.Attribute.family_new(options.font)) end
-    if options.weight then pal:insert(pango.Attribute.weight_new(tonumber(options.weight))) end
-    if options.size then pal:insert(pango.Attribute.size_new(options.size * 1024 * 0.75)) end -- I don't know why 0.75
-    if options.style then pal:insert(pango.Attribute.style_new(
-      options.style == "italic" and pango.Style.ITALIC or pango.Style.NORMAL)) end
-    if options.variant then pal:insert(pango.Attribute.variant_new(
-      options.variant == "smallcaps" and pango.Variant.SMALL_CAPS or pango.Variant.NORMAL)) end
-  end
-  if options.language then
-    pango_context:set_language(pango.Language.from_string(options.language))
-  end
-  palcache[p] = pal
-  return pal
-end  
-
-local function measureSpace( pal )
-  local ss = SILE.settings.get("document.spaceskip") 
-  if ss then return ss end
-  if spacecache[pal] then return spacecache[pal] end
-  local spaceitem = itemize(" ",pal)[1]
-  local g = (_shape(" ",spaceitem).glyphs)[1]
-  local spacewidth = g.geometry.width / 1024;
-  spacecache[pal] = SILE.length.new({ length = spacewidth * 1.2, shrink = spacewidth/3, stretch = spacewidth /2 }) -- XXX
-  return spacecache[pal]
 end
 
-local dimcache = {}
-function SILE.shapers.pango.measureDim(char)
-  local options = SILE.font.loadDefaults({})
-  local pal = getPal(options)
-  if dimcache[pal] and dimcache[pal][char] then return dimcache[pal][char] end
-  if not dimcache[pal] then dimcache[pal] = {} end
-  local charitem = itemize(char,pal)[1]
-  local g = (_shape(char,charitem).glyphs)[1]
-  if char == "x" then 
-    local font = charitem.analysis.font
-    local rect = font:get_glyph_extents(g.glyph)
-    dimcache[pal][char] = -rect.y/1024
-  else
-    dimcache[pal][char] = g.geometry.width / 1024
+local measureSpace
+do
+  local cache = {}
+  function measureSpace(pal)
+    local length = SILE.settings.get("document.spaceskip")
+    if length then return length end
+
+    length = cache[pal]
+    if length then return length end
+
+    local item = itemize(" ", pal)[1]
+    local g = (shape(" ", item).glyphs)[1]
+    local width = g.geometry.width / 1024
+    length = SILE.length.new({ length = width * 1.2, shrink = width/3, stretch = width /2 }) -- XXX
+    cache[pal] = length
+    return length
   end
-  return dimcache[pal][char]
-end 
+end
+
+do
+  local cache = {}
+  function SILE.shapers.pango.measureDim(char)
+    local pal = getPal(SILE.font.loadDefaults({}))
+
+    if not cache[pal] then cache[pal] = {} end
+
+    local width = cache[pal][char]
+    if width then return width end
+
+    local item = itemize(char, pal)[1]
+    local g = (shape(char, item).glyphs)[1]
+    if char == "x" then 
+      local font = item.analysis.font
+      local rect = font:get_glyph_extents(g.glyph)
+      width = -rect.y/1024
+    else
+      width = g.geometry.width / 1024
+    end
+    cache[pal][char] = width
+    return width
+  end
+end
 
 function SILE.shapers.pango.shape(text, options)
   if not options then options = {} end
@@ -96,7 +121,7 @@ function SILE.shapers.pango.shape(text, options)
       local items = itemize(token.string, pal)
       local nnode = {}
       for i in pairs(items) do
-        local pgs = _shape(token.string, items[i])
+        local pgs = shape(token.string, items[i])
         -- Sum the glyphs in this string
         local depth, height = 0,0
         local font = items[i].analysis.font
