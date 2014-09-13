@@ -33,41 +33,6 @@ typedef struct {
   double depth;
 } box;
 
-static char* get_font_path(fontOptions* f) {
-  FcResult result;
-  FcChar8* filename;
-  char* filename2;
-  int id;
-  FcPattern* matched;
-  FcPattern* p = FcPatternCreate();
-  FcPatternAddString (p, FC_FAMILY, (FcChar8*)(f->family));
-  FcPatternAddDouble (p, FC_SIZE, f->pointSize);
-  if (f->slant)
-    FcPatternAddInteger(p, FC_SLANT, f->slant);
-  if (f->weight)
-    FcPatternAddInteger(p, FC_WEIGHT, f->weight);
-
-  /* Add fallback fonts here. Some of the standard 14 should be fine. */
-  FcPatternAddString (p, FC_FAMILY,(FcChar8*) "Times-Roman");
-  FcPatternAddString (p, FC_FAMILY,(FcChar8*) "Times");
-  FcPatternAddString (p, FC_FAMILY,(FcChar8*) "Helvetica");
-  matched = FcFontMatch (0, p, &result);
-  
-  if (FcPatternGetString (matched, FC_FILE, 0, &filename) != FcResultMatch)
-    return NULL;
-  
-  if (FcPatternGetInteger (matched, FC_INDEX, 0, &id) != FcResultMatch)
-    return NULL;
-
-  filename2 = malloc(strlen(filename)); /* Because otherwise destroying the pattern will reclaim it. */
-  strcpy(filename2, (char*)filename);
-
-  FcPatternDestroy (p);
-  FcPatternDestroy (matched);
-
-  return filename2;
-}
-
 void calculate_extents(box* b, hb_glyph_info_t glyph_info, hb_glyph_position_t glyph_pos, FT_Face ft_face) {
   const FT_Error error = FT_Load_Glyph(ft_face, glyph_info.codepoint, FT_LOAD_DEFAULT);
   if (error) return;
@@ -85,9 +50,9 @@ int populate_options(fontOptions* f, lua_State* L) {
   lua_pushstring(L, "font");
   lua_gettable(L, -2);
   if (lua_isstring(L, -1)) {
-    char* newFamily = lua_tostring(L, -1);
+    const char* newFamily = lua_tostring(L, -1);
     if (strcmp(newFamily, f->family)) changed = 1;
-    f->family = newFamily;
+    f->family = (char*)newFamily;
   }
   lua_pop(L,1);
 
@@ -130,10 +95,9 @@ typedef struct {
 } userdata_state;
 
 int shape (lua_State *L) {    
-    char * font_path;
     const char * text = lua_tostring(L, 1);
     static fontOptions* f = NULL;
-    unsigned int glyph_count;
+    unsigned int glyph_count = 0;
     int error;
     hb_font_t *hb_ft_font;
     hb_buffer_t *buf;
@@ -155,7 +119,7 @@ int shape (lua_State *L) {
       changed = 1;
     }
     changed = populate_options(f, L) | changed;
-    /* Grab state */
+    // /* Grab state */
     lua_pushstring(L, "hb_uds");
     lua_gettable(L, LUA_REGISTRYINDEX);
 
@@ -174,18 +138,46 @@ int shape (lua_State *L) {
     lua_pop(L,1);
     /* Load our fonts */
     if (changed) {
+      FcChar8 * font_path;
+      FcPattern* p;
+      FcPattern* matched;
+      FcResult result;
+      p = FcPatternCreate();
+      assert(f->family);
+      FcPatternAddString (p, FC_FAMILY, (FcChar8*)(f->family));
+      FcPatternAddDouble (p, FC_SIZE, f->pointSize);
+      if (f->slant)
+        FcPatternAddInteger(p, FC_SLANT, f->slant);
+      if (f->weight)
+        FcPatternAddInteger(p, FC_WEIGHT, f->weight);
+
+      // /* Add fallback fonts here. Some of the standard 14 should be fine. */
+      FcPatternAddString (p, FC_FAMILY,(FcChar8*) "Times-Roman");
+      FcPatternAddString (p, FC_FAMILY,(FcChar8*) "Times");
+      FcPatternAddString (p, FC_FAMILY,(FcChar8*) "Helvetica");
+      matched = FcFontMatch (0, p, &result);
+      
+      if (FcPatternGetString (matched, FC_FILE, 0, &font_path) != FcResultMatch)
+        return 0;
+
       if (uds->ft_face) { FT_Done_Face(uds->ft_face); }
       uds->ft_face = malloc(sizeof(FT_Face));
-      font_path = get_font_path(f);
-      if (FT_New_Face(uds->ft_library, font_path, 0, &(uds->ft_face)))
+      if (!font_path) {
+        printf("Finding font path failed\n");
         return 0;
-      free(font_path);
-      if (FT_Set_Char_Size(uds->ft_face, 0, f->pointSize * 64, 72, 72 ))
+      }
+      if (FT_New_Face(uds->ft_library, (char*)font_path, 0, &(uds->ft_face)))
         return 0;
+      if (FT_Set_Char_Size(uds->ft_face,f->pointSize * 64.0, 0, 0, 0))
+        return 0;
+      FcPatternDestroy (matched);
+      FcPatternDestroy (p);
+      // free(font_path);
     }
 
     /* Get our harfbuzz font structs */
     hb_ft_font = hb_ft_font_create(uds->ft_face, NULL);
+    hb_font_set_ppem(hb_ft_font, 0, 0);
     buf = hb_buffer_create();
     if (f->script)
       hb_buffer_set_script(buf, hb_tag_from_string(f->script, strlen(f->script)));
@@ -201,10 +193,21 @@ int shape (lua_State *L) {
     glyph_info   = hb_buffer_get_glyph_infos(buf, &glyph_count);
     glyph_pos    = hb_buffer_get_glyph_positions(buf, &glyph_count);
     for (j = 0; j < glyph_count; ++j) {
+      char buf[255];
       box glyph_extents  = { 0.0, 0.0, 0.0 };
-      
       calculate_extents(&glyph_extents, glyph_info[j], glyph_pos[j], uds->ft_face);
+      glyph_extents.width += glyph_pos[j].x_offset / 64.0;
+      //assert(!glyph_pos[j].x_offset);
+      /* Add kerning? */
+      if (j < glyph_count) {
+        hb_position_t kern = hb_font_get_glyph_h_kerning(hb_ft_font, glyph_info[j].codepoint, glyph_info[j+1].codepoint);
+        glyph_extents.width += kern;
+      }
       lua_newtable(L);
+      lua_pushstring(L, "name");
+      FT_Get_Glyph_Name( uds->ft_face, glyph_info[j].codepoint, buf, 255 );      
+      lua_pushstring(L, buf);
+      lua_settable(L, -3);
       lua_pushstring(L, "codepoint");
       lua_pushinteger(L, glyph_info[j].codepoint);
       lua_settable(L, -3);
@@ -232,16 +235,17 @@ static const struct luaL_reg lib_table [] = {
     
 int jehb_gc(lua_State *L) {
   userdata_state *uds = lua_touserdata(L, 1);
+  printf("Destructor called\n");
   FT_Done_Face(uds->ft_face);
   FT_Done_FreeType(uds->ft_library);
   return 0;
 }
 
 int luaopen_justenoughharfbuzz (lua_State *L) {
-  luaL_newmetatable(L, "JEHB.state");
-  lua_pushstring(L, "__gc");
-  lua_pushcfunction(L, jehb_gc);  
-  lua_settable(L, -3);
+  // luaL_newmetatable(L, "JEHB.state");
+  // lua_pushstring(L, "__gc");
+  // lua_pushcfunction(L, jehb_gc);  
+  // lua_settable(L, -3);
 
   luaL_openlib(L, "justenoughharfbuzz", lib_table, 0);
   return 1;
