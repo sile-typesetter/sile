@@ -100,6 +100,7 @@ int shape (lua_State *L) {
     unsigned int glyph_count = 0;
     int error;
     hb_font_t *hb_ft_font;
+    hb_face_t *hb_ft_face;
     hb_buffer_t *buf;
     hb_glyph_info_t *glyph_info;
     hb_glyph_position_t *glyph_pos;
@@ -146,8 +147,7 @@ int shape (lua_State *L) {
       assert(f->family);
       FcPatternAddString (p, FC_FAMILY, (FcChar8*)(f->family));
       FcPatternAddDouble (p, FC_SIZE, f->pointSize);
-      if (f->slant)
-        FcPatternAddInteger(p, FC_SLANT, f->slant);
+      FcPatternAddInteger(p, FC_SLANT, f->slant);
       if (f->weight)
         FcPatternAddInteger(p, FC_WEIGHT, f->weight);
 
@@ -177,7 +177,7 @@ int shape (lua_State *L) {
 
     /* Get our harfbuzz font structs */
     hb_ft_font = hb_ft_font_create(uds->ft_face, NULL);
-    hb_font_set_ppem(hb_ft_font, 0, 0);
+
     buf = hb_buffer_create();
     if (f->script)
       hb_buffer_set_script(buf, hb_tag_from_string(f->script, strlen(f->script)));
@@ -196,13 +196,15 @@ int shape (lua_State *L) {
       char buf[255];
       box glyph_extents  = { 0.0, 0.0, 0.0 };
       calculate_extents(&glyph_extents, glyph_info[j], glyph_pos[j], uds->ft_face);
-      glyph_extents.width += glyph_pos[j].x_offset / 64.0;
-      //assert(!glyph_pos[j].x_offset);
-      /* Add kerning? */
+      // glyph_extents.width += glyph_pos[j].x_offset / 64.0;
+      assert(!glyph_pos[j].x_offset);
+      /* Add kerning */
       if (j < glyph_count) {
         hb_position_t kern = hb_font_get_glyph_h_kerning(hb_ft_font, glyph_info[j].codepoint, glyph_info[j+1].codepoint);
-        glyph_extents.width += kern;
+        glyph_extents.width -= kern / 64.0;
+
       }
+
       lua_newtable(L);
       lua_pushstring(L, "name");
       FT_Get_Glyph_Name( uds->ft_face, glyph_info[j].codepoint, buf, 255 );      

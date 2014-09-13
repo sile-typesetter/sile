@@ -161,6 +161,7 @@ SILE.baseClass = std.object {
   finish = function(self)
     self:endPage();
     SILE.typesetter:chuck()
+    SILE.outputter:finish()
  end,
   newPar = function(typesetter)
     typesetter:pushGlue(SILE.settings.get("current.parindent"))

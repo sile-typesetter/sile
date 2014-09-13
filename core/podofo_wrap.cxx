@@ -38803,7 +38803,7 @@ static int _wrap_PdfPainter_DrawGlyph(lua_State* L) {
   
   SWIG_check_num_args("PoDoFo::PdfPainter::DrawGlyph",5,5)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfPainter::DrawGlyph",1,"PoDoFo::PdfPainter *");
-  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("PoDoFo::PdfPainter::DrawGlyph",2,"PoDoFo::PdfMemDocument *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("PoDoFo::PdfPainter::DrawGlyph",2,"PoDoFo::PdfStreamedDocument *");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("PoDoFo::PdfPainter::DrawGlyph",3,"double");
   if(!lua_isnumber(L,4)) SWIG_fail_arg("PoDoFo::PdfPainter::DrawGlyph",4,"double");
   if(!SWIG_lua_isnilstring(L,5)) SWIG_fail_arg("PoDoFo::PdfPainter::DrawGlyph",5,"char const *");
@@ -38813,8 +38813,8 @@ static int _wrap_PdfPainter_DrawGlyph(lua_State* L) {
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
-    SWIG_fail_ptr("PdfPainter_DrawGlyph",2,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
+    SWIG_fail_ptr("PdfPainter_DrawGlyph",2,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
   }
   
   arg3 = (double)lua_tonumber(L, 3);

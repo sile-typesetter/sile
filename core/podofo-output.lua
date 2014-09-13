@@ -13,8 +13,8 @@ SILE.outputters.podofo = {
   init = function()
     document = pdf.PdfStreamedDocument(SILE.outputFilename)
     pagesize = pdf.PdfRect()
-    pagesize:setWidth(SILE.documentState.paperSize[1])
-    pagesize:setHeight(SILE.documentState.paperSize[2])
+    pagesize:SetWidth(SILE.documentState.paperSize[1])
+    pagesize:SetHeight(SILE.documentState.paperSize[2])
     page = document:CreatePage(pagesize)
     painter = podofo.PdfPainter();
     painter:SetPage(page)
@@ -25,28 +25,29 @@ SILE.outputters.podofo = {
     painter:SetPage(page)
   end,
   finish = function()
+    print("Finishing")
     painter:FinishPage()
     document:Close()
   end,
   setColor = function (self, color)
     painter:SetColor(color.r, color.g, color.b)
   end,
-  showGlyphString = function(f,pgs, options)
-    sgs(cr, f,pgs)
+  showGlyphs = function (glyphs)
+  -- print(glyphs[1])
+    painter:DrawGlyph(document,cursorX, cursorY, glyphs[1])
+    -- painter:DrawText(cursorX, cursorY, podofo.PdfString(glyphs[1]))
   end,
   setFont = function (options)
     font = document:CreateFont(options.font)
-    font:setFontSize(options.size)
+    font:SetFontSize(options.size)
+    painter:SetFont(font)
     -- ...
-  end,
-  showText = function(t)
-    cr:show_text(t)
   end,
   drawPNG = function (src, x,y,w,h)
   end,
   moveTo = function (x,y)
-    cursorX = 0
-    cursorY = 0
+    cursorX = x
+    cursorY = SILE.documentState.paperSize[2] - y
   end,
   rule = function (x,y,w,d)
     painter:Rectangle(x,y,w,d)
@@ -56,7 +57,13 @@ SILE.outputters.podofo = {
   debugFrame = function (self,f)
   end,
   debugHbox = function(typesetter, hbox, scaledWidth)
-
+    painter:SetColor(0.9,0.9,0.9);
+    painter:SetStrokeWidth(0.5);  
+    painter:Rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY+(hbox.height), scaledWidth, hbox.height+hbox.depth);
+    if (hbox.depth) then painter:Rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY+(hbox.height), scaledWidth, hbox.height); end
+    painter:Stroke();
+    painter:SetColor(0,0,0);
+    --cr:move_to(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY);
   end
 }
 

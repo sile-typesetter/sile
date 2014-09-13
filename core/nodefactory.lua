@@ -45,7 +45,12 @@ local _hbox = _box {
       -- print(self.value.glyphNames[1])
     end
     SILE.outputter.setFont(self.value.options)
-    SILE.outputter.showText(self.value.text)
+    -- SILE.outputter.showGlyphs(self.value.glyphNames)
+    if self.value.pgs then
+      SILE.outputter.showGlyphString(self.value.font, self.value.pgs)
+    elseif self.value.glyphNames then
+      SILE.outputter.showGlyphs(self.value.glyphNames)
+    end
     typesetter.frame:moveX(scaledWidth)
   end
 }
