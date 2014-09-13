@@ -40,7 +40,12 @@ local _hbox = _box {
     end
     typesetter.frame:normalize()
     SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
-    SILE.outputter.showGlyphString(self.value.font, self.value.glyphString, self.value.options)
+    -- SILE.outputter.debugHbox(typesetter, self, scaledWidth)
+    if self.value.glyphNames then
+      -- print(self.value.glyphNames[1])
+    end
+    SILE.outputter.setFont(self.value.options)
+    SILE.outputter.showText(self.value.text)
     typesetter.frame:moveX(scaledWidth)
   end
 }

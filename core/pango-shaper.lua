@@ -4,7 +4,8 @@ local pango = lgi.Pango
 local fm = lgi.PangoCairo.FontMap.get_default()
 local pango_context = lgi.Pango.FontMap.create_context(fm)
 
-SILE.shapers = { pango= {} }
+if not SILE.shapers then SILE.shapers = { } end
+SILE.shapers.pango = {}
 
 SILE.settings.declare({
   name = "shaper.spacepattern", 
@@ -98,20 +99,23 @@ function SILE.shapers.pango.shape(text, options)
       for i in pairs(items) do
         local pgs = _shape(token.string, items[i])
         -- Sum the glyphs in this string
+        local text = string.sub(token.string,1+items[i].offset, items[i].length)
         local depth, height = 0,0
         local font = items[i].analysis.font
+        local glyphs = {}
         for g in pairs(pgs.glyphs) do
           local rect = font:get_glyph_extents(pgs.glyphs[g].glyph)
           local desc = rect.y + rect.height
           local asc  = -rect.y 
           if desc > depth then depth = desc end
           if asc > height then height = asc end
+          table.insert(glyphs, pgs.glyphs[g].glyph)
         end
         table.insert(nnode, SILE.nodefactory.newHbox({ 
           depth = depth / 1024,
           height= height / 1024,
           width = SILE.length.new({ length= pgs:get_width() / 1024 }),
-          value = {font = font, glyphString = pgs, options = options }
+          value = {font = font, text = text, glyphString = pgs, glyphs = glyphs, options = options }
         }))
       end
       table.insert(nodes, SILE.nodefactory.newNnode({ 

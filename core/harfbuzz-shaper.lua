@@ -1,5 +1,6 @@
 
-if not SILE.shapers then SILE.shapers = { harfbuzz = {} } end
+if not SILE.shapers then SILE.shapers = { } end
+SILE.shapers.harfbuzz = {}
 
 SILE.settings.declare({
   name = "shaper.spacepattern", 
@@ -14,6 +15,7 @@ local function measureSpace( options )
   local ss = SILE.settings.get("document.spaceskip") 
   if ss then return ss end
   local i = { SILE.shapers.harfbuzz._shape(" ") }
+  if not i[1] then return SILE.length.new() end
   local spacewidth = i[1].width
   return SILE.length.new({ length = spacewidth * 1.2, shrink = spacewidth/3, stretch = spacewidth /2 }) -- XXX
 end
@@ -33,28 +35,31 @@ function SILE.shapers.harfbuzz.shape(text, options)
   options = SILE.font.loadDefaults(options)
   local nodes = {}
   local gluewidth = measureSpace(options)
+  options.lang = "en"
   for token in SU.gtoke(text, SILE.settings.get("shaper.spacepattern")) do
     if (token.separator) then
       table.insert(nodes, SILE.nodefactory.newGlue({ width = gluewidth }))
     else
       local items = { SILE.shapers.harfbuzz._shape(token.string, options) }
-      local glyphs = {}
-      local totalWidth = 0
-      local depth = 0
-      local height = 0
       local nnode = {}
       for i = 1,#items do local glyph = items[i]
+        local totalWidth = 0
+        local depth = 0
+        local height = 0
+        
+        local glyphs = {}
         if glyph.depth > depth then depth = glyph.depth end
         if glyph.height > height then height = glyph.height end
         totalWidth = totalWidth + glyph.width
         table.insert(glyphs, glyph.codepoint)
-      end
       table.insert(nnode, SILE.nodefactory.newHbox({ 
         depth = depth,
         height= height,
         width = SILE.length.new({ length = totalWidth }),
-        value = {glyphString = glyphs, options = options }
+        value = {glyphString = glyphs, glyphNames = {glyph.name}, options = options, text = token.string[i] }
       }))
+
+      end
       table.insert(nodes, SILE.nodefactory.newNnode({ 
         nodes = nnode,
         text = token.string,
