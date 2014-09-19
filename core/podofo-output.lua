@@ -25,23 +25,22 @@ SILE.outputters.podofo = {
     painter:SetPage(page)
   end,
   finish = function()
-    print("Finishing")
     painter:FinishPage()
     document:Close()
   end,
   setColor = function (self, color)
     painter:SetColor(color.r, color.g, color.b)
   end,
-  showGlyphs = function (glyphs)
-  -- print(glyphs[1])
-    painter:DrawGlyph(document,cursorX, cursorY, glyphs[1])
-    -- painter:DrawText(cursorX, cursorY, podofo.PdfString(glyphs[1]))
+  outputHbox = function (value)
+    if not value.glyphNames then return end
+    for i = 1,#(value.glyphNames) do
+      painter:DrawGlyph(document,cursorX, cursorY, value.glyphNames[i])
+    end
   end,
   setFont = function (options)
-    font = document:CreateFont(options.font)
+    font = document:CreateFont(options.font, options.weight > 200, options.style == "italic")
     font:SetFontSize(options.size)
     painter:SetFont(font)
-    -- ...
   end,
   drawPNG = function (src, x,y,w,h)
   end,

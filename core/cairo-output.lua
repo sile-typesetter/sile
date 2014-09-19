@@ -25,15 +25,17 @@ SILE.outputters.cairo = {
   setColor = function (self, color)
     cr:set_source_rgb(color.r, color.g, color.b)
   end,
-  showGlyphString = function(f,pgs, options)
-    sgs(cr, f,pgs)
+  outputHbox = function (value)
+    if not value then return end
+    if value.pgs then
+      sgs(cr, value.font, value.pgs)
+    elseif value.text then
+      cr:show_text(value.text)
+    end
   end,
   setFont = function (options)
     cr:select_font_face(options.font, options.style == "italic" and 1 or 0, options.weight > 100 and 0 or 1)
     cr:set_font_size(options.size)
-  end,
-  showText = function(t)
-    cr:show_text(t)
   end,
   drawPNG = function (src, x,y,w,h)
     local image = cairo.ImageSurface.create_from_png(src)
