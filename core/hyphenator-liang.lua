@@ -86,7 +86,7 @@ SILE.hyphenate = function (nodelist)
         local newnodes = {}
         for j, b in ipairs(breaks) do
           if not(b=="") then
-            for _,nn in pairs(SILE.shaper.shape(b, {options = n.options, pal = n.pal, language = n.language})) do 
+            for _,nn in pairs(SILE.shaper.shape(b, n.options)) do 
               table.insert(newnodes, nn) 
             end
             if not (j == #breaks) then
