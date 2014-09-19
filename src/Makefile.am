@@ -8,4 +8,7 @@ justenoughharfbuzz_la_LIBADD = $(HARFBUZZ_LIBS) $(FREETYPE_LIBS) $(FONTCONFIG_LI
 podofo_la_SOURCES = podofo_wrap.cxx
 podofo_la_LDFLAGS = -module -avoid-version -shared
 podofo_la_LIBADD = -lpodofo
+
+all-local: $(core_LTLIBRARIES)
+	cp .libs/justenoughharfbuzz.so .libs/podofo.so ../core
 endif
