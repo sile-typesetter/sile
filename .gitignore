@@ -12,3 +12,17 @@ Makefile.in
 /install-sh
 /missing
 /stamp-h1
+
+# Other autojunk
+.deps
+.libs
+*.lo
+*.la
+AUTHORS
+COPYING
+INSTALL
+
+libtool
+ltmain.sh
+subfiles.mk
+
