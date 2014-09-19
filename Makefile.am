@@ -1,3 +1,4 @@
+ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = src
 dist_bin_SCRIPTS = sile
 -include subfiles.mk
