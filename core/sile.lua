@@ -31,7 +31,7 @@ SILE.linebreak = require("core/break")
 
 require("core/frame")
 
-if pcall(function () require("justenoughharfbuzz") end)
+if pcall(function () require("justenoughharfbuzz") end) then
   require("core/harfbuzz-shaper")
   require("core/podofo-output")
 else
