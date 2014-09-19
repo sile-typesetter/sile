@@ -19,7 +19,6 @@ require("core/settings")
 require("core/inputs-texlike")
 require("core/inputs-xml")
 require("core/inputs-common")
-require("core/pango-shaper")
 require("core/papersizes")
 require("core/colorparser")
 require("core/pagebuilder")
@@ -31,7 +30,14 @@ SILE.frameParser = require("core/frameparser")
 SILE.linebreak = require("core/break")
 
 require("core/frame")
-require("core/cairo-output")
+
+if pcall(function () require("justenoughharfbuzz") end)
+  require("core/harfbuzz-shaper")
+  require("core/podofo-output")
+else
+  require("core/pango-shaper")
+  require("core/cairo-output")
+end
 
 SILE.require = function(d)
   -- path?

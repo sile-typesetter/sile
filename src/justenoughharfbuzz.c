@@ -84,7 +84,29 @@ int populate_options(fontOptions* f, lua_State* L) {
   lua_pop(L,1);
 
   // language
+  lua_pushstring(L, "language");
+  lua_gettable(L, -2);
+  if (lua_isstring(L, -1)) {
+    const char* newLanguage = lua_tostring(L, -1);
+    if (strcmp(newLanguage, f->lang)) changed = 1;
+    f->lang = (char*)newLanguage;
+  }
+  lua_pop(L,1);
+
   // style
+  lua_pushstring(L, "style");
+  lua_gettable(L, -2);
+  if (lua_isstring(L, -1)) {
+    int newStyle = FC_SLANT_ROMAN;
+    const char* newStyleAsText = lua_tostring(L, -1);
+    if (!strcmp(newStyleAsText, "italic"))
+      newStyle = FC_SLANT_ITALIC;
+
+    if (newStyle != f->slant) changed = 1;
+    f->slant = newStyle;
+  }
+  lua_pop(L,1);
+
   // variant
   return changed;
 }
