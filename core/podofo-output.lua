@@ -11,7 +11,7 @@ local cursorX = 0
 local cursorY = 0
 SILE.outputters.podofo = {
   init = function()
-    document = pdf.PdfStreamedDocument(SILE.outputFilename)
+    document = pdf.PdfMemDocument()
     pagesize = pdf.PdfRect()
     pagesize:SetWidth(SILE.documentState.paperSize[1])
     pagesize:SetHeight(SILE.documentState.paperSize[2])
@@ -26,7 +26,7 @@ SILE.outputters.podofo = {
   end,
   finish = function()
     painter:FinishPage()
-    document:Close()
+    document:Write(SILE.outputFilename)
   end,
   setColor = function (self, color)
     painter:SetColor(color.r, color.g, color.b)
