@@ -105,6 +105,7 @@ int populate_options(fontOptions* f, lua_State* L) {
     if (newStyle != f->slant) changed = 1;
     f->slant = newStyle;
   }
+
   lua_pop(L,1);
 
   // variant
@@ -190,11 +191,12 @@ int shape (lua_State *L) {
       }
       if (FT_New_Face(uds->ft_library, (char*)font_path, 0, &(uds->ft_face)))
         return 0;
+      
       if (FT_Set_Char_Size(uds->ft_face,f->pointSize * 64.0, 0, 0, 0))
         return 0;
       FcPatternDestroy (matched);
       FcPatternDestroy (p);
-      // free(font_path);
+      //free(font_path);
     }
 
     /* Get our harfbuzz font structs */
@@ -266,10 +268,10 @@ int jehb_gc(lua_State *L) {
 }
 
 int luaopen_justenoughharfbuzz (lua_State *L) {
-  // luaL_newmetatable(L, "JEHB.state");
-  // lua_pushstring(L, "__gc");
-  // lua_pushcfunction(L, jehb_gc);  
-  // lua_settable(L, -3);
+  luaL_newmetatable(L, "JEHB.state");
+  lua_pushstring(L, "__gc");
+  lua_pushcfunction(L, jehb_gc);  
+  lua_settable(L, -3);
 
   luaL_openlib(L, "justenoughharfbuzz", lib_table, 0);
   return 1;

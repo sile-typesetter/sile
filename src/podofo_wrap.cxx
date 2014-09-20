@@ -2638,117 +2638,129 @@ SWIG_Lua_dostring(lua_State *L, const char *str) {
 #define SWIGTYPE_p_PdfFontMetricsBase14 swig_types[11]
 #define SWIGTYPE_p_PdfObject swig_types[12]
 #define SWIGTYPE_p_PdfRefCountedBuffer swig_types[13]
-#define SWIGTYPE_p_PdfStream swig_types[14]
-#define SWIGTYPE_p_PoDoFo__NonPublic__PdfHintStream swig_types[15]
-#define SWIGTYPE_p_PoDoFo__PODOFO_CharData swig_types[16]
-#define SWIGTYPE_p_PoDoFo__PdfAcroForm swig_types[17]
-#define SWIGTYPE_p_PoDoFo__PdfAction swig_types[18]
-#define SWIGTYPE_p_PoDoFo__PdfAnnotation swig_types[19]
-#define SWIGTYPE_p_PoDoFo__PdfArray swig_types[20]
-#define SWIGTYPE_p_PoDoFo__PdfAxialShadingPattern swig_types[21]
-#define SWIGTYPE_p_PoDoFo__PdfButton swig_types[22]
-#define SWIGTYPE_p_PoDoFo__PdfCMapEncoding swig_types[23]
-#define SWIGTYPE_p_PoDoFo__PdfCanvas swig_types[24]
-#define SWIGTYPE_p_PoDoFo__PdfCheckBox swig_types[25]
-#define SWIGTYPE_p_PoDoFo__PdfColor swig_types[26]
-#define SWIGTYPE_p_PoDoFo__PdfComboBox swig_types[27]
-#define SWIGTYPE_p_PoDoFo__PdfContents swig_types[28]
-#define SWIGTYPE_p_PoDoFo__PdfDestination swig_types[29]
-#define SWIGTYPE_p_PoDoFo__PdfDictionary swig_types[30]
-#define SWIGTYPE_p_PoDoFo__PdfDifferenceEncoding swig_types[31]
-#define SWIGTYPE_p_PoDoFo__PdfDocument swig_types[32]
-#define SWIGTYPE_p_PoDoFo__PdfElement swig_types[33]
-#define SWIGTYPE_p_PoDoFo__PdfEncoding swig_types[34]
-#define SWIGTYPE_p_PoDoFo__PdfEncodingDifference swig_types[35]
-#define SWIGTYPE_p_PoDoFo__PdfEncodingObjectFactory swig_types[36]
-#define SWIGTYPE_p_PoDoFo__PdfExponentialFunction swig_types[37]
-#define SWIGTYPE_p_PoDoFo__PdfExtGState swig_types[38]
-#define SWIGTYPE_p_PoDoFo__PdfField swig_types[39]
-#define SWIGTYPE_p_PoDoFo__PdfFileSpec swig_types[40]
-#define SWIGTYPE_p_PoDoFo__PdfFont swig_types[41]
-#define SWIGTYPE_p_PoDoFo__PdfFontCID swig_types[42]
-#define SWIGTYPE_p_PoDoFo__PdfFontCache swig_types[43]
-#define SWIGTYPE_p_PoDoFo__PdfFontConfigWrapper swig_types[44]
-#define SWIGTYPE_p_PoDoFo__PdfFontFactory swig_types[45]
-#define SWIGTYPE_p_PoDoFo__PdfFontMetrics swig_types[46]
-#define SWIGTYPE_p_PoDoFo__PdfFontSimple swig_types[47]
-#define SWIGTYPE_p_PoDoFo__PdfFontTTFSubset swig_types[48]
-#define SWIGTYPE_p_PoDoFo__PdfFunction swig_types[49]
-#define SWIGTYPE_p_PoDoFo__PdfFunctionBaseShadingPattern swig_types[50]
-#define SWIGTYPE_p_PoDoFo__PdfIdentityEncoding swig_types[51]
-#define SWIGTYPE_p_PoDoFo__PdfImage swig_types[52]
-#define SWIGTYPE_p_PoDoFo__PdfInfo swig_types[53]
-#define SWIGTYPE_p_PoDoFo__PdfInputDevice swig_types[54]
-#define SWIGTYPE_p_PoDoFo__PdfInputStream swig_types[55]
-#define SWIGTYPE_p_PoDoFo__PdfListBox swig_types[56]
-#define SWIGTYPE_p_PoDoFo__PdfListField swig_types[57]
-#define SWIGTYPE_p_PoDoFo__PdfMemDocument swig_types[58]
-#define SWIGTYPE_p_PoDoFo__PdfName swig_types[59]
-#define SWIGTYPE_p_PoDoFo__PdfNamesTree swig_types[60]
-#define SWIGTYPE_p_PoDoFo__PdfObject swig_types[61]
-#define SWIGTYPE_p_PoDoFo__PdfOutlineItem swig_types[62]
-#define SWIGTYPE_p_PoDoFo__PdfOutlines swig_types[63]
-#define SWIGTYPE_p_PoDoFo__PdfOutputDevice swig_types[64]
-#define SWIGTYPE_p_PoDoFo__PdfPage swig_types[65]
-#define SWIGTYPE_p_PoDoFo__PdfPagesTree swig_types[66]
-#define SWIGTYPE_p_PoDoFo__PdfPagesTreeCache swig_types[67]
-#define SWIGTYPE_p_PoDoFo__PdfPainter swig_types[68]
-#define SWIGTYPE_p_PoDoFo__PdfPainterMM swig_types[69]
-#define SWIGTYPE_p_PoDoFo__PdfPushButton swig_types[70]
-#define SWIGTYPE_p_PoDoFo__PdfRadialShadingPattern swig_types[71]
-#define SWIGTYPE_p_PoDoFo__PdfRect swig_types[72]
-#define SWIGTYPE_p_PoDoFo__PdfReference swig_types[73]
-#define SWIGTYPE_p_PoDoFo__PdfSampledFunction swig_types[74]
-#define SWIGTYPE_p_PoDoFo__PdfShadingPattern swig_types[75]
-#define SWIGTYPE_p_PoDoFo__PdfSigIncPainter swig_types[76]
-#define SWIGTYPE_p_PoDoFo__PdfSignOutputDevice swig_types[77]
-#define SWIGTYPE_p_PoDoFo__PdfSignatureField swig_types[78]
-#define SWIGTYPE_p_PoDoFo__PdfSimpleTableModel swig_types[79]
-#define SWIGTYPE_p_PoDoFo__PdfStitchingFunction swig_types[80]
-#define SWIGTYPE_p_PoDoFo__PdfStream swig_types[81]
-#define SWIGTYPE_p_PoDoFo__PdfStreamedDocument swig_types[82]
-#define SWIGTYPE_p_PoDoFo__PdfString swig_types[83]
-#define SWIGTYPE_p_PoDoFo__PdfTable swig_types[84]
-#define SWIGTYPE_p_PoDoFo__PdfTableModel swig_types[85]
-#define SWIGTYPE_p_PoDoFo__PdfTextField swig_types[86]
-#define SWIGTYPE_p_PoDoFo__PdfTilingPattern swig_types[87]
-#define SWIGTYPE_p_PoDoFo__PdfTriangleShadingPattern swig_types[88]
-#define SWIGTYPE_p_PoDoFo__PdfVariant swig_types[89]
-#define SWIGTYPE_p_PoDoFo__PdfVecObjects swig_types[90]
-#define SWIGTYPE_p_PoDoFo__PdfXObject swig_types[91]
-#define SWIGTYPE_p_PoDoFo__TFontCacheElement swig_types[92]
-#define SWIGTYPE_p_PoDoFo__TLineElement swig_types[93]
-#define SWIGTYPE_p_Sample swig_types[94]
-#define SWIGTYPE_p_TVecFilters swig_types[95]
-#define SWIGTYPE_p_a_4__char swig_types[96]
-#define SWIGTYPE_p_a_9__char swig_types[97]
-#define SWIGTYPE_p_char swig_types[98]
-#define SWIGTYPE_p_double swig_types[99]
-#define SWIGTYPE_p_f_r_PoDoFo__PdfRect_p_void__p_PoDoFo__PdfPage swig_types[100]
-#define SWIGTYPE_p_p_char swig_types[101]
-#define SWIGTYPE_p_pdf_int16 swig_types[102]
-#define SWIGTYPE_p_pdf_int64 swig_types[103]
-#define SWIGTYPE_p_pdf_long swig_types[104]
-#define SWIGTYPE_p_pdf_uint16 swig_types[105]
-#define SWIGTYPE_p_pdf_uint32 swig_types[106]
-#define SWIGTYPE_p_ptrdiff_t swig_types[107]
-#define SWIGTYPE_p_std__dequeT_PoDoFo__PdfObject_p_t swig_types[108]
-#define SWIGTYPE_p_std__listT_PoDoFo__PdfFunction_t swig_types[109]
-#define SWIGTYPE_p_std__listT_char_t swig_types[110]
-#define SWIGTYPE_p_std__mapT_PoDoFo__PdfReference_PoDoFo__PdfAnnotation_p_t swig_types[111]
-#define SWIGTYPE_p_std__mapT_PoDoFo__PdfReference_PoDoFo__PdfAnnotation_p_t__const_iterator swig_types[112]
-#define SWIGTYPE_p_std__mapT_PoDoFo__PdfReference_PoDoFo__PdfAnnotation_p_t__iterator swig_types[113]
-#define SWIGTYPE_p_std__ostringstream swig_types[114]
-#define SWIGTYPE_p_std__string swig_types[115]
-#define SWIGTYPE_p_std__vectorT_PoDoFo__PdfObject_p_t swig_types[116]
-#define SWIGTYPE_p_std__vectorT_PoDoFo__PdfPage_p_t swig_types[117]
-#define SWIGTYPE_p_std__vectorT_PoDoFo__PdfRect_t swig_types[118]
-#define SWIGTYPE_p_std__vectorT_PoDoFo__PdfString_t swig_types[119]
-#define SWIGTYPE_p_unsigned_char swig_types[120]
-#define SWIGTYPE_p_void swig_types[121]
-#define SWIGTYPE_p_wchar_t swig_types[122]
-static swig_type_info *swig_types[124];
-static swig_module_info swig_module = {swig_types, 123, 0, 0, 0, 0};
+#define SWIGTYPE_p_PdfRefCountedInputDevice swig_types[14]
+#define SWIGTYPE_p_PdfStream swig_types[15]
+#define SWIGTYPE_p_PoDoFo__NonPublic__PdfHintStream swig_types[16]
+#define SWIGTYPE_p_PoDoFo__PODOFO_CharData swig_types[17]
+#define SWIGTYPE_p_PoDoFo__PdfAcroForm swig_types[18]
+#define SWIGTYPE_p_PoDoFo__PdfAction swig_types[19]
+#define SWIGTYPE_p_PoDoFo__PdfAnnotation swig_types[20]
+#define SWIGTYPE_p_PoDoFo__PdfArray swig_types[21]
+#define SWIGTYPE_p_PoDoFo__PdfAxialShadingPattern swig_types[22]
+#define SWIGTYPE_p_PoDoFo__PdfButton swig_types[23]
+#define SWIGTYPE_p_PoDoFo__PdfCMapEncoding swig_types[24]
+#define SWIGTYPE_p_PoDoFo__PdfCanvas swig_types[25]
+#define SWIGTYPE_p_PoDoFo__PdfCheckBox swig_types[26]
+#define SWIGTYPE_p_PoDoFo__PdfColor swig_types[27]
+#define SWIGTYPE_p_PoDoFo__PdfComboBox swig_types[28]
+#define SWIGTYPE_p_PoDoFo__PdfContents swig_types[29]
+#define SWIGTYPE_p_PoDoFo__PdfDestination swig_types[30]
+#define SWIGTYPE_p_PoDoFo__PdfDictionary swig_types[31]
+#define SWIGTYPE_p_PoDoFo__PdfDifferenceEncoding swig_types[32]
+#define SWIGTYPE_p_PoDoFo__PdfDocument swig_types[33]
+#define SWIGTYPE_p_PoDoFo__PdfElement swig_types[34]
+#define SWIGTYPE_p_PoDoFo__PdfEncoding swig_types[35]
+#define SWIGTYPE_p_PoDoFo__PdfEncodingDifference swig_types[36]
+#define SWIGTYPE_p_PoDoFo__PdfEncodingObjectFactory swig_types[37]
+#define SWIGTYPE_p_PoDoFo__PdfEncrypt swig_types[38]
+#define SWIGTYPE_p_PoDoFo__PdfEncrypt__EPdfEncryptAlgorithm swig_types[39]
+#define SWIGTYPE_p_PoDoFo__PdfEncrypt__EPdfKeyLength swig_types[40]
+#define SWIGTYPE_p_PoDoFo__PdfError swig_types[41]
+#define SWIGTYPE_p_PoDoFo__PdfErrorInfo swig_types[42]
+#define SWIGTYPE_p_PoDoFo__PdfError__LogMessageCallback swig_types[43]
+#define SWIGTYPE_p_PoDoFo__PdfExponentialFunction swig_types[44]
+#define SWIGTYPE_p_PoDoFo__PdfExtGState swig_types[45]
+#define SWIGTYPE_p_PoDoFo__PdfField swig_types[46]
+#define SWIGTYPE_p_PoDoFo__PdfFileSpec swig_types[47]
+#define SWIGTYPE_p_PoDoFo__PdfFont swig_types[48]
+#define SWIGTYPE_p_PoDoFo__PdfFontCID swig_types[49]
+#define SWIGTYPE_p_PoDoFo__PdfFontCache swig_types[50]
+#define SWIGTYPE_p_PoDoFo__PdfFontConfigWrapper swig_types[51]
+#define SWIGTYPE_p_PoDoFo__PdfFontFactory swig_types[52]
+#define SWIGTYPE_p_PoDoFo__PdfFontMetrics swig_types[53]
+#define SWIGTYPE_p_PoDoFo__PdfFontSimple swig_types[54]
+#define SWIGTYPE_p_PoDoFo__PdfFontTTFSubset swig_types[55]
+#define SWIGTYPE_p_PoDoFo__PdfFunction swig_types[56]
+#define SWIGTYPE_p_PoDoFo__PdfFunctionBaseShadingPattern swig_types[57]
+#define SWIGTYPE_p_PoDoFo__PdfIdentityEncoding swig_types[58]
+#define SWIGTYPE_p_PoDoFo__PdfImage swig_types[59]
+#define SWIGTYPE_p_PoDoFo__PdfInfo swig_types[60]
+#define SWIGTYPE_p_PoDoFo__PdfInputDevice swig_types[61]
+#define SWIGTYPE_p_PoDoFo__PdfInputStream swig_types[62]
+#define SWIGTYPE_p_PoDoFo__PdfListBox swig_types[63]
+#define SWIGTYPE_p_PoDoFo__PdfListField swig_types[64]
+#define SWIGTYPE_p_PoDoFo__PdfMemDocument swig_types[65]
+#define SWIGTYPE_p_PoDoFo__PdfName swig_types[66]
+#define SWIGTYPE_p_PoDoFo__PdfNamesTree swig_types[67]
+#define SWIGTYPE_p_PoDoFo__PdfObject swig_types[68]
+#define SWIGTYPE_p_PoDoFo__PdfOutlineItem swig_types[69]
+#define SWIGTYPE_p_PoDoFo__PdfOutlines swig_types[70]
+#define SWIGTYPE_p_PoDoFo__PdfOutputDevice swig_types[71]
+#define SWIGTYPE_p_PoDoFo__PdfPage swig_types[72]
+#define SWIGTYPE_p_PoDoFo__PdfPagesTree swig_types[73]
+#define SWIGTYPE_p_PoDoFo__PdfPagesTreeCache swig_types[74]
+#define SWIGTYPE_p_PoDoFo__PdfPainter swig_types[75]
+#define SWIGTYPE_p_PoDoFo__PdfPainterMM swig_types[76]
+#define SWIGTYPE_p_PoDoFo__PdfPushButton swig_types[77]
+#define SWIGTYPE_p_PoDoFo__PdfRadialShadingPattern swig_types[78]
+#define SWIGTYPE_p_PoDoFo__PdfRect swig_types[79]
+#define SWIGTYPE_p_PoDoFo__PdfReference swig_types[80]
+#define SWIGTYPE_p_PoDoFo__PdfSampledFunction swig_types[81]
+#define SWIGTYPE_p_PoDoFo__PdfShadingPattern swig_types[82]
+#define SWIGTYPE_p_PoDoFo__PdfSigIncPainter swig_types[83]
+#define SWIGTYPE_p_PoDoFo__PdfSignOutputDevice swig_types[84]
+#define SWIGTYPE_p_PoDoFo__PdfSignatureField swig_types[85]
+#define SWIGTYPE_p_PoDoFo__PdfSimpleTableModel swig_types[86]
+#define SWIGTYPE_p_PoDoFo__PdfStitchingFunction swig_types[87]
+#define SWIGTYPE_p_PoDoFo__PdfStream swig_types[88]
+#define SWIGTYPE_p_PoDoFo__PdfStreamedDocument swig_types[89]
+#define SWIGTYPE_p_PoDoFo__PdfString swig_types[90]
+#define SWIGTYPE_p_PoDoFo__PdfTable swig_types[91]
+#define SWIGTYPE_p_PoDoFo__PdfTableModel swig_types[92]
+#define SWIGTYPE_p_PoDoFo__PdfTextField swig_types[93]
+#define SWIGTYPE_p_PoDoFo__PdfTilingPattern swig_types[94]
+#define SWIGTYPE_p_PoDoFo__PdfTriangleShadingPattern swig_types[95]
+#define SWIGTYPE_p_PoDoFo__PdfVariant swig_types[96]
+#define SWIGTYPE_p_PoDoFo__PdfVecObjects swig_types[97]
+#define SWIGTYPE_p_PoDoFo__PdfXObject swig_types[98]
+#define SWIGTYPE_p_PoDoFo__TFontCacheElement swig_types[99]
+#define SWIGTYPE_p_PoDoFo__TLineElement swig_types[100]
+#define SWIGTYPE_p_Sample swig_types[101]
+#define SWIGTYPE_p_TVecFilters swig_types[102]
+#define SWIGTYPE_p_a_4__char swig_types[103]
+#define SWIGTYPE_p_a_9__char swig_types[104]
+#define SWIGTYPE_p_char swig_types[105]
+#define SWIGTYPE_p_double swig_types[106]
+#define SWIGTYPE_p_f_r_PoDoFo__PdfRect_p_void__p_PoDoFo__PdfPage swig_types[107]
+#define SWIGTYPE_p_p_char swig_types[108]
+#define SWIGTYPE_p_pdf_int16 swig_types[109]
+#define SWIGTYPE_p_pdf_int64 swig_types[110]
+#define SWIGTYPE_p_pdf_long swig_types[111]
+#define SWIGTYPE_p_pdf_uint16 swig_types[112]
+#define SWIGTYPE_p_pdf_uint32 swig_types[113]
+#define SWIGTYPE_p_ptrdiff_t swig_types[114]
+#define SWIGTYPE_p_std__dequeT_PoDoFo__PdfErrorInfo_t swig_types[115]
+#define SWIGTYPE_p_std__dequeT_PoDoFo__PdfErrorInfo_t__const_iterator swig_types[116]
+#define SWIGTYPE_p_std__dequeT_PoDoFo__PdfErrorInfo_t__iterator swig_types[117]
+#define SWIGTYPE_p_std__dequeT_PoDoFo__PdfObject_p_t swig_types[118]
+#define SWIGTYPE_p_std__listT_PoDoFo__PdfFunction_t swig_types[119]
+#define SWIGTYPE_p_std__listT_char_t swig_types[120]
+#define SWIGTYPE_p_std__mapT_PoDoFo__PdfReference_PoDoFo__PdfAnnotation_p_t swig_types[121]
+#define SWIGTYPE_p_std__mapT_PoDoFo__PdfReference_PoDoFo__PdfAnnotation_p_t__const_iterator swig_types[122]
+#define SWIGTYPE_p_std__mapT_PoDoFo__PdfReference_PoDoFo__PdfAnnotation_p_t__iterator swig_types[123]
+#define SWIGTYPE_p_std__ostringstream swig_types[124]
+#define SWIGTYPE_p_std__string swig_types[125]
+#define SWIGTYPE_p_std__vectorT_PdfExtension_t swig_types[126]
+#define SWIGTYPE_p_std__vectorT_PoDoFo__PdfObject_p_t swig_types[127]
+#define SWIGTYPE_p_std__vectorT_PoDoFo__PdfPage_p_t swig_types[128]
+#define SWIGTYPE_p_std__vectorT_PoDoFo__PdfRect_t swig_types[129]
+#define SWIGTYPE_p_std__vectorT_PoDoFo__PdfString_t swig_types[130]
+#define SWIGTYPE_p_std__wstring swig_types[131]
+#define SWIGTYPE_p_unsigned_char swig_types[132]
+#define SWIGTYPE_p_void swig_types[133]
+#define SWIGTYPE_p_wchar_t swig_types[134]
+static swig_type_info *swig_types[136];
+static swig_module_info swig_module = {swig_types, 135, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -2961,7 +2973,15 @@ static int _wrap_PdfElement_GetObject__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("PdfElement_GetObject",1,SWIGTYPE_p_PoDoFo__PdfElement);
   }
   
-  result = (PdfObject *)(arg1)->GetObject();
+  {
+    try {
+      result = (PdfObject *)(arg1)->GetObject();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -2985,7 +3005,15 @@ static int _wrap_PdfElement_GetObject__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfElement_GetObject",1,SWIGTYPE_p_PoDoFo__PdfElement);
   }
   
-  result = (PdfObject *)((PoDoFo::PdfElement const *)arg1)->GetObject();
+  {
+    try {
+      result = (PdfObject *)((PoDoFo::PdfElement const *)arg1)->GetObject();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -3096,7 +3124,15 @@ static int _wrap_new_PdfAcroForm__SWIG_0(lua_State* L) {
   }
   
   arg2 = (PoDoFo::EPdfAcroFormDefaulAppearance)(int)lua_tonumber(L, 2);
-  result = (PoDoFo::PdfAcroForm *)new PoDoFo::PdfAcroForm(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfAcroForm *)new PoDoFo::PdfAcroForm(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfAcroForm,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -3120,7 +3156,15 @@ static int _wrap_new_PdfAcroForm__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfAcroForm",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfAcroForm *)new PoDoFo::PdfAcroForm(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfAcroForm *)new PoDoFo::PdfAcroForm(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfAcroForm,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -3154,7 +3198,15 @@ static int _wrap_new_PdfAcroForm__SWIG_2(lua_State* L) {
   }
   
   arg3 = (PoDoFo::EPdfAcroFormDefaulAppearance)(int)lua_tonumber(L, 3);
-  result = (PoDoFo::PdfAcroForm *)new PoDoFo::PdfAcroForm(arg1,arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfAcroForm *)new PoDoFo::PdfAcroForm(arg1,arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfAcroForm,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -3185,7 +3237,15 @@ static int _wrap_new_PdfAcroForm__SWIG_3(lua_State* L) {
     SWIG_fail_ptr("new_PdfAcroForm",2,SWIGTYPE_p_PdfObject);
   }
   
-  result = (PoDoFo::PdfAcroForm *)new PoDoFo::PdfAcroForm(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfAcroForm *)new PoDoFo::PdfAcroForm(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfAcroForm,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -3313,7 +3373,15 @@ static int _wrap_PdfAcroForm_GetDocument(lua_State* L) {
     SWIG_fail_ptr("PdfAcroForm_GetDocument",1,SWIGTYPE_p_PoDoFo__PdfAcroForm);
   }
   
-  result = (PoDoFo::PdfDocument *)(arg1)->GetDocument();
+  {
+    try {
+      result = (PoDoFo::PdfDocument *)(arg1)->GetDocument();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDocument,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -3339,7 +3407,15 @@ static int _wrap_PdfAcroForm_SetNeedAppearances(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetNeedAppearances(arg2);
+  {
+    try {
+      (arg1)->SetNeedAppearances(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -3363,7 +3439,15 @@ static int _wrap_PdfAcroForm_GetNeedAppearances(lua_State* L) {
     SWIG_fail_ptr("PdfAcroForm_GetNeedAppearances",1,SWIGTYPE_p_PoDoFo__PdfAcroForm);
   }
   
-  result = (bool)((PoDoFo::PdfAcroForm const *)arg1)->GetNeedAppearances();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfAcroForm const *)arg1)->GetNeedAppearances();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -3440,7 +3524,15 @@ static int _wrap_new_PdfAction__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfAction",2,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfAction *)new PoDoFo::PdfAction(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfAction *)new PoDoFo::PdfAction(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfAction,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -3467,7 +3559,15 @@ static int _wrap_new_PdfAction__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfAction",2,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfAction *)new PoDoFo::PdfAction(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfAction *)new PoDoFo::PdfAction(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfAction,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -3491,7 +3591,15 @@ static int _wrap_new_PdfAction__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("new_PdfAction",1,SWIGTYPE_p_PoDoFo__PdfObject);
   }
   
-  result = (PoDoFo::PdfAction *)new PoDoFo::PdfAction(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfAction *)new PoDoFo::PdfAction(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfAction,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -3590,7 +3698,15 @@ static int _wrap_PdfAction_SetURI(lua_State* L) {
     SWIG_fail_ptr("PdfAction_SetURI",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->SetURI((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      (arg1)->SetURI((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -3614,7 +3730,15 @@ static int _wrap_PdfAction_GetURI(lua_State* L) {
     SWIG_fail_ptr("PdfAction_GetURI",1,SWIGTYPE_p_PoDoFo__PdfAction);
   }
   
-  result = ((PoDoFo::PdfAction const *)arg1)->GetURI();
+  {
+    try {
+      result = ((PoDoFo::PdfAction const *)arg1)->GetURI();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfString * resultptr = new PoDoFo::PdfString((const PoDoFo::PdfString &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++;
@@ -3641,7 +3765,15 @@ static int _wrap_PdfAction_HasURI(lua_State* L) {
     SWIG_fail_ptr("PdfAction_HasURI",1,SWIGTYPE_p_PoDoFo__PdfAction);
   }
   
-  result = (bool)((PoDoFo::PdfAction const *)arg1)->HasURI();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfAction const *)arg1)->HasURI();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -3671,7 +3803,15 @@ static int _wrap_PdfAction_SetScript(lua_State* L) {
     SWIG_fail_ptr("PdfAction_SetScript",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->SetScript((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      (arg1)->SetScript((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -3695,7 +3835,15 @@ static int _wrap_PdfAction_GetScript(lua_State* L) {
     SWIG_fail_ptr("PdfAction_GetScript",1,SWIGTYPE_p_PoDoFo__PdfAction);
   }
   
-  result = ((PoDoFo::PdfAction const *)arg1)->GetScript();
+  {
+    try {
+      result = ((PoDoFo::PdfAction const *)arg1)->GetScript();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfString * resultptr = new PoDoFo::PdfString((const PoDoFo::PdfString &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++;
@@ -3722,7 +3870,15 @@ static int _wrap_PdfAction_HasScript(lua_State* L) {
     SWIG_fail_ptr("PdfAction_HasScript",1,SWIGTYPE_p_PoDoFo__PdfAction);
   }
   
-  result = (bool)((PoDoFo::PdfAction const *)arg1)->HasScript();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfAction const *)arg1)->HasScript();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -3746,7 +3902,15 @@ static int _wrap_PdfAction_GetType(lua_State* L) {
     SWIG_fail_ptr("PdfAction_GetType",1,SWIGTYPE_p_PoDoFo__PdfAction);
   }
   
-  result = (PoDoFo::EPdfAction)((PoDoFo::PdfAction const *)arg1)->GetType();
+  {
+    try {
+      result = (PoDoFo::EPdfAction)((PoDoFo::PdfAction const *)arg1)->GetType();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
   return SWIG_arg;
   
@@ -3776,7 +3940,15 @@ static int _wrap_PdfAction_AddToDictionary(lua_State* L) {
     SWIG_fail_ptr("PdfAction_AddToDictionary",2,SWIGTYPE_p_PdfDictionary);
   }
   
-  ((PoDoFo::PdfAction const *)arg1)->AddToDictionary(*arg2);
+  {
+    try {
+      ((PoDoFo::PdfAction const *)arg1)->AddToDictionary(*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -3855,7 +4027,15 @@ static int _wrap_new_PdfDestination__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfDestination",1,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfDestination *)new PoDoFo::PdfDestination(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfDestination *)new PoDoFo::PdfDestination(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDestination,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -3886,7 +4066,15 @@ static int _wrap_new_PdfDestination__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfDestination",2,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfDestination *)new PoDoFo::PdfDestination(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfDestination *)new PoDoFo::PdfDestination(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDestination,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -3917,7 +4105,15 @@ static int _wrap_new_PdfDestination__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("new_PdfDestination",2,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfDestination *)new PoDoFo::PdfDestination(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfDestination *)new PoDoFo::PdfDestination(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDestination,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -3944,7 +4140,15 @@ static int _wrap_new_PdfDestination__SWIG_3(lua_State* L) {
   }
   
   arg2 = (PoDoFo::EPdfDestinationFit)(int)lua_tonumber(L, 2);
-  result = (PoDoFo::PdfDestination *)new PoDoFo::PdfDestination((PoDoFo::PdfPage const *)arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfDestination *)new PoDoFo::PdfDestination((PoDoFo::PdfPage const *)arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDestination,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -3968,7 +4172,15 @@ static int _wrap_new_PdfDestination__SWIG_4(lua_State* L) {
     SWIG_fail_ptr("new_PdfDestination",1,SWIGTYPE_p_PoDoFo__PdfPage);
   }
   
-  result = (PoDoFo::PdfDestination *)new PoDoFo::PdfDestination((PoDoFo::PdfPage const *)arg1);
+  {
+    try {
+      result = (PoDoFo::PdfDestination *)new PoDoFo::PdfDestination((PoDoFo::PdfPage const *)arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDestination,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -3999,7 +4211,15 @@ static int _wrap_new_PdfDestination__SWIG_5(lua_State* L) {
     SWIG_fail_ptr("new_PdfDestination",2,SWIGTYPE_p_PoDoFo__PdfRect);
   }
   
-  result = (PoDoFo::PdfDestination *)new PoDoFo::PdfDestination((PoDoFo::PdfPage const *)arg1,(PoDoFo::PdfRect const &)*arg2);
+  {
+    try {
+      result = (PoDoFo::PdfDestination *)new PoDoFo::PdfDestination((PoDoFo::PdfPage const *)arg1,(PoDoFo::PdfRect const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDestination,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -4032,7 +4252,15 @@ static int _wrap_new_PdfDestination__SWIG_6(lua_State* L) {
   arg2 = (double)lua_tonumber(L, 2);
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
-  result = (PoDoFo::PdfDestination *)new PoDoFo::PdfDestination((PoDoFo::PdfPage const *)arg1,arg2,arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfDestination *)new PoDoFo::PdfDestination((PoDoFo::PdfPage const *)arg1,arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDestination,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -4062,7 +4290,15 @@ static int _wrap_new_PdfDestination__SWIG_7(lua_State* L) {
   
   arg2 = (PoDoFo::EPdfDestinationFit)(int)lua_tonumber(L, 2);
   arg3 = (double)lua_tonumber(L, 3);
-  result = (PoDoFo::PdfDestination *)new PoDoFo::PdfDestination((PoDoFo::PdfPage const *)arg1,arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfDestination *)new PoDoFo::PdfDestination((PoDoFo::PdfPage const *)arg1,arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDestination,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -4086,7 +4322,15 @@ static int _wrap_new_PdfDestination__SWIG_8(lua_State* L) {
     SWIG_fail_ptr("new_PdfDestination",1,SWIGTYPE_p_PoDoFo__PdfDestination);
   }
   
-  result = (PoDoFo::PdfDestination *)new PoDoFo::PdfDestination((PoDoFo::PdfDestination const &)*arg1);
+  {
+    try {
+      result = (PoDoFo::PdfDestination *)new PoDoFo::PdfDestination((PoDoFo::PdfDestination const &)*arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDestination,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -4326,7 +4570,15 @@ static int _wrap_PdfDestination_GetPage__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("PdfDestination_GetPage",2,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfPage *)(arg1)->GetPage(arg2);
+  {
+    try {
+      result = (PoDoFo::PdfPage *)(arg1)->GetPage(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPage,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -4357,7 +4609,15 @@ static int _wrap_PdfDestination_GetPage__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfDestination_GetPage",2,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfPage *)(arg1)->GetPage(arg2);
+  {
+    try {
+      result = (PoDoFo::PdfPage *)(arg1)->GetPage(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPage,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -4445,7 +4705,15 @@ static int _wrap_PdfDestination_GetType(lua_State* L) {
     SWIG_fail_ptr("PdfDestination_GetType",1,SWIGTYPE_p_PoDoFo__PdfDestination);
   }
   
-  result = (PoDoFo::EPdfDestinationType)((PoDoFo::PdfDestination const *)arg1)->GetType();
+  {
+    try {
+      result = (PoDoFo::EPdfDestinationType)((PoDoFo::PdfDestination const *)arg1)->GetType();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
   return SWIG_arg;
   
@@ -4469,7 +4737,15 @@ static int _wrap_PdfDestination_GetZoom(lua_State* L) {
     SWIG_fail_ptr("PdfDestination_GetZoom",1,SWIGTYPE_p_PoDoFo__PdfDestination);
   }
   
-  result = (double)((PoDoFo::PdfDestination const *)arg1)->GetZoom();
+  {
+    try {
+      result = (double)((PoDoFo::PdfDestination const *)arg1)->GetZoom();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -4493,7 +4769,15 @@ static int _wrap_PdfDestination_GetRect(lua_State* L) {
     SWIG_fail_ptr("PdfDestination_GetRect",1,SWIGTYPE_p_PoDoFo__PdfDestination);
   }
   
-  result = ((PoDoFo::PdfDestination const *)arg1)->GetRect();
+  {
+    try {
+      result = ((PoDoFo::PdfDestination const *)arg1)->GetRect();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfRect * resultptr = new PoDoFo::PdfRect((const PoDoFo::PdfRect &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfRect,1); SWIG_arg++;
@@ -4520,7 +4804,15 @@ static int _wrap_PdfDestination_GetTop(lua_State* L) {
     SWIG_fail_ptr("PdfDestination_GetTop",1,SWIGTYPE_p_PoDoFo__PdfDestination);
   }
   
-  result = (double)((PoDoFo::PdfDestination const *)arg1)->GetTop();
+  {
+    try {
+      result = (double)((PoDoFo::PdfDestination const *)arg1)->GetTop();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -4544,7 +4836,15 @@ static int _wrap_PdfDestination_GetLeft(lua_State* L) {
     SWIG_fail_ptr("PdfDestination_GetLeft",1,SWIGTYPE_p_PoDoFo__PdfDestination);
   }
   
-  result = (double)((PoDoFo::PdfDestination const *)arg1)->GetLeft();
+  {
+    try {
+      result = (double)((PoDoFo::PdfDestination const *)arg1)->GetLeft();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -4568,7 +4868,15 @@ static int _wrap_PdfDestination_GetDValue(lua_State* L) {
     SWIG_fail_ptr("PdfDestination_GetDValue",1,SWIGTYPE_p_PoDoFo__PdfDestination);
   }
   
-  result = (double)((PoDoFo::PdfDestination const *)arg1)->GetDValue();
+  {
+    try {
+      result = (double)((PoDoFo::PdfDestination const *)arg1)->GetDValue();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -4592,7 +4900,15 @@ static int _wrap_PdfDestination_GetObject__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("PdfDestination_GetObject",1,SWIGTYPE_p_PoDoFo__PdfDestination);
   }
   
-  result = (PoDoFo::PdfObject *)(arg1)->GetObject();
+  {
+    try {
+      result = (PoDoFo::PdfObject *)(arg1)->GetObject();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -4616,7 +4932,15 @@ static int _wrap_PdfDestination_GetObject__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfDestination_GetObject",1,SWIGTYPE_p_PoDoFo__PdfDestination);
   }
   
-  result = (PoDoFo::PdfObject *)((PoDoFo::PdfDestination const *)arg1)->GetObject();
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfDestination const *)arg1)->GetObject();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -4684,7 +5008,15 @@ static int _wrap_PdfDestination_GetArray__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("PdfDestination_GetArray",1,SWIGTYPE_p_PoDoFo__PdfDestination);
   }
   
-  result = (PdfArray *) &(arg1)->GetArray();
+  {
+    try {
+      result = (PdfArray *) &(arg1)->GetArray();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PdfArray,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -4708,7 +5040,15 @@ static int _wrap_PdfDestination_GetArray__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfDestination_GetArray",1,SWIGTYPE_p_PoDoFo__PdfDestination);
   }
   
-  result = (PdfArray *) &((PoDoFo::PdfDestination const *)arg1)->GetArray();
+  {
+    try {
+      result = (PdfArray *) &((PoDoFo::PdfDestination const *)arg1)->GetArray();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PdfArray,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -4782,7 +5122,15 @@ static int _wrap_PdfDestination_AddToDictionary(lua_State* L) {
     SWIG_fail_ptr("PdfDestination_AddToDictionary",2,SWIGTYPE_p_PdfDictionary);
   }
   
-  ((PoDoFo::PdfDestination const *)arg1)->AddToDictionary(*arg2);
+  {
+    try {
+      ((PoDoFo::PdfDestination const *)arg1)->AddToDictionary(*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -4880,7 +5228,15 @@ static int _wrap_new_PdfAnnotation__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfAnnotation",4,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfAnnotation *)new PoDoFo::PdfAnnotation(arg1,arg2,(PoDoFo::PdfRect const &)*arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfAnnotation *)new PoDoFo::PdfAnnotation(arg1,arg2,(PoDoFo::PdfRect const &)*arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfAnnotation,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -4911,7 +5267,15 @@ static int _wrap_new_PdfAnnotation__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfAnnotation",2,SWIGTYPE_p_PoDoFo__PdfPage);
   }
   
-  result = (PoDoFo::PdfAnnotation *)new PoDoFo::PdfAnnotation(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfAnnotation *)new PoDoFo::PdfAnnotation(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfAnnotation,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -5020,7 +5384,15 @@ static int _wrap_PdfAnnotation_SetAppearanceStream(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_SetAppearanceStream",2,SWIGTYPE_p_PoDoFo__PdfXObject);
   }
   
-  (arg1)->SetAppearanceStream(arg2);
+  {
+    try {
+      (arg1)->SetAppearanceStream(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -5044,7 +5416,15 @@ static int _wrap_PdfAnnotation_HasAppearanceStream(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_HasAppearanceStream",1,SWIGTYPE_p_PoDoFo__PdfAnnotation);
   }
   
-  result = (bool)((PoDoFo::PdfAnnotation const *)arg1)->HasAppearanceStream();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfAnnotation const *)arg1)->HasAppearanceStream();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -5068,7 +5448,15 @@ static int _wrap_PdfAnnotation_GetRect(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_GetRect",1,SWIGTYPE_p_PoDoFo__PdfAnnotation);
   }
   
-  result = ((PoDoFo::PdfAnnotation const *)arg1)->GetRect();
+  {
+    try {
+      result = ((PoDoFo::PdfAnnotation const *)arg1)->GetRect();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfRect * resultptr = new PoDoFo::PdfRect((const PoDoFo::PdfRect &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfRect,1); SWIG_arg++;
@@ -5103,7 +5491,15 @@ static int _wrap_PdfAnnotation_SetFlags(lua_State* L) {
   }
   arg2 = *argp2;
   
-  (arg1)->SetFlags(arg2);
+  {
+    try {
+      (arg1)->SetFlags(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -5127,7 +5523,15 @@ static int _wrap_PdfAnnotation_GetFlags(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_GetFlags",1,SWIGTYPE_p_PoDoFo__PdfAnnotation);
   }
   
-  result = ((PoDoFo::PdfAnnotation const *)arg1)->GetFlags();
+  {
+    try {
+      result = ((PoDoFo::PdfAnnotation const *)arg1)->GetFlags();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     pdf_uint32 * resultptr = new pdf_uint32((const pdf_uint32 &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_pdf_uint32,1); SWIG_arg++;
@@ -5162,7 +5566,15 @@ static int _wrap_PdfAnnotation_SetBorderStyle__SWIG_0(lua_State* L) {
   arg2 = (double)lua_tonumber(L, 2);
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
-  (arg1)->SetBorderStyle(arg2,arg3,arg4);
+  {
+    try {
+      (arg1)->SetBorderStyle(arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -5201,7 +5613,15 @@ static int _wrap_PdfAnnotation_SetBorderStyle__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_SetBorderStyle",5,SWIGTYPE_p_PdfArray);
   }
   
-  (arg1)->SetBorderStyle(arg2,arg3,arg4,(PdfArray const &)*arg5);
+  {
+    try {
+      (arg1)->SetBorderStyle(arg2,arg3,arg4,(PdfArray const &)*arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -5315,7 +5735,15 @@ static int _wrap_PdfAnnotation_SetTitle(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_SetTitle",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->SetTitle((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      (arg1)->SetTitle((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -5339,7 +5767,15 @@ static int _wrap_PdfAnnotation_GetTitle(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_GetTitle",1,SWIGTYPE_p_PoDoFo__PdfAnnotation);
   }
   
-  result = ((PoDoFo::PdfAnnotation const *)arg1)->GetTitle();
+  {
+    try {
+      result = ((PoDoFo::PdfAnnotation const *)arg1)->GetTitle();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfString * resultptr = new PoDoFo::PdfString((const PoDoFo::PdfString &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++;
@@ -5372,7 +5808,15 @@ static int _wrap_PdfAnnotation_SetContents(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_SetContents",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->SetContents((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      (arg1)->SetContents((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -5396,7 +5840,15 @@ static int _wrap_PdfAnnotation_GetContents(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_GetContents",1,SWIGTYPE_p_PoDoFo__PdfAnnotation);
   }
   
-  result = ((PoDoFo::PdfAnnotation const *)arg1)->GetContents();
+  {
+    try {
+      result = ((PoDoFo::PdfAnnotation const *)arg1)->GetContents();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfString * resultptr = new PoDoFo::PdfString((const PoDoFo::PdfString &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++;
@@ -5429,7 +5881,15 @@ static int _wrap_PdfAnnotation_SetDestination(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_SetDestination",2,SWIGTYPE_p_PoDoFo__PdfDestination);
   }
   
-  (arg1)->SetDestination((PoDoFo::PdfDestination const &)*arg2);
+  {
+    try {
+      (arg1)->SetDestination((PoDoFo::PdfDestination const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -5460,7 +5920,15 @@ static int _wrap_PdfAnnotation_GetDestination(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_GetDestination",2,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = ((PoDoFo::PdfAnnotation const *)arg1)->GetDestination(arg2);
+  {
+    try {
+      result = ((PoDoFo::PdfAnnotation const *)arg1)->GetDestination(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfDestination * resultptr = new PoDoFo::PdfDestination((const PoDoFo::PdfDestination &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfDestination,1); SWIG_arg++;
@@ -5487,7 +5955,15 @@ static int _wrap_PdfAnnotation_HasDestination(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_HasDestination",1,SWIGTYPE_p_PoDoFo__PdfAnnotation);
   }
   
-  result = (bool)((PoDoFo::PdfAnnotation const *)arg1)->HasDestination();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfAnnotation const *)arg1)->HasDestination();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -5517,7 +5993,15 @@ static int _wrap_PdfAnnotation_SetAction(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_SetAction",2,SWIGTYPE_p_PoDoFo__PdfAction);
   }
   
-  (arg1)->SetAction((PoDoFo::PdfAction const &)*arg2);
+  {
+    try {
+      (arg1)->SetAction((PoDoFo::PdfAction const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -5541,7 +6025,15 @@ static int _wrap_PdfAnnotation_GetAction(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_GetAction",1,SWIGTYPE_p_PoDoFo__PdfAnnotation);
   }
   
-  result = (PoDoFo::PdfAction *)((PoDoFo::PdfAnnotation const *)arg1)->GetAction();
+  {
+    try {
+      result = (PoDoFo::PdfAction *)((PoDoFo::PdfAnnotation const *)arg1)->GetAction();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfAction,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -5565,7 +6057,15 @@ static int _wrap_PdfAnnotation_HasAction(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_HasAction",1,SWIGTYPE_p_PoDoFo__PdfAnnotation);
   }
   
-  result = (bool)((PoDoFo::PdfAnnotation const *)arg1)->HasAction();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfAnnotation const *)arg1)->HasAction();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -5591,7 +6091,15 @@ static int _wrap_PdfAnnotation_SetOpen(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetOpen(arg2);
+  {
+    try {
+      (arg1)->SetOpen(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -5615,7 +6123,15 @@ static int _wrap_PdfAnnotation_GetOpen(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_GetOpen",1,SWIGTYPE_p_PoDoFo__PdfAnnotation);
   }
   
-  result = (bool)((PoDoFo::PdfAnnotation const *)arg1)->GetOpen();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfAnnotation const *)arg1)->GetOpen();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -5639,7 +6155,15 @@ static int _wrap_PdfAnnotation_HasFileAttachement(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_HasFileAttachement",1,SWIGTYPE_p_PoDoFo__PdfAnnotation);
   }
   
-  result = (bool)((PoDoFo::PdfAnnotation const *)arg1)->HasFileAttachement();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfAnnotation const *)arg1)->HasFileAttachement();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -5669,7 +6193,15 @@ static int _wrap_PdfAnnotation_SetFileAttachement(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_SetFileAttachement",2,SWIGTYPE_p_PoDoFo__PdfFileSpec);
   }
   
-  (arg1)->SetFileAttachement((PoDoFo::PdfFileSpec const &)*arg2);
+  {
+    try {
+      (arg1)->SetFileAttachement((PoDoFo::PdfFileSpec const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -5693,7 +6225,15 @@ static int _wrap_PdfAnnotation_GetFileAttachement(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_GetFileAttachement",1,SWIGTYPE_p_PoDoFo__PdfAnnotation);
   }
   
-  result = (PoDoFo::PdfFileSpec *)((PoDoFo::PdfAnnotation const *)arg1)->GetFileAttachement();
+  {
+    try {
+      result = (PoDoFo::PdfFileSpec *)((PoDoFo::PdfAnnotation const *)arg1)->GetFileAttachement();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFileSpec,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -5717,7 +6257,15 @@ static int _wrap_PdfAnnotation_GetQuadPoints(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_GetQuadPoints",1,SWIGTYPE_p_PoDoFo__PdfAnnotation);
   }
   
-  result = ((PoDoFo::PdfAnnotation const *)arg1)->GetQuadPoints();
+  {
+    try {
+      result = ((PoDoFo::PdfAnnotation const *)arg1)->GetQuadPoints();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PdfArray * resultptr = new PdfArray((const PdfArray &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PdfArray,1); SWIG_arg++;
@@ -5750,7 +6298,15 @@ static int _wrap_PdfAnnotation_SetQuadPoints(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_SetQuadPoints",2,SWIGTYPE_p_PdfArray);
   }
   
-  (arg1)->SetQuadPoints((PdfArray const &)*arg2);
+  {
+    try {
+      (arg1)->SetQuadPoints((PdfArray const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -5774,7 +6330,15 @@ static int _wrap_PdfAnnotation_GetColor(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_GetColor",1,SWIGTYPE_p_PoDoFo__PdfAnnotation);
   }
   
-  result = ((PoDoFo::PdfAnnotation const *)arg1)->GetColor();
+  {
+    try {
+      result = ((PoDoFo::PdfAnnotation const *)arg1)->GetColor();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PdfArray * resultptr = new PdfArray((const PdfArray &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PdfArray,1); SWIG_arg++;
@@ -5809,7 +6373,15 @@ static int _wrap_PdfAnnotation_SetColor__SWIG_0(lua_State* L) {
   arg2 = (double)lua_tonumber(L, 2);
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
-  (arg1)->SetColor(arg2,arg3,arg4);
+  {
+    try {
+      (arg1)->SetColor(arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -5844,7 +6416,15 @@ static int _wrap_PdfAnnotation_SetColor__SWIG_1(lua_State* L) {
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
   arg5 = (double)lua_tonumber(L, 5);
-  (arg1)->SetColor(arg2,arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->SetColor(arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -5870,7 +6450,15 @@ static int _wrap_PdfAnnotation_SetColor__SWIG_2(lua_State* L) {
   }
   
   arg2 = (double)lua_tonumber(L, 2);
-  (arg1)->SetColor(arg2);
+  {
+    try {
+      (arg1)->SetColor(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -5893,7 +6481,15 @@ static int _wrap_PdfAnnotation_SetColor__SWIG_3(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_SetColor",1,SWIGTYPE_p_PoDoFo__PdfAnnotation);
   }
   
-  (arg1)->SetColor();
+  {
+    try {
+      (arg1)->SetColor();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -6031,7 +6627,15 @@ static int _wrap_PdfAnnotation_GetType(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_GetType",1,SWIGTYPE_p_PoDoFo__PdfAnnotation);
   }
   
-  result = (PoDoFo::EPdfAnnotation)((PoDoFo::PdfAnnotation const *)arg1)->GetType();
+  {
+    try {
+      result = (PoDoFo::EPdfAnnotation)((PoDoFo::PdfAnnotation const *)arg1)->GetType();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
   return SWIG_arg;
   
@@ -6055,7 +6659,15 @@ static int _wrap_PdfAnnotation_GetPage(lua_State* L) {
     SWIG_fail_ptr("PdfAnnotation_GetPage",1,SWIGTYPE_p_PoDoFo__PdfAnnotation);
   }
   
-  result = (PoDoFo::PdfPage *)((PoDoFo::PdfAnnotation const *)arg1)->GetPage();
+  {
+    try {
+      result = (PoDoFo::PdfPage *)((PoDoFo::PdfAnnotation const *)arg1)->GetPage();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPage,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -6153,7 +6765,15 @@ static int _wrap_PdfCanvas_GetContents(lua_State* L) {
     SWIG_fail_ptr("PdfCanvas_GetContents",1,SWIGTYPE_p_PoDoFo__PdfCanvas);
   }
   
-  result = (PoDoFo::PdfObject *)((PoDoFo::PdfCanvas const *)arg1)->GetContents();
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfCanvas const *)arg1)->GetContents();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -6177,7 +6797,15 @@ static int _wrap_PdfCanvas_GetContentsForAppending(lua_State* L) {
     SWIG_fail_ptr("PdfCanvas_GetContentsForAppending",1,SWIGTYPE_p_PoDoFo__PdfCanvas);
   }
   
-  result = (PoDoFo::PdfObject *)((PoDoFo::PdfCanvas const *)arg1)->GetContentsForAppending();
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfCanvas const *)arg1)->GetContentsForAppending();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -6201,7 +6829,15 @@ static int _wrap_PdfCanvas_GetResources(lua_State* L) {
     SWIG_fail_ptr("PdfCanvas_GetResources",1,SWIGTYPE_p_PoDoFo__PdfCanvas);
   }
   
-  result = (PoDoFo::PdfObject *)((PoDoFo::PdfCanvas const *)arg1)->GetResources();
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfCanvas const *)arg1)->GetResources();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -6225,7 +6861,15 @@ static int _wrap_PdfCanvas_GetPageSize(lua_State* L) {
     SWIG_fail_ptr("PdfCanvas_GetPageSize",1,SWIGTYPE_p_PoDoFo__PdfCanvas);
   }
   
-  result = ((PoDoFo::PdfCanvas const *)arg1)->GetPageSize();
+  {
+    try {
+      result = ((PoDoFo::PdfCanvas const *)arg1)->GetPageSize();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfRect * resultptr = new PoDoFo::PdfRect((const PoDoFo::PdfRect &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfRect,1); SWIG_arg++;
@@ -6245,7 +6889,15 @@ static int _wrap_PdfCanvas_GetProcSet(lua_State* L) {
   PdfArray *result = 0 ;
   
   SWIG_check_num_args("PoDoFo::PdfCanvas::GetProcSet",0,0)
-  result = (PdfArray *) &PoDoFo::PdfCanvas::GetProcSet();
+  {
+    try {
+      result = (PdfArray *) &PoDoFo::PdfCanvas::GetProcSet();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PdfArray,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -6275,7 +6927,15 @@ static int _wrap_PdfCanvas_AddColorResource(lua_State* L) {
     SWIG_fail_ptr("PdfCanvas_AddColorResource",2,SWIGTYPE_p_PoDoFo__PdfColor);
   }
   
-  (arg1)->AddColorResource((PoDoFo::PdfColor const &)*arg2);
+  {
+    try {
+      (arg1)->AddColorResource((PoDoFo::PdfColor const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -6319,7 +6979,15 @@ static int _wrap_PdfCanvas_AddResource(lua_State* L) {
     SWIG_fail_ptr("PdfCanvas_AddResource",4,SWIGTYPE_p_PoDoFo__PdfName);
   }
   
-  (arg1)->AddResource((PoDoFo::PdfName const &)*arg2,(PoDoFo::PdfReference const &)*arg3,(PoDoFo::PdfName const &)*arg4);
+  {
+    try {
+      (arg1)->AddResource((PoDoFo::PdfName const &)*arg2,(PoDoFo::PdfReference const &)*arg3,(PoDoFo::PdfName const &)*arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -6382,7 +7050,15 @@ static int _wrap_new_PdfRect__SWIG_0(lua_State* L) {
   PoDoFo::PdfRect *result = 0 ;
   
   SWIG_check_num_args("PoDoFo::PdfRect::PdfRect",0,0)
-  result = (PoDoFo::PdfRect *)new PoDoFo::PdfRect();
+  {
+    try {
+      result = (PoDoFo::PdfRect *)new PoDoFo::PdfRect();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfRect,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -6411,7 +7087,15 @@ static int _wrap_new_PdfRect__SWIG_1(lua_State* L) {
   arg2 = (double)lua_tonumber(L, 2);
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
-  result = (PoDoFo::PdfRect *)new PoDoFo::PdfRect(arg1,arg2,arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfRect *)new PoDoFo::PdfRect(arg1,arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfRect,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -6435,7 +7119,15 @@ static int _wrap_new_PdfRect__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("new_PdfRect",1,SWIGTYPE_p_PoDoFo__PdfArray);
   }
   
-  result = (PoDoFo::PdfRect *)new PoDoFo::PdfRect((PoDoFo::PdfArray const &)*arg1);
+  {
+    try {
+      result = (PoDoFo::PdfRect *)new PoDoFo::PdfRect((PoDoFo::PdfArray const &)*arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfRect,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -6459,7 +7151,15 @@ static int _wrap_new_PdfRect__SWIG_3(lua_State* L) {
     SWIG_fail_ptr("new_PdfRect",1,SWIGTYPE_p_PoDoFo__PdfRect);
   }
   
-  result = (PoDoFo::PdfRect *)new PoDoFo::PdfRect((PoDoFo::PdfRect const &)*arg1);
+  {
+    try {
+      result = (PoDoFo::PdfRect *)new PoDoFo::PdfRect((PoDoFo::PdfRect const &)*arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfRect,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -6562,7 +7262,15 @@ static int _wrap_PdfRect_ToVariant(lua_State* L) {
     SWIG_fail_ptr("PdfRect_ToVariant",2,SWIGTYPE_p_PoDoFo__PdfVariant);
   }
   
-  ((PoDoFo::PdfRect const *)arg1)->ToVariant(*arg2);
+  {
+    try {
+      ((PoDoFo::PdfRect const *)arg1)->ToVariant(*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -6586,7 +7294,15 @@ static int _wrap_PdfRect_ToString(lua_State* L) {
     SWIG_fail_ptr("PdfRect_ToString",1,SWIGTYPE_p_PoDoFo__PdfRect);
   }
   
-  result = ((PoDoFo::PdfRect const *)arg1)->ToString();
+  {
+    try {
+      result = ((PoDoFo::PdfRect const *)arg1)->ToString();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     std::string * resultptr = new std::string((const std::string &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_std__string,1); SWIG_arg++;
@@ -6619,7 +7335,15 @@ static int _wrap_PdfRect_FromArray(lua_State* L) {
     SWIG_fail_ptr("PdfRect_FromArray",2,SWIGTYPE_p_PoDoFo__PdfArray);
   }
   
-  (arg1)->FromArray((PoDoFo::PdfArray const &)*arg2);
+  {
+    try {
+      (arg1)->FromArray((PoDoFo::PdfArray const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -6649,7 +7373,15 @@ static int _wrap_PdfRect_Intersect(lua_State* L) {
     SWIG_fail_ptr("PdfRect_Intersect",2,SWIGTYPE_p_PoDoFo__PdfRect);
   }
   
-  (arg1)->Intersect((PoDoFo::PdfRect const &)*arg2);
+  {
+    try {
+      (arg1)->Intersect((PoDoFo::PdfRect const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -6673,7 +7405,15 @@ static int _wrap_PdfRect_GetBottom(lua_State* L) {
     SWIG_fail_ptr("PdfRect_GetBottom",1,SWIGTYPE_p_PoDoFo__PdfRect);
   }
   
-  result = (double)((PoDoFo::PdfRect const *)arg1)->GetBottom();
+  {
+    try {
+      result = (double)((PoDoFo::PdfRect const *)arg1)->GetBottom();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -6699,7 +7439,15 @@ static int _wrap_PdfRect_SetBottom(lua_State* L) {
   }
   
   arg2 = (double)lua_tonumber(L, 2);
-  (arg1)->SetBottom(arg2);
+  {
+    try {
+      (arg1)->SetBottom(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -6723,7 +7471,15 @@ static int _wrap_PdfRect_GetLeft(lua_State* L) {
     SWIG_fail_ptr("PdfRect_GetLeft",1,SWIGTYPE_p_PoDoFo__PdfRect);
   }
   
-  result = (double)((PoDoFo::PdfRect const *)arg1)->GetLeft();
+  {
+    try {
+      result = (double)((PoDoFo::PdfRect const *)arg1)->GetLeft();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -6749,7 +7505,15 @@ static int _wrap_PdfRect_SetLeft(lua_State* L) {
   }
   
   arg2 = (double)lua_tonumber(L, 2);
-  (arg1)->SetLeft(arg2);
+  {
+    try {
+      (arg1)->SetLeft(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -6773,7 +7537,15 @@ static int _wrap_PdfRect_GetWidth(lua_State* L) {
     SWIG_fail_ptr("PdfRect_GetWidth",1,SWIGTYPE_p_PoDoFo__PdfRect);
   }
   
-  result = (double)((PoDoFo::PdfRect const *)arg1)->GetWidth();
+  {
+    try {
+      result = (double)((PoDoFo::PdfRect const *)arg1)->GetWidth();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -6799,7 +7571,15 @@ static int _wrap_PdfRect_SetWidth(lua_State* L) {
   }
   
   arg2 = (double)lua_tonumber(L, 2);
-  (arg1)->SetWidth(arg2);
+  {
+    try {
+      (arg1)->SetWidth(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -6823,7 +7603,15 @@ static int _wrap_PdfRect_GetHeight(lua_State* L) {
     SWIG_fail_ptr("PdfRect_GetHeight",1,SWIGTYPE_p_PoDoFo__PdfRect);
   }
   
-  result = (double)((PoDoFo::PdfRect const *)arg1)->GetHeight();
+  {
+    try {
+      result = (double)((PoDoFo::PdfRect const *)arg1)->GetHeight();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -6849,7 +7637,15 @@ static int _wrap_PdfRect_SetHeight(lua_State* L) {
   }
   
   arg2 = (double)lua_tonumber(L, 2);
-  (arg1)->SetHeight(arg2);
+  {
+    try {
+      (arg1)->SetHeight(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -6925,7 +7721,15 @@ static int _wrap_new_PdfString__SWIG_0(lua_State* L) {
   PoDoFo::PdfString *result = 0 ;
   
   SWIG_check_num_args("PoDoFo::PdfString::PdfString",0,0)
-  result = (PoDoFo::PdfString *)new PoDoFo::PdfString();
+  {
+    try {
+      result = (PoDoFo::PdfString *)new PoDoFo::PdfString();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -6956,7 +7760,15 @@ static int _wrap_new_PdfString__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfString",2,SWIGTYPE_p_PoDoFo__PdfEncoding);
   }
   
-  result = (PoDoFo::PdfString *)new PoDoFo::PdfString((std::string const &)*arg1,(PoDoFo::PdfEncoding const *)arg2);
+  {
+    try {
+      result = (PoDoFo::PdfString *)new PoDoFo::PdfString((std::string const &)*arg1,(PoDoFo::PdfEncoding const *)arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -6980,7 +7792,15 @@ static int _wrap_new_PdfString__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("new_PdfString",1,SWIGTYPE_p_std__string);
   }
   
-  result = (PoDoFo::PdfString *)new PoDoFo::PdfString((std::string const &)*arg1);
+  {
+    try {
+      result = (PoDoFo::PdfString *)new PoDoFo::PdfString((std::string const &)*arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -7007,7 +7827,15 @@ static int _wrap_new_PdfString__SWIG_3(lua_State* L) {
     SWIG_fail_ptr("new_PdfString",2,SWIGTYPE_p_PoDoFo__PdfEncoding);
   }
   
-  result = (PoDoFo::PdfString *)new PoDoFo::PdfString((char const *)arg1,(PoDoFo::PdfEncoding const *)arg2);
+  {
+    try {
+      result = (PoDoFo::PdfString *)new PoDoFo::PdfString((char const *)arg1,(PoDoFo::PdfEncoding const *)arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -7027,7 +7855,15 @@ static int _wrap_new_PdfString__SWIG_4(lua_State* L) {
   SWIG_check_num_args("PoDoFo::PdfString::PdfString",1,1)
   if(!SWIG_lua_isnilstring(L,1)) SWIG_fail_arg("PoDoFo::PdfString::PdfString",1,"char const *");
   arg1 = (char *)lua_tostring(L, 1);
-  result = (PoDoFo::PdfString *)new PoDoFo::PdfString((char const *)arg1);
+  {
+    try {
+      result = (PoDoFo::PdfString *)new PoDoFo::PdfString((char const *)arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -7060,7 +7896,15 @@ static int _wrap_new_PdfString__SWIG_5(lua_State* L) {
   }
   arg2 = *argp2;
   
-  result = (PoDoFo::PdfString *)new PoDoFo::PdfString((wchar_t const *)arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfString *)new PoDoFo::PdfString((wchar_t const *)arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -7084,7 +7928,15 @@ static int _wrap_new_PdfString__SWIG_6(lua_State* L) {
     SWIG_fail_ptr("new_PdfString",1,SWIGTYPE_p_wchar_t);
   }
   
-  result = (PoDoFo::PdfString *)new PoDoFo::PdfString((wchar_t const *)arg1);
+  {
+    try {
+      result = (PoDoFo::PdfString *)new PoDoFo::PdfString((wchar_t const *)arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -7123,7 +7975,15 @@ static int _wrap_PdfString_setFromWchar_t__SWIG_0(lua_State* L) {
   }
   arg3 = *argp3;
   
-  (arg1)->setFromWchar_t((wchar_t const *)arg2,arg3);
+  {
+    try {
+      (arg1)->setFromWchar_t((wchar_t const *)arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -7153,7 +8013,15 @@ static int _wrap_PdfString_setFromWchar_t__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfString_setFromWchar_t",2,SWIGTYPE_p_wchar_t);
   }
   
-  (arg1)->setFromWchar_t((wchar_t const *)arg2);
+  {
+    try {
+      (arg1)->setFromWchar_t((wchar_t const *)arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -7266,7 +8134,15 @@ static int _wrap_new_PdfString__SWIG_7(lua_State* L) {
     SWIG_fail_ptr("new_PdfString",4,SWIGTYPE_p_PoDoFo__PdfEncoding);
   }
   
-  result = (PoDoFo::PdfString *)new PoDoFo::PdfString((char const *)arg1,arg2,arg3,(PoDoFo::PdfEncoding const *)arg4);
+  {
+    try {
+      result = (PoDoFo::PdfString *)new PoDoFo::PdfString((char const *)arg1,arg2,arg3,(PoDoFo::PdfEncoding const *)arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -7298,7 +8174,15 @@ static int _wrap_new_PdfString__SWIG_8(lua_State* L) {
   arg2 = *argp2;
   
   arg3 = (lua_toboolean(L, 3)!=0);
-  result = (PoDoFo::PdfString *)new PoDoFo::PdfString((char const *)arg1,arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfString *)new PoDoFo::PdfString((char const *)arg1,arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -7327,7 +8211,15 @@ static int _wrap_new_PdfString__SWIG_9(lua_State* L) {
   }
   arg2 = *argp2;
   
-  result = (PoDoFo::PdfString *)new PoDoFo::PdfString((char const *)arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfString *)new PoDoFo::PdfString((char const *)arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -7351,7 +8243,15 @@ static int _wrap_new_PdfString__SWIG_10(lua_State* L) {
     SWIG_fail_ptr("new_PdfString",1,SWIGTYPE_p_unsigned_char);
   }
   
-  result = (PoDoFo::PdfString *)new PoDoFo::PdfString((PoDoFo::pdf_utf8 const *)arg1);
+  {
+    try {
+      result = (PoDoFo::PdfString *)new PoDoFo::PdfString((PoDoFo::pdf_utf8 const *)arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -7375,7 +8275,15 @@ static int _wrap_new_PdfString__SWIG_11(lua_State* L) {
     SWIG_fail_ptr("new_PdfString",1,SWIGTYPE_p_pdf_uint16);
   }
   
-  result = (PoDoFo::PdfString *)new PoDoFo::PdfString((PoDoFo::pdf_utf16be const *)arg1);
+  {
+    try {
+      result = (PoDoFo::PdfString *)new PoDoFo::PdfString((PoDoFo::pdf_utf16be const *)arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -7408,7 +8316,15 @@ static int _wrap_new_PdfString__SWIG_12(lua_State* L) {
   }
   arg2 = *argp2;
   
-  result = (PoDoFo::PdfString *)new PoDoFo::PdfString((PoDoFo::pdf_utf8 const *)arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfString *)new PoDoFo::PdfString((PoDoFo::pdf_utf8 const *)arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -7441,7 +8357,15 @@ static int _wrap_new_PdfString__SWIG_13(lua_State* L) {
   }
   arg2 = *argp2;
   
-  result = (PoDoFo::PdfString *)new PoDoFo::PdfString((PoDoFo::pdf_utf16be const *)arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfString *)new PoDoFo::PdfString((PoDoFo::pdf_utf16be const *)arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -7465,7 +8389,15 @@ static int _wrap_new_PdfString__SWIG_14(lua_State* L) {
     SWIG_fail_ptr("new_PdfString",1,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  result = (PoDoFo::PdfString *)new PoDoFo::PdfString((PoDoFo::PdfString const &)*arg1);
+  {
+    try {
+      result = (PoDoFo::PdfString *)new PoDoFo::PdfString((PoDoFo::PdfString const &)*arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -7810,7 +8742,15 @@ static int _wrap_PdfString_SetHexData__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("PdfString_SetHexData",4,SWIGTYPE_p_PdfEncrypt);
   }
   
-  (arg1)->SetHexData((char const *)arg2,arg3,arg4);
+  {
+    try {
+      (arg1)->SetHexData((char const *)arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -7845,7 +8785,15 @@ static int _wrap_PdfString_SetHexData__SWIG_1(lua_State* L) {
   }
   arg3 = *argp3;
   
-  (arg1)->SetHexData((char const *)arg2,arg3);
+  {
+    try {
+      (arg1)->SetHexData((char const *)arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -7871,7 +8819,15 @@ static int _wrap_PdfString_SetHexData__SWIG_2(lua_State* L) {
   }
   
   arg2 = (char *)lua_tostring(L, 2);
-  (arg1)->SetHexData((char const *)arg2);
+  {
+    try {
+      (arg1)->SetHexData((char const *)arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -7999,7 +8955,15 @@ static int _wrap_PdfString_IsValid(lua_State* L) {
     SWIG_fail_ptr("PdfString_IsValid",1,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  result = (bool)((PoDoFo::PdfString const *)arg1)->IsValid();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfString const *)arg1)->IsValid();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -8023,7 +8987,15 @@ static int _wrap_PdfString_IsHex(lua_State* L) {
     SWIG_fail_ptr("PdfString_IsHex",1,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  result = (bool)((PoDoFo::PdfString const *)arg1)->IsHex();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfString const *)arg1)->IsHex();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -8047,7 +9019,15 @@ static int _wrap_PdfString_IsUnicode(lua_State* L) {
     SWIG_fail_ptr("PdfString_IsUnicode",1,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  result = (bool)((PoDoFo::PdfString const *)arg1)->IsUnicode();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfString const *)arg1)->IsUnicode();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -8071,7 +9051,15 @@ static int _wrap_PdfString_GetString(lua_State* L) {
     SWIG_fail_ptr("PdfString_GetString",1,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  result = (char *)((PoDoFo::PdfString const *)arg1)->GetString();
+  {
+    try {
+      result = (char *)((PoDoFo::PdfString const *)arg1)->GetString();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushstring(L,(const char *)result); SWIG_arg++;
   return SWIG_arg;
   
@@ -8095,7 +9083,15 @@ static int _wrap_PdfString_GetUnicode(lua_State* L) {
     SWIG_fail_ptr("PdfString_GetUnicode",1,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  result = (PoDoFo::pdf_utf16be *)((PoDoFo::PdfString const *)arg1)->GetUnicode();
+  {
+    try {
+      result = (PoDoFo::pdf_utf16be *)((PoDoFo::PdfString const *)arg1)->GetUnicode();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_pdf_uint16,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -8119,7 +9115,15 @@ static int _wrap_PdfString_GetStringUtf8(lua_State* L) {
     SWIG_fail_ptr("PdfString_GetStringUtf8",1,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  result = (std::string *) &((PoDoFo::PdfString const *)arg1)->GetStringUtf8();
+  {
+    try {
+      result = (std::string *) &((PoDoFo::PdfString const *)arg1)->GetStringUtf8();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_std__string,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -8143,7 +9147,15 @@ static int _wrap_PdfString_GetLength(lua_State* L) {
     SWIG_fail_ptr("PdfString_GetLength",1,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  result = ((PoDoFo::PdfString const *)arg1)->GetLength();
+  {
+    try {
+      result = ((PoDoFo::PdfString const *)arg1)->GetLength();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     pdf_long * resultptr = new pdf_long((const pdf_long &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_pdf_long,1); SWIG_arg++;
@@ -8170,7 +9182,15 @@ static int _wrap_PdfString_GetUnicodeLength(lua_State* L) {
     SWIG_fail_ptr("PdfString_GetUnicodeLength",1,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  result = ((PoDoFo::PdfString const *)arg1)->GetUnicodeLength();
+  {
+    try {
+      result = ((PoDoFo::PdfString const *)arg1)->GetUnicodeLength();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     pdf_long * resultptr = new pdf_long((const pdf_long &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_pdf_long,1); SWIG_arg++;
@@ -8197,7 +9217,15 @@ static int _wrap_PdfString_GetCharacterLength(lua_State* L) {
     SWIG_fail_ptr("PdfString_GetCharacterLength",1,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  result = ((PoDoFo::PdfString const *)arg1)->GetCharacterLength();
+  {
+    try {
+      result = ((PoDoFo::PdfString const *)arg1)->GetCharacterLength();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     pdf_long * resultptr = new pdf_long((const pdf_long &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_pdf_long,1); SWIG_arg++;
@@ -8240,7 +9268,15 @@ static int _wrap_PdfString_Write__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("PdfString_Write",4,SWIGTYPE_p_PdfEncrypt);
   }
   
-  ((PoDoFo::PdfString const *)arg1)->Write(arg2,arg3,(PdfEncrypt const *)arg4);
+  {
+    try {
+      ((PoDoFo::PdfString const *)arg1)->Write(arg2,arg3,(PdfEncrypt const *)arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -8273,7 +9309,15 @@ static int _wrap_PdfString_Write__SWIG_1(lua_State* L) {
   }
   
   arg3 = (PoDoFo::EPdfWriteMode)(int)lua_tonumber(L, 3);
-  ((PoDoFo::PdfString const *)arg1)->Write(arg2,arg3);
+  {
+    try {
+      ((PoDoFo::PdfString const *)arg1)->Write(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -8388,7 +9432,15 @@ static int _wrap_PdfString___lt(lua_State* L) {
     SWIG_fail_ptr("PdfString___lt",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  result = (bool)((PoDoFo::PdfString const *)arg1)->operator <((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      result = (bool)((PoDoFo::PdfString const *)arg1)->operator <((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -8419,7 +9471,15 @@ static int _wrap_PdfString___eq(lua_State* L) {
     SWIG_fail_ptr("PdfString___eq",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  result = (bool)((PoDoFo::PdfString const *)arg1)->operator ==((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      result = (bool)((PoDoFo::PdfString const *)arg1)->operator ==((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -8443,7 +9503,15 @@ static int _wrap_PdfString_ToUnicode(lua_State* L) {
     SWIG_fail_ptr("PdfString_ToUnicode",1,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  result = ((PoDoFo::PdfString const *)arg1)->ToUnicode();
+  {
+    try {
+      result = ((PoDoFo::PdfString const *)arg1)->ToUnicode();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfString * resultptr = new PoDoFo::PdfString((const PoDoFo::PdfString &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++;
@@ -8470,7 +9538,15 @@ static int _wrap_PdfString_GetBuffer(lua_State* L) {
     SWIG_fail_ptr("PdfString_GetBuffer",1,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  result = (PdfRefCountedBuffer *) &(arg1)->GetBuffer();
+  {
+    try {
+      result = (PdfRefCountedBuffer *) &(arg1)->GetBuffer();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PdfRefCountedBuffer,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -8527,7 +9603,15 @@ static int _wrap_PdfString_ConvertUTF8toUTF16__SWIG_0(lua_State* L) {
   }
   arg3 = *argp3;
   
-  result = PoDoFo::PdfString::ConvertUTF8toUTF16((unsigned char const *)arg1,arg2,arg3);
+  {
+    try {
+      result = PoDoFo::PdfString::ConvertUTF8toUTF16((unsigned char const *)arg1,arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     pdf_long * resultptr = new pdf_long((const pdf_long &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_pdf_long,1); SWIG_arg++;
@@ -8582,7 +9666,15 @@ static int _wrap_PdfString_ConvertUTF8toUTF16__SWIG_1(lua_State* L) {
   arg4 = *argp4;
   
   arg5 = (PoDoFo::EPdfStringConversion)(int)lua_tonumber(L, 5);
-  result = PoDoFo::PdfString::ConvertUTF8toUTF16((unsigned char const *)arg1,arg2,arg3,arg4,arg5);
+  {
+    try {
+      result = PoDoFo::PdfString::ConvertUTF8toUTF16((unsigned char const *)arg1,arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     pdf_long * resultptr = new pdf_long((const pdf_long &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_pdf_long,1); SWIG_arg++;
@@ -8634,7 +9726,15 @@ static int _wrap_PdfString_ConvertUTF8toUTF16__SWIG_2(lua_State* L) {
   }
   arg4 = *argp4;
   
-  result = PoDoFo::PdfString::ConvertUTF8toUTF16((unsigned char const *)arg1,arg2,arg3,arg4);
+  {
+    try {
+      result = PoDoFo::PdfString::ConvertUTF8toUTF16((unsigned char const *)arg1,arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     pdf_long * resultptr = new pdf_long((const pdf_long &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_pdf_long,1); SWIG_arg++;
@@ -8821,7 +9921,15 @@ static int _wrap_PdfString_ConvertUTF16toUTF8__SWIG_0(lua_State* L) {
   }
   arg3 = *argp3;
   
-  result = PoDoFo::PdfString::ConvertUTF16toUTF8((pdf_uint16 const *)arg1,arg2,arg3);
+  {
+    try {
+      result = PoDoFo::PdfString::ConvertUTF16toUTF8((pdf_uint16 const *)arg1,arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     pdf_long * resultptr = new pdf_long((const pdf_long &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_pdf_long,1); SWIG_arg++;
@@ -8876,7 +9984,15 @@ static int _wrap_PdfString_ConvertUTF16toUTF8__SWIG_1(lua_State* L) {
   arg4 = *argp4;
   
   arg5 = (PoDoFo::EPdfStringConversion)(int)lua_tonumber(L, 5);
-  result = PoDoFo::PdfString::ConvertUTF16toUTF8((pdf_uint16 const *)arg1,arg2,arg3,arg4,arg5);
+  {
+    try {
+      result = PoDoFo::PdfString::ConvertUTF16toUTF8((pdf_uint16 const *)arg1,arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     pdf_long * resultptr = new pdf_long((const pdf_long &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_pdf_long,1); SWIG_arg++;
@@ -8928,7 +10044,15 @@ static int _wrap_PdfString_ConvertUTF16toUTF8__SWIG_2(lua_State* L) {
   }
   arg4 = *argp4;
   
-  result = PoDoFo::PdfString::ConvertUTF16toUTF8((pdf_uint16 const *)arg1,arg2,arg3,arg4);
+  {
+    try {
+      result = PoDoFo::PdfString::ConvertUTF16toUTF8((pdf_uint16 const *)arg1,arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     pdf_long * resultptr = new pdf_long((const pdf_long &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_pdf_long,1); SWIG_arg++;
@@ -9155,6 +10279,2177 @@ static swig_lua_class *swig_PdfString_bases[] = {0};
 static const char *swig_PdfString_base_names[] = {0};
 static swig_lua_class _wrap_class_PdfString = { "PdfString", "PdfString", &SWIGTYPE_p_PoDoFo__PdfString,_proxy__wrap_new_PdfString, swig_delete_PdfString, swig_PdfString_methods, swig_PdfString_attributes, &swig_PdfString_Sf_SwigStatic, swig_PdfString_meta, swig_PdfString_bases, swig_PdfString_base_names };
 
+static int _wrap_new_PdfErrorInfo__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfErrorInfo *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfErrorInfo::PdfErrorInfo",0,0)
+  {
+    try {
+      result = (PoDoFo::PdfErrorInfo *)new PoDoFo::PdfErrorInfo();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfErrorInfo,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfErrorInfo__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  int arg1 ;
+  char *arg2 = (char *) 0 ;
+  char *arg3 = (char *) 0 ;
+  PoDoFo::PdfErrorInfo *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfErrorInfo::PdfErrorInfo",3,3)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("PoDoFo::PdfErrorInfo::PdfErrorInfo",1,"int");
+  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfErrorInfo::PdfErrorInfo",2,"char const *");
+  if(!SWIG_lua_isnilstring(L,3)) SWIG_fail_arg("PoDoFo::PdfErrorInfo::PdfErrorInfo",3,"char const *");
+  arg1 = (int)lua_tonumber(L, 1);
+  arg2 = (char *)lua_tostring(L, 2);
+  arg3 = (char *)lua_tostring(L, 3);
+  {
+    try {
+      result = (PoDoFo::PdfErrorInfo *)new PoDoFo::PdfErrorInfo(arg1,(char const *)arg2,(char const *)arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfErrorInfo,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfErrorInfo__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  int arg1 ;
+  char *arg2 = (char *) 0 ;
+  wchar_t *arg3 = (wchar_t *) 0 ;
+  PoDoFo::PdfErrorInfo *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfErrorInfo::PdfErrorInfo",3,3)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("PoDoFo::PdfErrorInfo::PdfErrorInfo",1,"int");
+  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfErrorInfo::PdfErrorInfo",2,"char const *");
+  if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("PoDoFo::PdfErrorInfo::PdfErrorInfo",3,"wchar_t const *");
+  arg1 = (int)lua_tonumber(L, 1);
+  arg2 = (char *)lua_tostring(L, 2);
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_wchar_t,0))){
+    SWIG_fail_ptr("new_PdfErrorInfo",3,SWIGTYPE_p_wchar_t);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::PdfErrorInfo *)new PoDoFo::PdfErrorInfo(arg1,(char const *)arg2,(wchar_t const *)arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfErrorInfo,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfErrorInfo__SWIG_3(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfErrorInfo *arg1 = 0 ;
+  PoDoFo::PdfErrorInfo *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfErrorInfo::PdfErrorInfo",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("PoDoFo::PdfErrorInfo::PdfErrorInfo",1,"PoDoFo::PdfErrorInfo const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfErrorInfo,0))){
+    SWIG_fail_ptr("new_PdfErrorInfo",1,SWIGTYPE_p_PoDoFo__PdfErrorInfo);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::PdfErrorInfo *)new PoDoFo::PdfErrorInfo((PoDoFo::PdfErrorInfo const &)*arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfErrorInfo,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfErrorInfo(lua_State* L) {
+  int argc;
+  int argv[4]={
+    1,2,3,4
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 0) {
+    return _wrap_new_PdfErrorInfo__SWIG_0(L);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      void *ptr;
+      if (lua_isuserdata(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfErrorInfo, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      return _wrap_new_PdfErrorInfo__SWIG_3(L);
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      _v = lua_isnumber(L,argv[0]);
+    }
+    if (_v) {
+      {
+        _v = SWIG_lua_isnilstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (SWIG_isptrtype(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_wchar_t, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          return _wrap_new_PdfErrorInfo__SWIG_2(L);
+        }
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      _v = lua_isnumber(L,argv[0]);
+    }
+    if (_v) {
+      {
+        _v = SWIG_lua_isnilstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = SWIG_lua_isnilstring(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_new_PdfErrorInfo__SWIG_1(L);
+        }
+      }
+    }
+  }
+  
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'new_PdfErrorInfo'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    PoDoFo::PdfErrorInfo::PdfErrorInfo()\n"
+    "    PoDoFo::PdfErrorInfo::PdfErrorInfo(int,char const *,char const *)\n"
+    "    PoDoFo::PdfErrorInfo::PdfErrorInfo(int,char const *,wchar_t const *)\n"
+    "    PoDoFo::PdfErrorInfo::PdfErrorInfo(PoDoFo::PdfErrorInfo const &)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_PdfErrorInfo_GetLine(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfErrorInfo *arg1 = (PoDoFo::PdfErrorInfo *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("PoDoFo::PdfErrorInfo::GetLine",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfErrorInfo::GetLine",1,"PoDoFo::PdfErrorInfo const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfErrorInfo,0))){
+    SWIG_fail_ptr("PdfErrorInfo_GetLine",1,SWIGTYPE_p_PoDoFo__PdfErrorInfo);
+  }
+  
+  {
+    try {
+      result = (int)((PoDoFo::PdfErrorInfo const *)arg1)->GetLine();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfErrorInfo_GetFilename(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfErrorInfo *arg1 = (PoDoFo::PdfErrorInfo *) 0 ;
+  std::string *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfErrorInfo::GetFilename",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfErrorInfo::GetFilename",1,"PoDoFo::PdfErrorInfo const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfErrorInfo,0))){
+    SWIG_fail_ptr("PdfErrorInfo_GetFilename",1,SWIGTYPE_p_PoDoFo__PdfErrorInfo);
+  }
+  
+  {
+    try {
+      result = (std::string *) &((PoDoFo::PdfErrorInfo const *)arg1)->GetFilename();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_std__string,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfErrorInfo_GetInformation(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfErrorInfo *arg1 = (PoDoFo::PdfErrorInfo *) 0 ;
+  std::string *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfErrorInfo::GetInformation",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfErrorInfo::GetInformation",1,"PoDoFo::PdfErrorInfo const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfErrorInfo,0))){
+    SWIG_fail_ptr("PdfErrorInfo_GetInformation",1,SWIGTYPE_p_PoDoFo__PdfErrorInfo);
+  }
+  
+  {
+    try {
+      result = (std::string *) &((PoDoFo::PdfErrorInfo const *)arg1)->GetInformation();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_std__string,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfErrorInfo_GetInformationW(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfErrorInfo *arg1 = (PoDoFo::PdfErrorInfo *) 0 ;
+  std::wstring *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfErrorInfo::GetInformationW",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfErrorInfo::GetInformationW",1,"PoDoFo::PdfErrorInfo const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfErrorInfo,0))){
+    SWIG_fail_ptr("PdfErrorInfo_GetInformationW",1,SWIGTYPE_p_PoDoFo__PdfErrorInfo);
+  }
+  
+  {
+    try {
+      result = (std::wstring *) &((PoDoFo::PdfErrorInfo const *)arg1)->GetInformationW();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_std__wstring,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfErrorInfo_SetInformation__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfErrorInfo *arg1 = (PoDoFo::PdfErrorInfo *) 0 ;
+  char *arg2 = (char *) 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfErrorInfo::SetInformation",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfErrorInfo::SetInformation",1,"PoDoFo::PdfErrorInfo *");
+  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfErrorInfo::SetInformation",2,"char const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfErrorInfo,0))){
+    SWIG_fail_ptr("PdfErrorInfo_SetInformation",1,SWIGTYPE_p_PoDoFo__PdfErrorInfo);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  {
+    try {
+      (arg1)->SetInformation((char const *)arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfErrorInfo_SetInformation__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfErrorInfo *arg1 = (PoDoFo::PdfErrorInfo *) 0 ;
+  wchar_t *arg2 = (wchar_t *) 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfErrorInfo::SetInformation",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfErrorInfo::SetInformation",1,"PoDoFo::PdfErrorInfo *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("PoDoFo::PdfErrorInfo::SetInformation",2,"wchar_t const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfErrorInfo,0))){
+    SWIG_fail_ptr("PdfErrorInfo_SetInformation",1,SWIGTYPE_p_PoDoFo__PdfErrorInfo);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_wchar_t,0))){
+    SWIG_fail_ptr("PdfErrorInfo_SetInformation",2,SWIGTYPE_p_wchar_t);
+  }
+  
+  {
+    try {
+      (arg1)->SetInformation((wchar_t const *)arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfErrorInfo_SetInformation(lua_State* L) {
+  int argc;
+  int argv[3]={
+    1,2,3
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfErrorInfo, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_wchar_t, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_PdfErrorInfo_SetInformation__SWIG_1(L);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfErrorInfo, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = SWIG_lua_isnilstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_PdfErrorInfo_SetInformation__SWIG_0(L);
+      }
+    }
+  }
+  
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'PdfErrorInfo_SetInformation'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    PoDoFo::PdfErrorInfo::SetInformation(char const *)\n"
+    "    PoDoFo::PdfErrorInfo::SetInformation(wchar_t const *)\n");
+  lua_error(L);return 0;
+}
+
+
+static void swig_delete_PdfErrorInfo(void *obj) {
+PoDoFo::PdfErrorInfo *arg1 = (PoDoFo::PdfErrorInfo *) obj;
+delete arg1;
+}
+static int _proxy__wrap_new_PdfErrorInfo(lua_State *L) {
+    assert(lua_istable(L,1));
+    lua_pushcfunction(L,_wrap_new_PdfErrorInfo);
+    assert(!lua_isnil(L,-1));
+    lua_replace(L,1); /* replace our table with real constructor */
+    lua_call(L,lua_gettop(L)-1,1);
+    return 1;
+}
+static swig_lua_attribute swig_PdfErrorInfo_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_method swig_PdfErrorInfo_methods[]= {
+    { "GetLine", _wrap_PdfErrorInfo_GetLine},
+    { "GetFilename", _wrap_PdfErrorInfo_GetFilename},
+    { "GetInformation", _wrap_PdfErrorInfo_GetInformation},
+    { "GetInformationW", _wrap_PdfErrorInfo_GetInformationW},
+    { "SetInformation", _wrap_PdfErrorInfo_SetInformation},
+    {0,0}
+};
+static swig_lua_method swig_PdfErrorInfo_meta[] = {
+    {0,0}
+};
+
+static swig_lua_attribute swig_PdfErrorInfo_Sf_SwigStatic_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_const_info swig_PdfErrorInfo_Sf_SwigStatic_constants[]= {
+    {0,0,0,0,0,0}
+};
+static swig_lua_method swig_PdfErrorInfo_Sf_SwigStatic_methods[]= {
+    {0,0}
+};
+static swig_lua_class* swig_PdfErrorInfo_Sf_SwigStatic_classes[]= {
+    0
+};
+
+static swig_lua_namespace swig_PdfErrorInfo_Sf_SwigStatic = {
+    "PdfErrorInfo",
+    swig_PdfErrorInfo_Sf_SwigStatic_methods,
+    swig_PdfErrorInfo_Sf_SwigStatic_attributes,
+    swig_PdfErrorInfo_Sf_SwigStatic_constants,
+    swig_PdfErrorInfo_Sf_SwigStatic_classes,
+    0
+};
+static swig_lua_class *swig_PdfErrorInfo_bases[] = {0};
+static const char *swig_PdfErrorInfo_base_names[] = {0};
+static swig_lua_class _wrap_class_PdfErrorInfo = { "PdfErrorInfo", "PdfErrorInfo", &SWIGTYPE_p_PoDoFo__PdfErrorInfo,_proxy__wrap_new_PdfErrorInfo, swig_delete_PdfErrorInfo, swig_PdfErrorInfo_methods, swig_PdfErrorInfo_attributes, &swig_PdfErrorInfo_Sf_SwigStatic, swig_PdfErrorInfo_meta, swig_PdfErrorInfo_bases, swig_PdfErrorInfo_base_names };
+
+static int _wrap_PdfError_SetLogMessageCallback(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfError::LogMessageCallback *arg1 = (PoDoFo::PdfError::LogMessageCallback *) 0 ;
+  PoDoFo::PdfError::LogMessageCallback *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::SetLogMessageCallback",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfError::SetLogMessageCallback",1,"PoDoFo::PdfError::LogMessageCallback *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfError__LogMessageCallback,0))){
+    SWIG_fail_ptr("PdfError_SetLogMessageCallback",1,SWIGTYPE_p_PoDoFo__PdfError__LogMessageCallback);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::PdfError::LogMessageCallback *)PoDoFo::PdfError::SetLogMessageCallback(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfError__LogMessageCallback,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfError__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfError *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::PdfError",0,0)
+  {
+    try {
+      result = (PoDoFo::PdfError *)new PoDoFo::PdfError();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfError,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfError__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::EPdfError *arg1 = 0 ;
+  char *arg2 = (char *) 0 ;
+  int arg3 ;
+  char *arg4 = (char *) 0 ;
+  PoDoFo::EPdfError temp1 ;
+  PoDoFo::PdfError *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::PdfError",4,4)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("PoDoFo::PdfError::PdfError",1,"PoDoFo::EPdfError const &");
+  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfError::PdfError",2,"char const *");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("PoDoFo::PdfError::PdfError",3,"int");
+  if(!SWIG_lua_isnilstring(L,4)) SWIG_fail_arg("PoDoFo::PdfError::PdfError",4,"char const *");
+  temp1=(PoDoFo::EPdfError)(int)lua_tonumber(L,1); arg1=&temp1;
+  arg2 = (char *)lua_tostring(L, 2);
+  arg3 = (int)lua_tonumber(L, 3);
+  arg4 = (char *)lua_tostring(L, 4);
+  {
+    try {
+      result = (PoDoFo::PdfError *)new PoDoFo::PdfError((PoDoFo::EPdfError const &)*arg1,(char const *)arg2,arg3,(char const *)arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfError,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfError__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::EPdfError *arg1 = 0 ;
+  char *arg2 = (char *) 0 ;
+  int arg3 ;
+  PoDoFo::EPdfError temp1 ;
+  PoDoFo::PdfError *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::PdfError",3,3)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("PoDoFo::PdfError::PdfError",1,"PoDoFo::EPdfError const &");
+  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfError::PdfError",2,"char const *");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("PoDoFo::PdfError::PdfError",3,"int");
+  temp1=(PoDoFo::EPdfError)(int)lua_tonumber(L,1); arg1=&temp1;
+  arg2 = (char *)lua_tostring(L, 2);
+  arg3 = (int)lua_tonumber(L, 3);
+  {
+    try {
+      result = (PoDoFo::PdfError *)new PoDoFo::PdfError((PoDoFo::EPdfError const &)*arg1,(char const *)arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfError,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfError__SWIG_3(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::EPdfError *arg1 = 0 ;
+  char *arg2 = (char *) 0 ;
+  PoDoFo::EPdfError temp1 ;
+  PoDoFo::PdfError *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::PdfError",2,2)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("PoDoFo::PdfError::PdfError",1,"PoDoFo::EPdfError const &");
+  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfError::PdfError",2,"char const *");
+  temp1=(PoDoFo::EPdfError)(int)lua_tonumber(L,1); arg1=&temp1;
+  arg2 = (char *)lua_tostring(L, 2);
+  {
+    try {
+      result = (PoDoFo::PdfError *)new PoDoFo::PdfError((PoDoFo::EPdfError const &)*arg1,(char const *)arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfError,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfError__SWIG_4(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::EPdfError *arg1 = 0 ;
+  PoDoFo::EPdfError temp1 ;
+  PoDoFo::PdfError *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::PdfError",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("PoDoFo::PdfError::PdfError",1,"PoDoFo::EPdfError const &");
+  temp1=(PoDoFo::EPdfError)(int)lua_tonumber(L,1); arg1=&temp1;
+  {
+    try {
+      result = (PoDoFo::PdfError *)new PoDoFo::PdfError((PoDoFo::EPdfError const &)*arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfError,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfError__SWIG_5(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfError *arg1 = 0 ;
+  PoDoFo::PdfError *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::PdfError",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("PoDoFo::PdfError::PdfError",1,"PoDoFo::PdfError const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfError,0))){
+    SWIG_fail_ptr("new_PdfError",1,SWIGTYPE_p_PoDoFo__PdfError);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::PdfError *)new PoDoFo::PdfError((PoDoFo::PdfError const &)*arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfError,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfError(lua_State* L) {
+  int argc;
+  int argv[5]={
+    1,2,3,4,5
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 0) {
+    return _wrap_new_PdfError__SWIG_0(L);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      void *ptr;
+      if (lua_isuserdata(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfError, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      return _wrap_new_PdfError__SWIG_5(L);
+    }
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      _v = lua_isnumber(L,argv[0]);
+    }
+    if (_v) {
+      return _wrap_new_PdfError__SWIG_4(L);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      _v = lua_isnumber(L,argv[0]);
+    }
+    if (_v) {
+      {
+        _v = SWIG_lua_isnilstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_new_PdfError__SWIG_3(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      _v = lua_isnumber(L,argv[0]);
+    }
+    if (_v) {
+      {
+        _v = SWIG_lua_isnilstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_new_PdfError__SWIG_2(L);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      _v = lua_isnumber(L,argv[0]);
+    }
+    if (_v) {
+      {
+        _v = SWIG_lua_isnilstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = SWIG_lua_isnilstring(L,argv[3]);
+          }
+          if (_v) {
+            return _wrap_new_PdfError__SWIG_1(L);
+          }
+        }
+      }
+    }
+  }
+  
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'new_PdfError'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    PoDoFo::PdfError::PdfError()\n"
+    "    PoDoFo::PdfError::PdfError(PoDoFo::EPdfError const &,char const *,int,char const *)\n"
+    "    PoDoFo::PdfError::PdfError(PoDoFo::EPdfError const &,char const *,int)\n"
+    "    PoDoFo::PdfError::PdfError(PoDoFo::EPdfError const &,char const *)\n"
+    "    PoDoFo::PdfError::PdfError(PoDoFo::EPdfError const &)\n"
+    "    PoDoFo::PdfError::PdfError(PoDoFo::PdfError const &)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_PdfError___eq__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfError *arg1 = (PoDoFo::PdfError *) 0 ;
+  PoDoFo::PdfError *arg2 = 0 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::operator ==",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfError::operator ==",1,"PoDoFo::PdfError *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("PoDoFo::PdfError::operator ==",2,"PoDoFo::PdfError const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfError,0))){
+    SWIG_fail_ptr("PdfError___eq",1,SWIGTYPE_p_PoDoFo__PdfError);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PoDoFo__PdfError,0))){
+    SWIG_fail_ptr("PdfError___eq",2,SWIGTYPE_p_PoDoFo__PdfError);
+  }
+  
+  {
+    try {
+      result = (bool)(arg1)->operator ==((PoDoFo::PdfError const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError___eq__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfError *arg1 = (PoDoFo::PdfError *) 0 ;
+  PoDoFo::EPdfError *arg2 = 0 ;
+  PoDoFo::EPdfError temp2 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::operator ==",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfError::operator ==",1,"PoDoFo::PdfError *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfError::operator ==",2,"PoDoFo::EPdfError const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfError,0))){
+    SWIG_fail_ptr("PdfError___eq",1,SWIGTYPE_p_PoDoFo__PdfError);
+  }
+  
+  temp2=(PoDoFo::EPdfError)(int)lua_tonumber(L,2); arg2=&temp2;
+  {
+    try {
+      result = (bool)(arg1)->operator ==((PoDoFo::EPdfError const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError___eq(lua_State* L) {
+  int argc;
+  int argv[3]={
+    1,2,3
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfError, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfError, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_PdfError___eq__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfError, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_PdfError___eq__SWIG_1(L);
+      }
+    }
+  }
+  
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'PdfError___eq'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    PoDoFo::PdfError::operator ==(PoDoFo::PdfError const &)\n"
+    "    PoDoFo::PdfError::operator ==(PoDoFo::EPdfError const &)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_PdfError_GetError(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfError *arg1 = (PoDoFo::PdfError *) 0 ;
+  PoDoFo::EPdfError result;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::GetError",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfError::GetError",1,"PoDoFo::PdfError const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfError,0))){
+    SWIG_fail_ptr("PdfError_GetError",1,SWIGTYPE_p_PoDoFo__PdfError);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::EPdfError)((PoDoFo::PdfError const *)arg1)->GetError();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_GetCallstack(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfError *arg1 = (PoDoFo::PdfError *) 0 ;
+  PoDoFo::TDequeErrorInfo *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::GetCallstack",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfError::GetCallstack",1,"PoDoFo::PdfError const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfError,0))){
+    SWIG_fail_ptr("PdfError_GetCallstack",1,SWIGTYPE_p_PoDoFo__PdfError);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::TDequeErrorInfo *) &((PoDoFo::PdfError const *)arg1)->GetCallstack();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_std__dequeT_PoDoFo__PdfErrorInfo_t,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_SetError__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfError *arg1 = (PoDoFo::PdfError *) 0 ;
+  PoDoFo::EPdfError *arg2 = 0 ;
+  char *arg3 = (char *) 0 ;
+  int arg4 ;
+  char *arg5 = (char *) 0 ;
+  PoDoFo::EPdfError temp2 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::SetError",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfError::SetError",1,"PoDoFo::PdfError *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfError::SetError",2,"PoDoFo::EPdfError const &");
+  if(!SWIG_lua_isnilstring(L,3)) SWIG_fail_arg("PoDoFo::PdfError::SetError",3,"char const *");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("PoDoFo::PdfError::SetError",4,"int");
+  if(!SWIG_lua_isnilstring(L,5)) SWIG_fail_arg("PoDoFo::PdfError::SetError",5,"char const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfError,0))){
+    SWIG_fail_ptr("PdfError_SetError",1,SWIGTYPE_p_PoDoFo__PdfError);
+  }
+  
+  temp2=(PoDoFo::EPdfError)(int)lua_tonumber(L,2); arg2=&temp2;
+  arg3 = (char *)lua_tostring(L, 3);
+  arg4 = (int)lua_tonumber(L, 4);
+  arg5 = (char *)lua_tostring(L, 5);
+  {
+    try {
+      (arg1)->SetError((PoDoFo::EPdfError const &)*arg2,(char const *)arg3,arg4,(char const *)arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_SetError__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfError *arg1 = (PoDoFo::PdfError *) 0 ;
+  PoDoFo::EPdfError *arg2 = 0 ;
+  char *arg3 = (char *) 0 ;
+  int arg4 ;
+  PoDoFo::EPdfError temp2 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::SetError",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfError::SetError",1,"PoDoFo::PdfError *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfError::SetError",2,"PoDoFo::EPdfError const &");
+  if(!SWIG_lua_isnilstring(L,3)) SWIG_fail_arg("PoDoFo::PdfError::SetError",3,"char const *");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("PoDoFo::PdfError::SetError",4,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfError,0))){
+    SWIG_fail_ptr("PdfError_SetError",1,SWIGTYPE_p_PoDoFo__PdfError);
+  }
+  
+  temp2=(PoDoFo::EPdfError)(int)lua_tonumber(L,2); arg2=&temp2;
+  arg3 = (char *)lua_tostring(L, 3);
+  arg4 = (int)lua_tonumber(L, 4);
+  {
+    try {
+      (arg1)->SetError((PoDoFo::EPdfError const &)*arg2,(char const *)arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_SetError__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfError *arg1 = (PoDoFo::PdfError *) 0 ;
+  PoDoFo::EPdfError *arg2 = 0 ;
+  char *arg3 = (char *) 0 ;
+  PoDoFo::EPdfError temp2 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::SetError",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfError::SetError",1,"PoDoFo::PdfError *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfError::SetError",2,"PoDoFo::EPdfError const &");
+  if(!SWIG_lua_isnilstring(L,3)) SWIG_fail_arg("PoDoFo::PdfError::SetError",3,"char const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfError,0))){
+    SWIG_fail_ptr("PdfError_SetError",1,SWIGTYPE_p_PoDoFo__PdfError);
+  }
+  
+  temp2=(PoDoFo::EPdfError)(int)lua_tonumber(L,2); arg2=&temp2;
+  arg3 = (char *)lua_tostring(L, 3);
+  {
+    try {
+      (arg1)->SetError((PoDoFo::EPdfError const &)*arg2,(char const *)arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_SetError__SWIG_3(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfError *arg1 = (PoDoFo::PdfError *) 0 ;
+  PoDoFo::EPdfError *arg2 = 0 ;
+  PoDoFo::EPdfError temp2 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::SetError",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfError::SetError",1,"PoDoFo::PdfError *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfError::SetError",2,"PoDoFo::EPdfError const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfError,0))){
+    SWIG_fail_ptr("PdfError_SetError",1,SWIGTYPE_p_PoDoFo__PdfError);
+  }
+  
+  temp2=(PoDoFo::EPdfError)(int)lua_tonumber(L,2); arg2=&temp2;
+  {
+    try {
+      (arg1)->SetError((PoDoFo::EPdfError const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_SetError(lua_State* L) {
+  int argc;
+  int argv[6]={
+    1,2,3,4,5,6
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfError, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_PdfError_SetError__SWIG_3(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfError, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = SWIG_lua_isnilstring(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_PdfError_SetError__SWIG_2(L);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfError, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = SWIG_lua_isnilstring(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            return _wrap_PdfError_SetError__SWIG_1(L);
+          }
+        }
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfError, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = SWIG_lua_isnilstring(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            {
+              _v = SWIG_lua_isnilstring(L,argv[4]);
+            }
+            if (_v) {
+              return _wrap_PdfError_SetError__SWIG_0(L);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'PdfError_SetError'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    PoDoFo::PdfError::SetError(PoDoFo::EPdfError const &,char const *,int,char const *)\n"
+    "    PoDoFo::PdfError::SetError(PoDoFo::EPdfError const &,char const *,int)\n"
+    "    PoDoFo::PdfError::SetError(PoDoFo::EPdfError const &,char const *)\n"
+    "    PoDoFo::PdfError::SetError(PoDoFo::EPdfError const &)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_PdfError_SetErrorInformation__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfError *arg1 = (PoDoFo::PdfError *) 0 ;
+  char *arg2 = (char *) 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::SetErrorInformation",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfError::SetErrorInformation",1,"PoDoFo::PdfError *");
+  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfError::SetErrorInformation",2,"char const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfError,0))){
+    SWIG_fail_ptr("PdfError_SetErrorInformation",1,SWIGTYPE_p_PoDoFo__PdfError);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  {
+    try {
+      (arg1)->SetErrorInformation((char const *)arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_SetErrorInformation__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfError *arg1 = (PoDoFo::PdfError *) 0 ;
+  wchar_t *arg2 = (wchar_t *) 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::SetErrorInformation",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfError::SetErrorInformation",1,"PoDoFo::PdfError *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("PoDoFo::PdfError::SetErrorInformation",2,"wchar_t const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfError,0))){
+    SWIG_fail_ptr("PdfError_SetErrorInformation",1,SWIGTYPE_p_PoDoFo__PdfError);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_wchar_t,0))){
+    SWIG_fail_ptr("PdfError_SetErrorInformation",2,SWIGTYPE_p_wchar_t);
+  }
+  
+  {
+    try {
+      (arg1)->SetErrorInformation((wchar_t const *)arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_SetErrorInformation(lua_State* L) {
+  int argc;
+  int argv[3]={
+    1,2,3
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfError, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_wchar_t, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_PdfError_SetErrorInformation__SWIG_1(L);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfError, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = SWIG_lua_isnilstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_PdfError_SetErrorInformation__SWIG_0(L);
+      }
+    }
+  }
+  
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'PdfError_SetErrorInformation'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    PoDoFo::PdfError::SetErrorInformation(char const *)\n"
+    "    PoDoFo::PdfError::SetErrorInformation(wchar_t const *)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_PdfError_AddToCallstack__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfError *arg1 = (PoDoFo::PdfError *) 0 ;
+  char *arg2 = (char *) 0 ;
+  int arg3 ;
+  char *arg4 = (char *) 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::AddToCallstack",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfError::AddToCallstack",1,"PoDoFo::PdfError *");
+  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfError::AddToCallstack",2,"char const *");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("PoDoFo::PdfError::AddToCallstack",3,"int");
+  if(!SWIG_lua_isnilstring(L,4)) SWIG_fail_arg("PoDoFo::PdfError::AddToCallstack",4,"char const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfError,0))){
+    SWIG_fail_ptr("PdfError_AddToCallstack",1,SWIGTYPE_p_PoDoFo__PdfError);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  arg3 = (int)lua_tonumber(L, 3);
+  arg4 = (char *)lua_tostring(L, 4);
+  {
+    try {
+      (arg1)->AddToCallstack((char const *)arg2,arg3,(char const *)arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_AddToCallstack__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfError *arg1 = (PoDoFo::PdfError *) 0 ;
+  char *arg2 = (char *) 0 ;
+  int arg3 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::AddToCallstack",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfError::AddToCallstack",1,"PoDoFo::PdfError *");
+  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfError::AddToCallstack",2,"char const *");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("PoDoFo::PdfError::AddToCallstack",3,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfError,0))){
+    SWIG_fail_ptr("PdfError_AddToCallstack",1,SWIGTYPE_p_PoDoFo__PdfError);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  arg3 = (int)lua_tonumber(L, 3);
+  {
+    try {
+      (arg1)->AddToCallstack((char const *)arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_AddToCallstack__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfError *arg1 = (PoDoFo::PdfError *) 0 ;
+  char *arg2 = (char *) 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::AddToCallstack",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfError::AddToCallstack",1,"PoDoFo::PdfError *");
+  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfError::AddToCallstack",2,"char const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfError,0))){
+    SWIG_fail_ptr("PdfError_AddToCallstack",1,SWIGTYPE_p_PoDoFo__PdfError);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  {
+    try {
+      (arg1)->AddToCallstack((char const *)arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_AddToCallstack__SWIG_3(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfError *arg1 = (PoDoFo::PdfError *) 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::AddToCallstack",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfError::AddToCallstack",1,"PoDoFo::PdfError *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfError,0))){
+    SWIG_fail_ptr("PdfError_AddToCallstack",1,SWIGTYPE_p_PoDoFo__PdfError);
+  }
+  
+  {
+    try {
+      (arg1)->AddToCallstack();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_AddToCallstack(lua_State* L) {
+  int argc;
+  int argv[5]={
+    1,2,3,4,5
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 1) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfError, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      return _wrap_PdfError_AddToCallstack__SWIG_3(L);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfError, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = SWIG_lua_isnilstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_PdfError_AddToCallstack__SWIG_2(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfError, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = SWIG_lua_isnilstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_PdfError_AddToCallstack__SWIG_1(L);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfError, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = SWIG_lua_isnilstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = SWIG_lua_isnilstring(L,argv[3]);
+          }
+          if (_v) {
+            return _wrap_PdfError_AddToCallstack__SWIG_0(L);
+          }
+        }
+      }
+    }
+  }
+  
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'PdfError_AddToCallstack'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    PoDoFo::PdfError::AddToCallstack(char const *,int,char const *)\n"
+    "    PoDoFo::PdfError::AddToCallstack(char const *,int)\n"
+    "    PoDoFo::PdfError::AddToCallstack(char const *)\n"
+    "    PoDoFo::PdfError::AddToCallstack()\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_PdfError_IsError(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfError *arg1 = (PoDoFo::PdfError *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::IsError",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfError::IsError",1,"PoDoFo::PdfError const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfError,0))){
+    SWIG_fail_ptr("PdfError_IsError",1,SWIGTYPE_p_PoDoFo__PdfError);
+  }
+  
+  {
+    try {
+      result = (bool)((PoDoFo::PdfError const *)arg1)->IsError();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_PrintErrorMsg(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfError *arg1 = (PoDoFo::PdfError *) 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::PrintErrorMsg",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfError::PrintErrorMsg",1,"PoDoFo::PdfError const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfError,0))){
+    SWIG_fail_ptr("PdfError_PrintErrorMsg",1,SWIGTYPE_p_PoDoFo__PdfError);
+  }
+  
+  {
+    try {
+      ((PoDoFo::PdfError const *)arg1)->PrintErrorMsg();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_what(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfError *arg1 = (PoDoFo::PdfError *) 0 ;
+  char *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::what",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfError::what",1,"PoDoFo::PdfError const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfError,0))){
+    SWIG_fail_ptr("PdfError_what",1,SWIGTYPE_p_PoDoFo__PdfError);
+  }
+  
+  {
+    try {
+      result = (char *)((PoDoFo::PdfError const *)arg1)->what();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushstring(L,(const char *)result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_ErrorName(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::EPdfError arg1 ;
+  char *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::ErrorName",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("PoDoFo::PdfError::ErrorName",1,"PoDoFo::EPdfError");
+  arg1 = (PoDoFo::EPdfError)(int)lua_tonumber(L, 1);
+  {
+    try {
+      result = (char *)PoDoFo::PdfError::ErrorName(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushstring(L,(const char *)result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_ErrorMessage(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::EPdfError arg1 ;
+  char *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::ErrorMessage",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("PoDoFo::PdfError::ErrorMessage",1,"PoDoFo::EPdfError");
+  arg1 = (PoDoFo::EPdfError)(int)lua_tonumber(L, 1);
+  {
+    try {
+      result = (char *)PoDoFo::PdfError::ErrorMessage(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushstring(L,(const char *)result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_LogMessage__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::ELogSeverity arg1 ;
+  char *arg2 = (char *) 0 ;
+  void *arg3 = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::LogMessage",2,2)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("PoDoFo::PdfError::LogMessage",1,"PoDoFo::ELogSeverity");
+  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfError::LogMessage",2,"char const *");
+  arg1 = (PoDoFo::ELogSeverity)(int)lua_tonumber(L, 1);
+  arg2 = (char *)lua_tostring(L, 2);
+  {
+    try {
+      PoDoFo::PdfError::LogMessage(arg1,(char const *)arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_LogMessage__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::ELogSeverity arg1 ;
+  wchar_t *arg2 = (wchar_t *) 0 ;
+  void *arg3 = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::LogMessage",2,2)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("PoDoFo::PdfError::LogMessage",1,"PoDoFo::ELogSeverity");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("PoDoFo::PdfError::LogMessage",2,"wchar_t const *");
+  arg1 = (PoDoFo::ELogSeverity)(int)lua_tonumber(L, 1);
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_wchar_t,0))){
+    SWIG_fail_ptr("PdfError_LogMessage",2,SWIGTYPE_p_wchar_t);
+  }
+  
+  {
+    try {
+      PoDoFo::PdfError::LogMessage(arg1,(wchar_t const *)arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_LogMessage(lua_State* L) {
+  int argc;
+  int argv[3]={
+    1,2,3
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      _v = lua_isnumber(L,argv[0]);
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_wchar_t, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        if (argc <= 2) {
+          return _wrap_PdfError_LogMessage__SWIG_1(L);
+        }
+        return _wrap_PdfError_LogMessage__SWIG_1(L);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      _v = lua_isnumber(L,argv[0]);
+    }
+    if (_v) {
+      {
+        _v = SWIG_lua_isnilstring(L,argv[1]);
+      }
+      if (_v) {
+        if (argc <= 2) {
+          return _wrap_PdfError_LogMessage__SWIG_0(L);
+        }
+        return _wrap_PdfError_LogMessage__SWIG_0(L);
+      }
+    }
+  }
+  
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'PdfError_LogMessage'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    PoDoFo::PdfError::LogMessage(PoDoFo::ELogSeverity,char const *,...)\n"
+    "    PoDoFo::PdfError::LogMessage(PoDoFo::ELogSeverity,wchar_t const *,...)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_PdfError_EnableLogging(lua_State* L) {
+  int SWIG_arg = 0;
+  bool arg1 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::EnableLogging",1,1)
+  if(!lua_isboolean(L,1)) SWIG_fail_arg("PoDoFo::PdfError::EnableLogging",1,"bool");
+  arg1 = (lua_toboolean(L, 1)!=0);
+  {
+    try {
+      PoDoFo::PdfError::EnableLogging(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_LoggingEnabled(lua_State* L) {
+  int SWIG_arg = 0;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::LoggingEnabled",0,0)
+  {
+    try {
+      result = (bool)PoDoFo::PdfError::LoggingEnabled();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_DebugMessage(lua_State* L) {
+  int SWIG_arg = 0;
+  char *arg1 = (char *) 0 ;
+  void *arg2 = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::DebugMessage",1,1)
+  if(!SWIG_lua_isnilstring(L,1)) SWIG_fail_arg("PoDoFo::PdfError::DebugMessage",1,"char const *");
+  arg1 = (char *)lua_tostring(L, 1);
+  {
+    try {
+      PoDoFo::PdfError::DebugMessage((char const *)arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_EnableDebug(lua_State* L) {
+  int SWIG_arg = 0;
+  bool arg1 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::EnableDebug",1,1)
+  if(!lua_isboolean(L,1)) SWIG_fail_arg("PoDoFo::PdfError::EnableDebug",1,"bool");
+  arg1 = (lua_toboolean(L, 1)!=0);
+  {
+    try {
+      PoDoFo::PdfError::EnableDebug(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfError_DebugEnabled(lua_State* L) {
+  int SWIG_arg = 0;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfError::DebugEnabled",0,0)
+  {
+    try {
+      result = (bool)PoDoFo::PdfError::DebugEnabled();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_PdfError(void *obj) {
+PoDoFo::PdfError *arg1 = (PoDoFo::PdfError *) obj;
+delete arg1;
+}
+static int _proxy__wrap_new_PdfError(lua_State *L) {
+    assert(lua_istable(L,1));
+    lua_pushcfunction(L,_wrap_new_PdfError);
+    assert(!lua_isnil(L,-1));
+    lua_replace(L,1); /* replace our table with real constructor */
+    lua_call(L,lua_gettop(L)-1,1);
+    return 1;
+}
+static swig_lua_attribute swig_PdfError_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_method swig_PdfError_methods[]= {
+    { "__eq", _wrap_PdfError___eq},
+    { "GetError", _wrap_PdfError_GetError},
+    { "GetCallstack", _wrap_PdfError_GetCallstack},
+    { "SetError", _wrap_PdfError_SetError},
+    { "SetErrorInformation", _wrap_PdfError_SetErrorInformation},
+    { "AddToCallstack", _wrap_PdfError_AddToCallstack},
+    { "IsError", _wrap_PdfError_IsError},
+    { "PrintErrorMsg", _wrap_PdfError_PrintErrorMsg},
+    { "what", _wrap_PdfError_what},
+    {0,0}
+};
+static swig_lua_method swig_PdfError_meta[] = {
+    { "__eq", _wrap_PdfError___eq},
+    {0,0}
+};
+
+static swig_lua_attribute swig_PdfError_Sf_SwigStatic_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_const_info swig_PdfError_Sf_SwigStatic_constants[]= {
+    {0,0,0,0,0,0}
+};
+static swig_lua_method swig_PdfError_Sf_SwigStatic_methods[]= {
+    { "SetLogMessageCallback", _wrap_PdfError_SetLogMessageCallback},
+    { "ErrorName", _wrap_PdfError_ErrorName},
+    { "ErrorMessage", _wrap_PdfError_ErrorMessage},
+    { "LogMessage", _wrap_PdfError_LogMessage},
+    { "EnableLogging", _wrap_PdfError_EnableLogging},
+    { "LoggingEnabled", _wrap_PdfError_LoggingEnabled},
+    { "DebugMessage", _wrap_PdfError_DebugMessage},
+    { "EnableDebug", _wrap_PdfError_EnableDebug},
+    { "DebugEnabled", _wrap_PdfError_DebugEnabled},
+    {0,0}
+};
+static swig_lua_class* swig_PdfError_Sf_SwigStatic_classes[]= {
+    0
+};
+
+static swig_lua_namespace swig_PdfError_Sf_SwigStatic = {
+    "PdfError",
+    swig_PdfError_Sf_SwigStatic_methods,
+    swig_PdfError_Sf_SwigStatic_attributes,
+    swig_PdfError_Sf_SwigStatic_constants,
+    swig_PdfError_Sf_SwigStatic_classes,
+    0
+};
+static swig_lua_class *swig_PdfError_bases[] = {0};
+static const char *swig_PdfError_base_names[] = {0};
+static swig_lua_class _wrap_class_PdfError = { "PdfError", "PdfError", &SWIGTYPE_p_PoDoFo__PdfError,_proxy__wrap_new_PdfError, swig_delete_PdfError, swig_PdfError_methods, swig_PdfError_attributes, &swig_PdfError_Sf_SwigStatic, swig_PdfError_meta, swig_PdfError_bases, swig_PdfError_base_names };
+
 static int _wrap_new_PdfCMapEncoding__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
   PoDoFo::PdfObject *arg1 = (PoDoFo::PdfObject *) 0 ;
@@ -9174,7 +12469,15 @@ static int _wrap_new_PdfCMapEncoding__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfCMapEncoding",2,SWIGTYPE_p_PoDoFo__PdfObject);
   }
   
-  result = (PoDoFo::PdfCMapEncoding *)new PoDoFo::PdfCMapEncoding(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfCMapEncoding *)new PoDoFo::PdfCMapEncoding(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfCMapEncoding,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -9198,7 +12501,15 @@ static int _wrap_new_PdfCMapEncoding__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfCMapEncoding",1,SWIGTYPE_p_PoDoFo__PdfObject);
   }
   
-  result = (PoDoFo::PdfCMapEncoding *)new PoDoFo::PdfCMapEncoding(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfCMapEncoding *)new PoDoFo::PdfCMapEncoding(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfCMapEncoding,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -9290,7 +12601,15 @@ static int _wrap_PdfCMapEncoding_ConvertToUnicode(lua_State* L) {
     SWIG_fail_ptr("PdfCMapEncoding_ConvertToUnicode",3,SWIGTYPE_p_PdfFont);
   }
   
-  result = ((PoDoFo::PdfCMapEncoding const *)arg1)->ConvertToUnicode((PoDoFo::PdfString const &)*arg2,(PdfFont const *)arg3);
+  {
+    try {
+      result = ((PoDoFo::PdfCMapEncoding const *)arg1)->ConvertToUnicode((PoDoFo::PdfString const &)*arg2,(PdfFont const *)arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfString * resultptr = new PoDoFo::PdfString((const PoDoFo::PdfString &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++;
@@ -9323,7 +12642,15 @@ static int _wrap_PdfCMapEncoding_AddToDictionary(lua_State* L) {
     SWIG_fail_ptr("PdfCMapEncoding_AddToDictionary",2,SWIGTYPE_p_PoDoFo__PdfDictionary);
   }
   
-  ((PoDoFo::PdfCMapEncoding const *)arg1)->AddToDictionary(*arg2);
+  {
+    try {
+      ((PoDoFo::PdfCMapEncoding const *)arg1)->AddToDictionary(*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -9361,7 +12688,15 @@ static int _wrap_PdfCMapEncoding_ConvertToEncoding(lua_State* L) {
     SWIG_fail_ptr("PdfCMapEncoding_ConvertToEncoding",3,SWIGTYPE_p_PdfFont);
   }
   
-  result = ((PoDoFo::PdfCMapEncoding const *)arg1)->ConvertToEncoding((PoDoFo::PdfString const &)*arg2,(PdfFont const *)arg3);
+  {
+    try {
+      result = ((PoDoFo::PdfCMapEncoding const *)arg1)->ConvertToEncoding((PoDoFo::PdfString const &)*arg2,(PdfFont const *)arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PdfRefCountedBuffer * resultptr = new PdfRefCountedBuffer((const PdfRefCountedBuffer &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PdfRefCountedBuffer,1); SWIG_arg++;
@@ -9388,7 +12723,15 @@ static int _wrap_PdfCMapEncoding_IsAutoDelete(lua_State* L) {
     SWIG_fail_ptr("PdfCMapEncoding_IsAutoDelete",1,SWIGTYPE_p_PoDoFo__PdfCMapEncoding);
   }
   
-  result = (bool)((PoDoFo::PdfCMapEncoding const *)arg1)->IsAutoDelete();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfCMapEncoding const *)arg1)->IsAutoDelete();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -9412,7 +12755,15 @@ static int _wrap_PdfCMapEncoding_IsSingleByteEncoding(lua_State* L) {
     SWIG_fail_ptr("PdfCMapEncoding_IsSingleByteEncoding",1,SWIGTYPE_p_PoDoFo__PdfCMapEncoding);
   }
   
-  result = (bool)((PoDoFo::PdfCMapEncoding const *)arg1)->IsSingleByteEncoding();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfCMapEncoding const *)arg1)->IsSingleByteEncoding();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -9439,7 +12790,15 @@ static int _wrap_PdfCMapEncoding_GetCharCode(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = ((PoDoFo::PdfCMapEncoding const *)arg1)->GetCharCode(arg2);
+  {
+    try {
+      result = ((PoDoFo::PdfCMapEncoding const *)arg1)->GetCharCode(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::pdf_utf16be * resultptr = new PoDoFo::pdf_utf16be((const PoDoFo::pdf_utf16be &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_pdf_uint16,1); SWIG_arg++;
@@ -9466,7 +12825,15 @@ static int _wrap_PdfCMapEncoding_GetID(lua_State* L) {
     SWIG_fail_ptr("PdfCMapEncoding_GetID",1,SWIGTYPE_p_PoDoFo__PdfCMapEncoding);
   }
   
-  result = (PoDoFo::PdfName *) &((PoDoFo::PdfCMapEncoding const *)arg1)->GetID();
+  {
+    try {
+      result = (PoDoFo::PdfName *) &((PoDoFo::PdfCMapEncoding const *)arg1)->GetID();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfName,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -9490,7 +12857,15 @@ static int _wrap_PdfCMapEncoding_GetBaseEncoding(lua_State* L) {
     SWIG_fail_ptr("PdfCMapEncoding_GetBaseEncoding",1,SWIGTYPE_p_PoDoFo__PdfCMapEncoding);
   }
   
-  result = (PoDoFo::PdfEncoding *)((PoDoFo::PdfCMapEncoding const *)arg1)->GetBaseEncoding();
+  {
+    try {
+      result = (PoDoFo::PdfEncoding *)((PoDoFo::PdfCMapEncoding const *)arg1)->GetBaseEncoding();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfEncoding,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -9573,7 +12948,15 @@ static int _wrap_new_PdfContents__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfContents",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfContents *)new PoDoFo::PdfContents(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfContents *)new PoDoFo::PdfContents(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfContents,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -9597,7 +12980,15 @@ static int _wrap_new_PdfContents__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfContents",1,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfContents *)new PoDoFo::PdfContents(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfContents *)new PoDoFo::PdfContents(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfContents,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -9621,7 +13012,15 @@ static int _wrap_new_PdfContents__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("new_PdfContents",1,SWIGTYPE_p_PoDoFo__PdfObject);
   }
   
-  result = (PoDoFo::PdfContents *)new PoDoFo::PdfContents(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfContents *)new PoDoFo::PdfContents(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfContents,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -9645,7 +13044,15 @@ static int _wrap_new_PdfContents__SWIG_3(lua_State* L) {
     SWIG_fail_ptr("new_PdfContents",1,SWIGTYPE_p_PoDoFo__PdfPage);
   }
   
-  result = (PoDoFo::PdfContents *)new PoDoFo::PdfContents(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfContents *)new PoDoFo::PdfContents(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfContents,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -9743,7 +13150,15 @@ static int _wrap_PdfContents_GetContents(lua_State* L) {
     SWIG_fail_ptr("PdfContents_GetContents",1,SWIGTYPE_p_PoDoFo__PdfContents);
   }
   
-  result = (PoDoFo::PdfObject *)((PoDoFo::PdfContents const *)arg1)->GetContents();
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfContents const *)arg1)->GetContents();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -9767,7 +13182,15 @@ static int _wrap_PdfContents_GetContentsForAppending(lua_State* L) {
     SWIG_fail_ptr("PdfContents_GetContentsForAppending",1,SWIGTYPE_p_PoDoFo__PdfContents);
   }
   
-  result = (PoDoFo::PdfObject *)((PoDoFo::PdfContents const *)arg1)->GetContentsForAppending();
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfContents const *)arg1)->GetContentsForAppending();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -9833,7 +13256,15 @@ static int _wrap_new_PdfEncodingDifference__SWIG_0(lua_State* L) {
   PoDoFo::PdfEncodingDifference *result = 0 ;
   
   SWIG_check_num_args("PoDoFo::PdfEncodingDifference::PdfEncodingDifference",0,0)
-  result = (PoDoFo::PdfEncodingDifference *)new PoDoFo::PdfEncodingDifference();
+  {
+    try {
+      result = (PoDoFo::PdfEncodingDifference *)new PoDoFo::PdfEncodingDifference();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfEncodingDifference,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -9857,7 +13288,15 @@ static int _wrap_new_PdfEncodingDifference__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfEncodingDifference",1,SWIGTYPE_p_PoDoFo__PdfEncodingDifference);
   }
   
-  result = (PoDoFo::PdfEncodingDifference *)new PoDoFo::PdfEncodingDifference((PoDoFo::PdfEncodingDifference const &)*arg1);
+  {
+    try {
+      result = (PoDoFo::PdfEncodingDifference *)new PoDoFo::PdfEncodingDifference((PoDoFo::PdfEncodingDifference const &)*arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfEncodingDifference,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -9925,7 +13364,15 @@ static int _wrap_PdfEncodingDifference_AddDifference__SWIG_0(lua_State* L) {
   }
   arg3 = *argp3;
   
-  (arg1)->AddDifference(arg2,arg3);
+  {
+    try {
+      (arg1)->AddDifference(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -9970,7 +13417,15 @@ static int _wrap_PdfEncodingDifference_AddDifference__SWIG_1(lua_State* L) {
   }
   
   arg5 = (lua_toboolean(L, 5)!=0);
-  (arg1)->AddDifference(arg2,arg3,(PoDoFo::PdfName const &)*arg4,arg5);
+  {
+    try {
+      (arg1)->AddDifference(arg2,arg3,(PoDoFo::PdfName const &)*arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -10012,7 +13467,15 @@ static int _wrap_PdfEncodingDifference_AddDifference__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("PdfEncodingDifference_AddDifference",4,SWIGTYPE_p_PoDoFo__PdfName);
   }
   
-  (arg1)->AddDifference(arg2,arg3,(PoDoFo::PdfName const &)*arg4);
+  {
+    try {
+      (arg1)->AddDifference(arg2,arg3,(PoDoFo::PdfName const &)*arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -10182,7 +13645,15 @@ static int _wrap_PdfEncodingDifference_Contains(lua_State* L) {
     SWIG_fail_ptr("PdfEncodingDifference_Contains",4,SWIGTYPE_p_pdf_uint16);
   }
   
-  result = (bool)((PoDoFo::PdfEncodingDifference const *)arg1)->Contains(arg2,*arg3,*arg4);
+  {
+    try {
+      result = (bool)((PoDoFo::PdfEncodingDifference const *)arg1)->Contains(arg2,*arg3,*arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -10222,7 +13693,15 @@ static int _wrap_PdfEncodingDifference_ContainsUnicodeValue(lua_State* L) {
     SWIG_fail_ptr("PdfEncodingDifference_ContainsUnicodeValue",3,SWIGTYPE_p_char);
   }
   
-  result = (bool)((PoDoFo::PdfEncodingDifference const *)arg1)->ContainsUnicodeValue(arg2,*arg3);
+  {
+    try {
+      result = (bool)((PoDoFo::PdfEncodingDifference const *)arg1)->ContainsUnicodeValue(arg2,*arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -10252,7 +13731,15 @@ static int _wrap_PdfEncodingDifference_ToArray(lua_State* L) {
     SWIG_fail_ptr("PdfEncodingDifference_ToArray",2,SWIGTYPE_p_PoDoFo__PdfArray);
   }
   
-  (arg1)->ToArray(*arg2);
+  {
+    try {
+      (arg1)->ToArray(*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -10276,7 +13763,15 @@ static int _wrap_PdfEncodingDifference_GetCount(lua_State* L) {
     SWIG_fail_ptr("PdfEncodingDifference_GetCount",1,SWIGTYPE_p_PoDoFo__PdfEncodingDifference);
   }
   
-  result = ((PoDoFo::PdfEncodingDifference const *)arg1)->GetCount();
+  {
+    try {
+      result = ((PoDoFo::PdfEncodingDifference const *)arg1)->GetCount();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -10362,7 +13857,15 @@ static int _wrap_new_PdfDifferenceEncoding__SWIG_0(lua_State* L) {
   }
   
   arg3 = (lua_toboolean(L, 3)!=0);
-  result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding((PoDoFo::PdfEncodingDifference const &)*arg1,arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding((PoDoFo::PdfEncodingDifference const &)*arg1,arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDifferenceEncoding,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -10393,7 +13896,15 @@ static int _wrap_new_PdfDifferenceEncoding__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfDifferenceEncoding",2,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding((PoDoFo::PdfEncodingDifference const &)*arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding((PoDoFo::PdfEncodingDifference const &)*arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDifferenceEncoding,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -10427,7 +13938,15 @@ static int _wrap_new_PdfDifferenceEncoding__SWIG_2(lua_State* L) {
   }
   
   arg3 = (lua_toboolean(L, 3)!=0);
-  result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding((PoDoFo::PdfEncodingDifference const &)*arg1,arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding((PoDoFo::PdfEncodingDifference const &)*arg1,arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDifferenceEncoding,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -10458,7 +13977,15 @@ static int _wrap_new_PdfDifferenceEncoding__SWIG_3(lua_State* L) {
     SWIG_fail_ptr("new_PdfDifferenceEncoding",2,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding((PoDoFo::PdfEncodingDifference const &)*arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding((PoDoFo::PdfEncodingDifference const &)*arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDifferenceEncoding,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -10495,7 +14022,15 @@ static int _wrap_new_PdfDifferenceEncoding__SWIG_4(lua_State* L) {
   }
   
   arg4 = (lua_toboolean(L, 4)!=0);
-  result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding((PoDoFo::PdfEncodingDifference const &)*arg1,arg2,arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding((PoDoFo::PdfEncodingDifference const &)*arg1,arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDifferenceEncoding,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -10529,7 +14064,15 @@ static int _wrap_new_PdfDifferenceEncoding__SWIG_5(lua_State* L) {
     SWIG_fail_ptr("new_PdfDifferenceEncoding",3,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding((PoDoFo::PdfEncodingDifference const &)*arg1,arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding((PoDoFo::PdfEncodingDifference const &)*arg1,arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDifferenceEncoding,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -10566,7 +14109,15 @@ static int _wrap_new_PdfDifferenceEncoding__SWIG_6(lua_State* L) {
   }
   
   arg4 = (lua_toboolean(L, 4)!=0);
-  result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding((PoDoFo::PdfEncodingDifference const &)*arg1,arg2,arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding((PoDoFo::PdfEncodingDifference const &)*arg1,arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDifferenceEncoding,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -10600,7 +14151,15 @@ static int _wrap_new_PdfDifferenceEncoding__SWIG_7(lua_State* L) {
     SWIG_fail_ptr("new_PdfDifferenceEncoding",3,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding((PoDoFo::PdfEncodingDifference const &)*arg1,arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding((PoDoFo::PdfEncodingDifference const &)*arg1,arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDifferenceEncoding,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -10630,7 +14189,15 @@ static int _wrap_new_PdfDifferenceEncoding__SWIG_8(lua_State* L) {
   
   arg2 = (lua_toboolean(L, 2)!=0);
   arg3 = (lua_toboolean(L, 3)!=0);
-  result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding(arg1,arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding(arg1,arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDifferenceEncoding,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -10657,7 +14224,15 @@ static int _wrap_new_PdfDifferenceEncoding__SWIG_9(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDifferenceEncoding,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -10681,7 +14256,15 @@ static int _wrap_new_PdfDifferenceEncoding__SWIG_10(lua_State* L) {
     SWIG_fail_ptr("new_PdfDifferenceEncoding",1,SWIGTYPE_p_PoDoFo__PdfObject);
   }
   
-  result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfDifferenceEncoding *)new PoDoFo::PdfDifferenceEncoding(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDifferenceEncoding,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -11019,7 +14602,15 @@ static int _wrap_PdfDifferenceEncoding_NameToUnicodeID(lua_State* L) {
     SWIG_fail_ptr("PdfDifferenceEncoding_NameToUnicodeID",1,SWIGTYPE_p_PoDoFo__PdfName);
   }
   
-  result = PoDoFo::PdfDifferenceEncoding::NameToUnicodeID((PoDoFo::PdfName const &)*arg1);
+  {
+    try {
+      result = PoDoFo::PdfDifferenceEncoding::NameToUnicodeID((PoDoFo::PdfName const &)*arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::pdf_utf16be * resultptr = new PoDoFo::pdf_utf16be((const PoDoFo::pdf_utf16be &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_pdf_uint16,1); SWIG_arg++;
@@ -11048,7 +14639,15 @@ static int _wrap_PdfDifferenceEncoding_UnicodeIDToName(lua_State* L) {
   }
   arg1 = *argp1;
   
-  result = PoDoFo::PdfDifferenceEncoding::UnicodeIDToName(arg1);
+  {
+    try {
+      result = PoDoFo::PdfDifferenceEncoding::UnicodeIDToName(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfName * resultptr = new PoDoFo::PdfName((const PoDoFo::PdfName &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfName,1); SWIG_arg++;
@@ -11081,7 +14680,15 @@ static int _wrap_PdfDifferenceEncoding_AddToDictionary(lua_State* L) {
     SWIG_fail_ptr("PdfDifferenceEncoding_AddToDictionary",2,SWIGTYPE_p_PoDoFo__PdfDictionary);
   }
   
-  ((PoDoFo::PdfDifferenceEncoding const *)arg1)->AddToDictionary(*arg2);
+  {
+    try {
+      ((PoDoFo::PdfDifferenceEncoding const *)arg1)->AddToDictionary(*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -11119,7 +14726,15 @@ static int _wrap_PdfDifferenceEncoding_ConvertToUnicode(lua_State* L) {
     SWIG_fail_ptr("PdfDifferenceEncoding_ConvertToUnicode",3,SWIGTYPE_p_PdfFont);
   }
   
-  result = ((PoDoFo::PdfDifferenceEncoding const *)arg1)->ConvertToUnicode((PoDoFo::PdfString const &)*arg2,(PdfFont const *)arg3);
+  {
+    try {
+      result = ((PoDoFo::PdfDifferenceEncoding const *)arg1)->ConvertToUnicode((PoDoFo::PdfString const &)*arg2,(PdfFont const *)arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfString * resultptr = new PoDoFo::PdfString((const PoDoFo::PdfString &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++;
@@ -11160,7 +14775,15 @@ static int _wrap_PdfDifferenceEncoding_ConvertToEncoding(lua_State* L) {
     SWIG_fail_ptr("PdfDifferenceEncoding_ConvertToEncoding",3,SWIGTYPE_p_PdfFont);
   }
   
-  result = ((PoDoFo::PdfDifferenceEncoding const *)arg1)->ConvertToEncoding((PoDoFo::PdfString const &)*arg2,(PdfFont const *)arg3);
+  {
+    try {
+      result = ((PoDoFo::PdfDifferenceEncoding const *)arg1)->ConvertToEncoding((PoDoFo::PdfString const &)*arg2,(PdfFont const *)arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PdfRefCountedBuffer * resultptr = new PdfRefCountedBuffer((const PdfRefCountedBuffer &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PdfRefCountedBuffer,1); SWIG_arg++;
@@ -11187,7 +14810,15 @@ static int _wrap_PdfDifferenceEncoding_IsAutoDelete(lua_State* L) {
     SWIG_fail_ptr("PdfDifferenceEncoding_IsAutoDelete",1,SWIGTYPE_p_PoDoFo__PdfDifferenceEncoding);
   }
   
-  result = (bool)((PoDoFo::PdfDifferenceEncoding const *)arg1)->IsAutoDelete();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfDifferenceEncoding const *)arg1)->IsAutoDelete();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -11211,7 +14842,15 @@ static int _wrap_PdfDifferenceEncoding_IsSingleByteEncoding(lua_State* L) {
     SWIG_fail_ptr("PdfDifferenceEncoding_IsSingleByteEncoding",1,SWIGTYPE_p_PoDoFo__PdfDifferenceEncoding);
   }
   
-  result = (bool)((PoDoFo::PdfDifferenceEncoding const *)arg1)->IsSingleByteEncoding();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfDifferenceEncoding const *)arg1)->IsSingleByteEncoding();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -11235,7 +14874,15 @@ static int _wrap_PdfDifferenceEncoding_GetDifferences(lua_State* L) {
     SWIG_fail_ptr("PdfDifferenceEncoding_GetDifferences",1,SWIGTYPE_p_PoDoFo__PdfDifferenceEncoding);
   }
   
-  result = (PoDoFo::PdfEncodingDifference *) &((PoDoFo::PdfDifferenceEncoding const *)arg1)->GetDifferences();
+  {
+    try {
+      result = (PoDoFo::PdfEncodingDifference *) &((PoDoFo::PdfDifferenceEncoding const *)arg1)->GetDifferences();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfEncodingDifference,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -11262,7 +14909,15 @@ static int _wrap_PdfDifferenceEncoding_GetCharCode(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = ((PoDoFo::PdfDifferenceEncoding const *)arg1)->GetCharCode(arg2);
+  {
+    try {
+      result = ((PoDoFo::PdfDifferenceEncoding const *)arg1)->GetCharCode(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::pdf_utf16be * resultptr = new PoDoFo::pdf_utf16be((const PoDoFo::pdf_utf16be &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_pdf_uint16,1); SWIG_arg++;
@@ -11349,7 +15004,15 @@ static int _wrap_PdfDocument_GetWriteMode(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_GetWriteMode",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::EPdfWriteMode)((PoDoFo::PdfDocument const *)arg1)->GetWriteMode();
+  {
+    try {
+      result = (PoDoFo::EPdfWriteMode)((PoDoFo::PdfDocument const *)arg1)->GetWriteMode();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
   return SWIG_arg;
   
@@ -11373,7 +15036,15 @@ static int _wrap_PdfDocument_GetPdfVersion(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_GetPdfVersion",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::EPdfVersion)((PoDoFo::PdfDocument const *)arg1)->GetPdfVersion();
+  {
+    try {
+      result = (PoDoFo::EPdfVersion)((PoDoFo::PdfDocument const *)arg1)->GetPdfVersion();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
   return SWIG_arg;
   
@@ -11397,7 +15068,15 @@ static int _wrap_PdfDocument_IsLinearized(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_IsLinearized",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (bool)((PoDoFo::PdfDocument const *)arg1)->IsLinearized();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfDocument const *)arg1)->IsLinearized();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -11421,7 +15100,15 @@ static int _wrap_PdfDocument_GetInfo(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_GetInfo",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfInfo *)((PoDoFo::PdfDocument const *)arg1)->GetInfo();
+  {
+    try {
+      result = (PoDoFo::PdfInfo *)((PoDoFo::PdfDocument const *)arg1)->GetInfo();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfInfo,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -11448,7 +15135,15 @@ static int _wrap_PdfDocument_GetOutlines__SWIG_0(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  result = (PoDoFo::PdfOutlines *)(arg1)->GetOutlines(arg2);
+  {
+    try {
+      result = (PoDoFo::PdfOutlines *)(arg1)->GetOutlines(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfOutlines,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -11472,7 +15167,15 @@ static int _wrap_PdfDocument_GetOutlines__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_GetOutlines",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfOutlines *)(arg1)->GetOutlines();
+  {
+    try {
+      result = (PoDoFo::PdfOutlines *)(arg1)->GetOutlines();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfOutlines,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -11548,7 +15251,15 @@ static int _wrap_PdfDocument_GetNamesTree__SWIG_0(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  result = (PoDoFo::PdfNamesTree *)(arg1)->GetNamesTree(arg2);
+  {
+    try {
+      result = (PoDoFo::PdfNamesTree *)(arg1)->GetNamesTree(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfNamesTree,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -11572,7 +15283,15 @@ static int _wrap_PdfDocument_GetNamesTree__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_GetNamesTree",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfNamesTree *)(arg1)->GetNamesTree();
+  {
+    try {
+      result = (PoDoFo::PdfNamesTree *)(arg1)->GetNamesTree();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfNamesTree,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -11651,7 +15370,15 @@ static int _wrap_PdfDocument_GetAcroForm__SWIG_0(lua_State* L) {
   
   arg2 = (lua_toboolean(L, 2)!=0);
   arg3 = (PoDoFo::EPdfAcroFormDefaulAppearance)(int)lua_tonumber(L, 3);
-  result = (PoDoFo::PdfAcroForm *)(arg1)->GetAcroForm(arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfAcroForm *)(arg1)->GetAcroForm(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfAcroForm,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -11678,7 +15405,15 @@ static int _wrap_PdfDocument_GetAcroForm__SWIG_1(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  result = (PoDoFo::PdfAcroForm *)(arg1)->GetAcroForm(arg2);
+  {
+    try {
+      result = (PoDoFo::PdfAcroForm *)(arg1)->GetAcroForm(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfAcroForm,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -11702,7 +15437,15 @@ static int _wrap_PdfDocument_GetAcroForm__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_GetAcroForm",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfAcroForm *)(arg1)->GetAcroForm();
+  {
+    try {
+      result = (PoDoFo::PdfAcroForm *)(arg1)->GetAcroForm();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfAcroForm,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -11800,7 +15543,15 @@ static int _wrap_PdfDocument_GetPagesTree(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_GetPagesTree",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfPagesTree *)((PoDoFo::PdfDocument const *)arg1)->GetPagesTree();
+  {
+    try {
+      result = (PoDoFo::PdfPagesTree *)((PoDoFo::PdfDocument const *)arg1)->GetPagesTree();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPagesTree,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -11824,7 +15575,15 @@ static int _wrap_PdfDocument_GetPageCount(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_GetPageCount",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (int)((PoDoFo::PdfDocument const *)arg1)->GetPageCount();
+  {
+    try {
+      result = (int)((PoDoFo::PdfDocument const *)arg1)->GetPageCount();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -11851,7 +15610,15 @@ static int _wrap_PdfDocument_GetPage(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = (PoDoFo::PdfPage *)((PoDoFo::PdfDocument const *)arg1)->GetPage(arg2);
+  {
+    try {
+      result = (PoDoFo::PdfPage *)((PoDoFo::PdfDocument const *)arg1)->GetPage(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPage,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -11900,7 +15667,15 @@ static int _wrap_PdfDocument_CreateFont__SWIG_0(lua_State* L) {
   arg5 = *argp5;
   
   arg6 = (lua_toboolean(L, 6)!=0);
-  result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2,arg3,(PoDoFo::PdfEncoding const *)arg4,arg5,arg6);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2,arg3,(PoDoFo::PdfEncoding const *)arg4,arg5,arg6);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -11946,7 +15721,15 @@ static int _wrap_PdfDocument_CreateFont__SWIG_1(lua_State* L) {
   }
   arg5 = *argp5;
   
-  result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2,arg3,(PoDoFo::PdfEncoding const *)arg4,arg5);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2,arg3,(PoDoFo::PdfEncoding const *)arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -11983,7 +15766,15 @@ static int _wrap_PdfDocument_CreateFont__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_CreateFont",4,SWIGTYPE_p_PoDoFo__PdfEncoding);
   }
   
-  result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2,arg3,(PoDoFo::PdfEncoding const *)arg4);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2,arg3,(PoDoFo::PdfEncoding const *)arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -12013,7 +15804,15 @@ static int _wrap_PdfDocument_CreateFont__SWIG_3(lua_State* L) {
   
   arg2 = (char *)lua_tostring(L, 2);
   arg3 = (lua_toboolean(L, 3)!=0);
-  result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -12040,7 +15839,15 @@ static int _wrap_PdfDocument_CreateFont__SWIG_4(lua_State* L) {
   }
   
   arg2 = (char *)lua_tostring(L, 2);
-  result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -12098,7 +15905,15 @@ static int _wrap_PdfDocument_CreateFont__SWIG_5(lua_State* L) {
   
   arg8 = (lua_toboolean(L, 8)!=0);
   arg9 = (char *)lua_tostring(L, 9);
-  result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2,arg3,arg4,arg5,(PoDoFo::PdfEncoding const *)arg6,arg7,arg8,(char const *)arg9);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2,arg3,arg4,arg5,(PoDoFo::PdfEncoding const *)arg6,arg7,arg8,(char const *)arg9);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -12153,7 +15968,15 @@ static int _wrap_PdfDocument_CreateFont__SWIG_6(lua_State* L) {
   arg7 = *argp7;
   
   arg8 = (lua_toboolean(L, 8)!=0);
-  result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2,arg3,arg4,arg5,(PoDoFo::PdfEncoding const *)arg6,arg7,arg8);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2,arg3,arg4,arg5,(PoDoFo::PdfEncoding const *)arg6,arg7,arg8);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -12205,7 +16028,15 @@ static int _wrap_PdfDocument_CreateFont__SWIG_7(lua_State* L) {
   }
   arg7 = *argp7;
   
-  result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2,arg3,arg4,arg5,(PoDoFo::PdfEncoding const *)arg6,arg7);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2,arg3,arg4,arg5,(PoDoFo::PdfEncoding const *)arg6,arg7);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -12248,7 +16079,15 @@ static int _wrap_PdfDocument_CreateFont__SWIG_8(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_CreateFont",6,SWIGTYPE_p_PoDoFo__PdfEncoding);
   }
   
-  result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2,arg3,arg4,arg5,(PoDoFo::PdfEncoding const *)arg6);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2,arg3,arg4,arg5,(PoDoFo::PdfEncoding const *)arg6);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -12284,7 +16123,15 @@ static int _wrap_PdfDocument_CreateFont__SWIG_9(lua_State* L) {
   arg3 = (lua_toboolean(L, 3)!=0);
   arg4 = (lua_toboolean(L, 4)!=0);
   arg5 = (lua_toboolean(L, 5)!=0);
-  result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2,arg3,arg4,arg5);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -12317,7 +16164,15 @@ static int _wrap_PdfDocument_CreateFont__SWIG_10(lua_State* L) {
   arg2 = (char *)lua_tostring(L, 2);
   arg3 = (lua_toboolean(L, 3)!=0);
   arg4 = (lua_toboolean(L, 4)!=0);
-  result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2,arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->CreateFont((char const *)arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -12363,7 +16218,15 @@ static int _wrap_PdfDocument_CreateFont__SWIG_11(lua_State* L) {
   }
   
   arg5 = (lua_toboolean(L, 5)!=0);
-  result = (PoDoFo::PdfFont *)(arg1)->CreateFont(arg2,arg3,(PoDoFo::PdfEncoding const *)arg4,arg5);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->CreateFont(arg2,arg3,(PoDoFo::PdfEncoding const *)arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -12406,7 +16269,15 @@ static int _wrap_PdfDocument_CreateFont__SWIG_12(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_CreateFont",4,SWIGTYPE_p_PoDoFo__PdfEncoding);
   }
   
-  result = (PoDoFo::PdfFont *)(arg1)->CreateFont(arg2,arg3,(PoDoFo::PdfEncoding const *)arg4);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->CreateFont(arg2,arg3,(PoDoFo::PdfEncoding const *)arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -12442,7 +16313,15 @@ static int _wrap_PdfDocument_CreateFont__SWIG_13(lua_State* L) {
   arg2 = *argp2;
   
   arg3 = (lua_toboolean(L, 3)!=0);
-  result = (PoDoFo::PdfFont *)(arg1)->CreateFont(arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->CreateFont(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -12475,7 +16354,15 @@ static int _wrap_PdfDocument_CreateFont__SWIG_14(lua_State* L) {
   }
   arg2 = *argp2;
   
-  result = (PoDoFo::PdfFont *)(arg1)->CreateFont(arg2);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->CreateFont(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -13128,7 +17015,15 @@ static int _wrap_PdfDocument_CreateDuplicateFontType1(lua_State* L) {
   }
   
   arg3 = (char *)lua_tostring(L, 3);
-  result = (PoDoFo::PdfFont *)(arg1)->CreateDuplicateFontType1(arg2,(char const *)arg3);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->CreateDuplicateFontType1(arg2,(char const *)arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -13174,7 +17069,15 @@ static int _wrap_PdfDocument_CreateFontSubset__SWIG_0(lua_State* L) {
   }
   
   arg7 = (char *)lua_tostring(L, 7);
-  result = (PoDoFo::PdfFont *)(arg1)->CreateFontSubset((char const *)arg2,arg3,arg4,arg5,(PoDoFo::PdfEncoding const *)arg6,(char const *)arg7);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->CreateFontSubset((char const *)arg2,arg3,arg4,arg5,(PoDoFo::PdfEncoding const *)arg6,(char const *)arg7);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -13217,7 +17120,15 @@ static int _wrap_PdfDocument_CreateFontSubset__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_CreateFontSubset",6,SWIGTYPE_p_PoDoFo__PdfEncoding);
   }
   
-  result = (PoDoFo::PdfFont *)(arg1)->CreateFontSubset((char const *)arg2,arg3,arg4,arg5,(PoDoFo::PdfEncoding const *)arg6);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->CreateFontSubset((char const *)arg2,arg3,arg4,arg5,(PoDoFo::PdfEncoding const *)arg6);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -13253,7 +17164,15 @@ static int _wrap_PdfDocument_CreateFontSubset__SWIG_2(lua_State* L) {
   arg3 = (lua_toboolean(L, 3)!=0);
   arg4 = (lua_toboolean(L, 4)!=0);
   arg5 = (lua_toboolean(L, 5)!=0);
-  result = (PoDoFo::PdfFont *)(arg1)->CreateFontSubset((char const *)arg2,arg3,arg4,arg5);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->CreateFontSubset((char const *)arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -13286,7 +17205,15 @@ static int _wrap_PdfDocument_CreateFontSubset__SWIG_3(lua_State* L) {
   arg2 = (char *)lua_tostring(L, 2);
   arg3 = (lua_toboolean(L, 3)!=0);
   arg4 = (lua_toboolean(L, 4)!=0);
-  result = (PoDoFo::PdfFont *)(arg1)->CreateFontSubset((char const *)arg2,arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->CreateFontSubset((char const *)arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -13484,7 +17411,15 @@ static int _wrap_PdfDocument_GetFontLibrary(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_GetFontLibrary",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = ((PoDoFo::PdfDocument const *)arg1)->GetFontLibrary();
+  {
+    try {
+      result = ((PoDoFo::PdfDocument const *)arg1)->GetFontLibrary();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     FT_Library * resultptr = new FT_Library((const FT_Library &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_FT_Library,1); SWIG_arg++;
@@ -13510,7 +17445,15 @@ static int _wrap_PdfDocument_EmbedSubsetFonts(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_EmbedSubsetFonts",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  (arg1)->EmbedSubsetFonts();
+  {
+    try {
+      (arg1)->EmbedSubsetFonts();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -13541,7 +17484,15 @@ static int _wrap_PdfDocument_CreatePage(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_CreatePage",2,SWIGTYPE_p_PoDoFo__PdfRect);
   }
   
-  result = (PoDoFo::PdfPage *)(arg1)->CreatePage((PoDoFo::PdfRect const &)*arg2);
+  {
+    try {
+      result = (PoDoFo::PdfPage *)(arg1)->CreatePage((PoDoFo::PdfRect const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPage,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -13571,7 +17522,15 @@ static int _wrap_PdfDocument_CreatePages(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_CreatePages",2,SWIGTYPE_p_std__vectorT_PoDoFo__PdfRect_t);
   }
   
-  (arg1)->CreatePages((std::vector< PoDoFo::PdfRect > const &)*arg2);
+  {
+    try {
+      (arg1)->CreatePages((std::vector< PoDoFo::PdfRect > const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -13605,7 +17564,15 @@ static int _wrap_PdfDocument_InsertPage(lua_State* L) {
   }
   
   arg3 = (int)lua_tonumber(L, 3);
-  result = (PoDoFo::PdfPage *)(arg1)->InsertPage((PoDoFo::PdfRect const &)*arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfPage *)(arg1)->InsertPage((PoDoFo::PdfRect const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPage,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -13639,7 +17606,15 @@ static int _wrap_PdfDocument_Append__SWIG_0(lua_State* L) {
   }
   
   arg3 = (lua_toboolean(L, 3)!=0);
-  result = (PoDoFo::PdfDocument *) &(arg1)->Append((PoDoFo::PdfMemDocument const &)*arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfDocument *) &(arg1)->Append((PoDoFo::PdfMemDocument const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDocument,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -13670,7 +17645,15 @@ static int _wrap_PdfDocument_Append__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_Append",2,SWIGTYPE_p_PoDoFo__PdfMemDocument);
   }
   
-  result = (PoDoFo::PdfDocument *) &(arg1)->Append((PoDoFo::PdfMemDocument const &)*arg2);
+  {
+    try {
+      result = (PoDoFo::PdfDocument *) &(arg1)->Append((PoDoFo::PdfMemDocument const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDocument,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -13776,7 +17759,15 @@ static int _wrap_PdfDocument_InsertExistingPageAt(lua_State* L) {
   
   arg3 = (int)lua_tonumber(L, 3);
   arg4 = (int)lua_tonumber(L, 4);
-  result = (PoDoFo::PdfDocument *) &(arg1)->InsertExistingPageAt((PoDoFo::PdfMemDocument const &)*arg2,arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfDocument *) &(arg1)->InsertExistingPageAt((PoDoFo::PdfMemDocument const &)*arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDocument,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -13820,7 +17811,15 @@ static int _wrap_PdfDocument_FillXObjectFromDocumentPage(lua_State* L) {
   
   arg4 = (int)lua_tonumber(L, 4);
   arg5 = (lua_toboolean(L, 5)!=0);
-  result = (arg1)->FillXObjectFromDocumentPage(arg2,(PoDoFo::PdfMemDocument const &)*arg3,arg4,arg5);
+  {
+    try {
+      result = (arg1)->FillXObjectFromDocumentPage(arg2,(PoDoFo::PdfMemDocument const &)*arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfRect * resultptr = new PoDoFo::PdfRect((const PoDoFo::PdfRect &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfRect,1); SWIG_arg++;
@@ -13860,7 +17859,15 @@ static int _wrap_PdfDocument_FillXObjectFromExistingPage(lua_State* L) {
   
   arg3 = (int)lua_tonumber(L, 3);
   arg4 = (lua_toboolean(L, 4)!=0);
-  result = (arg1)->FillXObjectFromExistingPage(arg2,arg3,arg4);
+  {
+    try {
+      result = (arg1)->FillXObjectFromExistingPage(arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfRect * resultptr = new PoDoFo::PdfRect((const PoDoFo::PdfRect &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfRect,1); SWIG_arg++;
@@ -13908,7 +17915,15 @@ static int _wrap_PdfDocument_FillXObjectFromPage(lua_State* L) {
   arg4 = (lua_toboolean(L, 4)!=0);
   SWIG_contract_assert((lua_tonumber(L,5)>=0),"number must not be negative")
   arg5 = (unsigned int)lua_tonumber(L, 5);
-  result = (arg1)->FillXObjectFromPage(arg2,(PoDoFo::PdfPage const *)arg3,arg4,arg5);
+  {
+    try {
+      result = (arg1)->FillXObjectFromPage(arg2,(PoDoFo::PdfPage const *)arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfRect * resultptr = new PoDoFo::PdfRect((const PoDoFo::PdfRect &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfRect,1); SWIG_arg++;
@@ -13941,7 +17956,15 @@ static int _wrap_PdfDocument_AttachFile(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_AttachFile",2,SWIGTYPE_p_PoDoFo__PdfFileSpec);
   }
   
-  (arg1)->AttachFile((PoDoFo::PdfFileSpec const &)*arg2);
+  {
+    try {
+      (arg1)->AttachFile((PoDoFo::PdfFileSpec const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -13972,7 +17995,15 @@ static int _wrap_PdfDocument_GetAttachment(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_GetAttachment",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  result = (PoDoFo::PdfFileSpec *)(arg1)->GetAttachment((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      result = (PoDoFo::PdfFileSpec *)(arg1)->GetAttachment((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFileSpec,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -14009,7 +18040,15 @@ static int _wrap_PdfDocument_AddNamedDestination(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_AddNamedDestination",3,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->AddNamedDestination((PoDoFo::PdfDestination const &)*arg2,(PoDoFo::PdfString const &)*arg3);
+  {
+    try {
+      (arg1)->AddNamedDestination((PoDoFo::PdfDestination const &)*arg2,(PoDoFo::PdfString const &)*arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -14035,7 +18074,15 @@ static int _wrap_PdfDocument_SetPageMode(lua_State* L) {
   }
   
   arg2 = (PoDoFo::EPdfPageMode)(int)lua_tonumber(L, 2);
-  (arg1)->SetPageMode(arg2);
+  {
+    try {
+      (arg1)->SetPageMode(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -14059,7 +18106,15 @@ static int _wrap_PdfDocument_GetPageMode(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_GetPageMode",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::EPdfPageMode)((PoDoFo::PdfDocument const *)arg1)->GetPageMode();
+  {
+    try {
+      result = (PoDoFo::EPdfPageMode)((PoDoFo::PdfDocument const *)arg1)->GetPageMode();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
   return SWIG_arg;
   
@@ -14082,7 +18137,15 @@ static int _wrap_PdfDocument_SetUseFullScreen(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_SetUseFullScreen",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  (arg1)->SetUseFullScreen();
+  {
+    try {
+      (arg1)->SetUseFullScreen();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -14108,7 +18171,15 @@ static int _wrap_PdfDocument_SetPageLayout(lua_State* L) {
   }
   
   arg2 = (PoDoFo::EPdfPageLayout)(int)lua_tonumber(L, 2);
-  (arg1)->SetPageLayout(arg2);
+  {
+    try {
+      (arg1)->SetPageLayout(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -14131,7 +18202,15 @@ static int _wrap_PdfDocument_SetHideToolbar(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_SetHideToolbar",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  (arg1)->SetHideToolbar();
+  {
+    try {
+      (arg1)->SetHideToolbar();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -14154,7 +18233,15 @@ static int _wrap_PdfDocument_SetHideMenubar(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_SetHideMenubar",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  (arg1)->SetHideMenubar();
+  {
+    try {
+      (arg1)->SetHideMenubar();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -14177,7 +18264,15 @@ static int _wrap_PdfDocument_SetHideWindowUI(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_SetHideWindowUI",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  (arg1)->SetHideWindowUI();
+  {
+    try {
+      (arg1)->SetHideWindowUI();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -14200,7 +18295,15 @@ static int _wrap_PdfDocument_SetFitWindow(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_SetFitWindow",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  (arg1)->SetFitWindow();
+  {
+    try {
+      (arg1)->SetFitWindow();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -14223,7 +18326,15 @@ static int _wrap_PdfDocument_SetCenterWindow(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_SetCenterWindow",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  (arg1)->SetCenterWindow();
+  {
+    try {
+      (arg1)->SetCenterWindow();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -14246,7 +18357,15 @@ static int _wrap_PdfDocument_SetDisplayDocTitle(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_SetDisplayDocTitle",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  (arg1)->SetDisplayDocTitle();
+  {
+    try {
+      (arg1)->SetDisplayDocTitle();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -14276,7 +18395,15 @@ static int _wrap_PdfDocument_SetPrintScaling(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_SetPrintScaling",2,SWIGTYPE_p_PoDoFo__PdfName);
   }
   
-  (arg1)->SetPrintScaling(*arg2);
+  {
+    try {
+      (arg1)->SetPrintScaling(*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -14306,7 +18433,15 @@ static int _wrap_PdfDocument_SetBaseURI(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_SetBaseURI",2,SWIGTYPE_p_std__string);
   }
   
-  (arg1)->SetBaseURI((std::string const &)*arg2);
+  {
+    try {
+      (arg1)->SetBaseURI((std::string const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -14336,7 +18471,15 @@ static int _wrap_PdfDocument_SetLanguage(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_SetLanguage",2,SWIGTYPE_p_std__string);
   }
   
-  (arg1)->SetLanguage((std::string const &)*arg2);
+  {
+    try {
+      (arg1)->SetLanguage((std::string const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -14366,7 +18509,15 @@ static int _wrap_PdfDocument_SetBindingDirection(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_SetBindingDirection",2,SWIGTYPE_p_PoDoFo__PdfName);
   }
   
-  (arg1)->SetBindingDirection(*arg2);
+  {
+    try {
+      (arg1)->SetBindingDirection(*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -14390,7 +18541,15 @@ static int _wrap_PdfDocument_IsPrintAllowed(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_IsPrintAllowed",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (bool)((PoDoFo::PdfDocument const *)arg1)->IsPrintAllowed();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfDocument const *)arg1)->IsPrintAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -14414,7 +18573,15 @@ static int _wrap_PdfDocument_IsEditAllowed(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_IsEditAllowed",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (bool)((PoDoFo::PdfDocument const *)arg1)->IsEditAllowed();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfDocument const *)arg1)->IsEditAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -14438,7 +18605,15 @@ static int _wrap_PdfDocument_IsCopyAllowed(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_IsCopyAllowed",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (bool)((PoDoFo::PdfDocument const *)arg1)->IsCopyAllowed();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfDocument const *)arg1)->IsCopyAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -14462,7 +18637,15 @@ static int _wrap_PdfDocument_IsEditNotesAllowed(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_IsEditNotesAllowed",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (bool)((PoDoFo::PdfDocument const *)arg1)->IsEditNotesAllowed();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfDocument const *)arg1)->IsEditNotesAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -14486,7 +18669,15 @@ static int _wrap_PdfDocument_IsFillAndSignAllowed(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_IsFillAndSignAllowed",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (bool)((PoDoFo::PdfDocument const *)arg1)->IsFillAndSignAllowed();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfDocument const *)arg1)->IsFillAndSignAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -14510,7 +18701,15 @@ static int _wrap_PdfDocument_IsAccessibilityAllowed(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_IsAccessibilityAllowed",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (bool)((PoDoFo::PdfDocument const *)arg1)->IsAccessibilityAllowed();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfDocument const *)arg1)->IsAccessibilityAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -14534,7 +18733,15 @@ static int _wrap_PdfDocument_IsDocAssemblyAllowed(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_IsDocAssemblyAllowed",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (bool)((PoDoFo::PdfDocument const *)arg1)->IsDocAssemblyAllowed();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfDocument const *)arg1)->IsDocAssemblyAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -14558,7 +18765,15 @@ static int _wrap_PdfDocument_IsHighPrintAllowed(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_IsHighPrintAllowed",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (bool)((PoDoFo::PdfDocument const *)arg1)->IsHighPrintAllowed();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfDocument const *)arg1)->IsHighPrintAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -14582,7 +18797,15 @@ static int _wrap_PdfDocument_GetObjects__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_GetObjects",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfVecObjects *)(arg1)->GetObjects();
+  {
+    try {
+      result = (PoDoFo::PdfVecObjects *)(arg1)->GetObjects();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfVecObjects,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -14606,7 +18829,15 @@ static int _wrap_PdfDocument_GetObjects__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_GetObjects",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfVecObjects *)((PoDoFo::PdfDocument const *)arg1)->GetObjects();
+  {
+    try {
+      result = (PoDoFo::PdfVecObjects *)((PoDoFo::PdfDocument const *)arg1)->GetObjects();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfVecObjects,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -14680,7 +18911,15 @@ static int _wrap_PdfDocument_SetFontConfigWrapper(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_SetFontConfigWrapper",2,SWIGTYPE_p_PoDoFo__PdfFontConfigWrapper);
   }
   
-  (arg1)->SetFontConfigWrapper((PoDoFo::PdfFontConfigWrapper const &)*arg2);
+  {
+    try {
+      (arg1)->SetFontConfigWrapper((PoDoFo::PdfFontConfigWrapper const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -14803,7 +19042,15 @@ static int _wrap_PdfEncodingObjectFactory_CreateEncoding__SWIG_0(lua_State* L) {
   }
   
   arg3 = (lua_toboolean(L, 3)!=0);
-  result = (PoDoFo::PdfEncoding *)PoDoFo::PdfEncodingObjectFactory::CreateEncoding(arg1,arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfEncoding *)PoDoFo::PdfEncodingObjectFactory::CreateEncoding(arg1,arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfEncoding,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -14834,7 +19081,15 @@ static int _wrap_PdfEncodingObjectFactory_CreateEncoding__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfEncodingObjectFactory_CreateEncoding",2,SWIGTYPE_p_PoDoFo__PdfObject);
   }
   
-  result = (PoDoFo::PdfEncoding *)PoDoFo::PdfEncodingObjectFactory::CreateEncoding(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfEncoding *)PoDoFo::PdfEncodingObjectFactory::CreateEncoding(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfEncoding,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -14858,7 +19113,15 @@ static int _wrap_PdfEncodingObjectFactory_CreateEncoding__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("PdfEncodingObjectFactory_CreateEncoding",1,SWIGTYPE_p_PoDoFo__PdfObject);
   }
   
-  result = (PoDoFo::PdfEncoding *)PoDoFo::PdfEncodingObjectFactory::CreateEncoding(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfEncoding *)PoDoFo::PdfEncodingObjectFactory::CreateEncoding(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfEncoding,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -15006,7 +19269,15 @@ static int _wrap_new_PdfExtGState__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfExtGState",1,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfExtGState *)new PoDoFo::PdfExtGState(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfExtGState *)new PoDoFo::PdfExtGState(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfExtGState,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -15030,7 +19301,15 @@ static int _wrap_new_PdfExtGState__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfExtGState",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfExtGState *)new PoDoFo::PdfExtGState(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfExtGState *)new PoDoFo::PdfExtGState(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfExtGState,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -15098,7 +19377,15 @@ static int _wrap_PdfExtGState_GetIdentifier(lua_State* L) {
     SWIG_fail_ptr("PdfExtGState_GetIdentifier",1,SWIGTYPE_p_PoDoFo__PdfExtGState);
   }
   
-  result = (PoDoFo::PdfName *) &((PoDoFo::PdfExtGState const *)arg1)->GetIdentifier();
+  {
+    try {
+      result = (PoDoFo::PdfName *) &((PoDoFo::PdfExtGState const *)arg1)->GetIdentifier();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfName,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -15124,7 +19411,15 @@ static int _wrap_PdfExtGState_SetFillOpacity(lua_State* L) {
   }
   
   arg2 = (float)lua_tonumber(L, 2);
-  (arg1)->SetFillOpacity(arg2);
+  {
+    try {
+      (arg1)->SetFillOpacity(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -15150,7 +19445,15 @@ static int _wrap_PdfExtGState_SetStrokeOpacity(lua_State* L) {
   }
   
   arg2 = (float)lua_tonumber(L, 2);
-  (arg1)->SetStrokeOpacity(arg2);
+  {
+    try {
+      (arg1)->SetStrokeOpacity(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -15176,7 +19479,15 @@ static int _wrap_PdfExtGState_SetBlendMode(lua_State* L) {
   }
   
   arg2 = (char *)lua_tostring(L, 2);
-  (arg1)->SetBlendMode((char const *)arg2);
+  {
+    try {
+      (arg1)->SetBlendMode((char const *)arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -15202,7 +19513,15 @@ static int _wrap_PdfExtGState_SetOverprint__SWIG_0(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetOverprint(arg2);
+  {
+    try {
+      (arg1)->SetOverprint(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -15225,7 +19544,15 @@ static int _wrap_PdfExtGState_SetOverprint__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfExtGState_SetOverprint",1,SWIGTYPE_p_PoDoFo__PdfExtGState);
   }
   
-  (arg1)->SetOverprint();
+  {
+    try {
+      (arg1)->SetOverprint();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -15300,7 +19627,15 @@ static int _wrap_PdfExtGState_SetFillOverprint__SWIG_0(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetFillOverprint(arg2);
+  {
+    try {
+      (arg1)->SetFillOverprint(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -15323,7 +19658,15 @@ static int _wrap_PdfExtGState_SetFillOverprint__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfExtGState_SetFillOverprint",1,SWIGTYPE_p_PoDoFo__PdfExtGState);
   }
   
-  (arg1)->SetFillOverprint();
+  {
+    try {
+      (arg1)->SetFillOverprint();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -15398,7 +19741,15 @@ static int _wrap_PdfExtGState_SetStrokeOverprint__SWIG_0(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetStrokeOverprint(arg2);
+  {
+    try {
+      (arg1)->SetStrokeOverprint(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -15421,7 +19772,15 @@ static int _wrap_PdfExtGState_SetStrokeOverprint__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfExtGState_SetStrokeOverprint",1,SWIGTYPE_p_PoDoFo__PdfExtGState);
   }
   
-  (arg1)->SetStrokeOverprint();
+  {
+    try {
+      (arg1)->SetStrokeOverprint();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -15496,7 +19855,15 @@ static int _wrap_PdfExtGState_SetNonZeroOverprint__SWIG_0(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetNonZeroOverprint(arg2);
+  {
+    try {
+      (arg1)->SetNonZeroOverprint(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -15519,7 +19886,15 @@ static int _wrap_PdfExtGState_SetNonZeroOverprint__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfExtGState_SetNonZeroOverprint",1,SWIGTYPE_p_PoDoFo__PdfExtGState);
   }
   
-  (arg1)->SetNonZeroOverprint();
+  {
+    try {
+      (arg1)->SetNonZeroOverprint();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -15594,7 +19969,15 @@ static int _wrap_PdfExtGState_SetRenderingIntent(lua_State* L) {
   }
   
   arg2 = (char *)lua_tostring(L, 2);
-  (arg1)->SetRenderingIntent((char const *)arg2);
+  {
+    try {
+      (arg1)->SetRenderingIntent((char const *)arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -15620,7 +20003,15 @@ static int _wrap_PdfExtGState_SetFrequency(lua_State* L) {
   }
   
   arg2 = (double)lua_tonumber(L, 2);
-  (arg1)->SetFrequency(arg2);
+  {
+    try {
+      (arg1)->SetFrequency(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -15708,7 +20099,15 @@ static int _wrap_new_PdfField__SWIG_6(lua_State* L) {
     SWIG_fail_ptr("new_PdfField",2,SWIGTYPE_p_PoDoFo__PdfAnnotation);
   }
   
-  result = (PoDoFo::PdfField *)new PoDoFo::PdfField(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfField *)new PoDoFo::PdfField(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfField,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -15732,7 +20131,15 @@ static int _wrap_new_PdfField__SWIG_7(lua_State* L) {
     SWIG_fail_ptr("new_PdfField",1,SWIGTYPE_p_PoDoFo__PdfField);
   }
   
-  result = (PoDoFo::PdfField *)new PoDoFo::PdfField((PoDoFo::PdfField const &)*arg1);
+  {
+    try {
+      result = (PoDoFo::PdfField *)new PoDoFo::PdfField((PoDoFo::PdfField const &)*arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfField,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -15810,7 +20217,15 @@ static int _wrap_PdfField_GetPage(lua_State* L) {
     SWIG_fail_ptr("PdfField_GetPage",1,SWIGTYPE_p_PoDoFo__PdfField);
   }
   
-  result = (PoDoFo::PdfPage *)((PoDoFo::PdfField const *)arg1)->GetPage();
+  {
+    try {
+      result = (PoDoFo::PdfPage *)((PoDoFo::PdfField const *)arg1)->GetPage();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPage,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -15836,7 +20251,15 @@ static int _wrap_PdfField_SetHighlightingMode(lua_State* L) {
   }
   
   arg2 = (PoDoFo::EPdfHighlightingMode)(int)lua_tonumber(L, 2);
-  (arg1)->SetHighlightingMode(arg2);
+  {
+    try {
+      (arg1)->SetHighlightingMode(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -15860,7 +20283,15 @@ static int _wrap_PdfField_GetHighlightingMode(lua_State* L) {
     SWIG_fail_ptr("PdfField_GetHighlightingMode",1,SWIGTYPE_p_PoDoFo__PdfField);
   }
   
-  result = (PoDoFo::EPdfHighlightingMode)((PoDoFo::PdfField const *)arg1)->GetHighlightingMode();
+  {
+    try {
+      result = (PoDoFo::EPdfHighlightingMode)((PoDoFo::PdfField const *)arg1)->GetHighlightingMode();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
   return SWIG_arg;
   
@@ -15883,7 +20314,15 @@ static int _wrap_PdfField_SetBorderColorTransparent(lua_State* L) {
     SWIG_fail_ptr("PdfField_SetBorderColorTransparent",1,SWIGTYPE_p_PoDoFo__PdfField);
   }
   
-  (arg1)->SetBorderColorTransparent();
+  {
+    try {
+      (arg1)->SetBorderColorTransparent();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -15909,7 +20348,15 @@ static int _wrap_PdfField_SetBorderColor__SWIG_0(lua_State* L) {
   }
   
   arg2 = (double)lua_tonumber(L, 2);
-  (arg1)->SetBorderColor(arg2);
+  {
+    try {
+      (arg1)->SetBorderColor(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -15941,7 +20388,15 @@ static int _wrap_PdfField_SetBorderColor__SWIG_1(lua_State* L) {
   arg2 = (double)lua_tonumber(L, 2);
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
-  (arg1)->SetBorderColor(arg2,arg3,arg4);
+  {
+    try {
+      (arg1)->SetBorderColor(arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -15976,7 +20431,15 @@ static int _wrap_PdfField_SetBorderColor__SWIG_2(lua_State* L) {
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
   arg5 = (double)lua_tonumber(L, 5);
-  (arg1)->SetBorderColor(arg2,arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->SetBorderColor(arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16098,7 +20561,15 @@ static int _wrap_PdfField_SetBackgroundColorTransparent(lua_State* L) {
     SWIG_fail_ptr("PdfField_SetBackgroundColorTransparent",1,SWIGTYPE_p_PoDoFo__PdfField);
   }
   
-  (arg1)->SetBackgroundColorTransparent();
+  {
+    try {
+      (arg1)->SetBackgroundColorTransparent();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16124,7 +20595,15 @@ static int _wrap_PdfField_SetBackgroundColor__SWIG_0(lua_State* L) {
   }
   
   arg2 = (double)lua_tonumber(L, 2);
-  (arg1)->SetBackgroundColor(arg2);
+  {
+    try {
+      (arg1)->SetBackgroundColor(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16156,7 +20635,15 @@ static int _wrap_PdfField_SetBackgroundColor__SWIG_1(lua_State* L) {
   arg2 = (double)lua_tonumber(L, 2);
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
-  (arg1)->SetBackgroundColor(arg2,arg3,arg4);
+  {
+    try {
+      (arg1)->SetBackgroundColor(arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16191,7 +20678,15 @@ static int _wrap_PdfField_SetBackgroundColor__SWIG_2(lua_State* L) {
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
   arg5 = (double)lua_tonumber(L, 5);
-  (arg1)->SetBackgroundColor(arg2,arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->SetBackgroundColor(arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16320,7 +20815,15 @@ static int _wrap_PdfField_SetFieldName(lua_State* L) {
     SWIG_fail_ptr("PdfField_SetFieldName",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->SetFieldName((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      (arg1)->SetFieldName((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16344,7 +20847,15 @@ static int _wrap_PdfField_GetFieldName(lua_State* L) {
     SWIG_fail_ptr("PdfField_GetFieldName",1,SWIGTYPE_p_PoDoFo__PdfField);
   }
   
-  result = ((PoDoFo::PdfField const *)arg1)->GetFieldName();
+  {
+    try {
+      result = ((PoDoFo::PdfField const *)arg1)->GetFieldName();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfString * resultptr = new PoDoFo::PdfString((const PoDoFo::PdfString &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++;
@@ -16377,7 +20888,15 @@ static int _wrap_PdfField_SetAlternateName(lua_State* L) {
     SWIG_fail_ptr("PdfField_SetAlternateName",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->SetAlternateName((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      (arg1)->SetAlternateName((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16401,7 +20920,15 @@ static int _wrap_PdfField_GetAlternateName(lua_State* L) {
     SWIG_fail_ptr("PdfField_GetAlternateName",1,SWIGTYPE_p_PoDoFo__PdfField);
   }
   
-  result = ((PoDoFo::PdfField const *)arg1)->GetAlternateName();
+  {
+    try {
+      result = ((PoDoFo::PdfField const *)arg1)->GetAlternateName();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfString * resultptr = new PoDoFo::PdfString((const PoDoFo::PdfString &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++;
@@ -16434,7 +20961,15 @@ static int _wrap_PdfField_SetMappingName(lua_State* L) {
     SWIG_fail_ptr("PdfField_SetMappingName",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->SetMappingName((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      (arg1)->SetMappingName((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16458,7 +20993,15 @@ static int _wrap_PdfField_GetMappingName(lua_State* L) {
     SWIG_fail_ptr("PdfField_GetMappingName",1,SWIGTYPE_p_PoDoFo__PdfField);
   }
   
-  result = ((PoDoFo::PdfField const *)arg1)->GetMappingName();
+  {
+    try {
+      result = ((PoDoFo::PdfField const *)arg1)->GetMappingName();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfString * resultptr = new PoDoFo::PdfString((const PoDoFo::PdfString &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++;
@@ -16487,7 +21030,15 @@ static int _wrap_PdfField_SetReadOnly(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetReadOnly(arg2);
+  {
+    try {
+      (arg1)->SetReadOnly(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16511,7 +21062,15 @@ static int _wrap_PdfField_IsReadOnly(lua_State* L) {
     SWIG_fail_ptr("PdfField_IsReadOnly",1,SWIGTYPE_p_PoDoFo__PdfField);
   }
   
-  result = (bool)((PoDoFo::PdfField const *)arg1)->IsReadOnly();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfField const *)arg1)->IsReadOnly();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -16537,7 +21096,15 @@ static int _wrap_PdfField_SetRequired(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetRequired(arg2);
+  {
+    try {
+      (arg1)->SetRequired(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16561,7 +21128,15 @@ static int _wrap_PdfField_IsRequired(lua_State* L) {
     SWIG_fail_ptr("PdfField_IsRequired",1,SWIGTYPE_p_PoDoFo__PdfField);
   }
   
-  result = (bool)((PoDoFo::PdfField const *)arg1)->IsRequired();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfField const *)arg1)->IsRequired();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -16587,7 +21162,15 @@ static int _wrap_PdfField_SetExport(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetExport(arg2);
+  {
+    try {
+      (arg1)->SetExport(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16611,7 +21194,15 @@ static int _wrap_PdfField_IsExport(lua_State* L) {
     SWIG_fail_ptr("PdfField_IsExport",1,SWIGTYPE_p_PoDoFo__PdfField);
   }
   
-  result = (bool)((PoDoFo::PdfField const *)arg1)->IsExport();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfField const *)arg1)->IsExport();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -16641,7 +21232,15 @@ static int _wrap_PdfField_SetMouseEnterAction(lua_State* L) {
     SWIG_fail_ptr("PdfField_SetMouseEnterAction",2,SWIGTYPE_p_PoDoFo__PdfAction);
   }
   
-  (arg1)->SetMouseEnterAction((PoDoFo::PdfAction const &)*arg2);
+  {
+    try {
+      (arg1)->SetMouseEnterAction((PoDoFo::PdfAction const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16671,7 +21270,15 @@ static int _wrap_PdfField_SetMouseLeaveAction(lua_State* L) {
     SWIG_fail_ptr("PdfField_SetMouseLeaveAction",2,SWIGTYPE_p_PoDoFo__PdfAction);
   }
   
-  (arg1)->SetMouseLeaveAction((PoDoFo::PdfAction const &)*arg2);
+  {
+    try {
+      (arg1)->SetMouseLeaveAction((PoDoFo::PdfAction const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16701,7 +21308,15 @@ static int _wrap_PdfField_SetMouseDownAction(lua_State* L) {
     SWIG_fail_ptr("PdfField_SetMouseDownAction",2,SWIGTYPE_p_PoDoFo__PdfAction);
   }
   
-  (arg1)->SetMouseDownAction((PoDoFo::PdfAction const &)*arg2);
+  {
+    try {
+      (arg1)->SetMouseDownAction((PoDoFo::PdfAction const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16731,7 +21346,15 @@ static int _wrap_PdfField_SetMouseUpAction(lua_State* L) {
     SWIG_fail_ptr("PdfField_SetMouseUpAction",2,SWIGTYPE_p_PoDoFo__PdfAction);
   }
   
-  (arg1)->SetMouseUpAction((PoDoFo::PdfAction const &)*arg2);
+  {
+    try {
+      (arg1)->SetMouseUpAction((PoDoFo::PdfAction const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16761,7 +21384,15 @@ static int _wrap_PdfField_SetFocusEnterAction(lua_State* L) {
     SWIG_fail_ptr("PdfField_SetFocusEnterAction",2,SWIGTYPE_p_PoDoFo__PdfAction);
   }
   
-  (arg1)->SetFocusEnterAction((PoDoFo::PdfAction const &)*arg2);
+  {
+    try {
+      (arg1)->SetFocusEnterAction((PoDoFo::PdfAction const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16791,7 +21422,15 @@ static int _wrap_PdfField_SetFocusLeaveAction(lua_State* L) {
     SWIG_fail_ptr("PdfField_SetFocusLeaveAction",2,SWIGTYPE_p_PoDoFo__PdfAction);
   }
   
-  (arg1)->SetFocusLeaveAction((PoDoFo::PdfAction const &)*arg2);
+  {
+    try {
+      (arg1)->SetFocusLeaveAction((PoDoFo::PdfAction const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16821,7 +21460,15 @@ static int _wrap_PdfField_SetPageOpenAction(lua_State* L) {
     SWIG_fail_ptr("PdfField_SetPageOpenAction",2,SWIGTYPE_p_PoDoFo__PdfAction);
   }
   
-  (arg1)->SetPageOpenAction((PoDoFo::PdfAction const &)*arg2);
+  {
+    try {
+      (arg1)->SetPageOpenAction((PoDoFo::PdfAction const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16851,7 +21498,15 @@ static int _wrap_PdfField_SetPageCloseAction(lua_State* L) {
     SWIG_fail_ptr("PdfField_SetPageCloseAction",2,SWIGTYPE_p_PoDoFo__PdfAction);
   }
   
-  (arg1)->SetPageCloseAction((PoDoFo::PdfAction const &)*arg2);
+  {
+    try {
+      (arg1)->SetPageCloseAction((PoDoFo::PdfAction const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16881,7 +21536,15 @@ static int _wrap_PdfField_SetPageVisibleAction(lua_State* L) {
     SWIG_fail_ptr("PdfField_SetPageVisibleAction",2,SWIGTYPE_p_PoDoFo__PdfAction);
   }
   
-  (arg1)->SetPageVisibleAction((PoDoFo::PdfAction const &)*arg2);
+  {
+    try {
+      (arg1)->SetPageVisibleAction((PoDoFo::PdfAction const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16911,7 +21574,15 @@ static int _wrap_PdfField_SetPageInvisibleAction(lua_State* L) {
     SWIG_fail_ptr("PdfField_SetPageInvisibleAction",2,SWIGTYPE_p_PoDoFo__PdfAction);
   }
   
-  (arg1)->SetPageInvisibleAction((PoDoFo::PdfAction const &)*arg2);
+  {
+    try {
+      (arg1)->SetPageInvisibleAction((PoDoFo::PdfAction const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16941,7 +21612,15 @@ static int _wrap_PdfField_SetKeystrokeAction(lua_State* L) {
     SWIG_fail_ptr("PdfField_SetKeystrokeAction",2,SWIGTYPE_p_PoDoFo__PdfAction);
   }
   
-  (arg1)->SetKeystrokeAction((PoDoFo::PdfAction const &)*arg2);
+  {
+    try {
+      (arg1)->SetKeystrokeAction((PoDoFo::PdfAction const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16971,7 +21650,15 @@ static int _wrap_PdfField_SetValidateAction(lua_State* L) {
     SWIG_fail_ptr("PdfField_SetValidateAction",2,SWIGTYPE_p_PoDoFo__PdfAction);
   }
   
-  (arg1)->SetValidateAction((PoDoFo::PdfAction const &)*arg2);
+  {
+    try {
+      (arg1)->SetValidateAction((PoDoFo::PdfAction const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -16995,7 +21682,15 @@ static int _wrap_PdfField_GetType(lua_State* L) {
     SWIG_fail_ptr("PdfField_GetType",1,SWIGTYPE_p_PoDoFo__PdfField);
   }
   
-  result = (PoDoFo::EPdfField)((PoDoFo::PdfField const *)arg1)->GetType();
+  {
+    try {
+      result = (PoDoFo::EPdfField)((PoDoFo::PdfField const *)arg1)->GetType();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
   return SWIG_arg;
   
@@ -17019,7 +21714,15 @@ static int _wrap_PdfField_GetWidgetAnnotation(lua_State* L) {
     SWIG_fail_ptr("PdfField_GetWidgetAnnotation",1,SWIGTYPE_p_PoDoFo__PdfField);
   }
   
-  result = (PoDoFo::PdfAnnotation *)((PoDoFo::PdfField const *)arg1)->GetWidgetAnnotation();
+  {
+    try {
+      result = (PoDoFo::PdfAnnotation *)((PoDoFo::PdfField const *)arg1)->GetWidgetAnnotation();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfAnnotation,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -17043,7 +21746,15 @@ static int _wrap_PdfField_GetFieldObject(lua_State* L) {
     SWIG_fail_ptr("PdfField_GetFieldObject",1,SWIGTYPE_p_PoDoFo__PdfField);
   }
   
-  result = (PoDoFo::PdfObject *)((PoDoFo::PdfField const *)arg1)->GetFieldObject();
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfField const *)arg1)->GetFieldObject();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -17148,7 +21859,15 @@ static int _wrap_new_PdfButton__SWIG_4(lua_State* L) {
     SWIG_fail_ptr("new_PdfButton",1,SWIGTYPE_p_PoDoFo__PdfField);
   }
   
-  result = (PoDoFo::PdfButton *)new PoDoFo::PdfButton((PoDoFo::PdfField const &)*arg1);
+  {
+    try {
+      result = (PoDoFo::PdfButton *)new PoDoFo::PdfButton((PoDoFo::PdfField const &)*arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfButton,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -17201,7 +21920,15 @@ static int _wrap_PdfButton_IsPushButton(lua_State* L) {
     SWIG_fail_ptr("PdfButton_IsPushButton",1,SWIGTYPE_p_PoDoFo__PdfButton);
   }
   
-  result = (bool)((PoDoFo::PdfButton const *)arg1)->IsPushButton();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfButton const *)arg1)->IsPushButton();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -17225,7 +21952,15 @@ static int _wrap_PdfButton_IsCheckBox(lua_State* L) {
     SWIG_fail_ptr("PdfButton_IsCheckBox",1,SWIGTYPE_p_PoDoFo__PdfButton);
   }
   
-  result = (bool)((PoDoFo::PdfButton const *)arg1)->IsCheckBox();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfButton const *)arg1)->IsCheckBox();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -17249,7 +21984,15 @@ static int _wrap_PdfButton_IsRadioButton(lua_State* L) {
     SWIG_fail_ptr("PdfButton_IsRadioButton",1,SWIGTYPE_p_PoDoFo__PdfButton);
   }
   
-  result = (bool)((PoDoFo::PdfButton const *)arg1)->IsRadioButton();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfButton const *)arg1)->IsRadioButton();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -17279,7 +22022,15 @@ static int _wrap_PdfButton_SetCaption(lua_State* L) {
     SWIG_fail_ptr("PdfButton_SetCaption",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->SetCaption((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      (arg1)->SetCaption((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -17303,7 +22054,15 @@ static int _wrap_PdfButton_GetCaption(lua_State* L) {
     SWIG_fail_ptr("PdfButton_GetCaption",1,SWIGTYPE_p_PoDoFo__PdfButton);
   }
   
-  result = ((PoDoFo::PdfButton const *)arg1)->GetCaption();
+  {
+    try {
+      result = ((PoDoFo::PdfButton const *)arg1)->GetCaption();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfString * resultptr = new PoDoFo::PdfString((const PoDoFo::PdfString &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++;
@@ -17389,7 +22148,15 @@ static int _wrap_new_PdfPushButton__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfPushButton",2,SWIGTYPE_p_PoDoFo__PdfAcroForm);
   }
   
-  result = (PoDoFo::PdfPushButton *)new PoDoFo::PdfPushButton(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfPushButton *)new PoDoFo::PdfPushButton(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPushButton,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -17427,7 +22194,15 @@ static int _wrap_new_PdfPushButton__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfPushButton",3,SWIGTYPE_p_PoDoFo__PdfAcroForm);
   }
   
-  result = (PoDoFo::PdfPushButton *)new PoDoFo::PdfPushButton(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfPushButton *)new PoDoFo::PdfPushButton(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPushButton,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -17465,7 +22240,15 @@ static int _wrap_new_PdfPushButton__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("new_PdfPushButton",3,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfPushButton *)new PoDoFo::PdfPushButton(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfPushButton *)new PoDoFo::PdfPushButton(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPushButton,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -17503,7 +22286,15 @@ static int _wrap_new_PdfPushButton__SWIG_3(lua_State* L) {
     SWIG_fail_ptr("new_PdfPushButton",3,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
   }
   
-  result = (PoDoFo::PdfPushButton *)new PoDoFo::PdfPushButton(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfPushButton *)new PoDoFo::PdfPushButton(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPushButton,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -17527,7 +22318,15 @@ static int _wrap_new_PdfPushButton__SWIG_4(lua_State* L) {
     SWIG_fail_ptr("new_PdfPushButton",1,SWIGTYPE_p_PoDoFo__PdfField);
   }
   
-  result = (PoDoFo::PdfPushButton *)new PoDoFo::PdfPushButton((PoDoFo::PdfField const &)*arg1);
+  {
+    try {
+      result = (PoDoFo::PdfPushButton *)new PoDoFo::PdfPushButton((PoDoFo::PdfField const &)*arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPushButton,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -17716,7 +22515,15 @@ static int _wrap_PdfPushButton_SetRolloverCaption(lua_State* L) {
     SWIG_fail_ptr("PdfPushButton_SetRolloverCaption",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->SetRolloverCaption((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      (arg1)->SetRolloverCaption((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -17740,7 +22547,15 @@ static int _wrap_PdfPushButton_GetRolloverCaption(lua_State* L) {
     SWIG_fail_ptr("PdfPushButton_GetRolloverCaption",1,SWIGTYPE_p_PoDoFo__PdfPushButton);
   }
   
-  result = ((PoDoFo::PdfPushButton const *)arg1)->GetRolloverCaption();
+  {
+    try {
+      result = ((PoDoFo::PdfPushButton const *)arg1)->GetRolloverCaption();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfString * resultptr = new PoDoFo::PdfString((const PoDoFo::PdfString &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++;
@@ -17773,7 +22588,15 @@ static int _wrap_PdfPushButton_SetAlternateCaption(lua_State* L) {
     SWIG_fail_ptr("PdfPushButton_SetAlternateCaption",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->SetAlternateCaption((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      (arg1)->SetAlternateCaption((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -17797,7 +22620,15 @@ static int _wrap_PdfPushButton_GetAlternateCaption(lua_State* L) {
     SWIG_fail_ptr("PdfPushButton_GetAlternateCaption",1,SWIGTYPE_p_PoDoFo__PdfPushButton);
   }
   
-  result = ((PoDoFo::PdfPushButton const *)arg1)->GetAlternateCaption();
+  {
+    try {
+      result = ((PoDoFo::PdfPushButton const *)arg1)->GetAlternateCaption();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfString * resultptr = new PoDoFo::PdfString((const PoDoFo::PdfString &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++;
@@ -17882,7 +22713,15 @@ static int _wrap_new_PdfCheckBox__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfCheckBox",2,SWIGTYPE_p_PoDoFo__PdfAcroForm);
   }
   
-  result = (PoDoFo::PdfCheckBox *)new PoDoFo::PdfCheckBox(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfCheckBox *)new PoDoFo::PdfCheckBox(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfCheckBox,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -17920,7 +22759,15 @@ static int _wrap_new_PdfCheckBox__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfCheckBox",3,SWIGTYPE_p_PoDoFo__PdfAcroForm);
   }
   
-  result = (PoDoFo::PdfCheckBox *)new PoDoFo::PdfCheckBox(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfCheckBox *)new PoDoFo::PdfCheckBox(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfCheckBox,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -17958,7 +22805,15 @@ static int _wrap_new_PdfCheckBox__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("new_PdfCheckBox",3,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfCheckBox *)new PoDoFo::PdfCheckBox(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfCheckBox *)new PoDoFo::PdfCheckBox(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfCheckBox,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -17996,7 +22851,15 @@ static int _wrap_new_PdfCheckBox__SWIG_3(lua_State* L) {
     SWIG_fail_ptr("new_PdfCheckBox",3,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
   }
   
-  result = (PoDoFo::PdfCheckBox *)new PoDoFo::PdfCheckBox(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfCheckBox *)new PoDoFo::PdfCheckBox(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfCheckBox,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -18020,7 +22883,15 @@ static int _wrap_new_PdfCheckBox__SWIG_4(lua_State* L) {
     SWIG_fail_ptr("new_PdfCheckBox",1,SWIGTYPE_p_PoDoFo__PdfField);
   }
   
-  result = (PoDoFo::PdfCheckBox *)new PoDoFo::PdfCheckBox((PoDoFo::PdfField const &)*arg1);
+  {
+    try {
+      result = (PoDoFo::PdfCheckBox *)new PoDoFo::PdfCheckBox((PoDoFo::PdfField const &)*arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfCheckBox,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -18209,7 +23080,15 @@ static int _wrap_PdfCheckBox_SetAppearanceChecked(lua_State* L) {
     SWIG_fail_ptr("PdfCheckBox_SetAppearanceChecked",2,SWIGTYPE_p_PoDoFo__PdfXObject);
   }
   
-  (arg1)->SetAppearanceChecked((PoDoFo::PdfXObject const &)*arg2);
+  {
+    try {
+      (arg1)->SetAppearanceChecked((PoDoFo::PdfXObject const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -18239,7 +23118,15 @@ static int _wrap_PdfCheckBox_SetAppearanceUnchecked(lua_State* L) {
     SWIG_fail_ptr("PdfCheckBox_SetAppearanceUnchecked",2,SWIGTYPE_p_PoDoFo__PdfXObject);
   }
   
-  (arg1)->SetAppearanceUnchecked((PoDoFo::PdfXObject const &)*arg2);
+  {
+    try {
+      (arg1)->SetAppearanceUnchecked((PoDoFo::PdfXObject const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -18265,7 +23152,15 @@ static int _wrap_PdfCheckBox_SetChecked(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetChecked(arg2);
+  {
+    try {
+      (arg1)->SetChecked(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -18289,7 +23184,15 @@ static int _wrap_PdfCheckBox_IsChecked(lua_State* L) {
     SWIG_fail_ptr("PdfCheckBox_IsChecked",1,SWIGTYPE_p_PoDoFo__PdfCheckBox);
   }
   
-  result = (bool)((PoDoFo::PdfCheckBox const *)arg1)->IsChecked();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfCheckBox const *)arg1)->IsChecked();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -18371,7 +23274,15 @@ static int _wrap_new_PdfTextField__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfTextField",2,SWIGTYPE_p_PoDoFo__PdfAcroForm);
   }
   
-  result = (PoDoFo::PdfTextField *)new PoDoFo::PdfTextField(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfTextField *)new PoDoFo::PdfTextField(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfTextField,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -18409,7 +23320,15 @@ static int _wrap_new_PdfTextField__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfTextField",3,SWIGTYPE_p_PoDoFo__PdfAcroForm);
   }
   
-  result = (PoDoFo::PdfTextField *)new PoDoFo::PdfTextField(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfTextField *)new PoDoFo::PdfTextField(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfTextField,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -18447,7 +23366,15 @@ static int _wrap_new_PdfTextField__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("new_PdfTextField",3,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfTextField *)new PoDoFo::PdfTextField(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfTextField *)new PoDoFo::PdfTextField(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfTextField,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -18485,7 +23412,15 @@ static int _wrap_new_PdfTextField__SWIG_3(lua_State* L) {
     SWIG_fail_ptr("new_PdfTextField",3,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
   }
   
-  result = (PoDoFo::PdfTextField *)new PoDoFo::PdfTextField(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfTextField *)new PoDoFo::PdfTextField(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfTextField,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -18509,7 +23444,15 @@ static int _wrap_new_PdfTextField__SWIG_4(lua_State* L) {
     SWIG_fail_ptr("new_PdfTextField",1,SWIGTYPE_p_PoDoFo__PdfField);
   }
   
-  result = (PoDoFo::PdfTextField *)new PoDoFo::PdfTextField((PoDoFo::PdfField const &)*arg1);
+  {
+    try {
+      result = (PoDoFo::PdfTextField *)new PoDoFo::PdfTextField((PoDoFo::PdfField const &)*arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfTextField,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -18698,7 +23641,15 @@ static int _wrap_PdfTextField_SetText(lua_State* L) {
     SWIG_fail_ptr("PdfTextField_SetText",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->SetText((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      (arg1)->SetText((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -18722,7 +23673,15 @@ static int _wrap_PdfTextField_GetText(lua_State* L) {
     SWIG_fail_ptr("PdfTextField_GetText",1,SWIGTYPE_p_PoDoFo__PdfTextField);
   }
   
-  result = ((PoDoFo::PdfTextField const *)arg1)->GetText();
+  {
+    try {
+      result = ((PoDoFo::PdfTextField const *)arg1)->GetText();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfString * resultptr = new PoDoFo::PdfString((const PoDoFo::PdfString &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++;
@@ -18757,7 +23716,15 @@ static int _wrap_PdfTextField_SetMaxLen(lua_State* L) {
   }
   arg2 = *argp2;
   
-  (arg1)->SetMaxLen(arg2);
+  {
+    try {
+      (arg1)->SetMaxLen(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -18781,7 +23748,15 @@ static int _wrap_PdfTextField_GetMaxLen(lua_State* L) {
     SWIG_fail_ptr("PdfTextField_GetMaxLen",1,SWIGTYPE_p_PoDoFo__PdfTextField);
   }
   
-  result = ((PoDoFo::PdfTextField const *)arg1)->GetMaxLen();
+  {
+    try {
+      result = ((PoDoFo::PdfTextField const *)arg1)->GetMaxLen();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     pdf_long * resultptr = new pdf_long((const pdf_long &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_pdf_long,1); SWIG_arg++;
@@ -18810,7 +23785,15 @@ static int _wrap_PdfTextField_SetMultiLine(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetMultiLine(arg2);
+  {
+    try {
+      (arg1)->SetMultiLine(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -18834,7 +23817,15 @@ static int _wrap_PdfTextField_IsMultiLine(lua_State* L) {
     SWIG_fail_ptr("PdfTextField_IsMultiLine",1,SWIGTYPE_p_PoDoFo__PdfTextField);
   }
   
-  result = (bool)((PoDoFo::PdfTextField const *)arg1)->IsMultiLine();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfTextField const *)arg1)->IsMultiLine();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -18860,7 +23851,15 @@ static int _wrap_PdfTextField_SetPasswordField(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetPasswordField(arg2);
+  {
+    try {
+      (arg1)->SetPasswordField(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -18884,7 +23883,15 @@ static int _wrap_PdfTextField_IsPasswordField(lua_State* L) {
     SWIG_fail_ptr("PdfTextField_IsPasswordField",1,SWIGTYPE_p_PoDoFo__PdfTextField);
   }
   
-  result = (bool)((PoDoFo::PdfTextField const *)arg1)->IsPasswordField();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfTextField const *)arg1)->IsPasswordField();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -18910,7 +23917,15 @@ static int _wrap_PdfTextField_SetFileField(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetFileField(arg2);
+  {
+    try {
+      (arg1)->SetFileField(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -18934,7 +23949,15 @@ static int _wrap_PdfTextField_IsFileField(lua_State* L) {
     SWIG_fail_ptr("PdfTextField_IsFileField",1,SWIGTYPE_p_PoDoFo__PdfTextField);
   }
   
-  result = (bool)((PoDoFo::PdfTextField const *)arg1)->IsFileField();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfTextField const *)arg1)->IsFileField();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -18960,7 +23983,15 @@ static int _wrap_PdfTextField_SetSpellcheckingEnabled(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetSpellcheckingEnabled(arg2);
+  {
+    try {
+      (arg1)->SetSpellcheckingEnabled(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -18984,7 +24015,15 @@ static int _wrap_PdfTextField_IsSpellcheckingEnabled(lua_State* L) {
     SWIG_fail_ptr("PdfTextField_IsSpellcheckingEnabled",1,SWIGTYPE_p_PoDoFo__PdfTextField);
   }
   
-  result = (bool)((PoDoFo::PdfTextField const *)arg1)->IsSpellcheckingEnabled();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfTextField const *)arg1)->IsSpellcheckingEnabled();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -19010,7 +24049,15 @@ static int _wrap_PdfTextField_SetScrollBarsEnabled(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetScrollBarsEnabled(arg2);
+  {
+    try {
+      (arg1)->SetScrollBarsEnabled(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -19034,7 +24081,15 @@ static int _wrap_PdfTextField_IsScrollBarsEnabled(lua_State* L) {
     SWIG_fail_ptr("PdfTextField_IsScrollBarsEnabled",1,SWIGTYPE_p_PoDoFo__PdfTextField);
   }
   
-  result = (bool)((PoDoFo::PdfTextField const *)arg1)->IsScrollBarsEnabled();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfTextField const *)arg1)->IsScrollBarsEnabled();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -19060,7 +24115,15 @@ static int _wrap_PdfTextField_SetCombs(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetCombs(arg2);
+  {
+    try {
+      (arg1)->SetCombs(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -19084,7 +24147,15 @@ static int _wrap_PdfTextField_IsCombs(lua_State* L) {
     SWIG_fail_ptr("PdfTextField_IsCombs",1,SWIGTYPE_p_PoDoFo__PdfTextField);
   }
   
-  result = (bool)((PoDoFo::PdfTextField const *)arg1)->IsCombs();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfTextField const *)arg1)->IsCombs();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -19110,7 +24181,15 @@ static int _wrap_PdfTextField_SetRichText(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetRichText(arg2);
+  {
+    try {
+      (arg1)->SetRichText(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -19134,7 +24213,15 @@ static int _wrap_PdfTextField_IsRichText(lua_State* L) {
     SWIG_fail_ptr("PdfTextField_IsRichText",1,SWIGTYPE_p_PoDoFo__PdfTextField);
   }
   
-  result = (bool)((PoDoFo::PdfTextField const *)arg1)->IsRichText();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfTextField const *)arg1)->IsRichText();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -19223,7 +24310,15 @@ static int _wrap_new_PdfListField__SWIG_4(lua_State* L) {
     SWIG_fail_ptr("new_PdfListField",1,SWIGTYPE_p_PoDoFo__PdfField);
   }
   
-  result = (PoDoFo::PdfListField *)new PoDoFo::PdfListField((PoDoFo::PdfField const &)*arg1);
+  {
+    try {
+      result = (PoDoFo::PdfListField *)new PoDoFo::PdfListField((PoDoFo::PdfField const &)*arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfListField,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -19289,7 +24384,15 @@ static int _wrap_PdfListField_InsertItem__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("PdfListField_InsertItem",3,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->InsertItem((PoDoFo::PdfString const &)*arg2,(PoDoFo::PdfString const &)*arg3);
+  {
+    try {
+      (arg1)->InsertItem((PoDoFo::PdfString const &)*arg2,(PoDoFo::PdfString const &)*arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -19319,7 +24422,15 @@ static int _wrap_PdfListField_InsertItem__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfListField_InsertItem",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->InsertItem((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      (arg1)->InsertItem((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -19419,7 +24530,15 @@ static int _wrap_PdfListField_RemoveItem(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  (arg1)->RemoveItem(arg2);
+  {
+    try {
+      (arg1)->RemoveItem(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -19446,7 +24565,15 @@ static int _wrap_PdfListField_GetItem(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = ((PoDoFo::PdfListField const *)arg1)->GetItem(arg2);
+  {
+    try {
+      result = ((PoDoFo::PdfListField const *)arg1)->GetItem(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfString * resultptr = new PoDoFo::PdfString((const PoDoFo::PdfString &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++;
@@ -19476,7 +24603,15 @@ static int _wrap_PdfListField_GetItemDisplayText(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = ((PoDoFo::PdfListField const *)arg1)->GetItemDisplayText(arg2);
+  {
+    try {
+      result = ((PoDoFo::PdfListField const *)arg1)->GetItemDisplayText(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfString * resultptr = new PoDoFo::PdfString((const PoDoFo::PdfString &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++;
@@ -19503,7 +24638,15 @@ static int _wrap_PdfListField_GetItemCount(lua_State* L) {
     SWIG_fail_ptr("PdfListField_GetItemCount",1,SWIGTYPE_p_PoDoFo__PdfListField);
   }
   
-  result = ((PoDoFo::PdfListField const *)arg1)->GetItemCount();
+  {
+    try {
+      result = ((PoDoFo::PdfListField const *)arg1)->GetItemCount();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -19529,7 +24672,15 @@ static int _wrap_PdfListField_SetSelectedItem(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  (arg1)->SetSelectedItem(arg2);
+  {
+    try {
+      (arg1)->SetSelectedItem(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -19553,7 +24704,15 @@ static int _wrap_PdfListField_GetSelectedItem(lua_State* L) {
     SWIG_fail_ptr("PdfListField_GetSelectedItem",1,SWIGTYPE_p_PoDoFo__PdfListField);
   }
   
-  result = (int)((PoDoFo::PdfListField const *)arg1)->GetSelectedItem();
+  {
+    try {
+      result = (int)((PoDoFo::PdfListField const *)arg1)->GetSelectedItem();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -19577,7 +24736,15 @@ static int _wrap_PdfListField_IsComboBox(lua_State* L) {
     SWIG_fail_ptr("PdfListField_IsComboBox",1,SWIGTYPE_p_PoDoFo__PdfListField);
   }
   
-  result = (bool)((PoDoFo::PdfListField const *)arg1)->IsComboBox();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfListField const *)arg1)->IsComboBox();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -19603,7 +24770,15 @@ static int _wrap_PdfListField_SetSpellcheckingEnabled(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetSpellcheckingEnabled(arg2);
+  {
+    try {
+      (arg1)->SetSpellcheckingEnabled(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -19627,7 +24802,15 @@ static int _wrap_PdfListField_IsSpellcheckingEnabled(lua_State* L) {
     SWIG_fail_ptr("PdfListField_IsSpellcheckingEnabled",1,SWIGTYPE_p_PoDoFo__PdfListField);
   }
   
-  result = (bool)((PoDoFo::PdfListField const *)arg1)->IsSpellcheckingEnabled();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfListField const *)arg1)->IsSpellcheckingEnabled();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -19653,7 +24836,15 @@ static int _wrap_PdfListField_SetSorted(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetSorted(arg2);
+  {
+    try {
+      (arg1)->SetSorted(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -19677,7 +24868,15 @@ static int _wrap_PdfListField_IsSorted(lua_State* L) {
     SWIG_fail_ptr("PdfListField_IsSorted",1,SWIGTYPE_p_PoDoFo__PdfListField);
   }
   
-  result = (bool)((PoDoFo::PdfListField const *)arg1)->IsSorted();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfListField const *)arg1)->IsSorted();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -19703,7 +24902,15 @@ static int _wrap_PdfListField_SetMultiSelect(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetMultiSelect(arg2);
+  {
+    try {
+      (arg1)->SetMultiSelect(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -19727,7 +24934,15 @@ static int _wrap_PdfListField_IsMultiSelect(lua_State* L) {
     SWIG_fail_ptr("PdfListField_IsMultiSelect",1,SWIGTYPE_p_PoDoFo__PdfListField);
   }
   
-  result = (bool)((PoDoFo::PdfListField const *)arg1)->IsMultiSelect();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfListField const *)arg1)->IsMultiSelect();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -19753,7 +24968,15 @@ static int _wrap_PdfListField_SetCommitOnSelectionChange(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetCommitOnSelectionChange(arg2);
+  {
+    try {
+      (arg1)->SetCommitOnSelectionChange(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -19777,7 +25000,15 @@ static int _wrap_PdfListField_IsCommitOnSelectionChange(lua_State* L) {
     SWIG_fail_ptr("PdfListField_IsCommitOnSelectionChange",1,SWIGTYPE_p_PoDoFo__PdfListField);
   }
   
-  result = (bool)((PoDoFo::PdfListField const *)arg1)->IsCommitOnSelectionChange();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfListField const *)arg1)->IsCommitOnSelectionChange();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -19871,7 +25102,15 @@ static int _wrap_new_PdfComboBox__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfComboBox",2,SWIGTYPE_p_PoDoFo__PdfAcroForm);
   }
   
-  result = (PoDoFo::PdfComboBox *)new PoDoFo::PdfComboBox(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfComboBox *)new PoDoFo::PdfComboBox(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfComboBox,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -19909,7 +25148,15 @@ static int _wrap_new_PdfComboBox__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfComboBox",3,SWIGTYPE_p_PoDoFo__PdfAcroForm);
   }
   
-  result = (PoDoFo::PdfComboBox *)new PoDoFo::PdfComboBox(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfComboBox *)new PoDoFo::PdfComboBox(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfComboBox,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -19947,7 +25194,15 @@ static int _wrap_new_PdfComboBox__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("new_PdfComboBox",3,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfComboBox *)new PoDoFo::PdfComboBox(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfComboBox *)new PoDoFo::PdfComboBox(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfComboBox,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -19985,7 +25240,15 @@ static int _wrap_new_PdfComboBox__SWIG_3(lua_State* L) {
     SWIG_fail_ptr("new_PdfComboBox",3,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
   }
   
-  result = (PoDoFo::PdfComboBox *)new PoDoFo::PdfComboBox(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfComboBox *)new PoDoFo::PdfComboBox(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfComboBox,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -20009,7 +25272,15 @@ static int _wrap_new_PdfComboBox__SWIG_4(lua_State* L) {
     SWIG_fail_ptr("new_PdfComboBox",1,SWIGTYPE_p_PoDoFo__PdfField);
   }
   
-  result = (PoDoFo::PdfComboBox *)new PoDoFo::PdfComboBox((PoDoFo::PdfField const &)*arg1);
+  {
+    try {
+      result = (PoDoFo::PdfComboBox *)new PoDoFo::PdfComboBox((PoDoFo::PdfField const &)*arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfComboBox,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -20194,7 +25465,15 @@ static int _wrap_PdfComboBox_SetEditable(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetEditable(arg2);
+  {
+    try {
+      (arg1)->SetEditable(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -20218,7 +25497,15 @@ static int _wrap_PdfComboBox_IsEditable(lua_State* L) {
     SWIG_fail_ptr("PdfComboBox_IsEditable",1,SWIGTYPE_p_PoDoFo__PdfComboBox);
   }
   
-  result = (bool)((PoDoFo::PdfComboBox const *)arg1)->IsEditable();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfComboBox const *)arg1)->IsEditable();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -20298,7 +25585,15 @@ static int _wrap_new_PdfListBox__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfListBox",2,SWIGTYPE_p_PoDoFo__PdfAcroForm);
   }
   
-  result = (PoDoFo::PdfListBox *)new PoDoFo::PdfListBox(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfListBox *)new PoDoFo::PdfListBox(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfListBox,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -20336,7 +25631,15 @@ static int _wrap_new_PdfListBox__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfListBox",3,SWIGTYPE_p_PoDoFo__PdfAcroForm);
   }
   
-  result = (PoDoFo::PdfListBox *)new PoDoFo::PdfListBox(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfListBox *)new PoDoFo::PdfListBox(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfListBox,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -20374,7 +25677,15 @@ static int _wrap_new_PdfListBox__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("new_PdfListBox",3,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfListBox *)new PoDoFo::PdfListBox(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfListBox *)new PoDoFo::PdfListBox(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfListBox,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -20412,7 +25723,15 @@ static int _wrap_new_PdfListBox__SWIG_3(lua_State* L) {
     SWIG_fail_ptr("new_PdfListBox",3,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
   }
   
-  result = (PoDoFo::PdfListBox *)new PoDoFo::PdfListBox(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfListBox *)new PoDoFo::PdfListBox(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfListBox,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -20436,7 +25755,15 @@ static int _wrap_new_PdfListBox__SWIG_4(lua_State* L) {
     SWIG_fail_ptr("new_PdfListBox",1,SWIGTYPE_p_PoDoFo__PdfField);
   }
   
-  result = (PoDoFo::PdfListBox *)new PoDoFo::PdfListBox((PoDoFo::PdfField const &)*arg1);
+  {
+    try {
+      result = (PoDoFo::PdfListBox *)new PoDoFo::PdfListBox((PoDoFo::PdfField const &)*arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfListBox,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -20675,7 +26002,15 @@ static int _wrap_new_PdfFileSpec__SWIG_0(lua_State* L) {
   }
   
   arg4 = (lua_toboolean(L, 4)!=0);
-  result = (PoDoFo::PdfFileSpec *)new PoDoFo::PdfFileSpec((char const *)arg1,arg2,arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfFileSpec *)new PoDoFo::PdfFileSpec((char const *)arg1,arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFileSpec,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -20705,7 +26040,15 @@ static int _wrap_new_PdfFileSpec__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfFileSpec",3,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfFileSpec *)new PoDoFo::PdfFileSpec((char const *)arg1,arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfFileSpec *)new PoDoFo::PdfFileSpec((char const *)arg1,arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFileSpec,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -20738,7 +26081,15 @@ static int _wrap_new_PdfFileSpec__SWIG_2(lua_State* L) {
   }
   
   arg4 = (lua_toboolean(L, 4)!=0);
-  result = (PoDoFo::PdfFileSpec *)new PoDoFo::PdfFileSpec((char const *)arg1,arg2,arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfFileSpec *)new PoDoFo::PdfFileSpec((char const *)arg1,arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFileSpec,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -20768,7 +26119,15 @@ static int _wrap_new_PdfFileSpec__SWIG_3(lua_State* L) {
     SWIG_fail_ptr("new_PdfFileSpec",3,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfFileSpec *)new PoDoFo::PdfFileSpec((char const *)arg1,arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfFileSpec *)new PoDoFo::PdfFileSpec((char const *)arg1,arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFileSpec,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -20814,7 +26173,15 @@ static int _wrap_new_PdfFileSpec__SWIG_4(lua_State* L) {
   }
   
   arg5 = (lua_toboolean(L, 5)!=0);
-  result = (PoDoFo::PdfFileSpec *)new PoDoFo::PdfFileSpec((char const *)arg1,(unsigned char const *)arg2,arg3,arg4,arg5);
+  {
+    try {
+      result = (PoDoFo::PdfFileSpec *)new PoDoFo::PdfFileSpec((char const *)arg1,(unsigned char const *)arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFileSpec,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -20857,7 +26224,15 @@ static int _wrap_new_PdfFileSpec__SWIG_5(lua_State* L) {
     SWIG_fail_ptr("new_PdfFileSpec",4,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfFileSpec *)new PoDoFo::PdfFileSpec((char const *)arg1,(unsigned char const *)arg2,arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfFileSpec *)new PoDoFo::PdfFileSpec((char const *)arg1,(unsigned char const *)arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFileSpec,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -20903,7 +26278,15 @@ static int _wrap_new_PdfFileSpec__SWIG_6(lua_State* L) {
   }
   
   arg5 = (lua_toboolean(L, 5)!=0);
-  result = (PoDoFo::PdfFileSpec *)new PoDoFo::PdfFileSpec((char const *)arg1,(unsigned char const *)arg2,arg3,arg4,arg5);
+  {
+    try {
+      result = (PoDoFo::PdfFileSpec *)new PoDoFo::PdfFileSpec((char const *)arg1,(unsigned char const *)arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFileSpec,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -20946,7 +26329,15 @@ static int _wrap_new_PdfFileSpec__SWIG_7(lua_State* L) {
     SWIG_fail_ptr("new_PdfFileSpec",4,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfFileSpec *)new PoDoFo::PdfFileSpec((char const *)arg1,(unsigned char const *)arg2,arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfFileSpec *)new PoDoFo::PdfFileSpec((char const *)arg1,(unsigned char const *)arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFileSpec,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -20970,7 +26361,15 @@ static int _wrap_new_PdfFileSpec__SWIG_8(lua_State* L) {
     SWIG_fail_ptr("new_PdfFileSpec",1,SWIGTYPE_p_PoDoFo__PdfObject);
   }
   
-  result = (PoDoFo::PdfFileSpec *)new PoDoFo::PdfFileSpec(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfFileSpec *)new PoDoFo::PdfFileSpec(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFileSpec,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -21306,7 +26705,15 @@ static int _wrap_PdfFileSpec_GetFilename(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  result = (PoDoFo::PdfString *) &((PoDoFo::PdfFileSpec const *)arg1)->GetFilename(arg2);
+  {
+    try {
+      result = (PoDoFo::PdfString *) &((PoDoFo::PdfFileSpec const *)arg1)->GetFilename(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -21392,7 +26799,15 @@ static int _wrap_new_PdfFont__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfFont",3,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfFont *)new PoDoFo::PdfFont(arg1,(PoDoFo::PdfEncoding const *)arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)new PoDoFo::PdfFont(arg1,(PoDoFo::PdfEncoding const *)arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -21430,7 +26845,15 @@ static int _wrap_new_PdfFont__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfFont",3,SWIGTYPE_p_PoDoFo__PdfObject);
   }
   
-  result = (PoDoFo::PdfFont *)new PoDoFo::PdfFont(arg1,(PoDoFo::PdfEncoding const *)arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)new PoDoFo::PdfFont(arg1,(PoDoFo::PdfEncoding const *)arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -21540,7 +26963,15 @@ static int _wrap_PdfFont_SetFontSize(lua_State* L) {
   }
   
   arg2 = (float)lua_tonumber(L, 2);
-  (arg1)->SetFontSize(arg2);
+  {
+    try {
+      (arg1)->SetFontSize(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -21564,7 +26995,15 @@ static int _wrap_PdfFont_GetFontSize(lua_State* L) {
     SWIG_fail_ptr("PdfFont_GetFontSize",1,SWIGTYPE_p_PoDoFo__PdfFont);
   }
   
-  result = (float)((PoDoFo::PdfFont const *)arg1)->GetFontSize();
+  {
+    try {
+      result = (float)((PoDoFo::PdfFont const *)arg1)->GetFontSize();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -21590,7 +27029,15 @@ static int _wrap_PdfFont_SetFontScale(lua_State* L) {
   }
   
   arg2 = (float)lua_tonumber(L, 2);
-  (arg1)->SetFontScale(arg2);
+  {
+    try {
+      (arg1)->SetFontScale(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -21614,7 +27061,15 @@ static int _wrap_PdfFont_GetFontScale(lua_State* L) {
     SWIG_fail_ptr("PdfFont_GetFontScale",1,SWIGTYPE_p_PoDoFo__PdfFont);
   }
   
-  result = (float)((PoDoFo::PdfFont const *)arg1)->GetFontScale();
+  {
+    try {
+      result = (float)((PoDoFo::PdfFont const *)arg1)->GetFontScale();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -21640,7 +27095,15 @@ static int _wrap_PdfFont_SetFontCharSpace(lua_State* L) {
   }
   
   arg2 = (float)lua_tonumber(L, 2);
-  (arg1)->SetFontCharSpace(arg2);
+  {
+    try {
+      (arg1)->SetFontCharSpace(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -21664,7 +27127,15 @@ static int _wrap_PdfFont_GetFontCharSpace(lua_State* L) {
     SWIG_fail_ptr("PdfFont_GetFontCharSpace",1,SWIGTYPE_p_PoDoFo__PdfFont);
   }
   
-  result = (float)((PoDoFo::PdfFont const *)arg1)->GetFontCharSpace();
+  {
+    try {
+      result = (float)((PoDoFo::PdfFont const *)arg1)->GetFontCharSpace();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -21690,7 +27161,15 @@ static int _wrap_PdfFont_SetWordSpace(lua_State* L) {
   }
   
   arg2 = (float)lua_tonumber(L, 2);
-  (arg1)->SetWordSpace(arg2);
+  {
+    try {
+      (arg1)->SetWordSpace(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -21714,7 +27193,15 @@ static int _wrap_PdfFont_GetWordSpace(lua_State* L) {
     SWIG_fail_ptr("PdfFont_GetWordSpace",1,SWIGTYPE_p_PoDoFo__PdfFont);
   }
   
-  result = (float)((PoDoFo::PdfFont const *)arg1)->GetWordSpace();
+  {
+    try {
+      result = (float)((PoDoFo::PdfFont const *)arg1)->GetWordSpace();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -21740,7 +27227,15 @@ static int _wrap_PdfFont_SetUnderlined(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetUnderlined(arg2);
+  {
+    try {
+      (arg1)->SetUnderlined(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -21764,7 +27259,15 @@ static int _wrap_PdfFont_IsUnderlined(lua_State* L) {
     SWIG_fail_ptr("PdfFont_IsUnderlined",1,SWIGTYPE_p_PoDoFo__PdfFont);
   }
   
-  result = (bool)((PoDoFo::PdfFont const *)arg1)->IsUnderlined();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfFont const *)arg1)->IsUnderlined();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -21788,7 +27291,15 @@ static int _wrap_PdfFont_IsBold(lua_State* L) {
     SWIG_fail_ptr("PdfFont_IsBold",1,SWIGTYPE_p_PoDoFo__PdfFont);
   }
   
-  result = (bool)((PoDoFo::PdfFont const *)arg1)->IsBold();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfFont const *)arg1)->IsBold();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -21812,7 +27323,15 @@ static int _wrap_PdfFont_IsItalic(lua_State* L) {
     SWIG_fail_ptr("PdfFont_IsItalic",1,SWIGTYPE_p_PoDoFo__PdfFont);
   }
   
-  result = (bool)((PoDoFo::PdfFont const *)arg1)->IsItalic();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfFont const *)arg1)->IsItalic();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -21838,7 +27357,15 @@ static int _wrap_PdfFont_SetStrikeOut(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetStrikeOut(arg2);
+  {
+    try {
+      (arg1)->SetStrikeOut(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -21862,7 +27389,15 @@ static int _wrap_PdfFont_IsStrikeOut(lua_State* L) {
     SWIG_fail_ptr("PdfFont_IsStrikeOut",1,SWIGTYPE_p_PoDoFo__PdfFont);
   }
   
-  result = (bool)((PoDoFo::PdfFont const *)arg1)->IsStrikeOut();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfFont const *)arg1)->IsStrikeOut();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -21886,7 +27421,15 @@ static int _wrap_PdfFont_GetIdentifier(lua_State* L) {
     SWIG_fail_ptr("PdfFont_GetIdentifier",1,SWIGTYPE_p_PoDoFo__PdfFont);
   }
   
-  result = (PoDoFo::PdfName *) &((PoDoFo::PdfFont const *)arg1)->GetIdentifier();
+  {
+    try {
+      result = (PoDoFo::PdfName *) &((PoDoFo::PdfFont const *)arg1)->GetIdentifier();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfName,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -21910,7 +27453,15 @@ static int _wrap_PdfFont_GetEncoding(lua_State* L) {
     SWIG_fail_ptr("PdfFont_GetEncoding",1,SWIGTYPE_p_PoDoFo__PdfFont);
   }
   
-  result = (PoDoFo::PdfEncoding *)((PoDoFo::PdfFont const *)arg1)->GetEncoding();
+  {
+    try {
+      result = (PoDoFo::PdfEncoding *)((PoDoFo::PdfFont const *)arg1)->GetEncoding();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfEncoding,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -21934,7 +27485,15 @@ static int _wrap_PdfFont_GetFontMetrics(lua_State* L) {
     SWIG_fail_ptr("PdfFont_GetFontMetrics",1,SWIGTYPE_p_PoDoFo__PdfFont);
   }
   
-  result = (PdfFontMetrics *)((PoDoFo::PdfFont const *)arg1)->GetFontMetrics();
+  {
+    try {
+      result = (PdfFontMetrics *)((PoDoFo::PdfFont const *)arg1)->GetFontMetrics();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PdfFontMetrics,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -21958,7 +27517,15 @@ static int _wrap_PdfFont_GetFontMetrics2(lua_State* L) {
     SWIG_fail_ptr("PdfFont_GetFontMetrics2",1,SWIGTYPE_p_PoDoFo__PdfFont);
   }
   
-  result = (PdfFontMetrics *)(arg1)->GetFontMetrics2();
+  {
+    try {
+      result = (PdfFontMetrics *)(arg1)->GetFontMetrics2();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PdfFontMetrics,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -21995,7 +27562,15 @@ static int _wrap_PdfFont_WriteStringToStream(lua_State* L) {
     SWIG_fail_ptr("PdfFont_WriteStringToStream",3,SWIGTYPE_p_PdfStream);
   }
   
-  (arg1)->WriteStringToStream((PoDoFo::PdfString const &)*arg2,arg3);
+  {
+    try {
+      (arg1)->WriteStringToStream((PoDoFo::PdfString const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -22018,7 +27593,15 @@ static int _wrap_PdfFont_EmbedFont(lua_State* L) {
     SWIG_fail_ptr("PdfFont_EmbedFont",1,SWIGTYPE_p_PoDoFo__PdfFont);
   }
   
-  (arg1)->EmbedFont();
+  {
+    try {
+      (arg1)->EmbedFont();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -22051,7 +27634,15 @@ static int _wrap_PdfFont_AddUsedSubsettingGlyphs(lua_State* L) {
   }
   
   arg3 = (long)lua_tonumber(L, 3);
-  (arg1)->AddUsedSubsettingGlyphs((PoDoFo::PdfString const &)*arg2,arg3);
+  {
+    try {
+      (arg1)->AddUsedSubsettingGlyphs((PoDoFo::PdfString const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -22077,7 +27668,15 @@ static int _wrap_PdfFont_AddUsedGlyphname(lua_State* L) {
   }
   
   arg2 = (char *)lua_tostring(L, 2);
-  (arg1)->AddUsedGlyphname((char const *)arg2);
+  {
+    try {
+      (arg1)->AddUsedGlyphname((char const *)arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -22100,7 +27699,15 @@ static int _wrap_PdfFont_EmbedSubsetFont(lua_State* L) {
     SWIG_fail_ptr("PdfFont_EmbedSubsetFont",1,SWIGTYPE_p_PoDoFo__PdfFont);
   }
   
-  (arg1)->EmbedSubsetFont();
+  {
+    try {
+      (arg1)->EmbedSubsetFont();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -22124,7 +27731,15 @@ static int _wrap_PdfFont_IsSubsetting(lua_State* L) {
     SWIG_fail_ptr("PdfFont_IsSubsetting",1,SWIGTYPE_p_PoDoFo__PdfFont);
   }
   
-  result = (bool)((PoDoFo::PdfFont const *)arg1)->IsSubsetting();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfFont const *)arg1)->IsSubsetting();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -22239,7 +27854,15 @@ static int _wrap_new_PdfFontCID__SWIG_0(lua_State* L) {
   
   arg4 = (lua_toboolean(L, 4)!=0);
   arg5 = (lua_toboolean(L, 5)!=0);
-  result = (PoDoFo::PdfFontCID *)new PoDoFo::PdfFontCID(arg1,(PoDoFo::PdfEncoding const *)arg2,arg3,arg4,arg5);
+  {
+    try {
+      result = (PoDoFo::PdfFontCID *)new PoDoFo::PdfFontCID(arg1,(PoDoFo::PdfEncoding const *)arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFontCID,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -22280,7 +27903,15 @@ static int _wrap_new_PdfFontCID__SWIG_1(lua_State* L) {
   }
   
   arg4 = (lua_toboolean(L, 4)!=0);
-  result = (PoDoFo::PdfFontCID *)new PoDoFo::PdfFontCID(arg1,(PoDoFo::PdfEncoding const *)arg2,arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfFontCID *)new PoDoFo::PdfFontCID(arg1,(PoDoFo::PdfEncoding const *)arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFontCID,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -22402,7 +28033,15 @@ static int _wrap_PdfFontCID_EmbedFont(lua_State* L) {
     SWIG_fail_ptr("PdfFontCID_EmbedFont",1,SWIGTYPE_p_PoDoFo__PdfFontCID);
   }
   
-  (arg1)->EmbedFont();
+  {
+    try {
+      (arg1)->EmbedFont();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -22425,7 +28064,15 @@ static int _wrap_PdfFontCID_EmbedSubsetFont(lua_State* L) {
     SWIG_fail_ptr("PdfFontCID_EmbedSubsetFont",1,SWIGTYPE_p_PoDoFo__PdfFontCID);
   }
   
-  (arg1)->EmbedSubsetFont();
+  {
+    try {
+      (arg1)->EmbedSubsetFont();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -22458,7 +28105,15 @@ static int _wrap_PdfFontCID_AddUsedSubsettingGlyphs(lua_State* L) {
   }
   
   arg3 = (long)lua_tonumber(L, 3);
-  (arg1)->AddUsedSubsettingGlyphs((PoDoFo::PdfString const &)*arg2,arg3);
+  {
+    try {
+      (arg1)->AddUsedSubsettingGlyphs((PoDoFo::PdfString const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -22525,7 +28180,15 @@ static int _wrap_new_TFontCacheElement__SWIG_0(lua_State* L) {
   PoDoFo::TFontCacheElement *result = 0 ;
   
   SWIG_check_num_args("PoDoFo::TFontCacheElement::TFontCacheElement",0,0)
-  result = (PoDoFo::TFontCacheElement *)new PoDoFo::TFontCacheElement();
+  {
+    try {
+      result = (PoDoFo::TFontCacheElement *)new PoDoFo::TFontCacheElement();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__TFontCacheElement,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -22561,7 +28224,15 @@ static int _wrap_new_TFontCacheElement__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_TFontCacheElement",5,SWIGTYPE_p_PoDoFo__PdfEncoding);
   }
   
-  result = (PoDoFo::TFontCacheElement *)new PoDoFo::TFontCacheElement((char const *)arg1,arg2,arg3,arg4,(PoDoFo::PdfEncoding const *)arg5);
+  {
+    try {
+      result = (PoDoFo::TFontCacheElement *)new PoDoFo::TFontCacheElement((char const *)arg1,arg2,arg3,arg4,(PoDoFo::PdfEncoding const *)arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__TFontCacheElement,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -22585,7 +28256,15 @@ static int _wrap_new_TFontCacheElement__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("new_TFontCacheElement",1,SWIGTYPE_p_PoDoFo__TFontCacheElement);
   }
   
-  result = (PoDoFo::TFontCacheElement *)new PoDoFo::TFontCacheElement((PoDoFo::TFontCacheElement const &)*arg1);
+  {
+    try {
+      result = (PoDoFo::TFontCacheElement *)new PoDoFo::TFontCacheElement((PoDoFo::TFontCacheElement const &)*arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__TFontCacheElement,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -22684,7 +28363,15 @@ static int _wrap_TFontCacheElement___lt(lua_State* L) {
     SWIG_fail_ptr("TFontCacheElement___lt",2,SWIGTYPE_p_PoDoFo__TFontCacheElement);
   }
   
-  result = (bool)((PoDoFo::TFontCacheElement const *)arg1)->operator <((PoDoFo::TFontCacheElement const &)*arg2);
+  {
+    try {
+      result = (bool)((PoDoFo::TFontCacheElement const *)arg1)->operator <((PoDoFo::TFontCacheElement const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -22722,7 +28409,15 @@ static int _wrap_TFontCacheElement___call(lua_State* L) {
     SWIG_fail_ptr("TFontCacheElement___call",3,SWIGTYPE_p_PoDoFo__TFontCacheElement);
   }
   
-  result = (bool)((PoDoFo::TFontCacheElement const *)arg1)->operator ()((PoDoFo::TFontCacheElement const &)*arg2,(PoDoFo::TFontCacheElement const &)*arg3);
+  {
+    try {
+      result = (bool)((PoDoFo::TFontCacheElement const *)arg1)->operator ()((PoDoFo::TFontCacheElement const &)*arg2,(PoDoFo::TFontCacheElement const &)*arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -23115,7 +28810,15 @@ static int _wrap_new_PdfFontCache__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfFontCache",1,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfFontCache *)new PoDoFo::PdfFontCache(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfFontCache *)new PoDoFo::PdfFontCache(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFontCache,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -23146,7 +28849,15 @@ static int _wrap_new_PdfFontCache__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfFontCache",2,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfFontCache *)new PoDoFo::PdfFontCache((PoDoFo::PdfFontConfigWrapper const &)*arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfFontCache *)new PoDoFo::PdfFontCache((PoDoFo::PdfFontConfigWrapper const &)*arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFontCache,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -23223,7 +28934,15 @@ static int _wrap_PdfFontCache_EmptyCache(lua_State* L) {
     SWIG_fail_ptr("PdfFontCache_EmptyCache",1,SWIGTYPE_p_PoDoFo__PdfFontCache);
   }
   
-  (arg1)->EmptyCache();
+  {
+    try {
+      (arg1)->EmptyCache();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -23254,7 +28973,15 @@ static int _wrap_PdfFontCache_GetFont__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("PdfFontCache_GetFont",2,SWIGTYPE_p_PoDoFo__PdfObject);
   }
   
-  result = (PoDoFo::PdfFont *)(arg1)->GetFont(arg2);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->GetFont(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -23306,7 +29033,15 @@ static int _wrap_PdfFontCache_GetFont__SWIG_1(lua_State* L) {
   }
   
   arg9 = (char *)lua_tostring(L, 9);
-  result = (PoDoFo::PdfFont *)(arg1)->GetFont((char const *)arg2,arg3,arg4,arg5,arg6,arg7,(PoDoFo::PdfEncoding const *)arg8,(char const *)arg9);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->GetFont((char const *)arg2,arg3,arg4,arg5,arg6,arg7,(PoDoFo::PdfEncoding const *)arg8,(char const *)arg9);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -23355,7 +29090,15 @@ static int _wrap_PdfFontCache_GetFont__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("PdfFontCache_GetFont",8,SWIGTYPE_p_PoDoFo__PdfEncoding);
   }
   
-  result = (PoDoFo::PdfFont *)(arg1)->GetFont((char const *)arg2,arg3,arg4,arg5,arg6,arg7,(PoDoFo::PdfEncoding const *)arg8);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->GetFont((char const *)arg2,arg3,arg4,arg5,arg6,arg7,(PoDoFo::PdfEncoding const *)arg8);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -23397,7 +29140,15 @@ static int _wrap_PdfFontCache_GetFont__SWIG_3(lua_State* L) {
   arg5 = (lua_toboolean(L, 5)!=0);
   arg6 = (lua_toboolean(L, 6)!=0);
   arg7 = (PoDoFo::PdfFontCache::EFontCreationFlags)(int)lua_tonumber(L, 7);
-  result = (PoDoFo::PdfFont *)(arg1)->GetFont((char const *)arg2,arg3,arg4,arg5,arg6,arg7);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->GetFont((char const *)arg2,arg3,arg4,arg5,arg6,arg7);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -23436,7 +29187,15 @@ static int _wrap_PdfFontCache_GetFont__SWIG_4(lua_State* L) {
   arg4 = (lua_toboolean(L, 4)!=0);
   arg5 = (lua_toboolean(L, 5)!=0);
   arg6 = (lua_toboolean(L, 6)!=0);
-  result = (PoDoFo::PdfFont *)(arg1)->GetFont((char const *)arg2,arg3,arg4,arg5,arg6);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->GetFont((char const *)arg2,arg3,arg4,arg5,arg6);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -23482,7 +29241,15 @@ static int _wrap_PdfFontCache_GetFont__SWIG_5(lua_State* L) {
     SWIG_fail_ptr("PdfFontCache_GetFont",5,SWIGTYPE_p_PoDoFo__PdfEncoding);
   }
   
-  result = (PoDoFo::PdfFont *)(arg1)->GetFont(arg2,arg3,arg4,(PoDoFo::PdfEncoding const *)arg5);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->GetFont(arg2,arg3,arg4,(PoDoFo::PdfEncoding const *)arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -23521,7 +29288,15 @@ static int _wrap_PdfFontCache_GetFont__SWIG_6(lua_State* L) {
   
   arg3 = (lua_toboolean(L, 3)!=0);
   arg4 = (lua_toboolean(L, 4)!=0);
-  result = (PoDoFo::PdfFont *)(arg1)->GetFont(arg2,arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->GetFont(arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -23874,7 +29649,15 @@ static int _wrap_PdfFontCache_GetDuplicateFontType1(lua_State* L) {
   }
   
   arg3 = (char *)lua_tostring(L, 3);
-  result = (PoDoFo::PdfFont *)(arg1)->GetDuplicateFontType1(arg2,(char const *)arg3);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->GetDuplicateFontType1(arg2,(char const *)arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -23920,7 +29703,15 @@ static int _wrap_PdfFontCache_GetFontSubset__SWIG_0(lua_State* L) {
   }
   
   arg7 = (char *)lua_tostring(L, 7);
-  result = (PoDoFo::PdfFont *)(arg1)->GetFontSubset((char const *)arg2,arg3,arg4,arg5,(PoDoFo::PdfEncoding const *)arg6,(char const *)arg7);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->GetFontSubset((char const *)arg2,arg3,arg4,arg5,(PoDoFo::PdfEncoding const *)arg6,(char const *)arg7);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -23963,7 +29754,15 @@ static int _wrap_PdfFontCache_GetFontSubset__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfFontCache_GetFontSubset",6,SWIGTYPE_p_PoDoFo__PdfEncoding);
   }
   
-  result = (PoDoFo::PdfFont *)(arg1)->GetFontSubset((char const *)arg2,arg3,arg4,arg5,(PoDoFo::PdfEncoding const *)arg6);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->GetFontSubset((char const *)arg2,arg3,arg4,arg5,(PoDoFo::PdfEncoding const *)arg6);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -23999,7 +29798,15 @@ static int _wrap_PdfFontCache_GetFontSubset__SWIG_2(lua_State* L) {
   arg3 = (lua_toboolean(L, 3)!=0);
   arg4 = (lua_toboolean(L, 4)!=0);
   arg5 = (lua_toboolean(L, 5)!=0);
-  result = (PoDoFo::PdfFont *)(arg1)->GetFontSubset((char const *)arg2,arg3,arg4,arg5);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->GetFontSubset((char const *)arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -24166,7 +29973,15 @@ static int _wrap_PdfFontCache_EmbedSubsetFonts(lua_State* L) {
     SWIG_fail_ptr("PdfFontCache_EmbedSubsetFonts",1,SWIGTYPE_p_PoDoFo__PdfFontCache);
   }
   
-  (arg1)->EmbedSubsetFonts();
+  {
+    try {
+      (arg1)->EmbedSubsetFonts();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -24190,7 +30005,15 @@ static int _wrap_PdfFontCache_GetFontLibrary(lua_State* L) {
     SWIG_fail_ptr("PdfFontCache_GetFontLibrary",1,SWIGTYPE_p_PoDoFo__PdfFontCache);
   }
   
-  result = ((PoDoFo::PdfFontCache const *)arg1)->GetFontLibrary();
+  {
+    try {
+      result = ((PoDoFo::PdfFontCache const *)arg1)->GetFontLibrary();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     FT_Library * resultptr = new FT_Library((const FT_Library &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_FT_Library,1); SWIG_arg++;
@@ -24223,7 +30046,15 @@ static int _wrap_PdfFontCache_SetFontConfigWrapper(lua_State* L) {
     SWIG_fail_ptr("PdfFontCache_SetFontConfigWrapper",2,SWIGTYPE_p_PoDoFo__PdfFontConfigWrapper);
   }
   
-  (arg1)->SetFontConfigWrapper((PoDoFo::PdfFontConfigWrapper const &)*arg2);
+  {
+    try {
+      (arg1)->SetFontConfigWrapper((PoDoFo::PdfFontConfigWrapper const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -24297,7 +30128,15 @@ static int _wrap_new_PdfFontConfigWrapper__SWIG_0(lua_State* L) {
   PoDoFo::PdfFontConfigWrapper *result = 0 ;
   
   SWIG_check_num_args("PoDoFo::PdfFontConfigWrapper::PdfFontConfigWrapper",0,0)
-  result = (PoDoFo::PdfFontConfigWrapper *)new PoDoFo::PdfFontConfigWrapper();
+  {
+    try {
+      result = (PoDoFo::PdfFontConfigWrapper *)new PoDoFo::PdfFontConfigWrapper();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFontConfigWrapper,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -24321,7 +30160,15 @@ static int _wrap_new_PdfFontConfigWrapper__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfFontConfigWrapper",1,SWIGTYPE_p_PoDoFo__PdfFontConfigWrapper);
   }
   
-  result = (PoDoFo::PdfFontConfigWrapper *)new PoDoFo::PdfFontConfigWrapper((PoDoFo::PdfFontConfigWrapper const &)*arg1);
+  {
+    try {
+      result = (PoDoFo::PdfFontConfigWrapper *)new PoDoFo::PdfFontConfigWrapper((PoDoFo::PdfFontConfigWrapper const &)*arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFontConfigWrapper,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -24378,7 +30225,15 @@ static int _wrap_PdfFontConfigWrapper_GetFontConfig(lua_State* L) {
     SWIG_fail_ptr("PdfFontConfigWrapper_GetFontConfig",1,SWIGTYPE_p_PoDoFo__PdfFontConfigWrapper);
   }
   
-  result = (void *)(arg1)->GetFontConfig();
+  {
+    try {
+      result = (void *)(arg1)->GetFontConfig();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_void,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -24467,7 +30322,15 @@ static int _wrap_PdfFontFactory_CreateFontObject(lua_State* L) {
     SWIG_fail_ptr("PdfFontFactory_CreateFontObject",4,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfFont *)PoDoFo::PdfFontFactory::CreateFontObject(arg1,arg2,(PoDoFo::PdfEncoding const *)arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)PoDoFo::PdfFontFactory::CreateFontObject(arg1,arg2,(PoDoFo::PdfEncoding const *)arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -24498,7 +30361,15 @@ static int _wrap_PdfFontFactory_CreateFont(lua_State* L) {
     SWIG_fail_ptr("PdfFontFactory_CreateFont",2,SWIGTYPE_p_PoDoFo__PdfObject);
   }
   
-  result = (PoDoFo::PdfFont *)PoDoFo::PdfFontFactory::CreateFont(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)PoDoFo::PdfFontFactory::CreateFont(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -24535,7 +30406,15 @@ static int _wrap_PdfFontFactory_CreateBase14Font(lua_State* L) {
     SWIG_fail_ptr("PdfFontFactory_CreateBase14Font",4,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfFont *)PoDoFo::PdfFontFactory::CreateBase14Font((char const *)arg1,arg2,(PoDoFo::PdfEncoding const *)arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)PoDoFo::PdfFontFactory::CreateBase14Font((char const *)arg1,arg2,(PoDoFo::PdfEncoding const *)arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -24555,7 +30434,15 @@ static int _wrap_PdfFontFactory_GetFontType(lua_State* L) {
   SWIG_check_num_args("PoDoFo::PdfFontFactory::GetFontType",1,1)
   if(!SWIG_lua_isnilstring(L,1)) SWIG_fail_arg("PoDoFo::PdfFontFactory::GetFontType",1,"char const *");
   arg1 = (char *)lua_tostring(L, 1);
-  result = (PoDoFo::EPdfFontType)PoDoFo::PdfFontFactory::GetFontType((char const *)arg1);
+  {
+    try {
+      result = (PoDoFo::EPdfFontType)PoDoFo::PdfFontFactory::GetFontType((char const *)arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
   return SWIG_arg;
   
@@ -24572,7 +30459,15 @@ static int _wrap_new_PdfFontFactory(lua_State* L) {
   PoDoFo::PdfFontFactory *result = 0 ;
   
   SWIG_check_num_args("PoDoFo::PdfFontFactory::PdfFontFactory",0,0)
-  result = (PoDoFo::PdfFontFactory *)new PoDoFo::PdfFontFactory();
+  {
+    try {
+      result = (PoDoFo::PdfFontFactory *)new PoDoFo::PdfFontFactory();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFontFactory,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -24817,7 +30712,15 @@ static int _wrap_new_PODOFO_CharData(lua_State* L) {
   PoDoFo::PODOFO_CharData *result = 0 ;
   
   SWIG_check_num_args("PoDoFo::PODOFO_CharData::PODOFO_CharData",0,0)
-  result = (PoDoFo::PODOFO_CharData *)new PoDoFo::PODOFO_CharData();
+  {
+    try {
+      result = (PoDoFo::PODOFO_CharData *)new PoDoFo::PODOFO_CharData();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PODOFO_CharData,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -25168,1932 +31071,6 @@ fail:
 }
 
 
-static int _wrap_PdfFontMetrics_GetWidthArray(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  PoDoFo::PdfVariant *arg2 = 0 ;
-  unsigned int arg3 ;
-  unsigned int arg4 ;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetWidthArray",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetWidthArray",1,"PoDoFo::PdfFontMetrics const *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetWidthArray",2,"PoDoFo::PdfVariant &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetWidthArray",3,"unsigned int");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetWidthArray",4,"unsigned int");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetWidthArray",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PoDoFo__PdfVariant,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetWidthArray",2,SWIGTYPE_p_PoDoFo__PdfVariant);
-  }
-  
-  SWIG_contract_assert((lua_tonumber(L,3)>=0),"number must not be negative")
-  arg3 = (unsigned int)lua_tonumber(L, 3);
-  SWIG_contract_assert((lua_tonumber(L,4)>=0),"number must not be negative")
-  arg4 = (unsigned int)lua_tonumber(L, 4);
-  ((PoDoFo::PdfFontMetrics const *)arg1)->GetWidthArray(*arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetGlyphWidth__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  int arg2 ;
-  double result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetGlyphWidth",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetGlyphWidth",1,"PoDoFo::PdfFontMetrics const *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetGlyphWidth",2,"int");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetGlyphWidth",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  arg2 = (int)lua_tonumber(L, 2);
-  result = (double)((PoDoFo::PdfFontMetrics const *)arg1)->GetGlyphWidth(arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetGlyphWidth__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  char *arg2 = (char *) 0 ;
-  double result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetGlyphWidth",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetGlyphWidth",1,"PoDoFo::PdfFontMetrics const *");
-  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetGlyphWidth",2,"char const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetGlyphWidth",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  arg2 = (char *)lua_tostring(L, 2);
-  result = (double)((PoDoFo::PdfFontMetrics const *)arg1)->GetGlyphWidth((char const *)arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetGlyphWidth(lua_State* L) {
-  int argc;
-  int argv[3]={
-    1,2,3
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfFontMetrics, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        return _wrap_PdfFontMetrics_GetGlyphWidth__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfFontMetrics, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = SWIG_lua_isnilstring(L,argv[1]);
-      }
-      if (_v) {
-        return _wrap_PdfFontMetrics_GetGlyphWidth__SWIG_1(L);
-      }
-    }
-  }
-  
-  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'PdfFontMetrics_GetGlyphWidth'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    PoDoFo::PdfFontMetrics::GetGlyphWidth(int) const\n"
-    "    PoDoFo::PdfFontMetrics::GetGlyphWidth(char const *) const\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_PdfFontMetrics_GetBoundingBox(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  PoDoFo::PdfArray *arg2 = 0 ;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetBoundingBox",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetBoundingBox",1,"PoDoFo::PdfFontMetrics const *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetBoundingBox",2,"PoDoFo::PdfArray &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetBoundingBox",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PoDoFo__PdfArray,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetBoundingBox",2,SWIGTYPE_p_PoDoFo__PdfArray);
-  }
-  
-  ((PoDoFo::PdfFontMetrics const *)arg1)->GetBoundingBox(*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_StringWidth__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  PoDoFo::PdfString *arg2 = 0 ;
-  double result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::StringWidth",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidth",1,"PoDoFo::PdfFontMetrics const *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidth",2,"PoDoFo::PdfString const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidth",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PoDoFo__PdfString,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidth",2,SWIGTYPE_p_PoDoFo__PdfString);
-  }
-  
-  result = (double)((PoDoFo::PdfFontMetrics const *)arg1)->StringWidth((PoDoFo::PdfString const &)*arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_StringWidth__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  char *arg2 = (char *) 0 ;
-  pdf_long arg3 ;
-  pdf_long *argp3 ;
-  double result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::StringWidth",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidth",1,"PoDoFo::PdfFontMetrics const *");
-  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidth",2,"char const *");
-  if(!lua_isuserdata(L,3)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidth",3,"pdf_long");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidth",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  arg2 = (char *)lua_tostring(L, 2);
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&argp3,SWIGTYPE_p_pdf_long,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidth",3,SWIGTYPE_p_pdf_long);
-  }
-  arg3 = *argp3;
-  
-  result = (double)((PoDoFo::PdfFontMetrics const *)arg1)->StringWidth((char const *)arg2,arg3);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_StringWidth__SWIG_2(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  char *arg2 = (char *) 0 ;
-  double result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::StringWidth",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidth",1,"PoDoFo::PdfFontMetrics const *");
-  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidth",2,"char const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidth",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  arg2 = (char *)lua_tostring(L, 2);
-  result = (double)((PoDoFo::PdfFontMetrics const *)arg1)->StringWidth((char const *)arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_StringWidth__SWIG_3(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  PoDoFo::pdf_utf16be *arg2 = (PoDoFo::pdf_utf16be *) 0 ;
-  unsigned int arg3 ;
-  double result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::StringWidth",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidth",1,"PoDoFo::PdfFontMetrics const *");
-  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidth",2,"PoDoFo::pdf_utf16be const *");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidth",3,"unsigned int");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidth",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_pdf_uint16,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidth",2,SWIGTYPE_p_pdf_uint16);
-  }
-  
-  SWIG_contract_assert((lua_tonumber(L,3)>=0),"number must not be negative")
-  arg3 = (unsigned int)lua_tonumber(L, 3);
-  result = (double)((PoDoFo::PdfFontMetrics const *)arg1)->StringWidth((PoDoFo::pdf_utf16be const *)arg2,arg3);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_StringWidth__SWIG_4(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  PoDoFo::pdf_utf16be *arg2 = (PoDoFo::pdf_utf16be *) 0 ;
-  double result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::StringWidth",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidth",1,"PoDoFo::PdfFontMetrics const *");
-  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidth",2,"PoDoFo::pdf_utf16be const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidth",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_pdf_uint16,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidth",2,SWIGTYPE_p_pdf_uint16);
-  }
-  
-  result = (double)((PoDoFo::PdfFontMetrics const *)arg1)->StringWidth((PoDoFo::pdf_utf16be const *)arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_StringWidth__SWIG_5(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  wchar_t *arg2 = (wchar_t *) 0 ;
-  unsigned int arg3 ;
-  double result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::StringWidth",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidth",1,"PoDoFo::PdfFontMetrics const *");
-  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidth",2,"wchar_t const *");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidth",3,"unsigned int");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidth",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_wchar_t,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidth",2,SWIGTYPE_p_wchar_t);
-  }
-  
-  SWIG_contract_assert((lua_tonumber(L,3)>=0),"number must not be negative")
-  arg3 = (unsigned int)lua_tonumber(L, 3);
-  result = (double)((PoDoFo::PdfFontMetrics const *)arg1)->StringWidth((wchar_t const *)arg2,arg3);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_StringWidth__SWIG_6(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  wchar_t *arg2 = (wchar_t *) 0 ;
-  double result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::StringWidth",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidth",1,"PoDoFo::PdfFontMetrics const *");
-  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidth",2,"wchar_t const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidth",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_wchar_t,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidth",2,SWIGTYPE_p_wchar_t);
-  }
-  
-  result = (double)((PoDoFo::PdfFontMetrics const *)arg1)->StringWidth((wchar_t const *)arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_StringWidth(lua_State* L) {
-  int argc;
-  int argv[4]={
-    1,2,3,4
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfFontMetrics, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfString, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_PdfFontMetrics_StringWidth__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfFontMetrics, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_pdf_uint16, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_PdfFontMetrics_StringWidth__SWIG_4(L);
-      }
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfFontMetrics, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_wchar_t, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_PdfFontMetrics_StringWidth__SWIG_6(L);
-      }
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfFontMetrics, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = SWIG_lua_isnilstring(L,argv[1]);
-      }
-      if (_v) {
-        return _wrap_PdfFontMetrics_StringWidth__SWIG_2(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfFontMetrics, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_wchar_t, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_PdfFontMetrics_StringWidth__SWIG_5(L);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfFontMetrics, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_pdf_uint16, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_PdfFontMetrics_StringWidth__SWIG_3(L);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfFontMetrics, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = SWIG_lua_isnilstring(L,argv[1]);
-      }
-      if (_v) {
-        {
-          void *ptr;
-          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_pdf_long, 0)) {
-            _v = 0;
-          } else {
-            _v = 1;
-          }
-        }
-        if (_v) {
-          return _wrap_PdfFontMetrics_StringWidth__SWIG_1(L);
-        }
-      }
-    }
-  }
-  
-  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'PdfFontMetrics_StringWidth'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    PoDoFo::PdfFontMetrics::StringWidth(PoDoFo::PdfString const &) const\n"
-    "    PoDoFo::PdfFontMetrics::StringWidth(char const *,pdf_long) const\n"
-    "    PoDoFo::PdfFontMetrics::StringWidth(char const *) const\n"
-    "    PoDoFo::PdfFontMetrics::StringWidth(PoDoFo::pdf_utf16be const *,unsigned int) const\n"
-    "    PoDoFo::PdfFontMetrics::StringWidth(PoDoFo::pdf_utf16be const *) const\n"
-    "    PoDoFo::PdfFontMetrics::StringWidth(wchar_t const *,unsigned int) const\n"
-    "    PoDoFo::PdfFontMetrics::StringWidth(wchar_t const *) const\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_PdfFontMetrics_StringWidthMM__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  char *arg2 = (char *) 0 ;
-  unsigned int arg3 ;
-  unsigned long result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::StringWidthMM",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidthMM",1,"PoDoFo::PdfFontMetrics const *");
-  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidthMM",2,"char const *");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidthMM",3,"unsigned int");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidthMM",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  arg2 = (char *)lua_tostring(L, 2);
-  SWIG_contract_assert((lua_tonumber(L,3)>=0),"number must not be negative")
-  arg3 = (unsigned int)lua_tonumber(L, 3);
-  result = (unsigned long)((PoDoFo::PdfFontMetrics const *)arg1)->StringWidthMM((char const *)arg2,arg3);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_StringWidthMM__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  char *arg2 = (char *) 0 ;
-  unsigned long result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::StringWidthMM",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidthMM",1,"PoDoFo::PdfFontMetrics const *");
-  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidthMM",2,"char const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidthMM",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  arg2 = (char *)lua_tostring(L, 2);
-  result = (unsigned long)((PoDoFo::PdfFontMetrics const *)arg1)->StringWidthMM((char const *)arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_StringWidthMM__SWIG_2(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  PoDoFo::pdf_utf16be *arg2 = (PoDoFo::pdf_utf16be *) 0 ;
-  unsigned int arg3 ;
-  unsigned long result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::StringWidthMM",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidthMM",1,"PoDoFo::PdfFontMetrics const *");
-  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidthMM",2,"PoDoFo::pdf_utf16be const *");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidthMM",3,"unsigned int");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidthMM",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_pdf_uint16,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidthMM",2,SWIGTYPE_p_pdf_uint16);
-  }
-  
-  SWIG_contract_assert((lua_tonumber(L,3)>=0),"number must not be negative")
-  arg3 = (unsigned int)lua_tonumber(L, 3);
-  result = (unsigned long)((PoDoFo::PdfFontMetrics const *)arg1)->StringWidthMM((PoDoFo::pdf_utf16be const *)arg2,arg3);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_StringWidthMM__SWIG_3(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  PoDoFo::pdf_utf16be *arg2 = (PoDoFo::pdf_utf16be *) 0 ;
-  unsigned long result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::StringWidthMM",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidthMM",1,"PoDoFo::PdfFontMetrics const *");
-  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidthMM",2,"PoDoFo::pdf_utf16be const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidthMM",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_pdf_uint16,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidthMM",2,SWIGTYPE_p_pdf_uint16);
-  }
-  
-  result = (unsigned long)((PoDoFo::PdfFontMetrics const *)arg1)->StringWidthMM((PoDoFo::pdf_utf16be const *)arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_StringWidthMM__SWIG_4(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  wchar_t *arg2 = (wchar_t *) 0 ;
-  unsigned int arg3 ;
-  unsigned long result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::StringWidthMM",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidthMM",1,"PoDoFo::PdfFontMetrics const *");
-  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidthMM",2,"wchar_t const *");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidthMM",3,"unsigned int");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidthMM",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_wchar_t,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidthMM",2,SWIGTYPE_p_wchar_t);
-  }
-  
-  SWIG_contract_assert((lua_tonumber(L,3)>=0),"number must not be negative")
-  arg3 = (unsigned int)lua_tonumber(L, 3);
-  result = (unsigned long)((PoDoFo::PdfFontMetrics const *)arg1)->StringWidthMM((wchar_t const *)arg2,arg3);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_StringWidthMM__SWIG_5(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  wchar_t *arg2 = (wchar_t *) 0 ;
-  unsigned long result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::StringWidthMM",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidthMM",1,"PoDoFo::PdfFontMetrics const *");
-  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::StringWidthMM",2,"wchar_t const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidthMM",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_wchar_t,0))){
-    SWIG_fail_ptr("PdfFontMetrics_StringWidthMM",2,SWIGTYPE_p_wchar_t);
-  }
-  
-  result = (unsigned long)((PoDoFo::PdfFontMetrics const *)arg1)->StringWidthMM((wchar_t const *)arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_StringWidthMM(lua_State* L) {
-  int argc;
-  int argv[4]={
-    1,2,3,4
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfFontMetrics, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_pdf_uint16, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_PdfFontMetrics_StringWidthMM__SWIG_3(L);
-      }
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfFontMetrics, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_wchar_t, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_PdfFontMetrics_StringWidthMM__SWIG_5(L);
-      }
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfFontMetrics, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = SWIG_lua_isnilstring(L,argv[1]);
-      }
-      if (_v) {
-        return _wrap_PdfFontMetrics_StringWidthMM__SWIG_1(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfFontMetrics, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_wchar_t, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_PdfFontMetrics_StringWidthMM__SWIG_4(L);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfFontMetrics, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_pdf_uint16, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_PdfFontMetrics_StringWidthMM__SWIG_2(L);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfFontMetrics, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = SWIG_lua_isnilstring(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_PdfFontMetrics_StringWidthMM__SWIG_0(L);
-        }
-      }
-    }
-  }
-  
-  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'PdfFontMetrics_StringWidthMM'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    PoDoFo::PdfFontMetrics::StringWidthMM(char const *,unsigned int) const\n"
-    "    PoDoFo::PdfFontMetrics::StringWidthMM(char const *) const\n"
-    "    PoDoFo::PdfFontMetrics::StringWidthMM(PoDoFo::pdf_utf16be const *,unsigned int) const\n"
-    "    PoDoFo::PdfFontMetrics::StringWidthMM(PoDoFo::pdf_utf16be const *) const\n"
-    "    PoDoFo::PdfFontMetrics::StringWidthMM(wchar_t const *,unsigned int) const\n"
-    "    PoDoFo::PdfFontMetrics::StringWidthMM(wchar_t const *) const\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_PdfFontMetrics_CharWidth(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  unsigned char arg2 ;
-  double result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::CharWidth",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::CharWidth",1,"PoDoFo::PdfFontMetrics const *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::CharWidth",2,"unsigned char");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_CharWidth",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative")
-  arg2 = (unsigned char)lua_tonumber(L, 2);
-  result = (double)((PoDoFo::PdfFontMetrics const *)arg1)->CharWidth(arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_UnicodeCharWidth(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  unsigned short arg2 ;
-  double result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::UnicodeCharWidth",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::UnicodeCharWidth",1,"PoDoFo::PdfFontMetrics const *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::UnicodeCharWidth",2,"unsigned short");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_UnicodeCharWidth",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative")
-  arg2 = (unsigned short)lua_tonumber(L, 2);
-  result = (double)((PoDoFo::PdfFontMetrics const *)arg1)->UnicodeCharWidth(arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_CharWidthMM(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  unsigned char arg2 ;
-  unsigned long result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::CharWidthMM",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::CharWidthMM",1,"PoDoFo::PdfFontMetrics const *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::CharWidthMM",2,"unsigned char");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_CharWidthMM",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative")
-  arg2 = (unsigned char)lua_tonumber(L, 2);
-  result = (unsigned long)((PoDoFo::PdfFontMetrics const *)arg1)->CharWidthMM(arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetLineSpacing(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  double result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetLineSpacing",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetLineSpacing",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetLineSpacing",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (double)((PoDoFo::PdfFontMetrics const *)arg1)->GetLineSpacing();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetLineSpacingMM(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  unsigned long result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetLineSpacingMM",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetLineSpacingMM",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetLineSpacingMM",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (unsigned long)((PoDoFo::PdfFontMetrics const *)arg1)->GetLineSpacingMM();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetUnderlineThickness(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  double result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetUnderlineThickness",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetUnderlineThickness",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetUnderlineThickness",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (double)((PoDoFo::PdfFontMetrics const *)arg1)->GetUnderlineThickness();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetUnderlineThicknessMM(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  unsigned long result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetUnderlineThicknessMM",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetUnderlineThicknessMM",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetUnderlineThicknessMM",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (unsigned long)((PoDoFo::PdfFontMetrics const *)arg1)->GetUnderlineThicknessMM();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetUnderlinePosition(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  double result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetUnderlinePosition",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetUnderlinePosition",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetUnderlinePosition",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (double)((PoDoFo::PdfFontMetrics const *)arg1)->GetUnderlinePosition();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetUnderlinePositionMM(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  long result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetUnderlinePositionMM",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetUnderlinePositionMM",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetUnderlinePositionMM",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (long)((PoDoFo::PdfFontMetrics const *)arg1)->GetUnderlinePositionMM();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetStrikeOutPosition(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  double result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetStrikeOutPosition",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetStrikeOutPosition",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetStrikeOutPosition",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (double)((PoDoFo::PdfFontMetrics const *)arg1)->GetStrikeOutPosition();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetStrikeOutPositionMM(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  unsigned long result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetStrikeOutPositionMM",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetStrikeOutPositionMM",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetStrikeOutPositionMM",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (unsigned long)((PoDoFo::PdfFontMetrics const *)arg1)->GetStrikeOutPositionMM();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetStrikeoutThickness(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  double result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetStrikeoutThickness",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetStrikeoutThickness",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetStrikeoutThickness",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (double)((PoDoFo::PdfFontMetrics const *)arg1)->GetStrikeoutThickness();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetStrikeoutThicknessMM(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  unsigned long result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetStrikeoutThicknessMM",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetStrikeoutThicknessMM",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetStrikeoutThicknessMM",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (unsigned long)((PoDoFo::PdfFontMetrics const *)arg1)->GetStrikeoutThicknessMM();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetFilename(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  char *result = 0 ;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetFilename",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetFilename",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetFilename",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (char *)((PoDoFo::PdfFontMetrics const *)arg1)->GetFilename();
-  lua_pushstring(L,(const char *)result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetFontData(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  char *result = 0 ;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetFontData",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetFontData",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetFontData",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (char *)((PoDoFo::PdfFontMetrics const *)arg1)->GetFontData();
-  lua_pushstring(L,(const char *)result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetFontDataLen(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  pdf_long result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetFontDataLen",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetFontDataLen",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetFontDataLen",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = ((PoDoFo::PdfFontMetrics const *)arg1)->GetFontDataLen();
-  {
-    pdf_long * resultptr = new pdf_long((const pdf_long &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_pdf_long,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetFontname(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  char *result = 0 ;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetFontname",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetFontname",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetFontname",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (char *)((PoDoFo::PdfFontMetrics const *)arg1)->GetFontname();
-  lua_pushstring(L,(const char *)result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetSubsetFontnamePrefix(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  char *result = 0 ;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetSubsetFontnamePrefix",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetSubsetFontnamePrefix",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetSubsetFontnamePrefix",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (char *)((PoDoFo::PdfFontMetrics const *)arg1)->GetSubsetFontnamePrefix();
-  lua_pushstring(L,(const char *)result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetWeight(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  unsigned int result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetWeight",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetWeight",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetWeight",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (unsigned int)((PoDoFo::PdfFontMetrics const *)arg1)->GetWeight();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetAscent(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  double result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetAscent",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetAscent",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetAscent",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (double)((PoDoFo::PdfFontMetrics const *)arg1)->GetAscent();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetPdfAscent(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  double result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetPdfAscent",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetPdfAscent",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetPdfAscent",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (double)((PoDoFo::PdfFontMetrics const *)arg1)->GetPdfAscent();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetDescent(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  double result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetDescent",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetDescent",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetDescent",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (double)((PoDoFo::PdfFontMetrics const *)arg1)->GetDescent();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetPdfDescent(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  double result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetPdfDescent",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetPdfDescent",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetPdfDescent",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (double)((PoDoFo::PdfFontMetrics const *)arg1)->GetPdfDescent();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetItalicAngle(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  int result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetItalicAngle",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetItalicAngle",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetItalicAngle",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (int)((PoDoFo::PdfFontMetrics const *)arg1)->GetItalicAngle();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_SetFontSize(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  float arg2 ;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::SetFontSize",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::SetFontSize",1,"PoDoFo::PdfFontMetrics *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::SetFontSize",2,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_SetFontSize",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  (arg1)->SetFontSize(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetFontSize(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  float result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetFontSize",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetFontSize",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetFontSize",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (float)((PoDoFo::PdfFontMetrics const *)arg1)->GetFontSize();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_SetFontScale(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  float arg2 ;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::SetFontScale",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::SetFontScale",1,"PoDoFo::PdfFontMetrics *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::SetFontScale",2,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_SetFontScale",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  (arg1)->SetFontScale(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetFontScale(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  float result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetFontScale",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetFontScale",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetFontScale",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (float)((PoDoFo::PdfFontMetrics const *)arg1)->GetFontScale();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_SetFontCharSpace(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  float arg2 ;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::SetFontCharSpace",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::SetFontCharSpace",1,"PoDoFo::PdfFontMetrics *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::SetFontCharSpace",2,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_SetFontCharSpace",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  (arg1)->SetFontCharSpace(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetFontCharSpace(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  float result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetFontCharSpace",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetFontCharSpace",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetFontCharSpace",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (float)((PoDoFo::PdfFontMetrics const *)arg1)->GetFontCharSpace();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_SetWordSpace(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  float arg2 ;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::SetWordSpace",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::SetWordSpace",1,"PoDoFo::PdfFontMetrics *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::SetWordSpace",2,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_SetWordSpace",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  (arg1)->SetWordSpace(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetWordSpace(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  float result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetWordSpace",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetWordSpace",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetWordSpace",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (float)((PoDoFo::PdfFontMetrics const *)arg1)->GetWordSpace();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetFontType(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  PoDoFo::EPdfFontType result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetFontType",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetFontType",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetFontType",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (PoDoFo::EPdfFontType)((PoDoFo::PdfFontMetrics const *)arg1)->GetFontType();
-  lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_GetGlyphId(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  long arg2 ;
-  long result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::GetGlyphId",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetGlyphId",1,"PoDoFo::PdfFontMetrics const *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::GetGlyphId",2,"long");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_GetGlyphId",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  arg2 = (long)lua_tonumber(L, 2);
-  result = (long)((PoDoFo::PdfFontMetrics const *)arg1)->GetGlyphId(arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_IsSymbol(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::IsSymbol",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::IsSymbol",1,"PoDoFo::PdfFontMetrics const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfFontMetrics,0))){
-    SWIG_fail_ptr("PdfFontMetrics_IsSymbol",1,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
-  }
-  
-  result = (bool)((PoDoFo::PdfFontMetrics const *)arg1)->IsSymbol();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfFontMetrics_FontTypeFromFilename(lua_State* L) {
-  int SWIG_arg = 0;
-  char *arg1 = (char *) 0 ;
-  PoDoFo::EPdfFontType result;
-  
-  SWIG_check_num_args("PoDoFo::PdfFontMetrics::FontTypeFromFilename",1,1)
-  if(!SWIG_lua_isnilstring(L,1)) SWIG_fail_arg("PoDoFo::PdfFontMetrics::FontTypeFromFilename",1,"char const *");
-  arg1 = (char *)lua_tostring(L, 1);
-  result = (PoDoFo::EPdfFontType)PoDoFo::PdfFontMetrics::FontTypeFromFilename((char const *)arg1);
-  lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static void swig_delete_PdfFontMetrics(void *obj) {
-PoDoFo::PdfFontMetrics *arg1 = (PoDoFo::PdfFontMetrics *) obj;
-delete arg1;
-}
-static swig_lua_attribute swig_PdfFontMetrics_attributes[] = {
-    {0,0,0}
-};
-static swig_lua_method swig_PdfFontMetrics_methods[]= {
-    { "GetWidthArray", _wrap_PdfFontMetrics_GetWidthArray},
-    { "GetGlyphWidth", _wrap_PdfFontMetrics_GetGlyphWidth},
-    { "GetBoundingBox", _wrap_PdfFontMetrics_GetBoundingBox},
-    { "StringWidth", _wrap_PdfFontMetrics_StringWidth},
-    { "StringWidthMM", _wrap_PdfFontMetrics_StringWidthMM},
-    { "CharWidth", _wrap_PdfFontMetrics_CharWidth},
-    { "UnicodeCharWidth", _wrap_PdfFontMetrics_UnicodeCharWidth},
-    { "CharWidthMM", _wrap_PdfFontMetrics_CharWidthMM},
-    { "GetLineSpacing", _wrap_PdfFontMetrics_GetLineSpacing},
-    { "GetLineSpacingMM", _wrap_PdfFontMetrics_GetLineSpacingMM},
-    { "GetUnderlineThickness", _wrap_PdfFontMetrics_GetUnderlineThickness},
-    { "GetUnderlineThicknessMM", _wrap_PdfFontMetrics_GetUnderlineThicknessMM},
-    { "GetUnderlinePosition", _wrap_PdfFontMetrics_GetUnderlinePosition},
-    { "GetUnderlinePositionMM", _wrap_PdfFontMetrics_GetUnderlinePositionMM},
-    { "GetStrikeOutPosition", _wrap_PdfFontMetrics_GetStrikeOutPosition},
-    { "GetStrikeOutPositionMM", _wrap_PdfFontMetrics_GetStrikeOutPositionMM},
-    { "GetStrikeoutThickness", _wrap_PdfFontMetrics_GetStrikeoutThickness},
-    { "GetStrikeoutThicknessMM", _wrap_PdfFontMetrics_GetStrikeoutThicknessMM},
-    { "GetFilename", _wrap_PdfFontMetrics_GetFilename},
-    { "GetFontData", _wrap_PdfFontMetrics_GetFontData},
-    { "GetFontDataLen", _wrap_PdfFontMetrics_GetFontDataLen},
-    { "GetFontname", _wrap_PdfFontMetrics_GetFontname},
-    { "GetSubsetFontnamePrefix", _wrap_PdfFontMetrics_GetSubsetFontnamePrefix},
-    { "GetWeight", _wrap_PdfFontMetrics_GetWeight},
-    { "GetAscent", _wrap_PdfFontMetrics_GetAscent},
-    { "GetPdfAscent", _wrap_PdfFontMetrics_GetPdfAscent},
-    { "GetDescent", _wrap_PdfFontMetrics_GetDescent},
-    { "GetPdfDescent", _wrap_PdfFontMetrics_GetPdfDescent},
-    { "GetItalicAngle", _wrap_PdfFontMetrics_GetItalicAngle},
-    { "SetFontSize", _wrap_PdfFontMetrics_SetFontSize},
-    { "GetFontSize", _wrap_PdfFontMetrics_GetFontSize},
-    { "SetFontScale", _wrap_PdfFontMetrics_SetFontScale},
-    { "GetFontScale", _wrap_PdfFontMetrics_GetFontScale},
-    { "SetFontCharSpace", _wrap_PdfFontMetrics_SetFontCharSpace},
-    { "GetFontCharSpace", _wrap_PdfFontMetrics_GetFontCharSpace},
-    { "SetWordSpace", _wrap_PdfFontMetrics_SetWordSpace},
-    { "GetWordSpace", _wrap_PdfFontMetrics_GetWordSpace},
-    { "GetFontType", _wrap_PdfFontMetrics_GetFontType},
-    { "GetGlyphId", _wrap_PdfFontMetrics_GetGlyphId},
-    { "IsSymbol", _wrap_PdfFontMetrics_IsSymbol},
-    {0,0}
-};
-static swig_lua_method swig_PdfFontMetrics_meta[] = {
-    {0,0}
-};
-
-static swig_lua_attribute swig_PdfFontMetrics_Sf_SwigStatic_attributes[] = {
-    {0,0,0}
-};
-static swig_lua_const_info swig_PdfFontMetrics_Sf_SwigStatic_constants[]= {
-    {0,0,0,0,0,0}
-};
-static swig_lua_method swig_PdfFontMetrics_Sf_SwigStatic_methods[]= {
-    { "FontTypeFromFilename", _wrap_PdfFontMetrics_FontTypeFromFilename},
-    {0,0}
-};
-static swig_lua_class* swig_PdfFontMetrics_Sf_SwigStatic_classes[]= {
-    0
-};
-
-static swig_lua_namespace swig_PdfFontMetrics_Sf_SwigStatic = {
-    "PdfFontMetrics",
-    swig_PdfFontMetrics_Sf_SwigStatic_methods,
-    swig_PdfFontMetrics_Sf_SwigStatic_attributes,
-    swig_PdfFontMetrics_Sf_SwigStatic_constants,
-    swig_PdfFontMetrics_Sf_SwigStatic_classes,
-    0
-};
-static swig_lua_class *swig_PdfFontMetrics_bases[] = {0};
-static const char *swig_PdfFontMetrics_base_names[] = {0};
-static swig_lua_class _wrap_class_PdfFontMetrics = { "PdfFontMetrics", "PdfFontMetrics", &SWIGTYPE_p_PoDoFo__PdfFontMetrics,0, swig_delete_PdfFontMetrics, swig_PdfFontMetrics_methods, swig_PdfFontMetrics_attributes, &swig_PdfFontMetrics_Sf_SwigStatic, swig_PdfFontMetrics_meta, swig_PdfFontMetrics_bases, swig_PdfFontMetrics_base_names };
-
 static int _wrap_PdfFontSimple_EmbedFont(lua_State* L) {
   int SWIG_arg = 0;
   PoDoFo::PdfFontSimple *arg1 = (PoDoFo::PdfFontSimple *) 0 ;
@@ -27105,7 +31082,15 @@ static int _wrap_PdfFontSimple_EmbedFont(lua_State* L) {
     SWIG_fail_ptr("PdfFontSimple_EmbedFont",1,SWIGTYPE_p_PoDoFo__PdfFontSimple);
   }
   
-  (arg1)->EmbedFont();
+  {
+    try {
+      (arg1)->EmbedFont();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -27176,7 +31161,15 @@ static int _wrap_new_PdfFontTTFSubset__SWIG_0(lua_State* L) {
   
   SWIG_contract_assert((lua_tonumber(L,3)>=0),"number must not be negative")
   arg3 = (unsigned short)lua_tonumber(L, 3);
-  result = (PoDoFo::PdfFontTTFSubset *)new PoDoFo::PdfFontTTFSubset((char const *)arg1,arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfFontTTFSubset *)new PoDoFo::PdfFontTTFSubset((char const *)arg1,arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFontTTFSubset,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -27203,7 +31196,15 @@ static int _wrap_new_PdfFontTTFSubset__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfFontTTFSubset",2,SWIGTYPE_p_PoDoFo__PdfFontMetrics);
   }
   
-  result = (PoDoFo::PdfFontTTFSubset *)new PoDoFo::PdfFontTTFSubset((char const *)arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfFontTTFSubset *)new PoDoFo::PdfFontTTFSubset((char const *)arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFontTTFSubset,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -27241,7 +31242,15 @@ static int _wrap_new_PdfFontTTFSubset__SWIG_2(lua_State* L) {
   arg3 = (PoDoFo::PdfFontTTFSubset::EFontFileType)(int)lua_tonumber(L, 3);
   SWIG_contract_assert((lua_tonumber(L,4)>=0),"number must not be negative")
   arg4 = (unsigned short)lua_tonumber(L, 4);
-  result = (PoDoFo::PdfFontTTFSubset *)new PoDoFo::PdfFontTTFSubset(arg1,arg2,arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfFontTTFSubset *)new PoDoFo::PdfFontTTFSubset(arg1,arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFontTTFSubset,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -27275,7 +31284,15 @@ static int _wrap_new_PdfFontTTFSubset__SWIG_3(lua_State* L) {
   }
   
   arg3 = (PoDoFo::PdfFontTTFSubset::EFontFileType)(int)lua_tonumber(L, 3);
-  result = (PoDoFo::PdfFontTTFSubset *)new PoDoFo::PdfFontTTFSubset(arg1,arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfFontTTFSubset *)new PoDoFo::PdfFontTTFSubset(arg1,arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFontTTFSubset,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -27429,7 +31446,15 @@ static int _wrap_PdfFontTTFSubset_BuildFont(lua_State* L) {
     SWIG_fail_ptr("PdfFontTTFSubset_BuildFont",2,SWIGTYPE_p_PoDoFo__PdfOutputDevice);
   }
   
-  (arg1)->BuildFont(arg2);
+  {
+    try {
+      (arg1)->BuildFont(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -27456,7 +31481,15 @@ static int _wrap_PdfFontTTFSubset_AddGlyph(lua_State* L) {
   
   SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative")
   arg2 = (unsigned short)lua_tonumber(L, 2);
-  (arg1)->AddGlyph(arg2);
+  {
+    try {
+      (arg1)->AddGlyph(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -27488,7 +31521,15 @@ static int _wrap_PdfFontTTFSubset_AddCharacter(lua_State* L) {
   }
   arg2 = *argp2;
   
-  (arg1)->AddCharacter(arg2);
+  {
+    try {
+      (arg1)->AddCharacter(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -27512,7 +31553,15 @@ static int _wrap_PdfFontTTFSubset_GetSize(lua_State* L) {
     SWIG_fail_ptr("PdfFontTTFSubset_GetSize",1,SWIGTYPE_p_PoDoFo__PdfFontTTFSubset);
   }
   
-  result = ((PoDoFo::PdfFontTTFSubset const *)arg1)->GetSize();
+  {
+    try {
+      result = ((PoDoFo::PdfFontTTFSubset const *)arg1)->GetSize();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -27651,7 +31700,15 @@ static int _wrap_new_PdfSampledFunction__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfSampledFunction",4,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfSampledFunction *)new PoDoFo::PdfSampledFunction((PoDoFo::PdfArray const &)*arg1,(PoDoFo::PdfArray const &)*arg2,(PoDoFo::PdfFunction::Sample const &)*arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfSampledFunction *)new PoDoFo::PdfSampledFunction((PoDoFo::PdfArray const &)*arg1,(PoDoFo::PdfArray const &)*arg2,(PoDoFo::PdfFunction::Sample const &)*arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfSampledFunction,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -27696,7 +31753,15 @@ static int _wrap_new_PdfSampledFunction__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfSampledFunction",4,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfSampledFunction *)new PoDoFo::PdfSampledFunction((PoDoFo::PdfArray const &)*arg1,(PoDoFo::PdfArray const &)*arg2,(PoDoFo::PdfFunction::Sample const &)*arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfSampledFunction *)new PoDoFo::PdfSampledFunction((PoDoFo::PdfArray const &)*arg1,(PoDoFo::PdfArray const &)*arg2,(PoDoFo::PdfFunction::Sample const &)*arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfSampledFunction,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -27895,7 +31960,15 @@ static int _wrap_new_PdfExponentialFunction__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfExponentialFunction",5,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfExponentialFunction *)new PoDoFo::PdfExponentialFunction((PoDoFo::PdfArray const &)*arg1,(PoDoFo::PdfArray const &)*arg2,(PoDoFo::PdfArray const &)*arg3,arg4,arg5);
+  {
+    try {
+      result = (PoDoFo::PdfExponentialFunction *)new PoDoFo::PdfExponentialFunction((PoDoFo::PdfArray const &)*arg1,(PoDoFo::PdfArray const &)*arg2,(PoDoFo::PdfArray const &)*arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfExponentialFunction,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -27943,7 +32016,15 @@ static int _wrap_new_PdfExponentialFunction__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfExponentialFunction",5,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfExponentialFunction *)new PoDoFo::PdfExponentialFunction((PoDoFo::PdfArray const &)*arg1,(PoDoFo::PdfArray const &)*arg2,(PoDoFo::PdfArray const &)*arg3,arg4,arg5);
+  {
+    try {
+      result = (PoDoFo::PdfExponentialFunction *)new PoDoFo::PdfExponentialFunction((PoDoFo::PdfArray const &)*arg1,(PoDoFo::PdfArray const &)*arg2,(PoDoFo::PdfArray const &)*arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfExponentialFunction,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -28156,7 +32237,15 @@ static int _wrap_new_PdfStitchingFunction__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfStitchingFunction",5,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfStitchingFunction *)new PoDoFo::PdfStitchingFunction((PoDoFo::PdfFunction::List const &)*arg1,(PoDoFo::PdfArray const &)*arg2,(PoDoFo::PdfArray const &)*arg3,(PoDoFo::PdfArray const &)*arg4,arg5);
+  {
+    try {
+      result = (PoDoFo::PdfStitchingFunction *)new PoDoFo::PdfStitchingFunction((PoDoFo::PdfFunction::List const &)*arg1,(PoDoFo::PdfArray const &)*arg2,(PoDoFo::PdfArray const &)*arg3,(PoDoFo::PdfArray const &)*arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfStitchingFunction,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -28208,7 +32297,15 @@ static int _wrap_new_PdfStitchingFunction__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfStitchingFunction",5,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfStitchingFunction *)new PoDoFo::PdfStitchingFunction((PoDoFo::PdfFunction::List const &)*arg1,(PoDoFo::PdfArray const &)*arg2,(PoDoFo::PdfArray const &)*arg3,(PoDoFo::PdfArray const &)*arg4,arg5);
+  {
+    try {
+      result = (PoDoFo::PdfStitchingFunction *)new PoDoFo::PdfStitchingFunction((PoDoFo::PdfFunction::List const &)*arg1,(PoDoFo::PdfArray const &)*arg2,(PoDoFo::PdfArray const &)*arg3,(PoDoFo::PdfArray const &)*arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfStitchingFunction,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -28410,7 +32507,15 @@ static int _wrap_new_PdfHintStream(lua_State* L) {
     SWIG_fail_ptr("new_PdfHintStream",2,SWIGTYPE_p_PoDoFo__PdfPagesTree);
   }
   
-  result = (PoDoFo::NonPublic::PdfHintStream *)new PoDoFo::NonPublic::PdfHintStream(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::NonPublic::PdfHintStream *)new PoDoFo::NonPublic::PdfHintStream(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__NonPublic__PdfHintStream,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -28442,7 +32547,15 @@ static int _wrap_PdfHintStream_WriteUInt16(lua_State* L) {
   }
   arg2 = *argp2;
   
-  (arg1)->WriteUInt16(arg2);
+  {
+    try {
+      (arg1)->WriteUInt16(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -28474,7 +32587,15 @@ static int _wrap_PdfHintStream_WriteUInt32(lua_State* L) {
   }
   arg2 = *argp2;
   
-  (arg1)->WriteUInt32(arg2);
+  {
+    try {
+      (arg1)->WriteUInt32(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -28556,7 +32677,15 @@ static int _wrap_new_PdfIdentityEncoding__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfIdentityEncoding",4,SWIGTYPE_p_PoDoFo__PdfObject);
   }
   
-  result = (PoDoFo::PdfIdentityEncoding *)new PoDoFo::PdfIdentityEncoding(arg1,arg2,arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfIdentityEncoding *)new PoDoFo::PdfIdentityEncoding(arg1,arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfIdentityEncoding,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -28582,7 +32711,15 @@ static int _wrap_new_PdfIdentityEncoding__SWIG_1(lua_State* L) {
   arg1 = (int)lua_tonumber(L, 1);
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (lua_toboolean(L, 3)!=0);
-  result = (PoDoFo::PdfIdentityEncoding *)new PoDoFo::PdfIdentityEncoding(arg1,arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfIdentityEncoding *)new PoDoFo::PdfIdentityEncoding(arg1,arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfIdentityEncoding,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -28605,7 +32742,15 @@ static int _wrap_new_PdfIdentityEncoding__SWIG_2(lua_State* L) {
   if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfIdentityEncoding::PdfIdentityEncoding",2,"int");
   arg1 = (int)lua_tonumber(L, 1);
   arg2 = (int)lua_tonumber(L, 2);
-  result = (PoDoFo::PdfIdentityEncoding *)new PoDoFo::PdfIdentityEncoding(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfIdentityEncoding *)new PoDoFo::PdfIdentityEncoding(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfIdentityEncoding,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -28625,7 +32770,15 @@ static int _wrap_new_PdfIdentityEncoding__SWIG_3(lua_State* L) {
   SWIG_check_num_args("PoDoFo::PdfIdentityEncoding::PdfIdentityEncoding",1,1)
   if(!lua_isnumber(L,1)) SWIG_fail_arg("PoDoFo::PdfIdentityEncoding::PdfIdentityEncoding",1,"int");
   arg1 = (int)lua_tonumber(L, 1);
-  result = (PoDoFo::PdfIdentityEncoding *)new PoDoFo::PdfIdentityEncoding(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfIdentityEncoding *)new PoDoFo::PdfIdentityEncoding(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfIdentityEncoding,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -28642,7 +32795,15 @@ static int _wrap_new_PdfIdentityEncoding__SWIG_4(lua_State* L) {
   PoDoFo::PdfIdentityEncoding *result = 0 ;
   
   SWIG_check_num_args("PoDoFo::PdfIdentityEncoding::PdfIdentityEncoding",0,0)
-  result = (PoDoFo::PdfIdentityEncoding *)new PoDoFo::PdfIdentityEncoding();
+  {
+    try {
+      result = (PoDoFo::PdfIdentityEncoding *)new PoDoFo::PdfIdentityEncoding();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfIdentityEncoding,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -28765,7 +32926,15 @@ static int _wrap_PdfIdentityEncoding_AddToDictionary(lua_State* L) {
     SWIG_fail_ptr("PdfIdentityEncoding_AddToDictionary",2,SWIGTYPE_p_PoDoFo__PdfDictionary);
   }
   
-  ((PoDoFo::PdfIdentityEncoding const *)arg1)->AddToDictionary(*arg2);
+  {
+    try {
+      ((PoDoFo::PdfIdentityEncoding const *)arg1)->AddToDictionary(*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -28803,7 +32972,15 @@ static int _wrap_PdfIdentityEncoding_ConvertToUnicode(lua_State* L) {
     SWIG_fail_ptr("PdfIdentityEncoding_ConvertToUnicode",3,SWIGTYPE_p_PoDoFo__PdfFont);
   }
   
-  result = ((PoDoFo::PdfIdentityEncoding const *)arg1)->ConvertToUnicode((PoDoFo::PdfString const &)*arg2,(PoDoFo::PdfFont const *)arg3);
+  {
+    try {
+      result = ((PoDoFo::PdfIdentityEncoding const *)arg1)->ConvertToUnicode((PoDoFo::PdfString const &)*arg2,(PoDoFo::PdfFont const *)arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfString * resultptr = new PoDoFo::PdfString((const PoDoFo::PdfString &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++;
@@ -28844,7 +33021,15 @@ static int _wrap_PdfIdentityEncoding_ConvertToEncoding(lua_State* L) {
     SWIG_fail_ptr("PdfIdentityEncoding_ConvertToEncoding",3,SWIGTYPE_p_PoDoFo__PdfFont);
   }
   
-  result = ((PoDoFo::PdfIdentityEncoding const *)arg1)->ConvertToEncoding((PoDoFo::PdfString const &)*arg2,(PoDoFo::PdfFont const *)arg3);
+  {
+    try {
+      result = ((PoDoFo::PdfIdentityEncoding const *)arg1)->ConvertToEncoding((PoDoFo::PdfString const &)*arg2,(PoDoFo::PdfFont const *)arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PdfRefCountedBuffer * resultptr = new PdfRefCountedBuffer((const PdfRefCountedBuffer &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PdfRefCountedBuffer,1); SWIG_arg++;
@@ -28871,7 +33056,15 @@ static int _wrap_PdfIdentityEncoding_IsAutoDelete(lua_State* L) {
     SWIG_fail_ptr("PdfIdentityEncoding_IsAutoDelete",1,SWIGTYPE_p_PoDoFo__PdfIdentityEncoding);
   }
   
-  result = (bool)((PoDoFo::PdfIdentityEncoding const *)arg1)->IsAutoDelete();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfIdentityEncoding const *)arg1)->IsAutoDelete();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -28895,7 +33088,15 @@ static int _wrap_PdfIdentityEncoding_IsSingleByteEncoding(lua_State* L) {
     SWIG_fail_ptr("PdfIdentityEncoding_IsSingleByteEncoding",1,SWIGTYPE_p_PoDoFo__PdfIdentityEncoding);
   }
   
-  result = (bool)((PoDoFo::PdfIdentityEncoding const *)arg1)->IsSingleByteEncoding();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfIdentityEncoding const *)arg1)->IsSingleByteEncoding();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -28922,7 +33123,15 @@ static int _wrap_PdfIdentityEncoding_GetCharCode(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = ((PoDoFo::PdfIdentityEncoding const *)arg1)->GetCharCode(arg2);
+  {
+    try {
+      result = ((PoDoFo::PdfIdentityEncoding const *)arg1)->GetCharCode(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::pdf_utf16be * resultptr = new PoDoFo::pdf_utf16be((const PoDoFo::pdf_utf16be &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_pdf_uint16,1); SWIG_arg++;
@@ -29015,7 +33224,15 @@ static int _wrap_new_PdfXObject__SWIG_0(lua_State* L) {
   
   arg3 = (char *)lua_tostring(L, 3);
   arg4 = (lua_toboolean(L, 4)!=0);
-  result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject((PoDoFo::PdfRect const &)*arg1,arg2,(char const *)arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject((PoDoFo::PdfRect const &)*arg1,arg2,(char const *)arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfXObject,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -29049,7 +33266,15 @@ static int _wrap_new_PdfXObject__SWIG_1(lua_State* L) {
   }
   
   arg3 = (char *)lua_tostring(L, 3);
-  result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject((PoDoFo::PdfRect const &)*arg1,arg2,(char const *)arg3);
+  {
+    try {
+      result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject((PoDoFo::PdfRect const &)*arg1,arg2,(char const *)arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfXObject,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -29080,7 +33305,15 @@ static int _wrap_new_PdfXObject__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("new_PdfXObject",2,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject((PoDoFo::PdfRect const &)*arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject((PoDoFo::PdfRect const &)*arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfXObject,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -29114,7 +33347,15 @@ static int _wrap_new_PdfXObject__SWIG_3(lua_State* L) {
   }
   
   arg3 = (char *)lua_tostring(L, 3);
-  result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject((PoDoFo::PdfRect const &)*arg1,arg2,(char const *)arg3);
+  {
+    try {
+      result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject((PoDoFo::PdfRect const &)*arg1,arg2,(char const *)arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfXObject,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -29145,7 +33386,15 @@ static int _wrap_new_PdfXObject__SWIG_4(lua_State* L) {
     SWIG_fail_ptr("new_PdfXObject",2,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject((PoDoFo::PdfRect const &)*arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject((PoDoFo::PdfRect const &)*arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfXObject,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -29185,7 +33434,15 @@ static int _wrap_new_PdfXObject__SWIG_5(lua_State* L) {
   
   arg4 = (char *)lua_tostring(L, 4);
   arg5 = (lua_toboolean(L, 5)!=0);
-  result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject((PoDoFo::PdfMemDocument const &)*arg1,arg2,arg3,(char const *)arg4,arg5);
+  {
+    try {
+      result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject((PoDoFo::PdfMemDocument const &)*arg1,arg2,arg3,(char const *)arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfXObject,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -29222,7 +33479,15 @@ static int _wrap_new_PdfXObject__SWIG_6(lua_State* L) {
   }
   
   arg4 = (char *)lua_tostring(L, 4);
-  result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject((PoDoFo::PdfMemDocument const &)*arg1,arg2,arg3,(char const *)arg4);
+  {
+    try {
+      result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject((PoDoFo::PdfMemDocument const &)*arg1,arg2,arg3,(char const *)arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfXObject,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -29256,7 +33521,15 @@ static int _wrap_new_PdfXObject__SWIG_7(lua_State* L) {
     SWIG_fail_ptr("new_PdfXObject",3,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject((PoDoFo::PdfMemDocument const &)*arg1,arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject((PoDoFo::PdfMemDocument const &)*arg1,arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfXObject,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -29289,7 +33562,15 @@ static int _wrap_new_PdfXObject__SWIG_8(lua_State* L) {
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (char *)lua_tostring(L, 3);
   arg4 = (lua_toboolean(L, 4)!=0);
-  result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject(arg1,arg2,(char const *)arg3,arg4);
+  {
+    try {
+      result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject(arg1,arg2,(char const *)arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfXObject,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -29319,7 +33600,15 @@ static int _wrap_new_PdfXObject__SWIG_9(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (char *)lua_tostring(L, 3);
-  result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject(arg1,arg2,(char const *)arg3);
+  {
+    try {
+      result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject(arg1,arg2,(char const *)arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfXObject,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -29346,7 +33635,15 @@ static int _wrap_new_PdfXObject__SWIG_10(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfXObject,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -29370,7 +33667,15 @@ static int _wrap_new_PdfXObject__SWIG_11(lua_State* L) {
     SWIG_fail_ptr("new_PdfXObject",1,SWIGTYPE_p_PoDoFo__PdfObject);
   }
   
-  result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfXObject *)new PoDoFo::PdfXObject(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfXObject,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -29748,7 +34053,15 @@ static int _wrap_PdfXObject_GetContents(lua_State* L) {
     SWIG_fail_ptr("PdfXObject_GetContents",1,SWIGTYPE_p_PoDoFo__PdfXObject);
   }
   
-  result = (PoDoFo::PdfObject *)((PoDoFo::PdfXObject const *)arg1)->GetContents();
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfXObject const *)arg1)->GetContents();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -29772,7 +34085,15 @@ static int _wrap_PdfXObject_GetContentsForAppending(lua_State* L) {
     SWIG_fail_ptr("PdfXObject_GetContentsForAppending",1,SWIGTYPE_p_PoDoFo__PdfXObject);
   }
   
-  result = (PoDoFo::PdfObject *)((PoDoFo::PdfXObject const *)arg1)->GetContentsForAppending();
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfXObject const *)arg1)->GetContentsForAppending();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -29796,7 +34117,15 @@ static int _wrap_PdfXObject_GetResources(lua_State* L) {
     SWIG_fail_ptr("PdfXObject_GetResources",1,SWIGTYPE_p_PoDoFo__PdfXObject);
   }
   
-  result = (PoDoFo::PdfObject *)((PoDoFo::PdfXObject const *)arg1)->GetResources();
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfXObject const *)arg1)->GetResources();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -29820,7 +34149,15 @@ static int _wrap_PdfXObject_GetPageSize(lua_State* L) {
     SWIG_fail_ptr("PdfXObject_GetPageSize",1,SWIGTYPE_p_PoDoFo__PdfXObject);
   }
   
-  result = ((PoDoFo::PdfXObject const *)arg1)->GetPageSize();
+  {
+    try {
+      result = ((PoDoFo::PdfXObject const *)arg1)->GetPageSize();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfRect * resultptr = new PoDoFo::PdfRect((const PoDoFo::PdfRect &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfRect,1); SWIG_arg++;
@@ -29847,7 +34184,15 @@ static int _wrap_PdfXObject_GetIdentifier(lua_State* L) {
     SWIG_fail_ptr("PdfXObject_GetIdentifier",1,SWIGTYPE_p_PoDoFo__PdfXObject);
   }
   
-  result = (PoDoFo::PdfName *) &((PoDoFo::PdfXObject const *)arg1)->GetIdentifier();
+  {
+    try {
+      result = (PoDoFo::PdfName *) &((PoDoFo::PdfXObject const *)arg1)->GetIdentifier();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfName,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -29871,7 +34216,15 @@ static int _wrap_PdfXObject_GetObjectReference(lua_State* L) {
     SWIG_fail_ptr("PdfXObject_GetObjectReference",1,SWIGTYPE_p_PoDoFo__PdfXObject);
   }
   
-  result = (PoDoFo::PdfReference *) &((PoDoFo::PdfXObject const *)arg1)->GetObjectReference();
+  {
+    try {
+      result = (PoDoFo::PdfReference *) &((PoDoFo::PdfXObject const *)arg1)->GetObjectReference();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfReference,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -29951,7 +34304,15 @@ static int _wrap_new_PdfImage__SWIG_0(lua_State* L) {
   }
   
   arg2 = (char *)lua_tostring(L, 2);
-  result = (PoDoFo::PdfImage *)new PoDoFo::PdfImage(arg1,(char const *)arg2);
+  {
+    try {
+      result = (PoDoFo::PdfImage *)new PoDoFo::PdfImage(arg1,(char const *)arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfImage,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -29975,7 +34336,15 @@ static int _wrap_new_PdfImage__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfImage",1,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfImage *)new PoDoFo::PdfImage(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfImage *)new PoDoFo::PdfImage(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfImage,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -30002,7 +34371,15 @@ static int _wrap_new_PdfImage__SWIG_2(lua_State* L) {
   }
   
   arg2 = (char *)lua_tostring(L, 2);
-  result = (PoDoFo::PdfImage *)new PoDoFo::PdfImage(arg1,(char const *)arg2);
+  {
+    try {
+      result = (PoDoFo::PdfImage *)new PoDoFo::PdfImage(arg1,(char const *)arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfImage,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -30026,7 +34403,15 @@ static int _wrap_new_PdfImage__SWIG_3(lua_State* L) {
     SWIG_fail_ptr("new_PdfImage",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfImage *)new PoDoFo::PdfImage(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfImage *)new PoDoFo::PdfImage(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfImage,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -30050,7 +34435,15 @@ static int _wrap_new_PdfImage__SWIG_4(lua_State* L) {
     SWIG_fail_ptr("new_PdfImage",1,SWIGTYPE_p_PoDoFo__PdfObject);
   }
   
-  result = (PoDoFo::PdfImage *)new PoDoFo::PdfImage(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfImage *)new PoDoFo::PdfImage(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfImage,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -30166,7 +34559,15 @@ static int _wrap_PdfImage_GetSupportedFormats(lua_State* L) {
   char **result = 0 ;
   
   SWIG_check_num_args("PoDoFo::PdfImage::GetSupportedFormats",0,0)
-  result = (char **)PoDoFo::PdfImage::GetSupportedFormats();
+  {
+    try {
+      result = (char **)PoDoFo::PdfImage::GetSupportedFormats();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_p_char,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -30199,7 +34600,15 @@ static int _wrap_PdfImage_SetImageColorSpace__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("PdfImage_SetImageColorSpace",3,SWIGTYPE_p_PoDoFo__PdfArray);
   }
   
-  (arg1)->SetImageColorSpace(arg2,(PoDoFo::PdfArray const *)arg3);
+  {
+    try {
+      (arg1)->SetImageColorSpace(arg2,(PoDoFo::PdfArray const *)arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -30225,7 +34634,15 @@ static int _wrap_PdfImage_SetImageColorSpace__SWIG_1(lua_State* L) {
   }
   
   arg2 = (PoDoFo::EPdfColorSpace)(int)lua_tonumber(L, 2);
-  (arg1)->SetImageColorSpace(arg2);
+  {
+    try {
+      (arg1)->SetImageColorSpace(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -30325,7 +34742,15 @@ static int _wrap_PdfImage_SetImageICCProfile__SWIG_0(lua_State* L) {
   
   arg3 = (long)lua_tonumber(L, 3);
   arg4 = (PoDoFo::EPdfColorSpace)(int)lua_tonumber(L, 4);
-  (arg1)->SetImageICCProfile(arg2,arg3,arg4);
+  {
+    try {
+      (arg1)->SetImageICCProfile(arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -30358,7 +34783,15 @@ static int _wrap_PdfImage_SetImageICCProfile__SWIG_1(lua_State* L) {
   }
   
   arg3 = (long)lua_tonumber(L, 3);
-  (arg1)->SetImageICCProfile(arg2,arg3);
+  {
+    try {
+      (arg1)->SetImageICCProfile(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -30467,7 +34900,15 @@ static int _wrap_PdfImage_SetImageSoftmask(lua_State* L) {
     SWIG_fail_ptr("PdfImage_SetImageSoftmask",2,SWIGTYPE_p_PoDoFo__PdfImage);
   }
   
-  (arg1)->SetImageSoftmask((PoDoFo::PdfImage const *)arg2);
+  {
+    try {
+      (arg1)->SetImageSoftmask((PoDoFo::PdfImage const *)arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -30491,7 +34932,15 @@ static int _wrap_PdfImage_GetWidth(lua_State* L) {
     SWIG_fail_ptr("PdfImage_GetWidth",1,SWIGTYPE_p_PoDoFo__PdfImage);
   }
   
-  result = (double)((PoDoFo::PdfImage const *)arg1)->GetWidth();
+  {
+    try {
+      result = (double)((PoDoFo::PdfImage const *)arg1)->GetWidth();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -30515,7 +34964,15 @@ static int _wrap_PdfImage_GetHeight(lua_State* L) {
     SWIG_fail_ptr("PdfImage_GetHeight",1,SWIGTYPE_p_PoDoFo__PdfImage);
   }
   
-  result = (double)((PoDoFo::PdfImage const *)arg1)->GetHeight();
+  {
+    try {
+      result = (double)((PoDoFo::PdfImage const *)arg1)->GetHeight();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -30557,7 +35014,15 @@ static int _wrap_PdfImage_SetImageData__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("PdfImage_SetImageData",5,SWIGTYPE_p_PoDoFo__PdfInputStream);
   }
   
-  (arg1)->SetImageData(arg2,arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->SetImageData(arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -30606,7 +35071,15 @@ static int _wrap_PdfImage_SetImageData__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfImage_SetImageData",6,SWIGTYPE_p_TVecFilters);
   }
   
-  (arg1)->SetImageData(arg2,arg3,arg4,arg5,(TVecFilters const &)*arg6);
+  {
+    try {
+      (arg1)->SetImageData(arg2,arg3,arg4,arg5,(TVecFilters const &)*arg6);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -30752,7 +35225,15 @@ static int _wrap_PdfImage_SetImageDataRaw(lua_State* L) {
     SWIG_fail_ptr("PdfImage_SetImageDataRaw",5,SWIGTYPE_p_PoDoFo__PdfInputStream);
   }
   
-  (arg1)->SetImageDataRaw(arg2,arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->SetImageDataRaw(arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -30778,7 +35259,15 @@ static int _wrap_PdfImage_LoadFromFile(lua_State* L) {
   }
   
   arg2 = (char *)lua_tostring(L, 2);
-  (arg1)->LoadFromFile((char const *)arg2);
+  {
+    try {
+      (arg1)->LoadFromFile((char const *)arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -30837,7 +35326,15 @@ static int _wrap_PdfImage_SetImageChromaKeyMask__SWIG_0(lua_State* L) {
   }
   arg5 = *argp5;
   
-  (arg1)->SetImageChromaKeyMask(arg2,arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->SetImageChromaKeyMask(arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -30887,7 +35384,15 @@ static int _wrap_PdfImage_SetImageChromaKeyMask__SWIG_1(lua_State* L) {
   }
   arg4 = *argp4;
   
-  (arg1)->SetImageChromaKeyMask(arg2,arg3,arg4);
+  {
+    try {
+      (arg1)->SetImageChromaKeyMask(arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -31027,7 +35532,15 @@ static int _wrap_PdfImage_SetInterpolate(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetInterpolate(arg2);
+  {
+    try {
+      (arg1)->SetInterpolate(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -31112,7 +35625,15 @@ static int _wrap_new_PdfInfo__SWIG_0(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = (PoDoFo::PdfInfo *)new PoDoFo::PdfInfo(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfInfo *)new PoDoFo::PdfInfo(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfInfo,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -31136,7 +35657,15 @@ static int _wrap_new_PdfInfo__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfInfo",1,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfInfo *)new PoDoFo::PdfInfo(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfInfo *)new PoDoFo::PdfInfo(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfInfo,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -31163,7 +35692,15 @@ static int _wrap_new_PdfInfo__SWIG_2(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = (PoDoFo::PdfInfo *)new PoDoFo::PdfInfo(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfInfo *)new PoDoFo::PdfInfo(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfInfo,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -31187,7 +35724,15 @@ static int _wrap_new_PdfInfo__SWIG_3(lua_State* L) {
     SWIG_fail_ptr("new_PdfInfo",1,SWIGTYPE_p_PoDoFo__PdfObject);
   }
   
-  result = (PoDoFo::PdfInfo *)new PoDoFo::PdfInfo(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfInfo *)new PoDoFo::PdfInfo(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfInfo,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -31301,7 +35846,15 @@ static int _wrap_PdfInfo_SetAuthor(lua_State* L) {
     SWIG_fail_ptr("PdfInfo_SetAuthor",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->SetAuthor((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      (arg1)->SetAuthor((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -31325,7 +35878,15 @@ static int _wrap_PdfInfo_GetAuthor(lua_State* L) {
     SWIG_fail_ptr("PdfInfo_GetAuthor",1,SWIGTYPE_p_PoDoFo__PdfInfo);
   }
   
-  result = (PoDoFo::PdfString *) &((PoDoFo::PdfInfo const *)arg1)->GetAuthor();
+  {
+    try {
+      result = (PoDoFo::PdfString *) &((PoDoFo::PdfInfo const *)arg1)->GetAuthor();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -31355,7 +35916,15 @@ static int _wrap_PdfInfo_SetCreator(lua_State* L) {
     SWIG_fail_ptr("PdfInfo_SetCreator",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->SetCreator((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      (arg1)->SetCreator((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -31379,7 +35948,15 @@ static int _wrap_PdfInfo_GetCreator(lua_State* L) {
     SWIG_fail_ptr("PdfInfo_GetCreator",1,SWIGTYPE_p_PoDoFo__PdfInfo);
   }
   
-  result = (PoDoFo::PdfString *) &((PoDoFo::PdfInfo const *)arg1)->GetCreator();
+  {
+    try {
+      result = (PoDoFo::PdfString *) &((PoDoFo::PdfInfo const *)arg1)->GetCreator();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -31409,7 +35986,15 @@ static int _wrap_PdfInfo_SetKeywords(lua_State* L) {
     SWIG_fail_ptr("PdfInfo_SetKeywords",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->SetKeywords((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      (arg1)->SetKeywords((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -31433,7 +36018,15 @@ static int _wrap_PdfInfo_GetKeywords(lua_State* L) {
     SWIG_fail_ptr("PdfInfo_GetKeywords",1,SWIGTYPE_p_PoDoFo__PdfInfo);
   }
   
-  result = (PoDoFo::PdfString *) &((PoDoFo::PdfInfo const *)arg1)->GetKeywords();
+  {
+    try {
+      result = (PoDoFo::PdfString *) &((PoDoFo::PdfInfo const *)arg1)->GetKeywords();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -31463,7 +36056,15 @@ static int _wrap_PdfInfo_SetSubject(lua_State* L) {
     SWIG_fail_ptr("PdfInfo_SetSubject",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->SetSubject((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      (arg1)->SetSubject((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -31487,7 +36088,15 @@ static int _wrap_PdfInfo_GetSubject(lua_State* L) {
     SWIG_fail_ptr("PdfInfo_GetSubject",1,SWIGTYPE_p_PoDoFo__PdfInfo);
   }
   
-  result = (PoDoFo::PdfString *) &((PoDoFo::PdfInfo const *)arg1)->GetSubject();
+  {
+    try {
+      result = (PoDoFo::PdfString *) &((PoDoFo::PdfInfo const *)arg1)->GetSubject();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -31517,7 +36126,15 @@ static int _wrap_PdfInfo_SetTitle(lua_State* L) {
     SWIG_fail_ptr("PdfInfo_SetTitle",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->SetTitle((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      (arg1)->SetTitle((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -31541,7 +36158,15 @@ static int _wrap_PdfInfo_GetTitle(lua_State* L) {
     SWIG_fail_ptr("PdfInfo_GetTitle",1,SWIGTYPE_p_PoDoFo__PdfInfo);
   }
   
-  result = (PoDoFo::PdfString *) &((PoDoFo::PdfInfo const *)arg1)->GetTitle();
+  {
+    try {
+      result = (PoDoFo::PdfString *) &((PoDoFo::PdfInfo const *)arg1)->GetTitle();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -31571,7 +36196,15 @@ static int _wrap_PdfInfo_SetProducer(lua_State* L) {
     SWIG_fail_ptr("PdfInfo_SetProducer",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->SetProducer((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      (arg1)->SetProducer((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -31595,7 +36228,15 @@ static int _wrap_PdfInfo_GetProducer(lua_State* L) {
     SWIG_fail_ptr("PdfInfo_GetProducer",1,SWIGTYPE_p_PoDoFo__PdfInfo);
   }
   
-  result = (PoDoFo::PdfString *) &((PoDoFo::PdfInfo const *)arg1)->GetProducer();
+  {
+    try {
+      result = (PoDoFo::PdfString *) &((PoDoFo::PdfInfo const *)arg1)->GetProducer();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -31625,7 +36266,15 @@ static int _wrap_PdfInfo_SetTrapped(lua_State* L) {
     SWIG_fail_ptr("PdfInfo_SetTrapped",2,SWIGTYPE_p_PoDoFo__PdfName);
   }
   
-  (arg1)->SetTrapped((PoDoFo::PdfName const &)*arg2);
+  {
+    try {
+      (arg1)->SetTrapped((PoDoFo::PdfName const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -31649,7 +36298,15 @@ static int _wrap_PdfInfo_GetTrapped(lua_State* L) {
     SWIG_fail_ptr("PdfInfo_GetTrapped",1,SWIGTYPE_p_PoDoFo__PdfInfo);
   }
   
-  result = (PoDoFo::PdfName *) &((PoDoFo::PdfInfo const *)arg1)->GetTrapped();
+  {
+    try {
+      result = (PoDoFo::PdfName *) &((PoDoFo::PdfInfo const *)arg1)->GetTrapped();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfName,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -31673,7 +36330,15 @@ static int _wrap_PdfInfo_GetCreationDate(lua_State* L) {
     SWIG_fail_ptr("PdfInfo_GetCreationDate",1,SWIGTYPE_p_PoDoFo__PdfInfo);
   }
   
-  result = ((PoDoFo::PdfInfo const *)arg1)->GetCreationDate();
+  {
+    try {
+      result = ((PoDoFo::PdfInfo const *)arg1)->GetCreationDate();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PdfDate * resultptr = new PdfDate((const PdfDate &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PdfDate,1); SWIG_arg++;
@@ -31700,7 +36365,15 @@ static int _wrap_PdfInfo_GetModDate(lua_State* L) {
     SWIG_fail_ptr("PdfInfo_GetModDate",1,SWIGTYPE_p_PoDoFo__PdfInfo);
   }
   
-  result = ((PoDoFo::PdfInfo const *)arg1)->GetModDate();
+  {
+    try {
+      result = ((PoDoFo::PdfInfo const *)arg1)->GetModDate();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PdfDate * resultptr = new PdfDate((const PdfDate &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PdfDate,1); SWIG_arg++;
@@ -31740,7 +36413,15 @@ static int _wrap_PdfInfo_SetCustomKey(lua_State* L) {
     SWIG_fail_ptr("PdfInfo_SetCustomKey",3,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->SetCustomKey((PoDoFo::PdfName const &)*arg2,(PoDoFo::PdfString const &)*arg3);
+  {
+    try {
+      (arg1)->SetCustomKey((PoDoFo::PdfName const &)*arg2,(PoDoFo::PdfString const &)*arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -31819,6 +36500,3402 @@ static swig_lua_class *swig_PdfInfo_bases[] = {0,0};
 static const char *swig_PdfInfo_base_names[] = {"PoDoFo::PdfElement *",0};
 static swig_lua_class _wrap_class_PdfInfo = { "PdfInfo", "PdfInfo", &SWIGTYPE_p_PoDoFo__PdfInfo,_proxy__wrap_new_PdfInfo, swig_delete_PdfInfo, swig_PdfInfo_methods, swig_PdfInfo_attributes, &swig_PdfInfo_Sf_SwigStatic, swig_PdfInfo_meta, swig_PdfInfo_bases, swig_PdfInfo_base_names };
 
+static int _wrap_new_PdfStreamedDocument__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfOutputDevice *arg1 = (PoDoFo::PdfOutputDevice *) 0 ;
+  PoDoFo::EPdfVersion arg2 ;
+  PdfEncrypt *arg3 = (PdfEncrypt *) 0 ;
+  PoDoFo::EPdfWriteMode arg4 ;
+  PoDoFo::PdfStreamedDocument *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",1,"PoDoFo::PdfOutputDevice *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",2,"PoDoFo::EPdfVersion");
+  if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",3,"PdfEncrypt *");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",4,"PoDoFo::EPdfWriteMode");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfOutputDevice,0))){
+    SWIG_fail_ptr("new_PdfStreamedDocument",1,SWIGTYPE_p_PoDoFo__PdfOutputDevice);
+  }
+  
+  arg2 = (PoDoFo::EPdfVersion)(int)lua_tonumber(L, 2);
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_PdfEncrypt,0))){
+    SWIG_fail_ptr("new_PdfStreamedDocument",3,SWIGTYPE_p_PdfEncrypt);
+  }
+  
+  arg4 = (PoDoFo::EPdfWriteMode)(int)lua_tonumber(L, 4);
+  {
+    try {
+      result = (PoDoFo::PdfStreamedDocument *)new PoDoFo::PdfStreamedDocument(arg1,arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfStreamedDocument__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfOutputDevice *arg1 = (PoDoFo::PdfOutputDevice *) 0 ;
+  PoDoFo::EPdfVersion arg2 ;
+  PdfEncrypt *arg3 = (PdfEncrypt *) 0 ;
+  PoDoFo::PdfStreamedDocument *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",1,"PoDoFo::PdfOutputDevice *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",2,"PoDoFo::EPdfVersion");
+  if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",3,"PdfEncrypt *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfOutputDevice,0))){
+    SWIG_fail_ptr("new_PdfStreamedDocument",1,SWIGTYPE_p_PoDoFo__PdfOutputDevice);
+  }
+  
+  arg2 = (PoDoFo::EPdfVersion)(int)lua_tonumber(L, 2);
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_PdfEncrypt,0))){
+    SWIG_fail_ptr("new_PdfStreamedDocument",3,SWIGTYPE_p_PdfEncrypt);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::PdfStreamedDocument *)new PoDoFo::PdfStreamedDocument(arg1,arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfStreamedDocument__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfOutputDevice *arg1 = (PoDoFo::PdfOutputDevice *) 0 ;
+  PoDoFo::EPdfVersion arg2 ;
+  PoDoFo::PdfStreamedDocument *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",1,"PoDoFo::PdfOutputDevice *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",2,"PoDoFo::EPdfVersion");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfOutputDevice,0))){
+    SWIG_fail_ptr("new_PdfStreamedDocument",1,SWIGTYPE_p_PoDoFo__PdfOutputDevice);
+  }
+  
+  arg2 = (PoDoFo::EPdfVersion)(int)lua_tonumber(L, 2);
+  {
+    try {
+      result = (PoDoFo::PdfStreamedDocument *)new PoDoFo::PdfStreamedDocument(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfStreamedDocument__SWIG_3(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfOutputDevice *arg1 = (PoDoFo::PdfOutputDevice *) 0 ;
+  PoDoFo::PdfStreamedDocument *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",1,"PoDoFo::PdfOutputDevice *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfOutputDevice,0))){
+    SWIG_fail_ptr("new_PdfStreamedDocument",1,SWIGTYPE_p_PoDoFo__PdfOutputDevice);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::PdfStreamedDocument *)new PoDoFo::PdfStreamedDocument(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfStreamedDocument__SWIG_4(lua_State* L) {
+  int SWIG_arg = 0;
+  char *arg1 = (char *) 0 ;
+  PoDoFo::EPdfVersion arg2 ;
+  PdfEncrypt *arg3 = (PdfEncrypt *) 0 ;
+  PoDoFo::EPdfWriteMode arg4 ;
+  PoDoFo::PdfStreamedDocument *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",4,4)
+  if(!SWIG_lua_isnilstring(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",1,"char const *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",2,"PoDoFo::EPdfVersion");
+  if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",3,"PdfEncrypt *");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",4,"PoDoFo::EPdfWriteMode");
+  arg1 = (char *)lua_tostring(L, 1);
+  arg2 = (PoDoFo::EPdfVersion)(int)lua_tonumber(L, 2);
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_PdfEncrypt,0))){
+    SWIG_fail_ptr("new_PdfStreamedDocument",3,SWIGTYPE_p_PdfEncrypt);
+  }
+  
+  arg4 = (PoDoFo::EPdfWriteMode)(int)lua_tonumber(L, 4);
+  {
+    try {
+      result = (PoDoFo::PdfStreamedDocument *)new PoDoFo::PdfStreamedDocument((char const *)arg1,arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfStreamedDocument__SWIG_5(lua_State* L) {
+  int SWIG_arg = 0;
+  char *arg1 = (char *) 0 ;
+  PoDoFo::EPdfVersion arg2 ;
+  PdfEncrypt *arg3 = (PdfEncrypt *) 0 ;
+  PoDoFo::PdfStreamedDocument *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",3,3)
+  if(!SWIG_lua_isnilstring(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",1,"char const *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",2,"PoDoFo::EPdfVersion");
+  if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",3,"PdfEncrypt *");
+  arg1 = (char *)lua_tostring(L, 1);
+  arg2 = (PoDoFo::EPdfVersion)(int)lua_tonumber(L, 2);
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_PdfEncrypt,0))){
+    SWIG_fail_ptr("new_PdfStreamedDocument",3,SWIGTYPE_p_PdfEncrypt);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::PdfStreamedDocument *)new PoDoFo::PdfStreamedDocument((char const *)arg1,arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfStreamedDocument__SWIG_6(lua_State* L) {
+  int SWIG_arg = 0;
+  char *arg1 = (char *) 0 ;
+  PoDoFo::EPdfVersion arg2 ;
+  PoDoFo::PdfStreamedDocument *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",2,2)
+  if(!SWIG_lua_isnilstring(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",1,"char const *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",2,"PoDoFo::EPdfVersion");
+  arg1 = (char *)lua_tostring(L, 1);
+  arg2 = (PoDoFo::EPdfVersion)(int)lua_tonumber(L, 2);
+  {
+    try {
+      result = (PoDoFo::PdfStreamedDocument *)new PoDoFo::PdfStreamedDocument((char const *)arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfStreamedDocument__SWIG_7(lua_State* L) {
+  int SWIG_arg = 0;
+  char *arg1 = (char *) 0 ;
+  PoDoFo::PdfStreamedDocument *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",1,1)
+  if(!SWIG_lua_isnilstring(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",1,"char const *");
+  arg1 = (char *)lua_tostring(L, 1);
+  {
+    try {
+      result = (PoDoFo::PdfStreamedDocument *)new PoDoFo::PdfStreamedDocument((char const *)arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfStreamedDocument(lua_State* L) {
+  int argc;
+  int argv[5]={
+    1,2,3,4,5
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 1) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfOutputDevice, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      return _wrap_new_PdfStreamedDocument__SWIG_3(L);
+    }
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      _v = SWIG_lua_isnilstring(L,argv[0]);
+    }
+    if (_v) {
+      return _wrap_new_PdfStreamedDocument__SWIG_7(L);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfOutputDevice, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_new_PdfStreamedDocument__SWIG_2(L);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      _v = SWIG_lua_isnilstring(L,argv[0]);
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_new_PdfStreamedDocument__SWIG_6(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfOutputDevice, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (SWIG_isptrtype(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_PdfEncrypt, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          return _wrap_new_PdfStreamedDocument__SWIG_1(L);
+        }
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      _v = SWIG_lua_isnilstring(L,argv[0]);
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (SWIG_isptrtype(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_PdfEncrypt, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          return _wrap_new_PdfStreamedDocument__SWIG_5(L);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfOutputDevice, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (SWIG_isptrtype(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_PdfEncrypt, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            return _wrap_new_PdfStreamedDocument__SWIG_0(L);
+          }
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      _v = SWIG_lua_isnilstring(L,argv[0]);
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (SWIG_isptrtype(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_PdfEncrypt, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            return _wrap_new_PdfStreamedDocument__SWIG_4(L);
+          }
+        }
+      }
+    }
+  }
+  
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'new_PdfStreamedDocument'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    PoDoFo::PdfStreamedDocument::PdfStreamedDocument(PoDoFo::PdfOutputDevice *,PoDoFo::EPdfVersion,PdfEncrypt *,PoDoFo::EPdfWriteMode)\n"
+    "    PoDoFo::PdfStreamedDocument::PdfStreamedDocument(PoDoFo::PdfOutputDevice *,PoDoFo::EPdfVersion,PdfEncrypt *)\n"
+    "    PoDoFo::PdfStreamedDocument::PdfStreamedDocument(PoDoFo::PdfOutputDevice *,PoDoFo::EPdfVersion)\n"
+    "    PoDoFo::PdfStreamedDocument::PdfStreamedDocument(PoDoFo::PdfOutputDevice *)\n"
+    "    PoDoFo::PdfStreamedDocument::PdfStreamedDocument(char const *,PoDoFo::EPdfVersion,PdfEncrypt *,PoDoFo::EPdfWriteMode)\n"
+    "    PoDoFo::PdfStreamedDocument::PdfStreamedDocument(char const *,PoDoFo::EPdfVersion,PdfEncrypt *)\n"
+    "    PoDoFo::PdfStreamedDocument::PdfStreamedDocument(char const *,PoDoFo::EPdfVersion)\n"
+    "    PoDoFo::PdfStreamedDocument::PdfStreamedDocument(char const *)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_PdfStreamedDocument_Close(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::Close",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::Close",1,"PoDoFo::PdfStreamedDocument *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
+    SWIG_fail_ptr("PdfStreamedDocument_Close",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
+  }
+  
+  {
+    try {
+      (arg1)->Close();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfStreamedDocument_GetWriteMode(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
+  PoDoFo::EPdfWriteMode result;
+  
+  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::GetWriteMode",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::GetWriteMode",1,"PoDoFo::PdfStreamedDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
+    SWIG_fail_ptr("PdfStreamedDocument_GetWriteMode",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::EPdfWriteMode)((PoDoFo::PdfStreamedDocument const *)arg1)->GetWriteMode();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfStreamedDocument_GetPdfVersion(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
+  PoDoFo::EPdfVersion result;
+  
+  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::GetPdfVersion",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::GetPdfVersion",1,"PoDoFo::PdfStreamedDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
+    SWIG_fail_ptr("PdfStreamedDocument_GetPdfVersion",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::EPdfVersion)((PoDoFo::PdfStreamedDocument const *)arg1)->GetPdfVersion();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfStreamedDocument_IsLinearized(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::IsLinearized",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::IsLinearized",1,"PoDoFo::PdfStreamedDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
+    SWIG_fail_ptr("PdfStreamedDocument_IsLinearized",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
+  }
+  
+  {
+    try {
+      result = (bool)((PoDoFo::PdfStreamedDocument const *)arg1)->IsLinearized();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfStreamedDocument_IsPrintAllowed(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::IsPrintAllowed",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::IsPrintAllowed",1,"PoDoFo::PdfStreamedDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
+    SWIG_fail_ptr("PdfStreamedDocument_IsPrintAllowed",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
+  }
+  
+  {
+    try {
+      result = (bool)((PoDoFo::PdfStreamedDocument const *)arg1)->IsPrintAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfStreamedDocument_IsEditAllowed(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::IsEditAllowed",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::IsEditAllowed",1,"PoDoFo::PdfStreamedDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
+    SWIG_fail_ptr("PdfStreamedDocument_IsEditAllowed",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
+  }
+  
+  {
+    try {
+      result = (bool)((PoDoFo::PdfStreamedDocument const *)arg1)->IsEditAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfStreamedDocument_IsCopyAllowed(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::IsCopyAllowed",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::IsCopyAllowed",1,"PoDoFo::PdfStreamedDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
+    SWIG_fail_ptr("PdfStreamedDocument_IsCopyAllowed",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
+  }
+  
+  {
+    try {
+      result = (bool)((PoDoFo::PdfStreamedDocument const *)arg1)->IsCopyAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfStreamedDocument_IsEditNotesAllowed(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::IsEditNotesAllowed",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::IsEditNotesAllowed",1,"PoDoFo::PdfStreamedDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
+    SWIG_fail_ptr("PdfStreamedDocument_IsEditNotesAllowed",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
+  }
+  
+  {
+    try {
+      result = (bool)((PoDoFo::PdfStreamedDocument const *)arg1)->IsEditNotesAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfStreamedDocument_IsFillAndSignAllowed(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::IsFillAndSignAllowed",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::IsFillAndSignAllowed",1,"PoDoFo::PdfStreamedDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
+    SWIG_fail_ptr("PdfStreamedDocument_IsFillAndSignAllowed",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
+  }
+  
+  {
+    try {
+      result = (bool)((PoDoFo::PdfStreamedDocument const *)arg1)->IsFillAndSignAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfStreamedDocument_IsAccessibilityAllowed(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::IsAccessibilityAllowed",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::IsAccessibilityAllowed",1,"PoDoFo::PdfStreamedDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
+    SWIG_fail_ptr("PdfStreamedDocument_IsAccessibilityAllowed",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
+  }
+  
+  {
+    try {
+      result = (bool)((PoDoFo::PdfStreamedDocument const *)arg1)->IsAccessibilityAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfStreamedDocument_IsDocAssemblyAllowed(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::IsDocAssemblyAllowed",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::IsDocAssemblyAllowed",1,"PoDoFo::PdfStreamedDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
+    SWIG_fail_ptr("PdfStreamedDocument_IsDocAssemblyAllowed",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
+  }
+  
+  {
+    try {
+      result = (bool)((PoDoFo::PdfStreamedDocument const *)arg1)->IsDocAssemblyAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfStreamedDocument_IsHighPrintAllowed(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::IsHighPrintAllowed",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::IsHighPrintAllowed",1,"PoDoFo::PdfStreamedDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
+    SWIG_fail_ptr("PdfStreamedDocument_IsHighPrintAllowed",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
+  }
+  
+  {
+    try {
+      result = (bool)((PoDoFo::PdfStreamedDocument const *)arg1)->IsHighPrintAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_PdfStreamedDocument(void *obj) {
+PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) obj;
+delete arg1;
+}
+static int _proxy__wrap_new_PdfStreamedDocument(lua_State *L) {
+    assert(lua_istable(L,1));
+    lua_pushcfunction(L,_wrap_new_PdfStreamedDocument);
+    assert(!lua_isnil(L,-1));
+    lua_replace(L,1); /* replace our table with real constructor */
+    lua_call(L,lua_gettop(L)-1,1);
+    return 1;
+}
+static swig_lua_attribute swig_PdfStreamedDocument_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_method swig_PdfStreamedDocument_methods[]= {
+    { "Close", _wrap_PdfStreamedDocument_Close},
+    { "GetWriteMode", _wrap_PdfStreamedDocument_GetWriteMode},
+    { "GetPdfVersion", _wrap_PdfStreamedDocument_GetPdfVersion},
+    { "IsLinearized", _wrap_PdfStreamedDocument_IsLinearized},
+    { "IsPrintAllowed", _wrap_PdfStreamedDocument_IsPrintAllowed},
+    { "IsEditAllowed", _wrap_PdfStreamedDocument_IsEditAllowed},
+    { "IsCopyAllowed", _wrap_PdfStreamedDocument_IsCopyAllowed},
+    { "IsEditNotesAllowed", _wrap_PdfStreamedDocument_IsEditNotesAllowed},
+    { "IsFillAndSignAllowed", _wrap_PdfStreamedDocument_IsFillAndSignAllowed},
+    { "IsAccessibilityAllowed", _wrap_PdfStreamedDocument_IsAccessibilityAllowed},
+    { "IsDocAssemblyAllowed", _wrap_PdfStreamedDocument_IsDocAssemblyAllowed},
+    { "IsHighPrintAllowed", _wrap_PdfStreamedDocument_IsHighPrintAllowed},
+    {0,0}
+};
+static swig_lua_method swig_PdfStreamedDocument_meta[] = {
+    {0,0}
+};
+
+static swig_lua_attribute swig_PdfStreamedDocument_Sf_SwigStatic_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_const_info swig_PdfStreamedDocument_Sf_SwigStatic_constants[]= {
+    {0,0,0,0,0,0}
+};
+static swig_lua_method swig_PdfStreamedDocument_Sf_SwigStatic_methods[]= {
+    {0,0}
+};
+static swig_lua_class* swig_PdfStreamedDocument_Sf_SwigStatic_classes[]= {
+    0
+};
+
+static swig_lua_namespace swig_PdfStreamedDocument_Sf_SwigStatic = {
+    "PdfStreamedDocument",
+    swig_PdfStreamedDocument_Sf_SwigStatic_methods,
+    swig_PdfStreamedDocument_Sf_SwigStatic_attributes,
+    swig_PdfStreamedDocument_Sf_SwigStatic_constants,
+    swig_PdfStreamedDocument_Sf_SwigStatic_classes,
+    0
+};
+static swig_lua_class *swig_PdfStreamedDocument_bases[] = {0,0};
+static const char *swig_PdfStreamedDocument_base_names[] = {"PoDoFo::PdfDocument *",0};
+static swig_lua_class _wrap_class_PdfStreamedDocument = { "PdfStreamedDocument", "PdfStreamedDocument", &SWIGTYPE_p_PoDoFo__PdfStreamedDocument,_proxy__wrap_new_PdfStreamedDocument, swig_delete_PdfStreamedDocument, swig_PdfStreamedDocument_methods, swig_PdfStreamedDocument_attributes, &swig_PdfStreamedDocument_Sf_SwigStatic, swig_PdfStreamedDocument_meta, swig_PdfStreamedDocument_bases, swig_PdfStreamedDocument_base_names };
+
+static int _wrap_new_PdfMemDocument__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::PdfMemDocument",0,0)
+  {
+    try {
+      result = (PoDoFo::PdfMemDocument *)new PoDoFo::PdfMemDocument();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfMemDocument,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfMemDocument__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  bool arg1 ;
+  PoDoFo::PdfMemDocument *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::PdfMemDocument",1,1)
+  if(!lua_isboolean(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::PdfMemDocument",1,"bool");
+  arg1 = (lua_toboolean(L, 1)!=0);
+  {
+    try {
+      result = (PoDoFo::PdfMemDocument *)new PoDoFo::PdfMemDocument(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfMemDocument,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfMemDocument__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  char *arg1 = (char *) 0 ;
+  PoDoFo::PdfMemDocument *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::PdfMemDocument",1,1)
+  if(!SWIG_lua_isnilstring(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::PdfMemDocument",1,"char const *");
+  arg1 = (char *)lua_tostring(L, 1);
+  {
+    try {
+      result = (PoDoFo::PdfMemDocument *)new PoDoFo::PdfMemDocument((char const *)arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfMemDocument,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_PdfMemDocument(lua_State* L) {
+  int argc;
+  int argv[2]={
+    1,2
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 0) {
+    return _wrap_new_PdfMemDocument__SWIG_0(L);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      _v = lua_isboolean(L,argv[0]);
+    }
+    if (_v) {
+      return _wrap_new_PdfMemDocument__SWIG_1(L);
+    }
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      _v = SWIG_lua_isnilstring(L,argv[0]);
+    }
+    if (_v) {
+      return _wrap_new_PdfMemDocument__SWIG_2(L);
+    }
+  }
+  
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'new_PdfMemDocument'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    PoDoFo::PdfMemDocument::PdfMemDocument()\n"
+    "    PoDoFo::PdfMemDocument::PdfMemDocument(bool)\n"
+    "    PoDoFo::PdfMemDocument::PdfMemDocument(char const *)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_PdfMemDocument_Load__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  char *arg2 = (char *) 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::Load",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::Load",1,"PoDoFo::PdfMemDocument *");
+  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::Load",2,"char const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_Load",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  {
+    try {
+      (arg1)->Load((char const *)arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_Load__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  char *arg2 = (char *) 0 ;
+  long arg3 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::Load",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::Load",1,"PoDoFo::PdfMemDocument *");
+  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::Load",2,"char const *");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("PoDoFo::PdfMemDocument::Load",3,"long");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_Load",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  arg3 = (long)lua_tonumber(L, 3);
+  {
+    try {
+      (arg1)->Load((char const *)arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_Load__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PdfRefCountedInputDevice *arg2 = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::Load",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::Load",1,"PoDoFo::PdfMemDocument *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::Load",2,"PdfRefCountedInputDevice const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_Load",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PdfRefCountedInputDevice,0))){
+    SWIG_fail_ptr("PdfMemDocument_Load",2,SWIGTYPE_p_PdfRefCountedInputDevice);
+  }
+  
+  {
+    try {
+      (arg1)->Load((PdfRefCountedInputDevice const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_Load(lua_State* L) {
+  int argc;
+  int argv[4]={
+    1,2,3,4
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfMemDocument, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_PdfRefCountedInputDevice, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_PdfMemDocument_Load__SWIG_2(L);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfMemDocument, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = SWIG_lua_isnilstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_PdfMemDocument_Load__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfMemDocument, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = SWIG_lua_isnilstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_PdfMemDocument_Load__SWIG_1(L);
+        }
+      }
+    }
+  }
+  
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'PdfMemDocument_Load'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    PoDoFo::PdfMemDocument::Load(char const *)\n"
+    "    PoDoFo::PdfMemDocument::Load(char const *,long)\n"
+    "    PoDoFo::PdfMemDocument::Load(PdfRefCountedInputDevice const &)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_PdfMemDocument_Write__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  char *arg2 = (char *) 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::Write",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::Write",1,"PoDoFo::PdfMemDocument *");
+  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::Write",2,"char const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_Write",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  {
+    try {
+      (arg1)->Write((char const *)arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_Write__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::PdfOutputDevice *arg2 = (PoDoFo::PdfOutputDevice *) 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::Write",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::Write",1,"PoDoFo::PdfMemDocument *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::Write",2,"PoDoFo::PdfOutputDevice *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_Write",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PoDoFo__PdfOutputDevice,0))){
+    SWIG_fail_ptr("PdfMemDocument_Write",2,SWIGTYPE_p_PoDoFo__PdfOutputDevice);
+  }
+  
+  {
+    try {
+      (arg1)->Write(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_Write(lua_State* L) {
+  int argc;
+  int argv[3]={
+    1,2,3
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfMemDocument, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfOutputDevice, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_PdfMemDocument_Write__SWIG_1(L);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfMemDocument, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = SWIG_lua_isnilstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_PdfMemDocument_Write__SWIG_0(L);
+      }
+    }
+  }
+  
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'PdfMemDocument_Write'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    PoDoFo::PdfMemDocument::Write(char const *)\n"
+    "    PoDoFo::PdfMemDocument::Write(PoDoFo::PdfOutputDevice *)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_PdfMemDocument_SetWriteMode(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::EPdfWriteMode arg2 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::SetWriteMode",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetWriteMode",1,"PoDoFo::PdfMemDocument *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetWriteMode",2,"PoDoFo::EPdfWriteMode");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_SetWriteMode",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  arg2 = (PoDoFo::EPdfWriteMode)(int)lua_tonumber(L, 2);
+  {
+    try {
+      (arg1)->SetWriteMode(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_GetWriteMode(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::EPdfWriteMode result;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::GetWriteMode",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::GetWriteMode",1,"PoDoFo::PdfMemDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_GetWriteMode",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::EPdfWriteMode)((PoDoFo::PdfMemDocument const *)arg1)->GetWriteMode();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_SetPdfVersion(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::EPdfVersion arg2 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::SetPdfVersion",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetPdfVersion",1,"PoDoFo::PdfMemDocument *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetPdfVersion",2,"PoDoFo::EPdfVersion");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_SetPdfVersion",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  arg2 = (PoDoFo::EPdfVersion)(int)lua_tonumber(L, 2);
+  {
+    try {
+      (arg1)->SetPdfVersion(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_GetPdfVersion(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::EPdfVersion result;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::GetPdfVersion",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::GetPdfVersion",1,"PoDoFo::PdfMemDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_GetPdfVersion",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::EPdfVersion)((PoDoFo::PdfMemDocument const *)arg1)->GetPdfVersion();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_AddPdfExtension(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  char *arg2 = (char *) 0 ;
+  pdf_int64 arg3 ;
+  pdf_int64 *argp3 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::AddPdfExtension",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::AddPdfExtension",1,"PoDoFo::PdfMemDocument *");
+  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::AddPdfExtension",2,"char const *");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("PoDoFo::PdfMemDocument::AddPdfExtension",3,"pdf_int64");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_AddPdfExtension",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&argp3,SWIGTYPE_p_pdf_int64,0))){
+    SWIG_fail_ptr("PdfMemDocument_AddPdfExtension",3,SWIGTYPE_p_pdf_int64);
+  }
+  arg3 = *argp3;
+  
+  {
+    try {
+      (arg1)->AddPdfExtension((char const *)arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_HasPdfExtension(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  char *arg2 = (char *) 0 ;
+  pdf_int64 arg3 ;
+  pdf_int64 *argp3 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::HasPdfExtension",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::HasPdfExtension",1,"PoDoFo::PdfMemDocument const *");
+  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::HasPdfExtension",2,"char const *");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("PoDoFo::PdfMemDocument::HasPdfExtension",3,"pdf_int64");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_HasPdfExtension",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&argp3,SWIGTYPE_p_pdf_int64,0))){
+    SWIG_fail_ptr("PdfMemDocument_HasPdfExtension",3,SWIGTYPE_p_pdf_int64);
+  }
+  arg3 = *argp3;
+  
+  {
+    try {
+      result = (bool)((PoDoFo::PdfMemDocument const *)arg1)->HasPdfExtension((char const *)arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_RemovePdfExtension(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  char *arg2 = (char *) 0 ;
+  pdf_int64 arg3 ;
+  pdf_int64 *argp3 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::RemovePdfExtension",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::RemovePdfExtension",1,"PoDoFo::PdfMemDocument *");
+  if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::RemovePdfExtension",2,"char const *");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("PoDoFo::PdfMemDocument::RemovePdfExtension",3,"pdf_int64");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_RemovePdfExtension",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&argp3,SWIGTYPE_p_pdf_int64,0))){
+    SWIG_fail_ptr("PdfMemDocument_RemovePdfExtension",3,SWIGTYPE_p_pdf_int64);
+  }
+  arg3 = *argp3;
+  
+  {
+    try {
+      (arg1)->RemovePdfExtension((char const *)arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_GetPdfExtensions(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  std::vector< PdfExtension > result;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::GetPdfExtensions",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::GetPdfExtensions",1,"PoDoFo::PdfMemDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_GetPdfExtensions",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = ((PoDoFo::PdfMemDocument const *)arg1)->GetPdfExtensions();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  {
+    std::vector< PdfExtension > * resultptr = new std::vector< PdfExtension >((const std::vector< PdfExtension > &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_std__vectorT_PdfExtension_t,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_SetPassword(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  std::string *arg2 = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::SetPassword",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetPassword",1,"PoDoFo::PdfMemDocument *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetPassword",2,"std::string const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_SetPassword",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("PdfMemDocument_SetPassword",2,SWIGTYPE_p_std__string);
+  }
+  
+  {
+    try {
+      (arg1)->SetPassword((std::string const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_SetEncrypted__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  std::string *arg2 = 0 ;
+  std::string *arg3 = 0 ;
+  int arg4 ;
+  PoDoFo::PdfEncrypt::EPdfEncryptAlgorithm arg5 ;
+  PoDoFo::PdfEncrypt::EPdfKeyLength arg6 ;
+  PoDoFo::PdfEncrypt::EPdfEncryptAlgorithm *argp5 ;
+  PoDoFo::PdfEncrypt::EPdfKeyLength *argp6 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::SetEncrypted",6,6)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetEncrypted",1,"PoDoFo::PdfMemDocument *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetEncrypted",2,"std::string const &");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetEncrypted",3,"std::string const &");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetEncrypted",4,"int");
+  if(!lua_isuserdata(L,5)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetEncrypted",5,"PoDoFo::PdfEncrypt::EPdfEncryptAlgorithm");
+  if(!lua_isuserdata(L,6)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetEncrypted",6,"PoDoFo::PdfEncrypt::EPdfKeyLength");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_SetEncrypted",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("PdfMemDocument_SetEncrypted",2,SWIGTYPE_p_std__string);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("PdfMemDocument_SetEncrypted",3,SWIGTYPE_p_std__string);
+  }
+  
+  arg4 = (int)lua_tonumber(L, 4);
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,5,(void**)&argp5,SWIGTYPE_p_PoDoFo__PdfEncrypt__EPdfEncryptAlgorithm,0))){
+    SWIG_fail_ptr("PdfMemDocument_SetEncrypted",5,SWIGTYPE_p_PoDoFo__PdfEncrypt__EPdfEncryptAlgorithm);
+  }
+  arg5 = *argp5;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,6,(void**)&argp6,SWIGTYPE_p_PoDoFo__PdfEncrypt__EPdfKeyLength,0))){
+    SWIG_fail_ptr("PdfMemDocument_SetEncrypted",6,SWIGTYPE_p_PoDoFo__PdfEncrypt__EPdfKeyLength);
+  }
+  arg6 = *argp6;
+  
+  {
+    try {
+      (arg1)->SetEncrypted((std::string const &)*arg2,(std::string const &)*arg3,arg4,arg5,arg6);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_SetEncrypted__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  std::string *arg2 = 0 ;
+  std::string *arg3 = 0 ;
+  int arg4 ;
+  PoDoFo::PdfEncrypt::EPdfEncryptAlgorithm arg5 ;
+  PoDoFo::PdfEncrypt::EPdfEncryptAlgorithm *argp5 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::SetEncrypted",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetEncrypted",1,"PoDoFo::PdfMemDocument *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetEncrypted",2,"std::string const &");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetEncrypted",3,"std::string const &");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetEncrypted",4,"int");
+  if(!lua_isuserdata(L,5)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetEncrypted",5,"PoDoFo::PdfEncrypt::EPdfEncryptAlgorithm");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_SetEncrypted",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("PdfMemDocument_SetEncrypted",2,SWIGTYPE_p_std__string);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("PdfMemDocument_SetEncrypted",3,SWIGTYPE_p_std__string);
+  }
+  
+  arg4 = (int)lua_tonumber(L, 4);
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,5,(void**)&argp5,SWIGTYPE_p_PoDoFo__PdfEncrypt__EPdfEncryptAlgorithm,0))){
+    SWIG_fail_ptr("PdfMemDocument_SetEncrypted",5,SWIGTYPE_p_PoDoFo__PdfEncrypt__EPdfEncryptAlgorithm);
+  }
+  arg5 = *argp5;
+  
+  {
+    try {
+      (arg1)->SetEncrypted((std::string const &)*arg2,(std::string const &)*arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_SetEncrypted__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  std::string *arg2 = 0 ;
+  std::string *arg3 = 0 ;
+  int arg4 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::SetEncrypted",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetEncrypted",1,"PoDoFo::PdfMemDocument *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetEncrypted",2,"std::string const &");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetEncrypted",3,"std::string const &");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetEncrypted",4,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_SetEncrypted",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("PdfMemDocument_SetEncrypted",2,SWIGTYPE_p_std__string);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("PdfMemDocument_SetEncrypted",3,SWIGTYPE_p_std__string);
+  }
+  
+  arg4 = (int)lua_tonumber(L, 4);
+  {
+    try {
+      (arg1)->SetEncrypted((std::string const &)*arg2,(std::string const &)*arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_SetEncrypted__SWIG_3(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  std::string *arg2 = 0 ;
+  std::string *arg3 = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::SetEncrypted",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetEncrypted",1,"PoDoFo::PdfMemDocument *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetEncrypted",2,"std::string const &");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetEncrypted",3,"std::string const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_SetEncrypted",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("PdfMemDocument_SetEncrypted",2,SWIGTYPE_p_std__string);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("PdfMemDocument_SetEncrypted",3,SWIGTYPE_p_std__string);
+  }
+  
+  {
+    try {
+      (arg1)->SetEncrypted((std::string const &)*arg2,(std::string const &)*arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_SetEncrypted__SWIG_4(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::PdfEncrypt *arg2 = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::SetEncrypted",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetEncrypted",1,"PoDoFo::PdfMemDocument *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::SetEncrypted",2,"PoDoFo::PdfEncrypt const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_SetEncrypted",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PoDoFo__PdfEncrypt,0))){
+    SWIG_fail_ptr("PdfMemDocument_SetEncrypted",2,SWIGTYPE_p_PoDoFo__PdfEncrypt);
+  }
+  
+  {
+    try {
+      (arg1)->SetEncrypted((PoDoFo::PdfEncrypt const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_SetEncrypted(lua_State* L) {
+  int argc;
+  int argv[7]={
+    1,2,3,4,5,6,7
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfMemDocument, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfEncrypt, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_PdfMemDocument_SetEncrypted__SWIG_4(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfMemDocument, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_std__string, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_std__string, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          return _wrap_PdfMemDocument_SetEncrypted__SWIG_3(L);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfMemDocument, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_std__string, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_std__string, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            return _wrap_PdfMemDocument_SetEncrypted__SWIG_2(L);
+          }
+        }
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfMemDocument, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_std__string, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_std__string, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            {
+              void *ptr;
+              if (lua_isuserdata(L,argv[4])==0 || SWIG_ConvertPtr(L,argv[4], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfEncrypt__EPdfEncryptAlgorithm, 0)) {
+                _v = 0;
+              } else {
+                _v = 1;
+              }
+            }
+            if (_v) {
+              return _wrap_PdfMemDocument_SetEncrypted__SWIG_1(L);
+            }
+          }
+        }
+      }
+    }
+  }
+  if (argc == 6) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfMemDocument, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_std__string, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_std__string, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            {
+              void *ptr;
+              if (lua_isuserdata(L,argv[4])==0 || SWIG_ConvertPtr(L,argv[4], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfEncrypt__EPdfEncryptAlgorithm, 0)) {
+                _v = 0;
+              } else {
+                _v = 1;
+              }
+            }
+            if (_v) {
+              {
+                void *ptr;
+                if (lua_isuserdata(L,argv[5])==0 || SWIG_ConvertPtr(L,argv[5], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfEncrypt__EPdfKeyLength, 0)) {
+                  _v = 0;
+                } else {
+                  _v = 1;
+                }
+              }
+              if (_v) {
+                return _wrap_PdfMemDocument_SetEncrypted__SWIG_0(L);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'PdfMemDocument_SetEncrypted'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    PoDoFo::PdfMemDocument::SetEncrypted(std::string const &,std::string const &,int,PoDoFo::PdfEncrypt::EPdfEncryptAlgorithm,PoDoFo::PdfEncrypt::EPdfKeyLength)\n"
+    "    PoDoFo::PdfMemDocument::SetEncrypted(std::string const &,std::string const &,int,PoDoFo::PdfEncrypt::EPdfEncryptAlgorithm)\n"
+    "    PoDoFo::PdfMemDocument::SetEncrypted(std::string const &,std::string const &,int)\n"
+    "    PoDoFo::PdfMemDocument::SetEncrypted(std::string const &,std::string const &)\n"
+    "    PoDoFo::PdfMemDocument::SetEncrypted(PoDoFo::PdfEncrypt const &)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_PdfMemDocument_GetEncrypted(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::GetEncrypted",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::GetEncrypted",1,"PoDoFo::PdfMemDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_GetEncrypted",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (bool)((PoDoFo::PdfMemDocument const *)arg1)->GetEncrypted();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_IsLinearized(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::IsLinearized",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::IsLinearized",1,"PoDoFo::PdfMemDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_IsLinearized",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (bool)((PoDoFo::PdfMemDocument const *)arg1)->IsLinearized();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_GetObjects__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::PdfVecObjects *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::GetObjects",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::GetObjects",1,"PoDoFo::PdfMemDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_GetObjects",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::PdfVecObjects *) &((PoDoFo::PdfMemDocument const *)arg1)->GetObjects();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfVecObjects,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_GetObjects__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::PdfVecObjects *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::GetObjects",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::GetObjects",1,"PoDoFo::PdfMemDocument *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_GetObjects",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::PdfVecObjects *) &(arg1)->GetObjects();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfVecObjects,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_GetObjects(lua_State* L) {
+  int argc;
+  int argv[2]={
+    1,2
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 1) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfMemDocument, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      return _wrap_PdfMemDocument_GetObjects__SWIG_1(L);
+    }
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfMemDocument, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      return _wrap_PdfMemDocument_GetObjects__SWIG_0(L);
+    }
+  }
+  
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'PdfMemDocument_GetObjects'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    PoDoFo::PdfMemDocument::GetObjects() const\n"
+    "    PoDoFo::PdfMemDocument::GetObjects()\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_PdfMemDocument_GetCatalog__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::PdfObject *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::GetCatalog",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::GetCatalog",1,"PoDoFo::PdfMemDocument *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_GetCatalog",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::PdfObject *)(arg1)->GetCatalog();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_GetCatalog__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::PdfObject *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::GetCatalog",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::GetCatalog",1,"PoDoFo::PdfMemDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_GetCatalog",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfMemDocument const *)arg1)->GetCatalog();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_GetCatalog(lua_State* L) {
+  int argc;
+  int argv[2]={
+    1,2
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 1) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfMemDocument, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      return _wrap_PdfMemDocument_GetCatalog__SWIG_0(L);
+    }
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfMemDocument, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      return _wrap_PdfMemDocument_GetCatalog__SWIG_1(L);
+    }
+  }
+  
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'PdfMemDocument_GetCatalog'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    PoDoFo::PdfMemDocument::GetCatalog()\n"
+    "    PoDoFo::PdfMemDocument::GetCatalog() const\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_PdfMemDocument_GetTrailer(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::PdfObject *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::GetTrailer",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::GetTrailer",1,"PoDoFo::PdfMemDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_GetTrailer",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfMemDocument const *)arg1)->GetTrailer();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_GetStructTreeRoot(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::PdfObject *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::GetStructTreeRoot",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::GetStructTreeRoot",1,"PoDoFo::PdfMemDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_GetStructTreeRoot",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfMemDocument const *)arg1)->GetStructTreeRoot();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_GetMetadata(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::PdfObject *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::GetMetadata",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::GetMetadata",1,"PoDoFo::PdfMemDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_GetMetadata",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfMemDocument const *)arg1)->GetMetadata();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_GetMarkInfo(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::PdfObject *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::GetMarkInfo",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::GetMarkInfo",1,"PoDoFo::PdfMemDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_GetMarkInfo",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfMemDocument const *)arg1)->GetMarkInfo();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_GetLanguage(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::PdfObject *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::GetLanguage",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::GetLanguage",1,"PoDoFo::PdfMemDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_GetLanguage",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfMemDocument const *)arg1)->GetLanguage();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_GetFont(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::PdfObject *arg2 = (PoDoFo::PdfObject *) 0 ;
+  PoDoFo::PdfFont *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::GetFont",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::GetFont",1,"PoDoFo::PdfMemDocument *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::GetFont",2,"PoDoFo::PdfObject *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_GetFont",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PoDoFo__PdfObject,0))){
+    SWIG_fail_ptr("PdfMemDocument_GetFont",2,SWIGTYPE_p_PoDoFo__PdfObject);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::PdfFont *)(arg1)->GetFont(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_InsertPages(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::PdfMemDocument *arg2 = 0 ;
+  int arg3 ;
+  int arg4 ;
+  PoDoFo::PdfMemDocument *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::InsertPages",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::InsertPages",1,"PoDoFo::PdfMemDocument *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::InsertPages",2,"PoDoFo::PdfMemDocument const &");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("PoDoFo::PdfMemDocument::InsertPages",3,"int");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("PoDoFo::PdfMemDocument::InsertPages",4,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_InsertPages",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_InsertPages",2,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  arg3 = (int)lua_tonumber(L, 3);
+  arg4 = (int)lua_tonumber(L, 4);
+  {
+    try {
+      result = (PoDoFo::PdfMemDocument *) &(arg1)->InsertPages((PoDoFo::PdfMemDocument const &)*arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfMemDocument,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_DeletePages(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::DeletePages",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::DeletePages",1,"PoDoFo::PdfMemDocument *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::DeletePages",2,"int");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("PoDoFo::PdfMemDocument::DeletePages",3,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_DeletePages",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  arg3 = (int)lua_tonumber(L, 3);
+  {
+    try {
+      (arg1)->DeletePages(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_IsPrintAllowed(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::IsPrintAllowed",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::IsPrintAllowed",1,"PoDoFo::PdfMemDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_IsPrintAllowed",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (bool)((PoDoFo::PdfMemDocument const *)arg1)->IsPrintAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_IsEditAllowed(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::IsEditAllowed",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::IsEditAllowed",1,"PoDoFo::PdfMemDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_IsEditAllowed",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (bool)((PoDoFo::PdfMemDocument const *)arg1)->IsEditAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_IsCopyAllowed(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::IsCopyAllowed",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::IsCopyAllowed",1,"PoDoFo::PdfMemDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_IsCopyAllowed",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (bool)((PoDoFo::PdfMemDocument const *)arg1)->IsCopyAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_IsEditNotesAllowed(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::IsEditNotesAllowed",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::IsEditNotesAllowed",1,"PoDoFo::PdfMemDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_IsEditNotesAllowed",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (bool)((PoDoFo::PdfMemDocument const *)arg1)->IsEditNotesAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_IsFillAndSignAllowed(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::IsFillAndSignAllowed",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::IsFillAndSignAllowed",1,"PoDoFo::PdfMemDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_IsFillAndSignAllowed",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (bool)((PoDoFo::PdfMemDocument const *)arg1)->IsFillAndSignAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_IsAccessibilityAllowed(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::IsAccessibilityAllowed",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::IsAccessibilityAllowed",1,"PoDoFo::PdfMemDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_IsAccessibilityAllowed",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (bool)((PoDoFo::PdfMemDocument const *)arg1)->IsAccessibilityAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_IsDocAssemblyAllowed(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::IsDocAssemblyAllowed",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::IsDocAssemblyAllowed",1,"PoDoFo::PdfMemDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_IsDocAssemblyAllowed",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (bool)((PoDoFo::PdfMemDocument const *)arg1)->IsDocAssemblyAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_IsHighPrintAllowed(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::IsHighPrintAllowed",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::IsHighPrintAllowed",1,"PoDoFo::PdfMemDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_IsHighPrintAllowed",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (bool)((PoDoFo::PdfMemDocument const *)arg1)->IsHighPrintAllowed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_FreeObjectMemory__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::PdfReference *arg2 = 0 ;
+  bool arg3 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::FreeObjectMemory",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::FreeObjectMemory",1,"PoDoFo::PdfMemDocument *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::FreeObjectMemory",2,"PoDoFo::PdfReference const &");
+  if(!lua_isboolean(L,3)) SWIG_fail_arg("PoDoFo::PdfMemDocument::FreeObjectMemory",3,"bool");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_FreeObjectMemory",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PoDoFo__PdfReference,0))){
+    SWIG_fail_ptr("PdfMemDocument_FreeObjectMemory",2,SWIGTYPE_p_PoDoFo__PdfReference);
+  }
+  
+  arg3 = (lua_toboolean(L, 3)!=0);
+  {
+    try {
+      (arg1)->FreeObjectMemory((PoDoFo::PdfReference const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_FreeObjectMemory__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::PdfReference *arg2 = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::FreeObjectMemory",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::FreeObjectMemory",1,"PoDoFo::PdfMemDocument *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::FreeObjectMemory",2,"PoDoFo::PdfReference const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_FreeObjectMemory",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PoDoFo__PdfReference,0))){
+    SWIG_fail_ptr("PdfMemDocument_FreeObjectMemory",2,SWIGTYPE_p_PoDoFo__PdfReference);
+  }
+  
+  {
+    try {
+      (arg1)->FreeObjectMemory((PoDoFo::PdfReference const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_FreeObjectMemory__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::PdfObject *arg2 = (PoDoFo::PdfObject *) 0 ;
+  bool arg3 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::FreeObjectMemory",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::FreeObjectMemory",1,"PoDoFo::PdfMemDocument *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::FreeObjectMemory",2,"PoDoFo::PdfObject *");
+  if(!lua_isboolean(L,3)) SWIG_fail_arg("PoDoFo::PdfMemDocument::FreeObjectMemory",3,"bool");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_FreeObjectMemory",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PoDoFo__PdfObject,0))){
+    SWIG_fail_ptr("PdfMemDocument_FreeObjectMemory",2,SWIGTYPE_p_PoDoFo__PdfObject);
+  }
+  
+  arg3 = (lua_toboolean(L, 3)!=0);
+  {
+    try {
+      (arg1)->FreeObjectMemory(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_FreeObjectMemory__SWIG_3(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::PdfObject *arg2 = (PoDoFo::PdfObject *) 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::FreeObjectMemory",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::FreeObjectMemory",1,"PoDoFo::PdfMemDocument *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("PoDoFo::PdfMemDocument::FreeObjectMemory",2,"PoDoFo::PdfObject *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_FreeObjectMemory",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PoDoFo__PdfObject,0))){
+    SWIG_fail_ptr("PdfMemDocument_FreeObjectMemory",2,SWIGTYPE_p_PoDoFo__PdfObject);
+  }
+  
+  {
+    try {
+      (arg1)->FreeObjectMemory(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_PdfMemDocument_FreeObjectMemory(lua_State* L) {
+  int argc;
+  int argv[4]={
+    1,2,3,4
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfMemDocument, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfReference, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_PdfMemDocument_FreeObjectMemory__SWIG_1(L);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfMemDocument, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfObject, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_PdfMemDocument_FreeObjectMemory__SWIG_3(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfMemDocument, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfObject, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        {
+          _v = lua_isboolean(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_PdfMemDocument_FreeObjectMemory__SWIG_2(L);
+        }
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfMemDocument, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfReference, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        {
+          _v = lua_isboolean(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_PdfMemDocument_FreeObjectMemory__SWIG_0(L);
+        }
+      }
+    }
+  }
+  
+  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'PdfMemDocument_FreeObjectMemory'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    PoDoFo::PdfMemDocument::FreeObjectMemory(PoDoFo::PdfReference const &,bool)\n"
+    "    PoDoFo::PdfMemDocument::FreeObjectMemory(PoDoFo::PdfReference const &)\n"
+    "    PoDoFo::PdfMemDocument::FreeObjectMemory(PoDoFo::PdfObject *,bool)\n"
+    "    PoDoFo::PdfMemDocument::FreeObjectMemory(PoDoFo::PdfObject *)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_PdfMemDocument_GetEncrypt(lua_State* L) {
+  int SWIG_arg = 0;
+  PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) 0 ;
+  PoDoFo::PdfEncrypt *result = 0 ;
+  
+  SWIG_check_num_args("PoDoFo::PdfMemDocument::GetEncrypt",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfMemDocument::GetEncrypt",1,"PoDoFo::PdfMemDocument const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfMemDocument_GetEncrypt",1,SWIGTYPE_p_PoDoFo__PdfMemDocument);
+  }
+  
+  {
+    try {
+      result = (PoDoFo::PdfEncrypt *)((PoDoFo::PdfMemDocument const *)arg1)->GetEncrypt();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfEncrypt,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_PdfMemDocument(void *obj) {
+PoDoFo::PdfMemDocument *arg1 = (PoDoFo::PdfMemDocument *) obj;
+delete arg1;
+}
+static int _proxy__wrap_new_PdfMemDocument(lua_State *L) {
+    assert(lua_istable(L,1));
+    lua_pushcfunction(L,_wrap_new_PdfMemDocument);
+    assert(!lua_isnil(L,-1));
+    lua_replace(L,1); /* replace our table with real constructor */
+    lua_call(L,lua_gettop(L)-1,1);
+    return 1;
+}
+static swig_lua_attribute swig_PdfMemDocument_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_method swig_PdfMemDocument_methods[]= {
+    { "Load", _wrap_PdfMemDocument_Load},
+    { "Write", _wrap_PdfMemDocument_Write},
+    { "SetWriteMode", _wrap_PdfMemDocument_SetWriteMode},
+    { "GetWriteMode", _wrap_PdfMemDocument_GetWriteMode},
+    { "SetPdfVersion", _wrap_PdfMemDocument_SetPdfVersion},
+    { "GetPdfVersion", _wrap_PdfMemDocument_GetPdfVersion},
+    { "AddPdfExtension", _wrap_PdfMemDocument_AddPdfExtension},
+    { "HasPdfExtension", _wrap_PdfMemDocument_HasPdfExtension},
+    { "RemovePdfExtension", _wrap_PdfMemDocument_RemovePdfExtension},
+    { "GetPdfExtensions", _wrap_PdfMemDocument_GetPdfExtensions},
+    { "SetPassword", _wrap_PdfMemDocument_SetPassword},
+    { "SetEncrypted", _wrap_PdfMemDocument_SetEncrypted},
+    { "GetEncrypted", _wrap_PdfMemDocument_GetEncrypted},
+    { "IsLinearized", _wrap_PdfMemDocument_IsLinearized},
+    { "GetObjects", _wrap_PdfMemDocument_GetObjects},
+    { "GetCatalog", _wrap_PdfMemDocument_GetCatalog},
+    { "GetTrailer", _wrap_PdfMemDocument_GetTrailer},
+    { "GetStructTreeRoot", _wrap_PdfMemDocument_GetStructTreeRoot},
+    { "GetMetadata", _wrap_PdfMemDocument_GetMetadata},
+    { "GetMarkInfo", _wrap_PdfMemDocument_GetMarkInfo},
+    { "GetLanguage", _wrap_PdfMemDocument_GetLanguage},
+    { "GetFont", _wrap_PdfMemDocument_GetFont},
+    { "InsertPages", _wrap_PdfMemDocument_InsertPages},
+    { "DeletePages", _wrap_PdfMemDocument_DeletePages},
+    { "IsPrintAllowed", _wrap_PdfMemDocument_IsPrintAllowed},
+    { "IsEditAllowed", _wrap_PdfMemDocument_IsEditAllowed},
+    { "IsCopyAllowed", _wrap_PdfMemDocument_IsCopyAllowed},
+    { "IsEditNotesAllowed", _wrap_PdfMemDocument_IsEditNotesAllowed},
+    { "IsFillAndSignAllowed", _wrap_PdfMemDocument_IsFillAndSignAllowed},
+    { "IsAccessibilityAllowed", _wrap_PdfMemDocument_IsAccessibilityAllowed},
+    { "IsDocAssemblyAllowed", _wrap_PdfMemDocument_IsDocAssemblyAllowed},
+    { "IsHighPrintAllowed", _wrap_PdfMemDocument_IsHighPrintAllowed},
+    { "FreeObjectMemory", _wrap_PdfMemDocument_FreeObjectMemory},
+    { "GetEncrypt", _wrap_PdfMemDocument_GetEncrypt},
+    {0,0}
+};
+static swig_lua_method swig_PdfMemDocument_meta[] = {
+    {0,0}
+};
+
+static swig_lua_attribute swig_PdfMemDocument_Sf_SwigStatic_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_const_info swig_PdfMemDocument_Sf_SwigStatic_constants[]= {
+    {0,0,0,0,0,0}
+};
+static swig_lua_method swig_PdfMemDocument_Sf_SwigStatic_methods[]= {
+    {0,0}
+};
+static swig_lua_class* swig_PdfMemDocument_Sf_SwigStatic_classes[]= {
+    0
+};
+
+static swig_lua_namespace swig_PdfMemDocument_Sf_SwigStatic = {
+    "PdfMemDocument",
+    swig_PdfMemDocument_Sf_SwigStatic_methods,
+    swig_PdfMemDocument_Sf_SwigStatic_attributes,
+    swig_PdfMemDocument_Sf_SwigStatic_constants,
+    swig_PdfMemDocument_Sf_SwigStatic_classes,
+    0
+};
+static swig_lua_class *swig_PdfMemDocument_bases[] = {0,0};
+static const char *swig_PdfMemDocument_base_names[] = {"PoDoFo::PdfDocument *",0};
+static swig_lua_class _wrap_class_PdfMemDocument = { "PdfMemDocument", "PdfMemDocument", &SWIGTYPE_p_PoDoFo__PdfMemDocument,_proxy__wrap_new_PdfMemDocument, swig_delete_PdfMemDocument, swig_PdfMemDocument_methods, swig_PdfMemDocument_attributes, &swig_PdfMemDocument_Sf_SwigStatic, swig_PdfMemDocument_meta, swig_PdfMemDocument_bases, swig_PdfMemDocument_base_names };
+
 static int _wrap_new_PdfNamesTree__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
   PoDoFo::PdfVecObjects *arg1 = (PoDoFo::PdfVecObjects *) 0 ;
@@ -31831,7 +39908,15 @@ static int _wrap_new_PdfNamesTree__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfNamesTree",1,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfNamesTree *)new PoDoFo::PdfNamesTree(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfNamesTree *)new PoDoFo::PdfNamesTree(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfNamesTree,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -31862,7 +39947,15 @@ static int _wrap_new_PdfNamesTree__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfNamesTree",2,SWIGTYPE_p_PoDoFo__PdfObject);
   }
   
-  result = (PoDoFo::PdfNamesTree *)new PoDoFo::PdfNamesTree(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfNamesTree *)new PoDoFo::PdfNamesTree(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfNamesTree,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -31960,7 +40053,15 @@ static int _wrap_PdfNamesTree_AddValue(lua_State* L) {
     SWIG_fail_ptr("PdfNamesTree_AddValue",4,SWIGTYPE_p_PoDoFo__PdfObject);
   }
   
-  (arg1)->AddValue((PoDoFo::PdfName const &)*arg2,(PoDoFo::PdfString const &)*arg3,(PoDoFo::PdfObject const &)*arg4);
+  {
+    try {
+      (arg1)->AddValue((PoDoFo::PdfName const &)*arg2,(PoDoFo::PdfString const &)*arg3,(PoDoFo::PdfObject const &)*arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -31998,7 +40099,15 @@ static int _wrap_PdfNamesTree_GetValue(lua_State* L) {
     SWIG_fail_ptr("PdfNamesTree_GetValue",3,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  result = (PoDoFo::PdfObject *)((PoDoFo::PdfNamesTree const *)arg1)->GetValue((PoDoFo::PdfName const &)*arg2,(PoDoFo::PdfString const &)*arg3);
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfNamesTree const *)arg1)->GetValue((PoDoFo::PdfName const &)*arg2,(PoDoFo::PdfString const &)*arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -32036,7 +40145,15 @@ static int _wrap_PdfNamesTree_HasValue(lua_State* L) {
     SWIG_fail_ptr("PdfNamesTree_HasValue",3,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  result = (bool)((PoDoFo::PdfNamesTree const *)arg1)->HasValue((PoDoFo::PdfName const &)*arg2,(PoDoFo::PdfString const &)*arg3);
+  {
+    try {
+      result = (bool)((PoDoFo::PdfNamesTree const *)arg1)->HasValue((PoDoFo::PdfName const &)*arg2,(PoDoFo::PdfString const &)*arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -32067,7 +40184,15 @@ static int _wrap_PdfNamesTree_CheckLimits(lua_State* L) {
     SWIG_fail_ptr("PdfNamesTree_CheckLimits",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  result = (PoDoFo::EPdfNameLimits)PoDoFo::PdfNamesTree::CheckLimits((PoDoFo::PdfObject const *)arg1,(PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      result = (PoDoFo::EPdfNameLimits)PoDoFo::PdfNamesTree::CheckLimits((PoDoFo::PdfObject const *)arg1,(PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
   return SWIG_arg;
   
@@ -32104,7 +40229,15 @@ static int _wrap_PdfNamesTree_ToDictionary(lua_State* L) {
     SWIG_fail_ptr("PdfNamesTree_ToDictionary",3,SWIGTYPE_p_PoDoFo__PdfDictionary);
   }
   
-  (arg1)->ToDictionary((PoDoFo::PdfName const &)*arg2,*arg3);
+  {
+    try {
+      (arg1)->ToDictionary((PoDoFo::PdfName const &)*arg2,*arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -32131,7 +40264,15 @@ static int _wrap_PdfNamesTree_GetJavaScriptNode__SWIG_0(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  result = (PoDoFo::PdfObject *)((PoDoFo::PdfNamesTree const *)arg1)->GetJavaScriptNode(arg2);
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfNamesTree const *)arg1)->GetJavaScriptNode(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -32155,7 +40296,15 @@ static int _wrap_PdfNamesTree_GetJavaScriptNode__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfNamesTree_GetJavaScriptNode",1,SWIGTYPE_p_PoDoFo__PdfNamesTree);
   }
   
-  result = (PoDoFo::PdfObject *)((PoDoFo::PdfNamesTree const *)arg1)->GetJavaScriptNode();
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfNamesTree const *)arg1)->GetJavaScriptNode();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -32231,7 +40380,15 @@ static int _wrap_PdfNamesTree_GetDestsNode__SWIG_0(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  result = (PoDoFo::PdfObject *)((PoDoFo::PdfNamesTree const *)arg1)->GetDestsNode(arg2);
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfNamesTree const *)arg1)->GetDestsNode(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -32255,7 +40412,15 @@ static int _wrap_PdfNamesTree_GetDestsNode__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfNamesTree_GetDestsNode",1,SWIGTYPE_p_PoDoFo__PdfNamesTree);
   }
   
-  result = (PoDoFo::PdfObject *)((PoDoFo::PdfNamesTree const *)arg1)->GetDestsNode();
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfNamesTree const *)arg1)->GetDestsNode();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -32396,7 +40561,15 @@ static int _wrap_PdfOutlineItem_CreateChild(lua_State* L) {
     SWIG_fail_ptr("PdfOutlineItem_CreateChild",3,SWIGTYPE_p_PoDoFo__PdfDestination);
   }
   
-  result = (PoDoFo::PdfOutlineItem *)(arg1)->CreateChild((PoDoFo::PdfString const &)*arg2,(PoDoFo::PdfDestination const &)*arg3);
+  {
+    try {
+      result = (PoDoFo::PdfOutlineItem *)(arg1)->CreateChild((PoDoFo::PdfString const &)*arg2,(PoDoFo::PdfDestination const &)*arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfOutlineItem,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -32434,7 +40607,15 @@ static int _wrap_PdfOutlineItem_CreateNext__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("PdfOutlineItem_CreateNext",3,SWIGTYPE_p_PoDoFo__PdfDestination);
   }
   
-  result = (PoDoFo::PdfOutlineItem *)(arg1)->CreateNext((PoDoFo::PdfString const &)*arg2,(PoDoFo::PdfDestination const &)*arg3);
+  {
+    try {
+      result = (PoDoFo::PdfOutlineItem *)(arg1)->CreateNext((PoDoFo::PdfString const &)*arg2,(PoDoFo::PdfDestination const &)*arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfOutlineItem,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -32472,7 +40653,15 @@ static int _wrap_PdfOutlineItem_CreateNext__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfOutlineItem_CreateNext",3,SWIGTYPE_p_PoDoFo__PdfAction);
   }
   
-  result = (PoDoFo::PdfOutlineItem *)(arg1)->CreateNext((PoDoFo::PdfString const &)*arg2,(PoDoFo::PdfAction const &)*arg3);
+  {
+    try {
+      result = (PoDoFo::PdfOutlineItem *)(arg1)->CreateNext((PoDoFo::PdfString const &)*arg2,(PoDoFo::PdfAction const &)*arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfOutlineItem,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -32586,7 +40775,15 @@ static int _wrap_PdfOutlineItem_InsertChild(lua_State* L) {
     SWIG_fail_ptr("PdfOutlineItem_InsertChild",2,SWIGTYPE_p_PoDoFo__PdfOutlineItem);
   }
   
-  (arg1)->InsertChild(arg2);
+  {
+    try {
+      (arg1)->InsertChild(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -32610,7 +40807,15 @@ static int _wrap_PdfOutlineItem_Prev(lua_State* L) {
     SWIG_fail_ptr("PdfOutlineItem_Prev",1,SWIGTYPE_p_PoDoFo__PdfOutlineItem);
   }
   
-  result = (PoDoFo::PdfOutlineItem *)((PoDoFo::PdfOutlineItem const *)arg1)->Prev();
+  {
+    try {
+      result = (PoDoFo::PdfOutlineItem *)((PoDoFo::PdfOutlineItem const *)arg1)->Prev();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfOutlineItem,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -32634,7 +40839,15 @@ static int _wrap_PdfOutlineItem_Next(lua_State* L) {
     SWIG_fail_ptr("PdfOutlineItem_Next",1,SWIGTYPE_p_PoDoFo__PdfOutlineItem);
   }
   
-  result = (PoDoFo::PdfOutlineItem *)((PoDoFo::PdfOutlineItem const *)arg1)->Next();
+  {
+    try {
+      result = (PoDoFo::PdfOutlineItem *)((PoDoFo::PdfOutlineItem const *)arg1)->Next();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfOutlineItem,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -32658,7 +40871,15 @@ static int _wrap_PdfOutlineItem_First(lua_State* L) {
     SWIG_fail_ptr("PdfOutlineItem_First",1,SWIGTYPE_p_PoDoFo__PdfOutlineItem);
   }
   
-  result = (PoDoFo::PdfOutlineItem *)((PoDoFo::PdfOutlineItem const *)arg1)->First();
+  {
+    try {
+      result = (PoDoFo::PdfOutlineItem *)((PoDoFo::PdfOutlineItem const *)arg1)->First();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfOutlineItem,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -32682,7 +40903,15 @@ static int _wrap_PdfOutlineItem_Last(lua_State* L) {
     SWIG_fail_ptr("PdfOutlineItem_Last",1,SWIGTYPE_p_PoDoFo__PdfOutlineItem);
   }
   
-  result = (PoDoFo::PdfOutlineItem *)((PoDoFo::PdfOutlineItem const *)arg1)->Last();
+  {
+    try {
+      result = (PoDoFo::PdfOutlineItem *)((PoDoFo::PdfOutlineItem const *)arg1)->Last();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfOutlineItem,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -32706,7 +40935,15 @@ static int _wrap_PdfOutlineItem_GetParentOutline(lua_State* L) {
     SWIG_fail_ptr("PdfOutlineItem_GetParentOutline",1,SWIGTYPE_p_PoDoFo__PdfOutlineItem);
   }
   
-  result = (PoDoFo::PdfOutlineItem *)((PoDoFo::PdfOutlineItem const *)arg1)->GetParentOutline();
+  {
+    try {
+      result = (PoDoFo::PdfOutlineItem *)((PoDoFo::PdfOutlineItem const *)arg1)->GetParentOutline();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfOutlineItem,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -32729,7 +40966,15 @@ static int _wrap_PdfOutlineItem_Erase(lua_State* L) {
     SWIG_fail_ptr("PdfOutlineItem_Erase",1,SWIGTYPE_p_PoDoFo__PdfOutlineItem);
   }
   
-  (arg1)->Erase();
+  {
+    try {
+      (arg1)->Erase();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -32759,7 +41004,15 @@ static int _wrap_PdfOutlineItem_SetDestination(lua_State* L) {
     SWIG_fail_ptr("PdfOutlineItem_SetDestination",2,SWIGTYPE_p_PoDoFo__PdfDestination);
   }
   
-  (arg1)->SetDestination((PoDoFo::PdfDestination const &)*arg2);
+  {
+    try {
+      (arg1)->SetDestination((PoDoFo::PdfDestination const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -32790,7 +41043,15 @@ static int _wrap_PdfOutlineItem_GetDestination(lua_State* L) {
     SWIG_fail_ptr("PdfOutlineItem_GetDestination",2,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfDestination *)(arg1)->GetDestination(arg2);
+  {
+    try {
+      result = (PoDoFo::PdfDestination *)(arg1)->GetDestination(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfDestination,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -32820,7 +41081,15 @@ static int _wrap_PdfOutlineItem_SetAction(lua_State* L) {
     SWIG_fail_ptr("PdfOutlineItem_SetAction",2,SWIGTYPE_p_PoDoFo__PdfAction);
   }
   
-  (arg1)->SetAction((PoDoFo::PdfAction const &)*arg2);
+  {
+    try {
+      (arg1)->SetAction((PoDoFo::PdfAction const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -32844,7 +41113,15 @@ static int _wrap_PdfOutlineItem_GetAction(lua_State* L) {
     SWIG_fail_ptr("PdfOutlineItem_GetAction",1,SWIGTYPE_p_PoDoFo__PdfOutlineItem);
   }
   
-  result = (PoDoFo::PdfAction *)(arg1)->GetAction();
+  {
+    try {
+      result = (PoDoFo::PdfAction *)(arg1)->GetAction();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfAction,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -32874,7 +41151,15 @@ static int _wrap_PdfOutlineItem_SetTitle(lua_State* L) {
     SWIG_fail_ptr("PdfOutlineItem_SetTitle",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->SetTitle((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      (arg1)->SetTitle((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -32898,7 +41183,15 @@ static int _wrap_PdfOutlineItem_GetTitle(lua_State* L) {
     SWIG_fail_ptr("PdfOutlineItem_GetTitle",1,SWIGTYPE_p_PoDoFo__PdfOutlineItem);
   }
   
-  result = (PoDoFo::PdfString *) &((PoDoFo::PdfOutlineItem const *)arg1)->GetTitle();
+  {
+    try {
+      result = (PoDoFo::PdfString *) &((PoDoFo::PdfOutlineItem const *)arg1)->GetTitle();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfString,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -32924,7 +41217,15 @@ static int _wrap_PdfOutlineItem_SetTextFormat(lua_State* L) {
   }
   
   arg2 = (PoDoFo::EPdfOutlineFormat)(int)lua_tonumber(L, 2);
-  (arg1)->SetTextFormat(arg2);
+  {
+    try {
+      (arg1)->SetTextFormat(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -32948,7 +41249,15 @@ static int _wrap_PdfOutlineItem_GetTextFormat(lua_State* L) {
     SWIG_fail_ptr("PdfOutlineItem_GetTextFormat",1,SWIGTYPE_p_PoDoFo__PdfOutlineItem);
   }
   
-  result = (PoDoFo::EPdfOutlineFormat)((PoDoFo::PdfOutlineItem const *)arg1)->GetTextFormat();
+  {
+    try {
+      result = (PoDoFo::EPdfOutlineFormat)((PoDoFo::PdfOutlineItem const *)arg1)->GetTextFormat();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
   return SWIG_arg;
   
@@ -32980,7 +41289,15 @@ static int _wrap_PdfOutlineItem_SetTextColor(lua_State* L) {
   arg2 = (double)lua_tonumber(L, 2);
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
-  (arg1)->SetTextColor(arg2,arg3,arg4);
+  {
+    try {
+      (arg1)->SetTextColor(arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -33004,7 +41321,15 @@ static int _wrap_PdfOutlineItem_GetTextColorRed(lua_State* L) {
     SWIG_fail_ptr("PdfOutlineItem_GetTextColorRed",1,SWIGTYPE_p_PoDoFo__PdfOutlineItem);
   }
   
-  result = (double)((PoDoFo::PdfOutlineItem const *)arg1)->GetTextColorRed();
+  {
+    try {
+      result = (double)((PoDoFo::PdfOutlineItem const *)arg1)->GetTextColorRed();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -33028,7 +41353,15 @@ static int _wrap_PdfOutlineItem_GetTextColorBlue(lua_State* L) {
     SWIG_fail_ptr("PdfOutlineItem_GetTextColorBlue",1,SWIGTYPE_p_PoDoFo__PdfOutlineItem);
   }
   
-  result = (double)((PoDoFo::PdfOutlineItem const *)arg1)->GetTextColorBlue();
+  {
+    try {
+      result = (double)((PoDoFo::PdfOutlineItem const *)arg1)->GetTextColorBlue();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -33052,7 +41385,15 @@ static int _wrap_PdfOutlineItem_GetTextColorGreen(lua_State* L) {
     SWIG_fail_ptr("PdfOutlineItem_GetTextColorGreen",1,SWIGTYPE_p_PoDoFo__PdfOutlineItem);
   }
   
-  result = (double)((PoDoFo::PdfOutlineItem const *)arg1)->GetTextColorGreen();
+  {
+    try {
+      result = (double)((PoDoFo::PdfOutlineItem const *)arg1)->GetTextColorGreen();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -33136,7 +41477,15 @@ static int _wrap_new_PdfOutlines__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfOutlines",1,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfOutlines *)new PoDoFo::PdfOutlines(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfOutlines *)new PoDoFo::PdfOutlines(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfOutlines,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -33160,7 +41509,15 @@ static int _wrap_new_PdfOutlines__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfOutlines",1,SWIGTYPE_p_PoDoFo__PdfObject);
   }
   
-  result = (PoDoFo::PdfOutlines *)new PoDoFo::PdfOutlines(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfOutlines *)new PoDoFo::PdfOutlines(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfOutlines,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -33235,7 +41592,15 @@ static int _wrap_PdfOutlines_CreateRoot(lua_State* L) {
     SWIG_fail_ptr("PdfOutlines_CreateRoot",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  result = (PoDoFo::PdfOutlineItem *)(arg1)->CreateRoot((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      result = (PoDoFo::PdfOutlineItem *)(arg1)->CreateRoot((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfOutlineItem,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -33314,7 +41679,15 @@ static int _wrap_new_PdfPage__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfPage",2,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfPage *)new PoDoFo::PdfPage((PoDoFo::PdfRect const &)*arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfPage *)new PoDoFo::PdfPage((PoDoFo::PdfRect const &)*arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPage,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -33345,7 +41718,15 @@ static int _wrap_new_PdfPage__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfPage",2,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfPage *)new PoDoFo::PdfPage((PoDoFo::PdfRect const &)*arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfPage *)new PoDoFo::PdfPage((PoDoFo::PdfRect const &)*arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPage,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -33376,7 +41757,15 @@ static int _wrap_new_PdfPage__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("new_PdfPage",2,SWIGTYPE_p_std__dequeT_PoDoFo__PdfObject_p_t);
   }
   
-  result = (PoDoFo::PdfPage *)new PoDoFo::PdfPage(arg1,(std::deque< PoDoFo::PdfObject * > const &)*arg2);
+  {
+    try {
+      result = (PoDoFo::PdfPage *)new PoDoFo::PdfPage(arg1,(std::deque< PoDoFo::PdfObject * > const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPage,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -33489,7 +41878,15 @@ static int _wrap_PdfPage_GetPageSize(lua_State* L) {
     SWIG_fail_ptr("PdfPage_GetPageSize",1,SWIGTYPE_p_PoDoFo__PdfPage);
   }
   
-  result = ((PoDoFo::PdfPage const *)arg1)->GetPageSize();
+  {
+    try {
+      result = ((PoDoFo::PdfPage const *)arg1)->GetPageSize();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfRect * resultptr = new PoDoFo::PdfRect((const PoDoFo::PdfRect &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfRect,1); SWIG_arg++;
@@ -33519,7 +41916,15 @@ static int _wrap_PdfPage_SetPageWidth(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = (bool)(arg1)->SetPageWidth(arg2);
+  {
+    try {
+      result = (bool)(arg1)->SetPageWidth(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -33546,7 +41951,15 @@ static int _wrap_PdfPage_SetPageHeight(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = (bool)(arg1)->SetPageHeight(arg2);
+  {
+    try {
+      result = (bool)(arg1)->SetPageHeight(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -33576,7 +41989,15 @@ static int _wrap_PdfPage_SetTrimBox(lua_State* L) {
     SWIG_fail_ptr("PdfPage_SetTrimBox",2,SWIGTYPE_p_PoDoFo__PdfRect);
   }
   
-  (arg1)->SetTrimBox((PoDoFo::PdfRect const &)*arg2);
+  {
+    try {
+      (arg1)->SetTrimBox((PoDoFo::PdfRect const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -33600,7 +42021,15 @@ static int _wrap_PdfPage_GetPageNumber(lua_State* L) {
     SWIG_fail_ptr("PdfPage_GetPageNumber",1,SWIGTYPE_p_PoDoFo__PdfPage);
   }
   
-  result = (unsigned int)((PoDoFo::PdfPage const *)arg1)->GetPageNumber();
+  {
+    try {
+      result = (unsigned int)((PoDoFo::PdfPage const *)arg1)->GetPageNumber();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -33623,7 +42052,15 @@ static int _wrap_PdfPage_CreateStandardPageSize__SWIG_0(lua_State* L) {
   if(!lua_isboolean(L,2)) SWIG_fail_arg("PoDoFo::PdfPage::CreateStandardPageSize",2,"bool");
   arg1 = (PoDoFo::EPdfPageSize const)(int)lua_tonumber(L, 1);
   arg2 = (lua_toboolean(L, 2)!=0);
-  result = PoDoFo::PdfPage::CreateStandardPageSize(arg1,arg2);
+  {
+    try {
+      result = PoDoFo::PdfPage::CreateStandardPageSize(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfRect * resultptr = new PoDoFo::PdfRect((const PoDoFo::PdfRect &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfRect,1); SWIG_arg++;
@@ -33646,7 +42083,15 @@ static int _wrap_PdfPage_CreateStandardPageSize__SWIG_1(lua_State* L) {
   SWIG_check_num_args("PoDoFo::PdfPage::CreateStandardPageSize",1,1)
   if(!lua_isnumber(L,1)) SWIG_fail_arg("PoDoFo::PdfPage::CreateStandardPageSize",1,"PoDoFo::EPdfPageSize const");
   arg1 = (PoDoFo::EPdfPageSize const)(int)lua_tonumber(L, 1);
-  result = PoDoFo::PdfPage::CreateStandardPageSize(arg1);
+  {
+    try {
+      result = PoDoFo::PdfPage::CreateStandardPageSize(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfRect * resultptr = new PoDoFo::PdfRect((const PoDoFo::PdfRect &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfRect,1); SWIG_arg++;
@@ -33712,7 +42157,15 @@ static int _wrap_PdfPage_GetContents(lua_State* L) {
     SWIG_fail_ptr("PdfPage_GetContents",1,SWIGTYPE_p_PoDoFo__PdfPage);
   }
   
-  result = (PoDoFo::PdfObject *)((PoDoFo::PdfPage const *)arg1)->GetContents();
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfPage const *)arg1)->GetContents();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -33736,7 +42189,15 @@ static int _wrap_PdfPage_GetContentsForAppending(lua_State* L) {
     SWIG_fail_ptr("PdfPage_GetContentsForAppending",1,SWIGTYPE_p_PoDoFo__PdfPage);
   }
   
-  result = (PoDoFo::PdfObject *)((PoDoFo::PdfPage const *)arg1)->GetContentsForAppending();
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfPage const *)arg1)->GetContentsForAppending();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -33760,7 +42221,15 @@ static int _wrap_PdfPage_GetResources(lua_State* L) {
     SWIG_fail_ptr("PdfPage_GetResources",1,SWIGTYPE_p_PoDoFo__PdfPage);
   }
   
-  result = (PoDoFo::PdfObject *)((PoDoFo::PdfPage const *)arg1)->GetResources();
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfPage const *)arg1)->GetResources();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -33784,7 +42253,15 @@ static int _wrap_PdfPage_GetMediaBox(lua_State* L) {
     SWIG_fail_ptr("PdfPage_GetMediaBox",1,SWIGTYPE_p_PoDoFo__PdfPage);
   }
   
-  result = ((PoDoFo::PdfPage const *)arg1)->GetMediaBox();
+  {
+    try {
+      result = ((PoDoFo::PdfPage const *)arg1)->GetMediaBox();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfRect * resultptr = new PoDoFo::PdfRect((const PoDoFo::PdfRect &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfRect,1); SWIG_arg++;
@@ -33811,7 +42288,15 @@ static int _wrap_PdfPage_GetCropBox(lua_State* L) {
     SWIG_fail_ptr("PdfPage_GetCropBox",1,SWIGTYPE_p_PoDoFo__PdfPage);
   }
   
-  result = ((PoDoFo::PdfPage const *)arg1)->GetCropBox();
+  {
+    try {
+      result = ((PoDoFo::PdfPage const *)arg1)->GetCropBox();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfRect * resultptr = new PoDoFo::PdfRect((const PoDoFo::PdfRect &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfRect,1); SWIG_arg++;
@@ -33838,7 +42323,15 @@ static int _wrap_PdfPage_GetTrimBox(lua_State* L) {
     SWIG_fail_ptr("PdfPage_GetTrimBox",1,SWIGTYPE_p_PoDoFo__PdfPage);
   }
   
-  result = ((PoDoFo::PdfPage const *)arg1)->GetTrimBox();
+  {
+    try {
+      result = ((PoDoFo::PdfPage const *)arg1)->GetTrimBox();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfRect * resultptr = new PoDoFo::PdfRect((const PoDoFo::PdfRect &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfRect,1); SWIG_arg++;
@@ -33865,7 +42358,15 @@ static int _wrap_PdfPage_GetBleedBox(lua_State* L) {
     SWIG_fail_ptr("PdfPage_GetBleedBox",1,SWIGTYPE_p_PoDoFo__PdfPage);
   }
   
-  result = ((PoDoFo::PdfPage const *)arg1)->GetBleedBox();
+  {
+    try {
+      result = ((PoDoFo::PdfPage const *)arg1)->GetBleedBox();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfRect * resultptr = new PoDoFo::PdfRect((const PoDoFo::PdfRect &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfRect,1); SWIG_arg++;
@@ -33892,7 +42393,15 @@ static int _wrap_PdfPage_GetArtBox(lua_State* L) {
     SWIG_fail_ptr("PdfPage_GetArtBox",1,SWIGTYPE_p_PoDoFo__PdfPage);
   }
   
-  result = ((PoDoFo::PdfPage const *)arg1)->GetArtBox();
+  {
+    try {
+      result = ((PoDoFo::PdfPage const *)arg1)->GetArtBox();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfRect * resultptr = new PoDoFo::PdfRect((const PoDoFo::PdfRect &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfRect,1); SWIG_arg++;
@@ -33919,7 +42428,15 @@ static int _wrap_PdfPage_GetRotation(lua_State* L) {
     SWIG_fail_ptr("PdfPage_GetRotation",1,SWIGTYPE_p_PoDoFo__PdfPage);
   }
   
-  result = (int)((PoDoFo::PdfPage const *)arg1)->GetRotation();
+  {
+    try {
+      result = (int)((PoDoFo::PdfPage const *)arg1)->GetRotation();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -33945,7 +42462,15 @@ static int _wrap_PdfPage_SetRotation(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  (arg1)->SetRotation(arg2);
+  {
+    try {
+      (arg1)->SetRotation(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -33969,7 +42494,15 @@ static int _wrap_PdfPage_GetNumAnnots(lua_State* L) {
     SWIG_fail_ptr("PdfPage_GetNumAnnots",1,SWIGTYPE_p_PoDoFo__PdfPage);
   }
   
-  result = (int)((PoDoFo::PdfPage const *)arg1)->GetNumAnnots();
+  {
+    try {
+      result = (int)((PoDoFo::PdfPage const *)arg1)->GetNumAnnots();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -34003,7 +42536,15 @@ static int _wrap_PdfPage_CreateAnnotation(lua_State* L) {
     SWIG_fail_ptr("PdfPage_CreateAnnotation",3,SWIGTYPE_p_PoDoFo__PdfRect);
   }
   
-  result = (PoDoFo::PdfAnnotation *)(arg1)->CreateAnnotation(arg2,(PoDoFo::PdfRect const &)*arg3);
+  {
+    try {
+      result = (PoDoFo::PdfAnnotation *)(arg1)->CreateAnnotation(arg2,(PoDoFo::PdfRect const &)*arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfAnnotation,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -34030,7 +42571,15 @@ static int _wrap_PdfPage_GetAnnotation(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = (PoDoFo::PdfAnnotation *)(arg1)->GetAnnotation(arg2);
+  {
+    try {
+      result = (PoDoFo::PdfAnnotation *)(arg1)->GetAnnotation(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfAnnotation,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -34056,7 +42605,15 @@ static int _wrap_PdfPage_DeleteAnnotation__SWIG_0(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  (arg1)->DeleteAnnotation(arg2);
+  {
+    try {
+      (arg1)->DeleteAnnotation(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -34086,7 +42643,15 @@ static int _wrap_PdfPage_DeleteAnnotation__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfPage_DeleteAnnotation",2,SWIGTYPE_p_PoDoFo__PdfReference);
   }
   
-  (arg1)->DeleteAnnotation((PoDoFo::PdfReference const &)*arg2);
+  {
+    try {
+      (arg1)->DeleteAnnotation((PoDoFo::PdfReference const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -34169,7 +42734,15 @@ static int _wrap_PdfPage_GetNumFields(lua_State* L) {
     SWIG_fail_ptr("PdfPage_GetNumFields",1,SWIGTYPE_p_PoDoFo__PdfPage);
   }
   
-  result = (int)((PoDoFo::PdfPage const *)arg1)->GetNumFields();
+  {
+    try {
+      result = (int)((PoDoFo::PdfPage const *)arg1)->GetNumFields();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -34196,7 +42769,15 @@ static int _wrap_PdfPage_GetField__SWIG_0(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = (arg1)->GetField(arg2);
+  {
+    try {
+      result = (arg1)->GetField(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfField * resultptr = new PoDoFo::PdfField((const PoDoFo::PdfField &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfField,1); SWIG_arg++;
@@ -34226,7 +42807,15 @@ static int _wrap_PdfPage_GetField__SWIG_1(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = ((PoDoFo::PdfPage const *)arg1)->GetField(arg2);
+  {
+    try {
+      result = ((PoDoFo::PdfPage const *)arg1)->GetField(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfField * resultptr = new PoDoFo::PdfField((const PoDoFo::PdfField &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfField,1); SWIG_arg++;
@@ -34321,7 +42910,15 @@ static int _wrap_PdfPage_GetFromResources(lua_State* L) {
     SWIG_fail_ptr("PdfPage_GetFromResources",3,SWIGTYPE_p_PoDoFo__PdfName);
   }
   
-  result = (PoDoFo::PdfObject *)(arg1)->GetFromResources((PoDoFo::PdfName const &)*arg2,(PoDoFo::PdfName const &)*arg3);
+  {
+    try {
+      result = (PoDoFo::PdfObject *)(arg1)->GetFromResources((PoDoFo::PdfName const &)*arg2,(PoDoFo::PdfName const &)*arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -34352,7 +42949,15 @@ static int _wrap_PdfPage_GetInheritedKey(lua_State* L) {
     SWIG_fail_ptr("PdfPage_GetInheritedKey",2,SWIGTYPE_p_PoDoFo__PdfName);
   }
   
-  result = (PoDoFo::PdfObject *)((PoDoFo::PdfPage const *)arg1)->GetInheritedKey((PoDoFo::PdfName const &)*arg2);
+  {
+    try {
+      result = (PoDoFo::PdfObject *)((PoDoFo::PdfPage const *)arg1)->GetInheritedKey((PoDoFo::PdfName const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -34386,7 +42991,15 @@ static int _wrap_PdfPage_GetOwnAnnotationsArray(lua_State* L) {
     SWIG_fail_ptr("PdfPage_GetOwnAnnotationsArray",3,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfObject *)(arg1)->GetOwnAnnotationsArray(arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfObject *)(arg1)->GetOwnAnnotationsArray(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfObject,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -34482,7 +43095,15 @@ static int _wrap_new_PdfPagesTree__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfPagesTree",1,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfPagesTree *)new PoDoFo::PdfPagesTree(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfPagesTree *)new PoDoFo::PdfPagesTree(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPagesTree,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -34506,7 +43127,15 @@ static int _wrap_new_PdfPagesTree__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfPagesTree",1,SWIGTYPE_p_PoDoFo__PdfObject);
   }
   
-  result = (PoDoFo::PdfPagesTree *)new PoDoFo::PdfPagesTree(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfPagesTree *)new PoDoFo::PdfPagesTree(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPagesTree,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -34574,7 +43203,15 @@ static int _wrap_PdfPagesTree_GetTotalNumberOfPages(lua_State* L) {
     SWIG_fail_ptr("PdfPagesTree_GetTotalNumberOfPages",1,SWIGTYPE_p_PoDoFo__PdfPagesTree);
   }
   
-  result = (int)((PoDoFo::PdfPagesTree const *)arg1)->GetTotalNumberOfPages();
+  {
+    try {
+      result = (int)((PoDoFo::PdfPagesTree const *)arg1)->GetTotalNumberOfPages();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -34601,7 +43238,15 @@ static int _wrap_PdfPagesTree_GetPage__SWIG_0(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = (PoDoFo::PdfPage *)(arg1)->GetPage(arg2);
+  {
+    try {
+      result = (PoDoFo::PdfPage *)(arg1)->GetPage(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPage,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -34632,7 +43277,15 @@ static int _wrap_PdfPagesTree_GetPage__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfPagesTree_GetPage",2,SWIGTYPE_p_PoDoFo__PdfReference);
   }
   
-  result = (PoDoFo::PdfPage *)(arg1)->GetPage((PoDoFo::PdfReference const &)*arg2);
+  {
+    try {
+      result = (PoDoFo::PdfPage *)(arg1)->GetPage((PoDoFo::PdfReference const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPage,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -34724,7 +43377,15 @@ static int _wrap_PdfPagesTree_InsertPage__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("PdfPagesTree_InsertPage",3,SWIGTYPE_p_PoDoFo__PdfObject);
   }
   
-  (arg1)->InsertPage(arg2,arg3);
+  {
+    try {
+      (arg1)->InsertPage(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -34757,7 +43418,15 @@ static int _wrap_PdfPagesTree_InsertPage__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfPagesTree_InsertPage",3,SWIGTYPE_p_PoDoFo__PdfPage);
   }
   
-  (arg1)->InsertPage(arg2,arg3);
+  {
+    try {
+      (arg1)->InsertPage(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -34790,7 +43459,15 @@ static int _wrap_PdfPagesTree_InsertPages(lua_State* L) {
     SWIG_fail_ptr("PdfPagesTree_InsertPages",3,SWIGTYPE_p_std__vectorT_PoDoFo__PdfObject_p_t);
   }
   
-  (arg1)->InsertPages(arg2,(std::vector< PoDoFo::PdfObject * > const &)*arg3);
+  {
+    try {
+      (arg1)->InsertPages(arg2,(std::vector< PoDoFo::PdfObject * > const &)*arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -34821,7 +43498,15 @@ static int _wrap_PdfPagesTree_CreatePage(lua_State* L) {
     SWIG_fail_ptr("PdfPagesTree_CreatePage",2,SWIGTYPE_p_PoDoFo__PdfRect);
   }
   
-  result = (PoDoFo::PdfPage *)(arg1)->CreatePage((PoDoFo::PdfRect const &)*arg2);
+  {
+    try {
+      result = (PoDoFo::PdfPage *)(arg1)->CreatePage((PoDoFo::PdfRect const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPage,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -34851,7 +43536,15 @@ static int _wrap_PdfPagesTree_CreatePages(lua_State* L) {
     SWIG_fail_ptr("PdfPagesTree_CreatePages",2,SWIGTYPE_p_std__vectorT_PoDoFo__PdfRect_t);
   }
   
-  (arg1)->CreatePages((std::vector< PoDoFo::PdfRect > const &)*arg2);
+  {
+    try {
+      (arg1)->CreatePages((std::vector< PoDoFo::PdfRect > const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -34885,7 +43578,15 @@ static int _wrap_PdfPagesTree_InsertPage__SWIG_2(lua_State* L) {
   }
   
   arg3 = (int)lua_tonumber(L, 3);
-  result = (PoDoFo::PdfPage *)(arg1)->InsertPage((PoDoFo::PdfRect const &)*arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfPage *)(arg1)->InsertPage((PoDoFo::PdfRect const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPage,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -35015,7 +43716,15 @@ static int _wrap_PdfPagesTree_DeletePage(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  (arg1)->DeletePage(arg2);
+  {
+    try {
+      (arg1)->DeletePage(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -35038,7 +43747,15 @@ static int _wrap_PdfPagesTree_ClearCache(lua_State* L) {
     SWIG_fail_ptr("PdfPagesTree_ClearCache",1,SWIGTYPE_p_PoDoFo__PdfPagesTree);
   }
   
-  (arg1)->ClearCache();
+  {
+    try {
+      (arg1)->ClearCache();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -35113,7 +43830,15 @@ static int _wrap_new_PdfPagesTreeCache(lua_State* L) {
   SWIG_check_num_args("PoDoFo::PdfPagesTreeCache::PdfPagesTreeCache",1,1)
   if(!lua_isnumber(L,1)) SWIG_fail_arg("PoDoFo::PdfPagesTreeCache::PdfPagesTreeCache",1,"int");
   arg1 = (int)lua_tonumber(L, 1);
-  result = (PoDoFo::PdfPagesTreeCache *)new PoDoFo::PdfPagesTreeCache(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfPagesTreeCache *)new PoDoFo::PdfPagesTreeCache(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPagesTreeCache,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -35140,7 +43865,15 @@ static int _wrap_PdfPagesTreeCache_GetPage(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = (PoDoFo::PdfPage *)(arg1)->GetPage(arg2);
+  {
+    try {
+      result = (PoDoFo::PdfPage *)(arg1)->GetPage(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPage,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -35173,7 +43906,15 @@ static int _wrap_PdfPagesTreeCache_AddPageObject(lua_State* L) {
     SWIG_fail_ptr("PdfPagesTreeCache_AddPageObject",3,SWIGTYPE_p_PoDoFo__PdfPage);
   }
   
-  (arg1)->AddPageObject(arg2,arg3);
+  {
+    try {
+      (arg1)->AddPageObject(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -35208,7 +43949,15 @@ static int _wrap_PdfPagesTreeCache_AddPageObjects(lua_State* L) {
   }
   arg3 = *argp3;
   
-  (arg1)->AddPageObjects(arg2,arg3);
+  {
+    try {
+      (arg1)->AddPageObjects(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -35234,7 +43983,15 @@ static int _wrap_PdfPagesTreeCache_InsertPage(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  (arg1)->InsertPage(arg2);
+  {
+    try {
+      (arg1)->InsertPage(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -35263,7 +44020,15 @@ static int _wrap_PdfPagesTreeCache_InsertPages(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  (arg1)->InsertPages(arg2,arg3);
+  {
+    try {
+      (arg1)->InsertPages(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -35289,7 +44054,15 @@ static int _wrap_PdfPagesTreeCache_DeletePage(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  (arg1)->DeletePage(arg2);
+  {
+    try {
+      (arg1)->DeletePage(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -35312,7 +44085,15 @@ static int _wrap_PdfPagesTreeCache_ClearCache(lua_State* L) {
     SWIG_fail_ptr("PdfPagesTreeCache_ClearCache",1,SWIGTYPE_p_PoDoFo__PdfPagesTreeCache);
   }
   
-  (arg1)->ClearCache();
+  {
+    try {
+      (arg1)->ClearCache();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -35383,7 +44164,15 @@ static int _wrap_new_TLineElement(lua_State* L) {
   PoDoFo::TLineElement *result = 0 ;
   
   SWIG_check_num_args("PoDoFo::TLineElement::TLineElement",0,0)
-  result = (PoDoFo::TLineElement *)new PoDoFo::TLineElement();
+  {
+    try {
+      result = (PoDoFo::TLineElement *)new PoDoFo::TLineElement();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__TLineElement,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -35565,7 +44354,15 @@ static int _wrap_new_PdfPainter(lua_State* L) {
   PoDoFo::PdfPainter *result = 0 ;
   
   SWIG_check_num_args("PoDoFo::PdfPainter::PdfPainter",0,0)
-  result = (PoDoFo::PdfPainter *)new PoDoFo::PdfPainter();
+  {
+    try {
+      result = (PoDoFo::PdfPainter *)new PoDoFo::PdfPainter();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPainter,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -35595,7 +44392,15 @@ static int _wrap_PdfPainter_SetPage(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_SetPage",2,SWIGTYPE_p_PoDoFo__PdfCanvas);
   }
   
-  (arg1)->SetPage(arg2);
+  {
+    try {
+      (arg1)->SetPage(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -35619,7 +44424,15 @@ static int _wrap_PdfPainter_GetPage(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_GetPage",1,SWIGTYPE_p_PoDoFo__PdfPainter);
   }
   
-  result = (PoDoFo::PdfCanvas *)((PoDoFo::PdfPainter const *)arg1)->GetPage();
+  {
+    try {
+      result = (PoDoFo::PdfCanvas *)((PoDoFo::PdfPainter const *)arg1)->GetPage();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfCanvas,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -35643,7 +44456,15 @@ static int _wrap_PdfPainter_GetCanvas(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_GetCanvas",1,SWIGTYPE_p_PoDoFo__PdfPainter);
   }
   
-  result = (PoDoFo::PdfStream *)((PoDoFo::PdfPainter const *)arg1)->GetCanvas();
+  {
+    try {
+      result = (PoDoFo::PdfStream *)((PoDoFo::PdfPainter const *)arg1)->GetCanvas();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfStream,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -35666,7 +44487,15 @@ static int _wrap_PdfPainter_FinishPage(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_FinishPage",1,SWIGTYPE_p_PoDoFo__PdfPainter);
   }
   
-  (arg1)->FinishPage();
+  {
+    try {
+      (arg1)->FinishPage();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -35692,7 +44521,15 @@ static int _wrap_PdfPainter_SetStrokingGray(lua_State* L) {
   }
   
   arg2 = (double)lua_tonumber(L, 2);
-  (arg1)->SetStrokingGray(arg2);
+  {
+    try {
+      (arg1)->SetStrokingGray(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -35718,7 +44555,15 @@ static int _wrap_PdfPainter_SetGray(lua_State* L) {
   }
   
   arg2 = (double)lua_tonumber(L, 2);
-  (arg1)->SetGray(arg2);
+  {
+    try {
+      (arg1)->SetGray(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -35750,7 +44595,15 @@ static int _wrap_PdfPainter_SetStrokingColor__SWIG_0(lua_State* L) {
   arg2 = (double)lua_tonumber(L, 2);
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
-  (arg1)->SetStrokingColor(arg2,arg3,arg4);
+  {
+    try {
+      (arg1)->SetStrokingColor(arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -35782,7 +44635,15 @@ static int _wrap_PdfPainter_SetColor__SWIG_0(lua_State* L) {
   arg2 = (double)lua_tonumber(L, 2);
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
-  (arg1)->SetColor(arg2,arg3,arg4);
+  {
+    try {
+      (arg1)->SetColor(arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -35817,7 +44678,15 @@ static int _wrap_PdfPainter_SetStrokingColorCMYK(lua_State* L) {
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
   arg5 = (double)lua_tonumber(L, 5);
-  (arg1)->SetStrokingColorCMYK(arg2,arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->SetStrokingColorCMYK(arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -35852,7 +44721,15 @@ static int _wrap_PdfPainter_SetColorCMYK(lua_State* L) {
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
   arg5 = (double)lua_tonumber(L, 5);
-  (arg1)->SetColorCMYK(arg2,arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->SetColorCMYK(arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -35882,7 +44759,15 @@ static int _wrap_PdfPainter_SetStrokingShadingPattern(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_SetStrokingShadingPattern",2,SWIGTYPE_p_PoDoFo__PdfShadingPattern);
   }
   
-  (arg1)->SetStrokingShadingPattern((PoDoFo::PdfShadingPattern const &)*arg2);
+  {
+    try {
+      (arg1)->SetStrokingShadingPattern((PoDoFo::PdfShadingPattern const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -35912,7 +44797,15 @@ static int _wrap_PdfPainter_SetShadingPattern(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_SetShadingPattern",2,SWIGTYPE_p_PoDoFo__PdfShadingPattern);
   }
   
-  (arg1)->SetShadingPattern((PoDoFo::PdfShadingPattern const &)*arg2);
+  {
+    try {
+      (arg1)->SetShadingPattern((PoDoFo::PdfShadingPattern const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -35942,7 +44835,15 @@ static int _wrap_PdfPainter_SetStrokingTilingPattern__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_SetStrokingTilingPattern",2,SWIGTYPE_p_PoDoFo__PdfTilingPattern);
   }
   
-  (arg1)->SetStrokingTilingPattern((PoDoFo::PdfTilingPattern const &)*arg2);
+  {
+    try {
+      (arg1)->SetStrokingTilingPattern((PoDoFo::PdfTilingPattern const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -35972,7 +44873,15 @@ static int _wrap_PdfPainter_SetStrokingTilingPattern__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_SetStrokingTilingPattern",2,SWIGTYPE_p_std__string);
   }
   
-  (arg1)->SetStrokingTilingPattern((std::string const &)*arg2);
+  {
+    try {
+      (arg1)->SetStrokingTilingPattern((std::string const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -36066,7 +44975,15 @@ static int _wrap_PdfPainter_SetTilingPattern__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_SetTilingPattern",2,SWIGTYPE_p_PoDoFo__PdfTilingPattern);
   }
   
-  (arg1)->SetTilingPattern((PoDoFo::PdfTilingPattern const &)*arg2);
+  {
+    try {
+      (arg1)->SetTilingPattern((PoDoFo::PdfTilingPattern const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -36096,7 +45013,15 @@ static int _wrap_PdfPainter_SetTilingPattern__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_SetTilingPattern",2,SWIGTYPE_p_std__string);
   }
   
-  (arg1)->SetTilingPattern((std::string const &)*arg2);
+  {
+    try {
+      (arg1)->SetTilingPattern((std::string const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -36190,7 +45115,15 @@ static int _wrap_PdfPainter_SetStrokingColor__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_SetStrokingColor",2,SWIGTYPE_p_PoDoFo__PdfColor);
   }
   
-  (arg1)->SetStrokingColor((PoDoFo::PdfColor const &)*arg2);
+  {
+    try {
+      (arg1)->SetStrokingColor((PoDoFo::PdfColor const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -36289,7 +45222,15 @@ static int _wrap_PdfPainter_SetColor__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_SetColor",2,SWIGTYPE_p_PoDoFo__PdfColor);
   }
   
-  (arg1)->SetColor((PoDoFo::PdfColor const &)*arg2);
+  {
+    try {
+      (arg1)->SetColor((PoDoFo::PdfColor const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -36384,7 +45325,15 @@ static int _wrap_PdfPainter_SetStrokeWidth(lua_State* L) {
   }
   
   arg2 = (double)lua_tonumber(L, 2);
-  (arg1)->SetStrokeWidth(arg2);
+  {
+    try {
+      (arg1)->SetStrokeWidth(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -36422,7 +45371,15 @@ static int _wrap_PdfPainter_SetStrokeStyle__SWIG_0(lua_State* L) {
   arg4 = (lua_toboolean(L, 4)!=0);
   arg5 = (double)lua_tonumber(L, 5);
   arg6 = (lua_toboolean(L, 6)!=0);
-  (arg1)->SetStrokeStyle(arg2,(char const *)arg3,arg4,arg5,arg6);
+  {
+    try {
+      (arg1)->SetStrokeStyle(arg2,(char const *)arg3,arg4,arg5,arg6);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -36457,7 +45414,15 @@ static int _wrap_PdfPainter_SetStrokeStyle__SWIG_1(lua_State* L) {
   arg3 = (char *)lua_tostring(L, 3);
   arg4 = (lua_toboolean(L, 4)!=0);
   arg5 = (double)lua_tonumber(L, 5);
-  (arg1)->SetStrokeStyle(arg2,(char const *)arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->SetStrokeStyle(arg2,(char const *)arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -36489,7 +45454,15 @@ static int _wrap_PdfPainter_SetStrokeStyle__SWIG_2(lua_State* L) {
   arg2 = (PoDoFo::EPdfStrokeStyle)(int)lua_tonumber(L, 2);
   arg3 = (char *)lua_tostring(L, 3);
   arg4 = (lua_toboolean(L, 4)!=0);
-  (arg1)->SetStrokeStyle(arg2,(char const *)arg3,arg4);
+  {
+    try {
+      (arg1)->SetStrokeStyle(arg2,(char const *)arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -36518,7 +45491,15 @@ static int _wrap_PdfPainter_SetStrokeStyle__SWIG_3(lua_State* L) {
   
   arg2 = (PoDoFo::EPdfStrokeStyle)(int)lua_tonumber(L, 2);
   arg3 = (char *)lua_tostring(L, 3);
-  (arg1)->SetStrokeStyle(arg2,(char const *)arg3);
+  {
+    try {
+      (arg1)->SetStrokeStyle(arg2,(char const *)arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -36544,7 +45525,15 @@ static int _wrap_PdfPainter_SetStrokeStyle__SWIG_4(lua_State* L) {
   }
   
   arg2 = (PoDoFo::EPdfStrokeStyle)(int)lua_tonumber(L, 2);
-  (arg1)->SetStrokeStyle(arg2);
+  {
+    try {
+      (arg1)->SetStrokeStyle(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -36734,7 +45723,15 @@ static int _wrap_PdfPainter_SetLineCapStyle(lua_State* L) {
   }
   
   arg2 = (PoDoFo::EPdfLineCapStyle)(int)lua_tonumber(L, 2);
-  (arg1)->SetLineCapStyle(arg2);
+  {
+    try {
+      (arg1)->SetLineCapStyle(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -36760,7 +45757,15 @@ static int _wrap_PdfPainter_SetLineJoinStyle(lua_State* L) {
   }
   
   arg2 = (PoDoFo::EPdfLineJoinStyle)(int)lua_tonumber(L, 2);
-  (arg1)->SetLineJoinStyle(arg2);
+  {
+    try {
+      (arg1)->SetLineJoinStyle(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -36790,7 +45795,15 @@ static int _wrap_PdfPainter_SetFont(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_SetFont",2,SWIGTYPE_p_PoDoFo__PdfFont);
   }
   
-  (arg1)->SetFont(arg2);
+  {
+    try {
+      (arg1)->SetFont(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -36816,7 +45829,15 @@ static int _wrap_PdfPainter_SetTextRenderingMode(lua_State* L) {
   }
   
   arg2 = (PoDoFo::EPdfTextRenderingMode)(int)lua_tonumber(L, 2);
-  (arg1)->SetTextRenderingMode(arg2);
+  {
+    try {
+      (arg1)->SetTextRenderingMode(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -36840,7 +45861,15 @@ static int _wrap_PdfPainter_GetTextRenderingMode(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_GetTextRenderingMode",1,SWIGTYPE_p_PoDoFo__PdfPainter);
   }
   
-  result = (PoDoFo::EPdfTextRenderingMode)((PoDoFo::PdfPainter const *)arg1)->GetTextRenderingMode();
+  {
+    try {
+      result = (PoDoFo::EPdfTextRenderingMode)((PoDoFo::PdfPainter const *)arg1)->GetTextRenderingMode();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
   return SWIG_arg;
   
@@ -36864,7 +45893,15 @@ static int _wrap_PdfPainter_GetFont(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_GetFont",1,SWIGTYPE_p_PoDoFo__PdfPainter);
   }
   
-  result = (PoDoFo::PdfFont *)((PoDoFo::PdfPainter const *)arg1)->GetFont();
+  {
+    try {
+      result = (PoDoFo::PdfFont *)((PoDoFo::PdfPainter const *)arg1)->GetFont();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -36899,7 +45936,15 @@ static int _wrap_PdfPainter_SetClipRect__SWIG_0(lua_State* L) {
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
   arg5 = (double)lua_tonumber(L, 5);
-  (arg1)->SetClipRect(arg2,arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->SetClipRect(arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -36929,7 +45974,15 @@ static int _wrap_PdfPainter_SetClipRect__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_SetClipRect",2,SWIGTYPE_p_PoDoFo__PdfRect);
   }
   
-  (arg1)->SetClipRect((PoDoFo::PdfRect const &)*arg2);
+  {
+    try {
+      (arg1)->SetClipRect((PoDoFo::PdfRect const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -37029,7 +46082,15 @@ static int _wrap_PdfPainter_SetMiterLimit(lua_State* L) {
   }
   
   arg2 = (double)lua_tonumber(L, 2);
-  (arg1)->SetMiterLimit(arg2);
+  {
+    try {
+      (arg1)->SetMiterLimit(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -37064,7 +46125,15 @@ static int _wrap_PdfPainter_DrawLine(lua_State* L) {
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
   arg5 = (double)lua_tonumber(L, 5);
-  (arg1)->DrawLine(arg2,arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->DrawLine(arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -37105,7 +46174,15 @@ static int _wrap_PdfPainter_Rectangle__SWIG_0(lua_State* L) {
   arg5 = (double)lua_tonumber(L, 5);
   arg6 = (double)lua_tonumber(L, 6);
   arg7 = (double)lua_tonumber(L, 7);
-  (arg1)->Rectangle(arg2,arg3,arg4,arg5,arg6,arg7);
+  {
+    try {
+      (arg1)->Rectangle(arg2,arg3,arg4,arg5,arg6,arg7);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -37143,7 +46220,15 @@ static int _wrap_PdfPainter_Rectangle__SWIG_1(lua_State* L) {
   arg4 = (double)lua_tonumber(L, 4);
   arg5 = (double)lua_tonumber(L, 5);
   arg6 = (double)lua_tonumber(L, 6);
-  (arg1)->Rectangle(arg2,arg3,arg4,arg5,arg6);
+  {
+    try {
+      (arg1)->Rectangle(arg2,arg3,arg4,arg5,arg6);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -37178,7 +46263,15 @@ static int _wrap_PdfPainter_Rectangle__SWIG_2(lua_State* L) {
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
   arg5 = (double)lua_tonumber(L, 5);
-  (arg1)->Rectangle(arg2,arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->Rectangle(arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -37214,7 +46307,15 @@ static int _wrap_PdfPainter_Rectangle__SWIG_3(lua_State* L) {
   
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
-  (arg1)->Rectangle((PoDoFo::PdfRect const &)*arg2,arg3,arg4);
+  {
+    try {
+      (arg1)->Rectangle((PoDoFo::PdfRect const &)*arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -37247,7 +46348,15 @@ static int _wrap_PdfPainter_Rectangle__SWIG_4(lua_State* L) {
   }
   
   arg3 = (double)lua_tonumber(L, 3);
-  (arg1)->Rectangle((PoDoFo::PdfRect const &)*arg2,arg3);
+  {
+    try {
+      (arg1)->Rectangle((PoDoFo::PdfRect const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -37277,7 +46386,15 @@ static int _wrap_PdfPainter_Rectangle__SWIG_5(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_Rectangle",2,SWIGTYPE_p_PoDoFo__PdfRect);
   }
   
-  (arg1)->Rectangle((PoDoFo::PdfRect const &)*arg2);
+  {
+    try {
+      (arg1)->Rectangle((PoDoFo::PdfRect const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -37536,7 +46653,15 @@ static int _wrap_PdfPainter_Ellipse(lua_State* L) {
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
   arg5 = (double)lua_tonumber(L, 5);
-  (arg1)->Ellipse(arg2,arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->Ellipse(arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -37568,7 +46693,15 @@ static int _wrap_PdfPainter_Circle(lua_State* L) {
   arg2 = (double)lua_tonumber(L, 2);
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
-  (arg1)->Circle(arg2,arg3,arg4);
+  {
+    try {
+      (arg1)->Circle(arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -37604,7 +46737,15 @@ static int _wrap_PdfPainter_DrawText__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_DrawText",4,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->DrawText(arg2,arg3,(PoDoFo::PdfString const &)*arg4);
+  {
+    try {
+      (arg1)->DrawText(arg2,arg3,(PoDoFo::PdfString const &)*arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -37643,7 +46784,15 @@ static int _wrap_PdfPainter_DrawText__SWIG_1(lua_State* L) {
   }
   
   arg5 = (long)lua_tonumber(L, 5);
-  (arg1)->DrawText(arg2,arg3,(PoDoFo::PdfString const &)*arg4,arg5);
+  {
+    try {
+      (arg1)->DrawText(arg2,arg3,(PoDoFo::PdfString const &)*arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -37783,7 +46932,15 @@ static int _wrap_PdfPainter_DrawMultiLineText__SWIG_0(lua_State* L) {
   arg7 = (PoDoFo::EPdfAlignment)(int)lua_tonumber(L, 7);
   arg8 = (PoDoFo::EPdfVerticalAlignment)(int)lua_tonumber(L, 8);
   arg9 = (lua_toboolean(L, 9)!=0);
-  (arg1)->DrawMultiLineText(arg2,arg3,arg4,arg5,(PoDoFo::PdfString const &)*arg6,arg7,arg8,arg9);
+  {
+    try {
+      (arg1)->DrawMultiLineText(arg2,arg3,arg4,arg5,(PoDoFo::PdfString const &)*arg6,arg7,arg8,arg9);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -37831,7 +46988,15 @@ static int _wrap_PdfPainter_DrawMultiLineText__SWIG_1(lua_State* L) {
   
   arg7 = (PoDoFo::EPdfAlignment)(int)lua_tonumber(L, 7);
   arg8 = (PoDoFo::EPdfVerticalAlignment)(int)lua_tonumber(L, 8);
-  (arg1)->DrawMultiLineText(arg2,arg3,arg4,arg5,(PoDoFo::PdfString const &)*arg6,arg7,arg8);
+  {
+    try {
+      (arg1)->DrawMultiLineText(arg2,arg3,arg4,arg5,(PoDoFo::PdfString const &)*arg6,arg7,arg8);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -37876,7 +47041,15 @@ static int _wrap_PdfPainter_DrawMultiLineText__SWIG_2(lua_State* L) {
   }
   
   arg7 = (PoDoFo::EPdfAlignment)(int)lua_tonumber(L, 7);
-  (arg1)->DrawMultiLineText(arg2,arg3,arg4,arg5,(PoDoFo::PdfString const &)*arg6,arg7);
+  {
+    try {
+      (arg1)->DrawMultiLineText(arg2,arg3,arg4,arg5,(PoDoFo::PdfString const &)*arg6,arg7);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -37918,7 +47091,15 @@ static int _wrap_PdfPainter_DrawMultiLineText__SWIG_3(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_DrawMultiLineText",6,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->DrawMultiLineText(arg2,arg3,arg4,arg5,(PoDoFo::PdfString const &)*arg6);
+  {
+    try {
+      (arg1)->DrawMultiLineText(arg2,arg3,arg4,arg5,(PoDoFo::PdfString const &)*arg6);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -37964,7 +47145,15 @@ static int _wrap_PdfPainter_DrawMultiLineText__SWIG_4(lua_State* L) {
   arg4 = (PoDoFo::EPdfAlignment)(int)lua_tonumber(L, 4);
   arg5 = (PoDoFo::EPdfVerticalAlignment)(int)lua_tonumber(L, 5);
   arg6 = (lua_toboolean(L, 6)!=0);
-  (arg1)->DrawMultiLineText((PoDoFo::PdfRect const &)*arg2,(PoDoFo::PdfString const &)*arg3,arg4,arg5,arg6);
+  {
+    try {
+      (arg1)->DrawMultiLineText((PoDoFo::PdfRect const &)*arg2,(PoDoFo::PdfString const &)*arg3,arg4,arg5,arg6);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -38007,7 +47196,15 @@ static int _wrap_PdfPainter_DrawMultiLineText__SWIG_5(lua_State* L) {
   
   arg4 = (PoDoFo::EPdfAlignment)(int)lua_tonumber(L, 4);
   arg5 = (PoDoFo::EPdfVerticalAlignment)(int)lua_tonumber(L, 5);
-  (arg1)->DrawMultiLineText((PoDoFo::PdfRect const &)*arg2,(PoDoFo::PdfString const &)*arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->DrawMultiLineText((PoDoFo::PdfRect const &)*arg2,(PoDoFo::PdfString const &)*arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -38047,7 +47244,15 @@ static int _wrap_PdfPainter_DrawMultiLineText__SWIG_6(lua_State* L) {
   }
   
   arg4 = (PoDoFo::EPdfAlignment)(int)lua_tonumber(L, 4);
-  (arg1)->DrawMultiLineText((PoDoFo::PdfRect const &)*arg2,(PoDoFo::PdfString const &)*arg3,arg4);
+  {
+    try {
+      (arg1)->DrawMultiLineText((PoDoFo::PdfRect const &)*arg2,(PoDoFo::PdfString const &)*arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -38084,7 +47289,15 @@ static int _wrap_PdfPainter_DrawMultiLineText__SWIG_7(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_DrawMultiLineText",3,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->DrawMultiLineText((PoDoFo::PdfRect const &)*arg2,(PoDoFo::PdfString const &)*arg3);
+  {
+    try {
+      (arg1)->DrawMultiLineText((PoDoFo::PdfRect const &)*arg2,(PoDoFo::PdfString const &)*arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -38512,7 +47725,15 @@ static int _wrap_PdfPainter_GetMultiLineTextAsLines(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_GetMultiLineTextAsLines",3,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  result = (arg1)->GetMultiLineTextAsLines(arg2,(PoDoFo::PdfString const &)*arg3);
+  {
+    try {
+      result = (arg1)->GetMultiLineTextAsLines(arg2,(PoDoFo::PdfString const &)*arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     std::vector< PoDoFo::PdfString > * resultptr = new std::vector< PoDoFo::PdfString >((const std::vector< PoDoFo::PdfString > &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_std__vectorT_PoDoFo__PdfString_t,1); SWIG_arg++;
@@ -38557,7 +47778,15 @@ static int _wrap_PdfPainter_DrawTextAligned(lua_State* L) {
   }
   
   arg6 = (PoDoFo::EPdfAlignment)(int)lua_tonumber(L, 6);
-  (arg1)->DrawTextAligned(arg2,arg3,arg4,(PoDoFo::PdfString const &)*arg5,arg6);
+  {
+    try {
+      (arg1)->DrawTextAligned(arg2,arg3,arg4,(PoDoFo::PdfString const &)*arg5,arg6);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -38586,7 +47815,15 @@ static int _wrap_PdfPainter_BeginText(lua_State* L) {
   
   arg2 = (double)lua_tonumber(L, 2);
   arg3 = (double)lua_tonumber(L, 3);
-  (arg1)->BeginText(arg2,arg3);
+  {
+    try {
+      (arg1)->BeginText(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -38616,7 +47853,15 @@ static int _wrap_PdfPainter_AddText__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_AddText",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->AddText((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      (arg1)->AddText((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -38655,7 +47900,15 @@ static int _wrap_PdfPainter_AddText__SWIG_1(lua_State* L) {
   }
   arg3 = *argp3;
   
-  (arg1)->AddText((PoDoFo::PdfString const &)*arg2,arg3);
+  {
+    try {
+      (arg1)->AddText((PoDoFo::PdfString const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -38758,7 +48011,15 @@ static int _wrap_PdfPainter_MoveTextPos(lua_State* L) {
   
   arg2 = (double)lua_tonumber(L, 2);
   arg3 = (double)lua_tonumber(L, 3);
-  (arg1)->MoveTextPos(arg2,arg3);
+  {
+    try {
+      (arg1)->MoveTextPos(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -38781,7 +48042,15 @@ static int _wrap_PdfPainter_EndText(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_EndText",1,SWIGTYPE_p_PoDoFo__PdfPainter);
   }
   
-  (arg1)->EndText();
+  {
+    try {
+      (arg1)->EndText();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -38803,7 +48072,7 @@ static int _wrap_PdfPainter_DrawGlyph(lua_State* L) {
   
   SWIG_check_num_args("PoDoFo::PdfPainter::DrawGlyph",5,5)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfPainter::DrawGlyph",1,"PoDoFo::PdfPainter *");
-  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("PoDoFo::PdfPainter::DrawGlyph",2,"PoDoFo::PdfStreamedDocument *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("PoDoFo::PdfPainter::DrawGlyph",2,"PoDoFo::PdfMemDocument *");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("PoDoFo::PdfPainter::DrawGlyph",3,"double");
   if(!lua_isnumber(L,4)) SWIG_fail_arg("PoDoFo::PdfPainter::DrawGlyph",4,"double");
   if(!SWIG_lua_isnilstring(L,5)) SWIG_fail_arg("PoDoFo::PdfPainter::DrawGlyph",5,"char const *");
@@ -38813,14 +48082,22 @@ static int _wrap_PdfPainter_DrawGlyph(lua_State* L) {
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
-    SWIG_fail_ptr("PdfPainter_DrawGlyph",2,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PoDoFo__PdfMemDocument,0))){
+    SWIG_fail_ptr("PdfPainter_DrawGlyph",2,SWIGTYPE_p_PoDoFo__PdfMemDocument);
   }
   
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
   arg5 = (char *)lua_tostring(L, 5);
-  (arg1)->DrawGlyph(arg2,arg3,arg4,(char const *)arg5);
+  {
+    try {
+      (arg1)->DrawGlyph(arg2,arg3,arg4,(char const *)arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -38862,7 +48139,15 @@ static int _wrap_PdfPainter_DrawImage__SWIG_0(lua_State* L) {
   
   arg5 = (double)lua_tonumber(L, 5);
   arg6 = (double)lua_tonumber(L, 6);
-  (arg1)->DrawImage(arg2,arg3,arg4,arg5,arg6);
+  {
+    try {
+      (arg1)->DrawImage(arg2,arg3,arg4,arg5,arg6);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -38901,7 +48186,15 @@ static int _wrap_PdfPainter_DrawImage__SWIG_1(lua_State* L) {
   }
   
   arg5 = (double)lua_tonumber(L, 5);
-  (arg1)->DrawImage(arg2,arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->DrawImage(arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -38937,7 +48230,15 @@ static int _wrap_PdfPainter_DrawImage__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_DrawImage",4,SWIGTYPE_p_PoDoFo__PdfImage);
   }
   
-  (arg1)->DrawImage(arg2,arg3,arg4);
+  {
+    try {
+      (arg1)->DrawImage(arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -39113,7 +48414,15 @@ static int _wrap_PdfPainter_DrawXObject__SWIG_0(lua_State* L) {
   
   arg5 = (double)lua_tonumber(L, 5);
   arg6 = (double)lua_tonumber(L, 6);
-  (arg1)->DrawXObject(arg2,arg3,arg4,arg5,arg6);
+  {
+    try {
+      (arg1)->DrawXObject(arg2,arg3,arg4,arg5,arg6);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -39152,7 +48461,15 @@ static int _wrap_PdfPainter_DrawXObject__SWIG_1(lua_State* L) {
   }
   
   arg5 = (double)lua_tonumber(L, 5);
-  (arg1)->DrawXObject(arg2,arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->DrawXObject(arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -39188,7 +48505,15 @@ static int _wrap_PdfPainter_DrawXObject__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_DrawXObject",4,SWIGTYPE_p_PoDoFo__PdfXObject);
   }
   
-  (arg1)->DrawXObject(arg2,arg3,arg4);
+  {
+    try {
+      (arg1)->DrawXObject(arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -39345,7 +48670,15 @@ static int _wrap_PdfPainter_ClosePath(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_ClosePath",1,SWIGTYPE_p_PoDoFo__PdfPainter);
   }
   
-  (arg1)->ClosePath();
+  {
+    try {
+      (arg1)->ClosePath();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -39374,7 +48707,15 @@ static int _wrap_PdfPainter_LineTo(lua_State* L) {
   
   arg2 = (double)lua_tonumber(L, 2);
   arg3 = (double)lua_tonumber(L, 3);
-  (arg1)->LineTo(arg2,arg3);
+  {
+    try {
+      (arg1)->LineTo(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -39403,7 +48744,15 @@ static int _wrap_PdfPainter_MoveTo(lua_State* L) {
   
   arg2 = (double)lua_tonumber(L, 2);
   arg3 = (double)lua_tonumber(L, 3);
-  (arg1)->MoveTo(arg2,arg3);
+  {
+    try {
+      (arg1)->MoveTo(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -39444,7 +48793,15 @@ static int _wrap_PdfPainter_CubicBezierTo(lua_State* L) {
   arg5 = (double)lua_tonumber(L, 5);
   arg6 = (double)lua_tonumber(L, 6);
   arg7 = (double)lua_tonumber(L, 7);
-  (arg1)->CubicBezierTo(arg2,arg3,arg4,arg5,arg6,arg7);
+  {
+    try {
+      (arg1)->CubicBezierTo(arg2,arg3,arg4,arg5,arg6,arg7);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -39470,7 +48827,15 @@ static int _wrap_PdfPainter_HorizontalLineTo(lua_State* L) {
   }
   
   arg2 = (double)lua_tonumber(L, 2);
-  (arg1)->HorizontalLineTo(arg2);
+  {
+    try {
+      (arg1)->HorizontalLineTo(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -39496,7 +48861,15 @@ static int _wrap_PdfPainter_VerticalLineTo(lua_State* L) {
   }
   
   arg2 = (double)lua_tonumber(L, 2);
-  (arg1)->VerticalLineTo(arg2);
+  {
+    try {
+      (arg1)->VerticalLineTo(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -39531,7 +48904,15 @@ static int _wrap_PdfPainter_SmoothCurveTo(lua_State* L) {
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
   arg5 = (double)lua_tonumber(L, 5);
-  (arg1)->SmoothCurveTo(arg2,arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->SmoothCurveTo(arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -39566,7 +48947,15 @@ static int _wrap_PdfPainter_QuadCurveTo(lua_State* L) {
   arg3 = (double)lua_tonumber(L, 3);
   arg4 = (double)lua_tonumber(L, 4);
   arg5 = (double)lua_tonumber(L, 5);
-  (arg1)->QuadCurveTo(arg2,arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->QuadCurveTo(arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -39595,7 +48984,15 @@ static int _wrap_PdfPainter_SmoothQuadCurveTo(lua_State* L) {
   
   arg2 = (double)lua_tonumber(L, 2);
   arg3 = (double)lua_tonumber(L, 3);
-  (arg1)->SmoothQuadCurveTo(arg2,arg3);
+  {
+    try {
+      (arg1)->SmoothQuadCurveTo(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -39639,7 +49036,15 @@ static int _wrap_PdfPainter_ArcTo(lua_State* L) {
   arg6 = (double)lua_tonumber(L, 6);
   arg7 = (lua_toboolean(L, 7)!=0);
   arg8 = (lua_toboolean(L, 8)!=0);
-  (arg1)->ArcTo(arg2,arg3,arg4,arg5,arg6,arg7,arg8);
+  {
+    try {
+      (arg1)->ArcTo(arg2,arg3,arg4,arg5,arg6,arg7,arg8);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -39678,7 +49083,15 @@ static int _wrap_PdfPainter_Arc(lua_State* L) {
   arg4 = (double)lua_tonumber(L, 4);
   arg5 = (double)lua_tonumber(L, 5);
   arg6 = (double)lua_tonumber(L, 6);
-  result = (bool)(arg1)->Arc(arg2,arg3,arg4,arg5,arg6);
+  {
+    try {
+      result = (bool)(arg1)->Arc(arg2,arg3,arg4,arg5,arg6);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -39701,7 +49114,15 @@ static int _wrap_PdfPainter_Close(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_Close",1,SWIGTYPE_p_PoDoFo__PdfPainter);
   }
   
-  (arg1)->Close();
+  {
+    try {
+      (arg1)->Close();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -39724,7 +49145,15 @@ static int _wrap_PdfPainter_Stroke(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_Stroke",1,SWIGTYPE_p_PoDoFo__PdfPainter);
   }
   
-  (arg1)->Stroke();
+  {
+    try {
+      (arg1)->Stroke();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -39750,7 +49179,15 @@ static int _wrap_PdfPainter_Fill__SWIG_0(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->Fill(arg2);
+  {
+    try {
+      (arg1)->Fill(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -39773,7 +49210,15 @@ static int _wrap_PdfPainter_Fill__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_Fill",1,SWIGTYPE_p_PoDoFo__PdfPainter);
   }
   
-  (arg1)->Fill();
+  {
+    try {
+      (arg1)->Fill();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -39848,7 +49293,15 @@ static int _wrap_PdfPainter_FillAndStroke__SWIG_0(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->FillAndStroke(arg2);
+  {
+    try {
+      (arg1)->FillAndStroke(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -39871,7 +49324,15 @@ static int _wrap_PdfPainter_FillAndStroke__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_FillAndStroke",1,SWIGTYPE_p_PoDoFo__PdfPainter);
   }
   
-  (arg1)->FillAndStroke();
+  {
+    try {
+      (arg1)->FillAndStroke();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -39946,7 +49407,15 @@ static int _wrap_PdfPainter_Clip__SWIG_0(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->Clip(arg2);
+  {
+    try {
+      (arg1)->Clip(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -39969,7 +49438,15 @@ static int _wrap_PdfPainter_Clip__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_Clip",1,SWIGTYPE_p_PoDoFo__PdfPainter);
   }
   
-  (arg1)->Clip();
+  {
+    try {
+      (arg1)->Clip();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -40041,7 +49518,15 @@ static int _wrap_PdfPainter_EndPath(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_EndPath",1,SWIGTYPE_p_PoDoFo__PdfPainter);
   }
   
-  (arg1)->EndPath();
+  {
+    try {
+      (arg1)->EndPath();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -40064,7 +49549,15 @@ static int _wrap_PdfPainter_Save(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_Save",1,SWIGTYPE_p_PoDoFo__PdfPainter);
   }
   
-  (arg1)->Save();
+  {
+    try {
+      (arg1)->Save();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -40087,7 +49580,15 @@ static int _wrap_PdfPainter_Restore(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_Restore",1,SWIGTYPE_p_PoDoFo__PdfPainter);
   }
   
-  (arg1)->Restore();
+  {
+    try {
+      (arg1)->Restore();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -40128,7 +49629,15 @@ static int _wrap_PdfPainter_SetTransformationMatrix(lua_State* L) {
   arg5 = (double)lua_tonumber(L, 5);
   arg6 = (double)lua_tonumber(L, 6);
   arg7 = (double)lua_tonumber(L, 7);
-  (arg1)->SetTransformationMatrix(arg2,arg3,arg4,arg5,arg6,arg7);
+  {
+    try {
+      (arg1)->SetTransformationMatrix(arg2,arg3,arg4,arg5,arg6,arg7);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -40158,7 +49667,15 @@ static int _wrap_PdfPainter_SetExtGState(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_SetExtGState",2,SWIGTYPE_p_PoDoFo__PdfExtGState);
   }
   
-  (arg1)->SetExtGState(arg2);
+  {
+    try {
+      (arg1)->SetExtGState(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -40184,7 +49701,15 @@ static int _wrap_PdfPainter_SetRenderingIntent(lua_State* L) {
   }
   
   arg2 = (char *)lua_tostring(L, 2);
-  (arg1)->SetRenderingIntent(arg2);
+  {
+    try {
+      (arg1)->SetRenderingIntent(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -40211,7 +49736,15 @@ static int _wrap_PdfPainter_SetTabWidth(lua_State* L) {
   
   SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative")
   arg2 = (unsigned short)lua_tonumber(L, 2);
-  (arg1)->SetTabWidth(arg2);
+  {
+    try {
+      (arg1)->SetTabWidth(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -40235,7 +49768,15 @@ static int _wrap_PdfPainter_GetTabWidth(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_GetTabWidth",1,SWIGTYPE_p_PoDoFo__PdfPainter);
   }
   
-  result = (unsigned short)((PoDoFo::PdfPainter const *)arg1)->GetTabWidth();
+  {
+    try {
+      result = (unsigned short)((PoDoFo::PdfPainter const *)arg1)->GetTabWidth();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -40262,7 +49803,15 @@ static int _wrap_PdfPainter_SetPrecision(lua_State* L) {
   
   SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative")
   arg2 = (unsigned short)lua_tonumber(L, 2);
-  (arg1)->SetPrecision(arg2);
+  {
+    try {
+      (arg1)->SetPrecision(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -40286,7 +49835,15 @@ static int _wrap_PdfPainter_GetPrecision(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_GetPrecision",1,SWIGTYPE_p_PoDoFo__PdfPainter);
   }
   
-  result = (unsigned short)((PoDoFo::PdfPainter const *)arg1)->GetPrecision();
+  {
+    try {
+      result = (unsigned short)((PoDoFo::PdfPainter const *)arg1)->GetPrecision();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -40310,7 +49867,15 @@ static int _wrap_PdfPainter_GetCurrentPath(lua_State* L) {
     SWIG_fail_ptr("PdfPainter_GetCurrentPath",1,SWIGTYPE_p_PoDoFo__PdfPainter);
   }
   
-  result = (std::ostringstream *) &(arg1)->GetCurrentPath();
+  {
+    try {
+      result = (std::ostringstream *) &(arg1)->GetCurrentPath();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_std__ostringstream,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -40440,7 +50005,15 @@ static int _wrap_new_PdfPainterMM(lua_State* L) {
   PoDoFo::PdfPainterMM *result = 0 ;
   
   SWIG_check_num_args("PoDoFo::PdfPainterMM::PdfPainterMM",0,0)
-  result = (PoDoFo::PdfPainterMM *)new PoDoFo::PdfPainterMM();
+  {
+    try {
+      result = (PoDoFo::PdfPainterMM *)new PoDoFo::PdfPainterMM();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfPainterMM,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -40466,7 +50039,15 @@ static int _wrap_PdfPainterMM_SetStrokeWidthMM(lua_State* L) {
   }
   
   arg2 = (long)lua_tonumber(L, 2);
-  (arg1)->SetStrokeWidthMM(arg2);
+  {
+    try {
+      (arg1)->SetStrokeWidthMM(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -40501,7 +50082,15 @@ static int _wrap_PdfPainterMM_DrawLineMM(lua_State* L) {
   arg3 = (long)lua_tonumber(L, 3);
   arg4 = (long)lua_tonumber(L, 4);
   arg5 = (long)lua_tonumber(L, 5);
-  (arg1)->DrawLineMM(arg2,arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->DrawLineMM(arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -40536,7 +50125,15 @@ static int _wrap_PdfPainterMM_RectangleMM(lua_State* L) {
   arg3 = (long)lua_tonumber(L, 3);
   arg4 = (long)lua_tonumber(L, 4);
   arg5 = (long)lua_tonumber(L, 5);
-  (arg1)->RectangleMM(arg2,arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->RectangleMM(arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -40571,7 +50168,15 @@ static int _wrap_PdfPainterMM_EllipseMM(lua_State* L) {
   arg3 = (long)lua_tonumber(L, 3);
   arg4 = (long)lua_tonumber(L, 4);
   arg5 = (long)lua_tonumber(L, 5);
-  (arg1)->EllipseMM(arg2,arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->EllipseMM(arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -40607,7 +50212,15 @@ static int _wrap_PdfPainterMM_DrawTextMM__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("PdfPainterMM_DrawTextMM",4,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->DrawTextMM(arg2,arg3,(PoDoFo::PdfString const &)*arg4);
+  {
+    try {
+      (arg1)->DrawTextMM(arg2,arg3,(PoDoFo::PdfString const &)*arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -40646,7 +50259,15 @@ static int _wrap_PdfPainterMM_DrawTextMM__SWIG_1(lua_State* L) {
   }
   
   arg5 = (long)lua_tonumber(L, 5);
-  (arg1)->DrawTextMM(arg2,arg3,(PoDoFo::PdfString const &)*arg4,arg5);
+  {
+    try {
+      (arg1)->DrawTextMM(arg2,arg3,(PoDoFo::PdfString const &)*arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -40777,7 +50398,15 @@ static int _wrap_PdfPainterMM_DrawImageMM__SWIG_0(lua_State* L) {
   
   arg5 = (double)lua_tonumber(L, 5);
   arg6 = (double)lua_tonumber(L, 6);
-  (arg1)->DrawImageMM(arg2,arg3,arg4,arg5,arg6);
+  {
+    try {
+      (arg1)->DrawImageMM(arg2,arg3,arg4,arg5,arg6);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -40816,7 +50445,15 @@ static int _wrap_PdfPainterMM_DrawImageMM__SWIG_1(lua_State* L) {
   }
   
   arg5 = (double)lua_tonumber(L, 5);
-  (arg1)->DrawImageMM(arg2,arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->DrawImageMM(arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -40852,7 +50489,15 @@ static int _wrap_PdfPainterMM_DrawImageMM__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("PdfPainterMM_DrawImageMM",4,SWIGTYPE_p_PoDoFo__PdfImage);
   }
   
-  (arg1)->DrawImageMM(arg2,arg3,arg4);
+  {
+    try {
+      (arg1)->DrawImageMM(arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -41028,7 +50673,15 @@ static int _wrap_PdfPainterMM_DrawXObjectMM__SWIG_0(lua_State* L) {
   
   arg5 = (double)lua_tonumber(L, 5);
   arg6 = (double)lua_tonumber(L, 6);
-  (arg1)->DrawXObjectMM(arg2,arg3,arg4,arg5,arg6);
+  {
+    try {
+      (arg1)->DrawXObjectMM(arg2,arg3,arg4,arg5,arg6);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -41067,7 +50720,15 @@ static int _wrap_PdfPainterMM_DrawXObjectMM__SWIG_1(lua_State* L) {
   }
   
   arg5 = (double)lua_tonumber(L, 5);
-  (arg1)->DrawXObjectMM(arg2,arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->DrawXObjectMM(arg2,arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -41103,7 +50764,15 @@ static int _wrap_PdfPainterMM_DrawXObjectMM__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("PdfPainterMM_DrawXObjectMM",4,SWIGTYPE_p_PoDoFo__PdfXObject);
   }
   
-  (arg1)->DrawXObjectMM(arg2,arg3,arg4);
+  {
+    try {
+      (arg1)->DrawXObjectMM(arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -41266,7 +50935,15 @@ static int _wrap_PdfPainterMM_LineToMM(lua_State* L) {
   
   arg2 = (long)lua_tonumber(L, 2);
   arg3 = (long)lua_tonumber(L, 3);
-  (arg1)->LineToMM(arg2,arg3);
+  {
+    try {
+      (arg1)->LineToMM(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -41295,7 +50972,15 @@ static int _wrap_PdfPainterMM_MoveToMM(lua_State* L) {
   
   arg2 = (long)lua_tonumber(L, 2);
   arg3 = (long)lua_tonumber(L, 3);
-  (arg1)->MoveToMM(arg2,arg3);
+  {
+    try {
+      (arg1)->MoveToMM(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -41375,7 +51060,15 @@ static int _wrap_PdfShadingPattern_GetIdentifier(lua_State* L) {
     SWIG_fail_ptr("PdfShadingPattern_GetIdentifier",1,SWIGTYPE_p_PoDoFo__PdfShadingPattern);
   }
   
-  result = (PoDoFo::PdfName *) &((PoDoFo::PdfShadingPattern const *)arg1)->GetIdentifier();
+  {
+    try {
+      result = (PoDoFo::PdfName *) &((PoDoFo::PdfShadingPattern const *)arg1)->GetIdentifier();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfName,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -41465,7 +51158,15 @@ static int _wrap_new_PdfAxialShadingPattern__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfAxialShadingPattern",7,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfAxialShadingPattern *)new PoDoFo::PdfAxialShadingPattern(arg1,arg2,arg3,arg4,(PoDoFo::PdfColor const &)*arg5,(PoDoFo::PdfColor const &)*arg6,arg7);
+  {
+    try {
+      result = (PoDoFo::PdfAxialShadingPattern *)new PoDoFo::PdfAxialShadingPattern(arg1,arg2,arg3,arg4,(PoDoFo::PdfColor const &)*arg5,(PoDoFo::PdfColor const &)*arg6,arg7);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfAxialShadingPattern,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -41515,7 +51216,15 @@ static int _wrap_new_PdfAxialShadingPattern__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfAxialShadingPattern",7,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfAxialShadingPattern *)new PoDoFo::PdfAxialShadingPattern(arg1,arg2,arg3,arg4,(PoDoFo::PdfColor const &)*arg5,(PoDoFo::PdfColor const &)*arg6,arg7);
+  {
+    try {
+      result = (PoDoFo::PdfAxialShadingPattern *)new PoDoFo::PdfAxialShadingPattern(arg1,arg2,arg3,arg4,(PoDoFo::PdfColor const &)*arg5,(PoDoFo::PdfColor const &)*arg6,arg7);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfAxialShadingPattern,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -41745,7 +51454,15 @@ static int _wrap_new_PdfFunctionBaseShadingPattern__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfFunctionBaseShadingPattern",6,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfFunctionBaseShadingPattern *)new PoDoFo::PdfFunctionBaseShadingPattern((PoDoFo::PdfColor const &)*arg1,(PoDoFo::PdfColor const &)*arg2,(PoDoFo::PdfColor const &)*arg3,(PoDoFo::PdfColor const &)*arg4,(PoDoFo::PdfArray const &)*arg5,arg6);
+  {
+    try {
+      result = (PoDoFo::PdfFunctionBaseShadingPattern *)new PoDoFo::PdfFunctionBaseShadingPattern((PoDoFo::PdfColor const &)*arg1,(PoDoFo::PdfColor const &)*arg2,(PoDoFo::PdfColor const &)*arg3,(PoDoFo::PdfColor const &)*arg4,(PoDoFo::PdfArray const &)*arg5,arg6);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFunctionBaseShadingPattern,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -41804,7 +51521,15 @@ static int _wrap_new_PdfFunctionBaseShadingPattern__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfFunctionBaseShadingPattern",6,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfFunctionBaseShadingPattern *)new PoDoFo::PdfFunctionBaseShadingPattern((PoDoFo::PdfColor const &)*arg1,(PoDoFo::PdfColor const &)*arg2,(PoDoFo::PdfColor const &)*arg3,(PoDoFo::PdfColor const &)*arg4,(PoDoFo::PdfArray const &)*arg5,arg6);
+  {
+    try {
+      result = (PoDoFo::PdfFunctionBaseShadingPattern *)new PoDoFo::PdfFunctionBaseShadingPattern((PoDoFo::PdfColor const &)*arg1,(PoDoFo::PdfColor const &)*arg2,(PoDoFo::PdfColor const &)*arg3,(PoDoFo::PdfColor const &)*arg4,(PoDoFo::PdfArray const &)*arg5,arg6);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFunctionBaseShadingPattern,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -42051,7 +51776,15 @@ static int _wrap_new_PdfRadialShadingPattern__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfRadialShadingPattern",9,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfRadialShadingPattern *)new PoDoFo::PdfRadialShadingPattern(arg1,arg2,arg3,arg4,arg5,arg6,(PoDoFo::PdfColor const &)*arg7,(PoDoFo::PdfColor const &)*arg8,arg9);
+  {
+    try {
+      result = (PoDoFo::PdfRadialShadingPattern *)new PoDoFo::PdfRadialShadingPattern(arg1,arg2,arg3,arg4,arg5,arg6,(PoDoFo::PdfColor const &)*arg7,(PoDoFo::PdfColor const &)*arg8,arg9);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfRadialShadingPattern,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -42107,7 +51840,15 @@ static int _wrap_new_PdfRadialShadingPattern__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfRadialShadingPattern",9,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfRadialShadingPattern *)new PoDoFo::PdfRadialShadingPattern(arg1,arg2,arg3,arg4,arg5,arg6,(PoDoFo::PdfColor const &)*arg7,(PoDoFo::PdfColor const &)*arg8,arg9);
+  {
+    try {
+      result = (PoDoFo::PdfRadialShadingPattern *)new PoDoFo::PdfRadialShadingPattern(arg1,arg2,arg3,arg4,arg5,arg6,(PoDoFo::PdfColor const &)*arg7,(PoDoFo::PdfColor const &)*arg8,arg9);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfRadialShadingPattern,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -42361,7 +52102,15 @@ static int _wrap_new_PdfTriangleShadingPattern__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfTriangleShadingPattern",10,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfTriangleShadingPattern *)new PoDoFo::PdfTriangleShadingPattern(arg1,arg2,(PoDoFo::PdfColor const &)*arg3,arg4,arg5,(PoDoFo::PdfColor const &)*arg6,arg7,arg8,(PoDoFo::PdfColor const &)*arg9,arg10);
+  {
+    try {
+      result = (PoDoFo::PdfTriangleShadingPattern *)new PoDoFo::PdfTriangleShadingPattern(arg1,arg2,(PoDoFo::PdfColor const &)*arg3,arg4,arg5,(PoDoFo::PdfColor const &)*arg6,arg7,arg8,(PoDoFo::PdfColor const &)*arg9,arg10);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfTriangleShadingPattern,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -42424,7 +52173,15 @@ static int _wrap_new_PdfTriangleShadingPattern__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfTriangleShadingPattern",10,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfTriangleShadingPattern *)new PoDoFo::PdfTriangleShadingPattern(arg1,arg2,(PoDoFo::PdfColor const &)*arg3,arg4,arg5,(PoDoFo::PdfColor const &)*arg6,arg7,arg8,(PoDoFo::PdfColor const &)*arg9,arg10);
+  {
+    try {
+      result = (PoDoFo::PdfTriangleShadingPattern *)new PoDoFo::PdfTriangleShadingPattern(arg1,arg2,(PoDoFo::PdfColor const &)*arg3,arg4,arg5,(PoDoFo::PdfColor const &)*arg6,arg7,arg8,(PoDoFo::PdfColor const &)*arg9,arg10);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfTriangleShadingPattern,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -42662,7 +52419,15 @@ static int _wrap_new_PdfSigIncPainter(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  result = (PoDoFo::PdfSigIncPainter *)new PoDoFo::PdfSigIncPainter(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfSigIncPainter *)new PoDoFo::PdfSigIncPainter(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfSigIncPainter,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -42699,7 +52464,15 @@ static int _wrap_PdfSigIncPainter_SetPageCanvas(lua_State* L) {
     SWIG_fail_ptr("PdfSigIncPainter_SetPageCanvas",3,SWIGTYPE_p_PoDoFo__PdfObject);
   }
   
-  (arg1)->SetPageCanvas(arg2,arg3);
+  {
+    try {
+      (arg1)->SetPageCanvas(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -42722,7 +52495,15 @@ static int _wrap_PdfSigIncPainter_EndCanvas(lua_State* L) {
     SWIG_fail_ptr("PdfSigIncPainter_EndCanvas",1,SWIGTYPE_p_PoDoFo__PdfSigIncPainter);
   }
   
-  (arg1)->EndCanvas();
+  {
+    try {
+      (arg1)->EndCanvas();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -42765,7 +52546,15 @@ static int _wrap_PdfSigIncPainter_DrawMultiLineText__SWIG_0(lua_State* L) {
   
   arg4 = (PoDoFo::EPdfAlignment)(int)lua_tonumber(L, 4);
   arg5 = (PoDoFo::EPdfVerticalAlignment)(int)lua_tonumber(L, 5);
-  (arg1)->DrawMultiLineText((PoDoFo::PdfRect const &)*arg2,(PoDoFo::PdfString const &)*arg3,arg4,arg5);
+  {
+    try {
+      (arg1)->DrawMultiLineText((PoDoFo::PdfRect const &)*arg2,(PoDoFo::PdfString const &)*arg3,arg4,arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -42805,7 +52594,15 @@ static int _wrap_PdfSigIncPainter_DrawMultiLineText__SWIG_1(lua_State* L) {
   }
   
   arg4 = (PoDoFo::EPdfAlignment)(int)lua_tonumber(L, 4);
-  (arg1)->DrawMultiLineText((PoDoFo::PdfRect const &)*arg2,(PoDoFo::PdfString const &)*arg3,arg4);
+  {
+    try {
+      (arg1)->DrawMultiLineText((PoDoFo::PdfRect const &)*arg2,(PoDoFo::PdfString const &)*arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -42842,7 +52639,15 @@ static int _wrap_PdfSigIncPainter_DrawMultiLineText__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("PdfSigIncPainter_DrawMultiLineText",3,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->DrawMultiLineText((PoDoFo::PdfRect const &)*arg2,(PoDoFo::PdfString const &)*arg3);
+  {
+    try {
+      (arg1)->DrawMultiLineText((PoDoFo::PdfRect const &)*arg2,(PoDoFo::PdfString const &)*arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -43050,7 +52855,15 @@ static int _wrap_new_PdfSignOutputDevice__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfSignOutputDevice",1,SWIGTYPE_p_PoDoFo__PdfOutputDevice);
   }
   
-  result = (PoDoFo::PdfSignOutputDevice *)new PoDoFo::PdfSignOutputDevice(arg1);
+  {
+    try {
+      result = (PoDoFo::PdfSignOutputDevice *)new PoDoFo::PdfSignOutputDevice(arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfSignOutputDevice,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -43070,7 +52883,15 @@ static int _wrap_new_PdfSignOutputDevice__SWIG_1(lua_State* L) {
   SWIG_check_num_args("PoDoFo::PdfSignOutputDevice::PdfSignOutputDevice",1,1)
   if(!SWIG_lua_isnilstring(L,1)) SWIG_fail_arg("PoDoFo::PdfSignOutputDevice::PdfSignOutputDevice",1,"char const *");
   arg1 = (char *)lua_tostring(L, 1);
-  result = (PoDoFo::PdfSignOutputDevice *)new PoDoFo::PdfSignOutputDevice((char const *)arg1);
+  {
+    try {
+      result = (PoDoFo::PdfSignOutputDevice *)new PoDoFo::PdfSignOutputDevice((char const *)arg1);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfSignOutputDevice,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -43136,7 +52957,15 @@ static int _wrap_PdfSignOutputDevice_SetSignatureSize(lua_State* L) {
   
   SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative")
   arg2 = (size_t)lua_tonumber(L, 2);
-  (arg1)->SetSignatureSize(arg2);
+  {
+    try {
+      (arg1)->SetSignatureSize(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -43160,7 +52989,15 @@ static int _wrap_PdfSignOutputDevice_GetSignatureSize(lua_State* L) {
     SWIG_fail_ptr("PdfSignOutputDevice_GetSignatureSize",1,SWIGTYPE_p_PoDoFo__PdfSignOutputDevice);
   }
   
-  result = ((PoDoFo::PdfSignOutputDevice const *)arg1)->GetSignatureSize();
+  {
+    try {
+      result = ((PoDoFo::PdfSignOutputDevice const *)arg1)->GetSignatureSize();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -43184,7 +53021,15 @@ static int _wrap_PdfSignOutputDevice_GetSignatureBeacon(lua_State* L) {
     SWIG_fail_ptr("PdfSignOutputDevice_GetSignatureBeacon",1,SWIGTYPE_p_PoDoFo__PdfSignOutputDevice);
   }
   
-  result = (PdfData *)((PoDoFo::PdfSignOutputDevice const *)arg1)->GetSignatureBeacon();
+  {
+    try {
+      result = (PdfData *)((PoDoFo::PdfSignOutputDevice const *)arg1)->GetSignatureBeacon();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PdfData,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -43208,7 +53053,15 @@ static int _wrap_PdfSignOutputDevice_HasSignaturePosition(lua_State* L) {
     SWIG_fail_ptr("PdfSignOutputDevice_HasSignaturePosition",1,SWIGTYPE_p_PoDoFo__PdfSignOutputDevice);
   }
   
-  result = (bool)((PoDoFo::PdfSignOutputDevice const *)arg1)->HasSignaturePosition();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfSignOutputDevice const *)arg1)->HasSignaturePosition();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -43231,7 +53084,15 @@ static int _wrap_PdfSignOutputDevice_AdjustByteRange(lua_State* L) {
     SWIG_fail_ptr("PdfSignOutputDevice_AdjustByteRange",1,SWIGTYPE_p_PoDoFo__PdfSignOutputDevice);
   }
   
-  (arg1)->AdjustByteRange();
+  {
+    try {
+      (arg1)->AdjustByteRange();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -43262,7 +53123,15 @@ static int _wrap_PdfSignOutputDevice_ReadForSignature(lua_State* L) {
   arg2 = (char *)lua_tostring(L, 2);
   SWIG_contract_assert((lua_tonumber(L,3)>=0),"number must not be negative")
   arg3 = (size_t)lua_tonumber(L, 3);
-  result = (arg1)->ReadForSignature(arg2,arg3);
+  {
+    try {
+      result = (arg1)->ReadForSignature(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -43292,7 +53161,15 @@ static int _wrap_PdfSignOutputDevice_SetSignature(lua_State* L) {
     SWIG_fail_ptr("PdfSignOutputDevice_SetSignature",2,SWIGTYPE_p_PdfData);
   }
   
-  (arg1)->SetSignature((PdfData const &)*arg2);
+  {
+    try {
+      (arg1)->SetSignature((PdfData const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -43316,7 +53193,15 @@ static int _wrap_PdfSignOutputDevice_GetLength(lua_State* L) {
     SWIG_fail_ptr("PdfSignOutputDevice_GetLength",1,SWIGTYPE_p_PoDoFo__PdfSignOutputDevice);
   }
   
-  result = ((PoDoFo::PdfSignOutputDevice const *)arg1)->GetLength();
+  {
+    try {
+      result = ((PoDoFo::PdfSignOutputDevice const *)arg1)->GetLength();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -43343,7 +53228,15 @@ static int _wrap_PdfSignOutputDevice_Print(lua_State* L) {
   }
   
   arg2 = (char *)lua_tostring(L, 2);
-  (arg1)->Print((char const *)arg2,arg3);
+  {
+    try {
+      (arg1)->Print((char const *)arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -43373,7 +53266,15 @@ static int _wrap_PdfSignOutputDevice_Write(lua_State* L) {
   arg2 = (char *)lua_tostring(L, 2);
   SWIG_contract_assert((lua_tonumber(L,3)>=0),"number must not be negative")
   arg3 = (size_t)lua_tonumber(L, 3);
-  (arg1)->Write((char const *)arg2,arg3);
+  {
+    try {
+      (arg1)->Write((char const *)arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -43404,7 +53305,15 @@ static int _wrap_PdfSignOutputDevice_Read(lua_State* L) {
   arg2 = (char *)lua_tostring(L, 2);
   SWIG_contract_assert((lua_tonumber(L,3)>=0),"number must not be negative")
   arg3 = (size_t)lua_tonumber(L, 3);
-  result = (arg1)->Read(arg2,arg3);
+  {
+    try {
+      result = (arg1)->Read(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -43431,7 +53340,15 @@ static int _wrap_PdfSignOutputDevice_Seek(lua_State* L) {
   
   SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative")
   arg2 = (size_t)lua_tonumber(L, 2);
-  (arg1)->Seek(arg2);
+  {
+    try {
+      (arg1)->Seek(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -43455,7 +53372,15 @@ static int _wrap_PdfSignOutputDevice_Tell(lua_State* L) {
     SWIG_fail_ptr("PdfSignOutputDevice_Tell",1,SWIGTYPE_p_PoDoFo__PdfSignOutputDevice);
   }
   
-  result = ((PoDoFo::PdfSignOutputDevice const *)arg1)->Tell();
+  {
+    try {
+      result = ((PoDoFo::PdfSignOutputDevice const *)arg1)->Tell();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -43478,7 +53403,15 @@ static int _wrap_PdfSignOutputDevice_Flush(lua_State* L) {
     SWIG_fail_ptr("PdfSignOutputDevice_Flush",1,SWIGTYPE_p_PoDoFo__PdfSignOutputDevice);
   }
   
-  (arg1)->Flush();
+  {
+    try {
+      (arg1)->Flush();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -43577,7 +53510,15 @@ static int _wrap_new_PdfSignatureField__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfSignatureField",3,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfSignatureField *)new PoDoFo::PdfSignatureField(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfSignatureField *)new PoDoFo::PdfSignatureField(arg1,(PoDoFo::PdfRect const &)*arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfSignatureField,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -43615,7 +53556,15 @@ static int _wrap_new_PdfSignatureField__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfSignatureField",3,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfSignatureField *)new PoDoFo::PdfSignatureField(arg1,arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfSignatureField *)new PoDoFo::PdfSignatureField(arg1,arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfSignatureField,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -43729,7 +53678,15 @@ static int _wrap_PdfSignatureField_SetAppearanceStream(lua_State* L) {
     SWIG_fail_ptr("PdfSignatureField_SetAppearanceStream",2,SWIGTYPE_p_PoDoFo__PdfXObject);
   }
   
-  (arg1)->SetAppearanceStream(arg2);
+  {
+    try {
+      (arg1)->SetAppearanceStream(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -43759,7 +53716,15 @@ static int _wrap_PdfSignatureField_SetSignature(lua_State* L) {
     SWIG_fail_ptr("PdfSignatureField_SetSignature",2,SWIGTYPE_p_PdfData);
   }
   
-  (arg1)->SetSignature((PdfData const &)*arg2);
+  {
+    try {
+      (arg1)->SetSignature((PdfData const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -43789,7 +53754,15 @@ static int _wrap_PdfSignatureField_SetSignatureReason(lua_State* L) {
     SWIG_fail_ptr("PdfSignatureField_SetSignatureReason",2,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->SetSignatureReason((PoDoFo::PdfString const &)*arg2);
+  {
+    try {
+      (arg1)->SetSignatureReason((PoDoFo::PdfString const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -43819,7 +53792,15 @@ static int _wrap_PdfSignatureField_SetSignatureDate(lua_State* L) {
     SWIG_fail_ptr("PdfSignatureField_SetSignatureDate",2,SWIGTYPE_p_PdfDate);
   }
   
-  (arg1)->SetSignatureDate((PdfDate const &)*arg2);
+  {
+    try {
+      (arg1)->SetSignatureDate((PdfDate const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -43882,774 +53863,6 @@ static swig_lua_class *swig_PdfSignatureField_bases[] = {0,0};
 static const char *swig_PdfSignatureField_base_names[] = {"PoDoFo::PdfField *",0};
 static swig_lua_class _wrap_class_PdfSignatureField = { "PdfSignatureField", "PdfSignatureField", &SWIGTYPE_p_PoDoFo__PdfSignatureField,_proxy__wrap_new_PdfSignatureField, swig_delete_PdfSignatureField, swig_PdfSignatureField_methods, swig_PdfSignatureField_attributes, &swig_PdfSignatureField_Sf_SwigStatic, swig_PdfSignatureField_meta, swig_PdfSignatureField_bases, swig_PdfSignatureField_base_names };
 
-static int _wrap_new_PdfStreamedDocument__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfOutputDevice *arg1 = (PoDoFo::PdfOutputDevice *) 0 ;
-  PoDoFo::EPdfVersion arg2 ;
-  PdfEncrypt *arg3 = (PdfEncrypt *) 0 ;
-  PoDoFo::EPdfWriteMode arg4 ;
-  PoDoFo::PdfStreamedDocument *result = 0 ;
-  
-  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",1,"PoDoFo::PdfOutputDevice *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",2,"PoDoFo::EPdfVersion");
-  if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",3,"PdfEncrypt *");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",4,"PoDoFo::EPdfWriteMode");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfOutputDevice,0))){
-    SWIG_fail_ptr("new_PdfStreamedDocument",1,SWIGTYPE_p_PoDoFo__PdfOutputDevice);
-  }
-  
-  arg2 = (PoDoFo::EPdfVersion)(int)lua_tonumber(L, 2);
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_PdfEncrypt,0))){
-    SWIG_fail_ptr("new_PdfStreamedDocument",3,SWIGTYPE_p_PdfEncrypt);
-  }
-  
-  arg4 = (PoDoFo::EPdfWriteMode)(int)lua_tonumber(L, 4);
-  result = (PoDoFo::PdfStreamedDocument *)new PoDoFo::PdfStreamedDocument(arg1,arg2,arg3,arg4);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,1); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_new_PdfStreamedDocument__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfOutputDevice *arg1 = (PoDoFo::PdfOutputDevice *) 0 ;
-  PoDoFo::EPdfVersion arg2 ;
-  PdfEncrypt *arg3 = (PdfEncrypt *) 0 ;
-  PoDoFo::PdfStreamedDocument *result = 0 ;
-  
-  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",1,"PoDoFo::PdfOutputDevice *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",2,"PoDoFo::EPdfVersion");
-  if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",3,"PdfEncrypt *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfOutputDevice,0))){
-    SWIG_fail_ptr("new_PdfStreamedDocument",1,SWIGTYPE_p_PoDoFo__PdfOutputDevice);
-  }
-  
-  arg2 = (PoDoFo::EPdfVersion)(int)lua_tonumber(L, 2);
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_PdfEncrypt,0))){
-    SWIG_fail_ptr("new_PdfStreamedDocument",3,SWIGTYPE_p_PdfEncrypt);
-  }
-  
-  result = (PoDoFo::PdfStreamedDocument *)new PoDoFo::PdfStreamedDocument(arg1,arg2,arg3);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,1); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_new_PdfStreamedDocument__SWIG_2(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfOutputDevice *arg1 = (PoDoFo::PdfOutputDevice *) 0 ;
-  PoDoFo::EPdfVersion arg2 ;
-  PoDoFo::PdfStreamedDocument *result = 0 ;
-  
-  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",1,"PoDoFo::PdfOutputDevice *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",2,"PoDoFo::EPdfVersion");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfOutputDevice,0))){
-    SWIG_fail_ptr("new_PdfStreamedDocument",1,SWIGTYPE_p_PoDoFo__PdfOutputDevice);
-  }
-  
-  arg2 = (PoDoFo::EPdfVersion)(int)lua_tonumber(L, 2);
-  result = (PoDoFo::PdfStreamedDocument *)new PoDoFo::PdfStreamedDocument(arg1,arg2);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,1); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_new_PdfStreamedDocument__SWIG_3(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfOutputDevice *arg1 = (PoDoFo::PdfOutputDevice *) 0 ;
-  PoDoFo::PdfStreamedDocument *result = 0 ;
-  
-  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",1,"PoDoFo::PdfOutputDevice *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfOutputDevice,0))){
-    SWIG_fail_ptr("new_PdfStreamedDocument",1,SWIGTYPE_p_PoDoFo__PdfOutputDevice);
-  }
-  
-  result = (PoDoFo::PdfStreamedDocument *)new PoDoFo::PdfStreamedDocument(arg1);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,1); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_new_PdfStreamedDocument__SWIG_4(lua_State* L) {
-  int SWIG_arg = 0;
-  char *arg1 = (char *) 0 ;
-  PoDoFo::EPdfVersion arg2 ;
-  PdfEncrypt *arg3 = (PdfEncrypt *) 0 ;
-  PoDoFo::EPdfWriteMode arg4 ;
-  PoDoFo::PdfStreamedDocument *result = 0 ;
-  
-  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",4,4)
-  if(!SWIG_lua_isnilstring(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",1,"char const *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",2,"PoDoFo::EPdfVersion");
-  if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",3,"PdfEncrypt *");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",4,"PoDoFo::EPdfWriteMode");
-  arg1 = (char *)lua_tostring(L, 1);
-  arg2 = (PoDoFo::EPdfVersion)(int)lua_tonumber(L, 2);
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_PdfEncrypt,0))){
-    SWIG_fail_ptr("new_PdfStreamedDocument",3,SWIGTYPE_p_PdfEncrypt);
-  }
-  
-  arg4 = (PoDoFo::EPdfWriteMode)(int)lua_tonumber(L, 4);
-  result = (PoDoFo::PdfStreamedDocument *)new PoDoFo::PdfStreamedDocument((char const *)arg1,arg2,arg3,arg4);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,1); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_new_PdfStreamedDocument__SWIG_5(lua_State* L) {
-  int SWIG_arg = 0;
-  char *arg1 = (char *) 0 ;
-  PoDoFo::EPdfVersion arg2 ;
-  PdfEncrypt *arg3 = (PdfEncrypt *) 0 ;
-  PoDoFo::PdfStreamedDocument *result = 0 ;
-  
-  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",3,3)
-  if(!SWIG_lua_isnilstring(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",1,"char const *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",2,"PoDoFo::EPdfVersion");
-  if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",3,"PdfEncrypt *");
-  arg1 = (char *)lua_tostring(L, 1);
-  arg2 = (PoDoFo::EPdfVersion)(int)lua_tonumber(L, 2);
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_PdfEncrypt,0))){
-    SWIG_fail_ptr("new_PdfStreamedDocument",3,SWIGTYPE_p_PdfEncrypt);
-  }
-  
-  result = (PoDoFo::PdfStreamedDocument *)new PoDoFo::PdfStreamedDocument((char const *)arg1,arg2,arg3);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,1); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_new_PdfStreamedDocument__SWIG_6(lua_State* L) {
-  int SWIG_arg = 0;
-  char *arg1 = (char *) 0 ;
-  PoDoFo::EPdfVersion arg2 ;
-  PoDoFo::PdfStreamedDocument *result = 0 ;
-  
-  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",2,2)
-  if(!SWIG_lua_isnilstring(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",1,"char const *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",2,"PoDoFo::EPdfVersion");
-  arg1 = (char *)lua_tostring(L, 1);
-  arg2 = (PoDoFo::EPdfVersion)(int)lua_tonumber(L, 2);
-  result = (PoDoFo::PdfStreamedDocument *)new PoDoFo::PdfStreamedDocument((char const *)arg1,arg2);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,1); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_new_PdfStreamedDocument__SWIG_7(lua_State* L) {
-  int SWIG_arg = 0;
-  char *arg1 = (char *) 0 ;
-  PoDoFo::PdfStreamedDocument *result = 0 ;
-  
-  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",1,1)
-  if(!SWIG_lua_isnilstring(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::PdfStreamedDocument",1,"char const *");
-  arg1 = (char *)lua_tostring(L, 1);
-  result = (PoDoFo::PdfStreamedDocument *)new PoDoFo::PdfStreamedDocument((char const *)arg1);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,1); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_new_PdfStreamedDocument(lua_State* L) {
-  int argc;
-  int argv[5]={
-    1,2,3,4,5
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 1) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfOutputDevice, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      return _wrap_new_PdfStreamedDocument__SWIG_3(L);
-    }
-  }
-  if (argc == 1) {
-    int _v;
-    {
-      _v = SWIG_lua_isnilstring(L,argv[0]);
-    }
-    if (_v) {
-      return _wrap_new_PdfStreamedDocument__SWIG_7(L);
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfOutputDevice, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        return _wrap_new_PdfStreamedDocument__SWIG_2(L);
-      }
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      _v = SWIG_lua_isnilstring(L,argv[0]);
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        return _wrap_new_PdfStreamedDocument__SWIG_6(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfOutputDevice, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          void *ptr;
-          if (SWIG_isptrtype(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_PdfEncrypt, 0)) {
-            _v = 0;
-          } else {
-            _v = 1;
-          }
-        }
-        if (_v) {
-          return _wrap_new_PdfStreamedDocument__SWIG_1(L);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      _v = SWIG_lua_isnilstring(L,argv[0]);
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          void *ptr;
-          if (SWIG_isptrtype(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_PdfEncrypt, 0)) {
-            _v = 0;
-          } else {
-            _v = 1;
-          }
-        }
-        if (_v) {
-          return _wrap_new_PdfStreamedDocument__SWIG_5(L);
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PoDoFo__PdfOutputDevice, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          void *ptr;
-          if (SWIG_isptrtype(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_PdfEncrypt, 0)) {
-            _v = 0;
-          } else {
-            _v = 1;
-          }
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_new_PdfStreamedDocument__SWIG_0(L);
-          }
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      _v = SWIG_lua_isnilstring(L,argv[0]);
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          void *ptr;
-          if (SWIG_isptrtype(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_PdfEncrypt, 0)) {
-            _v = 0;
-          } else {
-            _v = 1;
-          }
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_new_PdfStreamedDocument__SWIG_4(L);
-          }
-        }
-      }
-    }
-  }
-  
-  SWIG_Lua_pusherrstring(L,"Wrong arguments for overloaded function 'new_PdfStreamedDocument'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    PoDoFo::PdfStreamedDocument::PdfStreamedDocument(PoDoFo::PdfOutputDevice *,PoDoFo::EPdfVersion,PdfEncrypt *,PoDoFo::EPdfWriteMode)\n"
-    "    PoDoFo::PdfStreamedDocument::PdfStreamedDocument(PoDoFo::PdfOutputDevice *,PoDoFo::EPdfVersion,PdfEncrypt *)\n"
-    "    PoDoFo::PdfStreamedDocument::PdfStreamedDocument(PoDoFo::PdfOutputDevice *,PoDoFo::EPdfVersion)\n"
-    "    PoDoFo::PdfStreamedDocument::PdfStreamedDocument(PoDoFo::PdfOutputDevice *)\n"
-    "    PoDoFo::PdfStreamedDocument::PdfStreamedDocument(char const *,PoDoFo::EPdfVersion,PdfEncrypt *,PoDoFo::EPdfWriteMode)\n"
-    "    PoDoFo::PdfStreamedDocument::PdfStreamedDocument(char const *,PoDoFo::EPdfVersion,PdfEncrypt *)\n"
-    "    PoDoFo::PdfStreamedDocument::PdfStreamedDocument(char const *,PoDoFo::EPdfVersion)\n"
-    "    PoDoFo::PdfStreamedDocument::PdfStreamedDocument(char const *)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_PdfStreamedDocument_Close(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
-  
-  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::Close",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::Close",1,"PoDoFo::PdfStreamedDocument *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
-    SWIG_fail_ptr("PdfStreamedDocument_Close",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
-  }
-  
-  (arg1)->Close();
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfStreamedDocument_GetWriteMode(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
-  PoDoFo::EPdfWriteMode result;
-  
-  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::GetWriteMode",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::GetWriteMode",1,"PoDoFo::PdfStreamedDocument const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
-    SWIG_fail_ptr("PdfStreamedDocument_GetWriteMode",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
-  }
-  
-  result = (PoDoFo::EPdfWriteMode)((PoDoFo::PdfStreamedDocument const *)arg1)->GetWriteMode();
-  lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfStreamedDocument_GetPdfVersion(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
-  PoDoFo::EPdfVersion result;
-  
-  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::GetPdfVersion",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::GetPdfVersion",1,"PoDoFo::PdfStreamedDocument const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
-    SWIG_fail_ptr("PdfStreamedDocument_GetPdfVersion",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
-  }
-  
-  result = (PoDoFo::EPdfVersion)((PoDoFo::PdfStreamedDocument const *)arg1)->GetPdfVersion();
-  lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfStreamedDocument_IsLinearized(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::IsLinearized",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::IsLinearized",1,"PoDoFo::PdfStreamedDocument const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
-    SWIG_fail_ptr("PdfStreamedDocument_IsLinearized",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
-  }
-  
-  result = (bool)((PoDoFo::PdfStreamedDocument const *)arg1)->IsLinearized();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfStreamedDocument_IsPrintAllowed(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::IsPrintAllowed",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::IsPrintAllowed",1,"PoDoFo::PdfStreamedDocument const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
-    SWIG_fail_ptr("PdfStreamedDocument_IsPrintAllowed",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
-  }
-  
-  result = (bool)((PoDoFo::PdfStreamedDocument const *)arg1)->IsPrintAllowed();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfStreamedDocument_IsEditAllowed(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::IsEditAllowed",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::IsEditAllowed",1,"PoDoFo::PdfStreamedDocument const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
-    SWIG_fail_ptr("PdfStreamedDocument_IsEditAllowed",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
-  }
-  
-  result = (bool)((PoDoFo::PdfStreamedDocument const *)arg1)->IsEditAllowed();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfStreamedDocument_IsCopyAllowed(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::IsCopyAllowed",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::IsCopyAllowed",1,"PoDoFo::PdfStreamedDocument const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
-    SWIG_fail_ptr("PdfStreamedDocument_IsCopyAllowed",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
-  }
-  
-  result = (bool)((PoDoFo::PdfStreamedDocument const *)arg1)->IsCopyAllowed();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfStreamedDocument_IsEditNotesAllowed(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::IsEditNotesAllowed",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::IsEditNotesAllowed",1,"PoDoFo::PdfStreamedDocument const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
-    SWIG_fail_ptr("PdfStreamedDocument_IsEditNotesAllowed",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
-  }
-  
-  result = (bool)((PoDoFo::PdfStreamedDocument const *)arg1)->IsEditNotesAllowed();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfStreamedDocument_IsFillAndSignAllowed(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::IsFillAndSignAllowed",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::IsFillAndSignAllowed",1,"PoDoFo::PdfStreamedDocument const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
-    SWIG_fail_ptr("PdfStreamedDocument_IsFillAndSignAllowed",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
-  }
-  
-  result = (bool)((PoDoFo::PdfStreamedDocument const *)arg1)->IsFillAndSignAllowed();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfStreamedDocument_IsAccessibilityAllowed(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::IsAccessibilityAllowed",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::IsAccessibilityAllowed",1,"PoDoFo::PdfStreamedDocument const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
-    SWIG_fail_ptr("PdfStreamedDocument_IsAccessibilityAllowed",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
-  }
-  
-  result = (bool)((PoDoFo::PdfStreamedDocument const *)arg1)->IsAccessibilityAllowed();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfStreamedDocument_IsDocAssemblyAllowed(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::IsDocAssemblyAllowed",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::IsDocAssemblyAllowed",1,"PoDoFo::PdfStreamedDocument const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
-    SWIG_fail_ptr("PdfStreamedDocument_IsDocAssemblyAllowed",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
-  }
-  
-  result = (bool)((PoDoFo::PdfStreamedDocument const *)arg1)->IsDocAssemblyAllowed();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_PdfStreamedDocument_IsHighPrintAllowed(lua_State* L) {
-  int SWIG_arg = 0;
-  PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("PoDoFo::PdfStreamedDocument::IsHighPrintAllowed",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfStreamedDocument::IsHighPrintAllowed",1,"PoDoFo::PdfStreamedDocument const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument,0))){
-    SWIG_fail_ptr("PdfStreamedDocument_IsHighPrintAllowed",1,SWIGTYPE_p_PoDoFo__PdfStreamedDocument);
-  }
-  
-  result = (bool)((PoDoFo::PdfStreamedDocument const *)arg1)->IsHighPrintAllowed();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static void swig_delete_PdfStreamedDocument(void *obj) {
-PoDoFo::PdfStreamedDocument *arg1 = (PoDoFo::PdfStreamedDocument *) obj;
-delete arg1;
-}
-static int _proxy__wrap_new_PdfStreamedDocument(lua_State *L) {
-    assert(lua_istable(L,1));
-    lua_pushcfunction(L,_wrap_new_PdfStreamedDocument);
-    assert(!lua_isnil(L,-1));
-    lua_replace(L,1); /* replace our table with real constructor */
-    lua_call(L,lua_gettop(L)-1,1);
-    return 1;
-}
-static swig_lua_attribute swig_PdfStreamedDocument_attributes[] = {
-    {0,0,0}
-};
-static swig_lua_method swig_PdfStreamedDocument_methods[]= {
-    { "Close", _wrap_PdfStreamedDocument_Close},
-    { "GetWriteMode", _wrap_PdfStreamedDocument_GetWriteMode},
-    { "GetPdfVersion", _wrap_PdfStreamedDocument_GetPdfVersion},
-    { "IsLinearized", _wrap_PdfStreamedDocument_IsLinearized},
-    { "IsPrintAllowed", _wrap_PdfStreamedDocument_IsPrintAllowed},
-    { "IsEditAllowed", _wrap_PdfStreamedDocument_IsEditAllowed},
-    { "IsCopyAllowed", _wrap_PdfStreamedDocument_IsCopyAllowed},
-    { "IsEditNotesAllowed", _wrap_PdfStreamedDocument_IsEditNotesAllowed},
-    { "IsFillAndSignAllowed", _wrap_PdfStreamedDocument_IsFillAndSignAllowed},
-    { "IsAccessibilityAllowed", _wrap_PdfStreamedDocument_IsAccessibilityAllowed},
-    { "IsDocAssemblyAllowed", _wrap_PdfStreamedDocument_IsDocAssemblyAllowed},
-    { "IsHighPrintAllowed", _wrap_PdfStreamedDocument_IsHighPrintAllowed},
-    {0,0}
-};
-static swig_lua_method swig_PdfStreamedDocument_meta[] = {
-    {0,0}
-};
-
-static swig_lua_attribute swig_PdfStreamedDocument_Sf_SwigStatic_attributes[] = {
-    {0,0,0}
-};
-static swig_lua_const_info swig_PdfStreamedDocument_Sf_SwigStatic_constants[]= {
-    {0,0,0,0,0,0}
-};
-static swig_lua_method swig_PdfStreamedDocument_Sf_SwigStatic_methods[]= {
-    {0,0}
-};
-static swig_lua_class* swig_PdfStreamedDocument_Sf_SwigStatic_classes[]= {
-    0
-};
-
-static swig_lua_namespace swig_PdfStreamedDocument_Sf_SwigStatic = {
-    "PdfStreamedDocument",
-    swig_PdfStreamedDocument_Sf_SwigStatic_methods,
-    swig_PdfStreamedDocument_Sf_SwigStatic_attributes,
-    swig_PdfStreamedDocument_Sf_SwigStatic_constants,
-    swig_PdfStreamedDocument_Sf_SwigStatic_classes,
-    0
-};
-static swig_lua_class *swig_PdfStreamedDocument_bases[] = {0,0};
-static const char *swig_PdfStreamedDocument_base_names[] = {"PoDoFo::PdfDocument *",0};
-static swig_lua_class _wrap_class_PdfStreamedDocument = { "PdfStreamedDocument", "PdfStreamedDocument", &SWIGTYPE_p_PoDoFo__PdfStreamedDocument,_proxy__wrap_new_PdfStreamedDocument, swig_delete_PdfStreamedDocument, swig_PdfStreamedDocument_methods, swig_PdfStreamedDocument_attributes, &swig_PdfStreamedDocument_Sf_SwigStatic, swig_PdfStreamedDocument_meta, swig_PdfStreamedDocument_bases, swig_PdfStreamedDocument_base_names };
-
 static int _wrap_PdfTableModel_GetText(lua_State* L) {
   int SWIG_arg = 0;
   PoDoFo::PdfTableModel *arg1 = (PoDoFo::PdfTableModel *) 0 ;
@@ -44668,7 +53881,15 @@ static int _wrap_PdfTableModel_GetText(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = ((PoDoFo::PdfTableModel const *)arg1)->GetText(arg2,arg3);
+  {
+    try {
+      result = ((PoDoFo::PdfTableModel const *)arg1)->GetText(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfString * resultptr = new PoDoFo::PdfString((const PoDoFo::PdfString &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++;
@@ -44701,7 +53922,15 @@ static int _wrap_PdfTableModel_GetAlignment(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = (PoDoFo::EPdfAlignment)((PoDoFo::PdfTableModel const *)arg1)->GetAlignment(arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::EPdfAlignment)((PoDoFo::PdfTableModel const *)arg1)->GetAlignment(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
   return SWIG_arg;
   
@@ -44731,7 +53960,15 @@ static int _wrap_PdfTableModel_GetVerticalAlignment(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = (PoDoFo::EPdfVerticalAlignment)((PoDoFo::PdfTableModel const *)arg1)->GetVerticalAlignment(arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::EPdfVerticalAlignment)((PoDoFo::PdfTableModel const *)arg1)->GetVerticalAlignment(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
   return SWIG_arg;
   
@@ -44761,7 +53998,15 @@ static int _wrap_PdfTableModel_GetFont(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = (PoDoFo::PdfFont *)((PoDoFo::PdfTableModel const *)arg1)->GetFont(arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)((PoDoFo::PdfTableModel const *)arg1)->GetFont(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -44791,7 +54036,15 @@ static int _wrap_PdfTableModel_HasBackgroundColor(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = (bool)((PoDoFo::PdfTableModel const *)arg1)->HasBackgroundColor(arg2,arg3);
+  {
+    try {
+      result = (bool)((PoDoFo::PdfTableModel const *)arg1)->HasBackgroundColor(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -44821,7 +54074,15 @@ static int _wrap_PdfTableModel_GetBackgroundColor(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = ((PoDoFo::PdfTableModel const *)arg1)->GetBackgroundColor(arg2,arg3);
+  {
+    try {
+      result = ((PoDoFo::PdfTableModel const *)arg1)->GetBackgroundColor(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfColor * resultptr = new PoDoFo::PdfColor((const PoDoFo::PdfColor &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfColor,1); SWIG_arg++;
@@ -44854,7 +54115,15 @@ static int _wrap_PdfTableModel_GetForegroundColor(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = ((PoDoFo::PdfTableModel const *)arg1)->GetForegroundColor(arg2,arg3);
+  {
+    try {
+      result = ((PoDoFo::PdfTableModel const *)arg1)->GetForegroundColor(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfColor * resultptr = new PoDoFo::PdfColor((const PoDoFo::PdfColor &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfColor,1); SWIG_arg++;
@@ -44887,7 +54156,15 @@ static int _wrap_PdfTableModel_HasWordWrap(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = (bool)((PoDoFo::PdfTableModel const *)arg1)->HasWordWrap(arg2,arg3);
+  {
+    try {
+      result = (bool)((PoDoFo::PdfTableModel const *)arg1)->HasWordWrap(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -44911,7 +54188,15 @@ static int _wrap_PdfTableModel_HasBorders(lua_State* L) {
     SWIG_fail_ptr("PdfTableModel_HasBorders",1,SWIGTYPE_p_PoDoFo__PdfTableModel);
   }
   
-  result = (bool)((PoDoFo::PdfTableModel const *)arg1)->HasBorders();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfTableModel const *)arg1)->HasBorders();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -44935,7 +54220,15 @@ static int _wrap_PdfTableModel_GetBorderWidth(lua_State* L) {
     SWIG_fail_ptr("PdfTableModel_GetBorderWidth",1,SWIGTYPE_p_PoDoFo__PdfTableModel);
   }
   
-  result = (double)((PoDoFo::PdfTableModel const *)arg1)->GetBorderWidth();
+  {
+    try {
+      result = (double)((PoDoFo::PdfTableModel const *)arg1)->GetBorderWidth();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -44965,7 +54258,15 @@ static int _wrap_PdfTableModel_GetBorderColor(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = ((PoDoFo::PdfTableModel const *)arg1)->GetBorderColor(arg2,arg3);
+  {
+    try {
+      result = ((PoDoFo::PdfTableModel const *)arg1)->GetBorderColor(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfColor * resultptr = new PoDoFo::PdfColor((const PoDoFo::PdfColor &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfColor,1); SWIG_arg++;
@@ -44998,7 +54299,15 @@ static int _wrap_PdfTableModel_HasImage(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = (bool)((PoDoFo::PdfTableModel const *)arg1)->HasImage(arg2,arg3);
+  {
+    try {
+      result = (bool)((PoDoFo::PdfTableModel const *)arg1)->HasImage(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -45028,7 +54337,15 @@ static int _wrap_PdfTableModel_GetImage(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = (PoDoFo::PdfImage *)((PoDoFo::PdfTableModel const *)arg1)->GetImage(arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfImage *)((PoDoFo::PdfTableModel const *)arg1)->GetImage(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfImage,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -45097,7 +54414,15 @@ static int _wrap_new_PdfSimpleTableModel__SWIG_0(lua_State* L) {
   PoDoFo::PdfSimpleTableModel *result = 0 ;
   
   SWIG_check_num_args("PoDoFo::PdfSimpleTableModel::PdfSimpleTableModel",0,0)
-  result = (PoDoFo::PdfSimpleTableModel *)new PoDoFo::PdfSimpleTableModel();
+  {
+    try {
+      result = (PoDoFo::PdfSimpleTableModel *)new PoDoFo::PdfSimpleTableModel();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfSimpleTableModel,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -45120,7 +54445,15 @@ static int _wrap_new_PdfSimpleTableModel__SWIG_1(lua_State* L) {
   if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfSimpleTableModel::PdfSimpleTableModel",2,"int");
   arg1 = (int)lua_tonumber(L, 1);
   arg2 = (int)lua_tonumber(L, 2);
-  result = (PoDoFo::PdfSimpleTableModel *)new PoDoFo::PdfSimpleTableModel(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfSimpleTableModel *)new PoDoFo::PdfSimpleTableModel(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfSimpleTableModel,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -45183,7 +54516,15 @@ static int _wrap_PdfSimpleTableModel_SetFont(lua_State* L) {
     SWIG_fail_ptr("PdfSimpleTableModel_SetFont",2,SWIGTYPE_p_PoDoFo__PdfFont);
   }
   
-  (arg1)->SetFont(arg2);
+  {
+    try {
+      (arg1)->SetFont(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -45209,7 +54550,15 @@ static int _wrap_PdfSimpleTableModel_SetAlignment__SWIG_0(lua_State* L) {
   }
   
   arg2 = (PoDoFo::EPdfAlignment)(int)lua_tonumber(L, 2);
-  (arg1)->SetAlignment(arg2);
+  {
+    try {
+      (arg1)->SetAlignment(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -45235,7 +54584,15 @@ static int _wrap_PdfSimpleTableModel_SetAlignment__SWIG_1(lua_State* L) {
   }
   
   arg2 = (PoDoFo::EPdfVerticalAlignment)(int)lua_tonumber(L, 2);
-  (arg1)->SetAlignment(arg2);
+  {
+    try {
+      (arg1)->SetAlignment(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -45319,7 +54676,15 @@ static int _wrap_PdfSimpleTableModel_SetBackgroundColor(lua_State* L) {
     SWIG_fail_ptr("PdfSimpleTableModel_SetBackgroundColor",2,SWIGTYPE_p_PoDoFo__PdfColor);
   }
   
-  (arg1)->SetBackgroundColor((PoDoFo::PdfColor const &)*arg2);
+  {
+    try {
+      (arg1)->SetBackgroundColor((PoDoFo::PdfColor const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -45349,7 +54714,15 @@ static int _wrap_PdfSimpleTableModel_SetForegroundColor(lua_State* L) {
     SWIG_fail_ptr("PdfSimpleTableModel_SetForegroundColor",2,SWIGTYPE_p_PoDoFo__PdfColor);
   }
   
-  (arg1)->SetForegroundColor((PoDoFo::PdfColor const &)*arg2);
+  {
+    try {
+      (arg1)->SetForegroundColor((PoDoFo::PdfColor const &)*arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -45375,7 +54748,15 @@ static int _wrap_PdfSimpleTableModel_SetBackgroundEnabled(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetBackgroundEnabled(arg2);
+  {
+    try {
+      (arg1)->SetBackgroundEnabled(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -45401,7 +54782,15 @@ static int _wrap_PdfSimpleTableModel_SetWordWrapEnabled(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetWordWrapEnabled(arg2);
+  {
+    try {
+      (arg1)->SetWordWrapEnabled(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -45427,7 +54816,15 @@ static int _wrap_PdfSimpleTableModel_SetBorderEnabled(lua_State* L) {
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->SetBorderEnabled(arg2);
+  {
+    try {
+      (arg1)->SetBorderEnabled(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -45453,7 +54850,15 @@ static int _wrap_PdfSimpleTableModel_SetBorderWidth(lua_State* L) {
   }
   
   arg2 = (double)lua_tonumber(L, 2);
-  (arg1)->SetBorderWidth(arg2);
+  {
+    try {
+      (arg1)->SetBorderWidth(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -45489,7 +54894,15 @@ static int _wrap_PdfSimpleTableModel_SetText(lua_State* L) {
     SWIG_fail_ptr("PdfSimpleTableModel_SetText",4,SWIGTYPE_p_PoDoFo__PdfString);
   }
   
-  (arg1)->SetText(arg2,arg3,(PoDoFo::PdfString const &)*arg4);
+  {
+    try {
+      (arg1)->SetText(arg2,arg3,(PoDoFo::PdfString const &)*arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -45519,7 +54932,15 @@ static int _wrap_PdfSimpleTableModel_GetText(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = ((PoDoFo::PdfSimpleTableModel const *)arg1)->GetText(arg2,arg3);
+  {
+    try {
+      result = ((PoDoFo::PdfSimpleTableModel const *)arg1)->GetText(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfString * resultptr = new PoDoFo::PdfString((const PoDoFo::PdfString &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfString,1); SWIG_arg++;
@@ -45552,7 +54973,15 @@ static int _wrap_PdfSimpleTableModel_GetAlignment(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = (PoDoFo::EPdfAlignment)((PoDoFo::PdfSimpleTableModel const *)arg1)->GetAlignment(arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::EPdfAlignment)((PoDoFo::PdfSimpleTableModel const *)arg1)->GetAlignment(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
   return SWIG_arg;
   
@@ -45582,7 +55011,15 @@ static int _wrap_PdfSimpleTableModel_GetVerticalAlignment(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = (PoDoFo::EPdfVerticalAlignment)((PoDoFo::PdfSimpleTableModel const *)arg1)->GetVerticalAlignment(arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::EPdfVerticalAlignment)((PoDoFo::PdfSimpleTableModel const *)arg1)->GetVerticalAlignment(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
   return SWIG_arg;
   
@@ -45612,7 +55049,15 @@ static int _wrap_PdfSimpleTableModel_GetFont(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = (PoDoFo::PdfFont *)((PoDoFo::PdfSimpleTableModel const *)arg1)->GetFont(arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfFont *)((PoDoFo::PdfSimpleTableModel const *)arg1)->GetFont(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfFont,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -45642,7 +55087,15 @@ static int _wrap_PdfSimpleTableModel_HasBackgroundColor(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = (bool)((PoDoFo::PdfSimpleTableModel const *)arg1)->HasBackgroundColor(arg2,arg3);
+  {
+    try {
+      result = (bool)((PoDoFo::PdfSimpleTableModel const *)arg1)->HasBackgroundColor(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -45672,7 +55125,15 @@ static int _wrap_PdfSimpleTableModel_GetBackgroundColor(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = ((PoDoFo::PdfSimpleTableModel const *)arg1)->GetBackgroundColor(arg2,arg3);
+  {
+    try {
+      result = ((PoDoFo::PdfSimpleTableModel const *)arg1)->GetBackgroundColor(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfColor * resultptr = new PoDoFo::PdfColor((const PoDoFo::PdfColor &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfColor,1); SWIG_arg++;
@@ -45705,7 +55166,15 @@ static int _wrap_PdfSimpleTableModel_GetForegroundColor(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = ((PoDoFo::PdfSimpleTableModel const *)arg1)->GetForegroundColor(arg2,arg3);
+  {
+    try {
+      result = ((PoDoFo::PdfSimpleTableModel const *)arg1)->GetForegroundColor(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfColor * resultptr = new PoDoFo::PdfColor((const PoDoFo::PdfColor &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfColor,1); SWIG_arg++;
@@ -45738,7 +55207,15 @@ static int _wrap_PdfSimpleTableModel_HasWordWrap(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = (bool)((PoDoFo::PdfSimpleTableModel const *)arg1)->HasWordWrap(arg2,arg3);
+  {
+    try {
+      result = (bool)((PoDoFo::PdfSimpleTableModel const *)arg1)->HasWordWrap(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -45762,7 +55239,15 @@ static int _wrap_PdfSimpleTableModel_HasBorders(lua_State* L) {
     SWIG_fail_ptr("PdfSimpleTableModel_HasBorders",1,SWIGTYPE_p_PoDoFo__PdfSimpleTableModel);
   }
   
-  result = (bool)((PoDoFo::PdfSimpleTableModel const *)arg1)->HasBorders();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfSimpleTableModel const *)arg1)->HasBorders();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -45786,7 +55271,15 @@ static int _wrap_PdfSimpleTableModel_GetBorderWidth(lua_State* L) {
     SWIG_fail_ptr("PdfSimpleTableModel_GetBorderWidth",1,SWIGTYPE_p_PoDoFo__PdfSimpleTableModel);
   }
   
-  result = (double)((PoDoFo::PdfSimpleTableModel const *)arg1)->GetBorderWidth();
+  {
+    try {
+      result = (double)((PoDoFo::PdfSimpleTableModel const *)arg1)->GetBorderWidth();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -45816,7 +55309,15 @@ static int _wrap_PdfSimpleTableModel_GetBorderColor(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = ((PoDoFo::PdfSimpleTableModel const *)arg1)->GetBorderColor(arg2,arg3);
+  {
+    try {
+      result = ((PoDoFo::PdfSimpleTableModel const *)arg1)->GetBorderColor(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   {
     PoDoFo::PdfColor * resultptr = new PoDoFo::PdfColor((const PoDoFo::PdfColor &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PoDoFo__PdfColor,1); SWIG_arg++;
@@ -45849,7 +55350,15 @@ static int _wrap_PdfSimpleTableModel_HasImage(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = (bool)((PoDoFo::PdfSimpleTableModel const *)arg1)->HasImage(arg2,arg3);
+  {
+    try {
+      result = (bool)((PoDoFo::PdfSimpleTableModel const *)arg1)->HasImage(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -45879,7 +55388,15 @@ static int _wrap_PdfSimpleTableModel_GetImage(lua_State* L) {
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = (PoDoFo::PdfImage *)((PoDoFo::PdfSimpleTableModel const *)arg1)->GetImage(arg2,arg3);
+  {
+    try {
+      result = (PoDoFo::PdfImage *)((PoDoFo::PdfSimpleTableModel const *)arg1)->GetImage(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfImage,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -45971,7 +55488,15 @@ static int _wrap_new_PdfTable(lua_State* L) {
   if(!lua_isnumber(L,2)) SWIG_fail_arg("PoDoFo::PdfTable::PdfTable",2,"int");
   arg1 = (int)lua_tonumber(L, 1);
   arg2 = (int)lua_tonumber(L, 2);
-  result = (PoDoFo::PdfTable *)new PoDoFo::PdfTable(arg1,arg2);
+  {
+    try {
+      result = (PoDoFo::PdfTable *)new PoDoFo::PdfTable(arg1,arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfTable,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -46028,7 +55553,15 @@ static int _wrap_PdfTable_Draw__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("PdfTable_Draw",7,SWIGTYPE_p_double);
   }
   
-  (arg1)->Draw(arg2,arg3,arg4,(PoDoFo::PdfRect const &)*arg5,arg6,arg7);
+  {
+    try {
+      (arg1)->Draw(arg2,arg3,arg4,(PoDoFo::PdfRect const &)*arg5,arg6,arg7);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -46078,7 +55611,15 @@ static int _wrap_PdfTable_Draw__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfTable_Draw",6,SWIGTYPE_p_double);
   }
   
-  (arg1)->Draw(arg2,arg3,arg4,(PoDoFo::PdfRect const &)*arg5,arg6);
+  {
+    try {
+      (arg1)->Draw(arg2,arg3,arg4,(PoDoFo::PdfRect const &)*arg5,arg6);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -46121,7 +55662,15 @@ static int _wrap_PdfTable_Draw__SWIG_2(lua_State* L) {
     SWIG_fail_ptr("PdfTable_Draw",5,SWIGTYPE_p_PoDoFo__PdfRect);
   }
   
-  (arg1)->Draw(arg2,arg3,arg4,(PoDoFo::PdfRect const &)*arg5);
+  {
+    try {
+      (arg1)->Draw(arg2,arg3,arg4,(PoDoFo::PdfRect const &)*arg5);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -46157,7 +55706,15 @@ static int _wrap_PdfTable_Draw__SWIG_3(lua_State* L) {
     SWIG_fail_ptr("PdfTable_Draw",4,SWIGTYPE_p_PoDoFo__PdfPainter);
   }
   
-  (arg1)->Draw(arg2,arg3,arg4);
+  {
+    try {
+      (arg1)->Draw(arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -46408,7 +55965,15 @@ static int _wrap_PdfTable_GetWidth(lua_State* L) {
     SWIG_fail_ptr("PdfTable_GetWidth",4,SWIGTYPE_p_PoDoFo__PdfCanvas);
   }
   
-  result = (double)((PoDoFo::PdfTable const *)arg1)->GetWidth(arg2,arg3,arg4);
+  {
+    try {
+      result = (double)((PoDoFo::PdfTable const *)arg1)->GetWidth(arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -46445,7 +56010,15 @@ static int _wrap_PdfTable_GetHeight(lua_State* L) {
     SWIG_fail_ptr("PdfTable_GetHeight",4,SWIGTYPE_p_PoDoFo__PdfCanvas);
   }
   
-  result = (double)((PoDoFo::PdfTable const *)arg1)->GetHeight(arg2,arg3,arg4);
+  {
+    try {
+      result = (double)((PoDoFo::PdfTable const *)arg1)->GetHeight(arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -46475,7 +56048,15 @@ static int _wrap_PdfTable_SetModel(lua_State* L) {
     SWIG_fail_ptr("PdfTable_SetModel",2,SWIGTYPE_p_PoDoFo__PdfTableModel);
   }
   
-  (arg1)->SetModel(arg2);
+  {
+    try {
+      (arg1)->SetModel(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -46499,7 +56080,15 @@ static int _wrap_PdfTable_GetModel(lua_State* L) {
     SWIG_fail_ptr("PdfTable_GetModel",1,SWIGTYPE_p_PoDoFo__PdfTable);
   }
   
-  result = (PoDoFo::PdfTableModel *)((PoDoFo::PdfTable const *)arg1)->GetModel();
+  {
+    try {
+      result = (PoDoFo::PdfTableModel *)((PoDoFo::PdfTable const *)arg1)->GetModel();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfTableModel,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -46529,7 +56118,15 @@ static int _wrap_PdfTable_SetColumnWidths(lua_State* L) {
     SWIG_fail_ptr("PdfTable_SetColumnWidths",2,SWIGTYPE_p_double);
   }
   
-  (arg1)->SetColumnWidths(arg2);
+  {
+    try {
+      (arg1)->SetColumnWidths(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -46559,7 +56156,15 @@ static int _wrap_PdfTable_SetRowHeights(lua_State* L) {
     SWIG_fail_ptr("PdfTable_SetRowHeights",2,SWIGTYPE_p_double);
   }
   
-  (arg1)->SetRowHeights(arg2);
+  {
+    try {
+      (arg1)->SetRowHeights(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -46585,7 +56190,15 @@ static int _wrap_PdfTable_SetColumnWidth(lua_State* L) {
   }
   
   arg2 = (double)lua_tonumber(L, 2);
-  (arg1)->SetColumnWidth(arg2);
+  {
+    try {
+      (arg1)->SetColumnWidth(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -46611,7 +56224,15 @@ static int _wrap_PdfTable_SetRowHeight(lua_State* L) {
   }
   
   arg2 = (double)lua_tonumber(L, 2);
-  (arg1)->SetRowHeight(arg2);
+  {
+    try {
+      (arg1)->SetRowHeight(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -46637,7 +56258,15 @@ static int _wrap_PdfTable_SetTableWidth(lua_State* L) {
   }
   
   arg2 = (double)lua_tonumber(L, 2);
-  (arg1)->SetTableWidth(arg2);
+  {
+    try {
+      (arg1)->SetTableWidth(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -46663,7 +56292,15 @@ static int _wrap_PdfTable_SetTableHeight(lua_State* L) {
   }
   
   arg2 = (double)lua_tonumber(L, 2);
-  (arg1)->SetTableHeight(arg2);
+  {
+    try {
+      (arg1)->SetTableHeight(arg2);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -46699,7 +56336,15 @@ static int _wrap_PdfTable_SetAutoPageBreak__SWIG_0(lua_State* L) {
   }
   
   arg4=(void *)SWIG_MustGetPtr(L,4,0,0,4,"PdfTable_SetAutoPageBreak");
-  (arg1)->SetAutoPageBreak(arg2,arg3,arg4);
+  {
+    try {
+      (arg1)->SetAutoPageBreak(arg2,arg3,arg4);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -46732,7 +56377,15 @@ static int _wrap_PdfTable_SetAutoPageBreak__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("PdfTable_SetAutoPageBreak",3,SWIGTYPE_p_f_r_PoDoFo__PdfRect_p_void__p_PoDoFo__PdfPage);
   }
   
-  (arg1)->SetAutoPageBreak(arg2,arg3);
+  {
+    try {
+      (arg1)->SetAutoPageBreak(arg2,arg3);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   
   return SWIG_arg;
   
@@ -46840,7 +56493,15 @@ static int _wrap_PdfTable_GetAutoPageBreak(lua_State* L) {
     SWIG_fail_ptr("PdfTable_GetAutoPageBreak",1,SWIGTYPE_p_PoDoFo__PdfTable);
   }
   
-  result = (bool)((PoDoFo::PdfTable const *)arg1)->GetAutoPageBreak();
+  {
+    try {
+      result = (bool)((PoDoFo::PdfTable const *)arg1)->GetAutoPageBreak();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -46864,7 +56525,15 @@ static int _wrap_PdfTable_GetCols(lua_State* L) {
     SWIG_fail_ptr("PdfTable_GetCols",1,SWIGTYPE_p_PoDoFo__PdfTable);
   }
   
-  result = (int)((PoDoFo::PdfTable const *)arg1)->GetCols();
+  {
+    try {
+      result = (int)((PoDoFo::PdfTable const *)arg1)->GetCols();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -46888,7 +56557,15 @@ static int _wrap_PdfTable_GetRows(lua_State* L) {
     SWIG_fail_ptr("PdfTable_GetRows",1,SWIGTYPE_p_PoDoFo__PdfTable);
   }
   
-  result = (int)((PoDoFo::PdfTable const *)arg1)->GetRows();
+  {
+    try {
+      result = (int)((PoDoFo::PdfTable const *)arg1)->GetRows();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -46974,7 +56651,15 @@ static int _wrap_PdfTilingPattern_GetIdentifier(lua_State* L) {
     SWIG_fail_ptr("PdfTilingPattern_GetIdentifier",1,SWIGTYPE_p_PoDoFo__PdfTilingPattern);
   }
   
-  result = (PoDoFo::PdfName *) &((PoDoFo::PdfTilingPattern const *)arg1)->GetIdentifier();
+  {
+    try {
+      result = (PoDoFo::PdfName *) &((PoDoFo::PdfTilingPattern const *)arg1)->GetIdentifier();
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfName,0); SWIG_arg++; 
   return SWIG_arg;
   
@@ -47035,7 +56720,15 @@ static int _wrap_new_PdfTilingPattern__SWIG_0(lua_State* L) {
     SWIG_fail_ptr("new_PdfTilingPattern",12,SWIGTYPE_p_PoDoFo__PdfVecObjects);
   }
   
-  result = (PoDoFo::PdfTilingPattern *)new PoDoFo::PdfTilingPattern(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12);
+  {
+    try {
+      result = (PoDoFo::PdfTilingPattern *)new PoDoFo::PdfTilingPattern(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfTilingPattern,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -47096,7 +56789,15 @@ static int _wrap_new_PdfTilingPattern__SWIG_1(lua_State* L) {
     SWIG_fail_ptr("new_PdfTilingPattern",12,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  result = (PoDoFo::PdfTilingPattern *)new PoDoFo::PdfTilingPattern(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12);
+  {
+    try {
+      result = (PoDoFo::PdfTilingPattern *)new PoDoFo::PdfTilingPattern(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12);
+    }
+    catch (PoDoFo::PdfError e) {
+      e.PrintErrorMsg();
+      return 0;
+    }
+  }
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_PoDoFo__PdfTilingPattern,1); SWIG_arg++; 
   return SWIG_arg;
   
@@ -47560,6 +57261,64 @@ static swig_lua_const_info swig_SwigModule_constants[]= {
     {SWIG_LUA_CONSTTAB_INT("PDF_STRING_BUFFER_SIZE", 24)},
     {SWIG_LUA_CONSTTAB_INT("ePdfStringConversion_Strict", PoDoFo::ePdfStringConversion_Strict)},
     {SWIG_LUA_CONSTTAB_INT("ePdfStringConversion_Lenient", PoDoFo::ePdfStringConversion_Lenient)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_ErrOk", PoDoFo::ePdfError_ErrOk)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_TestFailed", PoDoFo::ePdfError_TestFailed)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_InvalidHandle", PoDoFo::ePdfError_InvalidHandle)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_FileNotFound", PoDoFo::ePdfError_FileNotFound)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_InvalidDeviceOperation", PoDoFo::ePdfError_InvalidDeviceOperation)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_UnexpectedEOF", PoDoFo::ePdfError_UnexpectedEOF)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_OutOfMemory", PoDoFo::ePdfError_OutOfMemory)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_ValueOutOfRange", PoDoFo::ePdfError_ValueOutOfRange)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_InternalLogic", PoDoFo::ePdfError_InternalLogic)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_InvalidEnumValue", PoDoFo::ePdfError_InvalidEnumValue)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_PageNotFound", PoDoFo::ePdfError_PageNotFound)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_NoPdfFile", PoDoFo::ePdfError_NoPdfFile)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_NoXRef", PoDoFo::ePdfError_NoXRef)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_NoTrailer", PoDoFo::ePdfError_NoTrailer)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_NoNumber", PoDoFo::ePdfError_NoNumber)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_NoObject", PoDoFo::ePdfError_NoObject)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_NoEOFToken", PoDoFo::ePdfError_NoEOFToken)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_InvalidTrailerSize", PoDoFo::ePdfError_InvalidTrailerSize)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_InvalidLinearization", PoDoFo::ePdfError_InvalidLinearization)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_InvalidDataType", PoDoFo::ePdfError_InvalidDataType)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_InvalidXRef", PoDoFo::ePdfError_InvalidXRef)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_InvalidXRefStream", PoDoFo::ePdfError_InvalidXRefStream)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_InvalidXRefType", PoDoFo::ePdfError_InvalidXRefType)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_InvalidPredictor", PoDoFo::ePdfError_InvalidPredictor)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_InvalidStrokeStyle", PoDoFo::ePdfError_InvalidStrokeStyle)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_InvalidHexString", PoDoFo::ePdfError_InvalidHexString)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_InvalidStream", PoDoFo::ePdfError_InvalidStream)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_InvalidStreamLength", PoDoFo::ePdfError_InvalidStreamLength)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_InvalidKey", PoDoFo::ePdfError_InvalidKey)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_InvalidName", PoDoFo::ePdfError_InvalidName)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_InvalidEncryptionDict", PoDoFo::ePdfError_InvalidEncryptionDict)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_InvalidPassword", PoDoFo::ePdfError_InvalidPassword)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_InvalidFontFile", PoDoFo::ePdfError_InvalidFontFile)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_InvalidContentStream", PoDoFo::ePdfError_InvalidContentStream)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_UnsupportedFilter", PoDoFo::ePdfError_UnsupportedFilter)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_UnsupportedFontFormat", PoDoFo::ePdfError_UnsupportedFontFormat)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_ActionAlreadyPresent", PoDoFo::ePdfError_ActionAlreadyPresent)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_WrongDestinationType", PoDoFo::ePdfError_WrongDestinationType)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_MissingEndStream", PoDoFo::ePdfError_MissingEndStream)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_Date", PoDoFo::ePdfError_Date)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_Flate", PoDoFo::ePdfError_Flate)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_FreeType", PoDoFo::ePdfError_FreeType)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_SignatureError", PoDoFo::ePdfError_SignatureError)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_MutexError", PoDoFo::ePdfError_MutexError)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_UnsupportedImageFormat", PoDoFo::ePdfError_UnsupportedImageFormat)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_CannotConvertColor", PoDoFo::ePdfError_CannotConvertColor)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_NotImplemented", PoDoFo::ePdfError_NotImplemented)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_DestinationAlreadyPresent", PoDoFo::ePdfError_DestinationAlreadyPresent)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_ChangeOnImmutable", PoDoFo::ePdfError_ChangeOnImmutable)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_NotCompiled", PoDoFo::ePdfError_NotCompiled)},
+    {SWIG_LUA_CONSTTAB_INT("ePdfError_Unknown", PoDoFo::ePdfError_Unknown)},
+    {SWIG_LUA_CONSTTAB_INT("eLogSeverity_Critical", PoDoFo::eLogSeverity_Critical)},
+    {SWIG_LUA_CONSTTAB_INT("eLogSeverity_Error", PoDoFo::eLogSeverity_Error)},
+    {SWIG_LUA_CONSTTAB_INT("eLogSeverity_Warning", PoDoFo::eLogSeverity_Warning)},
+    {SWIG_LUA_CONSTTAB_INT("eLogSeverity_Information", PoDoFo::eLogSeverity_Information)},
+    {SWIG_LUA_CONSTTAB_INT("eLogSeverity_Debug", PoDoFo::eLogSeverity_Debug)},
+    {SWIG_LUA_CONSTTAB_INT("eLogSeverity_None", PoDoFo::eLogSeverity_None)},
+    {SWIG_LUA_CONSTTAB_INT("eLogSeverity_Unknown", PoDoFo::eLogSeverity_Unknown)},
     {SWIG_LUA_CONSTTAB_INT("PdfCMapEncoding_eBaseEncoding_Font", PoDoFo::PdfCMapEncoding::eBaseEncoding_Font)},
     {SWIG_LUA_CONSTTAB_INT("PdfCMapEncoding_eBaseEncoding_WinAnsi", PoDoFo::PdfCMapEncoding::eBaseEncoding_WinAnsi)},
     {SWIG_LUA_CONSTTAB_INT("PdfCMapEncoding_eBaseEncoding_MacRoman", PoDoFo::PdfCMapEncoding::eBaseEncoding_MacRoman)},
@@ -47642,6 +57401,15 @@ static swig_lua_method swig_SwigModule_methods[]= {
     { "PdfCanvas_GetProcSet", _wrap_PdfCanvas_GetProcSet},
     { "PdfString_ConvertUTF8toUTF16", _wrap_PdfString_ConvertUTF8toUTF16},
     { "PdfString_ConvertUTF16toUTF8", _wrap_PdfString_ConvertUTF16toUTF8},
+    { "PdfError_SetLogMessageCallback", _wrap_PdfError_SetLogMessageCallback},
+    { "PdfError_ErrorName", _wrap_PdfError_ErrorName},
+    { "PdfError_ErrorMessage", _wrap_PdfError_ErrorMessage},
+    { "PdfError_LogMessage", _wrap_PdfError_LogMessage},
+    { "PdfError_EnableLogging", _wrap_PdfError_EnableLogging},
+    { "PdfError_LoggingEnabled", _wrap_PdfError_LoggingEnabled},
+    { "PdfError_DebugMessage", _wrap_PdfError_DebugMessage},
+    { "PdfError_EnableDebug", _wrap_PdfError_EnableDebug},
+    { "PdfError_DebugEnabled", _wrap_PdfError_DebugEnabled},
     { "PdfDifferenceEncoding_NameToUnicodeID", _wrap_PdfDifferenceEncoding_NameToUnicodeID},
     { "PdfDifferenceEncoding_UnicodeIDToName", _wrap_PdfDifferenceEncoding_UnicodeIDToName},
     { "PdfEncodingObjectFactory_CreateEncoding", _wrap_PdfEncodingObjectFactory_CreateEncoding},
@@ -47649,7 +57417,6 @@ static swig_lua_method swig_SwigModule_methods[]= {
     { "PdfFontFactory_CreateFont", _wrap_PdfFontFactory_CreateFont},
     { "PdfFontFactory_CreateBase14Font", _wrap_PdfFontFactory_CreateBase14Font},
     { "PdfFontFactory_GetFontType", _wrap_PdfFontFactory_GetFontType},
-    { "PdfFontMetrics_FontTypeFromFilename", _wrap_PdfFontMetrics_FontTypeFromFilename},
     { "PdfImage_GetSupportedFormats", _wrap_PdfImage_GetSupportedFormats},
     { "PdfNamesTree_CheckLimits", _wrap_PdfNamesTree_CheckLimits},
     { "PdfPage_CreateStandardPageSize", _wrap_PdfPage_CreateStandardPageSize},
@@ -47664,6 +57431,8 @@ static swig_lua_class* swig_SwigModule_classes[]= {
 &_wrap_class_PdfCanvas,
 &_wrap_class_PdfRect,
 &_wrap_class_PdfString,
+&_wrap_class_PdfErrorInfo,
+&_wrap_class_PdfError,
 &_wrap_class_PdfCMapEncoding,
 &_wrap_class_PdfContents,
 &_wrap_class_PdfEncodingDifference,
@@ -47687,7 +57456,6 @@ static swig_lua_class* swig_SwigModule_classes[]= {
 &_wrap_class_PdfFontConfigWrapper,
 &_wrap_class_PdfFontFactory,
 &_wrap_class_PODOFO_CharData,
-&_wrap_class_PdfFontMetrics,
 &_wrap_class_PdfFontSimple,
 &_wrap_class_PdfFontTTFSubset,
 &_wrap_class_PdfFunction,
@@ -47699,6 +57467,8 @@ static swig_lua_class* swig_SwigModule_classes[]= {
 &_wrap_class_PdfXObject,
 &_wrap_class_PdfImage,
 &_wrap_class_PdfInfo,
+&_wrap_class_PdfStreamedDocument,
+&_wrap_class_PdfMemDocument,
 &_wrap_class_PdfNamesTree,
 &_wrap_class_PdfOutlineItem,
 &_wrap_class_PdfOutlines,
@@ -47716,7 +57486,6 @@ static swig_lua_class* swig_SwigModule_classes[]= {
 &_wrap_class_PdfSigIncPainter,
 &_wrap_class_PdfSignOutputDevice,
 &_wrap_class_PdfSignatureField,
-&_wrap_class_PdfStreamedDocument,
 &_wrap_class_PdfTableModel,
 &_wrap_class_PdfSimpleTableModel,
 &_wrap_class_PdfTable,
@@ -47834,6 +57603,9 @@ static void *_p_PoDoFo__PdfActionTo_p_PoDoFo__PdfElement(void *x, int *SWIGUNUSE
 static void *_p_PoDoFo__PdfStreamedDocumentTo_p_PoDoFo__PdfDocument(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((PoDoFo::PdfDocument *)  ((PoDoFo::PdfStreamedDocument *) x));
 }
+static void *_p_PoDoFo__PdfMemDocumentTo_p_PoDoFo__PdfDocument(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((PoDoFo::PdfDocument *)  ((PoDoFo::PdfMemDocument *) x));
+}
 static void *_p_PoDoFo__PdfImageTo_p_PoDoFo__PdfXObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((PoDoFo::PdfXObject *)  ((PoDoFo::PdfImage *) x));
 }
@@ -47935,6 +57707,7 @@ static swig_type_info _swigt__p_PdfFontMetrics = {"_p_PdfFontMetrics", "PdfFontM
 static swig_type_info _swigt__p_PdfFontMetricsBase14 = {"_p_PdfFontMetricsBase14", "PdfFontMetricsBase14 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_PdfObject = {"_p_PdfObject", "PdfObject *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_PdfRefCountedBuffer = {"_p_PdfRefCountedBuffer", "PdfRefCountedBuffer *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_PdfRefCountedInputDevice = {"_p_PdfRefCountedInputDevice", "PdfRefCountedInputDevice *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_PdfStream = {"_p_PdfStream", "PdfStream *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_PoDoFo__NonPublic__PdfHintStream = {"_p_PoDoFo__NonPublic__PdfHintStream", "PoDoFo::NonPublic::PdfHintStream *", 0, 0, (void*)&_wrap_class_PdfHintStream, 0};
 static swig_type_info _swigt__p_PoDoFo__PODOFO_CharData = {"_p_PoDoFo__PODOFO_CharData", "PoDoFo::PODOFO_CharData *", 0, 0, (void*)&_wrap_class_PODOFO_CharData, 0};
@@ -47958,6 +57731,12 @@ static swig_type_info _swigt__p_PoDoFo__PdfElement = {"_p_PoDoFo__PdfElement", "
 static swig_type_info _swigt__p_PoDoFo__PdfEncoding = {"_p_PoDoFo__PdfEncoding", "PoDoFo::PdfEncoding *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_PoDoFo__PdfEncodingDifference = {"_p_PoDoFo__PdfEncodingDifference", "PoDoFo::PdfEncodingDifference *", 0, 0, (void*)&_wrap_class_PdfEncodingDifference, 0};
 static swig_type_info _swigt__p_PoDoFo__PdfEncodingObjectFactory = {"_p_PoDoFo__PdfEncodingObjectFactory", "PoDoFo::PdfEncodingObjectFactory *", 0, 0, (void*)&_wrap_class_PdfEncodingObjectFactory, 0};
+static swig_type_info _swigt__p_PoDoFo__PdfEncrypt = {"_p_PoDoFo__PdfEncrypt", "PoDoFo::PdfEncrypt *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_PoDoFo__PdfEncrypt__EPdfEncryptAlgorithm = {"_p_PoDoFo__PdfEncrypt__EPdfEncryptAlgorithm", "PoDoFo::PdfEncrypt::EPdfEncryptAlgorithm *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_PoDoFo__PdfEncrypt__EPdfKeyLength = {"_p_PoDoFo__PdfEncrypt__EPdfKeyLength", "PoDoFo::PdfEncrypt::EPdfKeyLength *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_PoDoFo__PdfError = {"_p_PoDoFo__PdfError", "PoDoFo::PdfError *", 0, 0, (void*)&_wrap_class_PdfError, 0};
+static swig_type_info _swigt__p_PoDoFo__PdfErrorInfo = {"_p_PoDoFo__PdfErrorInfo", "PoDoFo::PdfErrorInfo *", 0, 0, (void*)&_wrap_class_PdfErrorInfo, 0};
+static swig_type_info _swigt__p_PoDoFo__PdfError__LogMessageCallback = {"_p_PoDoFo__PdfError__LogMessageCallback", "PoDoFo::PdfError::LogMessageCallback *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_PoDoFo__PdfExponentialFunction = {"_p_PoDoFo__PdfExponentialFunction", "PoDoFo::PdfExponentialFunction *", 0, 0, (void*)&_wrap_class_PdfExponentialFunction, 0};
 static swig_type_info _swigt__p_PoDoFo__PdfExtGState = {"_p_PoDoFo__PdfExtGState", "PoDoFo::PdfExtGState *", 0, 0, (void*)&_wrap_class_PdfExtGState, 0};
 static swig_type_info _swigt__p_PoDoFo__PdfField = {"_p_PoDoFo__PdfField", "PoDoFo::PdfField *", 0, 0, (void*)&_wrap_class_PdfField, 0};
@@ -47967,7 +57746,7 @@ static swig_type_info _swigt__p_PoDoFo__PdfFontCID = {"_p_PoDoFo__PdfFontCID", "
 static swig_type_info _swigt__p_PoDoFo__PdfFontCache = {"_p_PoDoFo__PdfFontCache", "PoDoFo::PdfFontCache *", 0, 0, (void*)&_wrap_class_PdfFontCache, 0};
 static swig_type_info _swigt__p_PoDoFo__PdfFontConfigWrapper = {"_p_PoDoFo__PdfFontConfigWrapper", "PoDoFo::PdfFontConfigWrapper *", 0, 0, (void*)&_wrap_class_PdfFontConfigWrapper, 0};
 static swig_type_info _swigt__p_PoDoFo__PdfFontFactory = {"_p_PoDoFo__PdfFontFactory", "PoDoFo::PdfFontFactory *", 0, 0, (void*)&_wrap_class_PdfFontFactory, 0};
-static swig_type_info _swigt__p_PoDoFo__PdfFontMetrics = {"_p_PoDoFo__PdfFontMetrics", "PoDoFo::PdfFontMetrics *", 0, 0, (void*)&_wrap_class_PdfFontMetrics, 0};
+static swig_type_info _swigt__p_PoDoFo__PdfFontMetrics = {"_p_PoDoFo__PdfFontMetrics", "PoDoFo::PdfFontMetrics *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_PoDoFo__PdfFontSimple = {"_p_PoDoFo__PdfFontSimple", "PoDoFo::PdfFontSimple *", 0, 0, (void*)&_wrap_class_PdfFontSimple, 0};
 static swig_type_info _swigt__p_PoDoFo__PdfFontTTFSubset = {"_p_PoDoFo__PdfFontTTFSubset", "PoDoFo::PdfFontTTFSubset *", 0, 0, (void*)&_wrap_class_PdfFontTTFSubset, 0};
 static swig_type_info _swigt__p_PoDoFo__PdfFunction = {"_p_PoDoFo__PdfFunction", "PoDoFo::PdfFunction *", 0, 0, (void*)&_wrap_class_PdfFunction, 0};
@@ -47979,7 +57758,7 @@ static swig_type_info _swigt__p_PoDoFo__PdfInputDevice = {"_p_PoDoFo__PdfInputDe
 static swig_type_info _swigt__p_PoDoFo__PdfInputStream = {"_p_PoDoFo__PdfInputStream", "PoDoFo::PdfInputStream *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_PoDoFo__PdfListBox = {"_p_PoDoFo__PdfListBox", "PoDoFo::PdfListBox *", 0, 0, (void*)&_wrap_class_PdfListBox, 0};
 static swig_type_info _swigt__p_PoDoFo__PdfListField = {"_p_PoDoFo__PdfListField", "PoDoFo::PdfListField *", 0, 0, (void*)&_wrap_class_PdfListField, 0};
-static swig_type_info _swigt__p_PoDoFo__PdfMemDocument = {"_p_PoDoFo__PdfMemDocument", "PoDoFo::PdfMemDocument *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_PoDoFo__PdfMemDocument = {"_p_PoDoFo__PdfMemDocument", "PoDoFo::PdfMemDocument *", 0, 0, (void*)&_wrap_class_PdfMemDocument, 0};
 static swig_type_info _swigt__p_PoDoFo__PdfName = {"_p_PoDoFo__PdfName", "PoDoFo::PdfName *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_PoDoFo__PdfNamesTree = {"_p_PoDoFo__PdfNamesTree", "PoDoFo::PdfNamesTree *", 0, 0, (void*)&_wrap_class_PdfNamesTree, 0};
 static swig_type_info _swigt__p_PoDoFo__PdfObject = {"_p_PoDoFo__PdfObject", "PoDoFo::PdfObject *", 0, 0, (void*)0, 0};
@@ -48029,6 +57808,9 @@ static swig_type_info _swigt__p_pdf_long = {"_p_pdf_long", "pdf_long *", 0, 0, (
 static swig_type_info _swigt__p_pdf_uint16 = {"_p_pdf_uint16", "pdf_uint16 *|PoDoFo::pdf_utf16be *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_pdf_uint32 = {"_p_pdf_uint32", "pdf_uint32 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_ptrdiff_t = {"_p_ptrdiff_t", "ptrdiff_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__dequeT_PoDoFo__PdfErrorInfo_t = {"_p_std__dequeT_PoDoFo__PdfErrorInfo_t", "PoDoFo::TDequeErrorInfo *|std::deque< PoDoFo::PdfErrorInfo > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__dequeT_PoDoFo__PdfErrorInfo_t__const_iterator = {"_p_std__dequeT_PoDoFo__PdfErrorInfo_t__const_iterator", "PoDoFo::TCIDequeErrorInfo *|std::deque< PoDoFo::PdfErrorInfo >::const_iterator *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__dequeT_PoDoFo__PdfErrorInfo_t__iterator = {"_p_std__dequeT_PoDoFo__PdfErrorInfo_t__iterator", "PoDoFo::TIDequeErrorInfo *|std::deque< PoDoFo::PdfErrorInfo >::iterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__dequeT_PoDoFo__PdfObject_p_t = {"_p_std__dequeT_PoDoFo__PdfObject_p_t", "std::deque< PoDoFo::PdfObject * > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__listT_PoDoFo__PdfFunction_t = {"_p_std__listT_PoDoFo__PdfFunction_t", "PoDoFo::PdfFunction::List *|std::list< PoDoFo::PdfFunction > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__listT_char_t = {"_p_std__listT_char_t", "std::list< char > *|PoDoFo::PdfFunction::Sample *", 0, 0, (void*)0, 0};
@@ -48037,10 +57819,12 @@ static swig_type_info _swigt__p_std__mapT_PoDoFo__PdfReference_PoDoFo__PdfAnnota
 static swig_type_info _swigt__p_std__mapT_PoDoFo__PdfReference_PoDoFo__PdfAnnotation_p_t__iterator = {"_p_std__mapT_PoDoFo__PdfReference_PoDoFo__PdfAnnotation_p_t__iterator", "std::map< PoDoFo::PdfReference,PoDoFo::PdfAnnotation * >::iterator *|PoDoFo::TIMapAnnotation *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__ostringstream = {"_p_std__ostringstream", "std::ostringstream *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__string = {"_p_std__string", "std::string *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__vectorT_PdfExtension_t = {"_p_std__vectorT_PdfExtension_t", "std::vector< PdfExtension > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_PoDoFo__PdfObject_p_t = {"_p_std__vectorT_PoDoFo__PdfObject_p_t", "std::vector< PoDoFo::PdfObject * > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_PoDoFo__PdfPage_p_t = {"_p_std__vectorT_PoDoFo__PdfPage_p_t", "std::vector< PoDoFo::PdfPage * > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_PoDoFo__PdfRect_t = {"_p_std__vectorT_PoDoFo__PdfRect_t", "std::vector< PoDoFo::PdfRect > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_PoDoFo__PdfString_t = {"_p_std__vectorT_PoDoFo__PdfString_t", "std::vector< PoDoFo::PdfString > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__wstring = {"_p_std__wstring", "std::wstring *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_char = {"_p_unsigned_char", "unsigned char *|PoDoFo::pdf_utf8 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_void = {"_p_void", "void *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_wchar_t = {"_p_wchar_t", "wchar_t *", 0, 0, (void*)0, 0};
@@ -48060,6 +57844,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_PdfFontMetricsBase14,
   &_swigt__p_PdfObject,
   &_swigt__p_PdfRefCountedBuffer,
+  &_swigt__p_PdfRefCountedInputDevice,
   &_swigt__p_PdfStream,
   &_swigt__p_PoDoFo__NonPublic__PdfHintStream,
   &_swigt__p_PoDoFo__PODOFO_CharData,
@@ -48083,6 +57868,12 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_PoDoFo__PdfEncoding,
   &_swigt__p_PoDoFo__PdfEncodingDifference,
   &_swigt__p_PoDoFo__PdfEncodingObjectFactory,
+  &_swigt__p_PoDoFo__PdfEncrypt,
+  &_swigt__p_PoDoFo__PdfEncrypt__EPdfEncryptAlgorithm,
+  &_swigt__p_PoDoFo__PdfEncrypt__EPdfKeyLength,
+  &_swigt__p_PoDoFo__PdfError,
+  &_swigt__p_PoDoFo__PdfErrorInfo,
+  &_swigt__p_PoDoFo__PdfError__LogMessageCallback,
   &_swigt__p_PoDoFo__PdfExponentialFunction,
   &_swigt__p_PoDoFo__PdfExtGState,
   &_swigt__p_PoDoFo__PdfField,
@@ -48154,6 +57945,9 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_pdf_uint16,
   &_swigt__p_pdf_uint32,
   &_swigt__p_ptrdiff_t,
+  &_swigt__p_std__dequeT_PoDoFo__PdfErrorInfo_t,
+  &_swigt__p_std__dequeT_PoDoFo__PdfErrorInfo_t__const_iterator,
+  &_swigt__p_std__dequeT_PoDoFo__PdfErrorInfo_t__iterator,
   &_swigt__p_std__dequeT_PoDoFo__PdfObject_p_t,
   &_swigt__p_std__listT_PoDoFo__PdfFunction_t,
   &_swigt__p_std__listT_char_t,
@@ -48162,10 +57956,12 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_std__mapT_PoDoFo__PdfReference_PoDoFo__PdfAnnotation_p_t__iterator,
   &_swigt__p_std__ostringstream,
   &_swigt__p_std__string,
+  &_swigt__p_std__vectorT_PdfExtension_t,
   &_swigt__p_std__vectorT_PoDoFo__PdfObject_p_t,
   &_swigt__p_std__vectorT_PoDoFo__PdfPage_p_t,
   &_swigt__p_std__vectorT_PoDoFo__PdfRect_t,
   &_swigt__p_std__vectorT_PoDoFo__PdfString_t,
+  &_swigt__p_std__wstring,
   &_swigt__p_unsigned_char,
   &_swigt__p_void,
   &_swigt__p_wchar_t,
@@ -48185,6 +57981,7 @@ static swig_cast_info _swigc__p_PdfFontMetrics[] = {  {&_swigt__p_PdfFontMetrics
 static swig_cast_info _swigc__p_PdfFontMetricsBase14[] = {  {&_swigt__p_PdfFontMetricsBase14, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PdfObject[] = {  {&_swigt__p_PdfObject, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PdfRefCountedBuffer[] = {  {&_swigt__p_PdfRefCountedBuffer, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_PdfRefCountedInputDevice[] = {  {&_swigt__p_PdfRefCountedInputDevice, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PdfStream[] = {  {&_swigt__p_PdfStream, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PoDoFo__NonPublic__PdfHintStream[] = {  {&_swigt__p_PoDoFo__NonPublic__PdfHintStream, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PoDoFo__PODOFO_CharData[] = {  {&_swigt__p_PoDoFo__PODOFO_CharData, 0, 0, 0},{0, 0, 0, 0}};
@@ -48203,11 +58000,17 @@ static swig_cast_info _swigc__p_PoDoFo__PdfContents[] = {  {&_swigt__p_PoDoFo__P
 static swig_cast_info _swigc__p_PoDoFo__PdfDestination[] = {  {&_swigt__p_PoDoFo__PdfDestination, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PoDoFo__PdfDictionary[] = {  {&_swigt__p_PoDoFo__PdfDictionary, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PoDoFo__PdfDifferenceEncoding[] = {  {&_swigt__p_PoDoFo__PdfDifferenceEncoding, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_PoDoFo__PdfDocument[] = {  {&_swigt__p_PoDoFo__PdfDocument, 0, 0, 0},  {&_swigt__p_PoDoFo__PdfStreamedDocument, _p_PoDoFo__PdfStreamedDocumentTo_p_PoDoFo__PdfDocument, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_PoDoFo__PdfDocument[] = {  {&_swigt__p_PoDoFo__PdfDocument, 0, 0, 0},  {&_swigt__p_PoDoFo__PdfStreamedDocument, _p_PoDoFo__PdfStreamedDocumentTo_p_PoDoFo__PdfDocument, 0, 0},  {&_swigt__p_PoDoFo__PdfMemDocument, _p_PoDoFo__PdfMemDocumentTo_p_PoDoFo__PdfDocument, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PoDoFo__PdfElement[] = {  {&_swigt__p_PoDoFo__PdfXObject, _p_PoDoFo__PdfXObjectTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfAnnotation, _p_PoDoFo__PdfAnnotationTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfNamesTree, _p_PoDoFo__PdfNamesTreeTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfPagesTree, _p_PoDoFo__PdfPagesTreeTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfOutlineItem, _p_PoDoFo__PdfOutlineItemTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfPage, _p_PoDoFo__PdfPageTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfContents, _p_PoDoFo__PdfContentsTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfFont, _p_PoDoFo__PdfFontTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfInfo, _p_PoDoFo__PdfInfoTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfRadialShadingPattern, _p_PoDoFo__PdfRadialShadingPatternTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfFunctionBaseShadingPattern, _p_PoDoFo__PdfFunctionBaseShadingPatternTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfAxialShadingPattern, _p_PoDoFo__PdfAxialShadingPatternTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfShadingPattern, _p_PoDoFo__PdfShadingPatternTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfTriangleShadingPattern, _p_PoDoFo__PdfTriangleShadingPatternTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfTilingPattern, _p_PoDoFo__PdfTilingPatternTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfFontSimple, _p_PoDoFo__PdfFontSimpleTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfOutlines, _p_PoDoFo__PdfOutlinesTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfExponentialFunction, _p_PoDoFo__PdfExponentialFunctionTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfSampledFunction, _p_PoDoFo__PdfSampledFunctionTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfFunction, _p_PoDoFo__PdfFunctionTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfStitchingFunction, _p_PoDoFo__PdfStitchingFunctionTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfDifferenceEncoding, _p_PoDoFo__PdfDifferenceEncodingTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfCMapEncoding, _p_PoDoFo__PdfCMapEncodingTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfExtGState, _p_PoDoFo__PdfExtGStateTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfImage, _p_PoDoFo__PdfImageTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__NonPublic__PdfHintStream, _p_PoDoFo__NonPublic__PdfHintStreamTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfFontCID, _p_PoDoFo__PdfFontCIDTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfFileSpec, _p_PoDoFo__PdfFileSpecTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfAcroForm, _p_PoDoFo__PdfAcroFormTo_p_PoDoFo__PdfElement, 0, 0},  {&_swigt__p_PoDoFo__PdfElement, 0, 0, 0},  {&_swigt__p_PoDoFo__PdfAction, _p_PoDoFo__PdfActionTo_p_PoDoFo__PdfElement, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PoDoFo__PdfEncoding[] = {  {&_swigt__p_PoDoFo__PdfEncoding, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PoDoFo__PdfEncodingDifference[] = {  {&_swigt__p_PoDoFo__PdfEncodingDifference, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PoDoFo__PdfEncodingObjectFactory[] = {  {&_swigt__p_PoDoFo__PdfEncodingObjectFactory, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_PoDoFo__PdfEncrypt[] = {  {&_swigt__p_PoDoFo__PdfEncrypt, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_PoDoFo__PdfEncrypt__EPdfEncryptAlgorithm[] = {  {&_swigt__p_PoDoFo__PdfEncrypt__EPdfEncryptAlgorithm, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_PoDoFo__PdfEncrypt__EPdfKeyLength[] = {  {&_swigt__p_PoDoFo__PdfEncrypt__EPdfKeyLength, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_PoDoFo__PdfError[] = {  {&_swigt__p_PoDoFo__PdfError, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_PoDoFo__PdfErrorInfo[] = {  {&_swigt__p_PoDoFo__PdfErrorInfo, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_PoDoFo__PdfError__LogMessageCallback[] = {  {&_swigt__p_PoDoFo__PdfError__LogMessageCallback, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PoDoFo__PdfExponentialFunction[] = {  {&_swigt__p_PoDoFo__PdfExponentialFunction, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PoDoFo__PdfExtGState[] = {  {&_swigt__p_PoDoFo__PdfExtGState, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PoDoFo__PdfField[] = {  {&_swigt__p_PoDoFo__PdfComboBox, _p_PoDoFo__PdfComboBoxTo_p_PoDoFo__PdfField, 0, 0},  {&_swigt__p_PoDoFo__PdfButton, _p_PoDoFo__PdfButtonTo_p_PoDoFo__PdfField, 0, 0},  {&_swigt__p_PoDoFo__PdfPushButton, _p_PoDoFo__PdfPushButtonTo_p_PoDoFo__PdfField, 0, 0},  {&_swigt__p_PoDoFo__PdfListBox, _p_PoDoFo__PdfListBoxTo_p_PoDoFo__PdfField, 0, 0},  {&_swigt__p_PoDoFo__PdfSignatureField, _p_PoDoFo__PdfSignatureFieldTo_p_PoDoFo__PdfField, 0, 0},  {&_swigt__p_PoDoFo__PdfListField, _p_PoDoFo__PdfListFieldTo_p_PoDoFo__PdfField, 0, 0},  {&_swigt__p_PoDoFo__PdfField, 0, 0, 0},  {&_swigt__p_PoDoFo__PdfTextField, _p_PoDoFo__PdfTextFieldTo_p_PoDoFo__PdfField, 0, 0},  {&_swigt__p_PoDoFo__PdfCheckBox, _p_PoDoFo__PdfCheckBoxTo_p_PoDoFo__PdfField, 0, 0},{0, 0, 0, 0}};
@@ -48279,6 +58082,9 @@ static swig_cast_info _swigc__p_pdf_long[] = {  {&_swigt__p_pdf_long, 0, 0, 0},{
 static swig_cast_info _swigc__p_pdf_uint16[] = {  {&_swigt__p_pdf_uint16, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pdf_uint32[] = {  {&_swigt__p_pdf_uint32, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_ptrdiff_t[] = {  {&_swigt__p_ptrdiff_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__dequeT_PoDoFo__PdfErrorInfo_t[] = {  {&_swigt__p_std__dequeT_PoDoFo__PdfErrorInfo_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__dequeT_PoDoFo__PdfErrorInfo_t__const_iterator[] = {  {&_swigt__p_std__dequeT_PoDoFo__PdfErrorInfo_t__const_iterator, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__dequeT_PoDoFo__PdfErrorInfo_t__iterator[] = {  {&_swigt__p_std__dequeT_PoDoFo__PdfErrorInfo_t__iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__dequeT_PoDoFo__PdfObject_p_t[] = {  {&_swigt__p_std__dequeT_PoDoFo__PdfObject_p_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__listT_PoDoFo__PdfFunction_t[] = {  {&_swigt__p_std__listT_PoDoFo__PdfFunction_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__listT_char_t[] = {  {&_swigt__p_std__listT_char_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -48287,10 +58093,12 @@ static swig_cast_info _swigc__p_std__mapT_PoDoFo__PdfReference_PoDoFo__PdfAnnota
 static swig_cast_info _swigc__p_std__mapT_PoDoFo__PdfReference_PoDoFo__PdfAnnotation_p_t__iterator[] = {  {&_swigt__p_std__mapT_PoDoFo__PdfReference_PoDoFo__PdfAnnotation_p_t__iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__ostringstream[] = {  {&_swigt__p_std__ostringstream, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__string[] = {  {&_swigt__p_std__string, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__vectorT_PdfExtension_t[] = {  {&_swigt__p_std__vectorT_PdfExtension_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_PoDoFo__PdfObject_p_t[] = {  {&_swigt__p_std__vectorT_PoDoFo__PdfObject_p_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_PoDoFo__PdfPage_p_t[] = {  {&_swigt__p_std__vectorT_PoDoFo__PdfPage_p_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_PoDoFo__PdfRect_t[] = {  {&_swigt__p_std__vectorT_PoDoFo__PdfRect_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_PoDoFo__PdfString_t[] = {  {&_swigt__p_std__vectorT_PoDoFo__PdfString_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__wstring[] = {  {&_swigt__p_std__wstring, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_char[] = {  {&_swigt__p_unsigned_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_void[] = {  {&_swigt__p_void, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_wchar_t[] = {  {&_swigt__p_wchar_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -48310,6 +58118,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_PdfFontMetricsBase14,
   _swigc__p_PdfObject,
   _swigc__p_PdfRefCountedBuffer,
+  _swigc__p_PdfRefCountedInputDevice,
   _swigc__p_PdfStream,
   _swigc__p_PoDoFo__NonPublic__PdfHintStream,
   _swigc__p_PoDoFo__PODOFO_CharData,
@@ -48333,6 +58142,12 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_PoDoFo__PdfEncoding,
   _swigc__p_PoDoFo__PdfEncodingDifference,
   _swigc__p_PoDoFo__PdfEncodingObjectFactory,
+  _swigc__p_PoDoFo__PdfEncrypt,
+  _swigc__p_PoDoFo__PdfEncrypt__EPdfEncryptAlgorithm,
+  _swigc__p_PoDoFo__PdfEncrypt__EPdfKeyLength,
+  _swigc__p_PoDoFo__PdfError,
+  _swigc__p_PoDoFo__PdfErrorInfo,
+  _swigc__p_PoDoFo__PdfError__LogMessageCallback,
   _swigc__p_PoDoFo__PdfExponentialFunction,
   _swigc__p_PoDoFo__PdfExtGState,
   _swigc__p_PoDoFo__PdfField,
@@ -48404,6 +58219,9 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_pdf_uint16,
   _swigc__p_pdf_uint32,
   _swigc__p_ptrdiff_t,
+  _swigc__p_std__dequeT_PoDoFo__PdfErrorInfo_t,
+  _swigc__p_std__dequeT_PoDoFo__PdfErrorInfo_t__const_iterator,
+  _swigc__p_std__dequeT_PoDoFo__PdfErrorInfo_t__iterator,
   _swigc__p_std__dequeT_PoDoFo__PdfObject_p_t,
   _swigc__p_std__listT_PoDoFo__PdfFunction_t,
   _swigc__p_std__listT_char_t,
@@ -48412,10 +58230,12 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_std__mapT_PoDoFo__PdfReference_PoDoFo__PdfAnnotation_p_t__iterator,
   _swigc__p_std__ostringstream,
   _swigc__p_std__string,
+  _swigc__p_std__vectorT_PdfExtension_t,
   _swigc__p_std__vectorT_PoDoFo__PdfObject_p_t,
   _swigc__p_std__vectorT_PoDoFo__PdfPage_p_t,
   _swigc__p_std__vectorT_PoDoFo__PdfRect_t,
   _swigc__p_std__vectorT_PoDoFo__PdfString_t,
+  _swigc__p_std__wstring,
   _swigc__p_unsigned_char,
   _swigc__p_void,
   _swigc__p_wchar_t,

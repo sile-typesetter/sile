@@ -47,7 +47,7 @@ AS_IF([test "x$with_harfbuzzpodofo" != xno -a "x$with_pangocairo" != xyes],
      AC_MSG_FAILURE(
        [--with-harfbuzzpodofo was given, but test for podofo failed])
    fi
-  ])
+  ], [$FONTCONFIG_LIBS $FREETYPE_LIBS -ljpeg -lpthread -lz])
    AC_LANG_POP([C++])
   ],
   [if test "x$with_harfbuzzpodofo" != xcheck; then
