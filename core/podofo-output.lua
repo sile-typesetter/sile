@@ -49,7 +49,7 @@ SILE.outputters.podofo = {
     cursorY = SILE.documentState.paperSize[2] - y
   end,
   rule = function (x,y,w,d)
-    painter:Rectangle(x,y,w,d)
+    painter:Rectangle(x,SILE.documentState.paperSize[2] - y,w,d)
     painter:Close()
     painter:Fill()
   end,
