@@ -6,6 +6,7 @@ local page
 local painter
 local pagesize
 local font
+local lastfont
 
 local cursorX = 0
 local cursorY = 0
@@ -38,6 +39,8 @@ SILE.outputters.podofo = {
     end
   end,
   setFont = function (options)
+    if SILE.font._key(options) == lastkey then return end
+    lastkey = SILE.font._key(options)
     font = document:CreateFont(options.font, options.weight > 200, options.style == "italic")
     font:SetFontSize(options.size)
     painter:SetFont(font)

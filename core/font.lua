@@ -28,6 +28,12 @@ SILE.settings.declare({name = "font.style", type = "string", default = "normal"}
 
 SILE.settings.declare({name = "document.language", type = "string", default = "en"})
 
+SILE.fontCache = {}
+
+local _key = function(options)
+  return table.concat({options.font;options.size;options.weight;options.style;options.variant},";")
+end
+
 
 SILE.font = {loadDefaults = function(options)
   if not options.font then options.font = SILE.settings.get("font.family") end
@@ -37,5 +43,9 @@ SILE.font = {loadDefaults = function(options)
   if not options.variant then options.variant = SILE.settings.get("font.variant") end
   if not options.language then options.language = SILE.settings.get("document.language") end
   return options
-end
+end,
+  cache = function(options, callback)
+    -- if not SILE.fontCache[_key(options)]
+  end,
+  _key = _key
 }
