@@ -113,7 +113,7 @@ AC_CONFIG_FILES([Makefile src/Makefile])
 AC_CONFIG_FILES([sile], [chmod +x sile])
 
 # Configure list of data files
-echo 'subdir_files = \\' > subfiles.mk
+echo 'subdir_files = \' > subfiles.mk
 find core classes languages packages -type f -print | sed 's/^/  /;$q;s/$/ \\/' >> subfiles.mk
 
 
