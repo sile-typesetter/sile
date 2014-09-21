@@ -2624,143 +2624,142 @@ SWIG_Lua_dostring(lua_State *L, const char *str) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define SWIGTYPE_p_FT_Face swig_types[0]
-#define SWIGTYPE_p_FT_Library swig_types[1]
-#define SWIGTYPE_p_List swig_types[2]
-#define SWIGTYPE_p_PdfArray swig_types[3]
-#define SWIGTYPE_p_PdfData swig_types[4]
-#define SWIGTYPE_p_PdfDate swig_types[5]
-#define SWIGTYPE_p_PdfDictionary swig_types[6]
-#define SWIGTYPE_p_PdfEncrypt swig_types[7]
-#define SWIGTYPE_p_PdfFont swig_types[8]
-#define SWIGTYPE_p_PdfFontCache__EFontCreationFlags swig_types[9]
-#define SWIGTYPE_p_PdfFontMetrics swig_types[10]
-#define SWIGTYPE_p_PdfFontMetricsBase14 swig_types[11]
-#define SWIGTYPE_p_PdfObject swig_types[12]
-#define SWIGTYPE_p_PdfRefCountedBuffer swig_types[13]
-#define SWIGTYPE_p_PdfRefCountedInputDevice swig_types[14]
-#define SWIGTYPE_p_PdfStream swig_types[15]
-#define SWIGTYPE_p_PoDoFo__NonPublic__PdfHintStream swig_types[16]
-#define SWIGTYPE_p_PoDoFo__PODOFO_CharData swig_types[17]
-#define SWIGTYPE_p_PoDoFo__PdfAcroForm swig_types[18]
-#define SWIGTYPE_p_PoDoFo__PdfAction swig_types[19]
-#define SWIGTYPE_p_PoDoFo__PdfAnnotation swig_types[20]
-#define SWIGTYPE_p_PoDoFo__PdfArray swig_types[21]
-#define SWIGTYPE_p_PoDoFo__PdfAxialShadingPattern swig_types[22]
-#define SWIGTYPE_p_PoDoFo__PdfButton swig_types[23]
-#define SWIGTYPE_p_PoDoFo__PdfCMapEncoding swig_types[24]
-#define SWIGTYPE_p_PoDoFo__PdfCanvas swig_types[25]
-#define SWIGTYPE_p_PoDoFo__PdfCheckBox swig_types[26]
-#define SWIGTYPE_p_PoDoFo__PdfColor swig_types[27]
-#define SWIGTYPE_p_PoDoFo__PdfComboBox swig_types[28]
-#define SWIGTYPE_p_PoDoFo__PdfContents swig_types[29]
-#define SWIGTYPE_p_PoDoFo__PdfDestination swig_types[30]
-#define SWIGTYPE_p_PoDoFo__PdfDictionary swig_types[31]
-#define SWIGTYPE_p_PoDoFo__PdfDifferenceEncoding swig_types[32]
-#define SWIGTYPE_p_PoDoFo__PdfDocument swig_types[33]
-#define SWIGTYPE_p_PoDoFo__PdfElement swig_types[34]
-#define SWIGTYPE_p_PoDoFo__PdfEncoding swig_types[35]
-#define SWIGTYPE_p_PoDoFo__PdfEncodingDifference swig_types[36]
-#define SWIGTYPE_p_PoDoFo__PdfEncodingObjectFactory swig_types[37]
-#define SWIGTYPE_p_PoDoFo__PdfEncrypt swig_types[38]
-#define SWIGTYPE_p_PoDoFo__PdfEncrypt__EPdfEncryptAlgorithm swig_types[39]
-#define SWIGTYPE_p_PoDoFo__PdfEncrypt__EPdfKeyLength swig_types[40]
-#define SWIGTYPE_p_PoDoFo__PdfError swig_types[41]
-#define SWIGTYPE_p_PoDoFo__PdfErrorInfo swig_types[42]
-#define SWIGTYPE_p_PoDoFo__PdfError__LogMessageCallback swig_types[43]
-#define SWIGTYPE_p_PoDoFo__PdfExponentialFunction swig_types[44]
-#define SWIGTYPE_p_PoDoFo__PdfExtGState swig_types[45]
-#define SWIGTYPE_p_PoDoFo__PdfField swig_types[46]
-#define SWIGTYPE_p_PoDoFo__PdfFileSpec swig_types[47]
-#define SWIGTYPE_p_PoDoFo__PdfFont swig_types[48]
-#define SWIGTYPE_p_PoDoFo__PdfFontCID swig_types[49]
-#define SWIGTYPE_p_PoDoFo__PdfFontCache swig_types[50]
-#define SWIGTYPE_p_PoDoFo__PdfFontConfigWrapper swig_types[51]
-#define SWIGTYPE_p_PoDoFo__PdfFontFactory swig_types[52]
-#define SWIGTYPE_p_PoDoFo__PdfFontMetrics swig_types[53]
-#define SWIGTYPE_p_PoDoFo__PdfFontSimple swig_types[54]
-#define SWIGTYPE_p_PoDoFo__PdfFontTTFSubset swig_types[55]
-#define SWIGTYPE_p_PoDoFo__PdfFunction swig_types[56]
-#define SWIGTYPE_p_PoDoFo__PdfFunctionBaseShadingPattern swig_types[57]
-#define SWIGTYPE_p_PoDoFo__PdfIdentityEncoding swig_types[58]
-#define SWIGTYPE_p_PoDoFo__PdfImage swig_types[59]
-#define SWIGTYPE_p_PoDoFo__PdfInfo swig_types[60]
-#define SWIGTYPE_p_PoDoFo__PdfInputDevice swig_types[61]
-#define SWIGTYPE_p_PoDoFo__PdfInputStream swig_types[62]
-#define SWIGTYPE_p_PoDoFo__PdfListBox swig_types[63]
-#define SWIGTYPE_p_PoDoFo__PdfListField swig_types[64]
-#define SWIGTYPE_p_PoDoFo__PdfMemDocument swig_types[65]
-#define SWIGTYPE_p_PoDoFo__PdfName swig_types[66]
-#define SWIGTYPE_p_PoDoFo__PdfNamesTree swig_types[67]
-#define SWIGTYPE_p_PoDoFo__PdfObject swig_types[68]
-#define SWIGTYPE_p_PoDoFo__PdfOutlineItem swig_types[69]
-#define SWIGTYPE_p_PoDoFo__PdfOutlines swig_types[70]
-#define SWIGTYPE_p_PoDoFo__PdfOutputDevice swig_types[71]
-#define SWIGTYPE_p_PoDoFo__PdfPage swig_types[72]
-#define SWIGTYPE_p_PoDoFo__PdfPagesTree swig_types[73]
-#define SWIGTYPE_p_PoDoFo__PdfPagesTreeCache swig_types[74]
-#define SWIGTYPE_p_PoDoFo__PdfPainter swig_types[75]
-#define SWIGTYPE_p_PoDoFo__PdfPainterMM swig_types[76]
-#define SWIGTYPE_p_PoDoFo__PdfPushButton swig_types[77]
-#define SWIGTYPE_p_PoDoFo__PdfRadialShadingPattern swig_types[78]
-#define SWIGTYPE_p_PoDoFo__PdfRect swig_types[79]
-#define SWIGTYPE_p_PoDoFo__PdfReference swig_types[80]
-#define SWIGTYPE_p_PoDoFo__PdfSampledFunction swig_types[81]
-#define SWIGTYPE_p_PoDoFo__PdfShadingPattern swig_types[82]
-#define SWIGTYPE_p_PoDoFo__PdfSigIncPainter swig_types[83]
-#define SWIGTYPE_p_PoDoFo__PdfSignOutputDevice swig_types[84]
-#define SWIGTYPE_p_PoDoFo__PdfSignatureField swig_types[85]
-#define SWIGTYPE_p_PoDoFo__PdfSimpleTableModel swig_types[86]
-#define SWIGTYPE_p_PoDoFo__PdfStitchingFunction swig_types[87]
-#define SWIGTYPE_p_PoDoFo__PdfStream swig_types[88]
-#define SWIGTYPE_p_PoDoFo__PdfStreamedDocument swig_types[89]
-#define SWIGTYPE_p_PoDoFo__PdfString swig_types[90]
-#define SWIGTYPE_p_PoDoFo__PdfTable swig_types[91]
-#define SWIGTYPE_p_PoDoFo__PdfTableModel swig_types[92]
-#define SWIGTYPE_p_PoDoFo__PdfTextField swig_types[93]
-#define SWIGTYPE_p_PoDoFo__PdfTilingPattern swig_types[94]
-#define SWIGTYPE_p_PoDoFo__PdfTriangleShadingPattern swig_types[95]
-#define SWIGTYPE_p_PoDoFo__PdfVariant swig_types[96]
-#define SWIGTYPE_p_PoDoFo__PdfVecObjects swig_types[97]
-#define SWIGTYPE_p_PoDoFo__PdfXObject swig_types[98]
-#define SWIGTYPE_p_PoDoFo__TFontCacheElement swig_types[99]
-#define SWIGTYPE_p_PoDoFo__TLineElement swig_types[100]
-#define SWIGTYPE_p_Sample swig_types[101]
-#define SWIGTYPE_p_TVecFilters swig_types[102]
-#define SWIGTYPE_p_a_4__char swig_types[103]
-#define SWIGTYPE_p_a_9__char swig_types[104]
-#define SWIGTYPE_p_char swig_types[105]
-#define SWIGTYPE_p_double swig_types[106]
-#define SWIGTYPE_p_f_r_PoDoFo__PdfRect_p_void__p_PoDoFo__PdfPage swig_types[107]
-#define SWIGTYPE_p_p_char swig_types[108]
-#define SWIGTYPE_p_pdf_int16 swig_types[109]
-#define SWIGTYPE_p_pdf_int64 swig_types[110]
-#define SWIGTYPE_p_pdf_long swig_types[111]
-#define SWIGTYPE_p_pdf_uint16 swig_types[112]
-#define SWIGTYPE_p_pdf_uint32 swig_types[113]
-#define SWIGTYPE_p_ptrdiff_t swig_types[114]
-#define SWIGTYPE_p_std__dequeT_PoDoFo__PdfErrorInfo_t swig_types[115]
-#define SWIGTYPE_p_std__dequeT_PoDoFo__PdfErrorInfo_t__const_iterator swig_types[116]
-#define SWIGTYPE_p_std__dequeT_PoDoFo__PdfErrorInfo_t__iterator swig_types[117]
-#define SWIGTYPE_p_std__dequeT_PoDoFo__PdfObject_p_t swig_types[118]
-#define SWIGTYPE_p_std__listT_PoDoFo__PdfFunction_t swig_types[119]
-#define SWIGTYPE_p_std__listT_char_t swig_types[120]
-#define SWIGTYPE_p_std__mapT_PoDoFo__PdfReference_PoDoFo__PdfAnnotation_p_t swig_types[121]
-#define SWIGTYPE_p_std__mapT_PoDoFo__PdfReference_PoDoFo__PdfAnnotation_p_t__const_iterator swig_types[122]
-#define SWIGTYPE_p_std__mapT_PoDoFo__PdfReference_PoDoFo__PdfAnnotation_p_t__iterator swig_types[123]
-#define SWIGTYPE_p_std__ostringstream swig_types[124]
-#define SWIGTYPE_p_std__string swig_types[125]
-#define SWIGTYPE_p_std__vectorT_PdfExtension_t swig_types[126]
-#define SWIGTYPE_p_std__vectorT_PoDoFo__PdfObject_p_t swig_types[127]
-#define SWIGTYPE_p_std__vectorT_PoDoFo__PdfPage_p_t swig_types[128]
-#define SWIGTYPE_p_std__vectorT_PoDoFo__PdfRect_t swig_types[129]
-#define SWIGTYPE_p_std__vectorT_PoDoFo__PdfString_t swig_types[130]
-#define SWIGTYPE_p_std__wstring swig_types[131]
-#define SWIGTYPE_p_unsigned_char swig_types[132]
-#define SWIGTYPE_p_void swig_types[133]
-#define SWIGTYPE_p_wchar_t swig_types[134]
-static swig_type_info *swig_types[136];
-static swig_module_info swig_module = {swig_types, 135, 0, 0, 0, 0};
+#define SWIGTYPE_p_FT_Library swig_types[0]
+#define SWIGTYPE_p_List swig_types[1]
+#define SWIGTYPE_p_PdfArray swig_types[2]
+#define SWIGTYPE_p_PdfData swig_types[3]
+#define SWIGTYPE_p_PdfDate swig_types[4]
+#define SWIGTYPE_p_PdfDictionary swig_types[5]
+#define SWIGTYPE_p_PdfEncrypt swig_types[6]
+#define SWIGTYPE_p_PdfFont swig_types[7]
+#define SWIGTYPE_p_PdfFontCache__EFontCreationFlags swig_types[8]
+#define SWIGTYPE_p_PdfFontMetrics swig_types[9]
+#define SWIGTYPE_p_PdfFontMetricsBase14 swig_types[10]
+#define SWIGTYPE_p_PdfObject swig_types[11]
+#define SWIGTYPE_p_PdfRefCountedBuffer swig_types[12]
+#define SWIGTYPE_p_PdfRefCountedInputDevice swig_types[13]
+#define SWIGTYPE_p_PdfStream swig_types[14]
+#define SWIGTYPE_p_PoDoFo__NonPublic__PdfHintStream swig_types[15]
+#define SWIGTYPE_p_PoDoFo__PODOFO_CharData swig_types[16]
+#define SWIGTYPE_p_PoDoFo__PdfAcroForm swig_types[17]
+#define SWIGTYPE_p_PoDoFo__PdfAction swig_types[18]
+#define SWIGTYPE_p_PoDoFo__PdfAnnotation swig_types[19]
+#define SWIGTYPE_p_PoDoFo__PdfArray swig_types[20]
+#define SWIGTYPE_p_PoDoFo__PdfAxialShadingPattern swig_types[21]
+#define SWIGTYPE_p_PoDoFo__PdfButton swig_types[22]
+#define SWIGTYPE_p_PoDoFo__PdfCMapEncoding swig_types[23]
+#define SWIGTYPE_p_PoDoFo__PdfCanvas swig_types[24]
+#define SWIGTYPE_p_PoDoFo__PdfCheckBox swig_types[25]
+#define SWIGTYPE_p_PoDoFo__PdfColor swig_types[26]
+#define SWIGTYPE_p_PoDoFo__PdfComboBox swig_types[27]
+#define SWIGTYPE_p_PoDoFo__PdfContents swig_types[28]
+#define SWIGTYPE_p_PoDoFo__PdfDestination swig_types[29]
+#define SWIGTYPE_p_PoDoFo__PdfDictionary swig_types[30]
+#define SWIGTYPE_p_PoDoFo__PdfDifferenceEncoding swig_types[31]
+#define SWIGTYPE_p_PoDoFo__PdfDocument swig_types[32]
+#define SWIGTYPE_p_PoDoFo__PdfElement swig_types[33]
+#define SWIGTYPE_p_PoDoFo__PdfEncoding swig_types[34]
+#define SWIGTYPE_p_PoDoFo__PdfEncodingDifference swig_types[35]
+#define SWIGTYPE_p_PoDoFo__PdfEncodingObjectFactory swig_types[36]
+#define SWIGTYPE_p_PoDoFo__PdfEncrypt swig_types[37]
+#define SWIGTYPE_p_PoDoFo__PdfEncrypt__EPdfEncryptAlgorithm swig_types[38]
+#define SWIGTYPE_p_PoDoFo__PdfEncrypt__EPdfKeyLength swig_types[39]
+#define SWIGTYPE_p_PoDoFo__PdfError swig_types[40]
+#define SWIGTYPE_p_PoDoFo__PdfErrorInfo swig_types[41]
+#define SWIGTYPE_p_PoDoFo__PdfError__LogMessageCallback swig_types[42]
+#define SWIGTYPE_p_PoDoFo__PdfExponentialFunction swig_types[43]
+#define SWIGTYPE_p_PoDoFo__PdfExtGState swig_types[44]
+#define SWIGTYPE_p_PoDoFo__PdfField swig_types[45]
+#define SWIGTYPE_p_PoDoFo__PdfFileSpec swig_types[46]
+#define SWIGTYPE_p_PoDoFo__PdfFont swig_types[47]
+#define SWIGTYPE_p_PoDoFo__PdfFontCID swig_types[48]
+#define SWIGTYPE_p_PoDoFo__PdfFontCache swig_types[49]
+#define SWIGTYPE_p_PoDoFo__PdfFontConfigWrapper swig_types[50]
+#define SWIGTYPE_p_PoDoFo__PdfFontFactory swig_types[51]
+#define SWIGTYPE_p_PoDoFo__PdfFontMetrics swig_types[52]
+#define SWIGTYPE_p_PoDoFo__PdfFontSimple swig_types[53]
+#define SWIGTYPE_p_PoDoFo__PdfFontTTFSubset swig_types[54]
+#define SWIGTYPE_p_PoDoFo__PdfFunction swig_types[55]
+#define SWIGTYPE_p_PoDoFo__PdfFunctionBaseShadingPattern swig_types[56]
+#define SWIGTYPE_p_PoDoFo__PdfIdentityEncoding swig_types[57]
+#define SWIGTYPE_p_PoDoFo__PdfImage swig_types[58]
+#define SWIGTYPE_p_PoDoFo__PdfInfo swig_types[59]
+#define SWIGTYPE_p_PoDoFo__PdfInputDevice swig_types[60]
+#define SWIGTYPE_p_PoDoFo__PdfInputStream swig_types[61]
+#define SWIGTYPE_p_PoDoFo__PdfListBox swig_types[62]
+#define SWIGTYPE_p_PoDoFo__PdfListField swig_types[63]
+#define SWIGTYPE_p_PoDoFo__PdfMemDocument swig_types[64]
+#define SWIGTYPE_p_PoDoFo__PdfName swig_types[65]
+#define SWIGTYPE_p_PoDoFo__PdfNamesTree swig_types[66]
+#define SWIGTYPE_p_PoDoFo__PdfObject swig_types[67]
+#define SWIGTYPE_p_PoDoFo__PdfOutlineItem swig_types[68]
+#define SWIGTYPE_p_PoDoFo__PdfOutlines swig_types[69]
+#define SWIGTYPE_p_PoDoFo__PdfOutputDevice swig_types[70]
+#define SWIGTYPE_p_PoDoFo__PdfPage swig_types[71]
+#define SWIGTYPE_p_PoDoFo__PdfPagesTree swig_types[72]
+#define SWIGTYPE_p_PoDoFo__PdfPagesTreeCache swig_types[73]
+#define SWIGTYPE_p_PoDoFo__PdfPainter swig_types[74]
+#define SWIGTYPE_p_PoDoFo__PdfPainterMM swig_types[75]
+#define SWIGTYPE_p_PoDoFo__PdfPushButton swig_types[76]
+#define SWIGTYPE_p_PoDoFo__PdfRadialShadingPattern swig_types[77]
+#define SWIGTYPE_p_PoDoFo__PdfRect swig_types[78]
+#define SWIGTYPE_p_PoDoFo__PdfReference swig_types[79]
+#define SWIGTYPE_p_PoDoFo__PdfSampledFunction swig_types[80]
+#define SWIGTYPE_p_PoDoFo__PdfShadingPattern swig_types[81]
+#define SWIGTYPE_p_PoDoFo__PdfSigIncPainter swig_types[82]
+#define SWIGTYPE_p_PoDoFo__PdfSignOutputDevice swig_types[83]
+#define SWIGTYPE_p_PoDoFo__PdfSignatureField swig_types[84]
+#define SWIGTYPE_p_PoDoFo__PdfSimpleTableModel swig_types[85]
+#define SWIGTYPE_p_PoDoFo__PdfStitchingFunction swig_types[86]
+#define SWIGTYPE_p_PoDoFo__PdfStream swig_types[87]
+#define SWIGTYPE_p_PoDoFo__PdfStreamedDocument swig_types[88]
+#define SWIGTYPE_p_PoDoFo__PdfString swig_types[89]
+#define SWIGTYPE_p_PoDoFo__PdfTable swig_types[90]
+#define SWIGTYPE_p_PoDoFo__PdfTableModel swig_types[91]
+#define SWIGTYPE_p_PoDoFo__PdfTextField swig_types[92]
+#define SWIGTYPE_p_PoDoFo__PdfTilingPattern swig_types[93]
+#define SWIGTYPE_p_PoDoFo__PdfTriangleShadingPattern swig_types[94]
+#define SWIGTYPE_p_PoDoFo__PdfVariant swig_types[95]
+#define SWIGTYPE_p_PoDoFo__PdfVecObjects swig_types[96]
+#define SWIGTYPE_p_PoDoFo__PdfXObject swig_types[97]
+#define SWIGTYPE_p_PoDoFo__TFontCacheElement swig_types[98]
+#define SWIGTYPE_p_PoDoFo__TLineElement swig_types[99]
+#define SWIGTYPE_p_Sample swig_types[100]
+#define SWIGTYPE_p_TVecFilters swig_types[101]
+#define SWIGTYPE_p_a_4__char swig_types[102]
+#define SWIGTYPE_p_a_9__char swig_types[103]
+#define SWIGTYPE_p_char swig_types[104]
+#define SWIGTYPE_p_double swig_types[105]
+#define SWIGTYPE_p_f_r_PoDoFo__PdfRect_p_void__p_PoDoFo__PdfPage swig_types[106]
+#define SWIGTYPE_p_p_char swig_types[107]
+#define SWIGTYPE_p_pdf_int16 swig_types[108]
+#define SWIGTYPE_p_pdf_int64 swig_types[109]
+#define SWIGTYPE_p_pdf_long swig_types[110]
+#define SWIGTYPE_p_pdf_uint16 swig_types[111]
+#define SWIGTYPE_p_pdf_uint32 swig_types[112]
+#define SWIGTYPE_p_ptrdiff_t swig_types[113]
+#define SWIGTYPE_p_std__dequeT_PoDoFo__PdfErrorInfo_t swig_types[114]
+#define SWIGTYPE_p_std__dequeT_PoDoFo__PdfErrorInfo_t__const_iterator swig_types[115]
+#define SWIGTYPE_p_std__dequeT_PoDoFo__PdfErrorInfo_t__iterator swig_types[116]
+#define SWIGTYPE_p_std__dequeT_PoDoFo__PdfObject_p_t swig_types[117]
+#define SWIGTYPE_p_std__listT_PoDoFo__PdfFunction_t swig_types[118]
+#define SWIGTYPE_p_std__listT_char_t swig_types[119]
+#define SWIGTYPE_p_std__mapT_PoDoFo__PdfReference_PoDoFo__PdfAnnotation_p_t swig_types[120]
+#define SWIGTYPE_p_std__mapT_PoDoFo__PdfReference_PoDoFo__PdfAnnotation_p_t__const_iterator swig_types[121]
+#define SWIGTYPE_p_std__mapT_PoDoFo__PdfReference_PoDoFo__PdfAnnotation_p_t__iterator swig_types[122]
+#define SWIGTYPE_p_std__ostringstream swig_types[123]
+#define SWIGTYPE_p_std__string swig_types[124]
+#define SWIGTYPE_p_std__vectorT_PdfExtension_t swig_types[125]
+#define SWIGTYPE_p_std__vectorT_PoDoFo__PdfObject_p_t swig_types[126]
+#define SWIGTYPE_p_std__vectorT_PoDoFo__PdfPage_p_t swig_types[127]
+#define SWIGTYPE_p_std__vectorT_PoDoFo__PdfRect_t swig_types[128]
+#define SWIGTYPE_p_std__vectorT_PoDoFo__PdfString_t swig_types[129]
+#define SWIGTYPE_p_std__wstring swig_types[130]
+#define SWIGTYPE_p_unsigned_char swig_types[131]
+#define SWIGTYPE_p_void swig_types[132]
+#define SWIGTYPE_p_wchar_t swig_types[133]
+static swig_type_info *swig_types[135];
+static swig_module_info swig_module = {swig_types, 134, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -16191,12 +16190,10 @@ static int _wrap_PdfDocument_CreateFont__SWIG_11(lua_State* L) {
   bool arg3 ;
   PoDoFo::PdfEncoding *arg4 = (PoDoFo::PdfEncoding *) (PoDoFo::PdfEncoding *)0 ;
   bool arg5 ;
-  FT_Face *argp2 ;
   PoDoFo::PdfFont *result = 0 ;
   
   SWIG_check_num_args("PoDoFo::PdfDocument::CreateFont",5,5)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfDocument::CreateFont",1,"PoDoFo::PdfDocument *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("PoDoFo::PdfDocument::CreateFont",2,"FT_Face");
   if(!lua_isboolean(L,3)) SWIG_fail_arg("PoDoFo::PdfDocument::CreateFont",3,"bool");
   if(!SWIG_isptrtype(L,4)) SWIG_fail_arg("PoDoFo::PdfDocument::CreateFont",4,"PoDoFo::PdfEncoding const *const");
   if(!lua_isboolean(L,5)) SWIG_fail_arg("PoDoFo::PdfDocument::CreateFont",5,"bool");
@@ -16205,12 +16202,9 @@ static int _wrap_PdfDocument_CreateFont__SWIG_11(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_CreateFont",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_FT_Face,0))){
-    SWIG_fail_ptr("PdfDocument_CreateFont",2,SWIGTYPE_p_FT_Face);
+  {
+    arg2 = (FT_Face)lua_touserdata(L,2);
   }
-  arg2 = *argp2;
-  
   arg3 = (lua_toboolean(L, 3)!=0);
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&arg4,SWIGTYPE_p_PoDoFo__PdfEncoding,0))){
@@ -16244,12 +16238,10 @@ static int _wrap_PdfDocument_CreateFont__SWIG_12(lua_State* L) {
   FT_Face arg2 ;
   bool arg3 ;
   PoDoFo::PdfEncoding *arg4 = (PoDoFo::PdfEncoding *) (PoDoFo::PdfEncoding *)0 ;
-  FT_Face *argp2 ;
   PoDoFo::PdfFont *result = 0 ;
   
   SWIG_check_num_args("PoDoFo::PdfDocument::CreateFont",4,4)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfDocument::CreateFont",1,"PoDoFo::PdfDocument *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("PoDoFo::PdfDocument::CreateFont",2,"FT_Face");
   if(!lua_isboolean(L,3)) SWIG_fail_arg("PoDoFo::PdfDocument::CreateFont",3,"bool");
   if(!SWIG_isptrtype(L,4)) SWIG_fail_arg("PoDoFo::PdfDocument::CreateFont",4,"PoDoFo::PdfEncoding const *const");
   
@@ -16257,12 +16249,9 @@ static int _wrap_PdfDocument_CreateFont__SWIG_12(lua_State* L) {
     SWIG_fail_ptr("PdfDocument_CreateFont",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_FT_Face,0))){
-    SWIG_fail_ptr("PdfDocument_CreateFont",2,SWIGTYPE_p_FT_Face);
+  {
+    arg2 = (FT_Face)lua_touserdata(L,2);
   }
-  arg2 = *argp2;
-  
   arg3 = (lua_toboolean(L, 3)!=0);
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&arg4,SWIGTYPE_p_PoDoFo__PdfEncoding,0))){
@@ -16294,24 +16283,19 @@ static int _wrap_PdfDocument_CreateFont__SWIG_13(lua_State* L) {
   PoDoFo::PdfDocument *arg1 = (PoDoFo::PdfDocument *) 0 ;
   FT_Face arg2 ;
   bool arg3 ;
-  FT_Face *argp2 ;
   PoDoFo::PdfFont *result = 0 ;
   
   SWIG_check_num_args("PoDoFo::PdfDocument::CreateFont",3,3)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfDocument::CreateFont",1,"PoDoFo::PdfDocument *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("PoDoFo::PdfDocument::CreateFont",2,"FT_Face");
   if(!lua_isboolean(L,3)) SWIG_fail_arg("PoDoFo::PdfDocument::CreateFont",3,"bool");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfDocument,0))){
     SWIG_fail_ptr("PdfDocument_CreateFont",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_FT_Face,0))){
-    SWIG_fail_ptr("PdfDocument_CreateFont",2,SWIGTYPE_p_FT_Face);
+  {
+    arg2 = (FT_Face)lua_touserdata(L,2);
   }
-  arg2 = *argp2;
-  
   arg3 = (lua_toboolean(L, 3)!=0);
   {
     try {
@@ -16337,23 +16321,18 @@ static int _wrap_PdfDocument_CreateFont__SWIG_14(lua_State* L) {
   int SWIG_arg = 0;
   PoDoFo::PdfDocument *arg1 = (PoDoFo::PdfDocument *) 0 ;
   FT_Face arg2 ;
-  FT_Face *argp2 ;
   PoDoFo::PdfFont *result = 0 ;
   
   SWIG_check_num_args("PoDoFo::PdfDocument::CreateFont",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfDocument::CreateFont",1,"PoDoFo::PdfDocument *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("PoDoFo::PdfDocument::CreateFont",2,"FT_Face");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PoDoFo__PdfDocument,0))){
     SWIG_fail_ptr("PdfDocument_CreateFont",1,SWIGTYPE_p_PoDoFo__PdfDocument);
   }
   
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_FT_Face,0))){
-    SWIG_fail_ptr("PdfDocument_CreateFont",2,SWIGTYPE_p_FT_Face);
+  {
+    arg2 = (FT_Face)lua_touserdata(L,2);
   }
-  arg2 = *argp2;
-  
   {
     try {
       result = (PoDoFo::PdfFont *)(arg1)->CreateFont(arg2);
@@ -16394,7 +16373,7 @@ static int _wrap_PdfDocument_CreateFont(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_FT_Face, 0)) {
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, 0, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -16437,7 +16416,7 @@ static int _wrap_PdfDocument_CreateFont(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_FT_Face, 0)) {
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, 0, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -16490,7 +16469,7 @@ static int _wrap_PdfDocument_CreateFont(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_FT_Face, 0)) {
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, 0, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -16592,7 +16571,7 @@ static int _wrap_PdfDocument_CreateFont(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_FT_Face, 0)) {
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, 0, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -29214,12 +29193,10 @@ static int _wrap_PdfFontCache_GetFont__SWIG_5(lua_State* L) {
   bool arg3 ;
   bool arg4 ;
   PoDoFo::PdfEncoding *arg5 = (PoDoFo::PdfEncoding *) (PoDoFo::PdfEncoding *)0 ;
-  FT_Face *argp2 ;
   PoDoFo::PdfFont *result = 0 ;
   
   SWIG_check_num_args("PoDoFo::PdfFontCache::GetFont",5,5)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontCache::GetFont",1,"PoDoFo::PdfFontCache *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("PoDoFo::PdfFontCache::GetFont",2,"FT_Face");
   if(!lua_isboolean(L,3)) SWIG_fail_arg("PoDoFo::PdfFontCache::GetFont",3,"bool");
   if(!lua_isboolean(L,4)) SWIG_fail_arg("PoDoFo::PdfFontCache::GetFont",4,"bool");
   if(!SWIG_isptrtype(L,5)) SWIG_fail_arg("PoDoFo::PdfFontCache::GetFont",5,"PoDoFo::PdfEncoding const *const");
@@ -29228,12 +29205,9 @@ static int _wrap_PdfFontCache_GetFont__SWIG_5(lua_State* L) {
     SWIG_fail_ptr("PdfFontCache_GetFont",1,SWIGTYPE_p_PoDoFo__PdfFontCache);
   }
   
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_FT_Face,0))){
-    SWIG_fail_ptr("PdfFontCache_GetFont",2,SWIGTYPE_p_FT_Face);
+  {
+    arg2 = (FT_Face)lua_touserdata(L,2);
   }
-  arg2 = *argp2;
-  
   arg3 = (lua_toboolean(L, 3)!=0);
   arg4 = (lua_toboolean(L, 4)!=0);
   
@@ -29267,12 +29241,10 @@ static int _wrap_PdfFontCache_GetFont__SWIG_6(lua_State* L) {
   FT_Face arg2 ;
   bool arg3 ;
   bool arg4 ;
-  FT_Face *argp2 ;
   PoDoFo::PdfFont *result = 0 ;
   
   SWIG_check_num_args("PoDoFo::PdfFontCache::GetFont",4,4)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PoDoFo::PdfFontCache::GetFont",1,"PoDoFo::PdfFontCache *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("PoDoFo::PdfFontCache::GetFont",2,"FT_Face");
   if(!lua_isboolean(L,3)) SWIG_fail_arg("PoDoFo::PdfFontCache::GetFont",3,"bool");
   if(!lua_isboolean(L,4)) SWIG_fail_arg("PoDoFo::PdfFontCache::GetFont",4,"bool");
   
@@ -29280,12 +29252,9 @@ static int _wrap_PdfFontCache_GetFont__SWIG_6(lua_State* L) {
     SWIG_fail_ptr("PdfFontCache_GetFont",1,SWIGTYPE_p_PoDoFo__PdfFontCache);
   }
   
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_FT_Face,0))){
-    SWIG_fail_ptr("PdfFontCache_GetFont",2,SWIGTYPE_p_FT_Face);
+  {
+    arg2 = (FT_Face)lua_touserdata(L,2);
   }
-  arg2 = *argp2;
-  
   arg3 = (lua_toboolean(L, 3)!=0);
   arg4 = (lua_toboolean(L, 4)!=0);
   {
@@ -29352,7 +29321,7 @@ static int _wrap_PdfFontCache_GetFont(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_FT_Face, 0)) {
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, 0, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -29386,7 +29355,7 @@ static int _wrap_PdfFontCache_GetFont(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_FT_Face, 0)) {
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, 0, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -57693,7 +57662,6 @@ static void *_p_PoDoFo__PdfCheckBoxTo_p_PoDoFo__PdfField(void *x, int *SWIGUNUSE
 static void *_p_PoDoFo__PdfSimpleTableModelTo_p_PoDoFo__PdfTableModel(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((PoDoFo::PdfTableModel *)  ((PoDoFo::PdfSimpleTableModel *) x));
 }
-static swig_type_info _swigt__p_FT_Face = {"_p_FT_Face", "FT_Face *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_FT_Library = {"_p_FT_Library", "FT_Library *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_List = {"_p_List", "List *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_PdfArray = {"_p_PdfArray", "PdfArray *", 0, 0, (void*)0, 0};
@@ -57830,7 +57798,6 @@ static swig_type_info _swigt__p_void = {"_p_void", "void *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_wchar_t = {"_p_wchar_t", "wchar_t *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
-  &_swigt__p_FT_Face,
   &_swigt__p_FT_Library,
   &_swigt__p_List,
   &_swigt__p_PdfArray,
@@ -57967,7 +57934,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_wchar_t,
 };
 
-static swig_cast_info _swigc__p_FT_Face[] = {  {&_swigt__p_FT_Face, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_FT_Library[] = {  {&_swigt__p_FT_Library, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_List[] = {  {&_swigt__p_List, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PdfArray[] = {  {&_swigt__p_PdfArray, 0, 0, 0},{0, 0, 0, 0}};
@@ -58104,7 +58070,6 @@ static swig_cast_info _swigc__p_void[] = {  {&_swigt__p_void, 0, 0, 0},{0, 0, 0,
 static swig_cast_info _swigc__p_wchar_t[] = {  {&_swigt__p_wchar_t, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
-  _swigc__p_FT_Face,
   _swigc__p_FT_Library,
   _swigc__p_List,
   _swigc__p_PdfArray,

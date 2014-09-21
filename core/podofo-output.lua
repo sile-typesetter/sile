@@ -8,6 +8,8 @@ local pagesize
 local font
 local lastfont
 
+local podofoFaces = {}
+
 local cursorX = 0
 local cursorY = 0
 SILE.outputters.podofo = {
@@ -40,10 +42,16 @@ SILE.outputters.podofo = {
   end,
   setFont = function (options)
     if SILE.font._key(options) == lastkey then return end
+    print("Font change")
     lastkey = SILE.font._key(options)
-    font = document:CreateFont(options.font, options.weight > 200, options.style == "italic")
-    font:SetFontSize(options.size)
-    painter:SetFont(font)
+    if not podofoFaces[lastkey] then
+      local ftface = SILE.font.cache(options, function () SU.error("Font should exist") end)
+      podofoFaces[lastkey] = document:CreateFont(ftface)
+    end
+    podofoFaces[lastkey]:SetFontSize(options.size)
+    painter:SetFont(podofoFaces[lastkey])
+    -- Podofo trashes the font, so we need to recompute.
+    SILE.fontCache[lastkey] = nil
   end,
   drawPNG = function (src, x,y,w,h)
   end,

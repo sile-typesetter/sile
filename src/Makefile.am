@@ -7,7 +7,7 @@ justenoughharfbuzz_la_CFLAGS = $(HARFBUZZ_CFLAGS) $(FREETYPE_CFLAGS) $(FONTCONFI
 justenoughharfbuzz_la_LIBADD = $(HARFBUZZ_LIBS) $(FREETYPE_LIBS) $(FONTCONFIG_LIBS)
 podofo_la_SOURCES = podofo_wrap.cxx
 podofo_la_LDFLAGS = -module -avoid-version -shared
-podofo_la_CFLAGS = $(LUA_INCLUDE) $(FREETYPE_CFLAGS) $(FONTCONFIG_CFLAGS)
+podofo_la_CXXFLAGS = $(LUA_INCLUDE) $(FREETYPE_CFLAGS) $(FONTCONFIG_CFLAGS)
 podofo_la_LIBADD = -lpodofo -lpthread -ltiff -ljpeg $(FREETYPE_LIBS) $(FONTCONFIG_LIBS)
 
 all-local: $(core_LTLIBRARIES)

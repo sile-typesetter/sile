@@ -45,7 +45,13 @@ SILE.font = {loadDefaults = function(options)
   return options
 end,
   cache = function(options, callback)
-    -- if not SILE.fontCache[_key(options)]
+    if not SILE.fontCache[_key(options)] then
+      print("Storing info for " .. _key(options))
+      SILE.fontCache[_key(options)] = callback(options)
+      print(" -> "..SILE.fontCache[_key(options)])
+    end
+    -- print("Returning " .. SILE.fontCache[_key(options)])
+    return SILE.fontCache[_key(options)]
   end,
   _key = _key
 }
