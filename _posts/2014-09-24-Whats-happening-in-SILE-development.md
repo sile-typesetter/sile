@@ -8,6 +8,6 @@ The first part is done, and there is a Harfbuzz shaper written. The second part 
 
 So, since we're going to have to ship our own PDF library with SILE anyway, my latest thought is, why don't we actually ship a good one? And it turns out the best one available is the one which turns TeX's DVIs (and XeTeX's XDVs) into PDFs. Unfortunately, it's currently quite tightly bound to xdvipdfm, and is not actually a library yet. Right now, I'm turning it into a separate library so it can ship with SILE, and SILE will eventually be driven by Harfbuzz/[libtexpdf][].
 
-[Harfbuzz][http://www.freedesktop.org/wiki/Software/HarfBuzz/]
-[PoDoFo][http://podofo.sourceforge.net]
-[libtexpdf][https://github.com/simoncozens/dvipdfm-x/tree/libtexpdf] 
+[Harfbuzz]: http://www.freedesktop.org/wiki/Software/HarfBuzz/
+[PoDoFo]: http://podofo.sourceforge.net
+[libtexpdf]: https://github.com/simoncozens/dvipdfm-x/tree/libtexpdf
