@@ -112,7 +112,6 @@ int face_from_options(lua_State* L) {
   lua_pop(L,1);
 
   p = FcPatternCreate();
-  printf("%s %f %i %i\n", family, pointSize, slant, weight);
 
   FcPatternAddString (p, FC_FAMILY, (FcChar8*)(family));
   FcPatternAddDouble (p, FC_SIZE, pointSize);
