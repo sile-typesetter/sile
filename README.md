@@ -42,7 +42,7 @@ Now try `sile examples/test.sil`.
 
 ## Finding out more
 
-Please read the [full SILE manual][3] for more information about what SILE is and how it can help you.
+Please read the [full SILE manual][3] for more information about what SILE is and how it can help you. There are example documents (source and PDF) in the examples/ directory. There's also an [FAQ][faq] available.
 
 ## Contact
 
@@ -57,5 +57,6 @@ SILE is distributed under the [MIT licence][5].
 [3]: https://raw.githubusercontent.com/simoncozens/sile/master/documentation/sile.pdf
 [4]: https://github.com/simoncozens/sile
 [5]: http://choosealicense.com/licenses/mit/
+[faq]: https://github.com/simoncozens/sile/wiki/faq
 [roadmap]: https://github.com/simoncozens/sile/blob/master/ROADMAP
 [luarocks]: http://luarocks.org/en/Download
