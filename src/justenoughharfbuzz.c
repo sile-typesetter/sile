@@ -147,16 +147,6 @@ int face_from_options(lua_State* L) {
   return 1;
 }
 
-static int traceback(lua_State *L) {
-    lua_getfield(L, LUA_GLOBALSINDEX, "debug");
-    lua_getfield(L, -1, "traceback");
-    lua_pushvalue(L, 1);
-    lua_pushinteger(L, 2);
-    lua_call(L, 2, 1);
-    fprintf(stderr, "%s\n", lua_tostring(L, -1));
-    return 1;
-}
-
 int shape (lua_State *L) {    
     const char * text = luaL_checkstring(L, 1);
     FT_Face face = lua_touserdata(L, 2);
@@ -171,7 +161,6 @@ int shape (lua_State *L) {
     hb_glyph_position_t *glyph_pos;
     unsigned int j;
 
-    if (!face) traceback(L);
     hb_ft_font = hb_ft_font_create(face, NULL);
     buf = hb_buffer_create();
     hb_buffer_set_script(buf, hb_tag_from_string(script, strlen(script)));
@@ -214,8 +203,30 @@ int shape (lua_State *L) {
     return glyph_count;
 }
 
+#if !defined LUA_VERSION_NUM
+/* Lua 5.0 */
+#define luaL_Reg luaL_reg
+#endif
 
-static const struct luaL_reg lib_table [] = {
+#if !defined LUA_VERSION_NUM || LUA_VERSION_NUM==501
+/*
+** Adapted from Lua 5.2.0
+*/
+static void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
+  luaL_checkstack(L, nup+1, "too many upvalues");
+  for (; l->name != NULL; l++) {  /* fill the table with given functions */
+    int i;
+    lua_pushstring(L, l->name);
+    for (i = 0; i < nup; i++)  /* copy upvalues to the top */
+      lua_pushvalue(L, -(nup+1));
+    lua_pushcclosure(L, l->func, nup);  /* closure with those upvalues */
+    lua_settable(L, -(nup + 3));
+  }
+  lua_pop(L, nup);  /* remove upvalues */
+}
+#endif
+
+static const struct luaL_Reg lib_table [] = {
   {"_shape", shape},
   {"_face", face_from_options},
   {NULL, NULL}
@@ -224,8 +235,9 @@ static const struct luaL_reg lib_table [] = {
 int luaopen_justenoughharfbuzz (lua_State *L) {
   ft_library = malloc(sizeof(FT_Library));
   FT_Init_FreeType(&ft_library);
-
-  luaL_openlib(L, "justenoughharfbuzz", lib_table, 0);
+  lua_newtable(L);
+  luaL_setfuncs(L, lib_table, 0);
+  //lua_setglobal(L, "harfbuzz");
   return 1;
 }
 
