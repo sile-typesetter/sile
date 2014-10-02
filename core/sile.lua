@@ -116,6 +116,11 @@ function SILE.initRepl ()
 end
 
 function SILE.repl()
+  if _VERSION:match("5.2") then
+    -- No repl for you!
+    print("luarepl does not support 5.2; sorry, REPL unavailable.")
+    return
+  end
   if not SILE._repl then SILE.initRepl() end
   SILE._repl:run()
 end
