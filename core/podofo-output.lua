@@ -42,7 +42,6 @@ SILE.outputters.podofo = {
   end,
   setFont = function (options)
     if SILE.font._key(options) == lastkey then return end
-    print("Font change")
     lastkey = SILE.font._key(options)
     if not podofoFaces[lastkey] then
       local ftface = SILE.font.cache(options, function () SU.error("Font should exist") end)
