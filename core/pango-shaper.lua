@@ -135,7 +135,6 @@ SILE.shaper = SILE.shapers.pango
 
 -- 
 -- local s = "ltr שָׁוְא ltr"
--- inspect = require "inspect"
 -- 
 
 -- for i in pairs(items) do

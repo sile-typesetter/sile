@@ -23,7 +23,6 @@ SILE.settings.declare({ name="linebreak.doubleHyphenDemerits", type = "integer",
 -- hyphenPenalty
 
 
-inspect = require("inspect")
 local passSerial = 0
 local awful_bad = 1073741823
 local inf_bad = 10000

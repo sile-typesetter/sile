@@ -95,7 +95,6 @@ AX_LUA_MODULE([lxp])
 AX_LUA_MODULE([epnf])
 AX_LUA_MODULE([repl])
 AX_LUA_MODULE([cassowary])
-AX_LUA_MODULE([inspect]) # For now
 
 AS_IF([test "$backend" = "pangocairo"],[AX_LUA_MODULE([lgi])])
 
