@@ -25,6 +25,7 @@ SILE.baseClass = std.object {
 
     local commandStack = {};
     SILE.registerCommand("define", function (options, content)
+      SU.required(options, "command", "defining command")
       SILE.registerCommand(options["command"], function(o,c)
         --local prevState = SILE.documentState;
         --SILE.documentState = std.tree.clone( prevState )
