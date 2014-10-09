@@ -96,6 +96,7 @@ SILE.baseClass = std.object {
 
     SILE.registerCommand("par", function(options, content) 
       SILE.typesetter:leaveHmode()
+      SILE.documentState.documentClass.endPar(SILE.typesetter)
     end, "Ends the current paragraph.")
 
   end),
