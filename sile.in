@@ -9,6 +9,15 @@ end
 SILE.parseArguments()
 if unparsed and unparsed[1] then
   SILE.masterFileName = unparsed[1]
+  if SILE.preamble then
+    print("Loading "..SILE.preamble)
+    local i = SILE.resolveFile(SILE.preamble)
+    if i then
+      SILE.readFile(i)
+    else
+      require("classes/"..SILE.preamble)
+    end
+  end
   SILE.readFile(unparsed[1])
 else
   SILE.repl()

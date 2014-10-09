@@ -71,16 +71,7 @@ local parser = std.optparse ("This is SILE "..SILE.version..[[
     for k,v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = 1 end
   end
   if opts.include then
-    SILE.preamble = true
-    -- Try a .sil
-    print("Loading "..opts.include)
-    local i = SILE.resolveFile(opts.include)
-    if i then
-      SILE.readFile(i)
-    else
-      require("classes/"..opts.include)
-    end
-    SILE.preamble=false
+    SILE.preamble = opts.include
   end
 end
 
