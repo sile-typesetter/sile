@@ -138,6 +138,7 @@ SILE.baseClass = std.object {
     -- local fW = function (val) return function() return SILE.parseComplexFrameDimension(val, "w"); end end
     -- local fH = function (val) return function() return SILE.parseComplexFrameDimension(val, "h"); end end
     spec.id = id
+    SILE.frames[id] = nil
     self.pageTemplate.frames[id] = SILE.newFrame(spec)
     --   next= spec.next,
     --   left= spec.left and fW(spec.left),
