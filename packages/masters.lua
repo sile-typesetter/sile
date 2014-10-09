@@ -1,17 +1,28 @@
 SILE.scratch.masters = {}
+local _currentMaster
 
-local function defineMaster (id, frameset, firstContentFrame)
-  SILE.scratch.masters[id] = {frames = {}, first = nil}
-  for k,spec in pairs(frameset) do
-    SILE.scratch.masters[id].frames[k] = SILE.newFrame(spec)
+local function defineMaster (self, args)
+  SU.required(args, "id", "defining master")
+  SU.required(args, "frames", "defining master")
+  SU.required(args, "firstContentFrame", "defining master")
+  SILE.scratch.masters[args.id] = {frames = {}, firstContentFrame = nil}
+  for k,spec in pairs(args.frames) do
+    spec.id=k
+    SILE.scratch.masters[args.id].frames[k] = SILE.newFrame(spec)
   end
-  SILE.scratch.masters[id].firstContentFrame = SILE.scratch.masters[id].frames[firstContentFrame]
+  SILE.frames = {page = SILE.frames.page}
+
+  SILE.scratch.masters[args.id].firstContentFrame = SILE.scratch.masters[args.id].frames[args.firstContentFrame]
+end
+
+local function defineMasters (self, list)
+  if list then
+    for i=1,#list do defineMaster(self, list[i]) end
+  end
 end
 
 local function doswitch(frames)
-  local page = SILE.frames.page
-  SILE.frames = {}
-  SILE.frames.page = page
+  SILE.frames = {page = SILE.frames.page}
   for id,f in pairs(frames) do
     SILE.frames[id] =f 
     f:invalidate()
@@ -22,7 +33,6 @@ local function switchMasterOnePage (id)
   if not SILE.scratch.masters[id] then
     SU.error("Can't find master "..id)
   end
-  print("(Going to master "..id..")")
   SILE.documentState.thisPageTemplate = SILE.scratch.masters[id]
   doswitch(SILE.scratch.masters[id].frames)
   SILE.typesetter:chuck()
@@ -30,13 +40,15 @@ local function switchMasterOnePage (id)
 end
 
 local function switchMaster (id)
+  _currentMaster = id
   if not SILE.scratch.masters[id] then
     SU.error("Can't find master "..id)
   end
   SILE.documentState.documentClass.pageTemplate = SILE.scratch.masters[id]
   SILE.documentState.thisPageTemplate = std.tree.clone(SILE.documentState.documentClass.pageTemplate)
   doswitch(SILE.scratch.masters[id].frames)
-  SILE.typesetter:init(SILE.scratch.masters[id].firstContentFrame)
+  -- SILE.typesetter:chuck()
+  -- SILE.typesetter:init(SILE.scratch.masters[id].firstContentFrame)
 end
 
 SILE.registerCommand("define-master-template", function(options, content)
@@ -73,6 +85,9 @@ return {
   init = defineMasters,
   exports = {
     switchMasterOnePage = switchMasterOnePage,
-    switchMaster = switchMaster
+    switchMaster = switchMaster,
+    defineMaster = defineMaster,
+    defineMasters = defineMasters,
+    currentMaster = function () return _currentMaster end
   }
 }

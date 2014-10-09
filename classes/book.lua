@@ -1,35 +1,35 @@
 local plain = SILE.require("classes/plain");
 local book = plain { id = "book" };
+book:loadPackage("masters")
+book:loadPackage("frametricks")
+book:defineMaster({ id = "right", firstContentFrame = "content", frames = {
+  content = {left = "8.3%", right = "86%", top = "11.6%", bottom = "top(footnotes)" },
+  folio = {left = "left(content)", right = "right(content)", top = "bottom(footnotes)+3%",bottom = "bottom(footnotes)+5%" },
+  runningHead = {left = "left(content)", right = "right(content)", top = "top(content) - 8%", bottom = "top(content)-3%" },
+  footnotes = { left="left(content)", right = "right(content)", height = "0", bottom="83.3%"}
+}})
 
-book:declareFrame("r",    {left = "8.3%",            right = "86%",            top = "11.6%",       bottom = "top(footnotes)"        });
-book:declareFrame("folio",{left = "left(r)",         right = "right(r)",       top = "bottom(footnotes)+3%",bottom = "bottom(footnotes)+5%" });
-book:declareFrame("rRH",  {left = "left(r)",         right = "right(r)",       top = "top(r) - 8%", bottom = "top(r)-3%"    });
-book:declareFrame("footnotes", { left="left(r)", right = "right(r)", height = "0", bottom="83.3%"})
-book.pageTemplate.firstContentFrame = book.pageTemplate.frames["r"];
+book:defineMaster({ id = "left", firstContentFrame = "content", frames = {
+  content = {left = "100% - 86%", right = "100% - 8.3%", top = "11.6%", bottom = "top(footnotes)" },
+  folio = {left = "left(content)", right = "right(content)", top = "bottom(footnotes)+3%",bottom = "bottom(footnotes)+5%" },
+  runningHead = {left = "left(content)", right = "right(content)", top = "top(content) - 8%", bottom = "top(content)-3%" },
+  footnotes = { left="left(content)", right = "right(content)", height = "0", bottom="83.3%"}
+}})
 
-book:loadPackage("twoside", { oddPageFrameID = "r", evenPageFrameID = "l" });
+book:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" });
 book:loadPackage("tableofcontents")
-
-book:declareMirroredFrame("l","r")
-book:declareMirroredFrame("lRH","rRH")
 
 if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end
 
-book.init = function()
-  book:loadPackage("footnotes", { insertInto = "footnotes", stealFrom = {"r";"l"} } )
-  return plain:init()
+book.pageTemplate = SILE.scratch.masters["right"]
+book.init = function(self)
+  book:loadPackage("footnotes", { insertInto = "footnotes", stealFrom = {"content"} } )
+  return plain.init(self)
 end
 
-book.newPage = function()
+book.newPage = function(self)
   book:switchPage()
-  if (book:oddPage()) then
-    book:declareFrame("folio",     { left="left(r)", right = "right(r)", top = "bottom(footnotes)+3%", bottom = "bottom(footnotes)+5%" });
-    book:declareFrame("footnotes", { left="left(r)", right = "right(r)", height = "0", bottom="83.3%"})
-  else
-    book:declareFrame("footnotes", { left="left(l)", right = "right(l)", height = "0", bottom="83.3%"})
-    book:declareFrame("folio",     { left="left(l)", right = "right(l)", top = "bottom(footnotes)+3%", bottom = "bottom(footnotes)+5%" });
-  end
-  return plain:newPage()
+  return plain.newPage(self)
 end
 
 book.finish = function ()
@@ -37,23 +37,25 @@ book.finish = function ()
   return plain:finish()
 end
 
-book.endPage = function()
+book.endPage = function(self)
   book:outputInsertions()
   book:moveTocNodes()
   book:newPageInfo()
+
   if (book:oddPage() and SILE.scratch.headers.right) then
-    SILE.typesetNaturally(SILE.getFrame("rRH"), function()
+    SILE.typesetNaturally(SILE.getFrame("runningHead"), function()
       SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
       SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
       SILE.process(SILE.scratch.headers.right)
     end)
   elseif (not(book:oddPage()) and SILE.scratch.headers.left) then
-      SILE.typesetNaturally(SILE.getFrame("lRH"), function()
+      SILE.typesetNaturally(SILE.getFrame("runningHead"), function()
         SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
         SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
         SILE.process(SILE.scratch.headers.left)
       end)
   end
+
   return plain.endPage(book);
 end;
 

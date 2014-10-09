@@ -1,26 +1,18 @@
+local tp = "odd"
 return {
   init = function (class, args)
-    class.oddPageFrameID = args.oddPageFrameID
-    class.evenPageFrameID = args.evenPageFrameID
+    class.oddPageMaster = args.oddPageMaster
+    class.evenPageMaster = args.evenPageMaster
   end,
   exports = {
-    oddPage = function (self) return (self.pageTemplate.firstContentFrame.id == self.oddPageFrameID) end,
-    declareMirroredFrame = function(self, new, existing)
-      self:declareFrame(new,
-        { 
-          width="width("..existing..")",
-          height="height("..existing..")",
-          top="top("..existing..")",
-          left = "100% - right("..existing..")",
-          right = "100% - left("..existing..")",
-        }
-      )
-    end,
+    oddPage = function (self) return tp == "odd" end,
     switchPage = function (self)
       if self:oddPage() then
-        self.pageTemplate.firstContentFrame = self.pageTemplate.frames[self.evenPageFrameID]
+        tp = "even"
+        self.switchMaster(self.evenPageMaster)
       else
-        self.pageTemplate.firstContentFrame = self.pageTemplate.frames[self.oddPageFrameID]
+        tp = "odd"
+        self.switchMaster(self.oddPageMaster)
       end
     end
   }
