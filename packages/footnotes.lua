@@ -8,12 +8,16 @@ SILE.require("packages/raiselower")
 local insertions = SILE.require("packages/insertions")
 SILE.scratch.counters.footnote = { value= 1, display= "arabic" };
 
-SILE.registerCommand("footnote", function(options, content)
+SILE.registerCommand("footnotemark", function(options, content)
   SILE.Commands["raise"]({height = "0.7ex"}, function()
     SILE.Commands["font"]({ size = "1.5ex" }, function()
       SILE.typesetter:typeset(SILE.scratch.counters.footnote.value)
     end)
   end)
+end)
+
+SILE.registerCommand("footnote", function(options, content)
+  SILE.call("footnotemark")
   -- XXX We need to vbox the material in the context of the frame it's going to
   -- be inserted into, not in the frame it's coming from; e.g. when a two-column
   -- layout has a full-width footnotes frame.
