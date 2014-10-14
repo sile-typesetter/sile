@@ -1,0 +1,4 @@
+[submodule "dvipdfm-x"]
+	path = libtexpdf
+	url = https://github.com/simoncozens/dvipdfm-x.git
+	branch = just-libtexpdf
