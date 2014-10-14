@@ -127,7 +127,10 @@ int face_from_options(lua_State* L) {
 
   FcPatternDestroy (matched);
   FcPatternDestroy (p);
-
+  lua_newtable(L);
+  lua_pushstring(L, "filename");
+  lua_pushstring(L, font_path);
+  lua_settable(L, -3);
   face = (FT_Face)malloc(sizeof(FT_Face));
   if (FT_New_Face(ft_library, (char*)font_path, 0, &face))
     return 0;
@@ -135,7 +138,10 @@ int face_from_options(lua_State* L) {
   if (FT_Set_Char_Size(face,pointSize * 64.0, 0, 0, 0))
     return 0;
 
+  lua_pushstring(L, "face");
   lua_pushlightuserdata(L, face);
+  lua_settable(L, -3);
+
   return 1;
 }
 

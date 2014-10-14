@@ -45,7 +45,8 @@ SILE.outputters.podofo = {
     lastkey = SILE.font._key(options)
     if not podofoFaces[lastkey] then
       local ftface = SILE.font.cache(options, function () SU.error("Font should exist") end)
-      podofoFaces[lastkey] = document:CreateFont(ftface)
+      print(ftface.filename)
+      podofoFaces[lastkey] = document:CreateFont(ftface.face)
     end
     podofoFaces[lastkey]:SetFontSize(options.size)
     painter:SetFont(podofoFaces[lastkey])
