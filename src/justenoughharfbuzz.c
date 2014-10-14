@@ -45,14 +45,6 @@ void calculate_extents(box* b, hb_glyph_info_t glyph_info, hb_glyph_position_t g
   b->depth = (ftmetrics->height - ftmetrics->horiBearingY) / 64.0;
 }
 
-int populate_options(fontOptions* f, lua_State* L) {
-  int changed = 0;
-
-
-  // variant
-  return changed;
-}
-
 int face_from_options(lua_State* L) {
   FT_Face face;
   FcChar8 * font_path;
