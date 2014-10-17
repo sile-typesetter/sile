@@ -17,7 +17,7 @@ int pdf_init (lua_State *L) {
   height = luaL_checknumber(L, 3);
 
   p = texpdf_open_document(fn, 0, w, height, 0,0,0);
-  texpdf_init_device(p, 1, 2, 0);
+  texpdf_init_device(p, 1.0, 2, 0);
 
   mediabox.llx = 0.0;
   mediabox.lly = 0.0;
@@ -36,7 +36,7 @@ int pdf_endpage(lua_State *L) {
 
 int pdf_beginpage(lua_State *L) {
   ASSERT(p);
-  texpdf_doc_begin_page(p, 1.0,72.0,height);
+  texpdf_doc_begin_page(p, 1.0,0,height);
   return 0;
 }
 
@@ -88,9 +88,11 @@ int pdf_setstring(lua_State *L) {
   double x = luaL_checknumber(L, 1);
   double y = luaL_checknumber(L, 2);
   const char*  s = luaL_checkstring(L, 3);
-  int    font_id = luaL_checkinteger(L, 4);
+  int    chrlen  = luaL_checkinteger(L, 4);
+  int    font_id = luaL_checkinteger(L, 5);
+  double w = luaL_checknumber(L,6);
 
-  texpdf_dev_set_string(p, x, -y, s, 7, 0, font_id, 1);
+  texpdf_dev_set_string(p, x, -height+y, s, chrlen, w * 65536, font_id, -1);
   return 0;
 }
 

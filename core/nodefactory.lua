@@ -46,7 +46,7 @@ local _hbox = _box {
     end
     SILE.outputter.setFont(self.value.options)
     -- SILE.outputter.showGlyphs(self.value.glyphNames)
-    SILE.outputter.outputHbox(self.value)
+    SILE.outputter.outputHbox(self.value, self.width.length)
     typesetter.frame:moveX(scaledWidth)
   end
 }

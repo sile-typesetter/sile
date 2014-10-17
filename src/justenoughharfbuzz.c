@@ -6,6 +6,7 @@
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include FT_OUTLINE_H
+#include FT_ADVANCES_H
 
 #include <hb.h>
 #include <hb-ft.h>
@@ -35,14 +36,20 @@ typedef struct {
 
 FT_Library ft_library;
 
-void calculate_extents(box* b, hb_glyph_info_t glyph_info, hb_glyph_position_t glyph_pos, FT_Face ft_face) {
-  const FT_Error error = FT_Load_Glyph(ft_face, glyph_info.codepoint, FT_LOAD_DEFAULT);
+void calculate_extents(box* b, hb_glyph_info_t glyph_info, hb_glyph_position_t glyph_pos, FT_Face ft_face, double point_size) {
+  FT_Error error = FT_Load_Glyph(ft_face, glyph_info.codepoint, FT_LOAD_NO_SCALE);
   if (error) return;
-
+  FT_Glyph glyph;
+  error = FT_Get_Glyph(ft_face->glyph, &glyph);
+  if (error) return;
+  FT_BBox ft_bbox;
+  FT_Glyph_Get_CBox(glyph, FT_GLYPH_BBOX_UNSCALED, &ft_bbox);
+  FT_Fixed advance;
+  FT_Get_Advance(ft_face, glyph_info.codepoint, FT_LOAD_NO_SCALE, &advance);
   const FT_Glyph_Metrics *ftmetrics = &ft_face->glyph->metrics;
-  b->width = glyph_pos.x_advance /64.0;
-  b->height = ftmetrics->horiBearingY / 64.0;
-  b->depth = (ftmetrics->height - ftmetrics->horiBearingY) / 64.0;
+  b->width = advance * point_size / ft_face->units_per_EM;
+  b->height = ft_bbox.yMax * point_size / ft_face->units_per_EM;
+  b->depth = -ft_bbox.yMin * point_size / ft_face->units_per_EM;
 }
 
 int face_from_options(lua_State* L) {
@@ -151,6 +158,8 @@ int shape (lua_State *L) {
     const char * script = luaL_checkstring(L, 3);
     hb_direction_t direction = luaL_checkinteger(L, 4);
     const char * lang = luaL_checkstring(L, 5);
+    double point_size = luaL_checknumber(L, 6);
+
     unsigned int glyph_count = 0;
     hb_font_t *hb_ft_font;
     hb_face_t *hb_ft_face;
@@ -174,8 +183,8 @@ int shape (lua_State *L) {
     for (j = 0; j < glyph_count; ++j) {
       char buf[255];
       box glyph_extents  = { 0.0, 0.0, 0.0 };
-      calculate_extents(&glyph_extents, glyph_info[j], glyph_pos[j], face);
-      // glyph_extents.width += glyph_pos[j].x_offset / 64.0;
+      calculate_extents(&glyph_extents, glyph_info[j], glyph_pos[j], face, point_size);
+      //glyph_extents.width += glyph_pos[j].x_offset / 64.0;
 
       lua_newtable(L);
       lua_pushstring(L, "name");
