@@ -20,6 +20,13 @@ end
 
 function loadPatterns(h, language)
   if not(language) or language == "" then language = "en" end
+  local hyph
+  pcall(function () hyph =  SILE.require("languages/"..language.."-compiled") end)
+  if hyph then
+    _hyphenators[language] = hyph
+    return
+  end
+
   SILE.require("languages/"..language);
   local languageset = SILE.hyphenator.languages[language];
   if not (languageset) then print("No patterns for language "..language) end
