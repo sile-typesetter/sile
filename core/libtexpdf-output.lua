@@ -46,7 +46,7 @@ SILE.outputters.libtexpdf = {
     cursorY = SILE.documentState.paperSize[2] - y
   end,
   rule = function (x,y,w,d)
-    -- XXX
+    pdf.setrule(x,SILE.documentState.paperSize[2] -y,w,d)
   end,
   debugFrame = function (self,f)
   end,

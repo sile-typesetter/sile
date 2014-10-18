@@ -9,6 +9,7 @@
 
 pdf_doc *p = NULL;
 double height = 0.0;
+double precision = 65536.0;
 
 int pdf_init (lua_State *L) {
   pdf_rect mediabox;
@@ -17,7 +18,7 @@ int pdf_init (lua_State *L) {
   height = luaL_checknumber(L, 3);
 
   p = texpdf_open_document(fn, 0, w, height, 0,0,0);
-  texpdf_init_device(p, 1.0, 2, 0);
+  texpdf_init_device(p, 1/precision, 2, 0);
 
   mediabox.llx = 0.0;
   mediabox.lly = 0.0;
@@ -36,7 +37,7 @@ int pdf_endpage(lua_State *L) {
 
 int pdf_beginpage(lua_State *L) {
   ASSERT(p);
-  texpdf_doc_begin_page(p, 1.0,0,height);
+  texpdf_doc_begin_page(p, 1,0,height);
   return 0;
 }
 
@@ -79,7 +80,7 @@ int pdf_loadfont(lua_State *L) {
 
   // layout_dir
   // extend
-  font_id = texpdf_dev_load_native_font(filename, index, ptsize, layout_dir, extend, slant, embolden);
+  font_id = texpdf_dev_load_native_font(filename, index, precision * ptsize, layout_dir, extend, slant, embolden);
   lua_pushinteger(L, font_id);
   return 1;
 }
@@ -92,10 +93,18 @@ int pdf_setstring(lua_State *L) {
   int    font_id = luaL_checkinteger(L, 5);
   double w = luaL_checknumber(L,6);
 
-  texpdf_dev_set_string(p, x, -height+y, s, chrlen, w * 65536, font_id, -1);
+  texpdf_dev_set_string(p, precision * x, precision * (-height+y), s, chrlen, w * 65536 * precision, font_id, -1);
   return 0;
 }
 
+int pdf_setrule(lua_State *L) {
+  double x = luaL_checknumber(L, 1);
+  double y = luaL_checknumber(L, 2);
+  double w = luaL_checknumber(L, 3);
+  double h = luaL_checknumber(L, 4);
+  texpdf_dev_set_rule(p, precision * x, precision * (-height+y), precision * w, precision * h);
+  return 0;
+}
 
 #if !defined LUA_VERSION_NUM
 /* Lua 5.0 */
@@ -127,6 +136,7 @@ static const struct luaL_Reg lib_table [] = {
   {"finish", pdf_finish},
   {"loadfont", pdf_loadfont},
   {"setstring", pdf_setstring},
+  {"setrule", pdf_setrule},
   {NULL, NULL}
 };
 
