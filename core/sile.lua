@@ -33,7 +33,7 @@ require("core/frame")
 
 if pcall(function () require("justenoughharfbuzz") end) then
   require("core/harfbuzz-shaper")
-  require("core/podofo-output")
+  require("core/libtexpdf-output")
 else
   require("core/pango-shaper")
   require("core/cairo-output")
