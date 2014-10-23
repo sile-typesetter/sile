@@ -31,12 +31,23 @@ SILE.linebreak = require("core/break")
 
 require("core/frame")
 
-if pcall(function () require("justenoughharfbuzz") end) then
-  require("core/harfbuzz-shaper")
-  require("core/libtexpdf-output")
-else
-  require("core/pango-shaper")
-  require("core/cairo-output")
+SILE.init = function()
+  if not SILE.backend then
+    if pcall(function () require("justenoughharfbuzz") end) then
+      SILE.backend = "libtexpdf"
+    elseif pcall(function() require("lgi") end) then
+      SILE.backend = "pangocairo"
+    else
+      SU.error("Neither libtexpdf nor pangocairo backends available!")
+    end
+  end
+  if SILE.backend == "libtexpdf" then
+    require("core/harfbuzz-shaper")
+    require("core/libtexpdf-output")
+  else
+    require("core/pango-shaper")
+    require("core/cairo-output")
+  end
 end
 
 SILE.require = function(d)
@@ -59,6 +70,7 @@ local parser = std.optparse ("This is SILE "..SILE.version..[[
  Options:
 
    -d, --debug=VALUE        debug SILE's operation
+   -b, --backend=VALUE      choose libtexpdf/pangocairo backend
    -I, --include=[FILE]     accept an optional argument
        --version            display version information, then exit
        --help               display this help, then exit
@@ -69,6 +81,9 @@ local parser = std.optparse ("This is SILE "..SILE.version..[[
   SILE.debugFlags = {}
   if opts.debug then
     for k,v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = 1 end
+  end
+  if opts.backend then
+    SILE.backend = opts.backend
   end
   if opts.include then
     SILE.preamble = opts.include

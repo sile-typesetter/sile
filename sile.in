@@ -1,6 +1,6 @@
 #!@LUA@
 package.path = (os.getenv("SILE_PATH") and
-os.getenv("SILE_PATH").."/?.lua" or "") .. ';@SILE_PATH@/?.lua;@SILE_PATH@/lua-libraries;?.lua;lua-libraries/?.lua;' .. package.path 
+os.getenv("SILE_PATH").."/?.lua" or "") .. ';@SILE_PATH@/?.lua;@SILE_PATH@/lua-libraries/?.lua;@SILE_PATH@/lua-libraries/?/init.lua;?.lua;lua-libraries/?.lua;lua-libraries/?/init.lua;' .. package.path 
 package.cpath = package.cpath .. ";core/?.so;@SILE_PATH@/core/?.so;"
 SILE = require("core/sile")
 io.stdout:setvbuf 'no'
@@ -8,6 +8,7 @@ if not os.getenv 'LUA_REPL_RLWRAP' then
   print('This is SILE '..SILE.version)
 end
 SILE.parseArguments()
+SILE.init()
 if unparsed and unparsed[1] then
   SILE.masterFileName = unparsed[1]
   if SILE.preamble then
