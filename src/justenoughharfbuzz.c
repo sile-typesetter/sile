@@ -58,6 +58,7 @@ int face_from_options(lua_State* L) {
   FcPattern* p;
   FcPattern* matched;
   FcResult result;
+  int index = 0;
 
   const char *family = "Gentium";
   double pointSize = 12;
@@ -126,6 +127,7 @@ int face_from_options(lua_State* L) {
   if (FcPatternGetString (matched, FC_FILE, 0, &font_path) != FcResultMatch)
     return 0;
   
+  FcPatternGetInteger(matched, FC_INDEX, 0, &index);
   font_path = strdup(font_path);
   if (!font_path) {
     printf("Finding font path failed\n");
@@ -139,11 +141,15 @@ int face_from_options(lua_State* L) {
   lua_pushstring(L, font_path);
   lua_settable(L, -3);
   face = (FT_Face)malloc(sizeof(FT_Face));
-  if (FT_New_Face(ft_library, (char*)font_path, 0, &face))
+  if (FT_New_Face(ft_library, (char*)font_path, index, &face))
     return 0;
 
   if (FT_Set_Char_Size(face,pointSize * 64.0, 0, 0, 0))
     return 0;
+
+  lua_pushstring(L, "index");
+  lua_pushinteger(L, index);
+  lua_settable(L, -3);
 
   lua_pushstring(L, "face");
   lua_pushlightuserdata(L, face);
