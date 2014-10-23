@@ -26,7 +26,7 @@ SILE.outputters.libtexpdf = {
     for i=1,#(value.glyphString) do
       glyph = value.glyphString[i]
       buf[#buf+1] = string.char(math.floor(glyph % 2^32 / 2^8))
-      buf[#buf+1] = string.char(glyph % 0xff)
+      buf[#buf+1] = string.char(glyph % 0x100)
     end
     buf = table.concat(buf, "")
     pdf.setstring(cursorX, cursorY, buf, string.len(buf), font, w)
