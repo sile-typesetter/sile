@@ -1,9 +1,9 @@
-<sile>
-<define command="center"><noindent><hss/><process/><hss/></noindent></define>
-<define command="em"><font style="italic"><process/></font></define>
-<define command="headline">
-<medskip/>
-<font family="Frutiger LT Std" weight="700" size="20pt"><center><process/></center></font>
-<bigskip/>
-</define>
-</sile>
+\begin{document}
+\define[command=center]{\noindent{\hss\process}}
+\define[command=em]{\font[style=italic]{\process}}
+\define[command=headline]{%
+\medskip%
+\font[family=Frutiger LT Std,weight=700,size=20pt]{\center{\process}}
+\bigskip%
+}
+\end{document}
