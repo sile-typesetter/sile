@@ -6,11 +6,9 @@ LT_PREREQ([2.2])
 LT_INIT([dlopen])
 
 m4_include([m4/ax_lua.m4])
-m4_include([m4/ax_cxx_check_lib.m4])
 m4_include([m4/adl_recursive_eval.m4])
 
 # Checks for programs.
-AC_PROG_CXX
 AC_PROG_CC
 
 # Checks for HB/libtexpdf combination
@@ -28,7 +26,7 @@ AC_ARG_WITH([pangocairo],
         [with_pangocairo=check])
 
 AS_IF([test "x$with_harfbuzz" = xyes -a "x$with_pangocairo" = xyes],
-    [AC_MSG_FAILURE([Build with either harfbuzz/podofo or pango/cairo, not both])]
+    [AC_MSG_FAILURE([Build with either harfbuzz/libtexpdf or pango/cairo, not both])]
     [])
 
 AS_IF([test "x$with_harfbuzz" != xno -a "x$with_pangocairo" != xyes],
