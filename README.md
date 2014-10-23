@@ -23,13 +23,8 @@ SILE is written in the Lua programming language, so you will need a Lua version 
 
 You also need to install the following Lua libraries using [luarocks][] (downloading luarocks if you do not already have it installed).
 
-* `stdlib`
 * `lpeg` 
 * `luaexpat`
-* `inspect`
-* `luaepnf`
-* `luarepl`
-* `cassowary`
 * `lgi` (required for Pango-Cairo only)
 
 Once your dependencies are installed, run
