@@ -1,0 +1,11 @@
+\begin[class=book,papersize=129mm x 198mm]{document}
+\script[src=packages/image]
+\bigskip
+One two \img[src=documentation/fig1.png,width=50] three
+
+\bigskip
+
+One two \img[src=documentation/fig1.png,height=50] three
+
+\end{document}
+
