@@ -118,18 +118,20 @@ int pdf_setcolor(lua_State *L) {
 }
 
 int pdf_drawimage(lua_State *L) {
-  const char* filename = luaL_checkstring(L, 3);
+  const char* filename = luaL_checkstring(L, 1);
   transform_info ti;
-  double x = luaL_checknumber(L, 1);
-  double y = luaL_checknumber(L, 2);
-  double w = luaL_checknumber(L, 3);
-  double h = luaL_checknumber(L, 4);
+  double x = luaL_checknumber(L, 2);
+  double y = luaL_checknumber(L, 3);
+  double w = luaL_checknumber(L, 4);
+  double h = luaL_checknumber(L, 5);
   int form_id = texpdf_ximage_findresource(p, filename, 0, NULL);
 
   texpdf_transform_info_clear(&ti);
   ti.width = w;
   ti.height = h;
-  texpdf_dev_put_image(p, form_id, &ti, x * precision, y * precision,0);
+  ti.flags |= (INFO_HAS_WIDTH|INFO_HAS_HEIGHT);
+
+  texpdf_dev_put_image(p, form_id, &ti, x, -h-y, 0);
   return 0;
 }
 

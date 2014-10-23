@@ -1,18 +1,13 @@
-local lgi = require("lgi");
-local cairo = lgi.cairo
-
+local imagesize = SILE.require("imagesize")
 SILE.registerCommand("img", function(options, content)
+  SU.required(options, "src", "including image file")
   local width =  SILE.parseComplexFrameDimension(options.width or 0,"w") or 0 
   local height = SILE.parseComplexFrameDimension(options.height or 0,"h") or 0
   local src = options.src
-
-  -- Wasteful but we need to know this at box construction time.
-  local image = cairo.ImageSurface.create_from_png(src)
-  if not image then SU.error("Could not load image "..src) end
-  local box_width = image:get_width()
-  local box_height = image:get_height()
-
-  if not (box_width > 0) then SU.error("Something went wrong loading image "..src) end
+  local box_width,box_height,err = imagesize.imgsize(src)
+  if not box_width then
+    SU.error(err.." loading image")
+  end
   local sx, sy = 1,1
   if width > 0 or height > 0 then
     sx = width > 0 and box_width / width
@@ -27,7 +22,7 @@ SILE.registerCommand("img", function(options, content)
     depth= 0,
     value= options.src,
     outputYourself= function (this, typesetter, line)
-      SILE.outputter.drawPNG(this.value, typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-this.height, this.width,this.height);
+      SILE.outputter.drawImage(this.value, typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-this.height, this.width,this.height);
       typesetter.frame:moveX(this.width)
   end});
 

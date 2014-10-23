@@ -39,7 +39,7 @@ SILE.outputters.libtexpdf = {
     font = f
   end,
   drawImage = function (src, x,y,w,h)
-    pdf.drawImage(src, x, y, w, h)
+    pdf.drawimage(src, x, y, w, h)
   end,
   moveTo = function (x,y)
     cursorX = x

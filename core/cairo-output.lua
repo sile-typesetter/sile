@@ -37,7 +37,7 @@ SILE.outputters.cairo = {
     cr:select_font_face(options.font, options.style == "italic" and 1 or 0, options.weight > 100 and 0 or 1)
     cr:set_font_size(options.size)
   end,
-  drawPNG = function (src, x,y,w,h)
+  drawImage = function (src, x,y,w,h)
     local image = cairo.ImageSurface.create_from_png(src)
     if not image then SU.error("Could not load image "..src) end
     local src_width = image:get_width()
