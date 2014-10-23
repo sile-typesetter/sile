@@ -76,12 +76,8 @@ AS_IF([test "x$with_pangocairo" = xno -a "x$with_harfbuzz" = xno], [AC_MSG_FAILU
 AX_PROG_LUA([5.1])
 AX_LUA_HEADERS
 # Check for Lua modules
-AX_LUA_MODULE([std])
 AX_LUA_MODULE([lpeg])
 AX_LUA_MODULE([lxp])
-AX_LUA_MODULE([epnf])
-AX_LUA_MODULE([repl])
-AX_LUA_MODULE([cassowary])
 
 AS_IF([test "$backend" = "pangocairo"],
   [AX_LUA_MODULE([lgi])],
@@ -104,7 +100,7 @@ AC_CONFIG_FILES([sile], [chmod +x sile])
 
 # Configure list of data files
 echo 'subdir_files = \' > subfiles.mk
-find core classes languages packages -type f -print | sed 's/^/  /;$q;s/$/ \\/' >> subfiles.mk
+find core classes languages packages lua-libraries -type f -print | sed 's/^/  /;$q;s/$/ \\/' >> subfiles.mk
 
 
 AC_OUTPUT
