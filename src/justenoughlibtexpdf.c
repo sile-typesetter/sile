@@ -106,6 +106,33 @@ int pdf_setrule(lua_State *L) {
   return 0;
 }
 
+int pdf_setcolor(lua_State *L) {
+  double r = luaL_checknumber(L, 1);
+  double g = luaL_checknumber(L, 2);
+  double b = luaL_checknumber(L, 3);
+
+  pdf_color color;
+  texpdf_color_rgbcolor(&color,r,g,b);
+  texpdf_color_set(p, &color, &color);
+  return 0;
+}
+
+int pdf_drawimage(lua_State *L) {
+  const char* filename = luaL_checkstring(L, 3);
+  transform_info ti;
+  double x = luaL_checknumber(L, 1);
+  double y = luaL_checknumber(L, 2);
+  double w = luaL_checknumber(L, 3);
+  double h = luaL_checknumber(L, 4);
+  int form_id = texpdf_ximage_findresource(p, filename, 0, NULL);
+
+  texpdf_transform_info_clear(&ti);
+  ti.width = w;
+  ti.height = h;
+  texpdf_dev_put_image(p, form_id, &ti, x * precision, y * precision,0);
+  return 0;
+}
+
 #if !defined LUA_VERSION_NUM
 /* Lua 5.0 */
 #define luaL_Reg luaL_reg
@@ -137,6 +164,8 @@ static const struct luaL_Reg lib_table [] = {
   {"loadfont", pdf_loadfont},
   {"setstring", pdf_setstring},
   {"setrule", pdf_setrule},
+  {"setcolor", pdf_setcolor},
+  {"drawimage", pdf_drawimage},
   {NULL, NULL}
 };
 

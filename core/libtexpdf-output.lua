@@ -18,7 +18,7 @@ SILE.outputters.libtexpdf = {
     pdf.finish()
   end,
   setColor = function (self, color)
-    -- XXX
+    pdf.setcolor(color.r, color.g, color.b)
   end,
   outputHbox = function (value,w)
     if not value.glyphString then return end
@@ -38,8 +38,8 @@ SILE.outputters.libtexpdf = {
     f = pdf.loadfont({filename=SILE.font.cache(options).filename,pointsize=options.size})
     font = f
   end,
-  drawPNG = function (src, x,y,w,h)
-    -- XXX
+  drawImage = function (src, x,y,w,h)
+    pdf.drawImage(src, x, y, w, h)
   end,
   moveTo = function (x,y)
     cursorX = x
