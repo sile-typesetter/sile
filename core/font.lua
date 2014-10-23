@@ -11,19 +11,20 @@
       end
       if (options.weight)  then SILE.settings.set("font.weight", 0+options.weight) end
       if (options.style)  then SILE.settings.set("font.style", options.style) end
+      if (options.script)  then SILE.settings.set("font.script", options.script) end
       if (options.variant)  then SILE.settings.set("font.variant", options.variant) end
       if (options.language)  then  SILE.settings.set("document.language", options.language) end
       if (type(content)=="function" or content[1]) then 
         SILE.process(content)
         SILE.settings.popState()
       end
-    end, "Set current font family, size, weight, style, variant and language")
+    end, "Set current font family, size, weight, style, variant, script and language")
 
 SILE.settings.declare({name = "font.family", type = "string", default = "Gentium"})
 SILE.settings.declare({name = "font.size", type = "number or integer", default = 10})
 SILE.settings.declare({name = "font.weight", type = "integer", default = 200})
 SILE.settings.declare({name = "font.variant", type = "string", default = "normal"})
-
+SILE.settings.declare({name = "font.script", type = "string", default = "latin"})
 SILE.settings.declare({name = "font.style", type = "string", default = "normal"})
 
 SILE.settings.declare({name = "document.language", type = "string", default = "en"})
@@ -42,6 +43,7 @@ SILE.font = {loadDefaults = function(options)
   if not options.style then options.style = SILE.settings.get("font.style") end
   if not options.variant then options.variant = SILE.settings.get("font.variant") end
   if not options.language then options.language = SILE.settings.get("document.language") end
+  if not options.script then options.script = SILE.settings.get("font.script") end
   return options
 end,
   cache = function(options, callback)

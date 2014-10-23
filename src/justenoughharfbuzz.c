@@ -133,6 +133,9 @@ int face_from_options(lua_State* L) {
     printf("Finding font path failed\n");
     return 0;
   }
+  /* Push back slant and weight, we need to pass them to libpdftex */
+  FcPatternGetInteger(matched, FC_SLANT, 0, &slant);
+  FcPatternGetInteger(matched, FC_WEIGHT, 0, &weight);
 
   FcPatternDestroy (matched);
   FcPatternDestroy (p);
@@ -149,6 +152,10 @@ int face_from_options(lua_State* L) {
 
   lua_pushstring(L, "index");
   lua_pushinteger(L, index);
+  lua_settable(L, -3);
+
+  lua_pushstring(L, "pointsize");
+  lua_pushnumber(L, pointSize);
   lua_settable(L, -3);
 
   lua_pushstring(L, "face");

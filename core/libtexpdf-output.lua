@@ -36,7 +36,7 @@ SILE.outputters.libtexpdf = {
     if SILE.font._key(options) == lastkey then return end
     lastkey = SILE.font._key(options)
     font = SILE.font.cache(options)
-    f = pdf.loadfont({filename=font.filename,pointsize=options.size, index=font.index})
+    f = pdf.loadfont(font)
     font = f
   end,
   drawImage = function (src, x,y,w,h)

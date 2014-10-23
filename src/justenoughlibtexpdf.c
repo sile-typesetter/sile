@@ -78,8 +78,30 @@ int pdf_loadfont(lua_State *L) {
   else { luaL_error(L, "No pointsize supplied to loadfont"); }
   lua_pop(L,1);
 
-  // layout_dir
-  // extend
+  /* The following parameters are not currently passed by SILE,
+     and it will work without them, but if SILE extensions put them
+     into the font cache then they should magically work. */
+
+  lua_pushstring(L, "extend");
+  lua_gettable(L, -2);
+  if (lua_isnumber(L, -1)) { extend = lua_tointeger(L, -1); }
+  lua_pop(L,1);
+
+  lua_pushstring(L, "embolden");
+  lua_gettable(L, -2);
+  if (lua_isnumber(L, -1)) { embolden = lua_tointeger(L, -1); }
+  lua_pop(L,1);
+
+  lua_pushstring(L, "slant");
+  lua_gettable(L, -2);
+  if (lua_isnumber(L, -1)) { slant = lua_tointeger(L, -1); }
+  lua_pop(L,1);
+
+  lua_pushstring(L, "layout_dir");
+  lua_gettable(L, -2);
+  if (lua_isnumber(L, -1)) { layout_dir = lua_tointeger(L, -1); }  
+  lua_pop(L,1);
+
   font_id = texpdf_dev_load_native_font(filename, index, precision * ptsize, layout_dir, extend, slant, embolden);
   lua_pushinteger(L, font_id);
   return 1;

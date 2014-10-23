@@ -15,7 +15,7 @@ local function measureSpace( options )
   local ss = SILE.settings.get("document.spaceskip") 
   if ss then return ss end
   local face = SILE.font.cache(options, SILE.shapers.harfbuzz._face)  
-  local i = { SILE.shapers.harfbuzz._shape(" ",face.face,"latin",4,options.language, options.size) }
+  local i = { SILE.shapers.harfbuzz._shape(" ",face.face,options.script,4,options.language, options.size) }
   if not i[1] then return SILE.length.new() end
   local spacewidth = i[1].width
   return SILE.length.new({ length = spacewidth * 1.2, shrink = spacewidth/3, stretch = spacewidth /2 }) -- XXX
@@ -25,7 +25,7 @@ function SILE.shapers.harfbuzz.measureDim(char)
   local options = SILE.font.loadDefaults({})
   local face = SILE.font.cache(options, SILE.shapers.harfbuzz._face)
 
-  local i = { SILE.shapers.harfbuzz._shape(char, face.face, "latin", 4, options.language, options.size) }
+  local i = { SILE.shapers.harfbuzz._shape(char, face.face, options.script, 4, options.language, options.size) }
   if char == "x" then 
     return i[1].height
   else
@@ -44,7 +44,7 @@ function SILE.shapers.harfbuzz.shape(text, options)
     if (token.separator) then
       table.insert(nodes, SILE.nodefactory.newGlue({ width = gluewidth }))
     else
-      local items = { SILE.shapers.harfbuzz._shape(token.string, face.face, "latin", 4, options.language, options.size) }
+      local items = { SILE.shapers.harfbuzz._shape(token.string, face.face, options.script, 4, options.language, options.size) }
       local nnode = {}
 
       local glyphs = {}
