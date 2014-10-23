@@ -19,22 +19,22 @@ SILE allows you to
 
 SILE can be downloaded from [its home page][1], or directly from [the release page][2].
 
-SILE is written in the Lua programming language, so you will need a Lua version 5.1 installation; it also relies on the Cairo and Pango libraries.
+SILE is written in the Lua programming language, so you will need a Lua version 5.1 installation. It also relies on external libraries to access fonts and write PDF files. Its preferred combination of libraries is [harfbuzz][] and a PDF creation library extracted from TeX. It should be possible to harfbuzz from your operating system's package manager. If this is not possible, SILE will attempt to use the GNOME Pango/Cairo libraries. 
 
 You also need to install the following Lua libraries using [luarocks][] (downloading luarocks if you do not already have it installed).
 
 * `stdlib`
-* `lgi` 
 * `lpeg` 
 * `luaexpat`
 * `inspect`
 * `luaepnf`
 * `luarepl`
 * `cassowary`
+* `lgi` (required for Pango-Cairo only)
 
 Once your dependencies are installed, run
 
-* `lua install.lua`
+* ./configure ; make install
 
 This will place the SILE libraries and executable in a sensible location.
 
@@ -60,3 +60,4 @@ SILE is distributed under the [MIT licence][5].
 [faq]: https://github.com/simoncozens/sile/wiki/faq
 [roadmap]: https://github.com/simoncozens/sile/blob/master/ROADMAP
 [luarocks]: http://luarocks.org/en/Download
+[harfbuzz]: http://www.freedesktop.org/wiki/Software/HarfBuzz/
