@@ -31,6 +31,10 @@ Once your dependencies are installed, run
 
 * ./configure ; make install
 
+(If you are running SILE from git, first run `bootstrap.sh` and then
+configure and make. I don't guarantee that SILE will work from the
+repository, although it probably ought to.)
+
 This will place the SILE libraries and executable in a sensible location.
 
 Now try `sile examples/test.sil`.
