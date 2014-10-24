@@ -1,5 +1,7 @@
 local utilities = {}
 
+require("bit32-compat")
+
 function utilities.required(t, name, context)
   if not t[name] then utilities.error(context.." needs a "..name.." parameter") end
   return t[name]
@@ -97,6 +99,25 @@ function utilities.sum(array)
     t = t + array[i]
   end
   return t
+end
+
+function utilities.codepoint(uchar)
+  local seq = 0
+  local val = -1
+  for i = 1, #uchar do
+    local c = string.byte(uchar, i)
+    if seq == 0 then
+      if val > -1 then return val end
+      seq = c < 0x80 and 1 or c < 0xE0 and 2 or c < 0xF0 and 3 or
+            c < 0xF8 and 4 or --c < 0xFC and 5 or c < 0xFE and 6 or
+          error("invalid UTF-8 character sequence")
+      val = bit32.band(c, 2^(8-seq) - 1)
+    else
+      val = bit32.bor(bit32.lshift(val, 6), bit32.band(c, 0x3F))
+    end
+    seq = seq - 1
+  end  
+  return val
 end
 
 return utilities
