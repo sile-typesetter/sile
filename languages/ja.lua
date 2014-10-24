@@ -39,7 +39,7 @@ local intracodepointglue = function(l,r)
   if kanji(l) and kanji(r) then return SILE.settings.get("language.ja.intrakanjiskip") end
   if punct(l) and punct(r) then return SILE.settings.get("language.ja.doublepunctskip") end
   -- Is this an adequate kinsoku shori? We may need to split out an intracodepointpenalty as well
-  if cannotEnd[l] or cannotEnd[r] then return nil end
+  if cannotEnd[l] or cannotStart[r] then return nil end
   if japanese(l) and japanese(r) then return SILE.settings.get("language.ja.intrakanjiskip") end
 end
 
