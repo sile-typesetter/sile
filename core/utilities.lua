@@ -12,7 +12,7 @@ end
 
 function utilities.warn(message)
   print("\n! "..message)
-  print(debug.traceback())
+  --print(debug.traceback())
   --os.exit(1)
 end
 
