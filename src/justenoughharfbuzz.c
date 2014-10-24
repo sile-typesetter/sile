@@ -169,9 +169,10 @@ int shape (lua_State *L) {
     const char * text = luaL_checkstring(L, 1);
     FT_Face face = lua_touserdata(L, 2);
     const char * script = luaL_checkstring(L, 3);
-    hb_direction_t direction = luaL_checkinteger(L, 4);
+    const char * direction_s = luaL_checkstring(L, 4);
     const char * lang = luaL_checkstring(L, 5);
     double point_size = luaL_checknumber(L, 6);
+    hb_direction_t direction;
 
     unsigned int glyph_count = 0;
     hb_font_t *hb_ft_font;
@@ -180,6 +181,11 @@ int shape (lua_State *L) {
     hb_glyph_info_t *glyph_info;
     hb_glyph_position_t *glyph_pos;
     unsigned int j;
+
+    if (!strcasecmp(direction_s,"RTL"))
+      direction = HB_DIRECTION_RTL;
+    else
+      direction = HB_DIRECTION_LTR;
 
     hb_ft_font = hb_ft_font_create(face, NULL);
     buf = hb_buffer_create();

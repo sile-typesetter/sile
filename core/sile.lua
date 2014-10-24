@@ -5,6 +5,7 @@ SU = SILE.utilities
 SILE.inputs = {}
 SILE.Commands = {};
 SILE.debugFlags = {}
+SILE.tokenizers = {}
 
 std = require("std")
 

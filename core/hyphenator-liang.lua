@@ -27,9 +27,15 @@ function loadPatterns(h, language)
     return
   end
 
-  SILE.require("languages/"..language);
+  if not pcall(function () SILE.require("languages/"..language) end) then
+    return
+  end
+
   local languageset = SILE.hyphenator.languages[language];
-  if not (languageset) then print("No patterns for language "..language) end
+  if not (languageset) then 
+    print("No patterns for language "..language)
+    return
+  end
   for _,pat in pairs(languageset.patterns) do addPattern(h, pat) end
   for _,exc in pairs(languageset.exceptions) do
     local k = exc:gsub("-", "")

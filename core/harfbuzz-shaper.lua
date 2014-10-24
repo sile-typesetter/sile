@@ -2,6 +2,10 @@
 if not SILE.shapers then SILE.shapers = { } end
 SILE.shapers.harfbuzz = {}
 
+SILE.tokenizers.default = function(text)
+  return SU.gtoke(text, SILE.settings.get("shaper.spacepattern"))
+end
+
 SILE.settings.declare({
   name = "shaper.spacepattern", 
   type = "string",
@@ -24,7 +28,6 @@ end
 function SILE.shapers.harfbuzz.measureDim(char)
   local options = SILE.font.loadDefaults({})
   local face = SILE.font.cache(options, SILE.shapers.harfbuzz._face)
-
   local i = { SILE.shapers.harfbuzz._shape(char, face.face, options.script, 4, options.language, options.size) }
   if char == "x" then 
     return i[1].height
@@ -40,11 +43,22 @@ function SILE.shapers.harfbuzz.shape(text, options)
   face = SILE.font.cache(options, SILE.shapers.harfbuzz._face)
   local nodes = {}
   local gluewidth = measureSpace(options)
-  for token in SU.gtoke(text, SILE.settings.get("shaper.spacepattern")) do
+
+  -- Do language-specific tokenization
+  pcall(function () SILE.require("languages/"..options.language) end)
+  local tokenizer = SILE.tokenizers[options.language]
+  if not tokenizer then
+    tokenizer = SILE.tokenizers.default
+  end
+
+  for token in tokenizer(text) do
     if (token.separator) then
       table.insert(nodes, SILE.nodefactory.newGlue({ width = gluewidth }))
+    elseif (token.node) then
+      print("Adding "..token.node)
+      table.insert(nodes, token.node)
     else
-      local items = { SILE.shapers.harfbuzz._shape(token.string, face.face, options.script, 4, options.language, options.size) }
+      local items = { SILE.shapers.harfbuzz._shape(token.string, face.face, options.script, options.direction, options.language, options.size) }
       local nnode = {}
 
       local glyphs = {}
