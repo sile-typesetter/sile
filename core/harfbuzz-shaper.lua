@@ -55,7 +55,6 @@ function SILE.shapers.harfbuzz.shape(text, options)
     if (token.separator) then
       table.insert(nodes, SILE.nodefactory.newGlue({ width = gluewidth }))
     elseif (token.node) then
-      print("Adding "..token.node)
       table.insert(nodes, token.node)
     else
       local items = { SILE.shapers.harfbuzz._shape(token.string, face.face, options.script, options.direction, options.language, options.size) }
