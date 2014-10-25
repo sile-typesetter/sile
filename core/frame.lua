@@ -13,7 +13,7 @@ local framePrototype = std.object {
   id= nil,
   previous= nil,
   balanced= 0,
-  direction = "LTR",
+  direction = nil,
   state = {},
   constrain = function (self, method, value)
     self.constraints[method] = value
@@ -75,10 +75,10 @@ function framePrototype:toString()
 end
 
 function framePrototype:moveX(amount)
-  if self.direction == "LTR" then
-    self.state.cursorX = self.state.cursorX + amount
-  else
+  if self.direction == "RTL" then
     self.state.cursorX = self.state.cursorX - amount
+  else
+    self.state.cursorX = self.state.cursorX + amount
   end
   self:normalize()
 end
@@ -89,7 +89,7 @@ function framePrototype:moveY(amount)
 end
 
 function framePrototype:newLine()
-  self.state.cursorX = self.direction == "LTR" and self:left() or self:right()
+  self.state.cursorX = self.direction == "RTL" and self:right() or self:left()
 end
 
 function framePrototype:init()

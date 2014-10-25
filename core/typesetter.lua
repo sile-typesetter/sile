@@ -132,7 +132,8 @@ SILE.defaultTypesetter = std.object {
 
   -- Empties self.state.nodes, breaks into lines, puts lines into vbox, adds vbox to
   -- Turns a node list into a list of vboxes
-  boxUpNodes = function (self, nl)
+  boxUpNodes = function (self)
+    local nl = self.state.nodes
     while (#nl > 0 and (nl[#nl]:isPenalty() or nl[#nl]:isGlue())) do
      table.remove(nl);
     end
@@ -263,7 +264,7 @@ SILE.defaultTypesetter = std.object {
   end,
   leaveHmode = function(self, independent)
     SU.debug("typesetter", "Leaving hmode");
-    local vboxlist = self:boxUpNodes(self.state.nodes)
+    local vboxlist = self:boxUpNodes()
     self.state.nodes = {};
     -- Push output lines into boxes and ship them to the page builder
     for index=1, #vboxlist do

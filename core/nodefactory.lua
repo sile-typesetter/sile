@@ -52,7 +52,7 @@ local _hbox = _box {
     SILE.outputter.setFont(self.value.options)
     -- SILE.outputter.showGlyphs(self.value.glyphNames)
     SILE.outputter.outputHbox(self.value, self.width.length)
-    if typesetter.frame.direction == "LTR" then
+    if typesetter.frame.direction ~= "RTL" then
       typesetter.frame:moveX(scaledWidth)
     end
   end
