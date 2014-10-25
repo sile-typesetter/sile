@@ -39,7 +39,12 @@ local _hbox = _box {
       scaledWidth = scaledWidth + self.width.stretch * line.ratio
     end
     typesetter.frame:normalize()
+    -- Yuck!
+    if typesetter.frame.direction == "RTL" then
+      typesetter.frame:moveX(scaledWidth)
+    end
     SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
+
     -- SILE.outputter.debugHbox(typesetter, self, scaledWidth)
     if self.value.glyphNames then
       -- print(self.value.glyphNames[1])
@@ -47,7 +52,9 @@ local _hbox = _box {
     SILE.outputter.setFont(self.value.options)
     -- SILE.outputter.showGlyphs(self.value.glyphNames)
     SILE.outputter.outputHbox(self.value, self.width.length)
-    typesetter.frame:moveX(scaledWidth)
+    if typesetter.frame.direction == "LTR" then
+      typesetter.frame:moveX(scaledWidth)
+    end
   end
 }
 
