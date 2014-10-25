@@ -444,16 +444,12 @@ local function create_matrix(line, base_level)
 
   local max_level = 0
   local matrix = {}
-  io.write("Levels: ")
   for i,c in next, line do
     if c.level > max_level then max_level = c.level end
-    io.write(c.level..",")
     matrix[i] = i
   end
-  io.write("\n")
 
   for level = base_level+1, max_level do
-    print("Level "..level)
     local level_start, level_limit
     for i,_ in next, line do
       if line[i].level >= level then
@@ -461,14 +457,12 @@ local function create_matrix(line, base_level)
           level_start = i
         elseif i == #line then
           level_end = i
-          print("Reversing",level_start,level_end)
           matrix = reverse_portion(matrix, level_start, level_end)
           level_start = nil
         end
       else
         if level_start then
           level_end = i-1
-          print("Reversing",level_start,level_end)
           matrix = reverse_portion(matrix, level_start, level_end)
           level_start = nil
         end
@@ -500,7 +494,6 @@ local function process(nodelist, frame)
     else
       base_level = get_base_level(line)
     end
-    print("Base level "..base_level)
 
   -- will be used later to set direction of sublists
   par_dir = dir_of_level(base_level)
@@ -512,10 +505,8 @@ local function process(nodelist, frame)
 
   local rv = {}
   for i = 1, #nodelist do
-    io.write(matrix[i]..",")
     rv[matrix[i]] = nodelist[i]
   end
-  io.write("\n")
   return rv
 end
 
