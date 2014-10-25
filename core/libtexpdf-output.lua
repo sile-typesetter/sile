@@ -50,6 +50,12 @@ SILE.outputters.libtexpdf = {
     pdf.setrule(x,SILE.documentState.paperSize[2] -y,w,d)
   end,
   debugFrame = function (self,f)
+    pdf.colorpush(0.8,0,0)
+    self.rule(f:left(), f:top(), f:width(), 0.5)
+    self.rule(f:left(), f:top(), 0.5, - f:height())
+    self.rule(f:right(), f:top(), 0.5, - f:height())
+    self.rule(f:left(), f:bottom(), f:width(), 0.5)
+    pdf.colorpop()
   end,
   debugHbox = function(typesetter, hbox, scaledWidth)
   end

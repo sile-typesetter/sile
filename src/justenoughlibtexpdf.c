@@ -139,6 +139,22 @@ int pdf_setcolor(lua_State *L) {
   return 0;
 }
 
+int pdf_colorpush(lua_State *L) {
+  double r = luaL_checknumber(L, 1);
+  double g = luaL_checknumber(L, 2);
+  double b = luaL_checknumber(L, 3);
+
+  pdf_color color;
+  texpdf_color_rgbcolor(&color,r,g,b);
+  texpdf_color_push(p, &color, &color);
+  return 0;
+}
+
+int pdf_colorpop(lua_State *L) {
+  texpdf_color_pop(p);
+  return 0;
+}
+
 int pdf_drawimage(lua_State *L) {
   const char* filename = luaL_checkstring(L, 1);
   transform_info ti;
@@ -190,6 +206,8 @@ static const struct luaL_Reg lib_table [] = {
   {"setrule", pdf_setrule},
   {"setcolor", pdf_setcolor},
   {"drawimage", pdf_drawimage},
+  {"colorpop", pdf_colorpop},
+  {"colorpush", pdf_colorpush},
   {NULL, NULL}
 };
 
