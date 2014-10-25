@@ -13,6 +13,7 @@ local framePrototype = std.object {
   id= nil,
   previous= nil,
   balanced= 0,
+  direction = "LTR",
   state = {},
   constrain = function (self, method, value)
     self.constraints[method] = value
@@ -74,7 +75,11 @@ function framePrototype:toString()
 end
 
 function framePrototype:moveX(amount)
-  self.state.cursorX = self.state.cursorX + amount
+  if self.direction == "LTR" then
+    self.state.cursorX = self.state.cursorX + amount
+  else
+    self.state.cursorX = self.state.cursorX - amount
+  end
   self:normalize()
 end
 
@@ -84,15 +89,15 @@ function framePrototype:moveY(amount)
 end
 
 function framePrototype:newLine()
-  self.state.cursorX = self:left(); -- XXX bidi
+  self.state.cursorX = self.direction == "LTR" and self:left() or self:right()
 end
 
 function framePrototype:init()
   self.state = {
-    cursorX = self:left(),
     cursorY = self:top(),
     totals = { height= 0, pastTop = false }
   }
+  self:newLine()
 end
 
 function framePrototype:normalize()
@@ -108,6 +113,8 @@ SILE.newFrame = function(spec)
   if not SILE.frames[spec.id] then 
     frame = framePrototype {
       id = spec.id,
+      balanced = spec.balanced,
+      direction = spec.direction,
       next = spec.next,
       previous = spec.previous,
       constraints = {},
