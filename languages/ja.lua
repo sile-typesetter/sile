@@ -1,4 +1,4 @@
-local punct = function(c) return c >= 0x3000 and c <= 0x303f end
+local punct = function(c) return c >= 0x3000 and c <= 0x303f or c == 0xff09 or c == 0xff08 end
 local hiragana = function(c) return c >= 0x3040 and c <= 0x309f end
 local katakana = function(c) return c >= 0x30a0 and c <= 0x30ff end
 local kana = function(c) return hiragana(c) or katakana(c) end
