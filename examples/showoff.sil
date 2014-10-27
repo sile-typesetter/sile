@@ -23,7 +23,6 @@ Let’s demonstrate some of the things which are interesting about SILE.
 \tocentry{Frames}% Normally called automatically but we are not using sectioning commands.
 On this page, we are demonstrating SILE’s frame capabilities.
 
-\showframe[id=sidebar]
 SILE’s frame system allows you to declare areas of the page where your text should be set.
 The frames are specified declaratively; this means that you say that, for instance, the first two columns on this
 page must have the same width, and sit either side of a gutter of a particular size.
