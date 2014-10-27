@@ -116,6 +116,15 @@ SILE.registerCommand("float", function(options, content)
   SILE.settings.set("current.parindent", SILE.settings.get("document.parindent"))
 end, "Sets the given content in its own frame, flowing the remaining content around it")
 
+SILE.registerCommand("typeset-into", function(options,content)
+  SU.required(options, "frame", "calling \\typeset-into")
+  if not SILE.frames[options.frame] then
+    SU.error("Can't find frame "..options.frame.." to typeset into")
+  end
+  SILE.typesetter:chuck()
+  SILE.typesetNaturally(SILE.frames[options.frame], function() SILE.process(content) end)
+end)
+
 return {
   init = function () end,
   exports = {
