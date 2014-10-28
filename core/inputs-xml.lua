@@ -3,7 +3,7 @@ SILE.inputs.XML = {
     local lom = require("lxp.lom")
     local fh = io.open(fn)
     local t = lom.parse(fh:read("*all"))
-    local root = not SILE.preamble
+    local root = SILE.documentState.documentClass == nil
     if root then
       if not(t.tag == "sile") then
         SU.error("This isn't a SILE document!")
