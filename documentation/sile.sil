@@ -35,7 +35,7 @@ to compare it to other systems which you may have heard of.
 
 When most people produce printed documents using a computer, they 
 usually use software such as Word (part of Microsoft Office) or Writer
-(part of Open/LibreOffice) or similar–word processing software. SILE is
+(part of Open/LibreOffice) or similar—word processing software. SILE is
 not a word processor; it is a typesetting system. There are
 several important differences.
 
@@ -45,10 +45,10 @@ For instance, in a word processor, you keep typing and when you hit the right ma
 
 Similarly for page breaks. When you type into a word processor, at some point you will spill over onto a new page. In SILE, you keep typing, because the page breaks are determined after considering the layout of the whole document.
 
-Word processors often describe themselves as WYSIWYG–What You See Is What You
+Word processors often describe themselves as WYSIWYG—What You See Is What You
 Get. SILE is cheerfully \em{not} WYSIWYG. In fact, you don’t see what you get until
-you get it. Rather, SILE documents are prepared initially in a \em{text editor}–a
-piece of software which focuses on the text itself and not what it looks like–and then
+you get it. Rather, SILE documents are prepared initially in a \em{text editor}—a
+piece of software which focuses on the text itself and not what it looks like—and then
 ran through SILE in order to produce a PDF document.
 
 In other words, SILE is a \em{language} for describing
@@ -68,9 +68,9 @@ but… really, SILE is basically a modern rewrite of TeX.
 
 TeX was one of the earliest typesetting systems, and had to make a lot of
 design decisions somewhat in a vacuum. Some of those design decisions have stood
-the test of time–and TeX is still an extremely well-used typesetting system more
+the test of time—and TeX is still an extremely well-used typesetting system more
 than thirty years after its inception, which is a testament to its design and
-performance–but many others have not. In fact, most of the development of TeX since
+performance—but many others have not. In fact, most of the development of TeX since
 Knuth’s era has involved removing his early decisions and replacing them with
 technologies which have become the industry standard:
 we use TrueType fonts, not METAFONTs (xetex); PDFs,
@@ -92,7 +92,7 @@ There are various hacks to try to make it happen, but they’re all horrible. In
 you can alter the behaviour of the typesetter and write a very short add-on package
 to enable grid typesetting.
 
-Of course, nobody uses plain TeX–they all use LaTeX equivalents plus a huge repository
+Of course, nobody uses plain TeX—they all use LaTeX equivalents plus a huge repository
 of packages available from the CTAN. SILE does not benefit from the large ecosystem 
 and community that has grown up around TeX; in that sense, TeX will remain streets
 ahead of SILE for some time to come. But in terms of \em{capabilities}, SILE is
@@ -104,7 +104,7 @@ The other tool that people reach for when designing printed material on a comput
 InDesign.
 
 InDesign is a complex, expensive, commercial publishing tool. It’s highly 
-graphical–you click and drag to move areas of text and images around the screen. 
+graphical—you click and drag to move areas of text and images around the screen. 
 SILE is a free, open source typesetting tool which is entirely text-based; you
 enter commands in a separate editing tool, save those commands into a file, and hand it to SILE for typesetting. And yet the two
 systems do have a number of common features.
@@ -119,7 +119,7 @@ the page, and so it’s possible to use SILE to generate page layouts which are
 more flexible and more complex than that afforded by TeX.
 
 Another thing which people use InDesign for is to turn structured data in XML
-format–catalogues, directories and the like–into print. The way you do this
+format—catalogues, directories and the like—into print. The way you do this
 in InDesign is to declare what styling should apply to each XML element, and as the
 data is read in, InDesign formats the content according to the rules that you
 have declared.\supereject
@@ -229,7 +229,7 @@ Copy in the content above and save the file. Now at your command line run:
 (SILE will automatically provide the extension \code{.sil} to input files if it
 is not provided by the user.)
 
-Once again, this should produce an output file \code{hello.pdf}. Congratulations–you
+Once again, this should produce an output file \code{hello.pdf}. Congratulations—you
 have just typeset your first document with SILE.
 
 \section{Let’s Do Something Cool}
@@ -295,7 +295,7 @@ Later we will meet some other ways of specifying lengths.
 }
 \section{Ordinary text}
 
- On the whole, ordinary text isn’t particularly interesting–it’s
+ On the whole, ordinary text isn’t particularly interesting—it’s
 just typeset. 
 
 \note{TeX users may have an expectation that SILE will do certain things with
@@ -356,8 +356,8 @@ This is paragraph three.
 \line
 \end{verbatim}
 
-The second clever thing that happens around ordinary text is that a few–four,
-in fact–characters have a special meaning to SILE. All of these will be familiar
+The second clever thing that happens around ordinary text is that a few—four,
+in fact—characters have a special meaning to SILE. All of these will be familiar
 to TeX users.
 
 We’ve seen that a \em{backslash} is
@@ -495,7 +495,7 @@ to SILE.
 However, there is an even smarter way of processing XML with SILE. For this,
 you need to know that you can define your own SILE commands, which can range
 from very simple formatting to fundamentally changing the way that SILE operates.
-If you have a file in some particular XML format–let’s say it’s a DocBook file—and
+If you have a file in some particular XML format—let’s say it’s a DocBook file—and
 you define SILE commands for each possible DocBook tag, then the DocBook file 
 becomes a valid SILE input file, as-is.
 
@@ -677,7 +677,7 @@ so do \code{\\goodbreak}, \code{\\nobreak} and \code{\\allowbreak}. If you want 
 absolutely sure that you are inhibiting a \em{page} break, you can say \code{\\novbreak}.
 
 \raggedright
-SILE normally fully-justifies text–that is, it tries to alter the spacing between
+SILE normally fully-justifies text—that is, it tries to alter the spacing between
 words so that the text stretches across the full width of the column. An alternative
 to full justification is ragged right margin formatting, where the spacing between
 words is constant but the right hand side of the paragraph may not line up. Ragged
@@ -980,14 +980,14 @@ footnote number, the chapter number, and so on. The counters package
 allows you to set up, increment and typeset named counters. It
 provides the following commands:
 
-• \code{\\set-counter[id=\em{<counter-name>},value=\em{<value}]} – sets
+• \code{\\set-counter[id=\em{<counter-name>},value=\em{<value}]} — sets
 the counter called \code{<counter-name>} to the value given. 
 
-• \code{\\increment-counter[id=\em{<counter-name>}]} – does the
+• \code{\\increment-counter[id=\em{<counter-name>}]} — does the
 same as \code{\\set-counter} except that when no \code{value} parameter
 is given, the counter is incremented by one.
 
-• \code{\\show-counter[id=\em{<counter-name>}]} – this typesets the
+• \code{\\show-counter[id=\em{<counter-name>}]} — this typesets the
 value of the counter according to the counter’s declared display type.
 
 \note{All of the commands in the counters package take an optional
@@ -1217,7 +1217,7 @@ Additionally, any single character is a valid TeX-flavor command name. (Hence
 \code{\\\\} for typesetting a backslash.)
 
 When it comes to defining commands, commands defined by an XML-flavor file can actually have
-any name that you like–even if they are not accessible from XML-favour! (You may define oddly-named commands in a XML-flavor SILE file
+any name that you like—even if they are not accessible from XML-favour! (You may define oddly-named commands in a XML-flavor SILE file
 and then use them in a TeX-flavor SILE file.) Commands defined in TeX-flavor
 obviously have to have names which are valid parameter values, or else they will
 not parse correctly either; parameter values happen to consist
@@ -1334,7 +1334,7 @@ Settings in SILE are \em{namespaced} so that 1) the name of the setting gives yo
 some kind of clue as to what area of the system it will affect, and 2) packages
 can define their own settings without worrying that they will be interfering
 with other packages or the SILE internals. Namespacing of settings takes the
-form \code{\em{area.name}}–so for instance, \code{typesetter.orphanpenalty} is
+form \code{\em{area.name}}—so for instance, \code{typesetter.orphanpenalty} is
 the setting which changes how the typesetter penalizes orphan (end-of-paragraph)
 lines.
 
@@ -1591,7 +1591,7 @@ local vglue = SILE.nodefactory.newVglue(\{ height = l\})
 \end{verbatim}
 
 SILE’s typesetting is organised by the \code{SILE.typesetter} object; it maintains
-two queues of material that it is working on–the node queues (\code{SILE.typesetter.state.nodes}) contains new horizontal boxes and glue that are going to be broken up into lines soon; and the output queue (\code{SILE.typesetter.state.outputQueue}) which consists
+two queues of material that it is working on—the node queues (\code{SILE.typesetter.state.nodes}) contains new horizontal boxes and glue that are going to be broken up into lines soon; and the output queue (\code{SILE.typesetter.state.outputQueue}) which consists
 of vertical material (lines) which are going to be broken up into pages. Line breaking
 and page breaking happens when the typesetter moves between horizontal and vertical
 mode; you can force this to happen by calling the function \code{SILE.typesetter:leaveHmode()}.
@@ -1967,7 +1967,7 @@ them into points.}
 \section{Output Routines}
 
 As well as defining frames and packages, different classes also alter
-the way that SILE performs its output–what it should do at the start or
+the way that SILE performs its output—what it should do at the start or
 end of a page, for instance, which controls things like swapping between
 different master frames, displaying page numbers, and so on.
 
@@ -2091,7 +2091,7 @@ end)
 \end{verbatim}
 
 And the job is done. Well, nearly. The \code{tableofcontents} package now contains a
-couple of functions–\code{moveNodes} and \code{writeToc}–that need to be called at 
+couple of functions—\code{moveNodes} and \code{writeToc}—that need to be called at 
 various points in the output routine of a class which uses this package. How do we
 do that?
 
@@ -2370,7 +2370,7 @@ other. It’s an instructive example of what can be done in a SILE class, so we
 will take it apart and see how it works.
 
 The key thing to note is that the SILE typesetter is an object. (in the object-oriented
-programming sense) Normally, it’s a singleton object–i.e. one typesetter is used for
+programming sense) Normally, it’s a singleton object—i.e. one typesetter is used for
 typesetting everything in a document. But there’s no reason why we can’t have more
 than one. In fact, for typesetting parallel texts, the simplest way to do things is
 to have two typesetters, one for each column, and have them communicate with each
@@ -2547,7 +2547,7 @@ notes.
 
 Sidenotes can be seen as a simplified form of
 parallel text. With a true parallel, neither the left or the right typesetter
-is “in charge”–either can fill up the page and then inform the other typesetter
+is “in charge”—either can fill up the page and then inform the other typesetter
 that they need to catch up. In the case of sidenotes, there’s a well-defined
 main flow of text, with annotations having to work around the pagination of the
 typeblock.
@@ -2555,7 +2555,7 @@ typeblock.
 There are a variety of ways that we could implement these sidenotes; as it
 happened, I chose a different strategy for the margin notes and the gutter notes.
 Cross-references in the gutter could appear fairly frequently, and so needed to
-“stack up” down the page–they need to be \em{at least} on a level with the verse
+“stack up” down the page—they need to be \em{at least} on a level with the verse
 that they relate to, but could end up further down the page if there are a few
 cross-references close to each other. Markings in the margin, on the other hand,
 were guaranteed not to overlap.
@@ -2593,7 +2593,7 @@ in the \code{hbox} variable.
 
 What we \em{do} want in the output queue is our special hbox node which will
 put the marking into the margin. This special hbox has no impact on the 
-current line–it has no width, height, or depth–and it contains a copy of the
+current line—it has no width, height, or depth—and it contains a copy of the
 symbol that we stored in the \code{hbox} variable.
 
 \begin{verbatim}
