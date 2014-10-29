@@ -1,7 +1,6 @@
 local plain = SILE.require("classes/plain");
 local book = plain { id = "book" };
 book:loadPackage("masters")
-book:loadPackage("frametricks")
 book:defineMaster({ id = "right", firstContentFrame = "content", frames = {
   content = {left = "8.3%", right = "86%", top = "11.6%", bottom = "top(footnotes)" },
   folio = {left = "left(content)", right = "right(content)", top = "bottom(footnotes)+3%",bottom = "bottom(footnotes)+5%" },
@@ -9,7 +8,7 @@ book:defineMaster({ id = "right", firstContentFrame = "content", frames = {
   footnotes = { left="left(content)", right = "right(content)", height = "0", bottom="83.3%"}
 }})
 book:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" });
-book:mirrorMaster("left", "right")
+book:mirrorMaster("right", "left")
 
 book:loadPackage("tableofcontents")
 
