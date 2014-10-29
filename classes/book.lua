@@ -8,15 +8,9 @@ book:defineMaster({ id = "right", firstContentFrame = "content", frames = {
   runningHead = {left = "left(content)", right = "right(content)", top = "top(content) - 8%", bottom = "top(content)-3%" },
   footnotes = { left="left(content)", right = "right(content)", height = "0", bottom="83.3%"}
 }})
-
-book:defineMaster({ id = "left", firstContentFrame = "content", frames = {
-  content = {left = "100% - 86%", right = "100% - 8.3%", top = "11.6%", bottom = "top(footnotes)" },
-  folio = {left = "left(content)", right = "right(content)", top = "bottom(footnotes)+3%",bottom = "bottom(footnotes)+5%" },
-  runningHead = {left = "left(content)", right = "right(content)", top = "top(content) - 8%", bottom = "top(content)-3%" },
-  footnotes = { left="left(content)", right = "right(content)", height = "0", bottom="83.3%"}
-}})
-
 book:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" });
+book:mirrorMaster("left", "right")
+
 book:loadPackage("tableofcontents")
 
 if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end
