@@ -1,4 +1,3 @@
-[submodule "dvipdfm-x"]
+[submodule "libtexpdf"]
 	path = libtexpdf
-	url = https://github.com/simoncozens/dvipdfm-x.git
-	branch = just-libtexpdf
+	url = https://github.com/simoncozens/libtexpdf.git
