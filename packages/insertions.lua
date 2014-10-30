@@ -81,13 +81,21 @@ local insert = function (self, classname, vbox)
          -- size of the insertion should be less than \pagegoal"
     ) then
     addInsertion(classname, vbox)
+    if thisclass["interInsertionSkip"] then
+      local vglue = SILE.nodefactory.newVglue({ height = thisclass["interInsertionSkip"] })
+      addInsertion(classname, vglue)
+    end
   else
     SU.error("I need to split this insertion and I don't know how")
   end
 end
 
 local outputInsertions = function(self)
-
+  if self.interInsertionSkip then
+    -- Pop off final node
+    SILE.scratch.insertions.thispage[#(SILE.scratch.insertions.thispage)] = nil
+    reduceHeight(self, 0 - self.interInsertionSkip)
+  end
   for classname,vboxes in pairs(SILE.scratch.insertions.thispage) do
     local opts = SILE.scratch.insertions.classes[classname]
     local f = SILE.getFrame(opts["insertInto"])

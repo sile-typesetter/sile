@@ -23,7 +23,8 @@ SILE.registerCommand("footnote", function(options, content)
   -- layout has a full-width footnotes frame.
   insertions.exports:insert("footnote", SILE.Commands["vbox"]({}, function()
     SILE.Commands["font"]({size = "9pt"}, function()
-      SILE.typesetter:typeset(SILE.scratch.counters.footnote.value..". ")
+      SILE.typesetter:typeset(SILE.scratch.counters.footnote.value..".")
+      SILE.call("qquad")
       SILE.process(content)
     end)
   end
@@ -37,7 +38,8 @@ return {
     insertInto = args.insertInto,
     stealFrom = args.stealFrom,
     maxHeight = SILE.length.new({length = SILE.toPoints("25", "%","h") }),
-    topSkip = SILE.length.parse("12pt")
+    topSkip = SILE.length.parse("2ex"),
+    interInsertionSkip = SILE.length.parse("1ex"),
   })
   end,
   exports = {
