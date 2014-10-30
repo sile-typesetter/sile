@@ -1,5 +1,4 @@
 #!/bin/sh
-touch NEWS README AUTHORS THANKS ChangeLog # HATE YOU GNU
 git submodule update --init --recursive
 autoreconf --install
 (cd libtexpdf; autoreconf)
