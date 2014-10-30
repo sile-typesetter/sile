@@ -11,6 +11,6 @@ end);
 local bidi = require("unicode-bidi-algorithm")
 
 SILE.typesetter.boxUpNodes = function (self)
-  self.state.nodes = bidi.process(self.state.nodes, self.frame)
+  self.state.nodes = bidi.process(SILE.hyphenate(self.state.nodes), self.frame)
   return SILE.defaultTypesetter.boxUpNodes(self)
 end
