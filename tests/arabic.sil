@@ -22,13 +22,12 @@
 عندما يريد العالم أن ‪يتكلّم ‬ ، فهو يتحدّث بلغة يونيكود. تسجّل الآن لحضور المؤتمر الدولي العاشر ليونيكود (\font[direction=LTR]{Unicode Conference})، الذي سيعقد في \font[direction=LTR]{10-12} آذار \font[direction=LTR]{1997} بمدينة مَايِنْتْس، ألمانيا. و سيجمع المؤتمر بين خبراء من كافة قطاعات الصناعة على الشبكة العالمية انترنيت ويونيكود، حيث ستتم، على الصعيدين الدولي والمحلي على حد سواء مناقشة سبل استخدام يونكود في النظم القائمة وفيما يخص التطبيقات الحاسوبية، الخطوط، تصميم النصوص والحوسبة متعددة اللغات.
 
 \bigskip%
-\breakframehorizontal%
-\thisframeLTR%
+\breakframevertical%
+\thisframeLTR
 
-First, in standard Arabic
-\font[family=Scheherazade,direction=RTL,language=ar,script=Arab]{ههه}; then in Sindi
-\font[family=Scheherazade,direction=RTL,language=snd,script=Arab]{ههه}; and then in Urdu
-\font[family=Scheherazade,direction=RTL,language=urd,script=Arab]{ههه}.
+\font[direction=LTR] First, in standard Arabic
+\font[family=Scheherazade,direction=RTL,language=ar]{ههه}; then in Sindi
+\font[family=Scheherazade,direction=RTL,language=snd]{ههه}; and then in Urdu
+\font[family=Scheherazade,direction=RTL,language=urd]{ههه}.
 
-\showframe
 \end{document}
