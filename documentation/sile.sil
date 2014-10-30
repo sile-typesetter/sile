@@ -6,13 +6,17 @@
 \script[src=packages/image]
 \script[src=packages/frametricks]
 \script[src=packages/lorem]
+\script[src=packages/bidi]
 \include[src=documentation/macros.sil]
 \define[command=silehp]{\code{http://www.sile-typesetter.org/}}
+\define[command=sileversion]{0.9.1}
 \font[size=11pt,family=Gentium Book Basic]
 \nofolios
 %\set[parameter=document.lskip,value=5em]
 %\set[parameter=document.rskip,value=5em]
 \font[size=50pt,weight=600,family=Helvetica Neue]{\hss The SILE Book \hss \par}
+\bigskip
+\font[size=12pt,family=Helvetica Neue]{\hss for SILE version \sileversion \hss \par}
 \bigskip[height=3in]
 \font[size=20pt,weight=600,family=Helvetica Neue]{\hss Simon Cozens \hss \par}
 %
@@ -103,13 +107,13 @@ already certainly equivalent to, if not somewhat more advanced than, TeX.
 The other tool that people reach for when designing printed material on a computer is
 InDesign.
 
+\float[rightboundary=7pt, bottomboundary=15pt]{\img[src=documentation/fig1.png,width=130]} 
 InDesign is a complex, expensive, commercial publishing tool. It’s highly 
 graphical—you click and drag to move areas of text and images around the screen. 
 SILE is a free, open source typesetting tool which is entirely text-based; you
 enter commands in a separate editing tool, save those commands into a file, and hand it to SILE for typesetting. And yet the two
 systems do have a number of common features.
 
-\float[rightboundary=7pt, bottomboundary=15pt]{\img[src=documentation/fig1.png,width=110]} 
 In InDesign, text is flowed into \em{frames} on the page. On the
 left, you can see an example of what
 a fairly typical InDesign layout might look like.
@@ -183,39 +187,60 @@ number (1) centered at the bottom. How are we going to get to that PDF?
 First of all, we need to get hold of SILE and get it running on our computer.
 Downloads of SILE can be obtained from the home page at \silehp.
 
+\a4break % Avoid tickling bug #24. Yes, this sucks.
+
 SILE requires a number of other software packages to be installed on the 
 computer before it can work—the Lua programming language, and the Harfbuzz text
-shaping library. SILE provides its own PDF creation library, which has
-its own requirements--\code{freetype}, \code{fontconfig}, \code{libz} and \code{libpng}.\footnote{You can also configure
-SILE to use Pango and Cairo instead, although the output will be inferior.
-You will need to install the \code{libcairo-gobject2} and \code{libpango1.0-0}
-packages in your operating system, and also the \code{lgi} Lua module.}.
+shaping library.
+
+SILE provides its own PDF creation library, which has
+its own requirements: \code{freetype}, \code{fontconfig}, \code{libz} and \code{libpng}.\footnote{You can also configure
+SILE to use Pango and Cairo instead, although the output will be inferior,
+especially on Linux. If you do so, you will need to install the \code{libcairo-gobject2} and \code{libpango1.0-0}
+packages in your operating system, and also the \code{lgi} Lua module.}
 On OS X machines running Homebrew (always a good idea for OS X machines), 
 you will need to run
 
+\medskip
 • \code{brew install harfbuzz fontconfig libpng lua luarocks freetype}
+\medskip
 
 On DEB-based Linux machines such as Debian and Ubuntu, try
 
+\medskip
 • \code{apt-get install lua5.1 luarocks libharfbuzz-dev libfreetype6-dev libfontconfig1-dev libpng-dev}
+\medskip
 
 Once these dependencies are installed, you also need to install some
 Lua libraries:
 
+\medskip
 • \code{luarocks install lpeg luaexpat}
+\medskip
 
 Now we should be finally really to go. Unpack the file that you downloaded
-from SILE’s home page, and change to that directory. You can now run SILE as
-is, uninstalled:
+from SILE’s home page, and change to that directory, and run 
 
+\medskip
+• \code{./configure; make}
+\medskip
+
+You can now run SILE as is, uninstalled\footnote{If you want to run SILE uninstalled
+on OS X, you need to fiddle with the environment like so:\break
+\code{DYLD_LIBRARY_PATH=./libtexpdf/.libs ./sile examples/simple.sil}}:
+
+\medskip
 • \code{./sile examples/simple.sil}
+\medskip
 
 If all has gone well, this should produce a file \code{examples/simple.pdf}.
 
 Most users of SILE will want to install the \code{sile} command and SILE’s
 library files onto their system; this can be done with
 
-• \code{lua install.lua}
+\medskip
+• \code{make install}
+\medskip
 
 Now the \code{sile} command is available from any directory.
 
@@ -246,7 +271,7 @@ is now as simple as:
 \begin{verbatim}
 \line
 \% \em{./sile -I docbook examples/article-template.xml}
-This is SILE 0.9.0
+This is SILE \sileversion
 Loading docbook
 <classes/docbook.sil><examples/article-template.xml>[1] [2] [3]
 \line
@@ -329,7 +354,7 @@ proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 \line
 \end{verbatim}
 
-you might not necessarily get a line break after ‘eiusmod’; you’ll get a line
+\noindent{}you might not necessarily get a line break after ‘eiusmod’; you’ll get a line
 break wherever is most appropriate. In the context of this document, you’ll
 get:
 
@@ -426,6 +451,7 @@ Here are a few more examples of SILE commands:
 \line
 \end{verbatim}
 
+\a4break
 \section{Environments}
 
 Commands like \code{\\chapter} and \code{\\em} (emphasises text by
@@ -588,6 +614,12 @@ two), but SILE will choose the closest.
 \noindent{}• \em{language}: The two letter (ISO639-1) language code for the
 text. This will affect both font shaping and hyphenation.
 
+\noindent{}• \em{direction}: Either \code{LTR} for left-to-right text or
+\code{RTL} for right-to-left text. If this is left unspecified the default of
+left-to-right will be used.
+
+\noindent{}• \em{script}: The script family in use. See the section “Hyphenation and Language”
+below.
 \medskip
 
 It’s quite fiddly to be always changing font specifications manually; later
@@ -628,8 +660,6 @@ This subsection begins with the command \code{\\subsection\{Chapters and Section
 Footnotes can be added to a book with the \code{\\footnote\{\dots\}} command.\footnote{Like this: \code{\\footnote\{Like this.\}}} The
 argument to the command will be set as a footnote at the bottom of the page;
 footnotes are automatically numbered from 1 at the start of each chapter.
-
-\a4break
 
 \section{Indentation and Spacing}
 
@@ -700,6 +730,40 @@ SILE comes with a special “language” called \code{xx}, which has no hyphenat
 patterns available. If you switch to this language, text will not be hyphenated.
 The command \code{\\nohyphenation\{\dots\}} is provided as a shortcut for
 \code{\\font[language=xx]\{\dots\}}.
+
+Aside from hyphenation, typesetting conventions differ from language to language.
+SILE has basic support for typesetting most languages and scripts. (Again, let me
+know if there are languages or scripts you are using that don’t work properly and
+I will add support for them.)
+
+In some cases, languages using the same alphabet
+expect the text to be typeset in different ways. For instance, Sindhi and Urdu
+users will expect the Arabic letter \em{heh} to combine with other letters in
+different ways to standard Arabic shaping. In those cases, you should ensure that
+you set the \code{language} and \code{script} options using the \command{\\font}
+command appropriately:
+
+\begin{verbatim}
+\line
+Standard Arabic:
+\\font[family=Scheherazade,direction=RTL,language=ar,script=Arab]\{ههه\};
+then in Sindi:
+\\font[family=Scheherazade,direction=RTL,language=snd,script=Arab]\{ههه\};
+then in Urdu:
+\\font[family=Scheherazade,direction=RTL,language=urd,script=Arab]\{ههه\}.
+\line
+\end{verbatim}
+
+\begin{examplefont}
+\line
+Standard Arabic: \font[family=Scheherazade,direction=RTL,language=ar,script=Arab]{ههه};
+then in Sindi: \font[family=Scheherazade,direction=RTL,language=snd,script=Arab]{ههه};
+then in Urdu: \font[family=Scheherazade,direction=RTL,language=urd,script=Arab]{ههه}.
+\line
+\end{examplefont}
+
+(A complete list of possible values for the \code{script} option can be found at
+\code{http://www.simon-cozens.org/content/duffers-guide-fontconfig-and-harfbuzz})
 
 \section{Including Other Files and Code}
 
@@ -803,10 +867,6 @@ path to them.}
 
 As well as processing text, SILE can also include images.
 
-\note{Image support is
-rather rudimentary at present due to limitations of the libraries that SILE
-uses.}
-
 Loading the \code{image} package gives you the \code{\\img} command, fashioned
 after the HTML equivalent. \code{\\img} takes the following parameters: 
 \code{src=\dots} must be the path to an image file \em{in PNG format};
@@ -871,6 +931,22 @@ So, for example, \color[color=red]{this text is typeset with \code{\\color[color
 Here is a rule typeset with \code{\\color[color=#22dd33]}:
 \color[color=#ffdd33]{\hrule[width=120pt,height=0.5pt]}
 
+\section{bidi}
+
+Scripts like the Latin alphabet you are currently reading are normally written left to
+right; however, some scripts, such as Arabic and Hebrew, are written right to left.
+The \code{bidi} package provides some tools to help you correctly typeset right-to-left
+text and also documents which mix right-to-left and left-to-right typesetting.
+
+Loading the \code{bidi} package provides two commands, \command{\\thisframeLTR} and
+\command{\\thisframeRTL}, which set the default text direction for the current frame.
+That is, if you tell SILE that a frame is RTL, the text will start in the right margin
+and proceed leftward. Additionally, loading \code{bidi} will cause SILE to check for and
+correctly order left-to-right text within right-to-left paragraphs, RTL within LTR
+within LTR and so on. If you are working with Hebrew, Arabic or other RTL languages,
+you will want to load the \code{bidi} package.
+
+\a4break
 \section{grid}
 \grid[spacing=15pt]
 
@@ -953,6 +1029,15 @@ function SILE.repl()
   if not SILE._repl then SILE.initRepl() end
   SILE._repl:run()
 end
+\end{verbatim}
+
+If you want to specify what font the verbatim environment should use, you
+can redefine the \code{verbatim:font} command. The current document says:
+
+\begin{verbatim}
+<define command="verbatim:font">
+   <font family="DejaVu Sans Mono" size="9pt"/>
+</define>
 \end{verbatim}
 
 \section{Packages usually used by other packages}
@@ -1046,7 +1131,6 @@ As we mentioned in the first chapter, SILE uses frames as an indication
 of where to put text onto the page. The \code{frametricks} package assists
 package authors by providing a number of commands to manipulate frames.
 
-\a4break
 The most immediately useful is \code{\\showframe}. This asks the output
 engine to draw a box and label around a particular frame. It takes an optional
 parameter \code{id=\em{<frame id>}}; if this is not supplied, the current
@@ -1075,7 +1159,8 @@ frame left or right. It takes \code{left=} and/or \code{right=} parameters,
 which can be positive or negative dimensions. It should only be used at the
 top of a frame, as it reinitializes the typesetter object.
 
-\bigskip
+\supereject
+
 \float[bottomboundary=5pt]{\font[size=60pt]{C}}ombining all of these commands, the \code{\\float}
 command breaks the current frame, creates a small frame to hold a floating
 object (like the dropcap at the start of this sentence), flows text into
@@ -1083,6 +1168,18 @@ the surrounding frame, and then, once text has descended past the floating objec
 moves the frame back into place again. It takes two optional parameters, \code{bottomboundary=\em{<dimension>}} and/or \code{rightboundary=\em{<dimension>}}, which
 open up additional space around the frame. At the start of this paragraph, I issued
 the command \code{\\float[bottomboundary=5pt]\{\\font[size=60pt]\{C\}\}}.
+
+Finally, it’s possible to define frames such as sidebars which are not connected
+to the main text flow of a page. We’ll see how to do that in a later chapter, but
+this raises the obvious question: if they’re not part of the text flow, how do we
+get stuff into them? \code{frametricks} provides the \command{\\typeset-into}
+command, which allows you to write text into a specified frame:
+
+\begin{verbatim}
+\line
+\\typeset-into[frame=sidebar]{ ... frame content here ... }
+\line
+\end{verbatim}
 
 \subsection{insertions}
 
@@ -1099,6 +1196,15 @@ The \code{book} class described in chapter 4 sets up left and right mirrored
 page masters; the \code{twoside} package is responsible for swapping between
 the two left and right frames, running headers and so on. It has no user-serviceable
 parts.
+
+\subsection{masters}
+
+The masters functionality is also itself an add-on package. It allows a class to
+define sets of frames and switch between them either temporarily or permanently.
+It defines the commands \command{\\define-master-template} (which is pattern
+on the \command{\\pagetemplate} function we will meet in chapter 8), \command{\\switch-master}
+and \command{\\switch-master-one-page}. See \code{tests/masters.sil} for more
+about this package.
 
 \subsection{infonode}
 
@@ -1192,6 +1298,8 @@ called \em{macros}, and the process of pretending is called \em{macro expansion}
 
 You can define these kinds of macros within a SILE file itself. In this
 very file, we entered:
+
+\a4break
 
 \begin{verbatim}
 \line
@@ -1763,6 +1871,8 @@ the two columns naturally:
 
 \chapter{Designing Basic Class Files}
 
+\changed
+
 Now we know how to define a frame layout for a single page, let’s try
 to define one for an entire document.
 
@@ -1777,37 +1887,44 @@ We are designing a book-like class, and so we will inherit from SILE’s
 standard \code{book} class, \code{classes/book.lua}.
 
 Let’s briefly have a look at \code{book.lua} to see how it works;
-after the initial class definition, we see  the following frame declarations: 
+after the initial class definition, we see that it loads the \code{masters}
+package, and defines a master the following frames:
 (wrapped for legibility)
 
 \begin{verbatim}
 \line
-book:declareFrame("r",    \{left = "8.3\%",
-                            right = "86\%",
-                            top = "11.6\%",
-                            bottom = "top(footnotes)"
-                          \});
-book:declareFrame("folio",\{left = "left(r)",
-                            right = "right(r)",
-                            top = "bottom(footnotes)+3\%",
-                            bottom = "bottom(footnotes)+5\%" 
-                          \});
-book:declareFrame("rRH",  \{left = "left(r)",
-                            right = "right(r)",
-                            top = "top(r) - 8\%",
-                            bottom = "top(r)-3\%"
-                          \});
-book:declareFrame("footnotes", \{ left="left(r)", 
-                            right = "right(r)",
-                            height = "0",
-                            bottom="83.3\%"
-                          \});
+book:defineMaster(\{
+  id = "right",
+  firstContentFrame = "content",
+  frames = \{
+
+    content = \{
+      left = "8.3%", right = "86%",
+      top = "11.6%", bottom = "top(footnotes)"
+    \},
+    
+    folio = \{
+      left = "left(content)", right = "right(content)",
+      top = "bottom(footnotes)+3%",bottom = "bottom(footnotes)+5%"
+    \},
+
+    runningHead = \{
+      left = "left(content)", right = "right(content)",
+      top = "top(content) - 8%", bottom = "top(content)-3%"
+    \},
+
+    footnotes = \{
+      left ="left(content)", right = "right(content)",
+      height = "0", bottom="83.3%"
+    \}
+  \}
+\})
 \line
 \end{verbatim}
 
 So there are four frames directly declared; the first is the 
-right-hand master frame, which by SILE convention is called
-\code{r}. Directly abutting the \code{r} frame at the bottom is
+content frame, which by SILE convention is called
+\code{content}. Directly abutting the \code{content} frame at the bottom is
 the \code{footnotes} frame. The top of the typeblock
 and the bottom of the footnote frame have fixed positions, but the
 boundary between typeblock and footnote is variable. Initially
@@ -1818,19 +1935,20 @@ is fixed and therefore its top will be adjusted, and the bottom
 of the main typeblock frame will also be correspondingly adjusted.
 
 The folio frame (the page number) lives below the footnotes, and the
-running headers live above the \code{r} frame.
+running headers live above the \code{content} frame.
 
 Next, we use the \code{twoside} package to mirror our right-page
-frames into left-page frames:
+master into a left-page master:
 
 \begin{verbatim}
 \line
-book:loadPackage("twoside", { oddPageFrameID = "r", evenPageFrameID = "l" });
-book:declareMirroredFrame("l","r")
-book:declareMirroredFrame("lRH","rRH")
+book:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" });
+book:mirrorMaster("left", "right")
 \line
 \end{verbatim}
 
+The book class also sets up commands for sectioning, and declares various
+things that need to be done at the start and end of each page.
 Since we will be inheriting from the book class, we will have all
 these definitions already available to us. All we need to do is set
 up our new class, and then define what is different about it. Here is
@@ -1845,7 +1963,7 @@ return bringhurst
 \line
 \end{verbatim}
 
-Now we need to define our frames. 
+Now we need to define our frame masters. 
 
 The LaTeX memoir class’ \em{A Few Notes
 On Book Design} tells us that Bringhurst’s book has a spine margin one thirteenth
@@ -1855,18 +1973,22 @@ terms like so:
 
 \begin{verbatim}
 \line
-bringhurst:declareFrame("r", \{
-  left = "width(page)/13",
-  top = "left(r) * 8 / 5",
-  right = "100\% - 2*top(r)",
-  bottom = "top(footnotes)"
+bringhurst:defineMaster(\{
+  id = "right", firstContentFrame = "content",
+  frames = \{
+    content = \{
+      left = "width(page)/13",
+      top = "left(content) * 8 / 5",
+      right = "100% - 2*top(content)",
+      bottom = "top(footnotes)"
+    \},
+    folio = \{ ... as before ... \},
+    footnotes = \{ ... as before ... \},
+    runningHead = \{ ... as before ... \},
+    \},
+  \}
 \})
-bringhurst:declareFrame("footnotes", \{
-  left="left(r)", 
-  right = "right(r)",
-  height = "0",
-  bottom = "100\% - 2*top(r)"
-\})
+bringhurst:mirrorMaster("right", "left")
 \line
 \end{verbatim}
 
@@ -1877,17 +1999,15 @@ actually find that the running headers are too high, because the typeblock is
 higher on the page than the standard book class, and the running heads are
 defined relative to them.
 
-So, we need to also declare the running header frame to bring them down a bit
-lower:
+So, we need to change the definition the running header frame to bring them
+down a bit lower:
 
 \begin{verbatim}
 \line
-bringhurst:declareFrame("rRH", \{
-  left = "left(r)",
-  right = "right(r)",
-  top = "top(r) - 4\%",
-  bottom = "top(r)-2\%"
-\});
+  runningHead = \{
+    left = "left(content)", right = "right(content)", 
+    top = "top(content) - 4%", bottom = "top(content)-2%" 
+  \},
 \line
 \end{verbatim}
 
@@ -1918,18 +2038,20 @@ So in the case of \code{\\mycommand[size=12pt]\{Hello \\break world\}},
 the first parameter will contain the table \code{\{size = "12pt"\}} and
 the second parameter will contain the table
 
+\a4break
+
 \begin{verbatim}
 \line
-{
+\{
   "Hello ", 
-  {
-    attr = {},
+  \{
+    attr = \{\},
     id = "command",
     pos = 8,
     tag = "break"
-  }, 
+  \}, 
   " world"
-}\line
+\}\line
 \end{verbatim}
 
 Most commands will find themselves doing something with the \code{options}
@@ -2040,9 +2162,9 @@ TOC nodes.
 
 \begin{verbatim}
 \line
-SILE.scratch.tableofcontents = { }
+SILE.scratch.tableofcontents = \{ \}
 
-\% Gather the tocentries into a big document-wide TOC
+-- Gather the tocentries into a big document-wide TOC
 local moveNodes = function(self)
   local n = SILE.scratch.info.thispage.toc
   for i=1,#n do 
@@ -2082,7 +2204,7 @@ SILE.registerCommand("tableofcontents", function (options, content)
   SILE.call("tableofcontents:header")
   for i = 1,#toc do
     local item = toc[i]
-    SILE.call("tableofcontents:item", {level = item.level, pageno= item.pageno}, item.label)
+    SILE.call("tableofcontents:item", \{level = item.level, pageno = item.pageno\}, item.label)
   end
 end)
 \line
@@ -2153,7 +2275,7 @@ and uses that as a wrapper around your file to be processed. If that then begins
 
 \begin{verbatim}
 \line
-\\begin[papersize=a4,class=\em{classname}]{document}%
+\\begin[papersize=a4,class=\em{classname}]\{document\}%
 \line
 \end{verbatim}
 
@@ -2184,6 +2306,8 @@ Now we can define our \code{<code>} (etc.) tags:
 
 If an end user wants things to look different, they can redefine the \code{docbook-ttfont}
 command and get a different font.
+
+\a4break
 
 \section{Handling Titles}
 
