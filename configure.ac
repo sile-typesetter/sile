@@ -71,7 +71,7 @@ AS_IF([test "x$with_pangocairo" != xno -a "x$with_harfbuzz" != xyes],
   ])])
 
 # Sanity check
-AS_IF([test "x$with_pangocairo" = xno -a "x$with_harfbuzz" = xno], [AC_MSG_FAILURE([Neither harfbuzz nor pango backend configured!])])
+AS_IF([test "$backend" = ""], [AC_MSG_FAILURE([Neither harfbuzz nor pango backend configured!])])
 
 AX_PROG_LUA([5.1])
 AX_LUA_HEADERS
