@@ -1,3 +1,7 @@
+SILE.registerCommand("verbatim:font", function(options, content)
+    SILE.settings.set("font.family", "Monaco")
+    SILE.settings.set("font.size", SILE.settings.get("font.size") - 3)
+end, "The font chosen for the verbatim environment")
 
 SILE.registerCommand("verbatim", function(options, content)
   SILE.typesetter:pushVglue({ height = SILE.length.new({ length = 6 }) })
@@ -9,9 +13,8 @@ SILE.registerCommand("verbatim", function(options, content)
     SILE.settings.set("current.parindent", SILE.nodefactory.newGlue("0"))
     SILE.settings.set("document.baselineskip", SILE.nodefactory.newVglue("0"))
     SILE.settings.set("document.lineskip", SILE.nodefactory.newVglue("2pt"))
-    SILE.settings.set("font.family", "Monaco") -- XXX
-    SILE.settings.set("font.size", SILE.settings.get("font.size") - 3)
     SILE.settings.set("document.spaceskip", SILE.length.parse("1en"))
+    SILE.call("verbatim:font")
     SILE.settings.set("document.language", "xx")
     SILE.settings.set("shaper.spacepattern", '%s')
     SILE.process(content)
