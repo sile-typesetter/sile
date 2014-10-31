@@ -144,9 +144,12 @@ end
 function SILE.readFile(fn)
   SILE.currentlyProcessingFile = fn
   fn = SILE.resolveFile(fn)
+  if not fn then
+    SU.error("Could not find file")
+  end
   local file, err = io.open(fn)
   if not file then
-    print("Could not open "..err)
+    print("Could not open "..fn..": "..err)
     return
   end
   io.write("<"..fn..">")
