@@ -137,8 +137,8 @@ SILE.defaultTypesetter = std.object {
     while (#nl > 0 and (nl[#nl]:isPenalty() or nl[#nl]:isGlue())) do
      table.remove(nl);
     end
-
     while (#nl >0 and nl[1]:isPenalty()) do table.remove(nl,1) end
+    if #nl == 0 then return {} end
     self:pushGlue(SILE.settings.get("typesetter.parfillskip"));
     self:pushPenalty({ flagged= 1, penalty= -inf_bad });
     local listToString = function(l)
@@ -185,6 +185,7 @@ SILE.defaultTypesetter = std.object {
     local vbox;
 
     local pageNodeList
+    if #(self.state.outputQueue) == 0 then return end
     pageNodeList, self.state.lastPenalty = SILE.pagebuilder.findBestBreak(self.state.outputQueue, target)
     if not pageNodeList then -- No break yet
       return false
