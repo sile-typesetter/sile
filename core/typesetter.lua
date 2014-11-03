@@ -236,7 +236,9 @@ SILE.defaultTypesetter = std.object {
     local v
     local function luaSucks (a) v=a return a end
 
-    while luaSucks(table.remove(self.state.outputQueue,1)) do
+    local oldqueue = self.state.outputQueue
+    self.state.outputQueue = {}
+    while luaSucks(table.remove(oldqueue,1)) do
       if not v:isVglue() and not v:isPenalty() then
         for i=1,#(v.nodes) do
             if v.nodes[i]:isDiscretionary() then
@@ -247,6 +249,13 @@ SILE.defaultTypesetter = std.object {
               self.state.nodes[#(self.state.nodes)+1] = v.nodes[i]
             end
         end
+      else
+        -- local vboxlist = self:boxUpNodes()
+        -- self.state.nodes = {};
+        -- for index=1, #vboxlist do
+        --   self.state.outputQueue[#(self.state.outputQueue)+1] = vboxlist[index]
+        -- end
+        -- self.state.outputQueue[#(self.state.outputQueue)+1] = v
       end
     end
     self:leaveHmode();
