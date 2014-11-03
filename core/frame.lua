@@ -113,7 +113,7 @@ SILE.newFrame = function(spec)
   if not SILE.frames[spec.id] then 
     frame = framePrototype {
       id = spec.id,
-      balanced = spec.balanced,
+      balanced = spec.balanced and true or false,
       direction = spec.direction,
       next = spec.next,
       previous = spec.previous,
