@@ -211,8 +211,14 @@ On DEB-based Linux machines such as Debian and Ubuntu, try
 • \code{apt-get install lua5.1 luarocks libharfbuzz-dev libfreetype6-dev libfontconfig1-dev libpng-dev}
 \medskip
 
+Here’s an incantation that will work for Redhat-based Linux:
+
+\medskip
+• \code{yum install harfbuzz-devel make automake gcc freetype-devel fontconfig-devel
+lua-devel lua-lpeg lua-expat libpng-devel}
+
 Once these dependencies are installed, you also need to install some
-Lua libraries:
+Lua libraries if they’re not already installed:
 
 \medskip
 • \code{luarocks install lpeg luaexpat}
