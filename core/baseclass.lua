@@ -162,8 +162,9 @@ SILE.baseClass = std.object {
     -- Any other output-routiney things will be done here by inheritors
   end,
   finish = function(self)
-    self:endPage();
-    SILE.typesetter:chuck()
+    SILE.call("supereject")
+    SILE.typesetter:leaveHmode(1)
+    self:endPage()
     SILE.outputter:finish()
  end,
   newPar = function(typesetter)
