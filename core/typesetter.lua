@@ -76,6 +76,7 @@ SILE.defaultTypesetter = std.object {
 
   debugState = function(self)
     print("\n---\nI am in "..(self:vmode() and "vertical" or "horizontal").." mode")
+    print("Writing into "..self.frame:toString())
     print("Recent contributions: ")
     for i = 1,#(self.state.nodes) do
       io.write(self.state.nodes[i].. " ")
