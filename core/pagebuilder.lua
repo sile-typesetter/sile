@@ -23,6 +23,7 @@ SILE.pagebuilder = {
     local totalHeight = 0
     local bestBreak = nil
     local leastC = inf_bad
+    SU.debug("pagebuilder", "Page builder called with "..#vboxlist.." nodes, "..target)
     for i = 1,#vboxlist do local vbox = vboxlist[i]
       SU.debug("pagebuilder", "Dealing with VBox " .. vbox)
       if (vbox:isVbox()) then
