@@ -263,7 +263,9 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
     local s = self.cur_p
     if breakType == "hyphenated" and self.nodes[self.cur_p] then self:computeDiscBreakWidth() end
     while self.nodes[s] and not self.nodes[s]:isBox() do
-      if self.nodes[s].width then -- We use the fact that (a) nodes know if they have width and (b) width subtraction is polymorphic
+      if self.sideways and self.nodes[s].height then
+        self.breakWidth = self.breakWidth - self.nodes[s].height
+      elseif self.nodes[s].width then -- We use the fact that (a) nodes know if they have width and (b) width subtraction is polymorphic
         self.breakWidth = self.breakWidth - self.nodes[s].width
       end
       s = s + 1
@@ -321,9 +323,15 @@ end
 
 function lineBreak:checkForLegalBreak(n) -- 892
   SU.debug("break", "considering node "..n);
-  if n:isBox() then
+  if self.sideways and n:isVbox() then
+    self.activeWidth = self.activeWidth + n.height
+  elseif self.sideways and n:isVglue() then
+    if self.nodes[self.prev_p] and (self.nodes[self.prev_p]:isVbox()) then
+      self:tryBreak(0, "unhyphenated")
+    end
+    self.activeWidth = self.activeWidth + n.height
+  elseif n:isBox() then
     self.activeWidth = self.activeWidth + n.width
-
   elseif n:isGlue() then
     -- 894
     if self.auto_breaking then
@@ -377,9 +385,10 @@ function lineBreak:tryFinalBreak()      -- 899
   end
 end
 
-function lineBreak:doBreak (nodes, hsize)
+function lineBreak:doBreak (nodes, hsize, sideways)
   self.nodes = nodes
   self.hsize = hsize
+  self.sideways = sideways
   self.auto_breaking = 1
   self:init()
   self.adjdemerits = param("adjdemerits")
