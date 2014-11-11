@@ -180,7 +180,6 @@ SILE.defaultTypesetter = std.object {
   end,
 
   pageBuilder = function (self, independent)
-    local totalHeight = 0
 
     local target = SILE.length.new({ length = self.frame:height() }) -- XXX Floats
     local vbox;
@@ -192,9 +191,16 @@ SILE.defaultTypesetter = std.object {
       return false
     end
 
+    self:setVerticalGlue(pageNodeList, target)
+    self:outputLinesToPage(pageNodeList);
+    return true
+  end,
+
+  setVerticalGlue = function (self, pageNodeList, target)
     -- Do some sums on that list
     local glues = {};
     local gTotal = SILE.length.new()
+    local totalHeight = 0
 
     for i=1,#pageNodeList do
       totalHeight = totalHeight + pageNodeList[i].height + pageNodeList[i].depth
@@ -214,9 +220,7 @@ SILE.defaultTypesetter = std.object {
       end
     end
 
-    SU.debug("pagebuilder", "Glues for self page adjusted by "..(adjustment/gTotal.stretch) )
-    self:outputLinesToPage(pageNodeList);
-    return true
+    SU.debug("pagebuilder", "Glues for self page adjusted by "..(adjustment/gTotal.stretch) )  
   end,
 
   initNextFrame = function(self)
