@@ -12,7 +12,7 @@ end
 SILE.settings.declare({
   name = "typesetter.widowpenalty", 
   type = "integer",
-  default = 150,
+  default = 3000,
   help = "Penalty to be applied to widow lines (at the start of a paragraph)"
 })
 
@@ -25,7 +25,7 @@ SILE.settings.declare({
 SILE.settings.declare({
   name = "typesetter.orphanpenalty",
   type = "integer",
-  default = 150,
+  default = 3000,
   help = "Penalty to be applied to orphan lines (at the end of a paragraph)"
 })
 
