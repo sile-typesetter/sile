@@ -8,7 +8,7 @@ local parseFrameDef = function(d, width_or_height)
   return SILE._frameParser:match(d);
 end
 
-local framePrototype = std.object {
+SILE.framePrototype = std.object {
   next= nil,
   id= nil,
   previous= nil,
@@ -65,7 +65,7 @@ local framePrototype = std.object {
   end
 };
 
-function framePrototype:toString()
+function SILE.framePrototype:toString()
   local f = "<Frame: "..self.id..": "
   for k,v in pairs(self.constraints) do
     f = f .. k.."="..v.."; "
@@ -74,7 +74,7 @@ function framePrototype:toString()
   return f
 end
 
-function framePrototype:moveX(amount)
+function SILE.framePrototype:moveX(amount)
   if self.direction == "RTL" then
     self.state.cursorX = self.state.cursorX - amount
   else
@@ -83,16 +83,16 @@ function framePrototype:moveX(amount)
   self:normalize()
 end
 
-function framePrototype:moveY(amount)
+function SILE.framePrototype:moveY(amount)
   self.state.cursorY = self.state.cursorY + amount
   self:normalize()
 end
 
-function framePrototype:newLine()
+function SILE.framePrototype:newLine()
   self.state.cursorX = self.direction == "RTL" and self:right() or self:left()
 end
 
-function framePrototype:init()
+function SILE.framePrototype:init()
   self.state = {
     cursorY = self:top(),
     totals = { height= 0, pastTop = false }
@@ -100,7 +100,7 @@ function framePrototype:init()
   self:newLine()
 end
 
-function framePrototype:normalize()
+function SILE.framePrototype:normalize()
   if (type(self.state.cursorY)) == "table" then self.state.cursorY  =self.state.cursorY.length end
   if (type(self.state.cursorX)) == "table" then self.state.cursorX  =self.state.cursorX.length end
 end
@@ -111,7 +111,7 @@ SILE.newFrame = function(spec)
 
   local frame 
   if not SILE.frames[spec.id] then 
-    frame = framePrototype {
+    frame = SILE.framePrototype {
       id = spec.id,
       balanced = spec.balanced and true or false,
       direction = spec.direction,
