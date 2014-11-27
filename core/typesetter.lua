@@ -224,6 +224,7 @@ SILE.defaultTypesetter = std.object {
   end,
 
   initNextFrame = function(self)
+    self.frame:leave()
     if (self.frame.next and not (self.state.lastPenalty <= supereject_penalty )) then
       self:initFrame(SILE.getFrame(self.frame.next));
     else
@@ -391,10 +392,13 @@ SILE.typesetter = SILE.defaultTypesetter {};
 
 SILE.typesetNaturally = function (frame, f)
   local saveTypesetter = SILE.typesetter
+  if SILE.typesetter.frame then SILE.typesetter.frame:leave() end
   SILE.typesetter = SILE.defaultTypesetter {};
   SILE.typesetter:init(frame)
   SILE.settings.temporarily(f)
   SILE.typesetter:leaveHmode()
   SILE.typesetter:chuck()
+  SILE.typesetter.frame:leave()
   SILE.typesetter = saveTypesetter
+  if SILE.typesetter.frame then SILE.typesetter.frame:enter() end
 end;

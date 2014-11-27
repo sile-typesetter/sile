@@ -15,6 +15,8 @@ SILE.framePrototype = std.object {
   balanced= 0,
   direction = nil,
   state = {},
+  enterHooks = {},
+  leaveHooks = {},
   constrain = function (self, method, value)
     self.constraints[method] = value
     self:invalidate()
@@ -97,7 +99,20 @@ function SILE.framePrototype:init()
     cursorY = self:top(),
     totals = { height= 0, pastTop = false }
   }
+  self:enter()
   self:newLine()
+end
+
+function SILE.framePrototype:enter()
+  for i = 1,#SILE.framePrototype.enterHooks do
+    SILE.framePrototype.enterHooks[i](self)
+  end
+end
+
+function SILE.framePrototype:leave()
+  for i = 1,#self.leaveHooks do
+    self.leaveHooks[i](self)
+  end
 end
 
 function SILE.framePrototype:normalize()

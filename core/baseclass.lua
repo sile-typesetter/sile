@@ -158,6 +158,7 @@ SILE.baseClass = std.object {
     return self:initialFrame();
   end,
   endPage= function()
+    SILE.typesetter.frame:leave()
     SILE.typesetter:leaveHmode();
     -- Any other output-routiney things will be done here by inheritors
   end,
