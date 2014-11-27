@@ -173,6 +173,23 @@ int pdf_drawimage(lua_State *L) {
   return 0;
 }
 
+int pdf_transform(lua_State *L) {
+  pdf_tmatrix matrix;
+  double a = luaL_checknumber(L, 1);
+  double b = luaL_checknumber(L, 2);
+  double c = luaL_checknumber(L, 3);
+  double d = luaL_checknumber(L, 4);
+  double e = luaL_checknumber(L, 5);
+  double f = luaL_checknumber(L, 6);
+  texpdf_graphics_mode(p);
+  pdf_setmatrix(&matrix, a,b,c,d,e,f);
+  texpdf_dev_concat(p, &matrix);
+  return 0;
+}
+
+int pdf_gsave(lua_State *L)    { texpdf_graphics_mode(p); texpdf_dev_gsave(p); return 0; }
+int pdf_grestore(lua_State *L) { texpdf_graphics_mode(p); texpdf_dev_grestore(p); return 0; }
+
 #if !defined LUA_VERSION_NUM
 /* Lua 5.0 */
 #define luaL_Reg luaL_reg
@@ -208,6 +225,9 @@ static const struct luaL_Reg lib_table [] = {
   {"drawimage", pdf_drawimage},
   {"colorpop", pdf_colorpop},
   {"colorpush", pdf_colorpush},
+  {"setmatrix", pdf_transform},
+  {"gsave", pdf_gsave},
+  {"grestore", pdf_grestore},
   {NULL, NULL}
 };
 
