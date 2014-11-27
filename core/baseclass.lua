@@ -62,18 +62,18 @@ SILE.baseClass = std.object {
     end, "Defines a new page template for the current page and sets the typesetter to use it.")
 
     SILE.registerCommand("frame", function (options, content)
-      local spec = {
-        id = options.id,
-        next = options.next,
-        balanced = (options.balanced or false),
-        top = options.top,
-        bottom = options.bottom,
-        left = options.left,
-        right = options.right,
-        width = options.width,
-        height = options.height
-      };
-      SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newFrame(spec);
+      -- local spec = {
+      --   id = options.id,
+      --   next = options.next,
+      --   balanced = (options.balanced or false),
+      --   top = options.top,
+      --   bottom = options.bottom,
+      --   left = options.left,
+      --   right = options.right,
+      --   width = options.width,
+      --   height = options.height
+      -- };
+      SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newFrame(options);
     end, "Declares (or re-declares) a frame on this page.")
 
     SILE.registerCommand("penalty", function(options, content)

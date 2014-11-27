@@ -112,17 +112,13 @@ SILE.newFrame = function(spec)
   local frame 
   if not SILE.frames[spec.id] then 
     frame = SILE.framePrototype {
-      id = spec.id,
-      balanced = spec.balanced and true or false,
-      direction = spec.direction,
-      next = spec.next,
-      previous = spec.previous,
       constraints = {},
       variables = {}
     }
-    SILE.frames[frame.id] = frame
+    -- Copy everything in from spec
+    SILE.frames[spec.id] = frame
 
-    for method, dimension in pairs(dims) do 
+    for method, dimension in pairs(dims) do
       frame.variables[method] = cassowary.Variable({ name = spec.id .. "_" .. method });
       frame[method] = function (frame)
         frame:solve()
@@ -132,9 +128,13 @@ SILE.newFrame = function(spec)
   else
     frame = SILE.frames[spec.id]
   end
+
+  for key, value in pairs(spec) do
+    if not dims[key] then frame[key] = spec[key] end
+  end
+
   frame.constraints = {}
   -- Add definitions of width and height
-
   for method, dimension in pairs(dims) do 
     if spec[method] then
       frame:constrain(method, spec[method])
