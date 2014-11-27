@@ -55,6 +55,7 @@ SILE.outputters.libtexpdf = {
     self.rule(f:left(), f:top(), 0.5, - f:height())
     self.rule(f:right(), f:top(), 0.5, - f:height())
     self.rule(f:left(), f:bottom(), f:width(), 0.5)
+    --self.rule(f:left() + f:width()/2 - 5, (f:top() + f:bottom())/2+5, 10, 10)
     pdf.colorpop()
   end,
   debugHbox = function(typesetter, hbox, scaledWidth)
