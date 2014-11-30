@@ -26,6 +26,9 @@ int pdf_init (lua_State *L) {
   mediabox.ury = height;
   texpdf_init_fontmaps();
   texpdf_doc_set_mediabox(p, 0, &mediabox);
+  texpdf_add_dict(p->info,
+               texpdf_new_name("Producer"),
+               texpdf_new_string("SILE", 4));
   return 0;
 }
 
