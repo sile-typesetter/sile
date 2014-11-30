@@ -76,11 +76,11 @@ AS_IF([test "$backend" = ""], [AC_MSG_FAILURE([Neither harfbuzz nor pango backen
 AX_PROG_LUA([5.1])
 AX_LUA_HEADERS
 # Check for Lua modules
-AX_LUA_MODULE([lpeg])
-AX_LUA_MODULE([lxp])
+AX_LUA_MODULE([lpeg], [lpeg])
+AX_LUA_MODULE([lxp], [luaexpat])
 
 AS_IF([test "$backend" = "pangocairo"],
-  [AX_LUA_MODULE([lgi])],
+  [AX_LUA_MODULE([lgi],[lgi])],
   [AC_CONFIG_SUBDIRS([libtexpdf])]
 )
 
