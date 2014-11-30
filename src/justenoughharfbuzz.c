@@ -50,6 +50,7 @@ void calculate_extents(box* b, hb_glyph_info_t glyph_info, hb_glyph_position_t g
   b->width = advance * point_size / ft_face->units_per_EM;
   b->height = ft_bbox.yMax * point_size / ft_face->units_per_EM;
   b->depth = -ft_bbox.yMin * point_size / ft_face->units_per_EM;
+  FT_Done_Glyph(glyph);
 }
 
 int face_from_options(lua_State* L) {
