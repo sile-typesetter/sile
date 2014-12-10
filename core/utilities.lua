@@ -8,7 +8,7 @@ function utilities.required(t, name, context)
 end
 
 function utilities.error(message)
-  print("\n! "..message.. " (processing "..SILE.currentlyProcessingFile..")")
+  print("\n! "..message.. " at "..SILE.currentlyProcessingFile.." l."..(SILE.currentCommand.line)..", col."..(SILE.currentCommand.col))
   os.exit(1)
 end
 

@@ -28,17 +28,58 @@ texlike = epnf.define(function (_ENV)
     ) * P("}") + E("Environment begun but never ended"))
 end)
 
-local function massage_ast(t)
+local linecache = {}
+local lno, col, lastpos
+local function resetCache()
+  lno = 1
+  col = 1
+  lastpos = 0
+  linecache = { { lno = 1, pos = 1} }
+end
+
+local function getline( s, p )
+  start = 1
+  lno = 1
+  if p > lastpos then
+    lno = linecache[#linecache].lno 
+    start = linecache[#linecache].pos + 1
+    col = 1
+  else
+    for j = 1,#linecache-1 do
+      if linecache[j+1].pos >= p then
+        lno = linecache[j].lno
+        col = p - linecache[j].pos 
+        return lno,col
+      end
+    end
+  end
+  for i = start, p do
+    if string.sub( s, i, i ) == "\n" then
+      lno = lno + 1
+      col = 1
+      linecache[#linecache+1] = { pos = i, lno = lno }
+      lastpos = i
+    end
+    col = col + 1
+  end
+  return lno, col
+end
+
+local function massage_ast(t,doc)
+  -- Sort out pos
   if type(t) == "string" then return t end
-  if t.id == "document" then return massage_ast(t[1]) end
+  if t.pos then
+    t.line, t.col = getline(doc, t.pos)
+  end
+  if t.id == "document" then return massage_ast(t[1],doc) end
   if t.id == "text" then return t[1] end
-  if t.id == "bracketed_stuff" then return massage_ast(t[1]) end
+  if t.id == "bracketed_stuff" then return massage_ast(t[1],doc) end
   for k,v in ipairs(t) do
     if v.id == "stuff" then
-      local val = massage_ast(v)
+      local val = massage_ast(v,doc)
       SU.splice(t, k,k, val)
     else
-      t[k] = massage_ast(v)
+      t[k] = massage_ast(v,doc)
     end
   end
   return t
@@ -46,6 +87,7 @@ end
 
 function SILE.inputs.TeXlike.process(fn)
   local fh = io.open(fn)
+  resetCache()
   local doc = fh:read("*all")
   local t = SILE.inputs.TeXlike.docToTree(doc)
   local root = SILE.documentState.documentClass == nil
@@ -64,6 +106,6 @@ function SILE.inputs.TeXlike.docToTree(doc)
   -- a document always consists of one stuff
   t = t[1][1]
   if not t then return end
-  t = massage_ast(t) 
+  t = massage_ast(t,doc) 
   return t
 end

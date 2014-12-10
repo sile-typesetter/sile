@@ -1,6 +1,6 @@
 SILE.inputs.XML = {
   process = function (fn)
-    local lom = require("lxp.lom")
+    local lom = require("lomwithpos")
     local fh = io.open(fn)
     local t = lom.parse(fh:read("*all"))
     local root = SILE.documentState.documentClass == nil
@@ -10,6 +10,7 @@ SILE.inputs.XML = {
       end
       SILE.inputs.common.init(fn, t)
     end
+    SILE.currentCommand = t    
     if SILE.Commands[t.tag] then
       SILE.Commands[t.tag](t.attr,t)
     else

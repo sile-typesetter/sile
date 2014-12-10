@@ -20,6 +20,7 @@ SILE.inputs.common = {
 SILE.process = function(t)
   if type(t) == "function" then return t() end
   for k,v in ipairs(t) do
+    SILE.currentCommand = v
     if type(v) == "string" then
       SILE.typesetter:typeset(v)
     elseif SILE.Commands[v.tag] then
