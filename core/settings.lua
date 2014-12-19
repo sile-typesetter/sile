@@ -47,7 +47,17 @@ SILE.settings = {
     SILE.settings.pushState()
     f()
     SILE.settings.popState()
-  end
+  end,
+  wrap = function() -- Returns a closure which applies the current state, later
+    local clSettings = std.table.clone(SILE.settings.state)
+    return function(f)
+      table.insert(SILE.settings.stateQueue, SILE.settings.state)
+      SILE.settings.state = clSettings
+      SILE.process(f)
+      SILE.settings.popState()
+    end
+  end,
+
 }
 
 SILE.settings.declare({

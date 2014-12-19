@@ -53,11 +53,13 @@ book.endPage = function(self)
 end;
 
 SILE.registerCommand("left-running-head", function(options, content)
-  SILE.scratch.headers.left = content
+  local closure = SILE.settings.wrap()
+  SILE.scratch.headers.left = function () closure(content) end
 end, "Text to appear on the top of the left page");
 
 SILE.registerCommand("right-running-head", function(options, content)
-  SILE.scratch.headers.right = content
+  local closure = SILE.settings.wrap()
+  SILE.scratch.headers.right = function () closure(content) end
 end, "Text to appear on the top of the right page");
 
 SILE.registerCommand("chapter", function (options, content)
@@ -70,7 +72,7 @@ SILE.registerCommand("chapter", function (options, content)
   SILE.Commands["book:chapterfont"]({}, {"Chapter "..SILE.formatCounter(SILE.scratch.counters.chapter)});
   SILE.typesetter:leaveHmode()
   SILE.Commands["book:chapterfont"]({}, content);
-  SILE.Commands["left-running-head"]({}, content);
+  SILE.Commands["left-running-head"]({}, content)
   SILE.call("tocentry", {level = 1}, content)
   SILE.call("bigskip")
   SILE.call("nofoliosthispage")
