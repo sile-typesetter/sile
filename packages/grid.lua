@@ -21,6 +21,8 @@ end
 
 local newBoxup = function (this)
   local b = SILE.defaultTypesetter.boxUpNodes(this)
+  if not this.frame.state.totals.gridCursor then this.frame.state.totals.gridCursor = SILE.typesetter.frame.state.cursorY end
+  
   if #b > 1 then
     this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + b[#b].height.length + b[#b].depth.length
   end
@@ -36,6 +38,8 @@ local debugGrid = function()
     g = g + gridSpacing
   end
 end
+
+SILE.registerCommand("grid:debug", debugGrid)
 
 SILE.registerCommand("grid", function(options, content)
   SU.required(options, "spacing", "grid package")
