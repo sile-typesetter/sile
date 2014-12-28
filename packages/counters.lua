@@ -19,9 +19,21 @@ local function romanize(k)
   return str
 end
 
+local function alpha(n)
+  local out = ""
+  local a = string.byte("a")
+  repeat
+    n = n - 1
+    out = string.char(n%26 + a) .. out
+    n = (n - n%26)/26
+  until n < 1
+  return out
+end
+
 SILE.formatCounter = function(options)
   if (options.display == "roman") then return romanize(options.value):lower() end
   if (options.display == "Roman") then return romanize(options.value) end
+  if (options.display == "alpha") then return alpha(options.value) end
   return tostring(options.value);
 end
   
