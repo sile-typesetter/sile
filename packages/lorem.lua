@@ -71,6 +71,9 @@ SILE.registerCommand("lorem", function(options, content)
     t = string.gsub(t, "%w+%s+", "", 1)
     words = words - 1
   end
-  SILE.typesetter:typeset(s)
-  SILE.typesetter:leaveHmode()
+  SILE.settings.temporarily(function()
+    SILE.settings.set("document.language","xx")
+    SILE.typesetter:typeset(s)
+    SILE.typesetter:leaveHmode()
+  end)
 end)
