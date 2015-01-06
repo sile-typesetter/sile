@@ -179,13 +179,14 @@ SILE.defaultTypesetter = std.object {
     return vboxes
   end,
 
+  pageTarget = function(self)
+    return self.frame:height()
+  end,
   pageBuilder = function (self, independent)
-
-    local target = SILE.length.new({ length = self.frame:height() }) -- XXX Floats
     local vbox;
-
     local pageNodeList
     if #(self.state.outputQueue) == 0 then return end
+    local target = self:pageTarget()
     pageNodeList, self.state.lastPenalty = SILE.pagebuilder.findBestBreak(self.state.outputQueue, target)
     if not pageNodeList then -- No break yet
       return false
@@ -210,8 +211,7 @@ SILE.defaultTypesetter = std.object {
       end
     end
 
-    local adjustment = (target - totalHeight)
-    if type(adjustment) == "table" then adjustment = adjustment.length end
+    local adjustment = (target - totalHeight.length)
 
     if (adjustment > gTotal.stretch) then adjustment = gTotal.stretch end
     if (adjustment / gTotal.stretch > 0) then 

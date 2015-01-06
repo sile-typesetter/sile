@@ -20,7 +20,7 @@ SILE.pagebuilder = {
 
   findBestBreak = function(vboxlist, target)
     local i
-    local totalHeight = 0
+    local totalHeight = SILE.length.new()
     local bestBreak = nil
     local leastC = inf_bad
     SU.debug("pagebuilder", "Page builder called with "..#vboxlist.." nodes, "..target)
@@ -31,7 +31,7 @@ SILE.pagebuilder = {
       elseif vbox:isVglue() then
         totalHeight = totalHeight + vbox.height.length;
       end
-      local left = (target - totalHeight).length
+      local left = target - totalHeight.length
       SU.debug("pagebuilder", "I have " .. tostring(left) .. "pts left");
       -- if (left < -20) then SU.error("\nCatastrophic page breaking failure!"); end 
       local pi = 0
