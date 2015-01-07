@@ -7,12 +7,13 @@ function utilities.required(t, name, context)
   return t[name]
 end
 
-function utilities.error(message)
+function utilities.error(message,bug)
   if(SILE.currentCommand) then
     print("\n! "..message.. " at "..SILE.currentlyProcessingFile.." l."..(SILE.currentCommand.line)..", col."..(SILE.currentCommand.col))
   else
     print("\n! "..message.. " at "..SILE.currentlyProcessingFile)
   end
+  if bug then print(debug.traceback()) end
   os.exit(1)
 end
 
