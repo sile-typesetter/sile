@@ -44,6 +44,7 @@ SILE.settings.declare({
 })
 SILE.defaultTypesetter = std.object {
   -- Setup functions
+  pageBreakHooks = {},
   init = function(self, frame)
     self.stateQueue = {};
     self:initFrame(frame)
@@ -182,6 +183,15 @@ SILE.defaultTypesetter = std.object {
   pageTarget = function(self)
     return self.frame:height()
   end,
+  registerPageBreakHook = function (self, f)
+    self.pageBreakHooks[1+#self.pageBreakHooks] = f
+  end,
+  runPageBreakHooks = function(self, nl)
+    for i = 1,#self.pageBreakHooks do
+      nl = self.pageBreakHooks[i](self, nl)
+    end
+    return nl
+  end,
   pageBuilder = function (self, independent)
     local vbox;
     local pageNodeList
@@ -191,7 +201,7 @@ SILE.defaultTypesetter = std.object {
     if not pageNodeList then -- No break yet
       return false
     end
-
+    pageNodeList = self:runPageBreakHooks(pageNodeList)
     self:setVerticalGlue(pageNodeList, target)
     self:outputLinesToPage(pageNodeList);
     return true
