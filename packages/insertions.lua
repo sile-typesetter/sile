@@ -4,23 +4,46 @@ SILE.scratch.insertions = {
   nextpage = {}
 }
 
+SILE.typesetter.pageTarget = function (self)
+  if not self.frame.state.totals.shrinkage then self.frame.state.totals.shrinkage = 0 end
+  return self.frame:height() - self.frame.state.totals.shrinkage
+end
+
 local initInsertionClass = function (self, classname, options)
   SU.required(options, "insertInto", "initializing insertions")
   SU.required(options, "stealFrom", "initializing insertions")
   SU.required(options, "maxHeight", "initializing insertions")
   SU.required(options, "topSkip", "initializing insertions")
 
+  -- Turn stealFrom into a hash, if it isn't one.
+  if type(options.stealFrom) == "string" then options.stealFrom = { options.stealFrom } end
+  if options.stealFrom[1] then
+    local rl = {}
+    for i = 1,#(options.stealFrom) do rl[options.stealFrom[i]] = 1 end
+    options.stealFrom = rl
+  end
   SILE.scratch.insertions.classes[classname] = options
 end
 
-local reduceHeight = function(classname, amount)
+local setShrinkage = function(classname, amount)
   SU.debug("insertions", "Shrinking main box by "..amount.length)
   local opts = SILE.scratch.insertions.classes[classname]
   local reduceList = opts["stealFrom"]
   if type(reduceList) == "string" then reduceList = { reduceList } end
+  for fName, ratio in pairs(reduceList) do local f = SILE.getFrame(fName)
+    if not f.state.totals.shrinkage then f.state.totals.shrinkage = 0 end
+    f.state.totals.shrinkage = f.state.totals.shrinkage + amount.length * ratio
+  end
+end
+
+local adjustHeights = function(classname, amount)
+  local opts = SILE.scratch.insertions.classes[classname]
+  local reduceList = opts["stealFrom"]
   local stealPosition = opts["steal-position"] or "bottom"
-  for i = 1,#reduceList do local f = SILE.getFrame(reduceList[i])
-    local newHeight = f:height() - amount.length
+
+  for fName, ratio in pairs(reduceList) do local f = SILE.getFrame(fName)
+    if not f.state.totals.shrinkage then f.state.totals.shrinkage = 0 end
+    local newHeight = f:height() - f.state.totals.shrinkage
     local oldBottom = f:bottom()
     if stealPosition == "bottom" then
       --f:constrain("bottom", oldBottom - amount.length)
@@ -30,7 +53,9 @@ local reduceHeight = function(classname, amount)
       f:relax("top")
     end
     --f:relax("height")
+    SU.debug("insertions", "Constraining height of "..fName.." to "..newHeight)
     f:constrain("height", newHeight)
+    f.state.totals.shrinkage = 0 -- for now
   end
 
   local f = SILE.getFrame(opts["insertInto"])
@@ -44,7 +69,8 @@ local reduceHeight = function(classname, amount)
 end
 
 local addInsertion = function(classname, material)
-  reduceHeight(classname, material.height)
+  setShrinkage(classname, material.height)
+  adjustHeights(classname, material.height)
   if material:isVbox() then 
     material.height = SILE.length.new({ length =  0 })
   end
