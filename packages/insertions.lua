@@ -159,7 +159,6 @@ SILE.typesetter:registerPageBreakHook(function (self,nl)
       for i = 1,#node.nodes do local node = node.nodes[i]
         if node.type == "insertionVbox" then
           if not totals[node.class] then totals[node.class] = 0 end
-          print("Found a box of height "..node.actualHeight)
           totals[node.class] = totals[node.class] + node.actualHeight
         end
       end
