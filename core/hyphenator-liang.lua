@@ -37,6 +37,7 @@ function loadPatterns(h, language)
     return
   end
   for _,pat in pairs(languageset.patterns) do addPattern(h, pat) end
+  if not languageset.exceptions then languageset.exceptions = {} end
   for _,exc in pairs(languageset.exceptions) do
     local k = exc:gsub("-", "")
     h.exceptions[k] = { 0 }
