@@ -188,7 +188,7 @@ SILE.defaultTypesetter = std.object {
     self.hooks[category][1+#(self.hooks[category])] = f
   end,
   runHooks = function(self, category, data)
-    if not self.hooks[category] then return end
+    if not self.hooks[category] then return data end
     for i = 1,#self.hooks[category] do
       data = self.hooks[category][i](self, data)
     end
