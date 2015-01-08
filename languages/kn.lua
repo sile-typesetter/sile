@@ -1,3 +1,4 @@
+SILE.languageSupport.languages.kn =  {defaultScript = "Knda"}
 SILE.hyphenator.languages["kn"] = {};
 SILE.hyphenator.languages["kn"].patterns =
    {
