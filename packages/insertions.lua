@@ -1,7 +1,8 @@
 SILE.scratch.insertions = {
   classes = {},
   thispage = {},
-  typesetters = {}
+  typesetters = {},
+  nextpage = {}
 }
 
 local initInsertionClass = function (self, classname, options)
@@ -82,27 +83,12 @@ local increaseInsertionFrame = function(classname, amount)
   if stealPosition == "bottom" then f:relax("top") end
 end
 
-SILE.typesetter:registerPageBreakHook(function (self,nl)
-  -- Find the insertion vboxes
-  local totals = {}
-  for i = 1,#nl do local node = nl[i]
-    if node.type == "insertionVbox" then
-      if not totals[node.class] then totals[node.class] = 0 end
-      totals[node.class] = totals[node.class] + node.actualHeight
-    end
-  end
-  -- Commit the size changes
-  for class, opts in pairs(SILE.scratch.insertions.classes) do
-    if totals[class] then increaseInsertionFrame(class, totals[class]) end
-  end
-  SILE.scratch.insertions.thispage = {}
-  SILE.scratch.insertions.typesetters = {}
-  return nl
-end)
-
 local addInsertion = function(classname, material)
   setShrinkage(classname, material.height)
-  table.insert(SILE.typesetter.state.outputQueue, _insertionVbox {
+  if not SILE.scratch.insertions.thispage[classname] then SILE.scratch.insertions.thispage[classname] = {} end
+  local ins = SILE.scratch.insertions.thispage[classname]
+  ins[#ins+1] = material
+  table.insert(SILE.typesetter.state.nodes, _insertionVbox {
     class = classname,
     material = material,
     actualHeight = material.height,
@@ -117,6 +103,18 @@ local heightSoFar = function(classname)
     h = h + ins.height.length + ins.depth
   end
   return h
+end
+
+local mainFrameHeightSoFar = function()
+  local heightOfBodySoFar = SILE.pagebuilder.collateVboxes(SILE.typesetter.state.outputQueue)
+  local nodes = std.tree.clone(SILE.typesetter.state.nodes)
+  SILE.typesetter:pushState()
+  SILE.typesetter.state.nodes = nodes
+  SILE.typesetter:leaveHmode()
+  local upcomingHeight = SILE.pagebuilder.collateVboxes(SILE.typesetter.state.outputQueue)
+  SILE.typesetter:popState()
+  SU.debug("insertions", "Height on the main list is ".. (heightOfBodySoFar.height +heightOfBodySoFar.depth) .. ", upcoming height is "..(upcomingHeight.height + upcomingHeight.depth))
+  return heightOfBodySoFar.height + upcomingHeight.height + heightOfBodySoFar.depth + upcomingHeight.depth
 end
 
 local insert = function (self, classname, vbox)
@@ -137,20 +135,52 @@ local insert = function (self, classname, vbox)
 
   SU.debug("insertions", "Maxheight is "..tostring(thisclass["maxHeight"]))
   SU.debug("insertions", "height is "..tostring((heightSoFar(classname) + vbox.height + vbox.depth)))
-
-  local heightOfBodySoFar = SILE.pagebuilder.collateVboxes(SILE.typesetter.state.outputQueue)
   -- If the current frame is in the steal list
-
+  SU.debug("insertions", "Total is "..SILE.typesetter:pageTarget())
   if heightSoFar(classname) + vbox.height + vbox.depth < thisclass["maxHeight"] and
     ( (vbox.height + vbox.depth).length < 0 or
-    true -- XXX "\pagetotal plus \pagedepth minus \pageshrink plus the effective
-         -- size of the insertion should be less than \pagegoal"
+    (mainFrameHeightSoFar() + vbox.height + vbox.depth) < SILE.typesetter:pageTarget()
     ) then
     addInsertion(classname, vbox)
-  else
+  elseif mainFrameHeightSoFar() > SILE.typesetter:pageTarget() then
+    -- No hope; defer until next time
+    SILE.scratch.insertions.nextpage[#(SILE.scratch.insertions.nextpage)+1] = {class=classname, material=vbox}
+  else -- split
     SU.error("I need to split this insertion and I don't know how")
   end
 end
+
+
+SILE.typesetter:registerPageBreakHook(function (self,nl)
+  -- Find the insertion vboxes
+  local totals = {}
+  for i = 1,#nl do local node = nl[i]
+    if node.nodes then
+      for i = 1,#node.nodes do local node = node.nodes[i]
+        if node.type == "insertionVbox" then
+          if not totals[node.class] then totals[node.class] = 0 end
+          print("Found a box of height "..node.actualHeight)
+          totals[node.class] = totals[node.class] + node.actualHeight
+        end
+      end
+    end
+  end
+  -- Commit the size changes
+  for class, opts in pairs(SILE.scratch.insertions.classes) do
+    if totals[class] then increaseInsertionFrame(class, totals[class]) end
+  end
+  SILE.scratch.insertions.thispage = {}
+  SILE.scratch.insertions.typesetters = {}
+  return nl
+end)
+
+SILE.typesetter:registerNewPageHook(function(self)
+  -- Process deferred insertions
+  for i = 1,#SILE.scratch.insertions.nextpage do local ins = SILE.scratch.insertions.nextpage[i]
+    insert(self,ins.class, ins.material)
+  end
+  SILE.scratch.insertions.nextpage = {}  
+end)
 
 local outputInsertions = function(self)end
 

@@ -44,7 +44,7 @@ SILE.settings.declare({
 })
 SILE.defaultTypesetter = std.object {
   -- Setup functions
-  pageBreakHooks = {},
+  hooks = {},
   init = function(self, frame)
     self.stateQueue = {};
     self:initFrame(frame)
@@ -183,14 +183,22 @@ SILE.defaultTypesetter = std.object {
   pageTarget = function(self)
     return self.frame:height()
   end,
-  registerPageBreakHook = function (self, f)
-    self.pageBreakHooks[1+#self.pageBreakHooks] = f
+  registerHook = function (self, category, f)
+    if not self.hooks[category] then self.hooks[category] = {} end
+    self.hooks[category][1+#(self.hooks[category])] = f
   end,
-  runPageBreakHooks = function(self, nl)
-    for i = 1,#self.pageBreakHooks do
-      nl = self.pageBreakHooks[i](self, nl)
+  runHooks = function(self, category, data)
+    if not self.hooks[category] then return end
+    for i = 1,#self.hooks[category] do
+      data = self.hooks[category][i](self, data)
     end
-    return nl
+    return data
+  end,
+  registerPageBreakHook = function (self, f)
+    self:registerHook("pagebreak", f)
+  end,
+  registerNewPageHook = function (self, f)
+    self:registerHook("newpage", f)
   end,
   pageBuilder = function (self, independent)
     local vbox;
@@ -201,7 +209,7 @@ SILE.defaultTypesetter = std.object {
     if not pageNodeList then -- No break yet
       return false
     end
-    pageNodeList = self:runPageBreakHooks(pageNodeList)
+    pageNodeList = self:runHooks("pagebreak",pageNodeList)
     self:setVerticalGlue(pageNodeList, target)
     self:outputLinesToPage(pageNodeList);
     return true
@@ -275,6 +283,7 @@ SILE.defaultTypesetter = std.object {
       end
     end
     self:leaveHmode();
+    self:runHooks("newpage")
   end,
   outputLinesToPage = function (self, lines)
     SU.debug("pagebuilder", "OUTPUTTING frame "..self.frame.id);
