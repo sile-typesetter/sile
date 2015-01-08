@@ -11,10 +11,20 @@
       end
       if (options.weight)  then SILE.settings.set("font.weight", 0+options.weight) end
       if (options.style)  then SILE.settings.set("font.style", options.style) end
-      if (options.script)  then SILE.settings.set("font.script", options.script) end
       if (options.variant)  then SILE.settings.set("font.variant", options.variant) end
       if (options.direction)  then SILE.settings.set("font.direction", options.direction) end
-      if (options.language)  then  SILE.settings.set("document.language", options.language) end
+      if (options.language)  then  
+        SILE.settings.set("document.language", options.language) 
+        SILE.languageSupport.loadLanguage(options.language)
+      end
+      if (options.script)  then SILE.settings.set("font.script", options.script) 
+      elseif SILE.settings.get("document.language") then
+        local lang = SILE.languageSupport.languages[SILE.settings.get("document.language")]
+        if lang and lang.defaultScript then
+          SILE.settings.set("font.script", lang.defaultScript)
+        end
+      end
+
       if (type(content)=="function" or content[1]) then 
         SILE.process(content)
         SILE.settings.popState()
@@ -25,7 +35,7 @@ SILE.settings.declare({name = "font.family", type = "string", default = "Gentium
 SILE.settings.declare({name = "font.size", type = "number or integer", default = 10})
 SILE.settings.declare({name = "font.weight", type = "integer", default = 200})
 SILE.settings.declare({name = "font.variant", type = "string", default = "normal"})
-SILE.settings.declare({name = "font.script", type = "string", default = "latin"})
+SILE.settings.declare({name = "font.script", type = "string", default = ""})
 SILE.settings.declare({name = "font.style", type = "string", default = "normal"})
 SILE.settings.declare({name = "font.direction", type = "string", default = "LTR"})
 SILE.settings.declare({name = "document.language", type = "string", default = "en"})

@@ -6,7 +6,6 @@ SILE.inputs = {}
 SILE.Commands = {};
 SILE.debugFlags = {}
 SILE.tokenizers = {}
-
 std = require("std")
 
 SILE.documentState = std.object {};
@@ -24,6 +23,7 @@ require("core/papersizes")
 require("core/colorparser")
 require("core/pagebuilder")
 require("core/typesetter")
+require("core/languages")
 require("core/hyphenator-liang")
 require("core/font")
 

@@ -19,17 +19,7 @@ local function addPattern(h, p)
 end
 
 function loadPatterns(h, language)
-  if not(language) or language == "" then language = "en" end
-  local hyph
-  pcall(function () hyph =  SILE.require("languages/"..language.."-compiled") end)
-  if hyph then
-    _hyphenators[language] = hyph
-    return
-  end
-
-  if not pcall(function () SILE.require("languages/"..language) end) then
-    return
-  end
+  SILE.languageSupport.loadLanguage(language)
 
   local languageset = SILE.hyphenator.languages[language];
   if not (languageset) then 
