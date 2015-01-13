@@ -24,7 +24,7 @@ function utilities.warn(message)
 end
 
 function utilities.debugging(category)
-  return SILE.debugFlags[category]
+  return SILE.debugFlags.all or SILE.debugFlags[category]
 end
 
 function utilities.gtoke(string, pattern)
