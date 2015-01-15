@@ -17,8 +17,14 @@ SILE.outputters.libtexpdf = {
     pdf.endpage()
     pdf.finish()
   end,
-  setColor = function (self, color)
+  setColor = function(self, color)
     pdf.setcolor(color.r, color.g, color.b)
+  end,
+  pushColor = function (self, color)
+    pdf.pushcolor(color.r, color.g, color.b)
+  end,
+  popColor = function (self)
+    pdf.colorpop()
   end,
   outputHbox = function (value,w)
     if not value.glyphString then return end
