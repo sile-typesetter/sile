@@ -2,6 +2,7 @@
 \script[src=packages/frametricks]
 \script[src=packages/lorem]
 \script[src=packages/bidi]
+\set[parameter=linebreak.tolerance,value=10000]
 \define[command=tableofcontents:headerfont]{\font[size=24pt,family=Baskerville,style=italic]{\process}}%
 % Of course this is a bit complicated. We're showing off doing complicated things.
 \begin[first-content-frame=title]{pagetemplate}
@@ -56,6 +57,7 @@ and so the two columns have adjusted their height to fit in with this one.
 \left-running-head{Multilingual capabilities}% Again, normally called automatically.
 \noindent\font[family=Baskerville,size=25pt]{\em{Multilingual capabilities}}
 \tocentry{Multilingual capabilities}
+\set[parameter=linebreak.tolerance,value=500]
 
 \noindent{}SILE uses the \em{Harfbuzz} shaping engine, which provides excellent support for handling text containing
 different languages. It’s very easy to use multiple languages, multiple text directions, and multiple text
@@ -102,7 +104,8 @@ for instance, we will typeset the same Unicode text three times. First, in stand
 \font[family=Scheherazade,direction=RTL,language=snd,script=Arab]{ههه}; and then in Urdu
 \font[family=Scheherazade,direction=RTL,language=urd,script=Arab]{ههه}.
 
-\eject%
+\supereject
+
 \right-running-head{\hfill Typesetting on a grid}%
 \noindent\font[family=Baskerville,size=25pt]{\em{Typesetting on a grid}}
 \tocentry{Typesetting on a grid}
