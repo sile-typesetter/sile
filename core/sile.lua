@@ -59,20 +59,16 @@ end
 SILE.parseArguments = function()
 local parser = std.optparse ("This is SILE "..SILE.version..[[
 
- Usage: sile
+ Usage: sile [options] file.sil|file.xml
 
- Banner text.
-
- Optional long description text to show when the --help
- option is passed.
-
- Several lines or paragraphs of long description are permitted.
+ The SILE typesetter.
 
  Options:
 
    -d, --debug=VALUE        debug SILE's operation
-   -b, --backend=VALUE      choose libtexpdf/pangocairo backend
-   -I, --include=[FILE]     accept an optional argument
+   -b, --backend=VALUE      choose between libtexpdf/pangocairo backends
+   -I, --include=[FILE]     include a class or SILE file before 
+                            processing main file
        --version            display version information, then exit
        --help               display this help, then exit
 ]])

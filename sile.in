@@ -4,10 +4,10 @@ os.getenv("SILE_PATH").."/?.lua" or "") .. ';?.lua;@SILE_PATH@/?.lua;@SILE_PATH@
 package.cpath = package.cpath .. ";core/?.so;@SILE_PATH@/core/?.so;"
 SILE = require("core/sile")
 io.stdout:setvbuf 'no'
+SILE.parseArguments()
 if not os.getenv 'LUA_REPL_RLWRAP' then
   print('This is SILE '..SILE.version)
 end
-SILE.parseArguments()
 SILE.init()
 if unparsed and unparsed[1] then
   SILE.masterFileName = unparsed[1]
