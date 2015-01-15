@@ -72,7 +72,7 @@ SILE.registerCommand("lorem", function(options, content)
     words = words - 1
   end
   SILE.settings.temporarily(function()
-    SILE.settings.set("document.language","xx")
+    SILE.settings.set("document.language","la")
     SILE.typesetter:typeset(s)
     SILE.typesetter:leaveHmode()
   end)
