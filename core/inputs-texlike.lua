@@ -106,6 +106,7 @@ function SILE.inputs.TeXlike.docToTree(doc)
   -- a document always consists of one stuff
   t = t[1][1]
   if not t then return end
+  resetCache()
   t = massage_ast(t,doc) 
   return t
 end
