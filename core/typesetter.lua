@@ -219,17 +219,17 @@ SILE.defaultTypesetter = std.object {
     -- Do some sums on that list
     local glues = {};
     local gTotal = SILE.length.new()
-    local totalHeight = 0
+    local totalHeight = SILE.length.new()
 
     for i=1,#pageNodeList do
       totalHeight = totalHeight + pageNodeList[i].height + pageNodeList[i].depth
       if pageNodeList[i]:isVglue() then 
         table.insert(glues,pageNodeList[i]);
-        gTotal = gTotal + pageNodeList[i].height
+        gTotal = gTotal + pageNodeList[i].height.length
       end
     end
 
-    local adjustment = (target - totalHeight.length)
+    local adjustment = (target - totalHeight).length
 
     if (adjustment > gTotal.stretch) then adjustment = gTotal.stretch end
     if (adjustment / gTotal.stretch > 0) then 

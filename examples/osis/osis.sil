@@ -1,15 +1,14 @@
 <sile>
-<font family="Cardo" size="9" language="el"/>
+<font family="Cardo" size="9pt" language="el"/>
 <script src="packages/grid"/>
-<grid spacing="15pt"/>
+<grid spacing="13pt"/>
 <script>
 -- Two column layout. It might be cleaner to use a two-column class but this is fine.
-SILE.documentState.documentClass.pageTemplate.frames = {
-  a = SILE.newFrame({left= "5%", right= "47.5%", top="5%", bottom="90%", id= "a", next= "b" }),
-  b = SILE.newFrame({left= "52.5%", right= "95%", top="5%", bottom="90%", id= "b" }),
-  folio = SILE.newFrame({left = "5%", right = "95%", top = "92%", bottom = "97%", id = "folio"})
-};
-SILE.documentState.documentClass.pageTemplate.firstContentFrame = SILE.documentState.documentClass.pageTemplate.frames["a"];
+local class = SILE.documentState.documentClass
+class:declareFrame("a", {left= "5%", right= "47.5%", top="5%", bottom="90%",next= "b" })
+class:declareFrame("b", {left= "52.5%", right= "95%", top="5%", bottom="90%" })
+class:declareFrame("folio",{left = "5%", right = "95%", top = "92%", bottom = "97%", id = "folio"})
+class.pageTemplate.firstContentFrame = SILE.getFrame("a")
 
 SILE.settings.set("typesetter.parseppattern", "\n\n\n\n\n+")
 if not SILE.scratch then SILE.scratch = {} end
@@ -20,13 +19,16 @@ SILE.registerCommand("verse", function(options, content)
   c,v = string.match(id, "(%d+).(%d+)$")
   if not (c == SILE.scratch.chapter) then
     io.write(" ("..c..") ")
+    SILE.call("bigskip")
+    SILE.Commands["font"]({ weight = 700, size = "15pt"}, { "Chapter ".. c })
     SILE.typesetter:leaveHmode()
-    SILE.Commands["font"]({ weight = 700, size = 15}, { "Chapter ".. c })
-    SILE.typesetter:leaveHmode()
+    SILE.call("bigskip")
     SILE.scratch.chapter = c
     SILE.typesetter:pushVpenalty({penalty = 10000 })
   end
-  SILE.Commands["font"]({ weight = 700, size = 7}, { v.." " })
+  SILE.Commands["font"]({ weight = 700, size = "7pt"}, { v.." " })
+  SILE.typesetter:pushPenalty({penalty = 10000 })
+
   SILE.process(content)
 end)
 
@@ -39,12 +41,11 @@ SILE.registerCommand("div", function(options, content)
   folio = SILE.newFrame({left = "5%", right = "95%", top = "92%", bottom = "97%", id = "folio"})      
       } };
       SILE.documentState.thisPageTemplate.firstContentFrame = SILE.documentState.thisPageTemplate.frames.t
-      SILE.typesetter.frame = SILE.documentState.thisPageTemplate.frames.t
+      SILE.typesetter:init(SILE.getFrame("t"))
   end
   SILE.process(content)
-  SILE.typesetter:pushVpenalty({penalty = -10000 })
+  SILE.call("supereject")
   SILE.typesetter:leaveHmode();
-  SILE.typesetter:shipOut(SILE.length.new({ length = SILE.typesetter.frame:height() }))
 end)
 </script>
 <define command="osisText"><process/></define>
@@ -53,10 +54,10 @@ end)
 <define command="center"><glue stretch="1000"/><process/><glue stretch="1000"/></define>
 <define command="title">
 <skip height="1cm"/>
-<font weight="700" size="20"><process/></font>
+<font weight="700" size="20pt"><process/></font>
 <skip height="0.5cm"/>
 </define>
-<define command="p"><process/><script>SILE.typesetter:leaveHmode()</script></define>
+<define command="p"><process/><script>SILE.call("medskip")</script></define>
 <define command="chapter"><process/></define>
 <define command="w"><process/></define>
 <define command="a"><process/></define>
