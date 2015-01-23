@@ -377,8 +377,8 @@ SILE.defaultTypesetter = std.object {
           if slice[i]:isGlue() or slice[i] == SILE.nodefactory.zeroHbox then
             -- Do nothing
           elseif (slice[i]:isDiscretionary()) then
-            slice[#(slice)].used = 1;
-            naturalTotals = naturalTotals + slice[#slice]:prebreakWidth()
+            slice[i].used = 1;
+            naturalTotals = naturalTotals + slice[i]:prebreakWidth()
           else
             break
           end
