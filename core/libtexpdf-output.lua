@@ -21,7 +21,7 @@ SILE.outputters.libtexpdf = {
     pdf.setcolor(color.r, color.g, color.b)
   end,
   pushColor = function (self, color)
-    pdf.pushcolor(color.r, color.g, color.b)
+    pdf.colorpush(color.r, color.g, color.b)
   end,
   popColor = function (self)
     pdf.colorpop()
