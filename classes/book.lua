@@ -40,12 +40,14 @@ book.endPage = function(self)
       SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
       SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
       SILE.process(SILE.scratch.headers.right)
+      SILE.call("par")
     end)
   elseif (not(book:oddPage()) and SILE.scratch.headers.left) then
       SILE.typesetNaturally(SILE.getFrame("runningHead"), function()
         SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
         SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
         SILE.process(SILE.scratch.headers.left)
+        SILE.call("par")
       end)
   end
 
