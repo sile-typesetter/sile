@@ -13,14 +13,18 @@ if unparsed and unparsed[1] then
   SILE.masterFileName = unparsed[1]
   if SILE.preamble then
     print("Loading "..SILE.preamble)
-    local i = SILE.resolveFile("classes/"..SILE.preamble)
-    if i then
-      SILE.readFile(i)
+    local c = SILE.resolveFile("classes/"..SILE.preamble)
+    local f = SILE.resolveFile(SILE.preamble)
+    if c then
+      SILE.readFile(c)
+    elseif f then
+      SILE.readFile(f)
     else
-      require("classes/"..SILE.preamble)
+      SILE.require("classes/"..SILE.preamble)
     end
   end
   SILE.readFile(unparsed[1])
+  if SILE.preamble then SILE.documentState.documentClass:finish() end
   io.write("\n")
 else
   SILE.repl()
