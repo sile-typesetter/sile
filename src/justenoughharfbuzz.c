@@ -202,15 +202,15 @@ int shape (lua_State *L) {
     glyph_pos    = hb_buffer_get_glyph_positions(buf, &glyph_count);
     lua_checkstack(L, glyph_count);
     for (j = 0; j < glyph_count; ++j) {
-      char buf[255];
+      char namebuf[255];
       box glyph_extents  = { 0.0, 0.0, 0.0 };
       calculate_extents(&glyph_extents, glyph_info[j], glyph_pos[j], face, point_size);
       //glyph_extents.width += glyph_pos[j].x_offset / 64.0;
 
       lua_newtable(L);
       lua_pushstring(L, "name");
-      FT_Get_Glyph_Name( face, glyph_info[j].codepoint, buf, 255 );      
-      lua_pushstring(L, buf);
+      FT_Get_Glyph_Name( face, glyph_info[j].codepoint, namebuf, 255 );      
+      lua_pushstring(L, namebuf);
       lua_settable(L, -3);
       lua_pushstring(L, "codepoint");
       lua_pushinteger(L, glyph_info[j].codepoint);
