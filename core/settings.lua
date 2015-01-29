@@ -119,5 +119,12 @@ SILE.registerCommand("set", function(options, content)
   elseif  string.match(def.type, "Length") then v = SILE.length.parse(v)
   elseif string.match(def.type, "VGlue") then v = SILE.nodefactory.newVglue(v)
   elseif string.match(def.type, "Glue") then v = SILE.nodefactory.newGlue(v) end
-  SILE.settings.set(p,v)
-end, "Set a SILE parameter <parameter> to value <value>")
+  if content and (type(content) == "function" or content[1]) then
+    SILE.settings.temporarily(function()
+      SILE.settings.set(p,v)
+      SILE.process(content)
+    end)
+  else
+    SILE.settings.set(p,v)
+  end
+end, "Set a SILE parameter <parameter> to value <value> (restoring the value afterwards if <content> is provided)")
