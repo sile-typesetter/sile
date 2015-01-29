@@ -15,8 +15,14 @@ SILE.settings.declare({
 
 SILE.shapers.harfbuzz = require("justenoughharfbuzz")
 
+local debugging_face = function(opts)
+  local face = SILE.shapers.harfbuzz._face(opts)
+  SU.debug("fonts", "Resolved font family "..opts.font.." -> "..face.filename)
+  return face
+end
+
 local function doShape (s, options)
-  local face = SILE.font.cache(options, SILE.shapers.harfbuzz._face)
+  local face = SILE.font.cache(options, debugging_face)
   if not face then 
     SU.error("Could not find requested font "..options.." or any suitable substitutes")
   end
