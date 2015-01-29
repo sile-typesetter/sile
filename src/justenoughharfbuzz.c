@@ -200,6 +200,7 @@ int shape (lua_State *L) {
 
     glyph_info   = hb_buffer_get_glyph_infos(buf, &glyph_count);
     glyph_pos    = hb_buffer_get_glyph_positions(buf, &glyph_count);
+    lua_checkstack(L, glyph_count);
     for (j = 0; j < glyph_count; ++j) {
       char buf[255];
       box glyph_extents  = { 0.0, 0.0, 0.0 };
