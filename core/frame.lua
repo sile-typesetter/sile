@@ -69,6 +69,7 @@ SILE.framePrototype = std.object {
 
 function SILE.framePrototype:toString()
   local f = "<Frame: "..self.id..": "
+  f = f .." next="..self.next.." "
   for k,v in pairs(self.constraints) do
     f = f .. k.."="..v.."; "
   end
@@ -120,6 +121,15 @@ function SILE.framePrototype:normalize()
   if (type(self.state.cursorX)) == "table" then self.state.cursorX  =self.state.cursorX.length end
 end
 
+function SILE.framePrototype:isMainContentFrame()
+  local c =  SILE.documentState.thisPageTemplate.firstContentFrame
+  while c do
+    if c == self then return true end
+    c = SILE.getFrame(c.next)
+  end
+  return false
+end
+
 SILE.newFrame = function(spec)
   SU.required(spec, "id", "frame declaration")
   local dims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
@@ -158,7 +168,10 @@ SILE.newFrame = function(spec)
   return frame
 end
 
-SILE.getFrame = function(id) return SILE.frames[id] or SU.error("Couldn't get frame ID "..id, true) end
+SILE.getFrame = function(id) 
+  if type(frame) == "table" then return frame end -- Shouldn't happen but...
+  return SILE.frames[id] or SU.error("Couldn't get frame ID "..id, true) 
+end
 
 SILE._frameParser = require("core/frameparser")
 

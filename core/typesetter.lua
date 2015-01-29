@@ -245,6 +245,9 @@ SILE.defaultTypesetter = std.object {
     self.frame:leave()
     if (self.frame.next and not (self.state.lastPenalty <= supereject_penalty )) then
       self:initFrame(SILE.getFrame(self.frame.next));
+    elseif not self.frame:isMainContentFrame() then
+      SU.warn("Overfull content for frame "..self.frame.id)
+      self:chuck()
     else
       SILE.documentState.documentClass:endPage()
       self:initFrame(SILE.documentState.documentClass:newPage()); -- XXX Hack
@@ -401,7 +404,7 @@ SILE.defaultTypesetter = std.object {
     return lines;
   end,
   chuck = function(self) -- emergency shipout everything
-    self:leaveHmode(1);
+    self:leaveHmode(true)
     self:outputLinesToPage(self.state.outputQueue)
     self.state.outputQueue = {}
   end
