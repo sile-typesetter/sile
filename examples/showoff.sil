@@ -2,6 +2,7 @@
 \script[src=packages/frametricks]
 \script[src=packages/lorem]
 \script[src=packages/bidi]
+\script[src=packages/image]
 \set[parameter=linebreak.tolerance,value=10000]
 \define[command=tableofcontents:headerfont]{\font[size=24pt,family=Baskerville,style=italic]{\process}}%
 % Of course this is a bit complicated. We're showing off doing complicated things.

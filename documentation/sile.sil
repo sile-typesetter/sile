@@ -839,7 +839,6 @@ produces the following output:
 \end{script}
 \line
 \end{examplefont}
-
 \chapter{SILE Packages}
 
 SILE comes with a number of packages which provide additional functionality.
@@ -952,7 +951,7 @@ correctly order left-to-right text within right-to-left paragraphs, RTL within L
 within LTR and so on. If you are working with Hebrew, Arabic or other RTL languages,
 you will want to load the \code{bidi} package.
 
-\a4break
+\a4break%
 \section{grid}
 \grid[spacing=15pt]
 
