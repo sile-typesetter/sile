@@ -17,6 +17,8 @@
 % Main title
 \center{\font[family=Baskerville,size=35pt]{\em{The SILE Show-off Document}}}\par
 \framebreak%
+\typeset-into[frame=sidebar]{\tableofcontents}%
+
 % First frame
 \skip[height=-1ex]\noindent{}\float[bottomboundary=5pt]{\font[size=60pt]{S}}ILE is a typesetting system. Its job is to produce beautiful printed documents. It’s similar to TeX, but with some ideas borrowed from InDesign, and written with modern technologies in mind.
 
@@ -50,8 +52,6 @@ and so the two columns have adjusted their height to fit in with this one.
 
 \font[style=italic]{Some more text to pad out this frame.}
 }
-
-\typeset-into[frame=sidebar]{\tableofcontents}
 
 \eject%
 \left-running-head{Multilingual capabilities}% Again, normally called automatically.
