@@ -7,11 +7,11 @@ end)
 
 SILE.typesetter.pageBuilder = function (self, independent)
   local frame = self.frame
-  if not frame.balanced then return SILE.defaultTypesetter.pageBuilder(self, independent) end
+  if not (frame.balanced == true) then return SILE.defaultTypesetter.pageBuilder(self, independent) end
 
   local colCount = 0
   local target = SILE.length.new({  })
-  while frame and frame.balanced do
+  while frame and frame.balanced == true do
     target = target + frame:height() 
     colCount = colCount + 1
     if frame.next then frame = SILE.getFrame(frame.next) else break end
@@ -45,7 +45,7 @@ SILE.typesetter.pageBuilder = function (self, independent)
   -- adjust the height of each frame to be an appropriate fraction of
   -- the content height
   local frame = self.frame
-  while frame and frame.balanced do
+  while frame and frame.balanced == true do
     frame:relax("bottom")
     frame:constrain("height", totalHeight.length / colCount + SILE.toPoints("3ex"))
     if frame.next then frame = SILE.getFrame(frame.next) else break end
@@ -53,7 +53,7 @@ SILE.typesetter.pageBuilder = function (self, independent)
   self.state.lastPenalty = 0
   while self.frame and self.frame.balanced do
     SILE.defaultTypesetter.pageBuilder(self,true)
-    if self.frame.next and SILE.getFrame(self.frame.next).balanced then
+    if self.frame.next and SILE.getFrame(self.frame.next).balanced == true then
       self:initFrame(SILE.getFrame(self.frame.next))
     else
       break -- Break early, because when we return

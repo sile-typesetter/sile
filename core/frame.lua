@@ -12,7 +12,7 @@ SILE.framePrototype = std.object {
   next= nil,
   id= nil,
   previous= nil,
-  balanced= 0,
+  balanced= false,
   direction = nil,
   state = {},
   enterHooks = {},
@@ -156,6 +156,10 @@ SILE.newFrame = function(spec)
 
   for key, value in pairs(spec) do
     if not dims[key] then frame[key] = spec[key] end
+  end
+  -- Fix up "balanced"
+  if frame.balanced == "true" or frame.balanced == "1" then
+    frame.balanced = true
   end
 
   frame.constraints = {}
