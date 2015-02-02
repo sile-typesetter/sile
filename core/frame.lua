@@ -125,7 +125,7 @@ function SILE.framePrototype:isMainContentFrame()
   local c =  SILE.documentState.thisPageTemplate.firstContentFrame
   while c do
     if c == self then return true end
-    c = SILE.getFrame(c.next)
+    if c.next then c = SILE.getFrame(c.next) else return false end
   end
   return false
 end
