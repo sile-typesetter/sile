@@ -70,9 +70,11 @@ SILE.registerCommand("chapter", function (options, content)
   SILE.scratch.headers.right = nil
   SILE.Commands["set-counter"]({id = "section", value = 0});
   SILE.Commands["set-counter"]({id = "footnote", value = 1});
-  SILE.Commands["increment-counter"]({id = "chapter"})
-  SILE.Commands["book:chapterfont"]({}, {"Chapter "..SILE.formatCounter(SILE.scratch.counters.chapter)});
-  SILE.typesetter:leaveHmode()
+  if options.numbering == nil or options.numbering == "yes" then
+    SILE.Commands["increment-counter"]({id = "chapter"})
+    SILE.Commands["book:chapterfont"]({}, {"Chapter "..SILE.formatCounter(SILE.scratch.counters.chapter)});
+    SILE.typesetter:leaveHmode()
+  end
   SILE.Commands["book:chapterfont"]({}, content);
   SILE.Commands["left-running-head"]({}, content)
   SILE.call("tocentry", {level = 1}, content)
