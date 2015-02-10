@@ -59,3 +59,5 @@ SILE.tokenizers.ja = function(string)
     end
   end)
 end
+
+SILE.hyphenator.languages.ja = {patterns={}}
