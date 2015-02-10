@@ -332,13 +332,13 @@ SILE.defaultTypesetter = std.object {
   end,
   addrlskip = function (self, slice)
     local rskip = SILE.settings.get("document.rskip")
-    if rskip and not (rskip.width.length == 0) then
+    if rskip then
       rskip.value = "rskip"
       table.insert(slice, rskip)
       table.insert(slice, SILE.nodefactory.zeroHbox)
     end
     local lskip = SILE.settings.get("document.lskip")
-    if lskip and not (lskip.width.length == 0) then 
+    if lskip then
       lskip.value = "lskip"
       table.insert(slice, 1, lskip) 
       table.insert(slice, 1, SILE.nodefactory.zeroHbox) 
