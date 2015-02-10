@@ -66,23 +66,14 @@ plain.registerCommands = function()
 \define[command=goodbreak]{\penalty[penalty=-500]}%
 \define[command=eject]{\par\break}%
 \define[command=supereject]{\par\penalty[penalty=-20000]}%
-\define[command=raggedright]{\set[parameter=document.rskip,value=0 plus 2em]\set[parameter=document.spaceskip,value=0.333em]}%
 \define[command=justified]{\set[parameter=document.rskip,value=0]\set[parameter=document.spaceskip]}%
 \define[command=rightalign]{\set[parameter=typesetter.parfillskip,value=0]{\hfill\process\par}}%
 \define[command=em]{\font[style=italic]{\process}}%
 \define[command=nohyphenation]{\font[language=xx]{\process}}%
-\define[command=center]{%%
-\set[parameter=document.lskip,value=20pt plus 1000pt]%%
-\set[parameter=document.rskip,value=20pt plus 1000pt]%%
-\set[parameter=typesetter.parfillskip,value=0pt]%%
-\set[parameter=document.parindent,value=0pt]%%
-\set[parameter=current.parindent,value=0pt]%%
-\noindent\process\par%%
-\set[parameter=document.lskip]%%
-\set[parameter=document.rskip]%%
-\set[parameter=document.parindent,value=20pt]%%
-\set[parameter=typesetter.parfillskip,value=0pt plus 1000pt]%%
-}]])
+\define[command=raggedright]{\ragged[right=true]{\process}}%
+\define[command=raggedleft]{\ragged[left=true]{\process}}%
+\define[command=center]{\ragged[left=true,right=true]{\process}}%
+]])
 end
 
 SILE.registerCommand("{", function (o,c) SILE.typesetter:typeset("{") end)
@@ -90,6 +81,18 @@ SILE.registerCommand("}", function (o,c) SILE.typesetter:typeset("}") end)
 SILE.registerCommand("%", function (o,c) SILE.typesetter:typeset("%") end)
 SILE.registerCommand("\\", function (o,c) SILE.typesetter:typeset("\\") end)
 
+SILE.registerCommand("ragged", function(options,c)
+  SILE.settings.temporarily(function()
+    if options.left then SILE.settings.set("document.lskip", SILE.nodefactory.hfillGlue) end
+    if options.right then SILE.settings.set("document.rskip", SILE.nodefactory.hfillGlue) end
+    SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
+    SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
+    SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
+    -- SILE.settings.set("document.spaceskip", SILE.length.new({ length = SILE.shaper.measureDim(" ") }))
+    SILE.process(c)
+    SILE.call("par")
+  end)
+end)
 SILE.registerCommand("hbox", function (o,c)
   local index = #(SILE.typesetter.state.nodes)+1
   local recentContribution = {}
