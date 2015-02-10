@@ -139,7 +139,7 @@ local insert = function (self, classname, vbox)
   SU.debug("insertions", "Total is "..SILE.typesetter:pageTarget())
   if heightSoFar(classname) + vbox.height + vbox.depth < thisclass["maxHeight"] and
     ( (vbox.height + vbox.depth).length < 0 or
-    (mainFrameHeightSoFar() + vbox.height + vbox.depth) < SILE.typesetter:pageTarget()
+    (mainFrameHeightSoFar() + vbox.height + vbox.depth - SILE.typesetter:pageTarget()).length < 0
     ) then
     addInsertion(classname, vbox)
   elseif mainFrameHeightSoFar() > SILE.typesetter:pageTarget() then
