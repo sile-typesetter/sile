@@ -237,7 +237,7 @@ function lineBreak:recordFeasible(pi, breakType) -- 881
   end
   SU.debug("break"," fit class = "..self.fitClass);
   d = d + self.r.totalDemerits
-  if d < self.minimalDemerits[self.fitClass] then
+  if d <= self.minimalDemerits[self.fitClass] then
     self.minimalDemerits[self.fitClass] = d
     self.best_place[self.fitClass] = self.r.breakNode
     self.best_pl_line[self.fitClass] = self.r.lineNumber
