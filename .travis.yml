@@ -1,0 +1,8 @@
+language: c
+compiler:
+ - gcc
+ - clang
+script: sh bootstrap.sh && ./configure && make
+before_install:
+ - sudo apt-get update -qq
+ - sudo apt-get install -y lua5.1 luarocks libharfbuzz-dev libfreetype6-dev libfontconfig1-dev libpng-dev lua-lpeg lua-expat
