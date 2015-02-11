@@ -25,14 +25,4 @@ describe("Overlapping frame definitions", function()
     it("should have bottom", function () assert.is.equal(aBot,8) end)
     it("should have height", function () assert.is.equal(aHt1,7) end)
  end)
- describe("Increase b", function()
-    b._height = 1
-    h2 = b:height()
-    it("should have height", function () assert.is.equal(b:height(),1) end)
-    a = SILE.getFrame("a")
-    aBot2 = a:bottom()
-    it("should shrink", function () assert.is.equal(aBot2,11) end)
-
-  end)
-
 end)

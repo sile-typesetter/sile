@@ -48,7 +48,7 @@ describe("The node factory", function()
     local nnode3 = SILE.nodefactory.newNnode({ width = 20, height = 30, depth = 2, text = "three" })
     local vbox   = SILE.nodefactory.newVbox({ nodes = {nnode1, glue, nnode2, glue, nnode3 } })
     it("should go to text", function() assert.is.equal(vbox:toText(), "VB[one two three]") end)
-    it("should have depth", function() assert.is.equal(vbox.depth, 7) end)
+    it("should have depth", function() assert.is.equal(vbox.depth.length, 7) end)
   end)
   
 end)

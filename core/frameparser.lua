@@ -27,7 +27,6 @@ end
 
 local primary = dimensioned_string + percentage + func + number.number
 
-if testingSILE then
 	SILE.frameParserBits = {
 		number = number,
 		identifier = identifier,
@@ -38,7 +37,6 @@ if testingSILE then
 		percentage = percentage,
 		primary = primary
 	}
-end
 
 local grammar = {
 	"additive",
