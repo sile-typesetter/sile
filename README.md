@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/simoncozens/sile.svg?branch=master)](https://travis-ci.org/simoncozens/sile)
 
 ## What is SILE?
 
