@@ -129,7 +129,7 @@ int face_from_options(lua_State* L) {
     return 0;
   
   FcPatternGetInteger(matched, FC_INDEX, 0, &index);
-  font_path = strdup(font_path);
+  font_path = (FcChar8 *)strdup((char*)font_path); /* XXX signedness problems? */
   if (!font_path) {
     printf("Finding font path failed\n");
     return 0;
@@ -142,7 +142,7 @@ int face_from_options(lua_State* L) {
   FcPatternDestroy (p);
   lua_newtable(L);
   lua_pushstring(L, "filename");
-  lua_pushstring(L, font_path);
+  lua_pushstring(L, (char*)font_path);
   lua_settable(L, -3);
   face = (FT_Face)malloc(sizeof(FT_Face));
   if (FT_New_Face(ft_library, (char*)font_path, index, &face))
