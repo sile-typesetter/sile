@@ -26,7 +26,7 @@ local function doShape (s, options)
   if not face then 
     SU.error("Could not find requested font "..options.." or any suitable substitutes")
   end
-  return { SILE.shapers.harfbuzz._shape(s,face.face,options.script, options.direction,options.language, options.size) }
+  return { SILE.shapers.harfbuzz._shape(s,face.face,options.script, options.direction,options.language, options.size, options.features) }
 end
 
 local function measureSpace( options )

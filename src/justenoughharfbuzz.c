@@ -166,6 +166,93 @@ int face_from_options(lua_State* L) {
   return 1;
 }
 
+/* The following function stolen from XeTeX_ext.c */
+static hb_tag_t
+read_tag_with_param(const char* cp, int* param)
+{
+  const char* cp2;
+  hb_tag_t tag;
+  int i;
+
+  cp2 = cp;
+  while (*cp2 && (*cp2 != ':') && (*cp2 != ';') && (*cp2 != ',') && (*cp2 != '='))
+    ++cp2;
+
+  tag = hb_tag_from_string(cp, cp2 - cp);
+
+  cp = cp2;
+  if (*cp == '=') {
+    int neg = 0;
+    ++cp;
+    if (*cp == '-') {
+      ++neg;
+      ++cp;
+    }
+    while (*cp >= '0' && *cp <= '9') {
+      *param = *param * 10 + *cp - '0';
+      ++cp;
+    }
+    if (neg)
+      *param = -(*param);
+  }
+
+  return tag;
+}
+
+static hb_feature_t* scan_feature_string(const char* cp1, int* ret) {
+  hb_feature_t* features = NULL;
+  hb_tag_t  tag;  
+  int nFeatures = 0;
+  const char* cp2;
+  const char* cp3;
+  while (*cp1) {
+    if ((*cp1 == ':') || (*cp1 == ';') || (*cp1 == ','))
+      ++cp1;
+    while ((*cp1 == ' ') || (*cp1 == '\t')) /* skip leading whitespace */
+      ++cp1;
+    if (*cp1 == 0)  /* break if end of string */
+      break;
+
+    cp2 = cp1;
+    while (*cp2 && (*cp2 != ':') && (*cp2 != ';') && (*cp2 != ','))
+      ++cp2;
+    
+    if (*cp1 == '+') {
+      int param = 0;
+      tag = read_tag_with_param(cp1 + 1, &param);
+      features = realloc(features, (nFeatures + 1) * sizeof(hb_feature_t));
+      features[nFeatures].tag = tag;
+      features[nFeatures].start = 0;
+      features[nFeatures].end = (unsigned int) -1;
+      if (param >= 0)
+        param++;
+      features[nFeatures].value = param;
+      nFeatures++;
+      goto next_option;
+    }
+    
+    if (*cp1 == '-') {
+      ++cp1;
+      tag = hb_tag_from_string(cp1, cp2 - cp1);
+      features = realloc(features, (nFeatures + 1) * sizeof(hb_feature_t));
+      features[nFeatures].tag = tag;
+      features[nFeatures].start = 0;
+      features[nFeatures].end = (unsigned int) -1;
+      features[nFeatures].value = 0;
+      nFeatures++;
+      goto next_option;
+    }
+    
+  bad_option:
+    //fontfeaturewarning(cp1, cp2 - cp1, 0, 0);
+  
+  next_option:
+    cp1 = cp2;
+  }
+  *ret = nFeatures;
+  return features;
+}
+
 int shape (lua_State *L) {    
     const char * text = luaL_checkstring(L, 1);
     FT_Face face = lua_touserdata(L, 2);
@@ -173,8 +260,14 @@ int shape (lua_State *L) {
     const char * direction_s = luaL_checkstring(L, 4);
     const char * lang = luaL_checkstring(L, 5);
     double point_size = luaL_checknumber(L, 6);
-    hb_direction_t direction;
+    const char * featurestring = luaL_checkstring(L, 7);
 
+    hb_segment_properties_t segment_props;
+    hb_shape_plan_t *shape_plan;
+
+    hb_direction_t direction;
+    hb_feature_t* features;
+    int nFeatures = 0;
     unsigned int glyph_count = 0;
     hb_font_t *hb_ft_font;
     hb_face_t *hb_ft_face;
@@ -183,20 +276,27 @@ int shape (lua_State *L) {
     hb_glyph_position_t *glyph_pos;
     unsigned int j;
 
+    features = scan_feature_string(featurestring, &nFeatures);
+
     if (!strcasecmp(direction_s,"RTL"))
       direction = HB_DIRECTION_RTL;
     else
       direction = HB_DIRECTION_LTR;
 
     hb_ft_font = hb_ft_font_create(face, NULL);
+    hb_face_t* hbFace = hb_font_get_face(hb_ft_font);
+
     buf = hb_buffer_create();
+    hb_buffer_add_utf8(buf, text, strlen(text), 0, strlen(text));
+
     hb_buffer_set_script(buf, hb_tag_from_string(script, strlen(script)));
     hb_buffer_set_direction(buf, direction);
     hb_buffer_set_language(buf, hb_language_from_string(lang,strlen(lang)));
 
-    /* Layout the text */
-    hb_buffer_add_utf8(buf, text, strlen(text), 0, strlen(text));
-    hb_shape(hb_ft_font, buf, NULL, 0);
+    hb_buffer_guess_segment_properties(buf);
+    hb_buffer_get_segment_properties(buf, &segment_props);
+    shape_plan = hb_shape_plan_create_cached(hbFace, &segment_props, features, nFeatures, NULL);
+    int res = hb_shape_plan_execute(shape_plan, hb_ft_font, buf, features, nFeatures);
 
     glyph_info   = hb_buffer_get_glyph_infos(buf, &glyph_count);
     glyph_pos    = hb_buffer_get_glyph_positions(buf, &glyph_count);
@@ -228,6 +328,9 @@ int shape (lua_State *L) {
     /* Cleanup */
     hb_buffer_destroy(buf);
     hb_font_destroy(hb_ft_font);
+    hb_shape_plan_destroy(shape_plan);
+
+    free(features);
     return glyph_count;
 }
 

@@ -1,4 +1,15 @@
 \begin[class=book,papersize=129mm x 198mm]{document}
-\font[family=Baskerville,size=30pt]
+\font[family=EB Garamond,size=15pt]
 Affluent fishing
+
+\font[features=+dlig:+hlig,language=xx]% XXX Bug with hyphenation
+Historical ligatures
+
+\font[family=Hiragino Maru Gothic Pro W4,size=9pt]
+1/2 \quad 1/4 \quad 5/6 \quad 13579/24680 \par
+\font[features=+frac]
+1/2 \quad 1/4 \quad 5/6 \quad 13579/24680 \par
+\font[features=+afrc]
+1/2 \quad 1/4 \quad 5/6 \quad 13579/24680
+
 \end{document}
