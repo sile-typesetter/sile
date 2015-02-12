@@ -381,6 +381,7 @@ SILE.defaultTypesetter = std.object {
             -- Do nothing
           elseif (slice[i]:isDiscretionary()) then
             slice[i].used = 1;
+            if slice[i].parent then slice[i].parent.hyphenated = true end
             naturalTotals = naturalTotals + slice[i]:prebreakWidth()
           else
             break

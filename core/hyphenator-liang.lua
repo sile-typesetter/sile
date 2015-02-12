@@ -91,14 +91,20 @@ SILE.hyphenate = function (nodelist)
         for j, b in ipairs(breaks) do
           if not(b=="") then
             for _,nn in pairs(SILE.shaper.shape(b, n.options)) do 
-              table.insert(newnodes, nn) 
+              nn.parent = n
+              table.insert(newnodes, nn)
             end
             if not (j == #breaks) then
-             table.insert(newnodes, SILE.nodefactory.newDiscretionary({ prebreak = SILE.shaper.shape("-", { pal = n.pal, options = n.options } ) }))
+              d = SILE.nodefactory.newDiscretionary({ prebreak = SILE.shaper.shape("-", { pal = n.pal, options = n.options } ) })
+              d.parent = n
+              table.insert(newnodes, d)
              --table.insert(newnodes, SILE.nodefactory.newPenalty({ value = SILE.settings.get("typesetter.hyphenpenalty") }))
             end
           end
         end
+        n.children = newnodes
+        n.hyphenated = false
+        n.done = false
         SU.splice(nodelist, i, i, newnodes);
         i = i + #newnodes - 1
       end

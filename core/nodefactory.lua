@@ -76,6 +76,13 @@ end,
     return self
     end,
   outputYourself = function(self, typesetter, line)
+    if self.parent and not self.parent.hyphenated then 
+      if not self.parent.used then
+        self.parent:outputYourself(typesetter,line)
+      end
+      self.parent.used = true
+      return
+    end
     for i, n in ipairs(self.nodes) do n:outputYourself(typesetter, line) end
   end,
   toText = function (self) return self.text end
