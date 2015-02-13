@@ -225,7 +225,7 @@ SILE.defaultTypesetter = std.object {
       totalHeight = totalHeight + pageNodeList[i].height + pageNodeList[i].depth
       if pageNodeList[i]:isVglue() then 
         table.insert(glues,pageNodeList[i]);
-        gTotal = gTotal + pageNodeList[i].height.length
+        gTotal = gTotal + pageNodeList[i].height
       end
     end
 
