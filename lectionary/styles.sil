@@ -1,0 +1,95 @@
+\begin{document}
+\define[command=rrcenter]{\center{\process}\raggedright}%
+\define[command=right]{\hfill\process}%
+\define[command=plain]{%
+\set[parameter=document.lskip,value=0pt]\indent\font[size=12pt]\process}%
+\define[command=biggest]{\font[size=18pt]{\process}}%
+\define[command=big]{\font[size=14pt]{\process}}%
+\define[command=bold]{\font[weight=800]{\process}}%
+%
+\define[command=ms1]{\par\rrcenter{\biggest{\process}}\bigskip\medskip}%
+%
+\define[command=ms2]{\par\rrcenter{\big{\process}}}%
+%
+\define[command=ms]{% 
+\par\gdbreak%
+\set[parameter=document.lskip,value=0pt]%
+\bigskip\noindent\big{\bold{\process}}\medskip}%
+%
+\define[command=mrx]{%
+\par\set[parameter=document.lskip,value=0pt]\smallskip\rrcenter{\em{\process}}\b}%
+%
+\define[command=s1]{\par\set[parameter=document.lskip,value=0pt]\noindent{\bold{\process}}}%
+\define[command=s2]{\par\medskip\bold{\right{\process}}}%
+\define[command=rq]{\hfill\hfill\process}%
+%
+\define[command=titles]{\eject\vfill\process\vfill}%
+%
+\define[command=mt1]{\par\font[size=32pt]{\bold{\rrcenter{\process}}}}%
+\define[command=mt2]{\par\font[size=28pt]{\bold{\rrcenter{\process}}}}%
+\define[command=mt]{\mt1{\process}}%
+%
+\define[command=p2]{\par\plain{\noindent\em{\process}}}%
+\define[command=p3]{\par\plain{\noindent\process}}%
+\define[command=nb]{\par\plain{\process}}%
+\define[command=p]{\par\plain{\process}}%
+\define[command=pi]{\par\plain{\process}}%
+\define[command=pm]{\par\plain{\process}}%
+%
+\define[command=m1]{\par\big{\noindent\process}}%
+\define[command=m2]{\par\rrcenter{\process}}%
+\define[command=mr]{\mrx{\process}}%
+\define[command=pm]{\p{\process}}%
+\define[command=sp]{%
+\par\set[parameter=document.lskip, value=20pt]%
+\set[parameter=current.parindent, value=-20pt]%
+\process}
+%
+\define[command=q1]{%
+\par\set[parameter=document.lskip, value=30pt]%
+\set[parameter=current.parindent, value=-20pt]%
+\process}%
+%
+\define[command=q]{\q1{\process}}%
+%
+\define[command=q2]{%
+\par\set[parameter=document.lskip, value=30pt]%
+\set[parameter=current.parindent, value=-10pt]%
+\process}%
+%
+\define[command=q3]{%
+\par%
+\set[parameter=document.lskip, value=30pt]%
+\process}%
+%
+\define[command=q4]{%
+\par%
+\set[parameter=document.lskip, value=30pt]%
+\process}%
+%
+\define[command=m]{\par\plain{\process}}%
+\define[command=mi]{\par\plain{\process}}%
+\define[command=b]{\medskip}%
+\define[command=b2]{\smallskip}%
+%
+\define[command=c]{}%
+\define[command=fig]{}%
+\define[command=rem]{}%
+\define[command=ib]{}%
+\define[command=id]{}%
+\define[command=io1]{}%
+\define[command=io2]{}%
+\define[command=ip]{}%
+\define[command=li1]{}%
+\define[command=raggedright]{%
+\set[parameter=document.rskip, value=0 plus 12em]%
+\set[parameter=document.spaceskip, value=0.333em]}%
+\raggedright%
+%
+\font[family=Gentium Book Basic,size=12pt]%
+\define[command=hfont]{%
+\font[family=Gentium Book Basic,weight=800,size=14pt]{\process}}%
+\define[command=bodyfont]{%
+\font[family=Gentium Book Basic,weight=100,size=12pt]{\process}}%
+\nohyphenation%
+\end{document}
