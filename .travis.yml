@@ -14,4 +14,4 @@ before_install:
  - sudo luarocks install busted
 script:
  - sh bootstrap.sh && ./configure && make
- - busted -m './lua-libraries/?.lua' tests
+ - busted -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
