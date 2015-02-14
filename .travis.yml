@@ -2,7 +2,6 @@ language: c
 compiler:
  - gcc
  - clang
-script: sh bootstrap.sh && ./configure && make
 before_install:
  - sudo apt-get update -qq
  - sudo apt-get install -y lua5.1 luarocks libfreetype6-dev libfontconfig1-dev libpng-dev liblua5.1-lpeg2 liblua5.1-expat0 fonts-sil-gentium
@@ -12,3 +11,7 @@ before_install:
  - ./configure && make && sudo make install
  - sudo ldconfig
  - cd ../
+ - luarocks install busted
+script:
+ - sh bootstrap.sh && ./configure && make
+ - busted -m './lua-libraries/?.lua' tests
