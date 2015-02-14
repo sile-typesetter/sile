@@ -1,6 +1,5 @@
 if HARFBUZZLIBTEXPDF
-coredir = $(pkgdatadir)/core
-core_LTLIBRARIES = justenoughharfbuzz.la justenoughlibtexpdf.la
+pkglib_LTLIBRARIES = justenoughharfbuzz.la justenoughlibtexpdf.la
 justenoughharfbuzz_la_SOURCES = justenoughharfbuzz.c
 justenoughharfbuzz_la_LDFLAGS = -module -avoid-version -shared
 justenoughharfbuzz_la_CFLAGS = $(HARFBUZZ_CFLAGS) $(FREETYPE_CFLAGS) $(FONTCONFIG_CFLAGS) $(LUA_INCLUDE)
