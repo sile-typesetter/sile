@@ -1,7 +1,7 @@
 #!@LUA@
 package.path = (os.getenv("SILE_PATH") and
 os.getenv("SILE_PATH").."/?.lua" or "") .. ';?.lua;@SILE_PATH@/?.lua;@SILE_PATH@/lua-libraries/?.lua;@SILE_PATH@/lua-libraries/?/init.lua;lua-libraries/?.lua;lua-libraries/?/init.lua;' .. package.path 
-package.cpath = package.cpath .. ";core/?.so;@SILE_PATH@/core/?.so;"
+package.cpath = package.cpath .. ";core/?.so;@SILE_LIB_PATH@/?.so;"
 SILE = require("core/sile")
 io.stdout:setvbuf 'no'
 SILE.parseArguments()
