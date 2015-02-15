@@ -88,12 +88,16 @@ AS_IF([test "$backend" = "pangocairo"],
 adl_RECURSIVE_EVAL(["${datadir}/${PACKAGE}"], [SILE_PATH])
 AC_DEFINE_UNQUOTED([SILE_PATH],["${SILE_PATH}"],[Path for SILE packages and classes])
 
+adl_RECURSIVE_EVAL(["${libdir}/${PACKAGE}"], [SILE_LIB_PATH])
+AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"],[Path for SILE libraries])
+
 AC_MSG_NOTICE([Configuring with $backend backend])
 AM_CONDITIONAL([HARFBUZZLIBTEXPDF], [test "$backend" = "harfbuzz"])
 AC_SUBST([backend])
 AC_SUBST([HARFBUZZ_CFLAGS])
 AC_SUBST([HARFBUZZ_LIBS])
 AC_SUBST([SILE_PATH])
+AC_SUBST([SILE_LIB_PATH])
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_CONFIG_FILES([sile], [chmod +x sile])
 
