@@ -29,7 +29,7 @@ SILE.pagebuilder = {
       if (vbox:isVbox()) then
         totalHeight = totalHeight + vbox.height + vbox.depth;
       elseif vbox:isVglue() then
-        totalHeight = totalHeight + vbox.height.length;
+        totalHeight = totalHeight + vbox.height
       end
       local left = target - totalHeight.length
       SU.debug("pagebuilder", "I have " .. tostring(left) .. "pts left");
@@ -39,7 +39,8 @@ SILE.pagebuilder = {
         pi = vbox.penalty
       end 
       if vbox:isPenalty() and vbox.penalty < inf_bad  or (vbox:isVglue() and i > 1 and not vboxlist[i-1]:isDiscardable()) then
-        local badness = left > 0 and left * left * left or awful_bad;
+        local b1 = (left/totalHeight.stretch)
+        local badness = left > 0 and b1*b1*b1 or awful_bad;
         local c
         if badness < awful_bad then 
           if pi <= eject_penalty then c = pi
