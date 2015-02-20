@@ -23,7 +23,11 @@ if unparsed and unparsed[1] then
       SILE.require("classes/"..SILE.preamble)
     end
   end
-  SILE.readFile(unparsed[1])
+  p,e = pcall(function() SILE.readFile(unparsed[1]) end)
+  if e:match(": interrupted!") then
+    SILE.outputter:finish()
+    os.exit(1)
+  end
   if SILE.preamble then SILE.documentState.documentClass:finish() end
   io.write("\n")
 else

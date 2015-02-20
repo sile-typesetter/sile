@@ -14,6 +14,7 @@ function utilities.error(message,bug)
     print("\n! "..message.. " at "..SILE.currentlyProcessingFile)
   end
   if bug then print(debug.traceback()) end
+  SILE.outputter:finish()
   os.exit(1)
 end
 
