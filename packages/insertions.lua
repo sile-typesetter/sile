@@ -133,20 +133,21 @@ local insert = function (self, classname, vbox)
     addInsertion(classname, vglue)
   end
 
+  local mfhsf = mainFrameHeightSoFar()
+  SU.debug("insertions", "Incoming vbox is "..tostring(vbox))
   SU.debug("insertions", "Maxheight is "..tostring(thisclass["maxHeight"]))
-  SU.debug("insertions", "height is "..tostring((heightSoFar(classname) + vbox.height + vbox.depth)))
+  SU.debug("insertions", "Insertion height is "..tostring((heightSoFar(classname) + vbox.height + vbox.depth)))
   -- If the current frame is in the steal list
-  SU.debug("insertions", "Total is "..SILE.typesetter:pageTarget())
+  SU.debug("insertions", "Target is "..SILE.typesetter:pageTarget())
   if heightSoFar(classname) + vbox.height + vbox.depth < thisclass["maxHeight"] and
     ( (vbox.height + vbox.depth).length < 0 or
-    (mainFrameHeightSoFar() + vbox.height + vbox.depth - SILE.typesetter:pageTarget()).length < 0
+    (mfhsf + vbox.height + vbox.depth - SILE.typesetter:pageTarget()).length < 0
     ) then
     addInsertion(classname, vbox)
-  elseif mainFrameHeightSoFar() > SILE.typesetter:pageTarget() then
+  else
     -- No hope; defer until next time
+    SU.debug("insertions", "Deferring to next page")
     SILE.scratch.insertions.nextpage[#(SILE.scratch.insertions.nextpage)+1] = {class=classname, material=vbox}
-  else -- split
-    SU.error("I need to split this insertion and I don't know how")
   end
 end
 
@@ -175,6 +176,8 @@ end)
 
 SILE.typesetter:registerNewPageHook(function(self)
   -- Process deferred insertions
+  SILE.scratch.insertions.thispage = {}
+  SILE.typesetter:initline()
   for i = 1,#SILE.scratch.insertions.nextpage do local ins = SILE.scratch.insertions.nextpage[i]
     insert(self,ins.class, ins.material)
   end
