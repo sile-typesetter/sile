@@ -159,7 +159,8 @@ SILE.baseClass = std.object {
   end,
   endPage= function()
     SILE.typesetter.frame:leave()
-    SILE.typesetter:leaveHmode();
+    -- I'm trying to call up a new frame here, don't cause a page break in the current one
+    -- SILE.typesetter:leaveHmode();
     -- Any other output-routiney things will be done here by inheritors
   end,
   finish = function(self)
