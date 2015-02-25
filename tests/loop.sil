@@ -1,0 +1,10 @@
+\begin[papersize=a4, class=book]{document}
+\script[src=packages/frametricks]
+\xright-running-head{First Line of Header \break \skip[height=22mm] Second Line of Header}
+\showframe[id=all]
+
+First page text
+\break \skip[height=22cm]
+Second page text
+
+\end{document}
