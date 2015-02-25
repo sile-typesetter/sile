@@ -44,7 +44,7 @@ SILE.registerCommand("grid:debug", debugGrid)
 SILE.registerCommand("grid", function(options, content)
   SU.required(options, "spacing", "grid package")
   gridSpacing = SILE.parseComplexFrameDimension(options.spacing,"h");
-  SILE.typesetter:chuck()
+  SILE.typesetter:leaveHmode()
 
   SILE.typesetter.leadingFor = leadingFor
   SILE.typesetter.pushVglue = pushVglue
