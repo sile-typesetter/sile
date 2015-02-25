@@ -7,13 +7,13 @@ local makeUp = function ()
 end
 
 local leadingFor = function(this, vbox, previous)
-  if not this.frame.state.totals.gridCursor then this.frame.state.totals.gridCursor = SILE.typesetter.frame.state.cursorY end
+  if not this.frame.state.totals.gridCursor then this.frame.state.totals.gridCursor = 0 end
   this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + previous.height.length + previous.depth.length
   return makeUp()
 end
 
 local pushVglue = function(this, spec)
-  if not this.frame.state.totals.gridCursor then this.frame.state.totals.gridCursor = SILE.typesetter.frame.state.cursorY end
+  if not this.frame.state.totals.gridCursor then this.frame.state.totals.gridCursor = 0 end
   this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + spec.height.length
   SILE.defaultTypesetter.pushVglue(this, spec);
   SILE.defaultTypesetter.pushVglue(this, makeUp())
@@ -21,7 +21,7 @@ end
 
 local newBoxup = function (this)
   local b = SILE.defaultTypesetter.boxUpNodes(this)
-  if not this.frame.state.totals.gridCursor then this.frame.state.totals.gridCursor = SILE.typesetter.frame.state.cursorY end
+  if not this.frame.state.totals.gridCursor then this.frame.state.totals.gridCursor = 0 end
   
   if #b > 1 then
     this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + b[#b].height.length + b[#b].depth.length
@@ -31,7 +31,7 @@ end
 
 local debugGrid = function()
   local t = SILE.typesetter
-  if not t.frame.state.totals.gridCursor then t.frame.state.totals.gridCursor = SILE.typesetter.frame.state.cursorY end
+  if not t.frame.state.totals.gridCursor then t.frame.state.totals.gridCursor = 0 end
   local g = t.frame.state.totals.gridCursor
   while g < t.frame:bottom() do
     SILE.outputter.rule(t.frame:left(), g, t.frame:width(), 0.1)
@@ -50,7 +50,7 @@ SILE.registerCommand("grid", function(options, content)
   SILE.typesetter.pushVglue = pushVglue
   SILE.typesetter.boxUpNodes = newBoxup
   SILE.typesetter.setVerticalGlue = function () end
-  SILE.typesetter.frame.state.totals.gridCursor = SILE.typesetter.frame.state.cursorY
+  SILE.typesetter.frame.state.totals.gridCursor = 0
   -- add some now
   SILE.defaultTypesetter.pushVglue(SILE.typesetter, makeUp())
 end, "Begins typesetting on a grid spaced at <spacing> intervals.")
