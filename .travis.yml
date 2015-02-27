@@ -11,7 +11,7 @@ before_install:
  - ./configure && make && sudo make install
  - sudo ldconfig
  - cd ../
- - sudo luarocks install busted
+ - sudo luarocks install busted 2.0.rc5-0
 script:
  - sh bootstrap.sh && ./configure && make
  - busted -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
