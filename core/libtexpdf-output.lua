@@ -43,6 +43,7 @@ SILE.outputters.libtexpdf = {
     lastkey = SILE.font._key(options)
     font = SILE.font.cache(options)
     f = pdf.loadfont(font)
+    if f< 0 then SU.error("Font loading error for "..options) end
     font = f
   end,
   drawImage = function (src, x,y,w,h)
