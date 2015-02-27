@@ -11,7 +11,8 @@ before_install:
  - ./configure && make && sudo make install
  - sudo ldconfig
  - cd ../
- - sudo luarocks install busted 2.0.rc5-0
+ - sudo luarocks install cliargs 2.3-3
+ - sudo luarocks install busted
 script:
  - sh bootstrap.sh && ./configure && make
  - busted -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
