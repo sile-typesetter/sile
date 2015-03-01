@@ -164,7 +164,6 @@ SILE.defaultTypesetter = std.object {
       local nodes = {}
       for i =1, #l.nodes do local n = l.nodes[i]
         if n.migrating == true then
-          print("Migrating a node "..n)
           vboxes[#vboxes+1] = n
         else
           nodes[#nodes+1] = n
