@@ -174,7 +174,8 @@ SILE.baseClass = std.object {
     SILE.settings.set("current.parindent", SILE.settings.get("document.parindent"))    
   end,
   endPar = function(typesetter)
-    typesetter:pushVglue(SILE.settings.get("document.parskip"))
+    local g = SILE.settings.get("document.parskip")
+    typesetter:pushVglue(std.tree.clone(g))
   end,
   options= { 
     papersize= function(size)
