@@ -22,7 +22,7 @@ SILE.settings.declare({ name="linebreak.doubleHyphenDemerits", type = "integer",
 -- doubleHyphenDemerits
 -- hyphenPenalty
 
-
+local classes = {"tight"; "decent"; "loose"; "veryLoose"}
 local passSerial = 0
 local awful_bad = 1073741823
 local inf_bad = 10000
@@ -286,7 +286,9 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
   else self.minimumDemerits = self.minimumDemerits + math.abs(self.adjdemerits)
   end
 
-  for class, value in pairs(self.minimalDemerits) do
+  for i = 1,#classes do
+    local class = classes[i]
+    local value = self.minimalDemerits[class]
     SU.debug("break","Class is "..class.." Best value here is " .. value)
 
     if value <= self.minimumDemerits then
