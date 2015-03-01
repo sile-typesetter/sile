@@ -7,6 +7,7 @@ _box = std.object {
   width= 0,
   type="special", 
   value=nil,
+  migrating=false,
   __tostring = function (s) return s.type end,
   __concat = function (x,y) return tostring(x)..tostring(y) end,
   init = function(self) return self end

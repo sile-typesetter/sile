@@ -160,7 +160,17 @@ SILE.defaultTypesetter = std.object {
     local previousVbox = nil
     for index=1, #lines do
       local l = lines[index]
-      local v = SILE.nodefactory.newVbox({ nodes = l.nodes, ratio = l.ratio });
+      -- Move any migrating material
+      local nodes = {}
+      for i =1, #l.nodes do local n = l.nodes[i]
+        if n.migrating == true then
+          print("Migrating a node "..n)
+          vboxes[#vboxes+1] = n
+        else
+          nodes[#nodes+1] = n
+        end
+      end
+      local v = SILE.nodefactory.newVbox({ nodes = nodes, ratio = l.ratio });
       local pageBreakPenalty = 0
       if (#lines > 1 and index == 1) then
         pageBreakPenalty = SILE.settings.get("typesetter.widowpenalty")

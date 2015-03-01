@@ -144,9 +144,13 @@ local insert = function (self, classname, vbox)
     (mfhsf + vbox.height + vbox.depth - SILE.typesetter:pageTarget()).length < 0
     ) then
     addInsertion(classname, vbox)
-  else
+  elseif (mfhsf - SILE.typesetter:pageTarget()).length > 0 then
     -- No hope; defer until next time
     SU.debug("insertions", "Deferring to next page")
+    SILE.scratch.insertions.nextpage[#(SILE.scratch.insertions.nextpage)+1] = {class=classname, material=vbox}
+  else
+    -- Push a migrating penalty and hope for the best :-/
+    SILE.typesetter:pushPenalty({ penalty = -10000, migrating = true })
     SILE.scratch.insertions.nextpage[#(SILE.scratch.insertions.nextpage)+1] = {class=classname, material=vbox}
   end
 end
