@@ -1,12 +1,15 @@
 SILE.inputs.TeXlike = {}
 local epnf = require( "epnf" )
 
-texlike = epnf.define(function (_ENV)
+local ID = lpeg.C( SILE.parserBits.letter * (SILE.parserBits.letter+SILE.parserBits.digit)^0 )
+SILE.inputs.TeXlike.identifier = (ID + lpeg.P("-") + lpeg.P(":"))^1
+
+SILE.inputs.TeXlike.parser = function (_ENV)
   local _ = WS^0
   local sep = lpeg.S(",;") * _
   local quotedString = (P("\"") * C((1-lpeg.S("\""))^1) * P("\"")) 
   local value = (quotedString + (1-lpeg.S(",;]"))^1 )
-  local myID = C( ((ID+P("-")+P(":"))^1)  + P(1) ) / function (t) return t end
+  local myID = C( SILE.inputs.TeXlike.identifier + lpeg.P(1) ) / function (t) return t end
   local pair = lpeg.Cg(myID * _ * "=" * _ * C(value)) * sep^-1   / function (...) local t= {...}; return t[1], t[#t] end
   local list = lpeg.Cf(lpeg.Ct("") * pair^0, rawset)
   local parameters = (P("[") * list * P("]")) ^-1 / function (a) return type(a)=="table" and a or {} end
@@ -27,7 +30,7 @@ texlike = epnf.define(function (_ENV)
       Cmt(myID * Cb("tag"), function(s,i,a,b) return a==b end) +
       E("Environment mismatch")
     ) * P("}") + E("Environment begun but never ended"))
-end)
+end
 
 local linecache = {}
 local lno, col, lastpos
@@ -102,8 +105,16 @@ function SILE.inputs.TeXlike.process(fn)
   end  
 end
 
+local _parser
+
+function SILE.inputs.TeXlike.rebuildParser()
+  _parser = epnf.define(SILE.inputs.TeXlike.parser)
+end
+
+SILE.inputs.TeXlike.rebuildParser()
+
 function SILE.inputs.TeXlike.docToTree(doc)
-  local t = epnf.parsestring(texlike, doc)
+  local t = epnf.parsestring(_parser, doc)
   -- a document always consists of one stuff
   t = t[1][1]
   if not t then return end

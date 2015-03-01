@@ -30,6 +30,8 @@ local dimensioned_string = ( C(number.number) * whitespace * C(units) ) / functi
 
 SILE.parserBits = {
   number = number,
+  digit = digit,
+  letter = lpeg.R( "az", "AZ" ) + lpeg.P"_",
   identifier = (R("AZ") + R("az") + P("_") + R("09"))^1,
   units = units,
   zero = zero,
