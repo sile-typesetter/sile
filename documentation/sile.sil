@@ -105,7 +105,7 @@ already certainly equivalent to, if not somewhat more advanced than, TeX.
 \section{SILE versus InDesign}
 
 The other tool that people reach for when designing printed material on a computer is
-InDesign.
+InDesign (or similar DTP software, such as Scribus).
 
 \float[rightboundary=7pt, bottomboundary=15pt]{\img[src=documentation/fig1.png,width=130]} 
 InDesign is a complex, expensive, commercial publishing tool. It’s highly 
