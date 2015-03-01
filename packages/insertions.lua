@@ -180,6 +180,7 @@ end)
 
 SILE.typesetter:registerNewPageHook(function(self)
   -- Process deferred insertions
+  SILE.scratch.insertions.typesetters = {}
   SILE.scratch.insertions.thispage = {}
   if 0 == #SILE.scratch.insertions.nextpage then return end
   SILE.typesetter:initline()
