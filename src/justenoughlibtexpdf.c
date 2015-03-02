@@ -24,6 +24,7 @@ int pdf_init (lua_State *L) {
   mediabox.lly = 0.0;
   mediabox.urx = w;
   mediabox.ury = height;
+  texpdf_files_init();
   texpdf_init_fontmaps();
   texpdf_doc_set_mediabox(p, 0, &mediabox);
   texpdf_add_dict(p->info,
@@ -48,7 +49,8 @@ int pdf_finish(lua_State *L) {
   ASSERT(p);
   texpdf_close_document(p);
   texpdf_close_device  ();
-  texpdf_close_fontmaps();    
+  texpdf_close_fontmaps();
+  texpdf_files_close();
   return 0;
 }
 
