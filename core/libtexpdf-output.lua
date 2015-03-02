@@ -49,6 +49,10 @@ SILE.outputters.libtexpdf = {
   drawImage = function (src, x,y,w,h)
     pdf.drawimage(src, x, y, w, h)
   end,
+  imageSize = function (src)
+    local llx, lly, urx, ury = pdf.imagebbox(src)
+    return (urx-llx), (ury-lly)
+  end,
   moveTo = function (x,y)
     cursorX = x
     cursorY = SILE.documentState.paperSize[2] - y

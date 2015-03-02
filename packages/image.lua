@@ -1,13 +1,9 @@
-local imagesize = SILE.require("imagesize")
 SILE.registerCommand("img", function(options, content)
   SU.required(options, "src", "including image file")
   local width =  SILE.parseComplexFrameDimension(options.width or 0,"w") or 0 
   local height = SILE.parseComplexFrameDimension(options.height or 0,"h") or 0
   local src = options.src
-  local box_width,box_height,err = imagesize.imgsize(src)
-  if not box_width then
-    SU.error(err.." loading image")
-  end
+  local box_width,box_height = SILE.outputter.imageSize(src)
   local sx, sy = 1,1
   if width > 0 or height > 0 then
     sx = width > 0 and box_width / width
