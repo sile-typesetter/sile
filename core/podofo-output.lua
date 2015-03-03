@@ -1,4 +1,5 @@
 local pdf = require("podofo");
+local imagesize = SILE.require("imagesize")
 if (not SILE.outputters) then SILE.outputters = {} end
 
 local document
@@ -54,6 +55,13 @@ SILE.outputters.podofo = {
     SILE.fontCache[lastkey] = nil
   end,
   drawPNG = function (src, x,y,w,h)
+  end,
+  imageSize = function (src)
+    local box_width,box_height, err = imagesize.imgsize(src)imagesize.imgsize(src)
+    if not box_width then
+      SU.error(err.." loading image")
+    end
+    return box_width, box_height
   end,
   moveTo = function (x,y)
     cursorX = x
