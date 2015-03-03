@@ -3,6 +3,7 @@ local cairo = lgi.cairo
 local pango = lgi.Pango
 local fm = lgi.PangoCairo.FontMap.get_default()
 local pango_context = lgi.Pango.FontMap.create_context(fm)
+local imagesize = SILE.require("imagesize")
 
 if (not SILE.outputters) then SILE.outputters = {} end
 
@@ -58,6 +59,13 @@ SILE.outputters.cairo = {
     p:set_matrix(matrix)
     cr:paint()
     cr:restore()
+  end,
+  imageSize = function (src)
+    local box_width,box_height, err = imagesize.imgsize(src)imagesize.imgsize(src)
+    if not box_width then
+      SU.error(err.." loading image")
+    end
+    return box_width, box_height
   end,
   moveTo = function (x,y)
     move(cr, x,y)

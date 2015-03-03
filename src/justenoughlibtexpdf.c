@@ -24,6 +24,7 @@ int pdf_init (lua_State *L) {
   mediabox.lly = 0.0;
   mediabox.urx = w;
   mediabox.ury = height;
+  texpdf_files_init();
   texpdf_init_fontmaps();
   texpdf_doc_set_mediabox(p, 0, &mediabox);
   texpdf_add_dict(p->info,
@@ -48,7 +49,8 @@ int pdf_finish(lua_State *L) {
   ASSERT(p);
   texpdf_close_document(p);
   texpdf_close_device  ();
-  texpdf_close_fontmaps();    
+  texpdf_close_fontmaps();
+  texpdf_files_close();
   return 0;
 }
 
@@ -176,6 +178,34 @@ int pdf_drawimage(lua_State *L) {
   return 0;
 }
 
+extern int get_image_bbox(FILE* f, double* llx, double* lly, double* urx, double* ury);
+
+int pdf_imagebbox(lua_State *L) {
+  const char* filename = luaL_checkstring(L, 1);
+  double llx = 0;
+  double lly = 0;
+  double urx = 0;
+  double ury = 0;
+
+  FILE* f = MFOPEN(filename, FOPEN_RBIN_MODE);
+  if (!f) {
+    return luaL_error(L, "Image file not found %s", filename);
+  }
+
+  if ( get_image_bbox(f, &llx, &lly, &urx, &ury) < 0 ) {
+    MFCLOSE(f);
+    return luaL_error(L, "Invalid image file %s", filename);
+  }
+
+  MFCLOSE(f);
+
+  lua_pushnumber(L, llx);
+  lua_pushnumber(L, lly);
+  lua_pushnumber(L, urx);
+  lua_pushnumber(L, ury);
+  return 4;
+}
+
 int pdf_transform(lua_State *L) {
   pdf_tmatrix matrix;
   double a = luaL_checknumber(L, 1);
@@ -226,6 +256,7 @@ static const struct luaL_Reg lib_table [] = {
   {"setrule", pdf_setrule},
   {"setcolor", pdf_setcolor},
   {"drawimage", pdf_drawimage},
+  {"imagebbox", pdf_imagebbox},
   {"colorpop", pdf_colorpop},
   {"colorpush", pdf_colorpush},
   {"setmatrix", pdf_transform},
