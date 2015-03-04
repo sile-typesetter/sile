@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <libtexpdf/libtexpdf.h>
+#include "libtexpdf/libtexpdf.h"
 
 int get_pdf_bbox(FILE* f, double* llx, double* lly, double* urx, double* ury) {
   pdf_obj* page;
@@ -29,7 +29,8 @@ int get_pdf_bbox(FILE* f, double* llx, double* lly, double* urx, double* ury) {
 }
 
 int get_image_bbox(FILE* f, double* llx, double* lly, double* urx, double* ury) {
-  long width, height;
+  int width, height;
+  uint32_t w2, h2;
   double xdensity, ydensity;
 
   if (texpdf_check_for_bmp(f)) {
@@ -45,9 +46,11 @@ int get_image_bbox(FILE* f, double* llx, double* lly, double* urx, double* ury) 
       return -1;
     }
   } else if (texpdf_check_for_png(f)) {
-    if(texpdf_png_get_bbox(f, &width, &height, &xdensity, &ydensity) < 0) {
+    if(texpdf_png_get_bbox(f, &w2, &h2, &xdensity, &ydensity) < 0) {
       return -1;
     }
+    width = w2;
+    height = h2;
   } else if (texpdf_check_for_pdf(f)) {
     return get_pdf_bbox(f, llx, lly, urx, ury);
   } else {
