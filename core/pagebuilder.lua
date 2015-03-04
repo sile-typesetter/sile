@@ -44,12 +44,14 @@ SILE.pagebuilder = {
       local pi = 0
       if vbox:isPenalty() then
         pi = vbox.penalty
+        -- print("PI "..pi)  
       end 
       if vbox:isPenalty() and vbox.penalty < inf_bad  or (vbox:isVglue() and i > 1 and not vboxlist[i-1]:isDiscardable()) then
         local badness
         if totalHeight.length < target then -- TeX #1039
           -- Account for infinite stretch?
           badness = SILE.pagebuilder.badness(left, totalHeight.stretch)
+          -- print("Height == "..totalHeight.length, "target=="..target, "stretch=="..totalHeight.stretch)
         elseif left < totalHeight.shrink then badness = awful_bad
         else badness = SILE.pagebuilder.badness(-left, totalHeight.shrink)
         end
@@ -65,6 +67,7 @@ SILE.pagebuilder = {
           leastC = c
           bestBreak = i
         end
+        -- print("Badness "..badness .." c = "..c)
         SU.debug("pagebuilder", "Badness: "..c);
         if c == awful_bad or pi <= eject_penalty then
           SU.debug("pagebuilder", "outputting");
