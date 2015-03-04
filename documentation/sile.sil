@@ -9,7 +9,8 @@
 \script[src=packages/bidi]
 \include[src=documentation/macros.sil]
 \define[command=silehp]{\code{http://www.sile-typesetter.org/}}
-\define[command=sileversion]{0.9.1}
+\define[command=sileversion]{0.9.2}
+\set[parameter=document.baselineskip,value=3ex]
 \font[size=11pt,family=Gentium Book Basic]
 \nofolios
 %\set[parameter=document.lskip,value=5em]
@@ -20,14 +21,12 @@
 \bigskip[height=3in]
 \font[size=20pt,weight=600,family=Helvetica Neue]{\hss Simon Cozens \hss \par}
 %
-\define[command=a4break]{\break}
-%
 %\set[parameter=document.lskip,value=0]
 %\set[parameter=document.rskip,value=0]
 \set[parameter=document.parskip,value=4pt plus 1pt]
+\define[command=untrue]{\color[color=red]{\process}}
 \open-double-page
 \tableofcontents
-
 \set-counter[id=folio,value=0]
 \chapter{What is SILE?}
 
@@ -107,7 +106,7 @@ already certainly equivalent to, if not somewhat more advanced than, TeX.
 The other tool that people reach for when designing printed material on a computer is
 InDesign (or similar DTP software, such as Scribus).
 
-\float[rightboundary=7pt, bottomboundary=15pt]{\img[src=documentation/fig1.png,width=130]} 
+\float[rightboundary=7pt, bottomboundary=15pt]{\img[src=documentation/fig1.png,width=150]} 
 InDesign is a complex, expensive, commercial publishing tool. It’s highly 
 graphical—you click and drag to move areas of text and images around the screen. 
 SILE is a free, open source typesetting tool which is entirely text-based; you
@@ -122,11 +121,12 @@ SILE also uses the concept of frames to determine where text should appear on
 the page, and so it’s possible to use SILE to generate page layouts which are
 more flexible and more complex than that afforded by TeX.
 
+\supereject
 Another thing which people use InDesign for is to turn structured data in XML
 format—catalogues, directories and the like—into print. The way you do this
 in InDesign is to declare what styling should apply to each XML element, and as the
 data is read in, InDesign formats the content according to the rules that you
-have declared.\supereject
+have declared.
 
 You can do exactly the same thing in SILE, except you have a lot more control
 over how the XML elements get styled, because you can run any SILE command you
@@ -186,8 +186,6 @@ number (1) centered at the bottom. How are we going to get to that PDF?
 
 First of all, we need to get hold of SILE and get it running on our computer.
 Downloads of SILE can be obtained from the home page at \silehp.
-
-\a4break % Avoid tickling bug #24. Yes, this sucks.
 
 SILE requires a number of other software packages to be installed on the 
 computer before it can work—the Lua programming language, and the Harfbuzz text
@@ -447,17 +445,15 @@ Here are a few more examples of SILE commands:
 
 \begin{verbatim}
 \line
-\\eject                                     \% A command with no parameters or argument
+\\eject                               \% A command with no parameters or argument
  
-\\font[family=Times,size=10pt]              \% Parameters, but no argument
+\\font[family=Times,size=10pt]           \% Parameters, but no argument
 
-\\chapter\{Introducing SILE\}                 \% Argument but no parameters
+\\chapter\{Introducing SILE\}             \% Argument but no parameters
  
-\\font[family=Times,size=10pt]\{Hi there!\}   \% Parameters and argument
+\\font[family=Times,size=10pt]\{Hi there!\} \% Parameters and argument
 \line
-\end{verbatim}
-
-\a4break
+\end{verbatim}%
 \section{Environments}
 
 Commands like \code{\\chapter} and \code{\\em} (emphasises text by
@@ -604,8 +600,6 @@ CSS-style ‘stack’ delimited by commas.
 
 \noindent{}• \em{style}: can be \code{normal} or \code{italic}.
 
-\noindent{}• \em{variant}: can be \code{normal} or \code{smallcaps}.
-
 \noindent{}• \em{weight}: a CSS-style numeric weight ranging from \font[weight=100]{100},
 through \font[weight=200]{200},
 \font[weight=300]{300},
@@ -657,7 +651,8 @@ the left running header. Additionally the section name and number will form the 
 
 \note{Chapters, sections and subsections will be automatically
 numbered starting from 1; to alter the numbering, see the documentation for the
-\code{counters} package in the next chapter.}
+\code{counters} package in the next chapter. To produce an unnumbered chapter,
+provide the parameter \code{[numbering=no]}.}
 
 This subsection begins with the command \code{\\subsection\{Chapters and Sections\}.}
 
@@ -679,8 +674,7 @@ it with an \code{\\indent}.
 To increase the vertical space between paragraphs or other elements, the commands \code{\\smallskip}, \code{\\medskip} and \code{\\bigskip} are available to add a 3pt, 6pt and 12pt
 gap respectively. There will be a \code{\\bigskip} after this paragraph.
 
-\bigskip
-
+\bigskip%
 There are also some commands to increase the horizontal space in a line; from
 the smallest to the largest, \code{\\thinspace} (1/6th of an em), \code{\\enspace}
 (1 en), \code{\\quad} (1 em), and \code{\\qquad} (2em).
@@ -712,25 +706,26 @@ not consider as suitable for breaking.
 so do \code{\\goodbreak}, \code{\\nobreak} and \code{\\allowbreak}. If you want to be 
 absolutely sure that you are inhibiting a \em{page} break, you can say \code{\\novbreak}.
 
-\raggedright
+\begin{raggedright}
 SILE normally fully-justifies text—that is, it tries to alter the spacing between
-words so that the text stretches across the full width of the column. An alternative
+words so that the text stretches across the full width of the column.\footnote{This 
+does not mean that text will always exactly fill the width of the column. SILE will
+choose line breaks and alter the spacing between words up to a certain extent, but
+when it has done its best, it will typeset the least bad solution; this may involve
+some of the words jutting slightly out into the margin.} An alternative
 to full justification is ragged right margin formatting, where the spacing between
 words is constant but the right hand side of the paragraph may not line up. Ragged
 right is often used for children’s books and for frames with narrow columns such as 
-newspapers. To switch to ragged right formatting, use the
-command \code{\\raggedright}. To switch back, use \code{\\justified}. This paragraph
-is set ragged right.
-\justified\set[parameter=document.lskip,value=0]
-
-\a4break
+newspapers. To use ragged right formatting, enclose your text in a \code{\\begin\break\{raggedright\}} environment.
+This paragraph is set ragged right.
+\end{raggedright}
 
 \section{Hyphenation and Language}
 
 SILE hyphenates words based on its current language. (Language is set using the
-\code{\\font} command above.) At present the only hyphenation patterns available for
-SILE are for English and Greek, although it is not difficult for TeX users to 
-produce additional pattern files. (Please send them to me if you do!)
+\code{\\font} command above.) SILE comes with support for hyphenating a wide 
+variety of languages, and also aims to encode specific typesetting knowledge about
+languages.
 
 SILE comes with a special “language” called \code{xx}, which has no hyphenation
 patterns available. If you switch to this language, text will not be hyphenated.
@@ -874,25 +869,29 @@ As well as processing text, SILE can also include images.
 
 Loading the \code{image} package gives you the \code{\\img} command, fashioned
 after the HTML equivalent. \code{\\img} takes the following parameters: 
-\code{src=\dots} must be the path to an image file \em{in PNG format};
+\code{src=\dots} must be the path to an image file;
 you may also give \code{height=\dots} and/or \code{width=\dots} parameters
 to specify the output size of the image on the paper. If the size parameters
 are not given, then the image will be output at its ‘natural’ pixel size.
 
-\a4break
+\begin{note}
+With the libtexpdf backend (the default), the images can be in JPEG, PNG, EPS or PDF
+formats; the Pango/Cairo backend only provides support for PNG images.
+\end{note}
+
 Here is a 200x243 pixel image output with \code{\\img[src=documentation/gutenberg.png]}:\par
 \img[src=documentation/gutenberg.png]
 
-\raggedright
+\raggedright{
 Here it is with (respectively) 
-\code{\\img[src=documentation/gutenberg.png,width=120px]},\break 
-\code{\\img[src=documentation/gutenberg.png,height=200px]}, and\break
-\code{\\img[src=documentation/gutenberg.png,width=120px,height=200px]}:\par
+\code{\\img[src=documentation/gutenberg.png,width=120px]},
+\code{\\img[src=documentation/gutenberg.png,height=200px]}, and
+\code{\\img[src=documentation/gutenberg.png,width=120px,height=200px]}:}
+
 \img[src=documentation/gutenberg.png,width=120px]
 \img[src=documentation/gutenberg.png,height=200px]
 \img[src=documentation/gutenberg.png,width=120px,height=200px]
 
-\justified
 Notice that images are typeset on the baseline of a line of text, rather like
 a very big letter.
 
@@ -1051,8 +1050,6 @@ frame left or right. It takes \code{left=} and/or \code{right=} parameters,
 which can be positive or negative dimensions. It should only be used at the
 top of a frame, as it reinitializes the typesetter object.
 
-\supereject
-
 \float[bottomboundary=5pt]{\font[size=60pt]{C}}ombining all of these commands, the \code{\\float}
 command breaks the current frame, creates a small frame to hold a floating
 object (like the dropcap at the start of this sentence), flows text into
@@ -1191,8 +1188,6 @@ called \em{macros}, and the process of pretending is called \em{macro expansion}
 You can define these kinds of macros within a SILE file itself. In this
 very file, we entered:
 
-\a4break
-
 \begin{verbatim}
 \line
 \\define[command=SILE]\{
@@ -1239,7 +1234,7 @@ text red \color[color=red]{like this}. The usual way to do that is to say
 
 However, we‘re not always going to want to be highlighting the words ‘\code{like this}’.
 We might want to be able to highlight other text instead. We need the ability
-to wrap the command \a4break\code{\\color[color=red]\{ ... \}} around our chosen content.
+to wrap the command \code{\\color[color=red]\{ ... \}} around our chosen content.
 In other words, we want to be able to define our own commands which take arguments.
 
 The way we express this in SILE is with the \code{\\process} command. \code{\\process}
@@ -1339,7 +1334,7 @@ the setting which changes how the typesetter penalizes orphan (end-of-paragraph)
 lines.
 
 The interface to changing settings from within a SILE document is the
-\code{\\set} commmand. It take two options: a \em{parameter} option which
+\code{\\set} commmand. It takes two options: a \em{parameter} option which
 expresses which setting is being changed, and a \em{value} option which expresses
 the value to which the setting is being changed. As an example:
 
@@ -1348,6 +1343,18 @@ the value to which the setting is being changed. As an example:
 \\set[parameter=typesetter.orphanpenalty, value=250]
 \line
 \end{verbatim}
+
+If the \code{\\set} command is provided with an argument, then the change of
+setting is localised to the content of the argument. In other words, this code:
+
+\begin{verbatim}
+\line
+\\set[parameter=typesetter.orphanpenalty, value=250]\{ \\lorem \}
+\line
+\end{verbatim}
+
+will change the orphan penalty to 250, typeset 50 words of dummy text, and then
+return the orphan penalty to its previous value.
 
 Now, let’s begin looking at what each of the built-in settings does, starting
 from the most obvious and moving towards the most subtle.
@@ -1371,7 +1378,7 @@ ideally by 12 points, but can expand or contract from a minimum of 9 points to a
 of 18 points.
 \end{note}
 
-\break
+\begin{untrue}
 So, for instance, to center a paragraph, you can set the margin parameters like
 so:
 \begin{verbatim}
@@ -1389,6 +1396,7 @@ This will narrow the left and right margins of the paragraph by at least
 20 points, but adds a large stretch which will be evenly distributed on both
 the left and right side of each line, leaving the text of the paragraph sitting 
 in the middle.\par
+\end{untrue}
 
 \medskip
 \set[parameter=document.lskip,value=0pt]%
@@ -1417,7 +1425,7 @@ As we mentioned in the section on grid typesetting, the rules for spacing betwee
 rules. Let’s reiterate those rules now in terms of settings:
 
 \noindent• SILE tries to insert space between two successive lines to make their 
-baselines exactly \a4break\code{document.baselineskip} apart.
+baselines exactly \code{document.baselineskip} apart.
 
 \noindent• If this first rule would mean that the bottom and the top of the lines are less
 than \code{document.lineskip} apart, then they are forced to be \code{document.lineskip} apart.
@@ -1709,8 +1717,8 @@ whether you’re dealing with vertical or horizontal percentages.
 
 \end{note}
 
-Next we declare the left and right column frames. The \code{book} class
-gives us some frames already, one of which, \code{r}, is a standard right-hand page.
+Next we declare the left and right column frames. \untrue{The \code{book} class
+gives us some frames already, one of which, \code{r}, is a standard right-hand page.}
 We will use the boundaries of this frame to declare our columns: the left
 margin of the left column is the left margin of the typeblock; the right margin of
 the right column is the right margin of the typeblock. But we also want
@@ -1930,8 +1938,6 @@ So in the case of \code{\\mycommand[size=12pt]\{Hello \\break world\}},
 the first parameter will contain the table \code{\{size = "12pt"\}} and
 the second parameter will contain the table
 
-\a4break
-
 \begin{verbatim}
 \line
 \{
@@ -1951,7 +1957,7 @@ and/or calling \break\code{SILE.process(content)} to recursively process the
 argument. Here’s a very simple example; an XML \code{<link>} tag may take
 an XLink \code{xl:href} attribute\footnote{Yes, I know the document author
 might choose a different XML namespace to refer to XLink. Let’s keep things
-simple.} We want to render \code{<link xl:href="http://...">\a4break{}Hello</link>}
+simple.} We want to render \code{<link xl:href="http://...">{}Hello</link>}
 as \examplefont{Hello (\code{http://...})}. So, first we need to render
 the content, and then we need to do something with the attribute:
 
@@ -2198,8 +2204,6 @@ Now we can define our \code{<code>} (etc.) tags:
 
 If an end user wants things to look different, they can redefine the \code{docbook-ttfont}
 command and get a different font.
-
-\a4break
 
 \section{Handling Titles}
 
