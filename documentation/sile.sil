@@ -899,15 +899,15 @@ a very big letter.
 \section{rules}
 \script{SILE.process(SILE.inputs.TeXlike.docToTree(require("packages/rules")))}
 
-\script{SILE.process(SILE.inputs.TeXlike.docToTree(require("packages/color")))}
 \section{color}
+\script{SILE.process(SILE.inputs.TeXlike.docToTree(require("packages/color")))}
 
 \section{features}
 
-Here is a rule typeset with \code{\\color[color=#22dd33]}:
-\color[color=#ffdd33]{\hrule[width=120pt,height=0.5pt]}
+XXX
 
 \section{bidi}
+\script{SILE.process(SILE.inputs.TeXlike.docToTree(require("packages/bidi")))}
 
 \section{grid}
 \grid[spacing=15pt]
