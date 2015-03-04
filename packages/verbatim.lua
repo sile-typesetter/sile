@@ -22,3 +22,34 @@ SILE.registerCommand("verbatim", function(options, content)
 
   SILE.typesetter:pushVglue({ height = SILE.length.new({ length = 6 }) })
 end, "Typesets its contents in a monospaced font.")
+
+return [[\begin{document}
+
+The \code{verbatim} package is useful when quoting pieces of computer code and 
+other text for which formatting is significant. It changes SILE’s settings
+so that text is set ragged right, with no hyphenation, no indentation and
+regular spacing. It tells SILE to honor multiple spaces, and sets a monospaced
+font.
+
+\note{Despite the name, \code{verbatim} does not alter the way that SILE
+sees special characters. You still need to escape backslashes and braces:
+to produce a backslash, you need to write \code{\\\\}.}
+
+Here is some text set in the verbatim environment:
+
+\begin{verbatim}
+function SILE.repl()
+  if not SILE._repl then SILE.initRepl() end
+  SILE._repl:run()
+end
+\end{verbatim}
+
+If you want to specify what font the verbatim environment should use, you
+can redefine the \code{verbatim:font} command. The current document says:
+
+\begin{verbatim}
+<define command="verbatim:font">
+   <font family="DejaVu Sans Mono" size="9pt"/>
+</define>
+\end{verbatim}
+\end{document}]]

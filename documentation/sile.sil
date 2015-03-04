@@ -897,61 +897,18 @@ Notice that images are typeset on the baseline of a line of text, rather like
 a very big letter.
 
 \section{rules}
+\script{SILE.process(SILE.inputs.TeXlike.docToTree(require("packages/rules")))}
 
-The \code{rules} package draws lines. It provides two commands.
-
-The first command is \code{\\hrule},
-which draws a line of a given length and thickness, although it calls these
-\code{width} and \code{height}. (A box is just a square line.)
-
-Lines are treated just like other text to be output, and so can appear in the
-middle of a paragraph, like this: \hrule[width=20pt, height=0.5pt] (that one
-was generated with \code{\\hrule[width=20pt, height=0.5pt]}.)
-
-Like images, rules are placed along the baseline of a line of text.
-
-The second command provided by \code{rules} is \code{\\underline}, which
-underlines its contents. 
-
-\note{
-Underlining is horrible typographic practice, and
-you should \underline{never} do it.}
-
-(That was produced with \code{\\underline\{never\}}.)
-
+\script{SILE.process(SILE.inputs.TeXlike.docToTree(require("packages/color")))}
 \section{color}
 
-The \code{color} package allows you to temporarily change the color of the 
-(virtual) ink that SILE uses to output text and rules. The package provides
-a \code{\\color} command which takes one parameter, \code{color=\em{<color \nobreak{}specification>}}, and typesets
-its argument in that color. The color specification is the same as HTML:
-it can be a RGB color value in \code{#xxx} or \code{#xxxxxx} format, where \code{x}
-represents a hexadecimal digit (\code{#000} is black, \code{#fff} is white,
-\code{#f00} is red and so on), or it can be one of the HTML and CSS named colors.
-
-\note{The HTML and CSS named colors can be found at \code{http://dev.w3.org/csswg/css-color/#named-colors}.}
-
-So, for example, \color[color=red]{this text is typeset with \code{\\color[color=red]\{\dots\}}}.
+\section{features}
 
 Here is a rule typeset with \code{\\color[color=#22dd33]}:
 \color[color=#ffdd33]{\hrule[width=120pt,height=0.5pt]}
 
 \section{bidi}
 
-Scripts like the Latin alphabet you are currently reading are normally written left to
-right; however, some scripts, such as Arabic and Hebrew, are written right to left.
-The \code{bidi} package provides some tools to help you correctly typeset right-to-left
-text and also documents which mix right-to-left and left-to-right typesetting.
-
-Loading the \code{bidi} package provides two commands, \command{\\thisframeLTR} and
-\command{\\thisframeRTL}, which set the default text direction for the current frame.
-That is, if you tell SILE that a frame is RTL, the text will start in the right margin
-and proceed leftward. Additionally, loading \code{bidi} will cause SILE to check for and
-correctly order left-to-right text within right-to-left paragraphs, RTL within LTR
-within LTR and so on. If you are working with Hebrew, Arabic or other RTL languages,
-you will want to load the \code{bidi} package.
-
-\a4break%
 \section{grid}
 \grid[spacing=15pt]
 
@@ -1016,34 +973,7 @@ cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
 proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 \section{verbatim}
-
-The \code{verbatim} package is useful when quoting pieces of computer code and 
-other text for which formatting is significant. It changes SILE’s settings
-so that text is set ragged right, with no hyphenation, no indentation and
-regular spacing. It tells SILE to honor multiple spaces, and sets a monospaced
-font.
-
-\note{Despite the name, \code{verbatim} does not alter the way that SILE
-sees special characters. You still need to escape backslashes and braces:
-to produce a backslash, you need to write \code{\\\\}.}
-
-Here is some text set in the verbatim environment:
-
-\begin{verbatim}
-function SILE.repl()
-  if not SILE._repl then SILE.initRepl() end
-  SILE._repl:run()
-end
-\end{verbatim}
-
-If you want to specify what font the verbatim environment should use, you
-can redefine the \code{verbatim:font} command. The current document says:
-
-\begin{verbatim}
-<define command="verbatim:font">
-   <font family="DejaVu Sans Mono" size="9pt"/>
-</define>
-\end{verbatim}
+\script{SILE.process(SILE.inputs.TeXlike.docToTree(require("packages/verbatim")))}
 
 \section{Packages usually used by other packages}
 
@@ -1063,50 +993,7 @@ formatting the footnotes. It does this by using a number of other
 packages that we will describe below.
 
 \subsection{counters}
-
-Various parts of SILE such as the \code{footnotes} package and the
-sectioning commands keep a counter of things going on: the current 
-footnote number, the chapter number, and so on. The counters package
-allows you to set up, increment and typeset named counters. It
-provides the following commands:
-
-• \code{\\set-counter[id=\em{<counter-name>},value=\em{<value}]} — sets
-the counter called \code{<counter-name>} to the value given. 
-
-• \code{\\increment-counter[id=\em{<counter-name>}]} — does the
-same as \code{\\set-counter} except that when no \code{value} parameter
-is given, the counter is incremented by one.
-
-• \code{\\show-counter[id=\em{<counter-name>}]} — this typesets the
-value of the counter according to the counter’s declared display type.
-
-\note{All of the commands in the counters package take an optional
-\code{display=\em{<display-type>}} parameter
-to set the \em{display type} of the counter. 
-
-The available display types are: \code{arabic}, the default;
-\code{roman}, for lower-case Roman numerals; and \code{Roman} for upper-case
-Roman numerals.}
-
-So, for example, the following SILE code:
-
-\begin{verbatim}
-\line
-\\set-counter[id=mycounter, value=2]
-\\show-counter[id=mycounter]
-
-\\increment-counter[id=mycounter]
-\\show-counter[id=mycounter, display=roman]
-\line
-\end{verbatim}
-
-produces: 
-
-\line
-\examplefont{2
-
-\noindent{}iii}
-\line
+\script{SILE.process(SILE.inputs.TeXlike.docToTree(require("packages/counters")))}
 
 \subsection{raiselower}
 
