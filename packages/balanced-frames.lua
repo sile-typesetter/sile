@@ -23,7 +23,7 @@ SILE.typesetter.pageBuilder = function (self, independent)
   -- of frame space on the page, and there are no magic requests to balance the
   -- columns, then we have a full page. Just send it out normally.
   local q = self.state.outputQueue
-  local totalHeight = 0
+  local totalHeight = SILE.length.new({  })
   local mustBalance = 0
   for i=1,#q do 
     totalHeight = totalHeight + q[i].height + q[i].depth
@@ -32,7 +32,7 @@ SILE.typesetter.pageBuilder = function (self, independent)
       break
     end
   end
-  if totalHeight > target.length and mustBalance == 0 and not independent then
+  if totalHeight.length > target.length and mustBalance == 0 and not independent then
     return SILE.defaultTypesetter.pageBuilder(self, independent)
   end
 
