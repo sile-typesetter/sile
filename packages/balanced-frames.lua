@@ -32,7 +32,7 @@ SILE.typesetter.pageBuilder = function (self, independent)
       break
     end
   end
-  if totalHeight > target and mustBalance == 0 and not independent then
+  if totalHeight > target.length and mustBalance == 0 and not independent then
     return SILE.defaultTypesetter.pageBuilder(self, independent)
   end
 
