@@ -70,6 +70,36 @@ local shiftframeedge = function(frame, options)
   end
 end
 
+local makecolumns = function (options)
+  local cFrame = SILE.typesetter.frame
+  local cols = options.columns or 2
+  local gutterWidth = options.gutter or "3%"
+  local right = cFrame:right()
+  local origId = cFrame.id
+  for i = 1,cols-1 do
+    local gutter = SILE.newFrame({ 
+      width = gutterWidth,
+      left = "right("..cFrame.id..")",
+      id = origId .. "_gutter" ..i
+    })
+    cFrame:relax("right")
+    cFrame:constrain("right", "left("..gutter.id..")")
+    local newFrame = SILE.newFrame({
+      top = cFrame:top(),
+      bottom = cFrame:bottom(),
+      id = origId .. "_col"..i
+    })
+    gutter:constrain("right", "left("..newFrame.id..")")
+    newFrame:constrain("left", "right("..gutter.id..")")
+    newFrame:constrain("width", "width("..cFrame.id..")") -- XXX
+    cFrame.next = newFrame.id
+    cFrame = newFrame
+  end
+  cFrame:constrain("right", right)
+    print("Frame: "..cFrame:toString())
+
+end
+
 SILE.registerCommand("showframe", function(options, content)
   local id = options.id or SILE.typesetter.frame.id
   if id == "all" then
@@ -91,6 +121,10 @@ end, "Adjusts the edge of the frame horizontally by amounts specified in <left> 
 SILE.registerCommand("breakframevertical", function ( options, content )
   breakFrameVertical(options.offset and SILE.length.parse(options.offset).length)
 end, "Breaks the current frame in two vertically at the current location or at a point <offset> below the current location")
+
+SILE.registerCommand("makecolumns", function ( options, content )
+  makecolumns(options)
+end, "Split the current frame into multiple columns")
 
 SILE.registerCommand("breakframehorizontal", function ( options, content )
   breakFrameHorizontalAt(options.offset and SILE.length.parse(options.offset).length)
