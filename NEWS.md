@@ -1,5 +1,39 @@
 ## What's new in SILE 
 
+## Version 0.9.2 (unreleased)
+
+* Rotating package (NEEDS DOC)
+
+* Unicode character package (NEEDS DOC)
+
+* Support for OpenType features (NEEDS DOC)
+
+* Support for quoted strings in the parameters to TeX-like commands. (NEEDS DOC)
+
+* Hyphenation support for many languages
+
+* Tibetan and Kannada language support
+
+* Restore color (and other settings) after end of scope
+
+* Warn when frames are overfull
+
+* Support for older versions of autotools
+
+* Continuous integration and testing framework
+
+* Fixes to long-standing bugs in grid support, ligatures, insertions and page breaking.
+
+* Fixes to the ragged-left, ragged-right and centered environments.
+
+* Experimental support for best-fit page breaking and balanced frames.
+
+* Better font handling and substitution.
+
+* Valid PDFs will still be generated on error/interruption.
+
+* Improved error handling and error messages.
+
 ## Version 0.9.1 (2014-10-30)
 
 * The main change in this release is a new shaper based on [Harfbuzz][]
