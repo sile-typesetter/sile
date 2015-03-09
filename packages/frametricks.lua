@@ -96,8 +96,6 @@ local makecolumns = function (options)
     cFrame = newFrame
   end
   cFrame:constrain("right", right)
-    print("Frame: "..cFrame:toString())
-
 end
 
 SILE.registerCommand("showframe", function(options, content)
