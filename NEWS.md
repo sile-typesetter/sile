@@ -2,7 +2,7 @@
 
 ## Version 0.9.2 (unreleased)
 
-* Rotating package (NEEDS DOC)
+* Rotating package
 
 * Unicode character package
 
@@ -22,7 +22,7 @@
 
 * Continuous integration and testing framework
 
-* Fixes to long-standing bugs in grid support, ligatures, insertions and page breaking.
+* Fixes to long-standing bugs in grid support, centering, ligatures, insertions and page breaking.
 
 * Fixes to the ragged-left, ragged-right and centered environments.
 
