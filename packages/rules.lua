@@ -33,7 +33,7 @@ SILE.registerCommand("underline", function(options, content)
 
 end, "Underlines some content (badly)");
 
-return [[\begin{document}
+return { documentation = [[\begin{document}
 The \code{rules} package draws lines. It provides two commands.
 
 The first command is \code{\\hrule},
@@ -54,4 +54,4 @@ Underlining is horrible typographic practice, and
 you should \underline{never} do it.}
 
 (That was produced with \code{\\underline\{never\}}.)
-\end{document}]]
+\end{document}]] }

@@ -1,6 +1,7 @@
 \begin[papersize=a4,class=book]{document}
 %\begin[papersize=152mm x 229mm,class=book]{document}
 \script[src=packages/grid]
+\script[src=packages/autodoc]
 \script[src=packages/verbatim]
 \script[src=packages/color]
 \script[src=packages/image]
@@ -902,17 +903,19 @@ Notice that images are typeset on the baseline of a line of text, rather like
 a very big letter.
 
 \section{rules}
-\script{SILE.process(SILE.inputs.TeXlike.docToTree(require("packages/rules")))}
+\package-documentation[src=packages/rules]
 
 \section{color}
-\script{SILE.process(SILE.inputs.TeXlike.docToTree(require("packages/color")))}
+\package-documentation[src=packages/color]
 
 \section{features}
+\package-documentation[src=packages/features]
 
-\script{SILE.process(SILE.inputs.TeXlike.docToTree(require("packages/features")))}
+\section{unichar}
+\package-documentation[src=packages/unichar]
 
 \section{bidi}
-\script{SILE.process(SILE.inputs.TeXlike.docToTree(require("packages/bidi")))}
+\package-documentation[src=packages/bidi]
 
 \section{grid}
 \grid[spacing=15pt]

@@ -4,7 +4,7 @@
 
 * Rotating package (NEEDS DOC)
 
-* Unicode character package (NEEDS DOC)
+* Unicode character package
 
 * Support for OpenType features
 

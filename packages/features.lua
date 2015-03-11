@@ -95,7 +95,7 @@ SILE.registerCommand("remove-font-feature", function(o,c)
   SILE.settings.set("font.features", table2featurestring(t))
 end)
 
-return [[\begin{document}
+return { documentation = [[\begin{document}
 As mentioned in Chapter 3, SILE automatically applies ligatures defined by the fonts
 that you use. These ligatures are defined by tables of \em{features} within
 the font file. As well as ligatures (multiple glyphs displayed as a single glyph),
@@ -131,4 +131,4 @@ package:
 \\remove-font-feature[Ligatures=Rare]\\remove-font-feature[Ligatures=Discretionary]
 \line
 \end{verbatim}
-\end{document}]]
+\end{document}]] }

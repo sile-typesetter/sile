@@ -15,7 +15,7 @@ SILE.typesetter.boxUpNodes = function (self)
   return SILE.defaultTypesetter.boxUpNodes(self)
 end
 
-return [[\begin{document}
+return { documentation = [[\begin{document}
 
 Scripts like the Latin alphabet you are currently reading are normally written left to
 right; however, some scripts, such as Arabic and Hebrew, are written right to left.
@@ -30,4 +30,4 @@ correctly order left-to-right text within right-to-left paragraphs, RTL within L
 within LTR and so on. If you are working with Hebrew, Arabic or other RTL languages,
 you will want to load the \code{bidi} package.
 
-\end{document}]]
+\end{document}]] }

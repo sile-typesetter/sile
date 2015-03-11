@@ -11,7 +11,7 @@ SILE.registerCommand("color", function(options, content)
   });
 end, "Changes the active ink color to the color <color>.");
 
-return [[\begin{document}
+return { documentation = [[\begin{document}
 The \code{color} package allows you to temporarily change the color of the 
 (virtual) ink that SILE uses to output text and rules. The package provides
 a \code{\\color} command which takes one parameter, \code{color=\em{<color \nobreak{}specification>}}, and typesets
@@ -26,4 +26,4 @@ So, for example, \color[color=red]{this text is typeset with \code{\\color[color
 
 Here is a rule typeset with \code{\\color[color=#22dd33]}:
 \color[color=#ffdd33]{\hrule[width=120pt,height=0.5pt]}
-\end{document}]]
+\end{document}]] }
