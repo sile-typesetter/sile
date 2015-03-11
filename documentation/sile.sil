@@ -908,6 +908,9 @@ a very big letter.
 \section{color}
 \package-documentation[src=packages/color]
 
+\section{rotate}
+\package-documentation[src=packages/rotate]
+
 \section{features}
 \package-documentation[src=packages/features]
 

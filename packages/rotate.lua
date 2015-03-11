@@ -95,3 +95,25 @@ SILE.registerCommand("rotate", function(options, content)
     outputYourself= outputRotatedHbox
   });
 end)
+
+return { documentation = [[\begin{document}
+The \code{rotate} package allows you to rotate things. You can rotate entire
+frames, by adding the \code{rotate=<angle>} declaration to your frame declaration,
+and you can rotate any content by issuing the command \code{\\rotate[angle=<angle>]\{...\}},
+where \code{<angle>} is measured in degrees.
+
+Content which is rotated is placed in a box and rotated. The height and width of
+the rotated box is measured, and then put into the normal horizontal list for 
+typesetting. The effect of this is that space is reserved around the rotated content.
+The best way to understand this is by example: here is some text rotated by
+\rotate[angle=10]{ten}, \rotate[angle=20]{twenty} and \rotate[angle=40]{forty} degrees.
+
+The previous line was produced by the following code:
+
+\begin{verbatim}
+\line
+here is some text rotated by
+\\rotate[angle=10]\{ten\}, \\rotate[angle=20]\{twenty\} and \\rotate[angle=40]\{forty\} degrees.
+\line
+\end{verbatim}
+\end{document}]] }
