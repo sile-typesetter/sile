@@ -94,3 +94,41 @@ SILE.registerCommand("remove-font-feature", function(o,c)
 
   SILE.settings.set("font.features", table2featurestring(t))
 end)
+
+return [[\begin{document}
+As mentioned in Chapter 3, SILE automatically applies ligatures defined by the fonts
+that you use. These ligatures are defined by tables of \em{features} within
+the font file. As well as ligatures (multiple glyphs displayed as a single glyph),
+the features tables also declare other glyph substitutions.
+
+The \code{features} package provides an interface to selecting the features that you
+want SILE to apply to a font. The features available will be specific to the font file;
+some fonts come with documentation explaining their supported features. Discussion
+of OpenType features is beyond the scope of this manual.
+
+These features can be turned on and off by passing ‘raw’ feature names to the 
+\code{\\font} command like so:
+
+\begin{verbatim}
+\line
+\\font[features="+dlig,+hlig"]{...} \% turn on discretionary and historic ligatures
+\line
+\end{verbatim}
+
+However, this is unwieldy and requires memorizing the feature codes. \code{features}
+provides two commands, \code{\\add-font-feature} and \code{\\remove-font-feature},
+which make it easier to access OpenType features. The interface is patterned on the 
+TeX package \code{fontspec}; for full documentation of the OpenType features supported,
+see the documentation for that package.\footnote{\code{http://texdoc.net/texmf-dist/doc/latex/fontspec/fontspec.pdf}}
+
+Here is how you would turn on discretionary and historic ligatures with the \code{features}
+package:
+
+\begin{verbatim}
+\line
+\\add-font-feature[Ligatures=Rare]\\add-font-feature[Ligatures=Discretionary]
+...
+\\remove-font-feature[Ligatures=Rare]\\remove-font-feature[Ligatures=Discretionary]
+\line
+\end{verbatim}
+\end{document}]]

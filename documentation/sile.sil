@@ -412,7 +412,9 @@ fishing} then, (depending on your font), your output might look like:
 ‘\examplefont{affluent fishing}.’ If you specifically
 want to break up the ligature, then insert an empty group (using the grouping
 characters \code{\{} and \code{\}}) in the middle of the ligature:
-\code{af\{\}f\{\}luent f\{\}ishing}: \examplefont{af{}f{}luent f{}ishing}
+\code{af\{\}f\{\}luent f\{\}ishing}: \examplefont{af{}f{}luent f{}ishing} See the
+section on \em{OpenType Features} for more information on how to control
+the display of ligatures and other font features.
 
 \section{Commands}
 
@@ -432,11 +434,15 @@ but we’ll pretend that it is for now and get to the details in a moment.}
 \end{verbatim}
 
 The parameters to a command are enclosed in square brackets and take the form
-\code{\em{key}=\em{value}};\break multiple parameters are separated by commas
+\code{\em{key}=\em{value}};\break{}multiple parameters are separated by commas
 or semicolons,
 as in \code{[key1=value1,key2=value2,\dots]} Spaces around
 the keys are not significant; we could equally write that as
-\code{[key1 = value1; key2 = value2; \dots]}. The optional argument (of which
+\code{[key1 = value1; key2 = value2; \dots]}. If you need to include a comma or
+semicolon within the value to a parameter, you can enclose the value in quotes:
+\code{[key1 = "value1, still value 1", key2 = value2; \dots]}.
+
+The optional argument (of which
 there can only be at most one) is enclosed in curly braces.\footnote{TeX users
 may forget this and try adding a command argument “bare”, without the braces.
 This won’t work; in SILE, the braces are mandatory.}
@@ -903,7 +909,7 @@ a very big letter.
 
 \section{features}
 
-XXX
+\script{SILE.process(SILE.inputs.TeXlike.docToTree(require("packages/features")))}
 
 \section{bidi}
 \script{SILE.process(SILE.inputs.TeXlike.docToTree(require("packages/bidi")))}

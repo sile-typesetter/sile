@@ -6,9 +6,9 @@
 
 * Unicode character package (NEEDS DOC)
 
-* Support for OpenType features (NEEDS DOC)
+* Support for OpenType features
 
-* Support for quoted strings in the parameters to TeX-like commands. (NEEDS DOC)
+* Support for quoted strings in the parameters to TeX-like commands.
 
 * Hyphenation support for many languages
 
