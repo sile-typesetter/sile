@@ -1,5 +1,5 @@
 SILE.hyphenator.languages["pt"] = {};
-SILE.hyphenator.languages["en"].patterns =
+SILE.hyphenator.languages["pt"].patterns =
    {
 "1b2l",
 "1b2r",

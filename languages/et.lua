@@ -1,5 +1,5 @@
 SILE.hyphenator.languages["et"] = {};
-SILE.hyphenator.languages["en"].patterns =
+SILE.hyphenator.languages["et"].patterns =
 {
 ".aa4",
 ".aasta5",

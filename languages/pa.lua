@@ -1,5 +1,5 @@
-SILE.hyphenator.languages["en"] = {};
-SILE.hyphenator.languages["en"].patterns =
+SILE.hyphenator.languages["pa"] = {};
+SILE.hyphenator.languages["pa"].patterns =
    {
 -- GENERAL RULE
 -- Do not break either side of ZERO-WIDTH JOINER  (U+200D)

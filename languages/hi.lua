@@ -1,5 +1,5 @@
-SILE.hyphenator.languages["en"] = {};
-SILE.hyphenator.languages["en"].patterns =
+SILE.hyphenator.languages["hi"] = {};
+SILE.hyphenator.languages["hi"].patterns =
    {
 "2‍2",
 -- Break on both sides of ZERO-WIDTH NON JOINER  (U+200C)
