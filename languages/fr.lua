@@ -1,5 +1,5 @@
 SILE.hyphenator.languages["fr"] = {};
-SILE.hyphenator.languages["en"].patterns =
+SILE.hyphenator.languages["fr"].patterns =
 {
 ---------------------%-----------------------%
 -- phonetic patterns % etymological patterns %
