@@ -77,7 +77,10 @@ SILE.baseClass = std.object {
     end, "Declares (or re-declares) a frame on this page.")
 
     SILE.registerCommand("penalty", function(options, content)
-      if (SILE.typesetter:vmode() or options.vertical) then
+      if options.vertical and not SILE.typesetter:vmode() then
+        SILE.typesetter:leaveHmode()
+      end
+      if SILE.typesetter:vmode() then
         SILE.typesetter:pushVpenalty({ flagged= tonumber(options.flagged), penalty = tonumber(options.penalty) })
       else
         SILE.typesetter:pushPenalty({ flagged= tonumber(options.flagged), penalty = tonumber(options.penalty) })
