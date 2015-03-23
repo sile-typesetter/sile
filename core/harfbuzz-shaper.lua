@@ -90,7 +90,7 @@ function SILE.shapers.harfbuzz.shape(text, options)
         depth = depth,
         height= height,
         width = SILE.length.new({ length = totalWidth }),
-        value = {glyphString = glyphs, glyphNames = glyphNames, options = options, text = token.string[i] }
+        value = {glyphString = glyphs, glyphNames = glyphNames, options = options, text = token.string }
       }))
 
       table.insert(nodes, SILE.nodefactory.newNnode({ 
