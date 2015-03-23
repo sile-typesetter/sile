@@ -49,6 +49,9 @@ SILE.init = function()
     require("core/pango-shaper")
     require("core/cairo-output")
   end
+  if SILE.dolua then
+    pcall(SILE.dolua)
+  end
 end
 
 SILE.require = function(d)
@@ -69,6 +72,7 @@ local parser = std.optparse ("This is SILE "..SILE.version..[[
    -b, --backend=VALUE      choose between libtexpdf/pangocairo backends
    -I, --include=[FILE]     include a class or SILE file before 
                             processing main file
+   -e, --evaluate=VALUE     evaluate some Lua code before processing file
        --version            display version information, then exit
        --help               display this help, then exit
 ]])
@@ -84,6 +88,10 @@ local parser = std.optparse ("This is SILE "..SILE.version..[[
   end
   if opts.include then
     SILE.preamble = opts.include
+  end
+  if opts.evaluate then
+    SILE.dolua,err = load(opts.evaluate)
+    if err then SU.error(err) end
   end
 end
 
