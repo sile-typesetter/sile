@@ -1,0 +1,7 @@
+\begin[papersize=a5, class=book]{document}
+
+First paragraph %comment
+
+
+Second paragraph
+\end{document}

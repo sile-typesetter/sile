@@ -1,0 +1,8 @@
+\begin[papersize=a4, class=book]{document}
+\set[parameter=document.parindent, value=10mm]
+\set[parameter=current.parindent, value=10mm]
+First line \par
+First word, first paragraph.
+
+First word, second paragraph.
+\end{document}
