@@ -1,0 +1,25 @@
+This is SILE 0.9.1
+<tests/combining.sil>Open file	tests/combining.pdf
+Set paper size 	595.275597	841.8897729
+Begin page
+Mx 	35.159742458579
+My 	49.906988645
+Set font 	Gentium;10;200;normal;normal;
+T	8 8 722 722 670	(((̵̵́)
+Mx 	44.195614387868
+T	675 0 0 185 710 714	(̆͒͟˚̩̭)
+Mx 	53.797892567158
+T	675 0 9 722 722 669 9	(̆͒)̵̵̀))
+Mx 	49.76377985
+My 	66.1755433325
+T	8 749 109	((͡°)
+Mx 	59.20837022532
+T	0 597	(͜ʖ)
+Mx 	68.64807778814
+T	749 109 9	(͡°))
+[1] Mx 	282.64742484405
+My 	780.6176926305
+T	17	(1)
+End page
+Finish
+
