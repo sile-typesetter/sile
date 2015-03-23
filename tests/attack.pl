@@ -9,6 +9,7 @@ for (<tests/*.sil>, <examples/*.sil>, "documentation/sile.sil") {
         if (system("diff -u $expectation $out")) {
             print("\n\n<<< EXPECTED >>>\n"); system("cat $expectation");  
             print("\n\n<<< GOT >>>\n"); system("cat $out");  
+            exit;
         }
     } else {
         exit $? >> 8 if system("./sile", $_);

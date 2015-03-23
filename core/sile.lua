@@ -91,7 +91,7 @@ local parser = std.optparse ("This is SILE "..SILE.version..[[
     SILE.preamble = opts.include
   end
   if opts.evaluate then
-    SILE.dolua,err = load(opts.evaluate)
+    SILE.dolua,err = loadstring(opts.evaluate)
     if err then SU.error(err) end
   end
 end
