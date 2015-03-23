@@ -50,7 +50,8 @@ SILE.init = function()
     require("core/cairo-output")
   end
   if SILE.dolua then
-    pcall(SILE.dolua)
+    _, err = pcall(SILE.dolua)
+    if err then error(err) end
   end
 end
 
