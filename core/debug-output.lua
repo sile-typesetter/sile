@@ -1,4 +1,7 @@
 if (not SILE.outputters) then SILE.outputters = {} end
+local f
+local cx
+local cy
 SILE.outputters.debug = {
   init = function()
     print("Open file", SILE.outputFilename)
@@ -27,10 +30,13 @@ SILE.outputters.debug = {
       buf[#buf+1] = value.glyphString[i]
     end
     buf = table.concat(buf, " ")
-    print("Output glyph string", buf, "("..value.text..")")
+    print("T", buf, "("..value.text..")")
   end,
   setFont = function (options)
-    print("Set font ", SILE.font._key(options))
+    if f ~= SILE.font._key(options) then
+      print("Set font ", SILE.font._key(options))
+      f = SILE.font._key(options)
+    end
   end,
   drawImage = function (src, x,y,w,h)
     print("Draw image", src, x, y, w, h)
@@ -41,7 +47,8 @@ SILE.outputters.debug = {
     return (urx-llx), (ury-lly)
   end,
   moveTo = function (x,y)
-    print("Move to", x, y)
+    if x ~= cx then print("Mx ",x); cx = x end
+    if y ~= cy then print("My ",y); cy = y end
   end,
   rule = function (x,y,w,d)
     print("Draw line", x, y, w, d)
