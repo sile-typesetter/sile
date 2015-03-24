@@ -72,6 +72,7 @@ SILE.doTexlike([[%
 \define[command=tableofcontents:header]{\par\noindent\tableofcontents:headerfont{Table of Contents}\medskip}%
 \define[command=tableofcontents:level1item]{\bigskip\noindent\font[size=14pt,weight=800]{\process}\medskip}%
 \define[command=tableofcontents:level2item]{\noindent\font[size=12pt]{\process}\medskip}%
+\define[command=tableofcontents:level3item]{\indent\font[size=10pt]{\process}\smallskip}%
 ]])
 
   end 
