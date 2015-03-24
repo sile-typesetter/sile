@@ -192,7 +192,6 @@ int pdf_bookmark(lua_State *L) {
     return 0;
   }
   current_depth = texpdf_doc_bookmarks_depth(p);
-  printf("TOC LEVEL %i", level);
   if (current_depth > level) {
     while (current_depth-- > level)
       texpdf_doc_bookmarks_up(p);
