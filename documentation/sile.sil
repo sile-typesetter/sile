@@ -8,6 +8,7 @@
 \script[src=packages/frametricks]
 \script[src=packages/lorem]
 \script[src=packages/bidi]
+\script[src=packages/pdf]
 \include[src=documentation/macros.sil]
 \define[command=silehp]{\code{http://www.sile-typesetter.org/}}
 \define[command=sileversion]{0.9.2}

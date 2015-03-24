@@ -133,6 +133,8 @@ int pdf_setrule(lua_State *L) {
   return 0;
 }
 
+/* Colors */
+
 int pdf_setcolor(lua_State *L) {
   double r = luaL_checknumber(L, 1);
   double g = luaL_checknumber(L, 2);
@@ -159,6 +161,77 @@ int pdf_colorpop(lua_State *L) {
   texpdf_color_pop(p);
   return 0;
 }
+
+/* PDF "specials" */
+
+int pdf_destination(lua_State *L) {
+  pdf_obj* array = texpdf_new_array();
+  const char* name = luaL_checkstring(L, 1);
+  double x = luaL_checknumber(L, 2);
+  double y = luaL_checknumber(L, 3);
+  
+  texpdf_add_array(array, texpdf_doc_this_page_ref(p));
+  texpdf_add_array(array, texpdf_new_name("XYZ"));
+  texpdf_add_array(array, texpdf_new_number(x));
+  texpdf_add_array(array, texpdf_new_number(y));
+  texpdf_add_array(array, texpdf_new_null());
+  texpdf_doc_add_names(p, "Dests",
+                    name,
+                    strlen(name),
+                    array);
+  return 0;
+}
+
+int pdf_bookmark(lua_State *L) {
+  const char* dictionary = luaL_checkstring(L, 1);
+  int level = luaL_checknumber(L, 2);
+  pdf_obj* dict = texpdf_parse_pdf_dict(&dictionary, dictionary + strlen(dictionary), NULL);
+  int current_depth;
+  if (!dict) {
+    luaL_error(L, "Unparsable bookmark dictionary");
+    return 0;
+  }
+  current_depth = texpdf_doc_bookmarks_depth(p);
+  printf("TOC LEVEL %i", level);
+  if (current_depth > level) {
+    while (current_depth-- > level)
+      texpdf_doc_bookmarks_up(p);
+  } else if (current_depth < level) {
+    while (current_depth++ < level)
+      texpdf_doc_bookmarks_down(p);
+  }  
+  texpdf_doc_bookmarks_add(p, dict, 0);
+  return 0;
+}
+
+int pdf_begin_annotation(lua_State *L) {
+  // In theory we should track boxes and breaking state and etc.
+  texpdf_doc_set_verbose();
+  texpdf_doc_set_verbose();
+  texpdf_doc_set_verbose();
+  return 0;
+}
+
+int pdf_end_annotation(lua_State *L) {
+  const char* dictionary = luaL_checkstring(L, 1);
+  pdf_rect rect;
+  pdf_obj* dict;
+
+  rect.llx = luaL_checknumber(L, 2);
+  rect.lly = luaL_checknumber(L, 3);
+  rect.urx = luaL_checknumber(L, 4);
+  rect.ury = luaL_checknumber(L, 5);
+
+  dict = texpdf_parse_pdf_dict(&dictionary, dictionary + strlen(dictionary), NULL);
+  if (!dict) {
+    luaL_error(L, "Unparsable annotation dictionary");
+    return 0;
+  }
+  texpdf_doc_add_annot(p, texpdf_doc_current_page_number(p), &rect, dict, 1);
+  texpdf_release_obj(dict);
+  return 0;
+}
+/* Images */
 
 int pdf_drawimage(lua_State *L) {
   const char* filename = luaL_checkstring(L, 1);
@@ -262,6 +335,10 @@ static const struct luaL_Reg lib_table [] = {
   {"setmatrix", pdf_transform},
   {"gsave", pdf_gsave},
   {"grestore", pdf_grestore},
+  {"destination", pdf_destination},
+  {"bookmark", pdf_bookmark},
+  {"begin_annotation", pdf_begin_annotation},
+  {"end_annotation", pdf_end_annotation},  
   {NULL, NULL}
 };
 
