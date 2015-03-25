@@ -8,7 +8,7 @@ function utilities.required(t, name, context)
 end
 
 function utilities.error(message,bug)
-  if(SILE.currentCommand) then
+  if(SILE.currentCommand and type(SILE.currentCommand) == "table") then
     print("\n! "..message.. " at "..SILE.currentlyProcessingFile.." l."..(SILE.currentCommand.line)..", col."..(SILE.currentCommand.col))
   else
     print("\n! "..message.. " at "..SILE.currentlyProcessingFile)
