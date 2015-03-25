@@ -64,20 +64,40 @@ SILE.registerCommand("right-running-head", function(options, content)
   SILE.scratch.headers.right = function () closure(content) end
 end, "Text to appear on the top of the right page");
 
+SILE.registerCommand("book:sectioning", function (options, content)
+  local level = SU.required(options, "level", "book:sectioning")
+  SILE.call("increment-multilevel-counter", {id = "sectioning", level = options.level})
+  SILE.call("tocentry", {level = options.level}, content)
+  if options.numbering == nil or options.numbering == "yes" then
+    if options.prenumber then SILE.call(options.prenumber) end
+    SILE.call("show-multilevel-counter", {id="sectioning"})
+    if options.postnumber then SILE.call(options.postnumber) end
+  end
+end)
+
+book.registerCommands = function()
+  plain.registerCommands()
+SILE.doTexlike([[%
+\define[command=book:chapter:pre]{Chapter }%
+\define[command=book:chapter:post]{\par}%
+\define[command=book:section:post]{ }%
+\define[command=book:subsection:post]{ }%
+]])
+end
+
 SILE.registerCommand("chapter", function (options, content)
   SILE.call("open-double-page")
   SILE.call("noindent")
   SILE.scratch.headers.right = nil
-  SILE.call("increment-multilevel-counter", {id = "sectioning", level = 1})
-  SILE.call("tocentry", {level = 1}, content)
-  SILE.call("set-counter", {id = "footnote", value = 1})
-  if options.numbering == nil or options.numbering == "yes" then
-    SILE.Commands["book:chapterfont"]({}, function()
-      SILE.typesetter:typeset("Chapter ")
-      SILE.call("show-multilevel-counter", {id="sectioning"})
-      SILE.typesetter:leaveHmode()
-    end)
-  end
+  SILE.call("set-counter", {id = "footnote", value = 1})  
+  SILE.call("book:chapterfont", {}, function()  
+    SILE.call("book:sectioning", {
+      numbering = options.numbering, 
+      level = 1,
+      prenumber = "book:chapter:pre",
+      postnumber = "book:chapter:post"
+    }, content)
+  end)
   SILE.Commands["book:chapterfont"]({}, content);
   SILE.Commands["left-running-head"]({}, content)
   SILE.call("bigskip")
@@ -89,11 +109,12 @@ SILE.registerCommand("section", function (options, content)
   SILE.call("goodbreak")  
   SILE.call("bigskip")
   SILE.call("noindent")
-  SILE.call("increment-multilevel-counter", {id = "sectioning", level = 2})
-  SILE.call("tocentry", {level = 2}, content)  
   SILE.Commands["book:sectionfont"]({}, function()
-    SILE.call("show-multilevel-counter", {id="sectioning", level = 2})
-    SILE.typesetter:typeset(" ")
+    SILE.call("book:sectioning", {
+      numbering = options.numbering, 
+      level = 2,
+      postnumber = "book:section:post"
+    }, content)
     SILE.process(content)
   end)
   if not SILE.scratch.counters.folio.off then
@@ -118,11 +139,12 @@ SILE.registerCommand("subsection", function (options, content)
   SILE.call("goodbreak")
   SILE.call("noindent")
   SILE.call("medskip")
-  SILE.call("increment-multilevel-counter", {id = "sectioning", level = 3})
-  SILE.call("tocentry", {level = 3}, content)
   SILE.Commands["book:subsectionfont"]({}, function()
-    SILE.call("show-multilevel-counter", {id="sectioning"})
-    SILE.typesetter:typeset(" ")
+    SILE.call("book:sectioning", {
+          numbering = options.numbering, 
+          level = 3,
+          postnumber = "book:subsection:post"
+        }, content)    
     SILE.process(content)
   end)
   SILE.typesetter:leaveHmode()
