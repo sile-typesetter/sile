@@ -294,6 +294,10 @@ SILE.defaultTypesetter = std.object {
         -- self.state.outputQueue[#(self.state.outputQueue)+1] = v
       end
     end
+    while self.state.nodes[#self.state.nodes] and self.state.nodes[#self.state.nodes]:isPenalty() or self.state.nodes[#self.state.nodes] == SILE.nodefactory.zeroHbox do
+      self.state.nodes[#self.state.nodes] = nil
+    end
+
     self:leaveHmode();
     self:runHooks("newpage")
   end,
