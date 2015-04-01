@@ -1,5 +1,8 @@
 local inputfilter = SILE.require("packages/inputfilter").exports
 
+SILE.require("packages/color")
+SILE.require("packages/raiselower")
+
 local function addChords(text, content)
   local result = {}
 
@@ -21,29 +24,16 @@ SILE.registerCommand("ch", function(options, content)
   SILE.typesetter.state.nodes[#(SILE.typesetter.state.nodes)] = nil
 
   -- Temporary hard coded values should be configurable
-  local offset = SILE.toPoints("2.5", "mm", "h")
+  local offset = SILE.toPoints("2", "ex", "h")
   local chordLineHeight = SILE.toPoints("4", "mm", "h")
-  local chordBoxHeight = chordLineHeight + 2 * offset
-  local heightOffset = chordLineHeight - chordBox.height + offset
-  local width = chordBox.width.length
+  chordBox.width = SILE.length.zero
+  chordBox.height = chordLineHeight
 
-  SILE.typesetter:pushHbox({
-    height = chordBoxHeight,
-    outputYourself = function (self, typesetter, line)
-      typesetter.frame:moveY(-heightOffset)
-      SILE.outputter:pushColor({r=0.5, g=0, b=0})
-    end
-  });
-  table.insert(SILE.typesetter.state.nodes, chordBox)
-  SILE.typesetter:pushHbox({
-    height = chordBoxHeight,
-    outputYourself = function (self, typesetter, line)
-      typesetter.frame:moveY(heightOffset)
-      typesetter.frame:moveX(-width)
-      SILE.outputter:popColor()
-    end
-  });
-  SILE.process(content)
+  SILE.call("color", {color = "#800000"}, function ()
+    SILE.call("raise", {height = offset}, function()
+      SILE.typesetter:pushHbox(chordBox)
+    end)
+  end)
 end, "Insert a a chord name above the text")
 
 SILE.registerCommand("chordmode", function(options, content)
