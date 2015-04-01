@@ -31,30 +31,27 @@ function _box:isKern ()  return self.type == "kern" end -- Which it never is
 local _hbox = _box { 
   type = "hbox",
   __tostring = function (this) return "H<" .. tostring(this.width) .. ">^" .. tostring(this.height) .. "-" .. tostring(this.depth) .. "v"; end,
-  outputYourself = function(self,typesetter, line)
-  if not self.value.glyphString then return end
+  scaledWidth = function (self, line)
     local scaledWidth = self.width.length
     if line.ratio < 0 and self.width.shrink > 0 then
       scaledWidth = scaledWidth + self.width.shrink * line.ratio
     elseif line.ratio > 0 and self.width.stretch > 0 then
       scaledWidth = scaledWidth + self.width.stretch * line.ratio
     end
+    return scaledWidth
+  end,
+  outputYourself = function(self,typesetter, line)
+    if not self.value.glyphString then return end
     typesetter.frame:normalize()
     -- Yuck!
     if typesetter.frame.direction == "RTL" then
-      typesetter.frame:moveX(scaledWidth)
+      typesetter.frame:moveX(self:scaledWidth(line))
     end
     SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
-
-    -- SILE.outputter.debugHbox(typesetter, self, scaledWidth)
-    if self.value.glyphNames then
-      -- print(self.value.glyphNames[1])
-    end
     SILE.outputter.setFont(self.value.options)
-    -- SILE.outputter.showGlyphs(self.value.glyphNames)
     SILE.outputter.outputHbox(self.value, self.width.length)
     if typesetter.frame.direction ~= "RTL" then
-      typesetter.frame:moveX(scaledWidth)
+      typesetter.frame:moveX(self:scaledWidth(line))
     end
   end
 }
