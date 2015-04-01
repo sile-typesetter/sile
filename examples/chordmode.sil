@@ -1,4 +1,4 @@
-\begin[papersize=a4,class=songbook]{document}
+\begin[papersize=a4]{document}
 
 \script[src=packages/chordmode]
 
