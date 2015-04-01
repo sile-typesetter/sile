@@ -113,8 +113,19 @@ SILE.registerCommand("hbox", function (o,c)
     depth = d,
     value = recentContribution,
     outputYourself = function (self, typesetter, line)
+      typesetter.frame:normalize()
+      -- Yuck!
+      if typesetter.frame.direction == "RTL" then
+        typesetter.frame:moveX(self:scaledWidth(line))
+      end
+      local X = typesetter.frame.state.cursorX
+      SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
       for i = 1, #(self.value) do local node = self.value[i]
         node:outputYourself(typesetter, line)
+      end
+      typesetter.frame.state.cursorX = X
+      if typesetter.frame.direction ~= "RTL" then
+        typesetter.frame:moveX(self:scaledWidth(line))
       end
     end
   })
