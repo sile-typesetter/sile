@@ -79,6 +79,7 @@ SILE.registerCommand("ch", function(options, content)
   -- Temporary hard coded values should be configurable
   local offset = SILE.toPoints("2", "ex", "h")
   local chordLineHeight = SILE.toPoints("4", "mm", "h")
+  local origWidth = chordBox.width
   chordBox.width = SILE.length.zero
   chordBox.height = chordLineHeight
 
@@ -87,6 +88,11 @@ SILE.registerCommand("ch", function(options, content)
       SILE.typesetter:pushHbox(chordBox)
     end)
   end)
+  local lyricBox = SILE.Commands["hbox"]({}, content)
+  if lyricBox.width < origWidth then
+    lyricBox.width = origWidth + SILE.toPoints("0.5em")
+  end
+
 end, "Insert a a chord name above the text")
 
 SILE.registerCommand("chordmode", function(options, content)
