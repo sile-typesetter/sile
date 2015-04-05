@@ -1,4 +1,5 @@
 use strict; use warnings;
+my $regression = ($ARGV[0] && $ARGV[0] =~ /--regression/i);
 for (<tests/*.sil>, <examples/*.sil>, "documentation/sile.sil") {
     next if /macros.sil/;
     print "### Compiling $_\n";
@@ -11,7 +12,7 @@ for (<tests/*.sil>, <examples/*.sil>, "documentation/sile.sil") {
             print("\n\n<<< GOT >>>\n"); system("cat $out");  
             exit;
         }
-    } else {
+    } elsif (!$regression) {
         exit $? >> 8 if system("./sile", $_);
     }
 }
