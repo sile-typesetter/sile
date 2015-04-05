@@ -1,6 +1,9 @@
 \begin[papersize=a4]{document}
 
 \script[src=packages/chordmode]
+\script[src=packages/color]
+
+\define[command=chordmode:chordfont]{\color[color=#800000]{\process}}
 
 \begin{chordmode}
 
