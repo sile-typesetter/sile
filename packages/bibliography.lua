@@ -1,5 +1,8 @@
 std = require("std")
 
+-- The following functions borrowed from Norman Ramsey's nbibtex, 
+-- with permission.
+
 local function find_outside_braces(s, pat, i)
   local len = string.len(s)
   local j, k = string.find(s, pat, i)
@@ -254,6 +257,8 @@ do
   end
 end
 
+--- Thanks, Norman, for the above functions!
+
 Bibliography = { -- This is big enough to have its own global var
   CitationStyles = {
     AuthorYear = function(_ENV)
@@ -372,9 +377,7 @@ Bibliography = { -- This is big enough to have its own global var
       end
     end,
 
-    -- The following functions borrowed from Norman Ramsey's nbibtex, 
-    -- with permission.
-    commafy = function (t, andword)
+    commafy = function (t, andword) -- also stolen from nbibtex
       andword = andword or 'and'
       if #t == 1 then
         return t[1]
