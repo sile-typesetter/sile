@@ -1,7 +1,7 @@
 epnf = require( "epnf" )
 
 local ID = lpeg.C(  (SILE.parserBits.letter+SILE.parserBits.digit)^1 )
-local identifier = (ID + lpeg.P("-"))^1
+local identifier = (ID + lpeg.S(":-"))^1
 
 local balanced = lpeg.C{ "{" * lpeg.P(" ")^0 * lpeg.C(((1 - lpeg.S"{}") + lpeg.V(1))^0) * "}" } / function(...) t={...}; return t[2] end
 local doubleq = lpeg.C( lpeg.P '"' * lpeg.C(((1 - lpeg.S '"\r\n\f\\') + (lpeg.P '\\' * 1)) ^ 0) * '"' )
@@ -38,3 +38,11 @@ local parseBibtex = function(fn)
   end
   return entries
 end
+
+SILE.scratch.bibtex = {}
+
+SILE.registerCommand("loadbibliography", function(o,c) 
+  local file = SU.required(o, "file", "loadbibliography")
+  SILE.scratch.bibtex = parseBibtex(file) -- Later we'll do multiple bibliogs, but not now
+end)
+
