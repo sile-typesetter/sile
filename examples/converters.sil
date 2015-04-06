@@ -1,0 +1,12 @@
+\begin[papersize=a4,class=plain]{document}
+
+\script[src=packages/converters]
+
+First line of text
+
+\converters:register[from=.txt, to=.sil, command=examples/conv-test.lua "$SOURCE" "$TARGET"]
+
+\converters:include[src=examples/conv-test.txt]
+
+\end{document}
+
