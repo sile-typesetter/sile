@@ -231,7 +231,7 @@ do
             -- tokens if the first token is short enough; otherwise,
             -- a space is the default.
             -- <possibly adjust [[sep]] and [[ssep]] according to token position and size>=
-            if find(sep, sep_char) then
+            if string.find(sep, sep_char) then
               -- do nothing; sep is OK
             elseif i == lim-1 then
               sep, ssep = '~', '~'

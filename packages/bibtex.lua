@@ -39,10 +39,36 @@ local parseBibtex = function(fn)
   return entries
 end
 
-SILE.scratch.bibtex = {}
+SILE.scratch.bibtex = { bib = {}, bibstyle = {} }
+SILE.require("packages/bibliography")
 
 SILE.registerCommand("loadbibliography", function(o,c) 
   local file = SU.required(o, "file", "loadbibliography")
-  SILE.scratch.bibtex = parseBibtex(file) -- Later we'll do multiple bibliogs, but not now
+  SILE.scratch.bibtex.bib = parseBibtex(file) -- Later we'll do multiple bibliogs, but not now
 end)
 
+SILE.registerCommand("bibstyle", function(o,c) 
+  SILE.scratch.bibtex.bibstyle = SILE.require("packages/bibstyles/"..c)
+end)
+
+SILE.call("bibstyle", {}, "chicago") -- Load some default
+
+SILE.registerCommand("cite", function(o,c)
+  if not o.key then o.key = c[1] end
+  local cite = Bibliography.produceCitation(o, SILE.scratch.bibtex.bib, SILE.scratch.bibtex.bibstyle)
+  if cite == Bibliography.Errors.UNKNOWN_REFERENCE then
+    SU.warn("Unknown reference in citation "..o)
+    return
+  end
+  SILE.process(SILE.inputs.TeXlike.docToTree("\\begin{document}"..cite.."\\end{document}"))
+end)
+
+SILE.registerCommand("reference", function(o,c)
+  if not o.key then o.key = c[1] end
+  local cite = Bibliography.produceReference(o, SILE.scratch.bibtex.bib, SILE.scratch.bibtex.bibstyle)
+  if cite == Bibliography.Errors.UNKNOWN_REFERENCE then
+    SU.warn("Unknown reference in citation "..o)
+    return
+  end
+  SILE.process(SILE.inputs.TeXlike.docToTree("\\begin{document}"..cite.."\\end{document}"))
+end)
