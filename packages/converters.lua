@@ -17,11 +17,13 @@ local applyConverter = function(source, converter)
   local sourceTime = lfs.attributes(source, "modification")
 
   if (sourceTime==nil) then
+    SU.debug("converters", "Source file not found "..source)
     return nil -- source not found
   end
 
   local targetTime = lfs.attributes(targetFile, "modification")
   if((targetTime~=nil) and (targetTime>sourceTime)) then
+    SU.debug("converters", "Source file already converted "..source)
     return targetFile -- already converted
   end
 
@@ -31,6 +33,7 @@ local applyConverter = function(source, converter)
   })
 
   if(os.execute(command)) then
+    SU.debug("converters", "Converted "..source.." to "..targetFile)
     return targetFile
   else
     return nil
@@ -55,10 +58,31 @@ SILE.registerCommand("converters:check", function(o, c)
   checkConverters(o.source)
 end)
 
-SILE.registerCommand("converters:include", function(o, c)
+local function extendCommand(name, f)
+  -- Wrap an existing command
+  local original = SILE.Commands[name]
+  if(original) then
+    SILE.Commands[name] = function(options, content)
+      f(options, content, original)
+    end
+  else
+    SU.debug("converters", "Can not extend command "..name)
+  end
+end
+
+extendCommand("include", function(o, c, original)
   local result = checkConverters(o.src)
   if(result~=nil) then
-    SILE.call("include", {src=result})
+    o["src"] = result
+    original(o, c)
+  end
+end)
+
+extendCommand("img", function(o, c, original)
+  local result = checkConverters(o.src)
+  if(result~=nil) then
+    o["src"] = result
+    original(o, c)
   end
 end)
 
