@@ -48,6 +48,7 @@ local checkConverters = function(source)
       return applyConverter(source, converter)
     end
   end
+  return source -- No conversion needed.
 end
 
 SILE.registerCommand("converters:register", function(o, c)
