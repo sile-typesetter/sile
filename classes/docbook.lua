@@ -114,7 +114,7 @@ end)
 
 
 SILE.registerCommand("itemizedlist", function(options,content)
-  docbook.push("list", {type = "itemized", ctr = 1})
+  docbook.push("list", {type = "itemized"})
   SILE.call("medskip")
   -- Indentation
   SILE.process(content)
@@ -124,7 +124,7 @@ end)
 
 
 SILE.registerCommand("orderedlist", function(options,content)
-  docbook.push("list", {type = "ordered"})
+  docbook.push("list", {type = "ordered", ctr = 1})
   SILE.call("medskip")
   -- Indentation
   SILE.process(content)
