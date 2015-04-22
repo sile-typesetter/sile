@@ -1,6 +1,9 @@
-\begin[papersize=a4]{document}
-\font[family=Hiragino Mincho Pro W3,language=ja]
-プロテスタントやカトリックの宣教に比べると、日本正教会が非常に貧しいでした。19世紀では、カトリックが26倍、プロテスタントが正教会より15倍のお金を費やしました。一つの理由は、明治時代のキリスト教が西洋文化と強く結び付けられました。「プロテスタントとカトリックの宣教師が外国の文化の魅力を利用して、大志を抱いている明治の中流家庭にターゲットして、わりと金持ちの信者を集めました。」
+\begin[papersize=210mm x 148mm]{document}%
+\font[family=Hiragino Mincho Pro W3,language=ja,direction=TTB]%
+\script[src=packages/tate]%
+\script[src=packages/rotate]%
+\pagetemplate[first-content-frame=contentx]{\tate-frame[id=contentx,left=5%,right=95%,top=5%,bottom=90%]}%
+プロテスタントやカトリックの宣教に比べると、日本正教会が非常に貧しいでした。１９世紀では、カトリックが２６倍、プロテスタントが正教会より１５倍のお金を費やしました。一つの理由は、明治時代のキリスト教が西洋文化と強く結び付けられました。「プロテスタントとカトリックの宣教師が外国の文化の魅力を利用して、大志を抱いている明治の中流家庭にターゲットして、わりと金持ちの信者を集めました。」
 
 
 \end{document}

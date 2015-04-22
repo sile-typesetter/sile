@@ -280,6 +280,8 @@ int shape (lua_State *L) {
 
     if (!strcasecmp(direction_s,"RTL"))
       direction = HB_DIRECTION_RTL;
+    else if (!strcasecmp(direction_s,"TTB"))
+      direction = HB_DIRECTION_TTB;
     else
       direction = HB_DIRECTION_LTR;
 

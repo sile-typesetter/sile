@@ -8,7 +8,7 @@ local japanese = function(c) return punct(c) or kana(c) or kanji(c) end
 SILE.settings.declare({
   name = "language.ja.intrakanjiskip",
   type = "Glue or nil",
-  default = SILE.nodefactory.newGlue("0 plus .4pt minus .4pt"),
+  default = SILE.nodefactory.newGlue("0pt plus 1ex minus 0pt"),
   help = "Glue added between two kanji"
 })
 

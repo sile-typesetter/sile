@@ -105,8 +105,8 @@ function SILE.framePrototype:init()
 end
 
 function SILE.framePrototype:enter()
-  for i = 1,#SILE.framePrototype.enterHooks do
-    SILE.framePrototype.enterHooks[i](self)
+  for i = 1,#self.enterHooks do
+    self.enterHooks[i](self)
   end
 end
 
@@ -130,13 +130,13 @@ function SILE.framePrototype:isMainContentFrame()
   return false
 end
 
-SILE.newFrame = function(spec)
+SILE.newFrame = function(spec, prototype)
   SU.required(spec, "id", "frame declaration")
   local dims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
-
+  prototype = prototype or SILE.framePrototype
   local frame 
   if not SILE.frames[spec.id] then 
-    frame = SILE.framePrototype {
+    frame = prototype {
       constraints = {},
       variables = {}
     }
