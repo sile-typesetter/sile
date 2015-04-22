@@ -15,11 +15,16 @@ SILE.tateFramePrototype = SILE.framePrototype {
   end,
   enterHooks = { function (self)
     self.state.oldBreak = SILE.settings.get("typesetter.breakwidth")
+    SILE.typesetter.oldPagetarget = SILE.typesetter.pageTarget
     SILE.settings.set("typesetter.breakwidth", SILE.length.new({length = self:height() }))
+    SILE.typesetter.pageTarget = function(self)
+      return self.frame:width()
+    end
     end
   },
   leaveHooks = { function (self)
     SILE.settings.set("typesetter.breakwidth", self.state.oldBreak)
+    SILE.typesetter.pageTarget = SILE.typesetter.oldPagetarget
   end
   }
 }
