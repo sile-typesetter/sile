@@ -1052,7 +1052,7 @@ The command \code{\\breakframevertical} breaks the current frame in two
 at the specified location into an upper and lower frame. If the frame initially had the ID
 \code{main}, then \code{main} becomes the upper frame (before the command)
 and the lower frame (after the command) is called \code{main_}. We just
-issued a \code{\\breakframehorizontal} command at the start of this paragraph,
+issued a \code{\\breakframevertical} command at the start of this paragraph,
 and now we will issue the command \code{\\showframe}. \showframe As you can
 see, the current frame is called
 \code{\script{SILE.typesetter:typeset(SILE.typesetter.frame.id)}}
