@@ -1864,23 +1864,23 @@ book:defineMaster(\{
   frames = \{
 
     content = \{
-      left = "8.3%", right = "86%",
-      top = "11.6%", bottom = "top(footnotes)"
+      left = "8.3\%", right = "86%",
+      top = "11.6\%", bottom = "top(footnotes)"
     \},
     
     folio = \{
       left = "left(content)", right = "right(content)",
-      top = "bottom(footnotes)+3%",bottom = "bottom(footnotes)+5%"
+      top = "bottom(footnotes)+3\%",bottom = "bottom(footnotes)+5\%"
     \},
 
     runningHead = \{
       left = "left(content)", right = "right(content)",
-      top = "top(content) - 8%", bottom = "top(content)-3%"
+      top = "top(content) - 8\%", bottom = "top(content)-3\%"
     \},
 
     footnotes = \{
       left ="left(content)", right = "right(content)",
-      height = "0", bottom="83.3%"
+      height = "0", bottom="83.3\%"
     \}
   \}
 \})
@@ -1971,7 +1971,7 @@ down a bit lower:
 \line
   runningHead = \{
     left = "left(content)", right = "right(content)", 
-    top = "top(content) - 4%", bottom = "top(content)-2%" 
+    top = "top(content) - 4\%", bottom = "top(content)-2\%" 
   \},
 \line
 \end{verbatim}
