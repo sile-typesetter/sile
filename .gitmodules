@@ -2,3 +2,4 @@
 	path = libtexpdf
 	url = https://github.com/simoncozens/libtexpdf.git
 	ignore = dirty
+	branch = master
