@@ -41,3 +41,6 @@ ltmain.sh
 subfiles.mk
 
 sile
+config.log
+core/justenoughharfbuzz.so
+core/justenoughlibtexpdf.so
