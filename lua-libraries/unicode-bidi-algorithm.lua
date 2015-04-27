@@ -403,12 +403,10 @@ local obj_code = 0xFFFC -- A who-cares character
 
 local function node_to_table(nodelist)
   -- Takes a node list and returns its textual representation
-
   local line = {}
   for i = 1,#nodelist do
     local n = nodelist[i]
     if n.type == "hbox" and n.value and n.value.text then
-      print(n.value)
       c = SU.codepoint(n.value.text)
     elseif n:isNnode() then
       -- This is technically a hack. n.text will probably contain multiple
@@ -434,6 +432,14 @@ local function reverse_portion(tbl, s,e)
   for i = e,s,-1 do rv[#rv+1] = tbl[i] end
   for i = e+1, #tbl do rv[#rv+1] = tbl[i] end
   return rv
+end
+local function backwards(t)
+    local reversedTable = {}
+    local itemCount = #t
+    for k, v in ipairs(t) do
+        reversedTable[itemCount + 1 - k] = v
+    end
+    return reversedTable
 end
 
 local function create_matrix(line, base_level)
@@ -506,6 +512,15 @@ local function process(nodelist, frame)
   local rv = {}
   for i = 1, #nodelist do
     rv[matrix[i]] = nodelist[i]
+    -- Urgh, too low level. But the point is that if we took an nnode
+    -- and used the first character as indicative of its character type,
+    -- we now have to reverse all the characters in it.
+    if line[i].level % 2 ~= base_level and 
+      rv[matrix[i]].nodes and 
+      (rv[matrix[i]].options.direction == frame.direction) and
+      rv[matrix[i]].nodes[1].value.glyphString then
+      rv[matrix[i]].nodes[1].value.glyphString = backwards(rv[matrix[i]].nodes[1].value.glyphString)
+    end
   end
   return rv
 end
