@@ -202,7 +202,7 @@ On OS X machines running Homebrew (always a good idea for OS X machines),
 you will need to run
 
 \medskip
-• \code{brew install harfbuzz fontconfig libpng lua luarocks freetype}
+• \code{brew install automake libtool harfbuzz fontconfig libpng lua luarocks freetype}
 \medskip
 
 On DEB-based Linux machines such as Debian and Ubuntu, try
