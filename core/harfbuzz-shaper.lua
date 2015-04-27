@@ -52,7 +52,7 @@ function SILE.shapers.harfbuzz.shape(text, options)
   if not options then options = {} end
   options = SILE.font.loadDefaults(options)
   -- Cache the font
-  face = SILE.font.cache(options, SILE.shapers.harfbuzz._face)
+  face = SILE.font.cache(options, debugging_face)
   local nodes = {}
   local gluewidth = measureSpace(options)
 
