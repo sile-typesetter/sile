@@ -1086,7 +1086,7 @@ command, which allows you to write text into a specified frame:
 
 \begin{verbatim}
 \line
-\\typeset-into[frame=sidebar]{ ... frame content here ... }
+\\typeset-into[frame=sidebar]\{ ... frame content here ... \}
 \line
 \end{verbatim}
 
