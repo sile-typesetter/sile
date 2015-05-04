@@ -122,7 +122,7 @@ SILE.defaultTypesetter = std.object {
     end
     for token in SU.gtoke(t, "-") do
       local t2= token.separator and token.separator or token.string
-      local newNodes = SILE.shaper.shape(t2)
+      local newNodes = SILE.shaper:shape(t2)
       for i=1,#newNodes do
           self.state.nodes[#(self.state.nodes)+1] = newNodes[i]
           if token.separator then

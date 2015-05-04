@@ -41,7 +41,7 @@ SILE.outputters.libtexpdf = {
   setFont = function (options)
     if SILE.font._key(options) == lastkey then return end
     lastkey = SILE.font._key(options)
-    font = SILE.font.cache(options)
+    font = SILE.font.cache(options, SILE.shaper.getFace)
     f = pdf.loadfont(font)
     if f< 0 then SU.error("Font loading error for "..options) end
     font = f
@@ -67,7 +67,7 @@ SILE.outputters.libtexpdf = {
     self.rule(f:right(), f:top(), 0.5, - f:height())
     self.rule(f:left(), f:bottom(), f:width(), 0.5)
     --self.rule(f:left() + f:width()/2 - 5, (f:top() + f:bottom())/2+5, 10, 10)
-    local stuff = SILE.shaper.shape(f.id)
+    local stuff = SILE.shaper:shape(f.id)
     stuff = stuff[1].nodes[1].value.glyphString -- Horrible hack
     local buf = {}
     for i=1,#stuff do
@@ -76,6 +76,7 @@ SILE.outputters.libtexpdf = {
       buf[#buf+1] = string.char(glyph % 0x100)
     end
     buf = table.concat(buf, "")
+    if font == 0 then SILE.outputter.setFont({}) end
     pdf.setstring(f:left(), SILE.documentState.paperSize[2] -f:top(), buf, string.len(buf), font, 0)
     pdf.colorpop()
   end,
