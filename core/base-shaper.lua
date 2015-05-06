@@ -59,9 +59,30 @@ SILE.shapers.base = std.object {
   end,
 
   itemize = function(self, nodelist, text)
+    local state = SILE.font.loadDefaults({})
+    local gluewidth = self:measureSpace(state)
+
+    -- First tokenize on spaces
+    for token in self:tokenize(text,state) do
+      if (token.separator) then
+        table.insert(nodelist, SILE.nodefactory.newGlue({ width = gluewidth }))
+      elseif (token.node) then
+        table.insert(nodelist, token.node)
+      else
+        local nodes = self:subItemize(token.string, state)
+        for i= 1,#nodes do
+          nodelist[#nodelist+1] = nodes[i]
+        end
+      end
+    end
+  end,
+
+  subItemize = function(self,text,options)
+    -- We have a character string; sort it out.
+    local nodelist = {}
     for token in SU.gtoke(text, "-") do
       local t2= token.separator and token.separator or token.string
-      local newNodes = SILE.shaper:shape(t2)
+      local newNodes = SILE.shaper:createNnodes(t2, options)
       for i=1,#newNodes do
         nodelist[#(nodelist)+1] = newNodes[i]
         if token.separator then
@@ -69,6 +90,7 @@ SILE.shapers.base = std.object {
         end
       end
     end
+    return nodelist
   end,
 
   tokenize = function(self, text, options)
@@ -84,22 +106,7 @@ SILE.shapers.base = std.object {
   shape = function(self, text, options)
     if not options then options = {} end
     options = SILE.font.loadDefaults(options)
-    local nodes = {}
-    if (type(self) ~= "table") then SU.error("shape called incorrectly", true) end
-    local gluewidth = self:measureSpace(options)
-    for token in self:tokenize(text,options) do
-      if (token.separator) then
-        table.insert(nodes, SILE.nodefactory.newGlue({ width = gluewidth }))
-      elseif (token.node) then
-        table.insert(nodes, token.node)
-      else
-        nnodes = self:createNnodes(token.string, options)
-        for i= 1,#nnodes do
-          nodes[#nodes+1] = nnodes[i]
-        end
-      end
-    end
-    return nodes
+    return self:subItemize(text, options)
   end,
 
   addShapedGlyphToNnodeValue = function (self, nnodevalue, shapedglyph)
