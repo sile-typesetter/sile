@@ -58,6 +58,19 @@ SILE.shapers.base = std.object {
     SU.error("Abstract function getFace called", true)
   end,
 
+  itemize = function(self, nodelist, text)
+    for token in SU.gtoke(text, "-") do
+      local t2= token.separator and token.separator or token.string
+      local newNodes = SILE.shaper:shape(t2)
+      for i=1,#newNodes do
+        nodelist[#(nodelist)+1] = newNodes[i]
+        if token.separator then
+          nodelist[#(nodelist)+1] = SILE.nodefactory.newPenalty({ value = SILE.settings.get("linebreak.hyphenPenalty") })
+        end
+      end
+    end
+  end,
+
   tokenize = function(self, text, options)
     -- Do language-specific tokenization
     pcall(function () SILE.require("languages/"..options.language) end)
@@ -114,6 +127,7 @@ SILE.shapers.base = std.object {
       width = width or SILE.length.new({ length = totalWidth }),
       value = nnodeValue
     }))
+    -- Why does the nnode contain only one hbox?
     return { SILE.nodefactory.newNnode({ 
       nodes = nnodeContents,
       text = token,
