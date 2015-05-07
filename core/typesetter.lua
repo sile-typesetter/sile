@@ -132,6 +132,9 @@ SILE.defaultTypesetter = std.object {
     end
     while (#nl >0 and nl[1]:isPenalty()) do table.remove(nl,1) end
     if #nl == 0 then return {} end
+    for i=1, #nl do n = nl[i]
+      if n:isUnshaped() then nl[i] = n:shape() end
+    end
     self:pushGlue(SILE.settings.get("typesetter.parfillskip"));
     self:pushPenalty({ flagged= 1, penalty= -inf_bad });
     local listToString = function(l)

@@ -19,6 +19,7 @@ function _box:isBox ()   return self.type=="hbox" or self.type == "nnode" or sel
 function _box:isNnode () return self.type=="nnode" end
 function _box:isGlue ()  return self.type == "glue" end
 function _box:isVglue ()  return self.type == "vglue" end
+function _box:isUnshaped ()  return self.type == "unshaped" end
 function _box:isVbox ()  return self.type == "vbox" end
 function _box:isDiscardable () return self:isGlue() or self:isPenalty() end
 function _box:isPenalty ()  return self.type == "penalty" end
@@ -84,6 +85,17 @@ end,
     for i, n in ipairs(self.nodes) do n:outputYourself(typesetter, line) end
   end,
   toText = function (self) return self.text end
+}
+
+local _unshaped = _nnode {
+  type = "unshaped",
+  __tostring = function (this) 
+    return "U(" .. this:toText() .. ")";
+  end,
+  shape = function(this)
+    local n =  SILE.shaper:createNnodes(this.text, this.options)
+    return n[1] -- bug
+  end
 }
 
 -- Discretionaries
@@ -204,8 +216,10 @@ local _vbox = _box {
 
 SILE.nodefactory = {}
 
-function SILE.nodefactory.newHbox(spec)   return _hbox(spec) end
-function SILE.nodefactory.newNnode(spec)  return _nnode(spec):init() end
+function SILE.nodefactory.newHbox(spec)     return _hbox(spec) end
+function SILE.nodefactory.newNnode(spec)    return _nnode(spec):init() end
+function SILE.nodefactory.newUnshaped(spec) return _unshaped(spec) end
+
 function SILE.nodefactory.newDisc(spec)   return _disc(spec) end
 function SILE.nodefactory.newGlue(spec)
   if type(spec) == "table" then return _glue(spec) end
