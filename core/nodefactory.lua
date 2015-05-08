@@ -126,6 +126,30 @@ local _disc = _hbox {
   end
 }
 
+-- Alternatives
+
+local _alt = _hbox {
+  type = "alternative",
+  options = {},
+  selected = nil,
+  __tostring = function(self)
+    return "A(" .. SU.concat(self.options," / ") .. ")"
+  end,
+  minWidth = function(self)
+    local min = self.options[1].width
+    for i = 2,#self.options do
+      if self.options[i].width < min then min = self.options[i].width end
+    end
+    return min
+  end,
+  deltas = function(self)
+    local minWidth = self:minWidth()
+    local rv = {}
+    for i = 1,#self.options do rv[#rv+1] = self.options[i].width - minWidth end
+    return rv
+  end
+}
+
 -- Glue
 local _glue = _box {
   _type = "Glue",
@@ -221,6 +245,8 @@ function SILE.nodefactory.newNnode(spec)    return _nnode(spec):init() end
 function SILE.nodefactory.newUnshaped(spec) return _unshaped(spec) end
 
 function SILE.nodefactory.newDisc(spec)   return _disc(spec) end
+function SILE.nodefactory.newAlternative(spec)   return _alt(spec) end
+
 function SILE.nodefactory.newGlue(spec)
   if type(spec) == "table" then return _glue(spec) end
   if type(spec) == "string" then return _glue({width = SILE.length.parse(spec)}) end
