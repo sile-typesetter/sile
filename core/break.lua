@@ -37,14 +37,13 @@ function lineBreak:init()
   -- 849
   self.activeWidth = SILE.length.new()
   self.curActiveWidth = SILE.length.new()
-  self.background = SILE.length.new()
   self.breakWidth = SILE.length.new() 
   -- 853
-  self.q = SILE.settings.get("document.rskip")
-  if type(self.q) == "table" then self.q = self.q.width else self.q = 0 end
-  self.r = SILE.settings.get("document.lskip")
-  if type(self.r) == "table" then self.r = self.r.width else self.r = 0 end
-  self.background = self.background + self.q + self.r   
+  local rskip = SILE.settings.get("document.rskip")
+  if type(rskip) == "table" then rskip = rskip.width else rskip = 0 end
+  local lskip = SILE.settings.get("document.lskip")
+  if type(lskip) == "table" then lskip = lskip.width else lskip = 0 end
+  self.background = SILE.length.new() + rskip + lskip   
   -- 860
   self.minimalDemerits = { tight = awful_bad, decent = awful_bad, loose = awful_bad, veryLoose = awful_bad }
   self.minimumDemerits = awful_bad
@@ -328,7 +327,7 @@ function lineBreak:checkForLegalBreak(n) -- 892
   if self.sideways and n:isVbox() then
     self.activeWidth = self.activeWidth + n.height + n.depth
   elseif self.sideways and n:isVglue() then
-    if self.nodes[self.prev_p] and (self.nodes[self.prev_p]:isVbox()) then
+    if self.nodes[self.cur_p - 1] and (self.nodes[self.cur_p - 1]:isVbox()) then
       self:tryBreak(0, "unhyphenated")
     end
     self.activeWidth = self.activeWidth + n.height + n.depth
@@ -337,7 +336,7 @@ function lineBreak:checkForLegalBreak(n) -- 892
   elseif n:isGlue() then
     -- 894
     if self.auto_breaking then
-      if self.nodes[self.prev_p] and (self.nodes[self.prev_p]:isBox()) then
+      if self.nodes[self.cur_p - 1] and (self.nodes[self.cur_p - 1]:isBox()) then
         --self.nodes[self.prev_p]:precedesBreak() or 
         --self.nodes[self.prev_p]:isKern()) then
         self:tryBreak(0, "unhyphenated")
@@ -358,13 +357,6 @@ function lineBreak:checkForLegalBreak(n) -- 892
   elseif n:isPenalty() then
     self:tryBreak(n.penalty, "unhyphenated")
   end
-  self:updatePrevP()
-  self.cur_p = self.cur_p + 1
-end
-
-function lineBreak:updatePrevP()
-  self.prev_p = self.cur_p
-  global_prev_p = self.cur_p
 end
 
 function lineBreak:tryFinalBreak()      -- 899
@@ -422,10 +414,9 @@ function lineBreak:doBreak (nodes, hsize, sideways)
 
     self.cur_p = 1
     self.auto_breaking = true
-    self:updatePrevP()
-    self.first_p = self.cur_p
     while self.nodes[self.cur_p] and not (self.active.next == self.active) do
       self:checkForLegalBreak(self.nodes[self.cur_p])
+      self.cur_p = self.cur_p + 1
     end
     if not self.nodes[self.cur_p] then
       if self:tryFinalBreak() == "done" then break end
