@@ -18,6 +18,7 @@ SILE.settings.declare({ name="linebreak.doLastLineFit", type = "boolean", defaul
 SILE.settings.declare({ name="linebreak.linePenalty", type = "integer", default = 10})
 SILE.settings.declare({ name="linebreak.hyphenPenalty", type = "integer", default = 50})
 SILE.settings.declare({ name="linebreak.doubleHyphenDemerits", type = "integer", default = 10000})
+SILE.settings.declare({ name="linebreak.finalHyphenDemerits", type = "integer", default = 5000})
 
 -- doubleHyphenDemerits
 -- hyphenPenalty
@@ -177,7 +178,6 @@ function lineBreak:considerDemerits(pi, breakType) -- 877
         self:deactivateR()
         return false
       end
-      self.nodeStaysActive = false
     end
   else
     self.prev_r = self.r
@@ -307,7 +307,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
       -- 871: this is what creates new active notes
       passSerial = passSerial + 1
 
-      local newPassive = { prev = self.passive, curBreak = self.cur_p, prevBreak = self.best_place[class], serial = passSerial, ratio = self.lastRatio }
+      local newPassive = { curBreak = self.cur_p, prevBreak = self.best_place[class], serial = passSerial, ratio = self.lastRatio }
       local newActive = { next = self.r, breakNode = newPassive, lineNumber = self.best_pl_line[class] + 1, type = breakType, fitness = class, totalDemerits = value }
       -- DoLastLineFit? 1636 XXX
       self.prev_r.next = newActive
