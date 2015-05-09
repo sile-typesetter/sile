@@ -1,9 +1,3 @@
--- Skeletons for nodes:
--- activeNode = { next = nil, breakNode = nil, 
---  lineNumber = 0, fitness = nil, 
---  type = nil, -- "hyphenated", "unhyphenated", "delta" (Delta nodes have a length entry)
---  totalDemerits = nil }
--- passiveNode = { prev = nil, curBreak = nil, prevBreak = nil, serial = 0 }
 
 SILE.settings.declare({ name="linebreak.parShape", type = "string or nil", default = nil}) -- unimplemented
 SILE.settings.declare({ name="linebreak.tolerance", type = "integer or nil", default = 500})
@@ -243,7 +237,7 @@ function lineBreak:recordFeasible(pi, breakType) -- 881
     -- XXX adjDemerits not added here
   end
   if self.nodes[self.cur_p] then
-    SU.debug("break", "@" .. self.nodes[self.cur_p] .. " via @@" .. (self.r.breakNode and self.r.breakNode.serial or "0")  .. " b=" .. self.b .. " d=".. d) -- 882
+    SU.debug("break", "@" .. self.nodes[self.cur_p] .. " via @@" .. (self.r.serial or "0")  .. " b=" .. self.b .. " d=".. d) -- 882
   else
     SU.debug("break", "@ \\par via @@");
   end
@@ -251,7 +245,7 @@ function lineBreak:recordFeasible(pi, breakType) -- 881
   d = d + self.r.totalDemerits
   if d <= self.minimalDemerits[self.fitClass] then
     self.minimalDemerits[self.fitClass] = d
-    self.best_place[self.fitClass] = self.r.breakNode
+    self.best_place[self.fitClass] = self.r.serial and self.r
     self.best_pl_line[self.fitClass] = self.r.lineNumber
     -- XXX do last line fit
     if d < self.minimumDemerits then self.minimumDemerits = d end
@@ -307,8 +301,16 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
       -- 871: this is what creates new active notes
       passSerial = passSerial + 1
 
-      local newPassive = { curBreak = self.cur_p, prevBreak = self.best_place[class], serial = passSerial, ratio = self.lastRatio }
-      local newActive = { next = self.r, breakNode = newPassive, lineNumber = self.best_pl_line[class] + 1, type = breakType, fitness = class, totalDemerits = value }
+      local newActive = { next = self.r, 
+        curBreak = self.cur_p, 
+        prevBreak = self.best_place[class], 
+        serial = passSerial, 
+        ratio = self.lastRatio, 
+        lineNumber = self.best_pl_line[class] + 1, 
+        type = breakType, 
+        fitness = class, 
+        totalDemerits = value
+      }
       -- DoLastLineFit? 1636 XXX
       self.prev_r.next = newActive
       self.prev_r = newActive
@@ -330,7 +332,7 @@ end
 
 function lineBreak:dumpBreakNode(b)
   if not SU.debugging("break") then return end
-  print("@@" .. b.breakNode.serial .. ": line " .. (b.lineNumber -1) .. "." .. b.fitness .. " " .. b.type .. " t=".. b.totalDemerits .. " -> @@ " .. (b.breakNode.prevBreak and b.breakNode.prevBreak.serial or "0") )
+  print("@@" .. b.serial .. ": line " .. (b.lineNumber -1) .. "." .. b.fitness .. " " .. b.type .. " t=".. b.totalDemerits .. " -> @@ " .. (b.prevBreak and b.prevBreak.serial or "0") )
 end
 
 function lineBreak:checkForLegalBreak(n) -- 892
@@ -415,7 +417,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
       self.nodes = SILE.hyphenate(self.nodes) 
     end
     -- 890
-    self.active.next = { type = "unhyphenated", fitness = "decent", next = self.active, breakNode = nil, lineNumber = param("prevGraf") + 1, totalDemerits = 0}
+    self.active.next = { type = "unhyphenated", fitness = "decent", next = self.active, lineNumber = param("prevGraf") + 1, totalDemerits = 0}
 
     if param("doLastLineFit") then
       --1630
@@ -448,7 +450,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
 end
 
 function lineBreak:postLineBreak() -- 903
-  local p = self.bestBet.breakNode
+  local p = self.bestBet
   local breaks = {}
   local line  = 1
   repeat
