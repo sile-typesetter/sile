@@ -20,6 +20,7 @@ function _box:isNnode () return self.type=="nnode" end
 function _box:isGlue ()  return self.type == "glue" end
 function _box:isVglue ()  return self.type == "vglue" end
 function _box:isUnshaped ()  return self.type == "unshaped" end
+function _box:isAlternative ()  return self.type == "alternative" end
 function _box:isVbox ()  return self.type == "vbox" end
 function _box:isDiscardable () return self:isGlue() or self:isPenalty() end
 function _box:isPenalty ()  return self.type == "penalty" end
@@ -147,7 +148,12 @@ local _alt = _hbox {
     local rv = {}
     for i = 1,#self.options do rv[#rv+1] = self.options[i].width - minWidth end
     return rv
-  end
+  end,
+  outputYourself = function(self,typesetter, line)
+    if self.selected then
+      self.options[self.selected]:outputYourself(typesetter,line)
+    end
+  end,
 }
 
 -- Glue
