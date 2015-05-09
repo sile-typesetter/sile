@@ -84,28 +84,32 @@ local hyphenateNode = function(n)
     loadPatterns(_hyphenators[n.language], n.language)
   end
   local breaks = _hyphenate(_hyphenators[n.language],n.text);
-  if #breaks <= 1 then return {n} end  
-  local newnodes = {}
-  for i = 1,#breaks do b = breaks[i]
-    if not(b=="") then
-      local nnodes = {}
-      SILE.shaper:itemize(nnodes, b, n.options)
-      newnodes[#newnodes+1] = nnodes[1]:shape()
-      if j ~= #breaks then
-        d = SILE.nodefactory.newDiscretionary({ prebreak = SILE.shaper:createNnodes("-", n.options) })
-        newnodes[#newnodes+1] = d
+  if #breaks > 1 then
+    local newnodes = {}
+    for j, b in ipairs(breaks) do
+      if not(b=="") then
+        for _,nn in pairs(SILE.shaper:createNnodes(b, n.options)) do 
+          nn.parent = n
+          table.insert(newnodes, nn)
+        end
+        if not (j == #breaks) then
+          d = SILE.nodefactory.newDiscretionary({ prebreak = SILE.shaper:createNnodes("-", n.options) })
+          d.parent = n
+          table.insert(newnodes, d)
+         --table.insert(newnodes, SILE.nodefactory.newPenalty({ value = SILE.settings.get("typesetter.hyphenpenalty") }))
+        end
       end
     end
+    n.children = newnodes
+    n.hyphenated = false
+    n.done = false
+    return newnodes
   end
-  for i =1,#newnodes do newnodes[i].parent = n end
-  n.children = newnodes
-  n.hyphenated = false
-  n.done = false
-  return newnodes
+  return {n}
 end
 
 SILE.hyphenate = function (nodelist)
-  for i = 1,#nodelist do local n = nodelist[i]
+  for i,n in ipairs(nodelist) do
     local newnodes = hyphenateNode(n)
     SU.splice(nodelist, i, i, newnodes)
     i = i + #newnodes - 1
