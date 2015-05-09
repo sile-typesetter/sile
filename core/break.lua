@@ -135,26 +135,39 @@ function lineBreak:tryBreak(pi, breakType) -- 855
   
 end
 
+local function fitclass(self, s) -- s =shortfall
+  local badness, class
+  local stretch = self.curActiveWidth.stretch
+  local shrink = self.curActiveWidth.shrink
+  if s > 0 then
+    if s > 110 and stretch < 25 then 
+      badness = inf_bad 
+    else
+      badness = lineBreak:badness(s, stretch)
+    end
+    if     badness > 99 then class = "veryLoose"
+    elseif badness > 12 then class = "loose"
+    else                     class = "decent"
+    end
+  else
+    s = -s
+    if s > shrink then 
+      badness = inf_bad + 1
+    else
+      badness = lineBreak:badness(s, shrink)
+    end
+    if badness > 12 then class = "tight"
+    else                 class = "decent"
+    end
+  end
+  return badness, class
+end
+
 function lineBreak:considerDemerits(pi, breakType) -- 877  
   self.artificialDemerits = false
   local nodeStaysActive = false
   local shortfall = self.lineWidth - self.curActiveWidth.length
-  SU.debug("break", "Considering demerits, shortfall is "..shortfall)
-  if shortfall > 0 then
-    -- 878
-    -- We do not currently deal with infinities, so we don't implement the "quick" side of this
-    if shortfall > 110 and self.curActiveWidth.stretch < 25 then -- Blame Knuth for the magic numbers
-      self.b = inf_bad; self.fitClass = "veryLoose";
-    else self.b = lineBreak:badness(shortfall, self.curActiveWidth.stretch) end
-    if self.b > 12 then 
-      if self.b > 99 then self.fitClass = "veryLoose" else self.fitClass = "loose" end
-    else self.fitClass = "decent" 
-    end
-  else
-    if -shortfall > self.curActiveWidth.shrink then self.b = inf_bad + 1
-      else self.b = lineBreak:badness(-shortfall, self.curActiveWidth.shrink) end
-    if self.b > 12 then self.fitClass = "tight" else self.fitClass = "decent" end
-  end
+  self.b, self.fitClass = fitclass(self, shortfall)
   SU.debug("break", self.b .. " " .. self.fitClass)
   if (self.b > inf_bad or pi == ejectPenalty) then
     if self.finalpass and self.minimumDemerits == awful_bad and self.r.next == self.active and self.prev_r == self.active then
@@ -295,8 +308,6 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
       passSerial = passSerial + 1
 
       local newPassive = { prev = self.passive, curBreak = self.cur_p, prevBreak = self.best_place[class], serial = passSerial, ratio = self.lastRatio }
-      self.passive = newPassive
-
       local newActive = { next = self.r, breakNode = newPassive, lineNumber = self.best_pl_line[class] + 1, type = breakType, fitness = class, totalDemerits = value }
       -- DoLastLineFit? 1636 XXX
       self.prev_r.next = newActive
@@ -324,10 +335,11 @@ end
 
 function lineBreak:checkForLegalBreak(n) -- 892
   SU.debug("break", "considering node "..n);
+  local previous = self.nodes[self.cur_p - 1]
   if self.sideways and n:isVbox() then
     self.activeWidth = self.activeWidth + n.height + n.depth
   elseif self.sideways and n:isVglue() then
-    if self.nodes[self.cur_p - 1] and (self.nodes[self.cur_p - 1]:isVbox()) then
+    if previous and (previous:isVbox()) then
       self:tryBreak(0, "unhyphenated")
     end
     self.activeWidth = self.activeWidth + n.height + n.depth
@@ -336,7 +348,7 @@ function lineBreak:checkForLegalBreak(n) -- 892
   elseif n:isGlue() then
     -- 894
     if self.auto_breaking then
-      if self.nodes[self.cur_p - 1] and (self.nodes[self.cur_p - 1]:isBox()) then
+      if previous and (previous:isBox()) then
         --self.nodes[self.prev_p]:precedesBreak() or 
         --self.nodes[self.prev_p]:isKern()) then
         self:tryBreak(0, "unhyphenated")
@@ -410,15 +422,13 @@ function lineBreak:doBreak (nodes, hsize, sideways)
     end
     self.activeWidth = std.tree.clone(self.background)
 
-    self.passive = nil
-
     self.cur_p = 1
     self.auto_breaking = true
     while self.nodes[self.cur_p] and not (self.active.next == self.active) do
       self:checkForLegalBreak(self.nodes[self.cur_p])
       self.cur_p = self.cur_p + 1
     end
-    if not self.nodes[self.cur_p] then
+    if self.cur_p > #(self.nodes) then
       if self:tryFinalBreak() == "done" then break end
     end
     -- (Not doing 891)
