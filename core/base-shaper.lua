@@ -58,8 +58,8 @@ SILE.shapers.base = std.object {
     SU.error("Abstract function getFace called", true)
   end,
 
-  itemize = function(self, nodelist, text, options)
-    local state = SILE.font.loadDefaults(options or {})
+  itemize = function(self, nodelist, text)
+    local state = SILE.font.loadDefaults({})
     local gluewidth = self:measureSpace(state)
 
     -- First tokenize on spaces

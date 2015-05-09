@@ -88,16 +88,17 @@ local hyphenateNode = function(n)
   local newnodes = {}
   for i = 1,#breaks do b = breaks[i]
     if not(b=="") then
-      local nnodes = {}
-      SILE.shaper:itemize(nnodes, b, n.options)
-      newnodes[#newnodes+1] = nnodes[1]:shape()
+      local nnodes = SILE.shaper:createNnodes(b, n.options)
+      assert(#nnodes == 1)
+      nnodes[1].parent = n
+      newnodes[#newnodes+1] = nnodes[1]
       if j ~= #breaks then
         d = SILE.nodefactory.newDiscretionary({ prebreak = SILE.shaper:createNnodes("-", n.options) })
+        d.parent = n
         newnodes[#newnodes+1] = d
       end
     end
   end
-  for i =1,#newnodes do newnodes[i].parent = n end
   n.children = newnodes
   n.hyphenated = false
   n.done = false
