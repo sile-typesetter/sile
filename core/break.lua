@@ -40,7 +40,12 @@ function lineBreak:init()
   if type(lskip) == "table" then lskip = lskip.width else lskip = 0 end
   self.background = SILE.length.new() + rskip + lskip   
   -- 860
-  self.minimalDemerits = { tight = awful_bad, decent = awful_bad, loose = awful_bad, veryLoose = awful_bad }
+  self.bestInClass = {}
+  for i = 1,#classes do 
+    self.bestInClass[classes[i]] = {
+      minimalDemerits = awful_bad
+    }
+  end
   self.minimumDemerits = awful_bad
   self.best_place = {}
   self.best_pl_line = {}
@@ -243,16 +248,19 @@ function lineBreak:recordFeasible(pi, breakType) -- 881
   end
   SU.debug("break"," fit class = "..self.fitClass);
   d = d + self.r.totalDemerits
-  if d <= self.minimalDemerits[self.fitClass] then
-    self.minimalDemerits[self.fitClass] = d
-    self.best_place[self.fitClass] = self.r.serial and self.r
-    self.best_pl_line[self.fitClass] = self.r.lineNumber
+  if d <= self.bestInClass[self.fitClass].minimalDemerits then
+    self.bestInClass[self.fitClass] = {
+      minimalDemerits = d,
+      node = self.r.serial and self.r,
+      line = self.r.lineNumber
+    }
     -- XXX do last line fit
     if d < self.minimumDemerits then self.minimumDemerits = d end
   end
 end
 
 function lineBreak:computeDiscBreakWidth() -- 866
+  if not self.nodes[self.cur_p] then return 0 end
   local rep = self.nodes[self.cur_p].replacement
   for _,n in pairs(rep) do self.breakWidth = self.breakWidth - n.width end
   local s = self.nodes[self.cur_p].postbreak
@@ -267,7 +275,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
     self.no_break_yet = false
     self.breakWidth = std.tree.clone(self.background)
     local s = self.cur_p
-    if breakType == "hyphenated" and self.nodes[self.cur_p] then self:computeDiscBreakWidth() end
+    if breakType == "hyphenated" then self:computeDiscBreakWidth() end
     while self.nodes[s] and not self.nodes[s]:isBox() do
       if self.sideways and self.nodes[s].height then
         self.breakWidth = self.breakWidth - (self.nodes[s].height + self.nodes[s].depth)
@@ -288,13 +296,15 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
     self.prev_prev_r = self.prev_r
     self.prev_r = newDelta
   end
-  if (math.abs(self.adjdemerits) >= awful_bad - self.minimumDemerits) then self.minimumDemerits = awful_bad - 1
+  if (math.abs(self.adjdemerits) >= awful_bad - self.minimumDemerits) then 
+    self.minimumDemerits = awful_bad - 1
   else self.minimumDemerits = self.minimumDemerits + math.abs(self.adjdemerits)
   end
 
   for i = 1,#classes do
     local class = classes[i]
-    local value = self.minimalDemerits[class]
+    local best = self.bestInClass[class]
+    local value = best.minimalDemerits
     SU.debug("break","Class is "..class.." Best value here is " .. value)
 
     if value <= self.minimumDemerits then
@@ -303,10 +313,10 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
 
       local newActive = { next = self.r, 
         curBreak = self.cur_p, 
-        prevBreak = self.best_place[class], 
+        prevBreak = best.node, 
         serial = passSerial, 
         ratio = self.lastRatio, 
-        lineNumber = self.best_pl_line[class] + 1, 
+        lineNumber = best.line + 1, 
         type = breakType, 
         fitness = class, 
         totalDemerits = value
@@ -317,7 +327,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
       self:dumpBreakNode(newActive)
 
     end
-    self.minimalDemerits[class] = awful_bad
+    self.bestInClass[class] = { minimalDemerits = awful_bad }
   end
 
   self.minimumDemerits = awful_bad
@@ -375,29 +385,27 @@ end
 
 function lineBreak:tryFinalBreak()      -- 899
   self:tryBreak(ejectPenalty, "hyphenated")
-  if not(self.active.next == self.active) then
-    self.r = self.active.next
-    self.fewestDemerits = awful_bad
-    repeat
-      if not(self.r.type == "delta") then
-        if (self.r.totalDemerits < self.fewestDemerits) then
-          self.bestBet = self.r
-        end
+  if self.active.next == self.active then return end
+  self.r = self.active.next
+  self.fewestDemerits = awful_bad
+  repeat
+    if not(self.r.type == "delta") then
+      if (self.r.totalDemerits < self.fewestDemerits) then
+        self.bestBet = self.r
       end
-      self.r = self.r.next
-    until self.r == self.active
-    self.bestLine = self.bestBet.lineNumber
-    if param("looseness") == 0 then return "done" end
-    -- XXX 901
-    if (self.actualLooseness == param("looseness")) or self.finalpass then return "done" end
-  end
+    end
+    self.r = self.r.next
+  until self.r == self.active
+  self.bestLine = self.bestBet.lineNumber
+  if param("looseness") == 0 then return "done" end
+  -- XXX 901
+  if (self.actualLooseness == param("looseness")) or self.finalpass then return "done" end
 end
 
 function lineBreak:doBreak (nodes, hsize, sideways)
   self.nodes = nodes
   self.hsize = hsize
   self.sideways = sideways
-  self.auto_breaking = 1
   self:init()
   self.adjdemerits = param("adjdemerits")
   self.threshold = param("pretolerance")
