@@ -391,12 +391,12 @@ function lineBreak:tryFinalBreak()      -- 899
   repeat
     if not(self.r.type == "delta") then
       if (self.r.totalDemerits < self.fewestDemerits) then
+        self.fewestDemerits = self.r.totalDemerits
         self.bestBet = self.r
       end
     end
     self.r = self.r.next
   until self.r == self.active
-  self.bestLine = self.bestBet.lineNumber
   if param("looseness") == 0 then return "done" end
   -- XXX 901
   if (self.actualLooseness == param("looseness")) or self.finalpass then return "done" end
