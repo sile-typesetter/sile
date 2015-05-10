@@ -107,7 +107,7 @@ local _disc = _hbox {
   postbreak = {},
   replacement = {},
   used = 0,
-  pbw = nil,
+  prebw = nil,
   __tostring = function (this) 
       return "D(" .. SU.concat(this.prebreak,"") .. "|" .. SU.concat(this.postbreak, "") .. ")";
   end,
@@ -119,12 +119,26 @@ local _disc = _hbox {
     end
   end,
   prebreakWidth = function(self)
-    -- if self.pbw then return self.pbw end
+    if self.prebw then return self.prebw end
     local l = 0
     for _,n in pairs(self.prebreak) do l = l + n.width end
-    -- self.pbw = l
+    self.prebw = l
     return l
-  end
+  end,
+  postbreakWidth = function(self)
+    if self.postbw then return self.postbw end
+    local l = 0
+    for _,n in pairs(self.postbreak) do l = l + n.width end
+    self.postbw = l
+    return l
+  end,
+  replacementWidth = function(self)
+    if self.replacew then return self.replacew end
+    local l = 0
+    for _,n in pairs(self.replacement) do l = l + n.width end
+    self.replacew = l
+    return l
+  end,
 }
 
 -- Alternatives

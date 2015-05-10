@@ -52,13 +52,9 @@ function lineBreak:init()
 end
 
 function lineBreak:trimGlue() -- 842
-  nodes = self.nodes
-  if nodes[#nodes]:isGlue() then
-    nodes[#nodes] = SILE.nodefactory.newPenalty({penalty = inf_bad})
-  else
-    nodes[#nodes+1] = SILE.nodefactory.newPenalty({penalty = inf_bad})
-  end 
-  -- XXX Add parskipfill glue here  
+  local nodes = self.nodes
+  if nodes[#nodes]:isGlue() then nodes[#nodes] = nil end
+  nodes[#nodes+1] = SILE.nodefactory.newPenalty({penalty = inf_bad})
 end
 
 function lineBreak:setupLineLengths(params) -- 874
@@ -329,7 +325,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
 
   self.minimumDemerits = awful_bad
   -- 870
-  if not (self.r == self.activeListHead) then
+  if self.r ~= self.activeListHead then
     local newDelta = { next = self.r, type = "delta", width = self.curActiveWidth - self.breakWidth }
     self.prev_r.next = newDelta
     self.prev_prev_r = self.prev_r
@@ -372,11 +368,11 @@ function lineBreak:tryFinalBreak()      -- 899
   self:tryBreak(ejectPenalty, "hyphenated")
   if self.activeListHead.next == self.activeListHead then return end
   self.r = self.activeListHead.next
-  self.fewestDemerits = awful_bad
+  local fewestDemerits = awful_bad
   repeat
     if not(self.r.type == "delta") then
-      if (self.r.totalDemerits < self.fewestDemerits) then
-        self.fewestDemerits = self.r.totalDemerits
+      if (self.r.totalDemerits < fewestDemerits) then
+        fewestDemerits = self.r.totalDemerits
         self.bestBet = self.r
       end
     end
