@@ -355,24 +355,14 @@ function lineBreak:checkForLegalBreak(n) -- 892
   elseif n:isBox() then
     self.activeWidth = self.activeWidth + n.width
   elseif n:isGlue() then
-    -- 894
-    if self.auto_breaking then
-      if previous and (previous:isBox()) then
-        --self.nodes[self.prev_p]:precedesBreak() or 
-        --self.nodes[self.prev_p]:isKern()) then
-        self:tryBreak(0, "unhyphenated")
-      end
-      self.activeWidth = self.activeWidth + n.width -- Length version      
-    end
+    -- 894 (We removed the auto_breaking parameter)
+    if previous and previous:isBox() then self:tryBreak(0, "unhyphenated") end
+    self.activeWidth = self.activeWidth + n.width -- Length version
   elseif n:isDiscretionary() then
     -- 895  XXX
-    if not n.prebreak then 
-      tryBreak(param("hyphenPenalty"), "hyphenated")
-    else
-      self.activeWidth = self.activeWidth + n:prebreakWidth()
-      self:tryBreak(param("hyphenPenalty"), "hyphenated")
-      self.activeWidth = self.activeWidth - n:prebreakWidth()      
-    end
+    self.activeWidth = self.activeWidth + n:prebreakWidth()
+    self:tryBreak(param("hyphenPenalty"), "hyphenated")
+    self.activeWidth = self.activeWidth - n:prebreakWidth()
   elseif n:isPenalty() then
     self:tryBreak(n.penalty, "unhyphenated")
   end
@@ -429,7 +419,6 @@ function lineBreak:doBreak (nodes, hsize, sideways)
     self.activeWidth = std.tree.clone(self.background)
 
     self.cur_p = 1
-    self.auto_breaking = true
     while self.nodes[self.cur_p] and self.activeListHead.next ~= self.activeListHead do
       self:checkForLegalBreak(self.nodes[self.cur_p])
       self.cur_p = self.cur_p + 1
