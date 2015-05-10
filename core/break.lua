@@ -28,7 +28,6 @@ local param = function(x) return SILE.settings.get("linebreak."..x) end
 
 function lineBreak:init()
   self:trimGlue() -- 842
-  self.active = { type = "hyphenated", lineNumber = awful_bad, subtype = 0 } -- 846
   -- 849
   self.activeWidth = SILE.length.new()
   self.curActiveWidth = SILE.length.new()
@@ -227,20 +226,24 @@ function lineBreak:deactivateR() -- 886
   end
 end
 
+function lineBreak:computeDemerits(pi, breakType)
+  if self.artificialDemerits then return 0 end
+  local d = param("linePenalty") + self.b
+  if math.abs(d) >= 10000 then d = 100000000 else d = d * d end
+  if pi > 0 then d = d + pi * pi
+  elseif pi == 0 then -- do nothing
+  elseif pi > ejectPenalty then d = d - pi * pi end
+  if breakType == "hyphenated" and self.r.type == "hyphenated" then
+    if self.nodes[self.cur_p] then 
+      d = d + param("doubleHyphenDemerits") 
+    else d = d + param("finalHyphenDemerits") end
+  end    
+  -- XXX adjDemerits not added here
+  return d
+end
+
 function lineBreak:recordFeasible(pi, breakType) -- 881
-  local d
-  if self.artificialDemerits then d = 0
-  else
-    d = param("linePenalty") + self.b
-    if math.abs(d) >= 10000 then d = 100000000 else d = d * d end
-    if not(pi == 0) then 
-      if pi > 0 then d = d + pi * pi elseif pi > ejectPenalty then d = d - pi * pi end
-    end
-    if breakType == "hyphenated" and self.r.type == "hyphenated" then
-      if self.nodes[self.cur_p] then d = d + param("doubleHyphenDemerits") else d = d + param("finalHyphenDemerits") end
-    end
-    -- XXX adjDemerits not added here
-  end
+  local d = lineBreak:computeDemerits(pi, breakType)
   if self.nodes[self.cur_p] then
     SU.debug("break", "@" .. self.nodes[self.cur_p] .. " via @@" .. (self.r.serial or "0")  .. " b=" .. self.b .. " d=".. d) -- 882
   else
@@ -425,6 +428,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
       self.nodes = SILE.hyphenate(self.nodes) 
     end
     -- 890
+    self.active = { type = "hyphenated", lineNumber = awful_bad, subtype = 0 } -- 846
     self.active.next = { type = "unhyphenated", fitness = "decent", next = self.active, lineNumber = param("prevGraf") + 1, totalDemerits = 0}
 
     if param("doLastLineFit") then
@@ -434,7 +438,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
 
     self.cur_p = 1
     self.auto_breaking = true
-    while self.nodes[self.cur_p] and not (self.active.next == self.active) do
+    while self.nodes[self.cur_p] and self.active.next ~= self.active do
       self:checkForLegalBreak(self.nodes[self.cur_p])
       self.cur_p = self.cur_p + 1
     end
@@ -442,7 +446,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
       if self:tryFinalBreak() == "done" then break end
     end
     -- (Not doing 891)
-    if not (self.pass == "second") then
+    if self.pass ~= "second" then
       self.pass = "second"
       self.threshold = param("tolerance")
     else
