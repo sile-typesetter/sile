@@ -24,6 +24,20 @@ local inf_bad = 10000
 local ejectPenalty = -inf_bad
 lineBreak = {}
 
+--[[
+  Basic control flow:
+  doBreak:
+    init
+    for each node:
+      checkForLegalBreak
+        tryBreak
+          createNewActiveNodes
+          considerDemerits
+            deactivateR (or) recordFeasible
+    tryFinalBreak
+    postLineBreak
+]]
+
 local param = function(x) return SILE.settings.get("linebreak."..x) end
 
 function lineBreak:init()
@@ -75,7 +89,14 @@ function lineBreak:setupLineLengths(params) -- 874
 
 end
 
-function lineBreak:tryBreak(pi, breakType) -- 855
+function lineBreak:tryBreak() -- 855
+  local pi,breakType
+  
+  local n = self.nodes[self.cur_p]
+  if not n then pi = ejectPenalty; breakType = "hyphenated"
+  elseif n:isDiscretionary() then breakType = "hyphenated"; pi = param("hyphenPenalty")
+  else breakType = "unhyphenated"; pi = n.penalty or 0 end
+
   SU.debug("break", "Trying a "..breakType.." break p="..pi)
   self.no_break_yet = true -- We have to store all this state crap in the object, or it's global variables all the way
   self.prev_prev_r = nil
@@ -122,7 +143,7 @@ function lineBreak:tryBreak(pi, breakType) -- 855
       end 
       SU.debug("break", " ---> (2) cuaw is ".. self.curActiveWidth.length)
       SU.debug("break", " ---> aw is ".. self.activeWidth.length)
-      local continuing = self:considerDemerits(pi, breakType)
+      self:considerDemerits(pi, breakType)
       SU.debug("break", " <--- cuaw is ".. self.curActiveWidth.length)
       SU.debug("break", " <--- aw is ".. self.activeWidth.length)
     end
@@ -170,20 +191,18 @@ function lineBreak:considerDemerits(pi, breakType) -- 877
     else
       if self.b > self.threshold then 
         self:deactivateR()
-        return false
+        return
       end
     end
   else
     self.prev_r = self.r
-    if self.b > self.threshold then return true end
+    if self.b > self.threshold then return end
     nodeStaysActive = true
   end
 
   self.lastRatio = shortfall > 0 and shortfall/(self.curActiveWidth.stretch or awful_bad) or shortfall/(self.curActiveWidth.shrink or awful_bad)
   self:recordFeasible(pi, breakType)
-  if nodeStaysActive then return true end
-  self:deactivateR()
-  return false
+  if not nodeStaysActive then self:deactivateR() end
 end
 
 function lineBreak:badness(t,s)
@@ -345,27 +364,26 @@ function lineBreak:checkForLegalBreak(n) -- 892
     self.activeWidth = self.activeWidth + n.height + n.depth
   elseif self.sideways and n:isVglue() then
     if previous and (previous:isVbox()) then
-      self:tryBreak(0, "unhyphenated")
+      self:tryBreak()
     end
     self.activeWidth = self.activeWidth + n.height + n.depth
   elseif n:isBox() then
     self.activeWidth = self.activeWidth + n.width
   elseif n:isGlue() then
     -- 894 (We removed the auto_breaking parameter)
-    if previous and previous:isBox() then self:tryBreak(0, "unhyphenated") end
-    self.activeWidth = self.activeWidth + n.width -- Length version
-  elseif n:isDiscretionary() then
-    -- 895  XXX
+    if previous and previous:isBox() then self:tryBreak() end
+    self.activeWidth = self.activeWidth + n.width
+  elseif n:isDiscretionary() then -- 895  XXX
     self.activeWidth = self.activeWidth + n:prebreakWidth()
-    self:tryBreak(param("hyphenPenalty"), "hyphenated")
+    self:tryBreak()
     self.activeWidth = self.activeWidth - n:prebreakWidth()
   elseif n:isPenalty() then
-    self:tryBreak(n.penalty, "unhyphenated")
+    self:tryBreak()
   end
 end
 
 function lineBreak:tryFinalBreak()      -- 899
-  self:tryBreak(ejectPenalty, "hyphenated")
+  self:tryBreak()
   if self.activeListHead.next == self.activeListHead then return end
   self.r = self.activeListHead.next
   local fewestDemerits = awful_bad
@@ -409,9 +427,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
     self.activeListHead = { type = "hyphenated", lineNumber = awful_bad, subtype = 0 } -- 846
     self.activeListHead.next = { type = "unhyphenated", fitness = "decent", next = self.activeListHead, lineNumber = param("prevGraf") + 1, totalDemerits = 0}
 
-    if param("doLastLineFit") then
-      --1630
-    end
+    -- Not doing 1630
     self.activeWidth = std.tree.clone(self.background)
 
     self.cur_p = 1
@@ -432,9 +448,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
       self.finalpass = true
     end    
   end
-  if param("doLastLineFit") then 
-    -- 1638
-  end
+  -- Not doing 1638
   return self:postLineBreak()
 end
 
