@@ -83,7 +83,7 @@ function lineBreak:tryBreak(pi, breakType) -- 855
   SU.debug("break", "Trying a "..breakType.." break p="..pi)
   self.no_break_yet = true -- We have to store all this state crap in the object, or it's global variables all the way
   self.prev_prev_r = nil
-  self.prev_r = self.active
+  self.prev_r = self.activeListHead
   self.old_l = 0
   self.r = nil
   self.curActiveWidth = std.tree.clone(self.activeWidth)
@@ -105,10 +105,10 @@ function lineBreak:tryBreak(pi, breakType) -- 855
       -- 861
       if self.r.lineNumber > self.old_l then
         SU.debug("break","Mimimum demerits = " .. self.minimumDemerits)
-        if self.minimumDemerits < awful_bad and (not (self.old_l == self.easy_line) or self.r == self.active) then
+        if self.minimumDemerits < awful_bad and (self.old_l ~= self.easy_line or self.r == self.activeListHead) then
           self:createNewActiveNodes(breakType)          
         end
-        if self.r == self.active then
+        if self.r == self.activeListHead then
           SU.debug("break", "<- tryBreak") 
           return 
         end
@@ -169,7 +169,7 @@ function lineBreak:considerDemerits(pi, breakType) -- 877
   self.b, self.fitClass = fitclass(self, shortfall)
   SU.debug("break", self.b .. " " .. self.fitClass)
   if (self.b > inf_bad or pi == ejectPenalty) then
-    if self.finalpass and self.minimumDemerits == awful_bad and self.r.next == self.active and self.prev_r == self.active then
+    if self.finalpass and self.minimumDemerits == awful_bad and self.r.next == self.activeListHead and self.prev_r == self.activeListHead then
       self.artificialDemerits = true
     else
       if self.b > self.threshold then 
@@ -200,21 +200,21 @@ end
 function lineBreak:deactivateR() -- 886
   SU.debug("break"," Deactivating r ("..self.r.type..")")
   self.prev_r.next = self.r.next
-  if self.prev_r == self.active then
+  if self.prev_r == self.activeListHead then
     -- 887
-    self.r = self.active.next
+    self.r = self.activeListHead.next
     if self.r.type == "delta" then
       self.activeWidth = self.activeWidth + self.r.width      
       self.curActiveWidth = std.tree.clone(self.activeWidth)      
-      self.active.next = self.r.next
+      self.activeListHead.next = self.r.next
     end
     SU.debug("break","  Deactivate, branch 1");
   else
     if self.prev_r.type == "delta" then
       self.r = self.prev_r.next
-      if self.r == self.active then
+      if self.r == self.activeListHead then
         self.curActiveWidth = self.curActiveWidth - self.r.width
-        self.prev_prev_r.next = self.active
+        self.prev_prev_r.next = self.activeListHead
         self.prev_r = self.prev_prev_r
       elseif self.r.type == "delta" then
         self.curActiveWidth = self.curActiveWidth + self.r.width
@@ -262,15 +262,6 @@ function lineBreak:recordFeasible(pi, breakType) -- 881
   end
 end
 
-function lineBreak:computeDiscBreakWidth() -- 866
-  if not self.nodes[self.cur_p] then return 0 end
-  local rep = self.nodes[self.cur_p].replacement
-  for _,n in pairs(rep) do self.breakWidth = self.breakWidth - n.width end
-  local s = self.nodes[self.cur_p].postbreak
-  for _,n in pairs(s) do self.breakWidth = self.breakWidth + n.width end
-  self.breakWidth = self.breakWidth + self.discWidth
-end
-
 
 function lineBreak:createNewActiveNodes(breakType) -- 862
   if self.no_break_yet then
@@ -278,7 +269,10 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
     self.no_break_yet = false
     self.breakWidth = std.tree.clone(self.background)
     local s = self.cur_p
-    if breakType == "hyphenated" then self:computeDiscBreakWidth() end
+    local n = self.nodes[s]
+    if n and n:isDiscretionary() then -- 866
+      self.breakWidth = self.breakWidth + n:prebreakWidth() + n:postbreakWidth() - n:replacementWidth()
+    end
     while self.nodes[s] and not self.nodes[s]:isBox() do
       if self.sideways and self.nodes[s].height then
         self.breakWidth = self.breakWidth - (self.nodes[s].height + self.nodes[s].depth)
@@ -291,7 +285,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
   end
   -- 869 (Add a new delta node)
   if self.prev_r.type == "delta" then self.prev_r.width = self.prev_r.width - self.curActiveWidth + self.breakWidth
-  elseif self.prev_r == self.active then self.activeWidth = std.tree.clone(self.breakWidth)
+  elseif self.prev_r == self.activeListHead then self.activeWidth = std.tree.clone(self.breakWidth)
   else
     local newDelta = { next = self.r, type = "delta", width = self.breakWidth - self.curActiveWidth}
     SU.debug("break", "Added new delta node = " .. tostring(newDelta.width))
@@ -335,7 +329,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
 
   self.minimumDemerits = awful_bad
   -- 870
-  if not (self.r == self.active) then
+  if not (self.r == self.activeListHead) then
     local newDelta = { next = self.r, type = "delta", width = self.curActiveWidth - self.breakWidth }
     self.prev_r.next = newDelta
     self.prev_prev_r = self.prev_r
@@ -372,14 +366,12 @@ function lineBreak:checkForLegalBreak(n) -- 892
     end
   elseif n:isDiscretionary() then
     -- 895  XXX
-    self.discWidth = 0
     if not n.prebreak then 
       tryBreak(param("hyphenPenalty"), "hyphenated")
     else
-      self.discWidth = n:prebreakWidth()
-      self.activeWidth = self.activeWidth + self.discWidth
+      self.activeWidth = self.activeWidth + n:prebreakWidth()
       self:tryBreak(param("hyphenPenalty"), "hyphenated")
-      self.activeWidth = self.activeWidth - self.discWidth      
+      self.activeWidth = self.activeWidth - n:prebreakWidth()      
     end
   elseif n:isPenalty() then
     self:tryBreak(n.penalty, "unhyphenated")
@@ -388,8 +380,8 @@ end
 
 function lineBreak:tryFinalBreak()      -- 899
   self:tryBreak(ejectPenalty, "hyphenated")
-  if self.active.next == self.active then return end
-  self.r = self.active.next
+  if self.activeListHead.next == self.activeListHead then return end
+  self.r = self.activeListHead.next
   self.fewestDemerits = awful_bad
   repeat
     if not(self.r.type == "delta") then
@@ -399,7 +391,7 @@ function lineBreak:tryFinalBreak()      -- 899
       end
     end
     self.r = self.r.next
-  until self.r == self.active
+  until self.r == self.activeListHead
   if param("looseness") == 0 then return "done" end
   -- XXX 901
   if (self.actualLooseness == param("looseness")) or self.finalpass then return "done" end
@@ -428,8 +420,8 @@ function lineBreak:doBreak (nodes, hsize, sideways)
       self.nodes = SILE.hyphenate(self.nodes) 
     end
     -- 890
-    self.active = { type = "hyphenated", lineNumber = awful_bad, subtype = 0 } -- 846
-    self.active.next = { type = "unhyphenated", fitness = "decent", next = self.active, lineNumber = param("prevGraf") + 1, totalDemerits = 0}
+    self.activeListHead = { type = "hyphenated", lineNumber = awful_bad, subtype = 0 } -- 846
+    self.activeListHead.next = { type = "unhyphenated", fitness = "decent", next = self.activeListHead, lineNumber = param("prevGraf") + 1, totalDemerits = 0}
 
     if param("doLastLineFit") then
       --1630
@@ -438,7 +430,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
 
     self.cur_p = 1
     self.auto_breaking = true
-    while self.nodes[self.cur_p] and self.active.next ~= self.active do
+    while self.nodes[self.cur_p] and self.activeListHead.next ~= self.activeListHead do
       self:checkForLegalBreak(self.nodes[self.cur_p])
       self.cur_p = self.cur_p + 1
     end
