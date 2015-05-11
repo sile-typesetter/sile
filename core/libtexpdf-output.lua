@@ -67,7 +67,7 @@ SILE.outputters.libtexpdf = {
     self.rule(f:right(), f:top(), 0.5, - f:height())
     self.rule(f:left(), f:bottom(), f:width(), 0.5)
     --self.rule(f:left() + f:width()/2 - 5, (f:top() + f:bottom())/2+5, 10, 10)
-    local stuff = SILE.shaper:shape(f.id)
+    local stuff = SILE.shaper:createNnodes(f.id, SILE.font.loadDefaults({}))
     stuff = stuff[1].nodes[1].value.glyphString -- Horrible hack
     local buf = {}
     for i=1,#stuff do
