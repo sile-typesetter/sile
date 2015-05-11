@@ -1,3 +1,5 @@
+tests/*.actual
+tests/*.pdf
 # http://www.gnu.org/software/automake
 
 Makefile.in
