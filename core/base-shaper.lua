@@ -110,6 +110,9 @@ SILE.shapers.base = std.object {
     SU.error("Abstract function addShapedGlyphToNnodeValue called", true)
   end,
 
+  preAddNodes = function(self, items, nnodeValue)
+  end,
+
   createNnodes = function (self, token, options)
     local items, width = self:shapeToken(token, options)
     local nnodeContents = {}
@@ -119,6 +122,7 @@ SILE.shapers.base = std.object {
     local height = 0
     local glyphNames = {}
     local nnodeValue = { text = token, options = options, glyphString = {} }
+    self:preAddNodes(items, nnodeValue)
     for i = 1,#items do local glyph = items[i]        
       if glyph.depth > depth then depth = glyph.depth end
       if glyph.height > height then height = glyph.height end

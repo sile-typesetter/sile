@@ -28,6 +28,16 @@ SILE.outputters.libtexpdf = {
   end,
   outputHbox = function (value,w)
     if not value.glyphString then return end
+    if value.complex then
+      for i=1,#(value.items) do
+        local glyph = value.items[i].codepoint
+        local buf = string.char(math.floor(glyph % 2^32 / 2^8)) .. string.char(glyph % 0x100)
+        pdf.setstring(cursorX + (value.items[i].x_offset or 0), cursorY + (value.items[i].y_offset or 0), buf, string.len(buf), font, value.items[i].width)
+        cursorX = cursorX + value.items[i].width
+        lastW = value.items[i].width
+      end
+      return
+    end
     local buf = {}
     for i=1,#(value.glyphString) do
       glyph = value.glyphString[i]

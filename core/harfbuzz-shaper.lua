@@ -23,8 +23,19 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
     SU.debug("fonts", "Resolved font family "..opts.font.." -> "..face.filename)
     return face
   end,
+  preAddNodes = function(self, items, nnodeValue) -- Check for complex nodes
+    for i=1,#items do
+      if items[i].x_offset or items[i].y_offset then nnodeValue.complex = true; break end
+    end
+    nnodeValue.complex = true
+  end,
   addShapedGlyphToNnodeValue = function (self, nnodevalue, shapedglyph)
-    if not nnodevalue.glyphString then nnodevalue.glyphs = {} end
+    if nnodevalue.complex then
+      if not nnodevalue.items then nnodevalue.items = {} end
+      nnodevalue.items[#nnodevalue.items+1] = shapedglyph
+      return
+    end
+    if not nnodevalue.glyphString then nnodevalue.glyphString = {} end
     if not nnodevalue.glyphNames then nnodevalue.glyphNames = {} end
     table.insert(nnodevalue.glyphString, shapedglyph.codepoint)
     table.insert(nnodevalue.glyphNames, shapedglyph.name)
