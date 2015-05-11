@@ -179,10 +179,49 @@ local function fitclass(self, s) -- s =shortfall
   return badness, class
 end
 
+function lineBreak:tryAlternatives(from, to)
+  local altSizes = {}
+  local alternates = {}
+  for i = from, to do
+    if self.nodes[i] and self.nodes[i]:isAlternative() then
+      alternates[#alternates+1] = self.nodes[i]
+      altSizes[#altSizes+1] = #(self.nodes[i].options)
+    end
+  end
+  if #alternates == 0 then return end
+  local localMinimum = awful_bad
+  local selectedShortfall = 0
+  local shortfall = self.lineWidth - self.curActiveWidth.length
+  SU.debug("break", "Shortfall was ", shortfall)
+  for combination in SU.allCombinations(altSizes) do
+    local addWidth = 0
+    for i = 1,#(alternates) do local alt = alternates[i]
+      addWidth = (addWidth + alt.options[combination[i]].width - alt:minWidth()).length
+      SU.debug("break", alt.options[combination[i]], " width", addWidth)
+    end
+    local ss = shortfall - addWidth
+    local b = ss > 0 and lineBreak:badness(ss, self.curActiveWidth.stretch) or lineBreak:badness(math.abs(ss), self.curActiveWidth.shrink)
+    SU.debug("break", "  badness of "..ss.." ("..self.curActiveWidth.stretch..") is ".. b)
+    if b < localMinimum then
+      self.r.alternates = alternates
+      self.r.altSelections = combination
+      selectedShortfall = addWidth
+      localMinimum = b
+    end
+  end
+  SU.debug("break", "Choosing ", alternates[1].options[self.r.altSelections[1]])
+  -- self.curActiveWidth = self.curActiveWidth + selectedShortfall
+  shortfall = self.lineWidth - self.curActiveWidth.length
+  SU.debug("break", "Is now ", shortfall)
+end
+
 function lineBreak:considerDemerits(pi, breakType) -- 877  
   self.artificialDemerits = false
   local nodeStaysActive = false
+  -- self:dumpActiveRing()
   local shortfall = self.lineWidth - self.curActiveWidth.length
+  self:tryAlternatives(self.r.prevBreak and self.r.prevBreak.curBreak or 1, self.r.curBreak and self.r.curBreak or 1, shortfall)
+  shortfall = self.lineWidth - self.curActiveWidth.length
   self.b, self.fitClass = fitclass(self, shortfall)
   SU.debug("break", self.b .. " " .. self.fitClass)
   if (self.b > inf_bad or pi == ejectPenalty) then
@@ -378,6 +417,8 @@ function lineBreak:checkForLegalBreak(n) -- 892
       self:tryBreak()
     end
     self.activeWidth = self.activeWidth + n.height + n.depth
+  elseif n:isAlternative() then
+    self.activeWidth = self.activeWidth + n:minWidth()    
   elseif n:isBox() then
     self.activeWidth = self.activeWidth + n.width
   elseif n:isGlue() then
@@ -470,6 +511,12 @@ function lineBreak:postLineBreak() -- 903
   local line  = 1
   repeat
     table.insert(breaks, 1,  { position = p.curBreak, width = self.parShape and self.parShape[line] or self.hsize } )
+    if p.alternates then
+      for i = 1,#p.alternates do
+        p.alternates[i].selected = p.altSelections[i]
+        p.alternates[i].width = p.alternates[i].options[p.altSelections[i]].width
+      end
+    end
     p = p.prevBreak
     line = line + 1
   until not p
