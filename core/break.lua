@@ -464,4 +464,15 @@ function lineBreak:postLineBreak() -- 903
   return breaks
 end
 
+function lineBreak:dumpActiveRing()
+  local p = self.activeListHead
+  io.write("\n")
+  repeat
+    if p == self.r then io.write("-> ") else io.write("   ") end
+    print(lineBreak:describeBreakNode(p))
+    p = p.next
+  until p == self.activeListHead
+  end
+  io.write("\n")
+
 return lineBreak
