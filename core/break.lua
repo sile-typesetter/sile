@@ -531,7 +531,6 @@ function lineBreak:dumpActiveRing()
     print(lineBreak:describeBreakNode(p))
     p = p.next
   until p == self.activeListHead
-  end
-  io.write("\n")
+end
 
 return lineBreak
