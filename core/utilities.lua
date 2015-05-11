@@ -153,4 +153,21 @@ function utilities.splitUtf8(s) -- Return an array of UTF8 strings each represen
   return rv
 end
 
+function utilities.allCombinations(options)
+  local count = 1
+  for i=1,#options do count = count * options[i] end
+  return coroutine.wrap(function()
+    for i=0,count-1 do
+      local this = i
+      local rv = {}
+      for j = 1,#options do
+        local base = options[j]
+        rv[#rv+1] = this % base + 1
+        this = (this - this % base )/ base
+      end
+      coroutine.yield(rv)
+    end
+  end)
+end
+
 return utilities

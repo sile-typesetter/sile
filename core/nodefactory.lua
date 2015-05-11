@@ -15,11 +15,12 @@ _box = std.object {
 
 function _box:outputYourself () SU.error(self.type.." with no output routine") end
 function _box:toText ()  return self.type end
-function _box:isBox ()   return self.type=="hbox" or self.type == "nnode" or self.type=="vbox" end
+function _box:isBox ()   return self.type=="hbox" or self.type == "alternative" or self.type == "nnode" or self.type=="vbox" end
 function _box:isNnode () return self.type=="nnode" end
 function _box:isGlue ()  return self.type == "glue" end
 function _box:isVglue ()  return self.type == "vglue" end
 function _box:isUnshaped ()  return self.type == "unshaped" end
+function _box:isAlternative ()  return self.type == "alternative" end
 function _box:isVbox ()  return self.type == "vbox" end
 function _box:isDiscardable () return self:isGlue() or self:isPenalty() end
 function _box:isPenalty ()  return self.type == "penalty" end
@@ -106,7 +107,7 @@ local _disc = _hbox {
   postbreak = {},
   replacement = {},
   used = 0,
-  pbw = nil,
+  prebw = nil,
   __tostring = function (this) 
       return "D(" .. SU.concat(this.prebreak,"") .. "|" .. SU.concat(this.postbreak, "") .. ")";
   end,
@@ -118,12 +119,55 @@ local _disc = _hbox {
     end
   end,
   prebreakWidth = function(self)
-    -- if self.pbw then return self.pbw end
+    if self.prebw then return self.prebw end
     local l = 0
     for _,n in pairs(self.prebreak) do l = l + n.width end
-    -- self.pbw = l
+    self.prebw = l
     return l
-  end
+  end,
+  postbreakWidth = function(self)
+    if self.postbw then return self.postbw end
+    local l = 0
+    for _,n in pairs(self.postbreak) do l = l + n.width end
+    self.postbw = l
+    return l
+  end,
+  replacementWidth = function(self)
+    if self.replacew then return self.replacew end
+    local l = 0
+    for _,n in pairs(self.replacement) do l = l + n.width end
+    self.replacew = l
+    return l
+  end,
+}
+
+-- Alternatives
+
+local _alt = _hbox {
+  type = "alternative",
+  options = {},
+  selected = nil,
+  __tostring = function(self)
+    return "A(" .. SU.concat(self.options," / ") .. ")"
+  end,
+  minWidth = function(self)
+    local min = self.options[1].width
+    for i = 2,#self.options do
+      if self.options[i].width < min then min = self.options[i].width end
+    end
+    return min
+  end,
+  deltas = function(self)
+    local minWidth = self:minWidth()
+    local rv = {}
+    for i = 1,#self.options do rv[#rv+1] = self.options[i].width - minWidth end
+    return rv
+  end,
+  outputYourself = function(self,typesetter, line)
+    if self.selected then
+      self.options[self.selected]:outputYourself(typesetter,line)
+    end
+  end,
 }
 
 -- Glue
@@ -221,6 +265,8 @@ function SILE.nodefactory.newNnode(spec)    return _nnode(spec):init() end
 function SILE.nodefactory.newUnshaped(spec) return _unshaped(spec) end
 
 function SILE.nodefactory.newDisc(spec)   return _disc(spec) end
+function SILE.nodefactory.newAlternative(spec)   return _alt(spec) end
+
 function SILE.nodefactory.newGlue(spec)
   if type(spec) == "table" then return _glue(spec) end
   if type(spec) == "string" then return _glue({width = SILE.length.parse(spec)}) end
