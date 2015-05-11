@@ -1,0 +1,9 @@
+\begin[papersize=a4]{document}
+
+\define[command=item]{\quad – \process}
+
+Primum, inquam, deprecor, ne me tamquam philosophum putetis scholam vobis aliquam explicaturum, quod ne in ipsis quidem philosophis magnopere umquam probavi.
+
+ \item{Quando enim Socrates, qui parens philosophiae iure dici potest, quicquam tale fecit?}
+
+\end{document}

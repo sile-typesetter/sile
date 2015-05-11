@@ -29,8 +29,10 @@ SILE.baseClass = std.object {
       SILE.registerCommand(options["command"], function(o,c)
         --local prevState = SILE.documentState;
         --SILE.documentState = std.tree.clone( prevState )
+        local depth = #commandStack
         table.insert(commandStack, c)
         SILE.process(content)
+        while (#commandStack > depth) do table.remove(commandStack) end
         --SILE.documentState = prevState
       end, options.help, SILE.currentlyProcessingFile)
     end, "Define a new macro. \\define[command=example]{ ... \\process }")
