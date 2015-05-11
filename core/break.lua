@@ -354,7 +354,18 @@ end
 
 function lineBreak:dumpBreakNode(b)
   if not SU.debugging("break") then return end
-  print("@@" .. b.serial .. ": line " .. (b.lineNumber -1) .. "." .. b.fitness .. " " .. b.type .. " t=".. b.totalDemerits .. " -> @@ " .. (b.prevBreak and b.prevBreak.serial or "0") )
+  print(lineBreak:describeBreakNode(b))
+end
+
+function lineBreak:describeBreakNode(b)
+  --print("@@" .. b.serial .. ": line " .. (b.lineNumber -1) .. "." .. b.fitness .. " " .. b.type .. " t=".. b.totalDemerits .. " -> @@ " .. (b.prevBreak and b.prevBreak.serial or "0") )
+  if b.sentinel then return b.sentinel end
+  if b.type == "delta" then return "delta "..b.width.length.."pt" end
+  local before = self.nodes[b.curBreak-1]
+  local after = self.nodes[b.curBreak+1]
+  local from = b.prevBreak and b.prevBreak.curBreak or 1
+  local to = b.curBreak
+  return "b "..from.."-"..to.." \""..(before and before:toText()).." | "..(after and after:toText()).."\" [".. b.totalDemerits..", "..b.fitness.."]"
 end
 
 function lineBreak:checkForLegalBreak(n) -- 892
@@ -402,6 +413,7 @@ function lineBreak:tryFinalBreak()      -- 899
 end
 
 function lineBreak:doBreak (nodes, hsize, sideways)
+  passSerial = 1
   self.nodes = nodes
   self.hsize = hsize
   self.sideways = sideways
@@ -424,8 +436,8 @@ function lineBreak:doBreak (nodes, hsize, sideways)
       self.nodes = SILE.hyphenate(self.nodes) 
     end
     -- 890
-    self.activeListHead = { type = "hyphenated", lineNumber = awful_bad, subtype = 0 } -- 846
-    self.activeListHead.next = { type = "unhyphenated", fitness = "decent", next = self.activeListHead, lineNumber = param("prevGraf") + 1, totalDemerits = 0}
+    self.activeListHead = { sentinel="START", type = "hyphenated", lineNumber = awful_bad, subtype = 0 } -- 846
+    self.activeListHead.next = { sentinel="END", type = "unhyphenated", fitness = "decent", next = self.activeListHead, lineNumber = param("prevGraf") + 1, totalDemerits = 0}
 
     -- Not doing 1630
     self.activeWidth = std.tree.clone(self.background)
