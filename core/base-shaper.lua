@@ -82,7 +82,7 @@ SILE.shapers.base = std.object {
     local nodelist = {}
     for token in SU.gtoke(text, "-") do
       local t2= token.separator and token.separator or token.string
-      nodelist[#(nodelist)+1] = SILE.nodefactory.newUnshaped({ text = t2, options = options })
+      nodelist[#(nodelist)+1] = SILE.nodefactory.newUnshaped({ text = t2, options = options }):shape()
       if token.separator then
         nodelist[#(nodelist)+1] = SILE.nodefactory.newPenalty({ value = SILE.settings.get("linebreak.hyphenPenalty") })
       end
