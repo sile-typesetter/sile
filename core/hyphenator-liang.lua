@@ -109,10 +109,11 @@ local hyphenateNode = function(n)
 end
 
 SILE.hyphenate = function (nodelist)
-  for i,n in ipairs(nodelist) do
+  local newlist = {}
+  for i = 1,#nodelist do
+    local n = nodelist[i]
     local newnodes = hyphenateNode(n)
-    SU.splice(nodelist, i, i, newnodes)
-    i = i + #newnodes - 1
+    for j=1,#newnodes do newlist[#newlist+1] = newnodes[j] end
   end
-  return nodelist
+  return newlist
 end

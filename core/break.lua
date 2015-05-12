@@ -475,6 +475,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
     if self.threshold > inf_bad then self.threshold = inf_bad end
     if self.pass == "second" then 
       self.nodes = SILE.hyphenate(self.nodes) 
+      SILE.typesetter.state.nodes = self.nodes -- Horrible breaking of separation of concerns here. :-(
     end
     -- 890
     self.activeListHead = { sentinel="START", type = "hyphenated", lineNumber = awful_bad, subtype = 0 } -- 846
