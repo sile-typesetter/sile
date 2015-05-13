@@ -96,7 +96,14 @@ local _unshaped = _nnode {
   shape = function(this)
     local n =  SILE.shaper:createNnodes(this.text, this.options)
     return n[1] -- bug
-  end
+  end,
+  width = nil,
+  outputYourself = function (this)
+    SU.error("An unshaped node made it to output", 1)
+  end,
+  __index = function(self,k)
+    if k == "width" then SU.error("Can't get width of unshaped node", 1) end
+  end  
 }
 
 -- Discretionaries
@@ -262,7 +269,11 @@ SILE.nodefactory = {}
 
 function SILE.nodefactory.newHbox(spec)     return _hbox(spec) end
 function SILE.nodefactory.newNnode(spec)    return _nnode(spec):init() end
-function SILE.nodefactory.newUnshaped(spec) return _unshaped(spec) end
+function SILE.nodefactory.newUnshaped(spec)
+  local u = _unshaped(spec) 
+  u.width = nil
+  return u
+end
 
 function SILE.nodefactory.newDisc(spec)   return _disc(spec) end
 function SILE.nodefactory.newAlternative(spec)   return _alt(spec) end
