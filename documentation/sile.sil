@@ -7,7 +7,7 @@
 \script[src=packages/image]
 \script[src=packages/frametricks]
 \script[src=packages/lorem]
-\script[src=packages/bidi]
+\script[src=packages/bidi]\bidi-off
 \script[src=packages/pdf]
 \include[src=documentation/macros.sil]
 \define[command=silehp]{\code{http://www.sile-typesetter.org/}}

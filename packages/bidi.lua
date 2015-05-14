@@ -10,10 +10,51 @@ end);
 
 local bidi = require("unicode-bidi-algorithm")
 
-SILE.typesetter.boxUpNodes = function (self)
-  self.state.nodes = bidi.process(SILE.hyphenate(self.state.nodes), self.frame)
+-- Split text into chunks of equal bidi type
+local bidiTokenize = function(text)
+  local unichars = SU.splitUtf8(text)
+  local chunks = { unichars[1] }
+  local lastType = bidi.get_bidi_type(SU.codepoint(unichars[1]))
+  for j = 2,#unichars do
+    local thisType = bidi.get_bidi_type(SU.codepoint(unichars[j]))
+    if thisType ~= lastType then
+      chunks[#chunks+1] = (chunks[#chunks+1]or"")..unichars[j]
+      lastType = thisType
+    else
+      chunks[#chunks] = chunks[#chunks]..unichars[j]
+    end
+  end
+  return chunks
+end
+
+local bidiBoxupNodes = function (self)
+  local nl = self.state.nodes
+  local newNl = {}
+  -- This is crazy-inefficient but processors get faster 
+  -- over time while code doesn't get easier to understand.
+  for i=1,#nl do
+    if nl[i]:isUnshaped() then
+      local chunks = bidiTokenize(nl[i].text)
+      for j = 1,#chunks do
+        newNl[#newNl+1] = SILE.nodefactory.newUnshaped({text = chunks[j], options = nl[i].options })
+      end
+    else
+      newNl[#newNl+1] = nl[i]
+    end
+  end
+  self.state.nodes = bidi.process(newNl, self.frame)
   return SILE.defaultTypesetter.boxUpNodes(self)
 end
+
+SILE.typesetter.boxUpNodes = bidiBoxupNodes
+
+SILE.registerCommand("bidi-on", function(options, content)
+  SILE.typesetter.boxUpNodes = bidiBoxupNodes
+end)
+
+SILE.registerCommand("bidi-off", function(options, content)
+  SILE.typesetter.boxUpNodes = SILE.defaultTypesetter.boxUpNodes
+end)
 
 return { documentation = [[\begin{document}
 

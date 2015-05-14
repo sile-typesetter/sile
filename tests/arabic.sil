@@ -1,7 +1,7 @@
 \begin[class=plain,papersize=129mm x 198mm]{document}%
 \script[src=packages/bidi]
 \script[src=packages/frametricks]
-\font[family=Scheherazade,size=12pt,direction=RTL,language=ar,script=Arab]%
+\font[family=Scheherazade,size=12pt,language=ar,script=Arab]%
 \set[parameter=current.parindent,value=0]%
 \set[parameter=document.parindent,value=0]%
 \thisframeRTL

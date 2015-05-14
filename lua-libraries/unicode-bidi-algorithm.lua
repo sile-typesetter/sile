@@ -408,11 +408,7 @@ local function node_to_table(nodelist)
     local n = nodelist[i]
     if n.type == "hbox" and n.value and n.value.text then
       c = SU.codepoint(n.value.text)
-    elseif n:isNnode() then
-      -- This is technically a hack. n.text will probably contain multiple
-      -- characters, but by dint of being shaped into the same run, they are
-      -- guaranteed(?) to be of the same class, so using one as a representative
-      -- should be fine.
+    elseif n.text then
       c = SU.codepoint(n.text)
     elseif n:isGlue() then
       c = 0x0020 -- space
@@ -508,21 +504,21 @@ local function process(nodelist, frame)
   line = resolve_levels(line, base_level)
   matrix = create_matrix(line, base_level)
   assert(#line == #nodelist)
-
+  local otherDirection = frame.direction == "RTL" and "LTR" or "RTL"
   local rv = {}
   for i = 1, #nodelist do
     rv[matrix[i]] = nodelist[i]
-    -- Urgh, too low level. But the point is that if we took an nnode
-    -- and used the first character as indicative of its character type,
-    -- we now have to reverse all the characters in it.
-    if line[i].level % 2 ~= base_level and 
-      rv[matrix[i]].nodes and 
-      (rv[matrix[i]].options.direction == frame.direction) and
-      rv[matrix[i]].nodes[1].value.glyphString then
-      rv[matrix[i]].nodes[1].value.glyphString = backwards(rv[matrix[i]].nodes[1].value.glyphString)
+    local thisNode = rv[matrix[i]]
+    if thisNode.options then
+      thisNode.options = table.clone(thisNode.options) -- options are often shared
+      if line[i].level % 2 == base_level then
+        thisNode.options.direction = frame.direction
+      else
+        thisNode.options.direction = otherDirection
+      end
     end
   end
   return rv
 end
 
-return { process = process }
+return { process = process, get_bidi_type = get_bidi_type }

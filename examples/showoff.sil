@@ -1,7 +1,7 @@
 \begin[class=book,papersize=a4]{document}%
 \script[src=packages/frametricks]
 \script[src=packages/lorem]
-\script[src=packages/bidi]
+\script[src=packages/bidi]\bidi-off
 \script[src=packages/image]
 \set[parameter=linebreak.tolerance,value=10000]
 \define[command=tableofcontents:headerfont]{\font[size=24pt,family=Baskerville,style=italic]{\process}}%
@@ -90,14 +90,14 @@ In fact, even that’s pretty easy, until you want to typeset primarily Arabic o
 and insert some left-to-right text in them. But don’t worry. SILE can do that too.
 
 \breakframevertical
-\thisframeRTL%
+\thisframeRTL\bidi-on%
 \font[family=Scheherazade,size=12pt,direction=RTL,language=ar,script=Arab]{%
-\noindent عندما يريد العالم أن ‪يتكلّم ‬ ، فهو يتحدّث بلغة يونيكود. تسجّل الآن لحضور المؤتمر الدولي العاشر ليونيكود (\font[direction=LTR]{Unicode Conference})، الذي سيعقد في \font[direction=LTR]{10-12} آذار \font[direction=LTR]{1997} بمدينة مَايِنْتْس، ألمانيا. و سيجمع المؤتمر بين خبراء من كافة قطاعات الصناعة على الشبكة العالمية انترنيت ويونيكود، حيث ستتم، على الصعيدين الدولي والمحلي على حد سواء مناقشة سبل استخدام يونكود في النظم القائمة وفيما يخص التطبيقات الحاسوبية، الخطوط، تصميم النصوص والحوسبة متعددة اللغات.  
+\noindent عندما يريد العالم أن ‪يتكلّم ‬ ، فهو يتحدّث بلغة يونيكود. تسجّل الآن لحضور المؤتمر الدولي العاشر ليونيكود (Unicode Conference) ، الذي سيعقد في 10–12 آذار 1997 بمدينة مَايِنْتْس، ألمانيا. و سيجمع المؤتمر بين خبراء من كافة قطاعات الصناعة على الشبكة العالمية انترنيت ويونيكود، حيث ستتم، على الصعيدين الدولي والمحلي على حد سواء مناقشة سبل استخدام يونكود في النظم القائمة وفيما يخص التطبيقات الحاسوبية، الخطوط، تصميم النصوص والحوسبة متعددة اللغات.  
 }
 
 
 \breakframevertical
-\thisframeLTR%
+\thisframeLTR\bidi-off%
 
 SILE also understands the difference between various languages, applying an appropriate shaper for each language;
 for instance, we will typeset the same Unicode text three times. First, in standard Arabic
