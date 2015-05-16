@@ -26,17 +26,26 @@ SILE.pagebuilder = {
   end,
 
   findBestBreak = function(vboxlist, target)
-    local i
+    local i = 0
     local totalHeight = SILE.length.new()
     local bestBreak = nil
     local leastC = inf_bad
     SU.debug("pagebuilder", "Page builder called with "..#vboxlist.." nodes, "..target)
-    for i = 1,#vboxlist do local vbox = vboxlist[i]
+    local started = false
+    while i < #vboxlist do 
+      i = i + 1
+      local vbox = vboxlist[i]
       SU.debug("pagebuilder", "Dealing with VBox " .. vbox)
       if (vbox:isVbox()) then
+        if not started then started = true end
         totalHeight = totalHeight + vbox.height + vbox.depth;
       elseif vbox:isVglue() then
-        totalHeight = totalHeight + vbox.height
+        if not started then
+          table.remove(vboxlist,i)
+          i = i - 1
+        else
+          totalHeight = totalHeight + vbox.height
+        end
       end
       local left = target - totalHeight.length
       SU.debug("pagebuilder", "I have " .. tostring(left) .. "pts left");
