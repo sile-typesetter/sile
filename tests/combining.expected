@@ -2,23 +2,23 @@ This is SILE 0.9.1
 <tests/combining.sil>Open file	tests/combining.pdf
 Set paper size 	595.275597	841.8897729
 Begin page
-Mx 	35.159742458579
-My 	49.906988645
+Mx 	35.15974
+My 	49.90699
 Set font 	Gentium;10;200;normal;normal;
 T		(((̵̵́)
-Mx 	44.195614387868
+Mx 	44.19561
 T		(̆͒͟˚̩̭)
-Mx 	53.797892567158
+Mx 	53.79789
 T		(̆͒)̵̵̀))
-Mx 	49.76377985
-My 	66.1755433325
+Mx 	49.76378
+My 	66.17554
 T		((͡°)
-Mx 	59.20837022532
+Mx 	59.20837
 T	0 597	(͜ʖ)
-Mx 	68.64807778814
+Mx 	68.64808
 T	749 109 9	(͡°))
-[1] Mx 	282.64742484405
-My 	780.6176926305
+[1] Mx 	282.64742
+My 	780.61769
 T	17	(1)
 End page
 Finish
