@@ -284,6 +284,7 @@ SILE.defaultTypesetter = std.object {
             end
         end
       elseif v.skiptype == "explicit" then
+        v.migrating = true
         self.state.nodes[#(self.state.nodes)+1] = v
       end
     end
