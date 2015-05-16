@@ -47,8 +47,8 @@ SILE.outputters.debug = {
     return (urx-llx), (ury-lly)
   end,
   moveTo = function (x,y)
-    if x ~= cx then print("Mx ",x); cx = x end
-    if y ~= cy then print("My ",y); cy = y end
+    if x ~= cx then print("Mx ",string.format("%.5f",x)); cx = x end
+    if y ~= cy then print("My ",string.format("%.5f",y)); cy = y end
   end,
   rule = function (x,y,w,d)
     print("Draw line", x, y, w, d)
