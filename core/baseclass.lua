@@ -97,7 +97,7 @@ SILE.baseClass = std.object {
 
     SILE.registerCommand("skip", function(options, content)
       SILE.typesetter:leaveHmode();
-      SILE.typesetter:pushVglue({ height = SILE.length.parse(options.height) })
+      SILE.typesetter:pushExplicitVglue({ height = SILE.length.parse(options.height) })
     end, "Inserts vertical skip. The height options denotes the skip dimension.")
 
     SILE.registerCommand("par", function(options, content) 

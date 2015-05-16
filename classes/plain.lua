@@ -32,14 +32,14 @@ for k,v in pairs(skips) do
     help = "The amount of a \\"..k.."skip"})
   SILE.registerCommand(k.."skip", function ( options, content )
     SILE.typesetter:leaveHmode();    
-    SILE.typesetter:pushVglue(SILE.settings.get("plain."..k.."skipamount"))
+    SILE.typesetter:pushExplicitVglue(SILE.settings.get("plain."..k.."skipamount"))
   end, "Skip vertically by a "..k.." amount")
 end
 
 SILE.registerCommand("hfill", function(o,c) SILE.typesetter:pushGlue(SILE.nodefactory.hfillGlue) end, "Add a huge horizontal glue")
 SILE.registerCommand("vfill", function(o,c) 
   SILE.typesetter:leaveHmode()
-  SILE.typesetter:pushVglue(SILE.nodefactory.vfillGlue) end, "Add huge vertical glue")
+  SILE.typesetter:pushExplicitVglue(SILE.nodefactory.vfillGlue) end, "Add huge vertical glue")
 SILE.registerCommand("hss", function(o,c) 
   SILE.typesetter:initline()
   SILE.typesetter:pushGlue(SILE.nodefactory.hssGlue)

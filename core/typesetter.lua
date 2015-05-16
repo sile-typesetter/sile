@@ -93,6 +93,10 @@ SILE.defaultTypesetter = std.object {
   pushPenalty = function (self, spec) return table.insert(self.state.nodes, SILE.nodefactory.newPenalty(spec)); end,
   pushVbox = function (self, spec) local v = SILE.nodefactory.newVbox(spec); table.insert(self.state.outputQueue,v); return v; end,
   pushVglue = function (self, spec) return table.insert(self.state.outputQueue, SILE.nodefactory.newVglue(spec)); end,
+  pushExplicitVglue = function (self, spec)
+    spec.skiptype = "explicit"
+    return table.insert(self.state.outputQueue, SILE.nodefactory.newVglue(spec)); 
+  end,  
   pushVpenalty = function (self, spec) return table.insert(self.state.outputQueue, SILE.nodefactory.newPenalty(spec)); end,
 
   -- Actual typesetting functions
@@ -279,13 +283,8 @@ SILE.defaultTypesetter = std.object {
               self.state.nodes[#(self.state.nodes)+1] = v.nodes[i]
             end
         end
-      else
-        -- local vboxlist = self:boxUpNodes()
-        -- self.state.nodes = {};
-        -- for index=1, #vboxlist do
-        --   self.state.outputQueue[#(self.state.outputQueue)+1] = vboxlist[index]
-        -- end
-        -- self.state.outputQueue[#(self.state.outputQueue)+1] = v
+      elseif v.skiptype == "explicit" then
+        self.state.nodes[#(self.state.nodes)+1] = v
       end
     end
     while self.state.nodes[#self.state.nodes] and self.state.nodes[#self.state.nodes]:isPenalty() or self.state.nodes[#self.state.nodes] == SILE.nodefactory.zeroHbox do
