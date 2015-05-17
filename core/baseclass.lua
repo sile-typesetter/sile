@@ -111,8 +111,8 @@ SILE.baseClass = std.object {
   deferredInit = {},
   loadPackage = function(self, packname, args)
     local pack = require("packages/"..packname)
-    if type(pack) == "table" then 
-      self:mapfields(pack.exports)
+    if type(pack) == "table" then
+      if pack.exports then self:mapfields(pack.exports) end
       if pack.init then
         table.insert(SILE.baseClass.deferredInit, function () pack.init(self, args) end)
       end
