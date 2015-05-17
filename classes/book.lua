@@ -33,8 +33,6 @@ end
 book.endPage = function(self)
   book:outputInsertions()
   book:moveTocNodes()
-  book:newPageInfo()
-
   if (book:oddPage() and SILE.scratch.headers.right) then
     SILE.typesetNaturally(SILE.getFrame("runningHead"), function()
       SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)

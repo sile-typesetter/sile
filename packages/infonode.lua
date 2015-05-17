@@ -35,11 +35,10 @@ SILE.registerCommand("info", function ( options, content )
   }))
 end, "Inserts an info node onto the current page")
 
+SILE.typesetter:registerNewPageHook(function ()
+  SILE.scratch.info = { thispage = {} }
+end)
+
 return {
   init = function () end,
-  exports = {
-    newPageInfo = function()
-      SILE.scratch.info = { thispage = {} }
-    end
-  }
 }
