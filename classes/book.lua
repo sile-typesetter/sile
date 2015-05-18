@@ -22,6 +22,7 @@ end
 
 book.newPage = function(self)
   book:switchPage()
+  book:newPageInfo()  
   return plain.newPage(self)
 end
 
@@ -33,7 +34,6 @@ end
 book.endPage = function(self)
   book:outputInsertions()
   book:moveTocNodes()
-  book:newPageInfo()
 
   if (book:oddPage() and SILE.scratch.headers.right) then
     SILE.typesetNaturally(SILE.getFrame("runningHead"), function()
@@ -54,7 +54,6 @@ book.endPage = function(self)
         SILE.call("par")
       end)
   end
-
   return plain.endPage(book);
 end;
 
