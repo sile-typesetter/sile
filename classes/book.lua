@@ -179,6 +179,6 @@ SILE.registerCommand("open-double-page", function()
     SILE.typesetter:leaveHmode();
     SILE.Commands["supereject"]();
   end
-
+  SILE.typesetter:leaveHmode();
 end)
 return book
