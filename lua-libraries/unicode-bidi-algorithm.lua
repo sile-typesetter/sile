@@ -477,7 +477,6 @@ end
 
 local function process(nodelist, frame)
   -- main node list processing
-
   -- return early if there is nothing to process
   if not nodelist then
     return nodelist
@@ -504,18 +503,13 @@ local function process(nodelist, frame)
   line = resolve_levels(line, base_level)
   matrix = create_matrix(line, base_level)
   assert(#line == #nodelist)
-  local otherDirection = frame.direction == "RTL" and "LTR" or "RTL"
   local rv = {}
   for i = 1, #nodelist do
     rv[matrix[i]] = nodelist[i]
     local thisNode = rv[matrix[i]]
     if thisNode.options then
-      thisNode.options = table.clone(thisNode.options) -- options are often shared
-      if line[i].level % 2 == base_level then
-        thisNode.options.direction = frame.direction
-      else
-        thisNode.options.direction = otherDirection
-      end
+      -- things have been adjusted to "fit in" with base direction now
+      thisNode.options.direction = frame.direction 
     end
   end
   return rv
