@@ -172,14 +172,5 @@ SILE.registerCommand("book:subsectionfont", function (options, content)
     SILE.Commands["font"]({weight=800, size="12pt"}, content)
   end)
 end)
-SILE.registerCommand("open-double-page", function() 
-  SILE.typesetter:leaveHmode();
-  SILE.Commands["supereject"]();
-  if book:oddPage() then
-    SILE.typesetter:typeset("")
-    SILE.typesetter:leaveHmode();
-    SILE.Commands["supereject"]();
-  end
-  SILE.typesetter:leaveHmode();
-end)
+
 return book

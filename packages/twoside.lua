@@ -25,6 +25,17 @@ local mirrorMaster = function(class, existing, new)
   end
 end
 
+SILE.registerCommand("open-double-page", function() 
+  SILE.typesetter:leaveHmode();
+  SILE.Commands["supereject"]();
+  if SILE.documentState.documentClass:oddPage() then
+    SILE.typesetter:typeset("")
+    SILE.typesetter:leaveHmode();
+    SILE.Commands["supereject"]();
+  end
+  SILE.typesetter:leaveHmode();
+end)
+
 return {
   init = function (class, args)
     class.oddPageMaster = args.oddPageMaster
