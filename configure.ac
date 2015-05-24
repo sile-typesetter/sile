@@ -30,8 +30,9 @@ AS_IF([test "x$with_harfbuzz" = xyes -a "x$with_pangocairo" = xyes],
     [])
 
 AS_IF([test "x$with_harfbuzz" != xno -a "x$with_pangocairo" != xyes],
-[AC_CHECK_LIB([harfbuzz], [hb_shape],
-  [PKG_CHECK_MODULES(HARFBUZZ, harfbuzz)
+[
+PKG_CHECK_MODULES(HARFBUZZ, harfbuzz,
+  [
    PKG_CHECK_MODULES(FREETYPE, freetype2,[],[AC_MSG_FAILURE([Harfbuzz found but not freetype2])])
    PKG_CHECK_MODULES(FONTCONFIG, fontconfig,[],[AC_MSG_FAILURE([Harfbuzz found but not fontconfig])])
    with_harfbuzz=yes
