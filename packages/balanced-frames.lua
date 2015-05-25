@@ -47,7 +47,7 @@ SILE.typesetter.pageBuilder = function (self, independent)
   local frame = self.frame
   while frame and frame.balanced == true do
     frame:relax("bottom")
-    frame:constrain("height", totalHeight.length / colCount + SILE.toPoints("3ex"))
+    frame:constrain("height", totalHeight.length / colCount)
     if frame.next then frame = SILE.getFrame(frame.next) else break end
   end
   self.state.lastPenalty = 0
