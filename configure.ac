@@ -95,14 +95,24 @@ AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"],[Path for SILE libraries
 
 AC_MSG_NOTICE([Configuring with $backend backend])
 AM_CONDITIONAL([HARFBUZZLIBTEXPDF], [test "$backend" = "harfbuzz"])
+AC_CANONICAL_HOST
+case $host_os in
+  cygwin* | mingw* )
+      SHARED_LIB_EXT="dll"
+      ;;
+  *)
+      SHARED_LIB_EXT="so"
+     ;;
+esac
+AC_SUBST([SHARED_LIB_EXT])
 AC_SUBST([backend])
 AC_SUBST([HARFBUZZ_CFLAGS])
 AC_SUBST([HARFBUZZ_LIBS])
 AC_SUBST([SILE_PATH])
 AC_SUBST([SILE_LIB_PATH])
+AC_SUBST([shared_ext])
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_CONFIG_FILES([sile], [chmod +x sile])
-
 
 # Configure list of data files
 echo 'subdir_files = \' > subfiles.mk

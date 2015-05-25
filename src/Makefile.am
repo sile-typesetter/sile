@@ -11,5 +11,5 @@ justenoughlibtexpdf_la_CFLAGS = -I.. $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(LIBPA
 justenoughlibtexpdf_la_LIBADD = ../libtexpdf/.libs/libtexpdf.la $(FREETYPE_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(LIBPAPER_LIBS) $(LUA_LIB)
 
 all-local: $(pkglib_LTLIBRARIES)
-	cp .libs/justenoughharfbuzz.so .libs/justenoughlibtexpdf.so ../core
+	cp .libs/justenoughharfbuzz.@SHARED_LIB_EXT@ .libs/justenoughlibtexpdf.@SHARED_LIB_EXT@ ../core
 endif
