@@ -6,7 +6,8 @@ SILE.registerCommand("para", function (options, content)
 end)
 
 SILE.registerCommand("note", function (options, content)
-  SILE.call("footnote", options, {options.caller})
+  local note = content[1] and content or {options.caller} -- USX keeps changing...
+  SILE.call("footnote", options, note)
 end)
 
 SILE.registerCommand("char", function (options, content)

@@ -1,5 +1,6 @@
 \begin[papersize=152mm x 229mm,class=usx,twocolumns=true]{document}%
 \script[src=packages/grid]%
+\grid[spacing=14pt]%
 \script[src=packages/xmltricks]%
 \script[src=packages/frametricks]%
 \script[src=packages/raiselower]%
@@ -15,11 +16,13 @@
 \define[command=para-iot]{\noindent\font[family=Avenir Next]{\process}\par}
 \define[command=para-ip]{\font[family=Avenir Next]{\process}\par}
 \define[command=para-io1]{\font[family=Avenir Next]{\narrower{\process}}\smallskip}
+\define[command=para-b]{\medskip}
 %
-\define[command=para-s]{\font[family=Avenir Next]{\process}\par}
+\define[command=para-s]{\font[family=Avenir Next]{\process}\par\medskip}
 \define[command=para-p]{\process\bigskip}
 \define[command=para-q]{\narrower{\process}\par}
 \define[command=para-q1]{\narrower{\process}\par}
+\define[command=para-q2]{\narrower{\process}\par}
 \define[command=para-m]{\noindent\process\par}
 \define[command=para-mt]{\noindent\process\par}
 \define[command=para-r]{\italic{\process}}
@@ -33,6 +36,6 @@
 \define[command=char-xo]{\bold{\process}}
 \define[command=char-fr]{\bold{\process}}
 %
-\define[command=bible:chapter-head]{\bigskip\float[rightboundary=5pt, bottomboundary=5pt]{\font[size=24pt]{\process}}}\bigskip%
+\define[command=bible:chapter-head]{\bigskip\float[rightboundary=5pt, bottomboundary=12pt]{\font[size=24pt]{\process}}}%
 \define[command=bible:verse-number]{\raise[height=3pt]{\font[size=9pt]{\process}}}
 \end{document}
