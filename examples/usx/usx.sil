@@ -1,27 +1,16 @@
-\begin[papersize=152mm x 229mm,class=usx]{document}%
+\begin[papersize=152mm x 229mm,class=usx,twocolumns=true]{document}%
 \script[src=packages/grid]%
 \script[src=packages/xmltricks]%
 \script[src=packages/frametricks]%
 \script[src=packages/raiselower]%
-\script[src=packages/masters]%
-\grid[spacing=15pt]%
-\define-master-template[id=columns,first-content-frame=l]{%
-\frame[id=gutter,width=15%]%
-\frame[id=l,left=5%,right=left(gutter),top=5%,bottom=90%,next=r]%
-\frame[id=r,left=right(gutter),right=95%,top=top(l),bottom=bottom(l),width=width(l)]%
-\frame[id=folio,left=left(l),right=right(r),top=bottom(footnotes)+3%,bottom = bottom(footnotes)+5%]
-}%
-\switch-master[id=columns]%
-\set[parameter=document.parskip,value=4pt plus 1pt]
+%\set[parameter=document.parskip,value=4pt plus 1pt]
 \xmltricks:ignore{book para-ide para-toc1 para-toc2 para-toc3 para-h}
 \xmltricks:passthru{char-xt char-ft}
-\define[command=note]{\footnote{\process}}
 %\define[command=para-h]{\left-running-head{\process}}
 \define[command=para-mt1]{\par\noindent\font[family=Minion Pro, weight=800,size=24pt]{\center{\process}}\par}
 \define[command=para-mt2]{\noindent\font[family=Minion Pro, size=15pt]{\center{\process}}\par}
 \font[family=Minion Pro]
 %
-\define[command=footnotemark]{}
 \define[command=para-is]{\bigskip\font[family=Avenir Next,size=15pt]{\process}\par\bigskip}
 \define[command=para-iot]{\noindent\font[family=Avenir Next]{\process}\par}
 \define[command=para-ip]{\font[family=Avenir Next]{\process}\par}
@@ -32,6 +21,7 @@
 \define[command=para-q]{\narrower{\process}\par}
 \define[command=para-q1]{\narrower{\process}\par}
 \define[command=para-m]{\noindent\process\par}
+\define[command=para-mt]{\noindent\process\par}
 \define[command=para-r]{\italic{\process}}
 %
 \define[command=narrower]{\set[parameter=document.lskip,value=24pt]\process\set[parameter=document.lskip,value=0pt]}
@@ -43,6 +33,6 @@
 \define[command=char-xo]{\bold{\process}}
 \define[command=char-fr]{\bold{\process}}
 %
-\define[command=dropcap]{\float[rightboundary=5pt, bottomboundary=5pt]{\font[size=54pt]{\process}}}%
-\define[command=vref]{\raise[height=3pt]{\font[size=9pt]{\process}}}
-\end{document}%
+\define[command=bible:chapter-head]{\bigskip\float[rightboundary=5pt, bottomboundary=5pt]{\font[size=24pt]{\process}}}\bigskip%
+\define[command=bible:verse-number]{\raise[height=3pt]{\font[size=9pt]{\process}}}
+\end{document}
