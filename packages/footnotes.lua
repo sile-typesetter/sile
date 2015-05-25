@@ -20,8 +20,12 @@ SILE.registerCommand("footnote", function(options, content)
   SILE.call("footnotemark")
   -- XXX We need to vbox the material in the context of the frame it's going to
   -- be inserted into, not in the frame it's coming from; e.g. when a two-column
-  -- layout has a full-width footnotes frame.
-  insertions.exports:insert("footnote", SILE.Commands["vbox"]({}, function()
+  -- layout has a full-width footnotes frame. This does so for the width, but by
+  -- being too familiar with the workings of insertions.
+  local opts = SILE.scratch.insertions.classes.footnote
+  local f = SILE.getFrame(opts["insertInto"])
+  local fwidth = SILE.length.new({length=f:width()})
+  insertions.exports:insert("footnote", SILE.Commands["vbox"]({width = fwidth}, function()
     SILE.Commands["font"]({size = "9pt"}, function()
       SILE.typesetter:typeset(SILE.formatCounter(SILE.scratch.counters.footnote)..".")
       SILE.call("qquad")

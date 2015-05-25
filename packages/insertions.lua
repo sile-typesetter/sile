@@ -53,6 +53,7 @@ local setShrinkage = function(classname, amount)
   SU.debug("insertions", "Shrinking main box by "..amount.length)
   local reduceList = SILE.scratch.insertions.classes[classname].stealFrom
   for fName, ratio in pairs(reduceList) do local f = SILE.getFrame(fName)
+    if not f.state.totals then f:init() end -- May be a frame that has not been entered yet
     if not f.state.totals.shrinkage then f.state.totals.shrinkage = 0 end
     f.state.totals.shrinkage = f.state.totals.shrinkage + amount.length * ratio
   end
@@ -98,6 +99,7 @@ end
 
 local heightSoFar = function(classname)
   local h = 0
+  if not (SILE.scratch.insertions.thispage[classname]) then return 0 end
   for i = 1,#(SILE.scratch.insertions.thispage[classname]) do 
     local ins = SILE.scratch.insertions.thispage[classname][i]
     h = h + ins.height.length + ins.depth
