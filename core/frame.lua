@@ -93,9 +93,11 @@ end
 
 function SILE.framePrototype:newLine()
   self.state.cursorX = self.direction == "RTL" and self:right() or self:left()
+  print(self.direction == "RTL" and "Setting Right" or "Setting Left")
 end
 
 function SILE.framePrototype:init()
+  print "init new frame"
   self.state = {
     cursorY = self:top(),
     totals = { height= 0, pastTop = false }

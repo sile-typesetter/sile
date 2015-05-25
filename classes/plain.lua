@@ -12,6 +12,14 @@ plain.endPage = function(self)
   return SILE.baseClass.endPage(self)
 end
 
+plain.newPage = function(self)
+  local f = SILE.baseClass.newPage(self)
+  print("setting direction to "..SILE.scratch.bidi["currentDir"])
+  f.direction = SILE.scratch.bidi["currentDir"]
+  f:newLine()
+  return f
+end
+
 SILE.registerCommand("noindent", function ( options, content )
   SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
   SILE.process(content)
@@ -146,5 +154,18 @@ SILE.registerCommand("vbox", function (options,c)
   end)
   return vbox
 end, "Compiles all the enclosed horizontal-mode material into a single hbox")
+
+SILE.scratch.bidi = { currentDir = "LTR" }
+
+SILE.registerCommand("setRTL", function(options, content)
+  SILE.scratch.bidi["currentDir"] = "RTL"
+  SILE.typesetter.frame.direction = "RTL"
+  SILE.typesetter.frame:newLine()
+end)
+
+SILE.registerCommand("setLTR", function(options, content)
+  SILE.scratch.bidi["currentDir"] = "LTR"
+  SILE.typesetter.frame.direction = "LTR"  
+end)
 
 return plain;
