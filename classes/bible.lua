@@ -52,6 +52,7 @@ function bible:init()
     SILE.scratch.masters.left.frames.contentB.next = "contentA"
     SILE.scratch.masters.left.frames.contentA.next = nil
   end
+  self.pageTemplate = SILE.scratch.masters["right"]
   return plain.init(self)
 end
 
@@ -132,7 +133,7 @@ SILE.registerCommand("verse-number", function (o,c)
       SILE.settings.set("document.rskip", SILE.nodefactory.zeroGlue)      
       SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
       SILE.call("font", {size="10pt", family="Gentium"}, function ()
-        SILE.call("font", {style="italic"}, SILE.scratch.theChapter)
+        -- SILE.call("font", {style="italic"}, SILE.scratch.theChapter)
         SILE.call("hfill")
         SILE.call("last-reference")
       end)
