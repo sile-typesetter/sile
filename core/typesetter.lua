@@ -207,7 +207,7 @@ SILE.defaultTypesetter = std.object {
   registerNewPageHook = function (self, f)
     self:registerHook("newpage", f)
   end,
-  pageBuilder = function (self, independent)
+  pageBuilder = function (self)
     local vbox;
     local pageNodeList
     if #(self.state.outputQueue) == 0 then return end
