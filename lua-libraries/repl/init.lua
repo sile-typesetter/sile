@@ -306,7 +306,7 @@ end
 
 -- TODO use lua-procure for this (eventually)
 local function findchunk(name)
-  for _, loader in pairs(package.loaders) do
+  for _, loader in pairs(package.loaders or package.searchers) do
     local chunk = loader(name)
 
     if type(chunk) == 'function' then
