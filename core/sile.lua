@@ -7,15 +7,7 @@ SILE.Commands = {};
 SILE.debugFlags = {}
 SILE.tokenizers = {}
 
-if not unpack then -- Lua 5.3!
-  function unpack (t, i)
-      i = i or 1
-      if t[i] ~= nil then
-        return t[i], unpack(t, i + 1)
-      end
-  end
-end
-
+if not unpack then unpack = table.unpack end -- 5.3 compatibility
 std = require("std")
 
 SILE.documentState = std.object {};

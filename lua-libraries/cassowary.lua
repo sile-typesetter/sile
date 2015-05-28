@@ -2,14 +2,7 @@ local epsilon = 1e-8
 local count = 2
 std = require("std")
 
-if not unpack then -- Lua 5.3!
-  function unpack (t, i)
-      i = i or 1
-      if t[i] ~= nil then
-        return t[i], unpack(t, i + 1)
-      end
-  end
-end
+if not unpack then unpack = table.unpack end -- 5.3 compatibility
 
 local function gPairs (t)
   local a = {}
