@@ -43,3 +43,4 @@ ltmain.sh
 subfiles.mk
 
 sile
+confdefs.h

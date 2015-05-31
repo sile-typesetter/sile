@@ -2,6 +2,10 @@
 
 ## Version 0.9.2 (unreleased)
 
+* Lua 5.3 support
+
+* Fixes to bidirectional support
+
 * Rotating package
 
 * Unicode character package

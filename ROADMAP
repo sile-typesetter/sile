@@ -1,12 +1,9 @@
-0.9.2 Release
-  Balanced frames
-  Tate (vertical) support
-  Full table support
-  Minimum five external packages
-
 0.9.3
   Full DocBook implementation
-  Minimum three code contributors
+  Full table support
+  Minimum five external packages
+  (Better) Balanced frames
+  Better tate (vertical) support
 
 Things to think about for later
 
