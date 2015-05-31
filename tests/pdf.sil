@@ -1,0 +1,12 @@
+\begin[papersize=a4]{document}
+\script[src=packages/pdf]
+
+Hello
+
+\pdf:destination[name=Here]
+\pdf:bookmark[dest=Here,title="Hello World"]
+World
+
+I want to see what it means to {\pdf:link[dest=Here]{linking}} with PDF.
+
+\end{document}

@@ -1,0 +1,11 @@
+\begin[papersize=129mm x 198mm]{document}%
+Para 1.
+
+\skip[height=155mm]
+
+Para 2.
+
+\goodbreak\bigskip\noindent\font[size=15pt]{Alice in Wonderland…}\novbreak\bigskip\novbreak
+
+Where did my skip just go?\par
+\end{document}

@@ -1,0 +1,15 @@
+\begin[papersize=a5]{document}
+\script[src=packages/bidi]
+\thisframeRTL%
+\font[family=Adobe Naskh,language=urd,script=Arab]
+\font[size=18pt]
+1955 میں ان کا انتقال ہوا۔
+
+1955 میں ان کا انتقال ہوا۔1947 میں وہ۔
+
+1955 میں ان کا انتقال ہوا۔ 1947 میں وہ۔
+
+میں 1955 میں آیا تھا
+
+میں1955 میں آیا تھا
+\end{document}
