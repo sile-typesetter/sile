@@ -5,7 +5,7 @@
 <define command="line"><novbreak/><skip height="5pt"/><noindent/><hrule width="450pt" height="0.3pt"/><par/><novbreak/><skip height="5pt"/></define>
 <define command="note"><medskip/>
 <set parameter="document.lskip" value="24pt"/>
-<par/><noindent/><hrule width="450pt" height="0.75pt"/><par/><smallskip/><font style="italic" size="10pt"><process/></font><par/><smallskip/><noindent/><hrule width="450pt" height="0.75pt"/><par/>
+<par/><noindent/><hrule width="450pt" height="0.75pt"/><par/><medskip/><font style="italic" size="10pt"><process/></font><par/><smallskip/><noindent/><hrule width="450pt" height="0.75pt"/><par/>
 <set parameter="document.lskip" value="0pt"/><medskip/>
 </define>
 <define command="sectionsfont"><font family="Helvetica Neue" weight="600"><process/></font></define>
