@@ -25,3 +25,5 @@ SILE.languageSupport = {
 -- The following languages neither have hyphenation nor specific
 -- language support at present. This code is here to suppress warnings.
 SILE.hyphenator.languages.ar = {patterns={}}
+SILE.hyphenator.languages.urd = {patterns={}}
+SILE.hyphenator.languages.snd = {patterns={}}
