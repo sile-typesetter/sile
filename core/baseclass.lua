@@ -170,7 +170,8 @@ SILE.baseClass = std.object {
   end,
   finish = function(self)
     SILE.call("supereject")
-    SILE.typesetter:leaveHmode(1)
+    SILE.typesetter:leaveHmode(true)
+    SILE.typesetter:pageBuilder()
     self:endPage()
     SILE.outputter:finish()
  end,

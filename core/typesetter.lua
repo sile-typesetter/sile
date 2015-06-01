@@ -315,7 +315,8 @@ SILE.defaultTypesetter = std.object {
     for index=1, #vboxlist do
       self.state.outputQueue[#(self.state.outputQueue)+1] = vboxlist[index]
     end
-    if self:pageBuilder() and not independent then
+    if independent then return end
+    if self:pageBuilder() then
       self:initNextFrame()
     end
   end,

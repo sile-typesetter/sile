@@ -140,7 +140,7 @@ SILE.registerCommand("vbox", function (options,c)
     if (options.width) then SILE.settings.set("typesetter.breakwidth", options.width) end
     SILE.typesetter:pushState()
     SILE.process(c)
-    SILE.typesetter:leaveHmode()
+    SILE.typesetter:leaveHmode(1)
     vbox = SILE.pagebuilder.collateVboxes(SILE.typesetter.state.outputQueue)
     SILE.typesetter:popState()    
   end)
