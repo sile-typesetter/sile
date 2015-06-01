@@ -13,7 +13,7 @@ SILE.framePrototype = std.object {
   id= nil,
   previous= nil,
   balanced= false,
-  direction = nil,
+  direction = "LTR",
   state = {},
   enterHooks = {},
   leaveHooks = {},
@@ -135,6 +135,7 @@ SILE.newFrame = function(spec, prototype)
   local dims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
   prototype = prototype or SILE.framePrototype
   local frame 
+  spec.direction = spec.direction
   if not SILE.frames[spec.id] then 
     frame = prototype {
       constraints = {},

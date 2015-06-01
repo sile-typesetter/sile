@@ -107,7 +107,7 @@ SILE.baseClass = std.object {
 
   end),
 
-  pageTemplate = std.object { frames= {}, firstContentFrame= nil },
+  pageTemplate = std.object { frames= {}, firstContentFrame= nil, direction = "LTR" },
   deferredInit = {},
   loadPackage = function(self, packname, args)
     local pack = require("packages/"..packname)
