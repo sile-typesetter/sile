@@ -20,20 +20,19 @@ SILE.registerCommand("footnote", function(options, content)
   SILE.call("footnotemark")
   local opts = SILE.scratch.insertions.classes.footnote
   local f = SILE.getFrame(opts["insertInto"])
-  local oldF = SILE.typesetter.frame
-  SILE.typesetter.frame = f
-  SILE.typesetter:pushState()
-  SILE.typesetter:initFrame(f)
-  insertions.exports:insert("footnote", SILE.Commands["vbox"]({}, function()
+  local oldT = SILE.typesetter
+  SILE.typesetter = SILE.typesetter {}
+  SILE.typesetter:init(f)
+  local material = SILE.Commands["vbox"]({}, function()
     SILE.Commands["font"]({size = "9pt"}, function()
       SILE.typesetter:typeset(SILE.formatCounter(SILE.scratch.counters.footnote)..".")
       SILE.call("qquad")
       SILE.process(content)
     end)
   end
-  ))
-  SILE.typesetter:popState()
-  SILE.typesetter.frame = oldF
+  )
+  SILE.typesetter = oldT
+  insertions.exports:insert("footnote", material)
   SILE.scratch.counters.footnote.value = SILE.scratch.counters.footnote.value + 1
 end)
 
