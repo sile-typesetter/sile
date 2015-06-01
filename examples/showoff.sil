@@ -80,9 +80,10 @@ after \font[family=Hiragino Mincho Pro,language=ja]{一つは}, this would leave
 typesetting principles. SILE understands these principles and refuses to allow a line to begin with 
 certain punctuation characters.
 
+\bidi-on
 But even so, Japanese typesetting is pretty easy because it’s still fundamentally left-to-right typesetting.
 Multilingual typesetting only gets difficult when you have to mix left-to-right and right-to-left typesetting,
-such as when you have English and \font[family=Scheherazade,size=12pt,direction=RTL,language=ar,script=Arab]{الخط العربي
+such as when you have English and \font[family=Scheherazade,size=12pt,language=ar,script=Arab]{الخط العربي
 }
 in the same document.
 
