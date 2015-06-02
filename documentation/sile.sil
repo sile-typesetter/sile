@@ -1,6 +1,7 @@
 \begin[papersize=a4,class=book]{document}
 %\begin[papersize=152mm x 229mm,class=book]{document}
 \script[src=packages/grid]
+\script[src=packages/url]
 \script[src=packages/autodoc]
 \script[src=packages/verbatim]
 \script[src=packages/color]
@@ -10,7 +11,7 @@
 \script[src=packages/bidi]\bidi-off
 \script[src=packages/pdf]
 \include[src=documentation/macros.sil]
-\define[command=silehp]{\code{http://www.sile-typesetter.org/}}
+\define[command=silehp]{\url{http://www.sile-typesetter.org/}}
 \define[command=sileversion]{0.9.2}
 \set[parameter=document.baselineskip,value=3ex]
 \font[size=11pt,family=Gentium Book Basic]
@@ -26,7 +27,6 @@
 %\set[parameter=document.lskip,value=0]
 %\set[parameter=document.rskip,value=0]
 \set[parameter=document.parskip,value=4pt plus 1pt]
-\define[command=untrue]{\color[color=red]{\process}}
 \open-double-page
 \tableofcontents
 \set-counter[id=folio,value=0]
@@ -189,73 +189,73 @@ number (1) centered at the bottom. How are we going to get to that PDF?
 First of all, we need to get hold of SILE and get it running on our computer.
 Downloads of SILE can be obtained from the home page at \silehp.
 
+\subsection{The Basic Instructions}
+
 SILE requires a number of other software packages to be installed on the 
 computer before it can work—the Lua programming language, and the Harfbuzz text
-shaping library.
-
-SILE provides its own PDF creation library, which has
+shaping library. SILE provides its own PDF creation library, which has
 its own requirements: \code{freetype}, \code{fontconfig}, \code{libz} and \code{libpng}.\footnote{You can also configure
 SILE to use Pango and Cairo instead, although the output will be inferior,
 especially on Linux. If you do so, you will need to install the \code{libcairo-gobject2} and \code{libpango1.0-0}
 packages in your operating system, and also the \code{lgi} Lua module.}
-On OS X machines running Homebrew (always a good idea for OS X machines), 
-you will need to run
-
-\medskip
-• \code{brew install automake libtool harfbuzz fontconfig libpng lua luarocks freetype}
-\medskip
-
-On DEB-based Linux machines such as Debian and Ubuntu, try
-
-\medskip
-• \code{apt-get install lua5.1 luarocks libharfbuzz-dev libfreetype6-dev libfontconfig1-dev libpng-dev}
-\medskip
-
-Here’s an incantation that will work for Redhat-based Linux:
-
-\medskip
-• \code{yum install harfbuzz-devel make automake gcc freetype-devel fontconfig-devel
-lua-devel lua-lpeg lua-expat libpng-devel}
-
 Once these dependencies are installed, you also need to install some
 Lua libraries if they’re not already installed:
 
-\medskip
-• \code{luarocks install lpeg luaexpat}
-\medskip
+\listitem{\code{luarocks install lpeg}}
+\listitem{\code{luarocks install luaexpat}}
 
-Now we should be finally really to go. Unpack the file that you downloaded
-from SILE’s home page, and change to that directory, and run 
+Once you have these requirements in place, you should then be able to unpack the file that you downloaded from SILE’s home page, change to that directory, and run 
 
-\medskip
-• \code{./configure; make}
-\medskip
+\listitem{\code{./configure; make}}
 
-You can now run SILE as is, uninstalled\footnote{If you want to run SILE uninstalled
-on OS X, you need to fiddle with the environment like so:\break
-\code{DYLD_LIBRARY_PATH=./libtexpdf/.libs ./sile examples/simple.sil}}:
+You can now run SILE as is, uninstalled:
 
-\medskip
-• \code{./sile examples/simple.sil}
-\medskip
+\listitem{\code{./sile examples/simple.sil}}
 
 If all has gone well, this should produce a file \code{examples/simple.pdf}.
 
 Most users of SILE will want to install the \code{sile} command and SILE’s
 library files onto their system; this can be done with
 
-\medskip
-• \code{make install}
-\medskip
+\listitem{\code{make install}}
 
 Now the \code{sile} command is available from any directory.
+
+\subsection{Notes for OS X users}
+
+On OS X machines running Homebrew (always a good idea for OS X machines), 
+you will need to run
+
+\listitem{\code{brew install pkg-config automake libtool harfbuzz fontconfig libpng lua luarocks freetype}}
+
+If you are using Homebrew on OS X, you may need to set your \code{PKG_CONFIG_PATH} environment variable, (\code{PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/lib}) or use \code{brew link} to provide the \code{pkgconfig} files for the dependency libraries. The configure script will alert you as to which libraries it cannot find.
+
+If you want to run SILE uninstalled, you will also need to fiddle with the environment like so:
+
+\code{DYLD_LIBRARY_PATH=./libtexpdf/.libs ./sile examples/simple.sil}
+
+\subsection{Notes for Linux users}
+
+On DEB-based Linux machines such as Debian and Ubuntu, you should be able
+to install most of the needed dependencies by issuing the command:
+
+\listitem{\code{apt-get install liblua5.2-dev lua-expat lua-lpeg libharfbuzz-dev libfreetype6-dev libfontconfig1-dev libpng-dev}}
+
+Here’s an incantation that will work for Redhat-based Linux:
+
+\listitem{\code{yum install harfbuzz-devel make automake gcc freetype-devel fontconfig-devel lua-devel lua-lpeg lua-expat libpng-devel}}
+
+\subsection{Notes for Windows users}
+
+Some people have reported successfully running SILE on Windows in the \code{mingw32} environment. At the moment there is no guaranteed recipe, but hints may be found
+in \url{https://github.com/simoncozens/sile/issues/82}.
 
 \section{Running SILE}
 
 Let’s move to a new directory, and in a text editor, create the file \code{hello.sil}.
 Copy in the content above and save the file. Now at your command line run:
 
-• \code{sile hello}
+\listitem{\code{sile hello}}
 
 (SILE will automatically provide the extension \code{.sil} to input files if it
 is not provided by the user.)
@@ -516,6 +516,7 @@ Commands without an argument need to be well-formed self-closing XML tags
 (for instance, \code{<break/>}), and commands with parameters should have 
 well-formed attributes. The example above, in XML flavor, would look like this:
 
+\break
 \begin{verbatim}
 \line
 <font family="Times" size="10pt">Hi there!</font>
@@ -621,10 +622,6 @@ two), but SILE will choose the closest.
 
 \noindent{}• \em{language}: The two letter (ISO639-1) language code for the
 text. This will affect both font shaping and hyphenation.
-
-\noindent{}• \em{direction}: Either \code{LTR} for left-to-right text or
-\code{RTL} for right-to-left text. If this is left unspecified the default of
-left-to-right will be used.
 
 \noindent{}• \em{script}: The script family in use. See the section “Hyphenation and Language”
 below.
@@ -758,27 +755,29 @@ different ways to standard Arabic shaping. In those cases, you should ensure tha
 you set the \code{language} and \code{script} options using the \command{\\font}
 command appropriately:
 
+\bidi-on
 \begin{verbatim}
 \line
 Standard Arabic:
-\\font[family=Scheherazade,direction=RTL,language=ar,script=Arab]\{ههه\};
+\\font[family=Scheherazade,language=ar,script=Arab]\{ه{}ه{}ه\};
 then in Sindi:
-\\font[family=Scheherazade,direction=RTL,language=snd,script=Arab]\{ههه\};
+\\font[family=Scheherazade,language=snd,script=Arab]\{ه{}ه{}ه\};
 then in Urdu:
-\\font[family=Scheherazade,direction=RTL,language=urd,script=Arab]\{ههه\}.
+\\font[family=Scheherazade,language=urd,script=Arab]\{ه{}ه{}ه\}.
 \line
 \end{verbatim}
 
 \begin{examplefont}
 \line
-Standard Arabic: \font[family=Scheherazade,direction=RTL,language=ar,script=Arab]{ههه};
-then in Sindi: \font[family=Scheherazade,direction=RTL,language=snd,script=Arab]{ههه};
-then in Urdu: \font[family=Scheherazade,direction=RTL,language=urd,script=Arab]{ههه}.
+Standard Arabic: \font[family=Scheherazade,language=ar,script=Arab]{ههه};
+then in Sindi: \font[family=Scheherazade,language=snd,script=Arab]{ههه};
+then in Urdu: \font[family=Scheherazade,language=urd,script=Arab]{ههه}.
 \line
 \end{examplefont}
+\bidi-off
 
 (A complete list of possible values for the \code{script} option can be found at
-\code{http://www.simon-cozens.org/content/duffers-guide-fontconfig-and-harfbuzz})
+\url{http://www.simon-cozens.org/content/duffers-guide-fontconfig-and-harfbuzz})
 
 \section{Including Other Files and Code}
 
@@ -951,7 +950,6 @@ some text lowered by \\lower[height=4pt]\{four points\}.
 
 \section{grid}
 \grid[spacing=15pt]
-
 In normal typesetting, SILE determines the spacing between lines of type
 according to the following two rules:
 
@@ -1033,9 +1031,11 @@ formatting the footnotes. It does this by using a number of other
 packages that we will describe below.
 
 \subsection{counters}
-\script{SILE.process(SILE.inputs.TeXlike.docToTree(require("packages/counters")))}
+\package-documentation[src=packages/counters]
 
-\eject
+\subsection{pdf}
+\package-documentation[src=packages/pdf]
+
 \subsection{frametricks}
 
 As we mentioned in the first chapter, SILE uses frames as an indication
@@ -1154,6 +1154,9 @@ local runningHead = SILE.shaper.shape(refs[1] .. " - " .. refs[#refs])
 SILE.typesetNaturally(rhFrame, runningHead);
 \line
 \end{verbatim}
+
+\subsection{inputfilter}
+\package-documentation[src=packages/inputfilter]
 
 \chapter{SILE Macros and Commands}
 
@@ -1619,8 +1622,8 @@ Conceptually, then, SILE knows about a few different basic components:
 horizontal boxes (such as a letter); horizontal glue (the stretchable, shrinkable
 space between words); vertical boxes (a line of text); vertical glue (the space
 between lines and paragraphs); and penalties (information about when and when
-not to break lines and pages).\footnote{Additionally there are two more types of box
-that SILE cares about: N-nodes and discretionaries.}
+not to break lines and pages).\footnote{Additionally there are three more types of box
+that SILE cares about: N-nodes, unshaped nodes, and discretionaries.}
 
 The most immediately useful of these are horizontal and vertical glue. It
 is possible to explicitly add horizontal and vertical glue into SILE‘s processing
@@ -1703,7 +1706,7 @@ SILE.typesetter:pushHbox(\{
   depth= 0,
   value= options.src,
   outputYourself= function (this, typesetter, line)
-    SILE.outputter.drawPNG(this.value, 
+    SILE.outputter.drawImage(this.value, 
       typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-this.height, 
       this.width,this.height
     );
@@ -1783,8 +1786,9 @@ whether you’re dealing with vertical or horizontal percentages.
 
 \end{note}
 
-Next we declare the left and right column frames. \untrue{The \code{book} class
-gives us some frames already, one of which, \code{r}, is a standard right-hand page.}
+Next we declare the left and right column frames. The \code{book} class
+gives us some frames already, one of which, \code{content}, defines a typeblock
+with a decent size and positioning on the page.
 We will use the boundaries of this frame to declare our columns: the left
 margin of the left column is the left margin of the typeblock; the right margin of
 the right column is the right margin of the typeblock. But we also want

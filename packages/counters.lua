@@ -110,7 +110,7 @@ SILE.registerCommand("show-multilevel-counter", function (options, content)
   SILE.typesetter:typeset(table.concat( out, "." ))
 end, "Outputs the value of the multilevel counter <id>, optionally displaying it with the <display> format.");
 
-return [[\begin{document}
+return { documentation = [[\begin{document}
 
 Various parts of SILE such as the \code{footnotes} package and the
 sectioning commands keep a counter of things going on: the current 
@@ -156,4 +156,4 @@ produces:
 
 \noindent{}iii}
 \line
-\end{document}]]
+\end{document}]] }

@@ -74,6 +74,8 @@ characters appear in the correct order.
 The \code{bidi} package provides two commands, \command{\\thisframeLTR} and
 \command{\\thisframeRTL}, which set the default text direction for the current frame.
 That is, if you tell SILE that a frame is RTL, the text will start in the right margin
-and proceed leftward.
+and proceed leftward. It also provides the commands \command{\\bidi-off} and
+\command{\\bidi-on}, which allow you to trade off bidirectional support for a dubious
+increase in speed.
 
 \end{document}]] }
