@@ -1,5 +1,5 @@
 SILE = {}
-SILE.version = "0.9.1"
+SILE.version = "0.9.2"
 SILE.utilities = require("core/utilities")
 SU = SILE.utilities
 SILE.inputs = {}

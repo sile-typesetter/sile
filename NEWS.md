@@ -1,42 +1,32 @@
 ## What's new in SILE 
 
-## Version 0.9.2 (unreleased)
+## Version 0.9.2 (2015-06-03)
 
-* Lua 5.3 support
+* New packages for: rotated content, accessing OpenType features and ligatures, alternative input of Unicode characters, PDF bookmarks and links, input transformation.
 
-* Fixes to bidirectional support
+* Packages to help with typesetting chord sheets and bibles.
 
-* Rotating package
-
-* Unicode character package
-
-* Support for OpenType features
+* Experimental packages for bibliography management, typesetting URLs, Japanese vertical typesetting, balanced columns, and best-fit page breaking.
 
 * Support for quoted strings in the parameters to TeX-like commands.
 
-* Hyphenation support for many languages
+* Language support: Many fixes to Arabic; support for Tibetan and Kannada; hyphenation for many languages; much improved bidirectional typesetting.
 
-* Tibetan and Kannada language support
+* Warn when frames are overfull.
 
-* Restore color (and other settings) after end of scope
-
-* Warn when frames are overfull
-
-* Support for older versions of autotools
+* Support for older versions of autotools, for Lua 5.3 and mingw32 environments.
 
 * Continuous integration and testing framework
 
 * Fixes to long-standing bugs in grid support, centering, ligatures, insertions and page breaking.
-
-* Fixes to the ragged-left, ragged-right and centered environments.
-
-* Experimental support for best-fit page breaking and balanced frames.
 
 * Better font handling and substitution.
 
 * Valid PDFs will still be generated on error/interruption.
 
 * Improved error handling and error messages.
+
+* Many miscellaneous bug fixes.
 
 ## Version 0.9.1 (2014-10-30)
 
