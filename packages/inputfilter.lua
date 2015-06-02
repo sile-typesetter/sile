@@ -5,21 +5,21 @@ local function tableInsertAll(t, values)
   end
 end
 
-local function transformContent(content, transformFunction)
+local function transformContent(content, transformFunction, data)
   local k, v
   local newContent = {}
 
   for k,v in pairs(content) do 
     if type(k) == "number" then
       if type(v) == "string" then
-        local nc = transformFunction(v, content)
+        local nc = transformFunction(v, content, data)
         if type(nc) == "table" then
           tableInsertAll(newContent, nc)
         else
           table.insert(newContent, nc)
         end
       else 
-        table.insert(newContent, transformContent(v, transformFunction))
+        table.insert(newContent, transformContent(v, transformFunction, data))
       end
     else
       newContent[k] = v
