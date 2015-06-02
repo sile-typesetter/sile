@@ -1,4 +1,4 @@
-This is SILE 0.9.1
+This is SILE 0.9.2
 <examples/showoff.sil>Open file	examples/showoff.pdf
 Set paper size 	595.275597	841.8897729
 Begin page
@@ -1034,23 +1034,23 @@ T	88 76 77 87	(this)
 Mx 	279.44139
 T	83 82 73 18	(one.)
 Mx 	69.40787
-My 	698.77611
-Set font 	Gill Sans;10;200;italic;normal;
-T	55 83 81 73	(Some)
-Mx 	93.29711
-T	81 83 86 73	(more)
-Mx 	115.72638
-T	88 73 92 88	(text)
-Mx 	133.75625
-T	88 83	(to)
-Mx 	144.39841
-T	84 69 72	(pad)
-Mx 	162.23296
-T	83 89 88	(out)
-Mx 	177.45520
-T	88 76 77 87	(this)
-Mx 	193.50264
-T	74 86 69 81 73 18	(frame.)
+My 	711.86693
+T	44 73 86 73 180 87	(Here’s)
+Mx 	98.15722
+T	69 82	(an)
+Mx 	110.66634
+T	77 81 69 75 73 16	(image,)
+Mx 	138.68815
+T	70 73 71 69 89 87 73	(because)
+Mx 	173.58496
+T	55 45 48 41	(SILE)
+Mx 	193.29134
+T	87 89 84 84 83 86 88 87	(supports)
+Mx 	230.57585
+T	88 76 83 87 73	(those)
+Mx 	255.58497
+T	88 83 83 30	(too:)
+Draw image	examples/images/sile-logo.jpg	274.54916127976	691.86693473195	35.602094240838	20
 [1] Mx 	267.42538
 My 	732.62998
 Set font 	Gentium;10;200;normal;normal;
