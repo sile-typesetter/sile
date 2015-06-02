@@ -73,6 +73,8 @@ plain.registerCommands = function()
 \define[command=raggedright]{\ragged[right=true]{\process}}%
 \define[command=raggedleft]{\ragged[left=true]{\process}}%
 \define[command=center]{\ragged[left=true,right=true]{\process}}%
+\define[command=quote]{\smallskip\par\set[parameter=document.lskip,value=2.5em]\set[parameter=document.rskip,value=2.5em]\font[size=1.2em]{\noindent\process}\par\set[parameter=document.lskip]\set[parameter="document.rskip"]\smallskip}%
+\define[command=listitem]{\medskip{}• \process\medskip}%
 ]])
 end
 
