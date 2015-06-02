@@ -32,7 +32,7 @@ end
 local debugGrid = function()
   local t = SILE.typesetter
   if not t.frame.state.totals.gridCursor then t.frame.state.totals.gridCursor = 0 end
-  local g = t.frame.state.totals.gridCursor
+  local g = t.frame:top() + t.frame.state.totals.gridCursor + SILE.toPoints("1em")
   while g < t.frame:bottom() do
     SILE.outputter.rule(t.frame:left(), g, t.frame:width(), 0.1)
     g = g + gridSpacing
@@ -44,15 +44,15 @@ SILE.registerCommand("grid:debug", debugGrid)
 SILE.registerCommand("grid", function(options, content)
   SU.required(options, "spacing", "grid package")
   gridSpacing = SILE.parseComplexFrameDimension(options.spacing,"h");
-  SILE.typesetter:leaveHmode()
+  -- SILE.typesetter:leaveHmode()
 
   SILE.typesetter.leadingFor = leadingFor
   SILE.typesetter.pushVglue = pushVglue
   SILE.typesetter.boxUpNodes = newBoxup
   SILE.typesetter.setVerticalGlue = function () end
-  SILE.typesetter.frame.state.totals.gridCursor = 0
+  SILE.typesetter.frame.state.totals.gridCursor = 0 -- Start the grid on the first baseline
   -- add some now
-  SILE.defaultTypesetter.pushVglue(SILE.typesetter, makeUp())
+  -- SILE.defaultTypesetter.pushVglue(SILE.typesetter, makeUp())
 end, "Begins typesetting on a grid spaced at <spacing> intervals.")
 
 SILE.registerCommand("no-grid", function (options, content)
