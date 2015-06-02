@@ -1,4 +1,0 @@
-\begin[papersize=a5]{document}
-\include[src=osis.sil]
-\include[src=kjv-osis.xml]
-\end{document}
