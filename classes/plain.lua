@@ -147,4 +147,5 @@ SILE.registerCommand("vbox", function (options,c)
   return vbox
 end, "Compiles all the enclosed horizontal-mode material into a single hbox")
 
+SILE.require("packages/bidi")
 return plain;
