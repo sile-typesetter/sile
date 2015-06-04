@@ -26,7 +26,7 @@ function _box:isDiscardable () return self:isGlue() or self:isPenalty() end
 function _box:isPenalty ()  return self.type == "penalty" end
 function _box:isDiscretionary ()  return self.type == "discretionary" end
 
-function _box:isKern ()  return self.type == "kern" end -- Which it never is
+function _box:isKern ()  return self.type == "kern" end
 
 -- Hboxes
 
@@ -193,7 +193,11 @@ local _glue = _box {
     typesetter.frame:moveX(scaledWidth)
   end
 }
-
+local _kern = _glue { 
+  _type = "Kern",
+  type = "kern",
+  __tostring = function (this) return "K<" .. tostring(this.width) .. ">"; end,
+}
 
 -- VGlue
 local _vglue = _box {
@@ -285,6 +289,11 @@ function SILE.nodefactory.newGlue(spec)
   if type(spec) == "table" then return _glue(spec) end
   if type(spec) == "string" then return _glue({width = SILE.length.parse(spec)}) end
   SU.error("Unparsable glue spec "..spec)
+end
+function SILE.nodefactory.newKern(spec)
+  if type(spec) == "table" then return _kern(spec) end
+  if type(spec) == "string" then return _kern({width = SILE.length.parse(spec)}) end
+  SU.error("Unparsable kern spec "..spec)
 end
 function SILE.nodefactory.newVglue(spec)
   if type(spec) == "table" then return _vglue(spec) end
