@@ -6,9 +6,8 @@ SILE.languageSupport = {
     if not(language) or language == "" then language = "en" end
     ok, fail = pcall(function () SILE.require("languages/"..language.."-compiled") end)
     if ok then return end
-    if not pcall(function () SILE.require("languages/"..language) end) then
-      return
-    end
+    ok, fail = pcall(function () SILE.require("languages/"..language) end)
+    if fail then SU.warn(fail) end
   end,
   compile = function(language)
     local ser = require("serpent")
