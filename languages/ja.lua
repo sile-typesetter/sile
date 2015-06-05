@@ -76,7 +76,6 @@ end
 local function intercharacterspace(before, after)
   local bc = jisClass(before)
   local ac = jisClass(after)
-  io.write("["..bc..","..ac.."]")
   -- This rule is not in jlreq but it stops situations like 1：2 getting munched
   if (bc == 5 and ac == 27) or (bc == 27 and ac == 5) then return 0 end
 
@@ -138,7 +137,6 @@ SILE.tokenizers.ja = function(string)
                                    shrink = SILE.toPoints(shrinkability(lastcp, thiscp))
                                   })
         })
-        io.write(uchar); io.write(kern.."")
         coroutine.yield({ node = kern })
         if breakAllowed(lastcp, thiscp) then
           coroutine.yield({ node = okbreak })
