@@ -92,6 +92,15 @@ local function intercharacterspace(before, after)
     if ac == 2 or ac == 6 or ac == 7 then return "-0.25em" end
     return 0
   end
+  if (bc == 9 or bc == 10 or bc == 11 or bc == 15 or bc == 16 or bc == 19) and
+    (ac == 21 or ac == 24 or ac == 25 or ac == 27) then
+    return "0.25em"
+  end
+  if (ac == 9 or ac == 10 or ac == 11 or ac == 15 or ac == 16 or ac == 19) and
+    (bc == 21 or bc == 24 or bc == 25 or bc == 27) then
+    return "0.25em"
+  end
+
   return 0
 end
 
@@ -131,15 +140,14 @@ SILE.tokenizers.ja = function(string)
       if string.match(uchar, space) then
         coroutine.yield({separator = uchar})
       else
-        local kern = SILE.nodefactory.newKern({ 
-          width = SILE.length.new({length = SILE.toPoints(intercharacterspace(lastcp, thiscp)), 
+        local length = SILE.length.new({length = SILE.toPoints(intercharacterspace(lastcp, thiscp)), 
                                    stretch = SILE.toPoints(stretchability(lastcp,thiscp)),
                                    shrink = SILE.toPoints(shrinkability(lastcp, thiscp))
                                   })
-        })
-        coroutine.yield({ node = kern })
         if breakAllowed(lastcp, thiscp) then
-          coroutine.yield({ node = okbreak })
+          coroutine.yield({ node = SILE.nodefactory.newGlue({ width = length }) })
+        elseif length.length ~= 0 or length.stretch ~= 0 or length.shrink ~= 0 then
+          coroutine.yield({ node = SILE.nodefactory.newKern({ width = length }) })
         end
         coroutine.yield({ string = uchar })
       end
