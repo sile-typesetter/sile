@@ -220,7 +220,9 @@ function lineBreak:considerDemerits(pi, breakType) -- 877
   local nodeStaysActive = false
   -- self:dumpActiveRing()
   local shortfall = self.lineWidth - self.curActiveWidth.length
-  self:tryAlternatives(self.r.prevBreak and self.r.prevBreak.curBreak or 1, self.r.curBreak and self.r.curBreak or 1, shortfall)
+  if self.seenAlternatives then
+    self:tryAlternatives(self.r.prevBreak and self.r.prevBreak.curBreak or 1, self.r.curBreak and self.r.curBreak or 1, shortfall)
+  end
   shortfall = self.lineWidth - self.curActiveWidth.length
   self.b, self.fitClass = fitclass(self, shortfall)
   SU.debug("break", self.b .. " " .. self.fitClass)
@@ -410,6 +412,7 @@ end
 function lineBreak:checkForLegalBreak(n) -- 892
   SU.debug("break", "considering node "..n);
   local previous = self.nodes[self.cur_p - 1]
+  if n:isAlternative() then self.seenAlternatives = true end
   if self.sideways and n:isVbox() then
     self.activeWidth = self.activeWidth + n.height + n.depth
   elseif self.sideways and n:isVglue() then
@@ -455,6 +458,7 @@ end
 
 function lineBreak:doBreak (nodes, hsize, sideways)
   passSerial = 1
+  self.seenAlternatives = false
   self.nodes = nodes
   self.hsize = hsize
   self.sideways = sideways
