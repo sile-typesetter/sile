@@ -1,12 +1,15 @@
 -- "jlreq" refers to http://www.w3.org/TR/jlreq/
 -- "JIS" refers to JIS X 4051
 
-local punct = function(c) return c >= 0x3000 and c <= 0x303f or c == 0xff09 or c == 0xff08 end
+-- jlreq measures distances in units of 1em, but also assumes that an em is the
+-- width of a full-width character. In SILE terms it isn't: measuring an "m" in
+-- a 10pt Japanese font gets you 5 points. So we measure a full-width character
+-- and use that as a unit. We call it zw following ptex (zenkaku width)
+SILE.xToPoints["zw"] =  function(v) return tonumber(v) * SILE.shaper:measureDim("あ") end
+
 local hiragana = function(c) return c > 0x3040 and c <= 0x309f end
 local katakana = function(c) return c > 0x30a0 and c <= 0x30ff end
-local kana = function(c) return hiragana(c) or katakana(c) end
 local kanji = function(c) return c >= 0x4e00 and c <= 0x9fcc end
-local japanese = function(c) return punct(c) or kana(c) or kanji(c) end
 
 local classes = { -- from jlreq
   [0x2018] = 1, [0x201C] = 1, [0x0028] = 1, [0x3014] = 1, [0x005B] = 1, 
@@ -59,7 +62,7 @@ local badBeforeClasses = { [1] = true, [12] = true, [28] = true }
 local badAfterClasses = { }
 for i,v in ipairs({2,3,4,5,6,7,9,10,11,20,29}) do badAfterClasses[v] = true end
 
-local function breakAllowed(before, after)
+function breakAllowed(before, after)
   local bc = jisClass(before)
   local ac = jisClass(after)
   if badBeforeClasses[bc] then return false end
@@ -84,21 +87,21 @@ local function intercharacterspace(before, after)
   -- zenkaku width with trailing space built into the glyph. So we do not add 
   -- space there. Instead, where no space is stipulated, we add negative space
   -- to counteract the trailing space in the glyph.
-  if ac == 5 then return "-0.25em" end
-  if bc == 5 then return "-0.25em" end
-  if bc == 7 and ac == 1 then return "-0.5em" end
-  if bc == 2 and ac == 1 then return "-0.5em" end
+  if ac == 5 then return "-0.25zw" end
+  if bc == 5 then return "-0.25zw" end
+  if bc == 7 and ac == 1 then return "-0.5zw" end
+  if bc == 2 and ac == 1 then return "-0.5zw" end
   if bc == 6 or bc == 7 then
-    if ac == 2 or ac == 6 or ac == 7 then return "-0.25em" end
+    if ac == 2 or ac == 6 or ac == 7 then return "-0.25zw" end
     return 0
   end
   if (bc == 9 or bc == 10 or bc == 11 or bc == 15 or bc == 16 or bc == 19) and
     (ac == 21 or ac == 24 or ac == 25 or ac == 27) then
-    return "0.25em"
+    return "0.25zw"
   end
   if (ac == 9 or ac == 10 or ac == 11 or ac == 15 or ac == 16 or ac == 19) and
     (bc == 21 or bc == 24 or bc == 25 or bc == 27) then
-    return "0.25em"
+    return "0.25zw"
   end
 
   return 0
@@ -108,13 +111,13 @@ local function stretchability(before, after)
   local bc = jisClass(before)
   local ac = jisClass(after)
   -- somewhat simplified from table 6 of jlreq
-  if ac == 1 then return "0.25em" end
+  if ac == 1 then return "0.25zw" end
   if ac < 8 then return 0 end
   if bc == 4 and (ac == 21 or ac==24 or ac==25 or ac==27) then
-    return "0.5em"
+    return "0.5zw"
   end
   if bc < 8 then return 0 end
-  return "0.25em" -- somewhat simplified
+  return "0.25zw" -- somewhat simplified
 end
 
 local function shrinkability(before, after)
@@ -123,10 +126,10 @@ local function shrinkability(before, after)
   -- This rule is not in jlreq but it stops situations like 1：2 getting munched
   if (bc == 5 and ac == 27) or (bc == 27 and ac == 5) then return 0 end
   -- somewhat simplified from table 5 of jlreq
-  if ac == 1 then return "0.5em" end
-  if ac == 5 then return "0.25em" end
-  if bc == 5 then return "0.25em" end
-  if bc == 7 then return "0.5em" end
+  if ac == 1 then return "0.5zw" end
+  if ac == 5 then return "0.25zw" end
+  if bc == 5 then return "0.25zw" end
+  if bc == 7 then return "0.5zw" end
   return 0
 end
 
@@ -134,24 +137,33 @@ local okbreak = SILE.nodefactory.newPenalty({ penalty = 0 })
 SILE.tokenizers.ja = function(string)
   return coroutine.wrap(function()
     local lastcp = -1
+    local lastchar = ""
     local space = SILE.settings.get("shaper.spacepattern")
     for uchar in string.gmatch(string, "([%z\1-\127\194-\244][\128-\191]*)") do
       local thiscp = SU.codepoint(uchar)
+      -- io.write(lastchar.. "|" .. uchar)
       if string.match(uchar, space) then
+        -- io.write(" S\n")
         coroutine.yield({separator = uchar})
       else
         local length = SILE.length.new({length = SILE.toPoints(intercharacterspace(lastcp, thiscp)), 
                                    stretch = SILE.toPoints(stretchability(lastcp,thiscp)),
                                    shrink = SILE.toPoints(shrinkability(lastcp, thiscp))
                                   })
-        if breakAllowed(lastcp, thiscp) then
-          coroutine.yield({ node = SILE.nodefactory.newGlue({ width = length }) })
-        elseif length.length ~= 0 or length.stretch ~= 0 or length.shrink ~= 0 then
-          coroutine.yield({ node = SILE.nodefactory.newKern({ width = length }) })
+        if lastcp > -1 then
+          if breakAllowed(lastcp, thiscp) then
+            -- io.write(" B\n")
+            coroutine.yield({ node = SILE.nodefactory.newGlue({ width = length }) })
+          elseif length.length ~= 0 or length.stretch ~= 0 or length.shrink ~= 0 then
+            -- io.write(" K\n")
+            coroutine.yield({ node = SILE.nodefactory.newKern({ width = length }) })
+          else -- io.write(" N\n")
+          end
         end
         coroutine.yield({ string = uchar })
       end
       lastcp =thiscp
+      lastchar = uchar
     end
   end)
 end
