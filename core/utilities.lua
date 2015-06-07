@@ -107,7 +107,26 @@ function utilities.sum(array)
   return t
 end
 
-function utilities.codepoint(uchar)
+function utilities.allCombinations(options)
+  local count = 1
+  for i=1,#options do count = count * options[i] end
+  return coroutine.wrap(function()
+    for i=0,count-1 do
+      local this = i
+      local rv = {}
+      for j = 1,#options do
+        local base = options[j]
+        rv[#rv+1] = this % base + 1
+        this = (this - this % base )/ base
+      end
+      coroutine.yield(rv)
+    end
+  end)
+end
+
+-- Unicode-related utilities
+pcall(function() utf8 = require("utf8") end)
+utilities.codepoint = utf8.codepoint or function (uchar)
   local seq = 0
   local val = -1
   for i = 1, #uchar do
@@ -124,6 +143,55 @@ function utilities.codepoint(uchar)
     seq = seq - 1
   end  
   return val
+end
+
+utilities.utf8codes = utf8.codes or function (ustr)
+  local pos = 1
+  return function()
+    if pos > #ustr then
+      return nil
+    else
+      local c, ucv = 0, 0
+      local nbytes = 0
+      c = string.byte(ustr, pos)
+      pos = pos + 1
+      if c < 0x80 then
+        ucv    = c
+        nbytes = 0
+      elseif c >= 0xc0 and c < 0xe0 then -- 110x xxxx
+        ucv    = c - 0xc0
+        nbytes = 1
+      elseif c >= 0xe0 and c < 0xf0 then -- 1110 xxxx
+        ucv    = c - 0xe0
+        nbytes = 2
+      elseif c >= 0xf0 and c < 0xf8 then -- 1111 0xxx
+        ucv    = c - 0xf0
+        nbytes = 3
+      elseif c >= 0xf8 and c < 0xfc then -- 1111 10xx
+        ucv    = c - 0xf8
+        nbytes = 4
+      elseif c >= 0xfc and c < 0xfe then -- 1111 110x
+        ucv    = c - 0xfc
+        nbytes = 5
+      else -- Invalid
+        return nil
+      end
+      if pos + nbytes > #ustr + 1 then -- Invalid
+        return nil
+      end
+      while nbytes > 0 do
+        nbytes = nbytes - 1
+        c = string.byte(ustr, pos)
+        pos = pos + 1
+        if c < 0x80 or c >= 0xc0 then -- Invalid
+          return nil
+        else
+          ucv = ucv * 64 + (c - 0x80);
+        end
+      end
+      return ucv
+    end
+  end
 end
 
 function utilities.splitUtf8(s) -- Return an array of UTF8 strings each representing a Unicode char
@@ -153,21 +221,18 @@ function utilities.splitUtf8(s) -- Return an array of UTF8 strings each represen
   return rv
 end
 
-function utilities.allCombinations(options)
-  local count = 1
-  for i=1,#options do count = count * options[i] end
-  return coroutine.wrap(function()
-    for i=0,count-1 do
-      local this = i
-      local rv = {}
-      for j = 1,#options do
-        local base = options[j]
-        rv[#rv+1] = this % base + 1
-        this = (this - this % base )/ base
-      end
-      coroutine.yield(rv)
+function utilities.utf8_to_utf16be(str)
+  local ustr = string.format("%04x", 0xfeff) -- BOM
+  for uchr in utilities.utf8codes(str) do
+    if (uchr < 0x10000) then
+      ustr = ustr..string.format("%04x", uchr)
+    else -- Surrogate pair
+      local sur_hi = (uchr - 0x10000) / 0x400 + 0xd800
+      local sur_lo = (uchr - 0x10000) % 0x400 + 0xdc00
+      ustr = ustr..string.format("%04x%04x", sur_hi, sur_lo)
     end
-  end)
+  end
+  return ustr
 end
 
 return utilities
