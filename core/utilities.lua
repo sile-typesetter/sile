@@ -126,6 +126,8 @@ end
 
 -- Unicode-related utilities
 pcall(function() utf8 = require("utf8") end)
+if not utf8 then utf8 = {} end
+
 utilities.codepoint = utf8.codepoint or function (uchar)
   local seq = 0
   local val = -1
