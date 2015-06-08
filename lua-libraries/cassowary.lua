@@ -1,8 +1,15 @@
 local epsilon = 1e-8
 local count = 2
-std = require("std")
+local std = require("std")
 
-if not unpack then unpack = table.unpack end -- 5.3 compatibility
+if not unpack then -- Lua 5.3!
+  function unpack (t, i)
+      i = i or 1
+      if t[i] ~= nil then
+        return t[i], unpack(t, i + 1)
+      end
+  end
+end
 
 local function gPairs (t)
   local a = {}
@@ -18,6 +25,7 @@ local function gPairs (t)
   return iter
 end
 
+local cassowary
 cassowary = {
   debug = false,
   trace = false,
@@ -160,7 +168,7 @@ cassowary.NotEnoughStays  = cassowary.Error { _type = "NotEnoughStays", descript
 cassowary.RequiredFailure = cassowary.Error { _type = "RequiredFailure", description = "A required constraint cannot be satisfied" }
 cassowary.TooDifficult    = cassowary.Error { _type = "TooDifficult", description = "The constraints are too difficult to solve" }
 
-Set = require("std.set")
+local Set = require("std.set")
 
 local SetSize = function (set)
   local c = 0
@@ -168,7 +176,7 @@ local SetSize = function (set)
   return c
 end
 
-SetFirst = function(set)
+local SetFirst = function(set)
   local iter = Set.elems(set)
   return iter(set)
 end
@@ -225,7 +233,7 @@ cassowary.Tableau = Object {
   end,
   removeColumn = function (self, aVar)
     cassowary:traceFnEnterPrint("removeColumn: "..tostring(aVar) )
-    rows = self.columns[aVar]
+    local rows = self.columns[aVar]
     if rows then
       self.columns[aVar] = nil
       for clv in Set.elems(rows) do
@@ -928,7 +936,7 @@ cassowary.SimplexSolver = cassowary.Tableau {
       end
       self:pivot(e:anyPivotableVariable(), av)
     end
-    assert(not self.rows[ev])
+    assert(not self.rows[av])
     self:removeColumn(av)
     self:removeRow(az)
   end,
