@@ -1,6 +1,6 @@
 local utilities = {}
 
-require("bit32-compat")
+local bit32 = require("bit32-compat")
 
 function utilities.required(t, name, context)
   if not t[name] then utilities.error(context.." needs a "..name.." parameter") end
