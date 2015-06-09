@@ -39,7 +39,6 @@ SILE.settings.declare({name = "font.variant", type = "string", default = "normal
 SILE.settings.declare({name = "font.script", type = "string", default = ""})
 SILE.settings.declare({name = "font.style", type = "string", default = "normal"})
 SILE.settings.declare({name = "font.features", type = "string", default = ""})
-SILE.settings.declare({name = "font.direction", type = "string", default = "LTR"})
 SILE.settings.declare({name = "document.language", type = "string", default = "en"})
 
 SILE.fontCache = {}
@@ -57,7 +56,7 @@ SILE.font = {loadDefaults = function(options)
   if not options.variant then options.variant = SILE.settings.get("font.variant") end
   if not options.language then options.language = SILE.settings.get("document.language") end
   if not options.script then options.script = SILE.settings.get("font.script") end
-  if not options.direction then options.direction = SILE.settings.get("font.direction") end
+  if not options.direction then options.direction = SILE.typesetter.frame.direction end
   if not options.features then options.features = SILE.settings.get("font.features") end
   return options
 end,
