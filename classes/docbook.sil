@@ -53,4 +53,4 @@
 \define[command=bibliography]{\font[size=16pt]{\docbook-section-title{Bibliography}}\par\font[size=2ex]\process}%
 \define[command=bibliomixed]{\process\smallskip}%
 \define[command=bibliomisc]{ \process}%
-\end{document}%
+\end{document}
