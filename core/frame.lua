@@ -78,6 +78,7 @@ function SILE.framePrototype:toString()
 end
 
 function SILE.framePrototype:moveX(amount)
+  if type(amount) == "table" then SU.error("Table passed to moveX", 1) end
   if self.direction == "RTL" then
     self.state.cursorX = self.state.cursorX - amount
   else
@@ -87,6 +88,7 @@ function SILE.framePrototype:moveX(amount)
 end
 
 function SILE.framePrototype:moveY(amount)
+  if type(amount) == "table" then SU.error("Table passed to moveY", 1) end
   self.state.cursorY = self.state.cursorY + amount
   self:normalize()
 end
@@ -117,8 +119,8 @@ function SILE.framePrototype:leave()
 end
 
 function SILE.framePrototype:normalize()
-  if (type(self.state.cursorY)) == "table" then self.state.cursorY  =self.state.cursorY.length end
-  if (type(self.state.cursorX)) == "table" then self.state.cursorX  =self.state.cursorX.length end
+  if (type(self.state.cursorY)) == "table" then SU.error("cursor Y has become a table",1) end
+  if (type(self.state.cursorX)) == "table" then SU.error("cursor X has become a table",1) end
 end
 
 function SILE.framePrototype:isMainContentFrame()

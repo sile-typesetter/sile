@@ -1,9 +1,11 @@
 SILE.tateFramePrototype = SILE.framePrototype {
   moveX = function(self, amount)
     self.state.cursorY = self.state.cursorY + amount
+  if type(amount) == "table" then SU.error("Table passed to moveX", 1) end
   end,
   moveY = function(self, amount)
     self.state.cursorX = self.state.cursorX - amount
+  if type(amount) == "table" then SU.error("Table passed to moveY", 1) end    
   end,
   newLine = function(self)
     self.state.cursorY = self:top()

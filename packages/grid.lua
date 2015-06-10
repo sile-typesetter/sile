@@ -8,7 +8,11 @@ end
 
 local leadingFor = function(this, vbox, previous)
   if not this.frame.state.totals.gridCursor then this.frame.state.totals.gridCursor = 0 end
-  this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + previous.height.length + previous.depth.length
+  if type(previous.height) == "table" then
+    this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + previous.height.length + previous.depth
+  else
+    this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + previous.height + previous.depth
+  end
   return makeUp()
 end
 
@@ -24,7 +28,8 @@ local newBoxup = function (this)
   if not this.frame.state.totals.gridCursor then this.frame.state.totals.gridCursor = 0 end
   
   if #b > 1 then
-    this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + b[#b].height.length + b[#b].depth.length
+    local h = type(b[#b].height) == "table" and b[#b].height.length or b[#b].height
+    this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + h + b[#b].depth
   end
   return b
 end
