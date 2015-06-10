@@ -252,9 +252,7 @@ local _vbox = _box {
     return "VB[" .. SU.concat(SU.map(function (n) return n:toText().."" end, self.nodes), "") .. "]" 
   end,
   outputYourself = function(self, typesetter, line)
-    if (typesetter.frame.state.cursorY == typesetter.frame:top()) then
-      typesetter.frame:moveY(self.height)
-    end
+    typesetter.frame:moveY(self.height)  
     local initial = true
     for i,node in pairs(self.nodes) do
       if initial and (node:isGlue() or node:isPenalty()) then
@@ -264,7 +262,6 @@ local _vbox = _box {
         node:outputYourself(typesetter, self)
       end
     end
-    typesetter.frame:moveY(self.height)
     typesetter.frame:moveY(self.depth)
     typesetter.frame:newLine()
   end  
