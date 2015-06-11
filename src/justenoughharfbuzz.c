@@ -36,7 +36,7 @@ typedef struct {
 
 FT_Library ft_library;
 
-void calculate_extents(box* b, hb_glyph_info_t glyph_info, hb_glyph_position_t glyph_pos, FT_Face ft_face, double point_size) {
+void calculate_extents(box* b, hb_glyph_info_t glyph_info, hb_glyph_position_t glyph_pos, FT_Face ft_face, double point_size, hb_direction_t direction) {
   FT_Error error = FT_Load_Glyph(ft_face, glyph_info.codepoint, FT_LOAD_NO_SCALE);
   if (error) return;
   FT_Glyph glyph;
@@ -48,8 +48,14 @@ void calculate_extents(box* b, hb_glyph_info_t glyph_info, hb_glyph_position_t g
   FT_Get_Advance(ft_face, glyph_info.codepoint, FT_LOAD_NO_SCALE, &advance);
   const FT_Glyph_Metrics *ftmetrics = &ft_face->glyph->metrics;
   b->width = advance * point_size / ft_face->units_per_EM;
-  b->height = ft_bbox.yMax * point_size / ft_face->units_per_EM;
-  b->depth = -ft_bbox.yMin * point_size / ft_face->units_per_EM;
+  if (direction == HB_DIRECTION_TTB) {
+    FT_Get_Advance(ft_face, glyph_info.codepoint, FT_LOAD_NO_SCALE | FT_LOAD_VERTICAL_LAYOUT, &advance);
+    b->height = advance * point_size / ft_face->units_per_EM;
+    b->depth = 0;
+  } else {
+    b->height = ft_bbox.yMax * point_size / ft_face->units_per_EM;
+    b->depth = -ft_bbox.yMin * point_size / ft_face->units_per_EM;
+  }
   FT_Done_Glyph(glyph);
 }
 
@@ -306,7 +312,7 @@ int shape (lua_State *L) {
     for (j = 0; j < glyph_count; ++j) {
       char namebuf[255];
       box glyph_extents  = { 0.0, 0.0, 0.0 };
-      calculate_extents(&glyph_extents, glyph_info[j], glyph_pos[j], face, point_size);
+      calculate_extents(&glyph_extents, glyph_info[j], glyph_pos[j], face, point_size, direction);
 
       lua_newtable(L);
       lua_pushstring(L, "name");
