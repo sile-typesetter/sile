@@ -1,10 +1,6 @@
 SILE.require("packages/tate")
-SILE.registerCommand("show-hanmen", function(options, content)
-  local f = SILE.typesetter.frame
-  if not f.hanmen then SU.error("show-hanmen called on a frame with no hanmen") end
-  
-  -- Assuming horizontal for now
-  SILE.outputter:pushColor({r = 1, g= 0.9, b = 0.9 })
+
+local showHanmenYoko = function(f)
   local g = f:top()
   while g < f:bottom() do
     SILE.outputter.rule(f:left(), g - 0.25, f:width(), 0.5)
@@ -17,8 +13,34 @@ SILE.registerCommand("show-hanmen", function(options, content)
     SILE.outputter.rule(f:left(), g - 0.25, f:width(), 0.5)
     g = g + f.hanmen.linegap
   end
-  SILE.outputter:popColor()
+end
 
+local showHanmenTate = function(f)
+  local g = f:right()
+  while g > f:left() do
+    SILE.outputter.rule( g - 0.25, f:top(), 0.5, -f:height())
+    local l = f:top()
+    while l < f:bottom() do
+      SILE.outputter.rule(g - f.hanmen.gridsize - 0.25, l-0.25, f.hanmen.gridsize, 0.5)
+      l = l + f.hanmen.gridsize
+    end
+    g = g - f.hanmen.gridsize
+    SILE.outputter.rule( g - 0.25, f:top(), 0.5, -f:height())
+    g = g - f.hanmen.linegap
+  end
+end
+
+
+SILE.registerCommand("show-hanmen", function(options, content)
+  local f = SILE.typesetter.frame
+  if not f.hanmen then SU.error("show-hanmen called on a frame with no hanmen") end
+  SILE.outputter:pushColor({r = 1, g= 0.9, b = 0.9 })
+  if f.direction == "TTB" then
+    showHanmenTate(f)
+  else
+    showHanmenYoko(f)
+  end
+  SILE.outputter:popColor()
 end)
 
 local declareHanmenFrame = function (self, id, spec)
