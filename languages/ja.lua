@@ -50,6 +50,7 @@ local classes = { -- from jlreq
 }
 
 local jisClass = function(c)
+  if c == -1 then return -1 end
   if classes[c] then return classes[c] end
   if hiragana(c) then return 15 end
   if katakana(c) then return 16 end
@@ -91,6 +92,7 @@ local function intercharacterspace(before, after)
   if bc == 5 then return "-0.25zw" end
   if bc == 7 and ac == 1 then return "-0.5zw" end
   if bc == 2 and ac == 1 then return "-0.5zw" end
+  if bc == -1 and ac == 1 then return "-0.5zw" end
   if bc == 6 or bc == 7 then
     if ac == 2 or ac == 6 or ac == 7 then return "-0.25zw" end
     return 0
