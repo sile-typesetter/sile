@@ -126,7 +126,10 @@ SILE.defaultTypesetter = std.object {
     end
     SILE.shaper:itemize(self.state.nodes, t)
   end,
-
+  breakIntoLines = function (self, nl, breakWidth)
+    local breaks = SILE.linebreak:doBreak( nl, breakWidth);
+    return self:breakpointsToLines(breaks);
+  end,
   -- Empties self.state.nodes, breaks into lines, puts lines into vbox, adds vbox to
   -- Turns a node list into a list of vboxes
   boxUpNodes = function (self)
@@ -149,11 +152,7 @@ SILE.defaultTypesetter = std.object {
 
     local breakWidth = SILE.settings.get("typesetter.breakwidth") or self.frame:width()
     if (type(breakWidth) == "table") then breakWidth = breakWidth.length end
-    local breaks = SILE.linebreak:doBreak( nl, breakWidth);
-    if (#breaks == 0) then
-      SU.error("Couldn't break :(")
-    end
-    local lines = self:breakpointsToLines(breaks);
+    local lines = self:breakIntoLines(nl, breakWidth)
     local vboxes = {}
     local previousVbox = nil
     for index=1, #lines do
