@@ -49,12 +49,16 @@ local declareHanmenFrame = function (self, id, spec)
   spec.hanmen = {
     gridsize = SILE.toPoints(SU.required(spec, "gridsize", "declaring the kihonhanmen")),
     linegap = SILE.toPoints(SU.required(spec, "linegap", "declaring the kihonhanmen")),
-    linelength = SILE.toPoints(SU.required(spec, "linelength", "declaring the kihonhanmen"))
+    linelength = SILE.toPoints(SU.required(spec, "linelength", "declaring the kihonhanmen")),
+    linecount = SILE.toPoints(SU.required(spec, "linecount", "declaring the kihonhanmen"))
   }
-  spec.width = (spec.hanmen.gridsize * spec.hanmen.linelength) .. "pt"
+  spec.height = (spec.hanmen.gridsize * spec.hanmen.linelength) .. "pt"
+  spec.width = (spec.hanmen.gridsize * spec.hanmen.linecount + 
+                spec.hanmen.linegap * ( spec.hanmen.linecount -1 )) .. "pt"
+
   local skip = spec.hanmen.linegap + spec.hanmen.gridsize
   SILE.settings.set("document.baselineskip", SILE.nodefactory.newVglue(skip.."pt"))
-  SILE.settings.set("document.parskip", SILE.nodefactory.newVglue((spec.hanmen.linegap+0.5) .. "pt"))
+  SILE.settings.set("document.parskip", SILE.nodefactory.newVglue((spec.hanmen.linegap) .. "pt"))
 
   self.pageTemplate.frames[id] = SILE.newFrame(spec, spec.tate and SILE.tateFramePrototype or SILE.framePrototype)
 end
