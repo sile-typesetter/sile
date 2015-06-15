@@ -413,10 +413,10 @@ function lineBreak:checkForLegalBreak(n) -- 892
   SU.debug("break", "considering node "..n);
   local previous = self.nodes[self.cur_p - 1]
   if n:isAlternative() then self.seenAlternatives = true end
-  if self.sideways and n:isVbox() then
+  if self.sideways and n:isBox() then
     self.activeWidth = self.activeWidth + n.height + n.depth
   elseif self.sideways and n:isVglue() then
-    if previous and (previous:isVbox()) then
+    if previous and (previous:isBox()) then
       self:tryBreak()
     end
     self.activeWidth = self.activeWidth + n.height + n.depth
