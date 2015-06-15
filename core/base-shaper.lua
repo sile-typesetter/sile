@@ -130,6 +130,7 @@ SILE.shapers.base = std.object {
       value = nnodeValue
     }))
     -- Why does the nnode contain only one hbox?
+    -- So it can be hypenated and split later
     return { SILE.nodefactory.newNnode({ 
       nodes = nnodeContents,
       text = token,
