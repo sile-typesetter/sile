@@ -98,11 +98,11 @@ local function intercharacterspace(before, after)
     return 0
   end
   if (bc == 9 or bc == 10 or bc == 11 or bc == 15 or bc == 16 or bc == 19) and
-    (ac == 21 or ac == 24 or ac == 25 or ac == 27) then
+    (ac == 21 or ac == 24 or ac == 25) then
     return "0.25zw"
   end
   if (ac == 9 or ac == 10 or ac == 11 or ac == 15 or ac == 16 or ac == 19) and
-    (bc == 21 or bc == 24 or bc == 25 or bc == 27) then
+    (bc == 21 or bc == 24 or bc == 25) then
     return "0.25zw"
   end
 
@@ -138,34 +138,34 @@ end
 local okbreak = SILE.nodefactory.newPenalty({ penalty = 0 })
 SILE.tokenizers.ja = function(string)
   return coroutine.wrap(function()
+    local db
     local lastcp = -1
     local lastchar = ""
     local space = SILE.settings.get("shaper.spacepattern")
     for uchar in string.gmatch(string, "([%z\1-\127\194-\244][\128-\191]*)") do
       local thiscp = SU.codepoint(uchar)
-      -- io.write(lastchar.. "|" .. uchar)
+      db = lastchar.. "|" .. uchar
       if string.match(uchar, space) then
-        -- io.write(" S\n")
-        coroutine.yield({separator = uchar})
+        db = db .. " S"
+        coroutine.yield({ separator = uchar })
       else
         local length = SILE.length.new({length = SILE.toPoints(intercharacterspace(lastcp, thiscp)), 
                                    stretch = SILE.toPoints(stretchability(lastcp,thiscp)),
                                    shrink = SILE.toPoints(shrinkability(lastcp, thiscp))
                                   })
-        if lastcp > -1 then
           if breakAllowed(lastcp, thiscp) then
-            -- io.write(" B\n")
+            db = db .." G ".. length
             coroutine.yield({ node = SILE.nodefactory.newGlue({ width = length }) })
           elseif length.length ~= 0 or length.stretch ~= 0 or length.shrink ~= 0 then
-            -- io.write(" K\n")
+            db = db .." K ".. length
             coroutine.yield({ node = SILE.nodefactory.newKern({ width = length }) })
-          else -- io.write(" N\n")
+          else db = db .. " N"
           end
-        end
         coroutine.yield({ string = uchar })
       end
       lastcp =thiscp
       lastchar = uchar
+      SU.debug("ja", db)
     end
   end)
 end
