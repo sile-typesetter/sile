@@ -376,7 +376,8 @@ SILE.defaultTypesetter = std.object {
           if (node:isBox() or (node:isPenalty() and node.penalty == -inf_bad)) then
             skipping = 0
             if node:isBox() then
-              naturalTotals = naturalTotals + node.width
+              local h = self.frame.direction == "TTB" and node.height or node.width
+              naturalTotals = naturalTotals + h
             end
           elseif skipping == 0 then-- and not(node:isGlue() and i == #slice) then
             naturalTotals = naturalTotals + node.width
