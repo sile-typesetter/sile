@@ -20,9 +20,9 @@ SILE allows you to
 
 ## Getting and installing
 
-SILE can be downloaded from [its home page][1], or directly from [the release page][2].
+SILE can be downloaded from [its home page][sile], or directly from [the release page][releases].
 
-SILE is written in the Lua programming language, so you will need a Lua version 5.1 installation. It also relies on external libraries to access fonts and write PDF files. Its preferred combination of libraries is [harfbuzz][] and a PDF creation library extracted from TeX. It should be possible to harfbuzz from your operating system's package manager. (For Harfbuzz to work you will also need freetype2 and fontconfig installed.) If this is not possible, SILE will attempt to use the GNOME Pango/Cairo libraries. 
+SILE is written in the Lua programming language, so you will need a Lua version 5.1 installation. It also relies on external libraries to access fonts and write PDF files. Its preferred combination of libraries is [harfbuzz][] and a PDF creation library extracted from TeX. It should be possible to harfbuzz from your operating system's package manager. (For Harfbuzz to work you will also need freetype2 and fontconfig installed.) If this is not possible, SILE will attempt to use the GNOME Pango/Cairo libraries.
 
 You also need to install the following Lua libraries using [luarocks][] (downloading luarocks if you do not already have it installed).
 
@@ -44,23 +44,23 @@ Now try `sile examples/test.sil`.
 
 ## Finding out more
 
-Please read the [full SILE manual][3] for more information about what SILE is and how it can help you. There are example documents (source and PDF) in the examples/ directory. There's also an [FAQ][faq] available.
+Please read the [full SILE manual][doc] for more information about what SILE is and how it can help you. There are example documents (source and PDF) in the examples/ directory. There's also an [FAQ][faq] available.
 
 ## Contact
 
-Please report bugs and send patches and pull requests at the [github repository][4]. For questions, please contact the author, Simon Cozens <simon@simon-cozens.org>.
+Please report bugs and send patches and pull requests at the [github repository][github]. For questions, please contact the author, Simon Cozens <simon@simon-cozens.org>.
 
 ## License terms
 
-SILE is distributed under the [MIT licence][5].
+SILE is distributed under the [MIT licence][license].
 
-[1]: http://www.sile-typesetter.org/
-[2]: https://github.com/simoncozens/sile/releases
-[3]: https://raw.githubusercontent.com/simoncozens/sile/master/documentation/sile.pdf
-[4]: https://github.com/simoncozens/sile
-[5]: http://choosealicense.com/licenses/mit/
-[faq]: https://github.com/simoncozens/sile/wiki/faq
-[showoff]: https://raw.githubusercontent.com/simoncozens/sile/master/examples/showoff.pdf
-[roadmap]: https://github.com/simoncozens/sile/blob/master/ROADMAP
-[luarocks]: http://luarocks.org/en/Download
-[harfbuzz]: http://www.freedesktop.org/wiki/Software/HarfBuzz/
+  [sile]: http://www.sile-typesetter.org/
+  [releases]: https://github.com/simoncozens/sile/releases
+  [doc]: https://raw.githubusercontent.com/simoncozens/sile/master/documentation/sile.pdf
+  [github]: https://github.com/simoncozens/sile
+  [license]: http://choosealicense.com/licenses/mit/
+  [faq]: https://github.com/simoncozens/sile/wiki/faq
+  [showoff]: https://raw.githubusercontent.com/simoncozens/sile/master/examples/showoff.pdf
+  [roadmap]: https://github.com/simoncozens/sile/blob/master/ROADMAP
+  [luarocks]: http://luarocks.org/en/Download
+  [harfbuzz]: http://www.freedesktop.org/wiki/Software/HarfBuzz/
