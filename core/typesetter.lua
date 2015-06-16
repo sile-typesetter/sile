@@ -154,7 +154,6 @@ SILE.defaultTypesetter = std.object {
     if (type(breakWidth) == "table") then breakWidth = breakWidth.length end
     local lines = self:breakIntoLines(nl, breakWidth)
     local vboxes = {}
-    local previousVbox = nil
     for index=1, #lines do
       local l = lines[index]
       -- Move any migrating material
@@ -173,11 +172,11 @@ SILE.defaultTypesetter = std.object {
       elseif (#lines > 1 and index == (#lines-1)) then
         pageBreakPenalty = SILE.settings.get("typesetter.orphanpenalty")
       end
-      if index > 1 then
-        vboxes[#vboxes+1] = self:leadingFor(v, previousVbox)
+      if self.state.previousVbox then
+        vboxes[#vboxes+1] = self:leadingFor(v, self.state.previousVbox)
       end
       vboxes[#vboxes+1] = v
-      previousVbox = v
+      self.state.previousVbox = v
       if pageBreakPenalty > 0 then
         SU.debug("typesetter", "adding penalty of "..pageBreakPenalty.." after "..v)
         vboxes[#vboxes+1] = SILE.nodefactory.newPenalty({ penalty = pageBreakPenalty})
@@ -245,6 +244,7 @@ SILE.defaultTypesetter = std.object {
     end
 
     SU.debug("pagebuilder", "Glues for self page adjusted by "..(adjustment/gTotal.stretch) )  
+    self.state.previousVbox = nil
   end,
 
   initNextFrame = function(self)
