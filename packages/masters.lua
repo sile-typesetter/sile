@@ -24,11 +24,11 @@ end
 local function doswitch(frames)
   SILE.frames = {page = SILE.frames.page}
   for id,f in pairs(frames) do
-    SILE.frames[id] =f 
+    SILE.frames[id] =f
     f:invalidate()
   end
 end
- 
+
 local function switchMasterOnePage (id)
   if not SILE.scratch.masters[id] then
     SU.error("Can't find master "..id)

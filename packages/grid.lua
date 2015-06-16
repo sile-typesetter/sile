@@ -1,7 +1,7 @@
 local gridSpacing -- Should be a setting
 
 local makeUp = function ()
-  local toadd = gridSpacing - (SILE.typesetter.frame.state.totals.gridCursor % gridSpacing)   
+  local toadd = gridSpacing - (SILE.typesetter.frame.state.totals.gridCursor % gridSpacing)
   SILE.typesetter.frame.state.totals.gridCursor = SILE.typesetter.frame.state.totals.gridCursor + toadd
   return SILE.nodefactory.newVglue({ height = SILE.length.new({ length = toadd }) })
 end
@@ -26,7 +26,7 @@ end
 local newBoxup = function (this)
   local b = SILE.defaultTypesetter.boxUpNodes(this)
   if not this.frame.state.totals.gridCursor then this.frame.state.totals.gridCursor = 0 end
-  
+
   if #b > 1 then
     local h = type(b[#b].height) == "table" and b[#b].height.length or b[#b].height
     this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + h + b[#b].depth

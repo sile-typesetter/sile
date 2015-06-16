@@ -24,7 +24,7 @@ end
 local _insertionVbox = SILE.nodefactory.newVbox({})
 _insertionVbox.outputYourself = function (self)
   local t = SILE.scratch.insertions.typesetters[self.class]
-  if not t then 
+  if not t then
     t = SILE.defaultTypesetter {}
     t:init(SILE.getFrame(self.frame))
     SILE.scratch.insertions.typesetters[self.class] = t
@@ -100,7 +100,7 @@ end
 local heightSoFar = function(classname)
   local h = 0
   if not (SILE.scratch.insertions.thispage[classname]) then return 0 end
-  for i = 1,#(SILE.scratch.insertions.thispage[classname]) do 
+  for i = 1,#(SILE.scratch.insertions.thispage[classname]) do
     local ins = SILE.scratch.insertions.thispage[classname][i]
     h = h + ins.height.length + ins.depth
   end
@@ -189,7 +189,7 @@ SILE.typesetter:registerNewPageHook(function(self)
   for i = 1,#SILE.scratch.insertions.nextpage do local ins = SILE.scratch.insertions.nextpage[i]
     insert(self,ins.class, ins.material)
   end
-  SILE.scratch.insertions.nextpage = {}  
+  SILE.scratch.insertions.nextpage = {}
 end)
 
 local outputInsertions = function(self)end

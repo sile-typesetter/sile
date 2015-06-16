@@ -38,7 +38,7 @@ function bible:init()
   self:loadPackage("masters")
   self:loadPackage("infonode")
   self:loadPackage("chapterverse")
-  if self.options.twocolumns() then 
+  if self.options.twocolumns() then
     self:twoColumnMaster()
     SILE.settings.set("linebreak.tolerance", 9000)
   else
@@ -59,7 +59,7 @@ end
 
 bible.newPage = function(self)
   self:switchPage()
-  self:newPageInfo()  
+  self:newPageInfo()
   return plain.newPage(self)
 end
 
@@ -131,7 +131,7 @@ SILE.registerCommand("verse-number", function (o,c)
   SILE.call("right-running-head", {}, function ()
     SILE.settings.temporarily(function()
       SILE.settings.set("document.lskip", SILE.nodefactory.zeroGlue)
-      SILE.settings.set("document.rskip", SILE.nodefactory.zeroGlue)      
+      SILE.settings.set("document.rskip", SILE.nodefactory.zeroGlue)
       SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
       SILE.call("font", {size="10pt", family="Gentium"}, function ()
         -- SILE.call("font", {style="italic"}, SILE.scratch.theChapter)
@@ -140,7 +140,7 @@ SILE.registerCommand("verse-number", function (o,c)
       end)
       SILE.typesetter:leaveHmode()
     end)
-  end)    
+  end)
 end)
 
 return bible

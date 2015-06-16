@@ -1,7 +1,7 @@
 SILE.Commands = {}
 SILE.Help = {}
-function SILE.registerCommand (name, f, help, pack) 
-  SILE.Commands[name] = f 
+function SILE.registerCommand (name, f, help, pack)
+  SILE.Commands[name] = f
   if not pack then
     local where = debug.getinfo(2).source
     pack = where:match("(%w+).lua")
@@ -43,9 +43,9 @@ SILE.baseClass = std.object {
     end, "Within a macro definition, processes the contents of the macro body.")
 
     SILE.registerCommand("script", function(options, content)
-      if (options["src"]) then 
+      if (options["src"]) then
         require(options["src"])
-      else 
+      else
         p,e = loadstring(content[1])
         if not p then SU.error(e) end
         p()
@@ -56,7 +56,7 @@ SILE.baseClass = std.object {
         SILE.readFile(options["src"]);
     end, "Includes a SILE file for processing.")
 
-    SILE.registerCommand("pagetemplate", function (options, content) 
+    SILE.registerCommand("pagetemplate", function (options, content)
       SILE.documentState.thisPageTemplate = { frames = {} };
       SILE.process(content);
       SILE.documentState.thisPageTemplate.firstContentFrame = SILE.getFrame(options["first-content-frame"]);
@@ -89,8 +89,8 @@ SILE.baseClass = std.object {
       end
     end, "Inserts a penalty node. Options are penalty= for the size of the penalty and flagged= if this is a flagged penalty.")
 
-    SILE.registerCommand("glue", function(options, content) 
-      SILE.typesetter:pushGlue({ 
+    SILE.registerCommand("glue", function(options, content)
+      SILE.typesetter:pushGlue({
         width = SILE.length.parse(options.width)
       })
     end, "Inserts a glue node. The width option denotes the glue dimension.")
@@ -100,7 +100,7 @@ SILE.baseClass = std.object {
       SILE.typesetter:pushExplicitVglue({ height = SILE.length.parse(options.height) })
     end, "Inserts vertical skip. The height options denotes the skip dimension.")
 
-    SILE.registerCommand("par", function(options, content) 
+    SILE.registerCommand("par", function(options, content)
       SILE.typesetter:leaveHmode()
       SILE.documentState.documentClass.endPar(SILE.typesetter)
     end, "Ends the current paragraph.")
@@ -125,7 +125,7 @@ SILE.baseClass = std.object {
       default = SILE.settings.get("document.parindent"),
       help = "Glue at start of paragraph"
     })
-    SILE.outputter.init(self); 
+    SILE.outputter.init(self);
     self:registerCommands();
     -- Call all stored package init routines
     for i = 1,#(SILE.baseClass.deferredInit) do (SILE.baseClass.deferredInit[i])() end
@@ -157,7 +157,7 @@ SILE.baseClass = std.object {
     --   id = id
     -- });
   end,
-  newPage = function(self) 
+  newPage = function(self)
     SILE.outputter:newPage();
     -- Any other output-routiney things will be done here by inheritors
     return self:initialFrame();
@@ -177,13 +177,13 @@ SILE.baseClass = std.object {
  end,
   newPar = function(typesetter)
     typesetter:pushGlue(SILE.settings.get("current.parindent"))
-    SILE.settings.set("current.parindent", SILE.settings.get("document.parindent"))    
+    SILE.settings.set("current.parindent", SILE.settings.get("document.parindent"))   
   end,
   endPar = function(typesetter)
     local g = SILE.settings.get("document.parskip")
     typesetter:pushVglue(std.tree.clone(g))
   end,
-  options= { 
+  options= {
     papersize= function(size)
       _, _, x, y = string.find(size, "(.+)%s+x%s+(.+)")
       if x then

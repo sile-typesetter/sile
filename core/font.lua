@@ -1,10 +1,10 @@
 
     SILE.registerCommand("font", function(options, content)
       if (type(content)=="function" or content[1]) then
-        SILE.settings.pushState()  
+        SILE.settings.pushState() 
       end
       if (options.family)  then SILE.settings.set("font.family", options.family) end
-      if (options.size)  then 
+      if (options.size)  then
         local size = SILE.parserBits.dimensioned_string:match(options.size)
         if not size then SU.error("Couldn't parse font size "..options.size) end
         SILE.settings.set("font.size", size)
@@ -14,11 +14,11 @@
       if (options.variant)  then SILE.settings.set("font.variant", options.variant) end
       if (options.features)  then SILE.settings.set("font.features", options.features) end
 
-      if (options.language)  then  
-        SILE.settings.set("document.language", options.language) 
+      if (options.language)  then 
+        SILE.settings.set("document.language", options.language)
         SILE.languageSupport.loadLanguage(options.language)
       end
-      if (options.script)  then SILE.settings.set("font.script", options.script) 
+      if (options.script)  then SILE.settings.set("font.script", options.script)
       elseif SILE.settings.get("document.language") then
         local lang = SILE.languageSupport.languages[SILE.settings.get("document.language")]
         if lang and lang.defaultScript then
@@ -26,7 +26,7 @@
         end
       end
 
-      if (type(content)=="function" or content[1]) then 
+      if (type(content)=="function" or content[1]) then
         SILE.process(content)
         SILE.settings.popState()
       end

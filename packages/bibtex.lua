@@ -16,7 +16,7 @@ bibtexparser = epnf.define(function (_ENV)
 
   START "document";
   document = (V"entry" + V"comment")^1 * (-1 + E("Unexpected character at end of input"))
-  comment  = WS + 
+  comment  = WS +
     ( V"blockcomment" + (P("%") * (1-lpeg.S("\r\n"))^0 * lpeg.S("\r\n")) /function () return "" end) -- Don't bother telling me about comments
   blockcomment = P("@comment")+ balanced/function () return "" end -- Don't bother telling me about comments
   entry = Ct( P("@") * Cg(myID, "type") * _ * P("{") * _ * Cg(myID, "label") * _ * sep * list * P("}") * _ )
@@ -42,12 +42,12 @@ end
 SILE.scratch.bibtex = { bib = {}, bibstyle = {} }
 SILE.require("packages/bibliography")
 
-SILE.registerCommand("loadbibliography", function(o,c) 
+SILE.registerCommand("loadbibliography", function(o,c)
   local file = SU.required(o, "file", "loadbibliography")
   SILE.scratch.bibtex.bib = parseBibtex(file) -- Later we'll do multiple bibliogs, but not now
 end)
 
-SILE.registerCommand("bibstyle", function(o,c) 
+SILE.registerCommand("bibstyle", function(o,c)
   SILE.scratch.bibtex.bibstyle = SILE.require("packages/bibstyles/"..c)
 end)
 

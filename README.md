@@ -26,7 +26,7 @@ SILE is written in the Lua programming language, so you will need a Lua version 
 
 You also need to install the following Lua libraries using [luarocks][] (downloading luarocks if you do not already have it installed).
 
-* `lpeg` 
+* `lpeg`
 * `luaexpat`
 * `lgi` (required for Pango-Cairo only)
 
@@ -54,7 +54,7 @@ Please report bugs and send patches and pull requests at the [github repository]
 
 SILE is distributed under the [MIT licence][5].
 
-[1]: http://www.sile-typesetter.org/ 
+[1]: http://www.sile-typesetter.org/
 [2]: https://github.com/simoncozens/sile/releases
 [3]: https://raw.githubusercontent.com/simoncozens/sile/master/documentation/sile.pdf
 [4]: https://github.com/simoncozens/sile

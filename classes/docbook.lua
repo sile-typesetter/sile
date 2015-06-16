@@ -34,8 +34,8 @@ SILE.registerCommand("article", function (options, content)
   local title = SILE.findInTree(content, "title") or (info and SILE.findInTree(info, "title"))
   local author = SILE.findInTree(content, "author") or (info and SILE.findInTree(info, "author"))
 
-  if title then 
-    SILE.call("docbook-article-title",{},title) 
+  if title then
+    SILE.call("docbook-article-title",{},title)
     docbook.wipe(title)
   end
   if author then
@@ -63,11 +63,11 @@ SILE.registerCommand("section", function (options, content)
   end
   local title = SILE.findInTree(content, "title")
   local number = table.concat(SILE.scratch.docbook.seccount, '.')
-  if title then 
+  if title then
     SILE.call("docbook-section-"..SILE.scratch.docbook.seclevel.."-title",{},function()
       SILE.typesetter:typeset(number.." ")
       SILE.process(title)
-    end) 
+    end)
     docbook.wipe(title)
   end
   SILE.process(content)
@@ -105,7 +105,7 @@ SILE.registerCommand("figure", function(options, content)
 end)
 
 SILE.registerCommand("imagedata", function(options, content)
-  local width = SILE.parseComplexFrameDimension(options.width or "100%","w") or 0 
+  local width = SILE.parseComplexFrameDimension(options.width or "100%","w") or 0
   SILE.call("img", {
     src = options.fileref,
     width = width / 2

@@ -6,7 +6,7 @@ if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end
 jplain:loadPackage("hanmenkyoshi")
 jplain:declareHanmenFrame( "content", {
   left = "8.3%", top = "11.6%",
-  gridsize = 10, linegap = 7, linelength = 50, 
+  gridsize = 10, linegap = 7, linelength = 50,
   linecount = 30,
   tate = true
 })

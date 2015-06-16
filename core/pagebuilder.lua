@@ -32,7 +32,7 @@ SILE.pagebuilder = {
     local leastC = inf_bad
     SU.debug("pagebuilder", "Page builder called with "..#vboxlist.." nodes, "..target)
     local started = false
-    while i < #vboxlist do 
+    while i < #vboxlist do
       i = i + 1
       local vbox = vboxlist[i]
       SU.debug("pagebuilder", "Dealing with VBox " .. vbox)
@@ -49,12 +49,12 @@ SILE.pagebuilder = {
       end
       local left = target - totalHeight.length
       SU.debug("pagebuilder", "I have " .. tostring(left) .. "pts left");
-      -- if (left < -20) then SU.error("\nCatastrophic page breaking failure!"); end 
+      -- if (left < -20) then SU.error("\nCatastrophic page breaking failure!"); end
       local pi = 0
       if vbox:isPenalty() then
         pi = vbox.penalty
-        -- print("PI "..pi)  
-      end 
+        -- print("PI "..pi) 
+      end
       if vbox:isPenalty() and vbox.penalty < inf_bad  or (vbox:isVglue() and i > 1 and not vboxlist[i-1]:isDiscardable()) then
         local badness
         if totalHeight.length < target then -- TeX #1039
@@ -66,7 +66,7 @@ SILE.pagebuilder = {
         end
 
         local c
-        if badness < awful_bad then 
+        if badness < awful_bad then
           if pi <= eject_penalty then c = pi
           elseif badness < inf_bad then c = badness + pi -- plus insert
           else c = deplorable
@@ -91,5 +91,5 @@ SILE.pagebuilder = {
     end
     SU.debug("pagebuilder", "No page break here")
     return
-  end,    
+  end,   
 }

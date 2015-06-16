@@ -1,6 +1,6 @@
 std = require("std")
 
--- The following functions borrowed from Norman Ramsey's nbibtex, 
+-- The following functions borrowed from Norman Ramsey's nbibtex,
 -- with permission.
 
 local function find_outside_braces(s, pat, i)
@@ -160,7 +160,7 @@ do
     if commacount == 0 then -- first von last jr
       von_start, first_start, last_lim, jr_lim = 1, 1, n+1, n+1
       -- OK, here's one form.
-      -- 
+      --
       -- <parse first von last jr>=
       local got_von = false
       while von_start < last_lim-1 do
@@ -265,7 +265,7 @@ Bibliography = { -- This is big enough to have its own global var
       return andSurnames(3), " ", year, optional(", ", cite.page)
     end
   },
-  
+
   produceCitation = function (cite, bib, style)
     local item = bib[cite.key]
     if not item then
@@ -286,7 +286,7 @@ Bibliography = { -- This is big enough to have its own global var
     end
 
     local t = Bibliography.buildEnv(cite, item.attributes, style)
-    return Bibliography._process(item.attributes, {style[item.type](t)})  
+    return Bibliography._process(item.attributes, {style[item.type](t)})
   end,
 
   buildEnv = function (cite,item, style)
@@ -298,7 +298,7 @@ Bibliography = { -- This is big enough to have its own global var
   end,
 
   _process = function (item, t, dStart, dEnd)
-    for i = 1,#t do 
+    for i = 1,#t do
       if type(t[i]) == "function" then
         t[i] = t[i](item)
       end
@@ -321,7 +321,7 @@ Bibliography = { -- This is big enough to have its own global var
       if #authors == 1 then
         return parse_name(authors[1]).ll
       else
-        for i = 1,#authors do 
+        for i = 1,#authors do
           local author = parse_name(authors[i])
           authors[i] = author.ll.. ", "..author.f.."."
         end
@@ -341,7 +341,7 @@ Bibliography = { -- This is big enough to have its own global var
       end
     end,
 
-    transEditor = function(item) 
+    transEditor = function(item)
       local r = {}
       if item.Editor then r[#r+1] = "Edited by "..item.Editor end
       if item.Translator then r[#r+1] = "Translated by "..item.Translator end

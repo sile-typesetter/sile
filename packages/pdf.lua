@@ -5,7 +5,7 @@ local pdf = require("justenoughlibtexpdf")
 
 SILE.registerCommand("pdf:destination", function (o,c)
   local name = SU.required(o, "name", "pdf:bookmark")
-  SILE.typesetter:pushHbox({ 
+  SILE.typesetter:pushHbox({
     value = nil,
     height = 0,
     width = 0,
@@ -26,7 +26,7 @@ SILE.registerCommand("pdf:bookmark", function (o,c)
   -- As PDFDocEncoding supports only limited character repertoire for
   -- European languages, we use UTF-16BE for internationalization.
   local ustr = SU.utf8_to_utf16be(title)
-  SILE.typesetter:pushHbox({ 
+  SILE.typesetter:pushHbox({
     value = nil, height = 0, width = 0, depth = 0,
     outputYourself= function ()
       local d = "<</Title<"..ustr..">/A<</S/GoTo/D("..dest..")>>>>"
@@ -49,7 +49,7 @@ end
 SILE.registerCommand("pdf:link", function (o,c)
   local dest = SU.required(o, "dest", "pdf:link")
   local llx, lly
-  SILE.typesetter:pushHbox({ 
+  SILE.typesetter:pushHbox({
     value = nil, height = 0, width = 0, depth = 0,
     outputYourself= function (self,typesetter)
       llx = typesetter.frame.state.cursorX
@@ -60,10 +60,10 @@ SILE.registerCommand("pdf:link", function (o,c)
 
   local hbox = SILE.Commands["hbox"]({}, c) -- hack
   SILE.typesetter:debugState()
-  
-  SILE.typesetter:pushHbox({ 
+
+  SILE.typesetter:pushHbox({
     value = nil, height = 0, width = 0, depth = 0,
-    outputYourself= function (self,typesetter) 
+    outputYourself= function (self,typesetter)
       local d = "<</Type/Annot/Subtype/Link/C [ 1 0 0 ]/A<</S/GoTo/D("..dest..")>>>>"
       pdf.end_annotation(d, llx, lly, typesetter.frame.state.cursorX, SILE.documentState.paperSize[2] -typesetter.frame.state.cursorY + hbox.height);
     end
@@ -74,10 +74,10 @@ The \code{pdf} package enables (basic) support for PDF links and table-of-conten
 entries. It provides the three commands \command{\\pdf:destination}, \command{\\pdf:link}
 and \command{\\pdf:bookmark}.
 
-The \command{\\pdf:destination} parameter creates a link target; it expects a 
+The \command{\\pdf:destination} parameter creates a link target; it expects a
 parameter called \code{name} to uniquely identify the target. To create a link to
 that location in the document, use \code{\\pdf:link[dest=\goodbreak{}name]\{link content\}}.
 
-If the \code{pdf} package is loaded after the \code{tableofcontents} package (e.g. 
+If the \code{pdf} package is loaded after the \code{tableofcontents} package (e.g.
 in a document with the \code{book} class), then a PDF document outline will be generated.
 \end{document}]] }

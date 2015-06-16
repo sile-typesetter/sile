@@ -76,7 +76,7 @@ SILE.outputters.podofo = {
   end,
   debugHbox = function(typesetter, hbox, scaledWidth)
     painter:SetColor(0.9,0.9,0.9);
-    painter:SetStrokeWidth(0.5);  
+    painter:SetStrokeWidth(0.5); 
     painter:Rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY+(hbox.height), scaledWidth, hbox.height+hbox.depth);
     if (hbox.depth) then painter:Rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY+(hbox.height), scaledWidth, hbox.height); end
     painter:Stroke();
