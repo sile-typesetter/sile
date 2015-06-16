@@ -948,7 +948,7 @@ SILE.hyphenator.languages["el-polyton"].patterns =
 "ρο5μ2πε",
 "ρο5μ2πω",
 ".τρο6μ3π",   -- tro-mp'oni",
-".τρό6μ3π", 
+".τρό6μ3π",
 ".τρό6μ3π",   -- tr'om-pa",
 ".ρου5μ2π",   -- rou-mp'ini",
 ".σα2μ5ποτ",
@@ -1137,7 +1137,7 @@ SILE.hyphenator.languages["el-polyton"].patterns =
 ".φαϲτφου5ν2τ",   -- fastfou-nt'adiko",
 ".χα5ν2το",   -- qa-nto'umhc",
 ".χα5ν2τρ",   -- qa-ntr~wn, q'a-ntra",
-".χά5ν2τρ", 
+".χά5ν2τρ",
 ".χά5ν2τρ",
 -------- some `weird' terminations in words of Greek and non-Greek origin
 --------
