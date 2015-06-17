@@ -2030,7 +2030,7 @@ and/or calling \break\code{SILE.process(content)} to recursively process the
 argument. Here’s a very simple example; an XML \code{<link>} tag may take
 an XLink \code{xl:href} attribute\footnote{Yes, I know the document author
 might choose a different XML namespace to refer to XLink. Let’s keep things
-simple.} We want to render \code{<link xl:href="http://...">{}Hello</link>}
+simple.} We want to render \code{<link xl:href="http://...">\goodbreak{}Hello</link>}
 as \examplefont{Hello (\code{http://...})}. So, first we need to render
 the content, and then we need to do something with the attribute:
 
