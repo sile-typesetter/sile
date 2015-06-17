@@ -1,4 +1,4 @@
-This is SILE 0.9.1
+This is SILE 0.9.2
 <tests/bug-61.sil>Open file	tests/bug-61.pdf
 Set paper size 	419.5275636	595.275597
 Begin page
@@ -19,7 +19,7 @@ T	70 73 82 83 84	(first)
 Mx 	133.70299
 T	80 65 82 65 71 82 65 80 72	(paragraph)
 Mx 	54.82079
-My 	112.47261
+My 	111.46285
 T	51 69 67 79 78 68	(Second)
 Mx 	86.97947
 T	70 82 65 77 69	(frame)
@@ -28,7 +28,7 @@ T	83 69 67 79 78 68	(second)
 Mx 	145.21286
 T	80 65 82 65 71 82 65 80 72	(paragraph)
 Mx 	54.82079
-My 	128.48238
+My 	126.46285
 T	51 69 67 79 78 68	(Second)
 Mx 	86.98033
 T	70 82 65 77 69	(frame)
