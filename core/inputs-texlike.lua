@@ -21,7 +21,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   stuff = Cg(V"environment" + 
     ((P("%") * (1-lpeg.S("\r\n"))^0 * lpeg.S("\r\n")^-1) /function () return "" end) -- Don't bother telling me about comments
     + V("text") + V"bracketed_stuff" + V"command")^0
-  bracketed_stuff = P"{" * V"stuff" * (P"}" + E("} expected"))
+  bracketed_stuff = P"{" * V"stuff" * (P"}" + E("} expected")) * _
   command =((P("\\")-P("\\begin")) * Cg(myID, "tag") * Cg(parameters,"attr") * V"bracketed_stuff"^0)-P("\\end{")
   environment = 
     P("\\begin") * Cg(parameters, "attr") * P("{") * Cg(myID, "tag") * P("}") 
@@ -29,7 +29,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     * (P("\\end{") * (
       Cmt(myID * Cb("tag"), function(s,i,a,b) return a==b end) +
       E("Environment mismatch")
-    ) * P("}") + E("Environment begun but never ended"))
+    ) * (P("}") * _) + E("Environment begun but never ended"))
 end
 
 local linecache = {}
