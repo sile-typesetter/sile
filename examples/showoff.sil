@@ -108,10 +108,9 @@ for instance, we will typeset the same Unicode text three times. First, in stand
 
 \right-running-head{\hfill Typesetting on a grid}%
 \noindent\font[family=Baskerville,size=25pt]{\em{Typesetting on a grid}}
-\tocentry{Typesetting on a grid}
+\tocentry{Typesetting on a grid}\bigskip
 \script[src=packages/grid]
 \grid[spacing=15pt]
-
 
 Because SILE is written in an interpreted language (Lua), it’s possible—in fact, it’s actually quite easy—to change the way that its typesetting algorithms work, at runtime and even during the course of a document. As an
 example, we’re currently using the grid package to typeset text on a fixed, 15 point grid.
@@ -125,6 +124,4 @@ feature when you’re trying to typeset onto very thin paper, as aligning the te
 stops the ink from bleeding through onto the other side of the page.
 
 \no-grid
-\eject
-
 \end{document}
