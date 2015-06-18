@@ -112,6 +112,11 @@ int pdf_loadfont(lua_State *L) {
   return 1;
 }
 
+int pdf_setdirmode(lua_State *L) {
+  int layout_dir = luaL_checkinteger(L,1);
+  texpdf_dev_set_dirmode(layout_dir);
+}
+
 int pdf_setstring(lua_State *L) {
   double x = luaL_checknumber(L, 1);
   double y = luaL_checknumber(L, 2);
@@ -119,7 +124,6 @@ int pdf_setstring(lua_State *L) {
   int    chrlen  = luaL_checkinteger(L, 4);
   int    font_id = luaL_checkinteger(L, 5);
   double w = luaL_checknumber(L,6);
-
   texpdf_dev_set_string(p, precision * x, precision * (-height+y), s, chrlen, w * 65536 * precision, font_id, -1);
   return 0;
 }
@@ -324,6 +328,7 @@ static const struct luaL_Reg lib_table [] = {
   {"endpage", pdf_endpage},
   {"finish", pdf_finish},
   {"loadfont", pdf_loadfont},
+  {"setdirmode", pdf_setdirmode},
   {"setstring", pdf_setstring},
   {"setrule", pdf_setrule},
   {"setcolor", pdf_setcolor},
