@@ -2,13 +2,11 @@
 
 ## What is SILE?
 
-SILE is a typesetting system. Its job is to produce beautiful printed documents. It’s similar to TeX, but with some ideas borrowed from InDesign, and written with modern technologies in mind.
+SILE is a [typesetting][typesetting] system; its job is to produce beautiful printed documents. Conceptually, SILE is similar to [TeX][tex]—from which it borrows some concepts and even syntax and algorithms—but the similarities end there. Rather than being a derivative of the TeX family SILE is a new typesetting and layout engine written from the ground up using modern technologies and borrowing some ideas from graphical systems such as [InDesign][indesign].
 
-## What can I do with it (that I can’t do with TeX)?
+## What can I do with SILE (that I can’t do with TeX)?
 
-First, have a look at the [show-off file][showoff]
-
-SILE allows you to
+First, have a look at the [show-off file][showoff]. SILE allows you to:
 
 * Produce complex document layouts using frames.
 
@@ -81,3 +79,6 @@ SILE is distributed under the [MIT licence][license].
   [aur]: https://wiki.archlinux.org/index.php/Arch_User_Repository
   [aur-rel]: https://aur.archlinux.org/packages/sile/
   [aur-dev]: https://aur.archlinux.org/packages/sile-git/
+  [typesetting]: https://en.wikipedia.org/wiki/Typesetting
+  [tex]: https://en.wikipedia.org/wiki/TeX
+  [indesign]: https://en.wikipedia.org/wiki/Adobe_InDesign
