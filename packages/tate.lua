@@ -77,15 +77,31 @@ local outputLatinInTate = function (self, typesetter, line)
   -- My baseline moved
   typesetter.frame:moveX(SILE.toPoints("1zw") )
   typesetter.frame:moveY(- SILE.toPoints("0.25zw"))
-
 end
 
+
+local outputTateChuYoko = function (self, typesetter, line)
+  -- My baseline moved
+
+  local vorigin = -typesetter.frame.state.cursorY
+  typesetter.frame:moveX(self.height)
+  typesetter.frame:moveY(0.5 * self.width.length)
+  pdf.setdirmode(0)
+  self:oldOutputYourself(typesetter,line)
+  pdf.setdirmode(1)
+  typesetter.frame.state.cursorY = -vorigin
+  typesetter.frame:moveX(self.height)
+  -- My baseline moved
+  -- typesetter.frame:moveX(SILE.toPoints("1zw") )
+  typesetter.frame:moveY(-0.5 * self.width.length)
+end
 -- Eventually will be automatically called by script detection, but for now
 -- called manually
 SILE.registerCommand("latin-in-tate", function (options, content)
   local nodes
   local oldT = SILE.typesetter
   local prevDirection = oldT.frame.direction
+  if prevDirection ~= "TTB" then return SILE.process(content) end
   SILE.require("packages/rotate")
   SILE.settings.temporarily(function()
     local latinT = SILE.defaultTypesetter {}
@@ -124,4 +140,16 @@ SILE.registerCommand("latin-in-tate", function (options, content)
       swap(n)
     end
   end
-end, "Declares (or re-declares) a frame on this page.")
+end, "Typeset rotated Western text in vertical Japanese")
+
+SILE.registerCommand("tate-chu-yoko", function (options, content)
+  if SILE.typesetter.frame.direction ~= "TTB" then return SILE.process(content) end
+  SILE.settings.temporarily(function()
+    SILE.settings.set("document.language", "xx")
+    SILE.settings.set("font.direction", "LTR")
+    SILE.call("hbox", {}, content)
+    local n = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
+    n.oldOutputYourself = n.outputYourself
+    n.outputYourself = outputTateChuYoko
+  end)  
+end)
