@@ -49,6 +49,9 @@ SILE.outputters.libtexpdf = {
     if SILE.font._key(options) == lastkey then return end
     lastkey = SILE.font._key(options)
     font = SILE.font.cache(options, SILE.shaper.getFace)
+    if options.direction == "TTB" then
+      font.layout_dir = 1
+    end
     f = pdf.loadfont(font)
     if f< 0 then SU.error("Font loading error for "..options) end
     font = f
