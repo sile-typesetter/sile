@@ -329,16 +329,18 @@ int shape (lua_State *L) {
       lua_pushstring(L, namebuf);
       lua_settable(L, -3);
 
-      if (glyph_pos[j].x_offset) {
-        lua_pushstring(L, "x_offset");
-        lua_pushnumber(L, glyph_pos[j].x_offset / 64.0);
-        lua_settable(L, -3);
-      }
+      if (direction != HB_DIRECTION_TTB) { /* XXX */
+        if (glyph_pos[j].x_offset) {
+          lua_pushstring(L, "x_offset");
+          lua_pushnumber(L, glyph_pos[j].x_offset / 64.0);
+          lua_settable(L, -3);
+        }
 
-      if (glyph_pos[j].y_offset) {
-        lua_pushstring(L, "y_offset");
-        lua_pushnumber(L, glyph_pos[j].y_offset / 64.0);
-        lua_settable(L, -3);
+        if (glyph_pos[j].y_offset) {
+          lua_pushstring(L, "y_offset");
+          lua_pushnumber(L, glyph_pos[j].y_offset / 64.0);
+          lua_settable(L, -3);
+        }
       }
 
       lua_pushstring(L, "codepoint");
