@@ -52,6 +52,7 @@ plain.registerCommands = function()
   SILE.doTexlike([[\define[command=thinspace]{\glue[width=0.16667em]}%
 \define[command=negthinspace]{\glue[width=-0.16667em]}%
 \define[command=enspace]{\glue[width=0.5em]}%
+\define[command=relax]{}%
 \define[command=enskip]{\enspace}%
 \define[command=quad]{\glue[width=1em]}%
 \define[command=qquad]{\glue[width=2em]}%
