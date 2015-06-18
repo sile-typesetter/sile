@@ -42,11 +42,19 @@ repository, although it probably ought to.)
 
 This will place the SILE libraries and executable in a sensible location.
 
-Now try `sile examples/test.sil`.
-
 ### For prepackaged distributions
 
 * **Arch Linux** packages are available in the [AUR][aur]. Use [sile][aur-rel] for the latest stable release or [sile-git][aur-dev] for testing the latest HEAD.
+
+### Testing
+
+If all goes well you should be able to compile one of the sample documents like this:
+
+    $ sile examples/test.sil
+    This is SILE 0.9.2
+    <examples/test.sil><examples/macros.sil>[1] [2] [3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20] [21] [22] [23] [24] [25] [26] [27] [28]
+
+You should now have `examples/test.pdf` ready for review.
 
 ## Finding out more
 
