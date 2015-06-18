@@ -12,7 +12,7 @@ SILE.typesetter.pageBuilder = function (self, independent)
   local colCount = 0
   local target = SILE.length.new({  })
   while frame and frame.balanced == true do
-    target = target + frame:height() 
+    target = target + frame:height()
     colCount = colCount + 1
     if frame.next then frame = SILE.getFrame(frame.next) else break end
   end
@@ -25,7 +25,7 @@ SILE.typesetter.pageBuilder = function (self, independent)
   local q = self.state.outputQueue
   local totalHeight = SILE.length.new({  })
   local mustBalance = 0
-  for i=1,#q do 
+  for i=1,#q do
     totalHeight = totalHeight + q[i].height + q[i].depth
     if q[i]:isPenalty() and q[i].penalty <= BALANCE_PENALTY then
       mustBalance = i

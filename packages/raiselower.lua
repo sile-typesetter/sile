@@ -2,15 +2,15 @@
 SILE.registerCommand("raise", function(options, content)
   local height = options.height or 0
   height = SILE.parseComplexFrameDimension(height,"h")
-  SILE.typesetter:pushHbox({ 
+  SILE.typesetter:pushHbox({
     outputYourself= function (self, typesetter, line)
       typesetter.frame:moveY(-height)
     end
   });
   SILE.process(content)
-  SILE.typesetter:pushHbox({ 
+  SILE.typesetter:pushHbox({
     outputYourself= function (self, typesetter, line)
-      if (type(typesetter.state.cursorY)) == "table" then typesetter.state.cursorY  =typesetter.state.cursorY.length end      
+      if (type(typesetter.state.cursorY)) == "table" then typesetter.state.cursorY  =typesetter.state.cursorY.length end
       typesetter.frame:moveY(height)
     end
   });

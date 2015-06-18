@@ -38,7 +38,7 @@ end)
 
 return {
   init = function (class, args)
-    insertions.exports:initInsertionClass("footnote", { 
+    insertions.exports:initInsertionClass("footnote", {
     insertInto = args.insertInto,
     stealFrom = args.stealFrom,
     maxHeight = SILE.length.new({length = SILE.toPoints("25", "%","h") }),

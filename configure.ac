@@ -47,7 +47,7 @@ PKG_CHECK_MODULES(HARFBUZZ, harfbuzz,
 # Checks for Pango/Cairo combination
 AS_IF([test "x$with_pangocairo" != xno -a "x$with_harfbuzz" != xyes],
 [PKG_CHECK_MODULES(PANGO, pango,
-  [PKG_CHECK_MODULES(CAIRO, cairo-pdf, 
+  [PKG_CHECK_MODULES(CAIRO, cairo-pdf,
    [
     AC_DEFINE([PANGO_CAIRO], [1], [Build using pango/cairo])
     with_pangocairo=yes

@@ -14,7 +14,7 @@ SILE.settings = {
     SILE.settings.state = std.table.clone(SILE.settings.state);
   end,
   popState = function()
-    SILE.settings.state = table.remove(SILE.settings.stateQueue);  
+    SILE.settings.state = table.remove(SILE.settings.stateQueue); 
   end,
   declare = function(t)
     SILE.settings.declarations[t.name] = t
@@ -26,11 +26,11 @@ SILE.settings = {
       SILE.settings.set(k,SILE.settings.defaults[k])
     end
   end,
-  get = function(name) 
+  get = function(name)
     if not SILE.settings.declarations[name] then
       SU.error("Undefined setting '"..name.."'")
-    end  
-    return SILE.settings.state[name] 
+    end 
+    return SILE.settings.state[name]
   end,
   set = function(name, value)
     if not SILE.settings.declarations[name] then
@@ -41,7 +41,7 @@ SILE.settings = {
     if not (string.find(wantedType, t) == 1 or string.find(wantedType, "or "..t) ) then
       SU.error("Setting "..name.." must be of type "..wantedType..", not "..t.." "..value.."\n"..name..": "..SILE.settings.declarations[name].help)
     end
-    SILE.settings.state[name] = value    
+    SILE.settings.state[name] = value   
   end,
   temporarily = function(f)
     SILE.settings.pushState()

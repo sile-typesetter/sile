@@ -6,15 +6,15 @@ SILE.require("core/base-shaper")
 SILE.shapers.harfbuzz = SILE.shapers.base {
   shapeToken = function (self, text, options)
     local face = SILE.font.cache(options, self.getFace)
-    if not face then 
+    if not face then
       SU.error("Could not find requested font "..options.." or any suitable substitutes")
     end
     return { hb._shape(text,
                       face.face,
-                      options.script, 
+                      options.script,
                       options.direction,
-                      options.language, 
-                      options.size, 
+                      options.language,
+                      options.size,
                       options.features
             ) }
   end,
@@ -25,8 +25,8 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
   end,
   preAddNodes = function(self, items, nnodeValue) -- Check for complex nodes
     for i=1,#items do
-      if items[i].y_offset then 
-        nnodeValue.complex = true; break 
+      if items[i].y_offset then
+        nnodeValue.complex = true; break
       end
     end
   end,

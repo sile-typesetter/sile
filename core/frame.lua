@@ -20,7 +20,7 @@ SILE.framePrototype = std.object {
   constrain = function (self, method, value)
     self.constraints[method] = value
     self:invalidate()
-  end, 
+  end,
   invalidate = function()
     solverNeedsReloading = true
   end,
@@ -40,7 +40,7 @@ SILE.framePrototype = std.object {
     solver:addConstraint(cassowary.Equation(self.variables.width, cassowary.minus(self.variables.right, self.variables.left)))
     solver:addConstraint(cassowary.Equation(self.variables.height, cassowary.minus(self.variables.bottom, self.variables.top)))
   end,
-  -- This is hideously inefficient, 
+  -- This is hideously inefficient,
   -- but it's the easiest way to allow users to reconfigure frames at runtime.
   solve = function(self)
     if not solverNeedsReloading then return end
@@ -136,9 +136,9 @@ SILE.newFrame = function(spec, prototype)
   SU.required(spec, "id", "frame declaration")
   local dims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
   prototype = prototype or SILE.framePrototype
-  local frame 
+  local frame
   spec.direction = spec.direction
-  if not SILE.frames[spec.id] then 
+  if not SILE.frames[spec.id] then
     frame = prototype {
       constraints = {},
       variables = {}
@@ -167,7 +167,7 @@ SILE.newFrame = function(spec, prototype)
 
   frame.constraints = {}
   -- Add definitions of width and height
-  for method, dimension in pairs(dims) do 
+  for method, dimension in pairs(dims) do
     if spec[method] then
       frame:constrain(method, spec[method])
     end
@@ -175,9 +175,9 @@ SILE.newFrame = function(spec, prototype)
   return frame
 end
 
-SILE.getFrame = function(id) 
+SILE.getFrame = function(id)
   if type(frame) == "table" then return frame end -- Shouldn't happen but...
-  return SILE.frames[id] or SU.error("Couldn't get frame ID "..id, true) 
+  return SILE.frames[id] or SU.error("Couldn't get frame ID "..id, true)
 end
 
 SILE._frameParser = require("core/frameparser")

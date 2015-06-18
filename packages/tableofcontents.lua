@@ -9,8 +9,8 @@ SILE.scratch.tableofcontents = { }
 
 local moveNodes = function(self)
   local n = SILE.scratch.info.thispage.toc
-  if n then 
-    for i = 1,#n do 
+  if n then
+    for i = 1,#n do
       n[i].pageno = SILE.formatCounter(SILE.scratch.counters.folio)
       SILE.scratch.tableofcontents[#(SILE.scratch.tableofcontents)+1] = n[i]
     end
@@ -75,5 +75,5 @@ SILE.doTexlike([[%
 \define[command=tableofcontents:level3item]{\indent\font[size=10pt]{\process}\smallskip}%
 ]])
 
-  end 
+  end
 }

@@ -7,7 +7,7 @@ local function addPattern(h, p)
   t["_"] = {};
   local lastWasDigit = 0
   for char in p:gmatch('.') do
-    if char:find("%d") then 
+    if char:find("%d") then
       lastWasDigit = 1
       table.insert(t["_"], tonumber(char))
     elseif lastWasDigit == 1 then
@@ -22,7 +22,7 @@ function loadPatterns(h, language)
   SILE.languageSupport.loadLanguage(language)
 
   local languageset = SILE.hyphenator.languages[language];
-  if not (languageset) then 
+  if not (languageset) then
     print("No patterns for language "..language)
     return
   end
@@ -88,7 +88,7 @@ local hyphenateNode = function(n)
     local newnodes = {}
     for j, b in ipairs(breaks) do
       if not(b=="") then
-        for _,nn in pairs(SILE.shaper:createNnodes(b, n.options)) do 
+        for _,nn in pairs(SILE.shaper:createNnodes(b, n.options)) do
           nn.parent = n
           table.insert(newnodes, nn)
         end

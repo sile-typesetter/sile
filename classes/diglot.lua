@@ -67,7 +67,7 @@ SILE.registerCommand("left", function(options, content)
 end, "Begin entering text on the left side")
 
 SILE.registerCommand("right", function(options, content)
-  SILE.settings.set("typesetter.parseppattern", -1)  
+  SILE.settings.set("typesetter.parseppattern", -1)
   SILE.typesetter = diglot.rightTypesetter;
   SILE.Commands["font"](SILE.scratch.diglot.rightfont, {})
 end, "Begin entering text on the right side")

@@ -3,7 +3,7 @@ SILE.baseClass:loadPackage("raiselower")
 SILE.registerCommand("hrule", function(options, content)
   local width = options.width or 0
   local height = options.height or 0
-  SILE.typesetter:pushHbox({ 
+  SILE.typesetter:pushHbox({
     width= SILE.length.new({length = SILE.parseComplexFrameDimension(width,"w") }),
     height= SILE.length.new({ length = SILE.parseComplexFrameDimension(height,"h") }),
     depth= 0,
@@ -14,7 +14,7 @@ SILE.registerCommand("hrule", function(options, content)
         scaledWidth = scaledWidth + self.width.shrink * line.ratio
       elseif line.ratio > 0 and self.width.stretch > 0 then
         scaledWidth = scaledWidth + self.width.stretch * line.ratio
-      end    
+      end
       typesetter.frame:normalize()
 
       SILE.outputter.rule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-(self.height.length), scaledWidth, self.height.length+self.depth)
@@ -47,7 +47,7 @@ was generated with \code{\\hrule[width=20pt, height=0.5pt]}.)
 Like images, rules are placed along the baseline of a line of text.
 
 The second command provided by \code{rules} is \code{\\underline}, which
-underlines its contents. 
+underlines its contents.
 
 \note{
 Underlining is horrible typographic practice, and

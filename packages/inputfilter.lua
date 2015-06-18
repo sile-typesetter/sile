@@ -9,7 +9,7 @@ local function transformContent(content, transformFunction, data)
   local k, v
   local newContent = {}
 
-  for k,v in pairs(content) do 
+  for k,v in pairs(content) do
     if type(k) == "number" then
       if type(v) == "string" then
         local nc = transformFunction(v, content, data)
@@ -18,7 +18,7 @@ local function transformContent(content, transformFunction, data)
         else
           table.insert(newContent, nc)
         end
-      else 
+      else
         table.insert(newContent, transformContent(v, transformFunction, data))
       end
     else
@@ -51,7 +51,7 @@ this by allowing you to rewrite the abstract syntax tree representing the docume
 Loading \code{inputfilter} into your class with \code{class:loadPackage("inputfilter")}
 provides you with two new Lua functions: \code{transformContent} and \code{createCommand}.
 \code{transformContent} takes a content tree and applies a transformation function to the
-text within it. See \code{examples/inputfilter.sil} for a simple example, and 
+text within it. See \code{examples/inputfilter.sil} for a simple example, and
 \code{packages/chordmode.sil} for a more complete one.
 \end{document}
 ]]}

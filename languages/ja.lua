@@ -12,36 +12,36 @@ local katakana = function(c) return c > 0x30a0 and c <= 0x30ff end
 local kanji = function(c) return c >= 0x4e00 and c <= 0x9fcc end
 
 local classes = { -- from jlreq
-  [0x2018] = 1, [0x201C] = 1, [0x0028] = 1, [0x3014] = 1, [0x005B] = 1, 
-  [0x007B] = 1, [0x3008] = 1, [0x300A] = 1, [0x300C] = 1, [0x300E] = 1, 
+  [0x2018] = 1, [0x201C] = 1, [0x0028] = 1, [0x3014] = 1, [0x005B] = 1,
+  [0x007B] = 1, [0x3008] = 1, [0x300A] = 1, [0x300C] = 1, [0x300E] = 1,
   [0x3010] = 1, [0x2985] = 1, [0x3018] = 1, [0x3016] = 1, [0x00AB] = 1, [0x301D] = 1,
   [0xFF08] = 1, -- see note 1 of appendix A
-  [0x2019] = 2, [0x201D] = 2, [0x0029] = 2, [0x3015] = 2, [0x005D] = 2, 
-  [0x007D] = 2, [0x3009] = 2, [0x300B] = 2, [0x300D] = 2, [0x300F] = 2, 
+  [0x2019] = 2, [0x201D] = 2, [0x0029] = 2, [0x3015] = 2, [0x005D] = 2,
+  [0x007D] = 2, [0x3009] = 2, [0x300B] = 2, [0x300D] = 2, [0x300F] = 2,
   [0x3011] = 2, [0x2986] = 2, [0x3019] = 2, [0x3017] = 2, [0x00BB] = 2, [0x301F] = 2,
   [0xFF09] = 2, -- see note 1 of appendix A
-  [0x2010] = 3, [0x301C] = 3, [0x30A0] = 3, [0x2013] = 3, 
+  [0x2010] = 3, [0x301C] = 3, [0x30A0] = 3, [0x2013] = 3,
   [0x0021] = 4, [0x003F] = 4, [0x203C] = 4, [0x2047] = 4, [0x2048] = 4, [0x2049] = 4,
-  [0x30FB] = 5, [0x003A] = 5, [0x003B] = 5, 
-  [0x3002] = 6, [0x002E] = 6, 
-  [0x3001] = 7, [0x002C] = 7, 
+  [0x30FB] = 5, [0x003A] = 5, [0x003B] = 5,
+  [0x3002] = 6, [0x002E] = 6,
+  [0x3001] = 7, [0x002C] = 7,
   [0x2014] = 8, [0x2026] = 8, [0x2025] = 8, [0x3033] = 8, [0x3034] = 8, [0x3035] = 8,
-  [0x30FD] = 9, [0x30FE] = 9, [0x309D] = 9, [0x309E] = 9, [0x3005] = 9, [0x303B] = 9, 
+  [0x30FD] = 9, [0x30FE] = 9, [0x309D] = 9, [0x309E] = 9, [0x3005] = 9, [0x303B] = 9,
   [0x30FC] = 10,
-  [0x3041] = 11, [0x3043] = 11, [0x3045] = 11, [0x3047] = 11, 
-  [0x3049] = 11, [0x30A1] = 11, [0x30A3] = 11, [0x30A5] = 11, 
-  [0x30A7] = 11, [0x30A9] = 11, [0x3063] = 11, [0x3083] = 11, 
-  [0x3085] = 11, [0x3087] = 11, [0x308E] = 11, [0x3095] = 11, 
-  [0x3096] = 11, [0x30C3] = 11, [0x30E3] = 11, [0x30E5] = 11, 
-  [0x30E7] = 11, [0x30EE] = 11, [0x30F5] = 11, [0x30F6] = 11, 
-  [0x31F0] = 11, [0x31F1] = 11, [0x31F2] = 11, [0x31F3] = 11, 
-  [0x31F4] = 11, [0x31F5] = 11, [0x31F6] = 11, [0x31F7] = 11, 
-  [0x31F8] = 11, [0x31F9] = 11, [0x31FA] = 11, [0x31FB] = 11, 
+  [0x3041] = 11, [0x3043] = 11, [0x3045] = 11, [0x3047] = 11,
+  [0x3049] = 11, [0x30A1] = 11, [0x30A3] = 11, [0x30A5] = 11,
+  [0x30A7] = 11, [0x30A9] = 11, [0x3063] = 11, [0x3083] = 11,
+  [0x3085] = 11, [0x3087] = 11, [0x308E] = 11, [0x3095] = 11,
+  [0x3096] = 11, [0x30C3] = 11, [0x30E3] = 11, [0x30E5] = 11,
+  [0x30E7] = 11, [0x30EE] = 11, [0x30F5] = 11, [0x30F6] = 11,
+  [0x31F0] = 11, [0x31F1] = 11, [0x31F2] = 11, [0x31F3] = 11,
+  [0x31F4] = 11, [0x31F5] = 11, [0x31F6] = 11, [0x31F7] = 11,
+  [0x31F8] = 11, [0x31F9] = 11, [0x31FA] = 11, [0x31FB] = 11,
   [0x31FC] = 11, [0x31FD] = 11, [0x31FE] = 11, [0x31FF] = 11,
   [0x00A5] = 12, [0x0024] = 12, [0x00A3] = 12, [0x0023] = 12, [0x20AC] = 12, [0x2116] = 12,
   [0x00B0] = 13, [0x2032] = 13, [0x2033] = 13, [0x2103] = 13, [0x00A2] = 13,
   [0x0025] = 13, [0x2030] = 13, [0x33CB] = 13, [0x2113] = 13, [0x3303] = 13,
-  [0x330D] = 13, [0x3314] = 13, [0x3318] = 13, [0x3322] = 13, [0x3323] = 13, 
+  [0x330D] = 13, [0x3314] = 13, [0x3318] = 13, [0x3322] = 13, [0x3323] = 13,
   [0x3326] = 13, [0x3327] = 13, [0x332B] = 13, [0x3336] = 13, [0x333B] = 13,
   [0x3349] = 13, [0x334A] = 13, [0x334D] = 13, [0x3351] = 13, [0x3357] = 13,
   [0x338E] = 13, [0x338F] = 13, [0x339C] = 13, [0x339D] = 13, [0x339E] = 13,
@@ -68,7 +68,7 @@ function breakAllowed(before, after)
   local ac = jisClass(after)
   if badBeforeClasses[bc] then return false end
   if badAfterClasses[ac] then return false end
-  if bc == 8 and ac == 8 then 
+  if bc == 8 and ac == 8 then
     if before == after then return false else return true end
   end
   -- The following rule is not in jlreq but it stops the algorithm from breaking
@@ -83,9 +83,9 @@ local function intercharacterspace(before, after)
   -- This rule is not in jlreq but it stops situations like 1：2 getting munched
   if (bc == 5 and ac == 27) or (bc == 27 and ac == 5) then return 0 end
 
-  -- jlreq expects yakumono to contain no following space, so recommends half 
-  -- a space afterwards. However, in real world fonts, yakumono occupies a full 
-  -- zenkaku width with trailing space built into the glyph. So we do not add 
+  -- jlreq expects yakumono to contain no following space, so recommends half
+  -- a space afterwards. However, in real world fonts, yakumono occupies a full
+  -- zenkaku width with trailing space built into the glyph. So we do not add
   -- space there. Instead, where no space is stipulated, we add negative space
   -- to counteract the trailing space in the glyph.
   if ac == 5 then return "-0.25zw" end
@@ -149,7 +149,7 @@ SILE.tokenizers.ja = function(string)
         db = db .. " S"
         coroutine.yield({ separator = uchar })
       else
-        local length = SILE.length.new({length = SILE.toPoints(intercharacterspace(lastcp, thiscp)), 
+        local length = SILE.length.new({length = SILE.toPoints(intercharacterspace(lastcp, thiscp)),
                                    stretch = SILE.toPoints(stretchability(lastcp,thiscp)),
                                    shrink = SILE.toPoints(shrinkability(lastcp, thiscp))
                                   })

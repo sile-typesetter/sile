@@ -5,7 +5,7 @@ _box = std.object {
   height= 0,
   depth= 0,
   width= 0,
-  type="special", 
+  type="special",
   value=nil,
   migrating=false,
   __tostring = function (s) return s.type end,
@@ -30,7 +30,7 @@ function _box:isKern ()  return self.type == "kern" end
 
 -- Hboxes
 
-local _hbox = _box { 
+local _hbox = _box {
   type = "hbox",
   __tostring = function (this) return "H<" .. tostring(this.width) .. ">^" .. tostring(this.height) .. "-" .. tostring(this.depth) .. "v"; end,
   scaledWidth = function (self, line)
@@ -68,7 +68,7 @@ local _nnode = _hbox {
   language = "",
   pal = nil,
   nodes = {},
-  __tostring = function (this) 
+  __tostring = function (this)
   return "N<" .. tostring(this.width) .. ">^" .. this.height .. "-" .. this.depth .. "v(" .. this:toText() .. ")";
 end,
   init = function(self)
@@ -78,7 +78,7 @@ end,
     return self
     end,
   outputYourself = function(self, typesetter, line)
-    if self.parent and not self.parent.hyphenated then 
+    if self.parent and not self.parent.hyphenated then
       if not self.parent.used then
         self.parent:outputYourself(typesetter,line)
       end
@@ -92,7 +92,7 @@ end,
 
 local _unshaped = _nnode {
   type = "unshaped",
-  __tostring = function (this) 
+  __tostring = function (this)
     return "U(" .. this:toText() .. ")";
   end,
   shape = function(this)
@@ -105,7 +105,7 @@ local _unshaped = _nnode {
   end,
   __index = function(self,k)
     if k == "width" then SU.error("Can't get width of unshaped node", 1) end
-  end  
+  end 
 }
 
 -- Discretionaries
@@ -117,7 +117,7 @@ local _disc = _hbox {
   replacement = {},
   used = 0,
   prebw = nil,
-  __tostring = function (this) 
+  __tostring = function (this)
       return "D(" .. SU.concat(this.prebreak,"") .. "|" .. SU.concat(this.postbreak, "") .. ")";
   end,
   toText = function (self) return self.used==1 and "-" or "_" end,
@@ -195,7 +195,7 @@ local _glue = _box {
     typesetter.frame:moveX(scaledWidth)
   end
 }
-local _kern = _glue { 
+local _kern = _glue {
   _type = "Kern",
   type = "kern",
   __tostring = function (this) return "K<" .. tostring(this.width) .. ">"; end,
@@ -205,10 +205,10 @@ local _kern = _glue {
 local _vglue = _box {
   type = "vglue",
   _type = "VGlue",
-  __tostring = function (this) 
+  __tostring = function (this)
       return "VG<" .. tostring(this.height) .. ">";
   end,
-  setGlue = function (self,adjustment)  
+  setGlue = function (self,adjustment) 
     -- XXX
     self.height.length = self.height.length + adjustment
     self.height.stretch = 0
@@ -225,7 +225,7 @@ local _penalty = _box {
   width = SILE.length.new({}),
   flagged = 0,
   penalty = 0,
-  __tostring = function (this) 
+  __tostring = function (this)
       return "P(" .. this.flagged .. "|" .. this.penalty .. ")";
   end,
   outputYourself = function() end,
@@ -236,7 +236,7 @@ local _penalty = _box {
 local _vbox = _box {
   type = "vbox",
   nodes = {},
-  __tostring = function (this) 
+  __tostring = function (this)
       return "VB<" .. tostring(this.height) .. "|" .. this:toText() .. "v"..tostring(this.depth)..")";
   end,
   init = function (self)
@@ -250,11 +250,11 @@ local _vbox = _box {
     end
     return self
   end,
-  toText = function (self) 
-    return "VB[" .. SU.concat(SU.map(function (n) return n:toText().."" end, self.nodes), "") .. "]" 
+  toText = function (self)
+    return "VB[" .. SU.concat(SU.map(function (n) return n:toText().."" end, self.nodes), "") .. "]"
   end,
   outputYourself = function(self, typesetter, line)
-    typesetter.frame:moveY(self.height)  
+    typesetter.frame:moveY(self.height) 
     local initial = true
     for i,node in pairs(self.nodes) do
       if initial and (node:isGlue() or node:isPenalty()) then
@@ -266,7 +266,7 @@ local _vbox = _box {
     end
     typesetter.frame:moveY(self.depth)
     typesetter.frame:newLine()
-  end  
+  end 
 }
 
 SILE.nodefactory = {}
@@ -274,7 +274,7 @@ SILE.nodefactory = {}
 function SILE.nodefactory.newHbox(spec)     return _hbox(spec) end
 function SILE.nodefactory.newNnode(spec)    return _nnode(spec):init() end
 function SILE.nodefactory.newUnshaped(spec)
-  local u = _unshaped(spec) 
+  local u = _unshaped(spec)
   u.width = nil
   return u
 end
@@ -303,7 +303,7 @@ function SILE.nodefactory.newVbox(spec)  return _vbox(spec):init() end
 
 -- This infinity needs to be smaller than an actual infinity but bigger than the infinite stretch
 -- added by the typesetter.
-local inf = 100000 
+local inf = 100000
 SILE.nodefactory.zeroGlue = SILE.nodefactory.newGlue({width = SILE.length.new({length = 0})})
 SILE.nodefactory.hfillGlue = SILE.nodefactory.newGlue({width = SILE.length.new({length = 0, stretch = inf})})
 SILE.nodefactory.vfillGlue = SILE.nodefactory.newVglue({height = SILE.length.new({length = 0, stretch = inf})})

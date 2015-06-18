@@ -1,6 +1,6 @@
 SILE.registerCommand("img", function(options, content)
   SU.required(options, "src", "including image file")
-  local width =  SILE.parseComplexFrameDimension(options.width or 0,"w") or 0 
+  local width =  SILE.parseComplexFrameDimension(options.width or 0,"w") or 0
   local height = SILE.parseComplexFrameDimension(options.height or 0,"h") or 0
   local src = options.src
   local box_width,box_height = SILE.outputter.imageSize(src)
@@ -12,7 +12,7 @@ SILE.registerCommand("img", function(options, content)
     sy = sy or sx
   end
 
-  SILE.typesetter:pushHbox({ 
+  SILE.typesetter:pushHbox({
     width= box_width / (sx),
     height= box_height / (sy),
     depth= 0,

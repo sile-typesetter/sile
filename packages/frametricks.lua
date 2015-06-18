@@ -4,7 +4,7 @@ local breakFrameVertical = function(after)
     totalHeight = after
   else
     totalHeight = 0
-    SILE.typesetter:leaveHmode(1)    
+    SILE.typesetter:leaveHmode(1)
     local q = SILE.typesetter.state.outputQueue
     for i=1,#q do
       totalHeight = totalHeight + q[i].height + q[i].depth
@@ -14,9 +14,9 @@ local breakFrameVertical = function(after)
 
   if type(totalHeight) == "table" then totalHeight= totalHeight.length end
 
-  local newFrame = SILE.newFrame({ 
-    bottom = cFrame:bottom(), 
-    left = cFrame:left(), 
+  local newFrame = SILE.newFrame({
+    bottom = cFrame:bottom(),
+    left = cFrame:left(),
     right = cFrame:right(),
     next = cFrame.next,
     previous = cFrame,
@@ -43,7 +43,7 @@ local breakFrameHorizontalAt = function (offset)
     SILE.typesetter:chuck()
     offset = SILE.typesetter.frame.state.cursorX
   end
-  local newFrame = SILE.newFrame({ 
+  local newFrame = SILE.newFrame({
     bottom = cFrame:bottom(),
     top = cFrame:top(),
     left = cFrame:left() + offset,
@@ -62,10 +62,10 @@ local breakFrameHorizontalAt = function (offset)
 end
 
 local shiftframeedge = function(frame, options)
-  if options.left then 
+  if options.left then
     frame:constrain("left", frame:left() + SILE.length.parse(options.left).length)
   end
-  if options.right then 
+  if options.right then
     frame:constrain("right", frame:right() + SILE.length.parse(options.right).length)
   end
 end
@@ -77,7 +77,7 @@ local makecolumns = function (options)
   local right = cFrame:right()
   local origId = cFrame.id
   for i = 1,cols-1 do
-    local gutter = SILE.newFrame({ 
+    local gutter = SILE.newFrame({
       width = gutterWidth,
       left = "right("..cFrame.id..")",
       id = origId .. "_gutter" ..i

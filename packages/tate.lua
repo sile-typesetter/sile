@@ -7,7 +7,7 @@ SILE.tateFramePrototype = SILE.framePrototype {
   end,
   moveY = function(self, amount)
     self.state.cursorX = self.state.cursorX - amount
-  if type(amount) == "table" then SU.error("Table passed to moveY", 1) end    
+  if type(amount) == "table" then SU.error("Table passed to moveY", 1) end
   end,
   newLine = function(self)
     self.state.cursorY = self:top()
@@ -21,7 +21,7 @@ SILE.tateFramePrototype = SILE.framePrototype {
     self.oldtypesetter = SILE.typesetter
     self.state.oldBreak = SILE.settings.get("typesetter.breakwidth")
     SILE.settings.set("typesetter.breakwidth", SILE.length.new({length = self:height() }))
-    
+
     SILE.typesetter.pageTarget = function(self)
       return self.frame:width()
     end
@@ -98,13 +98,13 @@ SILE.registerCommand("latin-in-tate", function (options, content)
   end)
   SILE.typesetter = oldT
   SILE.typesetter:pushGlue({
-    width = SILE.length.new({length = SILE.toPoints("0.5zw"), 
+    width = SILE.length.new({length = SILE.toPoints("0.5zw"),
                              stretch = SILE.toPoints("0.25zw"),
                               shrink = SILE.toPoints("0.25zw")
                             })
   })
   for i = 1,#nodes do
-    if SILE.typesetter.frame.direction ~= "TTB" then 
+    if SILE.typesetter.frame.direction ~= "TTB" then
       SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes+1] = nodes[i]
     elseif nodes[i]:isGlue() then
       nodes[i].width = nodes[i].width
@@ -120,9 +120,9 @@ SILE.registerCommand("latin-in-tate", function (options, content)
     end
   end
   SILE.typesetter:pushGlue({
-    width = SILE.length.new({length = SILE.toPoints("0.5zw"), 
+    width = SILE.length.new({length = SILE.toPoints("0.5zw"),
                              stretch = SILE.toPoints("0.25zw"),
                               shrink = SILE.toPoints("0.25zw")
                             })
-  })  
+  })
 end, "Declares (or re-declares) a frame on this page.")

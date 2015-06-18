@@ -47,7 +47,7 @@ SILE.shapers.pango = SILE.shapers.base {
       twidth = twidth + pgs:get_width() / 1024
       for g in pairs(pgs.glyphs) do
         local rect = font:get_glyph_extents(pgs.glyphs[g].glyph)
-        table.insert(rv, { 
+        table.insert(rv, {
           height = -rect.y / 1024, depth = (rect.y + rect.height) / 1024,
           width = rect.width / 1024,
           glyph = pgs.glyphs[g].glyph,
@@ -62,7 +62,7 @@ SILE.shapers.pango = SILE.shapers.base {
   addShapedGlyphToNnodeValue = function (self, nnodevalue, shapedglyph)
     nnodevalue.pgs = shapedglyph.pgs
     nnodevalue.font = shapedglyph.font
-  end  
+  end 
 }
 
 function _shape(s, item)

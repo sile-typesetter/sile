@@ -3,7 +3,7 @@ SILE.xToPoints = {
   pt = function (i) return i end,
   cm = function (c) return 2.8346457 * 10 * c end,
   ["in"] = function(i) return 72.0 * i end,
-  ["%" ]= function(v, dimension) 
+  ["%" ]= function(v, dimension)
     return tonumber(v) / 100 * SILE.documentState.paperSize[ dimension == 'w' and 1 or 2]
   end,
   ["ex"] =  function(v) return tonumber(v) * SILE.shaper:measureDim("x") end,
