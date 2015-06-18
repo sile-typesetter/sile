@@ -1,11 +1,13 @@
 SILE.registerCommand("thisframeLTR", function(options, content)
   SILE.typesetter.frame.direction = "LTR"
   SILE.typesetter:leaveHmode()
+  SILE.typesetter.frame:newLine()
 end);
 
 SILE.registerCommand("thisframeRTL", function(options, content)
   SILE.typesetter.frame.direction = "RTL"
   SILE.typesetter:leaveHmode()
+  SILE.typesetter.frame:newLine()
 end);
 
 local bidi = require("unicode-bidi-algorithm")

@@ -344,7 +344,8 @@ There are only a few bits of cleverness that happen around ordinary text.
 
 The first is that space is not particularly significant. If you write
 \code{Hello {} {} SILE!} with three spaces, you get the same output as if
-you write \code{Hello SILE!} with just one.
+you write \code{Hello SILE!} with just one. A space at the beginning of a line
+will be ignored.
 
 Similarly, you can place a line break anywhere you like in the input file,
 and it won’t affect the output because SILE considers each paragraph
@@ -375,6 +376,10 @@ consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
 cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
 proident, sunt in culpa qui officia deserunt mollit anim id est laborum.}}
 \line
+
+In other words, a line break is converted to a space. (Sometimes this is not
+what you want. If you don’t want that, use a comment character \code{\%} at the end of
+a line to suppress the additional whitespace.)
 
 When you want to end a paragraph, you need to input two line breaks in a row,
 like this:
@@ -451,6 +456,8 @@ The optional argument (of which
 there can only be at most one) is enclosed in curly braces.\footnote{TeX users
 may forget this and try adding a command argument “bare”, without the braces.
 This won’t work; in SILE, the braces are mandatory.}
+
+SILE will ignore whitespace and newlines after a command.
 
 Here are a few more examples of SILE commands:
 

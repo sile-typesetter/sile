@@ -19,7 +19,6 @@
 \par\framebreak\par
 
 \typeset-into[frame=sidebar]{\tableofcontents}%
-
 % First frame
 \noindent\float[bottomboundary=5pt]{\font[size=60pt]{S}}ILE is a typesetting system. Its job is to produce beautiful printed documents. It’s similar to TeX, but with some ideas borrowed from InDesign, and written with modern technologies in mind.
 
@@ -89,13 +88,13 @@ in the same document.
 In fact, even that’s pretty easy, until you want to typeset primarily Arabic or other right-to-left languages,
 and insert some left-to-right text in them. But don’t worry. SILE can do that too.
 
+\medskip
 \breakframevertical
 \thisframeRTL
-
 \font[family=Scheherazade,size=12pt,direction=RTL,language=ar,script=Arab]{\noindent{}عندما يريد العالم أن ‪يتكلّم ‬ ، فهو يتحدّث بلغة يونيكود. تسجّل الآن لحضور المؤتمر الدولي العاشر ليونيكود (Unicode Conference) ، الذي سيعقد في 10–12 آذار 1997 بمدينة مَايِنْتْس، ألمانيا. و سيجمع المؤتمر بين خبراء من كافة قطاعات الصناعة على الشبكة العالمية انترنيت ويونيكود، حيث ستتم، على الصعيدين الدولي والمحلي على حد سواء مناقشة سبل استخدام يونكود في النظم القائمة وفيما يخص التطبيقات الحاسوبية، الخطوط، تصميم النصوص والحوسبة متعددة اللغات.
 }
 
-
+\medskip
 \breakframevertical
 \thisframeLTR
 

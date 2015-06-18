@@ -1,6 +1,5 @@
 \begin[papersize=a4,class=book]{document}
 \font[size=11pt,family=Gentium Book Basic]
-
 \noindent{}Now that we understand some of what SILE is about and what it seeks to do, 
 let’s dive into SILE itself.
 

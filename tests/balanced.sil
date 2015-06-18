@@ -13,7 +13,6 @@
 \frame[id=title,left=left(content), right=right(content),top=bottom(rightCol1),bottom=top(title)+8%,next=leftCol2]%
 \frame[id=leftCol2,left=left(content),right=left(gutter),top=bottom(title),bottom=bottom(content),next=rightCol2,balanced=1]%
 \frame[id=rightCol2,left=right(gutter),right=right(content),top=top(leftCol2),bottom=bottom(content),width=width(leftCol2),balanced=1]%
-
 \end{pagetemplate}%
 
 But so that you may know that the Son of Man has authority on earth to forgive sins,”–he said to the paralytic– 
@@ -43,8 +42,7 @@ When Jesus heard this he said to them, “Those who are healthy don’t need a p
 \balancecolumns
 \medskip
 \center{\font[size=24pt,family=Minion Pro]{ Chapter 3 }}
-
-\framebreak
+\framebreak\par
 
 Then Jesus entered the synagogue again, and a man was there who had a withered hand. 
 They watched Jesus closely to see if he would heal him on the Sabbath, so that they could accuse him. 

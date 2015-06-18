@@ -2,11 +2,11 @@ This is SILE 0.9.2
 <tests/bug-61.sil>Open file	tests/bug-61.pdf
 Set paper size 	419.5275636	595.275597
 Begin page
-Mx 	37.48688
+Mx 	54.82079
 My 	87.21603
 Set font 	Gentium;24;200;normal;normal;
 T	38 73 82 83 84	(First)
-Mx 	88.89722
+Mx 	106.22655
 T	70 82 65 77 69	(frame)
 Mx 	54.82079
 My 	96.46285

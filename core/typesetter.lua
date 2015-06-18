@@ -57,7 +57,6 @@ SILE.defaultTypesetter = std.object {
       outputQueue = {},
       lastBadness = awful_bad,      
     };
-    self:initline()
   end,
   initFrame = function(self, frame)
     self.frame = frame
@@ -119,8 +118,8 @@ SILE.defaultTypesetter = std.object {
   -- Takes string, writes onto self.state.nodes
   setpar = function (self, t)
     t = string.gsub(t,"\n", " ");
-    --t = string.gsub(t,"^%s+", "");
     if (#self.state.nodes == 0) then
+      t = string.gsub(t,"^%s+", "");
       self:initline()
       SILE.documentState.documentClass.newPar(self)
     end
