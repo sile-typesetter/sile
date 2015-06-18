@@ -14,14 +14,14 @@
   \frame[id=sidebar,width=200pt,left=right(rightCol)+3%,right=right(title),top=top(leftCol),bottom=bottom(content)]
   \frame[id=bottomBox,bottom=bottom(content),left=left(content),right=right(rightCol),height=90pt]
 \end{pagetemplate}
-
 % Main title
-\center{\font[family=Baskerville,size=35pt]{\em{The SILE Show-off Document}}}\par
-\framebreak%
+\center{\font[family=Baskerville,size=35pt]{\em{The SILE Show-off Document}}}
+\par\framebreak\par
+
 \typeset-into[frame=sidebar]{\tableofcontents}%
 
 % First frame
-\skip[height=-1ex]\noindent{}\float[bottomboundary=5pt]{\font[size=60pt]{S}}ILE is a typesetting system. Its job is to produce beautiful printed documents. It’s similar to TeX, but with some ideas borrowed from InDesign, and written with modern technologies in mind.
+\noindent\float[bottomboundary=5pt]{\font[size=60pt]{S}}ILE is a typesetting system. Its job is to produce beautiful printed documents. It’s similar to TeX, but with some ideas borrowed from InDesign, and written with modern technologies in mind.
 
 Let’s demonstrate some of the things which are interesting about SILE.
 \tocentry{Frames}% Normally called automatically but we are not using sectioning commands.
@@ -58,7 +58,7 @@ Here’s an image, because SILE supports those too: \img[src=examples/images/sil
 \left-running-head{Multilingual capabilities}% Again, normally called automatically.
 \noindent\font[family=Baskerville,size=25pt]{\em{Multilingual capabilities}}
 \tocentry{Multilingual capabilities}
-\set[parameter=linebreak.tolerance,value=500]
+\set[parameter=linebreak.tolerance,value=500]\bigskip
 
 \noindent{}SILE uses the \em{Harfbuzz} shaping engine, which provides excellent support for handling text containing
 different languages. It’s very easy to use multiple languages, multiple text directions, and multiple text
