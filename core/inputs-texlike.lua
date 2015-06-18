@@ -14,6 +14,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   local list = lpeg.Cf(lpeg.Ct("") * pair^0, rawset)
   local parameters = (P("[") * list * P("]")) ^-1 / function (a) return type(a)=="table" and a or {} end
   local anything = C( (1-lpeg.S("\\{}%\r\n")) ^1) 
+  local lineEndLineStartSpace = (lpeg.S(" ")^0 * lpeg.S("\r\n")^1 * lpeg.S(" ")^0)^-1
 
   START "document";
   document = V("stuff") * (-1 + E("Unexpected character at end of input"))
@@ -21,10 +22,10 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   stuff = Cg(V"environment" + 
     ((P("%") * (1-lpeg.S("\r\n"))^0 * lpeg.S("\r\n")^-1) /function () return "" end) -- Don't bother telling me about comments
     + V("text") + V"bracketed_stuff" + V"command")^0
-  bracketed_stuff = P"{" * V"stuff" * (P"}" + E("} expected")) * _
-  command =((P("\\")-P("\\begin")) * Cg(myID, "tag") * Cg(parameters,"attr") * V"bracketed_stuff"^0)-P("\\end{")
+  bracketed_stuff = P"{" * V"stuff" * (P"}" + E("} expected"))
+  command =((P("\\")-P("\\begin")) * Cg(myID, "tag") * Cg(parameters,"attr") * V"bracketed_stuff"^0 * lineEndLineStartSpace)-P("\\end{")
   environment = 
-    P("\\begin") * Cg(parameters, "attr") * P("{") * Cg(myID, "tag") * P("}") 
+    P("\\begin") * Cg(parameters, "attr") * P("{") * Cg(myID, "tag") * P("}") * lineEndLineStartSpace
       * V("stuff") 
     * (P("\\end{") * (
       Cmt(myID * Cb("tag"), function(s,i,a,b) return a==b end) +
