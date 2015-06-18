@@ -144,12 +144,21 @@ int face_from_options(lua_State* L) {
   FcPatternGetInteger(matched, FC_SLANT, 0, &slant);
   FcPatternGetInteger(matched, FC_WEIGHT, 0, &weight);
 
-  FcPatternDestroy (matched);
-  FcPatternDestroy (p);
+  /* Find out which family we did actually pick up */
+  if (FcPatternGetString (matched, FC_FAMILY, 0, &family) != FcResultMatch)
+    return 0;
   lua_newtable(L);
   lua_pushstring(L, "filename");
   lua_pushstring(L, (char*)font_path);
   lua_settable(L, -3);
+
+  lua_pushstring(L, "family");
+  lua_pushstring(L, (char*)(family));
+  lua_settable(L, -3);
+
+  FcPatternDestroy (matched);
+  FcPatternDestroy (p);
+
   face = (FT_Face)malloc(sizeof(FT_Face));
   if (FT_New_Face(ft_library, (char*)font_path, index, &face))
     return 0;

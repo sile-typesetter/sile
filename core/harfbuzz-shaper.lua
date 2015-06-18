@@ -3,11 +3,16 @@ if not SILE.shapers then SILE.shapers = { } end
 local hb = require("justenoughharfbuzz")
 SILE.require("core/base-shaper")
 
+local substwarnings = {}
 SILE.shapers.harfbuzz = SILE.shapers.base {
   shapeToken = function (self, text, options)
     local face = SILE.font.cache(options, self.getFace)
     if not face then
       SU.error("Could not find requested font "..options.." or any suitable substitutes")
+    end
+    if face.family ~= options.font and not substwarnings[options.font] then
+      substwarnings[options.font] = true
+      SU.warn("Font '"..options.font.."' not available, falling back to '"..face.family.."'")
     end
     return { hb._shape(text,
                       face.face,
