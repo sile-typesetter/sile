@@ -3,7 +3,6 @@ if (not SILE.outputters) then SILE.outputters = {} end
 local cursorX = 0
 local cursorY = 0
 local font = 0
-local lastW = 0
 SILE.outputters.libtexpdf = {
   init = function()
     pdf.init(SILE.outputFilename, SILE.documentState.paperSize[1],SILE.documentState.paperSize[2])
@@ -34,7 +33,6 @@ SILE.outputters.libtexpdf = {
         local buf = string.char(math.floor(glyph % 2^32 / 2^8)) .. string.char(glyph % 0x100)
         pdf.setstring(cursorX + (value.items[i].x_offset or 0), cursorY + (value.items[i].y_offset or 0), buf, string.len(buf), font, value.items[i].width)
         cursorX = cursorX + value.items[i].width
-        lastW = value.items[i].width
       end
       return
     end
@@ -46,7 +44,6 @@ SILE.outputters.libtexpdf = {
     end
     buf = table.concat(buf, "")
     pdf.setstring(cursorX, cursorY, buf, string.len(buf), font, w)
-    lastW = w
   end,
   setFont = function (options)
     if SILE.font._key(options) == lastkey then return end
