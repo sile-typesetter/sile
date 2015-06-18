@@ -21,7 +21,7 @@ SILE.outputters.cairo = {
   newPage = function()
   	cr:show_page();
   end,
-  finish = function() 
+  finish = function()
   end,
   setColor = function (self, color)
     cr:set_source_rgb(color.r, color.g, color.b)
@@ -48,7 +48,7 @@ SILE.outputters.cairo = {
     cr:set_source_surface(image, 0,0)
     local p = cr:get_source()
     local matrix, sx, sy
-    if w or h then 
+    if w or h then
       if w > 0 then sx = src_width / w end
       if h > 0 then sy = src_height / h end
       matrix = cairo.Matrix.create_scale(sx or sy, sy or sx)

@@ -73,7 +73,7 @@ local parser = std.optparse ("This is SILE "..SILE.version..[[
 
    -d, --debug=VALUE        debug SILE's operation
    -b, --backend=VALUE      choose between libtexpdf/pangocairo backends
-   -I, --include=[FILE]     include a class or SILE file before 
+   -I, --include=[FILE]     include a class or SILE file before
                             processing main file
    -e, --evaluate=VALUE     evaluate some Lua code before processing file
        --version            display version information, then exit

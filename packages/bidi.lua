@@ -68,9 +68,9 @@ return { documentation = [[\begin{document}
 Scripts like the Latin alphabet you are currently reading are normally written left to
 right; however, some scripts, such as Arabic and Hebrew, are written right to left.
 The \code{bidi} package, which is loaded by default, provides SILE with the ability to
-correctly typeset right-to-left text and also documents which mix right-to-left and 
+correctly typeset right-to-left text and also documents which mix right-to-left and
 left-to-right typesetting. Because it is loaded by default, you can use both
-LTR and RTL text within a paragraph and SILE will ensure that the output 
+LTR and RTL text within a paragraph and SILE will ensure that the output
 characters appear in the correct order.
 
 The \code{bidi} package provides two commands, \command{\\thisframeLTR} and

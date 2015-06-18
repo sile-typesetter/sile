@@ -1,5 +1,5 @@
 SILE.hyphenator.languages["sr"] = {};
-SILE.hyphenator.languages["sr"].patterns = 
+SILE.hyphenator.languages["sr"].patterns =
 {
    ".ђ2",
 ".ћ2",

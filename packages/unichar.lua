@@ -28,7 +28,7 @@ SILE.registerCommand("unichar", function(options, content)
   hex = (cp:match("[Uu]%+(%x+)") or cp:match("0[xX](%x+)"))
   if hex then
     cp = tonumber("0x"..hex)
-  elseif tonumber(cp) then 
+  elseif tonumber(cp) then
     cp = tonumber(cp)
   end
   SILE.typesetter:typeset(utf8encode(cp))
@@ -50,7 +50,7 @@ available:
 \line
 \end{verbatim}
 
-If the argument to \code{\\unichar} begins \code{U+}, \code{u+}, \code{0x} or \code{0X}, 
+If the argument to \code{\\unichar} begins \code{U+}, \code{u+}, \code{0x} or \code{0X},
 then it is assumed to be a hexadecimal value. Otherwise it is assumed to be a
 decimal codepoint.
 \end{document}]] }

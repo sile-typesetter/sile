@@ -2,17 +2,17 @@
 SILE.registerCommand("color", function(options, content)
   local color = options.color or "black"
   color = SILE.colorparser(color)
-  SILE.typesetter:pushHbox({ 
+  SILE.typesetter:pushHbox({
     outputYourself= function () SILE.outputter:pushColor(color) end
   });
   SILE.process(content)
-  SILE.typesetter:pushHbox({ 
+  SILE.typesetter:pushHbox({
     outputYourself= function () SILE.outputter:popColor() end
   });
 end, "Changes the active ink color to the color <color>.");
 
 return { documentation = [[\begin{document}
-The \code{color} package allows you to temporarily change the color of the 
+The \code{color} package allows you to temporarily change the color of the
 (virtual) ink that SILE uses to output text and rules. The package provides
 a \code{\\color} command which takes one parameter, \code{color=\em{<color \nobreak{}specification>}}, and typesets
 its argument in that color. The color specification is the same as HTML:

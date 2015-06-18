@@ -34,7 +34,8 @@ SILE.hyphenator.languages["tr"].patterns =
 "1v1",
 "1y1",
 "1z1",
--- prevent e-cek at end of word
+-- prevent a-cak/e-cek at end of word
+"2a2cak.",
 "2e2cek.",
 -- prohibit hyphen before pair of consonants
 -- many pairs generated here are impossible anyway

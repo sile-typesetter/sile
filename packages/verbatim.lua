@@ -25,7 +25,7 @@ end, "Typesets its contents in a monospaced font.")
 
 return [[\begin{document}
 
-The \code{verbatim} package is useful when quoting pieces of computer code and 
+The \code{verbatim} package is useful when quoting pieces of computer code and
 other text for which formatting is significant. It changes SILE’s settings
 so that text is set ragged right, with no hyphenation, no indentation and
 regular spacing. It tells SILE to honor multiple spaces, and sets a monospaced

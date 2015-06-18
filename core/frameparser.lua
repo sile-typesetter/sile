@@ -14,14 +14,14 @@ local dimensioned_string = SILE.parserBits.dimensioned_string
 local whitespace = SILE.parserBits.whitespace
 
 local functionOfFrame = function (dim, ident)
-	if not SILE.frames[ident] then	
+	if not SILE.frames[ident] then
 		SILE.newFrame({id = ident})
 	end
-	return SILE.frames[ident].variables[dim]	
+	return SILE.frames[ident].variables[dim]
 end
 local func = C(P("top") + P("left") + P("bottom") + P("right") + P("width") + P("height")) * P("(") * C(identifier) * P(")") / functionOfFrame
 
-local percentage = ( C(number.number) * whitespace * P("%") ) / function (n) 
+local percentage = ( C(number.number) * whitespace * P("%") ) / function (n)
 	local dim = SILE.documentState._dimension == "w" and "width" or "height"
 	return cassowary.times(n / 100, functionOfFrame(dim, "page"))
 end

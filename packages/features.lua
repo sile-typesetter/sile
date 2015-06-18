@@ -1,11 +1,11 @@
 local opentype = { -- Mapping of opentype features to friendly names
-  Ligatures = { 
-    Required = "rlig", Common = "liga", Contextual = "clig", 
+  Ligatures = {
+    Required = "rlig", Common = "liga", Contextual = "clig",
     Rare = "dlig", Discretionary = "dlig", Historic = "hlig"
   },
   Fractions = { On = "frac", Alternate = "afrc" },
   StylisticSet = function(i) return string.format("ss%02i", tonumber(i)) end,
-  Letters = { 
+  Letters = {
     Uppercase = "case", SmallCaps = "smcp", PetiteCaps = "pcap",
     UppercaseSmallCaps = "c2sc", UppercasePetiteCaps = "c2pc",
     Unicase = "unic"
@@ -25,18 +25,18 @@ local opentype = { -- Mapping of opentype features to friendly names
   -- XXX character variant
   Style = {
     Alternate = "salt", Italic= "ital",
-    Ruby= "ruby", Swash= "swsh", Historic= "hist", TitlingCaps= "titl", 
+    Ruby= "ruby", Swash= "swsh", Historic= "hist", TitlingCaps= "titl",
     HorizontalKana= "hkna", VerticalKana= "vkna"
   },
   Diacritics = {MarkToBase = "mark", MarkToMark = "mkmk", AboveBase = "abvm", BelowBase = "blwm" },
   Kerning = { Uppercase = "cpsp", On = "kern" },
   CJKShape = {
-    Traditional = "trad", Simplified = "smpl", JIS1978 = "jp78", 
+    Traditional = "trad", Simplified = "smpl", JIS1978 = "jp78",
     JIS1983 = "jp83", JIS1990 = "jp90", Expert = "expt", NLC = "nlck",
   },
   CharacterWidth = {
-    Proportional = "pwid", Full = "fwid", Half = "hwid", Third = "twid", 
-    Quarter = "qwid", AlternateProportional = "palt", AlternateHalf = "halt", 
+    Proportional = "pwid", Full = "fwid", Half = "hwid", Third = "twid",
+    Quarter = "qwid", AlternateProportional = "palt", AlternateHalf = "halt",
   },
 }
 
@@ -106,7 +106,7 @@ want SILE to apply to a font. The features available will be specific to the fon
 some fonts come with documentation explaining their supported features. Discussion
 of OpenType features is beyond the scope of this manual.
 
-These features can be turned on and off by passing ‘raw’ feature names to the 
+These features can be turned on and off by passing ‘raw’ feature names to the
 \code{\\font} command like so:
 
 \begin{verbatim}
@@ -117,7 +117,7 @@ These features can be turned on and off by passing ‘raw’ feature names to th
 
 However, this is unwieldy and requires memorizing the feature codes. \code{features}
 provides two commands, \code{\\add-font-feature} and \code{\\remove-font-feature},
-which make it easier to access OpenType features. The interface is patterned on the 
+which make it easier to access OpenType features. The interface is patterned on the
 TeX package \code{fontspec}; for full documentation of the OpenType features supported,
 see the documentation for that package.\footnote{\code{http://texdoc.net/texmf-dist/doc/latex/fontspec/fontspec.pdf}}
 

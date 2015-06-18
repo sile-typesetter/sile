@@ -5,7 +5,7 @@ SILE.tokenizers.default = function(text)
 end
 
 SILE.settings.declare({
-  name = "shaper.spacepattern", 
+  name = "shaper.spacepattern",
   type = "string",
   default = "%s+",
   help = "The Lua pattern used for splitting words on spaces"
@@ -19,7 +19,7 @@ SILE.shapers.base = std.object {
 
   -- Caching this has no significant speedup
   measureSpace = function(self, options)
-    local ss = SILE.settings.get("document.spaceskip") 
+    local ss = SILE.settings.get("document.spaceskip")
     if ss then return ss end
     local i,w = self:shapeToken(" ", options)
     local spacewidth
@@ -28,9 +28,9 @@ SILE.shapers.base = std.object {
       if not i[1] then return SILE.length.new() end
       spacewidth = i[1].width
     end
-    return SILE.length.new({ 
-      length = spacewidth * 1.2, 
-      shrink = spacewidth/3, 
+    return SILE.length.new({
+      length = spacewidth * 1.2,
+      shrink = spacewidth/3,
       stretch = spacewidth /2
     }) -- XXX all rather arbitrary
   end,
@@ -38,7 +38,7 @@ SILE.shapers.base = std.object {
   measureDim = function (self, char)
     local options = SILE.font.loadDefaults({})
     local i = self:shapeToken(char, options)
-    if char == "x" then 
+    if char == "x" then
       return i[1].height
     else
       return i[1].width
@@ -117,13 +117,13 @@ SILE.shapers.base = std.object {
     local glyphNames = {}
     local nnodeValue = { text = token, options = options, glyphString = {} }
     self:preAddNodes(items, nnodeValue)
-    for i = 1,#items do local glyph = items[i]        
+    for i = 1,#items do local glyph = items[i]       
       if glyph.depth > depth then depth = glyph.depth end
       if glyph.height > height then height = glyph.height end
       totalWidth = totalWidth + glyph.width
       self:addShapedGlyphToNnodeValue(nnodeValue, glyph)
     end
-    table.insert(nnodeContents, SILE.nodefactory.newHbox({ 
+    table.insert(nnodeContents, SILE.nodefactory.newHbox({
       depth = depth,
       height= height,
       width = width or SILE.length.new({ length = totalWidth }),
@@ -131,7 +131,7 @@ SILE.shapers.base = std.object {
     }))
     -- Why does the nnode contain only one hbox?
     -- So it can be hypenated and split later
-    return { SILE.nodefactory.newNnode({ 
+    return { SILE.nodefactory.newNnode({
       nodes = nnodeContents,
       text = token,
       options = options,

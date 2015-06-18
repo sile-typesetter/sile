@@ -5,8 +5,8 @@ SILE.registerCommand("indexentry", function(o,c)
     SILE.process(c)
     local t = ""
     local nl = SILE.typesetter.state.nodes
-    for i = 2,#nl do 
-      t = t .. nl[i]:toText() 
+    for i = 2,#nl do
+      t = t .. nl[i]:toText()
     end
     o.label = t
     SILE.typesetter:popState()
@@ -30,8 +30,8 @@ local moveNodes = function(self)
     end
   end
 end
-  -- if c then 
-  --   for i = 1,#c do 
+  -- if c then
+  --   for i = 1,#c do
   --     if not SILE.scratch.index.commands[c[i].label] then
   --       SILE.scratch.index.commands[c[i].label] = {}
   --     end
@@ -49,8 +49,8 @@ SILE.registerCommand("printindex", function(o,c)
   table.sort(sortedIndex)
   SILE.call("bigskip")
   for i,k in ipairs(sortedIndex) do
-    local v = table.concat(index[k],", ")    
-    SILE.call("index:item", {pageno = v}, {k}) 
+    local v = table.concat(index[k],", ")
+    SILE.call("index:item", {pageno = v}, {k})
   end
 end)
 

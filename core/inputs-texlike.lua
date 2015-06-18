@@ -7,26 +7,26 @@ SILE.inputs.TeXlike.identifier = (ID + lpeg.P("-") + lpeg.P(":"))^1
 SILE.inputs.TeXlike.parser = function (_ENV)
   local _ = WS^0
   local sep = lpeg.S(",;") * _
-  local quotedString = (P("\"") * C((1-lpeg.S("\""))^1) * P("\"")) 
+  local quotedString = (P("\"") * C((1-lpeg.S("\""))^1) * P("\""))
   local value = (quotedString + (1-lpeg.S(",;]"))^1 )
   local myID = C( SILE.inputs.TeXlike.identifier + lpeg.P(1) ) / function (t) return t end
   local pair = lpeg.Cg(myID * _ * "=" * _ * C(value)) * sep^-1   / function (...) local t= {...}; return t[1], t[#t] end
   local list = lpeg.Cf(lpeg.Ct("") * pair^0, rawset)
   local parameters = (P("[") * list * P("]")) ^-1 / function (a) return type(a)=="table" and a or {} end
-  local anything = C( (1-lpeg.S("\\{}%\r\n")) ^1) 
+  local anything = C( (1-lpeg.S("\\{}%\r\n")) ^1)
   local lineEndLineStartSpace = (lpeg.S(" ")^0 * lpeg.S("\r\n")^1 * lpeg.S(" ")^0)^-1
 
   START "document";
   document = V("stuff") * (-1 + E("Unexpected character at end of input"))
   text = (anything + C(WS))^1 / function(...) return table.concat({...}, "") end
-  stuff = Cg(V"environment" + 
+  stuff = Cg(V"environment" +
     ((P("%") * (1-lpeg.S("\r\n"))^0 * lpeg.S("\r\n")^-1) /function () return "" end) -- Don't bother telling me about comments
     + V("text") + V"bracketed_stuff" + V"command")^0
   bracketed_stuff = P"{" * V"stuff" * (P"}" + E("} expected"))
   command =((P("\\")-P("\\begin")) * Cg(myID, "tag") * Cg(parameters,"attr") * V"bracketed_stuff"^0 * lineEndLineStartSpace)-P("\\end{")
-  environment = 
+  environment =
     P("\\begin") * Cg(parameters, "attr") * P("{") * Cg(myID, "tag") * P("}") * lineEndLineStartSpace
-      * V("stuff") 
+      * V("stuff")
     * (P("\\end{") * (
       Cmt(myID * Cb("tag"), function(s,i,a,b) return a==b end) +
       E("Environment mismatch")
@@ -46,14 +46,14 @@ local function getline( s, p )
   start = 1
   lno = 1
   if p > lastpos then
-    lno = linecache[#linecache].lno 
+    lno = linecache[#linecache].lno
     start = linecache[#linecache].pos + 1
     col = 1
   else
     for j = 1,#linecache-1 do
       if linecache[j+1].pos >= p then
         lno = linecache[j].lno
-        col = p - linecache[j].pos 
+        col = p - linecache[j].pos
         return lno,col
       end
     end
@@ -103,7 +103,7 @@ function SILE.inputs.TeXlike.process(fn)
   SILE.process(t)
   if root and not SILE.preamble then
     SILE.documentState.documentClass:finish()
-  end  
+  end 
 end
 
 local _parser
@@ -120,6 +120,6 @@ function SILE.inputs.TeXlike.docToTree(doc)
   t = t[1][1]
   if not t then return end
   resetCache()
-  t = massage_ast(t,doc) 
+  t = massage_ast(t,doc)
   return t
 end

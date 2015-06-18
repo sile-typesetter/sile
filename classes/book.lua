@@ -22,7 +22,7 @@ end
 
 book.newPage = function(self)
   book:switchPage()
-  book:newPageInfo()  
+  book:newPageInfo()
   return plain.newPage(self)
 end
 
@@ -92,10 +92,10 @@ SILE.registerCommand("chapter", function (options, content)
   SILE.call("open-double-page")
   SILE.call("noindent")
   SILE.scratch.headers.right = nil
-  SILE.call("set-counter", {id = "footnote", value = 1})  
-  SILE.call("book:chapterfont", {}, function()  
+  SILE.call("set-counter", {id = "footnote", value = 1})
+  SILE.call("book:chapterfont", {}, function()
     SILE.call("book:sectioning", {
-      numbering = options.numbering, 
+      numbering = options.numbering,
       level = 1,
       prenumber = "book:chapter:pre",
       postnumber = "book:chapter:post"
@@ -109,12 +109,12 @@ end, "Begin a new chapter");
 
 SILE.registerCommand("section", function (options, content)
   SILE.typesetter:leaveHmode()
-  SILE.call("goodbreak")  
+  SILE.call("goodbreak")
   SILE.call("bigskip")
   SILE.call("noindent")
   SILE.Commands["book:sectionfont"]({}, function()
     SILE.call("book:sectioning", {
-      numbering = options.numbering, 
+      numbering = options.numbering,
       level = 2,
       postnumber = "book:section:post"
     }, content)
@@ -144,10 +144,10 @@ SILE.registerCommand("subsection", function (options, content)
   SILE.call("medskip")
   SILE.Commands["book:subsectionfont"]({}, function()
     SILE.call("book:sectioning", {
-          numbering = options.numbering, 
+          numbering = options.numbering,
           level = 3,
           postnumber = "book:subsection:post"
-        }, content)    
+        }, content)
     SILE.process(content)
   end)
   SILE.typesetter:leaveHmode()

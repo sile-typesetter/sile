@@ -3,9 +3,9 @@ romans = {
   {1000, "M"},
   {900, "CM"}, {500, "D"}, {400, "CD"}, {100, "C"},
   {90, "XC"}, {50, "L"}, {40, "XL"}, {10, "X"},
-  {9, "IX"}, {5, "V"}, {4, "IV"}, {1, "I"} 
+  {9, "IX"}, {5, "V"}, {4, "IV"}, {1, "I"}
 }
- 
+
 local function romanize(k)
   str = ""
   k = k + 0
@@ -45,7 +45,7 @@ end
 
 SILE.registerCommand("increment-counter", function (options,content)
   local c = options.id; _init(c)
-  if (options["set-to"]) then 
+  if (options["set-to"]) then
     SILE.scratch.counters[c].value = tonumber(options["set-to"])
   else
     SILE.scratch.counters[c].value = SILE.scratch.counters[c].value + 1
@@ -53,7 +53,7 @@ SILE.registerCommand("increment-counter", function (options,content)
   if options.display then SILE.scratch.counters[c].display = options.display end
 end, "Increments the counter named by the <id> option")
 
-SILE.registerCommand("set-counter", function (options, content) 
+SILE.registerCommand("set-counter", function (options, content)
   local c = options.id; _init(c)
   if options.value then SILE.scratch.counters[c].value = tonumber(options.value) end
   if options.display then SILE.scratch.counters[c].display = options.display end
@@ -113,13 +113,13 @@ end, "Outputs the value of the multilevel counter <id>, optionally displaying it
 return { documentation = [[\begin{document}
 
 Various parts of SILE such as the \code{footnotes} package and the
-sectioning commands keep a counter of things going on: the current 
+sectioning commands keep a counter of things going on: the current
 footnote number, the chapter number, and so on. The counters package
 allows you to set up, increment and typeset named counters. It
 provides the following commands:
 
 • \code{\\set-counter[id=\em{<counter-name>},value=\em{<value}]} — sets
-the counter called \code{<counter-name>} to the value given. 
+the counter called \code{<counter-name>} to the value given.
 
 • \code{\\increment-counter[id=\em{<counter-name>}]} — does the
 same as \code{\\set-counter} except that when no \code{value} parameter
@@ -130,10 +130,10 @@ value of the counter according to the counter’s declared display type.
 
 \note{All of the commands in the counters package take an optional
 \code{display=\em{<display-type>}} parameter
-to set the \em{display type} of the counter. 
+to set the \em{display type} of the counter.
 
 The available display types are: \code{arabic}, the default;
-\code{alpha}, for alphabetic counting; 
+\code{alpha}, for alphabetic counting;
 \code{roman}, for lower-case Roman numerals; and \code{Roman} for upper-case
 Roman numerals.}
 
@@ -149,7 +149,7 @@ So, for example, the following SILE code:
 \line
 \end{verbatim}
 
-produces: 
+produces:
 
 \line
 \examplefont{2

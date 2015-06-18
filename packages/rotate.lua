@@ -3,12 +3,12 @@ if SILE.outputter ~= SILE.outputters.libtexpdf then
 end
 local pdf = require("justenoughlibtexpdf")
 
-local enter = function(self) 
-  if not self.rotate then return end 
+local enter = function(self)
+  if not self.rotate then return end
   local x = -math.rad(self.rotate)
   -- Keep center point the same
   pdf:gsave()
-  local cx = (self:left() + self:width() / 2) 
+  local cx = (self:left() + self:width() / 2)
   local cy = -((self:top() + self:bottom()) / 2) -- Trial and error, just like everything else.
 
   pdf.setmatrix(1,0,0,1,cx,cy)
@@ -21,7 +21,7 @@ local leave =   function(self)
   pdf:grestore()
 end
 
-if SILE.typesetter.frame then 
+if SILE.typesetter.frame then
   enter(SILE.typesetter.frame)
   table.insert(SILE.typesetter.frame.leaveHooks, leave)
 end
@@ -31,7 +31,7 @@ table.insert(SILE.framePrototype.leaveHooks, leave)
 
 -- What is the width, depth and height of a rectangle width w and height h rotated by angle theta?
 -- rect1 = Rectangle[{0, 0}, {w, h}]
--- {{xmin, xmax}, {ymin, ymax}} = Refine[RegionBounds[TransformedRegion[rect1, 
+-- {{xmin, xmax}, {ymin, ymax}} = Refine[RegionBounds[TransformedRegion[rect1,
 --                                                     RotationTransform[theta, {w/2,h/2}]]],
 --                                      w > 0 && h > 0 && theta > 0 && theta < 2 Pi ]
 -- PiecewiseExpand[xmax - xmin]
@@ -46,7 +46,7 @@ local outputRotatedHbox = function (self, typesetter,line)
   -- Find origin of untransformed hbox
   local save = typesetter.frame.state.cursorX
   typesetter.frame.state.cursorX = typesetter.frame.state.cursorX - (origbox.width.length-self.width)/2
-  
+
   local horigin = typesetter.frame.state.cursorX + origbox.width.length / 2
   local vorigin = -(typesetter.frame.state.cursorY - (origbox.height) /2)
   pdf:gsave()
@@ -68,11 +68,11 @@ SILE.registerCommand("rotate", function(options, content)
   local st = math.sin(theta)
   local ct = math.cos(theta)
   local height, width, depth
-  if st <= 0 and ct <= 0    then 
+  if st <= 0 and ct <= 0    then
     width  = -w * ct - h * st
     height = 0.5*(h-h*ct-w*st)
     depth  = 0.5*(h+h*ct+w*st)
-  elseif st <=0 and ct > 0  then 
+  elseif st <=0 and ct > 0  then
     width  =  w * ct - h * st
     height = 0.5*(h+h*ct-w*st)
     depth  = 0.5*(h-h*ct+w*st)
@@ -87,7 +87,7 @@ SILE.registerCommand("rotate", function(options, content)
   end
   depth = -depth
   if depth < 0 then depth = 0 end
-  SILE.typesetter:pushHbox({ 
+  SILE.typesetter:pushHbox({
     value = { orig = origbox, theta = theta},
     height = height,
     width = width,
@@ -103,7 +103,7 @@ and you can rotate any content by issuing the command \code{\\rotate[angle=<angl
 where \code{<angle>} is measured in degrees.
 
 Content which is rotated is placed in a box and rotated. The height and width of
-the rotated box is measured, and then put into the normal horizontal list for 
+the rotated box is measured, and then put into the normal horizontal list for
 typesetting. The effect of this is that space is reserved around the rotated content.
 The best way to understand this is by example: here is some text rotated by
 \rotate[angle=10]{ten}, \rotate[angle=20]{twenty} and \rotate[angle=40]{forty} degrees.

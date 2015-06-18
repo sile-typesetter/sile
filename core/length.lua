@@ -61,7 +61,7 @@ _length = std.object {
   --   end
   --   return result
   -- end,
-    
+   
   __lt = function (self, other)
     return (self-other).length < 0
   end,

@@ -5,8 +5,8 @@ SILE.typesetter.pageBuilder = function (self, independent)
   local q = self.state.outputQueue
   local lastpenalty = -1
   local cHeight = SILE.length.new()
-  for j = #q,1,-1 do 
-    if q[j]:isPenalty() and lastpenalty == -1 then 
+  for j = #q,1,-1 do
+    if q[j]:isPenalty() and lastpenalty == -1 then
       lastpenalty = q[j].penalty
     end
     cHeight = cHeight + q[j].height
@@ -15,7 +15,7 @@ SILE.typesetter.pageBuilder = function (self, independent)
   SU.debug("pagebuilder", "Finally running pagebuilder")
   repeat
     q = self.state.outputQueue
-    local breaks = SILE.linebreak:doBreak( q, self.frame:height(), true) 
+    local breaks = SILE.linebreak:doBreak( q, self.frame:height(), true)
     --Height is variable! therefore only the first break is believable
     local point = breaks[1]
     if point.position == 0 then return false end

@@ -10,14 +10,14 @@ if std.string.monkey_patch then -- stdlib >= 40
 end
 
 SILE.settings.declare({
-  name = "typesetter.widowpenalty", 
+  name = "typesetter.widowpenalty",
   type = "integer",
   default = 3000,
   help = "Penalty to be applied to widow lines (at the start of a paragraph)"
 })
 
 SILE.settings.declare({
-  name = "typesetter.parseppattern", 
+  name = "typesetter.parseppattern",
   type = "string or integer",
   default = "\n\n+",
   help = "Lua pattern used to separate paragraphs"
@@ -55,7 +55,7 @@ SILE.defaultTypesetter = std.object {
     self.state = {
       nodes = {},
       outputQueue = {},
-      lastBadness = awful_bad,      
+      lastBadness = awful_bad,     
     };
   end,
   initFrame = function(self, frame)
@@ -95,13 +95,13 @@ SILE.defaultTypesetter = std.object {
   pushExplicitVglue = function (self, spec)
     spec.skiptype = "explicit"
     return self:pushVglue(spec)
-  end,  
+  end, 
   pushVpenalty = function (self, spec) return table.insert(self.state.outputQueue, SILE.nodefactory.newPenalty(spec)); end,
 
   -- Actual typesetting functions
   typeset = function (self, text)
     for t in SU.gtoke(text,SILE.settings.get("typesetter.parseppattern")) do
-      if (t.separator) then 
+      if (t.separator) then
         self:leaveHmode();
         SILE.documentState.documentClass.endPar(self)
       else self:setpar(t.string)
@@ -227,7 +227,7 @@ SILE.defaultTypesetter = std.object {
 
     for i=1,#pageNodeList do
       totalHeight = totalHeight + pageNodeList[i].height + pageNodeList[i].depth
-      if pageNodeList[i]:isVglue() then 
+      if pageNodeList[i]:isVglue() then
         table.insert(glues,pageNodeList[i]);
         gTotal = gTotal + pageNodeList[i].height
       end
@@ -236,13 +236,13 @@ SILE.defaultTypesetter = std.object {
     local adjustment = (target - totalHeight).length
 
     if (adjustment > gTotal.stretch) then adjustment = gTotal.stretch end
-    if (adjustment / gTotal.stretch > 0) then 
+    if (adjustment / gTotal.stretch > 0) then
       for i,g in pairs(glues) do
         g:setGlue(adjustment * g.height.stretch / gTotal.stretch)
       end
     end
 
-    SU.debug("pagebuilder", "Glues for self page adjusted by "..(adjustment/gTotal.stretch) )  
+    SU.debug("pagebuilder", "Glues for self page adjusted by "..(adjustment/gTotal.stretch) )
     self.state.previousVbox = nil
   end,
 
@@ -346,8 +346,8 @@ SILE.defaultTypesetter = std.object {
     local lskip = SILE.settings.get("document.lskip")
     if lskip then
       lskip.value = "lskip"
-      table.insert(slice, 1, lskip) 
-      table.insert(slice, 1, SILE.nodefactory.zeroHbox) 
+      table.insert(slice, 1, lskip)
+      table.insert(slice, 1, SILE.nodefactory.zeroHbox)
     end
   end,
   breakpointsToLines = function(self, bp)

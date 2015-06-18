@@ -9,9 +9,9 @@ SILE.registerCommand("nofoliosthispage", function () SILE.scratch.counters.folio
 return {
   init = function () end,
   exports = {
-    outputFolio = function (this, frame) 
+    outputFolio = function (this, frame)
       if not frame then frame = "folio" end
-      if SILE.scratch.counters.folio.off then 
+      if SILE.scratch.counters.folio.off then
         if SILE.scratch.counters.folio.off == 2 then
           SILE.scratch.counters.folio.off = false
         end

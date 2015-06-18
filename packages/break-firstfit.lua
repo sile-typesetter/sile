@@ -24,7 +24,7 @@ local firstfit = function (typesetter, nl, breakWidth)
       end
     end
   end
-  breaks[#breaks+1] = { position = #nl, width = breakWidth}  
+  breaks[#breaks+1] = { position = #nl, width = breakWidth}
   return typesetter:breakpointsToLines(breaks)
 end
 
