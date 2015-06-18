@@ -21,7 +21,7 @@ SILE.tateFramePrototype = SILE.framePrototype {
     self.oldtypesetter = SILE.typesetter
     self.state.oldBreak = SILE.settings.get("typesetter.breakwidth")
     SILE.settings.set("typesetter.breakwidth", SILE.length.new({length = self:height() }))
-
+    pdf.setdirmode(1)
     SILE.typesetter.pageTarget = function(self)
       return self.frame:width()
     end
@@ -38,7 +38,7 @@ SILE.tateFramePrototype = SILE.framePrototype {
   leaveHooks = { function (self)
     SILE.settings.set("typesetter.breakwidth", self.state.oldBreak)
     SILE.typesetter = self.oldtypesetter
-
+    pdf.setdirmode(0)
   end
   }
 }
@@ -58,21 +58,26 @@ local swap = function (x)
 end
 
 local outputLatinInTate = function (self, typesetter, line)
-  local origbox = self.value
   -- My baseline moved
   typesetter.frame:moveX(SILE.toPoints("-1zw"))
+  typesetter.frame:moveY(SILE.toPoints("0.25zw"))
+
   local horigin = typesetter.frame.state.cursorX
   local vorigin = -typesetter.frame.state.cursorY
   pdf:gsave()
   pdf.setmatrix(1,0,0,1,horigin,vorigin)
   pdf.setmatrix(0, -1, 1, 0, 0, 0)
   pdf.setmatrix(1,0,0,1,-horigin,-vorigin)
+  pdf.setdirmode(0)
   self:oldOutputYourself(typesetter,line)
+  pdf.setdirmode(1)
   pdf:grestore()
   typesetter.frame.state.cursorY = -vorigin
   typesetter.frame:moveX(self.height)
   -- My baseline moved
-  typesetter.frame:moveX(SILE.toPoints("1zw"))
+  typesetter.frame:moveX(SILE.toPoints("1zw") )
+  typesetter.frame:moveY(- SILE.toPoints("0.25zw"))
+
 end
 
 -- Eventually will be automatically called by script detection, but for now
@@ -87,8 +92,8 @@ SILE.registerCommand("latin-in-tate", function (options, content)
     latinT.frame = oldT.frame
     latinT:initState()
     SILE.typesetter = latinT
-    latinT.frame.direction = "LTR"
     SILE.settings.set("document.language", "xx")
+    SILE.settings.set("font.direction", "LTR")
     SILE.process(content)
     nodes = SILE.typesetter.state.nodes
     for i=1,#nodes do
@@ -119,10 +124,4 @@ SILE.registerCommand("latin-in-tate", function (options, content)
       swap(n)
     end
   end
-  SILE.typesetter:pushGlue({
-    width = SILE.length.new({length = SILE.toPoints("0.5zw"),
-                             stretch = SILE.toPoints("0.25zw"),
-                              shrink = SILE.toPoints("0.25zw")
-                            })
-  })
 end, "Declares (or re-declares) a frame on this page.")
