@@ -44,3 +44,6 @@ subfiles.mk
 
 sile
 confdefs.h
+config.log
+core/justenoughharfbuzz.so
+core/justenoughlibtexpdf.so
