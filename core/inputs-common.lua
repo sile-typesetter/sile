@@ -25,6 +25,8 @@ SILE.process = function(t)
       SILE.typesetter:typeset(v)
     elseif SILE.Commands[v.tag] then
       SILE.Commands[v.tag](v.attr,v)
+    elseif v.id == "stuff" then
+      SILE.process(v)
     else
       SU.error("Unknown command "..(v.tag or v.id))
     end
