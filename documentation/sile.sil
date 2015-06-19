@@ -10,7 +10,7 @@
 \script[src=packages/lorem]
 \script[src=packages/bidi]\bidi-off
 \script[src=packages/pdf]
-\include[src=documentation/macros.sil]
+\include[src=documentation/macros.xml]
 \define[command=silehp]{\url{http://www.sile-typesetter.org/}}
 \define[command=sileversion]{0.9.2}
 \set[parameter=document.baselineskip,value=3ex]
