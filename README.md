@@ -18,6 +18,14 @@ First, have a look at the [show-off file][showoff]. SILE allows you to:
 
 ## Getting and installing
 
+### For OS X
+
+A homebrew formula is available with both stable and head versions available. Just `brew install sile` for the latest stable release or `brew install sile --HEAD` to build from the latest git commit.
+
+### For Linux (prepackaged distros)
+
+* **Arch Linux** packages are available in the [AUR][aur]. Use [sile][aur-rel] for the latest stable release or [sile-git][aur-dev] for testing the latest HEAD.
+
 ### From source
 
 SILE can be downloaded from [its home page][sile], or directly from [the release page][releases].
@@ -39,10 +47,6 @@ configure and make. I don't guarantee that SILE will work from the
 repository, although it probably ought to.)
 
 This will place the SILE libraries and executable in a sensible location.
-
-### For prepackaged distributions
-
-* **Arch Linux** packages are available in the [AUR][aur]. Use [sile][aur-rel] for the latest stable release or [sile-git][aur-dev] for testing the latest HEAD.
 
 ### Testing
 
