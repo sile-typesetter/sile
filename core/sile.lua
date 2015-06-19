@@ -13,6 +13,7 @@ std = require("std")
 SILE.documentState = std.object {};
 SILE.scratch = {};
 SILE.length = require("core/length")
+require("core/compat")
 require("core/parserbits")
 require("core/measurements")
 require("core/baseclass")

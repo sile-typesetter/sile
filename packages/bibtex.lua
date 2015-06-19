@@ -6,7 +6,7 @@ local identifier = (ID + lpeg.S(":-"))^1
 local balanced = lpeg.C{ "{" * lpeg.P(" ")^0 * lpeg.C(((1 - lpeg.S"{}") + lpeg.V(1))^0) * "}" } / function(...) t={...}; return t[2] end
 local doubleq = lpeg.C( lpeg.P '"' * lpeg.C(((1 - lpeg.S '"\r\n\f\\') + (lpeg.P '\\' * 1)) ^ 0) * '"' )
 
-bibtexparser = epnf.define(function (_ENV)
+bibtexparser = epnf.define(function ()
   local _ = WS^0
   local sep = lpeg.S(",;") * _
   local myID = C( identifier + lpeg.P(1) ) / function (t) return t end

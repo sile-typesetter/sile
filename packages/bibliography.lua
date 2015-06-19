@@ -1,4 +1,4 @@
-std = require("std")
+local std = require("std")
 
 -- The following functions borrowed from Norman Ramsey's nbibtex,
 -- with permission.
@@ -261,7 +261,7 @@ end
 
 Bibliography = { -- This is big enough to have its own global var
   CitationStyles = {
-    AuthorYear = function(_ENV)
+    AuthorYear = function()
       return andSurnames(3), " ", year, optional(", ", cite.page)
     end
   },
@@ -272,7 +272,7 @@ Bibliography = { -- This is big enough to have its own global var
       return Bibliography.Errors.UNKNOWN_REFERENCE
     end
     local t = Bibliography.buildEnv(cite, item.attributes, style)
-    return Bibliography._process(item.attributes, {style.CitationStyle(t)})
+    return Bibliography._process(item.attributes, {setfenv(style.CitationStyle,t)()})
   end,
 
   produceReference = function (cite, bib, style)
@@ -286,11 +286,11 @@ Bibliography = { -- This is big enough to have its own global var
     end
 
     local t = Bibliography.buildEnv(cite, item.attributes, style)
-    return Bibliography._process(item.attributes, {style[item.type](t)})
+    return Bibliography._process(item.attributes, {setfenv(style[item.type],t)()})
   end,
 
   buildEnv = function (cite,item, style)
-    local t = std.table.clone(_ENV)
+    local t = std.table.clone(getfenv(1))
     t.cite = cite
     t.item = item
     for k,v in pairs(item) do t[k:lower()] = v end
