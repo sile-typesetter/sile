@@ -12,6 +12,15 @@ plain.endPage = function(self)
   return SILE.baseClass.endPage(self)
 end
 
+local options = {}
+plain.declareOption = function (self, name, default)
+  options[name] = default
+  self.options[name] = function (g)
+    if g then options[name] = g end
+    return options[name]
+  end
+end
+
 SILE.registerCommand("noindent", function ( options, content )
   SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
   SILE.process(content)
