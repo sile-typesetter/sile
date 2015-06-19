@@ -16,15 +16,15 @@ First, have a look at the [show-off file][showoff]. SILE allows you to:
 
 * Typeset text on a grid.
 
-## Getting and installing
+## Download and installation
 
 ### For OS X
 
-A homebrew formula is available with both stable and head versions available. Just `brew install sile` for the latest stable release or `brew install sile --HEAD` to build from the latest git commit.
+A formula is available for [homebrew][brew] that can install both stable and head versions. Just run `brew install sile` for the latest stable release or `brew install sile --HEAD` to build from the latest git commit.
 
 ### For Linux (prepackaged distros)
 
-* **Arch Linux** packages are available in the [AUR][aur]. Use [sile][aur-rel] for the latest stable release or [sile-git][aur-dev] for testing the latest HEAD.
+* **Arch Linux** packages are available in the [AUR][aur] that can be installed using your prefered package manager (e.g. `yaourt -S sile`). Use [sile][aur-rel]for the latest stable release or [sile-git][aur-dev] to build from the latest git commit.
 
 ### From source
 
@@ -86,3 +86,4 @@ SILE is distributed under the [MIT licence][license].
   [typesetting]: https://en.wikipedia.org/wiki/Typesetting
   [tex]: https://en.wikipedia.org/wiki/TeX
   [indesign]: https://en.wikipedia.org/wiki/Adobe_InDesign
+  [brew]: http://brew.sh/
