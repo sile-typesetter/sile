@@ -10,7 +10,8 @@ local firstfit = function (typesetter, nl, breakWidth)
       SU.debug("break", n .. " ".. (typesetter.frame.direction == "TTB" and n.height or n.width))
       length = length + (typesetter.frame.direction == "TTB" and n.height or n.width)
       SU.debug("break", " Length now ".. length.. " breakwidth ".. breakWidth)
-    else
+    end
+    if not n:isBox() or n.isHangable then
       SU.debug("break", n )
       if n:isGlue() then
         length = length + n.width

@@ -135,6 +135,14 @@ local function shrinkability(before, after)
   return 0
 end
 
+local function hanging_punctuation (char)
+  -- return a hangable node
+  local n = SILE.nodefactory.newUnshaped({ text = char, options = SILE.font.loadDefaults({}) })
+  n = n:shape()
+  n.hangable = true
+  return { node = n }
+end
+
 local okbreak = SILE.nodefactory.newPenalty({ penalty = 0 })
 SILE.tokenizers.ja = function(string)
   return coroutine.wrap(function()
@@ -161,7 +169,11 @@ SILE.tokenizers.ja = function(string)
             coroutine.yield({ node = SILE.nodefactory.newKern({ width = length }) })
           else db = db .. " N"
           end
-        coroutine.yield({ string = uchar })
+        if jisClass(thiscp) == 5 or jisClass(thiscp) == 6 then
+          coroutine.yield(hanging_punctuation(uchar))
+        else
+          coroutine.yield({ string = uchar })
+        end
       end
       lastcp =thiscp
       lastchar = uchar

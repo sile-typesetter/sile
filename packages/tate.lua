@@ -29,10 +29,7 @@ SILE.tateFramePrototype = SILE.framePrototype {
       v.height = SILE.toPoints("1zw")
       return SILE.settings.get("document.parskip")
     end
-    SILE.typesetter.breakIntoLines = function (self, nl, breakWidth)
-      local breaks = SILE.linebreak:doBreak( nl, breakWidth, true)
-      return self.frame.oldtypesetter:breakpointsToLines(breaks);
-    end
+    SILE.typesetter.breakIntoLines = SILE.require("packages/break-firstfit")
   end
   },
   leaveHooks = { function (self)
