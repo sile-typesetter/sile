@@ -272,7 +272,8 @@ Bibliography = { -- This is big enough to have its own global var
       return Bibliography.Errors.UNKNOWN_REFERENCE
     end
     local t = Bibliography.buildEnv(cite, item.attributes, style)
-    return Bibliography._process(item.attributes, {setfenv(style.CitationStyle,t)()})
+    local func = setfenv and setfenv(style.CitationStyle, t) or style.CitationStyle
+    return Bibliography._process(item.attributes, {func(t)})
   end,
 
   produceReference = function (cite, bib, style)
@@ -286,7 +287,8 @@ Bibliography = { -- This is big enough to have its own global var
     end
 
     local t = Bibliography.buildEnv(cite, item.attributes, style)
-    return Bibliography._process(item.attributes, {setfenv(style[item.type],t)()})
+    local func = setfenv and setfenv(style[item.type], t) or style[item.type]
+    return Bibliography._process(item.attributes, {func(t)})
   end,
 
   buildEnv = function (cite,item, style)
