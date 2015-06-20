@@ -2,15 +2,32 @@ language: c
 compiler:
  - gcc
  - clang
+env:
+  global:
+    - LUAROCKS_BASE=luarocks-2.0.13
+  matrix:
+    - LUA=lua5.1 LUA_DEV=liblua5.1-dev LUA_VER=5.1 LUA_SFX=5.1 LUA_INCDIR=/usr/include/lua5.1
+    - LUA=lua5.2 LUA_DEV=liblua5.2-dev LUA_VER=5.2 LUA_SFX=5.2 LUA_INCDIR=/usr/include/lua5.2
 before_install:
  - sudo apt-get update -qq
- - sudo apt-get install -y lua5.1 luarocks libfreetype6-dev libfontconfig1-dev libpng-dev liblua5.1-lpeg2 liblua5.1-expat0 fonts-sil-gentium
+ - sudo apt-get install -y $LUA $LUA_DEV
+ - sudo apt-get install -y libfreetype6-dev libfontconfig1-dev libpng-dev fonts-sil-gentium libexpat1-dev
+ - wget http://luarocks.org/releases/$LUAROCKS_BASE.tar.gz
+ - tar zxvpf $LUAROCKS_BASE.tar.gz
+ - cd $LUAROCKS_BASE
+ - ./configure
+   --lua-version=$LUA_VER --lua-suffix=$LUA_SFX --with-lua-include="$LUA_INCDIR"
+ - sudo make
+ - sudo make install
+ - cd $TRAVIS_BUILD_DIR
  - wget http://www.freedesktop.org/software/harfbuzz/release/harfbuzz-0.9.26.tar.bz2
  - tar xf harfbuzz-0.9.26.tar.bz2
  - cd harfbuzz-0.9.26
  - ./configure && make && sudo make install
  - sudo ldconfig
  - cd ../
+ - sudo luarocks install lpeg
+ - sudo luarocks install luaexpat
  - sudo luarocks install lua_cliargs 2.3-3
  - sudo luarocks install busted
 script:
