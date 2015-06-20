@@ -71,12 +71,14 @@ SILE.registerCommand(tableTag, function(options, content)
       cell = tbl[row][col]
       local box = SILE.Commands["vbox"]({width = colwidths[col]}, cell.content)
       box = box.nodes[1]
-      box.outputYourself = function(self,typesetter, line)
-       for i, n in ipairs(self.nodes) do
-          n:outputYourself(typesetter, self)
+      if box then
+        box.outputYourself = function(self,typesetter, line)
+         for i, n in ipairs(self.nodes) do
+            n:outputYourself(typesetter, self)
+          end
         end
+        table.insert(SILE.typesetter.state.nodes, box) -- a vbox on the hbox list!
       end
-      table.insert(SILE.typesetter.state.nodes, box) -- a vbox on the hbox list!
     end
     SILE.typesetter:leaveHmode()
     SILE.call("smallskip")
