@@ -6,11 +6,11 @@ env:
   global:
     - LUAROCKS_BASE=luarocks-2.2.0
   matrix:
-    - LUA=lua5.1 LUA_DEV=liblua5.1-dev LUA_VER=5.1 LUA_SFX=5.1 LUA_INCDIR=/usr/include/lua5.1
-    - LUA=lua5.2 LUA_DEV=liblua5.2-dev LUA_VER=5.2 LUA_SFX=5.2 LUA_INCDIR=/usr/include/lua5.2
+    - LUA_VER=lua5.1 LUA_DEV=liblua5.1-dev LUA_VER=5.1 LUA_SFX=5.1 LUA_INCDIR=/usr/include/lua5.1
+    - LUA_VER=lua5.2 LUA_DEV=liblua5.2-dev LUA_VER=5.2 LUA_SFX=5.2 LUA_INCDIR=/usr/include/lua5.2
 before_install:
  - sudo apt-get update -qq
- - sudo apt-get install -y $LUA $LUA_DEV
+ - sudo apt-get install -y $LUA_VER $LUA_DEV
  - sudo apt-get install -y libfreetype6-dev libfontconfig1-dev libpng-dev fonts-sil-gentium libexpat1-dev
  - wget http://luarocks.org/releases/$LUAROCKS_BASE.tar.gz
  - tar zxvpf $LUAROCKS_BASE.tar.gz
