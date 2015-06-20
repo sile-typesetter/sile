@@ -261,7 +261,7 @@ end
 
 Bibliography = { -- This is big enough to have its own global var
   CitationStyles = {
-    AuthorYear = function()
+    AuthorYear = function(_ENV)
       return andSurnames(3), " ", year, optional(", ", cite.page)
     end
   },
@@ -292,7 +292,7 @@ Bibliography = { -- This is big enough to have its own global var
   end,
 
   buildEnv = function (cite,item, style)
-    local t = std.table.clone(getfenv(1))
+    local t = std.table.clone(getfenv and getfenv(1) or _ENV)
     t.cite = cite
     t.item = item
     for k,v in pairs(item) do t[k:lower()] = v end
