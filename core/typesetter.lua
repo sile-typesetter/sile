@@ -133,10 +133,10 @@ SILE.defaultTypesetter = std.object {
   -- Turns a node list into a list of vboxes
   boxUpNodes = function (self)
     local nl = self.state.nodes
-    while (#nl > 0 and (nl[#nl]:isPenalty() or nl[#nl]:isGlue())) do
+    while (#nl > 0 and (nl[#nl]:isHPenalty() or nl[#nl]:isGlue())) do
      table.remove(nl);
     end
-    while (#nl >0 and nl[1]:isPenalty()) do table.remove(nl,1) end
+    while (#nl >0 and nl[1]:isHPenalty()) do table.remove(nl,1) end
     if #nl == 0 then return {} end
     for i=1, #nl do n = nl[i]
       if n:isUnshaped() then nl[i] = n:shape() end

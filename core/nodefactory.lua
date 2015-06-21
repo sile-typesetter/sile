@@ -24,6 +24,7 @@ function _box:isAlternative ()  return self.type == "alternative" end
 function _box:isVbox ()  return self.type == "vbox" end
 function _box:isDiscardable () return self:isGlue() or self:isPenalty() end
 function _box:isPenalty ()  return self.type == "penalty" end
+function _box:isHPenalty ()  return self.type == "penalty" and self.migrating == false end
 function _box:isDiscretionary ()  return self.type == "discretionary" end
 
 function _box:isKern ()  return self.type == "kern" end
