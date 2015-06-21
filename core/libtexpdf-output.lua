@@ -3,16 +3,19 @@ if (not SILE.outputters) then SILE.outputters = {} end
 local cursorX = 0
 local cursorY = 0
 local font = 0
+local started = false
 SILE.outputters.libtexpdf = {
   init = function()
     pdf.init(SILE.outputFilename, SILE.documentState.paperSize[1],SILE.documentState.paperSize[2])
     pdf.beginpage()
+    started = true
   end,
   newPage = function()
     pdf.endpage()
     pdf.beginpage()
   end,
   finish = function()
+    if not started then return end
     pdf.endpage()
     pdf.finish()
   end,
