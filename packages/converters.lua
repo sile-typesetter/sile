@@ -32,7 +32,9 @@ local applyConverter = function(source, converter)
     TARGET = targetFile
   })
 
-  if(os.execute(command)) then
+  local result = os.execute(command)
+  if type(result) ~= "boolean" then result = (result == 0) end
+  if result then
     SU.debug("converters", "Converted "..source.." to "..targetFile)
     return targetFile
   else
