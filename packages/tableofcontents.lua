@@ -6,6 +6,7 @@
 --          moveTocNodes (call this in endPage)
 
 SILE.scratch.tableofcontents = { }
+local loadstring = loadstring or load
 
 local moveNodes = function(self)
   local n = SILE.scratch.info.thispage.toc
