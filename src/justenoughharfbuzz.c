@@ -61,7 +61,7 @@ void calculate_extents(box* b, hb_glyph_info_t glyph_info, hb_glyph_position_t g
 
 int face_from_options(lua_State* L) {
   FT_Face face;
-  FcChar8 * font_path;
+  FcChar8 * font_path, * fullname, * familyname;
   FcPattern* p;
   FcPattern* matched;
   FcResult result;
@@ -145,15 +145,22 @@ int face_from_options(lua_State* L) {
   FcPatternGetInteger(matched, FC_WEIGHT, 0, &weight);
 
   /* Find out which family we did actually pick up */
-  if (FcPatternGetString (matched, FC_FAMILY, 0, &family) != FcResultMatch)
+  if (FcPatternGetString (matched, FC_FAMILY, 0, &familyname) != FcResultMatch)
     return 0;
+  if (FcPatternGetString (matched, FC_FULLNAME, 0, &fullname) != FcResultMatch)
+    return 0;
+
   lua_newtable(L);
   lua_pushstring(L, "filename");
   lua_pushstring(L, (char*)font_path);
   lua_settable(L, -3);
 
   lua_pushstring(L, "family");
-  lua_pushstring(L, (char*)(family));
+  lua_pushstring(L, (char*)(familyname));
+  lua_settable(L, -3);
+
+  lua_pushstring(L, "fullname");
+  lua_pushstring(L, (char*)(fullname));
   lua_settable(L, -3);
 
   FcPatternDestroy (matched);
