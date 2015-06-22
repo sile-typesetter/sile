@@ -7,6 +7,7 @@ SILE.Commands = {};
 SILE.debugFlags = {}
 SILE.tokenizers = {}
 
+loadstring = loadstring or load -- 5.3 compatibility
 if not unpack then unpack = table.unpack end -- 5.3 compatibility
 std = require("std")
 
