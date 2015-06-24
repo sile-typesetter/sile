@@ -227,15 +227,13 @@ Now the \code{sile} command is available from any directory.
 \subsection{Notes for OS X users}
 
 On OS X machines running Homebrew (always a good idea for OS X machines), 
-you will need to run
+you will need to run:
 
-\listitem{\code{brew install pkg-config automake libtool harfbuzz fontconfig libpng lua luarocks freetype}}
+\listitem{\code{brew install sile}}
 
-If you are using Homebrew on OS X, you may need to set your \code{PKG_CONFIG_PATH} environment variable, (\code{PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/lib}) or use \code{brew link} to provide the \code{pkgconfig} files for the dependency libraries. The configure script will alert you as to which libraries it cannot find.
+The formula can also compile SILE from the current Git HEAD version. If you would like to test the latest unlreleased code you can install it like this:
 
-If you want to run SILE uninstalled, you will also need to fiddle with the environment like so:
-
-\code{DYLD_LIBRARY_PATH=./libtexpdf/.libs ./sile examples/simple.sil}
+\listitem{\code{brew install sile --head}}
 
 \subsection{Notes for Linux users}
 
