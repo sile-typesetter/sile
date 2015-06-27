@@ -21,6 +21,14 @@ SILE.languageSupport = {
   end
 }
 
+SILE.registerCommand("language", function (o,c)
+end)
+
+require("languages/unicode")
+SILE.tokenizers.basic = function(text)
+  return SU.gtoke(text, SILE.settings.get("shaper.spacepattern"))
+end
+
 -- The following languages neither have hyphenation nor specific
 -- language support at present. This code is here to suppress warnings.
 SILE.hyphenator.languages.ar = {patterns={}}

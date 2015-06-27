@@ -1,9 +1,5 @@
 if not SILE.shapers then SILE.shapers = { } end
 
-SILE.tokenizers.default = function(text)
-  return SU.gtoke(text, SILE.settings.get("shaper.spacepattern"))
-end
-
 SILE.settings.declare({
   name = "shaper.spacepattern",
   type = "string",
@@ -95,7 +91,7 @@ SILE.shapers.base = std.object {
     pcall(function () SILE.require("languages/"..options.language) end)
     local tokenizer = SILE.tokenizers[options.language]
     if not tokenizer then
-      tokenizer = SILE.tokenizers.default
+      tokenizer = SILE.tokenizers.unicode
     end
     return tokenizer(text)
   end,
