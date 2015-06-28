@@ -147,8 +147,6 @@ int face_from_options(lua_State* L) {
   /* Find out which family we did actually pick up */
   if (FcPatternGetString (matched, FC_FAMILY, 0, &familyname) != FcResultMatch)
     return 0;
-  if (FcPatternGetString (matched, FC_FULLNAME, 0, &fullname) != FcResultMatch)
-    return 0;
 
   lua_newtable(L);
   lua_pushstring(L, "filename");
@@ -159,9 +157,11 @@ int face_from_options(lua_State* L) {
   lua_pushstring(L, (char*)(familyname));
   lua_settable(L, -3);
 
-  lua_pushstring(L, "fullname");
-  lua_pushstring(L, (char*)(fullname));
-  lua_settable(L, -3);
+  if (FcPatternGetString (matched, FC_FULLNAME, 0, &fullname) != FcResultMatch) {
+    lua_pushstring(L, "fullname");
+    lua_pushstring(L, (char*)(fullname));
+    lua_settable(L, -3);
+  }
 
   FcPatternDestroy (matched);
   FcPatternDestroy (p);
