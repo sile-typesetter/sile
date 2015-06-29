@@ -25,7 +25,7 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
   end,
   getFace = function(opts)
     local face = hb._face(opts)
-    SU.debug("fonts", "Resolved font family "..opts.font.." -> "..face.filename)
+    SU.debug("fonts", "Resolved font family "..opts.font.." -> "..(face and face.filename))
     return face
   end,
   preAddNodes = function(self, items, nnodeValue) -- Check for complex nodes
