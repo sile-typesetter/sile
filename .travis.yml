@@ -29,9 +29,9 @@ before_install:
  - tar zxvpf $LUAROCKS_BASE.tar.gz
  - cd $LUAROCKS_BASE
  - if [ $LUA_VER=5.3 ]; then
-    ./configure
+    ./configure;
    else
-    ./configure --lua-version=$LUA_VER --lua-suffix=$LUA_SFX --with-lua-include="$LUA_INCDIR"
+    ./configure --lua-version=$LUA_VER --lua-suffix=$LUA_SFX --with-lua-include="$LUA_INCDIR";
    fi
  - sudo make
  - sudo make install
