@@ -36,6 +36,7 @@ You also need to install the following Lua libraries using [luarocks][] (downloa
 
 * `lpeg`
 * `luaexpat`
+* `luafilesystem`
 * `lgi` (required for Pango-Cairo only)
 
 Once your dependencies are installed, run

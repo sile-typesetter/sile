@@ -44,6 +44,7 @@ before_install:
  - cd ../
  - sudo luarocks install lpeg
  - sudo luarocks install luaexpat
+ - sudo luarocks install luafilesystem
  - sudo luarocks install lua_cliargs 2.3-3
  - sudo luarocks install busted
 script:

@@ -80,6 +80,7 @@ AX_LUA_LIBS
 # Check for Lua modules
 AX_LUA_MODULE([lpeg], [lpeg])
 AX_LUA_MODULE([lxp], [luaexpat])
+AX_LUA_MODULE([lfs], [luafilesystem])
 
 AS_IF([test "$backend" = "pangocairo"],
   [AX_LUA_MODULE([lgi],[lgi])],
