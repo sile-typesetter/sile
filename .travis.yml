@@ -10,19 +10,19 @@ env:
     - LUA_VER=5.3 LUA_INCDIR=/usr/local/include
 before_install:
  - sudo apt-get update -qq
- - if [ $LUA_VER=5.3 ]; then
-      wget http://www.lua.org/ftp/lua-5.3.1.tar.gz
-      sudo apt-get install libreadline-dev
-      tar zxvf lua-5.3.1.tar.gz
-      cd lua-5.3.1
-      make linux
-      sudo make install
-      cd $TRAVIS_BUILD_DIR
-      wget -O lualib.tar.gz 'http://sourceforge.net/projects/luabinaries/files/5.3/Linux%20Libraries/lua-5.3_Linux313_64_lib.tar.gz/download'
-      tar xzvf lualib.tar.gz liblua53.so
-      sudo cp liblua53.so /usr/local/lib/
-   else
-      sudo apt-get install -y $LUA_PKG $LUA_DEV
+ - if [ $LUA_VER=5.3 ]; then;
+      wget http://www.lua.org/ftp/lua-5.3.1.tar.gz;
+      sudo apt-get install libreadline-dev;
+      tar zxvf lua-5.3.1.tar.gz;
+      cd lua-5.3.1;
+      make linux;
+      sudo make install;
+      cd $TRAVIS_BUILD_DIR;
+      wget -O lualib.tar.gz 'http://sourceforge.net/projects/luabinaries/files/5.3/Linux%20Libraries/lua-5.3_Linux313_64_lib.tar.gz/download';
+      tar xzvf lualib.tar.gz liblua53.so;
+      sudo cp liblua53.so /usr/local/lib/;
+   else;
+      sudo apt-get install -y $LUA_PKG $LUA_DEV;
    fi
  - sudo apt-get install -y libfreetype6-dev libfontconfig1-dev libpng-dev fonts-sil-gentium libexpat1-dev
  - wget http://luarocks.org/releases/$LUAROCKS_BASE.tar.gz
