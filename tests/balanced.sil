@@ -6,6 +6,7 @@
 \set[parameter=document.parskip,value=6pt]%
 \script[src=packages/frametricks]%
 \script[src=packages/balanced-frames]%
+\font[family=Linux Libertine O]
 \begin[first-content-frame=leftCol1]{pagetemplate}%
 \frame[id=gutter,width=3%]%
 \frame[id=leftCol1,left=left(content),right=left(gutter),top=top(content),bottom=bottom(content),next=rightCol1,balanced=1]%
@@ -40,8 +41,8 @@ When Jesus heard this he said to them, “Those who are healthy don’t need a p
  For this reason the Son of Man is lord even of the Sabbath.”
 
 \balancecolumns
-\medskip
-\center{\font[size=24pt,family=Minion Pro]{ Chapter 3 }}
+\bigskip
+\center{\font[size=24pt,family=Linux Biolinum O,weight=800]{Chapter 3}}
 \framebreak\par
 
 Then Jesus entered the synagogue again, and a man was there who had a withered hand. 
