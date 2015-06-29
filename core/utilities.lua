@@ -140,7 +140,10 @@ utilities.utf8char = utf8.char or function (c)
     end
 end
 
-utilities.codepoint = utf8.codepoint or function (uchar)
+-- Obviously it would be better to use the utf8 library here but 
+-- I found strange "out of range" Heisenbugs with ordinary pieces of
+-- text, like newlines.
+utilities.codepoint = utf8.xxxcodepoint or function (uchar)
   local seq = 0
   local val = -1
   for i = 1, #uchar do
