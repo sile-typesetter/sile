@@ -128,6 +128,18 @@ end
 pcall(function() utf8 = require("utf8") end)
 if not utf8 then utf8 = {} end
 
+utilities.utf8char = utf8.char or function (c)
+    if     c < 128 then
+        return string.char(c)
+    elseif c < 2048 then
+        return string.char(192 + c/64, 128 + c%64)
+    elseif c < 55296 or 57343 < c and c < 65536 then
+        return  string.char(224 + c/4096, 128 + c/64%64, 128 + c%64)
+    elseif c < 1114112 then
+        return string.char(240 + c/262144, 128 + c/4096%64, 128 + c/64%64, 128 + c%64)
+    end
+end
+
 utilities.codepoint = utf8.codepoint or function (uchar)
   local seq = 0
   local val = -1
