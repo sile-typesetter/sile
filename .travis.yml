@@ -8,13 +8,15 @@ env:
   matrix:
     - LUA_VER=5.1 LUA_PKG=lua$LUA_VER LUA_DEV=liblua$LUA_VER-dev LUA_SFX=$LUA_VER LUA_INCDIR=/usr/include/lua$LUA_VER
     - LUA_VER=5.2 LUA_PKG=lua$LUA_VER LUA_DEV=liblua$LUA_VER-dev LUA_SFX=$LUA_VER LUA_INCDIR=/usr/include/lua$LUA_VER
-    - LUA_VER=5.3 LUA_53_BASE=lua-5.3.1 LUA_SFX=$LUA_VER LUA_INCDIR=/usr/local/include LUA_CONFIGURE_ARGS=(--lua-version=$LUA_VER --lua-suffix=$LUA_SFX --with-lua-include=$LUA_INCDIR)
+    - LUA_VER=5.3 LUA_52_COMPAT=true LUA_53_BASE=lua-5.3.1 LUA_SFX=$LUA_VER LUA_INCDIR=/usr/local/include LUA_CONFIGURE_ARGS=(--lua-version=$LUA_VER --lua-suffix=$LUA_SFX --with-lua-include=$LUA_INCDIR)
+    - LUA_VER=5.3 LUA_52_COMPAT=false LUA_53_BASE=lua-5.3.1 LUA_SFX=$LUA_VER LUA_INCDIR=/usr/local/include LUA_CONFIGURE_ARGS=(--lua-version=$LUA_VER --lua-suffix=$LUA_SFX --with-lua-include=$LUA_INCDIR)
 before_install:
  - sudo apt-get update -qq
  - if [ $LUA_VER = 5.3 ]; then
       sudo apt-get install libreadline-dev;
       wget http://www.lua.org/ftp/$LUA_53_BASE.tar.gz;
       tar xfz $LUA_53_BASE.tar.gz && pushd $LUA_53_BASE;
+      $LUA_52_COMPAT || sed 's/-DLUA_COMPAT_5_2 //' -i src/Makefile;
       make linux && sudo make install && popd;
       wget -O lualib.tar.gz 'http://sourceforge.net/projects/luabinaries/files/5.3/Linux%20Libraries/lua-5.3_Linux313_64_lib.tar.gz/download';
       tar xfz lualib.tar.gz liblua53.so;
