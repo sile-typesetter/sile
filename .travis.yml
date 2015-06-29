@@ -3,14 +3,15 @@ compiler:
  - gcc
 env:
   global:
-    - LUAROCKS_BASE=luarocks-2.2.0
-    - HARFBUZZ_BASE=harfbuzz-0.9.26
+   - LUAROCKS_BASE=luarocks-2.2.0
+   - HARFBUZZ_BASE=harfbuzz-0.9.26
   matrix:
-    - LUA_VER=5.1 LUA_PKG=lua$LUA_VER LUA_DEV=liblua$LUA_VER-dev LUA_SFX=$LUA_VER LUA_INCDIR=/usr/include/lua$LUA_VER
-    - LUA_VER=5.2 LUA_PKG=lua$LUA_VER LUA_DEV=liblua$LUA_VER-dev LUA_SFX=$LUA_VER LUA_INCDIR=/usr/include/lua$LUA_VER
-    - LUA_VER=5.3 LUA_52_COMPAT=true LUA_53_BASE=lua-5.3.1 LUA_SFX=$LUA_VER LUA_INCDIR=/usr/local/include LUA_CONFIGURE_ARGS=(--lua-version=$LUA_VER --lua-suffix=$LUA_SFX --with-lua-include=$LUA_INCDIR)
-    - LUA_VER=5.3 LUA_52_COMPAT=false LUA_53_BASE=lua-5.3.1 LUA_SFX=$LUA_VER LUA_INCDIR=/usr/local/include LUA_CONFIGURE_ARGS=(--lua-version=$LUA_VER --lua-suffix=$LUA_SFX --with-lua-include=$LUA_INCDIR)
+   - LUA_VER=5.1
+   - LUA_VER=5.2
+   - LUA_VER=5.3 LUA_52_COMPAT=true LUA_53_BASE=lua-5.3.1
+   - LUA_VER=5.3 LUA_52_COMPAT=false LUA_53_BASE=lua-5.3.1
 before_install:
+ - export LUA_PKG=lua$LUA_VER LUA_DEV=liblua$LUA_VER-dev LUA_SFX=$LUA_VER
  - sudo apt-get update -qq
  - if [ $LUA_VER = 5.3 ]; then
       sudo apt-get install libreadline-dev;
@@ -21,8 +22,10 @@ before_install:
       wget -O lualib.tar.gz 'http://sourceforge.net/projects/luabinaries/files/5.3/Linux%20Libraries/lua-5.3_Linux313_64_lib.tar.gz/download';
       tar xfz lualib.tar.gz liblua53.so;
       sudo cp liblua53.so /usr/local/lib/;
+      export LUA_INCDIR=/usr/local/include LUA_CONFIGURE_ARGS=(--lua-version=$LUA_VER --lua-suffix=$LUA_SFX --with-lua-include=$LUA_INCDIR);
    else
       sudo apt-get install -y $LUA_PKG $LUA_DEV;
+      export LUA_INCDIR=/usr/include/lua$LUA_VER;
    fi
  - sudo apt-get install -y libfreetype6-dev libfontconfig1-dev libpng-dev fonts-sil-gentium fonts-sil-gentium-basic fonts-linuxlibertine fonts-sil-scheherazade ttf-devanagari-fonts libexpat1-dev
  - wget http://luarocks.org/releases/$LUAROCKS_BASE.tar.gz
