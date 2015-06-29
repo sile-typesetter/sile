@@ -4,49 +4,37 @@ compiler:
 env:
   global:
     - LUAROCKS_BASE=luarocks-2.2.0
+    - HARFBUZZ_BASE=harfbuzz-0.9.26
   matrix:
-    - LUA_PKG=lua5.1 LUA_DEV=liblua5.1-dev LUA_VER=5.1 LUA_SFX=5.1 LUA_INCDIR=/usr/include/lua5.1
-    - LUA_PKG=lua5.2 LUA_DEV=liblua5.2-dev LUA_VER=5.2 LUA_SFX=5.2 LUA_INCDIR=/usr/include/lua5.2
-    - LUA_VER=5.3 LUA_INCDIR=/usr/local/include
+    - LUA_VER=5.1 LUA_PKG=lua$LUA_VER LUA_DEV=liblua$LUA_VER-dev LUA_SFX=$LUA_VER LUA_INCDIR=/usr/include/lua$LUA_VER
+    - LUA_VER=5.2 LUA_PKG=lua$LUA_VER LUA_DEV=liblua$LUA_VER-dev LUA_SFX=$LUA_VER LUA_INCDIR=/usr/include/lua$LUA_VER
+    - LUA_VER=5.3 LUA_53_BASE=lua-5.3.1 LUA_SFX=$LUA_VER LUA_INCDIR=/usr/local/include LUA_CONFIGURE_ARGS=(--lua-version=$LUA_VER --lua-suffix=$LUA_SFX --with-lua-include=$LUA_INCDIR)
 before_install:
  - sudo apt-get update -qq
  - if [ $LUA_VER = 5.3 ]; then
-      wget http://www.lua.org/ftp/lua-5.3.1.tar.gz;
       sudo apt-get install libreadline-dev;
-      tar zxvf lua-5.3.1.tar.gz;
-      cd lua-5.3.1;
-      make linux;
-      sudo make install;
-      cd $TRAVIS_BUILD_DIR;
+      wget http://www.lua.org/ftp/$LUA_53_BASE.tar.gz;
+      tar xfz $LUA_53_BASE.tar.gz && pushd $LUA_53_BASE;
+      make linux && sudo make install && popd;
       wget -O lualib.tar.gz 'http://sourceforge.net/projects/luabinaries/files/5.3/Linux%20Libraries/lua-5.3_Linux313_64_lib.tar.gz/download';
-      tar xzvf lualib.tar.gz liblua53.so;
+      tar xfz lualib.tar.gz liblua53.so;
       sudo cp liblua53.so /usr/local/lib/;
    else
       sudo apt-get install -y $LUA_PKG $LUA_DEV;
    fi
  - sudo apt-get install -y libfreetype6-dev libfontconfig1-dev libpng-dev fonts-sil-gentium fonts-sil-gentium-basic fonts-linuxlibertine fonts-sil-scheherazade ttf-devanagari-fonts libexpat1-dev
  - wget http://luarocks.org/releases/$LUAROCKS_BASE.tar.gz
- - tar zxvpf $LUAROCKS_BASE.tar.gz
- - cd $LUAROCKS_BASE
- - if [ $LUA_VER = 5.3 ]; then
-    ./configure;
-   else
-    ./configure --lua-version=$LUA_VER --lua-suffix=$LUA_SFX --with-lua-include="$LUA_INCDIR";
-   fi
- - sudo make
- - sudo make install
- - cd $TRAVIS_BUILD_DIR
- - wget http://www.freedesktop.org/software/harfbuzz/release/harfbuzz-0.9.26.tar.bz2
- - tar xf harfbuzz-0.9.26.tar.bz2
- - cd harfbuzz-0.9.26
- - ./configure && make && sudo make install
+ - tar xfz $LUAROCKS_BASE.tar.gz && pushd $LUAROCKS_BASE
+ - ./configure $LUA_CONFIGURE_ARGS && sudo make && sudo make install && popd
+ - wget http://www.freedesktop.org/software/harfbuzz/release/$HARFBUZZ_BASE.tar.bz2
+ - tar xfj $HARFBUZZ_BASE.tar.bz2 && pushd $HARFBUZZ_BASE
+ - ./configure && make && sudo make install && popd
  - sudo ldconfig
- - cd ../
  - sudo luarocks install lpeg
  - sudo luarocks install luaexpat
  - sudo luarocks install lua_cliargs 2.3-3
  - sudo luarocks install busted
 script:
- - sh bootstrap.sh && ./configure && make
+ - ./bootstrap.sh && ./configure && make
  - busted -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
  - perl tests/attack.pl
