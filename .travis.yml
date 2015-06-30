@@ -3,7 +3,7 @@ compiler:
  - gcc
 env:
   global:
-   - LUAROCKS_BASE=luarocks-2.2.0
+   - LUAROCKS_BASE=luarocks-2.2.2
    - HARFBUZZ_BASE=harfbuzz-0.9.26
   matrix:
    - LUA_VER=5.1
