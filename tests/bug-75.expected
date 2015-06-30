@@ -1,0 +1,17 @@
+This is SILE 0.9.3-unreleased
+<tests/bug-75.sil>Open file	tests/bug-75.pdf
+Set paper size 	419.5275636	595.275597
+Begin page
+Mx 	40.97638
+My 	36.10378
+Set font 	Kohinoor Devanagari;10;200;normal;normal;;LTR
+T	78 86 3 70 21 89 3 70 21 89 3 8 60 21 80 21 3	(यह दाग़ दाग़ उजाला )
+[1] 
+! Font 'Gentium' not available, falling back to 'Times'
+Mx 	207.26378
+My 	554.36253
+Set font 	Gentium;10;200;normal;normal;;LTR
+T	20	(1)
+End page
+Finish
+
