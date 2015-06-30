@@ -1,4 +1,4 @@
-\begin[papersize=a4]{document}
+\begin[papersize=a5]{document}
 \nofolios
 \script[src=packages/lorem]
 \script[src=packages/grid]
@@ -32,16 +32,9 @@ But the days are coming when the bridegroom will be taken from them, and at that
 No one sews a patch of unshrunk cloth on an old garment; otherwise, the patch pulls away from it, the new from the old, and the tear becomes worse. 
 And no one pours new wine into old wineskins; otherwise, the wine will burst the skins, and both the wine and the skins will be destroyed. Instead new wine is poured into new wineskins.”
 
-Jesus was going through the grain fields on a Sabbath, and his disciples began to pick some heads of wheat as they made their way. 
-So the Pharisees said to him, “Look, why are they doing what is against the law on the Sabbath?” 
-He said to them, “Have you never read what David did when he was in need and he and his companions were hungry– 
-how he entered the house of God when Abiathar was high priest and ate the sacred bread, which is against the law for any but the priests to eat, and also gave it to his companions?” 
-Then he said to them, “The Sabbath was made for people, not people for the Sabbath. 
-For this reason the Son of Man is lord even of the Sabbath.”
-
 \balancecolumns
 \bigskip
-\center{\font[size=24pt,family=Linux Biolinum O,weight=800]{Chapter 3}}
+\center{\font[size=18pt,family=Linux Biolinum O,weight=800]{Chapter 3}}
 \framebreak\par
 
 Then Jesus entered the synagogue again, and a man was there who had a withered hand. 
@@ -53,29 +46,5 @@ So the Pharisees went out immediately and began plotting with the Herodians, as 
 
 Then Jesus went away with his disciples to the sea, and a great multitude from Galilee followed him. And from Judea, 
 Jerusalem, Idumea, beyond the Jordan River, and around Tyre and Sidon a great multitude came to him when they heard about the things he had done. 
-Because of the crowd, he told his disciples to have a small boat ready for him so the crowd would not press toward him. 
-For he had healed many, so that all who were afflicted with diseases pressed toward him in order to touch him. 
-And whenever the unclean spirits saw him, they fell down before him and cried out, “You are the Son of God.” 
-But he sternly ordered them not to make him known.
-
-Now Jesus went up the mountain and called for those he wanted, and they came to him. 
-He appointed twelve (whom he named apostles), so that they would be with him and he could send them to preach 
-and to have authority to cast out demons. 
-He appointed twelve: To Simon he gave the name Peter; 
-to James and his brother John, the sons of Zebedee, he gave the name Boanerges (that is, “sons of thunder”); 
-and Andrew, Philip, Bartholomew, Matthew, Thomas, James the son of Alphaeus, Thaddaeus, Simon the Zealot, 
-and Judas Iscariot, who betrayed him.
-
-Now Jesus went home, and a crowd gathered so that they were not able to eat. 
-When his family heard this they went out to restrain him, for they said, “He is out of his mind.” 
-The experts in the law who came down from Jerusalem said, “He is possessed by Beelzebul,” and, “By the ruler of demons he casts out demons.” 
-So he called them and spoke to them in parables: “How can Satan cast out Satan? 
-If a kingdom is divided against itself, that kingdom will not be able to stand. 
-If a house is divided against itself, that house will not be able to stand. 
-And if Satan rises against himself and is divided, he is not able to stand and his end has come. 
-But no one is able to enter a strong man’s house and steal his property unless he first ties up the strong man. Then he can thoroughly plunder his house. 
-I tell you the truth, people will be forgiven for all sins, even all the blasphemies they utter. 
-But whoever blasphemes against the Holy Spirit will never be forgiven, but is guilty of an eternal sin” 
-because they said, “He has an unclean spirit”).
 
 \end{document}
