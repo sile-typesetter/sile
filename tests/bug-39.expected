@@ -1,0 +1,49 @@
+This is SILE 0.9.3-unreleased
+<tests/bug-39.sil>Open file	tests/bug-39.pdf
+Set paper size 	419.5275636	595.275597
+Begin page
+Mx 	54.82079
+My 	75.67306
+Set font 	Gentium;10;200;normal;normal;;LTR
+T	38 73 82 83 84	(First)
+Mx 	76.24533
+T	80 65 71 69	(page)
+Mx 	98.29976
+T	84 69 88 84	(text)
+Mx 	54.82079
+My 	28.99828
+T	38 73 82 83 84	(First)
+Mx 	76.24291
+T	44 73 78 69	(Line)
+Mx 	96.51756
+T	79 70	(of)
+Mx 	107.32445
+T	40 69 65 68 69 82	(Header)
+
+! Overfull content for frame runningHead
+Mx 	54.82079
+My 	64.67545
+T	51 69 67 79 78 68	(Second)
+Mx 	86.98391
+T	44 73 78 69	(Line)
+Mx 	107.25739
+T	79 70	(of)
+Mx 	118.06309
+T	40 69 65 68 69 82	(Header)
+[1] Mx 	195.46105
+My 	519.80194
+T	17	(1)
+New page
+Mx 	78.73386
+My 	76.62033
+T	51 69 67 79 78 68	(Second)
+Mx 	110.89941
+T	80 65 71 69	(page)
+Mx 	132.95265
+T	84 69 88 84	(text)
+[2] Mx 	219.37413
+My 	519.75311
+T	18	(2)
+End page
+Finish
+
