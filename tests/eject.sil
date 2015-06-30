@@ -1,4 +1,4 @@
-\begin[papersize=a4]{document}
+\begin[papersize=a5]{document}
 \script[src=packages/lorem]
 \pagetemplate[first-content-frame=a]{
   \frame[id=a,top=5%,bottom=95%,next=b,left=5%,right=28%]
@@ -6,16 +6,16 @@
   \frame[id=c,top=5%,bottom=95%,left=66%,right=95%]
 }
 
-1 \lorem[words=100]
+1 \lorem[words=60]
 
-2 \lorem[words=100]
+2 \lorem[words=60]
 
 \framebreak
 
-3 \lorem[words=100]
+3 \lorem[words=60]
 
 \pagebreak
 
-4 \lorem[words=100]
+4 \lorem[words=60]
 
 \end{document}
