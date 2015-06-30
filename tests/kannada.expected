@@ -1,0 +1,22 @@
+This is SILE 0.9.3-unreleased
+<tests/kannada.sil>Open file	tests/kannada.pdf
+Set paper size 	595.275597	841.8897729
+Begin page
+Mx 	49.76378
+My 	50.18043
+Set font 	Gentium;10;200;normal;normal;;LTR
+T	40 69 76 76 79	(Hello)
+Mx 	74.05905
+T	51 41 44 37 209	(SILE!)
+Mx 	96.92855
+Set font 	Noto Sans Kannada;10;200;normal;normal;;LTR
+T	39 44 163 57 97 46	(ನಮಸ್ಕಾರ)
+Mx 	138.95194
+T	422 405	(:))
+[1] Mx 	295.29161
+My 	780.61769
+Set font 	Gentium;10;200;normal;normal;;LTR
+T	17	(1)
+End page
+Finish
+
