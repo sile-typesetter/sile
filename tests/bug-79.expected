@@ -4,7 +4,7 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	76.69291
 My 	63.67291
-Set font 	Linux Libertine O;10;200;normal;normal;
+Set font 	Linux Libertine O;10;200;normal;normal;;LTR
 T	91 66 79 66	(zana)
 Mx 	100.10666
 T	35 80 86 83 80 87 161 13	(Bourová,)
@@ -62,9 +62,9 @@ Mx 	111.66365
 T	73 79 70 69	(hned)
 Mx 	135.00402
 T	91 66	(za)
-[1] Mx 	198.53944
+[1] Mx 	207.41759
 My 	553.73265
-Set font 	Gentium;10;200;normal;normal;
+Set font 	Gentium;10;200;normal;normal;;LTR
 T	17	(1)
 End page
 Finish
