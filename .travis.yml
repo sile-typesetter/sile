@@ -42,4 +42,4 @@ before_install:
 script:
  - ./bootstrap.sh && ./configure && make
  - busted -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
- - perl tests/attack.pl
+ - ./tests/attack.pl

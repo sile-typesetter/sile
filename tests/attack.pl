@@ -1,4 +1,8 @@
-use strict; use warnings;
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
 my $regression = ($ARGV[0] && $ARGV[0] =~ /--regression/i);
 for (<tests/*.sil>, <examples/*.sil>, "documentation/sile.sil") {
     next if /macros.sil/;
