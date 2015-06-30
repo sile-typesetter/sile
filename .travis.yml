@@ -49,3 +49,4 @@ script:
  - ./bootstrap.sh && ./configure && make
  - busted -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
  - ./tests/attack.pl
+ - ./tests/attack.pl --regression
