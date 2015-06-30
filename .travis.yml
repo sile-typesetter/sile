@@ -6,10 +6,10 @@ env:
    - LUAROCKS_BASE=luarocks-2.2.2
    - HARFBUZZ_BASE=harfbuzz-0.9.26
   matrix:
-   - LUA_VER=5.1
-   - LUA_VER=5.2
    - LUA_VER=5.3 LUA_52_COMPAT=true LUA_53_BASE=lua-5.3.1
    - LUA_VER=5.3 LUA_52_COMPAT=false LUA_53_BASE=lua-5.3.1
+   - LUA_VER=5.2
+   - LUA_VER=5.1
 before_install:
  - export LUA_PKG=lua$LUA_VER LUA_DEV=liblua$LUA_VER-dev LUA_SFX=$LUA_VER
    # Utility function for installing Noto fonts into the test environment
