@@ -8,6 +8,10 @@ for (<tests/*.sil>, <examples/*.sil>, "documentation/sile.sil") {
     next if /macros.sil/;
     my $expectation = $_; $expectation =~ s/\.sil$/\.expected/;
     if (-f $expectation and $regression) {
+        # Only test OSX specific regressions if running OSX
+        if ($_ =~ /_darwin\.sil/ && $^O !~ 'darwin') {
+            next;
+        }
         print "### Compiling $_\n";
         my $out = $_; $out =~ s/\.sil$/\.actual/;
         exit $? >> 8 if system qq{./sile -e 'require("core/debug-output")' $_ > $out};
