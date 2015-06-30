@@ -1,0 +1,47 @@
+This is SILE 0.9.3-unreleased
+<tests/disappearing-skip.sil>Open file	tests/disappearing-skip.pdf
+Set paper size 	365.6692953	561.2598486
+Begin page
+Mx 	38.28346
+My 	34.36182
+Set font 	Gentium;10;200;normal;normal;;LTR
+T	48 65 82 65	(Para)
+Mx 	59.32613
+T	17 14	(1.)
+Mx 	38.28346
+My 	487.92053
+T	48 65 82 65	(Para)
+Mx 	59.32613
+T	18 14	(2.)
+[1] Mx 	180.48846
+My 	522.43816
+T	17	(1)
+New page
+Mx 	18.28346
+My 	39.41553
+Set font 	Gentium;15;200;normal;normal;;LTR
+T	33 76 73 67 69	(Alice)
+Mx 	52.82102
+T	73 78	(in)
+Mx 	69.15790
+T	55 79 78 68 69 82 76 65 78 68 201	(Wonderland…)
+Mx 	18.28346
+My 	67.79278
+Set font 	Gentium;10;200;normal;normal;;LTR
+T	55 72 69 82 69	(Where)
+Mx 	48.16664
+T	68 73 68	(did)
+Mx 	63.94338
+T	77 89	(my)
+Mx 	79.57362
+T	83 75 73 80	(skip)
+Mx 	99.11012
+T	74 85 83 84	(just)
+Mx 	116.96693
+T	71 79 31	(go?)
+[2] Mx 	180.48846
+My 	522.38933
+T	18	(2)
+End page
+Finish
+
