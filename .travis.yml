@@ -14,9 +14,9 @@ before_install:
  - export LUA_PKG=lua$LUA_VER LUA_DEV=liblua$LUA_VER-dev LUA_SFX=$LUA_VER
    # Utility function for installing Noto fonts into the test environment
  - get_noto () {
-     mkdir -p ~/.local/share/fonts;
+     mkdir -p ~/.fonts;
      curl -Ls https://noto-website.storage.googleapis.com/pkgs/Noto$1-hinted.zip > $1.zip;
-     unzip -d ~/.local/share/fonts -n $1.zip;
+     unzip -d ~/.fonts -n $1.zip;
    }
  - sudo apt-get update -qq
    # Sadly Lua 5.3 is not available from any PPA for Ubuntu 12.04 LTS (used by Travis)
