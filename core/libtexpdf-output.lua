@@ -71,7 +71,7 @@ SILE.outputters.libtexpdf = {
     cursorY = SILE.documentState.paperSize[2] - y
   end,
   rule = function (x,y,w,d)
-    pdf.setrule(x,SILE.documentState.paperSize[2] -y,w,d)
+    pdf.setrule(x,SILE.documentState.paperSize[2] -y-d,w,d)
   end,
   debugFrame = function (self,f)
     pdf.colorpush(0.8,0,0)
