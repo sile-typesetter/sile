@@ -14,10 +14,12 @@ before_install:
  - export LUA_PKG=lua$LUA_VER LUA_DEV=liblua$LUA_VER-dev LUA_SFX=$LUA_VER
    # Utility function for installing Noto fonts into the test environment
  - get_noto () {
-     mkdir -p ~/.fonts;
      curl -Ls https://noto-website.storage.googleapis.com/pkgs/Noto$1-hinted.zip > $1.zip;
      unzip -d ~/.fonts -n $1.zip;
    }
+   # Add SIL's PPA repository because it has newer versions of fonts
+ - curl http://packages.sil.org/sil.gpg | sudo apt-key add -
+ - echo 'deb http://packages.sil.org/ubuntu precise main' | sudo tee -a /etc/apt/sources.list
  - sudo apt-get update -qq
    # Sadly Lua 5.3 is not available from any PPA for Ubuntu 12.04 LTS (used by Travis)
  - if [ $LUA_VER = 5.3 ]; then
