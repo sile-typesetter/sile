@@ -1,8 +1,7 @@
-tests/*.actual
+*/*.actual
 tests/*.pdf
-tests/*.toc
 examples/*.pdf
-examples/*.toc
+*/*.toc
 # http://www.gnu.org/software/automake
 
 Makefile.in

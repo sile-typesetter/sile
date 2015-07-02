@@ -1,33 +1,33 @@
 This is SILE 0.9.3-unreleased
 <tests/bug-54.sil>Open file	tests/bug-54.pdf
-Set paper size 	595.275597	841.8897729
+Set paper size 	419.5275636	595.275597
 Begin page
-Mx 	77.75433
-My 	105.22757
-Set font 	Gentium;10;200;normal;normal;
+Mx 	49.32284
+My 	37.33214
+Set font 	Gentium;10;200;normal;normal;;LTR
 T	38 73 82 83 84	(First)
-Mx 	99.19553
+Mx 	70.75468
 T	76 73 78 69	(line)
-Mx 	77.75433
-My 	120.22757
+Mx 	49.32284
+My 	52.33214
 T	38 73 82 83 84	(First)
-Mx 	99.18722
+Mx 	70.74638
 T	87 79 82 68 12	(word,)
-Mx 	125.40527
+Mx 	96.95508
 T	70 73 82 83 84	(first)
-Mx 	145.16825
+Mx 	116.70870
 T	80 65 82 65 71 82 65 80 72 14	(paragraph.)
-Mx 	77.75433
-My 	135.22757
+Mx 	49.32284
+My 	67.33214
 T	38 73 82 83 84	(First)
-Mx 	99.18596
+Mx 	70.74511
 T	87 79 82 68 12	(word,)
-Mx 	125.40274
+Mx 	96.95254
 T	83 69 67 79 78 68	(second)
-Mx 	156.67812
+Mx 	128.21857
 T	80 65 82 65 71 82 65 80 72 14	(paragraph.)
-[1] Mx 	267.42538
-My 	732.62998
+[1] Mx 	207.41759
+My 	553.73265
 T	17	(1)
 End page
 Finish

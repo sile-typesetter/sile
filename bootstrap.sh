@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env sh
+
 git submodule update --init --recursive --remote
 autoreconf --install
 (cd libtexpdf; autoreconf -I m4)

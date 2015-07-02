@@ -4,7 +4,7 @@ Set paper size 	595.275597	841.8897729
 Begin page
 Mx 	49.76378
 My 	49.66285
-Set font 	Gentium;10;200;normal;normal;
+Set font 	Gentium;10;200;normal;normal;;LTR
 T	48 82 73 77 85 77 12	(Primum,)
 Mx 	87.93431
 T	73 78 81 85 65 77 12	(inquam,)
@@ -78,7 +78,7 @@ Mx 	377.88968
 T	84 65 76 69	(tale)
 Mx 	395.90977
 T	70 69 67 73 84 31	(fecit?)
-[1] Mx 	282.64742
+[1] Mx 	295.29161
 My 	780.61769
 T	17	(1)
 End page

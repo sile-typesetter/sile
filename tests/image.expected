@@ -1,0 +1,27 @@
+This is SILE 0.9.3-unreleased
+<tests/image.sil>Open file	tests/image.pdf
+Set paper size 	419.5275636	595.275597
+Begin page
+Mx 	40.97638
+My 	99.00668
+Set font 	Gentium;10;200;normal;normal;;LTR
+T	47 78 69	(One)
+Mx 	59.78371
+T	84 87 79	(two)
+Draw image	documentation/fig1.png	77.985571410771	29.76377985	50.0	69.242902208202
+Mx 	130.65521
+T	84 72 82 69 69	(three)
+Mx 	40.97638
+My 	167.15317
+T	47 78 69	(One)
+Mx 	59.78524
+T	84 87 79	(two)
+Draw image	documentation/fig1.png	77.988630333249	117.1531664332	36.104783599089	50.0
+Mx 	116.76458
+T	84 72 82 69 69	(three)
+[1] Mx 	207.41759
+My 	553.73265
+T	17	(1)
+End page
+Finish
+

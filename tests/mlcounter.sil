@@ -1,24 +1,25 @@
-\begin[papersize=a4]{document}
+\begin[papersize=a5]{document}
 \script[src=packages/counters]
 
 \increment-multilevel-counter[id=test]
+\show-multilevel-counter[id=test] Aa
 
 \increment-multilevel-counter[id=test,level=4]
-\show-multilevel-counter[id=test]
+\show-multilevel-counter[id=test] Bb
 
 \increment-multilevel-counter[id=test,level=4]
-\show-multilevel-counter[id=test]
+\show-multilevel-counter[id=test] Cc
 
 
 \increment-multilevel-counter[id=test,level=4]
-\show-multilevel-counter[id=test]
+\show-multilevel-counter[id=test] Dd
 
 
 \increment-multilevel-counter[id=test,level=2]
-\show-multilevel-counter[id=test]
+\show-multilevel-counter[id=test] Ee
 
 
 \increment-multilevel-counter[id=test,level=5]
-\show-multilevel-counter[id=test]
+\show-multilevel-counter[id=test] Ff
 
 \end{document}

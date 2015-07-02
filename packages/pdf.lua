@@ -59,7 +59,6 @@ SILE.registerCommand("pdf:link", function (o,c)
   });
 
   local hbox = SILE.Commands["hbox"]({}, c) -- hack
-  SILE.typesetter:debugState()
 
   SILE.typesetter:pushHbox({
     value = nil, height = 0, width = 0, depth = 0,

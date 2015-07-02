@@ -2,19 +2,19 @@ This is SILE 0.9.3-unreleased
 <tests/bug-62.sil>Open file	tests/bug-62.pdf
 Set paper size 	419.5275636	595.275597
 Begin page
-Mx 	54.82079
-My 	76.62033
-Set font 	Gentium;10;200;normal;normal;
+Mx 	40.97638
+My 	37.33214
+Set font 	Gentium;10;200;normal;normal;;LTR
 T	38 73 82 83 84	(First)
-Mx 	76.24488
+Mx 	62.40615
 T	80 65 82 65 71 82 65 80 72	(paragraph)
-Mx 	54.82079
-My 	91.62033
+Mx 	40.97638
+My 	52.33214
 T	51 69 67 79 78 68	(Second)
-Mx 	86.98589
+Mx 	73.14716
 T	80 65 82 65 71 82 65 80 72	(paragraph)
-[1] Mx 	187.81152
-My 	519.80194
+[1] Mx 	207.41759
+My 	553.73265
 T	17	(1)
 End page
 Finish
