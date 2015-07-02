@@ -1,6 +1,9 @@
 \begin[class=diglot,papersize=a5]{document}
-\leftfont[family=Cardo,size=10pt,language=el]
-\rightfont[family=Gentium,size=10pt,language=en]
+\define[command=left:font]{\font[family=Cardo,size=10pt,language=el]}
+\define[command=right:font]{\font[family=Gentium,size=10pt,language=en]}
+\set[parameter=document.lineskip,value=0.7ex]
+\set[parameter=document.parskip,value=12pt]
+\set[parameter=document.parindent,value=0pt]
 
 \left Βίβλος γενέσεως Ἰησοῦ χριστοῦ υἱοῦ Δαυὶδ υἱοῦ Ἀβραάμ.
 
