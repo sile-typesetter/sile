@@ -62,7 +62,7 @@ end
 local addBalancingGlue = function (h)
   allTypesetters(function (n,t)
     local g = h - calculations[n].heightOfNewMaterial
-    if g > 0 then 
+    if g.length > 0 then 
       SU.debug("parallel", "Adding "..g.." to "..n)
       t:pushVglue({ height = g })
     end
