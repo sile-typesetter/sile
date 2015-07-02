@@ -39,7 +39,7 @@ SILE.outputters.debug = {
     end
   end,
   drawImage = function (src, x,y,w,h)
-    print("Draw image", src, x, y, w, h)
+    print("Draw image", src, string.format("%.5f %.5f %.5f %.5f",x, y, w, h))
   end,
   imageSize = function (src)
     local pdf = require("justenoughlibtexpdf");
