@@ -797,7 +797,7 @@ Mx 	213.88398
 T	88 74 79 70 84 76 74 79 84 15 1761	(wineskins.”)
 Mx 	170.62378
 My 	365.70583
-Set font 	Linux Biolinum O;18;800.0;normal;normal;;LTR
+Set font 	Linux Biolinum O;18;800;normal;normal;;LTR
 T	36 73 66 81 85 70 83	(Chapter)
 Mx 	239.65178
 T	20	(3)
