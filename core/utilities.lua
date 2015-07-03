@@ -125,10 +125,7 @@ function utilities.allCombinations(options)
 end
 
 -- Unicode-related utilities
-pcall(function() utf8 = require("utf8") end)
-if not utf8 then utf8 = {} end
-
-utilities.utf8char = utf8.char or function (c)
+utilities.utf8char = function (c)
     if     c < 128 then
         return string.char(c)
     elseif c < 2048 then
@@ -140,10 +137,7 @@ utilities.utf8char = utf8.char or function (c)
     end
 end
 
--- Obviously it would be better to use the utf8 library here but 
--- I found strange "out of range" Heisenbugs with ordinary pieces of
--- text, like newlines.
-utilities.codepoint = utf8.xxxcodepoint or function (uchar)
+utilities.codepoint = function (uchar)
   local seq = 0
   local val = -1
   for i = 1, #uchar do
@@ -162,7 +156,7 @@ utilities.codepoint = utf8.xxxcodepoint or function (uchar)
   return val
 end
 
-utilities.utf8codes = utf8.codes or function (ustr)
+utilities.utf8codes = function (ustr)
   local pos = 1
   return function()
     if pos > #ustr then
