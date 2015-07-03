@@ -1,5 +1,6 @@
 local typesetterPool = {}
 local calculations = {}
+local folioOrder = {}
 
 local allTypesetters = function (f) 
   local o = SILE.typesetter
@@ -10,8 +11,32 @@ end
   SILE.typesetter = o
 end
 
-local setupParallel = function (klass, names)
-  for k,v in pairs(names) do
+
+local parallelPagebreak = function ()
+  for i = 1,#folioOrder do
+    local thisPageFrames = folioOrder[i]
+    print("Folio frames ", thisPageFrames)
+    for j = 1,#thisPageFrames do
+      local n = thisPageFrames[j]
+      local t = typesetterPool[n]
+      local thispage = {}
+      for i = 1, calculations[n].mark do
+        thispage[i] = table.remove(t.state.outputQueue, 1)
+      end
+      t:outputLinesToPage(thispage)
+    end
+    SILE.documentState.documentClass:endPage()
+    for j = 1,#thisPageFrames do
+      local n = thisPageFrames[j]
+      local t = typesetterPool[n]
+      t:initFrame(t.frame)
+    end
+    SILE.documentState.documentClass:newPage()    
+  end
+end
+
+local setupParallel = function (klass, options)
+  for k,v in pairs(options.frames) do
     typesetterPool[k] = SILE.typesetter {}
     typesetterPool[k].id = v
     typesetterPool[k]:init(SILE.getFrame(v))
@@ -27,36 +52,26 @@ local setupParallel = function (klass, names)
     end)
     SILE.registerCommand(k..":font", function (o,c) end) -- to be overridden
   end
+  if not options.folios then
+    folioOrder = { {} }
+    for k,v in pairs(options.frames) do table.insert(folioOrder[1],k) end
+  else
+    folioOrder = options.folios -- As usual we trust the user knows what they're doing
+  end
   local o = klass.newPage
   klass.newPage = function(self)
     allTypesetters(function (n,t)
       calculations[n] = { mark = 0 }
     end)
     SILE.baseClass:newPage()
+    SILE.call("sync")
   end
   allTypesetters(function (n,t) calculations[n] = { mark = 0 } end)
-  o = klass.endPage
-  klass.endPage = function(self)
-    allTypesetters(function (n,t) t:chuck() end)
+  o = klass.finish
+  klass.finish = function(self)
+    parallelPagebreak()
     o(self)
   end
-end
-
-local parallelPagebreak = function ()
-  allTypesetters(function (n,t)
-    if not calculations[n].pageBreak then
-      local thispage = {}
-      for i = 1, calculations[n].mark do
-        thispage[i] = table.remove(t.state.outputQueue, 1)
-      end
-      t:outputLinesToPage(thispage)
-    else
-      t:outputLinesToPage(calculations[n].pageBreak)        
-    end
-  end)
-  SILE.documentState.documentClass:endPage()
-  SILE.documentState.documentClass:newPage()
-  allTypesetters(function (n,t) t:initFrame(t.frame) end)
 end
 
 local addBalancingGlue = function (h)
@@ -78,30 +93,28 @@ SILE.registerCommand("sync", function (o,c)
     -- Now we have each typesetter's content boxed up onto the output stream
     -- but page breaking has not been run. See if page breaking would cause a
     -- break
-    calculations[n].pageBreak = SILE.pagebuilder.findBestBreak(t.state.outputQueue, t:pageTarget())
-    if calculations[n].pageBreak then 
+    local lines = std.table.clone(t.state.outputQueue)
+    if SILE.pagebuilder.findBestBreak(lines, t:pageTarget()) then 
       anybreak = true 
-    else
-      calculations[n].heightOfNewMaterial = SILE.length.new()
-      local lastdepth = 0
-      for i = calculations[n].mark + 1, #t.state.outputQueue do
-        local thisHeight = t.state.outputQueue[i].height + t.state.outputQueue[i].depth
-        if t.state.outputQueue[i]:isBox() then
-          lastdepth = t.state.outputQueue[i].depth
-        end
-        calculations[n].heightOfNewMaterial = calculations[n].heightOfNewMaterial + thisHeight
-      end
-      -- calculations[n].heightOfNewMaterial = calculations[n].heightOfNewMaterial - lastdepth
-      if maxheight < calculations[n].heightOfNewMaterial then maxheight = calculations[n].heightOfNewMaterial end
     end
+  end)
+  
+  if anybreak then
+    parallelPagebreak()
+    return
+  end
+
+  allTypesetters(function (n,t)
+    calculations[n].heightOfNewMaterial = SILE.length.new()
+    local lastdepth = 0
+    for i = calculations[n].mark + 1, #t.state.outputQueue do
+      local thisHeight = t.state.outputQueue[i].height + t.state.outputQueue[i].depth
+      calculations[n].heightOfNewMaterial = calculations[n].heightOfNewMaterial + thisHeight
+    end
+    if maxheight < calculations[n].heightOfNewMaterial then maxheight = calculations[n].heightOfNewMaterial end
     SU.debug("parallel", n..": pre-sync content="..calculations[n].mark..", now "..#t.state.outputQueue..", height of material: "..calculations[n].heightOfNewMaterial)
   end)
-
-  if anybreak then -- Calling sync has causes a page break. Insert it for everyone
-    parallelPagebreak()
-  else
-    addBalancingGlue(maxheight)
-  end
+  addBalancingGlue(maxheight)
 end)
 
 return {

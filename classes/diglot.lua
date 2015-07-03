@@ -6,6 +6,6 @@ diglot:declareFrame("a",    {left = "8.3%",            right = "48%",           
 diglot:declareFrame("b",    {left = "52%",             right = "100% - left(a)", top = "top(a)",      bottom = "bottom(a)"    });
 diglot:declareFrame("folio",{left = "left(a)",         right = "right(b)",       top = "bottom(a)+3%",bottom = "bottom(a)+8%" });
 
-diglot:loadPackage("parallel", { left = "a", right = "b" })
+diglot:loadPackage("parallel", { frames = { left = "a", right = "b" } })
 
 return diglot
