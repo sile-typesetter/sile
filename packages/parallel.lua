@@ -15,7 +15,6 @@ end
 local parallelPagebreak = function ()
   for i = 1,#folioOrder do
     local thisPageFrames = folioOrder[i]
-    print("Folio frames ", thisPageFrames)
     for j = 1,#thisPageFrames do
       local n = thisPageFrames[j]
       local t = typesetterPool[n]
