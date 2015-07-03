@@ -40,8 +40,8 @@ end
 _insertionVbox.actualHeight = 0
 _insertionVbox.frame = nil
 _insertionVbox.isVbox = function () return true end
-_insertionVbox.type = "insertionVbox"
 _insertionVbox.active = 0
+_insertionVbox.subtype = "insertionVbox"
 _insertionVbox.class = nil
 
 SILE.typesetter.pageTarget = function (self)
@@ -119,14 +119,14 @@ local mainFrameHeightSoFar = function()
   return heightOfBodySoFar.height + upcomingHeight.height + heightOfBodySoFar.depth + upcomingHeight.depth
 end
 
-local insert = function (self, classname, vbox)
+local insert = function (self, classname, vbox, nots)
   local thisclass = SILE.scratch.insertions.classes[classname]
   if not thisclass then SU.error("Uninitialized insertion class "..classname) end
   local opts = SILE.scratch.insertions.classes[classname]
 
   if not SILE.scratch.insertions.thispage[classname] then
     SILE.scratch.insertions.thispage[classname] = {}
-    if thisclass["topSkip"] then
+    if thisclass["topSkip"] and not nots then
       local vglue = SILE.nodefactory.newVglue({ height = thisclass["topSkip"] })
       addInsertion(classname, vglue)
     end
@@ -139,14 +139,13 @@ local insert = function (self, classname, vbox)
   SU.debug("insertions", "Incoming vbox is "..tostring(vbox))
   SU.debug("insertions", "Maxheight is "..tostring(thisclass["maxHeight"]))
   SU.debug("insertions", "Insertion height is "..tostring((heightSoFar(classname) + vbox.height + vbox.depth)))
-  -- If the current frame is in the steal list
   SU.debug("insertions", "Target is "..SILE.typesetter:pageTarget())
-  if heightSoFar(classname) + vbox.height + vbox.depth < thisclass["maxHeight"] and
-    ( (vbox.height + vbox.depth).length < 0 or
-    (mfhsf + vbox.height + vbox.depth - SILE.typesetter:pageTarget()).length < 0
-    ) then
+  local incomingHeight = (vbox.height + vbox.depth).length
+  local stealableSpace = (SILE.typesetter:pageTarget() - mfhsf)
+  if heightSoFar(classname) + incomingHeight < thisclass["maxHeight"] and
+    (incomingHeight < 0 or stealableSpace > incomingHeight) then
     addInsertion(classname, vbox)
-  elseif (mfhsf - SILE.typesetter:pageTarget()).length > 0 then
+  elseif stealableSpace <= 0 then
     -- No hope; defer until next time
     SU.debug("insertions", "Deferring to next page")
     SILE.scratch.insertions.nextpage[#(SILE.scratch.insertions.nextpage)+1] = {class=classname, material=vbox}
@@ -165,7 +164,7 @@ SILE.typesetter:registerPageBreakHook(function (self,nl)
   for i = 1,#nl do local node = nl[i]
     if node.nodes then
       for i = 1,#node.nodes do local node = node.nodes[i]
-        if node.type == "insertionVbox" then
+        if node.subtype == "insertionVbox" then
           if not totals[node.class] then totals[node.class] = 0 end
           totals[node.class] = totals[node.class] + node.actualHeight
         end
@@ -186,9 +185,8 @@ SILE.typesetter:registerNewPageHook(function(self)
   SILE.scratch.insertions.typesetters = {}
   SILE.scratch.insertions.thispage = {}
   if 0 == #SILE.scratch.insertions.nextpage then return end
-  SILE.typesetter:initline()
   for i = 1,#SILE.scratch.insertions.nextpage do local ins = SILE.scratch.insertions.nextpage[i]
-    insert(self,ins.class, ins.material)
+    insert(self,ins.class, ins.material, true)
   end
   SILE.scratch.insertions.nextpage = {}
 end)
