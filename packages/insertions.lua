@@ -141,7 +141,7 @@ local insert = function (self, classname, vbox, nots)
   SU.debug("insertions", "Insertion height is "..tostring((heightSoFar(classname) + vbox.height + vbox.depth)))
   SU.debug("insertions", "Target is "..SILE.typesetter:pageTarget())
   local incomingHeight = (vbox.height + vbox.depth).length
-  local stealableSpace = (SILE.typesetter:pageTarget() - mfhsf)
+  local stealableSpace = (SILE.typesetter:pageTarget() - mfhsf).length
   if heightSoFar(classname) + incomingHeight < thisclass["maxHeight"] and
     (incomingHeight < 0 or stealableSpace > incomingHeight) then
     addInsertion(classname, vbox)
