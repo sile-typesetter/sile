@@ -65,7 +65,9 @@ Please read the [full SILE manual][doc] for more information about what SILE is 
 
 ## Contact
 
-Please report bugs and send patches and pull requests at the [github repository][github]. For questions, please contact the author, Simon Cozens <simon@simon-cozens.org>.
+Please report bugs and send patches and pull requests at the [github repository][github]. For questions and discussion, please join the [mailing list][list-en].
+
+日本語利用者は[メーリングリスト][list-ja]に参加してください。
 
 ## License terms
 
@@ -88,3 +90,5 @@ SILE is distributed under the [MIT licence][license].
   [tex]: https://en.wikipedia.org/wiki/TeX
   [indesign]: https://en.wikipedia.org/wiki/Adobe_InDesign
   [brew]: http://brew.sh/
+  [list-en]: https://groups.google.com/forum/#!forum/sile-users
+  [list-ja]: https://groups.google.com/forum/#!forum/sile-user-ja
