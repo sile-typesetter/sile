@@ -1423,11 +1423,11 @@ every line.
 
 \begin{note}
 \notehead{Glue} A \em{glue} parameter is slightly different from an ordinary dimensioned length. Glue basically means ‘space,’ but as well as signifying a length,
-it also has two additional optional components: \em{stretch} and \em{skip},
+it also has two additional optional components: \em{stretch} and \em{shrink},
 specified as \code{<dimension> plus <dimension> minus <dimension>}. The
 first dimension is the basic length; the stretch is the maximum length that
 can be added to it, and the shrink is some length that can be taken away from it.
-For instance, \code{12pt plus 3pt minus 6pt} specifies a space that would
+For instance, \code{12pt plus 6pt minus 3pt} specifies a space that would
 ideally by 12 points, but can expand or contract from a minimum of 9 points to a maximum
 of 18 points.
 \end{note}
@@ -1525,7 +1525,7 @@ penalty points. This value can be any number up to \code{10000}, which means
 \set[parameter=typesetter.parfillskip,value=0pt]
 SILE automatically inserts a piece of massively stretchable
 glue at the end of each paragraph; without this, the justification algorithm
-would apply justification to the entire paragraph, including the last fine,
+would apply justification to the entire paragraph, including the last line,
 and produce a fully justified paragraph. (Normally we want the last line of a justified paragraph to be 
 left-aligned.)
 The size of this glue is defined in the setting
@@ -1943,7 +1943,7 @@ master into a left-page master:
 
 \begin{verbatim}
 \line
-book:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" });
+book:loadPackage("twoside", \{ oddPageMaster = "right", evenPageMaster = "left" \});
 book:mirrorMaster("left", "right")
 \line
 \end{verbatim}
@@ -1958,7 +1958,7 @@ how we set up the inheritance:
 \begin{verbatim}
 \line
 local book = SILE.require("classes/book")
-local bringhurst = book { id = "bringhurst" }
+local bringhurst = book \{ id = "bringhurst" \}
 ...
 return bringhurst
 \line
@@ -2068,7 +2068,7 @@ SILE.registerCommand("link", function(options, content)
   SILE.process(content)
   if (options["xl:href"]) then
     SILE.typesetter:typeset(" (")
-    SILE.call("code", {}, {options["xl:href"]})
+    SILE.call("code", \{\}, \{options["xl:href"]\})
     SILE.typesetter:typeset(")")
   end
 end)
@@ -2247,7 +2247,7 @@ In other words, after:
 
 \begin{verbatim}
 \line
-  exports = {writeToc = writeToc, moveTocNodes = moveNodes}
+  exports = \{writeToc = writeToc, moveTocNodes = moveNodes\}
 \}
 \line
 \end{verbatim}
@@ -2332,10 +2332,10 @@ to keep track of an article number.
 \begin{verbatim}
 \line
 SILE.registerCommand("example", function(options,content)
-  SILE.call("increment-counter", {id="Example"})
+  SILE.call("increment-counter", \{id="Example"\})
   SILE.call("bigskip")
   SILE.call("docbook-line")
-  SILE.call("docbook-titling", {}, function()
+  SILE.call("docbook-titling", \{\}, function()
     SILE.typesetter:typeset("Example".." ".. SILE.formatCounter(SILE.scratch.counters.Example]))
 \end{verbatim}
 
@@ -2550,13 +2550,13 @@ using the \code{\\sync} command:
 SILE.registerCommand("left", function(options, content)
   SILE.settings.set("typesetter.parseppattern", -1)
   SILE.typesetter = diglot.leftTypesetter;
-  SILE.Commands["font"](SILE.scratch.diglot.leftfont, {})
+  SILE.Commands["font"](SILE.scratch.diglot.leftfont, \{\})
 end, "Begin entering text on the left side")
 
 SILE.registerCommand("right", function(options, content)
   SILE.settings.set("typesetter.parseppattern", -1)  
   SILE.typesetter = diglot.rightTypesetter;
-  SILE.Commands["font"](SILE.scratch.diglot.rightfont, {})
+  SILE.Commands["font"](SILE.scratch.diglot.rightfont, \{\})
 end, "Begin entering text on the right side")
 \end{verbatim}
 
@@ -2578,9 +2578,9 @@ SILE.registerCommand("sync", function()
   local lVbox = SILE.pagebuilder.collateVboxes(diglot.leftTypesetter.state.outputQueue)
   local rVbox = SILE.pagebuilder.collateVboxes(diglot.rightTypesetter.state.outputQueue)
   if (rVbox.height > lVbox.height) then
-    diglot.leftTypesetter:pushVglue({ height = rVbox.height - lVbox.height })
+    diglot.leftTypesetter:pushVglue(\{ height = rVbox.height - lVbox.height \})
   elseif (rVbox.height < lVbox.height) then
-    diglot.rightTypesetter:pushVglue({ height = lVbox.height - rVbox.height })
+    diglot.rightTypesetter:pushVglue(\{ height = lVbox.height - rVbox.height \})
   end
 \end{verbatim}
 
@@ -2832,7 +2832,7 @@ the cross-reference appears a bit lower than the verse it refers to.
 
 \begin{verbatim}
   if (innerVbox.height < mainVbox.height) then
-    discovery.innerTypesetter:pushVglue({ height = mainVbox.height - innerVbox.height })
+    discovery.innerTypesetter:pushVglue(\{ height = mainVbox.height - innerVbox.height \})
   end
 \end{verbatim}
 
@@ -2843,12 +2843,12 @@ can output the cross-reference itself.
 \begin{verbatim}
   SILE.settings.temporarily(function()
     SILE.settings.set("document.baselineskip", SILE.nodefactory.newVglue("7pt"))
-    SILE.Commands["font"]({size = "6pt", family="Helvetica", weight="800"}, {})
+    SILE.Commands["font"](\{size = "6pt", family="Helvetica", weight="800"\}, \{\})
     discovery.innerTypesetter:typeset(SILE.scratch.chapter..":"..SILE.scratch.verse.." ")
-    SILE.Commands["font"]({size = "6pt", family="Helvetica", weight="200"}, {})
+    SILE.Commands["font"](\{size = "6pt", family="Helvetica", weight="200"\}, \{\})
     discovery.innerTypesetter:typeset(xref)
     discovery.innerTypesetter:leaveHmode()
-    discovery.innerTypesetter:pushVglue({ height = SILE.length.new({length = 4}) })
+    discovery.innerTypesetter:pushVglue(\{ height = SILE.length.new(\{length = 4\}) \})
   end)
 end
 \line
