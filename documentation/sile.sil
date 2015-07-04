@@ -130,39 +130,45 @@ somewhat more advanced than, TeX.
 
 \section{SILE versus InDesign}
 
-The other tool that people reach for when designing printed material on a computer is
-InDesign (or similar DTP software, such as Scribus).
+The other tool that people reach for when designing printed material on
+a computer is InDesign (or similar Desktop Publishing software, such as
+Scribus).
 
-\float[rightboundary=7pt, bottomboundary=15pt]{\img[src=documentation/fig1.png,width=150]} 
-InDesign is a complex, expensive, commercial publishing tool. It’s highly 
-graphical—you click and drag to move areas of text and images around the screen. 
-SILE is a free, open source typesetting tool which is entirely text-based; you
-enter commands in a separate editing tool, save those commands into a file, and hand it to SILE for typesetting. And yet the two
-systems do have a number of common features.
+\float[rightboundary=7pt,bottomboundary=15pt]{\img[src=documentation/fig1.png,width=150]} 
+DTP software is similar to Word Processing Software in that they are
+both graphical and largely WYSIWYG, but the paradigm is different. The focus is
+usually less on preparing the content than on laying it out on the
+page--you click and drag to move areas of text and images around the screen.
 
-In InDesign, text is flowed into \em{frames} on the page. On the
-left, you can see an example of what
-a fairly typical InDesign layout might look like.
+InDesign is a complex, expensive, commercial publishing tool. SILE is a free,
+open source typesetting tool which is entirely text-based; you enter commands
+in a separate editing tool, save those commands into a file, and hand it to
+SILE for typesetting. And yet the two systems do have a number of common
+features.
+
+In InDesign, text is flowed into \em{frames} on the page. On the left, you can
+see an example of what a fairly typical InDesign layout might look like.
 
 SILE also uses the concept of frames to determine where text should appear on
 the page, and so it’s possible to use SILE to generate page layouts which are
 more flexible and more complex than that afforded by TeX.
 
-\supereject
 Another thing which people use InDesign for is to turn structured data in XML
-format—catalogues, directories and the like—into print. The way you do this
-in InDesign is to declare what styling should apply to each XML element, and as the
-data is read in, InDesign formats the content according to the rules that you
-have declared.
+format—catalogues, directories and the like—into print. The way you do this in
+InDesign is to declare what styling should apply to each XML element, and as
+the data is read in, InDesign formats the content according to the rules that
+you have declared.
 
 You can do exactly the same thing in SILE, except you have a lot more control
 over how the XML elements get styled, because you can run any SILE command you
-like for a given element, including calling out to Lua code to style a piece of 
+like for a given element, including calling out to Lua code to style a piece of
 XML. Since SILE is a command-line filter, armed with appropriate styling
-instructions you can go from an XML file to a PDF in one shot. Which is quite nice.
+instructions you can go from an XML file to a PDF in one shot. Which is quite
+nice.
 
-In the final chapters of this book, we’ll look at some extended examples of creating
-a \em{class file} for styling a complex XML document into a PDF with SILE.
+In the final chapters of this book, we’ll look at some extended examples of
+creating a \em{class file} for styling a complex XML document into a PDF with
+SILE.
 
 \section{Conclusion}
 
