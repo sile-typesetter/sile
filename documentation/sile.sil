@@ -41,27 +41,43 @@ to compare it to other systems which you may have heard of.
 
 \section{SILE versus Word}
 
-When most people produce printed documents using a computer, they 
-usually use software such as Word (part of Microsoft Office) or Writer
-(part of Open/LibreOffice) or similar—word processing software. SILE is
-not a word processor; it is a typesetting system. There are
-several important differences.
+When most people produce printed documents using a computer, they usually use
+desktop oriented word processing software such as Microsoft Word, iWork Pages,
+or LibreOffice Writer. SILE is not a word processor; it is a typesetting
+system. There are several important differences.
 
-The job of a word processor is to produce a document that looks exactly like what you type on the screen. SILE takes what you type and considers it instructions for producing a document that looks as good as possible.
-
-For instance, in a word processor, you keep typing and when you hit the right margin, your cursor will move to the next line. It is showing you where the lines will break. SILE doesn’t show you where the lines will break, because it doesn’t know yet. You can type and type and type as long a line as you like, and when SILE comes to process your instructions, it will consider your input (up to) three times over in order to work out how to best to break the lines to form a paragraph. Did we end two successive lines with a hyphenated word? Go back and try again.
-
-Similarly for page breaks. When you type into a word processor, at some point you will spill over onto a new page. In SILE, you keep typing, because the page breaks are determined after considering the layout of the whole document.
+The job of a word processor is to produce a document that looks exactly like
+what you type on the screen. By contrast the job of a typesetting system is to
+take raw content and produce a document that looks as good as possible. The
+input for SILE is a text document that includes instructions about how the
+content should be layed out on a page. In order to obtain the typeset result
+the input file must be processed to render the desired output.
 
 Word processors often describe themselves as WYSIWYG—What You See Is What You
-Get. SILE is cheerfully \em{not} WYSIWYG. In fact, you don’t see what you get until
-you get it. Rather, SILE documents are prepared initially in a \em{text editor}—a
-piece of software which focuses on the text itself and not what it looks like—and then
-ran through SILE in order to produce a PDF document.
+Get. SILE is cheerfully \em{not} WYSIWYG. In fact, you don’t see what you get
+until you get it. Rather, SILE documents are prepared initially in a \em{text
+editor}—a piece of software which focuses on the text itself and not what it
+looks like—and then run through SILE in order to produce a PDF document.
 
-In other words, SILE is a \em{language} for describing
-what you want to happen, and SILE will make certain formatting decisions about the
-best way for those instructions to be turned into print.
+For instance, in a word processor you typically type continuously and when you
+hit the right margin, your cursor will automatically jump to the next line. In
+doing so the user interface shows you where the lines will break. When
+preparing content for SILE you don't know where the lines will break until
+after it has been processed. You may user your text editor to type and type and
+type as long a line as you like, and when SILE comes to process your
+instructions, it will consider your input (up to) three times over in order to
+work out how to best to break the lines to form a paragraph. For example if
+after one pass it finds that it has ended two successive lines with
+a hyphenated word it will go back and try again.
+
+The same idea applies to page breaks. When you type into a word processor, at
+some point you will spill over onto a new page. When preparing content for
+SILE, you keep typing, because the page breaks are determined after considering
+the layout of the whole document.
+
+In other words, SILE is a \em{language} for describing what you want to happen
+and an interpreter that will make certain formatting decisions about the best
+way for those instructions to be turned into print.
 
 \section{SILE versus TeX}
 
