@@ -91,6 +91,7 @@ SILE.defaultTypesetter = std.object {
   pushGlue = function (self, spec) return table.insert(self.state.nodes, SILE.nodefactory.newGlue(spec)); end,
   pushPenalty = function (self, spec) return table.insert(self.state.nodes, SILE.nodefactory.newPenalty(spec)); end,
   pushVbox = function (self, spec) local v = SILE.nodefactory.newVbox(spec); table.insert(self.state.outputQueue,v); return v; end,
+  pushMigratingMaterial = function (self, material) local v = SILE.nodefactory.newMigrating({ material = material }); table.insert(self.state.nodes,v); return v; end,
   pushVglue = function (self, spec) return table.insert(self.state.outputQueue, SILE.nodefactory.newVglue(spec)); end,
   pushExplicitVglue = function (self, spec)
     spec.skiptype = "explicit"
@@ -133,10 +134,10 @@ SILE.defaultTypesetter = std.object {
   -- Turns a node list into a list of vboxes
   boxUpNodes = function (self)
     local nl = self.state.nodes
-    while (#nl > 0 and (nl[#nl]:isHPenalty() or nl[#nl]:isGlue())) do
+    while (#nl > 0 and (nl[#nl]:isPenalty() or nl[#nl]:isGlue())) do
      table.remove(nl);
     end
-    while (#nl >0 and nl[1]:isHPenalty()) do table.remove(nl,1) end
+    while (#nl >0 and nl[1]:isPenalty()) do table.remove(nl,1) end
     if #nl == 0 then return {} end
     for i=1, #nl do n = nl[i]
       if n:isUnshaped() then nl[i] = n:shape() end
@@ -148,7 +149,6 @@ SILE.defaultTypesetter = std.object {
       for i = 1,#l do rv = rv ..l[i] end return rv
     end
     SU.debug("typesetter", "Boxed up "..listToString(nl));
-
     local breakWidth = SILE.settings.get("typesetter.breakwidth") or self.frame:width()
     if (type(breakWidth) == "table") then breakWidth = breakWidth.length end
     local lines = self:breakIntoLines(nl, breakWidth)
@@ -158,8 +158,8 @@ SILE.defaultTypesetter = std.object {
       -- Move any migrating material
       local nodes = {}
       for i =1, #l.nodes do local n = l.nodes[i]
-        if n.migrating == true then
-          vboxes[#vboxes+1] = n
+        if n:isMigrating() then
+          for j=1,#n.material do vboxes[#vboxes+1] = n.material[j] end
         else
           nodes[#nodes+1] = n
         end

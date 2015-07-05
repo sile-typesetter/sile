@@ -7,7 +7,6 @@ _box = std.object {
   width= 0,
   type="special",
   value=nil,
-  migrating=false,
   __tostring = function (s) return s.type end,
   __concat = function (x,y) return tostring(x)..tostring(y) end,
   init = function(self) return self end
@@ -22,9 +21,9 @@ function _box:isVglue ()  return self.type == "vglue" end
 function _box:isUnshaped ()  return self.type == "unshaped" end
 function _box:isAlternative ()  return self.type == "alternative" end
 function _box:isVbox ()  return self.type == "vbox" end
+function _box:isMigrating ()  return self.migrating end
 function _box:isDiscardable () return self:isGlue() or self:isPenalty() end
 function _box:isPenalty ()  return self.type == "penalty" end
-function _box:isHPenalty ()  return self.type == "penalty" and self.migrating == false end
 function _box:isDiscretionary ()  return self.type == "discretionary" end
 
 function _box:isKern ()  return self.type == "kern" end
@@ -270,6 +269,14 @@ local _vbox = _box {
   end 
 }
 
+
+local _migrating = _hbox {
+  type = "migrating",
+  material = {},
+  value = {},
+  nodes = {},
+  migrating = true
+}
 SILE.nodefactory = {}
 
 function SILE.nodefactory.newHbox(spec)     return _hbox(spec) end
@@ -301,6 +308,7 @@ end
 function SILE.nodefactory.newPenalty(spec)  return _penalty(spec) end
 function SILE.nodefactory.newDiscretionary(spec)  return _disc(spec) end
 function SILE.nodefactory.newVbox(spec)  return _vbox(spec):init() end
+function SILE.nodefactory.newMigrating(spec)  return _migrating(spec) end
 
 -- This infinity needs to be smaller than an actual infinity but bigger than the infinite stretch
 -- added by the typesetter.

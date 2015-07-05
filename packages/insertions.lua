@@ -151,9 +151,8 @@ local insert = function (self, classname, vbox, nots)
     SILE.scratch.insertions.nextpage[#(SILE.scratch.insertions.nextpage)+1] = {class=classname, material=vbox}
   else
     SU.debug("insertions", "Hoping for deferral...")
-    SILE.typesetter:pushPenalty({ penalty = -20000, migrating = true })
+    SILE.typesetter:pushMigratingMaterial({ SILE.nodefactory.newPenalty({ penalty = -20000 }) })
     SILE.scratch.insertions.nextpage[#(SILE.scratch.insertions.nextpage)+1] = {class=classname, material=vbox}
-    SILE.typesetter:leaveHmode()
   end
 end
 
