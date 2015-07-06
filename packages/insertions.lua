@@ -122,9 +122,14 @@ SILE.insertions.processInsertion = function (ins, totalHeight, target)
   SU.debug("insertions", "Total height so far: ".. (- targetFrame.state.totals.shrinkage))
   SU.debug("insertions", "Incoming insertion: " .. h)
   SU.debug("insertions", "Max height: " .. options.maxHeight)
-  if (- targetFrame.state.totals.shrinkage) + h.length < options.maxHeight then
+  SU.debug("insertions", "Page target: "..target)
+  SU.debug("insertions", "Page shrinkage: "..ins.parent.state.totals.shrinkage)
+  SU.debug("insertions", "Total height: "..h)
+  if (- targetFrame.state.totals.shrinkage) + h.length < options.maxHeight
+    and target - (totalHeight + h) > 0 then
+    SU.debug("insertions", "fits")
     SILE.insertions.setShrinkage(ins.class, h)
-    target = ins.parent:height() - ins.parent.state.totals.shrinkage
+    target = SILE.typesetter.frame:height() - SILE.typesetter.frame.state.totals.shrinkage
     ins.actualHeight = ins.actualHeight + vglue.height
   elseif target - (totalHeight + h) < 0 then
     SU.debug("insertions", "no hope")
