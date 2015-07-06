@@ -197,6 +197,5 @@ return {
   exports = {
     initInsertionClass = initInsertionClass,
     insert = insert,
-    outputInsertions = outputInsertions
   }
 }
