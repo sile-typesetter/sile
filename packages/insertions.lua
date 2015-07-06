@@ -45,7 +45,6 @@ _insertionVbox.outputYourself = function (self)
 end
 _insertionVbox.actualHeight = 0
 _insertionVbox.frame = nil
--- _insertionVbox.isVbox = function () return true end
 _insertionVbox.active = 0
 _insertionVbox.type = "insertionVbox"
 _insertionVbox.class = nil
