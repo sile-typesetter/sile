@@ -155,11 +155,12 @@ SILE.defaultTypesetter = std.object {
     local vboxes = {}
     for index=1, #lines do
       local l = lines[index]
+      local migrating = {}
       -- Move any migrating material
       local nodes = {}
       for i =1, #l.nodes do local n = l.nodes[i]
         if n:isMigrating() then
-          for j=1,#n.material do vboxes[#vboxes+1] = n.material[j] end
+          for j=1,#n.material do migrating[#migrating+1] = n.material[j] end
         else
           nodes[#nodes+1] = n
         end
@@ -175,6 +176,7 @@ SILE.defaultTypesetter = std.object {
         vboxes[#vboxes+1] = self:leadingFor(v, self.state.previousVbox)
       end
       vboxes[#vboxes+1] = v
+      for i=1,#migrating do vboxes[#vboxes+1] = migrating[i] end
       self.state.previousVbox = v
       if pageBreakPenalty > 0 then
         SU.debug("typesetter", "adding penalty of "..pageBreakPenalty.." after "..v)
