@@ -1,0 +1,31 @@
+This is SILE 0.9.3-unreleased
+<tests/bug-132.sil>Open file	tests/bug-132.pdf
+Set paper size 	419.5275636	595.275597
+Begin page
+Mx 	20.97638
+My 	36.22374
+Set font 	DejaVu Sans Mono;9;200;normal;normal;;LTR
+T	6	(#)
+Mx 	80.57941
+T	6	(#)
+Mx 	20.97638
+My 	46.06163
+T	6 6 11 12 30 29 15 76 62 64 6 6	(##();:,i[]##)
+My 	57.00255
+T	6 6 48 48 58 58 52 52 42 42 6 6	(##MMWWQQGG##)
+My 	79.64903
+T	6	(#)
+Mx 	80.57941
+T	6	(#)
+Mx 	20.97638
+My 	89.48692
+T	6 6 11 12 30 29 15 76 62 64 6 6	(##();:,i[]##)
+My 	100.42784
+T	6 6 48 48 58 58 52 52 42 42 6 6	(##MMWWQQGG##)
+[1] Mx 	207.41759
+My 	553.73265
+Set font 	Gentium;10;200;normal;normal;;LTR
+T	17	(1)
+End page
+Finish
+
