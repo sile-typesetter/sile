@@ -57,6 +57,13 @@ SILE.insertions.setShrinkage = function(classname, amount)
     if not f.state.totals.shrinkage then f.state.totals.shrinkage = 0 end
     f.state.totals.shrinkage = f.state.totals.shrinkage + amount.length * ratio
   end
+
+  -- Calculate the total size of insertions so far this page as negative shrinkage...
+  f = SILE.getFrame(SILE.scratch.insertions.classes[classname].insertInto)
+  if not f.state.totals then f:init() end
+  if not f.state.totals.shrinkage then f.state.totals.shrinkage = 0 end
+  f.state.totals.shrinkage = f.state.totals.shrinkage - amount.length
+
 end
 
 SILE.insertions.commitShrinkage = function(classname)
@@ -73,6 +80,10 @@ SILE.insertions.commitShrinkage = function(classname)
     f:constrain("height", newHeight)
     f.state.totals.shrinkage = 0
   end
+
+  f = SILE.getFrame(SILE.scratch.insertions.classes[classname].insertInto)
+  if not f.state.totals then f:init() end -- May be a frame that has not been entered yet
+  if not f.state.totals.shrinkage then f.state.totals.shrinkage = 0 end
 end
 
 SILE.insertions.increaseInsertionFrame = function(classname, amount)
@@ -106,18 +117,23 @@ SILE.insertions.processInsertion = function (ins, totalHeight, target)
     table.insert(ins.material,1,vglue)
   end
   local h = ins.actualHeight + vglue.height
-
-  if targetFrame:height() + h < options.maxHeight then
-    SU.debug("insertions", "fits")
+  if not targetFrame.state.totals then targetFrame:init() end
+  if not targetFrame.state.totals.shrinkage then targetFrame.state.totals.shrinkage = 0 end
+  SU.debug("insertions", "Total height so far: ".. (- targetFrame.state.totals.shrinkage))
+  SU.debug("insertions", "Incoming insertion: " .. h)
+  SU.debug("insertions", "Max height: " .. options.maxHeight)
+  if (- targetFrame.state.totals.shrinkage) + h.length < options.maxHeight then
     SILE.insertions.setShrinkage(ins.class, h)
     target = ins.parent:height() - ins.parent.state.totals.shrinkage
     ins.actualHeight = ins.actualHeight + vglue.height
   elseif target - (totalHeight + h) < 0 then
     SU.debug("insertions", "no hope")
+    return target, SILE.nodefactory.newPenalty({penalty = -20000 })
   else
     SU.debug("insertions", "split")
+    return target, SILE.nodefactory.newPenalty({penalty = -20000 })
   end
-  return target
+  return target, ins
 end
 
 SILE.insertions.commit = function(nl)
@@ -145,6 +161,7 @@ end
 
 SILE.typesetter:registerPageBreakHook(function (self,nl)
   SILE.scratch.insertions.typesetters = {}
+  SILE.scratch.insertions.thispage = {}
   SILE.insertions.commit(nl)  
   return nl
 end)
