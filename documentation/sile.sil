@@ -525,11 +525,11 @@ Here are a few more examples of SILE commands:
 
 \begin{verbatim}
 \line
-\\eject                               \% A command with no parameters or argument
+\\eject                                   \% A command with no parameters or argument
  
-\\font[family=Times,size=10pt]           \% Parameters, but no argument
+\\font[family=Times,size=10pt]            \% Parameters, but no argument
 
-\\chapter\{Introducing SILE\}             \% Argument but no parameters
+\\chapter\{Introducing SILE\}               \% Argument but no parameters
  
 \\font[family=Times,size=10pt]\{Hi there!\} \% Parameters and argument
 \line
