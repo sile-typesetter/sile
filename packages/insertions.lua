@@ -84,13 +84,19 @@ SILE.insertions.increaseInsertionFrame = function(classname, amount)
   if stealPosition == "bottom" then f:relax("top") end
 end
 
+SILE.insertions.removeAddedSkip = function (ins)
+  while ins.material[1] and ins.material[1]:isVglue() and not ins.material[1].explicit do
+    table.remove(ins.material, 1)
+  end
+end
+
 SILE.insertions.processInsertion = function (ins, totalHeight, target)
   local options = SILE.scratch.insertions.classes[ins.class]
   local targetFrame = SILE.getFrame(ins.frame)
   local vglue
-  if not SILE.scratch.insertions.thispage[ins.class] then
-    -- XXX This may get added more than once?
-    SILE.scratch.insertions.thispage[ins.class] = {}
+  SILE.insertions.removeAddedSkip(ins)
+  if not SILE.scratch.insertions.thispage[ins.class] or not SILE.scratch.insertions.thispage[ins.class][1] then
+    SILE.scratch.insertions.thispage[ins.class] = {ins}
     if options["topSkip"] then
       vglue = SILE.nodefactory.newVglue({ height = options["topSkip"] })
       table.insert(ins.material,1,vglue)
