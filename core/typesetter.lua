@@ -282,8 +282,7 @@ SILE.defaultTypesetter = std.object {
             end
         end
       elseif v.skiptype == "explicit" then
-        v.migrating = true
-        self.state.nodes[#(self.state.nodes)+1] = v
+        SILE.typesetter:pushMigratingMaterial({v})
       end
     end
     while self.state.nodes[#self.state.nodes] and self.state.nodes[#self.state.nodes]:isPenalty() or self.state.nodes[#self.state.nodes] == SILE.nodefactory.zeroHbox do
