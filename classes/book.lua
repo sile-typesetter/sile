@@ -32,7 +32,6 @@ book.finish = function ()
 end
 
 book.endPage = function(self)
-  book:outputInsertions()
   book:moveTocNodes()
 
   if (book:oddPage() and SILE.scratch.headers.right) then
