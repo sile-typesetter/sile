@@ -23,7 +23,9 @@ local initInsertionClass = function (self, classname, options)
   SILE.scratch.insertions.classes[classname] = options
 end
 
-local _insertionVbox = SILE.nodefactory.newVbox({})
+local _insertionVbox = SILE.nodefactory.newVbox({
+  __tostring = function(self) return "I<"..self.material..">" end
+})
 _insertionVbox.outputYourself = function (self)
   local t = SILE.scratch.insertions.typesetters[self.class]
   if not t then

@@ -271,11 +271,13 @@ local _vbox = _box {
 
 
 local _migrating = _hbox {
-  type = "migrating",
   material = {},
   value = {},
   nodes = {},
-  migrating = true
+  migrating = true,
+  __tostring = function (this)
+    return "<M: "..this.material .. ">"
+  end
 }
 SILE.nodefactory = {}
 
