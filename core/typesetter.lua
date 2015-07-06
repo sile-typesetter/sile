@@ -276,18 +276,18 @@ SILE.defaultTypesetter = std.object {
     local oldqueue = self.state.outputQueue
     self.state.outputQueue = {}
     while luaSucks(table.remove(oldqueue,1)) do
-      if not v:isVglue() and not v:isPenalty() then
-        for i=1,#(v.nodes) do
-            if v.nodes[i]:isDiscretionary() then
-              v.nodes[i].used = 0 -- HACK HACK HACK
-            end
-            -- HACK HACK HACK HACK HACK
-            if not (v.nodes[i]:isGlue() and (v.nodes[i].value == "lskip" or v.nodes[i].value == "rskip")) then
-              self.state.nodes[#(self.state.nodes)+1] = v.nodes[i]
-            end
-        end
-      elseif v.skiptype == "explicit" then
+      if v.type == "insertionVbox" or v.skiptype == "explicit" then
         SILE.typesetter:pushMigratingMaterial({v})
+      elseif not v:isVglue() and not v:isPenalty() then
+        for i=1,#(v.nodes) do
+          if v.nodes[i]:isDiscretionary() then
+            v.nodes[i].used = 0 -- HACK HACK HACK
+          end
+          -- HACK HACK HACK HACK HACK
+          if not (v.nodes[i]:isGlue() and (v.nodes[i].value == "lskip" or v.nodes[i].value == "rskip")) then
+            self.state.nodes[#(self.state.nodes)+1] = v.nodes[i]
+          end
+        end
       end
     end
     while self.state.nodes[#self.state.nodes] and self.state.nodes[#self.state.nodes]:isPenalty() or self.state.nodes[#self.state.nodes] == SILE.nodefactory.zeroHbox do
