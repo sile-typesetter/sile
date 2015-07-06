@@ -46,6 +46,8 @@ SILE.pagebuilder = {
         else
           totalHeight = totalHeight + vbox.height
         end
+      elseif vbox.type == "insertionVbox" then
+        target = SILE.insertions.processInsertion(vbox, totalHeight, target)
       end
       local left = target - totalHeight.length
       SU.debug("pagebuilder", "I have " .. tostring(left) .. "pts left");

@@ -5,6 +5,8 @@ SILE.scratch.insertions = {
   nextpage = {}
 }
 
+SILE.insertions = {}
+
 local initInsertionClass = function (self, classname, options)
   SU.required(options, "insertInto", "initializing insertions")
   SU.required(options, "stealFrom", "initializing insertions")
@@ -29,27 +31,24 @@ _insertionVbox.outputYourself = function (self)
     t:init(SILE.getFrame(self.frame))
     SILE.scratch.insertions.typesetters[self.class] = t
   end
-  if self.material:isVglue() then
-    self.material:outputYourself(t, self.material)
-  else  -- Unvbox
-    for i,node in pairs(self.material.nodes) do
-      node:outputYourself(t, node)
+  for i = 1,#self.material do local n = self.material[i]
+    if n:isVglue() then
+      n:outputYourself(t, n)
+    else  -- Unvbox
+      for i,node in pairs(n.nodes) do
+        node:outputYourself(t, node)
+      end
     end
   end
 end
 _insertionVbox.actualHeight = 0
 _insertionVbox.frame = nil
-_insertionVbox.isVbox = function () return true end
+-- _insertionVbox.isVbox = function () return true end
 _insertionVbox.active = 0
-_insertionVbox.subtype = "insertionVbox"
+_insertionVbox.type = "insertionVbox"
 _insertionVbox.class = nil
 
-SILE.typesetter.pageTarget = function (self)
-  if not self.frame.state.totals.shrinkage then self.frame.state.totals.shrinkage = 0 end
-  return self.frame:height() - self.frame.state.totals.shrinkage
-end
-
-local setShrinkage = function(classname, amount)
+SILE.insertions.setShrinkage = function(classname, amount)
   SU.debug("insertions", "Shrinking main box by "..amount.length)
   local reduceList = SILE.scratch.insertions.classes[classname].stealFrom
   for fName, ratio in pairs(reduceList) do local f = SILE.getFrame(fName)
@@ -59,7 +58,7 @@ local setShrinkage = function(classname, amount)
   end
 end
 
-local commitShrinkage = function(classname)
+SILE.insertions.commitShrinkage = function(classname)
   local opts = SILE.scratch.insertions.classes[classname]
   local reduceList = opts["stealFrom"]
   local stealPosition = opts["steal-position"] or "bottom"
@@ -75,7 +74,7 @@ local commitShrinkage = function(classname)
   end
 end
 
-local increaseInsertionFrame = function(classname, amount)
+SILE.insertions.increaseInsertionFrame = function(classname, amount)
   local opts = SILE.scratch.insertions.classes[classname]
   local stealPosition = opts["steal-position"] or "bottom"
   local f = SILE.getFrame(opts["insertInto"])
@@ -84,113 +83,64 @@ local increaseInsertionFrame = function(classname, amount)
   if stealPosition == "bottom" then f:relax("top") end
 end
 
-local addInsertion = function(classname, material)
-  setShrinkage(classname, material.height)
-  if not SILE.scratch.insertions.thispage[classname] then SILE.scratch.insertions.thispage[classname] = {} end
-  local ins = SILE.scratch.insertions.thispage[classname]
-  ins[#ins+1] = material
-  table.insert(SILE.typesetter.state.nodes, _insertionVbox {
-    class = classname,
-    material = material,
-    actualHeight = material.height,
-    frame = SILE.scratch.insertions.classes[classname].insertInto
+SILE.insertions.processInsertion = function (ins, totalHeight, target)
+  local options = SILE.scratch.insertions.classes[ins.class]
+  local targetFrame = SILE.getFrame(ins.frame)
+  local vglue
+  if not SILE.scratch.insertions.thispage[ins.class] then
+    -- XXX This may get added more than once?
+    SILE.scratch.insertions.thispage[ins.class] = {}
+    if options["topSkip"] then
+      vglue = SILE.nodefactory.newVglue({ height = options["topSkip"] })
+      table.insert(ins.material,1,vglue)
+    end
+  else
+    vglue = SILE.nodefactory.newVglue({ height = options["interInsertionSkip"] })  
+    table.insert(ins.material,1,vglue)
+  end
+  local h = ins.actualHeight + vglue.height
+
+  if targetFrame:height() + h < options.maxHeight then
+    SU.debug("insertions", "fits")
+    SILE.insertions.setShrinkage(ins.class, h)
+    target = ins.parent:height() - ins.parent.state.totals.shrinkage
+    ins.actualHeight = ins.actualHeight + vglue.height
+  elseif target - (totalHeight + h) < 0 then
+    SU.debug("insertions", "no hope")
+  else
+    SU.debug("insertions", "split")
+  end
+  return target
+end
+
+SILE.insertions.commit = function(nl)
+  for i=1,#nl do n = nl[i]
+    if n.type == "insertionVbox" then
+      SILE.insertions.increaseInsertionFrame(n.class, n.actualHeight)
+      SILE.insertions.commitShrinkage(n.class)
+    end
+  end
+end
+
+local insert = function (self, classname, vbox)
+  local thisclass = SILE.scratch.insertions.classes[classname]
+  if not thisclass then SU.error("Uninitialized insertion class "..classname) end
+  SILE.typesetter:pushMigratingMaterial({
+    _insertionVbox {
+        class = classname,
+        material = { vbox },
+        actualHeight = vbox.height,
+        frame = thisclass.insertInto,
+        parent = SILE.typesetter.frame
+      }      
   })
 end
 
-local heightSoFar = function(classname)
-  local h = 0
-  if not (SILE.scratch.insertions.thispage[classname]) then return 0 end
-  for i = 1,#(SILE.scratch.insertions.thispage[classname]) do
-    local ins = SILE.scratch.insertions.thispage[classname][i]
-    h = h + ins.height.length + ins.depth
-  end
-  return h
-end
-
-local mainFrameHeightSoFar = function()
-  local heightOfBodySoFar = SILE.pagebuilder.collateVboxes(SILE.typesetter.state.outputQueue)
-  local nodes = std.tree.clone(SILE.typesetter.state.nodes)
-  SILE.typesetter:pushState()
-  SILE.typesetter.state.nodes = nodes
-  SILE.typesetter:leaveHmode()
-  local upcomingHeight = SILE.pagebuilder.collateVboxes(SILE.typesetter.state.outputQueue)
-  SILE.typesetter:popState()
-  SU.debug("insertions", "Height on the main list is ".. (heightOfBodySoFar.height +heightOfBodySoFar.depth) .. ", upcoming height is "..(upcomingHeight.height + upcomingHeight.depth))
-  return heightOfBodySoFar.height + upcomingHeight.height + heightOfBodySoFar.depth + upcomingHeight.depth
-end
-
-local insert = function (self, classname, vbox, nots)
-  local thisclass = SILE.scratch.insertions.classes[classname]
-  if not thisclass then SU.error("Uninitialized insertion class "..classname) end
-  local opts = SILE.scratch.insertions.classes[classname]
-
-  if not SILE.scratch.insertions.thispage[classname] then
-    SILE.scratch.insertions.thispage[classname] = {}
-    if thisclass["topSkip"] and not nots then
-      local vglue = SILE.nodefactory.newVglue({ height = thisclass["topSkip"] })
-      addInsertion(classname, vglue)
-    end
-  elseif thisclass["interInsertionSkip"] then
-    local vglue = SILE.nodefactory.newVglue({ height = thisclass["interInsertionSkip"] })
-    addInsertion(classname, vglue)
-  end
-
-  local mfhsf = mainFrameHeightSoFar()
-  SU.debug("insertions", "Incoming vbox is "..tostring(vbox))
-  SU.debug("insertions", "Maxheight is "..tostring(thisclass["maxHeight"]))
-  SU.debug("insertions", "Insertion height is "..tostring((heightSoFar(classname) + vbox.height + vbox.depth)))
-  SU.debug("insertions", "Target is "..SILE.typesetter:pageTarget())
-  local incomingHeight = (vbox.height + vbox.depth).length
-  local stealableSpace = (SILE.typesetter:pageTarget() - mfhsf).length
-  if (heightSoFar(classname) + incomingHeight - thisclass["maxHeight"]).length < 0 and
-    (incomingHeight < 0 or stealableSpace > incomingHeight) then
-    addInsertion(classname, vbox)
-  elseif stealableSpace <= 0 then
-    -- No hope; defer until next time
-    SU.debug("insertions", "Deferring to next page")
-    SILE.scratch.insertions.nextpage[#(SILE.scratch.insertions.nextpage)+1] = {class=classname, material=vbox}
-  else
-    SU.debug("insertions", "Hoping for deferral...")
-    SILE.typesetter:pushMigratingMaterial({ SILE.nodefactory.newPenalty({ penalty = -20000 }) })
-    SILE.scratch.insertions.nextpage[#(SILE.scratch.insertions.nextpage)+1] = {class=classname, material=vbox}
-  end
-end
-
-
 SILE.typesetter:registerPageBreakHook(function (self,nl)
-  -- Find the insertion vboxes
-  local totals = {}
-  for i = 1,#nl do local node = nl[i]
-    if node.nodes then
-      for i = 1,#node.nodes do local node = node.nodes[i]
-        if node.subtype == "insertionVbox" then
-          if not totals[node.class] then totals[node.class] = 0 end
-          totals[node.class] = totals[node.class] + node.actualHeight
-        end
-      end
-    end
-  end
-  -- Commit the size changes
-  for class, opts in pairs(SILE.scratch.insertions.classes) do
-    if totals[class] then increaseInsertionFrame(class, totals[class]) end
-  end
-  SILE.scratch.insertions.thispage = {}
   SILE.scratch.insertions.typesetters = {}
+  SILE.insertions.commit(nl)  
   return nl
 end)
-
-SILE.typesetter:registerNewPageHook(function(self)
-  -- Process deferred insertions
-  SILE.scratch.insertions.typesetters = {}
-  SILE.scratch.insertions.thispage = {}
-  if 0 == #SILE.scratch.insertions.nextpage then return end
-  for i = 1,#SILE.scratch.insertions.nextpage do local ins = SILE.scratch.insertions.nextpage[i]
-    insert(self,ins.class, ins.material, true)
-  end
-  SILE.scratch.insertions.nextpage = {}
-end)
-
-local outputInsertions = function(self)end
 
 return {
   init = function () end,
