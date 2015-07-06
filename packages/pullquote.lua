@@ -7,24 +7,27 @@ end, "The font style with which to typeset the author attribution.")
 
 SILE.registerCommand("pullquote", function(options, content)
 	local author = options.author or nil
-	SILE.typesetter:leaveHmode()
-	SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
-	SILE.typesetter:typeset("“")
+	local setback = options.setback or "2em"
 	SILE.settings.temporarily(function()
+		SILE.settings.set("document.rskip", SILE.nodefactory.newGlue(setback))
+		SILE.settings.set("document.lskip", SILE.nodefactory.newGlue(setback))
+		SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
 		SILE.call("pullquote:font")
+		SILE.typesetter:typeset("“")
 		SILE.process(content)
-	end)
-	SILE.typesetter:typeset("”")
-	if author then
-		SILE.settings.temporarily(function()
-			SILE.typesetter:leaveHmode()
-			SILE.call("pullquote:author-font")
-			SILE.call("raggedleft", {}, function ()
-				SILE.typesetter:typeset("— " .. author)
+		SILE.typesetter:typeset("”")
+		if author then
+			SILE.settings.temporarily(function()
+				SILE.typesetter:leaveHmode()
+				SILE.call("pullquote:author-font")
+				SILE.call("raggedleft", {}, function ()
+					SILE.typesetter:typeset("— " .. author)
+				end)
 			end)
-		end)
-	end
-	SILE.typesetter:leaveHmode()
+		else
+			SILE.call("par")
+		end
+	end)
 end, "Typesets its contents in a formatted blockquote.")
 
 return [[\begin{document}
@@ -39,7 +42,10 @@ an astonishing claim: to say everything depends on a guy who lived two thousand
 years ago, ate some fish, and got himself killed. And then ate some more fish.
 \end{pullquote}
 
-An optional value for \code{author} can be passed to add an attribution line.
+Optional values are available for:
+
+\listitem \code{author} to add an attribution line
+\listitem \code{setback} to add bilateral margins around the block
 
 If you want to specify what font the pullquote environment should use, you
 can redefine the \code{pullquote:font} command. By default it will be the same
