@@ -181,23 +181,28 @@ data.
 
 \chapter{Getting Started}
 
-Now that we understand some of what SILE is about and what it seeks to do, 
+Now that we understand some of what SILE is about and what it seeks to do,
 let’s dive into SILE itself.
 
 \section{A Basic SILE Document}
 
-Before we even show you how to use SILE, let’s have a look at an
-example of what SILE documents look like. This is the input that we’re
-going to feed to SILE, which it is going to process and turn into a PDF
-file. 
+Before we show you how to use SILE, let’s have a look at an example of what
+SILE documents look like. This is the input that we’re going to feed to SILE,
+which it is going to process and turn into a PDF file. Each of the examples can
+be saved as a text file and then use them as input to SILE.
 
-\note{These documents are plain text files; when you create your own
-SILE files, you will need to create them in a plain text editor such
-as \em{vi} or \em{emacs} on Unix, Sublime Text, TextMate or TextEdit on 
-OS X, or Notepad or Notepad+ on Windows, save them as a text file and
-then use them as input to SILE. Trying to create these files in a 
-word processor such as Word will not work, as they will not be saved 
-with the word processor’s formatting, rather than in a plain text format.}
+\note{These documents are \em{plain text} files; when you create your own SILE
+files, you will need to create them in a plain text editor. Trying to create
+these files in a word processor such as Word will not work as they will be
+saved with the word processor’s formatting rather than in a plain text format.
+Examples of good text editors include cross platform editors such as Atom and
+Sublime Text which are GUI oriented or Vim and Emacs which are more keyboard
+command oriented. Depending on your operating system there are other good
+choices such as Notepad++ on Windows or TextMate on OS X. You can also get
+started more simply with one of the basic editors built into your desktop
+environment such as Notepad on Windows, TextEdit on OS X, Gedit on Gnome, Kate
+on KDE, etc. For comparisons of text editors see
+\url{http://alternativeto.net/tag/text-editor/} and select your platform.}
 
 To begin with, here’s the most basic SILE file of all:
 
@@ -212,25 +217,29 @@ Hello SILE!
 We’ll pick apart this document in the next chapter, but for now take it on
 trust that this is what a SILE document looks like.
 
-At risk of belabouring the obvious, this is going to produce an A4-sized
-PDF document, with the text \examplefont{Hello SILE} at the top left, and the page
+At the risk of belabouring the obvious, this is going to produce an A4-sized PDF
+document, with the text \examplefont{Hello SILE} at the top left, and the page
 number (1) centered at the bottom. How are we going to get to that PDF?
 
 \section{Installing}
 
-First of all, we need to get hold of SILE and get it running on our computer.
+First of all, we need to get ahold of SILE and get it running on our computer.
 Downloads of SILE can be obtained from the home page at \silehp.
 
 \subsection{Installing Preconfigured Packgages}
 
 For OS X machines the recommended way to install SILE is through the Homebrew
-formula. Once you have Homebrew running (see http://brew.sh), installing SILE
-is as easy as running:
+package manager. Once you have Homebrew running (see \url{http://brew.sh}),
+installing SILE is as easy as running:
 
 \listitem{\code{brew install sile}}
 
-The formula can also compile SILE from the current Git HEAD version. To test
-the latest unlreleased code you can install using:
+If you have not used Lua programs before, that will prompt you to manually
+install a couple dependencies. After running the commands it provides you can
+run the install comand again to complete the instalation.
+
+The formula also has instruction that can compile SILE from the current
+Git HEAD version. To test the latest unlreleased code you can install using:
 
 \listitem{\code{brew install sile --HEAD}}
 
@@ -278,8 +287,11 @@ libraries if they’re not already installed:
 \listitem{\code{luarocks install luafilesystem}}
 
 Once you have these requirements in place, you should then be able to unpack
-the file that you downloaded from SILE’s home page, change to that directory,
-and run:
+the file that you downloaded from SILE’s home page, change to that directory
+\footnote{If you downloaded a copy of the SILE source by cloning the git
+repository rather than dowloading one of the release packages you will also
+need to run \code{./bootstrap.sh} to setup the configure script at this point
+before continuing to the next step.}, and run:
 
 \listitem{\code{./configure; make}}
 
@@ -310,22 +322,22 @@ command line run:
 
 \listitem{\code{sile hello}}
 
-(SILE will automatically provide the extension \code{.sil} to input files if it
-is not provided by the user.)
+\note{SILE will automatically provide the extension \code{.sil} to input files
+if it is not provided by the user.}
 
-Once again, this should produce an output file \code{hello.pdf}. Congratulations—you
-have just typeset your first document with SILE.
+Once again, this should produce an output file \code{hello.pdf}.
+Congratulations—you have just typeset your first document with SILE!
 
 \section{Let’s Do Something Cool}
 
 In \code{examples/article-template.xml}, you will find a typical DocBook 5.0
 article. Normally turning DocBook to print involves a curious dance of XSLT
 processors, format object processors and/or strange LaTeX packages. But SILE
-can read XML files and it also comes with a \code{docbook} class, which tells SILE
-how to render (admittedly, a subset of) the DocBook tags onto a page.
+can read XML files and it also comes with a \code{docbook} class, which tells
+SILE how to render (admittedly, a subset of) the DocBook tags onto a page.
 
-Turning \code{examples/article-template.xml} into \code{examples/article-template.pdf}
-is now as simple as:
+Turning \code{examples/article-template.xml} into
+\code{examples/article-template.pdf} is now as simple as:
 
 \begin{verbatim}
 \line
@@ -337,10 +349,10 @@ Loading docbook
 \end{verbatim}
 
 The \code{-I} flag loads up a \em{class} before reading the input file; after
-this has been loaded, the DocBook file can be read directly and its tags interpreted
-as SILE commands.
+this has been loaded, the DocBook file can be read directly and its tags
+interpreted as SILE commands.
 
-In Chapter 10, we’ll look at how the \code{docbook} class works, and how you 
+In Chapter 10, we’ll look at how the \code{docbook} class works, and how you
 can define processing expectations for other XML formats.
 
 \chapter{SILE’s Input Language}
