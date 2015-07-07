@@ -4,22 +4,22 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	40.97638
 My 	38.13097
-Set font 	Scheherazade;16;200;normal;normal;;LTR
-T	55 88 69 82 72 69 86 72	(Standard)
-Mx 	88.80116
-T	37 86 69 70 77 71	(Arabic)
-Mx 	126.53219
-T	1028 879 725 31	(ههه;)
-Mx 	150.12259
-T	55 77 82 72 77	(Sindi)
-Mx 	180.43175
-T	1028 881 727 31	(ههه;)
-Mx 	206.51434
-T	69 82 72	(and)
-Mx 	228.76100
-T	57 86 72 89	(Urdu)
-Mx 	258.47640
-T	1029 880 728 18	(ههه.)
+Set font 	Lateef;16;200;normal;normal;;LTR
+T	60 93 74 87 77 74 91 77	(Standard)
+Mx 	88.35783
+T	42 91 74 75 82 76	(Arabic)
+Mx 	125.64553
+T	640 778 905 36	(ههه;)
+Mx 	148.85510
+T	60 82 87 77 82	(Sindi)
+Mx 	178.72093
+T	642 780 905 36	(ههه;)
+Mx 	204.90706
+T	74 87 77	(and)
+Mx 	226.71039
+T	62 91 77 94	(Urdu)
+Mx 	255.98246
+T	643 779 906 22	(ههه.)
 [1] Mx 	207.41759
 My 	553.73265
 Set font 	Gentium;10;200;normal;normal;;LTR
