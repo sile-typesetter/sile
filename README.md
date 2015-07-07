@@ -1,5 +1,4 @@
 [![Build Status](https://travis-ci.org/simoncozens/sile.svg?branch=master)](https://travis-ci.org/simoncozens/sile)
-[Program exited, press any key to close]
 
 ## What is SILE?
 
