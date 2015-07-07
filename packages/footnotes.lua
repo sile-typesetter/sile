@@ -23,6 +23,7 @@ SILE.registerCommand("footnote", function(options, content)
   local oldT = SILE.typesetter
   SILE.typesetter = SILE.typesetter {}
   SILE.typesetter:init(f)
+  SILE.typesetter.pageTarget = function () return 0xFFFFFF end
   local material = SILE.Commands["vbox"]({}, function()
     SILE.Commands["font"]({size = "9pt"}, function()
       SILE.typesetter:typeset(SILE.formatCounter(SILE.scratch.counters.footnote)..".")

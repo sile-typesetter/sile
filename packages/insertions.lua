@@ -121,6 +121,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   if not targetFrame.state.totals.shrinkage then targetFrame.state.totals.shrinkage = 0 end
   SU.debug("insertions", "Total height so far: ".. (- targetFrame.state.totals.shrinkage))
   SU.debug("insertions", "Incoming insertion: " .. h)
+  SU.debug("insertions", "Incoming insertion: " .. ins)
   SU.debug("insertions", "Max height: " .. options.maxHeight)
   SU.debug("insertions", "Page target: "..target)
   SU.debug("insertions", "Page shrinkage: "..ins.parent.state.totals.shrinkage)
@@ -131,12 +132,35 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
     SILE.insertions.setShrinkage(ins.class, h)
     target = SILE.typesetter.frame:height() - SILE.typesetter.frame.state.totals.shrinkage
     ins.actualHeight = ins.actualHeight + vglue.height
-  elseif (target - (totalHeight + h)).length < 0 then
-    SU.debug("insertions", "no hope")
-    table.insert(vboxlist, i, SILE.nodefactory.newPenalty({penalty = -20000 }))
   else
     SU.debug("insertions", "split")
-    table.insert(vboxlist, i, SILE.nodefactory.newPenalty({penalty = -20000 }))
+    local maxsize = target - totalHeight
+    if maxsize > options.maxHeight then maxsize = options.maxHeight end
+      print("Splitting ",ins.actualHeight, " into ", maxsize)
+    local split = SILE.pagebuilder.findBestBreak(ins.material[2].nodes, maxsize.length)
+    if split then
+
+      ins.material[2] = SILE.pagebuilder.collateVboxes(ins.material[2].nodes)
+      ins.actualHeight = ins.material[1].height + ins.material[2].height
+      local newvbox = SILE.pagebuilder.collateVboxes(split)
+      table.insert(vboxlist, i, 
+        _insertionVbox {
+          class = ins.class,
+          material = { newvbox },
+          actualHeight = newvbox.height,
+          frame = ins.frame,
+          parent = SILE.typesetter.frame
+        }
+      )
+      table.insert(vboxlist, i+1, SILE.nodefactory.newPenalty({penalty = -20000 }))      
+      for j = 1, #vboxlist do
+        print(j, (i==j and "###" or ""), vboxlist[j])
+      end
+      print("Split height is ", newvbox.height)
+      print(newvbox)
+      return target
+    end
+    table.insert(vboxlist, i+1, SILE.nodefactory.newPenalty({penalty = -20000 }))
   end
   return target
 end
