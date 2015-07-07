@@ -8,25 +8,20 @@ local makeUp = function ()
 end
 
 local leadingFor = function(this, vbox, previous)
-print("Leading ", previous, vbox)
   if not this.frame.state.totals.gridCursor then this.frame.state.totals.gridCursor = 0 end
   if type(vbox.height) == "table" then
     this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + vbox.height.length + previous.depth
   else
     this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + vbox.height + previous.depth
   end
-  g = makeUp()
-  print(g)
-  return g
+  return makeUp()
 end
 
 local pushVglue = function(this, spec)
   if not this.frame.state.totals.gridCursor then 
-    print("Setting")
     this.frame.state.totals.gridCursor = 0 
   end
   this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + spec.height.length
-  print("Adding")
   SILE.defaultTypesetter.pushVglue(this, spec)
   SILE.defaultTypesetter.pushVglue(this, makeUp())
 end
