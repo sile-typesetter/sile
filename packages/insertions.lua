@@ -98,6 +98,9 @@ SILE.insertions.removeAddedSkip = function (ins)
   while ins.material[1] and ins.material[1]:isVglue() and not ins.material[1].explicit do
     table.remove(ins.material, 1)
   end
+  local h = SILE.length.new()
+  for i= 1,#(ins.material) do h = h + ins.material[i].height end
+  ins.actualHeight = h
 end
 
 SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
@@ -131,7 +134,6 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
     SU.debug("insertions", "fits")
     SILE.insertions.setShrinkage(ins.class, h)
     target = SILE.typesetter.frame:height() - SILE.typesetter.frame.state.totals.shrinkage
-    ins.actualHeight = ins.actualHeight + vglue.height
   else
     SU.debug("insertions", "split")
     local maxsize = target - totalHeight
@@ -160,6 +162,7 @@ SILE.insertions.commit = function(nl)
   local done = {}
   for i=1,#nl do n = nl[i]
     if n.type == "insertionVbox" then
+
       SILE.insertions.increaseInsertionFrame(n.class, n.actualHeight)
       if not done[n.class] then 
         SILE.insertions.commitShrinkage(n.class)
