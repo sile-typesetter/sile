@@ -5,10 +5,12 @@ env:
   global:
    - LUAROCKS_BASE=luarocks-2.2.2
    - HARFBUZZ_BASE=harfbuzz-0.9.41
+   - GRAPHITE=true
   matrix:
    - LUA_VER=5.3 LUA_52_COMPAT=true LUA_53_BASE=lua-5.3.1
    - LUA_VER=5.3 LUA_52_COMPAT=false LUA_53_BASE=lua-5.3.1
    - LUA_VER=5.2
+   - LUA_VER=5.2 GRAPHITE=false
    - LUA_VER=5.1
 before_install:
  - export LUA_PKG=lua$LUA_VER LUA_DEV=liblua$LUA_VER-dev LUA_SFX=$LUA_VER
@@ -17,6 +19,9 @@ before_install:
      curl -Ls https://noto-website.storage.googleapis.com/pkgs/Noto$1-hinted.zip > $1.zip;
      unzip -d ~/.fonts -n $1.zip;
    }
+   # Note installing graphite must be done before adding the SIL PPA because
+   # their packages of the same name have broken dependencies
+ - if $GRAPHITE; then sudo apt-get install libgraphite2-dev; fi
    # Add SIL's PPA repository because it has newer versions of fonts
  - curl http://packages.sil.org/sil.gpg | sudo apt-key add -
  - echo 'deb http://packages.sil.org/ubuntu precise main' | sudo tee -a /etc/apt/sources.list
@@ -49,7 +54,7 @@ before_install:
  - ./configure $LUA_CONFIGURE_ARGS && sudo make && sudo make install && popd
  - wget http://www.freedesktop.org/software/harfbuzz/release/$HARFBUZZ_BASE.tar.bz2
  - tar xfj $HARFBUZZ_BASE.tar.bz2 && pushd $HARFBUZZ_BASE
- - ./configure && make && sudo make install && popd
+ - ./configure --with-graphite2=auto && make && sudo make install && popd
  - sudo ldconfig
    # Install SILE runtime dependencies
  - sudo luarocks install lpeg
