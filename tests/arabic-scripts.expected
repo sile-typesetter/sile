@@ -1,0 +1,29 @@
+This is SILE 0.9.3-unreleased
+<tests/arabic-scripts.sil>Open file	tests/arabic-scripts.pdf
+Set paper size 	419.5275636	595.275597
+Begin page
+Mx 	40.97638
+My 	38.13097
+Set font 	Scheherazade;16;200;normal;normal;;LTR
+T	55 88 69 82 72 69 86 72	(Standard)
+Mx 	88.80116
+T	37 86 69 70 77 71	(Arabic)
+Mx 	126.53219
+T	1028 879 725 31	(ههه;)
+Mx 	150.12259
+T	55 77 82 72 77	(Sindi)
+Mx 	180.43175
+T	1028 881 727 31	(ههه;)
+Mx 	206.51434
+T	69 82 72	(and)
+Mx 	228.76100
+T	57 86 72 89	(Urdu)
+Mx 	258.47640
+T	1029 880 728 18	(ههه.)
+[1] Mx 	207.41759
+My 	553.73265
+Set font 	Gentium;10;200;normal;normal;;LTR
+T	17	(1)
+End page
+Finish
+
