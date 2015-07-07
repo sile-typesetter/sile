@@ -84,7 +84,7 @@ SILE.pagebuilder = {
         if c == awful_bad or pi <= eject_penalty then
           SU.debug("pagebuilder", "outputting");
           local onepage = {}
-          if not bestBreak then bestBreak = i-1 end
+          if not bestBreak then bestBreak = i end
           for j=1,bestBreak do
             onepage[j] = table.remove(vboxlist,1)
           end
