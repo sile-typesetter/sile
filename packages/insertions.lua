@@ -70,7 +70,6 @@ SILE.insertions.commitShrinkage = function(classname)
   local opts = SILE.scratch.insertions.classes[classname]
   local reduceList = opts["stealFrom"]
   local stealPosition = opts["steal-position"] or "bottom"
-
   for fName, ratio in pairs(reduceList) do local f = SILE.getFrame(fName)
     if not f.state.totals.shrinkage then f.state.totals.shrinkage = 0 end
     local newHeight = f:height() - f.state.totals.shrinkage
@@ -101,7 +100,8 @@ SILE.insertions.removeAddedSkip = function (ins)
   end
 end
 
-SILE.insertions.processInsertion = function (ins, totalHeight, target)
+SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
+  local ins = vboxlist[i]
   local options = SILE.scratch.insertions.classes[ins.class]
   local targetFrame = SILE.getFrame(ins.frame)
   local vglue
@@ -125,7 +125,7 @@ SILE.insertions.processInsertion = function (ins, totalHeight, target)
   SU.debug("insertions", "Page target: "..target)
   SU.debug("insertions", "Page shrinkage: "..ins.parent.state.totals.shrinkage)
   SU.debug("insertions", "Total height: "..h)
-  if (- targetFrame.state.totals.shrinkage) + h.length < options.maxHeight
+  if (- targetFrame.state.totals.shrinkage) + h.length - options.maxHeight < 0
     and target - (totalHeight + h) > 0 then
     SU.debug("insertions", "fits")
     SILE.insertions.setShrinkage(ins.class, h)
@@ -133,19 +133,23 @@ SILE.insertions.processInsertion = function (ins, totalHeight, target)
     ins.actualHeight = ins.actualHeight + vglue.height
   elseif target - (totalHeight + h) < 0 then
     SU.debug("insertions", "no hope")
-    return target, SILE.nodefactory.newPenalty({penalty = -20000 })
+    table.insert(vboxlist, i, SILE.nodefactory.newPenalty({penalty = -20000 }))
   else
     SU.debug("insertions", "split")
-    return target, SILE.nodefactory.newPenalty({penalty = -20000 })
+    table.insert(vboxlist, i, SILE.nodefactory.newPenalty({penalty = -20000 }))
   end
-  return target, ins
+  return target
 end
 
 SILE.insertions.commit = function(nl)
+  local done = {}
   for i=1,#nl do n = nl[i]
     if n.type == "insertionVbox" then
       SILE.insertions.increaseInsertionFrame(n.class, n.actualHeight)
-      SILE.insertions.commitShrinkage(n.class)
+      if not done[n.class] then 
+        SILE.insertions.commitShrinkage(n.class)
+        done[n.class] = true
+      end
     end
   end
 end

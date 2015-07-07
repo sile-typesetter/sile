@@ -30,7 +30,7 @@ SILE.pagebuilder = {
     local totalHeight = SILE.length.new()
     local bestBreak = nil
     local leastC = inf_bad
-    SU.debug("pagebuilder", "Page builder called with "..#vboxlist.." nodes, "..target)
+    SU.debug("pagebuilder", "Page builder for frame "..SILE.typesetter.frame.id.." called with "..#vboxlist.." nodes, "..target)
     local started = false
     while i < #vboxlist do
       i = i + 1
@@ -47,7 +47,8 @@ SILE.pagebuilder = {
           totalHeight = totalHeight + vbox.height
         end
       elseif vbox.type == "insertionVbox" then
-        target, vbox = SILE.insertions.processInsertion(vbox, totalHeight, target)
+        target = SILE.insertions.processInsertion(vboxlist, i, totalHeight, target)
+        vbox = vboxlist[i]
       end
       local left = target - totalHeight.length
       SU.debug("pagebuilder", "I have " .. tostring(left) .. "pts left");
