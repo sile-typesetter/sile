@@ -45,12 +45,14 @@ SILE.registerCommand("grid", function(options, content)
 
   SILE.typesetter.leadingFor = leadingFor
   SILE.typesetter.pushVglue = pushVglue
-  SILE.typesetter.setVerticalGlue = function () end
   SILE.typesetter.frame.state.totals.gridCursor = 0
   SILE.typesetter.state.previousVbox = SILE.defaultTypesetter.pushVbox(SILE.typesetter,{})
-  SILE.typesetter:registerNewPageHook(function(this)
-    SILE.typesetter.frame.state.totals.gridCursor = 0
-    SILE.typesetter.state.previousVbox = SILE.defaultTypesetter.pushVbox(SILE.typesetter,{})
+  SILE.typesetter:registerNewPageHook(function (this)
+    this.frame.state.totals.gridCursor = 0
+    if this.state.outputQueue[1] then
+      table.insert(this.state.outputQueue, 1, SILE.nodefactory.newVbox({}))
+      table.insert(this.state.outputQueue, 2, leadingFor(this, this.state.outputQueue[2], this.state.outputQueue[1]))
+    end
   end)
 
 end, "Begins typesetting on a grid spaced at <spacing> intervals.")
