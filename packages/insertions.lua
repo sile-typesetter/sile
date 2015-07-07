@@ -125,13 +125,13 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   SU.debug("insertions", "Page target: "..target)
   SU.debug("insertions", "Page shrinkage: "..ins.parent.state.totals.shrinkage)
   SU.debug("insertions", "Total height: "..h)
-  if (- targetFrame.state.totals.shrinkage) + h.length - options.maxHeight < 0
-    and target - (totalHeight + h) > 0 then
+  if ((- targetFrame.state.totals.shrinkage) + h.length - options.maxHeight).length < 0
+    and (target - (totalHeight + h)).length > 0 then
     SU.debug("insertions", "fits")
     SILE.insertions.setShrinkage(ins.class, h)
     target = SILE.typesetter.frame:height() - SILE.typesetter.frame.state.totals.shrinkage
     ins.actualHeight = ins.actualHeight + vglue.height
-  elseif target - (totalHeight + h) < 0 then
+  elseif (target - (totalHeight + h)).length < 0 then
     SU.debug("insertions", "no hope")
     table.insert(vboxlist, i, SILE.nodefactory.newPenalty({penalty = -20000 }))
   else
