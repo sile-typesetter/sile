@@ -172,7 +172,9 @@ SILE.
 
 \section{Conclusion}
 
-SILE takes some textual instructions and turns them into PDF output. It has
+SILE\footnote{In case you’re wondering, the author pronounces it
+\font[family=Gentium Plus]{/saɪəl/}, to rhyme with “trial”.} {}takes some textual
+instructions and turns them into PDF output. It has
 features inspired by TeX and InDesign, but seeks to be more flexible,
 extensible and programmable than either of them. It’s useful both for
 typesetting documents (such as this very documentation) written in the SILE
