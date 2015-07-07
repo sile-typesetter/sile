@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/simoncozens/sile.svg?branch=master)](https://travis-ci.org/simoncozens/sile)
+[Program exited, press any key to close]
 
 ## What is SILE?
 
@@ -39,12 +40,14 @@ You also need to install the following Lua libraries using [luarocks][] (downloa
 * `luafilesystem`
 * `lgi` (required for Pango-Cairo only)
 
-Once your dependencies are installed, run
+If you are building from a a git clone, start by running the script to setup your environment (if you are using the source tarball this is unnecessary):
 
-* `./configure ; make install`
+    $ ./bootstrap.sh
 
-(If you are running SILE from git, first run `bootstrap.sh` and then
-configure and make.)
+Once your dependencies are installed, run:
+
+    $ ./configure
+    $ make install
 
 This will place the SILE libraries and executable in a sensible location.
 
