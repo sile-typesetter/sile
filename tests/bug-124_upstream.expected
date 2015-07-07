@@ -1,0 +1,30 @@
+This is SILE 0.9.3-unreleased
+<tests/bug-124.sil>Open file	tests/bug-124.pdf
+Set paper size 	419.5275636	595.275597
+Begin page
+Mx 	359.43009
+My 	66.15050
+Set font 	Noto Naskh Arabic;40;200;normal;normal;;RTL
+T		(ألمّ)
+Mx 	318.29717
+Set font 	Scheherazade;40;200;normal;normal;;RTL
+T	120	(—)
+Mx 	279.00019
+T		(ألمّ)
+Mx 	369.54728
+My 	107.38878
+T	120	(—)
+Mx 	315.50548
+T		(إِنْ)
+Mx 	369.54728
+My 	157.86534
+T	120	(—)
+Mx 	284.34919
+T		(السُّــرورُ)
+[1] Mx 	207.41759
+My 	553.73265
+Set font 	Gentium;10;200;normal;normal;;LTR
+T	17	(1)
+End page
+Finish
+
