@@ -2,11 +2,19 @@
 \script[src=packages/lorem]
 \script[src=packages/grid]
 \script[src=packages/frametricks]
+\set[parameter=document.parskip,value=0pt]
 \showframe
-\grid[spacing=14pt]
+\grid[spacing=20pt]
 \grid:debug
+\lorem[words=50]\par
 
-\lorem[words=5]\par
-\font[size=12pt]{L}orem \lorem[words=100]
+\font[size=10pt]{ONE \lorem[words=50]}\par
+\skip[height=1.2ex]\font[size=14pt]{TWO \lorem[words=50]}\par
+
+\font[size=8pt]{THREE \lorem[words=50]}\par
+
+\font[size=8pt]{THREE \lorem[words=50]}\par
+\grid:debug
+\showframe
 
 \end{document}
