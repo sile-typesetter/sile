@@ -762,13 +762,13 @@ Mx 	60.83981
 T	71 65 71	(gag)
 Mx 	76.15645
 T	85 83 14	(us.)
-Mx 	34.82079
-My 	28.85180
-Set font 	Gentium;10;200;italic;normal;;LTR
+Mx 	304.05152
+My 	28.10961
+Set font 	Gentium;9;200;italic;normal;;LTR
 T	16 14 17	(0.1)
-Mx 	47.26482
+Mx 	314.88843
 T	51 80 76 73 84	(Split)
-Mx 	66.65221
+Mx 	331.97437
 T	38 79 79 84 78 79 84 69	(Footnote)
 [1] Mx 	195.46105
 My 	519.80194
