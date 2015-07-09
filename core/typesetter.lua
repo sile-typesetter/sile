@@ -216,6 +216,7 @@ SILE.defaultTypesetter = std.object {
     local target = self:pageTarget()
     pageNodeList, self.state.lastPenalty = SILE.pagebuilder.findBestBreak(self.state.outputQueue, target)
     if not pageNodeList then -- No break yet
+      self:runHooks("nopagebreak")
       return false
     end
     pageNodeList = self:runHooks("pagebreak",pageNodeList)

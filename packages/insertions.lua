@@ -193,6 +193,13 @@ SILE.typesetter:registerPageBreakHook(function (self,nl)
   return nl
 end)
 
+SILE.typesetter:registerHook("nopagebreak", function (self)
+  for k,v in pairs(SILE.scratch.insertions.thispage) do
+    local thisclass = SILE.scratch.insertions.classes[k]
+    SILE.getFrame(thisclass.insertInto).state.totals.shrinkage = 0
+  end
+end)
+
 return {
   init = function () end,
   exports = {
