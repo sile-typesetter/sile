@@ -70,10 +70,17 @@ SILE.registerCommand("book:sectioning", function (options, content)
   local level = SU.required(options, "level", "book:sectioning")
   SILE.call("increment-multilevel-counter", {id = "sectioning", level = options.level})
   SILE.call("tocentry", {level = options.level}, content)
+  local lang = SILE.settings.get("document.language")
   if options.numbering == nil or options.numbering == "yes" then
-    if options.prenumber then SILE.call(options.prenumber) end
+    if options.prenumber then
+      if SILE.Commands[options.prenumber..":"..lang] then options.prenumber = options.prenumber..":"..lang end
+      SILE.call(options.prenumber)
+    end
     SILE.call("show-multilevel-counter", {id="sectioning"})
-    if options.postnumber then SILE.call(options.postnumber) end
+    if options.postnumber then
+      if SILE.Commands[options.postnumber..":"..lang] then options.postnumber = options.postnumber..":"..lang end
+      SILE.call(options.postnumber)
+    end
   end
 end)
 
