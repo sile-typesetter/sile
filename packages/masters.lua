@@ -8,7 +8,11 @@ local function defineMaster (self, args)
   SILE.scratch.masters[args.id] = {frames = {}, firstContentFrame = nil}
   for k,spec in pairs(args.frames) do
     spec.id=k
-    SILE.scratch.masters[args.id].frames[k] = SILE.newFrame(spec)
+    if spec.solve then
+      SILE.scratch.masters[args.id].frames[k] = spec
+    else
+      SILE.scratch.masters[args.id].frames[k] = SILE.newFrame(spec)
+    end
   end
   SILE.frames = {page = SILE.frames.page}
 
