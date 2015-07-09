@@ -183,3 +183,9 @@ SILE.tokenizers.ja = function(string)
 end
 
 SILE.hyphenator.languages.ja = {patterns={}}
+
+-- Internationalisation stuff
+SILE.doTexlike([[%
+\define[command=book:chapter:pre:ja]{第}%
+\define[command=book:chapter:post]{章 \par}%
+]])
