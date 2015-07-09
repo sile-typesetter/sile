@@ -84,6 +84,8 @@ SILE.doTexlike([[%
 \define[command=book:chapter:post]{\par}%
 \define[command=book:section:post]{ }%
 \define[command=book:subsection:post]{ }%
+\define[command=book:left-running-head-font]{\font[size=9pt]}%
+\define[command=book:right-running-head-font]{\font[size=9pt,style=italic]}%
 ]])
 end
 
@@ -101,7 +103,12 @@ SILE.registerCommand("chapter", function (options, content)
     }, content)
   end)
   SILE.Commands["book:chapterfont"]({}, content);
-  SILE.Commands["left-running-head"]({}, content)
+  SILE.Commands["left-running-head"]({}, function()
+    SILE.settings.temporarily(function()
+      SILE.call("book:left-running-head-font")
+      SILE.process(content)
+    end)
+  end)
   SILE.call("bigskip")
   SILE.call("nofoliosthispage")
 end, "Begin a new chapter");
@@ -121,9 +128,9 @@ SILE.registerCommand("section", function (options, content)
   end)
   if not SILE.scratch.counters.folio.off then
     SILE.Commands["right-running-head"]({}, function()
+      SILE.call("book:right-running-head-font")
       SILE.call("rightalign", {}, function ()
         SILE.settings.temporarily(function()
-          SILE.settings.set("font.style", "italic")
           SILE.call("show-multilevel-counter", {id="sectioning", level =2})
           SILE.typesetter:typeset(" ")
           SILE.process(content)
