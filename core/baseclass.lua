@@ -19,28 +19,29 @@ function SILE.doTexlike (doc)
   SILE.process(SILE.inputs.TeXlike.docToTree(doc))
 end
 
+-- Need the \define command *really* early on in SILE startup
+local commandStack = {};
+SILE.registerCommand("define", function (options, content)
+  SU.required(options, "command", "defining command")
+  SILE.registerCommand(options["command"], function(o,c)
+    --local prevState = SILE.documentState;
+    --SILE.documentState = std.tree.clone( prevState )
+    local depth = #commandStack
+    table.insert(commandStack, c)
+    SILE.process(content)
+    while (#commandStack > depth) do table.remove(commandStack) end
+    --SILE.documentState = prevState
+  end, options.help, SILE.currentlyProcessingFile)
+end, "Define a new macro. \\define[command=example]{ ... \\process }")
+
+SILE.registerCommand("comment", function(o,c) end, "Ignores any text within this command's body.");
+SILE.registerCommand("process", function()
+  SILE.process(table.remove(commandStack));
+end, "Within a macro definition, processes the contents of the macro body.")
+
 SILE.baseClass = std.object {
   registerCommands = (function()
     SILE.registerCommand("\\", function(o,c)  SILE.typesetter:typeset("\\") end)
-
-    local commandStack = {};
-    SILE.registerCommand("define", function (options, content)
-      SU.required(options, "command", "defining command")
-      SILE.registerCommand(options["command"], function(o,c)
-        --local prevState = SILE.documentState;
-        --SILE.documentState = std.tree.clone( prevState )
-        local depth = #commandStack
-        table.insert(commandStack, c)
-        SILE.process(content)
-        while (#commandStack > depth) do table.remove(commandStack) end
-        --SILE.documentState = prevState
-      end, options.help, SILE.currentlyProcessingFile)
-    end, "Define a new macro. \\define[command=example]{ ... \\process }")
-
-    SILE.registerCommand("comment", function(o,c) end, "Ignores any text within this command's body.");
-    SILE.registerCommand("process", function()
-      SILE.process(table.remove(commandStack));
-    end, "Within a macro definition, processes the contents of the macro body.")
 
     SILE.registerCommand("script", function(options, content)
       if (options["src"]) then
