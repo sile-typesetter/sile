@@ -1,0 +1,14 @@
+\begin[papersize=a4]{document}
+\script[src=packages/lorem]
+
+\raggedleft{\em{Ragged left} \lorem[words=200]}\bigskip
+
+\raggedright{\em{Ragged right} {\lorem[words=200]}}\bigskip
+
+\center{\em{Centered} \lorem[words=40]}\bigskip
+
+\justified {\em{Justified} \lorem[words=200]}\bigskip
+
+\rightalign{\em{Right aligned} \lorem[words=10]}\bigskip
+
+\end{document}
