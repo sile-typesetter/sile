@@ -44,8 +44,12 @@ SILE.registerCommand("show-hanmen", function(options, content)
 end)
 
 local declareHanmenFrame = function (self, id, spec)
-  spec.id = id
-  SILE.frames[id] = nil
+  if id then
+    spec.id = id
+    SILE.frames[id] = nil
+  else
+    spec = id
+  end
   spec.hanmen = {
     gridsize = SILE.toPoints(SU.required(spec, "gridsize", "declaring the kihonhanmen")),
     linegap = SILE.toPoints(SU.required(spec, "linegap", "declaring the kihonhanmen")),
@@ -64,8 +68,11 @@ local declareHanmenFrame = function (self, id, spec)
   local skip = spec.hanmen.linegap + spec.hanmen.gridsize
   SILE.settings.set("document.baselineskip", SILE.nodefactory.newVglue(skip.."pt"))
   SILE.settings.set("document.parskip", SILE.nodefactory.newVglue((spec.hanmen.linegap) .. "pt"))
-
-  self.pageTemplate.frames[id] = SILE.newFrame(spec, spec.tate and SILE.tateFramePrototype or SILE.framePrototype)
+  local frame = SILE.newFrame(spec, spec.tate and SILE.tateFramePrototype or SILE.framePrototype)
+  if spec.id then
+    self.pageTemplate.frames[spec.id] = frame
+  end
+  return frame
 end
 
 return {
