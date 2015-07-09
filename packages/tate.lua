@@ -141,6 +141,12 @@ end, "Typeset rotated Western text in vertical Japanese")
 
 SILE.registerCommand("tate-chu-yoko", function (options, content)
   if SILE.typesetter.frame.direction ~= "TTB" then return SILE.process(content) end
+  SILE.typesetter:pushGlue({
+    width = SILE.length.new({length = SILE.toPoints("0.5zw"),
+                             stretch = SILE.toPoints("0.25zw"),
+                              shrink = SILE.toPoints("0.25zw")
+                            })
+  })
   SILE.settings.temporarily(function()
     SILE.settings.set("document.language", "xx")
     SILE.settings.set("font.direction", "LTR")
@@ -149,4 +155,11 @@ SILE.registerCommand("tate-chu-yoko", function (options, content)
     n.oldOutputYourself = n.outputYourself
     n.outputYourself = outputTateChuYoko
   end)  
+  SILE.typesetter:pushGlue({
+    width = SILE.length.new({length = SILE.toPoints("0.5zw"),
+                             stretch = SILE.toPoints("0.25zw"),
+                              shrink = SILE.toPoints("0.25zw")
+                            })
+  })
+
 end)
