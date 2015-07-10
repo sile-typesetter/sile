@@ -1,4 +1,3 @@
-SILE.require("packages/frametricks")
 SILE.require("packages/color")
 SILE.registerCommand("pullquote:font", function(options, content)
 end, "The font chosen for the pullquote environment")
@@ -9,14 +8,29 @@ SILE.registerCommand("pullquote:mark-font", function(options, content)
 	SILE.settings.set("font.family", "Libertine Sans")
 end, "The font from which to pull the quotation marks.")
 
-local typesetMark = function (scale, color, mark)
+local typesetMark = function (open, setback, scale, color, mark)
+	SILE.typesetter:chuck()
+	local saveX = SILE.typesetter.frame.state.cursorX;
+	local saveY = SILE.typesetter.frame.state.cursorY;
 	SILE.settings.temporarily(function()
 		SILE.call("pullquote:mark-font")
+		if open then
+			SILE.typesetter.frame:moveX(- SILE.toPoints(setback))
+			SILE.typesetter.frame:moveY(SILE.toPoints("1ex"))
+		else
+			SILE.typesetter.frame:moveX(SILE.toPoints(setback))
+			SILE.typesetter.frame:moveY(- SILE.toPoints(scale -1 .. "ex"))
+		end
 		SILE.settings.set("font.size", SILE.settings.get("font.size") * scale)
 		SILE.call("color", {color = color}, function ()
-			SILE.typesetter:typeset(mark)
+			SILE.call(open and "raggedright" or "raggedleft", {}, function ()
+				SILE.typesetter:typeset(mark)
+			end)
 		end)
 	end)
+	SILE.typesetter:chuck()
+	SILE.typesetter.frame.state.cursorX = saveX
+	SILE.typesetter.frame.state.cursorY = saveY
 end
 
 SILE.registerCommand("pullquote", function(options, content)
@@ -29,9 +43,9 @@ SILE.registerCommand("pullquote", function(options, content)
 		SILE.settings.set("document.lskip", SILE.nodefactory.newGlue(setback))
 		SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
 		SILE.call("pullquote:font")
-		typesetMark(scale, color, "“")
+		typesetMark(true, setback, scale, color, "“")
 		SILE.process(content)
-		typesetMark(scale, color, "”")
+		typesetMark(false, setback, scale, color, "”")
 		if author then
 			SILE.settings.temporarily(function()
 				SILE.typesetter:leaveHmode()
