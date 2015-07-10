@@ -277,7 +277,11 @@ SILE.defaultTypesetter = std.object {
     local oldqueue = self.state.outputQueue
     self.state.outputQueue = {}
     while luaSucks(table.remove(oldqueue,1)) do
-      if v.type == "insertionVbox" or v.skiptype == "explicit" then
+      if v.skiptype == "explicit" then
+        self:leaveHmode()
+        self:pushExplicitVglue(v)
+        self.state.previousVbox = nil
+      elseif v.type == "insertionVbox" then
         SILE.typesetter:pushMigratingMaterial({v})
       elseif not v:isVglue() and not v:isPenalty() then
         for i=1,#(v.nodes) do
