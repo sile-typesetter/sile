@@ -9,6 +9,10 @@ SILE.inputs.common = {
       end
     end
 
+    -- Prepend the dirname of the input file to the Lua search path
+    local dirname = SILE.masterFilename:match("(.-)[^%/]+$")
+    package.path = dirname.."?;"..dirname.."?.lua;"..package.path
+
     if not SILE.outputFilename and SILE.masterFilename then
       SILE.outputFilename = string.gsub(SILE.masterFilename,"%..-$", "").. ".pdf"
     end

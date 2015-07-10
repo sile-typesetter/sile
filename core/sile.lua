@@ -59,7 +59,6 @@ SILE.init = function()
 end
 
 SILE.require = function(d)
-  -- path?
   return require(d)
 end
 
@@ -171,7 +170,8 @@ function SILE.resolveFile(fn)
   if file_exists(fn) then return fn end
   if file_exists(fn..".sil") then return fn..".sil" end
 
-  for k in SU.gtoke(os.getenv("SILE_PATH"), ";") do
+  local dirname = SILE.masterFilename:match("(.-)[^%/]+$")
+  for k in SU.gtoke(dirname..";"..tostring(os.getenv("SILE_PATH")), ";") do
     if k.string then
       local f = std.io.catfile(k.string, fn)
       if file_exists(f) then return f end
