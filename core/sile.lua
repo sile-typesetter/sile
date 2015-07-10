@@ -77,6 +77,7 @@ Options:
   -b, --backend=VALUE      choose between libtexpdf/pangocairo backends
   -d, --debug=VALUE        debug SILE's operation
   -e, --evaluate=VALUE     evaluate some Lua code before processing file
+  -o, --output=[FILE]      explicitly set output file name
   -I, --include=[FILE]     include a class or SILE file before processing input
       --help               display this help, then exit
       --version            display version information, then exit
@@ -94,6 +95,9 @@ Options:
   if opts.evaluate then
     SILE.dolua,err = loadstring(opts.evaluate)
     if err then SU.error(err) end
+  end
+  if opts.output then
+    SILE.outputFilename = opts.output
   end
   if opts.include then
     SILE.preamble = opts.include
