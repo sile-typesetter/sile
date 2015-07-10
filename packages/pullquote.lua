@@ -56,6 +56,7 @@ SILE.registerCommand("pullquote", function(options, content)
       end)
     else
       SILE.call("par")
+      SILE.typesetter:chuck()
     end
   end)
 end, "Typesets its contents in a formatted blockquote with decorative quotation\
