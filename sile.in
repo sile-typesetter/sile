@@ -6,7 +6,7 @@ SILE = require("core/sile")
 io.stdout:setvbuf 'no'
 SILE.parseArguments()
 if not os.getenv 'LUA_REPL_RLWRAP' then
-  print('This is SILE '..SILE.version)
+  io.stderr:write('This is SILE '..SILE.version..'\n')
 end
 SILE.init()
 if unparsed and unparsed[1] then
