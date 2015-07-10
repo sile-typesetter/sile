@@ -64,7 +64,7 @@ SILE.require = function(d)
 end
 
 SILE.parseArguments = function()
-local parser = std.optparse ("This is SILE "..SILE.version..[[
+local parser = std.optparse ("SILE "..SILE.version..[[
 
  Usage: sile [options] file.sil|file.xml
 
