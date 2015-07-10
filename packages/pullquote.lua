@@ -5,7 +5,7 @@ SILE.registerCommand("pullquote:author-font", function(options, content)
   SILE.settings.set("font.style", "italic")
 end, "The font style with which to typeset the author attribution.")
 SILE.registerCommand("pullquote:mark-font", function(options, content)
-  SILE.settings.set("font.family", "Libertine Sans")
+  SILE.settings.set("font.family", "Linux Libertine O")
 end, "The font from which to pull the quotation marks.")
 
 local typesetMark = function (open, setback, scale, color, mark)
@@ -58,29 +58,33 @@ SILE.registerCommand("pullquote", function(options, content)
       SILE.call("par")
     end
   end)
-end, "Typesets its contents in a formatted blockquote.")
+end, "Typesets its contents in a formatted blockquote with decorative quotation\
+      marks in the margins.")
 
-return [[\begin{document}
+return { documentation = [[\begin{document}
 
-The \code{pullquote} formats longer quotations with a pretty layout.
+The \code{pullquote} command formats longer quotations in an indented
+blockquote block with decorative quotation marks in the margins.
 
 Here is some text set in a pullquote environment:
 
-\begin{pullquote}
-The history of every nation revolves around Jesus of Nazareth. This is really
-an astonishing claim: to say everything depends on a guy who lived two thousand
-years ago, ate some fish, and got himself killed. And then ate some more fish.
+\begin[author=Anatole France]{pullquote}
+An education is not how much you have committed to memory, or even how much you
+know. It is being able to differentiate between what you do know and what you
+do not know.
 \end{pullquote}
 
 Optional values are available for:
 
 \listitem \code{author} to add an attribution line
-\listitem \code{setback} to add bilateral margins around the block
+\listitem \code{setback} to set the bilateral margins around the block
 \listitem \code{color} to change the color of the quote marks
-\listitem \code{scale} to change the size of the marks relative to the base font
+\listitem \code{scale} to change the relative size of the quote marks
 
 If you want to specify what font the pullquote environment should use, you
 can redefine the \code{pullquote:font} command. By default it will be the same
 as the surrounding document. The font style used for the attribution line
 can likewise be set using \code{pullquote:author-font} and the font used for
-the quote marks can be set using \code{pullquote:mark-font}.]]
+the quote marks can be set using \code{pullquote:mark-font}.
+
+\end{document}]] }
