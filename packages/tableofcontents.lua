@@ -20,13 +20,13 @@ end
 
 local writeToc = function ()
   local t = "return "..std.string.pickle(SILE.scratch.tableofcontents)
-  local f,err = io.open(SILE.masterFileName .. '.toc',"w")
+  local f,err = io.open(SILE.masterFilename .. '.toc',"w")
   if not f then return SU.error(err) end
   f:write(t)
 end
 
 SILE.registerCommand("tableofcontents", function (options, content)
-  local f,err = io.open(SILE.masterFileName .. '.toc')
+  local f,err = io.open(SILE.masterFilename .. '.toc')
   if not f then
     SILE.call("tableofcontents:notocmessage")
     return

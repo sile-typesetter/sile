@@ -2230,7 +2230,7 @@ routine.
 \line
 local writeToc = function (self)
   local t = std.string.pickle(SILE.scratch.tableofcontents)
-  saveFile(t, SILE.masterFileName .. '.toc')
+  saveFile(t, SILE.masterFilename .. '.toc')
 end
 \line
 \end{verbatim}
@@ -2241,7 +2241,7 @@ present, and typesets the TOC nodes appropriately:
 \begin{verbatim}
 \line
 SILE.registerCommand("tableofcontents", function (options, content)
-  local toc = loadFile(SILE.masterFileName .. '.toc')
+  local toc = loadFile(SILE.masterFilename .. '.toc')
   if not toc then
     SILE.call("tableofcontents:notocmessage")
     return

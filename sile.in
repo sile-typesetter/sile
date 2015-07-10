@@ -10,7 +10,7 @@ if not os.getenv 'LUA_REPL_RLWRAP' then
 end
 SILE.init()
 if unparsed and unparsed[1] then
-  SILE.masterFileName = unparsed[1]
+  SILE.masterFilename = unparsed[1]
   if SILE.preamble then
     print("Loading "..SILE.preamble)
     local c = SILE.resolveFile("classes/"..SILE.preamble)
