@@ -66,36 +66,37 @@ end
 SILE.parseArguments = function()
 local parser = std.optparse ("SILE "..SILE.version..[[
 
- Usage: sile [options] file.sil|file.xml
+Usage: sile [options] file.sil|file.xml
 
- The SILE typesetter.
+The SILE typesetter reads a single input file in either SIL or XML format to
+generate an output in PDF format. The output will be writted to the same name
+as the input file with the extention changed to .pdf.
 
- Options:
+Options:
 
-   -d, --debug=VALUE        debug SILE's operation
-   -b, --backend=VALUE      choose between libtexpdf/pangocairo backends
-   -I, --include=[FILE]     include a class or SILE file before
-                            processing main file
-   -e, --evaluate=VALUE     evaluate some Lua code before processing file
-       --version            display version information, then exit
-       --help               display this help, then exit
+  -b, --backend=VALUE      choose between libtexpdf/pangocairo backends
+  -d, --debug=VALUE        debug SILE's operation
+  -e, --evaluate=VALUE     evaluate some Lua code before processing file
+  -I, --include=[FILE]     include a class or SILE file before processing input
+      --help               display this help, then exit
+      --version            display version information, then exit
 ]])
 
   parser:on ('--', parser.finished)
   _G.unparsed, _G.opts = parser:parse(_G.arg)
   SILE.debugFlags = {}
-  if opts.debug then
-    for k,v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = 1 end
-  end
   if opts.backend then
     SILE.backend = opts.backend
   end
-  if opts.include then
-    SILE.preamble = opts.include
+  if opts.debug then
+    for k,v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = 1 end
   end
   if opts.evaluate then
     SILE.dolua,err = loadstring(opts.evaluate)
     if err then SU.error(err) end
+  end
+  if opts.include then
+    SILE.preamble = opts.include
   end
 end
 
