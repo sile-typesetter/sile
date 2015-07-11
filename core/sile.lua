@@ -59,43 +59,47 @@ SILE.init = function()
 end
 
 SILE.require = function(d)
-  -- path?
   return require(d)
 end
 
 SILE.parseArguments = function()
-local parser = std.optparse ("This is SILE "..SILE.version..[[
+local parser = std.optparse ("SILE "..SILE.version..[[
 
- Usage: sile [options] file.sil|file.xml
+Usage: sile [options] file.sil|file.xml
 
- The SILE typesetter.
+The SILE typesetter reads a single input file in either SIL or XML format to
+generate an output in PDF format. The output will be writted to the same name
+as the input file with the extention changed to .pdf.
 
- Options:
+Options:
 
-   -d, --debug=VALUE        debug SILE's operation
-   -b, --backend=VALUE      choose between libtexpdf/pangocairo backends
-   -I, --include=[FILE]     include a class or SILE file before
-                            processing main file
-   -e, --evaluate=VALUE     evaluate some Lua code before processing file
-       --version            display version information, then exit
-       --help               display this help, then exit
+  -b, --backend=VALUE      choose between libtexpdf/pangocairo backends
+  -d, --debug=VALUE        debug SILE's operation
+  -e, --evaluate=VALUE     evaluate some Lua code before processing file
+  -o, --output=[FILE]      explicitly set output file name
+  -I, --include=[FILE]     include a class or SILE file before processing input
+      --help               display this help, then exit
+      --version            display version information, then exit
 ]])
 
   parser:on ('--', parser.finished)
   _G.unparsed, _G.opts = parser:parse(_G.arg)
   SILE.debugFlags = {}
-  if opts.debug then
-    for k,v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = 1 end
-  end
   if opts.backend then
     SILE.backend = opts.backend
   end
-  if opts.include then
-    SILE.preamble = opts.include
+  if opts.debug then
+    for k,v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = 1 end
   end
   if opts.evaluate then
     SILE.dolua,err = loadstring(opts.evaluate)
     if err then SU.error(err) end
+  end
+  if opts.output then
+    SILE.outputFilename = opts.output
+  end
+  if opts.include then
+    SILE.preamble = opts.include
   end
 end
 
@@ -166,7 +170,8 @@ function SILE.resolveFile(fn)
   if file_exists(fn) then return fn end
   if file_exists(fn..".sil") then return fn..".sil" end
 
-  for k in SU.gtoke(os.getenv("SILE_PATH"), ";") do
+  local dirname = SILE.masterFilename:match("(.-)[^%/]+$")
+  for k in SU.gtoke(dirname..";"..tostring(os.getenv("SILE_PATH")), ";") do
     if k.string then
       local f = std.io.catfile(k.string, fn)
       if file_exists(f) then return f end
