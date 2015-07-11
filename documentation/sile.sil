@@ -10,6 +10,7 @@
 \script[src=packages/lorem]
 \script[src=packages/bidi]\bidi-off
 \script[src=packages/pdf]
+\script[src=packages/pullquote]
 \include[src=documentation/macros.xml]
 \define[command=silehp]{\url{http://www.sile-typesetter.org/}}
 \define[command=sileversion]{0.9.2}
@@ -1002,6 +1003,9 @@ a very big letter.
 
 \section{bidi}
 \package-documentation[src=packages/bidi]
+
+\section{pullquote}
+\package-documentation[src=packages/pullquote]
 
 \section{raiselower}
 
