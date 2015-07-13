@@ -138,23 +138,19 @@ SILE.newFrame = function(spec, prototype)
   prototype = prototype or SILE.framePrototype
   local frame
   spec.direction = spec.direction
-  if not SILE.frames[spec.id] then
-    frame = prototype {
-      constraints = {},
-      variables = {}
-    }
-    -- Copy everything in from spec
-    SILE.frames[spec.id] = frame
+  frame = prototype {
+    constraints = {},
+    variables = {}
+  }
+  -- Copy everything in from spec
+  SILE.frames[spec.id] = frame
 
-    for method, dimension in pairs(dims) do
-      frame.variables[method] = cassowary.Variable({ name = spec.id .. "_" .. method });
-      frame[method] = function (frame)
-        frame:solve()
-        return frame.variables[method].value
-      end
+  for method, dimension in pairs(dims) do
+    frame.variables[method] = cassowary.Variable({ name = spec.id .. "_" .. method });
+    frame[method] = function (frame)
+      frame:solve()
+      return frame.variables[method].value
     end
-  else
-    frame = SILE.frames[spec.id]
   end
 
   for key, value in pairs(spec) do
