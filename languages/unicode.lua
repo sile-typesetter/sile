@@ -12,6 +12,7 @@ SILE.tokenizers.unicode = function(text)
         tmp = {}
         coroutine.yield({ separator = chunks[i]})
       elseif chardata[cp] and (chardata[cp].linebreak == "ba" or  chardata[cp].linebreak == "zw") then
+        tmp[#tmp+1] = chunks[i]
         coroutine.yield({ string = table.concat(tmp, "") })
         tmp = {}
         coroutine.yield({ node = SILE.nodefactory.newPenalty({ penalty = 0 }) })
