@@ -35,23 +35,16 @@ end
 
 local outputLatinInTate = function (self, typesetter, line)
   -- My baseline moved
-  typesetter.frame:advanceWritingDirection(SILE.toPoints("-1zw"))
+  typesetter.frame:advanceWritingDirection(SILE.toPoints("-0.5zw"))
   typesetter.frame:advancePageDirection(SILE.toPoints("0.25zw"))
 
   local horigin = typesetter.frame.state.cursorX
   local vorigin = -typesetter.frame.state.cursorY
-  pdf:gsave()
-  pdf.setmatrix(1,0,0,1,horigin,vorigin)
-  pdf.setmatrix(0, -1, 1, 0, 0, 0)
-  pdf.setmatrix(1,0,0,1,-horigin,-vorigin)
-  pdf.setdirmode(0)
   self:oldOutputYourself(typesetter,line)
-  pdf.setdirmode(1)
-  pdf:grestore()
   typesetter.frame.state.cursorY = -vorigin
   typesetter.frame:advanceWritingDirection(self.height)
   -- My baseline moved
-  typesetter.frame:advanceWritingDirection(SILE.toPoints("1zw") )
+  typesetter.frame:advanceWritingDirection(SILE.toPoints("0.5zw") )
   typesetter.frame:advancePageDirection(- SILE.toPoints("0.25zw"))
 end
 
