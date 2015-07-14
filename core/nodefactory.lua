@@ -5,13 +5,18 @@ _box = std.object {
   height= 0,
   depth= 0,
   width= 0,
+  misfit = false,
   type="special",
   value=nil,
   __tostring = function (s) return s.type end,
   __concat = function (x,y) return tostring(x)..tostring(y) end,
   init = function(self) return self end,
   lineContribution = function (self)
-    return SILE.typesetter.frame:writingDirection() == "TTB" and self.height or self.width
+    if SILE.typesetter.frame:writingDirection() == "TTB" then
+      return self.misfit and self.width.length or self.height
+    else
+      return self.misfit and self.height or self.width
+    end
   end
 }
 
@@ -37,26 +42,24 @@ local _hbox = _box {
   type = "hbox",
   __tostring = function (this) return "H<" .. tostring(this.width) .. ">^" .. tostring(this.height) .. "-" .. tostring(this.depth) .. "v"; end,
   scaledWidth = function (self, line)
-    local scaledWidth = self.width.length
+    local scaledWidth = self:lineContribution()
+    if type(scaledWidth) ~= "table" then return scaledWidth end
     if line.ratio < 0 and self.width.shrink > 0 then
       scaledWidth = scaledWidth + self.width.shrink * line.ratio
     elseif line.ratio > 0 and self.width.stretch > 0 then
       scaledWidth = scaledWidth + self.width.stretch * line.ratio
     end
-    return scaledWidth
+    return scaledWidth.length
   end,
   outputYourself = function(self,typesetter, line)
     if not self.value.glyphString then return end
-    -- Yuck!
     if typesetter.frame:writingDirection() == "RTL" then
       typesetter.frame:advanceWritingDirection(self:scaledWidth(line))
     end
     SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
     SILE.outputter.setFont(self.value.options)
     SILE.outputter.outputHbox(self.value, self.width.length)
-    if typesetter.frame:writingDirection() == "TTB" then
-      typesetter.frame:advanceWritingDirection(self.height)
-    elseif typesetter.frame:writingDirection() ~= "RTL" then
+    if typesetter.frame:writingDirection() ~= "RTL" then
       typesetter.frame:advanceWritingDirection(self:scaledWidth(line))
     end
   end

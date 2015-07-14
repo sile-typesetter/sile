@@ -119,9 +119,16 @@ SILE.shapers.base = std.object {
       totalWidth = totalWidth + glyph.width
       self:addShapedGlyphToNnodeValue(nnodeValue, glyph)
     end
+    local misfit = false
+    if SILE.typesetter.frame:writingDirection() == "TTB" then
+      if options.direction == "LTR" then misfit = true end
+    else
+      if options.direction == "TTB" then misfit = true end
+    end
     table.insert(nnodeContents, SILE.nodefactory.newHbox({
       depth = depth,
-      height= height,
+      height = height,
+      misfit = misfit,
       width = width or SILE.length.new({ length = totalWidth }),
       value = nnodeValue
     }))
@@ -130,6 +137,7 @@ SILE.shapers.base = std.object {
     return { SILE.nodefactory.newNnode({
       nodes = nnodeContents,
       text = token,
+      misfit = misfit,
       options = options,
       language = options.language
     }) }
