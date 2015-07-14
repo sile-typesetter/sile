@@ -8,10 +8,10 @@ local enter = function(self)
   local x = -math.rad(self.rotate)
   -- Keep center point the same
   pdf:gsave()
-  local cx = (self:left() + self:width() / 2)
-  local cy = -((self:top() + self:bottom()) / 2) -- Trial and error, just like everything else.
+  local cx = self:left()
+  local cy = -self:bottom()
 
-  pdf.setmatrix(1,0,0,1,cx,cy)
+  pdf.setmatrix(1,0,0,1,cx + math.sin(x) * self:height(),cy)
   pdf.setmatrix(math.cos(x), math.sin(x), -math.sin(x), math.cos(x), 0, 0)
   pdf.setmatrix(1,0,0,1,-cx,-cy)
 end
