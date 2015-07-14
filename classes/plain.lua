@@ -127,7 +127,7 @@ SILE.registerCommand("hbox", function (o,c)
     value = recentContribution,
     outputYourself = function (self, typesetter, line)
       -- Yuck!
-      if typesetter.frame.direction == "RTL" then
+      if typesetter.frame:writingDirection() == "RTL" then
         typesetter.frame:moveX(self:scaledWidth(line))
       end
       local X = typesetter.frame.state.cursorX
@@ -136,7 +136,7 @@ SILE.registerCommand("hbox", function (o,c)
         node:outputYourself(typesetter, line)
       end
       typesetter.frame.state.cursorX = X
-      if typesetter.frame.direction ~= "RTL" then
+      if typesetter.frame:writingDirection() ~= "RTL" then
         typesetter.frame:moveX(self:scaledWidth(line))
       end
     end

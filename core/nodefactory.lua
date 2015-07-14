@@ -45,15 +45,15 @@ local _hbox = _box {
   outputYourself = function(self,typesetter, line)
     if not self.value.glyphString then return end
     -- Yuck!
-    if typesetter.frame.direction == "RTL" then
+    if typesetter.frame:writingDirection() == "RTL" then
       typesetter.frame:moveX(self:scaledWidth(line))
     end
     SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
     SILE.outputter.setFont(self.value.options)
     SILE.outputter.outputHbox(self.value, self.width.length)
-    if typesetter.frame.direction == "TTB" then
+    if typesetter.frame:writingDirection() == "TTB" then
       typesetter.frame:moveX(self.height)
-    elseif typesetter.frame.direction ~= "RTL" then
+    elseif typesetter.frame:writingDirection() ~= "RTL" then
       typesetter.frame:moveX(self:scaledWidth(line))
     end
   end

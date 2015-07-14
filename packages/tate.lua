@@ -9,14 +9,7 @@ SILE.tateFramePrototype = SILE.framePrototype {
     self.state.cursorX = self.state.cursorX - amount
   if type(amount) == "table" then SU.error("Table passed to moveY", 1) end
   end,
-  newLine = function(self)
-    self.state.cursorY = self:top()
-  end,
-  direction = "TTB",
-  init = function(self)
-    SILE.framePrototype.init(self)
-    self.state.cursorX = self:right()
-  end,
+  direction = "TTB-RTL",
   enterHooks = { function (self)
     self.oldtypesetter = SILE.typesetter
     self.state.oldBreak = SILE.settings.get("typesetter.breakwidth")
@@ -98,7 +91,7 @@ SILE.registerCommand("latin-in-tate", function (options, content)
   local nodes
   local oldT = SILE.typesetter
   local prevDirection = oldT.frame.direction
-  if prevDirection ~= "TTB" then return SILE.process(content) end
+  if oldT.frame:writingDirection() ~= "TTB" then return SILE.process(content) end
   SILE.require("packages/rotate")
   SILE.settings.temporarily(function()
     local latinT = SILE.defaultTypesetter {}
@@ -122,7 +115,7 @@ SILE.registerCommand("latin-in-tate", function (options, content)
                             })
   })
   for i = 1,#nodes do
-    if SILE.typesetter.frame.direction ~= "TTB" then
+    if SILE.typesetter.frame:writingDirection() ~= "TTB" then
       SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes+1] = nodes[i]
     elseif nodes[i]:isGlue() then
       nodes[i].width = nodes[i].width
@@ -140,7 +133,7 @@ SILE.registerCommand("latin-in-tate", function (options, content)
 end, "Typeset rotated Western text in vertical Japanese")
 
 SILE.registerCommand("tate-chu-yoko", function (options, content)
-  if SILE.typesetter.frame.direction ~= "TTB" then return SILE.process(content) end
+  if SILE.typesetter.frame:writingDirection() ~= "TTB" then return SILE.process(content) end
   SILE.typesetter:pushGlue({
     width = SILE.length.new({length = SILE.toPoints("0.5zw"),
                              stretch = SILE.toPoints("0.25zw"),

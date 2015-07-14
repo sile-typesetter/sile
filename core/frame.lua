@@ -13,7 +13,9 @@ SILE.framePrototype = std.object {
   id= nil,
   previous= nil,
   balanced= false,
-  direction = "LTR",
+  direction = "LTR-TTB",
+  writingDirection     = function (self) return self.direction:match("^(%a+)") end,
+  pageAdvanceDirection = function (self) return self.direction:match("-(%a+)$") or "TTB" end,
   state = {},
   enterHooks = {},
   leaveHooks = {},
@@ -79,7 +81,7 @@ end
 
 function SILE.framePrototype:moveX(amount)
   if type(amount) == "table" then SU.error("Table passed to moveX", 1) end
-  if self.direction == "RTL" then
+  if self:writingDirection() == "RTL" then
     self.state.cursorX = self.state.cursorX - amount
   else
     self.state.cursorX = self.state.cursorX + amount
@@ -92,16 +94,30 @@ function SILE.framePrototype:moveY(amount)
 end
 
 function SILE.framePrototype:newLine()
-  self.state.cursorX = self.direction == "RTL" and self:right() or self:left()
+  if self:writingDirection() == "LTR" then
+    self.state.cursorX = self:left()
+  elseif self:writingDirection() == "RTL" then
+    self.state.cursorX = self:right()
+  elseif self:writingDirection() == "TTB" then
+    self.state.cursorY = self:top()
+  elseif self:writingDirection() == "BTT" then
+    self.state.cursorY = self:bottom()
+  end
 end
 
 function SILE.framePrototype:init()
-  self.state = {
-    cursorY = self:top(),
-    totals = { height= 0, pastTop = false }
-  }
+  self.state = { totals = { height= 0, pastTop = false } }
   self:enter()
   self:newLine()
+  if self:pageAdvanceDirection() == "TTB" then
+    self.state.cursorY = self:top()
+  elseif self:pageAdvanceDirection() == "LTR" then
+    self.state.cursorX = self:left()
+  elseif self:pageAdvanceDirection() == "RTL" then
+    self.state.cursorX = self:right()
+  elseif self:pageAdvanceDirection() == "BTT" then
+    self.state.cursorY = self:bottom()
+  end
 end
 
 function SILE.framePrototype:enter()
@@ -130,7 +146,6 @@ SILE.newFrame = function(spec, prototype)
   local dims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
   prototype = prototype or SILE.framePrototype
   local frame
-  spec.direction = spec.direction
   frame = prototype {
     constraints = {},
     variables = {}

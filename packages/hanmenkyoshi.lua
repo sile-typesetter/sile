@@ -35,7 +35,7 @@ SILE.registerCommand("show-hanmen", function(options, content)
   local f = SILE.typesetter.frame
   if not f.hanmen then SU.error("show-hanmen called on a frame with no hanmen") end
   SILE.outputter:pushColor({r = 1, g= 0.9, b = 0.9 })
-  if f.direction == "TTB" then
+  if f:writingDirection() == "TTB" then
     showHanmenTate(f)
   else
     showHanmenYoko(f)

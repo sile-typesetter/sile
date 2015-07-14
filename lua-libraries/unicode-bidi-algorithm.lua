@@ -509,7 +509,7 @@ local function process(nodelist, frame)
     local thisNode = rv[matrix[i]]
     if thisNode.options then
       -- things have been adjusted to "fit in" with base direction now
-      thisNode.options.direction = frame.direction 
+      thisNode.options.direction = frame:writingDirection()
     end
   end
   return rv
