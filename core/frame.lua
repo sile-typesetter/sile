@@ -84,13 +84,11 @@ function SILE.framePrototype:moveX(amount)
   else
     self.state.cursorX = self.state.cursorX + amount
   end
-  self:normalize()
 end
 
 function SILE.framePrototype:moveY(amount)
   if type(amount) == "table" then SU.error("Table passed to moveY", 1) end
   self.state.cursorY = self.state.cursorY + amount
-  self:normalize()
 end
 
 function SILE.framePrototype:newLine()
@@ -116,11 +114,6 @@ function SILE.framePrototype:leave()
   for i = 1,#self.leaveHooks do
     self.leaveHooks[i](self)
   end
-end
-
-function SILE.framePrototype:normalize()
-  if (type(self.state.cursorY)) == "table" then SU.error("cursor Y has become a table",1) end
-  if (type(self.state.cursorX)) == "table" then SU.error("cursor X has become a table",1) end
 end
 
 function SILE.framePrototype:isMainContentFrame()

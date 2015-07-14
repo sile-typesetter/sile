@@ -44,7 +44,6 @@ local _hbox = _box {
   end,
   outputYourself = function(self,typesetter, line)
     if not self.value.glyphString then return end
-    typesetter.frame:normalize()
     -- Yuck!
     if typesetter.frame.direction == "RTL" then
       typesetter.frame:moveX(self:scaledWidth(line))

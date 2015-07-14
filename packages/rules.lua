@@ -15,7 +15,6 @@ SILE.registerCommand("hrule", function(options, content)
       elseif line.ratio > 0 and self.width.stretch > 0 then
         scaledWidth = scaledWidth + self.width.stretch * line.ratio
       end
-      typesetter.frame:normalize()
 
       SILE.outputter.rule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-(self.height.length), scaledWidth, self.height.length+self.depth)
       typesetter.frame:moveX(scaledWidth)

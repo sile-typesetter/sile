@@ -126,7 +126,6 @@ SILE.registerCommand("hbox", function (o,c)
     depth = d,
     value = recentContribution,
     outputYourself = function (self, typesetter, line)
-      typesetter.frame:normalize()
       -- Yuck!
       if typesetter.frame.direction == "RTL" then
         typesetter.frame:moveX(self:scaledWidth(line))
