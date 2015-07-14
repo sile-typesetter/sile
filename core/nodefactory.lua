@@ -9,7 +9,10 @@ _box = std.object {
   value=nil,
   __tostring = function (s) return s.type end,
   __concat = function (x,y) return tostring(x)..tostring(y) end,
-  init = function(self) return self end
+  init = function(self) return self end,
+  lineContribution = function (self)
+    return SILE.typesetter.frame:writingDirection() == "TTB" and self.height or self.width
+  end
 }
 
 function _box:outputYourself () SU.error(self.type.." with no output routine") end

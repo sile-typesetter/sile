@@ -7,8 +7,8 @@ local firstfit = function (typesetter, nl, breakWidth)
   local length = SILE.length.new()
   for i = 1,#nl do local n = nl[i]
     if n:isBox() then
-      SU.debug("break", n .. " ".. (typesetter.frame:writingDirection() == "TTB" and n.height or n.width))
-      length = length + (typesetter.frame:writingDirection() == "TTB" and n.height or n.width)
+      SU.debug("break", n .. " ".. n:lineContribution())
+      length = length + n:lineContribution()
       SU.debug("break", " Length now ".. length.. " breakwidth ".. breakWidth)
     end
     if not n:isBox() or n.isHangable then

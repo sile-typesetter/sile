@@ -333,7 +333,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
       if self.sideways and self.nodes[s].height then
         self.breakWidth = self.breakWidth - (self.nodes[s].height + self.nodes[s].depth)
       elseif self.nodes[s].width then -- We use the fact that (a) nodes know if they have width and (b) width subtraction is polymorphic
-        self.breakWidth = self.breakWidth - self.nodes[s].width
+        self.breakWidth = self.breakWidth - self.nodes[s]:lineContribution()
       end
       s = s + 1
     end
@@ -423,7 +423,7 @@ function lineBreak:checkForLegalBreak(n) -- 892
   elseif n:isAlternative() then
     self.activeWidth = self.activeWidth + n:minWidth()   
   elseif n:isBox() then
-    self.activeWidth = self.activeWidth + n.width
+    self.activeWidth = self.activeWidth + n:lineContribution()
   elseif n:isGlue() then
     -- 894 (We removed the auto_breaking parameter)
     if previous and previous:isBox() then self:tryBreak() end
