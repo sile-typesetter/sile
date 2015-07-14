@@ -4,6 +4,13 @@ SILE.registerCommand("thisframeLTR", function(options, content)
   SILE.typesetter.frame:newLine()
 end);
 
+SILE.registerCommand("thisframedirection", function(options, content)
+  SILE.typesetter.frame.direction = SU.required(options, "direction", "frame direction")
+  SILE.typesetter:leaveHmode()
+  SILE.typesetter.frame:init()
+end);
+
+
 SILE.registerCommand("thisframeRTL", function(options, content)
   SILE.typesetter.frame.direction = "RTL"
   SILE.typesetter:leaveHmode()
