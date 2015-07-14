@@ -4,14 +4,14 @@ SILE.registerCommand("raise", function(options, content)
   height = SILE.parseComplexFrameDimension(height,"h")
   SILE.typesetter:pushHbox({
     outputYourself= function (self, typesetter, line)
-      typesetter.frame:moveY(-height)
+      typesetter.frame:advancePageDirection(-height)
     end
   });
   SILE.process(content)
   SILE.typesetter:pushHbox({
     outputYourself= function (self, typesetter, line)
       if (type(typesetter.state.cursorY)) == "table" then typesetter.state.cursorY  =typesetter.state.cursorY.length end
-      typesetter.frame:moveY(height)
+      typesetter.frame:advancePageDirection(height)
     end
   });
 end, "Raises the contents of the command by the amount specified in the <height> option");

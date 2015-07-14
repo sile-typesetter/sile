@@ -128,7 +128,7 @@ SILE.registerCommand("hbox", function (o,c)
     outputYourself = function (self, typesetter, line)
       -- Yuck!
       if typesetter.frame:writingDirection() == "RTL" then
-        typesetter.frame:moveX(self:scaledWidth(line))
+        typesetter.frame:advanceWritingDirection(self:scaledWidth(line))
       end
       local X = typesetter.frame.state.cursorX
       SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
@@ -137,7 +137,7 @@ SILE.registerCommand("hbox", function (o,c)
       end
       typesetter.frame.state.cursorX = X
       if typesetter.frame:writingDirection() ~= "RTL" then
-        typesetter.frame:moveX(self:scaledWidth(line))
+        typesetter.frame:advanceWritingDirection(self:scaledWidth(line))
       end
     end
   })

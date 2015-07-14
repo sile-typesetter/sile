@@ -19,7 +19,7 @@ SILE.registerCommand("img", function(options, content)
     value= options.src,
     outputYourself= function (this, typesetter, line)
       SILE.outputter.drawImage(this.value, typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-this.height, this.width,this.height);
-      typesetter.frame:moveX(this.width)
+      typesetter.frame:advanceWritingDirection(this.width)
   end});
 
 end, "Inserts the image specified with the <src> option in a box of size <width> by <height>");

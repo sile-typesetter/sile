@@ -56,7 +56,7 @@ local outputRotatedHbox = function (self, typesetter,line)
   origbox:outputYourself(typesetter,line)
   pdf:grestore()
   typesetter.frame.state.cursorX = save
-  typesetter.frame:moveX(self.width)
+  typesetter.frame:advanceWritingDirection(self.width)
 end
 
 SILE.registerCommand("rotate", function(options, content)

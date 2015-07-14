@@ -79,8 +79,8 @@ function SILE.framePrototype:toString()
   return f
 end
 
-function SILE.framePrototype:moveX(amount)
-  if type(amount) == "table" then SU.error("Table passed to moveX", 1) end
+function SILE.framePrototype:advanceWritingDirection(amount)
+  if type(amount) == "table" then SU.error("Table passed to advanceWritingDirection", 1) end
   if self:writingDirection() == "RTL" then
     self.state.cursorX = self.state.cursorX - amount
   else
@@ -88,8 +88,8 @@ function SILE.framePrototype:moveX(amount)
   end
 end
 
-function SILE.framePrototype:moveY(amount)
-  if type(amount) == "table" then SU.error("Table passed to moveY", 1) end
+function SILE.framePrototype:advancePageDirection(amount)
+  if type(amount) == "table" then SU.error("Table passed to advancePageDirection", 1) end
   self.state.cursorY = self.state.cursorY + amount
 end
 

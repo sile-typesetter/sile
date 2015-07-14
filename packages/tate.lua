@@ -1,13 +1,13 @@
 local pdf = require("justenoughlibtexpdf")
 
 SILE.tateFramePrototype = SILE.framePrototype {
-  moveX = function(self, amount)
+  advanceWritingDirection = function(self, amount)
     self.state.cursorY = self.state.cursorY + amount
-  if type(amount) == "table" then SU.error("Table passed to moveX", 1) end
+  if type(amount) == "table" then SU.error("Table passed to advanceWritingDirection", 1) end
   end,
-  moveY = function(self, amount)
+  advancePageDirection = function(self, amount)
     self.state.cursorX = self.state.cursorX - amount
-  if type(amount) == "table" then SU.error("Table passed to moveY", 1) end
+  if type(amount) == "table" then SU.error("Table passed to advancePageDirection", 1) end
   end,
   direction = "TTB-RTL",
   enterHooks = { function (self)
@@ -49,8 +49,8 @@ end
 
 local outputLatinInTate = function (self, typesetter, line)
   -- My baseline moved
-  typesetter.frame:moveX(SILE.toPoints("-1zw"))
-  typesetter.frame:moveY(SILE.toPoints("0.25zw"))
+  typesetter.frame:advanceWritingDirection(SILE.toPoints("-1zw"))
+  typesetter.frame:advancePageDirection(SILE.toPoints("0.25zw"))
 
   local horigin = typesetter.frame.state.cursorX
   local vorigin = -typesetter.frame.state.cursorY
@@ -63,10 +63,10 @@ local outputLatinInTate = function (self, typesetter, line)
   pdf.setdirmode(1)
   pdf:grestore()
   typesetter.frame.state.cursorY = -vorigin
-  typesetter.frame:moveX(self.height)
+  typesetter.frame:advanceWritingDirection(self.height)
   -- My baseline moved
-  typesetter.frame:moveX(SILE.toPoints("1zw") )
-  typesetter.frame:moveY(- SILE.toPoints("0.25zw"))
+  typesetter.frame:advanceWritingDirection(SILE.toPoints("1zw") )
+  typesetter.frame:advancePageDirection(- SILE.toPoints("0.25zw"))
 end
 
 
@@ -74,16 +74,16 @@ local outputTateChuYoko = function (self, typesetter, line)
   -- My baseline moved
 
   local vorigin = -typesetter.frame.state.cursorY
-  typesetter.frame:moveX(self.height)
-  typesetter.frame:moveY(0.5 * self.width.length)
+  typesetter.frame:advanceWritingDirection(self.height)
+  typesetter.frame:advancePageDirection(0.5 * self.width.length)
   pdf.setdirmode(0)
   self:oldOutputYourself(typesetter,line)
   pdf.setdirmode(1)
   typesetter.frame.state.cursorY = -vorigin
-  typesetter.frame:moveX(self.height)
+  typesetter.frame:advanceWritingDirection(self.height)
   -- My baseline moved
-  -- typesetter.frame:moveX(SILE.toPoints("1zw") )
-  typesetter.frame:moveY(-0.5 * self.width.length)
+  -- typesetter.frame:advanceWritingDirection(SILE.toPoints("1zw") )
+  typesetter.frame:advancePageDirection(-0.5 * self.width.length)
 end
 -- Eventually will be automatically called by script detection, but for now
 -- called manually

@@ -46,15 +46,15 @@ local _hbox = _box {
     if not self.value.glyphString then return end
     -- Yuck!
     if typesetter.frame:writingDirection() == "RTL" then
-      typesetter.frame:moveX(self:scaledWidth(line))
+      typesetter.frame:advanceWritingDirection(self:scaledWidth(line))
     end
     SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
     SILE.outputter.setFont(self.value.options)
     SILE.outputter.outputHbox(self.value, self.width.length)
     if typesetter.frame:writingDirection() == "TTB" then
-      typesetter.frame:moveX(self.height)
+      typesetter.frame:advanceWritingDirection(self.height)
     elseif typesetter.frame:writingDirection() ~= "RTL" then
-      typesetter.frame:moveX(self:scaledWidth(line))
+      typesetter.frame:advanceWritingDirection(self:scaledWidth(line))
     end
   end
 }
@@ -191,7 +191,7 @@ local _glue = _box {
     elseif line.ratio and line.ratio > 0 and self.width.stretch > 0 then
       scaledWidth = scaledWidth + self.width.stretch * line.ratio
     end
-    typesetter.frame:moveX(scaledWidth)
+    typesetter.frame:advanceWritingDirection(scaledWidth)
   end
 }
 local _kern = _glue {
@@ -214,7 +214,7 @@ local _vglue = _box {
     -- self.shrink = 0
   end,
   outputYourself = function (self,typesetter, line)
-    typesetter.frame:moveY(line.depth + line.height.length)
+    typesetter.frame:advancePageDirection(line.depth + line.height.length)
   end
 }
 
@@ -253,7 +253,7 @@ local _vbox = _box {
     return "VB[" .. SU.concat(SU.map(function (n) return n:toText().."" end, self.nodes), "") .. "]"
   end,
   outputYourself = function(self, typesetter, line)
-    typesetter.frame:moveY(self.height) 
+    typesetter.frame:advancePageDirection(self.height)
     local initial = true
     for i,node in pairs(self.nodes) do
       if initial and (node:isGlue() or node:isPenalty()) then
@@ -263,7 +263,7 @@ local _vbox = _box {
         node:outputYourself(typesetter, self)
       end
     end
-    typesetter.frame:moveY(self.depth)
+    typesetter.frame:advancePageDirection(self.depth)
     typesetter.frame:newLine()
   end 
 }

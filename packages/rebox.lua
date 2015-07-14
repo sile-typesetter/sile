@@ -5,7 +5,7 @@ SILE.registerCommand("rebox", function (options, content)
   if options.depth then box.depth = SILE.toPoints(options.depth) end
   if options.phantom then
     box.outputYourself = function (self, typesetter, line)
-      typesetter.frame:moveX(self:scaledWidth(line))
+      typesetter.frame:advanceWritingDirection(self:scaledWidth(line))
     end
   end
   table.insert(SILE.typesetter.state.nodes, box)

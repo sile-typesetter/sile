@@ -17,7 +17,7 @@ SILE.registerCommand("hrule", function(options, content)
       end
 
       SILE.outputter.rule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-(self.height.length), scaledWidth, self.height.length+self.depth)
-      typesetter.frame:moveX(scaledWidth)
+      typesetter.frame:advanceWritingDirection(scaledWidth)
     end
   });
 end, "Creates a line of width <width> and height <height>");
