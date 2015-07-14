@@ -13,6 +13,7 @@
       if (options.style)  then SILE.settings.set("font.style", options.style) end
       if (options.variant)  then SILE.settings.set("font.variant", options.variant) end
       if (options.features)  then SILE.settings.set("font.features", options.features) end
+      if (options.direction)  then SILE.settings.set("font.direction", options.direction) end
 
       if (options.language)  then 
         SILE.settings.set("document.language", options.language)
