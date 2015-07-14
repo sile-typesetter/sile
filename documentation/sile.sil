@@ -1794,7 +1794,7 @@ SILE.typesetter:pushHbox(\{
       typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-this.height, 
       this.width,this.height
     );
-    typesetter.frame:moveX(this.width)
+    typesetter.frame:advanceWritingDirection(this.width)
 end\});
 \line
 \end{verbatim}
