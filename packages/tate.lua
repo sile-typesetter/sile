@@ -1,23 +1,10 @@
 local pdf = require("justenoughlibtexpdf")
 
 SILE.tateFramePrototype = SILE.framePrototype {
-  advanceWritingDirection = function(self, amount)
-    self.state.cursorY = self.state.cursorY + amount
-  if type(amount) == "table" then SU.error("Table passed to advanceWritingDirection", 1) end
-  end,
-  advancePageDirection = function(self, amount)
-    self.state.cursorX = self.state.cursorX - amount
-  if type(amount) == "table" then SU.error("Table passed to advancePageDirection", 1) end
-  end,
   direction = "TTB-RTL",
   enterHooks = { function (self)
     self.oldtypesetter = SILE.typesetter
-    self.state.oldBreak = SILE.settings.get("typesetter.breakwidth")
-    SILE.settings.set("typesetter.breakwidth", SILE.length.new({length = self:height() }))
     pdf.setdirmode(1)
-    SILE.typesetter.pageTarget = function(self)
-      return self.frame:width()
-    end
     SILE.typesetter.leadingFor = function(self, v)
       v.height = SILE.toPoints("1zw")
       return SILE.settings.get("document.parskip")
@@ -26,7 +13,6 @@ SILE.tateFramePrototype = SILE.framePrototype {
   end
   },
   leaveHooks = { function (self)
-    SILE.settings.set("typesetter.breakwidth", self.state.oldBreak)
     SILE.typesetter = self.oldtypesetter
     pdf.setdirmode(0)
   end

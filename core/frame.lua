@@ -83,14 +83,26 @@ function SILE.framePrototype:advanceWritingDirection(amount)
   if type(amount) == "table" then SU.error("Table passed to advanceWritingDirection", 1) end
   if self:writingDirection() == "RTL" then
     self.state.cursorX = self.state.cursorX - amount
-  else
+  elseif self:writingDirection() == "LTR" then
     self.state.cursorX = self.state.cursorX + amount
+  elseif self:writingDirection() == "TTB" then
+    self.state.cursorY = self.state.cursorY + amount
+  elseif self:writingDirection() == "BTT" then
+    self.state.cursorY = self.state.cursorY - amount
   end
 end
 
 function SILE.framePrototype:advancePageDirection(amount)
   if type(amount) == "table" then SU.error("Table passed to advancePageDirection", 1) end
-  self.state.cursorY = self.state.cursorY + amount
+  if self:pageAdvanceDirection() == "TTB" then
+    self.state.cursorY = self.state.cursorY + amount
+  elseif self:pageAdvanceDirection() == "RTL" then
+    self.state.cursorX = self.state.cursorX - amount
+  elseif self:pageAdvanceDirection() == "RTL" then
+    self.state.cursorX = self.state.cursorX + amount
+  elseif self:pageAdvanceDirection() == "BTT" then
+    self.state.cursorY = self.state.cursorY - amount
+  end
 end
 
 function SILE.framePrototype:newLine()
@@ -102,6 +114,22 @@ function SILE.framePrototype:newLine()
     self.state.cursorY = self:top()
   elseif self:writingDirection() == "BTT" then
     self.state.cursorY = self:bottom()
+  end
+end
+
+function SILE.framePrototype:lineWidth()
+  if self:writingDirection() == "LTR" or self:writingDirection() == "RTL" then
+    return self:width()
+  else
+    return self:height()
+  end
+end
+
+function SILE.framePrototype:pageTarget()
+  if self:pageAdvanceDirection() == "TTB" or self:pageAdvanceDirection() == "BTT" then
+    return self:height()
+  else
+    return self:width()
   end
 end
 

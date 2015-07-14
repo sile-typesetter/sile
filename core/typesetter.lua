@@ -149,7 +149,7 @@ SILE.defaultTypesetter = std.object {
       for i = 1,#l do rv = rv ..l[i] end return rv
     end
     SU.debug("typesetter", "Boxed up "..listToString(nl));
-    local breakWidth = SILE.settings.get("typesetter.breakwidth") or self.frame:width()
+    local breakWidth = SILE.settings.get("typesetter.breakwidth") or self.frame:lineWidth()
     if (type(breakWidth) == "table") then breakWidth = breakWidth.length end
     local lines = self:breakIntoLines(nl, breakWidth)
     local vboxes = {}
@@ -187,7 +187,7 @@ SILE.defaultTypesetter = std.object {
   end,
 
   pageTarget = function(self)
-    return self.frame:height()
+    return self.frame:pageTarget()
   end,
   registerHook = function (self, category, f)
     if not self.hooks[category] then self.hooks[category] = {} end
