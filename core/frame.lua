@@ -98,7 +98,7 @@ function SILE.framePrototype:advancePageDirection(amount)
     self.state.cursorY = self.state.cursorY + amount
   elseif self:pageAdvanceDirection() == "RTL" then
     self.state.cursorX = self.state.cursorX - amount
-  elseif self:pageAdvanceDirection() == "RTL" then
+  elseif self:pageAdvanceDirection() == "LTR" then
     self.state.cursorX = self.state.cursorX + amount
   elseif self:pageAdvanceDirection() == "BTT" then
     self.state.cursorY = self.state.cursorY - amount
