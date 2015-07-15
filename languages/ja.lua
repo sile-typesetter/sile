@@ -101,10 +101,6 @@ local function intercharacterspace(before, after)
     (ac == 21 or ac == 24 or ac == 25) then
     return "0.25zw"
   end
-  if (ac == 9 or ac == 10 or ac == 11 or ac == 15 or ac == 16 or ac == 19) and
-    (bc == 21 or bc == 24 or bc == 25) then
-    return "0.25zw"
-  end
 
   return 0
 end
