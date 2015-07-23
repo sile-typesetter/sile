@@ -115,7 +115,7 @@ SILE.registerCommand("hbox", function (o,c)
     local node = SILE.typesetter.state.nodes[i]
     if node:isUnshaped() then node = node:shape() end
     table.insert(recentContribution, node)
-    l = l + node.width
+    l = l + node:lineContribution()
     h = node.height > h and node.height or h
     d = node.depth > d and node.depth or d
     SILE.typesetter.state.nodes[i] = nil
