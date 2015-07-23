@@ -4,7 +4,6 @@ SILE.tateFramePrototype = SILE.framePrototype {
   direction = "TTB-RTL",
   enterHooks = { function (self)
     self.oldtypesetter = SILE.typesetter
-    pdf.setdirmode(1)
     SILE.typesetter.leadingFor = function(self, v)
       v.height = SILE.toPoints("1zw")
       return SILE.settings.get("document.parskip")
@@ -14,7 +13,6 @@ SILE.tateFramePrototype = SILE.framePrototype {
   },
   leaveHooks = { function (self)
     SILE.typesetter = self.oldtypesetter
-    pdf.setdirmode(0)
   end
   }
 }
@@ -42,7 +40,7 @@ local outputLatinInTate = function (self, typesetter, line)
   local vorigin = -typesetter.frame.state.cursorY
   self:oldOutputYourself(typesetter,line)
   typesetter.frame.state.cursorY = -vorigin
-  typesetter.frame:advanceWritingDirection(self.height)
+  typesetter.frame:advanceWritingDirection(self:lineContribution())
   -- My baseline moved
   typesetter.frame:advanceWritingDirection(SILE.toPoints("0.5zw") )
   typesetter.frame:advancePageDirection(- SILE.toPoints("0.25zw"))
@@ -53,13 +51,11 @@ local outputTateChuYoko = function (self, typesetter, line)
   -- My baseline moved
 
   local vorigin = -typesetter.frame.state.cursorY
-  typesetter.frame:advanceWritingDirection(self.height)
+  typesetter.frame:advanceWritingDirection(self:lineContribution())
   typesetter.frame:advancePageDirection(0.5 * self.width.length)
-  pdf.setdirmode(0)
   self:oldOutputYourself(typesetter,line)
-  pdf.setdirmode(1)
   typesetter.frame.state.cursorY = -vorigin
-  typesetter.frame:advanceWritingDirection(self.height)
+  typesetter.frame:advanceWritingDirection(self:lineContribution())
   -- My baseline moved
   -- typesetter.frame:advanceWritingDirection(SILE.toPoints("1zw") )
   typesetter.frame:advancePageDirection(-0.5 * self.width.length)
@@ -106,7 +102,7 @@ SILE.registerCommand("latin-in-tate", function (options, content)
       local n = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
       n.oldOutputYourself = n.outputYourself
       n.outputYourself = outputLatinInTate
-      swap(n)
+      n.misfit = true
     end
   end
 end, "Typeset rotated Western text in vertical Japanese")
@@ -124,6 +120,7 @@ SILE.registerCommand("tate-chu-yoko", function (options, content)
     SILE.settings.set("font.direction", "LTR")
     SILE.call("hbox", {}, content)
     local n = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
+    n.misfit = false
     n.oldOutputYourself = n.outputYourself
     n.outputYourself = outputTateChuYoko
   end)  
