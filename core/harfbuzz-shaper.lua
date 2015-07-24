@@ -10,7 +10,7 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
     if not face then
       SU.error("Could not find requested font "..options.." or any suitable substitutes")
     end
-    if face.family ~= options.font and not substwarnings[options.font] then
+    if not(options.filename) and face.family ~= options.font and not substwarnings[options.font] then
       substwarnings[options.font] = true
       SU.warn("Font '"..options.font.."' not available, falling back to '"..face.family.."'")
     end

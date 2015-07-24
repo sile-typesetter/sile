@@ -77,6 +77,24 @@ int face_from_options(lua_State* L) {
 
   if (!lua_istable(L, 1)) return 0;
 
+  lua_pushstring(L, "size");
+  lua_gettable(L, -2);
+  if (lua_isnumber(L, -1)) { pointSize = lua_tonumber(L, -1); }
+  lua_pop(L,1);
+
+  lua_pushstring(L, "filename");
+  lua_gettable(L, -2);
+  if (lua_isstring(L, -1)) {
+    font_path = lua_tostring(L, -1);
+    lua_pop(L,1);
+    lua_newtable(L);
+    lua_pushstring(L, "filename");
+    lua_pushstring(L, (char*)font_path);
+    lua_settable(L, -3);
+    goto done_match;
+  }
+  lua_pop(L,1);
+
   lua_pushstring(L, "font");
   lua_gettable(L, -2);
   if (lua_isstring(L, -1)) { family = lua_tostring(L, -1); }
@@ -97,11 +115,6 @@ int face_from_options(lua_State* L) {
     else                       newWeight = FC_WEIGHT_HEAVY;
     weight = newWeight;
   }
-  lua_pop(L,1);
-
-  lua_pushstring(L, "size");
-  lua_gettable(L, -2);
-  if (lua_isnumber(L, -1)) { pointSize = lua_tonumber(L, -1); }
   lua_pop(L,1);
 
   lua_pushstring(L, "language");
@@ -166,6 +179,7 @@ int face_from_options(lua_State* L) {
   FcPatternDestroy (matched);
   FcPatternDestroy (p);
 
+  done_match:
   face = (FT_Face)malloc(sizeof(FT_Face));
   if (FT_New_Face(ft_library, (char*)font_path, index, &face))
     return 0;

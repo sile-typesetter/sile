@@ -1,9 +1,13 @@
-
     SILE.registerCommand("font", function(options, content)
       if (type(content)=="function" or content[1]) then
         SILE.settings.pushState() 
       end
-      if (options.family)  then SILE.settings.set("font.family", options.family) end
+      if (options.filename)  then SILE.settings.set("font.filename", options.filename) end
+      if (options.family) then
+        SILE.settings.set("font.family", options.family)
+        SILE.settings.set("font.filename", "")
+      end
+
       if (options.size)  then
         local size = SILE.parserBits.dimensioned_string:match(options.size)
         if not size then SU.error("Couldn't parse font size "..options.size) end
@@ -40,13 +44,14 @@ SILE.settings.declare({name = "font.variant", type = "string", default = "normal
 SILE.settings.declare({name = "font.script", type = "string", default = ""})
 SILE.settings.declare({name = "font.style", type = "string", default = "normal"})
 SILE.settings.declare({name = "font.direction", type = "string", default = ""})
+SILE.settings.declare({name = "font.filename", type = "string", default = ""})
 SILE.settings.declare({name = "font.features", type = "string", default = ""})
 SILE.settings.declare({name = "document.language", type = "string", default = "en"})
 
 SILE.fontCache = {}
 
 local _key = function(options)
-  return table.concat({options.font;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction},";")
+  return table.concat({options.font;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename},";")
 end
 
 
@@ -56,6 +61,10 @@ SILE.font = {loadDefaults = function(options)
   if not options.weight then options.weight = SILE.settings.get("font.weight") end
   if not options.style then options.style = SILE.settings.get("font.style") end
   if not options.variant then options.variant = SILE.settings.get("font.variant") end
+  if SILE.settings.get("font.filename") ~= "" then
+    options.filename = SILE.settings.get("font.filename")
+    options.font = ""
+  end
   if not options.language then options.language = SILE.settings.get("document.language") end
   if not options.script then options.script = SILE.settings.get("font.script") end
   if not options.direction then 
