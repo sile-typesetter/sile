@@ -11,4 +11,5 @@ fi
 
 autoreconf --install
 (cd libtexpdf; autoreconf -I m4)
-sed 's/rm -f core/rm -f/' -i configure
+sed -e 's/rm -f core/rm -f/' -i.bak configure
+rm -f configure.bak
