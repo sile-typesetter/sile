@@ -95,6 +95,11 @@ SILE.baseClass = std.object {
         width = SILE.length.parse(options.width)
       })
     end, "Inserts a glue node. The width option denotes the glue dimension.")
+    SILE.registerCommand("kern", function(options, content)
+      table.insert(SILE.typesetter.state.nodes,
+        SILE.nodefactory.newKern({width = SILE.length.parse(options.width) })
+      )
+    end, "Inserts a glue node. The width option denotes the glue dimension.")
 
     SILE.registerCommand("skip", function(options, content)
       SILE.typesetter:leaveHmode();
