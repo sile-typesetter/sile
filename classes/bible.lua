@@ -69,7 +69,6 @@ bible.finish = function (self)
 end
 
 bible.endPage = function(self)
-  self:outputInsertions()
   if (self:oddPage() and SILE.scratch.headers.right) then
     SILE.typesetNaturally(SILE.getFrame("runningHead"), function()
       SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
