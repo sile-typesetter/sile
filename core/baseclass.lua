@@ -90,6 +90,27 @@ SILE.baseClass = std.object {
       end
     end, "Inserts a penalty node. Options are penalty= for the size of the penalty and flagged= if this is a flagged penalty.")
 
+    SILE.registerCommand("discretionary", function(options, content)
+      local d = SILE.nodefactory.newDiscretionary({})
+      if options.prebreak then
+        SILE.call("hbox", {}, function() SILE.typesetter:typeset(options.prebreak) end)
+        d.prebreak = { SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] }
+        SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
+      end
+      if options.postbreak then
+        SILE.call("hbox", {}, function() SILE.typesetter:typeset(options.postbreak) end)
+        d.postbreak = { SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] }
+        SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
+      end
+      if options.replacement then
+        SILE.call("hbox", {}, function() SILE.typesetter:typeset(options.replacement) end)
+        d.replacement = { SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] }
+        SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
+      end
+
+      table.insert(SILE.typesetter.state.nodes, d)
+    end, "Inserts a discretionary node.")
+
     SILE.registerCommand("glue", function(options, content)
       SILE.typesetter:pushGlue({
         width = SILE.length.parse(options.width)
