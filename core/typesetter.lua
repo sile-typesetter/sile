@@ -378,46 +378,55 @@ SILE.defaultTypesetter = std.object {
         end
         if seenHbox == 0 then break end
         self:addrlskip(slice)
-
-        local naturalTotals = SILE.length.new({length =0 , stretch =0, shrink = 0})
-        for i,node in ipairs(slice) do
-          if (node:isBox() or (node:isPenalty() and node.penalty == -inf_bad)) then
-            skipping = 0
-            if node:isBox() then
-              naturalTotals = naturalTotals + node:lineContribution()
-            end
-          elseif skipping == 0 then-- and not(node:isGlue() and i == #slice) then
-            naturalTotals = naturalTotals + node.width
-          end
-        end
-        local i = #slice
-        while i > 1 do
-          if slice[i]:isGlue() or slice[i] == SILE.nodefactory.zeroHbox then
-            -- Do nothing
-          elseif (slice[i]:isDiscretionary()) then
-            slice[i].used = 1;
-            if slice[i].parent then slice[i].parent.hyphenated = true end
-            naturalTotals = naturalTotals + slice[i]:prebreakWidth()
-          else
-            break
-          end
-          i = i -1
-        end
-        local left = (point.width - naturalTotals.length)
-
-        if left < 0 then
-          left = left / naturalTotals.shrink
-        else
-          left = left / naturalTotals.stretch
-        end
-        if left < -1 then left = -1 end
-        local thisLine = { ratio = left, nodes = slice };
+        local ratio = self:computeLineRatio(point.width, slice)
+        local thisLine = { ratio = ratio, nodes = slice };
         lines[#lines+1] = thisLine
-        linestart = point.position+1
+        if slice[#slice]:isDiscretionary() then
+          linestart = point.position
+        else
+          linestart = point.position+1
+        end
       end
     end
     --self.state.nodes = nodes.slice(linestart+1,nodes.length);
     return lines;
+  end,
+  computeLineRatio = function(self, breakwidth, slice)
+    local naturalTotals = SILE.length.new({length =0 , stretch =0, shrink = 0})
+    for i,node in ipairs(slice) do
+      if (node:isBox() or (node:isPenalty() and node.penalty == -inf_bad)) then
+        skipping = 0
+        if node:isBox() then
+          naturalTotals = naturalTotals + node:lineContribution()
+        end
+      elseif node:isDiscretionary() then
+        naturalTotals = naturalTotals + node:replacementWidth()
+      elseif skipping == 0 then-- and not(node:isGlue() and i == #slice) then
+        naturalTotals = naturalTotals + node.width -- ??
+      end
+    end
+    local i = #slice
+    while i > 1 do
+      if slice[i]:isGlue() or slice[i] == SILE.nodefactory.zeroHbox then
+        -- Do nothing
+      elseif (slice[i]:isDiscretionary()) then
+        slice[i].used = 1;
+        if slice[i].parent then slice[i].parent.hyphenated = true end
+        naturalTotals = naturalTotals + slice[i]:prebreakWidth()
+      else
+        break
+      end
+      i = i -1
+    end
+    local left = (breakwidth - naturalTotals.length)
+
+    if left < 0 then
+      left = left / naturalTotals.shrink
+    else
+      left = left / naturalTotals.stretch
+    end
+    if left < -1 then left = -1 end
+    return left
   end,
   chuck = function(self) -- emergency shipout everything
     self:leaveHmode(true)
