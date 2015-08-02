@@ -432,6 +432,7 @@ function lineBreak:checkForLegalBreak(n) -- 892
     self.activeWidth = self.activeWidth + n:prebreakWidth()
     self:tryBreak()
     self.activeWidth = self.activeWidth - n:prebreakWidth()
+    self.activeWidth = self.activeWidth + n:replacementWidth()
   elseif n:isPenalty() then
     self:tryBreak()
   end
