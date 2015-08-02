@@ -123,13 +123,18 @@ local _disc = _hbox {
   used = 0,
   prebw = nil,
   __tostring = function (this)
-      return "D(" .. SU.concat(this.prebreak,"") .. "|" .. SU.concat(this.postbreak, "") .. ")";
+      return "D(" .. SU.concat(this.prebreak,"") .. "|" .. SU.concat(this.postbreak, "") .."|" .. SU.concat(this.replacement, "") .. ")";
   end,
   toText = function (self) return self.used==1 and "-" or "_" end,
   outputYourself = function(self,typesetter, line)
     if self.used == 1 then
-      -- XXX
-      for i, n in ipairs(self.prebreak) do n:outputYourself(typesetter,line) end
+      if (line.nodes[1] == self) then
+        for i, n in ipairs(self.postbreak) do n:outputYourself(typesetter,line) end
+      else
+        for i, n in ipairs(self.prebreak) do n:outputYourself(typesetter,line) end
+      end
+    else
+      for i, n in ipairs(self.replacement) do n:outputYourself(typesetter,line) end
     end
   end,
   prebreakWidth = function(self)
