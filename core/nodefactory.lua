@@ -158,6 +158,27 @@ local _disc = _hbox {
     self.replacew = l
     return l
   end,
+  prebreakHeight = function(self)
+    if self.prebh then return self.prebh end
+    local l = 0
+    for _,n in pairs(self.prebreak) do if n.height > l then l = n.height end end
+    self.prebh = l
+    return l
+  end,
+  postbreakHeight = function(self)
+    if self.postbh then return self.postbh end
+    local l = 0
+    for _,n in pairs(self.postbreak) do if n.height > l then l = n.height end end
+    self.postbh = l
+    return l
+  end,
+  replacementHeight = function(self)
+    if self.replaceh then return self.replaceh end
+    local l = 0
+    for _,n in pairs(self.replacement) do if n.height > l then l = n.height end end
+    self.replaceh = l
+    return l
+  end,
 }
 
 -- Alternatives

@@ -401,6 +401,7 @@ SILE.defaultTypesetter = std.object {
         end
       elseif node:isDiscretionary() then
         naturalTotals = naturalTotals + node:replacementWidth()
+        slice[i].height = slice[i]:replacementHeight()
       elseif skipping == 0 then-- and not(node:isGlue() and i == #slice) then
         naturalTotals = naturalTotals + node.width -- ??
       end
@@ -412,11 +413,19 @@ SILE.defaultTypesetter = std.object {
       elseif (slice[i]:isDiscretionary()) then
         slice[i].used = 1;
         if slice[i].parent then slice[i].parent.hyphenated = true end
+        naturalTotals = naturalTotals - slice[i]:replacementWidth()
         naturalTotals = naturalTotals + slice[i]:prebreakWidth()
+        slice[i].height = slice[i]:prebreakHeight()
+        break
       else
         break
       end
       i = i -1
+    end
+    if slice[1]:isDiscretionary() then
+      naturalTotals = naturalTotals - slice[1]:replacementWidth()
+      naturalTotals = naturalTotals + slice[1]:postbreakWidth()
+      slice[1].height = slice[1]:postbreakHeight()
     end
     local left = (breakwidth - naturalTotals.length)
 
