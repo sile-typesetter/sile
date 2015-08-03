@@ -289,7 +289,8 @@ SILE.defaultTypesetter = std.object {
             v.nodes[i].used = 0 -- HACK HACK HACK
           end
           -- HACK HACK HACK HACK HACK
-          if not (v.nodes[i]:isGlue() and (v.nodes[i].value == "lskip" or v.nodes[i].value == "rskip")) then
+          if not (v.nodes[i]:isGlue() and (v.nodes[i].value == "lskip" or v.nodes[i].value == "rskip"))
+            and not (v.nodes[i]:isDiscretionary() and i == 1) then
             self.state.nodes[#(self.state.nodes)+1] = v.nodes[i]
           end
         end
