@@ -102,6 +102,7 @@ local _unshaped = _nnode {
   end,
   shape = function(this)
     local n =  SILE.shaper:createNnodes(this.text, this.options)
+    n[1].parent = this.parent
     return n[1] -- bug
   end,
   width = nil,

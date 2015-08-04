@@ -48,7 +48,7 @@ local reorder = function(n, self)
     else
       local chunks = SU.splitUtf8(nl[i].text)
       for j = 1,#chunks do
-        newNl[#newNl+1] = SILE.nodefactory.newUnshaped({text = chunks[j], options = nl[i].options })
+        newNl[#newNl+1] = SILE.nodefactory.newUnshaped({text = chunks[j], options = nl[i].options, parent = nl[i].parent })
       end
     end
   end
