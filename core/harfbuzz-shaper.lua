@@ -30,13 +30,14 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
   end,
   preAddNodes = function(self, items, nnodeValue) -- Check for complex nodes
     for i=1,#items do
-      if items[i].y_offset or items[i].width == 0 then
+      if items[i].y_offset then
         nnodeValue.complex = true; break
       end
     end
   end,
   addShapedGlyphToNnodeValue = function (self, nnodevalue, shapedglyph)
     if nnodevalue.complex then
+
       if not nnodevalue.items then nnodevalue.items = {} end
       nnodevalue.items[#nnodevalue.items+1] = shapedglyph
       return
