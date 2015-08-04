@@ -33,7 +33,7 @@ describe("The node factory", function()
     local nnode2 = SILE.nodefactory.newNnode({ width = 20, height = 30, depth = 3, text = "break" })
     local nnode3 = SILE.nodefactory.newNnode({ width = 20, height = 30, depth = 3, text = "post" })
     local disc   = SILE.nodefactory.newDisc({ prebreak = {nnode1, nnode2}, postbreak = {nnode3, nnode2 } })
-    it("should stringify", function() assert.is.equal(tostring(disc), "D(N<20>^30-3v(pre)N<20>^30-3v(break)|N<20>^30-3v(post)N<20>^30-3v(break))") end)
+    it("should stringify", function() assert.is.equal(tostring(disc), "D(N<20>^30-3v(pre)N<20>^30-3v(break)|N<20>^30-3v(post)N<20>^30-3v(break)|)") end)
   end)
 
 
