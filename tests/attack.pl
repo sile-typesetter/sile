@@ -12,9 +12,11 @@ GetOptions(
 	'upstream' => \$upstream
 );
 
+my @specifics = @ARGV;
+
 if ($regression) {
 	my $exit = 0;
-	for (<tests/*.sil>) {
+	for (@specifics ? @specifics : <tests/*.sil>) {
 		my $expectation = $_; $expectation =~ s/\.sil$/\.expected/;
 		if (-f $expectation) {
 			# Only run regression tests for upstream bugs if specifically asked
