@@ -6,7 +6,7 @@
 -- Uyghur is Turkish, right?
 SILE.languageSupport.loadLanguage("tr")
 SILE.hyphenator.languages["ug"] = {}
-SILE.hyphenator.languages["ug"].patterns = SILE.hyphenator.languages["tk"].patterns
+SILE.hyphenator.languages["ug"].patterns = SILE.hyphenator.languages["tr"].patterns
 
 require("char-def")
 
