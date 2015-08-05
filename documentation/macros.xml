@@ -22,4 +22,13 @@
 <define command="changed">
 <note><bf>The material in this section has changed significantly since the previous release of SILE.</bf></note>
 </define>
+<script>
+-- Well, this is a hack
+local simpletable = SILE.require("packages/simpletable")
+simpletable.init(SILE.documentState.documentClass, {
+  tableTag = "table",
+  trTag = "tr",
+  tdTag = "td"
+})
+</script>
 </sile>
