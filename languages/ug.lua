@@ -4,7 +4,7 @@
 -- I had most of this working.
 
 -- Uyghur is Turkish, right?
-SILE.languageSupport.loadLanguage("tk")
+SILE.languageSupport.loadLanguage("tr")
 SILE.hyphenator.languages["ug"] = {}
 SILE.hyphenator.languages["ug"].patterns = SILE.hyphenator.languages["tk"].patterns
 
