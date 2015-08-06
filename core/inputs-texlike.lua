@@ -23,11 +23,11 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   stuff = Cg(V"environment" +
     comment
     + V("text") + V"bracketed_stuff" + V"command")^0
-  bracketed_stuff = P"{" * V"stuff" * (P"}" + E("} expected"))
-  command =((P("\\")-P("\\begin")) * Cg(myID, "tag") * Cg(parameters,"attr") * V"bracketed_stuff"^0 * lineEndLineStartSpace)-P("\\end{")
+  bracketed_stuff = P"{" * V"stuff" * (P"}" + E("} expected")) * _
+  command =((P("\\")-P("\\begin")) * Cg(myID, "tag") * Cg(parameters,"attr") * V"bracketed_stuff"^0)-P("\\end{")
   environment =
     comment^0 *
-   P("\\begin") * Cg(parameters, "attr") * P("{") * Cg(myID, "tag") * P("}") * lineEndLineStartSpace
+    P("\\begin") * Cg(parameters, "attr") * P("{") * Cg(myID, "tag") * P("}")
       * V("stuff")
     * (P("\\end{") * (
       Cmt(myID * Cb("tag"), function(s,i,a,b) return a==b end) +
