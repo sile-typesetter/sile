@@ -1,8 +1,14 @@
 \begin[papersize=a5]{document}
+% Test leading comment and package lines
 \script[src=packages/color]
 
-Foo \em{bar}
-baz
+Test tailing command \em{inside}
+paragraph.
 
-\em{quux}.
+\em{Test leading} command at start of paragraph.
+
+
+Test command and \em{end of paragraph.}
+
+Should be new paragraph.
 \end{document}

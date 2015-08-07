@@ -4,7 +4,7 @@ compiler:
 env:
   global:
    - LUAROCKS_BASE=luarocks-2.2.2
-   - HARFBUZZ_BASE=harfbuzz-0.9.41
+   - HARFBUZZ_BASE=harfbuzz-1.0.1
    - GRAPHITE=true
   matrix:
    - LUA_VER=5.3 LUA_52_COMPAT=true LUA_53_BASE=lua-5.3.1
