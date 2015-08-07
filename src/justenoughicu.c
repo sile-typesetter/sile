@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <unicode/ustring.h>
 #include <unicode/ustdio.h>
 #include <unicode/ubrk.h>
@@ -9,19 +10,38 @@
 #include <lualib.h>
 
 int icu_breakpoints(lua_State *L) {
-    // UBreakIterator* bi;
-    // int32_t p;
-    // u_printf("-> %S <-\n", s);
-    // UErrorCode err = U_ZERO_ERROR;
+  const char* input = luaL_checkstring(L, 1);
+  int input_l = strlen(input);
+  UChar *buffer;
+  int32_t l;
+  UErrorCode err = U_ZERO_ERROR;
+  u_strFromUTF8(NULL, 0, &l, input, input_l, &err);
+  /* Above call returns an error every time. */
+  err = U_ZERO_ERROR;
+  buffer = malloc(l * sizeof(UChar));
+  u_strFromUTF8(buffer, l, &l, input, input_l, &err);
 
-    // bi = ubrk_open(UBRK_LINE, 0, s, len, &err);
-    // if (U_FAILURE(err)) return;
-    // p = ubrk_first(bi);
-    // while (p != UBRK_DONE) {
-    //     printf("Boundary at position %d\n", p);
-    //     p = ubrk_next(bi);
-    // }
-    // ubrk_close(bi);
+  char* outputbuffer = malloc(input_l); /* To hold UTF8 */
+  UBreakIterator* bi;
+  int index = 1;
+  int32_t p, previous;
+  bi = ubrk_open(UBRK_LINE, 0, buffer, l, &err);
+  assert(!U_FAILURE(err));
+  p = ubrk_first(bi);
+  previous = 0;
+  lua_newtable(L);
+  while (p != UBRK_DONE) {
+    int32_t out_l;
+    u_strToUTF8(outputbuffer, input_l, &out_l, buffer+previous, p-previous, &err);
+    lua_pushinteger(L, index++);
+    lua_pushstring(L, outputbuffer);
+    lua_settable(L, -3);
+    assert(!U_FAILURE(err));
+    previous = p;
+    p = ubrk_next(bi);
+  }
+  ubrk_close(bi);
+  return 1;
 }
 
 
