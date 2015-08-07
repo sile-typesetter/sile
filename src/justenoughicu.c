@@ -42,7 +42,7 @@ int icu_breakpoints(lua_State *L) {
     /* At some kind of boundary */
     lua_newtable(L);
     lua_pushstring(L, "type");
-    lua_pushstring(L, ubrk_isBoundary(wordbreaks,i) ? "word" : "line");
+    lua_pushstring(L, ubrk_isBoundary(linebreaks,i) ? "line" : "word");
     lua_settable(L, -3);
 
     if (ubrk_isBoundary(linebreaks, i)) {
