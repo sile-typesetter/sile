@@ -1,5 +1,5 @@
 \begin[papersize=a5]{document}
-\script[src=package/color]
+\script[src=packages/color]
 
 Foo \em{bar}
 baz
