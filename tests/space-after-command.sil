@@ -1,0 +1,8 @@
+\begin[papersize=a5]{document}
+\script[src=package/color]
+
+Foo \em{bar}
+baz
+
+\em{quux}.
+\end{document}

@@ -101,6 +101,7 @@ SILE.defaultTypesetter = std.object {
 
   -- Actual typesetting functions
   typeset = function (self, text)
+    if text:match("^%\n$") then return end
     for t in SU.gtoke(text,SILE.settings.get("typesetter.parseppattern")) do
       if (t.separator) then
         self:leaveHmode();
@@ -118,7 +119,7 @@ SILE.defaultTypesetter = std.object {
 
   -- Takes string, writes onto self.state.nodes
   setpar = function (self, t)
-    t = string.gsub(t,"\n", " ");
+    t = string.gsub(t,"\n", " ")
     if (#self.state.nodes == 0) then
       t = string.gsub(t,"^%s+", "");
       self:initline()

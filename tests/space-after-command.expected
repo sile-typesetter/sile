@@ -1,0 +1,26 @@
+<tests/space-after-command.sil>Open file	tests/space-after-command.pdf
+Set paper size 	419.5275636	595.275597
+Begin page
+Mx 	40.97638
+My 	37.33214
+Set font 	Gentium;10;200;normal;normal;;LTR
+T	38 79 79	(Foo)
+Mx 	58.49202
+Set font 	Gentium;10;200;italic;normal;;LTR
+T	66 65 82	(bar)
+Mx 	73.88852
+Set font 	Gentium;10;200;normal;normal;;LTR
+T	66 65 90	(baz)
+Mx 	40.97638
+My 	52.33214
+Set font 	Gentium;10;200;italic;normal;;LTR
+T	81 85 85 88	(quux)
+Mx 	59.83868
+Set font 	Gentium;10;200;normal;normal;;LTR
+T	14	(.)
+[1] Mx 	207.41759
+My 	553.73265
+T	17	(1)
+End page
+Finish
+
