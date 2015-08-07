@@ -13,7 +13,7 @@ int icu_breakpoints(lua_State *L) {
   const char* input = luaL_checkstring(L, 1);
   int input_l = strlen(input);
   UChar *buffer;
-  int32_t l;
+  int32_t l, breakcount = 0;
   UErrorCode err = U_ZERO_ERROR;
   u_strFromUTF8(NULL, 0, &l, input, input_l, &err);
   /* Above call returns an error every time. */
@@ -22,26 +22,52 @@ int icu_breakpoints(lua_State *L) {
   u_strFromUTF8(buffer, l, &l, input, input_l, &err);
 
   char* outputbuffer = malloc(input_l); /* To hold UTF8 */
-  UBreakIterator* bi;
-  int index = 1;
-  int32_t p, previous;
-  bi = ubrk_open(UBRK_LINE, 0, buffer, l, &err);
+  UBreakIterator* wordbreaks, *linebreaks;
+  int32_t i, previous;
+  wordbreaks = ubrk_open(UBRK_WORD, 0, buffer, l, &err);
   assert(!U_FAILURE(err));
-  p = ubrk_first(bi);
+
+  linebreaks = ubrk_open(UBRK_LINE, 0, buffer, l, &err);
+  assert(!U_FAILURE(err));
+
   previous = 0;
-  lua_newtable(L);
-  while (p != UBRK_DONE) {
+  i = 0;
+  while (i <= l) {
     int32_t out_l;
-    u_strToUTF8(outputbuffer, input_l, &out_l, buffer+previous, p-previous, &err);
-    lua_pushinteger(L, index++);
-    lua_pushstring(L, outputbuffer);
+    int32_t type;
+    if (!ubrk_isBoundary(linebreaks, i) && !ubrk_isBoundary(wordbreaks,i)) {
+      i++; continue;
+    }
+
+    /* At some kind of boundary */
+    lua_newtable(L);
+    lua_pushstring(L, "type");
+    lua_pushstring(L, ubrk_isBoundary(wordbreaks,i) ? "word" : "line");
     lua_settable(L, -3);
-    assert(!U_FAILURE(err));
-    previous = p;
-    p = ubrk_next(bi);
+
+    if (ubrk_isBoundary(linebreaks, i)) {
+      lua_pushstring(L, "subtype");
+      type = ubrk_getRuleStatus(linebreaks);
+      if (type >= UBRK_LINE_SOFT && type < UBRK_LINE_SOFT_LIMIT) {
+        lua_pushstring(L, "soft");
+      } else {
+        lua_pushstring(L, "hard");
+      }
+      lua_settable(L, -3);
+    }
+    lua_pushstring(L, "token");
+    u_strToUTF8(outputbuffer, input_l, &out_l, buffer+previous, i-previous, &err);
+    lua_pushstring(L, outputbuffer);
+
+    lua_settable(L, -3);
+
+    previous  = i;
+    breakcount++;
+    i++;
   }
-  ubrk_close(bi);
-  return 1;
+  ubrk_close(wordbreaks);
+  ubrk_close(linebreaks);
+  return breakcount;
 }
 
 
