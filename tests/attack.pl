@@ -3,7 +3,8 @@
 use strict;
 use warnings;
 use Getopt::Long;
-
+use Term::ANSIColor;
+my (@failed, @passed);
 my $regression = 0;
 my $upstream = 0;
 
@@ -30,11 +31,18 @@ if ($regression) {
 			my $out = $_; $out =~ s/\.sil$/\.actual/;
 			exit $? >> 8 if system qq{./sile -e 'require("core/debug-output")' $_ > $out};
 			if (system("diff -U0 $expectation $out")) {
-				$exit = 1;
-			}
+				push @failed, $_;
+			} else { push @passed, $_ }
 		}
 	}
-	exit $exit;
+	print "\n",color("green"), "Passing tests:\n • ",join(", ", @passed),"\n";
+	if (@failed) {
+		print "\n",color("red"), "Failed tests: \n";
+		for (@failed) { print " • ",$_,"\n"}
+		print color("reset");
+		exit 1;
+	}
+	print color("reset");
 } else {
 	for (<examples/*.sil>, "documentation/sile.sil") {
 		next if /macros.sil/;
