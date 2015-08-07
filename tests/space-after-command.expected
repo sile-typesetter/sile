@@ -4,20 +4,58 @@ Begin page
 Mx 	40.97638
 My 	37.33214
 Set font 	Gentium;10;200;normal;normal;;LTR
-T	38 79 79	(Foo)
-Mx 	58.49202
+T	52 69 83 84	(Test)
+Mx 	61.07209
+T	84 65 73 76 73 78 71	(tailing)
+Mx 	90.29378
+T	67 79 77 77 65 78 68	(command)
+Mx 	133.72933
 Set font 	Gentium;10;200;italic;normal;;LTR
-T	66 65 82	(bar)
-Mx 	73.88852
+T	73 78 83 73 68 69	(inside)
+Mx 	158.39047
 Set font 	Gentium;10;200;normal;normal;;LTR
-T	66 65 90	(baz)
+T	80 65 82 65 71 82 65 80 72 14	(paragraph.)
 Mx 	40.97638
 My 	52.33214
 Set font 	Gentium;10;200;italic;normal;;LTR
-T	81 85 85 88	(quux)
-Mx 	59.83868
+T	52 69 83 84	(Test)
+Mx 	59.08009
+T	76 69 65 68 73 78 71	(leading)
+Mx 	89.10550
 Set font 	Gentium;10;200;normal;normal;;LTR
-T	14	(.)
+T	67 79 77 77 65 78 68	(command)
+Mx 	132.53912
+T	65 84	(at)
+Mx 	143.23348
+T	83 84 65 82 84	(start)
+Mx 	165.19249
+T	79 70	(of)
+Mx 	175.99427
+T	80 65 82 65 71 82 65 80 72 14	(paragraph.)
+Mx 	40.97638
+My 	67.33214
+T	52 69 83 84	(Test)
+Mx 	61.07364
+T	67 79 77 77 65 78 68	(command)
+Mx 	104.51074
+T	65 78 68	(and)
+Mx 	122.48397
+Set font 	Gentium;10;200;italic;normal;;LTR
+T	69 78 68	(end)
+Mx 	138.51078
+T	79 70	(of)
+Mx 	147.88231
+T	80 65 82 65 71 82 65 80 72 14	(paragraph.)
+Mx 	40.97638
+My 	82.33214
+Set font 	Gentium;10;200;normal;normal;;LTR
+T	51 72 79 85 76 68	(Should)
+Mx 	72.16202
+T	66 69	(be)
+Mx 	84.52930
+T	78 69 87	(new)
+Mx 	104.39658
+T	80 65 82 65 71 82 65 80 72 14	(paragraph.)
 [1] Mx 	207.41759
 My 	553.73265
 T	17	(1)
