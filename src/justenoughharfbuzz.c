@@ -292,8 +292,11 @@ int shape (lua_State *L) {
     else
       direction = HB_DIRECTION_LTR;
 
-    hb_ft_font = hb_ft_font_create(face, NULL);
-    hb_face_t* hbFace = hb_font_get_face(hb_ft_font);
+    hb_face_t* hbFace = hb_ft_face_create_cached(face);
+    hb_ft_font = hb_font_create (hbFace);
+    unsigned int upem = hb_face_get_upem(hbFace);
+    hb_font_set_scale(hb_ft_font, upem, upem);
+    hb_ft_font_set_funcs(hb_ft_font);
 
     buf = hb_buffer_create();
     hb_buffer_add_utf8(buf, text, strlen(text), 0, strlen(text));
@@ -339,13 +342,17 @@ int shape (lua_State *L) {
       lua_pushinteger(L, glyph_info[j].codepoint);
       lua_settable(L, -3);
       lua_pushstring(L, "width");
-      lua_pushnumber(L, glyph_pos[j].x_advance / 64.0);
+      lua_pushnumber(L, glyph_pos[j].x_advance * point_size / upem);
       lua_settable(L, -3);
+
+      double height = extents.y_bearing * point_size / upem;
+      double tHeight = extents.height * point_size / upem;
+
       lua_pushstring(L, "height");
-      lua_pushnumber(L, extents.y_bearing / 64.0);
+      lua_pushnumber(L, height);
       lua_settable(L, -3);
       lua_pushstring(L, "depth");
-      lua_pushnumber(L, -(extents.height / 64.0 + extents.y_bearing / 64.0));
+      lua_pushnumber(L, tHeight + height);
       lua_settable(L, -3);
     }
     /* Cleanup */
