@@ -28,36 +28,7 @@ typedef struct {
   char* script;
 } fontOptions;
 
-typedef struct {
-  double width;
-  double height;
-  double depth;
-} box;
-
 FT_Library ft_library;
-
-void calculate_extents(box* b, hb_glyph_info_t glyph_info, hb_glyph_position_t glyph_pos, FT_Face ft_face, double point_size, hb_direction_t direction) {
-  FT_Error error = FT_Load_Glyph(ft_face, glyph_info.codepoint, FT_LOAD_NO_SCALE);
-  if (error) return;
-  FT_Glyph glyph;
-  error = FT_Get_Glyph(ft_face->glyph, &glyph);
-  if (error) return;
-  FT_BBox ft_bbox;
-  FT_Glyph_Get_CBox(glyph, FT_GLYPH_BBOX_UNSCALED, &ft_bbox);
-  FT_Fixed advance;
-  FT_Get_Advance(ft_face, glyph_info.codepoint, FT_LOAD_NO_SCALE, &advance);
-  const FT_Glyph_Metrics *ftmetrics = &ft_face->glyph->metrics;
-  b->width = advance * point_size / ft_face->units_per_EM;
-  if (direction == HB_DIRECTION_TTB) {
-    FT_Get_Advance(ft_face, glyph_info.codepoint, FT_LOAD_NO_SCALE | FT_LOAD_VERTICAL_LAYOUT, &advance);
-    b->height = advance * point_size / ft_face->units_per_EM;
-    b->depth = 0;
-  } else {
-    b->height = ft_bbox.yMax * point_size / ft_face->units_per_EM;
-    b->depth = -ft_bbox.yMin * point_size / ft_face->units_per_EM;
-  }
-  FT_Done_Glyph(glyph);
-}
 
 int face_from_options(lua_State* L) {
   FT_Face face;
@@ -341,12 +312,12 @@ int shape (lua_State *L) {
     lua_checkstack(L, glyph_count);
     for (j = 0; j < glyph_count; ++j) {
       char namebuf[255];
-      box glyph_extents  = { 0.0, 0.0, 0.0 };
-      calculate_extents(&glyph_extents, glyph_info[j], glyph_pos[j], face, point_size, direction);
+      hb_glyph_extents_t extents = {0,0,0,0};
+      hb_font_get_glyph_extents(hb_ft_font, glyph_info[j].codepoint, &extents);
 
       lua_newtable(L);
       lua_pushstring(L, "name");
-      FT_Get_Glyph_Name( face, glyph_info[j].codepoint, namebuf, 255 );      
+      hb_font_get_glyph_name( hb_ft_font, glyph_info[j].codepoint, namebuf, 255 );
       lua_pushstring(L, namebuf);
       lua_settable(L, -3);
 
@@ -368,13 +339,13 @@ int shape (lua_State *L) {
       lua_pushinteger(L, glyph_info[j].codepoint);
       lua_settable(L, -3);
       lua_pushstring(L, "width");
-      lua_pushnumber(L, glyph_extents.width);
+      lua_pushnumber(L, glyph_pos[j].x_advance / 64.0);
       lua_settable(L, -3);
       lua_pushstring(L, "height");
-      lua_pushnumber(L, glyph_extents.height);
+      lua_pushnumber(L, extents.y_bearing / 64.0);
       lua_settable(L, -3);
       lua_pushstring(L, "depth");
-      lua_pushnumber(L, glyph_extents.depth);
+      lua_pushnumber(L, -(extents.height / 64.0 + extents.y_bearing / 64.0));
       lua_settable(L, -3);
     }
     /* Cleanup */
