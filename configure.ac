@@ -87,6 +87,14 @@ AS_IF([test "$backend" = "pangocairo"],
   [AC_CONFIG_SUBDIRS([libtexpdf])]
 )
 
+PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
+  AC_DEFINE([ICU], [1], [Build using icu4c])
+  with_icu=yes
+  AC_SUBST([ICU_CFLAGS])
+  AC_SUBST([ICU_LIBS])
+],[
+with_icu=no
+])
 
 adl_RECURSIVE_EVAL(["${datadir}/${PACKAGE}"], [SILE_PATH])
 AC_DEFINE_UNQUOTED([SILE_PATH],["${SILE_PATH}"],[Path for SILE packages and classes])
@@ -96,6 +104,8 @@ AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"],[Path for SILE libraries
 
 AC_MSG_NOTICE([Configuring with $backend backend])
 AM_CONDITIONAL([HARFBUZZLIBTEXPDF], [test "$backend" = "harfbuzz"])
+AM_CONDITIONAL([ICU], [test "x$with_icu" = "xyes"])
+
 AC_CANONICAL_HOST
 case $host_os in
   cygwin* | mingw* )
