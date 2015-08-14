@@ -2,13 +2,21 @@
 % Test leading comment and package lines
 \script[src=packages/color]
 
-Test tailing command \em{inside}
-paragraph.
+\noindent Note: each sentence below should be in its own paragraph with no
+line breaks or words slammed together. All paragraphs (except this one) should
+be indented.
 
-\em{Test leading} command at start of paragraph.
+Test command trailing at the end of a line \color[color=blue]{inside}
+a paragraph.
 
+\color[color=blue]{Test command} leadding at the start of a paragraph.
 
-Test command and \em{end of paragraph.}
+Test command at the \color[color=blue]{end of a paragraph.}
 
-Should be new paragraph.
+\em{Test command over full paragraph.}
+
+Test back to back commands on the \color[color=blue]{same} \color[color=green]{line}.
+
+Test command \color[color=blue]{at the end on one line}
+\color[color=green]{and the beginning} of another.
 \end{document}
