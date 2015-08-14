@@ -344,16 +344,19 @@ int shape (lua_State *L) {
       lua_pushstring(L, "index");
       lua_pushinteger(L, glyph_info[j].cluster);
       lua_settable(L, -3);
-      lua_pushstring(L, "width");
-      lua_pushnumber(L, glyph_pos[j].x_advance * point_size / upem);
-      lua_settable(L, -3);
 
       double height = extents.y_bearing * point_size / upem;
       double tHeight = extents.height * point_size / upem;
+      double width = glyph_pos[j].x_advance * point_size / upem;
       if (direction == HB_DIRECTION_TTB) { /* XXX */
         height = -glyph_pos[j].y_advance * point_size / upem;
         tHeight = 0;
+        width = extents.width * point_size / upem;
       }
+      lua_pushstring(L, "width");
+      lua_pushnumber(L, width);
+      lua_settable(L, -3);
+
       lua_pushstring(L, "height");
       lua_pushnumber(L, height);
       lua_settable(L, -3);
