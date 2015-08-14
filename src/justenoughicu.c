@@ -38,7 +38,7 @@ int icu_breakpoints(lua_State *L) {
     if (!ubrk_isBoundary(linebreaks, i) && !ubrk_isBoundary(wordbreaks,i)) {
       i++; continue;
     }
-
+    lua_checkstack(L, 3);
     /* At some kind of boundary */
     lua_newtable(L);
     lua_pushstring(L, "type");
