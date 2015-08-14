@@ -1,4 +1,4 @@
-\begin[papersize=a4]{document}
+\begin[papersize=a5]{document}
 
 \define[command=item]{\quad – \process}
 

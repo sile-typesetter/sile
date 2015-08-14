@@ -1,22 +1,22 @@
-<tests/image.sil>Open file	tests/image.pdf
+<tests/image.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	40.97638
 My 	99.00668
 Set font 	Gentium;10;200;normal;normal;;LTR
 T	47 78 69	(One)
-Mx 	59.78371
+Mx 	59.78374
 T	84 87 79	(two)
-Draw image	documentation/fig1.png	77.98557 29.76378 50.00000 69.24290
-Mx 	130.65521
+Draw image	documentation/fig1.png	77.83915 29.76378 50.00000 69.24290
+Mx 	130.50882
 T	84 72 82 69 69	(three)
 Mx 	40.97638
-My 	168.15317
+My 	168.00668
 T	47 78 69	(One)
-Mx 	59.78524
+Mx 	59.78527
 T	84 87 79	(two)
-Draw image	documentation/fig1.png	77.98863 118.15317 36.10478 50.00000
-Mx 	116.76458
+Draw image	documentation/fig1.png	77.84221 118.00668 36.10478 50.00000
+Mx 	116.61819
 T	84 72 82 69 69	(three)
 [1] Mx 	207.41759
 My 	553.73265

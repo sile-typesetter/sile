@@ -1,8 +1,8 @@
-<tests/bug-124.sil>Open file	tests/bug-124.pdf
+<tests/bug-124_upstream.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	359.43009
-My 	66.15050
+My 	66.75597
 Set font 	Noto Naskh Arabic;40;200;normal;normal;;RTL
 T		(ألمّ)
 Mx 	318.29717
@@ -11,14 +11,14 @@ T	120	(—)
 Mx 	279.00019
 T		(ألمّ)
 Mx 	369.54728
-My 	107.38878
+My 	113.95128
 T	120	(—)
 Mx 	315.50548
 T		(إِنْ)
 Mx 	369.54728
-My 	157.86534
+My 	163.33409
 T	120	(—)
-Mx 	284.34919
+Mx 	286.88698
 T		(السُّــرورُ)
 [1] Mx 	207.41759
 My 	553.73265

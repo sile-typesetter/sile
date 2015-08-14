@@ -4,7 +4,6 @@ local cx
 local cy
 SILE.outputters.debug = {
   init = function()
-    print("Open file", SILE.outputFilename)
     print("Set paper size ", SILE.documentState.paperSize[1],SILE.documentState.paperSize[2])
     print("Begin page")
   end,

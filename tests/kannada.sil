@@ -1,3 +1,3 @@
-\begin[papersize=a4]{document}
+\begin[papersize=a5]{document}
 Hello SILE! \font[family=Noto Sans Kannada,size=10pt,language=kn]{ನಮಸ್ಕಾರ :)}
 \end{document}

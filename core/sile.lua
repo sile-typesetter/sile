@@ -150,7 +150,7 @@ function SILE.readFile(fn)
     print("Could not open "..fn..": "..err)
     return
   end
-  io.write("<"..fn..">")
+  io.write("<"..fn..">\n")
   -- Sniff first few bytes
   local sniff = file:read("*l") or ""
   file:seek("set", 0)

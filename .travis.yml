@@ -45,7 +45,7 @@ before_install:
  - sudo apt-get install -y lib{freetype6,fontconfig1,png,expat1}-dev
    # Install fonts (needed for typesetting regression tests)
  - sudo apt-get install -y fonts-sil-{scheherazade,lateef,gentium{,-basic}}
- - get_noto NaskhArabic && get_noto SansKannada
+ - get_noto NaskhArabic && get_noto SansKannada && get_noto SansCJKJP
  - wget http://mirrors.kernel.org/ubuntu/pool/main/f/fonts-linuxlibertine/fonts-linuxlibertine_5.3.0-2_all.deb
  - sudo dpkg -i fonts-linuxlibertine_5.3.0-2_all.deb
    # Install luarocks (to later fetch SILE runtime dependencies)
