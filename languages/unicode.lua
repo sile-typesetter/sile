@@ -1,7 +1,7 @@
 require("char-def")
 local chardata  = characters.data
 
--- pcall( function () icu = require("justenoughicu") end)
+pcall( function () icu = require("justenoughicu") end)
 if icu then
   SILE.tokenizers.unicode = function(text)
     local chunks = {icu.breakpoints(text)}
