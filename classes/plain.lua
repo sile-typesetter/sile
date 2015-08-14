@@ -76,7 +76,7 @@ plain.registerCommands = function()
 \define[command=goodbreak]{\penalty[penalty=-500]}%
 \define[command=eject]{\par\break}%
 \define[command=supereject]{\par\penalty[penalty=-20000]}%
-\define[command=justified]{\set[parameter=document.rskip,value=0]\set[parameter=document.spaceskip]}%
+\define[command=justified]{\set[parameter=document.rskip]\set[parameter=document.spaceskip]}%
 \define[command=rightalign]{\raggedleft{\process\par}}%
 \define[command=em]{\font[style=italic]{\process}}%
 \define[command=nohyphenation]{\font[language=xx]{\process}}%
