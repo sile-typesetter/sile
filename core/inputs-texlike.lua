@@ -26,7 +26,6 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   bracketed_stuff = P"{" * V"stuff" * (P"}" + E("} expected"))
   command =((P("\\")-P("\\begin")) * Cg(myID, "tag") * Cg(parameters,"attr") * V"bracketed_stuff"^0)-P("\\end{")
   environment =
-    comment^0 *
     P("\\begin") * Cg(parameters, "attr") * P("{") * Cg(myID, "tag") * P("}")
       * V("stuff")
     * (P("\\end{") * (
