@@ -11,7 +11,9 @@ Mx 	96.92855
 Set font 	Noto Sans Kannada;10;200;normal;normal;;LTR
 T	39 44 163 57 97 46	(ನಮಸ್ಕಾರ)
 Mx 	138.95194
-T	422 405	(:))
+T	422	(:)
+Mx 	141.63261
+T	405	())
 [1] Mx 	295.29161
 My 	780.61769
 Set font 	Gentium;10;200;normal;normal;;LTR
