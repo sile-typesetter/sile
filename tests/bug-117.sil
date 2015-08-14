@@ -1,0 +1,10 @@
+\begin[papersize=a4]{document}
+%nice script from SILE book
+\begin{script}
+for i=1,10 do
+SILE.typesetter:typeset(i .. " x " .. i .. " = " .. i*i .. ". ")
+SILE.typesetter:leaveHmode()
+SILE.call("smallskip")
+end
+\end{script}
+\end{document}
