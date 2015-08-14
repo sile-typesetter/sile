@@ -350,7 +350,10 @@ int shape (lua_State *L) {
 
       double height = extents.y_bearing * point_size / upem;
       double tHeight = extents.height * point_size / upem;
-
+      if (direction == HB_DIRECTION_TTB) { /* XXX */
+        height = -glyph_pos[j].y_advance * point_size / upem;
+        tHeight = 0;
+      }
       lua_pushstring(L, "height");
       lua_pushnumber(L, height);
       lua_settable(L, -3);
