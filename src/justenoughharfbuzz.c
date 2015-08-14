@@ -341,6 +341,9 @@ int shape (lua_State *L) {
       lua_pushstring(L, "codepoint");
       lua_pushinteger(L, glyph_info[j].codepoint);
       lua_settable(L, -3);
+      lua_pushstring(L, "index");
+      lua_pushinteger(L, glyph_info[j].cluster);
+      lua_settable(L, -3);
       lua_pushstring(L, "width");
       lua_pushnumber(L, glyph_pos[j].x_advance * point_size / upem);
       lua_settable(L, -3);
