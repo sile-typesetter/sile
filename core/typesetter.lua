@@ -404,7 +404,7 @@ SILE.defaultTypesetter = std.object {
       elseif node:isDiscretionary() then
         naturalTotals = naturalTotals + node:replacementWidth()
         slice[i].height = slice[i]:replacementHeight()
-      elseif skipping == 0 then-- and not(node:isGlue() and i == #slice) then
+      elseif skipping == 0 and not(node:isGlue() and i == #slice) then
         naturalTotals = naturalTotals + node.width -- ??
       end
     end
