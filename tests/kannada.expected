@@ -1,21 +1,21 @@
 <tests/kannada.sil>
-Set paper size 	595.275597	841.8897729
+Set paper size 	419.5275636	595.275597
 Begin page
-Mx 	49.76378
-My 	50.18043
+Mx 	40.97638
+My 	37.84972
 Set font 	Gentium;10;200;normal;normal;;LTR
 T	40 69 76 76 79	(Hello)
-Mx 	74.05905
+Mx 	65.25424
 T	51 41 44 37 209	(SILE!)
-Mx 	96.92855
+Mx 	88.10633
 Set font 	Noto Sans Kannada;10;200;normal;normal;;LTR
 T	39 44 163 57 97 46	(ನಮಸ್ಕಾರ)
-Mx 	138.95194
+Mx 	130.10695
 T	422	(:)
-Mx 	141.63261
+Mx 	132.78761
 T	405	())
-[1] Mx 	295.29161
-My 	780.61769
+[1] Mx 	207.41759
+My 	553.73265
 Set font 	Gentium;10;200;normal;normal;;LTR
 T	17	(1)
 End page
