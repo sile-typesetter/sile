@@ -361,7 +361,7 @@ int shape (lua_State *L) {
       lua_pushnumber(L, height);
       lua_settable(L, -3);
       lua_pushstring(L, "depth");
-      lua_pushnumber(L, tHeight + height);
+      lua_pushnumber(L, -tHeight - height);
       lua_settable(L, -3);
     }
     /* Cleanup */
