@@ -1,0 +1,41 @@
+<tests/bug-162.sil>
+Set paper size 	419.5275636	595.275597
+Begin page
+Mx 	40.97638
+My 	37.33214
+Set font 	Gentium;10;200;normal;normal;;LTR
+T	34 79 84 72	(Both)
+Mx 	63.12727
+T	76 73 78 69 83	(lines)
+Mx 	85.20980
+T	66 69 76 79 87	(below)
+Mx 	112.22397
+T	83 72 79 85 76 68	(should)
+Mx 	142.50475
+T	69 78 68	(end)
+Mx 	160.50525
+T	73 78	(in)
+Mx 	171.39637
+T	65	(a)
+Mx 	178.64980
+T	80 69 82 73 79 68 14	(period.)
+Mx 	40.97638
+My 	52.33214
+T	20	(4)
+Mx 	48.34715
+T	77 73 83 84 69	(miste)
+Mx 	71.01317
+T	14	(.)
+Mx 	40.97638
+My 	67.33214
+T	20	(4)
+Mx 	48.34715
+T	77 73 83 84 69	(miste)
+Mx 	71.01317
+T	14	(.)
+[1] Mx 	207.41759
+My 	553.73265
+T	17	(1)
+End page
+Finish
+
