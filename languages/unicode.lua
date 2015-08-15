@@ -28,23 +28,24 @@ else
       local lasttype
       for i = 1,#chunks do
         local cp = SU.codepoint(chunks[i])
-        if chardata[cp] and chardata[cp].linebreak == "sp" then
+        local thistype = chardata[cp].linebreak
+        if chardata[cp] and thistype == "sp" then
           coroutine.yield({ string = table.concat(tmp, "") })
           tmp = {}
           coroutine.yield({ separator = chunks[i]})
-        elseif chardata[cp] and (chardata[cp].linebreak == "ba" or  chardata[cp].linebreak == "zw") then
+        elseif chardata[cp] and (thistype == "ba" or  thistype == "zw") then
           tmp[#tmp+1] = chunks[i]
           coroutine.yield({ string = table.concat(tmp, "") })
           tmp = {}
           coroutine.yield({ node = SILE.nodefactory.newPenalty({ penalty = 0 }) })
-        elseif lasttype and chardata[cp].linebreak ~= lasttype then
+        elseif lasttype and (thistype ~= lasttype and thistype ~= "cm") then
           coroutine.yield({ string = table.concat(tmp, "") })
           tmp = {}
           tmp[#tmp+1] = chunks[i]
         else
           tmp[#tmp+1] = chunks[i]
         end
-        lasttype = chardata[cp].linebreak
+        if thistype ~= "cm" then lasttype = chardata[cp].linebreak end
       end
       coroutine.yield({ string = table.concat(tmp, "") })
     end)
