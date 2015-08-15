@@ -2,15 +2,19 @@
 Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	40.97638
-My 	36.10378
+My 	36.24378
 Set font 	Kohinoor Devanagari;10;200;normal;normal;;LTR
-T	78 86 3 70 21 89 3 70 21 89 3 8 60 21 80 21 3	(यह दाग़ दाग़ उजाला )
-[1] 
-! Font 'Gentium' not available, falling back to 'Times'
-Mx 	207.26378
-My 	554.36253
+T	78 86	(यह)
+Mx 	55.54770
+T	70 21 89	(दाग़)
+Mx 	72.33903
+T	70 21 89	(दाग़)
+Mx 	89.13035
+T	8 60 21 80 21	(उजाला)
+[1] Mx 	207.41759
+My 	553.73265
 Set font 	Gentium;10;200;normal;normal;;LTR
-T	20	(1)
+T	17	(1)
 End page
 Finish
 
