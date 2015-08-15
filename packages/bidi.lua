@@ -69,7 +69,7 @@ local reorder = function(n, self)
       newNL[ncount] = this
 
     -- now both are unshaped, compare them
-    elseif SILE.font._key(this.options) == SILE.font._key(prev.options) then -- same font
+    elseif SILE.font._key(this.options) == SILE.font._key(prev.options) and this.parent == prev.parent then -- same font
       prev.text = prev.text .. this.text
     else
       ncount = ncount + 1
