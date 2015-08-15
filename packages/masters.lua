@@ -51,8 +51,7 @@ local function switchMaster (id)
   SILE.documentState.documentClass.pageTemplate = SILE.scratch.masters[id]
   SILE.documentState.thisPageTemplate = std.tree.clone(SILE.documentState.documentClass.pageTemplate)
   doswitch(SILE.scratch.masters[id].frames)
-  -- SILE.typesetter:chuck()
-  -- SILE.typesetter:init(SILE.scratch.masters[id].firstContentFrame)
+  SILE.typesetter:initFrame(SILE.scratch.masters[id].firstContentFrame)
 end
 
 SILE.registerCommand("define-master-template", function(options, content)
