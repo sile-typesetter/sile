@@ -1,0 +1,11 @@
+\begin[papersize=a5]{document}
+Both lines below should end in a period.
+
+\font[language=cs]
+4 miste.
+
+\bidi-off
+
+4 miste.
+
+\end{document}
