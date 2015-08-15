@@ -1,4 +1,4 @@
-\begin[papersize=a5]{document}
+\begin[papersize=a5]{document}% KNOWNBAD
 % Test leading comment and package lines
 \script[src=packages/color]
 

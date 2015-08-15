@@ -1,4 +1,4 @@
-\begin[papersize=a5]{document}
+\begin[papersize=a5]{document}% KNOWNBAD
 \script[src=packages/lorem]
 \pagetemplate[first-content-frame=a]{
 	\frame[id=a,top=5%,bottom=95%,next=b,left=5%,right=50%]
