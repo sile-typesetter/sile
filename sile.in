@@ -35,6 +35,7 @@ if unparsed and unparsed[1] then
   end
   if SILE.preamble then SILE.documentState.documentClass:finish() end
   io.write("\n")
+  if SU.debugging("versions") then SILE.shaper.debugVersions() end
 else
   SILE.repl()
 end

@@ -62,7 +62,10 @@ SILE.shapers.pango = SILE.shapers.base {
   addShapedGlyphToNnodeValue = function (self, nnodevalue, shapedglyph)
     nnodevalue.pgs = shapedglyph.pgs
     nnodevalue.font = shapedglyph.font
-  end 
+  end,
+  debugVersions = function ()
+    -- I have nothing here.
+  end
 }
 
 function _shape(s, item)

@@ -4,6 +4,7 @@ local hb = require("justenoughharfbuzz")
 SILE.require("core/base-shaper")
 
 local substwarnings = {}
+local usedfonts = {}
 SILE.shapers.harfbuzz = SILE.shapers.base {
   shapeToken = function (self, text, options)
     local face = SILE.font.cache(options, self.getFace)
@@ -14,6 +15,7 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
       substwarnings[options.font] = true
       SU.warn("Font '"..options.font.."' not available, falling back to '"..face.family.."'")
     end
+    if face.filename then usedfonts[face.filename] = true end
     return { hb._shape(text,
                       face.face,
                       options.script,
@@ -44,6 +46,15 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
     if not nnodevalue.glyphNames then nnodevalue.glyphNames = {} end
     table.insert(nnodevalue.glyphString, shapedglyph.codepoint)
     table.insert(nnodevalue.glyphNames, shapedglyph.name)
+  end,
+  debugVersions = function()
+    local md5 = require("md5")
+    print("Harfbuzz version: "..hb.version())
+    print("Fonts used:")
+    for k,_ in pairs(usedfonts) do
+      local fh = io.open(k)
+      print(k,md5.sumhexa(fh:read(1024)))
+    end
   end
 }
 
