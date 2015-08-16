@@ -299,6 +299,11 @@ int pdf_transform(lua_State *L) {
 int pdf_gsave(lua_State *L)    { texpdf_graphics_mode(p); texpdf_dev_gsave(p); return 0; }
 int pdf_grestore(lua_State *L) { texpdf_graphics_mode(p); texpdf_dev_grestore(p); return 0; }
 
+int pdf_version(lua_State *L) {
+  lua_pushstring(L, texpdf_library_version());
+  return 1;
+}
+
 #if !defined LUA_VERSION_NUM
 /* Lua 5.0 */
 #define luaL_Reg luaL_reg
@@ -343,6 +348,7 @@ static const struct luaL_Reg lib_table [] = {
   {"bookmark", pdf_bookmark},
   {"begin_annotation", pdf_begin_annotation},
   {"end_annotation", pdf_end_annotation},
+  {"version", pdf_version},
   {NULL, NULL}
 };
 

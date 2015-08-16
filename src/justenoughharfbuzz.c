@@ -378,6 +378,17 @@ int shape (lua_State *L) {
     return glyph_count;
 }
 
+int get_harfbuzz_version (lua_State *L) {
+  unsigned int major;
+  unsigned int minor;
+  unsigned int micro;
+  char version[256];
+  hb_version(&major, &minor, &micro);
+  sprintf(version, "%i.%i.%i", major, minor, micro);
+  lua_pushstring(L, version);
+  return 1;
+}
+
 #if !defined LUA_VERSION_NUM
 /* Lua 5.0 */
 #define luaL_Reg luaL_reg
@@ -403,6 +414,7 @@ static void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
 
 static const struct luaL_Reg lib_table [] = {
   {"_shape", shape},
+  {"version", get_harfbuzz_version},
   {"_face", face_from_options},
   {NULL, NULL}
 };
