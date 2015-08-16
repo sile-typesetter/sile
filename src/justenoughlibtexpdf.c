@@ -124,7 +124,7 @@ int pdf_setstring(lua_State *L) {
   int    chrlen  = luaL_checkinteger(L, 4);
   int    font_id = luaL_checkinteger(L, 5);
   double w = luaL_checknumber(L,6);
-  texpdf_dev_set_string(p, precision * x, precision * (-height+y), s, chrlen, w * 65536 * precision, font_id, -1);
+  texpdf_dev_set_string(p, precision * x, precision * (-height+y), s, chrlen, w * precision, font_id, -1);
   return 0;
 }
 
