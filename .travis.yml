@@ -24,7 +24,10 @@ before_install:
    # Note installing graphite must be done before adding the SIL PPA because
    # their packages of the same name have broken dependencies
  - if $GRAPHITE; then sudo apt-get install -y libgraphite2-dev; fi
- - if $ICU; then sudo apt-get install -y libicu-dev; fi
+ - if $ICU; then
+      sudo apt-get instal -y libicu-dev;
+      curl -s -L https://gist.githubusercontent.com/alerque/1ad04c9502d8eafebffb/raw/8476ea675f6778f26635afbb946ec3cecd66d12a/icu_pkgconfig_files.tar | base64 -d | sudo tar xP;
+   fi
    # Add SIL's PPA repository because it has newer versions of fonts
  - curl http://packages.sil.org/sil.gpg | sudo apt-key add -
  - echo 'deb http://packages.sil.org/ubuntu precise main' | sudo tee -a /etc/apt/sources.list
