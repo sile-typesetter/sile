@@ -1,0 +1,99 @@
+2.1 (planned)
+-------------
+Format combinators.
+Better error handling, and more error handling options for the user.
+Backreferences.
+Support for 5.3, and optional use of 5.3-specific features (new numeric types, bitwise operators, pack/unpack functions) for improved performance.
+Pre-5.3, optional use of FFI, bit32, and other struct libraries (lpack/struct) for improved performance.
+
+2.0
+---
+*** THIS VERSION BREAKS BACKWARDS COMPATIBILITY ***
+Many internal structural improvements.
+unpack/pack replaced with read/write in API.
+Changed the behaviour of the third argument to read().
+Changed read() and write() on compiled format strings from functions to methods.
+Added vstruct.records() iterator.
+Added vstruct.register() and format string splicing.
+Completely removed the code generator and replaced it with an AST walker.
+Improved test coverage.
+Improved error reporting for invalid arguments to API functions.
+
+1.1.4
+-----
+Fix a bug where specific non-integer values passed to `p`, `i`, and `u` will either crash the library or write corrupt data.
+Improved handling for errors in the unit tests.
+Documentation updates.
+
+1.1.3
+-----
+`x` format extended to permit padding with a specific value: "x8,15" writes 8 bytes of 0x0F.
+Improved error reporting for compile and runtime errors.
+Tests for error reporting.
+README is now in Github Flavoured Markdown format.
+Documentation updates.
+
+1.1.2
+-----
+5.2 support
+Remove use of module()
+
+1.1.1
+-----
+Bug fixes in the test suite.
+Endianness detection now works properly in luajit.
+Autodetect endianness on library load.
+
+1.1
+---
+Test suite upgrades.
+LuaDist compatibility.
+Assorted bugfixes.
+Widechar support for 'z' format.
+Change in 'p' format to make it consistent with the other formats.
+Change in bitpacks to read MSB first.
+
+1.1 beta 1
+----------
+New test set (contributed by Sanooj) which randomly generates new test cases.
+New parser and lexer, with greater extensibility and better error reporting.
+Bitpack support.
+
+1.0.2
+-----
+Bugfix release.
+
+1.0.1
+-----
+Bugfix release.
+
+1.0 final
+---------
+Bugfixes to read error handling
+Ability to return unpacked values rather than tables
+
+1.0 beta 4
+----------
+Added the ability to say 's' with no width to read until EOF.
+Modified struct.unpack and struct.pack to return the number of bytes
+read/written as a second value. Note that this is not the same as the r/w
+pointer delta if seeks are involved.
+
+1.0 beta 3
+----------
+Lots of bugfixing and general cleanup
+Improved error reporting
+API name changes
+
+1.0 beta 2
+----------
+Added the counted string format "c".
+Added float and double support, courtesy of Peter "Corsix" Cawley.
+Updated the test framework.
+Fixed a bug in format m that could result in data loss when manipulating fields
+of 7 bytes or more width.
+
+
+1.0 beta 1
+----------
+Released to the world.
