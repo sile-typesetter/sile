@@ -1,16 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-
-#include <ft2build.h>
-#include FT_FREETYPE_H
-#include FT_GLYPH_H
-#include FT_OUTLINE_H
-#include FT_ADVANCES_H
-
 #include <hb.h>
-#include <hb-ft.h>
-
+#include <hb-ot.h>
+#include <string.h>
 #include <fontconfig/fontconfig.h>
 
 #include <lua.h>
@@ -28,10 +21,7 @@ typedef struct {
   char* script;
 } fontOptions;
 
-FT_Library ft_library;
-
 int face_from_options(lua_State* L) {
-  FT_Face face;
   FcChar8 * font_path, * fullname, * familyname;
   FcPattern* p;
   FcPattern* matched;
@@ -151,23 +141,12 @@ int face_from_options(lua_State* L) {
   FcPatternDestroy (p);
 
   done_match:
-  face = (FT_Face)malloc(sizeof(FT_Face));
-  if (FT_New_Face(ft_library, (char*)font_path, index, &face))
-    return 0;
-
-  if (FT_Set_Char_Size(face,pointSize * 64.0, 0, 0, 0))
-    return 0;
-
   lua_pushstring(L, "index");
   lua_pushinteger(L, index);
   lua_settable(L, -3);
 
   lua_pushstring(L, "pointsize");
   lua_pushnumber(L, pointSize);
-  lua_settable(L, -3);
-
-  lua_pushstring(L, "face");
-  lua_pushlightuserdata(L, face);
   lua_settable(L, -3);
 
   return 1;
@@ -261,13 +240,15 @@ static hb_feature_t* scan_feature_string(const char* cp1, int* ret) {
 }
 
 int shape (lua_State *L) {    
+    unsigned int font_l;
     const char * text = luaL_checkstring(L, 1);
-    FT_Face face = lua_touserdata(L, 2);
-    const char * script = luaL_checkstring(L, 3);
-    const char * direction_s = luaL_checkstring(L, 4);
-    const char * lang = luaL_checkstring(L, 5);
-    double point_size = luaL_checknumber(L, 6);
-    const char * featurestring = luaL_checkstring(L, 7);
+    const char * font_s = luaL_checklstring(L, 2, &font_l);
+    unsigned int font_index = luaL_checknumber(L, 3);
+    const char * script = luaL_checkstring(L, 4);
+    const char * direction_s = luaL_checkstring(L, 5);
+    const char * lang = luaL_checkstring(L, 6);
+    double point_size = luaL_checknumber(L, 7);
+    const char * featurestring = luaL_checkstring(L, 8);
 
     hb_segment_properties_t segment_props;
     hb_shape_plan_t *shape_plan;
@@ -276,8 +257,7 @@ int shape (lua_State *L) {
     hb_feature_t* features;
     int nFeatures = 0;
     unsigned int glyph_count = 0;
-    hb_font_t *hb_ft_font;
-    hb_face_t *hb_ft_face;
+    hb_font_t *hbFont;
     hb_buffer_t *buf;
     hb_glyph_info_t *glyph_info;
     hb_glyph_position_t *glyph_pos;
@@ -292,11 +272,12 @@ int shape (lua_State *L) {
     else
       direction = HB_DIRECTION_LTR;
 
-    hb_face_t* hbFace = hb_ft_face_create_cached(face);
-    hb_ft_font = hb_font_create (hbFace);
+    hb_blob_t* blob = hb_blob_create (font_s, font_l, HB_MEMORY_MODE_WRITABLE, font_s, NULL);
+    hb_face_t* hbFace = hb_face_create (blob, font_index);
+    hbFont = hb_font_create (hbFace);
     unsigned int upem = hb_face_get_upem(hbFace);
-    hb_font_set_scale(hb_ft_font, upem, upem);
-    hb_ft_font_set_funcs(hb_ft_font);
+    hb_font_set_scale(hbFont, upem, upem);
+    hb_ot_font_set_funcs(hbFont);
 
     buf = hb_buffer_create();
     hb_buffer_add_utf8(buf, text, strlen(text), 0, strlen(text));
@@ -308,7 +289,7 @@ int shape (lua_State *L) {
     hb_buffer_guess_segment_properties(buf);
     hb_buffer_get_segment_properties(buf, &segment_props);
     shape_plan = hb_shape_plan_create_cached(hbFace, &segment_props, features, nFeatures, NULL);
-    int res = hb_shape_plan_execute(shape_plan, hb_ft_font, buf, features, nFeatures);
+    int res = hb_shape_plan_execute(shape_plan, hbFont, buf, features, nFeatures);
 
     glyph_info   = hb_buffer_get_glyph_infos(buf, &glyph_count);
     glyph_pos    = hb_buffer_get_glyph_positions(buf, &glyph_count);
@@ -316,11 +297,11 @@ int shape (lua_State *L) {
     for (j = 0; j < glyph_count; ++j) {
       char namebuf[255];
       hb_glyph_extents_t extents = {0,0,0,0};
-      hb_font_get_glyph_extents(hb_ft_font, glyph_info[j].codepoint, &extents);
+      hb_font_get_glyph_extents(hbFont, glyph_info[j].codepoint, &extents);
 
       lua_newtable(L);
       lua_pushstring(L, "name");
-      hb_font_get_glyph_name( hb_ft_font, glyph_info[j].codepoint, namebuf, 255 );
+      hb_font_get_glyph_name( hbFont, glyph_info[j].codepoint, namebuf, 255 );
       lua_pushstring(L, namebuf);
       lua_settable(L, -3);
 
@@ -371,7 +352,7 @@ int shape (lua_State *L) {
     }
     /* Cleanup */
     hb_buffer_destroy(buf);
-    hb_font_destroy(hb_ft_font);
+    hb_font_destroy(hbFont);
     hb_shape_plan_destroy(shape_plan);
 
     free(features);
@@ -420,8 +401,6 @@ static const struct luaL_Reg lib_table [] = {
 };
 
 int luaopen_justenoughharfbuzz (lua_State *L) {
-  ft_library = malloc(sizeof(FT_Library));
-  FT_Init_FreeType(&ft_library);
   lua_newtable(L);
   luaL_setfuncs(L, lib_table, 0);
   //lua_setglobal(L, "harfbuzz");
