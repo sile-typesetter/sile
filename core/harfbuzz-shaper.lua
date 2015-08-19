@@ -48,12 +48,17 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
     table.insert(nnodevalue.glyphNames, shapedglyph.name)
   end,
   debugVersions = function()
-    local md5 = require("md5")
+    local ot = SILE.require("core/opentype-parser")
     print("Harfbuzz version: "..hb.version())
     print("Fonts used:")
     for k,_ in pairs(usedfonts) do
       local fh = io.open(k)
-      print(k,md5.sumhexa(fh:read(1024)))
+      local font = ot.parseFont(fh)
+      local version
+      if font.names and font.names[5] then
+        for l,v in pairs(font.names[5]) do version = v[1]; break end
+      end
+      print(k,version)
     end
   end
 }

@@ -83,7 +83,6 @@ local parseFont = function(fd)
   for i=1,name.count do
     local record = vstruct.read(">platform:u2 encoding:u2 language:u2 name:u2 length:u2 offset:u2", fd)
     name.records[i] = record
-    print(record)
     local language
     if (record.platform == 1 and record.encoding == 0) or
        (record.platform == 3 and record.encoding == 1) then
