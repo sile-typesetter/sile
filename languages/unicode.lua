@@ -6,7 +6,7 @@ if icu then
   SILE.tokenizers.unicode = function(text)
     local chunks = {icu.breakpoints(text)}
     return coroutine.wrap(function()
-      for i = 1,#chunks do local chunk = chunks[i]
+      for i = 2,(#chunks) do local chunk = chunks[i]
         if chunk.token:match("^%s+$") then
           coroutine.yield({ separator = chunk.token })
         elseif chunk.type == "line" then
@@ -30,7 +30,7 @@ else
         local cp = SU.codepoint(chunks[i])
         local thistype = chardata[cp].linebreak
         if chardata[cp] and thistype == "sp" then
-          coroutine.yield({ string = table.concat(tmp, "") })
+          if #tmp>0 then coroutine.yield({ string = table.concat(tmp, "") }) end
           tmp = {}
           coroutine.yield({ separator = chunks[i]})
         elseif chardata[cp] and (thistype == "ba" or  thistype == "zw") then
@@ -39,7 +39,7 @@ else
           tmp = {}
           coroutine.yield({ node = SILE.nodefactory.newPenalty({ penalty = 0 }) })
         elseif lasttype and (thistype ~= lasttype and thistype ~= "cm") then
-          coroutine.yield({ string = table.concat(tmp, "") })
+          if #tmp>0 then coroutine.yield({ string = table.concat(tmp, "") }) end
           tmp = {}
           tmp[#tmp+1] = chunks[i]
         else
