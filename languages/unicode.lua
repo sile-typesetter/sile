@@ -28,7 +28,7 @@ else
       local lasttype
       for i = 1,#chunks do
         local cp = SU.codepoint(chunks[i])
-        local thistype = chardata[cp].linebreak
+        local thistype = chardata[cp] and chardata[cp].linebreak
         if chardata[cp] and thistype == "sp" then
           if #tmp>0 then coroutine.yield({ string = table.concat(tmp, "") }) end
           tmp = {}
@@ -45,7 +45,7 @@ else
         else
           tmp[#tmp+1] = chunks[i]
         end
-        if thistype ~= "cm" then lasttype = chardata[cp].linebreak end
+        if thistype ~= "cm" then lasttype = chardata[cp] and chardata[cp].linebreak end
       end
       coroutine.yield({ string = table.concat(tmp, "") })
     end)
