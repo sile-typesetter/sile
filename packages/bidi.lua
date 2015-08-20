@@ -73,11 +73,11 @@ local reorder = function(n, self)
     -- now both are unshaped, compare them
     elseif SILE.font._key(this.options) == SILE.font._key(prev.options)
       and this.parent == prev.parent
-      and (
+      and ( chardata[SU.codepoint(this.text)] and chardata[SU.codepoint(prev.text)] and (
         chardata[SU.codepoint(this.text)].linebreak == chardata[SU.codepoint(prev.text)].linebreak or
         chardata[SU.codepoint(this.text)].linebreak:match("^i") or
         chardata[SU.codepoint(prev.text)].linebreak:match("^i")
-        ) then -- same font
+        )) then -- same font
       prev.text = prev.text .. this.text
     else
       ncount = ncount + 1
