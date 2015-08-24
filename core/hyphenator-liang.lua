@@ -19,8 +19,6 @@ local function addPattern(h, p)
 end
 
 function loadPatterns(h, language)
-  SILE.languageSupport.loadLanguage(language)
-
   local languageset = SILE.hyphenator.languages[language];
   if not (languageset) then
     print("No patterns for language "..language)
@@ -79,6 +77,7 @@ _hyphenators = {};
 
 local hyphenateNode = function(n)
   if not n:isNnode() or not n.text then return {n} end
+  SILE.languageSupport.loadLanguage(n.language)
   if not _hyphenators[n.language] then
     _hyphenators[n.language] = {minWord = 5, leftmin = 2, rightmin = 2, trie = {}, exceptions = {} };
     loadPatterns(_hyphenators[n.language], n.language)
