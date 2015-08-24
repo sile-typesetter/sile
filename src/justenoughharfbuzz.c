@@ -240,7 +240,7 @@ static hb_feature_t* scan_feature_string(const char* cp1, int* ret) {
 }
 
 int shape (lua_State *L) {    
-    unsigned int font_l;
+    size_t font_l;
     const char * text = luaL_checkstring(L, 1);
     const char * font_s = luaL_checklstring(L, 2, &font_l);
     unsigned int font_index = luaL_checknumber(L, 3);
@@ -272,7 +272,7 @@ int shape (lua_State *L) {
     else
       direction = HB_DIRECTION_LTR;
 
-    hb_blob_t* blob = hb_blob_create (font_s, font_l, HB_MEMORY_MODE_WRITABLE, font_s, NULL);
+    hb_blob_t* blob = hb_blob_create (font_s, font_l, HB_MEMORY_MODE_WRITABLE, (void*)font_s, NULL);
     hb_face_t* hbFace = hb_face_create (blob, font_index);
     hbFont = hb_font_create (hbFace);
     unsigned int upem = hb_face_get_upem(hbFace);
