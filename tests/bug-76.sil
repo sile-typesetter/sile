@@ -1,7 +1,7 @@
 \begin[papersize=a5]{document}
 \script[src=packages/bidi]
 \thisframeRTL%
-\font[family=Scheherazade,language=urd,direction=RTL,script=Arab]
+\font[family=Noto Naskh Arabic,language=urd,direction=RTL,script=Arab]
 \font[size=18pt]
 سعادت حسن \font[direction=LTR]{abcd} 123 منٹو اردو کے ایک جانے مانے افسانہ نگار ہیں۔ وہ پنجاب کے لدھانہ ضلع میں  1912 میں پیدا ہوئے۔ ان کے ماں
 

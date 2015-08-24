@@ -18,6 +18,8 @@ SILE.registerCommand("thisframeRTL", function(options, content)
 end);
 
 local bidi = require("unicode-bidi-algorithm")
+require("char-def")
+local chardata  = characters.data
 
 local function has_mixed_direction_material(v)
   local linetext = {}
@@ -69,7 +71,13 @@ local reorder = function(n, self)
       newNL[ncount] = this
 
     -- now both are unshaped, compare them
-    elseif SILE.font._key(this.options) == SILE.font._key(prev.options) and this.parent == prev.parent then -- same font
+    elseif SILE.font._key(this.options) == SILE.font._key(prev.options)
+      and this.parent == prev.parent
+      and ( chardata[SU.codepoint(this.text)] and chardata[SU.codepoint(prev.text)] and (
+        chardata[SU.codepoint(this.text)].linebreak == chardata[SU.codepoint(prev.text)].linebreak or
+        chardata[SU.codepoint(this.text)].linebreak:match("^i") or
+        chardata[SU.codepoint(prev.text)].linebreak:match("^i")
+        )) then -- same font
       prev.text = prev.text .. this.text
     else
       ncount = ncount + 1

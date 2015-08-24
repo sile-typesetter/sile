@@ -2,7 +2,7 @@ local bible = SILE.require("classes/bible");
 local usx = bible { id = "usx", base = bible };
 
 SILE.registerCommand("para", function (options, content)
-  SILE.call("para-"..options.style,options, content)
+  SILE.call("style-"..options.style,options, content)
 end)
 
 SILE.registerCommand("note", function (options, content)
@@ -11,7 +11,7 @@ SILE.registerCommand("note", function (options, content)
 end)
 
 SILE.registerCommand("char", function (options, content)
-  SILE.call("char-"..options.style,options, content)
+  SILE.call("style-"..options.style,options, content)
 end)
 
 SILE.registerCommand("chapter", function(options, content)
@@ -22,5 +22,7 @@ end)
 SILE.registerCommand("verse", function(options,content)
   SILE.call("verse-number", options, {options.number})
 end)
-
+SILE.registerCommand("leftmargin", function(options,content)
+  SILE.call("set", {parameter="document.lskip", value=options.size}, content)
+end)
 return usx
