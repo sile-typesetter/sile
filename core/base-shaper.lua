@@ -88,7 +88,7 @@ SILE.shapers.base = std.object {
 
   tokenize = function(self, text, options)
     -- Do language-specific tokenization
-    SILE.languageSupport.loadLanguage(options.language)
+    pcall(function () SILE.require("languages/"..options.language) end)
     local tokenizer = SILE.tokenizers[options.language]
     if not tokenizer then
       tokenizer = SILE.tokenizers.unicode
