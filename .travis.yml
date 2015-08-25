@@ -12,7 +12,7 @@ env:
    - LUA_VER=5.3 LUA_52_COMPAT=false LUA_53_BASE=lua-5.3.1
    - LUA_VER=5.2
    - LUA_VER=5.2 GRAPHITE=false
-   - LUA_VER=5.2 ICU=false
+   # - LUA_VER=5.2 ICU=false
    - LUA_VER=5.1
 before_install:
  - export LUA_PKG=lua$LUA_VER LUA_DEV=liblua$LUA_VER-dev LUA_SFX=$LUA_VER
