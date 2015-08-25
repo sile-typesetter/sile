@@ -58,7 +58,7 @@ local _hbox = _box {
     end
     SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
     SILE.outputter.setFont(self.value.options)
-    SILE.outputter.outputHbox(self.value, self.width.length)
+    SILE.outputter.outputHbox(self.value, self:scaledWidth(line))
     if typesetter.frame:writingDirection() ~= "RTL" then
       typesetter.frame:advanceWritingDirection(self:scaledWidth(line))
     end
