@@ -351,7 +351,7 @@ int shape (lua_State *L) {
       double glyphWidth = extents.width * point_size / upem;
       if (direction == HB_DIRECTION_TTB) { /* XXX */
         height = -glyph_pos[j].y_advance * point_size / upem;
-        tHeight = 0;
+        tHeight = -height;
         width = glyphWidth;
       }
       lua_pushstring(L, "glyphWidth");
