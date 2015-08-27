@@ -209,6 +209,7 @@ SILE.typesetter:registerHook("noframebreak", function (self)
     local thisclass = SILE.scratch.insertions.classes[k]
     SILE.getFrame(thisclass.insertInto).state.totals.shrinkage = 0
   end
+  SILE.scratch.insertions.thispage = {}
 end)
 
 SILE.typesetter:registerPageEndHook(SILE.insertions.output)
