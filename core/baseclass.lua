@@ -199,6 +199,7 @@ SILE.baseClass = std.object {
     SILE.call("supereject")
     SILE.typesetter:leaveHmode(true)
     SILE.typesetter:pageBuilder()
+    SILE.typesetter:runHooks("pageend") -- normally run by the typesetter
     self:endPage()
     SILE.outputter:finish()
  end,

@@ -26,7 +26,18 @@ end
 local _insertionVbox = SILE.nodefactory.newVbox({
   __tostring = function(self) return "I<"..self.material..">" end
 })
-_insertionVbox.outputYourself = function (self)
+local insertionsThisPage = {}
+_insertionVbox.outputYourself = function(self)
+  insertionsThisPage[#insertionsThisPage+1] = self
+end
+SILE.insertions.output = function()
+  for i = 1,#insertionsThisPage do
+    insertionsThisPage[i]:realOutputYourself()
+  end
+  insertionsThisPage = {}
+end
+
+_insertionVbox.realOutputYourself = function (self)
   local t = SILE.scratch.insertions.typesetters[self.class]
   if not t then
     t = SILE.defaultTypesetter {}
@@ -199,6 +210,8 @@ SILE.typesetter:registerHook("noframebreak", function (self)
     SILE.getFrame(thisclass.insertInto).state.totals.shrinkage = 0
   end
 end)
+
+SILE.typesetter:registerPageEndHook(SILE.insertions.output)
 
 return {
   init = function () end,
