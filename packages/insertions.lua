@@ -82,11 +82,12 @@ SILE.insertions.commitShrinkage = function(classname)
   local reduceList = opts["stealFrom"]
   local stealPosition = opts["steal-position"] or "bottom"
   for fName, ratio in pairs(reduceList) do local f = SILE.getFrame(fName)
+    if not f.state.totals then f:init() end -- May be a frame that has not been entered yet
     if not f.state.totals.shrinkage then f.state.totals.shrinkage = 0 end
     local newHeight = f:height() - f.state.totals.shrinkage
     local oldBottom = f:bottom()
     if stealPosition == "bottom" then f:relax("bottom") else f:relax("top") end
-    SU.debug("insertions", "Constraining height of "..fName.." to "..newHeight)
+    SU.debug("insertions", "Constraining height of "..fName.." by "..f.state.totals.shrinkage.." to "..newHeight)
     f:constrain("height", newHeight)
     f.state.totals.shrinkage = 0
   end
@@ -98,11 +99,13 @@ end
 
 SILE.insertions.increaseInsertionFrame = function(classname, amount)
   local opts = SILE.scratch.insertions.classes[classname]
+  SU.debug("insertions", "Increasing insertion frame by "..amount)
   local stealPosition = opts["steal-position"] or "bottom"
   local f = SILE.getFrame(opts["insertInto"])
   local oldHeight = f:height()
   f:constrain("height", oldHeight + amount.length)
   if stealPosition == "bottom" then f:relax("top") end
+  SU.debug("insertions", "New height is now ".. f:height())
 end
 
 SILE.insertions.removeAddedSkip = function (ins)
@@ -131,6 +134,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
     table.insert(ins.material,1,vglue)
   end
   local h = ins.actualHeight + vglue.height
+  ins.actualHeight = h
   if not targetFrame.state.totals then targetFrame:init() end
   if not targetFrame.state.totals.shrinkage then targetFrame.state.totals.shrinkage = 0 end
   SU.debug("insertions", "Total height so far: ".. (- targetFrame.state.totals.shrinkage))
