@@ -113,7 +113,7 @@ SILE.shapers.base = std.object {
     local glyphNames = {}
     local nnodeValue = { text = token, options = options, glyphString = {} }
     self:preAddNodes(items, nnodeValue)
-    for i = 1,#items do local glyph = items[i]       
+    for i = 1,#items do local glyph = items[i]
       if glyph.depth > depth then depth = glyph.depth end
       if glyph.height > height then height = glyph.height end
       totalWidth = totalWidth + glyph.width

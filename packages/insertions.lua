@@ -116,7 +116,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
       table.insert(ins.material,1,vglue)
     end
   else
-    vglue = SILE.nodefactory.newVglue({ height = options["interInsertionSkip"] })  
+    vglue = SILE.nodefactory.newVglue({ height = options["interInsertionSkip"] })
     table.insert(ins.material,1,vglue)
   end
   local h = ins.actualHeight + vglue.height
@@ -143,7 +143,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
       ins.material[2] = SILE.pagebuilder.collateVboxes(ins.material[2].nodes)
       ins.actualHeight = ins.material[1].height + ins.material[2].height
       local newvbox = SILE.pagebuilder.collateVboxes(split)
-      table.insert(vboxlist, i, 
+      table.insert(vboxlist, i,
         _insertionVbox {
           class = ins.class,
           material = { newvbox },
@@ -164,7 +164,7 @@ SILE.insertions.commit = function(nl)
     if n.type == "insertionVbox" then
 
       SILE.insertions.increaseInsertionFrame(n.class, n.actualHeight)
-      if not done[n.class] then 
+      if not done[n.class] then
         SILE.insertions.commitShrinkage(n.class)
         done[n.class] = true
       end
@@ -182,14 +182,14 @@ local insert = function (self, classname, vbox)
         actualHeight = vbox.height,
         frame = thisclass.insertInto,
         parent = SILE.typesetter.frame
-      }      
+      }
   })
 end
 
 SILE.typesetter:registerFrameBreakHook(function (self,nl)
   SILE.scratch.insertions.typesetters = {}
   SILE.scratch.insertions.thispage = {}
-  SILE.insertions.commit(nl)  
+  SILE.insertions.commit(nl)
   return nl
 end)
 

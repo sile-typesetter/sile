@@ -104,7 +104,7 @@ function SILE.inputs.TeXlike.process(fn)
   SILE.process(t)
   if root and not SILE.preamble then
     SILE.documentState.documentClass:finish()
-  end 
+  end
 end
 
 local _parser

@@ -111,7 +111,7 @@ local _unshaped = _nnode {
   end,
   __index = function(self,k)
     if k == "width" then SU.error("Can't get width of unshaped node", 1) end
-  end 
+  end
 }
 
 -- Discretionaries
@@ -240,7 +240,7 @@ local _vglue = _box {
   __tostring = function (this)
       return "VG<" .. tostring(this.height) .. ">";
   end,
-  setGlue = function (self,adjustment) 
+  setGlue = function (self,adjustment)
     -- XXX
     self.height.length = self.height.length + adjustment
     self.height.stretch = 0
@@ -298,7 +298,7 @@ local _vbox = _box {
     end
     typesetter.frame:advancePageDirection(self.depth)
     typesetter.frame:newLine()
-  end 
+  end
 }
 
 

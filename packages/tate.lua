@@ -123,7 +123,7 @@ SILE.registerCommand("tate-chu-yoko", function (options, content)
     n.misfit = false
     n.oldOutputYourself = n.outputYourself
     n.outputYourself = outputTateChuYoko
-  end)  
+  end)
   SILE.typesetter:pushGlue({
     width = SILE.length.new({length = SILE.toPoints("0.5zw"),
                              stretch = SILE.toPoints("0.25zw"),

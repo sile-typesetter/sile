@@ -1,6 +1,6 @@
     SILE.registerCommand("font", function(options, content)
       if (type(content)=="function" or content[1]) then
-        SILE.settings.pushState() 
+        SILE.settings.pushState()
       end
       if (options.filename)  then SILE.settings.set("font.filename", options.filename) end
       if (options.family) then
@@ -19,7 +19,7 @@
       if (options.features)  then SILE.settings.set("font.features", options.features) end
       if (options.direction)  then SILE.settings.set("font.direction", options.direction) end
 
-      if (options.language)  then 
+      if (options.language)  then
         SILE.settings.set("document.language", options.language)
         SILE.languageSupport.loadLanguage(options.language)
       end
@@ -67,8 +67,8 @@ SILE.font = {loadDefaults = function(options)
   end
   if not options.language then options.language = SILE.settings.get("document.language") end
   if not options.script then options.script = SILE.settings.get("font.script") end
-  if not options.direction then 
-    options.direction = SILE.settings.get("font.direction") 
+  if not options.direction then
+    options.direction = SILE.settings.get("font.direction")
     if not options.direction or options.direction == "" then
       options.direction = SILE.typesetter.frame and SILE.typesetter.frame:writingDirection() or "LTR"
     end

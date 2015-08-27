@@ -204,7 +204,7 @@ SILE.baseClass = std.object {
  end,
   newPar = function(typesetter)
     typesetter:pushGlue(SILE.settings.get("current.parindent"))
-    SILE.settings.set("current.parindent", SILE.settings.get("document.parindent"))   
+    SILE.settings.set("current.parindent", SILE.settings.get("document.parindent"))
   end,
   endPar = function(typesetter)
     local g = SILE.settings.get("document.parskip")

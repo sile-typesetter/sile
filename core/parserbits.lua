@@ -11,7 +11,7 @@ local number = {}
 local digit = R("09")
 number.integer = (S("+-") ^ -1) * (digit   ^  1)
 number.fractional = (P(".")   ) * (digit ^ 1)
-number.decimal = 
+number.decimal =
   (number.integer *              -- Integer
   (number.fractional ^ -1)) +    -- Fractional
   (S("+-") * number.fractional)  -- Completely fractional number
@@ -41,6 +41,6 @@ SILE.parserBits = {
   units = units,
   zero = zero,
   whitespace = whitespace,
-  dimensioned_string = dimensioned_string, 
+  dimensioned_string = dimensioned_string,
   length = Ct(Cg(dimensioned_string + zero, "length") * whitespace * (P("plus") * whitespace * Cg(dimensioned_string + zero, "stretch"))^-1 * whitespace * (P("minus") * whitespace * Cg(dimensioned_string + zero,"shrink"))^-1)
 }

@@ -2,7 +2,7 @@ local gridSpacing -- Should be a setting
 
 local makeUp = function ()
   if not SILE.typesetter.frame.state.totals.gridCursor then SILE.typesetter.frame.state.totals.gridCursor = 0 end
-  local toadd = gridSpacing - (SILE.typesetter.frame.state.totals.gridCursor % gridSpacing) 
+  local toadd = gridSpacing - (SILE.typesetter.frame.state.totals.gridCursor % gridSpacing)
   SILE.typesetter.frame.state.totals.gridCursor = SILE.typesetter.frame.state.totals.gridCursor + toadd
   return SILE.nodefactory.newVglue({ height = SILE.length.new({ length = toadd }) })
 end
@@ -18,8 +18,8 @@ local leadingFor = function(this, vbox, previous)
 end
 
 local pushVglue = function(this, spec)
-  if not this.frame.state.totals.gridCursor then 
-    this.frame.state.totals.gridCursor = 0 
+  if not this.frame.state.totals.gridCursor then
+    this.frame.state.totals.gridCursor = 0
   end
   this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + spec.height.length
   SILE.defaultTypesetter.pushVglue(this, spec)

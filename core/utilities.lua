@@ -152,7 +152,7 @@ utilities.codepoint = function (uchar)
       val = bit32.bor(bit32.lshift(val, 6), bit32.band(c, 0x3F))
     end
     seq = seq - 1
-  end 
+  end
   return val
 end
 
@@ -227,8 +227,8 @@ function utilities.splitUtf8(s) -- Return an array of UTF8 strings each represen
       this = this .. s[i]
     end
     seq = seq - 1
-  end 
-  rv[1+#rv] = this 
+  end
+  rv[1+#rv] = this
   return rv
 end
 

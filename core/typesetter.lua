@@ -55,7 +55,7 @@ SILE.defaultTypesetter = std.object {
     self.state = {
       nodes = {},
       outputQueue = {},
-      lastBadness = awful_bad,     
+      lastBadness = awful_bad,
     };
   end,
   initFrame = function(self, frame)
@@ -96,7 +96,7 @@ SILE.defaultTypesetter = std.object {
   pushExplicitVglue = function (self, spec)
     spec.skiptype = "explicit"
     return self:pushVglue(spec)
-  end, 
+  end,
   pushVpenalty = function (self, spec) return table.insert(self.state.outputQueue, SILE.nodefactory.newPenalty(spec)); end,
 
   -- Actual typesetting functions
