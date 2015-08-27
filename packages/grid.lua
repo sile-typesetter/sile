@@ -47,7 +47,7 @@ SILE.registerCommand("grid", function(options, content)
   SILE.typesetter.pushVglue = pushVglue
   SILE.typesetter.frame.state.totals.gridCursor = 0
   SILE.typesetter.state.previousVbox = SILE.defaultTypesetter.pushVbox(SILE.typesetter,{})
-  SILE.typesetter:registerNewPageHook(function (this)
+  SILE.typesetter:registerNewFrameHook(function (this)
     this.frame.state.totals.gridCursor = 0
     if this.state.outputQueue[1] then
       table.insert(this.state.outputQueue, 1, SILE.nodefactory.newVbox({}))

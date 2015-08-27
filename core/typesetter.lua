@@ -201,11 +201,14 @@ SILE.defaultTypesetter = std.object {
     end
     return data
   end,
-  registerPageBreakHook = function (self, f)
-    self:registerHook("pagebreak", f)
+  registerFrameBreakHook = function (self, f)
+    self:registerHook("framebreak", f)
   end,
-  registerNewPageHook = function (self, f)
-    self:registerHook("newpage", f)
+  registerNewFrameHook = function (self, f)
+    self:registerHook("newframe", f)
+  end,
+  registerPageEndHook = function (self, f)
+    self:registerHook("pageend", f)
   end,
   pageBuilder = function (self)
     local vbox;
@@ -217,10 +220,10 @@ SILE.defaultTypesetter = std.object {
     local target = self:pageTarget()
     pageNodeList, self.state.lastPenalty = SILE.pagebuilder.findBestBreak(self.state.outputQueue, target)
     if not pageNodeList then -- No break yet
-      self:runHooks("nopagebreak")
+      self:runHooks("noframebreak")
       return false
     end
-    pageNodeList = self:runHooks("pagebreak",pageNodeList)
+    pageNodeList = self:runHooks("framebreak",pageNodeList)
     self:setVerticalGlue(pageNodeList, self:pageTarget())
     self:outputLinesToPage(pageNodeList);
     return true
@@ -261,6 +264,7 @@ SILE.defaultTypesetter = std.object {
       SU.warn("Overfull content for frame "..self.frame.id)
       self:chuck()
     else
+      self:runHooks("pageend")
       SILE.documentState.documentClass:endPage()
       self:initFrame(SILE.documentState.documentClass:newPage()); -- XXX Hack
     end
@@ -302,7 +306,7 @@ SILE.defaultTypesetter = std.object {
     end
 
     self:leaveHmode();
-    self:runHooks("newpage")
+    self:runHooks("newframe")
   end,
   outputLinesToPage = function (self, lines)
     SU.debug("pagebuilder", "OUTPUTTING frame "..self.frame.id);

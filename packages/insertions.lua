@@ -186,14 +186,14 @@ local insert = function (self, classname, vbox)
   })
 end
 
-SILE.typesetter:registerPageBreakHook(function (self,nl)
+SILE.typesetter:registerFrameBreakHook(function (self,nl)
   SILE.scratch.insertions.typesetters = {}
   SILE.scratch.insertions.thispage = {}
   SILE.insertions.commit(nl)  
   return nl
 end)
 
-SILE.typesetter:registerHook("nopagebreak", function (self)
+SILE.typesetter:registerHook("noframebreak", function (self)
   for k,v in pairs(SILE.scratch.insertions.thispage) do
     local thisclass = SILE.scratch.insertions.classes[k]
     SILE.getFrame(thisclass.insertInto).state.totals.shrinkage = 0
