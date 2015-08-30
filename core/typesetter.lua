@@ -149,7 +149,7 @@ SILE.defaultTypesetter = std.object {
       local rv = ""
       for i = 1,#l do rv = rv ..l[i] end return rv
     end
-    SU.debug("typesetter", "Boxed up "..listToString(nl));
+    SU.debug("typesetter", "Boxed up "..(#nl > 500 and (#nl).." nodes" or listToString(nl)));
     local breakWidth = SILE.settings.get("typesetter.breakwidth") or self.frame:lineWidth()
     if (type(breakWidth) == "table") then breakWidth = breakWidth.length end
     local lines = self:breakIntoLines(nl, breakWidth)
