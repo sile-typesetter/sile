@@ -19,7 +19,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
 
   START "document";
   document = V("stuff") * (-1 + E("Unexpected character at end of input"))
-  text = (anything + C(WS))^1 / function(...) return table.concat({...}, "") end
+  text = C( (1-lpeg.S("\\{}%")) ^1)
   stuff = Cg(V"environment" +
     comment
     + V("text") + V"bracketed_stuff" + V"command")^0
