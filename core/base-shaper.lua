@@ -57,13 +57,12 @@ SILE.shapers.base = std.object {
   itemize = function(self, nodelist, text)
     local state = SILE.font.loadDefaults({})
     local gluewidth = self:measureSpace(state)
-
     -- First tokenize on spaces
     for token in self:tokenize(text,state) do
       if (token.separator) then
-        table.insert(nodelist, SILE.nodefactory.newGlue({ width = gluewidth }))
+        nodelist[#nodelist+1]= SILE.nodefactory.newGlue({ width = gluewidth })
       elseif (token.node) then
-        table.insert(nodelist, token.node)
+        nodelist[#nodelist+1]= token.node
       else
         local nodes = self:subItemize(token.string, state)
         for i= 1,#nodes do
