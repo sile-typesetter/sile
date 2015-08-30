@@ -119,6 +119,7 @@ function SILE.inputs.TeXlike.docToTree(doc)
   local t = epnf.parsestring(_parser, doc)
   -- a document always consists of one stuff
   t = t[1][1]
+  if t.id == "text" then t = {t} end
   if not t then return end
   resetCache()
   t = massage_ast(t,doc)
