@@ -10,7 +10,7 @@ SILE.inputs.XML = {
       end
       SILE.inputs.common.init(fn, t)
     end
-    SILE.currentCommand = t   
+    SILE.currentCommand = t
     if SILE.Commands[t.tag] then
       SILE.Commands[t.tag](t.attr,t)
     else

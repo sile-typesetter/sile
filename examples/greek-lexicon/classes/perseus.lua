@@ -34,7 +34,7 @@ SILE.registerCommand("authorContainer", function(options, content)
   local auth = SILE.findInTree(content, "author")
   if not auth then return end
   local name = SILE.findInTree(auth, "name")
-  if name and name[1] ~= "NULL" then 
+  if name and name[1] ~= "NULL" then
     SILE.call("font", {style="italic"}, function ()
       SILE.typesetter:typeset("("..name[1]..")")
     end)

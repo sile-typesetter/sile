@@ -23,6 +23,13 @@ SILE.registerCommand("verbatim", function(options, content)
   SILE.typesetter:pushVglue({ height = SILE.length.new({ length = 6 }) })
 end, "Typesets its contents in a monospaced font.")
 
+SILE.registerCommand("obeylines", function(options, content)
+  SILE.settings.temporarily(function()
+    SILE.settings.set("typesetter.parseppattern", "\n")
+    SILE.process(content)
+  end)
+end)
+
 return [[\begin{document}
 
 The \code{verbatim} package is useful when quoting pieces of computer code and

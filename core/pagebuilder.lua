@@ -56,7 +56,7 @@ SILE.pagebuilder = {
       local pi = 0
       if vbox:isPenalty() then
         pi = vbox.penalty
-        -- print("PI "..pi) 
+        -- print("PI "..pi)
       end
       if vbox:isPenalty() and vbox.penalty < inf_bad  or (vbox:isVglue() and i > 1 and not vboxlist[i-1]:isDiscardable()) then
         local badness
@@ -94,5 +94,5 @@ SILE.pagebuilder = {
     end
     SU.debug("pagebuilder", "No page break here")
     return
-  end,   
+  end,
 }

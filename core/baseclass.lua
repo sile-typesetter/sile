@@ -196,15 +196,22 @@ SILE.baseClass = std.object {
     -- Any other output-routiney things will be done here by inheritors
   end,
   finish = function(self)
-    SILE.call("supereject")
-    SILE.typesetter:leaveHmode(true)
-    SILE.typesetter:pageBuilder()
+    while not (#SILE.typesetter.state.nodes == 0 and #SILE.typesetter.state.outputQueue == 0) do
+      SILE.call("supereject")
+      SILE.typesetter:leaveHmode(true)
+      SILE.typesetter:pageBuilder()
+      if not (#SILE.typesetter.state.nodes == 0 and #SILE.typesetter.state.outputQueue == 0) then
+        SILE.typesetter:initNextFrame()
+      end
+    end
+    SILE.typesetter:runHooks("pageend") -- normally run by the typesetter
     self:endPage()
+    assert(#SILE.typesetter.state.nodes == 0 and #SILE.typesetter.state.outputQueue == 0, "queues not empty")
     SILE.outputter:finish()
  end,
   newPar = function(typesetter)
     typesetter:pushGlue(SILE.settings.get("current.parindent"))
-    SILE.settings.set("current.parindent", SILE.settings.get("document.parindent"))   
+    SILE.settings.set("current.parindent", SILE.settings.get("document.parindent"))
   end,
   endPar = function(typesetter)
     local g = SILE.settings.get("document.parskip")

@@ -19,7 +19,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
 
   START "document";
   document = V("stuff") * (-1 + E("Unexpected character at end of input"))
-  text = (anything + C(WS))^1 / function(...) return table.concat({...}, "") end
+  text = C( (1-lpeg.S("\\{}%")) ^1)
   stuff = Cg(V"environment" +
     comment
     + V("text") + V"bracketed_stuff" + V"command")^0
@@ -104,7 +104,7 @@ function SILE.inputs.TeXlike.process(fn)
   SILE.process(t)
   if root and not SILE.preamble then
     SILE.documentState.documentClass:finish()
-  end 
+  end
 end
 
 local _parser
@@ -119,6 +119,7 @@ function SILE.inputs.TeXlike.docToTree(doc)
   local t = epnf.parsestring(_parser, doc)
   -- a document always consists of one stuff
   t = t[1][1]
+  if t.id == "text" then t = {t} end
   if not t then return end
   resetCache()
   t = massage_ast(t,doc)

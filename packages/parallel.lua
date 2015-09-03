@@ -2,12 +2,12 @@ local typesetterPool = {}
 local calculations = {}
 local folioOrder = {}
 
-local allTypesetters = function (f) 
+local allTypesetters = function (f)
   local o = SILE.typesetter
 for k,v in pairs(typesetterPool) do
   SILE.typesetter = v
-  f(k,v) 
-end 
+  f(k,v)
+end
   SILE.typesetter = o
 end
 
@@ -30,7 +30,7 @@ local parallelPagebreak = function ()
       local t = typesetterPool[n]
       t:initFrame(t.frame)
     end
-    SILE.documentState.documentClass:newPage()    
+    SILE.documentState.documentClass:newPage()
   end
 end
 
@@ -76,7 +76,7 @@ end
 local addBalancingGlue = function (h)
   allTypesetters(function (n,t)
     local g = h - calculations[n].heightOfNewMaterial
-    if g.length > 0 then 
+    if g.length > 0 then
       SU.debug("parallel", "Adding "..g.." to "..n)
       t:pushVglue({ height = g })
     end
@@ -93,8 +93,8 @@ SILE.registerCommand("sync", function (o,c)
     -- but page breaking has not been run. See if page breaking would cause a
     -- break
     local lines = std.table.clone(t.state.outputQueue)
-    if SILE.pagebuilder.findBestBreak(lines, t:pageTarget()) then 
-      anybreak = true 
+    if SILE.pagebuilder.findBestBreak(lines, t:pageTarget()) then
+      anybreak = true
     end
   end)
   

@@ -40,7 +40,7 @@ local breakpoint = { node = SILE.nodefactory.newPenalty({ penalty = 0 }) }
 local utoke = function(text) -- Yuck
   local chunks = SU.splitUtf8(text)
   local tmp = {}
-  for i = 1,#chunks do 
+  for i = 1,#chunks do
     local cp = SU.codepoint(chunks[i])
     if chardata[cp] and chardata[cp].linebreak == "sp" then
       coroutine.yield({ string = table.concat(tmp, "") })

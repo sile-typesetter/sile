@@ -16,7 +16,7 @@ return {
           SILE.scratch.counters.folio.off = false
         end
         SILE.scratch.counters.folio.value = SILE.scratch.counters.folio.value + 1
-        return 
+        return
       end
       io.write("["..SILE.formatCounter(SILE.scratch.counters.folio).."] ");
       local f = SILE.getFrame("folio");
