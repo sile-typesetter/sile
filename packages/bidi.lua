@@ -21,27 +21,6 @@ local bidi = require("unicode-bidi-algorithm")
 require("char-def")
 local chardata  = characters.data
 
-local function has_mixed_direction_material(v)
-  local linetext = {}
-  if not v.nodes then return false end
-  for i = 1,#(v.nodes) do
-    linetext[#linetext+1] = v.nodes[i].text
-  end
-  linetext = table.concat(linetext, "")
-  chunks = SU.splitUtf8(linetext)
-  local linedir
-  for i = 1,#chunks do
-    local d = bidi.get_bidi_type(SU.codepoint(chunks[i]))
-    if d == "r" or d == "l" or d == "al" or d == "en" then
-      if not linedir then linedir = d end
-      if d ~= linedir then
-        return true
-      end
-    end
-  end
-  return false
-end
-
 local reorder = function(n, self)
   local nl = n.nodes
   local newNl = {}
@@ -72,12 +51,7 @@ local reorder = function(n, self)
 
     -- now both are unshaped, compare them
     elseif SILE.font._key(this.options) == SILE.font._key(prev.options)
-      and this.parent == prev.parent
-      and ( chardata[SU.codepoint(this.text)] and chardata[SU.codepoint(prev.text)] and (
-        chardata[SU.codepoint(this.text)].linebreak == chardata[SU.codepoint(prev.text)].linebreak or
-        chardata[SU.codepoint(this.text)].linebreak:match("^i") or
-        chardata[SU.codepoint(prev.text)].linebreak:match("^i")
-        )) then -- same font
+      and this.parent == prev.parent then -- same font
       prev.text = prev.text .. this.text
     else
       ncount = ncount + 1
@@ -93,7 +67,7 @@ local bidiBoxupNodes = function (self)
   local vboxlist = SILE.defaultTypesetter.boxUpNodes(self)
   -- Scan for out-of-direction material
   for i=1,#vboxlist do local v = vboxlist[i]
-    if has_mixed_direction_material(v) then reorder(v, self) end
+    if v:isVbox() then reorder(v, self) end
   end
   return vboxlist
 end

@@ -329,14 +329,19 @@ int shape (lua_State *L) {
       double height = extents.y_bearing * point_size / upem;
       double tHeight = extents.height * point_size / upem;
       double width = glyph_pos[j].x_advance * point_size / upem;
-      double glyphWidth = extents.width * point_size / upem;
+
+      /* The PDF model expects us to make positioning adjustments
+      after a glyph is painted. For this we need to know the natural
+      glyph advance. libtexpdf will use this to compute the adjustment. */
+      double glyphAdvance = hb_font_get_glyph_h_advance(hb_ft_font, glyph_info[j].codepoint) * point_size / upem;
+
       if (direction == HB_DIRECTION_TTB) { /* XXX */
         height = -glyph_pos[j].y_advance * point_size / upem;
         tHeight = -height;
-        width = glyphWidth;
+        width = glyphAdvance;
       }
-      lua_pushstring(L, "glyphWidth");
-      lua_pushnumber(L, glyphWidth);
+      lua_pushstring(L, "glyphAdvance");
+      lua_pushnumber(L, glyphAdvance);
       lua_settable(L, -3);
 
       lua_pushstring(L, "width");
