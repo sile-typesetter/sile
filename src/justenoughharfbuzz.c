@@ -358,6 +358,7 @@ int shape (lua_State *L) {
         height = -glyph_pos[j].y_advance * point_size / upem;
         tHeight = -height;
         width = glyphAdvance;
+        glyphAdvance = height;
       }
       lua_pushstring(L, "glyphAdvance");
       lua_pushnumber(L, glyphAdvance);
