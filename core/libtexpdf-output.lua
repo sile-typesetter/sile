@@ -30,11 +30,19 @@ SILE.outputters.libtexpdf = {
   end,
   outputHbox = function (value,w)
     if not value.glyphString then return end
+    -- Nodes which require kerning or have offsets to the glyph
+    -- position should be output a glyph at a time. We pass the
+    -- glyph advance from the htmx table, so that libtexpdf knows
+    -- how wide each glyph is. It uses this to then compute the
+    -- relative position between the pen after the glyph has been
+    -- painted (cursorX + glyphAdvance) and the next painting
+    -- position (cursorX + width - remember that the box's "width"
+    -- is actually the shaped x_advance).
     if value.complex then
       for i=1,#(value.items) do
         local glyph = value.items[i].codepoint
         local buf = string.char(math.floor(glyph % 2^32 / 2^8)) .. string.char(glyph % 0x100)
-        pdf.setstring(cursorX + (value.items[i].x_offset or 0), cursorY + (value.items[i].y_offset or 0), buf, string.len(buf), font, value.items[i].width)
+        pdf.setstring(cursorX + (value.items[i].x_offset or 0), cursorY + (value.items[i].y_offset or 0), buf, string.len(buf), font, value.items[i].glyphAdvance)
         cursorX = cursorX + value.items[i].width
       end
       return
