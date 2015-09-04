@@ -402,6 +402,17 @@ int get_harfbuzz_version (lua_State *L) {
   return 1;
 }
 
+int list_shapers (lua_State *L) {
+  const char **shaper_list = hb_shape_list_shapers ();
+  int i = 0;
+
+  for (; *shaper_list; shaper_list++) {
+    i++;
+    lua_pushstring(L, *shaper_list);
+  }
+  return i;
+}
+
 #if !defined LUA_VERSION_NUM
 /* Lua 5.0 */
 #define luaL_Reg luaL_reg
@@ -428,6 +439,7 @@ static void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
 static const struct luaL_Reg lib_table [] = {
   {"_shape", shape},
   {"version", get_harfbuzz_version},
+  {"shapers", list_shapers},
   {"_face", face_from_options},
   {NULL, NULL}
 };
