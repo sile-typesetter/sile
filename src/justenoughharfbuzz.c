@@ -333,7 +333,7 @@ int shape (lua_State *L) {
       /* The PDF model expects us to make positioning adjustments
       after a glyph is painted. For this we need to know the natural
       glyph advance. libtexpdf will use this to compute the adjustment. */
-      double glyphAdvance = hb_font_get_glyph_h_advance(hb_ft_font, glyph_info[j].codepoint) * point_size / upem;
+      double glyphAdvance = hb_font_get_glyph_h_advance(hbFont, glyph_info[j].codepoint) * point_size / upem;
 
       if (direction == HB_DIRECTION_TTB) { /* XXX */
         height = -glyph_pos[j].y_advance * point_size / upem;
