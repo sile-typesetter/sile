@@ -153,8 +153,23 @@ SILE.registerCommand("typeset-into", function(options,content)
   if not SILE.frames[options.frame] then
     SU.error("Can't find frame "..options.frame.." to typeset into")
   end
-  SILE.typesetter:chuck()
   SILE.typesetNaturally(SILE.frames[options.frame], function() SILE.process(content) end)
+end)
+
+SILE.registerCommand("fit-frame", function(options, content)
+  SU.required(options, "frame", "calling \\fit-frame")
+  if not SILE.frames[options.frame] then
+    SU.error("Can't find frame "..options.frame.." to fit")
+  end
+  local f = SILE.frames[options.frame]
+  local h = SILE.length.new()
+  SILE.typesetNaturally(f, function()
+    SILE.typesetter:leaveHmode()
+    for i =1,#SILE.typesetter.state.outputQueue do
+      h = h + SILE.typesetter.state.outputQueue[i].height
+    end
+  end)
+  f:constrain("height", f:height() + h.length)
 end)
 
 return {
