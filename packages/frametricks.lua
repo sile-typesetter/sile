@@ -91,7 +91,9 @@ local makecolumns = function (options)
     })
     gutter:constrain("right", "left("..newFrame.id..")")
     newFrame:constrain("left", "right("..gutter.id..")")
-    newFrame:constrain("width", "width("..cFrame.id..")") -- XXX
+    -- In the future we may way to allow for unequal columns
+    -- but for now just assume they will be equal.
+    newFrame:constrain("width", "width("..cFrame.id..")")
     cFrame.next = newFrame.id
     cFrame = newFrame
   end

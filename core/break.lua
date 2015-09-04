@@ -82,7 +82,7 @@ function lineBreak:setupLineLengths(params) -- 874
       self.lastSpecialLine = 0
       self.secondWidth = self.hsize or SU.error("No hsize")
     else
-      self.node875() -- XXX
+      SU.error("Hanging indents not supported yet. Implement node 875 from TeX!", 1)
     end
   else
     self.lastSpecialLine = #param("parShape")
@@ -438,7 +438,7 @@ function lineBreak:checkForLegalBreak(n) -- 892
     -- 894 (We removed the auto_breaking parameter)
     if previous and previous:isBox() then self:tryBreak() end
     self.activeWidth = self.activeWidth + n.width
-  elseif n:isDiscretionary() then -- 895  XXX
+  elseif n:isDiscretionary() then -- 895
     self.activeWidth = self.activeWidth + n:prebreakWidth()
     self:tryBreak()
     self.activeWidth = self.activeWidth - n:prebreakWidth()
@@ -463,7 +463,7 @@ function lineBreak:tryFinalBreak()      -- 899
     self.r = self.r.next
   until self.r == self.activeListHead
   if param("looseness") == 0 then return "done" end
-  -- XXX 901
+  -- XXX node 901 not implemented
   if (self.actualLooseness == param("looseness")) or self.finalpass then return "done" end
 end
 

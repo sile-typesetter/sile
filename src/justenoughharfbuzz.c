@@ -119,7 +119,7 @@ int face_from_options(lua_State* L) {
     return 0;
   
   FcPatternGetInteger(matched, FC_INDEX, 0, &index);
-  font_path = (FcChar8 *)strdup((char*)font_path); /* XXX signedness problems? */
+  font_path = (FcChar8 *)strdup((char*)font_path);
   if (!font_path) {
     printf("Finding font path failed\n");
     return 0;
@@ -324,7 +324,14 @@ int shape (lua_State *L) {
       lua_pushstring(L, namebuf);
       lua_settable(L, -3);
 
-      if (direction != HB_DIRECTION_TTB) { /* XXX */
+      /* We don't apply x-offset and y-offsets for TTB, which
+      is arguably a bug. We should. The reason we don't is that
+      Harfbuzz assumes that you want to shift the character from a
+      top-center baseline to a bottom-left baseline, and gives you
+      offsets which do that. We don't want to do that so we ignore the
+      offsets. I'm told there is a way of configuring HB's idea of the
+      baseline, and we should use that and take out this condition. */
+      if (direction != HB_DIRECTION_TTB) {
         if (glyph_pos[j].x_offset) {
           lua_pushstring(L, "x_offset");
           lua_pushnumber(L, glyph_pos[j].x_offset * point_size / upem);
@@ -354,9 +361,9 @@ int shape (lua_State *L) {
       glyph advance. libtexpdf will use this to compute the adjustment. */
       double glyphAdvance = hb_font_get_glyph_h_advance(hb_ft_font, glyph_info[j].codepoint) * point_size / upem;
 
-      if (direction == HB_DIRECTION_TTB) { /* XXX */
+      if (direction == HB_DIRECTION_TTB) {
         height = -glyph_pos[j].y_advance * point_size / upem;
-        tHeight = -height;
+        tHeight = -height; /* Set depth to 0 - depth has no meaning for TTB */
         width = glyphAdvance;
         glyphAdvance = height;
       }

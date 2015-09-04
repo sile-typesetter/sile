@@ -266,7 +266,7 @@ SILE.defaultTypesetter = std.object {
     else
       self:runHooks("pageend")
       SILE.documentState.documentClass:endPage()
-      self:initFrame(SILE.documentState.documentClass:newPage()); -- XXX Hack
+      self:initFrame(SILE.documentState.documentClass:newPage())
     end
     -- Always push back and recalculate. The frame may have a different shape, or
     -- we may be doing clever things like grid typesetting. CPU time is cheap.
