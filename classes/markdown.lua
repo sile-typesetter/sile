@@ -23,6 +23,10 @@ SILE.inputs.markdown = {
 SILE.require("packages/verbatim")
 local book = SILE.require("classes/book")
 
+SILE.registerCommand("sect1", function(options, content)
+  SILE.call("chapter", options, content)
+end)
+
 SILE.registerCommand("sect2", function(options, content)
   SILE.call("section", options, content)
 end)
@@ -34,6 +38,12 @@ end)
 SILE.registerCommand("strong", function(options, content)
   SILE.call("em", options, content)
 end)
+
+SILE.registerCommand("emphasis", function(options, content)
+  SILE.call("em", options, content)
+end)
+
+
 SILE.registerCommand("bulletlist", function(options, content)
   SILE.process(content)
 end)
