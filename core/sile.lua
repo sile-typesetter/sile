@@ -154,11 +154,18 @@ function SILE.readFile(fn)
   -- Sniff first few bytes
   local sniff = file:read("*l") or ""
   file:seek("set", 0)
-  if sniff:find("<") then
-    SILE.inputs.XML.process(fn)
-  else
-    SILE.inputs.TeXlike.process(fn)
+  local inputsOrder = {}
+  for n in pairs(SILE.inputs) do
+    if SILE.inputs[n].order then table.insert(inputsOrder, n) end
   end
+  table.sort(inputsOrder,function(a,b) return SILE.inputs[a].order < SILE.inputs[b].order end)
+  for i = 1,#inputsOrder do local input = SILE.inputs[inputsOrder[i]]
+    if input.appropriate(fn, sniff) then
+      input.process(fn)
+      return
+    end
+  end
+  SU.error("No input processor available for "..fn.." (should never happen)",1)
 end
 
 local function file_exists(name)
