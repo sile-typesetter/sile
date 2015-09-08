@@ -46,6 +46,18 @@ if SILE.Commands.tocentry then
   end
 end
 
+SILE.registerCommand("pdf:literal", function (o,c)
+  SILE.typesetter:pushHbox({
+      value = nil,
+      height = 0,
+      width = 0,
+      depth = 0,
+      outputYourself= function (self, typesetter)
+        pdf.add_content(c[1])
+      end
+    });
+end)
+
 SILE.registerCommand("pdf:link", function (o,c)
   local dest = SU.required(o, "dest", "pdf:link")
   local llx, lly

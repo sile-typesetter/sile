@@ -1,7 +1,7 @@
 \begin[papersize=a4]{document}
 \script[src=packages/pdf]
 
-Hello
+\pdf:literal{/P <</MCID 0 >>BDC}Hello\pdf:literal{EMC}
 
 \pdf:destination[name=Here]
 \pdf:bookmark[dest=Here,title="Hello World"]

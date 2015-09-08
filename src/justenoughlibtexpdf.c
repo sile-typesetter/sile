@@ -115,6 +115,7 @@ int pdf_loadfont(lua_State *L) {
 int pdf_setdirmode(lua_State *L) {
   int layout_dir = luaL_checkinteger(L,1);
   texpdf_dev_set_dirmode(layout_dir);
+  return 0;
 }
 
 int pdf_setstring(lua_State *L) {
@@ -299,6 +300,20 @@ int pdf_transform(lua_State *L) {
 int pdf_gsave(lua_State *L)    { texpdf_graphics_mode(p); texpdf_dev_gsave(p); return 0; }
 int pdf_grestore(lua_State *L) { texpdf_graphics_mode(p); texpdf_dev_grestore(p); return 0; }
 
+#if !defined LUA_VERSION_NUM || LUA_VERSION_NUM==501
+#define lua_rawlen lua_strlen
+#endif
+
+int pdf_add_content(lua_State *L) {
+  const char* input = luaL_checkstring(L, 1);
+  int input_l = lua_rawlen(L, 1);
+  texpdf_graphics_mode(p); /* Don't be mid-string! */
+  texpdf_doc_add_page_content(p, " ", 1);
+  texpdf_doc_add_page_content(p, input, input_l);
+  texpdf_doc_add_page_content(p, " ", 1);
+  return 0;
+}
+
 int pdf_version(lua_State *L) {
   lua_pushstring(L, texpdf_library_version());
   return 1;
@@ -349,6 +364,7 @@ static const struct luaL_Reg lib_table [] = {
   {"begin_annotation", pdf_begin_annotation},
   {"end_annotation", pdf_end_annotation},
   {"version", pdf_version},
+  {"add_content", pdf_add_content},
   {NULL, NULL}
 };
 
