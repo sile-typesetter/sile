@@ -360,7 +360,7 @@ int pdf_get_dictionary(lua_State *L) {
 
 int pdf_lookup_dictionary(lua_State *L) {
   pdf_obj* dict = lua_touserdata(L, 1);
-  const char* key = luaL_checkstring(L, 1);
+  const char* key = luaL_checkstring(L, 2);
   pdf_obj *o = texpdf_lookup_dict(dict, key);
   if (o) {
     lua_pushlightuserdata(L,o);
@@ -368,6 +368,40 @@ int pdf_lookup_dictionary(lua_State *L) {
   } else {
     return 0;
   }
+}
+
+int pdf_push_array(lua_State *L) {
+  pdf_obj* array = lua_touserdata(L, 1);
+  if (!PDF_OBJ_ARRAYTYPE(array)) {
+    return luaL_error(L, "push_array called on non-array");
+  }
+  pdf_obj* val = lua_touserdata(L, 2);
+  texpdf_add_array(array, val);
+  return 0;
+}
+
+int pdf_get_array(lua_State *L) {
+  pdf_obj* array = lua_touserdata(L, 1);
+  if (!PDF_OBJ_ARRAYTYPE(array)) {
+    return luaL_error(L, "push_array called on non-array");
+  }
+  long idx = lua_tonumber(L, 2);
+  pdf_obj *o = texpdf_get_array(array,idx);
+  if (o) {
+    lua_pushlightuserdata(L,o);
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+int pdf_array_length(lua_State *L) {
+  pdf_obj* array = lua_touserdata(L, 1);
+  if (!PDF_OBJ_ARRAYTYPE(array)) {
+    return luaL_error(L, "push_array called on non-array");
+  }
+  lua_pushinteger(L, texpdf_array_length(array));
+  return 1;
 }
 
 int pdf_version(lua_State *L) {
@@ -427,6 +461,9 @@ static const struct luaL_Reg lib_table [] = {
   {"lookup_dictionary", pdf_lookup_dictionary},
   {"reference", pdf_reference},
   {"release", pdf_release},
+  {"push_array", pdf_push_array},
+  {"get_array", pdf_get_array},
+  {"array_length", pdf_array_length},
   {NULL, NULL}
 };
 
