@@ -80,6 +80,43 @@ SILE.registerCommand("pdf:link", function (o,c)
     end
   });end)
 
+local structureTree
+local structureBranch
+local mcid = 0
+
+SILE.registerCommand("pdf:structure:leaf", function (o,c)
+  local t = SU.required(o,"type", "pdf structure")
+  local lang = o.lang
+  if not structureTree then
+    local c = pdf.get_dictionary("Catalog")
+    structureTree = pdf.parse("<< /Type /StructTreeRoot >>")
+    pdf.add_dict(c,pdf.parse("/StructTreeRoot"),pdf.reference(structureTree))
+  end
+  structureLeaf = pdf.parse("<< /Type /StructElem >>")
+  local rLeaf = pdf.reference(structureLeaf)
+  -- pdf.add_dict(structureLeaf,pdf.parse("/P"),
+  --   structureTree)
+  pdf.add_dict(structureTree,pdf.parse("/K"),
+    pdf.reference(structureLeaf))
+  -- -- XXX add this to parent
+  if lang then
+    pdf.add_dict(structureLeaf,pdf.parse("/Lang"), pdf.parse("("..lang..")"))
+  end
+  pdf.add_dict(structureLeaf,pdf.parse("/S"), pdf.parse("/"..t))
+  pdf.add_dict(structureLeaf,pdf.parse("/K"), pdf.parse(mcid))
+  SILE.call("pdf:literal",{},{"/"..t.." <</MCID "..mcid.." >>BDC"})
+  SILE.process(c)
+  SILE.call("pdf:literal",{},{"EDC"})
+  pdf.release(structureLeaf)
+
+  mcid = mcid + 1
+end)
+
+SILE.outputters.libtexpdf.finish = function()
+  pdf.endpage()
+  if structureTree then pdf.release(structureTree) end
+  pdf.finish()
+end
 return { documentation = [[\begin{document}
 The \code{pdf} package enables (basic) support for PDF links and table-of-contents
 entries. It provides the three commands \command{\\pdf:destination}, \command{\\pdf:link}
