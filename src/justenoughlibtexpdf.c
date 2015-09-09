@@ -338,13 +338,30 @@ int pdf_reference(lua_State *L) {
   pdf_obj* o1 = lua_touserdata(L, 1);
   pdf_obj* o2 = texpdf_ref_obj(o1);
   lua_pushlightuserdata(L, o2);
-  texpdf_release_obj(o1);
   return 1;
+}
+
+int pdf_release(lua_State *L) {
+  pdf_obj* o1 = lua_touserdata(L, 1);
+  texpdf_release_obj(o1);
+  return 0;
 }
 
 int pdf_get_dictionary(lua_State *L) {
   const char* dict = luaL_checkstring(L, 1);
   pdf_obj *o = texpdf_doc_get_dictionary(p, dict);
+  if (o) {
+    lua_pushlightuserdata(L,o);
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+int pdf_lookup_dictionary(lua_State *L) {
+  pdf_obj* dict = lua_touserdata(L, 1);
+  const char* key = luaL_checkstring(L, 1);
+  pdf_obj *o = texpdf_lookup_dict(dict, key);
   if (o) {
     lua_pushlightuserdata(L,o);
     return 1;
@@ -407,7 +424,9 @@ static const struct luaL_Reg lib_table [] = {
   {"get_dictionary", pdf_get_dictionary},
   {"parse", pdf_parse},
   {"add_dict", pdf_add_dict},
+  {"lookup_dictionary", pdf_lookup_dictionary},
   {"reference", pdf_reference},
+  {"release", pdf_release},
   {NULL, NULL}
 };
 
