@@ -314,6 +314,45 @@ int pdf_add_content(lua_State *L) {
   return 0;
 }
 
+int pdf_parse(lua_State *L) {
+  const char* input = luaL_checkstring(L, 1);
+  int input_l = lua_rawlen(L, 1);
+  pdf_obj* o = texpdf_parse_pdf_object(&input, input+input_l, NULL);
+  if (o) {
+    lua_pushlightuserdata(L,o);
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+int pdf_add_dict(lua_State *L) {
+  pdf_obj* dict  = lua_touserdata(L, 1);
+  pdf_obj* key   = lua_touserdata(L, 2);
+  pdf_obj* value = lua_touserdata(L, 3);
+  texpdf_add_dict(dict, key, value);
+  return 0;
+}
+
+int pdf_reference(lua_State *L) {
+  pdf_obj* o1 = lua_touserdata(L, 1);
+  pdf_obj* o2 = texpdf_ref_obj(o1);
+  lua_pushlightuserdata(L, o2);
+  texpdf_release_obj(o1);
+  return 1;
+}
+
+int pdf_get_dictionary(lua_State *L) {
+  const char* dict = luaL_checkstring(L, 1);
+  pdf_obj *o = texpdf_doc_get_dictionary(p, dict);
+  if (o) {
+    lua_pushlightuserdata(L,o);
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
 int pdf_version(lua_State *L) {
   lua_pushstring(L, texpdf_library_version());
   return 1;
@@ -365,6 +404,10 @@ static const struct luaL_Reg lib_table [] = {
   {"end_annotation", pdf_end_annotation},
   {"version", pdf_version},
   {"add_content", pdf_add_content},
+  {"get_dictionary", pdf_get_dictionary},
+  {"parse", pdf_parse},
+  {"add_dict", pdf_add_dict},
+  {"reference", pdf_reference},
   {NULL, NULL}
 };
 
