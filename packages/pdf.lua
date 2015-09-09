@@ -81,24 +81,56 @@ SILE.registerCommand("pdf:link", function (o,c)
   });end)
 
 local structureTree
+local structureNumberTree
 local structureBranch
 local mcid = 0
 
-SILE.registerCommand("pdf:structure:leaf", function (o,c)
-  local t = SU.required(o,"type", "pdf structure")
-  local lang = o.lang
+local ensureStructureTree = function ()
   if not structureTree then
     local c = pdf.get_dictionary("Catalog")
     structureTree = pdf.parse("<< /Type /StructTreeRoot >>")
     pdf.add_dict(c,pdf.parse("/StructTreeRoot"),pdf.reference(structureTree))
   end
+  if not structureNumberTree then
+    structureNumberTree = pdf.parse("<< /Nums [ 0 [] ] >>")
+    pdf.add_dict(structureTree,pdf.parse("/ParentTree"),pdf.reference(structureNumberTree))
+  end
+  return structureTree
+end
+
+local addToBranch = function (leaf)
+  local k = pdf.lookup_dictionary(structureTree,"K")
+  if not k then
+    pdf.add_dict(structureTree,pdf.parse("/K"),pdf.reference(leaf))
+  end
+  if structureBranch then
+    local kids = pdf.lookup_dictionary(structureBranch,"K")
+    if not kids then
+      kids = pdf.parse("[]")
+      pdf.add_dict(structureBranch,pdf.parse("/K"), kids)
+    end
+    pdf.push_array(kids, pdf.reference(leaf))
+  else
+    local nums = pdf.lookup_dictionary(structureNumberTree, "Nums")
+    -- This is an array and its last element is an array
+    local r = pdf.get_array(nums, pdf.array_length(nums)-1)
+    pdf.push_array(r, pdf.reference(leaf))
+  end
+end
+
+SILE.registerCommand("pdf:structure:leaf", function (o,c)
+  local t = SU.required(o,"type", "pdf structure")
+  local lang = o.lang
+  ensureStructureTree()
   structureLeaf = pdf.parse("<< /Type /StructElem >>")
   local rLeaf = pdf.reference(structureLeaf)
   -- pdf.add_dict(structureLeaf,pdf.parse("/P"),
   --   structureTree)
-  pdf.add_dict(structureTree,pdf.parse("/K"),
-    pdf.reference(structureLeaf))
-  -- -- XXX add this to parent
+
+  pdf.add_dict(structureLeaf,pdf.parse("/Pg"),
+    pdf.reference(pdf.get_dictionary("@THISPAGE")))
+
+  addToBranch(structureLeaf)
   if lang then
     pdf.add_dict(structureLeaf,pdf.parse("/Lang"), pdf.parse("("..lang..")"))
   end
@@ -114,6 +146,7 @@ end)
 
 SILE.outputters.libtexpdf.finish = function()
   pdf.endpage()
+  if structureNumberTree then pdf.release(structureNumberTree) end
   if structureTree then pdf.release(structureTree) end
   pdf.finish()
 end
