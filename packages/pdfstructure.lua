@@ -33,42 +33,6 @@ SILE.registerCommand("pdf:structure", function (o,c)
   SILE.call("pdf:literal",{},{"EMC"})
 end)
 
-
--- local addToBranch = function (leaf)
---   local k = pdf.lookup_dictionary(structureTree,"K")
---   if not k then
---     pdf.add_dict(structureTree,pdf.parse("/K"),pdf.reference(leaf))
---   end
---   if structureBranch then
---     local kids = pdf.lookup_dictionary(structureBranch,"K")
---     if not kids then
---       kids = pdf.parse("[]")
---       pdf.add_dict(structureBranch,pdf.parse("/K"), kids)
---     end
---     pdf.push_array(kids, pdf.reference(leaf))
---   else
---     local nums = pdf.lookup_dictionary(structureNumberTree, "Nums")
---     -- This is an array and its last element is an array
---     local r = pdf.get_array(nums, pdf.array_length(nums)-1)
---     pdf.push_array(r, pdf.reference(leaf))
---   end
--- end
-
--- local createStructureElement = function(options)
---   local structElem = pdf.parse("<< /Type /StructElem >>")
---   local rElem = pdf.reference(structElem)
---   if options.page then
---     pdf.add_dict(structElem,pdf.parse("/Pg"),
---       pdf.reference(pdf.get_dictionary("@THISPAGE")))
---   end
---   addToBranch(structElem)
---   if options.lang then
---     pdf.add_dict(structElem,pdf.parse("/Lang"), pdf.parse("("..options.lang..")"))
---   end
---   pdf.add_dict(structElem,pdf.parse("/S"), pdf.parse("/"..SU.required(options,"t")))
---   return structElem
--- end
-
 local structureNumberTree
 local numberTreeIndex = 0
 local ensureStructureNumber = function ( node, pdfnode )
@@ -120,7 +84,6 @@ SILE.outputters.libtexpdf.finish = function()
 
   pdf.add_dict(structureTree, pdf.parse("/K"), dumpTree(stRoot))
 
-  -- if structureBranch then pdf.release(structureBranch) end
   if structureNumberTree then pdf.release(structureNumberTree) end
   if structureTree then pdf.release(structureTree) end
   pdf.finish()
