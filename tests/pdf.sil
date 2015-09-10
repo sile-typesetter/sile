@@ -1,6 +1,6 @@
 \begin[papersize=a4]{document}
-\script[src=packages/pdf]
-\pdf:structure:leaf[type=P,lang=en-US]{Hello}
+\script[src=packages/pdfstructure]
+\pdf:structure[type=P,lang=en-US]{Hello}
 
 \pdf:destination[name=Here]
 \pdf:bookmark[dest=Here,title="Hello World"]
