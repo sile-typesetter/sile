@@ -26,11 +26,17 @@ SILE.registerCommand("pdf:structure", function (o,c)
   node.lang = SILE.settings.get("document.language")
   node.page = pdf.get_dictionary("@THISPAGE")
   node.mcid = mcid
+  local oldstPointer = stPointer
   stPointer = node
-  SILE.call("pdf:literal",{},{"/"..t.." <</MCID "..mcid.." >>BDC"})
-  mcid = mcid + 1
-  SILE.process(c)
-  SILE.call("pdf:literal",{},{"EMC"})
+  if not o.block then
+    SILE.call("pdf:literal",{},{"/"..t.." <</MCID "..mcid.." >>BDC"})
+    mcid = mcid + 1
+    SILE.process(c)
+    SILE.call("pdf:literal",{},{"EMC"})
+  else
+    SILE.process(c)
+  end
+  stPointer = oldstPointer
 end)
 
 local structureNumberTree
