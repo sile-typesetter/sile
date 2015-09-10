@@ -75,6 +75,9 @@ dumpTree = function (node)
     pdf.add_dict(pdfNode, pdf.parse("/Pg"), pdf.reference(node.page))
     ensureStructureNumber(node, pdfNode)
   end
+  if node.lang then
+    pdf.add_dict(pdfNode, pdf.parse("/Lang"), pdf.parse("("..node.lang:upper()..")"))
+  end
   local ref = pdf.reference(pdfNode)
   pdf.release(pdfNode)
   return ref
