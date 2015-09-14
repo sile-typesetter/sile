@@ -54,6 +54,12 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
   debugVersions = function()
     local ot = SILE.require("core/opentype-parser")
     print("Harfbuzz version: "..hb.version())
+    print("Shapers enabled: ".. table.concat({hb.shapers()}, ", "))
+    pcall( function () icu = require("justenoughicu") end)
+    if icu then
+      print("ICU support enabled")
+    end
+    print("")
     print("Fonts used:")
     for k,_ in pairs(usedfonts) do
       local fh = io.open(k)

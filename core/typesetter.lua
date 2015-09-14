@@ -213,16 +213,20 @@ SILE.defaultTypesetter = std.object {
   pageBuilder = function (self)
     local vbox;
     local pageNodeList
+    local res
     if #(self.state.outputQueue) == 0 then return end
     self.frame.state.totals.shrinkage = 0
     if SILE.scratch.insertions then SILE.scratch.insertions.thisPage = {} end
 
     local target = self:pageTarget()
-    pageNodeList, self.state.lastPenalty = SILE.pagebuilder.findBestBreak(self.state.outputQueue, target)
+    pageNodeList, res = SILE.pagebuilder.findBestBreak(self.state.outputQueue, target, self.frame.state.pageRestart)
     if not pageNodeList then -- No break yet
+      self.frame.state.pageRestart = res
       self:runHooks("noframebreak")
       return false
     end
+    self.state.lastPenalty = res
+    self.frame.state.pageRestart = nil
     pageNodeList = self:runHooks("framebreak",pageNodeList)
     self:setVerticalGlue(pageNodeList, self:pageTarget())
     self:outputLinesToPage(pageNodeList);
@@ -247,7 +251,7 @@ SILE.defaultTypesetter = std.object {
 
     if (adjustment > gTotal.stretch) then adjustment = gTotal.stretch end
     if (adjustment / gTotal.stretch > 0) then
-      for i,g in pairs(glues) do
+      for i = 1,#glues do local g= glues[i]
         g:setGlue(adjustment * g.height.stretch / gTotal.stretch)
       end
     end
@@ -266,7 +270,7 @@ SILE.defaultTypesetter = std.object {
     else
       self:runHooks("pageend")
       SILE.documentState.documentClass:endPage()
-      self:initFrame(SILE.documentState.documentClass:newPage()); -- XXX Hack
+      self:initFrame(SILE.documentState.documentClass:newPage())
     end
     -- Always push back and recalculate. The frame may have a different shape, or
     -- we may be doing clever things like grid typesetting. CPU time is cheap.
@@ -370,7 +374,7 @@ SILE.defaultTypesetter = std.object {
     local lines = {};
     local nodes = self.state.nodes;
 
-    for i,point in pairs(bp) do
+    for i = 1,#bp do local point = bp[i]
       if not(point.position == 0) then
         slice = {}
         local seenHbox = 0
@@ -399,7 +403,7 @@ SILE.defaultTypesetter = std.object {
   end,
   computeLineRatio = function(self, breakwidth, slice)
     local naturalTotals = SILE.length.new({length =0 , stretch =0, shrink = 0})
-    for i,node in ipairs(slice) do
+    for i = 1,#slice do node=slice[i]
       if (node:isBox() or (node:isPenalty() and node.penalty == -inf_bad)) then
         skipping = 0
         if node:isBox() then

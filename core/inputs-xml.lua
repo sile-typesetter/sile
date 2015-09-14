@@ -1,4 +1,8 @@
 SILE.inputs.XML = {
+  order = 1,
+  appropriate = function(fn, sniff)
+    return (fn:match("xml$") or sniff:match("<"))
+  end,
   process = function (fn)
     local lom = require("lomwithpos")
     local fh = io.open(fn)

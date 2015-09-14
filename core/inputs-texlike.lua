@@ -125,3 +125,6 @@ function SILE.inputs.TeXlike.docToTree(doc)
   t = massage_ast(t,doc)
   return t
 end
+
+SILE.inputs.TeXlike.order = 99
+SILE.inputs.TeXlike.appropriate = function () return true end

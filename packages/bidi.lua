@@ -60,7 +60,13 @@ local reorder = function(n, self)
   end
   for i = 1,#newNL do if newNL[i]:isUnshaped() then newNL[i] = newNL[i]:shape() end end
   n.nodes = newNL
-  -- XXX Fix line ratio?
+  -- It's possible that the re-ordered shaped nodes would require us to
+  -- fix the line ratio of this box, i.e. if reordering means we are now
+  -- applying ligatures or substitutions that change the length of the
+  -- text in the line. But I haven't found any situations where that is the
+  -- case. If you find one, you may need to run
+  --    n.ratio = SILE.typesetter:computeLineRatio(n.width, n.nodes)
+  -- (or something like that) here.
 end
 
 local bidiBoxupNodes = function (self)

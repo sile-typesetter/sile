@@ -22,7 +22,7 @@ local opentype = { -- Mapping of opentype features to friendly names
     Superior = "sups", Inferior = "subs", Numerator = "numr", Denominator = "dnom",
     ScientificInferior = "sinf", Ordinal = "ordn"
   },
-  -- XXX character variant
+  -- XXX Character variant support not implemented yet
   Style = {
     Alternate = "salt", Italic= "ital",
     Ruby= "ruby", Swash= "swsh", Historic= "hist", TitlingCaps= "titl",

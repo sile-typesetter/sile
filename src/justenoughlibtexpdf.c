@@ -115,6 +115,7 @@ int pdf_loadfont(lua_State *L) {
 int pdf_setdirmode(lua_State *L) {
   int layout_dir = luaL_checkinteger(L,1);
   texpdf_dev_set_dirmode(layout_dir);
+  return 0;
 }
 
 int pdf_setstring(lua_State *L) {
@@ -299,6 +300,117 @@ int pdf_transform(lua_State *L) {
 int pdf_gsave(lua_State *L)    { texpdf_graphics_mode(p); texpdf_dev_gsave(p); return 0; }
 int pdf_grestore(lua_State *L) { texpdf_graphics_mode(p); texpdf_dev_grestore(p); return 0; }
 
+#if !defined LUA_VERSION_NUM || LUA_VERSION_NUM==501
+#define lua_rawlen lua_strlen
+#endif
+
+int pdf_add_content(lua_State *L) {
+  const char* input = luaL_checkstring(L, 1);
+  int input_l = lua_rawlen(L, 1);
+  texpdf_graphics_mode(p); /* Don't be mid-string! */
+  texpdf_doc_add_page_content(p, " ", 1);
+  texpdf_doc_add_page_content(p, input, input_l);
+  texpdf_doc_add_page_content(p, " ", 1);
+  return 0;
+}
+
+int pdf_parse(lua_State *L) {
+  const char* input = luaL_checkstring(L, 1);
+  int input_l = lua_rawlen(L, 1);
+  pdf_obj* o = texpdf_parse_pdf_object(&input, input+input_l, NULL);
+  if (o) {
+    lua_pushlightuserdata(L,o);
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+int pdf_add_dict(lua_State *L) {
+  pdf_obj* dict  = lua_touserdata(L, 1);
+  pdf_obj* key   = lua_touserdata(L, 2);
+  pdf_obj* value = lua_touserdata(L, 3);
+  texpdf_add_dict(dict, key, value);
+  return 0;
+}
+
+int pdf_reference(lua_State *L) {
+  pdf_obj* o1 = lua_touserdata(L, 1);
+  pdf_obj* o2 = texpdf_ref_obj(o1);
+  lua_pushlightuserdata(L, o2);
+  return 1;
+}
+
+int pdf_release(lua_State *L) {
+  pdf_obj* o1 = lua_touserdata(L, 1);
+  texpdf_release_obj(o1);
+  return 0;
+}
+
+int pdf_get_dictionary(lua_State *L) {
+  const char* dict = luaL_checkstring(L, 1);
+  pdf_obj *o = texpdf_doc_get_dictionary(p, dict);
+  if (o) {
+    lua_pushlightuserdata(L,o);
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+int pdf_lookup_dictionary(lua_State *L) {
+  pdf_obj* dict = lua_touserdata(L, 1);
+  const char* key = luaL_checkstring(L, 2);
+  pdf_obj *o = texpdf_lookup_dict(dict, key);
+  if (o) {
+    lua_pushlightuserdata(L,o);
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+int pdf_push_array(lua_State *L) {
+  pdf_obj* array = lua_touserdata(L, 1);
+  if (!PDF_OBJ_ARRAYTYPE(array)) {
+    return luaL_error(L, "push_array called on non-array");
+  }
+  pdf_obj* val = lua_touserdata(L, 2);
+  texpdf_add_array(array, val);
+  return 0;
+}
+
+int pdf_get_array(lua_State *L) {
+  pdf_obj* array = lua_touserdata(L, 1);
+  if (!PDF_OBJ_ARRAYTYPE(array)) {
+    return luaL_error(L, "push_array called on non-array");
+  }
+  long idx = lua_tonumber(L, 2);
+  pdf_obj *o = texpdf_get_array(array,idx);
+  if (o) {
+    lua_pushlightuserdata(L,o);
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+int pdf_array_length(lua_State *L) {
+  pdf_obj* array = lua_touserdata(L, 1);
+  if (!PDF_OBJ_ARRAYTYPE(array)) {
+    return luaL_error(L, "push_array called on non-array");
+  }
+  lua_pushinteger(L, texpdf_array_length(array));
+  return 1;
+}
+
+int pdf_new_string(lua_State *L) {
+  const char* s = luaL_checkstring(L, 1);
+  int l = lua_rawlen(L, 1);
+  lua_pushlightuserdata(L, texpdf_new_string(s, l));
+  return 1;
+}
+
 int pdf_version(lua_State *L) {
   lua_pushstring(L, texpdf_library_version());
   return 1;
@@ -349,6 +461,17 @@ static const struct luaL_Reg lib_table [] = {
   {"begin_annotation", pdf_begin_annotation},
   {"end_annotation", pdf_end_annotation},
   {"version", pdf_version},
+  {"add_content", pdf_add_content},
+  {"get_dictionary", pdf_get_dictionary},
+  {"parse", pdf_parse},
+  {"add_dict", pdf_add_dict},
+  {"lookup_dictionary", pdf_lookup_dictionary},
+  {"reference", pdf_reference},
+  {"release", pdf_release},
+  {"push_array", pdf_push_array},
+  {"get_array", pdf_get_array},
+  {"array_length", pdf_array_length},
+  {"string", pdf_new_string},
   {NULL, NULL}
 };
 

@@ -1,12 +1,26 @@
-\begin[papersize=a4]{document}
-\script[src=packages/pdf]
-
-Hello
+\begin[papersize=a4,class=book]{document}
+\script[src=packages/pdfstructure]
+\language[main=en]
+\begin[type=Art,block=1]{pdf:structure}
+\pdf:structure[type=H,lang=en-US]{\section{Hello World}}
 
 \pdf:destination[name=Here]
 \pdf:bookmark[dest=Here,title="Hello World"]
 World
 
 I want to see what it means to {\pdf:link[dest=Here]{linking}} with PDF.
+\end{pdf:structure}
+
+\begin[type=Art,block=1]{pdf:structure}
+\pdf:structure[type=H,lang=en-US]{\section{Article 2}}
+
+\pdf:structure[type=P]{Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.}
+
+\end{pdf:structure}
 
 \end{document}
