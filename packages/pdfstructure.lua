@@ -19,6 +19,8 @@ local addChild = function(node)
   node.parent = stPointer
 end
 
+local actualtext = {}
+
 SILE.registerCommand("pdf:structure", function (o,c)
   local t = SU.required(o,"type", "pdf structure")
   local node = stNode(t)
@@ -28,6 +30,7 @@ SILE.registerCommand("pdf:structure", function (o,c)
   node.mcid = mcid
   local oldstPointer = stPointer
   stPointer = node
+  actualtext[#actualtext+1] = ""
   if not o.block then
     SILE.call("pdf:literal",{},{"/"..t.." <</MCID "..mcid.." >>BDC"})
     mcid = mcid + 1
@@ -36,8 +39,15 @@ SILE.registerCommand("pdf:structure", function (o,c)
   else
     SILE.process(c)
   end
+  stPointer.actualtext = actualtext[#actualtext]
+  actualtext[#actualtext] = nil
   stPointer = oldstPointer
 end)
+
+SILE.typesetter.typeset = function(self, text)
+  actualtext[#actualtext] = actualtext[#actualtext] .. text
+  SILE.defaultTypesetter.typeset(self, text)
+end
 
 local structureNumberTree
 local numberTreeIndex = 0
@@ -78,10 +88,15 @@ dumpTree = function (node)
   if node.lang then
     pdf.add_dict(pdfNode, pdf.parse("/Lang"), pdf.parse("("..node.lang:upper()..")"))
   end
+
+  if node.actualtext then
+    pdf.add_dict(pdfNode, pdf.parse("/ActualText"), pdf.string(node.actualtext))
+  end
   local ref = pdf.reference(pdfNode)
   pdf.release(pdfNode)
   return ref
 end
+
 
 SILE.outputters.libtexpdf.finish = function()
   pdf.endpage()

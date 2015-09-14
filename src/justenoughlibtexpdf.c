@@ -404,6 +404,13 @@ int pdf_array_length(lua_State *L) {
   return 1;
 }
 
+int pdf_new_string(lua_State *L) {
+  const char* s = luaL_checkstring(L, 1);
+  int l = lua_rawlen(L, 1);
+  lua_pushlightuserdata(L, texpdf_new_string(s, l));
+  return 1;
+}
+
 int pdf_version(lua_State *L) {
   lua_pushstring(L, texpdf_library_version());
   return 1;
@@ -464,6 +471,7 @@ static const struct luaL_Reg lib_table [] = {
   {"push_array", pdf_push_array},
   {"get_array", pdf_get_array},
   {"array_length", pdf_array_length},
+  {"string", pdf_new_string},
   {NULL, NULL}
 };
 
