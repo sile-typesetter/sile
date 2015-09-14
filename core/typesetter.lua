@@ -213,16 +213,20 @@ SILE.defaultTypesetter = std.object {
   pageBuilder = function (self)
     local vbox;
     local pageNodeList
+    local res
     if #(self.state.outputQueue) == 0 then return end
     self.frame.state.totals.shrinkage = 0
     if SILE.scratch.insertions then SILE.scratch.insertions.thisPage = {} end
 
     local target = self:pageTarget()
-    pageNodeList, self.state.lastPenalty = SILE.pagebuilder.findBestBreak(self.state.outputQueue, target)
+    pageNodeList, res = SILE.pagebuilder.findBestBreak(self.state.outputQueue, target, self.frame.state.pageRestart)
     if not pageNodeList then -- No break yet
+      self.frame.state.pageRestart = res
       self:runHooks("noframebreak")
       return false
     end
+    self.state.lastPenalty = res
+    self.frame.state.pageRestart = nil
     pageNodeList = self:runHooks("framebreak",pageNodeList)
     self:setVerticalGlue(pageNodeList, self:pageTarget())
     self:outputLinesToPage(pageNodeList);

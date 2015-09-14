@@ -25,13 +25,18 @@ SILE.pagebuilder = {
     if bad > inf_bad then return inf_bad else return bad end
   end,
 
-  findBestBreak = function(vboxlist, target)
+  findBestBreak = function(vboxlist, target, restart)
     local i = 0
     local totalHeight = SILE.length.new()
     local bestBreak = nil
+    local started = false
+    if restart and restart.target == target then
+      totalHeight = restart.totalHeight
+      i = restart.i
+      started = restart.started
+    end
     local leastC = inf_bad
     SU.debug("pagebuilder", "Page builder for frame "..SILE.typesetter.frame.id.." called with "..#vboxlist.." nodes, "..target)
-    local started = false
     while i < #vboxlist do
       i = i + 1
       local vbox = vboxlist[i]
@@ -78,6 +83,8 @@ SILE.pagebuilder = {
         if c < leastC then
           leastC = c
           bestBreak = i
+        else
+          restart = { totalHeight = totalHeight, i = i, started = started, target = target}
         end
         -- print("Badness "..badness .." c = "..c)
         SU.debug("pagebuilder", "Badness: "..c);
@@ -93,6 +100,6 @@ SILE.pagebuilder = {
       end
     end
     SU.debug("pagebuilder", "No page break here")
-    return
+    return false, restart
   end,
 }
