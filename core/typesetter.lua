@@ -251,7 +251,7 @@ SILE.defaultTypesetter = std.object {
 
     if (adjustment > gTotal.stretch) then adjustment = gTotal.stretch end
     if (adjustment / gTotal.stretch > 0) then
-      for i,g in pairs(glues) do
+      for i = 1,#glues do local g= glues[i]
         g:setGlue(adjustment * g.height.stretch / gTotal.stretch)
       end
     end
@@ -374,7 +374,7 @@ SILE.defaultTypesetter = std.object {
     local lines = {};
     local nodes = self.state.nodes;
 
-    for i,point in pairs(bp) do
+    for i = 1,#bp do local point = bp[i]
       if not(point.position == 0) then
         slice = {}
         local seenHbox = 0
@@ -403,7 +403,7 @@ SILE.defaultTypesetter = std.object {
   end,
   computeLineRatio = function(self, breakwidth, slice)
     local naturalTotals = SILE.length.new({length =0 , stretch =0, shrink = 0})
-    for i,node in ipairs(slice) do
+    for i = 1,#slice do node=slice[i]
       if (node:isBox() or (node:isPenalty() and node.penalty == -inf_bad)) then
         skipping = 0
         if node:isBox() then
