@@ -24,6 +24,10 @@ if unparsed and unparsed[1] then
       SILE.require("classes/"..SILE.preamble)
     end
   end
+  if SU.debugging("profile") and pcall(function () require("ProFi") end) then
+    ProFi = require 'ProFi'
+    ProFi:start()
+  end
   p,e = pcall(function() SILE.readFile(unparsed[1]) end)
   if not p then
     if e:match(": interrupted!") then
@@ -35,6 +39,10 @@ if unparsed and unparsed[1] then
   end
   if SILE.preamble then SILE.documentState.documentClass:finish() end
   io.write("\n")
+  if SU.debugging("profile") and pcall(function () require("ProFi") end) then
+    ProFi:stop()
+    ProFi:writeReport( 'sile-profile.txt' )
+  end
   if SU.debugging("versions") then SILE.shaper.debugVersions() end
 else
   SILE.repl()
