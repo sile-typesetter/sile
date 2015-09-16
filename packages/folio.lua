@@ -15,6 +15,7 @@ return {
         if SILE.scratch.counters.folio.off == 2 then
           SILE.scratch.counters.folio.off = false
         end
+        io.write("["..SILE.formatCounter(SILE.scratch.counters.folio).."] ");
         SILE.scratch.counters.folio.value = SILE.scratch.counters.folio.value + 1
         return
       end
