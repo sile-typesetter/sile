@@ -214,7 +214,7 @@ Mx 	196.25400
 T	83 73 84	(sit)
 Mx 	208.91774
 T	65 77 69 84	(amet)
-New page
+[1] New page
 Mx 	49.76378
 My 	57.23121
 Set font 	Gentium;20;200;normal;normal;;LTR
@@ -450,7 +450,7 @@ Mx 	436.15290
 T	83 73 84	(sit)
 Mx 	448.82070
 T	65 77 69 84	(amet)
-New page
+[2] New page
 Mx 	49.76378
 My 	40.39341
 Set font 	Gentium;20;200;normal;normal;;LTR
@@ -676,7 +676,7 @@ Mx 	196.25400
 T	83 73 84	(sit)
 Mx 	208.91774
 T	65 77 69 84	(amet)
-New page
-End page
+[3] New page
+[4] End page
 Finish
 
