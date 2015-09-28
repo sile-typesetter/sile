@@ -69,7 +69,8 @@ SILE.shapers.harfbuzzOnly = SILE.shapers.harfbuzz {
       if glyph.name == "space" then
         addNode(thisNnode())
         resetNode()
-        addNode(SILE.nodefactory.newGlue({ width = SILE.length.new({
+        local ss = SILE.settings.get("document.spaceskip")
+        addNode(SILE.nodefactory.newGlue({ width = ss or SILE.length.new({
           length = glyph.width,
           shrink = glyph.width/2,
           stretch = glyph.width/3
