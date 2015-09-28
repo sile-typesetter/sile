@@ -131,6 +131,17 @@ SILE.defaultTypesetter = std.object {
     local breaks = SILE.linebreak:doBreak( nl, breakWidth);
     return self:breakpointsToLines(breaks);
   end,
+  shapeAllNodes = function(self, nl)
+    for i = 1,#nl do
+      if nl[i]:isUnshaped() then
+        local shaped = nl[i]:shape()
+        nl[i] = shaped[1]
+        for j = #shaped,2,-1 do
+          table.insert(nl,i+1,shaped[j])
+        end
+      end
+    end
+  end,
   -- Empties self.state.nodes, breaks into lines, puts lines into vbox, adds vbox to
   -- Turns a node list into a list of vboxes
   boxUpNodes = function (self)
@@ -140,9 +151,7 @@ SILE.defaultTypesetter = std.object {
     end
     while (#nl >0 and nl[1]:isPenalty()) do table.remove(nl,1) end
     if #nl == 0 then return {} end
-    for i=1, #nl do n = nl[i]
-      if n:isUnshaped() then nl[i] = n:shape() end
-    end
+    self:shapeAllNodes(nl)
     self:pushGlue(SILE.settings.get("typesetter.parfillskip"));
     self:pushPenalty({ flagged= 1, penalty= -inf_bad });
     local listToString = function(l)

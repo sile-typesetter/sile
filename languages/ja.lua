@@ -134,7 +134,7 @@ end
 local function hanging_punctuation (char)
   -- return a hangable node
   local n = SILE.nodefactory.newUnshaped({ text = char, options = SILE.font.loadDefaults({}) })
-  n = n:shape()
+  n = n:shape()[1] -- urgh
   n.hangable = true
   return { node = n }
 end

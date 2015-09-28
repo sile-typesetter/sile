@@ -107,6 +107,12 @@ function utilities.sum(array)
   return t
 end
 
+function table.append(t1, t2)
+  for i=1,#t2 do
+      t1[#t1+1] = t2[i]
+  end
+end
+
 function utilities.allCombinations(options)
   local count = 1
   for i=1,#options do count = count * options[i] end
@@ -230,6 +236,10 @@ function utilities.splitUtf8(s) -- Return an array of UTF8 strings each represen
   end
   rv[1+#rv] = this
   return rv
+end
+
+function utilities.utf8charat(str, index)
+  return str:sub(index):match("([%z\1-\127\194-\244][\128-\191]*)")
 end
 
 function utilities.utf8_to_utf16be(str)

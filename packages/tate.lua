@@ -77,9 +77,7 @@ SILE.registerCommand("latin-in-tate", function (options, content)
     SILE.settings.set("font.direction", "LTR")
     SILE.process(content)
     nodes = SILE.typesetter.state.nodes
-    for i=1,#nodes do
-      if nodes[i]:isUnshaped() then nodes[i] = nodes[i]:shape() end
-    end
+    SILE.typesetter:shapeAllNodes(nodes)
     SILE.typesetter.frame.direction = prevDirection
   end)
   SILE.typesetter = oldT

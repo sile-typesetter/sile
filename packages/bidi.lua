@@ -58,7 +58,7 @@ local reorder = function(n, self)
       newNL[ncount] = this
     end
   end
-  for i = 1,#newNL do if newNL[i]:isUnshaped() then newNL[i] = newNL[i]:shape() end end
+  SILE.typesetter:shapeAllNodes(newNL)
   n.nodes = newNL
   -- It's possible that the re-ordered shaped nodes would require us to
   -- fix the line ratio of this box, i.e. if reordering means we are now

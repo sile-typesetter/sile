@@ -79,7 +79,7 @@ SILE.tokenizers.ug = function(text)
       local nodes = SILE.shaper:subItemize(token.string, state)
       for i= 1,#nodes do
         if nodes[i]:isUnshaped() then
-          local s = SILE.hyphenate({ nodes[i]:shape() })
+          local s = SILE.hyphenate( nodes[i]:shape() )
           if #s == 1 then
           else
             local last
