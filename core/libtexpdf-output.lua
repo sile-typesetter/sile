@@ -39,12 +39,10 @@ SILE.outputters.libtexpdf = {
     -- position (cursorX + width - remember that the box's "width"
     -- is actually the shaped x_advance).
     if value.complex then
-      local xorigin = value.items[1].x_offset or 0
-      local yorigin = value.items[1].y_offset or 0
       for i=1,#(value.items) do
         local glyph = value.items[i].codepoint
         local buf = string.char(math.floor(glyph % 2^32 / 2^8)) .. string.char(glyph % 0x100)
-        pdf.setstring(cursorX + (value.items[i].x_offset or 0)-xorigin, cursorY + (value.items[i].y_offset or 0)-yorigin, buf, string.len(buf), font, value.items[i].glyphAdvance)
+        pdf.setstring(cursorX + (value.items[i].x_offset or 0), cursorY + (value.items[i].y_offset or 0), buf, string.len(buf), font, value.items[i].glyphAdvance)
         cursorX = cursorX + value.items[i].width
       end
       return
