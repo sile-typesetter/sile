@@ -88,7 +88,9 @@ SILE.registerCommand("bidi-off", function(options, content)
   SILE.typesetter.boxUpNodes = SILE.defaultTypesetter.boxUpNodes
 end)
 
-return { documentation = [[\begin{document}
+return {
+reorder = reorder,
+documentation = [[\begin{document}
 
 Scripts like the Latin alphabet you are currently reading are normally written left to
 right; however, some scripts, such as Arabic and Hebrew, are written right to left.
