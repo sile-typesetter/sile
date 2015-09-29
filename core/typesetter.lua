@@ -132,15 +132,15 @@ SILE.defaultTypesetter = std.object {
     return self:breakpointsToLines(breaks);
   end,
   shapeAllNodes = function(self, nl)
+    local newNl = {}
     for i = 1,#nl do
       if nl[i]:isUnshaped() then
-        local shaped = nl[i]:shape()
-        nl[i] = shaped[1]
-        for j = #shaped,2,-1 do
-          table.insert(nl,i+1,shaped[j])
-        end
+        table.append(newNl, nl[i]:shape())
+      else
+        newNl[#newNl+1] = nl[i]
       end
     end
+    for i =1,#newNl do nl[i]=newNl[i] end
   end,
   -- Empties self.state.nodes, breaks into lines, puts lines into vbox, adds vbox to
   -- Turns a node list into a list of vboxes
