@@ -54,47 +54,6 @@ SILE.shapers.base = std.object {
     SU.error("Abstract function getFace called", true)
   end,
 
-  itemize = function(self, nodelist, text)
-    local state = SILE.font.loadDefaults({})
-    local gluewidth = self:measureSpace(state)
-    -- First tokenize on spaces
-    for token in self:tokenize(text,state) do
-      if (token.separator) then
-        nodelist[#nodelist+1]= SILE.nodefactory.newGlue({ width = gluewidth })
-      elseif (token.node) then
-        nodelist[#nodelist+1]= token.node
-      else
-        local nodes = self:subItemize(token.string, state)
-        for i= 1,#nodes do
-          nodelist[#nodelist+1] = nodes[i]
-        end
-      end
-    end
-  end,
-
-  subItemize = function(self,text,options)
-    -- We have a character string; sort it out.
-    local nodelist = {}
-    for token in SU.gtoke(text, "-") do
-      local t2= token.separator and token.separator or token.string
-      nodelist[#(nodelist)+1] = SILE.nodefactory.newUnshaped({ text = t2, options = options })
-      if token.separator then
-        nodelist[#(nodelist)+1] = SILE.nodefactory.newPenalty({ value = SILE.settings.get("linebreak.hyphenPenalty") })
-      end
-    end
-    return nodelist
-  end,
-
-  tokenize = function(self, text, options)
-    -- Do language-specific tokenization
-    pcall(function () SILE.require("languages/"..options.language) end)
-    local tokenizer = SILE.tokenizers[options.language]
-    if not tokenizer then
-      tokenizer = SILE.tokenizers.unicode
-    end
-    return tokenizer(text)
-  end,
-
   addShapedGlyphToNnodeValue = function (self, nnodevalue, shapedglyph)
     SU.error("Abstract function addShapedGlyphToNnodeValue called", true)
   end,

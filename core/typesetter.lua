@@ -88,6 +88,7 @@ SILE.defaultTypesetter = std.object {
   end,
   -- Boxy stuff
   pushHbox = function (self, spec) table.insert(self.state.nodes, SILE.nodefactory.newHbox(spec)); end,
+  pushUnshaped = function (self, spec) table.insert(self.state.nodes, SILE.nodefactory.newUnshaped(spec)); end,
   pushGlue = function (self, spec) return table.insert(self.state.nodes, SILE.nodefactory.newGlue(spec)); end,
   pushPenalty = function (self, spec) return table.insert(self.state.nodes, SILE.nodefactory.newPenalty(spec)); end,
   pushVbox = function (self, spec) local v = SILE.nodefactory.newVbox(spec); table.insert(self.state.outputQueue,v); return v; end,
@@ -125,9 +126,10 @@ SILE.defaultTypesetter = std.object {
       self:initline()
       SILE.documentState.documentClass.newPar(self)
     end
-    SILE.shaper:itemize(self.state.nodes, t)
+    self:pushUnshaped({ text = t, options= SILE.font.loadDefaults({})})
   end,
   breakIntoLines = function (self, nl, breakWidth)
+    self:shapeAllNodes(nl)
     local breaks = SILE.linebreak:doBreak( nl, breakWidth);
     return self:breakpointsToLines(breaks);
   end,
