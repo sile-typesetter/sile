@@ -63,6 +63,19 @@ SILE.shapers.base = std.object {
 
   createNnodes = function (self, token, options)
     local items, width = self:shapeToken(token, options)
+    if #items < 1 then return {} end
+
+    local lang = options.lang
+    SILE.languageSupport.loadLanguage(lang)
+    local nodeMaker = SILE.nodeMakers[lang] or SILE.nodeMakers.unicode
+    local nodes = {}
+    for node in nodeMaker(items, token, options) do
+      nodes[#nodes+1] = node
+    end
+    return nodes
+  end,
+
+  formNnode = function (self, contents, token, options)
     local nnodeContents = {}
     local glyphs = {}
     local totalWidth = 0
@@ -70,8 +83,8 @@ SILE.shapers.base = std.object {
     local height = 0
     local glyphNames = {}
     local nnodeValue = { text = token, options = options, glyphString = {} }
-    self:preAddNodes(items, nnodeValue)
-    for i = 1,#items do local glyph = items[i]
+    SILE.shaper:preAddNodes(contents, nnodeValue)
+    for i = 1,#contents do local glyph = contents[i]
       if glyph.depth > depth then depth = glyph.depth end
       if glyph.height > height then height = glyph.height end
       totalWidth = totalWidth + glyph.width
@@ -90,14 +103,12 @@ SILE.shapers.base = std.object {
       width = width or SILE.length.new({ length = totalWidth }),
       value = nnodeValue
     }))
-    -- Why does the nnode contain only one hbox?
-    -- So it can be hypenated and split later
-    return { SILE.nodefactory.newNnode({
+    return SILE.nodefactory.newNnode({
       nodes = nnodeContents,
       text = token,
       misfit = misfit,
       options = options,
       language = options.language
-    }) }
+    })
   end
 }
