@@ -493,7 +493,7 @@ local function process(nodelist, frame, justlevels)
   -- set paragraph direction according to main direction set by the user,
   -- else based on first strong bidi character according to the algorithm
     if frame.direction then
-      base_level = frame.direction == "RTL" and 1 or 0
+      base_level = 0 -- frame.direction == "RTL" and 1 or 0
     else
       base_level = get_base_level(line)
     end
@@ -516,7 +516,7 @@ local function process(nodelist, frame, justlevels)
     local thisNode = rv[matrix[i]]
     if thisNode.options then
       -- things have been adjusted to "fit in" with base direction now
-      thisNode.options.direction = frame:writingDirection()
+      -- thisNode.options.direction = frame:writingDirection()
     end
   end
   return rv

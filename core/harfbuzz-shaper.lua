@@ -33,9 +33,19 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
                       options.features
             ) }
     -- Associate each item with a chunk of the string
-    for i = 1,#items do
-      local e = (i == #items) and #text or items[i+1].index
-      items[i].text = text:sub(items[i].index+1, e) -- Lua strings are 1-indexed
+    if options.direction == "RTL" then
+      -- I'm not sure about this. Now the .text of a node is in
+      -- presentation order, not logical order. So we've changed the
+      -- text here. Should we return items in reverse order too?
+      for i = #items,1,-1 do
+        local e = (i == 1) and #text or items[i-1].index
+        items[i].text = text:sub(items[i].index+1,e)
+      end
+    else
+      for i = 1,#items do
+        local e = (i == #items) and #text or items[i+1].index
+        items[i].text = text:sub(items[i].index+1, e) -- Lua strings are 1-indexed
+      end
     end
     if #text < smallTokenSize then shapeCache[_key(options,text)] = items end
     return items
