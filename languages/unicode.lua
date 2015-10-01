@@ -10,7 +10,7 @@ SILE.nodeMakers.unicode = function(items,text,options)
   local token = ""
   return coroutine.wrap(function()
     for i = 1,#items do item = items[i]
-      local char = SU.utf8charat(text, 1+item.index)
+      local char = items[i].text
       local cp = SU.codepoint(char)
       if chardata[cp] and chardata[cp].linebreak == "sp" then
         if #contents>0 then coroutine.yield(SILE.shaper:formNnode(contents, token, options)) end

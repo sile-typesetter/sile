@@ -16,7 +16,7 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
       SU.warn("Font '"..options.font.."' not available, falling back to '"..face.family.."'")
     end
     if face.filename then usedfonts[face.filename] = true end
-    return { hb._shape(text,
+    local items = { hb._shape(text,
                       face.face,
                       options.script,
                       options.direction,
@@ -24,6 +24,12 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
                       options.size,
                       options.features
             ) }
+    -- Associate each item with a chunk of the string
+    for i = 1,#items do
+      local e = (i == #items) and #text or items[i+1].index
+      items[i].text = text:sub(items[i].index+1, e) -- Lua strings are 1-indexed
+    end
+    return items
   end,
   getFace = function(opts)
     local face = hb._face(opts)
