@@ -65,7 +65,7 @@ SILE.shapers.base = std.object {
     local items, width = self:shapeToken(token, options)
     if #items < 1 then return {} end
 
-    local lang = options.lang
+    local lang = options.language
     SILE.languageSupport.loadLanguage(lang)
     local nodeMaker = SILE.nodeMakers[lang] or SILE.nodeMakers.unicode
     local nodes = {}
