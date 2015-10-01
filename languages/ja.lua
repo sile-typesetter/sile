@@ -131,27 +131,21 @@ local function shrinkability(before, after)
   return 0
 end
 
-local function hanging_punctuation (char)
-  -- return a hangable node
-  local n = SILE.nodefactory.newUnshaped({ text = char, options = SILE.font.loadDefaults({}) })
-  n = n:shape()[1] -- urgh
-  n.hangable = true
-  return { node = n }
-end
-
 local okbreak = SILE.nodefactory.newPenalty({ penalty = 0 })
-SILE.tokenizers.ja = function(string)
+
+SILE.nodeMakers.ja = function(items,text,options)
   return coroutine.wrap(function()
     local db
     local lastcp = -1
     local lastchar = ""
     local space = SILE.settings.get("shaper.spacepattern")
-    for uchar in string.gmatch(string, "([%z\1-\127\194-\244][\128-\191]*)") do
+    for i = 1,#items do item = items[i]
+      local uchar = items[i].text
       local thiscp = SU.codepoint(uchar)
       db = lastchar.. "|" .. uchar
       if string.match(uchar, space) then
         db = db .. " S"
-        coroutine.yield({ separator = uchar })
+        coroutine.yield(SILE.shaper:makeSpaceNode(options))
       else
         local length = SILE.length.new({length = SILE.toPoints(intercharacterspace(lastcp, thiscp)),
                                    stretch = SILE.toPoints(stretchability(lastcp,thiscp)),
@@ -159,16 +153,18 @@ SILE.tokenizers.ja = function(string)
                                   })
           if breakAllowed(lastcp, thiscp) then
             db = db .." G ".. length
-            coroutine.yield({ node = SILE.nodefactory.newGlue({ width = length }) })
+            coroutine.yield(SILE.nodefactory.newGlue({ width = length }))
           elseif length.length ~= 0 or length.stretch ~= 0 or length.shrink ~= 0 then
             db = db .." K ".. length
-            coroutine.yield({ node = SILE.nodefactory.newKern({ width = length }) })
+            coroutine.yield(SILE.nodefactory.newKern({ width = length }))
           else db = db .. " N"
           end
         if jisClass(thiscp) == 5 or jisClass(thiscp) == 6 then
-          coroutine.yield(hanging_punctuation(uchar))
+          local node = SILE.shaper:formNnode({item}, uchar, options)
+          node.hangable = true
+          coroutine.yield(node)
         else
-          coroutine.yield({ string = uchar })
+          coroutine.yield(SILE.shaper:formNnode({item}, uchar, options))
         end
       end
       lastcp =thiscp
