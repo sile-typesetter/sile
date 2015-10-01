@@ -7,6 +7,12 @@ SILE.settings.declare({
   help = "The Lua pattern used for splitting words on spaces"
 })
 
+local smallTokenSize = 20 -- Small words will be cached
+local shapeCache = {}
+local _key = function(options)
+  return table.concat({options.font;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename},";")
+end
+
 SILE.shapers.base = std.object {
 
   -- Return the length of a space character
@@ -73,6 +79,10 @@ SILE.shapers.base = std.object {
   end,
 
   subItemize = function(self,text,options)
+    if #text < smallTokenSize then
+      local v = shapeCache[_key(options)..";"..text]
+      if v then return v end
+    end
     -- We have a character string; sort it out.
     local nodelist = {}
     for token in SU.gtoke(text, "-") do
@@ -81,6 +91,9 @@ SILE.shapers.base = std.object {
       if token.separator then
         nodelist[#(nodelist)+1] = SILE.nodefactory.newPenalty({ value = SILE.settings.get("linebreak.hyphenPenalty") })
       end
+    end
+    if #text < smallTokenSize then
+      shapeCache[_key(options)..";"..text] = nodelist
     end
     return nodelist
   end,
