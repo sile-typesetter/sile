@@ -79,6 +79,7 @@ SILE.shapers.base = std.object {
   end,
 
   subItemize = function(self,text,options)
+    if not text then return {} end
     if #text < smallTokenSize then
       local v = shapeCache[_key(options)..";"..text]
       if v then return v end
