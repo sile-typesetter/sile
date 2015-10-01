@@ -1,10 +1,6 @@
 require("char-def")
 local chardata  = characters.data
 
-local makeGlue = function(options)
-  return SILE.nodefactory.newGlue({ width = SILE.shaper:measureSpace(options) })
-end
-
 SILE.nodeMakers.unicode = function(items,text,options)
   local contents = {}
   local token = ""
@@ -15,7 +11,7 @@ SILE.nodeMakers.unicode = function(items,text,options)
       if chardata[cp] and chardata[cp].linebreak == "sp" then
         if #contents>0 then coroutine.yield(SILE.shaper:formNnode(contents, token, options)) end
         contents = {} ; token = ""
-        coroutine.yield(makeGlue(options))
+        coroutine.yield(SILE.shaper:makeSpaceNode(options))
       else -- XXX
         contents[#contents+1] = item
         token = token .. char

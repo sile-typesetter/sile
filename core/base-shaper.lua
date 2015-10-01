@@ -110,5 +110,9 @@ SILE.shapers.base = std.object {
       options = options,
       language = options.language
     })
+  end,
+
+  makeSpaceNode = function(self, options)
+    return SILE.nodefactory.newGlue({ width = SILE.shaper:measureSpace(options) })
   end
 }
