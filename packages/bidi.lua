@@ -70,22 +70,25 @@ local splitNodelistIntoBidiRuns = function (self)
   local nl = self.state.nodes
   if #nl == 0 then return nl end
   local owners, text = nodeListToText(nl)
-  local levels = bidi.process(text, self.frame,true)
+  local levels = bidi.process(text, {},true)
   local base_direction = "LTR"
   local flipped_direction = "RTL"
-  local base_level = 0
+  local base_level = self.frame:writingDirection() == "RTL" and 1 or 0
   local lastlevel = base_level
   local nl = {}
   local lastowner
   local splitstart = 1
   for i = 1,#levels do
     if levels[i] % 2 ~= lastlevel % 2 and owners[i].node == lastowner then
+      owners[i].bidilevel = levels[i]
       local before,after = splitNodeAtPos(owners[i].node,splitstart,owners[i].pos)
       nl[#nl] = before
       nl[#nl+1] = after
       lastowner = owners[i].node
       splitstart = owners[i].pos
+      before.options.bidilevel = lastlevel
       after.options.direction = (levels[i] %2) == 0 and base_direction or flipped_direction
+      after.options.bidilevel = levels[i]
       before.options.direction = (levels[i-1] %2) == 0 and base_direction or flipped_direction
       -- assign direction for both nodes
     else
@@ -97,8 +100,8 @@ local splitNodelistIntoBidiRuns = function (self)
         end
       end
       lastowner = owners[i].node
+      if nl[#nl].options then nl[#nl].options.bidilevel = (levels[i]) end
     end
-    if nl[#nl].options then nl[#nl].options.bidilevel = (levels[i] %2) end
     lastlevel = levels[i]
   end
   return nl
