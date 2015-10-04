@@ -310,6 +310,9 @@ int shape (lua_State *L) {
     shape_plan = hb_shape_plan_create_cached(hbFace, &segment_props, features, nFeatures, NULL);
     int res = hb_shape_plan_execute(shape_plan, hb_ft_font, buf, features, nFeatures);
 
+    if (direction == HB_DIRECTION_RTL) {
+      hb_buffer_reverse(buf); /* URGH */
+    }
     glyph_info   = hb_buffer_get_glyph_infos(buf, &glyph_count);
     glyph_pos    = hb_buffer_get_glyph_positions(buf, &glyph_count);
     lua_checkstack(L, glyph_count);
