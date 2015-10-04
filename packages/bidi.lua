@@ -45,6 +45,7 @@ local nodeListToText = function (nl)
     else
       owners[p] = { node = n }
       text[p] = SU.utf8char(0xFFFC)
+      p = p + 1
     end
   end
   return owners, text
