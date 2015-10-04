@@ -24,11 +24,35 @@ local chardata  = characters.data
 local reorder = function(n, self)
   local nl = n.nodes
   local newNl = {}
+  local matrix = {}
+  local levels = {}
+  local base_level = self.frame:writingDirection() == "RTL" and 1 or 0
+  local prev_level = base_level
   for i=1,#nl do
-    newNl[#newNl+1] = nl[i]
-    -- XXX Nothing happens?
+    levels[i] = { level = nl[i].options and (nl[i].options.bidilevel) or prev_level }
+    prev_level = levels[i].level
   end
-  n.nodes = newNl
+  local matrix = bidi.create_matrix(levels,base_level)
+  local rv = {}
+  local reverse_array = function (t)
+    local n = {}
+    for i =1,#t do n[#t-i+1] = t[i] end
+    for i =1,#t do t[i] = n[i] end
+  end
+  for i = 1, #nl do
+    if nl[i]:isNnode() and levels[i].level %2 == 1 then
+      reverse_array(nl[i].nodes)
+      for j =1,#(nl[i].nodes) do
+        if nl[i].nodes[j].type =="hbox" then
+          if nl[i].nodes[j].value.items then reverse_array(nl[i].nodes[j].value.items) end
+          reverse_array(nl[i].nodes[j].value.glyphString)
+        end
+      end
+    end
+    rv[matrix[i]] = nl[i]
+    -- rv[i] = nl[i]
+  end
+  n.nodes = rv
 end
 
 local nodeListToText = function (nl)
@@ -71,7 +95,7 @@ local splitNodelistIntoBidiRuns = function (self)
   local nl = self.state.nodes
   if #nl == 0 then return nl end
   local owners, text = nodeListToText(nl)
-  local levels = bidi.process(text, {},true)
+  local levels = bidi.process(text, self.frame,true)
   local base_direction = "LTR"
   local flipped_direction = "RTL"
   local base_level = self.frame:writingDirection() == "RTL" and 1 or 0
@@ -110,8 +134,8 @@ end
 
 local bidiBoxupNodes = function (self)
   local newNodeList = splitNodelistIntoBidiRuns(self)
+  self:shapeAllNodes(newNodeList)
   self.state.nodes = newNodeList
-  -- SU.error(1,true)
   local vboxlist = SILE.defaultTypesetter.boxUpNodes(self)
   -- Scan for out-of-direction material
   for i=1,#vboxlist do local v = vboxlist[i]
