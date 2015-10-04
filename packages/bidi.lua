@@ -32,11 +32,11 @@ local reorder = function(n, self)
     levels[i] = { level = nl[i].options and (nl[i].options.bidilevel) or prev_level }
     prev_level = levels[i].level
   end
-  local matrix = bidi.create_matrix(levels,base_level)
   for i=#nl,1,-1 do
     if nl[i]:isBox() then break end
     levels[i].level = base_level
   end
+  local matrix = bidi.create_matrix(levels,base_level)
   local rv = {}
   local reverse_array = function (t)
     local n = {}
