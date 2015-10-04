@@ -2,6 +2,8 @@
 \font[family=SBL Hebrew,language=he]
 \font[size=25pt]
 \set[parameter=document.baselineskip,value=29pt]
+\set[parameter=document.parindent,value=0pt]
+\set[parameter=current.parindent,value=0pt]
 %\thisframeRTL
 
 My hovercraft is full of eels.
