@@ -29,13 +29,23 @@ local reorder = function(n, self)
   local base_level = self.frame:writingDirection() == "RTL" and 1 or 0
   local prev_level = base_level
   for i=1,#nl do
-    levels[i] = { level = nl[i].options and (nl[i].options.bidilevel) or prev_level }
-    prev_level = levels[i].level
+    if nl[i].options and nl[i].options.bidilevel then
+      levels[i] = { level = nl[i].options.bidilevel }
+    end
   end
-  for i=#nl,1,-1 do
-    if nl[i]:isBox() then break end
-    levels[i].level = base_level
-  end
+  for i=1,#nl do if not levels[i] then
+    -- resolve neutrals
+    local left_level, right_level, left, right
+    for left = i-1,1,-1 do if nl[left].options and nl[left].options.bidilevel then
+      left_level = nl[left].options.bidilevel
+      break
+    end end
+    for right = i+1,#nl do if nl[right].options and nl[right].options.bidilevel then
+      right_level = nl[right].options.bidilevel
+      break
+    end end
+    levels[i] = { level = (left_level == right_level and left_level or base_level) }
+  end end
   local matrix = bidi.create_matrix(levels,base_level)
   local rv = {}
   local reverse_array = function (t)
