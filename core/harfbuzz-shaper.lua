@@ -46,7 +46,7 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
   end,
   preAddNodes = function(self, items, nnodeValue) -- Check for complex nodes
     for i=1,#items do
-      if items[i].y_offset or items[i].width ~= items[i].glyphWidth then
+      if items[i].y_offset or items[i].x_offset or items[i].width ~= items[i].glyphAdvance then
         nnodeValue.complex = true; break
       end
     end
