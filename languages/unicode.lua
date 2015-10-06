@@ -4,12 +4,13 @@ local chardata  = characters.data
 SILE.nodeMakers.unicode = function(items,text,options)
   local contents = {}
   local token = ""
+  local lastnode
 
   local shipToken = function ()
     if #contents>0 then
       coroutine.yield(SILE.shaper:formNnode(contents, token, options))
+      contents = {} ; token = "" ; lastnode = "nnode"
     end
-    contents = {} ; token = ""
   end
   local addToken = function (char,item)
     token = token .. char
@@ -23,11 +24,15 @@ SILE.nodeMakers.unicode = function(items,text,options)
       local thistype = chardata[cp] and chardata[cp].linebreak
       if chardata[cp] and thistype == "sp" then
         shipToken()
-        coroutine.yield(SILE.shaper:makeSpaceNode(options))
+        if lastnode ~= "glue" then
+          coroutine.yield(SILE.shaper:makeSpaceNode(options))
+        end
+        lastnode = "glue"
       elseif chardata[cp] and (thistype == "ba" or  thistype == "zw") then
         addToken(char,item)
         shipToken()
         coroutine.yield( SILE.nodefactory.newPenalty({ penalty = 0 }) )
+        lastnode = "penalty"
       elseif lasttype and (thistype ~= lasttype and thistype ~= "cm") then
         shipToken()
         addToken(char,item)
