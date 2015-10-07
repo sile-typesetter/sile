@@ -1,49 +1,64 @@
 require("char-def")
 local chardata  = characters.data
 
-SILE.nodeMakers.unicode = function(items,text,options)
-  local contents = {}
-  local token = ""
-  local lastnode
-
-  local shipToken = function ()
-    if #contents>0 then
-      coroutine.yield(SILE.shaper:formNnode(contents, token, options))
-      contents = {} ; token = "" ; lastnode = "nnode"
+SILE.nodeMakers.base = std.object {
+  makeToken = function(self)
+    if #self.contents>0 then
+      coroutine.yield(SILE.shaper:formNnode(self.contents, self.token, self.options))
+      self.contents = {} ; self.token = "" ; self.lastnode = "nnode"
     end
+  end,
+  addToken = function (self, char, item)
+    self.token = self.token .. char
+    self.contents[#self.contents+1] = item
+  end,
+  makeGlue = function(self)
+    if self.lastnode ~= "glue" then
+      coroutine.yield(SILE.shaper:makeSpaceNode(self.options))
+    end
+    self.lastnode = "glue"
+  end,
+  makePenalty = function (self,p)
+    coroutine.yield( SILE.nodefactory.newPenalty({ penalty = p or 0 }) )
+    self.lastnode = "penalty"
+  end,
+  init = function (self)
+    self.contents = {}
+    self.token = ""
+    self.lastnode = ""
+  end,
+  iterator = function (self,items)
+    SU.error("Abstract function nodemaker:iterator called",1)
   end
-  local addToken = function (char,item)
-    token = token .. char
-    contents[#contents+1] = item
-  end
+}
 
-  return coroutine.wrap(function()
-    for i = 1,#items do item = items[i]
-      local char = items[i].text
-      local cp = SU.codepoint(char)
-      local thistype = chardata[cp] and chardata[cp].linebreak
-      if chardata[cp] and thistype == "sp" then
-        shipToken()
-        if lastnode ~= "glue" then
-          coroutine.yield(SILE.shaper:makeSpaceNode(options))
+SILE.nodeMakers.unicode = SILE.nodeMakers.base {
+  iterator = function (self, items)
+    self:init()
+    return coroutine.wrap(function()
+      for i = 1,#items do item = items[i]
+        local char = items[i].text
+        local cp = SU.codepoint(char)
+        local thistype = chardata[cp] and chardata[cp].linebreak
+        if chardata[cp] and thistype == "sp" then
+          self:makeToken()
+          self:makeGlue()
+        elseif chardata[cp] and (thistype == "ba" or  thistype == "zw") then
+          self:addToken(char,item)
+          self:makeToken()
+          self:makePenalty(0)
+        elseif lasttype and (thistype ~= lasttype and thistype ~= "cm") then
+          self:makeToken()
+          self:addToken(char,item)
+        else
+          self:addToken(char,item)
         end
-        lastnode = "glue"
-      elseif chardata[cp] and (thistype == "ba" or  thistype == "zw") then
-        addToken(char,item)
-        shipToken()
-        coroutine.yield( SILE.nodefactory.newPenalty({ penalty = 0 }) )
-        lastnode = "penalty"
-      elseif lasttype and (thistype ~= lasttype and thistype ~= "cm") then
-        shipToken()
-        addToken(char,item)
-      else
-        addToken(char,item)
+        if thistype ~= "cm" then lasttype = chardata[cp] and chardata[cp].linebreak end
       end
-      if thistype ~= "cm" then lasttype = chardata[cp] and chardata[cp].linebreak end
-    end
-    shipToken()
-  end)
-end
+      self:makeToken()
+    end)
+  end
+}
 
 pcall( function () icu = require("justenoughicu") end)
 if icu then

@@ -27,38 +27,24 @@ SILE.registerCommand("language", function (o,c)
 end)
 
 require("languages/unicode")
-SILE.nodeMakers.basic = function(items,text,options)
-  local contents = {}
-  local token = ""
-  local lastnode
-
-  local shipToken = function ()
-    if #contents>0 then
-      coroutine.yield(SILE.shaper:formNnode(contents, token, options))
-      contents = {} ; token = "" ; lastnode = "nnode"
-    end
-  end
-  local addToken = function (char,item)
-    token = token .. char
-    contents[#contents+1] = item
-  end
-
-  return coroutine.wrap(function()
-    for i = 1,#items do item = items[i]
-      local char = items[i].text
-      if char:match(SILE.settings.get("shaper.spacepattern")) then
-        shipToken()
-        if lastnode ~= "glue" then
-          coroutine.yield(SILE.shaper:makeSpaceNode(options))
+SILE.nodeMakers.basic = SILE.nodeMakers.base {
+  iterator = function (self, items)
+    self:init()
+    return coroutine.wrap(function()
+      for i = 1,#items do item = items[i]
+        local char = items[i].text
+        if char:match(SILE.settings.get("shaper.spacepattern")) then
+          self:makeToken()
+          self:makeGlue()
+        else
+          self:addToken(char,item)
         end
-        lastnode = "glue"
-      else
-        addToken(char,item)
       end
-    end
-    shipToken()
-  end)
-end
+      self:makeToken()
+    end)
+  end
+}
+
 
 -- The following languages neither have hyphenation nor specific
 -- language support at present. This code is here to suppress warnings.
