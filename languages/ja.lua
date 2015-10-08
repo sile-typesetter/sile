@@ -133,7 +133,10 @@ end
 
 local okbreak = SILE.nodefactory.newPenalty({ penalty = 0 })
 
-SILE.nodeMakers.ja = function(items,text,options)
+SILE.nodeMakers.ja = SILE.nodeMakers.base {
+  iterator = function (self, items)
+    self:init()
+    local options = self.options
   return coroutine.wrap(function()
     local db
     local lastcp = -1
@@ -172,7 +175,7 @@ SILE.nodeMakers.ja = function(items,text,options)
       SU.debug("ja", db)
     end
   end)
-end
+end }
 
 SILE.hyphenator.languages.ja = {patterns={}}
 
