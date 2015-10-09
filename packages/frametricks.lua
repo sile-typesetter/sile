@@ -131,10 +131,16 @@ SILE.registerCommand("breakframehorizontal", function ( options, content )
 end, "Breaks the current frame in two horizontally either at the current location or at a point <offset> from the left of the current frame")
 
 SILE.registerCommand("float", function(options, content)
-  breakFrameVertical()
-  SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
+  SILE.typesetter:leaveHmode()
   local hbox = SILE.Commands["hbox"]({}, content)
   table.remove(SILE.typesetter.state.nodes) -- steal it back
+  local heightOfPageSoFar = SILE.pagebuilder.collateVboxes(SILE.typesetter.state.outputQueue).height
+  if heightOfPageSoFar + hbox.height > SILE.typesetter:pageTarget() then
+    SILE.call("eject")
+    SILE.typesetter:leaveHmode()
+  end
+  breakFrameVertical()
+  SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
   local boundary = hbox.width.length + SILE.length.parse(options.rightboundary).length
   breakFrameHorizontalAt(boundary)
   SILE.typesetNaturally(SILE.typesetter.frame.previous, function()
