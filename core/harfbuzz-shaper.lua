@@ -23,9 +23,9 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
       SU.warn("Font '"..options.font.."' not available, falling back to '"..face.family.."'")
     end
     if face.filename then usedfonts[face.filename] = true end
-    if #text < 1 then return {} end
     local items = { hb._shape(text,
-                      face.face,
+                      face.data,
+                      face.index,
                       options.script,
                       options.direction,
                       options.language,
@@ -42,6 +42,8 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
   getFace = function(opts)
     local face = hb._face(opts)
     SU.debug("fonts", "Resolved font family "..opts.font.." -> "..(face and face.filename))
+    local fh = io.open(face.filename) or SU.error("Can't open "..face.filename)
+    face.data = fh:read("*all")
     return face
   end,
   preAddNodes = function(self, items, nnodeValue) -- Check for complex nodes
