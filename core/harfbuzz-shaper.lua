@@ -14,6 +14,7 @@ local usedfonts = {}
 SILE.shapers.harfbuzz = SILE.shapers.base {
   shapeToken = function (self, text, options)
     if #text < smallTokenSize then local v = shapeCache[_key(options,text)]; if v then return v end end
+    if #text <1 then return {} end -- work around segfault in HB < 1.0.4
     local face = SILE.font.cache(options, self.getFace)
     if not face then
       SU.error("Could not find requested font "..options.." or any suitable substitutes")
