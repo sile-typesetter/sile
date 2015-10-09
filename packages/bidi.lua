@@ -24,52 +24,132 @@ local chardata  = characters.data
 local reorder = function(n, self)
   local nl = n.nodes
   local newNl = {}
+  local matrix = {}
+  local levels = {}
+  local base_level = self.frame:writingDirection() == "RTL" and 1 or 0
+  local prev_level = base_level
   for i=1,#nl do
-    if not nl[i].text then newNl[#newNl+1] = nl[i]
-    else
-      local chunks = SU.splitUtf8(nl[i].text)
-      for j = 1,#chunks do
-        newNl[#newNl+1] = SILE.nodefactory.newUnshaped({text = chunks[j], options = nl[i].options, parent = nl[i].parent })
+    if nl[i].options and nl[i].options.bidilevel then
+      levels[i] = { level = nl[i].options.bidilevel }
+    end
+  end
+  for i=1,#nl do if not levels[i] then
+    -- resolve neutrals
+    local left_level, right_level, left, right
+    for left = i-1,1,-1 do if nl[left].options and nl[left].options.bidilevel then
+      left_level = nl[left].options.bidilevel
+      break
+    end end
+    for right = i+1,#nl do if nl[right].options and nl[right].options.bidilevel then
+      right_level = nl[right].options.bidilevel
+      break
+    end end
+    levels[i] = { level = (left_level == right_level and left_level or base_level) }
+  end end
+  local matrix = bidi.create_matrix(levels,base_level)
+  local rv = {}
+  local reverse_array = function (t)
+    local n = {}
+    for i =1,#t do n[#t-i+1] = t[i] end
+    for i =1,#t do t[i] = n[i] end
+  end
+  for i = 1, #nl do
+    if nl[i]:isNnode() and levels[i].level %2 == 1 then
+      reverse_array(nl[i].nodes)
+      for j =1,#(nl[i].nodes) do
+        if nl[i].nodes[j].type =="hbox" then
+          if nl[i].nodes[j].value.items then reverse_array(nl[i].nodes[j].value.items) end
+          reverse_array(nl[i].nodes[j].value.glyphString)
+        end
       end
     end
+    rv[matrix[i]] = nl[i]
+    -- rv[i] = nl[i]
   end
-  nl = bidi.process(newNl, self.frame)
-  -- Reconstitute. This code is a bit dodgy. Currently we have a bunch of nodes
-  -- each with one Unicode character in them. Sending that to the shaper one-at-a-time
-  -- will cause, e.g. Arabic letters to all come out as isolated forms. But equally,
-  -- we can't send the whole lot to the shaper at once because Harfbuzz doesn't itemize
-  -- them for us, spaces have already been converted to glue, and so on. So we combine
-  -- characters with equivalent options/character sets into a single node.
-  newNL = {nl[1]}
-  local ncount = 1 -- small optimization, save indexing newNL every time
-  for i=2,#nl do
-    local this = nl[i]
-    local prev = newNL[ncount]
-    if not this:isUnshaped() or not prev:isUnshaped() then
-      ncount = ncount + 1
-      newNL[ncount] = this
+  n.nodes = rv
+end
 
-    -- now both are unshaped, compare them
-    elseif SILE.font._key(this.options) == SILE.font._key(prev.options)
-      and this.parent == prev.parent then -- same font
-      prev.text = prev.text .. this.text
+local nodeListToText = function (nl)
+  local owners, text = {}, {}
+  local p = 1
+  for i = 1,#nl do local n = nl[i]
+    if n.text then
+      local utfchars = SU.splitUtf8(n.text)
+      for j = 1,#utfchars do
+        owners[p] = { node = n, pos = j }
+        text[p] = utfchars[j]
+        p = p + 1
+      end
     else
-      ncount = ncount + 1
-      newNL[ncount] = this
+      owners[p] = { node = n }
+      text[p] = SU.utf8char(0xFFFC)
+      p = p + 1
     end
   end
-  SILE.typesetter:shapeAllNodes(newNL)
-  n.nodes = newNL
-  -- It's possible that the re-ordered shaped nodes would require us to
-  -- fix the line ratio of this box, i.e. if reordering means we are now
-  -- applying ligatures or substitutions that change the length of the
-  -- text in the line. But I haven't found any situations where that is the
-  -- case. If you find one, you may need to run
-  --    n.ratio = SILE.typesetter:computeLineRatio(n.width, n.nodes)
-  -- (or something like that) here.
+  return owners, text
+end
+
+local splitNodeAtPos = function (n,splitstart, p)
+  if n:isUnshaped() then
+    local utf8chars = SU.splitUtf8(n.text)
+    local n2 = SILE.nodefactory.newUnshaped({ text = "", options = table.clone(n.options) })
+    local n1 = SILE.nodefactory.newUnshaped({ text = "", options = table.clone(n.options) })
+    for i = splitstart,#utf8chars do
+      if i < p then n1.text = n1.text .. utf8chars[i]
+      else n2.text = n2.text .. utf8chars[i]
+      end
+    end
+    return n1,n2
+  else
+    SU.error("Unsure how to split node "..n.." at position p",1)
+  end
+end
+
+local splitNodelistIntoBidiRuns = function (self)
+  local nl = self.state.nodes
+  if #nl == 0 then return nl end
+  local owners, text = nodeListToText(nl)
+  local levels = bidi.process(text, self.frame,true)
+  local base_direction = "LTR"
+  local flipped_direction = "RTL"
+  local base_level = self.frame:writingDirection() == "RTL" and 1 or 0
+  local lastlevel = base_level
+  local nl = {}
+  local lastowner
+  local splitstart = 1
+  for i = 1,#levels do
+    if levels[i] % 2 ~= lastlevel % 2 and owners[i].node == lastowner then
+      owners[i].bidilevel = levels[i]
+      local before,after = splitNodeAtPos(owners[i].node,splitstart,owners[i].pos)
+      nl[#nl] = before
+      nl[#nl+1] = after
+      lastowner = owners[i].node
+      splitstart = owners[i].pos
+      before.options.bidilevel = lastlevel
+      after.options.direction = (levels[i] %2) == 0 and base_direction or flipped_direction
+      after.options.bidilevel = levels[i]
+      before.options.direction = (levels[i-1] %2) == 0 and base_direction or flipped_direction
+      -- assign direction for both nodes
+    else
+      if owners[i].node ~= lastowner then
+        nl[#nl+1] = owners[i].node
+        splitstart = 1
+        if nl[#nl].options then
+          nl[#nl].options.direction = (levels[i] %2) == 0 and base_direction or flipped_direction
+        end
+      end
+      lastowner = owners[i].node
+      if nl[#nl].options then nl[#nl].options.bidilevel = (levels[i]) end
+    end
+    lastlevel = levels[i]
+  end
+  return nl
 end
 
 local bidiBoxupNodes = function (self)
+  local newNodeList = splitNodelistIntoBidiRuns(self)
+  self:shapeAllNodes(newNodeList)
+  self.state.nodes = newNodeList
   local vboxlist = SILE.defaultTypesetter.boxUpNodes(self)
   -- Scan for out-of-direction material
   for i=1,#vboxlist do local v = vboxlist[i]

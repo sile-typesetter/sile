@@ -1,0 +1,9 @@
+\begin[class=book,papersize=129mm x 198mm]{document}
+\font[family=EB Garamond]
+\set[parameter=typesetter.breakwidth,value=50mm]
+% The following made-up word has hyphenation points of-fial
+% which means it can only be hyphenated by splitting a ligature
+offial offial offial offial offial offial offial offial
+offial offial offial offial offial offial offial offial
+offial offial offial offial offial offial offial offial
+\end{document}

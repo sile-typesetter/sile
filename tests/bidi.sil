@@ -1,0 +1,41 @@
+\begin[papersize=a5]{document}
+\font[family=SBL Hebrew,language=he]
+\font[size=25pt]
+\set[parameter=document.baselineskip,value=29pt]
+\set[parameter=document.parindent,value=0pt]
+\set[parameter=current.parindent,value=0pt]
+\script[src=packages/frametricks]
+My hovercraft is full of eels.
+
+הרחפת שלי מלאה בצלופחים
+
+One two אבג three four
+
+אחד שתיים ABC שלוש ארבע
+
+
+\set[parameter=typesetter.breakwidth,value=50mm]
+
+My hovercraft is full of eels.
+
+הרחפת שלי מלאה בצלופחים
+
+\bigskip\breakframevertical
+\thisframeRTL\set[parameter=typesetter.breakwidth]
+
+My hovercraft is full of eels.
+
+הרחפת שלי מלאה בצלופחים
+
+One two אבג three four
+
+אחד שתיים ABC שלוש ארבע
+
+
+\set[parameter=typesetter.breakwidth,value=50mm]
+
+My hovercraft is full of eels.
+
+הרחפת שלי מלאה בצלופחים
+
+\end{document}

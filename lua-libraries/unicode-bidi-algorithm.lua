@@ -406,7 +406,9 @@ local function node_to_table(nodelist)
   local line = {}
   for i = 1,#nodelist do
     local n = nodelist[i]
-    if n.type == "hbox" and n.value and n.value.text then
+    if not(type(n) == "table") then
+      c = SU.codepoint(n)
+    elseif n.type == "hbox" and n.value and n.value.text then
       c = SU.codepoint(n.value.text)
     elseif n.text then
       c = SU.codepoint(n.text)
@@ -475,7 +477,7 @@ local function create_matrix(line, base_level)
   return matrix
 end
 
-local function process(nodelist, frame)
+local function process(nodelist, frame, justlevels)
   -- main node list processing
   -- return early if there is nothing to process
   if not nodelist then
@@ -501,18 +503,19 @@ local function process(nodelist, frame)
 
   -- run the bidi algorithm
   line = resolve_levels(line, base_level)
+  if justlevels then
+    local levels = {}
+    for i=1,#line do levels[i]=line[i].level end
+    return levels
+  end
   matrix = create_matrix(line, base_level)
   assert(#line == #nodelist)
   local rv = {}
   for i = 1, #nodelist do
     rv[matrix[i]] = nodelist[i]
     local thisNode = rv[matrix[i]]
-    if thisNode.options then
-      -- things have been adjusted to "fit in" with base direction now
-      thisNode.options.direction = frame:writingDirection()
-    end
   end
   return rv
 end
 
-return { process = process, get_bidi_type = get_bidi_type }
+return { process = process, get_bidi_type = get_bidi_type, create_matrix = create_matrix }

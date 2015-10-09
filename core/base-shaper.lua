@@ -60,55 +60,6 @@ SILE.shapers.base = std.object {
     SU.error("Abstract function getFace called", true)
   end,
 
-  itemize = function(self, nodelist, text)
-    local state = SILE.font.loadDefaults({})
-    local gluewidth = self:measureSpace(state)
-    -- First tokenize on spaces
-    for token in self:tokenize(text,state) do
-      if (token.separator) then
-        nodelist[#nodelist+1]= SILE.nodefactory.newGlue({ width = gluewidth })
-      elseif (token.node) then
-        nodelist[#nodelist+1]= token.node
-      else
-        local nodes = self:subItemize(token.string, state)
-        for i= 1,#nodes do
-          nodelist[#nodelist+1] = nodes[i]
-        end
-      end
-    end
-  end,
-
-  subItemize = function(self,text,options)
-    if not text then return {} end
-    if #text < smallTokenSize then
-      local v = shapeCache[_key(options)..";"..text]
-      if v then return v end
-    end
-    -- We have a character string; sort it out.
-    local nodelist = {}
-    for token in SU.gtoke(text, "-") do
-      local t2= token.separator and token.separator or token.string
-      nodelist[#(nodelist)+1] = SILE.nodefactory.newUnshaped({ text = t2, options = options })
-      if token.separator then
-        nodelist[#(nodelist)+1] = SILE.nodefactory.newPenalty({ value = SILE.settings.get("linebreak.hyphenPenalty") })
-      end
-    end
-    if #text < smallTokenSize then
-      shapeCache[_key(options)..";"..text] = nodelist
-    end
-    return nodelist
-  end,
-
-  tokenize = function(self, text, options)
-    -- Do language-specific tokenization
-    pcall(function () SILE.require("languages/"..options.language) end)
-    local tokenizer = SILE.tokenizers[options.language]
-    if not tokenizer then
-      tokenizer = SILE.tokenizers.unicode
-    end
-    return tokenizer(text)
-  end,
-
   addShapedGlyphToNnodeValue = function (self, nnodevalue, shapedglyph)
     SU.error("Abstract function addShapedGlyphToNnodeValue called", true)
   end,
@@ -118,6 +69,19 @@ SILE.shapers.base = std.object {
 
   createNnodes = function (self, token, options)
     local items, width = self:shapeToken(token, options)
+    if #items < 1 then return {} end
+
+    local lang = options.language
+    SILE.languageSupport.loadLanguage(lang)
+    local nodeMaker = SILE.nodeMakers[lang] or SILE.nodeMakers.unicode
+    local nodes = {}
+    for node in (nodeMaker { options=options }):iterator(items, token) do
+      nodes[#nodes+1] = node
+    end
+    return nodes
+  end,
+
+  formNnode = function (self, contents, token, options)
     local nnodeContents = {}
     local glyphs = {}
     local totalWidth = 0
@@ -125,8 +89,8 @@ SILE.shapers.base = std.object {
     local height = 0
     local glyphNames = {}
     local nnodeValue = { text = token, options = options, glyphString = {} }
-    self:preAddNodes(items, nnodeValue)
-    for i = 1,#items do local glyph = items[i]
+    SILE.shaper:preAddNodes(contents, nnodeValue)
+    for i = 1,#contents do local glyph = contents[i]
       if glyph.depth > depth then depth = glyph.depth end
       if glyph.height > height then height = glyph.height end
       totalWidth = totalWidth + glyph.width
@@ -145,14 +109,16 @@ SILE.shapers.base = std.object {
       width = width or SILE.length.new({ length = totalWidth }),
       value = nnodeValue
     }))
-    -- Why does the nnode contain only one hbox?
-    -- So it can be hypenated and split later
-    return { SILE.nodefactory.newNnode({
+    return SILE.nodefactory.newNnode({
       nodes = nnodeContents,
       text = token,
       misfit = misfit,
       options = options,
       language = options.language
-    }) }
+    })
+  end,
+
+  makeSpaceNode = function(self, options)
+    return SILE.nodefactory.newGlue({ width = SILE.shaper:measureSpace(options) })
   end
 }

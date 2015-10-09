@@ -1,4 +1,4 @@
-SILE.tokenizers.en = SILE.tokenizers.basic
+SILE.nodeMakers.en = SILE.nodeMakers.basic
 SILE.hyphenator.languages["en"] = {};
 SILE.hyphenator.languages["en"].patterns = {".ach4", ".ad4der", ".af1t", ".al3t", ".am5at", ".an5c", ".ang4",
 ".ani5m", ".ant4", ".an3te", ".anti5s", ".ar5s", ".ar4tie", ".ar4ty",

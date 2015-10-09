@@ -88,6 +88,7 @@ SILE.defaultTypesetter = std.object {
   end,
   -- Boxy stuff
   pushHbox = function (self, spec) table.insert(self.state.nodes, SILE.nodefactory.newHbox(spec)); end,
+  pushUnshaped = function (self, spec) table.insert(self.state.nodes, SILE.nodefactory.newUnshaped(spec)); end,
   pushGlue = function (self, spec) return table.insert(self.state.nodes, SILE.nodefactory.newGlue(spec)); end,
   pushPenalty = function (self, spec) return table.insert(self.state.nodes, SILE.nodefactory.newPenalty(spec)); end,
   pushVbox = function (self, spec) local v = SILE.nodefactory.newVbox(spec); table.insert(self.state.outputQueue,v); return v; end,
@@ -125,22 +126,23 @@ SILE.defaultTypesetter = std.object {
       self:initline()
       SILE.documentState.documentClass.newPar(self)
     end
-    SILE.shaper:itemize(self.state.nodes, t)
+    self:pushUnshaped({ text = t, options= SILE.font.loadDefaults({})})
   end,
   breakIntoLines = function (self, nl, breakWidth)
+    self:shapeAllNodes(nl)
     local breaks = SILE.linebreak:doBreak( nl, breakWidth);
     return self:breakpointsToLines(breaks);
   end,
   shapeAllNodes = function(self, nl)
+    local newNl = {}
     for i = 1,#nl do
       if nl[i]:isUnshaped() then
-        local shaped = nl[i]:shape()
-        nl[i] = shaped[1]
-        for j = #shaped,2,-1 do
-          table.insert(nl,i+1,shaped[j])
-        end
+        table.append(newNl, nl[i]:shape())
+      else
+        newNl[#newNl+1] = nl[i]
       end
     end
+    for i =1,#newNl do nl[i]=newNl[i] end
   end,
   -- Empties self.state.nodes, breaks into lines, puts lines into vbox, adds vbox to
   -- Turns a node list into a list of vboxes

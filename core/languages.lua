@@ -27,9 +27,24 @@ SILE.registerCommand("language", function (o,c)
 end)
 
 require("languages/unicode")
-SILE.tokenizers.basic = function(text)
-  return SU.gtoke(text, SILE.settings.get("shaper.spacepattern"))
-end
+SILE.nodeMakers.basic = SILE.nodeMakers.base {
+  iterator = function (self, items)
+    self:init()
+    return coroutine.wrap(function()
+      for i = 1,#items do item = items[i]
+        local char = items[i].text
+        if char:match(SILE.settings.get("shaper.spacepattern")) then
+          self:makeToken()
+          self:makeGlue()
+        else
+          self:addToken(char,item)
+        end
+      end
+      self:makeToken()
+    end)
+  end
+}
+
 
 -- The following languages neither have hyphenation nor specific
 -- language support at present. This code is here to suppress warnings.

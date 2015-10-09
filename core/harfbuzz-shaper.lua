@@ -3,10 +3,17 @@ if not SILE.shapers then SILE.shapers = { } end
 local hb = require("justenoughharfbuzz")
 SILE.require("core/base-shaper")
 
+local smallTokenSize = 20 -- Small words will be cached
+local shapeCache = {}
+local _key = function(options,text)
+  return table.concat({text,options.font;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename},";")
+end
+
 local substwarnings = {}
 local usedfonts = {}
 SILE.shapers.harfbuzz = SILE.shapers.base {
   shapeToken = function (self, text, options)
+    if #text < smallTokenSize then local v = shapeCache[_key(options,text)]; if v then return v end end
     local face = SILE.font.cache(options, self.getFace)
     if not face then
       SU.error("Could not find requested font "..options.." or any suitable substitutes")
@@ -16,7 +23,8 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
       SU.warn("Font '"..options.font.."' not available, falling back to '"..face.family.."'")
     end
     if face.filename then usedfonts[face.filename] = true end
-    return { hb._shape(text,
+    if #text < 1 then return {} end
+    local items = { hb._shape(text,
                       face.face,
                       options.script,
                       options.direction,
@@ -24,6 +32,12 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
                       options.size,
                       options.features
             ) }
+    for i = 1,#items do
+      local e = (i == #items) and #text or items[i+1].index
+      items[i].text = text:sub(items[i].index+1, e) -- Lua strings are 1-indexed
+    end
+    if #text < smallTokenSize then shapeCache[_key(options,text)] = items end
+    return items
   end,
   getFace = function(opts)
     local face = hb._face(opts)

@@ -5,6 +5,7 @@ SU = SILE.utilities
 SILE.inputs = {}
 SILE.Commands = {};
 SILE.debugFlags = {}
+SILE.nodeMakers = {}
 SILE.tokenizers = {}
 
 loadstring = loadstring or load -- 5.3 compatibility
