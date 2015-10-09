@@ -13,7 +13,7 @@
 \script[src=packages/pullquote]
 \include[src=documentation/macros.xml]
 \define[command=silehp]{\url{http://www.sile-typesetter.org/}}
-\define[command=sileversion]{0.9.2}
+\define[command=sileversion]{\script{SILE.typesetter:typeset(SILE.version)}}
 \set[parameter=document.baselineskip,value=3ex]
 \font[size=11pt,family=Gentium Book Basic]
 \nofolios
@@ -682,8 +682,9 @@ The full list of attributes to the \code{\\font} command are:
 
 \noindent{}• \em{family}: the name of the font to be selected. SILE should know
 about all the fonts installed on your system, so that fonts can be specified by
-their name. In the XML flavor of SILE, you can specify the font family as a
-CSS-style ‘stack’ delimited by commas.
+their name.
+
+\noindent{}• \em{filename}: if a filename is supplied, SILE will use the font file provided rather than looking at your system’s font library.
 
 \noindent{}• \em{style}: can be \code{normal} or \code{italic}.
 
@@ -1924,8 +1925,6 @@ the two columns naturally:
 \lorem[words=500]
 
 \chapter{Designing Basic Class Files}
-
-\changed
 
 Now we know how to define a frame layout for a single page, let’s try
 to define one for an entire document.

@@ -1,4 +1,32 @@
-## What's new in SILE 
+## What's new in SILE
+
+## Version 0.9.3 (2015-10-09)
+
+* Support for typesetting Japanese according to the JIS X 4051 standard, both horizontally and vertically.
+
+* Unicode line-breaking support; scripts now line-break correctly even if they don't have specific language support. Optionally uses the ICU library if installed.
+
+* Font designers rejoice: you can now say \font[filename=...] to use uninstalled fonts.
+
+* Pango/Cairo support is now officially deprecated. Stop using it!
+
+* Improvements to USX Bible processing.
+
+* Experimental support for Structured PDF generation.
+
+* Support for Opentype kerning.
+
+* Support for custom frame direction (e.g. "TTB-LTR" for Mongolian).
+
+* Support for many-way parallel texts across pages or spreads.
+
+* Line breaking support for Myanmar, Javanese and Uyghur.
+
+* Support for boustrophedon Greek. No, really.
+
+* Various fixes to bidirectionality, discretionary hyphens, insertions, footnotes, grid typesetting, alignment.
+
+* Under-the-hood advancements for Harfbuzz.
 
 ## Version 0.9.2 (2015-06-03)
 
