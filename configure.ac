@@ -33,7 +33,6 @@ AS_IF([test "x$with_harfbuzz" != xno -a "x$with_pangocairo" != xyes],
 [
 PKG_CHECK_MODULES(HARFBUZZ, harfbuzz,
   [
-   PKG_CHECK_MODULES(FREETYPE, freetype2,[],[AC_MSG_FAILURE([Harfbuzz found but not freetype2])])
    PKG_CHECK_MODULES(FONTCONFIG, fontconfig,[],[AC_MSG_FAILURE([Harfbuzz found but not fontconfig])])
    with_harfbuzz=yes
    backend=harfbuzz
