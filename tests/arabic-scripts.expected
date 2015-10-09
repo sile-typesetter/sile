@@ -8,22 +8,28 @@ T	60 93 74 87 77 74 91 77	(Standard)
 Mx 	88.35783
 T	42 91 74 75 82 76	(Arabic)
 Mx 	125.64553
+Set font 	Lateef;16;200;normal;normal;;RTL
 T	640 778 905	(ههه)
 Mx 	141.11428
+Set font 	Lateef;16;200;normal;normal;;LTR
 T	36	(;)
 Mx 	148.85510
 T	60 82 87 77 82	(Sindi)
 Mx 	178.72093
+Set font 	Lateef;16;200;normal;normal;;RTL
 T	642 780 905	(ههه)
 Mx 	197.16624
+Set font 	Lateef;16;200;normal;normal;;LTR
 T	36	(;)
 Mx 	204.90706
 T	74 87 77	(and)
 Mx 	226.71039
 T	62 91 77 94	(Urdu)
 Mx 	255.98246
+Set font 	Lateef;16;200;normal;normal;;RTL
 T	643 779 906	(ههه)
 Mx 	272.01371
+Set font 	Lateef;16;200;normal;normal;;LTR
 T	22	(.)
 [1] Mx 	207.41759
 My 	553.73265
