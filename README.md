@@ -30,14 +30,13 @@ A formula is available for [homebrew][brew] that can install both stable and hea
 
 SILE can be downloaded from [its home page][sile], or directly from [the release page][releases].
 
-SILE is written in the Lua programming language, so you will need a Lua installation. It also relies on external libraries to access fonts and write PDF files. Its preferred combination of libraries is [harfbuzz][] and a PDF creation library extracted from TeX. It should be possible to harfbuzz from your operating system's package manager. (For Harfbuzz to work you will also need freetype2 and fontconfig installed.) If this is not possible, SILE will attempt to use the GNOME Pango/Cairo libraries.
+SILE is written in the Lua programming language, so you will need a Lua installation. It also relies on external libraries to access fonts and write PDF files. Its preferred combination of libraries is [harfbuzz][] and a PDF creation library extracted from TeX. It should be possible to harfbuzz from your operating system's package manager. (For Harfbuzz to work you will also need freetype2 and fontconfig installed.)
 
 You also need to install the following Lua libraries using [luarocks][] (downloading luarocks if you do not already have it installed).
 
 * `lpeg`
 * `luaexpat`
 * `luafilesystem`
-* `lgi` (required for Pango-Cairo only)
 
 If you are building from a a git clone, start by running the script to setup your environment (if you are using the source tarball this is unnecessary):
 

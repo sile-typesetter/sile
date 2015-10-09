@@ -48,7 +48,8 @@ SILE.init = function()
   if SILE.backend == "libtexpdf" then
     require("core/harfbuzz-shaper")
     require("core/libtexpdf-output")
-  else
+  elseif SILE.backend == "pangocairo" then
+    SU.warn("The pangocairo backend is deprecated and will be removed in the next release of SILE")
     require("core/pango-shaper")
     require("core/cairo-output")
   end
