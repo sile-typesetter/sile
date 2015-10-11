@@ -45,8 +45,10 @@ SILE.registerCommand("grid", function(options, content)
 
   SILE.typesetter.leadingFor = leadingFor
   SILE.typesetter.pushVglue = pushVglue
-  SILE.typesetter.frame.state.totals.gridCursor = 0
-  SILE.typesetter.state.previousVbox = SILE.defaultTypesetter.pushVbox(SILE.typesetter,{})
+  if SILE.typesetter.frame then
+      SILE.typesetter.frame.state.totals.gridCursor = 0
+      SILE.typesetter.state.previousVbox = SILE.defaultTypesetter.pushVbox(SILE.typesetter,{})
+  end
   SILE.typesetter:registerNewFrameHook(function (this)
     this.frame.state.totals.gridCursor = 0
     if this.state.outputQueue[1] then
