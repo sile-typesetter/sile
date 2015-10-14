@@ -1,0 +1,17 @@
+\begin[papersize=a5]{document}
+\font[family=Adobe Caslon Pro,size=12pt]
+\set[parameter=typesetter.breakwidth,value=70mm]
+\script[src=packages/letterspace]
+\set[parameter=linebreak.tolerance,value=3000]
+\set[parameter=document.spaceskip,value=5pt plus 5pt]
+
+\begin{letterspace}
+The Flopsy Bunnies simply stuffed lettuces. By degrees,
+one after another, they were overcome with slumber, and
+lay down in the mown grass.
+
+Benjamin was not so much overcome as his children. Before
+going to sleep he was sufficiently wide awake to put a
+paper back over his head to keep off the flies.
+\end{letterspace}
+\end{document}
