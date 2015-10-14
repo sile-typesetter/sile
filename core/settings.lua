@@ -118,7 +118,8 @@ SILE.registerCommand("set", function(options, content)
   elseif  string.match(def.type, "integer") then v = tonumber(v)
   elseif  string.match(def.type, "Length") then v = SILE.length.parse(v)
   elseif string.match(def.type, "VGlue") then v = SILE.nodefactory.newVglue(v)
-  elseif string.match(def.type, "Glue") then v = SILE.nodefactory.newGlue(v) end
+  elseif string.match(def.type, "Glue") then v = SILE.nodefactory.newGlue(v)
+  elseif string.match(def.type, "Kern") then v = SILE.nodefactory.newKern(v) end
   if content and (type(content) == "function" or content[1]) then
     SILE.settings.temporarily(function()
       SILE.settings.set(p,v)
