@@ -87,12 +87,27 @@ SILE.defaultTypesetter = std.object {
     end
   end,
   -- Boxy stuff
-  pushHbox = function (self, spec) table.insert(self.state.nodes, SILE.nodefactory.newHbox(spec)); end,
-  pushUnshaped = function (self, spec) table.insert(self.state.nodes, SILE.nodefactory.newUnshaped(spec)); end,
-  pushGlue = function (self, spec) return table.insert(self.state.nodes, SILE.nodefactory.newGlue(spec)); end,
-  pushPenalty = function (self, spec) return table.insert(self.state.nodes, SILE.nodefactory.newPenalty(spec)); end,
+  pushHbox = function (self, spec)
+    self:initline()
+    table.insert(self.state.nodes, SILE.nodefactory.newHbox(spec))
+  end,
+  pushUnshaped = function (self, spec)
+    self:initline()
+    table.insert(self.state.nodes, SILE.nodefactory.newUnshaped(spec))
+  end,
+  pushGlue = function (self, spec)
+    self:initline()
+    return table.insert(self.state.nodes, SILE.nodefactory.newGlue(spec))
+  end,
+  pushPenalty = function (self, spec)
+    self:initline()
+    return table.insert(self.state.nodes, SILE.nodefactory.newPenalty(spec))
+  end,
   pushVbox = function (self, spec) local v = SILE.nodefactory.newVbox(spec); table.insert(self.state.outputQueue,v); return v; end,
-  pushMigratingMaterial = function (self, material) local v = SILE.nodefactory.newMigrating({ material = material }); table.insert(self.state.nodes,v); return v; end,
+  pushMigratingMaterial = function (self, material)
+    self:initline()
+    local v = SILE.nodefactory.newMigrating({ material = material })
+    table.insert(self.state.nodes,v); return v; end,
   pushVglue = function (self, spec) return table.insert(self.state.outputQueue, SILE.nodefactory.newVglue(spec)); end,
   pushExplicitVglue = function (self, spec)
     spec.skiptype = "explicit"
