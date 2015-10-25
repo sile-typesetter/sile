@@ -19,14 +19,14 @@
 \nofolios
 %\set[parameter=document.lskip,value=5em]
 %\set[parameter=document.rskip,value=5em]
-\par\center{\font[size=50pt,weight=600,family=Helvetica Neue]{The}\par
+\par\center{\font[size=50pt,weight=600,filename=documentation/Silson-Condensed.otf]{The}\par
 \center{\img[src=documentation/sile-logo.pdf,height=40mm]}\par
-\font[size=50pt,weight=600,family=Helvetica Neue]{Book}}
+\font[size=50pt,weight=600,filename=documentation/Silson-Condensed.otf]{Book}}
 \bigskip
-\font[size=12pt,family=Helvetica Neue]{\hss for SILE version \sileversion \hss \par}
+\font[size=12pt,filename=documentation/Silson-Condensed.otf]{\hss for SILE version \sileversion \hss \par}
 \skip[height=1in]
 \skip[height=1in]
-\font[size=20pt,weight=600,family=Helvetica Neue]{\hss Simon Cozens \hss \par}
+\font[size=20pt,weight=600,filename=documentation/Silson-Condensed.otf]{\hss Simon Cozens \hss \par}
 %
 %\set[parameter=document.lskip,value=0]
 %\set[parameter=document.rskip,value=0]
