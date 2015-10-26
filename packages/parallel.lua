@@ -11,6 +11,8 @@ end
   SILE.typesetter = o
 end
 
+local nulTypesetter = SILE.typesetter {} -- we ignore this
+nulTypesetter.outputLinesToPage = function() end
 
 local parallelPagebreak = function ()
   for i = 1,#folioOrder do
@@ -35,6 +37,7 @@ local parallelPagebreak = function ()
 end
 
 local setupParallel = function (klass, options)
+  nulTypesetter:init(SILE.getFrame("page"))
   for k,v in pairs(options.frames) do
     typesetterPool[k] = SILE.typesetter {}
     typesetterPool[k].id = v
@@ -88,6 +91,7 @@ SILE.registerCommand("sync", function (o,c)
   local anybreak = false
   local maxheight = SILE.length.new()
   allTypesetters(function (n,t)
+    t:debugState()
     t:leaveHmode(true)
     -- Now we have each typesetter's content boxed up onto the output stream
     -- but page breaking has not been run. See if page breaking would cause a
@@ -114,6 +118,7 @@ SILE.registerCommand("sync", function (o,c)
     SU.debug("parallel", n..": pre-sync content="..calculations[n].mark..", now "..#t.state.outputQueue..", height of material: "..calculations[n].heightOfNewMaterial)
   end)
   addBalancingGlue(maxheight)
+  SILE.typesetter = nulTypesetter
 end)
 
 return {
