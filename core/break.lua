@@ -64,8 +64,6 @@ function lineBreak:init()
     }
   end
   self.minimumDemerits = awful_bad
-  self.best_place = {}
-  self.best_pl_line = {}
   self:setupLineLengths(params)
 end
 
