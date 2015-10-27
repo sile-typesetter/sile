@@ -7,7 +7,7 @@ SILE.xToPoints = {
     return tonumber(v) / 100 * SILE.documentState.paperSize[ dimension == 'w' and 1 or 2]
   end,
   ["ex"] =  function(v) return tonumber(v) * SILE.shaper:measureDim("x") end,
-  ["em"] =  function(v) return tonumber(v) * SILE.shaper:measureDim("m") end,
+  ["em"] =  function(v) return tonumber(v) * SILE.settings.get("font.size") end,
   ["en"] =  function(v) return tonumber(v) * SILE.shaper:measureDim("n") end
 }
 
