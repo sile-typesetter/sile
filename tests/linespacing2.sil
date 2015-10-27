@@ -1,0 +1,60 @@
+\begin[papersize=a4]{document}
+\script[src=packages/linespacing]
+
+% TeX algorithm line spacing
+\font[size=30pt]{L}orem ipsum.\hfill\break{}Some tall, high ascenders.
+
+\skip[height=30pt]
+
+% Fixed 1.5em baseline-to-baseline spacing
+\set[parameter=linespacing.method,value=fixed]
+\set[parameter=linespacing.fixed.baselinedistance,value=1.5em]
+\font[size=30pt]{L}orem ipsum.\hfill\break{}Some tall, high ascenders.
+
+\skip[height=20pt]
+
+% Now base font size changed, 1.5 em is bigger
+\font[size=20pt]Lorem ipsum.\hfill\break{}Some tall, high ascenders.
+
+\skip[height=20pt]
+
+% Absolute baseline-to-baseline spacing
+\set[parameter=linespacing.fixed.baselinedistance,value=12pt]
+\font[size=20pt]Lorem ipsum.\hfill\break{}Some tall, high ascenders.
+
+\skip[height=20pt]
+
+% Measure all the heights/depths and add a bit of (absolute or relative) extra
+\set[parameter=linespacing.method,value=fit-glyph]
+\set[parameter=linespacing.fit-glyph.extra-space,value=5pt]
+\font[size=20pt]Lorem ipsum.\hfill\break{}Some tall, high ascenders.
+
+\skip[height=20pt]
+
+% Use font ascender/descender metrics and add a bit extra
+
+\set[parameter=linespacing.method,value=fit-font]
+\set[parameter=linespacing.fit-font.extra-space,value=2pt]
+\font[size=60pt]{Lq}\font[size=10pt]orem ipsum.\hfill\break{}Some tal\font[size=30pt]{l}, high ascenders.
+
+\skip[height=20pt]
+
+% Demonstrate that this works even without the descender in the text
+\font[size=60pt]{L}\font[size=10pt]orem ipsum.\hfill\break{}Some tal\font[size=30pt]{l}, high ascenders.
+
+\skip[height=20pt]
+
+\set[parameter=linespacing.method,value=css]
+\set[parameter=linespacing.css.line-height,value=1.5em]
+\font[size=30pt]{Lorem} ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in \font[size=30pt]{culpa} qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+\end{document}
