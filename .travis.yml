@@ -48,7 +48,7 @@ before_install:
       export LUA_INCDIR=/usr/include/lua$LUA_VER;
    fi
    # Install devel libraries and headers (for compiling libtexpdf)
- - sudo apt-get install -y lib{fontconfig1,png,expat1}-dev
+ - sudo apt-get install -y lib{freetype6,fontconfig1,png,expat1}-dev
    # Install fonts (needed for typesetting regression tests)
  - sudo apt-get install -y fonts-sil-{scheherazade,lateef,gentium{,-basic}}
  - get_noto NaskhArabic && get_noto SansKannada && get_noto SansCJKJP
