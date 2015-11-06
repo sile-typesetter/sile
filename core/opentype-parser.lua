@@ -104,6 +104,10 @@ local parseFont = function(fd)
       font.names[record.name][language] = vstruct.read(">@"..(font.offsets.name.offset + name.sOffset+record.offset).."s"..record.length, fd)
     end
   end
+
+  -- MAXP
+  local maxp = vstruct.read(">@" .. font.offsets.maxp.offset .. " version:u4 numGlyphs:u2", fd)
+  font.maxp = {version = maxp.version, numGlyphs = maxp.numGlyphs}
   return font
 end
 
