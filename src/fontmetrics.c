@@ -1,6 +1,7 @@
 #include <hb.h>
 #if HB_VERSION_ATLEAST(1,0,6)
 #define USE_HARFBUZZ_METRICS
+#include <hb-ft.h>
 #else
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -58,6 +59,21 @@ int get_typographic_extents (lua_State *L) {
 }
 
 
+int glyphwidth (lua_State* L) {
+  size_t font_l;
+  unsigned int gid = luaL_checknumber(L, 1);
+  const char * font_s = luaL_checklstring(L, 2, &font_l);
+  unsigned int font_index = luaL_checknumber(L, 3);
+  hb_blob_t* blob = hb_blob_create (font_s, font_l, HB_MEMORY_MODE_WRITABLE, (void*)font_s, NULL);
+  hb_face_t* hbFace = hb_face_create (blob, font_index);
+  hb_font_t* hbFont = hb_font_create (hbFace);
+  short upem = hb_face_get_upem(hbFace);
+  hb_ft_font_set_funcs(hbFont);
+  hb_position_t width = hb_font_get_glyph_h_advance(hbFont, gid);
+  lua_pushnumber(L, width / (double)upem);
+  return 1;
+}
+
 #if !defined LUA_VERSION_NUM
 /* Lua 5.0 */
 #define luaL_Reg luaL_reg
@@ -83,6 +99,7 @@ static void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
 
 static const struct luaL_Reg lib_table [] = {
   {"get_typographic_extents", get_typographic_extents},
+  {"glyphwidth", glyphwidth},
   {NULL, NULL}
 };
 
