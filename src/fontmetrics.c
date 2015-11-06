@@ -1,31 +1,59 @@
+#include <hb.h>
+#if HB_VERSION_ATLEAST(1,0,6)
+#define USE_HARFBUZZ_METRICS
+#else
 #include <ft2build.h>
 #include FT_FREETYPE_H
+#define USE_FREETYPE_METRICS
+
+FT_Library library = NULL;
+
+#endif
 
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
 
 
-FT_Library library = NULL;
-
 int get_typographic_extents (lua_State *L) {
   size_t font_l;
   const char * font_s = luaL_checklstring(L, 1, &font_l);
   unsigned int font_index = luaL_checknumber(L, 2);
+  short upem;
+  double ascender;
+  double descender;
 
+#ifdef USE_FREETYPE_METRICS
   if (!library) FT_Init_FreeType (&library);
   FT_Face ft_face = NULL;
   FT_Error err = FT_New_Memory_Face (library,
     (const FT_Byte *) font_s, font_l, font_index, &ft_face);
   if(err) { luaL_error(L, "FT_New_Memory_Face failed"); }
+  upem = ft_face->units_per_EM;
+  ascender = ft_face->ascender / (double)upem;
+  descender = ft_face->descender / (double)upem;
+  FT_Done_Face(ft_face);
+#else
+  hb_blob_t* blob = hb_blob_create (font_s, font_l, HB_MEMORY_MODE_WRITABLE, (void*)font_s, NULL);
+  hb_face_t* hbFace = hb_face_create (blob, font_index);
+  hb_font_t* hbFont = hb_font_create (hbFace);
+  hb_font_extents_t metrics = {0,0,0};
+  upem = hb_face_get_upem(hbFace);
+  hb_ft_font_set_funcs(hbFont);
+  hb_font_get_extents(hbFont, &metrics);
+  ascender = metrics.ascender / (double)upem;
+  descender = metrics.descender / (double)upem;
+  hb_font_destroy(hbFont);
+#endif
+
   lua_newtable(L);
   lua_pushstring(L, "ascender");
-  lua_pushnumber(L, (ft_face->ascender / (double)ft_face->units_per_EM));
+  lua_pushnumber(L, ascender);
   lua_settable(L, -3);
   lua_pushstring(L, "descender");
-  lua_pushnumber(L, -ft_face->descender / (double)ft_face->units_per_EM);
+  lua_pushnumber(L, descender);
   lua_settable(L, -3);
-  FT_Done_Face(ft_face);
+
   return 1;
 }
 
