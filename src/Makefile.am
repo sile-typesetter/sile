@@ -13,8 +13,8 @@ to_copy += .libs/justenoughlibtexpdf.@SHARED_LIB_EXT@
 
 fontmetrics_la_SOURCES = fontmetrics.c
 fontmetrics_la_LDFLAGS = -module -avoid-version -shared -no-undefined
-fontmetrics_la_CFLAGS = $(FREETYPE_CFLAGS) $(LUA_INCLUDE)
-fontmetrics_la_LIBADD = $(FREETYPE_LIBS) $(LUA_LIB)
+fontmetrics_la_CFLAGS = $(FREETYPE_CFLAGS) $(LUA_INCLUDE) $(HARFBUZZ_CFLAGS)
+fontmetrics_la_LIBADD = $(FREETYPE_LIBS) $(LUA_LIB) $(HARFBUZZ_LIBS)
 to_copy += .libs/fontmetrics.@SHARED_LIB_EXT@
 
 if ICU
