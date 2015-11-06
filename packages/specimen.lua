@@ -18,3 +18,18 @@ SILE.registerCommand("repertoire", function(o,c)
     SILE.typesetter:pushPenalty({penalty = 0})
   end
 end)
+
+SILE.registerCommand("pangrams", function (o,c)
+  pg = {
+    "Sphinx of black quartz, judge my vow!",
+    "The five boxing wizards jump quickly.",
+    "Five quacking zephyrs jolt my wax bed.",
+    "Pack my box with five dozen liquor jugs.",
+    "Grumpy wizards make toxic brew for the evil queen and jack.",
+    "Voix ambiguë d’un cœur qui au zéphyr préfère les jattes de kiwi.",
+  }
+  for i = 1, #pg do
+    SILE.typesetter:typeset(pg[i] .. " ")
+  end
+  SILE.call("bigskip")
+end)
