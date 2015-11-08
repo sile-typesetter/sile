@@ -91,7 +91,6 @@ SILE.registerCommand("sync", function (o,c)
   local anybreak = false
   local maxheight = SILE.length.new()
   allTypesetters(function (n,t)
-    t:debugState()
     t:leaveHmode(true)
     -- Now we have each typesetter's content boxed up onto the output stream
     -- but page breaking has not been run. See if page breaking would cause a
