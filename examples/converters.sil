@@ -1,4 +1,4 @@
-\begin[papersize=a4,class=plain]{document}
+\begin[class=plain]{document}
 
 \script[src=packages/image]
 \script[src=packages/converters]

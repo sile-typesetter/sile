@@ -1,4 +1,4 @@
-\begin[papersize=a4,class=jplain]{document}%
+\begin[class=jplain]{document}%
 \show-hanmen%
 \script[src=packages/ruby]
 \font[family=Hiragino Mincho Pro,language=ja]%

@@ -1,4 +1,4 @@
-\begin[papersize=a4]{document}
+\begin{document}
 \script[src=packages/linespacing]
 
 % TeX algorithm line spacing

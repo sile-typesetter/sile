@@ -1,4 +1,4 @@
-\begin[papersize=a4,class=perseus]{document}%
+\begin[class=perseus]{document}%
 \script[src=packages/grid]%
 \grid[spacing=13pt]%
 \define[command=gk]{\font[family=Cardo]{\process}}%
