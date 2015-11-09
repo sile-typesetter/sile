@@ -3,7 +3,7 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	34.82079
 My 	80.40451
-Set font 	Gentium;15;800;normal;normal;;LTR
+Set font 	Gentium;15;800;regular;normal;;LTR
 T	16 14 17	(0.1)
 Mx 	56.33266
 T	51 80 76 73 84	(Split)
@@ -11,7 +11,7 @@ Mx 	88.71367
 T	38 79 79 84 78 79 84 69	(Footnote)
 Mx 	34.82079
 My 	111.40451
-Set font 	Gentium;10;200;normal;normal;;LTR
+Set font 	Gentium;10;200;regular;normal;;LTR
 T	44 79 82 69 77	(Lorem)
 Mx 	64.17415
 T	73 80 83 85 77	(ipsum)
@@ -89,15 +89,15 @@ Mx 	270.30565
 T	67 79 77 77 79 68 79	(commodo)
 Mx 	311.02830
 My 	136.22580
-Set font 	Gentium;6.8115234375;200;normal;normal;;LTR
+Set font 	Gentium;6.8115234375;200;regular;normal;;LTR
 T	17	(1)
 Mx 	316.62378
 My 	139.40451
-Set font 	Gentium;10;200;normal;normal;;LTR
+Set font 	Gentium;10;200;regular;normal;;LTR
 T	67 79 78 83 69 81 85 65 84 14	(consequat.)
 Mx 	34.82079
 My 	151.67610
-Set font 	Gentium;9;200;normal;normal;;LTR
+Set font 	Gentium;9;200;regular;normal;;LTR
 T	17 14	(1.)
 Mx 	62.10026
 T	40 79 77 79 69 79 84 69 76	(Homoeotel)
@@ -765,7 +765,7 @@ Mx 	331.97437
 T	38 79 79 84 78 79 84 69	(Footnote)
 [1] Mx 	195.46105
 My 	519.80194
-Set font 	Gentium;10;200;normal;normal;;LTR
+Set font 	Gentium;10;200;regular;normal;;LTR
 T	17	(1)
 New page
 Mx 	58.73386
@@ -839,7 +839,7 @@ Mx 	242.85748
 T	76 65 66 79 82 85 77 14	(laborum.)
 Mx 	78.73386
 My 	428.66731
-Set font 	Gentium;9;200;normal;normal;;LTR
+Set font 	Gentium;9;200;regular;normal;;LTR
 T	51 79 89 12	(Soy,)
 Mx 	96.51261
 T	72 85 66 66 85 66	(hubbub)
@@ -1006,7 +1006,7 @@ Mx 	309.78230
 T	71 85 65 82 68 69 82 14	(guarder.)
 [2] Mx 	219.37413
 My 	519.75311
-Set font 	Gentium;10;200;normal;normal;;LTR
+Set font 	Gentium;10;200;regular;normal;;LTR
 T	18	(2)
 End page
 Finish

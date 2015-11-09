@@ -14,7 +14,8 @@
 \skip[height=20pt]
 
 % Now base font size changed, 1.5 em is bigger
-\font[size=20pt]Lorem ipsum.\hfill\break{}Some tall, high ascenders.
+\font[size=20pt]
+Lorem ipsum.\hfill\break{}Some tall, high ascenders.
 
 \skip[height=20pt]
 

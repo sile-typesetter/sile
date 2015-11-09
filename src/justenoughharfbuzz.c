@@ -34,6 +34,7 @@ int face_from_options(lua_State* L) {
   int weight = 100;
   const char *script = "latin";
   const char *language = "eng";
+  const char *style = "Regular";
   int direction = HB_DIRECTION_LTR;
 
   if (!lua_istable(L, 1)) return 0;
@@ -86,9 +87,7 @@ int face_from_options(lua_State* L) {
   lua_pushstring(L, "style");
   lua_gettable(L, -2);
   if (lua_isstring(L, -1)) {
-    const char* newStyleAsText = lua_tostring(L, -1);
-    if (!strcmp(newStyleAsText, "italic"))
-      slant = FC_SLANT_ITALIC;
+    style = lua_tostring(L, -1);
   }
   lua_pop(L,1);
 
@@ -96,7 +95,7 @@ int face_from_options(lua_State* L) {
 
   FcPatternAddString (p, FC_FAMILY, (FcChar8*)(family));
   FcPatternAddDouble (p, FC_SIZE, pointSize);
-  FcPatternAddInteger(p, FC_SLANT, slant);
+  FcPatternAddString (p, FC_STYLE, style);
   FcPatternAddInteger(p, FC_WEIGHT, weight);
 
   // /* Add fallback fonts here. Some of the standard 14 should be fine. */

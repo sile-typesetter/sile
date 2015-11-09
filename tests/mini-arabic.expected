@@ -3,10 +3,10 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	337.38322
 My 	42.79796
-Set font 	Noto Naskh Arabic;18;200;normal;normal;;LTR
+Set font 	Noto Naskh Arabic;18;200;regular;normal;;LTR
 T	1491 1499 1495 1495	(1955)
 Mx 	307.35560
-Set font 	Noto Naskh Arabic;18;200;normal;normal;;RTL
+Set font 	Noto Naskh Arabic;18;200;regular;normal;;RTL
 T	365 408 495	(میں)
 Mx 	287.71666
 T	70 39	(ان)
@@ -20,10 +20,10 @@ Mx 	201.29885
 T	212	(۔)
 Mx 	337.38322
 My 	63.42198
-Set font 	Noto Naskh Arabic;18;200;normal;normal;;LTR
+Set font 	Noto Naskh Arabic;18;200;regular;normal;;LTR
 T	1491 1499 1495 1495	(1955)
 Mx 	307.37467
-Set font 	Noto Naskh Arabic;18;200;normal;normal;;RTL
+Set font 	Noto Naskh Arabic;18;200;regular;normal;;RTL
 T	365 408 495	(میں)
 Mx 	287.75480
 T	70 39	(ان)
@@ -36,10 +36,10 @@ T	39 503 369	(ہوا)
 Mx 	201.39422
 T	212	(۔)
 Mx 	160.22625
-Set font 	Noto Naskh Arabic;18;200;normal;normal;;LTR
+Set font 	Noto Naskh Arabic;18;200;regular;normal;;LTR
 T	1491 1499 1494 1497	(1947)
 Mx 	130.21770
-Set font 	Noto Naskh Arabic;18;200;normal;normal;;RTL
+Set font 	Noto Naskh Arabic;18;200;regular;normal;;RTL
 T	365 408 495	(میں)
 Mx 	109.65740
 T	193 72	(وہ)
@@ -47,10 +47,10 @@ Mx 	105.28045
 T	212	(۔)
 Mx 	337.38322
 My 	84.04601
-Set font 	Noto Naskh Arabic;18;200;normal;normal;;LTR
+Set font 	Noto Naskh Arabic;18;200;regular;normal;;LTR
 T	1491 1499 1495 1495	(1955)
 Mx 	307.37562
-Set font 	Noto Naskh Arabic;18;200;normal;normal;;RTL
+Set font 	Noto Naskh Arabic;18;200;regular;normal;;RTL
 T	365 408 495	(میں)
 Mx 	287.75670
 T	70 39	(ان)
@@ -63,10 +63,10 @@ T	39 503 369	(ہوا)
 Mx 	201.39896
 T	212	(۔)
 Mx 	155.44801
-Set font 	Noto Naskh Arabic;18;200;normal;normal;;LTR
+Set font 	Noto Naskh Arabic;18;200;regular;normal;;LTR
 T	1491 1499 1494 1497	(1947)
 Mx 	125.44041
-Set font 	Noto Naskh Arabic;18;200;normal;normal;;RTL
+Set font 	Noto Naskh Arabic;18;200;regular;normal;;RTL
 T	365 408 495	(میں)
 Mx 	104.88106
 T	193 72	(وہ)
@@ -76,10 +76,10 @@ Mx 	353.32658
 My 	106.31358
 T	365 408 495	(میں)
 Mx 	307.34912
-Set font 	Noto Naskh Arabic;18;200;normal;normal;;LTR
+Set font 	Noto Naskh Arabic;18;200;regular;normal;;LTR
 T	1491 1499 1495 1495	(1955)
 Mx 	277.31502
-Set font 	Noto Naskh Arabic;18;200;normal;normal;;RTL
+Set font 	Noto Naskh Arabic;18;200;regular;normal;;RTL
 T	365 408 495	(میں)
 Mx 	257.49381
 T	434 407 34	(آیا)
@@ -89,10 +89,10 @@ Mx 	353.32658
 My 	128.58116
 T	365 408 495	(میں)
 Mx 	312.15861
-Set font 	Noto Naskh Arabic;18;200;normal;normal;;LTR
+Set font 	Noto Naskh Arabic;18;200;regular;normal;;LTR
 T	1491 1499 1495 1495	(1955)
 Mx 	282.12355
-Set font 	Noto Naskh Arabic;18;200;normal;normal;;RTL
+Set font 	Noto Naskh Arabic;18;200;regular;normal;;RTL
 T	365 408 495	(میں)
 Mx 	262.30139
 T	434 407 34	(آیا)
@@ -100,7 +100,7 @@ Mx 	238.74388
 T	434 373 440	(تھا)
 [1] Mx 	207.41759
 My 	553.73265
-Set font 	Gentium;10;200;normal;normal;;LTR
+Set font 	Gentium;10;200;regular;normal;;LTR
 T	17	(1)
 End page
 Finish

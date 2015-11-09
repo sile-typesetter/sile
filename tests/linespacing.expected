@@ -3,24 +3,24 @@ Set paper size 	595.275597	841.8897729
 Begin page
 Mx 	49.76378
 My 	49.66285
-Set font 	Gentium;10;200;normal;normal;;LTR
+Set font 	Gentium;10;200;regular;normal;;LTR
 T	51 77 65 76 76	(Small)
 Mx 	75.26125
 T	84 69 88 84	(text)
 Mx 	49.76378
 My 	64.66285
-Set font 	Gentium;15;200;normal;normal;;LTR
+Set font 	Gentium;15;200;regular;normal;;LTR
 T	34 73 71	(Big)
 Mx 	73.43306
 T	84 69 88 84 209	(text!)
 Mx 	49.76378
 My 	90.18824
-Set font 	Gentium;30;200;normal;normal;;LTR
+Set font 	Gentium;30;200;regular;normal;;LTR
 T	34 73 71 71 69 82	(Bigger)
 Mx 	137.19870
 T	84 69 88 84	(text)
 Mx 	190.70132
-Set font 	Gentium;15;200;normal;normal;;LTR
+Set font 	Gentium;15;200;regular;normal;;LTR
 T	44 79 82 69 77	(Lorem)
 Mx 	234.20638
 T	73 80 83 85 77	(ipsum)
@@ -171,24 +171,24 @@ Mx 	245.00834
 T	76 65 66 79 82 85 77 14	(laborum.)
 Mx 	49.76378
 My 	188.63062
-Set font 	Linux Libertine O;11;200;normal;normal;;LTR
+Set font 	Linux Libertine O;11;200;regular;normal;;LTR
 T	52 78 66 77 77	(Small)
 Mx 	77.98845
 T	85 70 89 85	(text)
 Mx 	49.76378
 My 	203.63062
-Set font 	Linux Libertine O;15;200;normal;normal;;LTR
+Set font 	Linux Libertine O;15;200;regular;normal;;LTR
 T	35 74 72	(Big)
 Mx 	74.73560
 T	85 70 89 85 2	(text!)
 Mx 	49.76378
 My 	228.61062
-Set font 	Linux Libertine O;30;200;normal;normal;;LTR
+Set font 	Linux Libertine O;30;200;regular;normal;;LTR
 T	35 74 72 72 70 83	(Bigger)
 Mx 	139.34979
 T	85 70 89 85	(text)
 Mx 	190.83279
-Set font 	Linux Libertine O;15;200;normal;normal;;LTR
+Set font 	Linux Libertine O;15;200;regular;normal;;LTR
 T	45 80 83 70 78	(Lorem)
 Mx 	234.95079
 T	74 81 84 86 78	(ipsum)
@@ -339,7 +339,7 @@ Mx 	243.64874
 T	77 66 67 80 83 86 78 15	(laborum.)
 [1] Mx 	295.29161
 My 	780.61769
-Set font 	Gentium;10;200;normal;normal;;LTR
+Set font 	Gentium;10;200;regular;normal;;LTR
 T	17	(1)
 End page
 Finish

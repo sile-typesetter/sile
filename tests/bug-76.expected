@@ -3,17 +3,17 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	333.37540
 My 	48.77452
-Set font 	Noto Naskh Arabic;18;200;normal;normal;;RTL
+Set font 	Noto Naskh Arabic;18;200;regular;normal;;RTL
 T	42 47 434 478 459	(سعادت)
 Mx 	294.27280
 T	497 460 449	(حسن)
 Mx 	258.20242
-Set font 	Noto Naskh Arabic;18;200;normal;normal;;LTR
+Set font 	Noto Naskh Arabic;18;200;regular;normal;;LTR
 T	1491 1492 1493	(123)
 Mx 	206.53146
 T	0 0 0 0	(abcd)
 Mx 	172.95717
-Set font 	Noto Naskh Arabic;18;200;normal;normal;;RTL
+Set font 	Noto Naskh Arabic;18;200;regular;normal;;RTL
 T	503 328 499 495	(منٹو)
 Mx 	140.91219
 T	72 47 49 39	(اردو)
@@ -47,10 +47,10 @@ T	476 493 468	(ضلع)
 Mx 	98.12611
 T	365 408 495	(میں)
 Mx 	51.57956
-Set font 	Noto Naskh Arabic;18;200;normal;normal;;LTR
+Set font 	Noto Naskh Arabic;18;200;regular;normal;;LTR
 T	1491 1499 1491 1492	(1912)
 Mx 	20.97638
-Set font 	Noto Naskh Arabic;18;200;normal;normal;;RTL
+Set font 	Noto Naskh Arabic;18;200;regular;normal;;RTL
 T	365 408 495	(میں)
 Mx 	373.08048
 My 	88.88390
@@ -67,7 +67,7 @@ Mx 	266.41828
 T	186 434 495	(ماں)
 [1] Mx 	207.41759
 My 	553.73265
-Set font 	Gentium;10;200;normal;normal;;LTR
+Set font 	Gentium;10;200;regular;normal;;LTR
 T	17	(1)
 End page
 Finish

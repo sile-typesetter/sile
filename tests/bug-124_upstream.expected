@@ -3,10 +3,10 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	359.43009
 My 	66.75597
-Set font 	Noto Naskh Arabic;40;200;normal;normal;;RTL
+Set font 	Noto Naskh Arabic;40;200;regular;normal;;RTL
 T		(ألمّ)
 Mx 	318.29717
-Set font 	Scheherazade;40;200;normal;normal;;RTL
+Set font 	Scheherazade;40;200;regular;normal;;RTL
 T	120	(—)
 Mx 	279.00019
 T		(ألمّ)
@@ -22,7 +22,7 @@ Mx 	286.88698
 T		(السُّــرورُ)
 [1] Mx 	207.41759
 My 	553.73265
-Set font 	Gentium;10;200;normal;normal;;LTR
+Set font 	Gentium;10;200;regular;normal;;LTR
 T	17	(1)
 End page
 Finish

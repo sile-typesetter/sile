@@ -8,7 +8,7 @@ T	50 65 71 71 69 68	(Ragged)
 Mx 	55.17716
 T	76 69 70 84	(left)
 Mx 	69.45939
-Set font 	Gentium;10;200;normal;normal;;LTR
+Set font 	Gentium;10;200;regular;normal;;LTR
 T	76 79 82 69 77	(lorem)
 Mx 	96.01212
 T	73 80 83 85 77	(ipsum)
@@ -221,7 +221,7 @@ T	50 65 71 71 69 68	(Ragged)
 Mx 	50.49786
 T	82 73 71 72 84	(right)
 Mx 	71.17169
-Set font 	Gentium;10;200;normal;normal;;LTR
+Set font 	Gentium;10;200;regular;normal;;LTR
 T	76 79 82 69 77	(lorem)
 Mx 	97.72443
 T	73 80 83 85 77	(ipsum)
@@ -432,7 +432,7 @@ My 	269.33214
 Set font 	Gentium;10;200;italic;normal;;LTR
 T	35 69 78 84 69 82 69 68	(Centered)
 Mx 	61.69005
-Set font 	Gentium;10;200;normal;normal;;LTR
+Set font 	Gentium;10;200;regular;normal;;LTR
 T	76 79 82 69 77	(lorem)
 Mx 	88.24279
 T	73 80 83 85 77	(ipsum)
@@ -519,7 +519,7 @@ My 	329.33214
 Set font 	Gentium;10;200;italic;normal;;LTR
 T	42 85 83 84 73 70 73 69 68	(Justified)
 Mx 	74.72285
-Set font 	Gentium;10;200;normal;normal;;LTR
+Set font 	Gentium;10;200;regular;normal;;LTR
 T	76 79 82 69 77	(lorem)
 Mx 	102.15096
 T	73 80 83 85 77	(ipsum)
@@ -736,7 +736,7 @@ T	50 73 71 72 84	(Right)
 Mx 	108.17521
 T	65 76 73 71 78 69 68	(aligned)
 Mx 	137.74064
-Set font 	Gentium;10;200;normal;normal;;LTR
+Set font 	Gentium;10;200;regular;normal;;LTR
 T	76 79 82 69 77	(lorem)
 Mx 	164.29337
 T	73 80 83 85 77	(ipsum)

@@ -3,7 +3,7 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	40.97638
 My 	36.24378
-Set font 	Kohinoor Devanagari;10;200;normal;normal;;LTR
+Set font 	Kohinoor Devanagari;10;200;regular;normal;;LTR
 T	78 86	(यह)
 Mx 	55.54770
 T	70 21 89	(दाग़)
@@ -13,7 +13,7 @@ Mx 	89.13035
 T	8 60 21 80 21	(उजाला)
 [1] Mx 	207.41759
 My 	553.73265
-Set font 	Gentium;10;200;normal;normal;;LTR
+Set font 	Gentium;10;200;regular;normal;;LTR
 T	17	(1)
 End page
 Finish

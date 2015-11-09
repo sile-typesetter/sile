@@ -3,7 +3,7 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	40.97638
 My 	36.74378
-Set font 	Linux Libertine O;10;200;normal;normal;;LTR
+Set font 	Linux Libertine O;10;200;regular;normal;;LTR
 T	35 86 85	(But)
 Mx 	57.79021
 T	84 80	(so)
@@ -796,13 +796,13 @@ Mx 	213.88398
 T	88 74 79 70 84 76 74 79 84 15 1761	(wineskins.”)
 Mx 	170.62378
 My 	365.70583
-Set font 	Linux Biolinum O;18;800;normal;normal;;LTR
+Set font 	Linux Biolinum O;18;800;regular;normal;;LTR
 T	36 73 66 81 85 70 83	(Chapter)
 Mx 	239.65178
 T	20	(3)
 Mx 	40.97638
 My 	382.91583
-Set font 	Linux Libertine O;10;200;normal;normal;;LTR
+Set font 	Linux Libertine O;10;200;regular;normal;;LTR
 T	2399 70 79	(Then)
 Mx 	63.51304
 T	43 70 84 86 84	(Jesus)
