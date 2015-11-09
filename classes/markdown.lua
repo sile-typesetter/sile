@@ -14,7 +14,7 @@ SILE.inputs.markdown = {
     local inp = fh:read("*all")
     local parse = reader.new(writer)
     local t = parse(inp)
-    t = { [1] = t, id = "document", attr = { class = "markdown", papersize = "a4" }}
+    t = { [1] = t, id = "document", attr = { class = "markdown" }}
     SILE.inputs.common.init(fn, t)
     SILE.process(t[1])
   end
