@@ -1,10 +1,12 @@
 <ul>
   {% for p in site.pages | sort:weight %}
+    {% unless p.url contains "blog/page" %}
     <li>
       <a {% if p.url == page.url %}class="active"{% endif %} href="{{ p.url }}">
         {{ p.title }}
       </a>
     </li>
+    {% endunless %}
   {% endfor %}
   <li> <a href="/images/sile-0.9.2.pdf">Manual (PDF)</a></li>
   <li> <a href="https://github.com/simoncozens/sile/releases"><strong>Download</strong></a></li>
