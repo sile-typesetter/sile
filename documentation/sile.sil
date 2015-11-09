@@ -211,7 +211,7 @@ To begin with, here’s the most basic SILE file of all:
 
 \begin{verbatim}
 \line
-\\begin[papersize=a4]\{document\}
+\\begin\{document\}
 Hello SILE!
 \\end\{document\}
 \line
@@ -360,7 +360,7 @@ Let’s now go back and reconsider the first SILE file we saw:
 
 \begin{verbatim}
 \line
-\\begin[papersize=a4]\{document\}
+\\begin\{document\}
 Hello SILE!
 \\end\{document\}
 \line
@@ -368,15 +368,26 @@ Hello SILE!
 
 \section{Defining the paper size}
 
-A document starts with a \code{\\begin\{document\}} command, which \em{must}
-define the paper size, and ends with \code{\\end\{document\}}. In between, SILE
-documents are made up of two elements: text to be typeset on the page, such as
-“Hello SILE!” in our example, and commands.
+A document starts with a \code{\\begin\{document\}} command and ends with
+\code{\\end\{document\}}. In between, SILE documents are made up of two
+elements: text to be typeset on the page, such as “Hello SILE!” in our example,
+and commands.
 
-SILE knows about the ISO standard A, B and C
-series paper sizes, as well as the following traditional sizes: letter, note,
-legal, executive, halfletter, halfexecutive, statement, folio, quarto, ledger,
-tabloid.
+The default paper size is A4, although each class may override this value. To
+manually change the paper size, an optional argument may be added to the docmument
+declaration:
+
+\begin{verbatim}
+\line
+\\begin[papersize=letter]\{document\}
+\line
+\end{verbatim}
+
+SILE knows about the ISO standard A, B and C series paper sizes using names a4,
+b5, etc. Also available are the traditional sizes letter, note, legal,
+executive, halfletter, halfexecutive, statement, folio, quarto, ledger,
+tabloid, the series archA through archE, as well as DL, Comm10, Monarch, flsa,
+flse, csheet, dsheet, and esheet.
 
 If you need a paper size for your document which is not one of the standards,
 then you can specify it by dimensions:
@@ -505,7 +516,7 @@ a moment.}
 
 \begin{verbatim}
 \line
-\\begin[papersize=a4]\{document\}
+\\begin\{document\}
 \line
 \end{verbatim}
 
@@ -581,7 +592,7 @@ In other words, the XML form of the above document would be:
 
 \begin{verbatim}
 \line
-<sile papersize="a4">
+<sile>
 Hello SILE!
 </sile>
 \line
@@ -719,7 +730,7 @@ and chapter, section and subsection headings.
 To use the commands in this section, you will need to request the \em{book}
 class by specifying in your \code{\\begin\{document\}} command ‘\code{[class=book]}’;
 for example, the document you are currently reading begins with the command
-\code{\\begin[papersize=a4,class=book]\{document\}}.
+\code{\\begin[class=book]\{document\}}.
 
 \subsection{Chapters and Sections}
 
@@ -868,7 +879,7 @@ for instance, you may wish to write a thesis like this:
 
 \begin{verbatim}
 \line
-\\begin[papersize=a4,class=thesis]\{document\}
+\\begin[class=thesis]\{document\}
 \\include[src=macros]
 \\include[src=chap1]
 \\include[src=chap2]
@@ -2323,7 +2334,7 @@ and uses that as a wrapper around your file to be processed. If that then begins
 
 \begin{verbatim}
 \line
-\\begin[papersize=a4,class=\em{classname}]\{document\}%
+\\begin[class=\em{classname}]\{document\}%
 \line
 \end{verbatim}
 
@@ -2931,7 +2942,6 @@ Here’s how to do it.
 require("core/sile")
 SILE.outputFilename = "byhand.pdf"
 local plain = require("classes/plain")
-plain.options.papersize("a4")
 SILE.documentState.documentClass = plain;
 local ff = plain:init()
 SILE.typesetter:init(ff)
@@ -2940,14 +2950,13 @@ SILE.typesetter:init(ff)
 
 Loading the SILE core library also loads up all the other parts of SILE. We
 need to set the output file name and load the class that we want to use to
-typeset the document with. As with an ordinary SILE document, the \code{papersize}
-option is mandatory, so we call the \code{options.papersize} method of our
-document class to set the paper size. We then need to tell SILE what class
-we are actually using, call \code{init} on the class to get the first frame
-for typesetting, and then initialize the typesetter with this frame. This
-is all that SILE does to get itself ready to typeset.
+typeset the document with.  We then need to tell SILE what class we are
+actually using, call \code{init} on the class to get the first frame for
+typesetting, and then initialize the typesetter with this frame. This is all
+that SILE does to get itself ready to typeset.
 
-After this, all the usual API calls will work: \code{SILE.call}, \code{SILE.typesetter:typeset} and so on.
+After this, all the usual API calls will work: \code{SILE.call},
+\code{SILE.typesetter:typeset} and so on.
 
 \begin{verbatim}
 SILE.typesetter:typeset(data)
