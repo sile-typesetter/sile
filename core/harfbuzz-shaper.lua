@@ -1,6 +1,7 @@
 
 if not SILE.shapers then SILE.shapers = { } end
 local hb = require("justenoughharfbuzz")
+local fontconfig = require("justenoughfontconfig")
 SILE.require("core/base-shaper")
 
 local smallTokenSize = 20 -- Small words will be cached
@@ -41,7 +42,7 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
     return items
   end,
   getFace = function(opts)
-    local face = hb._face(opts)
+    local face = fontconfig._face(opts)
     SU.debug("fonts", "Resolved font family "..opts.font.." -> "..(face and face.filename))
     local fh = io.open(face.filename) or SU.error("Can't open "..face.filename)
     face.data = fh:read("*all")
