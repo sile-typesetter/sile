@@ -9,9 +9,7 @@ if not os.getenv 'LUA_REPL_RLWRAP' then
   io.stderr:write('This is SILE '..SILE.version..'\n')
 end
 SILE.init()
-if unparsed and unparsed[1] then
-  -- Turn slashes around in the event we get passed a path from a Windows shell
-  SILE.masterFilename = unparsed[1]:gsub("\\", "/")
+if SILE.masterFilename then
   if SILE.preamble then
     print("Loading "..SILE.preamble)
     local c = SILE.resolveFile("classes/"..SILE.preamble)
