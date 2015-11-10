@@ -158,6 +158,9 @@ SILE.defaultTypesetter = std.object {
       end
     end
     for i =1,#newNl do nl[i]=newNl[i] end
+    if #nl > #newNl then
+      for i=#newNl+1,#nl do nl[i]=nil end
+    end
   end,
   -- Empties self.state.nodes, breaks into lines, puts lines into vbox, adds vbox to
   -- Turns a node list into a list of vboxes
