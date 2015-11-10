@@ -148,8 +148,8 @@ SILE.baseClass = std.object {
   init = function(self)
     SILE.settings.declare({
       name = "current.parindent",
-      type = "Glue",
-      default = SILE.settings.get("document.parindent"),
+      type = "Glue or nil",
+      default = nil,
       help = "Glue at start of paragraph"
     })
     SILE.outputter.init(self);
@@ -209,9 +209,9 @@ SILE.baseClass = std.object {
     assert(#SILE.typesetter.state.nodes == 0 and #SILE.typesetter.state.outputQueue == 0, "queues not empty")
     SILE.outputter:finish()
  end,
-  newPar = function(typesetter)
-    typesetter:pushGlue(SILE.settings.get("current.parindent"))
-    SILE.settings.set("current.parindent", SILE.settings.get("document.parindent"))
+  newPar = function(typesetter)    
+    typesetter:pushGlue(SILE.settings.get("current.parindent") or SILE.settings.get("document.parindent"))
+    SILE.settings.set("current.parindent", nil)
   end,
   endPar = function(typesetter)
     local g = SILE.settings.get("document.parskip")
