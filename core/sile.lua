@@ -61,6 +61,8 @@ SILE.init = function()
 end
 
 SILE.require = function(d)
+  local f = SILE.resolveFile(d..".lua")
+  if f then return require(f:gsub(".lua$","")) end
   return require(d)
 end
 
