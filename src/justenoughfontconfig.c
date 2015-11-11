@@ -5,16 +5,6 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
-typedef struct {
-  char* family;
-  char* lang;
-  double pointSize;
-  int weight;
-  int slant;
-  char* style;
-  char* script;
-} fontOptions;
-
 int face_from_options(lua_State* L) {
   FcChar8 * font_path, * fullname, * familyname;
   FcPattern* p;
