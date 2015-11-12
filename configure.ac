@@ -11,6 +11,26 @@ m4_include([m4/adl_recursive_eval.m4])
 # Checks for programs.
 AC_PROG_CC
 
+AC_CANONICAL_HOST
+
+case $host_os in
+  darwin* )
+    AC_PROG_OBJC
+    save_LIBS="$LIBS"
+    LIBS="$LIBS -framework AppKit"
+    AC_LANG_PUSH([Objective C])
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[]],[[]])],
+      have_appkit=yes
+      AC_DEFINE([APPKIT], [1], [Build using AppKit])
+      ],
+      [have_appkit=no]
+    )
+    AC_LANG_POP([Objective C])
+   LIBS="$save_LIBS"
+esac
+
+AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
+
 # Checks for HB/libtexpdf combination
 
 AC_ARG_WITH([harfbuzz],
@@ -122,6 +142,7 @@ AC_SUBST([HARFBUZZ_LIBS])
 AC_SUBST([SILE_PATH])
 AC_SUBST([SILE_LIB_PATH])
 AC_SUBST([shared_ext])
+AC_SUBST([APPKIT])
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_CONFIG_FILES([sile], [chmod +x sile])
 

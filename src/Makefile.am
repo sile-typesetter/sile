@@ -1,4 +1,4 @@
-pkglib_LTLIBRARIES = justenoughharfbuzz.la justenoughlibtexpdf.la justenoughfontconfig.la fontmetrics.la
+pkglib_LTLIBRARIES = justenoughharfbuzz.la justenoughlibtexpdf.la justenoughfontconfig.la fontmetrics.la macfonts.la
 justenoughharfbuzz_la_SOURCES = justenoughharfbuzz.c
 justenoughharfbuzz_la_LDFLAGS = -module -avoid-version -shared -no-undefined
 justenoughharfbuzz_la_CFLAGS = $(HARFBUZZ_CFLAGS) $(FREETYPE_CFLAGS) $(LUA_INCLUDE)
@@ -10,6 +10,14 @@ justenoughfontconfig_la_LDFLAGS = -module -avoid-version -shared -no-undefined
 justenoughfontconfig_la_CFLAGS = $(FONTCONFIG_CFLAGS) $(LUA_INCLUDE)
 justenoughfontconfig_la_LIBADD = $(FONTCONFIG_LIBS) $(LUA_LIB)
 to_copy += .libs/justenoughfontconfig.@SHARED_LIB_EXT@
+
+if APPKIT
+macfonts_la_SOURCES = macfonts.m
+macfonts_la_LDFLAGS = -module -avoid-version -shared -no-undefined
+macfonts_la_OBJCFLAGS = $(FREETYPE_CFLAGS) $(LUA_INCLUDE)  -fmodules
+macfonts_la_LIBADD = $(FREETYPE_LIBS) $(LUA_LIB)
+to_copy += .libs/macfonts.@SHARED_LIB_EXT@
+endif
 
 justenoughlibtexpdf_la_SOURCES = justenoughlibtexpdf.c imagebbox.c
 justenoughlibtexpdf_la_LDFLAGS = -module -avoid-version -shared -no-undefined
