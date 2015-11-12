@@ -39,7 +39,7 @@ case $host_os in
    LIBS="$save_LIBS"
    ;;
   *)
-    AC_MSG_RESULT([yes])
+    AC_MSG_RESULT([no])
     ;;
 esac
 
