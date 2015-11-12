@@ -1,0 +1,54 @@
+\begin[papersize=a5,direction=RTL]{document}
+\set[parameter=document.parindent,value=0pt]
+\nofolios
+\font[family=Scheherazade,style=Bold,language=urd,size=36pt]
+\center{لکیریں}
+\medskip
+\set[parameter=document.baselineskip,value=0.75em]
+\set[parameter=document.parskip,value=0.5em]
+\font[family=Amiri,style=Regular,language=urd,size=14pt]
+\begin{raggedright}
+لکیریں کھینچیں ہیں کاغز پہ مگر\break
+کہانی کویٔ بنتی نہیں\break 
+کصّے تمام یہں میرے پاس مگر\break 
+حقیقت کویٔ ملتی نہیں
+
+کھڈے ہوۓ ہیں اس موڑ پر \break
+کھو جانے کے لۓ تیّار\break 
+نقشے سارے جلا دۓ ہیں لیکن\break 
+گُمراہی ملتی نہیں
+
+کب سے ہیں اِسی کوشش میں اب\break 
+کہ نیند ہی بچاےگی\break 
+سپنوں میں بھی نضارے لیکن\break 
+سنہرے ملتے نہیں
+
+کب سے ہیں اِسی کوشش میں اب\break 
+کہ نیند ہی بچاےگی\break 
+سپنوں میں بھی نضارے لیکن\break 
+سنہرے ملتے نہیں
+
+کب سے ہیں اِسی کوشش میں اب\break 
+کہ نیند ہی بچاےگی\break 
+سپنوں میں بھی نضارے لیکن\break 
+سنہرے ملتے نہیں
+
+کب سے ہیں اِسی کوشش میں اب\break 
+کہ نیند ہی بچاےگی\break 
+سپنوں میں بھی نضارے لیکن\break 
+سنہرے ملتے نہیں
+\eject\par
+\font[family=Scheherazade,style=Bold,language=urd,size=36pt]
+\center{سفر}
+\medskip
+\font[family=Amiri,style=Regular,language=urd,size=14pt]
+سفر میں خود ہی گھایل ہو گیا ہوں\break 
+میں اپنا راستہ روکے کھڑا ہوں
+
+میرا گھر دور ھوتا جا رہا ہے\break
+میں پیچھے کی ترف چلتا رہا ہوں
+
+میری منزل میرے اندر ھو شاید\break 
+جسے خالِدؔ میں باہر ڈھونڈھتا ہوں
+\end{raggedright}
+\end{document}
