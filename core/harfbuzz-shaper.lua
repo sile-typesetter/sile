@@ -1,7 +1,15 @@
 
 if not SILE.shapers then SILE.shapers = { } end
 local hb = require("justenoughharfbuzz")
-local fontconfig = require("justenoughfontconfig")
+
+-- XXX This shouldn't be in the shaper. But still...
+
+local fontconfig
+
+if not pcall(function () fontconfig = require("macfonts") end) then
+  fontconfig = require("justenoughfontconfig")
+end
+
 SILE.require("core/base-shaper")
 
 local smallTokenSize = 20 -- Small words will be cached
