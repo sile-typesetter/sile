@@ -14,6 +14,7 @@ AC_PROG_OBJC
 
 AC_CANONICAL_HOST
 
+have_appkit=no
 case $host_os in
   darwin* )
     save_LIBS="$LIBS"
