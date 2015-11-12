@@ -10,12 +10,12 @@ m4_include([m4/adl_recursive_eval.m4])
 
 # Checks for programs.
 AC_PROG_CC
+AC_PROG_OBJC
 
 AC_CANONICAL_HOST
 
 case $host_os in
   darwin* )
-    AC_PROG_OBJC
     save_LIBS="$LIBS"
     LIBS="$LIBS -framework AppKit"
     AC_LANG_PUSH([Objective C])
