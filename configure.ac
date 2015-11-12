@@ -14,20 +14,33 @@ AC_PROG_OBJC
 
 AC_CANONICAL_HOST
 
+AC_MSG_CHECKING([for OS X])
 have_appkit=no
 case $host_os in
   darwin* )
+    AC_MSG_RESULT([yes])
+    AC_MSG_CHECKING([for AppKit works])
+
     save_LIBS="$LIBS"
     LIBS="$LIBS -framework AppKit"
     AC_LANG_PUSH([Objective C])
     AC_LINK_IFELSE([AC_LANG_PROGRAM([[]],[[]])],
+      [
       have_appkit=yes
       AC_DEFINE([APPKIT], [1], [Build using AppKit])
+      AC_MSG_RESULT([yes])
       ],
-      [have_appkit=no]
+      [
+      have_appkit=no
+      AC_MSG_RESULT([no])
+      ]
     )
     AC_LANG_POP([Objective C])
    LIBS="$save_LIBS"
+   ;;
+  *)
+    AC_MSG_RESULT([yes])
+    ;;
 esac
 
 AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
