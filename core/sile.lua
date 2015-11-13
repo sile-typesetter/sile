@@ -88,6 +88,8 @@ Options:
 
   parser:on ('--', parser.finished)
   _G.unparsed, _G.opts = parser:parse(_G.arg)
+  -- Turn slashes around in the event we get passed a path from a Windows shell
+  SILE.masterFilename = _G.unparsed[1]:gsub("\\", "/")
   SILE.debugFlags = {}
   if opts.backend then
     SILE.backend = opts.backend
@@ -180,6 +182,7 @@ end
 function SILE.resolveFile(fn)
   if file_exists(fn) then return fn end
   if file_exists(fn..".sil") then return fn..".sil" end
+  if not SILE.masterFilename then return nil end
 
   local dirname = SILE.masterFilename:match("(.-)[^%/]+$")
   for k in SU.gtoke(dirname..";"..tostring(os.getenv("SILE_PATH")), ";") do
