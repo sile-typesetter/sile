@@ -20,7 +20,8 @@ SILE.inputs.markdown = {
   end
 }
 
-SILE.require("packages/verbatim")
+SILE.require("packages/url")
+
 local book = SILE.require("classes/book")
 
 SILE.registerCommand("sect1", function(options, content)
@@ -48,20 +49,11 @@ SILE.registerCommand("bulletlist", function(options, content)
   SILE.process(content)
 end)
 
-SILE.registerCommand("code", function(options, content)
-  SILE.settings.temporarily(function()
-    SILE.call("verbatim:font")
-    SILE.process(content)
-    SILE.typesetter:typeset(" ")
-  end)
-end)
-
 SILE.registerCommand("link", function(options, content)
   -- SILE.settings.temporarily(function()
     -- SILE.call("verbatim:font")
     SILE.process(content)
   -- end)
 end)
-
 
 return book

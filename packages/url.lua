@@ -17,8 +17,18 @@ local filter = function (v, content, data)
   return result
 end
 
+SILE.require("packages/verbatim")
+
 SILE.registerCommand("url", function (options,content)
   local breakpat = options.breakpat or "/"
   local result = inputfilter.transformContent(content, filter, breakpat)
   SILE.call("code", {}, result)
+end)
+
+SILE.registerCommand("code", function(options, content)
+  SILE.settings.temporarily(function()
+    SILE.call("verbatim:font")
+    SILE.process(content)
+    SILE.typesetter:typeset(" ")
+  end)
 end)
