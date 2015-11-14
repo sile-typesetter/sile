@@ -10,7 +10,7 @@ local filter = function (v, content, data)
       table.insert(result, token.separator)
       table.insert(result, inputfilter.createCommand(
         content.pos, content.col, content.line,
-        "goodbreak", {}, nil
+        "penalty", {penalty = 100}, nil
       ))
     end
   end
