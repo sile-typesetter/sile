@@ -89,7 +89,9 @@ Options:
   parser:on ('--', parser.finished)
   _G.unparsed, _G.opts = parser:parse(_G.arg)
   -- Turn slashes around in the event we get passed a path from a Windows shell
-  SILE.masterFilename = _G.unparsed[1]:gsub("\\", "/")
+  if _G.unparsed[1] then
+    SILE.masterFilename = _G.unparsed[1]:gsub("\\", "/")
+  end
   SILE.debugFlags = {}
   if opts.backend then
     SILE.backend = opts.backend
