@@ -607,3 +607,9 @@ SILE.hyphenator.languages["tr"].patterns =
 "tu4r4k",
 "m1t4rak",
    };
+
+-- Internationalisation stuff
+SILE.doTexlike([[%
+\define[command=tableofcontents:title]{İçindekiler}%
+\define[command=book:chapter:pre:tr]{Bölüm }%
+]])
