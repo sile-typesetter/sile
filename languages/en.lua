@@ -597,3 +597,9 @@ SILE.hyphenator.languages["en"].exceptions = {"as-so-ciate", "as-so-ciates",
 "dec-li-na-tion", "oblig-a-tory", "phil-an-thropic", "present",
 "presents", "project", "projects", "reci-procity", "re-cog-ni-zance",
 "ref-or-ma-tion", "ret-ri-bu-tion", "ta-ble"};
+
+-- Internationalisation stuff
+SILE.doTexlike([[%
+\define[command=tableofcontents:title]{Table of Contents}%
+\define[command=book:chapter:pre:en]{Chapter }%
+]])

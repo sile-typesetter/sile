@@ -87,7 +87,7 @@ end)
 book.registerCommands = function()
   plain.registerCommands()
 SILE.doTexlike([[%
-\define[command=book:chapter:pre]{Chapter }%
+\define[command=book:chapter:pre]{}%
 \define[command=book:chapter:post]{\par}%
 \define[command=book:section:post]{ }%
 \define[command=book:subsection:post]{ }%

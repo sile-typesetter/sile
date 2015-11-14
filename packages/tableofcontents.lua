@@ -68,9 +68,10 @@ return {
   init = function (self)
     self:loadPackage("infonode")
 SILE.doTexlike([[%
+\define[command=tableofcontents:title]{}%
 \define[command=tableofcontents:notocmessage]{\tableofcontents:headerfont{Rerun SILE to process table of contents!}}%
 \define[command=tableofcontents:headerfont]{\font[size=24pt,weight=800]{\process}}%
-\define[command=tableofcontents:header]{\par\noindent\tableofcontents:headerfont{Table of Contents}\medskip}%
+\define[command=tableofcontents:header]{\par\noindent\tableofcontents:headerfont{\tableofcontents:title}\medskip}%
 \define[command=tableofcontents:level1item]{\bigskip\noindent\font[size=14pt,weight=800]{\process}\medskip}%
 \define[command=tableofcontents:level2item]{\noindent\font[size=12pt]{\process}\medskip}%
 \define[command=tableofcontents:level3item]{\indent\font[size=10pt]{\process}\smallskip}%
