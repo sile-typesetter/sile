@@ -64,6 +64,7 @@ local reorder = function(n, self)
       end
     end
     rv[matrix[i]] = nl[i]
+    nl[i].bidiDone = true
     -- rv[i] = nl[i]
   end
   n.nodes = rv
@@ -147,6 +148,11 @@ local splitNodelistIntoBidiRuns = function (self)
 end
 
 local bidiBoxupNodes = function (self)
+  local allDone = true
+  for i=1,#self.state.nodes do
+    if not self.state.nodes[i].bidiDone then allDone = false end
+  end
+  if allDone then return SILE.defaultTypesetter.boxUpNodes(self) end
   local newNodeList = splitNodelistIntoBidiRuns(self)
   self:shapeAllNodes(newNodeList)
   self.state.nodes = newNodeList
