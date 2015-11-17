@@ -7,20 +7,16 @@ local mirrorMaster = function(class, existing, new)
     SU.error("Can't find master "..existing)
   end
   for name,frame in pairs(SILE.scratch.masters[existing].frames) do
-    -- This seems to work although it is almost certainly too much magic
-    SILE.scratch.masters[new].frames[name] = frame {
-      left = function(frame)
-        frame:solve()
-        return SILE.frames.page:width() - frame.variables.right.value
-      end,
-      right = function(frame)
-        frame:solve()
-        return SILE.frames.page:width() - frame.variables.left.value
-      end
-    }
-
+    local newframe  = std.tree.clone(frame)
+    if frame:isAbsoluteConstraint("right") then
+      newframe.constraints.left = "100%-("..frame.constraints.right..")"
+    end
+    if frame:isAbsoluteConstraint("left") then
+      newframe.constraints.right = "100%-("..frame.constraints.left..")"
+    end
+    SILE.scratch.masters[new].frames[name] = newframe
     if frame == SILE.scratch.masters[existing].firstContentFrame then
-      SILE.scratch.masters[new].firstContentFrame = SILE.scratch.masters[new].frames[name]
+      SILE.scratch.masters[new].firstContentFrame = newframe
     end
   end
 end
