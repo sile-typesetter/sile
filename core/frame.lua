@@ -33,7 +33,7 @@ SILE.framePrototype = std.object {
     if not self.constraints[method] then return end
     local dims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
     local c = parseFrameDef(self.constraints[method], dims[method])
-    --print("Adding constraint "..self.id.."("..method..") = "..self.constraints[method])
+    -- print("Adding constraint "..self.id.."("..method..") = "..c)
     local eq = cassowary.Equation(self.variables[method],c)
     solver:addConstraint(eq)
     if stay then solver:addStay(eq) end
@@ -159,6 +159,20 @@ function SILE.framePrototype:leave()
     self.leaveHooks[i](self)
   end
 end
+
+function SILE.framePrototype:isAbsoluteConstraint(c)
+  local dims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
+  if not self.constraints[c] then return false end
+  local c = parseFrameDef(self.constraints[c], dims[c])
+  if not c.terms then return false end
+  for clv,coeff in pairs(c.terms) do
+    if clv.name and not clv.name:match("^page_") then
+      return false
+    end
+  end
+  return true
+end
+
 
 function SILE.framePrototype:isMainContentFrame()
   local c =  SILE.documentState.thisPageTemplate.firstContentFrame
