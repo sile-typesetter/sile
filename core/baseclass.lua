@@ -219,14 +219,7 @@ SILE.baseClass = std.object {
   end,
   options= {
     papersize= function(size)
-      _, _, x, y = string.find(size, "(.+)%s+x%s+(.+)")
-      if x then
-        SILE.documentState.paperSize ={ SILE.toPoints(x), SILE.toPoints(y) };
-      elseif (SILE.paperSizes[size]) then
-        SILE.documentState.paperSize = SILE.paperSizes[size];
-      else
-        SU.error("Unknown paper size "..size);
-      end
+      SILE.documentState.paperSize = SILE.paperSizeParser(size)
       SILE.newFrame({id = "page", left = 0, top = 0, right = SILE.documentState.paperSize[1], bottom = SILE.documentState.paperSize[2] })
     end
   }

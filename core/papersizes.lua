@@ -52,3 +52,14 @@ SILE.paperSizes = { a4 = { 595.275597, 841.8897728999999 },
   dsheet = { 1584, 2448 },
   esheet = { 2448, 3168 }
 }
+
+SILE.paperSizeParser = function(size)
+  _, _, x, y = string.find(size, "(.+)%s+x%s+(.+)")
+  if x then
+    return { SILE.toPoints(x), SILE.toPoints(y) }
+  elseif (SILE.paperSizes[size]) then
+    return SILE.paperSizes[size]
+  else
+    SU.error("Unknown paper size "..size)
+  end
+end
