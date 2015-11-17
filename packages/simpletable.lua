@@ -42,7 +42,6 @@ SILE.registerCommand(tableTag, function(options, content)
   local tbl = SILE.scratch.simpletable.tables[#(SILE.scratch.simpletable.tables)]
   SILE.settings.temporarily(function ()
     SILE.settings.set("document.parindent", SILE.nodefactory.newGlue("0pt"))
-    SILE.settings.set("current.parindent", SILE.nodefactory.newGlue("0pt"))
     SILE.process(content)
   end)
   SILE.typesetter:leaveHmode()
