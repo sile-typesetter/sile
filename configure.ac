@@ -69,6 +69,8 @@ AX_LUA_MODULE([lpeg], [lpeg])
 AX_LUA_MODULE([lxp], [luaexpat])
 AX_LUA_MODULE([lfs], [luafilesystem])
 
+AC_CONFIG_SUBDIRS([libtexpdf])
+
 PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
   AC_DEFINE([ICU], [1], [Build using icu4c])
   with_icu=yes
