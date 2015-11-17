@@ -40,19 +40,13 @@ SILE.init = function()
   if not SILE.backend then
     if pcall(function () require("justenoughharfbuzz") end) then
       SILE.backend = "libtexpdf"
-    elseif pcall(function() require("lgi") end) then
-      SILE.backend = "pangocairo"
     else
-      SU.error("Neither libtexpdf nor pangocairo backends available!")
+      SU.error("libtexpdf backend not available!")
     end
   end
   if SILE.backend == "libtexpdf" then
     require("core/harfbuzz-shaper")
     require("core/libtexpdf-output")
-  elseif SILE.backend == "pangocairo" then
-    SU.warn("The pangocairo backend is deprecated and will be removed in the next release of SILE")
-    require("core/pango-shaper")
-    require("core/cairo-output")
   end
   if SILE.dolua then
     _, err = pcall(SILE.dolua)
@@ -77,7 +71,7 @@ as the input file with the extention changed to .pdf.
 
 Options:
 
-  -b, --backend=VALUE      choose between libtexpdf/pangocairo backends
+  -b, --backend=VALUE      choose an alternative output backend
   -d, --debug=VALUE        debug SILE's operation
   -e, --evaluate=VALUE     evaluate some Lua code before processing file
   -o, --output=[FILE]      explicitly set output file name

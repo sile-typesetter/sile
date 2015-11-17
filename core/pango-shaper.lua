@@ -1,3 +1,6 @@
+-- This shaper package is deprecated and should only be used as an
+-- example of how to create alternative shaper backends, in comparison
+-- with the harfbuzz shaper.
 local lgi = require("lgi");
 require "string"
 local pango = lgi.Pango

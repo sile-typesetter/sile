@@ -263,11 +263,7 @@ SILE requires a number of other software packages to be installed on the
 computer before it can work—the Lua programming language, and the Harfbuzz text
 shaping library. SILE provides its own PDF creation library, which has its own
 requirements: \code{freetype}, \code{fontconfig}, \code{libz} and
-\code{libpng}.\footnote{You can also configure SILE to use Pango and Cairo
-instead, although the output will be inferior, especially on Linux. If you do
-so, you will need to install the \code{libcairo-gobject2} and
-\code{libpango1.0-0} packages in your operating system, and also the \code{lgi}
-Lua module. This support is deprecated and will be removed in the next release of SILE.}
+\code{libpng}.
 
 It is suggested you use your distro's package manager to install as many of the
 dependencies as possible. On DEB-based Linux machines such as Debian and

@@ -1,3 +1,6 @@
+-- This output package is deprecated and should only be used as an
+-- example of how to create alternative output backends, in comparison
+-- with the libtexpdf and debug backends.
 local lgi = require("lgi");
 local cairo = lgi.cairo
 local pango = lgi.Pango
