@@ -4,13 +4,19 @@ local cursorX = 0
 local cursorY = 0
 local font = 0
 local started = false
-SILE.outputters.libtexpdf = {
-  init = function()
+local function ensureInit ()
+  if not started then
     pdf.init(SILE.outputFilename, SILE.documentState.paperSize[1],SILE.documentState.paperSize[2])
     pdf.beginpage()
     started = true
+  end
+end
+SILE.outputters.libtexpdf = {
+  init = function()
+    -- We don't do anything yet because this commits us to a page size.
   end,
   newPage = function()
+    ensureInit()
     pdf.endpage()
     pdf.beginpage()
   end,
@@ -20,15 +26,19 @@ SILE.outputters.libtexpdf = {
     pdf.finish()
   end,
   setColor = function(self, color)
+    ensureInit()
     pdf.setcolor(color.r, color.g, color.b)
   end,
   pushColor = function (self, color)
+    ensureInit()
     pdf.colorpush(color.r, color.g, color.b)
   end,
   popColor = function (self)
+    ensureInit()
     pdf.colorpop()
   end,
   outputHbox = function (value,w)
+    ensureInit()
     if not value.glyphString then return end
     -- Nodes which require kerning or have offsets to the glyph
     -- position should be output a glyph at a time. We pass the
@@ -57,6 +67,7 @@ SILE.outputters.libtexpdf = {
     pdf.setstring(cursorX, cursorY, buf, string.len(buf), font, w)
   end,
   setFont = function (options)
+    ensureInit()
     if SILE.font._key(options) == lastkey then return end
     lastkey = SILE.font._key(options)
     font = SILE.font.cache(options, SILE.shaper.getFace)
@@ -73,6 +84,7 @@ SILE.outputters.libtexpdf = {
     font = f
   end,
   drawImage = function (src, x,y,w,h)
+    ensureInit()
     pdf.drawimage(src, x, y, w, h)
   end,
   imageSize = function (src)
@@ -84,9 +96,11 @@ SILE.outputters.libtexpdf = {
     cursorY = SILE.documentState.paperSize[2] - y
   end,
   rule = function (x,y,w,d)
+    ensureInit()
     pdf.setrule(x,SILE.documentState.paperSize[2] -y-d,w,d)
   end,
   debugFrame = function (self,f)
+    ensureInit()
     pdf.colorpush(0.8,0,0)
     self.rule(f:left(), f:top(), f:width(), 0.5)
     self.rule(f:left(), f:top(), 0.5, f:height())
