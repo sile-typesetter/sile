@@ -102,10 +102,11 @@ SILE.registerCommand("show-multilevel-counter", function (options, content)
   local this = SILE.scratch.counters[c]
   local currentLevel = #this.value
   local maxlevel = options.level or currentLevel
+  local minlevel = options.minlevel or 1
   if options.display then this.display[currentLevel] = options.display end
   local out = {}
-  for x = 1,maxlevel do
-    out[x] = SILE.formatCounter({ display = this.display[x], value = this.value[x] })
+  for x = minlevel, maxlevel do
+    out[x - minlevel + 1] = SILE.formatCounter({ display = this.display[x], value = this.value[x] })
   end
   SILE.typesetter:typeset(table.concat( out, "." ))
 end, "Outputs the value of the multilevel counter <id>, optionally displaying it with the <display> format.");
