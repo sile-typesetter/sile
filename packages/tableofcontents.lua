@@ -46,7 +46,7 @@ SILE.registerCommand("tableofcontents:item", function (o,c)
     SILE.call("tableofcontents:level"..o.level.."item", {}, function()
       SILE.process({c})
       -- Ideally, leaders
-      SILE.call("hss")
+      SILE.call("dotfill")
       SILE.typesetter:typeset(o.pageno)
     end)
   end)
@@ -67,6 +67,7 @@ return {
   exports = {writeToc = writeToc, moveTocNodes = moveNodes},
   init = function (self)
     self:loadPackage("infonode")
+    self:loadPackage("leaders")
 SILE.doTexlike([[%
 \define[command=tableofcontents:notocmessage]{\tableofcontents:headerfont{Rerun SILE to process table of contents!}}%
 \define[command=tableofcontents:headerfont]{\font[size=24pt,weight=800]{\process}}%
