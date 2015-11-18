@@ -164,6 +164,7 @@ function SILE.framePrototype:isAbsoluteConstraint(c)
   local dims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
   if not self.constraints[c] then return false end
   local c = parseFrameDef(self.constraints[c], dims[c])
+  if type(c) ~= "table" then return true end
   if not c.terms then return false end
   for clv,coeff in pairs(c.terms) do
     if clv.name and not clv.name:match("^page_") then
