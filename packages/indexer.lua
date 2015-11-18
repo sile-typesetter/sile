@@ -58,7 +58,6 @@ SILE.registerCommand("index:item", function (o,c)
   SILE.settings.temporarily(function ()
     SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
     SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
-    SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
     SILE.call("code", {}, c)
     -- Ideally, leaders
     SILE.call("hss")

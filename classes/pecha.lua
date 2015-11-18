@@ -56,7 +56,6 @@ function pecha:registerCommands()
   SILE.settings.set("document.lskip", SILE.nodefactory.hfillGlue)
   SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
   SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
-  SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
 end
 
 return pecha

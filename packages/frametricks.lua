@@ -140,7 +140,6 @@ SILE.registerCommand("float", function(options, content)
     SILE.typesetter:leaveHmode()
   end
   breakFrameVertical()
-  SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
   local boundary = hbox.width.length + SILE.length.parse(options.rightboundary).length
   breakFrameHorizontalAt(boundary)
   SILE.typesetNaturally(SILE.typesetter.frame.previous, function()
@@ -153,7 +152,6 @@ SILE.registerCommand("float", function(options, content)
   breakFrameVertical(hbox.height + SILE.length.parse(options.bottomboundary).length)
   shiftframeedge(SILE.getFrame(SILE.typesetter.frame.next), {left = ""..tostring(SILE.length.new() - boundary)})
   --SILE.outputter:debugFrame(SILE.typesetter.frame)
-  SILE.settings.set("current.parindent", SILE.settings.get("document.parindent"))
 end, "Sets the given content in its own frame, flowing the remaining content around it")
 
 SILE.registerCommand("typeset-into", function(options,content)
