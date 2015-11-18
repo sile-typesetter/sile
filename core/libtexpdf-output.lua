@@ -88,6 +88,7 @@ SILE.outputters.libtexpdf = {
     pdf.drawimage(src, x, y, w, h)
   end,
   imageSize = function (src)
+    ensureInit() -- in case it's a PDF file
     local llx, lly, urx, ury = pdf.imagebbox(src)
     return (urx-llx), (ury-lly)
   end,
