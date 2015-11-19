@@ -48,7 +48,11 @@ before_install:
       wget http://www.freedesktop.org/software/harfbuzz/release/$HARFBUZZ_BASE.tar.bz2 ;
       tar xfj $HARFBUZZ_BASE.tar.bz2 ;
       cd $HARFBUZZ_BASE ;
-      ./configure --with-graphite2=auto --prefix=$HOME/local/ ;
+      if [ "x$GRAPHITE" = "true" ]; then
+         ./configure --with-graphite2=yes --prefix=$HOME/local/ ;
+      else
+         ./configure --with-graphite2=no --prefix=$HOME/local/ ;
+      fi
       make ;
       make install ;
       popd ;
