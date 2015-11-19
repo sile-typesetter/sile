@@ -20,6 +20,8 @@ env:
   matrix:
    - LUA=lua5.2
    - LUA=lua5.2 GRAPHITE=false
+   - LUA=lua5.1
+   - LUA=lua5.1 GRAPHITE=false
 cache:
   directories:
   - $HOME/.fonts
@@ -33,7 +35,6 @@ before_install:
  - export LIBRARY_PATH=$HOME/local/lib:$LD_LIBRARY_PATH
  - export LD_RUN_PATH=$HOME/local/lib:$LD_RUN_PATH
  - export PKG_CONFIG_PATH=$HOME/local/lib/pkgconfig:$PKG_CONFIG_PATH
- - echo $HOME/local/
  - if [ ! -f ~/.fonts/Scheherazade-R.ttf ]; then
       pushd ~/.fonts/ ;
       wget http://dealer.simon-cozens.org/~simon/tmp/silefonts.tar.gz ;
@@ -50,6 +51,12 @@ before_install:
       make install ;
       popd ;
    fi
+ - export LUA_HOME_DIR=$TRAVIS_BUILD_DIR/install/lua
+ - export LUA=~/.lua/lua
+ - export LUA_INCLUDE=-I$LUA_HOME_DIR/include
+ - export LD_LIBRARY_PATH=$LUA_HOME_DIR/lib:$LD_LIBRARY_PATH
+ - export LIBRARY_PATH=$LUA_HOME_DIR/lib:$LD_LIBRARY_PATH
+ - export LD_RUN_PATH=$LUA_HOME_DIR/lib:$LD_RUN_PATH
 install:
  - luarocks install lpeg
  - luarocks install luaexpat
@@ -57,13 +64,6 @@ install:
  - luarocks install lua_cliargs 2.3-3
  - luarocks install busted
 script:
- - export LUA_HOME_DIR=$TRAVIS_BUILD_DIR/install/lua
- - export LUA=~/.lua/lua
- - export LUA_INCLUDE=-I$LUA_HOME_DIR/include
- - export LD_LIBRARY_PATH=$LUA_HOME_DIR/lib:$LD_LIBRARY_PATH
- - export LIBRARY_PATH=$LUA_HOME_DIR/lib:$LD_LIBRARY_PATH
- - export LD_RUN_PATH=$LUA_HOME_DIR/lib:$LD_RUN_PATH
- - find $LUA_HOME_DIR
  - ./bootstrap.sh && ./configure && make
  - busted -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
  - ./tests/attack.pl
