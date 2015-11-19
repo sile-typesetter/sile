@@ -12,20 +12,19 @@ addons:
    - libfontconfig1-dev
    - libpng-dev
    - libexpat1-dev
-   - lua5.2
-   - liblua5.2-dev
-   - luarocks
 env:
   global:
    - LUAROCKS_BASE=luarocks-2.2.2
    - HARFBUZZ_BASE=harfbuzz-1.0.4
    - GRAPHITE=true
   matrix:
-   - LUA_VER=5.2
-   - LUA_VER=5.2 GRAPHITE=false
+   - LUA=5.2
+   - LUA=5.2 GRAPHITE=false
 before_install:
  - mkdir ~/local/
+ - source .travis/setenv_lua.sh
  - export LD_LIBRARY_PATH=$HOME/local/lib:$LD_LIBRARY_PATH
+ - export LD_RUN_PATH=$HOME/local/lib:$LD_RUN_PATH
  - export PKG_CONFIG_PATH=$HOME/local/lib/pkgconfig:$PKG_CONFIG_PATH
  - export LUA_PKG=lua$LUA_VER LUA_DEV=liblua$LUA_VER-dev LUA_SFX=$LUA_VER
  - export LUA_INCDIR=/usr/include/lua$LUA_VER;
