@@ -38,7 +38,10 @@ before_install:
  - luarocks install lua_cliargs 2.3-3
  - luarocks install busted
  - export LUA=~/.lua/lua
- - export LUA_INCLUDE=-I$HOME/.lua/include
+ - export LUA_INCLUDE=-I$LUA_HOME_DIR/include
+ - export LD_LIBRARY_PATH=$LUA_HOME_DIR/lib:$LD_LIBRARY_PATH
+ - export LD_RUN_PATH=$LUA_HOME_DIR/lib:$LD_RUN_PATH
+
 script:
  - ./bootstrap.sh && ./configure && make
  - busted -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
