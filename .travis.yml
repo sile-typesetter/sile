@@ -25,12 +25,14 @@ env:
    - LUA_VER=5.2
    - LUA_VER=5.2 GRAPHITE=false
 before_install:
+ - mkdir ~/local/
+ - export LD_LIBRARY_PATH=~/local/lib:$LD_LIBRARY_PATH
  - export LUA_PKG=lua$LUA_VER LUA_DEV=liblua$LUA_VER-dev LUA_SFX=$LUA_VER
  - export LUA_INCDIR=/usr/include/lua$LUA_VER;
  - mkdir ~/.fonts && pushd ~/.fonts/ && wget http://dealer.simon-cozens.org/~simon/tmp/silefonts.tar.gz && tar xvf silefonts.tar.gz && popd
  - mkdir ~/builddeps/ && pushd ~/builddeps/ && wget http://www.freedesktop.org/software/harfbuzz/release/$HARFBUZZ_BASE.tar.bz2
  - tar xfj $HARFBUZZ_BASE.tar.bz2 && cd $HARFBUZZ_BASE
- - ./configure --with-graphite2=auto && make && make install && popd
+ - ./configure --with-graphite2=auto --prefix=~/local/ && make && make install && popd
    # Install SILE runtime dependencies
  - luarocks install lpeg
  - luarocks install luaexpat
