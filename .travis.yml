@@ -14,7 +14,7 @@ addons:
    - libexpat1-dev
 env:
   global:
-   - LUAROCKS_BASE=luarocks-2.2.2
+   - LUAROCKS=2.2.2
    - HARFBUZZ_BASE=harfbuzz-1.0.4
    - GRAPHITE=true
   matrix:
@@ -26,8 +26,6 @@ before_install:
  - export LD_LIBRARY_PATH=$HOME/local/lib:$LD_LIBRARY_PATH
  - export LD_RUN_PATH=$HOME/local/lib:$LD_RUN_PATH
  - export PKG_CONFIG_PATH=$HOME/local/lib/pkgconfig:$PKG_CONFIG_PATH
- - export LUA_PKG=lua$LUA_VER LUA_DEV=liblua$LUA_VER-dev LUA_SFX=$LUA_VER
- - export LUA_INCDIR=/usr/include/lua$LUA_VER;
  - echo $HOME/local/
  - mkdir ~/.fonts && pushd ~/.fonts/ && wget http://dealer.simon-cozens.org/~simon/tmp/silefonts.tar.gz && tar xvf silefonts.tar.gz && popd
  - mkdir ~/builddeps/ && pushd ~/builddeps/ && wget http://www.freedesktop.org/software/harfbuzz/release/$HARFBUZZ_BASE.tar.bz2
