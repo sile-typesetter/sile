@@ -38,6 +38,7 @@ before_install:
  - luarocks install luafilesystem
  - luarocks install lua_cliargs 2.3-3
  - luarocks install busted
+ - export LUA_HOME_DIR=$TRAVIS_BUILD_DIR/install/lua
  - export LUA=~/.lua/lua
  - export LUA_INCLUDE=-I$LUA_HOME_DIR/include
  - export LD_LIBRARY_PATH=$LUA_HOME_DIR/lib:$LD_LIBRARY_PATH
