@@ -35,20 +35,20 @@ before_install:
  - export PKG_CONFIG_PATH=$HOME/local/lib/pkgconfig:$PKG_CONFIG_PATH
  - echo $HOME/local/
  - if [ ! -f ~/.fonts/Scheherazade-R.ttf ]; then
-      pushd ~/.fonts/
-      wget http://dealer.simon-cozens.org/~simon/tmp/silefonts.tar.gz
-      tar xvf silefonts.tar.gz
-      popd
+      pushd ~/.fonts/ ;
+      wget http://dealer.simon-cozens.org/~simon/tmp/silefonts.tar.gz ;
+      tar xvf silefonts.tar.gz ;
+      popd ;
    fi
  - if [ ! -f ~/local/include/harfbuzz/hb.h ]; then
-      pushd ~/builddeps/
-      wget http://www.freedesktop.org/software/harfbuzz/release/$HARFBUZZ_BASE.tar.bz2
-      tar xfj $HARFBUZZ_BASE.tar.bz2
-      cd $HARFBUZZ_BASE
-      ./configure --with-graphite2=auto --prefix=$HOME/local/
-      make
-      make install
-      popd
+      pushd ~/builddeps/ ;
+      wget http://www.freedesktop.org/software/harfbuzz/release/$HARFBUZZ_BASE.tar.bz2 ;
+      tar xfj $HARFBUZZ_BASE.tar.bz2 ;
+      cd $HARFBUZZ_BASE ;
+      ./configure --with-graphite2=auto --prefix=$HOME/local/ ;
+      make ;
+      make install ;
+      popd ;
    fi
 install:
  - luarocks install lpeg
