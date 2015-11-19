@@ -14,7 +14,6 @@ addons:
    - libexpat1-dev
    - lua5.2
    - liblua5.2-dev
-   - lua-filesystem
    - luarocks
 env:
   global:
@@ -38,6 +37,7 @@ before_install:
    # Install SILE runtime dependencies
  - luarocks install lpeg
  - luarocks install luaexpat
+ - luarocks install luafilesystem
  - luarocks install lua_cliargs 2.3-3
  - luarocks install busted
 script:
