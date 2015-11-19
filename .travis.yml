@@ -25,23 +25,22 @@ cache:
   - $HOME/.fonts
   - $HOME/builddeps
   - $HOME/local
+  # Cache object files etc. to speed up build
+  - $TRAVIS_BUILD_DIR/libtexpdf
 before_install:
- - mkdir ~/local/
  - source .travis/setenv_lua.sh
  - export LD_LIBRARY_PATH=$HOME/local/lib:$LD_LIBRARY_PATH
  - export LIBRARY_PATH=$HOME/local/lib:$LD_LIBRARY_PATH
  - export LD_RUN_PATH=$HOME/local/lib:$LD_RUN_PATH
  - export PKG_CONFIG_PATH=$HOME/local/lib/pkgconfig:$PKG_CONFIG_PATH
  - echo $HOME/local/
- - if [!-d ~/.fonts]; then
-      mkdir ~/.fonts
+ - if [ ! -f ~/.fonts/Scheherazade-R.ttf ]; then
       pushd ~/.fonts/
       wget http://dealer.simon-cozens.org/~simon/tmp/silefonts.tar.gz
       tar xvf silefonts.tar.gz
       popd
    fi
- - if [!-d ~/local]; then
-      mkdir ~/builddeps/
+ - if [ ! -f ~/local/include/harfbuzz/hb.h ]; then
       pushd ~/builddeps/
       wget http://www.freedesktop.org/software/harfbuzz/release/$HARFBUZZ_BASE.tar.bz2
       tar xfj $HARFBUZZ_BASE.tar.bz2
@@ -52,12 +51,12 @@ before_install:
       popd
    fi
 install:
-   # Install SILE runtime dependencies
  - luarocks install lpeg
  - luarocks install luaexpat
  - luarocks install luafilesystem
  - luarocks install lua_cliargs 2.3-3
  - luarocks install busted
+script:
  - export LUA_HOME_DIR=$TRAVIS_BUILD_DIR/install/lua
  - export LUA=~/.lua/lua
  - export LUA_INCLUDE=-I$LUA_HOME_DIR/include
@@ -65,7 +64,6 @@ install:
  - export LIBRARY_PATH=$LUA_HOME_DIR/lib:$LD_LIBRARY_PATH
  - export LD_RUN_PATH=$LUA_HOME_DIR/lib:$LD_RUN_PATH
  - find $LUA_HOME_DIR
-script:
  - ./bootstrap.sh && ./configure && make
  - busted -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
  - ./tests/attack.pl
