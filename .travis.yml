@@ -21,15 +21,11 @@ env:
    - LUAROCKS_BASE=luarocks-2.2.2
    - HARFBUZZ_BASE=harfbuzz-1.0.4
    - GRAPHITE=true
-   - ICU=true
   matrix:
    - LUA_VER=5.2
    - LUA_VER=5.2 GRAPHITE=false
 before_install:
  - export LUA_PKG=lua$LUA_VER LUA_DEV=liblua$LUA_VER-dev LUA_SFX=$LUA_VER
- - if $ICU; then
-      curl -s -L https://gist.githubusercontent.com/alerque/1ad04c9502d8eafebffb/raw/8476ea675f6778f26635afbb946ec3cecd66d12a/icu_pkgconfig_files.tar | base64 -d | sudo tar xP;
-   fi
  - export LUA_INCDIR=/usr/include/lua$LUA_VER;
  - cd ~/.fonts && wget http://dealer.simon-cozens.org/~simon/tmp/silefonts.tar.gz && tar xvf silefonts.tar.gz && popd
  - wget http://www.freedesktop.org/software/harfbuzz/release/$HARFBUZZ_BASE.tar.bz2
