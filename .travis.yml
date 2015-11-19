@@ -52,7 +52,7 @@ before_install:
          ./configure --with-graphite2=yes --prefix=$HOME/local/ ;
       else
          ./configure --with-graphite2=no --prefix=$HOME/local/ ;
-      fi
+      fi ;
       make ;
       make install ;
       popd ;
