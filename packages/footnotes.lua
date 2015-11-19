@@ -24,6 +24,8 @@ SILE.registerCommand("footnote", function(options, content)
   SILE.typesetter = SILE.typesetter {}
   SILE.typesetter:init(f)
   SILE.typesetter.pageTarget = function () return 0xFFFFFF end
+  SILE.settings.pushState()
+  SILE.settings.reset()
   local material = SILE.Commands["vbox"]({}, function()
     SILE.Commands["font"]({size = "9pt"}, function()
       SILE.call("noindent")
@@ -33,6 +35,7 @@ SILE.registerCommand("footnote", function(options, content)
     end)
   end
   )
+  SILE.settings.popState()
   SILE.typesetter = oldT
   insertions.exports:insert("footnote", material)
   SILE.scratch.counters.footnote.value = SILE.scratch.counters.footnote.value + 1
