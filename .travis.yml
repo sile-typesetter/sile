@@ -18,8 +18,8 @@ env:
    - HARFBUZZ_BASE=harfbuzz-1.0.4
    - GRAPHITE=true
   matrix:
-   - LUA=5.2
-   - LUA=5.2 GRAPHITE=false
+   - LUA=lua5.2
+   - LUA=lua5.2 GRAPHITE=false
 before_install:
  - mkdir ~/local/
  - source .travis/setenv_lua.sh
