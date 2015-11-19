@@ -68,3 +68,4 @@ script:
  - busted -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
  - ./tests/attack.pl
  - ./tests/attack.pl --regression
+ - ./sile --debug=fonts,versions tests/bug-198.sil
