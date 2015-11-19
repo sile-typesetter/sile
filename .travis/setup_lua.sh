@@ -72,7 +72,7 @@ else
 
   # Build Lua without backwards compatibility for testing
   perl -i -pe 's/-DLUA_COMPAT_(ALL|5_2)//' src/Makefile
-  make $PLATFORM  MYCFLAGS=-fPIC
+  make $PLATFORM CC="gcc -std=gnu99 -fPIC"
   make INSTALL_TOP="$LUA_HOME_DIR" install;
 
   ln -s $LUA_HOME_DIR/bin/lua $HOME/.lua/lua
