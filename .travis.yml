@@ -24,6 +24,7 @@ before_install:
  - mkdir ~/local/
  - source .travis/setenv_lua.sh
  - export LD_LIBRARY_PATH=$HOME/local/lib:$LD_LIBRARY_PATH
+ - export LIBRARY_PATH=$HOME/local/lib:$LD_LIBRARY_PATH
  - export LD_RUN_PATH=$HOME/local/lib:$LD_RUN_PATH
  - export PKG_CONFIG_PATH=$HOME/local/lib/pkgconfig:$PKG_CONFIG_PATH
  - echo $HOME/local/
@@ -40,8 +41,9 @@ before_install:
  - export LUA=~/.lua/lua
  - export LUA_INCLUDE=-I$LUA_HOME_DIR/include
  - export LD_LIBRARY_PATH=$LUA_HOME_DIR/lib:$LD_LIBRARY_PATH
+ - export LIBRARY_PATH=$LUA_HOME_DIR/lib:$LD_LIBRARY_PATH
  - export LD_RUN_PATH=$LUA_HOME_DIR/lib:$LD_RUN_PATH
-
+ - find $LUA_HOME_DIR
 script:
  - ./bootstrap.sh && ./configure && make
  - busted -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
