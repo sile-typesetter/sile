@@ -18,7 +18,7 @@ int face_from_options(lua_State* L) {
   int weight = 100;
   const char *script = "latin";
   const char *language = "eng";
-  const char *style = "";
+  const char *style = "Regular";
 
   if (!lua_istable(L, 1)) return 0;
 
@@ -78,9 +78,7 @@ int face_from_options(lua_State* L) {
 
   FcPatternAddString (p, FC_FAMILY, (FcChar8*)(family));
   FcPatternAddDouble (p, FC_SIZE, pointSize);
-  if (strlen(style) > 0) {
-    FcPatternAddString (p, FC_STYLE, style);
-  }
+  FcPatternAddString (p, FC_STYLE, style);
   FcPatternAddInteger(p, FC_WEIGHT, weight);
 
   // /* Add fallback fonts here. Some of the standard 14 should be fine. */
