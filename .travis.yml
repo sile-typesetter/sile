@@ -79,4 +79,4 @@ script:
  - ./sile --debug=fonts,versions tests/bug-117.sil
 
 after_success:
-  - luacov-coveralls -e lua-libraries
+  - luacov-coveralls -e lua.libraries
