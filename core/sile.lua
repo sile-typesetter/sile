@@ -11,6 +11,7 @@ SILE.tokenizers = {}
 loadstring = loadstring or load -- 5.3 compatibility
 if not unpack then unpack = table.unpack end -- 5.3 compatibility
 std = require("std")
+if (os.getenv("SILE_COVERAGE")) then require("luacov") end
 
 SILE.documentState = std.object {};
 SILE.scratch = {};
