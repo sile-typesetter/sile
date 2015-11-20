@@ -7,10 +7,12 @@ use Term::ANSIColor;
 my (@failed, @passed, @knownbad);
 my $regression = 0;
 my $upstream = 0;
+my $coverage = 0;
 
 GetOptions(
 	'regression' => \$regression,
-	'upstream' => \$upstream
+	'upstream' => \$upstream,
+    'coverage' => \$coverage
 );
 
 my @specifics = @ARGV;
@@ -33,7 +35,7 @@ if ($regression) {
 			if (!system("grep KNOWNBAD $_ >/dev/null")) {
 				$knownbad = 1;
 			}
-			exit $? >> 8 if system qq{./sile -e 'require("core/debug-output")' $_ > $out};
+			exit $? >> 8 if system qq!./sile -e '@{[ $coverage && 'require("luacov");' ]} require("core/debug-output")' $_ > $out!;
 			if (system("diff -U0 $expectation $out")) {
 				push ($knownbad ? \@knownbad : \@failed, $_);
 			} else { push $knownbad ? \@failed: \@passed, $_ }
