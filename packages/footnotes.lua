@@ -21,7 +21,15 @@ SILE.registerCommand("footnote:separator", function(options, content)
   local material = SILE.Commands["vbox"]({}, content)
   SILE.scratch.insertions.classes.footnote.topBox = material
   SILE.settings.popState()
+end)
 
+SILE.registerCommand("footnote:options", function(options, content)
+  if options["max-height"] then
+    SILE.scratch.insertions.classes.footnote.maxHeight = SILE.length.parse(options["max-height"])
+  end
+  if options["inter-insertion-skip"] then
+    SILE.scratch.insertions.classes.footnote.interInsertionSkip = SILE.length.parse(options["inter-insertion-skip"])
+  end
 end)
 
 SILE.registerCommand("footnote", function(options, content)
