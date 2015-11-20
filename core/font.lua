@@ -52,7 +52,7 @@ SILE.settings.declare({name = "document.language", type = "string", default = "e
 SILE.fontCache = {}
 
 local _key = function(options)
-  return table.concat({options.font;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename},";")
+  return table.concat({options.font;("%g"):format(options.size);("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename},";")
 end
 
 
