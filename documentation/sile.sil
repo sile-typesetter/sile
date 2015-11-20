@@ -229,7 +229,7 @@ number (1) centered at the bottom. How are we going to get to that PDF?
 First of all, we need to get ahold of SILE and get it running on our computer.
 Downloads of SILE can be obtained from the home page at \silehp.
 
-\subsection{Installing Preconfigured Packgages}
+\subsection{Installing Preconfigured Packages}
 
 For OS X machines the recommended way to install SILE is through the Homebrew
 package manager. Once you have Homebrew running (see \url{http://brew.sh}),
