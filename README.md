@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/simoncozens/sile.svg?branch=master)](https://travis-ci.org/simoncozens/sile)
+[![Coverage Status](https://coveralls.io/repos/simoncozens/sile/badge.svg?branch=master&service=github)](https://coveralls.io/github/simoncozens/sile?branch=master)
 
 ## What is SILE?
 
