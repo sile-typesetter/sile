@@ -39,5 +39,5 @@ SILE.registerCommand("leaders", function(o,c)
 end)
 
 SILE.registerCommand("dotfill", function(o,c)
-  SILE.call("leaders", {width = "0pt plus 100000pt"}, {". "})
+  SILE.call("leaders", {width = "0pt plus 100000pt"}, {" . "})
 end)
