@@ -70,7 +70,7 @@ install:
  - luarocks install lua_cliargs 2.3-3
  - luarocks install busted
  - luarocks install luacov
- - luarocks install luarocks install luacov-coveralls
+ - luarocks install luacov-coveralls
 script:
  - ./bootstrap.sh && ./configure && make
  - busted -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
