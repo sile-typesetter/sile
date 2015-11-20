@@ -1,4 +1,4 @@
-\begin[papersize=a4,class=docbook]{document}
+\begin[class=docbook]{document}
 
 \noindent\begin{tgroup}%
 \row{\entry{One}\entry{Two}}%

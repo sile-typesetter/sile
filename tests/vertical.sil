@@ -1,4 +1,4 @@
-\begin[papersize=a4,class=jplain,layout=tate]{document}
+\begin[class=jplain,layout=tate]{document}
 \font[family=Noto Sans CJK JP,language=ja]%
 日本は昔から
 \end{document}

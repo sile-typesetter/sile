@@ -1,4 +1,4 @@
-\begin[class=book,papersize=a4]{document}%
+\begin[class=book]{document}%
 \script[src=packages/frametricks]
 \script[src=packages/lorem]
 \script[src=packages/image]

@@ -1,4 +1,4 @@
-\begin[papersize=a4,class=docbook]{document}%
+\begin[class=docbook]{document}%
 \script[src=packages/rules]%
 \script[src=packages/verbatim]%
 \define[command=docbook-line]{\medskip\hrule[height=0.5pt,width=50mm]\medskip}%

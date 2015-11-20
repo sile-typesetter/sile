@@ -1,4 +1,4 @@
-\begin[papersize=a4, class=book]{document}
+\begin[class=book]{document}
 \script[src=packages/bibtex]
 \loadbibliography[file=examples/sample.bib]
 

@@ -1,4 +1,4 @@
-\begin[papersize=a4,class=book]{document}
+\begin[class=book]{document}
 \script[src=packages/pdfstructure]
 \language[main=en]
 \begin[type=Art,block=1]{pdf:structure}
