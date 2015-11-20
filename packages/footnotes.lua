@@ -16,6 +16,14 @@ SILE.registerCommand("footnotemark", function(options, content)
   end)
 end)
 
+SILE.registerCommand("footnote:separator", function(options, content)
+  SILE.settings.pushState()
+  local material = SILE.Commands["vbox"]({}, content)
+  SILE.scratch.insertions.classes.footnote.topBox = material
+  SILE.settings.popState()
+
+end)
+
 SILE.registerCommand("footnote", function(options, content)
   SILE.call("footnotemark")
   local opts = SILE.scratch.insertions.classes.footnote
@@ -24,7 +32,6 @@ SILE.registerCommand("footnote", function(options, content)
   SILE.typesetter = SILE.typesetter {}
   SILE.typesetter:init(f)
   SILE.typesetter.pageTarget = function () return 0xFFFFFF end
-  SILE.settings.pushState()
   SILE.settings.reset()
   local material = SILE.Commands["vbox"]({}, function()
     SILE.Commands["font"]({size = "9pt"}, function()
@@ -34,7 +41,6 @@ SILE.registerCommand("footnote", function(options, content)
     end)
   end
   )
-  SILE.settings.popState()
   SILE.typesetter = oldT
   insertions.exports:insert("footnote", material)
   SILE.scratch.counters.footnote.value = SILE.scratch.counters.footnote.value + 1
@@ -55,7 +61,7 @@ return {
     insertInto = args.insertInto,
     stealFrom = args.stealFrom,
     maxHeight = SILE.length.new({length = SILE.toPoints("75", "%","h") }),
-    topSkip = SILE.length.parse("2ex"),
+    topBox = SILE.nodefactory.newVbox({height = SILE.length.parse("2ex") }),
     interInsertionSkip = SILE.length.parse("1ex"),
   })
   end,

@@ -11,7 +11,9 @@ local initInsertionClass = function (self, classname, options)
   SU.required(options, "insertInto", "initializing insertions")
   SU.required(options, "stealFrom", "initializing insertions")
   SU.required(options, "maxHeight", "initializing insertions")
-  SU.required(options, "topSkip", "initializing insertions")
+  if not options.topSkip and not options.topBox then
+    SU.required(options, "topSkip", "initializing insertions")
+  end
 
   -- Turn stealFrom into a hash, if it isn't one.
   if type(options.stealFrom) == "string" then options.stealFrom = { options.stealFrom } end
@@ -109,7 +111,7 @@ SILE.insertions.increaseInsertionFrame = function(classname, amount)
 end
 
 SILE.insertions.removeAddedSkip = function (ins)
-  while ins.material[1] and ins.material[1]:isVglue() and not ins.material[1].explicit do
+  while ins.material[1] and ins.material[1].subtype == "addedskip" do
     table.remove(ins.material, 1)
   end
   local h = SILE.length.new()
@@ -121,19 +123,23 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   local ins = vboxlist[i]
   local options = SILE.scratch.insertions.classes[ins.class]
   local targetFrame = SILE.getFrame(ins.frame)
-  local vglue
+  local topBox
   SILE.insertions.removeAddedSkip(ins)
   if not SILE.scratch.insertions.thispage[ins.class] or not SILE.scratch.insertions.thispage[ins.class][1] then
     SILE.scratch.insertions.thispage[ins.class] = {ins}
-    if options["topSkip"] then
-      vglue = SILE.nodefactory.newVglue({ height = options["topSkip"] })
-      table.insert(ins.material,1,vglue)
+    if options["topBox"] then
+      topBox = options["topBox"]
+      table.insert(ins.material,1,topBox)
+    elseif options["topSkip"] then
+      topBox = SILE.nodefactory.newVglue({ height = options["topSkip"] })
+      table.insert(ins.material,1,topBox)
     end
   else
-    vglue = SILE.nodefactory.newVglue({ height = options["interInsertionSkip"] })
-    table.insert(ins.material,1,vglue)
+    topBox = SILE.nodefactory.newVglue({ height = options["interInsertionSkip"] })
+    table.insert(ins.material,1,topBox)
   end
-  local h = ins.actualHeight + vglue.height
+  topBox.subtype = "addedskip"
+  local h = ins.actualHeight + topBox.height
   ins.actualHeight = h
   if not targetFrame.state.totals then targetFrame:init() end
   if not targetFrame.state.totals.shrinkage then targetFrame.state.totals.shrinkage = 0 end
@@ -177,7 +183,6 @@ SILE.insertions.commit = function(nl)
   local done = {}
   for i=1,#nl do n = nl[i]
     if n.type == "insertionVbox" then
-
       SILE.insertions.increaseInsertionFrame(n.class, n.actualHeight)
       if not done[n.class] then
         SILE.insertions.commitShrinkage(n.class)
