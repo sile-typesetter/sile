@@ -1,5 +1,5 @@
 #include <hb.h>
-#if HB_VERSION_ATLEAST(1,0,7)
+#if HB_VERSION_ATLEAST(999,0,0)
 #define USE_HARFBUZZ_METRICS
 #include <hb-ft.h>
 #else
