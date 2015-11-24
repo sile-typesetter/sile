@@ -23,7 +23,8 @@ bibtexparser = epnf.define(function (_ENV)
 end)
 
 local parseBibtex = function(fn)
-  local fh = io.open(fn)
+  local fh,e = io.open(fn)
+  if e then SU.error("Error reading bibliography file "..e) end
   local doc = fh:read("*all")
   local t = epnf.parsestring(bibtexparser, doc)
   if not(t) or not(t[1]) or t.id ~= "document" then
