@@ -143,20 +143,20 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   ins.actualHeight = h
   if not targetFrame.state.totals then targetFrame:init() end
   if not targetFrame.state.totals.shrinkage then targetFrame.state.totals.shrinkage = 0 end
-  SU.debug("insertions", "Total height so far: ".. (- targetFrame.state.totals.shrinkage))
-  SU.debug("insertions", "Incoming insertion: " .. h)
-  SU.debug("insertions", "Incoming insertion: " .. ins)
-  SU.debug("insertions", "Max height: " .. options.maxHeight)
+  SU.debug("insertions", "Total height of insertions so far: ".. (- targetFrame.state.totals.shrinkage))
+  SU.debug("insertions", "Incoming insertion content: " .. ins)
+  SU.debug("insertions", "Incoming insertion height: " .. h)
+  SU.debug("insertions", "Max allowed height of insertions on page: " .. options.maxHeight)
+  SU.debug("insertions", "Total content on page so far: " .. totalHeight)
   SU.debug("insertions", "Page target: "..target)
   SU.debug("insertions", "Page shrinkage: "..ins.parent.state.totals.shrinkage)
-  SU.debug("insertions", "Total height: "..h)
   if ((- targetFrame.state.totals.shrinkage) + h.length - options.maxHeight).length < 0
     and (target - (totalHeight + h)).length > 0 then
     SU.debug("insertions", "fits")
     SILE.insertions.setShrinkage(ins.class, h)
     target = SILE.typesetter.frame:height() - SILE.typesetter.frame.state.totals.shrinkage
   else
-    SU.debug("insertions", "split")
+    SU.debug("insertions", "splitting")
     local maxsize = target - totalHeight
     if maxsize > options.maxHeight then maxsize = options.maxHeight end
     local split = SILE.pagebuilder.findBestBreak(ins.material[2].nodes, maxsize.length)
