@@ -159,9 +159,12 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
     SU.debug("insertions", "splitting")
     local maxsize = target - totalHeight
     if maxsize > options.maxHeight then maxsize = options.maxHeight end
-    local split = SILE.pagebuilder.findBestBreak(ins.material[2].nodes, maxsize.length)
+    local materialToSplit = {}
+    table.append(materialToSplit, ins.material[1].nodes)
+    table.append(materialToSplit, ins.material[2].nodes)
+    local split = SILE.pagebuilder.findBestBreak(materialToSplit, maxsize.length, false, true)
     if split then
-      ins.material[2] = SILE.pagebuilder.collateVboxes(ins.material[2].nodes)
+      ins.material[2] = SILE.pagebuilder.collateVboxes(materialToSplit)
       ins.actualHeight = ins.material[1].height + ins.material[2].height
       local newvbox = SILE.pagebuilder.collateVboxes(split)
       table.insert(vboxlist, i,
@@ -173,6 +176,10 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
           parent = SILE.typesetter.frame
         }
       )
+    else
+      -- Split failure
+      table.insert(vboxlist, i, SILE.nodefactory.newPenalty({penalty = -20000 }))
+      return target
     end
     table.insert(vboxlist, i+1, SILE.nodefactory.newPenalty({penalty = -20000 }))
   end
