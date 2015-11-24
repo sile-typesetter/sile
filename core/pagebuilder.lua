@@ -25,7 +25,7 @@ SILE.pagebuilder = {
     if bad > inf_bad then return inf_bad else return bad end
   end,
 
-  findBestBreak = function(vboxlist, target, restart)
+  findBestBreak = function(vboxlist, target, restart, force)
     local i = 0
     local totalHeight = SILE.length.new()
     local bestBreak = nil
@@ -100,6 +100,13 @@ SILE.pagebuilder = {
       end
     end
     SU.debug("pagebuilder", "No page break here")
+    if force and bestBreak then
+      local onepage = {}
+      for j=1,bestBreak do
+        onepage[j] = table.remove(vboxlist,1)
+      end
+      return onepage, pi
+    end
     return false, restart
   end,
 }
