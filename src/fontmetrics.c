@@ -1,7 +1,7 @@
 #include <hb.h>
+#include <hb-ft.h>
 #if HB_VERSION_ATLEAST(999,0,0)
 #define USE_HARFBUZZ_METRICS
-#include <hb-ft.h>
 #else
 #include <ft2build.h>
 #include FT_FREETYPE_H
