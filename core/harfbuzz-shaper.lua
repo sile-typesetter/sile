@@ -52,7 +52,9 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
   getFace = function(opts)
     local face = fontconfig._face(opts)
     SU.debug("fonts", "Resolved font family "..opts.font.." -> "..(face and face.filename))
-    local fh = io.open(face.filename) or SU.error("Can't open "..face.filename)
+    if not face.filename then SU.error("Couldn't find face "..opts.font) end
+    local fh,e = io.open(face.filename)
+    if e then SU.error("Can't open "..e) end
     face.data = fh:read("*all")
     return face
   end,
