@@ -498,7 +498,7 @@ attractive), SILE automatically applies the ligature. So if you type
 like: ‘\examplefont{affluent fishing}.’ If you specifically want to break up
 the ligature, then insert an empty group (using the grouping characters
 \code{\{} and \code{\}}) in the middle of the ligature: \code{af\{\}f\{\}luent
-f\{\}ishing}: \examplefont{af{}f{}luent f{}ishing} See the section on
+f\{\}ishing}: \examplefont{af{}f{}luent f{}ishing}. See the section on
 \em{OpenType Features} for more information on how to control the display of
 ligatures and other font features.
 
@@ -1616,7 +1616,7 @@ Now we can finally complete our implementation of centering:
 
 And this is (more or less) how the \code{center} environment is defined in
 the plain class: we make the margins able to expand but the spaces not able
-to expand; we turn off indenting at the started of the paragraph, and we turn
+to expand; we turn off indenting at the start of the paragraph, and we turn
 off the filling glue at the end of the paragraph.
 \par
 \end{examplefont}
@@ -1675,7 +1675,7 @@ You should note that, while in the SILE layer, the \code{\\set} command does its
 best to turn the textual description of a type into the appropriate Lua type
 for the value. \code{SILE.settings.set} does not do that; it expects the value
 to be of the appropriate type: lengths need to be a \code{SILE.Length} object,
-glue must be \code{Glue} and so on.}
+glue must be \code{SILE.Glue} and so on.}
 
 \noindent• \code{SILE.settings.get(\em{<parameter>})}: retrieves the current
 setting of the parameter.
@@ -1701,8 +1701,8 @@ interact with these components at the Lua level.}
 
 \section{Boxes, Glue and Penalties}
 
-SILE‘s job is, looking at it in very abstract terms, all about arranging
-little boxes on a page. Some of those boxes have letters in them, and are
+SILE’s job is, looking at it in very abstract terms, all about arranging
+little boxes on a page. Some of those boxes have letters in them, and
 those letters are such-and-such a number of points wide and 
 such-and-such a number of points high; 
 some of the boxes are empty but are there just to take up space; when a
@@ -1713,7 +1713,7 @@ of boxes are then arranged to form a page.
 Conceptually, then, SILE knows about a few different basic components: 
 horizontal boxes (such as a letter); horizontal glue (the stretchable, shrinkable
 space between words); vertical boxes (a line of text); vertical glue (the space
-between lines and paragraphs); and penalties (information about when and when
+between lines and paragraphs); and penalties (information about where and when
 not to break lines and pages).\footnote{Additionally there are three more types of box
 that SILE cares about: N-nodes, unshaped nodes, and discretionaries.}
 
