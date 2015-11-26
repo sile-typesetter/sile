@@ -36,7 +36,14 @@ SILE.shapers.harfbuzzWithFallback = SILE.shapers.harfbuzz {
               startOfNotdefRun = -1
             end
             newItems[i].font = options.font
-            items[qItem.start + newItems[i].index] = newItems[i]
+            -- There might be multiple glyphs for the same index
+            if not items[qItem.start + newItems[i].index] then
+              items[qItem.start + newItems[i].index] = newItems[i]
+            else
+              local lastInPlace = items[qItem.start + newItems[i].index]
+              while lastInPlace.next do lastInPlace = lastInPlace.next end
+              lastInPlace.next = newItems[i]
+            end
           else
             if startOfNotdefRun == -1 then startOfNotdefRun = i end
             SU.warn("Glyph "..newItems[i].text.." not found in "..options.font)
@@ -52,7 +59,15 @@ SILE.shapers.harfbuzzWithFallback = SILE.shapers.harfbuzz {
       end
     end
     local nItems = {} -- Remove holes
-    for i=1,#text do if items[i] then nItems[#nItems+1] = items[i] end end
+    for i=1,table.maxn(items) do if items[i] then
+      nItems[#nItems+1] = items[i]
+      while items[i].next do
+        local nextG = items[i].next
+        items[i].next = nil
+        nItems[#nItems+1] = nextG
+        items[i] = nextG
+      end
+    end end
     SU.debug("fonts", nItems)
     return nItems
   end,
