@@ -108,7 +108,7 @@ function utilities.sum(array)
 end
 
 function table.append(t1, t2)
-  if not n1 or not n2 then SU.error("table.append called with nil table!: "..t1..", "..t2,true) end
+  if not t1 or not t2 then SU.error("table.append called with nil table!: "..t1..", "..t2,true) end
   for i=1,#t2 do
       t1[#t1+1] = t2[i]
   end
