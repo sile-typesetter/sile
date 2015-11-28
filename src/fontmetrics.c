@@ -1,6 +1,6 @@
 #include <hb.h>
 #include <hb-ft.h>
-#if HB_VERSION_ATLEAST(999,0,0)
+#if HB_VERSION_ATLEAST(1,1,3)
 #define USE_HARFBUZZ_METRICS
 #else
 #include <ft2build.h>
@@ -41,7 +41,7 @@ int get_typographic_extents (lua_State *L) {
   hb_font_extents_t metrics = {0,0,0};
   upem = hb_face_get_upem(hbFace);
   hb_ft_font_set_funcs(hbFont);
-  hb_font_get_extents(hbFont, &metrics);
+  hb_font_get_h_extents(hbFont, &metrics);
   ascender = metrics.ascender / (double)upem;
   descender = metrics.descender / (double)upem;
   hb_font_destroy(hbFont);
