@@ -20,12 +20,14 @@ leader.outputYourself = function (self,typesetter, line)
     typesetter.frame:advanceWritingDirection(remainder/2)
   end
 
-  local glue = remainder / (repetitions-1)
-  for i=1,(repetitions-1) do
+  if repetitions > 1 then
+    local glue = remainder / (repetitions-1)
+    for i=1,(repetitions-1) do
+      self.value:outputYourself(typesetter, line)
+      typesetter.frame:advanceWritingDirection(glue)
+    end
     self.value:outputYourself(typesetter, line)
-    typesetter.frame:advanceWritingDirection(glue)
   end
-  self.value:outputYourself(typesetter, line)
 end
 
 SILE.registerCommand("leaders", function(o,c)
