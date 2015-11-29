@@ -166,6 +166,9 @@ int face_from_options(lua_State* L) {
   lua_gettable(L, -2);
   if (lua_isstring(L, -1)) {
     style = lua_tostring(L, -1);
+    if (strcasestr(style, "italic")) {
+      ftm |= NSItalicFontMask;
+    }
   }
   lua_pop(L,1);
 

@@ -1,0 +1,14 @@
+<tests/italic.sil>
+Set paper size 	419.5275636	595.275597
+Begin page
+Mx 	40.97638
+My 	37.18565
+Set font 	Gentium;10;200;italic;normal;;LTR
+T	41 84 65 76 73 67 31	(Italic?)
+[1] Mx 	207.41759
+My 	553.73265
+Set font 	Gentium;10;200;regular;normal;;LTR
+T	17	(1)
+End page
+Finish
+
