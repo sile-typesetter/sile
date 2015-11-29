@@ -347,7 +347,7 @@ function SILE.nodefactory.newMigrating(spec)  return _migrating(spec) end
 
 -- This infinity needs to be smaller than an actual infinity but bigger than the infinite stretch
 -- added by the typesetter.
-local inf = 1e300
+local inf = 1e100
 SILE.nodefactory.zeroGlue = SILE.nodefactory.newGlue({width = SILE.length.new({length = 0})})
 SILE.nodefactory.hfillGlue = SILE.nodefactory.newGlue({width = SILE.length.new({length = 0, stretch = inf})})
 SILE.nodefactory.vfillGlue = SILE.nodefactory.newVglue({height = SILE.length.new({length = 0, stretch = inf})})
