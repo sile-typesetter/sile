@@ -160,7 +160,11 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
     local maxsize = target - totalHeight
     if maxsize > options.maxHeight then maxsize = options.maxHeight end
     local materialToSplit = {}
-    table.append(materialToSplit, ins.material[1])
+    if ins.material[1].nodes then -- Unbox, if it's a box
+      table.append(materialToSplit, ins.material[1].nodes)
+    else
+      table.append(materialToSplit, ins.material[1])
+    end
     table.append(materialToSplit, ins.material[2].nodes)
     local split = SILE.pagebuilder.findBestBreak(materialToSplit, maxsize.length, false, true)
     if split then
