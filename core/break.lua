@@ -447,7 +447,16 @@ function lineBreak:checkForLegalBreak(n) -- 892
 end
 
 function lineBreak:tryFinalBreak()      -- 899
-  self:tryBreak()
+  -- XXX TeX has self:tryBreak() here. But this doesn't seem to work
+  -- for us. If we call tryBreak(), we end up demoting all break points
+  -- to veryLoose (possibly because the active width gets reset - why?).
+  -- This means we end up doing unnecessary passes.
+  -- However, there doesn't seem to be any downside to not calling it
+  -- (how scary is that?) so I have removed it for now. With this
+  -- "fix", we only perform hyphenation and emergency passes when necessary
+  -- instead of every single time. If things go strange with the break
+  -- algorithm in the future, this should be the first place to look!
+  -- self:tryBreak()
   if self.activeListHead.next == self.activeListHead then return end
   self.r = self.activeListHead.next
   local fewestDemerits = awful_bad
