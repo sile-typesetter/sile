@@ -1,6 +1,6 @@
 \begin[papersize=250mm x 75mm,class=pecha]{document}%
-\font[family=Jomolhari-ID,size=18pt]%
-\define[command=pecha-folio-font]{\font[family=Jomolhari-ID,size=18pt]}%
+\font[family=Jomolhari,size=18pt]%
+\define[command=pecha-folio-font]{\font[family=Jomolhari,size=18pt]}%
 འདི་སྐད་བདག་གིས་ཐོས་པ་དུས་གཅིག་ན། 
 བཅོམ་ལྡན་འདས་རྒྱལ་པོའི་ཁབ་བྱ་རྒོད་ཕུང་པོའི་རི་ལ་དགེ་སློང་གི་ 
 དགེ་འདུན་ཆེན་པོ་དང་། 
