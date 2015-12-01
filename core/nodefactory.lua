@@ -249,7 +249,8 @@ local _vglue = _box {
   end,
   outputYourself = function (self,typesetter, line)
     typesetter.frame:advancePageDirection(line.depth + line.height.length)
-  end
+  end,
+  unbox = function (self) return { self } end
 }
 
 -- Penalties
@@ -262,7 +263,8 @@ local _penalty = _box {
       return "P(" .. this.flagged .. "|" .. this.penalty .. ")";
   end,
   outputYourself = function() end,
-  toText = function() return "(!)" end
+  toText = function() return "(!)" end,
+  unbox = function(self) return self end
 }
 
 -- Vbox
@@ -299,6 +301,22 @@ local _vbox = _box {
     end
     typesetter.frame:advancePageDirection(self.depth)
     typesetter.frame:newLine()
+  end,
+  unbox = function(self)
+    for i=1,#self.nodes do
+      if self.nodes[i]:isVbox() or self.nodes[i]:isVglue() then return self.nodes end
+    end
+    return self
+  end,
+  append = function (self, box)
+    local nodes = box
+    if nodes.type then
+      nodes = box:unbox()
+    end
+    for i = 1,#nodes do
+      self.height = self.height + nodes[i].height
+      self.nodes[(#self.nodes)+1] = nodes[i]
+    end
   end
 }
 
