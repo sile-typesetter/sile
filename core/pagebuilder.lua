@@ -25,7 +25,11 @@ SILE.pagebuilder = {
     if bad > inf_bad then return inf_bad else return bad end
   end,
 
-  findBestBreak = function(vboxlist, target, restart, force)
+  findBestBreak = function(options)
+    local vboxlist = SU.required(options, "vboxlist", "in findBestBreak")
+    local target   = SU.required(options, "target", "in findBestBreak")
+    local restart  = options.restart or false
+    local force    = options.force or false
     local i = 0
     local totalHeight = SILE.length.new()
     local bestBreak = nil

@@ -96,7 +96,7 @@ SILE.registerCommand("sync", function (o,c)
     -- but page breaking has not been run. See if page breaking would cause a
     -- break
     local lines = std.table.clone(t.state.outputQueue)
-    if SILE.pagebuilder.findBestBreak(lines, t:pageTarget()) then
+    if SILE.pagebuilder.findBestBreak({vboxlist = lines, target = t:pageTarget() }) then
       anybreak = true
     end
   end)

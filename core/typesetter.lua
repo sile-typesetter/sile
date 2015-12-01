@@ -247,8 +247,12 @@ SILE.defaultTypesetter = std.object {
     self.frame.state.totals.shrinkage = 0
     if SILE.scratch.insertions then SILE.scratch.insertions.thisPage = {} end
 
-    local target = self:pageTarget()
-    pageNodeList, res = SILE.pagebuilder.findBestBreak(self.state.outputQueue, target, self.frame.state.pageRestart)
+    pageNodeList, res = SILE.pagebuilder.findBestBreak({
+      vboxlist = self.state.outputQueue,
+      target   = self:pageTarget(),
+      restart  = self.frame.state.pageRestart
+    })
+
     if not pageNodeList then -- No break yet
       self.frame.state.pageRestart = res
       self:runHooks("noframebreak")

@@ -166,7 +166,12 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
       table.append(materialToSplit, ins.material[1])
     end
     table.append(materialToSplit, ins.material[2].nodes)
-    local split = SILE.pagebuilder.findBestBreak(materialToSplit, maxsize.length, false, true)
+    local split = SILE.pagebuilder.findBestBreak({
+      vboxlist = materialToSplit,
+      target   = maxsize.length,
+      restart  = false,
+      force    = true
+    })
     if split then
       ins.material[2] = SILE.pagebuilder.collateVboxes(materialToSplit)
       ins.actualHeight = ins.material[1].height + ins.material[2].height
