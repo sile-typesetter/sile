@@ -70,7 +70,7 @@ return {
     insertInto = args.insertInto,
     stealFrom = args.stealFrom,
     maxHeight = SILE.length.new({length = SILE.toPoints("75", "%","h") }),
-    topBox = SILE.nodefactory.newVbox({height = SILE.length.parse("2ex") }),
+    topBox = SILE.nodefactory.newVglue({height = SILE.length.parse("2ex") }),
     interInsertionSkip = SILE.length.parse("1ex"),
   })
   end,
