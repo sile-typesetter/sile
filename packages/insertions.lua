@@ -26,36 +26,49 @@ local initInsertionClass = function (self, classname, options)
 end
 
 local _insertionVbox = SILE.nodefactory.newVbox({
-  __tostring = function(self) return "I<"..self.material..">" end
+  __tostring = function(self) return "I<"..self.nodes..">" end
 })
+
+-- This initializes a vbox to store all the material in an insertion
+-- class for the current page
 local insertionsThisPage = {}
-_insertionVbox.outputYourself = function(self)
-  insertionsThisPage[#insertionsThisPage+1] = self
+local _pageInsertionVbox = SILE.nodefactory.newVbox({
+  __tostring = function(self) return "PI<"..self.nodes..">" end
+})
+
+_pageInsertionVbox.outputYourself = function (self)
+  if not self.typesetter then
+    self.typesetter = SILE.defaultTypesetter {}
+    self.typesetter:init(SILE.getFrame(self.frame))
+  end
+  for i = 1,#self.nodes do local n = self.nodes[i]
+    n:outputYourself(self.typesetter, n)
+  end
+  self.nodes = {}
 end
+
+local thisPageInsertionBoxForClass = function(class)
+  if not insertionsThisPage[class] then
+    local this = _pageInsertionVbox {}
+    this.frame  = SILE.scratch.insertions.classes[class].insertInto
+    insertionsThisPage[class] = this
+  end
+  return insertionsThisPage[class]
+end
+
+_insertionVbox.outputYourself = function(self)
+  for i = 1,#(self.nodes) do
+    thisPageInsertionBoxForClass(self.class):append(self.nodes[i])
+  end
+end
+
 SILE.insertions.output = function()
-  for i = 1,#insertionsThisPage do
-    insertionsThisPage[i]:realOutputYourself()
+  for k,v in pairs(insertionsThisPage) do
+    v:outputYourself()
   end
   insertionsThisPage = {}
 end
 
-_insertionVbox.realOutputYourself = function (self)
-  local t = SILE.scratch.insertions.typesetters[self.class]
-  if not t then
-    t = SILE.defaultTypesetter {}
-    t:init(SILE.getFrame(self.frame))
-    SILE.scratch.insertions.typesetters[self.class] = t
-  end
-  for i = 1,#self.material do local n = self.material[i]
-    if n:isVglue() then
-      n:outputYourself(t, n)
-    else  -- Unvbox
-      for i,node in pairs(n.nodes) do
-        node:outputYourself(t, node)
-      end
-    end
-  end
-end
 _insertionVbox.actualHeight = 0
 _insertionVbox.frame = nil
 _insertionVbox.active = 0
@@ -105,47 +118,36 @@ SILE.insertions.increaseInsertionFrame = function(classname, amount)
   local stealPosition = opts["steal-position"] or "bottom"
   local f = SILE.getFrame(opts["insertInto"])
   local oldHeight = f:height()
-  f:constrain("height", oldHeight + amount.length)
+  f:constrain("height", oldHeight + (type(amount)=="table" and amount.length or amount))
   if stealPosition == "bottom" then f:relax("top") end
   SU.debug("insertions", "New height is now ".. f:height())
 end
 
-SILE.insertions.removeAddedSkip = function (ins)
-  while ins.material[1] and ins.material[1].subtype == "addedskip" do
-    table.remove(ins.material, 1)
+local nextInterInsertionSkip = function (class)
+  local options = SILE.scratch.insertions.classes[class]
+  local stuffSoFar = thisPageInsertionBoxForClass(class)
+  if #(stuffSoFar.nodes) == 0 then
+    if options["topBox"] then
+      return options["topBox"]
+    elseif options["topSkip"] then
+      return SILE.nodefactory.newVglue({ height = options["topSkip"] })
+    end
+  else
+    return SILE.nodefactory.newVglue({ height = options["interInsertionSkip"] })
   end
-  local h = SILE.length.new()
-  for i= 1,#(ins.material) do h = h + ins.material[i].height end
-  ins.actualHeight = h
 end
 
 SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   local ins = vboxlist[i]
-  local options = SILE.scratch.insertions.classes[ins.class]
   local targetFrame = SILE.getFrame(ins.frame)
-  local topBox
-  SILE.insertions.removeAddedSkip(ins)
-  if not SILE.scratch.insertions.thispage[ins.class] or not SILE.scratch.insertions.thispage[ins.class][1] then
-    SILE.scratch.insertions.thispage[ins.class] = {ins}
-    if options["topBox"] then
-      topBox = options["topBox"]
-      table.insert(ins.material,1,topBox)
-    elseif options["topSkip"] then
-      topBox = SILE.nodefactory.newVglue({ height = options["topSkip"] })
-      table.insert(ins.material,1,topBox)
-    end
-  else
-    topBox = SILE.nodefactory.newVglue({ height = options["interInsertionSkip"] })
-    table.insert(ins.material,1,topBox)
-  end
-  topBox.subtype = "addedskip"
-  local h = ins.actualHeight + topBox.height
-  ins.actualHeight = h
+  local topBox = nextInterInsertionSkip(ins.class)
+  local options = SILE.scratch.insertions.classes[ins.class]
+  local h = ins.height + topBox.height
   if not targetFrame.state.totals then targetFrame:init() end
   if not targetFrame.state.totals.shrinkage then targetFrame.state.totals.shrinkage = 0 end
   SU.debug("insertions", "Total height of insertions so far: ".. (- targetFrame.state.totals.shrinkage))
   SU.debug("insertions", "Incoming insertion content: " .. ins)
-  SU.debug("insertions", "Incoming insertion height: " .. h)
+  SU.debug("insertions", "Incoming insertion plus topBox height: " .. ins.height .."+"..topBox.height.."="..h)
   SU.debug("insertions", "Max allowed height of insertions on page: " .. options.maxHeight)
   SU.debug("insertions", "Total content on page so far: " .. totalHeight)
   SU.debug("insertions", "Page target: "..target)
@@ -154,18 +156,16 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
     and (target - (totalHeight + h)).length > 0 then
     SU.debug("insertions", "fits")
     SILE.insertions.setShrinkage(ins.class, h)
+    thisPageInsertionBoxForClass(ins.class):append(topBox)
+    thisPageInsertionBoxForClass(ins.class):append(ins)
     target = SILE.typesetter.frame:height() - SILE.typesetter.frame.state.totals.shrinkage
   else
     SU.debug("insertions", "splitting")
     local maxsize = target - totalHeight
     if maxsize > options.maxHeight then maxsize = options.maxHeight end
+    maxsize = maxsize - topBox.height
     local materialToSplit = {}
-    if ins.material[1].nodes then -- Unbox, if it's a box
-      table.append(materialToSplit, ins.material[1].nodes)
-    else
-      table.append(materialToSplit, ins.material[1])
-    end
-    table.append(materialToSplit, ins.material[2].nodes)
+    table.append(materialToSplit, ins:unbox())
     local split = SILE.pagebuilder.findBestBreak({
       vboxlist = materialToSplit,
       target   = maxsize.length,
@@ -173,18 +173,23 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
       force    = true
     })
     if split then
-      ins.material[2] = SILE.pagebuilder.collateVboxes(materialToSplit)
-      ins.actualHeight = ins.material[1].height + ins.material[2].height
+      ins.nodes = {}
+      ins.height = 0
+      ins:append(materialToSplit)
       local newvbox = SILE.pagebuilder.collateVboxes(split)
+      SU.debug("insertions", "Split. Remaining insertion is ".. ins)
       table.insert(vboxlist, i,
         _insertionVbox {
           class = ins.class,
-          material = { newvbox },
-          actualHeight = newvbox.height,
+          nodes = newvbox.nodes,
+          height = newvbox.height,
           frame = ins.frame,
           parent = SILE.typesetter.frame
         }
       )
+      SILE.insertions.setShrinkage(ins.class, topBox.height + newvbox.height)
+      thisPageInsertionBoxForClass(ins.class):append(topBox)
+      thisPageInsertionBoxForClass(ins.class):append(newvbox)
     else
       -- Split failure
       table.insert(vboxlist, i, SILE.nodefactory.newPenalty({penalty = -20000 }))
@@ -195,15 +200,11 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   return target
 end
 
-SILE.insertions.commit = function(nl)
-  local done = {}
-  for i=1,#nl do n = nl[i]
-    if n.type == "insertionVbox" then
-      SILE.insertions.increaseInsertionFrame(n.class, n.actualHeight)
-      if not done[n.class] then
-        SILE.insertions.commitShrinkage(n.class)
-        done[n.class] = true
-      end
+SILE.insertions.commit = function()
+  for class, list in pairs(insertionsThisPage) do
+    SILE.insertions.commitShrinkage(class)
+    for i=1,#(list.nodes) do n = list.nodes[i]
+      SILE.insertions.increaseInsertionFrame(class, n.height + n.depth)
     end
   end
 end
@@ -214,8 +215,8 @@ local insert = function (self, classname, vbox)
   SILE.typesetter:pushMigratingMaterial({
     _insertionVbox {
         class = classname,
-        material = { vbox },
-        actualHeight = vbox.height,
+        nodes = vbox.nodes,
+        height = vbox.height,
         frame = thisclass.insertInto,
         parent = SILE.typesetter.frame
       }
@@ -224,17 +225,17 @@ end
 
 SILE.typesetter:registerFrameBreakHook(function (self,nl)
   SILE.scratch.insertions.typesetters = {}
-  SILE.scratch.insertions.thispage = {}
-  SILE.insertions.commit(nl)
+  SILE.insertions.commit()
   return nl
 end)
 
 SILE.typesetter:registerHook("noframebreak", function (self)
-  for k,v in pairs(SILE.scratch.insertions.thispage) do
-    local thisclass = SILE.scratch.insertions.classes[k]
-    SILE.getFrame(thisclass.insertInto).state.totals.shrinkage = 0
+  SU.debug("insertions", "no frame break, rolling back\n")
+  for class,v in pairs(insertionsThisPage) do
+    SILE.getFrame(SILE.scratch.insertions.classes[class].insertInto).state.totals.shrinkage = 0
+    v.nodes = {}
   end
-  SILE.scratch.insertions.thispage = {}
+  -- insertionsThisPage = {}
 end)
 
 SILE.typesetter:registerPageEndHook(SILE.insertions.output)
