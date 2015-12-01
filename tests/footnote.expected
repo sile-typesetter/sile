@@ -1,0 +1,45 @@
+<tests/footnote.sil>
+Set paper size 	595.275597	841.8897729
+Begin page
+Mx 	69.40787
+My 	105.22757
+Set font 	Gentium;10;200;regular;normal;;LTR
+T	48 65 82 65 71 82 65 80 72	(Paragraph)
+Mx 	114.70422
+T	79 78 69 14	(one.)
+Mx 	132.16028
+My 	102.04886
+Set font 	Gentium;6.81152;200;regular;normal;;LTR
+T	17	(1)
+Mx 	69.40787
+My 	121.22757
+Set font 	Gentium;10;200;regular;normal;;LTR
+T	48 65 82 65 71 82 65 80 72	(Paragraph)
+Mx 	114.70418
+T	84 87 79 14	(two.)
+Mx 	132.52645
+My 	118.04886
+Set font 	Gentium;6.81152;200;regular;normal;;LTR
+T	18	(2)
+Mx 	49.40787
+My 	690.77660
+Set font 	Gentium;9;200;regular;normal;;LTR
+T	17 14	(1.)
+Mx 	73.69205
+T	38 79 79 84 78 79 84 69	(Footnote)
+Mx 	109.30960
+T	79 78 69	(one)
+Mx 	49.40787
+My 	701.11840
+T	18 14	(2.)
+Mx 	73.69205
+T	38 79 79 84 78 79 84 69	(Footnote)
+Mx 	109.30957
+T	84 87 79	(two)
+[1] Mx 	278.32625
+My 	732.62998
+Set font 	Gentium;10;200;regular;normal;;LTR
+T	17	(1)
+End page
+Finish
+

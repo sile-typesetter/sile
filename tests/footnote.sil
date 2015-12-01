@@ -1,0 +1,6 @@
+\begin[papersize=a4,class=book]{document}
+
+Paragraph one.\footnote{Footnote one}\par
+
+Paragraph two.\footnote{Footnote two}
+\end{document}
