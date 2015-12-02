@@ -257,4 +257,32 @@ function utilities.utf8_to_utf16be_hexencoded(str)
   return ustr
 end
 
+function utilities.utf8_to_utf16be(str)
+  local ustr = ""
+  for uchr in utilities.utf8codes(str) do
+    if (uchr < 0x10000) then
+      ustr = ustr..string.format("%c%c", uchr / 256, uchr % 256 )
+    else -- Surrogate pair
+      local sur_hi = (uchr - 0x10000) / 0x400 + 0xd800
+      local sur_lo = (uchr - 0x10000) % 0x400 + 0xdc00
+      ustr = ustr..string.format("%c%c%c%c", sur_hi / 256, sur_hi % 256 , sur_lo / 256, sur_lo % 256)
+    end
+  end
+  return ustr
+end
+
+function utilities.utf8_to_utf16le(str)
+  local ustr = ""
+  for uchr in utilities.utf8codes(str) do
+    if (uchr < 0x10000) then
+      ustr = ustr..string.format("%c%c", uchr % 256, uchr / 256 )
+    else -- Surrogate pair
+      local sur_hi = (uchr - 0x10000) / 0x400 + 0xd800
+      local sur_lo = (uchr - 0x10000) % 0x400 + 0xdc00
+      ustr = ustr..string.format("%c%c%c%c", sur_hi % 256, sur_hi / 256 , sur_lo % 256, sur_lo / 256)
+    end
+  end
+  return ustr
+end
+
 return utilities
