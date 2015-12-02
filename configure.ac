@@ -70,6 +70,12 @@ AX_LUA_MODULE([lxp], [luaexpat])
 AX_LUA_MODULE([lfs], [luafilesystem])
 
 AC_CONFIG_SUBDIRS([libtexpdf])
+PKG_CHECK_MODULES(LIBTHAI, libthai, [
+  AC_DEFINE([LIBTHAI], [1], [Build using libthai])
+  AC_SUBST([LIBTHAI_CFLAGS])
+  AC_SUBST([LIBTHAI_LIBS])
+  with_libthai=yes
+],[with_libthai=no])
 
 PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
   AC_DEFINE([ICU], [1], [Build using icu4c])
@@ -87,6 +93,7 @@ adl_RECURSIVE_EVAL(["${libdir}/${PACKAGE}"], [SILE_LIB_PATH])
 AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"],[Path for SILE libraries])
 
 AM_CONDITIONAL([ICU], [test "x$with_icu" = "xyes"])
+AM_CONDITIONAL([LIBTHAI], [test "x$with_libthai" = "xyes"])
 
 AC_CANONICAL_HOST
 case $host_os in

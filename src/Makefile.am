@@ -39,6 +39,16 @@ justenoughicu_la_LDFLAGS = -module -avoid-version -shared -no-undefined
 justenoughicu_la_CFLAGS = -I.. $(ICU_CFLAGS) $(LUA_INCLUDE)
 justenoughicu_la_LIBADD = $(ICU_LIBS) $(LUA_LIB)
 to_copy += .libs/justenoughicu.@SHARED_LIB_EXT@
+
+if LIBTHAI
+pkglib_LTLIBRARIES += justenoughthai.la
+justenoughthai_la_SOURCES = justenoughthai.c
+justenoughthai_la_LDFLAGS = -module -avoid-version -shared -no-undefined
+justenoughthai_la_OBJCFLAGS = $(ICU_CFLAGS) $(LIBTHAI_CFLAGS) $(LUA_INCLUDE)
+justenoughthai_la_LIBADD = $(ICU_LIBS) $(LIBTHAI_LIBS) $(LUA_LIB)
+to_copy += .libs/justenoughthai.@SHARED_LIB_EXT@
+endif
+
 endif
 
 all-local: $(pkglib_LTLIBRARIES)
