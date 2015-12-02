@@ -46,7 +46,7 @@ local thisPageInsertionBoxForClass = function(class)
 end
 
 local _insertionVbox = SILE.nodefactory.newVbox({
-  __tostring = function(self) return "I<"..self.nodes..">" end,
+  __tostring = function(self) return "I<"..self.nodes[1].."...>" end,
   outputYourself = function(self)
     for i = 1,#(self.nodes) do
       thisPageInsertionBoxForClass(self.class):append(self.nodes[i])
@@ -102,13 +102,13 @@ end
 
 SILE.insertions.increaseInsertionFrame = function(classname, amount)
   local opts = SILE.scratch.insertions.classes[classname]
-  SU.debug("insertions", "Increasing insertion frame by "..amount)
+  -- SU.debug("insertions", "Increasing insertion frame by "..amount)
   local stealPosition = opts["steal-position"] or "bottom"
   local f = SILE.getFrame(opts["insertInto"])
   local oldHeight = f:height()
   f:constrain("height", oldHeight + (type(amount)=="table" and amount.length or amount))
   if stealPosition == "bottom" then f:relax("top") end
-  SU.debug("insertions", "New height is now ".. f:height())
+  -- SU.debug("insertions", "New height is now ".. f:height())
 end
 
 local nextInterInsertionSkip = function (class)
@@ -128,24 +128,29 @@ end
 SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   local ins = vboxlist[i]
   local targetFrame = SILE.getFrame(ins.frame)
-  local topBox = nextInterInsertionSkip(ins.class)
   local options = SILE.scratch.insertions.classes[ins.class]
+
+  local topBox = nextInterInsertionSkip(ins.class)
   local h = ins.height + topBox.height
+
   local leading
   local insbox = thisPageInsertionBoxForClass(ins.class)
   if insbox.height > 0 then
     leading = SILE.typesetter:leadingFor(ins,insbox.nodes[#insbox.nodes])
     h = h + leading.height
   end
-  if not targetFrame.state.totals then targetFrame:init() end
-  if not targetFrame.state.totals.shrinkage then targetFrame.state.totals.shrinkage = 0 end
-  SU.debug("insertions", "Total height of insertions so far: ".. (- targetFrame.state.totals.shrinkage))
-  SU.debug("insertions", "Incoming insertion content: " .. ins)
-  SU.debug("insertions", "Incoming insertion plus topBox height plus leading: " .. ins.height .."+"..topBox.height.."+"..(leading and leading.height or 0).."="..h)
-  SU.debug("insertions", "Max allowed height of insertions on page: " .. options.maxHeight)
-  SU.debug("insertions", "Total content on page so far: " .. totalHeight)
-  SU.debug("insertions", "Page target: "..target)
-  SU.debug("insertions", "Page shrinkage: "..ins.parent.state.totals.shrinkage)
+
+  initShrinkage(targetFrame)
+  if SU.debugging("insertions") then
+    print("[insertions]", "Incoming insertion")
+    print("top box height", topBox.height)
+    print("insertion", ins)
+    print("leading height", leading and leading.height or "no leading")
+    print("Total incoming height", h)
+    print("Insertions already in this class ", insbox.height)
+    print("Page target ", target)
+    print(totalHeight.." worth of content on page so far, plus "..-targetFrame.state.totals.shrinkage.." used to make way for insertions")
+  end
   if ((- targetFrame.state.totals.shrinkage) + h.length - options.maxHeight).length < 0
     and (target - (totalHeight + h)).length > 0 then
     SU.debug("insertions", "fits")
@@ -185,8 +190,8 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
         }
       )
       SILE.insertions.setShrinkage(ins.class, topBox.height + newvbox.height)
-      thisPageInsertionBoxForClass(ins.class):append(topBox)
-      thisPageInsertionBoxForClass(ins.class):append(newvbox)
+      insbox:append(topBox)
+      insbox:append(newvbox)
     else
       -- Split failure
       table.insert(vboxlist, i, SILE.nodefactory.newPenalty({penalty = -20000 }))
@@ -194,6 +199,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
     end
     table.insert(vboxlist, i+1, SILE.nodefactory.newPenalty({penalty = -20000 }))
   end
+  SU.debug("insertions", "")
   return target
 end
 
@@ -217,6 +223,9 @@ SILE.typesetter:registerFrameBreakHook(function (self,nl)
     for i=1,#(list.nodes) do n = list.nodes[i]
       SILE.insertions.increaseInsertionFrame(class, n.height + n.depth)
     end
+  end
+  if SU.debugging("insertions") then
+    for k,v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
   end
   return nl
 end)
