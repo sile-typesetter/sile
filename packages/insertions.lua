@@ -24,18 +24,17 @@ end
 -- class for the current page
 local insertionsThisPage = {}
 local _pageInsertionVbox = SILE.nodefactory.newVbox({
-  __tostring = function(self) return "PI<"..self.nodes..">" end
+  __tostring = function(self) return "PI<"..self.nodes..">" end,
+  outputYourself = function (self)
+    if not self.typesetter then
+      self.typesetter = SILE.defaultTypesetter {}
+      self.typesetter:init(SILE.getFrame(self.frame))
+    end
+    for i = 1,#self.nodes do local n = self.nodes[i]
+      n:outputYourself(self.typesetter, n)
+    end
+  end
 })
-
-_pageInsertionVbox.outputYourself = function (self)
-  if not self.typesetter then
-    self.typesetter = SILE.defaultTypesetter {}
-    self.typesetter:init(SILE.getFrame(self.frame))
-  end
-  for i = 1,#self.nodes do local n = self.nodes[i]
-    n:outputYourself(self.typesetter, n)
-  end
-end
 
 local thisPageInsertionBoxForClass = function(class)
   if not insertionsThisPage[class] then
@@ -197,15 +196,6 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   return target
 end
 
-SILE.insertions.commit = function()
-  for class, list in pairs(insertionsThisPage) do
-    SILE.insertions.commitShrinkage(class)
-    for i=1,#(list.nodes) do n = list.nodes[i]
-      SILE.insertions.increaseInsertionFrame(class, n.height + n.depth)
-    end
-  end
-end
-
 local insert = function (self, classname, vbox)
   local thisclass = SILE.scratch.insertions.classes[classname]
   if not thisclass then SU.error("Uninitialized insertion class "..classname) end
@@ -221,7 +211,12 @@ local insert = function (self, classname, vbox)
 end
 
 SILE.typesetter:registerFrameBreakHook(function (self,nl)
-  SILE.insertions.commit()
+  for class, list in pairs(insertionsThisPage) do
+    SILE.insertions.commitShrinkage(class)
+    for i=1,#(list.nodes) do n = list.nodes[i]
+      SILE.insertions.increaseInsertionFrame(class, n.height + n.depth)
+    end
+  end
   return nl
 end)
 
@@ -229,9 +224,8 @@ SILE.typesetter:registerHook("noframebreak", function (self)
   SU.debug("insertions", "no frame break, rolling back\n")
   for class,v in pairs(insertionsThisPage) do
     SILE.getFrame(SILE.scratch.insertions.classes[class].insertInto).state.totals.shrinkage = 0
-    v.nodes = {}
+    insertionsThisPage[class].nodes = {}
   end
-  -- insertionsThisPage = {}
 end)
 
 SILE.typesetter:registerPageEndHook(SILE.insertions.output)
