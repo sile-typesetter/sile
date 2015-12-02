@@ -98,13 +98,13 @@ end
 
 SILE.insertions.increaseInsertionFrame = function(classname, amount)
   local opts = SILE.scratch.insertions.classes[classname]
-  -- SU.debug("insertions", "Increasing insertion frame by "..amount)
+  SU.debug("insertions", "Increasing insertion frame by "..amount)
   local stealPosition = opts["steal-position"] or "bottom"
   local f = SILE.getFrame(opts["insertInto"])
   local oldHeight = f:height()
   f:constrain("height", oldHeight + (type(amount)=="table" and amount.length or amount))
   if stealPosition == "bottom" then f:relax("top") end
-  -- SU.debug("insertions", "New height is now ".. f:height())
+  SU.debug("insertions", "New height is now ".. f:height())
 end
 
 local nextInterInsertionSkip = function (class)
