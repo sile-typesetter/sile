@@ -67,10 +67,10 @@ local initShrinkage = function (f)
 end
 
 SILE.insertions.setShrinkage = function(classname, amount)
-  SU.debug("insertions", "Shrinking main box by "..amount.length)
   local reduceList = SILE.scratch.insertions.classes[classname].stealFrom
   for fName, ratio in pairs(reduceList) do local f = SILE.getFrame(fName)
     initShrinkage(f)
+    SU.debug("insertions", "Shrinking "..fName.." by "..amount.length*ratio)
     f.state.totals.shrinkage = f.state.totals.shrinkage + amount.length * ratio
   end
 
