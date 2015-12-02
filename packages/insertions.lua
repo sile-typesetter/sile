@@ -45,13 +45,6 @@ local thisPageInsertionBoxForClass = function(class)
   return insertionsThisPage[class]
 end
 
-SILE.insertions.output = function()
-  for k,v in pairs(insertionsThisPage) do
-    v:outputYourself()
-    insertionsThisPage[k] = nil
-  end
-end
-
 local _insertionVbox = SILE.nodefactory.newVbox({
   __tostring = function(self) return "I<"..self.nodes..">" end,
   outputYourself = function(self)
@@ -228,7 +221,12 @@ SILE.typesetter:registerHook("noframebreak", function (self)
   end
 end)
 
-SILE.typesetter:registerPageEndHook(SILE.insertions.output)
+SILE.typesetter:registerPageEndHook(function(self)
+  for k,v in pairs(insertionsThisPage) do
+    v:outputYourself()
+    insertionsThisPage[k] = nil
+  end
+end)
 
 return {
   init = function () end,
