@@ -38,7 +38,7 @@ local _pageInsertionVbox = SILE.nodefactory.newVbox({
 
 local thisPageInsertionBoxForClass = function(class)
   if not insertionsThisPage[class] then
-    local this = _pageInsertionVbox {}
+    local this = std.tree.clone(_pageInsertionVbox)
     this.frame  = SILE.scratch.insertions.classes[class].insertInto
     insertionsThisPage[class] = this
   end
@@ -224,7 +224,7 @@ SILE.typesetter:registerHook("noframebreak", function (self)
   SU.debug("insertions", "no frame break, rolling back\n")
   for class,v in pairs(insertionsThisPage) do
     SILE.getFrame(SILE.scratch.insertions.classes[class].insertInto).state.totals.shrinkage = 0
-    insertionsThisPage[class].nodes = {}
+    insertionsThisPage[class] = nil
   end
 end)
 
