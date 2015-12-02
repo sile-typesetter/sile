@@ -55,19 +55,28 @@ local _insertionVbox = SILE.nodefactory.newVbox({
   type = "insertionVbox"
 })
 
+-- Set up a value to track how much smaller/larger to make a frame.
+-- We have to track this on the frame, because different insertion
+-- classes might affect the same frame; so we can't track it per class.
+-- We also have to ensure it's initialized every time because we might
+-- be shrinking a frame further down the page that the typesetter hasn't
+-- entered yet.
+local initShrinkage = function (f)
+  if not f.state.totals then f:init() end
+  if not f.state.totals.shrinkage then f.state.totals.shrinkage = 0 end
+end
+
 SILE.insertions.setShrinkage = function(classname, amount)
   SU.debug("insertions", "Shrinking main box by "..amount.length)
   local reduceList = SILE.scratch.insertions.classes[classname].stealFrom
   for fName, ratio in pairs(reduceList) do local f = SILE.getFrame(fName)
-    if not f.state.totals then f:init() end -- May be a frame that has not been entered yet
-    if not f.state.totals.shrinkage then f.state.totals.shrinkage = 0 end
+    initShrinkage(f)
     f.state.totals.shrinkage = f.state.totals.shrinkage + amount.length * ratio
   end
 
   -- Calculate the total size of insertions so far this page as negative shrinkage...
   f = SILE.getFrame(SILE.scratch.insertions.classes[classname].insertInto)
-  if not f.state.totals then f:init() end
-  if not f.state.totals.shrinkage then f.state.totals.shrinkage = 0 end
+  initShrinkage(f)
   f.state.totals.shrinkage = f.state.totals.shrinkage - amount.length
 
 end
@@ -77,8 +86,7 @@ SILE.insertions.commitShrinkage = function(classname)
   local reduceList = opts["stealFrom"]
   local stealPosition = opts["steal-position"] or "bottom"
   for fName, ratio in pairs(reduceList) do local f = SILE.getFrame(fName)
-    if not f.state.totals then f:init() end -- May be a frame that has not been entered yet
-    if not f.state.totals.shrinkage then f.state.totals.shrinkage = 0 end
+    initShrinkage(f)
     local newHeight = f:height() - f.state.totals.shrinkage
     local oldBottom = f:bottom()
     if stealPosition == "bottom" then f:relax("bottom") else f:relax("top") end
