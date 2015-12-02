@@ -264,7 +264,7 @@ local _penalty = _box {
   end,
   outputYourself = function() end,
   toText = function() return "(!)" end,
-  unbox = function(self) return self end
+  unbox = function(self) return {self} end
 }
 
 -- Vbox
@@ -314,8 +314,12 @@ local _vbox = _box {
       nodes = box:unbox()
     end
     for i = 1,#nodes do
-      self.height = self.height + nodes[i].height
+      self.height = self.height + nodes[i].height + nodes[i].depth
       self.nodes[(#self.nodes)+1] = nodes[i]
+    end
+    if nodes[#nodes] then
+      self.height = self.height - nodes[#nodes].depth
+      self.depth = nodes[#nodes].depth
     end
   end
 }

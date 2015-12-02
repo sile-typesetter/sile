@@ -13,8 +13,8 @@ SILE.pagebuilder = {
       h = h + vboxlist[i].height + vboxlist[i].depth
     end
     output.ratio = 1
-    output.height = h
-    output.depth = 0
+    output.height = h - vboxlist[#vboxlist].depth
+    output.depth = vboxlist[#vboxlist].depth
     return output
   end,
 
