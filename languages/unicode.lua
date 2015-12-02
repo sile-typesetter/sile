@@ -62,22 +62,48 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
 
 pcall( function () icu = require("justenoughicu") end)
 if icu then
-  SILE.tokenizers.unicode = function(text)
-    local chunks = {icu.breakpoints(text)}
-    return coroutine.wrap(function()
-      for i = 2,(#chunks) do local chunk = chunks[i]
-        if chunk.token:match("^%s+$") then
-          coroutine.yield({ separator = chunk.token })
-        elseif chunk.type == "line" then
-          if #(chunk.token) > 0 then coroutine.yield({ string = chunk.token }) end
-          coroutine.yield({ node = SILE.nodefactory.newPenalty({
-            penalty = (chunk.subtype == "soft" and 0 or -1000) })
-          })
-        else
-          coroutine.yield({ string = chunk.token })
-        end
+  SILE.nodeMakers.unicode = SILE.nodeMakers.base {
+    iterator = function (self, items)
+      local fulltext = ""
+      for i = 1,#items do item = items[i]
+        fulltext = fulltext .. items[i].text
       end
-    end)
-  end
-else
+      local chunks = {icu.breakpoints(fulltext)}
+      self:init()
+      return coroutine.wrap(function()
+        local ptr = 1
+        for i = 1,(#chunks) do local chunk = chunks[i]
+          if chunk.token:match("^%s+$") then
+            local t = ""
+            while t ~= chunk.token do
+              if ptr > #items then SU.error("Couldn't resolve "..chunk.token.." in input") end
+              t = t .. items[ptr].text
+              ptr = ptr +1
+            end
+            self:makeToken()
+            self:makeGlue()
+          elseif chunk.type == "line" then
+            local t = ""
+            while t ~= chunk.token do
+              if ptr > #items then SU.error("Couldn't resolve "..chunk.token.." in input") end
+              t = t .. items[ptr].text
+              self:addToken(items[ptr].text,items[ptr])
+              ptr = ptr +1
+            end
+            self:makeToken()
+            self:makePenalty(chunk.subtype == "soft" and 0 or -1000)
+          else
+            local t = ""
+            while t ~= chunk.token do
+              if ptr > #items then SU.error("Couldn't resolve "..chunk.token.." in input") end
+              t = t .. items[ptr].text
+              self:addToken(items[ptr].text,items[ptr])
+              ptr = ptr +1
+            end
+          end
+        end
+        self:makeToken()
+      end)
+    end
+  }
 end
