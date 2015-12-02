@@ -216,9 +216,7 @@ end
 SILE.typesetter:registerFrameBreakHook(function (self,nl)
   for class, list in pairs(insertionsThisPage) do
     SILE.insertions.commitShrinkage(class)
-    for i=1,#(list.nodes) do n = list.nodes[i]
-      SILE.insertions.increaseInsertionFrame(class, n.height + n.depth)
-    end
+    SILE.insertions.increaseInsertionFrame(class, list.height + list.depth)
   end
   if SU.debugging("insertions") then
     for k,v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
