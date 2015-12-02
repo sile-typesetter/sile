@@ -243,7 +243,7 @@ function utilities.utf8charat(str, index)
   return str:sub(index):match("([%z\1-\127\194-\244][\128-\191]*)")
 end
 
-function utilities.utf8_to_utf16be(str)
+function utilities.utf8_to_utf16be_hexencoded(str)
   local ustr = string.format("%04x", 0xfeff) -- BOM
   for uchr in utilities.utf8codes(str) do
     if (uchr < 0x10000) then

@@ -25,7 +25,7 @@ SILE.registerCommand("pdf:bookmark", function (o,c)
   -- either PDFDocEncoding or UTF16-BE with a leading byte-order marker.
   -- As PDFDocEncoding supports only limited character repertoire for
   -- European languages, we use UTF-16BE for internationalization.
-  local ustr = SU.utf8_to_utf16be(title)
+  local ustr = SU.utf8_to_utf16be_hexencoded(title)
   SILE.typesetter:pushHbox({
     value = nil, height = 0, width = 0, depth = 0,
     outputYourself= function ()
