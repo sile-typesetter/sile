@@ -20,10 +20,6 @@ local initInsertionClass = function (self, classname, options)
   SILE.scratch.insertions.classes[classname] = options
 end
 
-local _insertionVbox = SILE.nodefactory.newVbox({
-  __tostring = function(self) return "I<"..self.nodes..">" end
-})
-
 -- This initializes a vbox to store all the material in an insertion
 -- class for the current page
 local insertionsThisPage = {}
@@ -52,12 +48,6 @@ local thisPageInsertionBoxForClass = function(class)
   return insertionsThisPage[class]
 end
 
-_insertionVbox.outputYourself = function(self)
-  for i = 1,#(self.nodes) do
-    thisPageInsertionBoxForClass(self.class):append(self.nodes[i])
-  end
-end
-
 SILE.insertions.output = function()
   for k,v in pairs(insertionsThisPage) do
     v:outputYourself()
@@ -65,11 +55,15 @@ SILE.insertions.output = function()
   insertionsThisPage = {}
 end
 
-_insertionVbox.actualHeight = 0
-_insertionVbox.frame = nil
-_insertionVbox.active = 0
-_insertionVbox.type = "insertionVbox"
-_insertionVbox.class = nil
+local _insertionVbox = SILE.nodefactory.newVbox({
+  __tostring = function(self) return "I<"..self.nodes..">" end,
+  outputYourself = function(self)
+    for i = 1,#(self.nodes) do
+      thisPageInsertionBoxForClass(self.class):append(self.nodes[i])
+    end
+  end,
+  type = "insertionVbox"
+})
 
 SILE.insertions.setShrinkage = function(classname, amount)
   SU.debug("insertions", "Shrinking main box by "..amount.length)
