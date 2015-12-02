@@ -1,9 +1,4 @@
-SILE.scratch.insertions = {
-  classes = {},
-  thispage = {},
-  typesetters = {},
-  nextpage = {}
-}
+SILE.scratch.insertions = { classes = {} }
 
 SILE.insertions = {}
 
@@ -234,7 +229,6 @@ local insert = function (self, classname, vbox)
 end
 
 SILE.typesetter:registerFrameBreakHook(function (self,nl)
-  SILE.scratch.insertions.typesetters = {}
   SILE.insertions.commit()
   return nl
 end)
