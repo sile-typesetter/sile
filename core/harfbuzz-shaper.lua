@@ -89,8 +89,8 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
     for k,_ in pairs(usedfonts) do
       local fh = io.open(k)
       local font = ot.parseFont(fh)
-      local version
-      if font.names and font.names[5] then
+      local version = "Unknown version"
+      if font and font.names and font.names[5] then
         for l,v in pairs(font.names[5]) do version = v[1]; break end
       end
       print(k,version)
