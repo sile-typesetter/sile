@@ -94,10 +94,6 @@ SILE.insertions.commitShrinkage = function(classname)
     f:constrain("height", newHeight)
     f.state.totals.shrinkage = 0
   end
-
-  f = SILE.getFrame(SILE.scratch.insertions.classes[classname].insertInto)
-  if not f.state.totals then f:init() end -- May be a frame that has not been entered yet
-  if not f.state.totals.shrinkage then f.state.totals.shrinkage = 0 end
 end
 
 SILE.insertions.increaseInsertionFrame = function(classname, amount)
