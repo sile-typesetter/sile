@@ -35,13 +35,11 @@ _pageInsertionVbox.outputYourself = function (self)
   for i = 1,#self.nodes do local n = self.nodes[i]
     n:outputYourself(self.typesetter, n)
   end
-  insertionsThisPage[self.class] = nil
 end
 
 local thisPageInsertionBoxForClass = function(class)
   if not insertionsThisPage[class] then
     local this = _pageInsertionVbox {}
-    this.class = class
     this.frame  = SILE.scratch.insertions.classes[class].insertInto
     insertionsThisPage[class] = this
   end
@@ -51,8 +49,8 @@ end
 SILE.insertions.output = function()
   for k,v in pairs(insertionsThisPage) do
     v:outputYourself()
+    insertionsThisPage[k] = nil
   end
-  insertionsThisPage = {}
 end
 
 local _insertionVbox = SILE.nodefactory.newVbox({
