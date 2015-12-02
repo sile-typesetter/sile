@@ -151,11 +151,11 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
     and (target - (totalHeight + h)).length > 0 then
     SU.debug("insertions", "fits")
     SILE.insertions.setShrinkage(ins.class, h)
-    insbox:append(topBox)
-    insbox:append(ins)
     if leading then
       insbox:append(leading)
     end
+    insbox:append(topBox)
+    insbox:append(ins)
     target = SILE.typesetter.frame:height() - SILE.typesetter.frame.state.totals.shrinkage
   else
     SU.debug("insertions", "splitting")
