@@ -176,15 +176,11 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
       ins:append(materialToSplit)
       local newvbox = SILE.pagebuilder.collateVboxes(split)
       SU.debug("insertions", "Split. Remaining insertion is ".. ins)
-      table.insert(vboxlist, i,
-        _insertionVbox {
-          class = ins.class,
-          nodes = newvbox.nodes,
-          height = newvbox.height,
-          frame = ins.frame,
-          parent = SILE.typesetter.frame
-        }
-      )
+
+      -- The following line means that the current insertion will now be
+      -- found at vboxlist[i+1], and therefore will be the next thing
+      -- that the page builder sees.
+      table.insert(vboxlist, i, SILE.nodefactory.newPenalty({}))
       SILE.insertions.setShrinkage(ins.class, topBox.height + newvbox.height)
       insbox:append(topBox)
       insbox:append(newvbox)
