@@ -71,7 +71,11 @@ local length = {
   new = function (spec)
     return _length(spec or {})
   end,
-
+  make = function (n)
+    local result = _length {}
+    result:fromLengthOrNumber(n)
+    return result
+  end,
   parse = function (spec)
     if not spec then return _length {} end
     local t = lpeg.match(SILE.parserBits.length, spec)

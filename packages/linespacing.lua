@@ -42,6 +42,7 @@ local metricscache = {}
 
 local getLineMetrics = function (l)
   local linemetrics = {ascender = 0, descender = 0, lineheight = 0}
+  if not l or not l.nodes then return linemetrics end
   for i = 1,#(l.nodes) do n = l.nodes[i]; if n:isNnode() then
     local m = metricscache[SILE.font._key(n.options)]
     if not m then
@@ -92,8 +93,8 @@ SILE.typesetter.leadingFor = function (self, v, previous)
     -- max(ascender) of fonts on next
     local extra = SILE.toPoints(SILE.settings.get("linespacing.fit-font.extra-space"))
     local btob = prevmetrics.descender + thismetrics.ascender + extra
-    local toAdd = SILE.length.new({ length = btob - (v.height + previous.depth) })
-    return SILE.nodefactory.newVglue({ height = toAdd })
+    local toAdd = btob - (v.height + (previous and previous.depth or 0))
+    return SILE.nodefactory.newVglue({ height = SILE.length.make(toAdd)})
   end
 
   if method == "css" then

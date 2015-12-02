@@ -143,11 +143,17 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   local topBox = nextInterInsertionSkip(ins.class)
   local options = SILE.scratch.insertions.classes[ins.class]
   local h = ins.height + topBox.height
+  local leading
+  local insbox = thisPageInsertionBoxForClass(ins.class)
+  if insbox.height > 0 then
+    leading = SILE.typesetter:leadingFor(ins,insbox.nodes[#insbox.nodes])
+    h = h + leading.height
+  end
   if not targetFrame.state.totals then targetFrame:init() end
   if not targetFrame.state.totals.shrinkage then targetFrame.state.totals.shrinkage = 0 end
   SU.debug("insertions", "Total height of insertions so far: ".. (- targetFrame.state.totals.shrinkage))
   SU.debug("insertions", "Incoming insertion content: " .. ins)
-  SU.debug("insertions", "Incoming insertion plus topBox height: " .. ins.height .."+"..topBox.height.."="..h)
+  SU.debug("insertions", "Incoming insertion plus topBox height plus leading: " .. ins.height .."+"..topBox.height.."+"..(leading and leading.height or 0).."="..h)
   SU.debug("insertions", "Max allowed height of insertions on page: " .. options.maxHeight)
   SU.debug("insertions", "Total content on page so far: " .. totalHeight)
   SU.debug("insertions", "Page target: "..target)
@@ -156,8 +162,11 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
     and (target - (totalHeight + h)).length > 0 then
     SU.debug("insertions", "fits")
     SILE.insertions.setShrinkage(ins.class, h)
-    thisPageInsertionBoxForClass(ins.class):append(topBox)
-    thisPageInsertionBoxForClass(ins.class):append(ins)
+    insbox:append(topBox)
+    insbox:append(ins)
+    if leading then
+      insbox:append(leading)
+    end
     target = SILE.typesetter.frame:height() - SILE.typesetter.frame.state.totals.shrinkage
   else
     SU.debug("insertions", "splitting")
