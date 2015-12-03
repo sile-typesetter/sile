@@ -125,19 +125,13 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   local topBox = nextInterInsertionSkip(ins.class)
   local h = ins.height + topBox.height
 
-  local leading
   local insbox = thisPageInsertionBoxForClass(ins.class)
-  if insbox.height > 0 then
-    leading = SILE.typesetter:leadingFor(ins,insbox.nodes[#insbox.nodes])
-    h = h + leading.height
-  end
 
   initShrinkage(targetFrame)
   if SU.debugging("insertions") then
     print("[insertions]", "Incoming insertion")
     print("top box height", topBox.height)
-    print("insertion", ins)
-    print("leading height", leading and leading.height or "no leading")
+    print("insertion", ins, ins.height, ins.depth)
     print("Total incoming height", h)
     print("Insertions already in this class ", insbox.height)
     print("Page target ", target)
@@ -147,9 +141,6 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
     and (target - (totalHeight + h)).length > 0 then
     SU.debug("insertions", "fits")
     SILE.insertions.setShrinkage(ins.class, h)
-    if leading then
-      insbox:append(leading)
-    end
     insbox:append(topBox)
     insbox:append(ins)
     target = SILE.typesetter.frame:height() - SILE.typesetter.frame.state.totals.shrinkage
