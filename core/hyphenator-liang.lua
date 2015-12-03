@@ -89,8 +89,10 @@ local hyphenateNode = function(n)
     for j, b in ipairs(breaks) do
       if not(b=="") then
         for _,nn in pairs(SILE.shaper:createNnodes(b, n.options)) do
-          nn.parent = n
-          table.insert(newnodes, nn)
+          if nn:isNnode() then
+            nn.parent = n
+            table.insert(newnodes, nn)
+          end
         end
         if not (j == #breaks) then
           d = SILE.nodefactory.newDiscretionary({ prebreak = SILE.shaper:createNnodes("-", n.options) })
