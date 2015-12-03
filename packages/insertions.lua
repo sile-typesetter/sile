@@ -173,7 +173,13 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
       insbox:append(newvbox)
     else
       -- Split failure
-      table.insert(vboxlist, i, SILE.nodefactory.newPenalty({penalty = -20000 }))
+      -- At this point we need to persuade the page builder to break before
+      -- the last vbox that it saw.
+      local lastbox = i
+      while not vboxlist[lastbox]:isVbox() do lastbox = lastbox - 1 end
+      while not vboxlist[i]:isPenalty() do
+        table.insert(vboxlist, lastbox, SILE.nodefactory.newPenalty({penalty = -20000 }))
+      end
       return target
     end
     table.insert(vboxlist, i+1, SILE.nodefactory.newPenalty({penalty = -20000 }))
