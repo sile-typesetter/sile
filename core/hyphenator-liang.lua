@@ -1,12 +1,15 @@
 local function addPattern(h, p)
   local t = h.trie;
-  for char in p:gmatch('%D') do
-    if not(t[char]) then t[char] = {} end
-    t = t[char]
+  bits = SU.splitUtf8(p)
+  for i = 1,#bits do char = bits[i]
+    if not char:find("%d") then
+      if not(t[char]) then t[char] = {} end
+      t = t[char]
+    end
   end
   t["_"] = {};
   local lastWasDigit = 0
-  for char in p:gmatch('.') do
+  for i = 1,#bits do char = bits[i]
     if char:find("%d") then
       lastWasDigit = 1
       table.insert(t["_"], tonumber(char))
@@ -38,8 +41,7 @@ end
 function _hyphenate(self, w)
   if string.len(w) < self.minWord then return {w} end
   local points = self.exceptions[w:lower()]
-  local word = {}
-  for i in w:gmatch(".") do table.insert(word, i) end
+  local word = SU.splitUtf8(w)
   if not points then
     points = SU.map(function()return 0 end, word)
     local work = SU.map(string.lower, word)
