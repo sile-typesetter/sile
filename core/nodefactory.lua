@@ -286,7 +286,7 @@ local _vbox = _box {
     return self
   end,
   toText = function (self)
-    return "VB[" .. SU.concat(SU.map(function (n) return n:toText().."" end, self.nodes), "") .. "]"
+    return "[" .. SU.concat(SU.map(function (n) return n:toText().."" end, self.nodes), "") .. "]"
   end,
   outputYourself = function(self, typesetter, line)
     typesetter.frame:advancePageDirection(self.height)
@@ -306,21 +306,24 @@ local _vbox = _box {
     for i=1,#self.nodes do
       if self.nodes[i]:isVbox() or self.nodes[i]:isVglue() then return self.nodes end
     end
-    return self
+    return {self}
   end,
   append = function (self, box)
     local nodes = box
+    if not box then SU.error("nil box given",1) end
     if nodes.type then
       nodes = box:unbox()
     end
-    for i = 1,#nodes do
-      self.height = self.height + nodes[i].height + nodes[i].depth
-      self.nodes[(#self.nodes)+1] = nodes[i]
+    local h = self.height
+    local lastdepth = 0
+    for i=1,#nodes do
+      table.insert(self.nodes, nodes[i])
+      h = h + nodes[i].height + nodes[i].depth
+      if nodes[i]:isVbox() then lastdepth = nodes[i].depth end
     end
-    if nodes[#nodes] then
-      self.height = self.height - nodes[#nodes].depth
-      self.depth = nodes[#nodes].depth
-    end
+    self.ratio = 1
+    self.height = h - lastdepth
+    self.depth = lastdepth
   end
 }
 
