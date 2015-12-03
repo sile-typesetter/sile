@@ -110,6 +110,15 @@ local hyphenateNode = function(n)
   return {n}
 end
 
+showHyphenationPoints = function (word, language)
+  language = language or "en"
+  if not _hyphenators[language] then
+    _hyphenators[language] = {minWord = 5, leftmin = 2, rightmin = 2, trie = {}, exceptions = {} };
+    loadPatterns(_hyphenators[language], language)
+  end
+  return SU.concat(_hyphenate(_hyphenators[language], word), "-")
+end
+
 SILE.hyphenate = function (nodelist)
   local newlist = {}
   for i = 1,#nodelist do
