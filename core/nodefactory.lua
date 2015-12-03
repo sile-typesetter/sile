@@ -286,7 +286,7 @@ local _vbox = _box {
     return self
   end,
   toText = function (self)
-    return "[" .. SU.concat(SU.map(function (n) return n:toText().."" end, self.nodes), "") .. "]"
+    return "VB[" .. SU.concat(SU.map(function (n) return n:toText().."" end, self.nodes), "") .. "]"
   end,
   outputYourself = function(self, typesetter, line)
     typesetter.frame:advancePageDirection(self.height)
