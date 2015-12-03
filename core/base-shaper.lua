@@ -97,7 +97,7 @@ SILE.shapers.base = std.object {
       self:addShapedGlyphToNnodeValue(nnodeValue, glyph)
     end
     local misfit = false
-    if SILE.typesetter.frame:writingDirection() == "TTB" then
+    if SILE.typesetter.frame and SILE.typesetter.frame:writingDirection() == "TTB" then
       if options.direction == "LTR" then misfit = true end
     else
       if options.direction == "TTB" then misfit = true end
