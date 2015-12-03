@@ -195,7 +195,7 @@ int shape (lua_State *L) {
         }
       }
 
-      lua_pushstring(L, "codepoint");
+      lua_pushstring(L, "gid");
       lua_pushinteger(L, glyph_info[j].codepoint);
       lua_settable(L, -3);
       lua_pushstring(L, "index");

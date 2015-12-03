@@ -73,7 +73,7 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
     end
     if not nnodevalue.glyphString then nnodevalue.glyphString = {} end
     if not nnodevalue.glyphNames then nnodevalue.glyphNames = {} end
-    table.insert(nnodevalue.glyphString, shapedglyph.codepoint)
+    table.insert(nnodevalue.glyphString, shapedglyph.gid)
     table.insert(nnodevalue.glyphNames, shapedglyph.name)
   end,
   debugVersions = function()
