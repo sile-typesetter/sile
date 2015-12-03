@@ -47,11 +47,7 @@ end
 
 local _insertionVbox = SILE.nodefactory.newVbox({
   __tostring = function(self) return "I<"..self.nodes[1].."...>" end,
-  outputYourself = function(self)
-    for i = 1,#(self.nodes) do
-      thisPageInsertionBoxForClass(self.class):append(self.nodes[i])
-    end
-  end,
+  outputYourself = function(self) end,
   type = "insertionVbox"
 })
 
