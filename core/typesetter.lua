@@ -370,6 +370,9 @@ SILE.defaultTypesetter = std.object {
       self:initNextFrame()
     end
   end,
+  inhibitLeading = function (self)
+    self.state.previousVbox = nil
+  end,
   leadingFor = function(self, v, previous)
     -- Insert leading
     SU.debug("typesetter", "   Considering leading between self two lines");
