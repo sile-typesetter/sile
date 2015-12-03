@@ -120,14 +120,16 @@ SILE.registerCommand("hbox", function (o,c)
       local s = node:shape()
       for i = 1, #s do
         recentContribution[#recentContribution+1] = s[i]
+        h = s[i].height > h and s[i].height or h
+        d = s[i].depth > d and s[i].depth or d
         l = l + s[i]:lineContribution()
       end
     else
       recentContribution[#recentContribution+1] = node
       l = l + node:lineContribution()
+      h = node.height > h and node.height or h
+      d = node.depth > d and node.depth or d
     end
-    h = node.height > h and node.height or h
-    d = node.depth > d and node.depth or d
     SILE.typesetter.state.nodes[i] = nil
   end
   local hbox = SILE.nodefactory.newHbox({
