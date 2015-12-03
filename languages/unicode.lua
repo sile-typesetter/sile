@@ -72,7 +72,7 @@ if icu then
       self:init()
       return coroutine.wrap(function()
         local ptr = 1
-        for i = 1,(#chunks) do local chunk = chunks[i]
+        for i = 2,(#chunks) do local chunk = chunks[i]
           if chunk.token:match("^%s+$") then
             local t = ""
             while t ~= chunk.token do
