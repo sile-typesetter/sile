@@ -43,7 +43,7 @@ SILE.registerCommand("footnote", function(options, content)
   SILE.settings.pushState()
   SILE.settings.reset()
   local material = SILE.Commands["vbox"]({}, function()
-    SILE.Commands["font"]({size = "9pt"}, function()
+    SILE.Commands["footnote:font"]({}, function()
       SILE.call("footnote:atstart")
       SILE.call("footnote:counter")
       SILE.process(content)
@@ -53,6 +53,12 @@ SILE.registerCommand("footnote", function(options, content)
   SILE.typesetter = oldT
   insertions.exports:insert("footnote", material)
   SILE.scratch.counters.footnote.value = SILE.scratch.counters.footnote.value + 1
+end)
+
+SILE.registerCommand("footnote:font", function(o,c)
+  SILE.Commands["font"]({size = "9pt"}, function()
+    SILE.process(c)
+  end)
 end)
 
 SILE.registerCommand("footnote:atstart", function(o,c)
