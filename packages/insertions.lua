@@ -123,7 +123,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   local options = SILE.scratch.insertions.classes[ins.class]
 
   local topBox = nextInterInsertionSkip(ins.class)
-  local h = ins.height + topBox.height
+  local h = ins.height + topBox.height + ins.depth
 
   local insbox = thisPageInsertionBoxForClass(ins.class)
 
@@ -168,7 +168,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
       -- found at vboxlist[i+1], and therefore will be the next thing
       -- that the page builder sees.
       table.insert(vboxlist, i, SILE.nodefactory.newPenalty({}))
-      SILE.insertions.setShrinkage(ins.class, topBox.height + newvbox.height)
+      SILE.insertions.setShrinkage(ins.class, topBox.height + newvbox.height + newvbox.depth)
       insbox:append(topBox)
       insbox:append(newvbox)
     else
