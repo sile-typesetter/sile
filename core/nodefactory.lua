@@ -249,7 +249,8 @@ local _vglue = _box {
   end,
   outputYourself = function (self,typesetter, line)
     typesetter.frame:advancePageDirection(line.depth + line.height.length)
-  end
+  end,
+  unbox = function (self) return { self } end
 }
 
 -- Penalties
@@ -262,7 +263,8 @@ local _penalty = _box {
       return "P(" .. this.flagged .. "|" .. this.penalty .. ")";
   end,
   outputYourself = function() end,
-  toText = function() return "(!)" end
+  toText = function() return "(!)" end,
+  unbox = function(self) return {self} end
 }
 
 -- Vbox
@@ -284,7 +286,7 @@ local _vbox = _box {
     return self
   end,
   toText = function (self)
-    return "VB[" .. SU.concat(SU.map(function (n) return n:toText().."" end, self.nodes), "") .. "]"
+    return "[" .. SU.concat(SU.map(function (n) return n:toText().."" end, self.nodes), "") .. "]"
   end,
   outputYourself = function(self, typesetter, line)
     typesetter.frame:advancePageDirection(self.height)
@@ -299,6 +301,29 @@ local _vbox = _box {
     end
     typesetter.frame:advancePageDirection(self.depth)
     typesetter.frame:newLine()
+  end,
+  unbox = function(self)
+    for i=1,#self.nodes do
+      if self.nodes[i]:isVbox() or self.nodes[i]:isVglue() then return self.nodes end
+    end
+    return {self}
+  end,
+  append = function (self, box)
+    local nodes = box
+    if not box then SU.error("nil box given",1) end
+    if nodes.type then
+      nodes = box:unbox()
+    end
+    local h = self.height
+    local lastdepth = 0
+    for i=1,#nodes do
+      table.insert(self.nodes, nodes[i])
+      h = h + nodes[i].height + nodes[i].depth
+      if nodes[i]:isVbox() then lastdepth = nodes[i].depth end
+    end
+    self.ratio = 1
+    self.height = h - lastdepth
+    self.depth = lastdepth
   end
 }
 
