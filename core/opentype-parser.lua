@@ -107,11 +107,69 @@ local parseMaxp = function(s)
   return vstruct.read(">version:u4 numGlyphs:u2", fd)
 end
 
+local function parseColr(s)
+  if s:len() <= 0 then return end
+  local fd = vstruct.cursor(s)
+
+  local version = vstruct.readvals(">u2", fd)
+  if version ~= 0 then return end
+
+  local colr = {}
+
+  local header = vstruct.read(">nBases:u2 oBases:u4 oLayers:u4 nLayers:u2", fd)
+  local bases = vstruct.read(">@" .. header.oBases .. " " .. header.nBases .. "*{gid:u2 firstLayer:u2 nLayers:u2}", fd)
+  local layers = vstruct.read(">@" .. header.oLayers .. " " .. header.nLayers .. "*{gid:u2 paletteIndex:u2}", fd);
+
+  for i = 1, #bases do
+    local base = bases[i]
+    local glyphLayers = {}
+    for j = base.firstLayer + 1, base.firstLayer + base.nLayers do
+      local layer = layers[j]
+      layer.paletteIndex = layer.paletteIndex + 1
+      glyphLayers[#glyphLayers+1] = layer
+    end
+    colr[base.gid] = glyphLayers
+  end
+
+  return colr
+end
+
+local function parseCpal(s)
+  if s:len() <= 0 then return end
+  local fd = vstruct.cursor(s)
+
+  local version = vstruct.readvals(">u2", fd)
+  if version > 1 then return end
+
+  local cpal = {}
+
+  local header = vstruct.read(">nPalettesEntries:u2 nPalettes:u2 nColors:u2 oFirstColor:u4", fd)
+  local colorIndices = vstruct.read("> " .. header.nPalettes .. "*u2", fd)
+  local colors = vstruct.read(">@" .. header.oFirstColor .. " " .. header.nColors .. "*{b:u1 g:u1 r:u1 a:u1}", fd)
+
+  for i = 1, header.nPalettes do
+    local first = colorIndices[i] + 1
+    local palette = {}
+    for j = 1, header.nPalettesEntries do
+      local color = colors[j]
+      for k, v in pairs(color) do
+        color[k] = v / 255
+      end
+      palette[#palette+1] = color
+    end
+    cpal[#cpal+1] = palette
+  end
+
+  return cpal
+end
+
 local parseFont = function(face)
   local font = {}
 
   font.names = parseName(hb.get_table(face.data, face.index, "name"))
   font.maxp = parseMaxp(hb.get_table(face.data, face.index, "maxp"))
+  font.colr = parseColr(hb.get_table(face.data, face.index, "COLR"))
+  font.cpal = parseCpal(hb.get_table(face.data, face.index, "CPAL"))
 
   return font
 end
