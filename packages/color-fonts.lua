@@ -24,8 +24,6 @@ SILE.shapers.harfbuzzWithColor = SILE.shapers.harfbuzz {
             -- XXX: handle multiple palette, add a font option?
             local color = font.cpal[1][layer.paletteIndex]
             local newItem = {
-              -- XXX: what is the name used for?
-           -- name = "",
               gid = layer.gid,
               glyphAdvance = item.glyphAdvance,
               width = width,
