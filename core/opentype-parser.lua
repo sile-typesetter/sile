@@ -164,14 +164,18 @@ local function parseCpal(s)
 end
 
 local parseFont = function(face)
-  local font = {}
+  if not face.font then
+    local font = {}
 
-  font.names = parseName(hb.get_table(face.data, face.index, "name"))
-  font.maxp = parseMaxp(hb.get_table(face.data, face.index, "maxp"))
-  font.colr = parseColr(hb.get_table(face.data, face.index, "COLR"))
-  font.cpal = parseCpal(hb.get_table(face.data, face.index, "CPAL"))
+    font.names = parseName(hb.get_table(face.data, face.index, "name"))
+    font.maxp = parseMaxp(hb.get_table(face.data, face.index, "maxp"))
+    font.colr = parseColr(hb.get_table(face.data, face.index, "COLR"))
+    font.cpal = parseCpal(hb.get_table(face.data, face.index, "CPAL"))
 
-  return font
+    face.font = font
+  end
+
+  return face.font
 end
 
 return { parseFont = parseFont }
