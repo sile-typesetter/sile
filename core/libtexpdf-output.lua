@@ -50,7 +50,7 @@ SILE.outputters.libtexpdf = {
     -- is actually the shaped x_advance).
     if value.complex then
       for i=1,#(value.items) do
-        local glyph = value.items[i].codepoint
+        local glyph = value.items[i].gid
         local buf = string.char(math.floor(glyph % 2^32 / 2^8)) .. string.char(glyph % 0x100)
         pdf.setstring(cursorX + (value.items[i].x_offset or 0), cursorY + (value.items[i].y_offset or 0), buf, string.len(buf), font, value.items[i].glyphAdvance)
         cursorX = cursorX + value.items[i].width

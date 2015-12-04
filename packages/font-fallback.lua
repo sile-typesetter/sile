@@ -25,7 +25,7 @@ SILE.shapers.harfbuzzWithFallback = SILE.shapers.harfbuzz {
         local newItems = SILE.shapers.harfbuzz:shapeToken(chunk, options)
         local startOfNotdefRun = -1
         for i =1,#newItems do
-          if newItems[i].codepoint > 0 then
+          if newItems[i].gid > 0 then
             SU.debug("fonts", "Found glyph '"..newItems[i].text.."'")
             if startOfNotdefRun > -1 then
               shapeQueue[#shapeQueue+1] = {
