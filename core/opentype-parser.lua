@@ -1,18 +1,11 @@
 local vstruct = require "vstruct"
-local parseFont = function(fd)
-  local sig = vstruct.readvals(">u4", fd)
-  if sig ~= 0x00010000 and sig ~= 0x4F54544F then return nil end
+local hb = require "justenoughharfbuzz"
 
-  local font = vstruct.read(">header:{numTables:u2 searchRange:u2 entrySelector:u2 rangeShift:u2}", fd)
-  font.offsets = {}
-  for i=1,font.header.numTables do
-    local offsettable = vstruct.read(">tag:s4 checksum:u4 offset:u4 length:u4", fd)
-    font.offsets[offsettable.tag] = offsettable
-    font.offsets[offsettable.tag].checksum=nil
-    font.offsets[offsettable.tag].tag=nil
-  end
+local parseName = function(s)
+  if s:len() <= 0 then return end
+  local fd = vstruct.cursor(s)
 
-  -- name
+  local names = {}
   local MacintoshLanguages = {
     [0] = 'en', [1] = 'fr', [2] = 'de', [3] = 'it', [4] = 'nl',
     [5] = 'sv', [6] = 'es', [7] = 'da', [8] = 'pt', [9] = 'no',
@@ -76,8 +69,7 @@ local parseFont = function(fd)
     [15370] = "es-PY", [16385] = "ar-QA", [16394] = "es-BO", [17418] = "es-SV",
     [18442] = "es-HN", [19466] = "es-NI", [20490] = "es-PR", [31748] = "zh-CHT"
   }
-  font.names = {}
-  local name = vstruct.read(">@" .. font.offsets.name.offset .. " format:u2 count:u2 sOffset:u2", fd)
+  local name = vstruct.read(">format:u2 count:u2 sOffset:u2", fd)
   name.records = {}
   if name.format == 1 then return end
   for i=1,name.count do
@@ -100,14 +92,27 @@ local parseFont = function(fd)
     local record = name.records[i]
     local language = record.language
     if language then
-      if not font.names[record.name] then font.names[record.name] = {} end
-      font.names[record.name][language] = vstruct.read(">@"..(font.offsets.name.offset + name.sOffset+record.offset).."s"..record.length, fd)
+      if not names[record.name] then names[record.name] = {} end
+      names[record.name][language] = vstruct.read(">@"..name.sOffset+record.offset.."s"..record.length, fd)
     end
   end
 
-  -- MAXP
-  local maxp = vstruct.read(">@" .. font.offsets.maxp.offset .. " version:u4 numGlyphs:u2", fd)
-  font.maxp = {version = maxp.version, numGlyphs = maxp.numGlyphs}
+  return names
+end
+
+local parseMaxp = function(s)
+  if s:len() <= 0 then return end
+  local fd = vstruct.cursor(s)
+
+  return vstruct.read(">version:u4 numGlyphs:u2", fd)
+end
+
+local parseFont = function(face)
+  local font = {}
+
+  font.names = parseName(hb.get_table(face.data, face.index, "name"))
+  font.maxp = parseMaxp(hb.get_table(face.data, face.index, "maxp"))
+
   return font
 end
 
