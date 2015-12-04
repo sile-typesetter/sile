@@ -1,0 +1,59 @@
+<tests/color-fonts.sil>
+Set paper size 	365.6692953	561.2598486
+Begin page
+Mx 	50.35055
+My 	73.10614
+Set font 	;10;200;regular;normal;;LTR;TestCLR-Regular.ttf
+T	3	(a)
+Push color	1.0	0.87843137254902	0.54117647058824
+Mx 	60.35055
+T	7	()
+Pop color
+Push color	0.89803921568627	0.6078431372549	0.14509803921569
+T	8	()
+Pop color
+Push color	0.51764705882353	0.21960784313725	0.050980392156863
+T	9	(☺)
+Pop color
+Mx 	70.35055
+T	3	(a)
+Mx 	50.35055
+My 	88.10614
+T	3	(a)
+Push color	0.98039215686275	0.87843137254902	0.81176470588235
+Mx 	60.35055
+T	7	()
+Pop color
+Push color	0.89803921568627	0.6078431372549	0.14509803921569
+T	8	()
+Pop color
+Push color	0.51764705882353	0.21960784313725	0.050980392156863
+T	9	(☺🏻)
+Pop color
+Mx 	70.35055
+T	3	(a)
+Mx 	50.35055
+My 	103.10614
+Set font 	;10;200;regular;normal;;RTL;TestCLR-Regular.ttf
+T	4	(ع)
+Push color	0.98039215686275	0.87843137254902	0.81176470588235
+Mx 	60.35055
+Set font 	;10;200;regular;normal;;LTR;TestCLR-Regular.ttf
+T	7	()
+Pop color
+Push color	0.89803921568627	0.6078431372549	0.14509803921569
+T	8	()
+Pop color
+Push color	0.51764705882353	0.21960784313725	0.050980392156863
+T	9	(☺🏻)
+Pop color
+Mx 	70.35055
+Set font 	;10;200;regular;normal;;RTL;TestCLR-Regular.ttf
+T	4	(ع)
+[1] Mx 	170.06688
+My 	490.44635
+Set font 	Gentium;10;200;regular;normal;;LTR
+T	17	(1)
+End page
+Finish
+

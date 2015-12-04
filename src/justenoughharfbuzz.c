@@ -263,6 +263,28 @@ int list_shapers (lua_State *L) {
   return i;
 }
 
+int get_table (lua_State *L) {
+  size_t font_l, tag_l;
+  const char * font_s = luaL_checklstring(L, 1, &font_l);
+  unsigned int font_index = luaL_checknumber(L, 2);
+  const char * tag_s = luaL_checklstring(L, 3, &tag_l);
+
+  hb_blob_t * blob = hb_blob_create (font_s, font_l, HB_MEMORY_MODE_WRITABLE, (void*)font_s, NULL);
+  hb_face_t * face = hb_face_create (blob, font_index);
+  hb_blob_t * table = hb_face_reference_table(face, hb_tag_from_string(tag_s, tag_l));
+
+  unsigned int table_l;
+  const char * table_s = hb_blob_get_data(table, &table_l);
+
+  lua_pushlstring(L, table_s, table_l);
+
+  hb_blob_destroy(table);
+  hb_face_destroy(face);
+  hb_blob_destroy(blob);
+
+  return 1;
+}
+
 #if !defined LUA_VERSION_NUM
 /* Lua 5.0 */
 #define luaL_Reg luaL_reg
@@ -290,6 +312,7 @@ static const struct luaL_Reg lib_table [] = {
   {"_shape", shape},
   {"version", get_harfbuzz_version},
   {"shapers", list_shapers},
+  {"get_table", get_table},
   {NULL, NULL}
 };
 
