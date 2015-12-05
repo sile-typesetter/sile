@@ -36,8 +36,7 @@ int thai_breakpoints(lua_State *L) {
   const char * text = luaL_checklstring(L, 1, &text_l);
   int i, l;
   UErrorCode err = U_ZERO_ERROR;
-  const char* buffer = malloc(text_l);
-  bzero(buffer,text_l);
+  const char* buffer = calloc(1, text_l);
   l = ucnv_convert("TIS-620","UTF-8", buffer, text_l, text, text_l, &err);
   int* pos = malloc(l * sizeof(int));
   int n_pos = th_brk(buffer, pos, l);
