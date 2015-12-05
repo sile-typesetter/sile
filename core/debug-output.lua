@@ -18,7 +18,7 @@ SILE.outputters.debug = {
     print("Set color", color.r, color.g, color.b)
   end,
   pushColor = function (self, color)
-    print("Push color", color.r, color.g, color.b)
+    print("Push color", ("%.5g"):format(color.r), ("%.5g"):format(color.g),("%.5g"):format(color.b))
   end,
   popColor = function (self)
     print("Pop color")
