@@ -1,6 +1,6 @@
 \begin[class=book,papersize=129mm x 198mm]{document}
 \script[src=packages/color-fonts]
-\font[filename=TestCLR-Regular.ttf]
+\font[filename=tests/TestCLR-Regular.ttf]
 a☺a
 
 a☺🏻a 
