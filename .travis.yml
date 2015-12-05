@@ -27,6 +27,7 @@ env:
 cache:
   directories:
   - $HOME/.fonts
+  - $HOME/local
   # Cache object files etc. to speed up build
   - $TRAVIS_BUILD_DIR/libtexpdf
 before_install:
