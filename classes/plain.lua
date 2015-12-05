@@ -58,7 +58,7 @@ SILE.registerCommand("hss", function(o,c)
   SILE.typesetter:pushGlue(SILE.nodefactory.hssGlue)
   table.insert(SILE.typesetter.state.nodes, SILE.nodefactory.zeroHbox)
 end, "Add glue which stretches and shrinks horizontally (good for centering)")
-SILE.registerCommand("vss", function(o,c) SILE.typesetter:pushVglue(SILE.nodefactory.vssGlue) end, "Add glue which stretches and shrinks vertically")
+SILE.registerCommand("vss", function(o,c) SILE.typesetter:pushExplicitVglue(SILE.nodefactory.vssGlue) end, "Add glue which stretches and shrinks vertically")
 
 plain.registerCommands = function()
   SILE.baseClass.registerCommands()
