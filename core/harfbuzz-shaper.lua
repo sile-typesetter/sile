@@ -32,7 +32,7 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
       substwarnings[options.font] = true
       SU.warn("Font '"..options.font.."' not available, falling back to '"..face.family.."'")
     end
-    if face.filename then usedfonts[face.filename] = true end
+    usedfonts[face] = true
     local items = { hb._shape(text,
                       face.data,
                       face.index,
@@ -86,14 +86,13 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
     end
     print("")
     print("Fonts used:")
-    for k,_ in pairs(usedfonts) do
-      local fh = io.open(k)
-      local font = ot.parseFont(fh)
+    for face,_ in pairs(usedfonts) do
+      local font = ot.parseFont(face)
       local version = "Unknown version"
       if font and font.names and font.names[5] then
         for l,v in pairs(font.names[5]) do version = v[1]; break end
       end
-      print(k,version)
+      print(face.filename..":"..face.index, version)
     end
   end
 }

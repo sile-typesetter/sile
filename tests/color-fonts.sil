@@ -1,0 +1,9 @@
+\begin[class=book,papersize=129mm x 198mm]{document}
+\script[src=packages/color-fonts]
+\font[filename=TestCLR-Regular.ttf]
+a☺a
+
+a☺🏻a 
+
+ع☺🏻ع 
+\end{document}
