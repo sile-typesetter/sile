@@ -27,7 +27,6 @@ book.newPage = function(self)
 end
 
 book.finish = function ()
-  book.endPage()
   book:writeToc()
   return plain:finish()
 end
