@@ -45,8 +45,13 @@ int icu_breakpoints(lua_State *L) {
     lua_pushstring(L, ubrk_isBoundary(linebreaks,i) ? "line" : "word");
     lua_settable(L, -3);
 
-    lua_pushstring(L, "index"); /* XXX This is not what you think it is! */
-    lua_pushinteger(L, i);
+    int32_t utf8_index = 0;
+    err = U_ZERO_ERROR;
+    u_strToUTF8(NULL, 0, &utf8_index, buffer, i, &err);
+    assert(U_SUCCESS(err) || err == U_BUFFER_OVERFLOW_ERROR);
+
+    lua_pushstring(L, "index");
+    lua_pushinteger(L, utf8_index);
     lua_settable(L, -3);
 
     if (ubrk_isBoundary(linebreaks, i)) {
