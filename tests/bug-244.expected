@@ -1,0 +1,7 @@
+<tests/bug-244.sil>
+Set paper size 	595.275597	841.8897729
+Begin page
+
+! rotating package requires libtexpdf backend at tests/bug-244.sil l.2, col.1
+End page
+Finish
