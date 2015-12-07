@@ -9,17 +9,17 @@ end
 
 function utilities.error(message,bug)
   if(SILE.currentCommand and type(SILE.currentCommand) == "table") then
-    print("\n! "..message.. " at "..SILE.currentlyProcessingFile.." l."..(SILE.currentCommand.line)..", col."..(SILE.currentCommand.col))
+    io.stderr:write("\n! "..message.. " at "..SILE.currentlyProcessingFile.." l."..(SILE.currentCommand.line)..", col."..(SILE.currentCommand.col))
   else
-    print("\n! "..message.. " at "..SILE.currentlyProcessingFile)
+    io.stderr:write("\n! "..message.. " at "..SILE.currentlyProcessingFile)
   end
-  if bug then print(debug.traceback()) end
+  if bug then io.stderr:write(debug.traceback()) end
   SILE.outputter:finish()
   os.exit(1)
 end
 
 function utilities.warn(message)
-  print("\n! "..message)
+  io.stderr:write("\n! "..message)
   --print(debug.traceback())
   --os.exit(1)
 end
