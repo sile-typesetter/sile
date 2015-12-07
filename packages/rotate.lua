@@ -1,6 +1,3 @@
-if SILE.outputter ~= SILE.outputters.libtexpdf then
-  SU.error("rotating package requires libtexpdf backend")
-end
 local pdf = require("justenoughlibtexpdf")
 
 local enter = function(self)

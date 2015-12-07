@@ -1,7 +1,17 @@
 <tests/bug-244.sil>
 Set paper size 	595.275597	841.8897729
 Begin page
-
-! rotating package requires libtexpdf backend at tests/bug-244.sil l.2, col.1
+Mx 	544.28898
+My 	107.68335
+Set font 	Gentium;10;200;regular;normal;;LTR
+T	40 69 76 76 79	(Hello)
+My 	131.98063
+T	87 79 82 76 68	(world)
+My 	155.94059
+T	14	(.)
+[1] Mx 	295.29161
+My 	780.61769
+T	17	(1)
 End page
 Finish
+
