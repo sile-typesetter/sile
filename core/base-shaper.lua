@@ -13,6 +13,11 @@ local _key = function(options)
   return table.concat({options.font;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename},";")
 end
 
+-- Function for testing shaping in the repl
+makenodes = function(s,o)
+  return SILE.shaper:createNnodes(s, SILE.font.loadDefaults(o or {}))
+end
+
 SILE.shapers.base = std.object {
 
   -- Return the length of a space character
