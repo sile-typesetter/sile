@@ -45,6 +45,10 @@ int icu_breakpoints(lua_State *L) {
     lua_pushstring(L, ubrk_isBoundary(linebreaks,i) ? "line" : "word");
     lua_settable(L, -3);
 
+    lua_pushstring(L, "index"); /* XXX This is not what you think it is! */
+    lua_pushinteger(L, i);
+    lua_settable(L, -3);
+
     if (ubrk_isBoundary(linebreaks, i)) {
       lua_pushstring(L, "subtype");
       type = ubrk_getRuleStatus(linebreaks);

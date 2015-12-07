@@ -19,7 +19,9 @@ SILE.nodeMakers.base = std.object {
     self.lastnode = "glue"
   end,
   makePenalty = function (self,p)
-    coroutine.yield( SILE.nodefactory.newPenalty({ penalty = p or 0 }) )
+    if self.lastnode ~= "penalty" and self.lastnode ~= "glue" then
+      coroutine.yield( SILE.nodefactory.newPenalty({ penalty = p or 0 }) )
+    end
     self.lastnode = "penalty"
   end,
   init = function (self)
@@ -70,36 +72,35 @@ if icu then
       end
       local chunks = {icu.breakpoints(fulltext)}
       self:init()
+      table.remove(chunks,1)
       return coroutine.wrap(function()
-        local ptr = 1
-        for i = 2,(#chunks) do local chunk = chunks[i]
-          if chunk.token:match("^%s+$") then
-            local t = ""
-            while t ~= chunk.token do
-              if ptr > #items then SU.error("Couldn't resolve "..chunk.token.." in input") end
-              t = t .. items[ptr].text
-              ptr = ptr +1
+        for i = 1,#items do item = items[i]
+          local char = items[i].text
+          local cp = SU.codepoint(char)
+          if chunks[1] and (items[i].index >= chunks[1].index) then
+            -- There's a break here
+            local thistype = chardata[cp] and chardata[cp].linebreak
+            local bp = chunks[1]
+            while chunks[1] and items[i].index >= chunks[1].index do
+              table.remove(chunks,1)
             end
-            self:makeToken()
-            self:makeGlue()
-          elseif chunk.type == "line" then
-            local t = ""
-            while t ~= chunk.token do
-              if ptr > #items then SU.error("Couldn't resolve "..chunk.token.." in input") end
-              t = t .. items[ptr].text
-              self:addToken(items[ptr].text,items[ptr])
-              ptr = ptr +1
+            if bp.type == "word" then
+              if chardata[cp] and thistype == "sp" then
+                -- Spacing word break
+                self:makeToken()
+                self:makeGlue()
+              else -- a word break which isn't a space
+                self:makePenalty(0)
+                self:addToken(char,item)
+                self:makeToken()
+              end
+            elseif bp.type == "line" then
+              -- Line break
+              self:makePenalty(bp.subtype == "soft" and 0 or -1000)
+              self:addToken(char,item)
             end
-            self:makeToken()
-            self:makePenalty(chunk.subtype == "soft" and 0 or -1000)
           else
-            local t = ""
-            while t ~= chunk.token do
-              if ptr > #items then SU.error("Couldn't resolve "..chunk.token.." in input") end
-              t = t .. items[ptr].text
-              self:addToken(items[ptr].text,items[ptr])
-              ptr = ptr +1
-            end
+            self:addToken(char,item)
           end
         end
         self:makeToken()
