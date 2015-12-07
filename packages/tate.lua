@@ -93,7 +93,7 @@ SILE.registerCommand("latin-in-tate", function (options, content)
     elseif nodes[i]:isGlue() then
       nodes[i].width = nodes[i].width
       SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes+1] = nodes[i]
-    elseif nodes[i]:lineContribution() > 0 then
+    elseif SILE.length.make(nodes[i]:lineContribution()).length > 0 then
       SILE.call("hbox", {}, function ()
         SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes+1] = nodes[i]
       end)
