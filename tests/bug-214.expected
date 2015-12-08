@@ -264,8 +264,6 @@ T	13	(-)
 My 	262.94052
 Set font 	Gentium;10;200;regular;normal;;LTR
 T	17	(1)
-
-! Overfull content for frame folio
 New page
 Mx 	29.36693
 My 	39.21348
@@ -284,8 +282,6 @@ T	85 76 76 65 77 67 79 14	(ullamco.)
 My 	262.89169
 Set font 	Gentium;10;200;regular;normal;;LTR
 T	18	(2)
-
-! Overfull content for frame folio
 End page
 Finish
 
