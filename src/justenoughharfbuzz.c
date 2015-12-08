@@ -139,7 +139,7 @@ int shape (lua_State *L) {
     /* Harfbuzz's support for OT fonts is great, but
        there's currently no support for CFF fonts, so
        downgrade to Freetype for those. */
-    if (strncmp(font_s, "OTTO", 4) == 0) {
+    if (strncmp(font_s, "OTTO", 4) == 0 || strncmp(font_s, "ttcf", 4) == 0) {
       hb_ft_font_set_funcs(hbFont);
     } else {
       hb_ot_font_set_funcs(hbFont);
