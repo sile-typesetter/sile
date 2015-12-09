@@ -436,6 +436,8 @@ function lineBreak:checkForLegalBreak(n) -- 892
     -- 894 (We removed the auto_breaking parameter)
     if previous and previous:isBox() then self:tryBreak() end
     self.activeWidth = self.activeWidth + n.width
+  elseif n:isKern() then
+    self.activeWidth = self.activeWidth + n.width
   elseif n:isDiscretionary() then -- 895
     self.activeWidth = self.activeWidth + n:prebreakWidth()
     self:tryBreak()
