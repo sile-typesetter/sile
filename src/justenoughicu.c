@@ -83,7 +83,6 @@ int icu_breakpoints(lua_State *L) {
   buffer = malloc(l * sizeof(UChar));
   u_strFromUTF8(buffer, l, &l, input, input_l, &err);
 
-  char* outputbuffer = malloc(input_l); /* To hold UTF8 */
   UBreakIterator* wordbreaks, *linebreaks;
   int32_t i, previous;
   wordbreaks = ubrk_open(UBRK_WORD, 0, buffer, l, &err);
@@ -127,13 +126,11 @@ int icu_breakpoints(lua_State *L) {
       lua_settable(L, -3);
     }
     lua_pushstring(L, "token");
-    err = U_ZERO_ERROR;
-    u_strToUTF8(outputbuffer, input_l, &out_l, buffer+previous, i-previous, &err);
-    lua_pushlstring(L, outputbuffer, out_l);
+    lua_pushlstring(L, input+previous, utf8_index-previous);
 
     lua_settable(L, -3);
 
-    previous  = i;
+    previous = utf8_index;
     breakcount++;
     i++;
   }
