@@ -127,6 +127,7 @@ int icu_breakpoints(lua_State *L) {
       lua_settable(L, -3);
     }
     lua_pushstring(L, "token");
+    err = U_ZERO_ERROR;
     u_strToUTF8(outputbuffer, input_l, &out_l, buffer+previous, i-previous, &err);
     lua_pushlstring(L, outputbuffer, out_l);
 
