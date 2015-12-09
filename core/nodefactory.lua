@@ -31,6 +31,7 @@ function _box:isAlternative ()  return self.type == "alternative" end
 function _box:isVbox ()  return self.type == "vbox" end
 function _box:isMigrating ()  return self.migrating end
 function _box:isDiscardable () return self:isGlue() or self:isPenalty() end
+function _box:isVDiscardable () return self:isVglue() or self:isPenalty() end
 function _box:isPenalty ()  return self.type == "penalty" end
 function _box:isDiscretionary ()  return self.type == "discretionary" end
 

@@ -113,7 +113,9 @@ local nextInterInsertionSkip = function (class)
       return SILE.nodefactory.newVglue({ height = options["topSkip"] })
     end
   else
-    return SILE.nodefactory.newVglue({ height = options["interInsertionSkip"] })
+    local skipSize = options["interInsertionSkip"]
+    skipSize = skipSize - stuffSoFar.nodes[#stuffSoFar.nodes].depth
+    return SILE.nodefactory.newVglue({ height = skipSize })
   end
 end
 
@@ -126,8 +128,12 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   local h = ins.height + topBox.height + ins.depth
 
   local insbox = thisPageInsertionBoxForClass(ins.class)
-
   initShrinkage(targetFrame)
+  -- drop discardables from ins
+  while(#ins.nodes > 1 and ins.nodes[#ins.nodes]:isVDiscardable()) do
+    ins.nodes[#ins.nodes] = nil
+  end
+
   if SU.debugging("insertions") then
     print("[insertions]", "Incoming insertion")
     print("top box height", topBox.height)
