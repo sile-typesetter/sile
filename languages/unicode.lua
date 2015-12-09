@@ -10,7 +10,10 @@ SILE.nodeMakers.base = std.object {
   end,
   makeLetterSpaceGlue = function(self)
     if self.lastnode ~= "glue" then
-      coroutine.yield(SILE.nodefactory.newKern(SILE.settings.get("document.letterspaceglue")))
+      if SILE.settings.get("document.letterspaceglue") then
+        local w = SILE.settings.get("document.letterspaceglue").width
+        coroutine.yield(SILE.nodefactory.newKern({ width = w }))
+      end
     end
     self.lastnode = "glue"
   end,
