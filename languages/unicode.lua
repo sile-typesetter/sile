@@ -96,6 +96,7 @@ if icu then
               end
             elseif bp.type == "line" then
               -- Line break
+              self:makeToken()
               self:makePenalty(bp.subtype == "soft" and 0 or -1000)
               self:addToken(char,item)
             end
