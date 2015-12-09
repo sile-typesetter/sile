@@ -37,6 +37,13 @@ SILE.settings.declare({
 })
 
 SILE.settings.declare({
+  name = "document.letterspaceglue",
+  type = "Glue or nil",
+  default = nil,
+  help = "Glue added between tokens"
+})
+
+SILE.settings.declare({
   name = "typesetter.breakwidth",
   type = "Length or nil",
   default = nil,

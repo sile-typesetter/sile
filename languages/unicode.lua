@@ -8,6 +8,12 @@ SILE.nodeMakers.base = std.object {
       self.contents = {} ; self.token = "" ; self.lastnode = "nnode"
     end
   end,
+  makeLetterSpaceGlue = function(self)
+    if self.lastnode ~= "glue" then
+      coroutine.yield(SILE.nodefactory.newKern(SILE.settings.get("document.letterspaceglue")))
+    end
+    self.lastnode = "glue"
+  end,
   addToken = function (self, char, item)
     self.token = self.token .. char
     self.contents[#self.contents+1] = item
@@ -37,6 +43,7 @@ SILE.nodeMakers.base = std.object {
 SILE.nodeMakers.unicode = SILE.nodeMakers.base {
   iterator = function (self, items)
     self:init()
+    local ics = SILE.settings.get("document.letterspaceglue")
     return coroutine.wrap(function()
       for i = 1,#items do item = items[i]
         local char = items[i].text
@@ -53,10 +60,15 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
           self:makeToken()
           self:addToken(char,item)
         else
+          if ics then
+            self:makeToken()
+            self:makeLetterSpaceGlue()
+          end
           self:addToken(char,item)
         end
         if thistype ~= "cm" then lasttype = chardata[cp] and chardata[cp].linebreak end
       end
+      if ics then self:makeLetterSpaceGlue() end
       self:makeToken()
     end)
   end
@@ -67,6 +79,7 @@ if icu then
   SILE.nodeMakers.unicode = SILE.nodeMakers.base {
     iterator = function (self, items)
       local fulltext = ""
+      local ics = SILE.settings.get("document.letterspaceglue")
       for i = 1,#items do item = items[i]
         fulltext = fulltext .. items[i].text
       end
@@ -101,9 +114,14 @@ if icu then
               self:addToken(char,item)
             end
           else
+            if ics then
+              self:makeToken()
+              self:makeLetterSpaceGlue()
+            end
             self:addToken(char,item)
           end
         end
+        if ics then self:makeLetterSpaceGlue() end
         self:makeToken()
       end)
     end
