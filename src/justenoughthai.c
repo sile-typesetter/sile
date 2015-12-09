@@ -7,6 +7,7 @@
 #include <thai/thailib.h>
 #include <thai/thbrk.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #if !defined LUA_VERSION_NUM
 /* Lua 5.0 */
@@ -40,9 +41,13 @@ int thai_breakpoints(lua_State *L) {
   l = ucnv_convert("TIS-620","UTF-8", buffer, text_l, text, text_l, &err);
   int* pos = malloc(l * sizeof(int));
   int n_pos = th_brk((const thchar_t*)buffer, pos, l);
+  lua_checkstack(L, n_pos);
   for (i=0; i < n_pos; i++) {
-    lua_checkstack(L, n_pos);
-    lua_pushinteger(L, pos[i]);
+    int err = U_ZERO_ERROR;
+    int utf8_index;
+    utf8_index = ucnv_convert("UTF-8","TIS-620", NULL, 0, buffer, pos[i], &err);
+    assert(U_SUCCESS(err) || err == U_BUFFER_OVERFLOW_ERROR);
+    lua_pushinteger(L, utf8_index);
   }
   free(pos);
   free(buffer);
