@@ -4,7 +4,9 @@ Begin page
 Mx 	40.97638
 My 	37.18565
 Set font 	Gentium;10;200;italic;normal;;LTR
-T	41 84 65 76 73 67 31	(Italic?)
+T	41 84 65 76 73 67	(Italic)
+Mx 	60.03888
+T	31	(?)
 [1] Mx 	207.41759
 My 	553.73265
 Set font 	Gentium;10;200;regular;normal;;LTR
