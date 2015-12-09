@@ -9,6 +9,68 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
+typedef int32_t (*conversion_function_t)(UChar *dest, int32_t destCapacity, const UChar *src, int32_t srcLength, const char *locale, UErrorCode *pErrorCode);
+
+int icu_case(lua_State *L) {
+  size_t input_l;
+  const char* input = luaL_checklstring(L, 1, &input_l);
+
+  const char* locale = luaL_checkstring(L, 2);
+  const char* recase = luaL_checkstring(L, 3);
+
+  /* Convert input to ICU-friendly UChars */
+  UChar *input_as_uchar;
+  int32_t l = 0;
+  UErrorCode err = U_ZERO_ERROR;
+  u_strFromUTF8(NULL, 0, &l, input, input_l, &err);
+  err = U_ZERO_ERROR;
+  input_as_uchar = malloc(l * sizeof(UChar));
+  u_strFromUTF8(input_as_uchar, l, &l, input, input_l, &err);
+
+  /* Now do the conversion */
+  conversion_function_t conversion;
+  UChar *output;
+  int32_t l2 = 0;
+
+  if (strcmp(recase, "upper") == 0) {
+    conversion = u_strToUpper;
+  } else if (strcmp(recase, "lower") == 0) {
+    conversion = u_strToLower;
+  // } else if (strcmp(recase, "title") == 0) {
+    // conversion = u_strToTitle;
+  } else {
+    free(input_as_uchar);
+    return luaL_error(L, "Unknown case conversion type %s", recase);
+  }
+  l2 = conversion(NULL, 0, input_as_uchar, l, locale, &err);
+  err = U_ZERO_ERROR;
+  output = malloc(l2 * sizeof(UChar));
+  conversion(output, l2, input_as_uchar, l, locale, &err);
+  if (!U_SUCCESS(err)) {
+    free(input_as_uchar);
+    free(output);
+    return luaL_error(L, "Error in case conversion %s", u_errorName(err));
+  }
+
+  int32_t l3 = 0;
+  u_strToUTF8(NULL, 0, &l3, output, l2, &err);
+  err = U_ZERO_ERROR;
+  char* utf8output = malloc(l3);
+  u_strToUTF8(utf8output, l3, NULL, output, l2, &err);
+  utf8output[l3] = '\0';
+  if (!U_SUCCESS(err)) {
+    free(input_as_uchar);
+    free(output);
+    free(utf8output);
+    return luaL_error(L, "Error in UTF8 conversion %s", u_errorName(err));
+  }
+  lua_pushstring(L, utf8output);
+  free(input_as_uchar);
+  free(output);
+  free(utf8output);
+  return 1;
+}
+
 int icu_breakpoints(lua_State *L) {
   const char* input = luaL_checkstring(L, 1);
   int input_l = strlen(input);
@@ -105,6 +167,7 @@ static void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
 
 static const struct luaL_Reg lib_table [] = {
   {"breakpoints", icu_breakpoints},
+  {"case", icu_case},
   {NULL, NULL}
 };
 
