@@ -86,7 +86,7 @@ if icu then
       for i = 1,#items do item = items[i]
         fulltext = fulltext .. items[i].text
       end
-      local chunks = {icu.breakpoints(fulltext)}
+      local chunks = {icu.breakpoints(fulltext, self.options.language)}
       self:init()
       table.remove(chunks,1)
       return coroutine.wrap(function()
@@ -106,9 +106,8 @@ if icu then
                 self:makeToken()
                 self:makeGlue()
               else -- a word break which isn't a space
-                self:makePenalty(0)
-                self:addToken(char,item)
                 self:makeToken()
+                self:addToken(char,item)
               end
             elseif bp.type == "line" then
               -- Line break

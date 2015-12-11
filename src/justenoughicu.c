@@ -74,6 +74,7 @@ int icu_case(lua_State *L) {
 int icu_breakpoints(lua_State *L) {
   const char* input = luaL_checkstring(L, 1);
   int input_l = strlen(input);
+  const char* locale = luaL_checkstring(L, 2);
   UChar *buffer;
   int32_t l, breakcount = 0;
   UErrorCode err = U_ZERO_ERROR;
@@ -85,10 +86,10 @@ int icu_breakpoints(lua_State *L) {
 
   UBreakIterator* wordbreaks, *linebreaks;
   int32_t i, previous;
-  wordbreaks = ubrk_open(UBRK_WORD, 0, buffer, l, &err);
+  wordbreaks = ubrk_open(UBRK_WORD, locale, buffer, l, &err);
   assert(!U_FAILURE(err));
 
-  linebreaks = ubrk_open(UBRK_LINE, 0, buffer, l, &err);
+  linebreaks = ubrk_open(UBRK_LINE, locale, buffer, l, &err);
   assert(!U_FAILURE(err));
 
   previous = 0;
