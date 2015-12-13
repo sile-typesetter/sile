@@ -1,6 +1,45 @@
+--[[
+ Insertions handling is the most complicated and bug-prone part of
+ SILE, and thus deserves to be well documented. If you plan to work
+ on this, it would help you a lot to read chapter 29 of "TeX By Topic"
+ by Victor Eijkhout.
+
+ Note: While most SILE packages are completely self-contained, this one
+ requires some support from the SILE core. We'll get to it later, but
+ when the page builder comes across some of the magic boxes that are
+ defined as part of insertions handling, it triggers a routine here
+ which can alter the page builder's operation. So it is not really an
+ optional package.
+
+--]]
+
 SILE.scratch.insertions = { classes = {} }
 
 SILE.insertions = {}
+
+--[[
+The typical insertion is a footnote but we provide a generic mechanism for
+handling any kind of insertion. An insertion is material which is added from
+the main flow of the document into a specific area on the page, and where
+moving such material alters the shape of the page.
+
+Because this is a generic mechanism, each insertion is part of a "class"
+(just like in TeX.); you may have several different classes putting insertions
+in different places on the page. These classes also define how the page shape
+is altered by the insertion. So, a class using the footnotes package may specify
+that insertions get added into the `footnotes' frame and the space used up by
+those insertions also reduces the 'content' frame. If you have two columns but
+one footnote frame, then an insertion will steal space equal to half the
+insertion's height from each column's frame. This is specified as:
+
+  insertInto = "footnotes",
+  stealFrom = { leftColumn = 0.5, rightColumn = 0.5 }
+
+Insertion classes also need to define the maximum height they can stretch to,
+the skip or box placed before the first insertion on a page, and the skip placed
+between insertions.
+
+--]]
 
 local initInsertionClass = function (self, classname, options)
   SU.required(options, "insertInto", "initializing insertions")
@@ -17,11 +56,19 @@ local initInsertionClass = function (self, classname, options)
     for i = 1,#(options.stealFrom) do rl[options.stealFrom[i]] = 1 end
     options.stealFrom = rl
   end
+  options.maxHeight = SILE.length.make(options.maxHeight)
+
   SILE.scratch.insertions.classes[classname] = options
 end
 
--- This initializes a vbox to store all the material in an insertion
--- class for the current page
+--[[
+
+Each insertion class stores a page's worth of content in a box.
+In some ways it's a fairly standard vbox, but it also knows its own
+typesetter and frame.
+
+--]]
+
 local insertionsThisPage = {}
 local _pageInsertionVbox = SILE.nodefactory.newVbox({
   __tostring = function(self) return "PI<"..self.nodes..">" end,
@@ -45,22 +92,60 @@ local thisPageInsertionBoxForClass = function(class)
   return insertionsThisPage[class]
 end
 
+--[[
+
+An insertion vbox, on the other hand, is a place where insertion material
+is held until we are sure it is going to end up on the current page. (We
+might be consuming material that will eventually end up on a future page.)
+So we stick the material into an insertion vbox, and when the pagebuilder
+sees this, magic will happen.
+
+--]]
 local _insertionVbox = SILE.nodefactory.newVbox({
   __tostring = function(self) return "I<"..self.nodes[1].."...>" end,
   outputYourself = function(self) end,
-  type = "insertionVbox"
+  type = "insertionVbox",
+  -- And some utility methods to make the insertion processing code
+  -- easier to read.
+  dropDiscardables = function (self)
+    while(#self.nodes > 1 and self.nodes[#self.nodes]:isVDiscardable()) do
+      self.nodes[#self.nodes] = nil
+    end
+  end,
+  split = function(self, materialToSplit, maxsize)
+    local s = SILE.pagebuilder.findBestBreak({
+      vboxlist = materialToSplit,
+      target   = maxsize.length,
+      restart  = false,
+      force    = true
+    })
+    if s then
+      local newvbox = SILE.pagebuilder.collateVboxes(s)
+      self.nodes = {}
+      self.height = 0
+      self:append(materialToSplit)
+      return newvbox
+    end
+  end
 })
 
--- Set up a value to track how much smaller/larger to make a frame.
--- We have to track this on the frame, because different insertion
--- classes might affect the same frame; so we can't track it per class.
--- We also have to ensure it's initialized every time because we might
--- be shrinking a frame further down the page that the typesetter hasn't
--- entered yet.
+--[[
+
+Set up a value to track how much smaller/larger to make a frame.
+We have to track this on the frame, because different insertion
+classes might affect the same frame; so we can't track it per class.
+We also have to ensure it's initialized every time because we might
+be shrinking a frame further down the page that the typesetter hasn't
+entered yet.
+
+--]]
+
 local initShrinkage = function (f)
   if not f.state.totals then f:init() end
   if not f.state.totals.shrinkage then f.state.totals.shrinkage = 0 end
 end
+
+--[[ Mark a frame for reduction. --]]
 
 SILE.insertions.setShrinkage = function(classname, amount)
   local reduceList = SILE.scratch.insertions.classes[classname].stealFrom
@@ -69,13 +154,9 @@ SILE.insertions.setShrinkage = function(classname, amount)
     SU.debug("insertions", "Shrinking "..fName.." by "..amount.length*ratio)
     f.state.totals.shrinkage = f.state.totals.shrinkage + amount.length * ratio
   end
-
-  -- Calculate the total size of insertions so far this page as negative shrinkage...
-  f = SILE.getFrame(SILE.scratch.insertions.classes[classname].insertInto)
-  initShrinkage(f)
-  f.state.totals.shrinkage = f.state.totals.shrinkage - amount.length
-
 end
+
+--[[ Actually shrink the frame. --]]
 
 SILE.insertions.commitShrinkage = function(classname)
   local opts = SILE.scratch.insertions.classes[classname]
@@ -84,7 +165,6 @@ SILE.insertions.commitShrinkage = function(classname)
   for fName, ratio in pairs(reduceList) do local f = SILE.getFrame(fName)
     initShrinkage(f)
     local newHeight = f:height() - f.state.totals.shrinkage
-    local oldBottom = f:bottom()
     if stealPosition == "bottom" then f:relax("bottom") else f:relax("top") end
     SU.debug("insertions", "Constraining height of "..fName.." by "..f.state.totals.shrinkage.." to "..newHeight)
     f:constrain("height", newHeight)
@@ -119,22 +199,9 @@ local nextInterInsertionSkip = function (class)
   end
 end
 
-SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
-  local ins = vboxlist[i]
-  local targetFrame = SILE.getFrame(ins.frame)
-  local options = SILE.scratch.insertions.classes[ins.class]
-
-  local topBox = nextInterInsertionSkip(ins.class)
-  local h = ins.height + topBox.height + ins.depth
-
-  local insbox = thisPageInsertionBoxForClass(ins.class)
-  initShrinkage(targetFrame)
-  -- drop discardables from ins
-  while(#ins.nodes > 1 and ins.nodes[#ins.nodes]:isVDiscardable()) do
-    ins.nodes[#ins.nodes] = nil
-  end
-
+local debugInsertion = function(ins, topBox, target, targetFrame)
   if SU.debugging("insertions") then
+    local h = ins.height + topBox.height + ins.depth
     print("[insertions]", "Incoming insertion")
     print("top box height", topBox.height)
     print("insertion", ins, ins.height, ins.depth)
@@ -143,78 +210,136 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
     print("Page target ", target)
     print(totalHeight.." worth of content on page so far, plus "..-targetFrame.state.totals.shrinkage.." used to make way for insertions")
   end
-  if ((- targetFrame.state.totals.shrinkage) + h.length - options.maxHeight).length < 0
-    and (target - (totalHeight + h)).length > 0 then
+end
+
+local min = function (a,b) return a < b and a or b end
+
+--[[
+  So, this is the magic routine called by the page builder to determine what
+  do to when an insertion is seen in the vertical list. The key design issue
+  about this routine is that it needs to be very careful about state; it may
+  end up processing the same list different times. (if the current list of
+  vertical items is not tall enough to cause a page break yet) So it should
+  not commit itself to anything yet.
+
+  However, it needs to make a decision about whether the upcoming insertion
+  can fit on the page; if it needs to be split; or if it should not appear
+  on this page at all (and hence force the line which caused the insertion
+  off the page as well).
+
+--]]
+
+SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
+  local ins = vboxlist[i]
+  local targetFrame = SILE.getFrame(ins.frame)
+  local options = SILE.scratch.insertions.classes[ins.class]
+  ins:dropDiscardables()
+
+  -- We look into the page's insertion box and choose the appropriate skip,
+  -- so we know how high the whole insertion is.
+  local topBox = nextInterInsertionSkip(ins.class)
+  local h = ins.height + topBox.height + ins.depth
+
+  local insbox = thisPageInsertionBoxForClass(ins.class)
+  initShrinkage(targetFrame)
+
+  debugInsertion(ins, topBox, target, targetFrame)
+
+  local effectOnThisFrame = options.stealFrom[SILE.typesetter.frame.id]
+  if effectOnThisFrame then effectOnThisFrame = effectOnThisFrame * h.length
+  else effectOnThisFrame = 0 end
+
+  local newTarget = target - effectOnThisFrame
+
+  -- We only fit if:
+  -- the effect of the insertion on this frame doesn't take us over the target
+  -- and this doesn't take the target frame over the max height.
+
+  if totalHeight < newTarget and
+    ((- targetFrame.state.totals.shrinkage) + h.length - options.maxHeight).length < 0 then
     SU.debug("insertions", "fits")
     SILE.insertions.setShrinkage(ins.class, h)
     insbox:append(topBox)
     insbox:append(ins)
-    target = SILE.typesetter.frame:height() - SILE.typesetter.frame.state.totals.shrinkage
-  else
-    SU.debug("insertions", "splitting")
-    local maxsize = target - totalHeight
-    if maxsize > options.maxHeight then maxsize = options.maxHeight end
-    maxsize = maxsize - topBox.height
-    local materialToSplit = {}
-    table.append(materialToSplit, ins:unbox())
-    local split = SILE.pagebuilder.findBestBreak({
-      vboxlist = materialToSplit,
-      target   = maxsize.length,
-      restart  = false,
-      force    = true
-    })
-    if split then
-      ins.nodes = {}
-      ins.height = 0
-      ins:append(materialToSplit)
-      local newvbox = SILE.pagebuilder.collateVboxes(split)
-      SU.debug("insertions", "Split. Remaining insertion is ".. ins)
-
-      -- The following line means that the current insertion will now be
-      -- found at vboxlist[i+1], and therefore will be the next thing
-      -- that the page builder sees.
-      table.insert(vboxlist, i, SILE.nodefactory.newPenalty({}))
-      SILE.insertions.setShrinkage(ins.class, topBox.height + newvbox.height + newvbox.depth)
-      insbox:append(topBox)
-      insbox:append(newvbox)
-    else
-      -- Split failure
-      -- At this point we need to persuade the page builder to break before
-      -- the last vbox that it saw.
-      local lastbox = i
-      while not vboxlist[lastbox]:isVbox() do lastbox = lastbox - 1 end
-      while not vboxlist[i]:isPenalty() do
-        table.insert(vboxlist, lastbox, SILE.nodefactory.newPenalty({penalty = -20000 }))
-      end
-      return target
-    end
-    table.insert(vboxlist, i+1, SILE.nodefactory.newPenalty({penalty = -20000 }))
+    return newTarget
   end
-  SU.debug("insertions", "")
-  return target
-end
 
-local insert = function (self, classname, vbox)
-  local thisclass = SILE.scratch.insertions.classes[classname]
-  if not thisclass then SU.error("Uninitialized insertion class "..classname) end
-  SILE.typesetter:pushMigratingMaterial({
-    _insertionVbox {
-        class = classname,
-        nodes = vbox.nodes,
-        height = vbox.height,
-        frame = thisclass.insertInto,
-        parent = SILE.typesetter.frame
-      }
-  })
+  -- OK, we didn't fit. So now we have to split the insertion to fit the height
+  -- we have within the insertion frame.
+  SU.debug("insertions", "splitting")
+  local maxsize = min(target - totalHeight, options.maxHeight)
+
+  -- If we're going to fit this insertion on the page, we will use the
+  -- whole of topbox, so let's subtract the height of that now.
+  -- The remaining height will be the amount of inserted material that we
+  -- intend to put on this page.
+  maxsize = maxsize - topBox.height
+  local materialToSplit = {}
+  table.append(materialToSplit, ins:unbox())
+  local newvbox = ins:split(materialToSplit, maxsize)
+
+  if newvbox then
+    SU.debug("insertions", "Split. Remaining insertion is ".. ins)
+    SILE.insertions.setShrinkage(ins.class, topBox.height + newvbox.height + newvbox.depth)
+    insbox:append(topBox)
+    insbox:append(newvbox)
+
+    --[[ The insertion we're dealing with is currently vboxlist[i], and it
+    now contains all the material that *didn't* make it onto the current
+    page. We've dealt with the material that did fit on the page. We want
+    the page builder to a) break the page immediately here - it's full by
+    definition, or else we would not have needed to split (XXX This is not
+    true, because we might not be stealing from the current frame.) and
+    then b) retry the remaining material. By inserting a penalty into the
+    vboxlist, when we return from here the pagebuilder will first consider
+    the penalty (and break the page) and then consider the rest of the
+    insertion. --]]
+
+    table.insert(vboxlist, i, SILE.nodefactory.newPenalty({penalty = -20000 }))
+    return target -- Who cares? The penalty is going to cause a split.
+  end
+
+  --[[ We couldn't even split the insertion.
+
+  Assume that previously we have seen these nodes on the vboxlist:
+
+    i-2 \vbox{Hello world. I am a footnote mark: 1}
+    i-1 \vglue
+    i   \insertionbox{1. Footnote}
+
+  This insertion couldn't fit on the page at all. Therefore we need to
+  take both the footnote *and* the previous vbox (from which the
+  insertion has been migrated) onto a new page. The way we achieve this
+  is by finding the most recent vbox and then continually inserting page
+  break penalties, pushing the insertion and vbox further down the list
+  until they are the next things to be considered. The end result of the
+  vboxlist will be:
+
+    i-2 \penalty
+    i-1 \penalty
+    i   \penalty <- considered now when we return to pagebuilder
+    i+1 \vbox{Hello world. I am a footnote mark: 1}
+    i+2 \vglue
+    i+3 \insertionbox{1. Footnote}
+
+  The page will be broken right now, and the old vbox will no longer
+  be part of the material to be output on the page. The new page will
+  start with the vbox and the insertion.
+
+  --]]
+
+  local lastbox = i
+  while not vboxlist[lastbox]:isVbox() do lastbox = lastbox - 1 end
+  while not vboxlist[i]:isPenalty() do
+    table.insert(vboxlist, lastbox, SILE.nodefactory.newPenalty({penalty = -20000 }))
+  end
+  return target
 end
 
 SILE.typesetter:registerFrameBreakHook(function (self,nl)
   for class, list in pairs(insertionsThisPage) do
     SILE.insertions.commitShrinkage(class)
     SILE.insertions.increaseInsertionFrame(class, list.height + list.depth)
-  end
-  if SU.debugging("insertions") then
-    for k,v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
   end
   return nl
 end)
@@ -232,7 +357,25 @@ SILE.typesetter:registerPageEndHook(function(self)
     v:outputYourself()
     insertionsThisPage[k] = nil
   end
+  if SU.debugging("insertions") then
+    for k,v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
+  end
 end)
+
+-- This just puts the insertion vbox into the typesetter's queues.
+local insert = function (self, classname, vbox)
+  local thisclass = SILE.scratch.insertions.classes[classname]
+  if not thisclass then SU.error("Uninitialized insertion class "..classname) end
+  SILE.typesetter:pushMigratingMaterial({
+    _insertionVbox {
+        class = classname,
+        nodes = vbox.nodes,
+        height = vbox.height,
+        frame = thisclass.insertInto,
+        parent = SILE.typesetter.frame
+      }
+  })
+end
 
 return {
   init = function () end,
