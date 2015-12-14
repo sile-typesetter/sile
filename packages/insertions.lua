@@ -261,7 +261,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   -- and this doesn't take the target frame over the max height.
 
   if not (totalHeight + effectOnThisFrame > target) and
-    not ((- targetFrame.state.totals.shrinkage) + h.length > options.maxHeight) then
+    not ((insbox.height + h).length > options.maxHeight.length) then
     SU.debug("insertions", "fits")
     SILE.insertions.setShrinkage(ins.class, h)
     insbox:append(topBox)
