@@ -199,7 +199,7 @@ local nextInterInsertionSkip = function (class)
   end
 end
 
-local debugInsertion = function(ins, topBox, target, targetFrame)
+local debugInsertion = function(ins, insbox, topBox, target, targetFrame)
   if SU.debugging("insertions") then
     local h = ins.height + topBox.height + ins.depth
     print("[insertions]", "Incoming insertion")
@@ -243,7 +243,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   local insbox = thisPageInsertionBoxForClass(ins.class)
   initShrinkage(targetFrame)
 
-  debugInsertion(ins, topBox, target, targetFrame)
+  debugInsertion(ins, insbox, topBox, target, targetFrame)
 
   local effectOnThisFrame = options.stealFrom[SILE.typesetter.frame.id]
   if effectOnThisFrame then effectOnThisFrame = effectOnThisFrame * h.length
