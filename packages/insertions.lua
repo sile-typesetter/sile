@@ -344,6 +344,13 @@ SILE.typesetter:registerFrameBreakHook(function (self,nl)
     SILE.insertions.commitShrinkage(class)
     SILE.insertions.increaseInsertionFrame(class, list.height + list.depth)
   end
+  for k,v in pairs(insertionsThisPage) do
+    v:outputYourself()
+    insertionsThisPage[k] = nil
+  end
+  if SU.debugging("insertions") then
+    for k,v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
+  end
   return nl
 end)
 
@@ -355,15 +362,6 @@ SILE.typesetter:registerHook("noframebreak", function (self)
   end
 end)
 
-SILE.typesetter:registerPageEndHook(function(self)
-  for k,v in pairs(insertionsThisPage) do
-    v:outputYourself()
-    insertionsThisPage[k] = nil
-  end
-  if SU.debugging("insertions") then
-    for k,v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
-  end
-end)
 
 -- This just puts the insertion vbox into the typesetter's queues.
 local insert = function (self, classname, vbox)
