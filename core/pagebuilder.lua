@@ -34,6 +34,11 @@ SILE.pagebuilder = {
     end
     local leastC = inf_bad
     SU.debug("pagebuilder", "Page builder for frame "..SILE.typesetter.frame.id.." called with "..#vboxlist.." nodes, "..target)
+    if SU.debugging("vboxes") then
+      for j = 1,#vboxlist do
+        SU.debug("vboxes", (j==i and " -> " or "    ")..j..": "..vboxlist[j])
+      end
+    end
     while i < #vboxlist do
       i = i + 1
       local vbox = vboxlist[i]
