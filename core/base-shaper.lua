@@ -1,12 +1,5 @@
 if not SILE.shapers then SILE.shapers = { } end
 
-SILE.settings.declare({
-  name = "shaper.spacepattern",
-  type = "string",
-  default = "%s+",
-  help = "The Lua pattern used for splitting words on spaces"
-})
-
 local smallTokenSize = 20 -- Small words will be cached
 local shapeCache = {}
 local _key = function(options)

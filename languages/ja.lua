@@ -141,7 +141,7 @@ SILE.nodeMakers.ja = SILE.nodeMakers.base {
     local db
     local lastcp = -1
     local lastchar = ""
-    local space = SILE.settings.get("shaper.spacepattern")
+    local space = "%s" -- XXX
     for i = 1,#items do item = items[i]
       local uchar = items[i].text
       local thiscp = SU.codepoint(uchar)

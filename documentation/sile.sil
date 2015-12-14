@@ -1624,15 +1624,6 @@ off the filling glue at the end of the paragraph.
 \medskip
 
 \set[parameter=typesetter.parfillskip,value=0pt plus 10000pt]
-Finally, the typesetter needs to know what separates a paragraph. Normally,
-this is two consecutive newlines in the input. However, when you are dealing with
-transforming XML input, this may not be a good assumption; in that case, you
-can set the setting \code{typesetter.parseppattern} to a Lua pattern. Its
-default setting is \code{\\n\\n+}. Additionally, the way that multiple spaces
-in an input are collapsed into one space is by means of the \code{shaper.spacepattern}
-setting. By default, this is set to \code{\%s+} (any number of spaces are interpreted
-as one space.) If you want to preserve spacing, so that two spaces in the input
-are typeset as two spaces in the output, you can set the space pattern to \code{\%s}.
 
 \section{Linebreaking settings}
 

@@ -15,7 +15,7 @@ SILE.registerCommand("verbatim", function(options, content)
     SILE.call("verbatim:font")
     SILE.settings.set("document.spaceskip", SILE.length.parse("1en"))
     SILE.settings.set("document.language", "xx")
-    SILE.settings.set("shaper.spacepattern", '%s')
+    -- SILE.settings.set("shaper.spacepattern", '%s') -- XXX Shaper no longer uses this so it was removed
     SILE.process(content)
   end)
 
