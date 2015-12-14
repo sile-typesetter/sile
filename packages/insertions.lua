@@ -359,7 +359,6 @@ end)
 SILE.typesetter:registerHook("noframebreak", function (self)
   SU.debug("insertions", "no frame break, rolling back\n")
   for class,v in pairs(insertionsThisPage) do
-    SILE.getFrame(SILE.scratch.insertions.classes[class].insertInto).state.totals.shrinkage = 0
     insertionsThisPage[class] = nil
   end
 end)
