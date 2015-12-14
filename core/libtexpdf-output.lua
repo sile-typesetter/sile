@@ -74,7 +74,7 @@ SILE.outputters.libtexpdf = {
     if options.direction == "TTB" then
       font.layout_dir = 1
     end
-    if SILE.typesetter.frame:writingDirection() == "TTB" then
+    if SILE.typesetter.frame and SILE.typesetter.frame:writingDirection() == "TTB" then
       pdf.setdirmode(1)
     else
       pdf.setdirmode(0)
