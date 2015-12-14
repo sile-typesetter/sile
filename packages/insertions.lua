@@ -236,6 +236,8 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   local ins = vboxlist[i]
   local targetFrame = SILE.getFrame(ins.frame)
   local options = SILE.scratch.insertions.classes[ins.class]
+  totalHeight = totalHeight.length
+
   ins:dropDiscardables()
 
   -- We look into the page's insertion box and choose the appropriate skip,
@@ -255,11 +257,11 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   local newTarget = target - effectOnThisFrame
 
   -- We only fit if:
-  -- the effect of the insertion on this frame doesn't take us over the target
+  -- the effect of the insertion on this frame doesn't take us over the page target
   -- and this doesn't take the target frame over the max height.
 
-  if totalHeight < newTarget and
-    ((- targetFrame.state.totals.shrinkage) + h.length - options.maxHeight).length < 0 then
+  if not (totalHeight + effectOnThisFrame > target) and
+    not ((- targetFrame.state.totals.shrinkage) + h.length > options.maxHeight) then
     SU.debug("insertions", "fits")
     SILE.insertions.setShrinkage(ins.class, h)
     insbox:append(topBox)
