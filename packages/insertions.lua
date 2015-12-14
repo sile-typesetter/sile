@@ -220,12 +220,15 @@ local min = function (a,b) return a < b and a or b end
   about this routine is that it needs to be very careful about state; it may
   end up processing the same list different times. (if the current list of
   vertical items is not tall enough to cause a page break yet) So it should
-  not commit itself to anything yet.
+  not commit itself to anything yet. Another interesting complication is that
+  when the page builder restarts, for optimization purposes it is at liberty
+  to restart its calculations half-way through the list. So you can't
+  completely forget the insertions that you've seen either.
 
-  However, it needs to make a decision about whether the upcoming insertion
-  can fit on the page; if it needs to be split; or if it should not appear
-  on this page at all (and hence force the line which caused the insertion
-  off the page as well).
+  The main job is this routine is to make a decision about whether the
+  upcoming insertion can fit on the page; if it needs to be split; or if it
+  should not appear on this page at all (and hence force the line which
+  caused the insertion off the page as well).
 
 --]]
 
