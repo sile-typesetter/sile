@@ -315,7 +315,7 @@ local _vbox = _box {
     if nodes.type then
       nodes = box:unbox()
     end
-    local h = self.height
+    local h = self.height + self.depth
     local lastdepth = 0
     for i=1,#nodes do
       table.insert(self.nodes, nodes[i])
