@@ -206,18 +206,24 @@ end
 
 local debugInsertion = function(ins, insbox, topBox, target, targetFrame, totalHeight)
   if SU.debugging("insertions") then
-    local h = ins.height + topBox.height + ins.depth
+    local h = ins.height + topBox.height + topBox.depth + ins.depth
     print("[insertions]", "Incoming insertion")
     print("top box height", topBox.height)
     print("insertion", ins, ins.height, ins.depth)
     print("Total incoming height", h)
-    print("Insertions already in this class ", insbox.height)
+    print("Insertions already in this class ", insbox.height, insbox.depth)
     print("Page target ", target)
     print(totalHeight.." worth of content on page so far")
   end
 end
 
 local min = function (a,b) return a < b and a or b end
+
+local pt = SILE.typesetter.pageTarget
+SILE.typesetter.pageTarget = function (self)
+  initShrinkage(self.frame)
+  return pt(self) - self.frame.state.totals.shrinkage
+end
 
 --[[
   So, this is the magic routine called by the page builder to determine what
@@ -230,6 +236,11 @@ local min = function (a,b) return a < b and a or b end
   to restart its calculations half-way through the list. So you can't
   completely forget the insertions that you've seen either.
 
+  However, one mitigating factor is: if an insertion fits on the current page,
+  it will end up on the current page. So if you've seen an insertion and it
+  fits, you can commit to it at this point. If at some later date we have
+  page builders which reflow multiple pages, then this may not be true.
+
   The main job is this routine is to make a decision about whether the
   upcoming insertion can fit on the page; if it needs to be split; or if it
   should not appear on this page at all (and hence force the line which
@@ -239,6 +250,7 @@ local min = function (a,b) return a < b and a or b end
 
 SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   local ins = vboxlist[i]
+  if ins.seen then return target end
   local targetFrame = SILE.getFrame(ins.frame)
   local options = SILE.scratch.insertions.classes[ins.class]
   totalHeight = totalHeight.length
@@ -248,10 +260,11 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   -- We look into the page's insertion box and choose the appropriate skip,
   -- so we know how high the whole insertion is.
   local topBox = nextInterInsertionSkip(ins.class)
-  local h = ins.height + topBox.height + ins.depth
+  local h = ins.height + topBox.height + topBox.depth + ins.depth
 
   local insbox = thisPageInsertionBoxForClass(ins.class)
   initShrinkage(targetFrame)
+  initShrinkage(SILE.typesetter.frame)
 
   debugInsertion(ins, insbox, topBox, target, targetFrame, totalHeight)
 
@@ -271,6 +284,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
     SILE.insertions.setShrinkage(ins.class, h)
     insbox:append(topBox)
     insbox:append(ins)
+    ins.seen = true
     return newTarget
   end
 
@@ -293,6 +307,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
     SILE.insertions.setShrinkage(ins.class, topBox.height + newvbox.height + newvbox.depth)
     insbox:append(topBox)
     insbox:append(newvbox)
+    newvbox.seen = true
 
     --[[ The insertion we're dealing with is currently vboxlist[i], and it
     now contains all the material that *didn't* make it onto the current
@@ -360,14 +375,6 @@ SILE.typesetter:registerFrameBreakHook(function (self,nl)
   end
   return nl
 end)
-
-SILE.typesetter:registerHook("noframebreak", function (self)
-  SU.debug("insertions", "no frame break, rolling back\n")
-  for class,v in pairs(insertionsThisPage) do
-    insertionsThisPage[class] = nil
-  end
-end)
-
 
 -- This just puts the insertion vbox into the typesetter's queues.
 local insert = function (self, classname, vbox)

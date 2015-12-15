@@ -251,7 +251,6 @@ SILE.defaultTypesetter = std.object {
     local pageNodeList
     local res
     if #(self.state.outputQueue) == 0 then return end
-    self.frame.state.totals.shrinkage = 0
     if SILE.scratch.insertions then SILE.scratch.insertions.thisPage = {} end
 
     pageNodeList, res = SILE.pagebuilder.findBestBreak({
