@@ -56,6 +56,9 @@ local initInsertionClass = function (self, classname, options)
     for i = 1,#(options.stealFrom) do rl[options.stealFrom[i]] = 1 end
     options.stealFrom = rl
   end
+
+  if type(options.insertInto) == "string" then options.insertInto = { frame = options.insertInto, ratio = 1} end
+
   options.maxHeight = SILE.length.make(options.maxHeight)
 
   SILE.scratch.insertions.classes[classname] = options
@@ -86,7 +89,7 @@ local _pageInsertionVbox = SILE.nodefactory.newVbox({
 local thisPageInsertionBoxForClass = function(class)
   if not insertionsThisPage[class] then
     local this = std.tree.clone(_pageInsertionVbox)
-    this.frame  = SILE.scratch.insertions.classes[class].insertInto
+    this.frame  = SILE.scratch.insertions.classes[class].insertInto.frame
     insertionsThisPage[class] = this
   end
   return insertionsThisPage[class]
@@ -176,9 +179,11 @@ SILE.insertions.increaseInsertionFrame = function(classname, amount)
   local opts = SILE.scratch.insertions.classes[classname]
   SU.debug("insertions", "Increasing insertion frame by "..amount)
   local stealPosition = opts["steal-position"] or "bottom"
-  local f = SILE.getFrame(opts["insertInto"])
+  local f = SILE.getFrame(opts["insertInto"].frame)
   local oldHeight = f:height()
-  f:constrain("height", oldHeight + (type(amount)=="table" and amount.length or amount))
+  amount = (type(amount)=="table" and amount.length or amount)
+  amount = amount * opts["insertInto"].ratio
+  f:constrain("height", oldHeight + amount)
   if stealPosition == "bottom" then f:relax("top") end
   SU.debug("insertions", "New height is now ".. f:height())
 end
@@ -373,7 +378,7 @@ local insert = function (self, classname, vbox)
         class = classname,
         nodes = vbox.nodes,
         height = vbox.height,
-        frame = thisclass.insertInto,
+        frame = thisclass.insertInto.frame,
         parent = SILE.typesetter.frame
       }
   })

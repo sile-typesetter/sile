@@ -35,7 +35,7 @@ end)
 SILE.registerCommand("footnote", function(options, content)
   SILE.call("footnotemark")
   local opts = SILE.scratch.insertions.classes.footnote
-  local f = SILE.getFrame(opts["insertInto"])
+  local f = SILE.getFrame(opts["insertInto"].frame)
   local oldT = SILE.typesetter
   SILE.typesetter = SILE.typesetter {}
   SILE.typesetter:init(f)
