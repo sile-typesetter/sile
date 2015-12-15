@@ -217,7 +217,9 @@ local debugInsertion = function(ins, insbox, topBox, target, targetFrame, totalH
   end
 end
 
-local min = function (a,b) return a < b and a or b end
+local min = function (a,b) -- Defined funny to help Lua 5.1 compare overloaded tables
+  return SILE.length.make(a).length < SILE.length.make(b).length and a or b
+end
 
 local pt = SILE.typesetter.pageTarget
 SILE.typesetter.pageTarget = function (self)
