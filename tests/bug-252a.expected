@@ -1,0 +1,36 @@
+<tests/bug-252a.sil>
+Set paper size 	209.7637818	297.6377985
+Begin page
+Mx 	37.41039
+My 	42.09434
+Set font 	Gentium;10;200;regular;normal;;LTR
+T	52 72 73 83	(This)
+Mx 	57.66003
+T	73 83	(is)
+Mx 	66.88428
+T	65	(a)
+Mx 	74.12611
+T	84 69 83 84	(test)
+Mx 	89.49232
+My 	38.91563
+Set font 	Gentium;6.81152;200;regular;normal;;LTR
+T	17	(1)
+Mx 	92.68855
+My 	42.09434
+Set font 	Gentium;10;200;regular;normal;;LTR
+T	14	(.)
+Mx 	17.41039
+My 	187.93229
+Set font 	Gentium;9;200;regular;normal;;LTR
+T	17	(1)
+Mx 	21.63354
+T	14	(.)
+Mx 	41.69457
+T	88	(x)
+[1] Mx 	96.55743
+My 	262.94052
+Set font 	Gentium;10;200;regular;normal;;LTR
+T	17	(1)
+End page
+Finish
+

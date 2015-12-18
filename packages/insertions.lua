@@ -387,6 +387,7 @@ local insert = function (self, classname, vbox)
         class = classname,
         nodes = vbox.nodes,
         height = vbox.height,
+        depth = vbox.depth,
         frame = thisclass.insertInto.frame,
         parent = SILE.typesetter.frame
       }
