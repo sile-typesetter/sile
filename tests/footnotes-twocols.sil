@@ -1,12 +1,14 @@
 \begin[papersize=a5,class=testtwocol]{document}
 \script[src=packages/lorem]
-\script[src=packages/linespacing]
+\set[parameter=document.baselineskip,value=15pt plus 2pt]
 \font[size=13pt]
-\set[parameter=linespacing.method,value=fixed]
-\set[parameter=linespacing.fixed.baselinedistance,value=1.5em]
-ABC \lorem[words=60]\footnote{fn 1}
+ABC \lorem[words=90]
 
-DEF \lorem\footnote{fn 2}
+Hello\footnote{fn 1}
+
+DEF \lorem[words=90]
+
+World\footnote{fn 2}
 
 GHI \lorem\footnote{fn 3}
 \end{document}

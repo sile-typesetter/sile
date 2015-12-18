@@ -127,6 +127,10 @@ local _insertionVbox = SILE.nodefactory.newVbox({
       self.nodes = {}
       self.height = 0
       self:append(materialToSplit)
+      self.contentHeight = self.height
+      self.contentDepth = self.depth
+      self.depth = 0
+      self.height = 0
       return newvbox
     end
   end
@@ -206,7 +210,7 @@ end
 
 local debugInsertion = function(ins, insbox, topBox, target, targetFrame, totalHeight)
   if SU.debugging("insertions") then
-    local h = ins.height + topBox.height + topBox.depth + ins.depth
+    local h = ins.contentHeight + topBox.height + topBox.depth + ins.contentDepth
     print("[insertions]", "Incoming insertion")
     print("top box height", topBox.height)
     print("insertion", ins, ins.height, ins.depth)
@@ -262,7 +266,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   -- We look into the page's insertion box and choose the appropriate skip,
   -- so we know how high the whole insertion is.
   local topBox = nextInterInsertionSkip(ins.class)
-  local h = ins.height + topBox.height + topBox.depth + ins.depth
+  local h = ins.contentHeight + topBox.height + topBox.depth + ins.contentDepth
 
   local insbox = thisPageInsertionBoxForClass(ins.class)
   initShrinkage(targetFrame)
@@ -308,6 +312,8 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
     SU.debug("insertions", "Split. Remaining insertion is ".. ins)
     SILE.insertions.setShrinkage(ins.class, topBox.height + newvbox.height + newvbox.depth)
     insbox:append(topBox)
+    -- newvbox.contentHeight = newvbox.height
+    -- newvbox.contentDepth = newvbox.depth
     insbox:append(newvbox)
     newvbox.seen = true
 
@@ -360,6 +366,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   while not vboxlist[i]:isPenalty() do
     table.insert(vboxlist, lastbox, SILE.nodefactory.newPenalty({penalty = -20000 }))
   end
+  -- table.insert(vboxlist, i, SILE.nodefactory.newPenalty({penalty = -20000 }))
   return target
 end
 
@@ -386,8 +393,9 @@ local insert = function (self, classname, vbox)
     _insertionVbox {
         class = classname,
         nodes = vbox.nodes,
-        height = vbox.height,
-        depth = vbox.depth,
+        -- actual height and depth must remain zero for page glue calculations
+        contentHeight = vbox.height,
+        contentDepth = vbox.depth,
         frame = thisclass.insertInto.frame,
         parent = SILE.typesetter.frame
       }
