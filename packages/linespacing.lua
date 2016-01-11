@@ -54,7 +54,7 @@ local getLineMetrics = function (l)
     end
     SILE.settings.temporarily(function()
       SILE.call("font", n.options, {})
-      m.lineheight = SILE.toPoints(SILE.settings.get("linespacing.css.line-height"))
+      m.lineheight = SILE.length.parse(SILE.settings.get("linespacing.css.line-height"))
     end)
     if m.ascender > linemetrics.ascender then linemetrics.ascender = m.ascender end
     if m.descender > linemetrics.descender then linemetrics.descender = m.descender end
@@ -70,13 +70,13 @@ SILE.typesetter.leadingFor = function (self, v, previous)
   end
 
   if method == "fit-glyph" then
-    local extra = SILE.toPoints(SILE.settings.get("linespacing.fit-glyph.extra-space"))
+    local extra = SILE.length.parse(SILE.settings.get("linespacing.fit-glyph.extra-space"))
     local toAdd = SILE.length.new({ length = extra })
     return SILE.nodefactory.newVglue({ height = toAdd })
   end
 
   if method == "fixed" then
-    local btob = SILE.toPoints(SILE.settings.get("linespacing.fixed.baselinedistance"))
+    local btob = SILE.length.parse(SILE.settings.get("linespacing.fixed.baselinedistance"))
     local toAdd = SILE.length.new({ length = btob - (v.height + previous.depth) })
     return SILE.nodefactory.newVglue({ height = toAdd })
   end
@@ -91,7 +91,7 @@ SILE.typesetter.leadingFor = function (self, v, previous)
   if method == "fit-font" then
     -- Distance to next baseline is max(descender) of fonts on previous +
     -- max(ascender) of fonts on next
-    local extra = SILE.toPoints(SILE.settings.get("linespacing.fit-font.extra-space"))
+    local extra = SILE.length.parse(SILE.settings.get("linespacing.fit-font.extra-space"))
     local btob = prevmetrics.descender + thismetrics.ascender + extra
     local toAdd = btob - (v.height + (previous and previous.depth or 0))
     return SILE.nodefactory.newVglue({ height = SILE.length.make(toAdd)})
