@@ -288,10 +288,26 @@ SILE.defaultTypesetter = std.object {
 
     local adjustment = (target - totalHeight).length
 
-    if (adjustment > gTotal.stretch) then adjustment = gTotal.stretch end
-    if (adjustment / gTotal.stretch > 0) then
-      for i = 1,#glues do local g= glues[i]
-        g:setGlue(adjustment * g.height.stretch / gTotal.stretch)
+    if adjustment > 0 then
+      if adjustment > gTotal.stretch then
+        -- SU.warn("Underfull frame: ".. adjustment .. " extra space required but "..gTotal.stretch.. " stretchiness available")
+        adjustment = gTotal.stretch
+      end
+      if gTotal.stretch > 0 then
+        for i = 1,#glues do local g= glues[i]
+          g:setGlue(adjustment * g.height.stretch / gTotal.stretch)
+        end
+      end
+    elseif adjustment < 0 then
+      adjustment = 0 - adjustment
+      if adjustment > gTotal.shrink then
+        SU.warn("Overfull frame: ".. adjustment .. " less space required but "..gTotal.shrink.. " shrink available")
+        adjustment = gTotal.shrink
+      end
+      if gTotal.shrink > 0 then
+        for i = 1,#glues do local g= glues[i]
+          g:setGlue(0 - (adjustment * g.height.shrink / gTotal.shrink))
+        end
       end
     end
 

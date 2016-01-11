@@ -246,7 +246,7 @@ local _vglue = _box {
   setGlue = function (self,adjustment)
     self.height.length = self.height.length + adjustment
     self.height.stretch = 0
-    -- self.shrink = 0
+    self.height.shrink = 0
   end,
   outputYourself = function (self,typesetter, line)
     typesetter.frame:advancePageDirection(line.depth + line.height.length)
