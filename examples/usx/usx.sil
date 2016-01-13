@@ -1,4 +1,4 @@
-\begin[papersize=152mm x 229mm,class=usx,twocolumns=true]{document}%
+\begin[papersize=152mm x 229mm,class=usx]{document}%
 \script[src=packages/grid]%
 %\grid[spacing=14pt]%
 \set[parameter=linebreak.tolerance,value=5000]%
