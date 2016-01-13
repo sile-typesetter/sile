@@ -5,8 +5,8 @@ if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end
 
 function bible:singleColumnMaster()
   self:defineMaster({ id = "right", firstContentFrame = "content", frames = {
-    title = {left = "left(content)", right = "right(content)", top="11.6%", bottom="top(content)" },
-    content = {left = "8.3%", right = "86%", top = "bottom(content)", bottom = "top(footnotes)" },
+    -- title = {left = "left(content)", right = "right(content)", top="11.6%", bottom="top(content)" },
+    content = {left = "8.3%", right = "86%", top = "11.6%", bottom = "top(footnotes)" },
     folio = {left = "left(content)", right = "right(content)", top = "bottom(footnotes)+3%",bottom = "bottom(footnotes)+5%" },
     runningHead = {left = "left(content)", right = "right(content)", top = "top(content) - 8%", bottom = "top(content)-3%" },
     footnotes = { left="left(content)", right = "right(content)", height = "0", bottom="83.3%"}
