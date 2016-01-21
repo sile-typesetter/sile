@@ -44,11 +44,26 @@ SILE.settings.declare({
 })
 
 SILE.settings.declare({
+  name = "typesetter.underfulltolerance",
+  type = "Length or nil",
+  default = SILE.length.parse("5pt"),
+  help = "Amount a page can be underfull without warning"
+})
+
+SILE.settings.declare({
+  name = "typesetter.overfulltolerance",
+  type = "Length or nil",
+  default = SILE.length.parse("5pt"),
+  help = "Amount a page can be overfull without warning"
+})
+
+SILE.settings.declare({
   name = "typesetter.breakwidth",
   type = "Length or nil",
   default = nil,
   help = "Width to break lines at"
 })
+
 SILE.defaultTypesetter = std.object {
   -- Setup functions
   hooks = {},
@@ -290,7 +305,9 @@ SILE.defaultTypesetter = std.object {
 
     if adjustment > 0 then
       if adjustment > gTotal.stretch then
-        -- SU.warn("Underfull frame: ".. adjustment .. " extra space required but "..gTotal.stretch.. " stretchiness available")
+        if (adjustment - gTotal.stretch) > SILE.settings.get("typesetter.underfulltolerance") then
+          SU.warn("Underfull frame: ".. adjustment .. " extra space required but "..gTotal.stretch.. " stretchiness available")
+        end
         adjustment = gTotal.stretch
       end
       if gTotal.stretch > 0 then
@@ -301,7 +318,9 @@ SILE.defaultTypesetter = std.object {
     elseif adjustment < 0 then
       adjustment = 0 - adjustment
       if adjustment > gTotal.shrink then
-        SU.warn("Overfull frame: ".. adjustment .. " less space required but "..gTotal.shrink.. " shrink available")
+        if (adjustment - gTotal.shrink) > SILE.settings.get("typesetter.overfulltolerance") then
+          SU.warn("Overfull frame: ".. adjustment .. " extra space required but "..gTotal.shrink.. " shrink available")
+        end
         adjustment = gTotal.shrink
       end
       if gTotal.shrink > 0 then
