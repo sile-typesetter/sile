@@ -305,7 +305,7 @@ SILE.defaultTypesetter = std.object {
 
     if adjustment > 0 then
       if adjustment > gTotal.stretch then
-        if (adjustment - gTotal.stretch) > SILE.settings.get("typesetter.underfulltolerance") then
+        if (adjustment - gTotal.stretch) > SILE.settings.get("typesetter.underfulltolerance").length then
           SU.warn("Underfull frame: ".. adjustment .. " extra space required but "..gTotal.stretch.. " stretchiness available")
         end
         adjustment = gTotal.stretch
@@ -318,7 +318,7 @@ SILE.defaultTypesetter = std.object {
     elseif adjustment < 0 then
       adjustment = 0 - adjustment
       if adjustment > gTotal.shrink then
-        if (adjustment - gTotal.shrink) > SILE.settings.get("typesetter.overfulltolerance") then
+        if (adjustment - gTotal.shrink) > SILE.settings.get("typesetter.overfulltolerance").length then
           SU.warn("Overfull frame: ".. adjustment .. " extra space required but "..gTotal.shrink.. " shrink available")
         end
         adjustment = gTotal.shrink
