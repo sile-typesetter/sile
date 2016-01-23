@@ -132,7 +132,12 @@ local _disc = _hbox {
   toText = function (self) return self.used==1 and "-" or "_" end,
   outputYourself = function(self,typesetter, line)
     if self.used == 1 then
-      if (line.nodes[1] == self) then
+      i = 1
+      while (line.nodes[i]:isGlue() and line.nodes[i].value == "lskip")
+        or line.nodes[i] == SILE.nodefactory.zeroHbox do
+        i = i+1
+      end
+      if (line.nodes[i] == self) then
         for i, n in ipairs(self.postbreak) do n:outputYourself(typesetter,line) end
       else
         for i, n in ipairs(self.prebreak) do n:outputYourself(typesetter,line) end
