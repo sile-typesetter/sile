@@ -2,7 +2,7 @@
 \include[src=examples/macros.sil]
 \script[src=packages/grid]
 \left-running-head{A Scandal in Bohemia}
-\right-running-head{\rightalign{Alexander Conan Doyle}}
+\right-running-head{\rightalign{Arthur Conan Doyle}}
 \headline{A Scandal In Bohemia}
 
 \noindent To Sherlock Holmes she is always \em{the woman}.\footnote{Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
