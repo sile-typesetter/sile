@@ -97,6 +97,7 @@ SILE.pagebuilder = {
           for j=1,bestBreak do
             onepage[j] = table.remove(vboxlist,1)
           end
+          while(onepage[#onepage]:isVDiscardable()) do onepage[#onepage] = nil end
           return onepage, pi
         end
       end
