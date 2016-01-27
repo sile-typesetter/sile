@@ -71,13 +71,13 @@ SILE.typesetter.leadingFor = function (self, v, previous)
 
   if method == "fit-glyph" then
     local extra = SILE.length.parse(SILE.settings.get("linespacing.fit-glyph.extra-space"))
-    local toAdd = SILE.length.new({ length = extra })
+    local toAdd = SILE.length.new(extra)
     return SILE.nodefactory.newVglue({ height = toAdd })
   end
 
   if method == "fixed" then
-    local btob = SILE.length.parse(SILE.settings.get("linespacing.fixed.baselinedistance"))
-    local toAdd = SILE.length.new({ length = btob - (v.height + previous.depth) })
+    local btob = SILE.length.new(SILE.length.parse(SILE.settings.get("linespacing.fixed.baselinedistance")))
+    local toAdd = SILE.length.new({ length = btob.length - (v.height + previous.depth) })
     return SILE.nodefactory.newVglue({ height = toAdd })
   end
 

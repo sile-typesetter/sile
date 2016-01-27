@@ -43,16 +43,16 @@ SILE.pagebuilder = {
       i = i + 1
       local vbox = vboxlist[i]
       SU.debug("pagebuilder", "Dealing with VBox " .. vbox)
+      while not started and vbox:isVglue() do
+        table.remove(vboxlist, i)
+        if i >= #vboxlist then break end
+        vbox = vboxlist[i]
+      end
       if (vbox:isVbox()) then
         if not started then started = true end
         totalHeight = totalHeight + vbox.height + vbox.depth;
       elseif vbox:isVglue() then
-        if not started then
-          table.remove(vboxlist,i)
-          i = i - 1
-        else
           totalHeight = totalHeight + vbox.height
-        end
       elseif vbox.type == "insertionVbox" then
         target = SILE.insertions.processInsertion(vboxlist, i, totalHeight, target)
         vbox = vboxlist[i]
@@ -67,6 +67,7 @@ SILE.pagebuilder = {
       end
       if vbox:isPenalty() and vbox.penalty < inf_bad  or (vbox:isVglue() and i > 1 and not vboxlist[i-1]:isDiscardable()) then
         local badness
+        SU.debug("pagebuilder", "totalHeight " .. totalHeight .. " with target " .. target);
         if totalHeight.length < target then -- TeX #1039
           -- Account for infinite stretch?
           badness = SILE.pagebuilder.badness(left, totalHeight.stretch)
