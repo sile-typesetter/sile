@@ -90,7 +90,17 @@ if icu then
       self:init()
       table.remove(chunks,1)
       return coroutine.wrap(function()
-        for i = 1,#items do item = items[i]
+        -- Special-case initial glue
+        local i = 1
+        while i < #items do item = items[i]
+          local char = item.text
+          local cp = SU.codepoint(char)
+          local thistype = chardata[cp] and chardata[cp].linebreak
+          if thistype == "sp" then self:makeGlue() else break end
+          i = i + 1
+        end
+        -- And now onto the real thing
+        for i = i,#items do item = items[i]
           local char = items[i].text
           local cp = SU.codepoint(char)
           if chunks[1] and (items[i].index >= chunks[1].index) then

@@ -1,0 +1,9 @@
+\begin[papersize=a5]{document}
+\raggedright{
+\font[weight=600]{This} is a sample of bogus\break
+extra space.
+
+\font[weight=600]{This} does not have\break
+{}extra space.
+}
+\end{document}
