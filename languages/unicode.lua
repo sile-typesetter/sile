@@ -22,7 +22,7 @@ SILE.nodeMakers.base = std.object {
     self.contents[#self.contents+1] = item
   end,
   makeGlue = function(self)
-    if self.lastnode ~= "glue" then
+    if SILE.settings.get("typesetter.obeyspaces") or self.lastnode ~= "glue" then
       coroutine.yield(SILE.shaper:makeSpaceNode(self.options))
     end
     self.lastnode = "glue"

@@ -22,6 +22,14 @@ SILE.settings.declare({
   default = "\n\n+",
   help = "Lua pattern used to separate paragraphs"
 })
+
+SILE.settings.declare({
+  name = "typesetter.obeyspaces",
+  type = "boolean or nil",
+  default = nil,
+  help = "Whether to ignore paragraph initial spaces"
+})
+
 SILE.settings.declare({
   name = "typesetter.orphanpenalty",
   type = "integer",
@@ -159,7 +167,9 @@ SILE.defaultTypesetter = std.object {
   setpar = function (self, t)
     t = string.gsub(t,"\n", " ")
     if (#self.state.nodes == 0) then
-      t = string.gsub(t,"^%s+", "");
+      if not SILE.settings.get("typesetter.obeyspaces") then
+        t = string.gsub(t,"^%s+", "");
+      end
       self:initline()
       SILE.documentState.documentClass.newPar(self)
     end
@@ -275,7 +285,7 @@ SILE.defaultTypesetter = std.object {
     })
 
     if not pageNodeList then -- No break yet
-      self.frame.state.pageRestart = res
+      -- self.frame.state.pageRestart = res
       self:runHooks("noframebreak")
       return false
     end
