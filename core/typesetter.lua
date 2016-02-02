@@ -499,13 +499,14 @@ SILE.defaultTypesetter = std.object {
       elseif node:isDiscretionary() then
         naturalTotals = naturalTotals + node:replacementWidth()
         slice[i].height = slice[i]:replacementHeight()
-      elseif skipping == 0 and not(node:isGlue() and i == #slice) then
-        naturalTotals = naturalTotals + node.width -- ??
+      elseif skipping == 0 then
+        naturalTotals = naturalTotals + node.width
       end
     end
     local i = #slice
     while i > 1 do
       if slice[i]:isGlue() or slice[i] == SILE.nodefactory.zeroHbox then
+        naturalTotals = naturalTotals - slice[i].width
         -- Do nothing
       elseif (slice[i]:isDiscretionary()) then
         slice[i].used = 1;
