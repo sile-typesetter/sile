@@ -39,17 +39,19 @@ SILE.pagebuilder = {
         SU.debug("vboxes", (j==i and " -> " or "    ")..j..": "..vboxlist[j])
       end
     end
+    while not started and i < #vboxlist do
+      i = i + 1
+      if not vboxlist[i]:isVglue() then
+        started = true
+        i = i - 1
+        break
+      end
+    end
     while i < #vboxlist do
       i = i + 1
       local vbox = vboxlist[i]
       SU.debug("pagebuilder", "Dealing with VBox " .. vbox)
-      while not started and vbox:isVglue() do
-        table.remove(vboxlist, i)
-        if i >= #vboxlist then break end
-        vbox = vboxlist[i]
-      end
       if (vbox:isVbox()) then
-        if not started then started = true end
         totalHeight = totalHeight + vbox.height + vbox.depth;
       elseif vbox:isVglue() then
           totalHeight = totalHeight + vbox.height
