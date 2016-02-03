@@ -506,8 +506,9 @@ SILE.defaultTypesetter = std.object {
     local i = #slice
     while i > 1 do
       if slice[i]:isGlue() or slice[i] == SILE.nodefactory.zeroHbox then
-        naturalTotals = naturalTotals - slice[i].width
-        -- Do nothing
+        if not slice[i].value then
+          naturalTotals = naturalTotals - slice[i].width
+        end
       elseif (slice[i]:isDiscretionary()) then
         slice[i].used = 1;
         if slice[i].parent then slice[i].parent.hyphenated = true end
