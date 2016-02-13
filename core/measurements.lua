@@ -8,7 +8,7 @@ SILE.xToPoints = {
   end,
   ["ex"] =  function(v) return tonumber(v) * SILE.shaper:measureDim("x") end,
   ["em"] =  function(v) return tonumber(v) * SILE.settings.get("font.size") end,
-  ["en"] =  function(v) return tonumber(v) * SILE.shaper:measureDim("n") end
+  ["en"] =  function(v) return 0.5 * tonumber(v) * SILE.settings.get("font.size") end
 }
 
 SILE.toPoints = function(num, unit, dimension)
