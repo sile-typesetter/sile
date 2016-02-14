@@ -25,7 +25,7 @@ number.scientific =
 number.number = C(number.decimal + number.scientific) / function (n) return tonumber(n) end
 local whitespace = S('\r\n\f\t ')^0
 local units = lpeg.Cmt(C(R("az")^-2), function (s,i,p)
-  for k,v in pairs(SILE.xToPoints) do
+  for k,v in pairs(SILE.units) do
     if p == k then return true end
   end
   return false

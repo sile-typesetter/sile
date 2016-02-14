@@ -1,14 +1,24 @@
+SILE.units = {
+  pt = { relative = false, value = 1 }
+}
+
+SILE.registerUnit = function (u, t)
+  local def = SU.required(t, "definition", "registering unit "..u)
+  local relative = t.relative or false
+  if type(def) == "string" then
+    local num,unit = string.match(def, "(-?[%d%.]+)%s*([%%%a]+)")
+    if not SILE.units[unit] then SU.error("Unit "..u.." defined in terms of unknown unit "..unit) end
+    if SILE.units[unit].relative then
+      SILE.units[u] = { relative = true, convertor = function (v,c) return num * SILE.toPoints(v,unit,c) end}
+    else
+      SILE.units[u] = { relative = false, value = SILE.toPoints(num,unit) }
+    end
+  else
+    SILE.units[u] = { relative = relative, convertor = def }
+  end
+end
+
 SILE.xToPoints = {
-  mm = function(m) return 2.8346457 * m end,
-  pt = function (i) return i end,
-  cm = function (c) return 2.8346457 * 10 * c end,
-  ["in"] = function(i) return 72.0 * i end,
-  ["%" ]= function(v, dimension)
-    return tonumber(v) / 100 * SILE.documentState.paperSize[ dimension == 'w' and 1 or 2]
-  end,
-  ["ex"] =  function(v) return tonumber(v) * SILE.shaper:measureDim("x") end,
-  ["em"] =  function(v) return tonumber(v) * SILE.settings.get("font.size") end,
-  ["en"] =  function(v) return 0.5 * tonumber(v) * SILE.settings.get("font.size") end
 }
 
 SILE.toPoints = function(num, unit, dimension)
@@ -18,7 +28,30 @@ SILE.toPoints = function(num, unit, dimension)
       num = tonumber(num)
     else return tonumber(num) end
   end
-  if (not SILE.xToPoints[unit]) then SU.error( "Unknown unit "..unit ) end
+  if (not SILE.units[unit]) then SU.error( "Unknown unit "..unit ) end
   num =  tonumber(string.match(num, "(-?[%d%.]+)"))
-  return SILE.xToPoints[unit](num, dimension);
+  if SILE.units[unit].convertor then
+    return SILE.units[unit].convertor(num, dimension)
+  else
+    return num * SILE.units[unit].value
+  end
 end
+
+SILE.registerUnit("mm", {definition = "2.8346457pt"})
+SILE.registerUnit("cm", {definition = "10mm"})
+SILE.registerUnit("in", {definition = "72pt"})
+
+SILE.registerUnit("%", { relative = true, definition = function (v, dim)
+  return v / 100 * SILE.documentState.paperSize[ dimension == 'w' and 1 or 2]
+end})
+SILE.registerUnit("em", { relative = true, definition = function (v)
+  return v * SILE.settings.get("font.size")
+end})
+SILE.registerUnit("ex", { relative = true, definition = function (v)
+  return v * SILE.shaper:measureDim("x")
+end})
+SILE.registerUnit("spc", { relative = true, definition = function (v)
+  return v * SILE.shaper:measureDim(" ")
+end})
+
+SILE.registerUnit("en", { definition = "0.5em" })
