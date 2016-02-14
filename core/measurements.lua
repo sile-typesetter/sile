@@ -18,9 +18,6 @@ SILE.registerUnit = function (u, t)
   end
 end
 
-SILE.xToPoints = {
-}
-
 SILE.toPoints = function(num, unit, dimension)
   if (not unit) then
     if (type(num) == "string") then -- split into num and unit parts
@@ -55,3 +52,23 @@ SILE.registerUnit("spc", { relative = true, definition = function (v)
 end})
 
 SILE.registerUnit("en", { definition = "0.5em" })
+
+_relativeMeasurement = std.object {
+  _type = "RelativeMeasurement",
+  absolute = function(self)
+    return SILE.toPoints(self.number, self.unit)
+  end
+}
+
+SILE.toMeasurement = function (number, unit)
+  if not SILE.units[unit].relative then return SILE.toPoints(number,unit) end
+  return _relativeMeasurement { number = number, unit = unit }
+end
+
+SILE.toAbsoluteMeasurement = function(n)
+  if type(n) == "table" and n.prototype and n:prototype() == "RelativeMeasurement" then
+    return n:absolute()
+  else
+    return n
+  end
+end

@@ -80,7 +80,13 @@ function SILE.framePrototype:toString()
 end
 
 function SILE.framePrototype:advanceWritingDirection(amount)
-  if type(amount) == "table" then SU.error("Table passed to advanceWritingDirection", 1) end
+  if type(amount) == "table" then
+    if amount.prototype and amount:prototype() == "RelativeMeasurement" then
+      amount = amount:absolute()
+    else
+      SU.error("Table passed to advanceWritingDirection", 1)
+    end
+  end
   if self:writingDirection() == "RTL" then
     self.state.cursorX = self.state.cursorX - amount
   elseif self:writingDirection() == "LTR" then
@@ -232,6 +238,7 @@ SILE._frameParser = require("core/frameparser")
 SILE.parseComplexFrameDimension = function(d, width_or_height)
   SILE.documentState._dimension = width_or_height; -- ugly hack since you can't pass state to the parser
   local v =  SILE._frameParser:match(d);
+  v = SILE.toAbsoluteMeasurement(v)
   if type(v) == "table" then
     local g = cassowary.Variable({ name = "t" })
     local eq = cassowary.Equation(g,v)

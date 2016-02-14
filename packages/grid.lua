@@ -21,7 +21,7 @@ local pushVglue = function(this, spec)
   if not this.frame.state.totals.gridCursor then
     this.frame.state.totals.gridCursor = 0
   end
-  this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + spec.height.length
+  this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + SILE.toAbsoluteMeasurement(spec.height.length)
   SILE.defaultTypesetter.pushVglue(this, spec)
   SILE.defaultTypesetter.pushVglue(this, makeUp())
 end

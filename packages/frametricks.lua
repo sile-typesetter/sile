@@ -149,7 +149,7 @@ SILE.registerCommand("float", function(options, content)
   undoSkip.stretch = hbox.height
   SILE.typesetter:pushHbox({value = {}})
   -- SILE.typesetter:pushVglue({height = undoSkip })
-  breakFrameVertical(hbox.height + SILE.length.parse(options.bottomboundary).length)
+  breakFrameVertical(hbox.height + SILE.toAbsoluteMeasurement(SILE.length.parse(options.bottomboundary).length))
   shiftframeedge(SILE.getFrame(SILE.typesetter.frame.next), {left = ""..tostring(SILE.length.new() - boundary)})
   --SILE.outputter:debugFrame(SILE.typesetter.frame)
 end, "Sets the given content in its own frame, flowing the remaining content around it")

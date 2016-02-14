@@ -20,7 +20,14 @@ SILE.shapers.base = std.object {
   -- Caching this has no significant speedup
   measureSpace = function(self, options)
     local ss = SILE.settings.get("document.spaceskip")
-    if ss then return ss end
+    if ss then
+      SILE.settings.temporarily(function()
+        SILE.settings.set("font.size", options.size)
+        SILE.settings.set("font.family", options.font)
+        ss = ss:absolute()
+      end)
+      return ss
+    end
     local i,w = self:shapeToken(" ", options)
     local spacewidth
     if w then spacewidth = w.length

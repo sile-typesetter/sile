@@ -11,6 +11,7 @@
       if (options.size)  then
         local size = SILE.parserBits.dimensioned_string:match(options.size)
         if type(options.size) == "number" then size = options.size end
+        size = SILE.toAbsoluteMeasurement(size)
         if not size then SU.error("Couldn't parse font size "..options.size) end
         SILE.settings.set("font.size", size)
       end

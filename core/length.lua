@@ -5,6 +5,13 @@ _length = std.object {
   shrink = 0,
   _type = "Length",
 
+  absolute = function (self, context)
+    return _length { length = SILE.toAbsoluteMeasurement(self.length),
+      stretch = SILE.toAbsoluteMeasurement(self.stretch),
+      shrink = SILE.toAbsoluteMeasurement(self.shrink)
+    }
+  end,
+
   fromLengthOrNumber = function (self, x)
     if type(x) == "table" then
       self.length = x.length
@@ -26,7 +33,9 @@ _length = std.object {
   __add = function (self, other)
     local result = _length {}
     result:fromLengthOrNumber(self)
+    result = result:absolute()
     if type(other) == "table" then
+      other = other:absolute()
       result.length = result.length + other.length
       result.stretch = result.stretch + other.stretch
       result.shrink = result.shrink + other.shrink
@@ -39,7 +48,10 @@ _length = std.object {
   __sub = function (self, other)
     local result = _length {}
     result:fromLengthOrNumber(self)
+    result = result:absolute()
+    other = SILE.toAbsoluteMeasurement(other)
     if type(other) == "table" then
+      other = other:absolute()
       result.length = result.length - other.length
       result.stretch = result.stretch - other.stretch
       result.shrink = result.shrink - other.shrink

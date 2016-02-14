@@ -254,7 +254,7 @@ local _vglue = _box {
     self.height.shrink = 0
   end,
   outputYourself = function (self,typesetter, line)
-    typesetter.frame:advancePageDirection(line.depth + line.height.length)
+    typesetter.frame:advancePageDirection(line.depth + SILE.toAbsoluteMeasurement(line.height.length))
   end,
   unbox = function (self) return { self } end
 }
