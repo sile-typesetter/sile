@@ -57,6 +57,12 @@ _relativeMeasurement = std.object {
   _type = "RelativeMeasurement",
   absolute = function(self)
     return SILE.toPoints(self.number, self.unit)
+  end,
+  __add = function (self, other)
+    SU.error("We tried to do arithmetic on a relative measurement without explicitly absolutizing it. (That's a bug)", 1)
+  end,
+  __sub = function (self, other)
+    SU.error("We tried to do arithmetic on a relative measurement without explicitly absolutizing it. (That's a bug)", 1)
   end
 }
 
