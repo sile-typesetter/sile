@@ -198,6 +198,7 @@ SILE.baseClass = std.object {
     -- Any other output-routiney things will be done here by inheritors
   end,
   finish = function(self)
+    SILE.call("vfill")
     while not (#SILE.typesetter.state.nodes == 0 and #SILE.typesetter.state.outputQueue == 0) do
       SILE.call("supereject")
       SILE.typesetter:leaveHmode(true)

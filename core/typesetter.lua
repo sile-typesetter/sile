@@ -141,6 +141,7 @@ SILE.defaultTypesetter = std.object {
   pushVglue = function (self, spec) return table.insert(self.state.outputQueue, SILE.nodefactory.newVglue(spec)); end,
   pushExplicitVglue = function (self, spec)
     spec.skiptype = "explicit"
+    spec.discardable = false
     return self:pushVglue(spec)
   end,
   pushVpenalty = function (self, spec) return table.insert(self.state.outputQueue, SILE.nodefactory.newPenalty(spec)); end,
