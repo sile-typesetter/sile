@@ -70,7 +70,7 @@ SILE.settings.declare({
 SILE.settings.declare({
   name = "document.baselineskip",
   type = "VGlue",
-  default = SILE.nodefactory.newVglue("13pt plus 1pt"),
+  default = SILE.nodefactory.newVglue("1.2em plus 1pt"),
   help = "Leading"
 })
 
