@@ -67,7 +67,7 @@ SILE.pagebuilder = {
         pi = vbox.penalty
         -- print("PI "..pi)
       end
-      if vbox:isPenalty() and vbox.penalty < inf_bad  or (vbox:isVglue() and i > 1 and not vboxlist[i-1]:isDiscardable()) then
+      if vbox:isPenalty() and vbox.penalty < inf_bad  or (vbox:isVglue() and i > 1 and not vboxlist[i-1].discardable) then
         local badness
         SU.debug("pagebuilder", "totalHeight " .. totalHeight .. " with target " .. target);
         if totalHeight.length < target then -- TeX #1039
@@ -100,7 +100,7 @@ SILE.pagebuilder = {
           for j=1,bestBreak do
             onepage[j] = table.remove(vboxlist,1)
           end
-          while(#onepage > 1 and onepage[#onepage]:isVDiscardable()) do onepage[#onepage] = nil end
+          while(#onepage > 1 and onepage[#onepage].discardable) do onepage[#onepage] = nil end
           return onepage, pi
         end
       end

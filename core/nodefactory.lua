@@ -7,6 +7,7 @@ _box = std.object {
   width= 0,
   misfit = false,
   type="special",
+  discardable = false,
   value=nil,
   __tostring = function (s) return s.type end,
   __concat = function (x,y) return tostring(x)..tostring(y) end,
@@ -30,8 +31,6 @@ function _box:isUnshaped ()  return self.type == "unshaped" end
 function _box:isAlternative ()  return self.type == "alternative" end
 function _box:isVbox ()  return self.type == "vbox" end
 function _box:isMigrating ()  return self.migrating end
-function _box:isDiscardable () return self:isGlue() or self:isPenalty() end
-function _box:isVDiscardable () return self:isVglue() or self:isPenalty() end
 function _box:isPenalty ()  return self.type == "penalty" end
 function _box:isDiscretionary ()  return self.type == "discretionary" end
 
@@ -223,6 +222,7 @@ local _alt = _hbox {
 local _glue = _box {
   _type = "Glue",
   type = "glue",
+  discardable = true,
   __tostring = function (this) return "G<" .. tostring(this.width) .. ">"; end,
   toText = function () return " " end,
   outputYourself = function (self,typesetter, line)
@@ -238,6 +238,7 @@ local _glue = _box {
 local _kern = _glue {
   _type = "Kern",
   type = "kern",
+  discardable = false,
   __tostring = function (this) return "K<" .. tostring(this.width) .. ">"; end,
 }
 
@@ -245,6 +246,7 @@ local _kern = _glue {
 local _vglue = _box {
   type = "vglue",
   _type = "VGlue",
+  discardable = true,
   __tostring = function (this)
       return "VG<" .. tostring(this.height) .. ">";
   end,
@@ -262,6 +264,7 @@ local _vglue = _box {
 -- Penalties
 local _penalty = _box {
   type = "penalty",
+  discardable = true,
   width = SILE.length.new({}),
   flagged = 0,
   penalty = 0,

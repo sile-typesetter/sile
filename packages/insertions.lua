@@ -111,7 +111,7 @@ local _insertionVbox = SILE.nodefactory.newVbox({
   -- And some utility methods to make the insertion processing code
   -- easier to read.
   dropDiscardables = function (self)
-    while(#self.nodes > 1 and self.nodes[#self.nodes]:isVDiscardable()) do
+    while #self.nodes > 1 and self.nodes[#self.nodes].discardable do
       self.nodes[#self.nodes] = nil
     end
   end,
