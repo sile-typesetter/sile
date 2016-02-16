@@ -11,11 +11,11 @@ Draw image	documentation/fig1.png	77.98557 29.76378 50.00000 69.24290
 Mx 	130.65521
 T	84 72 82 69 69	(three)
 Mx 	40.97638
-My 	168.15317
+My 	162.15317
 T	47 78 69	(One)
 Mx 	59.78524
 T	84 87 79	(two)
-Draw image	documentation/fig1.png	77.98863 118.15317 36.10478 50.00000
+Draw image	documentation/fig1.png	77.98863 112.15317 36.10478 50.00000
 Mx 	116.76458
 T	84 72 82 69 69	(three)
 [1] Mx 	207.41759

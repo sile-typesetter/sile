@@ -18,7 +18,7 @@ Pop color
 Mx 	70.35055
 T	3	(a)
 Mx 	50.35055
-My 	88.10614
+My 	85.10614
 T	3	(a)
 Push color	0.98039	0.87843	0.81176
 Mx 	60.35055
@@ -33,7 +33,7 @@ Pop color
 Mx 	70.35055
 T	3	(a)
 Mx 	50.35055
-My 	103.10614
+My 	97.10614
 Set font 	;10;200;regular;normal;;RTL;tests/TestCLR-Regular.ttf
 T	4	(ع)
 Push color	0.98039	0.87843	0.81176
