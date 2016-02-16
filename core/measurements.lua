@@ -72,7 +72,8 @@ SILE.toMeasurement = function (number, unit)
 end
 
 SILE.toAbsoluteMeasurement = function(n)
-  if type(n) == "table" and n.prototype and n:prototype() == "RelativeMeasurement" then
+  if type(n) == "table" and n.prototype and (n:prototype() == "RelativeMeasurement"
+    or n:prototype() == "Length") then
     return n:absolute()
   else
     return n

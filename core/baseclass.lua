@@ -113,18 +113,20 @@ SILE.baseClass = std.object {
 
     SILE.registerCommand("glue", function(options, content)
       SILE.typesetter:pushGlue({
-        width = SILE.length.parse(options.width)
+        width = SILE.length.parse(options.width):absolute()
       })
     end, "Inserts a glue node. The width option denotes the glue dimension.")
     SILE.registerCommand("kern", function(options, content)
       table.insert(SILE.typesetter.state.nodes,
-        SILE.nodefactory.newKern({width = SILE.length.parse(options.width) })
+        SILE.nodefactory.newKern({
+          width = SILE.length.parse(options.width):absolute()
+        })
       )
     end, "Inserts a glue node. The width option denotes the glue dimension.")
 
     SILE.registerCommand("skip", function(options, content)
       SILE.typesetter:leaveHmode();
-      SILE.typesetter:pushExplicitVglue({ height = SILE.length.parse(options.height) })
+      SILE.typesetter:pushExplicitVglue({ height = SILE.length.parse(options.height):absolute() })
     end, "Inserts vertical skip. The height options denotes the skip dimension.")
 
     SILE.registerCommand("par", function(options, content)
