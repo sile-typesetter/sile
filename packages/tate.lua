@@ -73,7 +73,7 @@ SILE.registerCommand("latin-in-tate", function (options, content)
     latinT.frame = oldT.frame
     latinT:initState()
     SILE.typesetter = latinT
-    SILE.settings.set("document.language", "xx")
+    SILE.settings.set("document.language", "und")
     SILE.settings.set("font.direction", "LTR")
     SILE.process(content)
     nodes = SILE.typesetter.state.nodes
@@ -114,7 +114,7 @@ SILE.registerCommand("tate-chu-yoko", function (options, content)
                             })
   })
   SILE.settings.temporarily(function()
-    SILE.settings.set("document.language", "xx")
+    SILE.settings.set("document.language", "und")
     SILE.settings.set("font.direction", "LTR")
     SILE.call("hbox", {}, content)
     local n = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]

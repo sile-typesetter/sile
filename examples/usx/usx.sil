@@ -3,7 +3,7 @@
 %\grid[spacing=14pt]%
 \set[parameter=linebreak.tolerance,value=5000]%
 \set-counter[id=footnote,display=alpha]%
-\font[language=xx]% Don't hyphenate
+\font[language=und]% Don't hyphenate
 \script[src=packages/xmltricks]%
 \script[src=packages/frametricks]%
 \script[src=packages/raiselower]%

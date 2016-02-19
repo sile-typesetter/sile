@@ -83,7 +83,7 @@ plain.registerCommands = function()
 \define[command=justified]{\set[parameter=document.rskip]\set[parameter=document.spaceskip]}%
 \define[command=rightalign]{\raggedleft{\process\par}}%
 \define[command=em]{\font[style=italic]{\process}}%
-\define[command=nohyphenation]{\font[language=xx]{\process}}%
+\define[command=nohyphenation]{\font[language=und]{\process}}%
 \define[command=raggedright]{\ragged[right=true]{\process}}%
 \define[command=raggedleft]{\ragged[left=true]{\process}}%
 \define[command=center]{\ragged[left=true,right=true]{\process}}%
