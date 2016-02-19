@@ -824,10 +824,10 @@ SILE hyphenates words based on its current language. (Language is set using the
 variety of languages, and also aims to encode specific typesetting knowledge about
 languages.
 
-SILE comes with a special “language” called \code{xx}, which has no hyphenation
+SILE comes with a special “language” called \code{und}, which has no hyphenation
 patterns available. If you switch to this language, text will not be hyphenated.
 The command \code{\\nohyphenation\{\dots\}} is provided as a shortcut for
-\code{\\font[language=xx]\{\dots\}}.
+\code{\\font[language=und]\{\dots\}}.
 
 Aside from hyphenation, typesetting conventions differ from language to language.
 SILE has basic support for typesetting most languages and scripts. (Again, let me
