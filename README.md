@@ -46,6 +46,14 @@ If you are building from a a git clone, start by running the script to setup you
 Once your dependencies are installed, run:
 
     $ ./configure
+
+If your system places 3rd party software in `/usr/local`, you may need to run this instead:
+
+    $ env CFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib ./configure
+
+Now you should be able to build and install SILE:
+
+    $ make
     $ make install
 
 This will place the SILE libraries and executable in a sensible location.
