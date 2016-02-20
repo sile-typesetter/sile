@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 git submodule update --init --recursive --remote
 autoreconf --install
 case `uname` in Darwin*) glibtoolize ;;
