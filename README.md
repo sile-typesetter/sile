@@ -31,9 +31,9 @@ A formula is available for [homebrew][brew] that can install both stable and hea
 
 SILE can be downloaded from [its home page][sile], or directly from [the release page][releases].
 
-SILE is written in the Lua programming language, so you will need a Lua installation. It also relies on external libraries to access fonts and write PDF files. Its preferred combination of libraries is [harfbuzz][] and a PDF creation library extracted from TeX. It should be possible to harfbuzz from your operating system's package manager. (For Harfbuzz to work you will also need freetype2 and fontconfig installed.)
+SILE is written in the Lua programming language, so you will need a Lua installation. It also relies on external libraries to access fonts and write PDF files. Its preferred combination of libraries is [harfbuzz][] and [libtexpdf][], a PDF creation library extracted from TeX. Harfbuzz should be available from your operating system's package manager. (For Harfbuzz to work you will also need freetype2 and fontconfig installed.)
 
-You also need to install the following Lua libraries using [luarocks][] (downloading luarocks if you do not already have it installed).
+You also need to install the following Lua libraries; they can be installed using [luarocks][], if not available from your system's package manager.
 
 * `lpeg`
 * `luaexpat`
@@ -84,6 +84,7 @@ SILE is distributed under the [MIT licence][license].
   [roadmap]: https://github.com/simoncozens/sile/blob/master/ROADMAP
   [luarocks]: http://luarocks.org/en/Download
   [harfbuzz]: http://www.freedesktop.org/wiki/Software/HarfBuzz/
+  [libtexpdf]: https://github.com/simoncozens/libtexpdf
   [aur]: https://wiki.archlinux.org/index.php/Arch_User_Repository
   [aur-rel]: https://aur.archlinux.org/packages/sile/
   [aur-dev]: https://aur.archlinux.org/packages/sile-git/
