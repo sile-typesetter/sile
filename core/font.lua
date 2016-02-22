@@ -22,6 +22,9 @@
       if (options.direction)  then SILE.settings.set("font.direction", options.direction) end
 
       if (options.language)  then
+        if icu and icu.canonicalize_language then
+          options.language = icu.canonicalize_language(options.language)
+        end
         SILE.settings.set("document.language", options.language)
         SILE.languageSupport.loadLanguage(options.language)
       end

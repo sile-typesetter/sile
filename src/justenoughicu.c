@@ -140,6 +140,25 @@ int icu_breakpoints(lua_State *L) {
   return breakcount;
 }
 
+int icu_canonicalize_language(lua_State *L) {
+  char* lang = luaL_checkstring(L, 1);
+  char locale[200], minimized[200], result[200];
+  UErrorCode error = 0;
+  uloc_forLanguageTag(lang, locale, sizeof(locale), NULL, &error);
+  if (!error) {
+    uloc_minimizeSubtags(locale, minimized, sizeof(minimized), &error);
+  }
+  if (!error) {
+    uloc_toLanguageTag(minimized, result, sizeof(result),
+               /* strict */ 1, &error);
+  }
+  if (!error) {
+    lua_pushstring(L, result);
+  } else {
+    lua_pushstring(L, "und");
+  }
+  return 1;
+}
 
 #if !defined LUA_VERSION_NUM
 /* Lua 5.0 */
@@ -167,6 +186,7 @@ static void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
 static const struct luaL_Reg lib_table [] = {
   {"breakpoints", icu_breakpoints},
   {"case", icu_case},
+  {"canonicalize_language", icu_canonicalize_language},
   {NULL, NULL}
 };
 
