@@ -15,6 +15,7 @@ SILE.outputters.libtexpdf = {
   init = function()
     -- We don't do anything yet because this commits us to a page size.
   end,
+  _init = ensureInit,
   newPage = function()
     ensureInit()
     pdf.endpage()

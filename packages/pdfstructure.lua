@@ -26,6 +26,7 @@ SILE.registerCommand("pdf:structure", function (o,c)
   local node = stNode(t)
   addChild(node)
   node.lang = SILE.settings.get("document.language")
+  SILE.outputter._init()
   node.page = pdf.get_dictionary("@THISPAGE")
   node.mcid = mcid
   local oldstPointer = stPointer
