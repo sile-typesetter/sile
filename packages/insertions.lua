@@ -17,6 +17,14 @@ SILE.scratch.insertions = { classes = {} }
 
 SILE.insertions = {}
 
+SILE.settings.declare({
+  name = "insertion.penalty",
+  type = "integer",
+  default = -3000,
+  help = "Penalty to be applied before insertion"
+})
+
+
 --[[
 The typical insertion is a footnote but we provide a generic mechanism for
 handling any kind of insertion. An insertion is material which is added from
@@ -389,6 +397,9 @@ end)
 local insert = function (self, classname, vbox)
   local thisclass = SILE.scratch.insertions.classes[classname]
   if not thisclass then SU.error("Uninitialized insertion class "..classname) end
+  SILE.typesetter:pushMigratingMaterial({
+    SILE.nodefactory.newPenalty({ penalty = SILE.settings.get("insertion.penalty") })
+  })
   SILE.typesetter:pushMigratingMaterial({
     _insertionVbox {
         class = classname,

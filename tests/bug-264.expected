@@ -1,0 +1,60 @@
+<tests/bug-264.sil>
+Set paper size 	209.7637818	297.6377985
+Begin page
+Mx 	37.41039
+My 	42.09434
+Set font 	Gentium;10;200;regular;normal;;LTR
+T	72	(h)
+[1] New page
+Mx 	49.36693
+T	76 65 66 79 82 85 77	(laborum)
+Mx 	84.06420
+T	14	(.)
+Mx 	86.35423
+My 	38.91563
+Set font 	Gentium;6.81152;200;regular;normal;;LTR
+T	17	(1)
+Mx 	29.36693
+My 	233.73502
+Set font 	Gentium;9;200;regular;normal;;LTR
+T	17	(1)
+Mx 	33.59007
+T	14	(.)
+Mx 	53.65111
+T	44 79 82 69 77	(Lorem)
+Mx 	79.13002
+T	73 80 83 85 77	(ipsum)
+Mx 	103.52787
+T	68 79 76 79 82	(dolor)
+Mx 	124.98138
+T	83 73 84	(sit)
+Mx 	135.71224
+T	65 77 69 84	(amet)
+Mx 	154.32748
+T	12	(,)
+Mx 	158.10619
+T	67 79 78	(con)
+Mx 	171.53148
+T	83 69 67 84 69	(secte)
+Mx 	190.35326
+T	13	(-)
+Mx 	29.36693
+My 	245.73502
+T	84 85 82	(tur)
+Mx 	43.17845
+T	65 68 73 80 73 83 73 67 73 78 71	(adipisicing)
+Mx 	85.65989
+T	69 76 73 84	(elit)
+Mx 	97.79319
+T	12	(,)
+Mx 	102.23557
+T	83 69 68	(sed)
+Mx 	116.93039
+T	68 79	(do)
+Mx 	128.51827
+T	69 73 85 83 77 79 68	(eiusmod)
+Mx 	159.79415
+T	14	(.)
+[2] End page
+Finish
+
