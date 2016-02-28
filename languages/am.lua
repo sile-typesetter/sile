@@ -15,13 +15,23 @@ SILE.nodeMakers.am = SILE.nodeMakers.unicode {
       for i = 1,#items do item = items[i]
         local char = items[i].text
         local cp = SU.codepoint(char)
-        if cp == 0x1361 then --
+        if cp == 0x1361 then -- ETHIOPIC WORDSPACE
           if style == "centered" then
             self:makeToken()
             self:makeGlue()
           end
           self:addToken(char,item)
           self:makeToken()
+          self:makeGlue()
+        elseif cp == 0x1362 then -- ETHIOPIC FULL STOP
+          if style == "centered" then
+            self:makeToken()
+            self:makeGlue()
+          end
+          self:addToken(char,item)
+          self:makeToken()
+          self:makeGlue()
+          self:makePenalty() -- This is cheating. We should really make double width glue
           self:makeGlue()
         else
           self:dealWith(items[i])
