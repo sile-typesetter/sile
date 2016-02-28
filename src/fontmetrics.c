@@ -5,6 +5,7 @@
 #else
 #include <ft2build.h>
 #include FT_FREETYPE_H
+#include FT_TRUETYPE_TABLES_H
 #define USE_FREETYPE_METRICS
 
 FT_Library library = NULL;
@@ -23,6 +24,7 @@ int get_typographic_extents (lua_State *L) {
   short upem;
   double ascender;
   double descender;
+  double x_height;
 
 #ifdef USE_FREETYPE_METRICS
   if (!library) FT_Init_FreeType (&library);
@@ -33,6 +35,10 @@ int get_typographic_extents (lua_State *L) {
   upem = ft_face->units_per_EM;
   ascender = ft_face->ascender / (double)upem;
   descender = ft_face->descender / (double)upem;
+  TT_OS2* os2 = (TT_OS2*) FT_Get_Sfnt_Table(ft_face, ft_sfnt_os2);
+  if (os2) {
+    x_height = os2->sxHeight / (double)upem;
+  }
   FT_Done_Face(ft_face);
 #else
   hb_blob_t* blob = hb_blob_create (font_s, font_l, HB_MEMORY_MODE_WRITABLE, (void*)font_s, NULL);
@@ -50,6 +56,9 @@ int get_typographic_extents (lua_State *L) {
   lua_newtable(L);
   lua_pushstring(L, "ascender");
   lua_pushnumber(L, ascender);
+  lua_settable(L, -3);
+  lua_pushstring(L, "x_height");
+  lua_pushnumber(L, x_height);
   lua_settable(L, -3);
   lua_pushstring(L, "descender");
   lua_pushnumber(L, descender);
