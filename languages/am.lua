@@ -1,14 +1,25 @@
+SILE.settings.declare({
+  name = "languages.am.justification",
+  type = "string",
+  default = "left",
+  help = "Justification method for Ethiopic word separators: left or centered"
+})
+
 
 SILE.nodeMakers.am = SILE.nodeMakers.unicode {
   iterator = function (self, items)
     self:init()
     local ics = SILE.settings.get("document.letterspaceglue")
+    local style = SILE.settings.get("languages.am.justification")
     return coroutine.wrap(function()
       for i = 1,#items do item = items[i]
         local char = items[i].text
         local cp = SU.codepoint(char)
         if cp == 0x1361 then --
-          -- XXX depends on method
+          if style == "centered" then
+            self:makeToken()
+            self:makeGlue()
+          end
           self:addToken(char,item)
           self:makeToken()
           self:makeGlue()
