@@ -11,6 +11,7 @@ SILE.tokenizers = {}
 loadstring = loadstring or load -- 5.3 compatibility
 if not unpack then unpack = table.unpack end -- 5.3 compatibility
 std = require("std")
+lfs = require("lfs")
 if (os.getenv("SILE_COVERAGE")) then require("luacov") end
 
 SILE.documentState = std.object {};
@@ -147,6 +148,9 @@ function SILE.readFile(fn)
   fn = SILE.resolveFile(fn)
   if not fn then
     SU.error("Could not find file")
+  end
+  if lfs.attributes(fn).mode ~= "file" then
+    SU.error(fn.." isn't a file, it's a "..lfs.attributes(fn).mode.."!")
   end
   local file, err = io.open(fn)
   if not file then
