@@ -1,13 +1,13 @@
 \begin[papersize=a5]{document}
 \nofolios
-\center{TITILE\break{}Then vfill to logo\vfill{}<logo>\eject}
+\center{TITILE\break{}Then vfill to logo\vfill{}<logo>\par\break}
 \define[command=pubpage]{
 Content so vfill isn't eaten at top of page.
 \vfill
 Paragraph 1 that should be towards the bottom of the page.
 
 Paragraph 2 that should be on the same page as paragraph 1.
-\eject
+\par\break
 }
 \pubpage
 Body content.
