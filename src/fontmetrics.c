@@ -34,7 +34,7 @@ int get_typographic_extents (lua_State *L) {
   if(err) { luaL_error(L, "FT_New_Memory_Face failed"); }
   upem = ft_face->units_per_EM;
   ascender = ft_face->ascender / (double)upem;
-  descender = ft_face->descender / (double)upem;
+  descender = -ft_face->descender / (double)upem;
   TT_OS2* os2 = (TT_OS2*) FT_Get_Sfnt_Table(ft_face, ft_sfnt_os2);
   if (os2) {
     x_height = os2->sxHeight / (double)upem;
