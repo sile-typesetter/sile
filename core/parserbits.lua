@@ -14,7 +14,7 @@ number.fractional = (P(".")   ) * (digit ^ 1)
 number.decimal =
   (number.integer *              -- Integer
   (number.fractional ^ -1)) +    -- Fractional
-  (S("+-") * number.fractional)  -- Completely fractional number
+  (S("+-")^-1 * number.fractional)  -- Completely fractional number
 
 number.scientific =
   number.decimal * -- Decimal number
