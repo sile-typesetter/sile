@@ -49,6 +49,9 @@ int face_from_options(lua_State* L) {
   lua_gettable(L, -2);
   if (lua_isnumber(L, -1)) {
     int newWeight = lua_tointeger(L, -1);
+#if FC_VERSION >= 21191
+    newWeight = FcWeightFromOpenType(newWeight);
+#else
     if      (newWeight <= 100) newWeight = FC_WEIGHT_THIN;
     else if (newWeight <= 200) newWeight = FC_WEIGHT_ULTRALIGHT;
     else if (newWeight <= 300) newWeight = FC_WEIGHT_LIGHT;
@@ -58,6 +61,7 @@ int face_from_options(lua_State* L) {
     else if (newWeight <= 700) newWeight = FC_WEIGHT_BOLD;
     else if (newWeight <= 800) newWeight = FC_WEIGHT_ULTRABOLD;
     else                       newWeight = FC_WEIGHT_HEAVY;
+#endif
     weight = newWeight;
   }
   lua_pop(L,1);
