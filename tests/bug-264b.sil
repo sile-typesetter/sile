@@ -1,0 +1,6 @@
+\begin[papersize=432pt x 648pt,class=book]{document}
+\script[src=packages/linespacing]
+\set[parameter=linespacing.method,value=fit-font]
+\set[parameter=linespacing.fit-font.extra-space,value=15pt plus 0.5pt minus 0.5pt]
+x\skip[height=420pt].\footnote{Matta 24:13}
+\end{document}

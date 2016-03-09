@@ -368,13 +368,11 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   start with the vbox and the insertion.
 
   --]]
-
   local lastbox = i
   while not vboxlist[lastbox]:isVbox() do lastbox = lastbox - 1 end
-  while not vboxlist[i]:isPenalty() do
+  while not (vboxlist[i]:isPenalty() and vboxlist[i].penalty == -20000) do
     table.insert(vboxlist, lastbox, SILE.nodefactory.newPenalty({penalty = -20000 }))
   end
-  -- table.insert(vboxlist, i, SILE.nodefactory.newPenalty({penalty = -20000 }))
   return target
 end
 
