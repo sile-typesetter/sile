@@ -14,12 +14,13 @@ function utilities.error(message,bug)
     io.stderr:write("\n! "..message.. " at "..SILE.currentlyProcessingFile)
   end
   if bug then io.stderr:write(debug.traceback()) end
+  io.stderr:write("\n")
   SILE.outputter:finish()
   os.exit(1)
 end
 
 function utilities.warn(message)
-  io.stderr:write("\n! "..message)
+  io.stderr:write("\n! "..message.."\n")
   --print(debug.traceback())
   --os.exit(1)
 end
