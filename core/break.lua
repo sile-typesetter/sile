@@ -38,7 +38,7 @@ lineBreak = {}
     postLineBreak
 ]]
 
-local param = function(x) return SILE.settings.get("linebreak."..x) end
+local param = function(x) return SILE.toAbsoluteMeasurement(SILE.settings.get("linebreak."..x)) end
 
 -- Routines here will be called thousands of times; we micro-optimize
 -- to avoid debugging and concat calls.
