@@ -1,0 +1,13 @@
+\begin[class=book,papersize=129mm x 198mm]{document}
+
+\font[family=DejaVu Sans]{
+  \font[weight=400,width=87]{Lorem ipsum dolor sit amet}
+
+  \font[weight=400,width=100]{Lorem ipsum dolor sit amet}
+
+  \font[weight=700,width=87]{Lorem ipsum dolor sit amet}
+
+  \font[weight=700,width=100]{Lorem ipsum dolor sit amet}
+}
+
+\end{document}
