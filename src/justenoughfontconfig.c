@@ -16,6 +16,7 @@ int face_from_options(lua_State* L) {
   double pointSize = 12;
   int slant = FC_SLANT_ROMAN;
   int weight = 100;
+  double width = 100.0;
   const char *script = "latin";
   const char *language = "eng";
   const char *style = "Regular";
@@ -66,6 +67,13 @@ int face_from_options(lua_State* L) {
   }
   lua_pop(L,1);
 
+  lua_pushstring(L, "width");
+  lua_gettable(L, -2);
+  if (lua_isnumber(L, -1)) {
+    width = lua_tonumber(L, -1);
+  }
+  lua_pop(L,1);
+
   lua_pushstring(L, "language");
   lua_gettable(L, -2);
   if (lua_isstring(L, -1)) { language = lua_tostring(L, -1); }
@@ -84,22 +92,25 @@ int face_from_options(lua_State* L) {
   FcPatternAddDouble (p, FC_SIZE, pointSize);
   FcPatternAddString (p, FC_STYLE, style);
   FcPatternAddInteger(p, FC_WEIGHT, weight);
+  FcPatternAddDouble(p, FC_WIDTH, width);
 
   // /* Add fallback fonts here. Some of the standard 14 should be fine. */
   FcPatternAddString (p, FC_FAMILY,(FcChar8*) "Times-Roman");
   FcPatternAddString (p, FC_FAMILY,(FcChar8*) "Times");
   FcPatternAddString (p, FC_FAMILY,(FcChar8*) "Helvetica");
+
+  FcDefaultSubstitute (p);
   matched = FcFontMatch (0, p, &result);
-  
   if (FcPatternGetString (matched, FC_FILE, 0, &font_path) != FcResultMatch)
     return 0;
-  
+
   FcPatternGetInteger(matched, FC_INDEX, 0, &index);
   font_path = (FcChar8 *)strdup((char*)font_path);
   if (!font_path) {
     printf("Finding font path failed\n");
     return 0;
   }
+
   /* Push back slant and weight, we need to pass them to libpdftex */
   FcPatternGetInteger(matched, FC_SLANT, 0, &slant);
   FcPatternGetInteger(matched, FC_WEIGHT, 0, &weight);

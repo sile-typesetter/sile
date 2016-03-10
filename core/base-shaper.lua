@@ -3,7 +3,7 @@ if not SILE.shapers then SILE.shapers = { } end
 local smallTokenSize = 20 -- Small words will be cached
 local shapeCache = {}
 local _key = function(options)
-  return table.concat({options.font;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename},";")
+  return table.concat({options.font;options.language;options.script;options.size;("%d"):format(options.weight);options.width;options.style;options.variant;options.features;options.direction;options.filename},";")
 end
 
 -- Function for testing shaping in the repl
