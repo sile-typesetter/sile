@@ -89,8 +89,11 @@ int face_from_options(lua_State* L) {
   FcPatternAddString (p, FC_FAMILY,(FcChar8*) "Times-Roman");
   FcPatternAddString (p, FC_FAMILY,(FcChar8*) "Times");
   FcPatternAddString (p, FC_FAMILY,(FcChar8*) "Helvetica");
+
+  FcConfigSubstitute (NULL, p, FcMatchFont);
+  FcDefaultSubstitute (p);
   matched = FcFontMatch (0, p, &result);
-  
+
   if (FcPatternGetString (matched, FC_FILE, 0, &font_path) != FcResultMatch)
     return 0;
   
