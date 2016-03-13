@@ -1951,7 +1951,7 @@ book:defineMaster(\{
   frames = \{
 
     content = \{
-      left = "8.3\%", right = "86%",
+      left = "8.3\%", right = "86\%",
       top = "11.6\%", bottom = "top(footnotes)"
     \},
     
@@ -2031,7 +2031,7 @@ bringhurst:defineMaster(\{
     content = \{
       left = "width(page)/13",
       top = "left(content) * 8 / 5",
-      right = "100% - 2*top(content)",
+      right = "100\% - 2*top(content)",
       bottom = "top(footnotes)"
     \},
     folio = \{ ... as before ... \},
