@@ -5,6 +5,9 @@
         {{ if page.date }}
           <span class="date">{{ page.date | date_to_string }}</span>
         {{ end }}
+        {{ if page.post_author }}
+          — <span class="author">{{ page.post_author }}</span>
+        {{ end }}
       </div>
   </div>
 
