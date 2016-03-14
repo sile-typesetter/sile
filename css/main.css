@@ -83,7 +83,6 @@ a:hover {
 
 .title {
   display: inline-block;
-  text-align: center;
   line-height: 25px;
 }
 
@@ -91,7 +90,6 @@ a:hover {
   width: 100%;
   color: #787878;
   font-weight: 600;
-  text-align: center;
   margin-top: 0.5em;
   display: block;
 }
@@ -109,8 +107,6 @@ a:hover {
   padding-top: 1.25em;
   padding-bottom: 1.5em;
   overflow: hidden;
-  float: center;
-  text-align: center;
 }
 
 /*****************************************************************************/
