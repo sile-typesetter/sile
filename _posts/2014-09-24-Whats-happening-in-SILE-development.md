@@ -1,3 +1,7 @@
+---
+post_author: Simon Cozens
+post_gravatar: 11cdaff4c6f9b290db40f69d3b20caf1
+---
 Right now SILE is in a state of flux. There doesn't appear to be much going on in the SILE repository but actually there is a lot of coding happening behind the scenes.
 
 The Pango/Cairo backend got SILE started and producing useful output, but it was never intended to be a permanent solution. The Cairo PDF writer only supports creation of simple PDFs, and does not include features such as document structure, thumbnails, hyperlinks, annotations and so on.
