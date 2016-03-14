@@ -119,7 +119,8 @@ a:hover {
 /*
 /*****************************************************************************/
 
-#date {
+.date {
+  display: inline-block;
   font-size: 16px;
   padding-top: 0.25em;
   margin-bottom: 2em;
@@ -128,20 +129,20 @@ a:hover {
   color: #787878;
 }
 
-#cover-photo-container,
-#info-container {
+.cover-photo-container,
+.info-container {
   display: block;
 }
 
-#cover-photo-container {
+.cover-photo-container {
   margin-top: 2em;
 }
 
-#info-container {
+.info-container {
   margin-top: 3em;
 }
 
-#title {
+.title {
   color: #4a4a4a;
   margin-bottom: 0.35em;
   font-size: 3em;
@@ -216,7 +217,7 @@ a:hover {
 /*
 /*****************************************************************************/
 
-.sidebar,
+#sidebar,
 .content {
   vertical-align: top;
   height: 100%;
@@ -225,7 +226,7 @@ a:hover {
   overflow-x: hidden;
 }
 
-.sidebar {
+#sidebar {
   float: left;
   width: 14%;
   padding-left: 11em;
@@ -233,12 +234,12 @@ a:hover {
   border-right: 1px solid #e7e7e7;
 }
 
-.sidebar ul { 
+#sidebar ul { 
   padding-top: 2em;
   padding-bottom: 2em;
 }
 
-.sidebar ul li { 
+#sidebar ul li { 
   padding-top: 1ex;
 }
 
@@ -271,7 +272,7 @@ a:hover {
   text-transform: uppercase;
 }
 
-#sidebar-button {
+.sidebar-button {
   height: intrinsic;
   cursor: pointer;
   display: none;
@@ -280,7 +281,7 @@ a:hover {
   border-bottom: 1px solid #e7e7e7;
 }
 
-#sidebar-button:active,
-#sidebar-button:hover {
+.sidebar-button:active,
+.sidebar-button:hover {
   opacity: 0.7;
 }
