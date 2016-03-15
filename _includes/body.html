@@ -1,19 +1,16 @@
-  <div id="post-info">
-    <div id="info-container">
-      <h1 id="title">{{ page.title }}</h1>
-  {{ if page.date }}
-      <span id="date">{{ page.date | date_to_string }}</span>
-  {{ end }}
-    </div>
+  <div class="post-info">
+    <div class="info-container">
+      <h1 class="title">{{ page.title }}</h1>
+      <div class="meta">
+        {{ if page.date }}
+          <span class="date">{{ page.date | date_to_string }}</span>
+        {{ end }}
+        {{ if page.post_author }}
+          — <span class="author">{{ page.post_author }}</span>
+        {{ end }}
+      </div>
   </div>
 
   <div class="post">
     {{ page.content }}
   </div>
-  {{ if page.date }}
-  <div class="colophon">
-    <p>
-      <span id="pub-date">Published on {{ page.date | date_to_string }}</span>
-    </p>
-  </div>
-  {{ end }}

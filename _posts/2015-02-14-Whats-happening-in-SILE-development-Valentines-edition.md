@@ -1,3 +1,7 @@
+---
+post_author: Simon Cozens
+post_gravatar: 11cdaff4c6f9b290db40f69d3b20caf1
+---
 Here are a few interesting things that have been going on lately. If you are interested in SILE, you should probably try using SILE from the [repository][] head.
 
 * Support has been added for [OpenType features][]! SILE now supports all your historic ligatures, swash characters, stylistic sets, kerning, fractions, diacritics, CJK shaping and character width, and any other clever things that your font can do.
