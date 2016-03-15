@@ -13,7 +13,8 @@ body {
   background-color: #fafbfc;
   font-family: 'Raleway', Arial, sans-serif;
   font-weight: 400;
-  font-size: 0.85em;
+  font-size: 1.15em;
+  line-height: 1.75em;
 }
 
 a {
@@ -81,20 +82,9 @@ a:hover {
 
 .posts-list li {
   text-align: center;
-  line-height: 1.75em;
-}
-
-#site {
-  line-height: 1.25em;
-}
-
-.title {
-  display: inline-block;
-  line-height: 25px;
 }
 
 .tagline {
-  font-size: 1.1em;
   width: 100%;
   color: #787878;
   font-weight: 600;
@@ -118,10 +108,8 @@ a:hover {
 
 .date {
   display: inline-block;
-  font-size: 16px;
   padding-top: 0.25em;
-  margin-bottom: 2em;
-  text-transform: uppercase;
+  margin-bottom: 1ex;
   font-weight: 600;
   color: #787878;
 }
@@ -140,19 +128,14 @@ img.cover-photo {
 
 .title {
   color: #4a4a4a;
-  margin-bottom: 0.35em;
-  font-size: 3em;
-  line-height: 40px;
-  text-transform: uppercase;
-}
-
-.post {
-  line-height: 24px;
+  margin-bottom: 0.2em;
+  font-size: 1.4em;
 }
 
 .post h2 {
-  margin-top: 1.25em;
-  margin-bottom: 1.25em;
+  font-size: 1.1em;
+  margin-top: 1em;
+  margin-bottom: .6em;
 }
 
 .post a,
@@ -173,9 +156,12 @@ img.cover-photo {
 
 .post p {
   font-family: 'Source Sans Pro', Arial, sans-serif;
-  font-size: 17px;
   margin-bottom: 1.45em;
   text-align: justify;
+}
+
+.post ul p {
+  margin-bottom: .1em;
 }
 
 .post ul, .post ol {
@@ -204,12 +190,12 @@ img.cover-photo {
   background-color: #333;
 }
 
-#sidebar ul { 
-  padding: 2em;
+#sidebar ul {
+  padding: 2em 0 1em 1em;
 }
 
-#sidebar ul li { 
-  padding-top: 1ex;
+#sidebar ul li {
+  padding-top: .5ex;
 }
 
 #header {
@@ -233,4 +219,9 @@ img.cover-photo {
   font-size: 0.65em;
   display: block;
   text-transform: uppercase;
+}
+
+.pagination > * {
+  display: inline-block;
+  padding: .2ex .4ex;
 }
