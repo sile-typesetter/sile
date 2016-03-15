@@ -198,6 +198,10 @@ img.cover-photo {
   padding-top: .5ex;
 }
 
+#sidebar li a {
+  display: block;
+}
+
 #header {
   text-align: center;
 }
