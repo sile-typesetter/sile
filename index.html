@@ -3,7 +3,8 @@ layout: default
 title: Home
 ---
 
-<div class="content" id="home">
+<div id="content">
+<div id="home">
 {% include head.html %}
 {% for page in paginator.posts %}
     {% include body.html %}
@@ -30,5 +31,6 @@ title: Home
   {% else %}
     <span>Next &raquo;</span>
   {% endif %}
+</div>
 </div>
 </div>

@@ -1,17 +1,10 @@
-/*****************************************************************************/
-/*
-/* Common
-/*
-/*****************************************************************************/
-
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 html, body {
-  height: 100%;
-  width: 100%;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -20,8 +13,8 @@ body {
   background-color: #fafbfc;
   font-family: 'Raleway', Arial, sans-serif;
   font-weight: 400;
-  font-size: 0.85em;
-  overflow: hidden;
+  font-size: 1.15em;
+  line-height: 1.75em;
 }
 
 a {
@@ -43,13 +36,36 @@ a:hover {
   color: #555;
 }
 
-/*****************************************************************************/
-/*
-/* Home
-/*
-/*****************************************************************************/
+#site {
+  width: 100%;
+  max-width: 990px;
+  margin: 20px auto;
+}
+
+#sidebar {
+  position: fixed;
+  bottom: 0;
+  top: 0;
+  width: 202px;
+  border-right: 1px solid #e7e7e7;
+  padding: 20px 10px;
+}
+
+#content {
+  margin: 0 0 0 202px;
+}
+
+#home {
+  margin: 10px;
+}
+
+#home video {
+  width: 100%;
+  height: 56.25%
+}
+
 #logo {
-  max-width: 128px;
+  width: 150px;
 }
 
 .posts a {
@@ -66,24 +82,6 @@ a:hover {
 
 .posts-list li {
   text-align: center;
-  line-height: 1.75em;
-}
-
-/*****************************************************************************/
-/*
-/* Site
-/*
-/*****************************************************************************/
-
-.site {
-  height: 100%;
-  width: 100%;
-  line-height: 1.25em;
-}
-
-.title {
-  display: inline-block;
-  line-height: 25px;
 }
 
 .tagline {
@@ -106,32 +104,22 @@ a:hover {
   border-top: 1px solid #e7e7e7;
   padding-top: 1.25em;
   padding-bottom: 1.5em;
-  overflow: hidden;
 }
-
-/*****************************************************************************/
-/*
-/* Posts
-/*
-/*****************************************************************************/
 
 .date {
   display: inline-block;
-  font-size: 16px;
   padding-top: 0.25em;
-  margin-bottom: 2em;
-  text-transform: uppercase;
+  margin-bottom: 1ex;
   font-weight: 600;
   color: #787878;
 }
 
-.cover-photo-container,
-.info-container {
-  display: block;
+.cover-photo-container {
+  text-align: center;
 }
 
-.cover-photo-container {
-  margin-top: 2em;
+img.cover-photo {
+  max-width: 100%
 }
 
 .info-container {
@@ -140,22 +128,14 @@ a:hover {
 
 .title {
   color: #4a4a4a;
-  margin-bottom: 0.35em;
-  font-size: 3em;
-  line-height: 40px;
-  text-transform: uppercase;
-}
-
-.post {
-  line-height: 24px;
-  max-width: 725px;
-  clear: both;
+  margin-bottom: 0.2em;
+  font-size: 1.4em;
 }
 
 .post h2 {
-  margin-top: 1.25em;
-  margin-left: -0.5em;
-  margin-bottom: 1.25em;
+  font-size: 1.1em;
+  margin-top: 1em;
+  margin-bottom: .6em;
 }
 
 .post a,
@@ -176,9 +156,12 @@ a:hover {
 
 .post p {
   font-family: 'Source Sans Pro', Arial, sans-serif;
-  font-size: 17px;
   margin-bottom: 1.45em;
   text-align: justify;
+}
+
+.post ul p {
+  margin-bottom: .1em;
 }
 
 .post ul, .post ol {
@@ -207,46 +190,20 @@ a:hover {
   background-color: #333;
 }
 
-/*****************************************************************************/
-/*
-/* Sidebar and Content
-/*
-/*****************************************************************************/
-
-#sidebar,
-.content {
-  vertical-align: top;
-  height: 100%;
-  -webkit-overflow-scrolling: touch;
-  overflow-y: auto;
-  overflow-x: hidden;
+#sidebar ul {
+  padding: 2em 0 1em 1em;
 }
 
-#sidebar {
-  float: left;
-  width: 14%;
-  padding-left: 11em;
-  padding-right: 2.125em;
-  border-right: 1px solid #e7e7e7;
+#sidebar ul li {
+  padding-top: .5ex;
 }
 
-#sidebar ul { 
-  padding-top: 2em;
-  padding-bottom: 2em;
+#sidebar li a {
+  display: block;
 }
 
-#sidebar ul li { 
-  padding-top: 1ex;
-}
-
-.content {
-  padding-left: 2.125em;
-}
-
-.header {
+#header {
   text-align: center;
-  padding-top: 2.5em;
-  font-size: 1.1em;
 }
 
 .post-link {
@@ -268,16 +225,7 @@ a:hover {
   text-transform: uppercase;
 }
 
-.sidebar-button {
-  height: intrinsic;
-  cursor: pointer;
-  display: none;
-  padding: 15px 5px 0px 0px;
-  margin-bottom: 10px;
-  border-bottom: 1px solid #e7e7e7;
-}
-
-.sidebar-button:active,
-.sidebar-button:hover {
-  opacity: 0.7;
+.pagination > * {
+  display: inline-block;
+  padding: .2ex .4ex;
 }
