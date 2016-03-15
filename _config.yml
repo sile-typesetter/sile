@@ -1,6 +1,6 @@
 name: SILE
 markdown: kramdown
-highlighter: pygments
+highlighter: rouge
 kramdown:
   input: GFM
 paginate: 5
