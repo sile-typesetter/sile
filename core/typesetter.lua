@@ -452,6 +452,9 @@ SILE.defaultTypesetter = std.object {
     end
     local lskip = SILE.settings.get("document.lskip")
     if lskip then
+      while slice[1].discardable do
+        table.remove(slice,1)
+      end
       lskip.value = "lskip"
       table.insert(slice, 1, lskip)
       table.insert(slice, 1, SILE.nodefactory.zeroHbox)
