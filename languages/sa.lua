@@ -656,7 +656,7 @@ SILE.hyphenator.languages["sa"].patterns =
 "1റ1", -- can occur in Sanskrit?
 "1ല1",
 "1ള1",
-"1ഴ1" -- can occur in Sanskrit?
+"1ഴ1", -- can occur in Sanskrit?
 "1വ1",
 "1ശ1",
 "1ഷ1",
@@ -693,7 +693,7 @@ SILE.hyphenator.languages["sa"].patterns =
 "2റ്.", -- can occur in Sanskrit?
 "2ല്.",
 "2ള്.",
-"2ഴ്." -- can occur in Sanskrit?
+"2ഴ്.", -- can occur in Sanskrit?
 "2വ്.",
 "2ശ്.",
 "2ഷ്.",
