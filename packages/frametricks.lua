@@ -89,6 +89,8 @@ local makecolumns = function (options)
       bottom = cFrame:bottom(),
       id = origId .. "_col"..i
     })
+    newFrame.balanced = true
+    cFrame.balanced = true
     gutter:constrain("right", "left("..newFrame.id..")")
     newFrame:constrain("left", "right("..gutter.id..")")
     -- In the future we may way to allow for unequal columns
@@ -99,6 +101,45 @@ local makecolumns = function (options)
   end
   cFrame:constrain("right", right)
 end
+
+local mergeColumns = function(options)
+  SILE.require("packages/balanced-frames")
+
+  -- 1) Balance all remaining material.
+
+  -- 1.1) Run the pagebuilder once to clear out any full pages
+  SILE.typesetter:pageBuilder()
+
+  -- 1.2) Find out the shape of the columnset. (It will change after we balance it)
+  t = SILE.typesetter.frame
+  local left = t:left()
+  local bottom = t:bottom()
+  while t.next and SILE.getFrame(t.next).balanced do
+    t = SILE.getFrame(t.next)
+  end
+  local right = t:right()
+
+  -- 1.3) Now force a balance, which will resize the frames
+  SILE.call("balancecolumns")
+  SILE.typesetter:pageBuilder()
+
+  -- 2) Add a new frame, the width of the old frameset and the height of
+  -- old frameset - new height, at the end of the current frame
+  local newId = SILE.typesetter.frame.id .. "_"
+  local newFrame = SILE.newFrame({
+    left = left,
+    right = right,
+    top = SILE.typesetter.frame:bottom(),
+    bottom = bottom,
+    id = newId
+  })
+  SILE.typesetter.frame.next = newId
+  SILE.typesetter:initNextFrame()
+end
+
+SILE.registerCommand("mergecolumns", function ( options, content )
+  mergeColumns(options)
+end, "Merge multiple columns into one")
 
 SILE.registerCommand("showframe", function(options, content)
   local id = options.id or SILE.typesetter.frame.id
