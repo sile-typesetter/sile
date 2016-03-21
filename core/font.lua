@@ -47,7 +47,7 @@ SILE.settings.declare({name = "font.size", type = "number or integer", default =
 SILE.settings.declare({name = "font.weight", type = "integer", default = 200})
 SILE.settings.declare({name = "font.variant", type = "string", default = "normal"})
 SILE.settings.declare({name = "font.script", type = "string", default = ""})
-SILE.settings.declare({name = "font.style", type = "string", default = "regular"})
+SILE.settings.declare({name = "font.style", type = "string", default = ""})
 SILE.settings.declare({name = "font.direction", type = "string", default = ""})
 SILE.settings.declare({name = "font.filename", type = "string", default = ""})
 SILE.settings.declare({name = "font.features", type = "string", default = ""})
