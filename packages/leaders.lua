@@ -15,9 +15,8 @@ leader.outputYourself = function (self,typesetter, line)
 
   local remainder = scaledWidth - repetitions * valwidth
   if repetitions == 1 then
-    typesetter.frame:advanceWritingDirection(remainder/2)
+    typesetter.frame:advanceWritingDirection(remainder)
     self.value:outputYourself(typesetter, line)
-    typesetter.frame:advanceWritingDirection(remainder/2)
   end
 
   if repetitions > 1 then
