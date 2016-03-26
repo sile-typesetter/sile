@@ -1,5 +1,10 @@
 language: c
-sudo: false
+matrix:
+  include:
+    - dist: precise
+      sudo: false
+    - dist: trusty
+      sudo: required
 compiler:
  - gcc
 addons:
