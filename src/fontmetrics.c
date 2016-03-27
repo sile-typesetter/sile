@@ -1,5 +1,10 @@
 #include <hb.h>
 #include <hb-ft.h>
+#ifndef HB_VERSION_ATLEAST
+#define HB_VERSION_ATLEAST(major,minor,micro) \
+        ((major)*10000+(minor)*100+(micro) <= \
+         HB_VERSION_MAJOR*10000+HB_VERSION_MINOR*100+HB_VERSION_MICRO)
+#endif
 #if HB_VERSION_ATLEAST(1,1,3)
 #define USE_HARFBUZZ_METRICS
 #else
