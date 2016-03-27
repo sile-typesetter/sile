@@ -1,8 +1,5 @@
 language: c
-sudo: required
-dist:
- - trusty
- - precise
+sudo: false
 compiler:
  - gcc
 addons:
