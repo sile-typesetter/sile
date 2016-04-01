@@ -47,10 +47,10 @@ int pdf_beginpage(lua_State *L) {
 
 int pdf_finish(lua_State *L) {
   ASSERT(p);
-  texpdf_close_document(p);
-  texpdf_close_device  ();
-  texpdf_close_fontmaps();
   texpdf_files_close();
+  texpdf_close_device  ();
+  texpdf_close_document(p);
+  texpdf_close_fontmaps();
   return 0;
 }
 
