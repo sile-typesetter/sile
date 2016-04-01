@@ -38,7 +38,7 @@ SILE.registerUnit("mm", {definition = "2.8346457pt"})
 SILE.registerUnit("cm", {definition = "10mm"})
 SILE.registerUnit("in", {definition = "72pt"})
 
-SILE.registerUnit("%", { relative = true, definition = function (v, dim)
+SILE.registerUnit("%", { relative = true, definition = function (v, dimension)
   return v / 100 * SILE.documentState.paperSize[ dimension == 'w' and 1 or 2]
 end})
 SILE.registerUnit("em", { relative = true, definition = function (v)
