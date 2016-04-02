@@ -38,8 +38,11 @@ SILE.registerUnit("mm", {definition = "2.8346457pt"})
 SILE.registerUnit("cm", {definition = "10mm"})
 SILE.registerUnit("in", {definition = "72pt"})
 
-SILE.registerUnit("%", { relative = true, definition = function (v, dimension)
-  return v / 100 * SILE.documentState.paperSize[ dimension == 'w' and 1 or 2]
+SILE.registerUnit("%pw", { relative = true, definition = function (v)
+  return v / 100 * SILE.documentState.paperSize[1]
+end})
+SILE.registerUnit("%ph", { relative = true, definition = function (v)
+  return v / 100 * SILE.documentState.paperSize[2]
 end})
 SILE.registerUnit("em", { relative = true, definition = function (v)
   return v * SILE.settings.get("font.size")
