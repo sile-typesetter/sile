@@ -9,7 +9,7 @@ jplain:declareOption("layout", "yoko")
 jplain:loadPackage("hanmenkyoshi")
 function jplain:init()
   self:declareHanmenFrame( "content", {
-    left = "8.3%", top = "11.6%",
+    left = "8.3%pw", top = "11.6%ph",
     gridsize = 10, linegap = 7, linelength = 50,
     linecount = 30,
     tate = self.options.layout() == "tate"
