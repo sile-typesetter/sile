@@ -1,9 +1,9 @@
 local plain = SILE.require("classes/plain");
 local perseus = plain { id = "perseus" };
 SILE.scratch.perseus = {}
-perseus:declareFrame("a",    {left = "8.3%",            right = "48%",            top = "11.6%",       bottom = "80%", next="b"});
-perseus:declareFrame("b",    {left = "52%",             right = "100% - left(a)", top = "top(a)",      bottom = "bottom(a)"    });
-perseus:declareFrame("folio",{left = "left(a)",         right = "right(b)",       top = "bottom(a)+3%",bottom = "bottom(a)+8%" });
+perseus:declareFrame("a",    { left = "8.3%pw",          right = "48%pw",            top = "11.6%ph",        bottom = "80%ph",         next="b" });
+perseus:declareFrame("b",    { left = "52%pw",           right = "100%pw - left(a)", top = "top(a)",         bottom = "bottom(a)"               });
+perseus:declareFrame("folio",{ left = "left(a)",         right = "right(b)",         top = "bottom(a)+3%ph", bottom = "bottom(a)+8%ph"          });
 perseus.pageTemplate.firstContentFrame = perseus.pageTemplate.frames["a"];
 
 SILE.registerCommand("lexicalEntry", function (options, content)

@@ -253,7 +253,7 @@ including RELAX NG. It comes preconfigured with DocBook support.</para>
 <title>DocBook V5.0 document opened in oXygen</title>
 <mediaobject>
 <imageobject>
-<imagedata fileref='examples/images/oxygen5.png' width="100%"/>
+<imagedata fileref='examples/images/oxygen5.png' width="100%pw"/>
 </imageobject>
 </mediaobject>
 </figure>
@@ -273,7 +273,7 @@ provides everything you need to edit DocBook V5.0 documents.</para>
 <title>XML Mind XML Editor – feels almost like MS Word but real DocBook V5.0 markup is created</title>
 <mediaobject>
 <imageobject>
-<imagedata fileref='examples/images/xxe.png' width="100%"/>
+<imagedata fileref='examples/images/xxe.png' width="100%pw"/>
 </imageobject>
 </mediaobject>
 </figure>
