@@ -9,7 +9,7 @@ SILE.registerUnit = function (u, t)
     local num,unit = string.match(def, "(-?[%d%.]+)%s*([%%%a]+)")
     if not SILE.units[unit] then SU.error("Unit "..u.." defined in terms of unknown unit "..unit) end
     if SILE.units[unit].relative then
-      SILE.units[u] = { relative = true, convertor = function (v,c) return num * SILE.toPoints(v,unit,c) end}
+      SILE.units[u] = { relative = true, convertor = function (v) return num * SILE.toPoints(v,unit) end}
     else
       SILE.units[u] = { relative = false, value = SILE.toPoints(num,unit) }
     end
@@ -18,7 +18,7 @@ SILE.registerUnit = function (u, t)
   end
 end
 
-SILE.toPoints = function(num, unit, dimension)
+SILE.toPoints = function(num, unit)
   if (not unit) then
     if (type(num) == "string") then -- split into num and unit parts
       num,unit = string.match(num, "(-?[%d%.]+)%s*([%%%a]+)")
@@ -28,7 +28,7 @@ SILE.toPoints = function(num, unit, dimension)
   if (not SILE.units[unit]) then SU.error( "Unknown unit "..unit ) end
   num =  tonumber(string.match(num, "(-?[%d%.]+)"))
   if SILE.units[unit].convertor then
-    return SILE.units[unit].convertor(num, dimension)
+    return SILE.units[unit].convertor(num)
   else
     return num * SILE.units[unit].value
   end

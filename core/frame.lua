@@ -3,10 +3,13 @@ SILE.frames = {}
 local solver = cassowary.SimplexSolver();
 solverNeedsReloading = true
 
-local parseFrameDef = function(d, width_or_height)
-  SILE.documentState._dimension = width_or_height; -- ugly hack since you can't pass state to the parser
+SILE._frameParser = require("core/frameparser")
+
+local parseFrameDef = function(d)
   return SILE._frameParser:match(d);
 end
+
+local dims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
 
 SILE.framePrototype = std.object {
   next= nil,
@@ -31,8 +34,7 @@ SILE.framePrototype = std.object {
   end,
   reifyConstraint = function(self, solver, method, stay)
     if not self.constraints[method] then return end
-    local dims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
-    local c = parseFrameDef(self.constraints[method], dims[method])
+    local c = parseFrameDef(self.constraints[method])
     -- print("Adding constraint "..self.id.."("..method..") = "..c)
     local eq = cassowary.Equation(self.variables[method],c)
     solver:addConstraint(eq)
@@ -167,9 +169,8 @@ function SILE.framePrototype:leave()
 end
 
 function SILE.framePrototype:isAbsoluteConstraint(c)
-  local dims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
   if not self.constraints[c] then return false end
-  local c = parseFrameDef(self.constraints[c], dims[c])
+  local c = parseFrameDef(self.constraints[c])
   if type(c) ~= "table" then return true end
   if not c.terms then return false end
   for clv,coeff in pairs(c.terms) do
@@ -192,7 +193,6 @@ end
 
 SILE.newFrame = function(spec, prototype)
   SU.required(spec, "id", "frame declaration")
-  local dims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
   prototype = prototype or SILE.framePrototype
   local frame
   frame = prototype {
@@ -233,11 +233,8 @@ SILE.getFrame = function(id)
   return SILE.frames[id] or SU.error("Couldn't get frame ID "..id, true)
 end
 
-SILE._frameParser = require("core/frameparser")
-
 SILE.parseComplexFrameDimension = function(d, width_or_height)
-  SILE.documentState._dimension = width_or_height; -- ugly hack since you can't pass state to the parser
-  local v =  SILE._frameParser:match(d);
+  local v =  parseFrameDef(d)
   v = SILE.toAbsoluteMeasurement(v)
   if type(v) == "table" then
     local g = cassowary.Variable({ name = "t" })
