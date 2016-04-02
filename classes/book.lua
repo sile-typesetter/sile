@@ -8,14 +8,14 @@ book:defineMaster({ id = "right", firstContentFrame = "content", frames = {
   footnotes = { left="left(content)", right = "right(content)", height = "0", bottom="83.3%ph"}
 }})
 book:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" });
-book:mirrorMaster("right", "left")
 
 book:loadPackage("tableofcontents")
 
 if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end
 
-book.pageTemplate = SILE.scratch.masters["right"]
 book.init = function(self)
+  book:mirrorMaster("right", "left")
+  book.pageTemplate = SILE.scratch.masters["right"]
   book:loadPackage("footnotes", { insertInto = "footnotes", stealFrom = {"content"} } )
   return plain.init(self)
 end
