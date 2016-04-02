@@ -8,7 +8,7 @@
 % Of course this is a bit complicated. We're showing off doing complicated things.
 \begin[first-content-frame=title]{pagetemplate}
   \frame[id=gutter,width=3%pw]
-  \frame[id=title, top=top(content), bottom=top(title)+5%pw, left=left(content), right=0.95 * width(page),next=leftCol]
+  \frame[id=title, top=top(content), bottom=top(title)+5%pw, left=left(content), right=95%pw,next=leftCol]
   \frame[id=leftCol,left=left(content),right=left(gutter),top=bottom(title)+2%ph,bottom=top(bottomBox)-2%ph,next=rightCol]
   \frame[id=rightCol,left=right(gutter),top=top(leftCol),bottom=top(bottomBox)-2%ph,width=width(leftCol)]
   \frame[id=sidebar,width=200pt,left=right(rightCol)+3%pw,right=right(title),top=top(leftCol),bottom=bottom(content)]

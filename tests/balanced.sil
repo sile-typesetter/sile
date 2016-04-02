@@ -8,10 +8,10 @@
 \script[src=packages/balanced-frames]
 \font[family=Linux Libertine O]
 \begin[first-content-frame=leftCol1]{pagetemplate}
-\frame[id=gutter,width=3%]
+\frame[id=gutter,width=3%pw]
 \frame[id=leftCol1,left=left(content),right=left(gutter),top=top(content),bottom=bottom(content),next=rightCol1,balanced=1]
 \frame[id=rightCol1,left=right(gutter),right=right(content),top=top(content),bottom=bottom(content),width=width(leftCol1),balanced=1,next=title]
-\frame[id=title,left=left(content), right=right(content),top=bottom(rightCol1),bottom=top(title)+8%,next=leftCol2]
+\frame[id=title,left=left(content), right=right(content),top=bottom(rightCol1),bottom=top(title)+8%ph,next=leftCol2]
 \frame[id=leftCol2,left=left(content),right=left(gutter),top=bottom(title),bottom=bottom(content),next=rightCol2,balanced=1]
 \frame[id=rightCol2,left=right(gutter),right=right(content),top=top(leftCol2),bottom=bottom(content),width=width(leftCol2),balanced=1]
 \end{pagetemplate}
