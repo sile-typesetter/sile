@@ -158,7 +158,7 @@ int face_from_options(lua_State* L) {
   lua_gettable(L, -2);
   if (lua_isnumber(L, -1)) {
     int newWeight = lua_tointeger(L, -1);
-    weight = newWeight / 50;
+    weight = newWeight / 66;
   }
   lua_pop(L,1);
 
