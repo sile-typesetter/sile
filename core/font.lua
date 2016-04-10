@@ -44,7 +44,7 @@
 
 SILE.settings.declare({name = "font.family", type = "string", default = "Gentium"})
 SILE.settings.declare({name = "font.size", type = "number or integer", default = 10})
-SILE.settings.declare({name = "font.weight", type = "integer", default = 200})
+SILE.settings.declare({name = "font.weight", type = "integer", default = 400})
 SILE.settings.declare({name = "font.variant", type = "string", default = "normal"})
 SILE.settings.declare({name = "font.script", type = "string", default = ""})
 SILE.settings.declare({name = "font.style", type = "string", default = ""})
