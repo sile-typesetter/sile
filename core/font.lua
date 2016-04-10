@@ -82,10 +82,12 @@ SILE.font = {loadDefaults = function(options)
   return options
 end,
   cache = function(options, callback)
-    if not SILE.fontCache[_key(options)] then
-      SILE.fontCache[_key(options)] = callback(options)
+    local key = _key(options)
+    if not SILE.fontCache[key] then
+      SU.debug("fonts", "Looking for "..key)
+      SILE.fontCache[key] = callback(options)
     end
-    return SILE.fontCache[_key(options)]
+    return SILE.fontCache[key]
   end,
   _key = _key
 }
