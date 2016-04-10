@@ -3,7 +3,7 @@ Set paper size 	365.6692953	561.2598486
 Begin page
 Mx 	50.35055
 My 	73.10614
-Set font 	;10;200;regular;normal;;LTR;tests/TestCLR-Regular.ttf
+Set font 	;10;400;;normal;;LTR;tests/TestCLR-Regular.ttf
 T	3	(a)
 Push color	1	0.87843	0.54118
 Mx 	60.35055
@@ -34,11 +34,11 @@ Mx 	70.35055
 T	3	(a)
 Mx 	50.35055
 My 	97.10614
-Set font 	;10;200;regular;normal;;RTL;tests/TestCLR-Regular.ttf
+Set font 	;10;400;;normal;;RTL;tests/TestCLR-Regular.ttf
 T	4	(ع)
 Push color	0.98039	0.87843	0.81176
 Mx 	60.35055
-Set font 	;10;200;regular;normal;;LTR;tests/TestCLR-Regular.ttf
+Set font 	;10;400;;normal;;LTR;tests/TestCLR-Regular.ttf
 T	7	()
 Pop color
 Push color	0.89804	0.60784	0.1451
@@ -48,11 +48,11 @@ Push color	0.51765	0.21961	0.05098
 T	9	(☺🏻)
 Pop color
 Mx 	70.35055
-Set font 	;10;200;regular;normal;;RTL;tests/TestCLR-Regular.ttf
+Set font 	;10;400;;normal;;RTL;tests/TestCLR-Regular.ttf
 T	4	(ع)
 [1] Mx 	170.06688
 My 	490.44635
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	17	(1)
 End page
 Finish

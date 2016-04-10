@@ -3,7 +3,7 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	40.97638
 My 	39.60265
-Set font 	Gentium;13;200;regular;normal;;LTR
+Set font 	Gentium;13;400;;normal;;LTR
 T	33 34 35	(ABC)
 Mx 	66.25392
 T	76 79 82 69 77	(lorem)
@@ -237,11 +237,11 @@ My 	259.62024
 T	40 69 76 76 79	(Hello)
 Mx 	69.06476
 My 	255.48792
-Set font 	Gentium;8.85498;200;regular;normal;;LTR
+Set font 	Gentium;8.85498;400;;normal;;LTR
 T	17	(1)
 Mx 	40.97638
 My 	275.65655
-Set font 	Gentium;13;200;regular;normal;;LTR
+Set font 	Gentium;13;400;;normal;;LTR
 T	36 37 38	(DEF)
 Mx 	65.01613
 T	76 79 82 69 77	(lorem)
@@ -475,11 +475,11 @@ My 	495.67414
 T	55 79 82 76 68	(World)
 Mx 	73.99689
 My 	491.54182
-Set font 	Gentium;8.85498;200;regular;normal;;LTR
+Set font 	Gentium;8.85498;400;;normal;;LTR
 T	18	(2)
 Mx 	272.55559
 My 	39.60265
-Set font 	Gentium;13;200;regular;normal;;LTR
+Set font 	Gentium;13;400;;normal;;LTR
 T	39 40 41	(GHI)
 Mx 	296.88013
 T	76 79 82 69 77	(lorem)
@@ -630,10 +630,10 @@ Mx 	269.02468
 T	65 77 69 84	(amet)
 Mx 	252.55559
 My 	215.47032
-Set font 	Gentium;8.85498;200;regular;normal;;LTR
+Set font 	Gentium;8.85498;400;;normal;;LTR
 T	19	(3)
 My 	470.25910
-Set font 	Gentium;9;200;regular;normal;;LTR
+Set font 	Gentium;9;400;;normal;;LTR
 T	17	(1)
 Mx 	256.77874
 T	14	(.)
@@ -661,7 +661,7 @@ Mx 	286.99387
 T	19	(3)
 [1] Mx 	207.41759
 My 	553.73265
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	17	(1)
 End page
 Finish

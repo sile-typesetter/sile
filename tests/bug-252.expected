@@ -3,7 +3,7 @@ Set paper size 	209.7637818	297.6377985
 Begin page
 Mx 	37.41039
 My 	42.09434
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	52 72 73 83	(This)
 Mx 	57.18494
 T	73 83	(is)
@@ -13,11 +13,11 @@ Mx 	72.70084
 T	84 69 83 84	(test)
 Mx 	88.06705
 My 	38.91563
-Set font 	Gentium;6.81152;200;regular;normal;;LTR
+Set font 	Gentium;6.81152;400;;normal;;LTR
 T	17	(1)
 Mx 	91.26328
 My 	42.09434
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	14	(.)
 Mx 	95.73021
 T	52 72 73 83	(This)
@@ -29,11 +29,11 @@ Mx 	131.02066
 T	84 69 83 84	(test)
 Mx 	146.38687
 My 	38.91563
-Set font 	Gentium;6.81152;200;regular;normal;;LTR
+Set font 	Gentium;6.81152;400;;normal;;LTR
 T	18	(2)
 Mx 	149.58310
 My 	42.09434
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	14	(.)
 Mx 	154.05004
 T	52 72 73 83	(This)
@@ -46,11 +46,11 @@ Mx 	24.07244
 T	84 69 83 84	(test)
 Mx 	39.43865
 My 	51.91563
-Set font 	Gentium;6.81152;200;regular;normal;;LTR
+Set font 	Gentium;6.81152;400;;normal;;LTR
 T	19	(3)
 Mx 	42.63488
 My 	55.09434
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	14	(.)
 Mx 	46.99711
 T	52 72 73 83	(This)
@@ -62,11 +62,11 @@ Mx 	81.97348
 T	84 69 83 84	(test)
 Mx 	97.33969
 My 	51.91563
-Set font 	Gentium;6.81152;200;regular;normal;;LTR
+Set font 	Gentium;6.81152;400;;normal;;LTR
 T	20	(4)
 Mx 	100.53592
 My 	55.09434
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	14	(.)
 Mx 	104.89816
 T	52 72 73 83	(This)
@@ -78,11 +78,11 @@ Mx 	139.87452
 T	84 69 83 84	(test)
 Mx 	155.24073
 My 	51.91563
-Set font 	Gentium;6.81152;200;regular;normal;;LTR
+Set font 	Gentium;6.81152;400;;normal;;LTR
 T	21	(5)
 Mx 	158.43696
 My 	55.09434
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	14	(.)
 Mx 	162.79920
 T	52 72 73 83	(This)
@@ -95,11 +95,11 @@ Mx 	34.92198
 T	84 69 83 84	(test)
 Mx 	50.28819
 My 	64.91563
-Set font 	Gentium;6.81152;200;regular;normal;;LTR
+Set font 	Gentium;6.81152;400;;normal;;LTR
 T	22	(6)
 Mx 	53.48442
 My 	68.09434
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	14	(.)
 Mx 	58.94920
 T	52 72 73 83	(This)
@@ -111,11 +111,11 @@ Mx 	97.23318
 T	84 69 83 84	(test)
 Mx 	112.59939
 My 	64.91563
-Set font 	Gentium;6.81152;200;regular;normal;;LTR
+Set font 	Gentium;6.81152;400;;normal;;LTR
 T	23	(7)
 Mx 	115.79562
 My 	68.09434
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	14	(.)
 Mx 	121.26039
 T	52 72 73 83	(This)
@@ -127,11 +127,11 @@ Mx 	159.54437
 T	84 69 83 84	(test)
 Mx 	174.91059
 My 	64.91563
-Set font 	Gentium;6.81152;200;regular;normal;;LTR
+Set font 	Gentium;6.81152;400;;normal;;LTR
 T	24	(8)
 Mx 	178.10681
 My 	68.09434
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	14	(.)
 Mx 	17.41039
 My 	81.09434
@@ -144,11 +144,11 @@ Mx 	55.71195
 T	84 69 83 84	(test)
 Mx 	71.07816
 My 	77.91563
-Set font 	Gentium;6.81152;200;regular;normal;;LTR
+Set font 	Gentium;6.81152;400;;normal;;LTR
 T	25	(9)
 Mx 	74.27439
 My 	81.09434
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	14	(.)
 Mx 	79.74503
 T	52 72 73 83	(This)
@@ -160,11 +160,11 @@ Mx 	118.04659
 T	84 69 83 84	(test)
 Mx 	133.41280
 My 	77.91563
-Set font 	Gentium;6.81152;200;regular;normal;;LTR
+Set font 	Gentium;6.81152;400;;normal;;LTR
 T	17 16	(10)
 Mx 	139.80525
 My 	81.09434
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	14	(.)
 Mx 	145.27589
 T	52 72 73 83	(This)
@@ -177,11 +177,11 @@ My 	94.09434
 T	84 69 83 84	(test)
 Mx 	32.77660
 My 	90.91563
-Set font 	Gentium;6.81152;200;regular;normal;;LTR
+Set font 	Gentium;6.81152;400;;normal;;LTR
 T	17 17	(11)
 Mx 	39.16906
 My 	94.09434
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	14	(.)
 Mx 	43.55193
 T	52 72 73 83	(This)
@@ -193,11 +193,11 @@ Mx 	78.59017
 T	84 69 83 84	(test)
 Mx 	93.95638
 My 	90.91563
-Set font 	Gentium;6.81152;200;regular;normal;;LTR
+Set font 	Gentium;6.81152;400;;normal;;LTR
 T	17 18	(12)
 Mx 	100.34884
 My 	94.09434
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	14	(.)
 Mx 	104.73171
 T	76 79 82 69 77	(lorem)
@@ -207,7 +207,7 @@ Mx 	158.46814
 T	68 79 76 79 82	(dolor)
 Mx 	17.41039
 My 	120.94498
-Set font 	Gentium;9;200;regular;normal;;LTR
+Set font 	Gentium;9;400;;normal;;LTR
 T	17	(1)
 Mx 	21.63354
 T	14	(.)
@@ -388,7 +388,7 @@ Mx 	137.12298
 T	31	(?)
 [1] Mx 	96.55743
 My 	262.94052
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	17	(1)
 New page
 Mx 	29.36693
@@ -418,11 +418,11 @@ Mx 	87.47594
 T	84 69 83 84	(test)
 Mx 	102.84215
 My 	64.91563
-Set font 	Gentium;6.81152;200;regular;normal;;LTR
+Set font 	Gentium;6.81152;400;;normal;;LTR
 T	17 19	(13)
 Mx 	109.23461
 My 	68.09434
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	14	(.)
 Mx 	114.64106
 T	76 79 82 69 77	(lorem)
@@ -457,11 +457,11 @@ Mx 	87.47594
 T	84 69 83 84	(test)
 Mx 	102.84215
 My 	103.91563
-Set font 	Gentium;6.81152;200;regular;normal;;LTR
+Set font 	Gentium;6.81152;400;;normal;;LTR
 T	17 20	(14)
 Mx 	109.23461
 My 	107.09434
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	14	(.)
 Mx 	114.64106
 T	76 79 82 69 77	(lorem)
@@ -496,11 +496,11 @@ Mx 	87.47594
 T	84 69 83 84	(test)
 Mx 	102.84215
 My 	142.91563
-Set font 	Gentium;6.81152;200;regular;normal;;LTR
+Set font 	Gentium;6.81152;400;;normal;;LTR
 T	17 21	(15)
 Mx 	109.23461
 My 	146.09434
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	14	(.)
 Mx 	114.64106
 T	76 79 82 69 77	(lorem)
@@ -535,11 +535,11 @@ Mx 	87.47594
 T	84 69 83 84	(test)
 Mx 	102.84215
 My 	181.91563
-Set font 	Gentium;6.81152;200;regular;normal;;LTR
+Set font 	Gentium;6.81152;400;;normal;;LTR
 T	17 22	(16)
 Mx 	109.23461
 My 	185.09434
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	14	(.)
 Mx 	114.64106
 T	76 79 82 69 77	(lorem)
@@ -549,7 +549,7 @@ Mx 	170.42468
 T	68 79 76 79 82	(dolor)
 Mx 	29.36693
 My 	211.76529
-Set font 	Gentium;9;200;regular;normal;;LTR
+Set font 	Gentium;9;400;;normal;;LTR
 T	17 19	(13)
 Mx 	37.81322
 T	14	(.)
@@ -610,7 +610,7 @@ Mx 	149.07951
 T	31	(?)
 [2] Mx 	108.51397
 My 	262.89169
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	18	(2)
 New page
 Mx 	17.41039
@@ -640,11 +640,11 @@ Mx 	75.51941
 T	84 69 83 84	(test)
 Mx 	90.88562
 My 	63.94077
-Set font 	Gentium;6.81152;200;regular;normal;;LTR
+Set font 	Gentium;6.81152;400;;normal;;LTR
 T	17 23	(17)
 Mx 	97.27807
 My 	67.11948
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	14	(.)
 Mx 	102.68453
 T	76 79 82 69 77	(lorem)
@@ -869,7 +869,7 @@ Mx 	161.74451
 T	75 65 83 68	(kasd)
 Mx 	17.41039
 My 	245.82291
-Set font 	Gentium;9;200;regular;normal;;LTR
+Set font 	Gentium;9;400;;normal;;LTR
 T	17 23	(17)
 Mx 	25.85668
 T	14	(.)
@@ -885,7 +885,7 @@ Mx 	137.12298
 T	31	(?)
 [3] Mx 	96.55743
 My 	262.89169
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	19	(3)
 New page
 Mx 	29.36693

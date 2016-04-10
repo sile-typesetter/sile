@@ -3,12 +3,12 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	25.65568
 My 	37.33214
-Set font 	Gentium;10;200;italic;normal;;LTR
+Set font 	Gentium;10;400;italic;normal;;LTR
 T	50 65 71 71 69 68	(Ragged)
 Mx 	55.17716
 T	76 69 70 84	(left)
 Mx 	69.45939
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	76 79 82 69 77	(lorem)
 Mx 	96.01212
 T	73 80 83 85 77	(ipsum)
@@ -216,12 +216,12 @@ Mx 	377.86759
 T	65 77 69 84	(amet)
 Mx 	20.97638
 My 	133.33214
-Set font 	Gentium;10;200;italic;normal;;LTR
+Set font 	Gentium;10;400;italic;normal;;LTR
 T	50 65 71 71 69 68	(Ragged)
 Mx 	50.49786
 T	82 73 71 72 84	(right)
 Mx 	71.17169
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	76 79 82 69 77	(lorem)
 Mx 	97.72443
 T	73 80 83 85 77	(ipsum)
@@ -429,10 +429,10 @@ Mx 	270.18048
 T	65 77 69 84	(amet)
 Mx 	27.64464
 My 	229.33214
-Set font 	Gentium;10;200;italic;normal;;LTR
+Set font 	Gentium;10;400;italic;normal;;LTR
 T	35 69 78 84 69 82 69 68	(Centered)
 Mx 	62.79113
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	76 79 82 69 77	(lorem)
 Mx 	89.34386
 T	73 80 83 85 77	(ipsum)
@@ -516,10 +516,10 @@ Mx 	303.18663
 T	71 85 66 69 82 71 82 69 78	(gubergren)
 Mx 	40.97638
 My 	277.33214
-Set font 	Gentium;10;200;italic;normal;;LTR
+Set font 	Gentium;10;400;italic;normal;;LTR
 T	42 85 83 84 73 70 73 69 68	(Justified)
 Mx 	74.72285
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	76 79 82 69 77	(lorem)
 Mx 	102.15096
 T	73 80 83 85 77	(ipsum)
@@ -731,12 +731,12 @@ Mx 	274.69837
 T	65 77 69 84	(amet)
 Mx 	85.79240
 My 	373.33214
-Set font 	Gentium;10;200;italic;normal;;LTR
+Set font 	Gentium;10;400;italic;normal;;LTR
 T	50 73 71 72 84	(Right)
 Mx 	108.17521
 T	65 76 73 71 78 69 68	(aligned)
 Mx 	137.74064
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	76 79 82 69 77	(lorem)
 Mx 	164.29337
 T	73 80 83 85 77	(ipsum)

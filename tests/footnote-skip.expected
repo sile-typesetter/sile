@@ -3,7 +3,7 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	54.82079
 My 	76.62033
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	76 79 82 69 77	(lorem)
 Mx 	82.23693
 T	73 80 83 85 77	(ipsum)
@@ -114,11 +114,11 @@ Mx 	288.48603
 T	65 77 69 84	(amet)
 Mx 	34.82079
 My 	121.44162
-Set font 	Gentium;6.81152;200;regular;normal;;LTR
+Set font 	Gentium;6.81152;400;;normal;;LTR
 T	17	(1)
 Mx 	54.82079
 My 	136.62033
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	76 79 82 69 77	(lorem)
 Mx 	82.23693
 T	73 80 83 85 77	(ipsum)
@@ -229,11 +229,11 @@ Mx 	288.48603
 T	65 77 69 84	(amet)
 Mx 	34.82079
 My 	181.44162
-Set font 	Gentium;6.81152;200;regular;normal;;LTR
+Set font 	Gentium;6.81152;400;;normal;;LTR
 T	18	(2)
 Mx 	54.82079
 My 	196.62033
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	76 79 82 69 77	(lorem)
 Mx 	82.23693
 T	73 80 83 85 77	(ipsum)
@@ -678,7 +678,7 @@ Mx 	34.82079
 My 	388.62033
 T	83 67 73 78 71	(scing)
 My 	431.86457
-Set font 	Gentium;9;200;regular;normal;;LTR
+Set font 	Gentium;9;400;;normal;;LTR
 T	17	(1)
 Mx 	39.04393
 T	14	(.)
@@ -691,7 +691,7 @@ T	14	(.)
 Draw line	59.1049674663	455.864572301	2	39.82421875
 [1] Mx 	195.46105
 My 	519.80194
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	17	(1)
 End page
 Finish

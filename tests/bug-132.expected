@@ -3,7 +3,7 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	20.97638
 My 	36.22374
-Set font 	DejaVu Sans Mono;9;200;regular;normal;;LTR
+Set font 	DejaVu Sans Mono;9;400;;normal;;LTR
 T	6	(#)
 Mx 	80.57941
 T	6	(#)
@@ -53,7 +53,7 @@ My 	95.42784
 T	6 6 48 48 58 58 52 52 42 42 6 6	(##MMWWQQGG##)
 [1] Mx 	207.41759
 My 	553.73265
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	17	(1)
 End page
 Finish

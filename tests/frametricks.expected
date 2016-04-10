@@ -4,11 +4,11 @@ Begin page
 <examples/macros.sil>
 Mx 	18.28346
 My 	61.28565
-Set font 	Gentium;54;200;regular;normal;;LTR
+Set font 	Gentium;54;400;;normal;;LTR
 T	52	(T)
 Mx 	53.02565
 My 	39.41553
-Set font 	Gentium;15;200;regular;normal;;LTR
+Set font 	Gentium;15;400;;normal;;LTR
 T	79	(o)
 Mx 	63.87282
 T	51 72 69 82 76 79 67 75	(Sherlock)
@@ -22,13 +22,13 @@ T	73 83	(is)
 Mx 	90.48903
 T	65 76 87 65 89 83	(always)
 Mx 	135.40846
-Set font 	Gentium;15;200;italic;normal;;LTR
+Set font 	Gentium;15;400;italic;normal;;LTR
 T	84 72 69	(the)
 Mx 	18.28346
 My 	79.44971
 T	87 79 77 65 78	(woman)
 Mx 	59.04274
-Set font 	Gentium;15;200;regular;normal;;LTR
+Set font 	Gentium;15;400;;normal;;LTR
 T	14	(.)
 Mx 	65.78102
 T	41	(I)
@@ -341,7 +341,7 @@ Mx 	220.19469
 T	73 78 84 82 85	(intru)
 [1] Mx 	180.48846
 My 	522.43816
-Set font 	Gentium;10;200;regular;normal;;LTR
+Set font 	Gentium;10;400;;normal;;LTR
 T	17	(1)
 End page
 Finish
