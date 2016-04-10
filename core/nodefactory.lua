@@ -256,7 +256,10 @@ local _vglue = _box {
     self.height.shrink = 0
   end,
   outputYourself = function (self,typesetter, line)
-    typesetter.frame:advancePageDirection(line.depth + SILE.toAbsoluteMeasurement(line.height.length))
+    d = line.depth
+    d = d + SILE.toAbsoluteMeasurement(line.height)
+    if type(d) == "table" then d = d.length end
+    typesetter.frame:advancePageDirection(d)
   end,
   unbox = function (self) return { self } end
 }
@@ -305,7 +308,7 @@ local _vbox = _box {
         -- do nothing
       else
         initial = false
-        node:outputYourself(typesetter, self)
+        node:outputYourself(typesetter, line)
       end
     end
     typesetter.frame:advancePageDirection(self.depth)
