@@ -55,7 +55,7 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
       self:addToken(char,item)
       self:makeToken()
       self:makePenalty(0)
-    elseif lasttype and (thistype ~= lasttype and thistype ~= "cm") then
+    elseif lasttype and (thistype and thistype ~= lasttype and thistype ~= "cm") then
       self:makeToken()
       self:addToken(char,item)
     else
