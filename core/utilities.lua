@@ -164,6 +164,22 @@ utilities.codepoint = function (uchar)
   return val
 end
 
+utilities.utf8charfromcodepoint = function (codepoint)
+  local val = codepoint
+  local cp = val
+  local hex = (cp:match("[Uu]%+(%x+)") or cp:match("0[xX](%x+)"))
+  if hex then
+    cp = tonumber("0x"..hex)
+  elseif tonumber(cp) then
+    cp = tonumber(cp)
+  end
+
+  if type(cp) == "number" then
+    val = SU.utf8char(cp)
+  end
+  return val
+end
+
 utilities.utf8codes = function (ustr)
   local pos = 1
   return function()
