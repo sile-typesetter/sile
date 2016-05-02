@@ -1,13 +1,7 @@
 SILE.registerCommand("unichar", function(options, content)
   local cp = content[1]
   if type(cp) ~= "string" then SU.error("Bad argument to \\unicode") end
-  hex = (cp:match("[Uu]%+(%x+)") or cp:match("0[xX](%x+)"))
-  if hex then
-    cp = tonumber("0x"..hex)
-  elseif tonumber(cp) then
-    cp = tonumber(cp)
-  end
-  SILE.typesetter:typeset(SU.utf8char(cp))
+  SILE.typesetter:typeset(SU.utf8charfromcodepoint(cp))
 end)
 
 return { documentation = [[\begin{document}
