@@ -44,7 +44,7 @@ SILE.registerCommand("tableofcontents:item", function (o,c)
   SILE.settings.temporarily(function ()
     SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
     SILE.call("tableofcontents:level"..o.level.."item", {}, function()
-      SILE.process({c})
+      SILE.process(c)
       -- Ideally, leaders
       SILE.call("dotfill")
       SILE.typesetter:typeset(o.pageno)
@@ -56,12 +56,11 @@ SILE.registerCommand("tocentry", function (options, content)
   SILE.call("info", {
     category = "toc",
     value = {
-      label = content[1],
+      label = content,
       level = (options.level or 1)
     }
   })
 end)
-
 
 return {
   exports = {writeToc = writeToc, moveTocNodes = moveNodes},
