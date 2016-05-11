@@ -132,6 +132,30 @@ function utilities.allCombinations(options)
   end)
 end
 
+-- Flatten content trees into just the string components (allows passing
+-- objects with complex structures to functions that need plain strings)
+function utilities.contentToString(content)
+  out = ""
+  for key, val in pairs(content) do
+    if type(key) == "number" and type(val) == "string" then
+      out = out .. val
+    end
+  end
+  return out
+end
+
+-- Strip the top level command off a content object and keep only the child
+-- items — assuming that the current command is taking care of itself
+function utilities.subContent(content)
+  out = { id="stuff" }
+  for key, val in pairs(content) do
+    if type(key) == "number" then
+      out[#out+1] = val
+    end
+  end
+  return out
+end
+
 -- Unicode-related utilities
 utilities.utf8char = function (c)
     if     c < 128 then
