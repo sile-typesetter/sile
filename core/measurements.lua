@@ -67,7 +67,12 @@ SILE.registerUnit("%fmax", { relative = true, definition = function (v)
   return v / 100 * math.max(SILE.typesetter.frame:width(), SILE.typesetter.frame:height())
 end})
 SILE.registerUnit("%lw", { relative = true, definition = function (v)
-  return v / 100 * SILE.typesetter.frame:lineWidth()
+  local lskip = SILE.settings.get("document.lskip") or SILE.length.parse("0")
+  local rskip = SILE.settings.get("document.rskip") or SILE.length.parse("0")
+  local left = lskip.width and lskip.width:absolute() or lskip:absolute()
+  local right = rskip.width and rskip.width:absolute() or rskip:absolute()
+  local lw = SILE.typesetter.frame:lineWidth() - left - right
+  return v / 100 * lw.length
 end})
 SILE.registerUnit("em", { relative = true, definition = function (v)
   return v * SILE.settings.get("font.size")
