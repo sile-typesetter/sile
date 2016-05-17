@@ -82,7 +82,8 @@ plain.registerCommands = function()
 \define[command=supereject]{\vfill\penalty[penalty=-20000]}%
 \define[command=justified]{\set[parameter=document.rskip]\set[parameter=document.spaceskip]}%
 \define[command=rightalign]{\raggedleft{\process\par}}%
-\define[command=em]{\font[style=italic]{\process}}%
+\define[command=em]{\font[style=Italic]{\process}}%
+\define[command=strong]{\font[weight=600]{\process}}%
 \define[command=nohyphenation]{\font[language=und]{\process}}%
 \define[command=raggedright]{\ragged[right=true]{\process}}%
 \define[command=raggedleft]{\ragged[left=true]{\process}}%

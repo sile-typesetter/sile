@@ -36,14 +36,9 @@ SILE.registerCommand("sect3", function(options, content)
   SILE.call("subsection", options, content)
 end)
 
-SILE.registerCommand("strong", function(options, content)
-  SILE.call("em", options, content)
-end)
-
 SILE.registerCommand("emphasis", function(options, content)
   SILE.call("em", options, content)
 end)
-
 
 SILE.registerCommand("bulletlist", function(options, content)
   SILE.process(content)
