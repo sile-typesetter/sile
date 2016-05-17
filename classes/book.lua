@@ -67,6 +67,7 @@ SILE.registerCommand("right-running-head", function(options, content)
 end, "Text to appear on the top of the right page");
 
 SILE.registerCommand("book:sectioning", function (options, content)
+  local content = SU.subContent(content)
   local level = SU.required(options, "level", "book:sectioning")
   SILE.call("increment-multilevel-counter", {id = "sectioning", level = options.level})
   SILE.call("tocentry", {level = options.level}, content)

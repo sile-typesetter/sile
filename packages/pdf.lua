@@ -40,7 +40,8 @@ if SILE.Commands.tocentry then
   local oldtoc = SILE.Commands.tocentry
   SILE.Commands.tocentry = function (o,c)
     SILE.call("pdf:destination", { name = "dest"..SILE.scratch.pdf.dc } )
-    SILE.call("pdf:bookmark", { title = c[1], dest = "dest"..SILE.scratch.pdf.dc, level = o.level })
+    local title = SU.contentToString(c)
+    SILE.call("pdf:bookmark", { title = title, dest = "dest"..SILE.scratch.pdf.dc, level = o.level })
     oldtoc(o,c)
     SILE.scratch.pdf.dc = SILE.scratch.pdf.dc + 1
   end
