@@ -35,6 +35,10 @@
           SILE.settings.set("font.script", lang.defaultScript)
         end
       end
+      if (options.hyphenchar) then
+        -- must be in the form of, for example, "-" or "U+2010" or "0x2010" (Unicode hex codepoint)
+        SILE.settings.set("font.hyphenchar", SU.utf8charfromcodepoint(options.hyphenchar))
+      end
 
       if (type(content)=="function" or content[1]) then
         SILE.process(content)
@@ -51,6 +55,7 @@ SILE.settings.declare({name = "font.style", type = "string", default = ""})
 SILE.settings.declare({name = "font.direction", type = "string", default = ""})
 SILE.settings.declare({name = "font.filename", type = "string", default = ""})
 SILE.settings.declare({name = "font.features", type = "string", default = ""})
+SILE.settings.declare({name = "font.hyphenchar", type = "string", default = "-"})
 SILE.settings.declare({name = "document.language", type = "string", default = "en"})
 
 SILE.fontCache = {}
@@ -79,6 +84,7 @@ SILE.font = {loadDefaults = function(options)
     end
   end
   if not options.features then options.features = SILE.settings.get("font.features") end
+  if not options.hyphenchar then options.hyphenchar = SILE.settings.get("font.hyphenchar") end
   return options
 end,
   cache = function(options, callback)

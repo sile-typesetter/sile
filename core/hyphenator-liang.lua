@@ -97,7 +97,7 @@ local hyphenateNode = function(n)
           end
         end
         if not (j == #breaks) then
-          d = SILE.nodefactory.newDiscretionary({ prebreak = SILE.shaper:createNnodes("-", n.options) })
+          d = SILE.nodefactory.newDiscretionary({ prebreak = SILE.shaper:createNnodes(SILE.settings.get("font.hyphenchar"), n.options) })
           d.parent = n
           table.insert(newnodes, d)
          --table.insert(newnodes, SILE.nodefactory.newPenalty({ value = SILE.settings.get("typesetter.hyphenpenalty") }))
@@ -118,7 +118,7 @@ showHyphenationPoints = function (word, language)
     _hyphenators[language] = {minWord = 5, leftmin = 2, rightmin = 2, trie = {}, exceptions = {} };
     loadPatterns(_hyphenators[language], language)
   end
-  return SU.concat(_hyphenate(_hyphenators[language], word), "-")
+  return SU.concat(_hyphenate(_hyphenators[language], word), SILE.settings.get("font.hyphenchar"))
 end
 
 SILE.hyphenate = function (nodelist)

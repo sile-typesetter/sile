@@ -824,6 +824,11 @@ SILE hyphenates words based on its current language. (Language is set using the
 variety of languages, and also aims to encode specific typesetting knowledge about
 languages.
 
+The default hyphen character is “-”, which can be tweaked by the \code{\\font}
+parameter \code{hyphenchar}. It accepts a Unicode character or Unicode codepoint
+in \code{[Uu]+<code>} or Hexadecimal \code{0[Xx]<code>} format – for instance
+\code{\\font[family=Rachana,language=ml,hyphenchar=U+200C]}.
+
 SILE comes with a special “language” called \code{und}, which has no hyphenation
 patterns available. If you switch to this language, text will not be hyphenated.
 The command \code{\\nohyphenation\{\dots\}} is provided as a shortcut for
