@@ -44,18 +44,22 @@ SILE.nodeMakers.base = std.object {
 }
 
 SILE.nodeMakers.unicode = SILE.nodeMakers.base {
+  isWordType = { cm = true },
+  isSpaceType = { sp = true },
+  isBreakingType = { ba = true, zw = true },
+  
   dealWith = function (self, item)
     local char = item.text
     local cp = SU.codepoint(char)
     local thistype = chardata[cp] and chardata[cp].linebreak
-    if chardata[cp] and thistype == "sp" then
+    if chardata[cp] and self.isSpaceType[thistype] then
       self:makeToken()
       self:makeGlue()
-    elseif chardata[cp] and (thistype == "ba" or  thistype == "zw") then
+    elseif chardata[cp] and self.isBreakingType[thistype] then
       self:addToken(char,item)
       self:makeToken()
       self:makePenalty(0)
-    elseif lasttype and (thistype and thistype ~= lasttype and thistype ~= "cm") then
+    elseif lasttype and (thistype and thistype ~= lasttype and not self.isWordType[thistype]) then
       self:makeToken()
       self:addToken(char,item)
     else
@@ -65,7 +69,7 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
       end
       self:addToken(char,item)
     end
-    if thistype ~= "cm" then lasttype = chardata[cp] and chardata[cp].linebreak end
+    if not self.isWordType[thistype] then lasttype = chardata[cp] and chardata[cp].linebreak end
   end,
   iterator = function (self, items)
     self:init()

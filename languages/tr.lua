@@ -1,3 +1,8 @@
+-- Quotes may be part of a word in Turkish
+SILE.nodeMakers.tr = SILE.nodeMakers.unicode {
+  isWordType = { cm = true, qu = true },
+}
+
 SILE.hyphenator.languages["tr"] = {};
 SILE.hyphenator.languages["tr"].patterns =
    {
