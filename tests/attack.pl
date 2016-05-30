@@ -46,20 +46,21 @@ if ($regression) {
 		}
 	}
 	if (@passed){
-		print "\n",color("green"), "Passing tests:\n • ",join(", ", @passed),"\n";
+		print "\n",color("green"), "Passing tests:",color("reset");
+		print "\n • ",join(", ", @passed),"\n";
 	}
 	if (@failed) {
-		print "\n",color("red"), "Failed tests: \n";
+		print "\n",color("red"), "Failed tests:\n",color("reset");
 		for (@failed) { print " • ",$_,"\n"}
-		print color("reset");
 	}
 	if (@knownbad){
-		print "\n",color("yellow"), "Known bad tests:\n • ",join(", ", @knownbad),"\n";
+		print "\n",color("yellow"), "Known bad tests:",color("reset");
+		print "\n • ",join(", ", @knownbad),"\n";
 	}
 	if (@missing){
-		print "\n",color("cyan"), "Tests missing expectations:\n • ",join(", ", @missing),"\n";
+		print "\n",color("cyan"),"Tests missing expectations:",color("reset");
+		print "\n • ",join(", ", @missing),"\n";
 	}
-	print color("reset");
 } else {
 	for (<examples/*.sil>, "documentation/sile.sil") {
 		next if /macros.sil/;
