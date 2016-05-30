@@ -15,7 +15,7 @@ addons:
 env:
   global:
    - LUAROCKS=2.2.2
-   - HARFBUZZ_BASE=harfbuzz-1.2.3
+   - HARFBUZZ_BASE=harfbuzz-1.2.6
    - GRAPHITE=true
   matrix:
    - LUA=lua5.2
@@ -36,7 +36,7 @@ before_install:
  - export LIBRARY_PATH=$HOME/local/lib:$LD_LIBRARY_PATH
  - export LD_RUN_PATH=$HOME/local/lib:$LD_RUN_PATH
  - export PKG_CONFIG_PATH=$HOME/local/lib/pkgconfig:$PKG_CONFIG_PATH
- - if [ ! -f ~/.fonts/Scheherazade-R.ttf ]; then
+ - if [ ! -f ~/.fonts/NotoSansMalayalam-Regular.ttf ]; then
       pushd ~/.fonts/ ;
       wget http://dealer.simon-cozens.org/~simon/tmp/silefonts.tar.gz ;
       tar xvf silefonts.tar.gz ;

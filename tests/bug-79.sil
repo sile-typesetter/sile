@@ -2,7 +2,7 @@
 \font[size=10pt, family=Linux Libertine O, language=cs]
 \set[parameter=linebreak.emergencyStretch, value=0.5cm]
 \begin[first-content-frame=frame]{pagetemplate}
-\frame[id=frame, left=2cm, width=6cm, top=2cm, bottom=10cm]
+\frame[id=frame, left=2cm, width=5.8cm, top=2cm, bottom=10cm]
 \end{pagetemplate}%
 zana Bourová, zápolila ve čtyřech závodech, nejlépe se umístila na Benecku na 4. místě. Magdaléna Chrástová skončila na místě sedmnáctém, Barbora Šulcová byla hned za
 \end{document}

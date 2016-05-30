@@ -1,25 +1,25 @@
 <tests/bug-308.sil>
 Set paper size 	595.275597	841.8897729
 Begin page
-Mx 	49.40787
-My 	156.15370
+Mx 	49.4079
+My 	156.1537
 Set font 	Noto Sans Malayalam;12;400;;normal;;LTR
 T	55 4	(സം)
-Mx 	69.51725
+Mx 	69.5172
 T	55 59	(സാ)
-Mx 	90.24772
+Mx 	90.2477
 T	47 60	(രി)
-Mx 	101.81412
+Mx 	101.8141
 T	260	(-)
-Mx 	49.40787
-My 	170.55370
+Mx 	49.4079
+My 	170.5537
 T	159 60	(ച്ചി)
-Mx 	63.34147
+Mx 	63.3415
 T	47 60	(രി)
-Mx 	74.90787
+Mx 	74.9079
 T	147 62 20	(ക്കുക)
-[1] Mx 	278.32625
-My 	732.62998
+[1] Mx 	278.3263
+My 	732.6300
 Set font 	Gentium;10;400;;normal;;LTR
 T	17	(1)
 End page

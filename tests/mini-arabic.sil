@@ -1,6 +1,6 @@
 \begin[papersize=a5]{document}
 \script[src=packages/bidi]
-\thisframeRTL%
+\thisframeRTL
 \font[family=Noto Naskh Arabic,language=urd,script=Arab]
 \font[size=18pt]
 1955 میں ان کا انتقال ہوا۔

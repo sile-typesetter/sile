@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Getopt::Long;
 use Term::ANSIColor;
-my (@failed, @passed, @knownbad);
+my (@failed, @passed, @knownbad, @missing);
 my $regression = 0;
 my $upstream = 0;
 my $coverage = 0;
@@ -41,23 +41,33 @@ if ($regression) {
 			if (system("diff -U0 $expectation $out")) {
 				push ($knownbad ? \@knownbad : \@failed, $_);
 			} else { push $knownbad ? \@failed: \@passed, $_ }
+		} else {
+			push \@missing, $_;
 		}
 	}
-	print "\n",color("green"), "Passing tests:\n • ",join(", ", @passed),"\n";
-	if (@knownbad){
-		print "\n",color("yellow"), "Known bad tests:\n • ",join(", ", @knownbad),"\n";
+	if (@passed){
+		print "\n",color("green"), "Passing tests:",color("reset");
+		print "\n • ",join(", ", @passed),"\n";
 	}
 	if (@failed) {
-		print "\n",color("red"), "Failed tests: \n";
+		print "\n",color("red"), "Failed tests:\n",color("reset");
 		for (@failed) { print " • ",$_,"\n"}
-		print color("reset");
-		exit 1;
 	}
-	print color("reset");
+	if (@knownbad){
+		print "\n",color("yellow"), "Known bad tests:",color("reset");
+		print "\n • ",join(", ", @knownbad),"\n";
+	}
+	if (@missing){
+		print "\n",color("cyan"),"Tests missing expectations:",color("reset");
+		print "\n • ",join(", ", @missing),"\n";
+	}
 } else {
 	for (<examples/*.sil>, "documentation/sile.sil") {
 		next if /macros.sil/;
 		print "### Compiling $_\n";
 		exit $? >> 8 if system("./sile", $_);
 	}
+}
+if (@failed) {
+	exit 1;
 }

@@ -1,48 +1,48 @@
 <tests/bug-254.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
-Mx 	20.97638
-My 	37.33214
+Mx 	20.9764
+My 	37.3321
 Set font 	Gentium;10;600;;normal;;LTR
 T	52 72 73 83	(This)
-Mx 	40.77618
+Mx 	40.7762
 Set font 	Gentium;10;400;;normal;;LTR
 T	73 83	(is)
-Mx 	49.55060
+Mx 	49.5506
 T	65	(a)
-Mx 	56.34259
+Mx 	56.3426
 T	83 65 77 80 76 69	(sample)
-Mx 	87.65607
+Mx 	87.6561
 T	79 70	(of)
-Mx 	97.99786
+Mx 	97.9979
 T	66 79 71 85 83	(bogus)
-Mx 	20.97638
-My 	49.33214
+Mx 	20.9764
+My 	49.3321
 T	69 88 84 82 65	(extra)
-Mx 	44.81915
+Mx 	44.8192
 T	83 80 65 67 69	(space)
-Mx 	67.55841
+Mx 	67.5584
 T	14	(.)
-Mx 	20.97638
-My 	61.33214
+Mx 	20.9764
+My 	61.3321
 Set font 	Gentium;10;600;;normal;;LTR
 T	52 72 73 83	(This)
-Mx 	40.77618
+Mx 	40.7762
 Set font 	Gentium;10;400;;normal;;LTR
 T	68 79 69 83	(does)
-Mx 	61.68927
+Mx 	61.6893
 T	78 79 84	(not)
-Mx 	77.88068
+Mx 	77.8807
 T	72 65 86 69	(have)
-Mx 	20.97638
-My 	73.33214
+Mx 	20.9764
+My 	73.3321
 T	69 88 84 82 65	(extra)
-Mx 	44.81915
+Mx 	44.8192
 T	83 80 65 67 69	(space)
-Mx 	67.55841
+Mx 	67.5584
 T	14	(.)
-[1] Mx 	207.41759
-My 	553.73265
+[1] Mx 	207.4176
+My 	553.7327
 T	17	(1)
 End page
 Finish

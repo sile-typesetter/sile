@@ -2,7 +2,7 @@
 \script[src=packages/rules]
 \footnote:separator{\em{Separator}\skip[height=5mm]}
 \footnote:options[inter-insertion-skip=3mm]
-Paragraph one.\footnote{Footnote one}\par
+Paragraph one.\footnote{Footnote one}
 
 Paragraph two.\footnote{Footnote two. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
@@ -36,7 +36,6 @@ cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
 proident, sunt in culpa qui officia deserunt mollit anim id est laborum.}
 
 Paragraph four.\footnote{Footnote four}\par
-
 Paragraph five.\footnote{Footnote five. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
 quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo

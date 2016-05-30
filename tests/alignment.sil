@@ -1,14 +1,15 @@
 \begin[papersize=a5]{document}
 \script[src=packages/lorem]
+\set[parameter=document.parskip,value=10pt]
 
-\raggedleft{\em{Ragged left} \lorem[words=100]}\bigskip
+\raggedleft{\em{Ragged left} \lorem[words=100]}
 
-\raggedright{\em{Ragged right} {\lorem[words=100]}}\bigskip
+\raggedright{\em{Ragged right} {\lorem[words=100]}}
 
-\center{\em{Centered} \lorem[words=40]}\bigskip
+\center{\em{Centered} \lorem[words=40]}
 
-\justified {\em{Justified} \lorem[words=100]}\bigskip
+\justified{\em{Justified} \lorem[words=100]}
 
-\rightalign{\em{Right aligned} \lorem[words=10]}\bigskip
+\rightalign{\em{Right aligned} \lorem[words=10]}
 
 \end{document}
