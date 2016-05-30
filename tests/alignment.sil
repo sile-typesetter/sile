@@ -7,7 +7,7 @@
 
 \center{\em{Centered} \lorem[words=40]}\bigskip
 
-\justified {\em{Justified} \lorem[words=100]}\bigskip
+\justified{\em{Justified} \lorem[words=100]}\bigskip
 
 \rightalign{\em{Right aligned} \lorem[words=10]}\bigskip
 
