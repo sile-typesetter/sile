@@ -15,7 +15,7 @@ addons:
 env:
   global:
    - LUAROCKS=2.2.2
-   - HARFBUZZ_BASE=harfbuzz-1.2.3
+   - HARFBUZZ_BASE=harfbuzz-1.2.6
    - GRAPHITE=true
   matrix:
    - LUA=lua5.2
