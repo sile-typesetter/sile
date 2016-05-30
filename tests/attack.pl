@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Getopt::Long;
 use Term::ANSIColor;
-my (@failed, @passed, @knownbad);
+my (@failed, @passed, @knownbad, @missing);
 my $regression = 0;
 my $upstream = 0;
 my $coverage = 0;
@@ -41,17 +41,23 @@ if ($regression) {
 			if (system("diff -U0 $expectation $out")) {
 				push ($knownbad ? \@knownbad : \@failed, $_);
 			} else { push $knownbad ? \@failed: \@passed, $_ }
+		} else {
+			push \@missing, $_;
 		}
 	}
-	print "\n",color("green"), "Passing tests:\n • ",join(", ", @passed),"\n";
-	if (@knownbad){
-		print "\n",color("yellow"), "Known bad tests:\n • ",join(", ", @knownbad),"\n";
+	if (@passed){
+		print "\n",color("green"), "Passing tests:\n • ",join(", ", @passed),"\n";
 	}
 	if (@failed) {
 		print "\n",color("red"), "Failed tests: \n";
 		for (@failed) { print " • ",$_,"\n"}
 		print color("reset");
-		exit 1;
+	}
+	if (@knownbad){
+		print "\n",color("yellow"), "Known bad tests:\n • ",join(", ", @knownbad),"\n";
+	}
+	if (@missing){
+		print "\n",color("cyan"), "Tests missing expectations:\n • ",join(", ", @missing),"\n";
 	}
 	print color("reset");
 } else {
@@ -60,4 +66,7 @@ if ($regression) {
 		print "### Compiling $_\n";
 		exit $? >> 8 if system("./sile", $_);
 	}
+}
+if (@failed) {
+	exit 1;
 }
