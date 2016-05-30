@@ -1,28 +1,28 @@
 <tests/bug-266.sil>
 Set paper size 	297.6377985	419.5275636
 Begin page
-Mx 	34.88189
-My 	28.54474
+Mx 	34.8819
+My 	28.5447
 Set font 	Gentium;10;400;;normal;;LTR
 T	55 79 82 68	(Word)
-Mx 	62.11334
+Mx 	62.1133
 T	84 79	(to)
-Mx 	73.24686
+Mx 	73.2469
 T	84 72 69	(the)
-Mx 	89.48781
+Mx 	89.4878
 T	87 73 83 69	(wise)
-Mx 	34.88189
-My 	44.82794
+Mx 	34.8819
+My 	44.8279
 Set font 	Gentium;20;400;;normal;;LTR
 T	55 79 82 68	(Word)
-Mx 	89.34478
+Mx 	89.3448
 T	84 79	(to)
-Mx 	111.59580
+Mx 	111.5958
 T	84 72 69	(the)
-Mx 	144.06166
+Mx 	144.0617
 T	87 73 83 69	(wise)
-[1] Mx 	146.47271
-My 	392.04446
+[1] Mx 	146.4727
+My 	392.0445
 Set font 	Gentium;10;400;;normal;;LTR
 T	17	(1)
 End page

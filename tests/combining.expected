@@ -1,21 +1,21 @@
 <tests/combining.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
-Mx 	40.97638
-My 	38.92394
+Mx 	40.9764
+My 	38.9239
 Set font 	Gentium;10;400;;normal;;LTR
 T	994	(Ầ)
-Mx 	49.60887
+Mx 	49.6089
 T	994	(Ầ)
-Mx 	40.97638
-My 	50.92394
+Mx 	40.9764
+My 	50.9239
 T	520	(ȭ)
-Mx 	48.68537
+Mx 	48.6854
 T	520	(ȭ)
-Mx 	56.39437
+Mx 	56.3944
 T	520	(ȭ)
-[1] Mx 	207.41759
-My 	553.73265
+[1] Mx 	207.4176
+My 	553.7327
 T	17	(1)
 End page
 Finish

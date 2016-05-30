@@ -1,12 +1,12 @@
 <tests/bug-182.sil>
 Set paper size 	595.275597	841.8897729
 Begin page
-Mx 	256.53544
-My 	48.52515
+Mx 	256.5354
+My 	48.5252
 Set font 	Gentium;10;400;;normal;;LTR
 T	33 34 35	(ABC)
-[1] Mx 	295.29161
-My 	780.61769
+[1] Mx 	295.2916
+My 	780.6177
 T	17	(1)
 End page
 Finish
