@@ -1,4 +1,4 @@
-\begin{document}
+\begin[papersize=a5]{document}
 Small text
 
 \font[size=15pt]Big text!
