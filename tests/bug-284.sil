@@ -1,5 +1,5 @@
-\begin[papersize=a6]{document}
-\font[size=11pt,language=tr]
+\begin[papersize=a5]{document}
+\font[size=16pt,language=tr]
 \set[parameter=document.lskip,value=15pt]
 \set[parameter=document.rskip,value=10pt]
 \noindent
