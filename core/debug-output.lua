@@ -18,7 +18,7 @@ SILE.outputters.debug = {
     print("Set color", color.r, color.g, color.b)
   end,
   pushColor = function (self, color)
-    print("Push color", ("%.5g"):format(color.r), ("%.5g"):format(color.g),("%.5g"):format(color.b))
+    print("Push color", ("%.4g"):format(color.r), ("%.4g"):format(color.g),("%.4g"):format(color.b))
   end,
   popColor = function (self)
     print("Pop color")
@@ -38,7 +38,7 @@ SILE.outputters.debug = {
     end
   end,
   drawImage = function (src, x,y,w,h)
-    print("Draw image", src, string.format("%.5f %.5f %.5f %.5f",x, y, w, h))
+    print("Draw image", src, string.format("%.4f %.4f %.4f %.4f",x, y, w, h))
   end,
   imageSize = function (src)
     local pdf = require("justenoughlibtexpdf");
@@ -46,8 +46,8 @@ SILE.outputters.debug = {
     return (urx-llx), (ury-lly)
   end,
   moveTo = function (x,y)
-    if string.format("%.5f",x) ~= string.format("%.5f",cx) then print("Mx ",string.format("%.5f",x)); cx = x end
-    if string.format("%.5f",y) ~= string.format("%.5f",cy) then print("My ",string.format("%.5f",y)); cy = y end
+    if string.format("%.4f",x) ~= string.format("%.4f",cx) then print("Mx ",string.format("%.4f",x)); cx = x end
+    if string.format("%.4f",y) ~= string.format("%.4f",cy) then print("My ",string.format("%.4f",y)); cy = y end
   end,
   rule = function (x,y,w,d)
     print("Draw line", x, y, w, d)
