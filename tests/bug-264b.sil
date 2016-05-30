@@ -1,6 +1,8 @@
-\begin[papersize=432pt x 648pt,class=book]{document}
+\begin[papersize=a5,class=book]{document}
+% Note: The failure case for this involves an infinite loop when it
+% erroniously matched penalty types that arenít actually page breaks
 \script[src=packages/linespacing]
 \set[parameter=linespacing.method,value=fit-font]
 \set[parameter=linespacing.fit-font.extra-space,value=15pt plus 0.5pt minus 0.5pt]
-x\skip[height=420pt].\footnote{Matta 24:13}
+x\skip[height=385pt].\footnote{Matthew 24:13}
 \end{document}

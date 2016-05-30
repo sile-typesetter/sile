@@ -1,39 +1,37 @@
 <tests/bug-264b.sil>
-Set paper size 	432	648
+Set paper size 	419.5275636	595.275597
 Begin page
-Mx 	55.85600
-My 	79.70902
+Mx 	54.8208
+My 	73.5930
 Set font 	Gentium;10;400;;normal;;LTR
 T	88	(x)
-[1] Mx 	201.34181
-My 	565.30310
+[1] Mx 	195.4611
+My 	519.8019
 T	17	(1)
 New page
-Mx 	80.48000
-My 	79.30879
+Mx 	78.7339
+My 	73.1928
 T	14	(.)
-Mx 	82.77004
-My 	76.13008
+Mx 	81.0239
+My 	70.0141
 Set font 	Gentium;6.81152;400;;normal;;LTR
 T	17	(1)
-Mx 	60.48000
-My 	539.60822
+Mx 	58.7339
+My 	495.6888
 Set font 	Gentium;9;400;;normal;;LTR
 T	17	(1)
-Mx 	64.70314
+Mx 	62.9570
 T	14	(.)
-Mx 	84.76418
-T	45 65 84 84 65	(Matta)
-Mx 	106.47756
-T	0	(Ê)
-Mx 	108.45949
+Mx 	83.0180
+T	45 65 84 84 72 69 87	(Matthew)
+Mx 	118.4809
 T	18 20	(24)
-Mx 	116.90578
+Mx 	126.9272
 T	26	(:)
-Mx 	118.96682
+Mx 	128.9882
 T	17 19	(13)
-[2] Mx 	225.96581
-My 	565.25427
+[2] Mx 	219.3741
+My 	519.7531
 Set font 	Gentium;10;400;;normal;;LTR
 T	18	(2)
 End page
