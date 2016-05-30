@@ -1,22 +1,14 @@
 <tests/vertical.sil>
 Set paper size 	595.275597	841.8897729
 Begin page
-Mx 	542.40787
-My 	107.65921
+Mx 	542.4079
+My 	107.6592
 Set font 	Noto Sans CJK JP;10;400;;normal;;TTB
 T	20616	(日)
-My 	117.76590
+My 	117.7760
 T	21156	(本)
-My 	127.87259
-T	65212	(は)
-My 	137.97928
-T	20691	(昔)
-My 	148.08597
-T	65176	(か)
-My 	158.19266
-T	65238	(ら)
-[1] Mx 	295.29161
-My 	780.61769
+[1] Mx 	295.2916
+My 	780.6177
 Set font 	Gentium;10;400;;normal;;LTR
 T	17	(1)
 End page
