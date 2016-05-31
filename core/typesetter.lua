@@ -198,19 +198,26 @@ SILE.defaultTypesetter = std.object {
   -- Empties self.state.nodes, breaks into lines, puts lines into vbox, adds vbox to
   -- Turns a node list into a list of vboxes
   boxUpNodes = function (self)
+    local listToString = function(l)
+      local rv = ""
+      for i = 1,#l do rv = rv ..l[i] end return rv
+    end
     local nl = self.state.nodes
-    while (#nl > 0 and (nl[#nl]:isPenalty() or nl[#nl]:isGlue())) do
-     table.remove(nl);
+    if #nl == 0 then return {} end
+    for j=#nl,1,-1 do
+      if nl[j]:isMigrating() then
+        -- pass
+      elseif nl[j].discardable then
+        table.remove(nl,j)
+      else
+        break
+      end
     end
     while (#nl >0 and nl[1]:isPenalty()) do table.remove(nl,1) end
     if #nl == 0 then return {} end
     self:shapeAllNodes(nl)
     self:pushGlue(SILE.settings.get("typesetter.parfillskip"));
     self:pushPenalty({ flagged= 1, penalty= -inf_bad });
-    local listToString = function(l)
-      local rv = ""
-      for i = 1,#l do rv = rv ..l[i] end return rv
-    end
     SU.debug("typesetter", "Boxed up "..(#nl > 500 and (#nl).." nodes" or listToString(nl)));
     local breakWidth = SILE.settings.get("typesetter.breakwidth") or self.frame:lineWidth()
     if (type(breakWidth) == "table") then breakWidth = breakWidth.length end
