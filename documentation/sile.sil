@@ -399,8 +399,23 @@ mentioned above can be specified as a floating-point number followed by
 a dimension abbreviation. Acceptable dimensions are printer’s points
 (\code{pt}), millimeters (\code{mm}), centimeters (\code{cm}) or inches.
 (\code{in}) For instance a standard B-format book can be specified
-\code{papersize=198mm x 129mm}. Later we will meet some other ways of
-specifying lengths.
+\code{papersize=198mm x 129mm}.
+
+Once some of the basic document properties have been setup using these fixed
+size units, other dimensions may be specificed relative to them using relative
+units. Percentage units are available relative to the page width or height, the
+current frame width or height, and the line width (\code{\%pw}, \code{\%ph},
+\code{\%fw}, \code{\%fw}, and \code{\%lw} respectively). Additional units are
+available relative to the largest or smallest value of either axis
+(\code{\%pmax}, \code{\%pmin}, \code{\%fmax, \code{\%fmin}}).
+
+\note{These relative units are a change from earlier versions of SILE in which
+the \% unit only worked on the page width (for most lengths) or tried to guess
+what axis to use (in the case of frame sizes). The old unit has been deprecated
+and old documents and document classes may need updating to use the new units.}
+
+Later we will meet some other ways of specifying lengths to make them
+stretchable or shrinkable.
 
 \section{Ordinary text}
 
@@ -678,8 +693,9 @@ Big text!
 As you can see, one possible attribute is \code{size}, which can be specified as
 a SILE \code{<dimension>}. A \code{<dimension>} is like a \code{<basic length>}
 (described above) but with a few extra possible dimensions which are relative
-to the size of the \em{current} font: ex units (\code{ex}), em units (\code{em}),
-and en units (\code{en}).
+to either the size of the \em{current} font (as in ex units (\code{ex}), em units
+(\code{em}), and en units (\code{en})) or the page, frame, or other dimention
+(as in the percent of page width (\code{\%pw}), height (\code{\%ph}), etc.).
 
 The full list of attributes to the \code{\\font} command are:
 
@@ -1860,10 +1876,10 @@ except with three additional features:
 functions. These functions take a frame ID. SILE magically pre-defines the frame
 \code{page} to allow you to access the dimensions of the whole page.
 
-\noindent• You can use arithmetic functions: plus, minus, divide, multiply and
-brackets have their ordinary arithmetic meaning. To declare that frame \code{b} 
+\noindent• You can use arithmetic functions: plus, minus, divide, multiply, and
+parenthesis have their ordinary arithmetic meaning. To declare that frame \code{b} 
 should be half the height of frame \code{a} plus 5 millimeters, you can say
-\code{height=5mm + (height(b) / 2)}. However as we will see later it is usually
+\code{height=5mm + (height(b) / 2)}. However, as we will see later, it is usually
 better to structure your declarations to let SILE make those kind of computations for
 you.
 
@@ -2035,7 +2051,7 @@ bringhurst:defineMaster(\{
     content = \{
       left = "width(page)/13",
       top = "left(content) * 8 / 5",
-      right = "100\% - 2*top(content)",
+      right = "100\%pw - 2*top(content)",
       bottom = "top(footnotes)"
     \},
     folio = \{ ... as before ... \},
