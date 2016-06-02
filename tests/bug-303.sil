@@ -1,0 +1,24 @@
+\begin[papersize=a5]{document}
+\nofolios
+\begin{script}
+SILE.registerCommand("poetry", function(options, content)
+  SILE.settings.temporarily(function()
+    SILE.typesetter:leaveHmode()
+    SILE.settings.set("document.lskip", SILE.nodefactory.newGlue("1em"))
+    SILE.settings.set("document.rskip", SILE.nodefactory.hfillGlue)
+    SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
+    SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
+    SILE.process(content)
+    SILE.call("par")
+  end)
+end)
+\end{script}
+\begin{poetry}
+Line 1\break
+\qquad
+Line 2\break
+Line 3\break
+\hbox\qquad
+Line 4
+\end{poetry}
+\end{document}
