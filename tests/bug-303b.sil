@@ -1,0 +1,20 @@
+\begin[papersize=a5,class=book]{document}
+\nofolios
+\script[src=packages/lorem]
+\begin{script}
+SILE.registerCommand("section", function (options, content)
+  SILE.typesetter:leaveHmode()
+  SILE.call("goodbreak")
+  SILE.call("bigskip") -- This skip shouldn't be moving the section header down the page
+  SILE.call("noindent")
+  SILE.process(content)
+  SILE.call("novbreak")
+end)
+\end{script}
+\hbox
+\skip[height=34em]
+\lorem[words=40]
+Note this fail case only happens after pages with footnotes.\footnote{Which for me is all the pages.}
+\section{SECTION AT TOP OF PAGE}
+\lorem[words=40]
+\end{document}
