@@ -1,0 +1,7 @@
+\begin[papersize=a6]{document}
+\nofolios
+\set[parameter=document.parskip,value=2em plus 1em]
+Test par
+
+Test par
+\end{document}
