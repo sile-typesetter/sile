@@ -1,0 +1,11 @@
+\begin[papersize=a5]{document}
+\nofolios
+\script[src=packages/lorem]
+\hbox
+\skip[height=43em] % change this to 45 for no bug symptoms
+\lorem[words=80]
+{
+\set[parameter=document.lskip,value=4em]
+This is an indented environment
+}
+\end{document}
