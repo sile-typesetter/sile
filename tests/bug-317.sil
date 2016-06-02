@@ -1,0 +1,10 @@
+\begin[papersize=a5]{document}
+\script[src=packages/verbatim]
+\define[command=verbatim:font]{\set[parameter=font.family,value=DejaVu Sans Mono]}
+\nofolios
+\begin{verbatim}
+pseudocode \{ here \}
+\end{verbatim}%\par
+
+This text should be in a new paragraph.
+\end{document}
