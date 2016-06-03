@@ -1,0 +1,19 @@
+\begin[papersize=a5]{document} % KNOWNBAD
+\nofolios
+\set[parameter=document.parindent,value=0]
+\set[parameter=document.parskip,value=1ex]
+
+\font[size=18pt]
+
+\font[family=Crimson]{\font[style=Italic]{I am italic but \font[weight=600]{these words} should be bold.} Whereas \font[weight=600]{these words} actually are.}
+
+\font[family=Libertinus Serif]{\font[style=Regular]{But it's not just italic style that throws off \font[weight=600]{these words} not being bold, Regular does too.}}
+
+\font[family=Libertinus Serif]{\font[style=Roman]{But style Roman doesn't throw off \font[weight=600]{these words} being bold.}}
+
+\font[family=Libertinus Serif]{\font[style=Italic]{I am italic but \font[weight=600]{these words} should be bold.} Whereas \font[weight=600]{these words} actually are.}
+
+\font[family=Montserrat]{\font[style=Italic]{I am not italic because this font doesn't have one and weight selection is going to work here, but why am I weight 200 \font[weight=300]{when 300 is thin,} \font[weight=400]{400 is normal,} \font[weight=600]{and 600 is bold?} \font[weight=800]{Not to mention black.}}
+
+\font[style=Regular]{Oh but wait, setting style Regular sets the font weight to 300 instead of the 200 default and lets you \font[weight=400]{manually set 400} \font[weight=600]{but not 600!}}}
+\end{document}
