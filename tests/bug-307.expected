@@ -1,0 +1,336 @@
+<tests/bug-307.sil>
+Set paper size 	419.5275636	595.275597
+Begin page
+Mx 	20.9764
+My 	67.7114
+Set font 	Crimson;18;400;Italic;normal;;LTR
+T	42	(I)
+Mx 	32.6459
+T	66 78	(am)
+Mx 	60.0831
+T	74 85 66 77 74 68	(italic)
+Mx 	100.5104
+T	67 86 85	(but)
+Mx 	129.7581
+Set font 	Crimson;18;600;Italic;normal;;LTR
+T	85 73 70 84 70	(these)
+Mx 	171.8730
+T	88 80 83 69 84	(words)
+Mx 	221.3531
+Set font 	Crimson;18;400;Italic;normal;;LTR
+T	84 73 80 86 77 69	(should)
+Mx 	274.4191
+T	67 70	(be)
+Mx 	296.7059
+T	67 80 77 69	(bold)
+Mx 	327.9422
+T	15	(.)
+Mx 	337.5551
+Set font 	Crimson;18;400;;normal;;LTR
+T	56 73 70 83 70 66 84	(Whereas)
+Mx 	20.9764
+My 	89.3114
+Set font 	Crimson;18;600;;normal;;LTR
+T	85 73 70 84 70	(these)
+Mx 	61.7333
+T	88 80 83 69 84	(words)
+Mx 	109.8555
+Set font 	Crimson;18;400;;normal;;LTR
+T	66 68 85 86 66 77 77 90	(actually)
+Mx 	168.6828
+T	66 83 70	(are)
+Mx 	190.4797
+T	15	(.)
+Mx 	20.9764
+My 	119.0853
+Set font 	Libertinus Serif;18;400;Regular;normal;;LTR
+T	35 86 85	(But)
+Mx 	54.5291
+T	74 85	(it)
+Mx 	65.0951
+T	8	(')
+Mx 	68.5151
+T	84	(s)
+Mx 	83.2579
+T	79 80 85	(not)
+Mx 	115.4966
+T	75 86 84 85	(just)
+Mx 	150.3814
+T	74 85 66 77 74 68	(italic)
+Mx 	194.2302
+T	84 85 90 77 70	(style)
+Mx 	236.7289
+T	85 73 66 85	(that)
+Mx 	273.7377
+T	85 73 83 80 88 84	(throws)
+Mx 	332.7964
+T	80 2442	(off)
+Mx 	360.0672
+Set font 	Libertinus Serif;18;600;Regular;normal;;LTR
+T	85 73 70 84 70	(these)
+Mx 	20.9764
+My 	140.6853
+T	88 80 83 69 84	(words)
+Mx 	71.4486
+Set font 	Libertinus Serif;18;400;Regular;normal;;LTR
+T	79 80 85	(not)
+Mx 	101.3828
+T	67 70 74 79 72	(being)
+Mx 	147.5350
+T	67 80 77 69	(bold)
+Mx 	179.5210
+T	13	(,)
+Mx 	188.8992
+T	51 70 72 86 77 66 83	(Regular)
+Mx 	251.1613
+T	69 80 70 84	(does)
+Mx 	289.9515
+T	85 80 80	(too)
+Mx 	313.7295
+T	15	(.)
+Mx 	20.9764
+My 	170.4591
+Set font 	Libertinus Serif;18;400;Roman;normal;;LTR
+T	35 86 85	(But)
+Mx 	51.6807
+T	84 85 90 77 70	(style)
+Mx 	91.3311
+T	51 80 78 66 79	(Roman)
+Mx 	148.0454
+T	69 80 70 84 79	(doesn)
+Mx 	191.1734
+T	8	(')
+Mx 	194.5934
+T	85	(t)
+Mx 	205.1558
+T	85 73 83 80 88	(throw)
+Mx 	254.3461
+T	80 2442	(off)
+Mx 	278.7685
+Set font 	Libertinus Serif;18;600;Roman;normal;;LTR
+T	85 73 70 84 70	(these)
+Mx 	323.3148
+T	88 80 83 69 84	(words)
+Mx 	375.3672
+Set font 	Libertinus Serif;18;400;Roman;normal;;LTR
+T	67 70	(be)
+Mx 	392.4672
+T	14	(-)
+Mx 	20.9764
+My 	192.0591
+T	74 79 72	(ing)
+Mx 	50.0807
+T	67 80 77 69	(bold)
+Mx 	82.0667
+T	15	(.)
+Mx 	20.9764
+My 	221.8329
+Set font 	Libertinus Serif;18;400;Italic;normal;;LTR
+T	42	(I)
+Mx 	30.3911
+T	66 78	(am)
+Mx 	57.6079
+T	74 85 66 77 74 68	(italic)
+Mx 	97.9826
+T	67 86 85	(but)
+Mx 	125.8654
+Set font 	Libertinus Serif;18;600;Italic;normal;;LTR
+T	85 73 70 84 70	(these)
+Mx 	172.2162
+T	88 80 83 69 84	(words)
+Mx 	223.6609
+Set font 	Libertinus Serif;18;400;Italic;normal;;LTR
+T	84 73 80 86 77 69	(should)
+Mx 	274.7457
+T	67 70	(be)
+Mx 	295.1224
+T	67 80 77 69	(bold)
+Mx 	325.5424
+T	15	(.)
+Mx 	333.8592
+Set font 	Libertinus Serif;18;400;;normal;;LTR
+T	56 73 70 83 70 66 84	(Whereas)
+Mx 	20.9764
+My 	243.4329
+Set font 	Libertinus Serif;18;600;;normal;;LTR
+T	85 73 70 84 70	(these)
+Mx 	66.0910
+T	88 80 83 69 84	(words)
+Mx 	118.7117
+Set font 	Libertinus Serif;18;400;;normal;;LTR
+T	66 68 85 86 66 77 77 90	(actually)
+Mx 	182.3304
+T	66 83 70	(are)
+Mx 	204.9744
+T	15	(.)
+Mx 	20.9764
+My 	273.2067
+Set font 	Montserrat;18;400;Italic;normal;;LTR
+T	35	(I)
+Mx 	34.9556
+T	112 169	(am)
+Mx 	72.8209
+T	170 175 198	(not)
+Mx 	111.8742
+T	147 198 112 163 147 124	(italic)
+Mx 	163.9774
+T	123 132 124 112 202 192 132	(because)
+Mx 	246.4467
+T	198 145 147 192	(this)
+Mx 	287.9299
+T	141 175 170 198	(font)
+Mx 	332.9772
+T	128 175 132 192 170	(doesn)
+Mx 	387.4812
+T	290	(')
+Mx 	391.2252
+T	198	(t)
+Mx 	20.9764
+My 	294.8067
+T	145 112 211 132	(have)
+Mx 	68.7648
+T	175 170 132	(one)
+Mx 	108.3452
+T	112 170 128	(and)
+Mx 	148.9156
+T	212 132 147 142 145 198	(weight)
+Mx 	217.0260
+T	192 132 163 132 124 198 147 175 170	(selection)
+Mx 	303.5504
+T	147 192	(is)
+Mx 	322.9348
+T	142 175 147 170 142	(going)
+Mx 	380.0832
+T	198 175	(to)
+Mx 	20.9764
+My 	316.4067
+T	212 175 188 160	(work)
+Mx 	70.5942
+T	145 132 188 132	(here)
+Mx 	110.8962
+T	280	(,)
+Mx 	119.6001
+T	123 202 198	(but)
+Mx 	155.7719
+T	212 145 218	(why)
+Mx 	198.0098
+T	112 169	(am)
+Mx 	232.1836
+T	35	(I)
+Mx 	242.4715
+T	212 132 147 142 145 198	(weight)
+Mx 	309.6213
+T	237 235 235	(200)
+Mx 	349.9332
+Set font 	Montserrat;18;300;Italic;normal;;LTR
+T	212 145 132 170	(when)
+Mx 	20.9764
+My 	338.0067
+T	238 235 235	(300)
+Mx 	59.5796
+T	147 192	(is)
+Mx 	76.8167
+T	198 145 147 170	(thin)
+Mx 	110.9447
+T	280	(,)
+Mx 	118.5036
+Set font 	Montserrat;18;400;Italic;normal;;LTR
+T	239 235 235	(400)
+Mx 	158.6604
+T	147 192	(is)
+Mx 	176.7312
+T	170 175 188 169 112 163	(normal)
+Mx 	241.6392
+T	280	(,)
+Mx 	249.9900
+Set font 	Montserrat;18;600;Italic;normal;;LTR
+T	202 295 231	(and)
+Mx 	289.3104
+T	394 388 388	(600)
+Mx 	329.9628
+T	270 320	(is)
+Mx 	348.5832
+T	224 301 287 231	(bold)
+Mx 	390.2352
+T	450	(?)
+Mx 	20.9764
+My 	359.6067
+Set font 	Montserrat;18;800;Italic;normal;;LTR
+T	103 301 327	(Not)
+Mx 	59.4912
+T	327 301	(to)
+Mx 	83.8940
+T	294 235 295 327 270 301 295	(mention)
+Mx 	168.1289
+T	224 287 202 225 284	(black)
+Mx 	219.2489
+T	449	(.)
+Mx 	20.9764
+My 	389.3806
+Set font 	Montserrat;18;400;Regular;normal;;LTR
+T	61 145	(Oh)
+Mx 	53.1536
+T	123 202 198	(but)
+Mx 	90.0289
+T	212 112 147 198	(wait)
+Mx 	128.8189
+T	280	(,)
+Mx 	138.2262
+T	192 132 198 198 147 170 142	(setting)
+Mx 	206.0434
+T	192 198 218 163 132	(style)
+Mx 	252.8367
+T	74 132 142 202 163 112 188	(Regular)
+Mx 	328.2139
+T	192 132 198 192	(sets)
+Mx 	368.5992
+T	198 145 132	(the)
+Mx 	20.9764
+My 	410.9806
+T	141 175 170 198	(font)
+Mx 	63.4010
+T	212 132 147 142 145 198	(weight)
+Mx 	131.6196
+T	198 175	(to)
+Mx 	156.0082
+T	238 235 235	(300)
+Mx 	196.5068
+T	147 170 192 198 132 112 128	(instead)
+Mx 	268.5594
+T	175 141	(of)
+Mx 	291.8140
+T	198 145 132	(the)
+Mx 	327.6866
+T	237 235 235	(200)
+Mx 	369.0672
+T	128 132	(de)
+Mx 	391.9272
+T	302	(-)
+Mx 	20.9764
+My 	432.5806
+T	141 112 202 163 198	(fault)
+Mx 	70.2125
+T	112 170 128	(and)
+Mx 	113.6526
+T	163 132 198 192	(lets)
+Mx 	154.0147
+T	218 175 202	(you)
+Mx 	194.8988
+T	169 112 170 202 112 163 163 218	(manually)
+Mx 	287.3170
+T	192 132 198	(set)
+Mx 	322.3691
+T	239 235 235	(400)
+Mx 	366.7092
+Set font 	Montserrat;18;600;Regular;normal;;LTR
+T	224 337 327	(but)
+Mx 	20.9764
+My 	454.1806
+T	295 301 327	(not)
+Mx 	57.3691
+T	394 388 388	(600)
+Mx 	93.8191
+T	446	(!)
+[1] End page
+Finish
+
