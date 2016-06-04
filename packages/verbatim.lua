@@ -19,8 +19,7 @@ SILE.registerCommand("verbatim", function(options, content)
     -- SILE.settings.set("shaper.spacepattern", '%s') -- XXX Shaper no longer uses this so it was removed
     SILE.process(content)
   end)
-
-  SILE.typesetter:pushVglue({ height = SILE.length.new({ length = 6 }) })
+  SILE.typesetter:leaveHmode()
 end, "Typesets its contents in a monospaced font.")
 
 SILE.registerCommand("obeylines", function(options, content)
