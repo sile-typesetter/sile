@@ -21,6 +21,21 @@ local function addPattern(h, p)
   end
 end
 
+local function registerException(h, exc)
+  local k = exc:gsub("-", "")
+  h.exceptions[k] = { }
+  j = 1
+  for i=1,#exc do
+    j = j + 1
+    if exc[i] == "-" then
+      j = j - 1
+      h.exceptions[k][j] = 1
+    else
+      h.exceptions[k][j] = 0
+    end
+  end
+end
+
 function loadPatterns(h, language)
   SILE.languageSupport.loadLanguage(language)
 
@@ -32,9 +47,7 @@ function loadPatterns(h, language)
   for _,pat in pairs(languageset.patterns) do addPattern(h, pat) end
   if not languageset.exceptions then languageset.exceptions = {} end
   for _,exc in pairs(languageset.exceptions) do
-    local k = exc:gsub("-", "")
-    h.exceptions[k] = { 0 }
-    for i in exc:gmatch(".") do table.insert(h.exceptions[k], i == "-" and 1 or 0) end
+    registerException(h, exc)
   end
 end
 
