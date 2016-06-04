@@ -75,6 +75,13 @@ int face_from_options(lua_State* L) {
   lua_gettable(L, -2);
   if (lua_isstring(L, -1)) {
     style = lua_tostring(L, -1);
+    if (strcasestr(style,"italic")) {
+      slant = FC_SLANT_ITALIC;
+      style = "\0";
+    } else if (strcasestr(style, "oblique")) {
+      slant = FC_SLANT_OBLIQUE;
+      style = "\0";
+    }
   }
   lua_pop(L,1);
 
@@ -84,6 +91,8 @@ int face_from_options(lua_State* L) {
   FcPatternAddDouble (p, FC_SIZE, pointSize);
   if (strlen(style) > 0) {
     FcPatternAddString (p, FC_STYLE, style);
+  } else {
+    FcPatternAddInteger(p, FC_SLANT, slant);
   }
   FcPatternAddInteger(p, FC_WEIGHT, weight);
 
