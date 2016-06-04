@@ -330,7 +330,7 @@ SILE.defaultTypesetter = std.object {
       end
       if gTotal.stretch > 0 then
         for i = 1,#glues do local g= glues[i]
-          g:setGlue(adjustment * g.height.stretch / gTotal.stretch)
+          g:setGlue(adjustment * g.height:absolute().stretch / gTotal.stretch)
         end
       end
     elseif adjustment < 0 then
@@ -343,7 +343,7 @@ SILE.defaultTypesetter = std.object {
       end
       if gTotal.shrink > 0 then
         for i = 1,#glues do local g= glues[i]
-          g:setGlue(0 - (adjustment * g.height.shrink / gTotal.shrink))
+          g:setGlue(0 - (adjustment * g.height:absolute().shrink / gTotal.shrink))
         end
       end
     end
