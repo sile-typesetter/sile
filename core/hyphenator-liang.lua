@@ -92,12 +92,16 @@ SILE.hyphenator = {}
 SILE.hyphenator.languages = {};
 _hyphenators = {};
 
+local initHyphenator = function (lang)
+  if not _hyphenators[lang] then
+    _hyphenators[lang] = {minWord = 5, leftmin = 2, rightmin = 2, trie = {}, exceptions = {} };
+    loadPatterns(_hyphenators[lang], lang)
+  end
+end
+
 local hyphenateNode = function(n)
   if not n:isNnode() or not n.text then return {n} end
-  if not _hyphenators[n.language] then
-    _hyphenators[n.language] = {minWord = 5, leftmin = 2, rightmin = 2, trie = {}, exceptions = {} };
-    loadPatterns(_hyphenators[n.language], n.language)
-  end
+  initHyphenator(n.language)
   local breaks = _hyphenate(_hyphenators[n.language],n.text);
   if #breaks > 1 then
     local newnodes = {}
@@ -127,10 +131,7 @@ end
 
 showHyphenationPoints = function (word, language)
   language = language or "en"
-  if not _hyphenators[language] then
-    _hyphenators[language] = {minWord = 5, leftmin = 2, rightmin = 2, trie = {}, exceptions = {} };
-    loadPatterns(_hyphenators[language], language)
-  end
+  initHyphenator(language)
   return SU.concat(_hyphenate(_hyphenators[language], word), SILE.settings.get("font.hyphenchar"))
 end
 
@@ -143,3 +144,14 @@ SILE.hyphenate = function (nodelist)
   end
   return newlist
 end
+
+SILE.registerCommand("hyphenator:add-exceptions", function (o,c)
+  local language = o.lang or SILE.settings.get("document.language")
+  SILE.languageSupport.loadLanguage(language)
+  initHyphenator(language)
+  for token in SU.gtoke(c[1]) do
+    if token.string then
+      registerException(_hyphenators[language],token.string)
+    end
+  end
+end)
