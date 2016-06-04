@@ -1,0 +1,32 @@
+<tests/hyph-except.sil>
+Set paper size 	419.5275636	595.275597
+Begin page
+Mx 	40.9764
+My 	37.3321
+Set font 	Gentium;10;400;;normal;;LTR
+T	82 65 66 7	(rab')
+Mx 	57.1043
+T	13	(-)
+Mx 	60.4734
+T	66 73 78	(bin)
+Mx 	40.9764
+My 	49.3321
+T	86 79 76 75 83	(volks)
+Mx 	62.5096
+T	13	(-)
+Mx 	65.8787
+T	69	(e)
+Mx 	70.4979
+T	13	(-)
+Mx 	73.8670
+T	77 79	(mo)
+Mx 	86.9285
+T	13	(-)
+Mx 	90.2977
+T	83 73 69	(sie)
+[1] Mx 	207.4176
+My 	553.7327
+T	17	(1)
+End page
+Finish
+
