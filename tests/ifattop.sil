@@ -1,0 +1,14 @@
+\begin[papersize=a5]{document}%
+\script[src=packages/ifattop]%
+\ifattop{Hello, top of frame.}
+
+\ifnotattop{Hello, middle of frame.}
+
+\ifattop{You should not see me.}
+\pagebreak
+\ifattop{Hello, top of frame.}
+
+\ifnotattop{Hello, middle of frame.}
+
+\ifattop{You should not see me.}
+\end{document}
