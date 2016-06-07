@@ -16,7 +16,7 @@
 \end{pagetemplate}
 % Main title
 \center{\font[family=Baskerville,size=35pt]{\em{The SILE Show-off Document}}}
-\par\framebreak\par
+\framebreak
 
 \typeset-into[frame=sidebar]{\tableofcontents}%
 % First frame
