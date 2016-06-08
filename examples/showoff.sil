@@ -7,16 +7,16 @@
 \define[command=tableofcontents:headerfont]{\font[size=24pt,family=Baskerville,style=italic]{\process}}%
 % Of course this is a bit complicated. We're showing off doing complicated things.
 \begin[first-content-frame=title]{pagetemplate}
-  \frame[id=gutter,width=3%]
-  \frame[id=title, top=top(content), bottom=top(title)+5%, left=left(content), right=0.95 * width(page),next=leftCol]
-  \frame[id=leftCol,left=left(content),right=left(gutter),top=bottom(title)+2%,bottom=top(bottomBox)-2%,next=rightCol]
-  \frame[id=rightCol,left=right(gutter),top=top(leftCol),bottom=top(bottomBox)-2%,width=width(leftCol)]
-  \frame[id=sidebar,width=200pt,left=right(rightCol)+3%,right=right(title),top=top(leftCol),bottom=bottom(content)]
+  \frame[id=gutter,width=3%pw]
+  \frame[id=title, top=top(content), bottom=top(title)+5%pw, left=left(content), right=95%pw,next=leftCol]
+  \frame[id=leftCol,left=left(content),right=left(gutter),top=bottom(title)+2%ph,bottom=top(bottomBox)-2%ph,next=rightCol]
+  \frame[id=rightCol,left=right(gutter),top=top(leftCol),bottom=top(bottomBox)-2%ph,width=width(leftCol)]
+  \frame[id=sidebar,width=200pt,left=right(rightCol)+3%pw,right=right(title),top=top(leftCol),bottom=bottom(content)]
   \frame[id=bottomBox,bottom=bottom(content),left=left(content),right=right(rightCol),height=90pt]
 \end{pagetemplate}
 % Main title
 \center{\font[family=Baskerville,size=35pt]{\em{The SILE Show-off Document}}}
-\par\framebreak\par
+\framebreak
 
 \typeset-into[frame=sidebar]{\tableofcontents}%
 % First frame

@@ -5,26 +5,26 @@ if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end
 
 function bible:singleColumnMaster()
   self:defineMaster({ id = "right", firstContentFrame = "content", frames = {
-    -- title = {left = "left(content)", right = "right(content)", top="11.6%", bottom="top(content)" },
-    content = {left = "8.3%", right = "86%", top = "11.6%", bottom = "top(footnotes)" },
-    folio = {left = "left(content)", right = "right(content)", top = "bottom(footnotes)+3%",bottom = "bottom(footnotes)+5%" },
-    runningHead = {left = "left(content)", right = "right(content)", top = "top(content) - 8%", bottom = "top(content)-3%" },
-    footnotes = { left="left(content)", right = "right(content)", height = "0", bottom="83.3%"}
+    -- title = {left = "left(content)", right = "right(content)", top="11.6%ph", bottom="top(content)" },
+    content = {left = "8.3%pw", right = "86%pw", top = "11.6%ph", bottom = "top(footnotes)" },
+    folio = {left = "left(content)", right = "right(content)", top = "bottom(footnotes)+3%ph", bottom = "bottom(footnotes)+5%ph" },
+    runningHead = {left = "left(content)", right = "right(content)", top = "top(content) - 8%ph", bottom = "top(content)-3%ph" },
+    footnotes = { left="left(content)", right = "right(content)", height = "0", bottom="83.3%ph"}
   }})
   self:loadPackage("footnotes", { insertInto = "footnotes", stealFrom = {"content"} } )
 end
 
 function bible:twoColumnMaster()
-  local gutterWidth = self.options.gutter or "3%"
+  local gutterWidth = self.options.gutter or "3%pw"
   self:defineMaster({ id = "right", firstContentFrame = "contentA", frames = {
-    title = {left = "left(contentA)", right = "right(contentB)", top="11.6%", height="0", bottom="top(contentA)" },
-    contentA = {left = "8.3%", right = "left(gutter)", top = "bottom(title)", bottom = "top(footnotesA)", next = "contentB", balanced = true },
-    contentB = {left = "right(gutter)", width="width(contentA)", right = "86%", top = "bottom(title)", bottom = "top(footnotesB)", balanced = true },
+    title = {left = "left(contentA)", right = "right(contentB)", top="11.6%ph", height="0", bottom="top(contentA)" },
+    contentA = {left = "8.3%pw", right = "left(gutter)", top = "bottom(title)", bottom = "top(footnotesA)", next = "contentB", balanced = true },
+    contentB = {left = "right(gutter)", width="width(contentA)", right = "86%pw", top = "bottom(title)", bottom = "top(footnotesB)", balanced = true },
     gutter = { left = "right(contentA)", right = "left(contentB)", width = gutterWidth },
-    folio = {left = "left(contentA)", right = "right(contentB)", top = "bottom(footnotesB)+3%",bottom = "bottom(footnotesB)+5%" },
-    runningHead = {left = "left(contentA)", right = "right(contentB)", top = "top(contentA) - 8%", bottom = "top(contentA)-3%" },
-    footnotesA = { left="left(contentA)", right = "right(contentA)", height = "0", bottom="83.3%"},
-    footnotesB = { left="left(contentB)", right = "right(contentB)", height = "0", bottom="83.3%"},
+    folio = {left = "left(contentA)", right = "right(contentB)", top = "bottom(footnotesB)+3%ph", bottom = "bottom(footnotesB)+5%ph" },
+    runningHead = {left = "left(contentA)", right = "right(contentB)", top = "top(contentA)-8%ph", bottom = "top(contentA)-3%ph" },
+    footnotesA = { left="left(contentA)", right = "right(contentA)", height = "0", bottom="83.3%ph"},
+    footnotesB = { left="left(contentB)", right = "right(contentB)", height = "0", bottom="83.3%ph"},
 
   }})
   -- Later we'll have an option for two fn frames

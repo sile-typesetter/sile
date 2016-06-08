@@ -5,9 +5,9 @@
 <script>
 -- Two column layout. It might be cleaner to use a two-column class but this is fine.
 local class = SILE.documentState.documentClass
-class:declareFrame("a", {left= "5%", right= "47.5%", top="5%", bottom="90%",next= "b" })
-class:declareFrame("b", {left= "52.5%", right= "95%", top="5%", bottom="90%" })
-class:declareFrame("folio",{left = "5%", right = "95%", top = "92%", bottom = "97%", id = "folio"})
+class:declareFrame("a", {left= "5%pw", right= "47.5%pw", top="5%ph", bottom="90%ph",next= "b" })
+class:declareFrame("b", {left= "52.5%pw", right= "95%pw", top="5%ph", bottom="90%ph" })
+class:declareFrame("folio",{left = "5%pw", right = "95%pw", top = "92%ph", bottom = "97%ph", id = "folio"})
 class.pageTemplate.firstContentFrame = SILE.getFrame("a")
 
 SILE.settings.set("typesetter.parseppattern", "\n\n\n\n\n+")
@@ -35,10 +35,10 @@ end)
 SILE.registerCommand("div", function(options, content)
   if (options.type == "book") then
       SILE.documentState.thisPageTemplate = { frames = {
-  t = SILE.newFrame({left= "5%", right= "95%", top="5%", bottom="15%", id= "t", next= "l" }),
-  l = SILE.newFrame({left= "5%", right= "47.5%", top="20%", bottom="90%", id= "l", next= "r" }),
-  r = SILE.newFrame({left= "52.5%", right= "95%", top="20%", bottom="90%", id= "r" }),
-  folio = SILE.newFrame({left = "5%", right = "95%", top = "92%", bottom = "97%", id = "folio"})      
+  t = SILE.newFrame({left= "5%pw", right= "95%pw", top="5%ph", bottom="15%ph", id= "t", next= "l" }),
+  l = SILE.newFrame({left= "5%pw", right= "47.5%pw", top="20%ph", bottom="90%ph", id= "l", next= "r" }),
+  r = SILE.newFrame({left= "52.5%pw", right= "95%pw", top="20%ph", bottom="90%ph", id= "r" }),
+  folio = SILE.newFrame({left = "5%pw", right = "95%pw", top = "92%ph", bottom = "97%ph", id = "folio"})
       } };
       SILE.documentState.thisPageTemplate.firstContentFrame = SILE.documentState.thisPageTemplate.frames.t
       SILE.typesetter:init(SILE.getFrame("t"))

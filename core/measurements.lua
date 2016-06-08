@@ -9,7 +9,7 @@ SILE.registerUnit = function (u, t)
     local num,unit = string.match(def, "(-?[%d%.]+)%s*([%%%a]+)")
     if not SILE.units[unit] then SU.error("Unit "..u.." defined in terms of unknown unit "..unit) end
     if SILE.units[unit].relative then
-      SILE.units[u] = { relative = true, convertor = function (v,c) return num * SILE.toPoints(v,unit,c) end}
+      SILE.units[u] = { relative = true, convertor = function (v) return num * SILE.toPoints(v,unit) end}
     else
       SILE.units[u] = { relative = false, value = SILE.toPoints(num,unit) }
     end
@@ -18,7 +18,7 @@ SILE.registerUnit = function (u, t)
   end
 end
 
-SILE.toPoints = function(num, unit, dimension)
+SILE.toPoints = function(num, unit)
   if (not unit) then
     if (type(num) == "string") then -- split into num and unit parts
       num,unit = string.match(num, "(-?[%d%.]+)%s*([%%%a]+)")
@@ -28,7 +28,7 @@ SILE.toPoints = function(num, unit, dimension)
   if (not SILE.units[unit]) then SU.error( "Unknown unit "..unit ) end
   num =  tonumber(string.match(num, "(-?[%d%.]+)"))
   if SILE.units[unit].convertor then
-    return SILE.units[unit].convertor(num, dimension)
+    return SILE.units[unit].convertor(num)
   else
     return num * SILE.units[unit].value
   end
@@ -38,8 +38,41 @@ SILE.registerUnit("mm", {definition = "2.8346457pt"})
 SILE.registerUnit("cm", {definition = "10mm"})
 SILE.registerUnit("in", {definition = "72pt"})
 
-SILE.registerUnit("%", { relative = true, definition = function (v, dim)
-  return v / 100 * SILE.documentState.paperSize[ dimension == 'w' and 1 or 2]
+SILE.registerUnit("%", { relative = true, definition = function (v)
+  SU.warn("Obsolete ambiguous % unit detected, please use %pw or %ph instead")
+  return v / 100 * SILE.documentState.paperSize[1]
+end})
+SILE.registerUnit("%pw", { relative = true, definition = function (v)
+  return v / 100 * SILE.documentState.paperSize[1]
+end})
+SILE.registerUnit("%ph", { relative = true, definition = function (v)
+  return v / 100 * SILE.documentState.paperSize[2]
+end})
+SILE.registerUnit("%pmin", { relative = true, definition = function (v)
+  return v / 100 * math.min(SILE.documentState.paperSize[1], SILE.documentState.paperSize[2])
+end})
+SILE.registerUnit("%pmax", { relative = true, definition = function (v)
+  return v / 100 * math.max(SILE.documentState.paperSize[1], SILE.documentState.paperSize[2])
+end})
+SILE.registerUnit("%fw", { relative = true, definition = function (v)
+  return v / 100 * SILE.typesetter.frame:width()
+end})
+SILE.registerUnit("%fh", { relative = true, definition = function (v)
+  return v / 100 * SILE.typesetter.frame:height()
+end})
+SILE.registerUnit("%fmin", { relative = true, definition = function (v)
+  return v / 100 * math.min(SILE.typesetter.frame:width(), SILE.typesetter.frame:height())
+end})
+SILE.registerUnit("%fmax", { relative = true, definition = function (v)
+  return v / 100 * math.max(SILE.typesetter.frame:width(), SILE.typesetter.frame:height())
+end})
+SILE.registerUnit("%lw", { relative = true, definition = function (v)
+  local lskip = SILE.settings.get("document.lskip") or SILE.length.parse("0")
+  local rskip = SILE.settings.get("document.rskip") or SILE.length.parse("0")
+  local left = lskip.width and lskip.width:absolute() or lskip:absolute()
+  local right = rskip.width and rskip.width:absolute() or rskip:absolute()
+  local lw = SILE.typesetter.frame:lineWidth() - left - right
+  return v / 100 * lw.length
 end})
 SILE.registerUnit("em", { relative = true, definition = function (v)
   return v * SILE.settings.get("font.size")

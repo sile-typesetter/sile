@@ -399,8 +399,23 @@ mentioned above can be specified as a floating-point number followed by
 a dimension abbreviation. Acceptable dimensions are printer’s points
 (\code{pt}), millimeters (\code{mm}), centimeters (\code{cm}) or inches.
 (\code{in}) For instance a standard B-format book can be specified
-\code{papersize=198mm x 129mm}. Later we will meet some other ways of
-specifying lengths.
+\code{papersize=198mm x 129mm}.
+
+Once some of the basic document properties have been setup using these fixed
+size units, other dimensions may be specificed relative to them using relative
+units. Percentage units are available relative to the page width or height, the
+current frame width or height, and the line width (\code{\%pw}, \code{\%ph},
+\code{\%fw}, \code{\%fw}, and \code{\%lw} respectively). Additional units are
+available relative to the largest or smallest value of either axis
+(\code{\%pmax}, \code{\%pmin}, \code{\%fmax, \code{\%fmin}}).
+
+\note{These relative units are a change from earlier versions of SILE in which
+the \% unit only worked on the page width (for most lengths) or tried to guess
+what axis to use (in the case of frame sizes). The old unit has been deprecated
+and old documents and document classes may need updating to use the new units.}
+
+Later we will meet some other ways of specifying lengths to make them
+stretchable or shrinkable.
 
 \section{Ordinary text}
 
@@ -678,8 +693,9 @@ Big text!
 As you can see, one possible attribute is \code{size}, which can be specified as
 a SILE \code{<dimension>}. A \code{<dimension>} is like a \code{<basic length>}
 (described above) but with a few extra possible dimensions which are relative
-to the size of the \em{current} font: ex units (\code{ex}), em units (\code{em}),
-and en units (\code{en}).
+to either the size of the \em{current} font (as in ex units (\code{ex}), em units
+(\code{em}), and en units (\code{en})) or the page, frame, or other dimention
+(as in the percent of page width (\code{\%pw}), height (\code{\%ph}), etc.).
 
 The full list of attributes to the \code{\\font} command are:
 
@@ -1847,7 +1863,7 @@ going to stipulate that the gutter width will be 3\% of the page width:
 
 \begin{verbatim}
 \line
-\\frame[id=gutter,width=3\%]
+\\frame[id=gutter,width=3\%pw]
 \line
 \end{verbatim}
 
@@ -1860,17 +1876,16 @@ except with three additional features:
 functions. These functions take a frame ID. SILE magically pre-defines the frame
 \code{page} to allow you to access the dimensions of the whole page.
 
-\noindent• You can use arithmetic functions: plus, minus, divide, multiply and
-brackets have their ordinary arithmetic meaning. To declare that frame \code{b} 
+\noindent• You can use arithmetic functions: plus, minus, divide, multiply, and
+parenthesis have their ordinary arithmetic meaning. To declare that frame \code{b} 
 should be half the height of frame \code{a} plus 5 millimeters, you can say
-\code{height=5mm + (height(b) / 2)}. However as we will see later it is usually
+\code{height=5mm + (height(b) / 2)}. However, as we will see later, it is usually
 better to structure your declarations to let SILE make those kind of computations for
 you.
 
 \noindent• Since book design is often specified in terms of proportion of a page,
-you can use the shortcut \code{width=5\%} instead of \code{width=0.05 * width(page)}
-and \code{height=50\%} instead of \code{height=0.5 * height(page)}. SILE knows
-whether you’re dealing with vertical or horizontal percentages.
+you can use the shortcut \code{width=5\%pw} instead of \code{width=0.05 * width(page)}
+and \code{height=50\%ph} instead of \code{height=0.5 * height(page)}.
 
 \end{note}
 
@@ -1912,7 +1927,7 @@ And now finally we can end our \code{pagetemplate}.
 Let’s do it.
 \eject\par%
 \begin[first-content-frame=leftCol]{pagetemplate}
-\frame[id=gutter,width=3%]
+\frame[id=gutter,width=3%pw]
 \frame[id=leftCol,left=left(content),right=left(gutter),top=top(content),bottom=bottom(content),next=rightCol]
 \frame[id=rightCol,left=right(gutter),right=right(runningHead),top=top(content),bottom=bottom(content),width=width(leftCol)]
 \end{pagetemplate}
@@ -1956,23 +1971,23 @@ book:defineMaster(\{
   frames = \{
 
     content = \{
-      left = "8.3\%", right = "86\%",
-      top = "11.6\%", bottom = "top(footnotes)"
+      left = "8.3\%pw", right = "86\%pw",
+      top = "11.6\%ph", bottom = "top(footnotes)"
     \},
     
     folio = \{
       left = "left(content)", right = "right(content)",
-      top = "bottom(footnotes)+3\%",bottom = "bottom(footnotes)+5\%"
+      top = "bottom(footnotes)+3\%ph",bottom = "bottom(footnotes)+5\%ph"
     \},
 
     runningHead = \{
       left = "left(content)", right = "right(content)",
-      top = "top(content) - 8\%", bottom = "top(content)-3\%"
+      top = "top(content) - 8\%ph", bottom = "top(content)-3\%ph"
     \},
 
     footnotes = \{
       left ="left(content)", right = "right(content)",
-      height = "0", bottom="83.3\%"
+      height = "0", bottom="83.3\%ph"
     \}
   \}
 \})
@@ -2036,7 +2051,7 @@ bringhurst:defineMaster(\{
     content = \{
       left = "width(page)/13",
       top = "left(content) * 8 / 5",
-      right = "100\% - 2*top(content)",
+      right = "100\%pw - 2*top(content)",
       bottom = "top(footnotes)"
     \},
     folio = \{ ... as before ... \},
@@ -2063,7 +2078,7 @@ down a bit lower:
 \line
   runningHead = \{
     left = "left(content)", right = "right(content)", 
-    top = "top(content) - 4\%", bottom = "top(content)-2\%" 
+    top = "top(content) - 4\%ph", bottom = "top(content)-2\%ph"
   \},
 \line
 \end{verbatim}
@@ -2561,12 +2576,12 @@ local diglot = std.tree.clone(plain);
 SILE.require("packages/counters");
 SILE.scratch.counters.folio = \{ value = 1, display = "arabic" \};
 SILE.scratch.diglot = \{\}
-diglot:declareFrame("a",    \{left = "8.3\%", right = "48\%",
-            top = "11.6\%", bottom = "80\%" \});
-diglot:declareFrame("b",    \{left = "52\%",  right = "100\% - left(a)",
+diglot:declareFrame("a",    \{left = "8.3\%pw", right = "48\%pw",
+            top = "11.6\%ph", bottom = "80\%ph" \});
+diglot:declareFrame("b",    \{left = "52\%pw",  right = "100\% - left(a)",
             top = "top(a)", bottom = "bottom(a)" \});
 diglot:declareFrame("folio",\{left = "left(a)", right = "right(b)",
-            top = "bottom(a)+3\%",bottom = "bottom(a)+8\%" \});
+            top = "bottom(a)+3\%ph",bottom = "bottom(a)+8\%ph" \});
 \end{verbatim}
 
 Now we create two new typesetters, one for each column, and we tell each one

@@ -9,10 +9,10 @@ local mirrorMaster = function(class, existing, new)
   for name,frame in pairs(SILE.scratch.masters[existing].frames) do
     local newframe  = std.tree.clone(frame)
     if frame:isAbsoluteConstraint("right") then
-      newframe.constraints.left = "100%-("..frame.constraints.right..")"
+      newframe.constraints.left = "100%pw-("..frame.constraints.right..")"
     end
     if frame:isAbsoluteConstraint("left") then
-      newframe.constraints.right = "100%-("..frame.constraints.left..")"
+      newframe.constraints.right = "100%pw-("..frame.constraints.left..")"
     end
     SILE.scratch.masters[new].frames[name] = newframe
     if frame == SILE.scratch.masters[existing].firstContentFrame then

@@ -105,7 +105,7 @@ SILE.registerCommand("figure", function(options, content)
 end)
 
 SILE.registerCommand("imagedata", function(options, content)
-  local width = SILE.parseComplexFrameDimension(options.width or "100%","w") or 0
+  local width = SILE.parseComplexFrameDimension(options.width or "100%pw") or 0
   SILE.call("img", {
     src = options.fileref,
     width = width / 2

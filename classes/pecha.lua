@@ -1,9 +1,9 @@
 local plain = SILE.require("classes/plain");
 local pecha = plain { id = "pecha", base = plain };
 
-pecha:declareFrame("content", {left = "5%",  right = "95%",  top = "5%",  bottom = "90%" })
-pecha:declareFrame("folio",   {left = "right(content)", rotate = -90, width = "2.5%", top = "top(content)", height = "height(content)" })
-pecha:declareFrame("runningHead", { width = "2.5%", rotate = -90, right = "left(content)", top = "top(content)", height = "height(content)"})
+pecha:declareFrame("content", {left = "5%pw",  right = "95%pw",  top = "5%ph",  bottom = "90%ph" })
+pecha:declareFrame("folio",   {left = "right(content)", rotate = -90, width = "2.5%pw", top = "top(content)", height = "height(content)" })
+pecha:declareFrame("runningHead", { width = "2.5%pw", rotate = -90, right = "left(content)", top = "top(content)", height = "height(content)"})
 
 pecha.pageTemplate.firstContentFrame = pecha.pageTemplate.frames["content"];
 pecha:loadPackage("rotate")

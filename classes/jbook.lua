@@ -15,13 +15,13 @@ function jbook:init()
     frames = {
       runningHead = {left = "left(content) + 9pt", right = "right(content) - 9pt", height = "20pt", bottom = "top(content)-9pt" },
       content = self:declareHanmenFrame( "content", {
-        left = "8.3%", top = "12%",
+        left = "8.3%pw", top = "12%ph",
         gridsize = 10, linegap = 7, linelength = 40,
         linecount = 35,
         tate = self.options.layout() == "tate"
       }),
-      folio = {left = "left(content)", right = "right(content)", top = "bottom(footnotes)+3%",bottom = "bottom(footnotes)+5%" },
-      footnotes = { left="left(content)", right = "right(content)", height = "0", bottom="83.3%"}
+      folio = {left = "left(content)", right = "right(content)", top = "bottom(footnotes)+3%ph",bottom = "bottom(footnotes)+5%ph" },
+      footnotes = { left="left(content)", right = "right(content)", height = "0", bottom="83.3%ph"}
     }
   })
   book:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" });

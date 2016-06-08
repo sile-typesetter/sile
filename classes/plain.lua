@@ -5,8 +5,8 @@ plain.options.direction = function (g)
   if g then plain.pageTemplate.frames["content"].direction = g end
 end
 
-plain:declareFrame("content",     {left = "5%",  right = "95%",  top = "5%",  bottom = "90%" });
-plain:declareFrame("folio", {left = "5%",  right = "95%",  top = "92%", bottom = "97%" });
+plain:declareFrame("content",     {left = "5%pw",  right = "95%pw",  top = "5%ph",  bottom = "90%ph" });
+plain:declareFrame("folio", {left = "5%pw",  right = "95%pw",  top = "92%ph", bottom = "97%ph" });
 
 plain.pageTemplate.firstContentFrame = plain.pageTemplate.frames["content"];
 plain:loadPackage("folio");

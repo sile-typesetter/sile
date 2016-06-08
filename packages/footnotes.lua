@@ -75,7 +75,7 @@ return {
     insertions.exports:initInsertionClass("footnote", {
     insertInto = args.insertInto,
     stealFrom = args.stealFrom,
-    maxHeight = SILE.length.new({length = SILE.toPoints("75", "%","h") }),
+    maxHeight = SILE.length.new({length = SILE.toPoints("75", "%ph") }),
     topBox = SILE.nodefactory.newVglue({height = SILE.length.parse("2ex") }),
     interInsertionSkip = SILE.length.parse("1ex"),
   })

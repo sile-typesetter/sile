@@ -73,7 +73,7 @@ end
 local makecolumns = function (options)
   local cFrame = SILE.typesetter.frame
   local cols = options.columns or 2
-  local gutterWidth = options.gutter or "3%"
+  local gutterWidth = options.gutter or "3%pw"
   local right = cFrame:right()
   local origId = cFrame.id
   for i = 1,cols-1 do

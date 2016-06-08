@@ -21,13 +21,9 @@ local functionOfFrame = function (dim, ident)
 end
 local func = C(P("top") + P("left") + P("bottom") + P("right") + P("width") + P("height")) * P("(") * C(identifier) * P(")") / functionOfFrame
 
-local percentage = ( C(number.number) * whitespace * P("%") ) / function (n)
-	local dim = SILE.documentState._dimension == "w" and "width" or "height"
-	return cassowary.times(n / 100, functionOfFrame(dim, "page"))
-end
+local primary = dimensioned_string + func + number.number
 
-local primary = dimensioned_string + percentage + func + number.number
-
+	-- For testing
 	SILE.frameParserBits = {
 		number = number,
 		identifier = identifier,
@@ -35,7 +31,6 @@ local primary = dimensioned_string + percentage + func + number.number
 		units = units,
 		dimensioned_string = dimensioned_string,
 		func = func,
-		percentage = percentage,
 		primary = primary
 	}
 
