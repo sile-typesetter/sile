@@ -5,8 +5,13 @@ if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end
 
 function bible:singleColumnMaster()
   self:defineMaster({ id = "right", firstContentFrame = "content", frames = {
-    -- title = {left = "left(content)", right = "right(content)", top="11.6%ph", bottom="top(content)" },
     content = {left = "8.3%pw", right = "86%pw", top = "11.6%ph", bottom = "top(footnotes)" },
+    folio = {left = "left(content)", right = "right(content)", top = "bottom(footnotes)+3%ph", bottom = "bottom(footnotes)+5%ph" },
+    runningHead = {left = "left(content)", right = "right(content)", top = "top(content) - 8%ph", bottom = "top(content)-3%ph" },
+    footnotes = { left="left(content)", right = "right(content)", height = "0", bottom="83.3%ph"}
+  }})
+  self:defineMaster({ id = "left", firstContentFrame = "content", frames = {
+    content = {left = "14%pw", right = "91.7%pw", top = "11.6%ph", bottom = "top(footnotes)" },
     folio = {left = "left(content)", right = "right(content)", top = "bottom(footnotes)+3%ph", bottom = "bottom(footnotes)+5%ph" },
     runningHead = {left = "left(content)", right = "right(content)", top = "top(content) - 8%ph", bottom = "top(content)-3%ph" },
     footnotes = { left="left(content)", right = "right(content)", height = "0", bottom="83.3%ph"}
@@ -25,7 +30,16 @@ function bible:twoColumnMaster()
     runningHead = {left = "left(contentA)", right = "right(contentB)", top = "top(contentA)-8%ph", bottom = "top(contentA)-3%ph" },
     footnotesA = { left="left(contentA)", right = "right(contentA)", height = "0", bottom="83.3%ph"},
     footnotesB = { left="left(contentB)", right = "right(contentB)", height = "0", bottom="83.3%ph"},
-
+  }})
+  self:defineMaster({ id = "left", firstContentFrame = "contentA", frames = {
+    title = {left = "left(contentA)", right = "right(contentB)", top="11.6%ph", height="0", bottom="top(contentA)" },
+    contentA = {left = "14%pw", right = "left(gutter)", top = "bottom(title)", bottom = "top(footnotesA)", next = "contentB", balanced = true },
+    contentB = {left = "right(gutter)", width="width(contentA)", right = "91.7%pw", top = "bottom(title)", bottom = "top(footnotesB)", balanced = true },
+    gutter = { left = "right(contentA)", right = "left(contentB)", width = gutterWidth },
+    folio = {left = "left(contentA)", right = "right(contentB)", top = "bottom(footnotesB)+3%ph", bottom = "bottom(footnotesB)+5%ph" },
+    runningHead = {left = "left(contentA)", right = "right(contentB)", top = "top(contentA)-8%ph", bottom = "top(contentA)-3%ph" },
+    footnotesA = { left="left(contentA)", right = "right(contentA)", height = "0", bottom="83.3%ph"},
+    footnotesB = { left="left(contentB)", right = "right(contentB)", height = "0", bottom="83.3%ph"},
   }})
   -- Later we'll have an option for two fn frames
   self:loadPackage("footnotes", { insertInto = "footnotesB", stealFrom = {"contentB"} } )
@@ -49,14 +63,6 @@ function bible:init()
     self:singleColumnMaster()
   end
   self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" });
-  self:mirrorMaster("right", "left")
-  -- mirrorMaster is not clever enough to handle two-column layouts,
-  -- and it mirrors them!
-  if self.options.twocolumns() then
-    SILE.scratch.masters.left.firstContentFrame = SILE.scratch.masters.left.frames.contentB
-    SILE.scratch.masters.left.frames.contentB.next = "contentA"
-    SILE.scratch.masters.left.frames.contentA.next = nil
-  end
   self.pageTemplate = SILE.scratch.masters["right"]
   return plain.init(self)
 end
