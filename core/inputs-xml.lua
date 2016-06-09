@@ -6,7 +6,10 @@ SILE.inputs.XML = {
   process = function (fn)
     local lom = require("lomwithpos")
     local fh = io.open(fn)
-    local t = lom.parse(fh:read("*all"))
+    local t, err = lom.parse(fh:read("*all"))
+    if t == nil then
+      error(err)
+    end
     local root = SILE.documentState.documentClass == nil
     if root then
       if not(t.tag == "sile") then
