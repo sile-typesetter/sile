@@ -74,8 +74,9 @@ bible.newPage = function(self)
 end
 
 bible.finish = function (self)
+  local r = plain.finish(self)
   --bible:writeToc()
-  return plain.finish(self)
+  return r
 end
 
 bible.endPage = function(self)
