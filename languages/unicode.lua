@@ -5,6 +5,7 @@ SILE.nodeMakers.base = std.object {
   makeToken = function(self)
     if #self.contents>0 then
       coroutine.yield(SILE.shaper:formNnode(self.contents, self.token, self.options))
+      SU.debug("tokenizer", "Token: "..self.token)
       self.contents = {} ; self.token = "" ; self.lastnode = "nnode"
     end
   end,
