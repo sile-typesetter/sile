@@ -1,0 +1,20 @@
+\begin[papersize=a7,class=bible]{document}
+\script[src=packages/lorem]
+\begin{script}
+SILE.registerCommand("format-reference", function (o,c)
+  local ref
+  if c.b then
+	ref =  c.b .. " " .. c.c .. ", " .. c.v
+  else
+  	ref =  c.c .. ", " .. c.v
+  end
+  SILE.typesetter:typeset(ref)
+end)
+SILE.registerCommand("bible:verse-number", function(o,c) end)
+\end{script}
+\save-book-title{Gn}
+\save-chapter-number{1}
+\verse-number{1}
+\verse-number{2}
+foo
+\end{document}
