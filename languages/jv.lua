@@ -35,20 +35,34 @@ jv.syllable = (jv.consonant * jv.V)^-1 * jv.consonant *
 
 SILE.nodeMakers.jv = SILE.nodeMakers.unicode {
   iterator = function (self, items)
-    local chunk = ""
     return coroutine.wrap(function()
       self:init()
+      local chunk = ""
       for i = 1,#items do item = items[i]
         local char = items[i].text
-        local end_syll = (jv.syllable):match(char)
-        if end_syll then
-          self:addToken(char,item)
+        chunk = chunk .. char
+      end
+      i = 1
+      local total = 0
+      while total < #chunk do
+        local syll = (lpeg.P(total) * lpeg.C(jv.syllable)):match(chunk)
+        if syll then
+          while i < #items do
+            if items[i].index >= total + #syll then break end
+            self:addToken(items[i].text,items[i])
+            i = i + 1
+          end
+          total = total + #syll
           self:makeToken()
           self:makePenalty(0)
         else
-          self:addToken(char,item)
+          self:dealWith(items[i])
+          i = i + 1
+          if i > #items then break end
+          total = items[i].index
         end
       end
+
       self:makeToken()
     end)
   end
