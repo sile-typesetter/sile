@@ -1,0 +1,25 @@
+<tests/bug-337.sil>
+Set paper size 	200	400
+Begin page
+Mx 	80.0000
+My 	76.0791
+Set font 	Gentium;10;400;;normal;;LTR
+T	20 16 16	(400)
+Mx 	96.7331
+T	88	(x)
+Mx 	104.4184
+T	18 16 16	(200)
+[1] Mx 	147.6538
+My 	424.0791
+T	17	(1)
+Draw line	40	50	-10	0.5
+Draw line	50	40	0.5	-10
+Draw line	260	50	10	0.5
+Draw line	250	40	0.5	-10
+Draw line	40	450	-10	0.5
+Draw line	50	460	0.5	10
+Draw line	260	450	10	0.5
+Draw line	250	460	0.5	10
+End page
+Finish
+

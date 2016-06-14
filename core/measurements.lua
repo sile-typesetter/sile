@@ -43,16 +43,16 @@ SILE.registerUnit("%", { relative = true, definition = function (v)
   return v / 100 * SILE.documentState.paperSize[1]
 end})
 SILE.registerUnit("%pw", { relative = true, definition = function (v)
-  return v / 100 * SILE.documentState.paperSize[1]
+  return v / 100 * SILE.documentState.orgPaperSize[1]
 end})
 SILE.registerUnit("%ph", { relative = true, definition = function (v)
-  return v / 100 * SILE.documentState.paperSize[2]
+  return v / 100 * SILE.documentState.orgPaperSize[2]
 end})
 SILE.registerUnit("%pmin", { relative = true, definition = function (v)
-  return v / 100 * math.min(SILE.documentState.paperSize[1], SILE.documentState.paperSize[2])
+  return v / 100 * math.min(SILE.documentState.orgPaperSize[1], SILE.documentState.orgPaperSize[2])
 end})
 SILE.registerUnit("%pmax", { relative = true, definition = function (v)
-  return v / 100 * math.max(SILE.documentState.paperSize[1], SILE.documentState.paperSize[2])
+  return v / 100 * math.max(SILE.documentState.orgPaperSize[1], SILE.documentState.orgPaperSize[2])
 end})
 SILE.registerUnit("%fw", { relative = true, definition = function (v)
   return v / 100 * SILE.typesetter.frame:width()
