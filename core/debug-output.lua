@@ -50,7 +50,7 @@ SILE.outputters.debug = {
     if string.format("%.4f",y) ~= string.format("%.4f",cy) then print("My ",string.format("%.4f",y)); cy = y end
   end,
   rule = function (x,y,w,d)
-    print("Draw line", x, y, w, d)
+    print("Draw line", string.format("%.4f %.4f %.4f %.4f",x, y, w, d))
   end,
   debugFrame = function (self,f)
   end,
