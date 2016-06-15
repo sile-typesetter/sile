@@ -223,6 +223,7 @@ SILE.baseClass = std.object {
   options= {
     papersize= function(size)
       SILE.documentState.paperSize = SILE.paperSizeParser(size)
+      SILE.documentState.orgPaperSize = SILE.documentState.paperSize
       SILE.newFrame({id = "page", left = 0, top = 0, right = SILE.documentState.paperSize[1], bottom = SILE.documentState.paperSize[2] })
     end
   }

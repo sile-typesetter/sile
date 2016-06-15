@@ -11,8 +11,7 @@ local outputMarks = function()
   SILE.outputter.rule(page:right() + 10, page:bottom(), 10, 0.5)
   SILE.outputter.rule(page:right(), page:bottom() + 10, 0.5, 10)
 
-  local info = SILE.masterFilename .. " - " .. os.date("%x %X") .. " -  " .. outcounter
-  SILE.call("hbox", {}, {info})
+  SILE.call("crop:header")
   local hbox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
   SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
 
@@ -20,7 +19,9 @@ local outputMarks = function()
   SILE.typesetter.frame.state.cursorY = page:top() - 30
   outcounter = outcounter + 1
 
-  for i=1,#(hbox.value) do hbox.value[i]:outputYourself(SILE.typesetter, {ratio=1}) end
+  if hbox then
+    for i=1,#(hbox.value) do hbox.value[i]:outputYourself(SILE.typesetter, {ratio=1}) end
+  end
 end
 
 local function reconstrainFrameset(fs)
@@ -42,6 +43,11 @@ local function reconstrainFrameset(fs)
     end
   end
 end
+
+SILE.registerCommand("crop:header", function (o, c)
+  local info = SILE.masterFilename .. " - " .. os.date("%x %X") .. " -  " .. outcounter
+  SILE.call("hbox", {}, {info})
+end)
 
 SILE.registerCommand("crop:setup", function (o,c)
   local papersize = SU.required(o, "papersize", "setting up crop marks")
