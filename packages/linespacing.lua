@@ -77,8 +77,13 @@ SILE.typesetter.leadingFor = function (self, v, previous)
 
   if method == "fixed" then
     local btob = SILE.settings.get("linespacing.fixed.baselinedistance"):absolute()
-    local toAdd = SILE.length.new({ length = btob.length - (v.height + previous.depth) })
-    return SILE.nodefactory.newVglue({ height = toAdd })
+    local toAdd = SILE.length.new({ length = btob.length - (v.height + (previous and previous.depth or 0)) })
+    local vg = SILE.nodefactory.newVglue({ height = toAdd })
+	if previous == nil then
+      vg.discardable = false
+      vg.isVglue = function() return false end
+    end
+    return vg
   end
 
   -- For these methods, we need to read the font metrics

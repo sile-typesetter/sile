@@ -242,9 +242,7 @@ SILE.defaultTypesetter = std.object {
       elseif (#lines > 1 and index == (#lines-1)) then
         pageBreakPenalty = SILE.settings.get("typesetter.orphanpenalty")
       end
-      if self.state.previousVbox then
-        vboxes[#vboxes+1] = self:leadingFor(v, self.state.previousVbox)
-      end
+      vboxes[#vboxes+1] = self:leadingFor(v, self.state.previousVbox)
       vboxes[#vboxes+1] = v
       for i=1,#migrating do vboxes[#vboxes+1] = migrating[i] end
       self.state.previousVbox = v
