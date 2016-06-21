@@ -10,9 +10,9 @@ end
 local leadingFor = function(this, vbox, previous)
   if not this.frame.state.totals.gridCursor then this.frame.state.totals.gridCursor = 0 end
   if type(vbox.height) == "table" then
-    this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + vbox.height.length + previous.depth
+    this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + vbox.height.length + (previous and previous.depth or 0)
   else
-    this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + vbox.height + previous.depth
+    this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + vbox.height + (previous and previous.depth or 0)
   end
   return makeUp()
 end
