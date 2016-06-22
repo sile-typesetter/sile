@@ -1,5 +1,8 @@
 \begin{document}
-\script[src=packages/linespacing]
+\script[src=packages/linespacing]%
+\script[src=packages/frametricks]\showframe%
+\set[parameter=linespacing.minimumfirstlineposition,value=50pt]
+First baseline should be positioned 50 points from the top of the frame.
 
 % TeX algorithm line spacing
 \font[size=30pt]{L}orem ipsum.\hfill\break{}Some tall, high ascenders.
@@ -21,7 +24,7 @@ Lorem ipsum.\hfill\break{}Some tall, high ascenders.
 
 % Absolute baseline-to-baseline spacing
 \set[parameter=linespacing.fixed.baselinedistance,value=12pt]
-\font[size=20pt]Lorem ipsum.\hfill\break{}Some tall, high ascenders.
+\font[size=20pt]Lorem ipsum.\hfill\break{}Some tall, high ascenders. (should clash)
 
 \skip[height=20pt]
 
