@@ -149,7 +149,7 @@ int face_from_options(lua_State* L) {
   }
   lua_pop(L,1);
 
-  lua_pushstring(L, "font");
+  lua_pushstring(L, "family");
   lua_gettable(L, -2);
   if (lua_isstring(L, -1)) { family = lua_tostring(L, -1); }
   lua_pop(L,1);

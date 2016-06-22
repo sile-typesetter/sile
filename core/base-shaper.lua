@@ -3,7 +3,7 @@ if not SILE.shapers then SILE.shapers = { } end
 local smallTokenSize = 20 -- Small words will be cached
 local shapeCache = {}
 local _key = function(options)
-  return table.concat({options.font;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename},";")
+  return table.concat({options.family;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename},";")
 end
 
 -- Function for testing shaping in the repl
@@ -23,7 +23,7 @@ SILE.shapers.base = std.object {
     if ss then
       SILE.settings.temporarily(function()
         SILE.settings.set("font.size", options.size)
-        SILE.settings.set("font.family", options.font)
+        SILE.settings.set("font.family", options.family)
         ss = ss:absolute()
       end)
       return ss

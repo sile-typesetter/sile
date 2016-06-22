@@ -15,7 +15,7 @@ SILE.require("core/base-shaper")
 local smallTokenSize = 20 -- Small words will be cached
 local shapeCache = {}
 local _key = function(options,text)
-  return table.concat({text,options.font;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename},";")
+  return table.concat({text,options.family;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename},";")
 end
 
 local substwarnings = {}
@@ -28,8 +28,8 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
     if not face then
       SU.error("Could not find requested font "..options.." or any suitable substitutes")
     end
-    if not(options.filename) and face.family ~= options.font and not substwarnings[options.font] then
-      substwarnings[options.font] = true
+    if not(options.filename) and face.family ~= options.family and not substwarnings[options.family] then
+      substwarnings[options.family] = true
       SU.warn("Font '"..options.font.."' not available, falling back to '"..face.family.."'")
     end
     usedfonts[face] = true
@@ -51,8 +51,8 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
   end,
   getFace = function(opts)
     local face = fontconfig._face(opts)
-    SU.debug("fonts", "Resolved font family "..opts.font.." -> "..(face and face.filename))
-    if not face.filename then SU.error("Couldn't find face "..opts.font) end
+    SU.debug("fonts", "Resolved font family "..opts.family.." -> "..(face and face.filename))
+    if not face.filename then SU.error("Couldn't find face "..opts.family) end
     local fh,e = io.open(face.filename)
     if e then SU.error("Can't open "..e) end
     face.data = fh:read("*all")

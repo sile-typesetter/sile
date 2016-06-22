@@ -61,19 +61,19 @@ SILE.settings.declare({name = "document.language", type = "string", default = "e
 SILE.fontCache = {}
 
 local _key = function(options)
-  return table.concat({options.font;("%g"):format(options.size);("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename},";")
+  return table.concat({options.family;("%g"):format(options.size);("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename},";")
 end
 
 
 SILE.font = {loadDefaults = function(options)
-  if not options.font then options.font = SILE.settings.get("font.family") end
+  if not options.family then options.family = SILE.settings.get("font.family") end
   if not options.size then options.size = SILE.settings.get("font.size") end
   if not options.weight then options.weight = SILE.settings.get("font.weight") end
   if not options.style then options.style = SILE.settings.get("font.style") end
   if not options.variant then options.variant = SILE.settings.get("font.variant") end
   if SILE.settings.get("font.filename") ~= "" then
     options.filename = SILE.settings.get("font.filename")
-    options.font = ""
+    options.family = ""
   end
   if not options.language then options.language = SILE.settings.get("document.language") end
   if not options.script then options.script = SILE.settings.get("font.script") end
