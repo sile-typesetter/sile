@@ -264,6 +264,14 @@ local _vglue = _box {
   unbox = function (self) return { self } end
 }
 
+local _vkern = _vglue {
+  _type = "VGlue",
+  type = "vglue",
+  discardable = false,
+  __tostring = function (this) return "VK<" .. tostring(this.height) .. ">"; end,
+}
+
+
 -- Penalties
 local _penalty = _box {
   type = "penalty",
@@ -376,6 +384,11 @@ function SILE.nodefactory.newVglue(spec)
   if type(spec) == "table" then return std.tree.clone(_vglue(spec)) end
   if type(spec) == "string" then return _vglue({height = SILE.length.parse(spec)}) end
   SU.error("Unparsable glue spec "..spec)
+end
+function SILE.nodefactory.newVKern(spec)
+  if type(spec) == "table" then return std.tree.clone(_vkern(spec)) end
+  if type(spec) == "string" then return _vkern({height = SILE.length.parse(spec)}) end
+  SU.error("Unparsable kern spec "..spec)
 end
 function SILE.nodefactory.newPenalty(spec)  return std.tree.clone(_penalty(spec)) end
 function SILE.nodefactory.newDiscretionary(spec)  return _disc(spec) end
