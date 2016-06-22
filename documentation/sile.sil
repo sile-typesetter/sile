@@ -7,6 +7,7 @@
 \script[src=packages/color]
 \script[src=packages/image]
 \script[src=packages/frametricks]
+\script[src=packages/linespacing]
 \script[src=packages/lorem]
 \script[src=packages/bidi]\bidi-off
 \script[src=packages/pdf]
@@ -1123,6 +1124,9 @@ consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
 cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
 proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
+\section{linespacing}
+\package-documentation[src=packages/linespacing]
+
 \section{verbatim}
 \script{SILE.process(SILE.inputs.TeXlike.docToTree(require("packages/verbatim")))}
 
@@ -1576,6 +1580,9 @@ baselines exactly \code{document.baselineskip} apart.
 
 \noindent• If this first rule would mean that the bottom and the top of the lines are less
 than \code{document.lineskip} apart, then they are forced to be \code{document.lineskip} apart.
+
+\note{This linebreaking method is fiddly, and book designers may prefer to
+work with the tools provided by the \code{linespacing} package.}
 
 The final spacing setting is \code{document.spaceskip}. Normally the size of
 the space between \em{words} is determined by the width of the space character
