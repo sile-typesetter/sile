@@ -1130,6 +1130,9 @@ proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 \section{verbatim}
 \script{SILE.process(SILE.inputs.TeXlike.docToTree(require("packages/verbatim")))}
 
+\section{font-fallback}
+\package-documentation[src=packages/font-fallback]
+
 \section{Packages usually used by other packages}
 
 In addition, there are certain packages that you \em{probably} don’t need

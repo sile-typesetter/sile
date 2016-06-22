@@ -3,59 +3,95 @@ local quotedString = (lpeg.P("\"") * lpeg.C((1-lpeg.S("\""))^1) * lpeg.P("\"")) 
 local value = (quotedString + lpeg.C((1-lpeg.S(",;]"))^1))
 local list = (value * sep^-1)^0
 
+local fallbackQueue = std.object {
+  init = function(self, text, fallbacks)
+    self.q = {}
+    self.fallbacks = fallbacks
+    self.text = text
+    self.q[1] = { start =1, stop = #text }
+    self.q[#(self.q)+1] = { popFallbacks = true }
+  end,
+  pop = function (self)
+    table.remove(self.fallbacks, 1)
+    table.remove(self.q, 1)
+    self.q[#(self.q)+1] = { popFallbacks = true }
+  end,
+  shift       = function(self) return table.remove(self.q, 1) end,
+  continuing  = function(self) return #self.q > 0 and #self.fallbacks > 0 end,
+  currentFont = function(self) return self.fallbacks[1] end,
+  currentJob  = function(self) return self.q[1] end,
+  lastJob     = function(self) return self.q[#(self.q)] end,
+  currentText = function(self) return self.text:sub(self.q[1].start, self.q[1].stop) end,
+  addJob = function (self,start, stop)
+    self.q[#(self.q)+1] = { start = start, stop = stop }
+  end,
+}
+
+local fontlist = {}
+
+SILE.registerCommand("font:clear-fallbacks", function()
+  fontlist = {}
+end)
+
+SILE.registerCommand("font:add-fallback",function(o,c)
+  fontlist[#fontlist+1] = o
+end)
+
 SILE.shapers.harfbuzzWithFallback = SILE.shapers.harfbuzz {
   shapeToken = function (self, text, options)
     local items = {}
-    local shapeQueue = { [1] = { start =1, stop = #text }, [2] = { popFallbacks = true } }
-    options = std.tree.clone(options)
-    if not options.font then return {} end
-    local toTry = { list:match(options.font) }
-    while #shapeQueue > 0 and #toTry > 0 do
-      SU.debug("fonts", "Queue: ".. shapeQueue)
-      options.font = toTry[1]
-      local qItem = table.remove(shapeQueue, 1)
-      SU.debug("fonts", qItem)
-      if qItem.popFallbacks then
-        table.remove(toTry, 1)
-        shapeQueue[#shapeQueue+1] = { popFallbacks = true }
+    optionSet = { options }
+    for i = 1,#fontlist do
+      local moreOptions = std.tree.clone(options)
+      for k,v in pairs(fontlist[i]) do moreOptions[k] = v end
+      optionSet[#optionSet+1] = moreOptions
+    end
+
+    local shapeQueue = fallbackQueue {}
+    shapeQueue:init(text, optionSet)
+    while shapeQueue:continuing() do
+      SU.debug("fonts", "Queue: ".. shapeQueue.q)
+      options = shapeQueue:currentFont()
+      if not (options.family or options.filename) then return end
+      SU.debug("fonts", shapeQueue:currentJob())
+      if shapeQueue:currentJob().popFallbacks then shapeQueue:pop()
       else
-        if not options.font then SU.error("No fallbacks for text!") end
-        local chunk = text:sub(qItem.start, qItem.stop)
-        SU.debug("fonts", "Trying font '"..options.font.."' for '"..chunk.."'")
+        local chunk = shapeQueue:currentText()
+        SU.debug("fonts", "Trying font '"..options.family.."' for '"..chunk.."'")
         local newItems = SILE.shapers.harfbuzz:shapeToken(chunk, options)
         local startOfNotdefRun = -1
         for i =1,#newItems do
           if newItems[i].gid > 0 then
             SU.debug("fonts", "Found glyph '"..newItems[i].text.."'")
+            local start = shapeQueue:currentJob().start
             if startOfNotdefRun > -1 then
-              shapeQueue[#shapeQueue+1] = {
-                start = qItem.start + newItems[startOfNotdefRun].index,
-                stop = qItem.start + newItems[i].index - 1
-              }
-              SU.debug("fonts", "adding run "..shapeQueue[#shapeQueue])
+              shapeQueue:addJob(start + newItems[startOfNotdefRun].index,
+                                start + newItems[i].index - 1)
+              SU.debug("fonts", "adding run "..shapeQueue:lastJob())
               startOfNotdefRun = -1
             end
-            newItems[i].font = options.font
+            newItems[i].fontOptions = options
             -- There might be multiple glyphs for the same index
-            if not items[qItem.start + newItems[i].index] then
-              items[qItem.start + newItems[i].index] = newItems[i]
+            if not items[start + newItems[i].index] then
+              items[start + newItems[i].index] = newItems[i]
             else
-              local lastInPlace = items[qItem.start + newItems[i].index]
+              local lastInPlace = items[start + newItems[i].index]
               while lastInPlace.next do lastInPlace = lastInPlace.next end
               lastInPlace.next = newItems[i]
             end
           else
             if startOfNotdefRun == -1 then startOfNotdefRun = i end
-            SU.warn("Glyph "..newItems[i].text.." not found in "..options.font)
+            SU.warn("Glyph "..newItems[i].text.." not found in "..options.family)
           end
         end
         if startOfNotdefRun > -1 then
-          shapeQueue[#shapeQueue+1] = {
-            start = qItem.start + newItems[startOfNotdefRun].index,
-            stop = qItem.stop
-          }
+          shapeQueue:addJob(
+            shapeQueue:currentJob().start + newItems[startOfNotdefRun].index,
+            shapeQueue:currentJob().stop
+          )
           SU.debug("fonts", "Some unfound at end: ", shapeQueue[#shapeQueue])
         end
+        shapeQueue:shift()
       end
     end
     local nItems = {} -- Remove holes
@@ -78,12 +114,12 @@ SILE.shapers.harfbuzzWithFallback = SILE.shapers.harfbuzz {
     local lang = options.language
     SILE.languageSupport.loadLanguage(lang)
     local nodeMaker = SILE.nodeMakers[lang] or SILE.nodeMakers.unicode
-    local run = { [1] = {slice = {}, font = items[1].font, chunk = "" } }
+    local run = { [1] = {slice = {}, fontOptions = items[1].fontOptions, chunk = "" } }
     for i = 1,#items do
-      if items[i].font ~= run[#run].font then
-        run[#run+1] = { slice = {}, chunk = "", font = items[i].font }
+      if items[i].fontOptions ~= run[#run].fontOptions then
+        run[#run+1] = { slice = {}, chunk = "", fontOptions = items[i].fontOptions }
         if i <#items then
-          run[#run].font = items[i].font
+          run[#run].fontOptions = items[i].fontOptions
         end
       end
       run[#run].chunk = run[#run].chunk .. items[i].text
@@ -91,9 +127,8 @@ SILE.shapers.harfbuzzWithFallback = SILE.shapers.harfbuzz {
     end
     local nodes = {}
     for i=1,#run do
-      options = std.tree.clone(options)
-      options.font = run[i].font
-      SU.debug("fonts", "Shaping ".. run[i].chunk.. " in ".. options.font)
+      options = run[i].fontOptions
+      SU.debug("fonts", "Shaping ".. run[i].chunk.. " in ".. options.family)
       for node in (nodeMaker { options=options }):iterator(run[i].slice, run[i].chunk) do
         nodes[#nodes+1] = node
       end
@@ -104,3 +139,57 @@ SILE.shapers.harfbuzzWithFallback = SILE.shapers.harfbuzz {
 }
 
 SILE.shaper = SILE.shapers.harfbuzzWithFallback
+
+return { documentation = [[\begin{document}
+
+What happens when SILE is asked to typeset a character which is not in the
+current font? For instance, we are currently using the “Gentium” font, which
+covers a wide range of European scripts; however, it doesn’t contain any
+Japanese character. So what if I ask SILE to typeset \code{abc
+\font[family=Noto Sans CJK JP]{あ}}?
+
+Many applications will find another font on the system containing the
+appropriate character and use that font instead. But which font should
+be chosen? SILE is designed for typesetting situations where the document
+or class author wants complete control over the typographic appearance
+of the output, so it’s not appropriate for it to make a guess - besides,
+you asked for Gentium. So where the glyph is not defined, SILE will give
+you the current font’s “glyph not defined” symbol (a glyph called \code{.notdef})
+instead.
+
+But there are times when this is just too strict. If you’re typesetting
+a document in English and Japanese, you should be able to choose your
+English font and choose your Japanese font, and if the glyph isn’t available
+in one, SILE should try the other. The \code{font-fallback} package gives you
+a way to specify a list of font specifications, and it will try each one in
+turn if glyphs cannot be found.
+
+It provides two commands, \command{\\font:add-fallback} and
+\command{\\font:clear-fallbacks}. The parameters to \command{\\font:add-fallback}
+are the same as the parameters to \command{\\font}. So this code:
+
+\begin{verbatim}
+\line
+\\font:add-fallback[family=Symbola]
+\\font:add-fallback[family=Noto Sans CJK JP]
+\line
+\end{verbatim}
+
+will add two fonts to try if characters are not found in the current font.
+Now we can say:
+
+\font:add-fallback[family=Symbola]
+\font:add-fallback[family=Noto Sans CJK JP]
+\begin{verbatim}
+あば x 😼 Hello world. あ
+\end{verbatim}
+
+and SILE will produce:
+
+\examplefont{あば x 😼 Hello world. あ}
+
+\command{\\font:clear-fallbacks} removes all font fallbacks from the list
+of fonts to try.
+
+\font:clear-fallbacks
+\end{document} ]]}
