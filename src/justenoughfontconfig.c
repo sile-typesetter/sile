@@ -5,6 +5,8 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
+#include "silewin32.h"
+
 int face_from_options(lua_State* L) {
   FcChar8 * font_path, * fullname, * familyname;
   FcPattern* p;
