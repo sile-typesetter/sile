@@ -65,6 +65,13 @@ end
 
 SILE.typesetter.leadingFor = function (self, v, previous)
   local method = SILE.settings.get("linespacing.method")
+
+  local firstline = SILE.settings.get("linespacing.minimumfirstlineposition"):absolute()
+  if not previous and firstline.length > 0 then
+    toAdd = SILE.length.new({ length = firstline.length -v.height })
+    return SILE.nodefactory.newVKern({ height = toAdd })
+  end
+
   if method == "tex" then
     return SILE.defaultTypesetter:leadingFor(v,previous)
   end
@@ -99,9 +106,11 @@ SILE.typesetter.leadingFor = function (self, v, previous)
 
   if method == "css" then
     local lh = prevmetrics.lineheight
-    local leading = (lh - (prevmetrics.ascender + prevmetrics.descender)).length
-    previous.height = previous.height + leading / 2
-    previous.depth = previous.depth + leading / 2
+    local leading = (lh - (prevmetrics.ascender + prevmetrics.descender))
+    if previous then
+      previous.height = previous.height + leading / 2
+      previous.depth = previous.depth + leading / 2
+    end
     return SILE.nodefactory.newVglue({ height = SILE.length.new({ length = 0  }) })
 
   end
