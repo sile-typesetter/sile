@@ -14,7 +14,5 @@
 \font[size=8pt]{THREE \lorem[words=50]}\par
 
 \font[size=8pt]{THREE \lorem[words=50]}\par
-\grid:debug
-\showframe
 
 \end{document}
