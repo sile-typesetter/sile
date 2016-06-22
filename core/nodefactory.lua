@@ -265,8 +265,8 @@ local _vglue = _box {
 }
 
 local _vkern = _vglue {
-  _type = "VGlue",
-  type = "vglue",
+  _type = "VKern",
+  type = "vkern",
   discardable = false,
   __tostring = function (this) return "VK<" .. tostring(this.height) .. ">"; end,
 }
