@@ -51,10 +51,10 @@ int get_typographic_extents (lua_State *L) {
   hb_font_t* hbFont = hb_font_create (hbFace);
   hb_font_extents_t metrics = {0,0,0};
   upem = hb_face_get_upem(hbFace);
-  hb_ft_font_set_funcs(hbFont);
+  hb_ot_font_set_funcs(hbFont);
   hb_font_get_h_extents(hbFont, &metrics);
   ascender = metrics.ascender / (double)upem;
-  descender = metrics.descender / (double)upem;
+  descender = -metrics.descender / (double)upem;
   hb_font_destroy(hbFont);
 #endif
 
