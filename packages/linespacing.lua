@@ -67,9 +67,13 @@ SILE.typesetter.leadingFor = function (self, v, previous)
   local method = SILE.settings.get("linespacing.method")
 
   local firstline = SILE.settings.get("linespacing.minimumfirstlineposition"):absolute()
-  if not previous and firstline.length > 0 then
-    toAdd = SILE.length.new({ length = firstline.length -v.height })
-    return SILE.nodefactory.newVKern({ height = toAdd })
+  if not previous then
+    if firstline.length > 0 then
+      toAdd = SILE.length.new({ length = firstline.length -v.height })
+      return SILE.nodefactory.newVKern({ height = toAdd })
+    else
+      return nil
+    end
   end
 
   if method == "tex" then
