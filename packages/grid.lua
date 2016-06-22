@@ -36,7 +36,10 @@ local debugGrid = function()
   end
 end
 
-SILE.registerCommand("grid:debug", debugGrid)
+SILE.registerCommand("grid:debug", function(o,c)
+  debugGrid()
+  SILE.typesetter:registerNewFrameHook(debugGrid)
+end)
 
 SILE.registerCommand("grid", function(options, content)
   SU.required(options, "spacing", "grid package")
