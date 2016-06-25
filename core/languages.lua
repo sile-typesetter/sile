@@ -24,7 +24,7 @@ SILE.languageSupport = {
 }
 
 SILE.registerCommand("language", function (o,c)
-  if not c then
+  if not c[1] then
     local lang = SU.required(o, "main", "language setting")
     SILE.languageSupport.loadLanguage(lang)
     SILE.settings.set("document.language", lang)
