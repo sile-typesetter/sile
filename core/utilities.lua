@@ -7,6 +7,14 @@ function utilities.required(t, name, context)
   return t[name]
 end
 
+if not table.maxn then
+  table.maxn = function(t)
+    local max = 0
+    for i,_ in pairs(t) do if i > max then max = i end end
+    return max
+  end
+end
+
 function utilities.error(message,bug)
   if(SILE.currentCommand and type(SILE.currentCommand) == "table") then
     io.stderr:write("\n! "..message.. " at "..SILE.currentlyProcessingFile.." l."..(SILE.currentCommand.line)..", col."..(SILE.currentCommand.col))
