@@ -43,7 +43,7 @@ function bible:twoColumnMaster()
   }})
   -- Later we'll have an option for two fn frames
   self:loadPackage("footnotes", { insertInto = "footnotesB", stealFrom = {"contentB"} } )
-  self:loadPackage("balanced-frames")
+  -- self:loadPackage("balanced-frames")
 end
 
 local _twocolumns
