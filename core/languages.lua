@@ -24,9 +24,18 @@ SILE.languageSupport = {
 }
 
 SILE.registerCommand("language", function (o,c)
-  local lang = SU.required(o, "main", "language setting")
-  SILE.languageSupport.loadLanguage(lang)
-  SILE.settings.set("document.language", lang)
+  if not c then
+    local lang = SU.required(o, "main", "language setting")
+    SILE.languageSupport.loadLanguage(lang)
+    SILE.settings.set("document.language", lang)
+  else
+    local lang = SU.required(o, "lang", "language setting")
+    SILE.languageSupport.loadLanguage(lang)
+    SILE.settings.temporarily(function ()
+      SILE.settings.set("document.language", lang)
+      SILE.process(c)
+    end)
+  end
 end)
 
 require("languages/unicode")
