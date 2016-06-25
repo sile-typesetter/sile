@@ -1,13 +1,14 @@
 \begin[papersize=152mm x 229mm,class=usx,twocolumns=true]{document}%
 \script[src=packages/grid]%
-%\grid[spacing=14pt]%
+\grid[spacing=14pt]%
 \set[parameter=linebreak.tolerance,value=5000]%
+\set[parameter=linebreak.emergencyStretch,value=0.5em]%
 \set-counter[id=footnote,display=alpha]%
 \font[language=und]% Don't hyphenate
 \script[src=packages/xmltricks]%
 \script[src=packages/frametricks]%
 \script[src=packages/raiselower]%
-\define[command=bible:chapter-head]{\bigskip\font[size=24pt]{\process}}%
+\define[command=bible:chapter-head]{\font[size=24pt]{\process}}%
 \define[command=bible:verse-number]{\raise[height=3pt]{\font[size=9pt]{\process}}}
 % The following informed by the paratext stylesheet at
 % http://paratext.org/system/files/usfm.sty
