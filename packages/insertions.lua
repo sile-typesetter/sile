@@ -376,9 +376,15 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   return target
 end
 
-SILE.typesetter:registerPageEndHook(function (self,nl)
+SILE.typesetter:registerFrameBreakHook(function (self,nl)
   for class, list in pairs(insertionsThisPage) do
     SILE.insertions.commitShrinkage(class)
+  end
+  return nl
+end)
+
+SILE.typesetter:registerPageEndHook(function (self,nl)
+  for class, list in pairs(insertionsThisPage) do
     SILE.insertions.increaseInsertionFrame(class, list.height + list.depth)
   end
   for k,v in pairs(insertionsThisPage) do
