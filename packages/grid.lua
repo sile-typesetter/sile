@@ -39,6 +39,8 @@ local debugGrid = function()
   end
 end
 
+local oldPageBuilder = SILE.pagebuilder
+
 SILE.registerCommand("grid:debug", function(o,c)
   debugGrid()
   SILE.typesetter:registerNewFrameHook(debugGrid)
@@ -48,6 +50,11 @@ SILE.registerCommand("grid", function(options, content)
   SU.required(options, "spacing", "grid package")
   gridSpacing = SILE.parseComplexFrameDimension(options.spacing,"h");
   -- SILE.typesetter:leaveHmode()
+
+  SILE.pagebuilder = std.tree.clone(SILE.pagebuilder)
+  SILE.pagebuilder.badness = function (t,s)
+    return t*t*t
+  end
 
   SILE.typesetter.leadingFor = leadingFor
   SILE.typesetter.pushVglue = pushVglue
@@ -69,5 +76,6 @@ SILE.registerCommand("no-grid", function (options, content)
   SILE.typesetter.leadingFor = SILE.defaultTypesetter.leadingFor
   SILE.typesetter.pushVglue = SILE.defaultTypesetter.pushVglue
   SILE.typesetter.setVerticalGlue = SILE.defaultTypesetter.setVerticalGlue
+  SILE.pagebuilder = oldPageBuilder
   -- SILE.typesetter.state = t.state
 end, "Stops grid typesetting.")
