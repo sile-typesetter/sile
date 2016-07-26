@@ -1,8 +1,8 @@
-\begin[papersize=200pt x 300pt,class=book]{document}
+\begin[papersize=a6,class=book]{document}
 \script[src=bug-337]
 \script[src=packages/cropmarks]
 \define[command=crop:header]{tests/bug-337.sil}
-\crop:setup[papersize=300pt x 500pt]
+\crop:setup[papersize=a5]
 
 \set[parameter=document.parindent,value=0]
 \set[parameter=current.parindent,value=0]
