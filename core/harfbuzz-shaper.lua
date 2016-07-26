@@ -30,7 +30,7 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
     end
     if not(options.filename) and face.family ~= options.family and not substwarnings[options.family] then
       substwarnings[options.family] = true
-      SU.warn("Font '"..options.font.."' not available, falling back to '"..face.family.."'")
+      SU.warn("Font '"..options.family.."' not available, falling back to '"..face.family.."'")
     end
     usedfonts[face] = true
     local items = { hb._shape(text,
