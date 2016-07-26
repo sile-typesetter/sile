@@ -74,7 +74,6 @@ SILE.registerCommand("crop:setup", function (o,c)
   else
     reconstrainFrameset(SILE.documentState.documentClass.pageTemplate.frames)
   end
-  reconstrainFrameset(SILE.frames)
   if SILE.typesetter.frame then SILE.typesetter.frame:init() end
 
   local oldEndPage = SILE.documentState.documentClass.endPage
