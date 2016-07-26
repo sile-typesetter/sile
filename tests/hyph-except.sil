@@ -1,7 +1,10 @@
 \begin[papersize=a5]{document}
 \language[main=tr]
 \hyphenator:add-exceptions{rab’-bin rab'-bin}
+
 \script{SILE.typesetter:typeset(showHyphenationPoints("rab'bin", "tr"))}
+
+\script{SILE.typesetter:typeset(showHyphenationPoints("rab’bin", "tr"))}
 
 \script{SILE.typesetter:typeset(showHyphenationPoints("volksemosie", "af"))}
 

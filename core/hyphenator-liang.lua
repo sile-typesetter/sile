@@ -22,12 +22,13 @@ local function addPattern(h, p)
 end
 
 local function registerException(h, exc)
+  local a = SU.splitUtf8(exc)
   local k = exc:gsub("-", "")
   h.exceptions[k] = { }
   j = 1
-  for i=1,#exc do
+  for i=1,#a do
     j = j + 1
-    if exc[i] == "-" then
+    if a[i] == "-" then
       j = j - 1
       h.exceptions[k][j] = 1
     else
