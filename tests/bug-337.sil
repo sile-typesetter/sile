@@ -1,6 +1,6 @@
 \begin[papersize=200pt x 400pt,foo="\"]{document}
 \script[src=packages/cropmarks]
-\define[command=crop:header]{}
+\define[command=crop:header]{tests/bug-337.sil}
 \crop:setup[papersize=300pt x 500pt]
 
 \script[src=bug-337]

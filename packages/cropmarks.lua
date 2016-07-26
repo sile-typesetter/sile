@@ -11,7 +11,9 @@ local outputMarks = function()
   SILE.outputter.rule(page:right() + 10, page:bottom(), 10, 0.5)
   SILE.outputter.rule(page:right(), page:bottom() + 10, 0.5, 10)
 
-  SILE.call("crop:header")
+  SILE.call("hbox", {}, function()
+    SILE.call("crop:header")
+  end)
   local hbox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
   SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
 
@@ -46,7 +48,7 @@ end
 
 SILE.registerCommand("crop:header", function (o, c)
   local info = SILE.masterFilename .. " - " .. os.date("%x %X") .. " -  " .. outcounter
-  SILE.call("hbox", {}, {info})
+  SILE.typesetter:typeset(info)
 end)
 
 SILE.registerCommand("crop:setup", function (o,c)
