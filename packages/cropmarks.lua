@@ -12,13 +12,17 @@ local outputMarks = function()
   SILE.outputter.rule(page:right(), page:bottom() + 10, 0.5, 10)
 
   SILE.call("hbox", {}, function()
-    SILE.call("crop:header")
+    SILE.settings.temporarily(function()
+      SILE.call("noindent")
+      SILE.call("font", { size="6pt" })
+      SILE.call("crop:header")
+    end)
   end)
   local hbox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
   SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
 
-  SILE.typesetter.frame.state.cursorX = page:left()
-  SILE.typesetter.frame.state.cursorY = page:top() - 30
+  SILE.typesetter.frame.state.cursorX = page:left() + 10
+  SILE.typesetter.frame.state.cursorY = page:top() - 13
   outcounter = outcounter + 1
 
   if hbox then
