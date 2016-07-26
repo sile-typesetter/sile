@@ -72,7 +72,6 @@ SILE.registerCommand("crop:setup", function (o,c)
   if SILE.typesetter.frame then SILE.typesetter.frame:init() end
 
   local oldEndPage = SILE.documentState.documentClass.endPage
-  SILE.outputter:debugFrame(page)
   SILE.documentState.documentClass.endPage = function(self)
     oldEndPage(self)
     outputMarks()
