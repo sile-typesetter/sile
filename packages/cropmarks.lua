@@ -11,12 +11,18 @@ local outputMarks = function()
   SILE.outputter.rule(page:right() + 10, page:bottom(), 10, 0.5)
   SILE.outputter.rule(page:right(), page:bottom() + 10, 0.5, 10)
 
-  SILE.call("crop:header")
+  SILE.call("hbox", {}, function()
+    SILE.settings.temporarily(function()
+      SILE.call("noindent")
+      SILE.call("font", { size="6pt" })
+      SILE.call("crop:header")
+    end)
+  end)
   local hbox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
   SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
 
-  SILE.typesetter.frame.state.cursorX = page:left()
-  SILE.typesetter.frame.state.cursorY = page:top() - 30
+  SILE.typesetter.frame.state.cursorX = page:left() + 10
+  SILE.typesetter.frame.state.cursorY = page:top() - 13
   outcounter = outcounter + 1
 
   if hbox then
@@ -46,7 +52,7 @@ end
 
 SILE.registerCommand("crop:header", function (o, c)
   local info = SILE.masterFilename .. " - " .. os.date("%x %X") .. " -  " .. outcounter
-  SILE.call("hbox", {}, {info})
+  SILE.typesetter:typeset(info)
 end)
 
 SILE.registerCommand("crop:setup", function (o,c)
@@ -68,11 +74,9 @@ SILE.registerCommand("crop:setup", function (o,c)
   else
     reconstrainFrameset(SILE.documentState.documentClass.pageTemplate.frames)
   end
-  reconstrainFrameset(SILE.frames)
   if SILE.typesetter.frame then SILE.typesetter.frame:init() end
 
   local oldEndPage = SILE.documentState.documentClass.endPage
-  SILE.outputter:debugFrame(page)
   SILE.documentState.documentClass.endPage = function(self)
     oldEndPage(self)
     outputMarks()

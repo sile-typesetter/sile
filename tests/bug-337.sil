@@ -1,9 +1,17 @@
-\begin[papersize=200pt x 400pt,foo="\"]{document}
-\script[src=packages/cropmarks]
-\define[command=crop:header]{}
-\crop:setup[papersize=300pt x 500pt]
-
+\begin[papersize=a6,class=book]{document}
 \script[src=bug-337]
+\script[src=packages/cropmarks]
+\define[command=crop:header]{tests/bug-337.sil}
+\crop:setup[papersize=a5]
 
+\set[parameter=document.parindent,value=0]
+\set[parameter=current.parindent,value=0]
+\set[parameter=document.parskip,value=0]
+
+\printPaperInPoints
+
+\pagebreak
+
+\printPaperInPoints
 
 \end{document}
