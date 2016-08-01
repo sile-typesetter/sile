@@ -1,4 +1,4 @@
-\begin[papersize=a5,class=book]{document} % KNOWNBAD
+\begin[papersize=a5,class=book]{document}
 \script[src=packages/lorem]
 \script[src=packages/grid]
 \script[src=packages/frametricks]
