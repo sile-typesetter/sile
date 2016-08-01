@@ -9,5 +9,5 @@ SILE.registerCommand("debug", function (options,c)
 end)
 
 SILE.registerCommand("disable-pushback", function (options,c)
-  SILE.typesetter.pushBack = function(self) self:runHooks("newframe") end
+  SILE.typesetter.pushBack = function(self) end
 end)

@@ -365,6 +365,8 @@ SILE.defaultTypesetter = std.object {
     -- Always push back and recalculate. The frame may have a different shape, or
     -- we may be doing clever things like grid typesetting. CPU time is cheap.
     self:pushBack();
+    self:leaveHmode(true);
+    self:runHooks("newframe")
   end,
 
   pushBack = function (self)
@@ -398,9 +400,6 @@ SILE.defaultTypesetter = std.object {
     while self.state.nodes[#self.state.nodes] and self.state.nodes[#self.state.nodes]:isPenalty() or self.state.nodes[#self.state.nodes] == SILE.nodefactory.zeroHbox do
       self.state.nodes[#self.state.nodes] = nil
     end
-
-    self:leaveHmode();
-    self:runHooks("newframe")
   end,
   outputLinesToPage = function (self, lines)
     SU.debug("pagebuilder", "OUTPUTTING frame "..self.frame.id);

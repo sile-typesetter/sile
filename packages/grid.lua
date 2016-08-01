@@ -9,7 +9,7 @@ end
 
 local leadingFor = function(this, vbox, previous)
   if not this.frame.state.totals.gridCursor then this.frame.state.totals.gridCursor = 0 end
-  if not previous then return end
+  if not previous then return SILE.nodefactory.newVglue({height=SILE.length.new({})}) end
   if type(vbox.height) == "table" then
     this.frame.state.totals.gridCursor = this.frame.state.totals.gridCursor + vbox.height.length + previous.depth
   else
@@ -114,6 +114,9 @@ SILE.registerCommand("grid", function(options, content)
   end
   SILE.typesetter:registerNewFrameHook(function (this)
     this.frame.state.totals.gridCursor = 0
+    while this.state.outputQueue[1] and this.state.outputQueue[1].discardable do
+      table.remove(this.state.outputQueue,1)
+    end
     if this.state.outputQueue[1] then
       table.insert(this.state.outputQueue, 1, SILE.nodefactory.newVbox({}))
       table.insert(this.state.outputQueue, 2, leadingFor(this, this.state.outputQueue[2], this.state.outputQueue[1]))
