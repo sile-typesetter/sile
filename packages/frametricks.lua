@@ -181,7 +181,7 @@ SILE.registerCommand("float", function(options, content)
     SILE.typesetter:leaveHmode()
   end
   breakFrameVertical()
-  local boundary = hbox.width.length + SILE.length.parse(options.rightboundary).length
+  local boundary = hbox.width.length + SILE.toAbsoluteMeasurement(SILE.length.parse(options.rightboundary).length)
   breakFrameHorizontalAt(boundary)
   SILE.typesetNaturally(SILE.typesetter.frame.previous, function()
     table.insert(SILE.typesetter.state.nodes,hbox)
