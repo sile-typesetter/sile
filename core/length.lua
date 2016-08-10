@@ -61,19 +61,34 @@ _length = std.object {
     return result
   end,
 
-  -- __mul = function(self, other)
-  --   local result = _length {}
-  --   result:fromLengthOrNumber(self)
-  --   if type(other) == "table" then
-  --     SU.error("Attempt to multiply two lengths together")
-  --   else
-  --     result.length = result.length * other
-  --     result.stretch = result.stretch * other
-  --     result.shrink = result.shrink * other
-  --   end
-  --   return result
-  -- end,
+  __mul = function(self, other)
+    local result = _length {}
+    result:fromLengthOrNumber(self)
+    result = result:absolute()
+    if type(other) == "table" then
+      SU.error("Attempt to multiply two lengths together")
+    else
+      result.length = result.length * other
+      result.stretch = result.stretch * other
+      result.shrink = result.shrink * other
+    end
+    return result
+  end,
    
+  __div = function(self, other)
+    local result = _length {}
+    result:fromLengthOrNumber(self)
+    result = result:absolute()
+    if type(other) == "table" then
+      SU.error("Attempt to divide two lengths together")
+    else
+      result.length = result.length / other
+      result.stretch = result.stretch / other
+      result.shrink = result.shrink / other
+    end
+    return result
+  end,
+
   __lt = function (self, other)
     return (self-other).length < 0
   end,
