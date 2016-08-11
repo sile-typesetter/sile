@@ -1025,6 +1025,9 @@ a very big letter.
 \section{color}
 \package-documentation[src=packages/color]
 
+\section{background}
+\package-documentation[src=packages/background]
+
 \section{rotate}
 \package-documentation[src=packages/rotate]
 
