@@ -80,7 +80,7 @@ plain.registerCommands = function()
 \define[command=goodbreak]{\penalty[penalty=-500]}%
 \define[command=eject]{\vfill\break}%
 \define[command=supereject]{\vfill\penalty[penalty=-20000]}%
-\define[command=justified]{\set[parameter=document.rskip]\set[parameter=document.spaceskip]{\process\par}}%
+\define[command=justified]{\set[parameter=document.rskip]{\process\par}}%
 \define[command=rightalign]{\raggedleft{\process\par}}%
 \define[command=em]{\font[style=Italic]{\process}}%
 \define[command=strong]{\font[weight=600]{\process}}%
@@ -106,7 +106,6 @@ SILE.registerCommand("ragged", function(options,c)
     if options.right then SILE.settings.set("document.rskip", SILE.nodefactory.hfillGlue) end
     SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
     SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
-    SILE.settings.set("document.spaceskip", SILE.length.parse("1spc"))
     SILE.process(c)
     SILE.call("par")
   end)
