@@ -10,7 +10,6 @@
 #include <lualib.h>
 
 typedef int32_t (*conversion_function_t)(UChar *dest, int32_t destCapacity, const UChar *src, int32_t srcLength, const char *locale, UErrorCode *pErrorCode);
-typedef int32_t (*conversion_function_ti)(UChar *dest, int32_t destCapacity, const UChar *src, int32_t srcLength, const UBreakIterator *iter, const char *locale, UErrorCode *pErrorCode);
 
 int icu_case(lua_State *L) {
   size_t input_l;
@@ -33,13 +32,10 @@ int icu_case(lua_State *L) {
   int32_t l2 = 0;
 
   if (strcmp(recase, "title") == 0) {
-    conversion_function_ti conversion;
-    UBreakIterator *iter;
-    conversion = u_strToTitle;
-    l2 = conversion(NULL, 0, input_as_uchar, l, iter, locale, &err);
+    l2 = u_strToTitle(NULL, 0, input_as_uchar, l, NULL, locale, &err);
     err = U_ZERO_ERROR;
     output = malloc(l2 * sizeof(UChar));
-    conversion(output, l2, input_as_uchar, l, iter, locale, &err);
+    u_strToTitle(output, l2, input_as_uchar, l, NULL, locale, &err);
   } else {
     conversion_function_t conversion;
     if (strcmp(recase, "upper") == 0) {
