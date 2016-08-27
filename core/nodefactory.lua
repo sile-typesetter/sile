@@ -7,6 +7,7 @@ _box = std.object {
   width= 0,
   misfit = false,
   type="special",
+  explicit = false,
   discardable = false,
   value=nil,
   __tostring = function (s) return s.type end,

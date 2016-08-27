@@ -147,7 +147,7 @@ SILE.defaultTypesetter = std.object {
     return self:pushVertical(SILE.nodefactory.newVglue(spec))
   end,
   pushExplicitVglue = function (self, spec)
-    spec.skiptype = "explicit"
+    spec.explicit = true
     spec.discardable = false
     return self:pushVglue(spec)
   end,
@@ -387,7 +387,7 @@ SILE.defaultTypesetter = std.object {
     local oldqueue = self.state.outputQueue
     self.state.outputQueue = {}
     while luaSucks(table.remove(oldqueue,1)) do
-      if v.skiptype == "explicit" then
+      if v.explicit then
         self:leaveHmode()
         self:pushExplicitVglue(v)
         self.state.previousVbox = nil
