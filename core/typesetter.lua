@@ -116,6 +116,7 @@ SILE.defaultTypesetter = std.object {
       print("  "..self.state.outputQueue[i])
     end
   end,
+
   -- Boxy stuff
   pushHbox = function (self, spec)
     self:initline()
@@ -133,18 +134,28 @@ SILE.defaultTypesetter = std.object {
     self:initline()
     return table.insert(self.state.nodes, SILE.nodefactory.newPenalty(spec))
   end,
-  pushVbox = function (self, spec) local v = SILE.nodefactory.newVbox(spec); table.insert(self.state.outputQueue,v); return v; end,
+  pushVbox = function (self, spec)
+    local v = SILE.nodefactory.newVbox(spec)
+    table.insert(self.state.outputQueue,v)
+    return v
+  end,
   pushMigratingMaterial = function (self, material)
     self:initline()
     local v = SILE.nodefactory.newMigrating({ material = material })
-    table.insert(self.state.nodes,v); return v; end,
-  pushVglue = function (self, spec) return table.insert(self.state.outputQueue, SILE.nodefactory.newVglue(spec)); end,
+    table.insert(self.state.nodes,v)
+    return v
+  end,
+  pushVglue = function (self, spec)
+    return table.insert(self.state.outputQueue, SILE.nodefactory.newVglue(spec))
+  end,
   pushExplicitVglue = function (self, spec)
     spec.skiptype = "explicit"
     spec.discardable = false
     return self:pushVglue(spec)
   end,
-  pushVpenalty = function (self, spec) return table.insert(self.state.outputQueue, SILE.nodefactory.newPenalty(spec)); end,
+  pushVpenalty = function (self, spec)
+    return table.insert(self.state.outputQueue, SILE.nodefactory.newPenalty(spec))
+  end,
 
   -- Actual typesetting functions
   typeset = function (self, text)
@@ -235,19 +246,19 @@ SILE.defaultTypesetter = std.object {
           nodes[#nodes+1] = n
         end
       end
-      local v = SILE.nodefactory.newVbox({ nodes = nodes, ratio = l.ratio });
+      local vbox = SILE.nodefactory.newVbox({ nodes = nodes, ratio = l.ratio });
       local pageBreakPenalty = 0
       if (#lines > 1 and index == 1) then
         pageBreakPenalty = SILE.settings.get("typesetter.widowpenalty")
       elseif (#lines > 1 and index == (#lines-1)) then
         pageBreakPenalty = SILE.settings.get("typesetter.orphanpenalty")
       end
-      vboxes[#vboxes+1] = self:leadingFor(v, self.state.previousVbox)
-      vboxes[#vboxes+1] = v
+      vboxes[#vboxes+1] = self:leadingFor(vbox, self.state.previousVbox)
+      vboxes[#vboxes+1] = vbox
       for i=1,#migrating do vboxes[#vboxes+1] = migrating[i] end
-      self.state.previousVbox = v
+      self.state.previousVbox = vbox
       if pageBreakPenalty > 0 then
-        SU.debug("typesetter", "adding penalty of "..pageBreakPenalty.." after "..v)
+        SU.debug("typesetter", "adding penalty of "..pageBreakPenalty.." after "..vbox)
         vboxes[#vboxes+1] = SILE.nodefactory.newPenalty({ penalty = pageBreakPenalty})
       end
     end
@@ -429,16 +440,16 @@ SILE.defaultTypesetter = std.object {
   inhibitLeading = function (self)
     self.state.previousVbox = nil
   end,
-  leadingFor = function(self, v, previous)
+  leadingFor = function(self, vbox, previous)
     -- Insert leading
     SU.debug("typesetter", "   Considering leading between self two lines");
     if not previous then return SILE.nodefactory.newVglue({height=SILE.length.new({})}) end
     local prevDepth = previous.depth
     SU.debug("typesetter", "   Depth of previous line was "..tostring(prevDepth));
     local bls = SILE.settings.get("document.baselineskip")
-    local d = bls.height - v.height - prevDepth;
+    local d = bls.height - vbox.height - prevDepth;
     d = d.length
-    SU.debug("typesetter", "   Leading height = " .. tostring(bls.height) .. " - " .. tostring(v.height) .. " - " .. tostring(prevDepth) .. " = "..d) ;
+    SU.debug("typesetter", "   Leading height = " .. tostring(bls.height) .. " - " .. tostring(vbox.height) .. " - " .. tostring(prevDepth) .. " = "..d) ;
 
     if (d > SILE.settings.get("document.lineskip").height.length) then
       len = SILE.length.new({ length = d, stretch = bls.height.stretch, shrink = bls.height.shrink })

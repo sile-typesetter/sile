@@ -63,9 +63,8 @@ local gridFindBestBreak = function(options)
     if (vbox:isVbox()) then
       totalHeight = totalHeight + vbox.height + vbox.depth;
     elseif vbox:isVglue() then
-        totalHeight = totalHeight + vbox.height
+      totalHeight = totalHeight + vbox.height
     end
-
     if vbox.type == "insertionVbox" then
       target = SILE.insertions.processInsertion(vboxlist, i, totalHeight, target)
       vbox = vboxlist[i]
