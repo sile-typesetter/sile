@@ -118,35 +118,33 @@ SILE.defaultTypesetter = std.object {
   end,
 
   -- Boxy stuff
-  pushHbox = function (self, spec)
+  pushHorizontal = function (self, node)
     self:initline()
-    table.insert(self.state.nodes, SILE.nodefactory.newHbox(spec))
+    return table.insert(self.state.nodes, node) and node or false
+  end,
+  pushVertical = function (self, vbox)
+    return table.insert(self.state.outputQueue, vbox) and vbox or false
+  end,
+  pushHbox = function (self, spec)
+    return self:pushHorizontal(SILE.nodefactory.newHbox(spec))
   end,
   pushUnshaped = function (self, spec)
-    self:initline()
-    table.insert(self.state.nodes, SILE.nodefactory.newUnshaped(spec))
+    return self:pushHorizontal(SILE.nodefactory.newUnshaped(spec))
   end,
   pushGlue = function (self, spec)
-    self:initline()
-    return table.insert(self.state.nodes, SILE.nodefactory.newGlue(spec))
+    return self:pushHorizontal(SILE.nodefactory.newGlue(spec))
   end,
   pushPenalty = function (self, spec)
-    self:initline()
-    return table.insert(self.state.nodes, SILE.nodefactory.newPenalty(spec))
-  end,
-  pushVbox = function (self, spec)
-    local v = SILE.nodefactory.newVbox(spec)
-    table.insert(self.state.outputQueue,v)
-    return v
+    return self:pushHorizontal(SILE.nodefactory.newPenalty(spec))
   end,
   pushMigratingMaterial = function (self, material)
-    self:initline()
-    local v = SILE.nodefactory.newMigrating({ material = material })
-    table.insert(self.state.nodes,v)
-    return v
+    return self:pushHorizontal(SILE.nodefactory.newMigrating({ material = material }))
+  end,
+  pushVbox = function (self, spec)
+    return self:pushVertical(SILE.nodefactory.newVbox(spec))
   end,
   pushVglue = function (self, spec)
-    return table.insert(self.state.outputQueue, SILE.nodefactory.newVglue(spec))
+    return self:pushVertical(SILE.nodefactory.newVglue(spec))
   end,
   pushExplicitVglue = function (self, spec)
     spec.skiptype = "explicit"
@@ -154,7 +152,7 @@ SILE.defaultTypesetter = std.object {
     return self:pushVglue(spec)
   end,
   pushVpenalty = function (self, spec)
-    return table.insert(self.state.outputQueue, SILE.nodefactory.newPenalty(spec))
+    return self:pushVertical(SILE.nodefactory.newPenalty(spec))
   end,
 
   -- Actual typesetting functions
