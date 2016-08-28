@@ -93,7 +93,7 @@ SILE.defaultTypesetter = std.object {
     self.frame:init()
   end,
   pushState = function(self)
-    table.insert(self.stateQueue, self.state)
+    self.stateQueue[#self.stateQueue+1] = self.state
     self:initState()
   end,
   popState = function(self)
@@ -120,10 +120,12 @@ SILE.defaultTypesetter = std.object {
   -- Boxy stuff
   pushHorizontal = function (self, node)
     self:initline()
-    return table.insert(self.state.nodes, node) and node or false
+    self.state.nodes[#self.state.nodes+1] = node
+    return node
   end,
   pushVertical = function (self, vbox)
-    return table.insert(self.state.outputQueue, vbox) and vbox or false
+    self.state.outputQueue[#self.state.outputQueue+1] = vbox
+    return vbox
   end,
   pushHbox = function (self, spec)
     return self:pushHorizontal(SILE.nodefactory.newHbox(spec))
@@ -169,7 +171,7 @@ SILE.defaultTypesetter = std.object {
 
   initline = function (self)
     if (#self.state.nodes == 0) then
-      table.insert(self.state.nodes, SILE.nodefactory.zeroHbox)
+      self.state.nodes[#self.state.nodes+1] = SILE.nodefactory.zeroHbox
     end
   end,
 
@@ -447,7 +449,7 @@ SILE.defaultTypesetter = std.object {
     local bls = SILE.settings.get("document.baselineskip")
     local d = bls.height - vbox.height - prevDepth
     d = d.length
-    SU.debug("typesetter", "   Leading height = " .. tostring(bls.height) .. " - " .. tostring(vbox.height) .. " - " .. tostring(prevDepth) .. " = "..d) 
+    SU.debug("typesetter", "   Leading height = " .. tostring(bls.height) .. " - " .. tostring(vbox.height) .. " - " .. tostring(prevDepth) .. " = "..d)
 
     if (d > SILE.settings.get("document.lineskip").height.length) then
       len = SILE.length.new({ length = d, stretch = bls.height.stretch, shrink = bls.height.shrink })
