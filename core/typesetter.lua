@@ -92,6 +92,15 @@ SILE.defaultTypesetter = std.object {
     self.frame = frame
     self.frame:init()
   end,
+  getMargins = function(self)
+    local lskip = SILE.settings.get("document.lskip") or SILE.nodefactory.zeroGlue
+    local rskip = SILE.settings.get("document.rskip") or SILE.nodefactory.zeroGlue
+    return { lskip, rskip }
+  end,
+  setMargins = function(self, margins)
+    SILE.settings.set("document.lskip", margins[1])
+    SILE.settings.set("document.rskip", margins[2])
+  end,
   pushState = function(self)
     self.stateQueue[#self.stateQueue+1] = self.state
     self:initState()
@@ -387,36 +396,47 @@ SILE.defaultTypesetter = std.object {
 
   pushBack = function (self)
     SU.debug("typesetter", "Pushing back "..#(self.state.outputQueue).." nodes")
-    --self:pushHbox({ width = SILE.length.new({}), value = {glyph = 0} });
-    local v
-    local function luaSucks (a) v=a return a end
-
     local oldqueue = self.state.outputQueue
     self.state.outputQueue = {}
-    while luaSucks(table.remove(oldqueue,1)) do
-      if v.explicit then
+    for _, vbox in ipairs(oldqueue) do
+      -- self:debugState()
+      if vbox.explicit then
+        SU.debug("pushback", { "explicit", vbox })
         self:leaveHmode()
-        self:pushExplicitVglue(v)
+        self:pushExplicitVglue(vbox)
         self.state.previousVbox = nil
-      elseif v.type == "insertionVbox" then
-        SILE.typesetter:pushMigratingMaterial({v})
-      elseif not v:isVglue() and not v:isPenalty() then
-        for i=1,#(v.nodes) do
-          if v.nodes[i]:isDiscretionary() then
-            v.nodes[i].used = false -- HACK HACK HACK
+      elseif vbox.type == "insertionVbox" then
+        SU.debug("pushback", { "pushBack", "insertion", vbox })
+        SILE.typesetter:pushMigratingMaterial({vbox})
+      elseif not vbox:isVglue() and not vbox:isPenalty() then
+        SU.debug("pushback", { "not vglue or penalty", vbox.type })
+        self:setMargins(vbox.margins)
+        for i, node in ipairs(vbox.nodes) do
+          if node:isDiscretionary() then
+            SU.debug("pushback", { "re-mark discretionary as unused" })
+            node.used = false -- HACK HACK HACK
           end
           -- HACK HACK HACK HACK HACK
-          if not (v.nodes[i]:isGlue() and (v.nodes[i].value == "lskip" or v.nodes[i].value == "rskip"))
-            and not (v.nodes[i]:isDiscretionary() and i == 1) then
-            self.state.nodes[#(self.state.nodes)+1] = v.nodes[i]
+          if not (node:isGlue() and (node.value == "lskip" or node.value == "rskip"))
+              and not (node:isDiscretionary() and i == 1) then
+            self:pushHorizontal(node)
+          else
+            SU.debug("pushback", { "ignored", _, vbox, vbox.type, vbox.margins })
+            -- self:setMargins(vbox.margins)
+            -- self:pushVertical(vbox)
+            -- self:endline()
           end
         end
+        self:endline()
       end
     end
-    while self.state.nodes[#self.state.nodes] and self.state.nodes[#self.state.nodes]:isPenalty() or self.state.nodes[#self.state.nodes] == SILE.nodefactory.zeroHbox do
+    while self.state.nodes[#self.state.nodes]
+      and self.state.nodes[#self.state.nodes]:isPenalty()
+       or self.state.nodes[#self.state.nodes] == SILE.nodefactory.zeroHbox do
       self.state.nodes[#self.state.nodes] = nil
     end
   end,
+
   outputLinesToPage = function (self, lines)
     SU.debug("pagebuilder", "OUTPUTTING frame "..self.frame.id)
     local i
@@ -432,10 +452,13 @@ SILE.defaultTypesetter = std.object {
   leaveHmode = function(self, independent)
     SU.debug("typesetter", "Leaving hmode")
     local vboxlist = self:boxUpNodes()
+    if #vboxlist == 0 then return end
+    local margins = self:getMargins()
     self.state.nodes = {}
     -- Push output lines into boxes and ship them to the page builder
-    for index=1, #vboxlist do
-      self.state.outputQueue[#(self.state.outputQueue)+1] = vboxlist[index]
+    for _, vbox in ipairs(vboxlist) do
+      vbox.margins = margins
+      self:pushVertical(vbox)
     end
     if independent then return end
     if self:pageBuilder() then
