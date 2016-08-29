@@ -96,8 +96,9 @@ SILE.defaultTypesetter = std.object {
     self.stateQueue[#self.stateQueue+1] = self.state
     self:initState()
   end,
-  popState = function(self)
-    self.state = table.remove(self.stateQueue)
+  popState = function(self, ncount)
+    local offset = ncount and #self.stateQueue - ncount or nil
+    self.state = table.remove(self.stateQueue, offset)
     if not self.state then SU.error("Typesetter state queue empty") end
   end,
   vmode = function(self)
