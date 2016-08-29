@@ -2,6 +2,10 @@
 \nofolios
 \script[src=packages/lorem]
 \hbox
+\begin[first-content-frame=a]{pagetemplate}
+  \frame[id=a,left=2%pw,right=44%pw,top=2%ph,bottom=98%ph,next=b]
+  \frame[id=b,left=46%pw,right=98%pw,top=2%ph,bottom=98%ph]
+\end{pagetemplate}
 \skip[height=43em] % change this to 45 for no bug symptoms
 \lorem[words=80]
 {
