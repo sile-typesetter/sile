@@ -402,7 +402,7 @@ SILE.defaultTypesetter = std.object {
       elseif not v:isVglue() and not v:isPenalty() then
         for i=1,#(v.nodes) do
           if v.nodes[i]:isDiscretionary() then
-            v.nodes[i].used = 0 -- HACK HACK HACK
+            v.nodes[i].used = false -- HACK HACK HACK
           end
           -- HACK HACK HACK HACK HACK
           if not (v.nodes[i]:isGlue() and (v.nodes[i].value == "lskip" or v.nodes[i].value == "rskip"))
@@ -533,7 +533,7 @@ SILE.defaultTypesetter = std.object {
           naturalTotals = naturalTotals - slice[i].width
         end
       elseif (slice[i]:isDiscretionary()) then
-        slice[i].used = 1
+        slice[i].used = true
         if slice[i].parent then slice[i].parent.hyphenated = true end
         naturalTotals = naturalTotals - slice[i]:replacementWidth()
         naturalTotals = naturalTotals + slice[i]:prebreakWidth()

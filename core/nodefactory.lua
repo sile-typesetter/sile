@@ -126,14 +126,14 @@ local _disc = _hbox {
   prebreak = {},
   postbreak = {},
   replacement = {},
-  used = 0,
+  used = false,
   prebw = nil,
   __tostring = function (this)
       return "D(" .. SU.concat(this.prebreak,"") .. "|" .. SU.concat(this.postbreak, "") .."|" .. SU.concat(this.replacement, "") .. ")";
   end,
-  toText = function (self) return self.used==1 and "-" or "_" end,
+  toText = function (self) return self.used and "-" or "_" end,
   outputYourself = function(self,typesetter, line)
-    if self.used == 1 then
+    if self.used then
       i = 1
       while (line.nodes[i]:isGlue() and line.nodes[i].value == "lskip")
           or line.nodes[i] == SILE.nodefactory.zeroHbox do
