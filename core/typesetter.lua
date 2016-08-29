@@ -72,6 +72,13 @@ SILE.settings.declare({
   help = "Width to break lines at"
 })
 
+local _margins = std.object {
+  __eq = function(a, b)
+    return SILE.toAbsoluteMeasurement(a.lskip.width) == SILE.toAbsoluteMeasurement(b.lskip.width)
+      and SILE.toAbsoluteMeasurement(a.rskip.width) == SILE.toAbsoluteMeasurement(b.rskip.width)
+  end
+}
+
 SILE.defaultTypesetter = std.object {
   -- Setup functions
   hooks = {},
@@ -95,11 +102,11 @@ SILE.defaultTypesetter = std.object {
   getMargins = function(self)
     local lskip = SILE.settings.get("document.lskip") or SILE.nodefactory.zeroGlue
     local rskip = SILE.settings.get("document.rskip") or SILE.nodefactory.zeroGlue
-    return { lskip, rskip }
+    return _margins { lskip=lskip, rskip=rskip }
   end,
   setMargins = function(self, margins)
-    SILE.settings.set("document.lskip", margins[1])
-    SILE.settings.set("document.rskip", margins[2])
+    SILE.settings.set("document.lskip", margins.lskip)
+    SILE.settings.set("document.rskip", margins.rskip)
   end,
   pushState = function(self)
     self.stateQueue[#self.stateQueue+1] = self.state
@@ -398,8 +405,14 @@ SILE.defaultTypesetter = std.object {
     SU.debug("typesetter", "Pushing back "..#(self.state.outputQueue).." nodes")
     local oldqueue = self.state.outputQueue
     self.state.outputQueue = {}
+    local lastMargins = self:getMargins()
     for _, vbox in ipairs(oldqueue) do
       SU.debug("pushback", { "process box", vbox })
+      if vbox.margins and vbox.margins ~= lastMargins then
+        SU.debug("pushback", { "new margins", lastMargins, vbox.margins })
+        if not self.state.grid then self:endline() end
+        self:setMargins(vbox.margins)
+      end
       if vbox.explicit then
         SU.debug("pushback", { "explicit", vbox })
         self:leaveHmode()
@@ -410,7 +423,6 @@ SILE.defaultTypesetter = std.object {
         SILE.typesetter:pushMigratingMaterial({vbox})
       elseif not vbox:isVglue() and not vbox:isPenalty() then
         SU.debug("pushback", { "not vglue or penalty", vbox.type })
-        self:setMargins(vbox.margins)
         for i, node in ipairs(vbox.nodes) do
           if node:isDiscretionary() then
             SU.debug("pushback", { "re-mark discretionary as unused" })
@@ -428,7 +440,6 @@ SILE.defaultTypesetter = std.object {
       else
         SU.debug("pushback", { "discard", vbox.type })
       end
-      if not self.state.grid then self:endline() end
     end
     while self.state.nodes[#self.state.nodes]
       and self.state.nodes[#self.state.nodes]:isPenalty()
