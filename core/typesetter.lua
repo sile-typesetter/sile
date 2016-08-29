@@ -399,7 +399,7 @@ SILE.defaultTypesetter = std.object {
     local oldqueue = self.state.outputQueue
     self.state.outputQueue = {}
     for _, vbox in ipairs(oldqueue) do
-      -- self:debugState()
+      SU.debug("pushback", { "process box", vbox })
       if vbox.explicit then
         SU.debug("pushback", { "explicit", vbox })
         self:leaveHmode()
@@ -419,16 +419,16 @@ SILE.defaultTypesetter = std.object {
           -- HACK HACK HACK HACK HACK
           if not (node:isGlue() and (node.value == "lskip" or node.value == "rskip"))
               and not (node:isDiscretionary() and i == 1) then
+            -- SU.debug("pushback", { "horiz", node })
             self:pushHorizontal(node)
           else
-            SU.debug("pushback", { "ignored", _, vbox, vbox.type, vbox.margins })
-            -- self:setMargins(vbox.margins)
-            -- self:pushVertical(vbox)
-            -- self:endline()
+            SU.debug("pushback", { "ignore", node.value, node })
           end
         end
-        self:endline()
+      else
+        SU.debug("pushback", { "discard", vbox.type })
       end
+      if not self.state.grid then self:endline() end
     end
     while self.state.nodes[#self.state.nodes]
       and self.state.nodes[#self.state.nodes]:isPenalty()
