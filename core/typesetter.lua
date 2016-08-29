@@ -162,9 +162,9 @@ SILE.defaultTypesetter = std.object {
     if text:match("^%\n$") then return end
     for t in SU.gtoke(text,SILE.settings.get("typesetter.parseppattern")) do
       if (t.separator) then
-        self:leaveHmode();
-        SILE.documentState.documentClass.endPar(self)
-      else self:setpar(t.string)
+        self:endline()
+      else
+        self:setpar(t.string)
       end
     end
   end,
@@ -173,6 +173,10 @@ SILE.defaultTypesetter = std.object {
     if (#self.state.nodes == 0) then
       self.state.nodes[#self.state.nodes+1] = SILE.nodefactory.zeroHbox
     end
+  end,
+  endline = function (self)
+    self:leaveHmode()
+    SILE.documentState.documentClass.endPar(self)
   end,
 
   -- Takes string, writes onto self.state.nodes
