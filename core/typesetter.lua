@@ -168,6 +168,7 @@ SILE.defaultTypesetter = std.object {
   pushExplicitVglue = function (self, spec)
     spec.explicit = true
     spec.discardable = false
+    self:inhibitLeading()
     return self:pushVglue(spec)
   end,
   pushVpenalty = function (self, spec)
@@ -415,9 +416,8 @@ SILE.defaultTypesetter = std.object {
       end
       if vbox.explicit then
         SU.debug("pushback", { "explicit", vbox })
-        self:leaveHmode()
+        self:endline()
         self:pushExplicitVglue(vbox)
-        self.state.previousVbox = nil
       elseif vbox.type == "insertionVbox" then
         SU.debug("pushback", { "pushBack", "insertion", vbox })
         SILE.typesetter:pushMigratingMaterial({vbox})
