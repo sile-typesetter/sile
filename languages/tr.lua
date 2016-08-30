@@ -3,7 +3,7 @@ SILE.nodeMakers.tr = SILE.nodeMakers.unicode {
   isWordType = { cm = true, qu = true },
 }
 
-SILE.hyphenator.languages["tr"] = {};
+SILE.hyphenator.languages["tr"] = {}
 SILE.hyphenator.languages["tr"].patterns =
    {
 "2a1",
@@ -611,7 +611,7 @@ SILE.hyphenator.languages["tr"].patterns =
 -- a couple of consonant-clusters
 "tu4r4k",
 "m1t4rak",
-   };
+   }
 
 -- Internationalisation stuff
 SILE.doTexlike([[%

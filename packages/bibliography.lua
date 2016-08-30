@@ -150,7 +150,7 @@ do
     -- (in which latter case there is no von name).
     -- <local parsing functions>=
     function divide_von_from_last()
-      von_lim = last_lim - 1;
+      von_lim = last_lim - 1
       while von_lim > von_start and not isVon(tokens[von_lim-1]) do
         von_lim = von_lim - 1
       end

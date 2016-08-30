@@ -6,7 +6,7 @@
 SILE.require("packages/counters")
 SILE.require("packages/raiselower")
 local insertions = SILE.require("packages/insertions")
-SILE.scratch.counters.footnote = { value= 1, display= "arabic" };
+SILE.scratch.counters.footnote = { value= 1, display= "arabic" }
 
 SILE.registerCommand("footnotemark", function(options, content)
   SILE.Commands["raise"]({height = "0.7ex"}, function()

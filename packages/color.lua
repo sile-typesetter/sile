@@ -4,12 +4,12 @@ SILE.registerCommand("color", function(options, content)
   color = SILE.colorparser(color)
   SILE.typesetter:pushHbox({
     outputYourself= function () SILE.outputter:pushColor(color) end
-  });
+  })
   SILE.process(content)
   SILE.typesetter:pushHbox({
     outputYourself= function () SILE.outputter:popColor() end
-  });
-end, "Changes the active ink color to the color <color>.");
+  })
+end, "Changes the active ink color to the color <color>.")
 
 return { documentation = [[\begin{document}
 The \code{color} package allows you to temporarily change the color of the

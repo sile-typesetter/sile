@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["el-monoton"] = {};
+SILE.hyphenator.languages["el-monoton"] = {}
 SILE.hyphenator.languages["en"].patterns =
    {
 -------- vowels
@@ -596,4 +596,4 @@ SILE.hyphenator.languages["en"].patterns =
 "4τϲ1μπ",
 "4τσ1ντ",
 "4τϲ1ντ",
-   };
+   }

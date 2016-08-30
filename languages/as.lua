@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["as"] = {};
+SILE.hyphenator.languages["as"] = {}
 SILE.hyphenator.languages["as"].patterns =
    {
 -- GENERAL RULE
@@ -83,4 +83,4 @@ SILE.hyphenator.languages["as"].patterns =
 "2ঽ1",
 -- Do not break either side of virama (may be within conjunct).
 "2্2",
-   };
+   }

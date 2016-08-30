@@ -4,11 +4,11 @@ plain.options.direction = function (g)
   if g then plain.pageTemplate.frames["content"].direction = g end
 end
 
-plain:declareFrame("content", { left = "5%pw",  right = "95%pw",  top = "5%ph",  bottom = "90%ph" });
-plain:declareFrame("folio",   { left = "5%pw",  right = "95%pw",  top = "92%ph", bottom = "97%ph" });
+plain:declareFrame("content", { left = "5%pw",  right = "95%pw",  top = "5%ph",  bottom = "90%ph" })
+plain:declareFrame("folio",   { left = "5%pw",  right = "95%pw",  top = "92%ph", bottom = "97%ph" })
 
-plain.pageTemplate.firstContentFrame = plain.pageTemplate.frames["content"];
-plain:loadPackage("folio");
+plain.pageTemplate.firstContentFrame = plain.pageTemplate.frames["content"]
+plain:loadPackage("folio")
 
 plain.endPage = function(self)
   plain:outputFolio()
@@ -48,7 +48,7 @@ for k, v in pairs(skips) do
     help = "The amount of a \\"..k.."skip"
   })
   SILE.registerCommand(k.."skip", function (options, content)
-    SILE.typesetter:leaveHmode();
+    SILE.typesetter:leaveHmode()
     SILE.typesetter:pushExplicitVglue(SILE.settings.get("plain."..k.."skipamount"))
   end, "Skip vertically by a "..k.." amount")
 end
@@ -188,4 +188,4 @@ end, "Compiles all the enclosed horizontal-mode material into a single hbox")
 
 SILE.require("packages/bidi")
 
-return plain;
+return plain

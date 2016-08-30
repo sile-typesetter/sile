@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["no"] = {};
+SILE.hyphenator.languages["no"] = {}
 SILE.hyphenator.languages["no"].patterns =
    {
 ".a4",

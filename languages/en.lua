@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["en"] = {};
+SILE.hyphenator.languages["en"] = {}
 SILE.hyphenator.languages["en"].patterns = {".ach4", ".ad4der", ".af1t", ".al3t", ".am5at", ".an5c", ".ang4",
 ".ani5m", ".ant4", ".an3te", ".anti5s", ".ar5s", ".ar4tie", ".ar4ty",
 ".as3c", ".as1p", ".as1s", ".aster5", ".atom5", ".au1d", ".av4i",
@@ -590,12 +590,12 @@ SILE.hyphenator.languages["en"].patterns = {".ach4", ".ad4der", ".af1t", ".al3t"
 "ys3io", "3ysis", "y4so", "yss4", "ys1t", "ys3ta", "ysur4", "y3thin",
 "yt3ic", "y1w", "za1", "z5a2b", "zar2", "4zb", "2ze", "ze4n", "ze4p",
 "z1er", "ze3ro", "zet4", "2z1i", "z4il", "z4is", "5zl", "4zm", "1zo",
-"zo4m", "zo5ol", "zte4", "4z1z2", "z4zy"};
+"zo4m", "zo5ol", "zte4", "4z1z2", "z4zy"}
 
 SILE.hyphenator.languages["en"].exceptions = {"as-so-ciate", "as-so-ciates",
 "dec-li-na-tion", "oblig-a-tory", "phil-an-thropic", "present",
 "presents", "project", "projects", "reci-procity", "re-cog-ni-zance",
-"ref-or-ma-tion", "ret-ri-bu-tion", "ta-ble"};
+"ref-or-ma-tion", "ret-ri-bu-tion", "ta-ble"}
 
 -- Internationalisation stuff
 SILE.doTexlike([[%

@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["ta"] = {};
+SILE.hyphenator.languages["ta"] = {}
 SILE.hyphenator.languages["ta"].patterns =
    {
 -- GENERAL RULE
@@ -81,4 +81,4 @@ SILE.hyphenator.languages["ta"].patterns =
 "2ௗ1",
 -- Do not break before virama but break after virama.
 "2்1",
-   };
+   }

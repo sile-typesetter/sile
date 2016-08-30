@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["fi"] = {};
+SILE.hyphenator.languages["fi"] = {}
 SILE.hyphenator.languages["fi"].patterns =
 {
 "1ba",
@@ -309,4 +309,4 @@ SILE.hyphenator.languages["fi"].patterns =
 "sc2h",
 "ts2h",
 "ch2r",
-};
+}

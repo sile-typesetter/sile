@@ -90,7 +90,7 @@ SILE.registerCommand("rotate", function(options, content)
     width = width,
     depth = depth,
     outputYourself= outputRotatedHbox
-  });
+  })
 end)
 
 return { documentation = [[\begin{document}

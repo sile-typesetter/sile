@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["nl"] = {};
+SILE.hyphenator.languages["nl"] = {}
 SILE.hyphenator.languages["nl"].patterns =
    {
 ".a4",
@@ -12768,4 +12768,4 @@ SILE.hyphenator.languages["nl"].exceptions =
 "wals-te",
 "wa-ter-staats-in-ge-ni-eur",
 "wa-ter-staats-in-ge-ni-eurs",
-   };
+   }

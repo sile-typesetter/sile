@@ -21,11 +21,11 @@ function SILE.doTexlike (doc)
 end
 
 -- Need the \define command *really* early on in SILE startup
-local commandStack = {};
+local commandStack = {}
 SILE.registerCommand("define", function (options, content)
   SU.required(options, "command", "defining command")
   SILE.registerCommand(options["command"], function(options2, content2)
-    --local prevState = SILE.documentState;
+    --local prevState = SILE.documentState
     --SILE.documentState = std.tree.clone( prevState )
     local depth = #commandStack
     table.insert(commandStack, content2)
@@ -36,10 +36,10 @@ SILE.registerCommand("define", function (options, content)
 end, "Define a new macro. \\define[command=example]{ ... \\process }")
 
 SILE.registerCommand("comment", function(options, content)
-end, "Ignores any text within this command's body.");
+end, "Ignores any text within this command's body.")
 
 SILE.registerCommand("process", function()
-  SILE.process(table.remove(commandStack));
+  SILE.process(table.remove(commandStack))
 end, "Within a macro definition, processes the contents of the macro body.")
 
 SILE.baseClass = std.object {
@@ -57,18 +57,18 @@ SILE.baseClass = std.object {
     end, "Runs lua code. The code may be supplied either inline or using the src=... option. (Think HTML.)")
 
     SILE.registerCommand("include", function(options, content)
-        SILE.readFile(options["src"]);
+        SILE.readFile(options["src"])
     end, "Includes a SILE file for processing.")
 
     SILE.registerCommand("pagetemplate", function (options, content)
-      SILE.documentState.thisPageTemplate = { frames = {} };
-      SILE.process(content);
-      SILE.documentState.thisPageTemplate.firstContentFrame = SILE.getFrame(options["first-content-frame"]);
-      SILE.typesetter:initFrame(SILE.documentState.thisPageTemplate.firstContentFrame);
+      SILE.documentState.thisPageTemplate = { frames = {} }
+      SILE.process(content)
+      SILE.documentState.thisPageTemplate.firstContentFrame = SILE.getFrame(options["first-content-frame"])
+      SILE.typesetter:initFrame(SILE.documentState.thisPageTemplate.firstContentFrame)
     end, "Defines a new page template for the current page and sets the typesetter to use it.")
 
     SILE.registerCommand("frame", function (options, content)
-      SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newFrame(options);
+      SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newFrame(options)
     end, "Declares (or re-declares) a frame on this page.")
 
     SILE.registerCommand("penalty", function(options, content)
@@ -117,7 +117,7 @@ SILE.baseClass = std.object {
     end, "Inserts a glue node. The width option denotes the glue dimension.")
 
     SILE.registerCommand("skip", function(options, content)
-      SILE.typesetter:leaveHmode();
+      SILE.typesetter:leaveHmode()
       SILE.typesetter:pushExplicitVglue({ height = SILE.length.parse(options.height):absolute() })
     end, "Inserts vertical skip. The height options denotes the skip dimension.")
 
@@ -149,11 +149,11 @@ SILE.baseClass = std.object {
       default = nil,
       help = "Glue at start of paragraph"
     })
-    SILE.outputter.init(self);
-    self:registerCommands();
+    SILE.outputter.init(self)
+    self:registerCommands()
     -- Call all stored package init routines
     for i = 1,#(SILE.baseClass.deferredInit) do (SILE.baseClass.deferredInit[i])() end
-    return self:initialFrame();
+    return self:initialFrame()
   end,
 
   initialFrame= function(self)
@@ -181,19 +181,19 @@ SILE.baseClass = std.object {
     --   height = spec.height and fH(spec.height),
     --   width = spec.width and fH(spec.width),
     --   id = id
-    -- });
+    -- })
   end,
 
   newPage = function(self)
-    SILE.outputter:newPage();
+    SILE.outputter:newPage()
     -- Any other output-routiney things will be done here by inheritors
-    return self:initialFrame();
+    return self:initialFrame()
   end,
 
   endPage= function()
     SILE.typesetter.frame:leave()
     -- I'm trying to call up a new frame here, don't cause a page break in the current one
-    -- SILE.typesetter:leaveHmode();
+    -- SILE.typesetter:leaveHmode()
     -- Any other output-routiney things will be done here by inheritors
   end,
 

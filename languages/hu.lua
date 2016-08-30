@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["hu"] = {};
+SILE.hyphenator.languages["hu"] = {}
 SILE.hyphenator.languages["hu"].patterns =
    {
 ".a2",
@@ -62852,4 +62852,4 @@ SILE.hyphenator.languages["hu"].patterns =
 "z3zsi",
 "z3zsí",
 "z3zso",
-   };
+   }

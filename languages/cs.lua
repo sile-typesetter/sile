@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["cs"] = {};
+SILE.hyphenator.languages["cs"] = {}
 SILE.hyphenator.languages["cs"].patterns =
    {
 ".a2",
@@ -3637,7 +3637,7 @@ SILE.hyphenator.languages["cs"].patterns =
 "2žš",
 "žš4ti",
 "žš4tě",
-   };
+   }
 SILE.hyphenator.languages["cs"].exceptions =
    {
 "koe-fi-ci-ent",
@@ -3645,7 +3645,7 @@ SILE.hyphenator.languages["cs"].exceptions =
 "pro-jek-ční",
 "úhlo-příč-ka",
 "úhlo-příč-ky",
-   };
+   }
 
 -- Internationalisation stuff
 SILE.doTexlike([[%

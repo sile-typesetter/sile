@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["ru"] = {};
+SILE.hyphenator.languages["ru"] = {}
 SILE.hyphenator.languages["ru"].patterns =
    {
 ".аб1р",
@@ -7023,7 +7023,7 @@ SILE.hyphenator.languages["ru"].patterns =
 "8я8ю-",
 "-я8я8",
 "8я8я-",
-   };
+   }
 SILE.hyphenator.languages["ru"].exceptions =
    {
 "ас-бест",
@@ -7210,4 +7210,4 @@ SILE.hyphenator.languages["ru"].exceptions =
 "юсом",
 "ядо-зу-бе",
 "ярем-но-го",
-};
+}

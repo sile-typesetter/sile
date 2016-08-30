@@ -1,12 +1,12 @@
-local book = SILE.require("classes/book");
-local jbook = book { id = "jbook", base = book };
+local book = SILE.require("classes/book")
+local jbook = book { id = "jbook", base = book }
 
 SILE.call("bidi-off")
 
 jbook:declareOption("layout", "yoko")
 jbook:loadPackage("masters")
 
-jbook:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" });
+jbook:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
 jbook:mirrorMaster("right", "left")
 
 jbook:loadPackage("hanmenkyoshi")
@@ -24,7 +24,7 @@ function jbook:init()
       footnotes = { left="left(content)", right = "right(content)", height = "0", bottom="83.3%ph"}
     }
   })
-  book:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" });
+  book:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
   book:mirrorMaster("right", "left")
   self.pageTemplate.firstContentFrame = self.pageTemplate.frames.content
   return self.base.init(self)

@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["bn"] = {};
+SILE.hyphenator.languages["bn"] = {}
 SILE.hyphenator.languages["bn"].patterns =
    {
 -- GENERAL RULE
@@ -83,4 +83,4 @@ SILE.hyphenator.languages["bn"].patterns =
 "2ঽ1",
 -- Do not break either side of virama (may be within conjunct).
 "2্2",
-   };
+   }

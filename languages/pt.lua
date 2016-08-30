@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["pt"] = {};
+SILE.hyphenator.languages["pt"] = {}
 SILE.hyphenator.languages["pt"].patterns =
    {
 "1b2l",
@@ -308,7 +308,7 @@ SILE.hyphenator.languages["pt"].patterns =
 "u3o",
 "u3u",
 "1-",
-   };
+   }
 
 SILE.hyphenator.languages["pt"].exceptions =
    {

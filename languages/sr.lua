@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["sr"] = {};
+SILE.hyphenator.languages["sr"] = {}
 SILE.hyphenator.languages["sr"].patterns =
 {
    ".ђ2",
@@ -2426,7 +2426,7 @@ SILE.hyphenator.languages["sr"].patterns =
 "з2н",
 "з2р",
 "з2в",
-};
+}
 SILE.hyphenator.languages["sr"].exceptions =
    {
 "на-дно",
@@ -2559,4 +2559,4 @@ SILE.hyphenator.languages["sr"].exceptions =
 "про-гра-ми-ра-ње",
 "сни-ма-ња",
 "сни-ма-ње",
-   };
+   }

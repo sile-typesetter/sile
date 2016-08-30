@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["ga"] = {};
+SILE.hyphenator.languages["ga"] = {}
 SILE.hyphenator.languages["ga"].patterns =
 {
 ".ab4ai",
@@ -6034,7 +6034,7 @@ SILE.hyphenator.languages["ga"].patterns =
 "x3ac",
 "x5ai",
 "x5aí",
-};
+}
 
 SILE.hyphenator.languages["ga"].exceptions =
    {
@@ -6084,4 +6084,4 @@ SILE.hyphenator.languages["ga"].exceptions =
 "spealta",
 "dtiom-áintí",
 "thiom-áintí",
-   };
+   }

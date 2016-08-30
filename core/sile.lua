@@ -3,7 +3,7 @@ SILE.version = "0.9.4"
 SILE.utilities = require("core/utilities")
 SU = SILE.utilities
 SILE.inputs = {}
-SILE.Commands = {};
+SILE.Commands = {}
 SILE.debugFlags = {}
 SILE.nodeMakers = {}
 SILE.tokenizers = {}
@@ -14,8 +14,8 @@ std = require("std")
 lfs = require("lfs")
 if (os.getenv("SILE_COVERAGE")) then require("luacov") end
 
-SILE.documentState = std.object {};
-SILE.scratch = {};
+SILE.documentState = std.object {}
+SILE.scratch = {}
 SILE.length = require("core/length")
 require("core/parserbits")
 require("core/measurements")

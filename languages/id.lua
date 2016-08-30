@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["id"] = {};
+SILE.hyphenator.languages["id"] = {}
 SILE.hyphenator.languages["id"].patterns =
    {
 "a1",
@@ -149,7 +149,7 @@ SILE.hyphenator.languages["id"].patterns =
 ".pa3ng4an.",
 ".ri3ng4an.",
 ".de3ng4an.", -- Don't overload the exception list...
-   };
+   }
 
 SILE.hyphenator.languages["id"].exceptions =
    {
@@ -208,4 +208,4 @@ SILE.hyphenator.languages["id"].exceptions =
 "te-ru-na",
 "te-rus",
 "te-ru-si",
-};
+}

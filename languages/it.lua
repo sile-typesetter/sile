@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["it"] = {};
+SILE.hyphenator.languages["it"] = {}
 SILE.hyphenator.languages["it"].patterns =
    {
 ".a3p2n",               -- After the Garzanti dictionary: a-pnea, a-pnoi-co
@@ -356,4 +356,4 @@ SILE.hyphenator.languages["it"].patterns =
 "2z'.",
 "2z''",
 ".z2",
-   };
+   }

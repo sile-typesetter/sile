@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["ca"] = {};
+SILE.hyphenator.languages["ca"] = {}
 SILE.hyphenator.languages["ca"].patterns =
    {
 --
@@ -886,7 +886,7 @@ SILE.hyphenator.languages["ca"].patterns =
 "sub3a",
 "ui3et",
 "o3gnò",
-   };
+   }
 
 SILE.hyphenator.languages["ca"].exceptions = {
 "cu-rie",
@@ -915,4 +915,4 @@ SILE.hyphenator.languages["ca"].exceptions = {
 "vos-al-tres",
 "whis-ky",
 "whis-kies",
-};
+}

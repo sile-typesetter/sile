@@ -41,7 +41,7 @@ SILE.outputters.debug = {
     print("Draw image", src, string.format("%.4f %.4f %.4f %.4f",x, y, w, h))
   end,
   imageSize = function (src)
-    local pdf = require("justenoughlibtexpdf");
+    local pdf = require("justenoughlibtexpdf")
     local llx, lly, urx, ury = pdf.imagebbox(src)
     return (urx-llx), (ury-lly)
   end,

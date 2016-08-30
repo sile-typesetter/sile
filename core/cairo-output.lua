@@ -1,7 +1,7 @@
 -- This output package is deprecated and should only be used as an
 -- example of how to create alternative output backends, in comparison
 -- with the libtexpdf and debug backends.
-local lgi = require("lgi");
+local lgi = require("lgi")
 local cairo = lgi.cairo
 local pango = lgi.Pango
 local fm = lgi.PangoCairo.FontMap.get_default()
@@ -22,7 +22,7 @@ SILE.outputters.cairo = {
     sgs = cr.show_glyph_string
   end,
   newPage = function()
-  	cr:show_page();
+  	cr:show_page()
   end,
   finish = function()
   end,
@@ -79,21 +79,21 @@ SILE.outputters.cairo = {
   end,
   debugFrame = function (self,f)
     cr:set_source_rgb(0.8,0,0)
-    cr:set_line_width(0.5);
-  	cr:rectangle(f:left(), f:top(), f:width(), f:height());
-    cr:stroke();
-  	cr:move_to(f:left() - 10, f:top() -2);
-  	cr:show_text(f.id);
-    cr:set_source_rgb(0,0,0);
+    cr:set_line_width(0.5)
+  	cr:rectangle(f:left(), f:top(), f:width(), f:height())
+    cr:stroke()
+  	cr:move_to(f:left() - 10, f:top() -2)
+  	cr:show_text(f.id)
+    cr:set_source_rgb(0,0,0)
   end,
   debugHbox = function(typesetter, hbox, scaledWidth)
-    cr:set_source_rgb(0.9,0.9,0.9);
-    cr:set_line_width(0.5);
-    cr:rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-(hbox.height), scaledWidth, hbox.height+hbox.depth);
+    cr:set_source_rgb(0.9,0.9,0.9)
+    cr:set_line_width(0.5)
+    cr:rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-(hbox.height), scaledWidth, hbox.height+hbox.depth)
     if (hbox.depth) then cr:rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-(hbox.height), scaledWidth, hbox.height); end
-    cr:stroke();
-    cr:set_source_rgb(0,0,0);
-    cr:move_to(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY);
+    cr:stroke()
+    cr:set_source_rgb(0,0,0)
+    cr:move_to(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
   end
 }
 

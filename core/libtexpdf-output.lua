@@ -1,4 +1,4 @@
-local pdf = require("justenoughlibtexpdf");
+local pdf = require("justenoughlibtexpdf")
 if (not SILE.outputters) then SILE.outputters = {} end
 local cursorX = 0
 local cursorY = 0

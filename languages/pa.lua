@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["pa"] = {};
+SILE.hyphenator.languages["pa"] = {}
 SILE.hyphenator.languages["pa"].patterns =
    {
 -- GENERAL RULE
@@ -70,4 +70,4 @@ SILE.hyphenator.languages["pa"].patterns =
 "2੍2",
 "2ੰ2",
 "2ੱ2",
-   };
+   }

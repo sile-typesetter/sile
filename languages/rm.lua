@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["rm"] = {};
+SILE.hyphenator.languages["rm"] = {}
 SILE.hyphenator.languages["rm"].patterns =
    {
 "2'2",
@@ -376,4 +376,4 @@ SILE.hyphenator.languages["rm"].patterns =
 "2zz",
 "2z.",
 ".z2",
-   };
+   }

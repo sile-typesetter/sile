@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["gu"] = {};
+SILE.hyphenator.languages["gu"] = {}
 SILE.hyphenator.languages["gu"].patterns =
    {
 -- GENERAL RULE
@@ -76,4 +76,4 @@ SILE.hyphenator.languages["gu"].patterns =
 -- Do not break either side of virama (may be within conjunct).
 "2્2",
 "2ં2",
-   };
+   }

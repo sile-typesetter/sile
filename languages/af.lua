@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["af"] = {};
+SILE.hyphenator.languages["af"] = {}
 SILE.hyphenator.languages["af"].patterns = {
 ".aan5s4",
 ".aä7lawa",
@@ -10342,7 +10342,7 @@ SILE.hyphenator.languages["af"].patterns = {
 "-s4ti",
 "-t4we",
 "-5twee",
-};
+}
 SILE.hyphenator.languages["af"].exceptions =
    {
 "sandaal",
@@ -10530,4 +10530,4 @@ SILE.hyphenator.languages["af"].exceptions =
 "werp-lood",
 "wes-oe-wer",
 "xho-sa-tjie",
-   };
+   }

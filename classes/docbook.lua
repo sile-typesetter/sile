@@ -1,5 +1,5 @@
-local plain = SILE.require("classes/plain");
-docbook = plain { id = "docbook" };
+local plain = SILE.require("classes/plain")
+docbook = plain { id = "docbook" }
 SILE.scratch.docbook = {
   seclevel = 0,
   seccount = {}

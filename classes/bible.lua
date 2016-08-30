@@ -1,5 +1,5 @@
-local plain = SILE.require("classes/plain");
-local bible = plain { id = "bible", base = plain };
+local plain = SILE.require("classes/plain")
+local bible = plain { id = "bible", base = plain }
 if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end
 
 
@@ -62,7 +62,7 @@ function bible:init()
   else
     self:singleColumnMaster()
   end
-  self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" });
+  self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
   self.pageTemplate = SILE.scratch.masters["right"]
   return plain.init(self)
 end
@@ -99,19 +99,19 @@ bible.endPage = function(self)
         SILE.call("par")
       end)
   end
-  return plain.endPage(self);
-end;
+  return plain.endPage(self)
+end
 
 
 SILE.registerCommand("left-running-head", function(options, content)
   local closure = SILE.settings.wrap()
   SILE.scratch.headers.left = function () closure(content) end
-end, "Text to appear on the top of the left page");
+end, "Text to appear on the top of the left page")
 
 SILE.registerCommand("right-running-head", function(options, content)
   local closure = SILE.settings.wrap()
   SILE.scratch.headers.right = function () closure(content) end
-end, "Text to appear on the top of the right page");
+end, "Text to appear on the top of the right page")
 
 
 SILE.registerCommand("chapter", function (o,c)

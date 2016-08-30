@@ -22,7 +22,7 @@ SILE.newTateFrame = function ( spec )
 end
 
 SILE.registerCommand("tate-frame", function (options, content)
-      SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newTateFrame(options);
+      SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newTateFrame(options)
     end, "Declares (or re-declares) a frame on this page.")
 
 local swap = function (x)

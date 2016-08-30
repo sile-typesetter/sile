@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["bg"] = {};
+SILE.hyphenator.languages["bg"] = {}
 SILE.hyphenator.languages["bg"].patterns =
    {
 "1а1",
@@ -1507,4 +1507,4 @@ SILE.hyphenator.languages["bg"].patterns =
 "н4кт.",
 "н4кс.",
 "к4ст.",
-   };
+   }

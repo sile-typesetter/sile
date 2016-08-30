@@ -1,7 +1,7 @@
 -- This output package is deprecated and should only be used as an
 -- example of how to create alternative output backends, in comparison
 -- with the libtexpdf and debug backends.
-local pdf = require("podofo");
+local pdf = require("podofo")
 local imagesize = SILE.require("imagesize")
 if (not SILE.outputters) then SILE.outputters = {} end
 
@@ -23,7 +23,7 @@ SILE.outputters.podofo = {
     pagesize:SetWidth(SILE.documentState.paperSize[1])
     pagesize:SetHeight(SILE.documentState.paperSize[2])
     page = document:CreatePage(pagesize)
-    painter = podofo.PdfPainter();
+    painter = podofo.PdfPainter()
     painter:SetPage(page)
   end,
   newPage = function()
@@ -78,13 +78,13 @@ SILE.outputters.podofo = {
   debugFrame = function (self,f)
   end,
   debugHbox = function(typesetter, hbox, scaledWidth)
-    painter:SetColor(0.9,0.9,0.9);
-    painter:SetStrokeWidth(0.5);
-    painter:Rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY+(hbox.height), scaledWidth, hbox.height+hbox.depth);
+    painter:SetColor(0.9,0.9,0.9)
+    painter:SetStrokeWidth(0.5)
+    painter:Rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY+(hbox.height), scaledWidth, hbox.height+hbox.depth)
     if (hbox.depth) then painter:Rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY+(hbox.height), scaledWidth, hbox.height); end
-    painter:Stroke();
-    painter:SetColor(0,0,0);
-    --cr:move_to(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY);
+    painter:Stroke()
+    painter:SetColor(0,0,0)
+    --cr:move_to(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
   end
 }
 
