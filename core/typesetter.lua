@@ -153,6 +153,11 @@ SILE.defaultTypesetter = std.object {
   pushGlue = function (self, spec)
     return self:pushHorizontal(SILE.nodefactory.newGlue(spec))
   end,
+  pushExplicitGlue = function (self, spec)
+    spec.explicit = true
+    spec.discardable = false
+    return self:pushHorizontal(SILE.nodefactory.newGlue(spec))
+  end,
   pushPenalty = function (self, spec)
     return self:pushHorizontal(SILE.nodefactory.newPenalty(spec))
   end,
@@ -248,7 +253,7 @@ SILE.defaultTypesetter = std.object {
     while (#nl >0 and nl[1]:isPenalty()) do table.remove(nl,1) end
     if #nl == 0 then return {} end
     self:shapeAllNodes(nl)
-    self:pushGlue(SILE.settings.get("typesetter.parfillskip"))
+    self:pushExplicitGlue(SILE.settings.get("typesetter.parfillskip"))
     self:pushPenalty({ flagged= 1, penalty= -inf_bad })
     SU.debug("typesetter", "Boxed up "..(#nl > 500 and (#nl).." nodes" or listToString(nl)))
     local breakWidth = SILE.settings.get("typesetter.breakwidth") or self.frame:lineWidth()
@@ -427,8 +432,10 @@ SILE.defaultTypesetter = std.object {
             SU.debug("pushback", { "re-mark discretionary as unused" })
             node.used = false -- HACK HACK HACK
           end
+          if not node.discardable then
+            self:pushHorizontal(node)
           -- HACK HACK HACK HACK HACK
-          if not (node:isGlue() and (node.value == "lskip" or node.value == "rskip"))
+          elseif not (node:isGlue() and (node.value == "lskip" or node.value == "rskip"))
               and not (node:isDiscretionary() and i == 1) then
             -- SU.debug("pushback", { "horiz", node })
             self:pushHorizontal(node)
