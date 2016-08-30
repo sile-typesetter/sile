@@ -226,7 +226,9 @@ local _glue = _box {
   _type = "Glue",
   type = "glue",
   discardable = true,
-  __tostring = function (this) return "G<" .. tostring(this.width) .. ">"; end,
+  __tostring = function (this)
+    return (this.explicit and "E:" or "") .. "G<" .. tostring(this.width) .. ">"
+  end,
   toText = function () return " " end,
   outputYourself = function (self,typesetter, line)
     local scaledWidth = self.width.length
@@ -242,7 +244,9 @@ local _kern = _glue {
   _type = "Kern",
   type = "kern",
   discardable = false,
-  __tostring = function (this) return "K<" .. tostring(this.width) .. ">"; end,
+  __tostring = function (this)
+    return "K<" .. tostring(this.width) .. ">"
+  end,
 }
 
 -- VGlue
@@ -251,7 +255,7 @@ local _vglue = _box {
   _type = "VGlue",
   discardable = true,
   __tostring = function (this)
-      return "VG<" .. tostring(this.height) .. ">";
+    return (this.explicit and "E:" or "") .. "VG<" .. tostring(this.height) .. ">";
   end,
   setGlue = function (self,adjustment)
     self.height.length = SILE.toAbsoluteMeasurement(self.height.length) + adjustment
