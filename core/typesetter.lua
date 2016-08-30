@@ -446,6 +446,7 @@ SILE.defaultTypesetter = std.object {
       else
         SU.debug("pushback", { "discard", vbox.type })
       end
+      lastMargins = vbox.margins
     end
     while self.state.nodes[#self.state.nodes]
       and self.state.nodes[#self.state.nodes]:isPenalty()
