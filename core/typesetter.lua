@@ -168,7 +168,6 @@ SILE.defaultTypesetter = std.object {
   pushExplicitVglue = function (self, spec)
     spec.explicit = true
     spec.discardable = false
-    self:inhibitLeading()
     return self:pushVglue(spec)
   end,
   pushVpenalty = function (self, spec)
