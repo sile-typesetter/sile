@@ -427,26 +427,37 @@ SILE.defaultTypesetter = std.object {
         SILE.typesetter:pushMigratingMaterial({vbox})
       elseif not vbox:isVglue() and not vbox:isPenalty() then
         SU.debug("pushback", { "not vglue or penalty", vbox.type })
+        local discardedFistInitLine = false
         for i, node in ipairs(vbox.nodes) do
-          if node:isDiscretionary() then
-            SU.debug("pushback", { "re-mark discretionary as unused" })
-            node.used = false -- HACK HACK HACK
-          end
-          if (not node:isDiscretionary() and not node.discardable) then
+          if node:isGlue() and not node.discardable then
             self:pushHorizontal(node)
-          -- HACK HACK HACK HACK HACK
-          elseif not (node:isGlue() and (node.value == "lskip" or node.value == "rskip"))
-              and not (node:isDiscretionary() and i == 1) then
-            -- SU.debug("pushback", { "horiz", node })
-            self:pushHorizontal(node)
+          elseif node:isGlue() and (node.value == "lskip" or node.value == "rskip") then
+            SU.debug("pushback", { "discard", node.value, node })
+          elseif node:isDiscretionary() then
+            SU.debug("pushback", { "re-mark discretionary as unused", node })
+            node.used = false
+            if i == 1 then
+              SU.debug("pushback", { "keep first discretionary", node })
+              self:pushHorizontal(node)
+            else
+              SU.debug("pushback", { "discard all other discretionaries", node })
+            end
+          elseif node == SILE.nodefactory.zeroHbox then
+            if not discardedFistInitLine then self:pushHorizontal(node)
+            else SU.debug("que", { "discard zero hbox" }) end
+            discardedFistInitLine = true
+          elseif node:isPenalty() then
+            if not discardedFistInitLine then self:pushHorizontal(node) end
+            SU.debug("que", { "discard penalty"  })
           else
-            SU.debug("pushback", { "ignore", node.value, node })
+            self:pushHorizontal(node)
           end
         end
       else
         SU.debug("pushback", { "discard", vbox.type })
       end
       lastMargins = vbox.margins
+      -- self:debugState()
     end
     while self.state.nodes[#self.state.nodes]
       and self.state.nodes[#self.state.nodes]:isPenalty()
