@@ -432,7 +432,7 @@ SILE.defaultTypesetter = std.object {
             SU.debug("pushback", { "re-mark discretionary as unused" })
             node.used = false -- HACK HACK HACK
           end
-          if not node.discardable then
+          if (not node:isDiscretionary() and not node.discardable) then
             self:pushHorizontal(node)
           -- HACK HACK HACK HACK HACK
           elseif not (node:isGlue() and (node.value == "lskip" or node.value == "rskip"))
