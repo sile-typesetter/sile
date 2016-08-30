@@ -73,9 +73,9 @@ SILE.settings.declare({
 })
 
 local _margins = std.object {
-  __eq = function(a, b)
-    return SILE.toAbsoluteMeasurement(a.lskip.width) == SILE.toAbsoluteMeasurement(b.lskip.width)
-      and SILE.toAbsoluteMeasurement(a.rskip.width) == SILE.toAbsoluteMeasurement(b.rskip.width)
+  __eq = function(self, other)
+    return SILE.toAbsoluteMeasurement(self.lskip.width) == SILE.toAbsoluteMeasurement(other.lskip.width)
+      and SILE.toAbsoluteMeasurement(self.rskip.width) == SILE.toAbsoluteMeasurement(other.rskip.width)
   end
 }
 
