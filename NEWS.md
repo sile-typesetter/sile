@@ -1,5 +1,37 @@
 ## What's new in SILE
 
+## Version 0.9.4 (2016-08-31)
+
+Nearly 600 changes, including:
+
+* New packages include: letter spacing, multiple line spacing methods, Japanese Ruby, font specimen generator, crop marks, font fallback, set PDF background color.
+
+* Fixed handling of font weight and style.
+
+* Hyphenation: Correct hyphenation of Indic scripts, words with non-alphabetic characters in them, and allow setting hyphen character and defining hyphenation exceptions.
+
+* Relative dimensions ("1.2em") are converted to absolute dimensions at point of use, not point of declaration. So you can set linespacing to 1.2em, change font size, and it'll still work.
+
+* Default paper size to A4.
+
+* Changes to semantics of percent-of-page and percent-of-frame length specifications. (`width=50%` etc.)
+
+* Much improved handling of footnotes, especially in multicolumn layouts.
+
+* Support for: the libthai line breaking library, color fonts, querying the system font library on OS X, multiple Amharic justification conventions.
+
+* Added explicit kern nodes.
+
+* Changed to using Harfbuzz for the text processing pipeline; much faster, and much more accurate text shaping.
+
+* Rewritten and more accurate bidirectional handling.
+
+* Removed dependency on FreeType; use Harfbuzz for font metrics.
+
+* Fixed the definition of an em. (It's not the width of a letter "m".)
+
+and much more besides.
+
 ## Version 0.9.3 (2015-10-09)
 
 * Support for typesetting Japanese according to the JIS X 4051 standard, both horizontally and vertically.
