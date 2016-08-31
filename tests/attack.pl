@@ -38,7 +38,7 @@ if ($regression) {
 				$knownbad = 1;
 			}
 			exit $? >> 8 if system qq!./sile -e 'require("core/debug-output")' $_ > $out!;
-			if (system("diff -U0 $expectation $out")) {
+			if (system("diff -".($knownbad?"q":"")."U0 $expectation $out")) {
 				if ($knownbad) { push @knownbad, $_; }
 				else { push @failed, $_; }
 			} else {
