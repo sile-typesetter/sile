@@ -1,12 +1,16 @@
-SILE.tokenizers.grc = function(text)
-  local chunks = SU.splitUtf8(text)
-  return coroutine.wrap(function()
-    for i = 1,#chunks do
-      coroutine.yield({ string = chunks[i] })
-      coroutine.yield({ node = SILE.nodefactory.newPenalty({ penalty = 0 }) })
-    end
-  end)
-end
+SILE.hyphenator.languages.grc = {patterns={}}
+SILE.nodeMakers.grc = SILE.nodeMakers.unicode {
+  iterator = function (self, items)
+    return coroutine.wrap(function()
+      self:init()
+      for i = 1,#items do
+        self:addToken(items[i].text,items[i])
+        self:makeToken()
+        self:makePenalty()
+      end
+    end)
+  end
+}
 
 local swap = SILE.nodefactory.newVbox({})
 swap.outputYourself = function(self,typesetter,line)

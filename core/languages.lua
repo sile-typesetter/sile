@@ -9,6 +9,7 @@ SILE.languageSupport = {
     ok, fail = pcall(function () SILE.require("languages/"..language) end)
     if fail then
       SU.warn("Error loading language "..language..": "..fail)
+      SILE.languageSupport.languages[language] = {} -- Don't try again
     end
   end,
   compile = function(language)
@@ -43,5 +44,6 @@ require("languages/unicode")
 -- The following languages neither have hyphenation nor specific
 -- language support at present. This code is here to suppress warnings.
 SILE.hyphenator.languages.ar = {patterns={}}
+SILE.hyphenator.languages.bo = {patterns={}}
 SILE.hyphenator.languages.urd = {patterns={}}
 SILE.hyphenator.languages.snd = {patterns={}}
