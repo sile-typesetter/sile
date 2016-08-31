@@ -1,5 +1,5 @@
 SILE.hyphenator.languages["el-monoton"] = {};
-SILE.hyphenator.languages["en"].patterns =
+SILE.hyphenator.languages["el-monoton"].patterns =
    {
 -------- vowels
 ---- Vowel patterns (pre-combined)
@@ -77,7 +77,7 @@ SILE.hyphenator.languages["en"].patterns =
 "ά3η.",
 "α2ϊ",
 "ά3ι.",
-"ά3ι.,"   -- ts'a-i
+"ά3ι.",   -- ts'a-i
 "α2ϋ",   -- ka"u-m'oc
 "ε2ϊ",   -- ze"i-mpekikoc
 "ε2ϋ",   -- Ke"u-l'anh
