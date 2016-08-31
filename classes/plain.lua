@@ -163,7 +163,7 @@ end, "Compiles all the enclosed horizontal-mode material into a single hbox")
 SILE.registerCommand("vbox", function (options,c)
   local vbox
   SILE.settings.temporarily(function()
-    if (options.width) then SILE.settings.set("typesetter.breakwidth", options.width) end
+    if (options.width) then SILE.settings.set("typesetter.breakwidth", SILE.length.parse(options.width)) end
     SILE.typesetter:pushState()
     SILE.process(c)
     SILE.typesetter:leaveHmode(1)
