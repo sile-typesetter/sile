@@ -5,6 +5,7 @@ compiler:
 addons:
  apt:
   packages:
+   - pkg-config
    - libgraphite2-dev
    - libicu-dev
    - libreadline-dev
