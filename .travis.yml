@@ -19,12 +19,12 @@ env:
    - GRAPHITE=true
    - COVERAGE=false
   matrix:
+   - LUA=lua5.3 COVERAGE=true
+   - LUA=lua5.3 GRAPHITE=false
    - LUA=lua5.2
    - LUA=lua5.2 GRAPHITE=false
    - LUA=lua5.1
    - LUA=lua5.1 GRAPHITE=false
-   - LUA=lua5.3 COVERAGE=true
-   - LUA=lua5.3 GRAPHITE=false
 cache:
   directories:
   - $HOME/.fonts
