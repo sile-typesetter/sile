@@ -50,7 +50,7 @@ before_install:
       wget http://www.freedesktop.org/software/harfbuzz/release/$HARFBUZZ_BASE.tar.bz2 ;
       tar xfj $HARFBUZZ_BASE.tar.bz2 ;
       cd $HARFBUZZ_BASE ;
-      ./configure --with-graphite2=$($GRAPHITE && echo 'yes' || echo 'no') --prefix=$HOME/local/ ;
+      ./configure --with$($GRAPHITE || echo 'out')-graphite2 --prefix=$HOME/local/ ;
       make ;
       make install ;
       popd ;
