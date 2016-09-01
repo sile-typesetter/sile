@@ -105,6 +105,7 @@ local length = {
   end,
   parse = function (spec)
     if not spec then return _length {} end
+    if type(spec) == "table" then return _length {spec} end
     local t = lpeg.match(SILE.parserBits.length, spec)
     if not t then SU.error("Bad length definition '"..spec.."'") end
     if not t.shrink then t.shrink = 0 end
