@@ -51,7 +51,6 @@ before_install:
       tar xfj $HARFBUZZ_BASE.tar.bz2 ;
       cd $HARFBUZZ_BASE ;
       ./configure --with-graphite2=$($GRAPHITE && echo 'yes' || echo 'no') --prefix=$HOME/local/ ;
-      fi ;
       make ;
       make install ;
       popd ;
