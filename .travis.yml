@@ -73,7 +73,7 @@ script:
  - ./bootstrap.sh && ./configure && make
  - busted -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
  - ./tests/attack.pl
- - $COVERAGE && ./tests/attack.pl --regression $($COVERAGE && echo '--coverage')
+ - ./tests/attack.pl --regression $($COVERAGE && echo '--coverage')
  - ./sile --debug=fonts,versions tests/bug-117.sil
 
 after_success:
