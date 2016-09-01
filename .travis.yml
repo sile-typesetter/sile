@@ -17,12 +17,13 @@ env:
    - LUAROCKS=2.2.2
    - HARFBUZZ_BASE=harfbuzz-1.2.6
    - GRAPHITE=true
+   - COVERAGE=false
   matrix:
    - LUA=lua5.2
    - LUA=lua5.2 GRAPHITE=false
    - LUA=lua5.1
    - LUA=lua5.1 GRAPHITE=false
-   - LUA=lua5.3
+   - LUA=lua5.3 COVERAGE=true
    - LUA=lua5.3 GRAPHITE=false
 cache:
   directories:
@@ -49,10 +50,7 @@ before_install:
       wget http://www.freedesktop.org/software/harfbuzz/release/$HARFBUZZ_BASE.tar.bz2 ;
       tar xfj $HARFBUZZ_BASE.tar.bz2 ;
       cd $HARFBUZZ_BASE ;
-      if [ "x$GRAPHITE" = "xtrue" ]; then
-         ./configure --with-graphite2=yes --prefix=$HOME/local/ ;
-      else
-         ./configure --with-graphite2=no --prefix=$HOME/local/ ;
+      ./configure --with-graphite2=$($GRAPHITE && echo 'yes' || echo 'no') --prefix=$HOME/local/ ;
       fi ;
       make ;
       make install ;
@@ -76,7 +74,7 @@ script:
  - ./bootstrap.sh && ./configure && make
  - busted -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
  - ./tests/attack.pl
- - ./tests/attack.pl --regression --coverage
+ - $COVERAGE && ./tests/attack.pl --regression $($COVERAGE && echo '--coverage')
  - ./sile --debug=fonts,versions tests/bug-117.sil
 
 after_success:
