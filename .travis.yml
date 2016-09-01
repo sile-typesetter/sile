@@ -72,10 +72,10 @@ install:
 script:
  - ./bootstrap.sh && ./configure && make
  - busted -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
- - ./tests/attack.pl
  - ./tests/attack.pl --regression
+ - ./tests/attack.pl
  - ./sile --debug=fonts,versions tests/bug-117.sil
 
 after_success:
- - $COVERAGE && ./tests/attack.pl --regression --coverage 2>&1 >/dev/null ||:
- - $COVERAGE && luacov-coveralls -e lua.libraries ||:
+ - $COVERAGE && ./tests/attack.pl --regression --coverage >/dev/null 2>&1
+ - $COVERAGE && luacov-coveralls -e lua.libraries
