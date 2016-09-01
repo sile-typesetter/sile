@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["uk"] = {};
+SILE.hyphenator.languages["uk"] = {}
 SILE.hyphenator.languages["uk"].patterns =
    {
 ---- break words into syllables (rules60 \S 30);
@@ -4359,4 +4359,4 @@ SILE.hyphenator.languages["uk"].patterns =
 "8'8я-",
 "-'8'8",
 "8'8'-",
-   };
+   }

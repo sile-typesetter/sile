@@ -1,12 +1,12 @@
-local plain = SILE.require("classes/plain");
-local testsidenote = plain { id = "testsidenote" };
+local plain = SILE.require("classes/plain")
+local testsidenote = plain { id = "testsidenote" }
 
 local gutterWidth = "3%pw"
 testsidenote:declareFrame("contentA", {left = "left(content)", right = "left(gutter)", top = "top(content)", bottom = "bottom(content)" })
 testsidenote:declareFrame("sidenotes", {left = "right(gutter)", width="width(contentA) * 2 / 3", right = "right(content)", top = "top(content)", bottom = "bottom(content)", balanced = true })
 testsidenote:declareFrame("gutter", {left = "right(contentA)", right = "left(sidenotes)", width = gutterWidth })
 
-testsidenote.pageTemplate.firstContentFrame = testsidenote.pageTemplate.frames["contentA"];
+testsidenote.pageTemplate.firstContentFrame = testsidenote.pageTemplate.frames["contentA"]
 
 local insertions = SILE.require("packages/insertions")
 SILE.require("packages/footnotes")

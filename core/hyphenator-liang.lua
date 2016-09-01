@@ -1,5 +1,5 @@
 local function addPattern(h, p)
-  local t = h.trie;
+  local t = h.trie
   bits = SU.splitUtf8(p)
   for i = 1,#bits do char = bits[i]
     if not char:find("%d") then
@@ -7,7 +7,7 @@ local function addPattern(h, p)
       t = t[char]
     end
   end
-  t["_"] = {};
+  t["_"] = {}
   local lastWasDigit = 0
   for i = 1,#bits do char = bits[i]
     if char:find("%d") then
@@ -40,7 +40,7 @@ end
 function loadPatterns(h, language)
   SILE.languageSupport.loadLanguage(language)
 
-  local languageset = SILE.hyphenator.languages[language];
+  local languageset = SILE.hyphenator.languages[language]
   if not (languageset) then
     print("No patterns for language "..language)
     return
@@ -90,12 +90,12 @@ function _hyphenate(self, w)
 end
 
 SILE.hyphenator = {}
-SILE.hyphenator.languages = {};
-_hyphenators = {};
+SILE.hyphenator.languages = {}
+_hyphenators = {}
 
 local initHyphenator = function (lang)
   if not _hyphenators[lang] then
-    _hyphenators[lang] = {minWord = 5, leftmin = 2, rightmin = 2, trie = {}, exceptions = {} };
+    _hyphenators[lang] = {minWord = 5, leftmin = 2, rightmin = 2, trie = {}, exceptions = {} }
     loadPatterns(_hyphenators[lang], lang)
   end
 end
@@ -103,7 +103,7 @@ end
 local hyphenateNode = function(n)
   if not n:isNnode() or not n.text then return {n} end
   initHyphenator(n.language)
-  local breaks = _hyphenate(_hyphenators[n.language],n.text);
+  local breaks = _hyphenate(_hyphenators[n.language],n.text)
   if #breaks > 1 then
     local newnodes = {}
     for j, b in ipairs(breaks) do

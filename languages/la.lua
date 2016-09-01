@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["la"] = {};
+SILE.hyphenator.languages["la"] = {}
 SILE.hyphenator.languages["la"].patterns =
    {
 ".a2b3l",
@@ -336,4 +336,4 @@ SILE.hyphenator.languages["la"].patterns =
 "u2r1ui",
 "u2r1uo",
 "u2r1uu",
-   };
+   }

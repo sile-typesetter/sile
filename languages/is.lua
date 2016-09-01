@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["is"] = {};
+SILE.hyphenator.languages["is"] = {}
 SILE.hyphenator.languages["is"].patterns =
    {
 ".að3",
@@ -4189,4 +4189,4 @@ SILE.hyphenator.languages["is"].patterns =
 "ötv3a",
 "ö5u",
 "þ6ó",
-   };
+   }

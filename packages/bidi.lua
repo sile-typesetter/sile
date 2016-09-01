@@ -2,20 +2,20 @@ SILE.registerCommand("thisframeLTR", function(options, content)
   SILE.typesetter.frame.direction = "LTR"
   SILE.typesetter:leaveHmode()
   SILE.typesetter.frame:newLine()
-end);
+end)
 
 SILE.registerCommand("thisframedirection", function(options, content)
   SILE.typesetter.frame.direction = SU.required(options, "direction", "frame direction")
   SILE.typesetter:leaveHmode()
   SILE.typesetter.frame:init()
-end);
+end)
 
 
 SILE.registerCommand("thisframeRTL", function(options, content)
   SILE.typesetter.frame.direction = "RTL"
   SILE.typesetter:leaveHmode()
   SILE.typesetter.frame:newLine()
-end);
+end)
 
 local bidi = require("unicode-bidi-algorithm")
 require("char-def")

@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["sl"] = {};
+SILE.hyphenator.languages["sl"] = {}
 SILE.hyphenator.languages["sl"].patterns =
    {
 ".av5r",
@@ -1069,4 +1069,4 @@ SILE.hyphenator.languages["sl"].patterns =
 "8ž.",
 "8š.",
 "8č.",
-   };
+   }

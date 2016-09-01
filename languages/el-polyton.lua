@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["el-polyton"] = {};
+SILE.hyphenator.languages["el-polyton"] = {}
 SILE.hyphenator.languages["el-polyton"].patterns =
    {
 -------- vowels
@@ -1190,4 +1190,4 @@ SILE.hyphenator.languages["el-polyton"].patterns =
 "6τϲ5μ2π",
 "6τσ5ν2τ",
 "6τϲ5ν2τ",
-   };
+   }

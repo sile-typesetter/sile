@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["or"] = {};
+SILE.hyphenator.languages["or"] = {}
 SILE.hyphenator.languages["or"].patterns =
    {
 -- GENERAL RULE
@@ -74,4 +74,4 @@ SILE.hyphenator.languages["or"].patterns =
 "2ଁ1",
 -- Do not break either side of virama (may be within conjunct).
 "2୍2",
-   };
+   }

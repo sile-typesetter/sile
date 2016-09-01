@@ -20,7 +20,7 @@ SILE.registerCommand("background", function (options, content)
       return page
     end
   end
-end, "Draws a solid background color <color> on pages after initialization.");
+end, "Draws a solid background color <color> on pages after initialization.")
 
 return { documentation = [[\begin{document}
 The \code{background} package allows you to set the color of the canvas background

@@ -1,5 +1,5 @@
-local plain = SILE.require("classes/plain");
-local book = plain { id = "book" };
+local plain = SILE.require("classes/plain")
+local book = plain { id = "book" }
 book:loadPackage("masters")
 book:defineMaster({ id = "right", firstContentFrame = "content", frames = {
   content = { left = "8.3%pw", right = "86%pw", top = "11.6%ph", bottom = "top(footnotes)" },
@@ -7,7 +7,7 @@ book:defineMaster({ id = "right", firstContentFrame = "content", frames = {
   runningHead = { left = "left(content)", right = "right(content)", top = "top(content)-8%ph", bottom = "top(content)-3%ph" },
   footnotes = { left="left(content)", right = "right(content)", height = "0", bottom="83.3%ph"}
 }})
-book:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" });
+book:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
 
 book:loadPackage("tableofcontents")
 
@@ -54,18 +54,18 @@ book.endPage = function(self)
         SILE.call("par")
       end)
   end
-  return plain.endPage(book);
-end;
+  return plain.endPage(book)
+end
 
 SILE.registerCommand("left-running-head", function(options, content)
   local closure = SILE.settings.wrap()
   SILE.scratch.headers.left = function () closure(content) end
-end, "Text to appear on the top of the left page");
+end, "Text to appear on the top of the left page")
 
 SILE.registerCommand("right-running-head", function(options, content)
   local closure = SILE.settings.wrap()
   SILE.scratch.headers.right = function () closure(content) end
-end, "Text to appear on the top of the right page");
+end, "Text to appear on the top of the right page")
 
 SILE.registerCommand("book:sectioning", function (options, content)
   local content = SU.subContent(content)
@@ -111,7 +111,7 @@ SILE.registerCommand("chapter", function (options, content)
       postnumber = "book:chapter:post"
     }, content)
   end)
-  SILE.Commands["book:chapterfont"]({}, content);
+  SILE.Commands["book:chapterfont"]({}, content)
   SILE.Commands["left-running-head"]({}, function()
     SILE.settings.temporarily(function()
       SILE.call("book:left-running-head-font")
@@ -120,7 +120,7 @@ SILE.registerCommand("chapter", function (options, content)
   end)
   SILE.call("bigskip")
   SILE.call("nofoliosthispage")
-end, "Begin a new chapter");
+end, "Begin a new chapter")
 
 SILE.registerCommand("section", function (options, content)
   SILE.typesetter:leaveHmode()
@@ -145,7 +145,7 @@ SILE.registerCommand("section", function (options, content)
           SILE.process(content)
         end)
       end)
-    end);
+    end)
   end
   SILE.call("novbreak")
   SILE.call("bigskip")

@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["hr"] = {};
+SILE.hyphenator.languages["hr"] = {}
 SILE.hyphenator.languages["hr"].patterns =
    {
 "a1a2",
@@ -1476,4 +1476,4 @@ SILE.hyphenator.languages["hr"].patterns =
 "r1s2t",
 "n2s1t",
 "l2f1t",
-   };
+   }

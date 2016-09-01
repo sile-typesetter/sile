@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["lv"] = {};
+SILE.hyphenator.languages["lv"] = {}
 SILE.hyphenator.languages["lv"].patterns =
    {
 "d4z",
@@ -11584,4 +11584,4 @@ SILE.hyphenator.languages["lv"].patterns =
 ".at3e2j",
 "bal2t3ma",
 ".vie2n1",
-   };
+   }

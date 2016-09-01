@@ -61,18 +61,17 @@ local gridFindBestBreak = function(options)
     local vbox = vboxlist[i]
     SU.debug("pagebuilder", "Dealing with VBox " .. vbox)
     if (vbox:isVbox()) then
-      totalHeight = totalHeight + vbox.height + vbox.depth;
+      totalHeight = totalHeight + vbox.height + vbox.depth
     elseif vbox:isVglue() then
-        totalHeight = totalHeight + vbox.height
+      totalHeight = totalHeight + vbox.height
     end
-
     if vbox.type == "insertionVbox" then
       target = SILE.insertions.processInsertion(vboxlist, i, totalHeight, target)
       vbox = vboxlist[i]
     end
     local left = target - totalHeight.length
     SU.debug("pagebuilder", "I have " .. tostring(left) .. "pts left")
-    SU.debug("pagebuilder", "totalHeight " .. totalHeight .. " with target " .. target);
+    SU.debug("pagebuilder", "totalHeight " .. totalHeight .. " with target " .. target)
     local badness = 0
     if left < 0 then badness = 1000000 end
     if vbox:isPenalty() then
@@ -100,7 +99,7 @@ end)
 
 SILE.registerCommand("grid", function(options, content)
   SU.required(options, "spacing", "grid package")
-  gridSpacing = SILE.parseComplexFrameDimension(options.spacing,"h");
+  gridSpacing = SILE.parseComplexFrameDimension(options.spacing,"h")
   -- SILE.typesetter:leaveHmode()
 
   SILE.pagebuilder = std.tree.clone(SILE.pagebuilder)

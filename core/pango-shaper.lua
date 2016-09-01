@@ -1,7 +1,7 @@
 -- This shaper package is deprecated and should only be used as an
 -- example of how to create alternative shaper backends, in comparison
 -- with the harfbuzz shaper.
-local lgi = require("lgi");
+local lgi = require("lgi")
 require "string"
 local pango = lgi.Pango
 local fm = lgi.PangoCairo.FontMap.get_default()
@@ -21,7 +21,7 @@ SILE.shapers.pango = SILE.shapers.base {
     local p = std.string.pickle(options)
     if palcache[p] then return palcache[p]
     else
-      pal = pango.AttrList.new();
+      pal = pango.AttrList.new()
       if options.language then pal:insert(pango.Attribute.language_new(pango.Language.from_string(options.language))) end
       if options.font then pal:insert(pango.Attribute.family_new(options.font)) end
       if options.weight then pal:insert(pango.Attribute.weight_new(tonumber(options.weight))) end

@@ -40,7 +40,9 @@ function _box:isKern ()  return self.type == "kern" end
 
 local _hbox = _box {
   type = "hbox",
-  __tostring = function (this) return "H<" .. tostring(this.width) .. ">^" .. tostring(this.height) .. "-" .. tostring(this.depth) .. "v"; end,
+  __tostring = function (this)
+    return "H<" .. tostring(this.width) .. ">^" .. tostring(this.height) .. "-" .. tostring(this.depth) .. "v"
+  end,
   scaledWidth = function (self, line)
     local scaledWidth = self:lineContribution()
     if type(scaledWidth) ~= "table" then return scaledWidth end
@@ -74,8 +76,8 @@ local _nnode = _hbox {
   pal = nil,
   nodes = {},
   __tostring = function (this)
-  return "N<" .. tostring(this.width) .. ">^" .. this.height .. "-" .. this.depth .. "v(" .. this:toText() .. ")";
-end,
+    return "N<" .. tostring(this.width) .. ">^" .. this.height .. "-" .. this.depth .. "v(" .. this:toText() .. ")";
+  end,
   init = function(self)
     if 0 == self.depth then self.depth = math.max(0,unpack(SU.map(function (n) return n.depth end, self.nodes))) end
     if 0 == self.height then self.height = math.max(0,unpack(SU.map(function (n) return n.height end, self.nodes))) end
@@ -133,7 +135,7 @@ local _disc = _hbox {
     if self.used == 1 then
       i = 1
       while (line.nodes[i]:isGlue() and line.nodes[i].value == "lskip")
-        or line.nodes[i] == SILE.nodefactory.zeroHbox do
+          or line.nodes[i] == SILE.nodefactory.zeroHbox do
         i = i+1
       end
       if (line.nodes[i] == self) then
@@ -268,7 +270,9 @@ local _vkern = _vglue {
   _type = "VGlue",
   type = "vglue",
   discardable = false,
-  __tostring = function (this) return "VK<" .. tostring(this.height) .. ">"; end,
+  __tostring = function (this)
+    return "VK<" .. tostring(this.height) .. ">"
+  end,
 }
 
 
@@ -280,7 +284,7 @@ local _penalty = _box {
   flagged = 0,
   penalty = 0,
   __tostring = function (this)
-      return "P(" .. this.flagged .. "|" .. this.penalty .. ")";
+    return "P(" .. this.flagged .. "|" .. this.penalty .. ")";
   end,
   outputYourself = function() end,
   toText = function() return "(!)" end,
@@ -292,7 +296,7 @@ local _vbox = _box {
   type = "vbox",
   nodes = {},
   __tostring = function (this)
-      return "VB<" .. tostring(this.height) .. "|" .. this:toText() .. "v"..tostring(this.depth)..")";
+    return "VB<" .. tostring(this.height) .. "|" .. this:toText() .. "v"..tostring(this.depth)..")";
   end,
   init = function (self)
     self.depth = 0
@@ -357,18 +361,19 @@ local _migrating = _hbox {
     return "<M: "..this.material .. ">"
   end
 }
+
 SILE.nodefactory = {}
 
-function SILE.nodefactory.newHbox(spec)     return _hbox(spec) end
-function SILE.nodefactory.newNnode(spec)    return _nnode(spec):init() end
+function SILE.nodefactory.newHbox(spec) return _hbox(spec) end
+function SILE.nodefactory.newNnode(spec) return _nnode(spec):init() end
 function SILE.nodefactory.newUnshaped(spec)
   local u = _unshaped(spec)
   u.width = nil
   return u
 end
 
-function SILE.nodefactory.newDisc(spec)   return _disc(spec) end
-function SILE.nodefactory.newAlternative(spec)   return _alt(spec) end
+function SILE.nodefactory.newDisc(spec) return _disc(spec) end
+function SILE.nodefactory.newAlternative(spec) return _alt(spec) end
 
 function SILE.nodefactory.newGlue(spec)
   if type(spec) == "table" then return std.tree.clone(_glue(spec)) end
@@ -405,4 +410,5 @@ SILE.nodefactory.hssGlue = SILE.nodefactory.newGlue({width = SILE.length.new({le
 SILE.nodefactory.vssGlue = SILE.nodefactory.newVglue({height = SILE.length.new({length = 0, stretch = inf, shrink = inf})})
 SILE.nodefactory.zeroHbox = SILE.nodefactory.newHbox({ width = SILE.length.new({length = 0, stretch = 0, shrink = 0}), value = {glyph = 0} });
 SILE.nodefactory.zeroVglue = SILE.nodefactory.newVglue({height = SILE.length.new({length = 0, stretch = 0, shrink = 0}) })
+
 return SILE.nodefactory

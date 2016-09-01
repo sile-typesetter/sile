@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["tk"] = {};
+SILE.hyphenator.languages["tk"] = {}
 SILE.hyphenator.languages["tk"].patterns =
    {
 -- Some suffixes are added through a hyphen. When hyphenating these words, a hyphen is added before the hyphen so that the line ends with a hyphen and the new line starts with a hyphen.
@@ -2379,4 +2379,4 @@ SILE.hyphenator.languages["tk"].patterns =
 "n2g1l",
 "n1g2r",
 "s2k1w",
-   };
+   }

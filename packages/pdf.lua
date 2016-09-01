@@ -13,7 +13,7 @@ SILE.registerCommand("pdf:destination", function (o,c)
     outputYourself= function (self, typesetter)
       pdf.destination(name, typesetter.frame.state.cursorX, SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY)
     end
-  });
+  })
 end)
 
 SILE.registerCommand("pdf:bookmark", function (o,c)
@@ -32,7 +32,7 @@ SILE.registerCommand("pdf:bookmark", function (o,c)
       local d = "<</Title<"..ustr..">/A<</S/GoTo/D("..dest..")>>>>"
       pdf.bookmark(d, level)
     end
-  });
+  })
 end)
 
 if SILE.Commands.tocentry then
@@ -56,7 +56,7 @@ SILE.registerCommand("pdf:literal", function (o,c)
       outputYourself= function (self, typesetter)
         pdf.add_content(c[1])
       end
-    });
+    })
 end)
 
 SILE.registerCommand("pdf:link", function (o,c)
@@ -69,7 +69,7 @@ SILE.registerCommand("pdf:link", function (o,c)
       lly = SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY
       pdf.begin_annotation()
     end
-  });
+  })
 
   local hbox = SILE.Commands["hbox"]({}, c) -- hack
 
@@ -77,7 +77,7 @@ SILE.registerCommand("pdf:link", function (o,c)
     value = nil, height = 0, width = 0, depth = 0,
     outputYourself= function (self,typesetter)
       local d = "<</Type/Annot/Subtype/Link/C [ 1 0 0 ]/A<</S/GoTo/D("..dest..")>>>>"
-      pdf.end_annotation(d, llx, lly, typesetter.frame.state.cursorX, SILE.documentState.paperSize[2] -typesetter.frame.state.cursorY + hbox.height);
+      pdf.end_annotation(d, llx, lly, typesetter.frame.state.cursorX, SILE.documentState.paperSize[2] -typesetter.frame.state.cursorY + hbox.height)
     end
   });end)
 

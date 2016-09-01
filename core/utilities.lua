@@ -253,7 +253,7 @@ utilities.utf8codes = function (ustr)
         if c < 0x80 or c >= 0xc0 then -- Invalid
           return nil
         else
-          ucv = ucv * 64 + (c - 0x80);
+          ucv = ucv * 64 + (c - 0x80)
         end
       end
       return ucv

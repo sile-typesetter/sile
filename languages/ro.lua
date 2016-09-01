@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["ro"] = {};
+SILE.hyphenator.languages["ro"] = {}
 SILE.hyphenator.languages["ro"].patterns =
    {
 ".a3ic",
@@ -648,4 +648,4 @@ SILE.hyphenator.languages["ro"].patterns =
 "zu2ț",
 "2z2v",
 "z3vă",
-   };
+   }

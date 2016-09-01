@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["pl"] = {};
+SILE.hyphenator.languages["pl"] = {}
 SILE.hyphenator.languages["pl"].patterns =
    {
 ".ćć8",
@@ -4054,7 +4054,7 @@ SILE.hyphenator.languages["pl"].patterns =
 "yo2",
 "yu2",
 "ze4p3p",
-   };
+   }
 SILE.hyphenator.languages["pl"].exceptions =
    {
 "be-zach",
@@ -4077,4 +4077,4 @@ SILE.hyphenator.languages["pl"].exceptions =
 "tró-jach",
 "tró-jami",
 "tró-jek",
-   };
+   }

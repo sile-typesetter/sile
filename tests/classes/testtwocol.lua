@@ -1,5 +1,5 @@
-local plain = SILE.require("classes/plain");
-local testtwocols = plain { id = "testtwocols" };
+local plain = SILE.require("classes/plain")
+local testtwocols = plain { id = "testtwocols" }
 
 local gutterWidth = "3%pw"
 testtwocols:declareFrame("contentA", {left = "left(content)", right = "left(gutter)", top = "5%pw", bottom = "83.3%ph", next = "contentB", balanced = true })
@@ -7,7 +7,7 @@ testtwocols:declareFrame("contentB", {left = "right(gutter)", width="width(conte
 testtwocols:declareFrame("gutter", {left = "right(contentA)", right = "left(contentB)", width = gutterWidth })
 testtwocols:declareFrame("footnotes", { left="left(contentB)", right = "right(contentB)", height = "0", bottom="83.3%ph"})
 
-testtwocols.pageTemplate.firstContentFrame = testtwocols.pageTemplate.frames["contentA"];
+testtwocols.pageTemplate.firstContentFrame = testtwocols.pageTemplate.frames["contentA"]
 
 testtwocols.init = function(self)
   testtwocols:loadPackage("footnotes", { insertInto = "footnotes", stealFrom = { contentB = 1 } } )

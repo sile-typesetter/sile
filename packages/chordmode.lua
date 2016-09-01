@@ -46,12 +46,12 @@ local function addChords(text, content)
       insertChord()
       currentText = ""
       process = processChordName
-    end;
+    end,
     ["\n"] = function(separator)
       insertChord()
       currentText = separator
       process = processText
-    end
+    end,
   }
   process = processText
 

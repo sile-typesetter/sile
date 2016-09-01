@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["ml"] = {};
+SILE.hyphenator.languages["ml"] = {}
 SILE.hyphenator.languages["ml"].patterns =
    {
 -- GENERAL RULE
@@ -98,4 +98,4 @@ SILE.hyphenator.languages["ml"].patterns =
 "2ൽ",
 "2ൾ",
 "2ൿ",
-   };
+   }

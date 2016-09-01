@@ -52,7 +52,7 @@ SILE.pagebuilder = {
       local vbox = vboxlist[i]
       SU.debug("pagebuilder", "Dealing with VBox " .. vbox)
       if (vbox:isVbox()) then
-        totalHeight = totalHeight + vbox.height + vbox.depth;
+        totalHeight = totalHeight + vbox.height + vbox.depth
       elseif vbox:isVglue() then
           totalHeight = totalHeight + vbox.height
       elseif vbox.type == "insertionVbox" then
@@ -60,7 +60,7 @@ SILE.pagebuilder = {
         vbox = vboxlist[i]
       end
       local left = target - totalHeight.length
-      SU.debug("pagebuilder", "I have " .. tostring(left) .. "pts left");
+      SU.debug("pagebuilder", "I have " .. tostring(left) .. "pts left")
       -- if (left < -20) then SU.error("\nCatastrophic page breaking failure!"); end
       local pi = 0
       if vbox:isPenalty() then
@@ -69,7 +69,7 @@ SILE.pagebuilder = {
       end
       if vbox:isPenalty() and vbox.penalty < inf_bad  or (vbox:isVglue() and i > 1 and not vboxlist[i-1].discardable) then
         local badness
-        SU.debug("pagebuilder", "totalHeight " .. totalHeight .. " with target " .. target);
+        SU.debug("pagebuilder", "totalHeight " .. totalHeight .. " with target " .. target)
         if totalHeight.length < target then -- TeX #1039
           -- Account for infinite stretch?
           badness = SILE.pagebuilder.badness(left, totalHeight.stretch)
@@ -92,9 +92,9 @@ SILE.pagebuilder = {
           restart = { totalHeight = totalHeight, i = i, started = started, target = target}
         end
         -- print("Badness "..badness .." c = "..c)
-        SU.debug("pagebuilder", "Badness: "..c);
+        SU.debug("pagebuilder", "Badness: "..c)
         if c == awful_bad or pi <= eject_penalty then
-          SU.debug("pagebuilder", "outputting");
+          SU.debug("pagebuilder", "outputting")
           local onepage = {}
           if not bestBreak then bestBreak = i end
           for j=1,bestBreak do

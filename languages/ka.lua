@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["ka"] = {};
+SILE.hyphenator.languages["ka"] = {}
 SILE.hyphenator.languages["ka"].patterns =
    {
 ".ავ4რწყა",
@@ -2111,4 +2111,4 @@ SILE.hyphenator.languages["ka"].patterns =
 "ჰ1ღ",
 "ჰ1ყ2",
 "ჰ1ხ2",
-   };
+   }

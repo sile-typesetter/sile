@@ -34,12 +34,12 @@ SILE.formatCounter = function(options)
   if (options.display == "roman") then return romanize(options.value):lower() end
   if (options.display == "Roman") then return romanize(options.value) end
   if (options.display == "alpha") then return alpha(options.value) end
-  return tostring(options.value);
+  return tostring(options.value)
 end
 
 local _init = function (c)
   if not(SILE.scratch.counters[c]) then
-    SILE.scratch.counters[c] = { value= 0, display= "arabic" };
+    SILE.scratch.counters[c] = { value= 0, display= "arabic" }
   end
 end
 
@@ -57,18 +57,18 @@ SILE.registerCommand("set-counter", function (options, content)
   local c = options.id; _init(c)
   if options.value then SILE.scratch.counters[c].value = tonumber(options.value) end
   if options.display then SILE.scratch.counters[c].display = options.display end
-end, "Sets the counter named by the <id> option to <value>; sets its display type (roman/Roman/arabic) to type <display>.");
+end, "Sets the counter named by the <id> option to <value>; sets its display type (roman/Roman/arabic) to type <display>.")
 
 
 SILE.registerCommand("show-counter", function (options, content)
   local c = options.id; _init(c)
   if options.display then SILE.scratch.counters[c].display = options.display end
-  SILE.typesetter:setpar(SILE.formatCounter(SILE.scratch.counters[c]));
-end, "Outputs the value of counter <id>, optionally displaying it with the <display> format.");
+  SILE.typesetter:setpar(SILE.formatCounter(SILE.scratch.counters[c]))
+end, "Outputs the value of counter <id>, optionally displaying it with the <display> format.")
 
 local _initml = function (c)
   if not(SILE.scratch.counters[c]) then
-    SILE.scratch.counters[c] = { value= {0}, display= {"arabic"} };
+    SILE.scratch.counters[c] = { value= {0}, display= {"arabic"} }
   end
 end
 
@@ -109,7 +109,7 @@ SILE.registerCommand("show-multilevel-counter", function (options, content)
     out[x - minlevel + 1] = SILE.formatCounter({ display = this.display[x], value = this.value[x] })
   end
   SILE.typesetter:typeset(table.concat( out, "." ))
-end, "Outputs the value of the multilevel counter <id>, optionally displaying it with the <display> format.");
+end, "Outputs the value of the multilevel counter <id>, optionally displaying it with the <display> format.")
 
 return { documentation = [[\begin{document}
 

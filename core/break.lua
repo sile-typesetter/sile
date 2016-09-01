@@ -310,9 +310,9 @@ function lineBreak:recordFeasible(pi, breakType) -- 881
     if self.nodes[self.cur_p] then
       SU.debug("break", "@" .. self.nodes[self.cur_p] .. " via @@" .. (self.r.serial or "0")  .. " b=" .. self.b .. " d=".. d) -- 882
     else
-      SU.debug("break", "@ \\par via @@");
+      SU.debug("break", "@ \\par via @@")
     end
-    SU.debug("break"," fit class = "..self.fitClass);
+    SU.debug("break"," fit class = "..self.fitClass)
   end
   d = d + self.r.totalDemerits
   if d <= self.bestInClass[self.fitClass].minimalDemerits then

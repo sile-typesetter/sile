@@ -1,12 +1,12 @@
 local cassowary = require("cassowary")
 SILE.frames = {}
-local solver = cassowary.SimplexSolver();
+local solver = cassowary.SimplexSolver()
 solverNeedsReloading = true
 
 SILE._frameParser = require("core/frameparser")
 
 local parseFrameDef = function(d)
-  return SILE._frameParser:match(d);
+  return SILE._frameParser:match(d)
 end
 
 local dims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
@@ -49,7 +49,7 @@ SILE.framePrototype = std.object {
   solve = function(self)
     if not solverNeedsReloading then return end
     --print("Solving")
-    solver = cassowary.SimplexSolver();
+    solver = cassowary.SimplexSolver()
     if SILE.frames.page then
       for k,c in pairs(SILE.frames.page.constraints) do
         SILE.frames.page:reifyConstraint(solver, k, true)
@@ -69,7 +69,7 @@ SILE.framePrototype = std.object {
     solverNeedsReloading = false
     --SILE.repl()
   end
-};
+}
 
 function SILE.framePrototype:toString()
   local f = "<Frame: "..self.id..": "
@@ -203,7 +203,7 @@ SILE.newFrame = function(spec, prototype)
   SILE.frames[spec.id] = frame
 
   for method, dimension in pairs(dims) do
-    frame.variables[method] = cassowary.Variable({ name = spec.id .. "_" .. method });
+    frame.variables[method] = cassowary.Variable({ name = spec.id .. "_" .. method })
     frame[method] = function (frame)
       frame:solve()
       return frame.variables[method].value

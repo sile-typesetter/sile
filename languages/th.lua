@@ -39,7 +39,7 @@ if t then
   }
 end
 
-SILE.hyphenator.languages["th"] = {};
+SILE.hyphenator.languages["th"] = {}
 SILE.hyphenator.languages["th"].patterns =
    {
 ".ชี5วั",
@@ -4338,4 +4338,4 @@ SILE.hyphenator.languages["th"].patterns =
 "ฮ7โ",
 "7อุ.",
 "ิศ7รา",
-   };
+   }

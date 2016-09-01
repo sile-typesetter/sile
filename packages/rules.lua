@@ -19,18 +19,18 @@ SILE.registerCommand("hrule", function(options, content)
       SILE.outputter.rule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-(self.height.length), scaledWidth, self.height.length+self.depth)
       typesetter.frame:advanceWritingDirection(scaledWidth)
     end
-  });
-end, "Creates a line of width <width> and height <height>");
+  })
+end, "Creates a line of width <width> and height <height>")
 
 SILE.registerCommand("underline", function(options, content)
   local hbox = SILE.Commands["hbox"]({}, content)
   local gl = SILE.length.new() - hbox.width
   SILE.Commands["lower"]({height = "0.5pt"}, function()
     SILE.Commands["hrule"]({width = gl.length, height = "0.5pt"})
-  end);
+  end)
   SILE.typesetter:pushGlue({width = hbox.width})
 
-end, "Underlines some content (badly)");
+end, "Underlines some content (badly)")
 
 return { documentation = [[\begin{document}
 The \code{rules} package draws lines. It provides two commands.

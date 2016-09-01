@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["sk"] = {};
+SILE.hyphenator.languages["sk"] = {}
 SILE.hyphenator.languages["sk"].patterns =
    {
 -- samohlásky
@@ -2486,7 +2486,7 @@ SILE.hyphenator.languages["sk"].patterns =
 "le2u3kémia",
 "t2ri3u2mf",
 "kli3e2nt",
-   };
+   }
 
 SILE.hyphenator.languages["sk"].exceptions =
    {

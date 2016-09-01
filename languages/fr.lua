@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["fr"] = {};
+SILE.hyphenator.languages["fr"] = {}
 SILE.hyphenator.languages["fr"].patterns =
 {
 ---------------------%-----------------------%
@@ -1221,4 +1221,4 @@ SILE.hyphenator.languages["fr"].patterns =
 "1zo",
 "1zu",
 "1zy",
-};
+}

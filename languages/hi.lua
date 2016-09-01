@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["hi"] = {};
+SILE.hyphenator.languages["hi"] = {}
 SILE.hyphenator.languages["hi"].patterns =
    {
 "2‍2",
@@ -78,4 +78,4 @@ SILE.hyphenator.languages["hi"].patterns =
 "2॒1",
 -- Do not break either side of virama (may be within conjunct).
 "2्2",
-   };
+   }

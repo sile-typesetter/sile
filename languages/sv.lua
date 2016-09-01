@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["sv"] = {};
+SILE.hyphenator.languages["sv"] = {}
 SILE.hyphenator.languages["sv"].patterns =
    {
 ".a4b",
@@ -4694,4 +4694,4 @@ SILE.hyphenator.languages["sv"].patterns =
 "öv3ri",
 "öv4sk",
 "é3e",
-   };
+   }

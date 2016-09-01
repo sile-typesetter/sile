@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["da"] = {};
+SILE.hyphenator.languages["da"] = {}
 SILE.hyphenator.languages["en"].patterns =
 {
 ".ae3",
@@ -1145,4 +1145,4 @@ SILE.hyphenator.languages["en"].patterns =
 "års5t",
 "å5sk",
 "å3t",
-};
+}

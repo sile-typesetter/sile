@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["eu"] = {};
+SILE.hyphenator.languages["eu"] = {}
 SILE.hyphenator.languages["eu"].patterns =
    {
 -- Rule SR1
@@ -201,4 +201,4 @@ SILE.hyphenator.languages["eu"].patterns =
 -- We now avoid some problematic breaks.
 "su2b2r",
 "su2b2l",
-   };
+   }

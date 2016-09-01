@@ -10,11 +10,11 @@ SILE.settings = {
   stateQueue = {},
   defaults = {},
   pushState = function()
-    table.insert(SILE.settings.stateQueue, SILE.settings.state);
-    SILE.settings.state = std.table.clone(SILE.settings.state);
+    table.insert(SILE.settings.stateQueue, SILE.settings.state)
+    SILE.settings.state = std.table.clone(SILE.settings.state)
   end,
   popState = function()
-    SILE.settings.state = table.remove(SILE.settings.stateQueue);
+    SILE.settings.state = table.remove(SILE.settings.stateQueue)
   end,
   declare = function(t)
     SILE.settings.declarations[t.name] = t

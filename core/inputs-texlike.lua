@@ -17,7 +17,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   local lineEndLineStartSpace = (lpeg.S(" ")^0 * lpeg.S("\r\n")^1 * lpeg.S(" ")^0)^-1
   local comment = ((P("%") * (1-lpeg.S("\r\n"))^0 * lpeg.S("\r\n")^-1) /function () return "" end)
 
-  START "document";
+  START "document"
   document = V("stuff") * (-1 + E("Unexpected character at end of input"))
   text = C( (1-lpeg.S("\\{}%")) ^1)
   stuff = Cg(V"environment" +

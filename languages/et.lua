@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["et"] = {};
+SILE.hyphenator.languages["et"] = {}
 SILE.hyphenator.languages["et"].patterns =
 {
 ".aa4",
@@ -3692,4 +3692,4 @@ SILE.hyphenator.languages["et"].patterns =
 "5šo",
 "4št",
 "3šu4",
-};
+}

@@ -1,4 +1,4 @@
-SILE.hyphenator.languages["es"] = {};
+SILE.hyphenator.languages["es"] = {}
 SILE.hyphenator.languages["es"].patterns =
 {
 "1b",
@@ -3372,4 +3372,4 @@ SILE.hyphenator.languages["es"].patterns =
 ".tran2s1oce",
 ".tran2s1ur",
 ".tri1ó2x",
-};
+}
