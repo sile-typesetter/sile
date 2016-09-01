@@ -1,9 +1,7 @@
 [![Build Status](https://travis-ci.org/simoncozens/sile.svg?branch=master)](https://travis-ci.org/simoncozens/sile)
-[![Coverage Status](https://coveralls.io/repos/simoncozens/sile/badge.svg?branch=master&service=github)](https://coveralls.io/github/simoncozens/sile?branch=master)
+[![Coverage Status](https://coveralls.io/repos/simoncozens/sile/badge.svg?branch=master&service=github)](https://coveralls.io/github/simoncozens/sile?branch=master) [![Join the chat at https://gitter.im/simoncozens/sile](https://badges.gitter.im/simoncozens/sile.svg)](https://gitter.im/simoncozens/sile?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## What is SILE?
-
-[![Join the chat at https://gitter.im/simoncozens/sile](https://badges.gitter.im/simoncozens/sile.svg)](https://gitter.im/simoncozens/sile?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 SILE is a [typesetting][typesetting] system; its job is to produce beautiful printed documents. Conceptually, SILE is similar to [TeX][tex]—from which it borrows some concepts and even syntax and algorithms—but the similarities end there. Rather than being a derivative of the TeX family SILE is a new typesetting and layout engine written from the ground up using modern technologies and borrowing some ideas from graphical systems such as [InDesign][indesign].
 
@@ -13,7 +11,7 @@ First, have a look at the [show-off file][showoff]. SILE allows you to:
 
 * Produce complex document layouts using frames.
 
-* Easily extend the typesetting system in a high-level programming language. (Lua)
+* Easily extend the typesetting system in a high-level programming language (Lua). 
 
 * Directly process XML to PDF without the use of XSL stylesheets.
 
