@@ -477,13 +477,12 @@ SILE.defaultTypesetter = std.object {
   leaveHmode = function(self, independent)
     SU.debug("typesetter", "Leaving hmode")
     local vboxlist = self:boxUpNodes()
-    if #vboxlist == 0 then return end
     local margins = self:getMargins()
     self.state.nodes = {}
     -- Push output lines into boxes and ship them to the page builder
-    for _, vbox in ipairs(vboxlist) do
-      vbox.margins = margins
-      self:pushVertical(vbox)
+    for i = 1, #vboxlist do
+      vboxlist[i].margins = margins
+      self:pushVertical(vboxlist[i])
     end
     if independent then return end
     if self:pageBuilder() then
