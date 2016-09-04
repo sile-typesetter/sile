@@ -38,6 +38,7 @@ SILE.registerCommand("tableofcontents", function (options, content)
     local item = toc[i]
     SILE.call("tableofcontents:item", {level = item.level, pageno= item.pageno}, item.label)
   end
+  SILE.call("tableofcontents:footer")
 end)
 
 SILE.registerCommand("tableofcontents:item", function (o,c)
@@ -72,6 +73,7 @@ SILE.doTexlike([[%
 \define[command=tableofcontents:notocmessage]{\tableofcontents:headerfont{Rerun SILE to process table of contents!}}%
 \define[command=tableofcontents:headerfont]{\font[size=24pt,weight=800]{\process}}%
 \define[command=tableofcontents:header]{\par\noindent\tableofcontents:headerfont{\tableofcontents:title}\medskip}%
+\define[command=tableofcontents:footer]{}%
 \define[command=tableofcontents:level1item]{\bigskip\noindent\font[size=14pt,weight=800]{\process}\medskip}%
 \define[command=tableofcontents:level2item]{\noindent\font[size=12pt]{\process}\medskip}%
 \define[command=tableofcontents:level3item]{\indent\font[size=10pt]{\process}\smallskip}%
