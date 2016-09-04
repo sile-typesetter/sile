@@ -5,50 +5,53 @@
 --          writeToc (call this in finish)
 --          moveTocNodes (call this in endPage)
 
-SILE.scratch.tableofcontents = { }
+SILE.scratch.tableofcontents = {}
+
 local loadstring = loadstring or load
 
 local moveNodes = function(self)
-  local n = SILE.scratch.info.thispage.toc
-  if n then
-    for i = 1,#n do
-      n[i].pageno = SILE.formatCounter(SILE.scratch.counters.folio)
-      SILE.scratch.tableofcontents[#(SILE.scratch.tableofcontents)+1] = n[i]
+  local node = SILE.scratch.info.thispage.toc
+  if node then
+    for i = 1, #node do
+      node[i].pageno = SILE.formatCounter(SILE.scratch.counters.folio)
+      SILE.scratch.tableofcontents[#(SILE.scratch.tableofcontents)+1] = node[i]
     end
   end
 end
 
 local writeToc = function ()
-  local t = "return "..std.string.pickle(SILE.scratch.tableofcontents)
-  local f,err = io.open(SILE.masterFilename .. '.toc',"w")
-  if not f then return SU.error(err) end
-  f:write(t)
+  local contents = "return "..std.string.pickle(SILE.scratch.tableofcontents)
+  local tocfile,err = io.open(SILE.masterFilename .. '.toc', "w")
+  if not tocfile then return SU.error(err) end
+  tocfile:write(contents)
 end
 
 SILE.registerCommand("tableofcontents", function (options, content)
-  local f,err = io.open(SILE.masterFilename .. '.toc')
-  if not f then
+  local tocfile,_ = io.open(SILE.masterFilename .. '.toc')
+  if not tocfile then
     SILE.call("tableofcontents:notocmessage")
     return
   end
-  local doc = f:read("*all")
+  local doc = tocfile:read("*all")
   local toc = assert(loadstring(doc))()
   SILE.call("tableofcontents:header")
-  for i = 1,#toc do
+  for i = 1, #toc do
     local item = toc[i]
-    SILE.call("tableofcontents:item", {level = item.level, pageno= item.pageno}, item.label)
+    SILE.call("tableofcontents:item", {
+      level = item.level,
+      pageno = item.pageno
+    }, item.label)
   end
   SILE.call("tableofcontents:footer")
 end)
 
-SILE.registerCommand("tableofcontents:item", function (o,c)
+SILE.registerCommand("tableofcontents:item", function (options, content)
   SILE.settings.temporarily(function ()
     SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
-    SILE.call("tableofcontents:level"..o.level.."item", {}, function()
-      SILE.process(c)
-      -- Ideally, leaders
+    SILE.call("tableofcontents:level"..options.level.."item", {}, function()
+      SILE.process(content)
       SILE.call("dotfill")
-      SILE.typesetter:typeset(o.pageno)
+      SILE.typesetter:typeset(options.pageno)
     end)
   end)
 end)
