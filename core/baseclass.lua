@@ -122,8 +122,7 @@ SILE.baseClass = std.object {
     end, "Inserts vertical skip. The height options denotes the skip dimension.")
 
     SILE.registerCommand("par", function(options, content)
-      SILE.typesetter:leaveHmode()
-      SILE.documentState.documentClass.endPar(SILE.typesetter)
+      SILE.typesetter:endline()
     end, "Ends the current paragraph.")
 
   end),

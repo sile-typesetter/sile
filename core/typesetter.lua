@@ -72,6 +72,13 @@ SILE.settings.declare({
   help = "Width to break lines at"
 })
 
+local _margins = std.object {
+  __eq = function(self, other)
+    return SILE.toAbsoluteMeasurement(self.lskip.width) == SILE.toAbsoluteMeasurement(other.lskip.width)
+      and SILE.toAbsoluteMeasurement(self.rskip.width) == SILE.toAbsoluteMeasurement(other.rskip.width)
+  end
+}
+
 SILE.defaultTypesetter = std.object {
   -- Setup functions
   hooks = {},
@@ -92,12 +99,22 @@ SILE.defaultTypesetter = std.object {
     self.frame = frame
     self.frame:init()
   end,
+  getMargins = function(self)
+    local lskip = SILE.settings.get("document.lskip") or SILE.nodefactory.zeroGlue
+    local rskip = SILE.settings.get("document.rskip") or SILE.nodefactory.zeroGlue
+    return _margins { lskip=lskip, rskip=rskip }
+  end,
+  setMargins = function(self, margins)
+    SILE.settings.set("document.lskip", margins.lskip)
+    SILE.settings.set("document.rskip", margins.rskip)
+  end,
   pushState = function(self)
-    table.insert(self.stateQueue, self.state)
+    self.stateQueue[#self.stateQueue+1] = self.state
     self:initState()
   end,
-  popState = function(self)
-    self.state = table.remove(self.stateQueue)
+  popState = function(self, ncount)
+    local offset = ncount and #self.stateQueue - ncount or nil
+    self.state = table.remove(self.stateQueue, offset)
     if not self.state then SU.error("Typesetter state queue empty") end
   end,
   vmode = function(self)
@@ -118,43 +135,48 @@ SILE.defaultTypesetter = std.object {
   end,
 
   -- Boxy stuff
-  pushHbox = function (self, spec)
+  pushHorizontal = function (self, node)
     self:initline()
-    table.insert(self.state.nodes, SILE.nodefactory.newHbox(spec))
+    self.state.nodes[#self.state.nodes+1] = node
+    return node
+  end,
+  pushVertical = function (self, vbox)
+    self.state.outputQueue[#self.state.outputQueue+1] = vbox
+    return vbox
+  end,
+  pushHbox = function (self, spec)
+    return self:pushHorizontal(SILE.nodefactory.newHbox(spec))
   end,
   pushUnshaped = function (self, spec)
-    self:initline()
-    table.insert(self.state.nodes, SILE.nodefactory.newUnshaped(spec))
+    return self:pushHorizontal(SILE.nodefactory.newUnshaped(spec))
   end,
   pushGlue = function (self, spec)
-    self:initline()
-    return table.insert(self.state.nodes, SILE.nodefactory.newGlue(spec))
+    return self:pushHorizontal(SILE.nodefactory.newGlue(spec))
+  end,
+  pushExplicitGlue = function (self, spec)
+    spec.explicit = true
+    spec.discardable = false
+    return self:pushHorizontal(SILE.nodefactory.newGlue(spec))
   end,
   pushPenalty = function (self, spec)
-    self:initline()
-    return table.insert(self.state.nodes, SILE.nodefactory.newPenalty(spec))
-  end,
-  pushVbox = function (self, spec)
-    local v = SILE.nodefactory.newVbox(spec)
-    table.insert(self.state.outputQueue,v)
-    return v
+    return self:pushHorizontal(SILE.nodefactory.newPenalty(spec))
   end,
   pushMigratingMaterial = function (self, material)
-    self:initline()
-    local v = SILE.nodefactory.newMigrating({ material = material })
-    table.insert(self.state.nodes,v)
-    return v
+    return self:pushHorizontal(SILE.nodefactory.newMigrating({ material = material }))
+  end,
+  pushVbox = function (self, spec)
+    return self:pushVertical(SILE.nodefactory.newVbox(spec))
   end,
   pushVglue = function (self, spec)
-    return table.insert(self.state.outputQueue, SILE.nodefactory.newVglue(spec))
+    return self:pushVertical(SILE.nodefactory.newVglue(spec))
   end,
   pushExplicitVglue = function (self, spec)
-    spec.skiptype = "explicit"
+    spec.explicit = true
     spec.discardable = false
     return self:pushVglue(spec)
   end,
   pushVpenalty = function (self, spec)
-    return table.insert(self.state.outputQueue, SILE.nodefactory.newPenalty(spec))
+    return self:pushVertical(SILE.nodefactory.newPenalty(spec))
   end,
 
   -- Actual typesetting functions
@@ -162,17 +184,21 @@ SILE.defaultTypesetter = std.object {
     if text:match("^%\n$") then return end
     for t in SU.gtoke(text,SILE.settings.get("typesetter.parseppattern")) do
       if (t.separator) then
-        self:leaveHmode();
-        SILE.documentState.documentClass.endPar(self)
-      else self:setpar(t.string)
+        self:endline()
+      else
+        self:setpar(t.string)
       end
     end
   end,
 
   initline = function (self)
     if (#self.state.nodes == 0) then
-      table.insert(self.state.nodes, SILE.nodefactory.zeroHbox)
+      self.state.nodes[#self.state.nodes+1] = SILE.nodefactory.zeroHbox
     end
+  end,
+  endline = function (self)
+    self:leaveHmode()
+    SILE.documentState.documentClass.endPar(self)
   end,
 
   -- Takes string, writes onto self.state.nodes
@@ -209,10 +235,6 @@ SILE.defaultTypesetter = std.object {
   -- Empties self.state.nodes, breaks into lines, puts lines into vbox, adds vbox to
   -- Turns a node list into a list of vboxes
   boxUpNodes = function (self)
-    local listToString = function(l)
-      local rv = ""
-      for i = 1,#l do rv = rv ..l[i] end return rv
-    end
     local nl = self.state.nodes
     if #nl == 0 then return {} end
     for j=#nl,1,-1 do
@@ -227,9 +249,9 @@ SILE.defaultTypesetter = std.object {
     while (#nl >0 and nl[1]:isPenalty()) do table.remove(nl,1) end
     if #nl == 0 then return {} end
     self:shapeAllNodes(nl)
-    self:pushGlue(SILE.settings.get("typesetter.parfillskip"))
+    self:pushExplicitGlue(SILE.settings.get("typesetter.parfillskip"))
     self:pushPenalty({ flagged= 1, penalty= -inf_bad })
-    SU.debug("typesetter", "Boxed up "..(#nl > 500 and (#nl).." nodes" or listToString(nl)))
+    SU.debug("typesetter", "Boxed up "..(#nl > 500 and (#nl).." nodes" or SU.contentToString(nl)))
     local breakWidth = SILE.settings.get("typesetter.breakwidth") or self.frame:lineWidth()
     if (type(breakWidth) == "table") then breakWidth = breakWidth.length end
     local lines = self:breakIntoLines(nl, breakWidth)
@@ -382,36 +404,64 @@ SILE.defaultTypesetter = std.object {
 
   pushBack = function (self)
     SU.debug("typesetter", "Pushing back "..#(self.state.outputQueue).." nodes")
-    --self:pushHbox({ width = SILE.length.new({}), value = {glyph = 0} });
-    local v
-    local function luaSucks (a) v=a return a end
-
     local oldqueue = self.state.outputQueue
     self.state.outputQueue = {}
-    while luaSucks(table.remove(oldqueue,1)) do
-      if v.skiptype == "explicit" then
-        self:leaveHmode()
-        self:pushExplicitVglue(v)
-        self.state.previousVbox = nil
-      elseif v.type == "insertionVbox" then
-        SILE.typesetter:pushMigratingMaterial({v})
-      elseif not v:isVglue() and not v:isPenalty() then
-        for i=1,#(v.nodes) do
-          if v.nodes[i]:isDiscretionary() then
-            v.nodes[i].used = 0 -- HACK HACK HACK
-          end
-          -- HACK HACK HACK HACK HACK
-          if not (v.nodes[i]:isGlue() and (v.nodes[i].value == "lskip" or v.nodes[i].value == "rskip"))
-            and not (v.nodes[i]:isDiscretionary() and i == 1) then
-            self.state.nodes[#(self.state.nodes)+1] = v.nodes[i]
+    local lastMargins = self:getMargins()
+    for _, vbox in ipairs(oldqueue) do
+      SU.debug("pushback", { "process box", vbox })
+      if vbox.margins and vbox.margins ~= lastMargins then
+        SU.debug("pushback", { "new margins", lastMargins, vbox.margins })
+        if not self.state.grid then self:endline() end
+        self:setMargins(vbox.margins)
+      end
+      if vbox.explicit then
+        SU.debug("pushback", { "explicit", vbox })
+        self:endline()
+        self:pushExplicitVglue(vbox)
+      elseif vbox.type == "insertionVbox" then
+        SU.debug("pushback", { "pushBack", "insertion", vbox })
+        SILE.typesetter:pushMigratingMaterial({vbox})
+      elseif not vbox:isVglue() and not vbox:isPenalty() then
+        SU.debug("pushback", { "not vglue or penalty", vbox.type })
+        local discardedFistInitLine = false
+        for i, node in ipairs(vbox.nodes) do
+          if node:isGlue() and not node.discardable then
+            self:pushHorizontal(node)
+          elseif node:isGlue() and (node.value == "lskip" or node.value == "rskip") then
+            SU.debug("pushback", { "discard", node.value, node })
+          elseif node:isDiscretionary() then
+            SU.debug("pushback", { "re-mark discretionary as unused", node })
+            node.used = false
+            if i == 1 then
+              SU.debug("pushback", { "keep first discretionary", node })
+              self:pushHorizontal(node)
+            else
+              SU.debug("pushback", { "discard all other discretionaries", node })
+            end
+          elseif node == SILE.nodefactory.zeroHbox then
+            if not discardedFistInitLine then self:pushHorizontal(node)
+            else SU.debug("que", { "discard zero hbox" }) end
+            discardedFistInitLine = true
+          elseif node:isPenalty() then
+            if not discardedFistInitLine then self:pushHorizontal(node) end
+            SU.debug("que", { "discard penalty"  })
+          else
+            self:pushHorizontal(node)
           end
         end
+      else
+        SU.debug("pushback", { "discard", vbox.type })
       end
+      lastMargins = vbox.margins
+      -- self:debugState()
     end
-    while self.state.nodes[#self.state.nodes] and self.state.nodes[#self.state.nodes]:isPenalty() or self.state.nodes[#self.state.nodes] == SILE.nodefactory.zeroHbox do
+    while self.state.nodes[#self.state.nodes]
+      and self.state.nodes[#self.state.nodes]:isPenalty()
+       or self.state.nodes[#self.state.nodes] == SILE.nodefactory.zeroHbox do
       self.state.nodes[#self.state.nodes] = nil
     end
   end,
+
   outputLinesToPage = function (self, lines)
     SU.debug("pagebuilder", "OUTPUTTING frame "..self.frame.id)
     local i
@@ -427,10 +477,12 @@ SILE.defaultTypesetter = std.object {
   leaveHmode = function(self, independent)
     SU.debug("typesetter", "Leaving hmode")
     local vboxlist = self:boxUpNodes()
+    local margins = self:getMargins()
     self.state.nodes = {}
     -- Push output lines into boxes and ship them to the page builder
-    for index=1, #vboxlist do
-      self.state.outputQueue[#(self.state.outputQueue)+1] = vboxlist[index]
+    for i = 1, #vboxlist do
+      vboxlist[i].margins = margins
+      self:pushVertical(vboxlist[i])
     end
     if independent then return end
     if self:pageBuilder() then
@@ -449,7 +501,7 @@ SILE.defaultTypesetter = std.object {
     local bls = SILE.settings.get("document.baselineskip")
     local d = bls.height - vbox.height - prevDepth
     d = d.length
-    SU.debug("typesetter", "   Leading height = " .. tostring(bls.height) .. " - " .. tostring(vbox.height) .. " - " .. tostring(prevDepth) .. " = "..d) 
+    SU.debug("typesetter", "   Leading height = " .. tostring(bls.height) .. " - " .. tostring(vbox.height) .. " - " .. tostring(prevDepth) .. " = "..d)
 
     if (d > SILE.settings.get("document.lineskip").height.length) then
       len = SILE.length.new({ length = d, stretch = bls.height.stretch, shrink = bls.height.shrink })
@@ -529,7 +581,7 @@ SILE.defaultTypesetter = std.object {
           naturalTotals = naturalTotals - slice[i].width
         end
       elseif (slice[i]:isDiscretionary()) then
-        slice[i].used = 1
+        slice[i].used = true
         if slice[i].parent then slice[i].parent.hyphenated = true end
         naturalTotals = naturalTotals - slice[i]:replacementWidth()
         naturalTotals = naturalTotals + slice[i]:prebreakWidth()

@@ -98,6 +98,7 @@ SILE.registerCommand("grid:debug", function(o,c)
 end)
 
 SILE.registerCommand("grid", function(options, content)
+  SILE.typesetter.state.grid = true
   SU.required(options, "spacing", "grid package")
   gridSpacing = SILE.parseComplexFrameDimension(options.spacing,"h")
   -- SILE.typesetter:leaveHmode()
@@ -125,6 +126,7 @@ SILE.registerCommand("grid", function(options, content)
 end, "Begins typesetting on a grid spaced at <spacing> intervals.")
 
 SILE.registerCommand("no-grid", function (options, content)
+  SILE.typesetter.state.grid = false
   SILE.typesetter.leadingFor = SILE.defaultTypesetter.leadingFor
   SILE.typesetter.pushVglue = SILE.defaultTypesetter.pushVglue
   SILE.typesetter.setVerticalGlue = SILE.defaultTypesetter.setVerticalGlue

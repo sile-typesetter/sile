@@ -11,7 +11,7 @@
 \frame[id=gutter,width=3%pw]
 \frame[id=leftCol1,left=left(content),right=left(gutter),top=top(content),bottom=bottom(content),next=rightCol1,balanced=1]
 \frame[id=rightCol1,left=right(gutter),right=right(content),top=top(content),bottom=bottom(content),width=width(leftCol1),balanced=1,next=title]
-\frame[id=title,left=left(content), right=right(content),top=bottom(rightCol1),bottom=top(title)+8%ph,next=leftCol2]
+\frame[id=title,left=left(content), right=right(content),top=bottom(rightCol1),bottom=top(title)+10%ph,next=leftCol2]
 \frame[id=leftCol2,left=left(content),right=left(gutter),top=bottom(title),bottom=bottom(content),next=rightCol2,balanced=1]
 \frame[id=rightCol2,left=right(gutter),right=right(content),top=top(leftCol2),bottom=bottom(content),width=width(leftCol2),balanced=1]
 \end{pagetemplate}
@@ -31,11 +31,11 @@ Jesus said to them, “The wedding guests cannot fast while the bridegroom is wi
 But the days are coming when the bridegroom will be taken from them, and at that time they will fast. 
 No one sews a patch of unshrunk cloth on an old garment; otherwise, the patch pulls away from it, the new from the old, and the tear becomes worse. 
 And no one pours new wine into old wineskins; otherwise, the wine will burst the skins, and both the wine and the skins will be destroyed. Instead new wine is poured into new wineskins.”
-
 \balancecolumns
-\bigskip
+
+\smallskip
 \center{\font[size=18pt,family=Linux Biolinum O,weight=800]{Chapter 3}}
-\framebreak\par
+\framebreak
 
 Then Jesus entered the synagogue again, and a man was there who had a withered hand. 
 They watched Jesus closely to see if he would heal him on the Sabbath, so that they could accuse him. 

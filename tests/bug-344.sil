@@ -1,0 +1,23 @@
+\begin[papersize=a5,class=book]{document}
+\nofolios
+\define[command=mwe]{One, two. Buckle my shoe.\smallskip}
+
+% Note this is not specific to using non-default linespacing methods,
+% this MWE shows the same problem with or without these lines
+\script[src=packages/linespacing]
+\set[parameter=linespacing.method,value=fit-font]
+\set[parameter=linespacing.fit-font.extra-space,value=6pt]
+
+This old man.
+
+% Note: making this skip 37em pushes the same amount of material to the
+% next page but the first line no longer has a spacing issue
+\skip[height=36em]
+
+\mwe
+\mwe
+\mwe
+\mwe
+\mwe
+\mwe
+\end{document}

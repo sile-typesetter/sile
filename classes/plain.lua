@@ -54,7 +54,7 @@ for k, v in pairs(skips) do
 end
 
 SILE.registerCommand("hfill", function(options, content)
-  SILE.typesetter:pushGlue(SILE.nodefactory.hfillGlue)
+  SILE.typesetter:pushExplicitGlue(SILE.nodefactory.hfillGlue)
 end, "Add a huge horizontal glue")
 
 SILE.registerCommand("vfill", function(options, content)

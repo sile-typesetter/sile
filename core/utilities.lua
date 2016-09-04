@@ -143,13 +143,13 @@ end
 -- Flatten content trees into just the string components (allows passing
 -- objects with complex structures to functions that need plain strings)
 function utilities.contentToString(content)
-  out = ""
-  for key, val in pairs(content) do
-    if type(key) == "number" and type(val) == "string" then
-      out = out .. val
+  local string = ""
+  for i = 1, #content do
+    if type(content[i]) == "string" then
+      string = string .. content[i]
     end
   end
-  return out
+  return string
 end
 
 -- Strip the top level command off a content object and keep only the child

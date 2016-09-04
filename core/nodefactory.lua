@@ -7,6 +7,7 @@ _box = std.object {
   width= 0,
   misfit = false,
   type="special",
+  explicit = false,
   discardable = false,
   value=nil,
   __tostring = function (s) return s.type end,
@@ -125,14 +126,14 @@ local _disc = _hbox {
   prebreak = {},
   postbreak = {},
   replacement = {},
-  used = 0,
+  used = false,
   prebw = nil,
   __tostring = function (this)
       return "D(" .. SU.concat(this.prebreak,"") .. "|" .. SU.concat(this.postbreak, "") .."|" .. SU.concat(this.replacement, "") .. ")";
   end,
-  toText = function (self) return self.used==1 and "-" or "_" end,
+  toText = function (self) return self.used and "-" or "_" end,
   outputYourself = function(self,typesetter, line)
-    if self.used == 1 then
+    if self.used then
       i = 1
       while (line.nodes[i]:isGlue() and line.nodes[i].value == "lskip")
           or line.nodes[i] == SILE.nodefactory.zeroHbox do
@@ -225,7 +226,9 @@ local _glue = _box {
   _type = "Glue",
   type = "glue",
   discardable = true,
-  __tostring = function (this) return "G<" .. tostring(this.width) .. ">"; end,
+  __tostring = function (this)
+    return (this.explicit and "E:" or "") .. "G<" .. tostring(this.width) .. ">"
+  end,
   toText = function () return " " end,
   outputYourself = function (self,typesetter, line)
     local scaledWidth = self.width.length
@@ -241,7 +244,9 @@ local _kern = _glue {
   _type = "Kern",
   type = "kern",
   discardable = false,
-  __tostring = function (this) return "K<" .. tostring(this.width) .. ">"; end,
+  __tostring = function (this)
+    return "K<" .. tostring(this.width) .. ">"
+  end,
 }
 
 -- VGlue
@@ -250,7 +255,7 @@ local _vglue = _box {
   _type = "VGlue",
   discardable = true,
   __tostring = function (this)
-      return "VG<" .. tostring(this.height) .. ">";
+    return (this.explicit and "E:" or "") .. "VG<" .. tostring(this.height) .. ">";
   end,
   setGlue = function (self,adjustment)
     self.height.length = SILE.toAbsoluteMeasurement(self.height.length) + adjustment

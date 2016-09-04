@@ -92,6 +92,12 @@ _length = std.object {
   __lt = function (self, other)
     return (self-other).length < 0
   end,
+
+  __eq = function (self, other)
+    return self.length == other.length
+      and self.stretch == other.stretch
+      and self.shrink == other.shrink
+  end,
 }
 
 local length = {
