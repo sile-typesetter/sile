@@ -17,7 +17,7 @@ return {
           SILE.scratch.counters.folio.off = false
         end
       else
-        local folioFrame = SILE.getFrame("folio")
+        local folioFrame = SILE.getFrame(frame)
         if (folioFrame) then
           SILE.typesetNaturally(folioFrame, function ()
             SILE.settings.pushState()
