@@ -28,24 +28,29 @@ int icu_case(lua_State *L) {
   u_strFromUTF8(input_as_uchar, l, &l, input, input_l, &err);
 
   /* Now do the conversion */
-  conversion_function_t conversion;
   UChar *output;
   int32_t l2 = 0;
 
-  if (strcmp(recase, "upper") == 0) {
-    conversion = u_strToUpper;
-  } else if (strcmp(recase, "lower") == 0) {
-    conversion = u_strToLower;
-  // } else if (strcmp(recase, "title") == 0) {
-    // conversion = u_strToTitle;
+  if (strcmp(recase, "title") == 0) {
+    l2 = u_strToTitle(NULL, 0, input_as_uchar, l, NULL, locale, &err);
+    err = U_ZERO_ERROR;
+    output = malloc(l2 * sizeof(UChar));
+    u_strToTitle(output, l2, input_as_uchar, l, NULL, locale, &err);
   } else {
-    free(input_as_uchar);
-    return luaL_error(L, "Unknown case conversion type %s", recase);
+    conversion_function_t conversion;
+    if (strcmp(recase, "upper") == 0) {
+      conversion = u_strToUpper;
+    } else if (strcmp(recase, "lower") == 0) {
+      conversion = u_strToLower;
+    } else {
+      free(input_as_uchar);
+      return luaL_error(L, "Unknown case conversion type %s", recase);
+    }
+    l2 = conversion(NULL, 0, input_as_uchar, l, locale, &err);
+    err = U_ZERO_ERROR;
+    output = malloc(l2 * sizeof(UChar));
+    conversion(output, l2, input_as_uchar, l, locale, &err);
   }
-  l2 = conversion(NULL, 0, input_as_uchar, l, locale, &err);
-  err = U_ZERO_ERROR;
-  output = malloc(l2 * sizeof(UChar));
-  conversion(output, l2, input_as_uchar, l, locale, &err);
   if (!U_SUCCESS(err)) {
     free(input_as_uchar);
     free(output);

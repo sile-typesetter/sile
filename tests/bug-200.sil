@@ -1,0 +1,20 @@
+\begin[papersize=a5]{document}
+\nofolios
+\begin{raggedright}
+\begin{script}
+icu = require("justenoughicu")
+SILE.typesetter:typeset(icu.case("teSTIng string", "en", "upper"))
+SILE.call("break")
+SILE.typesetter:typeset(icu.case("ibraNİLER denemesi ılIk çeşme", "tr", "upper"))
+SILE.call("break")
+SILE.typesetter:typeset(icu.case("teSTIng string", "en", "lower"))
+SILE.call("break")
+SILE.typesetter:typeset(icu.case("ibraNİLER denemesi ılIk çeşme", "tr", "lower"))
+SILE.call("break")
+SILE.typesetter:typeset(icu.case("teSTIng string", "en", "title"))
+SILE.call("break")
+SILE.typesetter:typeset(icu.case("ibraNİLER denemesi ılIk çeşme", "tr", "title"))
+SILE.call("break")
+\end{script}
+\end{raggedright}
+\end{document}

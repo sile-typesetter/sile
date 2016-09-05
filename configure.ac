@@ -83,7 +83,17 @@ PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
   AC_SUBST([ICU_CFLAGS])
   AC_SUBST([ICU_LIBS])
 ],[
-with_icu=no
+  AC_CHECK_TOOL(ICU_CONFIG, icu-config, no)
+  AC_MSG_CHECKING([for ICU by using icu-config fallback])
+  if test "$ICU_CONFIG" != "no" && "$ICU_CONFIG" --version >/dev/null; then
+    ICU_LIBS=`icu-config  --ldflags-libsonly --ldflags-icuio`
+    ICU_CFLAGS=`icu-config --cppflags`
+    with_icu=yes
+    AC_MSG_RESULT([yes])
+  else
+    AC_MSG_RESULT([no])
+    with_icu=no
+  fi
 ])
 
 adl_RECURSIVE_EVAL(["${datadir}/${PACKAGE}"], [SILE_PATH])
