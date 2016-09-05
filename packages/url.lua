@@ -7,13 +7,13 @@ local urlFilter = function (node, content, breakpat)
   local result = {}
   for token in SU.gtoke(node, breakpat) do
     if token.string then
-      table.insert(result, token.string)
+      result[#result+1] = token.string
     else
-      table.insert(result, token.separator)
-      table.insert(result, inputfilter.createCommand(
+      result[#result+1] = token.separator
+      result[#result+1] = inputfilter.createCommand(
         content.pos, content.col, content.line,
         "penalty", { penalty = 100 }, nil
-      ))
+      )
     end
   end
   return result

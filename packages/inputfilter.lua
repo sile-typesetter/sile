@@ -1,25 +1,16 @@
-local function tableInsertAll(t, values)
-  local i, n
-  for i, n in ipairs(values) do
-    table.insert(t, n)
-  end
-end
-
 local function transformContent(content, transformFunction, extraArgs)
-  local k, v
   local newContent = {}
-
   for k, v in pairs(content) do
     if type(k) == "number" then
       if type(v) == "string" then
         local transformed = transformFunction(v, content, extraArgs)
         if type(transformed) == "table" then
-          tableInsertAll(newContent, transformed)
+          for i = 1, #transformed do newContent[#newContent+1] = transformed[i] end
         else
-          table.insert(newContent, transformed)
+          newContent[#newContent+1] = transformed
         end
       else
-        table.insert(newContent, transformContent(v, transformFunction, extraArgs))
+        newContent[#newContent+1] = transformContent(v, transformFunction, extraArgs)
       end
     else
       newContent[k] = v
