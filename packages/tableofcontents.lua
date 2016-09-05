@@ -9,7 +9,7 @@ SILE.scratch.tableofcontents = {}
 
 local loadstring = loadstring or load
 
-local moveNodes = function(self)
+local moveNodes = function (self)
   local node = SILE.scratch.info.thispage.toc
   if node then
     for i = 1, #node do
@@ -48,7 +48,7 @@ end)
 SILE.registerCommand("tableofcontents:item", function (options, content)
   SILE.settings.temporarily(function ()
     SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
-    SILE.call("tableofcontents:level"..options.level.."item", {}, function()
+    SILE.call("tableofcontents:level" .. options.level .. "item", {}, function ()
       SILE.process(content)
       SILE.call("dotfill")
       SILE.typesetter:typeset(options.pageno)
@@ -67,7 +67,7 @@ SILE.registerCommand("tocentry", function (options, content)
 end)
 
 return {
-  exports = {writeToc = writeToc, moveTocNodes = moveNodes},
+  exports = { writeToc = writeToc, moveTocNodes = moveNodes },
   init = function (self)
     self:loadPackage("infonode")
     self:loadPackage("leaders")

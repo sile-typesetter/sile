@@ -5,21 +5,21 @@ local function tableInsertAll(t, values)
   end
 end
 
-local function transformContent(content, transformFunction, data)
+local function transformContent(content, transformFunction, extraArgs)
   local k, v
   local newContent = {}
 
-  for k,v in pairs(content) do
+  for k, v in pairs(content) do
     if type(k) == "number" then
       if type(v) == "string" then
-        local nc = transformFunction(v, content, data)
-        if type(nc) == "table" then
-          tableInsertAll(newContent, nc)
+        local transformed = transformFunction(v, content, extraArgs)
+        if type(transformed) == "table" then
+          tableInsertAll(newContent, transformed)
         else
-          table.insert(newContent, nc)
+          table.insert(newContent, transformed)
         end
       else
-        table.insert(newContent, transformContent(v, transformFunction, data))
+        table.insert(newContent, transformContent(v, transformFunction, extraArgs))
       end
     else
       newContent[k] = v
@@ -29,7 +29,7 @@ local function transformContent(content, transformFunction, data)
 end
 
 local function createCommand(pos, col, line, tag, attr, content)
-  local result = {content}
+  local result = { content }
   result.col = col
   result.line = line
   result.pos = pos
@@ -43,7 +43,8 @@ return {
   exports = {
     createCommand = createCommand,
     transformContent = transformContent
-  }, documentation = [[\begin{document}
+  },
+  documentation = [[\begin{document}
 The \code{inputfilter} package provides ways for class authors to transform the
 input of a SILE document after it is parsed but before it is processed. It does
 this by allowing you to rewrite the abstract syntax tree representing the document.

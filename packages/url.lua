@@ -1,27 +1,27 @@
+SILE.require("packages/verbatim")
+
 local inputfilter = SILE.require("packages/inputfilter").exports
 
-local filter = function (v, content, data)
-  if type(v) == "table" then return v end
+local urlFilter = function (node, content, breakpat)
+  if type(node) == "table" then return node end
   local result = {}
-  for token in SU.gtoke(v, data) do
+  for token in SU.gtoke(node, breakpat) do
     if token.string then
       table.insert(result, token.string)
     else
       table.insert(result, token.separator)
       table.insert(result, inputfilter.createCommand(
         content.pos, content.col, content.line,
-        "penalty", {penalty = 100}, nil
+        "penalty", { penalty = 100 }, nil
       ))
     end
   end
   return result
 end
 
-SILE.require("packages/verbatim")
-
-SILE.registerCommand("url", function (options,content)
+SILE.registerCommand("url", function (options, content)
   local breakpat = options.breakpat or "/"
-  local result = inputfilter.transformContent(content, filter, breakpat)
+  local result = inputfilter.transformContent(content, urlFilter, breakpat)
   SILE.call("code", {}, result)
 end)
 

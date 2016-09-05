@@ -1,21 +1,24 @@
 SILE.require("packages/color")
 SILE.require("packages/raiselower")
 SILE.require("packages/rebox")
-SILE.registerCommand("pullquote:font", function(options, content)
+
+SILE.registerCommand("pullquote:font", function (options, content)
 end, "The font chosen for the pullquote environment")
-SILE.registerCommand("pullquote:author-font", function(options, content)
+
+SILE.registerCommand("pullquote:author-font", function (options, content)
   SILE.settings.set("font.style", "italic")
 end, "The font style with which to typeset the author attribution.")
-SILE.registerCommand("pullquote:mark-font", function(options, content)
+
+SILE.registerCommand("pullquote:mark-font", function (options, content)
   SILE.settings.set("font.family", "Linux Libertine O")
 end, "The font from which to pull the quotation marks.")
 
 local typesetMark = function (open, setback, scale, color, mark)
-  SILE.settings.temporarily(function()
+  SILE.settings.temporarily(function ()
     SILE.call("pullquote:mark-font")
     local setwidth = SILE.length.new({ length = SILE.toPoints(setback) })
     SILE.typesetter:pushGlue({ width = open and 0-setwidth or setwidth })
-    SILE.call("raise", { height = -(open and (scale+1) or scale).."ex" }, function()
+    SILE.call("raise", { height = -(open and (scale+1) or scale) .. "ex" }, function ()
       SILE.settings.set("font.size", SILE.settings.get("font.size")*scale)
       SILE.call("color", { color = color }, function ()
         SILE.call("rebox", { width = 0, height = 0 }, { mark })
@@ -25,16 +28,15 @@ local typesetMark = function (open, setback, scale, color, mark)
   end)
 end
 
-SILE.registerCommand("pullquote", function(options, content)
+SILE.registerCommand("pullquote", function (options, content)
   local author = options.author or nil
   local setback = options.setback or "2em"
   local scale = options.scale or 3
   local color = options.color or "#999999"
-  SILE.settings.temporarily(function()
+  SILE.settings.temporarily(function ()
     SILE.settings.set("document.rskip", SILE.nodefactory.newGlue(setback))
     SILE.settings.set("document.lskip", SILE.nodefactory.newGlue(setback))
     SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
-
     SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
     SILE.call("pullquote:font")
     typesetMark(true, setback, scale, color, "“")
@@ -42,7 +44,7 @@ SILE.registerCommand("pullquote", function(options, content)
     SILE.typesetter:pushGlue(SILE.nodefactory.hfillGlue)
     typesetMark(false, setback, scale, color, "”")
     if author then
-      SILE.settings.temporarily(function()
+      SILE.settings.temporarily(function ()
         SILE.typesetter:leaveHmode()
         SILE.call("pullquote:author-font")
         SILE.call("raggedleft", {}, function ()

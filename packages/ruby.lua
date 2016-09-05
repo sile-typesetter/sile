@@ -1,9 +1,9 @@
-SILE.registerCommand("ruby", function (o,c)
-  local reading = SU.required(o, "reading", "\\ruby")
-  SILE.call("hbox", {}, function()
+SILE.registerCommand("ruby", function (options, content)
+  local reading = SU.required(options, "reading", "\\ruby")
+  SILE.call("hbox", {}, function ()
     SILE.settings.temporarily(function ()
       SILE.call("noindent")
-      SILE.call("font", {size = "0.6zw", weight = 800 })
+      SILE.call("font", { size = "0.6zw", weight = 800 })
       SILE.typesetter:typeset(reading)
     end)
   end)
@@ -14,17 +14,18 @@ SILE.registerCommand("ruby", function (o,c)
     typesetter.frame.state.cursorX = typesetter.frame.state.cursorX + rubybox.width
     typesetter.frame:advancePageDirection(-SILE.toPoints("1zw"))
     SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
-    for i = 1, #(self.value) do local node = self.value[i]
+    for i = 1, #(self.value) do
+      local node = self.value[i]
       node:outputYourself(typesetter, line)
     end
     typesetter.frame.state.cursorX = ox
     typesetter.frame.state.cursorY = oy
   end
   -- measure the content
-  SILE.call("hbox", {}, c)
+  SILE.call("hbox", {}, content)
   cbox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
-  SU.debug("ruby", "base box is "..cbox)
-  SU.debug("ruby", "reading is  "..rubybox)
+  SU.debug("ruby", "base box is " .. cbox)
+  SU.debug("ruby", "reading is  " .. rubybox)
   if cbox:lineContribution() > rubybox:lineContribution() then
     SU.debug("ruby", "Base is longer, offsetting ruby to fit")
     -- This is actually the offset against the base
@@ -32,8 +33,8 @@ SILE.registerCommand("ruby", function (o,c)
   else
     local diff = rubybox:lineContribution() - cbox:lineContribution()
     if type(diff) == "table" then diff = diff.length end
-    local to_insert = SILE.length.new({length = diff / 2, })
-    SU.debug("ruby", "Ruby is longer, inserting " ..to_insert.." either side of base")
+    local to_insert = SILE.length.new({ length = diff / 2 })
+    SU.debug("ruby", "Ruby is longer, inserting " .. to_insert .. " either side of base")
     cbox.width = SILE.length.make(rubybox:lineContribution())
     rubybox.width = 0
     -- add spaces at beginning and end
