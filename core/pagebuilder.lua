@@ -3,7 +3,7 @@ local inf_bad = 10000
 local eject_penalty = -inf_bad
 local deplorable = 100000
 
-SILE.pagebuilder = {
+SILE.defaultPagebuilder = std.object {
   collateVboxes = function(vboxlist)
     local i
     local output = SILE.nodefactory.newVbox({nodes = {} })
@@ -116,3 +116,4 @@ SILE.pagebuilder = {
     return false, restart
   end,
 }
+SILE.pagebuilder = SILE.defaultPagebuilder {}
