@@ -55,6 +55,7 @@ SILE.typesetter.pageBuilder = function (self, independent)
     SILE.defaultTypesetter.pageBuilder(self,true)
     if self.frame.next and SILE.getFrame(self.frame.next).balanced == true then
       self:initFrame(SILE.getFrame(self.frame.next))
+      self:runHooks("newframe")
     else
       break -- Break early, because when we return
     end
