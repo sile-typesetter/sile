@@ -45,12 +45,15 @@ SILE.typesetter.pageBuilder = function (self, independent)
   -- adjust the height of each frame to be an appropriate fraction of
   -- the content height
   local frame = self.frame
+  SU.debug("balancer", "Each column is now "..(totalHeight.length / colCount))
   while frame and frame.balanced == true do
     frame:relax("bottom")
     frame:constrain("height", totalHeight.length / colCount)
     if frame.next then frame = SILE.getFrame(frame.next) else break end
   end
   self.state.lastPenalty = 0
+  local pb = SILE.pagebuilder
+  SILE.pagebuilder = SILE.defaultPagebuilder
   while self.frame and self.frame.balanced do
     SILE.defaultTypesetter.pageBuilder(self,true)
     if self.frame.next and SILE.getFrame(self.frame.next).balanced == true then
@@ -60,6 +63,7 @@ SILE.typesetter.pageBuilder = function (self, independent)
       break -- Break early, because when we return
     end
   end
+  SILE.pagebuilder = pb
   SU.debug("balancer", "Finished this balance, frame id is now "..self.frame:toString())
   -- SILE.typesetter:debugState()
   -- We're done.
