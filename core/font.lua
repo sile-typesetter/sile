@@ -46,7 +46,7 @@
       end
     end, "Set current font family, size, weight, style, variant, script, direction and language")
 
-SILE.settings.declare({name = "font.family", type = "string", default = "Gentium"})
+SILE.settings.declare({name = "font.family", type = "string", default = "Gentium Plus"})
 SILE.settings.declare({name = "font.size", type = "number or integer", default = 10})
 SILE.settings.declare({name = "font.weight", type = "integer", default = 400})
 SILE.settings.declare({name = "font.variant", type = "string", default = "normal"})

@@ -50,6 +50,10 @@ Once your dependencies are installed, run:
 
 This will place the SILE libraries and executable in a sensible location.
 
+### Default font
+
+The default font used by SILE is Gentium Plus, available from [here][gentium]. If this font is not installed on your system, you won't be able to use the examples without modification.
+
 ### Testing
 
 If all goes well you should be able to compile one of the sample documents like this:
@@ -77,6 +81,7 @@ SILE is distributed under the [MIT licence][license].
   [sile]: http://www.sile-typesetter.org/
   [releases]: https://github.com/simoncozens/sile/releases
   [doc]: https://raw.githubusercontent.com/simoncozens/sile/master/documentation/sile.pdf
+  [gentium]: http://software.sil.org/gentium/
   [github]: https://github.com/simoncozens/sile
   [license]: http://choosealicense.com/licenses/mit/
   [faq]: https://github.com/simoncozens/sile/wiki/faq
