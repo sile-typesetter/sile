@@ -3,762 +3,762 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	25.6557
 My 	37.3321
-Set font 	Gentium;10;400;Italic;normal;;LTR
-T	50 65 71 71 69 68	(Ragged)
+Set font 	Gentium Plus;10;400;Italic;normal;;LTR
+T	53 68 74 74 72 71	(Ragged)
 Mx 	55.1772
-T	76 69 70 84	(left)
+T	79 72 73 87	(left)
 Mx 	69.4594
-Set font 	Gentium;10;400;;normal;;LTR
-T	76 79 82 69 77	(lorem)
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	79 82 85 72 80	(lorem)
 Mx 	96.0121
-T	73 80 83 85 77	(ipsum)
+T	76 83 86 88 80	(ipsum)
 Mx 	123.4145
-T	68 79 76 79 82	(dolor)
+T	71 82 79 82 85	(dolor)
 Mx 	147.5453
-T	83 73 84	(sit)
+T	86 76 87	(sit)
 Mx 	159.7621
-T	65 77 69 84	(amet)
+T	68 80 72 87	(amet)
 Mx 	182.6479
-T	67 79 78 83 69 84 69 84 85 82	(consetetur)
+T	70 82 81 86 72 87 72 87 88 85	(consetetur)
 Mx 	229.0102
-T	83 65 68 73 80 83 67 73 78 71	(sadipscing)
+T	86 68 71 76 83 86 70 76 81 74	(sadipscing)
 Mx 	274.2104
-T	69 76 73 84 82	(elitr)
+T	72 79 76 87 85	(elitr)
 Mx 	293.8539
-T	83 69 68	(sed)
+T	86 72 71	(sed)
 Mx 	309.7377
-T	68 73 65 77	(diam)
+T	71 76 68 80	(diam)
 Mx 	332.4721
-T	78 79 78 85 77 89	(nonumy)
+T	81 82 81 88 80 92	(nonumy)
 Mx 	369.0004
-T	69 73 82 77 79 68	(eirmod)
+T	72 76 85 80 82 71	(eirmod)
 Mx 	29.2885
 My 	49.3321
-T	84 69 77 80 79 82	(tempor)
+T	87 72 80 83 82 85	(tempor)
 Mx 	61.8715
-T	73 78 86 73 68 85 78 84	(invidunt)
+T	76 81 89 76 71 88 81 87	(invidunt)
 Mx 	99.4008
-T	85 84	(ut)
+T	88 87	(ut)
 Mx 	110.3432
-T	76 65 66 79 82 69	(labore)
+T	79 68 69 82 85 72	(labore)
 Mx 	138.5317
-T	69 84	(et)
+T	72 87	(et)
 Mx 	148.7953
-T	68 79 76 79 82 69	(dolore)
+T	71 82 79 82 85 72	(dolore)
 Mx 	177.5453
-T	77 65 71 78 65	(magna)
+T	80 68 74 81 68	(magna)
 Mx 	207.3549
-T	65 76 73 81 85 89 65 77	(aliquyam)
+T	68 79 76 84 88 92 68 80	(aliquyam)
 Mx 	247.5697
-T	69 82 65 84	(erat)
+T	72 85 68 87	(erat)
 Mx 	266.3832
-T	83 69 68	(sed)
+T	86 72 71	(sed)
 Mx 	282.2670
-T	68 73 65 77	(diam)
+T	71 76 68 80	(diam)
 Mx 	305.0014
-T	86 79 76 85 80 84 85 65	(voluptua)
+T	89 82 79 88 83 87 88 68	(voluptua)
 Mx 	343.8002
-T	65 84	(at)
+T	68 87	(at)
 Mx 	354.0346
-T	86 69 82 79	(vero)
+T	89 72 85 82	(vero)
 Mx 	374.7768
-T	69 79 83	(eos)
+T	72 82 86	(eos)
 Mx 	390.4897
-T	69 84	(et)
-Mx 	26.3246
+T	72 87	(et)
+Mx 	26.5688
 My 	61.3321
-T	65 67 67 85 83 65 77	(accusam)
-Mx 	63.6391
-T	69 84	(et)
-Mx 	73.9027
-T	74 85 83 84 79	(justo)
-Mx 	96.3246
-T	68 85 79	(duo)
-Mx 	114.0541
-T	68 79 76 79 82 69 83	(dolores)
-Mx 	146.6664
-T	69 84	(et)
-Mx 	156.9301
-T	69 65	(ea)
-Mx 	168.3412
-T	82 69 66 85 77	(rebum)
-Mx 	197.5307
-T	83 84 69 84	(stet)
-Mx 	215.0990
-T	67 76 73 84 65	(clita)
-Mx 	235.1235
-T	75 65 83 68	(kasd)
-Mx 	255.9779
-T	71 85 66 69 82 71 82 69 78	(gubergren)
-Mx 	300.9877
-T	78 79	(no)
-Mx 	313.7367
-T	83 69 65	(sea)
-Mx 	329.0102
-T	84 65 75 73 77 65 84 65	(takimata)
+T	68 70 70 88 86 68 80	(accusam)
+Mx 	63.8832
+T	72 87	(et)
+Mx 	74.1469
+T	77 88 86 87 82	(justo)
+Mx 	96.5688
+T	71 88 82	(duo)
+Mx 	114.2983
+T	71 82 79 82 85 72 86	(dolores)
+Mx 	146.9106
+T	72 87	(et)
+Mx 	157.1742
+T	72 68	(ea)
+Mx 	168.5854
+T	85 72 69 88 80	(rebum)
+Mx 	197.7748
+T	86 87 72 87	(stet)
+Mx 	215.3432
+T	70 79 76 87 68	(clita)
+Mx 	235.3676
+T	78 68 86 71	(kasd)
+Mx 	256.1000
+T	74 88 69 72 85 74 85 72 81	(gubergren)
+Mx 	301.1098
+T	81 82	(no)
+Mx 	313.8588
+T	86 72 68	(sea)
+Mx 	329.1322
+T	87 68 78 76 80 68 87 68	(takimata)
 Mx 	367.6088
-T	83 65 78 67 84 85 83	(sanctus)
+T	86 68 81 70 87 88 86	(sanctus)
 Mx 	33.1606
 My 	73.3321
-T	69 83 84	(est)
+T	72 86 87	(est)
 Mx 	47.2865
-T	76 79 82 69 77	(lorem)
+T	79 82 85 72 80	(lorem)
 Mx 	73.8393
-T	73 80 83 85 77	(ipsum)
+T	76 83 86 88 80	(ipsum)
 Mx 	101.2416
-T	68 79 76 79 82	(dolor)
+T	71 82 79 82 85	(dolor)
 Mx 	125.3725
-T	83 73 84	(sit)
+T	86 76 87	(sit)
 Mx 	137.5893
-T	65 77 69 84	(amet)
+T	68 80 72 87	(amet)
 Mx 	160.4750
-T	76 79 82 69 77	(lorem)
+T	79 82 85 72 80	(lorem)
 Mx 	187.0277
-T	73 80 83 85 77	(ipsum)
+T	76 83 86 88 80	(ipsum)
 Mx 	214.4301
-T	68 79 76 79 82	(dolor)
+T	71 82 79 82 85	(dolor)
 Mx 	238.5610
-T	83 73 84	(sit)
+T	86 76 87	(sit)
 Mx 	250.7777
-T	65 77 69 84	(amet)
+T	68 80 72 87	(amet)
 Mx 	273.6635
-T	67 79 78 83 69 84 69 84 85 82	(consetetur)
+T	70 82 81 86 72 87 72 87 88 85	(consetetur)
 Mx 	320.0258
-T	83 65 68 73 80 83 67 73 78 71	(sadipscing)
+T	86 68 71 76 83 86 70 76 81 74	(sadipscing)
 Mx 	365.2260
-T	69 76 73 84 82	(elitr)
+T	72 79 76 87 85	(elitr)
 Mx 	384.8695
-T	83 69 68	(sed)
+T	86 72 71	(sed)
 Mx 	34.0248
 My 	85.3321
-T	68 73 65 77	(diam)
+T	71 76 68 80	(diam)
 Mx 	56.7592
-T	78 79 78 85 77 89	(nonumy)
+T	81 82 81 88 80 92	(nonumy)
 Mx 	93.2875
-T	69 73 82 77 79 68	(eirmod)
+T	72 76 85 80 82 71	(eirmod)
 Mx 	125.0404
-T	84 69 77 80 79 82	(tempor)
+T	87 72 80 83 82 85	(tempor)
 Mx 	157.6235
-T	73 78 86 73 68 85 78 84	(invidunt)
+T	76 81 89 76 71 88 81 87	(invidunt)
 Mx 	195.1527
-T	85 84	(ut)
+T	88 87	(ut)
 Mx 	206.0951
-T	76 65 66 79 82 69	(labore)
+T	79 68 69 82 85 72	(labore)
 Mx 	234.2836
-T	69 84	(et)
+T	72 87	(et)
 Mx 	244.5473
-T	68 79 76 79 82 69	(dolore)
+T	71 82 79 82 85 72	(dolore)
 Mx 	273.2973
-T	77 65 71 78 65	(magna)
+T	80 68 74 81 68	(magna)
 Mx 	303.1068
-T	65 76 73 81 85 89 65 77	(aliquyam)
+T	68 79 76 84 88 92 68 80	(aliquyam)
 Mx 	343.3217
-T	69 82 65 84	(erat)
+T	72 85 68 87	(erat)
 Mx 	362.1352
-T	83 69 68	(sed)
+T	86 72 71	(sed)
 Mx 	378.0190
-T	68 73 65 77	(diam)
-Mx 	30.3383
+T	71 76 68 80	(diam)
+Mx 	30.4604
 My 	97.3321
-T	86 79 76 85 80 84 85 65	(voluptua)
-Mx 	69.1371
-T	65 84	(at)
-Mx 	79.3715
-T	86 69 82 79	(vero)
-Mx 	100.1137
-T	69 79 83	(eos)
-Mx 	115.8266
-T	69 84	(et)
-Mx 	126.0902
-T	65 67 67 85 83 65 77	(accusam)
-Mx 	163.4047
-T	69 84	(et)
-Mx 	173.6684
-T	74 85 83 84 79	(justo)
-Mx 	196.0902
-T	68 85 79	(duo)
-Mx 	213.8197
-T	68 79 76 79 82 69 83	(dolores)
-Mx 	246.4320
-T	69 84	(et)
-Mx 	256.6957
-T	69 65	(ea)
-Mx 	268.1068
-T	82 69 66 85 77	(rebum)
-Mx 	297.2963
-T	83 84 69 84	(stet)
-Mx 	314.8647
-T	67 76 73 84 65	(clita)
-Mx 	334.8891
-T	75 65 83 68	(kasd)
+T	89 82 79 88 83 87 88 68	(voluptua)
+Mx 	69.2592
+T	68 87	(at)
+Mx 	79.4936
+T	89 72 85 82	(vero)
+Mx 	100.2358
+T	72 82 86	(eos)
+Mx 	115.9486
+T	72 87	(et)
+Mx 	126.2123
+T	68 70 70 88 86 68 80	(accusam)
+Mx 	163.5268
+T	72 87	(et)
+Mx 	173.7904
+T	77 88 86 87 82	(justo)
+Mx 	196.2123
+T	71 88 82	(duo)
+Mx 	213.9418
+T	71 82 79 82 85 72 86	(dolores)
+Mx 	246.5541
+T	72 87	(et)
+Mx 	256.8178
+T	72 68	(ea)
+Mx 	268.2289
+T	85 72 69 88 80	(rebum)
+Mx 	297.4184
+T	86 87 72 87	(stet)
+Mx 	314.9867
+T	70 79 76 87 68	(clita)
+Mx 	335.0111
+T	78 68 86 71	(kasd)
 Mx 	355.7436
-T	71 85 66 69 82 71 82 69 78	(gubergren)
-Mx 	173.6733
+T	74 88 69 72 85 74 85 72 81	(gubergren)
+Mx 	173.7953
 My 	109.3321
-T	78 79	(no)
-Mx 	186.4223
-T	83 69 65	(sea)
-Mx 	201.6957
-T	84 65 75 73 77 65 84 65	(takimata)
+T	81 82	(no)
+Mx 	186.5443
+T	86 72 68	(sea)
+Mx 	201.8178
+T	87 68 78 76 80 68 87 68	(takimata)
 Mx 	240.2943
-T	83 65 78 67 84 85 83	(sanctus)
+T	86 68 81 70 87 88 86	(sanctus)
 Mx 	273.4389
-T	69 83 84	(est)
+T	72 86 87	(est)
 Mx 	287.5649
-T	76 79 82 69 77	(lorem)
+T	79 82 85 72 80	(lorem)
 Mx 	314.1176
-T	73 80 83 85 77	(ipsum)
+T	76 83 86 88 80	(ipsum)
 Mx 	341.5199
-T	68 79 76 79 82	(dolor)
+T	71 82 79 82 85	(dolor)
 Mx 	365.6508
-T	83 73 84	(sit)
+T	86 76 87	(sit)
 Mx 	377.8676
-T	65 77 69 84	(amet)
+T	68 80 72 87	(amet)
 Mx 	20.9764
 My 	141.3321
-Set font 	Gentium;10;400;Italic;normal;;LTR
-T	50 65 71 71 69 68	(Ragged)
+Set font 	Gentium Plus;10;400;Italic;normal;;LTR
+T	53 68 74 74 72 71	(Ragged)
 Mx 	50.4979
-T	82 73 71 72 84	(right)
+T	85 76 74 75 87	(right)
 Mx 	71.1717
-Set font 	Gentium;10;400;;normal;;LTR
-T	76 79 82 69 77	(lorem)
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	79 82 85 72 80	(lorem)
 Mx 	97.7244
-T	73 80 83 85 77	(ipsum)
+T	76 83 86 88 80	(ipsum)
 Mx 	125.1268
-T	68 79 76 79 82	(dolor)
+T	71 82 79 82 85	(dolor)
 Mx 	149.2576
-T	83 73 84	(sit)
+T	86 76 87	(sit)
 Mx 	161.4744
-T	65 77 69 84	(amet)
+T	68 80 72 87	(amet)
 Mx 	184.3602
-T	67 79 78 83 69 84 69 84 85 82	(consetetur)
+T	70 82 81 86 72 87 72 87 88 85	(consetetur)
 Mx 	230.7225
-T	83 65 68 73 80 83 67 73 78 71	(sadipscing)
+T	86 68 71 76 83 86 70 76 81 74	(sadipscing)
 Mx 	275.9227
-T	69 76 73 84 82	(elitr)
+T	72 79 76 87 85	(elitr)
 Mx 	295.5662
-T	83 69 68	(sed)
+T	86 72 71	(sed)
 Mx 	311.4500
-T	68 73 65 77	(diam)
+T	71 76 68 80	(diam)
 Mx 	334.1844
-T	78 79 78 85 77 89	(nonumy)
+T	81 82 81 88 80 92	(nonumy)
 Mx 	20.9764
 My 	153.3321
-T	69 73 82 77 79 68	(eirmod)
+T	72 76 85 80 82 71	(eirmod)
 Mx 	52.7293
-T	84 69 77 80 79 82	(tempor)
+T	87 72 80 83 82 85	(tempor)
 Mx 	85.3123
-T	73 78 86 73 68 85 78 84	(invidunt)
+T	76 81 89 76 71 88 81 87	(invidunt)
 Mx 	122.8416
-T	85 84	(ut)
+T	88 87	(ut)
 Mx 	133.7840
-T	76 65 66 79 82 69	(labore)
+T	79 68 69 82 85 72	(labore)
 Mx 	161.9725
-T	69 84	(et)
+T	72 87	(et)
 Mx 	172.2361
-T	68 79 76 79 82 69	(dolore)
+T	71 82 79 82 85 72	(dolore)
 Mx 	200.9861
-T	77 65 71 78 65	(magna)
+T	80 68 74 81 68	(magna)
 Mx 	230.7957
-T	65 76 73 81 85 89 65 77	(aliquyam)
+T	68 79 76 84 88 92 68 80	(aliquyam)
 Mx 	271.0106
-T	69 82 65 84	(erat)
+T	72 85 68 87	(erat)
 Mx 	289.8240
-T	83 69 68	(sed)
+T	86 72 71	(sed)
 Mx 	305.7078
-T	68 73 65 77	(diam)
+T	71 76 68 80	(diam)
 Mx 	328.4422
-T	86 79 76 85 80 84 85 65	(voluptua)
+T	89 82 79 88 83 87 88 68	(voluptua)
 Mx 	367.2410
-T	65 84	(at)
+T	68 87	(at)
 Mx 	377.4754
-T	86 69 82 79	(vero)
+T	89 72 85 82	(vero)
 Mx 	20.9764
 My 	165.3321
-T	69 79 83	(eos)
+T	72 82 86	(eos)
 Mx 	36.6893
-T	69 84	(et)
+T	72 87	(et)
 Mx 	46.9529
-T	65 67 67 85 83 65 77	(accusam)
+T	68 70 70 88 86 68 80	(accusam)
 Mx 	84.2674
-T	69 84	(et)
+T	72 87	(et)
 Mx 	94.5311
-T	74 85 83 84 79	(justo)
+T	77 88 86 87 82	(justo)
 Mx 	116.9529
-T	68 85 79	(duo)
+T	71 88 82	(duo)
 Mx 	134.6824
-T	68 79 76 79 82 69 83	(dolores)
+T	71 82 79 82 85 72 86	(dolores)
 Mx 	167.2947
-T	69 84	(et)
+T	72 87	(et)
 Mx 	177.5584
-T	69 65	(ea)
+T	72 68	(ea)
 Mx 	188.9695
-T	82 69 66 85 77	(rebum)
+T	85 72 69 88 80	(rebum)
 Mx 	218.1590
-T	83 84 69 84	(stet)
+T	86 87 72 87	(stet)
 Mx 	235.7274
-T	67 76 73 84 65	(clita)
+T	70 79 76 87 68	(clita)
 Mx 	255.7518
-T	75 65 83 68	(kasd)
-Mx 	276.6063
-T	71 85 66 69 82 71 82 69 78	(gubergren)
-Mx 	321.6160
-T	78 79	(no)
-Mx 	334.3651
-T	83 69 65	(sea)
-Mx 	349.6385
-T	84 65 75 73 77 65 84 65	(takimata)
+T	78 68 86 71	(kasd)
+Mx 	276.4842
+T	74 88 69 72 85 74 85 72 81	(gubergren)
+Mx 	321.4940
+T	81 82	(no)
+Mx 	334.2430
+T	86 72 68	(sea)
+Mx 	349.5164
+T	87 68 78 76 80 68 87 68	(takimata)
 Mx 	20.9764
 My 	177.3321
-T	83 65 78 67 84 85 83	(sanctus)
+T	86 68 81 70 87 88 86	(sanctus)
 Mx 	54.1209
-T	69 83 84	(est)
+T	72 86 87	(est)
 Mx 	68.2469
-T	76 79 82 69 77	(lorem)
+T	79 82 85 72 80	(lorem)
 Mx 	94.7996
-T	73 80 83 85 77	(ipsum)
+T	76 83 86 88 80	(ipsum)
 Mx 	122.2020
-T	68 79 76 79 82	(dolor)
+T	71 82 79 82 85	(dolor)
 Mx 	146.3328
-T	83 73 84	(sit)
+T	86 76 87	(sit)
 Mx 	158.5496
-T	65 77 69 84	(amet)
+T	68 80 72 87	(amet)
 Mx 	181.4354
-T	76 79 82 69 77	(lorem)
+T	79 82 85 72 80	(lorem)
 Mx 	207.9881
-T	73 80 83 85 77	(ipsum)
+T	76 83 86 88 80	(ipsum)
 Mx 	235.3904
-T	68 79 76 79 82	(dolor)
+T	71 82 79 82 85	(dolor)
 Mx 	259.5213
-T	83 73 84	(sit)
+T	86 76 87	(sit)
 Mx 	271.7381
-T	65 77 69 84	(amet)
+T	68 80 72 87	(amet)
 Mx 	294.6238
-T	67 79 78 83 69 84 69 84 85 82	(consetetur)
+T	70 82 81 86 72 87 72 87 88 85	(consetetur)
 Mx 	340.9861
-T	83 65 68 73 80 83 67 73 78 71	(sadipscing)
+T	86 68 71 76 83 86 70 76 81 74	(sadipscing)
 Mx 	20.9764
 My 	189.3321
-T	69 76 73 84 82	(elitr)
+T	72 79 76 87 85	(elitr)
 Mx 	40.6199
-T	83 69 68	(sed)
+T	86 72 71	(sed)
 Mx 	56.5037
-T	68 73 65 77	(diam)
+T	71 76 68 80	(diam)
 Mx 	79.2381
-T	78 79 78 85 77 89	(nonumy)
+T	81 82 81 88 80 92	(nonumy)
 Mx 	115.7664
-T	69 73 82 77 79 68	(eirmod)
+T	72 76 85 80 82 71	(eirmod)
 Mx 	147.5193
-T	84 69 77 80 79 82	(tempor)
+T	87 72 80 83 82 85	(tempor)
 Mx 	180.1024
-T	73 78 86 73 68 85 78 84	(invidunt)
+T	76 81 89 76 71 88 81 87	(invidunt)
 Mx 	217.6317
-T	85 84	(ut)
+T	88 87	(ut)
 Mx 	228.5740
-T	76 65 66 79 82 69	(labore)
+T	79 68 69 82 85 72	(labore)
 Mx 	256.7625
-T	69 84	(et)
+T	72 87	(et)
 Mx 	267.0262
-T	68 79 76 79 82 69	(dolore)
+T	71 82 79 82 85 72	(dolore)
 Mx 	295.7762
-T	77 65 71 78 65	(magna)
+T	80 68 74 81 68	(magna)
 Mx 	325.5858
-T	65 76 73 81 85 89 65 77	(aliquyam)
+T	68 79 76 84 88 92 68 80	(aliquyam)
 Mx 	365.8006
-T	69 82 65 84	(erat)
+T	72 85 68 87	(erat)
 Mx 	384.6141
-T	83 69 68	(sed)
+T	86 72 71	(sed)
 Mx 	20.9764
 My 	201.3321
-T	68 73 65 77	(diam)
+T	71 76 68 80	(diam)
 Mx 	43.7108
-T	86 79 76 85 80 84 85 65	(voluptua)
+T	89 82 79 88 83 87 88 68	(voluptua)
 Mx 	82.5096
-T	65 84	(at)
+T	68 87	(at)
 Mx 	92.7440
-T	86 69 82 79	(vero)
+T	89 72 85 82	(vero)
 Mx 	113.4861
-T	69 79 83	(eos)
+T	72 82 86	(eos)
 Mx 	129.1990
-T	69 84	(et)
+T	72 87	(et)
 Mx 	139.4627
-T	65 67 67 85 83 65 77	(accusam)
+T	68 70 70 88 86 68 80	(accusam)
 Mx 	176.7772
-T	69 84	(et)
+T	72 87	(et)
 Mx 	187.0408
-T	74 85 83 84 79	(justo)
+T	77 88 86 87 82	(justo)
 Mx 	209.4627
-T	68 85 79	(duo)
+T	71 88 82	(duo)
 Mx 	227.1922
-T	68 79 76 79 82 69 83	(dolores)
+T	71 82 79 82 85 72 86	(dolores)
 Mx 	259.8045
-T	69 84	(et)
+T	72 87	(et)
 Mx 	270.0682
-T	69 65	(ea)
+T	72 68	(ea)
 Mx 	281.4793
-T	82 69 66 85 77	(rebum)
+T	85 72 69 88 80	(rebum)
 Mx 	310.6688
-T	83 84 69 84	(stet)
+T	86 87 72 87	(stet)
 Mx 	328.2371
-T	67 76 73 84 65	(clita)
+T	70 79 76 87 68	(clita)
 Mx 	348.2615
-T	75 65 83 68	(kasd)
+T	78 68 86 71	(kasd)
 Mx 	20.9764
 My 	213.3321
-T	71 85 66 69 82 71 82 69 78	(gubergren)
+T	74 88 69 72 85 74 85 72 81	(gubergren)
 Mx 	65.9861
-T	78 79	(no)
+T	81 82	(no)
 Mx 	78.7352
-T	83 69 65	(sea)
+T	86 72 68	(sea)
 Mx 	94.0086
-T	84 65 75 73 77 65 84 65	(takimata)
-Mx 	132.6072
-T	83 65 78 67 84 85 83	(sanctus)
-Mx 	165.7518
-T	69 83 84	(est)
-Mx 	179.8777
-T	76 79 82 69 77	(lorem)
-Mx 	206.4305
-T	73 80 83 85 77	(ipsum)
-Mx 	233.8328
-T	68 79 76 79 82	(dolor)
-Mx 	257.9637
-T	83 73 84	(sit)
-Mx 	270.1805
-T	65 77 69 84	(amet)
+T	87 68 78 76 80 68 87 68	(takimata)
+Mx 	132.4852
+T	86 68 81 70 87 88 86	(sanctus)
+Mx 	165.6297
+T	72 86 87	(est)
+Mx 	179.7557
+T	79 82 85 72 80	(lorem)
+Mx 	206.3084
+T	76 83 86 88 80	(ipsum)
+Mx 	233.7108
+T	71 82 79 82 85	(dolor)
+Mx 	257.8416
+T	86 76 87	(sit)
+Mx 	270.0584
+T	68 80 72 87	(amet)
 Mx 	27.6446
 My 	245.3321
-Set font 	Gentium;10;400;Italic;normal;;LTR
-T	35 69 78 84 69 82 69 68	(Centered)
+Set font 	Gentium Plus;10;400;Italic;normal;;LTR
+T	38 72 81 87 72 85 72 71	(Centered)
 Mx 	62.7911
-Set font 	Gentium;10;400;;normal;;LTR
-T	76 79 82 69 77	(lorem)
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	79 82 85 72 80	(lorem)
 Mx 	89.3439
-T	73 80 83 85 77	(ipsum)
+T	76 83 86 88 80	(ipsum)
 Mx 	116.7462
-T	68 79 76 79 82	(dolor)
+T	71 82 79 82 85	(dolor)
 Mx 	140.8771
-T	83 73 84	(sit)
+T	86 76 87	(sit)
 Mx 	153.0939
-T	65 77 69 84	(amet)
+T	68 80 72 87	(amet)
 Mx 	175.9796
-T	67 79 78 83 69 84 69 84 85 82	(consetetur)
+T	70 82 81 86 72 87 72 87 88 85	(consetetur)
 Mx 	222.3419
-T	83 65 68 73 80 83 67 73 78 71	(sadipscing)
+T	86 68 71 76 83 86 70 76 81 74	(sadipscing)
 Mx 	267.5421
-T	69 76 73 84 82	(elitr)
+T	72 79 76 87 85	(elitr)
 Mx 	287.1857
-T	83 69 68	(sed)
+T	86 72 71	(sed)
 Mx 	303.0694
-T	68 73 65 77	(diam)
+T	71 76 68 80	(diam)
 Mx 	325.8038
-T	78 79 78 85 77 89	(nonumy)
+T	81 82 81 88 80 92	(nonumy)
 Mx 	362.3321
-T	69 73 82 77 79 68	(eirmod)
+T	72 76 85 80 82 71	(eirmod)
 Mx 	25.1324
 My 	257.3321
-T	84 69 77 80 79 82	(tempor)
+T	87 72 80 83 82 85	(tempor)
 Mx 	57.7154
-T	73 78 86 73 68 85 78 84	(invidunt)
+T	76 81 89 76 71 88 81 87	(invidunt)
 Mx 	95.2447
-T	85 84	(ut)
+T	88 87	(ut)
 Mx 	106.1871
-T	76 65 66 79 82 69	(labore)
+T	79 68 69 82 85 72	(labore)
 Mx 	134.3756
-T	69 84	(et)
+T	72 87	(et)
 Mx 	144.6393
-T	68 79 76 79 82 69	(dolore)
+T	71 82 79 82 85 72	(dolore)
 Mx 	173.3893
-T	77 65 71 78 65	(magna)
+T	80 68 74 81 68	(magna)
 Mx 	203.1988
-T	65 76 73 81 85 89 65 77	(aliquyam)
+T	68 79 76 84 88 92 68 80	(aliquyam)
 Mx 	243.4137
-T	69 82 65 84	(erat)
+T	72 85 68 87	(erat)
 Mx 	262.2272
-T	83 69 68	(sed)
+T	86 72 71	(sed)
 Mx 	278.1109
-T	68 73 65 77	(diam)
+T	71 76 68 80	(diam)
 Mx 	300.8453
-T	86 79 76 85 80 84 85 65	(voluptua)
+T	89 82 79 88 83 87 88 68	(voluptua)
 Mx 	339.6442
-T	65 84	(at)
+T	68 87	(at)
 Mx 	349.8785
-T	86 69 82 79	(vero)
+T	89 72 85 82	(vero)
 Mx 	370.6207
-T	69 79 83	(eos)
+T	72 82 86	(eos)
 Mx 	386.3336
-T	69 84	(et)
-Mx 	73.5333
+T	72 87	(et)
+Mx 	73.5943
 My 	269.3321
-T	65 67 67 85 83 65 77	(accusam)
-Mx 	110.8478
-T	69 84	(et)
-Mx 	121.1114
-T	74 85 83 84 79	(justo)
-Mx 	143.5333
-T	68 85 79	(duo)
-Mx 	161.2628
-T	68 79 76 79 82 69 83	(dolores)
-Mx 	193.8751
-T	69 84	(et)
-Mx 	204.1388
-T	69 65	(ea)
-Mx 	215.5499
-T	82 69 66 85 77	(rebum)
-Mx 	244.7394
-T	83 84 69 84	(stet)
-Mx 	262.3077
-T	67 76 73 84 65	(clita)
-Mx 	282.3321
-T	75 65 83 68	(kasd)
-Mx 	303.1866
-T	71 85 66 69 82 71 82 69 78	(gubergren)
+T	68 70 70 88 86 68 80	(accusam)
+Mx 	110.9088
+T	72 87	(et)
+Mx 	121.1725
+T	77 88 86 87 82	(justo)
+Mx 	143.5943
+T	71 88 82	(duo)
+Mx 	161.3238
+T	71 82 79 82 85 72 86	(dolores)
+Mx 	193.9361
+T	72 87	(et)
+Mx 	204.1998
+T	72 68	(ea)
+Mx 	215.6109
+T	85 72 69 88 80	(rebum)
+Mx 	244.8004
+T	86 87 72 87	(stet)
+Mx 	262.3688
+T	70 79 76 87 68	(clita)
+Mx 	282.3932
+T	78 68 86 71	(kasd)
+Mx 	303.1256
+T	74 88 69 72 85 74 85 72 81	(gubergren)
 Mx 	40.9764
 My 	301.3321
-Set font 	Gentium;10;400;Italic;normal;;LTR
-T	42 85 83 84 73 70 73 69 68	(Justified)
+Set font 	Gentium Plus;10;400;Italic;normal;;LTR
+T	45 88 86 87 76 1006 72 71	(Justified)
 Mx 	74.7228
-Set font 	Gentium;10;400;;normal;;LTR
-T	76 79 82 69 77	(lorem)
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	79 82 85 72 80	(lorem)
 Mx 	102.1510
-T	73 80 83 85 77	(ipsum)
+T	76 83 86 88 80	(ipsum)
 Mx 	130.4287
-T	68 79 76 79 82	(dolor)
+T	71 82 79 82 85	(dolor)
 Mx 	155.4349
-T	83 73 84	(sit)
+T	86 76 87	(sit)
 Mx 	168.5271
-T	65 77 69 84	(amet)
+T	68 80 72 87	(amet)
 Mx 	192.2882
-T	67 79 78 83 69 84 69 84 85 82	(consetetur)
+T	70 82 81 86 72 87 72 87 88 85	(consetetur)
 Mx 	239.5259
-T	83 65 68 73 80 83 67 73 78 71	(sadipscing)
+T	86 68 71 76 83 86 70 76 81 74	(sadipscing)
 Mx 	285.6014
-T	69 76 73 84 82	(elitr)
+T	72 79 76 87 85	(elitr)
 Mx 	306.1204
-T	83 69 68	(sed)
+T	86 72 71	(sed)
 Mx 	322.8795
-T	68 73 65 77	(diam)
+T	71 76 68 80	(diam)
 Mx 	346.4893
-T	78 79 78 85 77 89	(nonumy)
+T	81 82 81 88 80 92	(nonumy)
 Mx 	383.8930
-T	69 73 82	(eir)
+T	72 76 85	(eir)
 Mx 	395.1820
-T	13	(-)
+T	16	(-)
 Mx 	20.9764
 My 	313.3321
-T	77 79 68	(mod)
+T	80 82 71	(mod)
 Mx 	42.4277
-T	84 69 77 80 79 82	(tempor)
+T	87 72 80 83 82 85	(tempor)
 Mx 	75.9982
-T	73 78 86 73 68 85 78 84	(invidunt)
+T	76 81 89 76 71 88 81 87	(invidunt)
 Mx 	114.5150
-T	85 84	(ut)
+T	88 87	(ut)
 Mx 	126.4449
-T	76 65 66 79 82 69	(labore)
+T	79 68 69 82 85 72	(labore)
 Mx 	155.6208
-T	69 84	(et)
+T	72 87	(et)
 Mx 	166.8720
-T	68 79 76 79 82 69	(dolore)
+T	71 82 79 82 85 72	(dolore)
 Mx 	196.6095
-T	77 65 71 78 65	(magna)
+T	80 68 74 81 68	(magna)
 Mx 	227.4065
-T	65 76 73 81 85 89 65 77	(aliquyam)
+T	68 79 76 84 88 92 68 80	(aliquyam)
 Mx 	268.6089
-T	69 82 65 84	(erat)
+T	72 85 68 87	(erat)
 Mx 	288.4098
-T	83 69 68	(sed)
+T	86 72 71	(sed)
 Mx 	305.2811
-T	68 73 65 77	(diam)
+T	71 76 68 80	(diam)
 Mx 	329.0030
-T	86 79 76 85 80 84 85 65	(voluptua)
+T	89 82 79 88 83 87 88 68	(voluptua)
 Mx 	368.7893
-T	65 84	(at)
+T	68 87	(at)
 Mx 	380.0111
-T	86 69 82 79	(vero)
+T	89 72 85 82	(vero)
 Mx 	20.9764
 My 	325.3321
-T	69 79 83	(eos)
-Mx 	37.4715
-T	69 84	(et)
-Mx 	48.5175
-T	65 67 67 85 83 65 77	(accusam)
-Mx 	86.6142
-T	69 84	(et)
-Mx 	97.6601
-T	74 85 83 84 79	(justo)
-Mx 	120.8643
-T	68 85 79	(duo)
-Mx 	139.3760
-T	68 79 76 79 82 69 83	(dolores)
-Mx 	172.7706
-T	69 84	(et)
-Mx 	183.8165
-T	69 65	(ea)
-Mx 	196.0099
-T	82 69 66 85 77	(rebum)
-Mx 	225.9816
-T	83 84 69 84	(stet)
-Mx 	244.3323
-T	67 76 73 84 65	(clita)
-Mx 	265.1389
-T	75 65 83 68	(kasd)
-Mx 	286.7757
-T	71 85 66 69 82 71 82 69 78	(gubergren)
-Mx 	332.5677
-T	78 79	(no)
-Mx 	346.0990
-T	83 69 65	(sea)
-Mx 	362.1547
-T	84 65 75 73 77 65 84 65	(takimata)
+T	72 82 86	(eos)
+Mx 	37.4868
+T	72 87	(et)
+Mx 	48.5480
+T	68 70 70 88 86 68 80	(accusam)
+Mx 	86.6600
+T	72 87	(et)
+Mx 	97.7212
+T	77 88 86 87 82	(justo)
+Mx 	120.9406
+T	71 88 82	(duo)
+Mx 	139.4676
+T	71 82 79 82 85 72 86	(dolores)
+Mx 	172.8774
+T	72 87	(et)
+Mx 	183.9386
+T	72 68	(ea)
+Mx 	196.1472
+T	85 72 69 88 80	(rebum)
+Mx 	226.1342
+T	86 87 72 87	(stet)
+Mx 	244.5001
+T	70 79 76 87 68	(clita)
+Mx 	265.3220
+T	78 68 86 71	(kasd)
+Mx 	286.8520
+T	74 88 69 72 85 74 85 72 81	(gubergren)
+Mx 	332.6593
+T	81 82	(no)
+Mx 	346.2058
+T	86 72 68	(sea)
+Mx 	362.2768
+T	87 68 78 76 80 68 87 68	(takimata)
 Mx 	20.9764
 My 	337.3321
-T	83 65 78 67 84 85 83	(sanctus)
+T	86 68 81 70 87 88 86	(sanctus)
 Mx 	55.2414
-T	69 83 84	(est)
+T	72 86 87	(est)
 Mx 	70.4880
-T	76 79 82 69 77	(lorem)
+T	79 82 85 72 80	(lorem)
 Mx 	98.1612
-T	73 80 83 85 77	(ipsum)
+T	76 83 86 88 80	(ipsum)
 Mx 	126.6841
-T	68 79 76 79 82	(dolor)
+T	71 82 79 82 85	(dolor)
 Mx 	151.9355
-T	83 73 84	(sit)
+T	86 76 87	(sit)
 Mx 	165.2728
-T	65 77 69 84	(amet)
+T	68 80 72 87	(amet)
 Mx 	189.2791
-T	76 79 82 69 77	(lorem)
+T	79 82 85 72 80	(lorem)
 Mx 	216.9524
-T	73 80 83 85 77	(ipsum)
+T	76 83 86 88 80	(ipsum)
 Mx 	245.4753
-T	68 79 76 79 82	(dolor)
+T	71 82 79 82 85	(dolor)
 Mx 	270.7267
-T	83 73 84	(sit)
+T	86 76 87	(sit)
 Mx 	284.0640
-T	65 77 69 84	(amet)
+T	68 80 72 87	(amet)
 Mx 	308.0703
-T	67 79 78 83 69 84 69 84 85 82	(consetetur)
+T	70 82 81 86 72 87 72 87 88 85	(consetetur)
 Mx 	355.5531
-T	83 65 68 73 80 83 67 73 78 71	(sadipscing)
+T	86 68 71 76 83 86 70 76 81 74	(sadipscing)
 Mx 	20.9764
 My 	349.3321
-T	69 76 73 84 82	(elitr)
+T	72 79 76 87 85	(elitr)
 Mx 	41.8614
-T	83 69 68	(sed)
+T	86 72 71	(sed)
 Mx 	58.9867
-T	68 73 65 77	(diam)
+T	71 76 68 80	(diam)
 Mx 	82.9625
-T	78 79 78 85 77 89	(nonumy)
+T	81 82 81 88 80 92	(nonumy)
 Mx 	120.7323
-T	69 73 82 77 79 68	(eirmod)
+T	72 76 85 80 82 71	(eirmod)
 Mx 	153.7268
-T	84 69 77 80 79 82	(tempor)
+T	87 72 80 83 82 85	(tempor)
 Mx 	187.5512
-T	73 78 86 73 68 85 78 84	(invidunt)
+T	76 81 89 76 71 88 81 87	(invidunt)
 Mx 	226.3220
-T	85 84	(ut)
+T	88 87	(ut)
 Mx 	238.5059
-T	76 65 66 79 82 69	(labore)
+T	79 68 69 82 85 72	(labore)
 Mx 	267.9358
-T	69 84	(et)
+T	72 87	(et)
 Mx 	279.4410
-T	68 79 76 79 82 69	(dolore)
+T	71 82 79 82 85 72	(dolore)
 Mx 	309.4325
-T	77 65 71 78 65	(magna)
+T	80 68 74 81 68	(magna)
 Mx 	340.4835
-T	65 76 73 81 85 89 65 77	(aliquyam)
+T	68 79 76 84 88 92 68 80	(aliquyam)
 Mx 	381.9399
-T	69 82 65 84	(erat)
+T	72 85 68 87	(erat)
 Mx 	20.9764
 My 	361.3321
-T	83 69 68	(sed)
-Mx 	37.7868
-T	68 73 65 77	(diam)
-Mx 	61.4479
-T	86 79 76 85 80 84 85 65	(voluptua)
-Mx 	101.1734
-T	65 84	(at)
-Mx 	112.3345
-T	86 69 82 79	(vero)
-Mx 	134.0033
-T	69 79 83	(eos)
-Mx 	150.6429
-T	69 84	(et)
-Mx 	161.8332
-T	65 67 67 85 83 65 77	(accusam)
-Mx 	200.0744
-T	69 84	(et)
-Mx 	211.2647
-T	74 85 83 84 79	(justo)
-Mx 	234.6133
-T	68 85 79	(duo)
-Mx 	253.2694
-T	68 79 76 79 82 69 83	(dolores)
-Mx 	286.8084
-T	69 84	(et)
-Mx 	297.9988
-T	69 65	(ea)
-Mx 	310.3366
-T	82 69 66 85 77	(rebum)
-Mx 	340.4527
-T	83 84 69 84	(stet)
-Mx 	358.9478
-T	67 76 73 84 65	(clita)
-Mx 	379.8988
-T	75 65 83 68	(kasd)
+T	86 72 71	(sed)
+Mx 	37.7940
+T	71 76 68 80	(diam)
+Mx 	61.4623
+T	89 82 79 88 83 87 88 68	(voluptua)
+Mx 	101.1949
+T	68 87	(at)
+Mx 	112.3632
+T	89 72 85 82	(vero)
+Mx 	134.0392
+T	72 82 86	(eos)
+Mx 	150.6860
+T	72 87	(et)
+Mx 	161.8835
+T	68 70 70 88 86 68 80	(accusam)
+Mx 	200.1318
+T	72 87	(et)
+Mx 	211.3293
+T	77 88 86 87 82	(justo)
+Mx 	234.6851
+T	71 88 82	(duo)
+Mx 	253.3484
+T	71 82 79 82 85 72 86	(dolores)
+Mx 	286.8946
+T	72 87	(et)
+Mx 	298.0921
+T	72 68	(ea)
+Mx 	310.4371
+T	85 72 69 88 80	(rebum)
+Mx 	340.5604
+T	86 87 72 87	(stet)
+Mx 	359.0626
+T	70 79 76 87 68	(clita)
+Mx 	380.0209
+T	78 68 86 71	(kasd)
 Mx 	20.9764
 My 	373.3321
-T	71 85 66 69 82 71 82 69 78	(gubergren)
+T	74 88 69 72 85 74 85 72 81	(gubergren)
 Mx 	66.4379
-T	78 79	(no)
-Mx 	79.6387
-T	83 69 65	(sea)
+T	81 82	(no)
+Mx 	79.6388
+T	86 72 68	(sea)
 Mx 	95.3640
-T	84 65 75 73 77 65 84 65	(takimata)
-Mx 	134.4144
-T	83 65 78 67 84 85 83	(sanctus)
-Mx 	168.0107
-T	69 83 84	(est)
-Mx 	182.5885
-T	76 79 82 69 77	(lorem)
-Mx 	209.5930
-T	73 80 83 85 77	(ipsum)
-Mx 	237.4471
-T	68 79 76 79 82	(dolor)
-Mx 	262.0298
-T	83 73 84	(sit)
-Mx 	274.6984
-T	65 77 69 84	(amet)
+T	87 68 78 76 80 68 87 68	(takimata)
+Mx 	134.2924
+T	86 68 81 70 87 88 86	(sanctus)
+Mx 	167.8887
+T	72 86 87	(est)
+Mx 	182.4665
+T	79 82 85 72 80	(lorem)
+Mx 	209.4710
+T	76 83 86 88 80	(ipsum)
+Mx 	237.3252
+T	71 82 79 82 85	(dolor)
+Mx 	261.9078
+T	86 76 87	(sit)
+Mx 	274.5764
+T	68 80 72 87	(amet)
 Mx 	85.7924
 My 	405.3321
-Set font 	Gentium;10;400;Italic;normal;;LTR
-T	50 73 71 72 84	(Right)
+Set font 	Gentium Plus;10;400;Italic;normal;;LTR
+T	53 76 74 75 87	(Right)
 Mx 	108.1752
-T	65 76 73 71 78 69 68	(aligned)
+T	68 79 76 74 81 72 71	(aligned)
 Mx 	137.7406
-Set font 	Gentium;10;400;;normal;;LTR
-T	76 79 82 69 77	(lorem)
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	79 82 85 72 80	(lorem)
 Mx 	164.2934
-T	73 80 83 85 77	(ipsum)
+T	76 83 86 88 80	(ipsum)
 Mx 	191.6957
-T	68 79 76 79 82	(dolor)
+T	71 82 79 82 85	(dolor)
 Mx 	215.8266
-T	83 73 84	(sit)
+T	86 76 87	(sit)
 Mx 	228.0434
-T	65 77 69 84	(amet)
+T	68 80 72 87	(amet)
 Mx 	250.9291
-T	67 79 78 83 69 84 69 84 85 82	(consetetur)
+T	70 82 81 86 72 87 72 87 88 85	(consetetur)
 Mx 	297.2914
-T	83 65 68 73 80 83 67 73 78 71	(sadipscing)
+T	86 68 71 76 83 86 70 76 81 74	(sadipscing)
 Mx 	342.4916
-T	69 76 73 84 82	(elitr)
+T	72 79 76 87 85	(elitr)
 Mx 	362.1352
-T	83 69 68	(sed)
+T	86 72 71	(sed)
 Mx 	378.0190
-T	68 73 65 77	(diam)
+T	71 76 68 80	(diam)
 [1] Mx 	207.4176
 My 	553.7327
-T	17	(1)
+T	20	(1)
 End page
 Finish
 

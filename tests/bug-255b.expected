@@ -3,305 +3,305 @@ Set paper size 	297.6377985	419.5275636
 Begin page
 Mx 	34.8819
 My 	28.5447
-Set font 	Gentium;10;400;;normal;;LTR
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	94.8240
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	152.3101
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	212.2522
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	269.7383
-T	69 88	(ex)
+T	72 91	(ex)
 Mx 	279.3868
-T	13	(-)
+T	16	(-)
 Mx 	14.8819
 My 	40.5447
-T	80 69 82	(per)
+T	83 72 85	(per)
 Mx 	28.7588
-T	73	(i)
+T	76	(i)
 Mx 	31.4688
-T	77 69 78	(men)
+T	80 72 81	(men)
 Mx 	49.6377
-T	84 65 76	(tal)
+T	87 68 79	(tal)
 Mx 	62.0555
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	116.4214
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	173.2435
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	227.6094
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	14.8819
 My 	52.5447
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	71.9297
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	131.4336
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	188.4815
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	247.9854
-T	72 89	(hy)
+T	75 92	(hy)
 Mx 	258.4346
-T	80 72 69 78	(phen)
+T	83 75 72 81	(phen)
 Mx 	279.3868
-T	13	(-)
+T	16	(-)
 Mx 	14.8819
 My 	64.5447
-T	65 84 73 79 78	(ation)
+T	68 87 76 82 81	(ation)
 Mx 	39.7497
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	98.4749
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	154.7440
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	213.4692
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	269.7383
-T	69 88	(ex)
+T	72 91	(ex)
 Mx 	279.3868
-T	13	(-)
+T	16	(-)
 Mx 	14.8819
 My 	76.5447
-T	80 69 82	(per)
+T	83 72 85	(per)
 Mx 	28.7588
-T	73	(i)
+T	76	(i)
 Mx 	31.4688
-T	77 69 78	(men)
+T	80 72 81	(men)
 Mx 	49.6377
-T	84 65 76	(tal)
+T	87 68 79	(tal)
 Mx 	62.0555
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	116.4214
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	173.2435
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	227.6094
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	14.8819
 My 	88.5447
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	71.9297
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	131.4336
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	188.4815
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	247.9854
-T	72 89	(hy)
+T	75 92	(hy)
 Mx 	258.4346
-T	80 72 69 78	(phen)
+T	83 75 72 81	(phen)
 Mx 	279.3868
-T	13	(-)
+T	16	(-)
 Mx 	14.8819
 My 	100.5447
-T	65 84 73 79 78	(ation)
+T	68 87 76 82 81	(ation)
 Mx 	39.7497
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	98.4749
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	154.7440
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	213.4692
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	269.7383
-T	69 88	(ex)
+T	72 91	(ex)
 Mx 	279.3868
-T	13	(-)
+T	16	(-)
 Mx 	14.8819
 My 	112.5447
-T	80 69 82	(per)
+T	83 72 85	(per)
 Mx 	28.7588
-T	73	(i)
+T	76	(i)
 Mx 	31.4688
-T	77 69 78	(men)
+T	80 72 81	(men)
 Mx 	49.6377
-T	84 65 76	(tal)
+T	87 68 79	(tal)
 Mx 	62.0555
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	116.4214
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	173.2435
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	227.6094
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	14.8819
 My 	124.5447
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	71.9297
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	131.4336
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	188.4815
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	247.9854
-T	72 89	(hy)
+T	75 92	(hy)
 Mx 	258.4346
-T	80 72 69 78	(phen)
+T	83 75 72 81	(phen)
 Mx 	279.3868
-T	13	(-)
+T	16	(-)
 Mx 	14.8819
 My 	136.5447
-T	65 84 73 79 78	(ation)
+T	68 87 76 82 81	(ation)
 Mx 	54.8819
 My 	148.5447
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	113.4017
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	169.4655
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	227.9854
-T	72 89	(hy)
+T	75 92	(hy)
 Mx 	238.4346
-T	80 72 69 78	(phen)
+T	83 75 72 81	(phen)
 Mx 	259.3868
-T	13	(-)
+T	16	(-)
 Mx 	34.8819
 My 	160.5447
-T	65 84 73 79 78	(ation)
+T	68 87 76 82 81	(ation)
 Mx 	58.3787
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	115.7330
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	170.6312
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	227.9854
-T	72 89	(hy)
+T	75 92	(hy)
 Mx 	238.4346
-T	80 72 69 78	(phen)
+T	83 75 72 81	(phen)
 Mx 	259.3868
-T	13	(-)
+T	16	(-)
 Mx 	34.8819
 My 	172.5447
-T	65 84 73 79 78	(ation)
+T	68 87 76 82 81	(ation)
 Mx 	58.3787
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	115.7330
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	170.6312
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	227.9854
-T	72 89	(hy)
+T	75 92	(hy)
 Mx 	238.4346
-T	80 72 69 78	(phen)
+T	83 75 72 81	(phen)
 Mx 	259.3868
-T	13	(-)
+T	16	(-)
 Mx 	34.8819
 My 	184.5447
-T	65 84 73 79 78	(ation)
+T	68 87 76 82 81	(ation)
 Mx 	58.3787
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	115.7330
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	170.6312
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	227.9854
-T	72 89	(hy)
+T	75 92	(hy)
 Mx 	238.4346
-T	80 72 69 78	(phen)
+T	83 75 72 81	(phen)
 Mx 	259.3868
-T	13	(-)
+T	16	(-)
 Mx 	34.8819
 My 	196.5447
-T	65 84 73 79 78	(ation)
+T	68 87 76 82 81	(ation)
 Mx 	58.3787
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	115.7330
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	170.6312
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	227.9854
-T	72 89	(hy)
+T	75 92	(hy)
 Mx 	238.4346
-T	80 72 69 78	(phen)
+T	83 75 72 81	(phen)
 Mx 	259.3868
-T	13	(-)
+T	16	(-)
 Mx 	34.8819
 My 	208.5447
-T	65 84 73 79 78	(ation)
+T	68 87 76 82 81	(ation)
 Mx 	58.3787
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	115.7330
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	170.6312
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	227.9854
-T	72 89	(hy)
+T	75 92	(hy)
 Mx 	238.4346
-T	80 72 69 78	(phen)
+T	83 75 72 81	(phen)
 Mx 	259.3868
-T	13	(-)
+T	16	(-)
 Mx 	34.8819
 My 	220.5447
-T	65 84 73 79 78	(ation)
+T	68 87 76 82 81	(ation)
 Mx 	58.3787
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	115.7330
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	170.6312
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	227.9854
-T	72 89	(hy)
+T	75 92	(hy)
 Mx 	238.4346
-T	80 72 69 78	(phen)
+T	83 75 72 81	(phen)
 Mx 	259.3868
-T	13	(-)
+T	16	(-)
 Mx 	34.8819
 My 	232.5447
-T	65 84 73 79 78	(ation)
+T	68 87 76 82 81	(ation)
 Mx 	58.3787
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	115.7330
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	170.6312
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	227.9854
-T	72 89	(hy)
+T	75 92	(hy)
 Mx 	238.4346
-T	80 72 69 78	(phen)
+T	83 75 72 81	(phen)
 Mx 	259.3868
-T	13	(-)
+T	16	(-)
 Mx 	34.8819
 My 	244.5447
-T	65 84 73 79 78	(ation)
+T	68 87 76 82 81	(ation)
 Mx 	58.3787
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	115.7330
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	170.6312
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	227.9854
-T	72 89	(hy)
+T	75 92	(hy)
 Mx 	238.4346
-T	80 72 69 78	(phen)
+T	83 75 72 81	(phen)
 Mx 	259.3868
-T	13	(-)
+T	16	(-)
 Mx 	34.8819
 My 	256.5447
-T	65 84 73 79 78	(ation)
+T	68 87 76 82 81	(ation)
 Mx 	58.3787
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	115.7330
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 Mx 	170.6312
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	227.9854
-T	72 89	(hy)
+T	75 92	(hy)
 Mx 	238.4346
-T	80 72 69 78	(phen)
+T	83 75 72 81	(phen)
 Mx 	259.3868
-T	13	(-)
+T	16	(-)
 Mx 	34.8819
 My 	268.5447
-T	65 84 73 79 78	(ation)
+T	68 87 76 82 81	(ation)
 Mx 	58.6944
-T	69 88 80 69 82 73 77 69 78 84 65 76	(experimental)
+T	72 91 83 72 85 76 80 72 81 87 68 79	(experimental)
 Mx 	116.3643
-T	72 89 80 72 69 78 65 84 73 79 78	(hyphenation)
+T	75 92 83 75 72 81 68 87 76 82 81	(hyphenation)
 [1] Mx 	146.4727
 My 	392.0445
-T	17	(1)
+T	20	(1)
 End page
 Finish
 

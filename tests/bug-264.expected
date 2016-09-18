@@ -3,58 +3,58 @@ Set paper size 	209.7637818	297.6377985
 Begin page
 Mx 	37.4104
 My 	42.0943
-Set font 	Gentium;10;400;;normal;;LTR
-T	72	(h)
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	75	(h)
 [1] New page
 Mx 	49.3669
-T	76 65 66 79 82 85 77	(laborum)
+T	79 68 69 82 85 88 80	(laborum)
 Mx 	84.0642
-T	14	(.)
+T	17	(.)
 Mx 	86.3542
 My 	38.9156
-Set font 	Gentium;6.81152;400;;normal;;LTR
-T	17	(1)
+Set font 	Gentium Plus;6.81152;400;;normal;;LTR
+T	20	(1)
 Mx 	29.3669
 My 	233.7350
-Set font 	Gentium;9;400;;normal;;LTR
-T	17	(1)
+Set font 	Gentium Plus;9;400;;normal;;LTR
+T	20	(1)
 Mx 	33.5901
-T	14	(.)
+T	17	(.)
 Mx 	53.6511
-T	44 79 82 69 77	(Lorem)
+T	47 82 85 72 80	(Lorem)
 Mx 	79.1300
-T	73 80 83 85 77	(ipsum)
+T	76 83 86 88 80	(ipsum)
 Mx 	103.5279
-T	68 79 76 79 82	(dolor)
+T	71 82 79 82 85	(dolor)
 Mx 	124.9814
-T	83 73 84	(sit)
+T	86 76 87	(sit)
 Mx 	135.7122
-T	65 77 69 84	(amet)
+T	68 80 72 87	(amet)
 Mx 	154.3275
-T	12	(,)
+T	15	(,)
 Mx 	158.1062
-T	67 79 78	(con)
+T	70 82 81	(con)
 Mx 	171.5315
-T	83 69 67 84 69	(secte)
+T	86 72 70 87 72	(secte)
 Mx 	190.3533
-T	13	(-)
+T	16	(-)
 Mx 	29.3669
 My 	245.7350
-T	84 85 82	(tur)
+T	87 88 85	(tur)
 Mx 	43.1784
-T	65 68 73 80 73 83 73 67 73 78 71	(adipisicing)
+T	68 71 76 83 76 86 76 70 76 81 74	(adipisicing)
 Mx 	85.6599
-T	69 76 73 84	(elit)
+T	72 79 76 87	(elit)
 Mx 	97.7932
-T	12	(,)
+T	15	(,)
 Mx 	102.2356
-T	83 69 68	(sed)
+T	86 72 71	(sed)
 Mx 	116.9304
-T	68 79	(do)
+T	71 82	(do)
 Mx 	128.5183
-T	69 73 85 83 77 79 68	(eiusmod)
+T	72 76 88 86 80 82 71	(eiusmod)
 Mx 	159.7942
-T	14	(.)
+T	17	(.)
 [2] End page
 Finish
 

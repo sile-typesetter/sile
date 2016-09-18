@@ -3,192 +3,192 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	40.9764
 My 	37.3321
-Set font 	Gentium;10;400;;normal;;LTR
-T	51 77 65 76 76	(Small)
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	54 80 68 79 79	(Small)
 Mx 	66.4564
-T	84 69 88 84	(text)
+T	87 72 91 87	(text)
 Mx 	40.9764
 My 	55.3321
-Set font 	Gentium;15;400;;normal;;LTR
-T	34 73 71	(Big)
+Set font 	Gentium Plus;15;400;;normal;;LTR
+T	37 76 74	(Big)
 Mx 	64.6195
-T	84 69 88 84	(text)
+T	87 72 91 87	(text)
 Mx 	89.4193
-T	209	(!)
+T	4	(!)
 Mx 	40.9764
 My 	79.8575
-Set font 	Gentium;30;400;;normal;;LTR
-T	34 73 71 71 69 82	(Bigger)
+Set font 	Gentium Plus;30;400;;normal;;LTR
+T	37 76 74 74 72 85	(Bigger)
 Mx 	130.8901
-T	84 69 88 84	(text)
+T	87 72 91 87	(text)
 Mx 	185.6321
-Set font 	Gentium;15;400;;normal;;LTR
-T	44 79 82 69 77	(Lorem)
+Set font 	Gentium Plus;15;400;;normal;;LTR
+T	47 82 85 72 80	(Lorem)
 Mx 	230.3766
-T	73 80 83 85 77	(ipsum)
+T	76 83 86 88 80	(ipsum)
 Mx 	273.3193
-T	68 79 76 79 82	(dolor)
+T	71 82 79 82 85	(dolor)
 Mx 	311.3547
-T	83 73 84	(sit)
+T	86 76 87	(sit)
 Mx 	331.5191
-T	65 77 69 84	(amet)
+T	68 80 72 87	(amet)
 Mx 	362.5445
-T	12	(,)
+T	15	(,)
 Mx 	371.1220
-T	67 79 78	(con)
+T	70 82 81	(con)
 Mx 	393.4975
-T	13	(-)
+T	16	(-)
 Mx 	20.9764
 My 	99.5343
-T	83 69 67 84 69	(secte)
+T	86 72 70 87 72	(secte)
 Mx 	52.3460
-T	84 85 82	(tur)
+T	87 88 85	(tur)
 Mx 	76.9800
-T	65 68 73 80 73 83 73 67 73 78 71	(adipisicing)
+T	68 71 76 83 76 86 76 70 76 81 74	(adipisicing)
 Mx 	149.3972
-T	69 76 73 84	(elit)
+T	72 79 76 87	(elit)
 Mx 	169.6194
-T	12	(,)
+T	15	(,)
 Mx 	178.6382
-T	83 69 68	(sed)
+T	86 72 71	(sed)
 Mx 	204.7444
-T	68 79	(do)
+T	71 82	(do)
 Mx 	225.6723
-T	69 73 85 83 77 79 68	(eiusmod)
+T	72 76 88 86 80 82 71	(eiusmod)
 Mx 	283.3825
-T	84 69 77 80 79 82	(tempor)
+T	87 72 80 83 82 85	(tempor)
 Mx 	334.5375
-T	73 78 67 73 68 73 68 85 78 84	(incididunt)
+T	76 81 70 76 71 76 71 88 81 87	(incididunt)
 Mx 	20.9764
 My 	117.5343
-T	85 84	(ut)
+T	88 87	(ut)
 Mx 	38.1506
-T	76 65 66 79 82 69	(labore)
+T	79 68 69 82 85 72	(labore)
 Mx 	81.1940
-T	69 84	(et)
+T	72 87	(et)
 Mx 	97.3501
-T	68 79 76 79 82 69	(dolore)
+T	71 82 79 82 85 72	(dolore)
 Mx 	141.2358
-T	77 65 71 78 65	(magna)
+T	80 68 74 81 68	(magna)
 Mx 	186.7108
-T	65 76 73 81 85 65	(aliqua)
+T	68 79 76 84 88 68	(aliqua)
 Mx 	224.2840
-T	14	(.)
+T	17	(.)
 Mx 	231.7830
-T	53 84	(Ut)
+T	56 87	(Ut)
 Mx 	250.8176
-T	69 78 73 77	(enim)
+T	72 81 76 80	(enim)
 Mx 	286.1998
-T	65 68	(ad)
+T	68 71	(ad)
 Mx 	304.9487
-T	77 73 78 73 77	(minim)
+T	80 76 81 76 80	(minim)
 Mx 	349.5155
-T	86 69 78 73 65 77	(veniam)
+T	89 72 81 76 68 80	(veniam)
 Mx 	395.1161
-T	12	(,)
+T	15	(,)
 Mx 	20.9764
 My 	135.5343
-T	81 85 73 83	(quis)
+T	84 88 76 86	(quis)
 Mx 	49.9758
-T	78 79 83 84 82 85 68	(nostrud)
+T	81 82 86 87 85 88 71	(nostrud)
 Mx 	101.9074
-T	69 88 69 82 67 73 84 65 84 73 79 78	(exercitation)
+T	72 91 72 85 70 76 87 68 87 76 82 81	(exercitation)
 Mx 	180.4333
-T	85 76 76 65 77 67 79	(ullamco)
+T	88 79 79 68 80 70 82	(ullamco)
 Mx 	233.0094
-T	76 65 66 79 82 73 83	(laboris)
+T	79 68 69 82 85 76 86	(laboris)
 Mx 	278.3858
-T	78 73 83 73	(nisi)
+T	81 76 86 76	(nisi)
 Mx 	304.0528
-T	85 84	(ut)
+T	88 87	(ut)
 Mx 	320.6304
-T	65 76 73 81 85 73 80	(aliquip)
+T	68 79 76 84 88 76 83	(aliquip)
 Mx 	366.7978
-T	69 88	(ex)
+T	72 91	(ex)
 Mx 	384.7377
-T	69 65	(ea)
+T	72 68	(ea)
 Mx 	20.9764
 My 	153.5343
-T	67 79 77 77 79 68 79	(commodo)
+T	70 82 80 80 82 71 82	(commodo)
 Mx 	86.8457
-T	67 79 78 83 69 81 85 65 84	(consequat)
+T	70 82 81 86 72 84 88 68 87	(consequat)
 Mx 	149.6656
-T	14	(.)
+T	17	(.)
 Mx 	157.8860
-T	36 85 73 83	(Duis)
+T	39 88 76 86	(Duis)
 Mx 	189.3682
-T	65 85 84 69	(aute)
+T	68 88 87 72	(aute)
 Mx 	221.0774
-T	73 82 85 82 69	(irure)
+T	76 85 88 85 72	(irure)
 Mx 	256.6831
-T	68 79 76 79 82	(dolor)
+T	71 82 79 82 85	(dolor)
 Mx 	294.3615
-T	73 78	(in)
+T	76 81	(in)
 Mx 	311.4882
-T	82 69 80 82 69 72 69 78 68 69 82 73 84	(reprehenderit)
+T	85 72 83 85 72 75 72 81 71 72 85 76 87	(reprehenderit)
 Mx 	20.9764
 My 	171.5343
-T	73 78	(in)
+T	76 81	(in)
 Mx 	37.5621
-T	86 79 76 85 80 84 65 84 69	(voluptate)
+T	89 82 79 88 83 87 68 87 72	(voluptate)
 Mx 	100.8471
-T	86 69 76 73 84	(velit)
+T	89 72 79 76 87	(velit)
 Mx 	132.7111
-T	69 83 83 69	(esse)
+T	72 86 86 72	(esse)
 Mx 	162.3999
-T	67 73 76 76 85 77	(cillum)
+T	70 76 79 79 88 80	(cillum)
 Mx 	205.3894
-T	68 79 76 79 82 69	(dolore)
+T	71 82 79 82 85 72	(dolore)
 Mx 	249.4556
-T	69 85	(eu)
+T	72 88	(eu)
 Mx 	268.5755
-T	70 85 71 73 65 84	(fugiat)
+T	73 88 74 76 68 87	(fugiat)
 Mx 	308.8624
-T	78 85 76 76 65	(nulla)
+T	81 88 79 79 68	(nulla)
 Mx 	344.3446
-T	80 65 82 73 65 84 85 82	(pariatur)
+T	83 68 85 76 68 87 88 85	(pariatur)
 Mx 	395.1161
-T	14	(.)
+T	17	(.)
 Mx 	20.9764
 My 	189.5343
-T	37 88 67 69 80 84 69 85 82	(Excepteur)
+T	40 91 70 72 83 87 72 88 85	(Excepteur)
 Mx 	86.6568
-T	83 73 78 84	(sint)
+T	86 76 81 87	(sint)
 Mx 	113.2406
-T	79 67 67 65 69 67 65 84	(occaecat)
+T	82 70 70 68 72 70 68 87	(occaecat)
 Mx 	169.5973
-T	67 85 80 73 68 65 84 65 84	(cupidatat)
+T	70 88 83 76 71 68 87 68 87	(cupidatat)
 Mx 	231.2933
-T	78 79 78	(non)
+T	81 82 81	(non)
 Mx 	258.6754
-T	80 82 79 73 68 69 78 84	(proident)
+T	83 85 82 76 71 72 81 87	(proident)
 Mx 	312.3400
-T	12	(,)
+T	15	(,)
 Mx 	319.0604
-T	83 85 78 84	(sunt)
+T	86 88 81 87	(sunt)
 Mx 	349.5260
-T	73 78	(in)
+T	76 81	(in)
 Mx 	365.1527
-T	67 85 76 80 65	(culpa)
+T	70 88 79 83 68	(culpa)
 Mx 	20.9764
 My 	207.5343
-T	81 85 73	(qui)
+T	84 88 76	(qui)
 Mx 	44.6928
-T	79 70 70 73 67 73 65	(officia)
+T	82 1010 70 76 68	(officia)
 Mx 	87.1152
-T	68 69 83 69 82 85 78 84	(deserunt)
+T	71 72 86 72 85 88 81 87	(deserunt)
 Mx 	145.8707
-T	77 79 76 76 73 84	(mollit)
+T	80 82 79 79 76 87	(mollit)
 Mx 	186.7990
-T	65 78 73 77	(anim)
+T	68 81 76 80	(anim)
 Mx 	222.0510
-T	73 68	(id)
+T	76 71	(id)
 Mx 	237.8939
-T	69 83 84	(est)
+T	72 86 87	(est)
 Mx 	259.7573
-T	76 65 66 79 82 85 77	(laborum)
+T	79 68 69 82 85 88 80	(laborum)
 Mx 	311.8032
-T	14	(.)
+T	17	(.)
 Mx 	40.9764
 My 	220.7343
 Set font 	Linux Libertine O;11;400;;normal;;LTR
@@ -204,7 +204,7 @@ T	85 70 89 85	(text)
 Mx 	89.3485
 T	2	(!)
 Mx 	40.9764
-My 	262.7143
+My 	263.2243
 Set font 	Linux Libertine O;30;400;;normal;;LTR
 T	35 74 72 72 70 83	(Bigger)
 Mx 	132.7738
@@ -227,7 +227,7 @@ T	68 80 79	(con)
 Mx 	393.4812
 T	14	(-)
 Mx 	20.9764
-My 	281.3243
+My 	282.0893
 T	84 70 68 85 70	(secte)
 Mx 	51.5014
 T	85 86 83	(tur)
@@ -248,7 +248,7 @@ T	85 70 78 81 80 83	(tempor)
 Mx 	335.7912
 T	74 79 68 74 69 74 69 86 79 85	(incididunt)
 Mx 	20.9764
-My 	299.3243
+My 	300.0893
 T	86 85	(ut)
 Mx 	38.3534
 T	77 66 67 80 83 70	(labore)
@@ -275,7 +275,7 @@ T	87 70 79 74 66 78	(veniam)
 Mx 	395.2512
 T	13	(,)
 Mx 	20.9764
-My 	317.3243
+My 	318.0893
 T	82 86 74 84	(quis)
 Mx 	50.5675
 T	79 80 84 85 83 86 69	(nostrud)
@@ -296,7 +296,7 @@ T	70 89	(ex)
 Mx 	384.9912
 T	70 66	(ea)
 Mx 	20.9764
-My 	335.3243
+My 	336.0893
 T	68 80 78 78 80 69 80	(commodo)
 Mx 	87.1042
 T	68 80 79 84 70 82 86 66 85	(consequat)
@@ -315,7 +315,7 @@ T	74 79	(in)
 Mx 	314.9562
 T	83 70 81 83 70 73 70 79 69 70 83 74 85	(reprehenderit)
 Mx 	20.9764
-My 	353.3243
+My 	354.0893
 T	74 79	(in)
 Mx 	38.2391
 T	87 80 77 86 81 85 66 85 70	(voluptate)
@@ -338,7 +338,7 @@ T	81 66 83 74 66 85 86 83	(pariatur)
 Mx 	395.2512
 T	15	(.)
 Mx 	20.9764
-My 	371.3243
+My 	372.0893
 T	38 89 68 70 81 85 70 86 83	(Excepteur)
 Mx 	86.7151
 T	84 74 79 85	(sint)
@@ -359,7 +359,7 @@ T	74 79	(in)
 Mx 	365.6712
 T	68 86 77 81 66	(culpa)
 Mx 	20.9764
-My 	389.3243
+My 	390.0893
 T	82 86 74	(qui)
 Mx 	45.0672
 T	80 2649 68 74 66	(officia)
@@ -379,8 +379,8 @@ Mx 	310.0624
 T	15	(.)
 [1] Mx 	207.4176
 My 	553.7327
-Set font 	Gentium;10;400;;normal;;LTR
-T	17	(1)
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	20	(1)
 End page
 Finish
 

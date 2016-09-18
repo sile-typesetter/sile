@@ -52,8 +52,8 @@ Set font 	;10;400;;normal;;RTL;tests/TestCLR-Regular.ttf
 T	4	(ع)
 [1] Mx 	170.0669
 My 	490.4464
-Set font 	Gentium;10;400;;normal;;LTR
-T	17	(1)
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	20	(1)
 End page
 Finish
 

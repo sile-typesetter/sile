@@ -13,24 +13,24 @@ Mx 	133.1920
 T	96	(})
 Mx 	40.9764
 My 	49.3614
-Set font 	Gentium;10;400;;normal;;LTR
-T	52 72 73 83	(This)
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	55 75 76 86	(This)
 Mx 	61.2378
-T	84 69 88 84	(text)
+T	87 72 91 87	(text)
 Mx 	80.4348
-T	83 72 79 85 76 68	(should)
+T	86 75 82 88 79 71	(should)
 Mx 	110.7157
-T	66 69	(be)
+T	69 72	(be)
 Mx 	123.0768
-T	73 78	(in)
+T	76 81	(in)
 Mx 	133.9681
-T	65	(a)
+T	68	(a)
 Mx 	141.2217
-T	78 69 87	(new)
+T	81 72 90	(new)
 Mx 	161.0828
-T	80 65 82 65 71 82 65 80 72	(paragraph)
+T	83 68 85 68 74 85 68 83 75	(paragraph)
 Mx 	203.7634
-T	14	(.)
+T	17	(.)
 [1] End page
 Finish
 

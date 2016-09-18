@@ -3,41 +3,41 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	54.8208
 My 	87.2160
-Set font 	Gentium;24;400;;normal;;LTR
-T	38 73 82 83 84	(First)
+Set font 	Gentium Plus;24;400;;normal;;LTR
+T	41 76 85 86 87	(First)
 Mx 	106.2265
-T	70 82 65 77 69	(frame)
+T	73 85 68 80 72	(frame)
 Mx 	54.8208
 My 	96.4628
-Set font 	Gentium;10;400;;normal;;LTR
-T	51 69 67 79 78 68	(Second)
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	54 72 70 82 81 71	(Second)
 Mx 	86.9706
-T	70 82 65 77 69	(frame)
+T	73 85 68 80 72	(frame)
 Mx 	113.9348
-T	70 73 82 83 84	(first)
+T	1006 85 86 87	(first)
 Mx 	133.6725
-T	80 65 82 65 71 82 65 80 72	(paragraph)
+T	83 68 85 68 74 85 68 83 75	(paragraph)
 Mx 	54.8208
 My 	108.4628
-T	51 69 67 79 78 68	(Second)
+T	54 72 70 82 81 71	(Second)
 Mx 	86.9700
-T	70 82 65 77 69	(frame)
+T	73 85 68 80 72	(frame)
 Mx 	113.9336
-T	83 69 67 79 78 68	(second)
+T	86 72 70 82 81 71	(second)
 Mx 	145.1843
-T	80 65 82 65 71 82 65 80 72	(paragraph)
+T	83 68 85 68 74 85 68 83 75	(paragraph)
 Mx 	54.8208
 My 	120.4628
-T	51 69 67 79 78 68	(Second)
+T	54 72 70 82 81 71	(Second)
 Mx 	86.9803
-T	70 82 65 77 69	(frame)
+T	73 85 68 80 72	(frame)
 Mx 	113.9543
-T	84 72 73 82 68	(third)
+T	87 75 76 85 71	(third)
 Mx 	137.4469
-T	80 65 82 65 71 82 65 80 72	(paragraph)
+T	83 68 85 68 74 85 68 83 75	(paragraph)
 [1] Mx 	195.4611
 My 	519.8019
-T	17	(1)
+T	20	(1)
 End page
 Finish
 

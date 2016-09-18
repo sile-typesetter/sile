@@ -3,41 +3,41 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	40.9764
 My 	37.3321
-Set font 	Gentium;10;400;;normal;;LTR
-T	34 79 84 72	(Both)
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	37 82 87 75	(Both)
 Mx 	63.1273
-T	76 73 78 69 83	(lines)
+T	79 76 81 72 86	(lines)
 Mx 	85.2098
-T	66 69 76 79 87	(below)
+T	69 72 79 82 90	(below)
 Mx 	112.3704
-T	83 72 79 85 76 68	(should)
+T	86 75 82 88 79 71	(should)
 Mx 	142.6512
-T	69 78 68	(end)
+T	72 81 71	(end)
 Mx 	160.6516
-T	73 78	(in)
+T	76 81	(in)
 Mx 	171.5428
-T	65	(a)
+T	68	(a)
 Mx 	178.7962
-T	80 69 82 73 79 68	(period)
+T	83 72 85 76 82 71	(period)
 Mx 	205.6126
-T	14	(.)
+T	17	(.)
 Mx 	40.9764
 My 	49.3321
-T	20	(4)
+T	23	(4)
 Mx 	48.3472
-T	77 73 83 84 69	(miste)
+T	80 76 86 87 72	(miste)
 Mx 	71.0132
-T	14	(.)
+T	17	(.)
 Mx 	40.9764
 My 	61.3321
-T	20	(4)
+T	23	(4)
 Mx 	48.3472
-T	77 73 83 84 69	(miste)
+T	80 76 86 87 72	(miste)
 Mx 	71.0132
-T	14	(.)
+T	17	(.)
 [1] Mx 	207.4176
 My 	553.7327
-T	17	(1)
+T	20	(1)
 End page
 Finish
 

@@ -4,345 +4,345 @@ Begin page
 <examples/macros.sil>
 Mx 	18.2835
 My 	61.2856
-Set font 	Gentium;54;400;;normal;;LTR
-T	52	(T)
+Set font 	Gentium Plus;54;400;;normal;;LTR
+T	55	(T)
 Mx 	53.0257
 My 	39.4155
-Set font 	Gentium;15;400;;normal;;LTR
-T	79	(o)
+Set font 	Gentium Plus;15;400;;normal;;LTR
+T	82	(o)
 Mx 	63.8728
-T	51 72 69 82 76 79 67 75	(Sherlock)
-Mx 	121.1262
-T	40 79 76 77 69 83	(Holmes)
+T	54 75 72 85 79 82 70 78	(Sherlock)
+Mx 	120.9431
+T	43 82 79 80 72 86	(Holmes)
 Mx 	53.0257
 My 	59.8501
-T	83 72 69	(she)
+T	86 75 72	(she)
 Mx 	77.3274
-T	73 83	(is)
+T	76 86	(is)
 Mx 	90.4890
-T	65 76 87 65 89 83	(always)
+T	68 79 90 68 92 86	(always)
 Mx 	135.4085
-Set font 	Gentium;15;400;italic;normal;;LTR
-T	84 72 69	(the)
+Set font 	Gentium Plus;15;400;italic;normal;;LTR
+T	87 75 72	(the)
 Mx 	18.2835
 My 	79.4497
-T	87 79 77 65 78	(woman)
+T	90 82 80 68 81	(woman)
 Mx 	59.0427
-Set font 	Gentium;15;400;;normal;;LTR
-T	14	(.)
+Set font 	Gentium Plus;15;400;;normal;;LTR
+T	17	(.)
 Mx 	65.7810
-T	41	(I)
+T	44	(I)
 Mx 	73.5520
-T	72 65 86 69	(have)
+T	75 68 89 72	(have)
 Mx 	106.3425
-T	83 69 76 68 79 77	(seldom)
+T	86 72 79 71 82 80	(seldom)
 Mx 	18.2835
 My 	99.8843
-T	72 69 65 82 68	(heard)
+T	75 72 68 85 71	(heard)
 Mx 	57.4168
-T	72 73 77	(him)
+T	75 76 80	(him)
 Mx 	85.1096
-T	77 69 78 84 73 79 78	(mention)
+T	80 72 81 87 76 82 81	(mention)
 Mx 	140.7151
-T	72 69 82	(her)
+T	75 72 85	(her)
 Mx 	18.2835
 My 	120.3189
-T	85 78 68 69 82	(under)
+T	88 81 71 72 85	(under)
 Mx 	58.4788
-T	65 78 89	(any)
+T	68 81 92	(any)
 Mx 	84.3406
-T	79 84 72 69 82	(other)
+T	82 87 75 72 85	(other)
 Mx 	121.4964
-T	78 65 77 69	(name)
+T	81 68 80 72	(name)
 Mx 	155.6345
-T	14	(.)
+T	17	(.)
 Mx 	162.3728
-T	41 78	(In)
+T	44 81	(In)
 Mx 	18.2835
 My 	140.7534
-T	72 73 83	(his)
+T	75 76 86	(his)
 Mx 	39.7215
-T	69 89 69 83	(eyes)
+T	72 92 72 86	(eyes)
 Mx 	70.0730
-T	83 72 69	(she)
+T	86 75 72	(she)
 Mx 	94.3748
-T	69 67 76 73 80 83 69 83	(eclipses)
+T	72 70 79 76 83 86 72 86	(eclipses)
 Mx 	145.7542
-T	65 78 68	(and)
+T	68 81 71	(and)
 Mx 	18.2835
 My 	161.1880
-T	80 82 69 68 79 77 73 78 65 84 69 83	(predominates)
+T	83 85 72 71 82 80 76 81 68 87 72 86	(predominates)
 Mx 	106.9065
-T	84 72 69	(the)
+T	87 75 72	(the)
 Mx 	130.5784
-T	87 72 79 76 69	(whole)
+T	90 75 82 79 72	(whole)
 Mx 	18.2835
 My 	181.6226
-T	79 70	(of)
+T	82 73	(of)
 Mx 	33.7962
-T	72 69 82	(her)
+T	75 72 85	(her)
 Mx 	58.2444
-T	83 69 88	(sex)
+T	86 72 91	(sex)
 Mx 	78.5105
-T	14	(.)
+T	17	(.)
 Mx 	85.2488
-T	41 84	(It)
+T	44 87	(It)
 Mx 	98.1834
-T	87 65 83	(was)
+T	90 68 86	(was)
 Mx 	124.7556
-T	78 79 84	(not)
+T	81 82 87	(not)
 Mx 	149.0427
-T	84 72 65 84	(that)
+T	87 75 68 87	(that)
 Mx 	18.2835
 My 	202.0571
-T	72 69	(he)
+T	75 72	(he)
 Mx 	36.7918
-T	70 69 76 84	(felt)
+T	73 72 79 87	(felt)
 Mx 	60.9177
-T	65 78 89	(any)
+T	68 81 92	(any)
 Mx 	86.7796
-T	69 77 79 84 73 79 78	(emotion)
+T	72 80 82 87 76 82 81	(emotion)
 Mx 	141.6526
-T	65 75 73 78	(akin)
+T	68 78 76 81	(akin)
 Mx 	18.2835
 My 	222.4917
-T	84 79	(to)
+T	87 82	(to)
 Mx 	34.2942
-T	76 79 86 69	(love)
+T	79 82 89 72	(love)
 Mx 	63.5325
-T	70 79 82	(for)
+T	73 82 85	(for)
 Mx 	84.9851
-T	41 82 69 78 69	(Irene)
+T	44 85 72 81 72	(Irene)
 Mx 	120.8299
-T	33 68 76 69 82	(Adler)
+T	36 71 79 72 85	(Adler)
 Mx 	154.4920
-T	14	(.)
+T	17	(.)
 Mx 	18.2835
 My 	242.9263
-T	33 76 76	(All)
+T	36 79 79	(All)
 Mx 	38.6448
-T	69 77 79 84 73 79 78 83	(emotions)
+T	72 80 82 87 76 82 81 86	(emotions)
 Mx 	96.0081
-T	12	(,)
+T	15	(,)
 Mx 	102.7464
-T	65 78 68	(and)
+T	68 81 71	(and)
 Mx 	129.0110
-T	84 72 65 84	(that)
+T	87 75 68 87	(that)
 Mx 	18.2835
 My 	263.3608
-T	79 78 69	(one)
+T	82 81 72	(one)
 Mx 	44.3357
-T	80 65 82 84 73 67 85 76 65 82 76 89	(particularly)
+T	83 68 85 87 76 70 88 79 68 85 79 92	(particularly)
 Mx 	117.1897
-T	12	(,)
+T	15	(,)
 Mx 	123.9280
-T	87 69 82 69	(were)
+T	90 72 85 72	(were)
 Mx 	18.2835
 My 	283.7954
-T	65 66 72 79 82 82 69 78 84	(abhorrent)
+T	68 69 75 82 85 85 72 81 87	(abhorrent)
 Mx 	84.1575
-T	84 79	(to)
+T	87 82	(to)
 Mx 	100.1682
-T	72 73 83	(his)
+T	75 76 86	(his)
 Mx 	121.6062
-T	67 79 76 68	(cold)
+T	70 82 79 71	(cold)
 Mx 	147.5706
-T	12	(,)
+T	15	(,)
 Mx 	18.2835
 My 	304.2300
-T	80 82 69 67 73 83 69	(precise)
+T	83 85 72 70 76 86 72	(precise)
 Mx 	65.7444
-T	66 85 84	(but)
+T	69 88 87	(but)
 Mx 	89.7752
-T	65 68 77 73 82 65 66 76 89	(admirably)
+T	68 71 80 76 85 68 69 79 92	(admirably)
 Mx 	18.2835
 My 	324.6646
-T	66 65 76 65 78 67 69 68	(balanced)
+T	69 68 79 68 81 70 72 71	(balanced)
 Mx 	76.5989
-T	77 73 78 68	(mind)
+T	80 76 81 71	(mind)
 Mx 	108.7888
-T	14	(.)
+T	17	(.)
 Mx 	115.5271
-T	40 69	(He)
+T	43 72	(He)
 Mx 	135.5662
-T	87 65 83	(was)
+T	90 68 86	(was)
 Mx 	158.8352
-T	12	(,)
+T	15	(,)
 Mx 	165.5735
-T	41	(I)
+T	44	(I)
 Mx 	18.2835
 My 	345.0991
-T	84 65 75 69	(take)
-Mx 	48.0637
-T	73 84	(it)
-Mx 	57.2923
-T	12	(,)
-Mx 	64.0305
-T	84 72 69	(the)
-Mx 	87.7024
-T	77 79 83 84	(most)
-Mx 	121.5549
-T	80 69 82 70 69 67 84	(perfect)
+T	87 68 78 72	(take)
+Mx 	47.8806
+T	76 87	(it)
+Mx 	57.1091
+T	15	(,)
+Mx 	63.8474
+T	87 75 72	(the)
+Mx 	87.5193
+T	80 82 86 87	(most)
+Mx 	121.3718
+T	83 72 85 73 72 70 87	(perfect)
 Mx 	18.2835
 My 	365.5337
-T	82 69 65 83 79 78 73 78 71	(reasoning)
+T	85 72 68 86 82 81 76 81 74	(reasoning)
 Mx 	82.6121
-T	65 78 68	(and)
+T	68 81 71	(and)
 Mx 	108.8767
-T	79 66 83 69 82 86 73 78 71	(observing)
+T	82 69 86 72 85 89 76 81 74	(observing)
 Mx 	18.2835
 My 	385.9683
-T	77 65 67 72 73 78 69	(machine)
+T	80 68 70 75 76 81 72	(machine)
 Mx 	74.6214
-T	84 72 65 84	(that)
+T	87 75 68 87	(that)
 Mx 	103.4129
-T	84 72 69	(the)
+T	87 75 72	(the)
 Mx 	127.0847
-T	87 79 82 76 68	(world)
+T	90 82 85 79 71	(world)
 Mx 	18.2835
 My 	406.4028
-T	72 65 83	(has)
+T	75 68 86	(has)
 Mx 	42.5413
-T	83 69 69 78	(seen)
+T	86 72 72 81	(seen)
 Mx 	70.4685
-T	12	(,)
+T	15	(,)
 Mx 	77.2068
-T	66 85 84	(but)
+T	69 88 87	(but)
 Mx 	101.2376
-T	65 83	(as)
+T	68 86	(as)
 Mx 	117.2190
-T	65	(a)
+T	68	(a)
 Mx 	127.4070
-T	76 79 86 69 82	(lover)
+T	79 82 89 72 85	(lover)
 Mx 	18.2835
 My 	426.8374
-T	72 69	(he)
+T	75 72	(he)
 Mx 	36.7918
-T	87 79 85 76 68	(would)
+T	90 82 88 79 71	(would)
 Mx 	78.0418
-T	72 65 86 69	(have)
+T	75 68 89 72	(have)
 Mx 	110.8323
-T	80 76 65 67 69 68	(placed)
+T	83 79 68 70 72 71	(placed)
 Mx 	18.2835
 My 	447.2720
-T	72 73 77 83 69 76 70	(himself)
+T	75 76 80 86 72 79 73	(himself)
 Mx 	67.4290
-T	73 78	(in)
+T	76 81	(in)
 Mx 	83.0735
-T	65	(a)
+T	68	(a)
 Mx 	93.2615
-T	70 65 76 83 69	(false)
+T	73 68 79 86 72	(false)
 Mx 	18.2835
 My 	467.7065
-T	80 79 83 73 84 73 79 78	(position)
+T	83 82 86 76 87 76 82 81	(position)
 Mx 	68.6814
-T	14	(.)
+T	17	(.)
 Mx 	18.2835
 My 	488.1411
-T	40 69	(He)
+T	43 72	(He)
 Mx 	38.3225
-T	78 69 86 69 82	(never)
+T	81 72 89 72 85	(never)
 Mx 	77.0969
-T	83 80 79 75 69	(spoke)
-Mx 	116.1131
-T	79 70	(of)
-Mx 	131.6257
-T	84 72 69	(the)
+T	86 83 82 78 72	(spoke)
+Mx 	115.9299
+T	82 73	(of)
+Mx 	131.4426
+T	87 75 72	(the)
 Mx 	18.2835
 My 	508.5757
-T	83 79 70 84 69 82	(softer)
+T	86 82 73 87 72 85	(softer)
 Mx 	57.6218
-T	80 65 83 83 73 79 78 83	(passions)
+T	83 68 86 86 76 82 81 86	(passions)
 Mx 	109.7190
-T	12	(,)
+T	15	(,)
 Mx 	116.4573
-T	83 65 86 69	(save)
+T	86 68 89 72	(save)
 Mx 	146.7649
-T	87 73 84 72	(with)
+T	90 76 87 75	(with)
 Mx 	188.3197
 My 	39.4155
-T	65	(a)
+T	68	(a)
 Mx 	198.5077
-T	71 73 66 69	(gibe)
+T	74 76 69 72	(gibe)
 Mx 	227.7386
-T	65 78 68	(and)
+T	68 81 71	(and)
 Mx 	254.0033
-T	65	(a)
+T	68	(a)
 Mx 	264.1913
-T	83 78 69 69 82	(sneer)
+T	86 81 72 72 85	(sneer)
 Mx 	298.0585
-T	14	(.)
+T	17	(.)
 Mx 	304.7967
-T	52 72 69 89	(They)
+T	55 75 72 92	(They)
 Mx 	188.3197
 My 	59.8501
-T	87 69 82 69	(were)
+T	90 72 85 72	(were)
 Mx 	222.0111
-T	65 68 77 73 82 65 66 76 69	(admirable)
+T	68 71 80 76 85 68 69 79 72	(admirable)
 Mx 	287.5482
-T	84 72 73 78 71 83	(things)
+T	87 75 76 81 74 86	(things)
 Mx 	188.3197
 My 	80.2847
-T	70 79 82	(for)
+T	73 82 85	(for)
 Mx 	209.7723
-T	84 72 69	(the)
+T	87 75 72	(the)
 Mx 	233.4442
-T	79 66 83 69 82 86 69 82	(observer)
+T	82 69 86 72 85 89 72 85	(observer)
 Mx 	290.8368
-T	13 13	(--)
+T	16 16	(--)
 Mx 	188.3197
 My 	100.7192
-T	69 88 67 69 76 76 69 78 84	(excellent)
+T	72 91 70 72 79 79 72 81 87	(excellent)
 Mx 	248.0780
-T	70 79 82	(for)
+T	73 82 85	(for)
 Mx 	269.5306
-T	68 82 65 87 73 78 71	(drawing)
+T	71 85 68 90 76 81 74	(drawing)
 Mx 	323.7079
-T	84 72 69	(the)
+T	87 75 72	(the)
 Mx 	188.3197
 My 	121.1538
-T	86 69 73 76	(veil)
+T	89 72 76 79	(veil)
 Mx 	214.0790
-T	70 82 79 77	(from)
+T	73 85 82 80	(from)
 Mx 	247.5799
-T	77 69 78	(men)
+T	80 72 81	(men)
 Mx 	274.8334
-T	7	(')
+T	10	(')
 Mx 	278.5834
-T	83	(s)
+T	86	(s)
 Mx 	287.6800
-T	77 79 84 73 86 69 83	(motives)
+T	80 82 87 76 89 72 86	(motives)
 Mx 	188.3197
 My 	141.5884
-T	65 78 68	(and)
+T	68 81 71	(and)
 Mx 	214.5843
-T	65 67 84 73 79 78 83	(actions)
+T	68 70 87 76 82 81 86	(actions)
 Mx 	258.8666
-T	14	(.)
+T	17	(.)
 Mx 	265.6048
-T	34 85 84	(But)
+T	37 88 87	(But)
 Mx 	290.2655
-T	70 79 82	(for)
+T	73 82 85	(for)
 Mx 	311.7181
-T	84 72 69	(the)
+T	87 75 72	(the)
 Mx 	188.3197
 My 	162.0230
-T	84 82 65 73 78 69 68	(trained)
+T	87 85 68 76 81 72 71	(trained)
 Mx 	236.6815
-T	84 69 65 83 79 78 69 82	(teasoner)
+T	87 72 68 86 82 81 72 85	(teasoner)
 Mx 	293.4442
-T	84 79	(to)
+T	87 82	(to)
 Mx 	309.4549
-T	65 68 77 73 84	(admit)
+T	68 71 80 76 87	(admit)
 Mx 	188.3197
 My 	182.4575
-T	83 85 67 72	(such)
+T	86 88 70 75	(such)
 Mx 	220.1947
-T	73 78 84 82 85	(intru)
+T	76 81 87 85 88	(intru)
 [1] Mx 	180.4885
 My 	522.4382
-Set font 	Gentium;10;400;;normal;;LTR
-T	17	(1)
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	20	(1)
 End page
 Finish
 

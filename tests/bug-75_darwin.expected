@@ -1,20 +1,20 @@
 <tests/bug-75_darwin.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
-Mx 	40.97638
-My 	36.24378
-Set font 	Kohinoor Devanagari;10;200;regular;normal;;LTR
-T	78 86	(यह)
-Mx 	55.54770
-T	70 21 89	(दाग़)
-Mx 	72.33903
-T	70 21 89	(दाग़)
-Mx 	89.13035
-T	8 60 21 80 21	(उजाला)
-[1] Mx 	207.41759
-My 	553.73265
-Set font 	Gentium;10;200;regular;normal;;LTR
-T	17	(1)
+Mx 	40.9764
+My 	36.3238
+Set font 	Kohinoor Devanagari;10;400;;normal;;LTR
+T	76 83	(यह)
+Mx 	55.6333
+T	68 27 89	(दाग़)
+Mx 	72.6602
+T	68 27 89	(दाग़)
+Mx 	89.6871
+T	6 58 27 78 27	(उजाला)
+[1] Mx 	207.4176
+My 	553.7327
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	20	(1)
 End page
 Finish
 

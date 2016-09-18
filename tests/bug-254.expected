@@ -3,47 +3,47 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	20.9764
 My 	37.3321
-Set font 	Gentium;10;600;;normal;;LTR
-T	52 72 73 83	(This)
+Set font 	Gentium Plus;10;600;;normal;;LTR
+T	55 75 76 86	(This)
 Mx 	40.7762
-Set font 	Gentium;10;400;;normal;;LTR
-T	73 83	(is)
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	76 86	(is)
 Mx 	49.5506
-T	65	(a)
+T	68	(a)
 Mx 	56.3426
-T	83 65 77 80 76 69	(sample)
+T	86 68 80 83 79 72	(sample)
 Mx 	87.6561
-T	79 70	(of)
+T	82 73	(of)
 Mx 	97.9979
-T	66 79 71 85 83	(bogus)
+T	69 82 74 88 86	(bogus)
 Mx 	20.9764
 My 	49.3321
-T	69 88 84 82 65	(extra)
+T	72 91 87 85 68	(extra)
 Mx 	44.8192
-T	83 80 65 67 69	(space)
+T	86 83 68 70 72	(space)
 Mx 	67.5584
-T	14	(.)
+T	17	(.)
 Mx 	20.9764
 My 	61.3321
-Set font 	Gentium;10;600;;normal;;LTR
-T	52 72 73 83	(This)
+Set font 	Gentium Plus;10;600;;normal;;LTR
+T	55 75 76 86	(This)
 Mx 	40.7762
-Set font 	Gentium;10;400;;normal;;LTR
-T	68 79 69 83	(does)
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	71 82 72 86	(does)
 Mx 	61.6893
-T	78 79 84	(not)
+T	81 82 87	(not)
 Mx 	77.8807
-T	72 65 86 69	(have)
+T	75 68 89 72	(have)
 Mx 	20.9764
 My 	73.3321
-T	69 88 84 82 65	(extra)
+T	72 91 87 85 68	(extra)
 Mx 	44.8192
-T	83 80 65 67 69	(space)
+T	86 83 68 70 72	(space)
 Mx 	67.5584
-T	14	(.)
+T	17	(.)
 [1] Mx 	207.4176
 My 	553.7327
-T	17	(1)
+T	20	(1)
 End page
 Finish
 
