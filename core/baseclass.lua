@@ -117,8 +117,14 @@ SILE.baseClass = std.object {
     end, "Inserts a glue node. The width option denotes the glue dimension.")
 
     SILE.registerCommand("skip", function(options, content)
+      options.discardable = options.discardable or false
+      options.height = SILE.length.parse(options.height):absolute()
       SILE.typesetter:leaveHmode()
-      SILE.typesetter:pushExplicitVglue({ height = SILE.length.parse(options.height):absolute() })
+      if options.discardable then
+        SILE.typesetter:pushVglue(options)
+      else
+        SILE.typesetter:pushExplicitVglue(options)
+      end
     end, "Inserts vertical skip. The height options denotes the skip dimension.")
 
     SILE.registerCommand("par", function(options, content)
