@@ -136,7 +136,7 @@ The other tool that people reach for when designing printed material on
 a computer is InDesign (or similar Desktop Publishing software, such as
 Scribus).
 
-\float[rightboundary=7pt,bottomboundary=15pt]{\img[src=documentation/fig1.png,width=150]} 
+\float[rightboundary=7pt,bottomboundary=15pt]{\img[src=documentation/fig1.png,width=150]}
 DTP software is similar to Word Processing Software in that they are
 both graphical and largely WYSIWYG, but the paradigm is different. The focus is
 usually less on preparing the content than on laying it out on the
@@ -664,12 +664,12 @@ So, for instance:
 \begin{verbatim}
 \line
 Small text
- 
+
 \\font[size=15pt]%
 Big text!
- 
+
 \\font[size=30pt]\{Bigger text\}
- 
+
 Still big text!
 \line
 \end{verbatim}
@@ -732,7 +732,7 @@ below.
 
 It’s quite fiddly to be always changing font specifications manually; later
 we’ll see some ways to automate the process. SILE provides the \code{\\em\{\dots\}}
-command as a shortcut for \code{\\font[style=italic]\{\dots\}}. 
+command as a shortcut for \code{\\font[style=italic]\{\dots\}}.
 There is no shortcut for boldface, because boldface isn’t good typographic
 practice and so we don’t want to make it easy for you to make bad books.
 
@@ -755,7 +755,7 @@ You can divide your document into different sections using the commands
 \code{\\chapter\{\dots\}}, \code{\\section\{\dots\}} and \code{\\subsection\{\dots\}}.
 The argument to each command is the name of the chapter or section respectively;
 chapters will be opened on a new right-hand page, and the chapter name will form
-the left running header. Additionally the section name and number will form the right running header. 
+the left running header. Additionally the section name and number will form the right running header.
 
 \note{Chapters, sections and subsections will be automatically
 numbered starting from 1; to alter the numbering, see the documentation for the
@@ -805,25 +805,25 @@ are multiple frames on a page—for instance, in a document with multiple column
 \code{\\pagebreak} (also known as \code{\\supereject}) is a more forceful variant,
 and ensures that a new page is opened even if there are remaining frames on the page.
 A less forceful variant is \code{\\goodbreak}, which suggests to SILE that this is
-a good point to break a page. The opposite is \code{\\nobreak} which requests that, 
+a good point to break a page. The opposite is \code{\\nobreak} which requests that,
 if at all possible, SILE does not break at the given point. A neutral variant is
 \code{\\allowbreak}, which allows SILE to break at a point that it would otherwise
 not consider as suitable for breaking.
 
 \em{Within} a paragraph, these commands have a different meaning. The \code{\\break} command requests a \em{line} break at the given location, and, \em{mutatis mutandis},
-so do \code{\\goodbreak}, \code{\\nobreak} and \code{\\allowbreak}. If you want to be 
+so do \code{\\goodbreak}, \code{\\nobreak} and \code{\\allowbreak}. If you want to be
 absolutely sure that you are inhibiting a \em{page} break, you can say \code{\\novbreak}.
 
 \begin{raggedright}
 SILE normally fully-justifies text—that is, it tries to alter the spacing between
-words so that the text stretches across the full width of the column.\footnote{This 
+words so that the text stretches across the full width of the column.\footnote{This
 does not mean that text will always exactly fill the width of the column. SILE will
 choose line breaks and alter the spacing between words up to a certain extent, but
 when it has done its best, it will typeset the least bad solution; this may involve
 some of the words jutting slightly out into the margin.} An alternative
 to full justification is ragged right margin formatting, where the spacing between
 words is constant but the right hand side of the paragraph may not line up. Ragged
-right is often used for children’s books and for frames with narrow columns such as 
+right is often used for children’s books and for frames with narrow columns such as
 newspapers. To use ragged right formatting, enclose your text in a \code{\\begin\break\{raggedright\}} environment.
 This paragraph is set ragged right.
 \end{raggedright}
@@ -837,7 +837,7 @@ paragraph is set ragged left.\par
 \section{Hyphenation and Language}
 
 SILE hyphenates words based on its current language. (Language is set using the
-\code{\\font} command above.) SILE comes with support for hyphenating a wide 
+\code{\\font} command above.) SILE comes with support for hyphenating a wide
 variety of languages, and also aims to encode specific typesetting knowledge about
 languages.
 
@@ -889,7 +889,7 @@ then in Urdu: \font[family=Scheherazade,language=urd,script=Arab]{ههه}.
 
 \section{Including Other Files and Code}
 
-To make it easier for you to author a large document, you can break your SILE document 
+To make it easier for you to author a large document, you can break your SILE document
 up into multiple files. For instance, you may wish to put each chapter into a
 separate file; you may wish to develop a file of user-defined commands (see
 chapter 6) and keep this separate from the main body of the document. You
@@ -920,7 +920,7 @@ available at runtime. Just as one can run Javascript code from within a HTML
 document using a \code{<script>} tag, one can run Lua code from within a SILE
 document using a \code{\\script} command. (It looks better in XML-flavor.) This
 command has two forms: \code{\\script[src=\em{<filename>}]} which includes a Lua
-file, and \code{\\script\{\dots\}} which runs Lua code inline. 
+file, and \code{\\script\{\dots\}} which runs Lua code inline.
 
 Doing anything interesting inline requires knowledge of the internals of SILE,
 (thankfully the code is not that hard to read)
@@ -992,7 +992,7 @@ path to them.}
 As well as processing text, SILE can also include images.
 
 Loading the \code{image} package gives you the \code{\\img} command, fashioned
-after the HTML equivalent. \code{\\img} takes the following parameters: 
+after the HTML equivalent. \code{\\img} takes the following parameters:
 \code{src=\dots} must be the path to an image file;
 you may also give \code{height=\dots} and/or \code{width=\dots} parameters
 to specify the output size of the image on the paper. If the size parameters
@@ -1007,7 +1007,7 @@ Here is a 200x243 pixel image output with \code{\\img[src=documentation/gutenber
 \img[src=documentation/gutenberg.png]
 
 \raggedright{
-Here it is with (respectively) 
+Here it is with (respectively)
 \code{\\img[src=documentation/gutenberg.png,width=120px]},
 \code{\\img[src=documentation/gutenberg.png,height=200px]}, and
 \code{\\img[src=documentation/gutenberg.png,width=120px,height=200px]}:}
@@ -1140,7 +1140,7 @@ proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 In addition, there are certain packages that you \em{probably} don’t need
 to use directly, as their main job is to provide more
-basic functionality to other packages and classes. Classes such as the 
+basic functionality to other packages and classes. Classes such as the
 \code{book} class compose functionality from different auxiliary packages.
 
 \subsection{footnotes}
@@ -1185,7 +1185,7 @@ and now begins at the start of the paragraph.
 Similarly, the \code{\\breakframehorizontal} command breaks the frame in two
 into a left and a right frame.
 The command takes an optional argument \code{offset=<dimension>}, specifying
-where on the line the frame should be split. If it is not supplied, the 
+where on the line the frame should be split. If it is not supplied, the
 frame is split at the current position in the line.
 
 The command \code{\\shiftframeedge} allows you to reposition the current
@@ -1246,7 +1246,7 @@ While typesetting a document, SILE first breaks a paragraph into lines, then
 arranges lines into a page, and later outputs the page. In other words,
 while it is looking at the text of a paragraph, it is not clear what page
 the text will eventually end up on. This makes it difficult to produce
-indexes, tables of contents and so on where one needs to know the page number 
+indexes, tables of contents and so on where one needs to know the page number
 for a particular element.
 
 To get around this problem, the \code{infonode} allows you to insert \em{information
@@ -1268,7 +1268,7 @@ SILE.Commands["info"]({ category = "references", value = ref }, {})
 \end{verbatim}
 
 During the \code{endPage} method which is called at the end of every page,
-we look at the list of “references” information nodes: 
+we look at the list of “references” information nodes:
 
 \begin{verbatim}
 \line
@@ -1311,7 +1311,7 @@ In \SILE code, that looks like:
 
 \begin{verbatim}
 \line
-S\\lower[height=0.5ex]\{I\}L\\glue[width=-.2em]\\raise[height=0.6ex]\{\\font[size=0.8em]\{E\}\} 
+S\\lower[height=0.5ex]\{I\}L\\glue[width=-.2em]\\raise[height=0.6ex]\{\\font[size=0.8em]\{E\}\}
 \line
 \end{verbatim}
 
@@ -1326,8 +1326,8 @@ I want you to interpret that as \code{S\\lower[height=0.5ex]\{I\}L\\glue[width=-
 In other words, we want to define our own commands.
 
 SILE\footnote{Let’s give up on the logo at this point.} allows you to define
-your own commands in two ways. The simplest commands of all are those like 
-\code{\\SILE} above: “when I write \code{\\x}, I 
+your own commands in two ways. The simplest commands of all are those like
+\code{\\SILE} above: “when I write \code{\\x}, I
 want SILE to pretend that I had written \code{X \\Y Z} instead.” These are
 called \em{macros}, and the process of pretending is called \em{macro expansion}.
 
@@ -1348,11 +1348,11 @@ are defining. The content of the \code{\\define} command is a series of SILE ins
 be executed when the command is used.
 
 \begin{note}
-At this point it’s worth knowing the precise rules for allowable 
-names of SILE commands. 
+At this point it’s worth knowing the precise rules for allowable
+names of SILE commands.
 
 Commands in XML-flavor input files must be allowable XML tag names or else your
-input files will not be well formed. Command names in TeX-flavor input files 
+input files will not be well formed. Command names in TeX-flavor input files
 may consist of any number of alphanumeric characters, hyphens or colons.
 Additionally, any single character is a valid TeX-flavor command name. (Hence
 \code{\\\\} for typesetting a backslash.)
@@ -1420,7 +1420,7 @@ The \code{\\define} command really is meant to be used just for simple things.
 
 That said, one thing you can do is to call a macro within a macro. This should
 be obvious, because a macro is just a replacement for the current processing
-step—when SILE reads a macro command, it behaves as if you had entered the 
+step—when SILE reads a macro command, it behaves as if you had entered the
 definition of the macro instead, and of course such a definition can contain
 other commands.
 
@@ -1465,7 +1465,7 @@ investigate.
 \chapter{SILE Settings}
 
 As well as commands, SILE offers a variety of knobs and levers which affect
-how it does its job. Changing these parameters can have anything from a 
+how it does its job. Changing these parameters can have anything from a
 subtle to a dramatic effect on the eventual document. External packages may
 declare their own settings (although none of the packages which ship with
 SILE happen to do so), but here we will run through the settings which are
@@ -1547,7 +1547,7 @@ first, the normal paragraph indentation is applied, meaning the first line of
 text is indented.
 Second, the space between words is stretchable, meaning that the lines are
 stretched out so they almost seem justified.
-Finally, by default SILE adds very large glue at the 
+Finally, by default SILE adds very large glue at the
 end of each paragraph so that when the text is justified, the spacing of the
 last line is not stretched out of proportion. This makes the centering of the
 last line look a bit odd. We will deal with these three issues in the following
@@ -1558,11 +1558,11 @@ paragraphs.\par
 \set[parameter=document.lskip,value=0pt]%
 \set[parameter=document.rskip,value=0pt]%
 \set[parameter=document.spaceskip]%
-The indentation at the start of each paragraph is controlled by the 
-setting \code{document.parindent}; this is a glue parameter, and by default it’s 
+The indentation at the start of each paragraph is controlled by the
+setting \code{document.parindent}; this is a glue parameter, and by default it’s
 set to 20pt with no stretch and shrink. Actually, the amount added to the
 start of the paragraph is \code{current.parindent}. After each paragraph,
-\code{current.parident} is reset to the value of \code{document.parindent}. The 
+\code{current.parident} is reset to the value of \code{document.parindent}. The
 \code{\\noindent} command works by setting \code{current.parindent} to zero.
 
 \medskip%
@@ -1577,11 +1577,11 @@ set the \code{document.lskip} to 20 points, and the \code{current.parindent} to
 The space between \em{paragraphs} is set with the glue parameter
 \code{document.parskip}. It’s normally set to five points with one point of stretchability.
 
-As we mentioned in the section on grid typesetting, the rules for spacing between 
+As we mentioned in the section on grid typesetting, the rules for spacing between
 \em{lines} within a paragraph is determined by two
 rules. Let’s reiterate those rules now in terms of settings:
 
-\noindent• SILE tries to insert space between two successive lines to make their 
+\noindent• SILE tries to insert space between two successive lines to make their
 baselines exactly \code{document.baselineskip} apart.
 
 \noindent• If this first rule would mean that the bottom and the top of the lines are less
@@ -1597,7 +1597,7 @@ and stretchable. Specifically, if the width of a space in the current font setti
 \code{1.2 <space> plus 0.5 <space> minus 0.333 <space>}\footnote{This somewhat
 arbitrary convention is arguably a bug.}.
 
-If you want to set it explicitly, you can set the 
+If you want to set it explicitly, you can set the
 \code{document.spaceskip} setting. If you want to go back to the default (measuring
 the space character of the font), then you need to \em{unset} the setting. To
 unset it, just call \code{\\set} with no \code{value} parameter:
@@ -1609,7 +1609,7 @@ The settings which affect SILE’s spacing controls have the most obvious effect
 on a document; the typesetter itself has some knobs that can be twiddled:
 
 \code{typesetter.widowpenalty} and \code{typesetter.orphanpenalty}\footnote{TeX
-users, please notice the renaming.} affect how strongly SILE is averse to 
+users, please notice the renaming.} affect how strongly SILE is averse to
 leaving stray lines at the start and end of pages. A \em{widow} happens when
 a page is broken leaving one line at the bottom of a page; an \em{orphan} line
 is the last line in a paragraph broken off at the top of the page. By default,
@@ -1621,7 +1621,7 @@ penalty points. This value can be any number up to \code{10000}, which means
 SILE automatically inserts a piece of massively stretchable
 glue at the end of each paragraph; without this, the justification algorithm
 would apply justification to the entire paragraph, including the last line,
-and produce a fully justified paragraph. (Normally we want the last line of a justified paragraph to be 
+and produce a fully justified paragraph. (Normally we want the last line of a justified paragraph to be
 left-aligned.)
 The size of this glue is defined in the setting
 \code{typesetter.parfillskip}. Its default value is \code{0pt plus 10000pt} but
@@ -1728,14 +1728,14 @@ interact with these components at the Lua level.}
 
 SILE’s job is, looking at it in very abstract terms, all about arranging
 little boxes on a page. Some of those boxes have letters in them, and
-those letters are such-and-such a number of points wide and 
-such-and-such a number of points high; 
+those letters are such-and-such a number of points wide and
+such-and-such a number of points high;
 some of the boxes are empty but are there just to take up space; when a
 horizontal row of boxes has been decided (i.e. when a line break is determined)
 then the whole row of boxes is put into another box and the vertical list
 of boxes are then arranged to form a page.
 
-Conceptually, then, SILE knows about a few different basic components: 
+Conceptually, then, SILE knows about a few different basic components:
 horizontal boxes (such as a letter); horizontal glue (the stretchable, shrinkable
 space between words); vertical boxes (a line of text); vertical glue (the space
 between lines and paragraphs); and penalties (information about where and when
@@ -1746,7 +1746,7 @@ The most immediately useful of these are horizontal and vertical glue. It
 is possible to explicitly add horizontal and vertical glue into SILE‘s processing
 stream using the \code{\\glue} and \code{\\skip} commands. These take a
 \code{width} and a \code{height} parameter respectively, both of which are
-glue dimensions. So, for instance, the \code{\\smallskip} command is 
+glue dimensions. So, for instance, the \code{\\smallskip} command is
 the equivalent of \code{\\skip[height=3pt plus 1pt minus 1pt]}; \code{\\thinspace}
 is defined as being \code{\\glue[width=0.16667em]}.
 
@@ -1765,7 +1765,7 @@ the new box.
 
 SILE’s Lua interface contains a \code{nodefactory} for creating boxes and glue.
 Before we get into that, however, you need to know that glue measurements in SILE
-should always be specified in terms of \code{SILE.length} objects; these are 
+should always be specified in terms of \code{SILE.length} objects; these are
 “three-dimensional” lengths, in that they consist of a base length plus stretch and
 shrink. To construct a \code{SILE.length}:
 
@@ -1817,14 +1817,14 @@ and instructions to the output engine to display the image:
 
 \begin{verbatim}
 \line
-SILE.typesetter:pushHbox(\{ 
+SILE.typesetter:pushHbox(\{
   width= \dots,
   height= \dots,
   depth= 0,
   value= options.src,
   outputYourself= function (this, typesetter, line)
-    SILE.outputter.drawImage(this.value, 
-      typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-this.height, 
+    SILE.outputter.drawImage(this.value,
+      typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-this.height,
       this.width,this.height
     );
     typesetter.frame:advanceWritingDirection(this.width)
@@ -1832,13 +1832,13 @@ end\});
 \line
 \end{verbatim}
 
-Adding horizontal and vertical penalties to the typesetter’s queues is similarly 
-done with the \code{SILE.typesetter:pushPenalty(\{penalty = x\})} and 
+Adding horizontal and vertical penalties to the typesetter’s queues is similarly
+done with the \code{SILE.typesetter:pushPenalty(\{penalty = x\})} and
 \code{SILE.typesetter:pushVpenalty(\{penalty = y\})} methods.
 
 \section{Frames}
 
-As we have previously mentioned, SILE arranges text into frames on the page. 
+As we have previously mentioned, SILE arranges text into frames on the page.
 Normally those frames are defined by your document class, but you can actually
 create your own frames on a per-page basis using the \code{\\pagetemplate}
 and \code{\\frame} commands. There are very few situations in which you will
@@ -1890,7 +1890,7 @@ functions. These functions take a frame ID. SILE magically pre-defines the frame
 \code{page} to allow you to access the dimensions of the whole page.
 
 \noindent• You can use arithmetic functions: plus, minus, divide, multiply, and
-parenthesis have their ordinary arithmetic meaning. To declare that frame \code{b} 
+parenthesis have their ordinary arithmetic meaning. To declare that frame \code{b}
 should be half the height of frame \code{a} plus 5 millimeters, you can say
 \code{height=5mm + (height(b) / 2)}. However, as we will see later, it is usually
 better to structure your declarations to let SILE make those kind of computations for
@@ -1921,7 +1921,7 @@ column.
 \begin{verbatim}
 \line
 \\frame[id=leftCol, left=left(r), right=left(gutter),
-       top=top(r), bottom=bottom(r), 
+       top=top(r), bottom=bottom(r),
        next=rightCol]
 \\frame[id=rightCol, left=right(gutter), right=right(r),
        top=top(r), bottom=bottom(r),
@@ -1987,7 +1987,7 @@ book:defineMaster(\{
       left = "8.3\%pw", right = "86\%pw",
       top = "11.6\%ph", bottom = "top(footnotes)"
     \},
-    
+
     folio = \{
       left = "left(content)", right = "right(content)",
       top = "bottom(footnotes)+3\%ph",bottom = "bottom(footnotes)+5\%ph"
@@ -2007,7 +2007,7 @@ book:defineMaster(\{
 \line
 \end{verbatim}
 
-So there are four frames directly declared; the first is the 
+So there are four frames directly declared; the first is the
 content frame, which by SILE convention is called
 \code{content}. Directly abutting the \code{content} frame at the bottom is
 the \code{footnotes} frame. The top of the typeblock
@@ -2048,11 +2048,11 @@ return bringhurst
 \line
 \end{verbatim}
 
-Now we need to define our frame masters. 
+Now we need to define our frame masters.
 
 The LaTeX memoir class’ \em{A Few Notes
 On Book Design} tells us that Bringhurst’s book has a spine margin one thirteenth
-of the page width; a top margin eight-fifths of the spine margin; a front margin 
+of the page width; a top margin eight-fifths of the spine margin; a front margin
 and bottom margin both sixteen-fifths of the spine margin. We can define this in SILE
 terms like so:
 
@@ -2090,13 +2090,13 @@ down a bit lower:
 \begin{verbatim}
 \line
   runningHead = \{
-    left = "left(content)", right = "right(content)", 
+    left = "left(content)", right = "right(content)",
     top = "top(content) - 4\%ph", bottom = "top(content)-2\%ph"
   \},
 \line
 \end{verbatim}
 
-If all we want to do in our new class is to create a different page shape, 
+If all we want to do in our new class is to create a different page shape,
 this is all we need.
 
 \section{Defining Commands}
@@ -2115,7 +2115,7 @@ signature of a function representing a SILE command is fixed: you need
 to take two parameters, \code{options} and \code{content} (of course you
 can name your parameters whatever you like, but these are the most common
 names). Both of these parameters are Lua tables. The \code{options} parameter
-contains the command’s parameters or XML attributes as a key-value table, 
+contains the command’s parameters or XML attributes as a key-value table,
 and the \code{content}
 is an abstract syntax tree reflecting the input being currently processed.
 
@@ -2126,13 +2126,13 @@ the second parameter will contain the table
 \begin{verbatim}
 \line
 \{
-  "Hello ", 
+  "Hello ",
   \{
     attr = \{\},
     id = "command",
     pos = 8,
     tag = "break"
-  \}, 
+  \},
   " world"
 \}\line
 \end{verbatim}
@@ -2159,11 +2159,11 @@ end)
 \line
 \end{verbatim}
 
-We use the usual \code{SILE.typesetter:typeset} and \code{SILE.call} 
+We use the usual \code{SILE.typesetter:typeset} and \code{SILE.call}
 functions to output text and call other commands.
 
-\note{If you do need to do something with a dimension, you can use 
-\code{SILE.toPoints} to parse a basic length and 
+\note{If you do need to do something with a dimension, you can use
+\code{SILE.toPoints} to parse a basic length and
 \code{SILE.parseComplexFrameDimension} to parse a frame dimension, and turn
 them into points.}
 
@@ -2191,12 +2191,12 @@ overriding their superclass’ methods where necessary.
 When you are loading packages which affect the output routine, the composition of
 such packages into a class is not completely automatic\footnote{Because the
 order of events is sometimes significant.}; in other words, loading the package
-will not necessarily by itself change the output routines. You need to 
+will not necessarily by itself change the output routines. You need to
 explicitly plug the various features provided by those packages into the output routine
 yourself.
 
-So, for instance, the \code{footnote} or \code{insertions} packages 
-provide a \code{outputInsertions} method which needs to be called at the end 
+So, for instance, the \code{footnote} or \code{insertions} packages
+provide a \code{outputInsertions} method which needs to be called at the end
 of each page. If you want to build a document class that inherits from \code{plain}
 but also has footnote functionality, you will want your \code{endPage} method
 to look like this:
@@ -2232,8 +2232,8 @@ end)
 \end{verbatim}
 
 Infonodes work on a per-page basis, so if we want to save them throughout
-the whole document, at the end of each page we need to move them from the 
-per-page table to our own 
+the whole document, at the end of each page we need to move them from the
+per-page table to our own
 table. We also need to make sure we store their page numbers!
 
 \note{SILE provides the \code{SILE.scratch} variable for you to store
@@ -2250,7 +2250,7 @@ SILE.scratch.tableofcontents = \{ \}
 -- Gather the tocentries into a big document-wide TOC
 local moveNodes = function(self)
   local n = SILE.scratch.info.thispage.toc
-  for i=1,#n do 
+  for i=1,#n do
     n[i].pageno = SILE.formatCounter(SILE.scratch.counters.folio)
     table.insert(SILE.scratch.tableofcontents, n[i])
   end
@@ -2294,7 +2294,7 @@ end)
 \end{verbatim}
 
 And the job is done. Well, nearly. The \code{tableofcontents} package now contains a
-couple of functions—\code{moveNodes} and \code{writeToc}—that need to be called at 
+couple of functions—\code{moveNodes} and \code{writeToc}—that need to be called at
 various points in the output routine of a class which uses this package. How do we
 do that?
 
@@ -2325,7 +2325,7 @@ return \{
 \line
 \end{verbatim}
 
-The other entry to be returned from the package is \code{exports}, 
+The other entry to be returned from the package is \code{exports},
 which contains names and functions to be mixed into the caller’s namespace.
 In other words, after:
 
@@ -2351,8 +2351,8 @@ on a page, and so we shall have to make all the presentation decisions for ourse
 
 The first thing you should know is that it makes your life significantly easier if you
 consider writing the class file in \em{two} files; the first being a SILE file in TeX
-format, and the second as Lua code. This allows you to dispose of all the easy jobs in a 
-convenient format, and then deal with the hard jobs in Lua. When you use the 
+format, and the second as Lua code. This allows you to dispose of all the easy jobs in a
+convenient format, and then deal with the hard jobs in Lua. When you use the
 \code{-I \em{classname}} command line option to SILE, SILE first looks for \code{\em{classname}.sil}
 and uses that as a wrapper around your file to be processed. If that then begins
 
@@ -2364,7 +2364,7 @@ and uses that as a wrapper around your file to be processed. If that then begins
 
 \noindent{}then SILE will also load up \code{classes/\em{classname}.lua} as normal.
 
-Now we can start defining SILE commands to render XML elements. Most of these are 
+Now we can start defining SILE commands to render XML elements. Most of these are
 fairly straightforward so we will not dwell on them too much. For instance,
 DocBook has a tags like \code{<code>}, \code{<filename>}, \code{<guimenu>} which should
 all be rendered in a monospaced typewriter font. To make it easier to customize the
@@ -2401,13 +2401,13 @@ XML attributes, so we will not repeat that here. Let’s look at another area of
 the apparently-simple \code{<title>} tag. The reason this is complex is that it occurs
 in different contexts, sometimes more than once within a context; it should often be
 rendered differently in different contexts. So for instance \code{<article><title>...}
-will look different to \code{<section><title>...}. Inside an \code{<example>} tag, 
+will look different to \code{<section><title>...}. Inside an \code{<example>} tag,
 the title will be preferenced by an example number; inside a \code{<bibliomixed>}
 bibliography entry the title should not be set off as a new block but should be
 part of the running text, and so on.
 
-What we will do to deal with this situation is provide a very simple definition of 
-\code{<title>}, but when processing the containing elements of \code{<title>} 
+What we will do to deal with this situation is provide a very simple definition of
+\code{<title>}, but when processing the containing elements of \code{<title>}
 (such as \code{<article>}, \code{<example>}), we will process the title ourselves.
 
 For instance, let’s look at \code{<example>}, which has the added complexity of needed
@@ -2436,7 +2436,7 @@ content form within the DOM tree;\footnote{Patches, as they say, are welcome.} i
 there is a simple one-level function called \code{SILE.findInTree} which looks for
 a particular tag or command name within the immediate children of the current tree:
 
-\begin{verbatim} 
+\begin{verbatim}
     local t = SILE.findInTree(content, "title")
     if t then
       SILE.typesetter:typeset(": ")
@@ -2513,7 +2513,7 @@ any counts we have for levels above the current level (if we didn’t do that, t
 \examplefont{E} in our example above would be marked \examplefont{1.3.1}):
 
 \begin{verbatim}
-  SILE.scratch.docbook.seccount[SILE.scratch.docbook.seclevel] = 
+  SILE.scratch.docbook.seccount[SILE.scratch.docbook.seclevel] =
     (SILE.scratch.docbook.seccount[SILE.scratch.docbook.seclevel] or 0) + 1
   while #(SILE.scratch.docbook.seccount) > SILE.scratch.docbook.seclevel do
     SILE.scratch.docbook.seccount[#(SILE.scratch.docbook.seccount)] = nil
@@ -2525,11 +2525,11 @@ Now we find the title, and prefix it by the concatenation of all the \code{secco
 \begin{verbatim}
   local title = SILE.findInTree(content, "title")
   local number = table.concat(SILE.scratch.docbook.seccount, '.')
-  if title then 
+  if title then
     SILE.call("docbook-section-"..SILE.scratch.docbook.seclevel.."-title",\{\},function()
       SILE.typesetter:typeset(number.." ")
       SILE.process(title)
-    end) 
+    end)
     docbook.wipe(title)
   end
 \end{verbatim}
@@ -2564,7 +2564,7 @@ further programming.
 
 \section{Parallel Text}
 
-The file \code{examples/parallel.sil} contains a rendering of chapter 1 of 
+The file \code{examples/parallel.sil} contains a rendering of chapter 1 of
 Matthew’s Gospel in English and Greek. It uses the \code{diglot} class to align
 the two texts side-by-side. \code{diglot} provides the \code{\\left} and \code{\\right}
 commands to start entering text on the left column or the right column respectively,
@@ -2638,7 +2638,7 @@ SILE.registerCommand("left", function(options, content)
 end, "Begin entering text on the left side")
 
 SILE.registerCommand("right", function(options, content)
-  SILE.settings.set("typesetter.parseppattern", -1)  
+  SILE.settings.set("typesetter.parseppattern", -1)
   SILE.typesetter = diglot.rightTypesetter;
   SILE.Commands["font"](SILE.scratch.diglot.rightfont, \{\})
 end, "Begin entering text on the right side")
@@ -2653,8 +2653,8 @@ output queue to get them back in sync, and vice versa.
 
 SILE’s page builder has a method called \code{SILE.pagebuilder.collateVboxes}
 which bundles a bunch of vertical boxes into one; we can use this to bundle up
-each typesetter’s output queue and measure the height of the combined vbox. 
-(Of course it’s possible to sum the heights of each box on the output queue 
+each typesetter’s output queue and measure the height of the combined vbox.
+(Of course it’s possible to sum the heights of each box on the output queue
 by hand, but this achieves the same goal a bit more cleanly.)
 
 \begin{verbatim}
@@ -2701,7 +2701,7 @@ event, the other typesetter also gets correctly initialised:
 \begin{verbatim}
 diglot.newPage = function(self)
   plain.newPage(self)
-  if SILE.typesetter == diglot.leftTypesetter then 
+  if SILE.typesetter == diglot.leftTypesetter then
     SILE.typesetter.other:initFrame(SILE.getFrame("b"))
     return SILE.getFrame("a")
   else
@@ -2742,7 +2742,7 @@ typesetters at once.
 \section{Sidenotes}
 
 One SILE project needed two different kinds of sidenotes, margin notes and gutter
-notes. 
+notes.
 
 \line
 \img[src=documentation/discovery.png,width=width(content)]
@@ -2774,7 +2774,7 @@ First we need to find the appropriate margin frame and, find its left boundary:
 \begin{verbatim}
 \line
 discovery.typesetProphecy = function(symbol)
-  local margin = discovery:oddPage() and 
+  local margin = discovery:oddPage() and
                   SILE.getFrame("rMargin") or SILE.getFrame("lMargin")
   local target = margin:left()
 \end{verbatim}
@@ -2795,12 +2795,12 @@ in the \code{hbox} variable.
 \end{verbatim}
 
 What we \em{do} want in the output queue is our special hbox node which will
-put the marking into the margin. This special hbox has no impact on the 
+put the marking into the margin. This special hbox has no impact on the
 current line—it has no width, height, or depth—and it contains a copy of the
 symbol that we stored in the \code{hbox} variable.
 
 \begin{verbatim}
-  SILE.typesetter:pushHbox(\{ 
+  SILE.typesetter:pushHbox(\{
     width= 0,
     height = 0,
     depth= 0,
@@ -2830,7 +2830,7 @@ back to where we were:
 \line
 \end{verbatim}
 
-This was a quick-and-dirty version of sidenotes (in twenty lines of code!) 
+This was a quick-and-dirty version of sidenotes (in twenty lines of code!)
 which works reasonably well
 for individual symbols which are guaranteed not to overlap. For the gutter notes,
 which are closer to true sidenotes, we need to do something a bit more intelligent.
@@ -2845,7 +2845,7 @@ and at the start of each page it is populated correctly with the appropriate fra
 discovery.innerTypesetter = SILE.defaultTypesetter \{\}
 
 discovery.init = function()
-  local gutter = discovery:oddPage() and 
+  local gutter = discovery:oddPage() and
                  SILE.getFrame("rGutter") or SILE.getFrame("lGutter")
   discovery.innerTypesetter:init(gutter)
   ...
@@ -2855,7 +2855,7 @@ end
 discovery.newPage = function ()
   ...
   discovery.innerTypesetter:leaveHmode(1)
-  local gutter = discovery:oddPage() and 
+  local gutter = discovery:oddPage() and
                  SILE.getFrame("rGutter") or SILE.getFrame("lGutter")
   discovery.innerTypesetter:init(gutter)
   ...
@@ -2881,7 +2881,7 @@ other words, completed paragraphs. The problem here is that we do not want to
 end a paragraph between two verses; if we are mid-paragraph while typesetting
 a cross-reference, we need to work out what the height of the material \em{would have
 been} if we were to put it onto the output queue at this point. So, we take
-the \code{SILE.typesetter} object on a little excursion. 
+the \code{SILE.typesetter} object on a little excursion.
 
 First we take a copy of the current node queue, and then we call the typesetter’s
 \code{pushState} method. This initializes the typesetter anew, while saving
@@ -2920,7 +2920,7 @@ the cross-reference appears a bit lower than the verse it refers to.
   end
 \end{verbatim}
 
-At this point the two typesetters are now either aligned, or the cross-reference 
+At this point the two typesetters are now either aligned, or the cross-reference
 typesetter has gone further down the page than the verse it refers to. Now we
 can output the cross-reference itself.
 
@@ -3004,7 +3004,7 @@ Running SILE with the \code{--debug \em{facility}} switch will turn on debugging
 for a particular area of SILE’s operation:
 
 \noindent{}• \code{typesetter} provides general debugging for the typesetter:
-turning characters into boxes, boxes into lines, lines into paragraphs, and 
+turning characters into boxes, boxes into lines, lines into paragraphs, and
 paragraphs into pages.
 
 \noindent{}• \code{pagebuilder} helps to debug problems when determining page
@@ -3032,7 +3032,7 @@ SILE.debugFlags.typesetter = nil
 \line
 \end{verbatim}
 
-From a package’s point of view, you can write debugging information by 
+From a package’s point of view, you can write debugging information by
 calling the \code{SU.debug} function (\code{SU} stands for SILE Utilities,
 and contains a variety of auxiliary functions used throughout SILE):
 
@@ -3055,7 +3055,7 @@ This is SILE 0.9.0
 \end{verbatim}
 
 At any point during the evaluation of Lua commands, you can call \code{SILE.repl()}
-to enter the REPL and poke around; hitting Ctrl-D will end the REPL and 
+to enter the REPL and poke around; hitting Ctrl-D will end the REPL and
 return to processing the document.
 
 \section{Conclusion}
