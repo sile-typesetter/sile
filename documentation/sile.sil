@@ -276,8 +276,8 @@ issuing the command:
 
 Here’s an incantation that will work on most Redhat-based Linux distros:
 
-\listitem{\code{yum install harfbuzz-devel make automake gcc freetype-devel
-	fontconfig-devel lua-devel lua-lpeg lua-expat libpng-devel}}
+\listitem{\code{yum install harfbuzz-devel make automake libtool gcc
+freetype-devel fontconfig-devel lua-devel lua-lpeg lua-expat libpng-devel}}
 
 Once these dependencies are installed, you also need to install some Lua
 libraries if they’re not already installed:
@@ -375,7 +375,7 @@ elements: text to be typeset on the page, such as “Hello SILE!” in our examp
 and commands.
 
 The default paper size is A4, although each class may override this value. To
-manually change the paper size, an optional argument may be added to the docmument
+manually change the paper size, an optional argument may be added to the document
 declaration:
 
 \begin{verbatim}
