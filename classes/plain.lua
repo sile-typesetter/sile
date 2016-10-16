@@ -118,7 +118,10 @@ SILE.registerCommand("ragged", function(options, content)
     if options.right then SILE.settings.set("document.rskip", SILE.nodefactory.hfillGlue) end
     SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
     SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
-    SILE.settings.set("document.spaceskip", SILE.length.parse("1spc"))
+    local space = SILE.length.parse("1spc")
+    space.stretch = 0
+    space.shrink = 0
+    SILE.settings.set("document.spaceskip", space)
     SILE.process(content)
     SILE.call("par")
   end)
