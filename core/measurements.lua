@@ -77,10 +77,10 @@ SILE.registerUnit("em", { relative = true, definition = function (v)
   return v * SILE.settings.get("font.size")
 end})
 SILE.registerUnit("ex", { relative = true, definition = function (v)
-  return v * SILE.shaper:measureDim("x")
+  return v * SILE.shaper:measureChar("x").height
 end})
 SILE.registerUnit("spc", { relative = true, definition = function (v)
-  return v * SILE.shaper:measureDim(" ")
+  return v * SILE.shaper:measureChar(" ").width
 end})
 
 SILE.registerUnit("en", { definition = "0.5em" })
