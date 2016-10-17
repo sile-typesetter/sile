@@ -2,7 +2,7 @@
 \define[command=em]{\font[style=italic]{\process}}
 \define[command=headline]{%
 \medskip%
-\font[family=Frutiger LT Std,weight=700,size=20pt]{\center{\process}}
+\font[family=DejaVu Sans,style=Bold Condensed,weight=700,size=20pt]{\center{\process}}
 \bigskip%
 }
 \end{document}
