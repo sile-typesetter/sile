@@ -39,8 +39,7 @@ SILE.registerUnit("cm", {definition = "10mm"})
 SILE.registerUnit("in", {definition = "72pt"})
 
 SILE.registerUnit("%", { relative = true, definition = function (v)
-  SU.warn("Obsolete ambiguous % unit detected, please use %pw or %ph instead")
-  return v / 100 * SILE.documentState.paperSize[1]
+  SU.error("Obsolete ambiguous % unit detected, please use %pw or %ph instead")
 end})
 SILE.registerUnit("%pw", { relative = true, definition = function (v)
   return v / 100 * SILE.documentState.orgPaperSize[1]
