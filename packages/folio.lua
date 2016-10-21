@@ -5,6 +5,9 @@ SILE.scratch.counters.folio = { value = 1, display = "arabic" }
 SILE.registerCommand("folios", function () SILE.scratch.counters.folio.off = false end)
 SILE.registerCommand("nofolios", function () SILE.scratch.counters.folio.off = true end)
 SILE.registerCommand("nofoliosthispage", function () SILE.scratch.counters.folio.off = 2 end)
+SILE.registerCommand("foliostyle", function (options, content)
+  SILE.call("center", {}, content)
+end)
 
 return {
   init = function () end,
@@ -22,9 +25,7 @@ return {
           SILE.typesetNaturally(folioFrame, function ()
             SILE.settings.pushState()
             SILE.settings.reset()
-            SILE.call("center", {}, function ()
-              SILE.typesetter:typeset(SILE.formatCounter(SILE.scratch.counters.folio))
-            end)
+            SILE.call("foliostyle", {}, { SILE.formatCounter(SILE.scratch.counters.folio) })
             SILE.typesetter:leaveHmode()
             SILE.settings.popState()
           end)
