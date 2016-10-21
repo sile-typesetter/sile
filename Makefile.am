@@ -7,6 +7,9 @@ dist_bin_SCRIPTS = sile
 nobase_dist_pkgdata_DATA = $(subdir_files)
 EXTRA_DIST=NEWS.md README.md LICENSE ROADMAP tests examples
 
+tests/%.expected: tests/%.sil
+	./sile -e 'require("core/debug-output")' $< > $@
+
 gource.webm:
 	mkdir -p /tmp/gravatars
 	convert examples/images/sile-logo.jpg -negate -resize 50% /tmp/sile-logo.jpg
