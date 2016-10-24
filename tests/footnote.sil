@@ -1,7 +1,7 @@
 \begin[papersize=a5,class=book]{document}
 \script[src=packages/rules]
 \footnote:separator{\em{Separator}\skip[height=5mm]}
-\footnote:options[inter-insertion-skip=3mm]
+\footnote:options[interInsertionSkip=3mm]
 Paragraph one.\footnote{Footnote one}
 
 Paragraph two.\footnote{Footnote two. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod

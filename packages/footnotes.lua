@@ -24,11 +24,11 @@ SILE.registerCommand("footnote:separator", function(options, content)
 end)
 
 SILE.registerCommand("footnote:options", function(options, content)
-  if options["max-height"] then
-    SILE.scratch.insertions.classes.footnote.maxHeight = SILE.length.parse(options["max-height"])
+  if options["maxHeight"] then
+    SILE.scratch.insertions.classes.footnote.maxHeight = SILE.length.parse(options["maxHeight"])
   end
-  if options["inter-insertion-skip"] then
-    SILE.scratch.insertions.classes.footnote.interInsertionSkip = SILE.length.parse(options["inter-insertion-skip"])
+  if options["interInsertionSkip"] then
+    SILE.scratch.insertions.classes.footnote.interInsertionSkip = SILE.length.parse(options["interInsertionSkip"])
   end
 end)
 
