@@ -38,16 +38,17 @@ SILE.registerCommand("last-reference", function (options, content)
   local refs = SILE.scratch.info.thispage.references
   if refs then
     SU.debug("bcv", "last-reference: " .. refs[#(refs)])
-    SILE.call("format-reference", {}, refs[#(refs)])
+    SILE.call("format-reference", options, refs[#(refs)])
   else
     SU.debug("bcv", "last-reference: none")
   end
 end)
 
 SILE.registerCommand("format-reference", function (options, content)
+  if type(options.showbook) == "nil" then options.showbook = true end
   SU.debug("bcv", "formatting: " .. content)
   local ref
-  if content.book then
+  if content.book and options.showbook then
     ref = content.book .. " " .. content.chapter .. ":" .. content.verse
   else
     ref = content.chapter .. ":" .. content.verse
