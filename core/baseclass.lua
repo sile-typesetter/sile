@@ -1,4 +1,3 @@
-SILE.Commands = {}
 SILE.Help = {}
 
 function SILE.registerCommand (name, f, help, pack)
