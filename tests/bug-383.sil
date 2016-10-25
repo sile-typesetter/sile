@@ -1,0 +1,13 @@
+\begin[class=book,papersize=a5]{document}
+\switch-master-one-page[id=right]
+Something\footnote{Check out the vertical location of footnotes between pages.}.
+
+\break
+
+Something\footnote{Check out the vertical location of footnotes between pages.}.
+
+\break
+
+Something\footnote{Check out the vertical location of footnotes between pages.}.
+
+\end{document}
