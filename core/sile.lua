@@ -56,10 +56,10 @@ SILE.init = function()
   end
 end
 
-SILE.require = function(d)
-  local f = SILE.resolveFile(d..".lua")
-  if f then return require(f:gsub(".lua$","")) end
-  return require(d)
+SILE.require = function(dependency)
+  local file = SILE.resolveFile(dependency..".lua")
+  if file then return require(file:gsub(".lua$","")) end
+  return require(dependency)
 end
 
 SILE.parseArguments = function()
@@ -143,21 +143,21 @@ function SILE.repl()
   SILE._repl:run()
 end
 
-function SILE.readFile(fn)
-  SILE.currentlyProcessingFile = fn
-  fn = SILE.resolveFile(fn)
-  if not fn then
+function SILE.readFile(filename)
+  SILE.currentlyProcessingFile = filename
+  filename = SILE.resolveFile(filename)
+  if not filename then
     SU.error("Could not find file")
   end
-  if lfs.attributes(fn).mode ~= "file" then
-    SU.error(fn.." isn't a file, it's a "..lfs.attributes(fn).mode.."!")
+  if lfs.attributes(filename).mode ~= "file" then
+    SU.error(filename.." isn't a file, it's a "..lfs.attributes(filename).mode.."!")
   end
-  local file, err = io.open(fn)
+  local file, err = io.open(filename)
   if not file then
-    print("Could not open "..fn..": "..err)
+    print("Could not open "..filename..": "..err)
     return
   end
-  io.write("<"..fn..">\n")
+  io.write("<"..filename..">\n")
   -- Sniff first few bytes
   local sniff = file:read("*l") or ""
   file:seek("set", 0)
@@ -167,35 +167,35 @@ function SILE.readFile(fn)
   end
   table.sort(inputsOrder,function(a,b) return SILE.inputs[a].order < SILE.inputs[b].order end)
   for i = 1,#inputsOrder do local input = SILE.inputs[inputsOrder[i]]
-    if input.appropriate(fn, sniff) then
-      input.process(fn)
+    if input.appropriate(filename, sniff) then
+      input.process(filename)
       return
     end
   end
-  SU.error("No input processor available for "..fn.." (should never happen)",1)
+  SU.error("No input processor available for "..filename.." (should never happen)",1)
 end
 
-local function file_exists(name)
-   local f=io.open(name,"r")
-   if f~=nil then io.close(f) return true else return false end
+local function file_exists(filename)
+   local file = io.open(filename,"r")
+   if file ~= nil then io.close(file) return true else return false end
 end
 
-function SILE.resolveFile(fn)
-  if file_exists(fn) then return fn end
-  if file_exists(fn..".sil") then return fn..".sil" end
+function SILE.resolveFile(filename)
+  if file_exists(filename) then return filename end
+  if file_exists(filename..".sil") then return filename..".sil" end
   if not SILE.masterFilename then return nil end
 
   local dirname = SILE.masterFilename:match("(.-)[^%/]+$")
   for k in SU.gtoke(dirname..";"..tostring(os.getenv("SILE_PATH")), ";") do
     if k.string then
-      local f = std.io.catfile(k.string, fn)
-      if file_exists(f) then return f end
-      if file_exists(f..".sil") then return f..".sil" end
+      local file = std.io.catfile(k.string, filename)
+      if file_exists(file) then return file end
+      if file_exists(file..".sil") then return file..".sil" end
     end
   end
 end
 
-function SILE.call(cmd,options, content)
+function SILE.call(cmd, options, content)
   SILE.currentCommand = content
   if not SILE.Commands[cmd] then SU.error("Unknown command "..cmd) end
   SILE.Commands[cmd](options or {}, content or {})

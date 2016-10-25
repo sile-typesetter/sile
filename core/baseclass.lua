@@ -1,8 +1,8 @@
 SILE.Commands = {}
 SILE.Help = {}
 
-function SILE.registerCommand (name, f, help, pack)
-  SILE.Commands[name] = f
+function SILE.registerCommand (name, func, help, pack)
+  SILE.Commands[name] = func
   if not pack then
     local where = debug.getinfo(2).source
     pack = where:match("(%w+).lua")
@@ -212,7 +212,7 @@ SILE.baseClass = std.object {
     SILE.outputter:finish()
   end,
 
-  newPar = function(typesetter)    
+  newPar = function(typesetter)
     typesetter:pushGlue(SILE.settings.get("current.parindent") or SILE.settings.get("document.parindent"))
     SILE.settings.set("current.parindent", nil)
   end,
