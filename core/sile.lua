@@ -56,8 +56,8 @@ SILE.init = function()
   end
 end
 
-SILE.require = function(dependency)
-  local file = SILE.resolveFile(dependency..".lua")
+SILE.require = function (dependency, pathprefix)
+  local file = SILE.resolveFile(dependency..".lua", pathprefix)
   if file then return require(file:gsub(".lua$","")) end
   return require(dependency)
 end
@@ -180,7 +180,7 @@ local function file_exists(filename)
    if file ~= nil then io.close(file) return true else return false end
 end
 
-function SILE.resolveFile(filename)
+function SILE.resolveFile(filename, pathprefix)
   if file_exists(filename) then return filename end
   if file_exists(filename..".sil") then return filename..".sil" end
   if not SILE.masterFilename then return nil end
@@ -188,6 +188,11 @@ function SILE.resolveFile(filename)
   local dirname = SILE.masterFilename:match("(.-)[^%/]+$")
   for k in SU.gtoke(dirname..";"..tostring(os.getenv("SILE_PATH")), ";") do
     if k.string then
+      if pathprefix then
+        local file = std.io.catfile(k.string, pathprefix, filename)
+        if file_exists(file) then return file end
+        if file_exists(file..".sil") then return file..".sil" end
+      end
       local file = std.io.catfile(k.string, filename)
       if file_exists(file) then return file end
       if file_exists(file..".sil") then return file..".sil" end
