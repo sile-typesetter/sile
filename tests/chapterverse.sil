@@ -1,16 +1,16 @@
 \begin[papersize=a7,class=bible]{document}
 \script[src=packages/lorem]
 \begin{script}
-SILE.registerCommand("format-reference", function (o,c)
+SILE.registerCommand("format-reference", function (options, content)
   local ref
-  if c.b then
-	ref =  c.b .. " " .. c.c .. ", " .. c.v
+  if content.book then
+	ref =  content.book .. " " .. content.chapter .. ", " .. content.verse
   else
-  	ref =  c.c .. ", " .. c.v
+  	ref =  content.chapter .. ", " .. content.verse
   end
   SILE.typesetter:typeset(ref)
 end)
-SILE.registerCommand("bible:verse-number", function(o,c) end)
+SILE.registerCommand("bible:verse-number", function(options, content) end)
 \end{script}
 \save-book-title{Gn}
 \save-chapter-number{1}
