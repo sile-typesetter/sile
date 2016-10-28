@@ -30,10 +30,18 @@ local function alpha(n)
   return out
 end
 
+local function arabicIndic(n)
+  local out,_ = tostring(n):gsub(".", function(d)
+    return SILE.utilities.utf8char(tonumber(d) + 0x0660)
+  end)
+  return out
+end
+
 SILE.formatCounter = function(options)
   if (options.display == "roman") then return romanize(options.value):lower() end
   if (options.display == "Roman") then return romanize(options.value) end
   if (options.display == "alpha") then return alpha(options.value) end
+  if (options.display == "arabic-indic") then return arabicIndic(options.value) end
   return tostring(options.value)
 end
 
@@ -133,10 +141,15 @@ value of the counter according to the counter’s declared display type.
 \code{display=\em{<display-type>}} parameter
 to set the \em{display type} of the counter.
 
-The available display types are: \code{arabic}, the default;
-\code{alpha}, for alphabetic counting;
-\code{roman}, for lower-case Roman numerals; and \code{Roman} for upper-case
-Roman numerals.}
+The available display types are:
+
+• \code{arabic}, the default.
+
+• \code{alpha}, for alphabetic counting.
+
+• \code{roman}, for lower-case Roman numerals, and \code{Roman} for upper-case Roman numerals.
+
+• \code{arabic-indic}, for Arabic-Indic numerals.
 
 So, for example, the following SILE code:
 
