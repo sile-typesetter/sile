@@ -24,7 +24,7 @@ case $host_os in
     save_LIBS="$LIBS"
     LIBS="$LIBS -framework AppKit"
     AC_LANG_PUSH([Objective C])
-    AC_LINK_IFELSE([AC_LANG_PROGRAM([[]],[[]])],
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[@import AppKit;]],[[]])],
       [
       have_appkit=yes
       AC_DEFINE([APPKIT], [1], [Build using AppKit])
