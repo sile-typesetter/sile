@@ -6,10 +6,17 @@ romans = {
   {9, "IX"}, {5, "V"}, {4, "IV"}, {1, "I"}
 }
 
-local function romanize(k)
+abjads = {
+  {1000, "غ"},
+  {900, "ظ"}, {800, "ض"}, {700, "ذ"}, {600, "خ"}, {500, "ث"}, {400, "ت"}, {300, "ش"}, {200, "ر"}, {100, "ق"},
+  {90, "ص"},  {80, "ف"},  {70, "ع"},  {60, "س"},  {50, "ن"},  {40, "م"},  {30, "ل"},  {20, "ك"},  {10, "ي"},
+  {9, "ط"},   {8, "ح"},   {7, "ز"},   {6, "و"},   {5, "ه"},   {4, "د"},   {3, "ج"},   {2, "ب"},   {1, "ا"},
+}
+
+local function alphabeticize(k, map)
   str = ""
   k = k + 0
-  for _, v in ipairs(romans) do
+  for _, v in ipairs(map) do
     val, let = unpack(v)
     while k >= val do
       k = k - val
@@ -30,10 +37,19 @@ local function alpha(n)
   return out
 end
 
+local function arabicIndic(n)
+  local out,_ = tostring(n):gsub(".", function(d)
+    return SILE.utilities.utf8char(tonumber(d) + 0x0660)
+  end)
+  return out
+end
+
 SILE.formatCounter = function(options)
-  if (options.display == "roman") then return romanize(options.value):lower() end
-  if (options.display == "Roman") then return romanize(options.value) end
+  if (options.display == "roman") then return alphabeticize(options.value, romans):lower() end
+  if (options.display == "Roman") then return alphabeticize(options.value, romans) end
   if (options.display == "alpha") then return alpha(options.value) end
+  if (options.display == "arabic-indic") then return arabicIndic(options.value) end
+  if (options.display == "abjad") then return alphabeticize(options.value, abjads) end
   return tostring(options.value)
 end
 
@@ -133,10 +149,17 @@ value of the counter according to the counter’s declared display type.
 \code{display=\em{<display-type>}} parameter
 to set the \em{display type} of the counter.
 
-The available display types are: \code{arabic}, the default;
-\code{alpha}, for alphabetic counting;
-\code{roman}, for lower-case Roman numerals; and \code{Roman} for upper-case
-Roman numerals.}
+The available display types are:
+
+• \code{arabic}, the default.
+
+• \code{alpha}, for alphabetic counting.
+
+• \code{roman}, for lower-case Roman numerals, and \code{Roman} for upper-case Roman numerals.
+
+• \code{arabic-indic}, for Arabic-Indic numerals.
+
+• \code{abjad}, for Arabic Abjad numerals.
 
 So, for example, the following SILE code:
 
