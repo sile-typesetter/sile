@@ -83,13 +83,13 @@ SILE.registerCommand("increment-multilevel-counter", function (options, content)
   elseif level > currentLevel then
     while level > currentLevel do
       currentLevel = currentLevel + 1
-      this.value[currentLevel] = 1
-      this.display[currentLevel] = this.display[currentLevel -1]
+      this.value[currentLevel] = (options.reset == false) and this.value[currentLevel -1 ] or 1
+      this.display[currentLevel] = this.display[currentLevel - 1]
     end
   else -- level < currentLevel
     this.value[level] = this.value[level] + 1
     while currentLevel > level do
-      this.value[currentLevel] = nil
+      if not options.reset == false then this.value[currentLevel] = nil end
       this.display[currentLevel] = nil
       currentLevel = currentLevel - 1
     end
