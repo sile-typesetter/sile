@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <unicode/ustring.h>
 #include <unicode/ustdio.h>
+#include <unicode/unum.h>
 #include <unicode/ubrk.h>
 #include <lua.h>
 #include <lauxlib.h>
