@@ -384,6 +384,7 @@ SILE.defaultTypesetter = std.object {
   end,
 
   initNextFrame = function(self)
+    local oldframe = self.frame
     self.frame:leave()
     if (self.frame.next and not (self.state.lastPenalty <= supereject_penalty )) then
       self:initFrame(SILE.getFrame(self.frame.next))
@@ -395,9 +396,9 @@ SILE.defaultTypesetter = std.object {
       SILE.documentState.documentClass:endPage()
       self:initFrame(SILE.documentState.documentClass:newPage())
     end
-    -- Always push back and recalculate. The frame may have a different shape, or
-    -- we may be doing clever things like grid typesetting. CPU time is cheap.
-    self:pushBack()
+    if oldframe:lineWidth() ~= self.frame:lineWidth() then
+      self:pushBack()
+    end
     self:leaveHmode(true)
     self:runHooks("newframe")
   end,
@@ -446,6 +447,7 @@ SILE.defaultTypesetter = std.object {
             if not discardedFistInitLine then self:pushHorizontal(node) end
             SU.debug("que", { "discard penalty"  })
           else
+            node.bidiDone = true
             self:pushHorizontal(node)
           end
         end
