@@ -30,7 +30,21 @@ local function alpha(n)
   return out
 end
 
+local icu
+pcall( function () icu = require("justenoughicu") end)
+
 SILE.formatCounter = function(options)
+  -- If there is a language-specific formatter, use that.
+  local lang = SILE.settings.get("document.language")
+  if SILE.languageSupport.languages[lang] and SILE.languageSupport.languages[lang].counter then
+    local res = SILE.languageSupport.languages[lang].counter(options)
+    if res then return res end -- allow them to pass.
+  end
+  -- If we have ICU, try that
+  if icu then
+    local ok, res = pcall(function() return icu.format_number(options.value, options.display) end)
+    if ok then return res end
+  end
   if (options.display == "roman") then return romanize(options.value):lower() end
   if (options.display == "Roman") then return romanize(options.value) end
   if (options.display == "alpha") then return alpha(options.value) end

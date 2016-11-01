@@ -1,0 +1,15 @@
+\begin[papersize=a5]{document}
+\script[src=packages/counters]
+
+\set-counter[id=test,value=1234]
+Standard counter: \show-counter[id=test]
+
+Roman counter: \show-counter[id=test,display=roman]
+
+Greek counter: \show-counter[id=test,display=greklow]
+
+Japanese counter: \font[family=Noto Sans CJK JP]{\show-counter[id=test,display=jpan]}
+
+Arabic counter: \font[family=Scheherazade]{\show-counter[id=test,display=arab]}
+
+\end{document}
