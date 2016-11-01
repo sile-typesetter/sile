@@ -249,7 +249,7 @@ SILE.defaultTypesetter = std.object {
     while (#nl >0 and nl[1]:isPenalty()) do table.remove(nl,1) end
     if #nl == 0 then return {} end
     self:shapeAllNodes(nl)
-    self:pushExplicitGlue(SILE.settings.get("typesetter.parfillskip"))
+    self:pushGlue(SILE.settings.get("typesetter.parfillskip"))
     self:pushPenalty({ flagged= 1, penalty= -inf_bad })
     SU.debug("typesetter", "Boxed up "..(#nl > 500 and (#nl).." nodes" or SU.contentToString(nl)))
     local breakWidth = SILE.settings.get("typesetter.breakwidth") or self.frame:lineWidth()
@@ -440,7 +440,7 @@ SILE.defaultTypesetter = std.object {
               SU.debug("pushback", { "discard all other discretionaries", node })
             end
           elseif node == SILE.nodefactory.zeroHbox then
-            if not discardedFistInitLine then self:pushHorizontal(node)
+            if discardedFistInitLine then self:pushHorizontal(node)
             else SU.debug("que", { "discard zero hbox" }) end
             discardedFistInitLine = true
           elseif node:isPenalty() then
