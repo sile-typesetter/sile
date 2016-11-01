@@ -116,6 +116,12 @@ function utilities.sum(array)
   return t
 end
 
+function utilities.compress(items)
+  local rv = {}
+  for i=1,table.maxn(items) do if items[i] then rv[#rv+1] = items[i] end end
+  return rv
+end
+
 function table.append(t1, t2)
   if not t1 or not t2 then SU.error("table.append called with nil table!: "..t1..", "..t2,true) end
   for i=1,#t2 do

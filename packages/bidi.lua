@@ -67,7 +67,7 @@ local reorder = function(n, self)
     nl[i].bidiDone = true
     -- rv[i] = nl[i]
   end
-  n.nodes = rv
+  n.nodes = SU.compress(rv)
 end
 
 local nodeListToText = function (nl)
