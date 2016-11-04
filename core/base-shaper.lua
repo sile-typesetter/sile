@@ -42,14 +42,10 @@ SILE.shapers.base = std.object {
     }) -- XXX all rather arbitrary
   end,
 
-  measureDim = function (self, char)
+  measureChar = function (self, char)
     local options = SILE.font.loadDefaults({})
     local i = self:shapeToken(char, options)
-    if char == "x" then
-      return i[1].height
-    else
-      return i[1].width
-    end
+    return { height = i[1].height, width = i[1].width }
   end,
 
 

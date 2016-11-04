@@ -6,7 +6,7 @@
 -- a 10pt Japanese font gets you 5 points. So we measure a full-width character
 -- and use that as a unit. We call it zw following ptex (zenkaku width)
 SILE.registerUnit("zw", { relative = true, definition = function (v)
-  return v * SILE.shaper:measureDim("あ")
+  return v * SILE.shaper:measureChar("あ").width
 end})
 
 local hiragana = function(c) return c > 0x3040 and c <= 0x309f end

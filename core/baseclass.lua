@@ -1,7 +1,7 @@
 SILE.Help = {}
 
-function SILE.registerCommand (name, f, help, pack)
-  SILE.Commands[name] = f
+function SILE.registerCommand (name, func, help, pack)
+  SILE.Commands[name] = func
   if not pack then
     local where = debug.getinfo(2).source
     pack = where:match("(%w+).lua")
@@ -116,8 +116,14 @@ SILE.baseClass = std.object {
     end, "Inserts a glue node. The width option denotes the glue dimension.")
 
     SILE.registerCommand("skip", function(options, content)
+      options.discardable = options.discardable or false
+      options.height = SILE.length.parse(options.height):absolute()
       SILE.typesetter:leaveHmode()
-      SILE.typesetter:pushExplicitVglue({ height = SILE.length.parse(options.height):absolute() })
+      if options.discardable then
+        SILE.typesetter:pushVglue(options)
+      else
+        SILE.typesetter:pushExplicitVglue(options)
+      end
     end, "Inserts vertical skip. The height options denotes the skip dimension.")
 
     SILE.registerCommand("par", function(options, content)
@@ -211,7 +217,7 @@ SILE.baseClass = std.object {
     SILE.outputter:finish()
   end,
 
-  newPar = function(typesetter)    
+  newPar = function(typesetter)
     typesetter:pushGlue(SILE.settings.get("current.parindent") or SILE.settings.get("document.parindent"))
     SILE.settings.set("current.parindent", nil)
   end,
