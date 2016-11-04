@@ -50,6 +50,8 @@ int svg_to_ps(lua_State *L) {
         output = safe_append(output, &output_l, &max_output, thisPath);
       }
       char strokeFillOper = 's'; // Just stroke
+      if (!path->closed)
+        strokeFillOper = 'S';
       if (shape->stroke.type == NSVG_PAINT_COLOR) {
         int r = shape->stroke.color        & 0xff;
         int g = (shape->stroke.color >> 8) & 0xff;
