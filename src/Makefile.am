@@ -1,4 +1,4 @@
-pkglib_LTLIBRARIES = justenoughharfbuzz.la justenoughlibtexpdf.la justenoughfontconfig.la fontmetrics.la
+pkglib_LTLIBRARIES = justenoughharfbuzz.la justenoughlibtexpdf.la justenoughfontconfig.la fontmetrics.la svg.la
 justenoughharfbuzz_la_SOURCES = justenoughharfbuzz.c
 justenoughharfbuzz_la_LDFLAGS = -module -avoid-version -shared -no-undefined
 justenoughharfbuzz_la_CFLAGS = $(HARFBUZZ_CFLAGS) $(FREETYPE_CFLAGS) $(LUA_INCLUDE)
@@ -31,6 +31,12 @@ fontmetrics_la_LDFLAGS = -module -avoid-version -shared -no-undefined
 fontmetrics_la_CFLAGS = $(FREETYPE_CFLAGS) $(LUA_INCLUDE) $(HARFBUZZ_CFLAGS)
 fontmetrics_la_LIBADD = $(FREETYPE_LIBS) $(LUA_LIB) $(HARFBUZZ_LIBS)
 to_copy += .libs/fontmetrics.@SHARED_LIB_EXT@
+
+svg = svg.c
+svg_la_LDFLAGS = -module -avoid-version -shared -no-undefined
+svg_la_CFLAGS = $(LUA_INCLUDE)
+svg_la_LIBADD = $(LUA_LIB)
+to_copy += .libs/svg.@SHARED_LIB_EXT@
 
 if ICU
 pkglib_LTLIBRARIES += justenoughicu.la

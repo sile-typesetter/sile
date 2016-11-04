@@ -38,6 +38,9 @@ SILE.outputters.libtexpdf = {
     ensureInit()
     pdf.colorpop()
   end,
+  cursor = function(self)
+    return cursorX, cursorY
+  end,
   outputHbox = function (value,w)
     ensureInit()
     if not value.glyphString then return end

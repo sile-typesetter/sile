@@ -1,0 +1,4 @@
+\begin[papersize=a5]{document}
+\script[src=packages/svg]
+Hello world. \include-svg-file[src=examples/smiley.svg] That was SVG!
+\end{document}
