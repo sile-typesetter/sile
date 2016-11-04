@@ -24,7 +24,7 @@ int svg_to_ps(lua_State *L) {
               // Some kind of precision here?
               snprintf(thisPath, 256, "%f %f m %f %f %f %f %f %f c ",
                 p[0],p[1], p[2],p[3], p[4],p[5], p[6],p[7]);
-              if (max_output > output_l + strlen(thisPath)) {
+              if (output_l + strlen(thisPath) > max_output) {
                 max_output *= 2;
                 output = realloc(output, max_output);
               }
@@ -39,7 +39,7 @@ int svg_to_ps(lua_State *L) {
           strokeFillOper = 'B';
         }
       }
-      if (max_output > output_l + 3) { // How unlucky
+      if (output_l + 3 > max_output) { // How unlucky
         output = realloc(output, max_output + 3);
       }
       output[output_l++] = strokeFillOper;
