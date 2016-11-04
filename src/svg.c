@@ -8,6 +8,16 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
+static char* safe_append(char* output, int* output_l, int* max_output, char* s2) {
+  if (*output_l + strlen(s2) > *max_output) {
+    *max_output *= 2;
+    output = realloc(output, *max_output);
+  }
+  strncat(output, s2, *max_output);
+  *output_l += strlen(s2);
+  return output;
+}
+
 int svg_to_ps(lua_State *L) {
   const char* input = luaL_checkstring(L, 1);
   struct NSVGimage* image;
@@ -18,28 +28,54 @@ int svg_to_ps(lua_State *L) {
   output[0] = '\0';
   for (NSVGshape *shape = image->shapes; shape != NULL; shape = shape->next) {
       for (NSVGpath *path = shape->paths; path != NULL; path = path->next) {
+        double lastx = -1;
+        double lasty = -1;
           for (int i = 0; i < path->npts-1; i += 3) {
               float* p = &path->pts[i*2];
               char thisPath[256];
               // Some kind of precision here?
-              snprintf(thisPath, 256, "%f %f m %f %f %f %f %f %f c ",
-                p[0],p[1], p[2],p[3], p[4],p[5], p[6],p[7]);
-              if (output_l + strlen(thisPath) > max_output) {
-                max_output *= 2;
-                output = realloc(output, max_output);
+              if (lastx != p[0] || lasty != p[1]) {
+                // Move needed
+                snprintf(thisPath, 256, "%f %f m ", p[0], p[1]);
+                output = safe_append(output, &output_l, &max_output, thisPath);
               }
-              strncat(output, thisPath, max_output);
-              output_l += strlen(thisPath);
+              snprintf(thisPath, 256, "%f %f %f %f %f %f c ",
+                p[2],p[3], p[4],p[5], p[6],p[7]);
+              lastx = p[6];
+              lasty = p[7];
+              output = safe_append(output, &output_l, &max_output, thisPath);
           }
       }
-      char strokeFillOper = 'S';
+      char strokeFillOper = 's'; // Just stroke
+      if (shape->stroke.type == NSVG_PAINT_COLOR) {
+        int r = shape->stroke.color        & 0xff;
+        int g = (shape->stroke.color >> 8) & 0xff;
+        int b = (shape->stroke.color >> 16)& 0xff;
+        char color[256];
+        snprintf(color, 256, "%f w %f %f %f RG ", shape->strokeWidth,
+          r/256.0, g/256.0, b/256.0);
+        output = safe_append(output, &output_l, &max_output, color);
+      }
       if (shape->fill.type == NSVG_PAINT_COLOR) {
-        strokeFillOper = 'F';
+        int r = shape->fill.color        & 0xff;
+        int g = (shape->fill.color >> 8) & 0xff;
+        int b = (shape->fill.color >> 16)& 0xff;
+        char color[256];
+        snprintf(color, 256, "%f %f %f rg ", r/256.0, g/256.0, b/256.0);
+        output = safe_append(output, &output_l, &max_output, color);
+
+        strokeFillOper = 'f';
         if (shape->stroke.type == NSVG_PAINT_COLOR) {
           strokeFillOper = 'B';
+        } else {
+          if (output_l + 2 > max_output) {
+            output = realloc(output, max_output + 2);
+          }
+          output[output_l++] = 'h';
+          output[output_l++] = ' ';
         }
       }
-      if (output_l + 3 > max_output) { // How unlucky
+      if (output_l + 3 > max_output) {
         output = realloc(output, max_output + 3);
       }
       output[output_l++] = strokeFillOper;
