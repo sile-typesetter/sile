@@ -15,6 +15,7 @@ int svg_to_ps(lua_State *L) {
   int max_output = 256;
   int output_l = 0;
   char *output = malloc(max_output);
+  output[0] = '\0';
   for (NSVGshape *shape = image->shapes; shape != NULL; shape = shape->next) {
       for (NSVGpath *path = shape->paths; path != NULL; path = path->next) {
           for (int i = 0; i < path->npts-1; i += 3) {
