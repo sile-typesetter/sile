@@ -1,5 +1,7 @@
-#include <fontconfig/fontconfig.h>
+#define _GNU_SOURCE
 #include <string.h>
+
+#include <fontconfig/fontconfig.h>
 
 #include <lua.h>
 #include <lauxlib.h>
