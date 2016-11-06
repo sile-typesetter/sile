@@ -5,6 +5,8 @@ AC_CONFIG_MACRO_DIR([m4])
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
 
+AM_SILENT_RULES([yes])
+
 m4_include([m4/ax_lua.m4])
 m4_include([m4/adl_recursive_eval.m4])
 
