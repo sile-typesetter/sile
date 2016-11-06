@@ -163,6 +163,28 @@ local function parseCpal(s)
   return cpal
 end
 
+local function parseSvg(s)
+  if s:len() <= 0 then return end
+  local fd = vstruct.cursor(s)
+
+  local offsets = {}
+  local header = vstruct.read(">version:u2 oDocIndex:u4", fd)
+  if header.version > 0 then return end
+  local numEntries = vstruct.read(">@"..header.oDocIndex.." u2", fd)
+  local outlines = vstruct.read("> " .. numEntries[1] .. "*{startGlyphID:u2 endGlyphID:u2 svgDocOffset:u4 svgDocLength:u4}", fd)
+  for i = 1, numEntries[1] do
+    local outline = outlines[i]
+    for j = outline.startGlyphID,outline.endGlyphID do
+      offsets[j] = {
+        svgDocLength = outline.svgDocLength,
+        svgDocOffset = outline.svgDocOffset + header.oDocIndex
+        -- Note that now we are an offset from the beginning of the table
+      }
+    end
+  end
+  return offsets
+end
+
 local parseFont = function(face)
   if not face.font then
     local font = {}
@@ -171,11 +193,21 @@ local parseFont = function(face)
     font.maxp = parseMaxp(hb.get_table(face.data, face.index, "maxp"))
     font.colr = parseColr(hb.get_table(face.data, face.index, "COLR"))
     font.cpal = parseCpal(hb.get_table(face.data, face.index, "CPAL"))
-
+    font.svg  = parseSvg(hb.get_table(face.data, face.index, "SVG"))
     face.font = font
   end
 
   return face.font
 end
 
-return { parseFont = parseFont }
+local getSVG = function(face, gid)
+  if not face.font then parseFont(face) end
+  if not face.font.svg then return end
+  local item = face.font.svg[gid]
+  if not item then return end
+  local s = hb.get_table(face.data, face.index, "SVG")
+  local start = item.svgDocOffset+1
+  return s:sub(start, start + item.svgDocLength-1)
+end
+
+return { parseFont = parseFont, getSVG = getSVG }
