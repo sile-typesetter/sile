@@ -147,7 +147,7 @@ int icu_breakpoints(lua_State *L) {
 }
 
 int icu_canonicalize_language(lua_State *L) {
-  char* lang = luaL_checkstring(L, 1);
+  const char* lang = luaL_checkstring(L, 1);
   char locale[200], minimized[200], result[200];
   UErrorCode error = 0;
   uloc_forLanguageTag(lang, locale, sizeof(locale), NULL, &error);
@@ -171,7 +171,7 @@ int icu_format_number(lua_State *L) {
   double a = luaL_checknumber(L, 1);
   /* See http://www.unicode.org/repos/cldr/tags/latest/common/bcp47/number.xml
      for valid system names */
-  char* system = luaL_checkstring(L, 2);
+  const char* system = luaL_checkstring(L, 2);
   char locale[18]; // "@numbers=12345678";
   UChar buf[256];
   char utf8[256];

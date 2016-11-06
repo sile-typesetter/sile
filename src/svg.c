@@ -21,7 +21,7 @@ static char* safe_append(char* output, int* output_l, int* max_output, char* s2)
 int svg_to_ps(lua_State *L) {
   const char* input = luaL_checkstring(L, 1);
   struct NSVGimage* image;
-  image = nsvgParse(input, "pt", 72);
+  image = nsvgParse((char*)input, "pt", 72);
   int max_output = 256;
   int output_l = 0;
   char *output = malloc(max_output);
