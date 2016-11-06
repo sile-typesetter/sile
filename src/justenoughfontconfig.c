@@ -1,5 +1,7 @@
-#include <fontconfig/fontconfig.h>
+#define _GNU_SOURCE
 #include <string.h>
+
+#include <fontconfig/fontconfig.h>
 
 #include <lua.h>
 #include <lauxlib.h>
@@ -32,7 +34,7 @@ int face_from_options(lua_State* L) {
   lua_pushstring(L, "filename");
   lua_gettable(L, -2);
   if (lua_isstring(L, -1)) {
-    font_path = lua_tostring(L, -1);
+    font_path = (char*)lua_tostring(L, -1);
     lua_pop(L,1);
     lua_newtable(L);
     lua_pushstring(L, "filename");

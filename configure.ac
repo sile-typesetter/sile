@@ -11,7 +11,7 @@ m4_include([m4/ax_lua.m4])
 m4_include([m4/adl_recursive_eval.m4])
 
 # Checks for programs.
-AC_PROG_CC
+AC_PROG_CC_C99
 AC_PROG_OBJC
 
 AC_CANONICAL_HOST

@@ -7,6 +7,7 @@
 #endif
 #if HB_VERSION_ATLEAST(1,1,3)
 #define USE_HARFBUZZ_METRICS
+#include <hb-ot.h>
 #else
 #include <ft2build.h>
 #include FT_FREETYPE_H
