@@ -40,7 +40,8 @@ int thai_breakpoints(lua_State *L) {
   char* buffer = calloc(1, text_l);
   l = ucnv_convert("TIS-620","UTF-8", buffer, text_l, text, text_l, &err);
   int* pos = malloc(l * sizeof(int));
-  int n_pos = th_brk((const thchar_t*)buffer, pos, l);
+  ThBrk* brk = th_brk_new(NULL);
+  int n_pos = th_brk_find_breaks(brk, buffer, pos, l);
   lua_checkstack(L, n_pos);
   for (i=0; i < n_pos; i++) {
     int err = U_ZERO_ERROR;
@@ -51,6 +52,7 @@ int thai_breakpoints(lua_State *L) {
   }
   free(pos);
   free(buffer);
+  th_brk_delete(brk);
   return n_pos;
 }
 
