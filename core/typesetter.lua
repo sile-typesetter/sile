@@ -392,6 +392,9 @@ SILE.defaultTypesetter = std.object {
       SU.warn("Overfull content for frame "..self.frame.id)
       self:chuck()
     else
+      if SU.debugging("frames") then
+        for k,v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
+      end
       self:runHooks("pageend")
       SILE.documentState.documentClass:endPage()
       self:initFrame(SILE.documentState.documentClass:newPage())
