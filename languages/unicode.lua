@@ -96,7 +96,7 @@ if icu then
     return coroutine.wrap(function()
       -- Special-case initial glue
       local i = 1
-      while i < #items do item = items[i]
+      while i <= #items do item = items[i]
         local char = item.text
         local cp = SU.codepoint(char)
         local thistype = chardata[cp] and chardata[cp].linebreak
