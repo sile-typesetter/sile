@@ -82,7 +82,7 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
   end
 }
 
-pcall( function () icu = require("xjustenoughicu") end)
+pcall( function () icu = require("justenoughicu") end)
 if icu then
   SILE.nodeMakers.unicode.iterator = function (self, items)
     local fulltext = ""
