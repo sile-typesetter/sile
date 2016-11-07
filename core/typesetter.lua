@@ -496,7 +496,9 @@ SILE.defaultTypesetter = std.object {
   end,
   leadingFor = function(self, vbox, previous)
     -- Insert leading
-    SU.debug("typesetter", "   Considering leading between self two lines")
+    SU.debug("typesetter", "   Considering leading between two lines:")
+    SU.debug("typesetter", "   1) "..previous)
+    SU.debug("typesetter", "   2) "..vbox)
     if not previous then return SILE.nodefactory.newVglue({height=SILE.length.new({})}) end
     local prevDepth = previous.depth
     SU.debug("typesetter", "   Depth of previous line was "..tostring(prevDepth))
