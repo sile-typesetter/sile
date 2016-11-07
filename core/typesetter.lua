@@ -380,7 +380,6 @@ SILE.defaultTypesetter = std.object {
     end
 
     SU.debug("pagebuilder", "Glues for self page adjusted by "..(adjustment/gTotal.stretch) )
-    self.state.previousVbox = nil
   end,
 
   initNextFrame = function(self)
@@ -407,6 +406,7 @@ SILE.defaultTypesetter = std.object {
     SU.debug("typesetter", "Pushing back "..#(self.state.outputQueue).." nodes")
     local oldqueue = self.state.outputQueue
     self.state.outputQueue = {}
+    self.state.previousVbox = nil
     local lastMargins = self:getMargins()
     for _, vbox in ipairs(oldqueue) do
       SU.debug("pushback", { "process box", vbox })
