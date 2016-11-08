@@ -2,7 +2,7 @@
 Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	20.9764
-My 	67.7114
+My 	42.2618
 Set font 	Crimson;18;400;Italic;normal;;LTR
 T	42	(I)
 Mx 	32.6459
@@ -29,7 +29,7 @@ Mx 	337.5551
 Set font 	Crimson;18;400;;normal;;LTR
 T	56 73 70 83 70 66 84	(Whereas)
 Mx 	20.9764
-My 	89.3114
+My 	63.8618
 Set font 	Crimson;18;600;;normal;;LTR
 T	85 73 70 84 70	(these)
 Mx 	61.7333
@@ -42,15 +42,11 @@ T	66 83 70	(are)
 Mx 	190.4797
 T	15	(.)
 Mx 	20.9764
-My 	119.0853
+My 	93.6357
 Set font 	Libertinus Serif;18;400;Regular;normal;;LTR
 T	35 86 85	(But)
 Mx 	54.5291
-T	74 85	(it)
-Mx 	65.0951
-T	8	(')
-Mx 	68.5151
-T	84	(s)
+T	74 85 8 84	(it's)
 Mx 	83.2579
 T	79 80 85	(not)
 Mx 	115.4966
@@ -69,7 +65,7 @@ Mx 	360.0672
 Set font 	Libertinus Serif;18;600;Regular;normal;;LTR
 T	85 73 70 84 70	(these)
 Mx 	20.9764
-My 	140.6853
+My 	115.2357
 T	88 80 83 69 84	(words)
 Mx 	71.4486
 Set font 	Libertinus Serif;18;400;Regular;normal;;LTR
@@ -89,7 +85,7 @@ T	85 80 80	(too)
 Mx 	313.7295
 T	15	(.)
 Mx 	20.9764
-My 	170.4591
+My 	145.0095
 Set font 	Libertinus Serif;18;400;Roman;normal;;LTR
 T	35 86 85	(But)
 Mx 	51.6807
@@ -97,11 +93,7 @@ T	84 85 90 77 70	(style)
 Mx 	91.3311
 T	51 80 78 66 79	(Roman)
 Mx 	148.0454
-T	69 80 70 84 79	(doesn)
-Mx 	191.1734
-T	8	(')
-Mx 	194.5934
-T	85	(t)
+T	69 80 70 84 79 8 85	(doesn't)
 Mx 	205.1558
 T	85 73 83 80 88	(throw)
 Mx 	254.3461
@@ -117,14 +109,14 @@ T	67 70	(be)
 Mx 	392.4672
 T	14	(-)
 Mx 	20.9764
-My 	192.0591
+My 	166.6095
 T	74 79 72	(ing)
 Mx 	50.0807
 T	67 80 77 69	(bold)
 Mx 	82.0667
 T	15	(.)
 Mx 	20.9764
-My 	221.8329
+My 	196.3833
 Set font 	Libertinus Serif;18;400;Italic;normal;;LTR
 T	42	(I)
 Mx 	30.3911
@@ -151,7 +143,7 @@ Mx 	333.8592
 Set font 	Libertinus Serif;18;400;;normal;;LTR
 T	56 73 70 83 70 66 84	(Whereas)
 Mx 	20.9764
-My 	243.4329
+My 	217.9833
 Set font 	Libertinus Serif;18;600;;normal;;LTR
 T	85 73 70 84 70	(these)
 Mx 	66.0910
@@ -164,7 +156,7 @@ T	66 83 70	(are)
 Mx 	204.9744
 T	15	(.)
 Mx 	20.9764
-My 	273.2067
+My 	247.7571
 Set font 	Montserrat;18;400;Italic;normal;;LTR
 T	35	(I)
 Mx 	34.9556
@@ -180,13 +172,9 @@ T	198 145 147 192	(this)
 Mx 	287.9299
 T	141 175 170 198	(font)
 Mx 	332.9772
-T	128 175 132 192 170	(doesn)
-Mx 	387.4812
-T	290	(')
-Mx 	391.2252
-T	198	(t)
+T	128 175 132 192 170 290 198	(doesn't)
 Mx 	20.9764
-My 	294.8067
+My 	269.3571
 T	145 112 211 132	(have)
 Mx 	68.7648
 T	175 170 132	(one)
@@ -203,7 +191,7 @@ T	142 175 147 170 142	(going)
 Mx 	380.0832
 T	198 175	(to)
 Mx 	20.9764
-My 	316.4067
+My 	290.9571
 T	212 175 188 160	(work)
 Mx 	70.5942
 T	145 132 188 132	(here)
@@ -225,7 +213,7 @@ Mx 	349.9332
 Set font 	Montserrat;18;300;Italic;normal;;LTR
 T	212 145 132 170	(when)
 Mx 	20.9764
-My 	338.0067
+My 	312.5571
 T	238 235 235	(300)
 Mx 	59.5796
 T	147 192	(is)
@@ -254,7 +242,7 @@ T	224 301 287 231	(bold)
 Mx 	390.2352
 T	450	(?)
 Mx 	20.9764
-My 	359.6067
+My 	334.1571
 Set font 	Montserrat;18;800;Italic;normal;;LTR
 T	103 301 327	(Not)
 Mx 	59.4912
@@ -266,7 +254,7 @@ T	224 287 202 225 284	(black)
 Mx 	219.2489
 T	449	(.)
 Mx 	20.9764
-My 	389.3806
+My 	363.9310
 Set font 	Montserrat;18;400;Regular;normal;;LTR
 T	61 145	(Oh)
 Mx 	53.1536
@@ -286,7 +274,7 @@ T	192 132 198 192	(sets)
 Mx 	368.5992
 T	198 145 132	(the)
 Mx 	20.9764
-My 	410.9806
+My 	385.5310
 T	141 175 170 198	(font)
 Mx 	63.4010
 T	212 132 147 142 145 198	(weight)
@@ -307,7 +295,7 @@ T	128 132	(de)
 Mx 	391.9272
 T	302	(-)
 Mx 	20.9764
-My 	432.5806
+My 	407.1310
 T	141 112 202 163 198	(fault)
 Mx 	70.2125
 T	112 170 128	(and)
@@ -325,7 +313,7 @@ Mx 	366.7092
 Set font 	Montserrat;18;600;Regular;normal;;LTR
 T	224 337 327	(but)
 Mx 	20.9764
-My 	454.1806
+My 	428.7310
 T	295 301 327	(not)
 Mx 	57.3691
 T	394 388 388	(600)
