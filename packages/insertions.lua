@@ -115,6 +115,7 @@ sees this, magic will happen.
 local _insertionVbox = SILE.nodefactory.newVbox({
   __tostring = function(self) return "I<"..self.nodes[1].."...>" end,
   outputYourself = function(self) end,
+  discardable = true,
   type = "insertionVbox",
   -- And some utility methods to make the insertion processing code
   -- easier to read.
