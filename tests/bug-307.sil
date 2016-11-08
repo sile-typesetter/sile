@@ -3,17 +3,17 @@
 \set[parameter=document.parindent,value=0]
 \set[parameter=document.parskip,value=1ex]
 
-\font[size=18pt]
+\font[size=17pt]
 
-\font[family=Crimson]{\font[style=Italic]{I am italic but \font[weight=600]{these words} should be bold.} Whereas \font[weight=600]{these words} actually are.}
+\font[family=Crimson]{\font[style=Italic]{This paragraph is Crimson, this scentence has style Italic, but \font[weight=600]{these words should be bold}.} Back to Roman with \font[weight=600]{these words in bold}.}
 
-\font[family=Libertinus Serif]{\font[style=Regular]{But it's not just italic style that throws off \font[weight=600]{these words} not being bold, Regular does too.}}
+\font[family=Libertinus Serif]{\font[style=Regular]{This paragraph is Libertinus Serif with style Regular and \font[weight=600]{these words should be bold}.}}
 
-\font[family=Libertinus Serif]{\font[style=Roman]{But style Roman doesn't throw off \font[weight=600]{these words} being bold.}}
+\font[family=Libertinus Serif]{\font[style=Roman]{Still Libertinus Serif here, but this time setting style to Roman and \font[weight=600]{these words should be bold}.}}
 
-\font[family=Libertinus Serif]{\font[style=Italic]{I am italic but \font[weight=600]{these words} should be bold.} Whereas \font[weight=600]{these words} actually are.}
+\font[family=Libertinus Serif]{\font[style=Italic]{Libertinus Serif again but this scentence should be style Italic and \font[weight=600]{these words should be bold}.} Back to no style and \font[weight=600]{these words in bold}.}
 
-\font[family=Montserrat]{\font[style=Italic]{I am not italic because this font doesn't have one and weight selection is going to work here, but why am I weight 200 \font[weight=300]{when 300 is thin,} \font[weight=400]{400 is normal,} \font[weight=600]{and 600 is bold?} \font[weight=800]{Not to mention black.}}
+\font[family=Montserrat]{\font[style=Italic]{Switching to Montserrat for this paragraph with this scentence having style Italic (which this font doesn't have so it should skip it) but no weight selection going on (so it should be 400, not the lowest available of 200). For comparison \font[weight=200]{when 200 is light,} \font[weight=300]{300 is thin,} \font[weight=400]{400 is normal,} \font[weight=600]{600 is bold,} \font[weight=800]{and 800 is black.}}
 
-\font[style=Regular]{Oh but wait, setting style Regular sets the font weight to 300 instead of the 200 default and lets you \font[weight=400]{manually set 400} \font[weight=600]{but not 600!}}}
+\font[family=Montserrat,style=Regular]{One more thing, setting style Regular shouldn't trigger weight 300 and \font[weight=400]{manually setting 400 shouldn't changing anything} \font[weight=600]{but these woulds should be bold (600)!}}}
 \end{document}
