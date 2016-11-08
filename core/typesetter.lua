@@ -471,7 +471,9 @@ SILE.defaultTypesetter = std.object {
     SU.debug("pagebuilder", "OUTPUTTING frame "..self.frame.id)
     local i
     for i = 1,#lines do local l = lines[i]
-      if not self.frame.state.totals.pastTop and not l.discardable then
+      -- Annoyingly, explicit glue *should* disappear at the top of a page.
+      -- if you don't want that, add an empty vbox or something.
+      if not self.frame.state.totals.pastTop and not l.discardable and not l.explicit then
         self.frame.state.totals.pastTop = true
       end
       if self.frame.state.totals.pastTop then
