@@ -112,8 +112,6 @@ SILE.outputters.libtexpdf = {
     self.rule(f:right(), f:top(), 0.5, f:height())
     self.rule(f:left(), f:bottom(), f:width(), 0.5)
     --self.rule(f:left() + f:width()/2 - 5, (f:top() + f:bottom())/2+5, 10, 10)
-    local oldfont = font
-    SILE.outputter.setFont(SILE.font.loadDefaults({}))
     local stuff = SILE.shaper:createNnodes(f.id, SILE.font.loadDefaults({}))
     stuff = stuff[1].nodes[1].value.glyphString -- Horrible hack
     local buf = {}
@@ -123,9 +121,9 @@ SILE.outputters.libtexpdf = {
       buf[#buf+1] = string.char(glyph % 0x100)
     end
     buf = table.concat(buf, "")
+    if font == 0 then SILE.outputter.setFont(SILE.font.loadDefaults({})) end
     pdf.setstring(f:left(), SILE.documentState.paperSize[2] -f:top(), buf, string.len(buf), font, 0)
     pdf.colorpop()
-    font = oldfont
   end,
   debugHbox = function(typesetter, hbox, scaledWidth)
   end
