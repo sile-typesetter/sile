@@ -284,6 +284,7 @@ libraries if they’re not already installed:
 
 \listitem{\code{luarocks install lpeg}}
 \listitem{\code{luarocks install luaexpat}}
+\listitem{\code{luarocks install lua-zlib}}
 \listitem{\code{luarocks install luafilesystem}}
 
 Once you have these requirements in place, you should then be able to unpack

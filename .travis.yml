@@ -64,6 +64,7 @@ before_install:
  - export LD_RUN_PATH=$LUA_HOME_DIR/lib:$LD_RUN_PATH
 install:
  - luarocks install lpeg
+ - luarocks install lua-zlib
  - luarocks install luaexpat
  - luarocks install luafilesystem
  - luarocks install lua_cliargs 2.3-3

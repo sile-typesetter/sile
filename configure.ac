@@ -69,6 +69,7 @@ AX_LUA_LIBS
 # Check for Lua modules
 AX_LUA_MODULE([lpeg], [lpeg])
 AX_LUA_MODULE([lxp], [luaexpat])
+AX_LUA_MODULE([zlib], [lua-zlib])
 AX_LUA_MODULE([lfs], [luafilesystem])
 
 AC_CONFIG_SUBDIRS([libtexpdf])
