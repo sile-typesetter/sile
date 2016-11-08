@@ -2,7 +2,7 @@ local svg = require("svg")
 local pdf = require("justenoughlibtexpdf")
 local parser = require("core/opentype-parser")
 
-local pushSVG = function(string, desiredHeight, em)
+local pushSVG = function(string, desiredHeight, em, drop)
   local figure, width, height = svg.svg_to_ps(string,em)
   local scalefactor = 1
   if desiredHeight then
@@ -19,7 +19,7 @@ local pushSVG = function(string, desiredHeight, em)
       pdf.add_content("q")
       SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
       local x,y = SILE.outputter.cursor()
-      y = y - SILE.documentState.paperSize[2] + height
+      y = y - SILE.documentState.paperSize[2] + (drop and 0 or height)
       pdf.add_content(scalefactor.." 0 0 "..-(scalefactor).." "..x.." "..y.." cm")
       pdf.add_content(figure)
       pdf.add_content("Q")
@@ -43,7 +43,7 @@ SILE.registerCommand("svg-glyph", function(options,content)
   if not face.font.svg then return SILE.process(content) end
   for i =1,#items do
     local svg = parser.getSVG(face, items[i].gid)
-    if svg then pushSVG(svg,nil,12)
+    if svg then pushSVG(svg,fontoptions.size,72,true)
     else
       -- XXX
     end
