@@ -9,3 +9,4 @@ print "$title\n";
 if ($? == 0) { print "travis_fold:start:$fold\r"; }
 print $out_and_err;
 if ($? == 0) { print "travis_fold:end:$fold\r"; }
+exit $? >> 8;
