@@ -2,6 +2,8 @@ local utilities = {}
 
 local bit32 = require("bit32-compat")
 
+math.epsilon = 1E-12
+
 function utilities.required(t, name, context)
   if not t[name] then utilities.error(context.." needs a "..name.." parameter") end
   return t[name]
@@ -35,6 +37,11 @@ end
 
 function utilities.debugging(category)
   return SILE.debugFlags.all or SILE.debugFlags[category]
+end
+
+function utilities.feq(lhs, rhs) -- Float point equal
+  local abs = math.abs
+  return abs(lhs - rhs) <= math.epsilon * (abs(lhs) + abs(rhs))
 end
 
 function utilities.gtoke(string, pattern)

@@ -399,7 +399,7 @@ SILE.defaultTypesetter = std.object {
       SILE.documentState.documentClass:endPage()
       self:initFrame(SILE.documentState.documentClass:newPage())
     end
-    if oldframe:lineWidth() ~= self.frame:lineWidth() then
+    if not SU.feq(oldframe:lineWidth(), self.frame:lineWidth()) then
       self:pushBack()
     end
     self:leaveHmode(true)
