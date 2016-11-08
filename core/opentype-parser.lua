@@ -1,5 +1,6 @@
 local vstruct = require "vstruct"
 local hb = require "justenoughharfbuzz"
+local zlib = require "zlib"
 
 local parseName = function(s)
   if s:len() <= 0 then return end
@@ -200,6 +201,17 @@ local parseFont = function(face)
   return face.font
 end
 
+local decompress = function (s)
+  local f = zlib.inflate()
+  local decompressed = {}
+  while true do
+    local chunk, eof = f(s)
+    decompressed[#decompressed+1] = chunk
+    if eof then break end
+  end
+  return table.concat(decompressed, "")
+end
+
 local getSVG = function(face, gid)
   if not face.font then parseFont(face) end
   if not face.font.svg then return end
@@ -207,7 +219,11 @@ local getSVG = function(face, gid)
   if not item then return end
   local s = hb.get_table(face.data, face.index, "SVG")
   local start = item.svgDocOffset+1
-  return s:sub(start, start + item.svgDocLength-1)
+  local svg = s:sub(start, start + item.svgDocLength-1)
+  if svg[1] == "\x1f" and svg[2] == "\x8b" then
+    svg = decompress(svg)
+  end
+  return svg
 end
 
 return { parseFont = parseFont, getSVG = getSVG }
