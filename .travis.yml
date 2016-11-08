@@ -74,7 +74,7 @@ install:
  - luarocks install luacov-coveralls
 script:
  - echo "travis_fold:start:build"; chronic ./bootstrap.sh && chronic ./configure && chronic make; echo "travis_fold:end:build"
- - echo "travis_fold:start:busted"; chronic busted -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests; echo "travis_fold:start:busted"
+ - echo "travis_fold:start:busted"; chronic busted -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests; echo "travis_fold:end:busted"
  - chronic ./tests/attack.pl --regression 2>/dev/null
  - echo "travis_fold:start:compile_docs"; chronic perl ./tests/attack.pl; echo "travis_fold:end:compile_docs"
  - echo "travis_fold:start:versions"; ./sile --debug=fonts,versions tests/bug-117.sil; echo "travis_fold:end:versions"
