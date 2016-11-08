@@ -13,6 +13,7 @@ addons:
    - libfontconfig1-dev
    - libpng-dev
    - libexpat1-dev
+   - moreutils
 env:
   global:
    - LUAROCKS=2.2.2
@@ -72,10 +73,10 @@ install:
  - luarocks install luacov 0.8-1
  - luarocks install luacov-coveralls
 script:
- - ./bootstrap.sh && ./configure && make
- - busted -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
- - ./tests/attack.pl
- - ./tests/attack.pl --regression
+ - chronic ./bootstrap.sh && chronic ./configure && chronic make
+ - chronic busted -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
+ - chronic perl ./tests/attack.pl
+ - chronic ./tests/attack.pl --regression
  - ./sile --debug=fonts,versions tests/bug-117.sil
 
 after_success:
