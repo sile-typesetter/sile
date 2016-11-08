@@ -385,7 +385,9 @@ SILE.defaultTypesetter = std.object {
   initNextFrame = function(self)
     local oldframe = self.frame
     self.frame:leave()
-    self.state.previousVbox = nil
+    if #self.state.outputQueue == 0 then
+      self.state.previousVbox = nil
+    end
     if (self.frame.next and not (self.state.lastPenalty <= supereject_penalty )) then
       self:initFrame(SILE.getFrame(self.frame.next))
     elseif not self.frame:isMainContentFrame() then
