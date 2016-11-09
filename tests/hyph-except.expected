@@ -4,14 +4,18 @@ Begin page
 Mx 	40.9764
 My 	37.3321
 Set font 	Gentium Plus;10;400;;normal;;LTR
-T	85 68 69 10	(rab')
+T	85 68 69	(rab)
+Mx 	54.6043
+T	10	(')
 Mx 	57.1043
 T	16	(-)
 Mx 	60.4734
 T	69 76 81	(bin)
 Mx 	40.9764
 My 	49.3321
-T	85 68 69 183	(rab’)
+T	85 68 69	(rab)
+Mx 	54.6043
+T	183	(’)
 Mx 	56.8943
 T	16	(-)
 Mx 	60.2635
