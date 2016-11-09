@@ -124,17 +124,28 @@ if icu then
               self:addToken(char,item)
             end
           elseif bp.type == "line" then
-            -- Line break
-            self:makeToken()
-            self:makePenalty(bp.subtype == "soft" and 0 or -1000)
-            self:addToken(char,item)
+            if chardata[cp] and thistype == "sp" then
+              self:makeToken()
+              self:makeGlue()
+            else
+              -- Line break
+              self:makeToken()
+              self:makePenalty(bp.subtype == "soft" and 0 or -1000)
+              self:addToken(char,item)
+            end
           end
         else
+          local thistype = chardata[cp] and chardata[cp].linebreak
           if ics then
             self:makeToken()
             self:makeLetterSpaceGlue()
           end
-          self:addToken(char,item)
+          if chardata[cp] and thistype == "sp" then
+            self:makeToken()
+            self:makeGlue()
+          else
+            self:addToken(char,item)
+          end
         end
       end
       if ics then self:makeLetterSpaceGlue() end
