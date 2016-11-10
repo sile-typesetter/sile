@@ -52,7 +52,7 @@ function pecha:newPage()
 end
 function pecha:registerCommands()
   self.base:registerCommands()
-  SILE.call("language", {main = "bo"})
+  SILE.call("language", { lang = "bo" })
   SILE.settings.set("document.lskip", SILE.nodefactory.hfillGlue)
   SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
   SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
