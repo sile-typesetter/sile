@@ -175,29 +175,36 @@ function SILE.readFile(filename)
   SU.error("No input processor available for "..filename.." (should never happen)",1)
 end
 
-local function file_exists(filename)
-   local file = io.open(filename,"r")
-   if file ~= nil then io.close(file) return true else return false end
+local function file_exists (filename)
+   local file = io.open(filename, "r")
+   if file ~= nil then return io.close(file) else return false end
 end
 
+-- Sort through possible places files could be
 function SILE.resolveFile(filename, pathprefix)
-  if file_exists(filename) then return filename end
-  if file_exists(filename..".sil") then return filename..".sil" end
-  if not SILE.masterFilename then return nil end
-
-  local dirname = SILE.masterFilename:match("(.-)[^%/]+$")
-  for k in SU.gtoke(dirname..";"..tostring(os.getenv("SILE_PATH")), ";") do
-    if k.string then
-      if pathprefix then
-        local file = std.io.catfile(k.string, pathprefix, filename)
-        if file_exists(file) then return file end
-        if file_exists(file..".sil") then return file..".sil" end
+  local candidates = {}
+  -- Start with the raw file name as given prefixed with a path if requested
+  if pathprefix then candidates[#candidates+1] = std.io.catfile(pathprefix, filename) end
+  -- Also check the raw file name without a path
+  candidates[#candidates+1] = filename
+  -- Iterate through the directory of the master file, the SILE_PATH variable, and the current directory
+  -- Check for prefixed paths first, then the plain path in that fails
+  if SILE.masterFilename then
+    local dirname = SILE.masterFilename:match("(.-)[^%/]+$")
+    for path in SU.gtoke(dirname..";"..tostring(os.getenv("SILE_PATH")), ";") do
+      if path.string and path.string ~= "nil" then
+        if pathprefix then candidates[#candidates+1] = std.io.catfile(path.string, pathprefix, filename) end
+        candidates[#candidates+1] = std.io.catfile(path.string, filename)
       end
-      local file = std.io.catfile(k.string, filename)
-      if file_exists(file) then return file end
-      if file_exists(file..".sil") then return file..".sil" end
     end
   end
+  -- Return the first candidate that exists, also checking the .sil suffix
+  for i, v in pairs(candidates) do
+    if file_exists(v) then return v end
+    if file_exists(v..".sil") then return v .. ".sil" end
+  end
+  -- If we got here then no files existed even resembling the requested one
+  return nil
 end
 
 function SILE.call(cmd, options, content)
