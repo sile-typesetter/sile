@@ -26,15 +26,15 @@ SILE.languageSupport = {
 }
 
 SILE.registerCommand("language", function (options, content)
-  local lang = SU.required(options, "lang", "language setting")
-  SILE.languageSupport.loadLanguage(lang)
+  local main = SU.required(options, "main", "language setting")
+  SILE.languageSupport.loadLanguage(main)
   if content[1] then
     SILE.settings.temporarily(function ()
-      SILE.settings.set("document.language", lang)
+      SILE.settings.set("document.language", main)
       SILE.process(content)
     end)
   else
-    SILE.settings.set("document.language", lang)
+    SILE.settings.set("document.language", main)
   end
 end)
 

@@ -32,7 +32,7 @@ end
 
 function jbook:registerCommands()
   self.base:registerCommands()
-  SILE.call("language", { lang = "ja" })
+  SILE.call("language", { main = "ja" })
 end
 
 SILE.settings.set("document.parindent",SILE.nodefactory.newGlue("10pt"))

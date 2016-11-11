@@ -1,5 +1,5 @@
 \begin[papersize=a5]{document}
-\language[lang=tr]
+\language[main=tr]
 \hyphenator:add-exceptions{rab’-bin rab'-bin}
 
 \script{SILE.typesetter:typeset(showHyphenationPoints("rab'bin", "tr"))}
