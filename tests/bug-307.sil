@@ -1,4 +1,4 @@
-\begin[papersize=a5]{document}
+\begin[papersize=a5]{document}% KNOWNBAD
 \nofolios
 \set[parameter=document.parindent,value=0]
 \set[parameter=document.parskip,value=1ex]
