@@ -23,7 +23,11 @@
 
       if (options.language)  then
         if icu and icu.canonicalize_language then
-          options.language = icu.canonicalize_language(options.language)
+          local newlang = icu.canonicalize_language(options.language)
+          if newlang ~= options.language then
+            SU.warn("Language '"..options.language.."' not canonical, '"..newlang.."' will be used instead.")
+          end
+          options.language = newlang
         end
         SILE.settings.set("document.language", options.language)
         SILE.languageSupport.loadLanguage(options.language)

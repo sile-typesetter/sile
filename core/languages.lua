@@ -8,6 +8,7 @@ SILE.languageSupport = {
     if ok then return end
     ok, fail = pcall(function () SILE.require("languages/"..language) end)
     if fail then
+      if fail:match("not found") then fail = "no support for this language" end
       SU.warn("Error loading language "..language..": "..fail)
       SILE.languageSupport.languages[language] = {} -- Don't try again
     end
