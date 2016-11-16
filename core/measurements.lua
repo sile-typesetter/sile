@@ -73,6 +73,16 @@ SILE.registerUnit("%lw", { relative = true, definition = function (v)
   local lw = SILE.typesetter.frame:lineWidth() - left - right
   return v / 100 * lw.length
 end})
+SILE.registerUnit("ps", { relative = true, definition = function (v)
+  local ps = SILE.settings.get("document.parskip") or SILE.length.parse("0")
+  ps = ps.height and ps.height:absolute() or ps:absolute()
+  return v * ps.length
+end})
+SILE.registerUnit("bs", { relative = true, definition = function (v)
+  local bs = SILE.settings.get("document.baselineskip") or SILE.length.parse("0")
+  bs = bs.height and bs.height:absolute() or bs:absolute()
+  return v * bs.length
+end})
 SILE.registerUnit("em", { relative = true, definition = function (v)
   return v * SILE.settings.get("font.size")
 end})
