@@ -59,22 +59,28 @@ int icu_case(lua_State *L) {
   }
 
   int32_t l3 = 0;
-  u_strToUTF8(NULL, 0, &l3, output, l2, &err);
-  err = U_ZERO_ERROR;
-  char* utf8output = malloc(l3);
-  u_strToUTF8(utf8output, l3, NULL, output, l2, &err);
-  utf8output[l3] = '\0';
-  if (!U_SUCCESS(err)) {
+  char possibleOutbuf[4096];
+  u_strToUTF8(possibleOutbuf, 4096, &l3, output, l2, &err);
+  if (U_SUCCESS(err)) {
+    lua_pushstring(L, possibleOutbuf);
+    free(input_as_uchar);
+    free(output);
+    return 1;
+  }
+  char *utf8output;
+  if (err == U_BUFFER_OVERFLOW_ERROR) {
+    utf8output = malloc(l3);
+    u_strToUTF8(utf8output, l3, NULL, output, l2, &err);
+    if (!U_SUCCESS(err)) goto fail;
+    utf8output[l3] = '\0';
+    lua_pushstring(L, utf8output);
     free(input_as_uchar);
     free(output);
     free(utf8output);
-    return luaL_error(L, "Error in UTF8 conversion %s", u_errorName(err));
+    return 1;
   }
-  lua_pushstring(L, utf8output);
-  free(input_as_uchar);
-  free(output);
-  free(utf8output);
-  return 1;
+  fail:
+    return luaL_error(L, "Error in UTF8 conversion %s", u_errorName(err));
 }
 
 int icu_breakpoints(lua_State *L) {
