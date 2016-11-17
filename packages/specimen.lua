@@ -34,3 +34,20 @@ SILE.registerCommand("pangrams", function (o,c)
   end
   SILE.call("bigskip")
 end)
+
+SILE.registerCommand("set-to-width", function(options,content)
+  local width = SILE.length.parse(SU.required(options, "width", "set to width"))
+  local fontOptions = SILE.font.loadDefaults({})
+  for line in SU.gtoke(content[1],"\n+") do
+    if line.string then
+      local tokens = SILE.shaper:shapeToken(line.string,fontOptions)
+      local w = 0
+      for j= 1,#tokens do w = w + tokens[j].width end
+      local ratio = width.length / w
+      SILE.call("font", {size = fontOptions.size * ratio}, function()
+        SILE.process({line.string})
+        SILE.call("par")
+      end)
+    end
+  end
+end)
