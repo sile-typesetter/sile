@@ -66,9 +66,9 @@ function utilities.gtoke(string, pattern)
   end)
 end
 
-function utilities.debug(category, messages)
+function utilities.debug(category, ...)
   if utilities.debugging(category) then
-    print("["..category.."]", messages)
+    print("["..category.."]", ...)
   end
 end
 
