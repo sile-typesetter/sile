@@ -1,4 +1,4 @@
-local plain = SILE.require("classes/plain");
+local plain = SILE.require("plain", "classes");
 local perseus = plain { id = "perseus" };
 SILE.scratch.perseus = {}
 perseus:declareFrame("a",    { left = "8.3%pw",          right = "48%pw",            top = "11.6%ph",        bottom = "80%ph",         next="b" });

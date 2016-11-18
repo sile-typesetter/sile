@@ -1,4 +1,4 @@
-local plain = SILE.require("classes/plain")
+local plain = SILE.require("plain", "classes")
 local testtwocols = plain { id = "testtwocols" }
 
 local gutterWidth = "3%pw"

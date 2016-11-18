@@ -1,4 +1,4 @@
-local plain = SILE.require("classes/plain")
+local plain = SILE.require("plain", "classes")
 local pecha = plain { id = "pecha", base = plain }
 
 pecha:declareFrame("content", {left = "5%pw",  right = "95%pw",  top = "5%ph",  bottom = "90%ph" })

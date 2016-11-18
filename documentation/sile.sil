@@ -2041,7 +2041,7 @@ how we set up the inheritance:
 
 \begin{verbatim}
 \line
-local book = SILE.require("classes/book")
+local book = SILE.require("book", "classes")
 local bringhurst = book \{ id = "bringhurst" \}
 ...
 return bringhurst
@@ -2584,7 +2584,7 @@ frames:
 
 \begin{verbatim}
 \line
-local plain = SILE.require("classes/plain");
+local plain = SILE.require("plain", "classes");
 local diglot = std.tree.clone(plain);
 SILE.require("packages/counters");
 SILE.scratch.counters.folio = \{ value = 1, display = "arabic" \};
@@ -2965,7 +2965,7 @@ Here’s how to do it.
 \line
 require("core/sile")
 SILE.outputFilename = "byhand.pdf"
-local plain = require("classes/plain")
+local plain = require("plain", "classes")
 SILE.documentState.documentClass = plain;
 local ff = plain:init()
 SILE.typesetter:init(ff)

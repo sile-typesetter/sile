@@ -1,5 +1,5 @@
 -- Basic! Transitional! In development! Not very good! Don't use it!
-local plain = SILE.require("classes/plain")
+local plain = SILE.require("plain", "classes")
 local jplain = plain { id = "jplain", base = plain }
 
 SILE.call("bidi-off")

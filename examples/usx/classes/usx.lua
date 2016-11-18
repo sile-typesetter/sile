@@ -1,4 +1,4 @@
-local bible = SILE.require("classes/bible");
+local bible = SILE.require("bible", "classes");
 local usx = bible { id = "usx", base = bible };
 
 SILE.registerCommand("para", function (options, content)
