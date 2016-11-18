@@ -72,6 +72,10 @@ function utilities.debug(category, ...)
   end
 end
 
+function utilities.dump(...)
+  require("pl.pretty").dump(..., "/dev/stderr")
+end
+
 function utilities.concat(array, c)
   return table.concat(utilities.map(tostring, array), c)
 end
