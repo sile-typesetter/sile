@@ -67,13 +67,15 @@ function utilities.gtoke(string, pattern)
 end
 
 function utilities.debug(category, ...)
+  local arg = { ... } -- Avoid things that Lua stuffs in arg like args to self()
   if utilities.debugging(category) then
-    print("["..category.."]", ...)
+    print("["..category.."]", arg)
   end
 end
 
 function utilities.dump(...)
-  require("pl.pretty").dump(..., "/dev/stderr")
+  local arg = { ... } -- Avoid things that Lua stuffs in arg like args to self()
+  require("pl.pretty").dump(arg, "/dev/stderr")
 end
 
 function utilities.concat(array, c)
