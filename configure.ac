@@ -72,6 +72,9 @@ AX_LUA_MODULE([lxp], [luaexpat])
 AX_LUA_MODULE([zlib], [lua-zlib])
 AX_LUA_MODULE([lfs], [luafilesystem])
 
+AC_ARG_ENABLE([linklua],
+    AS_HELP_STRING([--disable-linklua], [Don't link lua library with dylibs]))
+
 AC_CONFIG_SUBDIRS([libtexpdf])
 PKG_CHECK_MODULES(LIBTHAI, libthai, [
   AC_DEFINE([LIBTHAI], [1], [Build using libthai])
@@ -106,6 +109,7 @@ adl_RECURSIVE_EVAL(["${libdir}/${PACKAGE}"], [SILE_LIB_PATH])
 AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"],[Path for SILE libraries])
 
 AM_CONDITIONAL([ICU], [test "x$with_icu" = "xyes"])
+AM_CONDITIONAL([LINKLUA], [test "x$enable_linklua" != "xno"])
 AM_CONDITIONAL([LIBTHAI], [test "x$with_libthai" = "xyes"])
 
 AC_CANONICAL_HOST
