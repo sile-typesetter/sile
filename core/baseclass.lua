@@ -193,6 +193,12 @@ SILE.baseClass = std.object {
     -- })
   end,
 
+  declareFrames = function (self, specs)
+    if specs then
+      for k, v in ipairs(specs) do self:declareFrame(k, v) end
+    end
+  end,
+
   newPage = function(self)
     SILE.outputter:newPage()
     -- Any other output-routiney things will be done here by inheritors
