@@ -22,7 +22,7 @@ SILE.inputs.markdown = {
 
 SILE.require("packages/url")
 
-local book = SILE.require("classes/book")
+local book = SILE.require("book", "classes")
 
 SILE.registerCommand("sect1", function(options, content)
   SILE.call("chapter", options, content)

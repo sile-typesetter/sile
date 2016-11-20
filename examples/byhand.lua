@@ -4,7 +4,7 @@ package.cpath = package.cpath .. ";core/?.so;/usr/local/lib/sile/?.so;"
 require("core/sile")
 SILE.init()
 SILE.outputFilename="byhand.pdf"
-local plain = require("classes/plain")
+local plain = require("plain", "classes")
 plain.options.papersize("a4")
 SILE.documentState.documentClass = plain;
 local ff = plain:init()

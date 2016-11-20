@@ -1,4 +1,4 @@
-local plain = SILE.require("classes/plain")
+local plain = SILE.require("plain", "classes")
 local book = plain { id = "book" }
 book:loadPackage("masters")
 book:defineMaster({ id = "right", firstContentFrame = "content", frames = {

@@ -1,4 +1,4 @@
-local plain = SILE.require("classes/plain")
+local plain = SILE.require("plain", "classes")
 docbook = plain { id = "docbook" }
 SILE.scratch.docbook = {
   seclevel = 0,

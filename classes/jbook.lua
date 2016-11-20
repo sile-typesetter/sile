@@ -1,4 +1,4 @@
-local book = SILE.require("classes/book")
+local book = SILE.require("book", "classes")
 local jbook = book { id = "jbook", base = book }
 
 SILE.call("bidi-off")

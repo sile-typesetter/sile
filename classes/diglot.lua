@@ -1,4 +1,4 @@
-local plain = SILE.require("classes/plain")
+local plain = SILE.require("plain", "classes")
 local diglot = std.tree.clone(plain)
 SILE.require("packages/counters")
 SILE.scratch.counters.folio = { value = 1, display = "arabic" }

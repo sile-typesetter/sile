@@ -1,4 +1,4 @@
-local plain = SILE.require("classes/plain")
+local plain = SILE.require("plain", "classes")
 local bible = plain { id = "bible", base = plain }
 if not(SILE.scratch.headers) then SILE.scratch.headers = {}; end
 

@@ -2,7 +2,7 @@ SILE.inputs.common = {
   init = function(fn, t)
     local dclass = t.attr.class or "plain"
     t.attr.papersize = t.attr.papersize or "a4"
-    SILE.documentState.documentClass = SILE.require("classes/"..dclass)
+    SILE.documentState.documentClass = SILE.require(dclass, "classes")
     for k,v in pairs(t.attr) do
       if SILE.documentState.documentClass.options[k] then
         SILE.documentState.documentClass.options[k](v)
