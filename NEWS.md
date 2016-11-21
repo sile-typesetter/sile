@@ -1,5 +1,9 @@
 ## What's new in SILE
 
+## Version 0.9.5 (unreleased)
+
+* ICU is now required for correct Unicode processing.
+
 ## Version 0.9.4 (2016-08-31)
 
 Nearly 600 changes, including:

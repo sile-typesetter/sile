@@ -1,5 +1,6 @@
 require("char-def")
 local chardata  = characters.data
+icu = require("justenoughicu")
 
 SILE.nodeMakers.base = std.object {
   makeToken = function(self)
@@ -48,7 +49,6 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
   isWordType = { cm = true },
   isSpaceType = { sp = true },
   isBreakingType = { ba = true, zw = true },
-  
   dealWith = function (self, item)
     local char = item.text
     local cp = SU.codepoint(char)
@@ -73,18 +73,6 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
     if not self.isWordType[thistype] then lasttype = chardata[cp] and chardata[cp].linebreak end
   end,
   iterator = function (self, items)
-    self:init()
-    return coroutine.wrap(function()
-      for i = 1,#items do self:dealWith(items[i]) end
-      if SILE.settings.get("document.letterspaceglue") then self:makeLetterSpaceGlue() end
-      self:makeToken()
-    end)
-  end
-}
-
-pcall( function () icu = require("justenoughicu") end)
-if icu then
-  SILE.nodeMakers.unicode.iterator = function (self, items)
     local fulltext = ""
     local ics = SILE.settings.get("document.letterspaceglue")
     for i = 1,#items do item = items[i]
@@ -152,4 +140,4 @@ if icu then
       self:makeToken()
     end)
   end
-end
+}

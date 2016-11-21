@@ -97,8 +97,7 @@ PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
     with_icu=yes
     AC_MSG_RESULT([yes])
   else
-    AC_MSG_RESULT([no])
-    with_icu=no
+    AC_MSG_FAILURE([Required ICU library not found])
   fi
 ])
 

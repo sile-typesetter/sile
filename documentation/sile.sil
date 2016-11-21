@@ -272,12 +272,12 @@ Ubuntu, you should be able to install most of the needed dependencies by
 issuing the command:
 
 \listitem{\code{apt-get install liblua5.2-dev lua-expat lua-lpeg
-	libharfbuzz-dev libfreetype6-dev libfontconfig1-dev libpng-dev}}
+	libharfbuzz-dev libfreetype6-dev libfontconfig1-dev libpng-dev libicu-dev}}
 
 Here’s an incantation that will work on most Redhat-based Linux distros:
 
 \listitem{\code{yum install harfbuzz-devel make automake libtool gcc
-freetype-devel fontconfig-devel lua-devel lua-lpeg lua-expat libpng-devel}}
+freetype-devel fontconfig-devel lua-devel lua-lpeg lua-expat libpng-devel libicu-devel}}
 
 Once these dependencies are installed, you also need to install some Lua
 libraries if they’re not already installed:
