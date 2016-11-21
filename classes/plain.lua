@@ -1,16 +1,26 @@
 plain = SILE.baseClass { id = "plain" }
 
-plain.options.direction = function (g)
-  if g then plain.pageTemplate.frames["content"].direction = g end
+plain.options.direction = function (value)
+  if value then plain.pageTemplate.frames["content"].direction = value end
 end
 
-plain:declareFrame("content", { left = "5%pw",  right = "95%pw",  top = "5%ph",  bottom = "90%ph" })
-plain:declareFrame("folio",   { left = "5%pw",  right = "95%pw",  top = "92%ph", bottom = "97%ph" })
+plain:declareFrame("content", {
+    left = "5%pw",
+    right = "95%pw",
+    top = "5%ph",
+    bottom = "90%ph"
+  })
+plain:declareFrame("folio", {
+    left = "5%pw",
+    right = "95%pw",
+    top = "92%ph",
+    bottom = "97%ph"
+  })
 
 plain.pageTemplate.firstContentFrame = plain.pageTemplate.frames["content"]
 plain:loadPackage("folio")
 
-plain.endPage = function(self)
+plain.endPage = function (self)
   plain:outputFolio()
   return SILE.baseClass.endPage(self)
 end
@@ -18,8 +28,8 @@ end
 local options = {}
 plain.declareOption = function (self, name, default)
   options[name] = default
-  self.options[name] = function (g)
-    if g then options[name] = g end
+  self.options[name] = function (value)
+    if value then options[name] = value end
     return options[name]
   end
 end
@@ -36,43 +46,43 @@ end, "Do add an indent to the start of this paragraph, even if previously told o
 
 local skips = {
   small = "3pt plus 1pt minus 1pt",
-  med   = "6pt plus 2pt minus 2pt",
-  big   = "12pt plus 4pt minus 4pt"
+    med = "6pt plus 2pt minus 2pt",
+    big = "12pt plus 4pt minus 4pt"
 }
 
 for k, v in pairs(skips) do
   SILE.settings.declare({
-    name = "plain."..k.."skipamount",
-    type="VGlue",
+    name = "plain." .. k .. "skipamount",
+    type = "VGlue",
     default = SILE.nodefactory.newVglue(v),
-    help = "The amount of a \\"..k.."skip"
+    help = "The amount of a \\" .. k .. "skip"
   })
-  SILE.registerCommand(k.."skip", function (options, content)
+  SILE.registerCommand(k .. "skip", function (options, content)
     SILE.typesetter:leaveHmode()
-    SILE.typesetter:pushExplicitVglue(SILE.settings.get("plain."..k.."skipamount"))
-  end, "Skip vertically by a "..k.." amount")
+    SILE.typesetter:pushExplicitVglue(SILE.settings.get("plain." .. k .. "skipamount"))
+  end, "Skip vertically by a " .. k .. " amount")
 end
 
-SILE.registerCommand("hfill", function(options, content)
+SILE.registerCommand("hfill", function (options, content)
   SILE.typesetter:pushExplicitGlue(SILE.nodefactory.hfillGlue)
 end, "Add a huge horizontal glue")
 
-SILE.registerCommand("vfill", function(options, content)
+SILE.registerCommand("vfill", function (options, content)
   SILE.typesetter:leaveHmode()
   SILE.typesetter:pushExplicitVglue(SILE.nodefactory.vfillGlue)
 end, "Add huge vertical glue")
 
-SILE.registerCommand("hss", function(options, content)
+SILE.registerCommand("hss", function (options, content)
   SILE.typesetter:initline()
   SILE.typesetter:pushGlue(SILE.nodefactory.hssGlue)
   table.insert(SILE.typesetter.state.nodes, SILE.nodefactory.zeroHbox)
 end, "Add glue which stretches and shrinks horizontally (good for centering)")
 
-SILE.registerCommand("vss", function(options, content)
+SILE.registerCommand("vss", function (options, content)
   SILE.typesetter:pushExplicitVglue(SILE.nodefactory.vssGlue)
 end, "Add glue which stretches and shrinks vertically")
 
-plain.registerCommands = function()
+plain.registerCommands = function ()
   SILE.baseClass.registerCommands()
   SILE.doTexlike([[\define[command=thinspace]{\glue[width=0.16667em]}%
 \define[command=negthinspace]{\glue[width=-0.16667em]}%
@@ -112,8 +122,8 @@ SILE.registerCommand("}", function (options, content) SILE.typesetter:typeset("}
 SILE.registerCommand("%", function (options, content) SILE.typesetter:typeset("%") end)
 SILE.registerCommand("\\", function (options, content) SILE.typesetter:typeset("\\") end)
 
-SILE.registerCommand("ragged", function(options, content)
-  SILE.settings.temporarily(function()
+SILE.registerCommand("ragged", function (options, content)
+  SILE.settings.temporarily(function ()
     if options.left then SILE.settings.set("document.lskip", SILE.nodefactory.hfillGlue) end
     if options.right then SILE.settings.set("document.rskip", SILE.nodefactory.hfillGlue) end
     SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
@@ -178,7 +188,7 @@ end, "Compiles all the enclosed horizontal-mode material into a single hbox")
 
 SILE.registerCommand("vbox", function (options, content)
   local vbox
-  SILE.settings.temporarily(function()
+  SILE.settings.temporarily(function ()
     if (options.width) then SILE.settings.set("typesetter.breakwidth", SILE.length.parse(options.width)) end
     SILE.typesetter:pushState()
     SILE.process(content)

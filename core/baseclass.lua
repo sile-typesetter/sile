@@ -7,7 +7,6 @@ function SILE.registerCommand (name, func, help, pack)
     pack = where:match("(%w+).lua")
   end
   --if not help and not pack:match(".sil") then SU.error("Could not define command '"..name.."' (in package "..pack..") - no help text" ) end
-
   SILE.Help[name] = {
     description = help,
     where = pack
@@ -15,7 +14,7 @@ function SILE.registerCommand (name, func, help, pack)
 end
 
 function SILE.doTexlike (doc)
-  doc = "\\begin{document}"..doc.."\\end{document}"
+  doc = "\\begin{document}" .. doc .. "\\end{document}"
   SILE.process(SILE.inputs.TeXlike.docToTree(doc))
 end
 
@@ -23,7 +22,7 @@ end
 local commandStack = {}
 SILE.registerCommand("define", function (options, content)
   SU.required(options, "command", "defining command")
-  SILE.registerCommand(options["command"], function(options2, content2)
+  SILE.registerCommand(options["command"], function (options2, content2)
     --local prevState = SILE.documentState
     --SILE.documentState = std.tree.clone( prevState )
     local depth = #commandStack
@@ -34,18 +33,18 @@ SILE.registerCommand("define", function (options, content)
   end, options.help, SILE.currentlyProcessingFile)
 end, "Define a new macro. \\define[command=example]{ ... \\process }")
 
-SILE.registerCommand("comment", function(options, content)
+SILE.registerCommand("comment", function (options, content)
 end, "Ignores any text within this command's body.")
 
-SILE.registerCommand("process", function()
+SILE.registerCommand("process", function ()
   SILE.process(table.remove(commandStack))
 end, "Within a macro definition, processes the contents of the macro body.")
 
 SILE.baseClass = std.object {
-  registerCommands = (function()
-    SILE.registerCommand("\\", function(options, content) SILE.typesetter:typeset("\\") end)
+  registerCommands = (function ()
+    SILE.registerCommand("\\", function (options, content) SILE.typesetter:typeset("\\") end)
 
-    SILE.registerCommand("script", function(options, content)
+    SILE.registerCommand("script", function (options, content)
       if (options["src"]) then
         require(options["src"])
       else
@@ -55,7 +54,7 @@ SILE.baseClass = std.object {
       end
     end, "Runs lua code. The code may be supplied either inline or using the src=... option. (Think HTML.)")
 
-    SILE.registerCommand("include", function(options, content)
+    SILE.registerCommand("include", function (options, content)
         SILE.readFile(options["src"])
     end, "Includes a SILE file for processing.")
 
@@ -70,44 +69,44 @@ SILE.baseClass = std.object {
       SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newFrame(options)
     end, "Declares (or re-declares) a frame on this page.")
 
-    SILE.registerCommand("penalty", function(options, content)
+    SILE.registerCommand("penalty", function (options, content)
       if options.vertical and not SILE.typesetter:vmode() then
         SILE.typesetter:leaveHmode()
       end
       if SILE.typesetter:vmode() then
-        SILE.typesetter:pushVpenalty({ flagged= tonumber(options.flagged), penalty = tonumber(options.penalty) })
+        SILE.typesetter:pushVpenalty({ flagged = tonumber(options.flagged), penalty = tonumber(options.penalty) })
       else
-        SILE.typesetter:pushPenalty({ flagged= tonumber(options.flagged), penalty = tonumber(options.penalty) })
+        SILE.typesetter:pushPenalty({ flagged = tonumber(options.flagged), penalty = tonumber(options.penalty) })
       end
     end, "Inserts a penalty node. Options are penalty= for the size of the penalty and flagged= if this is a flagged penalty.")
 
-    SILE.registerCommand("discretionary", function(options, content)
-      local d = SILE.nodefactory.newDiscretionary({})
+    SILE.registerCommand("discretionary", function (options, content)
+      local discretionary = SILE.nodefactory.newDiscretionary({})
       if options.prebreak then
-        SILE.call("hbox", {}, function() SILE.typesetter:typeset(options.prebreak) end)
-        d.prebreak = { SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] }
+        SILE.call("hbox", {}, function () SILE.typesetter:typeset(options.prebreak) end)
+        discretionary.prebreak = { SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] }
         SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
       end
       if options.postbreak then
-        SILE.call("hbox", {}, function() SILE.typesetter:typeset(options.postbreak) end)
-        d.postbreak = { SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] }
+        SILE.call("hbox", {}, function () SILE.typesetter:typeset(options.postbreak) end)
+        discretionary.postbreak = { SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] }
         SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
       end
       if options.replacement then
-        SILE.call("hbox", {}, function() SILE.typesetter:typeset(options.replacement) end)
-        d.replacement = { SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] }
+        SILE.call("hbox", {}, function () SILE.typesetter:typeset(options.replacement) end)
+        discretionary.replacement = { SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] }
         SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
       end
-      table.insert(SILE.typesetter.state.nodes, d)
+      table.insert(SILE.typesetter.state.nodes, discretionary)
     end, "Inserts a discretionary node.")
 
-    SILE.registerCommand("glue", function(options, content)
+    SILE.registerCommand("glue", function (options, content)
       SILE.typesetter:pushGlue({
         width = SILE.length.parse(options.width):absolute()
       })
     end, "Inserts a glue node. The width option denotes the glue dimension.")
 
-    SILE.registerCommand("kern", function(options, content)
+    SILE.registerCommand("kern", function (options, content)
       table.insert(SILE.typesetter.state.nodes,
         SILE.nodefactory.newKern({
           width = SILE.length.parse(options.width):absolute()
@@ -115,7 +114,7 @@ SILE.baseClass = std.object {
       )
     end, "Inserts a glue node. The width option denotes the glue dimension.")
 
-    SILE.registerCommand("skip", function(options, content)
+    SILE.registerCommand("skip", function (options, content)
       options.discardable = options.discardable or false
       options.height = SILE.length.parse(options.height):absolute()
       SILE.typesetter:leaveHmode()
@@ -126,18 +125,18 @@ SILE.baseClass = std.object {
       end
     end, "Inserts vertical skip. The height options denotes the skip dimension.")
 
-    SILE.registerCommand("par", function(options, content)
+    SILE.registerCommand("par", function (options, content)
       SILE.typesetter:endline()
     end, "Ends the current paragraph.")
 
   end),
 
-  pageTemplate = std.object { frames= {}, firstContentFrame= nil },
+  pageTemplate = std.object { frames = {}, firstContentFrame = nil },
 
   deferredInit = {},
 
-  loadPackage = function(self, packname, args)
-    local pack = require("packages/"..packname)
+  loadPackage = function (self, packname, args)
+    local pack = require("packages/" .. packname)
     if type(pack) == "table" then
       if pack.exports then self:mapfields(pack.exports) end
       if pack.init then
@@ -146,7 +145,7 @@ SILE.baseClass = std.object {
     end
   end,
 
-  init = function(self)
+  init = function (self)
     SILE.settings.declare({
       name = "current.parindent",
       type = "Glue or nil",
@@ -165,10 +164,10 @@ SILE.baseClass = std.object {
     return self:initialFrame()
   end,
 
-  initialFrame= function(self)
+  initialFrame = function (self)
     SILE.documentState.thisPageTemplate = std.tree.clone(self.pageTemplate)
     local p = SILE.frames.page
-    SILE.frames = {page = p}
+    SILE.frames = { page = p }
     for k,v in pairs(SILE.documentState.thisPageTemplate.frames) do
       SILE.frames[k] = v
     end
@@ -177,16 +176,16 @@ SILE.baseClass = std.object {
   end,
 
   declareFrame = function (self, id, spec)
-    -- local fW = function (val) return function() return SILE.parseComplexFrameDimension(val, "w"); end end
-    -- local fH = function (val) return function() return SILE.parseComplexFrameDimension(val, "h"); end end
+    -- local fW = function (val) return function () return SILE.parseComplexFrameDimension(val, "w"); end end
+    -- local fH = function (val) return function () return SILE.parseComplexFrameDimension(val, "h"); end end
     spec.id = id
     SILE.frames[id] = nil
     self.pageTemplate.frames[id] = SILE.newFrame(spec)
-    --   next= spec.next,
-    --   left= spec.left and fW(spec.left),
-    --   right= spec.right and fW(spec.right),
-    --   top= spec.top and fH(spec.top),
-    --   bottom= spec.bottom and fH(spec.bottom),
+    --   next = spec.next,
+    --   left = spec.left and fW(spec.left),
+    --   right = spec.right and fW(spec.right),
+    --   top = spec.top and fH(spec.top),
+    --   bottom = spec.bottom and fH(spec.bottom),
     --   height = spec.height and fH(spec.height),
     --   width = spec.width and fH(spec.width),
     --   id = id
@@ -199,20 +198,20 @@ SILE.baseClass = std.object {
     end
   end,
 
-  newPage = function(self)
+  newPage = function (self)
     SILE.outputter:newPage()
     -- Any other output-routiney things will be done here by inheritors
     return self:initialFrame()
   end,
 
-  endPage= function()
+  endPage = function ()
     SILE.typesetter.frame:leave()
     -- I'm trying to call up a new frame here, don't cause a page break in the current one
     -- SILE.typesetter:leaveHmode()
     -- Any other output-routiney things will be done here by inheritors
   end,
 
-  finish = function(self)
+  finish = function (self)
     SILE.call("vfill")
     while not (#SILE.typesetter.state.nodes == 0 and #SILE.typesetter.state.outputQueue == 0) do
       SILE.call("supereject")
@@ -228,21 +227,27 @@ SILE.baseClass = std.object {
     SILE.outputter:finish()
   end,
 
-  newPar = function(typesetter)
+  newPar = function (typesetter)
     typesetter:pushGlue(SILE.settings.get("current.parindent") or SILE.settings.get("document.parindent"))
     SILE.settings.set("current.parindent", nil)
   end,
 
-  endPar = function(typesetter)
+  endPar = function (typesetter)
     local g = SILE.settings.get("document.parskip")
     typesetter:pushVglue(std.tree.clone(g))
   end,
 
-  options= {
-    papersize= function(size)
+  options = {
+    papersize = function (size)
       SILE.documentState.paperSize = SILE.paperSizeParser(size)
       SILE.documentState.orgPaperSize = SILE.documentState.paperSize
-      SILE.newFrame({id = "page", left = 0, top = 0, right = SILE.documentState.paperSize[1], bottom = SILE.documentState.paperSize[2] })
+      SILE.newFrame({
+          id = "page",
+          left = 0,
+          top = 0,
+          right = SILE.documentState.paperSize[1],
+          bottom = SILE.documentState.paperSize[2]
+        })
     end
   }
 }
