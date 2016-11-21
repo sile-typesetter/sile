@@ -1,42 +1,40 @@
 SILE.languageSupport = {
   languages = {},
-  loadLanguage = function(language)
+  loadLanguage = function (language)
     if SILE.languageSupport.languages[language] then return end
     if SILE.hyphenator.languages[language] then return end
     if not(language) or language == "" then language = "en" end
-    ok, fail = pcall(function () SILE.require("languages/"..language.."-compiled") end)
+    ok, fail = pcall(function () SILE.require("languages/" .. language .. "-compiled") end)
     if ok then return end
-    ok, fail = pcall(function () SILE.require("languages/"..language) end)
+    ok, fail = pcall(function () SILE.require("languages/" .. language) end)
     if fail then
       if fail:match("not found") then fail = "no support for this language" end
-      SU.warn("Error loading language "..language..": "..fail)
+      SU.warn("Error loading language " .. language .. ": " .. fail)
       SILE.languageSupport.languages[language] = {} -- Don't try again
     end
   end,
-  compile = function(language)
+  compile = function (language)
     local ser = require("serpent")
     -- Ensure things are loaded
     SILE.languageSupport.loadLanguage(language)
-    SILE.hyphenate({ SILE.nodefactory.newNnode({language=language, text=""}) })
-    local f = io.open("languages/"..language.."-compiled.lua", "w")
-    f:write("_hyphenators."..language.."="..ser.line(_hyphenators[language]).."\n")
-    f:write("SILE.hyphenator.languages."..language.."="..ser.line(SILE.hyphenator.languages[language]).."\n")
-    f:close()
+    SILE.hyphenate({ SILE.nodefactory.newNnode({ language = language, text = "" }) })
+    local file = io.open("languages/" .. language .. "-compiled.lua", "w")
+    file:write("_hyphenators." .. language .. " = " .. ser.line(_hyphenators[language]) .. "\n")
+    file:write("SILE.hyphenator.languages." .. language .. " = " .. ser.line(SILE.hyphenator.languages[language]) .. "\n")
+    file:close()
   end
 }
 
-SILE.registerCommand("language", function (o,c)
-  if not c[1] then
-    local lang = SU.required(o, "main", "language setting")
-    SILE.languageSupport.loadLanguage(lang)
-    SILE.settings.set("document.language", lang)
-  else
-    local lang = SU.required(o, "lang", "language setting")
-    SILE.languageSupport.loadLanguage(lang)
+SILE.registerCommand("language", function (options, content)
+  local main = SU.required(options, "main", "language setting")
+  SILE.languageSupport.loadLanguage(main)
+  if content[1] then
     SILE.settings.temporarily(function ()
-      SILE.settings.set("document.language", lang)
-      SILE.process(c)
+      SILE.settings.set("document.language", main)
+      SILE.process(content)
     end)
+  else
+    SILE.settings.set("document.language", main)
   end
 end)
 
@@ -44,7 +42,7 @@ require("languages/unicode")
 
 -- The following languages neither have hyphenation nor specific
 -- language support at present. This code is here to suppress warnings.
-SILE.hyphenator.languages.ar = {patterns={}}
-SILE.hyphenator.languages.bo = {patterns={}}
-SILE.hyphenator.languages.ur = {patterns={}}
-SILE.hyphenator.languages.sd = {patterns={}}
+SILE.hyphenator.languages.ar = { patterns = {} }
+SILE.hyphenator.languages.bo = { patterns = {} }
+SILE.hyphenator.languages.ur = { patterns = {} }
+SILE.hyphenator.languages.sd = { patterns = {} }
