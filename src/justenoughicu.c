@@ -6,11 +6,22 @@
 #include <unicode/ustdio.h>
 #include <unicode/unum.h>
 #include <unicode/ubrk.h>
+#include <unicode/ubidi.h>
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
 
 typedef int32_t (*conversion_function_t)(UChar *dest, int32_t destCapacity, const UChar *src, int32_t srcLength, const char *locale, UErrorCode *pErrorCode);
+
+#define utf32_to_utf8(in, in_l, out, out_l)   { \
+  UErrorCode err; \
+  out_l = 0; \
+  err = U_ZERO_ERROR; \
+  u_strFromUTF8(NULL, 0, &out_l, in, in_l, &err); \
+  err = U_ZERO_ERROR; \
+  out = malloc(out_l * sizeof(UChar)); \
+  u_strFromUTF8(out, out_l, &out_l, in, in_l, &err); \
+}
 
 int icu_case(lua_State *L) {
   size_t input_l;
@@ -21,16 +32,14 @@ int icu_case(lua_State *L) {
 
   /* Convert input to ICU-friendly UChars */
   UChar *input_as_uchar;
-  int32_t l = 0;
-  UErrorCode err = U_ZERO_ERROR;
-  u_strFromUTF8(NULL, 0, &l, input, input_l, &err);
-  err = U_ZERO_ERROR;
-  input_as_uchar = malloc(l * sizeof(UChar));
-  u_strFromUTF8(input_as_uchar, l, &l, input, input_l, &err);
+  int32_t l;
+  utf32_to_utf8(input, input_l, input_as_uchar, l);
 
   /* Now do the conversion */
   UChar *output;
   int32_t l2 = 0;
+
+  UErrorCode err = U_ZERO_ERROR;
 
   if (strcmp(recase, "title") == 0) {
     l2 = u_strToTitle(NULL, 0, input_as_uchar, l, NULL, locale, &err);
@@ -196,6 +205,61 @@ int icu_format_number(lua_State *L) {
   return 1;
 }
 
+int icu_bidi(lua_State *L) {
+  size_t input_l;
+  const char* input = luaL_checklstring(L, 1, &input_l);
+  const char* direction = luaL_checkstring(L, 2);
+
+  UChar *input_as_uchar;
+  int32_t l;
+  utf32_to_utf8(input, input_l, input_as_uchar, l);
+
+  UBiDiLevel paraLevel = UBIDI_DEFAULT_LTR;
+  if (strncasecmp(direction, "RTL", 3) == 0) {
+    paraLevel = UBIDI_DEFAULT_RTL;
+  }
+
+  /* Now let's bidi! */
+  UBiDi* bidi = ubidi_open();
+  UErrorCode err = U_ZERO_ERROR;
+  ubidi_setPara(bidi, input_as_uchar, l, paraLevel, NULL, &err);
+  if (!U_SUCCESS(err)) {
+    free(input_as_uchar);
+    ubidi_close(bidi);
+    return luaL_error(L, "Error in bidi %s", u_errorName(err));
+  }
+
+  int count = ubidi_countRuns(bidi,&err);
+  int start, length;
+  for (int i=0; i < count; i++) {
+    UBiDiDirection dir = ubidi_getVisualRun(bidi, i, &start, &length);
+    lua_newtable(L);
+    // Convert back to UTF8...
+    int32_t l3 = 0;
+    char possibleOutbuf[4096];
+    u_strToUTF8(possibleOutbuf, 4096, &l3, input_as_uchar+start, length, &err);
+    if (!U_SUCCESS(err)) {
+      return luaL_error(L, "Bidi run too big? %s", u_errorName(err));
+    }
+    lua_pushstring(L, "run");
+    lua_pushstring(L, possibleOutbuf);
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "dir");
+    lua_pushstring(L, dir == UBIDI_RTL ? "rtl" : "ltr");
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "level");
+    lua_pushinteger(L, ubidi_getLevelAt(bidi, start));
+    lua_settable(L, -3);
+
+  }
+
+  free(input_as_uchar);
+  ubidi_close(bidi);
+  return count;
+}
+
 #if !defined LUA_VERSION_NUM
 /* Lua 5.0 */
 #define luaL_Reg luaL_reg
@@ -222,6 +286,7 @@ static void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
 static const struct luaL_Reg lib_table [] = {
   {"breakpoints", icu_breakpoints},
   {"case", icu_case},
+  {"bidi", icu_bidi},
   {"canonicalize_language", icu_canonicalize_language},
   {"format_number", icu_format_number},
   {NULL, NULL}
