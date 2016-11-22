@@ -88,7 +88,7 @@ local linespacingLeading = function (self, v, previous)
 
   if method == "fixed" then
     local btob = SILE.settings.get("linespacing.fixed.baselinedistance"):absolute()
-    local toAdd = SILE.length.new({ length = btob.length - (v.height + previous.depth) })
+    local toAdd = SILE.length.new({ length = btob.length - (v.height + previous.depth), stretch = btob.stretch, shrink = btob.shrink })
     return SILE.nodefactory.newVglue({ height = toAdd })
   end
 
