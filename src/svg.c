@@ -22,7 +22,7 @@ int svg_to_ps(lua_State *L) {
   const char* input = luaL_checkstring(L, 1);
   int em = 72;
   if (lua_gettop(L) == 2) {
-    em = luaL_checkint(L, 2);
+    em = luaL_checkinteger(L, 2);
   }
   struct NSVGimage* image;
   image = nsvgParse((char*)input, "pt", em);
@@ -31,26 +31,27 @@ int svg_to_ps(lua_State *L) {
   char *output = malloc(max_output);
   output[0] = '\0';
   for (NSVGshape *shape = image->shapes; shape != NULL; shape = shape->next) {
-      for (NSVGpath *path = shape->paths; path != NULL; path = path->next) {
-        double lastx = -1;
-        double lasty = -1;
-          for (int i = 0; i < path->npts-1; i += 3) {
-              float* p = &path->pts[i*2];
-              char thisPath[256];
-              // Some kind of precision here?
-              if (lastx != p[0] || lasty != p[1]) {
-                // Move needed
-                snprintf(thisPath, 256, "%f %f m ", p[0], p[1]);
-                output = safe_append(output, &output_l, &max_output, thisPath);
-              }
-              snprintf(thisPath, 256, "%f %f %f %f %f %f c ",
-                p[2],p[3], p[4],p[5], p[6],p[7]);
-              lastx = p[6];
-              lasty = p[7];
-              output = safe_append(output, &output_l, &max_output, thisPath);
-          }
+    for (NSVGpath *path = shape->paths; path != NULL; path = path->next) {
+      double lastx = -1;
+      double lasty = -1;
+      for (int i = 0; i < path->npts-1; i += 3) {
+        float* p = &path->pts[i*2];
+        char thisPath[256];
+        // Some kind of precision here?
+        if (lastx != p[0] || lasty != p[1]) {
+          // Move needed
+          snprintf(thisPath, 256, "%f %f m ", p[0], p[1]);
+          output = safe_append(output, &output_l, &max_output, thisPath);
+        }
+        snprintf(thisPath, 256, "%f %f %f %f %f %f c ",
+          p[2],p[3], p[4],p[5], p[6],p[7]);
+        lastx = p[6];
+        lasty = p[7];
+        output = safe_append(output, &output_l, &max_output, thisPath);
       }
       char strokeFillOper = 's'; // Just stroke
+      if (!path->closed)
+        strokeFillOper = 'S';
       if (shape->stroke.type == NSVG_PAINT_COLOR) {
         int r = shape->stroke.color        & 0xff;
         int g = (shape->stroke.color >> 8) & 0xff;
@@ -85,6 +86,7 @@ int svg_to_ps(lua_State *L) {
       output[output_l++] = strokeFillOper;
       output[output_l++] = ' ';
       output[output_l] = '\0';
+    }
   }
   lua_pushstring(L, output);
   lua_pushnumber(L, image->width);
