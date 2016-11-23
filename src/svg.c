@@ -22,7 +22,7 @@ int svg_to_ps(lua_State *L) {
   const char* input = luaL_checkstring(L, 1);
   int em = 72;
   if (lua_gettop(L) == 2) {
-    em = luaL_checkint(L, 2);
+    em = luaL_checkinteger(L, 2);
   }
   struct NSVGimage* image;
   image = nsvgParse((char*)input, "pt", em);
