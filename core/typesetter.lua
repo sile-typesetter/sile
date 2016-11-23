@@ -398,9 +398,12 @@ SILE.defaultTypesetter = std.object {
       SILE.documentState.documentClass:endPage()
       self:initFrame(SILE.documentState.documentClass:newPage())
     end
-    if not SU.feq(oldframe:lineWidth(), self.frame:lineWidth()) then
+    -- XXX A temporary measure to expose pushback bugs, so we can
+    -- fix them.
+    --
+    -- if not SU.feq(oldframe:lineWidth(), self.frame:lineWidth()) then
       self:pushBack()
-    end
+    -- end
     self:leaveHmode(true)
     self:runHooks("newframe")
   end,
