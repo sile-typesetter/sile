@@ -11,13 +11,12 @@ local M = {}
 
 local groff = require("lunamark.writer.groff")
 local util = require("lunamark.util")
-local gsub = string.gsub
 local format = string.format
 
 --- Returns a new groff writer.
 -- For a list of fields, see [lunamark.writer.generic].
 function M.new(options)
-  local options = options or {}
+  options = options or {}
   local Man = groff.new(options)
 
   local endnotes = {}
@@ -74,6 +73,8 @@ function M.new(options)
   function Man.verbatim(s)
     return {".IP\n.nf\n\\f[C]\n",s,".fi"}
   end
+
+  Man.fenced_code = Man.verbatim
 
   function Man.header(s,level)
     local hcode = ".SS"

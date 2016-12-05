@@ -8,12 +8,11 @@ local M = {}
 
 local tex = require("lunamark.writer.tex")
 local util = require("lunamark.util")
-local format = string.format
 
 --- Returns a new ConTeXt writer
 -- For a list of all the fields, see [lunamark.writer.generic].
 function M.new(options)
-  local options = options or {}
+  options = options or {}
   local ConTeXt = tex.new(options)
 
   -- we don't try to escape utf-8 characters in context
@@ -81,6 +80,15 @@ function M.new(options)
 
   function ConTeXt.verbatim(s)
     return {"\\starttyping\n",s,"\\stoptyping"}
+  end
+
+  function ConTeXt.fenced_code(s,i)
+    if i ~= "" then
+      return {"\\starttyping[option=",i:match("[^ ]*"),
+        "]\n",s,"\\stoptyping"}
+    else
+      return ConTeXt.verbatim(s)
+    end
   end
 
   function ConTeXt.header(s,level)

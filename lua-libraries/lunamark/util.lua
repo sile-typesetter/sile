@@ -6,7 +6,6 @@
 local M = {}
 local cosmo = require("cosmo")
 local rep  = string.rep
-local insert = table.insert
 local lpeg = require("lpeg")
 local Cs, P, S, lpegmatch = lpeg.Cs, lpeg.P, lpeg.S, lpeg.match
 local any = lpeg.P(1)
@@ -18,7 +17,6 @@ local any = lpeg.P(1)
 -- `APPDATA` directory.
 function M.find_template(name)
   local base, ext = name:match("([^%.]*)(.*)")
-  if (not ext or ext == "") and format then ext = "." .. format end
   local fname = base .. ext
   local file = io.open(fname, "read")
   if not file then
@@ -37,7 +35,9 @@ function M.find_template(name)
     end
   end
   if file then
-    return file:read("*all")
+    local data = file:read("*all")
+    file:close()
+    return data
   else
     return false, "Could not find template '" .. fname .. "'"
   end
@@ -55,7 +55,7 @@ function M.sepby(arg)
   elseif type(a) ~= "table" then
     a = {a}
   end
-  for i,v in ipairs(a) do
+  for i in ipairs(a) do
      if i > 1 then cosmo.yield{_template=2} end
      cosmo.yield{it = a[i], _template=1}
   end
@@ -131,9 +131,9 @@ M.walk = walk
 --- Flatten an array `ary`.
 local function flatten(ary)
   local new = {}
-  for i,v in ipairs(ary) do
+  for _,v in ipairs(ary) do
     if type(v) == "table" then
-      for j,w in ipairs(flatten(v)) do
+      for _,w in ipairs(flatten(v)) do
         new[#new + 1] = w
       end
     else

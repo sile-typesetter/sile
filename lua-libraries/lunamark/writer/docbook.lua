@@ -8,16 +8,16 @@ local M = {}
 
 local xml = require("lunamark.writer.xml")
 local util = require("lunamark.util")
-local gsub = string.gsub
-local format = string.format
 
 --- Returns a new DocBook writer.
 -- For a list of all the fields, see [lunamark.writer.generic].
 function M.new(options)
-  local options = options or {}
+  options = options or {}
   local Docbook = xml.new(options)
 
   Docbook.linebreak = "<literallayout>&#xA;</literallayout>"
+
+  Docbook.nbsp = "&nbsp;"
 
   function Docbook.code(s)
     return {"<literal>",Docbook.string(s),"</literal>"}
@@ -33,7 +33,7 @@ function M.new(options)
   end
 
   function Docbook.image(lab,src,tit)
-    local titattr, altattr
+    local titattr
     if tit and string.len(tit) > 0
        then titattr = string.format("<objectinfo><title>%s%</title></objectinfo>",
                         Docbook.string(tit))
@@ -94,6 +94,8 @@ function M.new(options)
     return {"<programlisting>",Docbook.string(s),"</programlisting>"}
   end
 
+  Docbook.fenced_code = Docbook.verbatim
+
   function Docbook.stop_document()
     local stop = Docbook.stop_section(1) -- close section containers
     if stop ~= "" then stop = Docbook.containersep .. stop end
@@ -102,7 +104,6 @@ function M.new(options)
 
   function Docbook.header(s,level)
     local sep = ""
-    local stop
     if options.slides or options.containers then
       local lev = (options.slides and 1) or level
       local stop = Docbook.stop_section(lev)

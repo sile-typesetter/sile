@@ -7,15 +7,13 @@
 
 local M = {}
 
-local format = string.format
 local util = require("lunamark.util")
 local generic = require("lunamark.writer.generic")
-local entities = require("lunamark.entities")
 
 --- Returns a new Groff writer.
 -- For a list of all fields, see [lunamark.writer.generic].
 function M.new(options)
-  local options = options or {}
+  options = options or {}
   local Groff = generic.new(options)
 
   Groff.interblocksep = "\n\n"  -- insensitive to layout
@@ -29,6 +27,8 @@ function M.new(options)
   Groff.mdash = "\\[em]"
 
   Groff.ndash = "\\[en]"
+
+  Groff.nbsp = "\\~"
 
   function Groff.singlequoted(s)
     return {"`",s,"'"}

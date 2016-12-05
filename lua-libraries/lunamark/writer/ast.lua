@@ -25,11 +25,10 @@ function M.new(options)
         elseif typ == "table" then
           out[#out+1] = walk(t[i])
           out[#out].tag = t[i].tag
-          -- if #(out[#out]) == 1 and type(out[#out][1]) == "table" then
-          --   local tag = out[#out][1].tag or out[#out].tag
-          --   out[#out] = out[#out][1]
-          --   out[#out].tag = tag
-          -- end
+          -- Copy attributes
+          for key,value in pairs(t[i]) do
+            if type(key)=="string" then out[#out][key] = value end
+          end
         elseif typ == "function" then
           out[#out+1] = t[i]()
         end
@@ -48,6 +47,7 @@ function M.new(options)
   end
 
   AST.strong = AST.genericCommand("strong")
+  AST.paragraph = AST.genericCommand("paragraph")
   AST.code = AST.genericCommand("code")
   AST.emphasis = AST.genericCommand("emphasis")
   AST.blockquote = AST.genericCommand("blockquote")
@@ -63,6 +63,9 @@ function M.new(options)
   end
   AST.link = function(lab, src, tit)
     return { [1] = lab, tag = "link", href = src }
+  end
+  AST.image = function(lab, src, tit)
+    return { tag = "image", src=src, [1]=lab }
   end
   return AST
 end

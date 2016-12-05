@@ -6,6 +6,7 @@
 local M = {}
 
 local utf8=require("utf8")
+utf8_char = utf8.char
 
 local character_entities = {
   ["quot"] = 0x0022,
@@ -262,20 +263,20 @@ local character_entities = {
 --- Given a string of decimal digits, returns a UTF-8 encoded
 -- string encoding a unicode character.
 function M.dec_entity(s)
-  return utf8.char(tonumber(s))
+  return utf8_char(tonumber(s))
 end
 
 --- Given a string of hexadecimal digits, returns a UTF-8 encoded
 -- string encoding a unicode character.
 function M.hex_entity(s)
-  return utf8.char(tonumber("0x"..s))
+  return utf8_char(tonumber("0x"..s))
 end
 
 --- Given a character entity name (like `ouml`), returns a UTF-8 encoded
 -- string encoding a unicode character.
 function M.char_entity(s)
   local n = character_entities[s]
-  return utf8.char(n)
+  return utf8_char(n)
 end
 
 return M

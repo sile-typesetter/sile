@@ -13,7 +13,7 @@ local util = require("lunamark.util")
 --- Returns a new XML writer.
 -- For a list of fields, see [lunamark.writer.generic].
 function M.new(options)
-  local options = options or {}
+  options = options or {}
   local Xml = generic.new(options)
 
   Xml.container = "section"

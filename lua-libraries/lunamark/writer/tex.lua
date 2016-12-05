@@ -9,13 +9,12 @@ local M = {}
 
 local util = require("lunamark.util")
 local generic = require("lunamark.writer.generic")
-local entities = require("lunamark.entities")
 local format = string.format
 
 --- Returns a new TeX writer.
 -- For a list ofy fields, see [lunamark.writer.generic].
 function M.new(options)
-  local options = options or {}
+  options = options or {}
   local TeX = generic.new(options)
 
   TeX.interblocksep = "\n\n"  -- insensitive to layout
@@ -29,6 +28,8 @@ function M.new(options)
   TeX.mdash = "---"
 
   TeX.ndash = "--"
+
+  TeX.nbsp = "~"
 
   function TeX.singlequoted(s)
     return format("`%s'",s)

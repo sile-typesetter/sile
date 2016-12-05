@@ -11,9 +11,21 @@ local util = require("lunamark.util")
 local format = string.format
 
 --- Returns a new LaTeX writer.
+--
+-- *   `options` is a table with parsing options.
+--     The following fields are significant:
+--
+--     `citations`
+--     :   Enable citations as in pandoc. Either a boolean or one of
+--         the following strings should be specified:
+--
+--         - `latex`    -- produce basic LaTeX2e citations,
+--         - `natbib`   -- produce citations for the Natbib package, or
+--         - `biblatex` -- produce citations for the BibLaTeX package.
+--
 -- For a list of fields in the writer, see [lunamark.writer.generic].
 function M.new(options)
-  local options = options or {}
+  options = options or {}
   local LaTeX = tex.new(options)
 
   function LaTeX.code(s)
@@ -66,6 +78,8 @@ function M.new(options)
     return {"\\begin{verbatim}\n",s,"\\end{verbatim}"}
   end
 
+  LaTeX.fenced_code = LaTeX.verbatim
+
   function LaTeX.header(s,level)
     local cmd
     if level == 1 then
@@ -88,6 +102,105 @@ function M.new(options)
 
   function LaTeX.note(contents)
     return {"\\footnote{",contents,"}"}
+  end
+
+  local function citation_optargs(cite)
+    if cite.prenote and cite.postnote then
+      return {"[", cite.prenote, "][", cite.postnote, "]"}
+    elseif cite.prenote and not cite.postnote then
+      return {"[", cite.prenote, "][]"}
+    elseif not cite.prenote and cite.postnote then
+      return {"[", cite.postnote, "]"}
+    else
+      return ""
+    end
+  end
+
+  if options.citations == true or options.citations == "latex" then
+    --- Basic LaTeX2e citations
+    function LaTeX.citations(_, cites)
+      local buffer = {}
+      local opened_braces = false
+      for i, cite in ipairs(cites) do
+        if cite.prenote or cite.postnote then -- A separate complex citation
+          buffer[#buffer + 1] = {opened_braces and "}" or "",
+            cite.prenote and {i == 1 and "" or " ", cite.prenote, "~"} or
+            "", {(i == 1 or cite.prenote) and "" or " ", "\\cite"},
+            cite.postnote and {"[", cite.postnote, "]"} or "", "{", cite.name,
+            cite_postnote and {"~", cite_postnote} or "", "}"}
+          opened_braces = false
+        else -- A string of simple citations
+          buffer[#buffer + 1] = {opened_braces and ", " or {i == 1 and "" or
+            " ", "\\cite{"}, cite.name}
+          opened_braces = true
+        end
+      end
+      if opened_braces then
+        buffer[#buffer + 1] = "}"
+      end
+      return buffer
+    end
+  elseif options.citations == "natbib" then
+    --- NatBib citations
+    function LaTeX.citations(text_cites, cites)
+      if #cites == 1 then -- A single citation
+        local cite = cites[1]
+        if text_cites then
+          return {"\\citet", citation_optargs(cite), "{", cite.name, "}"}
+        else
+          return {cite.suppress_author and "\\citeyearpar" or "\\citep",
+            citation_optargs(cite), "{", cite.name, "}"}
+        end
+      else -- A string of citations
+        local complex = false
+        local last_suppressed = nil
+        for _, cite in ipairs(cites) do
+          if cite.prenote or cite.postnote or
+             cite.suppress_author == not last_suppressed then
+            complex = true
+            break
+          end
+          last_suppressed = cite.suppress_author
+        end
+        if complex then -- A string of complex citations
+          local buffer = {"\\citetext{"}
+          for i, cite in ipairs(cites) do
+            buffer[#buffer + 1] = {i ~= 1 and "; " or "", cite.suppress_author
+              and "\\citeyear" or (text_cites and "\\citealt" or "\\citealp"),
+              citation_optargs(cite), "{", cite.name, "}"}
+          end
+          buffer[#buffer + 1] = "}"
+          return buffer
+        else -- A string of simple citations
+          local buffer = {}
+          for i, cite in ipairs(cites) do
+            buffer[#buffer + 1] = {i == 1 and (text_cites and "\\citet{" or
+              "\\citep{") or ", ", cite.name}
+          end
+          buffer[#buffer + 1] = "}"
+          return buffer
+        end
+      end
+    end
+  elseif options.citations == "biblatex" then
+    --- BibLaTeX citations
+    function LaTeX.citations(text_cites, cites)
+      if #cites == 1 then -- A single citation
+        local cite = cites[1]
+        if text_cites then
+          return {"\\textcite", citation_optargs(cite), "{", cite.name, "}"}
+        else
+          return {"\\autocite", cite.suppress_author and "*" or "",
+            citation_optargs(cite), "{", cite.name, "}"}
+        end
+      else -- A string of citations
+        local buffer = {text_cites and "\\textcites" or "\\autocites"}
+        for _, cite in ipairs(cites) do
+          buffer[#buffer + 1] = {citation_optargs(cite), "{", cite.name, "}"}
+        end
+        return buffer
+      end
+    end
   end
 
   function LaTeX.definitionlist(items)

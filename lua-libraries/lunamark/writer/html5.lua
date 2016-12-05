@@ -7,14 +7,13 @@
 
 local M = {}
 
-local util = require("lunamark.util")
 local html = require("lunamark.writer.html")
 
 --- Returns a new HTML 5 writer.
 -- `options` is as in `lunamark.writer.html`.
 -- For a list of fields, see [lunamark.writer.generic].
 function M.new(options)
-  local options = options or {}
+  options = options or {}
   local Html5 = html.new(options)
 
   Html5.container = "section"

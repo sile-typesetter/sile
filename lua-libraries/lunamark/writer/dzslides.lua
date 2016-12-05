@@ -8,7 +8,6 @@
 
 local M = {}
 
-local util = require("lunamark.util")
 local html5 = require("lunamark.writer.html5")
 
 --- Returns a new dzslides writer.
@@ -16,7 +15,7 @@ local html5 = require("lunamark.writer.html5")
 -- `options.slides` is ignored and set to `true`.
 -- For a list of fields, see [lunamark.writer.generic].
 function M.new(options)
-  local options = options or {}
+  options = options or {}
   options.slides = true
   local DZSlides = html5.new(options)
 
@@ -284,7 +283,7 @@ $body
     if (idx == 1 && step == 0) return;
     if (step == 0)
       setCursor(idx - 1, slides[idx - 2].querySelectorAll('.incremental > *').length);
-    else 
+    else
       setCursor(idx, step - 1);
   }
   function forward() {
