@@ -21,6 +21,7 @@ SILE.inputs.markdown = {
 }
 
 SILE.require("packages/url")
+SILE.require("packages/image")
 
 local book = SILE.require("book", "classes")
 
@@ -40,6 +41,11 @@ SILE.registerCommand("emphasis", function(options, content)
   SILE.call("em", options, content)
 end)
 
+SILE.registerCommand("paragraph", function(options, content)
+  SILE.process(content)
+  SILE.call("par")
+end)
+
 SILE.registerCommand("bulletlist", function(options, content)
   SILE.process(content)
 end)
@@ -51,4 +57,7 @@ SILE.registerCommand("link", function(options, content)
   -- end)
 end)
 
+SILE.registerCommand("image", function(options, content)
+  SILE.call("img", {src=content.src})
+  end)
 return book
