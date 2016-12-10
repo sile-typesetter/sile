@@ -3,23 +3,23 @@ if SILE.outputter ~= SILE.outputters.libtexpdf then
 end
 local pdf = require("justenoughlibtexpdf")
 
-SILE.registerCommand("pdf:destination", function (o,c)
-  local name = SU.required(o, "name", "pdf:bookmark")
+SILE.registerCommand("pdf:destination", function (options, content)
+  local name = SU.required(options, "name", "pdf:bookmark")
   SILE.typesetter:pushHbox({
     value = nil,
     height = 0,
     width = 0,
     depth = 0,
-    outputYourself= function (self, typesetter)
+    outputYourself = function (self, typesetter)
       pdf.destination(name, typesetter.frame.state.cursorX, SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY)
     end
   })
 end)
 
-SILE.registerCommand("pdf:bookmark", function (o,c)
-  local dest = SU.required(o, "dest", "pdf:bookmark")
-  local title = SU.required(o, "title", "pdf:bookmark")
-  local level = o.level or 1
+SILE.registerCommand("pdf:bookmark", function (options, content)
+  local dest = SU.required(options, "dest", "pdf:bookmark")
+  local title = SU.required(options, "title", "pdf:bookmark")
+  local level = options.level or 1
   -- Added UTF8 to UTF16-BE conversion
   -- For annotations and bookmarks, text strings must be encoded using
   -- either PDFDocEncoding or UTF16-BE with a leading byte-order marker.
@@ -28,8 +28,8 @@ SILE.registerCommand("pdf:bookmark", function (o,c)
   local ustr = SU.utf8_to_utf16be_hexencoded(title)
   SILE.typesetter:pushHbox({
     value = nil, height = 0, width = 0, depth = 0,
-    outputYourself= function ()
-      local d = "<</Title<"..ustr..">/A<</S/GoTo/D("..dest..")>>>>"
+    outputYourself = function ()
+      local d = "<</Title<" .. ustr .. ">/A<</S/GoTo/D(" .. dest .. ")>>>>"
       pdf.bookmark(d, level)
     end
   })
@@ -38,48 +38,55 @@ end)
 if SILE.Commands.tocentry then
   SILE.scratch.pdf = { dests = {}, dc = 1 }
   local oldtoc = SILE.Commands.tocentry
-  SILE.Commands.tocentry = function (o,c)
-    SILE.call("pdf:destination", { name = "dest"..SILE.scratch.pdf.dc } )
-    local title = SU.contentToString(c)
-    SILE.call("pdf:bookmark", { title = title, dest = "dest"..SILE.scratch.pdf.dc, level = o.level })
-    oldtoc(o,c)
+  SILE.Commands.tocentry = function (options, content)
+    SILE.call("pdf:destination", { name = "dest" .. SILE.scratch.pdf.dc } )
+    local title = SU.contentToString(content)
+    SILE.call("pdf:bookmark", { title = title, dest = "dest" .. SILE.scratch.pdf.dc, level = options.level })
+    oldtoc(options, content)
     SILE.scratch.pdf.dc = SILE.scratch.pdf.dc + 1
   end
 end
 
-SILE.registerCommand("pdf:literal", function (o,c)
+SILE.registerCommand("pdf:literal", function (options, content)
   SILE.typesetter:pushHbox({
       value = nil,
       height = 0,
       width = 0,
       depth = 0,
-      outputYourself= function (self, typesetter)
-        pdf.add_content(c[1])
+      outputYourself = function (self, typesetter)
+        pdf.add_content(content[1])
       end
     })
 end)
 
-SILE.registerCommand("pdf:link", function (o,c)
-  local dest = SU.required(o, "dest", "pdf:link")
+SILE.registerCommand("pdf:link", function (options, content)
+  local dest = SU.required(options, "dest", "pdf:link")
   local llx, lly
   SILE.typesetter:pushHbox({
-    value = nil, height = 0, width = 0, depth = 0,
-    outputYourself= function (self,typesetter)
+    value = nil,
+    height = 0,
+    width = 0,
+    depth = 0,
+    outputYourself = function (self,typesetter)
       llx = typesetter.frame.state.cursorX
       lly = SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY
       pdf.begin_annotation()
     end
   })
 
-  local hbox = SILE.Commands["hbox"]({}, c) -- hack
+  local hbox = SILE.Commands["hbox"]({}, content) -- hack
 
   SILE.typesetter:pushHbox({
-    value = nil, height = 0, width = 0, depth = 0,
-    outputYourself= function (self,typesetter)
-      local d = "<</Type/Annot/Subtype/Link/C [ 1 0 0 ]/A<</S/GoTo/D("..dest..")>>>>"
+    value = nil,
+    height = 0,
+    width = 0,
+    depth = 0,
+    outputYourself = function (self,typesetter)
+      local d = "<</Type/Annot/Subtype/Link/C [ 1 0 0 ]/A<</S/GoTo/D(" .. dest .. ")>>>>"
       pdf.end_annotation(d, llx, lly, typesetter.frame.state.cursorX, SILE.documentState.paperSize[2] -typesetter.frame.state.cursorY + hbox.height)
     end
-  });end)
+  })
+end)
 
 return { documentation = [[\begin{document}
 The \code{pdf} package enables (basic) support for PDF links and table-of-contents
