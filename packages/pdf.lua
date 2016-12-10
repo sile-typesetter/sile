@@ -61,6 +61,7 @@ end)
 
 SILE.registerCommand("pdf:link", function (options, content)
   local dest = SU.required(options, "dest", "pdf:link")
+  local target = options.external and "/Type/Action/S/URI/URI" or "/S/GoTo/D"
   local llx, lly
   SILE.typesetter:pushHbox({
     value = nil,
@@ -82,7 +83,7 @@ SILE.registerCommand("pdf:link", function (options, content)
     width = 0,
     depth = 0,
     outputYourself = function (self,typesetter)
-      local d = "<</Type/Annot/Subtype/Link/C [ 1 0 0 ]/A<</S/GoTo/D(" .. dest .. ")>>>>"
+      local d = "<</Type/Annot/Subtype/Link/C [ 1 0 0 ]/A<<" .. target .. "(" .. dest .. ")>>>>"
       pdf.end_annotation(d, llx, lly, typesetter.frame.state.cursorX, SILE.documentState.paperSize[2] -typesetter.frame.state.cursorY + hbox.height)
     end
   })
