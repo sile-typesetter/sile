@@ -211,7 +211,9 @@ SILE.defaultTypesetter = std.object {
       self:initline()
       SILE.documentState.documentClass.newPar(self)
     end
-    self:pushUnshaped({ text = t, options= SILE.font.loadDefaults({})})
+    if #t >0 then
+      self:pushUnshaped({ text = t, options= SILE.font.loadDefaults({})})
+    end
   end,
   breakIntoLines = function (self, nl, breakWidth)
     self:shapeAllNodes(nl)
