@@ -17,9 +17,50 @@ SILE.registerCommand("thisframeRTL", function(options, content)
   SILE.typesetter.frame:newLine()
 end)
 
-local bidi = require("unicode-bidi-algorithm")
-require("char-def")
-local chardata  = characters.data
+local function reverse_portion(tbl, s,e)
+  rv = {}
+  for i = 1,s-1 do rv[#rv+1] = tbl[i] end
+  for i = e,s,-1 do rv[#rv+1] = tbl[i] end
+  for i = e+1, #tbl do rv[#rv+1] = tbl[i] end
+  return rv
+end
+
+local function create_matrix(line, base_level)
+  -- L2; create a transformation matrix of elements
+  -- such that output[matrix[i]] = input[i]
+  -- e.g. No reversions required: [1,2,3,4,5]
+  -- Levels [0,0,0,1,1] -> [1,2,3,5,4]
+
+  local max_level = 0
+  local matrix = {}
+  for i,c in next, line do
+    if c.level > max_level then max_level = c.level end
+    matrix[i] = i
+  end
+
+  for level = base_level+1, max_level do
+    local level_start, level_limit
+    for i,_ in next, line do
+      if line[i].level >= level then
+        if not level_start then
+          level_start = i
+        elseif i == #line then
+          level_end = i
+          matrix = reverse_portion(matrix, level_start, level_end)
+          level_start = nil
+        end
+      else
+        if level_start then
+          level_end = i-1
+          matrix = reverse_portion(matrix, level_start, level_end)
+          level_start = nil
+        end
+      end
+    end
+  end
+
+  return matrix
+end
 
 local reorder = function(n, self)
   local nl = n.nodes
@@ -27,7 +68,6 @@ local reorder = function(n, self)
   local matrix = {}
   local levels = {}
   local base_level = self.frame:writingDirection() == "RTL" and 1 or 0
-  local prev_level = base_level
   for i=1,#nl do
     if nl[i].options and nl[i].options.bidilevel then
       levels[i] = { level = nl[i].options.bidilevel }
@@ -44,17 +84,18 @@ local reorder = function(n, self)
       right_level = nl[right].options.bidilevel
       break
     end end
-    levels[i] = { level = (left_level == right_level and left_level or base_level) }
+    levels[i] = {level = (left_level == right_level and left_level or 0) }
   end end
-  local matrix = bidi.create_matrix(levels,base_level)
+  local matrix = create_matrix(levels,0)
   local rv = {}
   local reverse_array = function (t)
     local n = {}
     for i =1,#t do n[#t-i+1] = t[i] end
     for i =1,#t do t[i] = n[i] end
   end
+  -- for i = 1,#nl do print(i,nl[i],levels[i]) end
   for i = 1, #nl do
-    if nl[i]:isNnode() and levels[i].level %2 == 1 then
+    if nl[i]:isNnode() and levels[i].level %2 ~= base_level then
       reverse_array(nl[i].nodes)
       for j =1,#(nl[i].nodes) do
         if nl[i].nodes[j].type =="hbox" then
@@ -96,13 +137,13 @@ local splitNodeAtPos = function (n,splitstart, p)
     local n2 = SILE.nodefactory.newUnshaped({ text = "", options = table.clone(n.options) })
     local n1 = SILE.nodefactory.newUnshaped({ text = "", options = table.clone(n.options) })
     for i = splitstart,#utf8chars do
-      if i < p then n1.text = n1.text .. utf8chars[i]
+      if i <= p then n1.text = n1.text .. utf8chars[i]
       else n2.text = n2.text .. utf8chars[i]
       end
     end
     return n1,n2
   else
-    SU.error("Unsure how to split node "..n.." at position p",1)
+    SU.error("Unsure how to split node "..n.." at position "..p,1)
   end
 end
 
@@ -110,40 +151,53 @@ local splitNodelistIntoBidiRuns = function (self)
   local nl = self.state.nodes
   if #nl == 0 then return nl end
   local owners, text = nodeListToText(nl)
-  local levels = bidi.process(text, self.frame,true)
-  local base_direction = "LTR"
-  local flipped_direction = "RTL"
   local base_level = self.frame:writingDirection() == "RTL" and 1 or 0
-  local lastlevel = base_level
-  local nl = {}
-  local lastowner
-  local splitstart = 1
-  for i = 1,#levels do
-    if levels[i] % 2 ~= lastlevel % 2 and owners[i].node == lastowner then
-      owners[i].bidilevel = levels[i]
-      local before,after = splitNodeAtPos(owners[i].node,splitstart,owners[i].pos)
-      nl[#nl] = before
-      nl[#nl+1] = after
-      lastowner = owners[i].node
-      splitstart = owners[i].pos
-      before.options.bidilevel = lastlevel
-      after.options.direction = (levels[i] %2) == 0 and base_direction or flipped_direction
-      after.options.bidilevel = levels[i]
-      before.options.direction = (levels[i-1] %2) == 0 and base_direction or flipped_direction
-      -- assign direction for both nodes
-    else
-      if owners[i].node ~= lastowner then
-        nl[#nl+1] = owners[i].node
-        splitstart = 1
-        if nl[#nl].options then
-          nl[#nl].options.direction = (levels[i] %2) == 0 and base_direction or flipped_direction
+  local runs = { icu.bidi_runs(table.concat(text), self.frame:writingDirection()) }
+  runs = table.sort(runs, function (a,b) return a.start < b.start end)
+  local newNl = {}
+  -- Split nodes on run boundaries
+  for i = 1,#runs do
+    local run = runs[i]
+    local thisOwner = owners[run.start+run.length]
+    local nextOwner = owners[run.start+1+run.length]
+    -- print(thisOwner, nextOwner)
+    if nextOwner and thisOwner.node == nextOwner.node then
+      local before,after = splitNodeAtPos(nextOwner.node, 1,nextOwner.pos-1)
+      -- print(before,after)
+      local start = nil
+      for j = run.start+1, run.start+run.length do
+        if owners[j].node==nextOwner.node then
+          if not start then start = j end
+          owners[j]={node=before,pos=j-start+1}
         end
       end
-      lastowner = owners[i].node
-      if nl[#nl].options then nl[#nl].options.bidilevel = (levels[i]) end
+      for j = run.start+1+run.length,#owners do
+        if owners[j].node==nextOwner.node then
+          owners[j] = {node = after, pos=j-(run.start+run.length)}
+        end
+      end
     end
-    lastlevel = levels[i]
   end
+  -- Assign direction/level to nodes
+  for i = 1,#runs do
+    local runstart = runs[i].start+1
+    local runend   = runstart + runs[i].length-1
+    for j= runstart,runend do
+      if owners[j].node and owners[j].node.options then
+        owners[j].node.options.direction = runs[i].dir
+        owners[j].node.options.bidilevel = runs[i].level - base_level
+      end
+    end
+  end
+  -- String together nodelist
+  nl={}
+  for i=1,#owners do
+    if #nl and nl[#nl] ~= owners[i].node then
+      nl[#nl+1] = owners[i].node
+      -- print(nl[#nl], nl[#nl].options)
+    end
+  end
+  -- for i = 1,#nl do print(i,nl[i]) end
   return nl
 end
 
