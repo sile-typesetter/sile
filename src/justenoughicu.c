@@ -7,6 +7,7 @@
 #include <unicode/unum.h>
 #include <unicode/ubrk.h>
 #include <unicode/ubidi.h>
+#include <unicode/utf16.h>
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
@@ -205,7 +206,7 @@ int icu_format_number(lua_State *L) {
   return 1;
 }
 
-int icu_bidi(lua_State *L) {
+int icu_bidi_runs(lua_State *L) {
   size_t input_l;
   const char* input = luaL_checklstring(L, 1, &input_l);
   const char* direction = luaL_checkstring(L, 2);
@@ -214,11 +215,10 @@ int icu_bidi(lua_State *L) {
   int32_t l;
   utf32_to_utf8(input, input_l, input_as_uchar, l);
 
-  UBiDiLevel paraLevel = UBIDI_DEFAULT_LTR;
+  UBiDiLevel paraLevel = 0;
   if (strncasecmp(direction, "RTL", 3) == 0) {
-    paraLevel = UBIDI_DEFAULT_RTL;
+    paraLevel = 1;
   }
-
   /* Now let's bidi! */
   UBiDi* bidi = ubidi_open();
   UErrorCode err = U_ZERO_ERROR;
@@ -231,6 +231,7 @@ int icu_bidi(lua_State *L) {
 
   int count = ubidi_countRuns(bidi,&err);
   int start, length;
+
   for (int i=0; i < count; i++) {
     UBiDiDirection dir = ubidi_getVisualRun(bidi, i, &start, &length);
     lua_newtable(L);
@@ -245,14 +246,31 @@ int icu_bidi(lua_State *L) {
     lua_pushstring(L, possibleOutbuf);
     lua_settable(L, -3);
 
+    lua_pushstring(L, "start");
+    int32_t new_start = start;
+    // Length/start is given in terms of UTF16 codepoints.
+    // But we want a count of Unicode characters. This means
+    // surrogate pairs need to be counted as 1.
+    for (int j=0; j< start; j++) {
+      if (U_IS_TRAIL(*(input_as_uchar+j))) new_start--;
+    }
+    lua_pushinteger(L, new_start);
+    lua_settable(L, -3);
+
+    lua_pushstring(L, "length");
+    for (int j=start; j< start+length; j++) {
+      if (U_IS_TRAIL(*(input_as_uchar+j))) length--;
+    }
+    lua_pushinteger(L, length);
+    lua_settable(L, -3);
+
     lua_pushstring(L, "dir");
-    lua_pushstring(L, dir == UBIDI_RTL ? "rtl" : "ltr");
+    lua_pushstring(L, dir == UBIDI_RTL ? "RTL" : "LTR");
     lua_settable(L, -3);
 
     lua_pushstring(L, "level");
     lua_pushinteger(L, ubidi_getLevelAt(bidi, start));
     lua_settable(L, -3);
-
   }
 
   free(input_as_uchar);
@@ -286,7 +304,7 @@ static void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
 static const struct luaL_Reg lib_table [] = {
   {"breakpoints", icu_breakpoints},
   {"case", icu_case},
-  {"bidi", icu_bidi},
+  {"bidi_runs", icu_bidi_runs},
   {"canonicalize_language", icu_canonicalize_language},
   {"format_number", icu_format_number},
   {NULL, NULL}
