@@ -14,7 +14,7 @@
 
 typedef int32_t (*conversion_function_t)(UChar *dest, int32_t destCapacity, const UChar *src, int32_t srcLength, const char *locale, UErrorCode *pErrorCode);
 
-#define utf32_to_utf8(in, in_l, out, out_l)   { \
+#define utf8_to_uchar(in, in_l, out, out_l)   { \
   UErrorCode err; \
   out_l = 0; \
   err = U_ZERO_ERROR; \
@@ -34,7 +34,7 @@ int icu_case(lua_State *L) {
   /* Convert input to ICU-friendly UChars */
   UChar *input_as_uchar;
   int32_t l;
-  utf32_to_utf8(input, input_l, input_as_uchar, l);
+  utf8_to_uchar(input, input_l, input_as_uchar, l);
 
   /* Now do the conversion */
   UChar *output;
@@ -213,7 +213,7 @@ int icu_bidi_runs(lua_State *L) {
 
   UChar *input_as_uchar;
   int32_t l;
-  utf32_to_utf8(input, input_l, input_as_uchar, l);
+  utf8_to_uchar(input, input_l, input_as_uchar, l);
 
   UBiDiLevel paraLevel = 0;
   if (strncasecmp(direction, "RTL", 3) == 0) {
