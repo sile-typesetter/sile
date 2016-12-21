@@ -22,6 +22,15 @@ SILE.registerCommand("hrule", function(options, content)
   })
 end, "Creates a line of width <width> and height <height>")
 
+SILE.registerCommand("fullrule", function (options, content)
+  SILE.call("raise", { height = options.raise or "0.5em" }, function ()
+    SILE.call("hrule", {
+        height = options.height or "0.2pt",
+        width = options.width or "100%lw"
+      })
+  end)
+end, "Draw a full width hrule centered on the current line")
+
 SILE.registerCommand("underline", function(options, content)
   local hbox = SILE.Commands["hbox"]({}, content)
   local gl = SILE.length.new() - hbox.width
