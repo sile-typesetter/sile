@@ -12,6 +12,11 @@ _length = std.object {
     }
   end,
 
+  negate = function (self)
+    local zero = SILE.length.new({})
+    return zero - self
+  end,
+
   fromLengthOrNumber = function (self, x)
     if type(x) == "table" then
       self.length = x.length
