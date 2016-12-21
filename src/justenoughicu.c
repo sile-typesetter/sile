@@ -232,6 +232,7 @@ int icu_bidi_runs(lua_State *L) {
   int count = ubidi_countRuns(bidi,&err);
   int start, length;
 
+  lua_checkstack(L,count);
   for (int i=0; i < count; i++) {
     UBiDiDirection dir = ubidi_getVisualRun(bidi, i, &start, &length);
     lua_newtable(L);
