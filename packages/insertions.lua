@@ -166,9 +166,11 @@ end
 SILE.insertions.setShrinkage = function(classname, amount)
   local reduceList = SILE.scratch.insertions.classes[classname].stealFrom
   for fName, ratio in pairs(reduceList) do local f = SILE.getFrame(fName)
-    initShrinkage(f)
-    SU.debug("insertions", "Shrinking "..fName.." by "..amount.length*ratio)
-    f.state.totals.shrinkage = f.state.totals.shrinkage + amount.length * ratio
+    if f then
+      initShrinkage(f)
+      SU.debug("insertions", "Shrinking "..fName.." by "..amount.length*ratio)
+      f.state.totals.shrinkage = f.state.totals.shrinkage + amount.length * ratio
+    end
   end
 end
 
@@ -179,12 +181,14 @@ SILE.insertions.commitShrinkage = function(classname)
   local reduceList = opts["stealFrom"]
   local stealPosition = opts["steal-position"] or "bottom"
   for fName, ratio in pairs(reduceList) do local f = SILE.getFrame(fName)
-    initShrinkage(f)
-    local newHeight = f:height() - f.state.totals.shrinkage
-    if stealPosition == "bottom" then f:relax("bottom") else f:relax("top") end
-    SU.debug("insertions", "Constraining height of "..fName.." by "..f.state.totals.shrinkage.." to "..newHeight)
-    f:constrain("height", newHeight)
-    f.state.totals.shrinkage = 0
+    if f then
+      initShrinkage(f)
+      local newHeight = f:height() - f.state.totals.shrinkage
+      if stealPosition == "bottom" then f:relax("bottom") else f:relax("top") end
+      SU.debug("insertions", "Constraining height of "..fName.." by "..f.state.totals.shrinkage.." to "..newHeight)
+      f:constrain("height", newHeight)
+      f.state.totals.shrinkage = 0
+    end
   end
 end
 
