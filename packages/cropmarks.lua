@@ -1,4 +1,5 @@
 local outcounter = 1
+local date = SILE.require("packages.date").exports
 
 local outputMarks = function()
   local page = SILE.getFrame("page")
@@ -51,7 +52,7 @@ local function reconstrainFrameset(fs)
 end
 
 SILE.registerCommand("crop:header", function (o, c)
-  local info = SILE.masterFilename .. " - " .. os.date("%x %X") .. " -  " .. outcounter
+  local info = SILE.masterFilename .. " - " .. date.date("%x %X") .. " -  " .. outcounter
   SILE.typesetter:typeset(info)
 end)
 
