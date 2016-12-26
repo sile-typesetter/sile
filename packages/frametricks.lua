@@ -186,7 +186,7 @@ SILE.registerCommand("float", function(options, content)
   SILE.typesetNaturally(SILE.typesetter.frame.previous, function()
     table.insert(SILE.typesetter.state.nodes,hbox)
   end)
-  local undoSkip = SILE.length.new({}) - SILE.settings.get("document.baselineskip").height.length + SILE.length.parse("1ex")
+  local undoSkip = SILE.settings.get("document.baselineskip").height:negate().length + SILE.length.parse("1ex")
   undoSkip.stretch = hbox.height
   SILE.typesetter:pushHbox({value = {}})
   -- SILE.typesetter:pushVglue({height = undoSkip })
