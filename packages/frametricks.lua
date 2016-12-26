@@ -22,6 +22,9 @@ local breakFrameVertical = function(after)
     previous = cFrame,
     id = cFrame.id .. "_"
   })
+  if SILE.scratch.insertions and SILE.scratch.insertions.classes['footnote'] and SILE.scratch.insertions.classes['footnote'].stealFrom then
+    SILE.scratch.insertions.classes['footnote'].stealFrom[newFrame.id] = 1
+  end
 
   cFrame:relax("bottom")
   cFrame:constrain("height", totalHeight)
@@ -52,6 +55,9 @@ local breakFrameHorizontalAt = function (offset)
     previous = cFrame,
     id = cFrame.id .. "_"
   })
+  if SILE.scratch.insertions and SILE.scratch.insertions.classes['footnote'] and SILE.scratch.insertions.classes['footnote'].stealFrom then
+    -- SILE.scratch.insertions.classes['footnote'].stealFrom[newFrame.id] = 1
+  end
   local oldLeft = cFrame:left()
   cFrame.next = newFrame.id
   cFrame:constrain("left", oldLeft)

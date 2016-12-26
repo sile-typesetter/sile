@@ -54,7 +54,7 @@ _length = std.object {
     local result = _length {}
     result:fromLengthOrNumber(self)
     result = result:absolute()
-    other = SILE.toAbsoluteMeasurement(other)
+    other = SILE.toAbsoluteMeasurement(other or 0)
     if type(other) == "table" then
       other = other:absolute()
       result.length = result.length - other.length
