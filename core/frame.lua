@@ -230,7 +230,8 @@ end
 
 SILE.getFrame = function(id)
   if type(id) == "table" then return id end -- Shouldn't happen but...
-  return SILE.frames[id] or SU.warn("Couldn't get frame ID "..id, true)
+  return SILE.frames[id]
+  -- or SU.warn("Couldn't get frame ID "..id, true)
 end
 
 SILE.parseComplexFrameDimension = function(d, width_or_height)
