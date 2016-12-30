@@ -10,6 +10,7 @@ local pushSVG = function (string, desiredHeight, em, drop)
     height = desiredHeight
     width = width * scalefactor
   end
+  scalefactor = scalefactor * em / 72
   SILE.typesetter:pushHbox({
     value = nil,
     height = height,
@@ -31,9 +32,10 @@ end
 SILE.registerCommand("include-svg-file", function (options, content)
   local fn = SU.required(options, "src", "filename")
   local height = SILE.length.parse(options.height):absolute().length or nil
+  local density = options.density or 72
   local fh = io.open(fn)
   local inp = fh:read("*all")
-  pushSVG(inp, height, 72)
+  pushSVG(inp, height, density)
 end)
 
 SILE.registerCommand("svg-glyph", function(options,content)
