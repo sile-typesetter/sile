@@ -2,7 +2,7 @@ local svg = require("svg")
 local pdf = require("justenoughlibtexpdf")
 local parser = require("core/opentype-parser")
 
-local pushSVG = function(string, desiredHeight, em, drop)
+local pushSVG = function (string, desiredHeight, em, drop)
   local figure, width, height = svg.svg_to_ps(string,em)
   local scalefactor = 1
   if desiredHeight then
@@ -28,11 +28,12 @@ local pushSVG = function(string, desiredHeight, em, drop)
   })
 end
 
-SILE.registerCommand("include-svg-file", function (options,content)
+SILE.registerCommand("include-svg-file", function (options, content)
   local fn = SU.required(options, "src", "filename")
+  local height = SILE.length.parse(options.height):absolute().length or nil
   local fh = io.open(fn)
   local inp = fh:read("*all")
-  pushSVG(inp,nil, 72)
+  pushSVG(inp, height, 72)
 end)
 
 SILE.registerCommand("svg-glyph", function(options,content)
