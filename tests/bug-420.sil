@@ -1,0 +1,10 @@
+\begin[papersize=a5,class=book]{document}
+\script[src=packages/lorem]
+\script[src=packages/frametricks]
+\nofolios
+\font[size=16pt]
+
+\noindent
+\float[bottomboundary=1.5ex]{\font[size=3em]{T}}his old man.\footnote{He played one!} \lorem[words=200]
+
+\end{document}
