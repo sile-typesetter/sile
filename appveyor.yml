@@ -1,0 +1,18 @@
+platform:
+  - x64
+
+install:
+  - set
+  - set "PATH=C:\msys64\usr\bin;C:\msys64\mingw64\bin;%PATH%"
+  - C:\msys64\usr\bin\bash -lc ""
+  - C:\msys64\usr\bin\bash -lc "pacman --version"
+  - C:\msys64\usr\bin\bash -lc "pacman -Q"
+  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm --sync pacman-mirrors"
+  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S autoconf automake bison flex"
+  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-x86_64-qt4"
+
+
+build_script:
+  - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER/sile && ./bootstrap"
+  - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER/sile && ./configure"
+  - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER/sile && make install"
