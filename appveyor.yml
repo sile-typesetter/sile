@@ -13,6 +13,6 @@ install:
 
 
 build_script:
-  - bash -lc "exec 0</dev/null && ./bootstrap"
-  - bash -lc "exec 0</dev/null && ./configure"
-  - bash -lc "exec 0</dev/null && make install"
+  - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && ./bootstrap"
+  - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && ./configure"
+  - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && make install"
