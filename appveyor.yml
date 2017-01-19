@@ -14,5 +14,5 @@ install:
 
 build_script:
   - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && ./bootstrap.sh"
-  - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && ./configure"
+  - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && ./configure || cat config.log"
   - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && make install"
