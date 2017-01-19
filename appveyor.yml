@@ -9,10 +9,10 @@ install:
   - C:\msys64\usr\bin\bash -lc "pacman -Q"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm --sync pacman-mirrors"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S autoconf automake bison flex"
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-x86_64-qt4"
+  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-x86_64-harfbuzz mingw-w64-x86_64-libpng  mingw-w64-x86_64-freetype  mingw-w64-x86_64-fontconfig mingw-w64-x86_64-icu mingw-w64-x86_64-lua"
 
 
 build_script:
-  - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER/sile && ./bootstrap"
-  - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER/sile && ./configure"
-  - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER/sile && make install"
+  - bash -lc "exec 0</dev/null && ./bootstrap"
+  - bash -lc "exec 0</dev/null && ./configure"
+  - bash -lc "exec 0</dev/null && make install"
