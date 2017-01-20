@@ -3,6 +3,9 @@ platform:
 
 environment:
   PKG_CONFIG_PATH: /mingw64/lib/pkgconfig/
+  LUA: /mingw64/bin/lua
+  LUA_INCLUDE: /mingw64/include/
+  LUA_LIB: /mingw64/lib/
 
 install:
   - set
