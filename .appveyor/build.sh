@@ -20,8 +20,8 @@ pacman -Ql mingw-w64-x86_64-zlib
 pacman -Ql mingw-w64-x86_64-expat
 
 luarocks install lpeg
-luarocks install lua-zlib
-luarocks install luaexpat
+luarocks install lua-zlib ZLIB_DIR=/mingw64
+luarocks install luaexpat EXPAT_DIR=/mingw64
 luarocks install luafilesystem
 luarocks install lua_cliargs 2.3-3
 luarocks install busted
