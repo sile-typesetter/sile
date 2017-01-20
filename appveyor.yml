@@ -23,3 +23,4 @@ build_script:
   - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && ./configure"
   #- C:\msys64\usr\bin\bash -lc "pacman -Ql mingw-w64-x86_64-lua"
   #- bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && make install"
+  - C:\msys64\usr\bin\bash -lc "cat config.log"
