@@ -3,9 +3,7 @@ platform:
 
 environment:
   PKG_CONFIG_PATH: /mingw64/lib/pkgconfig/
-  LUA: /mingw64/bin/lua
-  LUA_INCLUDE: /mingw64/include/
-  LUA_LIB: /mingw64/lib/
+  LUA: lua5.3
 
 install:
   - set
@@ -18,8 +16,9 @@ install:
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-x86_64-harfbuzz mingw-w64-x86_64-libpng  mingw-w64-x86_64-freetype  mingw-w64-x86_64-fontconfig mingw-w64-x86_64-icu mingw-w64-x86_64-lua"
 
 build_script:
-  - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && ./bootstrap.sh"
+  - bash -lc "exec 0</dev/null && source .travis/setenv_lua.sh"
   - lua -e "print('Hello ' .. _VERSION .. '!')"
+  - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && ./bootstrap.sh"
   - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && ./configure"
   #- C:\msys64\usr\bin\bash -lc "pacman -Ql mingw-w64-x86_64-lua"
   #- bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && make install"
