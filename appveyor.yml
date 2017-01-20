@@ -2,7 +2,7 @@ platform:
   - x64
 
 environment:
-  - PKG_CONFIG_PATH: /mingw64/lib/pkgconfig/
+  PKG_CONFIG_PATH: /mingw64/lib/pkgconfig/
 
 install:
   - set
