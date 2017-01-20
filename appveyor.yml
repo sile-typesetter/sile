@@ -8,21 +8,12 @@ environment:
 install:
   - set
   - set "PATH=C:\msys64\usr\bin;C:\msys64\mingw64\bin;%PATH%"
-  - C:\msys64\usr\bin\bash -lc ""
-  - C:\msys64\usr\bin\bash -lc "pacman --version"
-  - C:\msys64\usr\bin\bash -lc "pacman -Q"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm --sync pacman-mirrors"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S autoconf automake bison flex"
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-x86_64-harfbuzz mingw-w64-x86_64-libpng  mingw-w64-x86_64-freetype  mingw-w64-x86_64-fontconfig mingw-w64-x86_64-icu mingw-w64-x86_64-lua"
+  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-x86_64-harfbuzz mingw-w64-x86_64-libpng  mingw-w64-x86_64-freetype  mingw-w64-x86_64-fontconfig mingw-w64-x86_64-icu"
 
 build_script:
-  - bash -lc "exec 0</dev/null && source .travis/setenv_lua.sh"
-  - lua -e "print('Hello ' .. _VERSION .. '!')"
-  - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && ./bootstrap.sh"
-  - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && ./configure"
-  #- C:\msys64\usr\bin\bash -lc "pacman -Ql mingw-w64-x86_64-lua"
-  #- bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && make install"
-  - C:\msys64\usr\bin\bash -lc "cat config.log"
+  - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && sh .appveyor/build.sh"
 
 on_finish:
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
