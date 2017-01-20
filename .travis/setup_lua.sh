@@ -82,7 +82,9 @@ else
 
   ln -s $LUA_HOME_DIR/bin/lua $HOME/.lua/lua
   ln -s $LUA_HOME_DIR/bin/luac $HOME/.lua/luac;
-
+  if [ "$PLATFORM" == "mingw" ]; then
+    ln -s $LUA_HOME_DIR/bin/$LUA_DLL $HOME/.lua/$LUA_DLL;
+  fi
 fi
 
 cd $TRAVIS_BUILD_DIR
