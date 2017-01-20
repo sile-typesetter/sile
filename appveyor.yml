@@ -1,6 +1,9 @@
 platform:
   - x64
 
+environment:
+  - PKG_CONFIG_PATH: /mingw64/lib/pkgconfig/
+
 install:
   - set
   - set "PATH=C:\msys64\usr\bin;C:\msys64\mingw64\bin;%PATH%"
@@ -10,7 +13,6 @@ install:
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm --sync pacman-mirrors"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S autoconf automake bison flex"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-x86_64-harfbuzz mingw-w64-x86_64-libpng  mingw-w64-x86_64-freetype  mingw-w64-x86_64-fontconfig mingw-w64-x86_64-icu mingw-w64-x86_64-lua"
-
 
 build_script:
   - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && ./bootstrap.sh"
