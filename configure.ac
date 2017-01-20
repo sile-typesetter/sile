@@ -64,6 +64,7 @@ PKG_CHECK_MODULES(HARFBUZZ, harfbuzz,
 
 case $host_os in
   msys)
+    LUA_VERSION=5.3 # By fiat. This is obviously not good.
     ;;
   *)
     AX_PROG_LUA([5.1])
