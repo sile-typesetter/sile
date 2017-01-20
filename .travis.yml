@@ -1,5 +1,8 @@
 language: c
 sudo: false
+branches:
+  except:
+    - appveyor
 compiler:
  - gcc
 addons:
