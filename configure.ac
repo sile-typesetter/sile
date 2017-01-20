@@ -62,8 +62,14 @@ PKG_CHECK_MODULES(HARFBUZZ, harfbuzz,
    fi
   ])
 
+case $host_os in
+  msys)
+    ;;
+  *)
+    AX_PROG_LUA([5.1])
+    ;;
+esac
 
-AX_PROG_LUA([5.1])
 AX_LUA_HEADERS
 AX_LUA_LIBS
 # Check for Lua modules
