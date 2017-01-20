@@ -55,6 +55,11 @@ This will place the SILE libraries and executable in a sensible location.
 
 As of SILE 0.9.5, the default font is Gentium Plus, available from [here][gentium]. If this font is not installed on your system, you won't be able to use the examples without modification. (Previously we used Original Gentium, but that's getting harder to get hold of.)
 
+If you are using OS X with Homebrew, the easiest way to install Gentium Plus is through the Homebrew Fonts caskroom:
+
+    $ brew tap caskroom/fonts
+    $ brew cask install font-gentium-plus
+
 ### Testing
 
 If all goes well you should be able to compile one of the sample documents like this:
