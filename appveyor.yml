@@ -24,3 +24,6 @@ build_script:
   #- C:\msys64\usr\bin\bash -lc "pacman -Ql mingw-w64-x86_64-lua"
   #- bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && make install"
   - C:\msys64\usr\bin\bash -lc "cat config.log"
+
+on_finish:
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
