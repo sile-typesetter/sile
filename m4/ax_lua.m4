@@ -347,7 +347,7 @@ dnl =========================================================================
 AC_DEFUN([_AX_LUA_CHK_IS_INTRP],
 [
   dnl Just print _VERSION because all Lua interpreters have this global.
-  AS_IF([$1 -e "print('Hello ' .. _VERSION .. '!')" >/dev/null 2>&1],
+  AS_IF([$1 -e "print('Hello ' .. _VERSION .. '!')"],
     [$2], [$3])
 ])
 
