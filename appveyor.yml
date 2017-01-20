@@ -4,6 +4,7 @@ platform:
 environment:
   PKG_CONFIG_PATH: /mingw64/lib/pkgconfig/
   LUA: lua5.3
+  PLATFORM: mingw64
 
 install:
   - set
