@@ -74,7 +74,7 @@ else
   perl -i -pe 's/-DLUA_COMPAT_(ALL|5_2)//' src/Makefile
   perl -i -pe 's/-DLUA_BUILD_AS_DLL/-DLUA_DL_DLL -DLUA_BUILD_AS_DLL/' src/Makefile
   if [ "$PLATFORM" == "mingw" ]; then
-    LUA_DLL=$(echo "$LUA.dll" | sed 's/\.//g')
+    LUA_DLL=$(echo "$LUA.dll" | sed 's/\.//')
     perl -i -pe "s/TO_BIN= lua luac/TO_BIN= lua.exe luac.exe $LUA_DLL/" Makefile;
   fi
   make $PLATFORM CC="gcc -std=gnu99 -fPIC"
