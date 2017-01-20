@@ -16,6 +16,9 @@ export PATH=.travis:$PATH
 
 lua -e "print('Hello ' .. _VERSION .. '!')"
 
+pacman -Ql mingw-w64-x86_64-zlib
+pacman -Ql mingw-w64-x86_64-expat
+
 luarocks install lpeg
 luarocks install lua-zlib
 luarocks install luaexpat
