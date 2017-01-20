@@ -17,5 +17,5 @@ install:
 build_script:
   - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && ./bootstrap.sh"
   - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && ./configure || cat config.log"
-  - C:\msys64\usr\bin\bash -lc "pacman -Ql mingw-w64-x86_64-harfbuzz"
+  - C:\msys64\usr\bin\bash -lc "pacman -Ql mingw-w64-x86_64-lua"
   - bash -lc "exec 0</dev/null && cd $APPVEYOR_BUILD_FOLDER && make install"
