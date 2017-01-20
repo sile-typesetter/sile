@@ -116,6 +116,7 @@ cd $TRAVIS_BUILD_DIR
 if [ "$PLATFORM" == "mingw" ]; then # XXX Fix version thing later
   mkdir -p ~/.luarocks/
 cat > ~/.luarocks/config-5.3.lua <<EOF
+variables = {}
 variables.CC = "gcc"
 variables.LD = "gcc"
 variables.LIBFLAG = "-shared -llua"
