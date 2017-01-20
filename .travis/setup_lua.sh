@@ -113,7 +113,13 @@ ln -s $LR_HOME_DIR/bin/luarocks $HOME/.lua/luarocks
 
 cd $TRAVIS_BUILD_DIR
 
-luarocks --help
+if [ "$PLATFORM" == "mingw" ]; then # XXX Fix version thing later
+cat > ~/.luarocks/config-5.3.lua <<EOF
+variables.CC = "gcc"
+variables.LD = "gcc"
+variables.LIBFLAG = "-shared -llua"
+EOF
+fi
 
 rm -rf $LUAROCKS_BASE
 
