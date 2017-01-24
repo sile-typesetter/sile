@@ -18,8 +18,9 @@ pacman -Ql mingw-w64-x86_64-zlib
 pacman -Ql mingw-w64-x86_64-expat
 
 echo "Building lpeg"
-cd vendor/lpeg; pwd; ls
-make -f makefile LUA_DLL=$HOME/.lua/lua*.dll LUADIR=$LUA_HOME_DIR/include && make -f makefile install ; cd ../..
+cd vendor/lpeg
+make LUA_DLL=$HOME/.lua/lua*.dll LUADIR=$LUA_HOME_DIR/include mingw && make install
+cd ../..
 echo "---"
 
 luarocks install lua-zlib ZLIB_DIR=/mingw64
