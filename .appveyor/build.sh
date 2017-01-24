@@ -19,7 +19,7 @@ pacman -Ql mingw-w64-x86_64-expat
 
 echo "Building lpeg"
 cd vendor/lpeg
-make LUA_DLL=$HOME/.lua/lua*.dll LUADIR=$LUA_HOME_DIR/include mingw && make install
+make LUA_DLL=$HOME/.lua/lua*.dll LUADIR=$LUA_HOME_DIR/include mingw && cp lpeg.dll $LUA_HOME_DIR/bin
 cd ../..
 echo "---"
 
