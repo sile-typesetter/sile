@@ -14,12 +14,12 @@ export LIBRARY_PATH=$LUA_HOME_DIR/lib:$LD_LIBRARY_PATH
 export LD_RUN_PATH=$LUA_HOME_DIR/lib:$LD_RUN_PATH
 export PATH=.travis:$PATH
 
-lua -e "print('Hello ' .. _VERSION .. '!')"
-
 pacman -Ql mingw-w64-x86_64-zlib
 pacman -Ql mingw-w64-x86_64-expat
 
-cd vendor/lpeg; make LUA_DLL=$HOME/.lua/lua*.dll LUADIR=$LUA_HOME_DIR && make install ; cd ../..
+echo "Building lpeg"
+cd vendor/lpeg; make -f makefile LUA_DLL=$HOME/.lua/lua*.dll LUADIR=$LUA_HOME_DIR && make -f makefile install ; cd ../..
+echo "---"
 
 luarocks install lua-zlib ZLIB_DIR=/mingw64
 luarocks install luaexpat EXPAT_DIR=/mingw64
