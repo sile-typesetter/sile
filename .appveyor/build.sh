@@ -19,7 +19,8 @@ lua -e "print('Hello ' .. _VERSION .. '!')"
 pacman -Ql mingw-w64-x86_64-zlib
 pacman -Ql mingw-w64-x86_64-expat
 
-luarocks install lpeg
+cd vendor/lpeg; make LUA_DLL=$HOME/.lua/lua*.dll LUADIR=$LUA_HOME_DIR && make install ; cd ../..
+
 luarocks install lua-zlib ZLIB_DIR=/mingw64
 luarocks install luaexpat EXPAT_DIR=/mingw64
 luarocks install luafilesystem
