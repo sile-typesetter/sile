@@ -25,9 +25,16 @@ cp lpeg.dll /usr/local/lib/lua/5.3/lpeg.so # We'll move it to a SILE dir later
 cd ../..
 echo "---"
 
+echo "Building lfs"
+cd vendor/luafilesystem
+make LUADIR=$LUA_HOME_DIR/include LIB_OPTION="-shared "$HOME/.lua/lua*.dll mingw
+mkdir -p /usr/local/lib/lua/5.3/
+cp src/lfs.so /usr/local/lib/lua/5.3/lfs.so
+cd ../..
+echo "---"
+
 luarocks install lua-zlib ZLIB_DIR=/mingw64
 luarocks install luaexpat EXPAT_DIR=/mingw64
-luarocks install luafilesystem
 luarocks install lua_cliargs 2.3-3
 luarocks install busted
 luarocks install luacov 0.8-1
