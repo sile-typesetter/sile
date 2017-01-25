@@ -14,7 +14,7 @@ SILE.inputs.common = {
     package.path = dirname.."?;"..dirname.."?.lua;"..package.path
 
     if not SILE.outputFilename and SILE.masterFilename then
-      SILE.outputFilename = string.gsub(SILE.masterFilename,"%..-$", "").. ".pdf"
+      SILE.outputFilename = string.match(SILE.masterFilename,"(.+)%..-$")..".pdf"
     end
     local ff = SILE.documentState.documentClass:init()
     SILE.typesetter:init(ff)
