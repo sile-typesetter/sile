@@ -27,7 +27,7 @@ echo "---"
 
 echo "Building lfs"
 cd vendor/luafilesystem
-make LUADIR=$LUA_HOME_DIR/include LIB_OPTION="-shared "$HOME/.lua/lua*.dll
+make LUA_INC=$LUA_HOME_DIR/include LIB_OPTION="-shared "$HOME/.lua/lua*.dll
 mkdir -p /usr/local/lib/lua/5.3/
 cp src/lfs.so /usr/local/lib/lua/5.3/lfs.so
 cd ../..
