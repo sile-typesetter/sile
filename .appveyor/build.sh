@@ -35,14 +35,14 @@ cp src/lfs.so ../../lfs.so
 cd ../..
 echo "---"
 
+pwd
+
 echo "Building luaexpat"
 cd vendor/luaexpat
-make EXPAT_INC=-I/mingw64/include LUA_INC=$LUA_HOME_DIR/include EXPAT_LIB="-L/mingw64/lib -lexpat "$HOME/.lua/lua*.dll
+make EXPAT_INC=-I/mingw64/include LUA_INC=-I$LUA_HOME_DIR/include EXPAT_LIB="-L/mingw64/lib -lexpat "$HOME/.lua/lua*.dll
 cp src/lxp.so ../..
 cd ../..
 echo "---"
-
-pwd
 
 luarocks install lua-zlib ZLIB_DIR=/mingw64
 luarocks install lua_cliargs 2.3-3
