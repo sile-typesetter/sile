@@ -149,21 +149,27 @@ end
 
 function SILE.readFile(filename)
   SILE.currentlyProcessingFile = filename
-  filename = SILE.resolveFile(filename)
-  if not filename then
-    SU.error("Could not find file")
+  local doc = nil
+  if filename == "-" then
+    io.write("<STDIN>\n")
+    doc = io.stdin:read("*a")
+  else
+    filename = SILE.resolveFile(filename)
+    if not filename then
+      SU.error("Could not find file")
+    end
+    local mode = lfs.attributes(filename).mode
+    if mode ~= "file" and mode ~= "named pipe" then
+      SU.error(filename.." isn't a file or named pipe, it's a ".. mode .."!")
+    end
+    local file, err = io.open(filename)
+    if not file then
+      print("Could not open "..filename..": "..err)
+      return
+    end
+    io.write("<"..filename..">\n")
+    doc = file:read("*a")
   end
-  local mode = lfs.attributes(filename).mode
-  if mode ~= "file" and mode ~= "named pipe" then
-    SU.error(filename.." isn't a file or named pipe, it's a ".. mode .."!")
-  end
-  local file, err = io.open(filename)
-  if not file then
-    print("Could not open "..filename..": "..err)
-    return
-  end
-  io.write("<"..filename..">\n")
-  local doc = file:read("*all")
   local sniff = doc:sub(1, 100) or ""
   local inputsOrder = {}
   for n in pairs(SILE.inputs) do
