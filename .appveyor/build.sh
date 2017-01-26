@@ -21,7 +21,8 @@ echo "Building lpeg"
 cd vendor/lpeg
 make LUA_DLL=$HOME/.lua/lua*.dll LUADIR=$LUA_HOME_DIR/include mingw
 mkdir -p /usr/local/lib/lua/5.3/
-cp lpeg.dll /usr/local/lib/lua/5.3/lpeg.so # We'll move it to a SILE dir later
+#cp lpeg.dll /usr/local/lib/lua/5.3/lpeg.so # We'll move it to a SILE dir later
+cp lpeg.dll ../../lpeg.so
 cd ../..
 echo "---"
 
@@ -29,12 +30,19 @@ echo "Building lfs"
 cd vendor/luafilesystem
 make LUA_INC=$LUA_HOME_DIR/include LIB_OPTION="-shared "$HOME/.lua/lua*.dll
 mkdir -p /usr/local/lib/lua/5.3/
-cp src/lfs.so /usr/local/lib/lua/5.3/lfs.so
+#cp src/lfs.so /usr/local/lib/lua/5.3/lfs.so
+cp lfs.dll ../../lfs.so
+cd ../..
+echo "---"
+
+echo "Building luaexpat"
+cd vendor/luaexpat
+make EXPAT_INC=-I/mingw64/include LUA_INC=$LUA_HOME_DIR/include EXPAT_LIB="-L/mingw64/lib -lexpat "$HOME/.lua/lua*.dll
+cp src/lxp.so ../..
 cd ../..
 echo "---"
 
 luarocks install lua-zlib ZLIB_DIR=/mingw64
-luarocks install luaexpat EXPAT_DIR=/mingw64
 luarocks install lua_cliargs 2.3-3
 # luarocks install busted
 # luarocks install luacov 0.8-1
