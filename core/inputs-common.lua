@@ -14,7 +14,15 @@ SILE.inputs.common = {
     package.path = dirname.."?;"..dirname.."?.lua;"..package.path
 
     if not SILE.outputFilename and SILE.masterFilename then
-      SILE.outputFilename = string.match(SILE.masterFilename,"(.+)%..-$")..".pdf"
+      -- TODO: This hack works on *nix systems because /dev/stdout is usable as
+      -- a filename to refer to STDOUT. Libtexpdf works fine with this, but it's
+      -- not going to work on Windows quite the same way. Normal filnames will
+      -- still work but explicitly using piped streams won't.
+      if SILE.masterFilename == "-" then
+        SILE.outputFilename = "/dev/stdout"
+      else
+        SILE.outputFilename = string.match(SILE.masterFilename,"(.+)%..-$")..".pdf"
+      end
     end
     local ff = SILE.documentState.documentClass:init()
     SILE.typesetter:init(ff)
