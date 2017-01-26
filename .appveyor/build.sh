@@ -22,7 +22,6 @@ cd vendor/lpeg
 make LUA_DLL=$HOME/.lua/lua*.dll LUADIR=$LUA_HOME_DIR/include mingw
 mkdir -p /usr/local/lib/lua/5.3/
 cp lpeg.dll /usr/local/lib/lua/5.3/lpeg.so # We'll move it to a SILE dir later
-cp lpeg.dll ../../lpeg.so # Urgh
 cd ../..
 echo "---"
 
@@ -31,7 +30,6 @@ cd vendor/luafilesystem
 make LUA_INC=$LUA_HOME_DIR/include LIB_OPTION="-shared "$HOME/.lua/lua*.dll
 mkdir -p /usr/local/lib/lua/5.3/
 cp src/lfs.so /usr/local/lib/lua/5.3/lfs.so
-cp lpeg.dll ../../lfs.so # Urgh
 cd ../..
 echo "---"
 
