@@ -35,8 +35,6 @@ cp src/lfs.so ../../lfs.so
 cd ../..
 echo "---"
 
-pwd
-
 echo "Building luaexpat"
 cd vendor/luaexpat
 make EXPAT_INC=-I/mingw64/include LUA_INC=-I$LUA_HOME_DIR/include EXPAT_LIB="-L/mingw64/lib -lexpat "$HOME/.lua/lua*.dll
@@ -44,11 +42,14 @@ cp src/lxp.so ../..
 cd ../..
 echo "---"
 
-luarocks install lua-zlib ZLIB_DIR=/mingw64
+echo "Building lua-zlib"
+cd vendor/lua-zlib
+make linux INCDIR="-I$LUA_HOME_DIR/include -I/mingw64/include" LIBDIR="-L$LUA_HOME_DIR/lib -L/mingw64/lib"
+cp zlib.so ../..
+cd ../..
+echo "---"
+
 luarocks install lua_cliargs 2.3-3
-# luarocks install busted
-# luarocks install luacov 0.8-1
-# luarocks install luacov-coveralls
 
 ./bootstrap.sh || exit 1
 ./configure || exit 1
