@@ -126,7 +126,7 @@ SILE.defaultTypesetter = std.object {
     print("Writing into "..self.frame:toString())
     print("Recent contributions: ")
     for i = 1,#(self.state.nodes) do
-      io.write(self.state.nodes[i].. " ")
+      io.stderr:write(self.state.nodes[i].. " ")
     end
     print("\nVertical list: ")
     for i = 1,#(self.state.outputQueue) do

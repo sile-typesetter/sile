@@ -151,7 +151,7 @@ function SILE.readFile(filename)
   SILE.currentlyProcessingFile = filename
   local doc = nil
   if filename == "-" then
-    io.write("<STDIN>\n")
+    io.stderr:write("<STDIN>\n")
     doc = io.stdin:read("*a")
   else
     filename = SILE.resolveFile(filename)
@@ -167,7 +167,7 @@ function SILE.readFile(filename)
       print("Could not open "..filename..": "..err)
       return
     end
-    io.write("<"..filename..">\n")
+    io.stderr:write("<"..filename..">\n")
     doc = file:read("*a")
   end
   local sniff = doc:sub(1, 100) or ""

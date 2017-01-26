@@ -14,7 +14,7 @@ return {
   exports = {
     outputFolio = function (this, frame)
       if not frame then frame = "folio" end
-      io.write("[" .. SILE.formatCounter(SILE.scratch.counters.folio) .. "] ")
+      io.stderr:write("[" .. SILE.formatCounter(SILE.scratch.counters.folio) .. "] ")
       if SILE.scratch.counters.folio.off then
         if SILE.scratch.counters.folio.off == 2 then
           SILE.scratch.counters.folio.off = false

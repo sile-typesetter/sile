@@ -224,13 +224,13 @@ end
 local debugInsertion = function(ins, insbox, topBox, target, targetFrame, totalHeight)
   if SU.debugging("insertions") then
     local h = ins.contentHeight + topBox.height + topBox.depth + ins.contentDepth
-    print("[insertions]", "Incoming insertion")
-    print("top box height", topBox.height)
-    print("insertion", ins, ins.height, ins.depth)
-    print("Total incoming height", h)
-    print("Insertions already in this class ", insbox.height, insbox.depth)
-    print("Page target ", target)
-    print(totalHeight.." worth of content on page so far")
+    io.stderr:write("[insertions]", "Incoming insertion")
+    io.stderr:write("top box height", topBox.height)
+    io.stderr:write("insertion", ins, ins.height, ins.depth)
+    io.stderr:write("Total incoming height", h)
+    io.stderr:write("Insertions already in this class ", insbox.height, insbox.depth)
+    io.stderr:write("Page target ", target)
+    io.stderr:write(totalHeight.." worth of content on page so far")
   end
 end
 

@@ -551,9 +551,9 @@ end
 
 function lineBreak:dumpActiveRing()
   local p = self.activeListHead
-  io.write("\n")
+  io.stderr:write("\n")
   repeat
-    if p == self.r then io.write("-> ") else io.write("   ") end
+    if p == self.r then io.stderr:write("-> ") else io.stderr:write("   ") end
     print(lineBreak:describeBreakNode(p))
     p = p.next
   until p == self.activeListHead
