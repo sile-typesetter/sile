@@ -44,7 +44,7 @@ echo "---"
 
 echo "Building lua-zlib"
 cd vendor/lua-zlib
-make linux INCDIR="-I$LUA_HOME_DIR/include -I/mingw64/include" LIBDIR="-L$LUA_HOME_DIR/lib -L/mingw64/lib"
+make linux INCDIR="-I$LUA_HOME_DIR/include -I/mingw64/include" LIBDIR="-L$LUA_HOME_DIR/lib -L/mingw64/lib" LIBS="-lz -lm "$HOME/.lua/lua*.dll
 cp zlib.so ../..
 cd ../..
 echo "---"
