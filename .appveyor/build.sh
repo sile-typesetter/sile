@@ -52,5 +52,5 @@ echo "---"
 luarocks install lua_cliargs 2.3-3
 
 ./bootstrap.sh || exit 1
-./configure || exit 1
+./configure CFLAGS=-I/mingw64/include LDFLAGS=-L-I/mingw64/lib || exit 1
 make || exit 1
