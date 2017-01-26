@@ -91,17 +91,14 @@ local function massage_ast(t,doc)
   return t
 end
 
-function SILE.inputs.TeXlike.process(fn)
-  local fh = io.open(fn)
-  resetCache()
-  local doc = fh:read("*all")
-  local t = SILE.inputs.TeXlike.docToTree(doc)
+function SILE.inputs.TeXlike.process(doc)
+  local tree = SILE.inputs.TeXlike.docToTree(doc)
   local root = SILE.documentState.documentClass == nil
   if root then
-    if not(t.tag == "document") then SU.error("Should begin with \\begin{document}") end
-    SILE.inputs.common.init(fn, t)
+    if not(tree.tag == "document") then SU.error("Should begin with \\begin{document}") end
+    SILE.inputs.common.init(doc, tree)
   end
-  SILE.process(t)
+  SILE.process(tree)
   if root and not SILE.preamble then
     SILE.documentState.documentClass:finish()
   end
@@ -116,14 +113,14 @@ end
 SILE.inputs.TeXlike.rebuildParser()
 
 function SILE.inputs.TeXlike.docToTree(doc)
-  local t = epnf.parsestring(_parser, doc)
+  local tree = epnf.parsestring(_parser, doc)
   -- a document always consists of one stuff
-  t = t[1][1]
-  if t.id == "text" then t = {t} end
-  if not t then return end
+  tree = tree[1][1]
+  if tree.id == "text" then tree = {tree} end
+  if not tree then return end
   resetCache()
-  t = massage_ast(t,doc)
-  return t
+  tree = massage_ast(tree,doc)
+  return tree
 end
 
 SILE.inputs.TeXlike.order = 99

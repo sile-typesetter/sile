@@ -153,8 +153,9 @@ function SILE.readFile(filename)
   if not filename then
     SU.error("Could not find file")
   end
-  if lfs.attributes(filename).mode ~= "file" then
-    SU.error(filename.." isn't a file, it's a "..lfs.attributes(filename).mode.."!")
+  local mode = lfs.attributes(filename).mode
+  if mode ~= "file" and mode ~= "named pipe" then
+    SU.error(filename.." isn't a file or named pipe, it's a ".. mode .."!")
   end
   local file, err = io.open(filename)
   if not file then
@@ -162,9 +163,8 @@ function SILE.readFile(filename)
     return
   end
   io.write("<"..filename..">\n")
-  -- Sniff first few bytes
-  local sniff = file:read("*l") or ""
-  file:seek("set", 0)
+  local doc = file:read("*all")
+  local sniff = doc:sub(1, 100) or ""
   local inputsOrder = {}
   for n in pairs(SILE.inputs) do
     if SILE.inputs[n].order then table.insert(inputsOrder, n) end
@@ -172,7 +172,7 @@ function SILE.readFile(filename)
   table.sort(inputsOrder,function(a,b) return SILE.inputs[a].order < SILE.inputs[b].order end)
   for i = 1,#inputsOrder do local input = SILE.inputs[inputsOrder[i]]
     if input.appropriate(filename, sniff) then
-      input.process(filename)
+      input.process(doc)
       return
     end
   end
