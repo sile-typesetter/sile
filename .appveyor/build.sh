@@ -31,7 +31,7 @@ cd vendor/luafilesystem
 make LUA_INC=$LUA_HOME_DIR/include LIB_OPTION="-shared "$HOME/.lua/lua*.dll
 mkdir -p /usr/local/lib/lua/5.3/
 #cp src/lfs.so /usr/local/lib/lua/5.3/lfs.so
-cp lfs.dll ../../lfs.so
+cp src/lfs.so ../../lfs.so
 cd ../..
 echo "---"
 
@@ -41,6 +41,8 @@ make EXPAT_INC=-I/mingw64/include LUA_INC=$LUA_HOME_DIR/include EXPAT_LIB="-L/mi
 cp src/lxp.so ../..
 cd ../..
 echo "---"
+
+pwd
 
 luarocks install lua-zlib ZLIB_DIR=/mingw64
 luarocks install lua_cliargs 2.3-3
