@@ -36,9 +36,9 @@ echo "---"
 luarocks install lua-zlib ZLIB_DIR=/mingw64
 luarocks install luaexpat EXPAT_DIR=/mingw64
 luarocks install lua_cliargs 2.3-3
-luarocks install busted
-luarocks install luacov 0.8-1
-luarocks install luacov-coveralls
+# luarocks install busted
+# luarocks install luacov 0.8-1
+# luarocks install luacov-coveralls
 
 ./bootstrap.sh || exit 1
 ./configure || exit 1
