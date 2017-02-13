@@ -162,5 +162,17 @@ SILE.colorparser = function(col)
   if r then
     return { r = tonumber("0x"..r)/15, g = tonumber("0x"..g)/15, b = tonumber("0x"..b)/15,}
   end
-  SU.error("Unparsable color "..col)
+  local c, m, y, k = col:match("^%s*(%d+%.?%d*)%s+(%d+%.?%d*)%s+(%d+%.?%d*)%s+(%d+%.?%d*)%s*$")
+  if c then
+    return {c = tonumber(c)/255, m = tonumber(m)/255, y = tonumber(y)/255, k = tonumber(k)/255}
+  end
+  local r, g, b = col:match("^%s*(%d+%.?%d*)%s+(%d+%.?%d*)%s+(%d+%.?%d*)%s*$")
+  if r then
+    return {r = tonumber(r)/255, g = tonumber(g)/255, b = tonumber(b)/255}
+  end
+  local l = col:match("^%s*(%d+.?%d*)%s*$")
+  if l then
+    return {l = tonumber(l)/255}
+  end
+  SU.error("Unparsable color "..col..print(type(col)))
 end

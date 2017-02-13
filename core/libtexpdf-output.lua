@@ -28,11 +28,21 @@ SILE.outputters.libtexpdf = {
   end,
   setColor = function(self, color)
     ensureInit()
-    pdf.setcolor(color.r, color.g, color.b)
+    if color.r then
+      pdf.setcolor_rgb(color.r, color.g, color.b)end
+    if color.c then
+      pdf.setcolor_cmyk(color.c, color.m, color.y, color.k)end
+    if color.l then
+      pdf.setcolor_gray(color.l)end
   end,
   pushColor = function (self, color)
     ensureInit()
-    pdf.colorpush(color.r, color.g, color.b)
+    if color.r then
+      pdf.colorpush_rgb(color.r, color.g, color.b)end
+    if color.c then
+      pdf.colorpush_cmyk(color.c, color.m, color.y, color.k)end
+    if color.l then
+      pdf.colorpush_gray(color.l)end
   end,
   popColor = function (self)
     ensureInit()
