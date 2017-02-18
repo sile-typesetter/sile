@@ -140,25 +140,67 @@ int pdf_setrule(lua_State *L) {
 
 /* Colors */
 
-int pdf_setcolor(lua_State *L) {
+int pdf_colorpush_rgb(lua_State *L) {
   double r = luaL_checknumber(L, 1);
   double g = luaL_checknumber(L, 2);
   double b = luaL_checknumber(L, 3);
 
   pdf_color color;
-  texpdf_color_rgbcolor(&color,r,g,b);
+  texpdf_color_rgbcolor(&color, r, g, b);
+  texpdf_color_push(p, &color, &color);
+  return 0;
+    }
+
+int pdf_colorpush_cmyk(lua_State *L) {
+  double c = luaL_checknumber(L, 1);
+  double m = luaL_checknumber(L, 2);
+  double y = luaL_checknumber(L, 3);
+  double k = luaL_checknumber(L, 4);
+
+  pdf_color color;
+  texpdf_color_cmykcolor(&color, c, m, y, k);
+  texpdf_color_push(p, &color, &color);
+  return 0;
+    }
+
+int pdf_colorpush_gray(lua_State *L) {
+  double l = luaL_checknumber(L, 1);
+
+  pdf_color color;
+  texpdf_color_graycolor(&color, l);
+  texpdf_color_push(p, &color, &color);
+  return 0;
+    }
+
+int pdf_setcolor_rgb(lua_State *L) {
+  double r = luaL_checknumber(L, 1);
+  double g = luaL_checknumber(L, 2);
+  double b = luaL_checknumber(L, 3);
+
+  pdf_color color;
+  texpdf_color_rgbcolor(&color, r, g, b);
   texpdf_color_set(p, &color, &color);
   return 0;
 }
 
-int pdf_colorpush(lua_State *L) {
-  double r = luaL_checknumber(L, 1);
-  double g = luaL_checknumber(L, 2);
-  double b = luaL_checknumber(L, 3);
+int pdf_setcolor_cmyk(lua_State *L) {
+  double c = luaL_checknumber(L, 1);
+  double m = luaL_checknumber(L, 2);
+  double y = luaL_checknumber(L, 3);
+  double k = luaL_checknumber(L, 4);
+  
+  pdf_color color;
+  texpdf_color_cmykcolor(&color, c, m, y, k);
+  texpdf_color_set(p, &color, &color);
+  return 0;
+}
+
+int pdf_setcolor_gray(lua_State *L) {
+  double l = luaL_checknumber(L, 1);
 
   pdf_color color;
-  texpdf_color_rgbcolor(&color,r,g,b);
-  texpdf_color_push(p, &color, &color);
+  texpdf_color_graycolor(&color, l);
+  texpdf_color_set(p, &color, &color);
   return 0;
 }
 
@@ -448,11 +490,15 @@ static const struct luaL_Reg lib_table [] = {
   {"setdirmode", pdf_setdirmode},
   {"setstring", pdf_setstring},
   {"setrule", pdf_setrule},
-  {"setcolor", pdf_setcolor},
+  {"setcolor_rgb", pdf_setcolor_rgb},
+  {"setcolor_cmyk", pdf_setcolor_cmyk},
+  {"setcolor_gray", pdf_setcolor_gray},
   {"drawimage", pdf_drawimage},
   {"imagebbox", pdf_imagebbox},
   {"colorpop", pdf_colorpop},
-  {"colorpush", pdf_colorpush},
+  {"colorpush_rgb", pdf_colorpush_rgb},
+  {"colorpush_cmyk", pdf_colorpush_cmyk},
+  {"colorpush_gray", pdf_colorpush_gray},
   {"setmatrix", pdf_transform},
   {"gsave", pdf_gsave},
   {"grestore", pdf_grestore},
