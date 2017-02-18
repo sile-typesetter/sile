@@ -154,25 +154,25 @@ SILE.colorparser = function(col)
     local c = colorsRGB[col]
     return { r = c[1] / 255, g = c[2] / 255, b = c[3] / 255 }
   end
-  local r, g, b =  col:match("#(%x%x)(%x%x)(%x%x)")
+  local r, g, b = col:match("#(%x%x)(%x%x)(%x%x)")
   if r then
-    return { r = tonumber("0x"..r)/255, g = tonumber("0x"..g)/255, b = tonumber("0x"..b)/255,}
+    return { r = tonumber("0x"..r)/255, g = tonumber("0x"..g)/255, b = tonumber("0x"..b)/255 }
   end
-  local r, g, b =  col:match("#(%x)(%x)(%x)")
+  local r, g, b = col:match("#(%x)(%x)(%x)")
   if r then
     return { r = tonumber("0x"..r)/15, g = tonumber("0x"..g)/15, b = tonumber("0x"..b)/15,}
   end
-  local c, m, y, k = col:match("^%s*(%d+%.?%d*)%s+(%d+%.?%d*)%s+(%d+%.?%d*)%s+(%d+%.?%d*)%s*$")
+  local c, m, y, k = col:match("(%d+%.?%d*)%s+(%d+%.?%d*)%s+(%d+%.?%d*)%s+(%d+%.?%d*)")
   if c then
-    return {c = tonumber(c)/255, m = tonumber(m)/255, y = tonumber(y)/255, k = tonumber(k)/255}
+    return { c = tonumber(c)/255, m = tonumber(m)/255, y = tonumber(y)/255, k = tonumber(k)/255 }
   end
-  local r, g, b = col:match("^%s*(%d+%.?%d*)%s+(%d+%.?%d*)%s+(%d+%.?%d*)%s*$")
+  local r, g, b = col:match("(%d+%.?%d*)%s+(%d+%.?%d*)%s+(%d+%.?%d*)")
   if r then
-    return {r = tonumber(r)/255, g = tonumber(g)/255, b = tonumber(b)/255}
+    return { r = tonumber(r)/255, g = tonumber(g)/255, b = tonumber(b)/255 }
   end
-  local l = col:match("^%s*(%d+.?%d*)%s*$")
+  local l = col:match("(%d+.?%d*)")
   if l then
-    return {l = tonumber(l)/255}
+    return { l = tonumber(l)/255 }
   end
-  SU.error("Unparsable color "..col..print(type(col)))
+  SU.error("Unparsable color "..col)
 end
