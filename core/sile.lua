@@ -92,6 +92,7 @@ Options:
   -b, --backend=VALUE      choose an alternative output backend
   -d, --debug=VALUE        debug SILE's operation
   -e, --evaluate=VALUE     evaluate some Lua code before processing file
+  -m, --makedeps=[FILE]    generate a list of dependencies in Makefile format
   -o, --output=[FILE]      explicitly set output file name
   -I, --include=[FILE]     include a class or SILE file before processing input
   -t, --traceback          display detailed location trace on errors and warnings
@@ -122,6 +123,10 @@ Options:
       if err then SU.error(err) end
       SILE.dolua[#SILE.dolua+1] = func
     end
+  end
+  if opts.makedeps then
+    SILE.makeDeps = require("core.makedeps")
+    SILE.makeDeps.filename = opts.makedeps
   end
   if opts.output then
     SILE.outputFilename = opts.output
@@ -219,6 +224,7 @@ end
 
 -- Sort through possible places files could be
 function SILE.resolveFile(filename, pathprefix)
+  local resolved = nil
   local candidates = {}
   -- Start with the raw file name as given prefixed with a path if requested
   if pathprefix then candidates[#candidates+1] = std.io.catfile(pathprefix, filename) end
@@ -237,11 +243,11 @@ function SILE.resolveFile(filename, pathprefix)
   end
   -- Return the first candidate that exists, also checking the .sil suffix
   for _, v in pairs(candidates) do
-    if file_exists(v) then return v end
-    if file_exists(v..".sil") then return v .. ".sil" end
+    if file_exists(v) then resolved = v break end
+    if file_exists(v..".sil") then resolved = v..".sil" break end
   end
-  -- If we got here then no files existed even resembling the requested one
-  return nil
+  if SILE.makeDeps then SILE.makeDeps:add(resolved) end
+  return resolved
 end
 
 function SILE.call(command, options, content)
@@ -258,6 +264,12 @@ function SILE.call(command, options, content)
   local result = SILE.Commands[command](options, content)
   SILE.traceStack:pop(pId)
   return result
+end
+
+function SILE.finish ()
+  if SILE.makeDeps then
+    SILE.makeDeps:write()
+  end
 end
 
 return SILE

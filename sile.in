@@ -72,3 +72,5 @@ if SILE.masterFilename then
 else
   SILE.repl()
 end
+if SILE.makeDeps then SILE.makeDeps:add(debug.getinfo(1, "S").short_src) end
+SILE.finish()
