@@ -110,7 +110,7 @@ SILE.outputters.libtexpdf = {
   end,
   debugFrame = function (self,f)
     ensureInit()
-    pdf.colorpush(0.8,0,0)
+    pdf.colorpush_rgb(0.8, 0, 0)
     self.rule(f:left(), f:top(), f:width(), 0.5)
     self.rule(f:left(), f:top(), 0.5, f:height())
     self.rule(f:right(), f:top(), 0.5, f:height())
