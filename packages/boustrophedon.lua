@@ -7,6 +7,7 @@ SILE.nodeMakers.grc = SILE.nodeMakers.unicode {
         self:addToken(items[i].text,items[i])
         self:makeToken()
         self:makePenalty()
+        coroutine.yield(SILE.nodefactory.newGlue("0pt plus 2pt"))
       end
     end)
   end
