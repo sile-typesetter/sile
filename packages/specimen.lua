@@ -36,7 +36,7 @@ SILE.registerCommand("pangrams", function (o,c)
 end)
 
 SILE.registerCommand("set-to-width", function(options,content)
-  local width = SILE.length.parse(SU.required(options, "width", "set to width"))
+  local width = SILE.length.parse(SU.required(options, "width", "set to width")):absolute()
   local fontOptions = SILE.font.loadDefaults({})
   for line in SU.gtoke(content[1],"\n+") do
     if line.string then
