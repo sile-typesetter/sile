@@ -47,7 +47,7 @@ local setupParallel = function (klass, options)
     end
     -- Fixed leading here is obviously a bug, but n-way leading calculations
     -- get very complicated...
-    typesetterPool[k].leadingFor = function() return SILE.nodefactory.newVglue(SILE.settings.get("document.lineskip")) end
+    -- typesetterPool[k].leadingFor = function() return SILE.nodefactory.newVglue(SILE.settings.get("document.lineskip")) end
     SILE.registerCommand(k, function (o,c) -- \left ...
       SILE.typesetter = typesetterPool[k]
       SILE.call(k..":font")
