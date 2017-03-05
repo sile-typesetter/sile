@@ -11,7 +11,7 @@ SILE.registerCommand("ruby", function (options, content)
   rubybox.outputYourself = function (self, typesetter, line)
     local ox = typesetter.frame.state.cursorX
     local oy = typesetter.frame.state.cursorY
-    typesetter.frame.state.cursorX = typesetter.frame.state.cursorX + rubybox.width
+    typesetter.frame:advanceWritingDirection(rubybox.width)
     typesetter.frame:advancePageDirection(-SILE.toPoints("1zw"))
     SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
     for i = 1, #(self.value) do
