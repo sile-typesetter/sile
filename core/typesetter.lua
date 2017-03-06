@@ -400,14 +400,18 @@ SILE.defaultTypesetter = std.object {
       SILE.documentState.documentClass:endPage()
       self:initFrame(SILE.documentState.documentClass:newPage())
     end
-    -- XXX A temporary measure to expose pushback bugs, so we can
-    -- fix them.
-    --
-    -- if not SU.feq(oldframe:lineWidth(), self.frame:lineWidth()) then
+
+    if not SU.feq(oldframe:lineWidth(), self.frame:lineWidth()) then
       self:pushBack()
-    -- end
-    self:leaveHmode(true)
+    else
+      -- If I have some things on the vertical list already, they need
+      -- proper top-of-frame leading applied.
+      if #(self.state.outputQueue) > 0 then
+        table.insert(self.state.outputQueue,1,self:leadingFor(self.state.outputQueue[1],nil))
+      end
+    end
     self:runHooks("newframe")
+
   end,
 
   pushBack = function (self)
