@@ -513,11 +513,11 @@ SILE.defaultTypesetter = std.object {
     local prevDepth = previous.depth
     SU.debug("typesetter", "   Depth of previous line was "..tostring(prevDepth))
     local bls = SILE.settings.get("document.baselineskip")
-    local d = bls.height - vbox.height - prevDepth
+    local d = bls.height:absolute() - vbox.height - prevDepth
     d = d.length
     SU.debug("typesetter", "   Leading height = " .. tostring(bls.height) .. " - " .. tostring(vbox.height) .. " - " .. tostring(prevDepth) .. " = "..d)
 
-    if (d > SILE.settings.get("document.lineskip").height.length) then
+    if (d > SILE.settings.get("document.lineskip").height:absolute().length) then
       len = SILE.length.new({ length = d, stretch = bls.height.stretch, shrink = bls.height.shrink })
       return SILE.nodefactory.newVglue({height = len})
     else
