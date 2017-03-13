@@ -82,8 +82,8 @@ Options:
   -e, --evaluate=VALUE     evaluate some Lua code before processing file
   -o, --output=[FILE]      explicitly set output file name
   -I, --include=[FILE]     include a class or SILE file before processing input
-      --help               display this help, then exit
-      --version            display version information, then exit
+  -h, --help               display this help, then exit
+  -v, --version            display version information, then exit
 ]])
 
   parser:on ('--', parser.finished)
