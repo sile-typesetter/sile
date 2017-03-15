@@ -1,12 +1,11 @@
 SILE.inputs.XML = {
   order = 1,
-  appropriate = function(fn, sniff)
-    return (fn:match("xml$") or sniff:match("<"))
+  appropriate = function(filename, sniff)
+    return (filename:match("xml$") or sniff:match("<"))
   end,
-  process = function (fn)
+  process = function (doc)
     local lom = require("lomwithpos")
-    local fh = io.open(fn)
-    local t, err = lom.parse(fh:read("*all"))
+    local t, err = lom.parse(doc)
     if t == nil then
       error(err)
     end
@@ -15,7 +14,7 @@ SILE.inputs.XML = {
       if not(t.tag == "sile") then
         SU.error("This isn't a SILE document!")
       end
-      SILE.inputs.common.init(fn, t)
+      SILE.inputs.common.init(doc, t)
     end
     SILE.currentCommand = t
     if SILE.Commands[t.tag] then

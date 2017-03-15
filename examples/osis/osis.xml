@@ -18,7 +18,7 @@ SILE.registerCommand("verse", function(options, content)
   local id = options.osisID
   c,v = string.match(id, "(%d+).(%d+)$")
   if not (c == SILE.scratch.chapter) then
-    io.write(" ("..c..") ")
+    io.stderr:write(" ("..c..") ")
     SILE.call("bigskip")
     SILE.Commands["font"]({ weight = 700, size = "15pt"}, { "Chapter ".. c })
     SILE.typesetter:leaveHmode()

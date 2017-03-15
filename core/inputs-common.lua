@@ -1,9 +1,9 @@
 SILE.inputs.common = {
-  init = function(fn, t)
-    local dclass = t.attr.class or "plain"
-    t.attr.papersize = t.attr.papersize or "a4"
+  init = function(doc, tree)
+    local dclass = tree.attr.class or "plain"
+    tree.attr.papersize = tree.attr.papersize or "a4"
     SILE.documentState.documentClass = SILE.require(dclass, "classes")
-    for k,v in pairs(t.attr) do
+    for k,v in pairs(tree.attr) do
       if SILE.documentState.documentClass.options[k] then
         SILE.documentState.documentClass.options[k](v)
       end
@@ -14,7 +14,15 @@ SILE.inputs.common = {
     package.path = dirname.."?;"..dirname.."?.lua;"..package.path
 
     if not SILE.outputFilename and SILE.masterFilename then
-      SILE.outputFilename = string.match(SILE.masterFilename,"(.+)%..-$")..".pdf"
+      -- TODO: This hack works on *nix systems because /dev/stdout is usable as
+      -- a filename to refer to STDOUT. Libtexpdf works fine with this, but it's
+      -- not going to work on Windows quite the same way. Normal filnames will
+      -- still work but explicitly using piped streams won't.
+      if SILE.masterFilename == "-" then
+        SILE.outputFilename = "/dev/stdout"
+      else
+        SILE.outputFilename = string.match(SILE.masterFilename,"(.+)%..-$")..".pdf"
+      end
     end
     local ff = SILE.documentState.documentClass:init()
     SILE.typesetter:init(ff)
@@ -39,11 +47,11 @@ SILE.process = function(input)
 end
 
 -- Just a simple one-level find. We're not reimplementing XPath here.
-SILE.findInTree = function (t, tag)
-  for i=1, #t do
-    if type(t[i]) == "string" then
-    elseif t[i].tag == tag then
-      return t[i]
+SILE.findInTree = function (tree, tag)
+  for i=1, #tree do
+    if type(tree[i]) == "string" then
+    elseif tree[i].tag == tag then
+      return tree[i]
     end
   end
 end

@@ -16,7 +16,7 @@ end
 SILE.init()
 if SILE.masterFilename then
   if SILE.preamble then
-    print("Loading "..SILE.preamble)
+    io.stderr:write("Loading "..SILE.preamble)
     local c = SILE.resolveFile("classes/"..SILE.preamble)
     local f = SILE.resolveFile(SILE.preamble)
     if c then
@@ -41,7 +41,7 @@ if SILE.masterFilename then
     os.exit(1)
   end
   if SILE.preamble then SILE.documentState.documentClass:finish() end
-  io.write("\n")
+  io.stderr:write("\n")
   if SU.debugging("profile") and pcall(function () require("ProFi") end) then
     ProFi:stop()
     ProFi:writeReport( 'sile-profile.txt' )
