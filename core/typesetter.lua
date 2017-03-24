@@ -407,7 +407,8 @@ SILE.defaultTypesetter = std.object {
       -- If I have some things on the vertical list already, they need
       -- proper top-of-frame leading applied.
       if #(self.state.outputQueue) > 0 then
-        table.insert(self.state.outputQueue,1,self:leadingFor(self.state.outputQueue[1],nil))
+        local lead = self:leadingFor(self.state.outputQueue[1],nil)
+        if lead then table.insert(self.state.outputQueue,1,lead) end
       end
     end
     self:runHooks("newframe")
