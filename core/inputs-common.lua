@@ -21,7 +21,7 @@ SILE.inputs.common = {
       if SILE.masterFilename == "-" then
         SILE.outputFilename = "/dev/stdout"
       else
-        SILE.outputFilename = string.match(SILE.masterFilename,"(.+)%..-$")..".pdf"
+        SILE.outputFilename = SILE.masterFilename..".pdf"
       end
     end
     local ff = SILE.documentState.documentClass:init()

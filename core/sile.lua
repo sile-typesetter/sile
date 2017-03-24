@@ -91,6 +91,8 @@ Options:
   -- Turn slashes around in the event we get passed a path from a Windows shell
   if _G.unparsed[1] then
     SILE.masterFilename = _G.unparsed[1]:gsub("\\", "/")
+    -- Strip extension
+    SILE.masterFilename = string.match(SILE.masterFilename,"(.+)%..-$") or SILE.masterFilename
   end
   SILE.debugFlags = {}
   if opts.backend then
