@@ -6,6 +6,12 @@ MY_LUA_LIB=
 UNDEFINED=
 endif
 
+if SYSTEM_LIBTEXPDF
+LIBTEXPDF_LIB=-ltexpdf
+else
+LIBTEXPDF_LIB=../libtexpdf/.libs/libtexpdf.la
+endif
+
 pkglib_LTLIBRARIES = justenoughharfbuzz.la justenoughlibtexpdf.la justenoughfontconfig.la fontmetrics.la svg.la
 justenoughharfbuzz_la_SOURCES = justenoughharfbuzz.c
 justenoughharfbuzz_la_LDFLAGS = -module -avoid-version -shared $(UNDEFINED)
@@ -31,7 +37,7 @@ endif
 justenoughlibtexpdf_la_SOURCES = justenoughlibtexpdf.c imagebbox.c
 justenoughlibtexpdf_la_LDFLAGS = -module -avoid-version -shared $(UNDEFINED)
 justenoughlibtexpdf_la_CFLAGS = -I.. $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(LIBPAPER_INCLUDES) $(LUA_INCLUDE) $(FREETYPE_CFLAGS)
-justenoughlibtexpdf_la_LIBADD = ../libtexpdf/.libs/libtexpdf.la $(FREETYPE_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(LIBPAPER_LIBS) $(MY_LUA_LIB)
+justenoughlibtexpdf_la_LIBADD = $(LIBTEXPDF_LIB) $(FREETYPE_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(LIBPAPER_LIBS) $(MY_LUA_LIB)
 to_copy += .libs/justenoughlibtexpdf.@SHARED_LIB_EXT@
 
 fontmetrics_la_SOURCES = fontmetrics.c

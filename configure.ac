@@ -48,6 +48,8 @@ esac
 AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
 
 # Checks for HB/libtexpdf combination
+AC_ARG_WITH([system-libtexpdf],
+    AS_HELP_STRING([--with-system-libtexpdf], [Don't build libtexpdf, use the installed version]))
 
 PKG_CHECK_MODULES(HARFBUZZ, harfbuzz,
   [
@@ -55,12 +57,26 @@ PKG_CHECK_MODULES(HARFBUZZ, harfbuzz,
    PKG_CHECK_MODULES(FONTCONFIG, fontconfig,[],[AC_MSG_FAILURE([Harfbuzz found but not fontconfig])])
    with_harfbuzz=yes
    backend=harfbuzz
+
+   AS_IF([test "x$with_system_libtexpdf" != "xyes"],
+     [
+     AC_CONFIG_SUBDIRS([libtexpdf])
+     ],
+     [
+       AC_CHECK_LIB([texpdf],[texpdf_doc_set_verbose],[],
+         [AC_MSG_FAILURE([--with-system-libtexpdf was given, but test for libtexpdf failed])]
+       )
+     ]
+   )
    ],
   [if test "x$with_harfbuzz" != xcheck; then
      AC_MSG_FAILURE(
        [--with-harfbuzz was given, but test for harfbuzz failed])
    fi
   ])
+
+AM_CONDITIONAL([SYSTEM_LIBTEXPDF], [test "x$with_system_libtexpdf" = "xyes"])
+
 
 case $host_os in
   msys)
@@ -81,8 +97,6 @@ AX_LUA_MODULE([lfs], [luafilesystem])
 
 AC_ARG_ENABLE([linklua],
     AS_HELP_STRING([--disable-linklua], [Don't link lua library with dylibs]))
-
-AC_CONFIG_SUBDIRS([libtexpdf])
 
 PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
   AC_DEFINE([ICU], [1], [Build using icu4c])
