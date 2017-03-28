@@ -1,6 +1,10 @@
 ACLOCAL_AMFLAGS = -I m4
 
+if SYSTEM_LIBTEXPDF
+SUBDIRS = src
+else
 SUBDIRS = libtexpdf src
+endif
 
 dist_bin_SCRIPTS = sile
 -include subfiles.mk
