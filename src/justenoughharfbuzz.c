@@ -68,7 +68,7 @@ static hb_feature_t* scan_feature_string(const char* cp1, int* ret) {
       features[nFeatures].tag = tag;
       features[nFeatures].start = 0;
       features[nFeatures].end = (unsigned int) -1;
-      if (param >= 0)
+      if (param == 0)
         param++;
       features[nFeatures].value = param;
       nFeatures++;
