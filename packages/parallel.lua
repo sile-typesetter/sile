@@ -21,10 +21,18 @@ local parallelPagebreak = function ()
       local n = thisPageFrames[j]
       local t = typesetterPool[n]
       local thispage = {}
-      for i = 1, calculations[n].mark do
-        thispage[i] = table.remove(t.state.outputQueue, 1)
+      SU.debug("parallel", "Dumping lines for page on typesetter "..t.id)
+      if #t.state.outputQueue > 0 and calculations[n].mark == 0 then
+        -- More than one page worth of stuff here.
+        -- Just ship out one page and hope for the best.
+        SILE.defaultTypesetter.pageBuilder(t)
+      else
+        for i = 1, calculations[n].mark do
+          thispage[i] = table.remove(t.state.outputQueue, 1)
+          SU.debug("parallel", thispage[i])
+        end
+        t:outputLinesToPage(thispage)
       end
-      t:outputLinesToPage(thispage)
     end
     SILE.documentState.documentClass:endPage()
     for j = 1,#thisPageFrames do
@@ -90,7 +98,9 @@ end
 SILE.registerCommand("sync", function (o,c)
   local anybreak = false
   local maxheight = SILE.length.new()
+  SU.debug("parallel", "Trying a sync")
   allTypesetters(function (n,t)
+    SU.debug("parallel", "Leaving hmode on "..t.id)
     t:leaveHmode(true)
     -- Now we have each typesetter's content boxed up onto the output stream
     -- but page breaking has not been run. See if page breaking would cause a
