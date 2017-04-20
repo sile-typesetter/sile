@@ -1,0 +1,4 @@
+\begin[papersize=a5]{document}
+\include[src=osis.xml]
+\include[src=SBLGNT.osis.xml]
+\end{document}
