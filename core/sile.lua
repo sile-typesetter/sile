@@ -109,7 +109,7 @@ Options:
     SILE.outputFilename = opts.output
   end
   if opts.include then
-    SILE.preamble = opts.include
+    SILE.preamble = type(opts.include) == "table" and opts.include or { opts.include }
   end
 end
 

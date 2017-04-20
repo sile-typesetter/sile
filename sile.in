@@ -16,15 +16,17 @@ end
 SILE.init()
 if SILE.masterFilename then
   if SILE.preamble then
-    io.stderr:write("Loading "..SILE.preamble)
-    local c = SILE.resolveFile("classes/"..SILE.preamble)
-    local f = SILE.resolveFile(SILE.preamble)
-    if c then
-      SILE.readFile(c)
-    elseif f then
-      SILE.readFile(f)
-    else
-      SILE.require("classes/"..SILE.preamble)
+    for _, preamble in pairs(SILE.preamble) do
+      io.stderr:write("Loading "..preamble)
+      local c = SILE.resolveFile("classes/"..preamble)
+      local f = SILE.resolveFile(preamble)
+      if c then
+        SILE.readFile(c)
+      elseif f then
+        SILE.readFile(f)
+      else
+        SILE.require("classes/"..preamble)
+      end
     end
   end
   if SU.debugging("profile") and pcall(function () require("ProFi") end) then
