@@ -20,9 +20,9 @@ end
 
 function pecha:init()
   local v = self.base.init(self)
-  SILE.outputter:debugFrame(SILE.getFrame("content"))
-  SILE.outputter:debugFrame(SILE.getFrame("runningHead"))
-  SILE.outputter:debugFrame(SILE.getFrame("folio"))
+  -- SILE.outputter:debugFrame(SILE.getFrame("content"))
+  -- SILE.outputter:debugFrame(SILE.getFrame("runningHead"))
+  -- SILE.outputter:debugFrame(SILE.getFrame("folio"))
   return v
 end
 
