@@ -1,15 +1,10 @@
 ---
 layout: static
-title: SILE Examples
+title: SILE Examples - Packages
 ---
 
-<ul>
-  <a href="/examples/global.html">Global Scripts</a><br>
-  <a href="/examples/packages.html">Packages</a>
-</ul>
-
 <table class="examples">
-{% tablerow example in site.data.examples.basic cols:3%}
+{% tablerow example in site.data.examples.packages cols:3%}
     <a href="https://raw.githubusercontent.com/simoncozens/sile/master/examples/{{example.fn}}.png">
     <img src="https://raw.githubusercontent.com/simoncozens/sile/master/examples/{{example.fn}}.png">
     </a>

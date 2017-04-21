@@ -14,7 +14,7 @@ body {
   font-family: 'Raleway', Arial, sans-serif;
   font-weight: 400;
   font-size: 1.15em;
-  line-height: 1.75em;
+  line-height: 1.2em;
 }
 
 a {
@@ -229,3 +229,9 @@ img.cover-photo {
   display: inline-block;
   padding: .2ex .4ex;
 }
+
+/* Examples */
+.examples { text-align: center; }
+.examples td { padding: 30px 30px 30px 30px; }
+.examples img { width:200px; border:1px solid blue; }
+.examples .title { font-size:10pt; line-height: 90%; }
