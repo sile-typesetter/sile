@@ -1,0 +1,3 @@
+\begin[papersize=a5]{document}
+Hello \include[src=bug-465-b.sil].
+\end{document}
