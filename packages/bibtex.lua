@@ -23,6 +23,7 @@ bibtexparser = epnf.define(function (_ENV)
 end)
 
 local parseBibtex = function(fn)
+  fn = SILE.resolveFile(fn)
   local fh,e = io.open(fn)
   if e then SU.error("Error reading bibliography file "..e) end
   local doc = fh:read("*all")
