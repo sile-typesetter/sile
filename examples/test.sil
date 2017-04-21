@@ -1,6 +1,9 @@
 \begin[class=book,papersize=129mm x 198mm]{document}
-\include[src=examples/macros.sil]
-\script[src=packages/grid]
+\define[command=headline]{%
+\medskip%
+\font[family=DejaVu Sans,style=Bold Condensed,weight=700,size=20pt]{\center{\process}}
+\bigskip%
+}
 \left-running-head{A Scandal in Bohemia}
 \right-running-head{\rightalign{Arthur Conan Doyle}}
 \headline{A Scandal In Bohemia}

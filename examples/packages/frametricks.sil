@@ -1,5 +1,4 @@
-\begin[papersize=129mm x 198mm]{document}
-\include[src=examples/macros.sil]
+\begin[papersize=129mm x 198mm]{document}\nofolios
 \script[src=packages/frametricks]
 \makecolumns[columns=2]
 \font[size=15pt]

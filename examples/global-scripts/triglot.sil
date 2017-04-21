@@ -1,4 +1,4 @@
-\begin[class=triglot,papersize=a5]{document}
+\begin[class=triglot,papersize=a5]{document}\nofolios
 \script[src=packages/rules]
 \script[src=packages/color]
 \define[command=left:font]{\font[family=Cardo,size=10pt,language=el]}

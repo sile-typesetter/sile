@@ -1,4 +1,4 @@
-\begin[papersize=a4]{document}
+\begin[papersize=a4]{document}\nofolios
 \font[language=my,family=Padauk]
 \set[parameter=linebreak.tolerance,value=2000]
 အပြည်ပြည်ဆိုင်ရာ လူ့အခွင့်အရေး ကြေညာစာတမ်း

@@ -1,4 +1,4 @@
-\begin{document}
+\begin{document}\nofolios
 
 \script[src=packages/chordmode]
 \script[src=packages/color]

@@ -1,6 +1,6 @@
-\begin[class=book]{document}
+\begin[class=book,papersize=140mm x 68mm]{document}\nofolios
 \script[src=packages/bibtex]
-\loadbibliography[file=examples/sample.bib]
+\loadbibliography[file=sample.bib]
 
 For a detailed exposition of this
 disturbing and sorry period in the church's history, see

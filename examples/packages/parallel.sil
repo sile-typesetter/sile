@@ -1,4 +1,4 @@
-\begin[class=diglot,papersize=a5]{document}
+\begin[class=diglot,papersize=a5]{document}\nofolios
 \define[command=left:font]{\font[family=Cardo,size=10pt,language=el]}
 \define[command=right:font]{\font[family=Gentium,size=10pt,language=en]}
 \set[parameter=document.lineskip,value=0.7ex]

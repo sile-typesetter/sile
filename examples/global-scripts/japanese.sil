@@ -1,5 +1,5 @@
-\begin[class=jplain]{document}%
-\show-hanmen%
+\begin[class=jplain,layout=tate]{document}\nofolios%
+%\show-hanmen%
 \script[src=packages/ruby]
 \font[family=Hiragino Mincho Pro,language=ja]%
 \ruby[reading=にほん]{日本}は\ruby[reading=むかし]{昔}から「寄付しない国」として知られていました。対名目GDP比寄付金規模はイギリスの四分の一、アメリカの九分の一です。世界寄付指数によると、個人寄付はアジアの諸国の中でワースト３位です。社会の評論家によると、いくつかの理由があります。ウチとソトの違いがあって、ソトへの関心が弱いと言われています。また、日本政府と市町村が幅広い市民サービスを提供しますので、海外のように社会福祉に貢献する寄付の必要がありません。

@@ -1,4 +1,4 @@
-\begin[papersize=100mm x 110mm]{document}%
+\begin[papersize=100mm x 110mm]{document}\nofolios%
 \script[src=packages/linespacing]%
 \set[parameter=linespacing.method,value=fixed]
 \set[parameter=linespacing.fixed.baselinedistance,value=1.5em]

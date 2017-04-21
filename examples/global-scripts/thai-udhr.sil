@@ -1,5 +1,5 @@
 \begin[papersize=a5]{document}
-\font[family=Noto Sans Thai,size=14pt,language=th]
+\font[family=Noto Sans Thai,size=14pt,language=th]\nofolios
 \script[src=packages/linespacing]
 \set[parameter=linespacing.method,value=fixed]
 \set[parameter=linespacing.fixed.baselinedistance,value=1.5em]

@@ -8,11 +8,11 @@ First line of text
 \converters:register[from=.txt, to=.sil, command=examples/conv-test.lua "$SOURCE" "$TARGET"]
 \converters:register[from=.svg, to=.pdf, command=inkscape -A "$TARGET" "$SOURCE"]
 
-\img[src=examples/smiley.svg, width=50px]
+\img[src=smiley.svg, width=50px]
 
-\include[src=examples/conv-test.txt]
+\include[src=conv-test.txt]
 
-\img[src=examples/smiley.svg, width=100px]
+\img[src=smiley.svg, width=100px]
 
 \end{document}
 

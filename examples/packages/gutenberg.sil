@@ -1,4 +1,4 @@
-\begin[class=plain,papersize=130mm x 100mm]{document}%
+\begin[class=plain,papersize=130mm x 100mm]{document}\nofolios%
 \script[src=packages/gutenberg]%
 \script[src=packages/unichar]%
 \script[src=packages/color]%
