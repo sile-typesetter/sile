@@ -46,6 +46,22 @@ int pdf_beginpage(lua_State *L) {
   return 0;
 }
 
+
+int pdf_changepagesize(lua_State *L) {
+  pdf_rect mediabox;
+
+  double pageno = luaL_checknumber(L, 1);
+  mediabox.llx = luaL_checknumber(L, 2);
+  mediabox.lly = luaL_checknumber(L, 3);
+  mediabox.urx = luaL_checknumber(L, 4);
+  mediabox.ury = luaL_checknumber(L, 5);
+
+  ASSERT(p);
+
+  texpdf_doc_set_mediabox(p, pageno, &mediabox);
+  return 0;
+}
+
 int pdf_finish(lua_State *L) {
   ASSERT(p);
   texpdf_files_close();
@@ -485,6 +501,7 @@ static void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
 static const struct luaL_Reg lib_table [] = {
   {"init", pdf_init},
   {"beginpage", pdf_beginpage},
+  {"change_page_size", pdf_changepagesize},
   {"endpage", pdf_endpage},
   {"finish", pdf_finish},
   {"loadfont", pdf_loadfont},
