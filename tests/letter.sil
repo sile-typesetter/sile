@@ -1,0 +1,9 @@
+\begin[papersize=a5,class=letter]{document}
+\recipient{John Doe,\cr
+Some Street,\cr
+Anytown}
+\salutation{Dear John}
+\begin{letter}
+Hello.
+\end{letter}
+\end{document}
