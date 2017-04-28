@@ -39,6 +39,11 @@ SILE.registerCommand("noindent", function ( options, content )
   SILE.process(content)
 end, "Do not add an indent to the start of this paragraph")
 
+SILE.registerCommand("neverindent", function ( options, content )
+  SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
+  SILE.process(content)
+end, "Turn off all indentation")
+
 SILE.registerCommand("indent", function ( options, content )
   SILE.settings.set("current.parindent", SILE.settings.get("document.parindent"))
   SILE.process(content)
@@ -93,6 +98,7 @@ plain.registerCommands = function ()
 \define[command=qquad]{\glue[width=2em]}%
 \define[command=slash]{/\penalty[penalty=50]}%
 \define[command=break]{\penalty[penalty=-10000]}%
+\define[command=cr]{\hfill\break}%
 \define[command=framebreak]{\break}%
 \define[command=pagebreak]{\penalty[penalty=-20000]}%
 \define[command=nobreak]{\penalty[penalty=10000]}%
