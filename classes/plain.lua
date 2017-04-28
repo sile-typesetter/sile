@@ -197,7 +197,7 @@ SILE.registerCommand("vbox", function (options, content)
     SILE.typesetter:popState()
   end)
   return vbox
-end, "Compiles all the enclosed horizontal-mode material into a single hbox")
+end, "Compiles all the enclosed material into a single vbox")
 
 SILE.require("packages/bidi")
 
