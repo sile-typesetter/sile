@@ -7,6 +7,9 @@ local _key = function(options)
 end
 
 SILE.settings.declare({name = "shaper.variablespaces", type = "integer", default = 1})
+SILE.settings.declare({name = "shaper.spaceenlargementfactor", type = "number", default = 1.2})
+SILE.settings.declare({name = "shaper.spaceshrinkfactor", type = "number", default = 1/3})
+SILE.settings.declare({name = "shaper.spacestretchfactor", type = "number", default = 1/2})
 
 -- Function for testing shaping in the repl
 makenodes = function(s,o)
@@ -38,10 +41,10 @@ SILE.shapers.base = std.object {
       spacewidth = i[1].width
     end
     return SILE.length.new({
-      length = spacewidth * 1.2,
-      shrink = spacewidth/3,
-      stretch = spacewidth /2
-    }) -- XXX all rather arbitrary
+      length = spacewidth * SILE.settings.get("shaper.spaceenlargementfactor"),
+      shrink = spacewidth * SILE.settings.get("shaper.spaceshrinkfactor"),
+      stretch = spacewidth * SILE.settings.get("shaper.spacestretchfactor")
+    })
   end,
 
   measureChar = function (self, char)
@@ -123,12 +126,13 @@ SILE.shapers.base = std.object {
 
   makeSpaceNode = function(self, options, item)
     if SILE.settings.get("shaper.variablespaces") == 1 then
-      spacewidth = SILE.length.new({
-        length = item.width,
-        shrink = item.width/3,
-        stretch = item.width /2
+      spacewidth = item.width
+      w = SILE.length.new({
+        length = spacewidth * SILE.settings.get("shaper.spaceenlargementfactor"),
+        shrink = spacewidth * SILE.settings.get("shaper.spaceshrinkfactor"),
+        stretch = spacewidth * SILE.settings.get("shaper.spacestretchfactor")
       })
-      return (SILE.nodefactory.newGlue({ width = spacewidth }))
+      return (SILE.nodefactory.newGlue({ width = w }))
     else
       return SILE.nodefactory.newGlue({ width = SILE.shaper:measureSpace(options) })
     end
