@@ -6,6 +6,8 @@ local _key = function(options)
   return table.concat({options.family;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename},";")
 end
 
+SILE.settings.declare({name = "shaper.variablespaces", type = "integer", default = 1})
+
 -- Function for testing shaping in the repl
 makenodes = function(s,o)
   return SILE.shaper:createNnodes(s, SILE.font.loadDefaults(o or {}))
@@ -119,7 +121,16 @@ SILE.shapers.base = std.object {
     })
   end,
 
-  makeSpaceNode = function(self, options)
-    return SILE.nodefactory.newGlue({ width = SILE.shaper:measureSpace(options) })
+  makeSpaceNode = function(self, options, item)
+    if SILE.settings.get("shaper.variablespaces") == 1 then
+      spacewidth = SILE.length.new({
+        length = item.width,
+        shrink = item.width/3,
+        stretch = item.width /2
+      })
+      return (SILE.nodefactory.newGlue({ width = spacewidth }))
+    else
+      return SILE.nodefactory.newGlue({ width = SILE.shaper:measureSpace(options) })
+    end
   end
 }

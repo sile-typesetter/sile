@@ -18,21 +18,21 @@ SILE.nodeMakers.am = SILE.nodeMakers.unicode {
         if cp == 0x1361 then -- ETHIOPIC WORDSPACE
           if style == "centered" then
             self:makeToken()
-            self:makeGlue()
+            self:makeGlue(item)
           end
           self:addToken(char,item)
           self:makeToken()
-          self:makeGlue()
+          self:makeGlue(item)
         elseif cp == 0x1362 then -- ETHIOPIC FULL STOP
           if style == "centered" then
             self:makeToken()
-            self:makeGlue()
+            self:makeGlue(item)
           end
           self:addToken(char,item)
           self:makeToken()
-          self:makeGlue()
+          self:makeGlue(item)
           self:makePenalty() -- This is cheating. We should really make double width glue
-          self:makeGlue()
+          self:makeGlue(item)
         else
           self:dealWith(items[i])
         end

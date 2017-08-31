@@ -23,9 +23,9 @@ SILE.nodeMakers.base = std.object {
     self.token = self.token .. char
     self.contents[#self.contents+1] = item
   end,
-  makeGlue = function(self)
+  makeGlue = function(self,item)
     if SILE.settings.get("typesetter.obeyspaces") or self.lastnode ~= "glue" then
-      coroutine.yield(SILE.shaper:makeSpaceNode(self.options))
+      coroutine.yield(SILE.shaper:makeSpaceNode(self.options, item))
     end
     self.lastnode = "glue"
   end,
@@ -55,7 +55,7 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
     local thistype = chardata[cp] and chardata[cp].linebreak
     if chardata[cp] and self.isSpaceType[thistype] then
       self:makeToken()
-      self:makeGlue()
+      self:makeGlue(item)
     elseif chardata[cp] and self.isBreakingType[thistype] then
       self:addToken(char,item)
       self:makeToken()
@@ -88,7 +88,7 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
         local char = item.text
         local cp = SU.codepoint(char)
         local thistype = chardata[cp] and chardata[cp].linebreak
-        if thistype == "sp" then self:makeGlue() else break end
+        if thistype == "sp" then self:makeGlue(item) else break end
         i = i + 1
       end
       -- And now onto the real thing
@@ -106,7 +106,7 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
             if chardata[cp] and thistype == "sp" then
               -- Spacing word break
               self:makeToken()
-              self:makeGlue()
+              self:makeGlue(item)
             else -- a word break which isn't a space
               self:makeToken()
               self:addToken(char,item)
@@ -114,7 +114,7 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
           elseif bp.type == "line" then
             if chardata[cp] and thistype == "sp" then
               self:makeToken()
-              self:makeGlue()
+              self:makeGlue(item)
             else
               -- Line break
               self:makeToken()
@@ -130,7 +130,7 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
           end
           if chardata[cp] and thistype == "sp" then
             self:makeToken()
-            self:makeGlue()
+            self:makeGlue(item)
           else
             self:addToken(char,item)
           end
