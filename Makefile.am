@@ -9,7 +9,7 @@ endif
 dist_bin_SCRIPTS = sile
 -include subfiles.mk
 nobase_dist_pkgdata_DATA = $(subdir_files)
-EXTRA_DIST=NEWS.md README.md LICENSE ROADMAP tests examples
+EXTRA_DIST=NEWS.md README.md LICENSE ROADMAP tests examples documentation
 
 tests/%.expected: tests/%.sil
 	./sile -e 'require("core/debug-output")' $< > $@
