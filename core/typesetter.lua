@@ -19,7 +19,7 @@ SILE.settings.declare({
 SILE.settings.declare({
   name = "typesetter.parseppattern",
   type = "string or integer",
-  default = "\n\n+",
+  default = "\r?\n[\r\n]+",
   help = "Lua pattern used to separate paragraphs"
 })
 
@@ -181,7 +181,7 @@ SILE.defaultTypesetter = std.object {
 
   -- Actual typesetting functions
   typeset = function (self, text)
-    if text:match("^%\n$") then return end
+    if text:match("^%\r?\n$") then return end
     for t in SU.gtoke(text,SILE.settings.get("typesetter.parseppattern")) do
       if (t.separator) then
         self:endline()
@@ -203,7 +203,7 @@ SILE.defaultTypesetter = std.object {
 
   -- Takes string, writes onto self.state.nodes
   setpar = function (self, t)
-    t = string.gsub(t,"\n", " ")
+    t = string.gsub(t,"\r?\n", " ")
     if (#self.state.nodes == 0) then
       if not SILE.settings.get("typesetter.obeyspaces") then
         t = string.gsub(t,"^%s+", "")
