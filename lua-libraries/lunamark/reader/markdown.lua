@@ -20,7 +20,7 @@ local rope_to_string = util.rope_to_string
 -- Normalize a markdown reference tag.  (Make lowercase, and collapse
 -- adjacent whitespace characters.)
 local function normalize_tag(tag)
-  return utf8_lower(gsub(rope_to_string(tag), "[ \n\r\t]+", " "))
+  return utf8.lower(gsub(rope_to_string(tag), "[ \n\r\t]+", " "))
 end
 
 ------------------------------------------------------------------------------
