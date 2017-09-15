@@ -6,16 +6,14 @@ SILE.inputs.markdown = {
   appropriate = function(fn, sniff)
     return fn:match("md$") or fn:match("markdown$")
   end,
-  process = function (fn)
+  process = function (data)
     local lunamark = require("lunamark")
     local reader = lunamark.reader.markdown
     local writer = lunamark.writer.ast.new()
-    local fh = io.open(fn)
-    local inp = fh:read("*all")
     local parse = reader.new(writer)
-    local t = parse(inp)
+    local t = parse(data)
     t = { [1] = t, id = "document", attr = { class = "markdown" }}
-    SILE.inputs.common.init(fn, t)
+    -- SILE.inputs.common.init(fn, t)
     SILE.process(t[1])
   end
 }
