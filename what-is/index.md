@@ -71,7 +71,7 @@ It’s highly graphical–you click and drag to move areas of text and images ar
 SILE is a free, open source typesetting tool which is entirely text-based; you enter commands in a separate editing tool, save those commands into a file, and hand it to SILE for typesetting. 
 And yet the two systems do have a number of common features.
 
-In InDesign, text is flowed into \em{frames} on the page. 
+In InDesign, text is flowed into *frames* on the page. 
 SILE also uses the concept of frames to determine where text should appear on the page, and so it’s possible to use SILE to generate page layouts which are more flexible and more complex than that afforded by TeX.
 
 Another thing which people use InDesign for is to turn structured data in XML format–catalogues, directories and the like–into print. 
