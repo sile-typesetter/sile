@@ -61,16 +61,26 @@ until you get it. Rather, SILE documents are prepared initially in a \em{text
 editor}—a piece of software which focuses on the text itself and not what it
 looks like—and then run through SILE in order to produce a PDF document.
 
-For instance, in a word processor you typically type continuously and when you
-hit the right margin, your cursor will automatically jump to the next line. In
-doing so the user interface shows you where the lines will break. When
-preparing content for SILE you don't know where the lines will break until
-after it has been processed. You may user your text editor to type and type and
-type as long a line as you like, and when SILE comes to process your
-instructions, it will consider your input (up to) three times over in order to
-work out how to best to break the lines to form a paragraph. For example if
-after one pass it finds that it has ended two successive lines with
-a hyphenated word it will go back and try again.
+For instance, most word processors are built roughly around the concept of a
+page with a central content area into which you type and style your content.
+The overall page layout is controlled by the page size and margins and more
+fine tuning is done by styling the content itself. You typically type
+continuously and when you hit the right margin, your cursor will automatically
+jump to the next line. In doing so the user interface shows you where the lines
+will break.
+
+In SILE the overall page layout is defined with a paper size and a serious of
+one or more content frames. These frame descriptions provide the containers
+where content will later by typeset including information about how it might
+flow from one frame to the next. Content is written separately and automatically
+flowed from frame to frame and page to page. When preparing content for SILE
+you don't know where the lines will break until after it has been processed.
+You may user your text editor to type and type and type as long a line as you
+like, and when SILE comes to process your instructions, it will consider your
+input (up to) three times over in order to work out how to best to break the
+lines to form a paragraph. For example if after one pass it finds that it has
+ended two successive lines with a hyphenated word it will go back and try
+again.
 
 The same idea applies to page breaks. When you type into a word processor, at
 some point you will spill over onto a new page. When preparing content for
@@ -1514,6 +1524,13 @@ Setting this to a positive length effectively increases the left margin of
 the text. Similarly, \code{document.rskip} adds some space to the right side of
 every line.
 
+Note that these skip settings are not the same as page margins. The
+\code{document.lskip} and \code{document.rskip} values are applied inside of the
+current frame and are relative to the edge of the frame, not to the edge of the
+page. They are best used for temporary adjustments to the margins relative to the
+normal margins, such as to indented a pull-quote. They can also be negative,
+pulling the effective margin outside of the current frame.
+
 \begin{note}
 \notehead{Glue} A \em{glue} parameter is slightly different from an ordinary dimensioned length. Glue basically means ‘space,’ but as well as signifying a length,
 it also has two additional optional components: \em{stretch} and \em{shrink},
@@ -1840,6 +1857,10 @@ done with the \code{SILE.typesetter:pushPenalty(\{penalty = x\})} and
 \section{Frames}
 
 As we have previously mentioned, SILE arranges text into frames on the page.
+The overall layout of a page including the apparent margins between content
+and the page edge and other content regions is controlled by defining the
+position of the frame or frames into which the content will be flowed.
+
 Normally those frames are defined by your document class, but you can actually
 create your own frames on a per-page basis using the \code{\\pagetemplate}
 and \code{\\frame} commands. There are very few situations in which you will
