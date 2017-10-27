@@ -208,7 +208,7 @@ SILE.defaultTypesetter = std.object {
     t = string.gsub(t,"\r?\n", " ")
     if (#self.state.nodes == 0) then
       if not SILE.settings.get("typesetter.obeyspaces") then
-        t = string.gsub(t,"^%s+", "")
+        t = string.gsub(t,"^[%s\t]+", "")
       end
       self:initline()
     end
