@@ -38,7 +38,7 @@ SILE.linebreak = require("core/break")
 
 require("core/frame")
 
-SILE.init = function()
+SILE.init = function ()
   if not SILE.backend then
     if pcall(function () require("justenoughharfbuzz") end) then
       SILE.backend = "libtexpdf"
@@ -51,8 +51,10 @@ SILE.init = function()
     require("core/libtexpdf-output")
   end
   if SILE.dolua then
-    _, err = pcall(SILE.dolua)
-    if err then error(err) end
+    for _, func in pairs(SILE.dolua) do
+      _, err = pcall(func)
+      if err then error(err) end
+    end
   end
 end
 
@@ -102,14 +104,19 @@ Options:
     for k,v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = 1 end
   end
   if opts.evaluate then
-    SILE.dolua,err = loadstring(opts.evaluate)
-    if err then SU.error(err) end
+    local statements = type(opts.evaluate) == "table" and opts.evaluate or { opts.evaluate }
+    SILE.dolua = {}
+    for _, statement in ipairs(statements) do
+      local func, err = loadstring(statement)
+      if err then SU.error(err) end
+      SILE.dolua[#SILE.dolua+1] = func
+    end
   end
   if opts.output then
     SILE.outputFilename = opts.output
   end
   if opts.include then
-    SILE.preamble = opts.include
+    SILE.preamble = type(opts.include) == "table" and opts.include or { opts.include }
   end
 end
 
