@@ -17,10 +17,14 @@ SILE.inputs.TeXlike.parser = function (_ENV)
 
   START "document"
   document = V("stuff") * (-1 + E("Unexpected character at end of input"))
-  text = C((1-S("\\{}%"))^1)
-  stuff = Cg(V"environment" +
-    comment +
-    V("text") + V"bracketed_stuff" + V"command")^0
+  text = C(( 1-S("\\{}%") )^1)
+  stuff = Cg(
+      V"environment" +
+      comment +
+      V"text" +
+      V"bracketed_stuff" +
+      V"command"
+    )^0
   bracketed_stuff = P"{" * V"stuff" * (P"}" + E("} expected"))
   command = ( (P("\\")-P("\\begin")) * Cg(myID, "tag") * Cg(parameters,"attr") * V"bracketed_stuff"^0 ) - P("\\end{")
   environment =
