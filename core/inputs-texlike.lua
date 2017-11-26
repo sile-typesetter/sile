@@ -1,5 +1,5 @@
 SILE.inputs.TeXlike = {}
-local epnf = require( "epnf" )
+local epnf = require("epnf")
 
 local ID = lpeg.C( SILE.parserBits.letter * (SILE.parserBits.letter+SILE.parserBits.digit)^0 )
 SILE.inputs.TeXlike.identifier = (ID + lpeg.P("-") + lpeg.P(":"))^1
@@ -58,14 +58,14 @@ end
 
 local linecache = {}
 local lno, col, lastpos
-local function resetCache()
+local function resetCache ()
   lno = 1
   col = 1
   lastpos = 0
   linecache = { { lno = 1, pos = 1} }
 end
 
-local function getline( s, p )
+local function getline (s, p)
   start = 1
   lno = 1
   if p > lastpos then
@@ -93,15 +93,15 @@ local function getline( s, p )
   return lno, col
 end
 
-local function massage_ast(t,doc)
+local function massage_ast (t, doc)
   -- Sort out pos
   if type(t) == "string" then return t end
   if t.pos then
     t.line, t.col = getline(doc, t.pos)
   end
-  if t.id == "document" then return massage_ast(t[1],doc) end
+  if t.id == "document" then return massage_ast(t[1], doc) end
   if t.id == "text" then return t[1] end
-  if t.id == "bracketed_stuff" then return massage_ast(t[1],doc) end
+  if t.id == "bracketed_stuff" then return massage_ast(t[1], doc) end
   for k,v in ipairs(t) do
     if v.id == "stuff" then
       local val = massage_ast(v,doc)
@@ -113,14 +113,14 @@ local function massage_ast(t,doc)
   return t
 end
 
-function SILE.inputs.TeXlike.process(doc)
+function SILE.inputs.TeXlike.process (doc)
   local tree = SILE.inputs.TeXlike.docToTree(doc)
   local root = SILE.documentState.documentClass == nil
   if root then
     if tree.tag == "document" then
       SILE.inputs.common.init(doc, tree)
       SILE.process(tree)
-    elseif pcall(function() assert(loadstring(doc))() end) then
+    elseif pcall(function () assert(loadstring(doc))() end) then
     else
       SU.error("Input not recognized as Lua or SILE content")
     end
@@ -132,20 +132,20 @@ end
 
 local _parser
 
-function SILE.inputs.TeXlike.rebuildParser()
+function SILE.inputs.TeXlike.rebuildParser ()
   _parser = epnf.define(SILE.inputs.TeXlike.parser)
 end
 
 SILE.inputs.TeXlike.rebuildParser()
 
-function SILE.inputs.TeXlike.docToTree(doc)
+function SILE.inputs.TeXlike.docToTree (doc)
   local tree = epnf.parsestring(_parser, doc)
   -- a document always consists of one stuff
   tree = tree[1][1]
   if tree.id == "text" then tree = {tree} end
   if not tree then return end
   resetCache()
-  tree = massage_ast(tree,doc)
+  tree = massage_ast(tree, doc)
   return tree
 end
 
