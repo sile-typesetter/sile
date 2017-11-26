@@ -13,8 +13,6 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1   / function (...) local t= {...}; return t[1], t[#t] end
   local list = Cf(Ct("") * pair^0, rawset)
   local parameters = (P("[") * list * P("]")) ^-1 / function (a) return type(a)=="table" and a or {} end
-  local anything = C( (1-S("\\{}%\r\n")) ^1)
-  local lineEndLineStartSpace = (S(" ")^0 * S("\r\n")^1 * S(" ")^0)^-1
   local comment = ((P("%") * (1-S("\r\n"))^0 * S("\r\n")^-1) /function () return "" end)
 
   START "document"
