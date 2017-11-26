@@ -8,28 +8,28 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   local _ = WS^0
   local sep = S(",;") * _
   local quotedString = (P("\"") * C((1-S("\""))^1) * P("\""))
-  local value = (quotedString + (1-S(",;]"))^1 )
-  local myID = C( SILE.inputs.TeXlike.identifier + P(1) ) / function (t) return t end
+  local value = ( quotedString + (1-S(",;]"))^1 )
+  local myID = C(SILE.inputs.TeXlike.identifier + P(1)) / function (t) return t end
   local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1   / function (...) local t= {...}; return t[1], t[#t] end
   local list = Cf(Ct("") * pair^0, rawset)
-  local parameters = (P("[") * list * P("]")) ^-1 / function (a) return type(a)=="table" and a or {} end
-  local comment = ((P("%") * (1-S("\r\n"))^0 * S("\r\n")^-1) /function () return "" end)
+  local parameters = ( P("[") * list * P("]") )^-1 / function (a) return type(a)=="table" and a or {} end
+  local comment = ( (P("%") * (1-S("\r\n"))^0 * S("\r\n")^-1) / function () return "" end )
 
   START "document"
   document = V("stuff") * (-1 + E("Unexpected character at end of input"))
-  text = C( (1-S("\\{}%")) ^1)
+  text = C((1-S("\\{}%"))^1)
   stuff = Cg(V"environment" +
     comment +
     V("text") + V"bracketed_stuff" + V"command")^0
   bracketed_stuff = P"{" * V"stuff" * (P"}" + E("} expected"))
-  command =((P("\\")-P("\\begin")) * Cg(myID, "tag") * Cg(parameters,"attr") * V"bracketed_stuff"^0)-P("\\end{")
+  command = ( (P("\\")-P("\\begin")) * Cg(myID, "tag") * Cg(parameters,"attr") * V"bracketed_stuff"^0 ) - P("\\end{")
   environment =
-    P("\\begin") * Cg(parameters, "attr") * P("{") * Cg(myID, "tag") * P("}")
-      * V("stuff")
-    * (P("\\end{") * (
-      Cmt(myID * Cb("tag"), function(s,i,a,b) return a==b end) +
+    P("\\begin") * Cg(parameters, "attr") * P("{") * Cg(myID, "tag") * P("}") *
+      V("stuff") *
+      ( P("\\end{") * (
+      Cmt(myID * Cb("tag"), function (s,i,a,b) return a==b end) +
       E("Environment mismatch")
-    ) * (P("}") * _) + E("Environment begun but never ended"))
+    ) * (P("}") * _) + E("Environment begun but never ended") )
 end
 
 local linecache = {}
