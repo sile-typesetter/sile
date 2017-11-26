@@ -6,20 +6,20 @@ SILE.inputs.TeXlike.identifier = (ID + lpeg.P("-") + lpeg.P(":"))^1
 
 SILE.inputs.TeXlike.parser = function (_ENV)
   local _ = WS^0
-  local sep = lpeg.S(",;") * _
-  local quotedString = (P("\"") * C((1-lpeg.S("\""))^1) * P("\""))
-  local value = (quotedString + (1-lpeg.S(",;]"))^1 )
-  local myID = C( SILE.inputs.TeXlike.identifier + lpeg.P(1) ) / function (t) return t end
-  local pair = lpeg.Cg(myID * _ * "=" * _ * C(value)) * sep^-1   / function (...) local t= {...}; return t[1], t[#t] end
-  local list = lpeg.Cf(lpeg.Ct("") * pair^0, rawset)
+  local sep = S(",;") * _
+  local quotedString = (P("\"") * C((1-S("\""))^1) * P("\""))
+  local value = (quotedString + (1-S(",;]"))^1 )
+  local myID = C( SILE.inputs.TeXlike.identifier + P(1) ) / function (t) return t end
+  local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1   / function (...) local t= {...}; return t[1], t[#t] end
+  local list = Cf(Ct("") * pair^0, rawset)
   local parameters = (P("[") * list * P("]")) ^-1 / function (a) return type(a)=="table" and a or {} end
-  local anything = C( (1-lpeg.S("\\{}%\r\n")) ^1)
-  local lineEndLineStartSpace = (lpeg.S(" ")^0 * lpeg.S("\r\n")^1 * lpeg.S(" ")^0)^-1
-  local comment = ((P("%") * (1-lpeg.S("\r\n"))^0 * lpeg.S("\r\n")^-1) /function () return "" end)
+  local anything = C( (1-S("\\{}%\r\n")) ^1)
+  local lineEndLineStartSpace = (S(" ")^0 * S("\r\n")^1 * S(" ")^0)^-1
+  local comment = ((P("%") * (1-S("\r\n"))^0 * S("\r\n")^-1) /function () return "" end)
 
   START "document"
   document = V("stuff") * (-1 + E("Unexpected character at end of input"))
-  text = C( (1-lpeg.S("\\{}%")) ^1)
+  text = C( (1-S("\\{}%")) ^1)
   stuff = Cg(V"environment" +
     comment +
     V("text") + V"bracketed_stuff" + V"command")^0
