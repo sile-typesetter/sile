@@ -9,8 +9,8 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   local sep = S(",;") * _
   local quotedString = ( P("\"") * C((1-S("\""))^1) * P("\"") )
   local value = ( quotedString + (1-S(",;]"))^1 )
-  local myID = C(SILE.inputs.TeXlike.identifier + P(1))/function (t) return t end
-  local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1/function (...) local t = {...}; return t[1], t[#t] end
+  local myID = C(SILE.inputs.TeXlike.identifier + P(1)) / 1
+  local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1 / function (...) local t = {...}; return t[1], t[#t] end
   local list = Cf(Ct("") * pair^0, rawset)
   local parameters = (
       P("[") *
@@ -18,10 +18,12 @@ SILE.inputs.TeXlike.parser = function (_ENV)
       P("]")
     )^-1/function (a) return type(a)=="table" and a or {} end
   local comment = (
-      P("%") *
-      (1-S("\r\n"))^0 *
-      S("\r\n")^-1
-    ) / ""
+      (
+        P("%") *
+        (1-S("\r\n"))^0 *
+        S("\r\n")^-1
+      ) / ""
+    )
 
   START "document"
   document = V("stuff") * (-1 + E("Unexpected character at end of input"))
