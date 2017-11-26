@@ -24,7 +24,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     ) / ""
 
   START "document"
-  document = V("stuff") * (-1 + E("Unexpected character at end of input"))
+  document = V("stuff") * EOF"Unexpected character at end of input"
   text = C((1-S("\\{}%"))^1)
   stuff = Cg(
       V"environment" +
