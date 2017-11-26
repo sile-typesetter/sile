@@ -1,0 +1,9 @@
+\begin[papersize=a5,class=book]{document}
+% A real comment
+\begin{script}
+answer = tostring(9 % 5)
+\end{script}
+Modulus: 9 \% 5 = \script{SILE.typesetter:typeset(answer)}
+
+\em{100\% italic}
+\end{document}
