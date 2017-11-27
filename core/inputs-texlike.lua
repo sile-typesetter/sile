@@ -2,29 +2,29 @@ SILE.inputs.TeXlike = {}
 local epnf = require("epnf")
 
 local ID = lpeg.C( SILE.parserBits.letter * (SILE.parserBits.letter+SILE.parserBits.digit)^0 )
-SILE.inputs.TeXlike.identifier = (ID + lpeg.P("-") + lpeg.P(":"))^1
+SILE.inputs.TeXlike.identifier = (ID + lpeg.P"-" + lpeg.P":")^1
 
 SILE.inputs.TeXlike.parser = function (_ENV)
   local _ = WS^0
-  local sep = S(",;") * _
-  local quotedString = P("\"") * C((1-S("\""))^1) * P("\"")
-  local value = quotedString + (1-S(",;]"))^1
+  local sep = S",;" * _
+  local quotedString = P"\"" * C((1-S"\"")^1) * P"\""
+  local value = quotedString + (1-S",;]")^1
   local myID = C(SILE.inputs.TeXlike.identifier + P(1)) / 1
   local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1 / function (...) local t = {...}; return t[1], t[#t] end
-  local list = Cf(Ct("") * pair^0, rawset)
+  local list = Cf(Ct"" * pair^0, rawset)
   local parameters = (
-      P("[") *
+      P"[" *
       list *
-      P("]")
+      P"]"
     )^-1/function (a) return type(a)=="table" and a or {} end
   local comment = (
-      P("%") *
-      (1-S("\r\n"))^0 *
-      S("\r\n")^-1
+      P"%" *
+      P(1-S"\r\n")^0 *
+      S"\r\n"^-1
     ) / ""
 
   START "document"
-  document = V("stuff") * EOF"Unexpected character at end of input"
+  document = V"stuff" * EOF"Unexpected character at end of input"
   text = C((1-S("\\{}%"))^1)
   stuff = Cg(
       V"environment" +
@@ -35,24 +35,24 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     )^0
   bracketed_stuff = P"{" * V"stuff" * (P"}" + E("} expected"))
   command = (
-      ( P("\\")-P("\\begin") ) *
+      ( P"\\"-P"\\begin" ) *
       Cg(myID, "tag") *
       Cg(parameters,"attr") *
       V"bracketed_stuff"^0
     ) - P("\\end{")
   environment =
-    P("\\begin") *
+    P"\\begin" *
     Cg(parameters, "attr") *
-    P("{") *
+    P"{" *
     Cg(myID, "tag") *
-    P("}") *
-    V("stuff") *
+    P"}" *
+    V"stuff" *
     (
-      P("\\end{") *
+      P"\\end{" *
       (
-        Cmt(myID * Cb("tag"), function (s,i,a,b) return a==b end) + E("Environment mismatch")
+        Cmt(myID * Cb"tag", function (s,i,a,b) return a==b end) + E"Environment mismatch"
       ) *
-      ( P("}") * _ ) + E("Environment begun but never ended")
+      ( P"}" * _ ) + E"Environment begun but never ended"
     )
 end
 
