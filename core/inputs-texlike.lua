@@ -31,7 +31,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
       V"environment" +
       comment +
       V"texlike_text" +
-      V"bracketed_stuff" +
+      V"texlike_bracketed_stuff" +
       V"command"
     )^0
   passthrough_stuff = Cg(
@@ -39,12 +39,20 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     )^0
   texlike_text = C((1-S("\\{}%"))^1)
   passthrough_text = C((1-S("\\{}"))^1)
-  bracketed_stuff = P"{" * V"texlike_stuff" * (P"}" + E("} expected"))
+  texlike_bracketed_stuff = P"{" * V"texlike_stuff" * (P"}" + E("} expected"))
+  passthrough_bracketed_stuff = P"{" * V"passthrough_stuff" * (P"}" + E("} expected"))
   command = (
       ( P"\\"-P"\\begin" ) *
       Cg(myID, "tag") *
       Cg(parameters,"attr") *
-      V"bracketed_stuff"^0
+      (
+        (Cmt(Cb"tag", function(s, i, a)
+          return a == "script"
+          end) * V"passthrough_bracketed_stuff") +
+        (Cmt(Cb"tag", function(s, i, a)
+          return a ~= "script"
+          end) * V"texlike_bracketed_stuff")
+      )^0
     ) - P("\\end{")
   environment =
     P"\\begin" *
@@ -115,7 +123,8 @@ local function massage_ast (t, doc)
   if t.id == "document" then return massage_ast(t[1], doc) end
   if t.id == "texlike_text" then return t[1] end
   if t.id == "passthrough_text" then return t[1] end
-  if t.id == "bracketed_stuff" then return massage_ast(t[1], doc) end
+  if t.id == "texlike_bracketed_stuff" then return massage_ast(t[1], doc) end
+  if t.id == "passthrough_bracketed_stuff" then return massage_ast(t[1], doc) end
   for k,v in ipairs(t) do
     if v.id == "texlike_stuff" then
       local val = massage_ast(v,doc)
