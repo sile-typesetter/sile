@@ -7,7 +7,9 @@ SILE.inputs.TeXlike.identifier = (ID + lpeg.P"-" + lpeg.P":")^1
 SILE.inputs.TeXlike.parser = function (_ENV)
   local _ = WS^0
   local sep = S",;" * _
-  local quotedString = P"\"" * C((1-S"\"")^1) * P"\""
+  local eol = S"\r\n"
+  local quote = P'"'
+  local quotedString = quote * C((1-quote)^1) * quote
   local value = quotedString + (1-S",;]")^1
   local myID = C(SILE.inputs.TeXlike.identifier + P(1)) / 1
   local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1 / function (...) local t = {...}; return t[1], t[#t] end
@@ -19,21 +21,21 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     )^-1/function (a) return type(a)=="table" and a or {} end
   local comment = (
       P"%" *
-      P(1-S"\r\n")^0 *
-      S"\r\n"^-1
+      P(1-eol)^0 *
+      eol^-1
     ) / ""
 
   START "document"
-  document = V"stuff" * EOF"Unexpected character at end of input"
-  text = C((1-S("\\{}%"))^1)
-  stuff = Cg(
+  document = V"texlike_stuff" * EOF"Unexpected character at end of input"
+  texlike_stuff = Cg(
       V"environment" +
       comment +
       V"text" +
       V"bracketed_stuff" +
       V"command"
     )^0
-  bracketed_stuff = P"{" * V"stuff" * (P"}" + E("} expected"))
+  text = C((1-S("\\{}%"))^1)
+  bracketed_stuff = P"{" * V"texlike_stuff" * (P"}" + E("} expected"))
   command = (
       ( P"\\"-P"\\begin" ) *
       Cg(myID, "tag") *
@@ -46,7 +48,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     P"{" *
     Cg(myID, "tag") *
     P"}" *
-    V"stuff" *
+    V"texlike_stuff" *
     (
       P"\\end{" *
       (
@@ -103,7 +105,7 @@ local function massage_ast (t, doc)
   if t.id == "text" then return t[1] end
   if t.id == "bracketed_stuff" then return massage_ast(t[1], doc) end
   for k,v in ipairs(t) do
-    if v.id == "stuff" then
+    if v.id == "texlike_stuff" then
       local val = massage_ast(v,doc)
       SU.splice(t, k,k, val)
     else
@@ -140,7 +142,7 @@ SILE.inputs.TeXlike.rebuildParser()
 
 function SILE.inputs.TeXlike.docToTree (doc)
   local tree = epnf.parsestring(_parser, doc)
-  -- a document always consists of one stuff
+  -- a document always consists of one texlike_stuff
   tree = tree[1][1]
   if tree.id == "text" then tree = {tree} end
   if not tree then return end
