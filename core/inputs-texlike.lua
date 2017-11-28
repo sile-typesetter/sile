@@ -9,8 +9,8 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   local sep = S",;" * _
   local eol = S"\r\n"
   local quote = P'"'
-  local quotedString = quote * C((1-quote)^1) * quote
-  local value = quotedString + (1-S",;]")^1
+  local quotedString = ( quote * C((1-quote)^1) * quote )
+  local value = ( quotedString + (1-S",;]")^1 )
   local myID = C(SILE.inputs.TeXlike.identifier + P(1)) / 1
   local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1 / function (...) local t = {...}; return t[1], t[#t] end
   local list = Cf(Ct"" * pair^0, rawset)
