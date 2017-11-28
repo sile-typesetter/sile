@@ -30,11 +30,15 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   texlike_stuff = Cg(
       V"environment" +
       comment +
-      V"text" +
+      V"texlike_text" +
       V"bracketed_stuff" +
       V"command"
     )^0
-  text = C((1-S("\\{}%"))^1)
+  passthrough_stuff = Cg(
+      V"passthrough_text"
+    )^0
+  texlike_text = C((1-S("\\{}%"))^1)
+  passthrough_text = C((1-S("\\{}"))^1)
   bracketed_stuff = P"{" * V"texlike_stuff" * (P"}" + E("} expected"))
   command = (
       ( P"\\"-P"\\begin" ) *
@@ -48,7 +52,14 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     P"{" *
     Cg(myID, "tag") *
     P"}" *
-    V"texlike_stuff" *
+    (
+      (Cmt(Cb"tag", function(s, i, a)
+          return a == "script"
+        end) * V"passthrough_stuff") +
+      (Cmt(Cb"tag", function(s, i, a)
+          return a ~= "script"
+        end) * V"texlike_stuff")
+    ) *
     (
       P"\\end{" *
       (
@@ -102,10 +113,14 @@ local function massage_ast (t, doc)
     t.line, t.col = getline(doc, t.pos)
   end
   if t.id == "document" then return massage_ast(t[1], doc) end
-  if t.id == "text" then return t[1] end
+  if t.id == "texlike_text" then return t[1] end
+  if t.id == "passthrough_text" then return t[1] end
   if t.id == "bracketed_stuff" then return massage_ast(t[1], doc) end
   for k,v in ipairs(t) do
     if v.id == "texlike_stuff" then
+      local val = massage_ast(v,doc)
+      SU.splice(t, k,k, val)
+    elseif v.id == "passthrough_stuff" then
       local val = massage_ast(v,doc)
       SU.splice(t, k,k, val)
     else
@@ -144,7 +159,7 @@ function SILE.inputs.TeXlike.docToTree (doc)
   local tree = epnf.parsestring(_parser, doc)
   -- a document always consists of one texlike_stuff
   tree = tree[1][1]
-  if tree.id == "text" then tree = {tree} end
+  if tree.id == "texlike_text" then tree = {tree} end
   if not tree then return end
   resetCache()
   tree = massage_ast(tree, doc)
