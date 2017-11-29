@@ -50,12 +50,8 @@ SILE.inputs.TeXlike.parser = function (_ENV)
       Cg(myID, "tag") *
       Cg(parameters,"attr") *
       (
-        (Cmt(Cb"tag", function(s, i, a)
-          return a == "script"
-          end) * V"passthrough_bracketed_stuff") +
-        (Cmt(Cb"tag", function(s, i, a)
-          return a ~= "script"
-          end) * V"texlike_bracketed_stuff")
+        (Cmt(Cb"tag", function(_, _, tag) return tag == "script" end) * V"passthrough_bracketed_stuff") +
+        (Cmt(Cb"tag", function(_, _, tag) return tag ~= "script" end) * V"texlike_bracketed_stuff")
       )^0
     ) - P("\\end{")
   environment =
@@ -65,17 +61,13 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     Cg(myID, "tag") *
     P"}" *
     (
-      (Cmt(Cb"tag", function(s, i, a)
-          return a == "script"
-        end) * V"passthrough_env_stuff") +
-      (Cmt(Cb"tag", function(s, i, a)
-          return a ~= "script"
-        end) * V"texlike_stuff")
+      (Cmt(Cb"tag", function(_, _, tag) return tag == "script" end) * V"passthrough_env_stuff") +
+      (Cmt(Cb"tag", function(_, _, tag) return tag ~= "script" end) * V"texlike_stuff")
     ) *
     (
       P"\\end{" *
       (
-        Cmt(myID * Cb"tag", function (s,i,a,b) return a==b end) + E"Environment mismatch"
+        Cmt(myID * Cb"tag", function (_,_,thisTag,lastTag) return thisTag == lastTag end) + E"Environment mismatch"
       ) *
       ( P"}" * _ ) + E"Environment begun but never ended"
     )
