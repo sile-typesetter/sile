@@ -8,4 +8,6 @@ Normal {bracketed \% mark} and pure command \em{100\% italic}.
 Modulus from environment: 3 * 3 \% 5 = \script{SILE.typesetter:typeset(answer.output)}
 
 Modulus in inline command: 3 * 3 \% 5 = \script{SILE.typesetter:typeset(tostring(3 * 3 % 5))}
+
+Braces in inline command: \script{val = { str = "Matching brace {} inception is" }; SILE.typesetter:typeset(val.str)} valid.
 \end{document}
