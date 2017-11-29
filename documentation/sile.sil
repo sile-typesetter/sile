@@ -966,6 +966,23 @@ produces the following output:
 \end{script}
 \line
 \end{examplefont}
+
+There are a couple of caveats when embedding Lua code documents written with the
+TeX-flavor markup. Since SILE has to first parse the TeX markup to find the
+start and end of such script commands \em{without} understanding what's in
+between, it is strictly necessary that no end tags appear inside the Lua code.
+This means that for the environment block version (\code{\\begin\{script\}})
+there must be no instances of \code{\\end\{script\}} inside the Lua code block,
+even inside a string that would otherwise be valid Lua code. The first instance
+of such and end tag terminates the block and there is no way to escape it. For
+the inline comand form (\code{\\script}) an exact matching number of open and
+closing braces make appear in the Lua cod, but the next match at the same level
+as the one opening the script tag will close the tag, even if it happens to be
+inside some quoted string in the Lua code. Lastly in both versions, it is
+impossible to enter escaped characters of any kind (sequences such as
+\code{\\n}, etc.). For now you simply must use the XML-flavor or inlude an
+external script to pass such escape sequences to Lua.
+
 \chapter{SILE Packages}
 
 SILE comes with a number of packages which provide additional functionality.
