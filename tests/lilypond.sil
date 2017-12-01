@@ -1,0 +1,7 @@
+\begin[papersize=a5,class=book]{document}
+\script[src=packages/lilypond]
+\set[parameter=document.parindent,value=0]
+Sing it with me now...
+
+\lilypond[src=song.ly]
+\end{document}
