@@ -11,6 +11,26 @@ dist_bin_SCRIPTS = sile
 nobase_dist_pkgdata_DATA = $(subdir_files)
 EXTRA_DIST=NEWS.md README.md LICENSE ROADMAP tests examples documentation
 
+.PHONY: test
+test: tests/attack.pl | sile
+	./tests/attack.pl --regression
+
+EXAMPLES = $(addsuffix .pdf,$(basename $(wildcard examples/*.sil)))
+DOCS = $(addsuffix .pdf,$(basename $(wildcard documentation/*.sil)))
+
+.PHONY: docs
+docs: $(EXAMPLES) $(DOCS) | sile
+
+%.pdf: %.sil | sile
+	./sile $< -o $@
+
+%.pdf: %.xml | sile
+	./sile $< -o $@
+
+.PHONY: coverage
+coverage:
+	./tests/attack.pl --regression --coverage
+
 tests/%.expected: tests/%.sil
 	./sile -e 'require("core/debug-output")' $< > $@
 

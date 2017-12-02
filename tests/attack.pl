@@ -65,12 +65,6 @@ if ($regression) {
 		print "\n",color("cyan"),"Tests missing expectations:",color("reset");
 		print "\n • ",join(", ", @missing),"\n";
 	}
-} else {
-	for (<examples/*.sil>, "documentation/sile.sil") {
-		next if /macros.sil/;
-		print "### Compiling $_\n";
-		exit $? >> 8 if system("./sile", $_);
-	}
 }
 if (@failed) {
 	exit 1;
