@@ -11,9 +11,11 @@ dist_bin_SCRIPTS = sile
 nobase_dist_pkgdata_DATA = $(subdir_files)
 EXTRA_DIST=NEWS.md README.md LICENSE ROADMAP tests examples documentation
 
+REGRESSIONSCRIPT = ./tests/regressions.pl
+
 .PHONY: test
-test: tests/attack.pl | sile
-	./tests/attack.pl --regression
+test: $(REGRESSIONSCRIPT) | sile
+	$(REGRESSIONSCRIPT)
 
 EXAMPLES = $(addsuffix .pdf,$(basename $(wildcard examples/*.sil)))
 DOCS = $(addsuffix .pdf,$(basename $(wildcard documentation/*.sil)))
@@ -28,8 +30,8 @@ docs: $(EXAMPLES) $(DOCS) | sile
 	./sile $< -o $@
 
 .PHONY: coverage
-coverage:
-	./tests/attack.pl --regression --coverage
+coverage: $(REGRESSIONSCRIPT)
+	$(REGRESSIONSCRIPT) --coverage
 
 EXPECTS = $(wildcard tests/*.expected)
 
