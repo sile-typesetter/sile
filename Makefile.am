@@ -31,8 +31,16 @@ docs: $(EXAMPLES) $(DOCS) | sile
 coverage:
 	./tests/attack.pl --regression --coverage
 
-tests/%.expected: tests/%.sil
+EXPECTS = $(wildcard tests/*.expected)
+
+.PHONY: update_expected
+update_expected: $(EXPECTS)
+
+tests/%.expected: tests/%.sil force | sile
 	./sile -e 'require("core/debug-output")' $< > $@
+
+.PHONY: force
+force: ;
 
 gource.webm:
 	mkdir -p /tmp/gravatars
