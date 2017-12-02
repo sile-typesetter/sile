@@ -13,6 +13,16 @@ function SILE.registerCommand (name, func, help, pack)
   }
 end
 
+SILE.setCommandDefaults = function (command, defaults)
+  local oldCommand = SILE.Commands[command]
+  SILE.Commands[command] = function (options, content)
+    for k, v in pairs(defaults) do
+      options[k] = options[k] or v
+    end
+    return oldCommand(options, content)
+  end
+end
+
 function SILE.doTexlike (doc)
   doc = "\\begin{document}" .. doc .. "\\end{document}"
   SILE.process(SILE.inputs.TeXlike.docToTree(doc))
