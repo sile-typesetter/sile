@@ -15,6 +15,7 @@ local schemeBoolean = function (input)
 
 local makePreamble = function (options)
     return trim(string.format([[
+#(define default-toplevel-book-handler print-book-with-defaults-as-systems)
 #(set-global-staff-size %f)
 \layout {
   line-width = %f\pt
@@ -51,6 +52,7 @@ SILE.registerCommand("lilypond", function(options, content)
   if options.src then
     for i, system in pairs(renderLilypondSystems(options)) do
       SILE.call("img", { src = system })
+      SILE.call("break")
     end
   end
 end)
