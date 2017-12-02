@@ -21,11 +21,13 @@ local makePreamble = function (options)
   line-width = %f\pt
   indent = %f\pt
   ragged-right = %s
+  ragged-last = %s
 }
       ]], options.staffsize,
           options.linewidth,
           options.indent,
-          schemeBoolean(options.raggedright)))
+          schemeBoolean(options.raggedright),
+          schemeBoolean(options.raggedlast)))
   end
 
 local renderLilypondSystems = function(options)
@@ -49,6 +51,7 @@ SILE.registerCommand("lilypond", function(options, content)
   options.linewidth = options.linewidth or SILE.length.parse("100%lw"):absolute().length
   options.indent = options.indent or (SILE.settings.get("document.parindent") or SILE.nodefactory.zeroGlue).width:absolute().length
   options.raggedright = SU.boolean(options.raggedright, (SILE.settings.get("document.rskip") and SILE.settings.get("document.rskip").width.stretch > 1000 or false))
+  options.raggedlast = SU.boolean(options.raggedlast, (SILE.settings.get("typesetter.parfillskip").width.stretch > 1000 or false))
   if options.src then
     for i, system in pairs(renderLilypondSystems(options)) do
       SILE.call("img", { src = system })
