@@ -150,7 +150,7 @@ SILE.nodeMakers.ja = SILE.nodeMakers.base {
       db = lastchar.. "|" .. uchar
       if string.match(uchar, space) then
         db = db .. " S"
-        coroutine.yield(SILE.shaper:makeSpaceNode(options))
+        coroutine.yield(SILE.shaper:makeSpaceNode(options, item))
       else
         local length = SILE.length.new({length = SILE.toPoints(intercharacterspace(lastcp, thiscp)),
                                    stretch = SILE.toPoints(stretchability(lastcp,thiscp)),
