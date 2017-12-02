@@ -1,7 +1,13 @@
 \begin[papersize=a5,class=book]{document}
 \script[src=packages/lilypond]
-\set[parameter=document.parindent,value=0]
-Sing it with me now...
+Just the defaults:
 
+\lilypond[src=song.ly]
+
+\font[size=15pt]
+\set[parameter=document.parindent,value=0]
+Bigger, not indented and flush:
+
+\set[parameter=typesetter.parfillskip,value=0]
 \lilypond[src=song.ly]
 \end{document}
