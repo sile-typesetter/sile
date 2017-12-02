@@ -1,6 +1,6 @@
 SILE.Help = {}
 
-function SILE.registerCommand (name, func, help, pack)
+SILE.registerCommand = function (name, func, help, pack)
   SILE.Commands[name] = func
   if not pack then
     local where = debug.getinfo(2).source
@@ -23,7 +23,7 @@ SILE.setCommandDefaults = function (command, defaults)
   end
 end
 
-function SILE.doTexlike (doc)
+SILE.doTexlike = function (doc)
   doc = "\\begin{document}" .. doc .. "\\end{document}"
   SILE.process(SILE.inputs.TeXlike.docToTree(doc))
 end
