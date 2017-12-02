@@ -28,9 +28,8 @@ local makePreamble = function (options)
           schemeBoolean(options.raggedlast)))
   end
 
-local renderLilypondSystems = function(options)
+local renderLilypondSystems = function(options, input)
     local tmpdir = trim(io.shell("mktemp -d lilypond.XXXXXX"))
-    local input = io.slurp(SILE.resolveFile(options.src))
     local fname = "lilypond.ly"
     local lyfile = io.catfile(tmpdir, fname)
     local preamble = makePreamble(options)
@@ -50,10 +49,9 @@ SILE.registerCommand("lilypond", function(options, content)
   options.indent = options.indent or (SILE.settings.get("document.parindent") or SILE.nodefactory.zeroGlue).width:absolute().length
   options.raggedright = SU.boolean(options.raggedright, (SILE.settings.get("document.rskip") and SILE.settings.get("document.rskip").width.stretch > 1000 or false))
   options.raggedlast = SU.boolean(options.raggedlast, (SILE.settings.get("typesetter.parfillskip").width.stretch > 1000 or false))
-  if options.src then
-    for i, system in pairs(renderLilypondSystems(options)) do
-      SILE.call("img", { src = system })
-      SILE.call("break")
-    end
+  local input = options.src and io.slurp(SILE.resolveFile(options.src)) or content[1]
+  for i, system in pairs(renderLilypondSystems(options, input)) do
+    SILE.call("img", { src = system })
+    SILE.call("break")
   end
 end)
