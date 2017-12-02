@@ -5,28 +5,28 @@ SILE.inputs.TeXlike.passthroughTags.lilypond = true
 local lilypond_command = "lilypond"
 local lilypond_options = "-dbackend=eps -dno-point-and-click -ddelete-intermediate-files -djob-count=2"
 
-local runLilypond = function(input)
-    local result = os.execute(lilypond_command .. " " .. lilypond_options .. " " .. input)
-    return result
+local trim = function (str)
+    return str:gsub("^%s*", ""):gsub("%s*$", "")
   end
 
-local read_file = function (path)
-    local file = io.open(path, "r")
-    if not file then return nil end
-    local content = file:read "*a"
-    file:close()
-    return content
+local renderLilypondSystems = function(input)
+    local tmpdir = trim(io.shell("mktemp -d lilypond.XXXXXX"))
+    local input = io.slurp(SILE.resolveFile(input))
+    local fname = "lilypond.ly"
+    local lyfile = io.catfile(tmpdir, fname)
+    io.writelines(io.open(lyfile, "w+"), input)
+    io.shell("cd " .. tmpdir .. ";" .. lilypond_command .. " " .. lilypond_options .. " " .. fname)
+    local systemscount = trim(io.slurp(lyfile:gsub(".ly$", "-systems.count")))
+    local systems = {}
+    for i=1, systemscount do
+      systems[#systems+1] = lyfile:gsub(".ly$", "-" .. i .. ".pdf")
+    end
+    return systems
   end
 
 SILE.registerCommand("lilypond", function(options, content)
   if options.src then
-    local src = SILE.resolveFile(options.src)
-    local out = runLilypond(src)
-    local out_systems = options.src:gsub(".ly", "-systems.count")
-    local systems = read_file(out_systems)
-    local system
-    for i=1, systems do
-      system = options.src:gsub(".ly", "-" .. i .. ".pdf")
+    for i, system in pairs(renderLilypondSystems(options.src)) do
       SILE.call("img", { src = system })
     end
   end
