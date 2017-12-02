@@ -15,9 +15,9 @@ local schemeBoolean = function (input)
 
 local makePreamble = function (options)
     return trim(string.format([[
-#(set-global-staff-size %s)
+#(set-global-staff-size %f)
 \layout {
-  indent = %s\pt
+  indent = %f\pt
   ragged-right = %s
 }
       ]], options.staffsize,
