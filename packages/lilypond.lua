@@ -9,12 +9,19 @@ local trim = function (str)
     return str:gsub("^%s*", ""):gsub("%s*$", "")
   end
 
-local renderLilypondSystems = function(input)
+local makePreamble = function (options)
+    return trim(string.format([[
+      #(set-global-staff-size %s)
+    ]], options.staffsize))
+  end
+
+local renderLilypondSystems = function(options)
     local tmpdir = trim(io.shell("mktemp -d lilypond.XXXXXX"))
-    local input = io.slurp(SILE.resolveFile(input))
+    local input = io.slurp(SILE.resolveFile(options.src))
     local fname = "lilypond.ly"
     local lyfile = io.catfile(tmpdir, fname)
-    io.writelines(io.open(lyfile, "w+"), input)
+    local preamble = makePreamble(options)
+    io.writelines(io.open(lyfile, "w+"), preamble, input)
     io.shell("cd " .. tmpdir .. ";" .. lilypond_command .. " " .. lilypond_options .. " " .. fname)
     local systemscount = trim(io.slurp(lyfile:gsub(".ly$", "-systems.count")))
     local systems = {}
@@ -25,8 +32,9 @@ local renderLilypondSystems = function(input)
   end
 
 SILE.registerCommand("lilypond", function(options, content)
+  options.staffsize = options.staffsize or SILE.settings.get("document.baselineskip").height:absolute().length
   if options.src then
-    for i, system in pairs(renderLilypondSystems(options.src)) do
+    for i, system in pairs(renderLilypondSystems(options)) do
       SILE.call("img", { src = system })
     end
   end
