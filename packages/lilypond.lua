@@ -17,10 +17,12 @@ local makePreamble = function (options)
     return trim(string.format([[
 #(set-global-staff-size %f)
 \layout {
+  line-width = %f\pt
   indent = %f\pt
   ragged-right = %s
 }
       ]], options.staffsize,
+          options.linewidth,
           options.indent,
           schemeBoolean(options.raggedright)))
   end
@@ -43,6 +45,7 @@ local renderLilypondSystems = function(options)
 
 SILE.registerCommand("lilypond", function(options, content)
   options.staffsize = options.staffsize or SILE.settings.get("document.baselineskip").height:absolute().length
+  options.linewidth = options.linewidth or SILE.length.parse("100%lw"):absolute().length
   options.indent = options.indent or (SILE.settings.get("document.parindent") or SILE.nodefactory.zeroGlue).width:absolute().length
   options.raggedright = SU.boolean(options.raggedright, (SILE.settings.get("document.rskip") and SILE.settings.get("document.rskip").width.stretch > 1000 or false))
   if options.src then
