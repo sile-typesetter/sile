@@ -9,10 +9,20 @@ local trim = function (str)
     return str:gsub("^%s*", ""):gsub("%s*$", "")
   end
 
+local schemeBoolean = function (input)
+    return input and "##t" or "##f"
+  end
+
 local makePreamble = function (options)
     return trim(string.format([[
-      #(set-global-staff-size %s)
-    ]], options.staffsize))
+#(set-global-staff-size %s)
+\layout {
+  indent = %s\pt
+  ragged-right = %s
+}
+      ]], options.staffsize,
+          options.indent,
+          schemeBoolean(options.raggedright)))
   end
 
 local renderLilypondSystems = function(options)
@@ -33,6 +43,8 @@ local renderLilypondSystems = function(options)
 
 SILE.registerCommand("lilypond", function(options, content)
   options.staffsize = options.staffsize or SILE.settings.get("document.baselineskip").height:absolute().length
+  options.indent = options.indent or (SILE.settings.get("document.parindent") or SILE.nodefactory.zeroGlue).width:absolute().length
+  options.raggedright = SU.boolean(options.raggedright, (SILE.settings.get("document.rskip") and SILE.settings.get("document.rskip").width.stretch > 1000 or false))
   if options.src then
     for i, system in pairs(renderLilypondSystems(options)) do
       SILE.call("img", { src = system })
