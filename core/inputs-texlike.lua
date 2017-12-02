@@ -42,8 +42,8 @@ SILE.inputs.TeXlike.parser = function (_ENV)
       V"passthrough_env_text"
     )^0
   texlike_text = C((1-S("\\{}%"))^1)
-  passthrough_text = C((1-S("\\{}"))^1)
-  passthrough_env_text = C((1-S("\\"))^1)
+  passthrough_text = C((1-S("{}"))^1)
+  passthrough_env_text = C((1-(P"\\end{" * (myID * Cb"tag") * P"}"))^1)
   texlike_bracketed_stuff = P"{" * V"texlike_stuff" * ( P"}" + E("} expected") )
   passthrough_bracketed_stuff = P"{" * V"passthrough_stuff" * ( P"}" + E("} expected") )
   passthrough_debracketed_stuff = C(V"passthrough_bracketed_stuff")
