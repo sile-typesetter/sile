@@ -9,6 +9,14 @@ function utilities.required(t, name, context)
   return t[name]
 end
 
+function utilities.boolean (value, default)
+  if value == "false" then return false end
+  if value == false then return false end
+  if value == "true" then return true end
+  if value == true then return true end
+  return default
+end
+
 if not table.maxn then
   table.maxn = function(t)
     local max = 0
