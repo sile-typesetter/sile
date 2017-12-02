@@ -1,7 +1,5 @@
 require "packages/image"
 
-SILE.inputs.TeXlike.passthroughTags.lilypond = true
-
 local lilypond_command = "lilypond"
 local lilypond_options = "-dbackend=eps -dno-point-and-click -ddelete-intermediate-files -djob-count=2"
 

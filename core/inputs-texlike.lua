@@ -4,7 +4,8 @@ local epnf = require("epnf")
 local ID = lpeg.C( SILE.parserBits.letter * (SILE.parserBits.letter+SILE.parserBits.digit)^0 )
 SILE.inputs.TeXlike.identifier = (ID + lpeg.P"-" + lpeg.P":")^1
 
-SILE.inputs.TeXlike.passthroughTags = { script = true }
+SILE.inputs.TeXlike.passthroughTags = { script = true, lilypond = true }
+
 SILE.inputs.TeXlike.passthroughTag = function (tag)
     return SILE.inputs.TeXlike.passthroughTags[tag]
   end
