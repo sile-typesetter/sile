@@ -1,4 +1,3 @@
-<tests/bug-283.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	40.9764
@@ -452,10 +451,9 @@ My 	389.1484
 T	78 74 91 70	(mize)
 Mx 	49.3711
 T	53 66 79 83 241 79 241 79	(Tanrının)
-[1] Mx 	207.4176
+Mx 	207.4176
 My 	553.7327
 Set font 	Gentium Plus;10;400;;normal;;LTR
 T	20	(1)
 End page
 Finish
-

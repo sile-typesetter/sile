@@ -1,18 +1,17 @@
-<tests/bug-241.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	196.4166
 My 	35.9161
 Set font 	Gentium Plus;10;400;;normal;;LTR
 T	55 44 55 44 47 40	(TITILE)
-Mx 	174.7345
+Mx 	174.0738
 My 	47.9161
 T	55 75 72 81	(Then)
-Mx 	198.0987
+Mx 	197.8785
 T	89 1006 79 79	(vfill)
-Mx 	216.4728
+Mx 	216.6930
 T	87 82	(to)
-Mx 	227.1466
+Mx 	227.8072
 T	79 82 74 82	(logo)
 Mx 	196.5509
 My 	533.3066
@@ -21,7 +20,7 @@ Mx 	200.9405
 T	79 82 74 82	(logo)
 Mx 	218.5870
 T	33	(>)
-[1] New page
+New page
 Mx 	40.9764
 My 	37.3321
 T	38 82 81 87 72 81 87	(Content)
@@ -95,7 +94,7 @@ Mx 	287.5291
 T	20	(1)
 Mx 	292.2215
 T	17	(.)
-[2] New page
+New page
 Mx 	40.9764
 My 	37.3321
 T	37 82 71 92	(Body)
@@ -103,6 +102,5 @@ Mx 	64.3112
 T	70 82 81 87 72 81 87	(content)
 Mx 	96.2496
 T	17	(.)
-[3] End page
+End page
 Finish
-

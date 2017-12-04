@@ -1,4 +1,3 @@
-<tests/split-footnote.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	34.8208
@@ -993,15 +992,15 @@ Mx 	270.2538
 T	69 68 85 81 86 87 82 85 80	(barnstorm)
 Mx 	312.1814
 T	70 82 79 82 85 79 72 86 86 81 72 86 86	(colorlessness)
-Mx 	304.0515
+Mx 	303.3308
 My 	28.1096
 Set font 	Gentium Plus;9;400;italic;normal;;LTR
 T	19 17 20	(0.1)
-Mx 	314.8884
+Mx 	314.5281
 T	54 83 79 76 87	(Split)
 Mx 	331.9744
 T	41 82 82 87 81 82 87 72	(Footnote)
-[1] Mx 	195.4611
+Mx 	195.4611
 My 	519.8019
 Set font 	Gentium Plus;10;400;;normal;;LTR
 T	20	(1)
@@ -1138,10 +1137,9 @@ Mx 	309.6725
 T	74 88 68 85 71 72 85	(guarder)
 Mx 	338.9269
 T	17	(.)
-[2] Mx 	219.3741
+Mx 	219.3741
 My 	519.7531
 Set font 	Gentium Plus;10;400;;normal;;LTR
 T	21	(2)
 End page
 Finish
-
