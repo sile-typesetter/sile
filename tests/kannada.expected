@@ -1,4 +1,3 @@
-<tests/kannada.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	40.9764
@@ -16,10 +15,9 @@ Mx 	201.3613
 T	422	(:)
 Mx 	206.1865
 T	405	())
-[1] Mx 	207.4176
+Mx 	207.4176
 My 	553.7327
 Set font 	Gentium Plus;10;400;;normal;;LTR
 T	20	(1)
 End page
 Finish
-

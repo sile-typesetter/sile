@@ -1,4 +1,3 @@
-<tests/bug-226.sil>
 Set paper size 	595.275597	841.8897729
 Begin page
 Mx 	436.9181
@@ -53,9 +52,8 @@ My 	97.9070
 T	38 68 79 72 69	(Caleb)
 Mx 	520.0187
 T	48 68 70 79 72 81 81 68 81	(Maclennan)
-[1] Mx 	295.2916
+Mx 	295.2916
 My 	780.6177
 T	20	(1)
 End page
 Finish
-

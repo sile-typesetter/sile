@@ -1,4 +1,3 @@
-<tests/chapterverse.sil>
 Set paper size 	209.7637818	297.6377985
 Begin page
 Mx 	20.0695
@@ -15,10 +14,9 @@ Mx 	170.7719
 T	12	(,)
 Mx 	175.7045
 T	18	(2)
-[1] Mx 	96.5574
+Mx 	96.5574
 My 	262.9405
 Set font 	Gentium Plus;10;400;;normal;;LTR
 T	20	(1)
 End page
 Finish
-

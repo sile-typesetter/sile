@@ -1,11 +1,10 @@
-<tests/bug-264.sil>
 Set paper size 	209.7637818	297.6377985
 Begin page
 Mx 	37.4104
 My 	42.0943
 Set font 	Gentium Plus;10;400;;normal;;LTR
 T	75	(h)
-[1] New page
+New page
 Mx 	49.3669
 T	79 68 69 82 85 88 80	(laborum)
 Mx 	84.0642
@@ -55,6 +54,5 @@ Mx 	128.5183
 T	72 76 88 86 80 82 71	(eiusmod)
 Mx 	159.7942
 T	17	(.)
-[2] End page
+End page
 Finish
-

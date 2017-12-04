@@ -1,4 +1,3 @@
-<tests/hyph-except.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	40.9764
@@ -35,9 +34,8 @@ Mx 	86.8065
 T	16	(-)
 Mx 	90.1756
 T	86 76 72	(sie)
-[1] Mx 	207.4176
+Mx 	207.4176
 My 	553.7327
 T	20	(1)
 End page
 Finish
-

@@ -1,4 +1,3 @@
-<tests/bug-244.sil>
 Set paper size 	595.275597	841.8897729
 Begin page
 Mx 	543.8630
@@ -9,9 +8,8 @@ My 	132.0307
 T	90 82 85 79 71	(world)
 My 	155.9907
 T	17	(.)
-[1] Mx 	295.2916
+Mx 	295.2916
 My 	780.6177
 T	20	(1)
 End page
 Finish
-

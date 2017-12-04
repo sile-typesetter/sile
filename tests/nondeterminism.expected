@@ -1,4 +1,3 @@
-<tests/nondeterminism.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	34.8208
@@ -50,10 +49,9 @@ Mx 	153.9934
 T	76 87 86 72 79 73	(itself)
 Mx 	177.1106
 T	17	(.)
-[1] Mx 	195.4611
+Mx 	195.4611
 My 	519.8019
 Set font 	Gentium Plus;10;400;;normal;;LTR
 T	20	(1)
 End page
 Finish
-

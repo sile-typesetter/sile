@@ -1,4 +1,3 @@
-<tests/bug-54.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	49.3228
@@ -33,9 +32,8 @@ Mx 	128.2186
 T	83 68 85 68 74 85 68 83 75	(paragraph)
 Mx 	170.8992
 T	17	(.)
-[1] Mx 	207.4176
+Mx 	207.4176
 My 	553.7327
 T	20	(1)
 End page
 Finish
-

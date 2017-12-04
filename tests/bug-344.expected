@@ -1,4 +1,3 @@
-<tests/bug-344.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	54.8208
@@ -45,7 +44,7 @@ Mx 	142.0650
 T	86 75 82 72	(shoe)
 Mx 	161.0933
 T	17	(.)
-[1] New page
+New page
 Mx 	78.7339
 My 	76.6203
 T	50 81 72	(One)
@@ -114,6 +113,5 @@ Mx 	165.9780
 T	86 75 82 72	(shoe)
 Mx 	185.0064
 T	17	(.)
-[2] End page
+End page
 Finish
-

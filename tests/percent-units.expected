@@ -1,4 +1,3 @@
-<tests/percent-units.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
 Draw line	20.9764 29.7638 297.6378 41.9528
@@ -30,9 +29,8 @@ T	6	(#)
 Draw line	70.9764 318.3102 138.7874 10.0000
 My 	328.3102
 T	6	(#)
-[1] Mx 	207.4176
+Mx 	207.4176
 My 	553.7327
 T	20	(1)
 End page
 Finish
-

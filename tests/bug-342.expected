@@ -1,170 +1,183 @@
-<tests/bug-342.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	54.8208
 My 	76.6203
-Set font 	Gentium;10;400;;normal;;LTR
-T	47 78 69	(One)
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	50 81 72	(One)
 Mx 	70.9585
-T	12	(,)
+T	15	(,)
 Mx 	75.9128
-T	84 87 79	(two)
-Mx 	91.4450
-T	14	(.)
+T	87 90 82	(two)
+Mx 	91.4451
+T	17	(.)
 Mx 	96.3994
-T	34 85 67 75 76 69	(Buckle)
-Mx 	126.5588
-T	77 89	(my)
-Mx 	142.1870
-T	83 72 79 69	(shoe)
-Mx 	161.2153
-T	14	(.)
+T	37 88 70 78 79 72	(Buckle)
+Mx 	126.4368
+T	80 92	(my)
+Mx 	142.0650
+T	86 75 82 72	(shoe)
+Mx 	161.0933
+T	17	(.)
 Mx 	54.8208
 My 	461.6203
-T	52 72 82 69 69	(Three)
+T	55 75 85 72 72	(Three)
 Mx 	81.7084
-T	70 79 85 82	(four)
+T	73 82 88 85	(four)
 Mx 	99.1058
-T	14	(.)
+T	17	(.)
 Mx 	104.0598
-T	51 72 85 84	(Shut)
+T	54 75 88 87	(Shut)
 Mx 	125.7423
-T	84 72 69	(the)
+T	87 75 72	(the)
 Mx 	141.9854
-T	68 79 79 82	(door)
+T	71 82 82 85	(door)
 Mx 	161.2041
-T	14	(.)
+T	17	(.)
 Mx 	163.4942
 My 	458.4416
-Set font 	Gentium;6.81152;400;;normal;;LTR
-T	17	(1)
+Set font 	Gentium Plus;6.81152;400;;normal;;LTR
+T	20	(1)
 Mx 	34.8208
 My 	482.8673
-Set font 	Gentium;9;400;;normal;;LTR
-T	17	(1)
+Set font 	Gentium Plus;9;400;;normal;;LTR
+T	20	(1)
 Mx 	39.0439
-T	14	(.)
+T	17	(.)
 Mx 	59.1050
-T	76 79 82 69 77	(lorem)
+T	79 82 85 72 80	(lorem)
 Mx 	83.5030
-T	73 80 83 85 77	(ipsum)
+T	76 83 86 88 80	(ipsum)
 Mx 	108.6657
-T	68 79 76 79 82	(dolor)
+T	71 82 79 82 85	(dolor)
 Mx 	130.8840
-T	83 73 84	(sit)
+T	86 76 87	(sit)
 Mx 	142.3797
-T	65 77 69 84	(amet)
+T	68 80 72 87	(amet)
 Mx 	163.4774
-T	67 79 78 83 69 84 69 84 85 82	(consetetur)
+T	70 82 81 86 72 87 72 87 88 85	(consetetur)
 Mx 	205.7040
-T	83 65 68 73 80 83 67 73 78 71	(sadipscing)
+T	86 68 71 76 83 86 70 76 81 74	(sadipscing)
 Mx 	246.8847
-T	69 76 73 84 82	(elitr)
+T	72 79 76 87 85	(elitr)
 Mx 	265.0645
-T	83 69 68	(sed)
+T	86 72 71	(sed)
 Mx 	279.8605
-T	68 73 65 77	(diam)
+T	71 76 68 80	(diam)
 Mx 	300.8220
-T	78 79 78 85 77 89	(nonumy)
+T	81 82 81 88 80 92	(nonumy)
 Mx 	334.1980
-T	69 73 82 77 79 68	(eirmod)
+T	72 76 85 80 82 71	(eirmod)
 Mx 	34.8208
 My 	493.6673
-T	84 69 77 80 79 82	(tempor)
+T	87 72 80 83 82 85	(tempor)
 Mx 	64.3508
-T	73 78 86 73 68 85 78 84	(invidunt)
+T	76 81 89 76 71 88 81 87	(invidunt)
 Mx 	98.3324
-T	85 84	(ut)
+T	88 87	(ut)
 Mx 	108.3858
-T	76 65 66 79 82 69	(labore)
+T	79 68 69 82 85 72	(labore)
 Mx 	133.9607
-T	69 84	(et)
+T	72 87	(et)
 Mx 	143.4033
-T	68 79 76 79 82 69	(dolore)
+T	71 82 79 82 85 72	(dolore)
 Mx 	169.4836
-T	77 65 71 78 65	(magna)
+T	80 68 74 81 68	(magna)
 Mx 	196.5175
-T	65 76 73 81 85 89 65 77	(aliquyam)
+T	68 79 76 84 88 92 68 80	(aliquyam)
 Mx 	232.9161
-T	69 82 65 84	(erat)
+T	72 85 68 87	(erat)
 Mx 	250.0535
-T	83 69 68	(sed)
+T	86 72 71	(sed)
 Mx 	264.5542
-T	68 73 65 77	(diam)
+T	71 76 68 80	(diam)
 Mx 	285.2204
-T	86 79 76 85 80 84 85 65	(voluptua)
+T	89 82 79 88 83 87 88 68	(voluptua)
 Mx 	320.3446
-T	65 84	(at)
+T	68 87	(at)
 Mx 	329.7608
-T	86 69 82 79	(vero)
+T	89 72 85 82	(vero)
 Mx 	348.6340
-T	69 79 83	(eos)
-[1] New page
+T	72 82 86	(eos)
+New page
 Mx 	78.7339
-My 	81.0520
-Set font 	Gentium;10;400;;normal;;LTR
-T	38 73 88	(Fix)
+My 	76.6203
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	55 75 76 86	(This)
+Mx 	98.9931
+T	82 79 71	(old)
+Mx 	114.5941
+T	80 68 81	(man)
+Mx 	135.3954
+T	90 72 81 87	(went)
+Mx 	158.6966
+T	85 82 79 76 81 74	(roling)
+Mx 	186.1629
+T	75 82 80 72	(home)
+Mx 	209.3611
+T	4	(!)
+Mx 	78.7339
+My 	88.6203
+T	41 76 91	(Fix)
 Mx 	93.9197
-T	83 73 88	(six)
+T	86 76 91	(six)
 Mx 	105.5213
-T	14	(.)
+T	17	(.)
 Mx 	110.4776
-T	48 73 67 75	(Pick)
-Mx 	130.4535
-T	85 80	(up)
-Mx 	143.7155
-T	83 84 73 67 75 83	(sticks)
-Mx 	166.9625
-T	14	(.)
+T	51 76 70 78	(Pick)
+Mx 	130.3315
+T	88 83	(up)
+Mx 	143.5935
+T	86 87 76 70 78 86	(sticks)
+Mx 	166.7185
+T	17	(.)
 Mx 	58.7339
 My 	482.9552
-Set font 	Gentium;9;400;;normal;;LTR
-T	69 84	(et)
-Mx 	68.7419
-T	65 67 67 85 83 65 77	(accusam)
-Mx 	103.0957
-T	69 84	(et)
-Mx 	113.1038
-T	74 85 83 84 79	(justo)
-Mx 	134.0543
-T	68 85 79	(duo)
-Mx 	150.7816
-T	68 79 76 79 82 69 83	(dolores)
-Mx 	180.9035
-T	69 84	(et)
-Mx 	190.9116
-T	69 65	(ea)
-Mx 	201.9524
-T	82 69 66 85 77	(rebum)
-Mx 	228.9937
-T	83 84 69 84	(stet)
-Mx 	245.5760
-T	67 76 73 84 65	(clita)
-Mx 	264.3688
-T	75 65 83 68	(kasd)
-Mx 	283.9086
-T	71 85 66 69 82 71 82 69 78	(gubergren)
-Mx 	325.1882
-T	78 79	(no)
-Mx 	337.4331
-T	83 69 65	(sea)
-Mx 	351.9499
-T	84 65 75 73 77 65 84 65	(takimata)
+Set font 	Gentium Plus;9;400;;normal;;LTR
+T	72 87	(et)
+Mx 	68.7566
+T	68 70 70 88 86 68 80	(accusam)
+Mx 	103.1250
+T	72 87	(et)
+Mx 	113.1478
+T	77 88 86 87 82	(justo)
+Mx 	134.1129
+T	71 88 82	(duo)
+Mx 	150.8549
+T	71 82 79 82 85 72 86	(dolores)
+Mx 	180.9914
+T	72 87	(et)
+Mx 	191.0141
+T	72 68	(ea)
+Mx 	202.0696
+T	85 72 69 88 80	(rebum)
+Mx 	229.1255
+T	86 87 72 87	(stet)
+Mx 	245.7225
+T	70 79 76 87 68	(clita)
+Mx 	264.5299
+T	78 68 86 71	(kasd)
+Mx 	283.9745
+T	74 88 69 72 85 74 85 72 81	(gubergren)
+Mx 	325.2687
+T	81 82	(no)
+Mx 	337.5283
+T	86 72 68	(sea)
+Mx 	352.0598
+T	87 68 78 76 80 68 87 68	(takimata)
 Mx 	58.7339
 My 	493.7552
-T	83 65 78 67 84 85 83	(sanctus)
+T	86 68 81 70 87 88 86	(sanctus)
 Mx 	88.9783
-T	69 83 84	(est)
+T	72 86 87	(est)
 Mx 	102.1060
-T	76 79 82 69 77	(lorem)
+T	79 82 85 72 80	(lorem)
 Mx 	126.4178
-T	73 80 83 85 77	(ipsum)
+T	76 83 86 88 80	(ipsum)
 Mx 	151.4942
-T	68 79 76 79 82	(dolor)
+T	71 82 79 82 85	(dolor)
 Mx 	173.6263
-T	83 73 84	(sit)
+T	86 76 87	(sit)
 Mx 	185.0357
-T	65 77 69 84	(amet)
-[2] End page
+T	68 80 72 87	(amet)
+End page
 Finish
-

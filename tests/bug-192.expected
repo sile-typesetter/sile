@@ -1,4 +1,3 @@
-<tests/bug-192.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	40.9764
@@ -17,7 +16,7 @@ Mx 	204.8522
 T	374 459	(سے)
 Mx 	231.0233
 T	435 354	(کب)
-[1] New page
+New page
 Mx 	40.9764
 My 	42.7189
 T	40 39	(اب)
@@ -33,6 +32,5 @@ Mx 	204.8522
 T	374 459	(سے)
 Mx 	231.0233
 T	435 354	(کب)
-[2] End page
+End page
 Finish
-

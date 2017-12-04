@@ -1,4 +1,3 @@
-<tests/grid.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
 Draw line	34.8208 69.0520 325.9729 0.1000
@@ -398,7 +397,7 @@ Mx 	345.2234
 T	87 72 80	(tem)
 Mx 	358.0984
 T	16	(-)
-[1] Mx 	195.4611
+Mx 	195.4611
 My 	519.8019
 Set font 	Gentium Plus;10;400;;normal;;LTR
 T	20	(1)
@@ -617,7 +616,7 @@ Mx 	78.4155
 T	86 76 87	(sit)
 Mx 	88.5659
 T	68 80 72 87	(amet)
-[2] Mx 	219.3741
+Mx 	219.3741
 My 	519.7531
 Set font 	Gentium Plus;10;400;;normal;;LTR
 T	21	(2)
@@ -647,8 +646,7 @@ Draw line	34.8208 489.0520 325.9729 0.1000
 Draw line	34.8208 509.0520 325.9729 0.1000
 Draw line	34.8208 529.0520 325.9729 0.1000
 Draw line	34.8208 549.0520 325.9729 0.1000
-[3] Mx 	195.4611
+Mx 	195.4611
 T	22	(3)
 End page
 Finish
-

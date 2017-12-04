@@ -1,4 +1,3 @@
-<tests/color-fonts.sil>
 Set paper size 	365.6692953	561.2598486
 Begin page
 Mx 	50.3506
@@ -36,24 +35,21 @@ Mx 	50.3506
 My 	97.1061
 Set font 	;10;400;;normal;;RTL;tests/TestCLR-Regular.ttf
 T	4	(ع)
-Push color	0.9804	0.8784	0.8118
+Pop color
 Mx 	60.3506
-Set font 	;10;400;;normal;;LTR;tests/TestCLR-Regular.ttf
-T	7	()
-Pop color
-Push color	0.898	0.6078	0.1451
-T	8	()
-Pop color
-Push color	0.5176	0.2196	0.05098
 T	9	(☺🏻)
+Push color	0.5176	0.2196	0.05098
 Pop color
 Mx 	70.3506
-Set font 	;10;400;;normal;;RTL;tests/TestCLR-Regular.ttf
+T	8	()
+Push color	0.898	0.6078	0.1451
+Pop color
+T	7	()
+Push color	0.9804	0.8784	0.8118
 T	4	(ع)
-[1] Mx 	170.0669
+Mx 	170.0669
 My 	490.4464
 Set font 	Gentium Plus;10;400;;normal;;LTR
 T	20	(1)
 End page
 Finish
-
