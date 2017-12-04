@@ -1,4 +1,3 @@
-<tests/sura-2.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	340.9731
@@ -58,7 +57,7 @@ Set font 	Amiri Quran;40;400;;normal;;LTR
 T	1318	(٣)
 Mx 	-7.9918
 T	113	(۝)
-[1] New page
+New page
 Mx 	320.2895
 My 	77.6153
 Set font 	Amiri Quran;40;400;;normal;;RTL
@@ -109,7 +108,7 @@ Mx 	76.5957
 T	76 527 381 83 499 120 1311 76 531 115 70 379 38 76 70	(وَأُو۟لَٰۤئِكَ)
 Mx 	20.9764
 T	77 533 77 525	(هُمُ)
-[2] New page
+New page
 Mx 	280.0551
 My 	75.0763
 T	76 68 561 77 521 78 532 117 512 77 535 117 531 101	(ٱلۡمُفۡلِحُونَ)
@@ -150,6 +149,5 @@ Set font 	Amiri Quran;40;400;;normal;;LTR
 T	1321	(٦)
 Mx 	104.8591
 T	113	(۝)
-[3] End page
+End page
 Finish
-
