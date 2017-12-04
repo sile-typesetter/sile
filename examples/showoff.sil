@@ -50,7 +50,7 @@ Now I will typeset some text on the other frames of this page.
 on the page, but it doesn’t stretch as far as the third column. I’ve defined this frame to be precisely 90pt high,
 and so the two columns have adjusted their height to fit in with this one.
 
-Here’s an image, because SILE supports those too: \img[src=examples/images/sile-logo.jpg,height=20pt]
+Here’s an image, because SILE supports those too: \img[src=examples/docbook/images/sile-logo.jpg,height=20pt]
 }
 
 \eject%
