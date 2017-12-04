@@ -38,7 +38,7 @@ SILE.outputters.cairo = {
     end
   end,
   setFont = function (options)
-    cr:select_font_face(options.font, options.style == "italic" and 1 or 0, options.weight > 100 and 0 or 1)
+    cr:select_font_face(options.font, options.style:lower() == "italic" and 1 or 0, options.weight > 100 and 0 or 1)
     cr:set_font_size(options.size)
   end,
   drawImage = function (src, x,y,w,h)
