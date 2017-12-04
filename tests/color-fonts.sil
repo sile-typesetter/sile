@@ -1,5 +1,6 @@
-\begin[class=book,papersize=129mm x 198mm]{document}
+\begin[class=book,papersize=129mm x 198mm]{document}% KNOWNBAD
 \script[src=packages/color-fonts]
+\bidi-on
 \font[filename=tests/TestCLR-Regular.ttf]
 a☺a
 
