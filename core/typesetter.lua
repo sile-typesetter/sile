@@ -425,7 +425,7 @@ SILE.defaultTypesetter = std.object {
       SU.debug("pushback", { "process box", vbox })
       if vbox.margins and vbox.margins ~= lastMargins then
         SU.debug("pushback", { "new margins", lastMargins, vbox.margins })
-        -- if not self.state.grid then self:endline() end
+        if not self.state.grid then self:endline() end
         self:setMargins(vbox.margins)
       end
       if vbox.explicit then
