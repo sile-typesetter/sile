@@ -179,7 +179,7 @@ function SILE.readFile(filename)
     io.stderr:write("<"..filename..">\n")
     doc = file:read("*a")
   end
-  local sniff = doc:sub(1, 100) or ""
+  local sniff = doc:sub(1, 100):gsub("begin.*", "") or ""
   local inputsOrder = {}
   for n in pairs(SILE.inputs) do
     if SILE.inputs[n].order then table.insert(inputsOrder, n) end
