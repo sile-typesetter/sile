@@ -1,4 +1,3 @@
-<tests/bug-284.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	35.9764
@@ -53,10 +52,9 @@ Mx 	172.9625
 T	74 129 70 129 71 129 85	(gücüdür)
 Mx 	227.8453
 T	17	(.)
-[1] Mx 	207.4176
+Mx 	207.4176
 My 	553.7327
 Set font 	Gentium Plus;10;400;;normal;;LTR
 T	20	(1)
 End page
 Finish
-

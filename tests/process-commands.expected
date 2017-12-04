@@ -1,15 +1,18 @@
-<tests/process-commands.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
-Mx 	40.97638
-My 	37.33214
-Set font 	Gentium;10;200;regular;normal;;LTR
-T	38 73 82 83 84	(First)
-Mx 	62.38810
-T	76 73 78 69 14	(line.)
-[1] Mx 	207.41759
-My 	553.73265
-T	17	(1)
+Mx 	43.6365
+My 	38.5528
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	0	(	)
+Mx 	40.9764
+My 	50.5528
+T	41 76 85 86 87	(First)
+Mx 	62.3881
+T	79 76 81 72	(line)
+Mx 	77.9447
+T	17	(.)
+Mx 	207.4176
+My 	553.7327
+T	20	(1)
 End page
 Finish
-

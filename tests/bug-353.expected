@@ -1,4 +1,3 @@
-<tests/bug-353.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
 Push color	0.9137	0.8471	0.7294
@@ -14,6 +13,5 @@ T	69 68 69 92	(baby)
 Mx 	65.3107
 T	17	(.)
 Pop color
-[1] End page
+End page
 Finish
-

@@ -1,4 +1,3 @@
-<tests/rskip.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	54.8208
@@ -107,9 +106,8 @@ Mx 	162.4390
 T	86 76 87	(sit)
 Mx 	175.1082
 T	68 80 72 87	(amet)
-[1] Mx 	195.4611
+Mx 	195.4611
 My 	519.8019
 T	20	(1)
 End page
 Finish
-

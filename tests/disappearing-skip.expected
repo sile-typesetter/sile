@@ -1,4 +1,3 @@
-<tests/disappearing-skip.sil>
 Set paper size 	365.6692953	561.2598486
 Begin page
 Mx 	38.2835
@@ -16,7 +15,7 @@ Mx 	59.3261
 T	21	(2)
 Mx 	64.0185
 T	17	(.)
-[1] Mx 	180.4885
+Mx 	180.4885
 My 	522.4382
 T	20	(1)
 New page
@@ -46,9 +45,8 @@ Mx 	116.8449
 T	74 82	(go)
 Mx 	126.7522
 T	34	(?)
-[2] Mx 	180.4885
+Mx 	180.4885
 My 	522.3893
 T	21	(2)
 End page
 Finish
-

@@ -1,4 +1,3 @@
-<tests/eject.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	40.9764
@@ -453,7 +452,7 @@ T	86 72 71	(sed)
 Mx 	138.4441
 My 	193.3321
 T	71 76 68 80	(diam)
-[1] Mx 	207.4176
+Mx 	207.4176
 My 	553.7327
 T	20	(1)
 New page
@@ -594,9 +593,8 @@ T	86 72 71	(sed)
 Mx 	20.9764
 My 	85.3321
 T	71 76 68 80	(diam)
-[2] Mx 	207.4176
+Mx 	207.4176
 My 	553.6838
 T	21	(2)
 End page
 Finish
-

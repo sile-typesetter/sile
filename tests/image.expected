@@ -1,4 +1,3 @@
-<tests/image.sil>
 Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	40.9764
@@ -18,9 +17,8 @@ T	87 90 82	(two)
 Draw image	documentation/fig1.png	77.9886 112.1532 36.1048 50.0000
 Mx 	116.7646
 T	87 75 85 72 72	(three)
-[1] Mx 	207.4176
+Mx 	207.4176
 My 	553.7327
 T	20	(1)
 End page
 Finish
-

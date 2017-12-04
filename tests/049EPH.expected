@@ -1,4 +1,3 @@
-<tests/049EPH.sil>
 Set paper size 	430.8661464	649.1338653
 Begin page
 Mx 	35.7619
@@ -739,7 +738,7 @@ Mx 	358.8701
 T	26	(:)
 Mx 	361.1601
 T	18 25	(29)
-[1] Mx 	200.8072
+Mx 	200.8072
 My 	566.2816
 Set font 	Gentium Plus;10;400;;normal;;LTR
 T	20	(1)
@@ -902,10 +901,9 @@ Mx 	91.2588
 T	26	(:)
 Mx 	93.5488
 T	19 16	(30)
-[2] Mx 	225.3666
+Mx 	225.3666
 My 	566.2328
 Set font 	Gentium Plus;10;400;;normal;;LTR
 T	21	(2)
 End page
 Finish
-
