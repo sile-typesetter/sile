@@ -112,33 +112,31 @@ local function getline (s, p)
   return lno, col
 end
 
-local function massage_ast (t, doc)
+local function massage_ast (tree, doc)
   -- Sort out pos
-  if type(t) == "string" then return t end
-  if t.pos then
-    t.line, t.col = getline(doc, t.pos)
+  if type(tree) == "string" then return tree end
+  if tree.pos then
+    tree.line, tree.col = getline(doc, tree.pos)
   end
-  if t.id == "document" then return massage_ast(t[1], doc) end
-  if t.id == "texlike_text" then return t[1] end
-  if t.id == "passthrough_text" then return t[1] end
-  if t.id == "passthrough_env_text" then return t[1] end
-  if t.id == "texlike_bracketed_stuff" then return massage_ast(t[1], doc) end
-  if t.id == "passthrough_bracketed_stuff" then return massage_ast(t[1], doc) end
-  for k,v in ipairs(t) do
-    if v.id == "texlike_stuff" then
-      local val = massage_ast(v,doc)
-      SU.splice(t, k,k, val)
-    elseif v.id == "passthrough_stuff" then
-      local val = massage_ast(v,doc)
-      SU.splice(t, k,k, val)
-    elseif v.id == "passthrough_env_stuff" then
-      local val = massage_ast(v,doc)
-      SU.splice(t, k,k, val)
+  if tree.id == "document"
+      or tree.id == "texlike_bracketed_stuff"
+      or tree.id == "passthrough_bracketed_stuff"
+    then return massage_ast(tree[1], doc) end
+  if tree.id == "texlike_text"
+      or tree.id == "passthrough_text"
+      or tree.id == "passthrough_env_text"
+    then return tree[1] end
+  for key, val in ipairs(tree) do
+    if val.id == "texlike_stuff"
+      or val.id == "passthrough_stuff"
+      or val.id == "passthrough_env_stuff"
+      then
+      SU.splice(tree, key, key, massage_ast(val, doc))
     else
-      t[k] = massage_ast(v,doc)
+      tree[key] = massage_ast(val, doc)
     end
   end
-  return t
+  return tree
 end
 
 function SILE.inputs.TeXlike.process (doc)
