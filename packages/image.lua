@@ -2,7 +2,7 @@ SILE.registerCommand("img", function(options, content)
   SU.required(options, "src", "including image file")
   local width =  SILE.parseComplexFrameDimension(options.width or 0,"w") or 0
   local height = SILE.parseComplexFrameDimension(options.height or 0,"h") or 0
-  local src = SILE.resolveFile(options.src)
+  local src = SILE.resolveFile(options.src) or SU.error("Couldn't find file "..options.src)
   local box_width,box_height = SILE.outputter.imageSize(src)
   local sx, sy = 1,1
   if width > 0 or height > 0 then
