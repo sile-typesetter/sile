@@ -15,6 +15,7 @@ SILE.registerCommand("verbatim", function(options, content)
     SILE.settings.set("document.lineskip", SILE.nodefactory.newVglue("2pt"))
     SILE.call("verbatim:font")
     SILE.settings.set("document.spaceskip", SILE.length.parse("1spc"))
+    SILE.settings.set("shaper.variablespaces",0)
     SILE.settings.set("document.language", "und")
     -- SILE.settings.set("shaper.spacepattern", '%s') -- XXX Shaper no longer uses this so it was removed
     SILE.process(content)
