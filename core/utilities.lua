@@ -4,9 +4,17 @@ local bit32 = require("bit32-compat")
 
 math.epsilon = 1E-12
 
-function utilities.required(t, name, context)
+utilities.required = function (t, name, context)
   if not t[name] then utilities.error(context.." needs a "..name.." parameter") end
   return t[name]
+end
+
+utilities.boolean = function (value, default)
+  if value == "false" then return false end
+  if value == false then return false end
+  if value == "true" then return true end
+  if value == true then return true end
+  return default
 end
 
 if not table.maxn then
@@ -17,7 +25,7 @@ if not table.maxn then
   end
 end
 
-function utilities.error(message,bug)
+utilities.error = function (message, bug)
   if(SILE.currentCommand and type(SILE.currentCommand) == "table") then
     io.stderr:write("\n! "..message.. " at "..SILE.currentlyProcessingFile.." l."..(SILE.currentCommand.line)..", col."..(SILE.currentCommand.col))
   else
@@ -29,22 +37,22 @@ function utilities.error(message,bug)
   os.exit(1)
 end
 
-function utilities.warn(message)
+utilities.warn = function (message)
   io.stderr:write("\n! "..message.."\n")
   --print(debug.traceback())
   --os.exit(1)
 end
 
-function utilities.debugging(category)
+utilities.debugging = function (category)
   return SILE.debugFlags.all or SILE.debugFlags[category]
 end
 
-function utilities.feq(lhs, rhs) -- Float point equal
+utilities.feq = function (lhs, rhs) -- Float point equal
   local abs = math.abs
   return abs(lhs - rhs) <= math.epsilon * (abs(lhs) + abs(rhs))
 end
 
-function utilities.gtoke(string, pattern)
+utilities.gtoke = function (string, pattern)
   string = string and tostring(string) or ''
   pattern = pattern and tostring(pattern) or "%s+"
   local length = #string
@@ -66,23 +74,23 @@ function utilities.gtoke(string, pattern)
   end)
 end
 
-function utilities.debug(category, ...)
+utilities.debug = function (category, ...)
   local arg = { ... } -- Avoid things that Lua stuffs in arg like args to self()
   if utilities.debugging(category) then
     print("["..category.."]", #arg == 1 and arg[1] or arg)
   end
 end
 
-function utilities.dump(...)
+utilities.dump = function (...)
   local arg = { ... } -- Avoid things that Lua stuffs in arg like args to self()
   require("pl.pretty").dump(#arg == 1 and arg[1] or arg, "/dev/stderr")
 end
 
-function utilities.concat(array, c)
+utilities.concat = function (array, c)
   return table.concat(utilities.map(tostring, array), c)
 end
 
-function utilities.inherit(orig, spec)
+utilities.inherit = function (orig, spec)
   local new = std.tree.clone(orig)
   if spec then
     for k,v in pairs(spec) do new[k] = v end
@@ -91,7 +99,7 @@ function utilities.inherit(orig, spec)
   return new
 end
 
-function utilities.map(func, array)
+utilities.map = function (func, array)
   local new_array = {}
   local last = #array
   for i = 1, last do
@@ -100,7 +108,7 @@ function utilities.map(func, array)
   return new_array
 end
 
-function utilities.splice(array, start, stop, replacement)
+utilities.splice = function (array, start, stop, replacement)
   local ptr = start
   local room = stop - start + 1
   local last = replacement and #replacement or 0
@@ -120,7 +128,7 @@ function utilities.splice(array, start, stop, replacement)
   return array
 end
 
-function utilities.sum(array)
+utilities.sum = function (array)
   local t = 0
   local last = #array
   for i = 1, last do
@@ -129,20 +137,20 @@ function utilities.sum(array)
   return t
 end
 
-function utilities.compress(items)
+utilities.compress = function (items)
   local rv = {}
   for i=1,table.maxn(items) do if items[i] then rv[#rv+1] = items[i] end end
   return rv
 end
 
-function table.append(t1, t2)
+table.append = function (t1, t2)
   if not t1 or not t2 then SU.error("table.append called with nil table!: "..t1..", "..t2,true) end
   for i=1,#t2 do
       t1[#t1+1] = t2[i]
   end
 end
 
-function utilities.allCombinations(options)
+utilities.allCombinations = function (options)
   local count = 1
   for i=1,#options do count = count * options[i] end
   return coroutine.wrap(function()
@@ -161,7 +169,7 @@ end
 
 -- Flatten content trees into just the string components (allows passing
 -- objects with complex structures to functions that need plain strings)
-function utilities.contentToString(content)
+utilities.contentToString = function (content)
   local string = ""
   for i = 1, #content do
     if type(content[i]) == "string" then
@@ -173,7 +181,7 @@ end
 
 -- Strip the top level command off a content object and keep only the child
 -- items — assuming that the current command is taking care of itself
-function utilities.subContent(content)
+utilities.subContent = function (content)
   out = { id="stuff" }
   for key, val in pairs(content) do
     if type(key) == "number" then
@@ -280,7 +288,7 @@ utilities.utf8codes = function (ustr)
   end
 end
 
-function utilities.splitUtf8(s) -- Return an array of UTF8 strings each representing a Unicode char
+utilities.splitUtf8 = function (s) -- Return an array of UTF8 strings each representing a Unicode char
   local seq = 0
   local rv = {}
   local val = -1
@@ -307,11 +315,11 @@ function utilities.splitUtf8(s) -- Return an array of UTF8 strings each represen
   return rv
 end
 
-function utilities.utf8charat(str, index)
+utilities.utf8charat = function (str, index)
   return str:sub(index):match("([%z\1-\127\194-\244][\128-\191]*)")
 end
 
-function utilities.utf8_to_utf16be_hexencoded(str)
+utilities.utf8_to_utf16be_hexencoded = function (str)
   local ustr = string.format("%04x", 0xfeff) -- BOM
   for uchr in utilities.utf8codes(str) do
     if (uchr < 0x10000) then
@@ -325,7 +333,7 @@ function utilities.utf8_to_utf16be_hexencoded(str)
   return ustr
 end
 
-function utilities.utf8_to_utf16be(str)
+utilities.utf8_to_utf16be = function (str)
   local ustr = ""
   for uchr in utilities.utf8codes(str) do
     if (uchr < 0x10000) then
@@ -339,7 +347,7 @@ function utilities.utf8_to_utf16be(str)
   return ustr
 end
 
-function utilities.utf8_to_utf16le(str)
+utilities.utf8_to_utf16le = function (str)
   local ustr = ""
   for uchr in utilities.utf8codes(str) do
     if (uchr < 0x10000) then
