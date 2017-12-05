@@ -11,8 +11,38 @@ dist_bin_SCRIPTS = sile
 nobase_dist_pkgdata_DATA = $(subdir_files)
 EXTRA_DIST=NEWS.md README.md LICENSE ROADMAP tests examples documentation
 
-tests/%.expected: tests/%.sil
+REGRESSIONSCRIPT = ./tests/regressions.pl
+
+.PHONY: test
+test: $(REGRESSIONSCRIPT) | sile
+	$(REGRESSIONSCRIPT)
+
+EXAMPLES = $(addsuffix .pdf,$(basename $(wildcard examples/*.sil)))
+DOCS = $(addsuffix .pdf,$(basename $(wildcard documentation/*.sil)))
+
+.PHONY: docs
+docs: $(EXAMPLES) $(DOCS) | sile
+
+%.pdf: %.sil | sile
+	./sile $< -o $@
+
+%.pdf: %.xml | sile
+	./sile $< -o $@
+
+.PHONY: coverage
+coverage: $(REGRESSIONSCRIPT)
+	$(REGRESSIONSCRIPT) --coverage
+
+EXPECTS = $(wildcard tests/*.expected)
+
+.PHONY: update_expected
+update_expected: $(EXPECTS)
+
+tests/%.expected: tests/%.sil force | sile
 	./sile -e 'require("core/debug-output")' $< > $@
+
+.PHONY: force
+force: ;
 
 gource.webm:
 	mkdir -p /tmp/gravatars
