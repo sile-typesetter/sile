@@ -1,4 +1,3 @@
-% Test
 \begin[papersize=a4,class=book]{document}
 \script[src=packages/pdf]
 \script[src=packages/image]
