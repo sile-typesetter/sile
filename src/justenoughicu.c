@@ -238,13 +238,18 @@ int icu_bidi_runs(lua_State *L) {
     lua_newtable(L);
     // Convert back to UTF8...
     int32_t l3 = 0;
-    char possibleOutbuf[4096];
-    u_strToUTF8(possibleOutbuf, 4096, &l3, input_as_uchar+start, length, &err);
+    char* possibleOutbuf = malloc(4*length);
+    if(!possibleOutbuf) {
+      return luaL_error(L, "Couldn't malloc");
+    }
+    u_strToUTF8(possibleOutbuf, 4 * length, &l3, input_as_uchar+start, length, &err);
     if (!U_SUCCESS(err)) {
+      free(possibleOutbuf);
       return luaL_error(L, "Bidi run too big? %s", u_errorName(err));
     }
     lua_pushstring(L, "run");
     lua_pushstring(L, possibleOutbuf);
+    free(possibleOutbuf);
     lua_settable(L, -3);
 
     lua_pushstring(L, "start");
