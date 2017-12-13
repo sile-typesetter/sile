@@ -29,7 +29,7 @@ SILE.registerCommand("ruby", function (options, content)
   if cbox:lineContribution() > rubybox:lineContribution() then
     SU.debug("ruby", "Base is longer, offsetting ruby to fit")
     -- This is actually the offset against the base
-    rubybox.width = SILE.length.make(cbox:lineContribution() - rubybox:lineContribution()).length
+    rubybox.width = SILE.length.make(cbox:lineContribution() - rubybox:lineContribution()).length/2
   else
     local diff = rubybox:lineContribution() - cbox:lineContribution()
     if type(diff) == "table" then diff = diff.length end
