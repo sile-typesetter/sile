@@ -1,0 +1,4 @@
+\begin[papersize=a5]{document}
+\include[src=tests/includeme.sil]
+\fromsilinclude
+\end{document}
