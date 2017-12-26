@@ -142,14 +142,14 @@ end
 function SILE.inputs.TeXlike.process (doc)
   local tree = SILE.inputs.TeXlike.docToTree(doc)
   local root = SILE.documentState.documentClass == nil
-  if root then
-    if tree.tag == "document" then
+  if tree.tag then
+    if root and tree.tag == "document" then
       SILE.inputs.common.init(doc, tree)
-      SILE.process(tree)
-    elseif pcall(function () assert(loadstring(doc))() end) then
-    else
-      SU.error("Input not recognized as Lua or SILE content")
     end
+    SILE.process(tree)
+  elseif pcall(function () assert(loadstring(doc))() end) then
+  else
+    SU.error("Input not recognized as Lua or SILE content")
   end
   if root and not SILE.preamble then
     SILE.documentState.documentClass:finish()
