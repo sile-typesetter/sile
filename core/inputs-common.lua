@@ -38,7 +38,7 @@ SILE.process = function(input)
       SILE.typesetter:typeset(content)
     elseif SILE.Commands[content.tag] then
       SILE.Commands[content.tag](content.attr,content)
-    elseif content.id == "stuff" or (not content.tag and not content.id) then
+    elseif content.id == "texlike_stuff" or (not content.tag and not content.id) then
       SILE.process(content)
     else
       SU.error("Unknown command "..(content.tag or content.id))
