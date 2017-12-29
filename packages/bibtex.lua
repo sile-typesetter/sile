@@ -62,7 +62,7 @@ SILE.registerCommand("cite", function(o,c)
     SU.warn("Unknown reference in citation "..o)
     return
   end
-  SILE.process(SILE.inputs.TeXlike.docToTree("\\begin{document}"..cite.."\\end{document}"))
+  SILE.doTexlike(cite)
 end)
 
 SILE.registerCommand("reference", function(o,c)
@@ -72,5 +72,5 @@ SILE.registerCommand("reference", function(o,c)
     SU.warn("Unknown reference in citation "..o)
     return
   end
-  SILE.process(SILE.inputs.TeXlike.docToTree("\\begin{document}"..cite.."\\end{document}"))
+  SILE.doTexlike(cite)
 end)
