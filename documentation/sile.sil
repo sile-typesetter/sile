@@ -558,7 +558,7 @@ value to a parameter, you can enclose the value in quotes: \code{[key1
 The optional argument (of which there can only be at most one) is enclosed in
 curly braces.\footnote{TeX users may forget this and try adding a command
 argument “bare”, without the braces. This won’t work; in SILE, the braces are
-always mandatory.}
+always mandatory.} Because the argument is optional, there is a difference between this: \code{\\command\{args\}} (which is interpreted as a command with argument \code{args}) and \code{\\command \{args\}} (which is interpreted as a command with no arguments, followed by the word \command{args} in a new group).
 
 SILE will ignore whitespace and newlines after a command.
 
