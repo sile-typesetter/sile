@@ -13,6 +13,11 @@ local pathvar = os.getenv("SILE_PATH")
 if pathvar then
 	for path in string.gmatch(pathvar, "[^;]+") do
 		package.path =  path .. "/?.lua;" .. package.path
+		package.path =  path .. "/?/init.lua;" .. package.path
+		package.path =  path .. "/lua-libraries/?.lua;" .. package.path
+		package.path =  path .. "/lua-libraries/?/init.lua;" .. package.path
+		package.cpath = path .. "/?."..SHARED_LIB_EXT..";" .. package.cpath
+		package.cpath = path .. "/core/?."..SHARED_LIB_EXT..";" .. package.cpath
 	end
 end
 
