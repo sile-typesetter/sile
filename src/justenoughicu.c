@@ -109,10 +109,14 @@ int icu_breakpoints(lua_State *L) {
   UBreakIterator* wordbreaks, *linebreaks;
   int32_t i, previous;
   wordbreaks = ubrk_open(UBRK_WORD, locale, buffer, l, &err);
-  assert(!U_FAILURE(err));
+  if(U_FAILURE(err)) {
+    luaL_error(L, "Word break parser failure: %s", u_errorName(err));
+  }
 
   linebreaks = ubrk_open(UBRK_LINE, locale, buffer, l, &err);
-  assert(!U_FAILURE(err));
+  if(U_FAILURE(err)) {
+    luaL_error(L, "Line break parser failure: %s", u_errorName(err));
+  }
 
   previous = 0;
   i = 0;
