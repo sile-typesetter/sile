@@ -7,9 +7,9 @@ local _key = function(options)
 end
 
 SILE.settings.declare({name = "shaper.variablespaces", type = "integer", default = 1})
-SILE.settings.declare({name = "shaper.spaceenlargementfactor", type = "number", default = 1.2})
-SILE.settings.declare({name = "shaper.spaceshrinkfactor", type = "number", default = 1/3})
-SILE.settings.declare({name = "shaper.spacestretchfactor", type = "number", default = 1/2})
+SILE.settings.declare({name = "shaper.spaceenlargementfactor", type = "number or integer", default = 1.2})
+SILE.settings.declare({name = "shaper.spaceshrinkfactor", type = "number or integer", default = 1/3})
+SILE.settings.declare({name = "shaper.spacestretchfactor", type = "number or integer", default = 1/2})
 
 -- Function for testing shaping in the repl
 makenodes = function(s,o)
