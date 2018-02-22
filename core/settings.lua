@@ -123,6 +123,7 @@ SILE.registerCommand("set", function(options, content)
   if not def then SU.error("Unknown parameter "..p.." in \\set command") end
   if     string.match(def.type, "nil") and type(v) == "nil" then -- ok
   elseif  string.match(def.type, "integer") then v = tonumber(v)
+  elseif  string.match(def.type, "number") then v = tonumber(v)
   elseif  string.match(def.type, "boolean") then v = toboolean(v)
   elseif  string.match(def.type, "Length") then v = SILE.length.parse(v)
   elseif string.match(def.type, "VGlue") then v = SILE.nodefactory.newVglue(v)
