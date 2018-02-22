@@ -150,6 +150,14 @@ table.append = function (t1, t2)
   end
 end
 
+table.flip = function(tbl)
+  for i=1, math.floor(#tbl / 2) do
+    local tmp = tbl[i]
+    tbl[i] = tbl[#tbl - i + 1]
+    tbl[#tbl - i + 1] = tmp
+  end
+end
+
 utilities.allCombinations = function (options)
   local count = 1
   for i=1,#options do count = count * options[i] end
