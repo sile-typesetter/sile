@@ -9,6 +9,7 @@ SILE.hyphenator.languages["ug"] = {}
 SILE.hyphenator.languages["ug"].patterns = SILE.hyphenator.languages["tr"].patterns
 
 require("char-def")
+local chardata  = characters.data
 
 local transliteration = {
   -- I'm going to pretend that normalisation isn't a problem
@@ -60,62 +61,97 @@ arabicToLatin = function(s)
   end
   return s
 end
-latinToArabic = function(s)
+latinToArabic = function(s, useLapa)
   for i = 1,#transliteration do
-    s = s:lower():gsub(transliteration[i].lapa or transliteration[i].la, transliteration[i].al)
+    if useLapa then
+      s = s:lower():gsub(transliteration[i].lapa or transliteration[i].la, transliteration[i].al)
+    elseif not transliteration[i].lapa then
+      s = s:lower():gsub(transliteration[i].la, transliteration[i].al)
+    end
   end
   return s
 end
 
 local zwj = "‍"
 
-SILE.tokenizers.ug = function(text)
-  return coroutine.wrap(function ()
-  local state = SILE.font.loadDefaults({})
-  for token in SILE.tokenizers.unicode(arabicToLatin(text)) do
-    if (token.separator) then
-      coroutine.yield(token)
+local dropLast = function(t)
+  local bt = SU.splitUtf8(t)
+  local n = ""
+  for i = 1,#bt-1 do n = n..bt[i] end
+  return n
+end
+
+local dropFirst = function(t)
+  local bt = SU.splitUtf8(t)
+  local n = ""
+  for i = 2,#bt do n = n..bt[i] end
+  return n
+end
+
+local reorderHyphenations = function(t)
+  local new = {}
+  new[1] = t[1]
+  for i = 2,#t do
+    local prev = t[i-1]
+    local this = t[i]
+    if #prev > 1 then
+      local uprev = SU.splitUtf8(prev)
+      lastOfPrev = uprev[#uprev]
+      new[#new] = dropLast(new[#new])
     else
-      local nodes = SILE.shaper:subItemize(token.string, state)
-      for i= 1,#nodes do
-        if nodes[i]:isUnshaped() then
-          local s = SILE.hyphenate( nodes[i]:shape() )
-          if #s == 1 then
-          else
-            local last
-            for j = #s,1,-1 do
-              if s[j]:isDiscretionary() then
-                last = j
-                break
-              end
-            end
-            local before = {}
-            local after = {}
-            for j = 1,last-1 do
-              before[j] = s[j].text
-            end
-            for j = last+1,#s do
-              after[#after+1] = s[j].text
-            end
-            local beforetext = latinToArabic(table.concat(before,""))
-            local aftertext = latinToArabic(table.concat(after,""))
-            local normal = SILE.shaper:createNnodes(beforetext..aftertext, state)
-            local bt = SU.splitUtf8(beforetext)
-            local jointype = characters.data[SU.codepoint(bt[#bt])] and characters.data[SU.codepoint(bt[#bt])].arabic
-            local joinable = jointype == "d"
-            local d = SILE.nodefactory.newDiscretionary({
-              replacement = normal,
-              prebreak = SILE.shaper:createNnodes(beforetext..zwj.."-", state),
-              postbreak = SILE.shaper:createNnodes((joinable and zwj or "")..aftertext, state)
-            })
-              coroutine.yield({ node = SILE.nodefactory.zeroHbox })
-              coroutine.yield({ node = d })
-          end
-        else
-          coroutine.yield({ node = nodes[i]})
-        end
+      lastOfPrev = ""
+    end
+    if #this > 1 then
+      firstOfThis = SU.splitUtf8(this)[1]
+      this = dropFirst(this)
+    end
+    new[#new+1] = lastOfPrev..firstOfThis
+    new[#new+1] = this
+  end
+
+  for i = 1,#new do
+    new[i] = latinToArabic(new[i], i==1)
+    if i > 1 then
+      local beforetext = new[i-1]
+      local bt = SU.splitUtf8(beforetext)
+      local jointype = characters.data[SU.codepoint(bt[#bt])] and characters.data[SU.codepoint(bt[#bt])].arabic
+      local joinable = jointype == "d"
+
+      new[i-1] = new[i-1] .. zwj
+      if joinable then
+        new[i] = zwj..new[i]
       end
     end
   end
-  end)
+  return new
+end
+
+SILE.hyphenator.languages.ug = function(n)
+  local latin = arabicToLatin(n.text)
+  local state = n.options
+  -- Make "Turkish" nodes
+  newoptions = std.tree.clone(n.options)
+  newoptions.origlanguage = n.options.language
+  newoptions.language = "tr"
+  if not _hyphenators.tr then
+    SILE.hyphenate(SILE.shaper:createNnodes(latin, newoptions))
+  end
+  local items = _hyphenate(_hyphenators["tr"],latin)
+  if #items == 1 then return {n} end
+  items = reorderHyphenations(items)
+  newitems = {}
+  state.language = "ar"
+  for i = 1,#items do
+    local normal = SILE.shaper:createNnodes(items[i], state)
+    local prebreak = SILE.shaper:createNnodes(items[i].."-", state)
+    local postbreak = SILE.shaper:createNnodes((joinable and zwj or "")..aftertext, state)
+    local d = SILE.nodefactory.newDiscretionary({
+            replacement = normal,
+            prebreak = prebreak,
+            -- postbreak = postbreak
+          })
+      newitems[#newitems+1] = SILE.nodefactory.zeroHbox
+      newitems[#newitems+1] = d
+  end
+  return newitems
 end
