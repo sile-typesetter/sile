@@ -62,6 +62,15 @@ local function create_matrix(line, base_level)
   return matrix
 end
 
+local reverse_each_node = function(nodelist)
+  for j =1,#nodelist do
+    if nodelist[j].type =="hbox" then
+      if nodelist[j].value.items then table.flip(nodelist[j].value.items) end
+      table.flip(nodelist[j].value.glyphString)
+    end
+  end
+end
+
 local reorder = function(n, self)
   local nl = n.nodes
   local newNl = {}
@@ -88,21 +97,25 @@ local reorder = function(n, self)
   end end
   local matrix = create_matrix(levels,0)
   local rv = {}
-  local reverse_array = function (t)
-    local n = {}
-    for i =1,#t do n[#t-i+1] = t[i] end
-    for i =1,#t do t[i] = n[i] end
-  end
   -- for i = 1,#nl do print(i,nl[i],levels[i]) end
   for i = 1, #nl do
     if nl[i]:isNnode() and levels[i].level %2 ~= base_level then
-      reverse_array(nl[i].nodes)
-      for j =1,#(nl[i].nodes) do
-        if nl[i].nodes[j].type =="hbox" then
-          if nl[i].nodes[j].value.items then reverse_array(nl[i].nodes[j].value.items) end
-          reverse_array(nl[i].nodes[j].value.glyphString)
-        end
+      table.flip(nl[i].nodes)
+      reverse_each_node(nl[i].nodes)
+    elseif nl[i]:isDiscretionary() and levels[i].level %2 ~= base_level then
+      for j = 1,#(nl[i].replacement) do
+        table.flip(nl[i].replacement[j].nodes)
+        reverse_each_node(nl[i].replacement[j].nodes)
       end
+      for j = 1,#(nl[i].prebreak) do
+        table.flip(nl[i].prebreak[j].nodes)
+        reverse_each_node(nl[i].prebreak[j].nodes)
+      end
+      for j = 1,#(nl[i].postbreak) do
+        table.flip(nl[i].postbreak[j].nodes)
+        reverse_each_node(nl[i].postbreak[j].nodes)
+      end
+
     end
     rv[matrix[i]] = nl[i]
     nl[i].bidiDone = true
