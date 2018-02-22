@@ -109,17 +109,25 @@ local reorderHyphenations = function(t)
     new[#new+1] = this
   end
 
+  -- Drop empties.
+  local new2 = {}
+  for i =1,#new do if #new[i] > 0 then new2[#new2+1] = new[i] end end
+  new = new2
+
   for i = 1,#new do
     new[i] = latinToArabic(new[i], i==1)
+    local first = SU.splitUtf8(new[i])[1]
+    local thisjointype = characters.data[SU.codepoint(first)] and characters.data[SU.codepoint(first)].arabic
+    local thisjoinable = thisjointype == "d" or thisjointype == "r"
+
     if i > 1 then
       local beforetext = new[i-1]
       local bt = SU.splitUtf8(beforetext)
-      local jointype = characters.data[SU.codepoint(bt[#bt])] and characters.data[SU.codepoint(bt[#bt])].arabic
-      local joinable = jointype == "d"
-
-      new[i-1] = new[i-1] .. zwj
-      if joinable then
-        new[i] = zwj..new[i]
+      local prevjointype = characters.data[SU.codepoint(bt[#bt])] and characters.data[SU.codepoint(bt[#bt])].arabic
+      local prevjoinable = prevjointype == "d" or prevjointype == "l"
+      if prevjoinable and thisjoinable then
+          new[i-1] = new[i-1] .. zwj
+          new[i] = zwj..new[i]
       end
     end
   end
@@ -128,6 +136,7 @@ end
 
 SILE.hyphenator.languages.ug = function(n)
   local latin = arabicToLatin(n.text)
+  -- io.write("Original: ", n.text.." -> "..latin.." -> ")
   local state = n.options
   -- Make "Turkish" nodes
   newoptions = std.tree.clone(n.options)
@@ -142,13 +151,14 @@ SILE.hyphenator.languages.ug = function(n)
   newitems = {}
   state.language = "ar"
   for i = 1,#items do
+    -- io.write(items[i].."/")
     local normal = SILE.shaper:createNnodes(items[i], state)
     local prebreak = SILE.shaper:createNnodes(items[i].."-", state)
     local postbreak = SILE.shaper:createNnodes((joinable and zwj or "")..aftertext, state)
     local d = SILE.nodefactory.newDiscretionary({
             replacement = normal,
             prebreak = prebreak,
-            -- postbreak = postbreak
+            postbreak = postbreak
           })
       newitems[#newitems+1] = SILE.nodefactory.zeroHbox
       newitems[#newitems+1] = d
