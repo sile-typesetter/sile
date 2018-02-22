@@ -102,6 +102,9 @@ end
 
 local hyphenateNode = function(n)
   if not n:isNnode() or not n.text then return {n} end
+  if n.language and (type(SILE.hyphenator.languages[n.language]) == "function") then
+    return SILE.hyphenator.languages[n.language](n)
+  end
   initHyphenator(n.language)
   local breaks = _hyphenate(_hyphenators[n.language],n.text)
   if #breaks > 1 then
