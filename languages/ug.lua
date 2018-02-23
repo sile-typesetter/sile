@@ -88,6 +88,14 @@ local dropFirst = function(t)
   return n
 end
 
+local lastjoinable = function (t)
+  local t = SU.splitUtf8(t)
+  local last = t[#t]
+  local jointype = characters.data[SU.codepoint(last)] and characters.data[SU.codepoint(last)].arabic
+  local joinable = jointype == "d" or jointype == "l"
+  return joinable
+end
+
 local reorderHyphenations = function(t)
   local new = {}
   new[1] = t[1]
@@ -136,7 +144,7 @@ end
 
 SILE.hyphenator.languages.ug = function(n)
   local latin = arabicToLatin(n.text)
-  -- io.write("Original: ", n.text.." -> "..latin.." -> ")
+  if SU.debugging("uyghur") then io.write("Original: ", n.text.." -> "..latin.." -> ") end
   local state = n.options
   -- Make "Turkish" nodes
   newoptions = std.tree.clone(n.options)
@@ -146,22 +154,104 @@ SILE.hyphenator.languages.ug = function(n)
     SILE.hyphenate(SILE.shaper:createNnodes(latin, newoptions))
   end
   local items = _hyphenate(_hyphenators["tr"],latin)
-  if #items == 1 then return {n} end
+  if #items == 1 then
+    if SU.debugging("uyghur") then print(latin .." No hyphenation points") end
+    return {n}
+  end
+  if SU.debugging("uyghur") then
+    for i = 1,#items do
+      io.write(items[i].."/")
+    end
+    io.write(" -> ")
+  end
   items = reorderHyphenations(items)
   newitems = {}
-  state.language = "ar"
+  state.language = "ug"
   for i = 1,#items do
-    -- io.write(items[i].."/")
+    if SU.debugging("uyghur") then io.write(items[i].."/") end
     local normal = SILE.shaper:createNnodes(items[i], state)
-    local prebreak = SILE.shaper:createNnodes(items[i].."-", state)
-    local postbreak = SILE.shaper:createNnodes((joinable and zwj or "")..aftertext, state)
+    local prebreak = SILE.shaper:createNnodes(items[i]..(lastjoinable(items[i]) and zwj or "").."-", state)
     local d = SILE.nodefactory.newDiscretionary({
             replacement = normal,
-            prebreak = prebreak,
-            postbreak = postbreak
+            prebreak = prebreak
           })
-      newitems[#newitems+1] = SILE.nodefactory.zeroHbox
       newitems[#newitems+1] = d
+      newitems[#newitems+1] = SILE.nodefactory.zeroHbox
   end
+  if SU.debugging("uyghur") then print("") end
   return newitems
+end
+
+local canmerge = function(x,y)
+  if not y:isDiscretionary() and not y:isNnode() then return false end
+  if not x:isDiscretionary() and not x:isNnode() then return false end
+  if x:isDiscretionary() then content = x.replacement[1] else content = x end
+  -- if x.replacement[1].language ~= "ug" or y.replacement[1].language ~= "ug" then return false end
+  return true
+end
+
+local mergenodes = function (x,y, used)
+  -- Extract content
+  local xcontent, ycontent
+  text = ""
+  if x:isDiscretionary() then
+    if used then xcontent = x.prebreak else xcontent = x.replacement end
+    for i = 1,#(xcontent) do text = text .. xcontent[i].text end
+  else
+    xcontent = {x}
+    text = x.text
+  end
+
+  if y:isDiscretionary() then
+    ycontent = y.replacement
+    for i = 1,#ycontent do text = ycontent[i].text .. text end
+  else
+    ycontent = {y}
+    text = y.text .. text
+  end
+  -- Remove erroneous ZWJs
+  local t2 = ""
+  local t = SU.splitUtf8(text)
+  text = ""
+  for i = 1,#t do
+    if t[i] == zwj and t[i+1] ~= "-" then
+      --
+    else
+      text = text .. t[i]
+    end
+  end
+  return SILE.shaper:createNnodes(text, xcontent[1].options)
+end
+
+local mergeline = function(nodes)
+  local newnodes = {}
+  for i = 1,#nodes do
+    -- Drop all zerohboxes
+    local pos = #newnodes -1
+    if nodes[i] == SILE.nodefactory.zeroHbox then -- nothing
+    elseif #newnodes >1 and canmerge(nodes[i], newnodes[#newnodes]) then
+      local merged = mergenodes(nodes[i], newnodes[#newnodes],i == #nodes)
+      for j=1,#merged do
+        newnodes[pos+j] = merged[j]
+      end
+    elseif #newnodes == 0 and nodes[i]:isDiscretionary() and i == 1 then
+      local merged = mergenodes(nodes[i], SILE.shaper:createNnodes("x",nodes[i].replacement[1].options)[1])
+      for j=1,#merged do
+        newnodes[pos+j] = merged[j]
+      end
+    else
+      newnodes[#newnodes+1] = nodes[i]
+    end
+
+  end
+  return newnodes
+end
+
+local oldbreaker = SILE.typesetter.breakIntoLines
+SILE.typesetter.breakIntoLines = function(self, nl, breakWidth)
+  local lines = oldbreaker(self,nl,breakWidth)
+  for i = 1,#lines do
+    lines[i].nodes = mergeline(lines[i].nodes)
+  end
+  return lines
 end
