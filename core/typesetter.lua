@@ -560,7 +560,7 @@ SILE.defaultTypesetter = std.object {
           slice[#slice+1] = nodes[j]
           if nodes[j] then
             toss = 0
-            if nodes[j]:isBox() then seenHbox = 1 end
+            if nodes[j]:isBox() or nodes[j]:isDiscretionary() then seenHbox = 1 end
           end
         end
         if seenHbox == 0 then break end
@@ -580,6 +580,7 @@ SILE.defaultTypesetter = std.object {
   end,
   computeLineRatio = function(self, breakwidth, slice)
     local naturalTotals = SILE.length.new({length =0 , stretch =0, shrink = 0})
+    local skipping = 1
     for i = 1,#slice do node=slice[i]
       if (node:isBox() or (node:isPenalty() and node.penalty == -inf_bad)) then
         skipping = 0
@@ -587,6 +588,7 @@ SILE.defaultTypesetter = std.object {
           naturalTotals = naturalTotals + node:lineContribution()
         end
       elseif node:isDiscretionary() then
+        skipping = 0
         naturalTotals = naturalTotals + node:replacementWidth()
         slice[i].height = slice[i]:replacementHeight()
       elseif skipping == 0 then
@@ -617,7 +619,6 @@ SILE.defaultTypesetter = std.object {
       slice[1].height = slice[1]:postbreakHeight()
     end
     local left = (breakwidth - naturalTotals.length)
-
     if left < 0 then
       left = left / naturalTotals.shrink
     else
