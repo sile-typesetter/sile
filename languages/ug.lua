@@ -96,31 +96,34 @@ local lastjoinable = function (t)
   return joinable
 end
 
-local reorderHyphenations = function(t)
-  local new = {}
-  new[1] = t[1]
-  for i = 2,#t do
-    local prev = t[i-1]
-    local this = t[i]
-    if #prev > 1 then
-      local uprev = SU.splitUtf8(prev)
-      lastOfPrev = uprev[#uprev]
-      new[#new] = dropLast(new[#new])
-    else
-      lastOfPrev = ""
-    end
-    if #this > 1 then
-      firstOfThis = SU.splitUtf8(this)[1]
-      this = dropFirst(this)
-    end
-    new[#new+1] = lastOfPrev..firstOfThis
-    new[#new+1] = this
-  end
+local reorderHyphenations = function(t, debug)
+  local new = t
+  -- new[1] = t[1]
+  -- for i = 2,#t do
+  --   local prev = t[i-1]
+  --   local this = t[i]
+  --   local firstOfThis = ""
+  --   if #prev > 1 then
+  --     local uprev = SU.splitUtf8(prev)
+  --     lastOfPrev = uprev[#uprev]
+  --     new[#new] = dropLast(new[#new])
+  --   else
+  --     lastOfPrev = ""
+  --   end
+  --   if #this > 1 then
+  --     firstOfThis = SU.splitUtf8(this)[1]
+  --     this = dropFirst(this)
+  --   end
+  --   new[#new+1] = lastOfPrev..firstOfThis
+  --   new[#new+1] = this
+  -- end
 
-  -- Drop empties.
-  local new2 = {}
-  for i =1,#new do if #new[i] > 0 then new2[#new2+1] = new[i] end end
-  new = new2
+  -- -- Drop empties.
+  -- local new2 = {}
+  -- for i =1,#new do if #new[i] > 0 then new2[#new2+1] = new[i] end end
+  -- new = new2
+
+  -- if debug then return new end
 
   for i = 1,#new do
     new[i] = latinToArabic(new[i], i==1)
@@ -140,6 +143,13 @@ local reorderHyphenations = function(t)
     end
   end
   return new
+end
+
+function debugUyghur(word)
+  SILE.languageSupport.loadLanguage("tr")
+  print(showHyphenationPoints(word,"tr"))
+  local items = _hyphenate(_hyphenators["tr"],word)
+  print(reorderHyphenations(items,true))
 end
 
 SILE.hyphenator.languages.ug = function(n)
@@ -224,7 +234,7 @@ local mergenodes = function (x,y, used)
 end
 
 local mergeline = function(nodes)
-  local newnodes = {}
+  local newnodes = { }
   for i = 1,#nodes do
     -- Drop all zerohboxes
     local pos = #newnodes -1
@@ -249,9 +259,12 @@ end
 
 local oldbreaker = SILE.typesetter.breakIntoLines
 SILE.typesetter.breakIntoLines = function(self, nl, breakWidth)
-  local lines = oldbreaker(self,nl,breakWidth)
+  self:shapeAllNodes(nl)
+  local breaks = SILE.linebreak:doBreak( nl, breakWidth)
+  local lines = self:breakpointsToLines(breaks)
   for i = 1,#lines do
     lines[i].nodes = mergeline(lines[i].nodes)
+    lines[i].ratio = self:computeLineRatio(breaks[i].width, lines[i].nodes)
   end
   return lines
 end
