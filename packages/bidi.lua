@@ -102,7 +102,7 @@ local reorder = function(n, self)
     if nl[i]:isNnode() and levels[i].level %2 ~= base_level then
       table.flip(nl[i].nodes)
       reverse_each_node(nl[i].nodes)
-    elseif nl[i]:isDiscretionary() and levels[i].level %2 ~= base_level then
+    elseif nl[i]:isDiscretionary() and levels[i].level %2 ~= base_level and not nl[i].bidiDone then
       for j = 1,#(nl[i].replacement) do
         table.flip(nl[i].replacement[j].nodes)
         reverse_each_node(nl[i].replacement[j].nodes)
