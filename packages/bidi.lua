@@ -104,16 +104,22 @@ local reorder = function(n, self)
       reverse_each_node(nl[i].nodes)
     elseif nl[i]:isDiscretionary() and levels[i].level %2 ~= base_level and not nl[i].bidiDone then
       for j = 1,#(nl[i].replacement) do
-        table.flip(nl[i].replacement[j].nodes)
-        reverse_each_node(nl[i].replacement[j].nodes)
+        if nl[i].replacement[j]:isNnode() then
+          table.flip(nl[i].replacement[j].nodes)
+          reverse_each_node(nl[i].replacement[j].nodes)
+        end
       end
       for j = 1,#(nl[i].prebreak) do
-        table.flip(nl[i].prebreak[j].nodes)
-        reverse_each_node(nl[i].prebreak[j].nodes)
+        if nl[i].prebreak[j]:isNnode() then
+          table.flip(nl[i].prebreak[j].nodes)
+          reverse_each_node(nl[i].prebreak[j].nodes)
+        end
       end
       for j = 1,#(nl[i].postbreak) do
-        table.flip(nl[i].postbreak[j].nodes)
-        reverse_each_node(nl[i].postbreak[j].nodes)
+        if nl[i].postbreak[j]:isNnode() then
+          table.flip(nl[i].postbreak[j].nodes)
+          reverse_each_node(nl[i].postbreak[j].nodes)
+        end
       end
 
     end
