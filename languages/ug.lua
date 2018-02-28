@@ -9,6 +9,13 @@ SILE.languageSupport.loadLanguage("tr")
 require("char-def")
 local chardata  = characters.data
 
+SILE.settings.declare({
+  name = "languages.ug.hyphenoffset",
+  help = "Space added between text and hyphen",
+  type = "Glue or nil",
+  default = SILE.nodefactory.newGlue("1pt")
+})
+
 local transliteration = {
   -- I'm going to pretend that normalisation isn't a problem
   { al = "ئا", la = "a", lapa = "^a"},
@@ -70,7 +77,8 @@ latinToArabic = function(s, useLapa)
   return s
 end
 
-local zwj = "‍"
+local zwj = SU.utf8charfromcodepoint("U+200D")
+local zwnj = SU.utf8charfromcodepoint("U+200C")
 
 local dropLast = function(t)
   local bt = SU.splitUtf8(t)
@@ -143,7 +151,14 @@ SILE.hyphenator.languages.ug = function(n)
   state.language = "ug"
   items[1] = latinToArabic(items[1])
   items[2] = latinToArabic(items[2])
-  local prebreak = SILE.shaper:createNnodes(items[1] .. (lastjoinable(items[1]) and zwj or "").."-", state)
+  hyphen = SILE.settings.get("font.hyphenchar")
+  local prebreak = SILE.shaper:createNnodes(items[1] .. (lastjoinable(items[1]) and zwj or ""), state)
+  if SILE.settings.get("languages.ug.hyphenoffset") then
+    local w = SILE.settings.get("languages.ug.hyphenoffset").width
+    prebreak[#prebreak+1] = SILE.nodefactory.newKern({ width = w })
+  end
+  local hnodes = SILE.shaper:createNnodes(hyphen, state)
+  prebreak[#prebreak+1] = hnodes[1]
   local postbreak = SILE.shaper:createNnodes((lastjoinable(items[1]) and zwj or "")..items[2], state)
   local d = SILE.nodefactory.newDiscretionary({
     replacement = {n},
