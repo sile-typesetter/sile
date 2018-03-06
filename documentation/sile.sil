@@ -3048,11 +3048,18 @@ paragraphs into pages.
 \noindent{}• \code{pagebuilder} helps to debug problems when determining page
 breaks.
 
+\noindent{}• \code{vboxes} provides even more information about page break decisions, showing you what vboxes were in SILE's queue when considering the breaking.
+
 \noindent{}• \code{break} provides (copious) information about the line breaking
 algorithm.
 
-\noindent{}• Any package may define their own debugging facility; currently only
-\code{insertions} does this.
+\noindent{}• \code{frames} puts red boxes around the frames on the page.
+
+\noindent{}• \code{profile} turns on Lua profiling, which gives a report on where the Lua interpreter is spending its time while processing your document. It also makes SILE go really, really slow.
+
+\noindent{}• \code{versions} gives a report on the versions of libraries and fonts in use; please include this information when reporting bugs in SILE!
+
+\noindent{}• Any package or other area of SILE’s operation may define their own debugging facility; the \code{insertions} package does this, as does the Uyghur language support system (\code{--debug uyghur}).
 
 Multiple facilities can be turned on by separating them with commas:
 \code{--debug typesetter,break} will turn on debugging information for the
