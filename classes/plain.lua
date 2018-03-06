@@ -186,6 +186,7 @@ SILE.registerCommand("hbox", function (options, content)
       if typesetter.frame:writingDirection() ~= "RTL" then
         typesetter.frame:advanceWritingDirection(self:scaledWidth(line))
       end
+      if SU.debugging("hboxes") then SILE.outputter.debugHbox(self, self:scaledWidth(line)) end
     end
   })
   table.insert(SILE.typesetter.state.nodes, hbox)
