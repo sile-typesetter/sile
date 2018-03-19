@@ -11,6 +11,7 @@ SILE.settings.declare({
 
 SILE.registerCommand("ruby", function (options, content)
   local reading = SU.required(options, "reading", "\\ruby")
+  SILE.typesetter:setpar("")
   SILE.call("hbox", {}, function ()
     SILE.settings.temporarily(function ()
       SILE.call("noindent")
