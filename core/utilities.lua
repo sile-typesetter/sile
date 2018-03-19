@@ -323,6 +323,16 @@ utilities.splitUtf8 = function (s) -- Return an array of UTF8 strings each repre
   return rv
 end
 
+utilities.lastChar = function (s)
+  local chars = utilities.splitUtf8(s)
+  return chars[#chars]
+end
+
+utilities.firstChar = function (s)
+  local chars = utilities.splitUtf8(s)
+  return chars[1]
+end
+
 utilities.utf8charat = function (str, index)
   return str:sub(index):match("([%z\1-\127\194-\244][\128-\191]*)")
 end

@@ -9,9 +9,43 @@ SILE.settings.declare({
   help = "Vertical offset between the ruby and the main text"
   })
 
+SILE.settings.declare({
+  name = "ruby.latinspacer",
+  type = "Glue",
+  default = SILE.nodefactory.newGlue("0.25em"),
+  help = "Glue added between consecutive Latin ruby"
+})
+
+local isLatin = function(c)
+  return (c > 0x20 and c <= 0x24F) or (c>=0x300 and c<=0x36F)
+    or (c >= 0x1DC0 and c<= 0x1EFF) or (c >= 0x2C60 and c <= 0x2c7F)
+end
+
+local checkIfSpacerNeeded = function(reading)
+  -- First, did we have a ruby node at all?
+  if not SILE.scratch.lastRubyBox then return end
+  -- Does the current reading start with a latin?
+  if not isLatin(SU.codepoint(SU.firstChar(reading))) then return end
+  -- Did we have some nodes recently?
+  local top = #SILE.typesetter.state.nodes
+  if top < 2 then return end
+  -- Have we had other stuff since the last ruby node?
+  if SILE.typesetter.state.nodes[top] ~= SILE.scratch.lastRubyBox
+     and SILE.typesetter.state.nodes[top-1] ~= SILE.scratch.lastRubyBox then
+    return
+  end
+  -- Does the previous reading end with a latin?
+  if not isLatin(SU.codepoint(SU.lastChar(SILE.scratch.lastRubyText))) then return end
+  -- OK, we need a spacer!
+  SILE.typesetter:pushGlue(SILE.settings.get("ruby.latinspacer"))
+end
+
 SILE.registerCommand("ruby", function (options, content)
   local reading = SU.required(options, "reading", "\\ruby")
   SILE.typesetter:setpar("")
+
+  checkIfSpacerNeeded(reading)
+
   SILE.call("hbox", {}, function ()
     SILE.settings.temporarily(function ()
       SILE.call("noindent")
@@ -53,4 +87,6 @@ SILE.registerCommand("ruby", function (options, content)
     table.insert(cbox.value, 1, SILE.nodefactory.newGlue({ width = to_insert }))
     table.insert(cbox.value, SILE.nodefactory.newGlue({ width = to_insert }))
   end
+  SILE.scratch.lastRubyBox = rubybox
+  SILE.scratch.lastRubyText = reading
 end)
