@@ -194,6 +194,7 @@ SILE.defaultTypesetter = std.object {
   initline = function (self)
     if (#self.state.nodes == 0) then
       self.state.nodes[#self.state.nodes+1] = SILE.nodefactory.zeroHbox
+      SILE.documentState.documentClass.newPar(self)
     end
   end,
   endline = function (self)
@@ -209,7 +210,6 @@ SILE.defaultTypesetter = std.object {
         t = string.gsub(t,"^%s+", "")
       end
       self:initline()
-      SILE.documentState.documentClass.newPar(self)
     end
     if #t >0 then
       self:pushUnshaped({ text = t, options= SILE.font.loadDefaults({})})
