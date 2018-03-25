@@ -438,6 +438,10 @@ SILE.defaultTypesetter = std.object {
       elseif not vbox:isVglue() and not vbox:isPenalty() then
         SU.debug("pushback", { "not vglue or penalty", vbox.type })
         local discardedFistInitLine = false
+        if (#self.state.nodes == 0) then
+          -- Setup queue but avoid calling newPar
+          self.state.nodes[#self.state.nodes+1] = SILE.nodefactory.zeroHbox
+        end
         for i, node in ipairs(vbox.nodes) do
           if node:isGlue() and not node.discardable then
             self:pushHorizontal(node)
