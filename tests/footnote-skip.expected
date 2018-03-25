@@ -111,11 +111,10 @@ Mx 	275.7012
 T	86 76 87	(sit)
 Mx 	288.3641
 T	68 80 72 87	(amet)
-Mx 	34.8208
+Mx 	54.8208
 My 	121.4416
 Set font 	Gentium Plus;6.81152;400;;normal;;LTR
 T	20	(1)
-Mx 	54.8208
 My 	136.6203
 Set font 	Gentium Plus;10;400;;normal;;LTR
 T	79 82 85 72 80	(lorem)
@@ -226,11 +225,10 @@ Mx 	275.7012
 T	86 76 87	(sit)
 Mx 	288.3641
 T	68 80 72 87	(amet)
-Mx 	34.8208
+Mx 	54.8208
 My 	181.4416
 Set font 	Gentium Plus;6.81152;400;;normal;;LTR
 T	21	(2)
-Mx 	54.8208
 My 	196.6203
 Set font 	Gentium Plus;10;400;;normal;;LTR
 T	79 82 85 72 80	(lorem)
