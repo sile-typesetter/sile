@@ -6,7 +6,7 @@ local showHanmenYoko = function(f)
     SILE.outputter.rule(f:left(), g - 0.25, f:width(), 0.5)
     local l = f:left()
     while l <= f:right() do
-      SILE.outputter.rule(l-0.25, g + f.hanmen.gridsize - 0.25, 0.5, f.hanmen.gridsize)
+      SILE.outputter.rule(l-0.25, g + f.hanmen.gridsize - 0.25, 0.5, -f.hanmen.gridsize)
       l = l + f.hanmen.gridsize
     end
     g = g + f.hanmen.gridsize
@@ -67,7 +67,7 @@ local declareHanmenFrame = function (self, id, spec)
   end
   local skip = spec.hanmen.linegap + spec.hanmen.gridsize
   SILE.settings.set("document.baselineskip", SILE.nodefactory.newVglue(skip.."pt"))
-  SILE.settings.set("document.parskip", SILE.nodefactory.newVglue((spec.hanmen.linegap) .. "pt"))
+  SILE.settings.set("document.parskip", SILE.nodefactory.newVglue("0pt"))
   local frame = SILE.newFrame(spec, spec.tate and SILE.tateFramePrototype or SILE.framePrototype)
   if spec.id then
     self.pageTemplate.frames[spec.id] = frame
