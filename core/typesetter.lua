@@ -530,7 +530,9 @@ SILE.defaultTypesetter = std.object {
       len = SILE.length.new({ length = d, stretch = bls.height.stretch, shrink = bls.height.shrink })
       return SILE.nodefactory.newVglue({height = len})
     else
-      return SILE.nodefactory.newVglue(SILE.settings.get("document.lineskip"))
+      local lead = SILE.nodefactory.newVglue(SILE.settings.get("document.lineskip"))
+      lead.height = lead.height:absolute()
+      return lead
     end
   end,
   addrlskip = function (self, slice)
