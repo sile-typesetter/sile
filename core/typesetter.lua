@@ -536,13 +536,21 @@ SILE.defaultTypesetter = std.object {
     end
   end,
   addrlskip = function (self, slice)
-    local rskip = SILE.settings.get("document.rskip")
+    local rskip= SILE.settings.get(
+      self.frame:writingDirection() == "LTR"
+        and "document.rskip"
+        or  "document.lskip"
+    )
     if rskip then
       rskip.value = "rskip"
       table.insert(slice, rskip)
       table.insert(slice, SILE.nodefactory.zeroHbox)
     end
-    local lskip = SILE.settings.get("document.lskip")
+    local lskip= SILE.settings.get(
+      self.frame:writingDirection() == "LTR"
+        and "document.lskip"
+        or  "document.rskip"
+    )
     if lskip then
       while slice[1].discardable do
         table.remove(slice,1)
