@@ -29,8 +29,34 @@ SILE.inputs.common = {
   end
 }
 
+local function debugAST(ast,level)
+  local out = string.rep("  ", 1+level)
+  if level == 0 then SU.debug("ast", "["..SILE.currentlyProcessingFile) end
+  if type(ast) == "function" then SU.debug("ast",out.."(function)") end
+  if not ast then SU.error("SILE.process called with nil", 1) end
+  for i=1, #ast do
+    content = ast[i]
+    if type(content) == "string" then
+      SU.debug("ast",out.."["..content.."]")
+    elseif SILE.Commands[content.tag] then
+      local attrs = table.nitems(content.attr) > 0 and content.attr or ""
+      SU.debug("ast",out.."\\"..content.tag..attrs)
+      if (#content>=1) then debugAST(content,level+1) end
+    elseif content.id == "texlike_stuff" or (not content.tag and not content.id) then
+      debugAST(content,level+1)
+    else
+      SU.debug("ast",out.."?\\"..(content.tag or content.id))
+    end
+  end
+  if level == 0 then SU.debug("ast", "]") end
+end
+
 SILE.process = function(input)
+  if not input then SU.error("SILE.process called with nil", 1) end
   if type(input) == "function" then return input() end
+  if SU.debugging("ast") then
+    debugAST(input,0)
+  end
   for i=1, #input do
     SILE.currentCommand = input[i]
     content = input[i]
