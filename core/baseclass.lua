@@ -40,8 +40,10 @@ SILE.registerCommand("define", function (options, content)
     --SILE.documentState = std.tree.clone( prevState )
     local depth = #commandStack
     table.insert(commandStack, content2)
+    SU.debug("macros","Processing a "..options["command"].." Stack depth is "..depth)
     SILE.process(content)
     while (#commandStack > depth) do table.remove(commandStack) end
+    SU.debug("macros","Finished processing "..options["command"].." Stack depth is "..#commandStack.."\n")
     --SILE.documentState = prevState
   end, options.help, SILE.currentlyProcessingFile)
 end, "Define a new macro. \\define[command=example]{ ... \\process }")
