@@ -25,7 +25,10 @@ end
 
 SILE.doTexlike = function (doc)
   doc = "\\begin{document}" .. doc .. "\\end{document}"
+  local cpf = SILE.currentlyProcessingFile
+  SILE.currentlyProcessingFile = "<"..debug.getinfo(2).short_src..":"..debug.getinfo(2).linedefined..">"
   SILE.process(SILE.inputs.TeXlike.docToTree(doc))
+  SILE.currentlyProcessingFile = cpf
 end
 
 -- Need the \define command *really* early on in SILE startup
