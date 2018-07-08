@@ -143,6 +143,12 @@ utilities.compress = function (items)
   return rv
 end
 
+table.nitems = function (t)
+  local count = 0
+  for _ in pairs(t) do count = count + 1 end
+  return count
+end
+
 table.append = function (t1, t2)
   if not t1 or not t2 then SU.error("table.append called with nil table!: "..t1..", "..t2,true) end
   for i=1,#t2 do
