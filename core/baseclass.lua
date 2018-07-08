@@ -47,7 +47,9 @@ SILE.registerCommand("comment", function (options, content)
 end, "Ignores any text within this command's body.")
 
 SILE.registerCommand("process", function ()
-  SILE.process(table.remove(commandStack))
+  local val = table.remove(commandStack)
+  if not val then SU.error("Macro stack underflow. Too many \\process calls?") end
+  SILE.process(val)
 end, "Within a macro definition, processes the contents of the macro body.")
 
 SILE.baseClass = std.object {
