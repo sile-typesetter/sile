@@ -42,7 +42,6 @@ require("languages/unicode")
 
 -- The following languages neither have hyphenation nor specific
 -- language support at present. This code is here to suppress warnings.
-SILE.hyphenator.languages.ar = { patterns = {} }
 SILE.hyphenator.languages.bo = { patterns = {} }
 SILE.hyphenator.languages.ur = { patterns = {} }
 SILE.hyphenator.languages.sd = { patterns = {} }
