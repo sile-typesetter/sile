@@ -305,7 +305,7 @@ Bibliography = { -- This is big enough to have its own global var
         t[i] = t[i](item)
       end
     end
-    local res = table.concat(t,"")
+    local res = SU.concat(t,"")
     if dStart or dEnd then
       if res ~= "" then return (dStart .. res .. dEnd) end
     else
