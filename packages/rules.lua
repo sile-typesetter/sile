@@ -1,4 +1,5 @@
 SILE.baseClass:loadPackage("raiselower")
+SILE.baseClass:loadPackage("rebox")
 
 SILE.registerCommand("hrule", function(options, content)
   local width = options.width or 0
@@ -38,8 +39,21 @@ SILE.registerCommand("underline", function(options, content)
     SILE.Commands["hrule"]({width = gl.length, height = "0.5pt"})
   end)
   SILE.typesetter:pushGlue({width = hbox.width})
-
 end, "Underlines some content (badly)")
+
+SILE.registerCommand("boxaround", function (options, content)
+  local hbox = SILE.Commands["hbox"]({}, content)
+  local gl = SILE.length.new() - hbox.width
+  SILE.Commands["rebox"]({width = 0}, function()
+    SILE.Commands["hrule"]({width = gl.length-1, height = "0.5pt"})
+  end)
+  SILE.Commands["raise"]({height = hbox.height}, function()
+    SILE.Commands["hrule"]({width = gl.length-1, height = "0.5pt"})
+  end)
+  SILE.call("hrule", { height = hbox.height, width = "0.5pt"})
+  SILE.typesetter:pushGlue({width = hbox.width})
+  SILE.call("hrule", { height = hbox.height, width = "0.5pt"})
+end, "Draws a box around some content")
 
 return { documentation = [[\begin{document}
 The \code{rules} package draws lines. It provides two commands.
