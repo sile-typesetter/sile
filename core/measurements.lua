@@ -41,28 +41,49 @@ SILE.registerUnit("in", {definition = "72pt"})
 SILE.registerUnit("%", { relative = true, definition = function (v)
   SU.error("Obsolete ambiguous % unit detected, please use %pw or %ph instead")
 end})
+
+local checkPaperDefined = function ()
+  if not SILE.documentState or not SILE.documentState.orgPaperSize then
+    SU.error("A measurement tried to measure the paper size before the paper was defined", 1)
+  end
+end
+
+local checkFrameDefined = function ()
+  if not SILE.typesetter.frame then
+    SU.error("A measurement tried to measure the frame before the frame was defined", 1)
+  end
+end
+
 SILE.registerUnit("%pw", { relative = true, definition = function (v)
+  checkPaperDefined()
   return v / 100 * SILE.documentState.orgPaperSize[1]
 end})
 SILE.registerUnit("%ph", { relative = true, definition = function (v)
+  checkPaperDefined()
   return v / 100 * SILE.documentState.orgPaperSize[2]
 end})
 SILE.registerUnit("%pmin", { relative = true, definition = function (v)
+  checkPaperDefined()
   return v / 100 * math.min(SILE.documentState.orgPaperSize[1], SILE.documentState.orgPaperSize[2])
 end})
 SILE.registerUnit("%pmax", { relative = true, definition = function (v)
+  checkPaperDefined()
   return v / 100 * math.max(SILE.documentState.orgPaperSize[1], SILE.documentState.orgPaperSize[2])
 end})
 SILE.registerUnit("%fw", { relative = true, definition = function (v)
+  checkFrameDefined()
   return v / 100 * SILE.typesetter.frame:width()
 end})
 SILE.registerUnit("%fh", { relative = true, definition = function (v)
+  checkFrameDefined()
   return v / 100 * SILE.typesetter.frame:height()
 end})
 SILE.registerUnit("%fmin", { relative = true, definition = function (v)
+  checkFrameDefined()
   return v / 100 * math.min(SILE.typesetter.frame:width(), SILE.typesetter.frame:height())
 end})
 SILE.registerUnit("%fmax", { relative = true, definition = function (v)
+  checkFrameDefined()
   return v / 100 * math.max(SILE.typesetter.frame:width(), SILE.typesetter.frame:height())
 end})
 SILE.registerUnit("%lw", { relative = true, definition = function (v)
@@ -70,6 +91,7 @@ SILE.registerUnit("%lw", { relative = true, definition = function (v)
   local rskip = SILE.settings.get("document.rskip") or SILE.length.parse("0")
   local left = lskip.width and lskip.width:absolute() or lskip:absolute()
   local right = rskip.width and rskip.width:absolute() or rskip:absolute()
+  checkFrameDefined()
   local lw = SILE.typesetter.frame:lineWidth() - left - right
   return v / 100 * lw.length
 end})
