@@ -39,6 +39,7 @@ You also need to install the following Lua libraries; they can be installed usin
 * `luaexpat`
 * `lua-zlib`
 * `luafilesystem`
+* `luasocket`
 
 If you are building from a a git clone, start by running the script to setup your environment (if you are using the source tarball this is unnecessary):
 
