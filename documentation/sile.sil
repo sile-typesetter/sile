@@ -297,6 +297,7 @@ libraries if they’re not already installed:
 \listitem{\code{luarocks install lua-zlib}}
 \listitem{\code{luarocks install luafilesystem}}
 \listitem{\code{luarocks install luasocket}}
+\listitem{\code{luarocks install luasec OPENSSL_DIR=...}}
 
 Once you have these requirements in place, you should then be able to unpack
 the file that you downloaded from SILE’s home page, change to that directory
