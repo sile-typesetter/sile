@@ -12,6 +12,7 @@ addons:
    - libgraphite2-dev
    - libicu-dev
    - libreadline-dev
+   - libssl-dev
    - libfreetype6-dev
    - libfontconfig1-dev
    - libpng-dev
@@ -72,6 +73,8 @@ install:
  - luarocks install lua-zlib
  - luarocks install luaexpat
  - luarocks install luafilesystem
+ - luarocks install luasocket
+ - luarocks install luasec
  - luarocks install lua_cliargs 2.3-3
  - luarocks install busted
  - luarocks install luacov 0.8-1

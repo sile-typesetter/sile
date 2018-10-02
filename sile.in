@@ -1,12 +1,27 @@
 #!@LUA@
-package.path = '?.lua;@SILE_PATH@/?.lua;@SILE_PATH@/lua-libraries/?.lua;@SILE_PATH@/lua-libraries/?/init.lua;lua-libraries/?.lua;lua-libraries/?/init.lua;' .. package.path
+SYSTEM_SILE_PATH = "@SILE_PATH@"
+SYSTEM_SILE_LIB_PATH = "@SILE_LIB_PATH@"
+SHARED_LIB_EXT = "@SHARED_LIB_EXT@"
+
+package.path = SYSTEM_SILE_PATH..'/?.lua;'..
+  SYSTEM_SILE_PATH..'/lua-libraries/?.lua;'..
+  SYSTEM_SILE_PATH..'/lua-libraries/?/init.lua;'..
+  'lua-libraries/?.lua;lua-libraries/?/init.lua;' ..
+  package.path
+
 local pathvar = os.getenv("SILE_PATH")
 if pathvar then
 	for path in string.gmatch(pathvar, "[^;]+") do
 		package.path =  path .. "/?.lua;" .. package.path
 	end
 end
-package.cpath = package.cpath .. ";core/?.@SHARED_LIB_EXT@;@SILE_LIB_PATH@/?.@SHARED_LIB_EXT@;"
+
+package.path = '?.lua;' .. package.path
+
+package.cpath = package.cpath .. ";" ..
+  "core/?."..SHARED_LIB_EXT.. ";" ..
+  SYSTEM_SILE_LIB_PATH.."/?."..SHARED_LIB_EXT
+
 SILE = require("core/sile")
 io.stdout:setvbuf 'no'
 SILE.parseArguments()

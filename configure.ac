@@ -94,6 +94,8 @@ AX_LUA_MODULE([lpeg], [lpeg])
 AX_LUA_MODULE([lxp], [luaexpat])
 AX_LUA_MODULE([zlib], [lua-zlib])
 AX_LUA_MODULE([lfs], [luafilesystem])
+AX_LUA_MODULE([socket], [luasocket])
+AX_LUA_MODULE([ssl], [luasec])
 
 AC_ARG_ENABLE([linklua],
     AS_HELP_STRING([--disable-linklua], [Don't link lua library with dylibs]))
