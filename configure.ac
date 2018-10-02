@@ -24,7 +24,7 @@ case $host_os in
     AC_MSG_CHECKING([for AppKit works])
 
     save_LIBS="$LIBS"
-    LIBS="$LIBS -framework AppKit"
+    LIBS="$LIBS -framework AppKit  -fmodules"
     AC_LANG_PUSH([Objective C])
     AC_LINK_IFELSE([AC_LANG_PROGRAM([[@import AppKit;]],[[]])],
       [
