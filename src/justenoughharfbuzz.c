@@ -97,7 +97,39 @@ static hb_feature_t* scan_feature_string(const char* cp1, int* ret) {
   return features;
 }
 
-int shape (lua_State *L) {    
+static char** scan_shaper_list(char* cp1) {
+  char** res = NULL;
+  char* cp2;
+  int n_elems = 0;
+  int i;
+  while (*cp1) {
+    if ((*cp1 == ':') || (*cp1 == ';') || (*cp1 == ','))
+      ++cp1;
+    while ((*cp1 == ' ') || (*cp1 == '\t')) /* skip leading whitespace */
+      ++cp1;
+    if (*cp1 == 0)  /* break if end of string */
+      break;
+
+    cp2 = cp1;
+    while (*cp2 && (*cp2 != ':') && (*cp2 != ';') && (*cp2 != ','))
+      ++cp2;
+    if (*cp2 == 0) {
+      res = realloc (res, sizeof (char*) * ++n_elems);
+      res[n_elems-1] = cp1;
+      break;
+    } else {
+      *cp2 = '\0';
+      res = realloc (res, sizeof (char*) * ++n_elems);
+      res[n_elems-1] = cp1;
+    }
+    cp1 = cp2+1;
+  }
+  res = realloc (res, sizeof (char*) * (n_elems+1));
+  res[n_elems] = 0;
+  return res;
+}
+
+int shape (lua_State *L) {
     size_t font_l;
     const char * text = luaL_checkstring(L, 1);
     const char * font_s = luaL_checklstring(L, 2, &font_l);
@@ -107,7 +139,11 @@ int shape (lua_State *L) {
     const char * lang = luaL_checkstring(L, 6);
     double point_size = luaL_checknumber(L, 7);
     const char * featurestring = luaL_checkstring(L, 8);
-
+    char * shaper_list_string = luaL_checkstring(L, 9);
+    char ** shaper_list = NULL;
+    if (strlen(shaper_list_string) > 0) {
+      shaper_list = scan_shaper_list(shaper_list_string);
+    }
     hb_segment_properties_t segment_props;
     hb_shape_plan_t *shape_plan;
 
@@ -154,7 +190,7 @@ int shape (lua_State *L) {
 
     hb_buffer_guess_segment_properties(buf);
     hb_buffer_get_segment_properties(buf, &segment_props);
-    shape_plan = hb_shape_plan_create_cached(hbFace, &segment_props, features, nFeatures, NULL);
+    shape_plan = hb_shape_plan_create_cached(hbFace, &segment_props, features, nFeatures, shaper_list);
     int res = hb_shape_plan_execute(shape_plan, hbFont, buf, features, nFeatures);
 
     if (direction == HB_DIRECTION_RTL) {
