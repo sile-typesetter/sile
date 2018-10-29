@@ -253,7 +253,7 @@ install a couple dependencies. After running the commands it provides you can
 run the install comand again to complete the instalation.
 
 The formula also has instruction that can compile SILE from the current
-Git HEAD version. To test the latest unlreleased code you can install using:
+Git HEAD version. To test the latest unreleased code you can install using:
 
 \listitem{\code{brew install sile --HEAD}}
 
