@@ -71,7 +71,7 @@ will break.
 
 In SILE the overall page layout is defined with a paper size and a serious of
 one or more content frames. These frame descriptions provide the containers
-where content will later by typeset including information about how it might
+where content will later be typeset including information about how it might
 flow from one frame to the next. Content is written separately and automatically
 flowed from frame to frame and page to page. When preparing content for SILE
 you don't know where the lines will break until after it has been processed.
@@ -253,7 +253,7 @@ install a couple dependencies. After running the commands it provides you can
 run the install comand again to complete the instalation.
 
 The formula also has instruction that can compile SILE from the current
-Git HEAD version. To test the latest unlreleased code you can install using:
+Git HEAD version. To test the latest unreleased code you can install using:
 
 \listitem{\code{brew install sile --HEAD}}
 
