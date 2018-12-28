@@ -385,4 +385,25 @@ utilities.utf8_to_utf16le = function (str)
   return ustr
 end
 
+utilities.breadcrumbs = { "document" }
+
+setmetatable (utilities.breadcrumbs, {
+    __call = function (self, name, func)
+        return function (...)
+            if name ~= "define" then
+              self[#self+1] = name
+              SU.debug("breadcrumbs", "Enter command " .. name)
+            end
+            func(...)
+            if name ~= "define" then
+              self[#self] = nil
+              SU.debug("breadcrumbs", "Leave command " .. name)
+            end
+          end
+      end,
+    __tostring = function (self)
+        return "B»" .. table.concat(self, "»")
+      end
+  })
+
 return utilities
