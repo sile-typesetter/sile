@@ -406,4 +406,17 @@ setmetatable (utilities.breadcrumbs, {
       end
   })
 
+function utilities.breadcrumbs:dump ()
+  SU.dump(self)
+end
+
+function utilities.breadcrumbs:parent (n)
+  return self[#self-(n or 1)]
+end
+
+function utilities.breadcrumbs:contains (cmd)
+  for i, name in ipairs(self) do if name == cmd then return #self-i end end
+  return 0
+end
+
 return utilities
