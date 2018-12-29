@@ -385,38 +385,43 @@ utilities.utf8_to_utf16le = function (str)
   return ustr
 end
 
-utilities.breadcrumbs = { "document" }
+utilities.breadcrumbs = function ()
+  local breadcrumbs = { "document" }
 
-setmetatable (utilities.breadcrumbs, {
-    __call = function (self, name, func)
-        return function (...)
-            if name ~= "define" then
-              self[#self+1] = name
-              SU.debug("breadcrumbs", "Enter command " .. name)
+  setmetatable (breadcrumbs, {
+      __call = function (self, name, func)
+          return function (...)
+              if name ~= "define" then
+                self[#self+1] = name
+                SU.debug("breadcrumbs", "Enter command " .. name)
+              end
+              local ret = func(...)
+              if name ~= "define" and self then
+                self[#self] = nil
+                SU.debug("breadcrumbs", "Leave command " .. name)
+              end
+              return ret
             end
-            func(...)
-            if name ~= "define" then
-              self[#self] = nil
-              SU.debug("breadcrumbs", "Leave command " .. name)
-            end
-          end
-      end,
-    __tostring = function (self)
-        return "B»" .. table.concat(self, "»")
-      end
-  })
+        end,
+      __tostring = function (self)
+          return "B»" .. table.concat(self, "»")
+        end
+    })
 
-function utilities.breadcrumbs:dump ()
-  SU.dump(self)
-end
+  function breadcrumbs:dump ()
+    SU.dump(self)
+  end
 
-function utilities.breadcrumbs:parent (n)
-  return self[#self-(n or 1)]
-end
+  function breadcrumbs:parent (n)
+    return self[#self-(n or 1)]
+  end
 
-function utilities.breadcrumbs:contains (cmd)
-  for i, name in ipairs(self) do if name == cmd then return #self-i end end
-  return 0
+  function breadcrumbs:contains (cmd)
+    for i, name in ipairs(self) do if name == cmd then return #self-i end end
+    return -1
+  end
+
+  return breadcrumbs
 end
 
 return utilities
