@@ -4,6 +4,8 @@ local cursorX = 0
 local cursorY = 0
 local font = 0
 local started = false
+local lastkey
+
 local function ensureInit ()
   if not started then
     pdf.init(SILE.outputFilename, SILE.documentState.paperSize[1],SILE.documentState.paperSize[2])
@@ -25,6 +27,8 @@ SILE.outputters.libtexpdf = {
     if not started then return end
     pdf.endpage()
     pdf.finish()
+    started = false
+    lastkey = nil
   end,
   setColor = function(self, color)
     ensureInit()

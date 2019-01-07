@@ -2,6 +2,13 @@
 if not SILE.shapers then SILE.shapers = { } end
 local hb = require("justenoughharfbuzz")
 
+SILE.settings.declare({
+  name = "harfbuzz.subshapers",
+  type = "string or nil",
+  default = "",
+  help = "Comma-separated shaper list to pass to Harfbuzz"
+})
+
 -- XXX This shouldn't be in the shaper. But still...
 
 local fontconfig
@@ -40,7 +47,8 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
                       options.direction,
                       options.language,
                       options.size,
-                      options.features
+                      options.features,
+                      SILE.settings.get("harfbuzz.subshapers") or ""
             ) }
     for i = 1,#items do
       local e = (i == #items) and #text or items[i+1].index
@@ -54,7 +62,7 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
     SU.debug("fonts", "Resolved font family "..opts.family.." -> "..(face and face.filename))
     if not face.filename then SU.error("Couldn't find face "..opts.family) end
     local fh,e = io.open(face.filename, "rb")
-    if e then SU.error("Can't open "..e) end
+    if e then SU.error("Can't open "..face.filename..": "..e) end
     face.data = fh:read("*all")
     return face
   end,

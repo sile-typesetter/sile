@@ -32,6 +32,7 @@ require("core/typesetter")
 require("core/hyphenator-liang")
 require("core/languages")
 require("core/font")
+require("core/packagemanager")
 
 SILE.frameParser = require("core/frameparser")
 SILE.linebreak = require("core/break")
