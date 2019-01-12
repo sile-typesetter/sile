@@ -38,10 +38,6 @@ SILE.registerUnit("mm", {definition = "2.8346457pt"})
 SILE.registerUnit("cm", {definition = "10mm"})
 SILE.registerUnit("in", {definition = "72pt"})
 
-SILE.registerUnit("%", { relative = true, definition = function (v)
-  SU.error("Obsolete ambiguous % unit detected, please use %pw or %ph instead")
-end})
-
 local checkPaperDefined = function ()
   if not SILE.documentState or not SILE.documentState.orgPaperSize then
     SU.error("A measurement tried to measure the paper size before the paper was defined", 1)
