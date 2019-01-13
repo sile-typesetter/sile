@@ -1,5 +1,10 @@
 ## What's new in SILE
 
+## Version 0.9.5.1 (2019-01-13)
+
+No code changes, but the previous release was broken due to extraneous
+files in the tarball. Oh, the embarrassment.
+
 ## Version 0.9.5 (2019-01-07)
 
 * Experimental package manager.
