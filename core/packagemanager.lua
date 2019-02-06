@@ -118,7 +118,7 @@ local function reloadCatalogue()
 function updatePackage(packageName,branch)
   local target = packageHome .. packageName
   -- Are we already there?
-  if SILE.PackageManager.installed[packageName] == branch and branch ~= "HEAD" then
+  if SILE.PackageManager.installed[packageName] == branch and branch ~= "master" then
     print("Nothing to do!")
     return true
   end
@@ -166,7 +166,7 @@ function installPackage(packageName)
 
   -- Clone repo in temp directory
   if metadata.repository then
-    local branch = metadata.version or "HEAD"
+    local branch = metadata.version or "master"
     local target = packageHome .. packageName
     if lfs.attributes(target) then
       updatePackage(packageName, branch)
