@@ -29,6 +29,14 @@ end)
 
 SILE.registerCommand("span", function (options, content)
   handlePandocArgs(options)
+  for _, class in pairs(options.classes) do
+    SU.debug("pandoc", "Add div class "..class)
+  end
+  SILE.process(content)
+end,"Generic inline wrapper")
+
+SILE.registerCommand("div", function (options, content)
+  handlePandocArgs(options)
   SILE.process(content)
 end,"Generic inline wrapper")
 
@@ -104,6 +112,7 @@ Modified from default:
 Provided specifically for Pandoc:
 
 \listitem \code{span}
+\listitem \code{div}
 \listitem \code{emph}
 \listitem \code{smallcaps}
 \listitem \code{strikeout}
