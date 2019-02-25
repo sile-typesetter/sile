@@ -1,3 +1,7 @@
+SILE.require("packages/url")
+SILE.require("packages/pdf")
+SILE.require("packages/image")
+SILE.require("packages/footnotes")
 SILE.require("packages/raiselower")
 
 -- Process arguments that might not actually have that much to do with their
@@ -8,6 +12,20 @@ local handlePandocArgs = function (options)
     SU.debug("pandoc", "Set ID on tag")
   end
 end
+
+SILE.registerCommand("label", function(options, content)
+  SILE.call("pdf:bookmark", options, content)
+end)
+
+SILE.registerCommand("tt", function(options, content)
+  SILE.call("verbatim:font", options, content)
+end)
+
+SILE.registerCommand("rule", function (options, _)
+  options.height = options.height or "0.2pt"
+  options.width = options.width or SILE.typesetter.frame:lineWidth()
+  SILE.call("hrule", options)
+end)
 
 SILE.registerCommand("textem", function (options, content)
   handlePandocArgs(options)
