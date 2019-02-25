@@ -8,22 +8,26 @@ SILE.require("packages/raiselower")
 -- immediate function but affect the document in other ways, such as setting
 -- bookmarks on anything tagged with an ID attribute.
 local handlePandocArgs = function (options)
+  local wrapper = SILE.settings.wrap()
   if options.id then
     SU.debug("pandoc", "Set ID on tag")
   end
   if options.lang then
     SU.debug("pandoc", "Set lang tag: "..options.lang)
     local fontfunc = SILE.Commands[SILE.Commands["font:" .. options.lang] and "font:" .. options.lang or "font"]
-    fontfunc({ language = options.lang })
+    local innerWrapper = wrapper
+    wrapper = function (content) innerWrapper(function () fontfunc({ language = options.lang }, content) end) end
   end
   if options.classes then
     for _,class in pairs(options.classes:split(",")) do
       SU.debug("pandoc", "Add div class: "..class)
-      if SILE.Commands["Class:"..class] then
-        SILE.Call("Class:"..class, options, {})
+      if SILE.Commands["class:"..class] then
+        local innerWrapper = wrapper
+        wrapper = function (content) innerWrapper(function () SILE.Commands["class:"..class](options, content) end) end
       end
     end
   end
+  return wrapper
 end
 
 SILE.registerCommand("label", function(options, content)
@@ -41,18 +45,12 @@ SILE.registerCommand("HorizontalRule", function (options, _)
 end)
 
 SILE.registerCommand("Span", function (options, content)
-  SILE.settings.temporarily(function ()
-    handlePandocArgs(options)
-    SILE.process(content)
-  end)
+  handlePandocArgs(options)(content)
 end,"Generic inline wrapper")
 
 SILE.registerCommand("Div", function (options, content)
-  SILE.settings.temporarily(function ()
-    handlePandocArgs(options)
-    SILE.process(content)
-    SILE.call("par")
-  end)
+  handlePandocArgs(options)(content)
+  SILE.call("par")
 end,"Generic inline wrapper")
 
 SILE.registerCommand("Emph", function (_, content)
