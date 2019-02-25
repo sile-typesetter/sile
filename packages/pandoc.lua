@@ -11,11 +11,18 @@ local handlePandocArgs = function (options)
   if options.id then
     SU.debug("pandoc", "Set ID on tag")
   end
-  for _, class in pairs(options.classes) do
-    if SILE.Commands["Class:"..class] then
-      SILE.Call("Class:"..class, options, {})
+  if options.lang then
+    SU.debug("pandoc", "Set lang tag: "..options.lang)
+    local fontfunc = SILE.Commands[SILE.Commands["font:" .. options.lang] and "font:" .. options.lang or "font"]
+    fontfunc({ language = options.lang })
+  end
+  if options.classes then
+    for _,class in pairs(options.classes:split(",")) do
+      SU.debug("pandoc", "Add div class: "..class)
+      if SILE.Commands["Class:"..class] then
+        SILE.Call("Class:"..class, options, {})
+      end
     end
-    SU.debug("pandoc", "Add div class "..class)
   end
 end
 
@@ -44,49 +51,50 @@ SILE.registerCommand("Div", function (options, content)
   SILE.settings.temporarily(function ()
     handlePandocArgs(options)
     SILE.process(content)
+    SILE.call("par")
   end)
 end,"Generic inline wrapper")
 
-SILE.registerCommand("Emph", function (options, content)
+SILE.registerCommand("Emph", function (_, content)
   SILE.call("em", {}, content)
 end,"Inline emphasis wrapper")
 
-SILE.registerCommand("Strong", function (options, content)
+SILE.registerCommand("Strong", function (_, content)
   SILE.call("strong", {}, content)
 end,"Inline strong wrapper")
 
-SILE.registerCommand("SmallCaps", function (options, content)
+SILE.registerCommand("SmallCaps", function (_, content)
   SILE.call("font", { features = "+smcp" }, content)
 end,"Inline small caps wrapper")
 
-SILE.registerCommand("csl-no-emph", function (options, content)
+SILE.registerCommand("csl-no-emph", function (_, content)
   SILE.call("font", { style = "Roman" }, content)
 end,"Inline upright wrapper")
 
-SILE.registerCommand("csl-no-strong", function (options, content)
+SILE.registerCommand("csl-no-strong", function (_, content)
   SILE.call("font", { weight = 400 }, content)
 end,"Inline normal weight wrapper")
 
-SILE.registerCommand("csl-no-smallcaps", function (options, content)
+SILE.registerCommand("csl-no-smallcaps", function (_, content)
   SILE.call("font", { features = "-smcp" }, content)
 end,"Inline smallcaps disable wrapper")
 
 local scriptOffset = "0.7ex"
 local scriptSize = "1.5ex"
 
-SILE.registerCommand("Superscript", function (options, content)
+SILE.registerCommand("Superscript", function (_, content)
   SILE.call("raise", { height = scriptOffset }, function ()
     SILE.call("font", { size = scriptSize }, content)
   end)
 end,"Inline superscript wrapper")
 
-SILE.registerCommand("Subscript", function (options, content)
+SILE.registerCommand("Subscript", function (_, content)
   SILE.call("lower", { height = scriptOffset }, function ()
     SILE.call("font", { size = scriptSize }, content)
   end)
 end,"Inline subscript wrapper")
 
-SILE.registerCommand("unimplemented", function (options, content)
+SILE.registerCommand("unimplemented", function (_, content)
   SU.debug("pandoc", "Un-implemented function")
   SILE.process(content)
 end,"Unimplemented Pandoc function wrapper")
