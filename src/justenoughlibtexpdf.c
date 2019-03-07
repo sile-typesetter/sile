@@ -255,6 +255,10 @@ int pdf_bookmark(lua_State *L) {
     luaL_error(L, "Unparsable bookmark dictionary");
     return 0;
   }
+  if (!p) {
+    luaL_error(L, "PDF object not initialized!");
+    return 0;
+  }
   current_depth = texpdf_doc_bookmarks_depth(p);
   if (current_depth > level) {
     while (current_depth-- > level)
