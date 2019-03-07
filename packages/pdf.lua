@@ -11,6 +11,7 @@ SILE.registerCommand("pdf:destination", function (options, content)
     width = 0,
     depth = 0,
     outputYourself = function (self, typesetter)
+      SILE.outputters.libtexpdf._init()
       pdf.destination(name, typesetter.frame.state.cursorX, SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY)
     end
   })
