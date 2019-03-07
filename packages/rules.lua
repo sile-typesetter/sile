@@ -56,7 +56,7 @@ SILE.registerCommand("boxaround", function (options, content)
 end, "Draws a box around some content")
 
 return { documentation = [[\begin{document}
-The \code{rules} package draws lines. It provides two commands.
+The \code{rules} package draws lines. It provides three commands.
 
 The first command is \code{\\hrule},
 which draws a line of a given length and thickness, although it calls these
@@ -76,4 +76,6 @@ Underlining is horrible typographic practice, and
 you should \underline{never} do it.}
 
 (That was produced with \code{\\underline\{never\}}.)
+
+Finally, \code{fullrule} draws a thin line across the width of the current frame.
 \end{document}]] }
