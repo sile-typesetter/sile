@@ -1,7 +1,7 @@
 SILE.Help = {}
 
 SILE.registerCommand = function (name, func, help, pack)
-  SILE.Commands[name] = func
+  SILE.Commands[name] = SILE.typesetter and SILE.typesetter.breadcrumbs(name, func) or func
   if not pack then
     local where = debug.getinfo(2).source
     pack = where:match("(%w+).lua")

@@ -82,6 +82,7 @@ local _margins = std.object {
 SILE.defaultTypesetter = std.object {
   -- Setup functions
   hooks = {},
+  breadcrumbs = SU.breadcrumbs(),
   init = function(self, frame)
     self.stateQueue = {}
     self:initFrame(frame)
