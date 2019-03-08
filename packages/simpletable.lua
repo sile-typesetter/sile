@@ -32,7 +32,7 @@ return {
       local row = tbl[#tbl]
       row[#row+1] = {
         content = content,
-        width = (SILE.Commands["hbox"]({},content)).width
+        hbox = SILE.Commands["hbox"]({},content)
       }
       SILE.typesetter.state.nodes[#(SILE.typesetter.state.nodes)] = nil
     end)
@@ -41,7 +41,7 @@ SILE.registerCommand(tableTag, function(options, content)
   SILE.scratch.simpletable.tables[#(SILE.scratch.simpletable.tables)+1] = {}
   local tbl = SILE.scratch.simpletable.tables[#(SILE.scratch.simpletable.tables)]
   SILE.settings.temporarily(function ()
-    SILE.settings.set("document.parindent", SILE.nodefactory.newGlue("0pt"))
+    SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
     SILE.process(content)
   end)
   SILE.typesetter:leaveHmode()
@@ -55,8 +55,8 @@ SILE.registerCommand(tableTag, function(options, content)
       cell = tbl[row][col]
       if cell then
         stuffInThisColumn = true
-        if not(colwidths[col]) or cell.width > colwidths[col] then
-          colwidths[col] = cell.width
+        if not(colwidths[col]) or cell.hbox.width > colwidths[col] then
+          colwidths[col] = cell.hbox.width
         end
       end
     end
@@ -65,23 +65,18 @@ SILE.registerCommand(tableTag, function(options, content)
 
 
   -- Now set each row at the given column width
-  for row = 1,#tbl do
-    for col = 1,#(tbl[row]) do
-      cell = tbl[row][col]
-      local box = SILE.Commands["vbox"]({width = colwidths[col]}, cell.content)
-      box = box.nodes[1]
-      if box then
-        box.outputYourself = function(self,typesetter, line)
-         for i, n in ipairs(self.nodes) do
-            n:outputYourself(typesetter, self)
-          end
-        end
-        table.insert(SILE.typesetter.state.nodes, box) -- a vbox on the hbox list!
+  SILE.settings.temporarily(function ()
+    SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
+    for row = 1,#tbl do
+      for col = 1,#(tbl[row]) do
+        local hbox = tbl[row][col].hbox
+        hbox.width = colwidths[col]
+        SILE.typesetter:pushHbox(hbox)
       end
+      SILE.typesetter:leaveHmode()
+      SILE.call("smallskip")
     end
-    SILE.typesetter:leaveHmode()
-    SILE.call("smallskip")
-  end
+  end)
   SILE.typesetter:leaveHmode()
   SILE.scratch.simpletable.tables[#(SILE.scratch.simpletable.tables)] = nil
 end)
