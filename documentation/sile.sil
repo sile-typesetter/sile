@@ -69,7 +69,7 @@ continuously and when you hit the right margin, your cursor will automatically
 jump to the next line. In doing so the user interface shows you where the lines
 will break.
 
-In SILE the overall page layout is defined with a paper size and a serious of
+In SILE the overall page layout is defined with a paper size and a series of
 one or more content frames. These frame descriptions provide the containers
 where content will later be typeset including information about how it might
 flow from one frame to the next. Content is written separately and automatically
@@ -281,16 +281,16 @@ dependencies as possible. On DEB-based Linux machines such as Debian and
 Ubuntu, you should be able to install most of the needed dependencies by
 issuing the command:
 
-\listitem{\code{apt-get install liblua5.2-dev lua-expat lua-lpeg
-	libharfbuzz-dev libfreetype6-dev libfontconfig1-dev libpng-dev libicu-dev}}
+\listitem{\code{apt-get install lua5.2 liblua5.2-dev lua-zlib lua-filesystem lua-expat
+lua-lpeg lua-socket lua-sec libharfbuzz-dev libfreetype6-dev libfontconfig1-dev
+libpng-dev libicu-dev}}
 
 Here’s an incantation that will work on most Redhat-based Linux distros:
 
 \listitem{\code{yum install harfbuzz-devel make automake libtool gcc
 freetype-devel fontconfig-devel lua-devel lua-lpeg lua-expat libpng-devel libicu-devel}}
 
-Once these dependencies are installed, you also need to install some Lua
-libraries if they’re not already installed:
+You may need to install some Lua libraries from luarocks:
 
 \listitem{\code{luarocks install lpeg}}
 \listitem{\code{luarocks install luaexpat}}
