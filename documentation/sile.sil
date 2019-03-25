@@ -265,7 +265,7 @@ Linux. The \code{sile} package has the latest stable release while the
 from the Git repository. If you use a package manager with AUR support you can
 install either one as you would any other package:
 
-\terminal{$ yaourt -S sile}
+\terminal{$ yay -S sile}
 
 For all other systems you will need to follow the steps to download and compile
 the source yourself.
@@ -280,7 +280,7 @@ requirements: \code{freetype}, \code{fontconfig}, \code{libz} and
 
 It is suggested you use your distro's package manager to install as many of the
 dependencies as possible. On DEB-based Linux machines such as Debian and
-Ubuntu, you should be able to install most of the needed dependencies by
+Ubuntu, you should be able to install all of the needed dependencies by
 issuing the command:
 
 \terminal{$ apt-get install lua5.2 liblua5.2-dev lua-zlib lua-filesystem lua-expat
@@ -293,7 +293,9 @@ Here’s an incantation that will work on most Redhat-based Linux distros:
 freetype-devel fontconfig-devel lua-devel lua-lpeg lua-expat libpng-devel
 libicu-devel}
 
-You may need to install some Lua libraries from luarocks:
+If you are on another system you will have to come up with the correct equivalent
+packages yourself. If your system does not have the Lua libraries available as
+packages, you may install them from luarocks:
 
 \terminal{$ luarocks install lpeg luaexpat lua-zlib luafilesystem luasocket
 $ luarocks install luasec OPENSSL_DIR=...}
