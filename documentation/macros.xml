@@ -19,6 +19,7 @@
 <define command="code"><font family="DejaVu Sans Mono" size="1.5ex" style="roman" language="und"><process/></font></define>
 <define command="verbatim:font"><font family="DejaVu Sans Mono" size="9pt"/></define>
 <define command="command"><code><process/></code></define>
+<define command="terminal"><verbatim><set parameter="document.lskip" value="36pt" /><process/><smallskip /></verbatim></define>
 <define command="changed">
 <note><bf>The material in this section has changed significantly since the previous release of SILE.</bf></note>
 </define>

@@ -248,7 +248,7 @@ For OS X machines the recommended way to install SILE is through the Homebrew
 package manager. Once you have Homebrew running (see \url{http://brew.sh}),
 installing SILE is as easy as running:
 
-\listitem{\code{brew install sile}}
+\terminal{$ brew install sile}
 
 If you have not used Lua programs before, that will prompt you to manually
 install a couple dependencies. After running the commands it provides you can
@@ -257,7 +257,7 @@ run the install comand again to complete the instalation.
 The formula also has instruction that can compile SILE from the current
 Git HEAD version. To test the latest unreleased code you can install using:
 
-\listitem{\code{brew install sile --HEAD}}
+\terminal{$ brew install sile --HEAD}
 
 For Linux users, preconfigured package build files are available for Arch
 Linux. The \code{sile} package has the latest stable release while the
@@ -265,7 +265,7 @@ Linux. The \code{sile} package has the latest stable release while the
 from the Git repository. If you use a package manager with AUR support you can
 install either one as you would any other package:
 
-\listitem{\code{yaourt -S sile}}
+\terminal{$ yaourt -S sile}
 
 For all other systems you will need to follow the steps to download and compile
 the source yourself.
@@ -283,23 +283,20 @@ dependencies as possible. On DEB-based Linux machines such as Debian and
 Ubuntu, you should be able to install most of the needed dependencies by
 issuing the command:
 
-\listitem{\code{apt-get install lua5.2 liblua5.2-dev lua-zlib lua-filesystem lua-expat
-lua-lpeg lua-socket lua-sec libharfbuzz-dev libfreetype6-dev libfontconfig1-dev
-libpng-dev libicu-dev}}
+\terminal{$ apt-get install lua5.2 liblua5.2-dev lua-zlib lua-filesystem lua-expat
+lua-lpeg lua-socket lua-sec libharfbuzz-dev libfreetype6-dev
+libfontconfig1-dev libpng-dev libicu-dev}
 
 Here’s an incantation that will work on most Redhat-based Linux distros:
 
-\listitem{\code{yum install harfbuzz-devel make automake libtool gcc
-freetype-devel fontconfig-devel lua-devel lua-lpeg lua-expat libpng-devel libicu-devel}}
+\terminal{$ yum install harfbuzz-devel make automake libtool gcc
+freetype-devel fontconfig-devel lua-devel lua-lpeg lua-expat libpng-devel
+libicu-devel}
 
 You may need to install some Lua libraries from luarocks:
 
-\listitem{\code{luarocks install lpeg}}
-\listitem{\code{luarocks install luaexpat}}
-\listitem{\code{luarocks install lua-zlib}}
-\listitem{\code{luarocks install luafilesystem}}
-\listitem{\code{luarocks install luasocket}}
-\listitem{\code{luarocks install luasec OPENSSL_DIR=...}}
+\terminal{$ luarocks install lpeg luaexpat lua-zlib luafilesystem luasocket
+$ luarocks install luasec OPENSSL_DIR=...}
 
 Once you have these requirements in place, you should then be able to unpack
 the file that you downloaded from SILE’s home page, change to that directory
@@ -308,18 +305,18 @@ repository rather than dowloading one of the release packages you will also
 need to run \code{./bootstrap.sh} to setup the configure script at this point
 before continuing to the next step.}, and run:
 
-\listitem{\code{./configure; make}}
+\terminal{$ ./configure; make}
 
 You can now run SILE as is, uninstalled:
 
-\listitem{\code{./sile examples/simple.sil}}
+\terminal{$ ./sile examples/simple.sil}
 
 If all has gone well, this should produce a file \code{examples/simple.pdf}.
 
 Most users of SILE will want to install the \code{sile} command and SILE’s
 library files onto their system; this can be done with:
 
-\listitem{\code{make install}}
+\terminal{$ make install}
 
 Now the \code{sile} command is available from any directory.
 
@@ -337,7 +334,7 @@ Let’s move to a new directory, and in a text editor, create the file
 \code{hello.sil}. Copy in the content above and save the file. Now at your
 command line run:
 
-\listitem{\code{sile hello}}
+\terminal{$ sile hello}
 
 \note{SILE will automatically provide the extension \code{.sil} to input files
 if it is not provided by the user.}
