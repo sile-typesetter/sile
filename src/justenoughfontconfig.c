@@ -113,9 +113,6 @@ int face_from_options(lua_State* L) {
     return 0;
   
   FcPatternGetInteger(matched, FC_INDEX, 0, &index);
-#if FC_VERSION >= 21195
-  index &= 0xFFFF;
-#endif
   font_path = (FcChar8 *)strdup((char*)font_path);
   if (!font_path) {
     printf("Finding font path failed\n");
