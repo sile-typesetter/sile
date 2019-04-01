@@ -9,27 +9,21 @@ SILE.settings = {
   declarations = {},
   stateQueue = {},
   defaults = {},
-  dirty = {},
-  dirtyQueue = {},
   pushState = function()
     table.insert(SILE.settings.stateQueue, SILE.settings.state)
-    table.insert(SILE.settings.dirtyQueue, SILE.settings.dirty)
     SILE.settings.state = std.table.clone(SILE.settings.state)
   end,
   popState = function()
     SILE.settings.state = table.remove(SILE.settings.stateQueue)
-    SILE.settings.dirty = table.remove(SILE.settings.dirtyQueue)
   end,
   declare = function(t)
     SILE.settings.declarations[t.name] = t
     SILE.settings.set(t.name, t.default)
     SILE.settings.defaults[t.name] = t.default
-    SILE.settings.dirty[t.name] = false
   end,
   reset = function(t)
     for k,_ in pairs(SILE.settings.state) do
       SILE.settings.set(k,SILE.settings.defaults[k])
-      SILE.settings.dirty[k] = false
     end
   end,
   get = function(name)
@@ -48,7 +42,6 @@ SILE.settings = {
       SU.error("Setting "..name.." must be of type "..wantedType..", not "..t.." "..value.."\n"..name..": "..SILE.settings.declarations[name].help)
     end
     SILE.settings.state[name] = value
-    SILE.settings.dirty[name] = true
   end,
   temporarily = function(f)
     SILE.settings.pushState()
@@ -59,7 +52,6 @@ SILE.settings = {
     local clSettings = std.table.clone(SILE.settings.state)
     return function(f)
       table.insert(SILE.settings.stateQueue, SILE.settings.state)
-      table.insert(SILE.settings.dirtyQueue, SILE.settings.dirty)
       SILE.settings.state = clSettings
       SILE.process(f)
       SILE.settings.popState()
@@ -124,24 +116,19 @@ local function toboolean(v)
   return not not v
 end
 
-local function convert_to_type(v, t)
-  if     string.match(t, "nil") and type(v) == "nil" then return v
-  elseif  string.match(t, "integer") then return tonumber(v)
-  elseif  string.match(t, "number") then return tonumber(v)
-  elseif  string.match(t, "boolean") then return toboolean(v)
-  elseif  string.match(t, "Length") then return SILE.length.parse(v)
-  elseif string.match(t, "VGlue") then return SILE.nodefactory.newVglue(v)
-  elseif string.match(t, "Glue") then return SILE.nodefactory.newGlue(v)
-  elseif string.match(t, "Kern") then return SILE.nodefactory.newKern(v)
-  else return v end -- string
-end
-
 SILE.registerCommand("set", function(options, content)
   local p = SU.required(options, "parameter", "\\set command")
   local v = options.value -- could be nil!
   local def = SILE.settings.declarations[p]
   if not def then SU.error("Unknown parameter "..p.." in \\set command") end
-  v = convert_to_type(v, def.type)
+  if     string.match(def.type, "nil") and type(v) == "nil" then -- ok
+  elseif  string.match(def.type, "integer") then v = tonumber(v)
+  elseif  string.match(def.type, "number") then v = tonumber(v)
+  elseif  string.match(def.type, "boolean") then v = toboolean(v)
+  elseif  string.match(def.type, "Length") then v = SILE.length.parse(v)
+  elseif string.match(def.type, "VGlue") then v = SILE.nodefactory.newVglue(v)
+  elseif string.match(def.type, "Glue") then v = SILE.nodefactory.newGlue(v)
+  elseif string.match(def.type, "Kern") then v = SILE.nodefactory.newKern(v) end
   if content and (type(content) == "function" or content[1]) then
     SILE.settings.temporarily(function()
       SILE.settings.set(p,v)
@@ -151,16 +138,3 @@ SILE.registerCommand("set", function(options, content)
     SILE.settings.set(p,v)
   end
 end, "Set a SILE parameter <parameter> to value <value> (restoring the value afterwards if <content> is provided)")
-
-SILE.registerCommand("set-default", function(options)
-  local p = SU.required(options, "parameter", "\\set-default command")
-  local v = options.value -- could be nil!
-  local def = SILE.settings.declarations[p]
-  if not def then SU.error("Unknown parameter "..p.." in \\set-default command") end
-  v = convert_to_type(v, def.type)
-  SILE.settings.declarations[p].default = v
-  SILE.settings.defaults[p] = v
-  if not SILE.settings.dirty[p] then
-    SILE.settings.set(p,v)
-  end
-end, "Set the default value of a SILE parameter <parameter> to <value>")
