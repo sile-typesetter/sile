@@ -186,6 +186,176 @@ local function parseSvg(s)
   return offsets
 end
 
+local function parseMath(s)
+  if s:len() <= 0 then return end
+  local fd = vstruct.cursor(s)
+
+  local parseDeviceTable = function(offset, fd)
+    local header = vstruct.read(">@"..offset.." startSize:u2 endSize:u2 deltaFormat:u2", fd)
+    local size = header.endSize - header.startSize + 1
+    local buf = {}
+    if header.deltaFormat == 0x0001 then
+      buf = vstruct.read("> "..math.ceil(size+7/8).."*[2| i2 i2 i2 i2 i2 i2 i2 i2 ]", fd)
+    elseif header.deltaFormat == 0x0002 then
+      buf = vstruct.read("> "..math.ceil(size/4).."*[2| i4 i4 i4 i4 ]", fd)
+    elseif header.deltaFormat == 0x0003 then
+      buf = vstruct.read("> "..math.ceil(size/2).."*[2| i8 i8 ]", fd)
+    else
+      SU.warn('DeltaFormat '..header.deltaFormat.." in Device Table is not supported. Ignore the table.")
+      return nil
+    end
+    local deviceTable = {}
+    for i = 1, size do
+      deviceTable[header.startSize + i - 1] = buf[i]
+    end
+    return deviceTable
+  end
+  local fetchMathValueRecord = function(record, parent_offset, fd)
+    if record.deviceTableOffset ~= 0 then
+      record.deviceTable = parseDeviceTable(parent_offset + record.deviceTableOffset, fd)
+    end
+    record.deviceTableOffset = nil
+  end
+  local parseCoverage = function (offset, fd)
+    local coverageFormat = vstruct.readvals(">@"..offset.." u2", fd)
+    if coverageFormat == 1 then
+      local glyphCount = vstruct.readvals("> u2", fd)
+      return vstruct.read("> "..glyphCount.."*u2", fd)
+    elseif coverageFormat == 2 then
+      local rangeCount = vstruct.readvals("> u2", fd)
+      local ranges = vstruct.read("> "..rangeCount.."*{ &RangeRecord }", fd)
+      coverage = {}
+      for i = 1, #(ranges) do
+        for glyphID = ranges[i].startGlyphID, ranges[i].endGlyphID do
+          index = ranges[i].startCoverageIndex + glyphID - ranges[i].startGlyphID + 1 -- array in lua is one-based
+          if coverage[index] then
+            SU.error(glyphID .. " already exist in converage when processing " .. ranges[i])
+          end
+          coverage[index] = glyphID
+        end
+      end
+      return coverage
+    else
+      SU.error('Unsupported coverage table format '..coverageFormat)
+    end
+  end
+  local parsePerGlyphTable = function (offset, type, fd)
+    local coverageOffset = vstruct.readvals(">@"..offset.." u2", fd)
+    local coverageTable = parseCoverage(offset + coverageOffset, fd)
+    local count = vstruct.readvals(">@"..(offset+2).." u2", fd)
+    if count ~= #(coverageTable) then
+      SU.error("Coverage table corrupted")
+    end
+    local table = vstruct.read("> "..count.."*{ "..type.." }", fd)
+    local result = {}
+    for i = 1, count do
+      result[coverageTable[i]] = table[i]
+    end
+    return result
+  end
+  local parseMathKern = function(offset, fd)
+    local heightCount	= vstruct.readvals(">@"..offset.." u2", fd)
+    local mathKern = vstruct.read("> correctionHeight:{ "..heightCount.."*{ &MathValueRecord } } kernValues:{ "..(heightCount+1).."*{ &MathValueRecord } }", fd)
+    for i = 1, #(mathKern.correctionHeight) do
+      fetchMathValueRecord(mathKern.correctionHeight[i], offset, fd)
+    end
+    for i = 1, #(mathKern.kernValues) do
+      fetchMathValueRecord(mathKern.kernValues[i], offset, fd)
+    end
+    return mathKern
+  end
+
+  local mathConstantNames = { "scriptPercentScaleDown", "scriptScriptPercentScaleDown", "delimitedSubFormulaMinHeight",
+    "displayOperatorMinHeight", "accentBaseHeight", "flattenedAccentBaseHeight",
+    "subscriptShiftDown", "subscriptTopMax", "subscriptBaselineDropMin",
+    "superscriptShiftUp", "superscriptShiftUpCramped", "superscriptBottomMin",
+    "superscriptBaselineDropMax", "subSuperscriptGapMin", "superscriptBottomMaxWithSubscript",
+    "spaceAfterScript", "upperLimitGapMin", "upperLimitBaselineRiseMin",
+    "lowerLimitGapMin", "lowerLimitBaselineDropMin", "stackTopShiftUp",
+    "stackTopDisplayStyleShiftUp", "stackBottomShiftDown", "stackBottomDisplayStyleShiftDown",
+    "stackGapMin", "stackDisplayStyleGapMin", "stretchStackTopShiftUp",
+    "stretchStackBottomShiftDown", "stretchStackGapAboveMin", "stretchStackGapBelowMin",
+    "fractionNumeratorShiftUp", "fractionNumeratorDisplayStyleShiftUp", "fractionDenominatorShiftDown",
+    "fractionDenominatorDisplayStyleShiftDown", "fractionNumeratorGapMin", "fractionNumDisplayStyleGapMin",
+    "fractionRuleThickness", "fractionDenominatorGapMin", "fractionDenomDisplayStyleGapMin",
+    "skewedFractionHorizontalGap", "skewedFractionVerticalGap", "overbarVerticalGap",
+    "overbarRuleThickness", "overbarExtraAscender", "underbarVerticalGap",
+    "underbarRuleThickness", "underbarExtraDescender", "radicalVerticalGap",
+    "radicalDisplayStyleVerticalGap", "radicalRuleThickness", "radicalExtraAscender",
+    "radicalKernBeforeDegree", "radicalKernAfterDegree", "radicalDegreeBottomRaisePercent" }
+  local mathConstantTypes = { "i2", "i2", "u2",
+    "u2", "{ &MathValueRecord }", "{ &MathValueRecord }",
+    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+    "{ &MathValueRecord }", "{ &MathValueRecord }", "i2" }
+
+  local offsets = {}
+  local header = vstruct.read(">majorVersion:u2 minorVersion:u2 mathConstantsOffset:u2 mathGlyphInfoOffset:u2 mathVariantsOffset:u2", fd)
+  if header.majorVersion > 1 then return end
+  vstruct.compile("MathValueRecord", "value:i2 deviceTableOffset:u2")
+  vstruct.compile("RangeRecord", "startGlyphID:u2 endGlyphID:u2 startCoverageIndex:u2")
+  vstruct.compile("MathKernInfoRecord", "topRightMathKernOffset:u2 topLeftMathKernOffset:u2 bottomRightMathKernOffset:u2 bottomLeftMathKernOffset:u2")
+
+  local mathConstantFormat = ">@"..header.mathConstantsOffset
+  for i = 1, #(mathConstantNames) do
+    mathConstantFormat = mathConstantFormat.." "..mathConstantNames[i]..":"..mathConstantTypes[i]
+  end
+  local mathConstants = vstruct.read(mathConstantFormat, fd)
+  for k,v in pairs(mathConstants) do
+    if v and type(v) == "table" then
+      fetchMathValueRecord(v, header.mathConstantsOffset, fd)
+    end
+  end
+
+  local mathGlyphInfo = vstruct.read(">@"..header.mathGlyphInfoOffset..
+                                     " mathItalicsCorrectionInfoOffset:u2"..
+                                     " mathTopAccentAttachmentOffset:u2"..
+                                     " extendedShapeCoverageOffset:u2"..
+                                     " mathKernInfoOffset:u2", fd)
+  local mathItalicsCorrectionInfo = parsePerGlyphTable(header.mathGlyphInfoOffset + mathGlyphInfo.mathItalicsCorrectionInfoOffset, "&MathValueRecord", fd)
+  for k,v in pairs(mathItalicsCorrectionInfo) do
+    fetchMathValueRecord(v, header.mathGlyphInfoOffset + mathGlyphInfo.mathItalicsCorrectionInfoOffset, fd)
+  end
+  local mathTopAccentAttachment = parsePerGlyphTable(header.mathGlyphInfoOffset + mathGlyphInfo.mathTopAccentAttachmentOffset, "&MathValueRecord", fd)
+  for k,v in pairs(mathTopAccentAttachment) do
+    fetchMathValueRecord(v, header.mathGlyphInfoOffset + mathGlyphInfo.mathTopAccentAttachmentOffset, fd)
+  end
+  local extendedShapeCoverage = parseCoverage(header.mathGlyphInfoOffset + mathGlyphInfo.extendedShapeCoverageOffset, fd)
+  local mathKernInfo = parsePerGlyphTable(header.mathGlyphInfoOffset + mathGlyphInfo.mathKernInfoOffset, "&MathKernInfoRecord", fd)
+
+  mathKern = {}
+  for k,v in pairs(mathKernInfo) do
+    if v.topRightMathKernOffset ~= 0 or v.topLeftMathKernOffset ~= 0 or v.bottomRightMathKernOffset ~= 0 or v.bottomLeftMathKernOffset ~= 0 then
+      mathKern[k] = {
+        topRightMathKern = v.topRightMathKernOffset ~= 0 and parseMathKern(header.mathGlyphInfoOffset + mathGlyphInfo.mathKernInfoOffset + v.topRightMathKernOffset, fd) or nil,
+        topLeftMathKern = v.topLeftMathKernOffset ~= 0 and parseMathKern(header.mathGlyphInfoOffset + mathGlyphInfo.mathKernInfoOffset + v.topLeftMathKernOffset, fd) or nil,
+        bottomRightMathKern =  v.bottomRightMathKernOffset ~= 0 and parseMathKern(header.mathGlyphInfoOffset + mathGlyphInfo.mathKernInfoOffset + v.bottomRightMathKernOffset, fd) or nil,
+        bottomLeftMathKern = v.bottomLeftMathKernOffset ~= 0 and parseMathKern(header.mathGlyphInfoOffset + mathGlyphInfo.mathKernInfoOffset + v.bottomLeftMathKernOffset, fd) or nil
+      }
+    end
+  end
+  return {
+    mathConstants = mathConstants,
+    mathItalicsCorrectionInfo=mathItalicsCorrectionInfo,
+    mathTopAccentAttachment=mathTopAccentAttachment,
+    extendedShapeCoverage=extendedShapeCoverage,
+    mathKern=mathKern
+  }
+end
+
 local parseFont = function(face)
   if not face.font then
     local font = {}
@@ -195,6 +365,7 @@ local parseFont = function(face)
     font.colr = parseColr(hb.get_table(face.data, face.index, "COLR"))
     font.cpal = parseCpal(hb.get_table(face.data, face.index, "CPAL"))
     font.svg  = parseSvg(hb.get_table(face.data, face.index, "SVG"))
+    font.math = parseMath(hb.get_table(face.data, face.index, "MATH"))
     face.font = font
   end
 
