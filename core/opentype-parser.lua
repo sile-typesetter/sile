@@ -216,6 +216,55 @@ local function parseMath(s)
     end
     record.deviceTableOffset = nil
   end
+  local parseConstants = function(offset, fd)
+    local mathConstantNames = { "scriptPercentScaleDown", "scriptScriptPercentScaleDown", "delimitedSubFormulaMinHeight",
+      "displayOperatorMinHeight", "accentBaseHeight", "flattenedAccentBaseHeight",
+      "subscriptShiftDown", "subscriptTopMax", "subscriptBaselineDropMin",
+      "superscriptShiftUp", "superscriptShiftUpCramped", "superscriptBottomMin",
+      "superscriptBaselineDropMax", "subSuperscriptGapMin", "superscriptBottomMaxWithSubscript",
+      "spaceAfterScript", "upperLimitGapMin", "upperLimitBaselineRiseMin",
+      "lowerLimitGapMin", "lowerLimitBaselineDropMin", "stackTopShiftUp",
+      "stackTopDisplayStyleShiftUp", "stackBottomShiftDown", "stackBottomDisplayStyleShiftDown",
+      "stackGapMin", "stackDisplayStyleGapMin", "stretchStackTopShiftUp",
+      "stretchStackBottomShiftDown", "stretchStackGapAboveMin", "stretchStackGapBelowMin",
+      "fractionNumeratorShiftUp", "fractionNumeratorDisplayStyleShiftUp", "fractionDenominatorShiftDown",
+      "fractionDenominatorDisplayStyleShiftDown", "fractionNumeratorGapMin", "fractionNumDisplayStyleGapMin",
+      "fractionRuleThickness", "fractionDenominatorGapMin", "fractionDenomDisplayStyleGapMin",
+      "skewedFractionHorizontalGap", "skewedFractionVerticalGap", "overbarVerticalGap",
+      "overbarRuleThickness", "overbarExtraAscender", "underbarVerticalGap",
+      "underbarRuleThickness", "underbarExtraDescender", "radicalVerticalGap",
+      "radicalDisplayStyleVerticalGap", "radicalRuleThickness", "radicalExtraAscender",
+      "radicalKernBeforeDegree", "radicalKernAfterDegree", "radicalDegreeBottomRaisePercent" }
+    local mathConstantTypes = { "i2", "i2", "u2",
+      "u2", "{ &MathValueRecord }", "{ &MathValueRecord }",
+      "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+      "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+      "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+      "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+      "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+      "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+      "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+      "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+      "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+      "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+      "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+      "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+      "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+      "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+      "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+      "{ &MathValueRecord }", "{ &MathValueRecord }", "i2" }
+    local mathConstantFormat = ">@"..offset
+    for i = 1, #(mathConstantNames) do
+      mathConstantFormat = mathConstantFormat.." "..mathConstantNames[i]..":"..mathConstantTypes[i]
+    end
+    local mathConstants = vstruct.read(mathConstantFormat, fd)
+    for k,v in pairs(mathConstants) do
+      if v and type(v) == "table" then
+        fetchMathValueRecord(v, offset, fd)
+      end
+    end
+    return mathConstants
+  end
   local parseCoverage = function (offset, fd)
     local coverageFormat = vstruct.readvals(">@"..offset.." u2", fd)
     if coverageFormat == 1 then
@@ -239,20 +288,6 @@ local function parseMath(s)
       SU.error('Unsupported coverage table format '..coverageFormat)
     end
   end
-  local parsePerGlyphTable = function (offset, type, fd)
-    local coverageOffset = vstruct.readvals(">@"..offset.." u2", fd)
-    local coverageTable = parseCoverage(offset + coverageOffset, fd)
-    local count = vstruct.readvals(">@"..(offset+2).." u2", fd)
-    if count ~= #(coverageTable) then
-      SU.error("Coverage table corrupted")
-    end
-    local table = vstruct.read("> "..count.."*{ "..type.." }", fd)
-    local result = {}
-    for i = 1, count do
-      result[coverageTable[i]] = table[i]
-    end
-    return result
-  end
   local parseMathKern = function(offset, fd)
     local heightCount	= vstruct.readvals(">@"..offset.." u2", fd)
     local mathKern = vstruct.read("> correctionHeight:{ "..heightCount.."*{ &MathValueRecord } } kernValues:{ "..(heightCount+1).."*{ &MathValueRecord } }", fd)
@@ -264,43 +299,69 @@ local function parseMath(s)
     end
     return mathKern
   end
+  local parsePerGlyphTable = function(offset, type, fd)
+    local coverageOffset = vstruct.readvals(">@"..offset.." u2", fd)
+    local coverageTable = parseCoverage(offset + coverageOffset, fd)
+    local count = vstruct.readvals(">@"..(offset+2).." u2", fd)
+    if count ~= #(coverageTable) then
+      SU.error("Coverage table corrupted")
+    end
+    local table = vstruct.read("> "..count.."*{ "..type.." }", fd)
+    local result = {}
+    for i = 1, count do
+      if type == "&MathValueRecord" then
+        result[coverageTable[i]] = fetchMathValueRecord(table[i], offset, fd)
+      elseif type == "&MathKernInfoRecord" then
+        result[coverageTable[i]] = {
+          topRightMathKern = table[i].topRightMathKernOffset ~= 0 and parseMathKern(offset + table[i].topRightMathKernOffset, fd) or nil,
+          topLeftMathKern = table[i].topLeftMathKernOffset ~= 0 and parseMathKern(offset + table[i].topLeftMathKernOffset, fd) or nil,
+          bottomRightMathKern =  table[i].bottomRightMathKernOffset ~= 0 and parseMathKern(offset + table[i].bottomRightMathKernOffset, fd) or nil,
+          bottomLeftMathKern = table[i].bottomLeftMathKernOffset ~= 0 and parseMathKern(offset + table[i].bottomLeftMathKernOffset, fd) or nil
+        }
+      else
+        result[coverageTable[i]] = table[i]
+      end
+    end
+    return result
+  end
+  local parseMathVariants = function(offset, fd)
+    local parseGlyphAssembly = function(offset, fd)
+      local assembly = vstruct.read(">@"..offset.." italicsCorrection:{ &MathValueRecord } partCount:u2", fd)
+      fetchMathValueRecord(assembly.italicsCorrection, offset, fd)
+      assembly.partRecords = vstruct.read("> "..assembly.partCount.."*{ &GlyphPartRecord }", fd)
+      assembly.partCount = nil
+    end
+    local parseMathGlyphConstruction = function(offset, fd)
+      local construction = vstruct.read(">@"..offset.." glyphAssemblyOffset:u2 variantCount:u2", fd)
+      local mathGlyphVariantRecord = vstruct.read("> "..construction.variantCount.."*{ &MathGlyphVariantRecord }", fd)
+      return {
+        glyphAssembly = construction.glyphAssemblyOffset ~= 0 and parseGlyphAssembly(offset + construction.glyphAssemblyOffset, fd) or nil,
+        mathGlyphVariantRecord = mathGlyphVariantRecord
+      }
+    end
+    local variants = vstruct.read(">@"..offset.." minConnectorOverlap:u2 vertGlyphCoverageOffset:u2 horizGlyphCoverageOffset:u2 vertGlyphCount:u2 horizGlyphCount:u2", fd)
+    local vertGlyphConstructionOffsets = vstruct.read("> "..variants.vertGlyphCount.."*u2", fd)
+    local horizGlyphConstructionOffsets = vstruct.read("> "..variants.horizGlyphCount.."*u2", fd)
+    local vertGlyphCoverage = parseCoverage(offset + variants.vertGlyphCoverageOffset, fd)
+    local horizGlyphCoverage = parseCoverage(offset + variants.horizGlyphCoverageOffset, fd)
+    if variants.vertGlyphCount ~= #(vertGlyphCoverage) or variants.horizGlyphCount ~= #(horizGlyphCoverage) then
+      SU.error('MathVariants Table corrupted')
+    end
+    local vertGlyphConstructions = {}
+    local horizGlyphConstructions = {}
+    for i = 1, variants.vertGlyphCount do
+      vertGlyphConstructions[vertGlyphCoverage[i]] = parseMathGlyphConstruction(offset + vertGlyphConstructionOffsets[i], fd)
+    end
+    for i = 1, variants.horizGlyphCount do
+      horizGlyphConstructions[horizGlyphCoverage[i]] = parseMathGlyphConstruction(offset + horizGlyphConstructionOffsets[i], fd)
+    end
+    return {
+      minConnectorOverlap = variants.minConnectorOverlap,
+      vertGlyphConstructions = vertGlyphConstructions,
+      horizGlyphConstructions = horizGlyphConstructions
+    }
+  end
 
-  local mathConstantNames = { "scriptPercentScaleDown", "scriptScriptPercentScaleDown", "delimitedSubFormulaMinHeight",
-    "displayOperatorMinHeight", "accentBaseHeight", "flattenedAccentBaseHeight",
-    "subscriptShiftDown", "subscriptTopMax", "subscriptBaselineDropMin",
-    "superscriptShiftUp", "superscriptShiftUpCramped", "superscriptBottomMin",
-    "superscriptBaselineDropMax", "subSuperscriptGapMin", "superscriptBottomMaxWithSubscript",
-    "spaceAfterScript", "upperLimitGapMin", "upperLimitBaselineRiseMin",
-    "lowerLimitGapMin", "lowerLimitBaselineDropMin", "stackTopShiftUp",
-    "stackTopDisplayStyleShiftUp", "stackBottomShiftDown", "stackBottomDisplayStyleShiftDown",
-    "stackGapMin", "stackDisplayStyleGapMin", "stretchStackTopShiftUp",
-    "stretchStackBottomShiftDown", "stretchStackGapAboveMin", "stretchStackGapBelowMin",
-    "fractionNumeratorShiftUp", "fractionNumeratorDisplayStyleShiftUp", "fractionDenominatorShiftDown",
-    "fractionDenominatorDisplayStyleShiftDown", "fractionNumeratorGapMin", "fractionNumDisplayStyleGapMin",
-    "fractionRuleThickness", "fractionDenominatorGapMin", "fractionDenomDisplayStyleGapMin",
-    "skewedFractionHorizontalGap", "skewedFractionVerticalGap", "overbarVerticalGap",
-    "overbarRuleThickness", "overbarExtraAscender", "underbarVerticalGap",
-    "underbarRuleThickness", "underbarExtraDescender", "radicalVerticalGap",
-    "radicalDisplayStyleVerticalGap", "radicalRuleThickness", "radicalExtraAscender",
-    "radicalKernBeforeDegree", "radicalKernAfterDegree", "radicalDegreeBottomRaisePercent" }
-  local mathConstantTypes = { "i2", "i2", "u2",
-    "u2", "{ &MathValueRecord }", "{ &MathValueRecord }",
-    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
-    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
-    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
-    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
-    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
-    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
-    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
-    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
-    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
-    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
-    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
-    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
-    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
-    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
-    "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
-    "{ &MathValueRecord }", "{ &MathValueRecord }", "i2" }
 
   local offsets = {}
   local header = vstruct.read(">majorVersion:u2 minorVersion:u2 mathConstantsOffset:u2 mathGlyphInfoOffset:u2 mathVariantsOffset:u2", fd)
@@ -308,17 +369,10 @@ local function parseMath(s)
   vstruct.compile("MathValueRecord", "value:i2 deviceTableOffset:u2")
   vstruct.compile("RangeRecord", "startGlyphID:u2 endGlyphID:u2 startCoverageIndex:u2")
   vstruct.compile("MathKernInfoRecord", "topRightMathKernOffset:u2 topLeftMathKernOffset:u2 bottomRightMathKernOffset:u2 bottomLeftMathKernOffset:u2")
+  vstruct.compile("MathGlyphVariantRecord", "variantGlyph:u2 advanceMeasurement:u2")
+  vstruct.compile("GlyphPartRecord", "glyphID:u2 startConnectorLength:u2 endConnectorLength:u2 fullAdvance:u2 partFlags:u2")
 
-  local mathConstantFormat = ">@"..header.mathConstantsOffset
-  for i = 1, #(mathConstantNames) do
-    mathConstantFormat = mathConstantFormat.." "..mathConstantNames[i]..":"..mathConstantTypes[i]
-  end
-  local mathConstants = vstruct.read(mathConstantFormat, fd)
-  for k,v in pairs(mathConstants) do
-    if v and type(v) == "table" then
-      fetchMathValueRecord(v, header.mathConstantsOffset, fd)
-    end
-  end
+  local mathConstants = parseConstants(header.mathConstantsOffset, fd)
 
   local mathGlyphInfo = vstruct.read(">@"..header.mathGlyphInfoOffset..
                                      " mathItalicsCorrectionInfoOffset:u2"..
@@ -326,33 +380,18 @@ local function parseMath(s)
                                      " extendedShapeCoverageOffset:u2"..
                                      " mathKernInfoOffset:u2", fd)
   local mathItalicsCorrectionInfo = parsePerGlyphTable(header.mathGlyphInfoOffset + mathGlyphInfo.mathItalicsCorrectionInfoOffset, "&MathValueRecord", fd)
-  for k,v in pairs(mathItalicsCorrectionInfo) do
-    fetchMathValueRecord(v, header.mathGlyphInfoOffset + mathGlyphInfo.mathItalicsCorrectionInfoOffset, fd)
-  end
   local mathTopAccentAttachment = parsePerGlyphTable(header.mathGlyphInfoOffset + mathGlyphInfo.mathTopAccentAttachmentOffset, "&MathValueRecord", fd)
-  for k,v in pairs(mathTopAccentAttachment) do
-    fetchMathValueRecord(v, header.mathGlyphInfoOffset + mathGlyphInfo.mathTopAccentAttachmentOffset, fd)
-  end
   local extendedShapeCoverage = parseCoverage(header.mathGlyphInfoOffset + mathGlyphInfo.extendedShapeCoverageOffset, fd)
   local mathKernInfo = parsePerGlyphTable(header.mathGlyphInfoOffset + mathGlyphInfo.mathKernInfoOffset, "&MathKernInfoRecord", fd)
+  local mathVariants = parseMathVariants(header.mathVariantsOffset, fd)
 
-  mathKern = {}
-  for k,v in pairs(mathKernInfo) do
-    if v.topRightMathKernOffset ~= 0 or v.topLeftMathKernOffset ~= 0 or v.bottomRightMathKernOffset ~= 0 or v.bottomLeftMathKernOffset ~= 0 then
-      mathKern[k] = {
-        topRightMathKern = v.topRightMathKernOffset ~= 0 and parseMathKern(header.mathGlyphInfoOffset + mathGlyphInfo.mathKernInfoOffset + v.topRightMathKernOffset, fd) or nil,
-        topLeftMathKern = v.topLeftMathKernOffset ~= 0 and parseMathKern(header.mathGlyphInfoOffset + mathGlyphInfo.mathKernInfoOffset + v.topLeftMathKernOffset, fd) or nil,
-        bottomRightMathKern =  v.bottomRightMathKernOffset ~= 0 and parseMathKern(header.mathGlyphInfoOffset + mathGlyphInfo.mathKernInfoOffset + v.bottomRightMathKernOffset, fd) or nil,
-        bottomLeftMathKern = v.bottomLeftMathKernOffset ~= 0 and parseMathKern(header.mathGlyphInfoOffset + mathGlyphInfo.mathKernInfoOffset + v.bottomLeftMathKernOffset, fd) or nil
-      }
-    end
-  end
   return {
     mathConstants = mathConstants,
-    mathItalicsCorrectionInfo=mathItalicsCorrectionInfo,
-    mathTopAccentAttachment=mathTopAccentAttachment,
-    extendedShapeCoverage=extendedShapeCoverage,
-    mathKern=mathKern
+    mathItalicsCorrectionInfo = mathItalicsCorrectionInfo,
+    mathTopAccentAttachment = mathTopAccentAttachment,
+    extendedShapeCoverage = extendedShapeCoverage,
+    mathKern = mathKern,
+    mathVariants = mathVariants
   }
 end
 
