@@ -22,6 +22,8 @@ if (WIN32)
 	ExternalProject_Add(icu
 		GIT_REPOSITORY https://github.com/hunter-packages/icu
 		GIT_TAG v63.1-p5
+		PATCH_COMMAND git reset --hard HEAD
+		COMMAND git apply "${CMAKE_CURRENT_SOURCE_DIR}/cmake/icu.diff"
 		CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" -DICU_BUILD_IO=ON
 		INSTALL_DIR "${TMP_INSTALL_DIR}")
 
@@ -61,6 +63,9 @@ if (WIN32)
 		DEPENDS libiconv expat freetype2
 		GIT_REPOSITORY https://github.com/freedesktop/fontconfig
 		GIT_TAG 2.13.1
+		PATCH_COMMAND git reset --hard HEAD
+		COMMAND git clean -dfx
+		COMMAND git apply "${CMAKE_CURRENT_SOURCE_DIR}/cmake/fontconfig.diff"
 		LIST_SEPARATOR ::
 		CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" -DCMAKE_C_FLAGS=/DXML_STATIC=1 -DBUILD_SHARED=OFF -DBUILD_STATIC=ON "-DEXPAT_LIBRARIES=<INSTALL_DIR>/lib/expat.lib" "-DFREETYPE_LIBRARIES=<INSTALL_DIR>/lib/freetype.lib" "-DLIBRARIES_TO_LINK=<INSTALL_DIR>/lib/harfbuzz.lib::<INSTALL_DIR>/lib/libpng16_static.lib::<INSTALL_DIR>/lib/zlibstatic.lib"
 		INSTALL_DIR "${TMP_INSTALL_DIR}")
@@ -89,6 +94,8 @@ if (WIN32)
 	ExternalProject_Add(lua
 		GIT_REPOSITORY https://github.com/LuaJIT/LuaJIT
 		GIT_TAG v2.1.0-beta3
+		PATCH_COMMAND git clean -dfx
+		COMMAND git apply "${CMAKE_CURRENT_SOURCE_DIR}/cmake/lua.diff"
 		CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>"
 		INSTALL_DIR "${TMP_LUA_DIR}")
 
@@ -220,6 +227,8 @@ if (WIN32)
 	ExternalProject_Add(srlua
 		GIT_REPOSITORY https://github.com/LuaDist/srlua
 		GIT_TAG 5.2
+		PATCH_COMMAND git reset --hard HEAD
+		COMMAND git apply "${CMAKE_CURRENT_SOURCE_DIR}/cmake/srlua.diff"
 		CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" "-DLUA_INCLUDE_DIR=${TMP_LUA_DIR}/include" "-DLUA_LIBRARIES=${TMP_LUA_DIR}/lua51.lib"
 		INSTALL_DIR "${TMP_INSTALL_DIR}")
 	ExternalProject_Add_Step(srlua create_sile
