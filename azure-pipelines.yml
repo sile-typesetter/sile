@@ -1,22 +1,26 @@
-steps:
-  - checkout: self
-    submodules: true
-  - script: |
-      git config --global user.email "harrysummer@hotmail.com"
-      git config --global user.name "Azure Pipeline"
+jobs:
+- job: Windows
+  pool:
+    vmImage: 'windows-2019'
+  steps:
+    - checkout: self
+      submodules: true
+    - script: |
+        git config --global user.email "harrysummer@hotmail.com"
+        git config --global user.name "Azure Pipeline"
 
-    displayName: Set git user name and email
+      displayName: Set git user name and email
 
-  - script: cmake -G "Visual Studio 15 2017" -A x64 "-DCMAKE_INSTALL_PREFIX=$(Build.ArtifactStagingDirectory)" -S $(Build.SourcesDirectory) -B $(Build.BinariesDirectory)
-    displayName: Configure solution with CMake script
+    - script: cmake -G "Visual Studio 15 2017" -A x64 "-DCMAKE_INSTALL_PREFIX=$(Build.ArtifactStagingDirectory)" -S $(Build.SourcesDirectory) -B $(Build.BinariesDirectory)
+      displayName: Configure solution with CMake script
 
-  - script: cmake --build $(Build.BinariesDirectory) --config Release
-    displayName: Build solution
+    - script: cmake --build $(Build.BinariesDirectory) --config Release
+      displayName: Build solution
 
-  - script: cmake --build $(Build.BinariesDirectory) --config Release --target Install
-    displayName: Install solution
+    - script: cmake --build $(Build.BinariesDirectory) --config Release --target Install
+      displayName: Install solution
 
-  - task: PublishBuildArtifacts@1
-    inputs:
-      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      artifactName: sile
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        artifactName: sile
