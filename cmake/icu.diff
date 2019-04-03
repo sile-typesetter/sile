@@ -1,0 +1,42 @@
+diff --git a/source/io/CMakeLists.txt b/source/io/CMakeLists.txt
+index b4732e3..e2f7358 100644
+--- a/source/io/CMakeLists.txt
++++ b/source/io/CMakeLists.txt
+@@ -1,16 +1,16 @@
+ add_library(
+     icuio
+     locbund.cpp
+-    sprintf.c
+-    sscanf.c
++    sprintf.cpp
++    sscanf.cpp
+     ucln_io.cpp
+-    ufile.c
+-    ufmt_cmn.c
++    ufile.cpp
++    ufmt_cmn.cpp
+     uprintf.cpp
+-    uprntf_p.c
+-    uscanf.c
+-    uscanf_p.c
+-    ustdio.c
++    uprntf_p.cpp
++    uscanf.cpp
++    uscanf_p.cpp
++    ustdio.cpp
+     ustream.cpp
+ )
+ 
+diff --git a/source/tools/genrb/CMakeLists.txt b/source/tools/genrb/CMakeLists.txt
+index 529c9c4..228cf39 100644
+--- a/source/tools/genrb/CMakeLists.txt
++++ b/source/tools/genrb/CMakeLists.txt
+@@ -25,7 +25,7 @@ install(
+ )
+ 
+ if(ICU_BUILD_IO)
+-  add_executable(derb derb.c)
++  add_executable(derb derb.cpp)
+ 
+   target_link_libraries(derb PUBLIC icuio icutu icui18n icuuc)
+ 

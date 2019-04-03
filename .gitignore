@@ -49,3 +49,5 @@ sile
 confdefs.h
 config.log
 core/*.so
+build/ 
+.vscode/ 
