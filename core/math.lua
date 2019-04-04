@@ -28,6 +28,16 @@ local atomType = {
   vcenter = 12
 }
 
+SILE.settings.declare({name = "math.font.family", type = "string", default = "XITS Math"})
+
+local function getFont(options)
+  local font = SILE.font.loadDefaults({
+    family=SILE.settings.get("math.font.family")
+  })
+  if options.family then font.family = options.family end
+  return font
+end
+
 -- Style transition functions for superscript and subscript
 local function getSuperscriptStyle(style)
   if style == mathStyle.display or style == mathStyle.displayCramped then return mathStyle.script                 -- D, T -> S
@@ -71,7 +81,7 @@ local _mbox = _box {
   _type = "Mbox",
   type = "math",
   style = nil,
-  options = SILE.font.loadDefaults({}),
+  options = {},
   level = 0, -- The level in mbox hierarchy
   children = {}, -- The child nodes
   relX = nil, -- x position relative to its parent box
@@ -94,7 +104,7 @@ local _mbox = _box {
     SU.error("This is a virtual function that need to be overriden by its child classes")
   end,
 
-  outputYourself = function(self, typesetter, line)
+  output = function(self, x, y)
     SU.error("This is a virtual function that need to be overriden by its child classes")
   end,
 
@@ -128,10 +138,10 @@ local _mbox = _box {
   end,
 
   -- Output the node and all its descendants
-  outputTree = function(self, typesetter, line)
-    self:outputYourself(typesetter, line)
+  outputTree = function(self, x, y)
+    self:output(x, y)
     for i, n in ipairs(self.children) do
-      n:outputTree(typesetter, line)
+      n:outputTree(x, y)
     end
   end
 }
@@ -213,12 +223,17 @@ local _stackbox = _mbox {
       self.depth = 0
     end
   end,
-  -- Despite of its name, this function actually output the whole tree of nodes recursively
-  outputYourself = function(self)
-    for i, n in ipairs(self.children) do
-      n:outputYourself()
-    end
-  end
+  -- Despite of its name, this function actually output the whole tree of nodes recursively.
+  outputYourself = function(self, typesetter, line)
+    print(SILE.outputter)
+    local mathX = typesetter.frame.state.cursorX
+    local mathY = typesetter.frame.state.cursorY
+    print(SILE.scratch)
+    self:outputTree(mathX, mathY)
+    typesetter.frame.state.cursorX = mathX + self.width
+    typesetter.frame.state.curosrY = mathY
+  end,
+  output = function(self, x, y) end
 }
 
 -- _terminal is the base class for leaf node
@@ -232,10 +247,10 @@ local _terminal = _mbox {
 local _text = _terminal {
   _type = "Text",
   text = "",
-  options = SILE.font.loadDefaults({style="Italic"}),
+  options = { style="Italic" },
   __tostring = function(self) return "Text("..self.text..")" end,
   shapeYourself = function(self)
-    local glyphs = SILE.shaper:shapeToken(self.text, self.options)
+    local glyphs = SILE.shaper:shapeToken(self.text, getFont(self.options))
     self.value.glyphString = {}
     if glyphs and #glyphs > 0 then
       for i = 1, #glyphs do
@@ -251,17 +266,16 @@ local _text = _terminal {
         if glyphs[i].height > self.height then self.height = glyphs[i].height end
         if glyphs[i].depth > self.depth then self.depth = glyphs[i].depth end
       end
-      print(glyphs)
     else
       self.width = 0
       self.height = 0
       self.depth = 0
     end
   end,
-  outputYourself = function(self)
+  output = function(self, x, y)
     if not self.value.glyphString then return end
-    SILE.outputter.moveTo(SILE.typesetter.frame.state.cursorX, SILE.typesetter.frame.state.cursorY)
-    SILE.outputter.setFont(self.options)
+    SILE.outputter.moveTo(x + self.absX, y + self.absY)
+    SILE.outputter.setFont(getFont(self.options))
     SILE.outputter.outputHbox(self.value, self.width)
   end
 }
@@ -277,11 +291,11 @@ local function ConvertMathML(content, mbox)
     elseif type(v) == "table" then
       if v.id == 'command' then
         if v.tag == 'mrow' then
-          local hbox = std.tree.clone(_stackbox({ direction='H' }))
+          local hbox = std.tree.clone(_stackbox({ direction='H', level=mbox.level+1 }))
           ConvertMathML(v, hbox)
           table.insert(mbox.children, hbox)
         elseif v.tag == 'mi' then
-          local text = std.tree.clone(_text({ text=v[1] }))
+          local text = std.tree.clone(_text({ text=v[1], level=mbox.level+1 }))
           table.insert(mbox.children, text)
         end
       else
@@ -315,8 +329,7 @@ SILE.registerCommand("mathml", function (options, content)
   if #(mbox.children) == 1 then
     mbox = mbox.children[1]
   end
-  
-  SU.debug("math", mbox)
+
   mbox.style = mathStyle.display -- or text
   mbox:styleDescendants()
 
