@@ -238,36 +238,44 @@ local _stackbox = _mbox {
 
 local _subscript = _mbox {
   _type = "Subscript",
-  kind = "subscript",
-
+  kind = "sub",
+  init = function(self)
+    if kind == "sup" then
+      self.children[3] = self.children[2]
+      self.children[2] = nil
+    end
+  end,
   styleChildren = function(self)
     self.children[1].style = self.style
-    if self.kind == "subscript" then
-      self.children[2].style = getSubscriptStyle(self.style)
-    elseif self.kind == "superscript" then
-      self.children[2].style = getSuperscriptStyle(self.style)
-    end
+    if self.children[2] then self.children[2].style = getSubscriptStyle(self.style) end
+    if self.children[3] then self.children[3].style = getSuperscriptStyle(self.style) end
   end,
   setChildrenRelXY = function(self)
     self.children[1].relX = 0
     self.children[1].relY = 0
-    if self.kind == "subscript" then
+    if self.children[2] then
       self.children[2].relX = self.children[1].width
       self.children[2].relY = 1
-    elseif self.kind == "superscript" then
-      self.children[2].relX = self.children[1].width
-      self.children[2].relY = -3.75
+    end
+    if self.children[3] then
+      self.children[3].relX = self.children[1].width
+      self.children[3].relY = -3.75
     end
   end,
   shape = function(self)
-    self.width = self.children[1].width + self.children[2].width
-    if self.kind == "subscript" then
-      self.height = self.children[1].height
-      self.depth = self.children[2].depth + 1
-    elseif self.kind == "superscript" then
-      self.height = self.children[2].height + 3.75
-      self.depth = self.children[1].depth
+    local height, depth = self.children[1].height, self.children[1].depth
+    local width1, width2 = self.children[1].width, self.children[1].width
+    if self.children[2] then
+      depth = self.children[2].depth + 1
+      width1 = width1 + self.children[2].width
     end
+    if self.children[3] then
+      height = self.children[3].height + 3.75
+      width2 = width2 + self.children[3].width
+    end
+    self.height = height
+    self.depth = depth
+    self.width = math.max(width1, width2)
   end,
   output = function(self, x, y) end
 }
@@ -382,11 +390,13 @@ local function ConvertMathML(content)
     return newText({ text=content[1] })
   elseif content.tag == 'msub' then
     return newSubscript({
-      kind="subscript", children=convertChildren(content) })
-    elseif content.tag == 'msup' then
-      return newSubscript({
-        kind="superscript", children=convertChildren(content) })
-    
+      kind="sub", children=convertChildren(content) })
+  elseif content.tag == 'msup' then
+    return newSubscript({
+      kind="sup", children=convertChildren(content) })
+  elseif content.tag == 'msubsup' then
+    return newSubscript({
+      kind="subsup", children=convertChildren(content) })
   else
     return nil
   end
