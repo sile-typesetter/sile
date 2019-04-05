@@ -28,6 +28,11 @@ local atomType = {
   vcenter = 12
 }
 
+local mathScriptConversionTable = {
+  italicLatinUpper = function(codepoint) return codepoint + 0x1D434 - 0x41 end,
+  italicLatinLower = function(codepoint) return codepoint == 0x68 and 0x210E or codepoint + 0x1D44E - 0x61 end
+}
+
 SILE.settings.declare({name = "math.font.family", type = "string", default = "XITS Math"})
 
 local function getFont(options)
@@ -225,10 +230,8 @@ local _stackbox = _mbox {
   end,
   -- Despite of its name, this function actually output the whole tree of nodes recursively.
   outputYourself = function(self, typesetter, line)
-    print(SILE.outputter)
     local mathX = typesetter.frame.state.cursorX
     local mathY = typesetter.frame.state.cursorY
-    print(SILE.scratch)
     self:outputTree(mathX, mathY)
     typesetter.frame.state.cursorX = mathX + self.width
     typesetter.frame.state.curosrY = mathY
@@ -249,6 +252,25 @@ local _text = _terminal {
   text = "",
   options = { style="Italic" },
   __tostring = function(self) return "Text("..self.text..")" end,
+  init = function(self)
+    local converted = ""
+    for uchr in SU.utf8codes(self.text) do
+      if uchr >= 0x41 and uchr <= 0x5A then -- Latin capital letter
+        if self.options.style == "Italic" then
+          converted = converted..SU.utf8char(mathScriptConversionTable.italicLatinUpper(uchr))
+        else
+          converted = converted..SU.utf8char(uchr)
+        end
+      elseif uchr >= 0x61 and uchr <= 0x7A then -- Latin non-capital letter
+        if self.options.style == "Italic" then
+          converted = converted..SU.utf8char(mathScriptConversionTable.italicLatinLower(uchr))
+        else
+          converted = converted..SU.utf8char(uchr)
+        end
+      end
+    end
+    self.text = converted
+  end,
   shapeYourself = function(self)
     local glyphs = SILE.shaper:shapeToken(self.text, getFont(self.options))
     self.value.glyphString = {}
@@ -280,6 +302,18 @@ local _text = _terminal {
   end
 }
 
+local newText = function(spec)
+  local ret = _text(spec)
+  ret:init()
+  return ret
+end
+
+local newStackbox = function(spec)
+  local ret = std.tree.clone(_stackbox(spec))
+  ret:init()
+  return ret
+end
+
 -- convert MathML into mbox
 local function ConvertMathML(content, mbox)
   for i,v in ipairs(content) do
@@ -291,11 +325,11 @@ local function ConvertMathML(content, mbox)
     elseif type(v) == "table" then
       if v.id == 'command' then
         if v.tag == 'mrow' then
-          local hbox = std.tree.clone(_stackbox({ direction='H', level=mbox.level+1 }))
+          local hbox = newStackbox({ direction='H', level=mbox.level+1 })
           ConvertMathML(v, hbox)
           table.insert(mbox.children, hbox)
         elseif v.tag == 'mi' then
-          local text = std.tree.clone(_text({ text=v[1], level=mbox.level+1 }))
+          local text = newText({ text=v[1], level=mbox.level+1 })
           table.insert(mbox.children, text)
         end
       else
@@ -303,14 +337,6 @@ local function ConvertMathML(content, mbox)
       end
     end
   end
-end
-
-local newText = function(spec)
-  return _text(spec):init()
-end
-
-local newStackbox = function(spec)
-  return std.tree.clone(_stackbox(spec)):init()
 end
 
 SILE.nodefactory.math = {
