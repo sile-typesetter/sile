@@ -374,21 +374,19 @@ local function ConvertMathML(content)
   end
   if content.tag == 'math' then -- toplevel
     return newStackbox({
-      direction='V',
-      children=convertChildren(content)
-    })
+      direction='V', children=convertChildren(content) })
   elseif content.tag == 'mrow' then
     return newStackbox({
-      direction='H',
-      children=convertChildren(content)
-    })
+      direction='H', children=convertChildren(content) })
   elseif content.tag == 'mi' then
     return newText({ text=content[1] })
   elseif content.tag == 'msub' then
     return newSubscript({
-      kind="subscript",
-      children=convertChildren(content)
-    })
+      kind="subscript", children=convertChildren(content) })
+    elseif content.tag == 'msup' then
+      return newSubscript({
+        kind="superscript", children=convertChildren(content) })
+    
   else
     return nil
   end
