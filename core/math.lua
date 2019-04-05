@@ -79,7 +79,11 @@ local function getMathConstants(options)
   if not face then
     SU.error("Could not find requested font "..options.." or any suitable substitutes")
   end
-  return hb.get_math_constants(face.data, face.index, font.size)
+  local constants = hb.get_math_constants(face.data, face.index, font.size)
+  if constants == nil then
+    SU.error("You must use a math font for math rendering.")
+  end
+  return constants
 end
 
 -- Style transition functions for superscript and subscript
