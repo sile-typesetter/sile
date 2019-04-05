@@ -348,7 +348,7 @@ int get_math_constants(lua_State *L) {
     { HB_OT_MATH_CONSTANT_SUPERSCRIPT_SHIFT_UP_CRAMPED, "SuperscriptShiftUpCramped" },
     { HB_OT_MATH_CONSTANT_SUPERSCRIPT_BOTTOM_MIN, "SuperscriptBottomMin" },
     { HB_OT_MATH_CONSTANT_SUPERSCRIPT_BASELINE_DROP_MAX, "SuperscriptBaselineDropMax" },
-    { HB_OT_MATH_CONSTANT_SUB_SUPERSCRIPT_GAP_MIN, "ScriptSubSuperscriptGapMin" },
+    { HB_OT_MATH_CONSTANT_SUB_SUPERSCRIPT_GAP_MIN, "SubSuperscriptGapMin" },
     { HB_OT_MATH_CONSTANT_SUPERSCRIPT_BOTTOM_MAX_WITH_SUBSCRIPT, "SuperscriptBottomMaxWithSubscript" },
     { HB_OT_MATH_CONSTANT_SPACE_AFTER_SCRIPT, "SpaceAfterScript" },
     { HB_OT_MATH_CONSTANT_UPPER_LIMIT_GAP_MIN, "UpperLimitGapMin" },

@@ -49,6 +49,14 @@ local scriptType = {
 --   scriptType.bold =
 -- }
 
+local function isCrampedMode(mode)
+  return mode % 2 == 1
+end
+
+local function isItalicScript(script)
+  return script == 3 or script == 4 or script == 12
+end
+
 local mathScriptConversionTable = {
   italicLatinUpper = function(codepoint) return codepoint + 0x1D434 - 0x41 end,
   italicLatinLower = function(codepoint) return codepoint == 0x68 and 0x210E or codepoint + 0x1D44E - 0x61 end
@@ -143,7 +151,7 @@ local _mbox = _box {
   styleDescendants = function(self)
     self:styleChildren()
     for i, n in ipairs(self.children) do
-      n:styleDescendants()
+      if n then n:styleDescendants() end
     end
   end,
 
@@ -153,7 +161,7 @@ local _mbox = _box {
   -- and (relX, relY) which the relative position to its parent
   shapeTree = function(self)
     for i, n in ipairs(self.children) do
-      n:shapeTree()
+      if n then n:shapeTree() end
     end
     self:setChildrenRelXY()
     self:shape()
@@ -163,9 +171,13 @@ local _mbox = _box {
   outputTree = function(self, x, y)
     self:output(x, y)
     for i, n in ipairs(self.children) do
-      n:outputTree(x + n.relX, y + n.relY)
+      if n then n:outputTree(x + n.relX, y + n.relY) end
     end
   end
+}
+
+local _nil = _mbox {
+  _type = 'Nil'
 }
 
 -- _stackbox stacks its content one, either horizontally or vertically
@@ -260,9 +272,9 @@ local _subscript = _mbox {
   _type = "Subscript",
   kind = "sub",
   init = function(self)
-    if kind == "sup" then
+    if self.kind == "sup" then
       self.children[3] = self.children[2]
-      self.children[2] = nil
+      self.children[2] = false
     end
   end,
   styleChildren = function(self)
@@ -271,15 +283,37 @@ local _subscript = _mbox {
     if self.children[3] then self.children[3].mode = getSuperscriptMode(self.mode) end
   end,
   setChildrenRelXY = function(self)
+    print(self.children)
+    local constants = getMathConstants(self.options)
     self.children[1].relX = 0
     self.children[1].relY = 0
     if self.children[2] then
       self.children[2].relX = self.children[1].width
-      self.children[2].relY = 1
+      self.children[2].relY = table.maxn({
+        constants.SubscriptShiftDown,
+        self.children[1].depth + constants.SubscriptBaselineDropMin,
+        self.children[2].height - constants.SubscriptTopMax
+      })
     end
     if self.children[3] then
       self.children[3].relX = self.children[1].width
-      self.children[3].relY = -3.75
+      self.children[3].relY = -table.maxn({
+        isCrampedMode(self.children[3].mode) and constants.SuperscriptShiftUpCramped or constants.SuperscriptShiftUp, -- or cramped
+        self.children[1].height - constants.SuperscriptBaselineDropMax,
+        self.children[3].depth + constants.SuperscriptBottomMin
+      })
+    end
+    if self.children[2] and self.children[3] then
+      local gap = self.children[2].relY - self.children[2].height - self.children[3].relY - self.children[3].depth
+      if gap < constants.SubSuperscriptGapMin then
+        local supShift, subShift = constants.SubSuperscriptGapMin - gap, 0
+        if supShift > constants.SuperscriptBottomMaxWithSubscript then
+          subShift = supShift - constants.SuperscriptBottomMaxWithSubscript
+          supShift = constants.SuperscriptBottomMaxWithSubscript
+        end
+        self.children[3].relY = self.children[3].relY - supShift
+        self.children[2].relY = self.children[2].relY + subShift
+      end
     end
   end,
   shape = function(self)
@@ -311,18 +345,18 @@ local _terminal = _mbox {
 local _text = _terminal {
   _type = "Text",
   text = "",
-  options = { style="Italic" },
+  script = scriptType.upright,
   __tostring = function(self) return "Text("..(self.originalText or self.text)..")" end,
   init = function(self)
     local converted = ""
     for uchr in SU.utf8codes(self.text) do
       local dst_char = SU.utf8char(uchr)
       if uchr >= 0x41 and uchr <= 0x5A then -- Latin capital letter
-        if self.options.style == "Italic" then
+        if self.script == scriptType.italic then
           dst_char = SU.utf8char(mathScriptConversionTable.italicLatinUpper(uchr))
         end
       elseif uchr >= 0x61 and uchr <= 0x7A then -- Latin non-capital letter
-        if self.options.style == "Italic" then
+        if self.script == scriptType.italic then
           dst_char = SU.utf8char(mathScriptConversionTable.italicLatinLower(uchr))
         end
       end
@@ -407,7 +441,11 @@ local function ConvertMathML(content)
     return newStackbox({
       direction='H', children=convertChildren(content) })
   elseif content.tag == 'mi' then
-    return newText({ text=content[1] })
+    return newText({ script=scriptType.italic, text=content[1] })
+  elseif content.tag == 'mo' then
+    return newText({ script=scriptType.upright, text=content[1] })
+  elseif content.tag == 'mn' then
+    return newText({ script=scriptType.upright, text=content[1] })
   elseif content.tag == 'msub' then
     return newSubscript({
       kind="sub", children=convertChildren(content) })
