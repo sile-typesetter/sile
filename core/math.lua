@@ -1,7 +1,7 @@
 local nodefactory = require("core/nodefactory")
 local hb = require("justenoughharfbuzz")
 
-local mathStyle = {
+local mathMode = {
   display = 0,
   displayCramped = 1,
   text = 2,
@@ -28,6 +28,27 @@ local atomType = {
   vcenter = 12
 }
 
+local scriptType = {
+  upright = 1,
+  bold = 2, -- also have Greek and digits
+  italic = 3, -- also have Greek
+  boldItalic = 4, -- also have Greek
+  script = 5,
+  boldScript = 6,
+  fraktur = 7,
+  boldFraktur = 8,
+  doubleStruck = 9, -- also have digits
+  sansSerif = 10, -- also have digits
+  sansSerifBold = 11, -- also have Greek and digits
+  sansSerifItalic = 12,
+  sansSerifBoldItalic = 13, -- also have Greek
+  monospace = 14, -- also have digits
+}
+
+-- local scriptConversionTable {
+--   scriptType.bold =
+-- }
+
 local mathScriptConversionTable = {
   italicLatinUpper = function(codepoint) return codepoint + 0x1D434 - 0x41 end,
   italicLatinLower = function(codepoint) return codepoint == 0x68 and 0x210E or codepoint + 0x1D44E - 0x61 end
@@ -44,7 +65,7 @@ local function getFont(options)
   return font
 end
 
-local function getMathConstant(options)
+local function getMathConstants(options)
   local font = getFont(options)
   local face = SILE.font.cache(font, SILE.shaper.getFace)
   if not face then
@@ -54,31 +75,31 @@ local function getMathConstant(options)
 end
 
 -- Style transition functions for superscript and subscript
-local function getSuperscriptStyle(style)
-  if style == mathStyle.display or style == mathStyle.displayCramped then return mathStyle.script                 -- D, T -> S
-  elseif style == mathStyle.displayCramped or style == mathStyle.textCramped then return mathStyle.scriptCramped  -- D', T' -> S'
-  elseif style == mathStyle.script or style == mathStyle.scriptScript then return mathStyle.scriptScript          -- S, SS -> SS
-  else return mathStyle.scriptScriptCramped end                                                                   -- S', SS' -> SS'
+local function getSuperscriptMode(mode)
+  if mode == mathMode.display or mode == mathMode.displayCramped then return mathMode.script                 -- D, T -> S
+  elseif mode == mathMode.displayCramped or mode == mathMode.textCramped then return mathMode.scriptCramped  -- D', T' -> S'
+  elseif mode == mathMode.script or mode == mathMode.scriptScript then return mathMode.scriptScript          -- S, SS -> SS
+  else return mathMode.scriptScriptCramped end                                                                   -- S', SS' -> SS'
 end
-local function getSubscriptStyle(style)
-  if style == mathStyle.display or style == mathStyle.displayCramped
-      or style == mathStyle.displayCramped or style == mathStyle.textCramped then return mathStyle.scriptCramped  -- D, T, D', T' -> S'
-  else return mathStyle.scriptScriptCramped end                                                                   -- S, SS, S', SS' -> SS'
+local function getSubscriptMode(mode)
+  if mode == mathMode.display or mode == mathMode.displayCramped
+      or mode == mathMode.displayCramped or mode == mathMode.textCramped then return mathMode.scriptCramped  -- D, T, D', T' -> S'
+  else return mathMode.scriptScriptCramped end                                                                   -- S, SS, S', SS' -> SS'
 end
 
 -- Style transition functions for fraction (numerator and denominator)
-local function getNumeratorStyle(style)
-  if style == mathStyle.display then return mathStyle.text                                                -- D -> T
-  elseif style == mathStyle.displayCramped then return mathStyle.textCramped                              -- D' -> T'
-  elseif style == mathStyle.text then return mathStyle.script                                             -- T -> S
-  elseif style == mathStyle.textCramped then return mathStyle.scriptCramped                               -- T' -> S'
-  elseif style == mathStyle.script or style == mathStyle.scriptScript then return mathStyle.scriptScript  -- S, SS -> SS
-  else return mathStyle.scriptScriptCramped end                                                           -- S', SS' -> SS'
+local function getNumeratorMode(mode)
+  if mode == mathMode.display then return mathMode.text                                                -- D -> T
+  elseif mode == mathMode.displayCramped then return mathMode.textCramped                              -- D' -> T'
+  elseif mode == mathMode.text then return mathMode.script                                             -- T -> S
+  elseif mode == mathMode.textCramped then return mathMode.scriptCramped                               -- T' -> S'
+  elseif mode == mathMode.script or mode == mathMode.scriptScript then return mathMode.scriptScript  -- S, SS -> SS
+  else return mathMode.scriptScriptCramped end                                                           -- S', SS' -> SS'
 end
-local function getDenominatorStyle(style)
-  if style == mathStyle.display or style == mathStyle.displayCramped then return mathStyle.text           -- D, D' -> T'
-  elseif style == mathStyle.text or style == mathStyle.textCramped then return mathStyle.script           -- T, T' -> S'
-  else return mathStyle.scriptScriptCramped end                                                           -- S, SS, S', SS' -> SS'
+local function getDenominatorMode(mode)
+  if mode == mathMode.display or mode == mathMode.displayCramped then return mathMode.text           -- D, D' -> T'
+  elseif mode == mathMode.text or mode == mathMode.textCramped then return mathMode.script           -- T, T' -> S'
+  else return mathMode.scriptScriptCramped end                                                           -- S, SS, S', SS' -> SS'
 end 
 
 function _box:isMathBox () return self.type == "math" end
@@ -88,10 +109,9 @@ function _box:isMathBox () return self.type == "math" end
 -- math box, box with a horizontal shift value and could contain zero or more _mbox'es (or its child classes)
 -- the entire math environment itself is a top-level mbox.
 -- Typesetting of mbox evolves four steps:
---   1. Determine the style for each mbox according to their parent.
+--   1. Determine the mode for each mbox according to their parent.
 --   2. Shape the mbox hierarchy from leaf to top. Get the shape and relative position.
---   3. Recursively determine the position of the mbox's to the root mbox (i.e., add up the relative positions along the tree path)
---   4. Convert mbox into _nnode's to put in SILE's typesetting framwork
+--   3. Convert mbox into _nnode's to put in SILE's typesetting framwork
 local _mbox = _box {
   _type = "Mbox",
   type = "math",
@@ -119,7 +139,7 @@ local _mbox = _box {
     SU.error("This is a virtual function that need to be overriden by its child classes")
   end,
 
-  -- Determine the style of its descendants
+  -- Determine the mode of its descendants
   styleDescendants = function(self)
     self:styleChildren()
     for i, n in ipairs(self.children) do
@@ -163,7 +183,7 @@ local _stackbox = _mbox {
 
   styleChildren = function(self)
     for i, n in ipairs(self.children) do
-      n.style = self.style
+      n.mode = self.mode
     end
   end,
   setChildrenRelXY = function(self)
@@ -246,9 +266,9 @@ local _subscript = _mbox {
     end
   end,
   styleChildren = function(self)
-    self.children[1].style = self.style
-    if self.children[2] then self.children[2].style = getSubscriptStyle(self.style) end
-    if self.children[3] then self.children[3].style = getSuperscriptStyle(self.style) end
+    self.children[1].mode = self.mode
+    if self.children[2] then self.children[2].mode = getSubscriptMode(self.mode) end
+    if self.children[3] then self.children[3].mode = getSuperscriptMode(self.mode) end
   end,
   setChildrenRelXY = function(self)
     self.children[1].relX = 0
@@ -313,14 +333,14 @@ local _text = _terminal {
   end,
   shape = function(self)
     local font = getFont(self.options)
-    if self.style == mathStyle.script or self.style == mathStyle.scriptCramped then
+    if self.mode == mathMode.script or self.mode == mathMode.scriptCramped then
       local fontSize = math.floor(font.size * 0.7)
       font.size = fontSize
       self.options.size = fontSize
     end
     local glyphs = SILE.shaper:shapeToken(self.text, font)
-    -- self.value.items = glyphs
-    -- self.value.complex = true
+    SILE.shaper:preAddNodes(glyphs, self.value)
+    self.value.items = glyphs
     self.value.glyphString = {}
     if glyphs and #glyphs > 0 then
       for i = 1, #glyphs do
@@ -420,15 +440,11 @@ SILE.registerCommand("math", function (options, content)
     mbox = mbox.children[1]
   end
 
-  mbox.style = mathStyle.display -- or text
+  mbox.mode = mathMode.display -- or text
   mbox:styleDescendants()
 
   mbox:shapeTree()
 
-  print(mbox.width..' '..mbox.height..' '..mbox.depth)
-
   SILE.typesetter:pushMath(mbox)
-
-  -- print(getMathConstant({}))
 
 end)
