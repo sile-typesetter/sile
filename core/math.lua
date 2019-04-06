@@ -53,10 +53,6 @@ local function isCrampedMode(mode)
   return mode % 2 == 1
 end
 
-local function isItalicScript(script)
-  return script == 3 or script == 4 or script == 12
-end
-
 local mathScriptConversionTable = {
   italicLatinUpper = function(codepoint) return codepoint + 0x1D434 - 0x41 end,
   italicLatinLower = function(codepoint) return codepoint == 0x68 and 0x210E or codepoint + 0x1D44E - 0x61 end
@@ -73,7 +69,7 @@ local function getFont(options)
   return font
 end
 
-local function getMathConstants(options)
+local function getMathMetrics(options)
   local font = getFont(options)
   local face = SILE.font.cache(font, SILE.shaper.getFace)
   if not face then
@@ -143,10 +139,6 @@ local _mbox = _box {
     SU.error("This is a virtual function that need to be overriden by its child classes")
   end,
 
-  shape = function(self)
-    SU.error("This is a virtual function that need to be overriden by its child classes")
-  end,
-
   output = function(self, x, y)
     SU.error("This is a virtual function that need to be overriden by its child classes")
   end,
@@ -169,6 +161,21 @@ local _mbox = _box {
     end
     self:setChildrenRelXY()
     self:shape()
+  end,
+
+  shape = function(self)
+    local minX, maxX, minY, maxY = 0, 0, 0, 0
+    for i, n in ipairs(self.children) do
+      if n then
+        minX = math.min(minX, n.relX)
+        maxX = math.max(maxX, n.relX + n.width)
+        minY = math.min(minY, n.relY - n.height)
+        maxY = math.max(maxY, n.relY + n.depth)
+      end
+    end
+    self.width = maxX - minX
+    self.height = -minY
+    self.depth = maxY
   end,
 
   -- Output the node and all its descendants
@@ -287,8 +294,7 @@ local _subscript = _mbox {
     if self.children[3] then self.children[3].mode = getSuperscriptMode(self.mode) end
   end,
   setChildrenRelXY = function(self)
-    print(self.children)
-    local constants = getMathConstants(self.options)
+    local constants = getMathMetrics(self.options)
     self.children[1].relX = 0
     self.children[1].relY = 0
     if self.children[2] then
@@ -319,21 +325,6 @@ local _subscript = _mbox {
         self.children[2].relY = self.children[2].relY + subShift
       end
     end
-  end,
-  shape = function(self)
-    local height, depth = self.children[1].height, self.children[1].depth
-    local width1, width2 = self.children[1].width, self.children[1].width
-    if self.children[2] then
-      depth = self.children[2].depth + 1
-      width1 = width1 + self.children[2].width
-    end
-    if self.children[3] then
-      height = self.children[3].height + 3.75
-      width2 = width2 + self.children[3].width
-    end
-    self.height = height
-    self.depth = depth
-    self.width = math.max(width1, width2)
   end,
   output = function(self, x, y) end
 }
