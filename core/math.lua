@@ -1,5 +1,6 @@
 local nodefactory = require("core/nodefactory")
 local hb = require("justenoughharfbuzz")
+local ot = require("core/opentype-parser")
 
 local mathMode = {
   display = 0,
@@ -60,26 +61,27 @@ local mathScriptConversionTable = {
 
 SILE.settings.declare({name = "math.font.family", type = "string", default = "XITS Math"})
 
-local function getFont(options)
-  local font = SILE.font.loadDefaults({
-    family=SILE.settings.get("math.font.family")
-  })
-  if options.family then font.family = options.family end
-  if options.size then font.size = options.size end
-  return font
-end
+local mathCache = {}
 
 local function getMathMetrics(options)
-  local font = getFont(options)
-  local face = SILE.font.cache(font, SILE.shaper.getFace)
+  local face = SILE.font.cache(options, SILE.shaper.getFace)
   if not face then
     SU.error("Could not find requested font "..options.." or any suitable substitutes")
   end
-  local constants = hb.get_math_constants(face.data, face.index, font.size)
-  if constants == nil then
+  local mathTable = ot.parseMath(hb.get_table(face.data, face.index, "MATH"))
+  local upem = ot.parseHead(hb.get_table(face.data, face.index, "head")).unitsPerEm
+  if mathTable == nil then
     SU.error("You must use a math font for math rendering.")
   end
-  return constants
+  local constants = {}
+  for k,v in pairs(mathTable.mathConstants) do
+    if type(v) == "table" then v = v.value end
+    if k:sub(-9) == "ScaleDown" then constants[k] = v / 100
+    else constants[k] = v * options.size / upem end
+  end
+  return {
+    constants = constants
+  }
 end
 
 -- Style transition functions for superscript and subscript
@@ -129,7 +131,12 @@ local _mbox = _box {
   relY = 0, -- y position relative to its parent box
   value = {},
   __tostring = function (s) return s.type end,
-  init = function(self) return self end,
+  init = function(self)
+    local options = {
+      family=SILE.settings.get("math.font.family")
+    }
+    self.options = SILE.font.loadDefaults(options)
+  end,
 
   styleChildren = function(self)
     SU.error("This is a virtual function that need to be overriden by its child classes")
@@ -283,6 +290,7 @@ local _subscript = _mbox {
   _type = "Subscript",
   kind = "sub",
   init = function(self)
+    _mbox.init(self)
     if self.kind == "sup" then
       self.children[3] = self.children[2]
       self.children[2] = false
@@ -294,32 +302,33 @@ local _subscript = _mbox {
     if self.children[3] then self.children[3].mode = getSuperscriptMode(self.mode) end
   end,
   setChildrenRelXY = function(self)
-    local constants = getMathMetrics(self.options)
+    local constants = getMathMetrics(self.options).constants
+    print(constants)
     self.children[1].relX = 0
     self.children[1].relY = 0
     if self.children[2] then
       self.children[2].relX = self.children[1].width
       self.children[2].relY = table.maxn({
-        constants.SubscriptShiftDown,
-        self.children[1].depth + constants.SubscriptBaselineDropMin,
-        self.children[2].height - constants.SubscriptTopMax
+        constants.subscriptShiftDown,
+        self.children[1].depth + constants.subscriptBaselineDropMin,
+        self.children[2].height - constants.subscriptTopMax
       })
     end
     if self.children[3] then
       self.children[3].relX = self.children[1].width
       self.children[3].relY = -table.maxn({
-        isCrampedMode(self.children[3].mode) and constants.SuperscriptShiftUpCramped or constants.SuperscriptShiftUp, -- or cramped
-        self.children[1].height - constants.SuperscriptBaselineDropMax,
-        self.children[3].depth + constants.SuperscriptBottomMin
+        isCrampedMode(self.children[3].mode) and constants.superscriptShiftUpCramped or constants.superscriptShiftUp, -- or cramped
+        self.children[1].height - constants.superscriptBaselineDropMax,
+        self.children[3].depth + constants.superscriptBottomMin
       })
     end
     if self.children[2] and self.children[3] then
       local gap = self.children[2].relY - self.children[2].height - self.children[3].relY - self.children[3].depth
-      if gap < constants.SubSuperscriptGapMin then
-        local supShift, subShift = constants.SubSuperscriptGapMin - gap, 0
-        if supShift > constants.SuperscriptBottomMaxWithSubscript then
-          subShift = supShift - constants.SuperscriptBottomMaxWithSubscript
-          supShift = constants.SuperscriptBottomMaxWithSubscript
+      if gap < constants.subSuperscriptGapMin then
+        local supShift, subShift = constants.subSuperscriptGapMin - gap, 0
+        if supShift > constants.superscriptBottomMaxWithSubscript then
+          subShift = supShift - constants.superscriptBottomMaxWithSubscript
+          supShift = constants.superscriptBottomMaxWithSubscript
         end
         self.children[3].relY = self.children[3].relY - supShift
         self.children[2].relY = self.children[2].relY + subShift
@@ -343,6 +352,7 @@ local _text = _terminal {
   script = scriptType.upright,
   __tostring = function(self) return "Text("..(self.originalText or self.text)..")" end,
   init = function(self)
+    _terminal.init(self)
     local converted = ""
     for uchr in SU.utf8codes(self.text) do
       local dst_char = SU.utf8char(uchr)
@@ -358,16 +368,16 @@ local _text = _terminal {
       converted = converted..dst_char
     end
     self.originalText = self.text
-    self.text = converted 
+    self.text = converted
   end,
   shape = function(self)
-    local font = getFont(self.options)
+    local face = SILE.font.cache(self.options, SILE.shaper.getFace)
     if self.mode == mathMode.script or self.mode == mathMode.scriptCramped then
-      local fontSize = math.floor(font.size * 0.7)
-      font.size = fontSize
+      local fontSize = math.floor(self.options.size * 0.7)
+      face.size = fontSize
       self.options.size = fontSize
     end
-    local glyphs = SILE.shaper:shapeToken(self.text, font)
+    local glyphs = SILE.shaper:shapeToken(self.text, self.options)
     SILE.shaper:preAddNodes(glyphs, self.value)
     self.value.items = glyphs
     self.value.glyphString = {}
@@ -395,7 +405,7 @@ local _text = _terminal {
     if not self.value.glyphString then return end
     print('Output '..self.value.glyphString.." to "..x..", "..y)
     SILE.outputter.moveTo(x, y)
-    SILE.outputter.setFont(getFont(self.options))
+    SILE.outputter.setFont(self.options)
     SILE.outputter.outputHbox(self.value, self.width)
   end
 }

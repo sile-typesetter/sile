@@ -186,6 +186,12 @@ local function parseSvg(s)
   return offsets
 end
 
+local function parseHead(s)
+  if s:len() <= 0 then return end
+  local fd = vstruct.cursor(s)
+  return vstruct.read(">majorVersion:u2 minorVersion:u2 fontRevision:u4 checkSumAdjustment:u4 magicNumber:u4 flags:u2 unitsPerEm:u2 created:u8 modified:u8 xMin:i2 yMin:i2 xMax:i2 yMax:i2 macStyle:u2 lowestRecPPEM:u2 fontDirectionHint:i2 indexToLocFormat:i2 glyphDataFormat:i2", fd)
+end
+
 local function parseMath(s)
   if s:len() <= 0 then return end
   local fd = vstruct.cursor(s)
@@ -399,6 +405,7 @@ local parseFont = function(face)
   if not face.font then
     local font = {}
 
+    font.head = parseHead(hb.get_table(face.data, face.index, "head"))
     font.names = parseName(hb.get_table(face.data, face.index, "name"))
     font.maxp = parseMaxp(hb.get_table(face.data, face.index, "maxp"))
     font.colr = parseColr(hb.get_table(face.data, face.index, "COLR"))
@@ -436,4 +443,4 @@ local getSVG = function(face, gid)
   return svg
 end
 
-return { parseFont = parseFont, getSVG = getSVG }
+return { parseHead = parseHead, parseMath = parseMath, parseFont = parseFont, getSVG = getSVG }
