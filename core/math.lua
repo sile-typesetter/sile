@@ -214,6 +214,7 @@ local _stackbox = _mbox {
   styleChildren = function(self)
     for i, n in ipairs(self.children) do
       n.mode = self.mode
+      n.options = std.tree.clone(self.options)
     end
   end,
   setChildrenRelXY = function(self)
@@ -300,10 +301,24 @@ local _subscript = _mbox {
     self.children[1].mode = self.mode
     if self.children[2] then self.children[2].mode = getSubscriptMode(self.mode) end
     if self.children[3] then self.children[3].mode = getSuperscriptMode(self.mode) end
+    self.children[1].options = std.tree.clone(self.options)
+
+    local constants = getMathMetrics(self.options).constants
+    for i = 2,3 do
+      if self.children[i] then
+        self.children[i].options = std.tree.clone(self.options)
+        if self.children[i].mode == mathMode.script or self.children[i].mode == math.scriptCramped then
+          local fontSize = SILE.font.loadDefaults(self.options).size * constants.scriptPercentScaleDown
+          self.children[i].options.size = fontSize
+        elseif self.children[i].mode == mathMode.scriptScript or self.children[i].mode == math.scriptScriptCramped then
+          local fontSize = SILE.font.loadDefaults(self.options).size * constants.scriptScriptPercentScaleDown
+          self.children[i].options.size = fontSize
+        end
+      end
+    end
   end,
   setChildrenRelXY = function(self)
     local constants = getMathMetrics(self.options).constants
-    print(constants)
     self.children[1].relX = 0
     self.children[1].relY = 0
     if self.children[2] then
