@@ -323,117 +323,6 @@ int get_table (lua_State *L) {
   return 1;
 }
 
-#ifdef HB_OT_TAG_MATH
-struct MathConstantNameEntry {
-  hb_ot_math_constant_t id;
-  char *name;
-};
-
-int get_math_constants(lua_State *L) {
-  static struct MathConstantNameEntry constantNames_percent[] = {
-    { HB_OT_MATH_CONSTANT_SCRIPT_PERCENT_SCALE_DOWN, "ScriptPercentScaleDown" },
-    { HB_OT_MATH_CONSTANT_SCRIPT_SCRIPT_PERCENT_SCALE_DOWN, "ScriptScriptPercentScaleDown" },
-  };
-  static struct MathConstantNameEntry constantNames_number[] = {
-    { HB_OT_MATH_CONSTANT_DELIMITED_SUB_FORMULA_MIN_HEIGHT, "DelimitedScriptSubFormulaMinHeight" },
-    { HB_OT_MATH_CONSTANT_DISPLAY_OPERATOR_MIN_HEIGHT, "DisplayOperatorMinHeight" },
-    { HB_OT_MATH_CONSTANT_MATH_LEADING, "MathLeading" },
-    { HB_OT_MATH_CONSTANT_AXIS_HEIGHT, "AxisHeight" },
-    { HB_OT_MATH_CONSTANT_ACCENT_BASE_HEIGHT, "AccentBaseHeight" },
-    { HB_OT_MATH_CONSTANT_FLATTENED_ACCENT_BASE_HEIGHT, "FlattenedAccentBaseHeight" },
-    { HB_OT_MATH_CONSTANT_SUBSCRIPT_SHIFT_DOWN, "SubscriptShiftDown" },
-    { HB_OT_MATH_CONSTANT_SUBSCRIPT_TOP_MAX, "SubscriptTopMax" },
-    { HB_OT_MATH_CONSTANT_SUBSCRIPT_BASELINE_DROP_MIN, "SubscriptBaselineDropMin" },
-    { HB_OT_MATH_CONSTANT_SUPERSCRIPT_SHIFT_UP, "SuperscriptShiftUp" },
-    { HB_OT_MATH_CONSTANT_SUPERSCRIPT_SHIFT_UP_CRAMPED, "SuperscriptShiftUpCramped" },
-    { HB_OT_MATH_CONSTANT_SUPERSCRIPT_BOTTOM_MIN, "SuperscriptBottomMin" },
-    { HB_OT_MATH_CONSTANT_SUPERSCRIPT_BASELINE_DROP_MAX, "SuperscriptBaselineDropMax" },
-    { HB_OT_MATH_CONSTANT_SUB_SUPERSCRIPT_GAP_MIN, "SubSuperscriptGapMin" },
-    { HB_OT_MATH_CONSTANT_SUPERSCRIPT_BOTTOM_MAX_WITH_SUBSCRIPT, "SuperscriptBottomMaxWithSubscript" },
-    { HB_OT_MATH_CONSTANT_SPACE_AFTER_SCRIPT, "SpaceAfterScript" },
-    { HB_OT_MATH_CONSTANT_UPPER_LIMIT_GAP_MIN, "UpperLimitGapMin" },
-    { HB_OT_MATH_CONSTANT_UPPER_LIMIT_BASELINE_RISE_MIN, "UpperLimitBaselineRiseMin" },
-    { HB_OT_MATH_CONSTANT_LOWER_LIMIT_GAP_MIN, "LowerLimitGapMin" },
-    { HB_OT_MATH_CONSTANT_LOWER_LIMIT_BASELINE_DROP_MIN, "LowerLimitBaselineDropMin" },
-    { HB_OT_MATH_CONSTANT_STACK_TOP_SHIFT_UP, "StackTopShiftUp" },
-    { HB_OT_MATH_CONSTANT_STACK_TOP_DISPLAY_STYLE_SHIFT_UP, "StackTopDisplayStyleShiftUp" },
-    { HB_OT_MATH_CONSTANT_STACK_BOTTOM_SHIFT_DOWN, "StackBottomShiftDown" },
-    { HB_OT_MATH_CONSTANT_STACK_BOTTOM_DISPLAY_STYLE_SHIFT_DOWN, "StackBottomDisplayStyleShiftDown" },
-    { HB_OT_MATH_CONSTANT_STACK_GAP_MIN, "StackGapMin" },
-    { HB_OT_MATH_CONSTANT_STACK_DISPLAY_STYLE_GAP_MIN, "StackDisplayStyleGapMin" },
-    { HB_OT_MATH_CONSTANT_STRETCH_STACK_TOP_SHIFT_UP, "StretchStackTopShiftUp" },
-    { HB_OT_MATH_CONSTANT_STRETCH_STACK_BOTTOM_SHIFT_DOWN, "StretchStackBottomShiftDown" },
-    { HB_OT_MATH_CONSTANT_STRETCH_STACK_GAP_ABOVE_MIN, "StretchStackGapAboveMin" },
-    { HB_OT_MATH_CONSTANT_STRETCH_STACK_GAP_BELOW_MIN, "StretchStackGapBelowMin" },
-    { HB_OT_MATH_CONSTANT_FRACTION_NUMERATOR_SHIFT_UP, "FractionNumberatorShiftUp" },
-    { HB_OT_MATH_CONSTANT_FRACTION_NUMERATOR_DISPLAY_STYLE_SHIFT_UP, "FractionNumberatorDisplayStyleShiftUp" },
-    { HB_OT_MATH_CONSTANT_FRACTION_DENOMINATOR_SHIFT_DOWN, "FractionDenominatorShiftDown" },
-    { HB_OT_MATH_CONSTANT_FRACTION_DENOMINATOR_DISPLAY_STYLE_SHIFT_DOWN, "FractionDenominatorDisplayStyleShiftDown" },
-    { HB_OT_MATH_CONSTANT_FRACTION_NUMERATOR_GAP_MIN, "FractionNumberatorGapMin" },
-    { HB_OT_MATH_CONSTANT_FRACTION_NUM_DISPLAY_STYLE_GAP_MIN, "FractionNumDisplayStyleGapMin" },
-    { HB_OT_MATH_CONSTANT_FRACTION_RULE_THICKNESS, "FractionRuleThickness" },
-    { HB_OT_MATH_CONSTANT_FRACTION_DENOMINATOR_GAP_MIN, "FractionDenominatorGapMin" },
-    { HB_OT_MATH_CONSTANT_FRACTION_DENOM_DISPLAY_STYLE_GAP_MIN, "FractionDenomDisplayStyleGapMin" },
-    { HB_OT_MATH_CONSTANT_SKEWED_FRACTION_HORIZONTAL_GAP, "SkewedFractionHorizontalGap" },
-    { HB_OT_MATH_CONSTANT_SKEWED_FRACTION_VERTICAL_GAP, "SkewedFractionVerticalGap" },
-    { HB_OT_MATH_CONSTANT_OVERBAR_VERTICAL_GAP, "OverbarVerticalGap" },
-    { HB_OT_MATH_CONSTANT_OVERBAR_RULE_THICKNESS, "OverbarRuleThickness" },
-    { HB_OT_MATH_CONSTANT_OVERBAR_EXTRA_ASCENDER, "OverbarExtraAscender" },
-    { HB_OT_MATH_CONSTANT_UNDERBAR_VERTICAL_GAP, "UnderbarVerticalGap" },
-    { HB_OT_MATH_CONSTANT_UNDERBAR_RULE_THICKNESS, "UnderbarRuleThickness" },
-    { HB_OT_MATH_CONSTANT_UNDERBAR_EXTRA_DESCENDER, "UnderbarExtraDescender" },
-    { HB_OT_MATH_CONSTANT_RADICAL_VERTICAL_GAP, "RadicalVerticalGap" },
-    { HB_OT_MATH_CONSTANT_RADICAL_DISPLAY_STYLE_VERTICAL_GAP, "RadicalDisplayStyleVerticalGap" },
-    { HB_OT_MATH_CONSTANT_RADICAL_RULE_THICKNESS, "RadicalRuleThickness" },
-    { HB_OT_MATH_CONSTANT_RADICAL_EXTRA_ASCENDER, "RadicalExtraAscender" },
-    { HB_OT_MATH_CONSTANT_RADICAL_KERN_BEFORE_DEGREE, "RadicalKernBeforeDegree" },
-    { HB_OT_MATH_CONSTANT_RADICAL_KERN_AFTER_DEGREE, "RadicalKernAfterDegree" },
-    { HB_OT_MATH_CONSTANT_RADICAL_DEGREE_BOTTOM_RAISE_PERCENT, "RadicalDegreeBottomRaisePercent" },
-  };
-
-  size_t font_l;
-  const char * font_s = luaL_checklstring(L, 1, &font_l);
-  unsigned int font_index = luaL_checknumber(L, 2);
-  double point_size = luaL_checknumber(L, 3);
-
-  hb_blob_t * blob = hb_blob_create (font_s, font_l, HB_MEMORY_MODE_WRITABLE, (void*)font_s, NULL);
-  hb_face_t * face = hb_face_create (blob, font_index);
-  hb_font_t * font = hb_font_create (face);
-  unsigned int upem = hb_face_get_upem(face);
-
-  if (hb_ot_math_has_data(face)) {
-    lua_newtable(L);
-    for (int i = 0; i < sizeof(constantNames_percent) / sizeof(struct MathConstantNameEntry); ++i) {
-      hb_ot_math_constant_t constantId = constantNames_percent[i].id;
-      char *constantName = constantNames_percent[i].name;
-
-      hb_position_t value = hb_ot_math_get_constant(font, constantId);
-
-      lua_pushstring(L, constantName);
-      lua_pushnumber(L, value / 100.0);
-      lua_settable(L, -3);
-    }
-    for (int i = 0; i < sizeof(constantNames_number) / sizeof(struct MathConstantNameEntry); ++i) {
-      hb_ot_math_constant_t constantId = constantNames_number[i].id;
-      char *constantName = constantNames_number[i].name;
-
-      hb_position_t value = hb_ot_math_get_constant(font, constantId);
-
-      lua_pushstring(L, constantName);
-      lua_pushnumber(L, value * point_size / upem);
-      lua_settable(L, -3);
-    }
-  } else {
-    lua_pushnil(L);
-  }
-  
-  hb_font_destroy(font);
-  hb_face_destroy(face);
-  hb_blob_destroy(blob);
-  return 1;
-}
-#endif
-
 #if !defined LUA_VERSION_NUM
 /* Lua 5.0 */
 #define luaL_Reg luaL_reg
@@ -462,9 +351,6 @@ static const struct luaL_Reg lib_table [] = {
   {"version", get_harfbuzz_version},
   {"shapers", list_shapers},
   {"get_table", get_table},
-#ifdef HB_OT_TAG_MATH
-  {"get_math_constants", get_math_constants},
-#endif
   {NULL, NULL}
 };
 
