@@ -316,7 +316,8 @@ local function parseMath(s)
     local result = {}
     for i = 1, count do
       if type == "&MathValueRecord" then
-        result[coverageTable[i]] = fetchMathValueRecord(table[i], offset, fd)
+        fetchMathValueRecord(table[i], offset, fd)
+        result[coverageTable[i]] = table[i]
       elseif type == "&MathKernInfoRecord" then
         result[coverageTable[i]] = {
           topRightMathKern = table[i].topRightMathKernOffset ~= 0 and parseMathKern(offset + table[i].topRightMathKernOffset, fd) or nil,
@@ -385,7 +386,7 @@ local function parseMath(s)
                                      " mathTopAccentAttachmentOffset:u2"..
                                      " extendedShapeCoverageOffset:u2"..
                                      " mathKernInfoOffset:u2", fd)
-  local mathItalicsCorrectionInfo = parsePerGlyphTable(header.mathGlyphInfoOffset + mathGlyphInfo.mathItalicsCorrectionInfoOffset, "&MathValueRecord", fd)
+  local mathItalicsCorrection = parsePerGlyphTable(header.mathGlyphInfoOffset + mathGlyphInfo.mathItalicsCorrectionInfoOffset, "&MathValueRecord", fd)
   local mathTopAccentAttachment = parsePerGlyphTable(header.mathGlyphInfoOffset + mathGlyphInfo.mathTopAccentAttachmentOffset, "&MathValueRecord", fd)
   local extendedShapeCoverage = parseCoverage(header.mathGlyphInfoOffset + mathGlyphInfo.extendedShapeCoverageOffset, fd)
   local mathKernInfo = parsePerGlyphTable(header.mathGlyphInfoOffset + mathGlyphInfo.mathKernInfoOffset, "&MathKernInfoRecord", fd)
@@ -393,7 +394,7 @@ local function parseMath(s)
 
   return {
     mathConstants = mathConstants,
-    mathItalicsCorrectionInfo = mathItalicsCorrectionInfo,
+    mathItalicsCorrection = mathItalicsCorrection,
     mathTopAccentAttachment = mathTopAccentAttachment,
     extendedShapeCoverage = extendedShapeCoverage,
     mathKern = mathKern,
