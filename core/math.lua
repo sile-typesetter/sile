@@ -79,8 +79,13 @@ local function getMathMetrics(options)
     if k:sub(-9) == "ScaleDown" then constants[k] = v / 100
     else constants[k] = v * options.size / upem end
   end
+  local italicsCorrection = {}
+  for k, v in pairs(mathTable.mathItalicsCorrection) do
+    italicsCorrection[k] = v.value * options.size / upem
+  end
   return {
-    constants = constants
+    constants = constants,
+    italicsCorrection = italicsCorrection
   }
 end
 
@@ -318,7 +323,8 @@ local _subscript = _mbox {
     end
   end,
   setChildrenRelXY = function(self)
-    local constants = getMathMetrics(self.options).constants
+    local mathMetrics = getMathMetrics(self.options)
+    local constants = mathMetrics.constants
     self.children[1].relX = 0
     self.children[1].relY = 0
     if self.children[2] then
@@ -336,6 +342,16 @@ local _subscript = _mbox {
         self.children[1].height - constants.superscriptBaselineDropMax,
         self.children[3].depth + constants.superscriptBottomMin
       })
+      -- Italics correction
+      local italicsCorrection = mathMetrics.italicsCorrection
+      if self.children[1].type == "text" then
+        local glyphString = self.children[1].value.glyphString
+        local lastGid = glyphString[#glyphString]
+        if italicsCorrection[lastGid] then
+          SU.warn("Italics Correction needed! "..italicsCorrection[lastGid])
+          self.children[3].relX = self.children[3].relX + italicsCorrection[lastGid]
+        end
+      end
     end
     if self.children[2] and self.children[3] then
       local gap = self.children[2].relY - self.children[2].height - self.children[3].relY - self.children[3].depth
@@ -362,6 +378,7 @@ local _terminal = _mbox {
 
 -- text node
 local _text = _terminal {
+  type = "text",
   _type = "Text",
   text = "",
   script = scriptType.upright,
