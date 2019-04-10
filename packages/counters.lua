@@ -40,11 +40,22 @@ SILE.formatCounter = function(options)
     local res = SILE.languageSupport.languages[lang].counter(options)
     if res then return res end -- allow them to pass.
   end
+
   -- If we have ICU, try that
   if icu then
-    local ok, res = pcall(function() return icu.format_number(options.value, options.display) end)
+    local display = options.display
+
+    -- Translate numbering style names which are different in ICU
+    if display == "roman" then
+      display = "romanlow"
+    elseif display == "Roman" then
+      display = "roman"
+    end
+
+    local ok, res = pcall(function() return icu.format_number(options.value, display) end)
     if ok then return res end
   end
+
   if (options.display == "roman") then return romanize(options.value):lower() end
   if (options.display == "Roman") then return romanize(options.value) end
   if (options.display == "alpha") then return alpha(options.value) end
