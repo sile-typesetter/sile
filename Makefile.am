@@ -39,7 +39,7 @@ EXPECTS = $(wildcard tests/*.expected)
 update_expected: $(EXPECTS)
 
 tests/%.expected: tests/%.sil force | sile
-	./sile -e 'require("core/debug-output")' $< > $@
+	./sile -b debug $< -o $@
 
 .PHONY: force
 force: ;
