@@ -14,11 +14,9 @@ _box = std.object {
   __concat = function (x,y) return tostring(x)..tostring(y) end,
   init = function(self) return self end,
   lineContribution = function (self)
-    if SILE.typesetter.frame:writingDirection() == "TTB" then
-      return self.misfit and self.width.length or self.height
-    else
-      return self.misfit and self.height or self.width
-    end
+    -- Regardless of the orientations, "width" is always in the
+    -- writingDirection, and "height" is always in the "pageDirection"
+    return self.misfit and self.height or self.width
   end
 }
 
@@ -47,9 +45,9 @@ local _hbox = _box {
   scaledWidth = function (self, line)
     local scaledWidth = self:lineContribution()
     if type(scaledWidth) ~= "table" then return scaledWidth end
-    if line.ratio < 0 and self.width.shrink > 0 then
+    if line.ratio < 0 and type(self.width) == "table" and self.width.shrink > 0 then
       scaledWidth = scaledWidth + self.width.shrink * line.ratio
-    elseif line.ratio > 0 and self.width.stretch > 0 then
+    elseif line.ratio > 0 and type(self.width) == "table" and  self.width.stretch > 0 then
       scaledWidth = scaledWidth + self.width.stretch * line.ratio
     end
     return scaledWidth.length
