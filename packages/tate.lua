@@ -40,7 +40,7 @@ local outputLatinInTate = function (self, typesetter, line)
   local vorigin = -typesetter.frame.state.cursorY
   self:oldOutputYourself(typesetter,line)
   typesetter.frame.state.cursorY = -vorigin
-  typesetter.frame:advanceWritingDirection(self:lineContribution())
+  typesetter.frame:advanceWritingDirection(self:lineContribution().length)
   -- My baseline moved
   typesetter.frame:advanceWritingDirection(SILE.toPoints("0.5zw") )
   typesetter.frame:advancePageDirection(- SILE.toPoints("0.25zw"))

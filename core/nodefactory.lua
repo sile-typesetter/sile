@@ -318,7 +318,9 @@ local _vbox = _box {
     return "VB[" .. SU.concat(SU.map(function (n) return n:toText().."" end, self.nodes), "") .. "]"
   end,
   outputYourself = function(self, typesetter, line)
-    typesetter.frame:advancePageDirection(self.height)
+    local advanceamount = self.height
+    if type(advanceamount) == "table" then advanceamount = advanceamount.length end
+    typesetter.frame:advancePageDirection(advanceamount)
     local initial = true
     for i,node in pairs(self.nodes) do
       if initial and (node:isGlue() or node:isPenalty()) then
@@ -328,7 +330,7 @@ local _vbox = _box {
         node:outputYourself(typesetter, line)
       end
     end
-    typesetter.frame:advancePageDirection(self.depth)
+    if self.depth then typesetter.frame:advancePageDirection(self.depth) end
     typesetter.frame:newLine()
   end,
   unbox = function(self)
