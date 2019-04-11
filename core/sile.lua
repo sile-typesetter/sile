@@ -55,6 +55,9 @@ SILE.init = function ()
   elseif SILE.backend == "debug" then
     require("core/harfbuzz-shaper")
     require("core/debug-output")
+  elseif SILE.backend == "text" then
+    require("core/harfbuzz-shaper")
+    require("core/text-output")
   end
   if SILE.dolua then
     for _, func in pairs(SILE.dolua) do
