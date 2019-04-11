@@ -151,3 +151,7 @@ SILE.outputters.libtexpdf = {
 }
 
 SILE.outputter = SILE.outputters.libtexpdf
+
+if not SILE.outputFilename and SILE.masterFilename then
+	SILE.outputFilename = SILE.masterFilename..".pdf"
+end

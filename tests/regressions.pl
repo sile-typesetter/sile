@@ -34,7 +34,7 @@ for (@specifics ? @specifics : <tests/*.sil>) {
     if (!system("grep KNOWNBAD $_ >/dev/null")) {
       $knownbad = 1;
     }
-    exit $? >> 8 if system qq!./sile -e 'require("core/debug-output")' $_ > $out!;
+    exit $? >> 8 if system qq!./sile -b debug $_ -o $out!;
     if (system("diff -".($knownbad?"q":"")."U0 $expectation $out")) {
       if ($knownbad) { push @knownbad, $_; }
       else { push @failed, $_; }
