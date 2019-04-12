@@ -47,11 +47,11 @@ local scriptType = {
 }
 
 local operatorAtomTypes = {
-  ['+'] = atomType.binAtoms,
-  ['-'] = atomType.binAtoms,
-  ['<'] = atomType.relAtoms,
-  ['>'] = atomType.relAtoms,
-  ['='] = atomType.relAtoms,
+  ['+'] = atomType.binaryOperator,
+  ['-'] = atomType.binaryOperator,
+  ['<'] = atomType.relationalOperator,
+  ['>'] = atomType.relationalOperator,
+  ['='] = atomType.relationalOperator,
 }
 
 -- Foward declaration
@@ -560,7 +560,7 @@ local newSubscript = function(spec)
 end
 
 newSpace = function(spec)
-  local ret = _space(spec)
+  local ret = std.tree.clone(_space(spec))
   ret:init()
   return ret
 end
