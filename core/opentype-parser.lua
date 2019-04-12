@@ -223,24 +223,26 @@ local function parseMath(s)
     record.deviceTableOffset = nil
   end
   local parseConstants = function(offset, fd)
-    local mathConstantNames = { "scriptPercentScaleDown", "scriptScriptPercentScaleDown", "delimitedSubFormulaMinHeight",
-      "displayOperatorMinHeight", "accentBaseHeight", "flattenedAccentBaseHeight",
-      "subscriptShiftDown", "subscriptTopMax", "subscriptBaselineDropMin",
-      "superscriptShiftUp", "superscriptShiftUpCramped", "superscriptBottomMin",
-      "superscriptBaselineDropMax", "subSuperscriptGapMin", "superscriptBottomMaxWithSubscript",
-      "spaceAfterScript", "upperLimitGapMin", "upperLimitBaselineRiseMin",
-      "lowerLimitGapMin", "lowerLimitBaselineDropMin", "stackTopShiftUp",
-      "stackTopDisplayStyleShiftUp", "stackBottomShiftDown", "stackBottomDisplayStyleShiftDown",
-      "stackGapMin", "stackDisplayStyleGapMin", "stretchStackTopShiftUp",
-      "stretchStackBottomShiftDown", "stretchStackGapAboveMin", "stretchStackGapBelowMin",
-      "fractionNumeratorShiftUp", "fractionNumeratorDisplayStyleShiftUp", "fractionDenominatorShiftDown",
-      "fractionDenominatorDisplayStyleShiftDown", "fractionNumeratorGapMin", "fractionNumDisplayStyleGapMin",
-      "fractionRuleThickness", "fractionDenominatorGapMin", "fractionDenomDisplayStyleGapMin",
-      "skewedFractionHorizontalGap", "skewedFractionVerticalGap", "overbarVerticalGap",
-      "overbarRuleThickness", "overbarExtraAscender", "underbarVerticalGap",
-      "underbarRuleThickness", "underbarExtraDescender", "radicalVerticalGap",
-      "radicalDisplayStyleVerticalGap", "radicalRuleThickness", "radicalExtraAscender",
-      "radicalKernBeforeDegree", "radicalKernAfterDegree", "radicalDegreeBottomRaisePercent" }
+    local mathConstantNames = {
+      "scriptPercentScaleDown", "scriptScriptPercentScaleDown", "delimitedSubFormulaMinHeight",
+      "displayOperatorMinHeight", "mathLeading", "axisHeight",
+      "accentBaseHeight", "flattenedAccentBaseHeight", "subscriptShiftDown",
+      "subscriptTopMax", "subscriptBaselineDropMin", "superscriptShiftUp",
+      "superscriptShiftUpCramped", "superscriptBottomMin", "superscriptBaselineDropMax",
+      "subSuperscriptGapMin", "superscriptBottomMaxWithSubscript", "spaceAfterScript",
+      "upperLimitGapMin", "upperLimitBaselineRiseMin", "lowerLimitGapMin",
+      "lowerLimitBaselineDropMin", "stackTopShiftUp", "stackTopDisplayStyleShiftUp",
+      "stackBottomShiftDown", "stackBottomDisplayStyleShiftDown", "stackGapMin",
+      "stackDisplayStyleGapMin", "stretchStackTopShiftUp", "stretchStackBottomShiftDown",
+      "stretchStackGapAboveMin", "stretchStackGapBelowMin", "fractionNumeratorShiftUp",
+      "fractionNumeratorDisplayStyleShiftUp", "fractionDenominatorShiftDown", "fractionDenominatorDisplayStyleShiftDown",
+      "fractionNumeratorGapMin", "fractionNumDisplayStyleGapMin", "fractionRuleThickness",
+      "fractionDenominatorGapMin", "fractionDenomDisplayStyleGapMin", "skewedFractionHorizontalGap",
+      "skewedFractionVerticalGap", "overbarVerticalGap", "overbarRuleThickness",
+      "overbarExtraAscender", "underbarVerticalGap", "underbarRuleThickness",
+      "underbarExtraDescender", "radicalVerticalGap", "radicalDisplayStyleVerticalGap",
+      "radicalRuleThickness", "radicalExtraAscender", "radicalKernBeforeDegree",
+      "radicalKernAfterDegree", "radicalDegreeBottomRaisePercent" }
     local mathConstantTypes = { "i2", "i2", "u2",
       "u2", "{ &MathValueRecord }", "{ &MathValueRecord }",
       "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
@@ -258,7 +260,8 @@ local function parseMath(s)
       "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
       "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
       "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
-      "{ &MathValueRecord }", "{ &MathValueRecord }", "i2" }
+      "{ &MathValueRecord }", "{ &MathValueRecord }", "{ &MathValueRecord }",
+      "{ &MathValueRecord }", "i2" }
     local mathConstantFormat = ">@"..offset
     for i = 1, #(mathConstantNames) do
       mathConstantFormat = mathConstantFormat.." "..mathConstantNames[i]..":"..mathConstantTypes[i]
