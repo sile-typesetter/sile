@@ -91,15 +91,15 @@ end
 
 -- Style transition functions for superscript and subscript
 local function getSuperscriptMode(mode)
-  if mode == mathMode.display or mode == mathMode.displayCramped then return mathMode.script                 -- D, T -> S
-  elseif mode == mathMode.displayCramped or mode == mathMode.textCramped then return mathMode.scriptCramped  -- D', T' -> S'
-  elseif mode == mathMode.script or mode == mathMode.scriptScript then return mathMode.scriptScript          -- S, SS -> SS
-  else return mathMode.scriptScriptCramped end                                                                   -- S', SS' -> SS'
+  if mode == mathMode.display or mode == mathMode.text then return mathMode.script                          -- D, T -> S
+  elseif mode == mathMode.displayCramped or mode == mathMode.textCramped then return mathMode.scriptCramped -- D', T' -> S'
+  elseif mode == mathMode.script or mode == mathMode.scriptScript then return mathMode.scriptScript         -- S, SS -> SS
+  else return mathMode.scriptScriptCramped end                                                              -- S', SS' -> SS'
 end
 local function getSubscriptMode(mode)
-  if mode == mathMode.display or mode == mathMode.displayCramped
+  if mode == mathMode.display or mode == mathMode.text
       or mode == mathMode.displayCramped or mode == mathMode.textCramped then return mathMode.scriptCramped  -- D, T, D', T' -> S'
-  else return mathMode.scriptScriptCramped end                                                                   -- S, SS, S', SS' -> SS'
+  else return mathMode.scriptScriptCramped end                                                               -- S, SS, S', SS' -> SS'
 end
 
 -- Style transition functions for fraction (numerator and denominator)
@@ -117,9 +117,18 @@ local function getDenominatorMode(mode)
   else return mathMode.scriptScriptCramped end                                                           -- S, SS, S', SS' -> SS'
 end 
 
-function _box:isMathBox () return self.type == "math" end
-
--- function _box:isRule () return self.type == "rule" end
+local function typeof(var)
+  local _type = type(var)
+  if(_type ~= "table" and _type ~= "userdata") then
+      return _type
+  end
+  local _meta = getmetatable(var)
+  if(_meta ~= nil and _meta._type ~= nil) then
+      return _meta._type;
+  else
+      return _type;
+  end
+end
 
 -- math box, box with a horizontal shift value and could contain zero or more _mbox'es (or its child classes)
 -- the entire math environment itself is a top-level mbox.
@@ -129,7 +138,6 @@ function _box:isMathBox () return self.type == "math" end
 --   3. Convert mbox into _nnode's to put in SILE's typesetting framwork
 local _mbox = _box {
   _type = "Mbox",
-  type = "math",
   options = {},
   children = {}, -- The child nodes
   relX = 0, -- x position relative to its parent box
@@ -198,10 +206,6 @@ local _mbox = _box {
       if n then n:outputTree(x + n.relX, y + n.relY) end
     end
   end
-}
-
-local _nil = _mbox {
-  _type = 'Nil'
 }
 
 -- _stackbox stacks its content one, either horizontally or vertically
@@ -337,7 +341,6 @@ local _subscript = _mbox {
         local glyphString = self.children[1].value.glyphString
         local lastGid = glyphString[#glyphString]
         if italicsCorrection[lastGid] then
-          SU.warn("Italics Correction needed! "..italicsCorrection[lastGid])
           self.children[3].relX = self.children[3].relX + italicsCorrection[lastGid]
         end
       end
@@ -360,14 +363,13 @@ local _subscript = _mbox {
 
 -- _terminal is the base class for leaf node
 local _terminal = _mbox {
-  type = "terminal",
+  _type = "Terminal",
   styleChildren = function(self) end,
   setChildrenRelXY = function(self) end
 }
 
 -- text node. For any actual text output
 local _text = _terminal {
-  type = "text",
   _type = "Text",
   text = "",
   script = scriptType.upright,
@@ -426,7 +428,7 @@ local _text = _terminal {
   end,
   output = function(self, x, y)
     if not self.value.glyphString then return end
-    print('Output '..self.value.glyphString.." to "..x..", "..y)
+    -- print('Output '..self.value.glyphString.." to "..x..", "..y)
     SILE.outputter.moveTo(x, y)
     SILE.outputter.setFont(self.options)
     SILE.outputter.outputHbox(self.value, self.width)
@@ -489,13 +491,9 @@ local function ConvertMathML(content)
 end
 
 SILE.nodefactory.math = {
-  newText=newText,
+  newText = newText,
   newStackbox = newStackbox
 }
-
-SILE.typesetter.pushMath = function(self, mbox)
-  return self:pushHorizontal(mbox)
-end
 
 SILE.registerCommand("math", function (options, content)
   local mode = (options and options.mode) and options.mode or 'text'
@@ -506,11 +504,15 @@ SILE.registerCommand("math", function (options, content)
     mbox = mbox.children[1]
   end
 
-  mbox.mode = mathMode.display -- or text
+  if mode == 'display' then
+    mbox.mode = mathMode.display
+  elseif mode == 'text' then
+    mbox.mode = mathMode.text
+  else
+    SU.error('Unknown math mode '..mode)
+  end
   mbox:styleDescendants()
 
   mbox:shapeTree()
-
-  SILE.typesetter:pushMath(mbox)
 
 end)
