@@ -320,11 +320,13 @@ local _subscript = _mbox {
     end
     if self.children[3] then
       self.children[3].relX = self.children[1].width
+      print(constants.superscriptShiftUpCramped..' '..constants.superscriptShiftUp..' '..constants.superscriptBottomMin)
       self.children[3].relY = -math.max(
-        isCrampedMode(self.children[3].mode) and constants.superscriptShiftUpCramped or constants.superscriptShiftUp, -- or cramped
+        isCrampedMode(self.mode) and constants.superscriptShiftUpCramped or constants.superscriptShiftUp, -- or cramped
         self.children[1].height - constants.superscriptBaselineDropMax,
         self.children[3].depth + constants.superscriptBottomMin
       )
+      print('self.children[3].relY = '..self.children[3].relY)
       -- Italics correction
       local lastGid = getRightMostGlyphId(self.children[1])
       if lastGid > 0 then
@@ -550,7 +552,7 @@ SILE.registerCommand("math", function (options, content)
   if mode == 'display' then
     mbox.mode = mathMode.display
   elseif mode == 'text' then
-    mbox.mode = mathMode.text
+    mbox.mode = mathMode.textCramped
   else
     SU.error('Unknown math mode '..mode)
   end
