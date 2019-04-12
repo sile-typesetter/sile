@@ -130,6 +130,18 @@ local function typeof(var)
   end
 end
 
+local function getRightMostGlyphId(node)
+  local textNode = node
+  while typeof(node) == "Stackbox" and node.direction == 'H' do
+    node = node.children[#(node.children)]
+  end
+  if typeof(node) == "Text" then
+    return node.value.glyphString[#(node.value.glyphString)]
+  else
+    return 0
+  end
+end
+
 -- math box, box with a horizontal shift value and could contain zero or more _mbox'es (or its child classes)
 -- the entire math environment itself is a top-level mbox.
 -- Typesetting of mbox evolves four steps:
@@ -336,10 +348,9 @@ local _subscript = _mbox {
         self.children[3].depth + constants.superscriptBottomMin
       })
       -- Italics correction
-      local italicsCorrection = mathMetrics.italicsCorrection
-      if self.children[1].type == "text" then
-        local glyphString = self.children[1].value.glyphString
-        local lastGid = glyphString[#glyphString]
+      local lastGid = getRightMostGlyphId(self.children[1])
+      if lastGid > 0 then
+        local italicsCorrection = mathMetrics.italicsCorrection
         if italicsCorrection[lastGid] then
           self.children[3].relX = self.children[3].relX + italicsCorrection[lastGid]
         end
@@ -514,5 +525,7 @@ SILE.registerCommand("math", function (options, content)
   mbox:styleDescendants()
 
   mbox:shapeTree()
+
+  SILE.typesetter:pushHorizontal(mbox)
 
 end)
