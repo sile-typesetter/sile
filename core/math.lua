@@ -479,7 +479,7 @@ local _text = _terminal {
       for i = #glyphs, 1, -1 do
         self.width = i == #glyphs and SILE.length.make(glyphs[#glyphs].width) or self.width + glyphs[i].glyphAdvance
       end
-      for i = 2, #glyphs do
+      for i = 1, #glyphs do
         self.height = i == 1 and SILE.length.make(glyphs[i].height) or maxLength(self.height, glyphs[i].height)
         self.depth = i == 1 and SILE.length.make(glyphs[i].depth) or maxLength(self.depth, glyphs[i].depth)
       end
