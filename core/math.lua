@@ -142,6 +142,36 @@ local function getRightMostGlyphId(node)
   end
 end
 
+local function maxLength(...)
+  local arg = {...}
+  local result
+  for i, v in ipairs(arg) do
+    if typeof(v) == "number" then v = SILE.length.make(v) end
+    if i == 1 then
+      result = v
+    elseif typeof(v) == "Length" then
+      result = SILE.length.new({
+        length = math.max(result.length, v.length),
+        shrink = math.max(result.length, v.length) - math.max(result.length - result.shrink, v.length - v.shrink),
+        stretch = math.max(result.length + result.stretch, v.length + v.stretch) - math.max(result.length, v.length),
+      })
+    else
+      SU.error("Unknown type: "..typeof(v))
+    end
+  end
+  return result
+end
+
+local function getNumberFromLength(length, line)
+  local number = length.length
+  if line.ratio and line.ratio < 0 and length.shrink > 0 then
+    number = number + length.shrink * line.ratio
+  elseif line.ratio and line.ratio > 0 and length.stretch > 0 then
+    number = number + length.stretch * line.ratio
+  end
+  return number
+end
+
 -- math box, box with a horizontal shift value and could contain zero or more _mbox'es (or its child classes)
 -- the entire math environment itself is a top-level mbox.
 -- Typesetting of mbox evolves four steps:
@@ -172,7 +202,7 @@ local _mbox = _box {
     SU.error("shape is a virtual function that need to be overriden by its child classes")
   end,
 
-  output = function(self, x, y)
+  output = function(self, x, y, line)
     SU.error("output is a virtual function that need to be overriden by its child classes")
   end,
 
@@ -196,10 +226,10 @@ local _mbox = _box {
   end,
 
   -- Output the node and all its descendants
-  outputTree = function(self, x, y)
-    self:output(x, y)
+  outputTree = function(self, x, y, line)
+    self:output(x, y, line)
     for i, n in ipairs(self.children) do
-      if n then n:outputTree(x + n.relX, y + n.relY) end
+      if n then n:outputTree(x + n.relX, y + n.relY, line) end
     end
   end
 }
@@ -208,6 +238,7 @@ local _mbox = _box {
 local _stackbox = _mbox {
   _type = "Stackbox",
   direction = "H", -- 'H' for horizontal, 'V' for vertical
+  anchor = 1, -- The index of the child whose relX and relY will be 0
   __tostring = function (self)
     local result = self.direction.."Box("
     for i, n in ipairs(self.children) do
@@ -217,6 +248,12 @@ local _stackbox = _mbox {
     return result
   end,
 
+  init = function(self)
+    _mbox.init(self)
+    if self.anchor < 1 or self.anchor > #(self.children) then
+      SU.error('Wrong index of the anchor children')
+    end
+  end,
   styleChildren = function(self)
     for i, n in ipairs(self.children) do
       n.mode = self.mode
@@ -225,149 +262,133 @@ local _stackbox = _mbox {
   shape = function(self)
     if self.children and #(self.children) > 0 then
       for i, n in ipairs(self.children) do
-        if i == 1 then
-          -- Assuming the first children has the same anchor point as the parent
-          n.relX = 0
-          n.relY = 0
-        else
-          if self.direction == "H" then
-            -- Horizontal stackbox
+        if self.direction == "H" then
+          -- Horizontal stackbox
+          if i == self.anchor then
+            n.relX = SILE.length.make(0)
+          elseif i > self.anchor then
             n.relX = self.children[i - 1].relX + self.children[i - 1].width
-            n.relY = 0
-          else -- self.direction == "V"
-            n.relX = 0
+          end
+          n.relY = SILE.length.make(0)
+          self.width = i == 1 and self.children[i].width or (self.width + self.children[i].width)
+          self.height = i == 1 and self.children[i].height or maxLength(self.height, self.children[i].height)
+          self.depth = i == 1 and self.children[i].depth or maxLength(self.depth, self.children[i].depth)
+        else -- self.direction == "V"
+          n.relX = SILE.length.make(0)
+          if i == self.anchor then
+            n.relY = SILE.length.make(0)
+            self.height = n.height
+            self.depth = n.depth
+          elseif i > self.anchor then
             n.relY = self.children[i - 1].relY + self.children[i - 1].depth + n.height
+            self.depth = self.depth + n.height + n.depth
           end
+          self.width = i == 1 and self.children[i].width or maxLength(self.width, self.children[i].width)
         end
       end
-  
-      -- Get the minimum box that contains all children. Baseline is determined by relX, relY.
-      -- Along the stacking direction, the size of computed as last.end - first.start.
-      -- On the other direction, the size is max(end) - min(start).
-      -- Note that width/height/depth of children can all be negative.
-      local first = self.children[1]
-      local last = self.children[#(self.children)]
-      if self.direction == 'H' then
-        self.width = last.relX + last.width - first.relX
-        for i, n in ipairs(self.children) do
-          if i == 1 then
-            self.height = n.height - n.relY
-            self.depth = n.depth + n.relY
-          else
-            if n.height - n.relY > self.height then self.height = n.height - n.relY end
-            if n.depth + n.relY > self.depth then self.depth = n.depth + n.relY end
-          end
+      for i = self.anchor - 1, 1, -1 do
+        local n = self.children[i]
+        if self.direction == "H" then
+          n.relX = self.children[i + 1].relX - n.width
+        else -- self.direction == "V"
+          n.relY = self.children[i + 1].relY - self.children[i + 1].height - n.depth
+          self.height  = self.height + n.depth + n.height
         end
-      else -- self.direction == 'V"
-        self.height = first.height - first.relY
-        self.depth = last.depth + first.relY
-        local minX = self.children[0].relX
-        local maxX = self.children[0].relX
-        for i, n in ipairs(self.children) do
-          if n.relX < minX then minX = n.relX end
-          if n.relX > maxX then maxX = n.relX end
-        end
-        self.width = maxX - minX
       end
-    else
-      self.width = 0
-      self.height = 0
-      self.depth = 0
     end
   end,
   -- Despite of its name, this function actually output the whole tree of nodes recursively.
   outputYourself = function(self, typesetter, line)
     local mathX = typesetter.frame.state.cursorX
     local mathY = typesetter.frame.state.cursorY
-    self:outputTree(mathX + self.relX, mathY + self.relY)
-    typesetter.frame.state.cursorX = mathX + self.width
-    typesetter.frame.state.curosrY = mathY
+    self:outputTree(self.relX + mathX, self.relY + mathY, line)
+    typesetter.frame:advanceWritingDirection(getNumberFromLength(self.width, line))
   end,
-  output = function(self, x, y) end
+  output = function(self, x, y, line) end
 }
 
 local _subscript = _mbox {
   _type = "Subscript",
   kind = "sub",
+  base = nil,
+  sub = nil,
+  sup = nil,
   init = function(self)
     _mbox.init(self)
-    if self.kind == "sup" then
-      self.children[3] = self.children[2]
-      self.children[2] = false
-    end
+    if self.base then table.insert(self.children, self.base) end
+    if self.sub then table.insert(self.children, self.sub) end
+    if self.sup then table.insert(self.children, self.sup) end
   end,
   styleChildren = function(self)
-    self.children[1].mode = self.mode
-    if self.children[2] then
-      self.children[2].mode = getSubscriptMode(self.mode)
+    if self.base then self.base.mode = self.mode end
+    if self.sub then self.sub.mode = getSubscriptMode(self.mode) end
+    if self.sup then self.sup.mode = getSuperscriptMode(self.mode) end
+  end,
+  calculateItalicsCorrection = function(self)
+    local lastGid = getRightMostGlyphId(self.base)
+    if lastGid > 0 then
+      local mathMetrics = getMathMetrics(self.options)
+      if mathMetrics.italicsCorrection[lastGid] then
+        return mathMetrics.italicsCorrection[lastGid]
+      end
     end
-    if self.children[3] then
-      self.children[3].mode = getSuperscriptMode(self.mode)
-    end
+    return 0
   end,
   shape = function(self)
     local mathMetrics = getMathMetrics(self.options)
     local constants = mathMetrics.constants
-    self.children[1].relX = 0
-    self.children[1].relY = 0
-    if self.children[2] then
-      self.children[2].relX = self.children[1].width
-      self.children[2].relY = math.max(
+    if self.base then
+      self.base.relX = SILE.length.make(0)
+      self.base.relY = SILE.length.make(0)
+      self.width = self.base.width
+    else
+      self.width = SILE.length.make(0)
+    end
+    if self.sub then
+      self.sub.relX = self.width
+      self.sub.relY = maxLength(
         constants.subscriptShiftDown,
-        self.children[1].depth + constants.subscriptBaselineDropMin,
-        self.children[2].height - constants.subscriptTopMax
+        self.base.depth + constants.subscriptBaselineDropMin,
+        self.sub.height - constants.subscriptTopMax
       )
     end
-    if self.children[3] then
-      self.children[3].relX = self.children[1].width
-      print(constants.superscriptShiftUpCramped..' '..constants.superscriptShiftUp..' '..constants.superscriptBottomMin)
-      self.children[3].relY = -math.max(
+    if self.sup then
+      self.sup.relX = self.width + self:calculateItalicsCorrection()
+      self.sup.relY = maxLength(
         isCrampedMode(self.mode) and constants.superscriptShiftUpCramped or constants.superscriptShiftUp, -- or cramped
-        self.children[1].height - constants.superscriptBaselineDropMax,
-        self.children[3].depth + constants.superscriptBottomMin
-      )
-      print('self.children[3].relY = '..self.children[3].relY)
-      -- Italics correction
-      local lastGid = getRightMostGlyphId(self.children[1])
-      if lastGid > 0 then
-        local italicsCorrection = mathMetrics.italicsCorrection
-        if italicsCorrection[lastGid] then
-          self.superscriptItalicsCorrection = italicsCorrection[lastGid]
-          self.children[3].relX = self.children[3].relX + self.superscriptItalicsCorrection
-        end
-      end
+        self.base.height - constants.superscriptBaselineDropMax,
+        self.sup.depth + constants.superscriptBottomMin
+      ) * (-1)
     end
-    if self.children[2] and self.children[3] then
-      local gap = self.children[2].relY - self.children[2].height - self.children[3].relY - self.children[3].depth
-      -- print(self.children[1].depth)
-      -- print(self.children[2].relY..' '..self.children[2].height..' '..self.children[3].relY..' ' ..self.children[3].depth)
-      if gap < constants.subSuperscriptGapMin then
-        local supShift, subShift = constants.subSuperscriptGapMin - gap, 0
-        if supShift > constants.superscriptBottomMaxWithSubscript then
-          subShift = supShift - constants.superscriptBottomMaxWithSubscript
-          supShift = constants.superscriptBottomMaxWithSubscript
+    if self.sub and self.sup then
+      local gap = self.sub.relY - self.sub.height - self.sup.relY - self.sup.depth
+      if gap.length < constants.subSuperscriptGapMin then
+        local supShift, subShift = gap - constants.subSuperscriptGapMin, SILE.length.make(0)
+        if -supShift.length > constants.superscriptBottomMaxWithSubscript then
+          subShift = supShift * (-1) - constants.superscriptBottomMaxWithSubscript
+          supShift = -constants.superscriptBottomMaxWithSubscript
         end
-        self.children[3].relY = self.children[3].relY - supShift
-        self.children[2].relY = self.children[2].relY + subShift
+        self.sup.relY = self.sup.relY + supShift
+        self.sub.relY = self.sub.relY + subShift
       end
     end
 
-    self.width = self.children[1].width + math.max(
-      self.children[2] and self.children[2].width or 0,
-      self.children[3] and self.children[3].width or 0
+    self.width = self.width + maxLength(
+      self.sub and self.sub.width or 0,
+      self.sup and (self.sup.width + self:calculateItalicsCorrection()) or 0
     )
-    self.height = math.max(
-      self.children[1].height,
-      self.children[2] and (self.children[2].height - self.children[2].relY) or 0,
-      self.children[3] and (self.children[3].height - self.children[3].relY) or 0
+    self.height = maxLength(
+      self.base and self.base.height or 0,
+      self.sub and (self.sub.height - self.sub.relY) or 0,
+      self.sup and (self.sup.height - self.sup.relY) or 0
     )
-    self.depth = math.max(
-      self.children[1].depth,
-      self.children[2] and (self.children[2].depth + self.children[2].relY) or 0,
-      self.children[3] and (self.children[3].depth + self.children[3].relY) or 0
+    self.depth = maxLength(
+      self.base and self.base.depth or 0,
+      self.sub and (self.sub.depth + self.sub.relY) or 0,
+      self.sup and (self.sup.depth + self.sup.relY) or 0
     )
   end,
-  output = function(self, x, y) end
+  output = function(self, x, y, line) end
 }
 
 -- _terminal is the base class for leaf node
@@ -406,7 +427,7 @@ local _space = _terminal {
     end
   end,
   shape = function(self)
-    self.width = self.length.length
+    self.width = self.length
     self.height = self.options.size
     self.depth = 0
   end,
@@ -455,28 +476,25 @@ local _text = _terminal {
       for i = 1, #glyphs do
         table.insert(self.value.glyphString, glyphs[i].gid)
       end
-      self.width = glyphs[#glyphs].width
-      for i = 1, #glyphs-1 do
-        self.width = self.width + glyphs[i].glyphAdvance
+      for i = #glyphs, 1, -1 do
+        self.width = i == #glyphs and SILE.length.make(glyphs[#glyphs].width) or self.width + glyphs[i].glyphAdvance
       end
-      self.height = glyphs[1].height
-      self.depth = glyphs[1].depth
       for i = 2, #glyphs do
-        if glyphs[i].height > self.height then self.height = glyphs[i].height end
-        if glyphs[i].depth > self.depth then self.depth = glyphs[i].depth end
+        self.height = i == 1 and SILE.length.make(glyphs[i].height) or maxLength(self.height, glyphs[i].height)
+        self.depth = i == 1 and SILE.length.make(glyphs[i].depth) or maxLength(self.depth, glyphs[i].depth)
       end
     else
-      self.width = 0
-      self.height = 0
-      self.depth = 0
+      self.width = SILE.length.make(0)
+      self.height = SILE.length.make(0)
+      self.depth = SILE.length.make(0)
     end
   end,
-  output = function(self, x, y)
+  output = function(self, x, y, line)
     if not self.value.glyphString then return end
     -- print('Output '..self.value.glyphString.." to "..x..", "..y)
-    SILE.outputter.moveTo(x, y)
+    SILE.outputter.moveTo(getNumberFromLength(x, line), getNumberFromLength(y, line))
     SILE.outputter.setFont(self.options)
-    SILE.outputter.outputHbox(self.value, self.width)
+    SILE.outputter.outputHbox(self.value, getNumberFromLength(self.width, line))
   end
 }
 
@@ -522,14 +540,17 @@ local function ConvertMathML(content)
   elseif content.tag == 'mn' then
     return newText({ script=scriptType.upright, text=content[1] })
   elseif content.tag == 'msub' then
-    return newSubscript({
-      kind="sub", children=convertChildren(content) })
+    local children = convertChildren(content)
+    if #children ~= 2 then SU.error('Wrong number of children in msub') end
+    return newSubscript({ kind="sub", base=children[1], sub=children[2] })
   elseif content.tag == 'msup' then
-    return newSubscript({
-      kind="sup", children=convertChildren(content) })
+    local children = convertChildren(content)
+    if #children ~= 2 then SU.error('Wrong number of children in msup') end
+    return newSubscript({ kind="sup", base=children[1], sup=children[2] })
   elseif content.tag == 'msubsup' then
-    return newSubscript({
-      kind="subsup", children=convertChildren(content) })
+    local children = convertChildren(content)
+    if #children ~= 3 then SU.error('Wrong number of children in msubsup') end
+    return newSubscript({ kind="subsup", base=children[1], sub=children[2], sup=children[3] })
   else
     return nil
   end
