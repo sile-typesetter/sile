@@ -165,15 +165,15 @@ local _mbox = _box {
   end,
 
   styleChildren = function(self)
-    SU.error("This is a virtual function that need to be overriden by its child classes")
+    SU.error("styleChildren is a virtual function that need to be overriden by its child classes")
   end,
 
-  setChildrenRelXY = function(self)
-    SU.error("This is a virtual function that need to be overriden by its child classes")
+  shape = function(self, x, y)
+    SU.error("shape is a virtual function that need to be overriden by its child classes")
   end,
 
   output = function(self, x, y)
-    SU.error("This is a virtual function that need to be overriden by its child classes")
+    SU.error("output is a virtual function that need to be overriden by its child classes")
   end,
 
   -- Determine the mode of its descendants
@@ -192,23 +192,7 @@ local _mbox = _box {
     for i, n in ipairs(self.children) do
       if n then n:shapeTree() end
     end
-    self:setChildrenRelXY()
     self:shape()
-  end,
-
-  shape = function(self)
-    local minX, maxX, minY, maxY = 0, 0, 0, 0
-    for i, n in ipairs(self.children) do
-      if n then
-        minX = math.min(minX, n.relX)
-        maxX = math.max(maxX, n.relX + n.width)
-        minY = math.min(minY, n.relY - n.height)
-        maxY = math.max(maxY, n.relY + n.depth)
-      end
-    end
-    self.width = maxX - minX
-    self.height = -minY
-    self.depth = maxY
   end,
 
   -- Output the node and all its descendants
@@ -238,7 +222,7 @@ local _stackbox = _mbox {
       n.mode = self.mode
     end
   end,
-  setChildrenRelXY = function(self)
+  shape = function(self)
     if self.children and #(self.children) > 0 then
       for i, n in ipairs(self.children) do
         if i == 1 then
@@ -256,17 +240,11 @@ local _stackbox = _mbox {
           end
         end
       end
-    else
-      self.relX = 0
-      self.relY = 0
-    end
-  end,
-  shape = function(self)
-    -- Get the minimum box that contains all children. Baseline is determined by relX, relY.
-    -- Along the stacking direction, the size of computed as last.end - first.start.
-    -- On the other direction, the size is max(end) - min(start).
-    -- Note that width/height/depth of children can all be negative.
-    if self.children and #(self.children) > 0 then
+  
+      -- Get the minimum box that contains all children. Baseline is determined by relX, relY.
+      -- Along the stacking direction, the size of computed as last.end - first.start.
+      -- On the other direction, the size is max(end) - min(start).
+      -- Note that width/height/depth of children can all be negative.
       local first = self.children[1]
       local last = self.children[#(self.children)]
       if self.direction == 'H' then
@@ -327,37 +305,40 @@ local _subscript = _mbox {
       self.children[3].mode = getSuperscriptMode(self.mode)
     end
   end,
-  setChildrenRelXY = function(self)
+  shape = function(self)
     local mathMetrics = getMathMetrics(self.options)
     local constants = mathMetrics.constants
     self.children[1].relX = 0
     self.children[1].relY = 0
     if self.children[2] then
       self.children[2].relX = self.children[1].width
-      self.children[2].relY = table.maxn({
+      self.children[2].relY = math.max(
         constants.subscriptShiftDown,
         self.children[1].depth + constants.subscriptBaselineDropMin,
         self.children[2].height - constants.subscriptTopMax
-      })
+      )
     end
     if self.children[3] then
       self.children[3].relX = self.children[1].width
-      self.children[3].relY = -table.maxn({
+      self.children[3].relY = -math.max(
         isCrampedMode(self.children[3].mode) and constants.superscriptShiftUpCramped or constants.superscriptShiftUp, -- or cramped
         self.children[1].height - constants.superscriptBaselineDropMax,
         self.children[3].depth + constants.superscriptBottomMin
-      })
+      )
       -- Italics correction
       local lastGid = getRightMostGlyphId(self.children[1])
       if lastGid > 0 then
         local italicsCorrection = mathMetrics.italicsCorrection
         if italicsCorrection[lastGid] then
-          self.children[3].relX = self.children[3].relX + italicsCorrection[lastGid]
+          self.superscriptItalicsCorrection = italicsCorrection[lastGid]
+          self.children[3].relX = self.children[3].relX + self.superscriptItalicsCorrection
         end
       end
     end
     if self.children[2] and self.children[3] then
       local gap = self.children[2].relY - self.children[2].height - self.children[3].relY - self.children[3].depth
+      -- print(self.children[1].depth)
+      -- print(self.children[2].relY..' '..self.children[2].height..' '..self.children[3].relY..' ' ..self.children[3].depth)
       if gap < constants.subSuperscriptGapMin then
         local supShift, subShift = constants.subSuperscriptGapMin - gap, 0
         if supShift > constants.superscriptBottomMaxWithSubscript then
@@ -368,6 +349,21 @@ local _subscript = _mbox {
         self.children[2].relY = self.children[2].relY + subShift
       end
     end
+
+    self.width = self.children[1].width + math.max(
+      self.children[2] and self.children[2].width or 0,
+      self.children[3] and self.children[3].width or 0
+    )
+    self.height = math.max(
+      self.children[1].height,
+      self.children[2] and (self.children[2].height - self.children[2].relY) or 0,
+      self.children[3] and (self.children[3].height - self.children[3].relY) or 0
+    )
+    self.depth = math.max(
+      self.children[1].depth,
+      self.children[2] and (self.children[2].depth + self.children[2].relY) or 0,
+      self.children[3] and (self.children[3].depth + self.children[3].relY) or 0
+    )
   end,
   output = function(self, x, y) end
 }
@@ -376,7 +372,43 @@ local _subscript = _mbox {
 local _terminal = _mbox {
   _type = "Terminal",
   styleChildren = function(self) end,
-  setChildrenRelXY = function(self) end
+  shape = function(self) end
+}
+
+local _space = _terminal {
+  _type = "Space",
+  kind = "thin",
+  init = function(self)
+    _terminal.init(self)
+    local mu = self.options.size / 18
+    if kind == "thin" then
+      self.length = SILE.length.new({
+        length = 3 * mu,
+        shrink = 0,
+        stretch = 0
+      })
+    elseif kind == "med" then
+      self.length = SILE.length.new({
+        length = 4 * mu,
+        shrink = 4 * mu,
+        stretch = 2 * mu
+      })
+    elseif kind == "thick" then
+      self.length = SILE.length.new({
+        length = 5 * mu,
+        shrink = 0,
+        stretch = 5 * mu
+      })
+    else
+      SU.error("Unknown space type "..kind)
+    end
+  end,
+  shape = function(self)
+    self.width = self.length.length
+    self.height = self.options.size
+    self.depth = 0
+  end,
+  output = function(self) end
 }
 
 -- text node. For any actual text output
