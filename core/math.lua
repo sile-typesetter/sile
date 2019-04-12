@@ -46,46 +46,16 @@ local scriptType = {
   monospace = 14, -- also have digits
 }
 
--- local scriptConversionTable {
---   scriptType.bold =
--- }
-
-local binAtoms = {
-  '+', '-'
-}
-
-local relAtoms = {
-  '<', '>', '='
+local operatorAtomTypes = {
+  ['+'] = atomType.binAtoms,
+  ['-'] = atomType.binAtoms,
+  ['<'] = atomType.relAtoms,
+  ['>'] = atomType.relAtoms,
+  ['='] = atomType.relAtoms,
 }
 
 -- Foward declaration
 local newSpace
-local typeof
-
-local function isAtomType(node, type)
-  if type == atomType.binaryOperator then
-    if node.kind == 'operator' then
-      for _, v in ipairs(binAtoms) do
-        if v == node.text then return true end
-      end
-    end
-    return false
-  elseif type == atomType.relationalOperator then
-    if node.kind == 'operator' then
-      for _, v in ipairs(relAtoms) do
-        if v == node.text then return true end
-      end
-    end
-    return false
-  elseif type == atomType.ordinary then
-    if typeof(node) == 'Subscript' or (node.kind == 'identifier' or node.kind == 'number') then
-      return true
-    end
-    return false
-  else
-    SU.error('Unknown operator type '..type)
-  end
-end
 
 local function isCrampedMode(mode)
   return mode % 2 == 1
@@ -154,7 +124,7 @@ local function getDenominatorMode(mode)
   else return mathMode.scriptScriptCramped end                                                           -- S, SS, S', SS' -> SS'
 end 
 
-function typeof(var)
+local function typeof(var)
   local _type = type(var)
   if(_type ~= "table" and _type ~= "userdata") then
       return _type
@@ -223,6 +193,7 @@ local _mbox = _box {
   relY = 0, -- y position relative to its parent box
   value = {},
   mode = mathMode.display,
+  atom = atomType.ordinary,
   __tostring = function (s) return s.type end,
   init = function(self)
     local options = {
@@ -297,11 +268,11 @@ local _stackbox = _mbox {
       for i, v in ipairs(self.children) do
         if i < #self.children then
           local v2 = self.children[i + 1]
-          if (isAtomType(v, atomType.relationalOperator) and isAtomType(v2, atomType.ordinary)) or
-              (isAtomType(v2, atomType.relationalOperator) and isAtomType(v, atomType.ordinary)) then
+          if (v.atom == atomType.relationalOperator and v2.atom == atomType.ordinary) or
+              (v2.atom == atomType.relationalOperator and v.atom == atomType.ordinary) then
             spaces[i + 1] = 'thick'
-          elseif(isAtomType(v, atomType.binaryOperator) and isAtomType(v2, atomType.ordinary)) or
-              (isAtomType(v2, atomType.binaryOperator) and isAtomType(v, atomType.ordinary)) then
+          elseif (v.atom == atomType.binaryOperator and v2.atom == atomType.ordinary) or
+              (v2.atom == atomType.binaryOperator and v.atom == atomType.ordinary) then
             spaces[i + 1] = 'med'
           end
         end
@@ -508,22 +479,28 @@ local _text = _terminal {
   __tostring = function(self) return "Text("..(self.originalText or self.text)..")" end,
   init = function(self)
     _terminal.init(self)
-    local converted = ""
-    for uchr in SU.utf8codes(self.text) do
-      local dst_char = SU.utf8char(uchr)
-      if uchr >= 0x41 and uchr <= 0x5A then -- Latin capital letter
-        if self.script == scriptType.italic then
-          dst_char = SU.utf8char(mathScriptConversionTable.italicLatinUpper(uchr))
+    if self.kind == 'identifier' then
+      local converted = ""
+      for uchr in SU.utf8codes(self.text) do
+        local dst_char = SU.utf8char(uchr)
+        if uchr >= 0x41 and uchr <= 0x5A then -- Latin capital letter
+          if self.script == scriptType.italic then
+            dst_char = SU.utf8char(mathScriptConversionTable.italicLatinUpper(uchr))
+          end
+        elseif uchr >= 0x61 and uchr <= 0x7A then -- Latin non-capital letter
+          if self.script == scriptType.italic then
+            dst_char = SU.utf8char(mathScriptConversionTable.italicLatinLower(uchr))
+          end
         end
-      elseif uchr >= 0x61 and uchr <= 0x7A then -- Latin non-capital letter
-        if self.script == scriptType.italic then
-          dst_char = SU.utf8char(mathScriptConversionTable.italicLatinLower(uchr))
-        end
+        converted = converted..dst_char
       end
-      converted = converted..dst_char
+      self.originalText = self.text
+      self.text = converted
+    elseif self.kind == 'operator' then
+      if operatorAtomTypes[self.text] then
+        self.atom = operatorAtomTypes[self.text]
+      end
     end
-    self.originalText = self.text
-    self.text = converted
   end,
   shape = function(self)
     local face = SILE.font.cache(self.options, SILE.shaper.getFace)
