@@ -50,6 +50,43 @@ local scriptType = {
 --   scriptType.bold =
 -- }
 
+local binAtoms = {
+  '+', '-'
+}
+
+local relAtoms = {
+  '<', '>', '='
+}
+
+-- Foward declaration
+local newSpace
+local typeof
+
+local function isAtomType(node, type)
+  if type == atomType.binaryOperator then
+    if node.kind == 'operator' then
+      for _, v in ipairs(binAtoms) do
+        if v == node.text then return true end
+      end
+    end
+    return false
+  elseif type == atomType.relationalOperator then
+    if node.kind == 'operator' then
+      for _, v in ipairs(relAtoms) do
+        if v == node.text then return true end
+      end
+    end
+    return false
+  elseif type == atomType.ordinary then
+    if typeof(node) == 'Subscript' or (node.kind == 'identifier' or node.kind == 'number') then
+      return true
+    end
+    return false
+  else
+    SU.error('Unknown operator type '..type)
+  end
+end
+
 local function isCrampedMode(mode)
   return mode % 2 == 1
 end
@@ -117,7 +154,7 @@ local function getDenominatorMode(mode)
   else return mathMode.scriptScriptCramped end                                                           -- S, SS, S', SS' -> SS'
 end 
 
-local function typeof(var)
+function typeof(var)
   local _type = type(var)
   if(_type ~= "table" and _type ~= "userdata") then
       return _type
@@ -252,6 +289,33 @@ local _stackbox = _mbox {
     _mbox.init(self)
     if self.anchor < 1 or self.anchor > #(self.children) then
       SU.error('Wrong index of the anchor children')
+    end
+    -- Add space between Ord and Bin/Rel
+    local spaces = {}
+    if self.mode == mathMode.display or self.mode == mathMode.displayCramped or
+        self.mode == mathMode.text or self.mode == mathMode.textCramped then
+      for i, v in ipairs(self.children) do
+        if i < #self.children then
+          local v2 = self.children[i + 1]
+          if (isAtomType(v, atomType.relationalOperator) and isAtomType(v2, atomType.ordinary)) or
+              (isAtomType(v2, atomType.relationalOperator) and isAtomType(v, atomType.ordinary)) then
+            spaces[i + 1] = 'thick'
+          elseif(isAtomType(v, atomType.binaryOperator) and isAtomType(v2, atomType.ordinary)) or
+              (isAtomType(v2, atomType.binaryOperator) and isAtomType(v, atomType.ordinary)) then
+            spaces[i + 1] = 'med'
+          end
+        end
+      end
+    end
+
+    local spaceIdx = {}
+    for i, _ in pairs(spaces) do
+      table.insert(spaceIdx, i)
+    end
+    table.sort(spaceIdx, function(a, b) return a > b end)
+    for _, idx in ipairs(spaceIdx) do
+      table.insert(self.children, idx, newSpace({kind = spaces[idx]}))
+      if idx <= self.anchor then self.anchor = self.anchor + 1 end
     end
   end,
   styleChildren = function(self)
@@ -400,23 +464,24 @@ local _terminal = _mbox {
 
 local _space = _terminal {
   _type = "Space",
+  __tostring = function(self) return self.kind.."space" end,
   kind = "thin",
   init = function(self)
     _terminal.init(self)
     local mu = self.options.size / 18
-    if kind == "thin" then
+    if self.kind == "thin" then
       self.length = SILE.length.new({
         length = 3 * mu,
         shrink = 0,
         stretch = 0
       })
-    elseif kind == "med" then
+    elseif self.kind == "med" then
       self.length = SILE.length.new({
         length = 4 * mu,
         shrink = 4 * mu,
         stretch = 2 * mu
       })
-    elseif kind == "thick" then
+    elseif self.kind == "thick" then
       self.length = SILE.length.new({
         length = 5 * mu,
         shrink = 0,
@@ -438,6 +503,7 @@ local _space = _terminal {
 local _text = _terminal {
   _type = "Text",
   text = "",
+  kind = "number", -- may also be identifier or operator
   script = scriptType.upright,
   __tostring = function(self) return "Text("..(self.originalText or self.text)..")" end,
   init = function(self)
@@ -516,6 +582,12 @@ local newSubscript = function(spec)
   return ret
 end
 
+newSpace = function(spec)
+  local ret = _space(spec)
+  ret:init()
+  return ret
+end
+
 -- convert MathML into mbox
 local function ConvertMathML(content)
   if content == nil or content.id == nil or content.tag == nil then return nil end
@@ -528,17 +600,15 @@ local function ConvertMathML(content)
     return mboxes
   end
   if content.tag == 'math' then -- toplevel
-    return newStackbox({
-      direction='V', children=convertChildren(content) })
+    return newStackbox({ direction='V', children=convertChildren(content) })
   elseif content.tag == 'mrow' then
-    return newStackbox({
-      direction='H', children=convertChildren(content) })
+    return newStackbox({ direction='H', children=convertChildren(content) })
   elseif content.tag == 'mi' then
-    return newText({ script=scriptType.italic, text=content[1] })
+    return newText({ kind='identifier', script=scriptType.italic, text=content[1] })
   elseif content.tag == 'mo' then
-    return newText({ script=scriptType.upright, text=content[1] })
+    return newText({ kind='operator', script=scriptType.upright, text=content[1] })
   elseif content.tag == 'mn' then
-    return newText({ script=scriptType.upright, text=content[1] })
+    return newText({ kind='number', script=scriptType.upright, text=content[1] })
   elseif content.tag == 'msub' then
     local children = convertChildren(content)
     if #children ~= 2 then SU.error('Wrong number of children in msub') end
