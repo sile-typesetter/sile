@@ -23,6 +23,8 @@
 \par\center{\font[size=50pt,weight=600,filename=documentation/Silson-Condensed.otf]{The}\par
 \center{\img[src=documentation/sile-logo.pdf,height=40mm]}\par
 \font[size=50pt,weight=600,filename=documentation/Silson-Condensed.otf]{Book}}
+\pdf:metadata[key=Title, val=The SILE book]
+\pdf:metadata[key=Author, val=Simon Cozens]
 \bigskip
 \font[size=12pt,filename=documentation/Silson-Condensed.otf]{\hss for SILE version \sileversion \hss \par}
 \skip[height=1in]
