@@ -53,7 +53,7 @@ if SILE.masterFilename then
     ProFi = require 'ProFi'
     ProFi:start()
   end
-  p,e = pcall(function() SILE.readFile(unparsed[1]) end)
+  p,e = xpcall(function() SILE.readFile(unparsed[1]) end, SILE.errorHandler)
   if not p then
     if type(e) == "string" and e:match(": interrupted!") then
       SILE.outputter:finish()
