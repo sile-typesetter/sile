@@ -93,6 +93,7 @@ Options:
   -e, --evaluate=VALUE     evaluate some Lua code before processing file
   -o, --output=[FILE]      explicitly set output file name
   -I, --include=[FILE]     include a class or SILE file before processing input
+  -t, --traceback          display traceback on error
   -h, --help               display this help, then exit
   -v, --version            display version information, then exit
 ]])
@@ -127,6 +128,10 @@ Options:
   if opts.include then
     SILE.preamble = type(opts.include) == "table" and opts.include or { opts.include }
   end
+
+  -- http://lua-users.org/wiki/VarargTheSecondClassCitizen
+  local identity = function (...) return unpack({...}, 1, select('#', ...)) end
+  SILE.errorHandler = opts.traceback and debug.traceback or identity
 end
 
 function SILE.initRepl ()
