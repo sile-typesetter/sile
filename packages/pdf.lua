@@ -114,7 +114,9 @@ parameter called \code{name} to uniquely identify the target. To create a link t
 that location in the document, use \code{\\pdf:link[dest=\goodbreak{}name]\{link content\}}.
 
 To set arbitrary key-value metadata, use something like \code{\\pdf:metadata[key=Author,
-value=J. Smith]}. Recall that the PDF metadata field names are case-sensitive.
+value=J. Smith]}. The PDF metadata field names are case-sensitive. Common keys include
+\code{Title}, \code{Author}, \code{Subject}, \code{Keywords}, \code{CreationDate}, and
+\code{ModDate}.
 
 If the \code{pdf} package is loaded after the \code{tableofcontents} package (e.g.
 in a document with the \code{book} class), then a PDF document outline will be generated.
