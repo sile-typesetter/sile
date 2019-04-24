@@ -325,9 +325,11 @@ Now the \code{sile} command is available from any directory.
 
 \subsection{Notes for Windows users}
 
-Some people have reported successfully running SILE on Windows in the
-\code{mingw32} environment. At the moment there is no guaranteed recipe, but
-hints may be found in \url{https://github.com/simoncozens/sile/issues/82}.
+SILE may be built on Windows using CMake and Visual Studio. There is not an
+installer (yet), but Windows executables are generated uzing Azure for every
+commit. You may download these executables by selecting the latest build from
+\url{https://simoncozens-github.visualstudio.com/sile/_build} and downloading
+the "sile" artifact from the Artifacts drop down.
 
 \section{Running SILE}
 
