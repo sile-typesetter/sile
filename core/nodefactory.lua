@@ -14,11 +14,9 @@ _box = std.object {
   __concat = function (x,y) return tostring(x)..tostring(y) end,
   init = function(self) return self end,
   lineContribution = function (self)
-    if SILE.typesetter.frame:writingDirection() == "TTB" then
-      return self.misfit and self.width.length or self.height
-    else
-      return self.misfit and self.height or self.width
-    end
+    -- Regardless of the orientations, "width" is always in the
+    -- writingDirection, and "height" is always in the "pageDirection"
+    return self.misfit and self.height or self.width
   end
 }
 
@@ -47,9 +45,9 @@ local _hbox = _box {
   scaledWidth = function (self, line)
     local scaledWidth = self:lineContribution()
     if type(scaledWidth) ~= "table" then return scaledWidth end
-    if line.ratio < 0 and self.width.shrink > 0 then
+    if line.ratio < 0 and type(self.width) == "table" and self.width.shrink > 0 then
       scaledWidth = scaledWidth + self.width.shrink * line.ratio
-    elseif line.ratio > 0 and self.width.stretch > 0 then
+    elseif line.ratio > 0 and type(self.width) == "table" and  self.width.stretch > 0 then
       scaledWidth = scaledWidth + self.width.stretch * line.ratio
     end
     return scaledWidth.length
@@ -318,7 +316,9 @@ local _vbox = _box {
     return "VB[" .. SU.concat(SU.map(function (n) return n:toText().."" end, self.nodes), "") .. "]"
   end,
   outputYourself = function(self, typesetter, line)
-    typesetter.frame:advancePageDirection(self.height)
+    local advanceamount = self.height
+    if type(advanceamount) == "table" then advanceamount = advanceamount.length end
+    typesetter.frame:advancePageDirection(advanceamount)
     local initial = true
     for i,node in pairs(self.nodes) do
       if initial and (node:isGlue() or node:isPenalty()) then
@@ -328,7 +328,7 @@ local _vbox = _box {
         node:outputYourself(typesetter, line)
       end
     end
-    typesetter.frame:advancePageDirection(self.depth)
+    if self.depth then typesetter.frame:advancePageDirection(self.depth) end
     typesetter.frame:newLine()
   end,
   unbox = function(self)

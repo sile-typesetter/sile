@@ -82,6 +82,7 @@ SILE.registerCommand("ruby", function (options, content)
     local to_insert = SILE.length.new({ length = diff / 2 })
     SU.debug("ruby", "Ruby is longer, inserting " .. to_insert .. " either side of base")
     cbox.width = SILE.length.make(rubybox:lineContribution())
+    rubybox.height = 0
     rubybox.width = 0
     -- add spaces at beginning and end
     table.insert(cbox.value, 1, SILE.nodefactory.newGlue({ width = to_insert }))
