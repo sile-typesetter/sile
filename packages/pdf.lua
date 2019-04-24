@@ -11,6 +11,7 @@ SILE.registerCommand("pdf:destination", function (options, content)
     width = 0,
     depth = 0,
     outputYourself = function (self, typesetter)
+      SILE.outputters.libtexpdf._init()
       pdf.destination(name, typesetter.frame.state.cursorX, SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY)
     end
   })
@@ -30,6 +31,7 @@ SILE.registerCommand("pdf:bookmark", function (options, content)
     value = nil, height = 0, width = 0, depth = 0,
     outputYourself = function ()
       local d = "<</Title<" .. ustr .. ">/A<</S/GoTo/D(" .. dest .. ")>>>>"
+      SILE.outputters.libtexpdf._init()
       pdf.bookmark(d, level)
     end
   })
@@ -54,6 +56,7 @@ SILE.registerCommand("pdf:literal", function (options, content)
       width = 0,
       depth = 0,
       outputYourself = function (self, typesetter)
+        SILE.outputters.libtexpdf._init()
         pdf.add_content(content[1])
       end
     })
@@ -71,6 +74,7 @@ SILE.registerCommand("pdf:link", function (options, content)
     outputYourself = function (self,typesetter)
       llx = typesetter.frame.state.cursorX
       lly = SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY
+      SILE.outputters.libtexpdf._init()
       pdf.begin_annotation()
     end
   })
