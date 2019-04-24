@@ -17,11 +17,15 @@ REGRESSIONSCRIPT = ./tests/regressions.pl
 test: $(REGRESSIONSCRIPT) | sile
 	$(REGRESSIONSCRIPT)
 
-EXAMPLES = $(addsuffix .pdf,$(basename $(wildcard examples/*.sil)))
 DOCS = $(addsuffix .pdf,$(basename $(wildcard documentation/*.sil)))
 
 .PHONY: docs
-docs: $(EXAMPLES) $(DOCS) | sile
+docs: $(DOCS) | sile
+
+EXAMPLES = $(addsuffix .pdf,$(basename $(wildcard examples/*.sil)))
+
+.PHONY: examples
+examples: $(EXAMPLES) | sile
 
 %.pdf: %.sil | sile
 	./sile $< -o $@
