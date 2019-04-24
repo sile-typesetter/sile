@@ -9,7 +9,7 @@ endif
 dist_bin_SCRIPTS = sile
 -include subfiles.mk
 nobase_dist_pkgdata_DATA = $(subdir_files)
-EXTRA_DIST=NEWS.md README.md LICENSE ROADMAP tests examples documentation
+EXTRA_DIST=NEWS.md README.md LICENSE tests examples documentation
 
 REGRESSIONSCRIPT = ./tests/regressions.pl
 
