@@ -205,10 +205,10 @@ SILE.defaultTypesetter = std.object {
 
   -- Takes string, writes onto self.state.nodes
   setpar = function (self, t)
-    t = string.gsub(t,"\r?\n", " ")
+    t = t:gsub("\r?\n", " "):gsub("\t", " ")
     if (#self.state.nodes == 0) then
       if not SILE.settings.get("typesetter.obeyspaces") then
-        t = string.gsub(t,"^[%s\t]+", "")
+        t = t:gsub("^%s+", "")
       end
       self:initline()
     end
