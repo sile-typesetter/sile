@@ -3088,6 +3088,30 @@ SU.debug("mypackage", "Doing a thing")
 \line
 \end{verbatim}
 
+When an error occurs, for example when writing custom scripts, its traceback
+(\em{stack trace}) can be printed via the \code{--trace}, or \code{-t} switch:
+
+\begin{verbatim}
+\line
+$ sile -t broken.sil
+This is SILE 0.9.6
+<broken.sil>
+
+Error detected:
+packages/inline-footnotes.lua:9: attempt to call a nil value (global 'thisPageInsertionBoxForClass')
+stack traceback:
+  packages/inline-footnotes.lua:9: in upvalue 'func'
+  core/utilities.lua:398: in field '?'
+  core/inputs-common.lua:66: in function 'core/sile.process'
+  core/inputs-texlike.lua:149: in field 'process'
+  core/sile.lua:196: in function 'core/sile.readFile'
+  ./sile:56: in function <./sile:56>
+  [C]: in function 'xpcall'
+  ./sile:56: in main chunk
+  [C]: in ?
+\line
+\end{verbatim}
+
 Sometimes it’s useful for you to try out Lua code within the SILE environment;
 SILE contains a REPL (read-evaluate-print loop) for you to enter Lua code and
 print the results back to you. If you call SILE with no input file name, it
