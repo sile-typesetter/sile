@@ -100,7 +100,6 @@ SILE is distributed under the [MIT licence][license].
   [license]: http://choosealicense.com/licenses/mit/
   [faq]: https://github.com/simoncozens/sile/wiki/faq
   [showoff]: https://rawgit.com/simoncozens/sile/b66b979a6dca0c60bd4aa2cbad3da36ae2073672/examples/showoff.pdf
-  [roadmap]: https://github.com/simoncozens/sile/blob/master/ROADMAP
   [luarocks]: http://luarocks.org/en/Download
   [harfbuzz]: http://www.freedesktop.org/wiki/Software/HarfBuzz/
   [ICU]: http://icu-project.org
