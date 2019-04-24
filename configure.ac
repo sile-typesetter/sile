@@ -1,5 +1,5 @@
 AC_PREREQ([2.68])
-AC_INIT([SILE], [0.9.5.1], [simon@simon-cozens.org])
+AC_INIT([SILE], m4_esyscmd_s([git describe --always --tags --dirty=*]), [simon@simon-cozens.org])
 AM_INIT_AUTOMAKE([1.11.1 foreign tar-pax dist-bzip2 no-dist-gzip -Wall no-define color-tests -Wno-portability subdir-objects])
 AC_CONFIG_MACRO_DIR([m4])
 LT_PREREQ([2.2])
@@ -113,6 +113,8 @@ PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
 
 adl_RECURSIVE_EVAL(["${datadir}/${PACKAGE}"], [SILE_PATH])
 AC_DEFINE_UNQUOTED([SILE_PATH],["${SILE_PATH}"],[Path for SILE packages and classes])
+
+adl_RECURSIVE_EVAL(["${datadir}/${PACKAGE}"], m4_esyscmd_s[git describe --always --tags --dirty=*])
 
 adl_RECURSIVE_EVAL(["${libdir}/${PACKAGE}"], [SILE_LIB_PATH])
 AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"],[Path for SILE libraries])
