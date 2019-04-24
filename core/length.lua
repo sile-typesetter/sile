@@ -41,6 +41,9 @@ _length = std.object {
     result = result:absolute()
     if type(other) == "table" then
       other = other:absolute()
+    end
+
+    if type(other) == "table" then
       result.length = result.length + other.length
       result.stretch = result.stretch + other.stretch
       result.shrink = result.shrink + other.shrink
@@ -57,6 +60,9 @@ _length = std.object {
     other = SILE.toAbsoluteMeasurement(other or 0)
     if type(other) == "table" then
       other = other:absolute()
+    end
+
+    if type(other) == "table" then
       result.length = result.length - other.length
       result.stretch = result.stretch - other.stretch
       result.shrink = result.shrink - other.shrink

@@ -5,8 +5,12 @@ SILE.tateFramePrototype = SILE.framePrototype {
   enterHooks = { function (self)
     self.oldtypesetter = SILE.typesetter
     SILE.typesetter.leadingFor = function(self, v)
-      v.height = SILE.toPoints("1zw")
-      return SILE.settings.get("document.parskip")
+      v.height = SILE.length.new({ length = SILE.toPoints("1zw") })
+      local bls = SILE.settings.get("document.baselineskip")
+      local d = bls.height:absolute() - v.height
+      d = d.length
+      len = SILE.length.new({ length = d, stretch = bls.height.stretch, shrink = bls.height.shrink })
+      return SILE.nodefactory.newVglue({height = len})
     end
     SILE.typesetter.breakIntoLines = SILE.require("packages/break-firstfit")
   end
@@ -40,7 +44,7 @@ local outputLatinInTate = function (self, typesetter, line)
   local vorigin = -typesetter.frame.state.cursorY
   self:oldOutputYourself(typesetter,line)
   typesetter.frame.state.cursorY = -vorigin
-  typesetter.frame:advanceWritingDirection(self:lineContribution())
+  typesetter.frame:advanceWritingDirection(self:lineContribution().length)
   -- My baseline moved
   typesetter.frame:advanceWritingDirection(SILE.toPoints("0.5zw") )
   typesetter.frame:advancePageDirection(- SILE.toPoints("0.25zw"))
@@ -66,7 +70,7 @@ SILE.registerCommand("latin-in-tate", function (options, content)
   SILE.require("packages/rotate")
   SILE.settings.temporarily(function()
     local latinT = SILE.defaultTypesetter {}
-    latinT.frame = oldT.frame
+    latinT.frame = SILE.framePrototype
     latinT:initState()
     SILE.typesetter = latinT
     SILE.settings.set("document.language", "und")
@@ -96,7 +100,6 @@ SILE.registerCommand("latin-in-tate", function (options, content)
       local n = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
       n.oldOutputYourself = n.outputYourself
       n.outputYourself = outputLatinInTate
-      n.misfit = true
     end
   end
 end, "Typeset rotated Western text in vertical Japanese")
