@@ -314,6 +314,17 @@ int pdf_end_annotation(lua_State *L) {
   texpdf_release_obj(dict);
   return 0;
 }
+
+int pdf_metadata(lua_State *L) {
+  const char* key = luaL_checkstring(L, 1);
+  const char* val = luaL_checkstring(L, 2);
+  ASSERT(p);
+  ASSERT(key);
+  ASSERT(val);
+  texpdf_add_dict(p->info,
+               texpdf_new_name(key),
+               texpdf_new_string(val, strlen(val)));
+}
 /* Images */
 
 int pdf_drawimage(lua_State *L) {
@@ -558,6 +569,7 @@ static const struct luaL_Reg lib_table [] = {
   {"bookmark", pdf_bookmark},
   {"begin_annotation", pdf_begin_annotation},
   {"end_annotation", pdf_end_annotation},
+  {"metadata", pdf_metadata},
   {"version", pdf_version},
   {"add_content", pdf_add_content},
   {"get_dictionary", pdf_get_dictionary},
