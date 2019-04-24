@@ -23,6 +23,8 @@
 \par\center{\font[size=50pt,weight=600,filename=documentation/Silson-Condensed.otf]{The}\par
 \center{\img[src=documentation/sile-logo.pdf,height=40mm]}\par
 \font[size=50pt,weight=600,filename=documentation/Silson-Condensed.otf]{Book}}
+\pdf:metadata[key=Title, val=The SILE Book]
+\pdf:metadata[key=Author, val=Simon Cozens]
 \bigskip
 \font[size=12pt,filename=documentation/Silson-Condensed.otf]{\hss for SILE version \sileversion \hss \par}
 \skip[height=1in]
@@ -323,9 +325,11 @@ Now the \code{sile} command is available from any directory.
 
 \subsection{Notes for Windows users}
 
-Some people have reported successfully running SILE on Windows in the
-\code{mingw32} environment. At the moment there is no guaranteed recipe, but
-hints may be found in \url{https://github.com/simoncozens/sile/issues/82}.
+SILE may be built on Windows using CMake and Visual Studio. There is not an
+installer (yet), but Windows executables are generated uzing Azure for every
+commit. You may download these executables by selecting the latest build from
+\url{https://simoncozens-github.visualstudio.com/sile/_build} and downloading
+the "sile" artifact from the Artifacts drop down.
 
 \section{Running SILE}
 
@@ -3086,6 +3090,30 @@ SU.debug("mypackage", "Doing a thing")
 \line
 \end{verbatim}
 
+When an error occurs, for example when writing custom scripts, its traceback
+(\em{stack trace}) can be printed via the \code{--trace}, or \code{-t} switch:
+
+\begin{verbatim}
+\line
+$ sile -t broken.sil
+This is SILE 0.9.6
+<broken.sil>
+
+Error detected:
+packages/inline-footnotes.lua:9: attempt to call a nil value (global 'thisPageInsertionBoxForClass')
+stack traceback:
+  packages/inline-footnotes.lua:9: in upvalue 'func'
+  core/utilities.lua:398: in field '?'
+  core/inputs-common.lua:66: in function 'core/sile.process'
+  core/inputs-texlike.lua:149: in field 'process'
+  core/sile.lua:196: in function 'core/sile.readFile'
+  ./sile:56: in function <./sile:56>
+  [C]: in function 'xpcall'
+  ./sile:56: in main chunk
+  [C]: in ?
+\line
+\end{verbatim}
+
 Sometimes it’s useful for you to try out Lua code within the SILE environment;
 SILE contains a REPL (read-evaluate-print loop) for you to enter Lua code and
 print the results back to you. If you call SILE with no input file name, it
@@ -3101,6 +3129,16 @@ This is SILE 0.9.0
 At any point during the evaluation of Lua commands, you can call \code{SILE.repl()}
 to enter the REPL and poke around; hitting Ctrl-D will end the REPL and
 return to processing the document.
+
+Two alternative backends are also useful for debugging. Both use the same
+shaping engine as the default \code{libtexpdf} backend, but instead of
+actually generating a PDF they only output some textual information about
+what's going on. The \code{debug} backend (activated by calling
+\code{sile -b debug <input>}) will generate a log file with a \code{.debug}
+extension detailing each string and it's exact output loction. A simpler
+\code{text} backend (\code{sile -b text <input>}) will output a \code{.txt}
+file with just the text strings with rough approximations of line breaks.
+Either may be sent to STDOUT instead of files using \code{-o /dev/stdout}.
 
 \section{Conclusion}
 

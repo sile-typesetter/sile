@@ -91,28 +91,33 @@ SILE.shapers.base = std.object {
     local nnodeContents = {}
     local glyphs = {}
     local totalWidth = 0
-    local depth = 0
-    local height = 0
+    local totalDepth = 0
+    local totalHeight = 0
     local glyphNames = {}
     local nnodeValue = { text = token, options = options, glyphString = {} }
     SILE.shaper:preAddNodes(contents, nnodeValue)
-    for i = 1,#contents do local glyph = contents[i]
-      if glyph.depth > depth then depth = glyph.depth end
-      if glyph.height > height then height = glyph.height end
-      totalWidth = totalWidth + glyph.width
-      self:addShapedGlyphToNnodeValue(nnodeValue, glyph)
-    end
     local misfit = false
     if SILE.typesetter.frame and SILE.typesetter.frame:writingDirection() == "TTB" then
       if options.direction == "LTR" then misfit = true end
     else
       if options.direction == "TTB" then misfit = true end
     end
+    for i = 1,#contents do local glyph = contents[i]
+      if (options.direction == "TTB") ~= misfit then
+        if glyph.width > totalHeight then totalHeight = glyph.width end
+        totalWidth = totalWidth + glyph.height
+      else
+        if glyph.depth > totalDepth then totalDepth = glyph.depth end
+        if glyph.height > totalHeight then totalHeight = glyph.height end
+        totalWidth = totalWidth + glyph.width
+      end
+      self:addShapedGlyphToNnodeValue(nnodeValue, glyph)
+    end
     table.insert(nnodeContents, SILE.nodefactory.newHbox({
-      depth = depth,
-      height = height,
+      depth = totalDepth,
+      height = totalHeight,
       misfit = misfit,
-      width = width or SILE.length.new({ length = totalWidth }),
+      width = SILE.length.new({ length = totalWidth }),
       value = nnodeValue
     }))
     return SILE.nodefactory.newNnode({
@@ -129,8 +134,8 @@ SILE.shapers.base = std.object {
       spacewidth = item.width
       w = SILE.length.new({
         length = spacewidth * SILE.settings.get("shaper.spaceenlargementfactor"),
-        shrink = spacewidth * SILE.settings.get("shaper.spaceshrinkfactor"),
-        stretch = spacewidth * SILE.settings.get("shaper.spacestretchfactor")
+        shrink = math.abs(spacewidth) * SILE.settings.get("shaper.spaceshrinkfactor"),
+        stretch = math.abs(spacewidth) * SILE.settings.get("shaper.spacestretchfactor")
       })
       return (SILE.nodefactory.newGlue({ width = w }))
     else

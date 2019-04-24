@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/simoncozens/sile.svg?branch=master)](https://travis-ci.org/simoncozens/sile)
+[![Build Status](https://travis-ci.com/simoncozens/sile.svg?branch=master)](https://travis-ci.com/simoncozens/sile)
+[![Build Status](https://simoncozens-github.visualstudio.com/sile/_apis/build/status/simoncozens.sile?branchName=master)](https://simoncozens-github.visualstudio.com/sile/_build/latest?definitionId=1&branchName=master)
 [![Coverage Status](https://coveralls.io/repos/simoncozens/sile/badge.svg?branch=master&service=github)](https://coveralls.io/github/simoncozens/sile?branch=master) [![Join the chat at https://gitter.im/simoncozens/sile](https://badges.gitter.im/simoncozens/sile.svg)](https://gitter.im/simoncozens/sile?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## What is SILE?
@@ -26,6 +27,11 @@ A formula is available for [homebrew][brew] that can install both stable and hea
 ### For Linux (prepackaged distros)
 
 * **Arch Linux** packages are available in the [AUR][aur] that can be installed using your prefered package manager (e.g. `yaourt -S sile`). Use [sile][aur-rel] for the latest stable release or [sile-git][aur-dev] to build from the latest git commit.
+
+### For Windows
+
+There is no installer yet (see #410), but prebuilt Windows binaries may be downloaded from Azure's artifacts
+menu after selecting the [latest  build][azure]. For tips to how to build it yourself from source using CMake and Visual Studio, see #567.
 
 ### From source
 
@@ -87,7 +93,8 @@ SILE is distributed under the [MIT licence][license].
 
   [sile]: http://www.sile-typesetter.org/
   [releases]: https://github.com/simoncozens/sile/releases
-  [doc]: https://raw.githubusercontent.com/simoncozens/sile/master/documentation/sile.pdf
+  [azure]: https://simoncozens-github.visualstudio.com/sile/_build
+  [doc]: http://sile-typesetter.org/images/sile-0.9.4.pdf
   [gentium]: http://software.sil.org/gentium/download/
   [github]: https://github.com/simoncozens/sile
   [license]: http://choosealicense.com/licenses/mit/

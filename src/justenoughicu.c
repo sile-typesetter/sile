@@ -12,6 +12,8 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
+#include "silewin32.h"
+
 typedef int32_t (*conversion_function_t)(UChar *dest, int32_t destCapacity, const UChar *src, int32_t srcLength, const char *locale, UErrorCode *pErrorCode);
 
 #define utf8_to_uchar(in, in_l, out, out_l)   { \

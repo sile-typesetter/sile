@@ -120,6 +120,7 @@ SILE.registerCommand("set", function(options, content)
   local p = SU.required(options, "parameter", "\\set command")
   local v = options.value -- could be nil!
   local def = SILE.settings.declarations[p]
+  local makedefault = SU.boolean(options.makedefault, false)
   if not def then SU.error("Unknown parameter "..p.." in \\set command") end
   if     string.match(def.type, "nil") and type(v) == "nil" then -- ok
   elseif  string.match(def.type, "integer") then v = tonumber(v)
@@ -136,5 +137,9 @@ SILE.registerCommand("set", function(options, content)
     end)
   else
     SILE.settings.set(p,v)
+  end
+  if makedefault then
+    SILE.settings.declarations[p].default = v
+    SILE.settings.defaults[p] = v
   end
 end, "Set a SILE parameter <parameter> to value <value> (restoring the value afterwards if <content> is provided)")

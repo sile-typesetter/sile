@@ -10,6 +10,8 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
+#include "silewin32.h"
+
 /* The following function stolen from XeTeX_ext.c */
 static hb_tag_t
 read_tag_with_param(const char* cp, int* param)
