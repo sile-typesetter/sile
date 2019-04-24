@@ -98,3 +98,7 @@ SILE.outputters.cairo = {
 }
 
 SILE.outputter = SILE.outputters.cairo
+
+if not SILE.outputFilename and SILE.masterFilename then
+	SILE.outputFilename = SILE.masterFilename..".pdf"
+end

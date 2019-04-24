@@ -50,6 +50,14 @@ SILE.init = function ()
   if SILE.backend == "libtexpdf" then
     require("core/harfbuzz-shaper")
     require("core/libtexpdf-output")
+  elseif SILE.backend == "cairo" then
+    require("core/cairo-output")
+  elseif SILE.backend == "debug" then
+    require("core/harfbuzz-shaper")
+    require("core/debug-output")
+  elseif SILE.backend == "text" then
+    require("core/harfbuzz-shaper")
+    require("core/text-output")
   end
   if SILE.dolua then
     for _, func in pairs(SILE.dolua) do

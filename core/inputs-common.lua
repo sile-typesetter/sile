@@ -20,8 +20,6 @@ SILE.inputs.common = {
       -- still work but explicitly using piped streams won't.
       if SILE.masterFilename == "-" then
         SILE.outputFilename = "/dev/stdout"
-      else
-        SILE.outputFilename = SILE.masterFilename..".pdf"
       end
     end
     local ff = SILE.documentState.documentClass:init()
