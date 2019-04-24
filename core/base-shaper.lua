@@ -134,8 +134,8 @@ SILE.shapers.base = std.object {
       spacewidth = item.width
       w = SILE.length.new({
         length = spacewidth * SILE.settings.get("shaper.spaceenlargementfactor"),
-        shrink = spacewidth * SILE.settings.get("shaper.spaceshrinkfactor"),
-        stretch = spacewidth * SILE.settings.get("shaper.spacestretchfactor")
+        shrink = math.abs(spacewidth) * SILE.settings.get("shaper.spaceshrinkfactor"),
+        stretch = math.abs(spacewidth) * SILE.settings.get("shaper.spacestretchfactor")
       })
       return (SILE.nodefactory.newGlue({ width = w }))
     else
