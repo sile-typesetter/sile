@@ -84,7 +84,7 @@ script:
  - fold_unless_fail 'Building' 'build' sh -c './bootstrap.sh && ./configure && make'
  - fold_unless_fail 'busted' 'busted'  busted --cpath="core/?.so" -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
  - fold_unless_fail 'Run regression tests' 'regression' make test
- - fold_unless_fail 'Compile documentation and examples' 'compile_docs' make docs
+ - fold_unless_fail 'Compile documentation and examples' 'compile_docs' make docs examples
  - fold_unless_fail 'Versions' 'versions' ./sile --debug=fonts,versions tests/bug-117.sil
 after_success:
  - $COVERAGE && travis_wait make coverage
