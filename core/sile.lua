@@ -124,6 +124,7 @@ Options:
     end
   end
   SILE.passes = opts.passes and tonumber(opts.passes) or 1
+  SU.debug("passes", "init: " .. SILE.passes)
   if opts.output then
     SILE.outputFilename = opts.output
   end

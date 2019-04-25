@@ -35,6 +35,9 @@ if not os.getenv 'LUA_REPL_RLWRAP' then
 end
 SILE.init()
 if SILE.masterFilename then
+  repeat
+	  SU.debug("passes", "process: " .. SILE.passes)
+	  SILE.passes = SILE.passes - 1
   if SILE.preamble then
     for _, preamble in pairs(SILE.preamble) do
       io.stderr:write("Loading "..preamble)
@@ -68,6 +71,7 @@ if SILE.masterFilename then
     ProFi:stop()
     ProFi:writeReport( 'sile-profile.txt' )
   end
+  until (SILE.passes <= 0)
   if SU.debugging("versions") then SILE.shaper.debugVersions() end
 else
   SILE.repl()
