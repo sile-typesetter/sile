@@ -93,6 +93,7 @@ Options:
   -e, --evaluate=VALUE     evaluate some Lua code before processing file
   -o, --output=[FILE]      explicitly set output file name
   -I, --include=[FILE]     include a class or SILE file before processing input
+  -p, --passes=NUMBER      make extra rendering passes to fix cross references
   -t, --traceback          display traceback on error
   -h, --help               display this help, then exit
   -v, --version            display version information, then exit
@@ -122,6 +123,7 @@ Options:
       SILE.dolua[#SILE.dolua+1] = func
     end
   end
+  SILE.passes = opts.passes and tonumber(opts.passes) or 1
   if opts.output then
     SILE.outputFilename = opts.output
   end
