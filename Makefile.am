@@ -11,11 +11,12 @@ dist_bin_SCRIPTS = sile
 nobase_dist_pkgdata_DATA = $(subdir_files)
 EXTRA_DIST=NEWS.md README.md LICENSE ROADMAP tests examples documentation
 
-REGRESSIONSCRIPT = ./tests/regressions.pl
+REGRESSIONSCRIPT := ./tests/regressions.pl
+LOCALTESTFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
 
 .PHONY: test
 test: $(REGRESSIONSCRIPT) | sile
-	$(REGRESSIONSCRIPT)
+	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT)
 
 DOCS = $(addsuffix .pdf,$(basename $(wildcard documentation/*.sil)))
 
@@ -28,14 +29,14 @@ EXAMPLES = $(addsuffix .pdf,$(basename $(wildcard examples/*.sil)))
 examples: $(EXAMPLES) | sile
 
 %.pdf: %.sil | sile
-	./sile $< -o $@
+	$(LOCALTESTFONTS) ./sile $< -o $@
 
 %.pdf: %.xml | sile
-	./sile $< -o $@
+	$(LOCALTESTFONTS) ./sile $< -o $@
 
 .PHONY: coverage
 coverage: $(REGRESSIONSCRIPT)
-	$(REGRESSIONSCRIPT) --coverage
+	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) --coverage
 
 EXPECTS = $(wildcard tests/*.expected)
 
@@ -43,7 +44,15 @@ EXPECTS = $(wildcard tests/*.expected)
 update_expected: $(EXPECTS)
 
 tests/%.expected: tests/%.sil force | sile
-	./sile -b debug $< -o $@
+	$(LOCALTESTFONTS) ./sile -b debug $< -o $@
+
+ACTUALS = $(addsuffix .actual,$(basename $(wildcard tests/*.expected)))
+
+.PHONY: update_actuals
+update_actuals: $(ACTUALS)
+
+tests/%.actual: tests/%.sil | sile
+	$(LOCALTESTFONTS) ./sile -b debug $< -o $@
 
 .PHONY: force
 force: ;
