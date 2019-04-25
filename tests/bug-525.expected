@@ -1,102 +1,98 @@
-Set paper size 	595.275597	841.8897729
+Set paper size 	297.6377985	419.5275636
 Begin page
-Mx 	59.4079
-My 	96.0692
+Mx 	34.7039
+My 	46.9652
 Set font 	Noto Sans CJK JP;6;800;;normal;;LTR
-T	20616	(日)
-Mx 	65.5223
-T	21156	(本)
-Mx 	71.6368
-T	38082	(語)
-Mx 	59.4079
-My 	106.0692
-Mx 	63.4079
+T	20220	(日)
+Mx 	40.8182
+T	20758	(本)
+Mx 	46.9325
+T	37860	(語)
+Mx 	34.7039
+My 	56.9652
+Mx 	38.7039
 Set font 	Noto Sans CJK JP;10;400;;normal;;LTR
-T	29464	(私)
-Mx 	77.6368
-My 	96.0692
-Set font 	Noto Sans CJK JP;6;800;;normal;;LTR
-T	45	(L)
-Mx 	80.8832
-T	66	(a)
-Mx 	84.2016
-T	85	(t)
-Mx 	86.4281
-T	74	(i)
-Mx 	88.0845
-T	79	(n)
-Mx 	77.6368
-My 	106.0692
-Mx 	79.4108
-Set font 	Noto Sans CJK JP;10;400;;normal;;LTR
-T	29464	(私)
-Mx 	59.4079
-My 	113.0692
+T	29078	(私)
+Mx 	52.9325
+My 	46.9652
 Set font 	Noto Sans CJK JP;6;800;;normal;;LTR
 T	45	(L)
-Mx 	62.6543
+Mx 	56.3048
 T	66	(a)
-Mx 	65.9728
+Mx 	59.7131
 T	85	(t)
-Mx 	68.1992
+Mx 	62.0894
 T	74	(i)
-Mx 	69.8556
+Mx 	63.8537
 T	79	(n)
-Mx 	59.4079
-My 	123.0692
-Mx 	61.1819
+Mx 	52.9325
+My 	56.9652
+Mx 	54.9975
 Set font 	Noto Sans CJK JP;10;400;;normal;;LTR
-T	29464	(私)
-Mx 	73.4136
-My 	113.0692
-Set font 	Noto Sans CJK JP;6;800;;normal;;LTR
-T	20616	(日)
-Mx 	79.5281
-T	21156	(本)
-Mx 	85.6425
-T	38082	(語)
-Mx 	73.4136
-My 	123.0692
-Mx 	77.4136
-Set font 	Noto Sans CJK JP;10;400;;normal;;LTR
-T	29464	(私)
-Mx 	59.4079
-My 	130.0692
+T	29078	(私)
+Mx 	34.7039
+My 	63.9652
 Set font 	Noto Sans CJK JP;6;800;;normal;;LTR
 T	45	(L)
-Mx 	62.6547
+Mx 	38.0762
 T	66	(a)
-Mx 	65.9736
+Mx 	41.4845
 T	85	(t)
-Mx 	68.2005
+Mx 	43.8608
 T	74	(i)
-Mx 	69.8574
+Mx 	45.6251
 T	79	(n)
-Mx 	59.4079
-My 	140.0692
-Mx 	61.1819
+Mx 	34.7039
+My 	73.9652
+Mx 	36.7689
 Set font 	Noto Sans CJK JP;10;400;;normal;;LTR
-T	29464	(私)
-Mx 	75.9154
-My 	130.0692
+T	29078	(私)
+Mx 	49.2911
+My 	63.9652
+Set font 	Noto Sans CJK JP;6;800;;normal;;LTR
+T	20220	(日)
+Mx 	55.4054
+T	20758	(本)
+Mx 	61.5197
+T	37860	(語)
+Mx 	49.2911
+My 	73.9652
+Mx 	53.2911
+Set font 	Noto Sans CJK JP;10;400;;normal;;LTR
+T	29078	(私)
+Mx 	34.7039
+My 	80.9652
 Set font 	Noto Sans CJK JP;6;800;;normal;;LTR
 T	45	(L)
-Mx 	79.1622
+Mx 	38.0765
 T	66	(a)
-Mx 	82.4811
+Mx 	41.4851
 T	85	(t)
-Mx 	84.7080
+Mx 	43.8617
 T	74	(i)
-Mx 	86.3648
+Mx 	45.6263
 T	79	(n)
-Mx 	75.9154
-My 	140.0692
-Mx 	77.6894
+Mx 	34.7039
+My 	90.9652
+Mx 	36.7689
 Set font 	Noto Sans CJK JP;10;400;;normal;;LTR
-T	29464	(私)
-Mx 	295.2916
-My 	780.6177
-Set font 	Gentium Plus;10;400;;normal;;LTR
-T	20	(1)
+T	29078	(私)
+Mx 	51.7923
+My 	80.9652
+Set font 	Noto Sans CJK JP;6;800;;normal;;LTR
+T	45	(L)
+Mx 	55.1648
+T	66	(a)
+Mx 	58.5734
+T	85	(t)
+Mx 	60.9500
+T	74	(i)
+Mx 	62.7146
+T	79	(n)
+Mx 	51.7923
+My 	90.9652
+Mx 	53.8573
+Set font 	Noto Sans CJK JP;10;400;;normal;;LTR
+T	29078	(私)
 End page
 Finish

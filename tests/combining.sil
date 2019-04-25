@@ -1,7 +1,7 @@
-\begin[papersize=a5]{document}
-\font[family=Gentium]
+\begin[papersize=a6]{document}
+\nofolios
+\font[family=Gentium Plus,size=24pt]
 Ầ  Ầ
 
 ȭ ȭ ȭ
-
 \end{document}

@@ -1,34 +1,34 @@
-Set paper size 	419.5275636	595.275597
+Set paper size 	297.6377985	419.5275636
 Begin page
-Mx 	20.9764
-My 	37.3614
-Set font 	DejaVu Sans Mono;10;400;;normal;;LTR
-T	83 86 72 88 71 82 70 82 71 72	(pseudocode)
-Mx 	88.4841
-T	94	({)
-Mx 	101.8073
-T	75 72 85 72	(here)
-Mx 	133.1920
-T	96	(})
-Mx 	40.9764
-My 	49.3614
+Mx 	14.8819
+My 	28.9695
+Set font 	Hack;10;400;;normal;;LTR
+T	198 205 139 215 135 184 130 184 135 139	(pseudocode)
+Mx 	82.3567
+T	621	({)
+Mx 	95.6468
+T	156 139 201 139	(here)
+Mx 	126.9986
+T	622	(})
+Mx 	34.8819
+My 	40.9695
 Set font 	Gentium Plus;10;400;;normal;;LTR
 T	55 75 76 86	(This)
-Mx 	61.2378
+Mx 	55.1313
 T	87 72 91 87	(text)
-Mx 	80.4348
+Mx 	74.3162
 T	86 75 82 88 79 71	(should)
-Mx 	110.7157
+Mx 	104.5850
 T	69 72	(be)
-Mx 	123.0768
+Mx 	116.9340
 T	76 81	(in)
-Mx 	133.9681
+Mx 	127.8133
 T	68	(a)
-Mx 	141.2217
+Mx 	135.0548
 T	81 72 90	(new)
-Mx 	161.0828
+Mx 	154.9038
 T	83 68 85 68 74 85 68 83 75	(paragraph)
-Mx 	203.7634
+Mx 	197.5844
 T	17	(.)
 End page
 Finish

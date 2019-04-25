@@ -1,5 +1,6 @@
-\begin[class=jplain]{document}
+\begin[class=jplain,papersize=a6]{document}
 \script[src=packages/ruby]
+\nofolios
 \font[family=Noto Sans CJK JP,language=ja]
 
 \ruby[reading=日本語]{私}\ruby[reading=Latin]{私}

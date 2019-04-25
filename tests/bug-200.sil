@@ -1,5 +1,6 @@
-\begin[papersize=a5]{document}
+\begin[papersize=a6]{document}
 \nofolios
+\font[family=Gentium Plus,size=16pt,language=en]
 \begin{raggedright}
 \begin{script}
 icu = require("justenoughicu")
