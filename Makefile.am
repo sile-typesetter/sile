@@ -15,7 +15,7 @@ REGRESSIONSCRIPT := ./tests/regressions.pl
 LOCALTESTFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
 
 .PHONY: test
-test: $(REGRESSIONSCRIPT) | sile
+test: $(REGRESSIONSCRIPT) | sile testprep
 	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT)
 
 DOCS = $(addsuffix .pdf,$(basename $(wildcard documentation/*.sil)))
@@ -43,7 +43,7 @@ EXPECTS = $(wildcard tests/*.expected)
 .PHONY: update_expected
 update_expected: $(EXPECTS)
 
-tests/%.expected: tests/%.sil force | sile
+tests/%.expected: tests/%.sil force | sile testprep
 	$(LOCALTESTFONTS) ./sile -b debug $< -o $@
 
 ACTUALS = $(addsuffix .actual,$(basename $(wildcard tests/*.expected)))
@@ -51,11 +51,24 @@ ACTUALS = $(addsuffix .actual,$(basename $(wildcard tests/*.expected)))
 .PHONY: update_actuals
 update_actuals: $(ACTUALS)
 
-tests/%.actual: tests/%.sil | sile
+tests/%.actual: tests/%.sil | sile testprep
 	$(LOCALTESTFONTS) ./sile -b debug $< -o $@
 
 .PHONY: force
 force: ;
+
+.PRECIOUS: .fonts/%
+
+TESTFONTFILES  = NotoSansCJK-Regular.ttc
+
+.PHONY: testprep
+testprep: | $(addprefix .fonts/,$(TESTFONTFILES))
+
+.fonts: fontconfig.conf
+	mkdir -p $@
+
+.fonts/NotoSansCJK%: | .fonts
+	curl -s -L https://github.com/googlefonts/noto-cjk/raw/NotoSansV2.001/$(notdir $@) -o $@
 
 gource.webm:
 	mkdir -p /tmp/gravatars
