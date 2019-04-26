@@ -242,6 +242,7 @@ SILE.baseClass = std.object {
     self:endPage()
     assert(#SILE.typesetter.state.nodes == 0 and #SILE.typesetter.state.outputQueue == 0, "queues not empty")
     SILE.outputter:finish()
+	SILE.scratch.counters = {}
   end,
 
   newPar = function (typesetter)
