@@ -10,6 +10,7 @@ addons:
  apt:
   packages:
    - pkg-config
+   - bsdtar
    - libgraphite2-dev
    - libicu-dev
    - libreadline-dev
@@ -34,7 +35,7 @@ env:
    #- LUA=lua5.1 GRAPHITE=false
 cache:
   directories:
-  - $HOME/.fonts
+  - $TRAVIS_BUILD_DIR/.fonts
   - $HOME/local
   # Cache object files etc. to speed up build
   - $TRAVIS_BUILD_DIR/libtexpdf
@@ -83,6 +84,7 @@ install:
 script:
  - fold_unless_fail 'Building' 'build' sh -c './bootstrap.sh && ./configure && make'
  - fold_unless_fail 'busted' 'busted'  busted --cpath="core/?.so" -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
+ - fold_unless_fail 'Fetch resources used in tests' 'regression' make testprep
  - fold_unless_fail 'Run regression tests' 'regression' make test
  - fold_unless_fail 'Compile documentation and examples' 'compile_docs' make docs examples
  - fold_unless_fail 'Versions' 'versions' ./sile --debug=fonts,versions tests/bug-117.sil
