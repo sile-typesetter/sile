@@ -55,17 +55,22 @@ SILE.process = function(input)
   if SU.debugging("ast") then
     debugAST(input,0)
   end
+
   for i=1, #input do
-    SILE.currentCommand = input[i]
     local content = input[i]
+
     if type(content) == "string" then
       SILE.typesetter:typeset(content)
     elseif SILE.Commands[content.tag] then
       SILE.call(content.tag, content.attr, content)
     elseif content.id == "texlike_stuff" or (not content.tag and not content.id) then
+      local pId = SILE.currentCommandStack:pushContent(content, "texlike_stuff")
       SILE.process(content)
+      SILE.currentCommandStack:pop(pId)
     else
+      local pId = SILE.currentCommandStack:pushContent(content)
       SU.error("Unknown command "..(content.tag or content.id))
+      SILE.currentCommandStack:pop(pId)
     end
   end
 end

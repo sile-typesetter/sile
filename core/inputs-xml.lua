@@ -16,7 +16,7 @@ SILE.inputs.XML = {
       end
       SILE.inputs.common.init(doc, content)
     end
-    SILE.currentCommand = content
+
     if SILE.Commands[content.tag] then
       SILE.call(content.tag, content.attr, content)
     else

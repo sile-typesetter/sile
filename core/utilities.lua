@@ -25,21 +25,43 @@ if not table.maxn then
   end
 end
 
-utilities.error = function (message, bug)
-  if(SILE.currentCommand and type(SILE.currentCommand) == "table") then
-    io.stderr:write("\n! "..message.. " at "..SILE.currentlyProcessingFile.." l."..(SILE.currentCommand.line)..", col."..(SILE.currentCommand.col))
+utilities.error = function(message, bug)
+  io.stderr:write("\n! " .. message)
+  if not SILE.detailedErrors and not bug then
+    -- Normal operation, show only inline info
+    io.stderr:write(" at " .. SILE.currentCommandStack:locationInfo())
+    io.stderr:write("\n")
   else
-    io.stderr:write("\n! "..message.. " at "..SILE.currentlyProcessingFile)
+    -- Using full error handler, print whole trace
+    io.stderr:write("\n")
+    io.stderr:write(SILE.currentCommandStack:locationTrace())
+    io.stderr:write(debug.traceback(nil, 2))
+    io.stderr:write("\n")
   end
-  if bug then io.stderr:write(debug.traceback()) end
-  io.stderr:write("\n")
+  io.stderr:flush()
+
   SILE.outputter:finish()
   os.exit(1)
 end
 
-utilities.warn = function (message)
-  io.stderr:write("\n! "..message.."\n")
-  --print(debug.traceback())
+utilities.warn = function (message, bug)
+  io.stderr:write("\n! "..message)
+  if not (SILE.detailedErrors or bug) then
+    -- Normal operation, show only inline info
+    io.stderr:write(" at "..SILE.currentCommandStack:locationInfo())
+    io.stderr:write("\n")
+  else
+    -- Show full trace
+    io.stderr:write("\n")
+    io.stderr:write(SILE.currentCommandStack:locationTrace())
+  end
+
+  if bug then
+    -- Something weird has happened, but the program can continue
+    io.stderr:write(debug.traceback(nil, 2))
+    io.stderr:write("\n")
+  end
+
   --os.exit(1)
 end
 
