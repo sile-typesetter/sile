@@ -56,7 +56,11 @@ Once your dependencies are installed, run:
     $ ./configure
     $ make install
 
-This will place the SILE libraries and executable in a sensible location.
+This will place the SILE libraries and executable in a sensible location. You may also need to run:
+
+    $ sudo ldconfig
+
+… before trying to execute `sile` to make the system aware of the newly installed libraries.
 
 ### Default font
 
