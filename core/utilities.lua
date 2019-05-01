@@ -181,6 +181,32 @@ utilities.allCombinations = function (options)
   end)
 end
 
+utilities.type = function(value)
+  if type(value) == "number" then
+    return math.floor(value) == value and "integer" or "number"
+  elseif type(value) == "table" then
+    return value:prototype()
+  else
+    return type(value)
+  end
+end
+
+utilities.cast = function (wantedType, value)
+  local actualType = SU.type(value)
+  if string.match(wantedType, actualType)     then return value
+  elseif actualType == "nil"
+     and string.match(wantedType, "nil")      then return nil
+  elseif string.match(wantedType, "integer")  then return tonumber(value)
+  elseif string.match(wantedType, "number")   then return tonumber(value)
+  elseif string.match(wantedType, "boolean")  then return SU.boolean(value)
+  elseif string.match(wantedType, "Length")   then return SILE.length.parse(value)
+  elseif string.match(wantedType, "VGlue")    then return SILE.nodefactory.newVglue(value)
+  elseif string.match(wantedType, "Glue")     then return SILE.nodefactory.newGlue(value)
+  elseif string.match(wantedType, "Kern")     then return SILE.nodefactory.newKern(value)
+  else SU.warn("Unrecognized type: "..wantedType); return value
+  end
+end
+
 -- Flatten content trees into just the string components (allows passing
 -- objects with complex structures to functions that need plain strings)
 utilities.contentToString = function (content)
