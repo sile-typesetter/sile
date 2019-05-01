@@ -61,7 +61,7 @@ SILE.process = function(input)
     if type(content) == "string" then
       SILE.typesetter:typeset(content)
     elseif SILE.Commands[content.tag] then
-      SILE.Commands[content.tag](content.attr,content)
+      SILE.call(content.tag, content.attr, content)
     elseif content.id == "texlike_stuff" or (not content.tag and not content.id) then
       SILE.process(content)
     else

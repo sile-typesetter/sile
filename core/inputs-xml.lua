@@ -18,7 +18,7 @@ SILE.inputs.XML = {
     end
     SILE.currentCommand = t
     if SILE.Commands[t.tag] then
-      SILE.Commands[t.tag](t.attr,t)
+      SILE.call(t.tag, t.attr, t)
     else
       SILE.process(t)
     end

@@ -23,11 +23,11 @@ end
 
 SILE.registerCommand("open-double-page", function()
   SILE.typesetter:leaveHmode()
-  SILE.Commands["supereject"]()
+  SILE.call("supereject")
   if SILE.documentState.documentClass:oddPage() then
     SILE.typesetter:typeset("")
     SILE.typesetter:leaveHmode()
-    SILE.Commands["supereject"]()
+    SILE.call("supereject")
   end
   SILE.typesetter:leaveHmode()
 end)

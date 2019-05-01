@@ -20,13 +20,13 @@ SILE.registerCommand("verse", function(options, content)
   if not (c == SILE.scratch.chapter) then
     io.stderr:write(" ("..c..") ")
     SILE.call("bigskip")
-    SILE.Commands["font"]({ weight = 700, size = "15pt"}, { "Chapter ".. c })
+    SILE.call("font", { weight = 700, size = "15pt"}, { "Chapter ".. c })
     SILE.typesetter:leaveHmode()
     SILE.call("bigskip")
     SILE.scratch.chapter = c
     SILE.typesetter:pushVpenalty({penalty = 10000 })
   end
-  SILE.Commands["font"]({ weight = 700, size = "7pt"}, { v.." " })
+  SILE.call("font", { weight = 700, size = "7pt"}, { v.." " })
   SILE.typesetter:pushPenalty({penalty = 10000 })
 
   SILE.process(content)

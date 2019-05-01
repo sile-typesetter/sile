@@ -17,5 +17,5 @@ SILE.registerCommand("raise", function(options, content)
 end, "Raises the contents of the command by the amount specified in the <height> option")
 
 SILE.registerCommand("lower", function (options, content)
-  SILE.Commands["raise"]({height = "-"..options.height}, content)
+  SILE.call("raise", {height = "-"..options.height}, content)
 end, "Lowers the contents of the command by the amount specified in the <height> option")

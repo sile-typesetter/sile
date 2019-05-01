@@ -179,7 +179,7 @@ end, "Breaks the current frame in two horizontally either at the current locatio
 
 SILE.registerCommand("float", function(options, content)
   SILE.typesetter:leaveHmode()
-  local hbox = SILE.Commands["hbox"]({}, content)
+  local hbox = SILE.call("hbox", {}, content)
   table.remove(SILE.typesetter.state.nodes) -- steal it back
   local heightOfPageSoFar = SILE.pagebuilder.collateVboxes(SILE.typesetter.state.outputQueue).height
   if SILE.length.make(heightOfPageSoFar + hbox.height - SILE.typesetter:pageTarget()).length > 0 then

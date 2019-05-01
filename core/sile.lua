@@ -243,7 +243,7 @@ end
 function SILE.call(cmd, options, content)
   SILE.currentCommand = content
   if not SILE.Commands[cmd] then SU.error("Unknown command "..cmd) end
-  SILE.Commands[cmd](options or {}, content or {})
+  return SILE.Commands[cmd](options or {}, content or {})
 end
 
 return SILE
