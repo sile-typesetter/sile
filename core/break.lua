@@ -157,26 +157,26 @@ function lineBreak:tryBreak() -- 855
  
 end
 
-local function fitclass(self, s) -- s =shortfall
+local function fitclass(self, shortfall)
   local badness, class
   local stretch = self.curActiveWidth.stretch
   local shrink = self.curActiveWidth.shrink
-  if s > 0 then
-    if s > 110 and stretch < 25 then
+  if shortfall > 0 then
+    if shortfall > 110 and stretch < 25 then
       badness = inf_bad
     else
-      badness = lineBreak:badness(s, stretch)
+      badness = SU.rateBadness(inf_bad, shortfall, stretch)
     end
     if     badness > 99 then class = "veryLoose"
     elseif badness > 12 then class = "loose"
     else                     class = "decent"
     end
   else
-    s = -s
-    if s > shrink then
+    shortfall = -shortfall
+    if shortfall > shrink then
       badness = inf_bad + 1
     else
-      badness = lineBreak:badness(s, shrink)
+      badness = SU.rateBadness(inf_bad, shortfall, shrink)
     end
     if badness > 12 then class = "tight"
     else                 class = "decent"
@@ -206,7 +206,7 @@ function lineBreak:tryAlternatives(from, to)
       if debugging then SU.debug("break", alt.options[combination[i]], " width", addWidth) end
     end
     local ss = shortfall - addWidth
-    local badness = ss > 0 and SU.badness(inf_bad, ss, self.curActiveWidth.stretch) or SU.badness(inf_bad, math.abs(ss), self.curActiveWidth.shrink)
+    local badness = SU.rateBadness(inf_bad, math.abs(ss), ss > 0 and self.curActiveWidth.stretch or self.curActiveWidth.shrink)
     if debugging then SU.debug("break", "  badness of "..ss.." ("..self.curActiveWidth.stretch..") is ".. badness) end
     if badness < localMinimum then
       self.r.alternates = alternates
@@ -250,13 +250,6 @@ function lineBreak:considerDemerits(pi, breakType) -- 877
   self.lastRatio = shortfall > 0 and shortfall/(self.curActiveWidth.stretch or awful_bad) or shortfall/(self.curActiveWidth.shrink or awful_bad)
   self:recordFeasible(pi, breakType)
   if not nodeStaysActive then self:deactivateR() end
-end
-
-function lineBreak:badness(t,s)
-  local bad = 100 * (t/s)^3
-  bad = math.floor(bad) -- TeX uses integer math for this stuff, so for compatibility...
-
-  if bad > inf_bad then return inf_bad else return bad end
 end
 
 function lineBreak:deactivateR() -- 886

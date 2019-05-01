@@ -205,6 +205,11 @@ utilities.subContent = function (content)
   return out
 end
 
+utilities.rateBadness = function(inf_bad, shortfall, spring)
+  local bad = math.floor(100 * (shortfall / spring) ^ 3)
+  return bad > inf_bad and inf_bad or bad
+end
+
 -- Unicode-related utilities
 utilities.utf8char = function (c)
     if     c < 128 then
