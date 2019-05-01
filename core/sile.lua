@@ -111,7 +111,7 @@ Options:
     SILE.backend = opts.backend
   end
   if opts.debug then
-    for k,v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = 1 end
+    for _,v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = 1 end
   end
   if opts.evaluate then
     local statements = type(opts.evaluate) == "table" and opts.evaluate or { opts.evaluate }
@@ -195,11 +195,11 @@ function SILE.readFile(filename)
   end
   local sniff = doc:sub(1, 100):gsub("begin.*", "") or ""
   local inputsOrder = {}
-  for n in pairs(SILE.inputs) do
-    if SILE.inputs[n].order then table.insert(inputsOrder, n) end
+  for input in pairs(SILE.inputs) do
+    if SILE.inputs[input].order then table.insert(inputsOrder, input) end
   end
   table.sort(inputsOrder,function(a,b) return SILE.inputs[a].order < SILE.inputs[b].order end)
-  for i = 1,#inputsOrder do local input = SILE.inputs[inputsOrder[i]]
+  for i = 1, #inputsOrder do local input = SILE.inputs[inputsOrder[i]]
     if input.appropriate(filename, sniff) then
       input.process(doc)
       return
@@ -232,7 +232,7 @@ function SILE.resolveFile(filename, pathprefix)
     end
   end
   -- Return the first candidate that exists, also checking the .sil suffix
-  for i, v in pairs(candidates) do
+  for _, v in pairs(candidates) do
     if file_exists(v) then return v end
     if file_exists(v..".sil") then return v .. ".sil" end
   end

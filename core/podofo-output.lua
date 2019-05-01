@@ -57,7 +57,7 @@ SILE.outputters.podofo = {
     -- Podofo trashes the font, so we need to recompute.
     SILE.fontCache[lastkey] = nil
   end,
-  drawPNG = function (src, x,y,w,h)
+  drawPNG = function (src, x,y,width,height)
   end,
   imageSize = function (src)
     local box_width,box_height, err = imagesize.imgsize(src)imagesize.imgsize(src)
@@ -70,12 +70,12 @@ SILE.outputters.podofo = {
     cursorX = x
     cursorY = SILE.documentState.paperSize[2] - y
   end,
-  rule = function (x,y,w,d)
-    painter:Rectangle(x,SILE.documentState.paperSize[2] - y,w,d)
+  rule = function (x,y,width,depth)
+    painter:Rectangle(x,SILE.documentState.paperSize[2] - y,width,depth)
     painter:Close()
     painter:Fill()
   end,
-  debugFrame = function (self,f)
+  debugFrame = function (self,frame)
   end,
   debugHbox = function(typesetter, hbox, scaledWidth)
     painter:SetColor(0.9,0.9,0.9)

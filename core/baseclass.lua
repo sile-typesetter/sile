@@ -65,9 +65,9 @@ SILE.baseClass = std.object {
       if (options["src"]) then
         require(options["src"])
       else
-        p,e = loadstring(content[1])
-        if not p then SU.error(e) end
-        p()
+        func, err = loadstring(content[1])
+        if not func then SU.error(err) end
+        func()
       end
     end, "Runs lua code. The code may be supplied either inline or using the src=... option. (Think HTML.)")
 
@@ -183,9 +183,8 @@ SILE.baseClass = std.object {
 
   initialFrame = function (self)
     SILE.documentState.thisPageTemplate = std.tree.clone(self.pageTemplate)
-    local p = SILE.frames.page
-    SILE.frames = { page = p }
-    for k,v in pairs(SILE.documentState.thisPageTemplate.frames) do
+    SILE.frames = { page = SILE.frames.page }
+    for k, v in pairs(SILE.documentState.thisPageTemplate.frames) do
       SILE.frames[k] = v
     end
     SILE.documentState.thisPageTemplate.firstContentFrame:invalidate()

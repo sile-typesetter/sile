@@ -12,7 +12,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   local quotedString = ( quote * C((1-quote)^1) * quote )
   local value = ( quotedString + (1-S",;]")^1 )
   local myID = C(SILE.inputs.TeXlike.identifier + P(1)) / 1
-  local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1 / function (...) local t = {...}; return t[1], t[#t] end
+  local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1 / function (...) local tbl = {...}; return tbl[1], tbl[#tbl] end
   local list = Cf(Ct"" * pair^0, rawset)
   local parameters = (
       P"[" *
@@ -84,24 +84,24 @@ local function resetCache ()
   linecache = { { lno = 1, pos = 1} }
 end
 
-local function getline (s, p)
+local function getline (str, pos)
   start = 1
   lno = 1
-  if p > lastpos then
+  if pos > lastpos then
     lno = linecache[#linecache].lno
     start = linecache[#linecache].pos + 1
     col = 1
   else
     for j = 1,#linecache-1 do
-      if linecache[j+1].pos >= p then
+      if linecache[j+1].pos >= pos then
         lno = linecache[j].lno
-        col = p - linecache[j].pos
+        col = pos - linecache[j].pos
         return lno,col
       end
     end
   end
-  for i = start, p do
-    if string.sub( s, i, i ) == "\n" then
+  for i = start, pos do
+    if string.sub( str, i, i ) == "\n" then
       lno = lno + 1
       col = 1
       linecache[#linecache+1] = { pos = i, lno = lno }
