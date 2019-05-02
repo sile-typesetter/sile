@@ -233,7 +233,7 @@ SILE.getFrame = function(id)
   -- or SU.warn("Couldn't get frame ID "..id, true)
 end
 
-SILE.parseComplexFrameDimension = function(dimension, width_or_height)
+SILE.parseComplexFrameDimension = function(dimension)
   local length =  parseFrameDef(dimension)
   length = SILE.toAbsoluteMeasurement(length)
   if type(length) == "table" then

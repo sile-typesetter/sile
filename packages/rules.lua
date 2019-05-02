@@ -5,8 +5,8 @@ SILE.registerCommand("hrule", function(options, content)
   local width = options.width or 0
   local height = options.height or 0
   SILE.typesetter:pushHbox({
-    width= SILE.length.new({length = SILE.parseComplexFrameDimension(width,"w") }),
-    height= SILE.length.new({ length = SILE.parseComplexFrameDimension(height,"h") }),
+    width = SILE.length.new({ length = SILE.parseComplexFrameDimension(width) }),
+    height = SILE.length.new({ length = SILE.parseComplexFrameDimension(height) }),
     depth= 0,
     value= options.src,
     outputYourself= function (self, typesetter, line)

@@ -1,7 +1,7 @@
 
 SILE.registerCommand("raise", function(options, content)
   local height = options.height or 0
-  height = SILE.parseComplexFrameDimension(height,"h")
+  height = SILE.parseComplexFrameDimension(height)
   SILE.typesetter:pushHbox({
     outputYourself= function (self, typesetter, line)
       typesetter.frame:advancePageDirection(-height)
