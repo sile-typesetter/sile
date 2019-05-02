@@ -23,7 +23,7 @@ SILE.require("core/base-shaper")
 local smallTokenSize = 20 -- Small words will be cached
 local shapeCache = {}
 local _key = function(options, text)
-  return table.concat({text,options.family;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename},";")
+  return table.concat({ text, options.family, options.language, options.script, options.size, ("%d"):format(options.weight), options.style, options.variant, options.features, options.direction, options.filename },";")
 end
 
 local substwarnings = {}
