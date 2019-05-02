@@ -132,8 +132,8 @@ SILE.shapers.base = std.object {
 
   makeSpaceNode = function(self, options, item)
     if SILE.settings.get("shaper.variablespaces") == 1 then
-      spacewidth = item.width
-      width = SILE.length.new({
+      local spacewidth = item.width
+      local width = SILE.length.new({
         length = spacewidth * SILE.settings.get("shaper.spaceenlargementfactor"),
         shrink = math.abs(spacewidth) * SILE.settings.get("shaper.spaceshrinkfactor"),
         stretch = math.abs(spacewidth) * SILE.settings.get("shaper.spacestretchfactor")

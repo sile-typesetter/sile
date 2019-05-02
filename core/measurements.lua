@@ -136,7 +136,7 @@ end})
 
 SILE.registerUnit("en", { definition = "0.5em" })
 
-_relativeMeasurement = std.object {
+local _relativeMeasurement = std.object {
   _type = "RelativeMeasurement",
   __tostring = function (self) return "("..self.number..self.unit..")" end,
   absolute = function(self)
