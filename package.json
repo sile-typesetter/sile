@@ -1,0 +1,19 @@
+{
+  "name": "sile",
+  "version": "0.9.5",
+  "description": "SILE Typesetter",
+  "main": "sile",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simoncozens/sile.git"
+  },
+  "author": "Simon Cozens",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/simoncozens/sile/issues"
+  },
+  "homepage": "http://sile-typesetter.org"
+}
