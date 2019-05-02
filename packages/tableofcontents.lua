@@ -30,6 +30,7 @@ SILE.registerCommand("tableofcontents", function (options, content)
   local tocfile,_ = io.open(SILE.masterFilename .. '.toc')
   if not tocfile then
     SILE.call("tableofcontents:notocmessage")
+	SILE.passes = SILE.passes + 1
     return
   end
   local doc = tocfile:read("*all")
