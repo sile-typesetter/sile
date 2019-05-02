@@ -33,7 +33,7 @@ local function debugAST(ast,level)
   if type(ast) == "function" then SU.debug("ast",out.."(function)") end
   if not ast then SU.error("SILE.process called with nil", 1) end
   for i=1, #ast do
-    content = ast[i]
+    local content = ast[i]
     if type(content) == "string" then
       SU.debug("ast",out.."["..content.."]")
     elseif SILE.Commands[content.tag] then
@@ -57,7 +57,7 @@ SILE.process = function(input)
   end
   for i=1, #input do
     SILE.currentCommand = input[i]
-    content = input[i]
+    local content = input[i]
     if type(content) == "string" then
       SILE.typesetter:typeset(content)
     elseif SILE.Commands[content.tag] then

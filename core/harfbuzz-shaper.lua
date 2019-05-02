@@ -38,7 +38,7 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
     end
     if not(options.filename) and face.family ~= options.family and not substwarnings[options.family] then
       substwarnings[options.family] = true
-      SU.warn("Font '"..options.family.."' not available, falling back to '"..face.family.."'")
+      SU.warn("Font family '"..options.family.."' not available, falling back to '"..face.family.."'")
     end
     usedfonts[face] = true
     local items = { hb._shape(text,
@@ -60,14 +60,14 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
   end,
   getFace = function(opts)
     local face = fontconfig._face(opts)
-    SU.debug("fonts", "Resolved font family "..opts.family.." -> "..(face and face.filename))
-    if not face.filename then SU.error("Couldn't find face "..opts.family) end
+    SU.debug("fonts", "Resolved font family '"..opts.family.."' -> "..(face and face.filename))
+    if not face.filename then SU.error("Couldn't find face '"..opts.family.."'") end
     if bit32.rshift(face.index, 16) ~= 0 then
-      SU.warn("GX feature in "..opts.family.." is not supported, fallback to regular font face.")
+      SU.warn("GX feature in '"..opts.family.."' is not supported, fallback to regular font face.")
       face.index = bit32.band(face.index, 0xff)
     end
     local fh,e = io.open(face.filename, "rb")
-    if e then SU.error("Can't open "..face.filename..": "..e) end
+    if e then SU.error("Can't open font file '"..face.filename.."': "..e) end
     face.data = fh:read("*all")
     return face
   end,
