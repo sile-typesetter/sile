@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/simoncozens/sile/issues"
   },
-  "homepage": "http://sile-typesetter.org"
+  "homepage": "http://sile-typesetter.org",
+  "devDependencies": {
+    "@commitlint/cli": "^7.5.2",
+    "@commitlint/config-conventional": "^7.5.0"
+  }
 }
