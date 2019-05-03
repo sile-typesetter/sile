@@ -14,9 +14,14 @@ EXTRA_DIST=NEWS.md README.md LICENSE ROADMAP tests examples documentation
 REGRESSIONSCRIPT := ./tests/regressions.pl
 LOCALTESTFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
 
+TESTSIL ?= $(wildcard tests/*.sil)
+EXPECTS := $(addsuffix .expected,$(basename $(TESTSIL)))
+ACTUALS := $(addsuffix .actual,$(basename $(TESTSIL)))
+
 .PHONY: test
-test: $(REGRESSIONSCRIPT) | sile testprep
-	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT)
+test: REGRESSIONMODE ?= true
+test: $(TESTSIL) $(ACTUALS) | sile testprep
+	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSIL)
 
 DOCS = $(addsuffix .pdf,$(basename $(wildcard documentation/*.sil)))
 
@@ -38,21 +43,17 @@ examples: $(EXAMPLES) | sile
 coverage: $(REGRESSIONSCRIPT)
 	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) --coverage
 
-EXPECTS = $(wildcard tests/*.expected)
-
 .PHONY: update_expected
 update_expected: $(EXPECTS)
 
-tests/%.expected: tests/%.sil force | sile testprep
+tests/%.expected: tests/%.sil | sile testprep
 	$(LOCALTESTFONTS) ./sile -b debug $< -o $@
-
-ACTUALS = $(addsuffix .actual,$(basename $(wildcard tests/*.expected)))
 
 .PHONY: update_actuals
 update_actuals: $(ACTUALS)
 
-tests/%.actual: tests/%.sil | sile testprep
-	$(LOCALTESTFONTS) ./sile -b debug $< -o $@
+tests/%.actual: tests/%.sil $(and $(REGRESSIONMODE),force) | sile testprep
+	-$(LOCALTESTFONTS) ./sile -b debug $< -o $@
 
 .PHONY: force
 force: ;

@@ -10,7 +10,7 @@ my $coverage = 0;
 
 GetOptions(
 	'upstream' => \$upstream,
-  'coverage' => \$coverage
+	'coverage' => \$coverage
 );
 
 if ($coverage) { $ENV{SILE_COVERAGE} = 1}
@@ -29,13 +29,11 @@ for (@specifics ? @specifics : <tests/*.sil>) {
     } elsif ($_ =~ /_\w+\.sil/) {
       next if ($_ !~ /_$^O\.sil/) ;
     }
-    print "### Regression testing $_\n";
-    my $out = $_; $out =~ s/\.sil$/\.actual/;
+    my $actual = $_; $actual =~ s/\.sil$/\.actual/;
     if (!system("grep KNOWNBAD $_ >/dev/null")) {
       $knownbad = 1;
     }
-    exit $? >> 8 if system qq!./sile -b debug $_ -o $out!;
-    if (system("diff -".($knownbad?"q":"")."U0 $expectation $out")) {
+    if (system("diff -".($knownbad?"q":"")."U0 $expectation $actual")) {
       if ($knownbad) { push @knownbad, $_; }
       else { push @failed, $_; }
     } else {
