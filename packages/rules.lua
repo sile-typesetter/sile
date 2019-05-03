@@ -5,8 +5,8 @@ SILE.registerCommand("hrule", function(options, content)
   local width = options.width or 0
   local height = options.height or 0
   SILE.typesetter:pushHbox({
-    width= SILE.length.new({length = SILE.parseComplexFrameDimension(width,"w") }),
-    height= SILE.length.new({ length = SILE.parseComplexFrameDimension(height,"h") }),
+    width = SILE.length.new({ length = SILE.parseComplexFrameDimension(width) }),
+    height = SILE.length.new({ length = SILE.parseComplexFrameDimension(height) }),
     depth= 0,
     value= options.src,
     outputYourself= function (self, typesetter, line)
@@ -33,22 +33,22 @@ SILE.registerCommand("fullrule", function (options, content)
 end, "Draw a full width hrule centered on the current line")
 
 SILE.registerCommand("underline", function(options, content)
-  local hbox = SILE.Commands["hbox"]({}, content)
+  local hbox = SILE.call("hbox", {}, content)
   local gl = SILE.length.new() - hbox.width
-  SILE.Commands["lower"]({height = "0.5pt"}, function()
-    SILE.Commands["hrule"]({width = gl.length, height = "0.5pt"})
+  SILE.call("lower", {height = "0.5pt"}, function()
+    SILE.call("hrule", {width = gl.length, height = "0.5pt"})
   end)
   SILE.typesetter:pushGlue({width = hbox.width})
 end, "Underlines some content (badly)")
 
 SILE.registerCommand("boxaround", function (options, content)
-  local hbox = SILE.Commands["hbox"]({}, content)
+  local hbox = SILE.call("hbox", {}, content)
   local gl = SILE.length.new() - hbox.width
-  SILE.Commands["rebox"]({width = 0}, function()
-    SILE.Commands["hrule"]({width = gl.length-1, height = "0.5pt"})
+  SILE.call("rebox", {width = 0}, function()
+    SILE.call("hrule", {width = gl.length-1, height = "0.5pt"})
   end)
-  SILE.Commands["raise"]({height = hbox.height}, function()
-    SILE.Commands["hrule"]({width = gl.length-1, height = "0.5pt"})
+  SILE.call("raise", {height = hbox.height}, function()
+    SILE.call("hrule", {width = gl.length-1, height = "0.5pt"})
   end)
   SILE.call("hrule", { height = hbox.height, width = "0.5pt"})
   SILE.typesetter:pushGlue({width = hbox.width})

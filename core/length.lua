@@ -17,22 +17,22 @@ _length = std.object {
     return zero - self
   end,
 
-  fromLengthOrNumber = function (self, x)
-    if type(x) == "table" then
-      self.length = x.length
-      self.stretch = x.stretch
-      self.shrink = x.shrink
+  fromLengthOrNumber = function (self, input)
+    if type(input) == "table" then
+      self.length = input.length
+      self.stretch = input.stretch
+      self.shrink = input.shrink
     else
-      self.length = x
+      self.length = input
     end
     return self
   end,
 
-  __tostring = function (x)
-    local s = tostring(x.length).."pt"
-    if x.stretch ~= 0 then s = s .. " plus "..x.stretch.."pt" end
-    if x.shrink ~= 0 then s = s .. " minus "..x.shrink.."pt" end
-    return s
+  __tostring = function (self)
+    local str = tostring(self.length).."pt"
+    if self.stretch ~= 0 then str = str .. " plus "..self.stretch.."pt" end
+    if self.shrink ~= 0 then str = str .. " minus "..self.shrink.."pt" end
+    return str
   end,
 
   __add = function (self, other)
@@ -115,19 +115,19 @@ local length = {
   new = function (spec)
     return _length(spec or {})
   end,
-  make = function (n)
+  make = function (input)
     local result = _length {}
-    result:fromLengthOrNumber(n)
+    result:fromLengthOrNumber(input)
     return result
   end,
   parse = function (spec)
     if not spec then return _length {} end
     if type(spec) == "table" then return _length {spec} end
-    local t = lpeg.match(SILE.parserBits.length, spec)
-    if not t then SU.error("Bad length definition '"..spec.."'") end
-    if not t.shrink then t.shrink = 0 end
-    if not t.stretch then t.stretch = 0 end
-    return _length(t)
+    local length = lpeg.match(SILE.parserBits.length, spec)
+    if not length then SU.error("Bad length definition '"..spec.."'") end
+    if not length.shrink then length.shrink = 0 end
+    if not length.stretch then length.stretch = 0 end
+    return _length(length)
   end,
 
   zero = _length {}

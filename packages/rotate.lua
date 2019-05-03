@@ -58,7 +58,7 @@ end
 
 SILE.registerCommand("rotate", function(options, content)
   local theta = -math.rad(SU.required(options, "angle", "rotate command"))
-  local origbox = SILE.Commands["hbox"]({}, content)
+  local origbox = SILE.call("hbox", {}, content)
   SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
   local h = (origbox.height + origbox.depth)
   local w = origbox.width.length

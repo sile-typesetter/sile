@@ -32,7 +32,7 @@ return {
       local row = tbl[#tbl]
       row[#row+1] = {
         content = content,
-        hbox = SILE.Commands["hbox"]({},content)
+        hbox = SILE.call("hbox", {},content)
       }
       SILE.typesetter.state.nodes[#(SILE.typesetter.state.nodes)] = nil
     end)

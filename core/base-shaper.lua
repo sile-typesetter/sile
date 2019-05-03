@@ -12,8 +12,8 @@ SILE.settings.declare({name = "shaper.spaceshrinkfactor", type = "number or inte
 SILE.settings.declare({name = "shaper.spacestretchfactor", type = "number or integer", default = 1/2})
 
 -- Function for testing shaping in the repl
-makenodes = function(s,o)
-  return SILE.shaper:createNnodes(s, SILE.font.loadDefaults(o or {}))
+makenodes = function(string, options)
+  return SILE.shaper:createNnodes(string, SILE.font.loadDefaults(options or {}))
 end
 
 SILE.shapers.base = std.object {
@@ -33,12 +33,12 @@ SILE.shapers.base = std.object {
       end)
       return ss
     end
-    local i,w = self:shapeToken(" ", options)
+    local items, width = self:shapeToken(" ", options)
     local spacewidth
-    if w then spacewidth = w.length
+    if width then spacewidth = width.length
     else
-      if not i[1] then return SILE.length.new() end
-      spacewidth = i[1].width
+      if not items[1] then return SILE.length.new() end
+      spacewidth = items[1].width
     end
     return SILE.length.new({
       length = spacewidth * SILE.settings.get("shaper.spaceenlargementfactor"),
@@ -49,8 +49,8 @@ SILE.shapers.base = std.object {
 
   measureChar = function (self, char)
     local options = SILE.font.loadDefaults({})
-    local i = self:shapeToken(char, options)
-    return { height = i[1].height, width = i[1].width }
+    local items = self:shapeToken(char, options)
+    return { height = items[1].height, width = items[1].width }
   end,
 
 
@@ -102,7 +102,8 @@ SILE.shapers.base = std.object {
     else
       if options.direction == "TTB" then misfit = true end
     end
-    for i = 1,#contents do local glyph = contents[i]
+    for i = 1, #contents do
+      local glyph = contents[i]
       if (options.direction == "TTB") ~= misfit then
         if glyph.width > totalHeight then totalHeight = glyph.width end
         totalWidth = totalWidth + glyph.height
@@ -131,13 +132,13 @@ SILE.shapers.base = std.object {
 
   makeSpaceNode = function(self, options, item)
     if SILE.settings.get("shaper.variablespaces") == 1 then
-      spacewidth = item.width
-      w = SILE.length.new({
+      local spacewidth = item.width
+      local width = SILE.length.new({
         length = spacewidth * SILE.settings.get("shaper.spaceenlargementfactor"),
         shrink = math.abs(spacewidth) * SILE.settings.get("shaper.spaceshrinkfactor"),
         stretch = math.abs(spacewidth) * SILE.settings.get("shaper.spacestretchfactor")
       })
-      return (SILE.nodefactory.newGlue({ width = w }))
+      return (SILE.nodefactory.newGlue({ width = width }))
     else
       return SILE.nodefactory.newGlue({ width = SILE.shaper:measureSpace(options) })
     end

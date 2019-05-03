@@ -49,7 +49,7 @@ SILE.outputters.libtexpdf = {
   cursor = function(self)
     return cursorX, cursorY
   end,
-  outputHbox = function (value,w)
+  outputHbox = function (value, width)
     ensureInit()
     if not value.glyphString then return end
     -- Nodes which require kerning or have offsets to the glyph
@@ -76,7 +76,7 @@ SILE.outputters.libtexpdf = {
       buf[#buf+1] = string.char(glyph % 0x100)
     end
     buf = table.concat(buf, "")
-    pdf.setstring(cursorX, cursorY, buf, string.len(buf), font, w)
+    pdf.setstring(cursorX, cursorY, buf, string.len(buf), font, width)
   end,
   setFont = function (options)
     ensureInit()
@@ -91,36 +91,36 @@ SILE.outputters.libtexpdf = {
     else
       pdf.setdirmode(0)
     end
-    f = pdf.loadfont(font)
-    if f< 0 then SU.error("Font loading error for "..options) end
-    font = f
+    pdffont = pdf.loadfont(font)
+    if pdffont < 0 then SU.error("Font loading error for "..options) end
+    font = pdffont
   end,
-  drawImage = function (src, x,y,w,h)
+  drawImage = function (src, x, y, width, height)
     ensureInit()
-    pdf.drawimage(src, x, y, w, h)
+    pdf.drawimage(src, x, y, width, height)
   end,
   imageSize = function (src)
     ensureInit() -- in case it's a PDF file
     local llx, lly, urx, ury = pdf.imagebbox(src)
     return (urx-llx), (ury-lly)
   end,
-  moveTo = function (x,y)
+  moveTo = function (x, y)
     cursorX = x
     cursorY = SILE.documentState.paperSize[2] - y
   end,
-  rule = function (x,y,w,d)
+  rule = function (x, y, width, depth)
     ensureInit()
-    pdf.setrule(x,SILE.documentState.paperSize[2] -y-d,w,d)
+    pdf.setrule(x, SILE.documentState.paperSize[2] - y - depth, width, depth)
   end,
-  debugFrame = function (self,f)
+  debugFrame = function (self, frame)
     ensureInit()
     pdf.colorpush_rgb(0.8, 0, 0)
-    self.rule(f:left(), f:top(), f:width(), 0.5)
-    self.rule(f:left(), f:top(), 0.5, f:height())
-    self.rule(f:right(), f:top(), 0.5, f:height())
-    self.rule(f:left(), f:bottom(), f:width(), 0.5)
-    --self.rule(f:left() + f:width()/2 - 5, (f:top() + f:bottom())/2+5, 10, 10)
-    local stuff = SILE.shaper:createNnodes(f.id, SILE.font.loadDefaults({}))
+    self.rule(frame:left(), frame:top(), frame:width(), 0.5)
+    self.rule(frame:left(), frame:top(), 0.5, frame:height())
+    self.rule(frame:right(), frame:top(), 0.5, frame:height())
+    self.rule(frame:left(), frame:bottom(), frame:width(), 0.5)
+    --self.rule(frame:left() + frame:width()/2 - 5, (frame:top() + frame:bottom())/2+5, 10, 10)
+    local stuff = SILE.shaper:createNnodes(frame.id, SILE.font.loadDefaults({}))
     stuff = stuff[1].nodes[1].value.glyphString -- Horrible hack
     local buf = {}
     for i=1,#stuff do
@@ -130,7 +130,7 @@ SILE.outputters.libtexpdf = {
     end
     buf = table.concat(buf, "")
     if font == 0 then SILE.outputter.setFont(SILE.font.loadDefaults({})) end
-    pdf.setstring(f:left(), SILE.documentState.paperSize[2] -f:top(), buf, string.len(buf), font, 0)
+    pdf.setstring(frame:left(), SILE.documentState.paperSize[2] -frame:top(), buf, string.len(buf), font, 0)
     pdf.colorpop()
   end,
   debugHbox = function(hbox, scaledWidth)

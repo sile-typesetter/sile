@@ -71,12 +71,12 @@ SILE.shapers.pango = SILE.shapers.base {
   end
 }
 
-function _shape(s, item)
+function _shape(text, item)
   local offset = item.offset
   local length = item.length
   local analysis = item.analysis
   local pgs = pango.GlyphString.new()
-  pango.shape(string.sub(s,1+offset), length, analysis, pgs)
+  pango.shape(string.sub(text, 1+offset), length, analysis, pgs)
   return pgs
 end
 

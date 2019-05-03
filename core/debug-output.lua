@@ -1,6 +1,6 @@
 if (not SILE.outputters) then SILE.outputters = {} end
 
-local f
+local lastFont
 local outfile
 local writeline = function (...)
 	local args = table.pack(...)
@@ -36,7 +36,7 @@ SILE.outputters.debug = {
   popColor = function (self)
     writeline("Pop color")
   end,
-  outputHbox = function (value, w)
+  outputHbox = function (value, width)
     buf = {}
     for i=1, #(value.glyphString) do
       buf[#buf+1] = value.glyphString[i]
@@ -45,13 +45,14 @@ SILE.outputters.debug = {
     writeline("T", buf, "("..value.text..")")
   end,
   setFont = function (options)
-    if f ~= SILE.font._key(options) then
+    local font = SILE.font._key(options)
+    if lastFont ~= font then
       writeline("Set font ", SILE.font._key(options))
-      f = SILE.font._key(options)
+      lastFont = font
     end
   end,
-  drawImage = function (src, x, y, w, h)
-    writeline("Draw image", src, string.format("%.4f %.4f %.4f %.4f" , x, y, w, h))
+  drawImage = function (src, x, y, width, height)
+    writeline("Draw image", src, string.format("%.4f %.4f %.4f %.4f" , x, y, width, height))
   end,
   imageSize = function (src)
     local pdf = require("justenoughlibtexpdf")
@@ -62,10 +63,10 @@ SILE.outputters.debug = {
     if string.format("%.4f", x) ~= string.format("%.4f", cx) then writeline("Mx ", string.format("%.4f", x)); cx = x end
     if string.format("%.4f", y) ~= string.format("%.4f", cy) then writeline("My ", string.format("%.4f", y)); cy = y end
   end,
-  rule = function (x, y, w, d)
-    writeline("Draw line", string.format("%.4f %.4f %.4f %.4f", x, y, w, d))
+  rule = function (x, y, width, depth)
+    writeline("Draw line", string.format("%.4f %.4f %.4f %.4f", x, y, width, depth))
   end,
-  debugFrame = function (self, f)
+  debugFrame = function (self, frame)
   end,
   debugHbox = function(typesetter, hbox, scaledWidth)
   end

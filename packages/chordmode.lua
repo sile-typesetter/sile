@@ -72,7 +72,7 @@ local function addChords(text, content)
 end
 
 SILE.registerCommand("ch", function(options, content)
-  local chordBox = SILE.Commands["hbox"]({}, {options.name})
+  local chordBox = SILE.call("hbox", {}, {options.name})
   SILE.typesetter.state.nodes[#(SILE.typesetter.state.nodes)] = nil
 
   local chordLineHeight = SILE.toPoints("4", "mm", "h")
@@ -85,7 +85,7 @@ SILE.registerCommand("ch", function(options, content)
       SILE.typesetter:pushHbox(chordBox)
     end)
   end)
-  local lyricBox = SILE.Commands["hbox"]({}, content)
+  local lyricBox = SILE.call("hbox", {}, content)
   if lyricBox.width < origWidth then
     lyricBox.width = origWidth + SILE.toPoints("0.5em")
   end

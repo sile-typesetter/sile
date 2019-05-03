@@ -100,7 +100,7 @@ end)
 SILE.registerCommand("grid", function(options, content)
   SILE.typesetter.state.grid = true
   SU.required(options, "spacing", "grid package")
-  gridSpacing = SILE.parseComplexFrameDimension(options.spacing,"h")
+  gridSpacing = SILE.parseComplexFrameDimension(options.spacing)
   -- SILE.typesetter:leaveHmode()
 
   SILE.pagebuilder = std.tree.clone(SILE.pagebuilder)

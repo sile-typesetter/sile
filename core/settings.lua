@@ -16,14 +16,14 @@ SILE.settings = {
   popState = function()
     SILE.settings.state = table.remove(SILE.settings.stateQueue)
   end,
-  declare = function(t)
-    SILE.settings.declarations[t.name] = t
-    SILE.settings.set(t.name, t.default)
-    SILE.settings.defaults[t.name] = t.default
+  declare = function(spec)
+    SILE.settings.declarations[spec.name] = spec
+    SILE.settings.set(spec.name, spec.default)
+    SILE.settings.defaults[spec.name] = spec.default
   end,
-  reset = function(t)
+  reset = function()
     for k,_ in pairs(SILE.settings.state) do
-      SILE.settings.set(k,SILE.settings.defaults[k])
+      SILE.settings.set(k, SILE.settings.defaults[k])
     end
   end,
   get = function(name)
@@ -36,24 +36,24 @@ SILE.settings = {
     if not SILE.settings.declarations[name] then
       SU.error("Undefined setting '"..name.."'")
     end
-    local t = _type(value)
+    local valuetype = _type(value)
     local wantedType = SILE.settings.declarations[name].type
-    if not (string.find(wantedType, t) == 1 or string.find(wantedType, "or "..t) ) then
-      SU.error("Setting "..name.." must be of type "..wantedType..", not "..t.." "..value.."\n"..name..": "..SILE.settings.declarations[name].help)
+    if not (string.find(wantedType, valuetype) == 1 or string.find(wantedType, "or "..valuetype) ) then
+      SU.error("Setting "..name.." must be of type "..wantedType..", not "..valuetype.." "..value.."\n"..name..": "..SILE.settings.declarations[name].help)
     end
     SILE.settings.state[name] = value
   end,
-  temporarily = function(f)
+  temporarily = function(func)
     SILE.settings.pushState()
-    f()
+    func()
     SILE.settings.popState()
   end,
   wrap = function() -- Returns a closure which applies the current state, later
     local clSettings = std.table.clone(SILE.settings.state)
-    return function(f)
+    return function(func)
       table.insert(SILE.settings.stateQueue, SILE.settings.state)
       SILE.settings.state = clSettings
-      SILE.process(f)
+      SILE.process(func)
       SILE.settings.popState()
     end
   end,

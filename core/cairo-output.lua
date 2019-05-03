@@ -41,7 +41,7 @@ SILE.outputters.cairo = {
     cr:select_font_face(options.font, options.style:lower() == "italic" and 1 or 0, options.weight > 100 and 0 or 1)
     cr:set_font_size(options.size)
   end,
-  drawImage = function (src, x,y,w,h)
+  drawImage = function (src, x,y,width,height)
     local image = cairo.ImageSurface.create_from_png(src)
     if not image then SU.error("Could not load image "..src) end
     local src_width = image:get_width()
@@ -51,9 +51,9 @@ SILE.outputters.cairo = {
     cr:set_source_surface(image, 0,0)
     local p = cr:get_source()
     local matrix, sx, sy
-    if w or h then
-      if w > 0 then sx = src_width / w end
-      if h > 0 then sy = src_height / h end
+    if width or height then
+      if width > 0 then sx = src_width / width end
+      if height > 0 then sy = src_height / height end
       matrix = cairo.Matrix.create_scale(sx or sy, sy or sx)
     else
       matrix = cairo.Matrix.create_identity()
@@ -73,17 +73,17 @@ SILE.outputters.cairo = {
   moveTo = function (x,y)
     move(cr, x,y)
   end,
-  rule = function (x,y,w,d)
-    cr:rectangle(x,y,w,d)
+  rule = function (x,y,width,depth)
+    cr:rectangle(x,y,width,depth)
     cr:fill()
   end,
-  debugFrame = function (self,f)
+  debugFrame = function (self, frame)
     cr:set_source_rgb(0.8,0,0)
     cr:set_line_width(0.5)
-  	cr:rectangle(f:left(), f:top(), f:width(), f:height())
+  	cr:rectangle(frame:left(), frame:top(), frame:width(), frame:height())
     cr:stroke()
-  	cr:move_to(f:left() - 10, f:top() -2)
-  	cr:show_text(f.id)
+  	cr:move_to(frame:left() - 10, frame:top() -2)
+  	cr:show_text(frame.id)
     cr:set_source_rgb(0,0,0)
   end,
   debugHbox = function(typesetter, hbox, scaledWidth)
