@@ -60,6 +60,8 @@ force: ;
 .PRECIOUS: .fonts/%
 
 TESTFONTFILES  = NotoSansCJK-Regular.ttc
+TESTFONTFILES += LibertinusSerif-Regular.otf
+TESTFONTFILES += LibertinusSans-Bold.otf
 
 .PHONY: testprep
 testprep: | $(addprefix .fonts/,$(TESTFONTFILES))
@@ -69,6 +71,9 @@ testprep: | $(addprefix .fonts/,$(TESTFONTFILES))
 
 .fonts/NotoSansCJK%: | .fonts
 	curl -s -L https://github.com/googlefonts/noto-cjk/raw/NotoSansV2.001/$(notdir $@) -o $@
+
+.fonts/Libertinus%: | .fonts
+	curl -s -L https://github.com/alif-type/libertinus/raw/v6.9/$(notdir $@) -o $@
 
 gource.webm:
 	mkdir -p /tmp/gravatars
