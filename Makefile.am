@@ -57,11 +57,12 @@ tests/%.actual: tests/%.sil | sile testprep
 .PHONY: force
 force: ;
 
-.PRECIOUS: .fonts/%
+.PRECIOUS: .fonts/% %.zip
 
 TESTFONTFILES  = NotoSansCJK-Regular.ttc
 TESTFONTFILES += LibertinusSerif-Regular.otf
 TESTFONTFILES += LibertinusSans-Bold.otf
+TESTFONTFILES += GentiumPlus-R.ttf GentiumPlus-I.ttf
 
 .PHONY: testprep
 testprep: | $(addprefix .fonts/,$(TESTFONTFILES))
@@ -74,6 +75,13 @@ testprep: | $(addprefix .fonts/,$(TESTFONTFILES))
 
 .fonts/Libertinus%: | .fonts
 	curl -s -L https://github.com/alif-type/libertinus/raw/v6.9/$(notdir $@) -o $@
+
+.fonts/GentiumPlus%: GentiumPlus-5.000.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 1 GentiumPlus-5.000/$(notdir $@)
+	touch $@
+
+GentiumPlus-5.000.zip:
+	curl -s -L https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
 
 gource.webm:
 	mkdir -p /tmp/gravatars
