@@ -309,7 +309,7 @@ end
 function SILE.currentCommandStack:pushContent(content, tag, line, column, options, file)
   return self:_pushFrame({
     tag = tag or (type(content) == "table" and content.tag) or "???",
-    file = file or SILE.currentlyProcessingFile,
+    file = file or (type(content) == "table" and content.file) or SILE.currentlyProcessingFile,
     line = line or (type(content) == "table" and content.line),
     column = column or (type(content) == "table" and content.col),
     options = options or (type(content) == "table" and content.attr) or {}
@@ -474,6 +474,7 @@ function SILE.call(cmd, options, content)
     file = caller.short_src
     line = caller.currentline
   elseif type(content) == "table" then
+    file = content.file
     line = content.line
     column = content.col
   end

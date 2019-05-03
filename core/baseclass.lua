@@ -24,10 +24,21 @@ SILE.setCommandDefaults = function (command, defaults)
 end
 
 SILE.doTexlike = function (doc)
-  doc = "\\begin{document}" .. doc .. "\\end{document}"
+  -- Setup new "fake" file in which the doc exists
   local cpf = SILE.currentlyProcessingFile
-  SILE.currentlyProcessingFile = "<"..debug.getinfo(2).short_src..":"..debug.getinfo(2).linedefined..">"
-  SILE.process(SILE.inputs.TeXlike.docToTree(doc))
+  local caller = debug.getinfo(2, "Sl")
+  local temporaryFile = "<"..caller.short_src..":"..caller.currentline..">"
+  SILE.currentlyProcessingFile = temporaryFile
+
+  -- NOTE: this messes up column numbers on first line, but most places start with newline, so it isn't a problem
+  doc = "\\begin{document}" .. doc .. "\\end{document}"
+  local tree = SILE.inputs.TeXlike.docToTree(doc)
+  -- Since elements of the tree may be used long after currentlyProcessingFile has changed (e.g. through \define)
+  -- supply the file in which the node was found explicitly.
+  SU.forEachContentNode(tree, function (c) c.file = temporaryFile end)
+  SILE.process(tree)
+
+  -- Revert the processed file
   SILE.currentlyProcessingFile = cpf
 end
 

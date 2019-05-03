@@ -253,6 +253,18 @@ utilities.subContent = function (content)
   return out
 end
 
+-- Call `action` on each content node, recursively, including `content` itself.
+-- Not called on leaves, i.e. strings.
+utilities.forEachContentNode = function (content, action)
+  if type(content) ~= "table" then
+    return
+  end
+  action(content)
+  for i = 1, #content do
+    utilities.forEachContentNode(content[i], action)
+  end
+end
+
 utilities.rateBadness = function(inf_bad, shortfall, spring)
   local bad = math.floor(100 * (shortfall / spring) ^ 3)
   return bad > inf_bad and inf_bad or bad
