@@ -15,6 +15,7 @@ REGRESSIONSCRIPT := ./tests/regressions.pl
 LOCALTESTFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
 
 TESTSILS  ?= $(wildcard tests/*.sil)
+TESTPDFS   = $(addsuffix      .pdf,$(basename $(TESTSILS)))
 EXPECTEDS  = $(addsuffix .expected,$(basename $(TESTSILS)))
 ACTUALS    = $(addsuffix   .actual,$(basename $(TESTSILS)))
 
@@ -52,6 +53,9 @@ tests/%.expected: tests/%.sil | sile testprep
 .PHONY: update_actuals
 update_actuals: REGRESSIONMODE = true
 update_actuals: $(ACTUALS)
+
+.PHONY: test_previews
+test_previews: $(TESTPDFS)
 
 tests/%.actual: tests/%.sil $(and $(REGRESSIONMODE),force) | sile testprep
 	-$(LOCALTESTFONTS) ./sile -b debug $< -o $@
