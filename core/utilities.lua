@@ -27,14 +27,14 @@ end
 
 utilities.error = function(message, bug)
   io.stderr:write("\n! " .. message)
-  if not SILE.detailedErrors and not bug then
+  if not SILE.traceback and not bug then
     -- Normal operation, show only inline info
-    io.stderr:write(" at " .. SILE.currentCommandStack:locationInfo())
+    io.stderr:write(" at " .. SILE.traceStack:locationInfo())
     io.stderr:write("\n")
   else
     -- Using full error handler, print whole trace
     io.stderr:write("\n")
-    io.stderr:write(SILE.currentCommandStack:locationTrace())
+    io.stderr:write(SILE.traceStack:locationTrace())
     io.stderr:write(debug.traceback(nil, 2))
     io.stderr:write("\n")
   end
@@ -46,14 +46,14 @@ end
 
 utilities.warn = function (message, bug)
   io.stderr:write("\n! "..message)
-  if not (SILE.detailedErrors or bug) then
+  if not (SILE.traceback or bug) then
     -- Normal operation, show only inline info
-    io.stderr:write(" at "..SILE.currentCommandStack:locationInfo())
+    io.stderr:write(" at "..SILE.traceStack:locationInfo())
     io.stderr:write("\n")
   else
     -- Show full trace
     io.stderr:write("\n")
-    io.stderr:write(SILE.currentCommandStack:locationTrace())
+    io.stderr:write(SILE.traceStack:locationTrace())
   end
 
   if bug then
@@ -253,15 +253,15 @@ utilities.subContent = function (content)
   return out
 end
 
--- Call `action` on each content node, recursively, including `content` itself.
+-- Call `action` on each content AST node, recursively, including `content` itself.
 -- Not called on leaves, i.e. strings.
-utilities.forEachContentNode = function (content, action)
+utilities.walkContent = function (content, action)
   if type(content) ~= "table" then
     return
   end
   action(content)
   for i = 1, #content do
-    utilities.forEachContentNode(content[i], action)
+    utilities.walkContent(content[i], action)
   end
 end
 

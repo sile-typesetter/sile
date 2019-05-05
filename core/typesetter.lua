@@ -184,7 +184,7 @@ SILE.defaultTypesetter = std.object {
   typeset = function (self, text)
     if text:match("^%\r?\n$") then return end
 
-    local pId = SILE.currentCommandStack:pushText(text)
+    local pId = SILE.traceStack:pushText(text)
     for token in SU.gtoke(text,SILE.settings.get("typesetter.parseppattern")) do
       if (token.separator) then
         self:endline()
@@ -192,7 +192,7 @@ SILE.defaultTypesetter = std.object {
         self:setpar(token.string)
       end
     end
-    SILE.currentCommandStack:pop(pId)
+    SILE.traceStack:pop(pId)
   end,
 
   initline = function (self)

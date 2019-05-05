@@ -93,7 +93,7 @@ Options:
   -e, --evaluate=VALUE     evaluate some Lua code before processing file
   -o, --output=[FILE]      explicitly set output file name
   -I, --include=[FILE]     include a class or SILE file before processing input
-  -t, --traceback          display traceback on error
+  -t, --traceback          display traceback and more detailed location information on errors and warnings
   -h, --help               display this help, then exit
   -v, --version            display version information, then exit
 ]])
@@ -132,7 +132,7 @@ Options:
   -- http://lua-users.org/wiki/VarargTheSecondClassCitizen
   local identity = function (...) return unpack({...}, 1, select('#', ...)) end
   SILE.errorHandler = opts.traceback and debug.traceback or identity
-  SILE.detailedErrors = not not opts.traceback
+  SILE.traceback = opts.traceback
 end
 
 function SILE.initRepl ()
@@ -241,11 +241,16 @@ function SILE.resolveFile(filename, pathprefix)
   return nil
 end
 
-SILE.currentCommandStack = {
-  --- Internal: push-pop balance checking ID
+--- Represents a stack of frame objects, which describe the call-stack stack of processing of the currently processed document.
+--- To manipulate the stack, use
+SILE.traceStack = {
+  --- Internal: Push-pop balance checking ID
   _lastPushId = 0,
-  --- Internal: Function assigned to frames to convert them to string
-  _frameToString = function(self, skipFile, withAttrs)
+  --- Stores the frame which was last popped. Reset after a push.
+  --- Helps to further specify current location in the processed document.
+  afterFrame = nil,
+  --- Internal: Function assigned to stack frames to convert them to human readable location
+  _frameToLocationString = function(self, skipFile, withAttrs)
     local str
     if skipFile or not self.file then
       str = ""
@@ -286,15 +291,50 @@ SILE.currentCommandStack = {
       str = str .. type(self.content) .. "(" .. self.content .. ")"
     end
 
-    --str = str .. "\n\n" .. self.pushTrace .. "\n"
-
     return str
+  end,
+  --- Internal: Given an collection of frames and an afterFrame, construct and return a human readable info string
+  --- about the location in processed document. Similar to _frameToLocationString, but takes into account
+  --- the afterFrame and the fact, that not all frames may carry a location information.
+  _formatTraceHead = function (traceStack, afterFrame)
+    local top = traceStack[#traceStack]
+
+    if not top then
+      -- Stack is empty, there is not much we can do
+      return afterFrame and "after " .. afterFrame:toLocationString() or nil
+    end
+
+    local info = top:toLocationString()
+
+    -- Not all stack traces have to carry location information.
+    -- If the top stack trace does not carry it, find a frame which does.
+    -- Then append it, because its information may be useful.
+    if not top.line then
+      for i = #traceStack - 1, 1, -1 do
+        if traceStack[i].line then
+          -- Found a frame which does carry some relevant information.
+          info = info .. " near " .. traceStack[i]:toLocationString(--[[skipFile=]] traceStack[i].file == top.file)
+          break
+        end
+      end
+    end
+
+    -- Print after, if it is in a relevant file
+    if afterFrame and (not base or afterFrame.file == base.file) then
+      info = info .. " after " .. afterFrame:toLocationString(--[[skipFile=]] true)
+    end
+
+    return info
   end
 }
 --- Push a command frame on to the stack to record the execution trace for debugging.
 --- Carries information about the command call, not the command itself.
 --- Must be popped with `pop(returnOfPush)`.
-function SILE.currentCommandStack:pushCommand(tag, line, column, options, file)
+function SILE.traceStack:pushCommand(tag, line, column, options, file)
+  if not tag then
+    SU.warn("Tag should be specified for SILE.traceStack:pushCommand", true)
+  end
+
   return self:_pushFrame({
     tag = tag or "???",
     file = file or SILE.currentlyProcessingFile,
@@ -306,18 +346,28 @@ end
 --- Push a command frame on to the stack to record the execution trace for debugging.
 --- Command arguments are inferred from AST content, any item may be overridden.
 --- Must be popped with `pop(returnOfPush)`.
-function SILE.currentCommandStack:pushContent(content, tag, line, column, options, file)
+function SILE.traceStack:pushContent(content, tag, line, column, options, file)
+  if type(content) ~= "table" then
+    SU.warn("Content parameter of SILE.traceStack:pushContent must be a table", true)
+    content = {}
+  end
+
+  tag = tag or content.tag
+  if not tag then
+    SU.warn("Tag should be specified or inferable for SILE.traceStack:pushContent", true)
+  end
+
   return self:_pushFrame({
-    tag = tag or (type(content) == "table" and content.tag) or "???",
-    file = file or (type(content) == "table" and content.file) or SILE.currentlyProcessingFile,
-    line = line or (type(content) == "table" and content.line),
-    column = column or (type(content) == "table" and content.col),
-    options = options or (type(content) == "table" and content.attr) or {}
+    tag = tag or "???",
+    file = file or content.file or SILE.currentlyProcessingFile,
+    line = line or content.line,
+    column = column or content.col,
+    options = options or content.attr or {}
   })
 end
 --- Push a text that is going to get typeset on to the stack to record the execution trace for debugging.
 --- Must be popped with `pop(returnOfPush)`.
-function SILE.currentCommandStack:pushText(text, line, column, file)
+function SILE.traceStack:pushText(text, line, column, file)
   return self:_pushFrame({
     text = text,
     file = file,
@@ -326,129 +376,74 @@ function SILE.currentCommandStack:pushText(text, line, column, file)
   })
 end
 --- Internal: Push complete frame
-function SILE.currentCommandStack:_pushFrame(frame)
-  frame.toString = self._frameToString
+function SILE.traceStack:_pushFrame(frame)
+  frame.toLocationString = self._frameToLocationString
   frame.typesetter = SILE.typesetter
-  --frame.pushTrace = debug.traceback(nil, 3)
 
   -- Push the frame
   if SU.debugging("commandStack") then
-    print(string.rep(" ", #self) .. "PUSH(" .. frame:toString(false, true) .. ")")
+    print(string.rep(" ", #self) .. "PUSH(" .. frame:toLocationString(false, true) .. ")")
   end
   self[#self + 1] = frame
-  self.lastCommand = nil
+  self.afterFrame = nil
   self._lastPushId = self._lastPushId + 1
   frame.pushId = self._lastPushId
   return self._lastPushId
 end
 --- Pop previously pushed command from the stack.
 --- Return value of `push` function must be provided as argument to check for balanced usage.
-function SILE.currentCommandStack:pop(pushId)
+function SILE.traceStack:pop(pushId)
   if type(pushId) ~= "number" then
-    SU.error("SILE.currentCommandStack:pop's argument must be the result value of the corresponding push", true)
+    SU.error("SILE.traceStack:pop's argument must be the result value of the corresponding push", true)
   end
 
   -- First verify that push/pop is balanced
   local popped = self[#self]
   if popped.pushId ~= pushId then
     local message = "Unbalanced content push/pop"
-    local debug = SILE.detailedErrors or SU.debugging("commandStack")
+    local debug = SILE.traceback or SU.debugging("commandStack")
     if debug then
-      message = message .. ". Expected " .. popped.pushId .. " - (" .. popped:toString() .. "), got " .. pushId
+      message = message .. ". Expected " .. popped.pushId .. " - (" .. popped:toLocationString() .. "), got " .. pushId
     end
     SU.warn(message, debug)
   else
     -- Correctly balanced: pop the frame
-    self.lastCommand = popped
+    self.afterFrame = popped
     self[#self] = nil
     if SU.debugging("commandStack") then
-      print(string.rep(" ", #self) .. "POP(" .. popped:toString(false, true) .. ")")
+      print(string.rep(" ", #self) .. "POP(" .. popped:toLocationString(false, true) .. ")")
     end
   end
 end
---- Returns a stack of commands, which can be used to show information about location in document.
+--- Returns frame stack represented by SILE.traceStack and self.afterFrame, but without frames whose typesetter
+--- is different than what is given as a first parameter (nil = use current typesetter for filtering).
 --- Most relevant object is in the last index.
---- Second return: recently popped value which could provide extra location information
-function SILE.currentCommandStack:locationStack(currentTypesetterOnly)
+function SILE.traceStack:filteredByTypesetter(typesetter)
+  typesetter = typesetter or SILE.typesetter
+
   local result = {}
 
   for i = 1, #self do
-    if not currentTypesetterOnly or (self[i].typesetter == SILE.typesetter) then
+    if self[i].typesetter == typesetter then
       result[#result + 1] = self[i]
     end
   end
 
-  local extra = self.lastCommand
-  if (not extra) -- skip other checks if extra is nil
-          or extra == result[#result] -- no extra if it already is on the stack
-          or (currentTypesetterOnly and (extra.typesetter ~= SILE.typesetter)) -- no extra if wrong typesetter
-  then
-    extra = nil
+  local afterFrame
+  if self.afterFrame and self.afterFrame.typesetter == typesetter then
+    afterFrame = self.afterFrame
   end
 
-  return result, extra
-end
-
---- Internal: Format top of the stack from locationStack(), may return nil
-function SILE.currentCommandStack:_locationTraceEntry(stack, after)
-  -- Stack may contain mix of tables and strings.
-  -- We hope to get a table, because that contains position information.
-  -- A string may also be useful, but preferably with a table as well.
-  local top = stack[#stack]
-
-  if not top then
-    -- Stack is empty, there is not much we can do
-    if after then
-      return "after " .. after:toString()
-    else
-      return nil
-    end
-  end
-
-  local base -- real content frame with location information
-  local string -- string being typeset, closer to the real problem, but has no location information
-  if type(top.content) == "table" then
-    base = top
-    string = nil
-  else
-    string = top
-    for i = #stack - 1, 1, -1 do
-      if type(stack[i].content) == "table" then
-        base = stack[i]
-        break
-      end
-    end
-  end
-
-  -- Join
-  local info
-  if not string then
-    info = base:toString()
-  else
-    info = string:toString()
-    if base then
-      info = info .. " near " .. base:toString(--[[skipFile=]] base.file == string.file)
-    end
-  end
-
-  -- Print after, if it is in a relevant file
-  if after and (not base or after.file == base.file) then
-    info = info .. " after " .. after:toString(--[[skipFile=]] true)
-  end
-
-  return info
+  return result, afterFrame
 end
 --- Returns short string with most relevant location information for user messages.
-function SILE.currentCommandStack:locationInfo()
-  local stack, after = self:locationStack()
-  return self:_locationTraceEntry(stack, after) or SILE.currentlyProcessingFile or "<nowhere>"
+function SILE.traceStack:locationInfo()
+  return self:_formatTraceHead(self.afterFrame) or SILE.currentlyProcessingFile or "<nowhere>"
 end
 --- Returns multiline trace string, with full document location information for user messages.
-function SILE.currentCommandStack:locationTrace()
-  local stack, after = self:locationStack()
-
+function SILE.traceStack:locationTrace()
   local prefix = "  at "
-  local trace = self:_locationTraceEntry({ stack[#stack] } --[[we handle rest of the stack ourselves]], after)
+  local trace = self._formatTraceHead({ self[#self] } --[[we handle rest of the stack ourselves]], self.afterFrame)
   if not trace then
     -- There is nothing else then
     return prefix .. (SILE.currentlyProcessingFile or "<nowhere>") .. "\n"
@@ -456,9 +451,9 @@ function SILE.currentCommandStack:locationTrace()
   trace = prefix .. trace .. "\n"
 
   -- Iterate backwards, skipping the last element
-  for i = #stack - 1, 1, -1 do
-    local s = stack[i]
-    trace = trace .. prefix .. s:toString() .. "\n"
+  for i = #self - 1, 1, -1 do
+    local s = self[i]
+    trace = trace .. prefix .. s:toLocationString() .. "\n"
   end
 
   return trace
@@ -467,7 +462,7 @@ end
 function SILE.call(cmd, options, content)
   -- Prepare trace information for command stack
   local file, line, column
-  if SILE.detailedErrors and not (type(content) == "table" and content.line) then
+  if SILE.traceback and not (type(content) == "table" and content.line) then
     -- This call is from code (no content.line) and we want to spend the time
     -- to determine everything we need about the caller
     local caller = debug.getinfo(2, "Sl")
@@ -479,12 +474,12 @@ function SILE.call(cmd, options, content)
     column = content.col
   end
 
-  local pId = SILE.currentCommandStack:pushCommand(cmd, line, column, options, file)
+  local pId = SILE.traceStack:pushCommand(cmd, line, column, options, file)
 
   if not SILE.Commands[cmd] then SU.error("Unknown command "..cmd) end
   local result = SILE.Commands[cmd](options or {}, content or {})
 
-  SILE.currentCommandStack:pop(pId)
+  SILE.traceStack:pop(pId)
   return result
 end
 

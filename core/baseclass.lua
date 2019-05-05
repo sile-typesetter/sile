@@ -35,7 +35,7 @@ SILE.doTexlike = function (doc)
   local tree = SILE.inputs.TeXlike.docToTree(doc)
   -- Since elements of the tree may be used long after currentlyProcessingFile has changed (e.g. through \define)
   -- supply the file in which the node was found explicitly.
-  SU.forEachContentNode(tree, function (c) c.file = temporaryFile end)
+  SU.walkContent(tree, function (c) c.file = temporaryFile end)
   SILE.process(tree)
 
   -- Revert the processed file
