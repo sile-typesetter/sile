@@ -26,40 +26,21 @@ if not table.maxn then
 end
 
 utilities.error = function(message, bug)
-  io.stderr:write("\n! " .. message)
-  if not SILE.traceback and not bug then
-    -- Normal operation, show only inline info
-    io.stderr:write(" at " .. SILE.traceStack:locationInfo())
-    io.stderr:write("\n")
-  else
-    -- Using full error handler, print whole trace
-    io.stderr:write("\n")
-    io.stderr:write(SILE.traceStack:locationTrace())
-    io.stderr:write(debug.traceback(nil, 2))
-    io.stderr:write("\n")
-  end
+  utilities.warn(message, bug)
   io.stderr:flush()
   SILE.outputter:finish()
   os.exit(1)
 end
 
-utilities.warn = function (message, bug)
-  io.stderr:write("\n! "..message)
-  if not (SILE.traceback or bug) then
-    -- Normal operation, show only inline info
-    io.stderr:write(" at "..SILE.traceStack:locationInfo())
-    io.stderr:write("\n")
-  else
-    -- Show full trace
-    io.stderr:write("\n")
-    io.stderr:write(SILE.traceStack:locationTrace())
-  end
-  if bug then
-    -- Something weird has happened, but the program can continue
+utilities.warn = function(message, bug)
+  io.stderr:write("\n! " .. message)
+  if SILE.traceback or bug then
+    io.stderr:write("\n" .. SILE.traceStack:locationTrace())
     io.stderr:write(debug.traceback(nil, 2))
-    io.stderr:write("\n")
+  else
+    io.stderr:write(" at " .. SILE.traceStack:locationInfo())
   end
-  --os.exit(1)
+  io.stderr:write("\n")
 end
 
 utilities.debugging = function (category)

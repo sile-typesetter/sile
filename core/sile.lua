@@ -93,7 +93,7 @@ Options:
   -e, --evaluate=VALUE     evaluate some Lua code before processing file
   -o, --output=[FILE]      explicitly set output file name
   -I, --include=[FILE]     include a class or SILE file before processing input
-  -t, --traceback          display traceback and more detailed location information on errors and warnings
+  -t, --traceback          display detailed location trace on errors and warnings
   -h, --help               display this help, then exit
   -v, --version            display version information, then exit
 ]])
