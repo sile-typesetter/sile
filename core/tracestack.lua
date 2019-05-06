@@ -171,24 +171,6 @@ local traceStack = {
     end
   end,
 
-  -- Returns frame stack represented by SILE.traceStack and self.afterFrame, but without frames whose typesetter
-  -- is different than what is given as a first parameter (nil = use current typesetter for filtering).
-  -- Most relevant object is in the last index.
-  filteredByTypesetter = function(self, typesetter)
-    typesetter = typesetter or SILE.typesetter
-    local result = {}
-    for i = 1, #self do
-      if self[i].typesetter == typesetter then
-        result[#result + 1] = self[i]
-      end
-    end
-    local afterFrame
-    if self.afterFrame and self.afterFrame.typesetter == typesetter then
-      afterFrame = self.afterFrame
-    end
-    return result, afterFrame
-  end,
-
   -- Returns short string with most relevant location information for user messages.
   locationInfo = function(self)
     return self:_formatTraceHead(self.afterFrame) or SILE.currentlyProcessingFile or "<nowhere>"
