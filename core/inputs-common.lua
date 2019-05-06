@@ -55,10 +55,8 @@ SILE.process = function(input)
   if SU.debugging("ast") then
     debugAST(input,0)
   end
-
   for i=1, #input do
     local content = input[i]
-
     if type(content) == "string" then
       SILE.typesetter:typeset(content)
     elseif SILE.Commands[content.tag] then

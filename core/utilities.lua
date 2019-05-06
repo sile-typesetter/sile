@@ -39,7 +39,6 @@ utilities.error = function(message, bug)
     io.stderr:write("\n")
   end
   io.stderr:flush()
-
   SILE.outputter:finish()
   os.exit(1)
 end
@@ -55,13 +54,11 @@ utilities.warn = function (message, bug)
     io.stderr:write("\n")
     io.stderr:write(SILE.traceStack:locationTrace())
   end
-
   if bug then
     -- Something weird has happened, but the program can continue
     io.stderr:write(debug.traceback(nil, 2))
     io.stderr:write("\n")
   end
-
   --os.exit(1)
 end
 

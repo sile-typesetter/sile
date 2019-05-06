@@ -29,7 +29,6 @@ SILE.doTexlike = function (doc)
   local caller = debug.getinfo(2, "Sl")
   local temporaryFile = "<"..caller.short_src..":"..caller.currentline..">"
   SILE.currentlyProcessingFile = temporaryFile
-
   -- NOTE: this messes up column numbers on first line, but most places start with newline, so it isn't a problem
   doc = "\\begin{document}" .. doc .. "\\end{document}"
   local tree = SILE.inputs.TeXlike.docToTree(doc)
@@ -37,7 +36,6 @@ SILE.doTexlike = function (doc)
   -- supply the file in which the node was found explicitly.
   SU.walkContent(tree, function (c) c.file = temporaryFile end)
   SILE.process(tree)
-
   -- Revert the processed file
   SILE.currentlyProcessingFile = cpf
 end
