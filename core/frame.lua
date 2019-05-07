@@ -86,7 +86,7 @@ function SILE.framePrototype:advanceWritingDirection(amount)
     if amount.prototype and amount:prototype() == "RelativeMeasurement" then
       amount = amount:absolute()
     else
-      SU.error("Table passed to advanceWritingDirection", 1)
+      SU.error("Table passed to advanceWritingDirection", true)
     end
   end
   if self:writingDirection() == "RTL" then
@@ -101,7 +101,7 @@ function SILE.framePrototype:advanceWritingDirection(amount)
 end
 
 function SILE.framePrototype:advancePageDirection(amount)
-  if type(amount) == "table" then SU.error("Table passed to advancePageDirection", 1) end
+  if type(amount) == "table" then SU.error("Table passed to advancePageDirection", true) end
   if self:pageAdvanceDirection() == "TTB" then
     self.state.cursorY = self.state.cursorY + amount
   elseif self:pageAdvanceDirection() == "RTL" then

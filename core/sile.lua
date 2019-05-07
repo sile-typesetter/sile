@@ -207,7 +207,7 @@ function SILE.readFile(filename)
       return
     end
   end
-  SU.error("No input processor available for "..filename.." (should never happen)",1)
+  SU.error("No input processor available for "..filename.." (should never happen)", true)
 end
 
 local function file_exists (filename)

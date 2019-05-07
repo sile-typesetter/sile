@@ -73,9 +73,8 @@ utilities.gtoke = function (string, pattern)
 end
 
 utilities.debug = function (category, ...)
-  local arg = { ... } -- Avoid things that Lua stuffs in arg like args to self()
   if utilities.debugging(category) then
-    print("["..category.."]", #arg == 1 and arg[1] or arg)
+    io.stderr:write("\n["..category.."] ", table.concat({ ... }, " "))
   end
 end
 
@@ -148,7 +147,7 @@ table.nitems = function (tbl)
 end
 
 table.append = function (basetable, tbl)
-  if not basetable or not tbl then SU.error("table.append called with nil table!: "..basetable..", "..tbl,true) end
+  if not basetable or not tbl then SU.error("table.append called with nil table!: "..basetable..", "..tbl, true) end
   for i=1,#tbl do
       basetable[#basetable+1] = tbl[i]
   end
