@@ -133,7 +133,7 @@ local traceStack = {
 
   -- Internal: Push complete frame
   _pushFrame = function (self, frame)
-    frame.toLocationString = self._frameToLocationString
+    frame.toLocationString = frame.toLocationString or self._frameToLocationString
     frame.typesetter = SILE.typesetter
     -- Push the frame
     if SU.debugging("commandStack") then
