@@ -25,22 +25,21 @@ if not table.maxn then
   end
 end
 
-utilities.error = function (message, bug)
-  if(SILE.currentCommand and type(SILE.currentCommand) == "table") then
-    io.stderr:write("\n! "..message.. " at "..SILE.currentlyProcessingFile.." l."..(SILE.currentCommand.line)..", col."..(SILE.currentCommand.col))
-  else
-    io.stderr:write("\n! "..message.. " at "..SILE.currentlyProcessingFile)
-  end
-  if bug then io.stderr:write(debug.traceback()) end
-  io.stderr:write("\n")
+utilities.error = function(message, bug)
+  utilities.warn(message, bug)
   SILE.outputter:finish()
   os.exit(1)
 end
 
-utilities.warn = function (message)
-  io.stderr:write("\n! "..message.."\n")
-  --print(debug.traceback())
-  --os.exit(1)
+utilities.warn = function(message, bug)
+  io.stderr:write("\n! " .. message)
+  if SILE.traceback or bug then
+    io.stderr:write("\n" .. SILE.traceStack:locationTrace())
+    io.stderr:write(debug.traceback(nil, 2))
+  else
+    io.stderr:write(" at " .. SILE.traceStack:locationInfo())
+  end
+  io.stderr:write("\n")
 end
 
 utilities.debugging = function (category)
@@ -229,6 +228,18 @@ utilities.subContent = function (content)
     end
   end
   return out
+end
+
+-- Call `action` on each content AST node, recursively, including `content` itself.
+-- Not called on leaves, i.e. strings.
+utilities.walkContent = function (content, action)
+  if type(content) ~= "table" then
+    return
+  end
+  action(content)
+  for i = 1, #content do
+    utilities.walkContent(content[i], action)
+  end
 end
 
 utilities.rateBadness = function(inf_bad, shortfall, spring)

@@ -14,6 +14,7 @@ std = require("std")
 lfs = require("lfs")
 if (os.getenv("SILE_COVERAGE")) then require("luacov") end
 
+SILE.traceStack = require("core/tracestack")
 SILE.documentState = std.object {}
 SILE.scratch = {}
 SILE.length = require("core/length")
@@ -93,7 +94,7 @@ Options:
   -e, --evaluate=VALUE     evaluate some Lua code before processing file
   -o, --output=[FILE]      explicitly set output file name
   -I, --include=[FILE]     include a class or SILE file before processing input
-  -t, --traceback          display traceback on error
+  -t, --traceback          display detailed location trace on errors and warnings
   -h, --help               display this help, then exit
   -v, --version            display version information, then exit
 ]])
@@ -132,6 +133,7 @@ Options:
   -- http://lua-users.org/wiki/VarargTheSecondClassCitizen
   local identity = function (...) return unpack({...}, 1, select('#', ...)) end
   SILE.errorHandler = opts.traceback and debug.traceback or identity
+  SILE.traceback = opts.traceback
 end
 
 function SILE.initRepl ()
@@ -241,9 +243,21 @@ function SILE.resolveFile(filename, pathprefix)
 end
 
 function SILE.call(cmd, options, content)
-  SILE.currentCommand = content
+  -- Prepare trace information for command stack
+  local file, line, column
+  if SILE.traceback and not (type(content) == "table" and content.line) then
+    -- This call is from code (no content.line) and we want to spend the time
+    -- to determine everything we need about the caller
+    local caller = debug.getinfo(2, "Sl")
+    file, line = caller.short_src, caller.currentline
+  elseif type(content) == "table" then
+    file, line, column = content.file, content.line, content.col
+  end
+  local pId = SILE.traceStack:pushCommand(cmd, line, column, options, file)
   if not SILE.Commands[cmd] then SU.error("Unknown command "..cmd) end
-  return SILE.Commands[cmd](options or {}, content or {})
+  local result = SILE.Commands[cmd](options or {}, content or {})
+  SILE.traceStack:pop(pId)
+  return result
 end
 
 return SILE
