@@ -41,18 +41,18 @@ SILE.doTexlike = function (doc)
 end
 
 -- Need the \define command *really* early on in SILE startup
-local commandStack = {}
+local macroStack = {}
 SILE.registerCommand("define", function (options, content)
   SU.required(options, "command", "defining command")
   SILE.registerCommand(options["command"], function (options2, content2)
     --local prevState = SILE.documentState
     --SILE.documentState = std.tree.clone( prevState )
-    local depth = #commandStack
-    table.insert(commandStack, content2)
+    local depth = #macroStack
+    table.insert(macroStack, content2)
     SU.debug("macros","Processing a "..options["command"].." Stack depth is "..depth)
     SILE.process(content)
-    while (#commandStack > depth) do table.remove(commandStack) end
-    SU.debug("macros","Finished processing "..options["command"].." Stack depth is "..#commandStack.."\n")
+    while (#macroStack > depth) do table.remove(macroStack) end
+    SU.debug("macros","Finished processing "..options["command"].." Stack depth is "..#macroStack.."\n")
     --SILE.documentState = prevState
   end, options.help, SILE.currentlyProcessingFile)
 end, "Define a new macro. \\define[command=example]{ ... \\process }")
@@ -61,7 +61,7 @@ SILE.registerCommand("comment", function (options, content)
 end, "Ignores any text within this command's body.")
 
 SILE.registerCommand("process", function ()
-  local val = table.remove(commandStack)
+  local val = table.remove(macroStack)
   if not val then SU.error("Macro stack underflow. Too many \\process calls?") end
   SILE.process(val)
 end, "Within a macro definition, processes the contents of the macro body.")
