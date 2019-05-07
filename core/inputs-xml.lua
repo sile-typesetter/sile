@@ -11,13 +11,13 @@ SILE.inputs.XML = {
     end
     local root = SILE.documentState.documentClass == nil
     if root then
-      if not(content.tag == "sile") then
+      if not(content.command == "sile") then
         SU.error("This isn't a SILE document!")
       end
       SILE.inputs.common.init(doc, content)
     end
-    if SILE.Commands[content.tag] then
-      SILE.call(content.tag, content.attr, content)
+    if SILE.Commands[content.command] then
+      SILE.call(content.command, content.options, content)
     else
       SILE.process(content)
     end

@@ -42,7 +42,7 @@ SILE.registerCommand("article", function (options, content)
     SILE.call("docbook-main-author",{},function()
       for _,t in ipairs(author) do
         if type(t) == "table" then
-          SILE.call(t.tag,{},t)
+          SILE.call(t.command,{},t)
           SILE.typesetter:leaveHmode()
           SILE.call("bigskip")
         end

@@ -1,9 +1,9 @@
 SILE.inputs.common = {
   init = function(doc, tree)
-    local dclass = tree.attr.class or "plain"
-    tree.attr.papersize = tree.attr.papersize or "a4"
+    local dclass = tree.options.class or "plain"
+    tree.options.papersize = tree.options.papersize or "a4"
     SILE.documentState.documentClass = SILE.require(dclass, "classes")
-    for k,v in pairs(tree.attr) do
+    for k,v in pairs(tree.options) do
       if SILE.documentState.documentClass.options[k] then
         SILE.documentState.documentClass.options[k](v)
       end
@@ -36,14 +36,14 @@ local function debugAST(ast,level)
     local content = ast[i]
     if type(content) == "string" then
       SU.debug("ast",out.."["..content.."]")
-    elseif SILE.Commands[content.tag] then
-      local attrs = table.nitems(content.attr) > 0 and content.attr or ""
-      SU.debug("ast",out.."\\"..content.tag..attrs)
+    elseif SILE.Commands[content.command] then
+      local options = table.nitems(content.options) > 0 and content.options or ""
+      SU.debug("ast",out.."\\"..content.command..options)
       if (#content>=1) then debugAST(content,level+1) end
-    elseif content.id == "texlike_stuff" or (not content.tag and not content.id) then
+    elseif content.id == "texlike_stuff" or (not content.command and not content.id) then
       debugAST(content,level+1)
     else
-      SU.debug("ast",out.."?\\"..(content.tag or content.id))
+      SU.debug("ast",out.."?\\"..(content.command or content.id))
     end
   end
   if level == 0 then SU.debug("ast", "]") end
@@ -59,25 +59,25 @@ SILE.process = function(input)
     local content = input[i]
     if type(content) == "string" then
       SILE.typesetter:typeset(content)
-    elseif SILE.Commands[content.tag] then
-      SILE.call(content.tag, content.attr, content)
-    elseif content.id == "texlike_stuff" or (not content.tag and not content.id) then
+    elseif SILE.Commands[content.command] then
+      SILE.call(content.command, content.options, content)
+    elseif content.id == "texlike_stuff" or (not content.command and not content.id) then
       local pId = SILE.traceStack:pushContent(content, "texlike_stuff")
       SILE.process(content)
       SILE.traceStack:pop(pId)
     else
       local pId = SILE.traceStack:pushContent(content)
-      SU.error("Unknown command "..(content.tag or content.id))
+      SU.error("Unknown command "..(content.command or content.id))
       SILE.traceStack:pop(pId)
     end
   end
 end
 
 -- Just a simple one-level find. We're not reimplementing XPath here.
-SILE.findInTree = function (tree, tag)
+SILE.findInTree = function (tree, command)
   for i=1, #tree do
     if type(tree[i]) == "string" then
-    elseif tree[i].tag == tag then
+    elseif tree[i].command == command then
       return tree[i]
     end
   end

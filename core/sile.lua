@@ -242,20 +242,20 @@ function SILE.resolveFile(filename, pathprefix)
   return nil
 end
 
-function SILE.call(cmd, options, content)
+function SILE.call(command, options, content)
   -- Prepare trace information for command stack
-  local file, line, column
-  if SILE.traceback and not (type(content) == "table" and content.line) then
-    -- This call is from code (no content.line) and we want to spend the time
+  local file, lno, col
+  if SILE.traceback and not (type(content) == "table" and content.lno) then
+    -- This call is from code (no content.lno) and we want to spend the time
     -- to determine everything we need about the caller
     local caller = debug.getinfo(2, "Sl")
-    file, line = caller.short_src, caller.currentline
+    file, lno = caller.short_src, caller.currentline
   elseif type(content) == "table" then
-    file, line, column = content.file, content.line, content.col
+    file, lno, col = content.file, content.lno, content.col
   end
-  local pId = SILE.traceStack:pushCommand(cmd, line, column, options, file)
-  if not SILE.Commands[cmd] then SU.error("Unknown command "..cmd) end
-  local result = SILE.Commands[cmd](options or {}, content or {})
+  local pId = SILE.traceStack:pushCommand(command, lno, col, options, file)
+  if not SILE.Commands[command] then SU.error("Unknown command "..command) end
+  local result = SILE.Commands[command](options or {}, content or {})
   SILE.traceStack:pop(pId)
   return result
 end
