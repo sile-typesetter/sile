@@ -61,6 +61,7 @@ local traceStack = {
       return afterFrame and "after " .. afterFrame:toLocationString() or nil
     end
     local info = top:toLocationString()
+    local locationFrame = top
     -- Not all stack traces have to carry location information.
     -- If the top stack trace does not carry it, find a frame which does.
     -- Then append it, because its information may be useful.
@@ -68,13 +69,14 @@ local traceStack = {
       for i = #traceStack - 1, 1, -1 do
         if traceStack[i].line then
           -- Found a frame which does carry some relevant information.
-          info = info .. " near " .. traceStack[i]:toLocationString(--[[skipFile=]] traceStack[i].file == top.file)
+          locationFrame = traceStack[i]
+          info = info .. " near " .. locationFrame:toLocationString(--[[skipFile=]] locationFrame.file == top.file)
           break
         end
       end
     end
     -- Print after, if it is in a relevant file
-    if afterFrame and (not base or afterFrame.file == base.file) then
+    if afterFrame and (not locationFrame or afterFrame.file == locationFrame.file) then
       info = info .. " after " .. afterFrame:toLocationString(--[[skipFile=]] true)
     end
     return info
