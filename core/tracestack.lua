@@ -11,18 +11,17 @@ local traceStack = {
 
   -- Internal: Function assigned to stack frames to convert them to human readable location
   _frameToLocationString = function(self, skipFile, withAttrs)
-    local str
-    if skipFile or not self.file then
-      str = ""
-    else
-      str = self.file .. " "
+    local str = ""
+    if self.file and not skipFile then
+      str = self.file .. ":"
     end
     if self.line then
-      str = str .. "l." .. self.line .. " "
+      str = str .. self.line .. ":"
       if self.column then
-        str = str .. "col." .. self.column .. " "
+        str = str .. self.column .. ":"
       end
     end
+    str = str .. (str:len() > 0 and " " or "")
     if self.tag then
       -- Command
       str = str .. "\\" .. self.tag
@@ -178,7 +177,7 @@ local traceStack = {
 
   -- Returns multiline trace string, with full document location information for user messages.
   locationTrace = function(self)
-    local prefix = "  at "
+    local prefix = "\t"
     local trace = self._formatTraceHead({ self[#self] } --[[we handle rest of the stack ourselves]], self.afterFrame)
     if not trace then
       -- There is nothing else then
