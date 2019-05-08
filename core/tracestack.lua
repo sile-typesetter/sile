@@ -60,7 +60,6 @@ local function textFrameToString(frame)
     text = text:sub(1, 18) .. "…"
   end
   text = text:gsub("\n", "␤"):gsub("\t", "␉"):gsub("\v", "␋")
-
   return "\"" .. text .. "\""
 end
 
@@ -98,15 +97,15 @@ end
 -- Push a command frame on to the stack to record the execution trace for debugging.
 -- Carries information about the command call, not the command itself.
 -- Must be popped with `pop(returnOfPush)`.
-function traceStack:pushCommand(command, lno, col, options, file)
+function traceStack:pushCommand(command, content, options)
   if not command then
     SU.warn("Command should be specified for SILE.traceStack:pushCommand", true)
   end
   return self:pushFrame({
-      command = command or "???",
-      file = file or SILE.currentlyProcessingFile,
-      lno = lno,
-      col = col,
+      command = command,
+      file = content.file or SILE.currentlyProcessingFile,
+      lno = content.lno,
+      col = content.col,
       options = options or {},
       toString = commandFrameToString
     })
@@ -115,33 +114,29 @@ end
 -- Push a command frame on to the stack to record the execution trace for debugging.
 -- Command arguments are inferred from AST content, any item may be overridden.
 -- Must be popped with `pop(returnOfPush)`.
-function traceStack:pushContent(content, command, lno, col, options, file)
+function traceStack:pushContent(content, command)
   if type(content) ~= "table" then
     SU.warn("Content parameter of SILE.traceStack:pushContent must be a table", true)
-    content = {}
   end
   command = command or content.command
   if not command then
     SU.warn("Command should be specified or inferable for SILE.traceStack:pushContent", true)
   end
   return self:pushFrame({
-      command = command or "???",
-      file = file or content.file or SILE.currentlyProcessingFile,
-      lno = lno or content.lno,
-      col = col or content.col,
-      options = options or content.options or {},
+      command = command,
+      file = content.file or SILE.currentlyProcessingFile,
+      lno = content.lno,
+      col = content.col,
+      options = content.options or {},
       toString = commandFrameToString
     })
 end
 
 -- Push a text that is going to get typeset on to the stack to record the execution trace for debugging.
 -- Must be popped with `pop(returnOfPush)`.
-function traceStack:pushText(text, lno, col, file)
+function traceStack:pushText(text)
   return self:pushFrame({
       text = text,
-      file = file,
-      lno = lno,
-      col = col,
       toString = textFrameToString
     })
 end
@@ -157,7 +152,6 @@ local lastPushId = 0
 -- .toString = function(frame):string - takes the frame itself and returns a human readable string
 --             with information about the frame, NOT including `file`, `lno` and `col`.
 function traceStack:pushFrame(frame)
-  -- Push the frame
   SU.debug("commandStack", string.rep(".", #self) .. "PUSH(" .. frameToString(frame, false) .. ")")
   self[#self + 1] = frame
   self.afterFrame = nil
