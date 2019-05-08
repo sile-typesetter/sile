@@ -10,57 +10,47 @@ local traceStack = {
   afterFrame = nil
 }
 
+local function genericFrameToStringHelper(frame)
+  frame.file = nil
+  frame.lno = nil
+  frame.col = nil
+  return #frame > 0 and tostring(frame) or ""
+end
+
 -- Internal: Call with frame to convert that frame to a string.
--- Takes care of formatting location and calling frame's toString, if any.
+-- Takes care of formatting location and calling frame's toStringHelper, if any.
 local function frameToString(frame, skipFile)
   local str = ""
-  if self.file and not skipFile then
-    str = self.file .. ":"
+  if frame.file and not skipFile then
+    str = frame.file .. ":"
   end
-  if self.lno then
-    str = str .. self.lno .. ":"
-    if self.col then
-      str = str .. self.col .. ":"
+  if frame.lno then
+    str = str .. frame.lno .. ":"
+    if frame.col then
+      str = str .. frame.col .. ":"
     end
   end
   str = str .. (str:len() > 0 and " " or "") .. "in "
-  if frame.toString then
-    str = str .. frame:toString()
+  if frame.toStringHelper then
+    str = str .. frame:toStringHelper()
   else
-    local lightFrame = std.table.clone(frame)
-    lightFrame.file = nil
-    lightFrame.lno = nil
-    lightFrame.col = nil
-    str = str .. tostring(lightFrame)
+    str = str .. genericFrameToStringHelper(frame)
   end
   return str
 end
 
-local function commandFrameToString(frame)
-  local str = "\\" .. frame.command
-  local first = true
-  for key, value in pairs(frame.options) do
-    if first then
-      first = false
-      str = str .. "["
-    else
-      str = str .. ", "
-    end
-    str = str .. key .. "=" .. value
-  end
-  if not first then
-    str = str .. "]"
-  end
-  return str
+local function commandFrameToStringHelper(frame)
+  local options = (#frame.options > 0 and tostring(frame.options):gsub("^{", "["):gsub("}$", "]") or "")
+  return "\\" .. frame.command .. options
 end
 
-local function textFrameToString(frame)
+local function textFrameToStringHelper(frame)
   local text = frame.text
   if text:len() > 20 then
     text = text:sub(1, 18) .. "…"
   end
   text = text:gsub("\n", "␤"):gsub("\t", "␉"):gsub("\v", "␋")
-  return "\"" .. text .. "\""
+  return '"' .. text .. '"'
 end
 
 -- Internal: Given an collection of frames and an afterFrame, construct and return a human readable info string
@@ -82,14 +72,14 @@ local function formatTraceHead(stack, afterFrame)
       if stack[i].lno then
         -- Found a frame which does carry some relevant information.
         locationFrame = stack[i]
-        info = info .. " near " .. frameToString(locationFrame, --[[skipFile=]] locationFrame.file == top.file)
+        info = info .. " near " .. frameToString(locationFrame, locationFrame.file == top.file)
         break
       end
     end
   end
   -- Print after, if it is in a relevant file
   if afterFrame and (not locationFrame or afterFrame.file == locationFrame.file) then
-    info = info .. " after " .. frameToString(afterFrame, --[[skipFile=]] true)
+    info = info .. " after " .. frameToString(afterFrame, true)
   end
   return info
 end
@@ -107,7 +97,7 @@ function traceStack:pushCommand(command, content, options)
       lno = content.lno,
       col = content.col,
       options = options or {},
-      toString = commandFrameToString
+      toStringHelper = commandFrameToStringHelper
     })
 end
 
@@ -128,7 +118,7 @@ function traceStack:pushContent(content, command)
       lno = content.lno,
       col = content.col,
       options = content.options or {},
-      toString = commandFrameToString
+      toStringHelper = commandFrameToStringHelper
     })
 end
 
@@ -137,7 +127,7 @@ end
 function traceStack:pushText(text)
   return self:pushFrame({
       text = text,
-      toString = textFrameToString
+      toStringHelper = textFrameToStringHelper
     })
 end
 
@@ -149,8 +139,7 @@ local lastPushId = 0
 -- .file = string - name of the file from which this originates
 -- .lno = number - line in the file
 -- .col = number - column on the line
--- .toString = function(frame):string - takes the frame itself and returns a human readable string
---             with information about the frame, NOT including `file`, `lno` and `col`.
+-- .toStringHelper = function() that serializes extended information about the frame BESIDES location
 function traceStack:pushFrame(frame)
   SU.debug("commandStack", string.rep(".", #self) .. "PUSH(" .. frameToString(frame, false) .. ")")
   self[#self + 1] = frame
