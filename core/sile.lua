@@ -249,12 +249,9 @@ function SILE.call(cmd, options, content)
     -- This call is from code (no content.line) and we want to spend the time
     -- to determine everything we need about the caller
     local caller = debug.getinfo(2, "Sl")
-    file = caller.short_src
-    line = caller.currentline
+    file, line = caller.short_src, caller.currentline
   elseif type(content) == "table" then
-    file = content.file
-    line = content.line
-    column = content.col
+    file, line, column = content.file, content.line, content.col
   end
   local pId = SILE.traceStack:pushCommand(cmd, line, column, options, file)
   if not SILE.Commands[cmd] then SU.error("Unknown command "..cmd) end
