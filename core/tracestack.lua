@@ -158,9 +158,7 @@ local lastPushId = 0
 --             with information about the frame, NOT including `file`, `line` and `column`.
 function traceStack:pushFrame(frame)
   -- Push the frame
-  if SU.debugging("commandStack") then
-    print(string.rep(".", #self) .. "PUSH(" .. frameToString(frame, false) .. ")")
-  end
+  SU.debug("commandStack", string.rep(".", #self) .. "PUSH(" .. frameToString(frame, false) .. ")")
   self[#self + 1] = frame
   self.afterFrame = nil
   lastPushId = lastPushId + 1
@@ -178,18 +176,15 @@ function traceStack:pop(pushId)
   local popped = self[#self]
   if popped._pushId ~= pushId then
     local message = "Unbalanced content push/pop"
-    local debug = SILE.traceback or SU.debugging("commandStack")
-    if debug then
+    if SILE.traceback or SU.debugging("commandStack") then
       message = message .. ". Expected " .. popped.pushId .. " - (" .. frameToString(popped) .. "), got " .. pushId
     end
-    SU.warn(message, debug)
+    SU.warn(message, true)
   else
     -- Correctly balanced: pop the frame
     self.afterFrame = popped
     self[#self] = nil
-    if SU.debugging("commandStack") then
-      print(string.rep(".", #self) .. "POP(" .. frameToString(popped, false) .. ")")
-    end
+    SU.debug("commandStack", string.rep(".", #self) .. "POP(" .. frameToString(popped, false) .. ")")
   end
 end
 
