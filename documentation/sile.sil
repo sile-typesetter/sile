@@ -1,18 +1,5 @@
 \begin[class=book]{document}
-%\begin[papersize=152mm x 229mm,class=book]{document}
-\script[src=packages/grid]
-\script[src=packages/url]
-\script[src=packages/autodoc]
-\script[src=packages/verbatim]
-\script[src=packages/color]
-\script[src=packages/image]
-\script[src=packages/frametricks]
-\script[src=packages/linespacing]
-\script[src=packages/lorem]
-\script[src=packages/bidi]\bidi-off
-\script[src=packages/pdf]
-\script[src=packages/pullquote]
-\include[src=documentation/macros.xml]
+\include[src=documentation/macros.sil]
 \define[command=silehp]{\url{http://www.sile-typesetter.org/}}
 \define[command=sileversion]{\script{SILE.typesetter:typeset(SILE.version)}}
 \set[parameter=document.baselineskip,value=3ex]
