@@ -1,0 +1,439 @@
+\begin{document}
+\chapter{SILE Macros and Commands}
+
+\noindent One of the reasons that we use computers is that they are
+very good at doing repetitive jobs for us, so that we don’t have to.
+Perhaps the most important skill in operating computers, and particularly
+in programming computers, is noticing areas where an action is being
+repeated, and allowing the computer to do the work instead of the human.
+In other words, Don‘t Repeat Yourself.
+
+The same is true in operating SILE. After you have been using the
+system for a while, you will discover that there are patterns of input
+that you need to keep entering again and again.
+
+\section{A simple macro}
+
+\define[command=SILE]{S\lower[height=0.5ex]{I}L\glue[width=-.2em]\raise[height=0.6ex]{\font[size=0.8em]{E}}}
+For instance, let’s suppose that we want to design a nice little
+“bumpy road” logo for SILE. (Afficionados of T\glue[width=-.1667em]\lower[height=0.5ex]{E}\glue[width=-.125em]X and friends will be familar with the concept of
+bumpy road logos.) Our logo will look like this: \SILE. It’s not a great
+logo, but we’ll use it as \SILE’s logo for the purposes of this section.
+
+To typeset
+this logo, we need to ask \SILE to: typeset an ‘S’; typeset an ‘I’ lowered by
+a certain amount (half an ex, as it happens); typeset an ‘L’; walk backwards
+along the line a tiny bit; typeset a smaller-sized ‘E’ raised by a certain amount.
+
+In \SILE code, that looks like:
+
+\begin{verbatim}
+\line
+S\\lower[height=0.5ex]\{I\}L\\glue[width=-.2em]\\raise[height=0.6ex]\{\\font[size=0.8em]\{E\}\}
+\line
+\end{verbatim}
+
+(Don‘t worry about the \code{\\glue} command for the moment; we’ll come back
+to that later.)
+
+We’ve used our logo four times already in this chapter, and we don‘t want to
+have to input that whole monostrosity each time we do so. What we would like
+to do is tell the computer “this is \SILE’s logo; each time I enter \code{\\SILE},
+I want you to interpret that as \code{S\\lower[height=0.5ex]\{I\}L\\glue[width=-.2em]\\raise[height=0.6ex]\{\\font[size=0.8em]\{E\}\}}”.
+
+In other words, we want to define our own commands.
+
+SILE\footnote{Let’s give up on the logo at this point.} allows you to define
+your own commands in two ways. The simplest commands of all are those like
+\code{\\SILE} above: “when I write \code{\\x}, I
+want SILE to pretend that I had written \code{X \\Y Z} instead.” These are
+called \em{macros}, and the process of pretending is called \em{macro expansion}.
+
+You can define these kinds of macros within a SILE file itself. In this
+very file, we entered:
+
+\begin{verbatim}
+\line
+\\define[command=SILE]\{
+S\\lower[height=0.5ex]\{I\}L\\glue[width=-.2em]\\raise[height=0.6ex]\{\\font[size=0.8em]\{E\}\}
+\}
+\line
+\end{verbatim}
+
+We're using the built-in SILE command \code{\\define}. \code{\\define} takes
+an option called \code{command}; its value is the name of the command we
+are defining. The content of the \code{\\define} command is a series of SILE instructions to
+be executed when the command is used.
+
+\begin{note}
+At this point it’s worth knowing the precise rules for allowable
+names of SILE commands.
+
+Commands in XML-flavor input files must be allowable XML tag names or else your
+input files will not be well formed. Command names in TeX-flavor input files
+may consist of any number of alphanumeric characters, hyphens or colons.
+Additionally, any single character is a valid TeX-flavor command name. (Hence
+\code{\\\\} for typesetting a backslash.)
+
+When it comes to defining commands, commands defined by an XML-flavor file can actually have
+any name that you like—even if they are not accessible from XML-favour! (You may define oddly-named commands in a XML-flavor SILE file
+and then use them in a TeX-flavor SILE file.) Commands defined in TeX-flavor
+obviously have to have names which are valid parameter values, or else they will
+not parse correctly either; parameter values happen to consist
+of any text up until the nearest comma, semicolon or closing square bracket.
+\end{note}
+
+\section{Macro with content}
+
+Now let’s move on to the next level; sometimes you will want to create
+commands which are not simply replacements, but which have arguments of their
+own. As an example, let’s say we use the \code{color} package to turn a bit of
+text red \color[color=red]{like this}. The usual way to do that is to say
+
+\begin{verbatim}
+\line
+\\color[color=red]\{like this\}
+\line
+\end{verbatim}
+
+However, we‘re not always going to want to be highlighting the words ‘\code{like this}’.
+We might want to be able to highlight other text instead. We need the ability
+to wrap the command \code{\\color\break{}[color=red]\{ ... \}} around our chosen content.
+In other words, we want to be able to define our own commands which take arguments.
+
+The way we express this in SILE is with the \code{\\process} command. \code{\\process}
+is only valid within the context of a \code{\\define} command (you’ll mess everything
+up if you try using it somewhere else), and it
+basically means ‘do whatever you were planning to do with the arguments to this
+command.’ So if we want to a command which makes things red, we can say:
+
+\begin{verbatim}
+\line
+\\define[command=red]\{\\color[color=red]\{\\process\}\}
+
+…
+
+Making things red is a \\red\{silly\} way to emphasise text.
+\line
+\end{verbatim}
+
+\begin{note}
+You can’t call \code{\\process} more than once within the same macro.
+
+In the definition of the \code{\\chapter} command, we want to 1) display the
+chapter name in a big bold font, and 2) use the chapter name as the left
+running header. If you try writing the \code{\\chapter} command as a macro,
+you will get stuck—once you’ve \code{\\process}ed the chapter name to display
+it in bold, you won’t be able to process it again to set the running header.
+
+So the \code{\\chapter} command cannot be written as a simple macro. The other
+way to implement your own commands is to write them in the Lua programming
+language, which is what happens for \code{\\chapter}. We will see how to do
+this in later chapters.
+
+The \code{\\define} command really is meant to be used just for simple things.
+\end{note}
+
+\section{Nesting macros}
+
+That said, one thing you can do is to call a macro within a macro. This should
+be obvious, because a macro is just a replacement for the current processing
+step—when SILE reads a macro command, it behaves as if you had entered the
+definition of the macro instead, and of course such a definition can contain
+other commands.
+
+So it is possible even within the simple scope of macro processing to achieve
+quite a lot of automation.
+
+For instance, within this book, there have been a number of notes—italicized
+paragraphs between two heavy lines with a left margin. These have been typeset
+with the \code{\\note} command; this is not a built-in command but a macro
+specified within the \code{documentation/macros.sil} file included by this document.
+Here is one way to define \code{\\note}, in XML flavour:
+
+\begin{verbatim}
+\line
+<define command="line">
+  <par/><smallskip/><noindent/>
+  <hrule width="450pt" height="0.3pt"/><par/>
+  <novbreak/><smallskip/><novbreak/>
+</define>
+
+<define command="narrower">
+  <set parameter="document.lskip" value="24pt"/>
+  <process>
+  <set parameter="document.lskip" value="0pt"/>
+</end>
+
+<define command="notefont"><font style="italic" size="10pt"><process/></font></notefont>
+
+<define command="note">
+  <narrower>
+    <line/>
+    <notefont><process/></notefont>
+    <line/>
+  </narrower>
+</define>
+\line
+\end{verbatim}
+
+The only command we have not yet met here is \code{\\set}, which we will now
+investigate.
+
+\chapter{SILE Settings}
+
+As well as commands, SILE offers a variety of knobs and levers which affect
+how it does its job. Changing these parameters can have anything from a
+subtle to a dramatic effect on the eventual document. External packages may
+declare their own settings (although none of the packages which ship with
+SILE happen to do so), but here we will run through the settings which are
+built into the SILE system itself.
+
+Settings in SILE are \em{namespaced} so that 1) the name of the setting gives you
+some kind of clue as to what area of the system it will affect, and 2) packages
+can define their own settings without worrying that they will be interfering
+with other packages or the SILE internals. Namespacing of settings takes the
+form \code{\em{area.name}}—so for instance, \code{typesetter.orphanpenalty} is
+the setting which changes how the typesetter penalizes orphan (end-of-paragraph)
+lines.
+
+The interface to changing settings from within a SILE document is the
+\code{\\set} commmand. It takes two options: a \em{parameter} option which
+expresses which setting is being changed, and a \em{value} option which expresses
+the value to which the setting is being changed. As an example:
+
+\begin{verbatim}
+\line
+\\set[parameter=typesetter.orphanpenalty, value=250]
+\line
+\end{verbatim}
+
+If the \code{\\set} command is provided with an argument, then the change of
+setting is localised to the content of the argument. In other words, this code:
+
+\begin{verbatim}
+\line
+\\set[parameter=typesetter.orphanpenalty, value=250]\{ \\lorem \}
+\line
+\end{verbatim}
+
+will change the orphan penalty to 250, typeset 50 words of dummy text, and then
+return the orphan penalty to its previous value.
+
+Now, let’s begin looking at what each of the built-in settings does, starting
+from the most obvious and moving towards the most subtle.
+
+\section{Spacing Settings}
+
+In our \code{\\note} example, we saw the setting \code{document.lskip}.
+This is a \em{glue} parameter which is added to the left side of every line.
+Setting this to a positive length effectively increases the left margin of
+the text. Similarly, \code{document.rskip} adds some space to the right side of
+every line.
+
+Note that these skip settings are not the same as page margins. The
+\code{document.lskip} and \code{document.rskip} values are applied inside of the
+current frame and are relative to the edge of the frame, not to the edge of the
+page. They are best used for temporary adjustments to the margins relative to the
+normal margins, such as to indented a pull-quote. They can also be negative,
+pulling the effective margin outside of the current frame.
+
+\begin{note}
+\notehead{Glue} A \em{glue} parameter is slightly different from an ordinary dimensioned length. Glue basically means ‘space,’ but as well as signifying a length,
+it also has two additional optional components: \em{stretch} and \em{shrink},
+specified as \code{<dimension> plus <dimension> minus <dimension>}. The
+first dimension is the basic length; the stretch is the maximum length that
+can be added to it, and the shrink is some length that can be taken away from it.
+For instance, \code{12pt plus 6pt minus 3pt} specifies a space that would
+ideally by 12 points, but can expand or contract from a minimum of 9 points to a maximum
+of 18 points.
+\end{note}
+
+Let’s think about how the \code{center}ing environment is implemented. First,
+we will add incredibly stretchable glue to the left and right margins, like so:
+
+\begin{verbatim}
+\line
+\\set[parameter=document.lskip,value=0pt plus 100000pt]
+\\set[parameter=document.rskip,value=0pt plus 100000pt]
+\line
+\end{verbatim}
+
+This produces the following:
+
+\medskip%
+\begin{examplefont}%
+\set[parameter=document.lskip,value=0pt plus 500pt]% Lying for didactic purposes
+\set[parameter=document.rskip,value=0pt plus 500pt]
+\set[parameter=document.spaceskip,value=0.5en plus 120pt minus 0.3en]
+
+Here is some text which is almost centered. However, there are three problems:
+first, the normal paragraph indentation is applied, meaning the first line of
+text is indented.
+Second, the space between words is stretchable, meaning that the lines are
+stretched out so they almost seem justified.
+Finally, by default SILE adds very large glue at the
+end of each paragraph so that when the text is justified, the spacing of the
+last line is not stretched out of proportion. This makes the centering of the
+last line look a bit odd. We will deal with these three issues in the following
+paragraphs.\par
+\end{examplefont}
+\medskip
+
+\set[parameter=document.lskip,value=0pt]%
+\set[parameter=document.rskip,value=0pt]%
+\set[parameter=document.spaceskip]%
+The indentation at the start of each paragraph is controlled by the
+setting \code{document.parindent}; this is a glue parameter, and by default it’s
+set to 20pt with no stretch and shrink. Actually, the amount added to the
+start of the paragraph is \code{current.parindent}. After each paragraph,
+\code{current.parident} is reset to the value of \code{document.parindent}. The
+\code{\\noindent} command works by setting \code{current.parindent} to zero.
+
+\medskip%
+\set[parameter=current.parindent,value=-20pt]%
+\set[parameter=document.lskip,value=20pt]%
+How would you make a paragraph like this with a ‘hanging’ indentation? We’ve
+set the \code{document.lskip} to 20 points, and the \code{current.parindent} to
+\em{minus} 20 points. (In other words, we called:\break\code{\\set[parameter=document.lskip,value=20pt]} and \code{\\set[parameter=current.parindent,\break{}value=-20pt]}.)
+
+\medskip%
+\set[parameter=document.lskip,value=0pt]%
+The space between \em{paragraphs} is set with the glue parameter
+\code{document.parskip}. It’s normally set to five points with one point of stretchability.
+
+As we mentioned in the section on grid typesetting, the rules for spacing between
+\em{lines} within a paragraph is determined by two
+rules. Let’s reiterate those rules now in terms of settings:
+
+\noindent• SILE tries to insert space between two successive lines to make their
+baselines exactly \code{document.baselineskip} apart.
+
+\noindent• If this first rule would mean that the bottom and the top of the lines are less
+than \code{document.lineskip} apart, then they are forced to be \code{document.lineskip} apart.
+
+\note{This linebreaking method is fiddly, and book designers may prefer to
+work with the tools provided by the \code{linespacing} package.}
+
+The final spacing setting is \code{document.spaceskip}. Normally the size of
+the space between \em{words} is determined by the width of the space character
+in the current font. To help with justifying the text, the spaces are shrinkable
+and stretchable. Specifically, if the width of a space in the current font settings is \code{<space>}, then the default value of \code{document.spaceskip} is
+\code{1.2 <space> plus 0.5 <space> minus 0.333 <space>}\footnote{This somewhat
+arbitrary convention is arguably a bug.}.
+
+If you want to set it explicitly, you can set the
+\code{document.spaceskip} setting. If you want to go back to the default (measuring
+the space character of the font), then you need to \em{unset} the setting. To
+unset it, just call \code{\\set} with no \code{value} parameter:
+\code{\\set[parameter=document.spaceskip]}.
+
+\section{Typesetter settings}
+
+The settings which affect SILE’s spacing controls have the most obvious effect
+on a document; the typesetter itself has some knobs that can be twiddled:
+
+\code{typesetter.widowpenalty} and \code{typesetter.orphanpenalty}\footnote{TeX
+users, please notice the renaming.} affect how strongly SILE is averse to
+leaving stray lines at the start and end of pages. A \em{widow} happens when
+a page is broken leaving one line at the bottom of a page; an \em{orphan} line
+is the last line in a paragraph broken off at the top of the page. By default,
+the \em{penalty} attached to breaking the page at one of these places is 150
+penalty points. This value can be any number up to \code{10000}, which means
+“never break at this point.”
+
+\set[parameter=typesetter.parfillskip,value=0pt]
+SILE automatically inserts a piece of massively stretchable
+glue at the end of each paragraph; without this, the justification algorithm
+would apply justification to the entire paragraph, including the last line,
+and produce a fully justified paragraph. (Normally we want the last line of a justified paragraph to be
+left-aligned.)
+The size of this glue is defined in the setting
+\code{typesetter.parfillskip}. Its default value is \code{0pt plus 10000pt} but
+for this current paragraph, we have unset it.
+
+Now we can finally complete our implementation of centering:
+
+\begin{verbatim}
+\line
+\\set[parameter=document.lskip,value=0pt plus 100000pt]
+\\set[parameter=document.rskip,value=0pt plus 100000pt]
+\\set[parameter=document.spaceskip,value=0.5en]
+\\set[parameter=current.parindent,value=0pt]
+\\set[parameter=document.parindent,value=0pt]
+\\set[parameter=typesetter.parfillskip,value=0pt]
+\line
+\end{verbatim}
+
+\medskip
+\noindent\begin{examplefont}%
+\set[parameter=document.lskip,value=0pt plus 100000pt]%
+\set[parameter=document.rskip,value=0pt plus 100000pt]%
+\set[parameter=document.spaceskip,value=0.5en]%
+\set[parameter=current.parindent,value=0pt]%
+\set[parameter=typesetter.parfillskip,value=0pt]
+
+And this is (more or less) how the \code{center} environment is defined in
+the plain class: we make the margins able to expand but the spaces not able
+to expand; we turn off indenting at the start of the paragraph, and we turn
+off the filling glue at the end of the paragraph.
+\par
+\end{examplefont}
+
+\medskip
+
+\set[parameter=typesetter.parfillskip,value=0pt plus 10000pt]
+
+\section{Linebreaking settings}
+
+SILE’s linebreaking algorithm is lifted entirely from TeX, and so maintains the
+same level of customizability as TeX. Here is a quick run-down of the settings
+applicable to the line-breaking algorithm. You are expected to know what you
+are doing with these.
+
+\noindent• \code{linebreak.tolerance}: How bad a breakpoint is before it is rejected
+by the algorithm. (Default: 500)
+
+\noindent• \code{linebreak.pretolerance}: If there are no breakpoints better than
+this, the paragraph is considered for hyphenation. (Default: 100)
+
+\noindent• \code{linebreak.adjdemerits}: Additional demerits which are accumulated in the course of paragraph building when two consecutive lines are visually incompatible. In these cases, one line is built with much space for justification, and the other one with little space. (Default: 10000)
+
+\noindent• \code{linebreak.looseness}: How many lines the current paragraph should
+be made longer than normal. (Default: 0)
+
+\noindent• \code{linebreak.prevGraf}: The number of lines in the paragraph last added to the vertical list.
+
+\noindent• \code{linebreak.emergencyStretch}: Assumed extra stretchability in lines of a paragraph. (Default: 0)
+
+\noindent• \code{linebreak.linePenalty}: Penalty value associated with each line break. (Default: 10)
+
+\noindent• \code{linebreak.hyphenPenalty}: Penalty associated with break at a hyphen. (Default: 50)
+
+\noindent• \code{linebreak.doubleHyphenDemerits}: Penalty for consecutive lines ending with a hyphen. (Default: 10000)
+
+\section{Settings from Lua}
+
+Most of the time you will not be fiddling with these settings at the SILE layer,
+because complex layout commands are expected to be implemented in Lua. The
+following SILE functions access the settings system from inside Lua:
+
+\noindent• \code{SILE.settings.set(\em{<parameter>}, \em{value})}: sets a setting.
+
+\note{
+You should note that, while in the SILE layer, the \code{\\set} command does its
+best to turn the textual description of a type into the appropriate Lua type
+for the value. \code{SILE.settings.set} does not do that; it expects the value
+to be of the appropriate type: lengths need to be a \code{SILE.Length} object,
+glue must be \code{SILE.Glue} and so on.}
+
+\noindent• \code{SILE.settings.get(\em{<parameter>})}: retrieves the current
+setting of the parameter.
+
+\noindent• \code{SILE.settings.temporarily(\em{function})}: Saves all settings,
+runs the function and then restores all settings afterwards.
+
+\noindent• \code{SILE.settings.declare(\em{<specification>})}: Declares a new
+setting. See the base settings in \code{settings.lua} for examples of how to
+call this. A class or package should namespace its settings with \code{<package>.<setting>}.
+\end{document}
