@@ -66,7 +66,7 @@ local function getCounter(id)
   local counter = SILE.scratch.counters[id]
   if not counter then
     counter = {}
-    SILE.scratch.counters[id] = { value= 0, display= "arabic" }
+    SILE.scratch.counters[id] = { value= 0, display= "arabic", format = SILE.formatCounter }
   end
   return counter
 end
@@ -94,10 +94,20 @@ SILE.registerCommand("show-counter", function (options, _)
   SILE.typesetter:setpar(SILE.formatCounter(counter))
 end, "Outputs the value of counter <id>, optionally displaying it with the <display> format.")
 
+SILE.formatMultilevelCounter = function(counter, options)
+  local maxlevel = options and options.level or #counter.value
+  local minlevel = options and options.minlevel or 1
+  local out = {}
+  for x = minlevel, maxlevel do
+    out[x - minlevel + 1] = SILE.formatCounter({ display = counter.display[x], value = counter.value[x] })
+  end
+  return table.concat( out, "." )
+end
+
 local function getMultilevelCounter(id)
   local counter = SILE.scratch.counters[id]
   if not counter then
-    counter = { value= {0}, display= {"arabic"} }
+    counter = { value= {0}, display= {"arabic"}, format = SILE.formatMultilevelCounter }
     SILE.scratch.counters[id] = counter
   end
   return counter
@@ -128,18 +138,17 @@ end)
 
 SILE.registerCommand("show-multilevel-counter", function (options, _)
   local counter = getMultilevelCounter(options.id)
-  local currentLevel = #counter.value
-  local maxlevel = options.level or currentLevel
-  local minlevel = options.minlevel or 1
-  if options.display then counter.display[currentLevel] = options.display end
-  local out = {}
-  for x = minlevel, maxlevel do
-    out[x - minlevel + 1] = SILE.formatCounter({ display = counter.display[x], value = counter.value[x] })
-  end
-  SILE.typesetter:typeset(table.concat( out, "." ))
+  if options.display then counter.display[#counter.value] = options.display end
+
+  SILE.typesetter:typeset(SILE.formatMultilevelCounter(counter, options))
 end, "Outputs the value of the multilevel counter <id>, optionally displaying it with the <display> format.")
 
-return { documentation = [[\begin{document}
+return {
+  exports = {
+    getCounter = getCounter,
+    getMultilevelCounter = getMultilevelCounter
+  },
+  documentation = [[\begin{document}
 
 Various parts of SILE such as the \code{footnotes} package and the
 sectioning commands keep a counter of things going on: the current
