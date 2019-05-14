@@ -17,7 +17,7 @@
 \define[command=line]{\novbreak\skip[height=5pt]\noindent\hrule[width=450pt,height=0.3pt]\par\novbreak\skip[height=5pt]}
 \define[command=note]{\medskip
 \set[parameter=document.lskip,value=24pt]
-\par\goodbreak\noindent\hrule[width=450pt,height=0.75pt]\par\medskip\font[size=10pt,style=italic]{\process}\par\smallskip\noindent\hrule[width=450pt,height=0.75pt]\par
+\par\goodbreak\noindent\hrule[width=450pt,height=0.75pt]\par\medskip\font[size=10pt,style=italic]{\noindent\process}\par\smallskip\noindent\hrule[width=450pt,height=0.75pt]\par
 \set[parameter=document.lskip,value=0pt]\medskip
 }
 \define[command=sectionsfont]{\font[weight=600,filename=documentation/Silson-Condensed.otf]{\process}}
@@ -30,6 +30,7 @@
 
 \define[command=code]{\font[family=DejaVu Sans Mono,size=1.5ex,language=und,style=roman]{\process}}
 \define[command=verbatim:font]{\font[family=DejaVu Sans Mono,size=9pt]}
+\define[command=tt]{\code{\process}}
 \define[command=command]{\code{\process}}
 \define[command=terminal]{\verbatim{\set[parameter=document.lskip,value=36pt]\process\smallskip}}
 \define[command=changed]{
