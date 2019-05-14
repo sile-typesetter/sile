@@ -5,20 +5,30 @@
 \set[parameter=document.baselineskip,value=3ex]
 \font[size=11pt,family=Gentium Book Basic]
 \nofolios
-\par\center{\font[size=50pt,weight=600,filename=documentation/Silson-Condensed.otf]{The}\par
-\center{\img[src=documentation/sile-logo.pdf,height=40mm]}\par
-\font[size=50pt,weight=600,filename=documentation/Silson-Condensed.otf]{Book}}
 \pdf:metadata[key=Title, val=The SILE Book]
 \pdf:metadata[key=Author, val=Simon Cozens]
-\bigskip
-\font[size=12pt,filename=documentation/Silson-Condensed.otf]{\hss for SILE version \sileversion \hss \par}
-\skip[height=2in]
-\font[size=20pt,weight=600,filename=documentation/Silson-Condensed.otf]{\hss Simon Cozens \hss \par}
+
+\begin[family=Roboto Condensed,weight=600,size=50pt]{font}
+\begin[parameter=document.baselineskip,value=1.5ex]{set}
+\begin{center}
+The\break
+\img[src=documentation/sile-logo.pdf,height=125pt]\break
+Book
+
+\font[size=12pt]{for SILE version \sileversion}
+\vfill
+\font[size=20pt]{Simon Cozens}
+\end{center}
+\end{set}
+\end{font}
 \set[parameter=document.parskip,value=4pt plus 1pt]
+
 \open-double-page
 \tableofcontents
+
 \set-counter[id=folio,value=0]
 
+% Users' guide
 \include[src=documentation/c01-whatis.sil]
 \include[src=documentation/c02-gettingstarted.sil]
 \include[src=documentation/c03-input.sil]

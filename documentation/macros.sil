@@ -20,8 +20,8 @@
 \par\goodbreak\noindent\hrule[width=450pt,height=0.75pt]\par\medskip\font[size=10pt,style=italic]{\noindent\process}\par\smallskip\noindent\hrule[width=450pt,height=0.75pt]\par
 \set[parameter=document.lskip,value=0pt]\medskip
 }
-\define[command=sectionsfont]{\font[weight=600,filename=documentation/Silson-Condensed.otf]{\process}}
-\define[command=tableofcontents:headerfont]{\font[weight=600,size=22pt,filename=documentation/Silson-Condensed.otf]{\process}}
+\define[command=sectionsfont]{\font[weight=600,family=Roboto Condensed]{\process}}
+\define[command=tableofcontents:headerfont]{\font[weight=600,size=22pt,family=Roboto Condensed]{\process}}
 \define[command=examplefont]{\font[family=Adobe Caslon Pro]{\process}}
 \define[command=bf]{\font[weight=800]{\process}}
 \define[command=book:chapterfont]{\sectionsfont{\font[size=22pt]{\process}}}
