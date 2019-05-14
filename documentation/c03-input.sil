@@ -43,12 +43,12 @@ SILE knows a number of ways of specifying lengths. A \code{<basic length>} as
 mentioned above can be specified as a floating-point number followed by
 a dimension abbreviation. Acceptable dimensions are printer’s points
 (\code{pt}), millimeters (\code{mm}), centimeters (\code{cm}) or inches.
-(\code{in}) For instance a standard B-format book can be specified
+(\code{in}) For instance, a standard B-format book can be specified by
 \code{papersize=198mm x 129mm}.
 
 Once some of the basic document properties have been setup using these fixed
-size units, other dimensions may be specificed relative to them using relative
-units. Percentage units are available relative to the page width or height, the
+size units, other dimensions may be specified relative to them, using \em{relative
+units}. Percentage units are available relative to the page width or height, the
 current frame width or height, and the line width (\code{\%pw}, \code{\%ph},
 \code{\%fw}, \code{\%fw}, and \code{\%lw} respectively). You can specify
 lengths in terms of the current paragraph skip (\code{ps}) and baseline skip
@@ -189,8 +189,6 @@ The optional argument (of which there can only be at most one) is enclosed in
 curly braces.\footnote{TeX users may forget this and try adding a command
 argument “bare”, without the braces. This won’t work; in SILE, the braces are
 always mandatory.} Because the argument is optional, there is a difference between this: \code{\\command\{args\}} (which is interpreted as a command with argument \code{args}) and \code{\\command \{args\}} (which is interpreted as a command with no arguments, followed by the word \command{args} in a new group).
-
-SILE will ignore whitespace and newlines after a command.
 
 Here are a few more examples of SILE commands:
 
