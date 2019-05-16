@@ -257,7 +257,6 @@ Commands without an argument need to be well-formed self-closing XML tags (for
 instance, \code{<break/>}), and commands with parameters should have
 well-formed attributes. The example above, in XML flavor, would look like this:
 
-\break
 \begin{verbatim}
 \line
 <font family="Times" size="10pt">Hi there!</font>
