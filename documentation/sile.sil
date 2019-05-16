@@ -25,6 +25,9 @@
 \include[src=documentation/c04-useful.sil]
 \include[src=documentation/c05-packages.sil]
 \include[src=documentation/c06-macroscommands.sil]
+\include[src=documentation/c07-language.sil]
+
+% Developers' guide
 \include[src=documentation/c07-concepts.sil]
 \include[src=documentation/c08-classdesign.sil]
 \include[src=documentation/c09-xmlproc.sil]

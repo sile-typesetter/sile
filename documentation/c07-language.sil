@@ -1,0 +1,55 @@
+\begin{document}
+\chapter{Mutilingual Typesetting}
+
+\section{Hyphenation}
+
+SILE hyphenates words based on its current language. (Language is set using the
+\code{\\font} command above.) SILE comes with support for hyphenating a wide
+variety of languages, and also aims to encode specific typesetting knowledge about
+languages.
+
+The default hyphen character is “-”, which can be tweaked by the \code{\\font}
+parameter \code{hyphenchar}. It accepts a Unicode character or Unicode codepoint
+in \code{[Uu]+<code>} or Hexadecimal \code{0[Xx]<code>} format – for instance
+\code{\\font[family=Rachana,language=ml,hyphenchar=U+200C]}.
+
+SILE comes with a special “language” called \code{und}, which has no hyphenation
+patterns available. If you switch to this language, text will not be hyphenated.
+The command \code{\\nohyphenation\{\dots\}} is provided as a shortcut for
+\code{\\font[language=und]\{\dots\}}.
+
+\section{Script-specific shaping}
+
+Aside from hyphenation, typesetting conventions differ from language to language.
+SILE has basic support for typesetting most languages and scripts. (Again, let me
+know if there are languages or scripts you are using that don’t work properly and
+I will add support for them.)
+
+In some cases, languages using the same alphabet
+expect the text to be typeset in different ways. For instance, Sindhi and Urdu
+users will expect the Arabic letter \em{heh} to combine with other letters in
+different ways to standard Arabic shaping. In those cases, you should ensure that
+you set the \code{language} and \code{script} options using the \command{\\font}
+command appropriately:
+
+\bidi-on
+\begin{verbatim}
+\line
+Standard Arabic:
+\\font[family=Scheherazade,language=ar,script=Arab]\{ه{}ه{}ه\};
+then in Sindi:
+\\font[family=Scheherazade,language=snd,script=Arab]\{ه{}ه{}ه\};
+then in Urdu:
+\\font[family=Scheherazade,language=urd,script=Arab]\{ه{}ه{}ه\}.
+\line
+\end{verbatim}
+
+\begin{examplefont}
+\line
+Standard Arabic: \font[family=Scheherazade,language=ar,script=Arab]{ههه};
+then in Sindi: \font[family=Scheherazade,language=snd,script=Arab]{ههه};
+then in Urdu: \font[family=Scheherazade,language=urd,script=Arab]{ههه}.
+\line
+\end{examplefont}
+\bidi-off
+\end{document}

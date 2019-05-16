@@ -39,12 +39,12 @@ Still big text!
 \line%
 Small text
 
-\noindent\font[size=15pt]%
+\font[size=15pt]%
 Big text!
 
-\noindent\font[size=30pt]{Bigger text}
+\font[size=30pt]{Bigger text}
 
-\noindent{}Still big text!
+{}Still big text!
 \line
 \end{examplefont}
 
@@ -52,10 +52,10 @@ Big text!
 
 As you can see, one possible attribute is \code{size}, which can be specified as
 a SILE \code{<dimension>}. A \code{<dimension>} is like a \code{<basic length>}
-(described above) but with a few extra possible dimensions which are relative
-to either the size of the \em{current} font (as in ex units (\code{ex}), em units
-(\code{em}), and en units (\code{en})) or the page, frame, or other dimention
-(as in the percent of page width (\code{\%pw}), height (\code{\%ph}), etc.).
+(described above) but with a few extra possible dimensions: there are dimensions which are relative
+to the size of the \em{current} font (ex units, \code{ex}; em units,
+\code{em}; and en units, \code{en}), and dimensions which are relative to
+the size of the current page, frame or line. (such as percent of page width, \code{\%pw}; percentage of page height, \code{\%ph}; and so on).
 
 The full list of attributes to the \code{\\font} command are:
 
@@ -82,11 +82,14 @@ through \font[weight=200]{200},
 \font[weight=900]{900}. Not all fonts will support all weights (many just have
 two), but SILE will choose the closest.
 
+\noindent{}• \em{variant}: a font variant (\code{normal}, \code{smallcaps})
+
 \noindent{}• \em{language}: The two letter (ISO639-1) language code for the
 text. This will affect both font shaping and hyphenation.
 
-\noindent{}• \em{script}: The script family in use. See the section “Hyphenation and Language”
-below.
+\noindent{}• \em{direction}: The expected text direction. (\code{LTR-TTB} for left to right, top to bottom; \code{RTL-BTT} would set text right to left, bottom to top!)
+
+\noindent{}• \em{script}: The script family in use. (See chapter 7, “Language”, for more on these past three settings.)
 \medskip
 
 It’s quite fiddly to be always changing font specifications manually; later
@@ -110,11 +113,13 @@ for example, the document you are currently reading begins with the command
 
 \subsection{Chapters and Sections}
 
-You can divide your document into different sections using the commands
-\code{\\chapter\{\dots\}}, \code{\\section\{\dots\}} and \code{\\subsection\{\dots\}}.
-The argument to each command is the name of the chapter or section respectively;
-chapters will be opened on a new right-hand page, and the chapter name will form
-the left running header. Additionally the section name and number will form the right running header.
+If you choose the book class, you can divide your document into different
+sections using the commands \code{\\chapter\{\dots\}},
+\code{\\section\{\dots\}} and \code{\\subsection\{\dots\}}. The argument to
+each command is the name of the chapter or section respectively; chapters will
+be opened on a new right-hand page, and the chapter name will form the left
+running header. Additionally, the section name and number will form the right
+running header.
 
 \note{Chapters, sections and subsections will be automatically
 numbered starting from 1; to alter the numbering, see the documentation for the
@@ -193,59 +198,6 @@ margin of the paragraph is fixed, but the left-hand margin is allowed to vary. T
 paragraph is set ragged left.\par
 \end{raggedleft}
 
-\section{Hyphenation and Language}
-
-SILE hyphenates words based on its current language. (Language is set using the
-\code{\\font} command above.) SILE comes with support for hyphenating a wide
-variety of languages, and also aims to encode specific typesetting knowledge about
-languages.
-
-The default hyphen character is “-”, which can be tweaked by the \code{\\font}
-parameter \code{hyphenchar}. It accepts a Unicode character or Unicode codepoint
-in \code{[Uu]+<code>} or Hexadecimal \code{0[Xx]<code>} format – for instance
-\code{\\font[family=Rachana,language=ml,hyphenchar=U+200C]}.
-
-SILE comes with a special “language” called \code{und}, which has no hyphenation
-patterns available. If you switch to this language, text will not be hyphenated.
-The command \code{\\nohyphenation\{\dots\}} is provided as a shortcut for
-\code{\\font[language=und]\{\dots\}}.
-
-Aside from hyphenation, typesetting conventions differ from language to language.
-SILE has basic support for typesetting most languages and scripts. (Again, let me
-know if there are languages or scripts you are using that don’t work properly and
-I will add support for them.)
-
-In some cases, languages using the same alphabet
-expect the text to be typeset in different ways. For instance, Sindhi and Urdu
-users will expect the Arabic letter \em{heh} to combine with other letters in
-different ways to standard Arabic shaping. In those cases, you should ensure that
-you set the \code{language} and \code{script} options using the \command{\\font}
-command appropriately:
-
-\bidi-on
-\begin{verbatim}
-\line
-Standard Arabic:
-\\font[family=Scheherazade,language=ar,script=Arab]\{ه{}ه{}ه\};
-then in Sindi:
-\\font[family=Scheherazade,language=snd,script=Arab]\{ه{}ه{}ه\};
-then in Urdu:
-\\font[family=Scheherazade,language=urd,script=Arab]\{ه{}ه{}ه\}.
-\line
-\end{verbatim}
-
-\begin{examplefont}
-\line
-Standard Arabic: \font[family=Scheherazade,language=ar,script=Arab]{ههه};
-then in Sindi: \font[family=Scheherazade,language=snd,script=Arab]{ههه};
-then in Urdu: \font[family=Scheherazade,language=urd,script=Arab]{ههه}.
-\line
-\end{examplefont}
-\bidi-off
-
-(A complete list of possible values for the \code{script} option can be found at
-\url{http://www.simon-cozens.org/content/duffers-guide-fontconfig-and-harfbuzz})
-
 \section{Including Other Files and Code}
 
 To make it easier for you to author a large document, you can break your SILE document
@@ -322,11 +274,11 @@ between, it is strictly necessary that no end tags appear inside the Lua code.
 This means that for the environment block version (\code{\\begin\{script\}})
 there must be no instances of \code{\\end\{script\}} inside the Lua code block,
 even inside a string that would otherwise be valid Lua code, (e.g. if it was
-inside a quoted string or Lua comment). The first instance of such and end tag
-terminates the block and there is currently no way to escape it. For the inline
+inside a quoted string or Lua comment). The first instance of such an end tag
+terminates the block, and there is currently no way to escape it. For the inline
 comand form (\code{\\script}) an exact matching number of open and closing
 braces may appear in the Lua code — the next closing brace at the same level as
 the opening brace will close the tag, even if it happens to be inside some
-quoted string in the Lua code. Including any nuber of nested opening and closing
+quoted string in the Lua code. Including any number of nested opening and closing
 braces is possible as long as they are balanced.
 \end{document}
