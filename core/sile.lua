@@ -245,7 +245,7 @@ end
 function SILE.call(command, options, content)
   options = options or {}
   content = content or {}
-  if SILE.traceback and not content.lno then
+  if SILE.traceback and type(content) == "table" and not content.lno then
     -- This call is from code (no content.lno) and we want to spend the time
     -- to determine everything we need about the caller
     local caller = debug.getinfo(2, "Sl")

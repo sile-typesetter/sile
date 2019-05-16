@@ -91,6 +91,7 @@ function traceStack:pushCommand(command, content, options)
   if not command then
     SU.warn("Command should be specified for SILE.traceStack:pushCommand", true)
   end
+  if type(content) == "function" then content = {} end
   return self:pushFrame({
       command = command,
       file = content.file or SILE.currentlyProcessingFile,
