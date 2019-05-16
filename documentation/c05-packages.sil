@@ -43,8 +43,8 @@ to specify the output size of the image on the paper. If the size parameters
 are not given, then the image will be output at its ‘natural’ pixel size.
 
 \begin{note}
-With the libtexpdf backend (the default), the images can be in JPEG, PNG, EPS or PDF
-formats; the Pango/Cairo backend only provides support for PNG images.
+With the libtexpdf backend (the default), the images can be in JPEG, PNG,
+EPS or PDF formats.
 \end{note}
 
 Here is a 200x243 pixel image output with \code{\\img[src=documentation/gutenberg.png]}:\par
@@ -62,6 +62,9 @@ Here it is with (respectively)
 
 Notice that images are typeset on the baseline of a line of text, rather like
 a very big letter.
+
+\section{folio}
+\package-documentation[src=packages/folio]
 
 \section{rules}
 \package-documentation[src=packages/rules]
@@ -179,6 +182,25 @@ proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 \section{font-fallback}
 \package-documentation[src=packages/font-fallback]
+
+\section{boustrophedon}
+\package-documentation[src=packages/boustrophedon]
+
+\section{chordmode}
+\package-documentation[src=packages/chordmode]
+
+\section{color-fonts}
+\package-documentation[src=packages/color-fonts]
+
+\section{cropmarks}
+\package-documentation[src=packages/cropmarks]
+
+\section{date}
+\package-documentation[src=packages/date]
+
+\section{debug}
+\package-documentation[src=packages/debug]
+
 
 \section{Packages usually used by other packages}
 
@@ -324,4 +346,41 @@ SILE.typesetNaturally(rhFrame, runningHead);
 
 \subsection{inputfilter}
 \package-documentation[src=packages/inputfilter]
+
+\subsection{break-firstfit}
+\package-documentation[src=packages/break-firstfit]
+
+\subsection{chapterverse}
+\package-documentation[src=packages/chapterverse]
+
+\section{Experimental packages}
+
+\subsection{balanced-frames}
+\package-documentation[src=packages/balanced-frames]
+
+\subsection{bibtex}
+\package-documentation[src=packages/bibtex]
+
+\section{The Package Manager}
+
+While your SILE installation will include a comprehensive collection
+of SILE packages, there’s more out there! SILE comes with a simple
+package manager which can help you to download and install new packages.
+The package manager is accessed from the SILE REPL, like so:
+
+\begin{verbatim}
+\line
+ $ sile
+This is SILE 0.9.5.1
+> installPackage("endnotes")
+Loading catalogue from https://raw.githubusercontent.com/simoncozens/sile-packages/master/packages.lua
+\line
+\end{verbatim}
+
+There will then follow a load of information which should end up with
+the \code{endnotes} package and all its dependencies being installed.
+SILE will also ensure that downloaded packages are added to the package
+search path. There’s currently no way to list or search the available
+packages. We’ll get there.
+
 \end{document}
