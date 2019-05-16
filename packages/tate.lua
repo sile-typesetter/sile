@@ -12,7 +12,7 @@ SILE.tateFramePrototype = SILE.framePrototype {
       len = SILE.length.new({ length = d, stretch = bls.height.stretch, shrink = bls.height.shrink })
       return SILE.nodefactory.newVglue({height = len})
     end
-    SILE.typesetter.breakIntoLines = SILE.require("packages/break-firstfit")
+    SILE.typesetter.breakIntoLines = SILE.require("packages/break-firstfit").exports.breakIntoLines
   end
   },
   leaveHooks = { function (self)
