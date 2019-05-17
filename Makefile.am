@@ -55,7 +55,7 @@ busted: $(wildcard tests/*_spec.lua) sile testprep
 	packagepath=(./{,lua_modules/share/lua/$(LUAVERSION)/,lua-libraries/}?{,/init}.lua)
 	busted --cpath="$${packagecpath[*]}" --lpath="$${packagepath[*]}" tests
 
-DOCS = documentation/sile.pdf documentation/developers.pdf
+DOCS = documentation/sile.pdf
 
 .PHONY: docs
 docs: $(DOCS)
