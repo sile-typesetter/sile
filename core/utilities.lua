@@ -426,38 +426,31 @@ utilities.utf8_to_utf16le = function (str)
 end
 
 utilities.breadcrumbs = function ()
-  local breadcrumbs = { "document" }
+  local breadcrumbs = {}
 
   setmetatable (breadcrumbs, {
-      __call = function (self, name, func)
-          return function (...)
-              if name ~= "define" then
-                self[#self+1] = name
-                SU.debug("breadcrumbs", "Enter command " .. name)
-              end
-              local ret = func(...)
-              if name ~= "define" and self then
-                self[#self] = nil
-                SU.debug("breadcrumbs", "Leave command " .. name)
-              end
-              return ret
-            end
-        end,
+      __index = function(self, key)
+        local frame = SILE.traceStack[key]
+        return frame and frame.command or nil
+      end,
+      __len = function(self)
+        return #SILE.traceStack
+      end,
       __tostring = function (self)
-          return "B»" .. table.concat(self, "»")
-        end
+        return "B»" .. table.concat(self, "»")
+      end
     })
 
   function breadcrumbs:dump ()
     SU.dump(self)
   end
 
-  function breadcrumbs:parent (node)
-    return self[#self-(node or 1)]
+  function breadcrumbs:parent (count)
+    return self[#self-(count or 1)]
   end
 
-  function breadcrumbs:contains (cmd)
-    for i, name in ipairs(self) do if name == cmd then return #self-i end end
+  function breadcrumbs:contains (command)
+    for i, name in ipairs(self) do if name == command then return #self-i end end
     return -1
   end
 
