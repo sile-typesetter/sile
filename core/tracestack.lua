@@ -4,58 +4,39 @@
 -- Most recent and relevant stack frames are in higher indices, up to #traceStack.
 -- Do not manipulate the stack directly, use provided push<Type> and pop methods.
 -- There are different types of stack frames, see pushFrame for more details.
-local traceStack = {
+local traceStack = std.object {
   -- Stores the frame which was last popped. Reset after a push.
   -- Helps to further specify current location in the processed document.
-  afterFrame = nil
-}
+  afterFrame = nil,
 
-local function genericFrameToStringHelper(frame)
-  frame.file = nil
-  frame.lno = nil
-  frame.col = nil
-  return #frame > 0 and tostring(frame) or ""
-end
-
--- Internal: Call with frame to convert that frame to a string.
--- Takes care of formatting location and calling frame's toStringHelper, if any.
-local function frameToString(frame, skipFile)
-  local str = ""
-  if frame.file and not skipFile then
-    str = frame.file .. ":"
-  end
-  if frame.lno then
-    str = str .. frame.lno .. ":"
-    if frame.col then
-      str = str .. frame.col .. ":"
+  defaultFrame = std.object {
+    location = function(self, relative)
+      local str = ""
+      if self.file and not relative then
+        str = str .. self.file .. ":"
+      end
+      if self.lno then
+        str = str .. self.lno .. ":"
+        if self.col then
+          str = str .. self.col .. ":"
+        end
+      end
+      str = str .. (str:len() > 0 and " " or "") .. "in "
+      str = str .. tostring(self)
+      return str
     end
-  end
-  str = str .. (str:len() > 0 and " " or "") .. "in "
-  if frame.toStringHelper then
-    str = str .. frame:toStringHelper()
-  else
-    str = str .. genericFrameToStringHelper(frame)
-  end
-  return str
-end
+  },
 
-local function commandFrameToStringHelper(frame)
-  local options = (#frame.options > 0 and tostring(frame.options):gsub("^{", "["):gsub("}$", "]") or "")
-  return "\\" .. frame.command .. options
-end
+  defaultHelper = std.object {
+    __tostring = function (self)
+      self.file = nil
+      self.lno = nil
+      self.col = nil
+      return #self > 0 and tostring(self) or ""
+    end
+  }
 
-local function documentFrameToStringHelper(frame)
-  return "<document> ("..frame.sniff..")"
-end
-
-local function textFrameToStringHelper(frame)
-  local text = frame.text
-  if text:len() > 20 then
-    text = text:sub(1, 18) .. "…"
-  end
-  text = text:gsub("\n", "␤"):gsub("\t", "␉"):gsub("\v", "␋")
-  return '"' .. text .. '"'
-end
+}
 
 -- Internal: Given an collection of frames and an afterFrame, construct and return a human readable info string
 -- about the location in processed document. Similar to _frameToLocationString, but takes into account
@@ -64,9 +45,9 @@ local function formatTraceHead(stack, afterFrame)
   local top = stack[#stack]
   if not top then
     -- Stack is empty, there is not much we can do
-    return afterFrame and "after " .. frameToString(afterFrame) or nil
+    return afterFrame and "after " .. afterFrame:location() or nil
   end
-  local info = frameToString(top)
+  local info = top:location()
   local locationFrame = top
   -- Not all stack traces have to carry location information.
   -- If the top stack trace does not carry it, find a frame which does.
@@ -76,25 +57,28 @@ local function formatTraceHead(stack, afterFrame)
       if stack[i].lno then
         -- Found a frame which does carry some relevant information.
         locationFrame = stack[i]
-        info = info .. " near " .. frameToString(locationFrame, locationFrame.file == top.file)
+        info = info .. " near " .. locationFrame:location(locationFrame.file == top.file)
         break
       end
     end
   end
   -- Print after, if it is in a relevant file
   if afterFrame and (not locationFrame or afterFrame.file == locationFrame.file) then
-    info = info .. " after " .. frameToString(afterFrame, true)
+    info = info .. " after " .. afterFrame:location(true)
   end
   return info
 end
 
 function traceStack:pushDocument(file, sniff, document)
-  return self:pushFrame({
-      command = "document",
-      sniff = sniff,
-      file = file or SILE.currentlyProcessingFile,
-      toStringHelper = documentFrameToStringHelper
+  local frame = self.defaultFrame {
+    command = "document",
+    file = file,
+    sniff = sniff
+  }
+  setmetatable(frame, {
+      __tostring = function(self) return "<file> (" .. self.sniff .. ")" end,
     })
+  return self:pushFrame(frame)
 end
 
 -- Push a command frame on to the stack to record the execution trace for debugging.
@@ -105,14 +89,20 @@ function traceStack:pushCommand(command, content, options)
     SU.warn("Command should be specified for SILE.traceStack:pushCommand", true)
   end
   if type(content) == "function" then content = {} end
-  return self:pushFrame({
-      command = command,
-      file = content.file or SILE.currentlyProcessingFile,
-      lno = content.lno,
-      col = content.col,
-      options = options or {},
-      toStringHelper = commandFrameToStringHelper
-    })
+  local frame = self.defaultFrame {
+    command = command,
+    file = content.file or SILE.currentlyProcessingFile,
+    lno = content.lno,
+    col = content.col,
+    options = options or {}
+  }
+  setmetatable(frame, {
+    __tostring = function(self)
+      local options = (table.nitems(self.options) > 0 and tostring(self.options):gsub("^{", "["):gsub("}$", "]") or "")
+      return "\\" .. self.command .. options
+    end
+  })
+  return self:pushFrame(frame)
 end
 
 -- Push a command frame on to the stack to record the execution trace for debugging.
@@ -126,23 +116,39 @@ function traceStack:pushContent(content, command)
   if not command then
     SU.warn("Command should be specified or inferable for SILE.traceStack:pushContent", true)
   end
-  return self:pushFrame({
+  local frame = self.defaultFrame {
       command = command,
       file = content.file or SILE.currentlyProcessingFile,
       lno = content.lno,
       col = content.col,
-      options = content.options or {},
-      toStringHelper = commandFrameToStringHelper
-    })
+      options = content.options or {}
+    }
+  setmetatable(frame, {
+    __tostring = function(self)
+      local options = (table.nitems(self.options) > 0 and tostring(self.options):gsub("^{", "["):gsub("}$", "]") or "")
+      return "\\" .. self.command .. options
+    end
+  })
+  return self:pushFrame(frame)
 end
 
 -- Push a text that is going to get typeset on to the stack to record the execution trace for debugging.
 -- Must be popped with `pop(returnOfPush)`.
 function traceStack:pushText(text)
-  return self:pushFrame({
-      text = text,
-      toStringHelper = textFrameToStringHelper
-    })
+  local frame = self.defaultFrame {
+    text = text
+  }
+  setmetatable(frame, {
+    __tostring = function(self)
+      local text = self.text
+      if text:len() > 20 then
+        text = text:sub(1, 18) .. "…"
+      end
+      text = text:gsub("\n", "␤"):gsub("\t", "␉"):gsub("\v", "␋")
+      return '"' .. text .. '"'
+    end
+  })
+  return self:pushFrame(frame)
 end
 
 -- Internal: Push-pop balance checking ID
@@ -155,7 +161,7 @@ local lastPushId = 0
 -- .col = number - column on the line
 -- .toStringHelper = function() that serializes extended information about the frame BESIDES location
 function traceStack:pushFrame(frame)
-  SU.debug("commandStack", string.rep(".", #self) .. "PUSH(" .. frameToString(frame, false) .. ")")
+  SU.debug("commandStack", string.rep(".", #self) .. "PUSH(" .. frame:location() .. ")")
   self[#self + 1] = frame
   self.afterFrame = nil
   lastPushId = lastPushId + 1
@@ -174,14 +180,14 @@ function traceStack:pop(pushId)
   if popped._pushId ~= pushId then
     local message = "Unbalanced content push/pop"
     if SILE.traceback or SU.debugging("commandStack") then
-      message = message .. ". Expected " .. popped.pushId .. " - (" .. frameToString(popped) .. "), got " .. pushId
+      message = message .. ". Expected " .. popped.pushId .. " - (" .. popped:location() .. "), got " .. pushId
     end
     SU.warn(message, true)
   else
     -- Correctly balanced: pop the frame
     self.afterFrame = popped
     self[#self] = nil
-    SU.debug("commandStack", string.rep(".", #self) .. "POP(" .. frameToString(popped, false) .. ")")
+    SU.debug("commandStack", string.rep(".", #self) .. "POP(" .. popped:location() .. ")")
   end
 end
 
@@ -204,10 +210,9 @@ function traceStack:locationTrace()
     return prefix .. fallbackLocation() .. "\n"
   end
   trace = prefix .. trace .. "\n"
-  -- Iterate backwards, skipping the last element
-  for i = #self - 1, 1, -1 do
-    local s = self[i]
-    trace = trace .. prefix .. frameToString(s) .. "\n"
+  -- Iterate backwards, skipping the first (document) last (already displayed) elements
+  for i = #self - 1, 2, -1 do
+    trace = trace .. prefix .. self[i]:location() .. "\n"
   end
   return trace
 end
