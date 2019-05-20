@@ -201,14 +201,14 @@ function SILE.readFile(filename)
     if SILE.inputs[input].order then table.insert(inputsOrder, input) end
   end
   table.sort(inputsOrder,function(a,b) return SILE.inputs[a].order < SILE.inputs[b].order end)
-  local pId = SILE.traceStack:pushDocument(filename, sniff, doc)
   for i = 1, #inputsOrder do local input = SILE.inputs[inputsOrder[i]]
     if input.appropriate(filename, sniff) then
+      local pId = SILE.traceStack:pushDocument(filename, sniff, doc)
       input.process(doc)
+      SILE.traceStack:pop(pId)
       return
     end
   end
-  SILE.traceStack:pop(pId)
   SU.error("No input processor available for "..filename.." (should never happen)", true)
 end
 
