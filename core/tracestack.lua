@@ -38,37 +38,12 @@ local traceStack = std.object {
 
 }
 
--- Internal: Given an collection of frames and an afterFrame, construct and return a human readable info string
--- about the location in processed document. Similar to _frameToLocationString, but takes into account
--- the afterFrame and the fact, that not all frames may carry a location information.
-local function formatTraceHead(stack, afterFrame)
-  local top = stack[#stack]
-  if not top then
-    -- Stack is empty, there is not much we can do
-    return afterFrame and "after " .. afterFrame:location() or nil
-  end
-  local info = top:location()
-  local locationFrame = top
-  -- Not all stack traces have to carry location information.
-  -- If the top stack trace does not carry it, find a frame which does.
-  -- Then append it, because its information may be useful.
-  if not top.lno then
-    for i = #stack - 1, 1, -1 do
-      if stack[i].lno then
-        -- Found a frame which does carry some relevant information.
-        locationFrame = stack[i]
-        info = info .. " near " .. locationFrame:location(locationFrame.file == top.file)
-        break
-      end
-    end
-  end
-  -- Print after, if it is in a relevant file
-  if afterFrame and (not locationFrame or afterFrame.file == locationFrame.file) then
-    info = info .. " after " .. afterFrame:location(true)
-  end
-  return info
+local function formatTraceLine(string)
+  local prefix = "\t"
+  return prefix .. string .. "\n"
 end
 
+-- Push a document processing run (input method) onto the stack
 function traceStack:pushDocument(file, sniff, document)
   local frame = self.defaultFrame {
     command = "document",
@@ -191,28 +166,45 @@ function traceStack:pop(pushId)
   end
 end
 
--- Internal: Call to create a fallback location information, when the stack is empty.
-local function fallbackLocation()
-  return SILE.currentlyProcessingFile or "<nowhere>"
-end
-
--- Returns short string with most relevant location information for user messages.
-function traceStack:locationInfo()
-  return formatTraceHead(self, self.afterFrame) or fallbackLocation()
-end
-
--- Returns multiline trace string, with full document location information for user messages.
-function traceStack:locationTrace()
-  local prefix = "\t"
-  local trace = formatTraceHead({ self[#self] } --[[we handle rest of the stack ourselves]], self.afterFrame)
-  if not trace then
-    -- There is nothing else then
-    return prefix .. fallbackLocation() .. "\n"
+-- Returns single line string with location of top most trace frame
+function traceStack:locationHead()
+  local afterFrame = self.afterFrame
+  local top = self[#self]
+  if not top then
+    -- Stack is empty, there is not much we can do
+    return formatTraceLine(afterFrame and "after " .. afterFrame:location() or SILE.currentlyProcessingFile or "<nowhere>")
   end
-  trace = prefix .. trace .. "\n"
-  -- Iterate backwards, skipping the first (document) last (already displayed) elements
-  for i = #self - 1, 2, -1 do
-    trace = trace .. prefix .. self[i]:location() .. "\n"
+  local trace = top:location()
+  local locationFrame = top
+  -- Not all stack traces have to carry location information.
+  -- If the first stack trace does not carry it, find a frame which does.
+  -- Then append it, because its information may be useful.
+  if not locationFrame.lno then
+    for i = #self - 1, 1, -1 do
+      if self[i].lno then
+        locationFrame = self[i]
+        trace = trace .. " near " .. locationFrame:location(locationFrame.file == top.file)
+        break
+      end
+    end
+  end
+  -- Print after, if it is in a relevant file
+  if afterFrame and (not locationFrame or afterFrame.file == locationFrame.file) then
+    trace = trace .. " after " .. afterFrame:location(true)
+  end
+  return trace
+end
+
+-- Returns multiline trace string with locations of each frame up to maxdepth
+function traceStack:locationTrace(maxdepth)
+  local depth = maxdepth or #self
+  trace = formatTraceLine(self:locationHead())
+  depth = depth - 1
+  if depth > 1 then
+    repeat
+      trace = trace .. formatTraceLine(self[depth]:location())
+      depth = depth - 1
+    until depth == 1 -- stop at 1 (document) as not useful in trace
   end
   return trace
 end
