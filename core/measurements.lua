@@ -1,44 +1,54 @@
 SILE.units = {
-  pt = { relative = false, value = 1 }
+  pt = {relative = false, value = 1}
 }
 
-SILE.registerUnit = function (u, t)
-  local def = SU.required(t, "definition", "registering unit "..u)
-  local relative = t.relative or false
+SILE.registerUnit = function(unit, spec)
+  local def = SU.required(spec, "definition", "registering unit " .. unit)
+  local relative = spec.relative or false
   if type(def) == "string" then
-    local num,unit = string.match(def, "(-?[%d%.]+)%s*([%%%a]+)")
-    if not SILE.units[unit] then SU.error("Unit "..u.." defined in terms of unknown unit "..unit) end
-    if SILE.units[unit].relative then
-      SILE.units[u] = { relative = true, convertor = function (v) return num * SILE.toPoints(v,unit) end}
+    local factor, baseunit = string.match(def, "(-?[%d%.]+)%s*([%%%a]+)")
+    if not SILE.units[baseunit] then
+      SU.error("Unit " .. unit .. " defined in terms of unknown unit " .. baseunit)
+    end
+    if SILE.units[baseunit].relative then
+      SILE.units[unit] = {relative = true, convertor = function(value)
+          return factor * SILE.toPoints(value, baseunit)
+        end}
     else
-      SILE.units[u] = { relative = false, value = SILE.toPoints(num,unit) }
+      SILE.units[unit] = {relative = false, value = SILE.toPoints(factor, baseunit)}
     end
   else
-    SILE.units[u] = { relative = relative, convertor = def }
+    SILE.units[unit] = {relative = relative, convertor = def}
   end
 end
 
-SILE.toPoints = function(num, unit)
+SILE.toPoints = function(factor, unit)
   if (not unit) then
-    if (type(num) == "string") then -- split into num and unit parts
-      num,unit = string.match(num, "(-?[%d%.]+)%s*([%%%a]+)")
-      num = tonumber(num)
-    else return tonumber(num) end
+    if (type(factor) == "string") then -- split into factor and unit parts
+      factor, unit = string.match(factor, "(-?[%d%.]+)%s*([%%%a]+)")
+      factor = tonumber(factor)
+    else
+      return tonumber(factor)
+    end
   end
-  if (not SILE.units[unit]) then SU.error( "Unknown unit "..unit ) end
-  num =  tonumber(string.match(num, "(-?[%d%.]+)"))
+  if (not SILE.units[unit]) then
+    SU.error("Unknown unit " .. unit)
+  end
+  factor = tonumber(string.match(factor, "(-?[%d%.]+)"))
   if SILE.units[unit].convertor then
-    return SILE.units[unit].convertor(num)
+    return SILE.units[unit].convertor(factor)
   else
-    return num * SILE.units[unit].value
+    return factor * SILE.units[unit].value
   end
 end
 
 SILE.registerUnit("mm", {definition = "2.8346457pt"})
+
 SILE.registerUnit("cm", {definition = "10mm"})
+
 SILE.registerUnit("in", {definition = "72pt"})
 
-local checkPaperDefined = function ()
+local checkPaperDefined = function()
   if not SILE.documentState or not SILE.documentState.orgPaperSize then
     SU.error("A measurement tried to measure the paper size before the paper was defined", 1)
   end
@@ -50,70 +60,83 @@ local checkFrameDefined = function ()
   end
 end
 
-SILE.registerUnit("%pw", { relative = true, definition = function (v)
+SILE.registerUnit("%pw", { relative = true, definition = function (value)
   checkPaperDefined()
-  return v / 100 * SILE.documentState.orgPaperSize[1]
+  return value / 100 * SILE.documentState.orgPaperSize[1]
 end})
-SILE.registerUnit("%ph", { relative = true, definition = function (v)
+
+SILE.registerUnit("%ph", { relative = true, definition = function (value)
   checkPaperDefined()
-  return v / 100 * SILE.documentState.orgPaperSize[2]
+  return value / 100 * SILE.documentState.orgPaperSize[2]
 end})
-SILE.registerUnit("%pmin", { relative = true, definition = function (v)
+
+SILE.registerUnit("%pmin", { relative = true, definition = function (value)
   checkPaperDefined()
-  return v / 100 * math.min(SILE.documentState.orgPaperSize[1], SILE.documentState.orgPaperSize[2])
+  return value / 100 * math.min(SILE.documentState.orgPaperSize[1], SILE.documentState.orgPaperSize[2])
 end})
-SILE.registerUnit("%pmax", { relative = true, definition = function (v)
+
+SILE.registerUnit("%pmax", { relative = true, definition = function (value)
   checkPaperDefined()
-  return v / 100 * math.max(SILE.documentState.orgPaperSize[1], SILE.documentState.orgPaperSize[2])
+  return value / 100 * math.max(SILE.documentState.orgPaperSize[1], SILE.documentState.orgPaperSize[2])
 end})
-SILE.registerUnit("%fw", { relative = true, definition = function (v)
+
+SILE.registerUnit("%fw", { relative = true, definition = function (value)
   checkFrameDefined()
-  return v / 100 * SILE.typesetter.frame:width()
+  return value / 100 * SILE.typesetter.frame:width()
 end})
-SILE.registerUnit("%fh", { relative = true, definition = function (v)
+
+SILE.registerUnit("%fh", { relative = true, definition = function (value)
   checkFrameDefined()
-  return v / 100 * SILE.typesetter.frame:height()
+  return value / 100 * SILE.typesetter.frame:height()
 end})
-SILE.registerUnit("%fmin", { relative = true, definition = function (v)
+
+SILE.registerUnit("%fmin", { relative = true, definition = function (value)
   checkFrameDefined()
-  return v / 100 * math.min(SILE.typesetter.frame:width(), SILE.typesetter.frame:height())
+  return value / 100 * math.min(SILE.typesetter.frame:width(), SILE.typesetter.frame:height())
 end})
-SILE.registerUnit("%fmax", { relative = true, definition = function (v)
+
+SILE.registerUnit("%fmax", { relative = true, definition = function (value)
   checkFrameDefined()
-  return v / 100 * math.max(SILE.typesetter.frame:width(), SILE.typesetter.frame:height())
+  return value / 100 * math.max(SILE.typesetter.frame:width(), SILE.typesetter.frame:height())
 end})
-SILE.registerUnit("%lw", { relative = true, definition = function (v)
+
+SILE.registerUnit("%lw", { relative = true, definition = function (value)
   local lskip = SILE.settings.get("document.lskip") or SILE.length.parse("0")
   local rskip = SILE.settings.get("document.rskip") or SILE.length.parse("0")
   local left = lskip.width and lskip.width:absolute() or lskip:absolute()
   local right = rskip.width and rskip.width:absolute() or rskip:absolute()
   checkFrameDefined()
   local lw = SILE.typesetter.frame:lineWidth() - left - right
-  return v / 100 * lw.length
+  return value / 100 * lw.length
 end})
-SILE.registerUnit("ps", { relative = true, definition = function (v)
+
+SILE.registerUnit("ps", { relative = true, definition = function (value)
   local ps = SILE.settings.get("document.parskip") or SILE.length.parse("0")
   ps = ps.height and ps.height:absolute() or ps:absolute()
-  return v * ps.length
+  return value * ps.length
 end})
-SILE.registerUnit("bs", { relative = true, definition = function (v)
+
+SILE.registerUnit("bs", { relative = true, definition = function (value)
   local bs = SILE.settings.get("document.baselineskip") or SILE.length.parse("0")
   bs = bs.height and bs.height:absolute() or bs:absolute()
-  return v * bs.length
+  return value * bs.length
 end})
-SILE.registerUnit("em", { relative = true, definition = function (v)
-  return v * SILE.settings.get("font.size")
+
+SILE.registerUnit("em", { relative = true, definition = function (value)
+  return value * SILE.settings.get("font.size")
 end})
-SILE.registerUnit("ex", { relative = true, definition = function (v)
-  return v * SILE.shaper:measureChar("x").height
+
+SILE.registerUnit("ex", { relative = true, definition = function (value)
+  return value * SILE.shaper:measureChar("x").height
 end})
-SILE.registerUnit("spc", { relative = true, definition = function (v)
-  return v * SILE.shaper:measureChar(" ").width
+
+SILE.registerUnit("spc", { relative = true, definition = function (value)
+  return value * SILE.shaper:measureChar(" ").width
 end})
 
 SILE.registerUnit("en", { definition = "0.5em" })
 
-_relativeMeasurement = std.object {
+local _relativeMeasurement = std.object {
   _type = "RelativeMeasurement",
   __tostring = function (self) return "("..self.number..self.unit..")" end,
   absolute = function(self)
@@ -132,11 +155,11 @@ SILE.toMeasurement = function (number, unit)
   return _relativeMeasurement { number = number, unit = unit }
 end
 
-SILE.toAbsoluteMeasurement = function(n)
-  if type(n) == "table" and n.prototype and (n:prototype() == "RelativeMeasurement"
-    or n:prototype() == "Length") then
-    return n:absolute()
+SILE.toAbsoluteMeasurement = function(length)
+  if type(length) == "table" and length.prototype
+    and (length:prototype() == "RelativeMeasurement" or length:prototype() == "Length") then
+    return length:absolute()
   else
-    return n
+    return length
   end
 end

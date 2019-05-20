@@ -4,9 +4,9 @@ local bit32 = require("bit32-compat")
 
 math.epsilon = 1E-12
 
-utilities.required = function (t, name, context)
-  if not t[name] then utilities.error(context.." needs a "..name.." parameter") end
-  return t[name]
+utilities.required = function (options, name, context)
+  if not options[name] then utilities.error(context.." needs a "..name.." parameter") end
+  return options[name]
 end
 
 utilities.boolean = function (value, default)
@@ -18,9 +18,9 @@ utilities.boolean = function (value, default)
 end
 
 if not table.maxn then
-  table.maxn = function(t)
+  table.maxn = function(tbl)
     local max = 0
-    for i,_ in pairs(t) do if i > max then max = i end end
+    for i,_ in pairs(tbl) do if i > max then max = i end end
     return max
   end
 end
@@ -86,8 +86,8 @@ utilities.dump = function (...)
   require("pl.pretty").dump(#arg == 1 and arg[1] or arg, "/dev/stderr")
 end
 
-utilities.concat = function (array, c)
-  return table.concat(utilities.map(tostring, array), c)
+utilities.concat = function (array, separator)
+  return table.concat(utilities.map(tostring, array), separator)
 end
 
 utilities.inherit = function (orig, spec)
@@ -129,12 +129,12 @@ utilities.splice = function (array, start, stop, replacement)
 end
 
 utilities.sum = function (array)
-  local t = 0
+  local total = 0
   local last = #array
   for i = 1, last do
-    t = t + array[i]
+    total = total + array[i]
   end
-  return t
+  return total
 end
 
 utilities.compress = function (items)
@@ -143,16 +143,16 @@ utilities.compress = function (items)
   return rv
 end
 
-table.nitems = function (t)
+table.nitems = function (tbl)
   local count = 0
-  for _ in pairs(t) do count = count + 1 end
+  for _ in pairs(tbl) do count = count + 1 end
   return count
 end
 
-table.append = function (t1, t2)
-  if not t1 or not t2 then SU.error("table.append called with nil table!: "..t1..", "..t2,true) end
-  for i=1,#t2 do
-      t1[#t1+1] = t2[i]
+table.append = function (basetable, tbl)
+  if not basetable or not tbl then SU.error("table.append called with nil table!: "..basetable..", "..tbl,true) end
+  for i=1,#tbl do
+      basetable[#basetable+1] = tbl[i]
   end
 end
 
@@ -181,6 +181,32 @@ utilities.allCombinations = function (options)
   end)
 end
 
+utilities.type = function(value)
+  if type(value) == "number" then
+    return math.floor(value) == value and "integer" or "number"
+  elseif type(value) == "table" then
+    return value:prototype()
+  else
+    return type(value)
+  end
+end
+
+utilities.cast = function (wantedType, value)
+  local actualType = SU.type(value)
+  if string.match(wantedType, actualType)     then return value
+  elseif actualType == "nil"
+     and string.match(wantedType, "nil")      then return nil
+  elseif string.match(wantedType, "integer")  then return tonumber(value)
+  elseif string.match(wantedType, "number")   then return tonumber(value)
+  elseif string.match(wantedType, "boolean")  then return SU.boolean(value)
+  elseif string.match(wantedType, "Length")   then return SILE.length.parse(value)
+  elseif string.match(wantedType, "VGlue")    then return SILE.nodefactory.newVglue(value)
+  elseif string.match(wantedType, "Glue")     then return SILE.nodefactory.newGlue(value)
+  elseif string.match(wantedType, "Kern")     then return SILE.nodefactory.newKern(value)
+  else SU.warn("Unrecognized type: "..wantedType); return value
+  end
+end
+
 -- Flatten content trees into just the string components (allows passing
 -- objects with complex structures to functions that need plain strings)
 utilities.contentToString = function (content)
@@ -203,6 +229,11 @@ utilities.subContent = function (content)
     end
   end
   return out
+end
+
+utilities.rateBadness = function(inf_bad, shortfall, spring)
+  local bad = math.floor(100 * (shortfall / spring) ^ 3)
+  return bad > inf_bad and inf_bad or bad
 end
 
 -- Unicode-related utilities
@@ -302,13 +333,13 @@ utilities.utf8codes = function (ustr)
   end
 end
 
-utilities.splitUtf8 = function (s) -- Return an array of UTF8 strings each representing a Unicode char
+utilities.splitUtf8 = function (str) -- Return an array of UTF8 strings each representing a Unicode char
   local seq = 0
   local rv = {}
   local val = -1
   local this = ""
-  for i = 1, #s do
-    local c = string.byte(s, i)
+  for i = 1, #str do
+    local c = string.byte(str, i)
     if seq == 0 then
       if val > -1 then
         rv[1+#rv] = this
@@ -318,10 +349,10 @@ utilities.splitUtf8 = function (s) -- Return an array of UTF8 strings each repre
             c < 0xF8 and 4 or --c < 0xFC and 5 or c < 0xFE and 6 or
           error("invalid UTF-8 character sequence")
       val = bit32.band(c, 2^(8-seq) - 1)
-      this = this .. s[i]
+      this = this .. str[i]
     else
       val = bit32.bor(bit32.lshift(val, 6), bit32.band(c, 0x3F))
-      this = this .. s[i]
+      this = this .. str[i]
     end
     seq = seq - 1
   end
@@ -329,13 +360,13 @@ utilities.splitUtf8 = function (s) -- Return an array of UTF8 strings each repre
   return rv
 end
 
-utilities.lastChar = function (s)
-  local chars = utilities.splitUtf8(s)
+utilities.lastChar = function (str)
+  local chars = utilities.splitUtf8(str)
   return chars[#chars]
 end
 
-utilities.firstChar = function (s)
-  local chars = utilities.splitUtf8(s)
+utilities.firstChar = function (str)
+  local chars = utilities.splitUtf8(str)
   return chars[1]
 end
 
@@ -412,8 +443,8 @@ utilities.breadcrumbs = function ()
     SU.dump(self)
   end
 
-  function breadcrumbs:parent (n)
-    return self[#self-(n or 1)]
+  function breadcrumbs:parent (node)
+    return self[#self-(node or 1)]
   end
 
   function breadcrumbs:contains (cmd)

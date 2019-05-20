@@ -20,7 +20,7 @@ SILE.registerCommand("save-verse-number", function (options, content)
     verse = SILE.scratch.chapterverse.verse
   }
   SU.debug("bcv", "ref: " .. ref)
-  SILE.Commands["info"]({ category = "references", value = ref }, {})
+  SILE.call("info", { category = "references", value = ref }, {})
 end)
 
 SILE.registerCommand("first-reference", function (options, content)

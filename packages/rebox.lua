@@ -1,5 +1,5 @@
 SILE.registerCommand("rebox", function (options, content)
-  local box = SILE.Commands["hbox"]({}, content)
+  local box = SILE.call("hbox", {}, content)
   if options.width then box.width = SILE.length.new({length = SILE.toPoints(options.width)}) end
   if options.height then box.height = SILE.toPoints(options.height) end
   if options.depth then box.depth = SILE.toPoints(options.depth) end

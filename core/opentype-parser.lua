@@ -2,9 +2,9 @@ local vstruct = require "vstruct"
 local hb = require "justenoughharfbuzz"
 local zlib = require "zlib"
 
-local parseName = function(s)
-  if s:len() <= 0 then return end
-  local fd = vstruct.cursor(s)
+local parseName = function(str)
+  if str:len() <= 0 then return end
+  local fd = vstruct.cursor(str)
 
   local names = {}
   local MacintoshLanguages = {
@@ -101,16 +101,16 @@ local parseName = function(s)
   return names
 end
 
-local parseMaxp = function(s)
-  if s:len() <= 0 then return end
-  local fd = vstruct.cursor(s)
+local parseMaxp = function(str)
+  if str:len() <= 0 then return end
+  local fd = vstruct.cursor(str)
 
   return vstruct.read(">version:u4 numGlyphs:u2", fd)
 end
 
-local function parseColr(s)
-  if s:len() <= 0 then return end
-  local fd = vstruct.cursor(s)
+local function parseColr(str)
+  if str:len() <= 0 then return end
+  local fd = vstruct.cursor(str)
 
   local version = vstruct.readvals(">u2", fd)
   if version ~= 0 then return end
@@ -135,9 +135,9 @@ local function parseColr(s)
   return colr
 end
 
-local function parseCpal(s)
-  if s:len() <= 0 then return end
-  local fd = vstruct.cursor(s)
+local function parseCpal(str)
+  if str:len() <= 0 then return end
+  local fd = vstruct.cursor(str)
 
   local version = vstruct.readvals(">u2", fd)
   if version > 1 then return end
@@ -164,9 +164,9 @@ local function parseCpal(s)
   return cpal
 end
 
-local function parseSvg(s)
-  if s:len() <= 0 then return end
-  local fd = vstruct.cursor(s)
+local function parseSvg(str)
+  if str:len() <= 0 then return end
+  local fd = vstruct.cursor(str)
 
   local offsets = {}
   local header = vstruct.read(">version:u2 oDocIndex:u4", fd)
@@ -201,11 +201,10 @@ local parseFont = function(face)
   return face.font
 end
 
-local decompress = function (s)
-  local f = zlib.inflate()
+local decompress = function (str)
   local decompressed = {}
   while true do
-    local chunk, eof = f(s)
+    local chunk, eof = zlib.inflate(str)
     decompressed[#decompressed+1] = chunk
     if eof then break end
   end
@@ -217,9 +216,9 @@ local getSVG = function(face, gid)
   if not face.font.svg then return end
   local item = face.font.svg[gid]
   if not item then return end
-  local s = hb.get_table(face.data, face.index, "SVG")
+  local str = hb.get_table(face.data, face.index, "SVG")
   local start = item.svgDocOffset+1
-  local svg = s:sub(start, start + item.svgDocLength-1)
+  local svg = str:sub(start, start + item.svgDocLength-1)
   if svg[1] == "\x1f" and svg[2] == "\x8b" then
     svg = decompress(svg)
   end

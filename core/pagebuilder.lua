@@ -11,12 +11,6 @@ SILE.defaultPagebuilder = std.object {
     return output
   end,
 
-  badness = function (t,s)
-    local bad = 100 * (t/s)^3
-    bad = math.floor(bad) -- TeX uses integer math for this stuff, so for compatibility...
-
-    if bad > inf_bad then return inf_bad else return bad end
-  end,
 
   findBestBreak = function(options)
     local vboxlist = SU.required(options, "vboxlist", "in findBestBreak")
@@ -72,10 +66,10 @@ SILE.defaultPagebuilder = std.object {
         SU.debug("pagebuilder", "totalHeight " .. totalHeight .. " with target " .. target)
         if totalHeight.length < target then -- TeX #1039
           -- Account for infinite stretch?
-          badness = SILE.pagebuilder.badness(left, totalHeight.stretch)
+          badness = SU.rateBadness(inf_bad, left, totalHeight.stretch)
           -- print("Height == "..totalHeight.length, "target=="..target, "stretch=="..totalHeight.stretch)
         elseif left < totalHeight.shrink then badness = awful_bad
-        else badness = SILE.pagebuilder.badness(-left, totalHeight.shrink)
+        else badness = SU.rateBadness(inf_bad, -left, totalHeight.shrink)
         end
 
         local c

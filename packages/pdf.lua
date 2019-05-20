@@ -79,7 +79,7 @@ SILE.registerCommand("pdf:link", function (options, content)
     end
   })
 
-  local hbox = SILE.Commands["hbox"]({}, content) -- hack
+  local hbox = SILE.call("hbox", {}, content) -- hack
 
   SILE.typesetter:pushHbox({
     value = nil,

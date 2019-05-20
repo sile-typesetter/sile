@@ -1292,7 +1292,7 @@ a new verse, you would insert an information node with the verse reference:
 
 \begin{verbatim}
 \line
-SILE.Commands["info"]({ category = "references", value = ref }, {})
+SILE.call("info", { category = "references", value = ref }, {})
 \line
 \end{verbatim}
 
@@ -2674,13 +2674,13 @@ using the \code{\\sync} command:
 SILE.registerCommand("left", function(options, content)
   SILE.settings.set("typesetter.parseppattern", -1)
   SILE.typesetter = diglot.leftTypesetter;
-  SILE.Commands["font"](SILE.scratch.diglot.leftfont, \{\})
+  SILE.call("font", SILE.scratch.diglot.leftfont, \{\})
 end, "Begin entering text on the left side")
 
 SILE.registerCommand("right", function(options, content)
   SILE.settings.set("typesetter.parseppattern", -1)
   SILE.typesetter = diglot.rightTypesetter;
-  SILE.Commands["font"](SILE.scratch.diglot.rightfont, \{\})
+  SILE.call("font", SILE.scratch.diglot.rightfont, \{\})
 end, "Begin entering text on the right side")
 \end{verbatim}
 
@@ -2967,9 +2967,9 @@ can output the cross-reference itself.
 \begin{verbatim}
   SILE.settings.temporarily(function()
     SILE.settings.set("document.baselineskip", SILE.nodefactory.newVglue("7pt"))
-    SILE.Commands["font"](\{size = "6pt", family="Helvetica", weight="800"\}, \{\})
+    SILE.call("font", \{size = "6pt", family="Helvetica", weight="800"\}, \{\})
     discovery.innerTypesetter:typeset(SILE.scratch.chapter..":"..SILE.scratch.verse.." ")
-    SILE.Commands["font"](\{size = "6pt", family="Helvetica", weight="200"\}, \{\})
+    SILE.call("font", \{size = "6pt", family="Helvetica", weight="200"\}, \{\})
     discovery.innerTypesetter:typeset(xref)
     discovery.innerTypesetter:leaveHmode()
     discovery.innerTypesetter:pushVglue(\{ height = SILE.length.new(\{length = 4\}) \})
