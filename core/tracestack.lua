@@ -44,6 +44,10 @@ local function commandFrameToStringHelper(frame)
   return "\\" .. frame.command .. options
 end
 
+local function documentFrameToStringHelper(frame)
+  return "<document> ("..frame.sniff..")"
+end
+
 local function textFrameToStringHelper(frame)
   local text = frame.text
   if text:len() > 20 then
@@ -82,6 +86,15 @@ local function formatTraceHead(stack, afterFrame)
     info = info .. " after " .. frameToString(afterFrame, true)
   end
   return info
+end
+
+function traceStack:pushDocument(file, sniff, document)
+  return self:pushFrame({
+      command = "document",
+      sniff = sniff,
+      file = file or SILE.currentlyProcessingFile,
+      toStringHelper = documentFrameToStringHelper
+    })
 end
 
 -- Push a command frame on to the stack to record the execution trace for debugging.
