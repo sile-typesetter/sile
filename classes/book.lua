@@ -41,28 +41,28 @@ book:loadPackage("tableofcontents")
 if not SILE.scratch.headers then SILE.scratch.headers = {} end
 
 book.init = function (self)
-  book:mirrorMaster("right", "left")
-  book.pageTemplate = SILE.scratch.masters["right"]
-  book:loadPackage("footnotes", { insertInto = "footnotes", stealFrom = { "content" } })
+  self:mirrorMaster("right", "left")
+  self.switchMaster("right")
+  self:loadPackage("footnotes", { insertInto = "footnotes", stealFrom = { "content" } })
   return plain.init(self)
 end
 
 book.newPage = function (self)
-  book:switchPage()
-  book:newPageInfo()
+  self:switchPage()
+  self:newPageInfo()
   return plain.newPage(self)
 end
 
-book.finish = function ()
-  local ret = plain.finish(book)
-  book:writeToc()
+book.finish = function (self)
+  local ret = plain.finish(self)
+  self:writeToc()
   return ret
 end
 
 book.endPage = function (self)
-  book:moveTocNodes()
+  self:moveTocNodes()
 
-  if (book:oddPage() and SILE.scratch.headers.right) then
+  if (self:oddPage() and SILE.scratch.headers.right) then
     SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
       SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
       SILE.settings.set("document.lskip", SILE.nodefactory.zeroGlue)
@@ -71,7 +71,7 @@ book.endPage = function (self)
       SILE.process(SILE.scratch.headers.right)
       SILE.call("par")
     end)
-  elseif (not(book:oddPage()) and SILE.scratch.headers.left) then
+  elseif (not(self:oddPage()) and SILE.scratch.headers.left) then
       SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
         SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
         SILE.settings.set("document.lskip", SILE.nodefactory.zeroGlue)

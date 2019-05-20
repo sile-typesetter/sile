@@ -207,7 +207,7 @@ function bible:init()
     self:singleColumnMaster()
   end
   self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
-  self.pageTemplate = SILE.scratch.masters["right"]
+  self:switchMaster("right")
   return plain.init(self)
 end
 
@@ -218,9 +218,7 @@ bible.newPage = function (self)
 end
 
 bible.finish = function (self)
-  local r = plain.finish(self)
-  --bible:writeToc()
-  return r
+  return plain.finish(self)
 end
 
 bible.endPage = function (self)
