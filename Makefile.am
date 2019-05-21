@@ -73,6 +73,7 @@ force: ;
 .PRECIOUS: .fonts/% %.zip %.xz
 
 TESTFONTFILES  = NotoSansCJK-Regular.ttc
+TESTFONTFILES += NotoSansMalayalam-Regular.ttf
 TESTFONTFILES += NotoNaskhArabic-Regular.ttf
 TESTFONTFILES += LibertinusSerif-Regular.otf
 TESTFONTFILES += LibertinusSans-Bold.otf
