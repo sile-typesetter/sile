@@ -64,6 +64,7 @@ TESTFONTFILES += LibertinusSerif-Regular.otf
 TESTFONTFILES += LibertinusSans-Bold.otf
 TESTFONTFILES += GentiumPlus-R.ttf GentiumPlus-I.ttf
 TESTFONTFILES += Hack-Regular.ttf
+TESTFONTFILES += Amiri-Regular.ttf AmiriQuran.ttf
 
 .PHONY: testprep
 testprep: | $(addprefix .fonts/,$(TESTFONTFILES))
@@ -76,6 +77,9 @@ testprep: | $(addprefix .fonts/,$(TESTFONTFILES))
 
 .fonts/Libertinus%: | .fonts
 	curl -s -L https://github.com/alif-type/libertinus/raw/v6.9/$(notdir $@) -o $@
+
+.fonts/Amiri%: | .fonts
+	curl -s -L https://github.com/alif-type/amiri/raw/0.111/$(notdir $@) -o $@
 
 .fonts/GentiumPlus%: GentiumPlus-5.000.zip | .fonts
 	bsdtar -x -f $< -C $(dir $@) --strip-components 1 GentiumPlus-5.000/$(notdir $@)
