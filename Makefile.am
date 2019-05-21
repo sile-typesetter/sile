@@ -15,15 +15,15 @@ REGRESSIONSCRIPT := ./tests/regressions.pl
 LOCALTESTFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
 SILEFLAGS ?=
 
-TESTSILS  ?= $(wildcard tests/*.sil)
-TESTPDFS   = $(addsuffix      .pdf,$(basename $(TESTSILS)))
-EXPECTEDS  = $(addsuffix .expected,$(basename $(TESTSILS)))
-ACTUALS    = $(addsuffix   .actual,$(basename $(TESTSILS)))
+TESTSRCS  ?= $(wildcard tests/*.sil tests/*.xml)
+TESTPDFS   = $(addsuffix      .pdf,$(basename $(TESTSRCS)))
+EXPECTEDS  = $(addsuffix .expected,$(basename $(TESTSRCS)))
+ACTUALS    = $(addsuffix   .actual,$(basename $(TESTSRCS)))
 
 .PHONY: test
 test: REGRESSIONMODE ?= true
-test: $(TESTSILS) $(ACTUALS) | sile testprep
-	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSILS)
+test: $(TESTSRCS) $(ACTUALS) | sile testprep
+	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
 
 DOCS = $(addsuffix .pdf,$(basename $(wildcard documentation/*.sil)))
 
@@ -51,6 +51,9 @@ update_expecteds: $(EXPECTEDS)
 tests/%.expected: tests/%.sil | sile testprep
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
+tests/%.expected: tests/%.xml | sile testprep
+	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
+
 .PHONY: update_actuals
 update_actuals: REGRESSIONMODE = true
 update_actuals: $(ACTUALS)
@@ -59,6 +62,9 @@ update_actuals: $(ACTUALS)
 test_previews: $(TESTPDFS)
 
 tests/%.actual: tests/%.sil $(and $(REGRESSIONMODE),force) | sile testprep
+	-$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
+
+tests/%.actual: tests/%.xml $(and $(REGRESSIONMODE),force) | sile testprep
 	-$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
 .PHONY: force
