@@ -78,6 +78,7 @@ TESTFONTFILES += NotoNaskhArabic-Regular.ttf
 TESTFONTFILES += LibertinusSerif-Regular.otf
 TESTFONTFILES += LibertinusSans-Bold.otf
 TESTFONTFILES += GentiumPlus-R.ttf GentiumPlus-I.ttf
+TESTFONTFILES += LateefGR-Regular.ttf
 TESTFONTFILES += Hack-Regular.ttf
 TESTFONTFILES += Amiri-Regular.ttf AmiriQuran.ttf
 
@@ -103,12 +104,19 @@ testprep: | $(addprefix .fonts/,$(TESTFONTFILES))
 	bsdtar -x -f $< -C $(dir $@) --strip-components 1 GentiumPlus-5.000/$(notdir $@)
 	touch $@
 
+.fonts/LateefGR%: LateefGR-1.200.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 1 LateefGR-1.200/$(notdir $@)
+	touch $@
+
 .fonts/Hack%: Hack-v3.003-ttf.tar.xz | .fonts
 	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
 	touch $@
 
 GentiumPlus-5.000.zip:
 	curl -s -L https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
+
+LateefGR-1.200.zip:
+	curl -s -L https://software.sil.org/downloads/r/lateef/$(notdir $@) -o $@
 
 Hack-v3.003-ttf.tar.xz:
 	curl -s -L https://github.com/source-foundry/Hack/releases/download/v3.003/$(notdir $@) -o $@
