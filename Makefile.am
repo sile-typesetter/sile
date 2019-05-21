@@ -60,6 +60,7 @@ force: ;
 .PRECIOUS: .fonts/% %.zip %.xz
 
 TESTFONTFILES  = NotoSansCJK-Regular.ttc
+TESTFONTFILES += NotoNaskhArabic-Regular.ttf
 TESTFONTFILES += LibertinusSerif-Regular.otf
 TESTFONTFILES += LibertinusSans-Bold.otf
 TESTFONTFILES += GentiumPlus-R.ttf GentiumPlus-I.ttf
@@ -74,6 +75,9 @@ testprep: | $(addprefix .fonts/,$(TESTFONTFILES))
 
 .fonts/NotoSansCJK%: | .fonts
 	curl -s -L https://github.com/googlefonts/noto-cjk/raw/NotoSansV2.001/$(notdir $@) -o $@
+
+.fonts/Noto%: | .fonts
+	curl -s -L https://github.com/googlefonts/noto-fonts/raw/v2017-09-19-phase3-second/hinted/$(notdir $@) -o $@
 
 .fonts/Libertinus%: | .fonts
 	curl -s -L https://github.com/alif-type/libertinus/raw/v6.9/$(notdir $@) -o $@
