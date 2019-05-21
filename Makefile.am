@@ -74,6 +74,7 @@ force: ;
 
 TESTFONTFILES  = NotoSansCJK-Regular.ttc
 TESTFONTFILES += NotoSansMalayalam-Regular.ttf
+TESTFONTFILES += NotoSansKannada-Regular.ttf
 TESTFONTFILES += NotoNaskhArabic-Regular.ttf
 TESTFONTFILES += LibertinusSerif-Regular.otf
 TESTFONTFILES += LibertinusSans-Bold.otf
