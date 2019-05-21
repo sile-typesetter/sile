@@ -89,7 +89,7 @@ Please read the [full SILE manual][doc] for more information about what SILE is 
 
 ## Contact
 
-Please report bugs and send patches and pull requests at the [github repository][github]. For questions and discussion, please join the [mailing list][list-en].
+Please report bugs and send patches and pull requests at the [GitHub repository][github]. For questions and discussion, please join the [mailing list][list-en].
 
 日本語利用者は[メーリングリスト][list-ja]に参加してください。
 
