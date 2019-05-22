@@ -88,7 +88,6 @@ script:
  - fold_unless_fail 'Fetch resources used in tests' 'regression' make --output-sync testprep
  - fold_unless_fail 'Run regression tests' 'regression' make --output-sync test
  - fold_unless_fail 'Compile documentation and examples' 'compile_docs' make --output-sync docs examples
- - fold_unless_fail 'Versions' 'versions' ./sile --debug=fonts,versions tests/bug-117.sil
 after_success:
  - $COVERAGE && travis_wait make coverage
  - $COVERAGE && travis_wait luacov-coveralls -e lua.libraries
