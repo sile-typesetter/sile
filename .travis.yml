@@ -23,7 +23,7 @@ addons:
 env:
   global:
    - LUAROCKS=2.4.2
-   - HARFBUZZ_BASE=harfbuzz-1.7.1
+   - HARFBUZZ_BASE=harfbuzz-2.5.1
    - GRAPHITE=true
    - COVERAGE=false
    - MAKEFLAGS="--jobs=4"
@@ -53,11 +53,11 @@ before_install:
       popd ;
    fi
  - if [ ! -f ~/local/include/harfbuzz/hb.h ]; then
-      mkdir ~/local/ || true;
-      mkdir ~/builddeps / || true;
-      pushd ~/builddeps/ ;
-      wget http://www.freedesktop.org/software/harfbuzz/release/$HARFBUZZ_BASE.tar.bz2 ;
-      tar xfj $HARFBUZZ_BASE.tar.bz2 ;
+      mkdir ~/local || true;
+      mkdir ~/builddeps || true;
+      pushd ~/builddeps ;
+      wget https://github.com/harfbuzz/harfbuzz/releases/download/${HARFBUZZ_BASE/*-}/$HARFBUZZ_BASE.tar.xz ;
+      tar xf $HARFBUZZ_BASE.tar.xz ;
       cd $HARFBUZZ_BASE ;
       ./configure --with$($GRAPHITE || echo 'out')-graphite2 --prefix=$HOME/local/ ;
       make ;
