@@ -1,0 +1,57 @@
+require "packages/image"
+
+local lilypond_command = "lilypond"
+local lilypond_options = "-dbackend=eps -dno-point-and-click -ddelete-intermediate-files -djob-count=2"
+
+local trim = function (str)
+    return str:gsub("^%s*", ""):gsub("%s*$", "")
+  end
+
+local schemeBoolean = function (input)
+    return input and "##t" or "##f"
+  end
+
+local makePreamble = function (options)
+    return trim(string.format([[
+#(define default-toplevel-book-handler print-book-with-defaults-as-systems)
+#(set-global-staff-size %f)
+\layout {
+  line-width = %f\pt
+  indent = %f\pt
+  ragged-right = %s
+  ragged-last = %s
+}
+      ]], options.staffsize,
+          options.linewidth,
+          options.indent,
+          schemeBoolean(options.raggedright),
+          schemeBoolean(options.raggedlast)))
+  end
+
+local renderLilypondSystems = function(options, input)
+    local tmpdir = trim(io.shell("mktemp -d lilypond.XXXXXX"))
+    local fname = "lilypond.ly"
+    local lyfile = io.catfile(tmpdir, fname)
+    local preamble = makePreamble(options)
+    io.writelines(io.open(lyfile, "w+"), preamble, input)
+    io.shell("cd " .. tmpdir .. ";" .. lilypond_command .. " " .. lilypond_options .. " " .. fname)
+    local systemscount = trim(io.slurp(lyfile:gsub(".ly$", "-systems.count")))
+    local systems = {}
+    for i=1, systemscount do
+      systems[#systems+1] = lyfile:gsub(".ly$", "-" .. i .. ".pdf")
+    end
+    return systems
+  end
+
+SILE.registerCommand("lilypond", function(options, content)
+  options.staffsize = options.staffsize or SILE.settings.get("document.baselineskip").height:absolute().length
+  options.linewidth = options.linewidth or SILE.length.parse("100%lw"):absolute().length
+  options.indent = options.indent or (SILE.settings.get("document.parindent") or SILE.nodefactory.zeroGlue).width:absolute().length
+  options.raggedright = SU.boolean(options.raggedright, (SILE.settings.get("document.rskip") and SILE.settings.get("document.rskip").width.stretch > 1000 or false))
+  options.raggedlast = SU.boolean(options.raggedlast, (SILE.settings.get("typesetter.parfillskip").width.stretch > 1000 or false))
+  local input = options.src and io.slurp(SILE.resolveFile(options.src)) or content[1]
+  for i, system in pairs(renderLilypondSystems(options, input)) do
+    SILE.call("img", { src = system })
+    SILE.call("break")
+  end
+end)
