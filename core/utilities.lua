@@ -25,22 +25,22 @@ if not table.maxn then
   end
 end
 
-utilities.error = function (message, bug)
-  if(SILE.currentCommand and type(SILE.currentCommand) == "table") then
-    io.stderr:write("\n! "..message.. " at "..SILE.currentlyProcessingFile.." l."..(SILE.currentCommand.line)..", col."..(SILE.currentCommand.col))
-  else
-    io.stderr:write("\n! "..message.. " at "..SILE.currentlyProcessingFile)
-  end
-  if bug then io.stderr:write(debug.traceback()) end
-  io.stderr:write("\n")
+utilities.error = function(message, bug)
+  utilities.warn(message, bug)
+  io.stderr:flush()
   SILE.outputter:finish()
   os.exit(1)
 end
 
-utilities.warn = function (message)
-  io.stderr:write("\n! "..message.."\n")
-  --print(debug.traceback())
-  --os.exit(1)
+utilities.warn = function(message, bug)
+  io.stderr:write("\n! " .. message)
+  if SILE.traceback or bug then
+    io.stderr:write(" at:\n" .. SILE.traceStack:locationTrace())
+    io.stderr:write(debug.traceback(nil, 2))
+  else
+    io.stderr:write(" at " .. SILE.traceStack:locationHead())
+  end
+  io.stderr:write("\n")
 end
 
 utilities.debugging = function (category)
@@ -75,9 +75,8 @@ utilities.gtoke = function (string, pattern)
 end
 
 utilities.debug = function (category, ...)
-  local arg = { ... } -- Avoid things that Lua stuffs in arg like args to self()
   if utilities.debugging(category) then
-    print("["..category.."]", #arg == 1 and arg[1] or arg)
+    io.stderr:write("\n["..category.."] ", table.concat({ ... }, " "))
   end
 end
 
@@ -150,7 +149,7 @@ table.nitems = function (tbl)
 end
 
 table.append = function (basetable, tbl)
-  if not basetable or not tbl then SU.error("table.append called with nil table!: "..basetable..", "..tbl,true) end
+  if not basetable or not tbl then SU.error("table.append called with nil table!: "..basetable..", "..tbl, true) end
   for i=1,#tbl do
       basetable[#basetable+1] = tbl[i]
   end
@@ -229,6 +228,18 @@ utilities.subContent = function (content)
     end
   end
   return out
+end
+
+-- Call `action` on each content AST node, recursively, including `content` itself.
+-- Not called on leaves, i.e. strings.
+utilities.walkContent = function (content, action)
+  if type(content) ~= "table" then
+    return
+  end
+  action(content)
+  for i = 1, #content do
+    utilities.walkContent(content[i], action)
+  end
 end
 
 utilities.rateBadness = function(inf_bad, shortfall, spring)
@@ -417,38 +428,31 @@ utilities.utf8_to_utf16le = function (str)
 end
 
 utilities.breadcrumbs = function ()
-  local breadcrumbs = { "document" }
+  local breadcrumbs = {}
 
   setmetatable (breadcrumbs, {
-      __call = function (self, name, func)
-          return function (...)
-              if name ~= "define" then
-                self[#self+1] = name
-                SU.debug("breadcrumbs", "Enter command " .. name)
-              end
-              local ret = func(...)
-              if name ~= "define" and self then
-                self[#self] = nil
-                SU.debug("breadcrumbs", "Leave command " .. name)
-              end
-              return ret
-            end
-        end,
+      __index = function(self, key)
+        local frame = SILE.traceStack[key]
+        return frame and frame.command or nil
+      end,
+      __len = function(self)
+        return #SILE.traceStack
+      end,
       __tostring = function (self)
-          return "B»" .. table.concat(self, "»")
-        end
+        return "B»" .. table.concat(self, "»")
+      end
     })
 
   function breadcrumbs:dump ()
     SU.dump(self)
   end
 
-  function breadcrumbs:parent (node)
-    return self[#self-(node or 1)]
+  function breadcrumbs:parent (count)
+    return self[#self-(count or 1)]
   end
 
-  function breadcrumbs:contains (cmd)
-    for i, name in ipairs(self) do if name == cmd then return #self-i end end
+  function breadcrumbs:contains (command)
+    for i, name in ipairs(self) do if name == command then return #self-i end end
     return -1
   end
 

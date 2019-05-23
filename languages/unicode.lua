@@ -41,7 +41,7 @@ SILE.nodeMakers.base = std.object {
     self.lastnode = ""
   end,
   iterator = function (self,items)
-    SU.error("Abstract function nodemaker:iterator called",1)
+    SU.error("Abstract function nodemaker:iterator called", true)
   end
 }
 

@@ -58,7 +58,7 @@ if SILE.masterFilename then
     if type(e) == "string" and e:match(": interrupted!") then
       SILE.outputter:finish()
     else
-      io.stderr:write("\nError detected:\n"..e.."\n")
+      io.stderr:write("\nError detected:\n\t"..e.."\n")
     end
     os.exit(1)
   end
