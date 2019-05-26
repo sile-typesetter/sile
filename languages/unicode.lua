@@ -10,21 +10,13 @@ SILE.nodeMakers.base = std.object {
       self.contents = {} ; self.token = "" ; self.lastnode = "nnode"
     end
   end,
-  makeLetterSpaceGlue = function(self)
-    if self.lastnode ~= "glue" then
-      if SILE.settings.get("document.letterspaceglue") then
-        local w = SILE.settings.get("document.letterspaceglue").width
-        coroutine.yield(SILE.nodefactory.newKern({ width = w }))
-      end
-    end
-    self.lastnode = "glue"
-  end,
   addToken = function (self, char, item)
     self.token = self.token .. char
     self.contents[#self.contents+1] = item
   end,
   makeGlue = function(self,item)
     if SILE.settings.get("typesetter.obeyspaces") or self.lastnode ~= "glue" then
+      SU.debug("tokenizer", "Space node")
       coroutine.yield(SILE.shaper:makeSpaceNode(self.options, item))
     end
     self.lastnode = "glue"
@@ -38,7 +30,7 @@ SILE.nodeMakers.base = std.object {
   init = function (self)
     self.contents = {}
     self.token = ""
-    self.lastnode = ""
+    self.lastnode = false
     self.lasttype = false
   end,
   iterator = function (self,items)
@@ -76,10 +68,7 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
       self:makeToken()
       self:addToken(char,item)
     else
-      if SILE.settings.get("document.letterspaceglue") then
-        self:makeToken()
-        self:makeLetterSpaceGlue()
-      end
+      self:letterspace()
       self:addToken(char,item)
     end
     if not self.isWordType[thistype] then lasttype = chardata[cp] and chardata[cp].linebreak end
@@ -94,10 +83,15 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
     end
     return i,items
   end,
-  letterspace = function()
+  letterspace = function(self)
     if not SILE.settings.get("document.letterspaceglue") then return end
     if self.token then self:makeToken() end
-    self:makeLetterSpaceGlue()
+    if self.lastnode and self.lastnode ~= "glue" then
+      local w = SILE.settings.get("document.letterspaceglue").width
+      SU.debug("tokenizer", "Letter space glue: "..w)
+      coroutine.yield(SILE.nodefactory.newKern({ width = w }))
+      self.lastnode = "glue"
+    end
   end,
   isICUBreakHere = function(self, chunks, item)
     return chunks[1] and (item.index >= chunks[1].index)
