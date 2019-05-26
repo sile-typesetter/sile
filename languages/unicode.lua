@@ -41,6 +41,9 @@ SILE.nodeMakers.base = std.object {
     if not chardata[cp] then return {} end
     return chardata[cp]
   end,
+  isPunctuation = function(self, char)
+    return self.isPunctuationType[self:charData(char).category]
+  end,
   isSpace = function(self, char)
     return self.isSpaceType[self:charData(char).linebreak]
   end,
@@ -53,6 +56,7 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
   isWordType = { cm = true },
   isSpaceType = { sp = true },
   isBreakingType = { ba = true, zw = true },
+  isPunctuationType = { po = true },
   dealWith = function (self, item)
     local char = item.text
     local cp = SU.codepoint(char)
@@ -147,13 +151,14 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
     self:init()
     table.remove(chunks,1)
     return coroutine.wrap(function()
-      local i
-      i, items = self:handleInitialGlue(items)
-      for i = i,#items do item = items[i]
-        if self:isICUBreakHere(chunks, item) then
-          chunks = self:handleICUBreak(chunks, item)
+      i, self.items = self:handleInitialGlue(items)
+      for i = i,#items do
+        self.i = i
+        self.item = self.items[self.i]
+        if self:isICUBreakHere(chunks, self.item) then
+          chunks = self:handleICUBreak(chunks, self.item)
         else
-          self:dealWith(item)
+          self:dealWith(self.item)
         end
       end
       self:makeToken()
