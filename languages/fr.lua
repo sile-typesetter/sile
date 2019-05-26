@@ -1,3 +1,32 @@
+SILE.settings.declare({
+  name = "languages.fr.punctuationspace",
+    type = "Kern",
+    default = SILE.nodefactory.newKern("0.5en"),
+    help = "The amount of space before a punctuation"
+})
+
+SILE.nodeMakers.fr = SILE.nodeMakers.unicode {
+  makeUnbreakableSpace = function(self)
+    self:makeToken()
+    self.lastnode = "glue"
+    coroutine.yield(SILE.settings.get("languages.fr.punctuationspace"))
+  end,
+  nextIsPunctuation = function(self)
+    return self.items[self.i+1] and self:isPunctuation(self.items[self.i+1].text)
+  end,
+  handleICUBreak = function(self, chunks, item)
+    if self:nextIsPunctuation() then
+      self:makeUnbreakableSpace()
+      while chunks[1] and item.index >= chunks[1].index do
+        table.remove(chunks,1)
+      end
+      return chunks
+    else
+      return SILE.nodeMakers.unicode.handleICUBreak(self, chunks, item)
+    end
+  end
+}
+
 SILE.hyphenator.languages["fr"] = {}
 SILE.hyphenator.languages["fr"].patterns =
 {
