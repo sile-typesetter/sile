@@ -6,7 +6,7 @@ very good at doing repetitive jobs for us, so that we don’t have to.
 Perhaps the most important skill in operating computers, and particularly
 in programming computers, is noticing areas where an action is being
 repeated, and allowing the computer to do the work instead of the human.
-In other words, Don‘t Repeat Yourself.
+In other words, Don’t Repeat Yourself.
 
 The same is true in operating SILE. After you have been using the
 system for a while, you will discover that there are patterns of input
@@ -39,7 +39,7 @@ to that later.)
 We’ve used our logo four times already in this chapter, and we don‘t want to
 have to input that whole monostrosity each time we do so. What we would like
 to do is tell the computer “this is \SILE’s logo; each time I enter \code{\\SILE},
-I want you to interpret that as \code{S\\lower[height=0.5ex]\{I\}L\\glue[width=-.2em]\\raise[height=0.6ex]\{\\font[size=0.8em]\{E\}\}}”.
+I want you to interpret that as \code{S\\lower[height=0.5ex]\{I\}L\\glue[\goodbreak{}width=-.2em]\\raise[height=0.6ex]\{\\font[size=0.8em]\{E\}\}}”.
 
 In other words, we want to define our own commands.
 
@@ -128,10 +128,15 @@ it in bold, you won’t be able to process it again to set the running header.
 
 So the \code{\\chapter} command cannot be written as a simple macro. The other
 way to implement your own commands is to write them in the Lua programming
-language, which is what happens for \code{\\chapter}. We will see how to do
-this in later chapters.
-
-The \code{\\define} command really is meant to be used just for simple things.
+language, which is what happens for \code{\\chapter}. This is deliberate:
+the \code{\\define} command really is meant to be used just for simple
+things, because we believe that programming tasks should be done in a
+programming language. So don’t be afraid to write your own commands in Lua–it’s
+not too difficult, and if you’re creating any serious document format yourself
+(rather than processing a document using a class that someone else has written
+or adding minor formatting tweaks through customization hooks that classes
+give you) you’re should expect to write it in Lua, as you’re almost certainly
+going to need to do so. We will see how to do this in later chapters.
 \end{note}
 
 \section{Nesting macros}
