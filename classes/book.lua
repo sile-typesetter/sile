@@ -121,6 +121,8 @@ end)
 book.registerCommands = function ()
   plain.registerCommands()
 SILE.doTexlike([[%
+\define[command=book:volume:pre]{}%
+\define[command=book:volume:post]{\par}%
 \define[command=book:part:pre]{}%
 \define[command=book:part:post]{\par}%
 \define[command=book:chapter:pre]{}%
@@ -131,6 +133,26 @@ SILE.doTexlike([[%
 \define[command=book:right-running-head-font]{\font[size=9pt,style=italic]}%
 ]])
 end
+
+SILE.registerCommand("volume", function (options, content)
+  SILE.call("open-double-page")
+  SILE.call("nofoliosthispage")
+  SILE.call("noindent")
+  SILE.call("center", {}, function ()
+    SILE.call("book:volumefont", {}, function ()
+      SILE.call("hbox")
+      SILE.call("vfill")
+      SILE.call("book:sectioning", {
+          numbering = options.numbering or false,
+          toc = options.toc,
+          level = 1,
+          prenumber = "book:volume:pre",
+          postnumber = "book:volume:post"
+        }, content)
+      end)
+      SILE.call("book:volumefont", {}, content)
+  end)
+end, "Begin a new volume");
 
 SILE.registerCommand("part", function (options, content)
   SILE.call("open-double-page")
@@ -143,7 +165,7 @@ SILE.registerCommand("part", function (options, content)
       SILE.call("book:sectioning", {
           numbering = options.numbering,
           toc = options.toc,
-          level = 1,
+          level = 2,
           prenumber = "book:part:pre",
           postnumber = "book:part:post"
         }, content)
@@ -161,7 +183,7 @@ SILE.registerCommand("chapter", function (options, content)
     SILE.call("book:sectioning", {
       numbering = options.numbering,
       toc = options.toc,
-      level = 2,
+      level = 3,
       prenumber = "book:chapter:pre",
       postnumber = "book:chapter:post"
     }, content)
@@ -186,7 +208,7 @@ SILE.registerCommand("section", function (options, content)
     SILE.call("book:sectioning", {
       numbering = options.numbering,
       toc = options.toc,
-      level = 2,
+      level = 3,
       postnumber = "book:section:post"
     }, content)
     SILE.process(content)
@@ -196,7 +218,7 @@ SILE.registerCommand("section", function (options, content)
       SILE.call("book:right-running-head-font")
       SILE.call("rightalign", {}, function ()
         SILE.settings.temporarily(function ()
-          SILE.call("show-multilevel-counter", { id = "sectioning", level = 3 })
+          SILE.call("show-multilevel-counter", { id = "sectioning", level = 4 })
           SILE.typesetter:typeset(" ")
           SILE.process(content)
         end)
@@ -218,7 +240,7 @@ SILE.registerCommand("subsection", function (options, content)
     SILE.call("book:sectioning", {
           numbering = options.numbering,
           toc = options.toc,
-          level = 4,
+          level = 5,
           postnumber = "book:subsection:post"
         }, content)
     SILE.process(content)
@@ -230,9 +252,15 @@ SILE.registerCommand("subsection", function (options, content)
   SILE.typesetter:inhibitLeading()
 end, "Begin a new subsection")
 
-SILE.registerCommand("book:partfont", function (options, content)
+SILE.registerCommand("book:volumefont", function (options, content)
   SILE.settings.temporarily(function ()
     SILE.call("font", { weight = 800, size = "48pt" }, content)
+  end)
+end)
+
+SILE.registerCommand("book:partfont", function (options, content)
+  SILE.settings.temporarily(function ()
+    SILE.call("font", { weight = 800, size = "36pt" }, content)
   end)
 end)
 
