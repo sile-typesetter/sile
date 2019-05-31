@@ -127,9 +127,13 @@ SILE.doTexlike([[%
 \define[command=book:part:post]{\par}%
 \define[command=book:chapter:pre]{}%
 \define[command=book:chapter:post]{\par}%
+\define[command=book:section:pre]{}%
 \define[command=book:section:post]{ }%
+\define[command=book:subsection:pre]{}%
 \define[command=book:subsection:post]{ }%
+\define[command=book:subsubsection:pre]{}%
 \define[command=book:subsubsection:post]{ }%
+\define[command=book:subsubsubsection:pre]{}%
 \define[command=book:subsubsubsection:post]{ }%
 \define[command=book:left-running-head-font]{\font[size=9pt]}%
 \define[command=book:right-running-head-font]{\font[size=9pt,style=italic]}%
@@ -141,7 +145,7 @@ SILE.registerCommand("volume", function (options, content)
   SILE.call("nofoliosthispage")
   SILE.call("noindent")
   SILE.call("center", {}, function ()
-    SILE.call("book:volumefont", {}, function ()
+    SILE.call("book:volume:font", {}, function ()
       SILE.call("hbox")
       SILE.call("vfill")
       SILE.call("book:sectioning", {
@@ -152,7 +156,7 @@ SILE.registerCommand("volume", function (options, content)
           postnumber = "book:volume:post"
         }, content)
       end)
-      SILE.call("book:volumefont", {}, content)
+      SILE.call("book:volume:font", {}, content)
   end)
 end, "Begin a new volume");
 
@@ -161,7 +165,7 @@ SILE.registerCommand("part", function (options, content)
   SILE.call("nofoliosthispage")
   SILE.call("noindent")
   SILE.call("center", {}, function ()
-    SILE.call("book:partfont", {}, function ()
+    SILE.call("book:part:font", {}, function ()
       SILE.call("hbox")
       SILE.call("vfill")
       SILE.call("book:sectioning", {
@@ -172,7 +176,7 @@ SILE.registerCommand("part", function (options, content)
           postnumber = "book:part:post"
         }, content)
       end)
-      SILE.call("book:partfont", {}, content)
+      SILE.call("book:part:font", {}, content)
   end)
 end, "Begin a new part");
 
@@ -181,7 +185,7 @@ SILE.registerCommand("chapter", function (options, content)
   SILE.call("noindent")
   SILE.scratch.headers.right = nil
   SILE.call("set-counter", {id = "footnote", value = 1})
-  SILE.call("book:chapterfont", {}, function ()
+  SILE.call("book:chapter:font", {}, function ()
     SILE.call("book:sectioning", {
       numbering = options.numbering,
       toc = options.toc,
@@ -190,7 +194,7 @@ SILE.registerCommand("chapter", function (options, content)
       postnumber = "book:chapter:post"
     }, content)
   end)
-  SILE.call("book:chapterfont", {}, content)
+  SILE.call("book:chapter:font", {}, content)
   SILE.call("left-running-head", {}, function ()
     SILE.settings.temporarily(function ()
       SILE.call("book:left-running-head-font")
@@ -206,11 +210,12 @@ SILE.registerCommand("section", function (options, content)
   SILE.call("goodbreak")
   SILE.call("bigskip")
   SILE.call("noindent")
-  SILE.call("book:sectionfont", {}, function ()
+  SILE.call("book:section:font", {}, function ()
     SILE.call("book:sectioning", {
       numbering = options.numbering,
       toc = options.toc,
       level = 3,
+      prenumber = "book:section:pre",
       postnumber = "book:section:post"
     }, content)
     SILE.process(content)
@@ -238,11 +243,12 @@ SILE.registerCommand("subsection", function (options, content)
   SILE.call("goodbreak")
   SILE.call("noindent")
   SILE.call("medskip")
-  SILE.call("book:subsectionfont", {}, function ()
+  SILE.call("book:subsection:font", {}, function ()
     SILE.call("book:sectioning", {
           numbering = options.numbering,
           toc = options.toc,
           level = 5,
+          prenumber = "book:subsection:pre",
           postnumber = "book:subsection:post"
         }, content)
     SILE.process(content)
@@ -259,11 +265,12 @@ SILE.registerCommand("subsubsection", function (options, content)
   SILE.call("goodbreak")
   SILE.call("noindent")
   SILE.call("medskip")
-  SILE.call("book:subsectionfont", {}, function ()
+  SILE.call("book:subsection:font", {}, function ()
     SILE.call("book:sectioning", {
           numbering = options.numbering,
           toc = options.toc,
           level = 6,
+          prenumber = "book:subsubsection:pre",
           postnumber = "book:subsubsection:post"
         }, content)
     SILE.process(content)
@@ -280,11 +287,12 @@ SILE.registerCommand("subsubsubsection", function (options, content)
   SILE.call("goodbreak")
   SILE.call("noindent")
   SILE.call("medskip")
-  SILE.call("book:subsectionfont", {}, function ()
+  SILE.call("book:subsection:font", {}, function ()
     SILE.call("book:sectioning", {
           numbering = options.numbering,
           toc = options.toc,
           level = 7,
+          prenumber = "book:subsubsubsection:pre",
           postnumber = "book:subsubsubsection:post"
         }, content)
     SILE.process(content)
@@ -296,46 +304,37 @@ SILE.registerCommand("subsubsubsection", function (options, content)
   SILE.typesetter:inhibitLeading()
 end, "Begin a new subsubsubsection")
 
-SILE.registerCommand("book:volumefont", function (options, content)
-  SILE.settings.temporarily(function ()
-    SILE.call("font", { weight = 800, size = "48pt" }, content)
-  end)
+  -- Deprecated function names, change to error after min 0.9.6, drop after min 0.9.7
+  SU.deprecate("book:chapterfont", "book:chapter:font")
+  SU.deprecate("book:sectionfont", "book:section:font")
+  SU.deprecate("book:subsectionfont", "book:subsection:font")
+
+SILE.registerCommand("book:volume:font", function (options, content)
+  SILE.call("font", { weight = 800, size = "48pt" }, content)
 end)
 
-SILE.registerCommand("book:partfont", function (options, content)
-  SILE.settings.temporarily(function ()
-    SILE.call("font", { weight = 800, size = "36pt" }, content)
-  end)
+SILE.registerCommand("book:part:font", function (options, content)
+  SILE.call("font", { weight = 800, size = "36pt" }, content)
 end)
 
-SILE.registerCommand("book:chapterfont", function (options, content)
-  SILE.settings.temporarily(function ()
-    SILE.call("font", { weight = 800, size = "22pt" }, content)
-  end)
+SILE.registerCommand("book:chapter:font", function (options, content)
+  SILE.call("font", { weight = 800, size = "22pt" }, content)
 end)
 
-SILE.registerCommand("book:sectionfont", function (options, content)
-  SILE.settings.temporarily(function ()
-    SILE.call("font", { weight = 800, size = "15pt" }, content)
-  end)
+SILE.registerCommand("book:section:font", function (options, content)
+  SILE.call("font", { weight = 800, size = "15pt" }, content)
 end)
 
-SILE.registerCommand("book:subsectionfont", function (options, content)
-  SILE.settings.temporarily(function ()
-    SILE.call("font", { weight = 800, size = "12pt" }, content)
-  end)
+SILE.registerCommand("book:subsection:font", function (options, content)
+  SILE.call("font", { weight = 800, size = "12pt" }, content)
 end)
 
-SILE.registerCommand("book:subsubsectionfont", function (options, content)
-  SILE.settings.temporarily(function ()
-    SILE.call("font", { weight = 800, size = "11pt" }, content)
-  end)
+SILE.registerCommand("book:subsubsection:font", function (options, content)
+  SILE.call("font", { weight = 800, size = "11pt" }, content)
 end)
 
-SILE.registerCommand("book:subsubsubsectionfont", function (options, content)
-  SILE.settings.temporarily(function ()
-    SILE.call("font", { weight = 800, size = "10pt" }, content)
-  end)
+SILE.registerCommand("book:subsubsubsection:font", function (options, content)
+  SILE.call("font", { weight = 800, size = "10pt" }, content)
 end)
 
 return book
