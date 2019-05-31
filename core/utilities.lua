@@ -459,4 +459,13 @@ utilities.breadcrumbs = function ()
   return breadcrumbs
 end
 
+utilities.deprecate = function (old, new, removed)
+  local removed = SU.boolean(removed, false)
+  SILE.registerCommand(old, function (options, content)
+    local message = "Function \\"..old.." has been deprecated, please use \\"..new.." instead."
+    if not removed then SU.warn(message) else SU.error(message) end
+    SILE.call(new, options, content)
+  end)
+end
+
 return utilities
