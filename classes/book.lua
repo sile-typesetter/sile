@@ -121,52 +121,66 @@ end)
 book.registerCommands = function ()
   plain.registerCommands()
 
-  SILE.registerCommand("book:volume:pre", function (options, content)
+  SU.deprecate("book:volume:pre", "book:volume:prenumber")
+  SILE.registerCommand("book:volume:prenumber", function (options, content)
   end)
 
-  SILE.registerCommand("book:volume:post", function (options, content)
+  SU.deprecate("book:volume:post", "book:volume:postnumber")
+  SILE.registerCommand("book:volume:postnumber", function (options, content)
     SILE.call("par")
   end)
 
-  SILE.registerCommand("book:part:pre", function (options, content)
+  SU.deprecate("book:part:pre", "book:part:prenumber")
+  SILE.registerCommand("book:part:prenumber", function (options, content)
   end)
 
-  SILE.registerCommand("book:part:post", function (options, content)
+  SU.deprecate("book:part:post", "book:part:postnumber")
+  SILE.registerCommand("book:part:postnumber", function (options, content)
     SILE.call("par")
   end)
 
-  SILE.registerCommand("book:chapter:pre", function (options, content)
+  SU.deprecate("book:chapter:pre", "book:chapter:prenumber")
+  SILE.registerCommand("book:chapter:prenumber", function (options, content)
   end)
 
-  SILE.registerCommand("book:chapter:post", function (options, content)
+  SU.deprecate("book:chapter:post", "book:chapter:postnumber")
+  SILE.registerCommand("book:chapter:postnumber", function (options, content)
     SILE.call("par")
   end)
 
-  SILE.registerCommand("book:section:pre", function (options, content)
+  SU.deprecate("book:section:pre", "book:section:prenumber")
+  SILE.registerCommand("book:section:prenumber", function (options, content)
   end)
 
-  SILE.registerCommand("book:section:post", function (options, content)
+  SU.deprecate("book:section:post", "book:section:postnumber")
+  SILE.registerCommand("book:section:postnumber", function (options, content)
     SILE.typesetter:typeset(" ")
   end)
 
-  SILE.registerCommand("book:subsection:pre", function (options, content)
+  SU.deprecate("book:subsection:pre", "book:subsection:prenumber")
+  SILE.registerCommand("book:subsection:prenumber", function (options, content)
   end)
 
-  SILE.registerCommand("book:subsection:post", function (options, content)
+  SU.deprecate("book:subsection:post", "book:subsection:postnumber")
+  SILE.registerCommand("book:subsection:postnumber", function (options, content)
     SILE.typesetter:typeset(" ")
   end)
 
-  SILE.registerCommand("book:subsubsection:pre", function (options, content)
+  SU.deprecate("book:subsubsection:pre", "book:subsubsection:prenumber")
+  SILE.registerCommand("book:subsubsection:prenumber", function (options, content)
   end)
 
-  SILE.registerCommand("book:subsubsection:post", function (options, content)
+  SU.deprecate("book:subsubsection:post", "book:subsubsection:postnumber")
+  SILE.registerCommand("book:subsubsection:postnumber", function (options, content)
     SILE.typesetter:typeset(" ")
   end)
 
-  SILE.registerCommand("book:subsubsubsection:pre", function (options, content)
+  SU.deprecate("book:subsubsubsection:pre", "book:subsubsubsection:prenumber")
+  SILE.registerCommand("book:subsubsubsection:prenumber", function (options, content)
   end)
 
-  SILE.registerCommand("book:subsubsubsection:post", function (options, content)
+  SU.deprecate("book:subsubsubsection:post", "book:subsubsubsection:postnumber")
+  SILE.registerCommand("book:subsubsubsection:postnumber", function (options, content)
     SILE.typesetter:typeset(" ")
   end)
 
@@ -190,8 +204,8 @@ book.registerCommands = function ()
             numbering = options.numbering or false,
             toc = options.toc,
             level = 1,
-            prenumber = "book:volume:pre",
-            postnumber = "book:volume:post"
+            prenumber = "book:volume:prenumber",
+            postnumber = "book:volume:postnumber"
           }, content)
         end)
         SILE.call("book:volume:font", {}, content)
@@ -210,8 +224,8 @@ book.registerCommands = function ()
             numbering = options.numbering,
             toc = options.toc,
             level = 2,
-            prenumber = "book:part:pre",
-            postnumber = "book:part:post"
+            prenumber = "book:part:prenumber",
+            postnumber = "book:part:postnumber"
           }, content)
         end)
         SILE.call("book:part:font", {}, content)
@@ -228,8 +242,8 @@ book.registerCommands = function ()
         numbering = options.numbering,
         toc = options.toc,
         level = 3,
-        prenumber = "book:chapter:pre",
-        postnumber = "book:chapter:post"
+        prenumber = "book:chapter:prenumber",
+        postnumber = "book:chapter:postnumber"
       }, content)
     end)
     SILE.call("book:chapter:font", {}, content)
@@ -253,8 +267,8 @@ book.registerCommands = function ()
         numbering = options.numbering,
         toc = options.toc,
         level = 3,
-        prenumber = "book:section:pre",
-        postnumber = "book:section:post"
+        prenumber = "book:section:prenumber",
+        postnumber = "book:section:postnumber"
       }, content)
       SILE.process(content)
     end)
@@ -286,8 +300,8 @@ book.registerCommands = function ()
             numbering = options.numbering,
             toc = options.toc,
             level = 5,
-            prenumber = "book:subsection:pre",
-            postnumber = "book:subsection:post"
+            prenumber = "book:subsection:prenumber",
+            postnumber = "book:subsection:postnumber"
           }, content)
       SILE.process(content)
     end)
@@ -308,8 +322,8 @@ book.registerCommands = function ()
             numbering = options.numbering,
             toc = options.toc,
             level = 6,
-            prenumber = "book:subsubsection:pre",
-            postnumber = "book:subsubsection:post"
+            prenumber = "book:subsubsection:prenumber",
+            postnumber = "book:subsubsection:postnumber"
           }, content)
       SILE.process(content)
     end)
@@ -330,8 +344,8 @@ book.registerCommands = function ()
             numbering = options.numbering,
             toc = options.toc,
             level = 7,
-            prenumber = "book:subsubsubsection:pre",
-            postnumber = "book:subsubsubsection:post"
+            prenumber = "book:subsubsubsection:prenumber",
+            postnumber = "book:subsubsubsection:postnumber"
           }, content)
       SILE.process(content)
     end)
