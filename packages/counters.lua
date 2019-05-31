@@ -63,15 +63,13 @@ SILE.formatCounter = function(counter)
 end
 
 local function getCounter(id)
-  local counter = SILE.scratch.counters[id]
-  if not counter then
-    counter = {}
-    SILE.scratch.counters[id] = { value= 0, display= "arabic", format = SILE.formatCounter }
+  if not SILE.scratch.counters[id] then
+    SILE.scratch.counters[id] = { value = 0, display = "arabic", format = SILE.formatCounter }
   end
-  return counter
+  return SILE.scratch.counters[id]
 end
 
-SILE.registerCommand("increment-counter", function (options, _)
+SILE.registerCommand("increment-counter", function (options, content)
   local counter = getCounter(options.id)
   if (options["set-to"]) then
     counter.value = tonumber(options["set-to"])
@@ -81,14 +79,14 @@ SILE.registerCommand("increment-counter", function (options, _)
   if options.display then counter.display = options.display end
 end, "Increments the counter named by the <id> option")
 
-SILE.registerCommand("set-counter", function (options, _)
+SILE.registerCommand("set-counter", function (options, content)
   local counter = getCounter(options.id)
   if options.value then counter.value = tonumber(options.value) end
   if options.display then counter.display = options.display end
 end, "Sets the counter named by the <id> option to <value>; sets its display type (roman/Roman/arabic) to type <display>.")
 
 
-SILE.registerCommand("show-counter", function (options, _)
+SILE.registerCommand("show-counter", function (options, content)
   local counter = getCounter(options.id)
   if options.display then counter.display = options.display end
   SILE.typesetter:setpar(SILE.formatCounter(counter))
@@ -113,7 +111,7 @@ local function getMultilevelCounter(id)
   return counter
 end
 
-SILE.registerCommand("increment-multilevel-counter", function (options, _)
+SILE.registerCommand("increment-multilevel-counter", function (options, content)
   local counter = getMultilevelCounter(options.id)
   local currentLevel = #counter.value
   local level = tonumber(options.level) or currentLevel
@@ -136,7 +134,7 @@ SILE.registerCommand("increment-multilevel-counter", function (options, _)
   if options.display then counter.display[currentLevel] = options.display end
 end)
 
-SILE.registerCommand("show-multilevel-counter", function (options, _)
+SILE.registerCommand("show-multilevel-counter", function (options, content)
   local counter = getMultilevelCounter(options.id)
   if options.display then counter.display[#counter.value] = options.display end
 
