@@ -4,6 +4,7 @@
 \script[src=packages/image]
 \script[src=packages/bidi]
 \set[parameter=linebreak.tolerance,value=10000]
+\noindent
 \define[command=tableofcontents:headerfont]{\font[size=24pt,family=Baskerville,style=italic]{\process}}%
 % Of course this is a bit complicated. We're showing off doing complicated things.
 \begin[first-content-frame=title]{pagetemplate}
