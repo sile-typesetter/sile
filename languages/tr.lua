@@ -618,3 +618,68 @@ SILE.doTexlike([[%
 \define[command=tableofcontents:title]{İçindekiler}%
 \define[command=book:chapter:pre:tr]{Bölüm }%
 ]])
+
+local sum_tens = function (val, loc, digits)
+  local ten = string.sub(digits, loc+1, loc+1)
+  if ten:len() == 1 then val = val + tonumber(ten) * 10 end
+  return val
+end
+
+local sum_hundreds = function (val, loc, digits)
+  local hundred = string.sub(digits, loc+2, loc+2)
+  if hundred:len() == 1 then val = val + tonumber(hundred) * 100 end
+  return val + sum_tens(val, loc, digits)
+end
+
+local tr_nums = function (num, ordinal)
+  local ordinal = SU.boolean(ordinal, false)
+  local zero =  "sıfır"
+  local ones = { "bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz" }
+  local tens = { "on", "yirmi", "otuz", "kırk", "eli", "altmış", "yetmiş", "seksen", "doksan" }
+  local places = { "yüz", "bin", "milyon", "milyar", "trilyon" }
+  local zeroordinal = "sıfırıncı"
+  local onesordinals = { "birinci", "ikinci", "üçüncü", "dördüncü", "beşinci", "altıncı", "yedinci", "sekizinci", "dokuzuncu" }
+  local tensordinals = { "onuncu", "yirmiyinci", "otuzuncu", "kırkıncı", "eliyinci", "altmışıncı", "yetmişinci", "sekseninci", "Doksanıncı" }
+  local placesordinals = { "yüzüncü", "bininci", "milyonuncu", "milyarıncı", "trilyonuncu" }
+  local digits = string.reverse(num)
+  local words = {}
+  for i = 1, #digits do
+    local val, place, mod = tonumber(string.sub(digits, i, i)), math.floor(i / 3), i % 3
+    if #digits == 1 and val == 0 then
+      words[#words+1] = ordinal and zeroordinal or zero
+    elseif val >= 1 or i > 1 then
+      if i == 1 then
+        words[#words+1] = ordinal and onesordinals[val] or ones[val]
+        ordinal = false
+      elseif mod == 2 then
+        if val >= 1 then
+          words[#words+1] = ordinal and tensordinals[val] or tens[val]
+          ordinal = false
+        end
+      elseif mod == 1 then
+        if sum_hundreds(val, i, digits) >= 1 then
+          words[#words+1] = ordinal and placesordinals[place+1] or places[place+1]
+          ordinal = false
+        end
+        if sum_tens(val, i, digits) >= 2 or i > 7 then
+          words[#words+1] = ones[val]
+        end
+      elseif mod == 0 then
+        if val > 0 then
+          words[#words+1] = ordinal and placesordinals[1] or places[1]
+          ordinal = false
+        end
+        if val >= 2 then
+          words[#words+1] = ones[val]
+        end
+      end
+    end
+  end
+  table.flip(words)
+  return table.concat(words, " ")
+end
+
+SILE.languageSupport.languages.tr = {
+  num2string = function(num) return tr_nums(num, false) end,
+  num2ordinal = function(num) return tr_nums(num, true) end
+}
