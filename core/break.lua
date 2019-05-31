@@ -80,7 +80,7 @@ function lineBreak:setupLineLengths(params) -- 874
       self.lastSpecialLine = 0
       self.secondWidth = self.hsize or SU.error("No hsize")
     else
-      SU.error("Hanging indents not supported yet. Implement node 875 from TeX!", 1)
+      SU.error("Hanging indents not supported yet. Implement node 875 from TeX!", true)
     end
   else
     self.lastSpecialLine = #param("parShape")

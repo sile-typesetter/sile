@@ -110,10 +110,10 @@ local _unshaped = _nnode {
   end,
   width = nil,
   outputYourself = function (this)
-    SU.error("An unshaped node made it to output", 1)
+    SU.error("An unshaped node made it to output", true)
   end,
   __index = function(self,k)
-    if k == "width" then SU.error("Can't get width of unshaped node", 1) end
+    if k == "width" then SU.error("Can't get width of unshaped node", true) end
   end
 }
 
@@ -340,7 +340,7 @@ local _vbox = _box {
   end,
   append = function (self, box)
     local nodes = box
-    if not box then SU.error("nil box given",1) end
+    if not box then SU.error("nil box given", true) end
     if nodes.type then
       nodes = box:unbox()
     end

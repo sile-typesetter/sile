@@ -1,0 +1,36 @@
+{
+  "name": "sile",
+  "version": "0.9.5",
+  "description": "SILE Typesetter",
+  "main": "sile",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simoncozens/sile.git"
+  },
+  "author": "Simon Cozens",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/simoncozens/sile/issues"
+  },
+  "homepage": "http://sile-typesetter.org",
+  "devDependencies": {
+    "@commitlint/cli": "^7.5.2",
+    "@commitlint/config-conventional": "^7.5.0",
+    "@commitlint/prompt": "^7.5.0",
+    "commitizen": "^3.1.1",
+    "husky": "^2.2.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/prompt"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  }
+}

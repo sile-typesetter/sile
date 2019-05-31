@@ -12,7 +12,7 @@ SILE.inputs.markdown = {
     local writer = lunamark.writer.ast.new()
     local parse = reader.new(writer)
     local t = parse(data)
-    t = { [1] = t, id = "document", attr = { class = "markdown" }}
+    t = { [1] = t, id = "document", options = { class = "markdown" }}
     -- SILE.inputs.common.init(fn, t)
     SILE.process(t[1])
   end

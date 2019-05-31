@@ -14,6 +14,7 @@ std = require("std")
 lfs = require("lfs")
 if (os.getenv("SILE_COVERAGE")) then require("luacov") end
 
+SILE.traceStack = require("core/tracestack")
 SILE.documentState = std.object {}
 SILE.scratch = {}
 SILE.length = require("core/length")
@@ -93,7 +94,7 @@ Options:
   -e, --evaluate=VALUE     evaluate some Lua code before processing file
   -o, --output=[FILE]      explicitly set output file name
   -I, --include=[FILE]     include a class or SILE file before processing input
-  -t, --traceback          display traceback on error
+  -t, --traceback          display detailed location trace on errors and warnings
   -h, --help               display this help, then exit
   -v, --version            display version information, then exit
 ]])
@@ -132,6 +133,7 @@ Options:
   -- http://lua-users.org/wiki/VarargTheSecondClassCitizen
   local identity = function (...) return unpack({...}, 1, select('#', ...)) end
   SILE.errorHandler = opts.traceback and debug.traceback or identity
+  SILE.traceback = opts.traceback
 end
 
 function SILE.initRepl ()
@@ -201,11 +203,13 @@ function SILE.readFile(filename)
   table.sort(inputsOrder,function(a,b) return SILE.inputs[a].order < SILE.inputs[b].order end)
   for i = 1, #inputsOrder do local input = SILE.inputs[inputsOrder[i]]
     if input.appropriate(filename, sniff) then
+      local pId = SILE.traceStack:pushDocument(filename, sniff, doc)
       input.process(doc)
+      SILE.traceStack:pop(pId)
       return
     end
   end
-  SU.error("No input processor available for "..filename.." (should never happen)",1)
+  SU.error("No input processor available for "..filename.." (should never happen)", true)
 end
 
 local function file_exists (filename)
@@ -240,10 +244,20 @@ function SILE.resolveFile(filename, pathprefix)
   return nil
 end
 
-function SILE.call(cmd, options, content)
-  SILE.currentCommand = content
-  if not SILE.Commands[cmd] then SU.error("Unknown command "..cmd) end
-  return SILE.Commands[cmd](options or {}, content or {})
+function SILE.call(command, options, content)
+  options = options or {}
+  content = content or {}
+  if SILE.traceback and type(content) == "table" and not content.lno then
+    -- This call is from code (no content.lno) and we want to spend the time
+    -- to determine everything we need about the caller
+    local caller = debug.getinfo(2, "Sl")
+    content.file, content.lno = caller.short_src, caller.currentline
+  end
+  local pId = SILE.traceStack:pushCommand(command, content, options)
+  if not SILE.Commands[command] then SU.error("Unknown command " .. command) end
+  local result = SILE.Commands[command](options, content)
+  SILE.traceStack:pop(pId)
+  return result
 end
 
 return SILE

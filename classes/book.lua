@@ -94,10 +94,11 @@ SILE.registerCommand("right-running-head", function (options, content)
 end, "Text to appear on the top of the right page")
 
 SILE.registerCommand("book:sectioning", function (options, content)
-  local content = SU.subContent(content)
   local level = SU.required(options, "level", "book:sectioning")
-  SILE.call("increment-multilevel-counter", {id = "sectioning", level = options.level})
-  SILE.call("tocentry", {level = options.level}, content)
+  SILE.call("increment-multilevel-counter", {id = "sectioning", level = level})
+  if SU.boolean(options.toc, true) then
+    SILE.call("tocentry", {level = level}, SU.subContent(content))
+  end
   local lang = SILE.settings.get("document.language")
   if options.numbering == nil or options.numbering == "yes" then
     if options.prenumber then
@@ -136,6 +137,7 @@ SILE.registerCommand("chapter", function (options, content)
   SILE.call("book:chapterfont", {}, function ()
     SILE.call("book:sectioning", {
       numbering = options.numbering,
+      toc = options.toc,
       level = 1,
       prenumber = "book:chapter:pre",
       postnumber = "book:chapter:post"
@@ -160,6 +162,7 @@ SILE.registerCommand("section", function (options, content)
   SILE.call("book:sectionfont", {}, function ()
     SILE.call("book:sectioning", {
       numbering = options.numbering,
+      toc = options.toc,
       level = 2,
       postnumber = "book:section:post"
     }, content)
@@ -191,6 +194,7 @@ SILE.registerCommand("subsection", function (options, content)
   SILE.call("book:subsectionfont", {}, function ()
     SILE.call("book:sectioning", {
           numbering = options.numbering,
+          toc = options.toc,
           level = 3,
           postnumber = "book:subsection:post"
         }, content)

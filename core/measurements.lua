@@ -50,13 +50,13 @@ SILE.registerUnit("in", {definition = "72pt"})
 
 local checkPaperDefined = function()
   if not SILE.documentState or not SILE.documentState.orgPaperSize then
-    SU.error("A measurement tried to measure the paper size before the paper was defined", 1)
+    SU.error("A measurement tried to measure the paper size before the paper was defined", true)
   end
 end
 
 local checkFrameDefined = function ()
   if not SILE.typesetter.frame then
-    SU.error("A measurement tried to measure the frame before the frame was defined", 1)
+    SU.error("A measurement tried to measure the frame before the frame was defined", true)
   end
 end
 
@@ -143,10 +143,10 @@ local _relativeMeasurement = std.object {
     return SILE.toPoints(self.number, self.unit)
   end,
   __add = function (self, other)
-    SU.error("We tried to do arithmetic on a relative measurement without explicitly absolutizing it. (That's a bug)", 1)
+    SU.error("We tried to do arithmetic on a relative measurement without explicitly absolutizing it. (That's a bug)", true)
   end,
   __sub = function (self, other)
-    SU.error("We tried to do arithmetic on a relative measurement without explicitly absolutizing it. (That's a bug)", 1)
+    SU.error("We tried to do arithmetic on a relative measurement without explicitly absolutizing it. (That's a bug)", true)
   end
 }
 
