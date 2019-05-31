@@ -1,5 +1,7 @@
 if not SILE.scratch.counters then SILE.scratch.counters = {} end
 
+local textcase = SILE.require("packages/textcase").exports
+
 local romans = {
   {1000, "M"},
   {900, "CM"}, {500, "D"}, {400, "CD"}, {100, "C"},
@@ -31,11 +33,11 @@ local num2alpha = function (num)
   return out
 end
 
-local icu
-pcall( function () icu = require("justenoughicu") end)
+local icu = require("justenoughicu")
 
 SILE.formatCounter = function(counter)
   local lang = SILE.settings.get("document.language")
+  local num2string, num2ordinal
 
   local LS = SILE.languageSupport.languages[lang]
   if LS then
@@ -43,8 +45,10 @@ SILE.formatCounter = function(counter)
       local result = LS.formatCounter(counter)
       if result then return result end
     end
-    local num2alpha = LS.num2alpha and LS.num2alpha or num2alpha
-    local num2roman = LS.num2roman and LS.num2roman or num2roman
+    num2alpha = LS.num2alpha and LS.num2alpha or num2alpha
+    num2roman = LS.num2roman and LS.num2roman or num2roman
+    num2string = LS.num2string and LS.num2string or num2string
+    num2ordinal = LS.num2ordinal and LS.num2ordinal or num2ordinal
   end
 
   -- If we have ICU, try that
@@ -58,9 +62,16 @@ SILE.formatCounter = function(counter)
     if ok then return result end
   end
 
+  if (counter.display == "string") and num2string then return textcase.lowercase(num2string(counter.value)) end
+  if (counter.display == "String") and num2string then return textcase.titlecase(num2string(counter.value)) end
+  if (counter.display == "STRING") and num2string then return textcase.uppercase(num2string(counter.value)) end
+  if (counter.display == "ordinal") and num2ordinal then return textcase.lowercase(num2ordinal(counter.value)) end
+  if (counter.display == "Ordinal") and num2ordinal then return textcase.titlecase(num2ordinal(counter.value)) end
+  if (counter.display == "ORDINAL") and num2ordinal then return textcase.uppercase(num2ordinal(counter.value)) end
   if (counter.display == "roman") then return num2roman(counter.value):lower() end
-  if (counter.display == "Roman") then return num2roman(counter.value) end
+  if (counter.display == "Roman" or counter.display == "ROMAN") then return num2roman(counter.value) end
   if (counter.display == "alpha") then return num2alpha(counter.value) end
+  if (counter.display == "Alpha" or counter.display =="ALPHA") then return textcase.uppercase(num2alpha(counter.value)) end
   return tostring(counter.value)
 end
 
