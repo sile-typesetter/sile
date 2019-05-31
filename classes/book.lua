@@ -129,6 +129,8 @@ SILE.doTexlike([[%
 \define[command=book:chapter:post]{\par}%
 \define[command=book:section:post]{ }%
 \define[command=book:subsection:post]{ }%
+\define[command=book:subsubsection:post]{ }%
+\define[command=book:subsubsubsection:post]{ }%
 \define[command=book:left-running-head-font]{\font[size=9pt]}%
 \define[command=book:right-running-head-font]{\font[size=9pt,style=italic]}%
 ]])
@@ -252,6 +254,48 @@ SILE.registerCommand("subsection", function (options, content)
   SILE.typesetter:inhibitLeading()
 end, "Begin a new subsection")
 
+SILE.registerCommand("subsubsection", function (options, content)
+  SILE.typesetter:leaveHmode()
+  SILE.call("goodbreak")
+  SILE.call("noindent")
+  SILE.call("medskip")
+  SILE.call("book:subsectionfont", {}, function ()
+    SILE.call("book:sectioning", {
+          numbering = options.numbering,
+          toc = options.toc,
+          level = 6,
+          postnumber = "book:subsubsection:post"
+        }, content)
+    SILE.process(content)
+  end)
+  SILE.typesetter:leaveHmode()
+  SILE.call("novbreak")
+  SILE.call("medskip")
+  SILE.call("novbreak")
+  SILE.typesetter:inhibitLeading()
+end, "Begin a new subsubsection")
+
+SILE.registerCommand("subsubsubsection", function (options, content)
+  SILE.typesetter:leaveHmode()
+  SILE.call("goodbreak")
+  SILE.call("noindent")
+  SILE.call("medskip")
+  SILE.call("book:subsectionfont", {}, function ()
+    SILE.call("book:sectioning", {
+          numbering = options.numbering,
+          toc = options.toc,
+          level = 7,
+          postnumber = "book:subsubsubsection:post"
+        }, content)
+    SILE.process(content)
+  end)
+  SILE.typesetter:leaveHmode()
+  SILE.call("novbreak")
+  SILE.call("medskip")
+  SILE.call("novbreak")
+  SILE.typesetter:inhibitLeading()
+end, "Begin a new subsubsubsection")
+
 SILE.registerCommand("book:volumefont", function (options, content)
   SILE.settings.temporarily(function ()
     SILE.call("font", { weight = 800, size = "48pt" }, content)
@@ -279,6 +323,18 @@ end)
 SILE.registerCommand("book:subsectionfont", function (options, content)
   SILE.settings.temporarily(function ()
     SILE.call("font", { weight = 800, size = "12pt" }, content)
+  end)
+end)
+
+SILE.registerCommand("book:subsubsectionfont", function (options, content)
+  SILE.settings.temporarily(function ()
+    SILE.call("font", { weight = 800, size = "11pt" }, content)
+  end)
+end)
+
+SILE.registerCommand("book:subsubsubsectionfont", function (options, content)
+  SILE.settings.temporarily(function ()
+    SILE.call("font", { weight = 800, size = "10pt" }, content)
   end)
 end)
 
