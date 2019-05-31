@@ -1,0 +1,34 @@
+\begin[class=book,papersize=a6]{document}
+\tableofcontents
+\volume{A Book}
+
+\part{Alpha}
+
+\chapter{A Chapter}
+Go.
+
+\section{A Section}
+Keep going.
+
+\subsection{A Subsection}
+And going.
+
+\subsubsection{A subsubsection}
+And going.
+
+\subsubsubsection{A subsubsubsection}
+And going.
+
+\chapter{Enough}
+Stop.
+
+\part{Beta}
+
+\chapter{The End}
+Stop.
+
+\volume{B Book}
+
+\chapter{Once Upon a Time}
+There was.
+\end{document}
