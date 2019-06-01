@@ -92,5 +92,17 @@ return {
     defineMaster = defineMaster,
     defineMasters = defineMasters,
     currentMaster = function () return _currentMaster end
-  }
+  },
+  documentation = [[
+\begin{document}
+
+The masters functionality is also itself an add-on package. It allows a class to
+define sets of frames and switch between them either temporarily or permanently.
+It defines the commands \command{\\define-master-template} (which is pattern
+on the \command{\\pagetemplate} function we will meet in chapter 8), \command{\\switch-master}
+and \command{\\switch-master-one-page}. See \code{tests/masters.sil} for more
+about this package.
+
+\end{document}
+]]
 }

@@ -51,3 +51,38 @@ SILE.registerCommand("set-to-width", function(options,content)
     end
   end
 end)
+
+return {
+  documentation = [[
+\begin{document}
+SILE has found itself becoming well used by type designers, who often
+want to create specimen documents to show off their new fonts. This package
+provides a few commands to help create test documents. (The \code{fontproof}
+class, available from the package manager, contains many more tools for creating
+specimens.) The \code{\\repertoire} command prints out every glyph in the
+font, in a simple table. The \code{\\pangrams} command prints out a few
+pangrams for the Latin script. Finally, \code{\\set-to-width[width=...]\{...\}}
+will process each line of content, changing the font size so that the output
+is a constant width.
+
+\begin{verbatim}
+\line
+\\begin[width=4cm]\{set-to-width\}
+CAPERCAILLIE
+LAMMERGEYER
+CASSOWARY
+ACCENTOR DOWITCHER DOTTEREL
+\\end\{set-to-width\}
+\line
+\end{verbatim}
+
+\begin{examplefont}
+\begin[width=4cm]{set-to-width}
+CAPERCAILLIE
+LAMMERGEYER
+CASSOWARY
+ACCENTOR DOWITCHER DOTTEREL
+\end{set-to-width}
+\end{examplefont}
+\end{document}]]
+}

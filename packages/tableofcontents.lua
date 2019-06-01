@@ -80,5 +80,34 @@ SILE.doTexlike([[%
 \define[command=tableofcontents:level3item]{\indent\font[size=10pt]{\process}\smallskip}%
 ]])
 
-  end
+  end,
+  documentation = [[
+\begin{document}
+The \code{tableofcontents} package provides tools for class authors to
+create tables of contents. When you are writing sectioning commands such
+as \code{\\chapter} or \code{\\section}, your classes should call the
+\code{\\tocentry[level=...]\{Entry\}} command to register a table of
+contents entry. At the end of each page, the exported Lua function
+\code{moveTocNodes} should be called to collate the table of contents
+entries and store which page they're on. At the end of the document,
+the \code{writeToc} Lua function writes the table of contents data
+to a file. This is because the table of contents (written out with
+the \code{\\tableofcontents} command) is usually found at the
+start of a document, before the entries have been processed. Because of
+this, documents with a table of contents need to be processed at least
+twice—once to collect the entries and work out which pages they’re on,
+then to write the table of contents.
+
+Class designers can also style the table of contents by overriding the
+following commands:
+
+\noindent{}• \code{\\tableofcontents:title} - the text at the top of the TOC.
+
+\noindent{}• \code{\\tableofcontents:headerfont} - the font used for the header.
+
+\noindent{}• \code{\\tableofcontents:level1item}, \code{\\tableofcontents:level2item}, etc. - styling
+for entries.
+
+\end{document}
+]]
 }

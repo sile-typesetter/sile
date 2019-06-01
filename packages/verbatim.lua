@@ -30,7 +30,7 @@ SILE.registerCommand("obeylines", function(options, content)
   end)
 end)
 
-return [[\begin{document}
+return {documentation = [[\begin{document}
 
 The \code{verbatim} package is useful when quoting pieces of computer code and
 other text for which formatting is significant. It changes SILE’s settings
@@ -59,4 +59,4 @@ can redefine the \code{verbatim:font} command. The current document says:
    <font family="DejaVu Sans Mono" size="9pt"/>
 </define>
 \end{verbatim}
-\end{document}]]
+\end{document}]]}

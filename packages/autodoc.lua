@@ -16,3 +16,13 @@ SILE.registerCommand("package-documentation", function (o,c)
     )
   )
 end)
+
+return {
+  documentation = [[
+  \begin{document}
+This package extracts documentation from other packages. It’s used to
+construct the SILE documentation. Doing this allows us to keep the
+documentation near the implementation, which (in theory) makes it easy
+for documentation and implementation to be in sync.
+  \end{document}]]
+}

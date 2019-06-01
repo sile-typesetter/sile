@@ -52,3 +52,28 @@ SILE.registerCommand("svg-glyph", function(options,content)
     end
   end
 end)
+
+return {
+  documentation = [[\begin{document}
+This experimental package provides two commands.
+
+The first is \code{\\include-svg-file[src=...,height=...,[density=...]{}]}.
+This loads and parses an SVG file and attempts to render it in the current
+document with the given height and density (which defaults to 72 ppi). For
+example, the command \code{\\include-svg-file[src=examples/packages/smiley.svg,\goodbreak{}height=12pt]}
+produces the following:
+
+\include-svg-file[src=examples/packages/smiley.svg,height=12pt]
+
+The second is \code{\\svg-glyph}. When the current font is set to an SVG font,
+SILE does not currently render the SVG glyphs automatically. This command is
+intended to be used as a means of eventually implementing SVG fonts; it retrieves
+the SVG glyph provided and renders it.
+
+The rendering is done with our own SVG drawing library; it is currently
+very minimal, only handling lines, curves, strokes and fills. For a fuller
+implementation, consider using a \code{converters} registration to render
+your SVG file to PDF and include it on the fly.
+\end{document}]]
+
+}

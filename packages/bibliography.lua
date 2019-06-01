@@ -395,3 +395,11 @@ Bibliography = { -- This is big enough to have its own global var
     end
   }
 }
+
+return {
+  documentation = [[
+  \begin{document}
+This package provides backend functions used by the \code{bibtex} package;
+see that instead.
+  \end{document}]]
+}

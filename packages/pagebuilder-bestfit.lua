@@ -35,3 +35,18 @@ SILE.typesetter.pageBuilder = function (self, independent)
   until lastpenalty > -10000
   return false -- because we have already dealt with initializing the next frame
 end
+
+return {
+  documentation = [[
+\begin{document}
+Many of SILE’s core algorithms are borrowed from TeX, including the page builder.
+While TeX’s \em{paragraph} builder uses the “best-fit” algorithm, trying
+multiple different paragraphing options to find the best justification, the page
+builder takes a more simple “first-fit” approach, shipping out a page as soon as
+the page target is met. This experimental package uses the \em{paragraph}
+builder to build \em{pages}, applying the best-fit method to the set of vertical
+boxes and the vertical target instead of a set of horizontal boxes and a
+horizontal target.
+\end{document}
+]]
+}
