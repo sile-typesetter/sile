@@ -141,7 +141,11 @@ in width). To turn this off, you can use the \code{\\noindent} command at the
 start of a paragraph. (This current paragraph doesn’t need to call \code{\\noindent}
 because \code{\\section} and \code{\\chapter} automatically call it for the
 text following the heading.) A \code{\\noindent} can be cancelled by following
-it with an \code{\\indent}.
+it with an \code{\\indent}. You can completely turn off indentation for the
+whole of the document by changing its size to zero; we’ll see how to do change
+the size of the indentation in the settings chapter, but the easiest way to
+set it to zero for the whole of the document (rather than for just one
+paragraph) is to issue the command \code{\\neverindent}.
 
 To increase the vertical space between paragraphs or other elements, the commands \code{\\smallskip}, \code{\\medskip} and \code{\\bigskip} are available to add a 3pt, 6pt and 12pt
 gap respectively. There will be a \code{\\bigskip} after this paragraph.
@@ -156,6 +160,11 @@ You can center a paragraph of text by wrapping it in the \code{center} environme
 (\code{\\begin\{center\} \dots \\end\{center\}}). This paragraph is centered on the
 page.
 \end{center}
+
+If you want to add a very long stretchy space, you can use the command
+\code{\\hfill}. Doing this in conjunction with a line break will cause the
+line before the break to be flush left, like this.\cr{}The command \code{\\cr}
+is a shortcut for \code{\\hfill\\break}.
 
 \section{Breaks}
 
