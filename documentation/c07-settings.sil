@@ -4,9 +4,8 @@
 As well as commands, SILE offers a variety of knobs and levers which affect
 how it does its job. Changing these parameters can have anything from a
 subtle to a dramatic effect on the eventual document. External packages may
-declare their own settings (although none of the packages which ship with
-SILE happen to do so), but here we will run through the settings which are
-built into the SILE system itself.
+declare their own settings, which are documented accordingly. Here we will
+run through the settings which are built into the SILE system itself.
 
 Settings in SILE are \em{namespaced} so that 1) the name of the setting gives you
 some kind of clue as to what area of the system it will affect, and 2) packages
@@ -54,7 +53,7 @@ Note that these skip settings are not the same as page margins. The
 \code{document.lskip} and \code{document.rskip} values are applied inside of the
 current frame and are relative to the edge of the frame, not to the edge of the
 page. They are best used for temporary adjustments to the margins relative to the
-normal margins, such as to indented a pull-quote. They can also be negative,
+normal margins, such as to indent a pull-quote. They can also be negative,
 pulling the effective margin outside of the current frame.
 
 \begin{note}
@@ -121,6 +120,8 @@ set the \code{document.lskip} to 20 points, and the \code{current.parindent} to
 The space between \em{paragraphs} is set with the glue parameter
 \code{document.parskip}. It’s normally set to five points with one point of stretchability.
 
+\subsection{Line spacing settings}
+
 As we mentioned in the section on grid typesetting, the rules for spacing between
 \em{lines} within a paragraph is determined by two
 rules. Let’s reiterate those rules now in terms of settings:
@@ -134,18 +135,50 @@ than \code{document.lineskip} apart, then they are forced to be \code{document.l
 \note{This linebreaking method is fiddly, and book designers may prefer to
 work with the tools provided by the \code{linespacing} package.}
 
-The final spacing setting is \code{document.spaceskip}. Normally the size of
-the space between \em{words} is determined by the width of the space character
-in the current font. To help with justifying the text, the spaces are shrinkable
-and stretchable. Specifically, if the width of a space in the current font settings is \code{<space>}, then the default value of \code{document.spaceskip} is
-\code{1.2 <space> plus 0.5 <space> minus 0.333 <space>}\footnote{This somewhat
-arbitrary convention is arguably a bug.}.
+\subsection{Word spacing settings}
 
-If you want to set it explicitly, you can set the
-\code{document.spaceskip} setting. If you want to go back to the default (measuring
-the space character of the font), then you need to \em{unset} the setting. To
+There are multiple ways of defining the space between words. By default,
+the space between words is determined by the width of the
+space character in the current font. To help with justifying the text, the
+spaces are shrinkable and stretchable. Specifically, if the width of a space in the current font settings is \code{<space>}, then the width of the space
+between words is \code{<shaper.spaceenlargementfactor> * <space> plus
+<shaper.spacestretchfactor> * <space> minus <shaper.spaceshrinkfactor> *
+<space>}. The default values of these settings make the space width
+\code{1.2 <space> plus 0.5 <space> minus 0.333 <space>}.
+
+If you want to set the word space width explicitly, you can set the
+\code{document.spaceskip} setting. You will also need to turn \em{off} the
+setting \code{shaper.variablespaces}, which allows the width of a space
+to vary based on context (otherwise known as “space kerning”). If you want
+to go back to the default (measuring the space character of the font),
+then you need to turn on \code{shaper.variablespaces} (set it to a
+true value) and also \em{unset} the setting \code{document.spaceskip}. To
 unset it, just call \code{\\set} with no \code{value} parameter:
 \code{\\set[parameter=document.spaceskip]}.
+
+\subsection{Letter spacing settings}
+
+You can also put spaces in between \em{letters} with the \code{document.letterspaceglue} setting.
+
+\set[parameter=document.letterspaceglue,value=0pt plus 4pt]
+
+This paragraph
+is set with \code{document.letterspaceglue} set to \code{0pt plus 4pt},
+which allows the typesetter to insert tiny bits of spacing between the
+letters to improve the fitting of the paragraph, even though it would
+prefer to keep the letterspacing at zero points if possible. (Letter
+spacing is not considered a preferable way to solve justification problems.)
+
+
+\set[parameter=document.letterspaceglue,value=0.3pt]
+
+This paragraph
+is set with \code{document.letterspaceglue} set to \code{0.3pt},
+which \em{forces} the typesetter to insert tiny bits of
+spacing between the letters. Frederic Goudy is credited with
+saying that anyone who would letterspace lowercase would steal sheep.\footnote{He was probably talking about blackletter, but it’s still true.}
+
+\set[parameter=document.letterspaceglue]
 
 \section{Typesetter settings}
 
@@ -230,6 +263,41 @@ be made longer than normal. (Default: 0)
 \noindent• \code{linebreak.hyphenPenalty}: Penalty associated with break at a hyphen. (Default: 50)
 
 \noindent• \code{linebreak.doubleHyphenDemerits}: Penalty for consecutive lines ending with a hyphen. (Default: 10000)
+
+\section{Shaper settings}
+
+As well as the settings for varying word space (see above), there is one
+additional option which affects the shaping of text.\footnote{Shaping is
+the process of selecting and positioning the glyphs from a font–turning
+the text that we type into the boxes that SILE puts together on a line.}
+The default shaping engine, Harfbuzz, can actually call out to other shaping
+engines instead of doing the shaping itself. SILE provides an interface
+(through the \code{harfbuzz.subshapers} setting) to select the shaping
+engine in use. To get a list of the subshapers enabled in your build of
+Harfbuzz, run \code{sile --debug=versions} on any file:
+
+\begin{verbatim}
+\% $ ./sile --debug=versions hello.sil
+...
+Harfbuzz version: 2.4.0
+Shapers enabled: graphite2, ot, coretext, coretext_aat, fallback
+...
+\end{verbatim}
+
+If I wanted to test out the OS X’s CoreText shaper instead of using
+Graphite and Harfbuzz’s own OpenType shaper, I could set:
+
+\begin{verbatim}
+\line
+\\set[parameter=harfbuzz.subshapers,value=coretext]
+\line
+\end{verbatim}
+
+This is one of those situations where for 99\% of people it isn’t useful
+at all but the other 1\% of people will really appreciate it: specifically,
+if you are designing fonts with complex text layout and you want to check
+how they will appear on different rendering systems. If that’s not you,
+don’t worry about this setting; if it is, you’re welcome.
 
 \section{Settings from Lua}
 
