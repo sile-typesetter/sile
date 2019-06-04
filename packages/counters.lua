@@ -1,65 +1,8 @@
 if not SILE.scratch.counters then SILE.scratch.counters = {} end
-romans = {
-  {1000, "M"},
-  {900, "CM"}, {500, "D"}, {400, "CD"}, {100, "C"},
-  {90, "XC"}, {50, "L"}, {40, "XL"}, {10, "X"},
-  {9, "IX"}, {5, "V"}, {4, "IV"}, {1, "I"}
-}
 
-local function romanize(k)
-  str = ""
-  k = k + 0
-  for _, v in ipairs(romans) do
-    val, let = unpack(v)
-    while k >= val do
-      k = k - val
-      str = str..let
-    end
-  end
-  return str
-end
 
-local function alpha(n)
-  local out = ""
-  local a = string.byte("a")
-  repeat
-    n = n - 1
-    out = string.char(n%26 + a) .. out
-    n = (n - n%26)/26
-  until n < 1
-  return out
-end
-
-local icu
-pcall( function () icu = require("justenoughicu") end)
-
-SILE.formatCounter = function(counter)
-  -- If there is a language-specific formatter, use that.
-  local lang = SILE.settings.get("document.language")
-  if SILE.languageSupport.languages[lang] and SILE.languageSupport.languages[lang].counter then
-    local res = SILE.languageSupport.languages[lang].counter(counter)
-    if res then return res end -- allow them to pass.
-  end
-
-  -- If we have ICU, try that
-  if icu then
-    local display = counter.display
-
-    -- Translate numbering style names which are different in ICU
-    if display == "roman" then
-      display = "romanlow"
-    elseif display == "Roman" then
-      display = "roman"
-    end
-
-    local ok, res = pcall(function() return icu.format_number(counter.value, display) end)
-    if ok then return res end
-  end
-
-  if (counter.display == "roman") then return romanize(counter.value):lower() end
-  if (counter.display == "Roman") then return romanize(counter.value) end
-  if (counter.display == "alpha") then return alpha(counter.value) end
-  return tostring(counter.value)
+SILE.formatCounter = function (counter)
+  return SU.formatNumber(counter.value, counter.display)
 end
 
 local function getCounter(id)
