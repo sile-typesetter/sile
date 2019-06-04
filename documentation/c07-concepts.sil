@@ -1,10 +1,10 @@
 \begin{document}
 \chapter{The Nitty Gritty}
 
-\noindent{}We are finally at the bottom of our delve into SILE‘s commands
+\noindent{}We are finally at the bottom of our delve into SILE’s commands
 and settings. Here are the basic building blocks out of which all of the
 other operations in SILE are created; in fact, they are the basic
-building blocks of SILE's operation.
+building blocks of SILE’s operation.
 
 \note{At this point, it is expected that
 you are a class designer, and will be able to follow the details of how
