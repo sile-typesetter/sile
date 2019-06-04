@@ -427,6 +427,83 @@ utilities.utf8_to_utf16le = function (str)
   return ustr
 end
 
+local romans = {
+  {1000, "M"},
+  {900, "CM"}, {500, "D"}, {400, "CD"}, {100, "C"},
+  {90, "XC"}, {50, "L"}, {40, "XL"}, {10, "X"},
+  {9, "IX"}, {5, "V"}, {4, "IV"}, {1, "I"}
+}
+
+local icu = require("justenoughicu")
+
+local icuFormats = function (format)
+  if format == "roman" then return "romanlow" end
+  if format == "Roman" then return "roman" end
+  return format
+end
+
+local icuFormat = function (num, format)
+  local ok, result  = pcall(function() return icu.format_number(num, format) end)
+  return tostring(ok and result or num)
+end
+
+-- Language specific number formatters add functions to this table,
+-- see e.g. languages/tr.lua
+utilities.formatNumber = {
+  und = {
+
+    roman = function (num)
+      local out = ""
+      num = num + 0
+      for _, v in ipairs(romans) do
+        val, let = unpack(v)
+        while num >= val do
+          num = num - val
+          out = out .. let
+        end
+      end
+      return out
+    end,
+
+    alpha = function (num)
+      local out = ""
+      local a = string.byte("a")
+      repeat
+        num = num - 1
+        out = string.char(num % 26 + a) .. out
+        num = (num - num % 26) / 26
+      until num < 1
+      return out
+    end
+
+  }
+}
+
+setmetatable (utilities.formatNumber, {
+    __call = function (self, num, format, case)
+      if not case then
+        if format:match("^%l") then
+          case = "lower"
+        elseif format:match("^.%l") then
+          case = "title"
+        else
+          case = "upper"
+        end
+      end
+      local lang = SILE.settings.get("document.language")
+      local format = format:lower()
+      local result
+      if self[lang] and type(self[lang][format]) == "function" then
+        result = self[lang][format](num)
+      elseif type(self["und"][format]) == "function" then
+        result = self.und[format](num)
+      else
+        result = icuFormat(num, format)
+      end
+      return icu.case(result, lang, case)
+    end
+})
+
 utilities.breadcrumbs = function ()
   local breadcrumbs = {}
 

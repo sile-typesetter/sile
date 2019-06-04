@@ -679,7 +679,11 @@ local tr_nums = function (num, ordinal)
   return table.concat(words, " ")
 end
 
-SILE.languageSupport.languages.tr = {
-  num2string = function(num) return tr_nums(num, false) end,
-  num2ordinal = function(num) return tr_nums(num, true) end
+SU.formatNumber.tr = {
+  string = function(num)
+    return tr_nums(num, false)
+  end,
+  ordinal = function (num)
+    return tr_nums(num, true)
+  end,
 }
