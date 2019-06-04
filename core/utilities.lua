@@ -427,13 +427,6 @@ utilities.utf8_to_utf16le = function (str)
   return ustr
 end
 
-local romans = {
-  {1000, "M"},
-  {900, "CM"}, {500, "D"}, {400, "CD"}, {100, "C"},
-  {90, "XC"}, {50, "L"}, {40, "XL"}, {10, "X"},
-  {9, "IX"}, {5, "V"}, {4, "IV"}, {1, "I"}
-}
-
 local icu = require("justenoughicu")
 
 local icuFormats = function (format)
@@ -451,19 +444,6 @@ end
 -- see e.g. languages/tr.lua
 utilities.formatNumber = {
   und = {
-
-    roman = function (num)
-      local out = ""
-      num = num + 0
-      for _, v in ipairs(romans) do
-        val, let = unpack(v)
-        while num >= val do
-          num = num - val
-          out = out .. let
-        end
-      end
-      return out
-    end,
 
     alpha = function (num)
       local out = ""
