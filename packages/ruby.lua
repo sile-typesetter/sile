@@ -119,6 +119,7 @@ Produces:
   \ruby[reading=れいわ]{令和}
 }
 
+\language[main=en]
 
 \end{document}
 ]]
