@@ -632,10 +632,12 @@ local sum_hundreds = function (val, loc, digits)
 end
 
 local tr_nums = function (num, ordinal)
-  if num >= 1e+36 then
+  local abs = math.abs(num)
+  if abs >= 1e+36 then
     SU.error("Numbers past decillions not supported in Turkish")
   end
   local ordinal = SU.boolean(ordinal, false)
+  local minus =  "eksi"
   local zero =  "sıfır"
   local ones = { "bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz" }
   local tens = { "on", "yirmi", "otuz", "kırk", "eli", "altmış", "yetmiş", "seksen", "doksan" }
@@ -644,7 +646,7 @@ local tr_nums = function (num, ordinal)
   local onesordinals = { "birinci", "ikinci", "üçüncü", "dördüncü", "beşinci", "altıncı", "yedinci", "sekizinci", "dokuzuncu" }
   local tensordinals = { "onuncu", "yirmiyinci", "otuzuncu", "kırkıncı", "eliyinci", "altmışıncı", "yetmişinci", "sekseninci", "Doksanıncı" }
   local placesordinals = { "yüzüncü", "bininci", "milyonuncu", "milyarıncı", "trilyonuncu", "katrilyonuncu", "kentilyonuncu", "sekstilyonuncu", "septilyonuncu", "oktilyonuncu", "nonilyonuncu", "desilyonuncu" }
-  local digits = string.reverse(num)
+  local digits = string.reverse(string.format("%.f", abs))
   local words = {}
   for i = 1, #digits do
     local val, place, mod = tonumber(string.sub(digits, i, i)), math.floor(i / 3), i % 3
@@ -677,6 +679,9 @@ local tr_nums = function (num, ordinal)
         end
       end
     end
+  end
+  if abs > num then
+    words[#words+1] = minus
   end
   table.flip(words)
   return table.concat(words, " ")
