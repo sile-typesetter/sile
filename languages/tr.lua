@@ -632,15 +632,18 @@ local sum_hundreds = function (val, loc, digits)
 end
 
 local tr_nums = function (num, ordinal)
+  if num >= 1e+36 then
+    SU.error("Numbers past decillions not supported in Turkish")
+  end
   local ordinal = SU.boolean(ordinal, false)
   local zero =  "sıfır"
   local ones = { "bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz" }
   local tens = { "on", "yirmi", "otuz", "kırk", "eli", "altmış", "yetmiş", "seksen", "doksan" }
-  local places = { "yüz", "bin", "milyon", "milyar", "trilyon" }
+  local places = { "yüz", "bin", "milyon", "milyar", "trilyon", "katrilyon", "kentilyon", "sekstilyon", "septilyon", "oktilyon", "nonilyon", "desilyon" }
   local zeroordinal = "sıfırıncı"
   local onesordinals = { "birinci", "ikinci", "üçüncü", "dördüncü", "beşinci", "altıncı", "yedinci", "sekizinci", "dokuzuncu" }
   local tensordinals = { "onuncu", "yirmiyinci", "otuzuncu", "kırkıncı", "eliyinci", "altmışıncı", "yetmişinci", "sekseninci", "Doksanıncı" }
-  local placesordinals = { "yüzüncü", "bininci", "milyonuncu", "milyarıncı", "trilyonuncu" }
+  local placesordinals = { "yüzüncü", "bininci", "milyonuncu", "milyarıncı", "trilyonuncu", "katrilyonuncu", "kentilyonuncu", "sekstilyonuncu", "septilyonuncu", "oktilyonuncu", "nonilyonuncu", "desilyonuncu" }
   local digits = string.reverse(num)
   local words = {}
   for i = 1, #digits do
