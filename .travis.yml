@@ -93,7 +93,7 @@ jobs:
   include:
     - stage: lint
       name: "Lint commint messages"
-      script: fold_unless_fail 'Commitlint' 'commitlint' npx commitlint-travis
+      script: fold_unless_fail 'Commitlint' 'commitlint' @commitlint/travis-cli
 after_success:
  - $COVERAGE && travis_wait make coverage
  - $COVERAGE && travis_wait luacov-coveralls -e lua.libraries
