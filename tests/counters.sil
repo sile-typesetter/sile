@@ -19,6 +19,8 @@ Japanese: \font[family=Noto Sans CJK JP,language=ja]{\show-counter[id=test,displ
 
 Arabic-Indic: \font[family=Noto Naskh Arabic,language=ar]{\show-counter[id=test,display=arabext]}
 
+English String: \show-counter[id=test,display=String]
+
 Turkish String: \font[language=tr]{\show-counter[id=test,display=String]}
 
 Turkish Ordinal: \font[language=tr]{\show-counter[id=test,display=Ordinal]}
