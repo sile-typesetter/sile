@@ -694,4 +694,7 @@ SU.formatNumber.tr = {
   ordinal = function (num)
     return tr_nums(num, true)
   end,
+  nth = function (num)
+    return num .. "."
+  end
 }
