@@ -626,9 +626,11 @@ local sum_tens = function (val, loc, digits)
 end
 
 local sum_hundreds = function (val, loc, digits)
+  local ten = string.sub(digits, loc+1, loc+1)
   local hundred = string.sub(digits, loc+2, loc+2)
+  if ten:len() == 1 then val = val + tonumber(ten) * 10 end
   if hundred:len() == 1 then val = val + tonumber(hundred) * 100 end
-  return val + sum_tens(val, loc, digits)
+  return val
 end
 
 local tr_nums = function (num, ordinal)
@@ -665,9 +667,9 @@ local tr_nums = function (num, ordinal)
         if sum_hundreds(val, i, digits) >= 1 then
           words[#words+1] = ordinal and placesordinals[place+1] or places[place+1]
           ordinal = false
-        end
-        if sum_tens(val, i, digits) >= 2 or i > 7 then
-          words[#words+1] = ones[val]
+          if val > 0 and (i >= 7 or sum_hundreds(val, i, digits) >= 2) then
+            words[#words+1] = ones[val]
+          end
         end
       elseif mod == 0 then
         if val > 0 then
@@ -688,7 +690,7 @@ local tr_nums = function (num, ordinal)
 end
 
 SU.formatNumber.tr = {
-  string = function(num)
+  string = function (num)
     return tr_nums(num, false)
   end,
   ordinal = function (num)
