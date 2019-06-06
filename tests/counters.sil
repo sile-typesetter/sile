@@ -9,6 +9,8 @@ Default: \show-counter[id=test]
 
 Alpha: \show-counter[id=test,display=alpha]
 
+N'th: \show-counter[id=test,display=nth]
+
 Roman: \show-counter[id=test,display=ROMAN]
 
 Greek: \font[language=el]{\show-counter[id=test,display=greklow]}
