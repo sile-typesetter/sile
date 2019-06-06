@@ -1,4 +1,3 @@
-
 if not SILE.shapers then SILE.shapers = { } end
 local hb = require("justenoughharfbuzz")
 local bit32 = require("bit32-compat")
@@ -9,14 +8,6 @@ SILE.settings.declare({
   default = "",
   help = "Comma-separated shaper list to pass to Harfbuzz"
 })
-
--- XXX This shouldn't be in the shaper. But still...
-
-local fontconfig
-
-if not pcall(function () fontconfig = require("macfonts") end) then
-  fontconfig = require("justenoughfontconfig")
-end
 
 SILE.require("core/base-shaper")
 
@@ -59,7 +50,7 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
     return items
   end,
   getFace = function(opts)
-    local face = fontconfig._face(opts)
+    local face = SILE.fontManager:face(opts)
     SU.debug("fonts", "Resolved font family "..opts.family.." -> "..(face and face.filename))
     if not face.filename then SU.error("Couldn't find face "..opts.family) end
     if bit32.rshift(face.index, 16) ~= 0 then
