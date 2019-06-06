@@ -21,7 +21,7 @@ if pathvar then
 	end
 end
 
-package.path = '?.lua;' .. package.path
+package.path = '?;?.lua' .. package.path
 
 package.cpath = package.cpath .. ";" ..
   "core/?."..SHARED_LIB_EXT.. ";" ..
