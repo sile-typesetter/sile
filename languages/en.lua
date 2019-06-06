@@ -602,3 +602,18 @@ SILE.doTexlike([[%
 \define[command=tableofcontents:title]{Table of Contents}%
 \define[command=book:chapter:pre:en]{Chapter }%
 ]])
+
+local en_nth = function (num)
+  local mod100, mod10 = num % 100, num % 10
+  if mod100 > 3 and mod100 < 21 then return "th" end
+  if mod10 == 1 then return "st" end
+  if mod10 == 2 then return "nd" end
+  if mod10 == 3 then return "rd" end
+  return "th"
+end
+
+SU.formatNumber.en = {
+  nth = function (num)
+    return num .. '’' .. en_nth(num)
+  end
+}
