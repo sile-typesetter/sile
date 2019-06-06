@@ -13,7 +13,7 @@ EXTRA_DIST=NEWS.md README.md LICENSE ROADMAP tests examples documentation
 
 REGRESSIONSCRIPT := ./tests/regressions.pl
 LOCALTESTFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
-SILEFLAGS ?= -d versions
+SILEFLAGS ?= -d versions -f fontconfig
 
 TESTSRCS  ?= $(wildcard tests/*.sil tests/*.xml)
 TESTPDFS   = $(addsuffix      .pdf,$(basename $(TESTSRCS)))
