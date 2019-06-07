@@ -83,6 +83,7 @@ TESTFONTFILES += LateefGR-Regular.ttf
 TESTFONTFILES += Hack-Regular.ttf
 TESTFONTFILES += Amiri-Regular.ttf AmiriQuran.ttf
 TESTFONTFILES += SBL_Hbrw.ttf
+TESTFONTFILES += Symbola_Hinted.ttf
 
 .PHONY: testprep
 testprep: | $(addprefix .fonts/,$(TESTFONTFILES))
@@ -113,6 +114,13 @@ testprep: | $(addprefix .fonts/,$(TESTFONTFILES))
 .fonts/Hack%: Hack-v3.003-ttf.tar.xz | .fonts
 	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
 	touch $@
+
+.fonts/Symbola%: Symbola.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
+	touch $@
+
+Symbola.zip:
+	curl -s -L http://users.teilar.gr/~g1951d/$(notdir $@) -o $@
 
 GentiumPlus-5.000.zip:
 	curl -s -L https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
