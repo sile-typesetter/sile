@@ -82,6 +82,7 @@ TESTFONTFILES += GentiumPlus-R.ttf GentiumPlus-I.ttf
 TESTFONTFILES += LateefGR-Regular.ttf
 TESTFONTFILES += Hack-Regular.ttf
 TESTFONTFILES += Amiri-Regular.ttf AmiriQuran.ttf
+TESTFONTFILES += SBL_Hbrw.ttf
 
 .PHONY: testprep
 testprep: | $(addprefix .fonts/,$(TESTFONTFILES))
@@ -121,6 +122,9 @@ LateefGR-1.200.zip:
 
 Hack-v3.003-ttf.tar.xz:
 	curl -s -L https://github.com/source-foundry/Hack/releases/download/v3.003/$(notdir $@) -o $@
+
+.fonts/SBL_Hbrw.ttf:
+	curl -s -L http://www.sbl-site.org/Fonts/$(notdir $@) -o $@
 
 gource.webm:
 	mkdir -p /tmp/gravatars
