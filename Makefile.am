@@ -22,23 +22,23 @@ ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 
 .PHONY: test
 test: REGRESSIONMODE ?= true
-test: $(TESTSRCS) $(ACTUALS) | sile testprep
+test: $(TESTSRCS) $(ACTUALS) sile testprep
 	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
 
 DOCS = $(addsuffix .pdf,$(basename $(wildcard documentation/*.sil)))
 
 .PHONY: docs
-docs: $(DOCS) | sile
+docs: $(DOCS)
 
 EXAMPLES = $(addsuffix .pdf,$(basename $(wildcard examples/*.sil)))
 
 .PHONY: examples
-examples: $(EXAMPLES) | sile
+examples: $(EXAMPLES)
 
-%.pdf: %.sil | sile
+%.pdf: %.sil
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@
 
-%.pdf: %.xml | sile
+%.pdf: %.xml
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@
 
 .PHONY: coverage
@@ -48,10 +48,10 @@ coverage: $(REGRESSIONSCRIPT)
 .PHONY: update_expecteds
 update_expecteds: $(EXPECTEDS)
 
-tests/%.expected: tests/%.sil | sile testprep
+tests/%.expected: tests/%.sil
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-tests/%.expected: tests/%.xml | sile testprep
+tests/%.expected: tests/%.xml
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
 .PHONY: update_actuals
@@ -61,10 +61,10 @@ update_actuals: $(ACTUALS)
 .PHONY: test_previews
 test_previews: $(TESTPDFS)
 
-tests/%.actual: tests/%.sil $(and $(REGRESSIONMODE),force) | sile testprep
+tests/%.actual: tests/%.sil $(and $(REGRESSIONMODE),force)
 	-$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-tests/%.actual: tests/%.xml $(and $(REGRESSIONMODE),force) | sile testprep
+tests/%.actual: tests/%.xml $(and $(REGRESSIONMODE),force)
 	-$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
 .PHONY: force
