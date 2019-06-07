@@ -17,8 +17,8 @@ SILEFLAGS ?= -d versions -f fontconfig
 
 TESTSRCS  ?= $(wildcard tests/*.sil tests/*.xml)
 TESTPDFS   = $(addsuffix      .pdf,$(basename $(TESTSRCS)))
-EXPECTEDS  = $(addsuffix .expected,$(basename $(TESTSRCS)))
-ACTUALS    = $(addsuffix   .actual,$(basename $(TESTSRCS)))
+EXPECTEDS ?= $(wildcard tests/*.expected)
+ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 
 .PHONY: test
 test: REGRESSIONMODE ?= true
