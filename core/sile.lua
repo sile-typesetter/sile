@@ -52,6 +52,7 @@ SILE.init = function ()
     require("core/harfbuzz-shaper")
     require("core/libtexpdf-output")
   elseif SILE.backend == "cairo" then
+    require("core/pango-shaper")
     require("core/cairo-output")
   elseif SILE.backend == "debug" then
     require("core/harfbuzz-shaper")
