@@ -10,8 +10,8 @@ _box = std.object {
   explicit = false,
   discardable = false,
   value=nil,
-  __tostring = function (s) return s.type end,
-  __concat = function (x,y) return tostring(x)..tostring(y) end,
+  __tostring = function (str) return str.type end,
+  __concat = function (a, b) return tostring(a)..tostring(b) end,
   init = function(self) return self end,
   lineContribution = function (self)
     -- Regardless of the orientations, "width" is always in the
@@ -78,9 +78,9 @@ local _nnode = _hbox {
     return "N<" .. tostring(this.width) .. ">^" .. this.height .. "-" .. this.depth .. "v(" .. this:toText() .. ")";
   end,
   init = function(self)
-    if 0 == self.depth then self.depth = math.max(0,unpack(SU.map(function (n) return n.depth end, self.nodes))) end
-    if 0 == self.height then self.height = math.max(0,unpack(SU.map(function (n) return n.height end, self.nodes))) end
-    if 0 == self.width then self.width = SU.sum(SU.map(function (n) return n.width end, self.nodes)) end
+    if 0 == self.depth then self.depth = math.max(0,unpack(SU.map(function (node) return node.depth end, self.nodes))) end
+    if 0 == self.height then self.height = math.max(0,unpack(SU.map(function (node) return node.height end, self.nodes))) end
+    if 0 == self.width then self.width = SU.sum(SU.map(function (node) return node.width end, self.nodes)) end
     return self
     end,
   outputYourself = function(self, typesetter, line)
@@ -91,7 +91,7 @@ local _nnode = _hbox {
       self.parent.used = true
       return
     end
-    for i, n in ipairs(self.nodes) do n:outputYourself(typesetter, line) end
+    for i, node in ipairs(self.nodes) do node:outputYourself(typesetter, line) end
   end,
   toText = function (self) return self.text end
 }
@@ -102,18 +102,18 @@ local _unshaped = _nnode {
     return "U(" .. this:toText() .. ")";
   end,
   shape = function(this)
-    local n =  SILE.shaper:createNnodes(this.text, this.options)
-    for i=1,#n do
-      n[i].parent = this.parent
+    local node =  SILE.shaper:createNnodes(this.text, this.options)
+    for i=1, #node do
+      node[i].parent = this.parent
     end
-    return n
+    return node
   end,
   width = nil,
   outputYourself = function (this)
-    SU.error("An unshaped node made it to output", 1)
+    SU.error("An unshaped node made it to output", true)
   end,
   __index = function(self,k)
-    if k == "width" then SU.error("Can't get width of unshaped node", 1) end
+    if k == "width" then SU.error("Can't get width of unshaped node", true) end
   end
 }
 
@@ -138,55 +138,55 @@ local _disc = _hbox {
         i = i+1
       end
       if (line.nodes[i] == self) then
-        for i, n in ipairs(self.postbreak) do n:outputYourself(typesetter,line) end
+        for i, node in ipairs(self.postbreak) do node:outputYourself(typesetter,line) end
       else
-        for i, n in ipairs(self.prebreak) do n:outputYourself(typesetter,line) end
+        for i, node in ipairs(self.prebreak) do node:outputYourself(typesetter,line) end
       end
     else
-      for i, n in ipairs(self.replacement) do n:outputYourself(typesetter,line) end
+      for i, node in ipairs(self.replacement) do node:outputYourself(typesetter,line) end
     end
   end,
   prebreakWidth = function(self)
     if self.prebw then return self.prebw end
-    local l = 0
-    for _,n in pairs(self.prebreak) do l = l + n.width end
-    self.prebw = l
-    return l
+    local width = 0
+    for _,node in pairs(self.prebreak) do width = width + node.width end
+    self.prebw = width
+    return width
   end,
   postbreakWidth = function(self)
     if self.postbw then return self.postbw end
-    local l = 0
-    for _,n in pairs(self.postbreak) do l = l + n.width end
-    self.postbw = l
-    return l
+    local width = 0
+    for _,node in pairs(self.postbreak) do width = width + node.width end
+    self.postbw = width
+    return width
   end,
   replacementWidth = function(self)
     if self.replacew then return self.replacew end
-    local l = 0
-    for _,n in pairs(self.replacement) do l = l + n.width end
-    self.replacew = l
-    return l
+    local width = 0
+    for _,node in pairs(self.replacement) do width = width + node.width end
+    self.replacew = width
+    return width
   end,
   prebreakHeight = function(self)
     if self.prebh then return self.prebh end
-    local l = 0
-    for _,n in pairs(self.prebreak) do if n.height > l then l = n.height end end
-    self.prebh = l
-    return l
+    local width = 0
+    for _,node in pairs(self.prebreak) do if node.height > width then width = node.height end end
+    self.prebh = width
+    return width
   end,
   postbreakHeight = function(self)
     if self.postbh then return self.postbh end
-    local l = 0
-    for _,n in pairs(self.postbreak) do if n.height > l then l = n.height end end
-    self.postbh = l
-    return l
+    local width = 0
+    for _,node in pairs(self.postbreak) do if node.height > width then width = node.height end end
+    self.postbh = width
+    return width
   end,
   replacementHeight = function(self)
     if self.replaceh then return self.replaceh end
-    local l = 0
-    for _,n in pairs(self.replacement) do if n.height > l then l = n.height end end
-    self.replaceh = l
-    return l
+    local width = 0
+    for _,node in pairs(self.replacement) do if node.height > width then width = node.height end end
+    self.replaceh = width
+    return width
   end,
 }
 
@@ -260,11 +260,11 @@ local _vglue = _box {
     self.height.stretch = 0
     self.height.shrink = 0
   end,
-  outputYourself = function (self,typesetter, line)
-    d = line.depth
-    d = d + SILE.toAbsoluteMeasurement(line.height)
-    if type(d) == "table" then d = d.length end
-    typesetter.frame:advancePageDirection(d)
+  outputYourself = function (self, typesetter, line)
+    local depth = line.depth
+    depth = depth + SILE.toAbsoluteMeasurement(line.height)
+    if type(depth) == "table" then depth = depth.length end
+    typesetter.frame:advancePageDirection(depth)
   end,
   unbox = function (self) return { self } end
 }
@@ -304,16 +304,17 @@ local _vbox = _box {
   init = function (self)
     self.depth = 0
     self.height = 0
-    for i=1,#(self.nodes) do local n = self.nodes[i]
-      local h = type(n.height) == "table" and n.height.length or n.height
-      local d = type(n.depth) == "table" and n.depth.length or n.depth
-      self.depth = (d > self.depth) and d or self.depth
-      self.height = (h > self.height) and h or self.height
+    for i=1,#(self.nodes) do
+      local node = self.nodes[i]
+      local height = type(node.height) == "table" and node.height.length or node.height
+      local depth = type(node.depth) == "table" and node.depth.length or node.depth
+      self.depth = (depth > self.depth) and depth or self.depth
+      self.height = (height > self.height) and height or self.height
     end
     return self
   end,
   toText = function (self)
-    return "VB[" .. SU.concat(SU.map(function (n) return n:toText().."" end, self.nodes), "") .. "]"
+    return "VB[" .. SU.concat(SU.map(function (node) return node:toText().."" end, self.nodes), "") .. "]"
   end,
   outputYourself = function(self, typesetter, line)
     local advanceamount = self.height
@@ -339,19 +340,19 @@ local _vbox = _box {
   end,
   append = function (self, box)
     local nodes = box
-    if not box then SU.error("nil box given",1) end
+    if not box then SU.error("nil box given", true) end
     if nodes.type then
       nodes = box:unbox()
     end
-    local h = self.height + self.depth
+    local height = self.height + self.depth
     local lastdepth = 0
     for i=1,#nodes do
       table.insert(self.nodes, nodes[i])
-      h = h + nodes[i].height + nodes[i].depth
+      height = height + nodes[i].height + nodes[i].depth
       if nodes[i]:isVbox() then lastdepth = nodes[i].depth end
     end
     self.ratio = 1
-    self.height = h - lastdepth
+    self.height = height - lastdepth
     self.depth = lastdepth
   end
 }

@@ -10,7 +10,7 @@ local Ct = lpeg.Ct
 
 local number = SILE.parserBits.number
 local identifier = SILE.parserBits.identifier
-local dimensioned_string = SILE.parserBits.dimensioned_string / function (s) return SILE.toAbsoluteMeasurement(s) end
+local dimensioned_string = SILE.parserBits.dimensioned_string / function (str) return SILE.toAbsoluteMeasurement(str) end
 local whitespace = SILE.parserBits.whitespace
 
 local functionOfFrame = function (dim, ident)

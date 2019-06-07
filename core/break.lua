@@ -80,7 +80,7 @@ function lineBreak:setupLineLengths(params) -- 874
       self.lastSpecialLine = 0
       self.secondWidth = self.hsize or SU.error("No hsize")
     else
-      SU.error("Hanging indents not supported yet. Implement node 875 from TeX!", 1)
+      SU.error("Hanging indents not supported yet. Implement node 875 from TeX!", true)
     end
   else
     self.lastSpecialLine = #param("parShape")
@@ -94,10 +94,10 @@ end
 function lineBreak:tryBreak() -- 855
   local pi,breakType
  
-  local n = self.nodes[self.cur_p]
-  if not n then pi = ejectPenalty; breakType = "hyphenated"
-  elseif n:isDiscretionary() then breakType = "hyphenated"; pi = param("hyphenPenalty")
-  else breakType = "unhyphenated"; pi = n.penalty or 0 end
+  local node = self.nodes[self.place]
+  if not node then pi = ejectPenalty; breakType = "hyphenated"
+  elseif node:isDiscretionary() then breakType = "hyphenated"; pi = param("hyphenPenalty")
+  else breakType = "unhyphenated"; pi = node.penalty or 0 end
 
   if debugging then SU.debug("break", "Trying a "..breakType.." break p="..pi) end
   self.no_break_yet = true -- We have to store all this state crap in the object, or it's global variables all the way
@@ -157,26 +157,26 @@ function lineBreak:tryBreak() -- 855
  
 end
 
-local function fitclass(self, s) -- s =shortfall
+local function fitclass(self, shortfall)
   local badness, class
   local stretch = self.curActiveWidth.stretch
   local shrink = self.curActiveWidth.shrink
-  if s > 0 then
-    if s > 110 and stretch < 25 then
+  if shortfall > 0 then
+    if shortfall > 110 and stretch < 25 then
       badness = inf_bad
     else
-      badness = lineBreak:badness(s, stretch)
+      badness = SU.rateBadness(inf_bad, shortfall, stretch)
     end
     if     badness > 99 then class = "veryLoose"
     elseif badness > 12 then class = "loose"
     else                     class = "decent"
     end
   else
-    s = -s
-    if s > shrink then
+    shortfall = -shortfall
+    if shortfall > shrink then
       badness = inf_bad + 1
     else
-      badness = lineBreak:badness(s, shrink)
+      badness = SU.rateBadness(inf_bad, shortfall, shrink)
     end
     if badness > 12 then class = "tight"
     else                 class = "decent"
@@ -206,13 +206,13 @@ function lineBreak:tryAlternatives(from, to)
       if debugging then SU.debug("break", alt.options[combination[i]], " width", addWidth) end
     end
     local ss = shortfall - addWidth
-    local b = ss > 0 and lineBreak:badness(ss, self.curActiveWidth.stretch) or lineBreak:badness(math.abs(ss), self.curActiveWidth.shrink)
-    if debugging then SU.debug("break", "  badness of "..ss.." ("..self.curActiveWidth.stretch..") is ".. b) end
-    if b < localMinimum then
+    local badness = SU.rateBadness(inf_bad, math.abs(ss), ss > 0 and self.curActiveWidth.stretch or self.curActiveWidth.shrink)
+    if debugging then SU.debug("break", "  badness of "..ss.." ("..self.curActiveWidth.stretch..") is ".. badness) end
+    if badness < localMinimum then
       self.r.alternates = alternates
       self.r.altSelections = combination
       selectedShortfall = addWidth
-      localMinimum = b
+      localMinimum = badness
     end
   end
   if debugging then SU.debug("break", "Choosing ", alternates[1].options[self.r.altSelections[1]]) end
@@ -230,33 +230,26 @@ function lineBreak:considerDemerits(pi, breakType) -- 877
     self:tryAlternatives(self.r.prevBreak and self.r.prevBreak.curBreak or 1, self.r.curBreak and self.r.curBreak or 1, shortfall)
   end
   shortfall = self.lineWidth - self.curActiveWidth.length
-  self.b, self.fitClass = fitclass(self, shortfall)
-  if debugging then SU.debug("break", self.b .. " " .. self.fitClass) end
-  if (self.b > inf_bad or pi == ejectPenalty) then
+  self.badness, self.fitClass = fitclass(self, shortfall)
+  if debugging then SU.debug("break", self.badness .. " " .. self.fitClass) end
+  if (self.badness > inf_bad or pi == ejectPenalty) then
     if self.finalpass and self.minimumDemerits == awful_bad and self.r.next == self.activeListHead and self.prev_r == self.activeListHead then
       self.artificialDemerits = true
     else
-      if self.b > self.threshold then
+      if self.badness > self.threshold then
         self:deactivateR()
         return
       end
     end
   else
     self.prev_r = self.r
-    if self.b > self.threshold then return end
+    if self.badness > self.threshold then return end
     nodeStaysActive = true
   end
 
   self.lastRatio = shortfall > 0 and shortfall/(self.curActiveWidth.stretch or awful_bad) or shortfall/(self.curActiveWidth.shrink or awful_bad)
   self:recordFeasible(pi, breakType)
   if not nodeStaysActive then self:deactivateR() end
-end
-
-function lineBreak:badness(t,s)
-  local bad = 100 * (t/s)^3
-  bad = math.floor(bad) -- TeX uses integer math for this stuff, so for compatibility...
-
-  if bad > inf_bad then return inf_bad else return bad end
 end
 
 function lineBreak:deactivateR() -- 886
@@ -290,39 +283,39 @@ end
 
 function lineBreak:computeDemerits(pi, breakType)
   if self.artificialDemerits then return 0 end
-  local d = param("linePenalty") + self.b
-  if math.abs(d) >= 10000 then d = 100000000 else d = d * d end
-  if pi > 0 then d = d + pi * pi
+  local demerit = param("linePenalty") + self.badness
+  if math.abs(demerit) >= 10000 then demerit = 100000000 else demerit = demerit * demerit end
+  if pi > 0 then demerit = demerit + pi * pi
   elseif pi == 0 then -- do nothing
-  elseif pi > ejectPenalty then d = d - pi * pi end
+  elseif pi > ejectPenalty then demerit = demerit - pi * pi end
   if breakType == "hyphenated" and self.r.type == "hyphenated" then
-    if self.nodes[self.cur_p] then
-      d = d + param("doubleHyphenDemerits")
-    else d = d + param("finalHyphenDemerits") end
+    if self.nodes[self.place] then
+      demerit = demerit + param("doubleHyphenDemerits")
+    else demerit = demerit + param("finalHyphenDemerits") end
   end
   -- XXX adjDemerits not added here
-  return d
+  return demerit
 end
 
 function lineBreak:recordFeasible(pi, breakType) -- 881
-  local d = lineBreak:computeDemerits(pi, breakType)
+  local demerit = lineBreak:computeDemerits(pi, breakType)
   if debugging then
-    if self.nodes[self.cur_p] then
-      SU.debug("break", "@" .. self.nodes[self.cur_p] .. " via @@" .. (self.r.serial or "0")  .. " b=" .. self.b .. " d=".. d) -- 882
+    if self.nodes[self.place] then
+      SU.debug("break", "@" .. self.nodes[self.place] .. " via @@" .. (self.r.serial or "0")  .. " badness=" .. self.badness .. " demerit=".. demerit) -- 882
     else
       SU.debug("break", "@ \\par via @@")
     end
     SU.debug("break"," fit class = "..self.fitClass)
   end
-  d = d + self.r.totalDemerits
-  if d <= self.bestInClass[self.fitClass].minimalDemerits then
+  demerit = demerit + self.r.totalDemerits
+  if demerit <= self.bestInClass[self.fitClass].minimalDemerits then
     self.bestInClass[self.fitClass] = {
-      minimalDemerits = d,
+      minimalDemerits = demerit,
       node = self.r.serial and self.r,
       line = self.r.lineNumber
     }
     -- XXX do last line fit
-    if d < self.minimumDemerits then self.minimumDemerits = d end
+    if demerit < self.minimumDemerits then self.minimumDemerits = demerit end
   end
 end
 
@@ -332,18 +325,18 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
     -- 863
     self.no_break_yet = false
     self.breakWidth = std.tree.clone(self.background)
-    local s = self.cur_p
-    local n = self.nodes[s]
-    if n and n:isDiscretionary() then -- 866
-      self.breakWidth = self.breakWidth + n:prebreakWidth() + n:postbreakWidth() - n:replacementWidth()
+    local place = self.place
+    local node = self.nodes[place]
+    if node and node:isDiscretionary() then -- 866
+      self.breakWidth = self.breakWidth + node:prebreakWidth() + node:postbreakWidth() - node:replacementWidth()
     end
-    while self.nodes[s] and not self.nodes[s]:isBox() do
-      if self.sideways and self.nodes[s].height then
-        self.breakWidth = self.breakWidth - (self.nodes[s].height + self.nodes[s].depth)
-      elseif self.nodes[s].width then -- We use the fact that (a) nodes know if they have width and (b) width subtraction is polymorphic
-        self.breakWidth = self.breakWidth - self.nodes[s]:lineContribution()
+    while self.nodes[place] and not self.nodes[place]:isBox() do
+      if self.sideways and self.nodes[place].height then
+        self.breakWidth = self.breakWidth - (self.nodes[place].height + self.nodes[place].depth)
+      elseif self.nodes[place].width then -- We use the fact that (a) nodes know if they have width and (b) width subtraction is polymorphic
+        self.breakWidth = self.breakWidth - self.nodes[place]:lineContribution()
       end
-      s = s + 1
+      place = place + 1
     end
     if debugging then SU.debug("break", "Value of breakWidth = " .. tostring(self.breakWidth)) end
   end
@@ -373,7 +366,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
       passSerial = passSerial + 1
 
       local newActive = { next = self.r,
-        curBreak = self.cur_p,
+        curBreak = self.place,
         prevBreak = best.node,
         serial = passSerial,
         ratio = self.lastRatio,
@@ -401,49 +394,49 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
   end
 end
 
-function lineBreak:dumpBreakNode(b)
+function lineBreak:dumpBreakNode(node)
   if not SU.debugging("break") then return end
-  print(lineBreak:describeBreakNode(b))
+  print(lineBreak:describeBreakNode(node))
 end
 
-function lineBreak:describeBreakNode(b)
+function lineBreak:describeBreakNode(node)
   --print("@@" .. b.serial .. ": line " .. (b.lineNumber -1) .. "." .. b.fitness .. " " .. b.type .. " t=".. b.totalDemerits .. " -> @@ " .. (b.prevBreak and b.prevBreak.serial or "0") )
-  if b.sentinel then return b.sentinel end
-  if b.type == "delta" then return "delta "..b.width.length.."pt" end
-  local before = self.nodes[b.curBreak-1]
-  local after = self.nodes[b.curBreak+1]
-  local from = b.prevBreak and b.prevBreak.curBreak or 1
-  local to = b.curBreak
-  return "b "..from.."-"..to.." \""..(before and before:toText()).." | "..(after and after:toText()).."\" [".. b.totalDemerits..", "..b.fitness.."]"
+  if node.sentinel then return node.sentinel end
+  if node.type == "delta" then return "delta "..node.width.length.."pt" end
+  local before = self.nodes[node.curBreak-1]
+  local after = self.nodes[node.curBreak+1]
+  local from = node.prevBreak and node.prevBreak.curBreak or 1
+  local to = node.curBreak
+  return "b "..from.."-"..to.." \""..(before and before:toText()).." | "..(after and after:toText()).."\" [".. node.totalDemerits..", "..node.fitness.."]"
 end
 
-function lineBreak:checkForLegalBreak(n) -- 892
-  if debugging then SU.debug("break", "considering node "..n); end
-  local previous = self.nodes[self.cur_p - 1]
-  if n:isAlternative() then self.seenAlternatives = true end
-  if self.sideways and n:isBox() then
-    self.activeWidth = self.activeWidth + n.height + n.depth
-  elseif self.sideways and n:isVglue() then
+function lineBreak:checkForLegalBreak(node) -- 892
+  if debugging then SU.debug("break", "considering node "..node); end
+  local previous = self.nodes[self.place - 1]
+  if node:isAlternative() then self.seenAlternatives = true end
+  if self.sideways and node:isBox() then
+    self.activeWidth = self.activeWidth + node.height + node.depth
+  elseif self.sideways and node:isVglue() then
     if previous and (previous:isBox()) then
       self:tryBreak()
     end
-    self.activeWidth = self.activeWidth + n.height + n.depth
-  elseif n:isAlternative() then
-    self.activeWidth = self.activeWidth + n:minWidth()
-  elseif n:isBox() then
-    self.activeWidth = self.activeWidth + n:lineContribution()
-  elseif n:isGlue() then
+    self.activeWidth = self.activeWidth + node.height + node.depth
+  elseif node:isAlternative() then
+    self.activeWidth = self.activeWidth + node:minWidth()
+  elseif node:isBox() then
+    self.activeWidth = self.activeWidth + node:lineContribution()
+  elseif node:isGlue() then
     -- 894 (We removed the auto_breaking parameter)
     if previous and previous:isBox() then self:tryBreak() end
-    self.activeWidth = self.activeWidth + n.width
-  elseif n:isKern() then
-    self.activeWidth = self.activeWidth + n.width
-  elseif n:isDiscretionary() then -- 895
-    self.activeWidth = self.activeWidth + n:prebreakWidth()
+    self.activeWidth = self.activeWidth + node.width
+  elseif node:isKern() then
+    self.activeWidth = self.activeWidth + node.width
+  elseif node:isDiscretionary() then -- 895
+    self.activeWidth = self.activeWidth + node:prebreakWidth()
     self:tryBreak()
-    self.activeWidth = self.activeWidth - n:prebreakWidth()
-    self.activeWidth = self.activeWidth + n:replacementWidth()
-  elseif n:isPenalty() then
+    self.activeWidth = self.activeWidth - node:prebreakWidth()
+    self.activeWidth = self.activeWidth + node:replacementWidth()
+  elseif node:isPenalty() then
     self:tryBreak()
   end
 end
@@ -509,12 +502,12 @@ function lineBreak:doBreak (nodes, hsize, sideways)
     -- Not doing 1630
     self.activeWidth = std.tree.clone(self.background)
 
-    self.cur_p = 1
-    while self.nodes[self.cur_p] and self.activeListHead.next ~= self.activeListHead do
-      self:checkForLegalBreak(self.nodes[self.cur_p])
-      self.cur_p = self.cur_p + 1
+    self.place = 1
+    while self.nodes[self.place] and self.activeListHead.next ~= self.activeListHead do
+      self:checkForLegalBreak(self.nodes[self.place])
+      self.place = self.place + 1
     end
-    if self.cur_p > #(self.nodes) then
+    if self.place > #(self.nodes) then
       if self:tryFinalBreak() == "done" then break end
     end
     -- (Not doing 891)

@@ -162,7 +162,7 @@ local splitNodeAtPos = function (n,splitstart, p)
     end
     return n1,n2
   else
-    SU.error("Unsure how to split node "..n.." at position "..p,1)
+    SU.error("Unsure how to split node "..n.." at position "..p, true)
   end
 end
 

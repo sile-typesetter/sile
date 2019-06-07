@@ -180,7 +180,8 @@ SILE.registerCommand("hbox", function (options, content)
       local ox = typesetter.frame.state.cursorX
       local oy = typesetter.frame.state.cursorY
       SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
-      for i = 1, #(self.value) do local node = self.value[i]
+      for i = 1, #(self.value) do
+        local node = self.value[i]
         node:outputYourself(typesetter, line)
       end
       typesetter.frame.state.cursorX = ox

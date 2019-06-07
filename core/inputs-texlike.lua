@@ -12,7 +12,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   local quotedString = ( quote * C((1-quote)^1) * quote )
   local value = ( quotedString + (1-S",;]")^1 )
   local myID = C(SILE.inputs.TeXlike.identifier + P(1)) / 1
-  local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1 / function (...) local t = {...}; return t[1], t[#t] end
+  local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1 / function (...) local tbl = {...}; return tbl[1], tbl[#tbl] end
   local list = Cf(Ct"" * pair^0, rawset)
   local parameters = (
       P"[" *
@@ -32,7 +32,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
       comment +
       V"texlike_text" +
       V"texlike_bracketed_stuff" +
-      V"command"
+      V"texlike_command"
     )^0
   passthrough_stuff = C(Cg(
       V"passthrough_text" +
@@ -43,33 +43,33 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     )^0
   texlike_text = C((1-S("\\{}%"))^1)
   passthrough_text = C((1-S("{}"))^1)
-  passthrough_env_text = C((1-(P"\\end{" * (myID * Cb"tag") * P"}"))^1)
+  passthrough_env_text = C((1-(P"\\end{" * (myID * Cb"command") * P"}"))^1)
   texlike_bracketed_stuff = P"{" * V"texlike_stuff" * ( P"}" + E("} expected") )
   passthrough_bracketed_stuff = P"{" * V"passthrough_stuff" * ( P"}" + E("} expected") )
   passthrough_debracketed_stuff = C(V"passthrough_bracketed_stuff")
-  command = (
+  texlike_command = (
       ( P"\\"-P"\\begin" ) *
-      Cg(myID, "tag") *
-      Cg(parameters,"attr") *
+      Cg(myID, "command") *
+      Cg(parameters,"options") *
       (
-        (Cmt(Cb"tag", function(_, _, tag) return tag == "script" end) * V"passthrough_bracketed_stuff") +
-        (Cmt(Cb"tag", function(_, _, tag) return tag ~= "script" end) * V"texlike_bracketed_stuff")
+        (Cmt(Cb"command", function(_, _, command) return command == "script" end) * V"passthrough_bracketed_stuff") +
+        (Cmt(Cb"command", function(_, _, command) return command ~= "script" end) * V"texlike_bracketed_stuff")
       )^0
     ) - P("\\end{")
   environment =
     P"\\begin" *
-    Cg(parameters, "attr") *
+    Cg(parameters, "options") *
     P"{" *
-    Cg(myID, "tag") *
+    Cg(myID, "command") *
     P"}" *
     (
-      (Cmt(Cb"tag", function(_, _, tag) return tag == "script" end) * V"passthrough_env_stuff") +
-      (Cmt(Cb"tag", function(_, _, tag) return tag ~= "script" end) * V"texlike_stuff")
+      (Cmt(Cb"command", function(_, _, command) return command == "script" end) * V"passthrough_env_stuff") +
+      (Cmt(Cb"command", function(_, _, command) return command ~= "script" end) * V"texlike_stuff")
     ) *
     (
       P"\\end{" *
       (
-        Cmt(myID * Cb"tag", function (_,_,thisTag,lastTag) return thisTag == lastTag end) + E"Environment mismatch"
+        Cmt(myID * Cb"command", function (_,_,thisCommand,lastCommand) return thisCommand == lastCommand end) + E"Environment mismatch"
       ) *
       ( P"}" * _ ) + E"Environment begun but never ended"
     )
@@ -84,24 +84,24 @@ local function resetCache ()
   linecache = { { lno = 1, pos = 1} }
 end
 
-local function getline (s, p)
+local function getline (str, pos)
   start = 1
   lno = 1
-  if p > lastpos then
+  if pos > lastpos then
     lno = linecache[#linecache].lno
     start = linecache[#linecache].pos + 1
     col = 1
   else
     for j = 1,#linecache-1 do
-      if linecache[j+1].pos >= p then
+      if linecache[j+1].pos >= pos then
         lno = linecache[j].lno
-        col = p - linecache[j].pos
+        col = pos - linecache[j].pos
         return lno,col
       end
     end
   end
-  for i = start, p do
-    if string.sub( s, i, i ) == "\n" then
+  for i = start, pos do
+    if string.sub( str, i, i ) == "\n" then
       lno = lno + 1
       col = 1
       linecache[#linecache+1] = { pos = i, lno = lno }
@@ -116,7 +116,7 @@ local function massage_ast (tree, doc)
   -- Sort out pos
   if type(tree) == "string" then return tree end
   if tree.pos then
-    tree.line, tree.col = getline(doc, tree.pos)
+    tree.lno, tree.col = getline(doc, tree.pos)
   end
   if tree.id == "document"
       or tree.id == "texlike_bracketed_stuff"
@@ -142,8 +142,8 @@ end
 function SILE.inputs.TeXlike.process (doc)
   local tree = SILE.inputs.TeXlike.docToTree(doc)
   local root = SILE.documentState.documentClass == nil
-  if tree.tag then
-    if root and tree.tag == "document" then
+  if tree.command then
+    if root and tree.command == "document" then
       SILE.inputs.common.init(doc, tree)
     end
     SILE.process(tree)

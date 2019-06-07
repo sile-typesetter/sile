@@ -15,7 +15,7 @@ SILE.registerCommand("inlinefootnote", function(options, content)
   SILE.typesetter.pageTarget = function () return 0xFFFFFF end
   SILE.settings.pushState()
   SILE.settings.reset()
-  SILE.Commands["footnote:font"]({}, function()
+  SILE.call("footnote:font", {}, function()
     SILE.call("footnote:atstart")
     SILE.call("footnote:counter")
     SILE.process(content)

@@ -1,6 +1,8 @@
 [![Build Status](https://travis-ci.com/simoncozens/sile.svg?branch=master)](https://travis-ci.com/simoncozens/sile)
 [![Build Status](https://simoncozens-github.visualstudio.com/sile/_apis/build/status/simoncozens.sile?branchName=master)](https://simoncozens-github.visualstudio.com/sile/_build/latest?definitionId=1&branchName=master)
-[![Coverage Status](https://coveralls.io/repos/simoncozens/sile/badge.svg?branch=master&service=github)](https://coveralls.io/github/simoncozens/sile?branch=master) [![Join the chat at https://gitter.im/simoncozens/sile](https://badges.gitter.im/simoncozens/sile.svg)](https://gitter.im/simoncozens/sile?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Coverage Status](https://coveralls.io/repos/simoncozens/sile/badge.svg?branch=master&service=github)](https://coveralls.io/github/simoncozens/sile?branch=master)
+[![Join the chat at https://gitter.im/simoncozens/sile](https://badges.gitter.im/simoncozens/sile.svg)](https://gitter.im/simoncozens/sile?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 ## What is SILE?
 
@@ -56,7 +58,11 @@ Once your dependencies are installed, run:
     $ ./configure
     $ make install
 
-This will place the SILE libraries and executable in a sensible location.
+This will place the SILE libraries and executable in a sensible location. You may also need to run:
+
+    $ sudo ldconfig
+
+… before trying to execute `sile` to make the system aware of the newly installed libraries.
 
 ### Default font
 
@@ -100,7 +106,6 @@ SILE is distributed under the [MIT licence][license].
   [license]: http://choosealicense.com/licenses/mit/
   [faq]: https://github.com/simoncozens/sile/wiki/faq
   [showoff]: https://rawgit.com/simoncozens/sile/b66b979a6dca0c60bd4aa2cbad3da36ae2073672/examples/showoff.pdf
-  [roadmap]: https://github.com/simoncozens/sile/blob/master/ROADMAP
   [luarocks]: http://luarocks.org/en/Download
   [harfbuzz]: http://www.freedesktop.org/wiki/Software/HarfBuzz/
   [ICU]: http://icu-project.org

@@ -13,26 +13,27 @@ SILE.require("core/base-shaper")
 
 local smallTokenSize = 20 -- Small words will be cached
 local shapeCache = {}
-local _key = function(options,text)
-  return table.concat({text,options.family;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename},";")
+local _key = function(options, text)
+  return table.concat({ text, options.family, options.language, options.script, options.size, ("%d"):format(options.weight), options.style, options.variant, options.features, options.direction, options.filename },";")
 end
 
 local substwarnings = {}
 local usedfonts = {}
 SILE.shapers.harfbuzz = SILE.shapers.base {
   shapeToken = function (self, text, options)
-    if #text < smallTokenSize then local v = shapeCache[_key(options,text)]; if v then return v end end
-    if #text <1 then return {} end -- work around segfault in HB < 1.0.4
+    local items
+    if #text < smallTokenSize then items = shapeCache[_key(options, text)]; if items then return items end end
+    if #text < 1 then return {} end -- work around segfault in HB < 1.0.4
     local face = SILE.font.cache(options, self.getFace)
     if not face then
       SU.error("Could not find requested font "..options.." or any suitable substitutes")
     end
     if not(options.filename) and face.family ~= options.family and not substwarnings[options.family] then
       substwarnings[options.family] = true
-      SU.warn("Font '"..options.family.."' not available, falling back to '"..face.family.."'")
+      SU.warn("Font family '"..options.family.."' not available, falling back to '"..face.family.."'")
     end
     usedfonts[face] = true
-    local items = { hb._shape(text,
+    items = { hb._shape(text,
                       face.data,
                       face.index,
                       options.script,
@@ -42,28 +43,28 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
                       options.features,
                       SILE.settings.get("harfbuzz.subshapers") or ""
             ) }
-    for i = 1,#items do
-      local e = (i == #items) and #text or items[i+1].index
-      items[i].text = text:sub(items[i].index+1, e) -- Lua strings are 1-indexed
+    for i = 1, #items do
+      local j = (i == #items) and #text or items[i+1].index
+      items[i].text = text:sub(items[i].index+1, j) -- Lua strings are 1-indexed
     end
-    if #text < smallTokenSize then shapeCache[_key(options,text)] = items end
+    if #text < smallTokenSize then shapeCache[_key(options, text)] = items end
     return items
   end,
   getFace = function(opts)
     local face = SILE.fontManager:face(opts)
-    SU.debug("fonts", "Resolved font family "..opts.family.." -> "..(face and face.filename))
-    if not face.filename then SU.error("Couldn't find face "..opts.family) end
+    SU.debug("fonts", "Resolved font family '"..opts.family.."' -> "..(face and face.filename))
+    if not face.filename then SU.error("Couldn't find face '"..opts.family.."'") end
     if bit32.rshift(face.index, 16) ~= 0 then
-      SU.warn("GX feature in "..opts.family.." is not supported, fallback to regular font face.")
+      SU.warn("GX feature in '"..opts.family.."' is not supported, fallback to regular font face.")
       face.index = bit32.band(face.index, 0xff)
     end
-    local fh,e = io.open(face.filename, "rb")
-    if e then SU.error("Can't open "..face.filename..": "..e) end
+    local fh, err = io.open(face.filename, "rb")
+    if err then SU.error("Can't open font file '"..face.filename.."': "..err) end
     face.data = fh:read("*all")
     return face
   end,
   preAddNodes = function(self, items, nnodeValue) -- Check for complex nodes
-    for i=1,#items do
+    for i=1, #items do
       if items[i].y_offset or items[i].x_offset or items[i].width ~= items[i].glyphAdvance then
         nnodeValue.complex = true; break
       end

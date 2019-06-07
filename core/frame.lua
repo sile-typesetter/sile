@@ -5,8 +5,8 @@ solverNeedsReloading = true
 
 SILE._frameParser = require("core/frameparser")
 
-local parseFrameDef = function(d)
-  return SILE._frameParser:match(d)
+local parseFrameDef = function(dimension)
+  return SILE._frameParser:match(dimension)
 end
 
 local dims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
@@ -22,8 +22,8 @@ SILE.framePrototype = std.object {
   state = {},
   enterHooks = {},
   leaveHooks = {},
-  constrain = function (self, method, value)
-    self.constraints[method] = value
+  constrain = function (self, method, dimension)
+    self.constraints[method] = dimension
     self:invalidate()
   end,
   invalidate = function()
@@ -34,9 +34,9 @@ SILE.framePrototype = std.object {
   end,
   reifyConstraint = function(self, solver, method, stay)
     if not self.constraints[method] then return end
-    local c = parseFrameDef(self.constraints[method])
-    -- print("Adding constraint "..self.id.."("..method..") = "..c)
-    local eq = cassowary.Equation(self.variables[method],c)
+    local constraint = parseFrameDef(self.constraints[method])
+    -- print("Adding constraint "..self.id.."("..method..") = "..constraint)
+    local eq = cassowary.Equation(self.variables[method], constraint)
     solver:addConstraint(eq)
     if stay then solver:addStay(eq) end
   end,
@@ -51,18 +51,18 @@ SILE.framePrototype = std.object {
     --print("Solving")
     solver = cassowary.SimplexSolver()
     if SILE.frames.page then
-      for k,c in pairs(SILE.frames.page.constraints) do
-        SILE.frames.page:reifyConstraint(solver, k, true)
+      for method, dimension in pairs(SILE.frames.page.constraints) do
+        SILE.frames.page:reifyConstraint(solver, method, true)
       end
       SILE.frames.page:addWidthHeightDefinitions(solver)
     end
 
-    for id,f in pairs(SILE.frames) do
+    for id, frame in pairs(SILE.frames) do
       if not (id == "page") then
-        for k,c in pairs(f.constraints) do
-          f:reifyConstraint(solver, k)
+        for method, dimension in pairs(frame.constraints) do
+          frame:reifyConstraint(solver, method)
         end
-        f:addWidthHeightDefinitions(solver)
+        frame:addWidthHeightDefinitions(solver)
       end
     end
     solver:solve()
@@ -72,13 +72,13 @@ SILE.framePrototype = std.object {
 }
 
 function SILE.framePrototype:toString()
-  local f = "<Frame: "..self.id..": "
-  f = f .." next="..self.next.." "
-  for k,v in pairs(self.constraints) do
-    f = f .. k.."="..v.."; "
+  local str = "<Frame: " .. self.id .. ": "
+  str = str .. " next=" .. self.next .. " "
+  for method, dimension in pairs(self.constraints) do
+    str = str .. method .. "=" .. dimension .. "; "
   end
-  f = f.. ">"
-  return f
+  str = str .. ">"
+  return str
 end
 
 function SILE.framePrototype:advanceWritingDirection(amount)
@@ -86,7 +86,7 @@ function SILE.framePrototype:advanceWritingDirection(amount)
     if amount.prototype and amount:prototype() == "RelativeMeasurement" then
       amount = amount:absolute()
     else
-      SU.error("Table passed to advanceWritingDirection", 1)
+      SU.error("Table passed to advanceWritingDirection", true)
     end
   end
   if self:writingDirection() == "RTL" then
@@ -101,7 +101,7 @@ function SILE.framePrototype:advanceWritingDirection(amount)
 end
 
 function SILE.framePrototype:advancePageDirection(amount)
-  if type(amount) == "table" then SU.error("Table passed to advancePageDirection", 1) end
+  if type(amount) == "table" then SU.error("Table passed to advancePageDirection", true) end
   if self:pageAdvanceDirection() == "TTB" then
     self.state.cursorY = self.state.cursorY + amount
   elseif self:pageAdvanceDirection() == "RTL" then
@@ -168,12 +168,12 @@ function SILE.framePrototype:leave()
   end
 end
 
-function SILE.framePrototype:isAbsoluteConstraint(c)
-  if not self.constraints[c] then return false end
-  local c = parseFrameDef(self.constraints[c])
-  if type(c) ~= "table" then return true end
-  if not c.terms then return false end
-  for clv,coeff in pairs(c.terms) do
+function SILE.framePrototype:isAbsoluteConstraint(method)
+  if not self.constraints[method] then return false end
+  local constraint = parseFrameDef(self.constraints[method])
+  if type(constraint) ~= "table" then return true end
+  if not constraint.terms then return false end
+  for clv,coeff in pairs(constraint.terms) do
     if clv.name and not clv.name:match("^page_") then
       return false
     end
@@ -181,12 +181,11 @@ function SILE.framePrototype:isAbsoluteConstraint(c)
   return true
 end
 
-
 function SILE.framePrototype:isMainContentFrame()
-  local c =  SILE.documentState.thisPageTemplate.firstContentFrame
-  while c do
-    if c == self then return true end
-    if c.next then c = SILE.getFrame(c.next) else return false end
+  local frame =  SILE.documentState.thisPageTemplate.firstContentFrame
+  while frame do
+    if frame == self then return true end
+    if frame.next then frame = SILE.getFrame(frame.next) else return false end
   end
   return false
 end
@@ -234,17 +233,17 @@ SILE.getFrame = function(id)
   -- or SU.warn("Couldn't get frame ID "..id, true)
 end
 
-SILE.parseComplexFrameDimension = function(d, width_or_height)
-  local v =  parseFrameDef(d)
-  v = SILE.toAbsoluteMeasurement(v)
-  if type(v) == "table" then
+SILE.parseComplexFrameDimension = function(dimension)
+  local length =  parseFrameDef(dimension)
+  length = SILE.toAbsoluteMeasurement(length)
+  if type(length) == "table" then
     local g = cassowary.Variable({ name = "t" })
-    local eq = cassowary.Equation(g,v)
+    local eq = cassowary.Equation(g, length)
     solverNeedsReloading = true
     solver:addConstraint(eq)
     SILE.frames.page:solve()
     solverNeedsReloading = true
     return g.value
   end
-  return v
+  return length
 end

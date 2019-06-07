@@ -191,7 +191,7 @@ int icu_canonicalize_language(lua_State *L) {
 
 int icu_format_number(lua_State *L) {
   double a = luaL_checknumber(L, 1);
-  /* See http://www.unicode.org/repos/cldr/tags/latest/common/bcp47/number.xml
+  /* See https://github.com/unicode-org/cldr/blob/master/common/bcp47/number.xml
      for valid system names */
   const char* system = luaL_checkstring(L, 2);
   char locale[18]; // "@numbers=12345678";
