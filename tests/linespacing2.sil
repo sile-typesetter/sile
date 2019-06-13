@@ -1,4 +1,4 @@
-\begin{document}
+\begin{document}% KNOWNBAD #639
 \nofolios
 \font[family=Libertinus Serif,size=11pt]
 \script[src=packages/linespacing]%

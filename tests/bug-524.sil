@@ -1,4 +1,4 @@
-\begin[class=jplain]{document}
+\begin[class=jplain]{document}% KNOWNBAD #639
 \nofolios
 \set[parameter=document.parindent,value=0pt]
 \show-hanmen
