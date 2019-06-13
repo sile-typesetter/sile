@@ -11,9 +11,13 @@ dist_bin_SCRIPTS = sile
 nobase_dist_pkgdata_DATA = $(subdir_files)
 EXTRA_DIST=NEWS.md README.md LICENSE tests examples documentation
 
+.SECONDEXPANSION:
+.DELETE_ON_ERROR:
+
+DEPDIR := .deps
 REGRESSIONSCRIPT := ./tests/regressions.pl
 LOCALTESTFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
-SILEFLAGS ?= -d versions -f fontconfig
+SILEFLAGS ?= -m $(DEPDIR)/$(basename $@).d -d versions -f fontconfig
 
 TESTSRCS  ?= $(wildcard tests/*.sil tests/*.xml)
 TESTPDFS   = $(addsuffix      .pdf,$(basename $(TESTSRCS)))
@@ -21,16 +25,17 @@ EXPECTEDS ?= $(wildcard tests/*.expected)
 ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 
 .PHONY: test
-test: REGRESSIONMODE ?= true
 test: $(TESTSRCS) $(ACTUALS) sile testprep
 	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
 
-DOCS = $(addsuffix .pdf,$(basename $(wildcard documentation/*.sil)))
+DOCSSRCS = $(basename $(wildcard documentation/*.sil))
+DOCS = $(addsuffix .pdf,$(basename $(DOCSSRCS)))
 
 .PHONY: docs
 docs: $(DOCS)
 
-EXAMPLES = $(addsuffix .pdf,$(basename $(wildcard examples/*.sil)))
+EXAMPLESSRCS = $(basename $(wildcard examples/*.sil))
+EXAMPLES = $(addsuffix .pdf,$(DOCSSRCS))
 
 .PHONY: examples
 examples: $(EXAMPLES)
@@ -55,20 +60,30 @@ tests/%.expected: tests/%.xml
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
 .PHONY: update_actuals
-update_actuals: REGRESSIONMODE = true
 update_actuals: $(ACTUALS)
 
 .PHONY: test_previews
 test_previews: $(TESTPDFS)
 
-tests/%.actual: tests/%.sil $(and $(REGRESSIONMODE),force)
+tests/%.actual: tests/%.sil
 	-$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-tests/%.actual: tests/%.xml $(and $(REGRESSIONMODE),force)
+tests/%.actual: tests/%.xml
 	-$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-.PHONY: force
-force: ;
+DEPFILES = $(addsuffix .d,$(addprefix $(DEPDIR)/,$(basename $(TESTSRCS) $(DOCS) $(EXAMPLES))))
+DEPDIRS = $(sort $(dir $(DEPFILES)))
+
+$(DEPDIRS):
+	mkdir -p $@
+
+%.pdf: $(DEPDIR)/%.d
+%.expected: $(DEPDIR)/%.d
+%.actual: $(DEPDIR)/%.d
+
+$(DEPFILES): | $(DEPDIRS)
+
+include $(wildcard $(DEPFILES))
 
 .PRECIOUS: .fonts/% %.zip %.xz
 
@@ -86,7 +101,7 @@ TESTFONTFILES += SBL_Hbrw.ttf
 TESTFONTFILES += Symbola_Hinted.ttf
 
 .PHONY: testprep
-testprep: | $(addprefix .fonts/,$(TESTFONTFILES))
+testprep: | $(DEPDIRS) $(addprefix .fonts/,$(TESTFONTFILES))
 
 .fonts: fontconfig.conf
 	mkdir -p $@
