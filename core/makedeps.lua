@@ -28,6 +28,7 @@ local makeDeps = {
     local depfile, err = io.open(self.filename, "w")
     if not depfile then return SU.error(err) end
     depfile:write(SILE.outputFilename..": "..table.concat(deps, " ").."\n")
+    depfile:close()
   end
 }
 

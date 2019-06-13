@@ -278,6 +278,10 @@ function SILE.finish ()
   if SILE.makeDeps then
     SILE.makeDeps:write()
   end
+  if SILE.preamble then
+    SILE.documentState.documentClass:finish()
+  end
+  io.stderr:write("\n")
 end
 
 return SILE

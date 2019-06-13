@@ -33,6 +33,7 @@ SILE.parseArguments()
 if not os.getenv 'LUA_REPL_RLWRAP' then
   io.stderr:write('This is SILE '..SILE.version..'\n')
 end
+if SILE.makeDeps then SILE.makeDeps:add(debug.getinfo(1, "S").short_src) end
 SILE.init()
 if SILE.masterFilename then
   if SILE.preamble then
@@ -53,17 +54,16 @@ if SILE.masterFilename then
     ProFi = require 'ProFi'
     ProFi:start()
   end
-  p,e = xpcall(function() SILE.readFile(unparsed[1]) end, SILE.errorHandler)
-  if not p then
-    if type(e) == "string" and e:match(": interrupted!") then
+  main, err = xpcall(function() SILE.readFile(unparsed[1]) end, SILE.errorHandler)
+  if not main then
+    if type(err) == "string" and err:match(": interrupted!") then
       SILE.outputter:finish()
     else
-      io.stderr:write("\nError detected:\n\t"..e.."\n")
+      io.stderr:write("\nError detected:\n\t"..err.."\n")
     end
     os.exit(1)
   end
-  if SILE.preamble then SILE.documentState.documentClass:finish() end
-  io.stderr:write("\n")
+  SILE.finish()
   if SU.debugging("profile") and pcall(function () require("ProFi") end) then
     ProFi:stop()
     ProFi:writeReport( 'sile-profile.txt' )
@@ -72,5 +72,3 @@ if SILE.masterFilename then
 else
   SILE.repl()
 end
-if SILE.makeDeps then SILE.makeDeps:add(debug.getinfo(1, "S").short_src) end
-SILE.finish()
