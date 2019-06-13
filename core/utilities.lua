@@ -461,6 +461,9 @@ utilities.formatNumber = {
 
 setmetatable (utilities.formatNumber, {
     __call = function (self, num, format, case)
+      if math.abs(num) > 9223372036854775807 then
+        SU.warn("Integers larger than 64 bits do not reproduce properly in all formats")
+      end
       if not case then
         if format:match("^%l") then
           case = "lower"
