@@ -23,17 +23,15 @@ addons:
 env:
   global:
    - LUAROCKS=2.4.2
-   - HARFBUZZ_BASE=harfbuzz-2.5.1
    - GRAPHITE=true
    - COVERAGE=false
    - MAKEFLAGS="--jobs=4"
   matrix:
-   - LUA=lua5.3 COVERAGE=true
-   #- LUA=lua5.3 GRAPHITE=false
-   - LUA=lua5.2
-   #- LUA=lua5.2 GRAPHITE=false
-   - LUA=lua5.1
-   #- LUA=lua5.1 GRAPHITE=false
+   - LUA=lua5.3 HARFBUZZ=2.5.1 COVERAGE=true
+   - LUA=lua5.3 HARFBUZZ=1.4.2
+   - LUA=lua5.3 HARFBUZZ=1.1.3
+   - LUA=lua5.2 HARFBUZZ=2.5.1
+   - LUA=lua5.1 HARFBUZZ=2.5.1
 cache:
   directories:
   - $TRAVIS_BUILD_DIR/.fonts
@@ -50,10 +48,10 @@ before_install:
       mkdir ~/local || true;
       mkdir ~/builddeps || true;
       pushd ~/builddeps ;
-      wget https://github.com/harfbuzz/harfbuzz/releases/download/${HARFBUZZ_BASE/*-}/$HARFBUZZ_BASE.tar.xz ;
-      tar xf $HARFBUZZ_BASE.tar.xz ;
-      cd $HARFBUZZ_BASE ;
-      ./configure --with$($GRAPHITE || echo 'out')-graphite2 --prefix=$HOME/local/ ;
+      wget https://github.com/harfbuzz/harfbuzz/archive/${HARFBUZZ}.tar.gz ;
+      tar xfz ${HARFBUZZ}.tar.gz ;
+      cd harfbuzz-${HARFBUZZ} ;
+      ./autogen.sh --with$($GRAPHITE || echo 'out')-graphite2 --prefix=$HOME/local/ ;
       make ;
       make install ;
       popd ;
