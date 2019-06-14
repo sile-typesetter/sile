@@ -5,13 +5,6 @@ use warnings;
 use Getopt::Long;
 use Term::ANSIColor;
 my (@failed, @passed, @unsupported, @knownbad, @knownbadbutpassing, @missing);
-my $coverage = 0;
-
-GetOptions(
-	'coverage' => \$coverage
-);
-
-if ($coverage) { $ENV{SILE_COVERAGE} = 1}
 
 my @specifics = @ARGV;
 

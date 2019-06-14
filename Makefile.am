@@ -11,6 +11,7 @@ dist_bin_SCRIPTS = sile
 nobase_dist_pkgdata_DATA = $(subdir_files)
 EXTRA_DIST=NEWS.md README.md LICENSE tests examples documentation
 
+.ONESHELL:
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
 
@@ -40,15 +41,18 @@ EXAMPLES = $(addsuffix .pdf,$(DOCSSRCS))
 .PHONY: examples
 examples: $(EXAMPLES)
 
-%.pdf: %.sil
+%.pdf: %.sil $(and $(SILE_COVERAGE),force)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@
 
-%.pdf: %.xml
+%.pdf: %.xml $(and $(SILE_COVERAGE),force)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@
 
 .PHONY: coverage
-coverage: $(REGRESSIONSCRIPT)
-	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) --coverage
+coverage: export SILE_COVERAGE=1
+coverage: test_previews
+
+.PHONY: force
+force: ;
 
 .PHONY: update_expecteds
 update_expecteds: $(EXPECTEDS)
