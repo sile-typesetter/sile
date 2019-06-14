@@ -1,4 +1,4 @@
-\begin[class=jplain,papersize=a6]{document}% KNOWNBAD #639
+\begin[class=jplain,papersize=a6]{document}
 \nofolios
 \set[parameter=document.parindent,value=0pt]
 \script[src=packages/ruby]
