@@ -9,7 +9,6 @@ SILE.nodeMakers = {}
 SILE.tokenizers = {}
 SILE.status = {}
 
-loadstring = loadstring or load -- 5.3 compatibility
 if not unpack then unpack = table.unpack end -- 5.3 compatibility
 require("pl") -- Penlight on-demand module loader
 std = require("std")
@@ -130,7 +129,7 @@ Options:
     local statements = type(opts.evaluate) == "table" and opts.evaluate or { opts.evaluate }
     SILE.dolua = {}
     for _, statement in ipairs(statements) do
-      local func, err = loadstring(statement)
+      local func, err = load(statement)
       if err then SU.error(err) end
       SILE.dolua[#SILE.dolua+1] = func
     end
