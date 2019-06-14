@@ -85,69 +85,18 @@ $(DEPFILES): | $(DEPDIRS)
 
 include $(wildcard $(DEPFILES))
 
-.PRECIOUS: .fonts/% %.zip %.xz
-
-TESTFONTFILES  = NotoSansCJK-Regular.ttc
-TESTFONTFILES += NotoSansMalayalam-Regular.ttf
-TESTFONTFILES += NotoSansKannada-Regular.ttf
-TESTFONTFILES += NotoNaskhArabic-Regular.ttf
-TESTFONTFILES += LibertinusSerif-Regular.otf
-TESTFONTFILES += LibertinusSans-Bold.otf
-TESTFONTFILES += GentiumPlus-R.ttf GentiumPlus-I.ttf
-TESTFONTFILES += LateefGR-Regular.ttf
-TESTFONTFILES += Hack-Regular.ttf
-TESTFONTFILES += Amiri-Regular.ttf AmiriQuran.ttf
-TESTFONTFILES += SBL_Hbrw.ttf
-TESTFONTFILES += Symbola_Hinted.ttf
-
-.PHONY: testprep
-testprep: | $(DEPDIRS) $(addprefix .fonts/,$(TESTFONTFILES))
+# Make sure we have a local font directory before putting anything there
+.fonts/%: Makefile-fonts | .fonts
 
 .fonts: fontconfig.conf
 	mkdir -p $@
 
-.fonts/NotoSansCJK%: | .fonts
-	curl -s -L https://github.com/googlefonts/noto-cjk/raw/NotoSansV2.001/$(notdir $@) -o $@
+# Actual rules for downloading test fonts are in a separate file
+include Makefile-fonts
 
-.fonts/Noto%: | .fonts
-	curl -s -L https://github.com/googlefonts/noto-fonts/raw/v2017-09-19-phase3-second/hinted/$(notdir $@) -o $@
-
-.fonts/Libertinus%: | .fonts
-	curl -s -L https://github.com/alif-type/libertinus/raw/v6.9/$(notdir $@) -o $@
-
-.fonts/Amiri%: | .fonts
-	curl -s -L https://github.com/alif-type/amiri/raw/0.111/$(notdir $@) -o $@
-
-.fonts/GentiumPlus%: GentiumPlus-5.000.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) --strip-components 1 GentiumPlus-5.000/$(notdir $@)
-	touch $@
-
-.fonts/LateefGR%: LateefGR-1.200.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) --strip-components 1 LateefGR-1.200/$(notdir $@)
-	touch $@
-
-.fonts/Hack%: Hack-v3.003-ttf.tar.xz | .fonts
-	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
-	touch $@
-
-.fonts/Symbola%: Symbola.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
-	touch $@
-
-Symbola.zip:
-	curl -s -L http://users.teilar.gr/~g1951d/$(notdir $@) -o $@
-
-GentiumPlus-5.000.zip:
-	curl -s -L https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
-
-LateefGR-1.200.zip:
-	curl -s -L https://software.sil.org/downloads/r/lateef/$(notdir $@) -o $@
-
-Hack-v3.003-ttf.tar.xz:
-	curl -s -L https://github.com/source-foundry/Hack/releases/download/v3.003/$(notdir $@) -o $@
-
-.fonts/SBL_Hbrw.ttf:
-	curl -s -L http://www.sbl-site.org/Fonts/$(notdir $@) -o $@
+# Make sure we have font files before running tests (ignoring timestamp of font files)
+.PHONY: testprep
+testprep: | $(DEPDIRS) $(addprefix .fonts/,$(TESTFONTFILES))
 
 gource.webm:
 	mkdir -p /tmp/gravatars
