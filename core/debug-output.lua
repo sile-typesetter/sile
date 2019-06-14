@@ -23,6 +23,7 @@ SILE.outputters.debug = {
     writeline("New page")
   end,
   finish = function()
+    if SILE.status.unsupported then writeline("UNSUPPORTED") end
     writeline("End page")
     writeline("Finish")
     outfile:close()

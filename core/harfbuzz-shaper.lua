@@ -105,9 +105,10 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
     if hb.version_lessthan(1,0,4) and #text < 1 then
       return true
     end
-    if hb.version_lessthan(2,3,0) and
-      hb.get_table(face.data, face.index, "CFF "):len() > 0 and
-      not substwarnings["CFF "] then
+    if hb.version_lessthan(2,3,0)
+      and hb.get_table(face.data, face.index, "CFF "):len() > 0
+      and not substwarnings["CFF "] then
+      SILE.status.unsupported = true
       SU.warn("Vertical spacing of CFF fonts may be subtly inconsistent between systems. Upgrade to Harfbuzz 2.3.0 if you need absolute consistency.")
       substwarnings["CFF "] = true
     end

@@ -1,4 +1,4 @@
-\begin[papersize=a6,class=book]{document}% KNOWNBAD #639
+\begin[papersize=a6,class=book]{document}
 \script[src=packages/frametricks]
 \begin[first-content-frame=frame1]{pagetemplate}
 \frame[id=frame1,left=left(content),right=right(content),height=18pt,top=top(content),next=frame2]
