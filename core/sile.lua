@@ -11,8 +11,13 @@ SILE.status = {}
 
 loadstring = loadstring or load -- 5.3 compatibility
 if not unpack then unpack = table.unpack end -- 5.3 compatibility
+require("pl") -- Penlight on-demand module loader
 std = require("std")
 lfs = require("lfs")
+
+compat = require("pl.compat")
+if compat.lua51 then load = compat.load; execute = compat.execute end
+
 if (os.getenv("SILE_COVERAGE")) then require("luacov") end
 
 SILE.traceStack = require("core/tracestack")
