@@ -5,11 +5,9 @@ use warnings;
 use Getopt::Long;
 use Term::ANSIColor;
 my (@failed, @passed, @knownbad, @missing);
-my $upstream = 0;
 my $coverage = 0;
 
 GetOptions(
-	'upstream' => \$upstream,
 	'coverage' => \$coverage
 );
 
@@ -22,11 +20,8 @@ for (@specifics ? @specifics : <tests/*.sil>) {
   my $expectation = $_; $expectation =~ s/\.sil$/\.expected/;
   my $knownbad;
   if (-f $expectation) {
-    # Only run regression tests for upstream bugs if specifically asked
-    if ($_ =~ /_upstream\.sil/) {
-      next if !$upstream;
-    # Only test OS specific regressions on their respective OSes
-    } elsif ($_ =~ /_\w+\.sil/) {
+	 # Only test OS specific regressions on their respective OSes
+	 if ($_ =~ /_\w+\.sil/) {
       next if ($_ !~ /_$^O\.sil/) ;
     }
     my $actual = $_; $actual =~ s/\.sil$/\.actual/;
