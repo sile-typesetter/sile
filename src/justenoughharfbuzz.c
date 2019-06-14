@@ -174,13 +174,11 @@ int shape (lua_State *L) {
     unsigned int upem = hb_face_get_upem(hbFace);
     hb_font_set_scale(hbFont, upem, upem);
 
-    /* Harfbuzz's support for OT fonts is great, but
-       there's currently no support for CFF fonts, so
-       downgrade to Freetype for those. */
-    if (strncmp(font_s, "OTTO", 4) == 0 || strncmp(font_s, "ttcf", 4) == 0) {
-      hb_ft_font_set_funcs(hbFont);
-    } else {
+    /* Note that this will cause differing results for CFF fonts. */
+    if (hb_version_atleast(2,3,0)) {
       hb_ot_font_set_funcs(hbFont);
+    } else {
+      hb_ft_font_set_funcs(hbFont);
     }
 
     buf = hb_buffer_create();
