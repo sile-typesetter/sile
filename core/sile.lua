@@ -9,7 +9,6 @@ SILE.nodeMakers = {}
 SILE.tokenizers = {}
 SILE.status = {}
 
-if not unpack then unpack = table.unpack end -- 5.3 compatibility
 require("pl") -- Penlight on-demand module loader
 std = require("std")
 lfs = require("lfs")
@@ -149,7 +148,7 @@ Options:
   end
 
   -- http://lua-users.org/wiki/VarargTheSecondClassCitizen
-  local identity = function (...) return unpack({...}, 1, select('#', ...)) end
+  local identity = function (...) return utils.unpack({...}, 1, select('#', ...)) end
   SILE.errorHandler = opts.traceback and debug.traceback or identity
   SILE.traceback = opts.traceback
 end

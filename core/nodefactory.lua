@@ -78,8 +78,8 @@ local _nnode = _hbox {
     return "N<" .. tostring(this.width) .. ">^" .. this.height .. "-" .. this.depth .. "v(" .. this:toText() .. ")";
   end,
   init = function(self)
-    if 0 == self.depth then self.depth = math.max(0,unpack(SU.map(function (node) return node.depth end, self.nodes))) end
-    if 0 == self.height then self.height = math.max(0,unpack(SU.map(function (node) return node.height end, self.nodes))) end
+    if 0 == self.depth then self.depth = math.max(0,utils.unpack(SU.map(function (node) return node.depth end, self.nodes))) end
+    if 0 == self.height then self.height = math.max(0,utils.unpack(SU.map(function (node) return node.height end, self.nodes))) end
     if 0 == self.width then self.width = SU.sum(SU.map(function (node) return node.width end, self.nodes)) end
     return self
     end,
