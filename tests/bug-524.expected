@@ -1592,30 +1592,26 @@ Draw line	539.1579 600.4092 0.5000 -10.0000
 Draw line	549.1579 600.4092 0.5000 -10.0000
 Draw line	49.4079 600.4092 500.0000 0.5000
 Pop color
-Mx 	59.4079
-My 	106.0692
+Mx 	49.4079
+My 	105.9592
 Set font 	Noto Sans CJK JP;10;400;;normal;;LTR
-T	29464	(私)
-Mx 	69.5253
-T	1499	(は)
-Mx 	59.4079
-My 	123.0692
-T	29464	(私)
-Mx 	69.5253
-T	1499	(は)
-Mx 	61.8369
-My 	130.0692
+T	29078	(私)
+Mx 	59.5278
+T	1506	(は)
+Mx 	49.4079
+My 	122.9592
+T	29078	(私)
+Mx 	59.5278
+T	1506	(は)
+Mx 	51.7739
+My 	129.9592
 Set font 	Noto Sans CJK JP;6;800;;normal;;LTR
 T	56	(W)
-Mx 	59.4079
-My 	140.0692
+Mx 	49.4079
+My 	139.9592
 Set font 	Noto Sans CJK JP;10;400;;normal;;LTR
-T	29464	(私)
-Mx 	69.4079
-T	1499	(は)
-Mx 	295.2916
-My 	780.6177
-Set font 	Gentium Plus;10;400;;normal;;LTR
-T	20	(1)
+T	29078	(私)
+Mx 	59.4079
+T	1506	(は)
 End page
 Finish

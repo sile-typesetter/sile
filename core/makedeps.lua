@@ -28,7 +28,21 @@ local makeDeps = {
     local depfile, err = io.open(self.filename, "w")
     if not depfile then return SU.error(err) end
     depfile:write(SILE.outputFilename..": "..table.concat(deps, " ").."\n")
+    depfile:close()
   end
 }
+
+-- Lua 5.1 compatability hack, copied from Penlight's pl.compat library
+if not package.searchpath then
+  local sep = package.config:sub(1,1)
+  function package.searchpath (mod,path)    -- luacheck: ignore
+    mod = mod:gsub('%.',sep)
+    for m in path:gmatch('[^;]+') do
+      local nm = m:gsub('?',mod)
+      local f = io.open(nm,'r')
+      if f then f:close(); return nm end
+    end
+  end
+end
 
 return makeDeps

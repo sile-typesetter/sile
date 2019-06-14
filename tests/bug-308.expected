@@ -1,25 +1,21 @@
-Set paper size 	595.275597	841.8897729
+Set paper size 	297.6377985	419.5275636
 Begin page
-Mx 	49.4079
-My 	156.1537
+Mx 	20.9764
+My 	35.3764
 Set font 	Noto Sans Malayalam;12;400;;normal;;LTR
 T	55 4	(സം)
-Mx 	69.5172
+Mx 	41.0858
 T	55 59	(സാ)
-Mx 	90.2477
+Mx 	61.8162
 T	47 60	(രി)
-Mx 	101.8141
+Mx 	73.3826
 T	260	(-)
-Mx 	49.4079
-My 	170.5537
+Mx 	20.9764
+My 	49.7764
 T	159 60	(ച്ചി)
-Mx 	63.3415
+Mx 	34.9100
 T	47 60	(രി)
-Mx 	74.9079
+Mx 	46.4764
 T	147 62 20	(ക്കുക)
-Mx 	278.3263
-My 	732.6300
-Set font 	Gentium Plus;10;400;;normal;;LTR
-T	20	(1)
 End page
 Finish

@@ -35,6 +35,7 @@ require("core/languages")
 require("core/font")
 require("core/packagemanager")
 
+SILE.fontManager = require("core/fontmanager")
 SILE.frameParser = require("core/frameparser")
 SILE.linebreak = require("core/break")
 
@@ -95,6 +96,7 @@ Options:
   -b, --backend=VALUE      choose an alternative output backend
   -d, --debug=VALUE        debug SILE's operation
   -e, --evaluate=VALUE     evaluate some Lua code before processing file
+  -f, --fontmanager=VALUE  choose an alternative font manager
   -m, --makedeps=[FILE]    generate a list of dependencies in Makefile format
   -o, --output=[FILE]      explicitly set output file name
   -I, --include=[FILE]     include a class or SILE file before processing input
@@ -126,6 +128,9 @@ Options:
       if err then SU.error(err) end
       SILE.dolua[#SILE.dolua+1] = func
     end
+  end
+  if opts.fontmanager then
+    SILE.forceFontManager = opts.fontmanager
   end
   if opts.makedeps then
     SILE.makeDeps = require("core.makedeps")
@@ -273,6 +278,10 @@ function SILE.finish ()
   if SILE.makeDeps then
     SILE.makeDeps:write()
   end
+  if SILE.preamble then
+    SILE.documentState.documentClass:finish()
+  end
+  io.stderr:write("\n")
 end
 
 return SILE

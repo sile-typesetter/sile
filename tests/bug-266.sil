@@ -1,8 +1,8 @@
 \begin[papersize=a6]{document}
+\nofolios
 
 Word\glue[width=1ex]to the wise
+
 \font[size=20pt]
-
 Word\glue[width=1ex]to the wise
-\font[size=0.1pt]
 \end{document}

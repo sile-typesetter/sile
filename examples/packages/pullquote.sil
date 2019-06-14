@@ -1,6 +1,6 @@
 \begin[papersize=a5]{document}\nofolios
 \script[src=packages/pullquote]
-\font[family=Linux Libertine O,size=12pt]
+\font[family=Libertinus Serif,size=12pt]
 \set[parameter=document.parskip,value=12pt]
 These fishermen weren't going to be taken in for a hoax. The real flesh and
 blood dude that they'd spent three years traipsing around the countryside with

@@ -11,42 +11,92 @@ dist_bin_SCRIPTS = sile
 nobase_dist_pkgdata_DATA = $(subdir_files)
 EXTRA_DIST=NEWS.md README.md LICENSE tests examples documentation
 
-REGRESSIONSCRIPT = ./tests/regressions.pl
+.SECONDEXPANSION:
+.DELETE_ON_ERROR:
+
+DEPDIR := .deps
+REGRESSIONSCRIPT := ./tests/regressions.pl
+LOCALTESTFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
+SILEFLAGS ?= -m $(DEPDIR)/$(basename $@).d -d versions -f fontconfig
+
+TESTSRCS  ?= $(wildcard tests/*.sil tests/*.xml)
+TESTPDFS   = $(addsuffix      .pdf,$(basename $(TESTSRCS)))
+EXPECTEDS ?= $(wildcard tests/*.expected)
+ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 
 .PHONY: test
-test: $(REGRESSIONSCRIPT) | sile
-	$(REGRESSIONSCRIPT)
+test: $(TESTSRCS) $(ACTUALS) sile testprep
+	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
 
-DOCS = $(addsuffix .pdf,$(basename $(wildcard documentation/*.sil)))
+DOCSSRCS = $(basename $(wildcard documentation/*.sil))
+DOCS = $(addsuffix .pdf,$(basename $(DOCSSRCS)))
 
 .PHONY: docs
-docs: $(DOCS) | sile
+docs: $(DOCS)
 
-EXAMPLES = $(addsuffix .pdf,$(basename $(wildcard examples/*.sil)))
+EXAMPLESSRCS = $(basename $(wildcard examples/*.sil))
+EXAMPLES = $(addsuffix .pdf,$(DOCSSRCS))
 
 .PHONY: examples
-examples: $(EXAMPLES) | sile
+examples: $(EXAMPLES)
 
-%.pdf: %.sil | sile
-	./sile $< -o $@
+%.pdf: %.sil
+	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@
 
-%.pdf: %.xml | sile
-	./sile $< -o $@
+%.pdf: %.xml
+	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@
 
 .PHONY: coverage
 coverage: $(REGRESSIONSCRIPT)
-	$(REGRESSIONSCRIPT) --coverage
+	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) --coverage
 
-EXPECTS = $(wildcard tests/*.expected)
+.PHONY: update_expecteds
+update_expecteds: $(EXPECTEDS)
 
-.PHONY: update_expected
-update_expected: $(EXPECTS)
+tests/%.expected: tests/%.sil
+	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-tests/%.expected: tests/%.sil force | sile
-	./sile -b debug $< -o $@
+tests/%.expected: tests/%.xml
+	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-.PHONY: force
-force: ;
+.PHONY: update_actuals
+update_actuals: $(ACTUALS)
+
+.PHONY: test_previews
+test_previews: $(TESTPDFS)
+
+tests/%.actual: tests/%.sil
+	-$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
+
+tests/%.actual: tests/%.xml
+	-$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
+
+DEPFILES = $(addsuffix .d,$(addprefix $(DEPDIR)/,$(basename $(TESTSRCS) $(DOCS) $(EXAMPLES))))
+DEPDIRS = $(sort $(dir $(DEPFILES)))
+
+$(DEPDIRS):
+	mkdir -p $@
+
+%.pdf: $(DEPDIR)/%.d
+%.expected: $(DEPDIR)/%.d
+%.actual: $(DEPDIR)/%.d
+
+$(DEPFILES): | $(DEPDIRS)
+
+include $(wildcard $(DEPFILES))
+
+# Make sure we have a local font directory before putting anything there
+.fonts/%: Makefile-fonts | .fonts
+
+.fonts: fontconfig.conf
+	mkdir -p $@
+
+# Actual rules for downloading test fonts are in a separate file
+include Makefile-fonts
+
+# Make sure we have font files before running tests (ignoring timestamp of font files)
+.PHONY: testprep
+testprep: | $(DEPDIRS) $(addprefix .fonts/,$(TESTFONTFILES))
 
 gource.webm:
 	mkdir -p /tmp/gravatars

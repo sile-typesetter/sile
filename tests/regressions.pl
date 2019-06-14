@@ -10,7 +10,7 @@ my $coverage = 0;
 
 GetOptions(
 	'upstream' => \$upstream,
-  'coverage' => \$coverage
+	'coverage' => \$coverage
 );
 
 if ($coverage) { $ENV{SILE_COVERAGE} = 1}
@@ -29,13 +29,11 @@ for (@specifics ? @specifics : <tests/*.sil>) {
     } elsif ($_ =~ /_\w+\.sil/) {
       next if ($_ !~ /_$^O\.sil/) ;
     }
-    print "### Regression testing $_\n";
-    my $out = $_; $out =~ s/\.sil$/\.actual/;
+    my $actual = $_; $actual =~ s/\.sil$/\.actual/;
     if (!system("grep KNOWNBAD $_ >/dev/null")) {
       $knownbad = 1;
     }
-    exit $? >> 8 if system qq!./sile -b debug $_ -o $out!;
-    if (system("diff -".($knownbad?"q":"")."U0 $expectation $out")) {
+    if (system("diff -".($knownbad?"q":"")."U0 $expectation $actual")) {
       if ($knownbad) { push @knownbad, $_; }
       else { push @failed, $_; }
     } else {
@@ -47,21 +45,19 @@ for (@specifics ? @specifics : <tests/*.sil>) {
   }
 }
 if (@passed){
-  print "\n",color("green"), "Passing tests:",color("reset");
-  print "\n • ",join(", ", @passed),"\n";
-}
-if (@failed) {
-  print "\n",color("red"), "Failed tests:\n",color("reset");
-  for (@failed) { print " • ",$_,"\n"}
-}
-if (@knownbad){
-  print "\n",color("yellow"), "Known bad tests:",color("reset");
-  print "\n • ",join(", ", @knownbad),"\n";
+  print "\n", color("green"), "Passing tests:", color("reset"), "\n";
+  for (@passed) { print "✔ ", $_, "\n"}
 }
 if (@missing){
-  print "\n",color("cyan"),"Tests missing expectations:",color("reset");
-  print "\n • ",join(", ", @missing),"\n";
+  print "\n", color("cyan"), "Tests missing expectations:", color("reset"), "\n";
+  for (@missing) { print "• ", $_, "\n"}
+}
+if (@knownbad){
+  print "\n", color("yellow"), "Known bad tests:", color("reset"), "\n";
+  for (@knownbad) { print "⚠ ", $_, "\n"}
 }
 if (@failed) {
-	exit 1;
+  print "\n", color("red"), "Failed tests:", color("reset"), "\n";
+  for (@failed) { print "❌ ", $_, "\n"}
+  exit 1;
 }

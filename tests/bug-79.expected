@@ -1,8 +1,8 @@
-Set paper size 	419.5275636	595.275597
+Set paper size 	297.6377985	419.5275636
 Begin page
 Mx 	76.6929
-My 	63.8429
-Set font 	Linux Libertine O;10;400;;normal;;LTR
+My 	63.6729
+Set font 	Libertinus Serif;10;400;;normal;;LTR
 T	91 66 79 66	(zana)
 Mx 	99.8853
 T	35 80 86 83 80 87 161	(Bourová)
@@ -15,7 +15,7 @@ T	87 70	(ve)
 Mx 	190.6724
 T	205 85 90 281 70 68 73	(čtyřech)
 Mx 	56.6929
-My 	75.8429
+My 	75.6729
 T	91 161 87 80 69 70 68 73	(závodech)
 Mx 	94.7629
 T	13	(,)
@@ -32,7 +32,7 @@ T	35 70	(Be)
 Mx 	217.7924
 T	14	(-)
 Mx 	56.6929
-My 	87.8429
+My 	87.6729
 T	79 70 68 76 86	(necku)
 Mx 	83.7968
 T	79 66	(na)
@@ -49,7 +49,7 @@ T	46 66 72 69 66 77 169 79 66	(Magdaléna)
 Mx 	179.4024
 T	36 73 83 161 84 85 80 87 161	(Chrástová)
 Mx 	56.6929
-My 	99.8429
+My 	99.6729
 T	84 76 80 79 205 74 77 66	(skončila)
 Mx 	93.5578
 T	79 66	(na)
@@ -62,7 +62,7 @@ T	13	(,)
 Mx 	188.6424
 T	35 66 83 67 80 83 66	(Barbora)
 Mx 	56.6929
-My 	111.8429
+My 	111.6729
 T	288 86 77 68 80 87 161	(Šulcová)
 Mx 	91.2926
 T	67 90 77 66	(byla)
@@ -70,9 +70,5 @@ Mx 	111.5922
 T	73 79 70 69	(hned)
 Mx 	135.0019
 T	91 66	(za)
-Mx 	207.4176
-My 	553.7327
-Set font 	Gentium Plus;10;400;;normal;;LTR
-T	20	(1)
 End page
 Finish

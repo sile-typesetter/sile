@@ -10,7 +10,7 @@ SILE.registerCommand("pullquote:author-font", function (options, content)
 end, "The font style with which to typeset the author attribution.")
 
 SILE.registerCommand("pullquote:mark-font", function (options, content)
-  SILE.settings.set("font.family", "Linux Libertine O")
+  SILE.settings.set("font.family", "Libertinus Serif")
 end, "The font from which to pull the quotation marks.")
 
 local typesetMark = function (open, setback, scale, color, mark)
