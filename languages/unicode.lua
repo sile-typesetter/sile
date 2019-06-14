@@ -10,21 +10,13 @@ SILE.nodeMakers.base = std.object {
       self.contents = {} ; self.token = "" ; self.lastnode = "nnode"
     end
   end,
-  makeLetterSpaceGlue = function(self)
-    if self.lastnode ~= "glue" then
-      if SILE.settings.get("document.letterspaceglue") then
-        local w = SILE.settings.get("document.letterspaceglue").width
-        coroutine.yield(SILE.nodefactory.newKern({ width = w }))
-      end
-    end
-    self.lastnode = "glue"
-  end,
   addToken = function (self, char, item)
     self.token = self.token .. char
     self.contents[#self.contents+1] = item
   end,
   makeGlue = function(self,item)
     if SILE.settings.get("typesetter.obeyspaces") or self.lastnode ~= "glue" then
+      SU.debug("tokenizer", "Space node")
       coroutine.yield(SILE.shaper:makeSpaceNode(self.options, item))
     end
     self.lastnode = "glue"
@@ -38,10 +30,25 @@ SILE.nodeMakers.base = std.object {
   init = function (self)
     self.contents = {}
     self.token = ""
-    self.lastnode = ""
+    self.lastnode = false
+    self.lasttype = false
   end,
   iterator = function (self,items)
     SU.error("Abstract function nodemaker:iterator called", true)
+  end,
+  charData = function(self, char)
+    local cp = SU.codepoint(char)
+    if not chardata[cp] then return {} end
+    return chardata[cp]
+  end,
+  isPunctuation = function(self, char)
+    return self.isPunctuationType[self:charData(char).category]
+  end,
+  isSpace = function(self, char)
+    return self.isSpaceType[self:charData(char).linebreak]
+  end,
+  isBreaking = function(self, char)
+    return self.isBreakingType[self:charData(char).linebreak]
   end
 }
 
@@ -49,32 +56,94 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
   isWordType = { cm = true },
   isSpaceType = { sp = true },
   isBreakingType = { ba = true, zw = true },
+  isPunctuationType = { po = true },
   dealWith = function (self, item)
     local char = item.text
     local cp = SU.codepoint(char)
     local thistype = chardata[cp] and chardata[cp].linebreak
-    if chardata[cp] and self.isSpaceType[thistype] then
+    if self:isSpace(item.text) then
       self:makeToken()
       self:makeGlue(item)
-    elseif chardata[cp] and self.isBreakingType[thistype] then
+    elseif self:isBreaking(item.text) then
       self:addToken(char,item)
       self:makeToken()
       self:makePenalty(0)
-    elseif lasttype and (thistype and thistype ~= lasttype and not self.isWordType[thistype]) then
+    elseif self.lasttype and (self.thistype and thistype ~= lasttype and not self.isWordType[thistype]) then
       self:makeToken()
       self:addToken(char,item)
     else
-      if SILE.settings.get("document.letterspaceglue") then
-        self:makeToken()
-        self:makeLetterSpaceGlue()
-      end
+      self:letterspace()
       self:addToken(char,item)
     end
     if not self.isWordType[thistype] then lasttype = chardata[cp] and chardata[cp].linebreak end
+    self.lasttype = thistype
+  end,
+  handleInitialGlue = function(self, items)
+    local i = 1
+    while i <= #items do item = items[i]
+      local char = item.text
+      if self:isSpace(item.text) then self:makeGlue(item) else break end
+      i = i + 1
+    end
+    return i,items
+  end,
+  letterspace = function(self)
+    if not SILE.settings.get("document.letterspaceglue") then return end
+    if self.token then self:makeToken() end
+    if self.lastnode and self.lastnode ~= "glue" then
+      local w = SILE.settings.get("document.letterspaceglue").width
+      SU.debug("tokenizer", "Letter space glue: "..w)
+      coroutine.yield(SILE.nodefactory.newKern({ width = w }))
+      self.lastnode = "glue"
+    end
+  end,
+  isICUBreakHere = function(self, chunks, item)
+    return chunks[1] and (item.index >= chunks[1].index)
+  end,
+  handleICUBreak = function(self, chunks, item)
+    -- The ICU library has told us there is a breakpoint at
+    -- this index. We need to...
+    local bp = chunks[1]
+    -- ... remove this breakpoint (and any out of order ones)
+    -- from the ICU breakpoints array so that chunks[1] is
+    -- the next index point for comparison against the string...
+    while chunks[1] and item.index >= chunks[1].index do
+      table.remove(chunks,1)
+    end
+    -- ...decide which kind of breakpoint we have here and
+    -- handle it appropriately.
+    if bp.type == "word" then
+      self:handleWordBreak(item)
+    elseif bp.type == "line" then
+      self:handleLineBreak(item, bp.subtype)
+    end
+    return chunks
+  end,
+  handleWordBreak = function(self, item)
+    self:makeToken()
+    if self:isSpace(item.text) then
+      -- Spacing word break
+      self:makeGlue(item)
+    else -- a word break which isn't a space
+      self:addToken(item.text,item)
+    end
+  end,
+  handleLineBreak = function(self, item, subtype)
+    -- Because we are in charge of paragraphing, we
+    -- will override space-type line breaks, and treat
+    -- them just as ordinary word spaces.
+    if self:isSpace(item.text) then
+      self:handleWordBreak(item)
+      return
+    end
+    -- But explicit line breaks we will turn into
+    -- soft and hard breaks.
+    self:makeToken()
+    self:makePenalty(subtype == "soft" and 0 or -1000)
+    self:addToken(item.text,item)
   end,
   iterator = function (self, items)
     local fulltext = ""
-    local ics = SILE.settings.get("document.letterspaceglue")
     for i = 1,#items do item = items[i]
       fulltext = fulltext .. items[i].text
     end
@@ -82,61 +151,16 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
     self:init()
     table.remove(chunks,1)
     return coroutine.wrap(function()
-      -- Special-case initial glue
-      local i = 1
-      while i <= #items do item = items[i]
-        local char = item.text
-        local cp = SU.codepoint(char)
-        local thistype = chardata[cp] and chardata[cp].linebreak
-        if thistype == "sp" then self:makeGlue(item) else break end
-        i = i + 1
-      end
-      -- And now onto the real thing
-      for i = i,#items do item = items[i]
-        local char = items[i].text
-        local cp = SU.codepoint(char)
-        if chunks[1] and (items[i].index >= chunks[1].index) then
-          -- There's a break here
-          local thistype = chardata[cp] and chardata[cp].linebreak
-          local bp = chunks[1]
-          while chunks[1] and items[i].index >= chunks[1].index do
-            table.remove(chunks,1)
-          end
-          if bp.type == "word" then
-            if chardata[cp] and thistype == "sp" then
-              -- Spacing word break
-              self:makeToken()
-              self:makeGlue(item)
-            else -- a word break which isn't a space
-              self:makeToken()
-              self:addToken(char,item)
-            end
-          elseif bp.type == "line" then
-            if chardata[cp] and thistype == "sp" then
-              self:makeToken()
-              self:makeGlue(item)
-            else
-              -- Line break
-              self:makeToken()
-              self:makePenalty(bp.subtype == "soft" and 0 or -1000)
-              self:addToken(char,item)
-            end
-          end
+      i, self.items = self:handleInitialGlue(items)
+      for i = i,#items do
+        self.i = i
+        self.item = self.items[self.i]
+        if self:isICUBreakHere(chunks, self.item) then
+          chunks = self:handleICUBreak(chunks, self.item)
         else
-          local thistype = chardata[cp] and chardata[cp].linebreak
-          if ics then
-            self:makeToken()
-            self:makeLetterSpaceGlue()
-          end
-          if chardata[cp] and thistype == "sp" then
-            self:makeToken()
-            self:makeGlue(item)
-          else
-            self:addToken(char,item)
-          end
+          self:dealWith(self.item)
         end
       end
-      if ics then self:makeLetterSpaceGlue() end
       self:makeToken()
     end)
   end

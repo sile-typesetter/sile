@@ -10,6 +10,7 @@ TESTFONTFILES += LibertinusSans-Bold.otf LibertinusSerif-Regular.otf
 TESTFONTFILES += NotoNaskhArabic-Regular.ttf
 TESTFONTFILES += NotoSansCJK-Regular.ttc
 TESTFONTFILES += NotoSansKannada-Regular.ttf
+TESTFONTFILES += NotoSansEthiopic-Regular.ttf
 TESTFONTFILES += NotoSansMalayalam-Regular.ttf
 TESTFONTFILES += SBL_Hbrw.ttf
 TESTFONTFILES += Symbola_Hinted.ttf
