@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Getopt::Long;
 use Term::ANSIColor;
-my (@failed, @passed, @knownbad, @missing);
+my (@failed, @passed, @unsupported, @knownbad, @missing);
 my $coverage = 0;
 
 GetOptions(
@@ -18,23 +18,30 @@ my @specifics = @ARGV;
 my $exit = 0;
 for (@specifics ? @specifics : <tests/*.sil>) {
   my $expectation = $_; $expectation =~ s/\.sil$/\.expected/;
-  my $knownbad;
+	my $actual = $_; $actual =~ s/\.sil$/\.actual/;
+  my ($unsupported, $knownbad);
   if (-f $expectation) {
-	 # Only test OS specific regressions on their respective OSes
-	 if ($_ =~ /_\w+\.sil/) {
-      next if ($_ !~ /_$^O\.sil/) ;
-    }
-    my $actual = $_; $actual =~ s/\.sil$/\.actual/;
-    if (!system("grep KNOWNBAD $_ >/dev/null")) {
+		# Entirely skip tests designed for an OS that is not us
+		if (system("head -n1 $_ | grep -q -P -v 'OS=(?!$^O)'")) {
+			push @unsupported, $_;
+			next;
+		}
+		# Run but don't fail on tests that exist but are known to fail
+    if (!system("head -n1 $_ | grep -q KNOWNBAD")) {
       $knownbad = 1;
     }
-    if (system("diff -".($knownbad?"q":"")."U0 $expectation $actual")) {
-      if ($knownbad) { push @knownbad, $_; }
-      else { push @failed, $_; }
-    } else {
-      if ($knownbad) { push @knownbad, $_; }
-      else { push @passed, $_; }
-    }
+		if (!system("grep -qx 'UNSUPPORTED' $actual")) {
+			$unsupported = 1;
+		}
+    if (!system("diff -".($knownbad?"q":"")."U0 $expectation $actual")) {
+			push @passed, $_;
+		} elsif ($knownbad) {
+			push @knownbad, $_;
+		} elsif ($unsupported) {
+			push @unsupported, $_;
+		} else {
+			push @failed, $_;
+		}
   } else {
     push @missing, $_;
   }
@@ -46,6 +53,10 @@ if (@passed){
 if (@missing){
   print "\n", color("cyan"), "Tests missing expectations:", color("reset"), "\n";
   for (@missing) { print "• ", $_, "\n"}
+}
+if (@unsupported){
+  print "\n", color("magenta"), "Tests unsupported on this system:", color("reset"), "\n";
+  for (@unsupported) { print "⚠ ", $_, "\n"}
 }
 if (@knownbad){
   print "\n", color("yellow"), "Known bad tests:", color("reset"), "\n";
