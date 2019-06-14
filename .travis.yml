@@ -71,6 +71,7 @@ install:
  - luarocks install luasocket
  - luarocks install luasec
  - luarocks install lua_cliargs 2.3-3
+ - luarocks install penlight
  - luarocks install busted
  - luarocks install luacov 0.8-1
  - luarocks install luacov-coveralls
