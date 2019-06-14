@@ -131,6 +131,12 @@ static char** scan_shaper_list(char* cp1) {
   return res;
 }
 
+int can_use_ot_funcs (hb_face_t* face) {
+  if (hb_version_atleast(2,3,0)) return 1;
+  hb_blob_t *cff = hb_face_reference_table(face, hb_tag_from_string("CFF ", 4));
+  return hb_blob_get_length(cff) == 0;
+}
+
 int shape (lua_State *L) {
     size_t font_l;
     const char * text = luaL_checkstring(L, 1);
@@ -174,10 +180,13 @@ int shape (lua_State *L) {
     unsigned int upem = hb_face_get_upem(hbFace);
     hb_font_set_scale(hbFont, upem, upem);
 
-    /* Note that this will cause differing results for CFF fonts. */
-    if (hb_version_atleast(2,3,0)) {
+    if (can_use_ot_funcs(hbFace)) {
       hb_ot_font_set_funcs(hbFont);
     } else {
+      /*
+        Note that using FT may cause differing vertical metrics for CFF fonts.
+        SILE will give a one-time warning if this is the case.
+      */
       hb_ft_font_set_funcs(hbFont);
     }
 
