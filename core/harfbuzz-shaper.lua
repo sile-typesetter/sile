@@ -23,8 +23,8 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
   shapeToken = function (self, text, options)
     local items
     if #text < smallTokenSize then items = shapeCache[_key(options, text)]; if items then return items end end
-    if #text < 1 then return {} end -- work around segfault in HB < 1.0.4
     local face = SILE.font.cache(options, self.getFace)
+    if self:checkHBProblems(text, face) then return {} end
     if not face then
       SU.error("Could not find requested font "..options.." or any suitable substitutes")
     end
@@ -100,6 +100,18 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
       end
       print(face.filename..":"..face.index, version)
     end
+  end,
+  checkHBProblems = function (self, text, face)
+    if hb.version_lessthan(1,0,4) and #text < 1 then
+      return true
+    end
+    if hb.version_lessthan(2,3,0) and
+      hb.get_table(face.data, face.index, "CFF "):len() > 0 and
+      not substwarnings["CFF "] then
+      SU.warn("Vertical spacing of CFF fonts may be subtly inconsistent between systems. Upgrade to Harfbuzz 2.3.0 if you need absolute consistency.")
+      substwarnings["CFF "] = true
+    end
+    return false
   end
 }
 
