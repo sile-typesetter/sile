@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Getopt::Long;
 use Term::ANSIColor;
-my (@failed, @passed, @unsupported, @knownbad, @missing);
+my (@failed, @passed, @unsupported, @knownbad, @knownbadbutpassing, @missing);
 my $coverage = 0;
 
 GetOptions(
@@ -34,7 +34,8 @@ for (@specifics ? @specifics : <tests/*.sil>) {
 			$unsupported = 1;
 		}
     if (!system("diff -".($knownbad?"q":"")."U0 $expectation $actual")) {
-			push @passed, $_;
+			if ($knownbad) { push @knownbadbutpassing, $_;  }
+			else { push @passed, $_; }
 		} elsif ($knownbad) {
 			push @knownbad, $_;
 		} elsif ($unsupported) {
@@ -59,8 +60,12 @@ if (@unsupported){
   for (@unsupported) { print "⚠ ", $_, "\n"}
 }
 if (@knownbad){
-  print "\n", color("yellow"), "Known bad tests:", color("reset"), "\n";
+  print "\n", color("yellow"), "Known bad tests that fail:", color("reset"), "\n";
   for (@knownbad) { print "⚠ ", $_, "\n"}
+}
+if (@knownbadbutpassing){
+  print "\n", color("bright_yellow"), "Known bad tests that pass:", color("reset"), "\n";
+  for (@knownbadbutpassing) { print "❓ ", $_, "\n"}
 }
 if (@failed) {
   print "\n", color("red"), "Failed tests:", color("reset"), "\n";
