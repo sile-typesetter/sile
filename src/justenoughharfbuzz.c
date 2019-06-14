@@ -288,6 +288,14 @@ int get_harfbuzz_version (lua_State *L) {
   return 1;
 }
 
+int version_lessthan (lua_State *L) {
+  unsigned int major = luaL_checknumber(L, 1);
+  unsigned int minor = luaL_checknumber(L, 2);
+  unsigned int micro = luaL_checknumber(L, 3);
+  lua_pushboolean(L, !hb_version_atleast(major,minor,micro));
+  return 1;
+}
+
 int list_shapers (lua_State *L) {
   const char **shaper_list = hb_shape_list_shapers ();
   int i = 0;
@@ -349,6 +357,7 @@ static const struct luaL_Reg lib_table [] = {
   {"version", get_harfbuzz_version},
   {"shapers", list_shapers},
   {"get_table", get_table},
+  {"version_lessthan", version_lessthan},
   {NULL, NULL}
 };
 
