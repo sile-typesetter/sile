@@ -82,7 +82,7 @@ end
 
 utilities.dump = function (...)
   local arg = { ... } -- Avoid things that Lua stuffs in arg like args to self()
-  require("pl.pretty").dump(#arg == 1 and arg[1] or arg, "/dev/stderr")
+  pretty.dump(#arg == 1 and arg[1] or arg, "/dev/stderr")
 end
 
 utilities.concat = function (array, separator)
