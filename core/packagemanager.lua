@@ -22,7 +22,7 @@ local function loadInSandbox(untrusted_code)
     return pcall(untrusted_function)
   else
     if untrusted_code:byte(1) == 27 then return nil, "binary bytecode prohibited" end
-    local untrusted_function, message = loadstring(untrusted_code)
+    local untrusted_function, message = load(untrusted_code)
     if not untrusted_function then return nil, message end
     setfenv(untrusted_function, env)
     return pcall(untrusted_function)
@@ -131,11 +131,11 @@ function updatePackage(packageName,branch)
     installPackage(packageName)
   end
 
-  local ret = os.execute("git pull")
+  local ret = execute("git pull")
   if not ret then
     SU.error("Error updating repository for package "..packageName..": "..ret)
   end
-  local ret = os.execute("git checkout "..branch)
+  local ret = execute("git checkout "..branch)
   if not ret then
     SU.error("Error updating repository for package "..packageName..": "..ret)
   end
