@@ -3,29 +3,33 @@ SYSTEM_SILE_PATH = "@SILE_PATH@"
 SYSTEM_SILE_LIB_PATH = "@SILE_LIB_PATH@"
 SHARED_LIB_EXT = "@SHARED_LIB_EXT@"
 
-package.path = SYSTEM_SILE_PATH..'/?.lua;'..
-  SYSTEM_SILE_PATH..'/lua-libraries/?.lua;'..
-  SYSTEM_SILE_PATH..'/lua-libraries/?/init.lua;'..
-  'lua-libraries/?.lua;lua-libraries/?/init.lua;' ..
-  package.path
+local executable = debug.getinfo(1, "S").short_src
+
+local extendPath = function (path)
+  package.path =  path .. "/?.lua;" .. package.path
+  package.path =  path .. "/?/init.lua;" .. package.path
+  package.path =  path .. "/lua-libraries/?.lua;" .. package.path
+  package.path =  path .. "/lua-libraries/?/init.lua;" .. package.path
+  package.cpath = path .. "/?."..SHARED_LIB_EXT..";" .. package.cpath
+  package.cpath = path .. "/core/?."..SHARED_LIB_EXT..";" .. package.cpath
+end
+
+extendPath(SYSTEM_SILE_PATH)
+extendPath(SYSTEM_SILE_LIB_PATH)
 
 local pathvar = os.getenv("SILE_PATH")
 if pathvar then
-	for path in string.gmatch(pathvar, "[^;]+") do
-		package.path =  path .. "/?.lua;" .. package.path
-		package.path =  path .. "/?/init.lua;" .. package.path
-		package.path =  path .. "/lua-libraries/?.lua;" .. package.path
-		package.path =  path .. "/lua-libraries/?/init.lua;" .. package.path
-		package.cpath = path .. "/?."..SHARED_LIB_EXT..";" .. package.cpath
-		package.cpath = path .. "/core/?."..SHARED_LIB_EXT..";" .. package.cpath
-	end
+  for path in string.gmatch(pathvar, "[^;]+") do
+    if path:len() >= 1 and path ~= "./" then extendPath(path) end
+  end
 end
 
-package.path = '?;?.lua' .. package.path
+local cwd = executable:gsub("(.*/)(.*)", "%1")
+if cwd ~= "./" then extendPath(cwd) end
+extendPath(".")
 
-package.cpath = package.cpath .. ";" ..
-  "core/?."..SHARED_LIB_EXT.. ";" ..
-  SYSTEM_SILE_LIB_PATH.."/?."..SHARED_LIB_EXT
+-- Append the Lua runtime's default path
+package.path = package.path .. ";;"
 
 SILE = require("core/sile")
 io.stdout:setvbuf 'no'
@@ -33,7 +37,7 @@ SILE.parseArguments()
 if not os.getenv 'LUA_REPL_RLWRAP' then
   io.stderr:write('This is SILE '..SILE.version..'\n')
 end
-if SILE.makeDeps then SILE.makeDeps:add(debug.getinfo(1, "S").short_src) end
+if SILE.makeDeps then SILE.makeDeps:add(executable) end
 SILE.init()
 if SILE.masterFilename then
   if SILE.preamble then
