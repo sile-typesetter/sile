@@ -261,32 +261,34 @@ local _stackbox = _mbox {
     if self.anchor < 1 or self.anchor > #(self.children) then
       SU.error('Wrong index of the anchor children')
     end
-    -- Add space between Ord and Bin/Rel
-    local spaces = {}
-    if self.mode == mathMode.display or self.mode == mathMode.displayCramped or
-        self.mode == mathMode.text or self.mode == mathMode.textCramped then
-      for i, v in ipairs(self.children) do
-        if i < #self.children then
-          local v2 = self.children[i + 1]
-          if (v.atom == atomType.relationalOperator and v2.atom == atomType.ordinary) or
-              (v2.atom == atomType.relationalOperator and v.atom == atomType.ordinary) then
-            spaces[i + 1] = 'thick'
-          elseif (v.atom == atomType.binaryOperator and v2.atom == atomType.ordinary) or
-              (v2.atom == atomType.binaryOperator and v.atom == atomType.ordinary) then
-            spaces[i + 1] = 'med'
+    if self.direction == "H" then
+      -- Add space between Ord and Bin/Rel
+      local spaces = {}
+      if self.mode == mathMode.display or self.mode == mathMode.displayCramped or
+          self.mode == mathMode.text or self.mode == mathMode.textCramped then
+        for i, v in ipairs(self.children) do
+          if i < #self.children then
+            local v2 = self.children[i + 1]
+            if (v.atom == atomType.relationalOperator and v2.atom == atomType.ordinary) or
+                (v2.atom == atomType.relationalOperator and v.atom == atomType.ordinary) then
+              spaces[i + 1] = 'thick'
+            elseif (v.atom == atomType.binaryOperator and v2.atom == atomType.ordinary) or
+                (v2.atom == atomType.binaryOperator and v.atom == atomType.ordinary) then
+              spaces[i + 1] = 'med'
+            end
           end
         end
       end
-    end
 
-    local spaceIdx = {}
-    for i, _ in pairs(spaces) do
-      table.insert(spaceIdx, i)
-    end
-    table.sort(spaceIdx, function(a, b) return a > b end)
-    for _, idx in ipairs(spaceIdx) do
-      table.insert(self.children, idx, newSpace({kind = spaces[idx]}))
-      if idx <= self.anchor then self.anchor = self.anchor + 1 end
+      local spaceIdx = {}
+      for i, _ in pairs(spaces) do
+        table.insert(spaceIdx, i)
+      end
+      table.sort(spaceIdx, function(a, b) return a > b end)
+      for _, idx in ipairs(spaceIdx) do
+        table.insert(self.children, idx, newSpace({kind = spaces[idx]}))
+        if idx <= self.anchor then self.anchor = self.anchor + 1 end
+      end
     end
   end,
   styleChildren = function(self)
@@ -439,7 +441,8 @@ local _space = _terminal {
   kind = "thin",
   init = function(self)
     _terminal.init(self)
-    local mu = self.options.size / 18
+    local fontSize = math.floor(self.options.size * ((self.mode == mathMode.script or self.mode == mathMode.scriptCramped) and 0.7 or 0.5))
+    local mu = fontSize / 18
     if self.kind == "thin" then
       self.length = SILE.length.new({
         length = 3 * mu,
@@ -464,7 +467,9 @@ local _space = _terminal {
   end,
   shape = function(self)
     self.width = self.length
-    self.height = self.options.size
+    -- Spaces say that they have height zero because they cannot guess
+    -- what the maximum height in the surrounding text is
+    self.height = 0
     self.depth = 0
   end,
   output = function(self) end
