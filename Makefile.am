@@ -15,6 +15,12 @@ EXTRA_DIST=NEWS.md README.md LICENSE tests examples documentation
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
 
+.PHONY: installrocks
+installrocks: sile-dev-1.rockspec
+	luarocks --tree lua_modules install --only-deps $<
+
+sile: installrocks
+
 DEPDIR := .deps
 REGRESSIONSCRIPT := ./tests/regressions.pl
 LOCALTESTFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf

@@ -1,6 +1,6 @@
 if not SILE.shapers then SILE.shapers = { } end
 local hb = require("justenoughharfbuzz")
-local bit32 = require("bit32-compat")
+local bit32 = require("bit32")
 
 SILE.settings.declare({
   name = "harfbuzz.subshapers",

@@ -1,6 +1,6 @@
 local utilities = {}
 
-local bit32 = require("bit32-compat")
+local bit32 = require("bit32")
 
 math.epsilon = 1E-12
 

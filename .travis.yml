@@ -34,9 +34,9 @@ env:
    - LUA=lua5.1 HARFBUZZ=2.5.1
 cache:
   directories:
-  - $TRAVIS_BUILD_DIR/.fonts
   - $HOME/local
-  # Cache object files etc. to speed up build
+  - $TRAVIS_BUILD_DIR/.fonts
+  - $TRAVIS_BUILD_DIR/lua_modules
   - $TRAVIS_BUILD_DIR/libtexpdf
 before_install:
  - source .travis/setenv_lua.sh
@@ -63,21 +63,15 @@ before_install:
  - export LIBRARY_PATH=$LUA_HOME_DIR/lib:$LD_LIBRARY_PATH
  - export LD_RUN_PATH=$LUA_HOME_DIR/lib:$LD_RUN_PATH
  - export PATH=.travis:$PATH
+before_scipt:
+  - eval $(luarocks --tree lua_modules path)
 install:
- - luarocks install lpeg
- - luarocks install lua-zlib
- - luarocks install luaexpat
- - luarocks install luafilesystem
- - luarocks install luasocket
- - luarocks install luasec
- - luarocks install lua_cliargs 2.3-3
- - luarocks install penlight
  - luarocks install busted
  - luarocks install luacov 0.8-1
  - luarocks install luacov-coveralls
 script:
  - fold_unless_fail 'Building' 'build' sh -c './bootstrap.sh && ./configure && make'
- - fold_unless_fail 'busted' 'busted'  busted --cpath="core/?.so" -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
+ - fold_unless_fail 'Busted' 'busted'  busted --cpath="core/?.so" --lpath='./lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
  - fold_unless_fail 'Fetch resources used in tests' 'regression' make --output-sync testprep
  - fold_unless_fail 'Run regression tests' 'regression' make --output-sync test
  - fold_unless_fail 'Compile documentation and examples' 'compile_docs' make --output-sync docs examples
