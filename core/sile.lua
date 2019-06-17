@@ -15,6 +15,7 @@ lfs = require("lfs")
 
 compat = require("pl.compat")
 if compat.lua51 then load = compat.load; execute = compat.execute end
+if not bit32 then bit32 = require("bit32") end
 
 if (os.getenv("SILE_COVERAGE")) then require("luacov") end
 

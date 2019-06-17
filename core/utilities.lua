@@ -1,7 +1,5 @@
 local utilities = {}
 
-local bit32 = require("bit32")
-
 math.epsilon = 1E-12
 
 utilities.required = function (options, name, context)

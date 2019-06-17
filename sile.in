@@ -4,12 +4,16 @@ SYSTEM_SILE_LIB_PATH = "@SILE_LIB_PATH@"
 SHARED_LIB_EXT = "@SHARED_LIB_EXT@"
 
 local executable = debug.getinfo(1, "S").short_src
+local luaversion = _VERSION:match("%d+%.%d+")
 
 local extendPath = function (path)
-  package.path =  path .. "/?.lua;" .. package.path
-  package.path =  path .. "/?/init.lua;" .. package.path
-  package.path =  path .. "/lua-libraries/?.lua;" .. package.path
-  package.path =  path .. "/lua-libraries/?/init.lua;" .. package.path
+  package.path  = path .. "/?.lua;" .. package.path
+  package.path  = path .. "/?/init.lua;" .. package.path
+  package.path  = path .. "/lua-libraries/?.lua;" .. package.path
+  package.path  = path .. "/lua-libraries/?/init.lua;" .. package.path
+  package.path  = path .. '/lua_modules/share/lua/' .. luaversion .. '/?.lua;' .. package.path
+  package.path  = path .. '/lua_modules/share/lua/' .. luaversion .. '/?/init.lua;' .. package.path
+  package.cpath = path .. '/lua_modules/lib/lua/' .. luaversion .. '/?.so;' .. package.cpath
   package.cpath = path .. "/?."..SHARED_LIB_EXT..";" .. package.cpath
   package.cpath = path .. "/core/?."..SHARED_LIB_EXT..";" .. package.cpath
 end
