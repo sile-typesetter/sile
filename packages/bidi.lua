@@ -10,7 +10,6 @@ SILE.registerCommand("thisframedirection", function(options, content)
   SILE.typesetter.frame:init()
 end)
 
-
 SILE.registerCommand("thisframeRTL", function(options, content)
   SILE.typesetter.frame.direction = "RTL"
   SILE.typesetter:leaveHmode()
@@ -153,8 +152,8 @@ end
 local splitNodeAtPos = function (n,splitstart, p)
   if n:isUnshaped() then
     local utf8chars = SU.splitUtf8(n.text)
-    local n2 = SILE.nodefactory.newUnshaped({ text = "", options = table.clone(n.options) })
-    local n1 = SILE.nodefactory.newUnshaped({ text = "", options = table.clone(n.options) })
+    local n2 = SILE.nodefactory.newUnshaped({ text = "", options = std.table.clone(n.options) })
+    local n1 = SILE.nodefactory.newUnshaped({ text = "", options = std.table.clone(n.options) })
     for i = splitstart,#utf8chars do
       if i <= p then n1.text = n1.text .. utf8chars[i]
       else n2.text = n2.text .. utf8chars[i]
@@ -172,7 +171,7 @@ local splitNodelistIntoBidiRuns = function (self)
   local owners, text = nodeListToText(nl)
   local base_level = self.frame:writingDirection() == "RTL" and 1 or 0
   local runs = { icu.bidi_runs(table.concat(text), self.frame:writingDirection()) }
-  runs = table.sort(runs, function (a,b) return a.start < b.start end)
+  table.sort(runs, function (a,b) return a.start < b.start end)
   local newNl = {}
   -- Split nodes on run boundaries
   for i = 1,#runs do
