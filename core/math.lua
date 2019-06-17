@@ -54,6 +54,8 @@ local operatorAtomTypes = {
   ['='] = atomType.relationalOperator,
 }
 
+local bigOperators = {'∑','∏','⋀', '⋁', '⋂', '⋃', '⨅', '⨆'}
+
 -- Foward declaration
 local newSpace
 
@@ -147,6 +149,13 @@ local function getRightMostGlyphId(node)
   else
     return 0
   end
+end
+
+local function contains(table, elt)
+  for _,x in pairs(table) do
+    if x == elt then return true end
+  end
+  return false
 end
 
 local function maxLength(...)
@@ -428,6 +437,98 @@ local _subscript = _mbox {
   output = function(self, x, y, line) end
 }
 
+local _bigOpSubscript = _subscript {
+  _type = "BigOpSubscript",
+  kind = "sub",
+  base = nil,
+  sub = nil,
+  sup = nil,
+  init = function(self)
+    _mbox.init(self)
+    if self.sup then table.insert(self.children, self.sup) end
+    if self.base then table.insert(self.children, self.base) end
+    if self.sub then table.insert(self.children, self.sub) end
+  end,
+  styleChildren = function(self)
+    if self.base then self.base.mode = self.mode end
+    if self.sub then self.sub.mode = getSubscriptMode(self.mode) end
+    if self.sup then self.sup.mode = getSuperscriptMode(self.mode) end
+  end,
+  calculateItalicsCorrection = function(self)
+    local lastGid = getRightMostGlyphId(self.base)
+    if lastGid > 0 then
+      local mathMetrics = getMathMetrics(self.options)
+      if mathMetrics.italicsCorrection[lastGid] then
+        return mathMetrics.italicsCorrection[lastGid]
+      end
+    end
+    return 0
+  end,
+  shape = function(self)
+    local constants = getMathMetrics(self.options).constants
+    -- Determine relative Ys
+    if self.base then
+      self.base.relY = SILE.length.make(0)
+    end
+    if self.sub then
+      self.sub.relY = self.base.depth + maxLength(
+        self.sub.height + constants.lowerLimitGapMin,
+        constants.lowerLimitBaselineDropMin)
+    end
+    if self.sup then
+      self.sup.relY = maxLength(
+        self.base.height + constants.upperLimitGapMin,
+        constants.upperLimitBaselineRiseMin) * (-1)
+    end
+    -- Determine relative Xs based on widest symbol
+    local widest, a, b
+    if self.sub.width > self.base.width then
+      if self.sub.width > self.sup.width then
+        widest = self.sub
+        a = self.base
+        b = self.sup
+      else
+        widest = self.sup
+        a = self.base
+        b = self.sub
+      end
+    else
+      if self.base.width > self.sup.width then
+        widest = self.base
+        a = self.sub
+        b = self.sup
+      else
+        widest = self.sup
+        a = self.base
+        b = self.sub
+      end
+    end
+    widest.relX = SILE.length.make(0)
+    local c = widest.width / 2
+    a.relX = c - a.width / 2
+    b.relX = c - b.width / 2
+    -- Determine width and height
+    self.width = maxLength(
+      self.base and self.base.width or 0,
+      maxLength(
+        self.sub and self.sub.width or 0,
+        self.sup and self.sup.width or 0
+      )
+    )
+    if self.sup then
+      self.height = 0 - self.sup.relY + self.sup.height
+    else
+      self.height = self.base and self.base.height or 0
+    end
+    if self.sub then
+      self.depth = self.sub.relY + self.sub.depth
+    else
+      self.depth = self.base and self.base.depth or 0
+    end
+  end,
+  output = function(self, x, y, line) end
+}
+
 -- _terminal is the base class for leaf node
 local _terminal = _mbox {
   _type = "Terminal",
@@ -559,7 +660,14 @@ local newStackbox = function(spec)
 end
 
 local newSubscript = function(spec)
-  local ret = std.tree.clone(_subscript(spec))
+  local ret
+  if spec.base and typeof(spec.base) == "Text"
+      and spec.base.kind == "operator"
+      and contains(bigOperators, spec.base.text) then
+    ret = std.tree.clone(_bigOpSubscript(spec))
+  else
+    ret = std.tree.clone(_subscript(spec))
+  end
   ret:init()
   return ret
 end
