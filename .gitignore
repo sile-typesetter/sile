@@ -45,9 +45,17 @@ libtool
 ltmain.sh
 subfiles.mk
 
+# Build artifacts
 sile
 confdefs.h
 config.log
 core/*.so
-build/ 
-.vscode/ 
+build/
+
+# Vendor stuff
+node_modules
+lua_modules
+
+# Editor entrails
+.vscode/
+tags
