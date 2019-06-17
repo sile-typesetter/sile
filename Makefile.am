@@ -35,6 +35,9 @@ ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 test: $(TESTSRCS) $(ACTUALS) sile testprep
 	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
 
+busted: $(wildcard tests/*_spec.lua) sile testprep
+	busted --cpath="core/?.so" --lpath='./lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
+
 DOCSSRCS = $(basename $(wildcard documentation/*.sil))
 DOCS = $(addsuffix .pdf,$(basename $(DOCSSRCS)))
 
