@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/usr/bin/env bash
 
 # A script for setting up environment for travis-ci testing.
 # Sets up Lua and Luarocks.
@@ -10,13 +10,23 @@ set -eufo pipefail
 
 LUAJIT_BASE="LuaJIT-2.0.4"
 
-source .travis/platform.sh
+if [ -z "${PLATFORM:-}" ]; then
+  PLATFORM=$TRAVIS_OS_NAME;
+fi
 
-LUA_HOME_DIR=$TRAVIS_BUILD_DIR/install/lua
+if [ "$PLATFORM" == "osx" ]; then
+  PLATFORM="macosx";
+fi
 
-LR_HOME_DIR=$TRAVIS_BUILD_DIR/install/luarocks
+if [ -z "$PLATFORM" ]; then
+  if [ "$(uname)" == "Linux" ]; then
+    PLATFORM="linux";
+  else
+    PLATFORM="macosx";
+  fi;
+fi
 
-mkdir $HOME/.lua
+mkdir -p $HOME/.lua
 
 LUAJIT="no"
 

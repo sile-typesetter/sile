@@ -36,40 +36,30 @@ env:
 cache:
   directories:
   - $HOME/local
+  - $HOME/.lua
+  - $HOME/.luarocks
   - $TRAVIS_BUILD_DIR/.fonts
   - $TRAVIS_BUILD_DIR/lua_modules
   - $TRAVIS_BUILD_DIR/libtexpdf
 before_install:
- - source .travis/setenv_lua.sh
- - export LD_LIBRARY_PATH=$HOME/local/lib:$LD_LIBRARY_PATH
- - export LIBRARY_PATH=$HOME/local/lib:$LD_LIBRARY_PATH
- - export LD_RUN_PATH=$HOME/local/lib:$LD_RUN_PATH
+ - export PATH=.travis:$HOME/.lua:$PATH:$HOME/.local/bin:$HOME/.luarocks/bin
+ - export LUA_HOME_DIR=$HOME/local/lua
+ - export LR_HOME_DIR=$HOME/.luarocks
+ - bash .travis/setup_lua.sh
+ - eval $(luarocks --tree lua_modules --local path)
+ - export LD_LIBRARY_PATH=$HOME/local/lib:$LUA_HOME_DIR/lib:$LD_LIBRARY_PATH
+ - export LIBRARY_PATH=$HOME/local/lib:$LUA_HOME_DIR/lib:$LD_LIBRARY_PATH
+ - export LD_RUN_PATH=$HOME/local/lib:$LUA_HOME_DIR/lib:$LD_RUN_PATH
  - export PKG_CONFIG_PATH=$HOME/local/lib/pkgconfig:$PKG_CONFIG_PATH
- - if [ ! -f ~/local/include/harfbuzz/hb.h ]; then
-      mkdir ~/local || true;
-      mkdir ~/builddeps || true;
-      pushd ~/builddeps ;
-      wget https://github.com/harfbuzz/harfbuzz/archive/${HARFBUZZ}.tar.gz ;
-      tar xfz ${HARFBUZZ}.tar.gz ;
-      cd harfbuzz-${HARFBUZZ} ;
-      ./autogen.sh --with$($GRAPHITE || echo 'out')-graphite2 --prefix=$HOME/local/ ;
-      make ;
-      make install ;
-      popd ;
-   fi
- - export LUA_HOME_DIR=$TRAVIS_BUILD_DIR/install/lua
  - export LUA=~/.lua/lua
  - export LUA_INCLUDE=-I$LUA_HOME_DIR/include
- - export LD_LIBRARY_PATH=$LUA_HOME_DIR/lib:$LD_LIBRARY_PATH
- - export LIBRARY_PATH=$LUA_HOME_DIR/lib:$LD_LIBRARY_PATH
- - export LD_RUN_PATH=$LUA_HOME_DIR/lib:$LD_RUN_PATH
- - export PATH=.travis:$PATH
-before_scipt:
-  - eval $(luarocks --tree lua_modules path)
+ - bash .travis/setup_harfbuzz.sh
 install:
  - luarocks install busted
  - luarocks install luacov 0.8-1
  - luarocks install luacov-coveralls
+before_scipt:
+ - eval $(luarocks --tree lua_modules --local path)
 script:
  - fold_unless_fail 'Building' 'build' sh -c './bootstrap.sh && ./configure && make'
  - fold_unless_fail 'Busted' 'busted'  make busted
