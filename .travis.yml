@@ -3,7 +3,7 @@ sudo: false
 dist: xenial
 branches:
   except:
-    - appveyor
+   - appveyor
 compiler:
  - gcc
 addons:
@@ -33,14 +33,19 @@ env:
    - LUA=lua5.2 HARFBUZZ=2.5.1
    - LUA=lua5.1 HARFBUZZ=2.5.1
    - LUA=luajit HARFBUZZ=2.5.1
+matrix:
+  allow_failures:
+   - compiler: gcc
+     env: LUA=luajit HARFBUZZ=2.5.1
+  fast_finish: true
 cache:
   directories:
-  - $HOME/local
-  - $HOME/.lua
-  - $HOME/.luarocks
-  - $TRAVIS_BUILD_DIR/.fonts
-  - $TRAVIS_BUILD_DIR/lua_modules
-  - $TRAVIS_BUILD_DIR/libtexpdf
+   - $HOME/local
+   - $HOME/.lua
+   - $HOME/.luarocks
+   - $TRAVIS_BUILD_DIR/.fonts
+   - $TRAVIS_BUILD_DIR/lua_modules
+   - $TRAVIS_BUILD_DIR/libtexpdf
 before_install:
  - export PATH=.travis:$HOME/.lua:$PATH:$HOME/.local/bin:$HOME/.luarocks/bin
  - export LUA_HOME_DIR=$HOME/local/lua
