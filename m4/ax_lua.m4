@@ -567,7 +567,12 @@ AC_DEFUN([AX_LUA_LIBS],
                      lua$LUA_SHORT_VERSION \
                      lua-$LUA_VERSION \
                      lua-$LUA_SHORT_VERSION \
-                     lua],
+                     lua \
+                     luajit$LUA_VERSION \
+                     luajit$LUA_SHORT_VERSION \
+                     luajit-$LUA_VERSION \
+                     luajit-$LUA_SHORT_VERSION \
+                     luajit],
                    [_ax_found_lua_libs='yes'],
                    [_ax_found_lua_libs='no'],
                    [$_ax_lua_extra_libs])
