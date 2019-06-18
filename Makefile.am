@@ -11,13 +11,25 @@ dist_bin_SCRIPTS = sile
 nobase_dist_pkgdata_DATA = $(subdir_files)
 EXTRA_DIST=NEWS.md README.md LICENSE tests examples documentation
 
+SHELL = bash
 .ONESHELL:
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
 
+LUAROCKS := luarocks --tree lua_modules
+LUAMODLOCK := sile-dev-1.rockslock
+LUAMODSPEC := sile-dev-1.rockspec
+genrockslock := $(LUAROCKS) list --porcelain | awk '{print $$1 " " $$2}'
+rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
+
 .PHONY: installrocks
-installrocks: sile-dev-1.rockspec
-	luarocks --tree lua_modules install --only-deps $<
+installrocks: $(LUAMODLOCK) $(shell $(rocksmatch) || echo lua_modules)
+
+lua_modules: $(LUAMODSPEC) $(shell $(rocksmatch) || echo force)
+	$(LUAROCKS) install --only-deps $<
+
+$(LUAMODLOCK): lua_modules $(LUAMODSPEC)
+	$(genrockslock) > $@
 
 sile: installrocks
 
@@ -109,7 +121,7 @@ include Makefile-fonts
 
 # Make sure we have font files before running tests (ignoring timestamp of font files)
 .PHONY: testprep
-testprep: | $(DEPDIRS) $(addprefix .fonts/,$(TESTFONTFILES))
+testprep: installrocks | $(DEPDIRS) $(addprefix .fonts/,$(TESTFONTFILES))
 
 gource.webm:
 	mkdir -p /tmp/gravatars
