@@ -3,8 +3,7 @@
 
 \noindent{}We are finally at the bottom of our delve into SILE’s commands
 and settings. Here are the basic building blocks out of which all of the
-other operations in SILE are created; in fact, they are the basic
-building blocks of SILE’s operation.
+other operations in SILE are created.
 
 \note{At this point, it is expected that
 you are a class designer, and will be able to follow the details of how
@@ -126,8 +125,8 @@ done with the \code{SILE.typesetter:pushPenalty(\{penalty = x\})} and
 \section{Frames}
 
 As we have previously mentioned, SILE arranges text into frames on the page.
-The overall layout of a page including the apparent margins between content
-and the page edge and other content regions is controlled by defining the
+The overall layout of a page, including the apparent margins between content
+and the page edge and other content regions, is controlled by defining the
 position of the frame or frames into which the content will be flowed.
 
 Normally those frames are defined by your document class, but you can actually
