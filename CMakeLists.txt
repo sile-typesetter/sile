@@ -21,9 +21,8 @@ if (WIN32)
   
   ExternalProject_Add(icu
     GIT_REPOSITORY https://github.com/hunter-packages/icu
-    GIT_TAG v63.1-p5
+    GIT_TAG v63.1-p6
     PATCH_COMMAND git reset --hard HEAD
-    COMMAND git apply "${CMAKE_CURRENT_SOURCE_DIR}/cmake/icu.diff"
     CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" -DICU_BUILD_IO=ON
     INSTALL_DIR "${TMP_INSTALL_DIR}")
 
@@ -42,7 +41,7 @@ if (WIN32)
   ExternalProject_Add(harfbuzz
     DEPENDS ragel icu freetype2_bootstrap
     GIT_REPOSITORY https://github.com/harfbuzz/harfbuzz
-    GIT_TAG 2.3.1
+    GIT_TAG 2.5.1
     CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" -DHB_HAVE_ICU=ON -DHB_HAVE_FREETYPE=ON -DHB_BUILD_TESTS=OFF "-DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/bootstrap"
     INSTALL_DIR "${TMP_INSTALL_DIR}")
 
@@ -62,20 +61,19 @@ if (WIN32)
   ExternalProject_Add(fontconfig
     DEPENDS libiconv expat freetype2
     GIT_REPOSITORY https://github.com/freedesktop/fontconfig
-    GIT_TAG 2.13.1
+    GIT_TAG 2.13.91
     PATCH_COMMAND git reset --hard HEAD
     COMMAND git clean -dfx
     COMMAND git apply "${CMAKE_CURRENT_SOURCE_DIR}/cmake/fontconfig.diff"
-    LIST_SEPARATOR ::
-    CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" -DCMAKE_C_FLAGS=/DXML_STATIC=1 -DBUILD_SHARED=OFF -DBUILD_STATIC=ON "-DEXPAT_LIBRARIES=<INSTALL_DIR>/lib/expat.lib" "-DFREETYPE_LIBRARIES=<INSTALL_DIR>/lib/freetype.lib" "-DLIBRARIES_TO_LINK=<INSTALL_DIR>/lib/harfbuzz.lib::<INSTALL_DIR>/lib/libpng16_static.lib::<INSTALL_DIR>/lib/zlibstatic.lib"
+    CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" -DCMAKE_C_FLAGS=/DXML_STATIC=1 "-DCMAKE_EXE_LINKER_FLAGS=/LIBPATH:<INSTALL_DIR>/lib harfbuzz.lib libpng16_static.lib zlibstatic.lib" "-DCMAKE_PREFIX_PATH=<INSTALL_DIR>"
     INSTALL_DIR "${TMP_INSTALL_DIR}")
   ExternalProject_Add_Step(fontconfig genconf
     COMMAND "${CMAKE_COMMAND}" "-DCMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}" -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/fonts_conf.cmake"
     DEPENDEES build)
 
   ExternalProject_Add(perl
-    URL http://strawberryperl.com/download/5.28.1.1/strawberry-perl-5.28.1.1-64bit-portable.zip
-    URL_HASH SHA1=51dbc993d93069190606e2534bd64b9c9bf1b9e3
+    URL http://strawberryperl.com/download/5.30.0.1/strawberry-perl-5.30.0.1-64bit-portable.zip
+    URL_HASH SHA1=cda71445c20f4e0be0a9e07f65dcc10a047a8097
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND "<SOURCE_DIR>/perl/bin/cpan.bat" Text::Template)
@@ -83,7 +81,7 @@ if (WIN32)
   ExternalProject_Add(openssl
     DEPENDS perl zlib
     GIT_REPOSITORY https://github.com/openssl/openssl
-    GIT_TAG OpenSSL_1_1_1b
+    GIT_TAG OpenSSL_1_1_1
     INSTALL_DIR "${TMP_INSTALL_DIR}"
     CONFIGURE_COMMAND "${CMAKE_BINARY_DIR}/perl-prefix/src/perl/perl/bin/perl.exe" "<SOURCE_DIR>/Configure" VC-WIN64A-masm "--prefix=<INSTALL_DIR>" "--openssldir=<INSTALL_DIR>/ssl" "--with-zlib-include=<INSTALL_DIR>/include" "--with-zlib-lib=<INSTALL_DIR>/lib/zlibstatic.lib" --release zlib no-shared no-tests "CFLAGS=/W3 /wd4090 /nologo /O2 /MD"
     BUILD_COMMAND nmake
@@ -102,7 +100,7 @@ if (WIN32)
   ExternalProject_Add(luarocks
     DEPENDS lua
     GIT_REPOSITORY https://github.com/luarocks/luarocks
-    GIT_TAG v3.0.4
+    GIT_TAG v3.1.3
     CONFIGURE_COMMAND ""
     BUILD_COMMAND install.bat /P "<INSTALL_DIR>" /SELFCONTAINED /LUA "${TMP_LUA_DIR}" /LIB "${TMP_LUA_DIR}" /BIN  "${TMP_LUA_DIR}" /NOREG /NOADMIN /Q /F
     BUILD_IN_SOURCE 1
@@ -132,7 +130,7 @@ if (WIN32)
     DEPENDEES build)
 
   ExternalProject_Add_Step(luarocks install_luasec
-    COMMAND "${LUAROCKS_COMMAND}" install luasec 0.7-1 "OPENSSL_DIR=${TMP_INSTALL_DIR}" "LD=link -libpath:${TMP_INSTALL_DIR}/lib zlibstatic.lib Advapi32.lib User32.lib Crypt32.lib"
+    COMMAND "${LUAROCKS_COMMAND}" install luasec 0.8-1 "OPENSSL_DIR=${TMP_INSTALL_DIR}" "LD=link -libpath:${TMP_INSTALL_DIR}/lib zlibstatic.lib Advapi32.lib User32.lib Crypt32.lib"
     DEPENDEES build)
   ExternalProject_Add_StepDependencies(luarocks install_luasec openssl)
 
