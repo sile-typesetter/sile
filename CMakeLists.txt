@@ -6,11 +6,14 @@ add_subdirectory(libtexpdf)
 
 if (WIN32)
   include(ExternalProject)
+  include(cmake/generate_sile_rc.cmake)
 
   set(TMP_INSTALL_DIR "${CMAKE_BINARY_DIR}/tmp_install")
   set(TMP_LUA_DIR "${CMAKE_BINARY_DIR}/lua")
   set(TMP_LUAROCKS_DIR "${CMAKE_BINARY_DIR}/luarocks")
   set(LUAROCKS_COMMAND "${TMP_LUAROCKS_DIR}/luarocks.bat")
+
+  GenerateRc("${PROJECT_SOURCE_DIR}/cmake/sile.rc.template" "${PROJECT_BINARY_DIR}/sile.rc")
 
   ExternalProject_Add(expat
     GIT_REPOSITORY https://github.com/libexpat/libexpat
@@ -227,6 +230,8 @@ if (WIN32)
     GIT_TAG 5.2
     PATCH_COMMAND git reset --hard HEAD
     COMMAND git apply "${CMAKE_CURRENT_SOURCE_DIR}/cmake/srlua.diff"
+    COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${PROJECT_BINARY_DIR}/sile.rc" "<SOURCE_DIR>/srlua.rc"
+    COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${PROJECT_SOURCE_DIR}/sile-logo.ico" "<SOURCE_DIR>/sile-logo.ico"
     CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" "-DLUA_INCLUDE_DIR=${TMP_LUA_DIR}/include" "-DLUA_LIBRARIES=${TMP_LUA_DIR}/lua51.lib"
     INSTALL_DIR "${TMP_INSTALL_DIR}")
   ExternalProject_Add_Step(srlua create_sile
