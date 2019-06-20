@@ -14,16 +14,26 @@ jobs:
 
       displayName: Set git user name and email
 
-    - script: cmake -G "Visual Studio 16 2019" -A x64 "-DCMAKE_INSTALL_PREFIX=$(Build.ArtifactStagingDirectory)" -S $(Build.SourcesDirectory) -B $(Build.BinariesDirectory)
+    - script: cmake -G "Visual Studio 16 2019" -A x64 "-DCMAKE_INSTALL_PREFIX=$(Build.ArtifactStagingDirectory)\sile" -S "$(Build.SourcesDirectory)" -B "$(Build.BinariesDirectory)"
       displayName: Configure solution with CMake script
 
-    - script: cmake --build $(Build.BinariesDirectory) --config Release
+    - script: cmake --build "$(Build.BinariesDirectory)" --config Release
       displayName: Build solution
 
-    - script: cmake --build $(Build.BinariesDirectory) --config Release --target Install
+    - script: cmake --build "$(Build.BinariesDirectory)" --config Release --target Install
       displayName: Install solution
+
+    - script: |
+        "$(Build.SourcesDirectory)\.inno\build_installer.bat" "$(Build.SourcesDirectory)" "$(Build.ArtifactStagingDirectory)\sile" "$(Build.ArtifactStagingDirectory)\installer"
+
+      displayName: Build installer
 
     - task: PublishBuildArtifacts@1
       inputs:
-        pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        pathtoPublish: $(Build.ArtifactStagingDirectory)\sile
         artifactName: sile
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathtoPublish: $(Build.ArtifactStagingDirectory)\installer
+        artifactName: installer
