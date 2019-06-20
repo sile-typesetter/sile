@@ -102,8 +102,8 @@ if (WIN32)
 
   ExternalProject_Add(luarocks
     DEPENDS lua
-    GIT_REPOSITORY https://github.com/luarocks/luarocks
-    GIT_TAG v3.1.3
+    GIT_REPOSITORY https://github.com/harrysummer/luarocks
+    GIT_TAG vs2019
     CONFIGURE_COMMAND ""
     BUILD_COMMAND install.bat /P "<INSTALL_DIR>" /SELFCONTAINED /LUA "${TMP_LUA_DIR}" /LIB "${TMP_LUA_DIR}" /BIN  "${TMP_LUA_DIR}" /NOREG /NOADMIN /Q /F
     BUILD_IN_SOURCE 1
