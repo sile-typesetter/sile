@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.3)
 
 project(sile LANGUAGES C CXX)
 
@@ -25,7 +25,6 @@ if (WIN32)
   ExternalProject_Add(icu
     GIT_REPOSITORY https://github.com/hunter-packages/icu
     GIT_TAG v63.1-p6
-    PATCH_COMMAND git reset --hard HEAD
     CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" -DICU_BUILD_IO=ON
     INSTALL_DIR "${TMP_INSTALL_DIR}")
 
@@ -251,3 +250,5 @@ file(GLOB FONTCONFIG_BINARIES "${TMP_INSTALL_DIR}/bin/fc-*.exe")
 install(DIRECTORY "${TMP_INSTALL_DIR}/bin/" DESTINATION ${CMAKE_INSTALL_PREFIX} FILES_MATCHING PATTERN "fc-*.exe")
 install(FILES "${CMAKE_BINARY_DIR}/fonts.conf" DESTINATION fonts)
 install(DIRECTORY "${CMAKE_BINARY_DIR}/font_gentium-prefix/src/font_gentium/" DESTINATION fonts FILES_MATCHING PATTERN  "*.ttf" PATTERN "documentation/*" EXCLUDE)
+
+add_subdirectory(tests)

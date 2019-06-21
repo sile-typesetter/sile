@@ -20,6 +20,22 @@ jobs:
     - script: cmake --build "$(Build.BinariesDirectory)" --config Release
       displayName: Build solution
 
+    - task: CmdLine@2
+      inputs:
+        script: ctest -R .* -C Release --output-on-failure --progress -T Test
+        workingDirectory: $(Build.BinariesDirectory)\tests
+      displayName: Run tests
+      continueOnError: true
+
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: cTest
+        testResultsFiles: $(Build.BinariesDirectory)\tests\Testing\*\Test.xml
+        buildPlatform: x64
+        buildConfiguration: Release
+        failTaskOnFailedTests: false
+      displayName: Publish test results
+
     - script: cmake --build "$(Build.BinariesDirectory)" --config Release --target Install
       displayName: Install solution
 
