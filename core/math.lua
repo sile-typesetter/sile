@@ -480,6 +480,11 @@ local _bigOpSubscript = _subscript {
     return 0
   end,
   shape = function(self)
+    if not (self.mode == mathMode.display
+        or self.mode == mathMode.displayCramped) then
+      _subscript.shape(self)
+      return
+    end
     local constants = getMathMetrics(self.options).constants
     -- Determine relative Ys
     if self.base then
