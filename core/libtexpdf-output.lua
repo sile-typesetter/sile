@@ -136,14 +136,14 @@ SILE.outputters.libtexpdf = {
   debugHbox = function(hbox, scaledWidth)
     ensureInit()
     pdf.colorpush_rgb(0.8, 0.3, 0.3)
-    pdf.setrule(cursorX,cursorY+(hbox.height), scaledWidth+0.5, 0.5)
-    pdf.setrule(cursorX,cursorY, 0.5, hbox.height)
-    pdf.setrule(cursorX, cursorY, scaledWidth+0.5, 0.5)
-    pdf.setrule(cursorX+scaledWidth,cursorY, 0.5, hbox.height)
+    pdf.setrule(cursorX,cursorY+(hbox.height), scaledWidth+0.1, 0.1)
+    pdf.setrule(cursorX,cursorY, 0.1, hbox.height)
+    pdf.setrule(cursorX, cursorY, scaledWidth+0.1, 0.1)
+    pdf.setrule(cursorX+scaledWidth,cursorY, 0.1, hbox.height)
     if hbox.depth then
-      pdf.setrule(cursorX,cursorY-(hbox.depth), scaledWidth, 0.5)
-      pdf.setrule(cursorX+scaledWidth,cursorY-(hbox.depth), 0.5, hbox.depth)
-      pdf.setrule(cursorX,cursorY-(hbox.depth), 0.5, hbox.depth)
+      pdf.setrule(cursorX,cursorY-(hbox.depth), scaledWidth, 0.1)
+      pdf.setrule(cursorX+scaledWidth,cursorY-(hbox.depth), 0.1, hbox.depth)
+      pdf.setrule(cursorX,cursorY-(hbox.depth), 0.1, hbox.depth)
 
     end
     pdf.colorpop()

@@ -59,6 +59,9 @@ local bigOperators = {'∑','∏','⋀', '⋁', '⋂', '⋃', '⨅', '⨆'}
 -- Foward declaration
 local newSpace
 
+-- Whether to show debug boxes around mboxes
+local debug
+
 local function isCrampedMode(mode)
   return mode % 2 == 1
 end
@@ -249,6 +252,14 @@ local _mbox = _box {
   -- Output the node and all its descendants
   outputTree = function(self, x, y, line)
     self:output(x, y, line)
+    if debug and typeof(self) ~= "Space" then
+      SILE.outputter.moveTo(getNumberFromLength(x, line), y.length)
+      SILE.outputter.debugHbox(
+        { height = self.height.length,
+          depth = self.depth.length },
+        getNumberFromLength(self.width, line)
+      )
+    end
     for i, n in ipairs(self.children) do
       if n then n:outputTree(x + n.relX, y + n.relY, line) end
     end
@@ -727,6 +738,7 @@ SILE.nodefactory.math = {
 
 SILE.registerCommand("math", function (options, content)
   local mode = (options and options.mode) and options.mode or 'text'
+  debug = options and options.debug
 
   local mbox = ConvertMathML(content, mbox)
 
