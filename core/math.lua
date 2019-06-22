@@ -661,7 +661,7 @@ local _text = _terminal {
   output = function(self, x, y, line)
     if not self.value.glyphString then return end
     -- print('Output '..self.value.glyphString.." to "..x..", "..y)
-    SILE.outputter.moveTo(getNumberFromLength(x, line), getNumberFromLength(y, line))
+    SILE.outputter.moveTo(getNumberFromLength(x, line), y.length)
     SILE.outputter.setFont(self.options)
     SILE.outputter.outputHbox(self.value, getNumberFromLength(self.width, line))
   end
