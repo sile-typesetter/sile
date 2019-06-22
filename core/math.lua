@@ -285,6 +285,11 @@ local _stackbox = _mbox {
     if self.anchor < 1 or self.anchor > #(self.children) then
       SU.error('Wrong index of the anchor children')
     end
+  end,
+  styleChildren = function(self)
+    for i, n in ipairs(self.children) do
+      n.mode = self.mode
+    end
     if self.direction == "H" then
       -- Add space between Ord and Bin/Rel
       local spaces = {}
@@ -313,11 +318,6 @@ local _stackbox = _mbox {
         table.insert(self.children, idx, newSpace({kind = spaces[idx]}))
         if idx <= self.anchor then self.anchor = self.anchor + 1 end
       end
-    end
-  end,
-  styleChildren = function(self)
-    for i, n in ipairs(self.children) do
-      n.mode = self.mode
     end
   end,
   shape = function(self)
