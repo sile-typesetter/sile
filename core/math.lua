@@ -70,9 +70,12 @@ local mathScriptConversionTable = {
 
 SILE.settings.declare({name = "math.font.family", type = "string", default = "XITS Math"})
 
-local mathCache = {}
+local mathCache
 
 local function getMathMetrics(options)
+  if mathCache then
+    return mathCache
+  end
   local face = SILE.font.cache(options, SILE.shaper.getFace)
   if not face then
     SU.error("Could not find requested font "..options.." or any suitable substitutes")
@@ -92,10 +95,11 @@ local function getMathMetrics(options)
   for k, v in pairs(mathTable.mathItalicsCorrection) do
     italicsCorrection[k] = v.value * options.size / upem
   end
-  return {
+  mathCache = {
     constants = constants,
     italicsCorrection = italicsCorrection
   }
+  return mathCache
 end
 
 -- Style transition functions for superscript and subscript
