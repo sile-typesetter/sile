@@ -202,8 +202,8 @@ local _mbox = _box {
   _type = "Mbox",
   options = {},
   children = {}, -- The child nodes
-  relX = 0, -- x position relative to its parent box
-  relY = 0, -- y position relative to its parent box
+  relX = SILE.length.make(0), -- x position relative to its parent box
+  relY = SILE.length.make(0), -- y position relative to its parent box
   value = {},
   mode = mathMode.display,
   atom = atomType.ordinary,
@@ -574,8 +574,8 @@ local _space = _terminal {
     self.width = self.length
     -- Spaces say that they have height zero because they cannot guess
     -- what the maximum height in the surrounding text is
-    self.height = 0
-    self.depth = 0
+    self.height = SILE.length.make(0)
+    self.depth = SILE.length.make(0)
   end,
   output = function(self) end
 }
