@@ -715,6 +715,78 @@ local _text = _terminal {
   end
 }
 
+local _fraction = _mbox {
+  _type = "Fraction",
+  init = function(self)
+    _mbox.init(self)
+    if self.numerator then table.insert(self.children, self.numerator)
+    end
+    if self.denominator then table.insert(self.children, self.denominator)
+    end
+  end,
+  styleChildren = function(self)
+    if not (self.numerator or self.denominator) then
+      SU.error("Fraction cannot have both no numerator and no denominator")
+    end
+    if self.numerator then
+      self.numerator.mode = getNumeratorMode(self.mode)
+    end
+    if self.denominator then
+      self.denominator.mode = getDenominatorMode(self.mode)
+    end
+  end,
+  shape = function(self)
+    -- Determine relative abscissas and width
+    local widest, other
+    if self.numerator and self.denominator then
+      if self.denominator.width > self.numerator.width then
+        widest, other = self.denominator, self.numerator
+      else
+        widest, other = self.numerator, self.denominator
+      end
+    elseif self.numerator then widest, other = self.numerator, nil
+    elseif self.denominator then widest, other = self.denominator, nil
+    else
+      error("Fraction cannot have both no numerator and no denominator")
+    end
+    widest.relX = SILE.length.make(0)
+    other.relX = (widest.width - other.width) / 2
+    self.width = widest.width
+
+    -- Determine relative ordinates and height
+    local bls = SILE.settings.get("document.baselineskip")
+    local axis_height = bls.height / 2
+    local constants = getMathMetrics(self.options).constants
+    self.axisHeight = constants.axisHeight
+    self.ruleThickness = constants.fractionRuleThickness
+    if self.numerator then
+      self.numerator.relY = 0 - self.axisHeight
+        - constants.fractionNumDisplayStyleGapMin - self.numerator.depth
+    end
+    if self.denominator then
+      self.denominator.relY = 0 - self.axisHeight
+        + constants.fractionDenomDisplayStyleGapMin
+        + self.denominator.height
+    end
+    if self.numerator then
+      self.height = 0 - self.numerator.relY + self.numerator.height
+    else
+      self.height = self.axisHeight + self.ruleThickness / 2
+    end
+    if self.denominator then
+      self.depth = self.denominator.relY + self.denominator.depth
+    else
+      self.depth = SILE.length.make(0)
+    end
+  end,
+  output = function(self, x, y, line)
+    SILE.outputter.rule(
+      getNumberFromLength(x, line),
+      y.length - self.axisHeight - self.ruleThickness / 2,
+      getNumberFromLength(self.width, line), self.ruleThickness)
+  end
+}
+
 local newText = function(spec)
   local ret = std.tree.clone(_text(spec))
   ret:init()
@@ -742,6 +814,12 @@ end
 
 newSpace = function(spec)
   local ret = std.tree.clone(_space(spec))
+  ret:init()
+  return ret
+end
+
+newFraction = function(spec)
+  local ret = std.tree.clone(_fraction(spec))
   ret:init()
   return ret
 end
@@ -779,6 +857,11 @@ local function ConvertMathML(content)
     local children = convertChildren(content)
     if #children ~= 3 then SU.error('Wrong number of children in msubsup') end
     return newSubscript({ kind="subsup", base=children[1], sub=children[2], sup=children[3] })
+  elseif content.tag == 'mfrac' then
+    local children = convertChildren(content)
+    if #children ~= 2 then SU.error('Wrong number of children in mfrac')
+    end
+    return newFraction({ numerator=children[1], denominator=children[2] })
   else
     return nil
   end
