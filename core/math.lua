@@ -125,8 +125,8 @@ local function getNumeratorMode(mode)
   else return mathMode.scriptScriptCramped end                                                           -- S', SS' -> SS'
 end
 local function getDenominatorMode(mode)
-  if mode == mathMode.display or mode == mathMode.displayCramped then return mathMode.text           -- D, D' -> T'
-  elseif mode == mathMode.text or mode == mathMode.textCramped then return mathMode.script           -- T, T' -> S'
+  if mode == mathMode.display or mode == mathMode.displayCramped then return mathMode.textCramped    -- D, D' -> T'
+  elseif mode == mathMode.text or mode == mathMode.textCramped then return mathMode.scriptCramped    -- T, T' -> S'
   else return mathMode.scriptScriptCramped end                                                           -- S, SS, S', SS' -> SS'
 end 
 
