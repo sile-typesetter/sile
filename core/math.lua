@@ -757,15 +757,17 @@ local _fraction = _mbox {
     local bls = SILE.settings.get("document.baselineskip")
     local axis_height = bls.height / 2
     local constants = getMathMetrics(self.options).constants
-    self.axisHeight = constants.axisHeight
-    self.ruleThickness = constants.fractionRuleThickness
+    local scaleDown = self:getScaleDown()
+    self.axisHeight = constants.axisHeight * scaleDown
+    self.ruleThickness = constants.fractionRuleThickness * scaleDown
     if self.numerator then
       self.numerator.relY = 0 - self.axisHeight
-        - constants.fractionNumDisplayStyleGapMin - self.numerator.depth
+        - constants.fractionNumDisplayStyleGapMin * scaleDown
+        - self.numerator.depth
     end
     if self.denominator then
       self.denominator.relY = 0 - self.axisHeight
-        + constants.fractionDenomDisplayStyleGapMin
+        + constants.fractionDenomDisplayStyleGapMin * scaleDown
         + self.denominator.height
     end
     if self.numerator then
