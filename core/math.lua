@@ -66,6 +66,14 @@ local function isCrampedMode(mode)
   return mode % 2 == 1
 end
 
+local function isScriptMode(mode)
+  return mode == mathMode.script or mode == mathMode.scriptCramped
+end
+
+local function isScriptScriptMode(mode)
+  return mode == mathMode.scriptScript or mode == mathMode.scriptScriptCramped
+end
+
 local mathScriptConversionTable = {
   italicLatinUpper = function(codepoint) return codepoint + 0x1D434 - 0x41 end,
   italicLatinLower = function(codepoint) return codepoint == 0x68 and 0x210E or codepoint + 0x1D44E - 0x61 end
@@ -228,6 +236,19 @@ local _mbox = _box {
 
   output = function(self, x, y, line)
     SU.error("output is a virtual function that need to be overriden by its child classes")
+  end,
+
+  getScaleDown = function(self)
+    local constants = getMathMetrics(self.options).constants
+    local scaleDown
+    if isScriptMode(self.mode) then
+      scaleDown = constants.scriptPercentScaleDown
+    elseif isScriptScriptMode(self.mode) then
+      scaleDown = constants.scriptScriptPercentScaleDown
+    else
+      scaleDown = 1
+    end
+    return scaleDown
   end,
 
   -- Determine the mode of its descendants
@@ -398,6 +419,7 @@ local _subscript = _mbox {
   shape = function(self)
     local mathMetrics = getMathMetrics(self.options)
     local constants = mathMetrics.constants
+    local scaleDown = self:getScaleDown()
     if self.base then
       self.base.relX = SILE.length.make(0)
       self.base.relY = SILE.length.make(0)
@@ -405,39 +427,57 @@ local _subscript = _mbox {
     else
       self.width = SILE.length.make(0)
     end
+    local itCorr = self:calculateItalicsCorrection() * scaleDown
     if self.sub then
-      self.sub.relX = self.width
+      self.sub.relX = self.width - itCorr / 2
       self.sub.relY = maxLength(
-        constants.subscriptShiftDown,
-        self.base.depth + constants.subscriptBaselineDropMin,
-        self.sub.height - constants.subscriptTopMax
+        constants.subscriptShiftDown * scaleDown,
+        --self.base.depth + constants.subscriptBaselineDropMin * scaleDown,
+        self.sub.height - constants.subscriptTopMax * scaleDown
       )
+      local t = typeof(self.base)
+      if t == "BigOpSubscript" or t == "Stackbox" then
+        self.sub.relY = maxLength(self.sub.relY,
+          self.base.depth + constants.subscriptBaselineDropMin*scaleDown)
+      end
     end
     if self.sup then
-      self.sup.relX = self.width + self:calculateItalicsCorrection()
+      self.sup.relX = self.width + itCorr / 2
       self.sup.relY = maxLength(
-        isCrampedMode(self.mode) and constants.superscriptShiftUpCramped or constants.superscriptShiftUp, -- or cramped
-        self.base.height - constants.superscriptBaselineDropMax,
-        self.sup.depth + constants.superscriptBottomMin
+        isCrampedMode(self.mode)
+        and constants.superscriptShiftUpCramped * scaleDown
+        or constants.superscriptShiftUp * scaleDown, -- or cramped
+        --self.base.height - constants.superscriptBaselineDropMax * scaleDown,
+        self.sup.depth + constants.superscriptBottomMin * scaleDown
       ) * (-1)
+      local t = typeof(self.base)
+      if t == "BigOpSubscript" or t == "Stackbox" then
+        self.sub.relY = maxLength(
+          (-self.sub.relY),
+          self.base.height - constants.superscriptBaselineDropMax
+          * scaleDown) * (-1)
+        end
     end
     if self.sub and self.sup then
       local gap = self.sub.relY - self.sub.height - self.sup.relY - self.sup.depth
-      if gap.length < constants.subSuperscriptGapMin then
-        local supShift, subShift = gap - constants.subSuperscriptGapMin, SILE.length.make(0)
-        if -supShift.length > constants.superscriptBottomMaxWithSubscript then
-          subShift = supShift * (-1) - constants.superscriptBottomMaxWithSubscript
-          supShift = -constants.superscriptBottomMaxWithSubscript
+      if gap.length < constants.subSuperscriptGapMin * scaleDown then
+        -- The following adjustment comes directly from Appendix G of he
+        -- TeXbook (rule 18e).
+        self.sub.relY = constants.subSuperscriptGapMin * scaleDown
+          + self.sub.height + self.sup.relY + self.sup.depth
+        local psi = constants.superscriptBottomMaxWithSubscript*scaleDown
+          + self.sup.relY + self.sup.depth
+        if psi > 0 then
+          self.sup.relY = self.sup.relY - psi
+          self.sub.relY = self.sub.relY - psi
         end
-        self.sup.relY = self.sup.relY + supShift
-        self.sub.relY = self.sub.relY + subShift
       end
     end
 
     self.width = self.width + maxLength(
-      self.sub and self.sub.width or 0,
-      self.sup and (self.sup.width + self:calculateItalicsCorrection()) or 0
-    )
+      self.sub and self.sub.width - itCorr / 2 or 0,
+      self.sup and self.sup.width + itCorr / 2 or 0
+    ) + constants.spaceAfterScript * scaleDown
     self.height = maxLength(
       self.base and self.base.height or 0,
       self.sub and (self.sub.height - self.sub.relY) or 0,
@@ -486,19 +526,20 @@ local _bigOpSubscript = _subscript {
       return
     end
     local constants = getMathMetrics(self.options).constants
+    local scaleDown = self:getScaleDown()
     -- Determine relative Ys
     if self.base then
       self.base.relY = SILE.length.make(0)
     end
     if self.sub then
       self.sub.relY = self.base.depth + maxLength(
-        self.sub.height + constants.lowerLimitGapMin,
-        constants.lowerLimitBaselineDropMin)
+        self.sub.height + constants.lowerLimitGapMin * scaleDown,
+        constants.lowerLimitBaselineDropMin * scaleDown)
     end
     if self.sup then
-      self.sup.relY = maxLength(
-        self.base.height + constants.upperLimitGapMin,
-        constants.upperLimitBaselineRiseMin) * (-1)
+      self.sup.relY = 0 - self.base.height - maxLength(
+        constants.upperLimitGapMin * scaleDown + self.sup.depth,
+        constants.upperLimitBaselineRiseMin * scaleDown)
     end
     -- Determine relative Xs based on widest symbol
     local widest, a, b
@@ -527,6 +568,9 @@ local _bigOpSubscript = _subscript {
     local c = widest.width / 2
     a.relX = c - a.width / 2
     b.relX = c - b.width / 2
+    local itCorr = self:calculateItalicsCorrection() * scaleDown
+    if self.sup then self.sup.relX = self.sup.relX + itCorr / 2 end
+    if self.sub then self.sub.relX = self.sub.relX - itCorr / 2 end
     -- Determine width and height
     self.width = maxLength(
       self.base and self.base.width or 0,
@@ -562,7 +606,7 @@ local _space = _terminal {
   kind = "thin",
   init = function(self)
     _terminal.init(self)
-    local fontSize = math.floor(self.options.size * ((self.mode == mathMode.script or self.mode == mathMode.scriptCramped) and 0.7 or 0.5))
+    local fontSize = math.floor(self.options.size * self:getScaleDown())
     local mu = fontSize / 18
     if self.kind == "thin" then
       self.length = SILE.length.new({
@@ -630,13 +674,9 @@ local _text = _terminal {
   end,
   shape = function(self)
     local face = SILE.font.cache(self.options, SILE.shaper.getFace)
-    if self.mode == mathMode.script or self.mode == mathMode.scriptCramped or
-        self.mode == mathMode.scriptScript or self.mode == mathMode.scriptScriptCramped then
-      local constants = getMathMetrics(self.options).constants
-      local fontSize = math.floor(self.options.size * ((self.mode == mathMode.script or self.mode == mathMode.scriptCramped) and 0.7 or 0.5))
-      face.size = fontSize
-      self.options.size = fontSize
-    end
+    local fontSize = self.options.size * self:getScaleDown()
+    face.size = fontSize
+    self.options.size = fontSize
     local glyphs = SILE.shaper:shapeToken(self.text, self.options)
     SILE.shaper:preAddNodes(glyphs, self.value)
     self.value.items = glyphs
