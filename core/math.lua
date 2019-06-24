@@ -314,18 +314,23 @@ local _stackbox = _mbox {
     if self.direction == "H" then
       -- Add space between Ord and Bin/Rel
       local spaces = {}
-      if self.mode == mathMode.display or self.mode == mathMode.displayCramped or
-          self.mode == mathMode.text or self.mode == mathMode.textCramped then
-        for i, v in ipairs(self.children) do
-          if i < #self.children then
-            local v2 = self.children[i + 1]
+      for i, v in ipairs(self.children) do
+        if i < #self.children then
+          local v2 = self.children[i + 1]
+          if not (isScriptMode(self.mode) or isScriptScriptMode(self.mode)) then
             if (v.atom == atomType.relationalOperator and v2.atom == atomType.ordinary) or
                 (v2.atom == atomType.relationalOperator and v.atom == atomType.ordinary) then
               spaces[i + 1] = 'thick'
             elseif (v.atom == atomType.binaryOperator and v2.atom == atomType.ordinary) or
                 (v2.atom == atomType.binaryOperator and v.atom == atomType.ordinary) then
               spaces[i + 1] = 'med'
+            elseif (v.atom == atomType.bigOperator and v2.atom == atomType.relationalOperator) or
+                (v2.atom == atomType.bigOperator and v.atom == atomType.relationalOperator) then
+              spaces[i + 1] = 'thick'
             end
+          end
+          if (v.atom == atomType.bigOperator and v2.atom == atomType.ordinary) then
+            spaces[i + 1] = 'thin'
           end
         end
       end
@@ -395,11 +400,13 @@ local _subscript = _mbox {
   base = nil,
   sub = nil,
   sup = nil,
+  atom = nil,
   init = function(self)
     _mbox.init(self)
     if self.base then table.insert(self.children, self.base) end
     if self.sub then table.insert(self.children, self.sub) end
     if self.sup then table.insert(self.children, self.sup) end
+    self.atom = self.base.atom
   end,
   styleChildren = function(self)
     if self.base then self.base.mode = self.mode end
@@ -495,6 +502,7 @@ local _subscript = _mbox {
 local _bigOpSubscript = _subscript {
   _type = "BigOpSubscript",
   kind = "sub",
+  atom = atomType.bigOperator,
   base = nil,
   sub = nil,
   sup = nil,
