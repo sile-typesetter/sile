@@ -141,7 +141,7 @@ AC_CONFIG_FILES([sile], [chmod +x sile])
 
 # Configure list of data files
 echo 'subdir_files = \' > subfiles.mk
-find core classes languages packages lua-libraries -type f -print | sed 's/^/  /;$q;s/$/ \\/' >> subfiles.mk
+find core classes languages packages lua-libraries lua_modules -type f -print | sed 's/^/  /;$q;s/$/ \\/' >> subfiles.mk
 
 
 AC_OUTPUT
