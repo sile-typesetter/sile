@@ -64,8 +64,8 @@ if [ "$LUAJIT" == "yes" ]; then
 
   make && make install PREFIX="$LUA_HOME_DIR"
 
-  ln -s $LUA_HOME_DIR/bin/luajit $HOME/.lua/luajit
-  ln -s $LUA_HOME_DIR/bin/luajit $HOME/.lua/lua;
+  ln -sf $LUA_HOME_DIR/bin/luajit $HOME/.lua/luajit
+  ln -sf $LUA_HOME_DIR/bin/luajit $HOME/.lua/lua;
 
 else
 
@@ -90,10 +90,10 @@ else
   make $PLATFORM CC="gcc -std=gnu99 -fPIC"
   make INSTALL_TOP="$LUA_HOME_DIR" install;
 
-  ln -s $LUA_HOME_DIR/bin/lua $HOME/.lua/lua
-  ln -s $LUA_HOME_DIR/bin/luac $HOME/.lua/luac;
+  ln -sf $LUA_HOME_DIR/bin/lua $HOME/.lua/lua
+  ln -sf $LUA_HOME_DIR/bin/luac $HOME/.lua/luac;
   if [ "$PLATFORM" == "mingw" ]; then
-    ln -s $LUA_HOME_DIR/bin/$LUA_DLL $HOME/.lua/$LUA_DLL;
+    ln -sf $LUA_HOME_DIR/bin/$LUA_DLL $HOME/.lua/$LUA_DLL;
   fi
 fi
 
@@ -119,7 +119,7 @@ fi
 
 make build && make install
 
-ln -s $LR_HOME_DIR/bin/luarocks $HOME/.lua/luarocks
+ln -sf $LR_HOME_DIR/bin/luarocks $HOME/.lua/luarocks
 
 cd $TRAVIS_BUILD_DIR
 
