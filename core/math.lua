@@ -59,8 +59,9 @@ local bigOperators = {'∑','∏','⋀', '⋁', '⋂', '⋃', '⨅', '⨆'}
 -- Foward declaration
 local newSpace
 
--- Whether to show debug boxes around mboxes
-local debug
+local function isDisplayMode(mode)
+  return mode <= 1
+end
 
 local function isCrampedMode(mode)
   return mode % 2 == 1
@@ -754,21 +755,37 @@ local _fraction = _mbox {
     self.width = widest.width
 
     -- Determine relative ordinates and height
-    local bls = SILE.settings.get("document.baselineskip")
-    local axis_height = bls.height / 2
     local constants = getMathMetrics(self.options).constants
     local scaleDown = self:getScaleDown()
     self.axisHeight = constants.axisHeight * scaleDown
     self.ruleThickness = constants.fractionRuleThickness * scaleDown
     if self.numerator then
-      self.numerator.relY = 0 - self.axisHeight
-        - constants.fractionNumDisplayStyleGapMin * scaleDown
-        - self.numerator.depth
+      if isDisplayMode(self.mode) then
+        self.numerator.relY = -self.axisHeight - self.ruleThickness/2 - maxLength(
+          constants.fractionNumDisplayStyleGapMin*scaleDown + self.numerator.depth,
+          constants.fractionNumeratorDisplayStyleShiftUp * scaleDown
+            - self.axisHeight - self.ruleThickness/2)
+      else
+        self.numerator.relY = -self.axisHeight - self.ruleThickness/2 - maxLength(
+          constants.fractionNumeratorGapMin*scaleDown + self.numerator.depth,
+          constants.fractionNumeratorShiftUp * scaleDown - self.axisHeight
+            - self.ruleThickness/2)
+      end
     end
     if self.denominator then
-      self.denominator.relY = 0 - self.axisHeight
-        + constants.fractionDenomDisplayStyleGapMin * scaleDown
-        + self.denominator.height
+      if isDisplayMode(self.mode) then
+        self.denominator.relY = -self.axisHeight + self.ruleThickness/2 + maxLength(
+          constants.fractionDenomDisplayStyleGapMin * scaleDown
+            + self.denominator.height,
+          constants.fractionDenominatorDisplayStyleShiftDown * scaleDown
+            + self.axisHeight - self.ruleThickness/2)
+      else
+        self.denominator.relY = -self.axisHeight + self.ruleThickness/2 + maxLength(
+          constants.fractionDenominatorGapMin * scaleDown
+            + self.denominator.height,
+          constants.fractionDenominatorShiftDown * scaleDown
+           + self.axisHeight - self.ruleThickness/2)
+      end
     end
     if self.numerator then
       self.height = 0 - self.numerator.relY + self.numerator.height
