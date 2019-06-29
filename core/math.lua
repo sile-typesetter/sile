@@ -1,6 +1,7 @@
 local nodefactory = require("core/nodefactory")
 local hb = require("justenoughharfbuzz")
 local ot = require("core/opentype-parser")
+local symbols = require("core/math-symbols")
 
 local mathMode = {
   display = 0,
@@ -52,6 +53,7 @@ local operatorAtomTypes = {
   ['<'] = atomType.relationalOperator,
   ['>'] = atomType.relationalOperator,
   ['='] = atomType.relationalOperator,
+  ['≠'] = atomType.relationalOperator,
   ['∑'] = atomType.bigOperator
 }
 
@@ -675,6 +677,7 @@ local _text = _terminal {
   __tostring = function(self) return "Text("..(self.originalText or self.text)..")" end,
   init = function(self)
     _terminal.init(self)
+    if symbols[self.text.tag] then self.text = symbols[self.text.tag] end
     if self.kind == 'identifier' then
       local converted = ""
       for uchr in SU.utf8codes(self.text) do
