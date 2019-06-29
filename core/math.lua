@@ -52,6 +52,7 @@ local operatorAtomTypes = {
   ['<'] = atomType.relationalOperator,
   ['>'] = atomType.relationalOperator,
   ['='] = atomType.relationalOperator,
+  ['∑'] = atomType.bigOperator
 }
 
 local bigOperators = {'∑','∏','⋀', '⋁', '⋂', '⋃', '⨅', '⨆'}
@@ -510,7 +511,10 @@ local _bigOpSubscript = _subscript {
   init = function(self)
     _mbox.init(self)
     if self.sup then table.insert(self.children, self.sup) end
-    if self.base then table.insert(self.children, self.base) end
+    if self.base then
+      table.insert(self.children, self.base)
+      self.base.atom = atomType.bigOperator
+    end
     if self.sub then table.insert(self.children, self.sub) end
   end,
   styleChildren = function(self)
@@ -685,7 +689,13 @@ local _text = _terminal {
     local face = SILE.font.cache(self.options, SILE.shaper.getFace)
     local fontSize = self.options.size * self:getScaleDown()
     face.size = fontSize
-    self.options.size = fontSize
+    local constants = getMathMetrics(self.options).constants
+    if self.atom == atomType.bigOperator and isDisplayMode(self.mode) then
+      self.options.size = maxLength(constants.displayOperatorMinHeight,
+        fontSize).length
+    else
+     self.options.size = fontSize
+    end
     local glyphs = SILE.shaper:shapeToken(self.text, self.options)
     SILE.shaper:preAddNodes(glyphs, self.value)
     self.value.items = glyphs
