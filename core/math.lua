@@ -2,6 +2,8 @@ local nodefactory = require("core/nodefactory")
 local hb = require("justenoughharfbuzz")
 local ot = require("core/opentype-parser")
 local symbols = require("core/math-symbols")
+local epnf = require("epnf")
+require("core/parserbits")
 
 local mathMode = {
   display = 0,
@@ -321,7 +323,8 @@ local _stackbox = _mbox {
   init = function(self)
     _mbox.init(self)
     if self.anchor < 1 or self.anchor > #(self.children) then
-      SU.error('Wrong index of the anchor children')
+      print("children = " .. children)
+      SU.error('Wrong index of the anchor children: '..self.anchor)
     end
   end,
   styleChildren = function(self)
@@ -460,7 +463,7 @@ local _subscript = _mbox {
         self.sub.height - constants.subscriptTopMax * scaleDown
       )
       local t = typeof(self.base)
-      if t == "BigOpSubscript" or t == "Stackbox" then
+      if (t == "BigOpSubscript" or t == "Stackbox") then
         self.sub.relY = maxLength(self.sub.relY,
           self.base.depth + constants.subscriptBaselineDropMin*scaleDown)
       end
@@ -476,8 +479,8 @@ local _subscript = _mbox {
       ) * (-1)
       local t = typeof(self.base)
       if t == "BigOpSubscript" or t == "Stackbox" then
-        self.sub.relY = maxLength(
-          (-self.sub.relY),
+        self.sup.relY = maxLength(
+          (0-self.sup.relY),
           self.base.height - constants.superscriptBaselineDropMax
           * scaleDown) * (-1)
         end
@@ -904,12 +907,187 @@ local function ConvertMathML(content)
     return newSubscript({ kind="subsup", base=children[1], sub=children[2], sup=children[3] })
   elseif content.tag == 'mfrac' then
     local children = convertChildren(content)
-    if #children ~= 2 then SU.error('Wrong number of children in mfrac')
+    if #children ~= 2 then SU.error('Wrong number of children in mfrac: '
+      ..#children)
     end
     return newFraction({ numerator=children[1], denominator=children[2] })
   else
     return nil
   end
+end
+
+-- Grammar to parse sub/superscripts
+--[[
+subSupGrammar = lpeg.P{
+  "mathlist",
+  mathlist = lpeg.Ct((lpeg.V"atom" + lpeg.V"sup" + lpeg.V"sub"
+    + lpeg.V"subsup" + lpeg.S("\r\n\f\t "))^0 * (-1)),
+  atom = lpeg.C(lpeg.P(1) - (lpeg.S("^_") + WS)) / function(a) print("atom "..a); return a end,
+  sup = lpeg.V"atom" * WS * "^" * WS * lpeg.V"sup0"
+    / function(base, sup)
+        print("sup!")
+        return { tag = "msup", base, sup }
+      end,
+  sup0 = lpeg.V"atom" + (lpeg.V"atom" * WS * "^" * WS * lpeg.V"sup0")
+    / function(base,sup)
+        print("sup0!")
+        return { tag = "msup", base, sup }
+      end,
+  sub = lpeg.V"atom" * WS * "_" * WS * lpeg.V"sub0"
+    / function(base, sub)
+        return { tag = "msub", base, sub }
+      end,
+  sub0 = lpeg.V"atom" + (lpeg.V"atom" * WS * "_" * WS * lpeg.V"sub0")
+    / function(base, sub)
+        return { tag = "msub", base, sub }
+      end,
+  subsup = lpeg.V"sup" * WS * "_" * WS * lpeg.V"sub0"
+    / (function(msup, sub)
+        return { tag = "msubsup", msup.base, sub, msup.sup }
+      end)
+    + lpeg.V"sub" * WS * "^" * lpeg.V"sup0"
+    / (function(msub, sup)
+        return { tag = "msubsup", msub.base, msub.sub, sup }
+      end)
+}
+]]
+  local g = function(_ENV)
+  local _ = WS^0
+  local utf8char = SILE.parserBits.utf8char /
+    function(...)
+      print({...})
+      return utf8.char(...)
+    end
+  local atom = (utf8char - (WS + P"^" + P"\0")) + V"placeholder"
+  local number = R("09")^1
+
+  START "mathcontent"
+  mathcontent = V"mathlist" * EOF"Unexpected character at end of input"
+  mathlist = (V"msup" + atom + WS)^0
+  msup = atom * _ * P"^" * _ * atom
+  placeholder = P"\0" * Cg(number, "index") * P"\0"
+end
+subSupParser = epnf.define(g)
+
+--[[ Simply transform `^` and `_` in into their MathML counterparts.
+  TODO:  Also, turn `{}` groups into `mrow`s; infer `mi`, `mn` and `mo`.
+  Idea of the algorithm:
+  1. `content` is a sequence of strings and trees. Transform it into
+     a string `s` with placeholders for the trees, and keep a list of the
+     extracted trees.
+  2. Apply the algorithm being described to the extracted subtrees.
+  2. Parse `s` with a grammar for Tex-like math, resulting in a AST.
+  3. In that AST, join neighbour characters into strings, and replace the
+     placeholders with the new version of the extracted trees. Keep
+     non-numbered elements (like `tag`), if any.
+  4. Add the non-number-indexed elements of `content` to the result and
+     return it.
+  ]]
+local function convertTexlike(content)
+  print("convertTexlike on "..content)
+  -- Turn a list of children into a string, where leaves (of type string) are
+  -- substrings, and sub-trees are replaced with placeholders of the form:
+  -- `\0<integer>\0`, where `<integer>` is the index of the placeholder in
+  -- decimal form. For this reason, first check whether any substring contains
+  -- '\0' (although it shouldn't).
+  local function childrenToString(tree)
+    local acc = ""
+    local trees = {}
+    local placeholderIdx = 1
+    for _,c in ipairs(tree) do
+      if type(c) == "string" then
+        print("case 1")
+        print("c = "..c)
+        if(string.find(c, "\0")) then
+          SU.error("A substring contains '\\0' (should not happen)")
+        end
+        acc = acc .. c
+      else
+        print("case 2")
+        print("c = "..c)
+        acc = acc .. "\0" .. placeholderIdx .. "\0"
+        table.insert(trees, c)
+        placeholderIdx = placeholderIdx + 1
+      end
+      print("acc = "..acc)
+      print("trees = "..trees)
+    end
+    return acc, trees
+  end
+  -- Return the tree `content` after joining character leaves into string
+  -- leaves and replacing every placeholder with the corresponding element of
+  -- `trees`, recursing on sub-trees.
+  local function putBackChildren(content, trees)
+    print("\nputBackChildren on " .. content)
+    local acc = {}
+    local currentString, accPos = "", 1
+    for k,elt in pairs(content) do
+      if k == "id" then
+        acc["tag"] = elt
+      elseif type(k) ~= "number" then
+        -- Do not change other non-integer-indexed elements
+        acc[k] = elt
+      elseif type(elt) == "string" then
+        -- elt should contain exactly one UTF-8 character, but we don't require
+        -- it
+        for _,c in utf8.codes(elt) do
+          currentString = currentString .. utf8.char(c)
+        end
+      else
+        -- Insert current string
+        if currentString ~= "" then
+          acc[accPos] = currentString
+          currentString = ""
+          accPos = accPos + 1
+        end
+        -- If elt is a placeholder, replace it with the appropriate tree,
+        -- otherwise recurse on it and insert the result.
+        if elt.id and elt.id == "placeholder" then
+          acc[accPos] = trees[tonumber(elt.index)]
+          accPos = accPos + 1
+        else
+          acc[accPos] = putBackChildren(elt, trees)
+          accPos = accPos + 1
+        end
+      end
+    end
+    -- Insert remaining string, if any
+    if currentString ~= "" then
+      acc[accPos] = currentString
+    end
+    -- Add an element `id = "command"` if not present (required by
+    -- `convertMathML` for an unknown reason.
+    if not acc.id then acc.id = "command" end
+    print("putBackChildren returns " .. acc)
+    return acc
+  end
+
+  local str,trees = childrenToString(content)
+  print("str = " .. {string.byte(str, 1, #str)})
+
+  for i,t in ipairs(trees) do
+    print("\nrecurse convertTexlike")
+    trees[i] = convertTexlike(trees[i])
+  end
+
+  -- Parse the subscripts and superscripts in the string, resulting in a
+  -- sequence of characters and sub/superscript trees.
+  local parsed = epnf.parsestring(subSupParser, str)
+  if parsed == nil then
+    SU.error("TeX-like math parse error")
+  end
+  print("parsed = " .. parsed)
+
+  local res = putBackChildren(parsed[1], trees)
+
+  -- Add non-number-indexed elements of `content` into the result
+  for k,x in pairs(content) do
+    if type(k) ~= "number" then
+      res[k] = x
+    end
+  end
+  print("res = "..res)
+  return res
 end
 
 SILE.nodefactory.math = {
@@ -919,8 +1097,18 @@ SILE.nodefactory.math = {
 
 SILE.registerCommand("math", function (options, content)
   local mode = (options and options.mode) and options.mode or 'text'
+  local format = (options and options.type) and options.type or "mathml"
 
-  local mbox = ConvertMathML(content, mbox)
+  local mbox
+  xpcall(function()
+    if format == "mathml" then
+      mbox = ConvertMathML(content, mbox)
+    elseif format == "texlike" then
+      mbox = ConvertMathML(convertTexlike(content))
+    else
+      SU.error("Unknown math format type")
+    end
+  end, function(err) print(err); print(debug.traceback()) end)
 
   if #(mbox.children) == 1 then
     mbox = mbox.children[1]
