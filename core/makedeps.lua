@@ -16,7 +16,6 @@ local makeDeps = {
     local deps = {}
     for dep, _ in pairs(self._deps) do
       local resolvedFile = package.searchpath(dep, package.path, "/")
-      if not resolvedFile then resolvedFile = SILE.resolveFile(dep) end
       if resolvedFile then
         SU.debug("makedeps", "Resolved required file path", resolvedFile)
         deps[#deps+1] = resolvedFile
