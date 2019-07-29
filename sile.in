@@ -47,15 +47,12 @@ if SILE.masterFilename then
   extendPath(SILE.masterDir)
   if SILE.preamble then
     for _, preamble in pairs(SILE.preamble) do
-      io.stderr:write("Loading "..preamble)
-      local c = SILE.resolveFile("classes/"..preamble)
-      local f = SILE.resolveFile(preamble)
+      io.stderr:write("Loading "..preamble.."\n")
+      local c = SILE.resolveFile(preamble, "classes")
       if c then
         SILE.readFile(c)
-      elseif f then
-        SILE.readFile(f)
       else
-        SILE.require("classes/"..preamble)
+        SILE.require(preamble, "classes")
       end
     end
   end
