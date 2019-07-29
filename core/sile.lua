@@ -237,28 +237,29 @@ end
 
 -- Sort through possible places files could be
 function SILE.resolveFile(filename, pathprefix)
-  local resolved = nil
   local candidates = {}
   -- Start with the raw file name as given prefixed with a path if requested
-  if pathprefix then candidates[#candidates+1] = std.io.catfile(pathprefix, filename) end
+  if pathprefix then candidates[#candidates+1] = std.io.catfile(pathprefix, "?") end
   -- Also check the raw file name without a path
-  candidates[#candidates+1] = filename
+  candidates[#candidates+1] = "?"
   -- Iterate through the directory of the master file, the SILE_PATH variable, and the current directory
   -- Check for prefixed paths first, then the plain path in that fails
   if SILE.masterFilename then
     for path in SU.gtoke(SILE.masterDir..";"..tostring(os.getenv("SILE_PATH")), ";") do
       if path.string and path.string ~= "nil" then
-        if pathprefix then candidates[#candidates+1] = std.io.catfile(path.string, pathprefix, filename) end
-        candidates[#candidates+1] = std.io.catfile(path.string, filename)
+        if pathprefix then candidates[#candidates+1] = std.io.catfile(path.string, pathprefix, "?") end
+        candidates[#candidates+1] = std.io.catfile(path.string, "?")
       end
     end
   end
   -- Return the first candidate that exists, also checking the .sil suffix
-  for _, v in pairs(candidates) do
-    if file_exists(v) then resolved = v break end
-    if file_exists(v..".sil") then resolved = v..".sil" break end
+  local path = table.concat(candidates, ";")
+  local resolved, err = package.searchpath(filename, path, "/")
+  if resolved then
+    if SILE.makeDeps then SILE.makeDeps:add(resolved) end
+  else
+    SU.warn("Unable to find file " .. filename .. err)
   end
-  if SILE.makeDeps then SILE.makeDeps:add(resolved) end
   return resolved
 end
 
