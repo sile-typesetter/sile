@@ -44,6 +44,7 @@ end
 if SILE.makeDeps then SILE.makeDeps:add(executable) end
 SILE.init()
 if SILE.masterFilename then
+  extendPath(SILE.masterDir)
   if SILE.preamble then
     for _, preamble in pairs(SILE.preamble) do
       io.stderr:write("Loading "..preamble)

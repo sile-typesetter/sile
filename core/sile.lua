@@ -117,6 +117,7 @@ Options:
     SILE.masterFilename = _G.unparsed[1]:gsub("\\", "/")
     -- Strip extension
     SILE.masterFilename = string.match(SILE.masterFilename,"(.+)%..-$") or SILE.masterFilename
+    SILE.masterDir = SILE.masterFilename:match("(.-)[^%/]+$")
   end
   SILE.debugFlags = {}
   if opts.backend then
@@ -246,8 +247,7 @@ function SILE.resolveFile(filename, pathprefix)
   -- Iterate through the directory of the master file, the SILE_PATH variable, and the current directory
   -- Check for prefixed paths first, then the plain path in that fails
   if SILE.masterFilename then
-    local dirname = SILE.masterFilename:match("(.-)[^%/]+$")
-    for path in SU.gtoke(dirname..";"..tostring(os.getenv("SILE_PATH")), ";") do
+    for path in SU.gtoke(SILE.masterDir..";"..tostring(os.getenv("SILE_PATH")), ";") do
       if path.string and path.string ~= "nil" then
         if pathprefix then candidates[#candidates+1] = std.io.catfile(path.string, pathprefix, filename) end
         candidates[#candidates+1] = std.io.catfile(path.string, filename)
