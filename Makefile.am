@@ -17,6 +17,7 @@ SHELL = bash
 .DELETE_ON_ERROR:
 
 LUAROCKS := luarocks --tree lua_modules
+LUAROCKSARGS ?=
 LUAMODLOCK := sile-dev-1.rockslock
 LUAMODSPEC := sile-dev-1.rockspec
 LUAVERSION := $(shell lua <<< 'print(_VERSION:match("%d+%.%d+"))')
@@ -27,7 +28,7 @@ rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
 installrocks: $(LUAMODLOCK) $(shell $(rocksmatch) || echo lua_modules)
 
 lua_modules: $(LUAMODSPEC) $(shell $(rocksmatch) || echo force)
-	$(LUAROCKS) install --only-deps $<
+	$(LUAROCKS) $(LUAROCKSARGS) install --only-deps $<
 
 $(LUAMODLOCK): lua_modules $(LUAMODSPEC)
 	$(genrockslock) > $@

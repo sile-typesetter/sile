@@ -122,6 +122,10 @@ AM_CONDITIONAL([LINKLUA], [test "x$enable_linklua" != "xno"])
 
 AC_CANONICAL_HOST
 case $host_os in
+  darwin*)
+    LUAROCKSARGS="EXPAT_DIR=/usr/local/opt/expat OPENSSL_DIR=/usr/local/opt/openssl ZLIB_DIR=/usr/local/opt/zlib"
+    SHARED_LIB_EXT="so"
+    ;;
   cygwin* | mingw* )
       SHARED_LIB_EXT="dll"
       ;;
@@ -132,6 +136,7 @@ esac
 AC_SUBST([SHARED_LIB_EXT])
 AC_SUBST([HARFBUZZ_CFLAGS])
 AC_SUBST([HARFBUZZ_LIBS])
+AC_SUBST([LUAROCKSARGS])
 AC_SUBST([SILE_PATH])
 AC_SUBST([SILE_LIB_PATH])
 AC_SUBST([shared_ext])
