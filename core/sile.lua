@@ -1,3 +1,12 @@
+-- Initialize Lua environment
+require("compat53") -- Backport of lots of Lua 5.3 features to Lua 5.[12]
+bit32 = bit32 or require("bit32") -- Backport of Lua 5.2+ bitwise functions to Lua 5.1
+require("pl") -- Penlight on-demand module loader
+lfs = require("lfs") -- luafilesystem
+std = require("std") -- lua-stdlib (being phased out in favor of Penlight)
+if (os.getenv("SILE_COVERAGE")) then require("luacov") end
+
+-- Initialize SILE
 SILE = {}
 SILE.version = "0.9.5.1"
 SILE.utilities = require("core/utilities")
@@ -8,15 +17,6 @@ SILE.debugFlags = {}
 SILE.nodeMakers = {}
 SILE.tokenizers = {}
 SILE.status = {}
-
-require("pl") -- Penlight on-demand module loader
-std = require("std")
-lfs = require("lfs")
-
-require("compat53")
-if not bit32 then bit32 = require("bit32") end
-
-if (os.getenv("SILE_COVERAGE")) then require("luacov") end
 
 SILE.traceStack = require("core/tracestack")
 SILE.documentState = std.object {}
