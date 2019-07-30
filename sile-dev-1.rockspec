@@ -10,6 +10,7 @@ dependencies = {
   "lpeg",
   "cassowary",
   "compat53",
+  "linenoise",
   "lua-zlib",
   "lua_cliargs 2.3-3",
   "luaepnf",
