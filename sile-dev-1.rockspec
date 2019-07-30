@@ -9,6 +9,7 @@ dependencies = {
   "luaepnf",
   "lpeg",
   "cassowary",
+  "compat53",
   "lua-zlib",
   "lua_cliargs 2.3-3",
   "luaepnf",
