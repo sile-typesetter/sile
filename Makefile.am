@@ -19,6 +19,7 @@ SHELL = bash
 LUAROCKS := luarocks --tree lua_modules
 LUAMODLOCK := sile-dev-1.rockslock
 LUAMODSPEC := sile-dev-1.rockspec
+LUAVERSION := $(shell lua <<< 'print(_VERSION:match("%d+%.%d+"))')
 genrockslock := $(LUAROCKS) list --porcelain | awk '{print $$1 " " $$2}'
 rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
 
@@ -48,7 +49,10 @@ test: $(TESTSRCS) $(ACTUALS) sile testprep
 	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
 
 busted: $(wildcard tests/*_spec.lua) sile testprep
-	busted --cpath="core/?.so" --lpath='./lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
+	set -f; IFS=';'
+	packagecpath=(./{,core/,lua_modules/lib/lua/$(LUAVERSION)/}?.so)
+	packagepath=(./{,lua_modules/share/lua/$(LUAVERSION)/,lua-libraries/}?{,/init}.lua)
+	busted --cpath="$${packagecpath[*]}" --lpath="$${packagepath[*]}" tests
 
 DOCSSRCS = $(basename $(wildcard documentation/*.sil))
 DOCS = $(addsuffix .pdf,$(basename $(DOCSSRCS)))
