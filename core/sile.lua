@@ -155,10 +155,11 @@ end
 
 function SILE.initRepl ()
   SILE._repl          = require 'repl.console'
-  local has_linenoise = pcall(require, 'linenoise')
+  local has_linenoise, linenoise = pcall(require, 'linenoise')
 
   if has_linenoise then
-    SILE._repl:loadplugin 'linenoise'
+    SILE._repl:loadplugin('linenoise')
+    linenoise.enableutf8()
   else
     -- XXX check that we're not receiving input from a non-tty
     local has_rlwrap = os.execute('which rlwrap >/dev/null 2>/dev/null') == 0
@@ -178,10 +179,10 @@ function SILE.initRepl ()
     end
   end
 
-  SILE._repl:loadplugin 'history'
-  SILE._repl:loadplugin 'completion'
-  SILE._repl:loadplugin 'autoreturn'
-  SILE._repl:loadplugin 'rcfile'
+  SILE._repl:loadplugin('history')
+  SILE._repl:loadplugin('completion')
+  SILE._repl:loadplugin('autoreturn')
+  SILE._repl:loadplugin('rcfile')
 end
 
 function SILE.repl()
