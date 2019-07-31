@@ -4,7 +4,8 @@
   "description": "SILE Typesetter",
   "main": "sile",
   "scripts": {
-    "test": "make test"
+    "test": "make test && make busted",
+    "release": "standard-version"
   },
   "repository": {
     "type": "git",
@@ -21,7 +22,9 @@
     "@commitlint/config-conventional": "^8.1.0",
     "@commitlint/prompt": "^8.1.0",
     "commitizen": "^4.0.3",
-    "husky": "^3.0.2"
+    "conventional-changelog-cli": "^2.0.23",
+    "husky": "^3.0.2",
+    "standard-version": "^7.0.0"
   },
   "config": {
     "commitizen": {
@@ -32,5 +35,45 @@
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
+  },
+  "standard-version": {
+    "infile": "CHANGELOG.md",
+    "types": [
+      {
+        "type": "feat",
+        "section": "New Features"
+      },
+      {
+        "type": "fix",
+        "section": "Bug Fixes"
+      },
+      {
+        "type": "chore",
+        "section": "Behind the Scenes",
+        "hidden": true
+      },
+      {
+        "type": "docs",
+        "hidden": true
+      },
+      {
+        "type": "style",
+        "hidden": true
+      },
+      {
+        "type": "refactor",
+        "section": "Changes",
+        "hidden": true
+      },
+      {
+        "type": "perf",
+        "section": "Optimizations"
+      },
+      {
+        "type": "test",
+        "hidden": true
+      }
+    ],
+    "preset": "conventionalcommits"
   }
 }
