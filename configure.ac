@@ -89,13 +89,6 @@ esac
 
 AX_LUA_HEADERS
 AX_LUA_LIBS
-# Check for Lua modules
-AX_LUA_MODULE([lpeg], [lpeg])
-AX_LUA_MODULE([lxp], [luaexpat])
-AX_LUA_MODULE([zlib], [lua-zlib])
-AX_LUA_MODULE([lfs], [luafilesystem])
-AX_LUA_MODULE([socket], [luasocket])
-AX_LUA_MODULE([ssl], [luasec])
 
 AC_ARG_ENABLE([linklua],
     AS_HELP_STRING([--disable-linklua], [Don't link lua library with dylibs]))
@@ -129,6 +122,10 @@ AM_CONDITIONAL([LINKLUA], [test "x$enable_linklua" != "xno"])
 
 AC_CANONICAL_HOST
 case $host_os in
+  darwin*)
+    LUAROCKSARGS="EXPAT_DIR=/usr/local/opt/expat OPENSSL_DIR=/usr/local/opt/openssl ZLIB_DIR=/usr/local/opt/zlib"
+    SHARED_LIB_EXT="so"
+    ;;
   cygwin* | mingw* )
       SHARED_LIB_EXT="dll"
       ;;
@@ -139,16 +136,12 @@ esac
 AC_SUBST([SHARED_LIB_EXT])
 AC_SUBST([HARFBUZZ_CFLAGS])
 AC_SUBST([HARFBUZZ_LIBS])
+AC_SUBST([LUAROCKSARGS])
 AC_SUBST([SILE_PATH])
 AC_SUBST([SILE_LIB_PATH])
 AC_SUBST([shared_ext])
 AC_SUBST([APPKIT])
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_CONFIG_FILES([sile], [chmod +x sile])
-
-# Configure list of data files
-echo 'subdir_files = \' > subfiles.mk
-find core classes languages packages lua-libraries -type f -print | sed 's/^/  /;$q;s/$/ \\/' >> subfiles.mk
-
 
 AC_OUTPUT

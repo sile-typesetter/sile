@@ -1,3 +1,12 @@
+-- Initialize Lua environment
+require("compat53") -- Backport of lots of Lua 5.3 features to Lua 5.[12]
+bit32 = bit32 or require("bit32") -- Backport of Lua 5.2+ bitwise functions to Lua 5.1
+require("pl") -- Penlight on-demand module loader
+lfs = require("lfs") -- luafilesystem
+std = require("std") -- lua-stdlib (being phased out in favor of Penlight)
+if (os.getenv("SILE_COVERAGE")) then require("luacov") end
+
+-- Initialize SILE
 SILE = {}
 SILE.version = "0.9.5.1"
 SILE.utilities = require("core/utilities")
@@ -8,12 +17,6 @@ SILE.debugFlags = {}
 SILE.nodeMakers = {}
 SILE.tokenizers = {}
 SILE.status = {}
-
-loadstring = loadstring or load -- 5.3 compatibility
-if not unpack then unpack = table.unpack end -- 5.3 compatibility
-std = require("std")
-lfs = require("lfs")
-if (os.getenv("SILE_COVERAGE")) then require("luacov") end
 
 SILE.traceStack = require("core/tracestack")
 SILE.documentState = std.object {}
@@ -74,8 +77,7 @@ SILE.init = function ()
 end
 
 SILE.require = function (dependency, pathprefix)
-  local file = SILE.resolveFile(dependency..".lua", pathprefix)
-  if file then return require(file:gsub(".lua$","")) end
+  dependency = dependency:gsub(".lua$", "")
   if pathprefix then
     local status, lib = pcall(require, std.io.catfile(pathprefix, dependency))
     if status then return lib end
@@ -113,6 +115,7 @@ Options:
     SILE.masterFilename = _G.unparsed[1]:gsub("\\", "/")
     -- Strip extension
     SILE.masterFilename = string.match(SILE.masterFilename,"(.+)%..-$") or SILE.masterFilename
+    SILE.masterDir = SILE.masterFilename:match("(.-)[^%/]+$")
   end
   SILE.debugFlags = {}
   if opts.backend then
@@ -125,7 +128,7 @@ Options:
     local statements = type(opts.evaluate) == "table" and opts.evaluate or { opts.evaluate }
     SILE.dolua = {}
     for _, statement in ipairs(statements) do
-      local func, err = loadstring(statement)
+      local func, err = load(statement)
       if err then SU.error(err) end
       SILE.dolua[#SILE.dolua+1] = func
     end
@@ -145,17 +148,18 @@ Options:
   end
 
   -- http://lua-users.org/wiki/VarargTheSecondClassCitizen
-  local identity = function (...) return unpack({...}, 1, select('#', ...)) end
+  local identity = function (...) return utils.unpack({...}, 1, select('#', ...)) end
   SILE.errorHandler = opts.traceback and debug.traceback or identity
   SILE.traceback = opts.traceback
 end
 
 function SILE.initRepl ()
   SILE._repl          = require 'repl.console'
-  local has_linenoise = pcall(require, 'linenoise')
+  local has_linenoise, linenoise = pcall(require, 'linenoise')
 
   if has_linenoise then
-    SILE._repl:loadplugin 'linenoise'
+    SILE._repl:loadplugin('linenoise')
+    linenoise.enableutf8()
   else
     -- XXX check that we're not receiving input from a non-tty
     local has_rlwrap = os.execute('which rlwrap >/dev/null 2>/dev/null') == 0
@@ -175,10 +179,10 @@ function SILE.initRepl ()
     end
   end
 
-  SILE._repl:loadplugin 'history'
-  SILE._repl:loadplugin 'completion'
-  SILE._repl:loadplugin 'autoreturn'
-  SILE._repl:loadplugin 'rcfile'
+  SILE._repl:loadplugin('history')
+  SILE._repl:loadplugin('completion')
+  SILE._repl:loadplugin('autoreturn')
+  SILE._repl:loadplugin('rcfile')
 end
 
 function SILE.repl()
@@ -233,29 +237,29 @@ end
 
 -- Sort through possible places files could be
 function SILE.resolveFile(filename, pathprefix)
-  local resolved = nil
   local candidates = {}
   -- Start with the raw file name as given prefixed with a path if requested
-  if pathprefix then candidates[#candidates+1] = std.io.catfile(pathprefix, filename) end
+  if pathprefix then candidates[#candidates+1] = std.io.catfile(pathprefix, "?") end
   -- Also check the raw file name without a path
-  candidates[#candidates+1] = filename
+  candidates[#candidates+1] = "?"
   -- Iterate through the directory of the master file, the SILE_PATH variable, and the current directory
   -- Check for prefixed paths first, then the plain path in that fails
   if SILE.masterFilename then
-    local dirname = SILE.masterFilename:match("(.-)[^%/]+$")
-    for path in SU.gtoke(dirname..";"..tostring(os.getenv("SILE_PATH")), ";") do
+    for path in SU.gtoke(SILE.masterDir..";"..tostring(os.getenv("SILE_PATH")), ";") do
       if path.string and path.string ~= "nil" then
-        if pathprefix then candidates[#candidates+1] = std.io.catfile(path.string, pathprefix, filename) end
-        candidates[#candidates+1] = std.io.catfile(path.string, filename)
+        if pathprefix then candidates[#candidates+1] = std.io.catfile(path.string, pathprefix, "?") end
+        candidates[#candidates+1] = std.io.catfile(path.string, "?")
       end
     end
   end
   -- Return the first candidate that exists, also checking the .sil suffix
-  for _, v in pairs(candidates) do
-    if file_exists(v) then resolved = v break end
-    if file_exists(v..".sil") then resolved = v..".sil" break end
+  local path = table.concat(candidates, ";")
+  local resolved, err = package.searchpath(filename, path, "/")
+  if resolved then
+    if SILE.makeDeps then SILE.makeDeps:add(resolved) end
+  else
+    SU.warn("Unable to find file " .. filename .. err)
   end
-  if SILE.makeDeps then SILE.makeDeps:add(resolved) end
   return resolved
 end
 

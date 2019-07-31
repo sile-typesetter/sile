@@ -147,7 +147,7 @@ function SILE.inputs.TeXlike.process (doc)
       SILE.inputs.common.init(doc, tree)
     end
     SILE.process(tree)
-  elseif pcall(function () assert(loadstring(doc))() end) then
+  elseif pcall(function () assert(load(doc))() end) then
   else
     SU.error("Input not recognized as Lua or SILE content")
   end

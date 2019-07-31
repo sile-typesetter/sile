@@ -7,8 +7,6 @@
 
 SILE.scratch.tableofcontents = {}
 
-local loadstring = loadstring or load
-
 local moveNodes = function (self)
   local node = SILE.scratch.info.thispage.toc
   if node then
@@ -33,7 +31,7 @@ SILE.registerCommand("tableofcontents", function (options, content)
     return
   end
   local doc = tocfile:read("*all")
-  local toc = assert(loadstring(doc))()
+  local toc = assert(load(doc))()
   SILE.call("tableofcontents:header")
   for i = 1, #toc do
     local item = toc[i]

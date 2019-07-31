@@ -1,10 +1,8 @@
-local assert = require "luassert"
-testingSILE = true
 SILE = require("core/sile")
+
 describe("The frame parser", function()
-  it("should exist", function()
-    assert.is.truthy(SILE.frameParser)
-  end)
+  it("should exist", function() assert.is.truthy(SILE.frameParser) end)
+
   local n = SILE.frameParserBits.number
   local f = SILE.frameParserBits.func
   local d = SILE.frameParserBits.dimensioned_string
@@ -19,8 +17,8 @@ describe("The frame parser", function()
     SILE.documentState = {
       thisPageTemplate = {
         frames = { a = SILE.newFrame({ id = "A", top = 20, left = 30, bottom = 200, right = 300 }),
-                   bb3 = SILE.newFrame({ id ="B", top = 20, left = 30, bottom = 200, right = 300 })
-                }
+          bb3 = SILE.newFrame({ id ="B", top = 20, left = 30, bottom = 200, right = 300 })
+        }
       }
     }
     --it("should match valid functions", function() assert.is.equal(30,f:match("left(a)")) end)
@@ -32,4 +30,5 @@ describe("The frame parser", function()
   describe("dimensioned string", function()
     it("should convert via SILE.measurements", function() assert.is.equal(14.4,d:match("0.2 in")) end)
   end)
+
 end)

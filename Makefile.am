@@ -7,13 +7,33 @@ SUBDIRS = libtexpdf src
 endif
 
 dist_bin_SCRIPTS = sile
--include subfiles.mk
+subdir_files = $(shell find core classes languages packages lua-libraries lua_modules -type f -print)
 nobase_dist_pkgdata_DATA = $(subdir_files)
 EXTRA_DIST=NEWS.md README.md LICENSE tests examples documentation
 
+SHELL = bash
 .ONESHELL:
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
+
+LUAROCKS := luarocks --tree lua_modules
+LUAROCKSARGS ?=
+LUAMODLOCK := sile-dev-1.rockslock
+LUAMODSPEC := sile-dev-1.rockspec
+LUAVERSION := $(shell lua <<< 'print(_VERSION:match("%d+%.%d+"))')
+genrockslock := $(LUAROCKS) list --porcelain | awk '{print $$1 " " $$2}'
+rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
+
+.PHONY: installrocks
+installrocks: $(LUAMODLOCK) $(shell $(rocksmatch) || echo lua_modules)
+
+lua_modules: $(LUAMODSPEC) $(shell $(rocksmatch) || echo force)
+	$(LUAROCKS) $(LUAROCKSARGS) install --only-deps $<
+
+$(LUAMODLOCK): lua_modules $(LUAMODSPEC)
+	$(genrockslock) > $@
+
+sile: installrocks
 
 DEPDIR := .deps
 REGRESSIONSCRIPT := ./tests/regressions.pl
@@ -28,6 +48,12 @@ ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 .PHONY: test
 test: $(TESTSRCS) $(ACTUALS) sile testprep
 	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
+
+busted: $(wildcard tests/*_spec.lua) sile testprep
+	set -f; IFS=';'
+	packagecpath=(./{,core/,lua_modules/lib/lua/$(LUAVERSION)/}?.so)
+	packagepath=(./{,lua_modules/share/lua/$(LUAVERSION)/,lua-libraries/}?{,/init}.lua)
+	busted --cpath="$${packagecpath[*]}" --lpath="$${packagepath[*]}" tests
 
 DOCSSRCS = $(basename $(wildcard documentation/*.sil))
 DOCS = $(addsuffix .pdf,$(basename $(DOCSSRCS)))
@@ -100,7 +126,7 @@ include Makefile-fonts
 
 # Make sure we have font files before running tests (ignoring timestamp of font files)
 .PHONY: testprep
-testprep: | $(DEPDIRS) $(addprefix .fonts/,$(TESTFONTFILES))
+testprep: installrocks | $(DEPDIRS) $(addprefix .fonts/,$(TESTFONTFILES))
 
 gource.webm:
 	mkdir -p /tmp/gravatars
