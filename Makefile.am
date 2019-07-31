@@ -48,6 +48,9 @@ update_libtexpdf:
 	git add -- libtexpdf
 	git diff-index --quiet --cached HEAD || git commit -m "chore(build): Pin latest libtexpdf library submodule"
 
+gh-pages:
+	git worktree add -f $@ $@
+
 .PHONY: installrocks
 installrocks: $(LUAMODLOCK) $(shell $(rocksmatch) || echo lua_modules)
 
