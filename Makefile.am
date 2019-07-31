@@ -24,6 +24,13 @@ LUAVERSION := $(shell lua <<< 'print(_VERSION:match("%d+%.%d+"))')
 genrockslock := $(LUAROCKS) list --porcelain | awk '{print $$1 " " $$2}'
 rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
 
+# Make sure the embeded version number iterates with every commit
+configure.ac: .lastcommit
+
+.PHONY: .lastcommit
+.lastcommit:
+	@touch -d "$$(git log -n1 --pretty=format:%cI)" -- $@
+
 .PHONY: installrocks
 installrocks: $(LUAMODLOCK) $(shell $(rocksmatch) || echo lua_modules)
 
