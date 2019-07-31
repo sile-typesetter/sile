@@ -67,6 +67,10 @@ EXAMPLES = $(addsuffix .pdf,$(DOCSSRCS))
 .PHONY: examples
 examples: $(EXAMPLES)
 
+# Use system wide fonts for docs and examples
+documentation/%.pdf: LOCALTESTFONTS=
+examples/%.pdf: LOCALTESTFONTS=
+
 %.pdf: %.sil $(and $(SILE_COVERAGE),force)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@
 
