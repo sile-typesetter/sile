@@ -31,6 +31,23 @@ configure.ac: .lastcommit
 .lastcommit:
 	@touch -d "$$(git log -n1 --pretty=format:%cI)" -- $@
 
+.PHONY: tagrelease
+tagrelease: sile prerelease
+	test -z $$(git tag --points-at HEAD) || exit 0 # end if we are already on a release tag
+	git diff-index --quiet --cached HEAD || exit 1 # die if anything staged but not committed
+	git diff-files --quiet || exit 1 # die if any tracked files have unstagged changes
+	npm run release
+
+.PHONY: prerelease
+prerelease: sile test busted examples docs update_libtexpdf
+
+.PHONY: update_libtexpdf
+update_libtexpdf:
+	git diff-index --quiet --cached HEAD || exit 1 # die if anything already staged
+	git submodule update --init --remote -- libtexpdf
+	git add -- libtexpdf
+	git diff-index --quiet --cached HEAD || git commit -m "chore(build): Pin latest libtexpdf library submodule"
+
 .PHONY: installrocks
 installrocks: $(LUAMODLOCK) $(shell $(rocksmatch) || echo lua_modules)
 
