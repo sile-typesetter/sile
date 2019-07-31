@@ -101,7 +101,7 @@ SILE is distributed under the [MIT licence][license].
   [sile]: http://www.sile-typesetter.org/
   [releases]: https://github.com/simoncozens/sile/releases
   [azure]: https://simoncozens-github.visualstudio.com/sile/_build
-  [doc]: http://sile-typesetter.org/images/sile-0.9.4.pdf
+  [doc]: http://sile-typesetter.org/manual/sile-0.9.5.pdf
   [gentium]: http://software.sil.org/gentium/download/
   [github]: https://github.com/simoncozens/sile
   [license]: http://choosealicense.com/licenses/mit/
