@@ -3073,9 +3073,9 @@ a particular operation:
 
 \begin{verbatim}
 \line
-SILE.debugFlags.typesetter = 1
+SILE.debugFlags.typesetter = true
 SILE.typesetter:leaveHmode()
-SILE.debugFlags.typesetter = nil
+SILE.debugFlags.typesetter = false
 \line
 \end{verbatim}
 

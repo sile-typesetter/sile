@@ -127,7 +127,7 @@ Options:
     SILE.backend = opts.backend
   end
   if opts.debug then
-    for _,v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = 1 end
+    for _, v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = true end
   end
   if opts.evaluate then
     local statements = type(opts.evaluate) == "table" and opts.evaluate or { opts.evaluate }
