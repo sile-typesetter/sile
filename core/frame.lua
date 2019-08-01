@@ -1,23 +1,18 @@
-local cassowary = require("cassowary")
 SILE.frames = {}
+
+local cassowary = require("cassowary")
 local solver = cassowary.SimplexSolver()
-solverNeedsReloading = true
-
-SILE._frameParser = require("core/frameparser")
-
-local parseFrameDef = function(dimension)
-  return SILE._frameParser:match(dimension)
-end
+local solverNeedsReloading = true
 
 local dims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
 
 SILE.framePrototype = std.object {
-  next= nil,
-  id= nil,
-  previous= nil,
-  balanced= false,
+  next = nil,
+  id = nil,
+  previous = nil,
+  balanced = false,
   direction = "LTR-TTB",
-  writingDirection     = function (self) return self.direction:match("^(%a+)") end,
+  writingDirection     = function (self) return self.direction:match("^(%a+)") or "LTR" end,
   pageAdvanceDirection = function (self) return self.direction:match("-(%a+)$") or "TTB" end,
   state = {},
   enterHooks = {},
@@ -26,29 +21,29 @@ SILE.framePrototype = std.object {
     self.constraints[method] = dimension
     self:invalidate()
   end,
-  invalidate = function()
+  invalidate = function ()
     solverNeedsReloading = true
   end,
-  relax = function(self, method)
+  relax = function (self, method)
     self.constraints[method] = nil
   end,
-  reifyConstraint = function(self, solver, method, stay)
+  reifyConstraint = function (self, solver, method, stay)
     if not self.constraints[method] then return end
-    local constraint = parseFrameDef(self.constraints[method])
-    -- print("Adding constraint "..self.id.."("..method..") = "..constraint)
+    local constraint = SILE.frameParser:match(self.constraints[method])
+    SU.debug("frames", "Adding constraint "..self.id.."("..method..") = "..constraint)
     local eq = cassowary.Equation(self.variables[method], constraint)
     solver:addConstraint(eq)
     if stay then solver:addStay(eq) end
   end,
-  addWidthHeightDefinitions = function(self, solver)
+  addWidthHeightDefinitions = function (self, solver)
     solver:addConstraint(cassowary.Equation(self.variables.width, cassowary.minus(self.variables.right, self.variables.left)))
     solver:addConstraint(cassowary.Equation(self.variables.height, cassowary.minus(self.variables.bottom, self.variables.top)))
   end,
   -- This is hideously inefficient,
   -- but it's the easiest way to allow users to reconfigure frames at runtime.
-  solve = function(self)
+  solve = function (self)
     if not solverNeedsReloading then return end
-    --print("Solving")
+    SU.debug("frames", "Solving...")
     solver = cassowary.SimplexSolver()
     if SILE.frames.page then
       for method, dimension in pairs(SILE.frames.page.constraints) do
@@ -56,7 +51,6 @@ SILE.framePrototype = std.object {
       end
       SILE.frames.page:addWidthHeightDefinitions(solver)
     end
-
     for id, frame in pairs(SILE.frames) do
       if not (id == "page") then
         for method, dimension in pairs(frame.constraints) do
@@ -67,7 +61,6 @@ SILE.framePrototype = std.object {
     end
     solver:solve()
     solverNeedsReloading = false
-    --SILE.repl()
   end
 }
 
@@ -170,7 +163,7 @@ end
 
 function SILE.framePrototype:isAbsoluteConstraint(method)
   if not self.constraints[method] then return false end
-  local constraint = parseFrameDef(self.constraints[method])
+  local constraint = SILE.frameParser:match(self.constraints[method])
   if type(constraint) ~= "table" then return true end
   if not constraint.terms then return false end
   for clv,coeff in pairs(constraint.terms) do
@@ -190,7 +183,7 @@ function SILE.framePrototype:isMainContentFrame()
   return false
 end
 
-SILE.newFrame = function(spec, prototype)
+SILE.newFrame = function (spec, prototype)
   SU.required(spec, "id", "frame declaration")
   prototype = prototype or SILE.framePrototype
   local frame
@@ -198,9 +191,7 @@ SILE.newFrame = function(spec, prototype)
     constraints = {},
     variables = {}
   }
-  -- Copy everything in from spec
   SILE.frames[spec.id] = frame
-
   for method, dimension in pairs(dims) do
     frame.variables[method] = cassowary.Variable({ name = spec.id .. "_" .. method })
     frame[method] = function (frame)
@@ -208,15 +199,10 @@ SILE.newFrame = function(spec, prototype)
       return frame.variables[method].value
     end
   end
-
   for key, value in pairs(spec) do
     if not dims[key] then frame[key] = spec[key] end
   end
-  -- Fix up "balanced"
-  if frame.balanced == "true" or frame.balanced == "1" then
-    frame.balanced = true
-  end
-
+  frame.balanced = SU.boolean(frame.balanced, false)
   frame.constraints = {}
   -- Add definitions of width and height
   for method, dimension in pairs(dims) do
@@ -227,14 +213,15 @@ SILE.newFrame = function(spec, prototype)
   return frame
 end
 
-SILE.getFrame = function(id)
-  if type(id) == "table" then return id end -- Shouldn't happen but...
-  return SILE.frames[id]
-  -- or SU.warn("Couldn't get frame ID "..id, true)
+SILE.getFrame = function (id)
+  if type(id) == "table" then
+    SU.error("Passed a table, expected a string", true)
+  end
+  return SILE.frames[id] or SU.warn("Couldn't find frame ID "..id, true)
 end
 
-SILE.parseComplexFrameDimension = function(dimension)
-  local length =  parseFrameDef(dimension)
+SILE.parseComplexFrameDimension = function (dimension)
+  local length = SILE.frameParser:match(dimension)
   length = SILE.toAbsoluteMeasurement(length)
   if type(length) == "table" then
     local g = cassowary.Variable({ name = "t" })
