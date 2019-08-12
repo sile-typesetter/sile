@@ -150,7 +150,7 @@ page? Remember that the \code{\\eject} (another word for \code{\\break} in
 vertical mode) only adds a penalty to the end of the output queue; page breaking
 is triggered when we leave horizontal mode, and the way to do that is \code{\\par}.
 So we start with \code{\\eject\\par} and then we will begin a \code{\\pagetemplate}.
-Within \code{\\pagetemplate} we need to tell SILE which frame to being typesetting
+Within \code{\\pagetemplate} we need to tell SILE which frame to begin typesetting
 onto.
 
 \begin{verbatim}

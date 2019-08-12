@@ -118,7 +118,7 @@ function docbook.wipe(tbl)
 end
 \end{verbatim}
 
-Let’s finish off the \code{<example>} example by skipping a big between the title and
+Let’s finish off the \code{<example>} example by skipping a bit between the title and
 the content, processing the content and drawing a final line across the page:
 
 \begin{verbatim}

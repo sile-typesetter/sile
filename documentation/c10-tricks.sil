@@ -409,8 +409,8 @@ require("core/sile")
 SILE.outputFilename = "byhand.pdf"
 local plain = require("plain", "classes")
 SILE.documentState.documentClass = plain;
-local ff = plain:init()
-SILE.typesetter:init(ff)
+local firstFrame = plain:init()
+SILE.typesetter:init(firstFrame)
 \line
 \end{verbatim}
 
