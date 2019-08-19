@@ -77,6 +77,34 @@ examples: $(EXAMPLES)
 coverage: export SILE_COVERAGE=1
 coverage: test_previews
 
+HEADSHA ?= $(shell git rev-parse --short HEAD)
+BASESHA ?= $(shell git rev-parse --short $(HEADSHA)^)
+
+.PHONY: benchmark
+benchmark: time-$(HEADSHA).json time-$(BASESHA).json
+	cat $^
+
+time-%.json: benchmark-%/time.json
+	cp $< $@
+
+.PRECIOUS: benchmark-%/time.json
+benchmark-%/time.json: benchmark-%/sile
+	cd benchmark-$*
+	export TIMEFORMAT=$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
+	{ time (./sile documentation/sile.sil > /dev/null 2>&1) } 2> time.json
+
+.PRECIOUS: benchmark-%/sile:
+benchmark-%/sile:
+	[[ -d benchmark-$* ]] || git worktree add --detach benchmark-$* $(HEADSHA)
+	cd benchmark-$*
+	[[ -d libtexpdf ]] && rmdir libtexpdf
+	[[ -h libtexpdf ]] || ln -s ../libtexpdf
+	[[ -h lua_modules ]] || ln -s ../lua_modules
+	[[ -h node_modules ]] || ln -s ../node_modules
+	./bootstrap.sh
+	./configure
+	make
+
 .PHONY: force
 force: ;
 
