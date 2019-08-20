@@ -39,9 +39,9 @@ Book
 \include[src=documentation/c08-language.sil]
 
 % Developers' guide
-\include[src=documentation/c07-concepts.sil]
-\include[src=documentation/c08-classdesign.sil]
-\include[src=documentation/c09-xmlproc.sil]
-\include[src=documentation/c10-tricks.sil]
+\include[src=documentation/c09-concepts.sil]
+\include[src=documentation/c10-classdesign.sil]
+\include[src=documentation/c11-xmlproc.sil]
+\include[src=documentation/c12-tricks.sil]
 
 \end{document}
