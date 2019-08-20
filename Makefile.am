@@ -84,6 +84,14 @@ BASESHA ?= $(shell git rev-parse --short $(HEADSHA)^)
 benchmark: time-$(HEADSHA).json time-$(BASESHA).json
 	cat $^
 
+clean-recursive: clean-benchmarks
+
+.PHONY: clean-benchmarks
+clean-benchmarks:
+	rm -rf benchmark-*
+	git worktree prune
+	git branch --list | grep benchmark- | xargs git branch -D
+
 time-%.json: benchmark-%/time.json
 	cp $< $@
 
