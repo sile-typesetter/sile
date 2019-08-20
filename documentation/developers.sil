@@ -10,9 +10,9 @@
 \center{\img[src=documentation/sile-logo.pdf,height=40mm]}\par
 \font[size=50pt,weight=600,family=Helvetica Neue]{Developers’ Guide}}
 \bigskip
-\font[size=12pt,family=Helvetica Neue]{\hss for SILE version \sileversion \hss \par}
+\font[size=12pt]{\hss for SILE version \sileversion \hss \par}
 \skip[height=2in]
-\font[size=20pt,weight=600,family=Helvetica Neue]{\hss Simon Cozens \hss \par}
+\font[size=20pt]{\hss Simon Cozens \hss \par}
 \open-double-page
 \tableofcontents
 \set-counter[id=folio,value=0]

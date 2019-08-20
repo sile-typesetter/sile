@@ -55,12 +55,12 @@ Greek (\code{grc}) and wrap text in a \code{boustrophedon} environment:
 
 \set[parameter=document.parindent,value=0]{\par
 \begin{boustrophedon}
-\font[size=22pt,family=New Athena Unicode,language=grc]
+\font[size=22pt,family=Gentium Plus,language=grc]
 \noindent{}ΧΑΙΡΕΔΕΜΟΤΟΔΕΣΕΜΑΠΑΤΕΡΕΣΤΕΣΕΘΑΝΟΝΤΟΣΑΝΦΙΧΑΡΕΣΑΓΑΘΟΝΠΑΙΔΑΟΛΟΦΘΡΟΜΕΝΟΣΦΑΙΔΙΜΟΣΕΠΟΙΕ
 \end{boustrophedon}
 }
 
-(Under normal circumstances, that line would appear as \font[language=grc,family=New Athena Unicode]{
+(Under normal circumstances, that line would appear as \font[language=grc,family=Gentium Plus]{
 ΧΑΙΡΕΔΕΜΟΤΟΔΕΣΕΜΑΠΑΤΕΡΕΣΤΕΣΕΘΑΝΟΝΤΟΣΑΝΦΙΧΑΡΕΣΑΓΑΘΟΝΠΑΙΔΑΟΛΟΦΘΡΟΜΕΝΟΣΦΑΙΔΙΜΟΣΕΠΟΙΕ
 }.)
 
