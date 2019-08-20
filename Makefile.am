@@ -108,6 +108,7 @@ benchmark-%/sile:
 	[[ -h libtexpdf ]] || ln -s ../libtexpdf
 	[[ -h lua_modules ]] || ln -s ../lua_modules
 	[[ -h node_modules ]] || ln -s ../node_modules
+	[[ -h .fonts ]] || ln -s ../.fonts
 	./bootstrap.sh
 	./configure
 	make
