@@ -3,6 +3,7 @@
 
 # List of font files we _actually need_
 DOCSFONTFILES  = RobotoCondensed-Bold.ttf
+DOCSFONTFILES += GenBkBasR.ttf GenBkBasI.ttf GenBkBasB.ttf
 TESTFONTFILES  = $(DOCSFONTFILES)
 TESTFONTFILES += GentiumPlus-R.ttf GentiumPlus-I.ttf
 TESTFONTFILES += Amiri-Regular.ttf AmiriQuran.ttf
@@ -30,6 +31,10 @@ TESTFONTFILES += Symbola_Hinted.ttf
 .fonts/Amiri%: | .fonts
 	curl -s -L https://github.com/alif-type/amiri/raw/0.111/$(notdir $@) -o $@
 
+.fonts/GenB%: GentiumBasic_1102.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 1 GentiumBasic_1102/$(notdir $@)
+	touch $@
+
 .fonts/GentiumPlus%: GentiumPlus-5.000.zip | .fonts
 	bsdtar -x -f $< -C $(dir $@) --strip-components 1 GentiumPlus-5.000/$(notdir $@)
 	touch $@
@@ -40,6 +45,9 @@ roboto-unhinted.zip:
 
 Symbola.zip:
 	curl -s -L http://users.teilar.gr/~g1951d/$(notdir $@) -o $@
+
+GentiumBasic_1102.zip:
+	curl -s -L https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
 
 GentiumPlus-5.000.zip:
 	curl -s -L https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
