@@ -46,10 +46,10 @@ EXPECTEDS ?= $(wildcard tests/*.expected)
 ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 
 .PHONY: test
-test: $(TESTSRCS) $(ACTUALS) sile testprep
+test: $(TESTSRCS) $(ACTUALS) sile prep
 	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
 
-busted: $(wildcard tests/*_spec.lua) sile testprep
+busted: $(wildcard tests/*_spec.lua) sile prep
 	set -f; IFS=';'
 	packagecpath=(./{,core/,lua_modules/lib/lua/$(LUAVERSION)/}?.so)
 	packagepath=(./{,lua_modules/share/lua/$(LUAVERSION)/,lua-libraries/}?{,/init}.lua)
@@ -66,10 +66,10 @@ EXAMPLES = $(addsuffix .pdf,$(DOCSSRCS))
 .PHONY: examples
 examples: $(EXAMPLES)
 
-%.pdf: %.sil $(and $(SILE_COVERAGE),force)
+%.pdf: %.sil $(and $(SILE_COVERAGE),force) | $(DEPDIRS)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@
 
-%.pdf: %.xml $(and $(SILE_COVERAGE),force)
+%.pdf: %.xml $(and $(SILE_COVERAGE),force) | $(DEPDIRS)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@
 
 .PHONY: coverage
@@ -161,11 +161,9 @@ include $(wildcard $(DEPFILES))
 include Makefile-fonts
 
 # Make sure we have font files before running tests (ignoring timestamp of font files)
-.PHONY: testprep
-testprep: installrocks | $(DEPDIRS) $(addprefix .fonts/,$(TESTFONTFILES))
-
-# Make sure we have fonts for building the manual
-$(DOCS): | $(addprefix .fonts/,$(DOCSFONTFILES))
+.PHONY: prep
+prep: installrocks | $(DEPDIRS)
+prep $(DOCS): | $(addprefix .fonts/,$(LOCALFONTFILES))
 
 gource.webm:
 	mkdir -p /tmp/gravatars

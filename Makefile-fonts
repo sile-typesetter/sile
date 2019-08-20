@@ -2,21 +2,20 @@
 .PRECIOUS: .fonts/% %.zip %.xz
 
 # List of font files we _actually need_
-DOCSFONTFILES  = RobotoCondensed-Bold.ttf
-DOCSFONTFILES += GenBkBasR.ttf GenBkBasI.ttf GenBkBasB.ttf
-TESTFONTFILES  = $(DOCSFONTFILES)
-TESTFONTFILES += GentiumPlus-R.ttf GentiumPlus-I.ttf
-TESTFONTFILES += Amiri-Regular.ttf AmiriQuran.ttf
-TESTFONTFILES += Hack-Regular.ttf
-TESTFONTFILES += LateefGR-Regular.ttf
-TESTFONTFILES += LibertinusSans-Bold.otf LibertinusSerif-Regular.otf
-TESTFONTFILES += NotoNaskhArabic-Regular.ttf
-TESTFONTFILES += NotoSansCJK-Regular.ttc
-TESTFONTFILES += NotoSansKannada-Regular.ttf
-TESTFONTFILES += NotoSansEthiopic-Regular.ttf
-TESTFONTFILES += NotoSansMalayalam-Regular.ttf
-TESTFONTFILES += SBL_Hbrw.ttf
-TESTFONTFILES += Symbola_Hinted.ttf
+LOCALFONTFILES  = RobotoCondensed-Bold.ttf
+LOCALFONTFILES += GenBkBasR.ttf GenBkBasI.ttf GenBkBasB.ttf
+LOCALFONTFILES += GentiumPlus-R.ttf GentiumPlus-I.ttf
+LOCALFONTFILES += Amiri-Regular.ttf AmiriQuran.ttf
+LOCALFONTFILES += Hack-Regular.ttf
+LOCALFONTFILES += LateefGR-Regular.ttf
+LOCALFONTFILES += LibertinusSans-Bold.otf LibertinusSerif-Regular.otf
+LOCALFONTFILES += NotoNaskhArabic-Regular.ttf
+LOCALFONTFILES += NotoSansCJK-Regular.ttc
+LOCALFONTFILES += NotoSansKannada-Regular.ttf
+LOCALFONTFILES += NotoSansEthiopic-Regular.ttf
+LOCALFONTFILES += NotoSansMalayalam-Regular.ttf
+LOCALFONTFILES += SBL_Hbrw.ttf
+LOCALFONTFILES += Symbola_Hinted.ttf
 
 # Tell make how to download individual font files (when available)
 .fonts/NotoSansCJK%: | .fonts
