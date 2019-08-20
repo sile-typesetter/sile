@@ -2,7 +2,9 @@
 .PRECIOUS: .fonts/% %.zip %.xz
 
 # List of font files we _actually need_
-TESTFONTFILES  = GentiumPlus-R.ttf GentiumPlus-I.ttf
+DOCSFONTFILES  = RobotoCondensed-Bold.ttf
+TESTFONTFILES  = $(DOCSFONTFILES)
+TESTFONTFILES += GentiumPlus-R.ttf GentiumPlus-I.ttf
 TESTFONTFILES += Amiri-Regular.ttf AmiriQuran.ttf
 TESTFONTFILES += Hack-Regular.ttf
 TESTFONTFILES += LateefGR-Regular.ttf
@@ -33,6 +35,9 @@ TESTFONTFILES += Symbola_Hinted.ttf
 	touch $@
 
 # Tell  make how to download font file bundles (when not downloadable individually)
+roboto-unhinted.zip:
+	curl -s -L https://github.com/google/roboto/releases/download/v2.138/$(notdir $@) -o $@
+
 Symbola.zip:
 	curl -s -L http://users.teilar.gr/~g1951d/$(notdir $@) -o $@
 
@@ -51,6 +56,10 @@ Hack-v3.003-ttf.tar.xz:
 	touch $@
 
 .fonts/Hack%: Hack-v3.003-ttf.tar.xz | .fonts
+	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
+	touch $@
+
+.fonts/Roboto%: roboto-unhinted.zip | .fonts
 	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
 	touch $@
 

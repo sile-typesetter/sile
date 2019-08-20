@@ -164,6 +164,9 @@ include Makefile-fonts
 .PHONY: testprep
 testprep: installrocks | $(DEPDIRS) $(addprefix .fonts/,$(TESTFONTFILES))
 
+# Make sure we have fonts for building the manual
+$(DOCS): | $(addprefix .fonts/,$(DOCSFONTFILES))
+
 gource.webm:
 	mkdir -p /tmp/gravatars
 	convert examples/images/sile-logo.jpg -negate -resize 50% /tmp/sile-logo.jpg
