@@ -135,7 +135,7 @@ clean-recursive: clean-benchmarks
 clean-benchmarks:
 	rm -rf benchmark-*
 	git worktree prune
-	git branch --list | grep benchmark- | xargs git branch -D
+	git branch --list | grep benchmark- | xargs git branch -D ||:
 
 time-%.json: benchmark-%/time.json
 	cp $< $@
@@ -146,7 +146,7 @@ benchmark-%/time.json: benchmark-%/sile
 	export TIMEFORMAT=$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
 	{ time (./sile documentation/sile.sil > /dev/null 2>&1) } 2> time.json
 
-.PRECIOUS: benchmark-%/sile:
+.PRECIOUS: benchmark-%/sile
 benchmark-%/sile:
 	[[ -d benchmark-$* ]] || git worktree add --detach benchmark-$* $(HEADSHA)
 	cd benchmark-$*
