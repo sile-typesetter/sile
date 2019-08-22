@@ -76,7 +76,7 @@ after_success:
  - $COVERAGE && travis_wait make coverage
  - $COVERAGE && travis_wait luacov-coveralls -e lua-libraries -e lua_modules
 before_deploy:
- - make dist
+ - make distcheck
 deploy:
   provider: releases
   api_key:
