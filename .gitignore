@@ -47,11 +47,18 @@ config.log
 core/*.so
 build/
 *.debug
+benchmark-*
+gh-pages
+sile-v*
+*.zip
+*.xz
+*.rockslock
 
 # Test artifacts
 tests/*.actual
 tests/*.pdf
 */*.toc
+time-*.json
 
 # Vendor stuff
 node_modules
