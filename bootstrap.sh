@@ -6,7 +6,7 @@ set -e
 # and we are part of a git repository that the user has not fully initialized,
 # go ahead and do the step of fetching the the submodule so the compile process
 # can run.
-if [ ! -f "libtexpdf/configure.ac" ] && [ -d ".git" ]; then
+if [ ! -f "libtexpdf/configure.ac" ] && [ -e ".git" ]; then
     git submodule update --init --recursive --remote
 fi
 

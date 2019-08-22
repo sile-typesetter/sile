@@ -20,17 +20,25 @@ swap.outputYourself = function(self,typesetter,line)
 end
 
 SILE.registerCommand("boustrophedon", function (o,c)
+  SILE.typesetter:leaveHmode()
+  local saveBoxup = SILE.typesetter.boxUpNodes
+  local swaps = 0
   SILE.typesetter.boxUpNodes = function(self)
-    local vboxlist = SILE.defaultTypesetter.boxUpNodes(self)
+    local vboxlist = saveBoxup(self)
     local nl = {}
     for i=1,#vboxlist do
       nl[#nl+1] = vboxlist[i]
-      if nl[#nl]:isVbox() then nl[#nl+1] = swap end
+      if nl[#nl]:isVbox() then
+        nl[#nl+1] = swap
+        swaps = swaps + 1
+      end
     end
     return nl
   end
-  SILE.call("thisframeRTL")
   SILE.process(c)
   SILE.typesetter:leaveHmode()
-  SILE.typesetter.boxUpNodes = SILE.defaultTypesetter.boxUpNodes
+  SILE.typesetter.boxUpNodes = saveBoxup
+  if swaps % 2 == 1 then
+    SILE.typesetter:pushVbox(swap)
+  end
 end)
