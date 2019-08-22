@@ -44,6 +44,9 @@ tagrelease: sile prerelease
 .PHONY: prerelease
 prerelease: sile test busted examples docs update_libtexpdf
 
+.PHONY: release
+release: tagrelease
+
 .PHONY: postrelease
 postrelease:
 	@echo "- [ ] Ping packagers: https://repology.org/project/sile/versions"
