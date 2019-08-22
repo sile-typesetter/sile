@@ -11,6 +11,9 @@ subdir_files = $(shell find core classes languages packages lua-libraries lua_mo
 nobase_dist_pkgdata_DATA = $(subdir_files)
 EXTRA_DIST=CHANGELOG.md README.md LICENSE tests examples documentation
 
+# Hack around autoconf's overly opinionated ideas of what projects layouts should be
+AUTOCONF = ${SHELL} /home/caleb/projects/sile/missing autoconf && sed -i -e '/^rm -f/s/ core / /' configure
+
 SHELL = bash
 .ONESHELL:
 .SECONDEXPANSION:

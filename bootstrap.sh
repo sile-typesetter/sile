@@ -24,4 +24,4 @@ autoreconf
 
 (cd libtexpdf; autoreconf -I m4)
 
-sed -i -e 's/rm -f core/rm -f/' configure
+sed -i -e '/rm -f/s/ core / /' configure
