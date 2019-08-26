@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.com/simoncozens/sile.svg?branch=master)](https://travis-ci.com/simoncozens/sile)
-[![Build Status](https://simoncozens-github.visualstudio.com/sile/_apis/build/status/simoncozens.sile?branchName=master)](https://simoncozens-github.visualstudio.com/sile/_build/latest?definitionId=1&branchName=master)
-[![Coverage Status](https://coveralls.io/repos/simoncozens/sile/badge.svg?branch=master&service=github)](https://coveralls.io/github/simoncozens/sile?branch=master)
-[![Join the chat at https://gitter.im/simoncozens/sile](https://badges.gitter.im/simoncozens/sile.svg)](https://gitter.im/simoncozens/sile?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Linux Build Status](https://travis-ci.com/simoncozens/sile.svg?branch=master)](https://travis-ci.com/simoncozens/sile)
+[![Windows Build Status](https://simoncozens-github.visualstudio.com/sile/_apis/build/status/simoncozens.sile?branchName=master)](https://simoncozens-github.visualstudio.com/sile/_build/latest?definitionId=1&branchName=master)
+[![Lua Coverage Status](https://coveralls.io/repos/simoncozens/sile/badge.svg?branch=master&service=github)](https://coveralls.io/github/simoncozens/sile?branch=master)
+[![Join the chat](https://badges.gitter.im/simoncozens/sile.svg)](https://gitter.im/simoncozens/sile?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
@@ -25,30 +25,31 @@ First, have a look at the [show-off file][showoff]. SILE allows you to:
 
 ### For OS X
 
-A formula is available for [homebrew][brew] that can install both stable and head versions. Just run `brew install sile` for the latest stable release or `brew install sile --HEAD` to build from the latest git commit.
+A formula is available for [Homebrew][brew] that can install both stable and head versions. Just run `brew install sile` for the latest stable release or `brew install sile --HEAD` to build from the latest git commit.
 
 ### For Linux (prepackaged distros)
 
 * **Arch Linux** packages are available in the [AUR][aur] that can be installed using your prefered package manager (e.g. `yaourt -S sile`). Use [sile][aur-rel] for the latest stable release or [sile-git][aur-dev] to build from the latest git commit.
 
+* Track the status of **Ubuntu** packages in [issue #638](https://github.com/simoncozens/sile/issues/638).
+
+* **Other** Linux distros may be compiled from source or, optionally installed via [Nix][nix].
+
+### For BSD
+
+Install from OpenBSD ports, via source, or optionally via [Nix][nix].
+
 ### For Windows
 
-There is no installer yet (see #410), but prebuilt Windows binaries may be downloaded from Azure's artifacts
-menu after selecting the [latest  build][azure]. For tips to how to build it yourself from source using CMake and Visual Studio, see #567.
+There is no installer yet (track the status in [issue #410](https://github.com/simoncozens/sile/issues/638)), but prebuilt Windows binaries may be downloaded from Azure's artifacts menu after selecting the [latest  build][azure]. For tips to how to build it yourself from source using CMake and Visual Studio, see [issue #567](https://github.com/simoncozens/sile/pull/567).
 
 ### From source
 
-SILE can be downloaded from [its home page][sile], or directly from [the release page][releases].
+SILE can be downloaded from [its website][sile] or directly from [the Github releases page][releases].
 
-SILE is written in the Lua programming language, so you will need a Lua installation. It also relies on external libraries to access fonts and write PDF files. Its preferred combination of libraries is [harfbuzz][] and [libtexpdf][], a PDF creation library extracted from TeX. Harfbuzz should be available from your operating system's package manager. (For Harfbuzz to work you will also need freetype2 and fontconfig installed.) SILE also requires the [ICU][] libraries for correct Unicode handling.
+SILE is written in the Lua programming language, so you will need a working Lua installation on your system. It also relies on external libraries to access fonts and write PDF files. Its preferred combination of libraries is [Harfbuzz][harfbuzz] and [libtexpdf][], a PDF creation library extracted from TeX. Harfbuzz (minimum version 1.4.2) should be available from your operating system's package manager. For Harfbuzz to work you will also need fontconfig installed. SILE also requires the [ICU][icu] libraries for Unicode handling.
 
-You also need to install the following Lua libraries; they can be installed using [luarocks][], if not available from your system's package manager.
-
-* `lpeg`
-* `luaexpat`
-* `lua-zlib`
-* `luafilesystem`
-* `luasocket`
+Optionally you may install the Lua libraries listed in the [rockspec][] to your system (using either your system's package manage or [luarocks][] (`luarocks install sile-dev-1.rockspec`). If your system does not have these Lua packages or you do not want to manually install them, they can be bundled alongside SILE itself. If you downloaded a source tarball these depenedncies are included, if you are using a git clone of the source repository you will need `luarocks` to fetch them during build.
 
 If you are building from a a git clone, start by running the script to setup your environment (if you are using the source tarball this is unnecessary):
 
@@ -59,7 +60,9 @@ Once your dependencies are installed, run:
     $ ./configure
     $ make install
 
-This will place the SILE libraries and executable in a sensible location. You may also need to run:
+This will place the SILE libraries and executable in a sensible location.
+
+On some systems you may also need to run:
 
     $ sudo ldconfig
 
@@ -67,9 +70,9 @@ This will place the SILE libraries and executable in a sensible location. You ma
 
 ### Default font
 
-As of SILE 0.9.5, the default font is Gentium Plus, available from [here][gentium]. If this font is not installed on your system, you won't be able to use the examples without modification. (Previously we used Original Gentium, but that's getting harder to get hold of.)
+As of SILE 0.9.5, the default font is Gentium Plus, available from [here][gentium]. If this font is not installed on your system, you won't be able to use the examples without modification. (Previously we used Gentium Basic, but that's getting harder to get hold of.)
 
-If you are using OS X with Homebrew, the easiest way to install Gentium Plus is through the Homebrew Fonts caskroom:
+If you are using OS X with Homebrew, the easiest way to install Gentium Plus is through the [Homebrew Fonts caskroom][brewfonts]:
 
     $ brew tap caskroom/fonts
     $ brew cask install font-gentium-plus
@@ -101,6 +104,7 @@ SILE is distributed under the [MIT licence][license].
   [sile]: http://www.sile-typesetter.org/
   [releases]: https://github.com/simoncozens/sile/releases
   [azure]: https://simoncozens-github.visualstudio.com/sile/_build
+  [rockspec]: https://github.com/simoncozens/sile/blob/master/sile-dev-1.rockspec
   [doc]: http://sile-typesetter.org/manual/sile-0.9.5.pdf
   [gentium]: http://software.sil.org/gentium/download/
   [github]: https://github.com/simoncozens/sile
@@ -109,7 +113,7 @@ SILE is distributed under the [MIT licence][license].
   [showoff]: https://rawgit.com/simoncozens/sile/b66b979a6dca0c60bd4aa2cbad3da36ae2073672/examples/showoff.pdf
   [luarocks]: http://luarocks.org/en/Download
   [harfbuzz]: http://www.freedesktop.org/wiki/Software/HarfBuzz/
-  [ICU]: http://icu-project.org
+  [icu]: http://icu-project.org
   [libtexpdf]: https://github.com/simoncozens/libtexpdf
   [aur]: https://wiki.archlinux.org/index.php/Arch_User_Repository
   [aur-rel]: https://aur.archlinux.org/packages/sile/
@@ -117,6 +121,8 @@ SILE is distributed under the [MIT licence][license].
   [typesetting]: https://en.wikipedia.org/wiki/Typesetting
   [tex]: https://en.wikipedia.org/wiki/TeX
   [indesign]: https://en.wikipedia.org/wiki/Adobe_InDesign
-  [brew]: http://brew.sh/
+  [brew]: http://brew.sh
+  [brewfonts]: https://github.com/Homebrew/homebrew-cask-fonts
   [list-en]: https://groups.google.com/forum/#!forum/sile-users
   [list-ja]: https://groups.google.com/forum/#!forum/sile-users-ja
+  [nix]: https://nixos.org/nix
