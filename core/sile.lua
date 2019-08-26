@@ -14,7 +14,6 @@ std = require("std")
 
 -- Initialize SILE
 SILE = {}
-SILE.version = "0.9.5.1"
 SILE.utilities = require("core/utilities")
 SU = SILE.utilities
 SILE.inputs = {}

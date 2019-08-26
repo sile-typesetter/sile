@@ -52,7 +52,7 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
   getFace = function(opts)
     local face = SILE.fontManager:face(opts)
     SU.debug("fonts", "Resolved font family '"..opts.family.."' -> "..(face and face.filename))
-    if not face.filename then SU.error("Couldn't find face '"..opts.family.."'") end
+    if not face or not face.filename then SU.error("Couldn't find face '"..opts.family.."'") end
     if SILE.makeDeps then SILE.makeDeps:add(face.filename) end
     if bit32.rshift(face.index, 16) ~= 0 then
       SU.warn("GX feature in '"..opts.family.."' is not supported, fallback to regular font face.")
