@@ -18,7 +18,6 @@ dependencies = {
   "luafilesystem",
   "luarepl",
   "luasec",
-  "luasec",
   "luasocket",
   "penlight",
   "stdlib",

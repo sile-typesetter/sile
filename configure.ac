@@ -94,6 +94,26 @@ esac
 AX_LUA_HEADERS
 AX_LUA_LIBS
 
+AS_IF([test "x$with_system_luarocks" != "xyes"], [], [
+    AX_LUA_MODULE([bit32], [bit32])
+    AX_LUA_MODULE([epnf], [luaepnf])
+    AX_LUA_MODULE([lpeg], [lpeg])
+    AX_LUA_MODULE([cassowary], [cassowary])
+    AX_LUA_MODULE([compat53], [compat53])
+    AX_LUA_MODULE([linenoise], [linenoise])
+    AX_LUA_MODULE([zlib], [lua-zlib])
+    AX_LUA_MODULE([cliargs], [lua_cliargs])
+    AX_LUA_MODULE([epnf], [luaepnf])
+    AX_LUA_MODULE([expat], [luaexpat])
+    AX_LUA_MODULE([lfs], [luafilesystem])
+    AX_LUA_MODULE([repl], [luarepl])
+    AX_LUA_MODULE([ssl], [luasec])
+    AX_LUA_MODULE([socket], [luasocket])
+    AX_LUA_MODULE([pl], [penlight])
+    AX_LUA_MODULE([std], [stdlib])
+    AX_LUA_MODULE([vstruct], [vstruct])
+])
+
 AC_ARG_ENABLE([linklua],
     AS_HELP_STRING([--disable-linklua], [Don't link lua library with dylibs]))
 
