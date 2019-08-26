@@ -87,22 +87,16 @@ dependencies as possible. On DEB-based Linux machines such as Debian and
 Ubuntu, you should be able to install all of the needed dependencies by
 issuing the command:
 
-\terminal{$ apt-get install lua5.2 liblua5.2-dev lua-zlib lua-filesystem lua-expat
-lua-lpeg lua-socket lua-sec libharfbuzz-dev libfreetype6-dev
+\terminal{$ apt-get install lua5.3 liblua5.3-dev libharfbuzz-dev libfreetype6-dev
 libfontconfig1-dev libpng-dev libicu-dev}
 
 Here’s an incantation that will work on most Redhat-based Linux distros:
 
 \terminal{$ yum install harfbuzz-devel make automake libtool gcc
-freetype-devel fontconfig-devel lua-devel lua-lpeg lua-expat libpng-devel
-libicu-devel}
+freetype-devel fontconfig-devel lua-devel libpng-devel libicu-devel}
 
 If you are on another system, you will have to come up with the correct equivalent
-packages yourself. If your system does not have the Lua libraries available as
-packages, you may install them from luarocks:
-
-\terminal{$ luarocks install lpeg luaexpat lua-zlib luafilesystem luasocket
-$ luarocks install luasec OPENSSL_DIR=...}
+packages yourself.
 
 Once you have these requirements in place, you should then be able to unpack
 the file that you downloaded from SILE’s home page, change to that directory\footnote{If you downloaded a copy of the SILE source by cloning the git
@@ -110,7 +104,14 @@ repository rather than dowloading one of the release packages you will also
 need to run \code{./bootstrap.sh} to setup the configure script at this point
 before continuing to the next step.}, and run:
 
-\terminal{$ ./configure; make}
+\terminal{$ ./configure && make}
+
+Note that if you prefer and if you system has all the required Lua packages, you
+make opt to skip the download and inclusion of the required Lua rocks and opt to
+use your system ones instead, in which case you will want to pass this as an option
+to the configure script:
+
+\terminal{$ ./configure --with-system-luarocks && make}
 
 You can now run SILE as is, uninstalled:
 
