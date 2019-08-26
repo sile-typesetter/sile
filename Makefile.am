@@ -19,8 +19,6 @@ SHELL = bash
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
 
-LUAVERSION := $(shell lua <<< 'print(_VERSION:match("%d+%.%d+"))')
-
 if !SYSTEM_LUAROCKS
 subdir_files += $(shell find lua_modules -type f -print)
 LUAROCKS := luarocks --tree lua_modules
@@ -94,8 +92,8 @@ test: $(TESTSRCS) $(ACTUALS) sile testprep
 
 busted: $(wildcard tests/*_spec.lua) sile testprep
 	set -f; IFS=';'
-	packagecpath=(./{,core/,lua_modules/lib/lua/$(LUAVERSION)/}?.so)
-	packagepath=(./{,lua_modules/share/lua/$(LUAVERSION)/,lua-libraries/}?{,/init}.lua)
+	packagecpath=(./{,core/,lua_modules/lib/lua/$(LUA_VERSION)/}?.so)
+	packagepath=(./{,lua_modules/share/lua/$(LUA_VERSION)/,lua-libraries/}?{,/init}.lua)
 	busted --cpath="$${packagecpath[*]}" --lpath="$${packagepath[*]}" tests
 
 DOCSSRCS = $(basename $(wildcard documentation/*.sil))
