@@ -1,5 +1,5 @@
 AC_PREREQ([2.68])
-AC_INIT([SILE], [0.9.5.1], [simon@simon-cozens.org])
+AC_INIT([SILE], m4_esyscmd_s([git describe --always --tags --dirty=*]), [simon@simon-cozens.org])
 AM_INIT_AUTOMAKE([1.11.1 foreign tar-pax dist-bzip2 no-dist-gzip -Wall no-define color-tests -Wno-portability subdir-objects])
 AC_CONFIG_MACRO_DIR([m4])
 LT_PREREQ([2.2])
@@ -51,6 +51,9 @@ AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
 AC_ARG_WITH([system-libtexpdf],
     AS_HELP_STRING([--with-system-libtexpdf], [Don't build libtexpdf, use the installed version]))
 
+AC_ARG_WITH([system-luarocks],
+    AS_HELP_STRING([--with-system-luarocks], [Don't bundle lua rocks, use the installed versions]))
+
 PKG_CHECK_MODULES(HARFBUZZ, harfbuzz,
   [
    PKG_CHECK_MODULES(FREETYPE, freetype2,[],[AC_MSG_FAILURE([Harfbuzz found but not freetype2])])
@@ -76,6 +79,7 @@ PKG_CHECK_MODULES(HARFBUZZ, harfbuzz,
   ])
 
 AM_CONDITIONAL([SYSTEM_LIBTEXPDF], [test "x$with_system_libtexpdf" = "xyes"])
+AM_CONDITIONAL([SYSTEM_LUAROCKS], [test "x$with_system_luarocks" = "xyes"])
 
 
 case $host_os in
@@ -89,6 +93,26 @@ esac
 
 AX_LUA_HEADERS
 AX_LUA_LIBS
+
+AS_IF([test "x$with_system_luarocks" != "xyes"], [], [
+    AX_LUA_MODULE([bit32], [bit32])
+    AX_LUA_MODULE([epnf], [luaepnf])
+    AX_LUA_MODULE([lpeg], [lpeg])
+    AX_LUA_MODULE([cassowary], [cassowary])
+    # TODO: Need compat53 only on lua < 5.3
+    # AX_LUA_MODULE([compat53], [compat53])
+    AX_LUA_MODULE([linenoise], [linenoise])
+    AX_LUA_MODULE([zlib], [lua-zlib])
+    AX_LUA_MODULE([cliargs], [lua_cliargs])
+    AX_LUA_MODULE([epnf], [luaepnf])
+    AX_LUA_MODULE([lfs], [luafilesystem])
+    AX_LUA_MODULE([repl], [luarepl])
+    AX_LUA_MODULE([ssl], [luasec])
+    AX_LUA_MODULE([socket], [luasocket])
+    AX_LUA_MODULE([pl], [penlight])
+    AX_LUA_MODULE([std], [stdlib])
+    AX_LUA_MODULE([vstruct], [vstruct])
+])
 
 AC_ARG_ENABLE([linklua],
     AS_HELP_STRING([--disable-linklua], [Don't link lua library with dylibs]))
@@ -113,6 +137,8 @@ PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
 
 adl_RECURSIVE_EVAL(["${datadir}/${PACKAGE}"], [SILE_PATH])
 AC_DEFINE_UNQUOTED([SILE_PATH],["${SILE_PATH}"],[Path for SILE packages and classes])
+
+adl_RECURSIVE_EVAL(["${datadir}/${PACKAGE}"], m4_esyscmd_s[git describe --always --tags --dirty=*])
 
 adl_RECURSIVE_EVAL(["${libdir}/${PACKAGE}"], [SILE_LIB_PATH])
 AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"],[Path for SILE libraries])

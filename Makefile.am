@@ -7,24 +7,64 @@ SUBDIRS = libtexpdf src
 endif
 
 dist_bin_SCRIPTS = sile
-subdir_files = $(shell find core classes languages packages lua-libraries lua_modules -type f -print)
+subdir_files = $(shell find core classes languages packages lua-libraries -type f -print)
 nobase_dist_pkgdata_DATA = $(subdir_files)
-EXTRA_DIST=NEWS.md README.md LICENSE tests examples documentation
+EXTRA_DIST=CHANGELOG.md README.md LICENSE tests examples documentation
+
+# Hack around autoconf's overly opinionated ideas of what projects layouts should be
+AUTOCONF = ${SHELL} /home/caleb/projects/sile/missing autoconf && sed -i -e '/^rm -f/s/ core / /' configure
 
 SHELL = bash
 .ONESHELL:
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
 
+if !SYSTEM_LUAROCKS
+subdir_files += $(shell find lua_modules -type f -print)
 LUAROCKS := luarocks --tree lua_modules
 LUAROCKSARGS ?=
 LUAMODLOCK := sile-dev-1.rockslock
 LUAMODSPEC := sile-dev-1.rockspec
-LUAVERSION := $(shell lua <<< 'print(_VERSION:match("%d+%.%d+"))')
 genrockslock := $(LUAROCKS) list --porcelain | awk '{print $$1 " " $$2}'
 rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
+endif
+
+# Make sure the embeded version number iterates with every commit
+configure.ac: .lastcommit
+
+.PHONY: .lastcommit
+.lastcommit:
+	@touch -d "$$(git log -n1 --pretty=format:%cI)" -- $@
+
+.PHONY: tagrelease
+tagrelease: prerelease
+	test -z $$(git tag --points-at HEAD) || exit 0 # end if we are already on a release tag
+	git diff-index --quiet --cached HEAD || exit 1 # die if anything staged but not committed
+	git diff-files --quiet || exit 1 # die if any tracked files have unstagged changes
+	npm run release
+
+.PHONY: prerelease
+prerelease: sile test busted examples docs update_libtexpdf
+
+.PHONY: release
+release: tagrelease postrelease
+
+.PHONY: postrelease
+postrelease:
+	@echo "- [ ] Ping packagers: https://repology.org/project/sile/versions"
+
+.PHONY: update_libtexpdf
+update_libtexpdf:
+	git diff-index --quiet --cached HEAD || exit 1 # die if anything already staged
+	git submodule update --init --remote -- libtexpdf
+	git add -- libtexpdf
+	git diff-index --quiet --cached HEAD || git commit -m "chore(build): Pin latest libtexpdf library submodule"
+
+gh-pages:
+	git worktree add -f $@ $@
 
 .PHONY: installrocks
+if !SYSTEM_LUAROCKS
 installrocks: $(LUAMODLOCK) $(shell $(rocksmatch) || echo lua_modules)
 
 lua_modules: $(LUAMODSPEC) $(shell $(rocksmatch) || echo force)
@@ -34,6 +74,7 @@ $(LUAMODLOCK): lua_modules $(LUAMODSPEC)
 	$(genrockslock) > $@
 
 sile: installrocks
+endif
 
 DEPDIR := .deps
 REGRESSIONSCRIPT := ./tests/regressions.pl
@@ -51,26 +92,40 @@ test: $(TESTSRCS) $(ACTUALS) sile prep
 
 busted: $(wildcard tests/*_spec.lua) sile prep
 	set -f; IFS=';'
-	packagecpath=(./{,core/,lua_modules/lib/lua/$(LUAVERSION)/}?.so)
-	packagepath=(./{,lua_modules/share/lua/$(LUAVERSION)/,lua-libraries/}?{,/init}.lua)
+	packagecpath=(./{,core/,lua_modules/lib/lua/$(LUA_VERSION)/}?.so)
+	packagepath=(./{,lua_modules/share/lua/$(LUA_VERSION)/,lua-libraries/}?{,/init}.lua)
 	busted --cpath="$${packagecpath[*]}" --lpath="$${packagepath[*]}" tests
 
-DOCS = documentation/sile.pdf
+MANUAL = documentation/sile.pdf
 
 .PHONY: docs
-docs: $(DOCS)
+docs: $(MANUAL)
 
 EXAMPLESSRCS = $(basename $(wildcard examples/*.sil))
-EXAMPLES = $(addsuffix .pdf,$(DOCSSRCS))
+EXAMPLES = $(addsuffix .pdf,$(EXAMPLESSRCS))
 
 .PHONY: examples
 examples: $(EXAMPLES)
 
+# This is a monkey patch to figure out how many passes we have to to to
+# garantee the TOC is up to date, simplify when #230 is fixed.
+hastoc = [[ -f $(subst .pdf,.toc,$@) ]] && echo true || echo false
+pages = pdfinfo $@ | awk '$$1 == "Pages:" {print $$2}' || echo 0
+silepass = $(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@ && pg0=$${pg} pg=$$($(pages))
+define runsile =
+	pg0=$$($(pages)) hadtoc=$$($(hastoc))
+	$(silepass)
+	if $(hastoc); then
+		$${hadtoc} || $(silepass)
+		[[ $${pg} -gt $${pg0} ]] && $(silepass) ||:
+	fi
+endef
+
 %.pdf: %.sil $(and $(SILE_COVERAGE),force) | $(DEPDIRS)
-	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@
+	$(runsile)
 
 %.pdf: %.xml $(and $(SILE_COVERAGE),force) | $(DEPDIRS)
-	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@
+	$(runsile)
 
 .PHONY: coverage
 coverage: export SILE_COVERAGE=1
@@ -89,7 +144,7 @@ clean-recursive: clean-benchmarks
 clean-benchmarks:
 	rm -rf benchmark-*
 	git worktree prune
-	git branch --list | grep benchmark- | xargs git branch -D
+	git branch --list | grep benchmark- | xargs git branch -D ||:
 
 time-%.json: benchmark-%/time.json
 	cp $< $@
@@ -100,7 +155,7 @@ benchmark-%/time.json: benchmark-%/sile
 	export TIMEFORMAT=$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
 	{ time (./sile documentation/sile.sil > /dev/null 2>&1) } 2> time.json
 
-.PRECIOUS: benchmark-%/sile:
+.PRECIOUS: benchmark-%/sile
 benchmark-%/sile:
 	[[ -d benchmark-$* ]] || git worktree add --detach benchmark-$* $(HEADSHA)
 	cd benchmark-$*
@@ -137,7 +192,7 @@ tests/%.actual: tests/%.sil
 tests/%.actual: tests/%.xml
 	-$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-DEPFILES = $(addsuffix .d,$(addprefix $(DEPDIR)/,$(basename $(TESTSRCS) $(DOCS) $(EXAMPLES))))
+DEPFILES = $(addsuffix .d,$(addprefix $(DEPDIR)/,$(basename $(TESTSRCS) $(MANUAL) $(EXAMPLES))))
 DEPDIRS = $(sort $(dir $(DEPFILES)))
 
 $(DEPDIRS):
@@ -162,8 +217,12 @@ include Makefile-fonts
 
 # Make sure we have font files before running tests (ignoring timestamp of font files)
 .PHONY: prep
-prep: installrocks | $(DEPDIRS)
-prep $(DOCS): | $(addprefix .fonts/,$(LOCALFONTFILES))
+TESTPREPDEPS = $(DEPDIRS) $(addprefix .fonts/,$(TESTFONTFILES))
+if SYSTEM_LUAROCKS
+prep $(DOCS): | $(TESTPREPDEPS)
+else
+prep $(DOCS): installrocks | $(TESTPREPDEPS)
+endif
 
 gource.webm:
 	mkdir -p /tmp/gravatars

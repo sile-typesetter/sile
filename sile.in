@@ -36,6 +36,7 @@ extendPath(".")
 package.path = package.path .. ";;"
 
 SILE = require("core/sile")
+SILE.version = "@VERSION@"
 io.stdout:setvbuf 'no'
 SILE.parseArguments()
 if not os.getenv 'LUA_REPL_RLWRAP' then
