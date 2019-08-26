@@ -35,7 +35,7 @@ configure.ac: .lastcommit
 	@touch -d "$$(git log -n1 --pretty=format:%cI)" -- $@
 
 .PHONY: tagrelease
-tagrelease: sile prerelease
+tagrelease: prerelease
 	test -z $$(git tag --points-at HEAD) || exit 0 # end if we are already on a release tag
 	git diff-index --quiet --cached HEAD || exit 1 # die if anything staged but not committed
 	git diff-files --quiet || exit 1 # die if any tracked files have unstagged changes
@@ -45,7 +45,7 @@ tagrelease: sile prerelease
 prerelease: sile test busted examples docs update_libtexpdf
 
 .PHONY: release
-release: tagrelease
+release: tagrelease postrelease
 
 .PHONY: postrelease
 postrelease:
