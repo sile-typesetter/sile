@@ -51,6 +51,9 @@ AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
 AC_ARG_WITH([system-libtexpdf],
     AS_HELP_STRING([--with-system-libtexpdf], [Don't build libtexpdf, use the installed version]))
 
+AC_ARG_WITH([system-luarocks],
+    AS_HELP_STRING([--with-system-luarocks], [Don't bundle lua rocks, use the installed versions]))
+
 PKG_CHECK_MODULES(HARFBUZZ, harfbuzz,
   [
    PKG_CHECK_MODULES(FREETYPE, freetype2,[],[AC_MSG_FAILURE([Harfbuzz found but not freetype2])])
@@ -76,6 +79,7 @@ PKG_CHECK_MODULES(HARFBUZZ, harfbuzz,
   ])
 
 AM_CONDITIONAL([SYSTEM_LIBTEXPDF], [test "x$with_system_libtexpdf" = "xyes"])
+AM_CONDITIONAL([SYSTEM_LUAROCKS], [test "x$with_system_luarocks" = "xyes"])
 
 
 case $host_os in

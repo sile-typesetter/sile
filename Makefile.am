@@ -7,7 +7,7 @@ SUBDIRS = libtexpdf src
 endif
 
 dist_bin_SCRIPTS = sile
-subdir_files = $(shell find core classes languages packages lua-libraries lua_modules -type f -print)
+subdir_files = $(shell find core classes languages packages lua-libraries -type f -print)
 nobase_dist_pkgdata_DATA = $(subdir_files)
 EXTRA_DIST=CHANGELOG.md README.md LICENSE tests examples documentation
 
@@ -19,13 +19,17 @@ SHELL = bash
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
 
+LUAVERSION := $(shell lua <<< 'print(_VERSION:match("%d+%.%d+"))')
+
+if !SYSTEM_LUAROCKS
+subdir_files += $(shell find lua_modules -type f -print)
 LUAROCKS := luarocks --tree lua_modules
 LUAROCKSARGS ?=
 LUAMODLOCK := sile-dev-1.rockslock
 LUAMODSPEC := sile-dev-1.rockspec
-LUAVERSION := $(shell lua <<< 'print(_VERSION:match("%d+%.%d+"))')
 genrockslock := $(LUAROCKS) list --porcelain | awk '{print $$1 " " $$2}'
 rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
+endif
 
 # Make sure the embeded version number iterates with every commit
 configure.ac: .lastcommit
@@ -62,6 +66,7 @@ gh-pages:
 	git worktree add -f $@ $@
 
 .PHONY: installrocks
+if !SYSTEM_LUAROCKS
 installrocks: $(LUAMODLOCK) $(shell $(rocksmatch) || echo lua_modules)
 
 lua_modules: $(LUAMODSPEC) $(shell $(rocksmatch) || echo force)
@@ -71,6 +76,7 @@ $(LUAMODLOCK): lua_modules $(LUAMODSPEC)
 	$(genrockslock) > $@
 
 sile: installrocks
+endif
 
 DEPDIR := .deps
 REGRESSIONSCRIPT := ./tests/regressions.pl
@@ -217,7 +223,12 @@ include Makefile-fonts
 
 # Make sure we have font files before running tests (ignoring timestamp of font files)
 .PHONY: testprep
-testprep: installrocks | $(DEPDIRS) $(addprefix .fonts/,$(TESTFONTFILES))
+TESTPREPDEPS = $(DEPDIRS) $(addprefix .fonts/,$(TESTFONTFILES))
+if SYSTEM_LUAROCKS
+testprep: | $(TESTPREPDEPS)
+else
+testprep: lua_modules | $(TESTPREPDEPS)
+endif
 
 gource.webm:
 	mkdir -p /tmp/gravatars
