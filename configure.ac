@@ -99,8 +99,9 @@ AS_IF([test "x$with_system_luarocks" != "xyes"], [], [
     AX_LUA_MODULE([epnf], [luaepnf])
     AX_LUA_MODULE([lpeg], [lpeg])
     AX_LUA_MODULE([cassowary], [cassowary])
-    # TODO: Need compat53 only on lua < 5.3
-    # AX_LUA_MODULE([compat53], [compat53])
+    AS_IF([test "$LUA_SHORT_VERSION" -lt 53],
+        AX_LUA_MODULE([compat53], [compat53])
+    ) 
     AX_LUA_MODULE([linenoise], [linenoise])
     AX_LUA_MODULE([zlib], [lua-zlib])
     AX_LUA_MODULE([cliargs], [lua_cliargs])
@@ -171,3 +172,4 @@ AC_CONFIG_FILES([Makefile src/Makefile])
 AC_CONFIG_FILES([sile], [chmod +x sile])
 
 AC_OUTPUT
+m4_esyscmd_s([sed -i -e '/rm -f/s/ core / /' configure])

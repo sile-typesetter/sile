@@ -23,5 +23,3 @@ automake --force-missing --add-missing
 autoreconf
 
 (cd libtexpdf; autoreconf -I m4)
-
-sed -i -e '/rm -f/s/ core / /' configure
