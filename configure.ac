@@ -173,4 +173,4 @@ AC_CONFIG_FILES([Makefile src/Makefile])
 AC_CONFIG_FILES([sile], [chmod +x sile])
 
 AC_OUTPUT
-m4_esyscmd_s([sed -i -e '/rm -f/s/ core / /' configure])
+m4_esyscmd_s([test -f configure && sed -i -e '/rm -f/s/ core / /' configure])
