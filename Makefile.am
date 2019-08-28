@@ -89,9 +89,14 @@ test: $(TESTSRCS) $(ACTUALS) sile testprep
 
 busted: $(wildcard tests/*_spec.lua) sile testprep
 	set -f; IFS=';'
-	packagecpath=(./{,core/,lua_modules/lib/lua/$(LUA_VERSION)/}?.so)
+if SYSTEM_LUAROCKS
+	packagecpath=(./{,core/}?.$(SHARED_LIB_EXT))
+	packagepath=(./{,lua-libraries/}?{,/init}.lua)
+else
+	packagecpath=(./{,core/,lua_modules/lib/lua/$(LUA_VERSION)/}?.$(SHARED_LIB_EXT))
 	packagepath=(./{,lua_modules/share/lua/$(LUA_VERSION)/,lua-libraries/}?{,/init}.lua)
-	busted --cpath="$${packagecpath[*]}" --lpath="$${packagepath[*]}" tests
+endif
+	busted --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" tests
 
 DOCSSRCS = $(basename $(wildcard documentation/*.sil))
 DOCS = $(addsuffix .pdf,$(basename $(DOCSSRCS)))
