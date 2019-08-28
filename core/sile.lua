@@ -1,5 +1,6 @@
 -- Initialize Lua environment
-require("compat53") -- Backport of lots of Lua 5.3 features to Lua 5.[12]
+local lua_version = _VERSION:sub(-3)
+if lua_version < "5.3" then require("compat53") end -- Backport of lots of Lua 5.3 features to Lua 5.[12]
 bit32 = bit32 or require("bit32") -- Backport of Lua 5.2+ bitwise functions to Lua 5.1
 require("pl") -- Penlight on-demand module loader
 lfs = require("lfs") -- luafilesystem
