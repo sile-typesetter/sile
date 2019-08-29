@@ -4,7 +4,18 @@ local epnf = require("epnf")
 local ID = lpeg.C( SILE.parserBits.letter * (SILE.parserBits.letter+SILE.parserBits.digit)^0 )
 SILE.inputs.TeXlike.identifier = (ID + lpeg.P"-" + lpeg.P":")^1
 
+SILE.inputs.TeXlike.passthroughCommands = {
+  script = true
+}
+setmetatable(SILE.inputs.TeXlike.passthroughCommands, {
+    __call = function(self, command)
+      return self[command]
+    end
+  })
+
 SILE.inputs.TeXlike.parser = function (_ENV)
+  local isPassthrough = function (_, _, command) return SILE.inputs.TeXlike.passthroughCommands(command) end
+  local isNotPassThrough = function (...) return not isPassthrough(...) end
   local _ = WS^0
   local sep = S",;" * _
   local eol = S"\r\n"
@@ -52,8 +63,8 @@ SILE.inputs.TeXlike.parser = function (_ENV)
       Cg(myID, "command") *
       Cg(parameters,"options") *
       (
-        (Cmt(Cb"command", function(_, _, command) return command == "script" end) * V"passthrough_bracketed_stuff") +
-        (Cmt(Cb"command", function(_, _, command) return command ~= "script" end) * V"texlike_bracketed_stuff")
+        (Cmt(Cb"command", isPassthrough) * V"passthrough_bracketed_stuff") +
+        (Cmt(Cb"command", isNotPassThrough) * V"texlike_bracketed_stuff")
       )^0
     ) - P("\\end{")
   environment =
@@ -63,8 +74,8 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     Cg(myID, "command") *
     P"}" *
     (
-      (Cmt(Cb"command", function(_, _, command) return command == "script" end) * V"passthrough_env_stuff") +
-      (Cmt(Cb"command", function(_, _, command) return command ~= "script" end) * V"texlike_stuff")
+      (Cmt(Cb"command", isPassthrough) * V"passthrough_env_stuff") +
+      (Cmt(Cb"command", isNotPassThrough) * V"texlike_stuff")
     ) *
     (
       P"\\end{" *
