@@ -1,42 +1,37 @@
 #!@LUA@
-SYSTEM_SILE_PATH = "@SILE_PATH@"
-SYSTEM_SILE_LIB_PATH = "@SILE_LIB_PATH@"
-SHARED_LIB_EXT = "@SHARED_LIB_EXT@"
-local SYSTEM_LUAROCKS = "@SYSTEM_LUAROCKS_TRUE@" == ""
+SYSTEM_SILE_PATH = "@SILE_PATH@" -- global used in core/packagemanager
+SHARED_LIB_EXT = "@SHARED_LIB_EXT@" -- global used in core/packagemanager
 
 local executable = debug.getinfo(1, "S").short_src
 local luaversion = _VERSION:match("%d+%.%d+")
 
 local extendPath = function (path)
-  package.path  = path .. "/?.lua;" .. package.path
-  package.path  = path .. "/?/init.lua;" .. package.path
-  package.path  = path .. "/lua-libraries/?.lua;" .. package.path
-  package.path  = path .. "/lua-libraries/?/init.lua;" .. package.path
-  if not SYSTEM_LUAROCKS then
-    package.path  = path .. '/lua_modules/share/lua/' .. luaversion .. '/?.lua;' .. package.path
-    package.path  = path .. '/lua_modules/share/lua/' .. luaversion .. '/?/init.lua;' .. package.path
+  package.cpath = path .. "/core/?.@SHARED_LIB_EXT@;" .. package.cpath
+  package.cpath = path .. "/?.@SHARED_LIB_EXT@;" .. package.cpath
+  if "@SYSTEM_LUAROCKS_FALSE@" == "" then -- see ./configure --with[out]-system-luarocks
     package.cpath = path .. '/lua_modules/lib/lua/' .. luaversion .. '/?.so;' .. package.cpath
+    package.path  = path .. '/lua_modules/share/lua/' .. luaversion .. '/?/init.lua;' .. package.path
+    package.path  = path .. '/lua_modules/share/lua/' .. luaversion .. '/?.lua;' .. package.path
   end
-  package.cpath = path .. "/?."..SHARED_LIB_EXT..";" .. package.cpath
-  package.cpath = path .. "/core/?."..SHARED_LIB_EXT..";" .. package.cpath
+  package.path  = path .. "/lua-libraries/?/init.lua;" .. package.path
+  package.path  = path .. "/lua-libraries/?.lua;" .. package.path
+  package.path  = path .. "/?/init.lua;" .. package.path
+  package.path  = path .. "/?.lua;" .. package.path
 end
 
-extendPath(SYSTEM_SILE_PATH)
-extendPath(SYSTEM_SILE_LIB_PATH)
+extendPath("@SILE_PATH@")
+extendPath("@SILE_LIB_PATH@")
 
 local pathvar = os.getenv("SILE_PATH")
 if pathvar then
   for path in string.gmatch(pathvar, "[^;]+") do
-    if path:len() >= 1 and path ~= "./" then extendPath(path) end
+	if path:len() >= 1 and path ~= "./" then extendPath(path) end
   end
 end
 
 local cwd = executable:gsub("(.*/)(.*)", "%1")
 if cwd ~= "./" then extendPath(cwd) end
 extendPath(".")
-
--- Append the Lua runtime's default path
-package.path = package.path .. ";;"
 
 SILE = require("core/sile")
 SILE.version = "@VERSION@"
