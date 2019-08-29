@@ -1,13 +1,9 @@
-SILE.registerCommand("debug", function (options,c)
-  for k,v in pairs(options) do
-    if v == "false" or v == "no" or v == "off" then
-      SILE.debugFlags[k] = false
-    else
-      SILE.debugFlags[k] = true
-    end
+SILE.registerCommand("debug", function (options, content)
+  for k, v in pairs(options) do
+    SILE.debugFlags[k] = SU.boolean(v, true)
   end
 end)
 
-SILE.registerCommand("disable-pushback", function (options,c)
-  SILE.typesetter.pushBack = function(self) end
+SILE.registerCommand("disable-pushback", function (options, content)
+  SILE.typesetter.pushBack = function() end
 end)
