@@ -21,6 +21,7 @@ addons:
    - libpng-dev
    - libexpat1-dev
    - libipc-run-perl
+   - poppler-utils
 env:
   global:
    - LUAROCKS=2.4.2
