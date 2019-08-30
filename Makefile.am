@@ -9,7 +9,7 @@ endif
 dist_bin_SCRIPTS = sile
 subdir_files = $(shell find core classes languages packages lua-libraries -type f -print)
 nobase_dist_pkgdata_DATA = $(subdir_files)
-EXTRA_DIST=CHANGELOG.md README.md LICENSE tests examples documentation
+EXTRA_DIST = CHANGELOG.md README.md LICENSE tests examples documentation build-aux/git-version-gen .version
 
 SHELL = bash
 .ONESHELL:
@@ -26,12 +26,13 @@ genrockslock := $(LUAROCKS) list --porcelain | awk '{print $$1 " " $$2}'
 rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
 endif
 
-# Make sure the embeded version number iterates with every commit
-configure.ac: .lastcommit
+BUILT_SOURCES = .version
 
-.PHONY: .lastcommit
-.lastcommit:
-	@touch -d "$$(git log -n1 --pretty=format:%cI)" -- $@
+.version: $(wildcard .git/HEAD)
+	echo $(VERSION) > $@-t && mv $@-t $@
+
+dist-hook:
+	echo $(VERSION) > $(distdir)/.tarball-version
 
 .PHONY: tagrelease
 tagrelease: prerelease
