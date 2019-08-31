@@ -14,6 +14,9 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   local myID = C(SILE.inputs.TeXlike.identifier + P(1)) / 1
   local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1 / function (...) local t = {...}; return t[1], t[#t] end
   local list = Cf(Ct"" * pair^0, rawset)
+  local function is_passthrough(tag)
+    return tag == "script" or tag == "texmath"
+  end
   local parameters = (
       P"[" *
       list *
@@ -52,8 +55,8 @@ SILE.inputs.TeXlike.parser = function (_ENV)
       Cg(myID, "tag") *
       Cg(parameters,"attr") *
       (
-        (Cmt(Cb"tag", function(_, _, tag) return tag == "script" end) * V"passthrough_bracketed_stuff") +
-        (Cmt(Cb"tag", function(_, _, tag) return tag ~= "script" end) * V"texlike_bracketed_stuff")
+        (Cmt(Cb"tag", function(_, _, tag) return is_passthrough(tag) end) * V"passthrough_bracketed_stuff") +
+        (Cmt(Cb"tag", function(_, _, tag) return not is_passthrough(tag) end) * V"texlike_bracketed_stuff")
       )^0
     ) - P("\\end{")
   environment =
@@ -63,8 +66,8 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     Cg(myID, "tag") *
     P"}" *
     (
-      (Cmt(Cb"tag", function(_, _, tag) return tag == "script" end) * V"passthrough_env_stuff") +
-      (Cmt(Cb"tag", function(_, _, tag) return tag ~= "script" end) * V"texlike_stuff")
+      (Cmt(Cb"tag", function(_, _, tag) return is_passthrough(tag) end) * V"passthrough_env_stuff") +
+      (Cmt(Cb"tag", function(_, _, tag) return not is_passthrough(tag) end) * V"texlike_stuff")
     ) *
     (
       P"\\end{" *
