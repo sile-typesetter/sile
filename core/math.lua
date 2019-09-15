@@ -877,7 +877,7 @@ end
 
 -- convert MathML into mbox
 local function ConvertMathML(content)
-  if content == nil or content.id == nil or content.tag == nil then return nil end
+  if content == nil or content.tag == nil then return nil end
   local convertChildren = function(content)
     local mboxes = {}
     for i, n in ipairs(content) do
