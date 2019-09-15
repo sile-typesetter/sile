@@ -702,6 +702,9 @@ local _text = _terminal {
       if operatorAtomTypes[self.text] then
         self.atom = operatorAtomTypes[self.text]
       end
+      if self.text == "-" then
+        self.text = "−"
+      end
     end
   end,
   shape = function(self)
