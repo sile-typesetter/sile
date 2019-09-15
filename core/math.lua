@@ -928,17 +928,19 @@ local mathGrammar = function(_ENV)
       P"%" *
       P(1-eol)^0 *
       eol^-1
-    ) / ""
+    )
   START "texlike_math"
   texlike_math = V"mathlist" * EOF"Unexpected character at end of math code"
-  mathlist = Cg(comment + (WS * _) + V"element" + V"infix_element")^0
+  mathlist = (comment + (WS * _) + V"supsub" + V"subsup" + V"infix_element" + V"element")^0
   element =
     V"command" +
     V"group" +
     V"atom"
   infix_element = V"element" * _ * V"infix_op" * _ *
-    (V"element" + V"infix_element")
-  infix_op = S"^_"
+    (V"infix_element" + V"element")
+  infix_op = C(S"^_")
+  supsub = V"element" * _ * "^" * _ * V"element" * _ * "_" * _ * V"element"
+  subsup = V"element" * _ * "_" * _ * V"element" * _ * "^" * _ * V"element"
   group = P"{" * V"mathlist" * (P"}" + E("`}` expected"))
   atom = C(1 - S"\\{}%^_")
   command = (
@@ -951,9 +953,61 @@ local mathGrammar = function(_ENV)
 end
 local mathParser = epnf.define(mathGrammar)
 
+local function massageMathAst(tree)
+  if type(tree) == "string" then return tree end
+  for i,child in ipairs(tree) do
+    tree[i] = massageMathAst(tree[i])
+  end
+  if tree.id == "texlike_math" then
+    tree.tag = "math"
+  elseif tree.id == "element" or tree.id == "group" then
+    tree = tree[1]
+  elseif tree.id == "mathlist" then
+    tree.tag = "mrow"
+  end
+
+  return tree
+end
+
+local function compileToMathML(tree)
+  print("compileToMathML begin: "..tree)
+  if type(tree) == "string" then return tree end
+  for i,child in ipairs(tree) do
+    tree[i] = compileToMathML(tree[i])
+  end
+  if tree.id == "atom" then
+    if lpeg.match(lpeg.R("az","AZ"), tree[1]) then
+      tree.tag = "mi"
+    elseif lpeg.match(lpeg.R("09")^1, tree[1]) then
+      tree.tag = "mn"
+    else
+      tree.tag = "mo"
+    end
+  elseif tree.id == "infix_element" then
+    if tree[2][1] == "^" then
+      tree.tag = "msup"
+    elseif tree[2][1] == "_" then
+      tree.tag = "msub"
+    end
+    tree[2] = tree[3]
+    tree[3] = nil
+  elseif tree.id == "subsup" then
+    tree.tag = "msubsup"
+  elseif tree.id == "supsub" then
+    tree.tag = "msubsup"
+    local tmp = tree[2]
+    tree[2] = tree[3]
+    tree[3] = tmp
+  end
+  print("compileToMathML end: "..tree)
+  return tree
+end
+
 local function convertTexlike(content)
   local ret = epnf.parsestring(mathParser, content[1])
-  print("convertTexlike returning "..ret)
+  print("convertTexlike: before massaging: \n"..ret)
+  ret = massageMathAst(ret)
+  print("convertTexlike: after massaging: \n"..ret)
   return ret
 end
 
@@ -997,7 +1051,7 @@ SILE.registerCommand("texmath", function(options, content)
 
   local mbox
   xpcall(function()
-    mbox = ConvertMathML(convertTexlike(content))
+    mbox = ConvertMathML(compileToMathML(convertTexlike(content)))
   end, function(err) print(err); print(debug.traceback()) end)
 
   handleMath(mbox, mode)
