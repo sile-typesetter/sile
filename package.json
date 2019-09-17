@@ -9,12 +9,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/simoncozens/sile.git"
+    "url": "git+https://github.com/sile-typesetter/sile.git"
   },
   "author": "Simon Cozens",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/simoncozens/sile/issues"
+    "url": "https://github.com/sile-typesetter/sile/issues"
   },
   "homepage": "http://sile-typesetter.org",
   "devDependencies": {

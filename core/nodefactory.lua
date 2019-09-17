@@ -407,7 +407,7 @@ function SILE.nodefactory.newVbox(spec)  return _vbox(spec):init() end
 function SILE.nodefactory.newMigrating(spec)  return _migrating(spec) end
 
 -- This infinity needs to be smaller than an actual infinity but bigger than the infinite stretch
--- added by the typesetter. See https://github.com/simoncozens/sile/issues/227
+-- added by the typesetter. See https://github.com/sile-typesetter/sile/issues/227
 local inf = 1e13
 SILE.nodefactory.zeroGlue = SILE.nodefactory.newGlue({width = SILE.length.new({length = 0})})
 SILE.nodefactory.hfillGlue = SILE.nodefactory.newGlue({width = SILE.length.new({length = 0, stretch = inf})})
