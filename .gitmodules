@@ -1,5 +1,5 @@
 [submodule "libtexpdf"]
 	path = libtexpdf
-	url = https://github.com/simoncozens/libtexpdf.git
+	url = https://github.com/sile-typesetter/libtexpdf.git
 	ignore = dirty
 	branch = master
