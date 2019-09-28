@@ -546,16 +546,6 @@ local _bigOpSubscript = _subscript {
     if self.sub then self.sub.mode = getSubscriptMode(self.mode) end
     if self.sup then self.sup.mode = getSuperscriptMode(self.mode) end
   end,
-  calculateItalicsCorrection = function(self)
-    local lastGid = getRightMostGlyphId(self.base)
-    if lastGid > 0 then
-      local mathMetrics = getMathMetrics(self.options)
-      if mathMetrics.italicsCorrection[lastGid] then
-        return mathMetrics.italicsCorrection[lastGid]
-      end
-    end
-    return 0
-  end,
   shape = function(self)
     if not (self.mode == mathMode.display
           or self.mode == mathMode.displayCramped)
