@@ -860,13 +860,14 @@ local newSubscript = function(spec)
   return ret
 end
 
+-- not local, because used further up this file
 newSpace = function(spec)
   local ret = std.tree.clone(_space(spec))
   ret:init()
   return ret
 end
 
-newFraction = function(spec)
+local newFraction = function(spec)
   local ret = std.tree.clone(_fraction(spec))
   ret:init()
   return ret
