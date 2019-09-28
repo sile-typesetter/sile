@@ -468,7 +468,7 @@ local _subscript = _mbox {
         --self.base.depth + constants.subscriptBaselineDropMin * scaleDown,
         self.sub.height - constants.subscriptTopMax * scaleDown
       )
-      local t = typeof(self.base)
+      local t = typeof(self)
       if (t == "BigOpSubscript" or t == "Stackbox") then
         self.sub.relY = maxLength(self.sub.relY,
           self.base.depth + constants.subscriptBaselineDropMin*scaleDown)
@@ -483,7 +483,7 @@ local _subscript = _mbox {
         --self.base.height - constants.superscriptBaselineDropMax * scaleDown,
         self.sup.depth + constants.superscriptBottomMin * scaleDown
       ) * (-1)
-      local t = typeof(self.base)
+      local t = typeof(self)
       if t == "BigOpSubscript" or t == "Stackbox" then
         self.sup.relY = maxLength(
           (0-self.sup.relY),
