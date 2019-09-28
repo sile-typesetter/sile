@@ -634,6 +634,8 @@ local _space = _terminal {
   kind = "thin",
   init = function(self)
     _terminal.init(self)
+  end,
+  shape = function(self)
     local fontSize = math.floor(self.options.size * self:getScaleDown())
     local mu = fontSize / 18
     if self.kind == "thin" then
@@ -657,8 +659,6 @@ local _space = _terminal {
     else
       SU.error("Unknown space type "..kind)
     end
-  end,
-  shape = function(self)
     self.width = self.length
     -- Spaces say that they have height zero because they cannot guess
     -- what the maximum height in the surrounding text is
