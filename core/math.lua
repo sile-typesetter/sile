@@ -56,10 +56,16 @@ local operatorAtomTypes = {
   ['>'] = atomType.relationalOperator,
   ['='] = atomType.relationalOperator,
   ['≠'] = atomType.relationalOperator,
-  ['∑'] = atomType.bigOperator
+  ['∑'] = atomType.bigOperator,
+  ['∏'] = atomType.bigOperator,
+  ['⋀'] = atomType.bigOperator,
+  ['⋁'] = atomType.bigOperator,
+  ['⋂'] = atomType.bigOperator,
+  ['⋃'] = atomType.bigOperator,
+  ['⨅'] = atomType.bigOperator,
+  ['⨆'] = atomType.bigOperator,
+  ['∫'] = atomType.bigOperator
 }
-
-local bigOperators = {'∑','∏','⋀', '⋁', '⋂', '⋃', '⨅', '⨆'}
 
 -- Foward declaration
 local newSpace
@@ -552,7 +558,8 @@ local _bigOpSubscript = _subscript {
   end,
   shape = function(self)
     if not (self.mode == mathMode.display
-        or self.mode == mathMode.displayCramped) then
+          or self.mode == mathMode.displayCramped)
+        or (self.base and self.base.text == "∫") then
       _subscript.shape(self)
       return
     end
@@ -854,7 +861,7 @@ local newSubscript = function(spec)
   local ret
   if spec.base and typeof(spec.base) == "Text"
       and spec.base.kind == "operator"
-      and contains(bigOperators, spec.base.text) then
+      and operatorAtomTypes[spec.base.text] == atomType.bigOperator then
     ret = std.tree.clone(_bigOpSubscript(spec))
   else
     ret = std.tree.clone(_subscript(spec))
