@@ -92,6 +92,7 @@ local mathScriptConversionTable = {
 }
 
 SILE.settings.declare({name = "math.font.family", type = "string", default = "XITS Math"})
+SILE.settings.declare({name = "math.font.size", type = "integer", default = 10})
 -- Whether to show debug boxes around mboxes
 SILE.settings.declare({name = "math.debug.boxes", type = "boolean", default = false})
 
@@ -245,7 +246,8 @@ local _mbox = _box {
   __tostring = function (s) return s.type end,
   init = function(self)
     local options = {
-      family=SILE.settings.get("math.font.family")
+      family=SILE.settings.get("math.font.family"),
+      size=SILE.settings.get("math.font.size")
     }
     self.options = SILE.font.loadDefaults(options)
   end,
