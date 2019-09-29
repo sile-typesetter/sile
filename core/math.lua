@@ -444,7 +444,14 @@ local _subscript = _mbox {
     if lastGid > 0 then
       local mathMetrics = getMathMetrics(self.options)
       if mathMetrics.italicsCorrection[lastGid] then
-        return mathMetrics.italicsCorrection[lastGid]
+        local c = mathMetrics.italicsCorrection[lastGid]
+        -- If this is a big operator, and we are in display style, then the
+        -- base glyph may be bigger than the font size. We need to adjust the
+        -- italic correction accordingly.
+        if typeof(self) == "BigOpSubscript" and isDisplayMode(self.mode) then
+          c = c * (self.base and self.base.options.size / self.options.size or 1.0)
+        end
+        return c
       end
     end
     return 0
