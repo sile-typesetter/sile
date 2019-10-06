@@ -279,6 +279,61 @@ int shape (lua_State *L) {
     return glyph_count;
 }
 
+int get_glyph_dimensions(lua_State *L) {
+  size_t font_l;
+  const char * font_s = luaL_checklstring(L, 1, &font_l);
+  unsigned int font_index = (unsigned int)luaL_checknumber(L, 2);
+  double point_size = (unsigned int)luaL_checknumber(L, 3);
+  hb_codepoint_t glyphId = (hb_codepoint_t)luaL_checknumber(L, 4);
+
+  hb_blob_t* blob = hb_blob_create(font_s, font_l, HB_MEMORY_MODE_WRITABLE,
+      (void*)font_s, NULL);
+  hb_face_t* hbFace = hb_face_create(blob, font_index);
+  hb_font_t* hbFont = hb_font_create(hbFace);
+  unsigned int upem = hb_face_get_upem(hbFace);
+  hb_font_set_scale(hbFont, upem, upem);
+
+  /* Harfbuzz's support for OT fonts is great, but
+     there's currently no support for CFF fonts, so
+     downgrade to Freetype for those. */
+  if (strncmp(font_s, "OTTO", 4) == 0 || strncmp(font_s, "ttcf", 4) == 0) {
+    hb_ft_font_set_funcs(hbFont);
+  } else {
+    hb_ot_font_set_funcs(hbFont);
+  }
+
+  hb_glyph_extents_t extents = {0,0,0,0};
+  hb_font_get_glyph_extents(hbFont, glyphId, &extents);
+
+  double height = extents.y_bearing * point_size / upem;
+  double tHeight = extents.height * point_size / upem;
+  double width = extents.width * point_size / upem;
+  /* The PDF model expects us to make positioning adjustments
+  after a glyph is painted. For this we need to know the natural
+  glyph advance. libtexpdf will use this to compute the adjustment. */
+  double glyphAdvance = hb_font_get_glyph_h_advance(hbFont,
+    glyphId) * point_size / upem;
+
+  lua_newtable(L);
+  lua_pushstring(L, "glyphAdvance");
+  lua_pushnumber(L, glyphAdvance);
+  lua_settable(L, -3);
+  lua_pushstring(L, "width");
+  lua_pushnumber(L, width);
+  lua_settable(L, -3);
+  lua_pushstring(L, "height");
+  lua_pushnumber(L, height);
+  lua_settable(L, -3);
+  lua_pushstring(L, "depth");
+  lua_pushnumber(L, -tHeight - height);
+  lua_settable(L, -3);
+
+  /* Cleanup */
+  hb_font_destroy(hbFont);
+
+  return 1;
+}
+
 int get_harfbuzz_version (lua_State *L) {
   unsigned int major;
   unsigned int minor;
@@ -348,6 +403,7 @@ static void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
 
 static const struct luaL_Reg lib_table [] = {
   {"_shape", shape},
+  {"get_glyph_dimensions", get_glyph_dimensions},
   {"version", get_harfbuzz_version},
   {"shapers", list_shapers},
   {"get_table", get_table},
