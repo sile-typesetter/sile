@@ -96,12 +96,7 @@ SILE.settings.declare({name = "math.font.size", type = "integer", default = 10})
 -- Whether to show debug boxes around mboxes
 SILE.settings.declare({name = "math.debug.boxes", type = "boolean", default = false})
 
-local mathCache
-
-local function getMathMetrics(options)
-  if mathCache then
-    return mathCache
-  end
+local function retrieveMathTable(options)
   local face = SILE.font.cache(options, SILE.shaper.getFace)
   if not face then
     SU.error("Could not find requested font "..options.." or any suitable substitutes")
@@ -123,10 +118,23 @@ local function getMathMetrics(options)
   for k, v in pairs(mathTable.mathItalicsCorrection) do
     italicsCorrection[k] = v.value * options.size / upem
   end
-  mathCache = {
+  return {
     constants = constants,
-    italicsCorrection = italicsCorrection
+    italicsCorrection = italicsCorrection,
+    mathVariants = mathTable.mathVariants,
+    unitsPerEm = upem
   }
+end
+
+local mathCache
+
+local function getMathMetrics()
+  if mathCache then return mathCache end
+  local options = {
+    family=SILE.settings.get("math.font.family"),
+    size=SILE.settings.get("math.font.size")
+  }
+  mathCache = retrieveMathTable(options)
   return mathCache
 end
 
@@ -265,7 +273,7 @@ local _mbox = _box {
   end,
 
   getScaleDown = function(self)
-    local constants = getMathMetrics(self.options).constants
+    local constants = getMathMetrics().constants
     local scaleDown
     if isScriptMode(self.mode) then
       scaleDown = constants.scriptPercentScaleDown
@@ -444,7 +452,7 @@ local _subscript = _mbox {
   calculateItalicsCorrection = function(self)
     local lastGid = getRightMostGlyphId(self.base)
     if lastGid > 0 then
-      local mathMetrics = getMathMetrics(self.options)
+      local mathMetrics = getMathMetrics()
       if mathMetrics.italicsCorrection[lastGid] then
         local c = mathMetrics.italicsCorrection[lastGid]
         -- If this is a big operator, and we are in display style, then the
@@ -459,7 +467,7 @@ local _subscript = _mbox {
     return 0
   end,
   shape = function(self)
-    local mathMetrics = getMathMetrics(self.options)
+    local mathMetrics = getMathMetrics()
     local constants = mathMetrics.constants
     local scaleDown = self:getScaleDown()
     if self.base then
@@ -562,7 +570,7 @@ local _bigOpSubscript = _subscript {
       _subscript.shape(self)
       return
     end
-    local constants = getMathMetrics(self.options).constants
+    local constants = getMathMetrics().constants
     local scaleDown = self:getScaleDown()
     -- Determine relative Ys
     if self.base then
@@ -793,7 +801,7 @@ local _fraction = _mbox {
     self.width = widest.width
 
     -- Determine relative ordinates and height
-    local constants = getMathMetrics(self.options).constants
+    local constants = getMathMetrics().constants
     local scaleDown = self:getScaleDown()
     self.axisHeight = constants.axisHeight * scaleDown
     self.ruleThickness = constants.fractionRuleThickness * scaleDown
