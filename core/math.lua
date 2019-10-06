@@ -722,17 +722,48 @@ local _text = _terminal {
     end
   end,
   shape = function(self)
+    self.options.size = self.options.size * self:getScaleDown()
     local face = SILE.font.cache(self.options, SILE.shaper.getFace)
-    local fontSize = self.options.size * self:getScaleDown()
-    face.size = fontSize
-    local constants = getMathMetrics(self.options).constants
-    if self.atom == atomType.bigOperator and isDisplayMode(self.mode) then
-      self.options.size = maxLength(constants.displayOperatorMinHeight,
-        fontSize).length
-    else
-     self.options.size = fontSize
-    end
+    local mathMetrics = getMathMetrics()
     local glyphs = SILE.shaper:shapeToken(self.text, self.options)
+    -- Use bigger variants for big operators in display style
+    if isDisplayMode(self.mode) and self.atom == atomType.bigOperator then
+      -- We copy the glyph list to avoid modifying the shaper's cache. Yes.
+      glyphs = std.tree.clone(glyphs)
+      local displayVariants = mathMetrics.mathVariants
+        .vertGlyphConstructions[glyphs[1].gid].mathGlyphVariantRecord
+      -- We select the biggest variant. TODO: we shoud probably select the
+      -- first variant that is higher than displayOperatorMinHeight.
+      local biggest
+      local m = 0
+      for i, v in ipairs(displayVariants) do
+        if v.advanceMeasurement > m then
+          biggest = v
+          m = v.advanceMeasurement
+        end
+      end
+      if biggest then
+        glyphs[1].gid = biggest.variantGlyph
+        local dimen = hb.get_glyph_dimensions(face.data,
+          face.index, self.options.size, biggest.variantGlyph)
+        glyphs[1].width = dimen.width
+        glyphs[1].glyphAdvance = dimen.glyphAdvance
+        --[[ I am told (https://github.com/alif-type/xits/issues/90) that,
+        in fact, the relative height and depth of display-style big operators
+        in the font is not relevant, as these should be centered around the
+        axis. So the following code does that, while conserving their
+        vertical size (distance from top to bottom). ]]
+        local axisHeight = mathMetrics.constants.axisHeight * self:getScaleDown()
+        local y_size = dimen.height + dimen.depth
+        glyphs[1].height = y_size / 2 + axisHeight
+        glyphs[1].depth = y_size / 2 - axisHeight
+        -- We still need to store the font's height and depth somewhere,
+        -- because that's what will be used to draw the glyph, and we will need
+        -- to artificially compensate for that.
+        glyphs[1].fontHeight = dimen.height
+        glyphs[1].fontDepth = dimen.depth
+      end
+    end
     SILE.shaper:preAddNodes(glyphs, self.value)
     self.value.items = glyphs
     self.value.glyphString = {}
@@ -756,7 +787,14 @@ local _text = _terminal {
   output = function(self, x, y, line)
     if not self.value.glyphString then return end
     -- print('Output '..self.value.glyphString.." to "..x..", "..y)
-    SILE.outputter.moveTo(getNumberFromLength(x, line), y.length)
+    local compensatedY
+    if isDisplayMode(self.mode) and self.atom == atomType.bigOperator then
+      compensatedY = SILE.length.make(y.length + self.value.items[1].depth
+        - self.value.items[1].fontDepth)
+    else
+      compensatedY = y
+    end
+    SILE.outputter.moveTo(getNumberFromLength(x, line), compensatedY.length)
     SILE.outputter.setFont(self.options)
     SILE.outputter.outputHbox(self.value, getNumberFromLength(self.width, line))
   end
