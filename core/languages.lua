@@ -4,6 +4,7 @@ SILE.languageSupport = {
     if SILE.languageSupport.languages[language] then return end
     if SILE.hyphenator.languages[language] then return end
     if not(language) or language == "" then language = "en" end
+    language = SILE.cldr.locales[language] and language or "und"
     ok, fail = pcall(function () SILE.require("languages/" .. language) end)
     if fail then
       if fail:match("not found") then fail = "no support for this language" end
