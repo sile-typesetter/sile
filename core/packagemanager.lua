@@ -1,4 +1,4 @@
-local catalogueURL = "https://raw.githubusercontent.com/simoncozens/sile-packages/master/packages.lua"
+local catalogueURL = "https://raw.githubusercontent.com/sile-typesetter/sile-packages/master/packages.lua"
 local packageHome = SYSTEM_SILE_PATH .. "/packagemanager/"
 local catalogueHome = packageHome .. "catalogue.lua"
 local installedCatalogue = packageHome .. "installed.lua"
