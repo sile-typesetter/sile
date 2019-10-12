@@ -15,6 +15,8 @@ std = require("std")
 
 -- Initialize SILE
 SILE = {}
+SILE.fluent = require("fluent")()
+SILE.cldr = require("cldr")
 SILE.utilities = require("core/utilities")
 SU = SILE.utilities
 SILE.inputs = {}
