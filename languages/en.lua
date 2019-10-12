@@ -599,7 +599,6 @@ SILE.hyphenator.languages["en"].exceptions = {"as-so-ciate", "as-so-ciates",
 
 -- Internationalisation stuff
 SILE.doTexlike([[%
-\define[command=tableofcontents:title]{Table of Contents}%
 \define[command=book:chapter:pre:en]{Chapter }%
 ]])
 

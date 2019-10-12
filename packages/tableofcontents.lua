@@ -70,10 +70,9 @@ return {
     self:loadPackage("infonode")
     self:loadPackage("leaders")
 SILE.doTexlike([[%
-\define[command=tableofcontents:title]{}%
-\define[command=tableofcontents:notocmessage]{\tableofcontents:headerfont{Rerun SILE to process table of contents!}}%
+\define[command=tableofcontents:notocmessage]{\tableofcontents:headerfont{\fluent{toc-not-generated}}}%
 \define[command=tableofcontents:headerfont]{\font[size=24pt,weight=800]{\process}}%
-\define[command=tableofcontents:header]{\par\noindent\tableofcontents:headerfont{\tableofcontents:title}\medskip}%
+\define[command=tableofcontents:header]{\par\noindent\tableofcontents:headerfont{\fluent{toc-title}}\medskip}%
 \define[command=tableofcontents:footer]{}%
 \define[command=tableofcontents:level1item]{\bigskip\noindent\font[size=14pt,weight=800]{\process}\medskip}%
 \define[command=tableofcontents:level2item]{\noindent\font[size=12pt]{\process}\medskip}%

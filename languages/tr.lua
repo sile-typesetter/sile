@@ -615,7 +615,6 @@ SILE.hyphenator.languages["tr"].patterns =
 
 -- Internationalisation stuff
 SILE.doTexlike([[%
-\define[command=tableofcontents:title]{İçindekiler}%
 \define[command=book:chapter:pre:tr]{Bölüm }%
 ]])
 
