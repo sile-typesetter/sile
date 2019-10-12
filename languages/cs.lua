@@ -3646,7 +3646,3 @@ SILE.hyphenator.languages["cs"].exceptions =
 "úhlo-příč-ka",
 "úhlo-příč-ky",
    }
-
-SILE.doTexlike([[%
-\define[command=book:chapter:pre:cs]{Kapitola }%
-]])

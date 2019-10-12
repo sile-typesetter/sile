@@ -614,10 +614,6 @@ SILE.hyphenator.languages["tr"].patterns =
    }
 
 -- Internationalisation stuff
-SILE.doTexlike([[%
-\define[command=book:chapter:pre:tr]{Bölüm }%
-]])
-
 local sum_tens = function (val, loc, digits)
   local ten = string.sub(digits, loc+1, loc+1)
   if ten:len() == 1 then val = val + tonumber(ten) * 10 end
