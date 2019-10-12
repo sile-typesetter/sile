@@ -1,0 +1,8 @@
+\begin[papersize=a6]{document}
+\nofolios
+\language[main=en]
+\fluent[name=World]{hello}
+
+\language[main=tr]
+\fluent[name=Dünya]{hello}
+\end{document}

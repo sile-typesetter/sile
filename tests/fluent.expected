@@ -1,0 +1,19 @@
+Set paper size 	297.6377985	419.5275636
+Begin page
+Mx 	34.8819
+My 	28.5447
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	43 72 79 79 82	(Hello)
+Mx 	59.1524
+T	58 82 85 79 71	(World)
+Mx 	84.5528
+T	4	(!)
+Mx 	34.8819
+My 	40.5447
+T	48 72 85 75 68 69 68	(Merhaba)
+Mx 	73.9603
+T	39 129 81 92 68	(Dünya)
+Mx 	100.2249
+T	4	(!)
+End page
+Finish
