@@ -10,6 +10,13 @@ SILE.languageSupport = {
       SU.warn("Error loading language " .. language .. ": " .. fail)
       SILE.languageSupport.languages[language] = {} -- Don't try again
     end
+    SILE.fluent:set_locale(language)
+    local ftl, err = io.open("i18n/"..language..".ftl", "r")
+    if not err then
+      local ftl_entries = ftl:read("*all")
+      SILE.fluent:add_messages(ftl_entries)
+      io.close(ftl)
+    end
   end
 }
 
@@ -24,6 +31,12 @@ SILE.registerCommand("language", function (options, content)
   else
     SILE.settings.set("document.language", main)
   end
+end)
+
+SILE.registerCommand("fluent", function (options, content)
+  local key = content[1]
+  local message = SILE.fluent:get_message(key):format(options)
+  SILE.process({message})
 end)
 
 require("languages/unicode")
