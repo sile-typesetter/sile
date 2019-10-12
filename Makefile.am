@@ -9,7 +9,7 @@ endif
 dist_bin_SCRIPTS = sile
 subdir_files = $(shell find core classes languages packages lua-libraries -type f -print)
 nobase_dist_pkgdata_DATA = $(subdir_files)
-EXTRA_DIST=CHANGELOG.md README.md LICENSE tests examples documentation
+EXTRA_DIST=CHANGELOG.md README.md LICENSE tests examples documentation sile-dev-1.rockspec
 
 SHELL = bash
 .ONESHELL:
