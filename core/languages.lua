@@ -1,3 +1,12 @@
+local loadftl = function(path)
+  local ftl, err = io.open(path, "r")
+  if not err then
+    local ftl_entries = ftl:read("*all")
+    SILE.fluent:add_messages(ftl_entries)
+    io.close(ftl)
+  end
+end
+
 SILE.languageSupport = {
   languages = {},
   loadLanguage = function (language)
@@ -12,12 +21,7 @@ SILE.languageSupport = {
       SILE.languageSupport.languages[language] = {} -- Don't try again
     end
     SILE.fluent:set_locale(language)
-    local ftl, err = io.open("i18n/"..language..".ftl", "r")
-    if not err then
-      local ftl_entries = ftl:read("*all")
-      SILE.fluent:add_messages(ftl_entries)
-      io.close(ftl)
-    end
+    loadftl("i18n/"..language..".ftl")
   end
 }
 
@@ -38,6 +42,15 @@ SILE.registerCommand("fluent", function (options, content)
   local key = content[1]
   local message = SILE.fluent:get_message(key):format(options)
   SILE.process({message})
+end)
+
+SILE.registerCommand("ftl", function (options, content)
+  local input = content[1]
+  if (options["src"]) then
+    loadftl(options["src"])
+  else
+    SILE.fluent:add_messages(input)
+  end
 end)
 
 require("languages/unicode")
