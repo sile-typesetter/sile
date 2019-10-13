@@ -9,6 +9,6 @@
 \fluent[name=Dünya]{hello}
 
 % Override the default messages and use the same command
-\script{SILE.fluent:add_messages([[hello = { $name }'ya Selam!]])}
+\ftl{hello = { $name }’ya Selam!}
 \fluent[name=Dünya]{hello}
 \end{document}
