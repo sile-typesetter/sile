@@ -39,12 +39,14 @@ dist-hook:
 # Whether to force tests to run from scratch
 CLEAN ?=
 
+RELTYPE ?=
+
 .PHONY: tagrelease
 tagrelease: prerelease
 	test -z $$(git tag --points-at HEAD) || exit 0 # end if we are already on a release tag
 	git diff-index --quiet --cached HEAD || exit 1 # die if anything staged but not committed
 	git diff-files --quiet || exit 1 # die if any tracked files have unstagged changes
-	npm run release
+	npm run release -- $(and $(RELTYPE),--release-as $(RELTYPE))
 
 .PHONY: prerelease
 prerelease: sile test busted examples docs update_libtexpdf
