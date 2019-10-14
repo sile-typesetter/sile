@@ -43,7 +43,7 @@ ltmain.sh
 subfiles.mk
 
 # Build artifacts
-sile
+./sile
 confdefs.h
 config.log
 core/*.so
@@ -60,7 +60,7 @@ sile-v*
 tests/*.actual
 tests/*.pdf
 */*.toc
-time-*.json
+time*.json
 
 benchmark-*
 compare-*
