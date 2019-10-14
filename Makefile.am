@@ -42,20 +42,26 @@ CLEAN ?=
 RELTYPE ?=
 
 .PHONY: tagrelease
-tagrelease: prerelease
+tagrelease:
 	test -z $$(git tag --points-at HEAD) || exit 0 # end if we are already on a release tag
 	git diff-index --quiet --cached HEAD || exit 1 # die if anything staged but not committed
 	git diff-files --quiet || exit 1 # die if any tracked files have unstagged changes
 	npm run release -- $(and $(RELTYPE),--release-as $(RELTYPE))
 
 .PHONY: prerelease
-prerelease: sile test busted examples docs update_libtexpdf
+prerelease: all test busted examples docs update_libtexpdf
+
+.PHONY: release-preview
+release-preview:
+	npm run release -- --dry-run
 
 .PHONY: release
-release: tagrelease postrelease
+release: tagrelease
+
+dist: examples docs
 
 .PHONY: postrelease
-postrelease:
+postrelease: dist
 	@echo "- [ ] Ping packagers: https://repology.org/project/sile/versions"
 
 .PHONY: update_libtexpdf
@@ -92,7 +98,7 @@ EXPECTEDS ?= $(filter $(addsuffix .expected,$(basename $(TESTSRCS))),$(wildcard 
 ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 
 .PHONY: test
-test: $(TESTSRCS) $(ACTUALS) sile testprep
+test: $(TESTSRCS) $(ACTUALS) all testprep
 	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
 
 .PHONY: lint
@@ -102,7 +108,7 @@ lint: luacheck
 luacheck:
 	luacheck -q .
 
-busted: $(wildcard spec/*_spec.lua) sile testprep
+busted: $(wildcard spec/*_spec.lua) all testprep
 	set -f; IFS=';'
 if SYSTEM_LUAROCKS
 	packagecpath=(./{,core/}?.$(SHARED_LIB_EXT))
@@ -271,9 +277,9 @@ DEPDIRS = $(sort $(dir $(DEPFILES)))
 $(DEPDIRS):
 	mkdir -p $@
 
-%.pdf: $(DEPDIR)/%.d
-%.expected: $(DEPDIR)/%.d
-%.actual: $(DEPDIR)/%.d
+%.pdf: $(DEPDIR)/%.d all
+%.expected: $(DEPDIR)/%.d all
+%.actual: $(DEPDIR)/%.d all
 
 $(DEPFILES): | $(DEPDIRS)
 
