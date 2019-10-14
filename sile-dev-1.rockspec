@@ -11,7 +11,7 @@ dependencies = {
   "linenoise == 0.9-1",
   "lpeg == 1.0.2-1",
   "lua-zlib == 1.2-0",
-  "lua_cliargs == 2.3-3",
+  "lua_cliargs == 3.0-2",
   "luaepnf == 0.3-1",
   "luafilesystem == 1.7.0-2",
   "luarepl == 0.9-1",
