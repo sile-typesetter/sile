@@ -18,7 +18,7 @@ dependencies = {
   "luarepl == 0.9-1",
   "luasec == 0.8.1-1",
   "luasocket == 3.0rc1-2",
-  "penlight == 1.5.4-1",
+  "penlight == 1.7.0-1",
   "stdlib == 41.2.2-1",
   "vstruct == 2.0.1-1"
 }
