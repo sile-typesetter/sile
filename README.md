@@ -11,7 +11,7 @@ SILE is a [typesetting][typesetting] system; its job is to produce beautiful pri
 
 ## What can I do with SILE (that I can’t do with TeX)?
 
-First, have a look at the [show-off file][showoff]. SILE allows you to:
+First, have a look at the [usage examples gallery][examples]. SILE allows you to:
 
 * Produce complex document layouts using frames.
 
@@ -110,7 +110,7 @@ SILE is distributed under the [MIT licence][license].
   [github]: https://github.com/sile-typesetter/sile
   [license]: http://choosealicense.com/licenses/mit/
   [faq]: https://github.com/sile-typesetter/sile/wiki/faq
-  [showoff]: https://rawgit.com/sile-typesetter/sile/b66b979a6dca0c60bd4aa2cbad3da36ae2073672/examples/showoff.pdf
+  [examples]: http://www.sile-typesetter.org/examples/
   [luarocks]: http://luarocks.org/en/Download
   [harfbuzz]: http://www.freedesktop.org/wiki/Software/HarfBuzz/
   [icu]: http://icu-project.org
