@@ -27,16 +27,16 @@ local parallelPagebreak = function ()
         -- Just ship out one page and hope for the best.
         SILE.defaultTypesetter.pageBuilder(typesetter)
       else
-        for i = 1, calculations[frame].mark do
-          thispage[i] = table.remove(typesetter.state.outputQueue, 1)
-          SU.debug("parallel", thispage[i])
+        for l = 1, calculations[frame].mark do
+          thispage[l] = table.remove(typesetter.state.outputQueue, 1)
+          SU.debug("parallel", thispage[l])
         end
         typesetter:outputLinesToPage(thispage)
       end
     end
     SILE.documentState.documentClass:endPage()
-    for j = 1, #thisPageFrames do
-      local frame = thisPageFrames[j]
+    for l = 1, #thisPageFrames do
+      local frame = thisPageFrames[l]
       local typesetter = typesetterPool[frame]
       typesetter:initFrame(typesetter.frame)
     end

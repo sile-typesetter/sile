@@ -45,7 +45,7 @@ SILE.registerCommand("svg-glyph", function(_, content)
   parser.parseFont(face)
   if not face.font.svg then return SILE.process(content) end
   for i = 1, #items do
-    local svg = parser.getSVG(face, items[i].gid)
-    if svg then pushSVG(svg, fontoptions.size, 72, true) end
+    local svg_data = parser.getSVG(face, items[i].gid)
+    if svg_data then pushSVG(svg_data, fontoptions.size, 72, true) end
   end
 end)

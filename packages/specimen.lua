@@ -2,19 +2,19 @@ local metrics = require("fontmetrics")
 
 SILE.registerCommand("repertoire", function(_, _)
   local ot = SILE.require("core/opentype-parser")
-  local options = SILE.font.loadDefaults({})
-  local face = SILE.font.cache(options, SILE.shaper.getFace)
+  local fontoptions = SILE.font.loadDefaults({})
+  local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
   local font = ot.parseFont(face)
   local maxg = font.maxp.numGlyphs
   for i = 1 , maxg - 1 do
     local wd = metrics.glyphwidth(i, face.data, face.index)
     SILE.typesetter:pushHbox({
-      height= SILE.length.new({ length = 1.2 * options.size  }),
-      width= SILE.length.new({ length = wd * options.size }),
+      height= SILE.length.new({ length = 1.2 * fontoptions.size  }),
+      width= SILE.length.new({ length = wd * fontoptions.size }),
       depth= 0,
-      value= { options = options, glyphString =  { i } },
+      value= { options = fontoptions, glyphString =  { i } },
     })
-    SILE.typesetter:pushGlue(((1-wd) * options.size).."pt plus 1pt minus 1pt")
+    SILE.typesetter:pushGlue(((1-wd) * fontoptions.size).."pt plus 1pt minus 1pt")
   end
 end)
 

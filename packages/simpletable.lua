@@ -68,9 +68,9 @@ return {
       SILE.settings.temporarily(function ()
         SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
         for row = 1, #tbl do
-          for col = 1, #(tbl[row]) do
-            local hbox = tbl[row][col].hbox
-            hbox.width = colwidths[col]
+          for colno = 1, #(tbl[row]) do
+            local hbox = tbl[row][colno].hbox
+            hbox.width = colwidths[colno]
             SILE.typesetter:pushHbox(hbox)
           end
           SILE.typesetter:leaveHmode()
