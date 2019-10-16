@@ -15,14 +15,6 @@ utilities.boolean = function (value, default)
   return default
 end
 
-if not table.maxn then
-  table.maxn = function(tbl)
-    local max = 0
-    for i, _ in pairs(tbl) do if i > max then max = i end end
-    return max
-  end
-end
-
 utilities.error = function(message, bug)
   utilities.warn(message, bug)
   io.stderr:flush()
@@ -136,7 +128,8 @@ end
 
 utilities.compress = function (items)
   local rv = {}
-  for i=1,table.maxn(items) do if items[i] then rv[#rv+1] = items[i] end end
+  local max = math.max(table.unpack(pl.tablex.keys(items)))
+  for i = 1, max do if items[i] then rv[#rv+1] = items[i] end end
   return rv
 end
 
