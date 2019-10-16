@@ -227,7 +227,7 @@ SILE.defaultTypesetter = std.object {
     local newNl = {}
     for i = 1, #nodelist do
       if nodelist[i]:isUnshaped() then
-        table.append(newNl, nodelist[i]:shape())
+        pl.tablex.insertvalues(newNl, nodelist[i]:shape())
       else
         newNl[#newNl+1] = nodelist[i]
       end

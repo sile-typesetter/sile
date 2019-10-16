@@ -320,7 +320,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   -- intend to put on this page.
   maxsize = maxsize - topBox.height
   local materialToSplit = {}
-  table.append(materialToSplit, ins:unbox())
+  pl.tablex.insertvalues(materialToSplit, ins:unbox())
   local newvbox = ins:split(materialToSplit, maxsize)
 
   if newvbox then

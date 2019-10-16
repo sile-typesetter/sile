@@ -146,13 +146,6 @@ table.nitems = function (tbl)
   return count
 end
 
-table.append = function (basetable, tbl)
-  if not basetable or not tbl then SU.error("table.append called with nil table!: "..basetable..", "..tbl, true) end
-  for i=1,#tbl do
-      basetable[#basetable+1] = tbl[i]
-  end
-end
-
 table.flip = function(tbl)
   for i=1, math.floor(#tbl / 2) do
     local tmp = tbl[i]
