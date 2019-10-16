@@ -133,11 +133,13 @@ utilities.compress = function (items)
   return rv
 end
 
-table.flip = function(tbl)
-  for i=1, math.floor(#tbl / 2) do
-    local tmp = tbl[i]
-    tbl[i] = tbl[#tbl - i + 1]
-    tbl[#tbl - i + 1] = tmp
+utilities.flip_in_place = function (tbl)
+  local tmp, j
+  for i = 1, math.floor(#tbl / 2) do
+    tmp = tbl[i]
+    j = #tbl - i + 1
+    tbl[i] = tbl[j]
+    tbl[j] = tmp
   end
 end
 

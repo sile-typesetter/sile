@@ -685,7 +685,7 @@ local tr_nums = function (num, ordinal)
   if abs > num then
     words[#words+1] = minus
   end
-  table.flip(words)
+  SU.flip_in_place(words)
   return table.concat(words, " ")
 end
 
