@@ -5,7 +5,7 @@ SILE.settings = {
   defaults = {},
   pushState = function()
     table.insert(SILE.settings.stateQueue, SILE.settings.state)
-    SILE.settings.state = std.table.clone(SILE.settings.state)
+    SILE.settings.state = pl.tablex.copy(SILE.settings.state)
   end,
   popState = function()
     SILE.settings.state = table.remove(SILE.settings.stateQueue)
@@ -42,7 +42,7 @@ SILE.settings = {
     SILE.settings.popState()
   end,
   wrap = function() -- Returns a closure which applies the current state, later
-    local clSettings = std.table.clone(SILE.settings.state)
+    local clSettings = pl.tablex.copy(SILE.settings.state)
     return function(func)
       table.insert(SILE.settings.stateQueue, SILE.settings.state)
       SILE.settings.state = clSettings

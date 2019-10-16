@@ -105,7 +105,7 @@ SILE.registerCommand("sync", function (_, _)
     -- Now we have each typesetter's content boxed up onto the output stream
     -- but page breaking has not been run. See if page breaking would cause a
     -- break
-    local lines = std.table.clone(typesetter.state.outputQueue)
+    local lines = pl.tablex.copy(typesetter.state.outputQueue)
     if SILE.pagebuilder.findBestBreak({ vboxlist = lines, target = typesetter:pageTarget() }) then
       anybreak = true
     end
