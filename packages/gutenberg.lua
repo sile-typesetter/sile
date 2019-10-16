@@ -1,7 +1,7 @@
 SILE.registerCommand("alt", function(o, c)
   local options = {}
-  for i=1,#c do
-    SILE.call("hbox", {}, {c[i]})
+  for _, fragment in ipairs(c) do
+    SILE.call("hbox", {}, { fragment })
     options[#options + 1] = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
     SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
   end

@@ -21,7 +21,7 @@ local moveNodes = function(self)
   local n = SILE.scratch.info.thispage.index
   local thisPage = SILE.formatCounter(SILE.scratch.counters.folio)
   if not n then return end
-  for i=1,#n do node = n[i]
+  for _, node in ipairs(n) do
     if not SILE.scratch.index[node.index] then SILE.scratch.index[node.index] = {} end
     local thisIndex = SILE.scratch.index[node.index]
     if not thisIndex[node.label] then thisIndex[node.label] = {} end
