@@ -71,7 +71,7 @@ SILE.registerCommand("pdf:link", function (options, content)
     height = 0,
     width = 0,
     depth = 0,
-    outputYourself = function (self,typesetter)
+    outputYourself = function (self, typesetter)
       llx = typesetter.frame.state.cursorX
       lly = SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY
       SILE.outputters.libtexpdf._init()
@@ -86,7 +86,7 @@ SILE.registerCommand("pdf:link", function (options, content)
     height = 0,
     width = 0,
     depth = 0,
-    outputYourself = function (self,typesetter)
+    outputYourself = function (self, typesetter)
       local d = "<</Type/Annot/Subtype/Link/C [ 1 0 0 ]/A<<" .. target .. "(" .. dest .. ")>>>>"
       pdf.end_annotation(d, llx, lly, typesetter.frame.state.cursorX, SILE.documentState.paperSize[2] -typesetter.frame.state.cursorY + hbox.height)
     end
@@ -101,7 +101,7 @@ SILE.registerCommand("pdf:metadata", function (options, content)
     height = 0,
     width = 0,
     depth = 0,
-    outputYourself = function (self,typesetter)
+    outputYourself = function (self, typesetter)
       SILE.outputter._init()
       pdf.metadata(key, val)
     end

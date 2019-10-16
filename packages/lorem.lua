@@ -64,28 +64,28 @@ ipsum dolor sit amet
 
 ]]
 
-local _, nwords = lorem:gsub("%S+","")
+local _, nwords = lorem:gsub("%S+", "")
 local floor = math.floor
 
-SILE.registerCommand("lorem", function(options, content)
+SILE.registerCommand("lorem", function (options, content)
   local words = tonumber(options.words) or 50
   local counter = options.counter or false
   local times = floor(words/nwords)
   words = words - times*nwords
   local i, j = 0, 0
   for n = 1, words do
-    i, j = lorem:find("%S+", j+1)
+    i, j = lorem:find("%S+", j + 1)
   end
-  local s = string.rep(lorem,times)..lorem:sub(1,j)
+  local s = string.rep(lorem, times) .. lorem:sub(1, j)
   if counter then
     local c = 0
-    s = string.gsub(s, "(%s+)", function(x)
-      c=c+1
-      return " "..c.." "
+    s = string.gsub(s, "(%s+)", function (x)
+      c = c + 1
+      return " " .. c .. " "
     end)
   end
-  SILE.settings.temporarily(function()
-    SILE.settings.set("document.language","la")
+  SILE.settings.temporarily(function ()
+    SILE.settings.set("document.language", "la")
     SILE.typesetter:typeset(s)
     SILE.typesetter:leaveHmode()
   end)

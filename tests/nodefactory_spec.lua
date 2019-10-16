@@ -50,5 +50,5 @@ describe("The node factory", function()
     it("should go to text", function() assert.is.equal("VB[one two three]", vbox:toText()) end)
     it("should have depth", function() assert.is.equal(7, vbox.depth) end)
   end)
- 
+
 end)

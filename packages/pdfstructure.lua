@@ -1,10 +1,10 @@
 local stPointer
-local stNode = function(t) return {
-  t = t,
-  lang = SILE.settings.get("document.language"),
-  kids = {},
-  parent = stPointer
-}
+local stNode = function (t) return {
+    t = t,
+    lang = SILE.settings.get("document.language"),
+    kids = {},
+    parent = stPointer
+  }
 end
 
 SILE.require("packages/pdf")
@@ -14,15 +14,15 @@ local stRoot = stNode("Document")
 stPointer = stRoot
 local mcid = 0
 
-local addChild = function(node)
+local addChild = function (node)
   stPointer.kids[#(stPointer.kids)+1] = node
   node.parent = stPointer
 end
 
 local actualtext = {}
 
-SILE.registerCommand("pdf:structure", function (o,c)
-  local t = SU.required(o,"type", "pdf structure")
+SILE.registerCommand("pdf:structure", function (o, c)
+  local t = SU.required(o, "type", "pdf structure")
   local node = stNode(t)
   addChild(node)
   node.lang = SILE.settings.get("document.language")
@@ -33,10 +33,10 @@ SILE.registerCommand("pdf:structure", function (o,c)
   stPointer = node
   actualtext[#actualtext+1] = ""
   if not o.block then
-    SILE.call("pdf:literal",{},{"/"..t.." <</MCID "..mcid.." >>BDC"})
+    SILE.call("pdf:literal", {}, {"/"..t.." <</MCID "..mcid.." >>BDC"})
     mcid = mcid + 1
     SILE.process(c)
-    SILE.call("pdf:literal",{},{"EMC"})
+    SILE.call("pdf:literal", {}, {"EMC"})
   else
     SILE.process(c)
   end
@@ -45,7 +45,7 @@ SILE.registerCommand("pdf:structure", function (o,c)
   stPointer = oldstPointer
 end)
 
-SILE.typesetter.typeset = function(self, text)
+SILE.typesetter.typeset = function (self, text)
   actualtext[#actualtext] = actualtext[#actualtext] .. text
   SILE.defaultTypesetter.typeset(self, text)
 end
@@ -55,7 +55,7 @@ local numberTreeIndex = 0
 local ensureStructureNumber = function ( node, pdfnode )
   local p = node.page
   if not pdf.lookup_dictionary(p, "StructParents") then
-    pdf.add_dict(p,pdf.parse("/StructParents"),pdf.parse(numberTreeIndex))
+    pdf.add_dict(p, pdf.parse("/StructParents"), pdf.parse(numberTreeIndex))
     local nums = pdf.lookup_dictionary(structureNumberTree, "Nums")
     pdf.push_array(nums, pdf.parse(numberTreeIndex))
     pdf.push_array(nums, pdf.parse("[]"))
@@ -73,11 +73,11 @@ dumpTree = function (node)
   local k = {}
   local pdfNode = pdf.parse("<< /Type /StructElem /S /"..(node.t)..">>")
   if #(node.kids) > 0 then
-    for i = 1,#(node.kids) do
+    for i = 1, #(node.kids) do
       k[#k+1] = dumpTree(node.kids[i])
     end
     local kArray = pdf.parse("[]")
-    for i = 1,#k do pdf.push_array(kArray, k[i]) end
+    for i = 1, #k do pdf.push_array(kArray, k[i]) end
     pdf.add_dict(pdfNode, pdf.parse("/K"), kArray)
   else
     pdf.add_dict(pdfNode, pdf.parse("/K"), pdf.parse(node.mcid))
@@ -99,13 +99,13 @@ dumpTree = function (node)
 end
 
 
-SILE.outputters.libtexpdf.finish = function()
+SILE.outputters.libtexpdf.finish = function ()
   pdf.endpage()
   local c = pdf.get_dictionary("Catalog")
   structureTree = pdf.parse("<< /Type /StructTreeRoot >>")
-  pdf.add_dict(c,pdf.parse("/StructTreeRoot"),pdf.reference(structureTree))
+  pdf.add_dict(c, pdf.parse("/StructTreeRoot"), pdf.reference(structureTree))
   structureNumberTree = pdf.parse("<< /Nums [] >>")
-  pdf.add_dict(structureTree,pdf.parse("/ParentTree"),pdf.reference(structureNumberTree))
+  pdf.add_dict(structureTree, pdf.parse("/ParentTree"), pdf.reference(structureNumberTree))
 
   pdf.add_dict(structureTree, pdf.parse("/K"), dumpTree(stRoot))
 

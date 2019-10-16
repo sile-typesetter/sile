@@ -1,4 +1,4 @@
-SILE.registerCommand("ruby:font", function(options, content)
+SILE.registerCommand("ruby:font", function (options, content)
   SILE.call("font", { size = "0.6zw", weight = 800 })
 
 end)
@@ -16,12 +16,12 @@ SILE.settings.declare({
   help = "Glue added between consecutive Latin ruby"
 })
 
-local isLatin = function(c)
-  return (c > 0x20 and c <= 0x24F) or (c>=0x300 and c<=0x36F)
-    or (c >= 0x1DC0 and c<= 0x1EFF) or (c >= 0x2C60 and c <= 0x2c7F)
+local isLatin = function (c)
+  return (c > 0x20 and c <= 0x24F) or (c >= 0x300 and c <= 0x36F)
+    or (c >= 0x1DC0 and c <= 0x1EFF) or (c >= 0x2C60 and c <= 0x2c7F)
 end
 
-local checkIfSpacerNeeded = function(reading)
+local checkIfSpacerNeeded = function (reading)
   -- First, did we have a ruby node at all?
   if not SILE.scratch.lastRubyBox then return end
   -- Does the current reading start with a latin?

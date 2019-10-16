@@ -1,6 +1,6 @@
 SILE.require("packages/tate")
 
-local showHanmenYoko = function(f)
+local showHanmenYoko = function (f)
   local g = f:top()
   while g < f:bottom() do
     SILE.outputter.rule(f:left(), g - 0.25, f:width(), 0.5)
@@ -15,7 +15,7 @@ local showHanmenYoko = function(f)
   end
 end
 
-local showHanmenTate = function(f)
+local showHanmenTate = function (f)
   local g = f:right()
   while g > f:left() do
     SILE.outputter.rule( g - 0.25, f:top(), 0.5, -f:height())
@@ -31,7 +31,7 @@ local showHanmenTate = function(f)
 end
 
 
-SILE.registerCommand("show-hanmen", function(options, content)
+SILE.registerCommand("show-hanmen", function (options, content)
   local f = SILE.typesetter.frame
   if not f.hanmen then SU.error("show-hanmen called on a frame with no hanmen") end
   SILE.outputter:pushColor({r = 1, g= 0.9, b = 0.9 })

@@ -38,15 +38,15 @@ SILE.registerCommand("include-svg-file", function (options, content)
   pushSVG(inp, height, density)
 end)
 
-SILE.registerCommand("svg-glyph", function(options,content)
+SILE.registerCommand("svg-glyph", function(options, content)
   local fontoptions = SILE.font.loadDefaults({})
-  local items = SILE.shaper:shapeToken(content[1],fontoptions)
+  local items = SILE.shaper:shapeToken(content[1], fontoptions)
   local face = SILE.shaper.getFace(fontoptions)
   parser.parseFont(face)
   if not face.font.svg then return SILE.process(content) end
-  for i =1,#items do
+  for i = 1, #items do
     local svg = parser.getSVG(face, items[i].gid)
-    if svg then pushSVG(svg,fontoptions.size,72,true)
+    if svg then pushSVG(svg, fontoptions.size, 72, true)
     else
       -- XXX
     end

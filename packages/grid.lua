@@ -7,7 +7,7 @@ local makeUp = function ()
   return SILE.nodefactory.newVglue({ height = SILE.length.new({ length = toadd }) })
 end
 
-local leadingFor = function(this, vbox, previous)
+local leadingFor = function (this, vbox, previous)
   if not this.frame.state.totals.gridCursor then this.frame.state.totals.gridCursor = 0 end
   if not previous then return SILE.nodefactory.newVglue({height=SILE.length.new({})}) end
   if type(vbox.height) == "table" then
@@ -18,7 +18,7 @@ local leadingFor = function(this, vbox, previous)
   return makeUp()
 end
 
-local pushVglue = function(this, spec)
+local pushVglue = function (this, spec)
   if not this.frame.state.totals.gridCursor then
     this.frame.state.totals.gridCursor = 0
   end
@@ -29,7 +29,7 @@ local pushVglue = function(this, spec)
   SILE.defaultTypesetter.pushVglue(this, makeUp())
 end
 
-local debugGrid = function()
+local debugGrid = function ()
   local t = SILE.typesetter
   if not t.frame.state.totals.gridCursor then t.frame.state.totals.gridCursor = 0 end
   local g = t.frame.state.totals.gridCursor
@@ -40,7 +40,7 @@ local debugGrid = function()
 end
 
 local oldPageBuilder = SILE.pagebuilder
-local gridFindBestBreak = function(options)
+local gridFindBestBreak = function (options)
   local vboxlist = SU.required(options, "vboxlist", "in findBestBreak")
   local target   = SU.required(options, "target", "in findBestBreak")
   local i = 0
@@ -80,8 +80,8 @@ local gridFindBestBreak = function(options)
     end
     if badness > 0 then
       local onepage = {}
-      for j=1,bestBreak do
-        onepage[j] = table.remove(vboxlist,1)
+      for j=1, bestBreak do
+        onepage[j] = table.remove(vboxlist, 1)
       end
       while(#onepage > 1 and onepage[#onepage].discardable) do onepage[#onepage] = nil end
       return onepage, 1000
@@ -92,12 +92,12 @@ local gridFindBestBreak = function(options)
   return false, false
 end
 
-SILE.registerCommand("grid:debug", function(o,c)
+SILE.registerCommand("grid:debug", function (o, c)
   debugGrid()
   SILE.typesetter:registerNewFrameHook(debugGrid)
 end)
 
-SILE.registerCommand("grid", function(options, content)
+SILE.registerCommand("grid", function (options, content)
   SILE.typesetter.state.grid = true
   SU.required(options, "spacing", "grid package")
   gridSpacing = SILE.parseComplexFrameDimension(options.spacing)
@@ -110,12 +110,12 @@ SILE.registerCommand("grid", function(options, content)
   SILE.typesetter.pushVglue = pushVglue
   if SILE.typesetter.frame then
       SILE.typesetter.frame.state.totals.gridCursor = 0
-      SILE.typesetter.state.previousVbox = SILE.defaultTypesetter.pushVbox(SILE.typesetter,{})
+      SILE.typesetter.state.previousVbox = SILE.defaultTypesetter.pushVbox(SILE.typesetter, {})
   end
   SILE.typesetter:registerNewFrameHook(function (this)
     this.frame.state.totals.gridCursor = 0
     while this.state.outputQueue[1] and this.state.outputQueue[1].discardable do
-      table.remove(this.state.outputQueue,1)
+      table.remove(this.state.outputQueue, 1)
     end
     if this.state.outputQueue[1] then
       table.insert(this.state.outputQueue, 1, SILE.nodefactory.newVbox({}))

@@ -1,11 +1,11 @@
-SILE.registerCommand("indexentry", function(o,c)
+SILE.registerCommand("indexentry", function (o, c)
   if not o.label then
     -- Reconstruct the text.
     SILE.typesetter:pushState()
     SILE.process(c)
     local t = ""
     local nl = SILE.typesetter.state.nodes
-    for i = 2,#nl do
+    for i = 2, #nl do
       t = t .. nl[i]:toText()
     end
     o.label = t
@@ -17,7 +17,7 @@ end)
 
 SILE.scratch.index = {}
 
-local moveNodes = function(self)
+local moveNodes = function (self)
   local n = SILE.scratch.info.thispage.index
   local thisPage = SILE.formatCounter(SILE.scratch.counters.folio)
   if not n then return end
@@ -31,7 +31,7 @@ local moveNodes = function(self)
   end
 end
   -- if c then
-  --   for i = 1,#c do
+  --   for i = 1, #c do
   --     if not SILE.scratch.index.commands[c[i].label] then
   --       SILE.scratch.index.commands[c[i].label] = {}
   --     end
@@ -40,7 +40,7 @@ end
   -- end
 
 
-SILE.registerCommand("printindex", function(o,c)
+SILE.registerCommand("printindex", function (o, c)
   moveNodes()
   if not o.index then o.index = "main" end
   local index = SILE.scratch.index[o.index]
@@ -48,13 +48,13 @@ SILE.registerCommand("printindex", function(o,c)
   for n in pairs(index) do table.insert(sortedIndex, n) end
   table.sort(sortedIndex)
   SILE.call("bigskip")
-  for i,k in ipairs(sortedIndex) do
-    local v = table.concat(index[k],", ")
-    SILE.call("index:item", {pageno = v}, {k})
+  for i, k in ipairs(sortedIndex) do
+    local v = table.concat(index[k], ", ")
+    SILE.call("index:item", { pageno = v }, { k })
   end
 end)
 
-SILE.registerCommand("index:item", function (o,c)
+SILE.registerCommand("index:item", function (o, c)
   SILE.settings.temporarily(function ()
     SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
     SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)

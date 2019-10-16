@@ -1,4 +1,5 @@
 local tp = "odd"
+
 local mirrorMaster = function(class, existing, new)
   -- Frames in one master can't "see" frames in another, so we have to get creative
   -- XXX This knows altogether too much about the implementation of masters
@@ -6,7 +7,7 @@ local mirrorMaster = function(class, existing, new)
   if not SILE.scratch.masters[existing] then
     SU.error("Can't find master "..existing)
   end
-  for name,frame in pairs(SILE.scratch.masters[existing].frames) do
+  for name, frame in pairs(SILE.scratch.masters[existing].frames) do
     local newframe  = std.tree.clone(frame)
     if frame:isAbsoluteConstraint("right") then
       newframe.constraints.left = "100%pw-("..frame.constraints.right..")"

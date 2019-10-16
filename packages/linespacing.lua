@@ -43,23 +43,26 @@ local metricscache = {}
 local getLineMetrics = function (l)
   local linemetrics = {ascender = 0, descender = 0, lineheight = 0}
   if not l or not l.nodes then return linemetrics end
-  for i = 1,#(l.nodes) do n = l.nodes[i]; if n:isNnode() then
-    local m = metricscache[SILE.font._key(n.options)]
-    if not m then
-      local face = SILE.font.cache(n.options, SILE.shaper.getFace)
-      m = metrics.get_typographic_extents(face.data, face.index)
-      m.ascender = m.ascender * n.options.size
-      m.descender = m.descender * n.options.size
-      metricscache[SILE.font._key(n.options)] = m
+  for i = 1, #(l.nodes) do
+    n = l.nodes[i]
+    if n:isNnode() then
+      local m = metricscache[SILE.font._key(n.options)]
+      if not m then
+        local face = SILE.font.cache(n.options, SILE.shaper.getFace)
+        m = metrics.get_typographic_extents(face.data, face.index)
+        m.ascender = m.ascender * n.options.size
+        m.descender = m.descender * n.options.size
+        metricscache[SILE.font._key(n.options)] = m
+      end
+      SILE.settings.temporarily(function ()
+        SILE.call("font", n.options, {})
+        m.lineheight = SILE.settings.get("linespacing.css.line-height"):absolute().length
+      end)
+      if m.ascender > linemetrics.ascender then linemetrics.ascender = m.ascender end
+      if m.descender > linemetrics.descender then linemetrics.descender = m.descender end
+      if m.lineheight > linemetrics.lineheight then linemetrics.lineheight = m.lineheight end
     end
-    SILE.settings.temporarily(function()
-      SILE.call("font", n.options, {})
-      m.lineheight = SILE.settings.get("linespacing.css.line-height"):absolute().length
-    end)
-    if m.ascender > linemetrics.ascender then linemetrics.ascender = m.ascender end
-    if m.descender > linemetrics.descender then linemetrics.descender = m.descender end
-    if m.lineheight > linemetrics.lineheight then linemetrics.lineheight = m.lineheight end
-  end end
+  end
   return linemetrics
 end
 
@@ -77,7 +80,7 @@ local linespacingLeading = function (self, v, previous)
   end
 
   if method == "tex" then
-    return SILE.defaultTypesetter:leadingFor(v,previous)
+    return SILE.defaultTypesetter:leadingFor(v, previous)
   end
 
   if method == "fit-glyph" then
@@ -123,13 +126,14 @@ local linespacingLeading = function (self, v, previous)
 end
 
 SILE.typesetter.leadingFor = linespacingLeading
+
 SILE.registerCommand("linespacing-on", function ()
   SILE.typesetter.leadingFor = linespacingLeading
 end)
+
 SILE.registerCommand("linespacing-off", function ()
   SILE.typesetter.leadingFor = SILE.defaultTypesetter.leadingFor
 end)
-
 
 return { documentation = [[\begin{document}
 \linespacing-on

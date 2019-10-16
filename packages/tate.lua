@@ -21,13 +21,13 @@ SILE.tateFramePrototype = SILE.framePrototype {
   }
 }
 
-SILE.newTateFrame = function ( spec )
+SILE.newTateFrame = function (spec)
   return SILE.newFrame(spec, SILE.tateFramePrototype)
 end
 
 SILE.registerCommand("tate-frame", function (options, content)
-      SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newTateFrame(options)
-    end, "Declares (or re-declares) a frame on this page.")
+  SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newTateFrame(options)
+end, "Declares (or re-declares) a frame on this page.")
 
 local swap = function (x)
   local w = x.width
