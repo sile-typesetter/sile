@@ -63,7 +63,7 @@ SILE.shapers.harfbuzzWithColor = SILE.shapers.harfbuzz {
     end
     local nodes = {}
     for i=1, #run do
-      options = std.tree.clone(options)
+      options = pl.tablex.deepcopy(options)
       if run[i].color then
         nodes[#nodes+1] = SILE.nodefactory.newHbox({
           outputYourself = function () SILE.outputter:pushColor(run[i].color) end

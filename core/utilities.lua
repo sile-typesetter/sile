@@ -88,7 +88,7 @@ utilities.concat = function (array, separator)
 end
 
 utilities.inherit = function (orig, spec)
-  local new = std.tree.clone(orig)
+  local new = pl.tablex.deepcopy(orig)
   if spec then
     for k,v in pairs(spec) do new[k] = v end
   end

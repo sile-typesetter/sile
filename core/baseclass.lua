@@ -46,7 +46,7 @@ SILE.registerCommand("define", function (options, content)
   SU.required(options, "command", "defining command")
   SILE.registerCommand(options["command"], function (_, _content)
     --local prevState = SILE.documentState
-    --SILE.documentState = std.tree.clone( prevState )
+    --SILE.documentState = pl.tablex.deepcopy( prevState )
     local depth = #macroStack
     table.insert(macroStack, _content)
     SU.debug("macros", "Processing a "..options["command"].." Stack depth is "..depth)
@@ -194,7 +194,7 @@ SILE.baseClass = std.object {
   end,
 
   initialFrame = function (self)
-    SILE.documentState.thisPageTemplate = std.tree.clone(self.pageTemplate)
+    SILE.documentState.thisPageTemplate = pl.tablex.deepcopy(self.pageTemplate)
     SILE.frames = { page = SILE.frames.page }
     for k, v in pairs(SILE.documentState.thisPageTemplate.frames) do
       SILE.frames[k] = v
@@ -260,7 +260,7 @@ SILE.baseClass = std.object {
 
   endPar = function (typesetter)
     local g = SILE.settings.get("document.parskip")
-    typesetter:pushVglue(std.tree.clone(g))
+    typesetter:pushVglue(pl.tablex.deepcopy(g))
   end,
 
   options = {

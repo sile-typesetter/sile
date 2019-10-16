@@ -48,7 +48,7 @@ SILE.shapers.harfbuzzWithFallback = SILE.shapers.harfbuzz {
     local items = {}
     local optionSet = { options }
     for i = 1, #fontlist do
-      local moreOptions = std.tree.clone(options)
+      local moreOptions = pl.tablex.deepcopy(options)
       for k, v in pairs(fontlist[i]) do moreOptions[k] = v end
       optionSet[#optionSet+1] = moreOptions
     end

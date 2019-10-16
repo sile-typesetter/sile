@@ -1,5 +1,5 @@
 local plain = SILE.require("plain", "classes")
-local diglot = std.tree.clone(plain)
+local diglot = pl.tablex.deepcopy(plain)
 SILE.require("packages/counters")
 SILE.scratch.counters.folio = { value = 1, display = "arabic" }
 diglot:declareFrame("a",    { left = "8.3%pw",  right = "48%pw",          top = "11.6%ph",        bottom = "80%ph"          })

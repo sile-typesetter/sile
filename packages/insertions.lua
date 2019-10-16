@@ -96,7 +96,7 @@ local _pageInsertionVbox = SILE.nodefactory.newVbox({
 
 local thisPageInsertionBoxForClass = function (class)
   if not insertionsThisPage[class] then
-    local this = std.tree.clone(_pageInsertionVbox)
+    local this = pl.tablex.deepcopy(_pageInsertionVbox)
     this.frame  = SILE.scratch.insertions.classes[class].insertInto.frame
     insertionsThisPage[class] = this
   end

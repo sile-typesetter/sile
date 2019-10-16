@@ -102,7 +102,7 @@ SILE.registerCommand("grid", function (options, _)
   gridSpacing = SILE.parseComplexFrameDimension(options.spacing)
   -- SILE.typesetter:leaveHmode()
 
-  SILE.pagebuilder = std.tree.clone(SILE.pagebuilder)
+  SILE.pagebuilder = pl.tablex.deepcopy(SILE.pagebuilder)
   SILE.pagebuilder.findBestBreak = gridFindBestBreak
 
   SILE.typesetter.leadingFor = leadingFor

@@ -382,26 +382,26 @@ function SILE.nodefactory.newDisc(spec) return _disc(spec) end
 function SILE.nodefactory.newAlternative(spec) return _alt(spec) end
 
 function SILE.nodefactory.newGlue(spec)
-  if type(spec) == "table" then return std.tree.clone(_glue(spec)) end
+  if type(spec) == "table" then return pl.tablex.deepcopy(_glue(spec)) end
   if type(spec) == "string" then return _glue({width = SILE.length.parse(spec)}) end
   SU.error("Unparsable glue spec "..spec)
 end
 function SILE.nodefactory.newKern(spec)
-  if type(spec) == "table" then return std.tree.clone(_kern(spec)) end
+  if type(spec) == "table" then return pl.tablex.deepcopy(_kern(spec)) end
   if type(spec) == "string" then return _kern({width = SILE.length.parse(spec)}) end
   SU.error("Unparsable kern spec "..spec)
 end
 function SILE.nodefactory.newVglue(spec)
-  if type(spec) == "table" then return std.tree.clone(_vglue(spec)) end
+  if type(spec) == "table" then return pl.tablex.deepcopy(_vglue(spec)) end
   if type(spec) == "string" then return _vglue({height = SILE.length.parse(spec)}) end
   SU.error("Unparsable glue spec "..spec)
 end
 function SILE.nodefactory.newVKern(spec)
-  if type(spec) == "table" then return std.tree.clone(_vkern(spec)) end
+  if type(spec) == "table" then return pl.tablex.deepcopy(_vkern(spec)) end
   if type(spec) == "string" then return _vkern({height = SILE.length.parse(spec)}) end
   SU.error("Unparsable kern spec "..spec)
 end
-function SILE.nodefactory.newPenalty(spec)  return std.tree.clone(_penalty(spec)) end
+function SILE.nodefactory.newPenalty(spec)  return pl.tablex.deepcopy(_penalty(spec)) end
 function SILE.nodefactory.newDiscretionary(spec)  return _disc(spec) end
 function SILE.nodefactory.newVbox(spec)  return _vbox(spec):init() end
 function SILE.nodefactory.newMigrating(spec)  return _migrating(spec) end

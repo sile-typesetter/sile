@@ -123,7 +123,7 @@ SILE.hyphenator.languages.ug = function(n)
   if SU.debugging("uyghur") then io.write("Original: ", n.text.." -> "..latin.." -> ") end
   local state = n.options
   -- Make "Turkish" nodes
-  local newoptions = std.tree.clone(n.options)
+  local newoptions = pl.tablex.deepcopy(n.options)
   newoptions.language = "lt"
   if not SILE.hyphenators.lt then
     SILE.hyphenate(SILE.shaper:createNnodes(latin, newoptions))

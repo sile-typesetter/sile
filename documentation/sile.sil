@@ -2625,7 +2625,7 @@ frames:
 \begin{verbatim}
 \line
 local plain = SILE.require("plain", "classes");
-local diglot = std.tree.clone(plain);
+local diglot = pl.tablex.deepcopy(plain);
 SILE.require("packages/counters");
 SILE.scratch.counters.folio = \{ value = 1, display = "arabic" \};
 SILE.scratch.diglot = \{\}
@@ -2936,7 +2936,7 @@ we need to add to \code{mainVbox} to get the vertical position of the cross-refe
 mark.
 
 \begin{verbatim}
-  local unprocessedNodes = std.tree.clone(SILE.typesetter.state.nodes)
+  local unprocessedNodes = pl.tablex.deepcopy(SILE.typesetter.state.nodes)
   SILE.typesetter:pushState()
   SILE.typesetter.state.nodes = unprocessedNodes
   SILE.typesetter:leaveHmode(1)
