@@ -56,9 +56,9 @@ local breakFrameHorizontalAt = function (offset)
     previous = cFrame,
     id = cFrame.id .. "_"
   })
-  if SILE.scratch.insertions and SILE.scratch.insertions.classes['footnote'] and SILE.scratch.insertions.classes['footnote'].stealFrom then
+  -- if SILE.scratch.insertions and SILE.scratch.insertions.classes['footnote'] and SILE.scratch.insertions.classes['footnote'].stealFrom then
     -- SILE.scratch.insertions.classes['footnote'].stealFrom[newFrame.id] = 1
-  end
+  -- end
   local oldLeft = cFrame:left()
   cFrame.next = newFrame.id
   cFrame:constrain("left", oldLeft)
@@ -119,12 +119,12 @@ local mergeColumns = function ()
 
   -- 1.2) Find out the shape of the columnset. (It will change after we balance it)
   local frame = SILE.typesetter.frame
-  local left = frame:left()
-  local bottom = frame:bottom()
+  -- local left = frame:left()
+  -- local bottom = frame:bottom()
   while frame.next and SILE.getFrame(frame.next).balanced do
     frame = SILE.getFrame(frame.next)
   end
-  local right = frame:right()
+  -- local right = frame:right()
 
   -- 1.3) Now force a balance, which will resize the frames
   SILE.call("balancecolumns")
@@ -133,13 +133,6 @@ local mergeColumns = function ()
   -- 2) Add a new frame, the width of the old frameset and the height of
   -- old frameset - new height, at the end of the current frame
   local newId = SILE.typesetter.frame.id .. "_"
-  local newFrame = SILE.newFrame({
-    left = left,
-    right = right,
-    top = SILE.typesetter.frame:bottom(),
-    bottom = bottom,
-    id = newId
-  })
   SILE.typesetter.frame.next = newId
   SILE.typesetter:initNextFrame()
 end

@@ -88,7 +88,6 @@ local gridFindBestBreak = function (options)
     end
     bestBreak = i
   end
-  local left = target - totalHeight.length
   return false, false
 end
 

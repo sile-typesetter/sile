@@ -1,8 +1,3 @@
-local sep = lpeg.S(",;")
-local quotedString = (lpeg.P("\"") * lpeg.C((1-lpeg.S("\""))^1) * lpeg.P("\"")) / function(t) return t end
-local value = (quotedString + lpeg.C((1-lpeg.S(",;]"))^1))
-local list = (value * sep^-1)^0
-
 local fallbackQueue = std.object {
   init = function(self, text, fallbacks)
     self.q = {}

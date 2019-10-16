@@ -118,7 +118,6 @@ SILE.registerCommand("sync", function (_, _)
 
   allTypesetters(function (frame, typesetter)
     calculations[frame].heightOfNewMaterial = SILE.length.new()
-    local lastdepth = 0
     for i = calculations[frame].mark + 1, #typesetter.state.outputQueue do
       local thisHeight = typesetter.state.outputQueue[i].height + typesetter.state.outputQueue[i].depth
       calculations[frame].heightOfNewMaterial = calculations[frame].heightOfNewMaterial + thisHeight

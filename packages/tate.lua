@@ -1,5 +1,3 @@
-local pdf = require("justenoughlibtexpdf")
-
 SILE.tateFramePrototype = SILE.framePrototype {
   direction = "TTB-RTL",
   enterHooks = { function (self)
@@ -28,18 +26,11 @@ SILE.registerCommand("tate-frame", function (options, _)
   SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newTateFrame(options)
 end, "Declares (or re-declares) a frame on this page.")
 
-local swap = function (x)
-  local w = x.width
-  x.width = SILE.length.new({}) + x.height
-  x.height = type(w) == "table" and w.length or w
-end
-
 local outputLatinInTate = function (self, typesetter, line)
   -- My baseline moved
   typesetter.frame:advanceWritingDirection(SILE.toPoints("-0.5zw"))
   typesetter.frame:advancePageDirection(SILE.toPoints("0.25zw"))
 
-  local horigin = typesetter.frame.state.cursorX
   local vorigin = -typesetter.frame.state.cursorY
   self:oldOutputYourself(typesetter,line)
   typesetter.frame.state.cursorY = -vorigin

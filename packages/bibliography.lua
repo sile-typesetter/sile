@@ -4,7 +4,7 @@ local std = require("std")
 -- with permission.
 
 local function find_outside_braces(s, pat, i)
-  local len = string.len(s)
+  -- local len = string.len(s)
   local j, k = string.find(s, pat, i)
   if not j then return j, k end
   local jb, kb = string.find(s, '%b{}', i)
@@ -84,16 +84,16 @@ do
     elseif letter and letter <= (bs or letter) then
       return false
     elseif bs then
-      if upper_specials[command] then
-        return false
-      elseif lower_specials[command] then
-        return true
-      else
-        local close_brace = find_outside_braces(s, '%}', ebs+1)
+      -- if upper_specials[command] then
+      --   return false
+      -- elseif lower_specials[command] then
+      --   return true
+      -- else
+        -- local close_brace = find_outside_braces(s, '%}', ebs+1)
         lower  = find(s, '%l') -- first nonbrace lowercase
         letter = find(s, '%a') -- first nonbrace letter
         return lower and lower <= letter
-      end
+      -- end
     else
       return false
     end

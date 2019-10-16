@@ -1,3 +1,5 @@
+local icu = require("justenoughicu")
+
 SILE.registerCommand("thisframeLTR", function(options, content)
   SILE.typesetter.frame.direction = "LTR"
   SILE.typesetter:leaveHmode()
@@ -72,8 +74,8 @@ end
 
 local reorder = function(n, self)
   local nl = n.nodes
-  local newNl = {}
-  local matrix = {}
+  -- local newNl = {}
+  -- local matrix = {}
   local levels = {}
   local base_level = self.frame:writingDirection() == "RTL" and 1 or 0
   for i=1,#nl do
@@ -172,7 +174,7 @@ local splitNodelistIntoBidiRuns = function (self)
   local base_level = self.frame:writingDirection() == "RTL" and 1 or 0
   local runs = { icu.bidi_runs(table.concat(text), self.frame:writingDirection()) }
   table.sort(runs, function (a,b) return a.start < b.start end)
-  local newNl = {}
+  -- local newNl = {}
   -- Split nodes on run boundaries
   for i = 1,#runs do
     local run = runs[i]
