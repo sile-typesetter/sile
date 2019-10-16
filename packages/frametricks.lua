@@ -1,13 +1,14 @@
 local breakFrameVertical = function (after)
   local cFrame = SILE.typesetter.frame
+  local totalHeight
   if after then
     totalHeight = after
   else
     totalHeight = 0
     SILE.typesetter:leaveHmode(1)
-    local q = SILE.typesetter.state.outputQueue
-    for i = 1, #q do
-      totalHeight = totalHeight + q[i].height + q[i].depth
+    local queue = SILE.typesetter.state.outputQueue
+    for i = 1, #queue do
+      totalHeight = totalHeight + queue[i].height + queue[i].depth
     end
     SILE.typesetter:chuck()
   end
@@ -117,13 +118,13 @@ local mergeColumns = function (options)
   SILE.typesetter:pageBuilder()
 
   -- 1.2) Find out the shape of the columnset. (It will change after we balance it)
-  t = SILE.typesetter.frame
-  local left = t:left()
-  local bottom = t:bottom()
-  while t.next and SILE.getFrame(t.next).balanced do
-    t = SILE.getFrame(t.next)
+  frame = SILE.typesetter.frame
+  local left = frame:left()
+  local bottom = frame:bottom()
+  while frame.next and SILE.getFrame(frame.next).balanced do
+    frame = SILE.getFrame(frame.next)
   end
-  local right = t:right()
+  local right = frame:right()
 
   -- 1.3) Now force a balance, which will resize the frames
   SILE.call("balancecolumns")

@@ -1,7 +1,7 @@
 local metrics = require("fontmetrics")
 
-SILE.registerCommand("repertoire", function(o, c)
-  local columns = o.columns or 5
+SILE.registerCommand("repertoire", function(options, content)
+  local columns = options.columns or 5
   local ot = SILE.require("core/opentype-parser")
   local options = SILE.font.loadDefaults({})
   local face = SILE.font.cache(options, SILE.shaper.getFace)
@@ -20,7 +20,7 @@ SILE.registerCommand("repertoire", function(o, c)
   end
 end)
 
-SILE.registerCommand("pangrams", function (o, c)
+SILE.registerCommand("pangrams", function (options, content)
   pg = {
     "Sphinx of black quartz, judge my vow!",
     "The five boxing wizards jump quickly.",

@@ -16,9 +16,9 @@ SILE.settings.declare({
   help = "Glue added between consecutive Latin ruby"
 })
 
-local isLatin = function (c)
-  return (c > 0x20 and c <= 0x24F) or (c >= 0x300 and c <= 0x36F)
-    or (c >= 0x1DC0 and c <= 0x1EFF) or (c >= 0x2C60 and c <= 0x2c7F)
+local isLatin = function (char)
+  return (char > 0x20 and char <= 0x24F) or (char >= 0x300 and char <= 0x36F)
+    or (char >= 0x1DC0 and char <= 0x1EFF) or (char >= 0x2C60 and char <= 0x2c7F)
 end
 
 local checkIfSpacerNeeded = function (reading)

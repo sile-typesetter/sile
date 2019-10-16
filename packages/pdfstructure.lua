@@ -1,6 +1,7 @@
 local stPointer
-local stNode = function (t) return {
-    t = t,
+
+local stNode = function (notetype) return {
+    notetype = notetype,
     lang = SILE.settings.get("document.language"),
     kids = {},
     parent = stPointer
@@ -21,9 +22,9 @@ end
 
 local actualtext = {}
 
-SILE.registerCommand("pdf:structure", function (o, c)
-  local t = SU.required(o, "type", "pdf structure")
-  local node = stNode(t)
+SILE.registerCommand("pdf:structure", function (options, content)
+  local notetype = SU.required(options, "type", "pdf structure")
+  local node = stNode(notetype)
   addChild(node)
   node.lang = SILE.settings.get("document.language")
   SILE.outputter._init()
@@ -32,13 +33,13 @@ SILE.registerCommand("pdf:structure", function (o, c)
   local oldstPointer = stPointer
   stPointer = node
   actualtext[#actualtext+1] = ""
-  if not o.block then
-    SILE.call("pdf:literal", {}, {"/"..t.." <</MCID "..mcid.." >>BDC"})
+  if not options.block then
+    SILE.call("pdf:literal", {}, {"/"..notetype.." <</MCID "..mcid.." >>BDC"})
     mcid = mcid + 1
-    SILE.process(c)
+    SILE.process(content)
     SILE.call("pdf:literal", {}, {"EMC"})
   else
-    SILE.process(c)
+    SILE.process(content)
   end
   stPointer.actualtext = actualtext[#actualtext]
   actualtext[#actualtext] = nil
@@ -71,7 +72,7 @@ local dumpTree
 
 dumpTree = function (node)
   local k = {}
-  local pdfNode = pdf.parse("<< /Type /StructElem /S /"..(node.t)..">>")
+  local pdfNode = pdf.parse("<< /Type /StructElem /S /"..(node.notetype)..">>")
   if #(node.kids) > 0 then
     for i = 1, #(node.kids) do
       k[#k+1] = dumpTree(node.kids[i])
@@ -101,9 +102,9 @@ end
 
 SILE.outputters.libtexpdf.finish = function ()
   pdf.endpage()
-  local c = pdf.get_dictionary("Catalog")
+  local catalog = pdf.get_dictionary("Catalog")
   structureTree = pdf.parse("<< /Type /StructTreeRoot >>")
-  pdf.add_dict(c, pdf.parse("/StructTreeRoot"), pdf.reference(structureTree))
+  pdf.add_dict(catalog, pdf.parse("/StructTreeRoot"), pdf.reference(structureTree))
   structureNumberTree = pdf.parse("<< /Nums [] >>")
   pdf.add_dict(structureTree, pdf.parse("/ParentTree"), pdf.reference(structureNumberTree))
 

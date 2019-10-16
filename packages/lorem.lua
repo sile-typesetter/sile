@@ -72,21 +72,21 @@ SILE.registerCommand("lorem", function (options, content)
   local counter = options.counter or false
   local times = floor(words/nwords)
   words = words - times*nwords
-  local i, j = 0, 0
+  local i, pos = 0, 0
   for n = 1, words do
-    i, j = lorem:find("%S+", j + 1)
+    i, pos = lorem:find("%S+", pos + 1)
   end
-  local s = string.rep(lorem, times) .. lorem:sub(1, j)
+  local text = string.rep(lorem, times) .. lorem:sub(1, pos)
   if counter then
     local c = 0
-    s = string.gsub(s, "(%s+)", function (x)
+    text = string.gsub(text, "(%s+)", function (x)
       c = c + 1
       return " " .. c .. " "
     end)
   end
   SILE.settings.temporarily(function ()
     SILE.settings.set("document.language", "la")
-    SILE.typesetter:typeset(s)
+    SILE.typesetter:typeset(text)
     SILE.typesetter:leaveHmode()
   end)
 end)

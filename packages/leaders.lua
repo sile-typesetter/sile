@@ -30,10 +30,10 @@ leader.outputYourself = function (self, typesetter, line)
   end
 end
 
-SILE.registerCommand("leaders", function(o, c)
-  local gluespec = SU.required(o, "width", "creating leaders")
+SILE.registerCommand("leaders", function(options, content)
+  local gluespec = SU.required(options, "width", "creating leaders")
   local width = SILE.length.parse(gluespec)
-  SILE.call("hbox", {}, c)
+  SILE.call("hbox", {}, content)
   local hbox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
   SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
   local l = leader({ width = width, value = hbox })

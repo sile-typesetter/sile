@@ -17,9 +17,9 @@ SILE.registerCommand("img", function (options, content)
     height= box_height / (sy),
     depth= 0,
     value= src,
-    outputYourself= function (this, typesetter, line)
-      SILE.outputter.drawImage(this.value, typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-this.height, this.width, this.height)
-      typesetter.frame:advanceWritingDirection(this.width)
+    outputYourself= function (self, typesetter, line)
+      SILE.outputter.drawImage(self.value, typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-self.height, self.width, self.height)
+      typesetter.frame:advanceWritingDirection(self.width)
   end})
 
 end, "Inserts the image specified with the <src> option in a box of size <width> by <height>")

@@ -44,18 +44,18 @@ local getLineMetrics = function (l)
   local linemetrics = {ascender = 0, descender = 0, lineheight = 0}
   if not l or not l.nodes then return linemetrics end
   for i = 1, #(l.nodes) do
-    n = l.nodes[i]
-    if n:isNnode() then
-      local m = metricscache[SILE.font._key(n.options)]
+    node = l.nodes[i]
+    if node:isNnode() then
+      local m = metricscache[SILE.font._key(node.options)]
       if not m then
-        local face = SILE.font.cache(n.options, SILE.shaper.getFace)
+        local face = SILE.font.cache(node.options, SILE.shaper.getFace)
         m = metrics.get_typographic_extents(face.data, face.index)
-        m.ascender = m.ascender * n.options.size
-        m.descender = m.descender * n.options.size
-        metricscache[SILE.font._key(n.options)] = m
+        m.ascender = m.ascender * node.options.size
+        m.descender = m.descender * node.options.size
+        metricscache[SILE.font._key(node.options)] = m
       end
       SILE.settings.temporarily(function ()
-        SILE.call("font", n.options, {})
+        SILE.call("font", node.options, {})
         m.lineheight = SILE.settings.get("linespacing.css.line-height"):absolute().length
       end)
       if m.ascender > linemetrics.ascender then linemetrics.ascender = m.ascender end
@@ -66,13 +66,13 @@ local getLineMetrics = function (l)
   return linemetrics
 end
 
-local linespacingLeading = function (self, v, previous)
+local linespacingLeading = function (_, vbox, previous)
   local method = SILE.settings.get("linespacing.method")
 
   local firstline = SILE.settings.get("linespacing.minimumfirstlineposition"):absolute()
   if not previous then
     if firstline.length > 0 then
-      toAdd = SILE.length.new({ length = firstline.length -v.height })
+      toAdd = SILE.length.new({ length = firstline.length -vbox.height })
       return SILE.nodefactory.newVKern({ height = toAdd })
     else
       return nil
@@ -80,7 +80,7 @@ local linespacingLeading = function (self, v, previous)
   end
 
   if method == "tex" then
-    return SILE.defaultTypesetter:leadingFor(v, previous)
+    return SILE.defaultTypesetter:leadingFor(vbox, previous)
   end
 
   if method == "fit-glyph" then
@@ -91,7 +91,7 @@ local linespacingLeading = function (self, v, previous)
 
   if method == "fixed" then
     local btob = SILE.settings.get("linespacing.fixed.baselinedistance"):absolute()
-    local toAdd = SILE.length.new({ length = btob.length - (v.height + previous.depth), stretch = btob.stretch, shrink = btob.shrink })
+    local toAdd = SILE.length.new({ length = btob.length - (vbox.height + previous.depth), stretch = btob.stretch, shrink = btob.shrink })
     return SILE.nodefactory.newVglue({ height = toAdd })
   end
 
@@ -100,14 +100,14 @@ local linespacingLeading = function (self, v, previous)
     SU.error("'"..method.."' line spacing method requires freetype, which is not available.")
   end
 
-  local thismetrics = getLineMetrics(v)
+  local thismetrics = getLineMetrics(vbox)
   local prevmetrics = getLineMetrics(previous)
   if method == "fit-font" then
     -- Distance to next baseline is max(descender) of fonts on previous +
     -- max(ascender) of fonts on next
     local extra = SILE.settings.get("linespacing.fit-font.extra-space"):absolute()
     local btob = prevmetrics.descender + thismetrics.ascender + extra
-    local toAdd = btob - (v.height + (previous and previous.depth or 0))
+    local toAdd = btob - (vbox.height + (previous and previous.depth or 0))
     return SILE.nodefactory.newVglue({ height = SILE.length.make(toAdd)})
   end
 

@@ -2,13 +2,13 @@ local typesetterPool = {}
 local calculations = {}
 local folioOrder = {}
 
-local allTypesetters = function (f)
-  local o = SILE.typesetter
-  for k, v in pairs(typesetterPool) do
-    SILE.typesetter = v
-    f(k, v)
+local allTypesetters = function (callback)
+  local oldtypesetter = SILE.typesetter
+  for frame, typesetter in pairs(typesetterPool) do
+    SILE.typesetter = typesetter
+    callback(frame, typesetter)
   end
-  SILE.typesetter = o
+  SILE.typesetter = oldtypesetter
 end
 
 local nulTypesetter = SILE.typesetter {} -- we ignore this
@@ -18,27 +18,27 @@ local parallelPagebreak = function ()
   for i = 1, #folioOrder do
     local thisPageFrames = folioOrder[i]
     for j = 1, #thisPageFrames do
-      local n = thisPageFrames[j]
-      local t = typesetterPool[n]
+      local frame = thisPageFrames[j]
+      local typesetter = typesetterPool[frame]
       local thispage = {}
-      SU.debug("parallel", "Dumping lines for page on typesetter "..t.id)
-      if #t.state.outputQueue > 0 and calculations[n].mark == 0 then
+      SU.debug("parallel", "Dumping lines for page on typesetter "..typesetter.id)
+      if #typesetter.state.outputQueue > 0 and calculations[frame].mark == 0 then
         -- More than one page worth of stuff here.
         -- Just ship out one page and hope for the best.
-        SILE.defaultTypesetter.pageBuilder(t)
+        SILE.defaultTypesetter.pageBuilder(typesetter)
       else
-        for i = 1, calculations[n].mark do
-          thispage[i] = table.remove(t.state.outputQueue, 1)
+        for i = 1, calculations[frame].mark do
+          thispage[i] = table.remove(typesetter.state.outputQueue, 1)
           SU.debug("parallel", thispage[i])
         end
-        t:outputLinesToPage(thispage)
+        typesetter:outputLinesToPage(thispage)
       end
     end
     SILE.documentState.documentClass:endPage()
     for j = 1, #thisPageFrames do
-      local n = thisPageFrames[j]
-      local t = typesetterPool[n]
-      t:initFrame(t.frame)
+      local frame = thisPageFrames[j]
+      local typesetter = typesetterPool[frame]
+      typesetter:initFrame(typesetter.frame)
     end
     SILE.documentState.documentClass:newPage()
   end
@@ -46,52 +46,52 @@ end
 
 local setupParallel = function (klass, options)
   nulTypesetter:init(SILE.getFrame("page"))
-  for k, v in pairs(options.frames) do
-    typesetterPool[k] = SILE.typesetter {}
-    typesetterPool[k].id = v
-    typesetterPool[k]:init(SILE.getFrame(v))
-    typesetterPool[k].pageBuilder = function ()
+  for frame, typesetter in pairs(options.frames) do
+    typesetterPool[frame] = SILE.typesetter {}
+    typesetterPool[frame].id = typesetter
+    typesetterPool[frame]:init(SILE.getFrame(typesetter))
+    typesetterPool[frame].pageBuilder = function ()
       -- No thank you, I will do that.
     end
     -- Fixed leading here is obviously a bug, but n-way leading calculations
     -- get very complicated...
-    -- typesetterPool[k].leadingFor = function() return SILE.nodefactory.newVglue(SILE.settings.get("document.lineskip")) end
-    SILE.registerCommand(k, function (o, c) -- \left ...
-      SILE.typesetter = typesetterPool[k]
-      SILE.call(k .. ":font")
+    -- typesetterPool[frame].leadingFor = function() return SILE.nodefactory.newVglue(SILE.settings.get("document.lineskip")) end
+    SILE.registerCommand(frame, function (_, _) -- \left ...
+      SILE.typesetter = typesetterPool[frame]
+      SILE.call(frame..":font")
     end)
-    SILE.registerCommand(k..":font", function (o,c) end) -- to be overridden
+    SILE.registerCommand(frame..":font", function (_, _) end) -- to be overridden
   end
   if not options.folios then
     folioOrder = { {} }
-    for k, v in pairs(options.frames) do table.insert(folioOrder[1], k) end
+    for frame, _ in pairs(options.frames) do table.insert(folioOrder[1], frame) end
   else
     folioOrder = options.folios -- As usual we trust the user knows what they're doing
   end
-  local o = klass.newPage
-  klass.newPage = function (self)
-    allTypesetters(function (n, t)
-      calculations[n] = { mark = 0 }
+  local oldnewpage = klass.newPage
+  klass.newPage = function (_)
+    allTypesetters(function (frame, _)
+      calculations[frame] = { mark = oldnewpage }
     end)
     SILE.baseClass:newPage()
     SILE.call("sync")
   end
-  allTypesetters(function (n, t) calculations[n] = { mark = 0 } end)
-  o = klass.finish
+  allTypesetters(function (frame, _) calculations[frame] = { mark = oldnewpage } end)
+  local oldfinish = klass.finish
   klass.finish = function (self)
     parallelPagebreak()
-    o(self)
+    oldfinish(self)
   end
 end
 
-local addBalancingGlue = function (h)
-  allTypesetters(function (n, t)
-    local g = h - calculations[n].heightOfNewMaterial
-    if g.length > 0 then
-      SU.debug("parallel", "Adding "..g.." to "..n)
-      t:pushVglue({ height = g })
+local addBalancingGlue = function (height)
+  allTypesetters(function (frame, typesetter)
+    local glue = height - calculations[frame].heightOfNewMaterial
+    if glue.length > 0 then
+      SU.debug("parallel", "Adding "..glue.." to "..frame)
+      typesetter:pushVglue({ height = glue })
     end
-    calculations[n].mark = #t.state.outputQueue
+    calculations[frame].mark = #typesetter.state.outputQueue
   end)
 end
 
@@ -99,14 +99,14 @@ SILE.registerCommand("sync", function (o, c)
   local anybreak = false
   local maxheight = SILE.length.new()
   SU.debug("parallel", "Trying a sync")
-  allTypesetters(function (n, t)
-    SU.debug("parallel", "Leaving hmode on "..t.id)
-    t:leaveHmode(true)
+  allTypesetters(function (frame, typesetter)
+    SU.debug("parallel", "Leaving hmode on "..typesetter.id)
+    typesetter:leaveHmode(true)
     -- Now we have each typesetter's content boxed up onto the output stream
     -- but page breaking has not been run. See if page breaking would cause a
     -- break
-    local lines = std.table.clone(t.state.outputQueue)
-    if SILE.pagebuilder.findBestBreak({ vboxlist = lines, target = t:pageTarget() }) then
+    local lines = std.table.clone(typesetter.state.outputQueue)
+    if SILE.pagebuilder.findBestBreak({ vboxlist = lines, target = typesetter:pageTarget() }) then
       anybreak = true
     end
   end)
@@ -116,15 +116,15 @@ SILE.registerCommand("sync", function (o, c)
     return
   end
 
-  allTypesetters(function (n, t)
-    calculations[n].heightOfNewMaterial = SILE.length.new()
+  allTypesetters(function (frame, typesetter)
+    calculations[frame].heightOfNewMaterial = SILE.length.new()
     local lastdepth = 0
-    for i = calculations[n].mark + 1, #t.state.outputQueue do
-      local thisHeight = t.state.outputQueue[i].height + t.state.outputQueue[i].depth
-      calculations[n].heightOfNewMaterial = calculations[n].heightOfNewMaterial + thisHeight
+    for i = calculations[frame].mark + 1, #typesetter.state.outputQueue do
+      local thisHeight = typesetter.state.outputQueue[i].height + typesetter.state.outputQueue[i].depth
+      calculations[frame].heightOfNewMaterial = calculations[frame].heightOfNewMaterial + thisHeight
     end
-    if maxheight < calculations[n].heightOfNewMaterial then maxheight = calculations[n].heightOfNewMaterial end
-    SU.debug("parallel", n..": pre-sync content="..calculations[n].mark..", now "..#t.state.outputQueue..", height of material: "..calculations[n].heightOfNewMaterial)
+    if maxheight < calculations[frame].heightOfNewMaterial then maxheight = calculations[frame].heightOfNewMaterial end
+    SU.debug("parallel", frame..": pre-sync content="..calculations[frame].mark..", now "..#typesetter.state.outputQueue..", height of material: "..calculations[frame].heightOfNewMaterial)
   end)
   addBalancingGlue(maxheight)
   SILE.typesetter = nulTypesetter
