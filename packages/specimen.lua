@@ -1,13 +1,12 @@
 local metrics = require("fontmetrics")
 
-SILE.registerCommand("repertoire", function(options, content)
+SILE.registerCommand("repertoire", function(options, _)
   local columns = options.columns or 5
   local ot = SILE.require("core/opentype-parser")
   local options = SILE.font.loadDefaults({})
   local face = SILE.font.cache(options, SILE.shaper.getFace)
   local font = ot.parseFont(face)
   local maxg = font.maxp.numGlyphs
-  local em = SILE.toPoints("1em")
   for i = 1 , maxg - 1 do
     wd = metrics.glyphwidth(i, face.data, face.index)
     SILE.typesetter:pushHbox({
@@ -20,7 +19,7 @@ SILE.registerCommand("repertoire", function(options, content)
   end
 end)
 
-SILE.registerCommand("pangrams", function (options, content)
+SILE.registerCommand("pangrams", function (_, _)
   pg = {
     "Sphinx of black quartz, judge my vow!",
     "The five boxing wizards jump quickly.",

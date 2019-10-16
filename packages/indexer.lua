@@ -17,7 +17,7 @@ end)
 
 SILE.scratch.index = {}
 
-local moveNodes = function (self)
+local moveNodes = function (_)
   local nodes = SILE.scratch.info.thispage.index
   local thisPage = SILE.formatCounter(SILE.scratch.counters.folio)
   if not nodes then return end
@@ -40,7 +40,7 @@ end
   -- end
 
 
-SILE.registerCommand("printindex", function (options, content)
+SILE.registerCommand("printindex", function (options, _)
   moveNodes()
   if not options.index then options.index = "main" end
   local index = SILE.scratch.index[options.index]
@@ -48,7 +48,7 @@ SILE.registerCommand("printindex", function (options, content)
   for n in pairs(index) do table.insert(sortedIndex, n) end
   table.sort(sortedIndex)
   SILE.call("bigskip")
-  for i, k in ipairs(sortedIndex) do
+  for _, k in ipairs(sortedIndex) do
     local pageno = table.concat(index[k], ", ")
     SILE.call("index:item", { pageno = pageno }, { k })
   end

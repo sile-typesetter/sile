@@ -92,12 +92,12 @@ local gridFindBestBreak = function (options)
   return false, false
 end
 
-SILE.registerCommand("grid:debug", function (o, c)
+SILE.registerCommand("grid:debug", function (_, _)
   debugGrid()
   SILE.typesetter:registerNewFrameHook(debugGrid)
 end)
 
-SILE.registerCommand("grid", function (options, content)
+SILE.registerCommand("grid", function (options, _)
   SILE.typesetter.state.grid = true
   SU.required(options, "spacing", "grid package")
   gridSpacing = SILE.parseComplexFrameDimension(options.spacing)
@@ -125,7 +125,7 @@ SILE.registerCommand("grid", function (options, content)
 
 end, "Begins typesetting on a grid spaced at <spacing> intervals.")
 
-SILE.registerCommand("no-grid", function (options, content)
+SILE.registerCommand("no-grid", function (_, _)
   SILE.typesetter.state.grid = false
   SILE.typesetter.leadingFor = SILE.defaultTypesetter.leadingFor
   SILE.typesetter.pushVglue = SILE.defaultTypesetter.pushVglue

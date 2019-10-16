@@ -1,11 +1,11 @@
-SILE.registerCommand("ifattop", function (options, content)
+SILE.registerCommand("ifattop", function (_, content)
   SILE.typesetter:leaveHmode()
   if #(SILE.typesetter.state.outputQueue) == 0 then
     SILE.process(content)
   end
 end)
 
-SILE.registerCommand("ifnotattop", function (options, content)
+SILE.registerCommand("ifnotattop", function (_, content)
   SILE.typesetter:leaveHmode()
   if #(SILE.typesetter.state.outputQueue) ~= 0 then
     SILE.process(content)

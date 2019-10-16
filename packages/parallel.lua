@@ -95,11 +95,11 @@ local addBalancingGlue = function (height)
   end)
 end
 
-SILE.registerCommand("sync", function (o, c)
+SILE.registerCommand("sync", function (_, _)
   local anybreak = false
   local maxheight = SILE.length.new()
   SU.debug("parallel", "Trying a sync")
-  allTypesetters(function (frame, typesetter)
+  allTypesetters(function (_, typesetter)
     SU.debug("parallel", "Leaving hmode on "..typesetter.id)
     typesetter:leaveHmode(true)
     -- Now we have each typesetter's content boxed up onto the output stream

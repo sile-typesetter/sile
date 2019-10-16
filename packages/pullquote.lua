@@ -2,14 +2,14 @@ SILE.require("packages/color")
 SILE.require("packages/raiselower")
 SILE.require("packages/rebox")
 
-SILE.registerCommand("pullquote:font", function (options, content)
+SILE.registerCommand("pullquote:font", function (_, _)
 end, "The font chosen for the pullquote environment")
 
-SILE.registerCommand("pullquote:author-font", function (options, content)
+SILE.registerCommand("pullquote:author-font", function (_, _)
   SILE.settings.set("font.style", "italic")
 end, "The font style with which to typeset the author attribution.")
 
-SILE.registerCommand("pullquote:mark-font", function (options, content)
+SILE.registerCommand("pullquote:mark-font", function (_, _)
   SILE.settings.set("font.family", "Libertinus Serif")
 end, "The font from which to pull the quotation marks.")
 

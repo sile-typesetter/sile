@@ -31,7 +31,7 @@ local showHanmenTate = function (frame)
 end
 
 
-SILE.registerCommand("show-hanmen", function (options, content)
+SILE.registerCommand("show-hanmen", function (_, _)
   local frame = SILE.typesetter.frame
   if not frame.hanmen then SU.error("show-hanmen called on a frame with no hanmen") end
   SILE.outputter:pushColor({r = 1, g= 0.9, b = 0.9 })

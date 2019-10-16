@@ -1,4 +1,4 @@
-SILE.registerCommand("img", function (options, content)
+SILE.registerCommand("img", function (options, _)
   SU.required(options, "src", "including image file")
   local width =  SILE.parseComplexFrameDimension(options.width or 0) or 0
   local height = SILE.parseComplexFrameDimension(options.height or 0) or 0
@@ -17,7 +17,7 @@ SILE.registerCommand("img", function (options, content)
     height= box_height / (sy),
     depth= 0,
     value= src,
-    outputYourself= function (self, typesetter, line)
+    outputYourself= function (self, typesetter, _)
       SILE.outputter.drawImage(self.value, typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-self.height, self.width, self.height)
       typesetter.frame:advanceWritingDirection(self.width)
   end})

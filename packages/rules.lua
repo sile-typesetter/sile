@@ -1,7 +1,7 @@
 SILE.baseClass:loadPackage("raiselower")
 SILE.baseClass:loadPackage("rebox")
 
-SILE.registerCommand("hrule", function (options, content)
+SILE.registerCommand("hrule", function (options, _)
   local width = options.width or 0
   local height = options.height or 0
   SILE.typesetter:pushHbox({
@@ -23,7 +23,7 @@ SILE.registerCommand("hrule", function (options, content)
   })
 end, "Creates a line of width <width> and height <height>")
 
-SILE.registerCommand("fullrule", function (options, content)
+SILE.registerCommand("fullrule", function (options, _)
   SILE.call("raise", { height = options.raise or "0.5em" }, function ()
     SILE.call("hrule", {
         height = options.height or "0.2pt",
@@ -32,7 +32,7 @@ SILE.registerCommand("fullrule", function (options, content)
   end)
 end, "Draw a full width hrule centered on the current line")
 
-SILE.registerCommand("underline", function (options, content)
+SILE.registerCommand("underline", function (_, content)
   local hbox = SILE.call("hbox", {}, content)
   local gl = SILE.length.new() - hbox.width
   SILE.call("lower", {height = "0.5pt"}, function()
@@ -41,7 +41,7 @@ SILE.registerCommand("underline", function (options, content)
   SILE.typesetter:pushGlue({width = hbox.width})
 end, "Underlines some content (badly)")
 
-SILE.registerCommand("boxaround", function (options, content)
+SILE.registerCommand("boxaround", function (_, content)
   local hbox = SILE.call("hbox", {}, content)
   local gl = SILE.length.new() - hbox.width
   SILE.call("rebox", {width = 0}, function()

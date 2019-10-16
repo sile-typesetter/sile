@@ -18,18 +18,18 @@ SILE.scratch.simpletable = { tables = {} }
 
 return {
   exports = {},
-  init = function (class, args)
+  init = function (_, args)
     local tableTag = SU.required(args, "tableTag", "setting up table class")
     local trTag = SU.required(args, "trTag", "setting up table class")
     local tdTag = SU.required(args, "tdTag", "setting up table class")
 
-    SILE.registerCommand(trTag, function(options, content)
+    SILE.registerCommand(trTag, function(_, content)
       local tbl = SILE.scratch.simpletable.tables[#(SILE.scratch.simpletable.tables)]
       tbl[#tbl+1] = {}
       SILE.process(content)
     end)
 
-    SILE.registerCommand(tdTag, function(options, content)
+    SILE.registerCommand(tdTag, function(_, content)
       local tbl = SILE.scratch.simpletable.tables[#(SILE.scratch.simpletable.tables)]
       local row = tbl[#tbl]
       row[#row+1] = {
@@ -39,7 +39,7 @@ return {
       SILE.typesetter.state.nodes[#(SILE.typesetter.state.nodes)] = nil
     end)
 
-    SILE.registerCommand(tableTag, function(options, content)
+    SILE.registerCommand(tableTag, function(_, content)
       SILE.scratch.simpletable.tables[#(SILE.scratch.simpletable.tables)+1] = {}
       local tbl = SILE.scratch.simpletable.tables[#(SILE.scratch.simpletable.tables)]
       SILE.settings.temporarily(function ()

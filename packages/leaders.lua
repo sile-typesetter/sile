@@ -22,7 +22,7 @@ leader.outputYourself = function (self, typesetter, line)
 
   if repetitions > 1 then
     local glue = remainder / (repetitions-1)
-    for i = 1, (repetitions - 1) do
+    for _ = 1, (repetitions - 1) do
       self.value:outputYourself(typesetter, line)
       typesetter.frame:advanceWritingDirection(glue)
     end
@@ -40,6 +40,6 @@ SILE.registerCommand("leaders", function(options, content)
   table.insert(SILE.typesetter.state.nodes, l)
 end)
 
-SILE.registerCommand("dotfill", function(o, c)
+SILE.registerCommand("dotfill", function(_, _)
   SILE.call("leaders", { width = "0pt plus 100000pt" }, { " . " })
 end)

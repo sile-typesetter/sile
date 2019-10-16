@@ -1,6 +1,6 @@
 local tp = "odd"
 
-local mirrorMaster = function(class, existing, new)
+local mirrorMaster = function(_, existing, new)
   -- Frames in one master can't "see" frames in another, so we have to get creative
   -- XXX This knows altogether too much about the implementation of masters
   if not SILE.scratch.masters[new] then SILE.scratch.masters[new] = {frames={}} end
@@ -39,7 +39,7 @@ return {
     class.evenPageMaster = args.evenPageMaster
   end,
   exports = {
-    oddPage = function (self) return tp == "odd" end,
+    oddPage = function () return tp == "odd" end,
     mirrorMaster = mirrorMaster,
     switchPage = function (self)
       if self:oddPage() then

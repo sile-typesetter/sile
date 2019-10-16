@@ -49,7 +49,7 @@ between insertions.
 
 --]]
 
-local initInsertionClass = function (self, classname, options)
+local initInsertionClass = function (_, classname, options)
   SU.required(options, "insertInto", "initializing insertions")
   SU.required(options, "stealFrom", "initializing insertions")
   SU.required(options, "maxHeight", "initializing insertions")
@@ -114,7 +114,7 @@ sees this, magic will happen.
 --]]
 local _insertionVbox = SILE.nodefactory.newVbox({
   __tostring = function (self) return "I<"..self.nodes[1].."...>" end,
-  outputYourself = function (self) end,
+  outputYourself = function (_, _, _) end,
   discardable = true,
   type = "insertionVbox",
   -- And some utility methods to make the insertion processing code
@@ -180,7 +180,7 @@ SILE.insertions.commitShrinkage = function (classname)
   local opts = SILE.scratch.insertions.classes[classname]
   local reduceList = opts["stealFrom"]
   local stealPosition = opts["steal-position"] or "bottom"
-  for fName, ratio in pairs(reduceList) do
+  for fName, _ in pairs(reduceList) do
     local f = SILE.getFrame(fName)
     if f then
       initShrinkage(f)
@@ -383,14 +383,14 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   return target
 end
 
-SILE.typesetter:registerFrameBreakHook(function (self, nl)
-  for class, list in pairs(insertionsThisPage) do
+SILE.typesetter:registerFrameBreakHook(function (_, nl)
+  for class, _ in pairs(insertionsThisPage) do
     SILE.insertions.commitShrinkage(class)
   end
   return nl
 end)
 
-SILE.typesetter:registerPageEndHook(function (self, nl)
+SILE.typesetter:registerPageEndHook(function (_, nl)
   for class, list in pairs(insertionsThisPage) do
     SILE.insertions.increaseInsertionFrame(class, list.height + list.depth)
   end
@@ -399,13 +399,13 @@ SILE.typesetter:registerPageEndHook(function (self, nl)
     insertionsThisPage[k] = nil
   end
   if SU.debugging("insertions") then
-    for k, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
+    for _, frame in pairs(SILE.frames) do SILE.outputter:debugFrame(frame) end
   end
   return nl
 end)
 
 -- This just puts the insertion vbox into the typesetter's queues.
-local insert = function (self, classname, vbox)
+local insert = function (_, classname, vbox)
   local thisclass = SILE.scratch.insertions.classes[classname]
   if not thisclass then SU.error("Uninitialized insertion class "..classname) end
   SILE.typesetter:pushMigratingMaterial({

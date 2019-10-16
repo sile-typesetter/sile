@@ -1,4 +1,4 @@
-SILE.registerCommand("unichar", function(options, content)
+SILE.registerCommand("unichar", function(_, content)
   local cp = content[1]
   if type(cp) ~= "string" then SU.error("Bad argument to \\unicode") end
   SILE.typesetter:typeset(SU.utf8charfromcodepoint(cp))

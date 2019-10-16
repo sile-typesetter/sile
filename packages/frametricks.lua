@@ -109,7 +109,7 @@ local makecolumns = function (options)
   cFrame:constrain("right", right)
 end
 
-local mergeColumns = function (options)
+local mergeColumns = function ()
   SILE.require("packages/balanced-frames")
 
   -- 1) Balance all remaining material.
@@ -144,11 +144,11 @@ local mergeColumns = function (options)
   SILE.typesetter:initNextFrame()
 end
 
-SILE.registerCommand("mergecolumns", function (options, content)
-  mergeColumns(options)
+SILE.registerCommand("mergecolumns", function (_, _)
+  mergeColumns()
 end, "Merge multiple columns into one")
 
-SILE.registerCommand("showframe", function (options, content)
+SILE.registerCommand("showframe", function (options, _)
   local id = options.id or SILE.typesetter.frame.id
   if id == "all" then
     for _, f in pairs(SILE.frames) do
@@ -159,22 +159,22 @@ SILE.registerCommand("showframe", function (options, content)
   end
 end)
 
-SILE.registerCommand("shiftframeedge", function (options, content)
+SILE.registerCommand("shiftframeedge", function (options, _)
   local cFrame = SILE.typesetter.frame
   shiftframeedge(cFrame, options)
   SILE.typesetter:initFrame(cFrame)
   --SILE.outputter:debugFrame(cFrame)
 end, "Adjusts the edge of the frame horizontally by amounts specified in <left> and <right>")
 
-SILE.registerCommand("breakframevertical", function (options, content)
+SILE.registerCommand("breakframevertical", function (options, _)
   breakFrameVertical(options.offset and SILE.length.parse(options.offset).length)
 end, "Breaks the current frame in two vertically at the current location or at a point <offset> below the current location")
 
-SILE.registerCommand("makecolumns", function (options, content)
+SILE.registerCommand("makecolumns", function (options, _)
   makecolumns(options)
 end, "Split the current frame into multiple columns")
 
-SILE.registerCommand("breakframehorizontal", function (options, content)
+SILE.registerCommand("breakframehorizontal", function (options, _)
   breakFrameHorizontalAt(options.offset and SILE.length.parse(options.offset).length)
 end, "Breaks the current frame in two horizontally either at the current location or at a point <offset> from the left of the current frame")
 
@@ -210,7 +210,7 @@ SILE.registerCommand("typeset-into", function (options, content)
   SILE.typesetNaturally(SILE.frames[options.frame], function () SILE.process(content) end)
 end)
 
-SILE.registerCommand("fit-frame", function (options, content)
+SILE.registerCommand("fit-frame", function (options, _)
   SU.required(options, "frame", "calling \\fit-frame")
   if not SILE.frames[options.frame] then
     SU.error("Can't find frame "..options.frame.." to fit")

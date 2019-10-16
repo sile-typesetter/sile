@@ -1,4 +1,4 @@
-SILE.registerCommand("ruby:font", function (options, content)
+SILE.registerCommand("ruby:font", function (_, _)
   SILE.call("font", { size = "0.6zw", weight = 800 })
 
 end)
