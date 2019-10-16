@@ -140,12 +140,6 @@ utilities.compress = function (items)
   return rv
 end
 
-table.nitems = function (tbl)
-  local count = 0
-  for _ in pairs(tbl) do count = count + 1 end
-  return count
-end
-
 table.flip = function(tbl)
   for i=1, math.floor(#tbl / 2) do
     local tmp = tbl[i]

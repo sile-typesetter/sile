@@ -73,7 +73,7 @@ function traceStack:pushCommand(command, content, options)
   }
   setmetatable(frame, {
     __tostring = function(this)
-      local opts = (table.nitems(this.options) > 0 and tostring(this.options):gsub("^{", "["):gsub("}$", "]") or "")
+      local opts = (pl.tablex.size(this.options) > 0 and tostring(this.options):gsub("^{", "["):gsub("}$", "]") or "")
       return "\\" .. this.command .. opts
     end
   })
@@ -100,7 +100,7 @@ function traceStack:pushContent(content, command)
     }
   setmetatable(frame, {
     __tostring = function(this)
-      local options = (table.nitems(this.options) > 0 and tostring(this.options):gsub("^{", "["):gsub("}$", "]") or "")
+      local options = (pl.tablex.size(this.options) > 0 and tostring(this.options):gsub("^{", "["):gsub("}$", "]") or "")
       return "\\" .. this.command .. options
     end
   })
