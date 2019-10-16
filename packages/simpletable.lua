@@ -54,7 +54,7 @@ return {
       repeat
         stuffInThisColumn = false
         for row = 1, #tbl do
-          cell = tbl[row][col]
+          local cell = tbl[row][col]
           if cell then
             stuffInThisColumn = true
             if not(colwidths[col]) or cell.hbox.width > colwidths[col] then

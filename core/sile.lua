@@ -115,12 +115,12 @@ Options:
 ]])
 
   parser:on ('--', parser.finished)
-  _G.unparsed, _G.opts = parser:parse(_G.arg)
+  local unparsed, opts = parser:parse(_G.arg)
   -- Turn slashes around in the event we get passed a path from a Windows shell
-  if _G.unparsed[1] then
-    SILE.masterFilename = _G.unparsed[1]:gsub("\\", "/")
+  if unparsed[1] then
+    SILE.inputFile = unparsed[1]:gsub("\\", "/")
     -- Strip extension
-    SILE.masterFilename = string.match(SILE.masterFilename,"(.+)%..-$") or SILE.masterFilename
+    SILE.masterFilename = string.match(SILE.inputFile, "(.+)%..-$") or SILE.inputFile
     SILE.masterDir = SILE.masterFilename:match("(.-)[^%/]+$")
   end
   SILE.debugFlags = {}

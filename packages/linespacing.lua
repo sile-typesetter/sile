@@ -44,7 +44,7 @@ local getLineMetrics = function (l)
   local linemetrics = {ascender = 0, descender = 0, lineheight = 0}
   if not l or not l.nodes then return linemetrics end
   for i = 1, #(l.nodes) do
-    node = l.nodes[i]
+    local node = l.nodes[i]
     if node:isNnode() then
       local m = metricscache[SILE.font._key(node.options)]
       if not m then
@@ -72,7 +72,7 @@ local linespacingLeading = function (_, vbox, previous)
   local firstline = SILE.settings.get("linespacing.minimumfirstlineposition"):absolute()
   if not previous then
     if firstline.length > 0 then
-      toAdd = SILE.length.new({ length = firstline.length -vbox.height })
+      local toAdd = SILE.length.new({ length = firstline.length -vbox.height })
       return SILE.nodefactory.newVKern({ height = toAdd })
     else
       return nil

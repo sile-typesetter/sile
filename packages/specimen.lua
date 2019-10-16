@@ -8,7 +8,7 @@ SILE.registerCommand("repertoire", function(options, _)
   local font = ot.parseFont(face)
   local maxg = font.maxp.numGlyphs
   for i = 1 , maxg - 1 do
-    wd = metrics.glyphwidth(i, face.data, face.index)
+    local wd = metrics.glyphwidth(i, face.data, face.index)
     SILE.typesetter:pushHbox({
       height= SILE.length.new({ length = 1.2 * options.size  }),
       width= SILE.length.new({ length = wd * options.size }),
@@ -20,7 +20,7 @@ SILE.registerCommand("repertoire", function(options, _)
 end)
 
 SILE.registerCommand("pangrams", function (_, _)
-  pg = {
+  local pg = {
     "Sphinx of black quartz, judge my vow!",
     "The five boxing wizards jump quickly.",
     "Five quacking zephyrs jolt my wax bed.",

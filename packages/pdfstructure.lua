@@ -103,7 +103,7 @@ end
 SILE.outputters.libtexpdf.finish = function ()
   pdf.endpage()
   local catalog = pdf.get_dictionary("Catalog")
-  structureTree = pdf.parse("<< /Type /StructTreeRoot >>")
+  local structureTree = pdf.parse("<< /Type /StructTreeRoot >>")
   pdf.add_dict(catalog, pdf.parse("/StructTreeRoot"), pdf.reference(structureTree))
   structureNumberTree = pdf.parse("<< /Nums [] >>")
   pdf.add_dict(structureTree, pdf.parse("/ParentTree"), pdf.reference(structureNumberTree))

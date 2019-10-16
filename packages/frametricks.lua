@@ -118,7 +118,7 @@ local mergeColumns = function ()
   SILE.typesetter:pageBuilder()
 
   -- 1.2) Find out the shape of the columnset. (It will change after we balance it)
-  frame = SILE.typesetter.frame
+  local frame = SILE.typesetter.frame
   local left = frame:left()
   local bottom = frame:bottom()
   while frame.next and SILE.getFrame(frame.next).balanced do

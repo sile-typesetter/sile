@@ -69,7 +69,7 @@ SILE.registerCommand("ruby", function (options, content)
   end
   -- measure the content
   SILE.call("hbox", {}, content)
-  cbox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
+  local cbox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
   SU.debug("ruby", "base box is " .. cbox)
   SU.debug("ruby", "reading is  " .. rubybox)
   if cbox:lineContribution() > rubybox:lineContribution() then

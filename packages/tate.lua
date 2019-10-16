@@ -7,9 +7,8 @@ SILE.tateFramePrototype = SILE.framePrototype {
     SILE.typesetter.leadingFor = function(_, v)
       v.height = SILE.length.new({ length = SILE.toPoints("1zw") })
       local bls = SILE.settings.get("document.baselineskip")
-      local d = bls.height:absolute() - v.height
-      d = d.length
-      len = SILE.length.new({ length = d, stretch = bls.height.stretch, shrink = bls.height.shrink })
+      local d = (bls.height:absolute() - v.height).length
+      local len = SILE.length.new({ length = d, stretch = bls.height.stretch, shrink = bls.height.shrink })
       return SILE.nodefactory.newVglue({height = len})
     end
     SILE.typesetter.breakIntoLines = SILE.require("packages/break-firstfit")

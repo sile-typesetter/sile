@@ -5,7 +5,7 @@ SILE.registerCommand("alt", function (_, content)
     options[#options + 1] = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
     SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
   end
-  alt = SILE.nodefactory.newAlternative({
+  local alt = SILE.nodefactory.newAlternative({
     options=options,
     selected=1
     })
