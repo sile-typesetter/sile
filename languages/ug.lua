@@ -114,7 +114,7 @@ end
 -- function debugUyghur(word)
 --   SILE.languageSupport.loadLanguage("ug")
 --   print(showHyphenationPoints(word,"ug"))
---   local items = _hyphenate(_hyphenators["ug"],word)
+--   local items = SILE._hyphenate(SILE.hyphenators["ug"],word)
 --   print(reorderHyphenations(items,true))
 -- end
 
@@ -123,12 +123,12 @@ SILE.hyphenator.languages.ug = function(n)
   if SU.debugging("uyghur") then io.write("Original: ", n.text.." -> "..latin.." -> ") end
   local state = n.options
   -- Make "Turkish" nodes
-  newoptions = std.tree.clone(n.options)
+  local newoptions = std.tree.clone(n.options)
   newoptions.language = "lt"
-  if not _hyphenators.lt then
+  if not SILE.hyphenators.lt then
     SILE.hyphenate(SILE.shaper:createNnodes(latin, newoptions))
   end
-  local items = _hyphenate(_hyphenators["lt"],latin)
+  local items = SILE._hyphenate(SILE.hyphenators["lt"], latin)
   if #items == 1 then
     if SU.debugging("uyghur") then print(latin .." No hyphenation points") end
     return {n}
