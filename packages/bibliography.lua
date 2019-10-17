@@ -90,8 +90,8 @@ do
       --   return true
       -- else
         -- local close_brace = find_outside_braces(s, '%}', ebs+1)
-        lower  = find(s, '%l') -- first nonbrace lowercase
-        letter = find(s, '%a') -- first nonbrace letter
+        lower  = string.find(s, '%l') -- first nonbrace lowercase
+        letter = string.find(s, '%a') -- first nonbrace letter
         return lower and lower <= letter
       -- end
     else
@@ -101,7 +101,7 @@ do
 
   function parse_name(s, inter_token)
     if string.find(s, trailing_commas) then
-      biberrorf("Name '%s' has one or more commas at the end", s)
+      SU.error("Name '%s' has one or more commas at the end", s)
     end
     s = string.gsub(s, trailing_commas, '')
     s = string.gsub(s, leading_white_sep, '')
@@ -188,7 +188,7 @@ do
         1, commas[1], commas[2], commas[2], n+1
       divide_von_from_last()
     else
-      biberrorf("Too many commas in name '%s'")
+      SU.error("Too many commas in name '%s'")
     end
     -- <set fields of name based on [[first_start]] and friends>=
     -- We set long and short forms together; [[ss]] is the
