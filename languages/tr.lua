@@ -638,7 +638,7 @@ local tr_nums = function (num, ordinal)
   if abs >= 1e+36 then
     SU.error("Numbers past decillions not supported in Turkish")
   end
-  local ordinal = SU.boolean(ordinal, false)
+  ordinal = SU.boolean(ordinal, false)
   local minus =  "eksi"
   local zero =  "sıfır"
   local ones = { "bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz" }

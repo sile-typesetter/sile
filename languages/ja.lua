@@ -65,7 +65,7 @@ local badBeforeClasses = { [1] = true, [12] = true, [28] = true }
 local badAfterClasses = { }
 for _, v in ipairs({ 2, 3, 4, 5, 6, 7, 9, 10, 11, 20, 29 }) do badAfterClasses[v] = true end
 
-function breakAllowed(before, after)
+local function breakAllowed(before, after)
   local bc = jisClass(before)
   local ac = jisClass(after)
   if badBeforeClasses[bc] then return false end
@@ -144,7 +144,8 @@ SILE.nodeMakers.ja = SILE.nodeMakers.base {
     local lastcp = -1
     local lastchar = ""
     local space = "%s" -- XXX
-    for i = 1, #items do item = items[i]
+    for i = 1, #items do
+      local item = items[i]
       local uchar = items[i].text
       local thiscp = SU.codepoint(uchar)
       db = lastchar.. "|" .. uchar

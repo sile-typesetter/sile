@@ -12,7 +12,8 @@ SILE.nodeMakers.am = SILE.nodeMakers.unicode {
     local ics = SILE.settings.get("document.letterspaceglue")
     local style = SILE.settings.get("languages.am.justification")
     return coroutine.wrap(function ()
-      for i = 1, #items do item = items[i]
+      for i = 1, #items do
+        local item = items[i]
         local char = items[i].text
         local cp = SU.codepoint(char)
         if cp == 0x1361 then -- ETHIOPIC WORDSPACE

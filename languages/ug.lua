@@ -152,7 +152,7 @@ SILE.hyphenator.languages.ug = function(n)
   state.language = "ug"
   items[1] = latinToArabic(items[1])
   items[2] = latinToArabic(items[2])
-  hyphen = SILE.settings.get("font.hyphenchar")
+  local hyphen = SILE.settings.get("font.hyphenchar")
   local prebreak = SILE.shaper:createNnodes(items[1] .. (lastjoinable(items[1]) and zwj or ""), state)
   if SILE.settings.get("languages.ug.hyphenoffset") then
     local w = SILE.settings.get("languages.ug.hyphenoffset").width

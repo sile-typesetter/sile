@@ -14,7 +14,7 @@ local types = {
   "Nd", "Nd", "Nd", "Nd", "Nd", "Nd", "Nd", "Nd",
   "Nd", "Nd",  "x",  "x",  "x",  "x",  "x",  "x"
 }
-jv = {}
+local jv = {}
 local P8 = function (c) return lpeg.P(SU.utf8char(c)) end
 
 for i = 1, #types do
@@ -42,7 +42,7 @@ SILE.nodeMakers.jv = SILE.nodeMakers.unicode {
         local char = items[i].text
         chunk = chunk .. char
       end
-      i = 1
+      local i = 1
       local total = 0
       while total < #chunk do
         local syll = (lpeg.P(total) * lpeg.C(jv.syllable)):match(chunk)
