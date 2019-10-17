@@ -235,8 +235,8 @@ do
               if i == lim-1 then
                 sep, ssep = '~', '~'
               elseif i == start + 1 then
-                sep  = text_char_count(shortname)  < 3 and '~' or ' '
-                ssep = text_char_count(longname) < 3 and '~' or ' '
+                sep  = string.len(shortname)  < 3 and '~' or ' '
+                ssep = string.len(longname) < 3 and '~' or ' '
               else
                 sep, ssep = ' ', ' '
               end
