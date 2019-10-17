@@ -1,3 +1,5 @@
+local Bibliography = SILE.require("packages/bibliography")
+
 return Bibliography.Style {
   CitationStyle = Bibliography.CitationStyles.AuthorYear,
 

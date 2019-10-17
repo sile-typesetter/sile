@@ -45,7 +45,7 @@ local parseBibtex = function (fn)
 end
 
 SILE.scratch.bibtex = { bib = {}, bibstyle = {} }
-SILE.require("packages/bibliography")
+local Bibliography = SILE.require("packages/bibliography")
 
 SILE.registerCommand("loadbibliography", function (options, _)
   local file = SU.required(options, "file", "loadbibliography")

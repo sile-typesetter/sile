@@ -259,7 +259,8 @@ end
 
 --- Thanks, Norman, for the above functions!
 
-Bibliography = { -- This is big enough to have its own global var
+local Bibliography
+Bibliography = {
   CitationStyles = {
     -- luacheck: push ignore
     AuthorYear = function(_ENV)
@@ -397,3 +398,5 @@ Bibliography = { -- This is big enough to have its own global var
     end
   }
 }
+
+return Bibliography
