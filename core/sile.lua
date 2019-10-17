@@ -240,11 +240,6 @@ function SILE.readFile(filename)
   SU.error("No input processor available for "..filename.." (should never happen)", true)
 end
 
-local function file_exists (filename)
-   local file = io.open(filename, "r")
-   if file ~= nil then return io.close(file) else return false end
-end
-
 -- Sort through possible places files could be
 function SILE.resolveFile(filename, pathprefix)
   local candidates = {}

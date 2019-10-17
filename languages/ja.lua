@@ -133,7 +133,7 @@ local function shrinkability(before, after)
   return 0
 end
 
-local okbreak = SILE.nodefactory.newPenalty({ penalty = 0 })
+-- local okbreak = SILE.nodefactory.newPenalty({ penalty = 0 })
 
 SILE.nodeMakers.ja = SILE.nodeMakers.base {
   iterator = function (self, items)

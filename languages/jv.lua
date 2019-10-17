@@ -38,7 +38,7 @@ SILE.nodeMakers.jv = SILE.nodeMakers.unicode {
     return coroutine.wrap(function()
       self:init()
       local chunk = ""
-      for i = 1,#items do item = items[i]
+      for i = 1,#items do
         local char = items[i].text
         chunk = chunk .. char
       end

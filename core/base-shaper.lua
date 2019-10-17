@@ -1,10 +1,10 @@
 if not SILE.shapers then SILE.shapers = { } end
 
-local smallTokenSize = 20 -- Small words will be cached
-local shapeCache = {}
-local _key = function(options)
-  return table.concat({options.family;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename},";")
-end
+-- local smallTokenSize = 20 -- Small words will be cached
+-- local shapeCache = {}
+-- local _key = function (options)
+--   return table.concat({ options.family;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename }, ";")
+-- end
 
 SILE.settings.declare({name = "shaper.variablespaces", type = "integer", default = 1})
 SILE.settings.declare({name = "shaper.spaceenlargementfactor", type = "number or integer", default = 1.2})
@@ -89,11 +89,11 @@ SILE.shapers.base = std.object {
 
   formNnode = function (self, contents, token, options)
     local nnodeContents = {}
-    local glyphs = {}
+    -- local glyphs = {}
     local totalWidth = 0
     local totalDepth = 0
     local totalHeight = 0
-    local glyphNames = {}
+    -- local glyphNames = {}
     local nnodeValue = { text = token, options = options, glyphString = {} }
     SILE.shaper:preAddNodes(contents, nnodeValue)
     local misfit = false

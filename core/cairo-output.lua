@@ -3,9 +3,9 @@
 -- with the libtexpdf and debug backends.
 local lgi = require("lgi")
 local cairo = lgi.cairo
-local pango = lgi.Pango
-local fm = lgi.PangoCairo.FontMap.get_default()
-local pango_context = lgi.Pango.FontMap.create_context(fm)
+-- local pango = lgi.Pango
+-- local fm = lgi.PangoCairo.FontMap.get_default()
+-- local pango_context = lgi.Pango.FontMap.create_context(fm)
 local imagesize = SILE.require("imagesize")
 
 if (not SILE.outputters) then SILE.outputters = {} end

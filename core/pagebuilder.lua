@@ -5,7 +5,6 @@ local deplorable = 100000
 
 SILE.defaultPagebuilder = std.object {
   collateVboxes = function(vboxlist)
-    local i
     local output = SILE.nodefactory.newVbox({nodes = {} })
     output:append(vboxlist)
     return output

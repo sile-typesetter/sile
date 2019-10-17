@@ -83,7 +83,6 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
     local i = 1
     while i <= #items do
       local item = items[i]
-      local char = item.text
       if self:isSpace(item.text) then self:makeGlue(item) else break end
       i = i + 1
     end
@@ -147,7 +146,6 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
   iterator = function (self, items)
     local fulltext = ""
     for i = 1, #items do
-      local item = items[i]
       fulltext = fulltext .. items[i].text
     end
     local chunks = { icu.breakpoints(fulltext, self.options.language) }

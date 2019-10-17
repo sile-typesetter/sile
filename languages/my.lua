@@ -62,9 +62,6 @@ end
 
 SILE.tokenizers.my = function(string)
   return coroutine.wrap(function()
-    local db
-    local lastcp = -1
-    local lastchar = ""
     local lastclass = ""
     local collection = ""
     for uchar in string.gmatch(string, "([%z\1-\127\194-\244][\128-\191]*)") do
@@ -81,8 +78,6 @@ SILE.tokenizers.my = function(string)
         end
         collection = collection .. uchar
       end
-      lastcp = thiscp
-      lastchar = uchar
       lastclass = thisclass
     end
     coroutine.yield({ string = collection })

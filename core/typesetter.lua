@@ -1,9 +1,9 @@
 -- This is the default typesetter. You are, of course, welcome to create your own.
 local awful_bad = 1073741823
 local inf_bad = 10000
-local eject_penalty = -inf_bad
+-- local eject_penalty = -inf_bad
 local supereject_penalty = 2 * -inf_bad
-local deplorable = 100000
+-- local deplorable = 100000
 
 if std.string.monkey_patch then -- stdlib >= 40
   std.string.monkey_patch()
@@ -317,7 +317,6 @@ SILE.defaultTypesetter = std.object {
     self:registerHook("pageend", frame)
   end,
   pageBuilder = function (self)
-    local vbox
     local pageNodeList
     local res
     if #(self.state.outputQueue) == 0 then return end
@@ -577,11 +576,11 @@ SILE.defaultTypesetter = std.object {
       if not(point.position == 0) then
         slice = {}
         local seenHbox = 0
-        local toss = 1
+        -- local toss = 1
         for j = linestart, point.position do
           slice[#slice+1] = nodes[j]
           if nodes[j] then
-            toss = 0
+            -- toss = 0
             if nodes[j]:isBox() or nodes[j]:isDiscretionary() then seenHbox = 1 end
           end
         end

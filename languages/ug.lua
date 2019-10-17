@@ -79,21 +79,21 @@ local latinToArabic = function(s, useLapa)
 end
 
 local zwj = SU.utf8charfromcodepoint("U+200D")
-local zwnj = SU.utf8charfromcodepoint("U+200C")
+-- local zwnj = SU.utf8charfromcodepoint("U+200C")
 
-local dropLast = function(t)
-  local bt = SU.splitUtf8(t)
-  local n = ""
-  for i = 1,#bt-1 do n = n..bt[i] end
-  return n
-end
+-- local dropLast = function(t)
+--   local bt = SU.splitUtf8(t)
+--   local n = ""
+--   for i = 1,#bt-1 do n = n..bt[i] end
+--   return n
+-- end
 
-local dropFirst = function(t)
-  local bt = SU.splitUtf8(t)
-  local n = ""
-  for i = 2,#bt do n = n..bt[i] end
-  return n
-end
+-- local dropFirst = function(t)
+--   local bt = SU.splitUtf8(t)
+--   local n = ""
+--   for i = 2,#bt do n = n..bt[i] end
+--   return n
+-- end
 
 local lastjoinable = function (t)
   t = SU.splitUtf8(t)
@@ -103,20 +103,20 @@ local lastjoinable = function (t)
   return joinable
 end
 
-local firstjoinable = function (t)
-  local t = SU.splitUtf8(t)
-  local first = t[1]
-  local jointype = chardata[SU.codepoint(first)] and chardata[SU.codepoint(first)].arabic
-  local joinable = jointype == "d" or jointype=="r"
-  return joinable
-end
+-- local firstjoinable = function (t)
+--   local t = SU.splitUtf8(t)
+--   local first = t[1]
+--   local jointype = chardata[SU.codepoint(first)] and chardata[SU.codepoint(first)].arabic
+--   local joinable = jointype == "d" or jointype=="r"
+--   return joinable
+-- end
 
-function debugUyghur(word)
-  SILE.languageSupport.loadLanguage("ug")
-  print(showHyphenationPoints(word,"ug"))
-  local items = _hyphenate(_hyphenators["ug"],word)
-  print(reorderHyphenations(items,true))
-end
+-- function debugUyghur(word)
+--   SILE.languageSupport.loadLanguage("ug")
+--   print(showHyphenationPoints(word,"ug"))
+--   local items = _hyphenate(_hyphenators["ug"],word)
+--   print(reorderHyphenations(items,true))
+-- end
 
 SILE.hyphenator.languages.ug = function(n)
   local latin = arabicToLatin(n.text)

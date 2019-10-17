@@ -64,7 +64,7 @@ function lineBreak:init()
     }
   end
   self.minimumDemerits = awful_bad
-  self:setupLineLengths(params)
+  self:setupLineLengths()
 end
 
 function lineBreak:trimGlue() -- 842
@@ -73,7 +73,7 @@ function lineBreak:trimGlue() -- 842
   nodes[#nodes+1] = SILE.nodefactory.newPenalty({penalty = inf_bad})
 end
 
-function lineBreak:setupLineLengths(params) -- 874
+function lineBreak:setupLineLengths() -- 874
   self.parShape = param("parShape")
   if not self.parShape then
     if not param("hangIndent") then
@@ -196,7 +196,7 @@ function lineBreak:tryAlternatives(from, to)
   end
   if #alternates == 0 then return end
   local localMinimum = awful_bad
-  local selectedShortfall = 0
+  -- local selectedShortfall = 0
   local shortfall = self.lineWidth - self.curActiveWidth.length
   if debugging then SU.debug("break", "Shortfall was ", shortfall) end
   for combination in SU.allCombinations(altSizes) do
@@ -211,7 +211,7 @@ function lineBreak:tryAlternatives(from, to)
     if badness < localMinimum then
       self.r.alternates = alternates
       self.r.altSelections = combination
-      selectedShortfall = addWidth
+      -- selectedShortfall = addWidth
       localMinimum = badness
     end
   end

@@ -138,13 +138,13 @@ SILE.registerCommand("listitem", function(options,content)
     ctx.ctr = ctx.ctr + 1
   elseif ctx and ctx.type == "itemized" then
     SILE.typesetter:typeset( "• ")
-  elseif ctx and ctx.type == "" then
-    -- Other types?
+  -- elseif ctx and ctx.type == "" then
+  --   -- Other types?
   else
     SU.error("Listitem in outer space")
   end
   SILE.call("noindent")
-  for i=1, #ctx-1 do SILE.call("qquad") end -- Setting lskip better?
+  for _=1, #ctx-1 do SILE.call("qquad") end -- Setting lskip better?
   SILE.process(content)
   SILE.call("medskip")
 end)

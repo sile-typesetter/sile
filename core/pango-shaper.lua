@@ -10,7 +10,6 @@ local pango_context = lgi.Pango.FontMap.create_context(fm)
 SILE.require("core/base-shaper")
 
 local palcache = {}
-local spacecache = {}
 
 SILE.shapers.pango = SILE.shapers.base {
   getFace = function(options)
@@ -44,8 +43,8 @@ SILE.shapers.pango = SILE.shapers.base {
     local twidth = SILE.length.new({})
     for i = 1,#items do local item = items[i]
       local pgs = _shape(text, item)
-      local text = string.sub(text,1+items[i].offset, items[i].length)
-      local depth, height = 0,0
+      -- local text = string.sub(text,1+items[i].offset, items[i].length)
+      -- local depth, height = 0,0
       local font = items[i].analysis.font
       twidth = twidth + pgs:get_width() / 1024
       for g in pairs(pgs.glyphs) do

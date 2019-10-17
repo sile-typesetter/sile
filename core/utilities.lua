@@ -119,7 +119,7 @@ utilities.splice = function (array, start, stop, replacement)
     ptr = ptr + 1
   end
 
-  for i = 1, room do
+  for _ = 1, room do
       table.remove(array, ptr)
   end
   return array
@@ -427,12 +427,6 @@ end
 
 local icu = require("justenoughicu")
 
-local icuFormats = function (format)
-  if format == "roman" then return "romanlow" end
-  if format == "Roman" then return "roman" end
-  return format
-end
-
 local icuFormat = function (num, format)
   local ok, result  = pcall(function() return icu.format_number(num, format) end)
   return tostring(ok and result or num)
@@ -489,11 +483,11 @@ utilities.breadcrumbs = function ()
   local breadcrumbs = {}
 
   setmetatable (breadcrumbs, {
-      __index = function(self, key)
+      __index = function(_, key)
         local frame = SILE.traceStack[key]
         return frame and frame.command or nil
       end,
-      __len = function(self)
+      __len = function(_)
         return #SILE.traceStack
       end,
       __tostring = function (self)
