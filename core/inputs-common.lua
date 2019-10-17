@@ -1,5 +1,5 @@
 SILE.inputs.common = {
-  init = function (doc, tree)
+  init = function (_, tree)
     local dclass = tree.options.class or "plain"
     tree.options.papersize = tree.options.papersize or "a4"
     SILE.documentState.documentClass = SILE.require(dclass, "classes")

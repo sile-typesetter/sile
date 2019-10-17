@@ -406,7 +406,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
   end
 end
 
-function lineBreak:dumpBreakNode(node)
+function lineBreak.dumpBreakNode(_, node)
   if not SU.debugging("break") then return end
   print(lineBreak:describeBreakNode(node))
 end

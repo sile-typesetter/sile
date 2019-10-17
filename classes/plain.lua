@@ -35,17 +35,17 @@ plain.declareOption = function (self, name, default)
   end
 end
 
-SILE.registerCommand("noindent", function (options, content)
+SILE.registerCommand("noindent", function (_, content)
   SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
   SILE.process(content)
 end, "Do not add an indent to the start of this paragraph")
 
-SILE.registerCommand("neverindent", function (options, content)
+SILE.registerCommand("neverindent", function (_, content)
   SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
   SILE.process(content)
 end, "Turn off all indentation")
 
-SILE.registerCommand("indent", function (options, content)
+SILE.registerCommand("indent", function (_, content)
   SILE.settings.set("current.parindent", SILE.settings.get("document.parindent"))
   SILE.process(content)
 end, "Do add an indent to the start of this paragraph, even if previously told otherwise")
@@ -63,28 +63,28 @@ for k, v in pairs(skips) do
       default = SILE.nodefactory.newVglue(v),
       help = "The amount of a \\" .. k .. "skip"
     })
-  SILE.registerCommand(k .. "skip", function (options, content)
+  SILE.registerCommand(k .. "skip", function (_, _)
     SILE.typesetter:leaveHmode()
     SILE.typesetter:pushExplicitVglue(SILE.settings.get("plain." .. k .. "skipamount"))
   end, "Skip vertically by a " .. k .. " amount")
 end
 
-SILE.registerCommand("hfill", function (options, content)
+SILE.registerCommand("hfill", function (_, _)
   SILE.typesetter:pushExplicitGlue(SILE.nodefactory.hfillGlue)
 end, "Add a huge horizontal glue")
 
-SILE.registerCommand("vfill", function (options, content)
+SILE.registerCommand("vfill", function (_, _)
   SILE.typesetter:leaveHmode()
   SILE.typesetter:pushExplicitVglue(SILE.nodefactory.vfillGlue)
 end, "Add huge vertical glue")
 
-SILE.registerCommand("hss", function (options, content)
+SILE.registerCommand("hss", function (_, _)
   SILE.typesetter:initline()
   SILE.typesetter:pushGlue(SILE.nodefactory.hssGlue)
   table.insert(SILE.typesetter.state.nodes, SILE.nodefactory.zeroHbox)
 end, "Add glue which stretches and shrinks horizontally (good for centering)")
 
-SILE.registerCommand("vss", function (options, content)
+SILE.registerCommand("vss", function (_, _)
   SILE.typesetter:pushExplicitVglue(SILE.nodefactory.vssGlue)
 end, "Add glue which stretches and shrinks vertically")
 
@@ -124,10 +124,10 @@ plain.registerCommands = function ()
 ]])
 end
 
-SILE.registerCommand("{", function (options, content) SILE.typesetter:typeset("{") end)
-SILE.registerCommand("}", function (options, content) SILE.typesetter:typeset("}") end)
-SILE.registerCommand("%", function (options, content) SILE.typesetter:typeset("%") end)
-SILE.registerCommand("\\", function (options, content) SILE.typesetter:typeset("\\") end)
+SILE.registerCommand("{", function (_, _) SILE.typesetter:typeset("{") end)
+SILE.registerCommand("}", function (_, _) SILE.typesetter:typeset("}") end)
+SILE.registerCommand("%", function (_, _) SILE.typesetter:typeset("%") end)
+SILE.registerCommand("\\", function (_, _) SILE.typesetter:typeset("\\") end)
 
 SILE.registerCommand("ragged", function (options, content)
   SILE.settings.temporarily(function ()
@@ -144,7 +144,7 @@ SILE.registerCommand("ragged", function (options, content)
   end)
 end)
 
-SILE.registerCommand("hbox", function (options, content)
+SILE.registerCommand("hbox", function (_, content)
   local index = #(SILE.typesetter.state.nodes)+1
   local recentContribution = {}
   SILE.process(content)

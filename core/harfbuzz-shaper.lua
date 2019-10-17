@@ -63,14 +63,14 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
     face.data = fh:read("*all")
     return face
   end,
-  preAddNodes = function (self, items, nnodeValue) -- Check for complex nodes
+  preAddNodes = function (_, items, nnodeValue) -- Check for complex nodes
     for i = 1, #items do
       if items[i].y_offset or items[i].x_offset or items[i].width ~= items[i].glyphAdvance then
         nnodeValue.complex = true; break
       end
     end
   end,
-  addShapedGlyphToNnodeValue = function (self, nnodevalue, shapedglyph)
+  addShapedGlyphToNnodeValue = function (_, nnodevalue, shapedglyph)
     if nnodevalue.complex then
 
       if not nnodevalue.items then nnodevalue.items = {} end
@@ -95,12 +95,12 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
       local font = ot.parseFont(face)
       local version = "Unknown version"
       if font and font.names and font.names[5] then
-        for l, v in pairs(font.names[5]) do version = v[1]; break end
+        for _, v in pairs(font.names[5]) do version = v[1]; break end
       end
       print(face.filename..":"..face.index, version)
     end
   end,
-  checkHBProblems = function (self, text, face)
+  checkHBProblems = function (_, text, face)
     if hb.version_lessthan(1, 0, 4) and #text < 1 then
       return true
     end

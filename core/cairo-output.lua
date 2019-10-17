@@ -30,7 +30,7 @@ SILE.outputters.cairo = {
   finish = function ()
   end,
 
-  setColor = function (self, color)
+  setColor = function (_, color)
     cr:set_source_rgb(color.r, color.g, color.b)
   end,
 
@@ -88,7 +88,7 @@ SILE.outputters.cairo = {
     cr:fill()
   end,
 
-  debugFrame = function (self, frame)
+  debugFrame = function (_, frame)
     cr:set_source_rgb(0.8, 0, 0)
     cr:set_line_width(0.5)
     cr:rectangle(frame:left(), frame:top(), frame:width(), frame:height())

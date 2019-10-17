@@ -55,26 +55,26 @@ SILE.shapers.base = std.object {
 
 
   -- Given a text and some font options, return a bunch of boxes
-  shapeToken = function (self, text, options)
+  shapeToken = function (_, _, _)
     SU.error("Abstract function shapeToken called", true)
   end,
 
   -- Given font options, select a font. We will handle
   -- caching here. Returns an arbitrary, implementation-specific
   -- object (ie a PAL for Pango, font number for libtexpdf, ...)
-  getFace = function (options)
+  getFace = function (_)
     SU.error("Abstract function getFace called", true)
   end,
 
-  addShapedGlyphToNnodeValue = function (self, nnodevalue, shapedglyph)
+  addShapedGlyphToNnodeValue = function (_, _, _)
     SU.error("Abstract function addShapedGlyphToNnodeValue called", true)
   end,
 
-  preAddNodes = function (self, items, nnodeValue)
+  preAddNodes = function (_, _, _)
   end,
 
   createNnodes = function (self, token, options)
-    local items, width = self:shapeToken(token, options)
+    local items, _ = self:shapeToken(token, options)
     if #items < 1 then return {} end
 
     local lang = options.language
@@ -130,7 +130,7 @@ SILE.shapers.base = std.object {
     })
   end,
 
-  makeSpaceNode = function (self, options, item)
+  makeSpaceNode = function (_, options, item)
     if SILE.settings.get("shaper.variablespaces") == 1 then
       local spacewidth = item.width
       local width = SILE.length.new({

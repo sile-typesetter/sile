@@ -32,19 +32,19 @@ SILE.outputters.debug = {
     outfile:close()
   end,
 
-  setColor = function (self, color)
+  setColor = function (_, color)
     writeline("Set color", color.r, color.g, color.b)
   end,
 
-  pushColor = function (self, color)
+  pushColor = function (_, color)
     writeline("Push color", ("%.4g"):format(color.r), ("%.4g"):format(color.g), ("%.4g"):format(color.b))
   end,
 
-  popColor = function (self)
+  popColor = function (_)
     writeline("Pop color")
   end,
 
-  outputHbox = function (value, width)
+  outputHbox = function (value, _)
     buf = {}
     for i=1, #(value.glyphString) do
       buf[#buf+1] = value.glyphString[i]
@@ -80,10 +80,10 @@ SILE.outputters.debug = {
     writeline("Draw line", string.format("%.4f %.4f %.4f %.4f", x, y, width, depth))
   end,
 
-  debugFrame = function (self, frame)
+  debugFrame = function (_, _)
   end,
 
-  debugHbox = function (typesetter, hbox, scaledWidth)
+  debugHbox = function (_, _, _)
   end
 
 }

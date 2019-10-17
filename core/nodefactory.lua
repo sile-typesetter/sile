@@ -138,12 +138,12 @@ local _disc = _hbox {
         i = i+1
       end
       if (line.nodes[i] == self) then
-        for i, node in ipairs(self.postbreak) do node:outputYourself(typesetter, line) end
+        for _, node in ipairs(self.postbreak) do node:outputYourself(typesetter, line) end
       else
-        for i, node in ipairs(self.prebreak) do node:outputYourself(typesetter, line) end
+        for _, node in ipairs(self.prebreak) do node:outputYourself(typesetter, line) end
       end
     else
-      for i, node in ipairs(self.replacement) do node:outputYourself(typesetter, line) end
+      for _, node in ipairs(self.replacement) do node:outputYourself(typesetter, line) end
     end
   end,
   prebreakWidth = function (self)
@@ -260,7 +260,7 @@ local _vglue = _box {
     self.height.stretch = 0
     self.height.shrink = 0
   end,
-  outputYourself = function (self, typesetter, line)
+  outputYourself = function (_, typesetter, line)
     local depth = line.depth
     depth = depth + SILE.toAbsoluteMeasurement(line.height)
     if type(depth) == "table" then depth = depth.length end

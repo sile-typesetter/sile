@@ -142,10 +142,10 @@ local _relativeMeasurement = std.object {
   absolute = function (self)
     return SILE.toPoints(self.number, self.unit)
   end,
-  __add = function (self, other)
+  __add = function (_, _)
     SU.error("We tried to do arithmetic on a relative measurement without explicitly absolutizing it. (That's a bug)", true)
   end,
-  __sub = function (self, other)
+  __sub = function (_, _)
     SU.error("We tried to do arithmetic on a relative measurement without explicitly absolutizing it. (That's a bug)", true)
   end
 }

@@ -29,7 +29,7 @@ function docbook.wipe(tbl)
   while((#tbl) > 0) do tbl[#tbl] = nil end
 end
 
-SILE.registerCommand("article", function (options, content)
+SILE.registerCommand("article", function (_, content)
   local info = SILE.findInTree(content, "info") or SILE.findInTree(content, "articleinfo")
   local title = SILE.findInTree(content, "title") or (info and SILE.findInTree(info, "title"))
   local author = SILE.findInTree(content, "author") or (info and SILE.findInTree(info, "author"))
@@ -55,7 +55,7 @@ end)
 
 SILE.registerCommand("info", function ()end)
 
-SILE.registerCommand("section", function (options, content)
+SILE.registerCommand("section", function (_, content)
   SILE.scratch.docbook.seclevel = SILE.scratch.docbook.seclevel + 1
   SILE.scratch.docbook.seccount[SILE.scratch.docbook.seclevel] = (SILE.scratch.docbook.seccount[SILE.scratch.docbook.seclevel] or 0) + 1
   while #(SILE.scratch.docbook.seccount) > SILE.scratch.docbook.seclevel do
@@ -74,7 +74,7 @@ SILE.registerCommand("section", function (options, content)
   SILE.scratch.docbook.seclevel = SILE.scratch.docbook.seclevel - 1
 end)
 
-function countedThing(thing, options, content)
+function countedThing(thing, _, content)
   SILE.call("increment-counter", {id=thing})
   SILE.call("bigskip")
   SILE.call("docbook-line")
@@ -104,7 +104,7 @@ SILE.registerCommand("figure", function (options, content)
   countedThing("Figure", options, content)
 end)
 
-SILE.registerCommand("imagedata", function (options, content)
+SILE.registerCommand("imagedata", function (options, _)
   local width = SILE.parseComplexFrameDimension(options.width or "100%pw") or 0
   SILE.call("img", {
     src = options.fileref,
@@ -113,7 +113,7 @@ SILE.registerCommand("imagedata", function (options, content)
 end)
 
 
-SILE.registerCommand("itemizedlist", function (options, content)
+SILE.registerCommand("itemizedlist", function (_, content)
   docbook.push("list", {type = "itemized"})
   SILE.call("medskip")
   -- Indentation
@@ -123,7 +123,7 @@ SILE.registerCommand("itemizedlist", function (options, content)
 end)
 
 
-SILE.registerCommand("orderedlist", function (options, content)
+SILE.registerCommand("orderedlist", function (_, content)
   docbook.push("list", {type = "ordered", ctr = 1})
   SILE.call("medskip")
   -- Indentation
@@ -132,7 +132,7 @@ SILE.registerCommand("orderedlist", function (options, content)
   docbook.pop("list")
 end)
 
-SILE.registerCommand("listitem", function (options, content)
+SILE.registerCommand("listitem", function (_, content)
   local ctx = docbook.val("list")
   if ctx and ctx.type == "ordered" then
     SILE.typesetter:typeset( ctx.ctr ..". ")

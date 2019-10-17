@@ -17,7 +17,7 @@ SILE.scratch.letter = {
   salutation = ""
 }
 
-SILE.registerCommand("letter", function (options, content)
+SILE.registerCommand("letter", function (_, content)
   SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
   SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
   SILE.call("raggedright", {}, function ()
@@ -35,16 +35,16 @@ SILE.registerCommand("letter", function (options, content)
   end)
 end)
 
-SILE.registerCommand("sender", function (options, content)
+SILE.registerCommand("sender", function (_, content)
   SILE.scratch.letter.sender = content
 end)
-SILE.registerCommand("recipient", function (options, content)
+SILE.registerCommand("recipient", function (_, content)
   SILE.scratch.letter.recipient = content
 end)
-SILE.registerCommand("salutation", function (options, content)
+SILE.registerCommand("salutation", function (_, content)
   SILE.scratch.letter.salutation = content
 end)
-SILE.registerCommand("date", function (options, content)
+SILE.registerCommand("date", function (_, content)
   SILE.scratch.letter.date = content
 end)
 

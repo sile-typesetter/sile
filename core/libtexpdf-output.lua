@@ -36,26 +36,26 @@ SILE.outputters.libtexpdf = {
     lastkey = nil
   end,
 
-  setColor = function (self, color)
+  setColor = function (_, color)
     ensureInit()
     if color.r then pdf.setcolor_rgb(color.r, color.g, color.b) end
     if color.c then pdf.setcolor_cmyk(color.c, color.m, color.y, color.k) end
     if color.l then pdf.setcolor_gray(color.l) end
   end,
 
-  pushColor = function (self, color)
+  pushColor = function (_, color)
     ensureInit()
     if color.r then pdf.colorpush_rgb(color.r, color.g, color.b) end
     if color.c then pdf.colorpush_cmyk(color.c, color.m, color.y, color.k) end
     if color.l then pdf.colorpush_gray(color.l) end
   end,
 
-  popColor = function (self)
+  popColor = function (_)
     ensureInit()
     pdf.colorpop()
   end,
 
-  cursor = function (self)
+  cursor = function (_)
     return cursorX, cursorY
   end,
 

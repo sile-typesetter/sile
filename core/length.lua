@@ -7,7 +7,7 @@ _length = std.object {
   shrink = 0,
   _type = "Length",
 
-  absolute = function (self, context)
+  absolute = function (self, _)
     return _length { length = SILE.toAbsoluteMeasurement(self.length),
       stretch = SILE.toAbsoluteMeasurement(self.stretch),
       shrink = SILE.toAbsoluteMeasurement(self.shrink)

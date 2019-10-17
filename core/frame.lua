@@ -41,19 +41,19 @@ SILE.framePrototype = std.object {
   end,
   -- This is hideously inefficient,
   -- but it's the easiest way to allow users to reconfigure frames at runtime.
-  solve = function (self)
+  solve = function (_)
     if not solverNeedsReloading then return end
     SU.debug("frames", "Solving...")
     solver = cassowary.SimplexSolver()
     if SILE.frames.page then
-      for method, dimension in pairs(SILE.frames.page.constraints) do
+      for method, _ in pairs(SILE.frames.page.constraints) do
         SILE.frames.page:reifyConstraint(solver, method, true)
       end
       SILE.frames.page:addWidthHeightDefinitions(solver)
     end
     for id, frame in pairs(SILE.frames) do
       if not (id == "page") then
-        for method, dimension in pairs(frame.constraints) do
+        for method, _ in pairs(frame.constraints) do
           frame:reifyConstraint(solver, method)
         end
         frame:addWidthHeightDefinitions(solver)
@@ -166,7 +166,7 @@ function SILE.framePrototype:isAbsoluteConstraint(method)
   local constraint = SILE.frameParser:match(self.constraints[method])
   if type(constraint) ~= "table" then return true end
   if not constraint.terms then return false end
-  for clv,coeff in pairs(constraint.terms) do
+  for clv, _ in pairs(constraint.terms) do
     if clv.name and not clv.name:match("^page_") then
       return false
     end
@@ -192,20 +192,20 @@ SILE.newFrame = function (spec, prototype)
     variables = {}
   }
   SILE.frames[spec.id] = frame
-  for method, dimension in pairs(dims) do
+  for method, _ in pairs(dims) do
     frame.variables[method] = cassowary.Variable({ name = spec.id .. "_" .. method })
     frame[method] = function (frame)
       frame:solve()
       return frame.variables[method].value
     end
   end
-  for key, value in pairs(spec) do
+  for key, _ in pairs(spec) do
     if not dims[key] then frame[key] = spec[key] end
   end
   frame.balanced = SU.boolean(frame.balanced, false)
   frame.constraints = {}
   -- Add definitions of width and height
-  for method, dimension in pairs(dims) do
+  for method, _ in pairs(dims) do
     if spec[method] then
       frame:constrain(method, spec[method])
     end
