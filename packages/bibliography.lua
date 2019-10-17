@@ -3,54 +3,54 @@ local std = require("std")
 -- The following functions borrowed from Norman Ramsey's nbibtex,
 -- with permission.
 
-local function find_outside_braces(s, pat, i)
-  -- local len = string.len(s)
-  local j, k = string.find(s, pat, i)
+local function find_outside_braces(str, pat, i)
+  -- local len = string.len(str)
+  local j, k = string.find(str, pat, i)
   if not j then return j, k end
-  local jb, kb = string.find(s, '%b{}', i)
+  local jb, kb = string.find(str, '%b{}', i)
   while jb and jb < j do --- scan past braces
     --- braces come first, so we search again after close brace
     local i2 = kb + 1
-    j, k = string.find(s, pat, i2)
+    j, k = string.find(str, pat, i2)
     if not j then return j, k end
-    jb, kb = string.find(s, '%b{}', i2)
+    jb, kb = string.find(str, '%b{}', i2)
   end
   -- either pat precedes braces or there are no braces
-  return string.find(s, pat, j) --- 2nd call needed to get captures
+  return string.find(str, pat, j) --- 2nd call needed to get captures
 end
 
-local function split(s, pat, find) --- return list of substrings separated by pat
+local function split(str, pat, find) --- return list of substrings separated by pat
   find = find or string.find -- could be find_outside_braces
-  local len = string.len(s)
+  local len = string.len(str)
   local t = { }
   local insert = table.insert
   local i, j, k = 1, true
   while j and i <= len + 1 do
-    j, k = find(s, pat, i)
+    j, k = find(str, pat, i)
     if j then
-      insert(t, string.sub(s, i, j-1))
+      insert(t, string.sub(str, i, j-1))
       i = k + 1
     else
-      insert(t, string.sub(s, i))
+      insert(t, string.sub(str, i))
     end
   end
   return t
 end
 
-local function splitters(s, pat, find) --- return list of separators
+local function splitters(str, pat, find) --- return list of separators
   find = find or string.find -- could be find_outside_braces
   local t = { }
   local insert = table.insert
-  local j, k = find(s, pat, 1)
+  local j, k = find(str, pat, 1)
   while j do
-    insert(t, string.sub(s, j, k))
-    j, k = find(s, pat, k+1)
+    insert(t, string.sub(str, j, k))
+    j, k = find(str, pat, k+1)
   end
   return t
 end
 
-local function namesplit(s)
-  local t = split(s, '%s+[aA][nN][dD]%s+', find_outside_braces)
+local function namesplit(str)
+  local t = split(str, '%s+[aA][nN][dD]%s+', find_outside_braces)
   local i = 2
   while i <= #t do
     while string.find(t[i], '^[aA][nN][dD]%s+') do
@@ -75,10 +75,10 @@ do
   local leading_white_sep = '^' .. white_sep
 
   -- <name-parsing utilities>=
-  local function isVon(s)
-    local lower  = find_outside_braces(s, '%l') -- first nonbrace lowercase
-    local letter = find_outside_braces(s, '%a') -- first nonbrace letter
-    local bs, _, _ = find_outside_braces(s, '%{%\\(%a+)') -- \xxx
+  local function isVon(str)
+    local lower  = find_outside_braces(str, '%l') -- first nonbrace lowercase
+    local letter = find_outside_braces(str, '%a') -- first nonbrace letter
+    local bs, _, _ = find_outside_braces(str, '%{%\\(%a+)') -- \xxx
     if lower and lower <= letter and lower <= (bs or lower) then
       return true
     elseif letter and letter <= (bs or letter) then
@@ -89,9 +89,9 @@ do
       -- elseif lower_specials[command] then
       --   return true
       -- else
-        -- local close_brace = find_outside_braces(s, '%}', ebs+1)
-        lower  = string.find(s, '%l') -- first nonbrace lowercase
-        letter = string.find(s, '%a') -- first nonbrace letter
+        -- local close_brace = find_outside_braces(str, '%}', ebs+1)
+        lower  = string.find(str, '%l') -- first nonbrace lowercase
+        letter = string.find(str, '%a') -- first nonbrace letter
         return lower and lower <= letter
       -- end
     else
@@ -99,14 +99,14 @@ do
     end
   end
 
-  function parse_name(s, inter_token)
-    if string.find(s, trailing_commas) then
-      SU.error("Name '%s' has one or more commas at the end", s)
+  function parse_name(str, inter_token)
+    if string.find(str, trailing_commas) then
+      SU.error("Name '%s' has one or more commas at the end", str)
     end
-    s = string.gsub(s, trailing_commas, '')
-    s = string.gsub(s, leading_white_sep, '')
-    local tokens = split(s, white_comma_sep, find_outside_braces)
-    local trailers = splitters(s, white_comma_sep, find_outside_braces)
+    str = string.gsub(str, trailing_commas, '')
+    str = string.gsub(str, leading_white_sep, '')
+    local tokens = split(str, white_comma_sep, find_outside_braces)
+    local trailers = splitters(str, white_comma_sep, find_outside_braces)
     -- The string separating tokens is reduced to a single
     -- ``separator character.'' A comma always trumps other
     -- separator characters. Otherwise, if there's no comma,
@@ -116,12 +116,12 @@ do
     -- part.)
     -- <rewrite [[trailers]] to hold a single separator character each>=
     for i = 1, #trailers do
-      local s = trailers[i]
-      assert(string.len(s) > 0)
-      if string.find(s, ',') then
+      local trailer = trailers[i]
+      assert(string.len(trailer) > 0)
+      if string.find(trailer, ',') then
         trailers[i] = ','
       else
-        trailers[i] = string.sub(s, 1, 1)
+        trailers[i] = string.sub(trailer, 1, 1)
       end
     end
     local commas = { } --- maps each comma to index of token the follows it
@@ -217,11 +217,11 @@ do
           end
         end
         local ss = tokens[start]
-        local s  = abbrev(tokens[start])
+        local str  = abbrev(tokens[start])
         for i = start + 1, lim - 1 do
           if inter_token then
             ss = ss .. inter_token .. tokens[i]
-            s  = s  .. inter_token .. abbrev(tokens[i])
+            str  = str  .. inter_token .. abbrev(tokens[i])
           else
             local ssep, nnext = trailers[i-1], tokens[i]
             local sep,  next  = ssep,          abbrev(nnext)
@@ -236,17 +236,17 @@ do
             elseif i == lim-1 then
               sep, ssep = '~', '~'
             elseif i == start + 1 then
-              sep  = text_char_count(s)  < 3 and '~' or ' '
+              sep  = text_char_count(str)  < 3 and '~' or ' '
               ssep = text_char_count(ss) < 3 and '~' or ' '
             else
               sep, ssep = ' ', ' '
             end
             ss = ss ..        ssep .. nnext
-            s  = s  .. '.' .. sep  .. next
+            str  = str  .. '.' .. sep  .. next
           end
         end
         name[long] = ss
-        name[short] = s
+        name[short] = str
       end
     end
     set_name(first_start, first_lim, 'ff', 'f')
