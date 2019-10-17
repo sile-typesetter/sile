@@ -75,7 +75,7 @@ do
   local leading_white_sep = '^' .. white_sep
 
   -- <name-parsing utilities>=
-  function isVon(s)
+  local function isVon(s)
     local lower  = find_outside_braces(s, '%l') -- first nonbrace lowercase
     local letter = find_outside_braces(s, '%a') -- first nonbrace letter
     local bs, ebs, command = find_outside_braces(s, '%{%\\(%a+)') -- \xxx

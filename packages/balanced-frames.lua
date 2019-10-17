@@ -44,7 +44,7 @@ SILE.typesetter.pageBuilder = function (self, independent)
   -- OK. Now we have to balance the frames. We are going to cheat and
   -- adjust the height of each frame to be an appropriate fraction of
   -- the content height
-  local frame = self.frame
+  frame = self.frame
   SU.debug("balancer", "Each column is now "..(totalHeight.length / colCount))
   while frame and frame.balanced == true do
     frame:relax("bottom")

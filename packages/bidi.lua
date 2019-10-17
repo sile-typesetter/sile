@@ -19,7 +19,7 @@ SILE.registerCommand("thisframeRTL", function (options, content)
 end)
 
 local function reverse_portion(tbl, s, e)
-  rv = {}
+  local rv = {}
   for i = 1, s-1 do rv[#rv+1] = tbl[i] end
   for i = e, s, -1 do rv[#rv+1] = tbl[i] end
   for i = e+1, #tbl do rv[#rv+1] = tbl[i] end
@@ -40,19 +40,19 @@ local function create_matrix(line, base_level)
   end
 
   for level = base_level+1, max_level do
-    local level_start, level_limit
+    local level_start
     for i, _ in next, line do
       if line[i].level >= level then
         if not level_start then
           level_start = i
         elseif i == #line then
-          level_end = i
+          local level_end = i
           matrix = reverse_portion(matrix, level_start, level_end)
           level_start = nil
         end
       else
         if level_start then
-          level_end = i-1
+          local level_end = i-1
           matrix = reverse_portion(matrix, level_start, level_end)
           level_start = nil
         end
@@ -86,7 +86,7 @@ local reorder = function (n, self)
   for i = 1, #nl do
     if not levels[i] then
       -- resolve neutrals
-      local left_level, right_level, left, right
+      local left_level, right_level
       for left = i - 1, 1, -1 do
         if nl[left].options and nl[left].options.bidilevel then
           left_level = nl[left].options.bidilevel

@@ -34,10 +34,10 @@ SILE.nodeMakers.base = std.object {
     self.lastnode = false
     self.lasttype = false
   end,
-  iterator = function (self, items)
+  iterator = function (_, _)
     SU.error("Abstract function nodemaker:iterator called", true)
   end,
-  charData = function (self, char)
+  charData = function (_, char)
     local cp = SU.codepoint(char)
     if not chardata[cp] then return {} end
     return chardata[cp]
@@ -81,7 +81,8 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
   end,
   handleInitialGlue = function (self, items)
     local i = 1
-    while i <= #items do item = items[i]
+    while i <= #items do
+      local item = items[i]
       local char = item.text
       if self:isSpace(item.text) then self:makeGlue(item) else break end
       i = i + 1
@@ -98,7 +99,7 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
       self.lastnode = "glue"
     end
   end,
-  isICUBreakHere = function (self, chunks, item)
+  isICUBreakHere = function (_, chunks, item)
     return chunks[1] and (item.index >= chunks[1].index)
   end,
   handleICUBreak = function (self, chunks, item)
@@ -145,13 +146,15 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
   end,
   iterator = function (self, items)
     local fulltext = ""
-    for i = 1, #items do item = items[i]
+    for i = 1, #items do
+      local item = items[i]
       fulltext = fulltext .. items[i].text
     end
     local chunks = { icu.breakpoints(fulltext, self.options.language) }
     self:init()
     table.remove(chunks, 1)
     return coroutine.wrap(function ()
+      local i
       i, self.items = self:handleInitialGlue(items)
       for i = i, #items do
         self.i = i

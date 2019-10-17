@@ -8,7 +8,7 @@ local outputBackground = function (color)
   SILE.outputter:popColor()
 end
 
-SILE.registerCommand("background", function (options, content)
+SILE.registerCommand("background", function (options, _)
   options.color = options.color or "white"
   options.allpages = options.allpages or true
   outputBackground(options.color)

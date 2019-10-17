@@ -60,13 +60,14 @@ local transliteration = {
   { al = "خ", la = "x"}
 }
 
-arabicToLatin = function(s)
+local arabicToLatin = function(s)
   for i = 1,#transliteration do
     s = s:gsub(transliteration[i].al, transliteration[i].la)
   end
   return s
 end
-latinToArabic = function(s, useLapa)
+
+local latinToArabic = function(s, useLapa)
   for i = 1,#transliteration do
     if useLapa then
       s = s:lower():gsub(transliteration[i].lapa or transliteration[i].la, transliteration[i].al)
@@ -95,7 +96,7 @@ local dropFirst = function(t)
 end
 
 local lastjoinable = function (t)
-  local t = SU.splitUtf8(t)
+  t = SU.splitUtf8(t)
   local last = t[#t]
   local jointype = chardata[SU.codepoint(last)] and chardata[SU.codepoint(last)].arabic
   local joinable = jointype == "d" or jointype == "l"

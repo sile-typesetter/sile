@@ -27,7 +27,7 @@ local applyConverter = function (source, converter)
     return targetFile -- already converted
   end
 
-  command = string.gsub(converter.command, "%$(%w+)", {
+  local command = string.gsub(converter.command, "%$(%w+)", {
     SOURCE = source,
     TARGET = targetFile
   })
