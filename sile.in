@@ -77,3 +77,4 @@ if SILE.masterFilename then
 else
   SILE.repl()
 end
+-- vim: ft=lua

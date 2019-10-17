@@ -1,16 +1,22 @@
 std = "max"
 include_files = {
-	"**/*.lua",
-	"*.rockspec",
-	".luacheckrc"
+  "**/*.lua",
+  "sile.in",
+  "*.rockspec",
+  ".luacheckrc"
 }
 exclude_files = {
-	"lua_modules",
-	"lua-libraries"
+  "lua_modules",
+  "lua-libraries"
 }
 globals = {
-	"SILE",
-	"SU",
-	"bit32"
+  "SILE",
+  "SU",
+  "std",
+  "pl",
+  "bit32",
+  "SYSTEM_SILE_PATH",
+  "SHARED_LIB_EXT",
+  "ProFi"
 }
 max_line_length = false
