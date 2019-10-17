@@ -11,6 +11,15 @@ SILE.require("core/base-shaper")
 
 local palcache = {}
 
+local function _shape(text, item)
+  local offset = item.offset
+  local length = item.length
+  local analysis = item.analysis
+  local pgs = pango.GlyphString.new()
+  pango.shape(string.sub(text, 1+offset), length, analysis, pgs)
+  return pgs
+end
+
 SILE.shapers.pango = SILE.shapers.base {
   getFace = function(options)
     if options.pal then
@@ -70,15 +79,5 @@ SILE.shapers.pango = SILE.shapers.base {
     -- I have nothing here.
   end
 }
-
-function _shape(text, item)
-  local offset = item.offset
-  local length = item.length
-  local analysis = item.analysis
-  local pgs = pango.GlyphString.new()
-  pango.shape(string.sub(text, 1+offset), length, analysis, pgs)
-  return pgs
-end
-
 
 SILE.shaper = SILE.shapers.pango
