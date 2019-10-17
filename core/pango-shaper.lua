@@ -22,9 +22,9 @@ end
 
 SILE.shapers.pango = SILE.shapers.base {
   getFace = function(options)
+    local pal
     if options.pal then
-      pal = options.pal
-      return pal
+      return options.pal
     end
     local p = std.string.pickle(options)
     if palcache[p] then return palcache[p]

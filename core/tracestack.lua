@@ -198,7 +198,7 @@ end
 -- Returns multiline trace string with locations of each frame up to maxdepth
 function traceStack:locationTrace(maxdepth)
   local depth = maxdepth or #self
-  trace = formatTraceLine(self:locationHead())
+  local trace = formatTraceLine(self:locationHead())
   depth = depth - 1
   if depth > 1 then
     repeat

@@ -9,8 +9,7 @@ local document
 local page
 local painter
 local pagesize
-local font
-local lastfont
+local lastkey
 
 local podofoFaces = {}
 
@@ -23,7 +22,7 @@ SILE.outputters.podofo = {
     pagesize:SetWidth(SILE.documentState.paperSize[1])
     pagesize:SetHeight(SILE.documentState.paperSize[2])
     page = document:CreatePage(pagesize)
-    painter = podofo.PdfPainter()
+    painter = pdf.PdfPainter()
     painter:SetPage(page)
   end,
   newPage = function ()

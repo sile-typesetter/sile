@@ -55,7 +55,7 @@ SILE.paperSizes = {
 }
 
 SILE.paperSizeParser = function (size)
-  _, _, x, y = string.find(size, "(.+)%s+x%s+(.+)")
+  local _, _, x, y = string.find(size, "(.+)%s+x%s+(.+)")
   if x then
     return { SILE.toPoints(x), SILE.toPoints(y) }
   elseif (SILE.paperSizes[size]) then

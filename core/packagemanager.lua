@@ -74,7 +74,7 @@ local function updateCatalogue ()
     end
   end
   print("Loading catalogue from "..catalogueURL)
-  result, statuscode, content = http.request(catalogueURL)
+  local result, statuscode, _ = http.request(catalogueURL)
   if statuscode ~= 200 then
     SU.error("Could not load catalogue from "..catalogueURL..": "..statuscode)
   end
@@ -93,7 +93,7 @@ local function loadInstalledCatalogue()
   local file = io.open(installedCatalogue, "r")
   if file ~= nil then
     local contents = file:read("*all")
-    success, res = loadInSandbox(contents)
+    local success, res = loadInSandbox(contents)
     if not success then
       SU.error("Error loading installed package list: "..res)
     end

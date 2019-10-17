@@ -80,7 +80,7 @@ SILE.init = function ()
   end
   if SILE.dolua then
     for _, func in pairs(SILE.dolua) do
-      _, err = pcall(func)
+      local _, err = pcall(func)
       if err then error(err) end
     end
   end
@@ -202,7 +202,7 @@ end
 
 function SILE.readFile(filename)
   SILE.currentlyProcessingFile = filename
-  local doc = nil
+  local doc
   if filename == "-" then
     io.stderr:write("<STDIN>\n")
     doc = io.stdin:read("*a")

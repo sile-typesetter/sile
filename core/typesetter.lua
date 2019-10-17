@@ -531,7 +531,7 @@ SILE.defaultTypesetter = std.object {
     SU.debug("typesetter", "   Leading height = " .. tostring(bls.height) .. " - " .. tostring(vbox.height) .. " - " .. tostring(prevDepth) .. " = "..depth)
 
     if (depth > SILE.settings.get("document.lineskip").height:absolute().length) then
-      len = SILE.length.new({ length = depth, stretch = bls.height.stretch, shrink = bls.height.shrink })
+      local len = SILE.length.new({ length = depth, stretch = bls.height.stretch, shrink = bls.height.shrink })
       return SILE.nodefactory.newVglue({height = len})
     else
       local lead = SILE.nodefactory.newVglue(SILE.settings.get("document.lineskip"))
@@ -572,7 +572,7 @@ SILE.defaultTypesetter = std.object {
     for i = 1, #breappoints do
       local point = breappoints[i]
       if not(point.position == 0) then
-        slice = {}
+        local slice = {}
         local seenHbox = 0
         -- local toss = 1
         for j = linestart, point.position do
