@@ -50,7 +50,7 @@ local function fixupPaths()
   local cpaths = ""
   for pkg, _ in pairs(SILE.PackageManager.installed) do
     paths = paths .. packageHome .. pkg .. '/?.lua;'
-    cpaths = cpaths .. packagehome .. pkg .. "/?."..SHARED_LIB_EXT.. ";"
+    cpaths = cpaths .. packageHome .. pkg .. "/?."..SHARED_LIB_EXT.. ";"
   end
   package.path = origpath:gsub("?.lua", "?.lua;"..paths, 1)
   package.cpath = origcpath .. ";" .. cpaths
@@ -133,11 +133,11 @@ function updatePackage(packageName, branch)
     installPackage(packageName)
   end
 
-  local ret = execute("git pull")
+  local ret = os.execute("git pull")
   if not ret then
     SU.error("Error updating repository for package "..packageName..": "..ret)
   end
-  local ret = execute("git checkout "..branch)
+  local ret = os.execute("git checkout "..branch)
   if not ret then
     SU.error("Error updating repository for package "..packageName..": "..ret)
   end
