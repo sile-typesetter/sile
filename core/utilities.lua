@@ -74,7 +74,7 @@ end
 
 utilities.debug = function (category, ...)
   if utilities.debugging(category) then
-    io.stderr:write("\n["..category.."] ", table.concat({ ... }, " "))
+    io.stderr:write("\n["..category.."] ", utilities.concat(table.pack(...), " "))
   end
 end
 
