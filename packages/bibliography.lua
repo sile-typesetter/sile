@@ -231,15 +231,15 @@ do
             -- tokens if the first token is short enough; otherwise,
             -- a space is the default.
             -- <possibly adjust [[sep]] and [[ssep]] according to token position and size>=
-            if string.find(sep, sep_char) then
-              -- do nothing; sep is OK
-            elseif i == lim-1 then
-              sep, ssep = '~', '~'
-            elseif i == start + 1 then
-              sep  = text_char_count(shortname)  < 3 and '~' or ' '
-              ssep = text_char_count(longname) < 3 and '~' or ' '
-            else
-              sep, ssep = ' ', ' '
+            if not string.find(sep, sep_char) then
+              if i == lim-1 then
+                sep, ssep = '~', '~'
+              elseif i == start + 1 then
+                sep  = text_char_count(shortname)  < 3 and '~' or ' '
+                ssep = text_char_count(longname) < 3 and '~' or ' '
+              else
+                sep, ssep = ' ', ' '
+              end
             end
             longname = longname ..        ssep .. nnext
             shortname  = shortname  .. '.' .. sep  .. next
