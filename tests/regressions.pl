@@ -14,8 +14,9 @@ for (@specifics ? @specifics : <tests/*.sil>) {
 	my $actual = $_; $actual =~ s/\.sil$/\.actual/;
   my ($unsupported, $knownbad);
   if (-f $expectation) {
-		# Entirely skip tests designed for an OS that is not us
-		if (system("head -n1 $_ | grep -q -P -v 'OS=(?!$^O)'")) {
+        open my $exp, $expectation or die $!;
+        my $firstline = <$exp>;
+        if ($firstline =~ /OS=(?!$^O)/) {
 			push @unsupported, $_;
 			next;
 		}
