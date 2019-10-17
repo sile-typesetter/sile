@@ -158,7 +158,7 @@ Options:
   end
 
   -- http://lua-users.org/wiki/VarargTheSecondClassCitizen
-  local identity = function (...) return utils.unpack({...}, 1, select('#', ...)) end
+  local identity = function (...) return table.unpack({...}, 1, select('#', ...)) end
   SILE.errorHandler = opts.traceback and debug.traceback or identity
   SILE.traceback = opts.traceback
 end

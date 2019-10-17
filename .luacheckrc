@@ -1,4 +1,4 @@
-std = "min"
+std = "max"
 include_files = {
 	"**/*.lua",
 	"*.rockspec",
