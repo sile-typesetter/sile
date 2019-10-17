@@ -15,6 +15,7 @@ setmetatable(SILE.inputs.TeXlike.passthroughCommands, {
     end
   })
 
+-- luacheck: push ignore
 SILE.inputs.TeXlike.parser = function (_ENV)
   local isPassthrough = function (_, _, command) return SILE.inputs.TeXlike.passthroughCommands(command) end
   local isNotPassThrough = function (...) return not isPassthrough(...) end
@@ -87,6 +88,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
       ( P"}" * _ ) + E"Environment begun but never ended"
     )
 end
+-- luacheck: pop
 
 local linecache = {}
 local lno, col, lastpos

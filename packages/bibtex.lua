@@ -7,6 +7,7 @@ local identifier = (ID + lpeg.S(":-"))^1
 local balanced = lpeg.C{ "{" * lpeg.P(" ")^0 * lpeg.C(((1 - lpeg.S"{}") + lpeg.V(1))^0) * "}" } / function (...) local t={...}; return t[2] end
 local doubleq = lpeg.C( lpeg.P '"' * lpeg.C(((1 - lpeg.S '"\r\n\f\\') + (lpeg.P '\\' * 1)) ^ 0) * '"' )
 
+-- luacheck: push ignore
 local bibtexparser = epnf.define(function (_ENV)
   local _ = WS^0
   local sep = lpeg.S(",;") * _
@@ -22,6 +23,7 @@ local bibtexparser = epnf.define(function (_ENV)
   blockcomment = P("@comment")+ balanced/function () return "" end -- Don't bother telling me about comments
   entry = Ct( P("@") * Cg(myID, "type") * _ * P("{") * _ * Cg(myID, "label") * _ * sep * list * P("}") * _ )
 end)
+-- luacheck: pop
 
 local parseBibtex = function (fn)
   fn = SILE.resolveFile(fn)

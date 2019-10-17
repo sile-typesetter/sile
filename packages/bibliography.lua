@@ -261,9 +261,11 @@ end
 
 Bibliography = { -- This is big enough to have its own global var
   CitationStyles = {
+    -- luacheck: push ignore
     AuthorYear = function(_ENV)
       return andSurnames(3), " ", year, optional(", ", cite.page)
     end
+    -- luacheck: pop
   },
 
   produceCitation = function (cite, bib, style)
