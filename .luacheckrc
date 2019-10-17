@@ -3,6 +3,7 @@ include_files = {
   "**/*.lua",
   "sile.in",
   "*.rockspec",
+  ".busted",
   ".luacheckrc"
 }
 exclude_files = {
@@ -11,6 +12,9 @@ exclude_files = {
   ".lua",
   ".luarocks",
   ".install"
+}
+files["spec"] = {
+  std = "+busted"
 }
 globals = {
   "SILE",
