@@ -7,7 +7,10 @@ include_files = {
 }
 exclude_files = {
   "lua_modules",
-  "lua-libraries"
+  "lua-libraries",
+  ".lua",
+  ".luarocks",
+  ".install"
 }
 globals = {
   "SILE",
