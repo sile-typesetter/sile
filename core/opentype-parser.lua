@@ -83,8 +83,6 @@ local parseName = function(str)
         language = MacintoshLanguages[record.language]
       elseif record.language < 0x8000 and record.platform == 3 then
         language = WindowsLanguages[record.language]
-      else
-        -- I don't actually care
       end
     end
     name.records[i].language = language

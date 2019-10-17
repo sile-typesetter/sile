@@ -100,12 +100,12 @@ SILE.defaultTypesetter = std.object {
     self.frame = frame
     self.frame:init()
   end,
-  getMargins = function (self)
+  getMargins = function (_)
     local lskip = SILE.settings.get("document.lskip") or SILE.nodefactory.zeroGlue
     local rskip = SILE.settings.get("document.rskip") or SILE.nodefactory.zeroGlue
     return _margins { lskip=lskip, rskip=rskip }
   end,
-  setMargins = function (self, margins)
+  setMargins = function (_, margins)
     SILE.settings.set("document.lskip", margins.lskip)
     SILE.settings.set("document.rskip", margins.rskip)
   end,
@@ -223,7 +223,7 @@ SILE.defaultTypesetter = std.object {
     local breakpoints = SILE.linebreak:doBreak(nodelist, breakWidth)
     return self:breakpointsToLines(breakpoints)
   end,
-  shapeAllNodes = function (self, nodelist)
+  shapeAllNodes = function (_, nodelist)
     local newNl = {}
     for i = 1, #nodelist do
       if nodelist[i]:isUnshaped() then
@@ -243,12 +243,12 @@ SILE.defaultTypesetter = std.object {
     local nodelist = self.state.nodes
     if #nodelist == 0 then return {} end
     for j = #nodelist, 1, -1 do
-      if nodelist[j]:isMigrating() then
-        -- pass
-      elseif nodelist[j].discardable then
-        table.remove(nodelist, j)
-      else
-        break
+      if not nodelist[j]:isMigrating() then
+        if nodelist[j].discardable then
+          table.remove(nodelist, j)
+        else
+          break
+        end
       end
     end
     while (#nodelist > 0 and nodelist[1]:isPenalty()) do table.remove(nodelist, 1) end

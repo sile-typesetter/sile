@@ -321,7 +321,7 @@ local _vbox = _box {
     if type(advanceamount) == "table" then advanceamount = advanceamount.length end
     typesetter.frame:advancePageDirection(advanceamount)
     local initial = true
-    for i,node in pairs(self.nodes) do
+    for _, node in pairs(self.nodes) do
       if initial and (node:isGlue() or node:isPenalty()) then
         -- do nothing
       else
