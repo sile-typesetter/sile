@@ -51,13 +51,13 @@ local function reconstrainFrameset(fs)
   end
 end
 
-SILE.registerCommand("crop:header", function (o, c)
+SILE.registerCommand("crop:header", function (options, content)
   local info = SILE.masterFilename .. " - " .. date.date("%x %X") .. " -  " .. outcounter
   SILE.typesetter:typeset(info)
 end)
 
-SILE.registerCommand("crop:setup", function (o, c)
-  local papersize = SU.required(o, "papersize", "setting up crop marks")
+SILE.registerCommand("crop:setup", function (options, content)
+  local papersize = SU.required(options, "papersize", "setting up crop marks")
   local size = SILE.paperSizeParser(papersize)
   local oldsize = SILE.documentState.paperSize
   SILE.documentState.paperSize = size

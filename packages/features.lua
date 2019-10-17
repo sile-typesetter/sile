@@ -94,22 +94,22 @@ local opentype = { -- Mapping of opentype features to friendly names
 -- Parser for feature strings
 local featurename = lpeg.C((1-lpeg.S(",;:="))^1)
 local value = lpeg.C(SILE.parserBits.number.integer)
-local tag = lpeg.C(lpeg.S("+-")) * featurename * (lpeg.P("=") * value)^0 * lpeg.S(",;:")^-1 / function (pn, key, value) return key, { posneg = pn, value = value} end
+local tag = lpeg.C(lpeg.S("+-")) * featurename * (lpeg.P("=") * value)^0 * lpeg.S(",;:")^-1 / function (pos, k, v) return k, { posneg = pos, value = v} end
 local featurestring = lpeg.Cf(lpeg.Ct("") * tag^0, rawset)
 
-local featurestring2table = function (s)
-  return featurestring:match(s) or SU.error("Unparsable Opentype feature string '"..s.."'")
+local featurestring2table = function (str)
+  return featurestring:match(str) or SU.error("Unparsable Opentype feature string '"..str.."'")
 end
 
-local table2featurestring = function (t)
+local table2featurestring = function (tbl)
   local t2 = {}
-  for k, v in pairs(t) do t2[#t2+1] = v.posneg..k..(v.value and "="..v.value or "") end
+  for k, v in pairs(tbl) do t2[#t2+1] = v.posneg..k..(v.value and "="..v.value or "") end
   return table.concat(t2, ";")
 end
 
-SILE.registerCommand("add-font-feature", function (o, c)
+SILE.registerCommand("add-font-feature", function (options, content)
   local t = featurestring2table(SILE.settings.get("font.features"))
-  for k, v in pairs(o) do
+  for k, v in pairs(options) do
     if not opentype[k] then SU.warn("Unknown Opentype feature "..k)
     else
       local posneg = "+"
@@ -128,10 +128,10 @@ SILE.registerCommand("add-font-feature", function (o, c)
   SILE.settings.set("font.features", table2featurestring(t))
 end)
 
-SILE.registerCommand("remove-font-feature", function (o, c)
+SILE.registerCommand("remove-font-feature", function (options, content)
   local t = featurestring2table(SILE.settings.get("font.features"))
 
-  for k, v in pairs(o) do
+  for k, v in pairs(options) do
     if not opentype[k] then SU.warn("Unknown Opentype feature "..k)
     else
       v = v:gsub("^No", "")

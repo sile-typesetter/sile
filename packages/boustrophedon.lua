@@ -19,7 +19,7 @@ swap.outputYourself = function (self, typesetter, line)
   typesetter.frame:newLine()
 end
 
-SILE.registerCommand("boustrophedon", function (o, c)
+SILE.registerCommand("boustrophedon", function (options, content)
   SILE.typesetter:leaveHmode()
   local saveBoxup = SILE.typesetter.boxUpNodes
   local swaps = 0
@@ -35,7 +35,7 @@ SILE.registerCommand("boustrophedon", function (o, c)
     end
     return nl
   end
-  SILE.process(c)
+  SILE.process(content)
   SILE.typesetter:leaveHmode()
   SILE.typesetter.boxUpNodes = saveBoxup
   if swaps % 2 == 1 then

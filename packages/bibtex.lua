@@ -45,32 +45,32 @@ end
 SILE.scratch.bibtex = { bib = {}, bibstyle = {} }
 SILE.require("packages/bibliography")
 
-SILE.registerCommand("loadbibliography", function (o, c)
-  local file = SU.required(o, "file", "loadbibliography")
+SILE.registerCommand("loadbibliography", function (options, content)
+  local file = SU.required(options, "file", "loadbibliography")
   SILE.scratch.bibtex.bib = parseBibtex(file) -- Later we'll do multiple bibliogs, but not now
 end)
 
-SILE.registerCommand("bibstyle", function (o, c)
-  SILE.scratch.bibtex.bibstyle = SILE.require("packages/bibstyles/"..c)
+SILE.registerCommand("bibstyle", function (options, content)
+  SILE.scratch.bibtex.bibstyle = SILE.require("packages/bibstyles/"..content)
 end)
 
 SILE.call("bibstyle", {}, "chicago") -- Load some default
 
-SILE.registerCommand("cite", function (o, c)
-  if not o.key then o.key = c[1] end
-  local cite = Bibliography.produceCitation(o, SILE.scratch.bibtex.bib, SILE.scratch.bibtex.bibstyle)
+SILE.registerCommand("cite", function (options, content)
+  if not options.key then options.key = content[1] end
+  local cite = Bibliography.produceCitation(options, SILE.scratch.bibtex.bib, SILE.scratch.bibtex.bibstyle)
   if cite == Bibliography.Errors.UNKNOWN_REFERENCE then
-    SU.warn("Unknown reference in citation "..o)
+    SU.warn("Unknown reference in citation "..options)
     return
   end
   SILE.doTexlike(cite)
 end)
 
-SILE.registerCommand("reference", function (o, c)
-  if not o.key then o.key = c[1] end
-  local cite = Bibliography.produceReference(o, SILE.scratch.bibtex.bib, SILE.scratch.bibtex.bibstyle)
+SILE.registerCommand("reference", function (options, content)
+  if not options.key then options.key = content[1] end
+  local cite = Bibliography.produceReference(options, SILE.scratch.bibtex.bib, SILE.scratch.bibtex.bibstyle)
   if cite == Bibliography.Errors.UNKNOWN_REFERENCE then
-    SU.warn("Unknown reference in citation "..o)
+    SU.warn("Unknown reference in citation "..options)
     return
   end
   SILE.doTexlike(cite)

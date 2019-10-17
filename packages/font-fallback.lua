@@ -38,8 +38,8 @@ SILE.registerCommand("font:clear-fallbacks", function ()
   fontlist = {}
 end)
 
-SILE.registerCommand("font:add-fallback", function (o, c)
-  fontlist[#fontlist+1] = o
+SILE.registerCommand("font:add-fallback", function (options, content)
+  fontlist[#fontlist+1] = options
 end)
 
 SILE.shapers.harfbuzzWithFallback = SILE.shapers.harfbuzz {
