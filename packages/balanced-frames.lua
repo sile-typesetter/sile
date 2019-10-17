@@ -1,8 +1,8 @@
 local BALANCE_PENALTY = -17777
 
-SILE.registerCommand("balancecolumns", function(o,c)
+SILE.registerCommand("balancecolumns", function (o, c)
   SILE.typesetter:leaveHmode()
-  SILE.call("penalty", {penalty = BALANCE_PENALTY})
+  SILE.call("penalty", { penalty = BALANCE_PENALTY })
 end)
 
 SILE.typesetter.pageBuilder = function (self, independent)
@@ -25,7 +25,7 @@ SILE.typesetter.pageBuilder = function (self, independent)
   local q = self.state.outputQueue
   local totalHeight = SILE.length.new({  })
   local mustBalance = 0
-  for i=1,#q do
+  for i = 1, #q do
     totalHeight = totalHeight + q[i].height + q[i].depth
     if q[i]:isPenalty() and q[i].penalty <= BALANCE_PENALTY then
       mustBalance = i
@@ -55,7 +55,7 @@ SILE.typesetter.pageBuilder = function (self, independent)
   local pb = SILE.pagebuilder
   SILE.pagebuilder = SILE.defaultPagebuilder
   while self.frame and self.frame.balanced do
-    SILE.defaultTypesetter.pageBuilder(self,true)
+    SILE.defaultTypesetter.pageBuilder(self, true)
     if self.frame.next and SILE.getFrame(self.frame.next).balanced == true then
       self:initFrame(SILE.getFrame(self.frame.next))
       self:runHooks("newframe")

@@ -1,6 +1,6 @@
 SILE.require("packages/color")
 
-local outputBackground = function(color)
+local outputBackground = function (color)
   local page = SILE.getFrame("page")
   local backgroundColor = SILE.colorparser(color)
   SILE.outputter:pushColor(backgroundColor)
@@ -14,7 +14,7 @@ SILE.registerCommand("background", function (options, content)
   outputBackground(options.color)
   if options.allpages and options.allpages ~= "false" then
     local oldNewPage = SILE.documentState.documentClass.newPage
-    SILE.documentState.documentClass.newPage = function(self)
+    SILE.documentState.documentClass.newPage = function (self)
       local page = oldNewPage(self)
       outputBackground(options.color)
       return page

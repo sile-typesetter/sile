@@ -8,9 +8,9 @@ SILE.require("packages/raiselower")
 local insertions = SILE.require("packages/insertions")
 SILE.scratch.counters.footnote = { value= 1, display= "arabic" }
 
-SILE.registerCommand("footnotemark", function(options, content)
-  SILE.call("raise", {height = "0.7ex"}, function()
-    SILE.call("font", { size = "1.5ex" }, function()
+SILE.registerCommand("footnotemark", function (options, content)
+  SILE.call("raise", { height = "0.7ex" }, function ()
+    SILE.call("font", { size = "1.5ex" }, function ()
       SILE.typesetter:typeset(SILE.formatCounter(SILE.scratch.counters.footnote))
     end)
   end)
@@ -55,8 +55,8 @@ SILE.registerCommand("footnote", function(options, content)
   SILE.scratch.counters.footnote.value = SILE.scratch.counters.footnote.value + 1
 end)
 
-SILE.registerCommand("footnote:font", function(options, content)
-  SILE.call("font", {size = "9pt"}, function()
+SILE.registerCommand("footnote:font", function (options, content)
+  SILE.call("font", { size = "9pt" }, function ()
     SILE.process(content)
   end)
 end)
@@ -66,19 +66,19 @@ end)
 
 SILE.registerCommand("footnote:counter", function(options, content)
   SILE.call("noindent")
-  SILE.typesetter:typeset(SILE.formatCounter(SILE.scratch.counters.footnote)..".")
+  SILE.typesetter:typeset(SILE.formatCounter(SILE.scratch.counters.footnote) .. ".")
   SILE.call("qquad")
 end)
 
 return {
   init = function (class, args)
     insertions.exports:initInsertionClass("footnote", {
-    insertInto = args.insertInto,
-    stealFrom = args.stealFrom,
-    maxHeight = SILE.length.new({length = SILE.toPoints("75", "%ph") }),
-    topBox = SILE.nodefactory.newVglue({height = SILE.length.parse("2ex") }),
-    interInsertionSkip = SILE.length.parse("1ex"),
-  })
+        insertInto = args.insertInto,
+        stealFrom = args.stealFrom,
+        maxHeight = SILE.length.new({ length = SILE.toPoints("75", "%ph") }),
+        topBox = SILE.nodefactory.newVglue({ height = SILE.length.parse("2ex") }),
+        interInsertionSkip = SILE.length.parse("1ex"),
+      })
   end,
   exports = {
     outputInsertions = insertions.exports.outputInsertions

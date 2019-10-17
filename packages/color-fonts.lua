@@ -1,11 +1,11 @@
 local ot = SILE.require("core/opentype-parser")
 
 SILE.shapers.harfbuzzWithColor = SILE.shapers.harfbuzz {
+
   shapeToken = function (self, text, options)
     if not options.family then return {} end
     local face = SILE.font.cache(options, SILE.shaper.getFace)
     local font = ot.parseFont(face)
-
     local items = SILE.shapers.harfbuzz:shapeToken(text, options)
     if font.colr and font.cpal then
       local newItems = {}
@@ -43,15 +43,15 @@ SILE.shapers.harfbuzzWithColor = SILE.shapers.harfbuzz {
     end
     return items
   end,
+
   createNnodes = function (self, token, options)
     local items, width = self:shapeToken(token, options)
     if #items < 1 then return {} end
-
     local lang = options.language
     SILE.languageSupport.loadLanguage(lang)
     local nodeMaker = SILE.nodeMakers[lang] or SILE.nodeMakers.unicode
-    local run = { [1] = {slice = {}, color = items[1].color, chunk = "" } }
-    for i = 1,#items do
+    local run = { [1] = { slice = {}, color = items[1].color, chunk = "" } }
+    for i = 1, #items do
       if items[i].color ~= run[#run].color then
         run[#run+1] = { slice = {}, chunk = "", color = items[i].color }
         if i <#items then
@@ -62,11 +62,11 @@ SILE.shapers.harfbuzzWithColor = SILE.shapers.harfbuzz {
       run[#run].slice[#(run[#run].slice)+1] = items[i]
     end
     local nodes = {}
-    for i=1,#run do
+    for i=1, #run do
       options = std.tree.clone(options)
       if run[i].color then
         nodes[#nodes+1] = SILE.nodefactory.newHbox({
-          outputYourself= function () SILE.outputter:pushColor(run[i].color) end
+          outputYourself = function () SILE.outputter:pushColor(run[i].color) end
         })
       end
       for node in (nodeMaker { options=options }):iterator(run[i].slice, run[i].chunk) do
@@ -74,12 +74,13 @@ SILE.shapers.harfbuzzWithColor = SILE.shapers.harfbuzz {
       end
       if run[i].color then
         nodes[#nodes+1] = SILE.nodefactory.newHbox({
-          outputYourself= function () SILE.outputter:popColor() end
+          outputYourself = function () SILE.outputter:popColor() end
         })
       end
     end
     return nodes
-  end,
+  end
+
 }
 
 SILE.shaper = SILE.shapers.harfbuzzWithColor

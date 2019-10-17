@@ -2,7 +2,7 @@ local lfs = require('lfs')
 
 SILE.scratch.converters = {}
 
-local register = function(sourceExt, targetExt, command)
+local register = function (sourceExt, targetExt, command)
   table.insert(SILE.scratch.converters, {
     sourceExt = sourceExt,
     targetExt = targetExt,
@@ -10,7 +10,7 @@ local register = function(sourceExt, targetExt, command)
   })
 end
 
-local applyConverter = function(source, converter)
+local applyConverter = function (source, converter)
   local extLen = string.len(converter.sourceExt)
   local targetFile = string.sub(source, 1, -extLen-1) .. converter.targetExt
 
@@ -42,7 +42,7 @@ local applyConverter = function(source, converter)
   end
 end
 
-local checkConverters = function(source)
+local checkConverters = function (source)
   for _, converter in ipairs(SILE.scratch.converters) do
     local extLen = string.len(converter.sourceExt)
     if ((string.len(source) > extLen) and
@@ -53,11 +53,11 @@ local checkConverters = function(source)
   return source -- No conversion needed.
 end
 
-SILE.registerCommand("converters:register", function(o, c)
+SILE.registerCommand("converters:register", function (o, c)
   register(o.from, o.to, o.command)
 end)
 
-SILE.registerCommand("converters:check", function(o, c)
+SILE.registerCommand("converters:check", function (o, c)
   checkConverters(o.source)
 end)
 
@@ -65,7 +65,7 @@ local function extendCommand(name, f)
   -- Wrap an existing command
   local original = SILE.Commands[name]
   if(original) then
-    SILE.Commands[name] = function(options, content)
+    SILE.Commands[name] = function (options, content)
       f(options, content, original)
     end
   else
@@ -73,7 +73,7 @@ local function extendCommand(name, f)
   end
 end
 
-extendCommand("include", function(o, c, original)
+extendCommand("include", function (o, c, original)
   local result = checkConverters(o.src)
   if(result~=nil) then
     o["src"] = result
@@ -81,7 +81,7 @@ extendCommand("include", function(o, c, original)
   end
 end)
 
-extendCommand("img", function(o, c, original)
+extendCommand("img", function (o, c, original)
   local result = checkConverters(o.src)
   if(result~=nil) then
     o["src"] = result

@@ -35,20 +35,20 @@ SILE.registerCommand("show-counter", function (options, content)
   SILE.typesetter:setpar(SILE.formatCounter(counter))
 end, "Outputs the value of counter <id>, optionally displaying it with the <display> format.")
 
-SILE.formatMultilevelCounter = function(counter, options)
+SILE.formatMultilevelCounter = function (counter, options)
   local maxlevel = options and options.level or #counter.value
   local minlevel = options and options.minlevel or 1
   local out = {}
   for x = minlevel, maxlevel do
     out[x - minlevel + 1] = SILE.formatCounter({ display = counter.display[x], value = counter.value[x] })
   end
-  return table.concat( out, "." )
+  return table.concat(out, ".")
 end
 
 local function getMultilevelCounter(id)
   local counter = SILE.scratch.counters[id]
   if not counter then
-    counter = { value= {0}, display= {"arabic"}, format = SILE.formatMultilevelCounter }
+    counter = { value= { 0 }, display= { "arabic" }, format = SILE.formatMultilevelCounter }
     SILE.scratch.counters[id] = counter
   end
   return counter

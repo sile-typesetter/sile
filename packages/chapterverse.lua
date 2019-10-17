@@ -1,4 +1,5 @@
 SILE.require("packages/infonode")
+
 SILE.scratch.chapterverse = {}
 
 SILE.registerCommand("save-book-title", function (options, content)
