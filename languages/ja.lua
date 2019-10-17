@@ -9,9 +9,9 @@ SILE.registerUnit("zw", { relative = true, definition = function (v)
   return v * SILE.shaper:measureChar("あ").width
 end})
 
-local hiragana = function(c) return c > 0x3040 and c <= 0x309f end
-local katakana = function(c) return c > 0x30a0 and c <= 0x30ff end
-local kanji = function(c) return c >= 0x4e00 and c <= 0x9fcc end
+local hiragana = function (c) return c > 0x3040 and c <= 0x309f end
+local katakana = function (c) return c > 0x30a0 and c <= 0x30ff end
+local kanji = function (c) return c >= 0x4e00 and c <= 0x9fcc end
 
 local classes = { -- from jlreq
   [0x2018] = 1, [0x201C] = 1, [0x0028] = 1, [0x3014] = 1, [0x005B] = 1,
@@ -51,7 +51,7 @@ local classes = { -- from jlreq
   [0x3000] = 14,
 }
 
-local jisClass = function(c)
+local jisClass = function (c)
   if c == -1 then return -1 end
   if classes[c] then return classes[c] end
   if hiragana(c) then return 15 end
@@ -63,7 +63,7 @@ end
 -- This roughly implements the kinsoku shori given in Appendix C of jlreq
 local badBeforeClasses = { [1] = true, [12] = true, [28] = true }
 local badAfterClasses = { }
-for i,v in ipairs({2,3,4,5,6,7,9,10,11,20,29}) do badAfterClasses[v] = true end
+for i, v in ipairs({ 2, 3, 4, 5, 6, 7, 9, 10, 11, 20, 29 }) do badAfterClasses[v] = true end
 
 function breakAllowed(before, after)
   local bc = jisClass(before)
@@ -139,12 +139,12 @@ SILE.nodeMakers.ja = SILE.nodeMakers.base {
   iterator = function (self, items)
     self:init()
     local options = self.options
-  return coroutine.wrap(function()
+  return coroutine.wrap(function ()
     local db
     local lastcp = -1
     local lastchar = ""
     local space = "%s" -- XXX
-    for i = 1,#items do item = items[i]
+    for i = 1, #items do item = items[i]
       local uchar = items[i].text
       local thiscp = SU.codepoint(uchar)
       db = lastchar.. "|" .. uchar
@@ -152,24 +152,25 @@ SILE.nodeMakers.ja = SILE.nodeMakers.base {
         db = db .. " S"
         coroutine.yield(SILE.shaper:makeSpaceNode(options, item))
       else
-        local length = SILE.length.new({length = SILE.toPoints(intercharacterspace(lastcp, thiscp)),
-                                   stretch = SILE.toPoints(stretchability(lastcp,thiscp)),
-                                   shrink = SILE.toPoints(shrinkability(lastcp, thiscp))
-                                  })
-          if breakAllowed(lastcp, thiscp) then
-            db = db .." G ".. length
-            coroutine.yield(SILE.nodefactory.newGlue({ width = length }))
-          elseif length.length ~= 0 or length.stretch ~= 0 or length.shrink ~= 0 then
-            db = db .." K ".. length
-            coroutine.yield(SILE.nodefactory.newKern({ width = length }))
-          else db = db .. " N"
-          end
+        local length = SILE.length.new({
+            length = SILE.toPoints(intercharacterspace(lastcp, thiscp)),
+            stretch = SILE.toPoints(stretchability(lastcp, thiscp)),
+            shrink = SILE.toPoints(shrinkability(lastcp, thiscp))
+          })
+        if breakAllowed(lastcp, thiscp) then
+          db = db .." G ".. length
+          coroutine.yield(SILE.nodefactory.newGlue({ width = length }))
+        elseif length.length ~= 0 or length.stretch ~= 0 or length.shrink ~= 0 then
+          db = db .." K ".. length
+          coroutine.yield(SILE.nodefactory.newKern({ width = length }))
+        else db = db .. " N"
+        end
         if jisClass(thiscp) == 5 or jisClass(thiscp) == 6 then
-          local node = SILE.shaper:formNnode({item}, uchar, options)
+          local node = SILE.shaper:formNnode({ item }, uchar, options)
           node.hangable = true
           coroutine.yield(node)
         else
-          coroutine.yield(SILE.shaper:formNnode({item}, uchar, options))
+          coroutine.yield(SILE.shaper:formNnode({ item }, uchar, options))
         end
       end
       lastcp =thiscp
@@ -179,7 +180,7 @@ SILE.nodeMakers.ja = SILE.nodeMakers.base {
   end)
 end }
 
-SILE.hyphenator.languages.ja = {patterns={}}
+SILE.hyphenator.languages.ja = { patterns={} }
 
 -- Internationalisation stuff
 SILE.doTexlike([[%

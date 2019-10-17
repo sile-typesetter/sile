@@ -35,10 +35,10 @@ jv.syllable = (jv.consonant * jv.V)^-1 * jv.consonant *
 
 SILE.nodeMakers.jv = SILE.nodeMakers.unicode {
   iterator = function (self, items)
-    return coroutine.wrap(function()
+    return coroutine.wrap(function ()
       self:init()
       local chunk = ""
-      for i = 1,#items do
+      for i = 1, #items do
         local char = items[i].text
         chunk = chunk .. char
       end
@@ -49,7 +49,7 @@ SILE.nodeMakers.jv = SILE.nodeMakers.unicode {
         if syll then
           while i < #items do
             if items[i].index >= total + #syll then break end
-            self:addToken(items[i].text,items[i])
+            self:addToken(items[i].text, items[i])
             i = i + 1
           end
           total = total + #syll
