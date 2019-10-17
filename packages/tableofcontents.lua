@@ -7,7 +7,7 @@
 
 SILE.scratch.tableofcontents = {}
 
-local moveNodes = function (self)
+local moveNodes = function (_)
   local node = SILE.scratch.info.thispage.toc
   if node then
     for i = 1, #node do
@@ -24,7 +24,7 @@ local writeToc = function ()
   tocfile:write(contents)
 end
 
-SILE.registerCommand("tableofcontents", function (options, content)
+SILE.registerCommand("tableofcontents", function (_, _)
   local tocfile,_ = io.open(SILE.masterFilename .. '.toc')
   if not tocfile then
     SILE.call("tableofcontents:notocmessage")

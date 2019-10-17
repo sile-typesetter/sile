@@ -1,7 +1,7 @@
 SILE.scratch.masters = {}
 local _currentMaster
 
-local function defineMaster (self, args)
+local function defineMaster (_, args)
   SU.required(args, "id", "defining master")
   SU.required(args, "frames", "defining master")
   SU.required(args, "firstContentFrame", "defining master")
@@ -73,12 +73,12 @@ SILE.registerCommand("define-master-template", function(options, content)
   SILE.frames = sp2
 end)
 
-SILE.registerCommand("switch-master-one-page", function ( options, content )
+SILE.registerCommand("switch-master-one-page", function (options, _)
   SU.required(options, "id", "switching master")
   switchMasterOnePage(options.id)
   SILE.typesetter:leaveHmode()
 end, "Switches the master for the current page")
-SILE.registerCommand("switch-master", function ( options, content )
+SILE.registerCommand("switch-master", function (options, _)
   SU.required(options, "id", "switching master")
   switchMaster(options.id)
 end, "Switches the master for the current page")

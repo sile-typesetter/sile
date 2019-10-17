@@ -44,20 +44,20 @@ end
 local macroStack = {}
 SILE.registerCommand("define", function (options, content)
   SU.required(options, "command", "defining command")
-  SILE.registerCommand(options["command"], function (options2, content2)
+  SILE.registerCommand(options["command"], function (_, _content)
     --local prevState = SILE.documentState
     --SILE.documentState = std.tree.clone( prevState )
     local depth = #macroStack
-    table.insert(macroStack, content2)
-    SU.debug("macros","Processing a "..options["command"].." Stack depth is "..depth)
+    table.insert(macroStack, _content)
+    SU.debug("macros", "Processing a "..options["command"].." Stack depth is "..depth)
     SILE.process(content)
     while (#macroStack > depth) do table.remove(macroStack) end
-    SU.debug("macros","Finished processing "..options["command"].." Stack depth is "..#macroStack.."\n")
+    SU.debug("macros", "Finished processing "..options["command"].." Stack depth is "..#macroStack.."\n")
     --SILE.documentState = prevState
   end, options.help, SILE.currentlyProcessingFile)
 end, "Define a new macro. \\define[command=example]{ ... \\process }")
 
-SILE.registerCommand("comment", function (options, content)
+SILE.registerCommand("comment", function (_, _)
 end, "Ignores any text within this command's body.")
 
 SILE.registerCommand("process", function ()
@@ -68,19 +68,22 @@ end, "Within a macro definition, processes the contents of the macro body.")
 
 SILE.baseClass = std.object {
   registerCommands = (function ()
-    SILE.registerCommand("\\", function (options, content) SILE.typesetter:typeset("\\") end)
+
+    SILE.registerCommand("\\", function (_, _)
+      SILE.typesetter:typeset("\\")
+    end)
 
     SILE.registerCommand("script", function (options, content)
       if (options["src"]) then
         require(options["src"])
       else
-        func, err = load(content[1])
+        local func, err = load(content[1])
         if not func then SU.error(err) end
         func()
       end
     end, "Runs lua code. The code may be supplied either inline or using the src=... option. (Think HTML.)")
 
-    SILE.registerCommand("include", function (options, content)
+    SILE.registerCommand("include", function (options, _)
         SILE.readFile(options["src"])
     end, "Includes a SILE file for processing.")
 
@@ -91,11 +94,11 @@ SILE.baseClass = std.object {
       SILE.typesetter:initFrame(SILE.documentState.thisPageTemplate.firstContentFrame)
     end, "Defines a new page template for the current page and sets the typesetter to use it.")
 
-    SILE.registerCommand("frame", function (options, content)
+    SILE.registerCommand("frame", function (options, _)
       SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newFrame(options)
     end, "Declares (or re-declares) a frame on this page.")
 
-    SILE.registerCommand("penalty", function (options, content)
+    SILE.registerCommand("penalty", function (options, _)
       if options.vertical and not SILE.typesetter:vmode() then
         SILE.typesetter:leaveHmode()
       end
@@ -106,7 +109,7 @@ SILE.baseClass = std.object {
       end
     end, "Inserts a penalty node. Options are penalty= for the size of the penalty and flagged= if this is a flagged penalty.")
 
-    SILE.registerCommand("discretionary", function (options, content)
+    SILE.registerCommand("discretionary", function (options, _)
       local discretionary = SILE.nodefactory.newDiscretionary({})
       if options.prebreak then
         SILE.call("hbox", {}, function () SILE.typesetter:typeset(options.prebreak) end)
@@ -126,13 +129,13 @@ SILE.baseClass = std.object {
       table.insert(SILE.typesetter.state.nodes, discretionary)
     end, "Inserts a discretionary node.")
 
-    SILE.registerCommand("glue", function (options, content)
+    SILE.registerCommand("glue", function (options, _)
       SILE.typesetter:pushGlue({
         width = SILE.length.parse(options.width):absolute()
       })
     end, "Inserts a glue node. The width option denotes the glue dimension.")
 
-    SILE.registerCommand("kern", function (options, content)
+    SILE.registerCommand("kern", function (options, _)
       table.insert(SILE.typesetter.state.nodes,
         SILE.nodefactory.newKern({
           width = SILE.length.parse(options.width):absolute()
@@ -140,7 +143,7 @@ SILE.baseClass = std.object {
       )
     end, "Inserts a glue node. The width option denotes the glue dimension.")
 
-    SILE.registerCommand("skip", function (options, content)
+    SILE.registerCommand("skip", function (options, _)
       options.discardable = options.discardable or false
       options.height = SILE.length.parse(options.height):absolute()
       SILE.typesetter:leaveHmode()
@@ -151,7 +154,7 @@ SILE.baseClass = std.object {
       end
     end, "Inserts vertical skip. The height options denotes the skip dimension.")
 
-    SILE.registerCommand("par", function (options, content)
+    SILE.registerCommand("par", function (_, _)
       SILE.typesetter:endline()
     end, "Ends the current paragraph.")
 
@@ -181,10 +184,10 @@ SILE.baseClass = std.object {
     SILE.outputter.init(self)
     self:registerCommands()
     -- Call all stored package init routines
-    for i = 1,#(SILE.baseClass.deferredInit) do (SILE.baseClass.deferredInit[i])() end
+    for i = 1, #(SILE.baseClass.deferredInit) do (SILE.baseClass.deferredInit[i])() end
     SILE.typesetter:registerPageEndHook(function ()
       if SU.debugging("frames") then
-        for k,v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
+        for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
       end
     end)
     return self:initialFrame()

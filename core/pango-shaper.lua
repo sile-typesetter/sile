@@ -10,13 +10,21 @@ local pango_context = lgi.Pango.FontMap.create_context(fm)
 SILE.require("core/base-shaper")
 
 local palcache = {}
-local spacecache = {}
+
+local function _shape(text, item)
+  local offset = item.offset
+  local length = item.length
+  local analysis = item.analysis
+  local pgs = pango.GlyphString.new()
+  pango.shape(string.sub(text, 1+offset), length, analysis, pgs)
+  return pgs
+end
 
 SILE.shapers.pango = SILE.shapers.base {
   getFace = function(options)
+    local pal
     if options.pal then
-      pal = options.pal
-      return pal
+      return options.pal
     end
     local p = std.string.pickle(options)
     if palcache[p] then return palcache[p]
@@ -44,14 +52,15 @@ SILE.shapers.pango = SILE.shapers.base {
     local twidth = SILE.length.new({})
     for i = 1,#items do local item = items[i]
       local pgs = _shape(text, item)
-      local text = string.sub(text,1+items[i].offset, items[i].length)
-      local depth, height = 0,0
+      -- local text = string.sub(text,1+items[i].offset, items[i].length)
+      -- local depth, height = 0,0
       local font = items[i].analysis.font
       twidth = twidth + pgs:get_width() / 1024
       for g in pairs(pgs.glyphs) do
         local rect = font:get_glyph_extents(pgs.glyphs[g].glyph)
         table.insert(rv, {
-          height = -rect.y / 1024, depth = (rect.y + rect.height) / 1024,
+          height = -rect.y / 1024,
+          depth = (rect.y + rect.height) / 1024,
           width = rect.width / 1024,
           glyph = pgs.glyphs[g].glyph,
           pgs = pgs,
@@ -62,7 +71,7 @@ SILE.shapers.pango = SILE.shapers.base {
     end
     return rv, twidth
   end,
-  addShapedGlyphToNnodeValue = function (self, nnodevalue, shapedglyph)
+  addShapedGlyphToNnodeValue = function (_, nnodevalue, shapedglyph)
     nnodevalue.pgs = shapedglyph.pgs
     nnodevalue.font = shapedglyph.font
   end,
@@ -70,15 +79,5 @@ SILE.shapers.pango = SILE.shapers.base {
     -- I have nothing here.
   end
 }
-
-function _shape(text, item)
-  local offset = item.offset
-  local length = item.length
-  local analysis = item.analysis
-  local pgs = pango.GlyphString.new()
-  pango.shape(string.sub(text, 1+offset), length, analysis, pgs)
-  return pgs
-end
-
 
 SILE.shaper = SILE.shapers.pango

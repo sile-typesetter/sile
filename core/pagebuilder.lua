@@ -5,7 +5,6 @@ local deplorable = 100000
 
 SILE.defaultPagebuilder = std.object {
   collateVboxes = function(vboxlist)
-    local i
     local output = SILE.nodefactory.newVbox({nodes = {} })
     output:append(vboxlist)
     return output
@@ -41,6 +40,7 @@ SILE.defaultPagebuilder = std.object {
         break
       end
     end
+    local pi
     while i < #vboxlist do
       i = i + 1
       local vbox = vboxlist[i]
@@ -56,7 +56,7 @@ SILE.defaultPagebuilder = std.object {
       local left = target - totalHeight.length
       SU.debug("pagebuilder", "I have " .. tostring(left) .. "pts left")
       -- if (left < -20) then SU.error("\nCatastrophic page breaking failure!"); end
-      local pi = 0
+      pi = 0
       if vbox:isPenalty() then
         pi = vbox.penalty
         -- print("PI "..pi)

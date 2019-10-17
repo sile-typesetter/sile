@@ -9,13 +9,14 @@
 SILE.scratch.info = {
   thispage = {}
 }
+
 local _info = SILE.nodefactory.zeroHbox {
   _type = "Info",
   type="special",
   category = "",
   value=nil,
   __tostring = function (this) return "I<" .. this.category .. "|" .. this.value.. ">"; end,
-  outputYourself = function(self,typesetter, line)
+  outputYourself = function (self, _, _)
     if not SILE.scratch.info.thispage[self.category] then
       SILE.scratch.info.thispage[self.category] = {self.value}
     else
@@ -27,7 +28,7 @@ local _info = SILE.nodefactory.zeroHbox {
 
 function SILE.nodefactory.newInfo(spec)  return _info(spec) end
 
-SILE.registerCommand("info", function ( options, content )
+SILE.registerCommand("info", function (options, _)
   SU.required(options, "category", "info node")
   SU.required(options, "value", "info node")
   table.insert(SILE.typesetter.state.nodes, SILE.nodefactory.newInfo({
@@ -38,7 +39,7 @@ end, "Inserts an info node onto the current page")
 return {
   init = function () end,
   exports = {
-    newPageInfo = function()
+    newPageInfo = function ()
       SILE.scratch.info = { thispage = {} }
     end
   }

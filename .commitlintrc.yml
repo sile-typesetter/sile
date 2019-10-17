@@ -43,6 +43,7 @@ rules:
     - package-manager
     - travis
     - azure
+    - github
     - manual
     - examples
     - installation

@@ -1,6 +1,6 @@
 local utilities = {}
 
-math.epsilon = 1E-12
+local epsilon = 1E-12
 
 utilities.required = function (options, name, context)
   if not options[name] then utilities.error(context.." needs a "..name.." parameter") end
@@ -18,7 +18,7 @@ end
 if not table.maxn then
   table.maxn = function(tbl)
     local max = 0
-    for i,_ in pairs(tbl) do if i > max then max = i end end
+    for i, _ in pairs(tbl) do if i > max then max = i end end
     return max
   end
 end
@@ -47,7 +47,7 @@ end
 
 utilities.feq = function (lhs, rhs) -- Float point equal
   local abs = math.abs
-  return abs(lhs - rhs) <= math.epsilon * (abs(lhs) + abs(rhs))
+  return abs(lhs - rhs) <= epsilon * (abs(lhs) + abs(rhs))
 end
 
 utilities.gtoke = function (string, pattern)
@@ -74,7 +74,7 @@ end
 
 utilities.debug = function (category, ...)
   if utilities.debugging(category) then
-    io.stderr:write("\n["..category.."] ", table.concat({ ... }, " "))
+    io.stderr:write("\n["..category.."] ", utilities.concat(table.pack(...), " "))
   end
 end
 
@@ -119,7 +119,7 @@ utilities.splice = function (array, start, stop, replacement)
     ptr = ptr + 1
   end
 
-  for i = 1, room do
+  for _ = 1, room do
       table.remove(array, ptr)
   end
   return array
@@ -219,7 +219,7 @@ end
 -- Strip the top level command off a content object and keep only the child
 -- items — assuming that the current command is taking care of itself
 utilities.subContent = function (content)
-  out = { id="stuff" }
+  local out = { id="stuff" }
   for key, val in pairs(content) do
     if type(key) == "number" then
       out[#out+1] = val
@@ -299,8 +299,8 @@ utilities.utf8codes = function (ustr)
     if pos > #ustr then
       return nil
     else
-      local c, ucv = 0, 0
-      local nbytes = 0
+      local c, ucv
+      local nbytes
       c = string.byte(ustr, pos)
       pos = pos + 1
       if c < 0x80 then
@@ -427,12 +427,6 @@ end
 
 local icu = require("justenoughicu")
 
-local icuFormats = function (format)
-  if format == "roman" then return "romanlow" end
-  if format == "Roman" then return "roman" end
-  return format
-end
-
 local icuFormat = function (num, format)
   local ok, result  = pcall(function() return icu.format_number(num, format) end)
   return tostring(ok and result or num)
@@ -472,7 +466,7 @@ setmetatable (utilities.formatNumber, {
         end
       end
       local lang = SILE.settings.get("document.language")
-      local format = format:lower()
+      format = format:lower()
       local result
       if self[lang] and type(self[lang][format]) == "function" then
         result = self[lang][format](num)
@@ -489,11 +483,11 @@ utilities.breadcrumbs = function ()
   local breadcrumbs = {}
 
   setmetatable (breadcrumbs, {
-      __index = function(self, key)
+      __index = function(_, key)
         local frame = SILE.traceStack[key]
         return frame and frame.command or nil
       end,
-      __len = function(self)
+      __len = function(_)
         return #SILE.traceStack
       end,
       __tostring = function (self)

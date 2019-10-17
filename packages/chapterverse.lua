@@ -1,17 +1,18 @@
 SILE.require("packages/infonode")
+
 SILE.scratch.chapterverse = {}
 
-SILE.registerCommand("save-book-title", function (options, content)
+SILE.registerCommand("save-book-title", function (_, content)
   SU.debug("bcv", "book: " .. content[1])
   SILE.scratch.chapterverse.book = content[1]
 end)
 
-SILE.registerCommand("save-chapter-number", function (options, content)
+SILE.registerCommand("save-chapter-number", function (_, content)
   SU.debug("bcv", "chapter: " .. content[1])
   SILE.scratch.chapterverse.chapter = content[1]
 end)
 
-SILE.registerCommand("save-verse-number", function (options, content)
+SILE.registerCommand("save-verse-number", function (_, content)
   SU.debug("bcv", "verse: " .. content[1])
   SILE.scratch.chapterverse.verse = content[1]
   local ref = {
@@ -23,7 +24,7 @@ SILE.registerCommand("save-verse-number", function (options, content)
   SILE.call("info", { category = "references", value = ref }, {})
 end)
 
-SILE.registerCommand("first-reference", function (options, content)
+SILE.registerCommand("first-reference", function (_, _)
   local refs = SILE.scratch.info.thispage.references
   SU.debug("bcv", "first-reference: " .. SILE.scratch.info)
   if refs then
@@ -34,7 +35,7 @@ SILE.registerCommand("first-reference", function (options, content)
   end
 end)
 
-SILE.registerCommand("last-reference", function (options, content)
+SILE.registerCommand("last-reference", function (options, _)
   local refs = SILE.scratch.info.thispage.references
   if refs then
     SU.debug("bcv", "last-reference: " .. refs[#(refs)])

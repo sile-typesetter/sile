@@ -1,5 +1,7 @@
-SILE.inputs.TeXlike = {}
+local lpeg = require("lpeg")
 local epnf = require("epnf")
+
+SILE.inputs.TeXlike = {}
 
 local ID = lpeg.C( SILE.parserBits.letter * (SILE.parserBits.letter+SILE.parserBits.digit)^0 )
 SILE.inputs.TeXlike.identifier = (ID + lpeg.P"-" + lpeg.P":")^1
@@ -13,6 +15,7 @@ setmetatable(SILE.inputs.TeXlike.passthroughCommands, {
     end
   })
 
+-- luacheck: push ignore
 SILE.inputs.TeXlike.parser = function (_ENV)
   local isPassthrough = function (_, _, command) return SILE.inputs.TeXlike.passthroughCommands(command) end
   local isNotPassThrough = function (...) return not isPassthrough(...) end
@@ -85,6 +88,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
       ( P"}" * _ ) + E"Environment begun but never ended"
     )
 end
+-- luacheck: pop
 
 local linecache = {}
 local lno, col, lastpos
@@ -96,7 +100,7 @@ local function resetCache ()
 end
 
 local function getline (str, pos)
-  start = 1
+  local start = 1
   lno = 1
   if pos > lastpos then
     lno = linecache[#linecache].lno
@@ -158,8 +162,7 @@ function SILE.inputs.TeXlike.process (doc)
       SILE.inputs.common.init(doc, tree)
     end
     SILE.process(tree)
-  elseif pcall(function () assert(load(doc))() end) then
-  else
+  elseif not pcall(function () assert(load(doc))() end) then
     SU.error("Input not recognized as Lua or SILE content")
   end
   if root and not SILE.preamble then

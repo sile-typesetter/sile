@@ -14,7 +14,7 @@ local types = {
   "Nd", "Nd", "Nd", "Nd", "Nd", "Nd", "Nd", "Nd",
   "Nd", "Nd",  "x",  "x",  "x",  "x",  "x",  "x"
 }
-jv = {}
+local jv = {}
 local P8 = function (c) return lpeg.P(SU.utf8char(c)) end
 
 for i = 1, #types do
@@ -35,21 +35,21 @@ jv.syllable = (jv.consonant * jv.V)^-1 * jv.consonant *
 
 SILE.nodeMakers.jv = SILE.nodeMakers.unicode {
   iterator = function (self, items)
-    return coroutine.wrap(function()
+    return coroutine.wrap(function ()
       self:init()
       local chunk = ""
-      for i = 1,#items do item = items[i]
+      for i = 1, #items do
         local char = items[i].text
         chunk = chunk .. char
       end
-      i = 1
+      local i = 1
       local total = 0
       while total < #chunk do
         local syll = (lpeg.P(total) * lpeg.C(jv.syllable)):match(chunk)
         if syll then
           while i < #items do
             if items[i].index >= total + #syll then break end
-            self:addToken(items[i].text,items[i])
+            self:addToken(items[i].text, items[i])
             i = i + 1
           end
           total = total + #syll

@@ -12,7 +12,7 @@ local function getCounter(id)
   return SILE.scratch.counters[id]
 end
 
-SILE.registerCommand("increment-counter", function (options, content)
+SILE.registerCommand("increment-counter", function (options, _)
   local counter = getCounter(options.id)
   if (options["set-to"]) then
     counter.value = tonumber(options["set-to"])
@@ -22,39 +22,39 @@ SILE.registerCommand("increment-counter", function (options, content)
   if options.display then counter.display = options.display end
 end, "Increments the counter named by the <id> option")
 
-SILE.registerCommand("set-counter", function (options, content)
+SILE.registerCommand("set-counter", function (options, _)
   local counter = getCounter(options.id)
   if options.value then counter.value = tonumber(options.value) end
   if options.display then counter.display = options.display end
 end, "Sets the counter named by the <id> option to <value>; sets its display type (roman/Roman/arabic) to type <display>.")
 
 
-SILE.registerCommand("show-counter", function (options, content)
+SILE.registerCommand("show-counter", function (options, _)
   local counter = getCounter(options.id)
   if options.display then counter.display = options.display end
   SILE.typesetter:setpar(SILE.formatCounter(counter))
 end, "Outputs the value of counter <id>, optionally displaying it with the <display> format.")
 
-SILE.formatMultilevelCounter = function(counter, options)
+SILE.formatMultilevelCounter = function (counter, options)
   local maxlevel = options and options.level or #counter.value
   local minlevel = options and options.minlevel or 1
   local out = {}
   for x = minlevel, maxlevel do
     out[x - minlevel + 1] = SILE.formatCounter({ display = counter.display[x], value = counter.value[x] })
   end
-  return table.concat( out, "." )
+  return table.concat(out, ".")
 end
 
 local function getMultilevelCounter(id)
   local counter = SILE.scratch.counters[id]
   if not counter then
-    counter = { value= {0}, display= {"arabic"}, format = SILE.formatMultilevelCounter }
+    counter = { value= { 0 }, display= { "arabic" }, format = SILE.formatMultilevelCounter }
     SILE.scratch.counters[id] = counter
   end
   return counter
 end
 
-SILE.registerCommand("increment-multilevel-counter", function (options, content)
+SILE.registerCommand("increment-multilevel-counter", function (options, _)
   local counter = getMultilevelCounter(options.id)
   local currentLevel = #counter.value
   local level = tonumber(options.level) or currentLevel
@@ -77,7 +77,7 @@ SILE.registerCommand("increment-multilevel-counter", function (options, content)
   if options.display then counter.display[currentLevel] = options.display end
 end)
 
-SILE.registerCommand("show-multilevel-counter", function (options, content)
+SILE.registerCommand("show-multilevel-counter", function (options, _)
   local counter = getMultilevelCounter(options.id)
   if options.display then counter.display[#counter.value] = options.display end
 
