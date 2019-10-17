@@ -44,7 +44,7 @@ local function formatTraceLine(string)
 end
 
 -- Push a document processing run (input method) onto the stack
-function traceStack:pushDocument(file, sniff, document)
+function traceStack:pushDocument(file, sniff, _)
   local frame = self.defaultFrame {
     command = "document",
     file = file,

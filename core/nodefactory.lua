@@ -91,7 +91,7 @@ local _nnode = _hbox {
       self.parent.used = true
       return
     end
-    for i, node in ipairs(self.nodes) do node:outputYourself(typesetter, line) end
+    for _, node in ipairs(self.nodes) do node:outputYourself(typesetter, line) end
   end,
   toText = function (self) return self.text end
 }
@@ -109,10 +109,10 @@ local _unshaped = _nnode {
     return node
   end,
   width = nil,
-  outputYourself = function (this)
+  outputYourself = function (_)
     SU.error("An unshaped node made it to output", true)
   end,
-  __index = function(self,k)
+  __index = function (self,k)
     if k == "width" then SU.error("Can't get width of unshaped node", true) end
   end
 }

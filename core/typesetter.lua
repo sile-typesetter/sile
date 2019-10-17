@@ -341,7 +341,7 @@ SILE.defaultTypesetter = std.object {
     return true
   end,
 
-  setVerticalGlue = function (self, pageNodeList, target)
+  setVerticalGlue = function (_, pageNodeList, target)
     -- Do some sums on that list
     local glues = {}
     local gTotal = SILE.length.new()
@@ -517,7 +517,7 @@ SILE.defaultTypesetter = std.object {
   inhibitLeading = function (self)
     self.state.previousVbox = nil
   end,
-  leadingFor = function (self, vbox, previous)
+  leadingFor = function (_, vbox, previous)
     -- Insert leading
     SU.debug("typesetter", "   Considering leading between two lines:")
     SU.debug("typesetter", "   1) "..previous)

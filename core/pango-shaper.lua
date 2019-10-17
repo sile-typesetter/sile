@@ -71,7 +71,7 @@ SILE.shapers.pango = SILE.shapers.base {
     end
     return rv, twidth
   end,
-  addShapedGlyphToNnodeValue = function (self, nnodevalue, shapedglyph)
+  addShapedGlyphToNnodeValue = function (_, nnodevalue, shapedglyph)
     nnodevalue.pgs = shapedglyph.pgs
     nnodevalue.font = shapedglyph.font
   end,

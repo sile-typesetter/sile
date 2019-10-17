@@ -35,7 +35,7 @@ SILE.outputters.podofo = {
     painter:FinishPage()
     document:Write(SILE.outputFilename)
   end,
-  setColor = function (self, color)
+  setColor = function (_, color)
     painter:SetColor(color.r, color.g, color.b)
   end,
   outputHbox = function (value)
@@ -57,7 +57,7 @@ SILE.outputters.podofo = {
     -- Podofo trashes the font, so we need to recompute.
     SILE.fontCache[lastkey] = nil
   end,
-  drawPNG = function (src, x, y, width, height)
+  drawPNG = function (_, _, _, _, _)
   end,
   imageSize = function (src)
     local box_width, box_height, err = imagesize.imgsize(src)imagesize.imgsize(src)
@@ -75,7 +75,7 @@ SILE.outputters.podofo = {
     painter:Close()
     painter:Fill()
   end,
-  debugFrame = function (self, frame)
+  debugFrame = function (_, _)
   end,
   debugHbox = function (typesetter, hbox, scaledWidth)
     painter:SetColor(0.9, 0.9, 0.9)
