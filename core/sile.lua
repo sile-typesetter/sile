@@ -9,8 +9,10 @@ if (os.getenv("SILE_COVERAGE")) then require("luacov") end
 -- versions enable it by default and it comes with a huge performance hit.
 -- Note we are phasing out stdlib in favor of Penlight. When adding or
 -- refactoring code, using the Penlight equivalent features is preferred.
+-- luacheck: push ignore _DEBUG
 _DEBUG = false
 std = require("std")
+-- luacheck: pop
 
 -- Includes for _this_ scope
 local lfs = require("lfs")
