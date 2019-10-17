@@ -1,5 +1,7 @@
-SILE.inputs.TeXlike = {}
+local lpeg = require("lpeg")
 local epnf = require("epnf")
+
+SILE.inputs.TeXlike = {}
 
 local ID = lpeg.C( SILE.parserBits.letter * (SILE.parserBits.letter+SILE.parserBits.digit)^0 )
 SILE.inputs.TeXlike.identifier = (ID + lpeg.P"-" + lpeg.P":")^1

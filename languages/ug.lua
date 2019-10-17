@@ -7,7 +7,7 @@
 SILE.languageSupport.loadLanguage("tr")
 
 require("char-def")
-local chardata  = characters.data
+local chardata = characters.data
 
 SILE.settings.declare({
   name = "languages.ug.hyphenoffset",
@@ -97,7 +97,7 @@ end
 local lastjoinable = function (t)
   local t = SU.splitUtf8(t)
   local last = t[#t]
-  local jointype = characters.data[SU.codepoint(last)] and characters.data[SU.codepoint(last)].arabic
+  local jointype = chardata[SU.codepoint(last)] and chardata[SU.codepoint(last)].arabic
   local joinable = jointype == "d" or jointype == "l"
   return joinable
 end
@@ -105,7 +105,7 @@ end
 local firstjoinable = function (t)
   local t = SU.splitUtf8(t)
   local first = t[1]
-  local jointype = characters.data[SU.codepoint(first)] and characters.data[SU.codepoint(first)].arabic
+  local jointype = chardata[SU.codepoint(first)] and chardata[SU.codepoint(first)].arabic
   local joinable = jointype == "d" or jointype=="r"
   return joinable
 end

@@ -1,3 +1,5 @@
+local icu = require("justenoughicu")
+
     SILE.registerCommand("font", function(options, content)
       if (type(content)=="function" or content[1]) then
         SILE.settings.pushState()

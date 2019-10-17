@@ -3,7 +3,6 @@ local lua_version = _VERSION:sub(-3)
 if lua_version < "5.3" then require("compat53") end -- Backport of lots of Lua 5.3 features to Lua 5.[12]
 bit32 = bit32 or require("bit32") -- Backport of Lua 5.2+ bitwise functions to Lua 5.1
 require("pl") -- Penlight on-demand module loader
-lfs = require("lfs") -- luafilesystem
 if (os.getenv("SILE_COVERAGE")) then require("luacov") end
 
 -- Include lua-stdlib, but make sure debugging is turned off since newer
@@ -12,6 +11,9 @@ if (os.getenv("SILE_COVERAGE")) then require("luacov") end
 -- refactoring code, using the Penlight equivalent features is preferred.
 _DEBUG = false
 std = require("std")
+
+-- Includes for _this_ scope
+local lfs = require("lfs")
 
 -- Initialize SILE
 SILE = {}

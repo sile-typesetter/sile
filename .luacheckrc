@@ -10,6 +10,7 @@ exclude_files = {
 }
 globals = {
 	"SILE",
-	"SU"
+	"SU",
+	"bit32"
 }
 max_line_length = false

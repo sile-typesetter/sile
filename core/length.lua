@@ -1,3 +1,5 @@
+local lpeg = require("lpeg")
+
 local _length
 _length = std.object {
   length = 0,

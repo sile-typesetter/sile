@@ -1,6 +1,7 @@
+local icu = require("justenoughicu")
+
 require("char-def")
-local chardata  = characters.data
-icu = require("justenoughicu")
+local chardata = characters.data
 
 SILE.nodeMakers.base = std.object {
   makeToken = function(self)

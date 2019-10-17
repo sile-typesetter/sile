@@ -1,4 +1,5 @@
-epnf = require( "epnf" )
+local lpeg = require("lpeg")
+local epnf = require("epnf")
 
 local ID = lpeg.C(  (SILE.parserBits.letter+SILE.parserBits.digit)^1 )
 local identifier = (ID + lpeg.S(":-"))^1

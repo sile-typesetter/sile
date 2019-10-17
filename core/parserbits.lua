@@ -1,4 +1,5 @@
-lpeg = require("lpeg")
+local lpeg = require("lpeg")
+
 local R = lpeg.R
 local S = lpeg.S
 local P = lpeg.P

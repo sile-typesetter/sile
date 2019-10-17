@@ -1,3 +1,5 @@
+local lpeg = require("lpeg")
+
 local opentype = { -- Mapping of opentype features to friendly names
   Ligatures = {
     Required = "rlig", Common = "liga", Contextual = "clig",
@@ -41,7 +43,6 @@ local opentype = { -- Mapping of opentype features to friendly names
 }
 
 -- Parser for feature strings
-local lpeg = require("lpeg")
 local featurename = lpeg.C((1-lpeg.S(",;:="))^1)
 local value = lpeg.C(SILE.parserBits.number.integer)
 local tag = lpeg.C(lpeg.S("+-")) * featurename * (lpeg.P("=") * value)^0 * lpeg.S(",;:")^-1 / function(pn,key,value) return key, { posneg = pn, value = value} end
