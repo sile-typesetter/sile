@@ -73,7 +73,7 @@ SILE.settings.declare({
 })
 
 local _margins = std.object {
-  __eq = function(self, other)
+  __eq = function (self, other)
     return SILE.toAbsoluteMeasurement(self.lskip.width) == SILE.toAbsoluteMeasurement(other.lskip.width)
       and SILE.toAbsoluteMeasurement(self.rskip.width) == SILE.toAbsoluteMeasurement(other.rskip.width)
   end
@@ -83,46 +83,46 @@ SILE.defaultTypesetter = std.object {
   -- Setup functions
   hooks = {},
   breadcrumbs = SU.breadcrumbs(),
-  init = function(self, frame)
+  init = function (self, frame)
     self.stateQueue = {}
     self:initFrame(frame)
     self:initState()
     return self
   end,
-  initState = function(self)
+  initState = function (self)
     self.state = {
       nodes = {},
       outputQueue = {},
       lastBadness = awful_bad,
     }
   end,
-  initFrame = function(self, frame)
+  initFrame = function (self, frame)
     self.frame = frame
     self.frame:init()
   end,
-  getMargins = function(self)
+  getMargins = function (self)
     local lskip = SILE.settings.get("document.lskip") or SILE.nodefactory.zeroGlue
     local rskip = SILE.settings.get("document.rskip") or SILE.nodefactory.zeroGlue
     return _margins { lskip=lskip, rskip=rskip }
   end,
-  setMargins = function(self, margins)
+  setMargins = function (self, margins)
     SILE.settings.set("document.lskip", margins.lskip)
     SILE.settings.set("document.rskip", margins.rskip)
   end,
-  pushState = function(self)
+  pushState = function (self)
     self.stateQueue[#self.stateQueue+1] = self.state
     self:initState()
   end,
-  popState = function(self, ncount)
+  popState = function (self, ncount)
     local offset = ncount and #self.stateQueue - ncount or nil
     self.state = table.remove(self.stateQueue, offset)
     if not self.state then SU.error("Typesetter state queue empty") end
   end,
-  vmode = function(self)
+  vmode = function (self)
     return #self.state.nodes == 0
   end,
 
-  debugState = function(self)
+  debugState = function (self)
     print("\n---\nI am in "..(self:vmode() and "vertical" or "horizontal").." mode")
     print("Writing into "..self.frame:toString())
     print("Recent contributions: ")
@@ -223,7 +223,7 @@ SILE.defaultTypesetter = std.object {
     local breakpoints = SILE.linebreak:doBreak(nodelist, breakWidth)
     return self:breakpointsToLines(breakpoints)
   end,
-  shapeAllNodes = function(self, nodelist)
+  shapeAllNodes = function (self, nodelist)
     local newNl = {}
     for i = 1, #nodelist do
       if nodelist[i]:isUnshaped() then
@@ -293,14 +293,14 @@ SILE.defaultTypesetter = std.object {
     return vboxes
   end,
 
-  pageTarget = function(self)
+  pageTarget = function (self)
     return self.frame:pageTarget()
   end,
   registerHook = function (self, category, frame)
     if not self.hooks[category] then self.hooks[category] = {} end
     self.hooks[category][1+#(self.hooks[category])] = frame
   end,
-  runHooks = function(self, category, data)
+  runHooks = function (self, category, data)
     if not self.hooks[category] then return data end
     for i = 1, #self.hooks[category] do
       data = self.hooks[category][i](self, data)
@@ -389,7 +389,7 @@ SILE.defaultTypesetter = std.object {
     SU.debug("pagebuilder", "Glues for self page adjusted by "..(adjustment/gTotal.stretch) )
   end,
 
-  initNextFrame = function(self)
+  initNextFrame = function (self)
     local oldframe = self.frame
     self.frame:leave()
     if #self.state.outputQueue == 0 then
@@ -501,7 +501,7 @@ SILE.defaultTypesetter = std.object {
       end
     end
   end,
-  leaveHmode = function(self, independent)
+  leaveHmode = function (self, independent)
     SU.debug("typesetter", "Leaving hmode")
     local vboxlist = self:boxUpNodes()
     local margins = self:getMargins()
@@ -519,7 +519,7 @@ SILE.defaultTypesetter = std.object {
   inhibitLeading = function (self)
     self.state.previousVbox = nil
   end,
-  leadingFor = function(self, vbox, previous)
+  leadingFor = function (self, vbox, previous)
     -- Insert leading
     SU.debug("typesetter", "   Considering leading between two lines:")
     SU.debug("typesetter", "   1) "..previous)
@@ -566,7 +566,7 @@ SILE.defaultTypesetter = std.object {
       table.insert(slice, 1, SILE.nodefactory.zeroHbox)
     end
   end,
-  breakpointsToLines = function(self, breappoints)
+  breakpointsToLines = function (self, breappoints)
     local linestart = 0
     local lines = {}
     local nodes = self.state.nodes
@@ -599,7 +599,7 @@ SILE.defaultTypesetter = std.object {
     --self.state.nodes = nodes.slice(linestart+1,nodes.length)
     return lines
   end,
-  computeLineRatio = function(self, breakwidth, slice)
+  computeLineRatio = function (self, breakwidth, slice)
     local naturalTotals = SILE.length.new({length =0 , stretch =0, shrink = 0})
     local skipping = 1
     for i = 1, #slice do node=slice[i]
@@ -648,7 +648,7 @@ SILE.defaultTypesetter = std.object {
     if left < -1 then left = -1 end
     return left
   end,
-  chuck = function(self) -- emergency shipout everything
+  chuck = function (self) -- emergency shipout everything
     self:leaveHmode(true)
     self:outputLinesToPage(self.state.outputQueue)
     self.state.outputQueue = {}

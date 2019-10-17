@@ -50,7 +50,8 @@ SILE.shapers.pango = SILE.shapers.base {
       for g in pairs(pgs.glyphs) do
         local rect = font:get_glyph_extents(pgs.glyphs[g].glyph)
         table.insert(rv, {
-          height = -rect.y / 1024, depth = (rect.y + rect.height) / 1024,
+          height = -rect.y / 1024,
+          depth = (rect.y + rect.height) / 1024,
           width = rect.width / 1024,
           glyph = pgs.glyphs[g].glyph,
           pgs = pgs,

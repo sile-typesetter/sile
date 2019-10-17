@@ -32,17 +32,17 @@ local function loadInSandbox(untrusted_code)
 end
 
 local function dumpTable(tbl)
-   if type(tbl) == 'table' then
-      local str = '{ '
-      for k, v in pairs(tbl) do
-         if type(k) ~= 'number' then k = '"'..k..'"' end
-         str = str .. '['..k..'] = ' .. dumpTable(v) .. ','
-      end
-      return str .. '} '
-   else
-      -- This only works because we are only storing strings!
-      return '"' .. tostring(tbl) .. '"'
-   end
+  if type(tbl) == 'table' then
+    local str = '{ '
+    for k, v in pairs(tbl) do
+      if type(k) ~= 'number' then k = '"'..k..'"' end
+      str = str .. '['..k..'] = ' .. dumpTable(v) .. ','
+    end
+    return str .. '} '
+  else
+    -- This only works because we are only storing strings!
+    return '"' .. tostring(tbl) .. '"'
+  end
 end
 
 local function fixupPaths()
@@ -52,7 +52,7 @@ local function fixupPaths()
     paths = paths .. packageHome .. pkg .. '/?.lua;'
     cpaths = cpaths .. packagehome .. pkg .. "/?."..SHARED_LIB_EXT.. ";"
   end
-  package.path = origpath:gsub("?.lua","?.lua;"..paths,1)
+  package.path = origpath:gsub("?.lua", "?.lua;"..paths, 1)
   package.cpath = origcpath .. ";" .. cpaths
 end
 
@@ -90,34 +90,34 @@ local function updateCatalogue ()
 end
 
 local function loadInstalledCatalogue()
-   local file = io.open(installedCatalogue, "r")
-   if file ~= nil then
+  local file = io.open(installedCatalogue, "r")
+  if file ~= nil then
     local contents = file:read("*all")
-    success,res = loadInSandbox(contents)
+    success, res = loadInSandbox(contents)
     if not success then
       SU.error("Error loading installed package list: "..res)
     end
     SILE.PackageManager.installed = res
-   end
+  end
 end
 
 local function reloadCatalogue()
-   local file = io.open(catalogueHome,"r")
-   if file ~= nil then
+  local file = io.open(catalogueHome, "r")
+  if file ~= nil then
     local contents = file:read("*all")
-    local success,res = loadInSandbox(contents)
+    local success, res = loadInSandbox(contents)
     if not success then
       SU.error("Error loading package catalogue: "..res)
     end
     SILE.PackageManager.Catalogue = res
-   end
-   loadInstalledCatalogue()
-   print("Package catalogue reloaded")
-   recentlyReloaded = true
- end
+  end
+  loadInstalledCatalogue()
+  print("Package catalogue reloaded")
+  recentlyReloaded = true
+end
 
 -- These functions are global so they can be used from the REPL
-function updatePackage(packageName,branch)
+function updatePackage(packageName, branch)
   local target = packageHome .. packageName
   -- Are we already there?
   if SILE.PackageManager.installed[packageName] == branch and branch ~= "master" then
