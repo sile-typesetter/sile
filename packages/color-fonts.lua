@@ -2,7 +2,7 @@ local ot = SILE.require("core/opentype-parser")
 
 SILE.shapers.harfbuzzWithColor = SILE.shapers.harfbuzz {
 
-  shapeToken = function (self, text, options)
+  shapeToken = function (_, text, options)
     if not options.family then return {} end
     local face = SILE.font.cache(options, SILE.shaper.getFace)
     local font = ot.parseFont(face)
@@ -45,7 +45,7 @@ SILE.shapers.harfbuzzWithColor = SILE.shapers.harfbuzz {
   end,
 
   createNnodes = function (self, token, options)
-    local items, width = self:shapeToken(token, options)
+    local items, _ = self:shapeToken(token, options)
     if #items < 1 then return {} end
     local lang = options.language
     SILE.languageSupport.loadLanguage(lang)

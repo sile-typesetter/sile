@@ -45,12 +45,12 @@ end
 SILE.scratch.bibtex = { bib = {}, bibstyle = {} }
 SILE.require("packages/bibliography")
 
-SILE.registerCommand("loadbibliography", function (options, content)
+SILE.registerCommand("loadbibliography", function (options, _)
   local file = SU.required(options, "file", "loadbibliography")
   SILE.scratch.bibtex.bib = parseBibtex(file) -- Later we'll do multiple bibliogs, but not now
 end)
 
-SILE.registerCommand("bibstyle", function (options, content)
+SILE.registerCommand("bibstyle", function (_, content)
   SILE.scratch.bibtex.bibstyle = SILE.require("packages/bibstyles/"..content)
 end)
 

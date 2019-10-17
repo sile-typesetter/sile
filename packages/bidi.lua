@@ -1,18 +1,18 @@
 local icu = require("justenoughicu")
 
-SILE.registerCommand("thisframeLTR", function (options, content)
+SILE.registerCommand("thisframeLTR", function (_, _)
   SILE.typesetter.frame.direction = "LTR"
   SILE.typesetter:leaveHmode()
   SILE.typesetter.frame:newLine()
 end)
 
-SILE.registerCommand("thisframedirection", function (options, content)
+SILE.registerCommand("thisframedirection", function (options, _)
   SILE.typesetter.frame.direction = SU.required(options, "direction", "frame direction")
   SILE.typesetter:leaveHmode()
   SILE.typesetter.frame:init()
 end)
 
-SILE.registerCommand("thisframeRTL", function (options, content)
+SILE.registerCommand("thisframeRTL", function (_, _)
   SILE.typesetter.frame.direction = "RTL"
   SILE.typesetter:leaveHmode()
   SILE.typesetter.frame:newLine()
@@ -247,11 +247,11 @@ end
 
 SILE.typesetter.boxUpNodes = bidiBoxupNodes
 
-SILE.registerCommand("bidi-on", function (options, content)
+SILE.registerCommand("bidi-on", function (_, _)
   SILE.typesetter.boxUpNodes = bidiBoxupNodes
 end)
 
-SILE.registerCommand("bidi-off", function (options, content)
+SILE.registerCommand("bidi-off", function (_, _)
   SILE.typesetter.boxUpNodes = SILE.defaultTypesetter.boxUpNodes
 end)
 

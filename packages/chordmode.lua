@@ -4,9 +4,9 @@ SILE.require("packages/raiselower")
 
 local function addChords(text, content)
   local result = {}
-  local chordName = nil
+  local chordName
   local currentText = ""
-  local process = nil
+  local process
   local processText, processChordName, processChordText
 
   local function insertChord()
@@ -27,14 +27,14 @@ local function addChords(text, content)
   end
 
   processText = {
-    ["<"] = function (separator)
+    ["<"] = function (_)
       insertText()
       process = processChordName
     end
   }
 
   processChordName = {
-    [">"] = function (separator)
+    [">"] = function (_)
       chordName = currentText
       currentText = ""
       process = processChordText
@@ -42,7 +42,7 @@ local function addChords(text, content)
   }
 
   processChordText = {
-    ["<"] = function (separator)
+    ["<"] = function (_)
       insertChord()
       currentText = ""
       process = processChordName
@@ -74,7 +74,7 @@ end
 SILE.registerCommand("ch", function (options, content)
   local chordBox = SILE.call("hbox", {}, { options.name })
   SILE.typesetter.state.nodes[#(SILE.typesetter.state.nodes)] = nil
-  local chordLineHeight = SILE.toPoints("4", "mm", "h")
+  -- local chordLineHeight = SILE.toPoints("4", "mm", "h")
   local origWidth = chordBox.width
   chordBox.width = SILE.length.zero
   chordBox.height = SILE.settings.get("chordmode.lineheight")
@@ -89,11 +89,11 @@ SILE.registerCommand("ch", function (options, content)
   end
 end, "Insert a a chord name above the text")
 
-SILE.registerCommand("chordmode", function (options, content)
+SILE.registerCommand("chordmode", function (_, content)
   SILE.process(inputfilter.transformContent(content, addChords))
 end, "Transform embedded chords to 'ch' commands")
 
-SILE.registerCommand("chordmode:chordfont", function (options, content)
+SILE.registerCommand("chordmode:chordfont", function (_, content)
   SILE.process(content)
 end, "Override this command to change chord style.")
 

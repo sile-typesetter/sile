@@ -1,6 +1,6 @@
 local BALANCE_PENALTY = -17777
 
-SILE.registerCommand("balancecolumns", function (o, c)
+SILE.registerCommand("balancecolumns", function (_, _)
   SILE.typesetter:leaveHmode()
   SILE.call("penalty", { penalty = BALANCE_PENALTY })
 end)

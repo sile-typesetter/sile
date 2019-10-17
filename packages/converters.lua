@@ -53,11 +53,11 @@ local checkConverters = function (source)
   return source -- No conversion needed.
 end
 
-SILE.registerCommand("converters:register", function (options, content)
+SILE.registerCommand("converters:register", function (options, _)
   register(options.from, options.to, options.command)
 end)
 
-SILE.registerCommand("converters:check", function (options, content)
+SILE.registerCommand("converters:check", function (options, _)
   checkConverters(options.source)
 end)
 

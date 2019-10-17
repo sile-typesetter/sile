@@ -14,12 +14,12 @@ SILE.nodeMakers.grc = SILE.nodeMakers.unicode {
 }
 
 local swap = SILE.nodefactory.newVbox({})
-swap.outputYourself = function (self, typesetter, line)
+swap.outputYourself = function (_, typesetter, _)
   typesetter.frame.direction = typesetter.frame.direction == "LTR-TTB" and "RTL-TTB" or "LTR-TTB"
   typesetter.frame:newLine()
 end
 
-SILE.registerCommand("boustrophedon", function (options, content)
+SILE.registerCommand("boustrophedon", function (_, content)
   SILE.typesetter:leaveHmode()
   local saveBoxup = SILE.typesetter.boxUpNodes
   local swaps = 0

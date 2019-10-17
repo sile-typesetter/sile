@@ -8,7 +8,7 @@ SILE.require("packages/raiselower")
 local insertions = SILE.require("packages/insertions")
 SILE.scratch.counters.footnote = { value= 1, display= "arabic" }
 
-SILE.registerCommand("footnotemark", function (options, content)
+SILE.registerCommand("footnotemark", function (_, _)
   SILE.call("raise", { height = "0.7ex" }, function ()
     SILE.call("font", { size = "1.5ex" }, function ()
       SILE.typesetter:typeset(SILE.formatCounter(SILE.scratch.counters.footnote))
@@ -16,14 +16,14 @@ SILE.registerCommand("footnotemark", function (options, content)
   end)
 end)
 
-SILE.registerCommand("footnote:separator", function(options, content)
+SILE.registerCommand("footnote:separator", function (_, content)
   SILE.settings.pushState()
   local material = SILE.call("vbox", {}, content)
   SILE.scratch.insertions.classes.footnote.topBox = material
   SILE.settings.popState()
 end)
 
-SILE.registerCommand("footnote:options", function(options, content)
+SILE.registerCommand("footnote:options", function (options, _)
   if options["maxHeight"] then
     SILE.scratch.insertions.classes.footnote.maxHeight = SILE.length.parse(options["maxHeight"])
   end
@@ -32,7 +32,7 @@ SILE.registerCommand("footnote:options", function(options, content)
   end
 end)
 
-SILE.registerCommand("footnote", function(options, content)
+SILE.registerCommand("footnote", function (options, content)
   SILE.call("footnotemark")
   local opts = SILE.scratch.insertions.classes.footnote
   local f = SILE.getFrame(opts["insertInto"].frame)
@@ -42,8 +42,8 @@ SILE.registerCommand("footnote", function(options, content)
   SILE.typesetter.pageTarget = function () return 0xFFFFFF end
   SILE.settings.pushState()
   SILE.settings.reset()
-  local material = SILE.call("vbox", {}, function()
-    SILE.call("footnote:font", {}, function()
+  local material = SILE.call("vbox", {}, function ()
+    SILE.call("footnote:font", {}, function ()
       SILE.call("footnote:atstart", options)
       SILE.call("footnote:counter", options)
       SILE.process(content)
@@ -55,23 +55,23 @@ SILE.registerCommand("footnote", function(options, content)
   SILE.scratch.counters.footnote.value = SILE.scratch.counters.footnote.value + 1
 end)
 
-SILE.registerCommand("footnote:font", function (options, content)
+SILE.registerCommand("footnote:font", function (_, content)
   SILE.call("font", { size = "9pt" }, function ()
     SILE.process(content)
   end)
 end)
 
-SILE.registerCommand("footnote:atstart", function(options, content)
+SILE.registerCommand("footnote:atstart", function (_, _)
 end)
 
-SILE.registerCommand("footnote:counter", function(options, content)
+SILE.registerCommand("footnote:counter", function (_, _)
   SILE.call("noindent")
   SILE.typesetter:typeset(SILE.formatCounter(SILE.scratch.counters.footnote) .. ".")
   SILE.call("qquad")
 end)
 
 return {
-  init = function (class, args)
+  init = function (_, args)
     insertions.exports:initInsertionClass("footnote", {
         insertInto = args.insertInto,
         stealFrom = args.stealFrom,

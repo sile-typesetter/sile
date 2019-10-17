@@ -38,15 +38,15 @@ SILE.registerCommand("font:clear-fallbacks", function ()
   fontlist = {}
 end)
 
-SILE.registerCommand("font:add-fallback", function (options, content)
+SILE.registerCommand("font:add-fallback", function (options, _)
   fontlist[#fontlist+1] = options
 end)
 
 SILE.shapers.harfbuzzWithFallback = SILE.shapers.harfbuzz {
 
-  shapeToken = function (self, text, options)
+  shapeToken = function (_, text, options)
     local items = {}
-    optionSet = { options }
+    local optionSet = { options }
     for i = 1, #fontlist do
       local moreOptions = std.tree.clone(options)
       for k, v in pairs(fontlist[i]) do moreOptions[k] = v end
@@ -116,7 +116,7 @@ SILE.shapers.harfbuzzWithFallback = SILE.shapers.harfbuzz {
   end,
 
   createNnodes = function (self, token, options)
-    local items, width = self:shapeToken(token, options)
+    local items, _ = self:shapeToken(token, options)
     if #items < 1 then return {} end
     local lang = options.language
     SILE.languageSupport.loadLanguage(lang)

@@ -12,7 +12,7 @@ local function getCounter(id)
   return SILE.scratch.counters[id]
 end
 
-SILE.registerCommand("increment-counter", function (options, content)
+SILE.registerCommand("increment-counter", function (options, _)
   local counter = getCounter(options.id)
   if (options["set-to"]) then
     counter.value = tonumber(options["set-to"])
@@ -22,14 +22,14 @@ SILE.registerCommand("increment-counter", function (options, content)
   if options.display then counter.display = options.display end
 end, "Increments the counter named by the <id> option")
 
-SILE.registerCommand("set-counter", function (options, content)
+SILE.registerCommand("set-counter", function (options, _)
   local counter = getCounter(options.id)
   if options.value then counter.value = tonumber(options.value) end
   if options.display then counter.display = options.display end
 end, "Sets the counter named by the <id> option to <value>; sets its display type (roman/Roman/arabic) to type <display>.")
 
 
-SILE.registerCommand("show-counter", function (options, content)
+SILE.registerCommand("show-counter", function (options, _)
   local counter = getCounter(options.id)
   if options.display then counter.display = options.display end
   SILE.typesetter:setpar(SILE.formatCounter(counter))
@@ -54,7 +54,7 @@ local function getMultilevelCounter(id)
   return counter
 end
 
-SILE.registerCommand("increment-multilevel-counter", function (options, content)
+SILE.registerCommand("increment-multilevel-counter", function (options, _)
   local counter = getMultilevelCounter(options.id)
   local currentLevel = #counter.value
   local level = tonumber(options.level) or currentLevel
@@ -77,7 +77,7 @@ SILE.registerCommand("increment-multilevel-counter", function (options, content)
   if options.display then counter.display[currentLevel] = options.display end
 end)
 
-SILE.registerCommand("show-multilevel-counter", function (options, content)
+SILE.registerCommand("show-multilevel-counter", function (options, _)
   local counter = getMultilevelCounter(options.id)
   if options.display then counter.display[#counter.value] = options.display end
 

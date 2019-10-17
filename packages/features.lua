@@ -107,7 +107,7 @@ local table2featurestring = function (tbl)
   return table.concat(t2, ";")
 end
 
-SILE.registerCommand("add-font-feature", function (options, content)
+SILE.registerCommand("add-font-feature", function (options, _)
   local t = featurestring2table(SILE.settings.get("font.features"))
   for k, v in pairs(options) do
     if not opentype[k] then SU.warn("Unknown Opentype feature "..k)
@@ -128,7 +128,7 @@ SILE.registerCommand("add-font-feature", function (options, content)
   SILE.settings.set("font.features", table2featurestring(t))
 end)
 
-SILE.registerCommand("remove-font-feature", function (options, content)
+SILE.registerCommand("remove-font-feature", function (options, _)
   local t = featurestring2table(SILE.settings.get("font.features"))
 
   for k, v in pairs(options) do

@@ -78,7 +78,7 @@ do
   local function isVon(s)
     local lower  = find_outside_braces(s, '%l') -- first nonbrace lowercase
     local letter = find_outside_braces(s, '%a') -- first nonbrace letter
-    local bs, ebs, command = find_outside_braces(s, '%{%\\(%a+)') -- \xxx
+    local bs, _, _ = find_outside_braces(s, '%{%\\(%a+)') -- \xxx
     if lower and lower <= letter and lower <= (bs or lower) then
       return true
     elseif letter and letter <= (bs or letter) then
