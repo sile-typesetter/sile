@@ -87,6 +87,13 @@ ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 test: $(TESTSRCS) $(ACTUALS) sile testprep
 	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
 
+.PHONY: lint
+lint: luacheck
+
+.PHONY: luacheck
+luacheck:
+	luacheck -q .
+
 busted: $(wildcard tests/*_spec.lua) sile testprep
 	set -f; IFS=';'
 if SYSTEM_LUAROCKS
