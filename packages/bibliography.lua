@@ -149,7 +149,7 @@ do
     -- down until we find a von token or we hit the von start
     -- (in which latter case there is no von name).
     -- <local parsing functions>=
-    function divide_von_from_last()
+    local function divide_von_from_last()
       von_lim = last_lim - 1
       while von_lim > von_start and not isVon(tokens[von_lim-1]) do
         von_lim = von_lim - 1
@@ -206,7 +206,7 @@ do
           if first_alpha and first_alpha <= (first_brace or first_alpha) then
             return alpha
           elseif first_brace then
-            local i, j, special = string.find(token, '(%b{})', first_brace)
+            local i, _, special = string.find(token, '(%b{})', first_brace)
             if i then
               return special
             else -- unbalanced braces
@@ -216,12 +216,12 @@ do
             return ''
           end
         end
-        local ss = tokens[start]
-        local str  = abbrev(tokens[start])
+        local longname = tokens[start]
+        local shortname  = abbrev(tokens[start])
         for i = start + 1, lim - 1 do
           if inter_token then
-            ss = ss .. inter_token .. tokens[i]
-            str  = str  .. inter_token .. abbrev(tokens[i])
+            longname = longname .. inter_token .. tokens[i]
+            shortname  = shortname  .. inter_token .. abbrev(tokens[i])
           else
             local ssep, nnext = trailers[i-1], tokens[i]
             local sep,  next  = ssep,          abbrev(nnext)
@@ -236,17 +236,17 @@ do
             elseif i == lim-1 then
               sep, ssep = '~', '~'
             elseif i == start + 1 then
-              sep  = text_char_count(str)  < 3 and '~' or ' '
-              ssep = text_char_count(ss) < 3 and '~' or ' '
+              sep  = text_char_count(shortname)  < 3 and '~' or ' '
+              ssep = text_char_count(longname) < 3 and '~' or ' '
             else
               sep, ssep = ' ', ' '
             end
-            ss = ss ..        ssep .. nnext
-            str  = str  .. '.' .. sep  .. next
+            longname = longname ..        ssep .. nnext
+            shortname  = shortname  .. '.' .. sep  .. next
           end
         end
-        name[long] = ss
-        name[short] = str
+        name[long] = longname
+        name[short] = shortname
       end
     end
     set_name(first_start, first_lim, 'ff', 'f')

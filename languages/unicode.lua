@@ -156,8 +156,8 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
     return coroutine.wrap(function ()
       local i
       i, self.items = self:handleInitialGlue(items)
-      for i = i, #items do
-        self.i = i
+      for j = i, #items do
+        self.i = j
         self.item = self.items[self.i]
         if self:isICUBreakHere(chunks, self.item) then
           chunks = self:handleICUBreak(chunks, self.item)
