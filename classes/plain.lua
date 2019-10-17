@@ -153,12 +153,12 @@ SILE.registerCommand("hbox", function (_, content)
   for i = index, #(SILE.typesetter.state.nodes) do
     local node = SILE.typesetter.state.nodes[i]
     if node:isUnshaped() then
-      local s = node:shape()
-      for i = 1, #s do
-        recentContribution[#recentContribution+1] = s[i]
-        h = s[i].height > h and s[i].height or h
-        d = s[i].depth > d and s[i].depth or d
-        l = l + s[i]:lineContribution()
+      local shape = node:shape()
+      for _, attr in ipairs(shape) do
+        recentContribution[#recentContribution+1] = attr
+        h = attr.height > h and attr.height or h
+        d = attr.depth > d and attr.depth or d
+        l = l + attr:lineContribution()
       end
     else
       recentContribution[#recentContribution+1] = node

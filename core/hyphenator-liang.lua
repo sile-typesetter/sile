@@ -28,9 +28,9 @@ local function registerException(hyphenator, exception)
   local bits = SU.splitUtf8(exception)
   hyphenator.exceptions[text] = { }
   local j = 1
-  for i = 1, #bits do
+  for _, bit in ipairs(bits) do
     j = j + 1
-    if bits[i] == "-" then
+    if bit == "-" then
       j = j - 1
       hyphenator.exceptions[text][j] = 1
     else
