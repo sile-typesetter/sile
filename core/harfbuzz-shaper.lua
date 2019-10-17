@@ -1,5 +1,6 @@
 if not SILE.shapers then SILE.shapers = { } end
 local hb = require("justenoughharfbuzz")
+local icu = require("justenoughicu")
 
 SILE.settings.declare({
   name = "harfbuzz.subshapers",
@@ -85,7 +86,6 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
     local ot = SILE.require("core/opentype-parser")
     print("Harfbuzz version: "..hb.version())
     print("Shapers enabled: ".. table.concat({ hb.shapers() }, ", "))
-    pcall( function () icu = require("justenoughicu") end)
     if icu then
       print("ICU support enabled")
     end
