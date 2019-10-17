@@ -488,9 +488,7 @@ SILE.defaultTypesetter = std.object {
 
   outputLinesToPage = function (self, lines)
     SU.debug("pagebuilder", "OUTPUTTING frame "..self.frame.id)
-    local i
-    for i = 1, #lines do
-      local line = lines[i]
+    for _, line in ipairs(lines) do
       -- Annoyingly, explicit glue *should* disappear at the top of a page.
       -- if you don't want that, add an empty vbox or something.
       if not self.frame.state.totals.pastTop and not line.discardable and not line.explicit then
@@ -507,9 +505,9 @@ SILE.defaultTypesetter = std.object {
     local margins = self:getMargins()
     self.state.nodes = {}
     -- Push output lines into boxes and ship them to the page builder
-    for i = 1, #vboxlist do
-      vboxlist[i].margins = margins
-      self:pushVertical(vboxlist[i])
+    for _, vbox in ipairs(vboxlist) do
+      vbox.margins = margins
+      self:pushVertical(vbox)
     end
     if independent then return end
     if self:pageBuilder() then
@@ -599,10 +597,10 @@ SILE.defaultTypesetter = std.object {
     --self.state.nodes = nodes.slice(linestart+1,nodes.length)
     return lines
   end,
-  computeLineRatio = function (self, breakwidth, slice)
+  computeLineRatio = function (_, breakwidth, slice)
     local naturalTotals = SILE.length.new({length =0 , stretch =0, shrink = 0})
     local skipping = 1
-    for i = 1, #slice do node=slice[i]
+    for i, node in ipairs(slice) do
       if (node:isBox() or (node:isPenalty() and node.penalty == -inf_bad)) then
         skipping = 0
         if node:isBox() then
