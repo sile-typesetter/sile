@@ -149,7 +149,7 @@ local colorsRGB = {
   yellowgreen = {154, 205, 50}
 }
 
-SILE.colorparser = function(col)
+SILE.colorparser = function (col)
   if colorsRGB[col] then
     local c = colorsRGB[col]
     return { r = c[1] / 255, g = c[2] / 255, b = c[3] / 255 }
@@ -160,7 +160,7 @@ SILE.colorparser = function(col)
   end
   local r, g, b = col:match("#(%x)(%x)(%x)")
   if r then
-    return { r = tonumber("0x"..r)/15, g = tonumber("0x"..g)/15, b = tonumber("0x"..b)/15,}
+    return { r = tonumber("0x"..r)/15, g = tonumber("0x"..g)/15, b = tonumber("0x"..b)/15 }
   end
   local c, m, y, k = col:match("(%d+%.?%d*)%s+(%d+%.?%d*)%s+(%d+%.?%d*)%s+(%d+%.?%d*)")
   if c then

@@ -35,14 +35,14 @@ SILE.registerCommand("article", function (options, content)
   local author = SILE.findInTree(content, "author") or (info and SILE.findInTree(info, "author"))
 
   if title then
-    SILE.call("docbook-article-title",{},title)
+    SILE.call("docbook-article-title", {}, title)
     docbook.wipe(title)
   end
   if author then
-    SILE.call("docbook-main-author",{},function()
-      for _,t in ipairs(author) do
+    SILE.call("docbook-main-author", {}, function ()
+      for _, t in ipairs(author) do
         if type(t) == "table" then
-          SILE.call(t.command,{},t)
+          SILE.call(t.command, {}, t)
           SILE.typesetter:leaveHmode()
           SILE.call("bigskip")
         end
@@ -53,7 +53,7 @@ SILE.registerCommand("article", function (options, content)
   SILE.typesetter:chuck()
 end)
 
-SILE.registerCommand("info", function()end)
+SILE.registerCommand("info", function ()end)
 
 SILE.registerCommand("section", function (options, content)
   SILE.scratch.docbook.seclevel = SILE.scratch.docbook.seclevel + 1
@@ -64,7 +64,7 @@ SILE.registerCommand("section", function (options, content)
   local title = SILE.findInTree(content, "title")
   local number = table.concat(SILE.scratch.docbook.seccount, '.')
   if title then
-    SILE.call("docbook-section-"..SILE.scratch.docbook.seclevel.."-title",{},function()
+    SILE.call("docbook-section-"..SILE.scratch.docbook.seclevel.."-title", {}, function ()
       SILE.typesetter:typeset(number.." ")
       SILE.process(title)
     end)
@@ -78,7 +78,7 @@ function countedThing(thing, options, content)
   SILE.call("increment-counter", {id=thing})
   SILE.call("bigskip")
   SILE.call("docbook-line")
-  SILE.call("docbook-titling", {}, function()
+  SILE.call("docbook-titling", {}, function ()
     SILE.typesetter:typeset(thing.." ".. SILE.formatCounter(SILE.scratch.counters[thing]))
     local t = SILE.findInTree(content, "title")
     if t then
@@ -93,18 +93,18 @@ function countedThing(thing, options, content)
   SILE.call("bigskip")
 end
 
-SILE.registerCommand("example", function(options,content)
+SILE.registerCommand("example", function (options, content)
   countedThing("Example", options, content)
 end)
 
-SILE.registerCommand("table", function(options,content)
+SILE.registerCommand("table", function (options, content)
   countedThing("Table", options, content)
 end)
-SILE.registerCommand("figure", function(options, content)
+SILE.registerCommand("figure", function (options, content)
   countedThing("Figure", options, content)
 end)
 
-SILE.registerCommand("imagedata", function(options, content)
+SILE.registerCommand("imagedata", function (options, content)
   local width = SILE.parseComplexFrameDimension(options.width or "100%pw") or 0
   SILE.call("img", {
     src = options.fileref,
@@ -113,7 +113,7 @@ SILE.registerCommand("imagedata", function(options, content)
 end)
 
 
-SILE.registerCommand("itemizedlist", function(options,content)
+SILE.registerCommand("itemizedlist", function (options, content)
   docbook.push("list", {type = "itemized"})
   SILE.call("medskip")
   -- Indentation
@@ -123,7 +123,7 @@ SILE.registerCommand("itemizedlist", function(options,content)
 end)
 
 
-SILE.registerCommand("orderedlist", function(options,content)
+SILE.registerCommand("orderedlist", function (options, content)
   docbook.push("list", {type = "ordered", ctr = 1})
   SILE.call("medskip")
   -- Indentation
@@ -131,7 +131,8 @@ SILE.registerCommand("orderedlist", function(options,content)
   SILE.call("medskip")
   docbook.pop("list")
 end)
-SILE.registerCommand("listitem", function(options,content)
+
+SILE.registerCommand("listitem", function (options, content)
   local ctx = docbook.val("list")
   if ctx and ctx.type == "ordered" then
     SILE.typesetter:typeset( ctx.ctr ..". ")
@@ -149,7 +150,7 @@ SILE.registerCommand("listitem", function(options,content)
   SILE.call("medskip")
 end)
 
-SILE.registerCommand("link", function(options, content)
+SILE.registerCommand("link", function (options, content)
   SILE.process(content)
   if (options["xl:href"]) then
     SILE.typesetter:typeset(" (")

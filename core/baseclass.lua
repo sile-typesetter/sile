@@ -49,10 +49,10 @@ SILE.registerCommand("define", function (options, content)
     --SILE.documentState = std.tree.clone( prevState )
     local depth = #macroStack
     table.insert(macroStack, content2)
-    SU.debug("macros","Processing a "..options["command"].." Stack depth is "..depth)
+    SU.debug("macros", "Processing a "..options["command"].." Stack depth is "..depth)
     SILE.process(content)
     while (#macroStack > depth) do table.remove(macroStack) end
-    SU.debug("macros","Finished processing "..options["command"].." Stack depth is "..#macroStack.."\n")
+    SU.debug("macros", "Finished processing "..options["command"].." Stack depth is "..#macroStack.."\n")
     --SILE.documentState = prevState
   end, options.help, SILE.currentlyProcessingFile)
 end, "Define a new macro. \\define[command=example]{ ... \\process }")
@@ -181,10 +181,10 @@ SILE.baseClass = std.object {
     SILE.outputter.init(self)
     self:registerCommands()
     -- Call all stored package init routines
-    for i = 1,#(SILE.baseClass.deferredInit) do (SILE.baseClass.deferredInit[i])() end
+    for i = 1, #(SILE.baseClass.deferredInit) do (SILE.baseClass.deferredInit[i])() end
     SILE.typesetter:registerPageEndHook(function ()
       if SU.debugging("frames") then
-        for k,v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
+        for k, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
       end
     end)
     return self:initialFrame()

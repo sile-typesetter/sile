@@ -18,7 +18,7 @@ end
 if not table.maxn then
   table.maxn = function(tbl)
     local max = 0
-    for i,_ in pairs(tbl) do if i > max then max = i end end
+    for i, _ in pairs(tbl) do if i > max then max = i end end
     return max
   end
 end

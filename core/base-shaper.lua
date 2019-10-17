@@ -6,13 +6,13 @@ if not SILE.shapers then SILE.shapers = { } end
 --   return table.concat({ options.family;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename }, ";")
 -- end
 
-SILE.settings.declare({name = "shaper.variablespaces", type = "integer", default = 1})
-SILE.settings.declare({name = "shaper.spaceenlargementfactor", type = "number or integer", default = 1.2})
-SILE.settings.declare({name = "shaper.spaceshrinkfactor", type = "number or integer", default = 1/3})
-SILE.settings.declare({name = "shaper.spacestretchfactor", type = "number or integer", default = 1/2})
+SILE.settings.declare({ name = "shaper.variablespaces", type = "integer", default = 1 })
+SILE.settings.declare({ name = "shaper.spaceenlargementfactor", type = "number or integer", default = 1.2 })
+SILE.settings.declare({ name = "shaper.spaceshrinkfactor", type = "number or integer", default = 1/3 })
+SILE.settings.declare({ name = "shaper.spacestretchfactor", type = "number or integer", default = 1/2 })
 
 -- Function for testing shaping in the repl
-makenodes = function(string, options)
+makenodes = function (string, options)
   return SILE.shaper:createNnodes(string, SILE.font.loadDefaults(options or {}))
 end
 
@@ -23,10 +23,10 @@ SILE.shapers.base = std.object {
   -- giving preference to document.spaceskip
 
   -- Caching this has no significant speedup
-  measureSpace = function(self, options)
+  measureSpace = function (self, options)
     local ss = SILE.settings.get("document.spaceskip")
     if ss then
-      SILE.settings.temporarily(function()
+      SILE.settings.temporarily(function ()
         SILE.settings.set("font.size", options.size)
         SILE.settings.set("font.family", options.family)
         ss = ss:absolute()
@@ -55,14 +55,14 @@ SILE.shapers.base = std.object {
 
 
   -- Given a text and some font options, return a bunch of boxes
-  shapeToken = function(self, text, options)
+  shapeToken = function (self, text, options)
     SU.error("Abstract function shapeToken called", true)
   end,
 
   -- Given font options, select a font. We will handle
   -- caching here. Returns an arbitrary, implementation-specific
   -- object (ie a PAL for Pango, font number for libtexpdf, ...)
-  getFace = function(options)
+  getFace = function (options)
     SU.error("Abstract function getFace called", true)
   end,
 
@@ -70,7 +70,7 @@ SILE.shapers.base = std.object {
     SU.error("Abstract function addShapedGlyphToNnodeValue called", true)
   end,
 
-  preAddNodes = function(self, items, nnodeValue)
+  preAddNodes = function (self, items, nnodeValue)
   end,
 
   createNnodes = function (self, token, options)
@@ -81,7 +81,7 @@ SILE.shapers.base = std.object {
     SILE.languageSupport.loadLanguage(lang)
     local nodeMaker = SILE.nodeMakers[lang] or SILE.nodeMakers.unicode
     local nodes = {}
-    for node in (nodeMaker { options=options }):iterator(items, token) do
+    for node in (nodeMaker { options = options }):iterator(items, token) do
       nodes[#nodes+1] = node
     end
     return nodes
@@ -130,7 +130,7 @@ SILE.shapers.base = std.object {
     })
   end,
 
-  makeSpaceNode = function(self, options, item)
+  makeSpaceNode = function (self, options, item)
     if SILE.settings.get("shaper.variablespaces") == 1 then
       local spacewidth = item.width
       local width = SILE.length.new({

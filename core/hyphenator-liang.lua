@@ -1,7 +1,7 @@
 local function addPattern(hyphenator, pattern)
   local trie = hyphenator.trie
   local bits = SU.splitUtf8(pattern)
-  for i = 1,#bits do char = bits[i]
+  for i = 1, #bits do char = bits[i]
     if not char:find("%d") then
       if not(trie[char]) then trie[char] = {} end
       trie = trie[char]
@@ -9,7 +9,7 @@ local function addPattern(hyphenator, pattern)
   end
   trie["_"] = {}
   local lastWasDigit = 0
-  for i = 1,#bits do char = bits[i]
+  for i = 1, #bits do char = bits[i]
     if char:find("%d") then
       lastWasDigit = 1
       table.insert(trie["_"], tonumber(char))
@@ -26,7 +26,7 @@ local function registerException(hyphenator, exception)
   local bits = SU.splitUtf8(exception)
   hyphenator.exceptions[text] = { }
   j = 1
-  for i=1, #bits do
+  for i = 1, #bits do
     j = j + 1
     if bits[i] == "-" then
       j = j - 1
@@ -57,7 +57,7 @@ SILE._hyphenate = function (self, text)
   local points = self.exceptions[text:lower()]
   local word = SU.splitUtf8(text)
   if not points then
-    points = SU.map(function()return 0 end, word)
+    points = SU.map(function ()return 0 end, word)
     local work = SU.map(string.lower, word)
     table.insert(work, ".")
     table.insert(work, 1, ".")
@@ -100,7 +100,7 @@ local initHyphenator = function (lang)
   end
 end
 
-local hyphenateNode = function(node)
+local hyphenateNode = function (node)
   if not node:isNnode() or not node.text then return {node} end
   if node.language and (type(SILE.hyphenator.languages[node.language]) == "function") then
     return SILE.hyphenator.languages[node.language](node)
@@ -141,10 +141,10 @@ end
 
 SILE.hyphenate = function (nodelist)
   local newlist = {}
-  for i = 1,#nodelist do
+  for i = 1, #nodelist do
     local node = nodelist[i]
     local newnodes = hyphenateNode(node)
-    for j=1,#newnodes do newlist[#newlist+1] = newnodes[j] end
+    for j = 1, #newnodes do newlist[#newlist+1] = newnodes[j] end
   end
   return newlist
 end
@@ -155,7 +155,7 @@ SILE.registerCommand("hyphenator:add-exceptions", function (options, content)
   initHyphenator(language)
   for token in SU.gtoke(content[1]) do
     if token.string then
-      registerException(SILE._hyphenators[language],token.string)
+      registerException(SILE._hyphenators[language], token.string)
     end
   end
 end)

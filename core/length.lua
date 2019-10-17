@@ -74,7 +74,7 @@ _length = std.object {
     return result
   end,
 
-  __mul = function(self, other)
+  __mul = function (self, other)
     local result = _length {}
     result:fromLengthOrNumber(self)
     result = result:absolute()
@@ -87,8 +87,8 @@ _length = std.object {
     end
     return result
   end,
-   
-  __div = function(self, other)
+
+  __div = function (self, other)
     local result = _length {}
     result:fromLengthOrNumber(self)
     result = result:absolute()
