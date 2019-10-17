@@ -162,8 +162,7 @@ function SILE.inputs.TeXlike.process (doc)
       SILE.inputs.common.init(doc, tree)
     end
     SILE.process(tree)
-  elseif pcall(function () assert(load(doc))() end) then
-  else
+  elseif not pcall(function () assert(load(doc))() end) then
     SU.error("Input not recognized as Lua or SILE content")
   end
   if root and not SILE.preamble then

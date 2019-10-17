@@ -290,8 +290,8 @@ function lineBreak:computeDemerits(pi, breakType)
   end
   if pi > 0 then
     demerit = demerit + pi * pi
-  elseif pi == 0 then
-    -- do nothing
+  -- elseif pi == 0 then
+  --   -- do nothing
   elseif pi > ejectPenalty then
     demerit = demerit - pi * pi
   end

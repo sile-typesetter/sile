@@ -76,8 +76,7 @@ end
 -- Just a simple one-level find. We're not reimplementing XPath here.
 SILE.findInTree = function (tree, command)
   for i=1, #tree do
-    if type(tree[i]) == "string" then
-    elseif tree[i].command == command then
+    if type(tree[i]) == "table" and tree[i].command == command then
       return tree[i]
     end
   end
