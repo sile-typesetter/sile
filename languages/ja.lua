@@ -63,7 +63,7 @@ end
 -- This roughly implements the kinsoku shori given in Appendix C of jlreq
 local badBeforeClasses = { [1] = true, [12] = true, [28] = true }
 local badAfterClasses = { }
-for i, v in ipairs({ 2, 3, 4, 5, 6, 7, 9, 10, 11, 20, 29 }) do badAfterClasses[v] = true end
+for _, v in ipairs({ 2, 3, 4, 5, 6, 7, 9, 10, 11, 20, 29 }) do badAfterClasses[v] = true end
 
 function breakAllowed(before, after)
   local bc = jisClass(before)

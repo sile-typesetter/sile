@@ -14,12 +14,12 @@ SILE.registerCommand("char", function (options, content)
   SILE.call("style-"..options.style, options, content)
 end)
 
-SILE.registerCommand("chapter", function (options, content)
+SILE.registerCommand("chapter", function (options, _)
   SILE.call("bible:chapter-head", {}, { options.number })
   SILE.call("save-chapter-number", {}, { options.number })
 end)
 
-SILE.registerCommand("verse", function (options, content)
+SILE.registerCommand("verse", function (options, _)
   SILE.call("verse-number", options, { options.number })
 end)
 

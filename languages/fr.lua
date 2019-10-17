@@ -19,7 +19,7 @@ SILE.settings.declare({
 
 
 SILE.nodeMakers.fr = SILE.nodeMakers.unicode {
-  isHighPunctuation = function (self, text)
+  isHighPunctuation = function (_, text)
     return string.match(SILE.settings.get("languages.fr.highpunctuation"), text)
   end,
   makeUnbreakableSpace = function (self)
