@@ -81,7 +81,7 @@ SILE.outputters.libtexpdf = {
     end
     local buf = {}
     for i = 1, #(value.glyphString) do
-      glyph = value.glyphString[i]
+      local glyph = value.glyphString[i]
       buf[#buf+1] = string.char(math.floor(glyph % 2^32 / 2^8))
       buf[#buf+1] = string.char(glyph % 0x100)
     end
@@ -102,7 +102,7 @@ SILE.outputters.libtexpdf = {
     else
       pdf.setdirmode(0)
     end
-    pdffont = pdf.loadfont(font)
+    local pdffont = pdf.loadfont(font)
     if pdffont < 0 then SU.error("Font loading error for "..options) end
     font = pdffont
   end,
@@ -140,7 +140,7 @@ SILE.outputters.libtexpdf = {
     stuff = stuff[1].nodes[1].value.glyphString -- Horrible hack
     local buf = {}
     for i = 1, #stuff do
-      glyph = stuff[i]
+      local glyph = stuff[i]
       buf[#buf+1] = string.char(math.floor(glyph % 2^32 / 2^8))
       buf[#buf+1] = string.char(glyph % 0x100)
     end

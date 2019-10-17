@@ -113,7 +113,7 @@ end
 
 -- function debugUyghur(word)
 --   SILE.languageSupport.loadLanguage("ug")
---   print(showHyphenationPoints(word,"ug"))
+--   print(SILE.showHyphenationPoints(word,"ug"))
 --   local items = SILE._hyphenate(SILE.hyphenators["ug"],word)
 --   print(reorderHyphenations(items,true))
 -- end

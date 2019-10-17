@@ -100,7 +100,7 @@ local function resetCache ()
 end
 
 local function getline (str, pos)
-  start = 1
+  local start = 1
   lno = 1
   if pos > lastpos then
     lno = linecache[#linecache].lno

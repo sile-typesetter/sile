@@ -45,7 +45,7 @@ SILE.outputters.debug = {
   end,
 
   outputHbox = function (value, _)
-    buf = {}
+    local buf = {}
     for i=1, #(value.glyphString) do
       buf[#buf+1] = value.glyphString[i]
     end

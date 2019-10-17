@@ -1,5 +1,6 @@
 local plain = SILE.require("plain", "classes")
-docbook = plain { id = "docbook" }
+local docbook = plain { id = "docbook" }
+
 SILE.scratch.docbook = {
   seclevel = 0,
   seccount = {}
@@ -74,7 +75,7 @@ SILE.registerCommand("section", function (_, content)
   SILE.scratch.docbook.seclevel = SILE.scratch.docbook.seclevel - 1
 end)
 
-function countedThing(thing, _, content)
+local function countedThing(thing, _, content)
   SILE.call("increment-counter", {id=thing})
   SILE.call("bigskip")
   SILE.call("docbook-line")

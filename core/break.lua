@@ -21,7 +21,7 @@ local passSerial = 0
 local awful_bad = 1073741823
 local inf_bad = 10000
 local ejectPenalty = -inf_bad
-lineBreak = {}
+local lineBreak = {}
 
 --[[
   Basic control flow:

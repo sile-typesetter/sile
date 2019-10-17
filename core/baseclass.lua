@@ -77,7 +77,7 @@ SILE.baseClass = std.object {
       if (options["src"]) then
         require(options["src"])
       else
-        func, err = load(content[1])
+        local func, err = load(content[1])
         if not func then SU.error(err) end
         func()
       end

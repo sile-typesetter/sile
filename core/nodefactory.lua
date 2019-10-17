@@ -1,6 +1,6 @@
 -- Just boxes
 
-_box = std.object {
+local _box = std.object {
   _type = "Box",
   height= 0,
   depth= 0,
@@ -112,7 +112,7 @@ local _unshaped = _nnode {
   outputYourself = function (_)
     SU.error("An unshaped node made it to output", true)
   end,
-  __index = function (self, k)
+  __index = function (_, k)
     if k == "width" then SU.error("Can't get width of unshaped node", true) end
   end
 }
@@ -132,7 +132,7 @@ local _disc = _hbox {
   toText = function (self) return self.used and "-" or "_" end,
   outputYourself = function (self, typesetter, line)
     if self.used then
-      i = 1
+      local i = 1
       while (line.nodes[i]:isGlue() and line.nodes[i].value == "lskip")
           or line.nodes[i] == SILE.nodefactory.zeroHbox do
         i = i+1

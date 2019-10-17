@@ -1,4 +1,4 @@
-plain = SILE.baseClass { id = "plain" }
+local plain = SILE.baseClass { id = "plain" }
 
 plain.options.direction = function (value)
   if value then plain.pageTemplate.frames["content"].direction = value end

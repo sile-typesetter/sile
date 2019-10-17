@@ -137,7 +137,7 @@ function updatePackage(packageName, branch)
   if not ret then
     SU.error("Error updating repository for package "..packageName..": "..ret)
   end
-  local ret = os.execute("git checkout "..branch)
+  ret = os.execute("git checkout "..branch)
   if not ret then
     SU.error("Error updating repository for package "..packageName..": "..ret)
   end

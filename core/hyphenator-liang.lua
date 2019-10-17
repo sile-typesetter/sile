@@ -1,7 +1,8 @@
 local function addPattern(hyphenator, pattern)
   local trie = hyphenator.trie
   local bits = SU.splitUtf8(pattern)
-  for i = 1, #bits do char = bits[i]
+  for i = 1, #bits do
+    local char = bits[i]
     if not char:find("%d") then
       if not(trie[char]) then trie[char] = {} end
       trie = trie[char]
@@ -9,7 +10,8 @@ local function addPattern(hyphenator, pattern)
   end
   trie["_"] = {}
   local lastWasDigit = 0
-  for i = 1, #bits do char = bits[i]
+  for i = 1, #bits do
+    local char = bits[i]
     if char:find("%d") then
       lastWasDigit = 1
       table.insert(trie["_"], tonumber(char))
@@ -25,7 +27,7 @@ local function registerException(hyphenator, exception)
   local text = exception:gsub("-", "")
   local bits = SU.splitUtf8(exception)
   hyphenator.exceptions[text] = { }
-  j = 1
+  local j = 1
   for i = 1, #bits do
     j = j + 1
     if bits[i] == "-" then
@@ -37,7 +39,7 @@ local function registerException(hyphenator, exception)
   end
 end
 
-function loadPatterns(hyphenator, language)
+local function loadPatterns(hyphenator, language)
   SILE.languageSupport.loadLanguage(language)
 
   local languageset = SILE.hyphenator.languages[language]
@@ -118,7 +120,7 @@ local hyphenateNode = function (node)
           end
         end
         if not (j == #breaks) then
-          discretionary = SILE.nodefactory.newDiscretionary({ prebreak = SILE.shaper:createNnodes(SILE.settings.get("font.hyphenchar"), node.options) })
+          local discretionary = SILE.nodefactory.newDiscretionary({ prebreak = SILE.shaper:createNnodes(SILE.settings.get("font.hyphenchar"), node.options) })
           discretionary.parent = node
           table.insert(newnodes, discretionary)
          --table.insert(newnodes, SILE.nodefactory.newPenalty({ value = SILE.settings.get("typesetter.hyphenpenalty") }))
@@ -133,7 +135,7 @@ local hyphenateNode = function (node)
   return {node}
 end
 
-showHyphenationPoints = function (word, language)
+SILE.showHyphenationPoints = function (word, language)
   language = language or "en"
   initHyphenator(language)
   return SU.concat(SILE._hyphenate(SILE._hyphenators[language], word), SILE.settings.get("font.hyphenchar"))
