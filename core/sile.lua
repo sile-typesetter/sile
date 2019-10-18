@@ -101,8 +101,8 @@ local parser = std.optparse ("SILE "..SILE.version..[[
 Usage: sile [options] file.sil|file.xml
 
 The SILE typesetter reads a single input file in either SIL or XML format to
-generate an output in PDF format. The output will be writted to the same name
-as the input file with the extention changed to .pdf.
+generate an output in PDF format. The output will be written to the same name
+as the input file with the extension changed to .pdf.
 
 Options:
 
