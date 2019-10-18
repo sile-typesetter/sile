@@ -1,17 +1,18 @@
 SILE.hyphenator.languages.grc = { patterns={} }
-SILE.nodeMakers.grc = SILE.nodeMakers.unicode {
-  iterator = function (self, items)
-    return coroutine.wrap(function ()
-      self:init()
-      for i = 1, #items do
-        self:addToken(items[i].text, items[i])
-        self:makeToken()
-        self:makePenalty()
-        coroutine.yield(SILE.nodefactory.newGlue("0pt plus 2pt"))
-      end
-    end)
-  end
-}
+
+SILE.nodeMakers.grc = pl.class({
+    _base = SILE.nodeMakers.unicode,
+    iterator = function (self, items)
+      return coroutine.wrap(function ()
+        for i = 1, #items do
+          self:addToken(items[i].text, items[i])
+          self:makeToken()
+          self:makePenalty()
+          coroutine.yield(SILE.nodefactory.newGlue("0pt plus 2pt"))
+        end
+      end)
+    end
+  })
 
 local swap = SILE.nodefactory.newVbox({})
 swap.outputYourself = function (_, typesetter, _)

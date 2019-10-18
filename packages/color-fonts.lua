@@ -69,7 +69,7 @@ SILE.shapers.harfbuzzWithColor = SILE.shapers.harfbuzz {
           outputYourself = function () SILE.outputter:pushColor(run[i].color) end
         })
       end
-      for node in (nodeMaker { options=options }):iterator(run[i].slice, run[i].chunk) do
+      for node in nodeMaker(options):iterator(run[i].slice, run[i].chunk) do
         nodes[#nodes+1] = node
       end
       if run[i].color then

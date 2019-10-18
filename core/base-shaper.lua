@@ -82,7 +82,7 @@ SILE.shapers.base = std.object {
     SILE.languageSupport.loadLanguage(lang)
     local nodeMaker = SILE.nodeMakers[lang] or SILE.nodeMakers.unicode
     local nodes = {}
-    for node in (nodeMaker { options = options }):iterator(items, token) do
+    for node in nodeMaker(options):iterator(items, token) do
       nodes[#nodes+1] = node
     end
     return nodes

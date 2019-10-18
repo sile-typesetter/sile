@@ -135,7 +135,7 @@ SILE.shapers.harfbuzzWithFallback = SILE.shapers.harfbuzz {
     for i=1, #run do
       options = run[i].fontOptions
       SU.debug("fonts", "Shaping ".. run[i].chunk.. " in ".. options.family)
-      for node in (nodeMaker { options = options }):iterator(run[i].slice, run[i].chunk) do
+      for node in nodeMaker(options):iterator(run[i].slice, run[i].chunk) do
         nodes[#nodes+1] = node
       end
     end
