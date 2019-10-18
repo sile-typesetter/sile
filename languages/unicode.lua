@@ -75,7 +75,6 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
       self:letterspace()
       self:addToken(char, item)
     end
-    if not self.isWordType[thistype] then self.lasttype = chardata[cp] and chardata[cp].linebreak end
     self.lasttype = thistype
   end,
   handleInitialGlue = function (self, items)
