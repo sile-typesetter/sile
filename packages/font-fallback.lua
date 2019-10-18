@@ -1,36 +1,36 @@
-local fallbackQueue = std.object {
+local fallbackQueue = pl.class({
 
-  init = function (self, text, fallbacks)
-    self.q = {}
-    self.fallbacks = fallbacks
-    self.text = text
-    self.q[1] = { start =1, stop = #text }
-    self.q[#(self.q)+1] = { popFallbacks = true }
-  end,
+    _init = function (self, text, fallbacks)
+      self.q = {}
+      self.fallbacks = fallbacks
+      self.text = text
+      self.q[1] = { start =1, stop = #text }
+      self.q[#(self.q)+1] = { popFallbacks = true }
+    end,
 
-  pop = function (self)
-    table.remove(self.fallbacks, 1)
-    table.remove(self.q, 1)
-    self.q[#(self.q)+1] = { popFallbacks = true }
-  end,
+    pop = function (self)
+      table.remove(self.fallbacks, 1)
+      table.remove(self.q, 1)
+      self.q[#(self.q)+1] = { popFallbacks = true }
+    end,
 
-  shift       = function (self) return table.remove(self.q, 1) end,
+    shift       = function (self) return table.remove(self.q, 1) end,
 
-  continuing  = function (self) return #self.q > 0 and #self.fallbacks > 0 end,
+    continuing  = function (self) return #self.q > 0 and #self.fallbacks > 0 end,
 
-  currentFont = function (self) return self.fallbacks[1] end,
+    currentFont = function (self) return self.fallbacks[1] end,
 
-  currentJob  = function (self) return self.q[1] end,
+    currentJob  = function (self) return self.q[1] end,
 
-  lastJob     = function (self) return self.q[#(self.q)] end,
+    lastJob     = function (self) return self.q[#(self.q)] end,
 
-  currentText = function (self) return self.text:sub(self.q[1].start, self.q[1].stop) end,
+    currentText = function (self) return self.text:sub(self.q[1].start, self.q[1].stop) end,
 
-  addJob = function (self, start, stop)
-    self.q[#(self.q)+1] = { start = start, stop = stop }
-  end
+    addJob = function (self, start, stop)
+      self.q[#(self.q)+1] = { start = start, stop = stop }
+    end
 
-}
+  })
 
 local fontlist = {}
 
@@ -52,8 +52,7 @@ SILE.shapers.harfbuzzWithFallback = SILE.shapers.harfbuzz {
       for k, v in pairs(fontlist[i]) do moreOptions[k] = v end
       optionSet[#optionSet+1] = moreOptions
     end
-    local shapeQueue = fallbackQueue {}
-    shapeQueue:init(text, optionSet)
+    local shapeQueue = fallbackQueue(text, optionSet)
     while shapeQueue:continuing() do
       SU.debug("fonts", "Queue: ".. shapeQueue.q)
       options = shapeQueue:currentFont()
