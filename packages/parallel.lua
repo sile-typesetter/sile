@@ -106,7 +106,7 @@ SILE.registerCommand("sync", function (_, _)
     -- but page breaking has not been run. See if page breaking would cause a
     -- break
     local lines = pl.tablex.copy(typesetter.state.outputQueue)
-    if SILE.pagebuilder.findBestBreak({ vboxlist = lines, target = typesetter:pageTarget() }) then
+    if SILE.pagebuilder:findBestBreak({ vboxlist = lines, target = typesetter:pageTarget() }) then
       anybreak = true
     end
   end)

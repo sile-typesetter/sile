@@ -125,14 +125,14 @@ local _insertionVbox = SILE.nodefactory.newVbox({
     end
   end,
   split = function (self, materialToSplit, maxsize)
-    local s = SILE.pagebuilder.findBestBreak({
+    local s = SILE.pagebuilder:findBestBreak({
       vboxlist = materialToSplit,
       target   = maxsize.length,
       restart  = false,
       force    = true
     })
     if s then
-      local newvbox = SILE.pagebuilder.collateVboxes(s)
+      local newvbox = SILE.pagebuilder:collateVboxes(s)
       self.nodes = {}
       self.height = 0
       self:append(materialToSplit)

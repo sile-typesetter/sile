@@ -52,8 +52,8 @@ SILE.typesetter.buildPage = function (self, independent)
     if frame.next then frame = SILE.getFrame(frame.next) else break end
   end
   self.state.lastPenalty = 0
-  local pb = SILE.pagebuilder
-  SILE.pagebuilder = SILE.defaultPagebuilder
+  local oldPageBuilder = SILE.pagebuilder
+  SILE.pagebuilder = require("core/pagebuilder")()
   while self.frame and self.frame.balanced do
     SILE.defaultTypesetter.buildPage(self, true)
     if self.frame.next and SILE.getFrame(self.frame.next).balanced == true then
@@ -63,7 +63,7 @@ SILE.typesetter.buildPage = function (self, independent)
       break -- Break early, because when we return
     end
   end
-  SILE.pagebuilder = pb
+  SILE.pagebuilder = oldPageBuilder
   SU.debug("balancer", "Finished this balance, frame id is now "..self.frame:toString())
   -- SILE.typesetter:debugState()
   -- We're done.

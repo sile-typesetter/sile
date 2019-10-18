@@ -175,7 +175,7 @@ SILE.registerCommand("float", function (options, content)
   SILE.typesetter:leaveHmode()
   local hbox = SILE.call("hbox", {}, content)
   table.remove(SILE.typesetter.state.nodes) -- steal it back
-  local heightOfPageSoFar = SILE.pagebuilder.collateVboxes(SILE.typesetter.state.outputQueue).height
+  local heightOfPageSoFar = SILE.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue).height
   if SILE.length.make(heightOfPageSoFar + hbox.height - SILE.typesetter:pageTarget()).length > 0 then
     SILE.call("eject")
     SILE.typesetter:leaveHmode()

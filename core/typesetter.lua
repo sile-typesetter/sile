@@ -322,7 +322,7 @@ SILE.defaultTypesetter = std.object {
     if #(self.state.outputQueue) == 0 then return end
     if SILE.scratch.insertions then SILE.scratch.insertions.thisPage = {} end
 
-    pageNodeList, res = SILE.pagebuilder.findBestBreak({
+    pageNodeList, res = SILE.pagebuilder:findBestBreak({
       vboxlist = self.state.outputQueue,
       target   = self:pageTarget(),
       restart  = self.frame.state.pageRestart
