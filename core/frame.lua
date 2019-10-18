@@ -1,5 +1,9 @@
 SILE.frames = {}
 
+-- Buggy, relies on side effects
+-- luacheck: ignore solver frame
+-- See https://github.com/sile-typesetter/sile/issues/694
+
 local cassowary = require("cassowary")
 local solver = cassowary.SimplexSolver()
 local solverNeedsReloading = true
