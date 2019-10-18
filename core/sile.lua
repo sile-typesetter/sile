@@ -28,7 +28,7 @@ SILE.nodeMakers = {}
 SILE.tokenizers = {}
 SILE.status = {}
 
-SILE.traceStack = require("core/tracestack")
+SILE.traceStack = require("core/tracestack")()
 SILE.documentState = std.object {}
 SILE.scratch = {}
 SILE.length = require("core/length")
