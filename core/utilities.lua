@@ -163,8 +163,10 @@ end
 utilities.type = function(value)
   if type(value) == "number" then
     return math.floor(value) == value and "integer" or "number"
-  elseif type(value) == "table" then
+  elseif type(value) == "table" and value.prototype then
     return value:prototype()
+  elseif type(value) == "table" and value.is_a then
+    return value.type
   else
     return type(value)
   end

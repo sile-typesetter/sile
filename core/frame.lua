@@ -23,9 +23,9 @@ SILE.framePrototype = pl.class({
       if not dummy then
         for method, _ in pairs(alldims) do
           self.variables[method] = cassowary.Variable({ name = spec.id .. "_" .. method })
-          self[method] = function (self)
-            self:solve()
-            return self.variables[method].value
+          self[method] = function (_self)
+            _self:solve()
+            return _self.variables[method].value
           end
         end
         -- Add definitions of width and height
