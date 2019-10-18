@@ -44,17 +44,15 @@ local defaultPagebuilder = require("core/pagebuilder")
 local gridPagebuilder = pl.class({
     _base = defaultPagebuilder,
 
-    findBestBreak = function (self, options)
+    findBestBreak = function (_, options)
       local vboxlist = SU.required(options, "vboxlist", "in findBestBreak")
       local target   = SU.required(options, "target", "in findBestBreak")
       local i = 0
       local totalHeight = SILE.length.new()
       local bestBreak = 0
-      local started = false
-      while not started and i < #vboxlist do
+      while i < #vboxlist do
         i = i + 1
         if not vboxlist[i]:isVglue() then
-          started = true
           i = i - 1
           break
         end
