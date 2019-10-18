@@ -25,7 +25,7 @@ local parallelPagebreak = function ()
       if #typesetter.state.outputQueue > 0 and calculations[frame].mark == 0 then
         -- More than one page worth of stuff here.
         -- Just ship out one page and hope for the best.
-        SILE.defaultTypesetter.pageBuilder(typesetter)
+        SILE.defaultTypesetter.buildPage(typesetter)
       else
         for l = 1, calculations[frame].mark do
           thispage[l] = table.remove(typesetter.state.outputQueue, 1)
@@ -50,7 +50,7 @@ local setupParallel = function (klass, options)
     typesetterPool[frame] = SILE.typesetter {}
     typesetterPool[frame].id = typesetter
     typesetterPool[frame]:init(SILE.getFrame(typesetter))
-    typesetterPool[frame].pageBuilder = function ()
+    typesetterPool[frame].buildPage = function ()
       -- No thank you, I will do that.
     end
     -- Fixed leading here is obviously a bug, but n-way leading calculations

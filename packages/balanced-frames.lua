@@ -5,9 +5,9 @@ SILE.registerCommand("balancecolumns", function (_, _)
   SILE.call("penalty", { penalty = BALANCE_PENALTY })
 end)
 
-SILE.typesetter.pageBuilder = function (self, independent)
+SILE.typesetter.buildPage = function (self, independent)
   local frame = self.frame
-  if not (frame.balanced == true) then return SILE.defaultTypesetter.pageBuilder(self, independent) end
+  if not (frame.balanced == true) then return SILE.defaultTypesetter.buildPage(self, independent) end
 
   local colCount = 0
   local target = SILE.length.new({  })
@@ -18,7 +18,7 @@ SILE.typesetter.pageBuilder = function (self, independent)
   end
 
   -- Really, try and avoid doing anything, where possible.
-  if colCount == 1 then return SILE.defaultTypesetter.pageBuilder(self, independent) end
+  if colCount == 1 then return SILE.defaultTypesetter.buildPage(self, independent) end
   -- If the total amount of stuff on the output list is greater then the total
   -- of frame space on the page, and there are no magic requests to balance the
   -- columns, then we have a full page. Just send it out normally.
@@ -33,7 +33,7 @@ SILE.typesetter.pageBuilder = function (self, independent)
     end
   end
   if totalHeight.length > target.length and mustBalance == 0 and not independent then
-    return SILE.defaultTypesetter.pageBuilder(self, independent)
+    return SILE.defaultTypesetter.buildPage(self, independent)
   end
 
   -- Have we been explicitly asked to find a pagebreak at this point?
@@ -55,7 +55,7 @@ SILE.typesetter.pageBuilder = function (self, independent)
   local pb = SILE.pagebuilder
   SILE.pagebuilder = SILE.defaultPagebuilder
   while self.frame and self.frame.balanced do
-    SILE.defaultTypesetter.pageBuilder(self, true)
+    SILE.defaultTypesetter.buildPage(self, true)
     if self.frame.next and SILE.getFrame(self.frame.next).balanced == true then
       self:initFrame(SILE.getFrame(self.frame.next))
       self:runHooks("newframe")

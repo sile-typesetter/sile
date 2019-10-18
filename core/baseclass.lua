@@ -242,7 +242,7 @@ SILE.baseClass = std.object {
     while not (#SILE.typesetter.state.nodes == 0 and #SILE.typesetter.state.outputQueue == 0) do
       SILE.call("supereject")
       SILE.typesetter:leaveHmode(true)
-      SILE.typesetter:pageBuilder()
+      SILE.typesetter:buildPage()
       if not (#SILE.typesetter.state.nodes == 0 and #SILE.typesetter.state.outputQueue == 0) then
         SILE.typesetter:initNextFrame()
       end

@@ -316,7 +316,7 @@ SILE.defaultTypesetter = std.object {
   registerPageEndHook = function (self, frame)
     self:registerHook("pageend", frame)
   end,
-  pageBuilder = function (self)
+  buildPage = function (self)
     local pageNodeList
     local res
     if #(self.state.outputQueue) == 0 then return end
@@ -510,7 +510,7 @@ SILE.defaultTypesetter = std.object {
       self:pushVertical(vbox)
     end
     if independent then return end
-    if self:pageBuilder() then
+    if self:buildPage() then
       self:initNextFrame()
     end
   end,
