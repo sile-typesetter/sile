@@ -1,20 +1,32 @@
 local lpeg = require("lpeg")
 
-local _length
-_length = pl.class({
+return pl.class({
     type = "Length",
     length = 0,
     stretch = 0,
     shrink = 0,
 
     _init = function (self, spec)
-      for k, v in pairs(spec or {}) do
-        self[k] = v
+      if type(spec) == "table" then
+        if spec.length then self.length = spec.length end
+        if spec.stretch then self.stretch = spec.stretch end
+        if spec.shrink then self.shrink = spec.shrink end
+      elseif type(spec) == "number" then
+        self.length = spec
+      elseif type(spec) == "string" then
+        local num = tonumber(spec)
+        if type(num) == "number" then
+          self.length = num
+        else
+          local parsed = lpeg.match(SILE.parserBits.length, spec)
+          if not parsed then SU.error("Could not parse length '"..spec.."'") end
+          self:_init(parsed)
+        end
       end
     end,
 
-    absolute = function (self, _)
-      return _length({
+    absolute = function (self)
+      return SILE.length({
           length = SILE.toAbsoluteMeasurement(self.length),
           stretch = SILE.toAbsoluteMeasurement(self.stretch),
           shrink = SILE.toAbsoluteMeasurement(self.shrink)
@@ -22,19 +34,32 @@ _length = pl.class({
     end,
 
     negate = function (self)
-      local zero = SILE.length.new({})
-      return zero - self
+      return self:__unm()
     end,
 
-    fromLengthOrNumber = function (self, input)
-      if type(input) == "table" then
-        self.length = input.length
-        self.stretch = input.stretch
-        self.shrink = input.shrink
-      else
-        self.length = input
-      end
-      return self
+    new = function (spec)
+      -- SU.warn("Function SILE.length.new() is deprecated, just call SILE.length(...)")
+      return SILE.length(spec)
+    end,
+
+    make = function (spec)
+      -- SU.warn("Function SILE.length.make() is deprecated, just call SILE.length(...)")
+      return SILE.length(spec)
+    end,
+
+    parse = function (spec)
+      -- SU.warn("Function SILE.length.parse() is deprecated, just call SILE.length(...)")
+      return SILE.length(spec)
+    end,
+
+    fromLengthOrNumber = function (_, spec)
+      -- SU.warn("Function SILE.length.fromLengthOrNumber() is deprecated, just call SILE.length(...)")
+      return SILE.length(spec)
+    end,
+
+    __index = function (_, key)
+      -- SU.warn("Length method " .. key .. " is deprecated, just call SILE.length(...)")
+      return SILE.length()
     end,
 
     __tostring = function (self)
@@ -45,9 +70,7 @@ _length = pl.class({
     end,
 
     __add = function (self, other)
-      local result = _length()
-      result:fromLengthOrNumber(self)
-      result = result:absolute()
+      local result = SILE.length(self):absolute()
       if type(other) == "table" then
         other = other:absolute()
       end
@@ -63,9 +86,7 @@ _length = pl.class({
     end,
 
     __sub = function (self, other)
-      local result = _length()
-      result:fromLengthOrNumber(self)
-      result = result:absolute()
+      local result = SILE.length(self):absolute()
       other = SILE.toAbsoluteMeasurement(other or 0)
       if type(other) == "table" then
         other = other:absolute()
@@ -82,9 +103,7 @@ _length = pl.class({
     end,
 
     __mul = function (self, other)
-      local result = _length()
-      result:fromLengthOrNumber(self)
-      result = result:absolute()
+      local result = SILE.length(self):absolute()
       if type(other) == "table" then
         SU.error("Attempt to multiply two lengths together")
       else
@@ -95,10 +114,13 @@ _length = pl.class({
       return result
     end,
 
+    __unm = function(self)
+      local zero = SILE.length()
+      return zero - self
+    end,
+
     __div = function (self, other)
-      local result = _length()
-      result:fromLengthOrNumber(self)
-      result = result:absolute()
+      local result = SILE.length(self):absolute()
       if type(other) == "table" then
         SU.error("Attempt to divide two lengths together")
       else
@@ -117,32 +139,6 @@ _length = pl.class({
       return self.length == other.length
       and self.stretch == other.stretch
       and self.shrink == other.shrink
-    end,
+    end
+
   })
-
-local length = {
-
-  new = function (spec)
-    return _length(spec)
-  end,
-
-  make = function (input)
-    local result = _length()
-    result:fromLengthOrNumber(input)
-    return result
-  end,
-
-  parse = function (spec)
-    if not spec then return _length() end
-    if type(spec) == "table" then return _length(spec) end
-    local length = lpeg.match(SILE.parserBits.length, spec)
-    if not length then SU.error("Bad length definition '"..spec.."'") end
-    if not length.shrink then length.shrink = 0 end
-    if not length.stretch then length.stretch = 0 end
-    return _length(length)
-  end,
-
-  zero = _length()
-}
-
-return length
