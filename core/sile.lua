@@ -2,7 +2,7 @@
 local lua_version = _VERSION:sub(-3)
 if lua_version < "5.3" then require("compat53") end -- Backport of lots of Lua 5.3 features to Lua 5.[12]
 bit32 = bit32 or require("bit32") -- Backport of Lua 5.2+ bitwise functions to Lua 5.1
-require("pl") -- Penlight on-demand module loader
+pl = require("pl.import_into")() -- Penlight on-demand module loader
 if (os.getenv("SILE_COVERAGE")) then require("luacov") end
 
 -- Include lua-stdlib, but make sure debugging is turned off since newer
