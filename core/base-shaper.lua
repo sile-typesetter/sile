@@ -12,6 +12,7 @@ SILE.settings.declare({ name = "shaper.spaceshrinkfactor", type = "number or int
 SILE.settings.declare({ name = "shaper.spacestretchfactor", type = "number or integer", default = 1/2 })
 
 -- Function for testing shaping in the repl
+-- luacheck: ignore makenodes
 makenodes = function (string, options)
   return SILE.shaper:createNnodes(string, SILE.font.loadDefaults(options or {}))
 end
