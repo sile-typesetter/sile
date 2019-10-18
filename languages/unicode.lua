@@ -1,7 +1,6 @@
 local icu = require("justenoughicu")
 
-require("char-def")
-local chardata = characters.data
+local chardata = pl.pretty.load(pl.utils.readfile("lua-libraries/char-def.lua")).characters.data
 
 SILE.nodeMakers.base = pl.class({
     _init = function (self, options)
