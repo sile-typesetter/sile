@@ -26,7 +26,7 @@ SILE.shapers.pango = SILE.shapers.base {
     if options.pal then
       return options.pal
     end
-    local p = std.string.pickle(options)
+    local p = pl.pretty.write(options, '')
     if palcache[p] then return palcache[p]
     else
       pal = pango.AttrList.new()
