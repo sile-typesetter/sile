@@ -156,9 +156,9 @@ entered yet.
 
 --]]
 
-local initShrinkage = function (f)
-  if not f.state.totals then f:init() end
-  if not f.state.totals.shrinkage then f.state.totals.shrinkage = 0 end
+local initShrinkage = function (frame)
+  if not frame.state or not frame.state.totals then frame:init() end
+  if not frame.state.totals.shrinkage then frame.state.totals.shrinkage = 0 end
 end
 
 --[[ Mark a frame for reduction. --]]
