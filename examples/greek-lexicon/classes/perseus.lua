@@ -6,7 +6,7 @@ perseus:declareFrame("b",    { left = "52%pw",           right = "100%pw - left(
 perseus:declareFrame("folio",{ left = "left(a)",         right = "right(b)",         top = "bottom(a)+3%ph", bottom = "bottom(a)+8%ph"          });
 perseus.pageTemplate.firstContentFrame = perseus.pageTemplate.frames["a"];
 
-SILE.registerCommand("lexicalEntry", function (options, content)
+SILE.registerCommand("lexicalEntry", function (_, content)
   SILE.call("noindent")
   local pos = SILE.findInTree(content, "posContainer")
   if not pos then return end
@@ -19,23 +19,23 @@ SILE.registerCommand("lexicalEntry", function (options, content)
   SILE.call("smallskip")
 end)
 
-SILE.registerCommand("senses", function(options, content)
+SILE.registerCommand("senses", function (_, content)
   SILE.scratch.perseus.senseNo = 0
   SILE.process(content)
 end)
 
-SILE.registerCommand("senseContainer", function(options, content)
+SILE.registerCommand("senseContainer", function (_, content)
   SILE.scratch.perseus.senseNo = SILE.scratch.perseus.senseNo + 1
   SILE.typesetter:typeset(SILE.scratch.perseus.senseNo .. ". ")
   SILE.process(content)
 end)
 
-SILE.registerCommand("authorContainer", function(options, content)
+SILE.registerCommand("authorContainer", function (_, content)
   local auth = SILE.findInTree(content, "author")
   if not auth then return end
   local name = SILE.findInTree(auth, "name")
   if name and name[1] ~= "NULL" then
-    SILE.call("font", {style="italic"}, function ()
+    SILE.call("font", { style = "italic" }, function ()
       SILE.typesetter:typeset("("..name[1]..")")
     end)
   end

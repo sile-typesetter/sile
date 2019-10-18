@@ -59,7 +59,7 @@ if SILE.masterFilename then
     ProFi = require 'ProFi'
     ProFi:start()
   end
-  main, err = xpcall(function() SILE.readFile(unparsed[1]) end, SILE.errorHandler)
+  local main, err = xpcall(function() SILE.readFile(SILE.inputFile) end, SILE.errorHandler)
   if not main then
     if type(err) == "string" and err:match(": interrupted!") then
       SILE.outputter:finish()
@@ -77,3 +77,4 @@ if SILE.masterFilename then
 else
   SILE.repl()
 end
+-- vim: ft=lua

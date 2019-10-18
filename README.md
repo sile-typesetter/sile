@@ -1,6 +1,7 @@
-[![Linux Build Status](https://travis-ci.com/simoncozens/sile.svg?branch=master)](https://travis-ci.com/simoncozens/sile)
+[![Linux Build Status](https://travis-ci.com/sile-typesetter/sile.svg?branch=master)](https://travis-ci.com/sile-typesetter/sile)
 [![Windows Build Status](https://simoncozens-github.visualstudio.com/sile/_apis/build/status/simoncozens.sile?branchName=master)](https://simoncozens-github.visualstudio.com/sile/_build/latest?definitionId=1&branchName=master)
-[![Lua Coverage Status](https://coveralls.io/repos/simoncozens/sile/badge.svg?branch=master&service=github)](https://coveralls.io/github/simoncozens/sile?branch=master)
+[![Luacheck](https://github.com/sile-typesetter/sile/workflows/Luacheck/badge.svg)](https://github.com/sile-typesetter/sile/actions?workflow=Luacheck)
+[![Coverage Status](https://coveralls.io/repos/github/sile-typesetter/sile/badge.svg?branch=master)](https://coveralls.io/github/sile-typesetter/sile?branch=master)
 [![Join the chat](https://badges.gitter.im/simoncozens/sile.svg)](https://gitter.im/simoncozens/sile?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
@@ -11,7 +12,7 @@ SILE is a [typesetting][typesetting] system; its job is to produce beautiful pri
 
 ## What can I do with SILE (that I can’t do with TeX)?
 
-First, have a look at the [show-off file][showoff]. SILE allows you to:
+First, have a look at the [usage examples gallery][examples]. SILE allows you to:
 
 * Produce complex document layouts using frames.
 
@@ -31,7 +32,7 @@ A formula is available for [Homebrew][brew] that can install both stable and hea
 
 * **Arch Linux** packages are available in the [AUR][aur] that can be installed using your prefered package manager (e.g. `yaourt -S sile`). Use [sile][aur-rel] for the latest stable release or [sile-git][aur-dev] to build from the latest git commit.
 
-* Track the status of **Ubuntu** packages in [issue #638](https://github.com/simoncozens/sile/issues/638).
+* Track the status of **Ubuntu** packages in [issue #638](https://github.com/sile-typesetter/sile/issues/638).
 
 * **Other** Linux distros may be compiled from source or, optionally installed via [Nix][nix].
 
@@ -41,7 +42,7 @@ Install from OpenBSD ports, via source, or optionally via [Nix][nix].
 
 ### For Windows
 
-There is no installer yet (track the status in [issue #410](https://github.com/simoncozens/sile/issues/638)), but prebuilt Windows binaries may be downloaded from Azure's artifacts menu after selecting the [latest  build][azure]. For tips to how to build it yourself from source using CMake and Visual Studio, see [issue #567](https://github.com/simoncozens/sile/pull/567).
+There is no installer yet (track the status in [issue #410](https://github.com/sile-typesetter/sile/issues/638)), but prebuilt Windows binaries may be downloaded from Azure's artifacts menu after selecting the [latest  build][azure]. For tips to how to build it yourself from source using CMake and Visual Studio, see [issue #567](https://github.com/sile-typesetter/sile/pull/567).
 
 ### From source
 
@@ -49,7 +50,7 @@ SILE can be downloaded from [its website][sile] or directly from [the Github rel
 
 SILE is written in the Lua programming language, so you will need a working Lua installation on your system. It also relies on external libraries to access fonts and write PDF files. Its preferred combination of libraries is [Harfbuzz][harfbuzz] and [libtexpdf][], a PDF creation library extracted from TeX. Harfbuzz (minimum version 1.4.2) should be available from your operating system's package manager. For Harfbuzz to work you will also need fontconfig installed. SILE also requires the [ICU][icu] libraries for Unicode handling.
 
-Optionally you may install the Lua libraries listed in the [rockspec][] to your system (using either your system's package manage or [luarocks][] (`luarocks install sile-dev-1.rockspec`). By default all the required Lua libraries will bundled alongside the SILE the instalation. If you downloaded a source tarball these depenedncies are included, if you are using a git clone of the source repository the build system will require `luarocks` to fetch them during build. If your system has all the required packages already you may add `--with-system-luarocks` to the `./configure` command to skip this step.
+Optionally you may install the Lua libraries listed in the [rockspec][] to your system (using either your system's package manage or [luarocks][] (`luarocks install sile-dev-1.rockspec`). By default all the required Lua libraries will bundled alongside the SILE the instalation. If you downloaded a source tarball these depenedncies are included, if you are using a git clone of the source repository the build system will require `luarocks` to fetch them during build. Note that *openssl-devel* will be required for one of the Lua modules to compile. If your system has all the required packages already you may add `--with-system-luarocks` to the `./configure` command to skip this step.
 
 If you are building from a a git clone, start by running the script to setup your environment (if you are using the source tarball this is unnecessary):
 
@@ -102,19 +103,19 @@ Please report bugs and send patches and pull requests at the [github repository]
 SILE is distributed under the [MIT licence][license].
 
   [sile]: http://www.sile-typesetter.org/
-  [releases]: https://github.com/simoncozens/sile/releases
+  [releases]: https://github.com/sile-typesetter/sile/releases
   [azure]: https://simoncozens-github.visualstudio.com/sile/_build
-  [rockspec]: https://github.com/simoncozens/sile/blob/master/sile-dev-1.rockspec
+  [rockspec]: https://github.com/sile-typesetter/sile/blob/master/sile-dev-1.rockspec
   [doc]: http://sile-typesetter.org/manual/sile-0.9.5.pdf
   [gentium]: http://software.sil.org/gentium/download/
-  [github]: https://github.com/simoncozens/sile
+  [github]: https://github.com/sile-typesetter/sile
   [license]: http://choosealicense.com/licenses/mit/
-  [faq]: https://github.com/simoncozens/sile/wiki/faq
-  [showoff]: https://rawgit.com/simoncozens/sile/b66b979a6dca0c60bd4aa2cbad3da36ae2073672/examples/showoff.pdf
+  [faq]: https://github.com/sile-typesetter/sile/wiki/faq
+  [examples]: http://www.sile-typesetter.org/examples/
   [luarocks]: http://luarocks.org/en/Download
   [harfbuzz]: http://www.freedesktop.org/wiki/Software/HarfBuzz/
   [icu]: http://icu-project.org
-  [libtexpdf]: https://github.com/simoncozens/libtexpdf
+  [libtexpdf]: https://github.com/sile-typesetter/libtexpdf
   [aur]: https://wiki.archlinux.org/index.php/Arch_User_Repository
   [aur-rel]: https://aur.archlinux.org/packages/sile/
   [aur-dev]: https://aur.archlinux.org/packages/sile-git/

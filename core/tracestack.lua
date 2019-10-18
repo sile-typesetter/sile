@@ -44,14 +44,14 @@ local function formatTraceLine(string)
 end
 
 -- Push a document processing run (input method) onto the stack
-function traceStack:pushDocument(file, sniff, document)
+function traceStack:pushDocument(file, sniff, _)
   local frame = self.defaultFrame {
     command = "document",
     file = file,
     sniff = sniff
   }
   setmetatable(frame, {
-      __tostring = function(self) return "<file> (" .. self.sniff .. ")" end,
+      __tostring = function(this) return "<file> (" .. this.sniff .. ")" end,
     })
   return self:pushFrame(frame)
 end
@@ -72,9 +72,9 @@ function traceStack:pushCommand(command, content, options)
     options = options or {}
   }
   setmetatable(frame, {
-    __tostring = function(self)
-      local options = (table.nitems(self.options) > 0 and tostring(self.options):gsub("^{", "["):gsub("}$", "]") or "")
-      return "\\" .. self.command .. options
+    __tostring = function(this)
+      local opts = (table.nitems(this.options) > 0 and tostring(this.options):gsub("^{", "["):gsub("}$", "]") or "")
+      return "\\" .. this.command .. opts
     end
   })
   return self:pushFrame(frame)
@@ -99,9 +99,9 @@ function traceStack:pushContent(content, command)
       options = content.options or {}
     }
   setmetatable(frame, {
-    __tostring = function(self)
-      local options = (table.nitems(self.options) > 0 and tostring(self.options):gsub("^{", "["):gsub("}$", "]") or "")
-      return "\\" .. self.command .. options
+    __tostring = function(this)
+      local options = (table.nitems(this.options) > 0 and tostring(this.options):gsub("^{", "["):gsub("}$", "]") or "")
+      return "\\" .. this.command .. options
     end
   })
   return self:pushFrame(frame)
@@ -114,13 +114,12 @@ function traceStack:pushText(text)
     text = text
   }
   setmetatable(frame, {
-    __tostring = function(self)
-      local text = self.text
-      if text:len() > 20 then
-        text = text:sub(1, 18) .. "…"
+    __tostring = function(this)
+      if this.text:len() > 20 then
+        this.text = this.text:sub(1, 18) .. "…"
       end
-      text = text:gsub("\n", "␤"):gsub("\t", "␉"):gsub("\v", "␋")
-      return '"' .. text .. '"'
+      this.text = this.text:gsub("\n", "␤"):gsub("\t", "␉"):gsub("\v", "␋")
+      return '"' .. this.text .. '"'
     end
   })
   return self:pushFrame(frame)
@@ -198,7 +197,7 @@ end
 -- Returns multiline trace string with locations of each frame up to maxdepth
 function traceStack:locationTrace(maxdepth)
   local depth = maxdepth or #self
-  trace = formatTraceLine(self:locationHead())
+  local trace = formatTraceLine(self:locationHead())
   depth = depth - 1
   if depth > 1 then
     repeat

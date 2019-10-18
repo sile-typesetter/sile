@@ -246,12 +246,12 @@ bible.endPage = function (self)
   return plain.endPage(self)
 end
 
-SILE.registerCommand("left-running-head", function (options, content)
+SILE.registerCommand("left-running-head", function (_, content)
   local closure = SILE.settings.wrap()
   SILE.scratch.headers.left = function () closure(content) end
 end, "Text to appear on the top of the left page")
 
-SILE.registerCommand("right-running-head", function (options, content)
+SILE.registerCommand("right-running-head", function (_, content)
   local closure = SILE.settings.wrap()
   SILE.scratch.headers.right = function () closure(content) end
 end, "Text to appear on the top of the right page")

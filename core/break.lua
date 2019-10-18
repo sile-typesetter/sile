@@ -1,28 +1,27 @@
-
-SILE.settings.declare({ name="linebreak.parShape", type = "string or nil", default = nil}) -- unimplemented
-SILE.settings.declare({ name="linebreak.tolerance", type = "integer or nil", default = 500})
-SILE.settings.declare({ name="linebreak.pretolerance", type = "integer or nil", default = 100})
-SILE.settings.declare({ name="linebreak.hangIndent", type = "nil", default = nil}) -- unimplemented
-SILE.settings.declare({ name="linebreak.adjdemerits", type = "integer", default = 10000,
-  help = "Additional demerits which are accumulated in the course of paragraph building when two consecutive lines are visually incompatible. In these cases, one line is built with much space for justification, and the other one with little space."})
-SILE.settings.declare({ name="linebreak.looseness", type = "integer", default = 0})
-SILE.settings.declare({ name="linebreak.prevGraf", type = "integer", default = 0})
-SILE.settings.declare({ name="linebreak.emergencyStretch", type = "Length or nil", default = SILE.length.new()})
-SILE.settings.declare({ name="linebreak.doLastLineFit", type = "boolean", default = false}) -- unimplemented
-SILE.settings.declare({ name="linebreak.linePenalty", type = "integer", default = 10})
-SILE.settings.declare({ name="linebreak.hyphenPenalty", type = "integer", default = 50})
-SILE.settings.declare({ name="linebreak.doubleHyphenDemerits", type = "integer", default = 10000})
-SILE.settings.declare({ name="linebreak.finalHyphenDemerits", type = "integer", default = 5000})
+SILE.settings.declare({ name = "linebreak.parShape", type = "string or nil", default = nil }) -- unimplemented
+SILE.settings.declare({ name = "linebreak.tolerance", type = "integer or nil", default = 500 })
+SILE.settings.declare({ name = "linebreak.pretolerance", type = "integer or nil", default = 100 })
+SILE.settings.declare({ name = "linebreak.hangIndent", type = "nil", default = nil }) -- unimplemented
+SILE.settings.declare({ name = "linebreak.adjdemerits", type = "integer", default = 10000,
+  help = "Additional demerits which are accumulated in the course of paragraph building when two consecutive lines are visually incompatible. In these cases, one line is built with much space for justification, and the other one with little space." })
+SILE.settings.declare({ name = "linebreak.looseness", type = "integer", default = 0 })
+SILE.settings.declare({ name = "linebreak.prevGraf", type = "integer", default = 0 })
+SILE.settings.declare({ name = "linebreak.emergencyStretch", type = "Length or nil", default = SILE.length.new() })
+SILE.settings.declare({ name = "linebreak.doLastLineFit", type = "boolean", default = false }) -- unimplemented
+SILE.settings.declare({ name = "linebreak.linePenalty", type = "integer", default = 10 })
+SILE.settings.declare({ name = "linebreak.hyphenPenalty", type = "integer", default = 50 })
+SILE.settings.declare({ name = "linebreak.doubleHyphenDemerits", type = "integer", default = 10000 })
+SILE.settings.declare({ name = "linebreak.finalHyphenDemerits", type = "integer", default = 5000 })
 
 -- doubleHyphenDemerits
 -- hyphenPenalty
 
-local classes = {"tight"; "decent"; "loose"; "veryLoose"}
+local classes = { "tight"; "decent"; "loose"; "veryLoose" }
 local passSerial = 0
 local awful_bad = 1073741823
 local inf_bad = 10000
 local ejectPenalty = -inf_bad
-lineBreak = {}
+local lineBreak = {}
 
 --[[
   Basic control flow:
@@ -38,7 +37,7 @@ lineBreak = {}
     postLineBreak
 ]]
 
-local param = function(x) return SILE.toAbsoluteMeasurement(SILE.settings.get("linebreak."..x)) end
+local param = function (x) return SILE.toAbsoluteMeasurement(SILE.settings.get("linebreak."..x)) end
 
 -- Routines here will be called thousands of times; we micro-optimize
 -- to avoid debugging and concat calls.
@@ -58,22 +57,22 @@ function lineBreak:init()
   self.background = SILE.length.new() + rskip + lskip
   -- 860
   self.bestInClass = {}
-  for i = 1,#classes do
+  for i = 1, #classes do
     self.bestInClass[classes[i]] = {
       minimalDemerits = awful_bad
     }
   end
   self.minimumDemerits = awful_bad
-  self:setupLineLengths(params)
+  self:setupLineLengths()
 end
 
 function lineBreak:trimGlue() -- 842
   local nodes = self.nodes
   if nodes[#nodes]:isGlue() then nodes[#nodes] = nil end
-  nodes[#nodes+1] = SILE.nodefactory.newPenalty({penalty = inf_bad})
+  nodes[#nodes+1] = SILE.nodefactory.newPenalty({ penalty = inf_bad })
 end
 
-function lineBreak:setupLineLengths(params) -- 874
+function lineBreak:setupLineLengths() -- 874
   self.parShape = param("parShape")
   if not self.parShape then
     if not param("hangIndent") then
@@ -92,8 +91,8 @@ function lineBreak:setupLineLengths(params) -- 874
 end
 
 function lineBreak:tryBreak() -- 855
-  local pi,breakType
- 
+  local pi, breakType
+
   local node = self.nodes[self.place]
   if not node then pi = ejectPenalty; breakType = "hyphenated"
   elseif node:isDiscretionary() then breakType = "hyphenated"; pi = param("hyphenPenalty")
@@ -110,7 +109,7 @@ function lineBreak:tryBreak() -- 855
   while true do
     while true do -- allows "break" to function as "continue"
       self.r = self.prev_r.next
-      if debugging then SU.debug("break","We have moved the link  forward, ln is now "..(self.r.type == "delta" and "XX" or self.r.lineNumber)) end
+      if debugging then SU.debug("break", "We have moved the link  forward, ln is now "..(self.r.type == "delta" and "XX" or self.r.lineNumber)) end
 
       if self.r.type == "delta" then -- 858
         if debugging then SU.debug("break", " Adding delta node width of ".. tostring(self.r.width)) end
@@ -123,7 +122,7 @@ function lineBreak:tryBreak() -- 855
 
       -- 861
       if self.r.lineNumber > self.old_l then
-        if debugging then SU.debug("break","Mimimum demerits = " .. self.minimumDemerits) end
+        if debugging then SU.debug("break", "Mimimum demerits = " .. self.minimumDemerits) end
         if self.minimumDemerits < awful_bad and (self.old_l ~= self.easy_line or self.r == self.activeListHead) then
           self:createNewActiveNodes(breakType)
         end
@@ -154,7 +153,7 @@ function lineBreak:tryBreak() -- 855
       end
     end
   end
- 
+
 end
 
 local function fitclass(self, shortfall)
@@ -196,12 +195,12 @@ function lineBreak:tryAlternatives(from, to)
   end
   if #alternates == 0 then return end
   local localMinimum = awful_bad
-  local selectedShortfall = 0
+  -- local selectedShortfall
   local shortfall = self.lineWidth - self.curActiveWidth.length
   if debugging then SU.debug("break", "Shortfall was ", shortfall) end
   for combination in SU.allCombinations(altSizes) do
     local addWidth = 0
-    for i = 1,#(alternates) do local alt = alternates[i]
+    for i = 1, #(alternates) do local alt = alternates[i]
       addWidth = (addWidth + alt.options[combination[i]].width - alt:minWidth()).length
       if debugging then SU.debug("break", alt.options[combination[i]], " width", addWidth) end
     end
@@ -211,7 +210,7 @@ function lineBreak:tryAlternatives(from, to)
     if badness < localMinimum then
       self.r.alternates = alternates
       self.r.altSelections = combination
-      selectedShortfall = addWidth
+      -- selectedShortfall = addWidth
       localMinimum = badness
     end
   end
@@ -253,7 +252,7 @@ function lineBreak:considerDemerits(pi, breakType) -- 877
 end
 
 function lineBreak:deactivateR() -- 886
-  if debugging then SU.debug("break"," Deactivating r ("..self.r.type..")") end
+  if debugging then SU.debug("break", " Deactivating r ("..self.r.type..")") end
   self.prev_r.next = self.r.next
   if self.prev_r == self.activeListHead then
     -- 887
@@ -263,7 +262,7 @@ function lineBreak:deactivateR() -- 886
       self.curActiveWidth = std.tree.clone(self.activeWidth)
       self.activeListHead.next = self.r.next
     end
-    if debugging then SU.debug("break","  Deactivate, branch 1"); end
+    if debugging then SU.debug("break", "  Deactivate, branch 1"); end
   else
     if self.prev_r.type == "delta" then
       self.r = self.prev_r.next
@@ -277,21 +276,31 @@ function lineBreak:deactivateR() -- 886
         self.prev_r.next = self.r.next
       end
     end
-    if debugging then SU.debug("break","  Deactivate, branch 2"); end
+    if debugging then SU.debug("break", "  Deactivate, branch 2"); end
   end
 end
 
 function lineBreak:computeDemerits(pi, breakType)
   if self.artificialDemerits then return 0 end
   local demerit = param("linePenalty") + self.badness
-  if math.abs(demerit) >= 10000 then demerit = 100000000 else demerit = demerit * demerit end
-  if pi > 0 then demerit = demerit + pi * pi
-  elseif pi == 0 then -- do nothing
-  elseif pi > ejectPenalty then demerit = demerit - pi * pi end
+  if math.abs(demerit) >= 10000 then
+    demerit = 100000000
+  else
+    demerit = demerit * demerit
+  end
+  if pi > 0 then
+    demerit = demerit + pi * pi
+  -- elseif pi == 0 then
+  --   -- do nothing
+  elseif pi > ejectPenalty then
+    demerit = demerit - pi * pi
+  end
   if breakType == "hyphenated" and self.r.type == "hyphenated" then
     if self.nodes[self.place] then
       demerit = demerit + param("doubleHyphenDemerits")
-    else demerit = demerit + param("finalHyphenDemerits") end
+    else
+      demerit = demerit + param("finalHyphenDemerits")
+    end
   end
   -- XXX adjDemerits not added here
   return demerit
@@ -305,7 +314,7 @@ function lineBreak:recordFeasible(pi, breakType) -- 881
     else
       SU.debug("break", "@ \\par via @@")
     end
-    SU.debug("break"," fit class = "..self.fitClass)
+    SU.debug("break", " fit class = "..self.fitClass)
   end
   demerit = demerit + self.r.totalDemerits
   if demerit <= self.bestInClass[self.fitClass].minimalDemerits then
@@ -341,10 +350,12 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
     if debugging then SU.debug("break", "Value of breakWidth = " .. tostring(self.breakWidth)) end
   end
   -- 869 (Add a new delta node)
-  if self.prev_r.type == "delta" then self.prev_r.width = self.prev_r.width - self.curActiveWidth + self.breakWidth
-  elseif self.prev_r == self.activeListHead then self.activeWidth = std.tree.clone(self.breakWidth)
+  if self.prev_r.type == "delta" then
+    self.prev_r.width = self.prev_r.width - self.curActiveWidth + self.breakWidth
+  elseif self.prev_r == self.activeListHead then
+    self.activeWidth = std.tree.clone(self.breakWidth)
   else
-    local newDelta = { next = self.r, type = "delta", width = self.breakWidth - self.curActiveWidth}
+    local newDelta = { next = self.r, type = "delta", width = self.breakWidth - self.curActiveWidth }
     if debugging then SU.debug("break", "Added new delta node = " .. tostring(newDelta.width)) end
     self.prev_r.next = newDelta
     self.prev_prev_r = self.prev_r
@@ -352,14 +363,15 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
   end
   if (math.abs(self.adjdemerits) >= awful_bad - self.minimumDemerits) then
     self.minimumDemerits = awful_bad - 1
-  else self.minimumDemerits = self.minimumDemerits + math.abs(self.adjdemerits)
+  else
+    self.minimumDemerits = self.minimumDemerits + math.abs(self.adjdemerits)
   end
 
-  for i = 1,#classes do
+  for i = 1, #classes do
     local class = classes[i]
     local best = self.bestInClass[class]
     local value = best.minimalDemerits
-    if debugging then SU.debug("break","Class is "..class.." Best value here is " .. value) end
+    if debugging then SU.debug("break", "Class is "..class.." Best value here is " .. value) end
 
     if value <= self.minimumDemerits then
       -- 871: this is what creates new active notes
@@ -394,7 +406,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
   end
 end
 
-function lineBreak:dumpBreakNode(node)
+function lineBreak.dumpBreakNode(_, node)
   if not SU.debugging("break") then return end
   print(lineBreak:describeBreakNode(node))
 end
@@ -466,7 +478,9 @@ function lineBreak:tryFinalBreak()      -- 899
   until self.r == self.activeListHead
   if param("looseness") == 0 then return "done" end
   -- XXX node 901 not implemented
-  if (self.actualLooseness == param("looseness")) or self.finalpass then return "done" end
+  if (self.actualLooseness == param("looseness")) or self.finalpass then
+    return "done"
+  end
 end
 
 function lineBreak:doBreak (nodes, hsize, sideways)
@@ -496,8 +510,20 @@ function lineBreak:doBreak (nodes, hsize, sideways)
       SILE.typesetter.state.nodes = self.nodes -- Horrible breaking of separation of concerns here. :-(
     end
     -- 890
-    self.activeListHead = { sentinel="START", type = "hyphenated", lineNumber = awful_bad, subtype = 0 } -- 846
-    self.activeListHead.next = { sentinel="END", type = "unhyphenated", fitness = "decent", next = self.activeListHead, lineNumber = param("prevGraf") + 1, totalDemerits = 0}
+    self.activeListHead = {
+      sentinel="START",
+      type = "hyphenated",
+      lineNumber = awful_bad,
+      subtype = 0
+    } -- 846
+    self.activeListHead.next = {
+      sentinel="END",
+      type = "unhyphenated",
+      fitness = "decent",
+      next = self.activeListHead,
+      lineNumber = param("prevGraf") + 1,
+      totalDemerits = 0
+    }
 
     -- Not doing 1630
     self.activeWidth = std.tree.clone(self.background)
@@ -529,9 +555,12 @@ function lineBreak:postLineBreak() -- 903
   local breaks = {}
   local line  = 1
   repeat
-    table.insert(breaks, 1,  { position = p.curBreak, width = self.parShape and self.parShape[line] or self.hsize } )
+    table.insert(breaks, 1,  {
+        position = p.curBreak,
+        width = self.parShape and self.parShape[line] or self.hsize
+      })
     if p.alternates then
-      for i = 1,#p.alternates do
+      for i = 1, #p.alternates do
         p.alternates[i].selected = p.altSelections[i]
         p.alternates[i].width = p.alternates[i].options[p.altSelections[i]].width
       end

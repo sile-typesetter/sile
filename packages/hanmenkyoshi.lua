@@ -1,44 +1,44 @@
 SILE.require("packages/tate")
 
-local showHanmenYoko = function(f)
-  local g = f:top()
-  while g < f:bottom() do
-    SILE.outputter.rule(f:left(), g - 0.25, f:width(), 0.5)
-    local l = f:left()
-    while l <= f:right() do
-      SILE.outputter.rule(l-0.25, g + f.hanmen.gridsize - 0.25, 0.5, -f.hanmen.gridsize)
-      l = l + f.hanmen.gridsize
+local showHanmenYoko = function (frame)
+  local g = frame:top()
+  while g < frame:bottom() do
+    SILE.outputter.rule(frame:left(), g - 0.25, frame:width(), 0.5)
+    local l = frame:left()
+    while l <= frame:right() do
+      SILE.outputter.rule(l-0.25, g + frame.hanmen.gridsize - 0.25, 0.5, -frame.hanmen.gridsize)
+      l = l + frame.hanmen.gridsize
     end
-    g = g + f.hanmen.gridsize
-    SILE.outputter.rule(f:left(), g - 0.25, f:width(), 0.5)
-    g = g + f.hanmen.linegap
+    g = g + frame.hanmen.gridsize
+    SILE.outputter.rule(frame:left(), g - 0.25, frame:width(), 0.5)
+    g = g + frame.hanmen.linegap
   end
 end
 
-local showHanmenTate = function(f)
-  local g = f:right()
-  while g > f:left() do
-    SILE.outputter.rule( g - 0.25, f:top(), 0.5, -f:height())
-    local l = f:top()
-    while l < f:bottom() do
-      SILE.outputter.rule(g - f.hanmen.gridsize - 0.25, l-0.25, f.hanmen.gridsize, 0.5)
-      l = l + f.hanmen.gridsize
+local showHanmenTate = function (frame)
+  local g = frame:right()
+  while g > frame:left() do
+    SILE.outputter.rule( g - 0.25, frame:top(), 0.5, -frame:height())
+    local l = frame:top()
+    while l < frame:bottom() do
+      SILE.outputter.rule(g - frame.hanmen.gridsize - 0.25, l-0.25, frame.hanmen.gridsize, 0.5)
+      l = l + frame.hanmen.gridsize
     end
-    g = g - f.hanmen.gridsize
-    SILE.outputter.rule( g - 0.25, f:top(), 0.5, -f:height())
-    g = g - f.hanmen.linegap
+    g = g - frame.hanmen.gridsize
+    SILE.outputter.rule( g - 0.25, frame:top(), 0.5, -frame:height())
+    g = g - frame.hanmen.linegap
   end
 end
 
 
-SILE.registerCommand("show-hanmen", function(options, content)
-  local f = SILE.typesetter.frame
-  if not f.hanmen then SU.error("show-hanmen called on a frame with no hanmen") end
+SILE.registerCommand("show-hanmen", function (_, _)
+  local frame = SILE.typesetter.frame
+  if not frame.hanmen then SU.error("show-hanmen called on a frame with no hanmen") end
   SILE.outputter:pushColor({r = 1, g= 0.9, b = 0.9 })
-  if f:writingDirection() == "TTB" then
-    showHanmenTate(f)
+  if frame:writingDirection() == "TTB" then
+    showHanmenTate(frame)
   else
-    showHanmenYoko(f)
+    showHanmenYoko(frame)
   end
   SILE.outputter:popColor()
 end)

@@ -619,11 +619,11 @@ SILE.doTexlike([[%
 \define[command=book:chapter:pre:tr]{Bölüm }%
 ]])
 
-local sum_tens = function (val, loc, digits)
-  local ten = string.sub(digits, loc+1, loc+1)
-  if ten:len() == 1 then val = val + tonumber(ten) * 10 end
-  return val
-end
+-- local sum_tens = function (val, loc, digits)
+--   local ten = string.sub(digits, loc+1, loc+1)
+--   if ten:len() == 1 then val = val + tonumber(ten) * 10 end
+--   return val
+-- end
 
 local sum_hundreds = function (val, loc, digits)
   local ten = string.sub(digits, loc+1, loc+1)
@@ -638,7 +638,7 @@ local tr_nums = function (num, ordinal)
   if abs >= 1e+36 then
     SU.error("Numbers past decillions not supported in Turkish")
   end
-  local ordinal = SU.boolean(ordinal, false)
+  ordinal = SU.boolean(ordinal, false)
   local minus =  "eksi"
   local zero =  "sıfır"
   local ones = { "bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz" }

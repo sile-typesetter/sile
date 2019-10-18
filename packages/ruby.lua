@@ -1,4 +1,4 @@
-SILE.registerCommand("ruby:font", function(options, content)
+SILE.registerCommand("ruby:font", function (_, _)
   SILE.call("font", { size = "0.6zw", weight = 800 })
 
 end)
@@ -16,12 +16,12 @@ SILE.settings.declare({
   help = "Glue added between consecutive Latin ruby"
 })
 
-local isLatin = function(c)
-  return (c > 0x20 and c <= 0x24F) or (c>=0x300 and c<=0x36F)
-    or (c >= 0x1DC0 and c<= 0x1EFF) or (c >= 0x2C60 and c <= 0x2c7F)
+local isLatin = function (char)
+  return (char > 0x20 and char <= 0x24F) or (char >= 0x300 and char <= 0x36F)
+    or (char >= 0x1DC0 and char <= 0x1EFF) or (char >= 0x2C60 and char <= 0x2c7F)
 end
 
-local checkIfSpacerNeeded = function(reading)
+local checkIfSpacerNeeded = function (reading)
   -- First, did we have a ruby node at all?
   if not SILE.scratch.lastRubyBox then return end
   -- Does the current reading start with a latin?
@@ -69,7 +69,7 @@ SILE.registerCommand("ruby", function (options, content)
   end
   -- measure the content
   SILE.call("hbox", {}, content)
-  cbox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
+  local cbox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
   SU.debug("ruby", "base box is " .. cbox)
   SU.debug("ruby", "reading is  " .. rubybox)
   if cbox:lineContribution() > rubybox:lineContribution() then

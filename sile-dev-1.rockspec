@@ -8,7 +8,7 @@ dependencies = {
   "bit32",
   "luaepnf == 0.3-1",
   "lpeg == 1.0.2-1",
-  "cassowary == 2.2-0",
+  "cassowary == 2.2-1",
   "compat53 == 0.7-1",
   "linenoise == 0.9-1",
   "lua-zlib == 1.2-0",
@@ -18,7 +18,7 @@ dependencies = {
   "luarepl == 0.9-1",
   "luasec == 0.8.1-1",
   "luasocket == 3.0rc1-2",
-  "penlight == 1.5.4-1",
+  "penlight == 1.7.0-1",
   "stdlib == 41.2.2-1",
   "vstruct == 2.0.1-1"
 }

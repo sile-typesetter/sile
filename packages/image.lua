@@ -1,10 +1,10 @@
-SILE.registerCommand("img", function(options, content)
+SILE.registerCommand("img", function (options, _)
   SU.required(options, "src", "including image file")
   local width =  SILE.parseComplexFrameDimension(options.width or 0) or 0
   local height = SILE.parseComplexFrameDimension(options.height or 0) or 0
   local src = SILE.resolveFile(options.src) or SU.error("Couldn't find file "..options.src)
-  local box_width,box_height = SILE.outputter.imageSize(src)
-  local sx, sy = 1,1
+  local box_width, box_height = SILE.outputter.imageSize(src)
+  local sx, sy = 1, 1
   if width > 0 or height > 0 then
     sx = width > 0 and box_width / width
     sy = height > 0 and box_height / height
@@ -17,9 +17,9 @@ SILE.registerCommand("img", function(options, content)
     height= box_height / (sy),
     depth= 0,
     value= src,
-    outputYourself= function (this, typesetter, line)
-      SILE.outputter.drawImage(this.value, typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-this.height, this.width,this.height)
-      typesetter.frame:advanceWritingDirection(this.width)
+    outputYourself= function (self, typesetter, _)
+      SILE.outputter.drawImage(self.value, typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-self.height, self.width, self.height)
+      typesetter.frame:advanceWritingDirection(self.width)
   end})
 
 end, "Inserts the image specified with the <src> option in a box of size <width> by <height>")

@@ -19,31 +19,31 @@ SILE.settings.declare({
 
 
 SILE.nodeMakers.fr = SILE.nodeMakers.unicode {
-  isHighPunctuation = function(self, text)
+  isHighPunctuation = function (_, text)
     return string.match(SILE.settings.get("languages.fr.highpunctuation"), text)
   end,
-  makeUnbreakableSpace = function(self)
+  makeUnbreakableSpace = function (self)
     self:makeToken()
     self.lastnode = "glue"
     coroutine.yield(SILE.settings.get("languages.fr.punctuationspace"))
   end,
-  previousIsHighPunctuation = function(self)
+  previousIsHighPunctuation = function (self)
     return self.i >1 and self:isHighPunctuation(self.items[self.i-1].text)
   end,
-  nextIsHighPunctuation = function(self)
+  nextIsHighPunctuation = function (self)
     return self.items[self.i+1] and self:isHighPunctuation(self.items[self.i+1].text)
   end,
-  previousIsSpace = function(self)
+  previousIsSpace = function (self)
     return self.lastnode == "glue"
   end,
-  handleICUBreak = function(self, chunks, item)
+  handleICUBreak = function (self, chunks, item)
     if self:isHighPunctuation(item.text) and self:previousIsHighPunctuation() then
       return SILE.nodeMakers.unicode.handleICUBreak(self, chunks, item)
     end
     if self:nextIsHighPunctuation() and not self:isHighPunctuation(item.text) then
       self:makeUnbreakableSpace()
       while chunks[1] and item.index >= chunks[1].index do
-        table.remove(chunks,1)
+        table.remove(chunks, 1)
       end
       return chunks
     elseif self:isHighPunctuation(item.text) and not self:previousIsSpace() then
@@ -113,7 +113,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "1bê",
 "4be.",
 "4bes.",
-"2bent.",-- mute syllable: tombent (df) 22/02/94
+"2bent.", -- mute syllable: tombent (df) 22/02/94
 "1bi",
 "1bî",
 ".bi1a2c",

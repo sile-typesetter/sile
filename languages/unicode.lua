@@ -1,9 +1,10 @@
+local icu = require("justenoughicu")
+
 require("char-def")
-local chardata  = characters.data
-icu = require("justenoughicu")
+local chardata = characters.data
 
 SILE.nodeMakers.base = std.object {
-  makeToken = function(self)
+  makeToken = function (self)
     if #self.contents>0 then
       coroutine.yield(SILE.shaper:formNnode(self.contents, self.token, self.options))
       SU.debug("tokenizer", "Token: "..self.token)
@@ -14,14 +15,14 @@ SILE.nodeMakers.base = std.object {
     self.token = self.token .. char
     self.contents[#self.contents+1] = item
   end,
-  makeGlue = function(self,item)
+  makeGlue = function (self, item)
     if SILE.settings.get("typesetter.obeyspaces") or self.lastnode ~= "glue" then
       SU.debug("tokenizer", "Space node")
       coroutine.yield(SILE.shaper:makeSpaceNode(self.options, item))
     end
     self.lastnode = "glue"
   end,
-  makePenalty = function (self,p)
+  makePenalty = function (self, p)
     if self.lastnode ~= "penalty" and self.lastnode ~= "glue" then
       coroutine.yield( SILE.nodefactory.newPenalty({ penalty = p or 0 }) )
     end
@@ -33,21 +34,21 @@ SILE.nodeMakers.base = std.object {
     self.lastnode = false
     self.lasttype = false
   end,
-  iterator = function (self,items)
+  iterator = function (_, _)
     SU.error("Abstract function nodemaker:iterator called", true)
   end,
-  charData = function(self, char)
+  charData = function (_, char)
     local cp = SU.codepoint(char)
     if not chardata[cp] then return {} end
     return chardata[cp]
   end,
-  isPunctuation = function(self, char)
+  isPunctuation = function (self, char)
     return self.isPunctuationType[self:charData(char).category]
   end,
-  isSpace = function(self, char)
+  isSpace = function (self, char)
     return self.isSpaceType[self:charData(char).linebreak]
   end,
-  isBreaking = function(self, char)
+  isBreaking = function (self, char)
     return self.isBreakingType[self:charData(char).linebreak]
   end
 }
@@ -65,29 +66,29 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
       self:makeToken()
       self:makeGlue(item)
     elseif self:isBreaking(item.text) then
-      self:addToken(char,item)
+      self:addToken(char, item)
       self:makeToken()
       self:makePenalty(0)
     elseif self.lasttype and (self.thistype and thistype ~= lasttype and not self.isWordType[thistype]) then
       self:makeToken()
-      self:addToken(char,item)
+      self:addToken(char, item)
     else
       self:letterspace()
-      self:addToken(char,item)
+      self:addToken(char, item)
     end
     if not self.isWordType[thistype] then lasttype = chardata[cp] and chardata[cp].linebreak end
     self.lasttype = thistype
   end,
-  handleInitialGlue = function(self, items)
+  handleInitialGlue = function (self, items)
     local i = 1
-    while i <= #items do item = items[i]
-      local char = item.text
+    while i <= #items do
+      local item = items[i]
       if self:isSpace(item.text) then self:makeGlue(item) else break end
       i = i + 1
     end
-    return i,items
+    return i, items
   end,
-  letterspace = function(self)
+  letterspace = function (self)
     if not SILE.settings.get("document.letterspaceglue") then return end
     if self.token then self:makeToken() end
     if self.lastnode and self.lastnode ~= "glue" then
@@ -97,10 +98,10 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
       self.lastnode = "glue"
     end
   end,
-  isICUBreakHere = function(self, chunks, item)
+  isICUBreakHere = function (_, chunks, item)
     return chunks[1] and (item.index >= chunks[1].index)
   end,
-  handleICUBreak = function(self, chunks, item)
+  handleICUBreak = function (self, chunks, item)
     -- The ICU library has told us there is a breakpoint at
     -- this index. We need to...
     local bp = chunks[1]
@@ -108,7 +109,7 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
     -- from the ICU breakpoints array so that chunks[1] is
     -- the next index point for comparison against the string...
     while chunks[1] and item.index >= chunks[1].index do
-      table.remove(chunks,1)
+      table.remove(chunks, 1)
     end
     -- ...decide which kind of breakpoint we have here and
     -- handle it appropriately.
@@ -119,16 +120,16 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
     end
     return chunks
   end,
-  handleWordBreak = function(self, item)
+  handleWordBreak = function (self, item)
     self:makeToken()
     if self:isSpace(item.text) then
       -- Spacing word break
       self:makeGlue(item)
     else -- a word break which isn't a space
-      self:addToken(item.text,item)
+      self:addToken(item.text, item)
     end
   end,
-  handleLineBreak = function(self, item, subtype)
+  handleLineBreak = function (self, item, subtype)
     -- Because we are in charge of paragraphing, we
     -- will override space-type line breaks, and treat
     -- them just as ordinary word spaces.
@@ -140,20 +141,21 @@ SILE.nodeMakers.unicode = SILE.nodeMakers.base {
     -- soft and hard breaks.
     self:makeToken()
     self:makePenalty(subtype == "soft" and 0 or -1000)
-    self:addToken(item.text,item)
+    self:addToken(item.text, item)
   end,
   iterator = function (self, items)
     local fulltext = ""
-    for i = 1,#items do item = items[i]
+    for i = 1, #items do
       fulltext = fulltext .. items[i].text
     end
-    local chunks = {icu.breakpoints(fulltext, self.options.language)}
+    local chunks = { icu.breakpoints(fulltext, self.options.language) }
     self:init()
-    table.remove(chunks,1)
-    return coroutine.wrap(function()
+    table.remove(chunks, 1)
+    return coroutine.wrap(function ()
+      local i
       i, self.items = self:handleInitialGlue(items)
-      for i = i,#items do
-        self.i = i
+      for j = i, #items do
+        self.i = j
         self.item = self.items[self.i]
         if self:isICUBreakHere(chunks, self.item) then
           chunks = self:handleICUBreak(chunks, self.item)

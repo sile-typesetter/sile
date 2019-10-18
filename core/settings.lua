@@ -101,13 +101,6 @@ SILE.settings.declare({
   help = "Skip to be added to left side of line"
 })
 
-local function toboolean(v)
-  if type(v) == "boolean" then return v end
-  if type(v) == "string" then return v == "true" end
-  if type(v) == "number" or type(v) == "integer" then return not (v == 0) end
-  return not not v
-end
-
 SILE.registerCommand("set", function(options, content)
   local parameter = SU.required(options, "parameter", "\\set command")
   local makedefault = SU.boolean(options.makedefault, false)

@@ -1,13 +1,13 @@
 # ChangeLog
 
 <a name="0.9.5.1"></a>
-## [0.9.5.1](https://github.com/simoncozens/sile/compare/v0.9.4...v0.9.5.1) (2019-01-13)
+## [0.9.5.1](https://github.com/sile-typesetter/sile/compare/v0.9.4...v0.9.5.1) (2019-01-13)
 
 No code changes, but the previous release was broken due to extraneous
 files in the tarball. Oh, the embarrassment.
 
 <a name="0.9.5"></a>
-## [0.9.5](https://github.com/simoncozens/sile/compare/v0.9.4...v0.9.5) (2019-01-07)
+## [0.9.5](https://github.com/sile-typesetter/sile/compare/v0.9.4...v0.9.5) (2019-01-07)
 
 * Experimental package manager.
 
@@ -50,7 +50,7 @@ Most other changes in this release are internal and non-user-visible, including:
 * Many and varied internal fixes and speedups, and improved coding style.
 
 <a name="0.9.4"></a>
-## [0.9.4](https://github.com/simoncozens/sile/compare/v0.9.3...v0.9.4) (2016-08-31)
+## [0.9.4](https://github.com/sile-typesetter/sile/compare/v0.9.3...v0.9.4) (2016-08-31)
 
 Nearly 600 changes, including:
 
@@ -83,7 +83,7 @@ Nearly 600 changes, including:
 and much more besides.
 
 <a name="0.9.3"></a>
-## [0.9.3](https://github.com/simoncozens/sile/compare/v0.9.2...v0.9.3) (2015-10-09)
+## [0.9.3](https://github.com/sile-typesetter/sile/compare/v0.9.2...v0.9.3) (2015-10-09)
 
 * Support for typesetting Japanese according to the JIS X 4051 standard, both horizontally and vertically.
 
@@ -112,7 +112,7 @@ and much more besides.
 * Under-the-hood advancements for Harfbuzz.
 
 <a name="0.9.2"></a>
-## [0.9.2](https://github.com/simoncozens/sile/compare/v0.9.1...v0.9.2) (2015-06-02)
+## [0.9.2](https://github.com/sile-typesetter/sile/compare/v0.9.1...v0.9.2) (2015-06-02)
 
 * New packages for: rotated content, accessing OpenType features and ligatures, alternative input of Unicode characters, PDF bookmarks and links, input transformation.
 
@@ -141,7 +141,7 @@ and much more besides.
 * Many miscellaneous bug fixes.
 
 <a name="0.9.1"></a>
-## [0.9.1](https://github.com/simoncozens/sile/compare/v0.9.0...v0.9.1) (2014-10-30)
+## [0.9.1](https://github.com/sile-typesetter/sile/compare/v0.9.0...v0.9.1) (2014-10-30)
 
 * The main change in this release is a new shaper based on [Harfbuzz][]
   and a new PDF creation engine. This has greatly improved the output

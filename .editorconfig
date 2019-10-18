@@ -4,7 +4,7 @@ root = true
 end_of_line = lf
 insert_final_newline = true
 
-[*.lua]
+[{*.lua,sile.in,*rockspec,.busted,.luacheckrc}]
 indent_style = space
 indent_size = 2
 
