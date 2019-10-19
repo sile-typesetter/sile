@@ -1,40 +1,54 @@
-local lpeg = require("lpeg")
-
 return pl.class({
     type = "length",
-    length = 0,
-    stretch = 0,
-    shrink = 0,
+    length = SILE.measurement(0),
+    stretch = SILE.measurement(0),
+    shrink = SILE.measurement(0),
 
-    _init = function (self, spec)
-      if type(spec) == "table" then
-        if spec.length then self.length = spec.length end
-        if spec.stretch then self.stretch = spec.stretch end
-        if spec.shrink then self.shrink = spec.shrink end
+    _init = function (self, spec, stretch, shrink)
+      if stretch or shrink then
+        self.length = SILE.measurement(spec or 0)
+        self.stretch = SILE.measurement(stretch or 0)
+        self.shrink = SILE.measurement(shrink or 0)
       elseif type(spec) == "number" then
+        self.length = SILE.measurement(spec)
+      elseif SU.type(spec) == "measurement" then
         self.length = spec
+      elseif type(spec) == "table" then
+        self.length = SILE.measurement(spec.length or 0)
+        self.stretch = SILE.measurement(spec.stretch or 0)
+        self.shrink = SILE.measurement(spec.shrink or 0)
       elseif type(spec) == "string" then
-        local num = tonumber(spec)
-        if type(num) == "number" then
-          self.length = num
+        local amount = tonumber(spec)
+        if type(amount) == "number" then
+          self:_init(amount)
         else
-          local parsed = lpeg.match(SILE.parserBits.length, spec)
+          local parsed = SILE.parserBits.length:match(spec)
           if not parsed then SU.error("Could not parse length '"..spec.."'") end
           self:_init(parsed)
         end
       end
+      self.stretch.amount = math.abs(self.stretch.amount)
+      self.shrink.amount = math.abs(self.shrink.amount)
     end,
 
     absolute = function (self)
       return SILE.length({
-          length = SILE.toAbsoluteMeasurement(self.length),
-          stretch = SILE.toAbsoluteMeasurement(self.stretch),
-          shrink = SILE.toAbsoluteMeasurement(self.shrink)
+          length = SILE.measurement(self.length:absolute()),
+          stretch = SILE.measurement(self.stretch:absolute()),
+          shrink = SILE.measurement(self.shrink:absolute())
         })
     end,
 
     negate = function (self)
       return self:__unm()
+    end,
+
+    tostring = function (self)
+      return self:__tostring()
+    end,
+
+    tonumber = function (self)
+      return self.length:tonumber()
     end,
 
     new = function (spec)
@@ -63,54 +77,36 @@ return pl.class({
     end,
 
     __tostring = function (self)
-      local str = tostring(self.length).."pt"
-      if self.stretch ~= 0 then str = str .. " plus "..self.stretch.."pt" end
-      if self.shrink ~= 0 then str = str .. " minus "..self.shrink.."pt" end
+      local str = tostring(self.length)
+      if self.stretch.amount ~= 0 then str = str .. " plus " .. self.stretch end
+      if self.shrink.amount  ~= 0 then str = str .. " minus " .. self.shrink end
       return str
     end,
 
     __add = function (self, other)
       local result = SILE.length(self):absolute()
-      if type(other) == "table" then
-        other = other:absolute()
-      end
-
-      if type(other) == "table" then
-        result.length = result.length + other.length
-        result.stretch = result.stretch + other.stretch
-        result.shrink = result.shrink + other.shrink
-      else
-        result.length = result.length + other
-      end
+      other = SU.cast("length", other):absolute()
+      result.length = result.length + other.length
+      result.stretch = result.stretch + other.stretch
+      result.shrink = result.shrink + other.shrink
       return result
     end,
 
     __sub = function (self, other)
       local result = SILE.length(self):absolute()
-      other = SILE.toAbsoluteMeasurement(other or 0)
-      if type(other) == "table" then
-        other = other:absolute()
-      end
-
-      if type(other) == "table" then
-        result.length = result.length - other.length
-        result.stretch = result.stretch - other.stretch
-        result.shrink = result.shrink - other.shrink
-      else
-        result.length = result.length - other
-      end
+      other = SU.cast("length", other):absolute()
+      result.length = result.length - other.length
+      result.stretch = result.stretch - other.stretch
+      result.shrink = result.shrink - other.shrink
       return result
     end,
 
     __mul = function (self, other)
       local result = SILE.length(self):absolute()
-      if type(other) == "table" then
-        SU.error("Attempt to multiply two lengths together")
-      else
-        result.length = result.length * other
-        result.stretch = result.stretch * other
-        result.shrink = result.shrink * other
-      end
+      other = SU.cast("measurement", other):absolute()
+      result.length = result.length * other
+      result.stretch = result.stretch * other
+      result.shrink = result.shrink * other
       return result
     end,
 
@@ -121,24 +117,29 @@ return pl.class({
 
     __div = function (self, other)
       local result = SILE.length(self):absolute()
-      if type(other) == "table" then
-        SU.error("Attempt to divide two lengths together")
-      else
-        result.length = result.length / other
-        result.stretch = result.stretch / other
-        result.shrink = result.shrink / other
-      end
+      other = SU.cast("measurement", other):absolute()
+      result.length = result.length / other
+      result.stretch = result.stretch / other
+      result.shrink = result.shrink / other
       return result
     end,
 
+    __unm = function (self)
+      local ret = self
+      ret.length = -ret.length
+      return ret
+    end,
+
     __lt = function (self, other)
-      return (self-other).length < 0
+      local a = SU.cast("length", self):absolute()
+      local b = SU.cast("length", other):absolute()
+      return (a - b).length < 0
     end,
 
     __eq = function (self, other)
-      return self.length == other.length
-      and self.stretch == other.stretch
-      and self.shrink == other.shrink
+      local a = SU.cast("length", self)
+      local b = SU.cast("length", self)
+      return a.length == b.length and a.stretch == b.stretch and a.shrink == b.shrink
     end
 
   })

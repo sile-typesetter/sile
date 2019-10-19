@@ -38,6 +38,8 @@ utilities.debugging = function (category)
 end
 
 utilities.feq = function (lhs, rhs) -- Float point equal
+  lhs = SU.cast("number", lhs)
+  rhs = SU.cast("number", rhs)
   local abs = math.abs
   return abs(lhs - rhs) <= epsilon * (abs(lhs) + abs(rhs))
 end
@@ -178,13 +180,18 @@ utilities.cast = function (wantedType, value)
   if string.match(wantedType, actualType)     then return value
   elseif actualType == "nil"
      and string.match(wantedType, "nil")      then return nil
-  elseif string.match(wantedType, "integer")  then return tonumber(value)
-  elseif string.match(wantedType, "number")   then return tonumber(value)
+  elseif string.match(wantedType, "integer") or string.match(wantedType, "number") then
+    if type(value) == "table" and type(value.tonumber) == "function" then
+      return value:tonumber()
+    end
+    return tonumber(value)
   elseif string.match(wantedType, "boolean")  then return SU.boolean(value)
-  elseif string.match(wantedType, "length")   then return SILE.length.parse(value)
-  elseif string.match(wantedType, "vglue")    then return SILE.nodefactory.newVglue(value)
-  elseif string.match(wantedType, "glue")     then return SILE.nodefactory.newGlue(value)
-  elseif string.match(wantedType, "kern")     then return SILE.nodefactory.newKern(value)
+  elseif string.match(wantedType, "string")   then return tostring(value)
+  elseif string.match(wantedType, "length")   then return SILE.length(value)
+  elseif string.match(wantedType, "measurement") then return SILE.measurement(value)
+  elseif string.match(wantedType, "vglue")    then return SILE.nodefactory.vglue(value)
+  elseif string.match(wantedType, "glue")     then return SILE.nodefactory.glue(value)
+  elseif string.match(wantedType, "kern")     then return SILE.nodefactory.kern(value)
   else SU.warn("Unrecognized type: "..wantedType); return value
   end
 end
@@ -226,8 +233,8 @@ utilities.walkContent = function (content, action)
 end
 
 utilities.rateBadness = function(inf_bad, shortfall, spring)
-  local bad = math.floor(100 * (shortfall / spring) ^ 3)
-  return bad > inf_bad and inf_bad or bad
+  local bad = math.floor(100 * math.abs((shortfall / spring):tonumber()) ^ 3)
+  return math.min(inf_bad, bad)
 end
 
 -- Unicode-related utilities

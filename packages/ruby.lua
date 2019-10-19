@@ -75,13 +75,12 @@ SILE.registerCommand("ruby", function (options, content)
   if cbox:lineContribution() > rubybox:lineContribution() then
     SU.debug("ruby", "Base is longer, offsetting ruby to fit")
     -- This is actually the offset against the base
-    rubybox.width = SILE.length.make(cbox:lineContribution() - rubybox:lineContribution()).length/2
+    rubybox.width = SILE.length(cbox:lineContribution() - rubybox:lineContribution())/2
   else
     local diff = rubybox:lineContribution() - cbox:lineContribution()
-    if type(diff) == "table" then diff = diff.length end
-    local to_insert = SILE.length.new({ length = diff / 2 })
+    local to_insert = SILE.length(diff / 2)
     SU.debug("ruby", "Ruby is longer, inserting " .. to_insert .. " either side of base")
-    cbox.width = SILE.length.make(rubybox:lineContribution())
+    cbox.width = rubybox:lineContribution()
     rubybox.height = 0
     rubybox.width = 0
     -- add spaces at beginning and end

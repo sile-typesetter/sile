@@ -6,10 +6,10 @@ if not SILE.shapers then SILE.shapers = { } end
 --   return table.concat({ options.family;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename }, ";")
 -- end
 
-SILE.settings.declare({ name = "shaper.variablespaces", type = "integer", default = 1 })
+SILE.settings.declare({ name = "shaper.variablespaces", type = "boolean", default = true })
 SILE.settings.declare({ name = "shaper.spaceenlargementfactor", type = "number or integer", default = 1.2 })
-SILE.settings.declare({ name = "shaper.spaceshrinkfactor", type = "number or integer", default = 1/3 })
 SILE.settings.declare({ name = "shaper.spacestretchfactor", type = "number or integer", default = 1/2 })
+SILE.settings.declare({ name = "shaper.spaceshrinkfactor", type = "number or integer", default = 1/3 })
 
 -- Function for testing shaping in the repl
 -- luacheck: ignore makenodes
@@ -17,12 +17,19 @@ makenodes = function (token, options)
   return SILE.shaper:createNnodes(token, SILE.font.loadDefaults(options or {}))
 end
 
+local function shapespace (spacewidth)
+  spacewidth = SU.cast("measurement", spacewidth)
+  local length = spacewidth * SILE.settings.get("shaper.spaceenlargementfactor")
+  local stretch = spacewidth * SILE.settings.get("shaper.spacestretchfactor")
+  local shrink = spacewidth * SILE.settings.get("shaper.spaceshrinkfactor")
+  return SILE.length(length, stretch, shrink)
+end
+
 SILE.shapers.base = pl.class({
 
     -- Return the length of a space character
     -- with a particular set of font options,
     -- giving preference to document.spaceskip
-
     -- Caching this has no significant speedup
     measureSpace = function (self, options)
       local ss = SILE.settings.get("document.spaceskip")
@@ -35,17 +42,11 @@ SILE.shapers.base = pl.class({
         return ss
       end
       local items, width = self:shapeToken(" ", options)
-      local spacewidth
-      if width then spacewidth = width.length
-      else
-        if not items[1] then return SILE.length.new() end
-        spacewidth = items[1].width
+      if not width and not items[1] then
+        SU.warn("Could not measure the width of a space")
+        return SILE.length()
       end
-      return SILE.length.new({
-          length = spacewidth * SILE.settings.get("shaper.spaceenlargementfactor"),
-          shrink = spacewidth * SILE.settings.get("shaper.spaceshrinkfactor"),
-          stretch = spacewidth * SILE.settings.get("shaper.spacestretchfactor")
-        })
+      return shapespace(width and width.length or items[1].width)
     end,
 
     measureChar = function (self, char)
@@ -53,7 +54,6 @@ SILE.shapers.base = pl.class({
       local items = self:shapeToken(char, options)
       return { height = items[1].height, width = items[1].width }
     end,
-
 
     -- Given a text and some font options, return a bunch of boxes
     shapeToken = function (_, _, _)
@@ -77,13 +77,12 @@ SILE.shapers.base = pl.class({
     createNnodes = function (self, token, options)
       local items, _ = self:shapeToken(token, options)
       if #items < 1 then return {} end
-
       local lang = options.language
       SILE.languageSupport.loadLanguage(lang)
       local nodeMaker = SILE.nodeMakers[lang] or SILE.nodeMakers.unicode
       local nodes = {}
       for node in nodeMaker(options):iterator(items, token) do
-        nodes[#nodes+1] = node
+        table.insert(nodes, node)
       end
       return nodes
     end,
@@ -132,17 +131,13 @@ SILE.shapers.base = pl.class({
     end,
 
     makeSpaceNode = function (_, options, item)
-      if SILE.settings.get("shaper.variablespaces") == 1 then
-        local spacewidth = item.width
-        local width = SILE.length.new({
-            length = spacewidth * SILE.settings.get("shaper.spaceenlargementfactor"),
-            shrink = math.abs(spacewidth) * SILE.settings.get("shaper.spaceshrinkfactor"),
-            stretch = math.abs(spacewidth) * SILE.settings.get("shaper.spacestretchfactor")
-          })
-        return (SILE.nodefactory.newGlue({ width = width }))
+      local width
+      if SILE.settings.get("shaper.variablespaces") then
+        width = shapespace(item.width)
       else
-        return SILE.nodefactory.newGlue({ width = SILE.shaper:measureSpace(options) })
+        width = SILE.shaper:measureSpace(options)
       end
+      return SILE.nodefactory.glue(width)
     end
 
   })

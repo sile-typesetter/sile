@@ -54,14 +54,14 @@ SILE.settings.declare({
 SILE.settings.declare({
   name = "typesetter.underfulltolerance",
   type = "length or nil",
-  default = SILE.length.parse("1em"),
+  default = SILE.length("1em"),
   help = "Amount a page can be underfull without warning"
 })
 
 SILE.settings.declare({
   name = "typesetter.overfulltolerance",
   type = "length or nil",
-  default = SILE.length.parse("5pt"),
+  default = SILE.length("5pt"),
   help = "Amount a page can be overfull without warning"
 })
 
@@ -71,13 +71,6 @@ SILE.settings.declare({
   default = nil,
   help = "Width to break lines at"
 })
-
-local _margins = std.object {
-  __eq = function (self, other)
-    return SILE.toAbsoluteMeasurement(self.lskip.width) == SILE.toAbsoluteMeasurement(other.lskip.width)
-      and SILE.toAbsoluteMeasurement(self.rskip.width) == SILE.toAbsoluteMeasurement(other.rskip.width)
-  end
-}
 
 SILE.defaultTypesetter = std.object {
   -- Setup functions
@@ -107,7 +100,7 @@ SILE.defaultTypesetter = std.object {
   getMargins = function (_)
     local lskip = SILE.settings.get("document.lskip") or SILE.nodefactory.zeroGlue
     local rskip = SILE.settings.get("document.rskip") or SILE.nodefactory.zeroGlue
-    return _margins { lskip=lskip, rskip=rskip }
+    return { lskip = lskip, rskip = rskip }
   end,
 
   setMargins = function (_, margins)
@@ -284,8 +277,7 @@ SILE.defaultTypesetter = std.object {
     self:pushGlue(SILE.settings.get("typesetter.parfillskip"))
     self:pushPenalty({ flagged= 1, penalty = -inf_bad })
     SU.debug("typesetter", "Boxed up "..(#nodelist > 500 and (#nodelist).." nodes" or SU.contentToString(nodelist)))
-    local breakWidth = SILE.settings.get("typesetter.breakwidth") or self.frame:lineWidth()
-    if (type(breakWidth) == "table") then breakWidth = breakWidth.length end
+    local breakWidth = SILE.settings.get("typesetter.breakwidth") or self.frame:getLineWidth()
     local lines = self:breakIntoLines(nodelist, breakWidth)
     local vboxes = {}
     for index=1, #lines do
@@ -379,8 +371,8 @@ SILE.defaultTypesetter = std.object {
 
   setVerticalGlue = function (_, pageNodeList, target)
     local glues = {}
-    local gTotal = SILE.length.new()
-    local totalHeight = SILE.length.new()
+    local gTotal = SILE.length()
+    local totalHeight = SILE.length()
     for _, node in ipairs(pageNodeList) do
       totalHeight = totalHeight + node.height + node.depth
       if node:isVglue() then
@@ -388,32 +380,32 @@ SILE.defaultTypesetter = std.object {
         gTotal = gTotal + node.height
       end
     end
-    local adjustment = (target - totalHeight).length
+    local adjustment = target - totalHeight
     if adjustment > 0 then
       if adjustment > gTotal.stretch then
-        if (adjustment - gTotal.stretch) > SILE.settings.get("typesetter.underfulltolerance"):absolute().length then
-          SU.warn("Underfull frame: ".. adjustment .. " extra space required but "..gTotal.stretch.. " stretchiness available")
+        if (adjustment - gTotal.stretch) > SILE.settings.get("typesetter.underfulltolerance") then
+          SU.warn("Underfull frame: " .. adjustment .. " stretchiness required to fill but only " .. gTotal.stretch .. " available")
         end
         adjustment = gTotal.stretch
       end
       if gTotal.stretch > 0 then
         for i = 1, #glues do
-          local g= glues[i]
-          g:setGlue(adjustment * g.height:absolute().stretch / gTotal.stretch)
+          local g = glues[i]
+          g:adjustGlue(adjustment * g.height.stretch / gTotal.stretch)
         end
       end
     elseif adjustment < 0 then
       adjustment = 0 - adjustment
       if adjustment > gTotal.shrink then
-        if (adjustment - gTotal.shrink) > SILE.settings.get("typesetter.overfulltolerance"):absolute().length then
-          SU.warn("Overfull frame: ".. adjustment .. " extra space required but "..gTotal.shrink.. " shrink available")
+        if (adjustment - gTotal.shrink) > SILE.settings.get("typesetter.overfulltolerance") then
+          SU.warn("Overfull frame: " .. adjustment .. " shrinkability required to fit but only " .. gTotal.shrink .. " available")
         end
         adjustment = gTotal.shrink
       end
       if gTotal.shrink > 0 then
         for i = 1, #glues do
-          local g= glues[i]
-          g:setGlue(0 - (adjustment * g.height:absolute().shrink / gTotal.shrink))
+          local g  = glues[i]
+          g:adjustGlue(-(adjustment * g.height.shrink / gTotal.shrink))
         end
       end
     end
@@ -437,7 +429,7 @@ SILE.defaultTypesetter = std.object {
       self:initFrame(SILE.documentState.documentClass:newPage())
     end
 
-    if not SU.feq(oldframe:lineWidth(), self.frame:lineWidth()) then
+    if not SU.feq(oldframe:getLineWidth(), self.frame:getLineWidth()) then
       self:pushBack()
     else
       -- If I have some things on the vertical list already, they need
@@ -558,8 +550,7 @@ SILE.defaultTypesetter = std.object {
     local prevDepth = previous.depth
     SU.debug("typesetter", "   Depth of previous line was "..tostring(prevDepth))
     local bls = SILE.settings.get("document.baselineskip")
-    local depth = bls.height:absolute() - vbox.height - prevDepth
-    depth = depth.length
+    local depth = bls.height:absolute() - vbox.height:absolute() - prevDepth:absolute()
     SU.debug("typesetter", "   Leading height = " .. tostring(bls.height) .. " - " .. tostring(vbox.height) .. " - " .. tostring(prevDepth) .. " = "..depth)
 
     -- the lineskip setting is a vglue, but we need a version absolutized at this point, see #526
@@ -616,7 +607,7 @@ SILE.defaultTypesetter = std.object {
         if slice[#slice]:isDiscretionary() then
           linestart = point.position
         else
-          linestart = point.position+1
+          linestart = point.position + 1
         end
       end
     end
@@ -625,7 +616,7 @@ SILE.defaultTypesetter = std.object {
   end,
 
   computeLineRatio = function (_, breakwidth, slice)
-    local naturalTotals = SILE.length.new({ length = 0 , stretch = 0, shrink = 0 })
+    local naturalTotals = SILE.length()
     local skipping = true
     for i, node in ipairs(slice) do
       if node:isBox() then
@@ -635,8 +626,8 @@ SILE.defaultTypesetter = std.object {
         skipping = false
       elseif node:isDiscretionary() then
         skipping = false
-        naturalTotals = naturalTotals + node:replacementWidth()
-        slice[i].height = slice[i]:replacementHeight()
+        naturalTotals = naturalTotals + node:replacementWidth():absolute()
+        slice[i].height = slice[i]:replacementHeight():absolute()
       elseif not skipping then
         naturalTotals = naturalTotals + node.width
       end
@@ -647,7 +638,7 @@ SILE.defaultTypesetter = std.object {
         if not slice[i].value then
           naturalTotals = naturalTotals - slice[i].width
         end
-      elseif (slice[i]:isDiscretionary()) then
+      elseif slice[i]:isDiscretionary() then
         slice[i].used = true
         if slice[i].parent then slice[i].parent.hyphenated = true end
         naturalTotals = naturalTotals - slice[i]:replacementWidth()
@@ -657,21 +648,20 @@ SILE.defaultTypesetter = std.object {
       else
         break
       end
-      i = i -1
+      i = i - 1
     end
     if slice[1]:isDiscretionary() then
       naturalTotals = naturalTotals - slice[1]:replacementWidth()
       naturalTotals = naturalTotals + slice[1]:postbreakWidth()
       slice[1].height = slice[1]:postbreakHeight()
     end
-    local left = (breakwidth - naturalTotals.length)
+    local left = breakwidth - naturalTotals
     if left < 0 then
       left = left / naturalTotals.shrink
     else
       left = left / naturalTotals.stretch
     end
-    if left < -1 then left = -1 end
-    return left
+    return left:tonumber()
   end,
 
   chuck = function (self) -- emergency shipout everything

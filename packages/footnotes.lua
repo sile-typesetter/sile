@@ -39,7 +39,7 @@ SILE.registerCommand("footnote", function (options, content)
   local oldT = SILE.typesetter
   SILE.typesetter = SILE.typesetter {}
   SILE.typesetter:init(f)
-  SILE.typesetter.getTargetLength = function () return 0xFFFFFF end
+  SILE.typesetter.getTargetLength = function () return SILE.length(0xFFFFFF) end
   SILE.settings.pushState()
   SILE.settings.reset()
   local material = SILE.call("vbox", {}, function ()

@@ -3,14 +3,14 @@ SILE = require("core/sile")
 describe("The frame parser", function()
   it("should exist", function() assert.is.truthy(SILE.frameParser) end)
 
-  local n = SILE.frameParserBits.number
-  local f = SILE.frameParserBits.func
-  local d = SILE.frameParserBits.dimensioned_string
+  local n = SILE.parserBits.number
+  local m = SILE._frameParserBits.measurement
+  local f = SILE._frameParserBits.func
 
-  describe("Number.number", function() -- also tests all the number subrules
-    it("should capture number information", function() assert.is.equal(0.35, n.number:match("0.35")) end)
-    it("should capture number information", function() assert.is.equal(-.85, n.number:match("-.85")) end)
-    it("should capture number information", function() assert.is.equal(44, n.number:match("44 xyz")) end)
+  describe("Number", function() -- also tests all the number subrules
+    it("should capture number information", function() assert.is.equal(0.35, n:match("0.35")) end)
+    it("should capture number information", function() assert.is.equal(-.85, n:match("-.85")) end)
+    it("should capture number information", function() assert.is.equal(44, n:match("44 xyz")) end)
   end)
 
   describe("function", function() -- also tests identifier
@@ -28,7 +28,7 @@ describe("The frame parser", function()
   end)
 
   describe("dimensioned string", function()
-    it("should convert via SILE.measurements", function() assert.is.equal(14.4, d:match("0.2 in")) end)
+    it("should convert via SILE.measurements", function() assert.is.equal(14.4, m:match("0.2 in")) end)
   end)
 
 end)

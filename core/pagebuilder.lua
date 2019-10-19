@@ -19,7 +19,7 @@ return pl.class({
       local restart  = options.restart or false
       local force    = options.force or false
       local i = 0
-      local totalHeight = SILE.length.new()
+      local totalHeight = SILE.length()
       local bestBreak = nil
       local started = false
       if restart and restart.target == target then
@@ -28,10 +28,10 @@ return pl.class({
         started = restart.started
       end
       local leastC = self.inf_bad
-      SU.debug("pagebuilder", "Page builder for frame "..SILE.typesetter.frame.id.." called with "..#vboxlist.." nodes, "..target)
+      SU.debug("pagebuilder", "Page builder for frame " .. SILE.typesetter.frame.id .. " called with " .. #vboxlist .. " nodes, " .. target)
       if SU.debugging("vboxes") then
-        for j = 1,#vboxlist do
-          SU.debug("vboxes", (j==i and " -> " or "    ")..j..": "..vboxlist[j])
+        for j, box in ipairs(vboxlist) do
+          SU.debug("vboxes", (j == i and " >" or "  ") .. j .. ": " .. box)
         end
       end
       while not started and i < #vboxlist do
@@ -47,7 +47,7 @@ return pl.class({
         i = i + 1
         local vbox = vboxlist[i]
         SU.debug("pagebuilder", "Dealing with VBox " .. vbox)
-        if (vbox:isVbox()) then
+        if vbox:isVbox() then
           totalHeight = totalHeight + vbox.height + vbox.depth
         elseif vbox:isVglue() then
           totalHeight = totalHeight + vbox.height
@@ -56,8 +56,8 @@ return pl.class({
           vbox = vboxlist[i]
         end
         local left = target - totalHeight.length
-        SU.debug("pagebuilder", "I have " .. tostring(left) .. "pts left")
-        -- if (left < -20) then SU.error("\nCatastrophic page breaking failure!"); end
+        SU.debug("pagebuilder", "I have " .. left .. " left")
+        -- if left < -20 then SU.error("\nCatastrophic page breaking failure!"); end
         pi = 0
         if vbox:isPenalty() then
           pi = vbox.penalty

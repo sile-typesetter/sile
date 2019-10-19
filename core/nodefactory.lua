@@ -2,7 +2,7 @@ local nodefactory = {}
 
 -- This infinity needs to be smaller than an actual infinity but bigger than the infinite stretch
 -- added by the typesetter. See https://github.com/sile-typesetter/sile/issues/227
-local inf = 1e13
+local infinity = SILE.measurement(1e13)
 
 -- NOTE: Normally self:super() would be the way to recurse _init() functions,
 -- but due to a Penlight bug this only works for one level. This setup has
@@ -11,9 +11,9 @@ local inf = 1e13
 
 nodefactory.box = pl.class({
     type = "special",
-    height = 0,
-    depth = 0,
-    width = 0,
+    height = SILE.length(0),
+    depth = SILE.length(0),
+    width = SILE.length(0),
     misfit = false,
     explicit = false,
     discardable = false,
@@ -21,14 +21,18 @@ nodefactory.box = pl.class({
     _default_length = "width",
 
     _init = function (self, spec)
-      if type(spec) == "string" then
-        local len = SILE.length.parse(spec)
-        spec = {}
-        spec[self._default_length] = len
-      end
-      if type(spec) == "table" then
+      if type(spec) == "string"
+        or type(spec) == "number"
+        or SU.type(spec) == "measurement"
+        or SU.type(spec) == "length" then
+        self[self._default_length] = SU.cast("length", spec)
+      elseif SU.type(spec) == "table" then
         for k, v in pairs(spec) do
-          self[k] = v
+          if k == "height" or k == "width" or k == "depth" then
+            self[k] = SILE.length(v)
+          else
+            self[k] = v
+          end
         end
       end
     end,
@@ -41,7 +45,7 @@ nodefactory.box = pl.class({
       return self.type
     end,
 
-    __concat = function (a, b) return tostring(a)..tostring(b) end,
+    __concat = function (a, b) return tostring(a) .. tostring(b) end,
 
     lineContribution = function (self)
       -- Regardless of the orientations, "width" is always in the
@@ -108,18 +112,17 @@ nodefactory.hbox = pl.class({
     type = "hbox",
 
     __tostring = function (self)
-      return "H<" .. tostring(self.width) .. ">^" .. tostring(self.height) .. "-" .. tostring(self.depth) .. "v"
+      return "H<" .. self.width .. ">^" .. self.height .. "-" .. self.depth .. "v"
     end,
 
     scaledWidth = function (self, line)
       local scaledWidth = self:lineContribution()
-      if type(scaledWidth) ~= "table" then return scaledWidth end
-      if line.ratio < 0 and type(self.width) == "table" and self.width.shrink > 0 then
+      if line.ratio < 0 and self.width.shrink > 0 then
         scaledWidth = scaledWidth + self.width.shrink * line.ratio
-      elseif line.ratio > 0 and type(self.width) == "table" and self.width.stretch > 0 then
+      elseif line.ratio > 0 and self.width.stretch > 0 then
         scaledWidth = scaledWidth + self.width.stretch * line.ratio
       end
-      return scaledWidth.length
+      return scaledWidth
     end,
 
     outputYourself = function (self, typesetter, line)
@@ -153,13 +156,13 @@ nodefactory.nnode = pl.class({
     _init = function (self, spec)
       nodefactory.box._init(self, spec)
       self.nodes = spec.nodes
-      if 0 == self.depth then self.depth = math.max(0, table.unpack(SU.map(function (node) return node.depth end, self.nodes))) end
-      if 0 == self.height then self.height = math.max(0, table.unpack(SU.map(function (node) return node.height end, self.nodes))) end
-      if 0 == self.width then self.width = SU.sum(SU.map(function (node) return node.width end, self.nodes)) end
+      if 0 == self.depth:tonumber() then self.depth = math.max(0, table.unpack(SU.map(function (node) return node.depth end, self.nodes))) end
+      if 0 == self.height:tonumber() then self.height = math.max(0, table.unpack(SU.map(function (node) return node.height end, self.nodes))) end
+      if 0 == self.width:tonumber() then self.width = SU.sum(SU.map(function (node) return node.width end, self.nodes)) end
     end,
 
     __tostring = function (self)
-      return "N<" .. tostring(self.width) .. ">^" .. self.height .. "-" .. self.depth .. "v(" .. self:toText() .. ")";
+      return "N<" .. self.width .. ">^" .. self.height .. "-" .. self.depth .. "v(" .. self:toText() .. ")";
     end,
 
     outputYourself = function (self, typesetter, line)
@@ -247,14 +250,15 @@ nodefactory.disc = pl.class({
 
     prebreakWidth = function (self)
       if self.prebw then return self.prebw end
-      local width = 0
+      local width = SILE.length(0)
       for _, node in pairs(self.prebreak) do width = width + node.width end
       self.prebw = width
       return width
     end,
+
     postbreakWidth = function (self)
       if self.postbw then return self.postbw end
-      local width = 0
+      local width = SILE.length(0)
       for _, node in pairs(self.postbreak) do width = width + node.width end
       self.postbw = width
       return width
@@ -262,7 +266,7 @@ nodefactory.disc = pl.class({
 
     replacementWidth = function (self)
       if self.replacew then return self.replacew end
-      local width = 0
+      local width = SILE.length(0)
       for _, node in pairs(self.replacement) do width = width + node.width end
       self.replacew = width
       return width
@@ -270,7 +274,7 @@ nodefactory.disc = pl.class({
 
     prebreakHeight = function (self)
       if self.prebh then return self.prebh end
-      local width = 0
+      local width = SILE.length(0)
       for _, node in pairs(self.prebreak) do if node.height > width then width = node.height end end
       self.prebh = width
       return width
@@ -278,7 +282,7 @@ nodefactory.disc = pl.class({
 
     postbreakHeight = function (self)
       if self.postbh then return self.postbh end
-      local width = 0
+      local width = SILE.length(0)
       for _, node in pairs(self.postbreak) do if node.height > width then width = node.height end end
       self.postbh = width
       return width
@@ -286,7 +290,7 @@ nodefactory.disc = pl.class({
 
     replacementHeight = function (self)
       if self.replaceh then return self.replaceh end
-      local width = 0
+      local width = SILE.length(0)
       for _, node in pairs(self.replacement) do if node.height > width then width = node.height end end
       self.replaceh = width
       return width
@@ -330,14 +334,13 @@ nodefactory.glue = pl.class({
     discardable = true,
 
     __tostring = function (self)
-      return (self.explicit and "E:" or "") .. "G<" .. tostring(self.width) .. ">"
+      return (self.explicit and "E:" or "") .. "G<" .. self.width .. ">"
     end,
 
     toText = function () return " " end,
 
     outputYourself = function (self, typesetter, line)
-      self.width = SU.cast("length", self.width)
-      local scaledWidth = self.width.length
+      local scaledWidth = self.width
       if line.ratio and line.ratio < 0 and self.width.shrink > 0 then
         scaledWidth = scaledWidth + self.width.shrink * line.ratio
       elseif line.ratio and line.ratio > 0 and self.width.stretch > 0 then
@@ -350,14 +353,13 @@ nodefactory.glue = pl.class({
 
 nodefactory.hfillglue = pl.class({
     _base = nodefactory.glue,
-    stretch = inf
+    width = SILE.length(0, infinity)
   })
 
 nodefactory.hssglue = pl.class({
   -- possible bug, deprecated constructor actually used vglue for this
     _base = nodefactory.glue,
-    stretch = inf,
-    shrink = inf
+    width = SILE.length(0, infinity, infinity)
   })
 
 nodefactory.kern = pl.class({
@@ -366,7 +368,7 @@ nodefactory.kern = pl.class({
     discardable = false,
 
     __tostring = function (self)
-      return "K<" .. tostring(self.width) .. ">"
+      return "K<" .. self.width .. ">"
     end,
   })
 
@@ -377,26 +379,17 @@ nodefactory.vglue = pl.class({
     _default_length = "height",
 
     __tostring = function (self)
-      return (self.explicit and "E:" or "") .. "VG<" .. tostring(self.height) .. ">";
-    end,
-
-    setGlue = function (self, adjustment)
-      self.height.length = SILE.toAbsoluteMeasurement(self.height.length) + adjustment
-      self.height.stretch = 0
-      self.height.shrink = 0
+      return (self.explicit and "E:" or "") .. "VG<" .. self.height .. ">";
     end,
 
     adjustGlue = function (self, adjustment)
       self.height.length = self.height.length + adjustment
-      self.height.stretch = 0
-      self.height.shrink = 0
+      self.height.stretch = SILE.measurement(0)
+      self.height.shrink = SILE.measurement(0)
     end,
 
     outputYourself = function (_, typesetter, line)
-      local depth = line.depth
-      depth = depth + SILE.toAbsoluteMeasurement(line.height)
-      if type(depth) == "table" then depth = depth.length end
-      typesetter.frame:advancePageDirection(depth)
+      typesetter.frame:advancePageDirection(line.height + line.depth)
     end,
 
     unbox = function (self) return { self } end
@@ -405,13 +398,12 @@ nodefactory.vglue = pl.class({
 
 nodefactory.vfillglue = pl.class({
     _base = nodefactory.vglue,
-    stretch = inf
+    height = SILE.length(0, infinity)
   })
 
 nodefactory.vssglue = pl.class({
     _base = nodefactory.vglue,
-    stretch = inf,
-    shrink = inf
+    height = SILE.length(0, infinity, infinity)
   })
 
 nodefactory.zerovglue = pl.class({
@@ -423,7 +415,7 @@ nodefactory.vkern = pl.class({
     discardable = false,
 
     __tostring = function (self)
-      return "VK<" .. tostring(self.height) .. ">"
+      return "VK<" .. self.height .. ">"
     end
 
   })
@@ -432,7 +424,7 @@ nodefactory.penalty = pl.class({
     _base = nodefactory.box,
     type = "penalty",
     discardable = true,
-    width = SILE.length.new({}),
+    width = SILE.length(),
     flagged = 0,
     penalty = 0,
 
@@ -457,19 +449,16 @@ nodefactory.vbox = pl.class({
     _init = function (self, spec)
       nodefactory.box._init(self, spec)
       self.nodes = spec.nodes
-      self.depth = 0
-      self.height = 0
-      for i=1, #(self.nodes) do
-        local node = self.nodes[i]
-        local height = type(node.height) == "table" and node.height.length or node.height
-        local depth = type(node.depth) == "table" and node.depth.length or node.depth
-        self.depth = (depth > self.depth) and depth or self.depth
-        self.height = (height > self.height) and height or self.height
+      self.depth = SILE.length(0)
+      self.height = SILE.length(0)
+      for _, node in ipairs(self.nodes) do
+        self.depth  = math.max(SU.cast("length", node.depth), self.depth)
+        self.height = math.max(SU.cast("length", node.height), self.height)
       end
     end,
 
     __tostring = function (self)
-      return "VB<" .. tostring(self.height) .. "|" .. self:toText() .. "v"..tostring(self.depth)..")";
+      return "VB<" .. self.height .. "|" .. self:toText() .. "v".. self.depth ..")";
     end,
 
     toText = function (self)
@@ -477,9 +466,7 @@ nodefactory.vbox = pl.class({
     end,
 
     outputYourself = function (self, typesetter, line)
-      local advanceamount = self.height
-      if type(advanceamount) == "table" then advanceamount = advanceamount.length end
-      typesetter.frame:advancePageDirection(advanceamount)
+      typesetter.frame:advancePageDirection(self.height)
       local initial = true
       for _, node in pairs(self.nodes) do
         if not (initial and (node:isGlue() or node:isPenalty())) then
@@ -487,7 +474,7 @@ nodefactory.vbox = pl.class({
           node:outputYourself(typesetter, line)
         end
       end
-      if self.depth then typesetter.frame:advancePageDirection(self.depth) end
+      typesetter.frame:advancePageDirection(self.depth)
       typesetter.frame:newLine()
     end,
 
@@ -505,7 +492,7 @@ nodefactory.vbox = pl.class({
         nodes = box:unbox()
       end
       local height = self.height + self.depth
-      local lastdepth = 0
+      local lastdepth = SILE.length(0)
       for i = 1, #nodes do
         table.insert(self.nodes, nodes[i])
         height = height + nodes[i].height + nodes[i].depth

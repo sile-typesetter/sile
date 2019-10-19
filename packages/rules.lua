@@ -2,13 +2,14 @@ SILE.baseClass:loadPackage("raiselower")
 SILE.baseClass:loadPackage("rebox")
 
 SILE.registerCommand("hrule", function (options, _)
-  local width = options.width or 0
-  local height = options.height or 0
+  local width = SU.cast("length", options.width)
+  local height = SU.cast("length", options.height)
+  local depth = SU.cast("length", options.depth)
   SILE.typesetter:pushHbox({
-    width = SILE.length.new({ length = SILE.parseComplexFrameDimension(width) }),
-    height = SILE.length.new({ length = SILE.parseComplexFrameDimension(height) }),
-    depth= 0,
-    value= options.src,
+    width = width:absolute(),
+    height = height:absolute(),
+    depth = depth:absolute(),
+    value = options.src,
     outputYourself= function (self, typesetter, line)
       local scaledWidth = self.width.length
       if line.ratio < 0 and self.width.shrink > 0 then

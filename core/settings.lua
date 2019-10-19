@@ -55,28 +55,28 @@ SILE.settings = {
 SILE.settings.declare({
   name = "document.parindent",
   type = "glue",
-  default = SILE.nodefactory.newGlue("20pt"),
+  default = SILE.nodefactory.glue("20pt"),
   help = "Glue at start of paragraph"
 })
 
 SILE.settings.declare({
   name = "document.baselineskip",
   type = "vglue",
-  default = SILE.nodefactory.newVglue("1.2em plus 1pt"),
+  default = SILE.nodefactory.vglue("1.2em plus 1pt"),
   help = "Leading"
 })
 
 SILE.settings.declare({
   name = "document.lineskip",
   type = "vglue",
-  default = SILE.nodefactory.newVglue("1pt"),
+  default = SILE.nodefactory.vglue("1pt"),
   help = "Leading"
 })
 
 SILE.settings.declare({
   name = "document.parskip",
   type = "vglue",
-  default = SILE.nodefactory.newVglue("0pt plus 1pt"),
+  default = SILE.nodefactory.vglue("0pt plus 1pt"),
   help = "Leading"
 })
 

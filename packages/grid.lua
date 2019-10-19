@@ -24,7 +24,7 @@ local pushVglue = function (self, spec)
   end
   spec.height.stretch = 0
   spec.height.shrink = 0
-  self.frame.state.totals.gridCursor = self.frame.state.totals.gridCursor + SILE.toAbsoluteMeasurement(spec.height.length)
+  self.frame.state.totals.gridCursor = self.frame.state.totals.gridCursor + SILE.measurement(spec.height):absolute()
   SILE.defaultTypesetter.pushVglue(self, spec)
   SILE.defaultTypesetter.pushVglue(self, makeUp())
 end

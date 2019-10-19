@@ -6,7 +6,7 @@ SILE.settings.declare({ name = "linebreak.adjdemerits", type = "integer", defaul
   help = "Additional demerits which are accumulated in the course of paragraph building when two consecutive lines are visually incompatible. In these cases, one line is built with much space for justification, and the other one with little space." })
 SILE.settings.declare({ name = "linebreak.looseness", type = "integer", default = 0 })
 SILE.settings.declare({ name = "linebreak.prevGraf", type = "integer", default = 0 })
-SILE.settings.declare({ name = "linebreak.emergencyStretch", type = "length or nil", default = SILE.length.new() })
+SILE.settings.declare({ name = "linebreak.emergencyStretch", type = "measurement", default = SILE.measurement(0) })
 SILE.settings.declare({ name = "linebreak.doLastLineFit", type = "boolean", default = false }) -- unimplemented
 SILE.settings.declare({ name = "linebreak.linePenalty", type = "integer", default = 10 })
 SILE.settings.declare({ name = "linebreak.hyphenPenalty", type = "integer", default = 50 })
@@ -37,7 +37,10 @@ local lineBreak = {}
     postLineBreak
 ]]
 
-local param = function (x) return SILE.toAbsoluteMeasurement(SILE.settings.get("linebreak."..x)) end
+local param = function (x)
+  local value = SILE.settings.get("linebreak."..x)
+  return type(value) == "table" and value:absolute() or value
+end
 
 -- Routines here will be called thousands of times; we micro-optimize
 -- to avoid debugging and concat calls.
@@ -46,9 +49,9 @@ local debugging = false
 function lineBreak:init()
   self:trimGlue() -- 842
   -- 849
-  self.activeWidth = SILE.length.new()
-  self.curActiveWidth = SILE.length.new()
-  self.breakWidth = SILE.length.new()
+  self.activeWidth = SILE.length()
+  self.curActiveWidth = SILE.length()
+  self.breakWidth = SILE.length()
   -- 853
   local rskip = SILE.settings.get("document.rskip")
   if type(rskip) == "table" then rskip = rskip.width else rskip = 0 end
@@ -69,7 +72,7 @@ end
 function lineBreak:trimGlue() -- 842
   local nodes = self.nodes
   if nodes[#nodes]:isGlue() then nodes[#nodes] = nil end
-  nodes[#nodes+1] = SILE.nodefactory.newPenalty({ penalty = inf_bad })
+  nodes[#nodes+1] = SILE.nodefactory.penalty(inf_bad)
 end
 
 function lineBreak:setupLineLengths() -- 874
@@ -104,8 +107,7 @@ function lineBreak:tryBreak() -- 855
   self.prev_r = self.activeListHead
   self.old_l = 0
   self.r = nil
-  self.curActiveWidth = pl.tablex.deepcopy(self.activeWidth)
-
+  self.curActiveWidth = SILE.length(self.activeWidth)
   while true do
     while true do -- allows "break" to function as "continue"
       self.r = self.prev_r.next
@@ -143,13 +145,13 @@ function lineBreak:tryBreak() -- 855
         if debugging then SU.debug("break", "line width = "..self.lineWidth) end
       end
       if debugging then
-        SU.debug("break", " ---> (2) cuaw is ".. self.curActiveWidth.length)
-        SU.debug("break", " ---> aw is ".. self.activeWidth.length)
+        SU.debug("break", " ---> (2) cuaw is ".. self.curActiveWidth)
+        SU.debug("break", " ---> aw is ".. self.activeWidth)
       end
       self:considerDemerits(pi, breakType)
       if debugging then
-        SU.debug("break", " <--- cuaw is ".. self.curActiveWidth.length)
-        SU.debug("break", " <--- aw is ".. self.activeWidth.length)
+        SU.debug("break", " <--- cuaw is ".. self.curActiveWidth)
+        SU.debug("break", " <--- aw is ".. self.activeWidth)
       end
     end
   end
@@ -196,17 +198,17 @@ function lineBreak:tryAlternatives(from, to)
   if #alternates == 0 then return end
   local localMinimum = awful_bad
   -- local selectedShortfall
-  local shortfall = self.lineWidth - self.curActiveWidth.length
+  local shortfall = self.lineWidth - self.curActiveWidth
   if debugging then SU.debug("break", "Shortfall was ", shortfall) end
   for combination in SU.allCombinations(altSizes) do
     local addWidth = 0
     for i = 1, #(alternates) do local alt = alternates[i]
-      addWidth = (addWidth + alt.options[combination[i]].width - alt:minWidth()).length
+      addWidth = (addWidth + alt.options[combination[i]].width - alt:minWidth())
       if debugging then SU.debug("break", alt.options[combination[i]], " width", addWidth) end
     end
     local ss = shortfall - addWidth
-    local badness = SU.rateBadness(inf_bad, math.abs(ss), ss > 0 and self.curActiveWidth.stretch or self.curActiveWidth.shrink)
-    if debugging then SU.debug("break", "  badness of "..ss.." ("..self.curActiveWidth.stretch..") is ".. badness) end
+    local badness = SU.rateBadness(inf_bad, ss, self.curActiveWidth[ss > 0 and "stretch" or "shrink"])
+    if debugging then SU.debug("break", "  badness of " .. ss .. " (" .. self.curActiveWidth .. ") is " .. badness) end
     if badness < localMinimum then
       self.r.alternates = alternates
       self.r.altSelections = combination
@@ -216,7 +218,7 @@ function lineBreak:tryAlternatives(from, to)
   end
   if debugging then SU.debug("break", "Choosing ", alternates[1].options[self.r.altSelections[1]]) end
   -- self.curActiveWidth = self.curActiveWidth + selectedShortfall
-  shortfall = self.lineWidth - self.curActiveWidth.length
+  shortfall = self.lineWidth - self.curActiveWidth
   if debugging then SU.debug("break", "Is now ", shortfall) end
 end
 
@@ -224,11 +226,11 @@ function lineBreak:considerDemerits(pi, breakType) -- 877
   self.artificialDemerits = false
   local nodeStaysActive = false
   -- self:dumpActiveRing()
-  local shortfall = self.lineWidth - self.curActiveWidth.length
+  local shortfall = self.lineWidth - self.curActiveWidth
   if self.seenAlternatives then
     self:tryAlternatives(self.r.prevBreak and self.r.prevBreak.curBreak or 1, self.r.curBreak and self.r.curBreak or 1, shortfall)
   end
-  shortfall = self.lineWidth - self.curActiveWidth.length
+  shortfall = self.lineWidth - self.curActiveWidth
   self.badness, self.fitClass = fitclass(self, shortfall)
   if debugging then SU.debug("break", self.badness .. " " .. self.fitClass) end
   if (self.badness > inf_bad or pi == ejectPenalty) then
@@ -246,7 +248,12 @@ function lineBreak:considerDemerits(pi, breakType) -- 877
     nodeStaysActive = true
   end
 
-  self.lastRatio = shortfall > 0 and shortfall/(self.curActiveWidth.stretch or awful_bad) or shortfall/(self.curActiveWidth.shrink or awful_bad)
+  local function shortfallratio (metric)
+    local prop = self.curActiveWidth[metric]:tonumber()
+    local factor = prop ~= 0 and prop or awful_bad
+    return shortfall:tonumber() / factor
+  end
+  self.lastRatio = shortfallratio(shortfall > 0 and "stretch" or "shrink")
   self:recordFeasible(pi, breakType)
   if not nodeStaysActive then self:deactivateR() end
 end
@@ -259,7 +266,7 @@ function lineBreak:deactivateR() -- 886
     self.r = self.activeListHead.next
     if self.r.type == "delta" then
       self.activeWidth = self.activeWidth + self.r.width
-      self.curActiveWidth = pl.tablex.deepcopy(self.activeWidth)
+      self.curActiveWidth = SILE.length(self.activeWidth)
       self.activeListHead.next = self.r.next
     end
     if debugging then SU.debug("break", "  Deactivate, branch 1"); end
@@ -333,7 +340,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
   if self.no_break_yet then
     -- 863
     self.no_break_yet = false
-    self.breakWidth = pl.tablex.deepcopy(self.background)
+    self.breakWidth = SILE.length(self.background)
     local place = self.place
     local node = self.nodes[place]
     if node and node:isDiscretionary() then -- 866
@@ -353,7 +360,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
   if self.prev_r.type == "delta" then
     self.prev_r.width = self.prev_r.width - self.curActiveWidth + self.breakWidth
   elseif self.prev_r == self.activeListHead then
-    self.activeWidth = pl.tablex.deepcopy(self.breakWidth)
+    self.activeWidth = SILE.length(self.breakWidth)
   else
     local newDelta = { next = self.r, type = "delta", width = self.breakWidth - self.curActiveWidth }
     if debugging then SU.debug("break", "Added new delta node = " .. tostring(newDelta.width)) end
@@ -414,7 +421,7 @@ end
 function lineBreak:describeBreakNode(node)
   --print("@@" .. b.serial .. ": line " .. (b.lineNumber -1) .. "." .. b.fitness .. " " .. b.type .. " t=".. b.totalDemerits .. " -> @@ " .. (b.prevBreak and b.prevBreak.serial or "0") )
   if node.sentinel then return node.sentinel end
-  if node.type == "delta" then return "delta "..node.width.length.."pt" end
+  if node.type == "delta" then return "delta "..node.width.."pt" end
   local before = self.nodes[node.curBreak-1]
   local after = self.nodes[node.curBreak+1]
   local from = node.prevBreak and node.prevBreak.curBreak or 1
@@ -429,7 +436,7 @@ function lineBreak:checkForLegalBreak(node) -- 892
   if self.sideways and node:isBox() then
     self.activeWidth = self.activeWidth + node.height + node.depth
   elseif self.sideways and node:isVglue() then
-    if previous and (previous:isBox()) then
+    if previous and previous:isBox() then
       self:tryBreak()
     end
     self.activeWidth = self.activeWidth + node.height + node.depth
@@ -468,8 +475,8 @@ function lineBreak:tryFinalBreak()      -- 899
   self.r = self.activeListHead.next
   local fewestDemerits = awful_bad
   repeat
-    if not(self.r.type == "delta") then
-      if (self.r.totalDemerits < fewestDemerits) then
+    if self.r.type ~= "delta" then
+      if self.r.totalDemerits < fewestDemerits then
         fewestDemerits = self.r.totalDemerits
         self.bestBet = self.r
       end
@@ -478,7 +485,7 @@ function lineBreak:tryFinalBreak()      -- 899
   until self.r == self.activeListHead
   if param("looseness") == 0 then return "done" end
   -- XXX node 901 not implemented
-  if (self.actualLooseness == param("looseness")) or self.finalpass then
+  if self.actualLooseness == param("looseness") or self.finalpass then
     return "done"
   end
 end
@@ -526,7 +533,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
     }
 
     -- Not doing 1630
-    self.activeWidth = pl.tablex.deepcopy(self.background)
+    self.activeWidth = SILE.length(self.background)
 
     self.place = 1
     while self.nodes[self.place] and self.activeListHead.next ~= self.activeListHead do
@@ -542,7 +549,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
       self.threshold = param("tolerance")
     else
       self.pass = "emergency"
-      self.background.stretch = self.background.stretch + param("emergencyStretch").length
+      self.background.stretch = self.background.stretch + param("emergencyStretch")
       self.finalpass = true
     end
   end

@@ -4,24 +4,24 @@
 
 local firstfit = function (typesetter, nl, breakWidth)
   local breaks = {}
-  local length = SILE.length.new()
+  local length = SILE.length()
   for i = 1,#nl do local n = nl[i]
     if n:isBox() then
-      SU.debug("break", n .. " ".. n:lineContribution())
+      SU.debug("break", n .. " " .. n:lineContribution())
       length = length + n:lineContribution()
-      SU.debug("break", " Length now ".. length.. " breakwidth ".. breakWidth)
+      SU.debug("break", " Length now " .. length.. " breakwidth ".. breakWidth)
     end
     if not n:isBox() or n.isHangable then
       SU.debug("break", n )
       if n:isGlue() then
-        length = length + n.width.length
+        length = length + n.width
       end
-      SU.debug("break", " Length now ".. length.. " breakwidth ".. breakWidth)
+      SU.debug("break", " Length now " .. length .. " breakwidth " .. breakWidth)
       -- Can we break?
-      if length.length >= breakWidth then
+      if length >= breakWidth then
         SU.debug("break", "Breaking!")
         breaks[#breaks+1] = { position = i, width = breakWidth}
-        length = SILE.length.new()
+        length = SILE.length()
       end
     end
   end

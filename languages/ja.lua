@@ -5,9 +5,12 @@
 -- width of a full-width character. In SILE terms it isn't: measuring an "m" in
 -- a 10pt Japanese font gets you 5 points. So we measure a full-width character
 -- and use that as a unit. We call it zw following ptex (zenkaku width)
-SILE.registerUnit("zw", { relative = true, definition = function (v)
-  return v * SILE.shaper:measureChar("あ").width
-end})
+SILE.units["zw"] = {
+  relative = true,
+  definition = function (v)
+    return v * SILE.shaper:measureChar("あ").width
+  end
+}
 
 local hiragana = function (c) return c > 0x3040 and c <= 0x309f end
 local katakana = function (c) return c > 0x30a0 and c <= 0x30ff end

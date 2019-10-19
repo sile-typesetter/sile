@@ -8,7 +8,9 @@ local cassowary = require("cassowary")
 local solver = cassowary.SimplexSolver()
 local solverNeedsReloading = true
 
-local alldims = { top="h", bottom="h", height="h", left="w", right="w", width="w"}
+local widthdims = pl.Set { "left", "right", "width" }
+local heightdims = pl.Set { "top", "bottom", "height" }
+local alldims = widthdims + heightdims
 
 SILE.framePrototype = pl.class({
     direction = "LTR-TTB",
@@ -25,15 +27,15 @@ SILE.framePrototype = pl.class({
       end
       self.balanced = SU.boolean(self.balanced, false)
       if not dummy then
-        for method, _ in pairs(alldims) do
+        for method in pairs(alldims) do
           self.variables[method] = cassowary.Variable({ name = spec.id .. "_" .. method })
           self[method] = function (_self)
             _self:solve()
-            return _self.variables[method].value
+            return SILE.measurement(_self.variables[method].value)
           end
         end
         -- Add definitions of width and height
-        for method, _ in pairs(alldims) do
+        for method in pairs(alldims) do
           if spec[method] then
             self:constrain(method, spec[method])
           end
@@ -43,7 +45,7 @@ SILE.framePrototype = pl.class({
 
     -- This gets called by us in typesetter before we start to use the frame
     init = function (self)
-      self.state = { totals = { height= 0, pastTop = false } }
+      self.state = { totals = { height = SILE.measurement(0), pastTop = false } }
       self:enter()
       self:newLine()
       if self:pageAdvanceDirection() == "TTB" then
@@ -71,8 +73,13 @@ SILE.framePrototype = pl.class({
     end,
 
     reifyConstraint = function (self, solver, method, stay)
-      if not self.constraints[method] then return end
-      local constraint = SILE.frameParser:match(self.constraints[method])
+      local constraint = self.constraints[method]
+      if not constraint then return end
+      if SU.type(constraint) == "measurement" then
+        constraint = constraint:tonumber()
+      else
+        constraint = SILE.frameParser:match(constraint)
+      end
       SU.debug("frames", "Adding constraint " .. self.id .. "(" .. method .. ") = " .. constraint)
       local eq = cassowary.Equation(self.variables[method], constraint)
       solver:addConstraint(eq)
@@ -80,8 +87,9 @@ SILE.framePrototype = pl.class({
     end,
 
     addWidthHeightDefinitions = function (self, solver)
-      solver:addConstraint(cassowary.Equation(self.variables.width, cassowary.minus(self.variables.right, self.variables.left)))
-      solver:addConstraint(cassowary.Equation(self.variables.height, cassowary.minus(self.variables.bottom, self.variables.top)))
+      local vars = self.variables
+      solver:addConstraint(cassowary.Equation(vars.width, cassowary.minus(vars.right, vars.left)))
+      solver:addConstraint(cassowary.Equation(vars.height, cassowary.minus(vars.bottom, vars.top)))
     end,
 
     -- This is hideously inefficient,
@@ -108,18 +116,17 @@ SILE.framePrototype = pl.class({
       solverNeedsReloading = false
     end,
 
-    writingDirection     = function (self) return self.direction:match("^(%a+)") or "LTR" end,
-    pageAdvanceDirection = function (self) return self.direction:match("-(%a+)$") or "TTB" end,
+    writingDirection = function (self)
+      return self.direction:match("^(%a+)") or "LTR"
+    end,
 
-    advanceWritingDirection = function (self, amount)
-      if type(amount) == "table" then
-        if (amount.prototype and amount:prototype() == "RelativeMeasurement")
-          or (amount.type and amount.type == "RelativeMeasurement") then
-          amount = amount:absolute()
-        else
-          SU.error("Table passed to advanceWritingDirection", true)
-        end
-      end
+    pageAdvanceDirection = function (self)
+      return self.direction:match("-(%a+)$") or "TTB"
+    end,
+
+    advanceWritingDirection = function (self, length)
+      local amount = SU.cast("number", length)
+      if amount == 0 then return end
       if self:writingDirection() == "RTL" then
         self.state.cursorX = self.state.cursorX - amount
       elseif self:writingDirection() == "LTR" then
@@ -131,14 +138,9 @@ SILE.framePrototype = pl.class({
       end
     end,
 
-    advancePageDirection = function (self, amount)
-      if type(amount) == "table" then
-        if (amount.prototype and amount:prototype() == "RelativeMeasurement")
-          or (amount.type and amount.type == "RelativeMeasurement") then
-          amount = amount:absolute()
-        else
-        SU.error("Table passed to advancePageDirection", true) end
-      end
+    advancePageDirection = function (self, length)
+      local amount = SU.cast("number", length)
+      if amount == 0 then return end
       if self:pageAdvanceDirection() == "TTB" then
         self.state.cursorY = self.state.cursorY + amount
       elseif self:pageAdvanceDirection() == "RTL" then
@@ -163,6 +165,11 @@ SILE.framePrototype = pl.class({
     end,
 
     lineWidth = function (self)
+      SU.warn("Method :lineWidth() is deprecated, please use :getLineWidth()")
+      return self:getLineWidth()
+    end,
+
+    getLineWidth = function (self)
       if self:writingDirection() == "LTR" or self:writingDirection() == "RTL" then
         return self:width()
       else
@@ -246,7 +253,7 @@ end
 
 SILE.parseComplexFrameDimension = function (dimension)
   local length = SILE.frameParser:match(dimension)
-  length = SILE.toAbsoluteMeasurement(length)
+  length = SILE.measurement(length):absolute()
   if type(length) == "table" then
     local g = cassowary.Variable({ name = "t" })
     local eq = cassowary.Equation(g, length)

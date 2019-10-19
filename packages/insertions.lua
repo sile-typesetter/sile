@@ -67,7 +67,7 @@ local initInsertionClass = function (_, classname, options)
 
   if type(options.insertInto) == "string" then options.insertInto = { frame = options.insertInto, ratio = 1} end
 
-  options.maxHeight = SILE.length.make(options.maxHeight)
+  options.maxHeight = SILE.length(options.maxHeight)
 
   SILE.scratch.insertions.classes[classname] = options
 end
@@ -132,24 +132,24 @@ local _insertionVbox = pl.class({
     split = function (self, materialToSplit, maxsize)
       local s = SILE.pagebuilder:findBestBreak({
           vboxlist = materialToSplit,
-          target   = maxsize.length,
+          target   = maxsize,
           restart  = false,
           force    = true
         })
       if s then
         local newvbox = SILE.pagebuilder:collateVboxes(s)
         self.nodes = {}
-        self.height = 0
+        self.height = SILE.measurement(0)
         self:append(materialToSplit)
         self.contentHeight = self.height
         self.contentDepth = self.depth
-        self.depth = 0
-        self.height = 0
+        self.depth = SILE.measurement(0)
+        self.height = SILE.measurement(0)
         return newvbox
       end
     end
 
-  })
+})
 
 --[[
 
@@ -164,7 +164,7 @@ entered yet.
 
 local initShrinkage = function (frame)
   if not frame.state or not frame.state.totals then frame:init() end
-  if not frame.state.totals.shrinkage then frame.state.totals.shrinkage = 0 end
+  if not frame.state.totals.shrinkage then frame.state.totals.shrinkage = SILE.measurement(0) end
 end
 
 --[[ Mark a frame for reduction. --]]
@@ -175,7 +175,7 @@ SILE.insertions.setShrinkage = function (classname, amount)
     if f then
       initShrinkage(f)
       SU.debug("insertions", "Shrinking "..fName.." by "..amount.length*ratio)
-      f.state.totals.shrinkage = f.state.totals.shrinkage + amount.length * ratio
+      f.state.totals.shrinkage = f.state.totals.shrinkage + amount * ratio
     end
   end
 end
@@ -194,7 +194,7 @@ SILE.insertions.commitShrinkage = function (classname)
       if stealPosition == "bottom" then f:relax("bottom") else f:relax("top") end
       SU.debug("insertions", "Constraining height of "..fName.." by "..f.state.totals.shrinkage.." to "..newHeight)
       f:constrain("height", newHeight)
-      f.state.totals.shrinkage = 0
+      f.state.totals.shrinkage = SILE.measurement(0)
     end
   end
 end
@@ -222,8 +222,8 @@ local nextInterInsertionSkip = function (class)
       return SILE.nodefactory.vglue(options["topSkip"])
     end
   else
-    local skipSize = options["interInsertionSkip"]
-    skipSize = skipSize - stuffSoFar.nodes[#stuffSoFar.nodes].depth
+    local skipSize = options["interInsertionSkip"]:absolute()
+    skipSize = skipSize - stuffSoFar.nodes[#stuffSoFar.nodes].depth:absolute()
     return SILE.nodefactory.vglue(skipSize)
   end
 end
@@ -296,8 +296,8 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   end
 
   local effectOnThisFrame = options.stealFrom[SILE.typesetter.frame.id]
-  if effectOnThisFrame then effectOnThisFrame = effectOnThisFrame * h.length
-  else effectOnThisFrame = 0 end
+  if effectOnThisFrame then effectOnThisFrame = h * effectOnThisFrame
+  else effectOnThisFrame = SILE.measurement(0) end
 
   local newTarget = target - effectOnThisFrame
 

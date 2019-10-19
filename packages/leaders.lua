@@ -2,14 +2,14 @@ local leader = pl.class({
     _base = SILE.nodefactory.glue,
 
     outputYourself = function (self, typesetter, line)
-      local scaledWidth = self.width.length
+      local scaledWidth = self.width
       if line.ratio and line.ratio < 0 and self.width.shrink > 0 then
         scaledWidth = scaledWidth + self.width.shrink * line.ratio
       elseif line.ratio and line.ratio > 0 and self.width.stretch > 0 then
         scaledWidth = scaledWidth + self.width.stretch * line.ratio
       end
-      local valwidth = self.value.width.length
-      local repetitions = math.floor(scaledWidth / valwidth)
+      local valwidth = self.value.width
+      local repetitions = math.floor(scaledWidth:tonumber() / valwidth:tonumber())
       if repetitions < 1 then
         typesetter.frame:advanceWritingDirection(scaledWidth)
         return

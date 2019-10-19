@@ -1,52 +1,40 @@
 local lpeg = require("lpeg")
 local cassowary = require("cassowary")
 
--- local R = lpeg.R
--- local S = lpeg.S
-local P = lpeg.P
-local C = lpeg.C
-local V = lpeg.V
--- local Cg = lpeg.Cg
--- local Ct = lpeg.Ct
+local P, C, V = lpeg.P, lpeg.C, lpeg.V
+
+local function resolveMeasurement (str)
+  return SILE.measurement(str):tonumber()
+end
+
+local functionOfFrame = function (dim, id)
+  -- SU.debug("que", "fof", dim, id)
+  if not SILE.frames[id] then
+    -- TODO: Fix this race condition properly!
+    SILE.newFrame({ id = id })
+  end
+  return SILE.frames[id].variables[dim]
+end
 
 local number = SILE.parserBits.number
 local identifier = SILE.parserBits.identifier
-local dimensioned_string = SILE.parserBits.dimensioned_string / function (str) return SILE.toAbsoluteMeasurement(str) end
+local measurement = SILE.parserBits.measurement / resolveMeasurement
 local whitespace = SILE.parserBits.whitespace
+local func = C(P"top" + P"left" + P"bottom" + P"right" + P"width" + P"height") * P"(" * C(identifier) * P")" / functionOfFrame
 
-local functionOfFrame = function (dim, ident)
-	if not SILE.frames[ident] then
-		SILE.newFrame({id = ident})
-	end
-	return SILE.frames[ident].variables[dim]
-end
-local func = C(P("top") + P("left") + P("bottom") + P("right") + P("width") + P("height")) * P("(") * C(identifier) * P(")") / functionOfFrame
+local primary = func + measurement + number
 
-local primary = dimensioned_string + func + number.number
-
-	-- For testing
-	SILE.frameParserBits = {
-		number = number,
-		identifier = identifier,
-		whitespace = whitespace,
-		-- units = units,
-		dimensioned_string = dimensioned_string,
-		func = func,
-		primary = primary
-	}
-
-local grammar = {
-	"additive",
-	additive =  (( V("multiplicative") * whitespace * P("+")  * whitespace * V("additive") ) / function (l,r) return cassowary.plus(l,r) end)
-				+
-				(( V("multiplicative") * whitespace * P("-") * whitespace * V("additive") * whitespace ) / function(l,r) return cassowary.minus(l,r) end )+
-				V("multiplicative")
-	,
-	primary = primary + V("bracketed"),
-	multiplicative =  (( V("primary") * whitespace * P("*") * whitespace * V("multiplicative") ) / function (l,r) return cassowary.times(l,r) end)+
-				(( V("primary") * whitespace * P("/") * whitespace * V("multiplicative") ) / function(l,r) return cassowary.divide(l,r) end) +
-				V("primary"),
-	bracketed = P("(") * whitespace * V("additive") * whitespace * P(")") / function (a) return a; end
+-- For unit testing
+SILE._frameParserBits = {
+  measurement = measurement,
+  func = func,
 }
 
-return P(grammar)
+-- TODO: Cleanup this grammar for readability and maybe export a Lua function that does a match() instead of the grammar
+return P{
+  "additive",
+  additive = ((V"multiplicative" * whitespace * P"+" * whitespace * V"additive") / cassowary.plus) + ((V"multiplicative" * whitespace * P"-" * whitespace * V"additive" * whitespace) / cassowary.minus ) + V"multiplicative",
+  primary = primary + V"bracketed",
+  multiplicative = ((V"primary" * whitespace * P"*" * whitespace * V"multiplicative") / cassowary.times) + ((V"primary" * whitespace * P"/" * whitespace * V"multiplicative") / cassowary.divide) + V"primary",
+  bracketed = P"(" * whitespace * V"additive" * whitespace * P")" / function (a) return a end
+}
