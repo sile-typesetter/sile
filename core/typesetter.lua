@@ -39,35 +39,35 @@ SILE.settings.declare({
 
 SILE.settings.declare({
   name = "typesetter.parfillskip",
-  type = "Glue",
+  type = "glue",
   default = SILE.nodefactory.newGlue("0pt plus 10000pt"),
   help = "Glue added at the end of a paragraph"
 })
 
 SILE.settings.declare({
   name = "document.letterspaceglue",
-  type = "Glue or nil",
+  type = "glue or nil",
   default = nil,
   help = "Glue added between tokens"
 })
 
 SILE.settings.declare({
   name = "typesetter.underfulltolerance",
-  type = "Length or nil",
+  type = "length or nil",
   default = SILE.length.parse("1em"),
   help = "Amount a page can be underfull without warning"
 })
 
 SILE.settings.declare({
   name = "typesetter.overfulltolerance",
-  type = "Length or nil",
+  type = "length or nil",
   default = SILE.length.parse("5pt"),
   help = "Amount a page can be overfull without warning"
 })
 
 SILE.settings.declare({
   name = "typesetter.breakwidth",
-  type = "Length or nil",
+  type = "length or nil",
   default = nil,
   help = "Width to break lines at"
 })

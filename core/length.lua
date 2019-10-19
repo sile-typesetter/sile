@@ -1,7 +1,7 @@
 local lpeg = require("lpeg")
 
 return pl.class({
-    type = "Length",
+    type = "length",
     length = 0,
     stretch = 0,
     shrink = 0,

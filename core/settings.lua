@@ -54,49 +54,49 @@ SILE.settings = {
 
 SILE.settings.declare({
   name = "document.parindent",
-  type = "Glue",
+  type = "glue",
   default = SILE.nodefactory.newGlue("20pt"),
   help = "Glue at start of paragraph"
 })
 
 SILE.settings.declare({
   name = "document.baselineskip",
-  type = "VGlue",
+  type = "vglue",
   default = SILE.nodefactory.newVglue("1.2em plus 1pt"),
   help = "Leading"
 })
 
 SILE.settings.declare({
   name = "document.lineskip",
-  type = "VGlue",
+  type = "vglue",
   default = SILE.nodefactory.newVglue("1pt"),
   help = "Leading"
 })
 
 SILE.settings.declare({
   name = "document.parskip",
-  type = "VGlue",
+  type = "vglue",
   default = SILE.nodefactory.newVglue("0pt plus 1pt"),
   help = "Leading"
 })
 
 SILE.settings.declare({
   name = "document.spaceskip",
-  type = "Length or nil",
+  type = "length or nil",
   default = nil,
   help = "The length of a space (if nil, then measured from the font)"
 })
 
 SILE.settings.declare({
   name = "document.rskip",
-  type = "Glue or nil",
+  type = "glue or nil",
   default = nil,
   help = "Skip to be added to right side of line"
 })
 
 SILE.settings.declare({
   name = "document.lskip",
-  type = "Glue or nil",
+  type = "glue or nil",
   default = nil,
   help = "Skip to be added to left side of line"
 })

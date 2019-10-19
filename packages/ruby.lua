@@ -11,7 +11,7 @@ SILE.settings.declare({
 
 SILE.settings.declare({
   name = "ruby.latinspacer",
-  type = "Glue",
+  type = "glue",
   default = SILE.nodefactory.newGlue("0.25em"),
   help = "Glue added between consecutive Latin ruby"
 })

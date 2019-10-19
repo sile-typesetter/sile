@@ -174,16 +174,17 @@ end
 
 utilities.cast = function (wantedType, value)
   local actualType = SU.type(value)
+  wantedType = string.lower(wantedType)
   if string.match(wantedType, actualType)     then return value
   elseif actualType == "nil"
      and string.match(wantedType, "nil")      then return nil
   elseif string.match(wantedType, "integer")  then return tonumber(value)
   elseif string.match(wantedType, "number")   then return tonumber(value)
   elseif string.match(wantedType, "boolean")  then return SU.boolean(value)
-  elseif string.match(wantedType, "Length")   then return SILE.length.parse(value)
-  elseif string.match(wantedType, "VGlue")    then return SILE.nodefactory.newVglue(value)
-  elseif string.match(wantedType, "Glue")     then return SILE.nodefactory.newGlue(value)
-  elseif string.match(wantedType, "Kern")     then return SILE.nodefactory.newKern(value)
+  elseif string.match(wantedType, "length")   then return SILE.length.parse(value)
+  elseif string.match(wantedType, "vglue")    then return SILE.nodefactory.newVglue(value)
+  elseif string.match(wantedType, "glue")     then return SILE.nodefactory.newGlue(value)
+  elseif string.match(wantedType, "kern")     then return SILE.nodefactory.newKern(value)
   else SU.warn("Unrecognized type: "..wantedType); return value
   end
 end

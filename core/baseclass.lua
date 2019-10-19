@@ -177,7 +177,7 @@ SILE.baseClass = std.object {
   init = function (self)
     SILE.settings.declare({
       name = "current.parindent",
-      type = "Glue or nil",
+      type = "glue or nil",
       default = nil,
       help = "Glue at start of paragraph"
     })

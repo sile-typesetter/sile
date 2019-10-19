@@ -11,7 +11,7 @@ local chardata = pl.pretty.load(pl.utils.readfile("lua-libraries/char-def.lua"))
 SILE.settings.declare({
   name = "languages.ug.hyphenoffset",
   help = "Space added between text and hyphen",
-  type = "Glue or nil",
+  type = "glue or nil",
   default = SILE.nodefactory.newGlue("1pt")
 })
 
