@@ -83,12 +83,14 @@ SILE.defaultTypesetter = std.object {
   -- Setup functions
   hooks = {},
   breadcrumbs = SU.breadcrumbs(),
+
   init = function (self, frame)
     self.stateQueue = {}
     self:initFrame(frame)
     self:initState()
     return self
   end,
+
   initState = function (self)
     self.state = {
       nodes = {},
@@ -96,28 +98,34 @@ SILE.defaultTypesetter = std.object {
       lastBadness = awful_bad,
     }
   end,
+
   initFrame = function (self, frame)
     self.frame = frame
     self.frame:init()
   end,
+
   getMargins = function (_)
     local lskip = SILE.settings.get("document.lskip") or SILE.nodefactory.zeroGlue
     local rskip = SILE.settings.get("document.rskip") or SILE.nodefactory.zeroGlue
     return _margins { lskip=lskip, rskip=rskip }
   end,
+
   setMargins = function (_, margins)
     SILE.settings.set("document.lskip", margins.lskip)
     SILE.settings.set("document.rskip", margins.rskip)
   end,
+
   pushState = function (self)
     self.stateQueue[#self.stateQueue+1] = self.state
     self:initState()
   end,
+
   popState = function (self, ncount)
     local offset = ncount and #self.stateQueue - ncount or nil
     self.state = table.remove(self.stateQueue, offset)
     if not self.state then SU.error("Typesetter state queue empty") end
   end,
+
   vmode = function (self)
     return #self.state.nodes == 0
   end,
@@ -141,41 +149,52 @@ SILE.defaultTypesetter = std.object {
     self.state.nodes[#self.state.nodes+1] = node
     return node
   end,
+
   pushVertical = function (self, vbox)
     self.state.outputQueue[#self.state.outputQueue+1] = vbox
     return vbox
   end,
+
   pushHbox = function (self, spec)
     return self:pushHorizontal(SILE.nodefactory.newHbox(spec))
   end,
+
   pushUnshaped = function (self, spec)
     return self:pushHorizontal(SILE.nodefactory.newUnshaped(spec))
   end,
+
   pushGlue = function (self, spec)
     return self:pushHorizontal(SILE.nodefactory.newGlue(spec))
   end,
+
   pushExplicitGlue = function (self, spec)
     spec.explicit = true
     spec.discardable = false
     return self:pushHorizontal(SILE.nodefactory.newGlue(spec))
   end,
+
   pushPenalty = function (self, spec)
     return self:pushHorizontal(SILE.nodefactory.newPenalty(spec))
   end,
+
   pushMigratingMaterial = function (self, material)
     return self:pushHorizontal(SILE.nodefactory.newMigrating({ material = material }))
   end,
+
   pushVbox = function (self, spec)
     return self:pushVertical(SILE.nodefactory.newVbox(spec))
   end,
+
   pushVglue = function (self, spec)
     return self:pushVertical(SILE.nodefactory.newVglue(spec))
   end,
+
   pushExplicitVglue = function (self, spec)
     spec.explicit = true
     spec.discardable = false
     return self:pushVglue(spec)
   end,
+
   pushVpenalty = function (self, spec)
     return self:pushVertical(SILE.nodefactory.newPenalty(spec))
   end,
@@ -218,11 +237,13 @@ SILE.defaultTypesetter = std.object {
       self:pushUnshaped({ text = text, options= SILE.font.loadDefaults({})})
     end
   end,
+
   breakIntoLines = function (self, nodelist, breakWidth)
     self:shapeAllNodes(nodelist)
     local breakpoints = SILE.linebreak:doBreak(nodelist, breakWidth)
     return self:breakpointsToLines(breakpoints)
   end,
+
   shapeAllNodes = function (_, nodelist)
     local newNl = {}
     for i = 1, #nodelist do
@@ -237,6 +258,7 @@ SILE.defaultTypesetter = std.object {
       for i=#newNl+1, #nodelist do nodelist[i]=nil end
     end
   end,
+
   -- Empties self.state.nodes, breaks into lines, puts lines into vbox, adds vbox to
   -- Turns a node list into a list of vboxes
   boxUpNodes = function (self)
@@ -296,10 +318,12 @@ SILE.defaultTypesetter = std.object {
   pageTarget = function (self)
     return self.frame:pageTarget()
   end,
+
   registerHook = function (self, category, frame)
     if not self.hooks[category] then self.hooks[category] = {} end
     self.hooks[category][1+#(self.hooks[category])] = frame
   end,
+
   runHooks = function (self, category, data)
     if not self.hooks[category] then return data end
     for i = 1, #self.hooks[category] do
@@ -307,27 +331,29 @@ SILE.defaultTypesetter = std.object {
     end
     return data
   end,
+
   registerFrameBreakHook = function (self, frame)
     self:registerHook("framebreak", frame)
   end,
+
   registerNewFrameHook = function (self, frame)
     self:registerHook("newframe", frame)
   end,
+
   registerPageEndHook = function (self, frame)
     self:registerHook("pageend", frame)
   end,
+
   buildPage = function (self)
     local pageNodeList
     local res
     if #(self.state.outputQueue) == 0 then return end
     if SILE.scratch.insertions then SILE.scratch.insertions.thisPage = {} end
-
     pageNodeList, res = SILE.pagebuilder:findBestBreak({
       vboxlist = self.state.outputQueue,
       target   = self:pageTarget(),
       restart  = self.frame.state.pageRestart
     })
-
     if not pageNodeList then -- No break yet
       -- self.frame.state.pageRestart = res
       self:runHooks("noframebreak")
@@ -499,6 +525,7 @@ SILE.defaultTypesetter = std.object {
       end
     end
   end,
+
   leaveHmode = function (self, independent)
     SU.debug("typesetter", "Leaving hmode")
     local vboxlist = self:boxUpNodes()
@@ -514,9 +541,11 @@ SILE.defaultTypesetter = std.object {
       self:initNextFrame()
     end
   end,
+
   inhibitLeading = function (self)
     self.state.previousVbox = nil
   end,
+
   leadingFor = function (_, vbox, previous)
     -- Insert leading
     SU.debug("typesetter", "   Considering leading between two lines:")
@@ -539,6 +568,7 @@ SILE.defaultTypesetter = std.object {
       return lead
     end
   end,
+
   addrlskip = function (self, slice)
     local rskip= SILE.settings.get(
       self.frame:writingDirection() == "LTR"
@@ -564,6 +594,7 @@ SILE.defaultTypesetter = std.object {
       table.insert(slice, 1, SILE.nodefactory.zeroHbox)
     end
   end,
+
   breakpointsToLines = function (self, breappoints)
     local linestart = 0
     local lines = {}
@@ -597,6 +628,7 @@ SILE.defaultTypesetter = std.object {
     --self.state.nodes = nodes.slice(linestart+1,nodes.length)
     return lines
   end,
+
   computeLineRatio = function (_, breakwidth, slice)
     local naturalTotals = SILE.length.new({length =0 , stretch =0, shrink = 0})
     local skipping = 1
@@ -646,6 +678,7 @@ SILE.defaultTypesetter = std.object {
     if left < -1 then left = -1 end
     return left
   end,
+
   chuck = function (self) -- emergency shipout everything
     self:leaveHmode(true)
     self:outputLinesToPage(self.state.outputQueue)
