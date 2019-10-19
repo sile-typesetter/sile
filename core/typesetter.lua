@@ -373,11 +373,11 @@ SILE.defaultTypesetter = std.object {
     local gTotal = SILE.length.new()
     local totalHeight = SILE.length.new()
 
-    for i=1, #pageNodeList do
-      totalHeight = totalHeight + pageNodeList[i].height + pageNodeList[i].depth
-      if pageNodeList[i]:isVglue() then
-        table.insert(glues,pageNodeList[i])
-        gTotal = gTotal + pageNodeList[i].height
+    for _, node in ipairs(pageNodeList) do
+      totalHeight = totalHeight + node.height + node.depth
+      if node:isVglue() then
+        table.insert(glues, node)
+        gTotal = gTotal + node.height
       end
     end
 
