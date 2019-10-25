@@ -169,7 +169,7 @@ AC_SUBST([SILE_LIB_PATH])
 AC_SUBST([shared_ext])
 AC_SUBST([SYSTEM_LUAROCKS])
 AC_SUBST([APPKIT])
-AC_CONFIG_FILES([Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile sile.1])
 AC_CONFIG_FILES([sile], [chmod +x sile])
 
 AC_OUTPUT

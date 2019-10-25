@@ -7,6 +7,7 @@ SUBDIRS = libtexpdf src
 endif
 
 dist_bin_SCRIPTS = sile
+dist_man_MANS = sile.1
 subdir_files = $(shell find core classes languages packages lua-libraries -type f -print)
 nobase_dist_pkgdata_DATA = $(subdir_files)
 EXTRA_DIST=CHANGELOG.md README.md LICENSE tests examples documentation sile-dev-1.rockspec
@@ -87,7 +88,14 @@ ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 test: $(TESTSRCS) $(ACTUALS) sile testprep
 	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
 
-busted: $(wildcard tests/*_spec.lua) sile testprep
+.PHONY: lint
+lint: luacheck
+
+.PHONY: luacheck
+luacheck:
+	luacheck -q .
+
+busted: $(wildcard spec/*_spec.lua) sile testprep
 	set -f; IFS=';'
 if SYSTEM_LUAROCKS
 	packagecpath=(./{,core/}?.$(SHARED_LIB_EXT))
@@ -96,7 +104,7 @@ else
 	packagecpath=(./{,core/,lua_modules/lib/lua/$(LUA_VERSION)/}?.$(SHARED_LIB_EXT))
 	packagepath=(./{,lua_modules/share/lua/$(LUA_VERSION)/,lua-libraries/}?{,/init}.lua)
 endif
-	busted --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" tests
+	busted --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" spec
 
 DOCSSRCS = $(basename $(wildcard documentation/*.sil))
 DOCS = $(addsuffix .pdf,$(basename $(DOCSSRCS)))

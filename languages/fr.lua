@@ -1,9 +1,9 @@
 SILE.settings.declare({
-  name = "languages.fr.punctuationspace",
+    name = "languages.fr.punctuationspace",
     type = "Kern",
     default = SILE.nodefactory.newKern("0.2en"),
     help = "The amount of space before a punctuation"
-})
+  })
 
 -- Unfortunately, there is nothing in the Unicode properties
 -- database which distinguishes between high and low punctuation.
@@ -11,16 +11,16 @@ SILE.settings.declare({
 -- for everything and need our language-specific typesetting
 -- processors.
 SILE.settings.declare({
-  name = "languages.fr.highpunctuation",
+    name = "languages.fr.highpunctuation",
     type = "string",
     default = "?:;!",
     help = "A list of punctuation marks which should be preceded by a punctuationspace"
-})
+  })
 
 SILE.nodeMakers.fr = pl.class({
     _base = SILE.nodeMakers.unicode,
     isHighPunctuation = function (_, text)
-      return string.match(SILE.settings.get("languages.fr.highpunctuation"), text)
+      return string.find(SILE.settings.get("languages.fr.highpunctuation"), text, nil, true)
     end,
     makeUnbreakableSpace = function (self)
       self:makeToken()
