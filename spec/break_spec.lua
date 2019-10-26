@@ -72,7 +72,7 @@ describe("SILE.linebreak", function()
   nnode({ text ="sex.", height =  4.6875, depth = 0.1953, width = 15.6543 })
 
   it("should sleauth the right break point", function()
-    print(SILE.linebreak:doBreak(hlist, 30.0))
+    -- print(SILE.linebreak:doBreak(hlist, 30.0))
   end)
 
 end)
