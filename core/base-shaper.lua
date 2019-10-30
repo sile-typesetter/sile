@@ -13,8 +13,8 @@ SILE.settings.declare({ name = "shaper.spacestretchfactor", type = "number or in
 
 -- Function for testing shaping in the repl
 -- luacheck: ignore makenodes
-makenodes = function (string, options)
-  return SILE.shaper:createNnodes(string, SILE.font.loadDefaults(options or {}))
+makenodes = function (token, options)
+  return SILE.shaper:createNnodes(token, SILE.font.loadDefaults(options or {}))
 end
 
 SILE.shapers.base = pl.class({
