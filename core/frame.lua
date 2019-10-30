@@ -73,7 +73,7 @@ SILE.framePrototype = pl.class({
     reifyConstraint = function (self, solver, method, stay)
       if not self.constraints[method] then return end
       local constraint = SILE.frameParser:match(self.constraints[method])
-      SU.debug("frames", "Adding constraint "..self.id.."("..method..") = "..constraint)
+      SU.debug("frames", "Adding constraint " .. self.id .. "(" .. method .. ") = " .. constraint)
       local eq = cassowary.Equation(self.variables[method], constraint)
       solver:addConstraint(eq)
       if stay then solver:addStay(eq) end

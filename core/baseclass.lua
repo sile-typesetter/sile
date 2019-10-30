@@ -259,8 +259,7 @@ SILE.baseClass = std.object {
   end,
 
   endPar = function (typesetter)
-    local g = SILE.settings.get("document.parskip")
-    typesetter:pushVglue(pl.tablex.deepcopy(g))
+    typesetter:pushVglue(SILE.settings.get("document.parskip"))
   end,
 
   options = {

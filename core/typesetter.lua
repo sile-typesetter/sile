@@ -40,7 +40,7 @@ SILE.settings.declare({
 SILE.settings.declare({
   name = "typesetter.parfillskip",
   type = "glue",
-  default = SILE.nodefactory.newGlue("0pt plus 10000pt"),
+  default = SILE.nodefactory.glue("0pt plus 10000pt"),
   help = "Glue added at the end of a paragraph"
 })
 
@@ -282,7 +282,7 @@ SILE.defaultTypesetter = std.object {
     if #nodelist == 0 then return {} end
     self:shapeAllNodes(nodelist)
     self:pushGlue(SILE.settings.get("typesetter.parfillskip"))
-    self:pushPenalty({ flagged= 1, penalty= -inf_bad })
+    self:pushPenalty({ flagged= 1, penalty = -inf_bad })
     SU.debug("typesetter", "Boxed up "..(#nodelist > 500 and (#nodelist).." nodes" or SU.contentToString(nodelist)))
     local breakWidth = SILE.settings.get("typesetter.breakwidth") or self.frame:lineWidth()
     if (type(breakWidth) == "table") then breakWidth = breakWidth.length end
@@ -301,7 +301,7 @@ SILE.defaultTypesetter = std.object {
           nodes[#nodes+1] = node
         end
       end
-      local vbox = SILE.nodefactory.newVbox({ nodes = nodes, ratio = line.ratio })
+      local vbox = SILE.nodefactory.vbox({ nodes = nodes, ratio = line.ratio })
       local pageBreakPenalty = 0
       if (#lines > 1 and index == 1) then
         pageBreakPenalty = SILE.settings.get("typesetter.widowpenalty")
@@ -554,7 +554,7 @@ SILE.defaultTypesetter = std.object {
     SU.debug("typesetter", "   Considering leading between two lines:")
     SU.debug("typesetter", "   1) "..previous)
     SU.debug("typesetter", "   2) "..vbox)
-    if not previous then return SILE.nodefactory.newVglue({height=SILE.length.new({})}) end
+    if not previous then return SILE.nodefactory.vglue() end
     local prevDepth = previous.depth
     SU.debug("typesetter", "   Depth of previous line was "..tostring(prevDepth))
     local bls = SILE.settings.get("document.baselineskip")
@@ -562,39 +562,31 @@ SILE.defaultTypesetter = std.object {
     depth = depth.length
     SU.debug("typesetter", "   Leading height = " .. tostring(bls.height) .. " - " .. tostring(vbox.height) .. " - " .. tostring(prevDepth) .. " = "..depth)
 
-    if (depth > SILE.settings.get("document.lineskip").height:absolute().length) then
-      local len = SILE.length.new({ length = depth, stretch = bls.height.stretch, shrink = bls.height.shrink })
-      return SILE.nodefactory.newVglue({height = len})
+    -- the lineskip setting is a vglue, but we need a version absolutized at this point, see #526
+    local lead = SILE.settings.get("document.lineskip").height:absolute()
+    if depth > lead then
+      return SILE.nodefactory.vglue(SILE.length(depth.length, bls.height.stretch, bls.height.shrink))
     else
-      local lead = SILE.nodefactory.newVglue(SILE.settings.get("document.lineskip"))
-      lead.height = lead.height:absolute()
-      return lead
+      return SILE.nodefactory.vglue(lead)
     end
   end,
 
   addrlskip = function (self, slice)
-    local rskip= SILE.settings.get(
-      self.frame:writingDirection() == "LTR"
-        and "document.rskip"
-        or  "document.lskip"
-    )
+    local LoR = self.frame:writingDirection() == "LTR"
+    local rskip = SILE.settings.get("document." .. (LoR and "rskip" or "lskip"))
     if rskip then
       rskip.value = "rskip"
       table.insert(slice, rskip)
-      table.insert(slice, SILE.nodefactory.zeroHbox)
+      table.insert(slice, SILE.nodefactory.zerohbox())
     end
-    local lskip= SILE.settings.get(
-      self.frame:writingDirection() == "LTR"
-        and "document.lskip"
-        or  "document.rskip"
-    )
+    local lskip = SILE.settings.get("document." .. (LoR and "lskip" or "rskip"))
     if lskip then
       while slice[1].discardable do
-        table.remove(slice,1)
+        table.remove(slice, 1)
       end
       lskip.value = "lskip"
       table.insert(slice, 1, lskip)
-      table.insert(slice, 1, SILE.nodefactory.zeroHbox)
+      table.insert(slice, 1, SILE.nodefactory.zerohbox())
     end
   end,
 
@@ -633,19 +625,19 @@ SILE.defaultTypesetter = std.object {
   end,
 
   computeLineRatio = function (_, breakwidth, slice)
-    local naturalTotals = SILE.length.new({length =0 , stretch =0, shrink = 0})
-    local skipping = 1
+    local naturalTotals = SILE.length.new({ length = 0 , stretch = 0, shrink = 0 })
+    local skipping = true
     for i, node in ipairs(slice) do
-      if (node:isBox() or (node:isPenalty() and node.penalty == -inf_bad)) then
-        skipping = 0
-        if node:isBox() then
-          naturalTotals = naturalTotals + node:lineContribution()
-        end
+      if node:isBox() then
+        skipping = false
+        naturalTotals = naturalTotals + node:lineContribution()
+      elseif node:isPenalty() and node.penalty == -inf_bad then
+        skipping = false
       elseif node:isDiscretionary() then
-        skipping = 0
+        skipping = false
         naturalTotals = naturalTotals + node:replacementWidth()
         slice[i].height = slice[i]:replacementHeight()
-      elseif skipping == 0 then
+      elseif not skipping then
         naturalTotals = naturalTotals + node.width
       end
     end

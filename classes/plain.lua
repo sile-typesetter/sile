@@ -70,12 +70,12 @@ for k, v in pairs(skips) do
 end
 
 SILE.registerCommand("hfill", function (_, _)
-  SILE.typesetter:pushExplicitGlue(SILE.nodefactory.hfillGlue)
+  SILE.typesetter:pushExplicitGlue(SILE.nodefactory.hfillglue())
 end, "Add a huge horizontal glue")
 
 SILE.registerCommand("vfill", function (_, _)
   SILE.typesetter:leaveHmode()
-  SILE.typesetter:pushExplicitVglue(SILE.nodefactory.vfillGlue)
+  SILE.typesetter:pushExplicitVglue(SILE.nodefactory.vfillglue())
 end, "Add huge vertical glue")
 
 SILE.registerCommand("hss", function (_, _)
@@ -131,14 +131,11 @@ SILE.registerCommand("\\", function (_, _) SILE.typesetter:typeset("\\") end)
 
 SILE.registerCommand("ragged", function (options, content)
   SILE.settings.temporarily(function ()
-    if options.left then SILE.settings.set("document.lskip", SILE.nodefactory.hfillGlue) end
-    if options.right then SILE.settings.set("document.rskip", SILE.nodefactory.hfillGlue) end
-    SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
-    SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
-    local space = SILE.length.parse("1spc")
-    space.stretch = 0
-    space.shrink = 0
-    SILE.settings.set("document.spaceskip", space)
+    if SU.boolean(options.left, false) then SILE.settings.set("document.lskip", SILE.nodefactory.hfillglue()) end
+    if SU.boolean(options.right, false) then SILE.settings.set("document.rskip", SILE.nodefactory.hfillglue()) end
+    SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
+    SILE.settings.set("document.parindent", SILE.nodefactory.glue())
+    SILE.settings.set("document.spaceskip", SILE.length("1spc", 0, 0))
     SILE.process(content)
     SILE.call("par")
   end)

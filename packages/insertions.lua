@@ -81,7 +81,7 @@ typesetter and frame.
 --]]
 
 local insertionsThisPage = {}
-local _pageInsertionVbox = SILE.nodefactory.newVbox({
+local _pageInsertionVbox = SILE.nodefactory.vbox({
   __tostring = function (self) return "PI<"..self.nodes..">" end,
   outputYourself = function (self)
     if not self.typesetter then
@@ -112,38 +112,44 @@ So we stick the material into an insertion vbox, and when the pagebuilder
 sees this, magic will happen.
 
 --]]
-local _insertionVbox = SILE.nodefactory.newVbox({
-  __tostring = function (self) return "I<"..self.nodes[1].."...>" end,
-  outputYourself = function (_, _, _) end,
-  discardable = true,
-  type = "insertionVbox",
-  -- And some utility methods to make the insertion processing code
-  -- easier to read.
-  dropDiscardables = function (self)
-    while #self.nodes > 1 and self.nodes[#self.nodes].discardable do
-      self.nodes[#self.nodes] = nil
+local _insertionVbox = pl.class({
+    _base = SILE.nodefactory.vbox,
+    discardable = true,
+    type = "insertionVbox",
+
+    __tostring = function (self) return "I<"..self.nodes[1].."...>" end,
+
+    outputYourself = function (_, _, _) end,
+
+    -- And some utility methods to make the insertion processing code
+    -- easier to read.
+    dropDiscardables = function (self)
+      while #self.nodes > 1 and self.nodes[#self.nodes].discardable do
+        self.nodes[#self.nodes] = nil
+      end
+    end,
+
+    split = function (self, materialToSplit, maxsize)
+      local s = SILE.pagebuilder:findBestBreak({
+          vboxlist = materialToSplit,
+          target   = maxsize.length,
+          restart  = false,
+          force    = true
+        })
+      if s then
+        local newvbox = SILE.pagebuilder:collateVboxes(s)
+        self.nodes = {}
+        self.height = 0
+        self:append(materialToSplit)
+        self.contentHeight = self.height
+        self.contentDepth = self.depth
+        self.depth = 0
+        self.height = 0
+        return newvbox
+      end
     end
-  end,
-  split = function (self, materialToSplit, maxsize)
-    local s = SILE.pagebuilder:findBestBreak({
-      vboxlist = materialToSplit,
-      target   = maxsize.length,
-      restart  = false,
-      force    = true
-    })
-    if s then
-      local newvbox = SILE.pagebuilder:collateVboxes(s)
-      self.nodes = {}
-      self.height = 0
-      self:append(materialToSplit)
-      self.contentHeight = self.height
-      self.contentDepth = self.depth
-      self.depth = 0
-      self.height = 0
-      return newvbox
-    end
-  end
-})
+
+  })
 
 --[[
 
@@ -213,12 +219,12 @@ local nextInterInsertionSkip = function (class)
     if options["topBox"] then
       return options["topBox"]
     elseif options["topSkip"] then
-      return SILE.nodefactory.newVglue({ height = options["topSkip"] })
+      return SILE.nodefactory.vglue(options["topSkip"])
     end
   else
     local skipSize = options["interInsertionSkip"]
     skipSize = skipSize - stuffSoFar.nodes[#stuffSoFar.nodes].depth
-    return SILE.nodefactory.newVglue({ height = skipSize })
+    return SILE.nodefactory.vglue(skipSize)
   end
 end
 
@@ -343,7 +349,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
     the penalty (and break the page) and then consider the rest of the
     insertion. --]]
 
-    table.insert(vboxlist, i, SILE.nodefactory.newPenalty({penalty = -20000 }))
+    table.insert(vboxlist, i, SILE.nodefactory.penalty(-20000))
     return target -- Who cares? The penalty is going to cause a split.
   end
 
@@ -378,7 +384,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   local lastbox = i
   while not vboxlist[lastbox]:isVbox() do lastbox = lastbox - 1 end
   while not (vboxlist[i]:isPenalty() and vboxlist[i].penalty == -20000) do
-    table.insert(vboxlist, lastbox, SILE.nodefactory.newPenalty({penalty = -20000 }))
+    table.insert(vboxlist, lastbox, SILE.nodefactory.penalty(-20000))
   end
   return target
 end
@@ -409,10 +415,10 @@ local insert = function (_, classname, vbox)
   local thisclass = SILE.scratch.insertions.classes[classname]
   if not thisclass then SU.error("Uninitialized insertion class "..classname) end
   SILE.typesetter:pushMigratingMaterial({
-    SILE.nodefactory.newPenalty({ penalty = SILE.settings.get("insertion.penalty") })
+    SILE.nodefactory.penalty(SILE.settings.get("insertion.penalty"))
   })
   SILE.typesetter:pushMigratingMaterial({
-    _insertionVbox {
+    _insertionVbox({
         class = classname,
         nodes = vbox.nodes,
         -- actual height and depth must remain zero for page glue calculations
@@ -420,7 +426,7 @@ local insert = function (_, classname, vbox)
         contentDepth = vbox.depth,
         frame = thisclass.insertInto.frame,
         parent = SILE.typesetter.frame
-      }
+      })
   })
 end
 
