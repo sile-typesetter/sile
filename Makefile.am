@@ -161,6 +161,18 @@ clean-benchmarks:
 	git worktree prune
 	git branch --list | grep benchmark- | xargs git branch -D ||:
 
+clean-recursive: clean-tests
+
+.PHONY: clean-tests
+clean-tests:
+	rm -rf tests/*.actual
+
+clean-recursive: clean-deps
+
+.PHONY: clean-deps
+clean-deps:
+	rm -rf $(DEPDIR)
+
 time-%.json: benchmark-%/time.json
 	cp $< $@
 
