@@ -64,8 +64,13 @@ local operatorAtomTypes = {
   ['⋃'] = atomType.bigOperator,
   ['⨅'] = atomType.bigOperator,
   ['⨆'] = atomType.bigOperator,
-  ['∫'] = atomType.bigOperator
+  ['∫'] = atomType.bigOperator,
+  ['∰'] = atomType.bigOperator,
+  ['∮'] = atomType.bigOperator
 }
+
+local subscriptBigOps =
+  {'∫', '∮', '∰'}
 
 -- Foward declaration
 local newSpace
@@ -566,7 +571,7 @@ local _bigOpSubscript = _subscript {
   shape = function(self)
     if not (self.mode == mathMode.display
           or self.mode == mathMode.displayCramped)
-        or (self.base and self.base.text == "∫") then
+        or (self.base and contains(subscriptBigOps, self.base.text)) then
       _subscript.shape(self)
       return
     end
