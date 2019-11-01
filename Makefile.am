@@ -27,6 +27,9 @@ genrockslock := $(LUAROCKS) list --porcelain | awk '{print $$1 " " $$2}'
 rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
 endif
 
+# Whether to force tests to run from scratch
+CLEAN ?=
+
 # Make sure the embeded version number iterates with every commit
 configure.ac: .lastcommit
 
@@ -136,10 +139,10 @@ define runsile =
 	fi
 endef
 
-%.pdf: %.sil $(and $(SILE_COVERAGE),force)
+%.pdf: %.sil $(and $(SILE_COVERAGE)$(CLEAN),force)
 	$(runsile)
 
-%.pdf: %.xml $(and $(SILE_COVERAGE),force)
+%.pdf: %.xml $(and $(SILE_COVERAGE)$(CLEAN),force)
 	$(runsile)
 
 .PHONY: coverage
@@ -201,10 +204,10 @@ force: ;
 .PHONY: update_expecteds
 update_expecteds: $(EXPECTEDS)
 
-tests/%.expected: tests/%.sil
+tests/%.expected: tests/%.sil $(and $(CLEAN),force)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-tests/%.expected: tests/%.xml
+tests/%.expected: tests/%.xml $(and $(CLEAN),force)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
 .PHONY: update_actuals
@@ -213,11 +216,13 @@ update_actuals: $(ACTUALS)
 .PHONY: test_previews
 test_previews: $(TESTPDFS)
 
-tests/%.actual: tests/%.sil
-	-$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
+tests/%.actual: tests/%.sil $(and $(CLEAN),force)
+	-$(if $(CLEAN),rm -f $@,:)
+	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-tests/%.actual: tests/%.xml
-	-$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
+tests/%.actual: tests/%.xml $(and $(CLEAN),force)
+	-$(if $(CLEAN),rm -f $@,:)
+	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
 DEPFILES = $(addsuffix .d,$(addprefix $(DEPDIR)/,$(basename $(TESTSRCS) $(DOCS) $(EXAMPLES))))
 DEPDIRS = $(sort $(dir $(DEPFILES)))
