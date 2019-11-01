@@ -27,6 +27,9 @@ genrockslock := $(LUAROCKS) list --porcelain | awk '{print $$1 " " $$2}'
 rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
 endif
 
+# Whether to force tests to run from scratch
+CLEAN ?=
+
 # Make sure the embeded version number iterates with every commit
 configure.ac: .lastcommit
 
@@ -212,11 +215,13 @@ update_actuals: $(ACTUALS)
 .PHONY: test_previews
 test_previews: $(TESTPDFS)
 
-tests/%.actual: tests/%.sil
-	-$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
+tests/%.actual: tests/%.sil $(and $(CLEAN),force)
+	-$(if $(CLEAN),rm -f $@,:)
+	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-tests/%.actual: tests/%.xml
-	-$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
+tests/%.actual: tests/%.xml $(and $(CLEAN),force)
+	-$(if $(CLEAN),rm -f $@,:)
+	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
 DEPFILES = $(addsuffix .d,$(addprefix $(DEPDIR)/,$(basename $(TESTSRCS) $(DOCS) $(EXAMPLES))))
 DEPDIRS = $(sort $(dir $(DEPFILES)))
