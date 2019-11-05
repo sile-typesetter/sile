@@ -11,7 +11,6 @@ SILE.scratch.info = {
 }
 
 local _info = SILE.nodefactory.zeroHbox {
-  _type = "Info",
   type="special",
   category = "",
   value=nil,
