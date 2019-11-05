@@ -24,7 +24,7 @@ First, have a look at the [usage examples gallery][examples]. SILE allows you to
 
 ## Download and installation
 
-### For OS X
+### For macOS
 
 A formula is available for [Homebrew][brew] that can install both stable and head versions. Just run `brew install sile` for the latest stable release or `brew install sile --HEAD` to build from the latest git commit.
 
@@ -50,6 +50,27 @@ SILE can be downloaded from [its website][sile] or directly from [the Github rel
 
 SILE is written in the Lua programming language, so you will need a working Lua installation on your system. It also relies on external libraries to access fonts and write PDF files. Its preferred combination of libraries is [Harfbuzz][harfbuzz] and [libtexpdf][], a PDF creation library extracted from TeX. Harfbuzz (minimum version 1.4.2) should be available from your operating system's package manager. For Harfbuzz to work you will also need fontconfig installed. SILE also requires the [ICU][icu] libraries for Unicode handling.
 
+On macOS, ICU can be installed via Homebrew:
+
+    $ brew install icu4c
+
+After that, you might need to set environment variables. If you try to `brew link`, you will see this warning message:
+
+    $ brew link icu4c
+    Warning: Refusing to link macOS-provided software: icu4c
+    If you need to have icu4c first in your PATH run:
+      echo 'export PATH="/usr/local/opt/icu4c/bin:$PATH"' >> ~/.bash_profile
+      echo 'export PATH="/usr/local/opt/icu4c/sbin:$PATH"' >> ~/.bash_profile
+    
+    For compilers to find icu4c you may need to set:
+      export LDFLAGS="-L/usr/local/opt/icu4c/lib"
+      export CPPFLAGS="-I/usr/local/opt/icu4c/include"
+    
+    For pkg-config to find icu4c you may need to set:
+      export PKG_CONFIG_PATH="/usr/local/opt/icu4c/lib/pkgconfig"
+
+Set `PATH` and `PKG_CONFIG_PATH` as the message says.
+
 Optionally you may install the Lua libraries listed in the [rockspec][] to your system (using either your system's package manage or [luarocks][] (`luarocks install sile-dev-1.rockspec`). By default all the required Lua libraries will bundled alongside the SILE the instalation. If you downloaded a source tarball these depenedncies are included, if you are using a git clone of the source repository the build system will require `luarocks` to fetch them during build. Note that *openssl-devel* will be required for one of the Lua modules to compile. If your system has all the required packages already you may add `--with-system-luarocks` to the `./configure` command to skip this step.
 
 If you are building from a a git clone, start by running the script to setup your environment (if you are using the source tarball this is unnecessary):
@@ -73,7 +94,7 @@ On some systems you may also need to run:
 
 As of SILE 0.9.5, the default font is Gentium Plus, available from [here][gentium]. If this font is not installed on your system, you won't be able to use the examples without modification. (Previously we used Gentium Basic, but that's getting harder to get hold of.)
 
-If you are using OS X with Homebrew, the easiest way to install Gentium Plus is through the [Homebrew Fonts caskroom][brewfonts]:
+If you are using macOS with Homebrew, the easiest way to install Gentium Plus is through the [Homebrew Fonts caskroom][brewfonts]:
 
     $ brew tap caskroom/fonts
     $ brew cask install font-gentium-plus
