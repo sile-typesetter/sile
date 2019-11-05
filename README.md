@@ -54,22 +54,12 @@ On macOS, ICU can be installed via Homebrew:
 
     $ brew install icu4c
 
-After that, you might need to set environment variables. If you try to `brew link`, you will see this warning message:
+After that, you might need to set environment variables. If you try to `brew link` and you get a series of messages including something like these lines, you will need to run that export line to correctly set your path:
 
-    $ brew link icu4c
-    Warning: Refusing to link macOS-provided software: icu4c
-    If you need to have icu4c first in your PATH run:
-      echo 'export PATH="/usr/local/opt/icu4c/bin:$PATH"' >> ~/.bash_profile
-      echo 'export PATH="/usr/local/opt/icu4c/sbin:$PATH"' >> ~/.bash_profile
+    echo 'export PATH="/usr/local/opt/icu4c/bin:$PATH"' >> ~/.bash_profile
+    echo 'export PATH="/usr/local/opt/icu4c/sbin:$PATH"' >> ~/.bash_profile
     
-    For compilers to find icu4c you may need to set:
-      export LDFLAGS="-L/usr/local/opt/icu4c/lib"
-      export CPPFLAGS="-I/usr/local/opt/icu4c/include"
-    
-    For pkg-config to find icu4c you may need to set:
-      export PKG_CONFIG_PATH="/usr/local/opt/icu4c/lib/pkgconfig"
-
-Set `PATH` and `PKG_CONFIG_PATH` as the message says.
+    export PKG_CONFIG_PATH="/usr/local/opt/icu4c/lib/pkgconfig"
 
 Optionally you may install the Lua libraries listed in the [rockspec][] to your system (using either your system's package manage or [luarocks][] (`luarocks install sile-dev-1.rockspec`). By default all the required Lua libraries will bundled alongside the SILE the instalation. If you downloaded a source tarball these depenedncies are included, if you are using a git clone of the source repository the build system will require `luarocks` to fetch them during build. Note that *openssl-devel* will be required for one of the Lua modules to compile. If your system has all the required packages already you may add `--with-system-luarocks` to the `./configure` command to skip this step.
 
