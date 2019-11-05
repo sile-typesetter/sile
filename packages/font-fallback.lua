@@ -86,7 +86,7 @@ SILE.shapers.harfbuzzWithFallback = SILE.shapers.harfbuzz {
             end
           else
             if startOfNotdefRun == -1 then startOfNotdefRun = i end
-            SU.warn("Glyph "..newItems[i].text.." not found in "..options.family)
+            SU.debug("font-fallback", "Glyph "..newItems[i].text.." not found in "..options.family)
           end
         end
         if startOfNotdefRun > -1 then
@@ -94,7 +94,7 @@ SILE.shapers.harfbuzzWithFallback = SILE.shapers.harfbuzz {
             shapeQueue:currentJob().start + newItems[startOfNotdefRun].index,
             shapeQueue:currentJob().stop
           )
-          SU.debug("fonts", "Some unfound at end: ", shapeQueue[#shapeQueue])
+          SU.warn("Some glyph(s) not available in any fallback font, run with '-d font-fallback' for more detail")
         end
         shapeQueue:shift()
       end
