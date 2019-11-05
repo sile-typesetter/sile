@@ -32,7 +32,7 @@ configure.ac: .lastcommit
 
 .PHONY: .lastcommit
 .lastcommit:
-	@touch -d "$$(git log -n1 --pretty=format:%cI)" -- $@
+	@touch -t "$$(git log -n1 --date=format:'%Y%m%d%H%M.%S' --pretty=format:'%cd')" -- $@
 
 .PHONY: tagrelease
 tagrelease: prerelease
