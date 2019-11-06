@@ -133,6 +133,6 @@ SILE is distributed under the [MIT licence][license].
   [indesign]: https://en.wikipedia.org/wiki/Adobe_InDesign
   [brew]: http://brew.sh
   [brewfonts]: https://github.com/Homebrew/homebrew-cask-fonts
-  [list-en]: https://groups.google.com/forum/#!forum/sile-users
-  [list-ja]: https://groups.google.com/forum/#!forum/sile-users-ja
+  [list-en]: https://groups.google.com/d/forum/sile-users
+  [list-ja]: https://groups.google.com/d/forum/sile-users-ja
   [nix]: https://nixos.org/nix
