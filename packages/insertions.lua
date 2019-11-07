@@ -240,8 +240,8 @@ local min = function (a, b) -- Defined funny to help Lua 5.1 compare overloaded 
   return SILE.length.make(a).length < SILE.length.make(b).length and a or b
 end
 
-local pt = SILE.typesetter.pageTarget
-SILE.typesetter.pageTarget = function (self)
+local pt = SILE.typesetter.getTargetLength
+SILE.typesetter.getTargetLength = function (self)
   initShrinkage(self.frame)
   return pt(self) - self.frame.state.totals.shrinkage
 end

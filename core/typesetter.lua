@@ -321,7 +321,12 @@ SILE.defaultTypesetter = std.object {
   end,
 
   pageTarget = function (self)
-    return self.frame:pageTarget()
+    SU.warn("Method :pageTarget() is deprecated, please use :getTargetLength()")
+    return self:getTargetLength()
+  end,
+
+  getTargetLength = function (self)
+    return self.frame:getTargetLength()
   end,
 
   registerHook = function (self, category, frame)
@@ -356,7 +361,7 @@ SILE.defaultTypesetter = std.object {
     if SILE.scratch.insertions then SILE.scratch.insertions.thisPage = {} end
     pageNodeList, res = SILE.pagebuilder:findBestBreak({
       vboxlist = self.state.outputQueue,
-      target   = self:pageTarget(),
+      target   = self:getTargetLength(),
       restart  = self.frame.state.pageRestart
     })
     if not pageNodeList then -- No break yet
@@ -367,17 +372,15 @@ SILE.defaultTypesetter = std.object {
     self.state.lastPenalty = res
     self.frame.state.pageRestart = nil
     pageNodeList = self:runHooks("framebreak",pageNodeList)
-    self:setVerticalGlue(pageNodeList, self:pageTarget())
+    self:setVerticalGlue(pageNodeList, self:getTargetLength())
     self:outputLinesToPage(pageNodeList)
     return true
   end,
 
   setVerticalGlue = function (_, pageNodeList, target)
-    -- Do some sums on that list
     local glues = {}
     local gTotal = SILE.length.new()
     local totalHeight = SILE.length.new()
-
     for _, node in ipairs(pageNodeList) do
       totalHeight = totalHeight + node.height + node.depth
       if node:isVglue() then
@@ -385,9 +388,7 @@ SILE.defaultTypesetter = std.object {
         gTotal = gTotal + node.height
       end
     end
-
     local adjustment = (target - totalHeight).length
-
     if adjustment > 0 then
       if adjustment > gTotal.stretch then
         if (adjustment - gTotal.stretch) > SILE.settings.get("typesetter.underfulltolerance"):absolute().length then

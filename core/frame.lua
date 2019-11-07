@@ -171,7 +171,13 @@ SILE.framePrototype = pl.class({
     end,
 
     pageTarget = function (self)
-      if self:pageAdvanceDirection() == "TTB" or self:pageAdvanceDirection() == "BTT" then
+      SU.warn("Method :pageTarget() is deprecated, please use :getTargetLength()")
+      return self:getTargetLength()
+    end,
+
+    getTargetLength = function (self)
+      local direction = self:pageAdvanceDirection()
+      if direction == "TTB" or direction == "BTT" then
         return self:height()
       else
         return self:width()
