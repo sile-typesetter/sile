@@ -154,47 +154,67 @@ SILE.defaultTypesetter = std.object {
   end,
 
   pushHbox = function (self, spec)
-    return self:pushHorizontal(SILE.nodefactory.newHbox(spec))
+    -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
+    local node = SU.type(spec) == "hbox" and spec or SILE.nodefactory.hbox(spec)
+    return self:pushHorizontal(node)
   end,
 
   pushUnshaped = function (self, spec)
-    return self:pushHorizontal(SILE.nodefactory.newUnshaped(spec))
+    -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
+    local node = SU.type(spec) == "unshaped" and spec or SILE.nodefactory.unshaped(spec)
+    return self:pushHorizontal(node)
   end,
 
   pushGlue = function (self, spec)
-    return self:pushHorizontal(SILE.nodefactory.newGlue(spec))
+    -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
+    local node = SU.type(spec) == "glue" and spec or SILE.nodefactory.glue(spec)
+    return self:pushHorizontal(node)
   end,
 
   pushExplicitGlue = function (self, spec)
-    spec.explicit = true
-    spec.discardable = false
-    return self:pushHorizontal(SILE.nodefactory.newGlue(spec))
+    -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
+    local node = SU.type(spec) == "glue" and spec or SILE.nodefactory.glue(spec)
+    node.explicit = true
+    node.discardable = false
+    return self:pushHorizontal(node)
   end,
 
   pushPenalty = function (self, spec)
-    return self:pushHorizontal(SILE.nodefactory.newPenalty(spec))
+    -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
+    local node = SU.type(spec) == "penalty" and spec or SILE.nodefactory.penalty(spec)
+    return self:pushHorizontal(node)
   end,
 
-  pushMigratingMaterial = function (self, material)
-    return self:pushHorizontal(SILE.nodefactory.newMigrating({ material = material }))
+  pushMigratingMaterial = function (self, spec)
+    -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
+    local node = SU.type(spec) == "migrating" and spec or SILE.nodefactory.migrating(spec)
+    return self:pushHorizontal(node)
   end,
 
   pushVbox = function (self, spec)
-    return self:pushVertical(SILE.nodefactory.newVbox(spec))
+    -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
+    local node = SU.type(spec) == "vbox" and spec or SILE.nodefactory.vbox(spec)
+    return self:pushVertical(node)
   end,
 
   pushVglue = function (self, spec)
-    return self:pushVertical(SILE.nodefactory.newVglue(spec))
+    -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
+    local node = SU.type(spec) == "vglue" and spec or SILE.nodefactory.vglue(spec)
+    return self:pushVertical(node)
   end,
 
   pushExplicitVglue = function (self, spec)
-    spec.explicit = true
-    spec.discardable = false
-    return self:pushVglue(spec)
+    -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
+    local node = SU.type(spec) == "vglue" and spec or SILE.nodefactory.vglue(spec)
+    node.explicit = true
+    node.discardable = false
+    return self:pushVertical(node)
   end,
 
   pushVpenalty = function (self, spec)
-    return self:pushVertical(SILE.nodefactory.newPenalty(spec))
+    -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
+    local node = SU.type(spec) == "penalty" and spec or SILE.nodefactory.penalty(spec)
+    return self:pushVertical(node)
   end,
 
   -- Actual typesetting functions
@@ -217,6 +237,7 @@ SILE.defaultTypesetter = std.object {
       SILE.documentState.documentClass.newPar(self)
     end
   end,
+
   endline = function (self)
     self:leaveHmode()
     SILE.documentState.documentClass.endPar(self)
@@ -275,7 +296,7 @@ SILE.defaultTypesetter = std.object {
     if #nodelist == 0 then return {} end
     self:shapeAllNodes(nodelist)
     self:pushGlue(SILE.settings.get("typesetter.parfillskip"))
-    self:pushPenalty({ flagged= 1, penalty = -inf_bad })
+    self:pushPenalty(-inf_bad)
     SU.debug("typesetter", "Boxed up "..(#nodelist > 500 and (#nodelist).." nodes" or SU.contentToString(nodelist)))
     local breakWidth = SILE.settings.get("typesetter.breakwidth") or self.frame:getLineWidth()
     local lines = self:breakIntoLines(nodelist, breakWidth)
@@ -306,7 +327,7 @@ SILE.defaultTypesetter = std.object {
       self.state.previousVbox = vbox
       if pageBreakPenalty > 0 then
         SU.debug("typesetter", "adding penalty of "..pageBreakPenalty.." after "..vbox)
-        vboxes[#vboxes+1] = SILE.nodefactory.newPenalty({ penalty = pageBreakPenalty})
+        vboxes[#vboxes+1] = SILE.nodefactory.penalty(pageBreakPenalty)
       end
     end
     return vboxes
@@ -462,7 +483,7 @@ SILE.defaultTypesetter = std.object {
         self:pushExplicitVglue(vbox)
       elseif vbox.type == "insertionVbox" then
         SU.debug("pushback", { "pushBack", "insertion", vbox })
-        SILE.typesetter:pushMigratingMaterial({vbox})
+        SILE.typesetter:pushMigratingMaterial({ material = { vbox } })
       elseif not vbox:isVglue() and not vbox:isPenalty() then
         SU.debug("pushback", { "not vglue or penalty", vbox.type })
         local discardedFistInitLine = false

@@ -414,10 +414,10 @@ end)
 local insert = function (_, classname, vbox)
   local thisclass = SILE.scratch.insertions.classes[classname]
   if not thisclass then SU.error("Uninitialized insertion class "..classname) end
-  SILE.typesetter:pushMigratingMaterial({
+  SILE.typesetter:pushMigratingMaterial({ material = {
     SILE.nodefactory.penalty(SILE.settings.get("insertion.penalty"))
-  })
-  SILE.typesetter:pushMigratingMaterial({
+  }})
+  SILE.typesetter:pushMigratingMaterial({ material = {
     _insertionVbox({
         class = classname,
         nodes = vbox.nodes,
@@ -427,7 +427,7 @@ local insert = function (_, classname, vbox)
         frame = thisclass.insertInto.frame,
         parent = SILE.typesetter.frame
       })
-  })
+  }})
 end
 
 return {

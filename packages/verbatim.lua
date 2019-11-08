@@ -4,7 +4,7 @@ SILE.registerCommand("verbatim:font", function(_, _)
 end, "The font chosen for the verbatim environment")
 
 SILE.registerCommand("verbatim", function(_, content)
-  SILE.typesetter:pushVglue({ height = SILE.length.new({ length = 6 }) })
+  SILE.typesetter:pushVglue(6)
   SILE.typesetter:leaveHmode()
   SILE.settings.temporarily(function()
     SILE.settings.set("typesetter.parseppattern", "\n")

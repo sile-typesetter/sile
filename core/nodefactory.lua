@@ -29,11 +29,13 @@ nodefactory.box = pl.class({
       elseif SU.type(spec) == "table" then
         for k, v in pairs(spec) do
           if k == "height" or k == "width" or k == "depth" then
-            self[k] = SILE.length(v)
+            self[k] = SU.cast("length", v)
           else
             self[k] = v
           end
         end
+      elseif SU.type(spec) ~= "nil" then
+        SU.error("Unimplemented, creating " .. self.type .. " node from " .. SU.type(spec), 1)
       end
     end,
 
@@ -424,9 +426,15 @@ nodefactory.penalty = pl.class({
     _base = nodefactory.box,
     type = "penalty",
     discardable = true,
-    width = SILE.length(),
     flagged = 0,
     penalty = 0,
+
+    _init = function (self, spec)
+      nodefactory.box._init(self, spec)
+      if type(spec) ~= "table" then
+        self.penalty = SU.cast("number", spec)
+      end
+    end,
 
     __tostring = function (self)
       return "P(" .. self.flagged .. "|" .. self.penalty .. ")";
