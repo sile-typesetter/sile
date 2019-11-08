@@ -42,7 +42,7 @@ Install from OpenBSD ports, via source, or optionally via [Nix][nix].
 
 ### For Windows
 
-There is no installer yet (track the status in [issue #410](https://github.com/sile-typesetter/sile/issues/638)), but prebuilt Windows binaries may be downloaded from Azure's artifacts menu after selecting the [latest  build][azure]. For tips to how to build it yourself from source using CMake and Visual Studio, see [issue #567](https://github.com/sile-typesetter/sile/pull/567).
+There is no installer yet (track the status in [issue #410](https://github.com/sile-typesetter/sile/issues/410)), but prebuilt Windows binaries may be downloaded from Azure's artifacts menu after selecting the [latest  build][azure]. For tips to how to build it yourself from source using CMake and Visual Studio, see [issue #567](https://github.com/sile-typesetter/sile/pull/567).
 
 ### From source
 
