@@ -239,17 +239,17 @@ SILE.baseClass = std.object {
 
   finish = function (self)
     SILE.call("vfill")
-    while not (#SILE.typesetter.state.nodes == 0 and #SILE.typesetter.state.outputQueue == 0) do
+    while not SILE.typesetter:isQueueEmpty() do
       SILE.call("supereject")
       SILE.typesetter:leaveHmode(true)
       SILE.typesetter:buildPage()
-      if not (#SILE.typesetter.state.nodes == 0 and #SILE.typesetter.state.outputQueue == 0) then
+      if not SILE.typesetter:isQueueEmpty() then
         SILE.typesetter:initNextFrame()
       end
     end
     SILE.typesetter:runHooks("pageend") -- normally run by the typesetter
     self:endPage()
-    assert(#SILE.typesetter.state.nodes == 0 and #SILE.typesetter.state.outputQueue == 0, "queues not empty")
+    assert(SILE.typesetter:isQueueEmpty(), "queues not empty")
     SILE.outputter:finish()
   end,
 

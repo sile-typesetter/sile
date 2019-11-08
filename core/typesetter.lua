@@ -126,6 +126,11 @@ SILE.defaultTypesetter = std.object {
     if not self.state then SU.error("Typesetter state queue empty") end
   end,
 
+  isQueueEmpty = function (self)
+    if not self.state then return nil end
+    return #self.state.nodes == 0 and #self.state.outputQueue == 0
+  end,
+
   vmode = function (self)
     return #self.state.nodes == 0
   end,
@@ -347,7 +352,7 @@ SILE.defaultTypesetter = std.object {
   buildPage = function (self)
     local pageNodeList
     local res
-    if #(self.state.outputQueue) == 0 then return end
+    if self:isQueueEmpty() then return false end
     if SILE.scratch.insertions then SILE.scratch.insertions.thisPage = {} end
     pageNodeList, res = SILE.pagebuilder:findBestBreak({
       vboxlist = self.state.outputQueue,
