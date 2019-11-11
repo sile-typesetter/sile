@@ -488,12 +488,10 @@ SILE.defaultTypesetter = std.object {
               SU.debug("pushback", { "discard all other discretionaries", node })
             end
           elseif node == SILE.nodefactory.zeroHbox then
-            if discardedFistInitLine then self:pushHorizontal(node)
-            else SU.debug("que", { "discard zero hbox" }) end
+            if discardedFistInitLine then self:pushHorizontal(node) end
             discardedFistInitLine = true
           elseif node:isPenalty() then
             if not discardedFistInitLine then self:pushHorizontal(node) end
-            SU.debug("que", { "discard penalty"  })
           else
             node.bidiDone = true
             self:pushHorizontal(node)
