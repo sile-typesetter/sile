@@ -77,7 +77,7 @@ local measurement = pl.class({
     end,
 
     __unm = function (self)
-      local ret = self
+      local ret = SILE.measurement(self)
       ret.amount = self.amount * -1
       return ret
     end,

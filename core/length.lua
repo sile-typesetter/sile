@@ -32,11 +32,7 @@ return pl.class({
     end,
 
     absolute = function (self)
-      return SILE.length({
-          length = SILE.measurement(self.length:absolute()),
-          stretch = SILE.measurement(self.stretch:absolute()),
-          shrink = SILE.measurement(self.shrink:absolute())
-        })
+      return SILE.length(self.length:absolute(), self.stretch:absolute(), self.shrink:absolute())
     end,
 
     negate = function (self)
@@ -110,11 +106,6 @@ return pl.class({
       return result
     end,
 
-    __unm = function(self)
-      local zero = SILE.length()
-      return zero - self
-    end,
-
     __div = function (self, other)
       local result = SILE.length(self):absolute()
       other = SU.cast("measurement", other):absolute()
@@ -125,8 +116,8 @@ return pl.class({
     end,
 
     __unm = function (self)
-      local ret = self
-      ret.length = -ret.length
+      local ret = SILE.length(self)
+      ret.length = ret.length:__unm()
       return ret
     end,
 
