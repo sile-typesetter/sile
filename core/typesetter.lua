@@ -395,10 +395,10 @@ SILE.defaultTypesetter = std.object {
     local gTotal = SILE.length()
     local totalHeight = SILE.length()
     for _, node in ipairs(pageNodeList) do
-      totalHeight = totalHeight + node.height + node.depth
+      totalHeight = totalHeight + node.height:absolute() + node.depth:absolute()
       if node:isVglue() then
         table.insert(glues, node)
-        gTotal = gTotal + node.height
+        gTotal = gTotal + node.height:absolute()
       end
     end
     local adjustment = target - totalHeight
@@ -412,7 +412,7 @@ SILE.defaultTypesetter = std.object {
       if gTotal.stretch > 0 then
         for i = 1, #glues do
           local g = glues[i]
-          g:adjustGlue(adjustment * g.height.stretch / gTotal.stretch)
+          g:adjustGlue(adjustment * g.height.stretch:absolute() / gTotal.stretch)
         end
       end
     elseif adjustment < 0 then
@@ -426,7 +426,7 @@ SILE.defaultTypesetter = std.object {
       if gTotal.shrink > 0 then
         for i = 1, #glues do
           local g  = glues[i]
-          g:adjustGlue(-(adjustment * g.height.shrink / gTotal.shrink))
+          g:adjustGlue(-adjustment * g.height.shrink:absolute() / gTotal.shrink)
         end
       end
     end
@@ -623,6 +623,8 @@ SILE.defaultTypesetter = std.object {
         if seenHbox == 0 then break end
         self:addrlskip(slice)
         local ratio = self:computeLineRatio(point.width, slice)
+        -- TODO see bug 620
+        -- if math.abs(ratio) > 1 then SU.warn("Using ratio larger than 1" .. ratio) end
         local thisLine = { ratio = ratio, nodes = slice }
         lines[#lines+1] = thisLine
         if slice[#slice]:isDiscretionary() then
@@ -650,7 +652,7 @@ SILE.defaultTypesetter = std.object {
         naturalTotals = naturalTotals + node:replacementWidth():absolute()
         slice[i].height = slice[i]:replacementHeight():absolute()
       elseif not skipping then
-        naturalTotals = naturalTotals + node.width
+        naturalTotals = naturalTotals + node.width:absolute()
       end
     end
     local i = #slice
@@ -662,8 +664,8 @@ SILE.defaultTypesetter = std.object {
       elseif slice[i]:isDiscretionary() then
         slice[i].used = true
         if slice[i].parent then slice[i].parent.hyphenated = true end
-        naturalTotals = naturalTotals - slice[i]:replacementWidth()
-        naturalTotals = naturalTotals + slice[i]:prebreakWidth()
+        naturalTotals = naturalTotals - slice[i]:replacementWidth():absolute()
+        naturalTotals = naturalTotals + slice[i]:prebreakWidth():absolute()
         slice[i].height = slice[i]:prebreakHeight()
         break
       else
@@ -672,15 +674,18 @@ SILE.defaultTypesetter = std.object {
       i = i - 1
     end
     if slice[1]:isDiscretionary() then
-      naturalTotals = naturalTotals - slice[1]:replacementWidth()
-      naturalTotals = naturalTotals + slice[1]:postbreakWidth()
+      naturalTotals = naturalTotals - slice[1]:replacementWidth():absolute()
+      naturalTotals = naturalTotals + slice[1]:postbreakWidth():absolute()
       slice[1].height = slice[1]:postbreakHeight()
     end
-    local left = breakwidth - naturalTotals
+    local left = breakwidth:absolute() - naturalTotals
     if left < 0 then
       left = left / naturalTotals.shrink
+      -- TODO: See bug 620
+      -- left.amount = math.max(left.amount, -1)
     else
       left = left / naturalTotals.stretch
+      -- left.amount = math.min(left.amount, 1)
     end
     return left:tonumber()
   end,

@@ -189,8 +189,12 @@ units["spc"] = {
   end
 }
 
+-- Don't calculate this relative to EM because we don't want to absolutize at definition
 units["en"] = {
-  definition = "0.5em"
+  relative = true,
+  definition = function (value)
+    return value * SILE.settings.get("font.size") / 2
+  end
 }
 
 return units

@@ -240,10 +240,6 @@ local debugInsertion = function (ins, insbox, topBox, target, targetFrame, total
   SU.debug("insertions", totalHeight .. " worth of content on page so far")
 end
 
-local min = function (a, b) -- Defined funny to help Lua 5.1 compare overloaded tables
-  return SILE.length.make(a).length < SILE.length.make(b).length and a or b
-end
-
 local pt = SILE.typesetter.getTargetLength
 SILE.typesetter.getTargetLength = function (self)
   initShrinkage(self.frame)
@@ -278,14 +274,14 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   if ins.seen then return target end
   local targetFrame = SILE.getFrame(ins.frame)
   local options = SILE.scratch.insertions.classes[ins.class]
-  totalHeight = totalHeight.length
+  totalHeight = totalHeight.length:absolute()
 
   ins:dropDiscardables()
 
   -- We look into the page's insertion box and choose the appropriate skip,
   -- so we know how high the whole insertion is.
   local topBox = nextInterInsertionSkip(ins.class)
-  local h = ins.contentHeight + topBox.height + topBox.depth + ins.contentDepth
+  local h = ins.contentHeight + topBox.height:absolute() + topBox.depth:absolute() + ins.contentDepth:absolute()
 
   local insbox = thisPageInsertionBoxForClass(ins.class)
   initShrinkage(targetFrame)
@@ -318,7 +314,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   -- OK, we didn't fit. So now we have to split the insertion to fit the height
   -- we have within the insertion frame.
   SU.debug("insertions", "splitting")
-  local maxsize = min(target - totalHeight, options.maxHeight)
+  local maxsize = math.min(target - totalHeight, options.maxHeight)
 
   -- If we're going to fit this insertion on the page, we will use the
   -- whole of topbox, so let's subtract the height of that now.

@@ -1,3 +1,9 @@
+local function _error_if_not_number (a)
+  if type(a) ~= "number" then
+    SU.error("We tried to do impossible arithmetic on a " .. SU.type(a) .. ". (That's a bug)", true)
+  end
+end
+
 return pl.class({
     type = "length",
     length = SILE.measurement(0),
@@ -27,8 +33,8 @@ return pl.class({
           self:_init(parsed)
         end
       end
-      self.stretch.amount = math.abs(self.stretch.amount)
-      self.shrink.amount = math.abs(self.shrink.amount)
+      self.stretch.amount = self.stretch.amount
+      self.shrink.amount = self.shrink.amount
     end,
 
     absolute = function (self)
@@ -80,8 +86,8 @@ return pl.class({
     end,
 
     __add = function (self, other)
-      local result = SILE.length(self):absolute()
-      other = SU.cast("length", other):absolute()
+      local result = SILE.length(self)
+      other = SU.cast("length", other)
       result.length = result.length + other.length
       result.stretch = result.stretch + other.stretch
       result.shrink = result.shrink + other.shrink
@@ -89,8 +95,8 @@ return pl.class({
     end,
 
     __sub = function (self, other)
-      local result = SILE.length(self):absolute()
-      other = SU.cast("length", other):absolute()
+      local result = SILE.length(self)
+      other = SU.cast("length", other)
       result.length = result.length - other.length
       result.stretch = result.stretch - other.stretch
       result.shrink = result.shrink - other.shrink
@@ -98,8 +104,9 @@ return pl.class({
     end,
 
     __mul = function (self, other)
-      local result = SILE.length(self):absolute()
-      other = SU.cast("measurement", other):absolute()
+      if type(self) == "number" then self, other = other, self end
+      _error_if_not_number(other)
+      local result = SILE.length(self)
       result.length = result.length * other
       result.stretch = result.stretch * other
       result.shrink = result.shrink * other
@@ -107,8 +114,8 @@ return pl.class({
     end,
 
     __div = function (self, other)
-      local result = SILE.length(self):absolute()
-      other = SU.cast("measurement", other):absolute()
+      local result = SILE.length(self)
+      _error_if_not_number(other)
       result.length = result.length / other
       result.stretch = result.stretch / other
       result.shrink = result.shrink / other
@@ -116,9 +123,9 @@ return pl.class({
     end,
 
     __unm = function (self)
-      local ret = SILE.length(self)
-      ret.length = ret.length:__unm()
-      return ret
+      local result = SILE.length(self)
+      result.length = result.length:__unm()
+      return result
     end,
 
     __lt = function (self, other)
@@ -128,8 +135,8 @@ return pl.class({
     end,
 
     __eq = function (self, other)
-      local a = SU.cast("length", self)
-      local b = SU.cast("length", self)
+      local a = SU.cast("length", self):absolute()
+      local b = SU.cast("length", other):absolute()
       return a.length == b.length and a.stretch == b.stretch and a.shrink == b.shrink
     end
 

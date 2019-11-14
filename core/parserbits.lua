@@ -1,6 +1,6 @@
 local lpeg = require("lpeg")
 
-local R, S, P, C = lpeg.R, lpeg.S, lpeg.P, lpeg.C
+local R, S, P = lpeg.R, lpeg.S, lpeg.P
 local Cg, Ct, Cmt = lpeg.Cg, lpeg.Ct, lpeg.Cmt
 
 local function isaunit (_, _, unit)

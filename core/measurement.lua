@@ -2,6 +2,30 @@ local function _tonumber (amount)
   return SU.cast("number", amount)
 end
 
+local function _similarunit (a, b)
+  if type(b) == "number" or type(a) == "number" then
+    return true
+  else
+    return a.unit == b.unit
+  end
+end
+
+local function _hardnumber (a, b)
+  if type(b) == "number" or type(a) == "number" then
+    return true
+  else
+    return false
+  end
+end
+
+local function _unit (a, b)
+  return type(a) == "table" and a.unit or b.unit
+end
+
+local function _amount (input)
+  return type(input) == "number" and input or input.amount
+end
+
 local function _error_if_relative (a, b)
   if type(a) == "table" and a.relative or type(b) == "table" and b.relative then
     SU.error("We tried to do arithmetic on a relative measurement without explicitly absolutizing it. (That's a bug)", true)
@@ -52,28 +76,57 @@ local measurement = pl.class({
     end,
 
     __add = function (self, other)
-      _error_if_relative(self, other)
-      return SILE.measurement(_tonumber(self) + _tonumber(other))
+      if _similarunit(self, other) then
+        return SILE.measurement(_amount(self) + _amount(other), _unit(self, other))
+      else
+        _error_if_relative(self, other)
+        return SILE.measurement(_tonumber(self) + _tonumber(other))
+      end
     end,
 
     __sub = function (self, other)
-      _error_if_relative(self, other)
-      return SILE.measurement(_tonumber(self) - _tonumber(other))
+      if _similarunit(self, other) then
+        return SILE.measurement(_amount(self) - _amount(other), _unit(self, other))
+      else
+        _error_if_relative(self, other)
+        return SILE.measurement(_tonumber(self) - _tonumber(other))
+      end
     end,
 
     __mul = function (self, other)
-      _error_if_relative(self, other)
-      return SILE.measurement(_tonumber(self) * _tonumber(other))
+      if _hardnumber(self, other) then
+        return SILE.measurement(_amount(self) * _amount(other), _unit(self, other))
+      else
+        _error_if_relative(self, other)
+        return SILE.measurement(_tonumber(self) * _tonumber(other))
+      end
     end,
 
     __pow = function (self, other)
-      _error_if_relative(self, other)
-      return SILE.measurement(_tonumber(self) ^ _tonumber(other))
+      if _hardnumber(self, other) then
+        return SILE.measurement(_amount(self) ^ _amount(other), self.unit)
+      else
+        _error_if_relative(self, other)
+        return SILE.measurement(_tonumber(self) ^ _tonumber(other))
+      end
     end,
 
     __div = function (self, other)
-      _error_if_relative(self, other)
-      return SILE.measurement(_tonumber(self) / _tonumber(other))
+      if _hardnumber(self, other) then
+        return SILE.measurement(_amount(self) / _amount(other), self.unit)
+      else
+        _error_if_relative(self, other)
+        return SILE.measurement(_tonumber(self) / _tonumber(other))
+      end
+    end,
+
+    __mod = function (self, other)
+      if _hardnumber(self, other) then
+        return SILE.measurement(_amount(self) % _amount(other), self.unit)
+      else
+        _error_if_relative(self, other)
+        return SILE.measurement(_tonumber(self) % _tonumber(other))
+      end
     end,
 
     __unm = function (self)

@@ -253,7 +253,6 @@ end
 
 SILE.parseComplexFrameDimension = function (dimension)
   local length = SILE.frameParser:match(dimension)
-  length = SILE.measurement(length):absolute()
   if type(length) == "table" then
     local g = cassowary.Variable({ name = "t" })
     local eq = cassowary.Equation(g, length)

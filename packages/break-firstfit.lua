@@ -14,7 +14,7 @@ local firstfit = function (typesetter, nl, breakWidth)
     if not n:isBox() or n.isHangable then
       SU.debug("break", n )
       if n:isGlue() then
-        length = length + n.width
+        length = length + n.width:absolute()
       end
       SU.debug("break", " Length now " .. length .. " breakwidth " .. breakWidth)
       -- Can we break?

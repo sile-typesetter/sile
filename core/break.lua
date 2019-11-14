@@ -37,8 +37,8 @@ local lineBreak = {}
     postLineBreak
 ]]
 
-local param = function (x)
-  local value = SILE.settings.get("linebreak."..x)
+local param = function (key)
+  local value = SILE.settings.get("linebreak."..key)
   return type(value) == "table" and value:absolute() or value
 end
 
@@ -53,11 +53,9 @@ function lineBreak:init()
   self.curActiveWidth = SILE.length()
   self.breakWidth = SILE.length()
   -- 853
-  local rskip = SILE.settings.get("document.rskip")
-  if type(rskip) == "table" then rskip = rskip.width else rskip = 0 end
-  local lskip = SILE.settings.get("document.lskip")
-  if type(lskip) == "table" then lskip = lskip.width else lskip = 0 end
-  self.background = SILE.length.new() + rskip + lskip
+  local rskip = (SILE.settings.get("document.rskip") or SILE.nodefactory.glue()).width:absolute()
+  local lskip = (SILE.settings.get("document.lskip") or SILE.nodefactory.glue()).width:absolute()
+  self.background = rskip + lskip
   -- 860
   self.bestInClass = {}
   for i = 1, #classes do
@@ -434,27 +432,27 @@ function lineBreak:checkForLegalBreak(node) -- 892
   local previous = self.nodes[self.place - 1]
   if node:isAlternative() then self.seenAlternatives = true end
   if self.sideways and node:isBox() then
-    self.activeWidth = self.activeWidth + node.height + node.depth
+    self.activeWidth = self.activeWidth + node.height:absolute() + node.depth:absolute()
   elseif self.sideways and node:isVglue() then
     if previous and previous:isBox() then
       self:tryBreak()
     end
-    self.activeWidth = self.activeWidth + node.height + node.depth
+    self.activeWidth = self.activeWidth + node.height:absolute() + node.depth:absolute()
   elseif node:isAlternative() then
-    self.activeWidth = self.activeWidth + node:minWidth()
+    self.activeWidth = self.activeWidth + node:minWidth():absolute()
   elseif node:isBox() then
     self.activeWidth = self.activeWidth + node:lineContribution()
   elseif node:isGlue() then
     -- 894 (We removed the auto_breaking parameter)
     if previous and previous:isBox() then self:tryBreak() end
-    self.activeWidth = self.activeWidth + node.width
+    self.activeWidth = self.activeWidth + node.width:absolute()
   elseif node:isKern() then
-    self.activeWidth = self.activeWidth + node.width
+    self.activeWidth = self.activeWidth + node.width:absolute()
   elseif node:isDiscretionary() then -- 895
-    self.activeWidth = self.activeWidth + node:prebreakWidth()
+    self.activeWidth = self.activeWidth + node:prebreakWidth():absolute()
     self:tryBreak()
-    self.activeWidth = self.activeWidth - node:prebreakWidth()
-    self.activeWidth = self.activeWidth + node:replacementWidth()
+    self.activeWidth = self.activeWidth - node:prebreakWidth():absolute()
+    self.activeWidth = self.activeWidth + node:replacementWidth():absolute()
   elseif node:isPenalty() then
     self:tryBreak()
   end

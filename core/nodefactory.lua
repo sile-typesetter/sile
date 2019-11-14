@@ -385,13 +385,13 @@ nodefactory.vglue = pl.class({
     end,
 
     adjustGlue = function (self, adjustment)
-      self.height.length = self.height.length + adjustment
+      self.height.length = self.height.length:absolute() + adjustment
       self.height.stretch = SILE.measurement(0)
       self.height.shrink = SILE.measurement(0)
     end,
 
     outputYourself = function (_, typesetter, line)
-      typesetter.frame:advancePageDirection(line.height + line.depth)
+      typesetter.frame:advancePageDirection(line.height:absolute() + line.depth:absolute())
     end,
 
     unbox = function (self) return { self } end
@@ -499,12 +499,12 @@ nodefactory.vbox = pl.class({
       if nodes.type then
         nodes = box:unbox()
       end
-      local height = self.height + self.depth
+      local height = self.height:absolute() + self.depth:absolute()
       local lastdepth = SILE.length(0)
       for i = 1, #nodes do
         table.insert(self.nodes, nodes[i])
-        height = height + nodes[i].height + nodes[i].depth
-        if nodes[i]:isVbox() then lastdepth = nodes[i].depth end
+        height = height + nodes[i].height:absolute() + nodes[i].depth:absolute()
+        if nodes[i]:isVbox() then lastdepth = nodes[i].depth:absolute() end
       end
       self.ratio = 1
       self.height = height - lastdepth
