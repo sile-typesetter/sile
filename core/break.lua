@@ -49,6 +49,8 @@ function lineBreak:init()
   self.activeWidth = SILE.length.new()
   self.curActiveWidth = SILE.length.new()
   self.breakWidth = SILE.length.new()
+  self.alternates = {}
+  self.altSelections = {}
   -- 853
   local rskip = SILE.settings.get("document.rskip")
   if type(rskip) == "table" then rskip = rskip.width else rskip = 0 end
@@ -187,39 +189,43 @@ end
 
 function lineBreak:tryAlternatives(from, to)
   local altSizes = {}
-  local alternates = {}
+  self.alternates = {}
+  if debugging then SU.debug("break", "Considering alternates from "..from.." to "..to) end
   for i = from, to do
     if self.nodes[i] and self.nodes[i]:isAlternative() then
-      alternates[#alternates+1] = self.nodes[i]
+      self.alternates[#(self.alternates)+1] = self.nodes[i]
       altSizes[#altSizes+1] = #(self.nodes[i].options)
     end
   end
-  if #alternates == 0 then return end
+  if #(self.alternates) == 0 then
+    self.alternates = nil
+    self.altSelections = nil
+    return
+  end
   local localMinimum = awful_bad
-  -- local selectedShortfall
+  local selectedShortfall
   local shortfall = self.lineWidth - self.curActiveWidth.length
-  if debugging then SU.debug("break", "Shortfall was ", shortfall) end
-  for combination in SU.allCombinations(altSizes) do
-    local addWidth = 0
-    for i = 1, #(alternates) do local alt = alternates[i]
-      addWidth = (addWidth + alt.options[combination[i]].width - alt:minWidth()).length
-      if debugging then SU.debug("break", alt.options[combination[i]], " width", addWidth) end
-    end
   if debugging then SU.debug("break", "Target line width", self.lineWidth) end
   if debugging then SU.debug("break", "CurActive line width", self.curActiveWidth.length) end
   if debugging then SU.debug("break", "Active line width", self.activeWidth.length) end
+  if debugging then SU.debug("break", "Shortfall was ", shortfall) end
+  for combination in SU.allCombinations(altSizes) do
+    local addWidth = 0
+    for i = 1, #(self.alternates) do local alt = self.alternates[i]
+      addWidth = (addWidth + alt.options[combination[i]].width - alt:minWidth()).length
+      if debugging then SU.debug("break", alt.options[combination[i]], " width", addWidth) end
+    end
     local ss = shortfall - addWidth
     local badness = SU.rateBadness(inf_bad, math.abs(ss), ss > 0 and self.curActiveWidth.stretch or self.curActiveWidth.shrink)
     if debugging then SU.debug("break", "  badness of "..ss.." ("..self.curActiveWidth.stretch..") is ".. badness) end
     if badness < localMinimum then
-      self.r.alternates = alternates
-      self.r.altSelections = combination
-      -- selectedShortfall = addWidth
+      selectedShortfall = addWidth
       localMinimum = badness
+      self.altSelections = combination
     end
   end
-  if debugging then SU.debug("break", "Choosing ", alternates[1].options[self.r.altSelections[1]]) end
-  -- self.curActiveWidth = self.curActiveWidth + selectedShortfall
+  if debugging then SU.debug("break", "Choosing ", self.alternates[1].options[self.altSelections[1]]) end
+  self.curActiveWidth = self.curActiveWidth + selectedShortfall
   shortfall = self.lineWidth - self.curActiveWidth.length
   if debugging then SU.debug("break", "Is now ", shortfall) end
 end
@@ -230,7 +236,7 @@ function lineBreak:considerDemerits(pi, breakType) -- 877
   -- self:dumpActiveRing()
   local shortfall = self.lineWidth - self.curActiveWidth.length
   if self.seenAlternatives then
-    self:tryAlternatives(self.r.prevBreak and self.r.prevBreak.curBreak or 1, self.r.curBreak and self.r.curBreak or 1, shortfall)
+    self:tryAlternatives(self.r.prevBreak and self.r.prevBreak.curBreak or 1, self.place, shortfall)
   end
   shortfall = self.lineWidth - self.curActiveWidth.length
   self.badness, self.fitClass = fitclass(self, shortfall)
@@ -386,6 +392,8 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
         prevBreak = best.node,
         serial = passSerial,
         ratio = self.lastRatio,
+        alternates = self.alternates,
+        altSelections = self.altSelections,
         lineNumber = best.line + 1,
         type = breakType,
         fitness = class,
