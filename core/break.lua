@@ -92,6 +92,7 @@ end
 
 function lineBreak:tryBreak() -- 855
   local pi, breakType
+  if debugging then SU.debug("break", "-> tryBreak") end
 
   local node = self.nodes[self.place]
   if not node then pi = ejectPenalty; breakType = "hyphenated"
@@ -204,6 +205,9 @@ function lineBreak:tryAlternatives(from, to)
       addWidth = (addWidth + alt.options[combination[i]].width - alt:minWidth()).length
       if debugging then SU.debug("break", alt.options[combination[i]], " width", addWidth) end
     end
+  if debugging then SU.debug("break", "Target line width", self.lineWidth) end
+  if debugging then SU.debug("break", "CurActive line width", self.curActiveWidth.length) end
+  if debugging then SU.debug("break", "Active line width", self.activeWidth.length) end
     local ss = shortfall - addWidth
     local badness = SU.rateBadness(inf_bad, math.abs(ss), ss > 0 and self.curActiveWidth.stretch or self.curActiveWidth.shrink)
     if debugging then SU.debug("break", "  badness of "..ss.." ("..self.curActiveWidth.stretch..") is ".. badness) end
@@ -408,7 +412,7 @@ end
 
 function lineBreak.dumpBreakNode(_, node)
   if not SU.debugging("break") then return end
-  print(lineBreak:describeBreakNode(node))
+  SU.debug("break", lineBreak:describeBreakNode(node))
 end
 
 function lineBreak:describeBreakNode(node)
@@ -419,11 +423,16 @@ function lineBreak:describeBreakNode(node)
   local after = self.nodes[node.curBreak+1]
   local from = node.prevBreak and node.prevBreak.curBreak or 1
   local to = node.curBreak
-  return "b "..from.."-"..to.." \""..(before and before:toText()).." | "..(after and after:toText()).."\" [".. node.totalDemerits..", "..node.fitness.."]"
+  local description = "b "..from.."-"..to.." \""..(before and before:toText()).." | "..(after and after:toText()).."\" [".. node.totalDemerits..", "..node.fitness.."]"
+  if node.altSelections then
+    description = description .. " alternates="..node.altSelections
+  end
+  return description
 end
 
 function lineBreak:checkForLegalBreak(node) -- 892
   if debugging then SU.debug("break", "considering node "..node); end
+  if debugging then SU.debug("break", "Active width is now "..self.activeWidth); end
   local previous = self.nodes[self.place - 1]
   if node:isAlternative() then self.seenAlternatives = true end
   if self.sideways and node:isBox() then
@@ -560,6 +569,7 @@ function lineBreak:postLineBreak() -- 903
         width = self.parShape and self.parShape[line] or self.hsize
       })
     if p.alternates then
+      SU.debug("break", "Choosing alternate selections "..p.altSelections)
       for i = 1, #p.alternates do
         p.alternates[i].selected = p.altSelections[i]
         p.alternates[i].width = p.alternates[i].options[p.altSelections[i]].width
@@ -576,7 +586,8 @@ function lineBreak:dumpActiveRing()
   io.stderr:write("\n")
   repeat
     if p == self.r then io.stderr:write("-> ") else io.stderr:write("   ") end
-    print(lineBreak:describeBreakNode(p))
+    io.stderr:write(lineBreak:describeBreakNode(p))
+    io.stderr:write("\n")
     p = p.next
   until p == self.activeListHead
 end
