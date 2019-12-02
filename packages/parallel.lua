@@ -64,7 +64,9 @@ local setupParallel = function (klass, options)
   end
   if not options.folios then
     folioOrder = { {} }
-    for frame, _ in pairs(options.frames) do table.insert(folioOrder[1], frame) end
+    -- Note output order doesn't matter for PDF, but for our test suite it is
+    -- essential that the output order is deterministic, hence this sort()
+    for frame, _ in tablex.sort(options.frames) do table.insert(folioOrder[1], frame) end
   else
     folioOrder = options.folios -- As usual we trust the user knows what they're doing
   end
