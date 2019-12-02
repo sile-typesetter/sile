@@ -68,15 +68,14 @@ local setupParallel = function (klass, options)
   else
     folioOrder = options.folios -- As usual we trust the user knows what they're doing
   end
-  local oldnewpage = klass.newPage
-  klass.newPage = function (_)
+  klass.newPage = function(_)
     allTypesetters(function (frame, _)
-      calculations[frame] = { mark = oldnewpage }
+      calculations[frame] = { mark = 0 }
     end)
     SILE.baseClass:newPage()
     SILE.call("sync")
   end
-  allTypesetters(function (frame, _) calculations[frame] = { mark = oldnewpage } end)
+  allTypesetters(function (frame, _) calculations[frame] = { mark = 0 } end)
   local oldfinish = klass.finish
   klass.finish = function (self)
     parallelPagebreak()
