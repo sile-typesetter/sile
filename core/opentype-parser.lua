@@ -2,6 +2,22 @@ local vstruct = require "vstruct"
 local hb = require "justenoughharfbuzz"
 local zlib = require "zlib"
 
+vstruct.compile("SinglePosFormatOne", "> posFormat:u2 coverageOffset:u2 valueFormat:u2")
+vstruct.compile("RangeRecord", "> startGlyphID:u2 endGlyphID:u2 startCoverageIndex:u2")
+
+local function parseValueRecord(fd, valFormat)
+  valueRecord = {}
+  if (valFormat & 0x001) > 0 then valueRecord.xPlacement  = (vstruct.read("> i2", fd))[1] end
+  if (valFormat & 0x002) > 0 then valueRecord.yPlacement  = (vstruct.read("> i2", fd))[1] end
+  if (valFormat & 0x004) > 0 then valueRecord.xAdvance    = (vstruct.read("> i2", fd))[1] end
+  if (valFormat & 0x008) > 0 then valueRecord.yAdvance    = (vstruct.read("> i2", fd))[1] end
+  if (valFormat & 0x010) > 0 then valueRecord.xPlaDevice  = (vstruct.read("> u2", fd))[1] end
+  if (valFormat & 0x020) > 0 then valueRecord.yPlaDevice  = (vstruct.read("> u2", fd))[1] end
+  if (valFormat & 0x040) > 0 then valueRecord.xAdvDevice  = (vstruct.read("> u2", fd))[1] end
+  if (valFormat & 0x080) > 0 then valueRecord.yAdvDevice  = (vstruct.read("> u2", fd))[1] end
+  return valueRecord
+end
+
 local parseName = function(str)
   if str:len() <= 0 then return end
   local fd = vstruct.cursor(str)
@@ -106,6 +122,14 @@ local parseMaxp = function(str)
   return vstruct.read(">version:u4 numGlyphs:u2", fd)
 end
 
+local parseHead = function(str)
+  if str:len() <= 0 then return end
+  local fd = vstruct.cursor(str)
+
+  return vstruct.read(">majorVersion:u2 minorVersion:u2 fontRevisionMajor:u2 fontRevisionMinor:u2 checkSumAdjustment:u4 magicNumber:u4 flags:u2 unitsPerEm:u2 ", fd)
+end
+
+
 local function parseColr(str)
   if str:len() <= 0 then return end
   local fd = vstruct.cursor(str)
@@ -183,15 +207,136 @@ local function parseSvg(str)
   return offsets
 end
 
+local function parseCoverage(fd, off)
+  local header = vstruct.read("> @"..off.." coverageFormat:u2", fd)
+  local covered = {}
+  if header.coverageFormat == 1 then
+    local gcount = vstruct.read("> u2", fd)
+    local glyphs = vstruct.read("> "..gcount[1].."*u2", fd)
+    for i = 1,#glyphs do covered[glyphs[i]] = true end
+    return covered
+  end
+  if header.coverageFormat == 2 then
+    covered = {}
+    local rangecount = vstruct.read("> u2", fd)
+    for i = 1,rangecount[1] do
+      local range = vstruct.read("> { RangeRecord }",fd)
+      for j = range.startGlyphID,range.endGlyphID do
+        covered[j] = true
+      end
+    end
+    return covered
+  end
+  SU.error("Coverage table error: type=="..header.coverageFormat)
+end
+
+local function parseLookup(fd, off)
+  local header = vstruct.read("> @"..off.." lookupType:u2 lookupFlag:u2 subTableCount:u2", fd)
+  local subtableOffsets = vstruct.read("> "..header.subTableCount.."*u2",fd)
+  for i=1, header.subTableCount do
+    local subtableOff = off + subtableOffsets[i]
+    if header.lookupType == 1 then
+      local posFormat = vstruct.read("> @"..subtableOff.." u2 -2",fd)
+      header.subtables = {}
+      if posFormat[1] == 1 then
+        header.subtables[i] = vstruct.read("> &SinglePosFormatOne", fd)
+        header.subtables[i].valueRecord = parseValueRecord(fd, header.subtables[i].valueFormat)
+        header.subtables[i].coverage = parseCoverage(fd, subtableOff + header.subtables[i].coverageOffset)
+        -- be tidy
+        header.subtables[i].valueFormat = nil
+        header.subtables[i].coverageOffset = nil
+      end
+    end
+  end
+  return header
+end
+
+local function parseJstfLangSysTable(fd, off)
+  local header = vstruct.read("> @"..off.." jstfPriorityCount:u2", fd)
+  local suggestionOffsets = vstruct.read("> "..header.jstfPriorityCount .. "*u2", fd)
+  local suggestions = {}
+  for i = 1, header.jstfPriorityCount do
+      local suggestionOffset = suggestionOffsets[i] + off
+      local suggestion = vstruct.read("> @"..suggestionOffset.." shrinkageEnableGSUB:u2 shrinkageDisableGSUB:u2 shrinkageEnableGPOS:u2 shrinkageDisableGPOS:u2 shrinkageJstfMax:u2 extensionEnableGSUB:u2 extensionDisableGSUB:u2 extensionEnableGPOS:u2 extensionDisableGPOS:u2 extensionJstfMax:u2",fd)
+      if suggestion.extensionJstfMax then
+        local jsftMaxOffset = (suggestionOffset + suggestion.extensionJstfMax)
+        local lookupCount = vstruct.read(">@"..jsftMaxOffset.." u2",fd)
+        local lookupOffsets = vstruct.read("> "..lookupCount[1].."*u2",fd)
+        suggestion.lookupOffsets = lookupOffsets
+        suggestion.jsftMaxOffset = suggestion.extensionJstfMax
+        suggestion.extensionJstfMax = {}
+        for j = 1,lookupCount[1] do
+          suggestion.extensionJstfMax[j] = parseLookup(fd,jsftMaxOffset+lookupOffsets[j])
+        end
+      end
+      if suggestion.shrinkageJstfMax then
+        local jsftMinOffset = (suggestionOffset + suggestion.shrinkageJstfMax)
+        local lookupCount = vstruct.read(">@"..jsftMinOffset.." u2",fd)
+        local lookupOffsets = vstruct.read("> "..lookupCount[1].."*u2",fd)
+        suggestion.lookupOffsets = lookupOffsets
+        suggestion.jsftMinOffset = suggestion.shrinkageJstfMax
+        suggestion.shrinkageJstfMax = {}
+        for j = 1,lookupCount[1] do
+          suggestion.shrinkageJstfMax[j] = parseLookup(fd,jsftMinOffset+lookupOffsets[j])
+        end
+      end
+      suggestions[i] = suggestion
+  end
+  return suggestions
+end
+
+local function parseJstf(str)
+  if str:len() <= 0 then return end
+  local fd = vstruct.cursor(str)
+
+  local offsets = {}
+  local header = vstruct.read(">version:u4 JstfScriptCount:u2", fd)
+  if header.JstfScriptCount == 0 then return end
+
+  local su
+  local scriptdata = vstruct.read("> " .. header.JstfScriptCount .. "*{tag:s4 scriptOffset:u2}", fd)
+  scripts = {}
+  for i = 1, header.JstfScriptCount do
+    local scriptHead = scriptdata[i].scriptOffset
+    local record = vstruct.read("> @"..scriptHead.." extenderGlyphOffset:u2 defJstfLangSysOffset:u2 jstfLangSysCount:u2", fd)
+
+    record.languages = {}
+    if record.jstfLangSysCount > 0 then
+      local langSysData = vstruct.read("> " .. record.jstfLangSysCount .. "*{tag:s4 langSysOffset:u2}", fd)
+      for j = 1, record.jstfLangSysCount do
+        record.languages[langSysData[j].tag] = parseJstfLangSysTable(fd, scriptHead + langSysData[j].langSysOffset)
+      end
+    end
+
+    if record.extenderGlyphOffset then
+      local extenderPos = scriptHead + record.extenderGlyphOffset
+      local extenderRecord = vstruct.read("> @"..extenderPos.." glyphCount:u2",fd)
+      local glyphids = vstruct.read("> "..extenderRecord.glyphCount.."*u2",fd)
+      record.extenderGlyphs = glyphids
+    end
+
+    if record.defJstfLangSysOffset then
+      local defaultLangSysPos = scriptHead + record.defJstfLangSysOffset
+      record.defaultJstfLangSysTable = parseJstfLangSysTable(fd, defaultLangSysPos)
+    end
+
+    scripts[scriptdata[i].tag] = record
+  end
+  return scripts
+end
+
+
 local parseFont = function(face)
   if not face.font then
     local font = {}
 
     font.names = parseName(hb.get_table(face.data, face.index, "name"))
+    font.head = parseHead(hb.get_table(face.data, face.index, "head"))
     font.maxp = parseMaxp(hb.get_table(face.data, face.index, "maxp"))
     font.colr = parseColr(hb.get_table(face.data, face.index, "COLR"))
     font.cpal = parseCpal(hb.get_table(face.data, face.index, "CPAL"))
     font.svg  = parseSvg(hb.get_table(face.data, face.index, "SVG"))
+    font.jstf  = parseJstf(hb.get_table(face.data, face.index, "JSTF"))
     face.font = font
   end
 
