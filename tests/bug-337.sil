@@ -5,10 +5,10 @@
 \nofolios
 \set[parameter=document.parindent,value=0]
 
-\printPaperInPoints
+\printPageInPoints
 
 \pagebreak
 
-\printPaperInPoints
+\printPageInPoints
 
 \end{document}
