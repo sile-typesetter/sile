@@ -97,8 +97,8 @@ footnote number, the chapter number, and so on. The counters package
 allows you to set up, increment and typeset named counters. It
 provides the following commands:
 
-• \code{\\set-counter[id=\em{<counter-name>},value=\em{<value}]} — sets
-the counter called \code{<counter-name>} to the value given.
+• \code{\\set-counter[id=\em{<counter-name>},value=\em{<value>}]} — sets
+the counter called \code{<counter-name>} to the \code{<value>} given.
 
 • \code{\\increment-counter[id=\em{<counter-name>}]} — does the
 same as \code{\\set-counter} except that when no \code{value} parameter
