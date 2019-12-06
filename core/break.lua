@@ -49,6 +49,8 @@ function lineBreak:init()
   self.activeWidth = SILE.length.new()
   self.curActiveWidth = SILE.length.new()
   self.breakWidth = SILE.length.new()
+  self.alternates = {}
+  self.altSelections = {}
   -- 853
   local rskip = SILE.settings.get("document.rskip")
   if type(rskip) == "table" then rskip = rskip.width else rskip = 0 end
@@ -92,6 +94,7 @@ end
 
 function lineBreak:tryBreak() -- 855
   local pi, breakType
+  if debugging then SU.debug("break", "-> tryBreak") end
 
   local node = self.nodes[self.place]
   if not node then pi = ejectPenalty; breakType = "hyphenated"
@@ -186,21 +189,29 @@ end
 
 function lineBreak:tryAlternatives(from, to)
   local altSizes = {}
-  local alternates = {}
+  self.alternates = {}
+  if debugging then SU.debug("break", "Considering alternates from "..from.." to "..to) end
   for i = from, to do
     if self.nodes[i] and self.nodes[i]:isAlternative() then
-      alternates[#alternates+1] = self.nodes[i]
+      self.alternates[#(self.alternates)+1] = self.nodes[i]
       altSizes[#altSizes+1] = #(self.nodes[i].options)
     end
   end
-  if #alternates == 0 then return end
+  if #(self.alternates) == 0 then
+    self.alternates = nil
+    self.altSelections = nil
+    return
+  end
   local localMinimum = awful_bad
-  -- local selectedShortfall
+  local selectedShortfall
   local shortfall = self.lineWidth - self.curActiveWidth.length
+  if debugging then SU.debug("break", "Target line width", self.lineWidth) end
+  if debugging then SU.debug("break", "CurActive line width", self.curActiveWidth.length) end
+  if debugging then SU.debug("break", "Active line width", self.activeWidth.length) end
   if debugging then SU.debug("break", "Shortfall was ", shortfall) end
   for combination in SU.allCombinations(altSizes) do
     local addWidth = 0
-    for i = 1, #(alternates) do local alt = alternates[i]
+    for i = 1, #(self.alternates) do local alt = self.alternates[i]
       addWidth = (addWidth + alt.options[combination[i]].width - alt:minWidth()).length
       if debugging then SU.debug("break", alt.options[combination[i]], " width", addWidth) end
     end
@@ -208,14 +219,13 @@ function lineBreak:tryAlternatives(from, to)
     local badness = SU.rateBadness(inf_bad, math.abs(ss), ss > 0 and self.curActiveWidth.stretch or self.curActiveWidth.shrink)
     if debugging then SU.debug("break", "  badness of "..ss.." ("..self.curActiveWidth.stretch..") is ".. badness) end
     if badness < localMinimum then
-      self.r.alternates = alternates
-      self.r.altSelections = combination
-      -- selectedShortfall = addWidth
+      selectedShortfall = addWidth
       localMinimum = badness
+      self.altSelections = combination
     end
   end
-  if debugging then SU.debug("break", "Choosing ", alternates[1].options[self.r.altSelections[1]]) end
-  -- self.curActiveWidth = self.curActiveWidth + selectedShortfall
+  if debugging then SU.debug("break", "Choosing ", self.alternates[1].options[self.altSelections[1]]) end
+  self.curActiveWidth = self.curActiveWidth + selectedShortfall
   shortfall = self.lineWidth - self.curActiveWidth.length
   if debugging then SU.debug("break", "Is now ", shortfall) end
 end
@@ -226,7 +236,7 @@ function lineBreak:considerDemerits(pi, breakType) -- 877
   -- self:dumpActiveRing()
   local shortfall = self.lineWidth - self.curActiveWidth.length
   if self.seenAlternatives then
-    self:tryAlternatives(self.r.prevBreak and self.r.prevBreak.curBreak or 1, self.r.curBreak and self.r.curBreak or 1, shortfall)
+    self:tryAlternatives(self.r.prevBreak and self.r.prevBreak.curBreak or 1, self.place, shortfall)
   end
   shortfall = self.lineWidth - self.curActiveWidth.length
   self.badness, self.fitClass = fitclass(self, shortfall)
@@ -382,6 +392,8 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
         prevBreak = best.node,
         serial = passSerial,
         ratio = self.lastRatio,
+        alternates = self.alternates,
+        altSelections = self.altSelections,
         lineNumber = best.line + 1,
         type = breakType,
         fitness = class,
@@ -408,7 +420,7 @@ end
 
 function lineBreak.dumpBreakNode(_, node)
   if not SU.debugging("break") then return end
-  print(lineBreak:describeBreakNode(node))
+  SU.debug("break", lineBreak:describeBreakNode(node))
 end
 
 function lineBreak:describeBreakNode(node)
@@ -419,11 +431,16 @@ function lineBreak:describeBreakNode(node)
   local after = self.nodes[node.curBreak+1]
   local from = node.prevBreak and node.prevBreak.curBreak or 1
   local to = node.curBreak
-  return "b "..from.."-"..to.." \""..(before and before:toText()).." | "..(after and after:toText()).."\" [".. node.totalDemerits..", "..node.fitness.."]"
+  local description = "b "..from.."-"..to.." \""..(before and before:toText()).." | "..(after and after:toText()).."\" [".. node.totalDemerits..", "..node.fitness.."]"
+  if node.altSelections then
+    description = description .. " alternates="..node.altSelections
+  end
+  return description
 end
 
 function lineBreak:checkForLegalBreak(node) -- 892
   if debugging then SU.debug("break", "considering node "..node); end
+  if debugging then SU.debug("break", "Active width is now "..self.activeWidth); end
   local previous = self.nodes[self.place - 1]
   if node:isAlternative() then self.seenAlternatives = true end
   if self.sideways and node:isBox() then
@@ -560,6 +577,7 @@ function lineBreak:postLineBreak() -- 903
         width = self.parShape and self.parShape[line] or self.hsize
       })
     if p.alternates then
+      SU.debug("break", "Choosing alternate selections "..p.altSelections)
       for i = 1, #p.alternates do
         p.alternates[i].selected = p.altSelections[i]
         p.alternates[i].width = p.alternates[i].options[p.altSelections[i]].width
@@ -576,7 +594,8 @@ function lineBreak:dumpActiveRing()
   io.stderr:write("\n")
   repeat
     if p == self.r then io.stderr:write("-> ") else io.stderr:write("   ") end
-    print(lineBreak:describeBreakNode(p))
+    io.stderr:write(lineBreak:describeBreakNode(p))
+    io.stderr:write("\n")
     p = p.next
   until p == self.activeListHead
 end
