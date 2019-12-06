@@ -13,14 +13,23 @@ SILE.settings.declare({
 SILE.settings.declare({
     name = "languages.fr.highpunctuation",
     type = "string",
-    default = "?:;!",
-    help = "A list of punctuation marks which should be preceded by a punctuationspace"
+    default = "?:;!»›",
+    help = "A list of punctuation marks which should be preceded by a punctuation space"
   })
 
+SILE.settings.declare({
+    name = "languages.fr.highprepunctuation",
+    type = "string",
+    default = "«‹",
+    help = "A list of punctuation marks which should be followed by a punctuation space"
+  })
 
 SILE.nodeMakers.fr = SILE.nodeMakers.unicode {
   isHighPunctuation = function (_, text)
     return string.find(SILE.settings.get("languages.fr.highpunctuation"), text, nil, true)
+  end,
+  isHighPrePunctuation = function (_, text)
+    return string.find(SILE.settings.get("languages.fr.highprepunctuation"), text, nil, true)
   end,
   makeUnbreakableSpace = function (self)
     self:makeToken()
@@ -29,6 +38,9 @@ SILE.nodeMakers.fr = SILE.nodeMakers.unicode {
   end,
   previousIsHighPunctuation = function (self)
     return self.i >1 and self:isHighPunctuation(self.items[self.i-1].text)
+  end,
+  previousIsHighPrePunctuation = function (self)
+    return self.i >1 and self:isHighPrePunctuation(self.items[self.i-1].text)
   end,
   nextIsHighPunctuation = function (self)
     return self.items[self.i+1] and self:isHighPunctuation(self.items[self.i+1].text)
@@ -47,6 +59,8 @@ SILE.nodeMakers.fr = SILE.nodeMakers.unicode {
       end
       return chunks
     elseif self:isHighPunctuation(item.text) and not self:previousIsSpace() then
+      self:makeUnbreakableSpace()
+    elseif self:previousIsHighPrePunctuation() then
       self:makeUnbreakableSpace()
     end
     return SILE.nodeMakers.unicode.handleICUBreak(self, chunks, item)
