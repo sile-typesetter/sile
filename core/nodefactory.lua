@@ -426,7 +426,6 @@ nodefactory.penalty = pl.class({
     _base = nodefactory.box,
     type = "penalty",
     discardable = true,
-    flagged = 0,
     penalty = 0,
 
     _init = function (self, spec)
@@ -437,14 +436,12 @@ nodefactory.penalty = pl.class({
     end,
 
     __tostring = function (self)
-      return "P(" .. self.flagged .. "|" .. self.penalty .. ")";
+      return "P(" .. self.penalty .. ")";
     end,
 
     outputYourself = function () end,
-
     toText = function () return "(!)" end,
-
-    unbox = function (self) return {self} end
+    unbox = function (self) return { self } end
 
   })
 
