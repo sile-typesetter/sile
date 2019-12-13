@@ -5,7 +5,7 @@ describe("The frame parser", function()
 
   local n = SILE.parserBits.number
   local m = SILE._frameParserBits.measurement
-  local f = SILE._frameParserBits.func
+  local r = SILE._frameParserBits.relation
 
   describe("Number", function() -- also tests all the number subrules
     it("should capture number information", function() assert.is.equal(0.35, n:match("0.35")) end)
@@ -21,10 +21,10 @@ describe("The frame parser", function()
         }
       }
     }
-    --it("should match valid functions", function() assert.is.equal(30,f:match("left(a)")) end)
-    it("should match valid functions", function() assert.is.truthy(f:match("top(bb3)")) end)
-    it("should not match invalid functions", function() assert.is.falsy(f:match("xxx(a)")) end)
-    it("should not match invalid functions", function() assert.is.falsy(f:match("left(&)")) end)
+    --it("should match valid functions", function() assert.is.equal(30,r:match("left(a)")) end)
+    it("should match valid functions", function() assert.is.truthy(r:match("top(bb3)")) end)
+    it("should not match invalid functions", function() assert.is.falsy(r:match("xxx(a)")) end)
+    it("should not match invalid functions", function() assert.is.falsy(r:match("left(&)")) end)
   end)
 
   describe("dimensioned string", function()

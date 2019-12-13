@@ -75,11 +75,9 @@ SILE.framePrototype = pl.class({
     reifyConstraint = function (self, solver, method, stay)
       local constraint = self.constraints[method]
       if not constraint then return end
-      if SU.type(constraint) == "measurement" then
-        constraint = constraint:tonumber()
-      else
-        constraint = SILE.frameParser:match(constraint)
-      end
+      constraint = SU.type(constraint) == "measurement"
+        and constraint:tonumber()
+        or SILE.frameParser:match(constraint)
       SU.debug("frames", "Adding constraint " .. self.id .. "(" .. method .. ") = " .. constraint)
       local eq = cassowary.Equation(self.variables[method], constraint)
       solver:addConstraint(eq)
@@ -252,7 +250,7 @@ SILE.getFrame = function (id)
 end
 
 SILE.parseComplexFrameDimension = function (dimension)
-  local length = SILE.frameParser:match(dimension)
+  local length = SILE.frameParser:match(SU.cast("string", dimension))
   if type(length) == "table" then
     local g = cassowary.Variable({ name = "t" })
     local eq = cassowary.Equation(g, length)

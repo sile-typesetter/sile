@@ -8,7 +8,6 @@ local function resolveMeasurement (str)
 end
 
 local functionOfFrame = function (dim, id)
-  -- SU.debug("que", "fof", dim, id)
   if not SILE.frames[id] then
     -- TODO: Fix this race condition properly!
     SILE.newFrame({ id = id })
@@ -19,22 +18,26 @@ end
 local number = SILE.parserBits.number
 local identifier = SILE.parserBits.identifier
 local measurement = SILE.parserBits.measurement / resolveMeasurement
-local whitespace = SILE.parserBits.whitespace
-local func = C(P"top" + P"left" + P"bottom" + P"right" + P"width" + P"height") * P"(" * C(identifier) * P")" / functionOfFrame
+local ws = SILE.parserBits.whitespace^0
+local dims = P"top" + P"left" + P"bottom" + P"right" + P"width" + P"height"
+local relation = C(dims) * ws * P"(" * ws * C(identifier) * ws * P")" / functionOfFrame
 
-local primary = func + measurement + number
+local primary = relation + measurement + number
 
 -- For unit testing
 SILE._frameParserBits = {
   measurement = measurement,
-  func = func,
+  relation = relation,
 }
 
--- TODO: Cleanup this grammar for readability and maybe export a Lua function that does a match() instead of the grammar
 return P{
   "additive",
-  additive = ((V"multiplicative" * whitespace * P"+" * whitespace * V"additive") / cassowary.plus) + ((V"multiplicative" * whitespace * P"-" * whitespace * V"additive" * whitespace) / cassowary.minus ) + V"multiplicative",
-  primary = primary + V"bracketed",
-  multiplicative = ((V"primary" * whitespace * P"*" * whitespace * V"multiplicative") / cassowary.times) + ((V"primary" * whitespace * P"/" * whitespace * V"multiplicative") / cassowary.divide) + V"primary",
-  bracketed = P"(" * whitespace * V"additive" * whitespace * P")" / function (a) return a end
+  additive = V"plus" + V"minus" + V"multiplicative",
+  multiplicative = V"times" + V"divide" + V"primary",
+  primary = (ws * primary * ws) + V"bracketed",
+  plus = ws * V"multiplicative" * ws * P"+" * ws * V"additive" * ws / cassowary.plus,
+  minus = ws * V"multiplicative" * ws * P"-" * ws * V"additive" * ws / cassowary.minus,
+  times = ws * V"primary" * ws * P"*" * ws * V"multiplicative" * ws / cassowary.times,
+  divide = ws * V"primary" * ws * P"/" * ws * V"multiplicative" * ws / cassowary.divide,
+  bracketed = ws * P"(" * ws * V"additive" * ws * P")" * ws
 }
