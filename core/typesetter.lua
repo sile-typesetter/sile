@@ -72,6 +72,20 @@ SILE.settings.declare({
   help = "Width to break lines at"
 })
 
+-- Local helper class to compare pairs of margins
+local _margins = pl.class({
+    lskip = SILE.nodefactory.glue(),
+    rskip = SILE.nodefactory.glue(),
+
+    _init = function (self, lskip, rskip)
+      self.lskip, self.rskip = lskip, rskip
+    end,
+
+    __eq = function (self, other)
+      return self.lskip.width == other.lskip.width and self.rskip.width == other.rskip.width
+    end
+  })
+
 SILE.defaultTypesetter = std.object {
   -- Setup functions
   hooks = {},
@@ -98,9 +112,7 @@ SILE.defaultTypesetter = std.object {
   end,
 
   getMargins = function (_)
-    local lskip = SILE.settings.get("document.lskip") or SILE.nodefactory.zeroGlue
-    local rskip = SILE.settings.get("document.rskip") or SILE.nodefactory.zeroGlue
-    return { lskip = lskip, rskip = rskip }
+    return _margins(SILE.settings.get("document.lskip"), SILE.settings.get("document.rskip"))
   end,
 
   setMargins = function (_, margins)
@@ -494,7 +506,7 @@ SILE.defaultTypesetter = std.object {
         for i, node in ipairs(vbox.nodes) do
           if node:isGlue() and not node.discardable then
             self:pushHorizontal(node)
-          elseif node:isGlue() and (node.value == "lskip" or node.value == "rskip") then
+          elseif node:isGlue() and node.value == "margin" then
             SU.debug("pushback", { "discard", node.value, node })
           elseif node:isDiscretionary() then
             SU.debug("pushback", { "re-mark discretionary as unused", node })
@@ -587,7 +599,7 @@ SILE.defaultTypesetter = std.object {
     local LoR = self.frame:writingDirection() == "LTR"
     local rskip = SILE.settings.get("document." .. (LoR and "rskip" or "lskip"))
     if rskip then
-      rskip.value = "rskip"
+      rskip.value = "margin"
       table.insert(slice, rskip)
       table.insert(slice, SILE.nodefactory.zerohbox())
     end
@@ -596,7 +608,7 @@ SILE.defaultTypesetter = std.object {
       while slice[1].discardable do
         table.remove(slice, 1)
       end
-      lskip.value = "lskip"
+      lskip.value = "margin"
       table.insert(slice, 1, lskip)
       table.insert(slice, 1, SILE.nodefactory.zerohbox())
     end
