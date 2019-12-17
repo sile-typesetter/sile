@@ -614,13 +614,13 @@ SILE.defaultTypesetter = std.object {
     end
   end,
 
-  breakpointsToLines = function (self, breappoints)
+  breakpointsToLines = function (self, breakpoints)
     local linestart = 0
     local lines = {}
     local nodes = self.state.nodes
 
-    for i = 1, #breappoints do
-      local point = breappoints[i]
+    for i = 1, #breakpoints do
+      local point = breakpoints[i]
       if not(point.position == 0) then
         local slice = {}
         local seenHbox = 0

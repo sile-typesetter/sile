@@ -93,12 +93,10 @@ end
 
 function lineBreak:tryBreak() -- 855
   local pi, breakType
-
   local node = self.nodes[self.place]
   if not node then pi = ejectPenalty; breakType = "hyphenated"
   elseif node:isDiscretionary() then breakType = "hyphenated"; pi = param("hyphenPenalty")
   else breakType = "unhyphenated"; pi = node.penalty or 0 end
-
   if debugging then SU.debug("break", "Trying a "..breakType.." break p="..pi) end
   self.no_break_yet = true -- We have to store all this state crap in the object, or it's global variables all the way
   self.prev_prev_r = nil
@@ -110,16 +108,13 @@ function lineBreak:tryBreak() -- 855
     while true do -- allows "break" to function as "continue"
       self.r = self.prev_r.next
       if debugging then SU.debug("break", "We have moved the link  forward, ln is now "..(self.r.type == "delta" and "XX" or self.r.lineNumber)) end
-
       if self.r.type == "delta" then -- 858
         if debugging then SU.debug("break", " Adding delta node width of ".. tostring(self.r.width)) end
-
         self.curActiveWidth = self.curActiveWidth + self.r.width
         self.prev_prev_r = self.prev_r
         self.prev_r = self.r
         break
       end
-
       -- 861
       if self.r.lineNumber > self.old_l then
         if debugging then SU.debug("break", "Mimimum demerits = " .. self.minimumDemerits) end
@@ -153,7 +148,6 @@ function lineBreak:tryBreak() -- 855
       end
     end
   end
-
 end
 
 local function fitclass(self, shortfall)
@@ -382,13 +376,14 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
       -- 871: this is what creates new active notes
       passSerial = passSerial + 1
 
-      local newActive = { next = self.r,
+      local newActive = {
+        type = breakType,
+        next = self.r,
         curBreak = self.place,
         prevBreak = best.node,
         serial = passSerial,
         ratio = self.lastRatio,
         lineNumber = best.line + 1,
-        type = breakType,
         fitness = class,
         totalDemerits = value
       }
@@ -473,18 +468,16 @@ function lineBreak:tryFinalBreak()      -- 899
   self.r = self.activeListHead.next
   local fewestDemerits = awful_bad
   repeat
-    if self.r.type ~= "delta" then
-      if self.r.totalDemerits < fewestDemerits then
-        fewestDemerits = self.r.totalDemerits
-        self.bestBet = self.r
-      end
+    if self.r.type ~= "delta" and self.r.totalDemerits < fewestDemerits then
+      fewestDemerits = self.r.totalDemerits
+      self.bestBet = self.r
     end
     self.r = self.r.next
   until self.r == self.activeListHead
-  if param("looseness") == 0 then return "done" end
+  if param("looseness") == 0 then return true end
   -- XXX node 901 not implemented
   if self.actualLooseness == param("looseness") or self.finalpass then
-    return "done"
+    return true
   end
 end
 
@@ -504,7 +497,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
   else
     self.threshold = param("tolerance")
     self.pass = "second"
-    self.finalpass = (param("emergencyStretch") <= 0)
+    self.finalpass = param("emergencyStretch") <= 0
   end
   -- 889
   while 1 do
@@ -539,7 +532,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
       self.place = self.place + 1
     end
     if self.place > #(self.nodes) then
-      if self:tryFinalBreak() == "done" then break end
+      if self:tryFinalBreak() then break end
     end
     -- (Not doing 891)
     if self.pass ~= "second" then
