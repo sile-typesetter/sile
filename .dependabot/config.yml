@@ -1,0 +1,39 @@
+version: 1
+update_configs:
+
+  # Catch libtexpdf updates that didn't get explicitly updated
+  - package_manager: "submodules"
+    directory: "/"
+    update_schedule: "weekly"
+    default_reviewers:
+      - "alerque"
+      - "simoncozens"
+    default_labels:
+      - "todo"
+    commit_message:
+      prefix: "chore(backends)"
+      include_scope: false
+
+  # Catch tooling updates (commitlint, etc.), nothing critical here
+  - package_manager: "javascript"
+    directory: "/"
+    update_schedule: "monthly"
+    default_reviewers:
+      - "alerque"
+    default_labels:
+      - "todo"
+    commit_message:
+      prefix: "chore(tooling)"
+      include_scope: false
+
+  # Catch updates to Github Actions CI tooling
+  - package_manager: "github_actions"
+    directory: "/"
+    update_schedule: "weekly"
+    default_reviewers:
+      - "alerque"
+    default_labels:
+      - "todo"
+    commit_message:
+      prefix: "chore(tooling)"
+      include_scope: false
