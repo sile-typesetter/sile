@@ -245,7 +245,7 @@ SILE.defaultTypesetter = std.object {
 
   initline = function (self)
     if (#self.state.nodes == 0) then
-      self.state.nodes[#self.state.nodes+1] = SILE.nodefactory.zeroHbox
+      self.state.nodes[#self.state.nodes+1] = SILE.nodefactory.zerohbox()
       SILE.documentState.documentClass.newPar(self)
     end
   end,
@@ -501,7 +501,7 @@ SILE.defaultTypesetter = std.object {
         local discardedFistInitLine = false
         if (#self.state.nodes == 0) then
           -- Setup queue but avoid calling newPar
-          self.state.nodes[#self.state.nodes+1] = SILE.nodefactory.zeroHbox
+          self.state.nodes[#self.state.nodes+1] = SILE.nodefactory.zerohbox()
         end
         for i, node in ipairs(vbox.nodes) do
           if node:isGlue() and not node.discardable then
@@ -517,7 +517,7 @@ SILE.defaultTypesetter = std.object {
             else
               SU.debug("pushback", { "discard all other discretionaries", node })
             end
-          elseif node == SILE.nodefactory.zeroHbox then
+          elseif node:isZero() then
             if discardedFistInitLine then self:pushHorizontal(node) end
             discardedFistInitLine = true
           elseif node:isPenalty() then
@@ -534,8 +534,8 @@ SILE.defaultTypesetter = std.object {
       -- self:debugState()
     end
     while self.state.nodes[#self.state.nodes]
-      and self.state.nodes[#self.state.nodes]:isPenalty()
-       or self.state.nodes[#self.state.nodes] == SILE.nodefactory.zeroHbox do
+    and (self.state.nodes[#self.state.nodes]:isPenalty()
+      or self.state.nodes[#self.state.nodes]:isZero()) do
       self.state.nodes[#self.state.nodes] = nil
     end
   end,
@@ -556,8 +556,8 @@ SILE.defaultTypesetter = std.object {
 
   leaveHmode = function (self, independent)
     SU.debug("typesetter", "Leaving hmode")
-    local vboxlist = self:boxUpNodes()
     local margins = self:getMargins()
+    local vboxlist = self:boxUpNodes()
     self.state.nodes = {}
     -- Push output lines into boxes and ship them to the page builder
     for _, vbox in ipairs(vboxlist) do
@@ -605,9 +605,7 @@ SILE.defaultTypesetter = std.object {
     end
     local lskip = SILE.settings.get("document." .. (LoR and "lskip" or "rskip"))
     if lskip then
-      while slice[1].discardable do
-        table.remove(slice, 1)
-      end
+      while slice[1].discardable do table.remove(slice, 1) end
       lskip.value = "margin"
       table.insert(slice, 1, lskip)
       table.insert(slice, 1, SILE.nodefactory.zerohbox())
@@ -669,8 +667,8 @@ SILE.defaultTypesetter = std.object {
     end
     local i = #slice
     while i > 1 do
-      if slice[i]:isGlue() or slice[i] == SILE.nodefactory.zeroHbox then
-        if not slice[i].value then
+      if slice[i]:isGlue() or slice[i]:isZero() then
+        if slice[i].value ~= "margin" then
           naturalTotals = naturalTotals - slice[i].width
         end
       elseif slice[i]:isDiscretionary() then

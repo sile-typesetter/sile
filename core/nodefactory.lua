@@ -79,6 +79,10 @@ nodefactory.box = pl.class({
       return self.type == "vglue"
     end,
 
+    isZero = function (self)
+      return self.type == "zerohbox" or self.type == "zerovglue"
+    end,
+
     isUnshaped = function (self)
       return self.type == "unshaped"
     end,
