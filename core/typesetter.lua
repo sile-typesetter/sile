@@ -307,7 +307,9 @@ SILE.defaultTypesetter = std.object {
     while (#nodelist > 0 and nodelist[1]:isPenalty()) do table.remove(nodelist, 1) end
     if #nodelist == 0 then return {} end
     self:shapeAllNodes(nodelist)
-    self:pushGlue(SILE.settings.get("typesetter.parfillskip"))
+    local parfillskip = SILE.settings.get("typesetter.parfillskip")
+    parfillskip.discardable = false
+    self:pushGlue(parfillskip)
     self:pushPenalty(-inf_bad)
     SU.debug("typesetter", "Boxed up "..(#nodelist > 500 and (#nodelist).." nodes" or SU.contentToString(nodelist)))
     local breakWidth = SILE.settings.get("typesetter.breakwidth") or self.frame:getLineWidth()
@@ -597,21 +599,20 @@ SILE.defaultTypesetter = std.object {
     end
   end,
 
-  addrlskip = function (self, slice)
-    local LoR = self.frame:writingDirection() == "LTR"
-    local rskip = SILE.settings.get("document." .. (LoR and "rskip" or "lskip"))
-    if rskip then
-      rskip.value = "margin"
-      table.insert(slice, rskip)
-      table.insert(slice, SILE.nodefactory.zerohbox())
-    end
-    local lskip = SILE.settings.get("document." .. (LoR and "lskip" or "rskip"))
-    if lskip then
-      while slice[1].discardable do table.remove(slice, 1) end
-      lskip.value = "margin"
-      table.insert(slice, 1, lskip)
-      table.insert(slice, 1, SILE.nodefactory.zerohbox())
-    end
+  addrlskip = function (self, slice, margins)
+    local LTR = self.frame:writingDirection() == "LTR"
+    local rskip = margins[LTR and "rskip" or "lskip"]
+    if not rskip then rskip = SILE.nodefactory.glue(0) end
+    rskip.value = "margin"
+    -- while slice[#slice].discardable do table.remove(slice, #slice) end
+    table.insert(slice, rskip)
+    table.insert(slice, SILE.nodefactory.zerohbox())
+    local lskip = margins[LTR and "lskip" or "rskip"]
+    if not lskip then lskip = SILE.nodefactory.glue(0) end
+    lskip.value = "margin"
+    while slice[1].discardable do table.remove(slice, 1) end
+    table.insert(slice, 1, lskip)
+    table.insert(slice, 1, SILE.nodefactory.zerohbox())
   end,
 
   breakpointsToLines = function (self, breakpoints)
@@ -633,7 +634,7 @@ SILE.defaultTypesetter = std.object {
           end
         end
         if seenHbox == 0 then break end
-        self:addrlskip(slice)
+        self:addrlskip(slice, self:getMargins())
         local ratio = self:computeLineRatio(point.width, slice)
         -- TODO see bug 620
         -- if math.abs(ratio) > 1 then SU.warn("Using ratio larger than 1" .. ratio) end
