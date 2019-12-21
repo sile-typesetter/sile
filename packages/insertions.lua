@@ -187,7 +187,7 @@ end
 
 --[[ Actually shrink the frame. --]]
 
-SILE.insertions.commitShrinkage = function (classname)
+SILE.insertions.commitShrinkage = function (_, classname)
   local opts = SILE.scratch.insertions.classes[classname]
   local reduceList = opts["stealFrom"]
   local stealPosition = opts["steal-position"] or "bottom"
@@ -204,7 +204,8 @@ SILE.insertions.commitShrinkage = function (classname)
   end
 end
 
-SILE.insertions.increaseInsertionFrame = function (classname, amount)
+SILE.insertions.increaseInsertionFrame = function (insertionvbox, classname)
+  local amount = insertionvbox.height + insertionvbox.depth
   local opts = SILE.scratch.insertions.classes[classname]
   SU.debug("insertions", "Increasing insertion frame by "..amount)
   local stealPosition = opts["steal-position"] or "bottom"
@@ -390,16 +391,12 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
 end
 
 SILE.typesetter:registerFrameBreakHook(function (_, nl)
-  for class, _ in pairs(insertionsThisPage) do
-    SILE.insertions.commitShrinkage(class)
-  end
+  pl.tablex.foreach(insertionsThisPage, SILE.insertions.commitShrinkage)
   return nl
 end)
 
 SILE.typesetter:registerPageEndHook(function (_, nl)
-  for class, list in pairs(insertionsThisPage) do
-    SILE.insertions.increaseInsertionFrame(class, list.height + list.depth)
-  end
+  pl.tablex.foreach(insertionsThisPage, SILE.insertions.increaseInsertionFrame)
   for class, insertion in pairs(insertionsThisPage) do
     insertion:outputYourself()
     insertionsThisPage[class] = nil
