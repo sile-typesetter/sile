@@ -11,15 +11,9 @@ SILE.registerCommand("hrule", function (options, _)
     depth = depth:absolute(),
     value = options.src,
     outputYourself= function (self, typesetter, line)
-      local scaledWidth = self.width.length
-      if line.ratio < 0 and self.width.shrink > 0 then
-        scaledWidth = scaledWidth + self.width.shrink * line.ratio
-      elseif line.ratio > 0 and self.width.stretch > 0 then
-        scaledWidth = scaledWidth + self.width.stretch * line.ratio
-      end
-
-      SILE.outputter.rule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-(self.height.length), scaledWidth, self.height.length+self.depth)
-      typesetter.frame:advanceWritingDirection(scaledWidth)
+      local outputWidth = SU.rationWidth(self.width, self.width, line.ratio)
+      SILE.outputter.rule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY - self.height, outputWidth, self.height + self.depth)
+      typesetter.frame:advanceWritingDirection(outputWidth)
     end
   })
 end, "Creates a line of width <width> and height <height>")

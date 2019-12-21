@@ -126,25 +126,20 @@ nodefactory.hbox = pl.class({
     end,
 
     scaledWidth = function (self, line)
-      local scaledWidth = self:lineContribution()
-      if line.ratio < 0 and self.width.shrink > 0 then
-        scaledWidth = scaledWidth + self.width.shrink * line.ratio
-      elseif line.ratio > 0 and self.width.stretch > 0 then
-        scaledWidth = scaledWidth + self.width.stretch * line.ratio
-      end
-      return scaledWidth
+      return SU.rationWidth(self:lineContribution(), self.width, line.ratio)
     end,
 
     outputYourself = function (self, typesetter, line)
+      local outputWidth = self:scaledWidth(line)
       if not self.value.glyphString then return end
       if typesetter.frame:writingDirection() == "RTL" then
-        typesetter.frame:advanceWritingDirection(self:scaledWidth(line))
+        typesetter.frame:advanceWritingDirection(outputWidth)
       end
       SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
       SILE.outputter.setFont(self.value.options)
-      SILE.outputter.outputHbox(self.value, self:scaledWidth(line))
+      SILE.outputter.outputHbox(self.value, outputWidth)
       if typesetter.frame:writingDirection() ~= "RTL" then
-        typesetter.frame:advanceWritingDirection(self:scaledWidth(line))
+        typesetter.frame:advanceWritingDirection(outputWidth)
       end
     end
 
@@ -349,13 +344,8 @@ nodefactory.glue = pl.class({
     toText = function () return " " end,
 
     outputYourself = function (self, typesetter, line)
-      local scaledWidth = self.width
-      if line.ratio and line.ratio < 0 and self.width.shrink > 0 then
-        scaledWidth = scaledWidth + self.width.shrink * line.ratio
-      elseif line.ratio and line.ratio > 0 and self.width.stretch > 0 then
-        scaledWidth = scaledWidth + self.width.stretch * line.ratio
-      end
-      typesetter.frame:advanceWritingDirection(scaledWidth)
+      local outputWidth = SU.rationWidth(self.width:absolute(), self.width:absolute(), line.ratio)
+      typesetter.frame:advanceWritingDirection(outputWidth)
     end
 
   })

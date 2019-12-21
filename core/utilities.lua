@@ -238,6 +238,15 @@ utilities.rateBadness = function(inf_bad, shortfall, spring)
   return math.min(inf_bad, bad)
 end
 
+utilities.rationWidth = function (target, width, ratio)
+  if ratio < 0 and width.shrink > 0 then
+    target = target + width.shrink * ratio
+  elseif ratio > 0 and width.stretch > 0 then
+    target = target + width.stretch * ratio
+  end
+  return target
+end
+
 -- Unicode-related utilities
 utilities.utf8char = function (c)
     if     c < 128 then
