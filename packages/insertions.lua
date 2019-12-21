@@ -143,12 +143,12 @@ SILE.nodefactory.insertion = pl.class({
         })
       if firstpage then
         self.nodes = {}
-        self.height = SILE.measurement(0)
+        self.height = SILE.length(0)
         self:append(materialToSplit)
         self.contentHeight = self.height
         self.contentDepth = self.depth
-        self.depth = SILE.measurement(0)
-        self.height = SILE.measurement(0)
+        self.depth = SILE.length(0)
+        self.height = SILE.length(0)
         return SILE.pagebuilder:collateVboxes(firstpage)
       end
     end
