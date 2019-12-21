@@ -95,6 +95,10 @@ nodefactory.box = pl.class({
       return self.type == "vbox"
     end,
 
+    isInsertion = function (self)
+      return self.type == "insertion"
+    end,
+
     isMigrating = function (self)
       return self.migrating
     end,
@@ -161,7 +165,6 @@ nodefactory.nnode = pl.class({
 
     _init = function (self, spec)
       nodefactory.box._init(self, spec)
-      self.nodes = spec.nodes
       if 0 == self.depth:tonumber() then self.depth = math.max(0, table.unpack(SU.map(function (node) return node.depth end, self.nodes))) end
       if 0 == self.height:tonumber() then self.height = math.max(0, table.unpack(SU.map(function (node) return node.height end, self.nodes))) end
       if 0 == self.width:tonumber() then self.width = SU.sum(SU.map(function (node) return node.width end, self.nodes)) end
@@ -456,10 +459,8 @@ nodefactory.vbox = pl.class({
     _default_length = "height",
 
     _init = function (self, spec)
+      self.nodes = {}
       nodefactory.box._init(self, spec)
-      self.nodes = spec.nodes
-      self.depth = SILE.length(0)
-      self.height = SILE.length(0)
       for _, node in ipairs(self.nodes) do
         self.depth  = math.max(SU.cast("length", node.depth), self.depth)
         self.height = math.max(SU.cast("length", node.height), self.height)
@@ -520,6 +521,10 @@ nodefactory.migrating = pl.class({
     value = {},
     nodes = {},
     migrating = true,
+
+    _init = function (self, spec)
+      nodefactory.hbox._init(self, spec)
+    end,
 
     __tostring = function (self)
       return "<M: "..self.material .. ">"

@@ -8,7 +8,7 @@ return pl.class({
     end,
 
     collateVboxes = function(_, vboxlist)
-      local output = SILE.nodefactory.newVbox({nodes = {} })
+      local output = SILE.nodefactory.vbox()
       output:append(vboxlist)
       return output
     end,
@@ -51,7 +51,7 @@ return pl.class({
           totalHeight = totalHeight + vbox.height:absolute() + vbox.depth:absolute()
         elseif vbox:isVglue() then
           totalHeight = totalHeight + vbox.height:absolute()
-        elseif vbox.type == "insertionVbox" then
+        elseif vbox:isInsertion() then
           target = SILE.insertions.processInsertion(vboxlist, i, totalHeight, target)
           vbox = vboxlist[i]
         end

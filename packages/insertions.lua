@@ -81,24 +81,28 @@ typesetter and frame.
 --]]
 
 local insertionsThisPage = {}
-local _pageInsertionVbox = SILE.nodefactory.vbox({
-  __tostring = function (self) return "PI<"..self.nodes..">" end,
-  outputYourself = function (self)
-    if not self.typesetter then
-      self.typesetter = SILE.defaultTypesetter {}
+local _pageInsertionVbox = pl.class({
+    _base = SILE.nodefactory.vbox,
+    frame = nil,
+    typesetter = SILE.defaultTypesetter {},
+
+    __tostring = function (self)
+      return "PI<" .. self.nodes .. ">"
+    end,
+
+    outputYourself = function (self)
       self.typesetter:init(SILE.getFrame(self.frame))
+      for _, node in ipairs(self.nodes) do
+        node:outputYourself(self.typesetter, node)
+      end
     end
-    for _, node in ipairs(self.nodes) do
-      node:outputYourself(self.typesetter, node)
-    end
-  end
-})
+  })
 
 local thisPageInsertionBoxForClass = function (class)
   if not insertionsThisPage[class] then
-    local this = pl.tablex.deepcopy(_pageInsertionVbox)
-    this.frame  = SILE.scratch.insertions.classes[class].insertInto.frame
-    insertionsThisPage[class] = this
+    insertionsThisPage[class] = _pageInsertionVbox({
+      frame = SILE.scratch.insertions.classes[class].insertInto.frame
+    })
   end
   return insertionsThisPage[class]
 end
@@ -112,10 +116,11 @@ So we stick the material into an insertion vbox, and when the pagebuilder
 sees this, magic will happen.
 
 --]]
-local _insertionVbox = pl.class({
+SILE.nodefactory.insertion = pl.class({
     _base = SILE.nodefactory.vbox,
     discardable = true,
-    type = "insertionVbox",
+    type = "insertion",
+    seen = false,
 
     __tostring = function (self) return "I<"..self.nodes[1].."...>" end,
 
@@ -130,14 +135,13 @@ local _insertionVbox = pl.class({
     end,
 
     split = function (self, materialToSplit, maxsize)
-      local s = SILE.pagebuilder:findBestBreak({
+      local firstpage = SILE.pagebuilder:findBestBreak({
           vboxlist = materialToSplit,
           target   = maxsize,
           restart  = false,
           force    = true
         })
-      if s then
-        local newvbox = SILE.pagebuilder:collateVboxes(s)
+      if firstpage then
         self.nodes = {}
         self.height = SILE.measurement(0)
         self:append(materialToSplit)
@@ -145,7 +149,7 @@ local _insertionVbox = pl.class({
         self.contentDepth = self.depth
         self.depth = SILE.measurement(0)
         self.height = SILE.measurement(0)
-        return newvbox
+        return SILE.pagebuilder:collateVboxes(firstpage)
       end
     end
 
@@ -323,16 +327,16 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   maxsize = maxsize - topBox.height
   local materialToSplit = {}
   pl.tablex.insertvalues(materialToSplit, ins:unbox())
-  local newvbox = ins:split(materialToSplit, maxsize)
+  local deferredInsertions = ins:split(materialToSplit, maxsize)
 
-  if newvbox then
+  if deferredInsertions then
     SU.debug("insertions", "Split. Remaining insertion is " .. ins)
-    SILE.insertions.setShrinkage(ins.class, topBox.height + newvbox.height + newvbox.depth)
+    SILE.insertions.setShrinkage(ins.class, topBox.height + deferredInsertions.height + deferredInsertions.depth)
     insbox:append(topBox)
-    -- newvbox.contentHeight = newvbox.height
-    -- newvbox.contentDepth = newvbox.depth
-    insbox:append(newvbox)
-    newvbox.seen = true
+    -- deferredInsertions.contentHeight = deferredInsertions.height
+    -- deferredInsertions.contentDepth = deferredInsertions.depth
+    insbox:append(deferredInsertions)
+    deferredInsertions.seen = true
 
     --[[ The insertion we're dealing with is currently vboxlist[i], and it
     now contains all the material that *didn't* make it onto the current
@@ -414,7 +418,7 @@ local insert = function (_, classname, vbox)
     SILE.nodefactory.penalty(SILE.settings.get("insertion.penalty"))
   }})
   SILE.typesetter:pushMigratingMaterial({ material = {
-    _insertionVbox({
+    SILE.nodefactory.insertion({
         class = classname,
         nodes = vbox.nodes,
         -- actual height and depth must remain zero for page glue calculations
