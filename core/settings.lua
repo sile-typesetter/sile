@@ -24,7 +24,11 @@ SILE.settings = {
     if not SILE.settings.declarations[name] then
       SU.error("Undefined setting '"..name.."'")
     end
-    return SILE.settings.state[name] or SILE.settings.defaults[name]
+    if type(SILE.settings.state[name]) ~= "nil" then
+      return SILE.settings.state[name]
+    else
+      return SILE.settings.defaults[name]
+    end
   end,
   set = function(name, value)
     if not SILE.settings.declarations[name] then

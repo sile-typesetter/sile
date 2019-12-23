@@ -1,6 +1,6 @@
 \begin[papersize=a5]{document}
 \script[src=packages/lorem]
 
-\ragged[right=yes,left=yes]{\lorem[words=100]}
+\ragged[right=true,left=true]{\lorem[words=100]}
 
 \end{document}

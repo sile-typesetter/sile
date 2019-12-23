@@ -7,11 +7,17 @@ utilities.required = function (options, name, context)
   return options[name]
 end
 
+local function preferbool ()
+  utilities.warn("Please use boolean values or strings such as 'true' and 'false' instead of 'yes' and 'no'.")
+end
+
 utilities.boolean = function (value, default)
-  if value == "false" then return false end
   if value == false then return false end
-  if value == "true" then return true end
   if value == true then return true end
+  if value == "false" then return false end
+  if value == "true" then return true end
+  if value == "no" then preferbool(); return false end
+  if value == "yes" then preferbool(); return true end
   return default
 end
 
