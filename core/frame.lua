@@ -60,7 +60,7 @@ SILE.framePrototype = pl.class({
     end,
 
     constrain = function (self, method, dimension)
-      self.constraints[method] = dimension
+      self.constraints[method] = tostring(dimension)
       self:invalidate()
     end,
 
