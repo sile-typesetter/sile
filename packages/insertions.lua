@@ -58,14 +58,18 @@ local initInsertionClass = function (_, classname, options)
   end
 
   -- Turn stealFrom into a hash, if it isn't one.
-  if type(options.stealFrom) == "string" then options.stealFrom = { options.stealFrom } end
+  if SU.type(options.stealFrom) ~= "table" then
+    options.stealFrom = { options.stealFrom }
+  end
   if options.stealFrom[1] then
     local rl = {}
     for i = 1, #(options.stealFrom) do rl[options.stealFrom[i]] = 1 end
     options.stealFrom = rl
   end
 
-  if type(options.insertInto) == "string" then options.insertInto = { frame = options.insertInto, ratio = 1} end
+  if SU.type(options.insertInto) ~= "table" then
+    options.insertInto = { frame = options.insertInto, ratio = 1 }
+  end
 
   options.maxHeight = SILE.length(options.maxHeight)
 
@@ -332,7 +336,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
 
   if deferredInsertions then
     SU.debug("insertions", "Split. Remaining insertion is " .. ins)
-    SILE.insertions.setShrinkage(ins.class, topBox.height + deferredInsertions.height + deferredInsertions.depth)
+    SILE.insertions.setShrinkage(ins.class, topBox.height:absolute() + deferredInsertions.height:absolute() + deferredInsertions.depth:absolute())
     insbox:append(topBox)
     -- deferredInsertions.contentHeight = deferredInsertions.height
     -- deferredInsertions.contentDepth = deferredInsertions.depth
