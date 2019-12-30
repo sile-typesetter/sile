@@ -581,10 +581,10 @@ SILE.defaultTypesetter = std.object {
     SU.debug("typesetter", "   2) "..vbox)
     if not previous then return SILE.nodefactory.vglue() end
     local prevDepth = previous.depth
-    SU.debug("typesetter", "   Depth of previous line was "..tostring(prevDepth))
+    SU.debug("typesetter", "   Depth of previous line was " .. prevDepth)
     local bls = SILE.settings.get("document.baselineskip")
     local depth = bls.height:absolute() - vbox.height:absolute() - prevDepth:absolute()
-    SU.debug("typesetter", "   Leading height = " .. tostring(bls.height) .. " - " .. tostring(vbox.height) .. " - " .. tostring(prevDepth) .. " = "..depth)
+    SU.debug("typesetter", "   Leading height = " .. bls.height .. " - " .. vbox.height .. " - " .. prevDepth .. " = "..depth)
 
     -- the lineskip setting is a vglue, but we need a version absolutized at this point, see #526
     local lead = SILE.settings.get("document.lineskip").height:absolute()
