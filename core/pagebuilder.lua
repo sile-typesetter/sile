@@ -55,7 +55,7 @@ return pl.class({
           target = SILE.insertions.processInsertion(vboxlist, i, totalHeight, target)
           vbox = vboxlist[i]
         end
-        local left = target - totalHeight.length
+        local left = target - totalHeight
         SU.debug("pagebuilder", "I have " .. left .. " left")
         -- if left < -20 then SU.error("\nCatastrophic page breaking failure!"); end
         pi = 0

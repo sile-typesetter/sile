@@ -407,7 +407,9 @@ SILE.defaultTypesetter = std.object {
     local gTotal = SILE.length()
     local totalHeight = SILE.length()
     for _, node in ipairs(pageNodeList) do
-      totalHeight = totalHeight + node.height:absolute() + node.depth:absolute()
+      if not node:isInsertion() then
+        totalHeight = totalHeight + node.height:absolute() + node.depth:absolute()
+      end
       if node:isVglue() then
         table.insert(glues, node)
         gTotal = gTotal + node.height:absolute()

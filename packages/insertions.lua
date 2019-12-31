@@ -147,7 +147,6 @@ SILE.nodefactory.insertion = pl.class({
         })
       if firstpage then
         self.nodes = {}
-        self.height = SILE.length(0)
         self:append(materialToSplit)
         self.contentHeight = self.height
         self.contentDepth = self.depth
