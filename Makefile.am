@@ -27,6 +27,9 @@ genrockslock := $(LUAROCKS) list --porcelain | awk '{print $$1 " " $$2}'
 rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
 endif
 
+# Whether to force tests to run from scratch
+CLEAN ?=
+
 # Make sure the embeded version number iterates with every commit
 configure.ac: .lastcommit
 
@@ -81,7 +84,7 @@ SILEFLAGS ?= -m $(DEPDIR)/$(basename $@).d -d versions -f fontconfig
 
 TESTSRCS  ?= $(wildcard tests/*.sil tests/*.xml)
 TESTPDFS   = $(addsuffix      .pdf,$(basename $(TESTSRCS)))
-EXPECTEDS ?= $(wildcard tests/*.expected)
+EXPECTEDS ?= $(filter $(addsuffix .expected,$(basename $(TESTSRCS))),$(wildcard tests/*.expected))
 ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 
 .PHONY: test
@@ -136,10 +139,10 @@ define runsile =
 	fi
 endef
 
-%.pdf: %.sil $(and $(SILE_COVERAGE),force)
+%.pdf: %.sil $(and $(SILE_COVERAGE)$(CLEAN),force)
 	$(runsile)
 
-%.pdf: %.xml $(and $(SILE_COVERAGE),force)
+%.pdf: %.xml $(and $(SILE_COVERAGE)$(CLEAN),force)
 	$(runsile)
 
 .PHONY: coverage
@@ -149,38 +152,85 @@ coverage: test_previews
 HEADSHA ?= $(shell git rev-parse --short HEAD)
 BASESHA ?= $(shell git rev-parse --short $(HEADSHA)^)
 
-.PHONY: benchmark
-benchmark: time-$(HEADSHA).json time-$(BASESHA).json
-	cat $^
+clean-recursive: clean-tests
 
-clean-recursive: clean-benchmarks
+.PHONY: clean-tests
+clean-tests:
+	rm -rf tests/*.actual
+	rm -rf $(DEPDIR)/tests/*
 
-.PHONY: clean-benchmarks
-clean-benchmarks:
-	rm -rf benchmark-*
-	git worktree prune
-	git branch --list | grep benchmark- | xargs git branch -D ||:
+clean-recursive: clean-deps
 
-time-%.json: benchmark-%/time.json
-	cp $< $@
+.PHONY: clean-deps
+clean-deps:
+	rm -rf $(DEPDIR)
 
-.PRECIOUS: benchmark-%/time.json
-benchmark-%/time.json: benchmark-%/sile
-	cd benchmark-$*
+define time_action =
 	export TIMEFORMAT=$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
 	{ time (./sile documentation/sile.sil > /dev/null 2>&1) } 2> time.json
+endef
 
-.PRECIOUS: benchmark-%/sile
-benchmark-%/sile:
-	[[ -d benchmark-$* ]] || git worktree add --detach benchmark-$* $(HEADSHA)
-	cd benchmark-$*
+make_worktree_rules = $(eval $(foreach SHA,$(HEADSHA) $(BASESHA),$(call worktree_sha,$(1),$(SHA))))
+
+define worktree_sha =
+
+.PRECIOUS: $(1)-$(2)
+$(1)-$(2):
+	[[ -d $$@ ]] || git worktree add --detach $$@ $(2)
+	cd $$@
 	[[ -d libtexpdf ]] && rmdir libtexpdf
 	[[ -h libtexpdf ]] || ln -s ../libtexpdf
 	[[ -h lua_modules ]] || ln -s ../lua_modules
 	[[ -h node_modules ]] || ln -s ../node_modules
+	[[ -h .fonts ]] || ln -s ../.fonts
 	./bootstrap.sh
 	./configure
 	make
+
+.PRECIOUS: $(1)-$(2)/%
+$(1)-$(2)/%: $(1)-$(2)
+	cd $$<
+	make $$*
+
+.PRECIOUS: $(1)-$(2)/time.json
+$(1)-$(2)/time.json: $(1)-$(2) $(1)-$(2)/sile
+	cd $$<
+	$$(time_action)
+
+clean-recursive: clean-$(1)s
+
+.PHONY: clean-$(1)s
+clean-$(1)s:
+	rm -rf $(1)-*
+	git worktree prune
+	git branch --list | grep $(1)- | xargs git branch -D ||:
+
+endef
+
+$(call make_worktree_rules,benchmark)
+
+.PHONY: benchmark
+benchmark: time-$(HEADSHA).json time-$(BASESHA).json
+	cat $^
+
+.PRECIOUS: time-%.json
+time-%.json: benchmark-%/time.json
+	cp $< $@
+
+.PRECIOUS: time.json
+time.json: sile
+	$(time_action)
+
+$(call make_worktree_rules,compare)
+
+onetest = $(firstword $(ACTUALS)),$(firstword $(TESTPDFS))
+compare_prerequisites = $(shell echo {,compare-$(BASESHA)/}{$(onetest)})
+
+runapp ?= nohup $(1) > /dev/null &
+compare: $(call compare_prerequisites)
+	$(call runapp,diff-pdf --view $(filter %.pdf,$^))
+	$(call runapp,zathura $(filter %.pdf,$^))
+	diff -u $(filter %.actual,$^)
 
 .PHONY: force
 force: ;
@@ -188,10 +238,10 @@ force: ;
 .PHONY: update_expecteds
 update_expecteds: $(EXPECTEDS)
 
-tests/%.expected: tests/%.sil
+tests/%.expected: tests/%.sil $(and $(CLEAN),force)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-tests/%.expected: tests/%.xml
+tests/%.expected: tests/%.xml $(and $(CLEAN),force)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
 .PHONY: update_actuals
@@ -200,11 +250,13 @@ update_actuals: $(ACTUALS)
 .PHONY: test_previews
 test_previews: $(TESTPDFS)
 
-tests/%.actual: tests/%.sil
-	-$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
+tests/%.actual: tests/%.sil $(and $(CLEAN),force)
+	-$(if $(CLEAN),rm -f $@,:)
+	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-tests/%.actual: tests/%.xml
-	-$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
+tests/%.actual: tests/%.xml $(and $(CLEAN),force)
+	-$(if $(CLEAN),rm -f $@,:)
+	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
 DEPFILES = $(addsuffix .d,$(addprefix $(DEPDIR)/,$(basename $(TESTSRCS) $(DOCS) $(EXAMPLES))))
 DEPDIRS = $(sort $(dir $(DEPFILES)))
@@ -224,6 +276,7 @@ include $(wildcard $(DEPFILES))
 .fonts/%: Makefile-fonts | .fonts
 
 .fonts: fontconfig.conf
+	[[ -h .fonts ]] && exit 1
 	mkdir -p $@
 
 # Actual rules for downloading test fonts are in a separate file
@@ -248,3 +301,5 @@ gource.webm:
 		done
 	gource -a 0.2 -s 0.2 -i 0 --logo /tmp/sile-logo.jpg -b 000000 --max-file-lag 5 --hide filenames --date-format '%Y-%m-%d' --user-image-dir /tmp/gravatars --user-filter simoncozens --key -1920x1080 -o - \
 		| ffmpeg -y -r 60 -f image2pipe -vcodec ppm -i - -vcodec libvpx -b 10000K $@
+
+# vim: ft=make
