@@ -14,17 +14,29 @@ local fallbackQueue = pl.class({
       self.q[#(self.q)+1] = { popFallbacks = true }
     end,
 
-    shift       = function (self) return table.remove(self.q, 1) end,
+    shift       = function (self)
+      return table.remove(self.q, 1)
+    end,
 
-    continuing  = function (self) return #self.q > 0 and #self.fallbacks > 0 end,
+    continuing  = function (self)
+      return #self.q > 0 and #self.fallbacks > 0
+    end,
 
-    currentFont = function (self) return self.fallbacks[1] end,
+    currentFont = function (self)
+      return self.fallbacks[1]
+    end,
 
-    currentJob  = function (self) return self.q[1] end,
+    currentJob  = function (self)
+      return self.q[1]
+    end,
 
-    lastJob     = function (self) return self.q[#(self.q)] end,
+    lastJob     = function (self)
+      return self.q[#(self.q)]
+    end,
 
-    currentText = function (self) return self.text:sub(self.q[1].start, self.q[1].stop) end,
+    currentText = function (self)
+      return self.text:sub(self.q[1].start, self.q[1].stop)
+    end,
 
     addJob = function (self, start, stop)
       self.q[#(self.q)+1] = { start = start, stop = stop }
@@ -86,7 +98,7 @@ SILE.shapers.harfbuzzWithFallback = pl.class({
               end
             else
               if startOfNotdefRun == -1 then startOfNotdefRun = i end
-              SU.warn("Glyph "..newItems[i].text.." not found in "..options.family)
+              SU.debug("font-fallback", "Glyph " .. newItems[i].text .. " not found in " .. options.family)
             end
           end
           if startOfNotdefRun > -1 then
@@ -94,7 +106,7 @@ SILE.shapers.harfbuzzWithFallback = pl.class({
               shapeQueue:currentJob().start + newItems[startOfNotdefRun].index,
               shapeQueue:currentJob().stop
               )
-            SU.debug("fonts", "Some unfound at end: ", shapeQueue[#shapeQueue])
+            SU.warn("Some glyph(s) not available in any fallback font, run with '-d font-fallback' for more detail")
           end
           shapeQueue:shift()
         end
