@@ -71,7 +71,7 @@ describe("SILE.linebreak", function()
   glue({ width = SILE.length.new({ length = 2.20215, stretch = 1.10107, shrink = 0.73404 }) })
   nnode({ text ="sex.", height =  4.6875, depth = 0.1953, width = 15.6543 })
 
-  it("should sleauth the right break point", function()
+  it("should sleuth the right break point", function()
     -- print(SILE.linebreak:doBreak(hlist, 30.0))
   end)
 
