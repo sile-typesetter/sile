@@ -7,6 +7,8 @@ include_files = {
   ".luacheckrc"
 }
 exclude_files = {
+  "benchmark-*",
+  "compare-*",
   "lua_modules",
   "lua-libraries",
   ".lua",
