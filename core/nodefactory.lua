@@ -397,7 +397,13 @@ nodefactory.vglue = pl.class({
 
 nodefactory.vfillglue = pl.class({
     _base = nodefactory.vglue,
-    height = SILE.length(0, infinity)
+    height = SILE.length(0, infinity),
+    _init = function (self, spec)
+      -- TODO this shouldn't be necessary, but without it somehow new vfillglues
+      -- are getting heights inherited from previous page metrics!
+      self.height = SILE.length(0, infinity)
+      nodefactory.vglue._init(self, spec)
+    end
   })
 
 nodefactory.vssglue = pl.class({
