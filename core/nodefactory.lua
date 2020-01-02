@@ -376,19 +376,18 @@ nodefactory.vglue = pl.class({
     type = "vglue",
     discardable = true,
     _default_length = "height",
+    adjustment = SILE.measurement(),
 
     __tostring = function (self)
       return (self.explicit and "E:" or "") .. "VG<" .. self.height .. ">";
     end,
 
     adjustGlue = function (self, adjustment)
-      self.height.length = self.height.length:absolute() + adjustment
-      self.height.stretch = SILE.measurement(0)
-      self.height.shrink = SILE.measurement(0)
+      self.adjustment = adjustment
     end,
 
-    outputYourself = function (_, typesetter, line)
-      typesetter.frame:advancePageDirection(line.height:absolute() + line.depth:absolute())
+    outputYourself = function (self, typesetter, line)
+      typesetter.frame:advancePageDirection(line.height:absolute() + line.depth:absolute() + self.adjustment)
     end,
 
     unbox = function (self) return { self } end
@@ -458,8 +457,8 @@ nodefactory.vbox = pl.class({
       self.nodes = {}
       nodefactory.box._init(self, spec)
       for _, node in ipairs(self.nodes) do
-        self.depth  = math.max(SU.cast("length", node.depth), self.depth)
-        self.height = math.max(SU.cast("length", node.height), self.height)
+        self.depth  = math.max(node.depth, self.depth)
+        self.height = math.max(node.height, self.height)
       end
     end,
 
