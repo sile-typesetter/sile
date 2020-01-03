@@ -37,7 +37,7 @@ local function debugAST(ast, level)
     if type(content) == "string" then
       SU.debug("ast", out.."["..content.."]")
     elseif SILE.Commands[content.command] then
-      local options = table.nitems(content.options) > 0 and content.options or ""
+      local options = pl.tablex.size(content.options) > 0 and content.options or ""
       SU.debug("ast", out.."\\"..content.command..options)
       if (#content>=1) then debugAST(content, level+1) end
     elseif content.id == "texlike_stuff" or (not content.command and not content.id) then

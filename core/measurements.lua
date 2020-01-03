@@ -1,5 +1,8 @@
 SILE.units = {
-  pt = {relative = false, value = 1}
+  pt = {
+    relative = false,
+    value = 1
+  }
 }
 
 SILE.registerUnit = function (unit, spec)
@@ -136,28 +139,36 @@ end})
 
 SILE.registerUnit("en", { definition = "0.5em" })
 
-local _relativeMeasurement = std.object {
-  _type = "RelativeMeasurement",
-  __tostring = function (self) return "("..self.number..self.unit..")" end,
-  absolute = function (self)
-    return SILE.toPoints(self.number, self.unit)
-  end,
-  __add = function (_, _)
-    SU.error("We tried to do arithmetic on a relative measurement without explicitly absolutizing it. (That's a bug)", true)
-  end,
-  __sub = function (_, _)
-    SU.error("We tried to do arithmetic on a relative measurement without explicitly absolutizing it. (That's a bug)", true)
-  end
-}
+local _relativeMeasurement = pl.class({
+    type = "RelativeMeasurement",
+
+    _init = function (self, number, unit)
+      self.number = number
+      self.unit = unit
+    end,
+
+    __tostring = function (self) return "("..self.number..self.unit..")" end,
+
+    absolute = function (self)
+      return SILE.toPoints(self.number, self.unit)
+    end,
+
+    __add = function (_, _)
+      SU.error("We tried to do arithmetic on a relative measurement without explicitly absolutizing it. (That's a bug)", true)
+    end,
+
+    __sub = function (_, _)
+      SU.error("We tried to do arithmetic on a relative measurement without explicitly absolutizing it. (That's a bug)", true)
+    end
+  })
 
 SILE.toMeasurement = function (number, unit)
   if not SILE.units[unit].relative then return SILE.toPoints(number, unit) end
-  return _relativeMeasurement { number = number, unit = unit }
+  return _relativeMeasurement(number, unit)
 end
 
 SILE.toAbsoluteMeasurement = function (length)
-  if type(length) == "table" and length.prototype
-    and (length:prototype() == "RelativeMeasurement" or length:prototype() == "Length") then
+  if type(length) == "table" and length.absolute then
     return length:absolute()
   else
     return length

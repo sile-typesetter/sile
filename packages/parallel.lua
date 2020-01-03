@@ -25,7 +25,7 @@ local parallelPagebreak = function ()
       if #typesetter.state.outputQueue > 0 and calculations[frame].mark == 0 then
         -- More than one page worth of stuff here.
         -- Just ship out one page and hope for the best.
-        SILE.defaultTypesetter.pageBuilder(typesetter)
+        SILE.defaultTypesetter.buildPage(typesetter)
       else
         for l = 1, calculations[frame].mark do
           thispage[l] = table.remove(typesetter.state.outputQueue, 1)
@@ -50,7 +50,7 @@ local setupParallel = function (klass, options)
     typesetterPool[frame] = SILE.typesetter {}
     typesetterPool[frame].id = typesetter
     typesetterPool[frame]:init(SILE.getFrame(typesetter))
-    typesetterPool[frame].pageBuilder = function ()
+    typesetterPool[frame].buildPage = function ()
       -- No thank you, I will do that.
     end
     -- Fixed leading here is obviously a bug, but n-way leading calculations
@@ -66,7 +66,7 @@ local setupParallel = function (klass, options)
     folioOrder = { {} }
     -- Note output order doesn't matter for PDF, but for our test suite it is
     -- essential that the output order is deterministic, hence this sort()
-    for frame, _ in tablex.sort(options.frames) do table.insert(folioOrder[1], frame) end
+    for frame, _ in pl.tablex.sort(options.frames) do table.insert(folioOrder[1], frame) end
   else
     folioOrder = options.folios -- As usual we trust the user knows what they're doing
   end
@@ -106,8 +106,8 @@ SILE.registerCommand("sync", function (_, _)
     -- Now we have each typesetter's content boxed up onto the output stream
     -- but page breaking has not been run. See if page breaking would cause a
     -- break
-    local lines = std.table.clone(typesetter.state.outputQueue)
-    if SILE.pagebuilder.findBestBreak({ vboxlist = lines, target = typesetter:pageTarget() }) then
+    local lines = pl.tablex.copy(typesetter.state.outputQueue)
+    if SILE.pagebuilder:findBestBreak({ vboxlist = lines, target = typesetter:getTargetLength() }) then
       anybreak = true
     end
   end)

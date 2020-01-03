@@ -15,14 +15,6 @@ utilities.boolean = function (value, default)
   return default
 end
 
-if not table.maxn then
-  table.maxn = function(tbl)
-    local max = 0
-    for i, _ in pairs(tbl) do if i > max then max = i end end
-    return max
-  end
-end
-
 utilities.error = function(message, bug)
   utilities.warn(message, bug)
   io.stderr:flush()
@@ -80,7 +72,7 @@ end
 
 utilities.dump = function (...)
   local arg = { ... } -- Avoid things that Lua stuffs in arg like args to self()
-  pretty.dump(#arg == 1 and arg[1] or arg, "/dev/stderr")
+  pl.pretty.dump(#arg == 1 and arg[1] or arg, "/dev/stderr")
 end
 
 utilities.concat = function (array, separator)
@@ -88,7 +80,7 @@ utilities.concat = function (array, separator)
 end
 
 utilities.inherit = function (orig, spec)
-  local new = std.tree.clone(orig)
+  local new = pl.tablex.deepcopy(orig)
   if spec then
     for k,v in pairs(spec) do new[k] = v end
   end
@@ -136,28 +128,18 @@ end
 
 utilities.compress = function (items)
   local rv = {}
-  for i=1,table.maxn(items) do if items[i] then rv[#rv+1] = items[i] end end
+  local max = math.max(table.unpack(pl.tablex.keys(items)))
+  for i = 1, max do if items[i] then rv[#rv+1] = items[i] end end
   return rv
 end
 
-table.nitems = function (tbl)
-  local count = 0
-  for _ in pairs(tbl) do count = count + 1 end
-  return count
-end
-
-table.append = function (basetable, tbl)
-  if not basetable or not tbl then SU.error("table.append called with nil table!: "..basetable..", "..tbl, true) end
-  for i=1,#tbl do
-      basetable[#basetable+1] = tbl[i]
-  end
-end
-
-table.flip = function(tbl)
-  for i=1, math.floor(#tbl / 2) do
-    local tmp = tbl[i]
-    tbl[i] = tbl[#tbl - i + 1]
-    tbl[#tbl - i + 1] = tmp
+utilities.flip_in_place = function (tbl)
+  local tmp, j
+  for i = 1, math.floor(#tbl / 2) do
+    tmp = tbl[i]
+    j = #tbl - i + 1
+    tbl[i] = tbl[j]
+    tbl[j] = tmp
   end
 end
 
@@ -181,8 +163,10 @@ end
 utilities.type = function(value)
   if type(value) == "number" then
     return math.floor(value) == value and "integer" or "number"
-  elseif type(value) == "table" then
+  elseif type(value) == "table" and value.prototype then
     return value:prototype()
+  elseif type(value) == "table" and value.is_a then
+    return value.type
   else
     return type(value)
   end
@@ -190,16 +174,17 @@ end
 
 utilities.cast = function (wantedType, value)
   local actualType = SU.type(value)
+  wantedType = string.lower(wantedType)
   if string.match(wantedType, actualType)     then return value
   elseif actualType == "nil"
      and string.match(wantedType, "nil")      then return nil
   elseif string.match(wantedType, "integer")  then return tonumber(value)
   elseif string.match(wantedType, "number")   then return tonumber(value)
   elseif string.match(wantedType, "boolean")  then return SU.boolean(value)
-  elseif string.match(wantedType, "Length")   then return SILE.length.parse(value)
-  elseif string.match(wantedType, "VGlue")    then return SILE.nodefactory.newVglue(value)
-  elseif string.match(wantedType, "Glue")     then return SILE.nodefactory.newGlue(value)
-  elseif string.match(wantedType, "Kern")     then return SILE.nodefactory.newKern(value)
+  elseif string.match(wantedType, "length")   then return SILE.length.parse(value)
+  elseif string.match(wantedType, "vglue")    then return SILE.nodefactory.newVglue(value)
+  elseif string.match(wantedType, "glue")     then return SILE.nodefactory.newGlue(value)
+  elseif string.match(wantedType, "kern")     then return SILE.nodefactory.newKern(value)
   else SU.warn("Unrecognized type: "..wantedType); return value
   end
 end

@@ -146,7 +146,7 @@ local function parseCpal(str)
   -- local colorIndices = vstruct.read("> " .. header.nPalettes .. "*u2", fd)
   local colors = vstruct.read(">@" .. header.oFirstColor .. " " .. header.nColors .. "*{b:u1 g:u1 r:u1 a:u1}", fd)
 
-  for i = 1, header.nPalettes do
+  for _ = 1, header.nPalettes do
     local palette = {}
     for j = 1, header.nPalettesEntries do
       local color = colors[j]

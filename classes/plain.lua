@@ -59,7 +59,7 @@ local skips = {
 for k, v in pairs(skips) do
   SILE.settings.declare({
       name = "plain." .. k .. "skipamount",
-      type = "VGlue",
+      type = "vglue",
       default = SILE.nodefactory.newVglue(v),
       help = "The amount of a \\" .. k .. "skip"
     })
@@ -144,6 +144,16 @@ SILE.registerCommand("ragged", function (options, content)
   end)
 end)
 
+local _rtl_pre_post = function (box, typesetter, line)
+  local advance = function () typesetter.frame:advanceWritingDirection(box:scaledWidth(line)) end
+  if typesetter.frame:writingDirection() == "RTL" then
+    advance()
+    return function () end
+  else
+    return advance
+  end
+end
+
 SILE.registerCommand("hbox", function (_, content)
   local index = #(SILE.typesetter.state.nodes)+1
   local recentContribution = {}
@@ -174,22 +184,16 @@ SILE.registerCommand("hbox", function (_, content)
       depth = d,
       value = recentContribution,
       outputYourself = function (self, typesetter, line)
-        -- Yuck!
-        if typesetter.frame:writingDirection() == "RTL" then
-          typesetter.frame:advanceWritingDirection(self:scaledWidth(line))
-        end
+        local _post = _rtl_pre_post(self, typesetter, line)
         local ox = typesetter.frame.state.cursorX
         local oy = typesetter.frame.state.cursorY
         SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
-        for i = 1, #(self.value) do
-          local node = self.value[i]
+        for _, node in ipairs(self.value) do
           node:outputYourself(typesetter, line)
         end
         typesetter.frame.state.cursorX = ox
         typesetter.frame.state.cursorY = oy
-        if typesetter.frame:writingDirection() ~= "RTL" then
-          typesetter.frame:advanceWritingDirection(self:scaledWidth(line))
-        end
+        _post()
         if SU.debugging("hboxes") then SILE.outputter.debugHbox(self, self:scaledWidth(line)) end
       end
     })
@@ -204,7 +208,7 @@ SILE.registerCommand("vbox", function (options, content)
     SILE.typesetter:pushState()
     SILE.process(content)
     SILE.typesetter:leaveHmode(1)
-    vbox = SILE.pagebuilder.collateVboxes(SILE.typesetter.state.outputQueue)
+    vbox = SILE.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue)
     SILE.typesetter:popState()
   end)
   return vbox

@@ -161,9 +161,20 @@ clean-tests:
 
 clean-recursive: clean-deps
 
+clean-recursive: clean-tests
+
+.PHONY: clean-tests
+clean-tests:
+	rm -rf tests/*.actual
+
+clean-recursive: clean-deps
+
 .PHONY: clean-deps
 clean-deps:
 	rm -rf $(DEPDIR)
+
+time-%.json: benchmark-%/time.json
+	cp $< $@
 
 define time_action =
 	export TIMEFORMAT=$$'{ "real": "%R", "user": "%U", "sys": "%S" }'

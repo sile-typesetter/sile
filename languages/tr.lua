@@ -1,7 +1,8 @@
 -- Quotes may be part of a word in Turkish
-SILE.nodeMakers.tr = SILE.nodeMakers.unicode {
-  isWordType = { cm = true, qu = true },
-}
+SILE.nodeMakers.tr = pl.class({
+    _base = SILE.nodeMakers.unicode,
+    isWordType = { cm = true, qu = true },
+  })
 
 SILE.hyphenator.languages["tr"] = {}
 SILE.hyphenator.languages["tr"].patterns =
@@ -685,7 +686,7 @@ local tr_nums = function (num, ordinal)
   if abs > num then
     words[#words+1] = minus
   end
-  table.flip(words)
+  SU.flip_in_place(words)
   return table.concat(words, " ")
 end
 

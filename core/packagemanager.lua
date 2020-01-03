@@ -117,6 +117,7 @@ local function reloadCatalogue()
 end
 
 -- These functions are global so they can be used from the REPL
+-- luacheck: ignore updatePackage
 function updatePackage(packageName, branch)
   local target = packageHome .. packageName
   -- Are we already there?
@@ -146,6 +147,7 @@ function updatePackage(packageName, branch)
   saveInstalled()
 end
 
+-- luacheck: ignore installPackage
 function installPackage(packageName)
   if not recentlyUpdated  then updateCatalogue() end
   if not recentlyReloaded then reloadCatalogue() end

@@ -115,7 +115,7 @@ local mergeColumns = function ()
   -- 1) Balance all remaining material.
 
   -- 1.1) Run the pagebuilder once to clear out any full pages
-  SILE.typesetter:pageBuilder()
+  SILE.typesetter:buildPage()
 
   -- 1.2) Find out the shape of the columnset. (It will change after we balance it)
   local frame = SILE.typesetter.frame
@@ -128,7 +128,7 @@ local mergeColumns = function ()
 
   -- 1.3) Now force a balance, which will resize the frames
   SILE.call("balancecolumns")
-  SILE.typesetter:pageBuilder()
+  SILE.typesetter:buildPage()
 
   -- 2) Add a new frame, the width of the old frameset and the height of
   -- old frameset - new height, at the end of the current frame
@@ -175,8 +175,8 @@ SILE.registerCommand("float", function (options, content)
   SILE.typesetter:leaveHmode()
   local hbox = SILE.call("hbox", {}, content)
   table.remove(SILE.typesetter.state.nodes) -- steal it back
-  local heightOfPageSoFar = SILE.pagebuilder.collateVboxes(SILE.typesetter.state.outputQueue).height
-  if SILE.length.make(heightOfPageSoFar + hbox.height - SILE.typesetter:pageTarget()).length > 0 then
+  local heightOfPageSoFar = SILE.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue).height
+  if SILE.length.make(heightOfPageSoFar + hbox.height - SILE.typesetter:getTargetLength()).length > 0 then
     SILE.call("eject")
     SILE.typesetter:leaveHmode()
   end

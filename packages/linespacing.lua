@@ -10,32 +10,32 @@ SILE.settings.declare({
 SILE.settings.declare({
   name = "linespacing.fixed.baselinedistance",
   default = SILE.length.parse("1.2em"),
-  type = "Length",
+  type = "length",
   help = "Distance from baseline to baseline in the case of fixed line spacing"
 })
 
 SILE.settings.declare({
   name = "linespacing.minimumfirstlineposition",
   default = SILE.length.parse("0"),
-  type = "Length"
+  type = "length"
 })
 
 SILE.settings.declare({
   name = "linespacing.fit-glyph.extra-space",
   default = SILE.length.parse("0"),
-  type = "Length"
+  type = "length"
 })
 
 SILE.settings.declare({
   name = "linespacing.fit-font.extra-space",
   default = SILE.length.parse("0"),
-  type = "Length"
+  type = "length"
 })
 
 SILE.settings.declare({
   name = "linespacing.css.line-height",
   default = SILE.length.parse("1.2em"),
-  type = "Length"
+  type = "length"
 })
 
 local metricscache = {}

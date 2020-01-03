@@ -2,7 +2,7 @@
 local lua_version = _VERSION:sub(-3)
 if lua_version < "5.3" then require("compat53") end -- Backport of lots of Lua 5.3 features to Lua 5.[12]
 bit32 = bit32 or require("bit32") -- Backport of Lua 5.2+ bitwise functions to Lua 5.1
-require("pl") -- Penlight on-demand module loader
+pl = require("pl.import_into")() -- Penlight on-demand module loader
 if (os.getenv("SILE_COVERAGE")) then require("luacov") end
 
 -- Include lua-stdlib, but make sure debugging is turned off since newer
@@ -28,7 +28,7 @@ SILE.nodeMakers = {}
 SILE.tokenizers = {}
 SILE.status = {}
 
-SILE.traceStack = require("core/tracestack")
+SILE.traceStack = require("core/tracestack")()
 SILE.documentState = std.object {}
 SILE.scratch = {}
 SILE.length = require("core/length")
@@ -42,7 +42,7 @@ require("core/inputs-xml")
 require("core/inputs-common")
 require("core/papersizes")
 require("core/colorparser")
-require("core/pagebuilder")
+SILE.pagebuilder = require("core/pagebuilder")()
 require("core/typesetter")
 require("core/hyphenator-liang")
 require("core/languages")

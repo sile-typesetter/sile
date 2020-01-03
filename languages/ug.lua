@@ -6,13 +6,12 @@
 -- Uyghur is Turkish, right?
 SILE.languageSupport.loadLanguage("tr")
 
-require("char-def")
-local chardata = characters.data
+local chardata = pl.pretty.load(pl.utils.readfile("lua-libraries/char-def.lua")).characters.data
 
 SILE.settings.declare({
   name = "languages.ug.hyphenoffset",
   help = "Space added between text and hyphen",
-  type = "Glue or nil",
+  type = "glue or nil",
   default = SILE.nodefactory.newGlue("1pt")
 })
 
@@ -123,7 +122,7 @@ SILE.hyphenator.languages.ug = function(n)
   if SU.debugging("uyghur") then io.write("Original: ", n.text.." -> "..latin.." -> ") end
   local state = n.options
   -- Make "Turkish" nodes
-  local newoptions = std.tree.clone(n.options)
+  local newoptions = pl.tablex.deepcopy(n.options)
   newoptions.language = "lt"
   if not SILE.hyphenators.lt then
     SILE.hyphenate(SILE.shaper:createNnodes(latin, newoptions))

@@ -39,58 +39,62 @@ local debugGrid = function ()
   end
 end
 
-local oldPageBuilder = SILE.pagebuilder
-local gridFindBestBreak = function (options)
-  local vboxlist = SU.required(options, "vboxlist", "in findBestBreak")
-  local target   = SU.required(options, "target", "in findBestBreak")
-  local i = 0
-  local totalHeight = SILE.length.new()
-  local bestBreak = 0
-  local started = false
-  while not started and i < #vboxlist do
-    i = i + 1
-    if not vboxlist[i]:isVglue() then
-      started = true
-      i = i - 1
-      break
-    end
-  end
-  SU.debug("pagebuilder", "Page builder for frame "..SILE.typesetter.frame.id.." called with "..#vboxlist.." nodes, "..target)
-  while i < #vboxlist do
-    i = i + 1
-    local vbox = vboxlist[i]
-    SU.debug("pagebuilder", "Dealing with VBox " .. vbox)
-    if (vbox:isVbox()) then
-      totalHeight = totalHeight + vbox.height + vbox.depth
-    elseif vbox:isVglue() then
-      totalHeight = totalHeight + vbox.height
-    end
-    if vbox.type == "insertionVbox" then
-      target = SILE.insertions.processInsertion(vboxlist, i, totalHeight, target)
-      vbox = vboxlist[i]
-    end
-    local left = target - totalHeight.length
-    SU.debug("pagebuilder", "I have " .. tostring(left) .. "pts left")
-    SU.debug("pagebuilder", "totalHeight " .. totalHeight .. " with target " .. target)
-    local badness = 0
-    if left < 0 then badness = 1000000 end
-    if vbox:isPenalty() then
-      if vbox.penalty < -3000 then badness = 100000
-      else badness = -(left * left) - vbox.penalty end
-    end
-    if badness > 0 then
-      local onepage = {}
-      for j=1, bestBreak do
-        onepage[j] = table.remove(vboxlist, 1)
-      end
-      while(#onepage > 1 and onepage[#onepage].discardable) do onepage[#onepage] = nil end
-      return onepage, 1000
-    end
-    bestBreak = i
-  end
-  return false, false
-end
+local defaultPagebuilder = require("core/pagebuilder")
 
+local gridPagebuilder = pl.class({
+    _base = defaultPagebuilder,
+
+    findBestBreak = function (_, options)
+      local vboxlist = SU.required(options, "vboxlist", "in findBestBreak")
+      local target   = SU.required(options, "target", "in findBestBreak")
+      local i = 0
+      local totalHeight = SILE.length.new()
+      local bestBreak = 0
+      while i < #vboxlist do
+        i = i + 1
+        if not vboxlist[i]:isVglue() then
+          i = i - 1
+          break
+        end
+      end
+      SU.debug("pagebuilder", "Page builder for frame "..SILE.typesetter.frame.id.." called with "..#vboxlist.." nodes, "..target)
+      while i < #vboxlist do
+        i = i + 1
+        local vbox = vboxlist[i]
+        SU.debug("pagebuilder", "Dealing with VBox " .. vbox)
+        if (vbox:isVbox()) then
+          totalHeight = totalHeight + vbox.height + vbox.depth
+        elseif vbox:isVglue() then
+          totalHeight = totalHeight + vbox.height
+        end
+        if vbox.type == "insertionVbox" then
+          target = SILE.insertions.processInsertion(vboxlist, i, totalHeight, target)
+          vbox = vboxlist[i]
+        end
+        local left = target - totalHeight.length
+        SU.debug("pagebuilder", "I have " .. tostring(left) .. "pts left")
+        SU.debug("pagebuilder", "totalHeight " .. totalHeight .. " with target " .. target)
+        local badness = 0
+        if left < 0 then badness = 1000000 end
+        if vbox:isPenalty() then
+          if vbox.penalty < -3000 then badness = 100000
+        else badness = -(left * left) - vbox.penalty end
+      end
+      if badness > 0 then
+        local onepage = {}
+        for j=1, bestBreak do
+          onepage[j] = table.remove(vboxlist, 1)
+        end
+        while(#onepage > 1 and onepage[#onepage].discardable) do onepage[#onepage] = nil end
+        return onepage, 1000
+      end
+      bestBreak = i
+    end
+    return false, false
+  end
+})
+
+local oldPageBuilder
 SILE.registerCommand("grid:debug", function (_, _)
   debugGrid()
   SILE.typesetter:registerNewFrameHook(debugGrid)
@@ -102,8 +106,8 @@ SILE.registerCommand("grid", function (options, _)
   gridSpacing = SILE.parseComplexFrameDimension(options.spacing)
   -- SILE.typesetter:leaveHmode()
 
-  SILE.pagebuilder = std.tree.clone(SILE.pagebuilder)
-  SILE.pagebuilder.findBestBreak = gridFindBestBreak
+  oldPageBuilder = SILE.pagebuilder
+  SILE.pagebuilder = gridPagebuilder()
 
   SILE.typesetter.leadingFor = leadingFor
   SILE.typesetter.pushVglue = pushVglue

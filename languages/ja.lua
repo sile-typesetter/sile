@@ -135,51 +135,52 @@ end
 
 -- local okbreak = SILE.nodefactory.newPenalty({ penalty = 0 })
 
-SILE.nodeMakers.ja = SILE.nodeMakers.base {
-  iterator = function (self, items)
-    self:init()
-    local options = self.options
-  return coroutine.wrap(function ()
-    local db
-    local lastcp = -1
-    local lastchar = ""
-    local space = "%s" -- XXX
-    for i = 1, #items do
-      local item = items[i]
-      local uchar = items[i].text
-      local thiscp = SU.codepoint(uchar)
-      db = lastchar.. "|" .. uchar
-      if string.match(uchar, space) then
-        db = db .. " S"
-        coroutine.yield(SILE.shaper:makeSpaceNode(options, item))
-      else
-        local length = SILE.length.new({
-            length = SILE.toPoints(intercharacterspace(lastcp, thiscp)),
-            stretch = SILE.toPoints(stretchability(lastcp, thiscp)),
-            shrink = SILE.toPoints(shrinkability(lastcp, thiscp))
-          })
-        if breakAllowed(lastcp, thiscp) then
-          db = db .." G ".. length
-          coroutine.yield(SILE.nodefactory.newGlue({ width = length }))
-        elseif length.length ~= 0 or length.stretch ~= 0 or length.shrink ~= 0 then
-          db = db .." K ".. length
-          coroutine.yield(SILE.nodefactory.newKern({ width = length }))
-        else db = db .. " N"
+SILE.nodeMakers.ja = pl.class({
+    _base = SILE.nodeMakers.base,
+    iterator = function (self, items)
+      local options = self.options
+      return coroutine.wrap(function ()
+        local db
+        local lastcp = -1
+        local lastchar = ""
+        local space = "%s" -- XXX
+        for i = 1, #items do
+          local item = items[i]
+          local uchar = items[i].text
+          local thiscp = SU.codepoint(uchar)
+          db = lastchar.. "|" .. uchar
+          if string.match(uchar, space) then
+            db = db .. " S"
+            coroutine.yield(SILE.shaper:makeSpaceNode(options, item))
+          else
+            local length = SILE.length.new({
+                length = SILE.toPoints(intercharacterspace(lastcp, thiscp)),
+                stretch = SILE.toPoints(stretchability(lastcp, thiscp)),
+                shrink = SILE.toPoints(shrinkability(lastcp, thiscp))
+              })
+            if breakAllowed(lastcp, thiscp) then
+              db = db .." G ".. length
+              coroutine.yield(SILE.nodefactory.newGlue({ width = length }))
+            elseif length.length ~= 0 or length.stretch ~= 0 or length.shrink ~= 0 then
+              db = db .." K ".. length
+              coroutine.yield(SILE.nodefactory.newKern({ width = length }))
+            else db = db .. " N"
+            end
+            if jisClass(thiscp) == 5 or jisClass(thiscp) == 6 then
+              local node = SILE.shaper:formNnode({ item }, uchar, options)
+              node.hangable = true
+              coroutine.yield(node)
+            else
+              coroutine.yield(SILE.shaper:formNnode({ item }, uchar, options))
+            end
+          end
+          lastcp =thiscp
+          lastchar = uchar
+          SU.debug("ja", db)
         end
-        if jisClass(thiscp) == 5 or jisClass(thiscp) == 6 then
-          local node = SILE.shaper:formNnode({ item }, uchar, options)
-          node.hangable = true
-          coroutine.yield(node)
-        else
-          coroutine.yield(SILE.shaper:formNnode({ item }, uchar, options))
-        end
-      end
-      lastcp =thiscp
-      lastchar = uchar
-      SU.debug("ja", db)
+      end)
     end
-  end)
-end }
+  })
 
 SILE.hyphenator.languages.ja = { patterns={} }
 

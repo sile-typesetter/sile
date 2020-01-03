@@ -5,7 +5,7 @@ local function defineMaster (_, args)
   SU.required(args, "id", "defining master")
   SU.required(args, "frames", "defining master")
   SU.required(args, "firstContentFrame", "defining master")
-  SILE.scratch.masters[args.id] = {frames = {}, firstContentFrame = nil}
+  SILE.scratch.masters[args.id] = { frames = {}, firstContentFrame = nil }
   for k,spec in pairs(args.frames) do
     spec.id=k
     if spec.solve then
@@ -21,7 +21,7 @@ end
 
 local function defineMasters (self, list)
   if list then
-    for i=1,#list do defineMaster(self, list[i]) end
+    for i = 1, #list do defineMaster(self, list[i]) end
   end
 end
 
@@ -49,7 +49,7 @@ local function switchMaster (id)
     SU.error("Can't find master "..id)
   end
   SILE.documentState.documentClass.pageTemplate = SILE.scratch.masters[id]
-  SILE.documentState.thisPageTemplate = std.tree.clone(SILE.documentState.documentClass.pageTemplate)
+  SILE.documentState.thisPageTemplate = pl.tablex.deepcopy(SILE.documentState.documentClass.pageTemplate)
   doswitch(SILE.scratch.masters[id].frames)
   SILE.typesetter:initFrame(SILE.scratch.masters[id].firstContentFrame)
 end
@@ -82,7 +82,6 @@ SILE.registerCommand("switch-master", function (options, _)
   SU.required(options, "id", "switching master")
   switchMaster(options.id)
 end, "Switches the master for the current page")
-
 
 return {
   init = defineMasters,

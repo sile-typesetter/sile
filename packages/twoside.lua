@@ -8,7 +8,7 @@ local mirrorMaster = function(_, existing, new)
     SU.error("Can't find master "..existing)
   end
   for name, frame in pairs(SILE.scratch.masters[existing].frames) do
-    local newframe  = std.tree.clone(frame)
+    local newframe = pl.tablex.deepcopy(frame)
     if frame:isAbsoluteConstraint("right") then
       newframe.constraints.left = "100%pw-("..frame.constraints.right..")"
     end

@@ -96,7 +96,7 @@ local _pageInsertionVbox = SILE.nodefactory.newVbox({
 
 local thisPageInsertionBoxForClass = function (class)
   if not insertionsThisPage[class] then
-    local this = std.tree.clone(_pageInsertionVbox)
+    local this = pl.tablex.deepcopy(_pageInsertionVbox)
     this.frame  = SILE.scratch.insertions.classes[class].insertInto.frame
     insertionsThisPage[class] = this
   end
@@ -125,14 +125,14 @@ local _insertionVbox = SILE.nodefactory.newVbox({
     end
   end,
   split = function (self, materialToSplit, maxsize)
-    local s = SILE.pagebuilder.findBestBreak({
+    local s = SILE.pagebuilder:findBestBreak({
       vboxlist = materialToSplit,
       target   = maxsize.length,
       restart  = false,
       force    = true
     })
     if s then
-      local newvbox = SILE.pagebuilder.collateVboxes(s)
+      local newvbox = SILE.pagebuilder:collateVboxes(s)
       self.nodes = {}
       self.height = 0
       self:append(materialToSplit)
@@ -156,9 +156,9 @@ entered yet.
 
 --]]
 
-local initShrinkage = function (f)
-  if not f.state.totals then f:init() end
-  if not f.state.totals.shrinkage then f.state.totals.shrinkage = 0 end
+local initShrinkage = function (frame)
+  if not frame.state or not frame.state.totals then frame:init() end
+  if not frame.state.totals.shrinkage then frame.state.totals.shrinkage = 0 end
 end
 
 --[[ Mark a frame for reduction. --]]
@@ -240,8 +240,8 @@ local min = function (a, b) -- Defined funny to help Lua 5.1 compare overloaded 
   return SILE.length.make(a).length < SILE.length.make(b).length and a or b
 end
 
-local pt = SILE.typesetter.pageTarget
-SILE.typesetter.pageTarget = function (self)
+local pt = SILE.typesetter.getTargetLength
+SILE.typesetter.getTargetLength = function (self)
   initShrinkage(self.frame)
   return pt(self) - self.frame.state.totals.shrinkage
 end
@@ -320,7 +320,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   -- intend to put on this page.
   maxsize = maxsize - topBox.height
   local materialToSplit = {}
-  table.append(materialToSplit, ins:unbox())
+  pl.tablex.insertvalues(materialToSplit, ins:unbox())
   local newvbox = ins:split(materialToSplit, maxsize)
 
   if newvbox then

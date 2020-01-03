@@ -1,7 +1,8 @@
--- Just boxes
+-- This infinity needs to be smaller than an actual infinity but bigger than the infinite stretch
+-- added by the typesetter. See https://github.com/sile-typesetter/sile/issues/227
+local inf = 1e13
 
 local _box = std.object {
-  _type = "Box",
   height= 0,
   depth= 0,
   width= 0,
@@ -35,8 +36,6 @@ function _box:isDiscretionary ()  return self.type == "discretionary" end
 
 function _box:isKern ()  return self.type == "kern" end
 
--- Hboxes
-
 local _hbox = _box {
   type = "hbox",
   __tostring = function (this)
@@ -65,8 +64,6 @@ local _hbox = _box {
     end
   end
 }
-
--- Native nodes (clever hboxes)
 
 local _nnode = _hbox {
   type = "nnode",
@@ -116,8 +113,6 @@ local _unshaped = _nnode {
     if k == "width" then SU.error("Can't get width of unshaped node", true) end
   end
 }
-
--- Discretionaries
 
 local _disc = _hbox {
   type = "discretionary",
@@ -190,8 +185,6 @@ local _disc = _hbox {
   end,
 }
 
--- Alternatives
-
 local _alt = _hbox {
   type = "alternative",
   options = {},
@@ -219,9 +212,7 @@ local _alt = _hbox {
   end,
 }
 
--- Glue
 local _glue = _box {
-  _type = "Glue",
   type = "glue",
   discardable = true,
   __tostring = function (this)
@@ -239,7 +230,6 @@ local _glue = _box {
   end
 }
 local _kern = _glue {
-  _type = "Kern",
   type = "kern",
   discardable = false,
   __tostring = function (this)
@@ -247,10 +237,8 @@ local _kern = _glue {
   end,
 }
 
--- VGlue
 local _vglue = _box {
   type = "vglue",
-  _type = "VGlue",
   discardable = true,
   __tostring = function (this)
     return (this.explicit and "E:" or "") .. "VG<" .. tostring(this.height) .. ">";
@@ -270,7 +258,6 @@ local _vglue = _box {
 }
 
 local _vkern = _vglue {
-  _type = "VKern",
   type = "vkern",
   discardable = false,
   __tostring = function (this)
@@ -278,8 +265,6 @@ local _vkern = _vglue {
   end,
 }
 
-
--- Penalties
 local _penalty = _box {
   type = "penalty",
   discardable = true,
@@ -294,7 +279,6 @@ local _penalty = _box {
   unbox = function (self) return {self} end
 }
 
--- Vbox
 local _vbox = _box {
   type = "vbox",
   nodes = {},
@@ -382,33 +366,30 @@ function SILE.nodefactory.newDisc(spec) return _disc(spec) end
 function SILE.nodefactory.newAlternative(spec) return _alt(spec) end
 
 function SILE.nodefactory.newGlue(spec)
-  if type(spec) == "table" then return std.tree.clone(_glue(spec)) end
+  if type(spec) == "table" then return pl.tablex.deepcopy(_glue(spec)) end
   if type(spec) == "string" then return _glue({width = SILE.length.parse(spec)}) end
   SU.error("Unparsable glue spec "..spec)
 end
 function SILE.nodefactory.newKern(spec)
-  if type(spec) == "table" then return std.tree.clone(_kern(spec)) end
+  if type(spec) == "table" then return pl.tablex.deepcopy(_kern(spec)) end
   if type(spec) == "string" then return _kern({width = SILE.length.parse(spec)}) end
   SU.error("Unparsable kern spec "..spec)
 end
 function SILE.nodefactory.newVglue(spec)
-  if type(spec) == "table" then return std.tree.clone(_vglue(spec)) end
+  if type(spec) == "table" then return pl.tablex.deepcopy(_vglue(spec)) end
   if type(spec) == "string" then return _vglue({height = SILE.length.parse(spec)}) end
   SU.error("Unparsable glue spec "..spec)
 end
 function SILE.nodefactory.newVKern(spec)
-  if type(spec) == "table" then return std.tree.clone(_vkern(spec)) end
+  if type(spec) == "table" then return pl.tablex.deepcopy(_vkern(spec)) end
   if type(spec) == "string" then return _vkern({height = SILE.length.parse(spec)}) end
   SU.error("Unparsable kern spec "..spec)
 end
-function SILE.nodefactory.newPenalty(spec)  return std.tree.clone(_penalty(spec)) end
+function SILE.nodefactory.newPenalty(spec)  return pl.tablex.deepcopy(_penalty(spec)) end
 function SILE.nodefactory.newDiscretionary(spec)  return _disc(spec) end
 function SILE.nodefactory.newVbox(spec)  return _vbox(spec):init() end
 function SILE.nodefactory.newMigrating(spec)  return _migrating(spec) end
 
--- This infinity needs to be smaller than an actual infinity but bigger than the infinite stretch
--- added by the typesetter. See https://github.com/sile-typesetter/sile/issues/227
-local inf = 1e13
 SILE.nodefactory.zeroGlue = SILE.nodefactory.newGlue({width = SILE.length.new({length = 0})})
 SILE.nodefactory.hfillGlue = SILE.nodefactory.newGlue({width = SILE.length.new({length = 0, stretch = inf})})
 SILE.nodefactory.vfillGlue = SILE.nodefactory.newVglue({height = SILE.length.new({length = 0, stretch = inf})})

@@ -18,10 +18,11 @@ local moveNodes = function (_)
 end
 
 local writeToc = function ()
-  local contents = "return "..std.string.pickle(SILE.scratch.tableofcontents)
-  local tocfile,err = io.open(SILE.masterFilename .. '.toc', "w")
+  local tocdata = pl.pretty.write(SILE.scratch.tableofcontents)
+  local tocfile, err = io.open(SILE.masterFilename .. '.toc', "w")
   if not tocfile then return SU.error(err) end
-  tocfile:write(contents)
+  tocfile:write("return " .. tocdata)
+  tocfile:close()
 end
 
 SILE.registerCommand("tableofcontents", function (_, _)

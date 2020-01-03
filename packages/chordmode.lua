@@ -106,7 +106,7 @@ SILE.settings.declare({
 
 SILE.settings.declare({
     name = "chordmode.lineheight",
-    type = "Length",
+    type = "length",
     default = SILE.length.parse("4mm"),
     help = "Length of the chord name line."
   })

@@ -46,7 +46,7 @@ SILE.registerCommand("define", function (options, content)
   SU.required(options, "command", "defining command")
   SILE.registerCommand(options["command"], function (_, _content)
     --local prevState = SILE.documentState
-    --SILE.documentState = std.tree.clone( prevState )
+    --SILE.documentState = pl.tablex.deepcopy( prevState )
     local depth = #macroStack
     table.insert(macroStack, _content)
     SU.debug("macros", "Processing a "..options["command"].." Stack depth is "..depth)
@@ -177,7 +177,7 @@ SILE.baseClass = std.object {
   init = function (self)
     SILE.settings.declare({
       name = "current.parindent",
-      type = "Glue or nil",
+      type = "glue or nil",
       default = nil,
       help = "Glue at start of paragraph"
     })
@@ -194,7 +194,7 @@ SILE.baseClass = std.object {
   end,
 
   initialFrame = function (self)
-    SILE.documentState.thisPageTemplate = std.tree.clone(self.pageTemplate)
+    SILE.documentState.thisPageTemplate = pl.tablex.deepcopy(self.pageTemplate)
     SILE.frames = { page = SILE.frames.page }
     for k, v in pairs(SILE.documentState.thisPageTemplate.frames) do
       SILE.frames[k] = v
@@ -239,17 +239,17 @@ SILE.baseClass = std.object {
 
   finish = function (self)
     SILE.call("vfill")
-    while not (#SILE.typesetter.state.nodes == 0 and #SILE.typesetter.state.outputQueue == 0) do
+    while not SILE.typesetter:isQueueEmpty() do
       SILE.call("supereject")
       SILE.typesetter:leaveHmode(true)
-      SILE.typesetter:pageBuilder()
-      if not (#SILE.typesetter.state.nodes == 0 and #SILE.typesetter.state.outputQueue == 0) then
+      SILE.typesetter:buildPage()
+      if not SILE.typesetter:isQueueEmpty() then
         SILE.typesetter:initNextFrame()
       end
     end
     SILE.typesetter:runHooks("pageend") -- normally run by the typesetter
     self:endPage()
-    assert(#SILE.typesetter.state.nodes == 0 and #SILE.typesetter.state.outputQueue == 0, "queues not empty")
+    assert(SILE.typesetter:isQueueEmpty(), "queues not empty")
     SILE.outputter:finish()
   end,
 
@@ -260,7 +260,7 @@ SILE.baseClass = std.object {
 
   endPar = function (typesetter)
     local g = SILE.settings.get("document.parskip")
-    typesetter:pushVglue(std.tree.clone(g))
+    typesetter:pushVglue(pl.tablex.deepcopy(g))
   end,
 
   options = {

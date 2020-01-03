@@ -6,7 +6,7 @@ SILE.settings.declare({ name = "linebreak.adjdemerits", type = "integer", defaul
   help = "Additional demerits which are accumulated in the course of paragraph building when two consecutive lines are visually incompatible. In these cases, one line is built with much space for justification, and the other one with little space." })
 SILE.settings.declare({ name = "linebreak.looseness", type = "integer", default = 0 })
 SILE.settings.declare({ name = "linebreak.prevGraf", type = "integer", default = 0 })
-SILE.settings.declare({ name = "linebreak.emergencyStretch", type = "Length or nil", default = SILE.length.new() })
+SILE.settings.declare({ name = "linebreak.emergencyStretch", type = "length or nil", default = SILE.length.new() })
 SILE.settings.declare({ name = "linebreak.doLastLineFit", type = "boolean", default = false }) -- unimplemented
 SILE.settings.declare({ name = "linebreak.linePenalty", type = "integer", default = 10 })
 SILE.settings.declare({ name = "linebreak.hyphenPenalty", type = "integer", default = 50 })
@@ -104,7 +104,7 @@ function lineBreak:tryBreak() -- 855
   self.prev_r = self.activeListHead
   self.old_l = 0
   self.r = nil
-  self.curActiveWidth = std.tree.clone(self.activeWidth)
+  self.curActiveWidth = pl.tablex.deepcopy(self.activeWidth)
 
   while true do
     while true do -- allows "break" to function as "continue"
@@ -259,7 +259,7 @@ function lineBreak:deactivateR() -- 886
     self.r = self.activeListHead.next
     if self.r.type == "delta" then
       self.activeWidth = self.activeWidth + self.r.width
-      self.curActiveWidth = std.tree.clone(self.activeWidth)
+      self.curActiveWidth = pl.tablex.deepcopy(self.activeWidth)
       self.activeListHead.next = self.r.next
     end
     if debugging then SU.debug("break", "  Deactivate, branch 1"); end
@@ -333,7 +333,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
   if self.no_break_yet then
     -- 863
     self.no_break_yet = false
-    self.breakWidth = std.tree.clone(self.background)
+    self.breakWidth = pl.tablex.deepcopy(self.background)
     local place = self.place
     local node = self.nodes[place]
     if node and node:isDiscretionary() then -- 866
@@ -353,7 +353,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
   if self.prev_r.type == "delta" then
     self.prev_r.width = self.prev_r.width - self.curActiveWidth + self.breakWidth
   elseif self.prev_r == self.activeListHead then
-    self.activeWidth = std.tree.clone(self.breakWidth)
+    self.activeWidth = pl.tablex.deepcopy(self.breakWidth)
   else
     local newDelta = { next = self.r, type = "delta", width = self.breakWidth - self.curActiveWidth }
     if debugging then SU.debug("break", "Added new delta node = " .. tostring(newDelta.width)) end
@@ -526,7 +526,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
     }
 
     -- Not doing 1630
-    self.activeWidth = std.tree.clone(self.background)
+    self.activeWidth = pl.tablex.deepcopy(self.background)
 
     self.place = 1
     while self.nodes[self.place] and self.activeListHead.next ~= self.activeListHead do
