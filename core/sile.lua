@@ -1,5 +1,24 @@
+-- Initialize Lua environment
+local lua_version = _VERSION:sub(-3)
+if lua_version < "5.3" then require("compat53") end -- Backport of lots of Lua 5.3 features to Lua 5.[12]
+bit32 = bit32 or require("bit32") -- Backport of Lua 5.2+ bitwise functions to Lua 5.1
+require("pl") -- Penlight on-demand module loader
+if (os.getenv("SILE_COVERAGE")) then require("luacov") end
+
+-- Include lua-stdlib, but make sure debugging is turned off since newer
+-- versions enable it by default and it comes with a huge performance hit.
+-- Note we are phasing out stdlib in favor of Penlight. When adding or
+-- refactoring code, using the Penlight equivalent features is preferred.
+-- luacheck: push ignore _DEBUG
+_DEBUG = false
+std = require("std")
+-- luacheck: pop
+
+-- Includes for _this_ scope
+local lfs = require("lfs")
+
+-- Initialize SILE
 SILE = {}
-SILE.version = "0.9.5.1"
 SILE.utilities = require("core/utilities")
 SU = SILE.utilities
 SILE.inputs = {}
@@ -7,13 +26,9 @@ SILE.Commands = {}
 SILE.debugFlags = {}
 SILE.nodeMakers = {}
 SILE.tokenizers = {}
+SILE.status = {}
 
-loadstring = loadstring or load -- 5.3 compatibility
-if not unpack then unpack = table.unpack end -- 5.3 compatibility
-std = require("std")
-lfs = require("lfs")
-if (os.getenv("SILE_COVERAGE")) then require("luacov") end
-
+SILE.traceStack = require("core/tracestack")
 SILE.documentState = std.object {}
 SILE.scratch = {}
 SILE.length = require("core/length")
@@ -34,6 +49,7 @@ require("core/languages")
 require("core/font")
 require("core/packagemanager")
 
+SILE.fontManager = require("core/fontmanager")
 SILE.frameParser = require("core/frameparser")
 SILE.linebreak = require("core/break")
 
@@ -58,21 +74,23 @@ SILE.init = function ()
   elseif SILE.backend == "text" then
     require("core/harfbuzz-shaper")
     require("core/text-output")
+  elseif SILE.backend == "dummy" then
+    require("core/harfbuzz-shaper")
+    require("core/dummy-output")
   end
   if SILE.dolua then
     for _, func in pairs(SILE.dolua) do
-      _, err = pcall(func)
+      local _, err = pcall(func)
       if err then error(err) end
     end
   end
 end
 
 SILE.require = function (dependency, pathprefix)
-  local file = SILE.resolveFile(dependency..".lua", pathprefix)
-  if file then return require(file:gsub(".lua$","")) end
+  dependency = dependency:gsub(".lua$", "")
   if pathprefix then
     local status, lib = pcall(require, std.io.catfile(pathprefix, dependency))
-    return status and lib or require(dependency)
+    if status then return lib end
   end
   return require(dependency)
 end
@@ -83,44 +101,54 @@ local parser = std.optparse ("SILE "..SILE.version..[[
 Usage: sile [options] file.sil|file.xml
 
 The SILE typesetter reads a single input file in either SIL or XML format to
-generate an output in PDF format. The output will be writted to the same name
-as the input file with the extention changed to .pdf.
+generate an output in PDF format. The output will be written to the same name
+as the input file with the extension changed to .pdf.
 
 Options:
 
   -b, --backend=VALUE      choose an alternative output backend
   -d, --debug=VALUE        debug SILE's operation
   -e, --evaluate=VALUE     evaluate some Lua code before processing file
+  -f, --fontmanager=VALUE  choose an alternative font manager
+  -m, --makedeps=[FILE]    generate a list of dependencies in Makefile format
   -o, --output=[FILE]      explicitly set output file name
   -I, --include=[FILE]     include a class or SILE file before processing input
-  -t, --traceback          display traceback on error
+  -t, --traceback          display detailed location trace on errors and warnings
   -h, --help               display this help, then exit
   -v, --version            display version information, then exit
 ]])
 
   parser:on ('--', parser.finished)
-  _G.unparsed, _G.opts = parser:parse(_G.arg)
+  local unparsed, opts = parser:parse(_G.arg)
   -- Turn slashes around in the event we get passed a path from a Windows shell
-  if _G.unparsed[1] then
-    SILE.masterFilename = _G.unparsed[1]:gsub("\\", "/")
+  if unparsed[1] then
+    SILE.inputFile = unparsed[1]:gsub("\\", "/")
     -- Strip extension
-    SILE.masterFilename = string.match(SILE.masterFilename,"(.+)%..-$") or SILE.masterFilename
+    SILE.masterFilename = string.match(SILE.inputFile, "(.+)%..-$") or SILE.inputFile
+    SILE.masterDir = SILE.masterFilename:match("(.-)[^%/]+$")
   end
   SILE.debugFlags = {}
   if opts.backend then
     SILE.backend = opts.backend
   end
   if opts.debug then
-    for _,v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = 1 end
+    for _, v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = true end
   end
   if opts.evaluate then
     local statements = type(opts.evaluate) == "table" and opts.evaluate or { opts.evaluate }
     SILE.dolua = {}
     for _, statement in ipairs(statements) do
-      local func, err = loadstring(statement)
+      local func, err = load(statement)
       if err then SU.error(err) end
       SILE.dolua[#SILE.dolua+1] = func
     end
+  end
+  if opts.fontmanager then
+    SILE.forceFontManager = opts.fontmanager
+  end
+  if opts.makedeps then
+    SILE.makeDeps = require("core.makedeps")
+    SILE.makeDeps.filename = opts.makedeps
   end
   if opts.output then
     SILE.outputFilename = opts.output
@@ -130,16 +158,18 @@ Options:
   end
 
   -- http://lua-users.org/wiki/VarargTheSecondClassCitizen
-  local identity = function (...) return unpack({...}, 1, select('#', ...)) end
+  local identity = function (...) return table.unpack({...}, 1, select('#', ...)) end
   SILE.errorHandler = opts.traceback and debug.traceback or identity
+  SILE.traceback = opts.traceback
 end
 
 function SILE.initRepl ()
   SILE._repl          = require 'repl.console'
-  local has_linenoise = pcall(require, 'linenoise')
+  local has_linenoise, linenoise = pcall(require, 'linenoise')
 
   if has_linenoise then
-    SILE._repl:loadplugin 'linenoise'
+    SILE._repl:loadplugin('linenoise')
+    linenoise.enableutf8()
   else
     -- XXX check that we're not receiving input from a non-tty
     local has_rlwrap = os.execute('which rlwrap >/dev/null 2>/dev/null') == 0
@@ -159,10 +189,10 @@ function SILE.initRepl ()
     end
   end
 
-  SILE._repl:loadplugin 'history'
-  SILE._repl:loadplugin 'completion'
-  SILE._repl:loadplugin 'autoreturn'
-  SILE._repl:loadplugin 'rcfile'
+  SILE._repl:loadplugin('history')
+  SILE._repl:loadplugin('completion')
+  SILE._repl:loadplugin('autoreturn')
+  SILE._repl:loadplugin('rcfile')
 end
 
 function SILE.repl()
@@ -172,7 +202,7 @@ end
 
 function SILE.readFile(filename)
   SILE.currentlyProcessingFile = filename
-  local doc = nil
+  local doc
   if filename == "-" then
     io.stderr:write("<STDIN>\n")
     doc = io.stdin:read("*a")
@@ -201,49 +231,67 @@ function SILE.readFile(filename)
   table.sort(inputsOrder,function(a,b) return SILE.inputs[a].order < SILE.inputs[b].order end)
   for i = 1, #inputsOrder do local input = SILE.inputs[inputsOrder[i]]
     if input.appropriate(filename, sniff) then
+      local pId = SILE.traceStack:pushDocument(filename, sniff, doc)
       input.process(doc)
+      SILE.traceStack:pop(pId)
       return
     end
   end
-  SU.error("No input processor available for "..filename.." (should never happen)",1)
-end
-
-local function file_exists (filename)
-   local file = io.open(filename, "r")
-   if file ~= nil then return io.close(file) else return false end
+  SU.error("No input processor available for "..filename.." (should never happen)", true)
 end
 
 -- Sort through possible places files could be
 function SILE.resolveFile(filename, pathprefix)
   local candidates = {}
   -- Start with the raw file name as given prefixed with a path if requested
-  if pathprefix then candidates[#candidates+1] = std.io.catfile(pathprefix, filename) end
+  if pathprefix then candidates[#candidates+1] = std.io.catfile(pathprefix, "?") end
   -- Also check the raw file name without a path
-  candidates[#candidates+1] = filename
+  candidates[#candidates+1] = "?"
   -- Iterate through the directory of the master file, the SILE_PATH variable, and the current directory
   -- Check for prefixed paths first, then the plain path in that fails
   if SILE.masterFilename then
-    local dirname = SILE.masterFilename:match("(.-)[^%/]+$")
-    for path in SU.gtoke(dirname..";"..tostring(os.getenv("SILE_PATH")), ";") do
+    for path in SU.gtoke(SILE.masterDir..";"..tostring(os.getenv("SILE_PATH")), ";") do
       if path.string and path.string ~= "nil" then
-        if pathprefix then candidates[#candidates+1] = std.io.catfile(path.string, pathprefix, filename) end
-        candidates[#candidates+1] = std.io.catfile(path.string, filename)
+        if pathprefix then candidates[#candidates+1] = std.io.catfile(path.string, pathprefix, "?") end
+        candidates[#candidates+1] = std.io.catfile(path.string, "?")
       end
     end
   end
   -- Return the first candidate that exists, also checking the .sil suffix
-  for _, v in pairs(candidates) do
-    if file_exists(v) then return v end
-    if file_exists(v..".sil") then return v .. ".sil" end
+  local path = table.concat(candidates, ";")
+  local resolved, err = package.searchpath(filename, path, "/")
+  if resolved then
+    if SILE.makeDeps then SILE.makeDeps:add(resolved) end
+  else
+    SU.warn("Unable to find file " .. filename .. err)
   end
-  -- If we got here then no files existed even resembling the requested one
-  return nil
+  return resolved
 end
 
-function SILE.call(cmd, options, content)
-  SILE.currentCommand = content
-  if not SILE.Commands[cmd] then SU.error("Unknown command "..cmd) end
-  return SILE.Commands[cmd](options or {}, content or {})
+function SILE.call(command, options, content)
+  options = options or {}
+  content = content or {}
+  if SILE.traceback and type(content) == "table" and not content.lno then
+    -- This call is from code (no content.lno) and we want to spend the time
+    -- to determine everything we need about the caller
+    local caller = debug.getinfo(2, "Sl")
+    content.file, content.lno = caller.short_src, caller.currentline
+  end
+  local pId = SILE.traceStack:pushCommand(command, content, options)
+  if not SILE.Commands[command] then SU.error("Unknown command " .. command) end
+  local result = SILE.Commands[command](options, content)
+  SILE.traceStack:pop(pId)
+  return result
+end
+
+function SILE.finish ()
+  if SILE.makeDeps then
+    SILE.makeDeps:write()
+  end
+  if SILE.preamble then
+    SILE.documentState.documentClass:finish()
+  end
+  io.stderr:write("\n")
 end
 
 return SILE

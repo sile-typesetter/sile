@@ -1,10 +1,24 @@
-SILE.inputs.TeXlike = {}
+local lpeg = require("lpeg")
 local epnf = require("epnf")
+
+SILE.inputs.TeXlike = {}
 
 local ID = lpeg.C( SILE.parserBits.letter * (SILE.parserBits.letter+SILE.parserBits.digit)^0 )
 SILE.inputs.TeXlike.identifier = (ID + lpeg.P"-" + lpeg.P":")^1
 
+SILE.inputs.TeXlike.passthroughCommands = {
+  script = true
+}
+setmetatable(SILE.inputs.TeXlike.passthroughCommands, {
+    __call = function(self, command)
+      return self[command]
+    end
+  })
+
+-- luacheck: push ignore
 SILE.inputs.TeXlike.parser = function (_ENV)
+  local isPassthrough = function (_, _, command) return SILE.inputs.TeXlike.passthroughCommands(command) end
+  local isNotPassThrough = function (...) return not isPassthrough(...) end
   local _ = WS^0
   local sep = S",;" * _
   local eol = S"\r\n"
@@ -32,7 +46,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
       comment +
       V"texlike_text" +
       V"texlike_bracketed_stuff" +
-      V"command"
+      V"texlike_command"
     )^0
   passthrough_stuff = C(Cg(
       V"passthrough_text" +
@@ -43,37 +57,38 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     )^0
   texlike_text = C((1-S("\\{}%"))^1)
   passthrough_text = C((1-S("{}"))^1)
-  passthrough_env_text = C((1-(P"\\end{" * (myID * Cb"tag") * P"}"))^1)
+  passthrough_env_text = C((1-(P"\\end{" * (myID * Cb"command") * P"}"))^1)
   texlike_bracketed_stuff = P"{" * V"texlike_stuff" * ( P"}" + E("} expected") )
   passthrough_bracketed_stuff = P"{" * V"passthrough_stuff" * ( P"}" + E("} expected") )
   passthrough_debracketed_stuff = C(V"passthrough_bracketed_stuff")
-  command = (
+  texlike_command = (
       ( P"\\"-P"\\begin" ) *
-      Cg(myID, "tag") *
-      Cg(parameters,"attr") *
+      Cg(myID, "command") *
+      Cg(parameters,"options") *
       (
-        (Cmt(Cb"tag", function(_, _, tag) return tag == "script" end) * V"passthrough_bracketed_stuff") +
-        (Cmt(Cb"tag", function(_, _, tag) return tag ~= "script" end) * V"texlike_bracketed_stuff")
+        (Cmt(Cb"command", isPassthrough) * V"passthrough_bracketed_stuff") +
+        (Cmt(Cb"command", isNotPassThrough) * V"texlike_bracketed_stuff")
       )^0
     ) - P("\\end{")
   environment =
     P"\\begin" *
-    Cg(parameters, "attr") *
+    Cg(parameters, "options") *
     P"{" *
-    Cg(myID, "tag") *
+    Cg(myID, "command") *
     P"}" *
     (
-      (Cmt(Cb"tag", function(_, _, tag) return tag == "script" end) * V"passthrough_env_stuff") +
-      (Cmt(Cb"tag", function(_, _, tag) return tag ~= "script" end) * V"texlike_stuff")
+      (Cmt(Cb"command", isPassthrough) * V"passthrough_env_stuff") +
+      (Cmt(Cb"command", isNotPassThrough) * V"texlike_stuff")
     ) *
     (
       P"\\end{" *
       (
-        Cmt(myID * Cb"tag", function (_,_,thisTag,lastTag) return thisTag == lastTag end) + E"Environment mismatch"
+        Cmt(myID * Cb"command", function (_,_,thisCommand,lastCommand) return thisCommand == lastCommand end) + E"Environment mismatch"
       ) *
       ( P"}" * _ ) + E"Environment begun but never ended"
     )
 end
+-- luacheck: pop
 
 local linecache = {}
 local lno, col, lastpos
@@ -85,7 +100,7 @@ local function resetCache ()
 end
 
 local function getline (str, pos)
-  start = 1
+  local start = 1
   lno = 1
   if pos > lastpos then
     lno = linecache[#linecache].lno
@@ -116,7 +131,7 @@ local function massage_ast (tree, doc)
   -- Sort out pos
   if type(tree) == "string" then return tree end
   if tree.pos then
-    tree.line, tree.col = getline(doc, tree.pos)
+    tree.lno, tree.col = getline(doc, tree.pos)
   end
   if tree.id == "document"
       or tree.id == "texlike_bracketed_stuff"
@@ -142,13 +157,12 @@ end
 function SILE.inputs.TeXlike.process (doc)
   local tree = SILE.inputs.TeXlike.docToTree(doc)
   local root = SILE.documentState.documentClass == nil
-  if tree.tag then
-    if root and tree.tag == "document" then
+  if tree.command then
+    if root and tree.command == "document" then
       SILE.inputs.common.init(doc, tree)
     end
     SILE.process(tree)
-  elseif pcall(function () assert(loadstring(doc))() end) then
-  else
+  elseif not pcall(function () assert(load(doc))() end) then
     SU.error("Input not recognized as Lua or SILE content")
   end
   if root and not SILE.preamble then

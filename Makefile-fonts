@@ -1,0 +1,62 @@
+# Don't let make delete things we had to download
+.PRECIOUS: .fonts/% %.zip %.xz
+
+# List of font files we _actually need_
+TESTFONTFILES  = GentiumPlus-R.ttf GentiumPlus-I.ttf
+TESTFONTFILES += Amiri-Regular.ttf AmiriQuran.ttf
+TESTFONTFILES += Hack-Regular.ttf
+TESTFONTFILES += LateefGR-Regular.ttf
+TESTFONTFILES += LibertinusSans-Bold.otf LibertinusSerif-Regular.otf
+TESTFONTFILES += NotoNaskhArabic-Regular.ttf
+TESTFONTFILES += NotoSansCJK-Regular.ttc
+TESTFONTFILES += NotoSansKannada-Regular.ttf
+TESTFONTFILES += NotoSansEthiopic-Regular.ttf
+TESTFONTFILES += NotoSansMalayalam-Regular.ttf
+TESTFONTFILES += SBL_Hbrw.ttf
+TESTFONTFILES += Symbola_Hinted.ttf
+
+# Tell make how to download individual font files (when available)
+.fonts/NotoSansCJK%: | .fonts
+	curl -s -L https://github.com/googlefonts/noto-cjk/raw/NotoSansV2.001/$(notdir $@) -o $@
+
+.fonts/Noto%: | .fonts
+	curl -s -L https://github.com/googlefonts/noto-fonts/raw/v2017-09-19-phase3-second/hinted/$(notdir $@) -o $@
+
+.fonts/Libertinus%: | .fonts
+	curl -s -L https://github.com/alif-type/libertinus/raw/v6.9/$(notdir $@) -o $@
+
+.fonts/Amiri%: | .fonts
+	curl -s -L https://github.com/alif-type/amiri/raw/0.111/$(notdir $@) -o $@
+
+.fonts/GentiumPlus%: GentiumPlus-5.000.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 1 GentiumPlus-5.000/$(notdir $@)
+	touch $@
+
+# Tell  make how to download font file bundles (when not downloadable individually)
+Symbola.zip:
+	curl -s -L http://users.teilar.gr/~g1951d/$(notdir $@) -o $@
+
+GentiumPlus-5.000.zip:
+	curl -s -L https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
+
+LateefGR-1.200.zip:
+	curl -s -L https://software.sil.org/downloads/r/lateef/$(notdir $@) -o $@
+
+Hack-v3.003-ttf.tar.xz:
+	curl -s -L https://github.com/source-foundry/Hack/releases/download/v3.003/$(notdir $@) -o $@
+
+# Tell make how to exctact individual files from bundles
+.fonts/LateefGR%: LateefGR-1.200.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 1 LateefGR-1.200/$(notdir $@)
+	touch $@
+
+.fonts/Hack%: Hack-v3.003-ttf.tar.xz | .fonts
+	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
+	touch $@
+
+.fonts/Symbola%: Symbola.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
+	touch $@
+
+.fonts/SBL_Hbrw.ttf:
+	curl -s -L http://www.sbl-site.org/Fonts/$(notdir $@) -o $@

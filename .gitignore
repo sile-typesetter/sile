@@ -1,7 +1,3 @@
-*/*.actual
-tests/*.pdf
-examples/*.pdf
-*/*.toc
 # http://www.gnu.org/software/automake
 
 Makefile.in
@@ -40,14 +36,40 @@ Makefile
 NEWS
 README
 THANKS
-
 libtool
 ltmain.sh
 subfiles.mk
 
+# Build artifacts
 sile
 confdefs.h
 config.log
 core/*.so
-build/ 
-.vscode/ 
+build/
+*.debug
+benchmark-*
+gh-pages
+sile-v*
+*.zip
+*.xz
+*.rockslock
+
+# Test artifacts
+tests/*.actual
+tests/*.pdf
+*/*.toc
+time-*.json
+
+# Vendor stuff
+node_modules
+lua_modules
+
+# Editor entrails
+.vscode/
+tags
+
+# Generated resources
+documentation/*.pdf
+examples/*.pdf
+gource.webm
+*.tar.bz2

@@ -1,7 +1,7 @@
 SILE.Help = {}
 
 SILE.registerCommand = function (name, func, help, pack)
-  SILE.Commands[name] = SILE.typesetter and SILE.typesetter.breadcrumbs(name, func) or func
+  SILE.Commands[name] = func
   if not pack then
     local where = debug.getinfo(2).source
     pack = where:match("(%w+).lua")
@@ -24,54 +24,66 @@ SILE.setCommandDefaults = function (command, defaults)
 end
 
 SILE.doTexlike = function (doc)
-  doc = "\\begin{document}" .. doc .. "\\end{document}"
+  -- Setup new "fake" file in which the doc exists
   local cpf = SILE.currentlyProcessingFile
-  SILE.currentlyProcessingFile = "<"..debug.getinfo(2).short_src..":"..debug.getinfo(2).linedefined..">"
-  SILE.process(SILE.inputs.TeXlike.docToTree(doc))
+  local caller = debug.getinfo(2, "Sl")
+  local temporaryFile = "<"..caller.short_src..":"..caller.currentline..">"
+  SILE.currentlyProcessingFile = temporaryFile
+  -- NOTE: this messes up column numbers on first line, but most places start with newline, so it isn't a problem
+  doc = "\\begin{document}" .. doc .. "\\end{document}"
+  local tree = SILE.inputs.TeXlike.docToTree(doc)
+  -- Since elements of the tree may be used long after currentlyProcessingFile has changed (e.g. through \define)
+  -- supply the file in which the node was found explicitly.
+  SU.walkContent(tree, function (c) c.file = temporaryFile end)
+  SILE.process(tree)
+  -- Revert the processed file
   SILE.currentlyProcessingFile = cpf
 end
 
 -- Need the \define command *really* early on in SILE startup
-local commandStack = {}
+local macroStack = {}
 SILE.registerCommand("define", function (options, content)
   SU.required(options, "command", "defining command")
-  SILE.registerCommand(options["command"], function (options2, content2)
+  SILE.registerCommand(options["command"], function (_, _content)
     --local prevState = SILE.documentState
     --SILE.documentState = std.tree.clone( prevState )
-    local depth = #commandStack
-    table.insert(commandStack, content2)
-    SU.debug("macros","Processing a "..options["command"].." Stack depth is "..depth)
+    local depth = #macroStack
+    table.insert(macroStack, _content)
+    SU.debug("macros", "Processing a "..options["command"].." Stack depth is "..depth)
     SILE.process(content)
-    while (#commandStack > depth) do table.remove(commandStack) end
-    SU.debug("macros","Finished processing "..options["command"].." Stack depth is "..#commandStack.."\n")
+    while (#macroStack > depth) do table.remove(macroStack) end
+    SU.debug("macros", "Finished processing "..options["command"].." Stack depth is "..#macroStack.."\n")
     --SILE.documentState = prevState
   end, options.help, SILE.currentlyProcessingFile)
 end, "Define a new macro. \\define[command=example]{ ... \\process }")
 
-SILE.registerCommand("comment", function (options, content)
+SILE.registerCommand("comment", function (_, _)
 end, "Ignores any text within this command's body.")
 
 SILE.registerCommand("process", function ()
-  local val = table.remove(commandStack)
+  local val = table.remove(macroStack)
   if not val then SU.error("Macro stack underflow. Too many \\process calls?") end
   SILE.process(val)
 end, "Within a macro definition, processes the contents of the macro body.")
 
 SILE.baseClass = std.object {
   registerCommands = (function ()
-    SILE.registerCommand("\\", function (options, content) SILE.typesetter:typeset("\\") end)
+
+    SILE.registerCommand("\\", function (_, _)
+      SILE.typesetter:typeset("\\")
+    end)
 
     SILE.registerCommand("script", function (options, content)
       if (options["src"]) then
         require(options["src"])
       else
-        func, err = loadstring(content[1])
+        local func, err = load(content[1])
         if not func then SU.error(err) end
         func()
       end
     end, "Runs lua code. The code may be supplied either inline or using the src=... option. (Think HTML.)")
 
-    SILE.registerCommand("include", function (options, content)
+    SILE.registerCommand("include", function (options, _)
         SILE.readFile(options["src"])
     end, "Includes a SILE file for processing.")
 
@@ -82,11 +94,11 @@ SILE.baseClass = std.object {
       SILE.typesetter:initFrame(SILE.documentState.thisPageTemplate.firstContentFrame)
     end, "Defines a new page template for the current page and sets the typesetter to use it.")
 
-    SILE.registerCommand("frame", function (options, content)
+    SILE.registerCommand("frame", function (options, _)
       SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newFrame(options)
     end, "Declares (or re-declares) a frame on this page.")
 
-    SILE.registerCommand("penalty", function (options, content)
+    SILE.registerCommand("penalty", function (options, _)
       if options.vertical and not SILE.typesetter:vmode() then
         SILE.typesetter:leaveHmode()
       end
@@ -97,7 +109,7 @@ SILE.baseClass = std.object {
       end
     end, "Inserts a penalty node. Options are penalty= for the size of the penalty and flagged= if this is a flagged penalty.")
 
-    SILE.registerCommand("discretionary", function (options, content)
+    SILE.registerCommand("discretionary", function (options, _)
       local discretionary = SILE.nodefactory.newDiscretionary({})
       if options.prebreak then
         SILE.call("hbox", {}, function () SILE.typesetter:typeset(options.prebreak) end)
@@ -117,13 +129,13 @@ SILE.baseClass = std.object {
       table.insert(SILE.typesetter.state.nodes, discretionary)
     end, "Inserts a discretionary node.")
 
-    SILE.registerCommand("glue", function (options, content)
+    SILE.registerCommand("glue", function (options, _)
       SILE.typesetter:pushGlue({
         width = SILE.length.parse(options.width):absolute()
       })
     end, "Inserts a glue node. The width option denotes the glue dimension.")
 
-    SILE.registerCommand("kern", function (options, content)
+    SILE.registerCommand("kern", function (options, _)
       table.insert(SILE.typesetter.state.nodes,
         SILE.nodefactory.newKern({
           width = SILE.length.parse(options.width):absolute()
@@ -131,7 +143,7 @@ SILE.baseClass = std.object {
       )
     end, "Inserts a glue node. The width option denotes the glue dimension.")
 
-    SILE.registerCommand("skip", function (options, content)
+    SILE.registerCommand("skip", function (options, _)
       options.discardable = options.discardable or false
       options.height = SILE.length.parse(options.height):absolute()
       SILE.typesetter:leaveHmode()
@@ -142,7 +154,7 @@ SILE.baseClass = std.object {
       end
     end, "Inserts vertical skip. The height options denotes the skip dimension.")
 
-    SILE.registerCommand("par", function (options, content)
+    SILE.registerCommand("par", function (_, _)
       SILE.typesetter:endline()
     end, "Ends the current paragraph.")
 
@@ -172,10 +184,10 @@ SILE.baseClass = std.object {
     SILE.outputter.init(self)
     self:registerCommands()
     -- Call all stored package init routines
-    for i = 1,#(SILE.baseClass.deferredInit) do (SILE.baseClass.deferredInit[i])() end
+    for i = 1, #(SILE.baseClass.deferredInit) do (SILE.baseClass.deferredInit[i])() end
     SILE.typesetter:registerPageEndHook(function ()
       if SU.debugging("frames") then
-        for k,v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
+        for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
       end
     end)
     return self:initialFrame()

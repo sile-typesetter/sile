@@ -3073,9 +3073,9 @@ a particular operation:
 
 \begin{verbatim}
 \line
-SILE.debugFlags.typesetter = 1
+SILE.debugFlags.typesetter = true
 SILE.typesetter:leaveHmode()
-SILE.debugFlags.typesetter = nil
+SILE.debugFlags.typesetter = false
 \line
 \end{verbatim}
 
@@ -3095,7 +3095,7 @@ When an error occurs, for example when writing custom scripts, its traceback
 \begin{verbatim}
 \line
 $ sile -t broken.sil
-This is SILE 0.9.6
+This is SILE \sileversion
 <broken.sil>
 
 Error detected:
@@ -3119,7 +3119,7 @@ print the results back to you. If you call SILE with no input file name, it
 enters the REPL:
 
 \begin{verbatim}
-This is SILE 0.9.0
+This is SILE \sileversion
 > \em{l = SILE.length.parse("22mm")}
 > \em{l.length}
 62.3622054

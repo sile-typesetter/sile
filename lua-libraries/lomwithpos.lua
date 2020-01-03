@@ -1,57 +1,53 @@
-
 local lxp = require "lxp"
 
-local tinsert, tremove = table.insert, table.remove
-local assert, type, print = assert, type, print
-
-local function starttag (p, tag, attr)
-  local stack = p:getcallbacks().stack
-  local l, c, pos = p:pos()
-  local newelement = {tag = tag, attr = attr, line = l, col = c}
-  tinsert(stack, newelement)
+local function startcommand (parser, command, options)
+  local stack = parser:getcallbacks().stack
+  local lno, col, pos = parser:pos()
+  local element = { command = command, options = options, lno = lno, col = col }
+  table.insert(stack, element)
 end
 
-local function endtag (p, tag)
-  local stack = p:getcallbacks().stack
-  local element = tremove(stack)
-  assert(element.tag == tag)
+local function endcommand (parser, command)
+  local stack = parser:getcallbacks().stack
+  local element = table.remove(stack)
+  assert(element.command == command)
   local level = #stack
-  tinsert(stack[level], element)
+  table.insert(stack[level], element)
 end
 
-local function text (p, txt)
-  local stack = p:getcallbacks().stack
+local function text (parser, text)
+  local stack = parser:getcallbacks().stack
   local element = stack[#stack]
   local n = #element
   if type(element[n]) == "string" then
-    element[n] = element[n] .. txt
+    element[n] = element[n] .. text
   else
-    tinsert(element, txt)
+    table.insert(element, text)
   end
 end
 
-local function parse (o)
-  local c = { StartElement = starttag,
-              EndElement = endtag,
+local function parse (doc)
+  local content = { StartElement = startcommand,
+              EndElement = endcommand,
               CharacterData = text,
               _nonstrict = true,
               stack = {{}}
             }
-  local p = lxp.new(c)
+  local parser = lxp.new(content)
   local status, err
-  if type(o) == "string" then
-    status, err = p:parse(o)
+  if type(doc) == "string" then
+    status, err = parser:parse(doc)
     if not status then return nil, err end
   else
-    for l in pairs(o) do
-      status, err = p:parse(l)
+    for element in pairs(doc) do
+      status, err = parser:parse(element)
       if not status then return nil, err end
     end
   end
-  status, err = p:parse()
+  status, err = parser:parse()
   if not status then return nil, err end
-  p:close()
-  return c.stack[1][1]
+  parser:close()
+  return content.stack[1][1]
 end
 
 return { parse = parse }

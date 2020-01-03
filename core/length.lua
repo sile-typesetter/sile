@@ -1,3 +1,5 @@
+local lpeg = require("lpeg")
+
 local _length
 _length = std.object {
   length = 0,
@@ -5,7 +7,7 @@ _length = std.object {
   shrink = 0,
   _type = "Length",
 
-  absolute = function (self, context)
+  absolute = function (self, _)
     return _length { length = SILE.toAbsoluteMeasurement(self.length),
       stretch = SILE.toAbsoluteMeasurement(self.stretch),
       shrink = SILE.toAbsoluteMeasurement(self.shrink)
@@ -72,7 +74,7 @@ _length = std.object {
     return result
   end,
 
-  __mul = function(self, other)
+  __mul = function (self, other)
     local result = _length {}
     result:fromLengthOrNumber(self)
     result = result:absolute()
@@ -85,8 +87,8 @@ _length = std.object {
     end
     return result
   end,
-   
-  __div = function(self, other)
+
+  __div = function (self, other)
     local result = _length {}
     result:fromLengthOrNumber(self)
     result = result:absolute()

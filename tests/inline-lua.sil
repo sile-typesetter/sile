@@ -15,4 +15,6 @@ Braces in inline command: \script{val = { str = "Matching brace {} inception is"
 Lua character escapes from environment: \script{SILE.typesetter:typeset(escapes)}
 
 Lua character escapes from command: \script{SILE.typesetter:typeset("\\backslash & \ttab")}
+
+Grouped {words here} and \{escaped braces\} here.
 \end{document}

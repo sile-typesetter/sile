@@ -1,142 +1,95 @@
 if not SILE.scratch.counters then SILE.scratch.counters = {} end
-romans = {
-  {1000, "M"},
-  {900, "CM"}, {500, "D"}, {400, "CD"}, {100, "C"},
-  {90, "XC"}, {50, "L"}, {40, "XL"}, {10, "X"},
-  {9, "IX"}, {5, "V"}, {4, "IV"}, {1, "I"}
-}
 
-local function romanize(k)
-  str = ""
-  k = k + 0
-  for _, v in ipairs(romans) do
-    val, let = unpack(v)
-    while k >= val do
-      k = k - val
-      str = str..let
-    end
-  end
-  return str
+
+SILE.formatCounter = function (counter)
+  return SU.formatNumber(counter.value, counter.display)
 end
 
-local function alpha(n)
-  local out = ""
-  local a = string.byte("a")
-  repeat
-    n = n - 1
-    out = string.char(n%26 + a) .. out
-    n = (n - n%26)/26
-  until n < 1
-  return out
+local function getCounter(id)
+  if not SILE.scratch.counters[id] then
+    SILE.scratch.counters[id] = { value = 0, display = "arabic", format = SILE.formatCounter }
+  end
+  return SILE.scratch.counters[id]
 end
 
-local icu
-pcall( function () icu = require("justenoughicu") end)
-
-SILE.formatCounter = function(options)
-  -- If there is a language-specific formatter, use that.
-  local lang = SILE.settings.get("document.language")
-  if SILE.languageSupport.languages[lang] and SILE.languageSupport.languages[lang].counter then
-    local res = SILE.languageSupport.languages[lang].counter(options)
-    if res then return res end -- allow them to pass.
-  end
-
-  -- If we have ICU, try that
-  if icu then
-    local display = options.display
-
-    -- Translate numbering style names which are different in ICU
-    if display == "roman" then
-      display = "romanlow"
-    elseif display == "Roman" then
-      display = "roman"
-    end
-
-    local ok, res = pcall(function() return icu.format_number(options.value, display) end)
-    if ok then return res end
-  end
-
-  if (options.display == "roman") then return romanize(options.value):lower() end
-  if (options.display == "Roman") then return romanize(options.value) end
-  if (options.display == "alpha") then return alpha(options.value) end
-  return tostring(options.value)
-end
-
-local _init = function (c)
-  if not(SILE.scratch.counters[c]) then
-    SILE.scratch.counters[c] = { value= 0, display= "arabic" }
-  end
-end
-
-SILE.registerCommand("increment-counter", function (options,content)
-  local c = options.id; _init(c)
+SILE.registerCommand("increment-counter", function (options, _)
+  local counter = getCounter(options.id)
   if (options["set-to"]) then
-    SILE.scratch.counters[c].value = tonumber(options["set-to"])
+    counter.value = tonumber(options["set-to"])
   else
-    SILE.scratch.counters[c].value = SILE.scratch.counters[c].value + 1
+    counter.value = counter.value + 1
   end
-  if options.display then SILE.scratch.counters[c].display = options.display end
+  if options.display then counter.display = options.display end
 end, "Increments the counter named by the <id> option")
 
-SILE.registerCommand("set-counter", function (options, content)
-  local c = options.id; _init(c)
-  if options.value then SILE.scratch.counters[c].value = tonumber(options.value) end
-  if options.display then SILE.scratch.counters[c].display = options.display end
+SILE.registerCommand("set-counter", function (options, _)
+  local counter = getCounter(options.id)
+  if options.value then counter.value = tonumber(options.value) end
+  if options.display then counter.display = options.display end
 end, "Sets the counter named by the <id> option to <value>; sets its display type (roman/Roman/arabic) to type <display>.")
 
 
-SILE.registerCommand("show-counter", function (options, content)
-  local c = options.id; _init(c)
-  if options.display then SILE.scratch.counters[c].display = options.display end
-  SILE.typesetter:setpar(SILE.formatCounter(SILE.scratch.counters[c]))
+SILE.registerCommand("show-counter", function (options, _)
+  local counter = getCounter(options.id)
+  if options.display then counter.display = options.display end
+  SILE.typesetter:setpar(SILE.formatCounter(counter))
 end, "Outputs the value of counter <id>, optionally displaying it with the <display> format.")
 
-local _initml = function (c)
-  if not(SILE.scratch.counters[c]) then
-    SILE.scratch.counters[c] = { value= {0}, display= {"arabic"} }
+SILE.formatMultilevelCounter = function (counter, options)
+  local maxlevel = options and options.level or #counter.value
+  local minlevel = options and options.minlevel or 1
+  local out = {}
+  for x = minlevel, maxlevel do
+    out[x - minlevel + 1] = SILE.formatCounter({ display = counter.display[x], value = counter.value[x] })
   end
+  return table.concat(out, ".")
 end
 
-SILE.registerCommand("increment-multilevel-counter", function (options, content)
-  local c = options.id; _initml(c)
-  local this = SILE.scratch.counters[c]
+local function getMultilevelCounter(id)
+  local counter = SILE.scratch.counters[id]
+  if not counter then
+    counter = { value= { 0 }, display= { "arabic" }, format = SILE.formatMultilevelCounter }
+    SILE.scratch.counters[id] = counter
+  end
+  return counter
+end
 
-  local currentLevel = #this.value
+SILE.registerCommand("increment-multilevel-counter", function (options, _)
+  local counter = getMultilevelCounter(options.id)
+  local currentLevel = #counter.value
   local level = tonumber(options.level) or currentLevel
   if level == currentLevel then
-    this.value[level] = this.value[level] + 1
+    counter.value[level] = counter.value[level] + 1
   elseif level > currentLevel then
     while level > currentLevel do
       currentLevel = currentLevel + 1
-      this.value[currentLevel] = (options.reset == false) and this.value[currentLevel -1 ] or 1
-      this.display[currentLevel] = this.display[currentLevel - 1]
+      counter.value[currentLevel] = (options.reset == false) and counter.value[currentLevel -1 ] or 1
+      counter.display[currentLevel] = counter.display[currentLevel - 1]
     end
   else -- level < currentLevel
-    this.value[level] = this.value[level] + 1
+    counter.value[level] = counter.value[level] + 1
     while currentLevel > level do
-      if not (options.reset == false) then this.value[currentLevel] = nil end
-      this.display[currentLevel] = nil
+      if not (options.reset == false) then counter.value[currentLevel] = nil end
+      counter.display[currentLevel] = nil
       currentLevel = currentLevel - 1
     end
   end
-  if options.display then this.display[currentLevel] = options.display end
+  if options.display then counter.display[currentLevel] = options.display end
 end)
 
-SILE.registerCommand("show-multilevel-counter", function (options, content)
-  local c = options.id; _initml(c)
-  local this = SILE.scratch.counters[c]
-  local currentLevel = #this.value
-  local maxlevel = options.level or currentLevel
-  local minlevel = options.minlevel or 1
-  if options.display then this.display[currentLevel] = options.display end
-  local out = {}
-  for x = minlevel, maxlevel do
-    out[x - minlevel + 1] = SILE.formatCounter({ display = this.display[x], value = this.value[x] })
-  end
-  SILE.typesetter:typeset(table.concat( out, "." ))
+SILE.registerCommand("show-multilevel-counter", function (options, _)
+  local counter = getMultilevelCounter(options.id)
+  if options.display then counter.display[#counter.value] = options.display end
+
+  SILE.typesetter:typeset(SILE.formatMultilevelCounter(counter, options))
 end, "Outputs the value of the multilevel counter <id>, optionally displaying it with the <display> format.")
 
-return { documentation = [[\begin{document}
+return {
+  exports = {
+    getCounter = getCounter,
+    getMultilevelCounter = getMultilevelCounter
+  },
+  documentation = [[\begin{document}
 
 Various parts of SILE such as the \code{footnotes} package and the
 sectioning commands keep a counter of things going on: the current
@@ -144,8 +97,8 @@ footnote number, the chapter number, and so on. The counters package
 allows you to set up, increment and typeset named counters. It
 provides the following commands:
 
-• \code{\\set-counter[id=\em{<counter-name>},value=\em{<value}]} — sets
-the counter called \code{<counter-name>} to the value given.
+• \code{\\set-counter[id=\em{<counter-name>},value=\em{<value>}]} — sets
+the counter called \code{<counter-name>} to the \code{<value>} given.
 
 • \code{\\increment-counter[id=\em{<counter-name>}]} — does the
 same as \code{\\set-counter} except that when no \code{value} parameter

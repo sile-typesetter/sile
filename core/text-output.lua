@@ -43,7 +43,7 @@ SILE.outputters.text = {
     cursorX = x
   end,
   rule = function () end,
-  debugFrame = function (self) end,
+  debugFrame = function (_) end,
   debugHbox = function() end
 }
 

@@ -58,7 +58,7 @@ book.finish = function ()
   return ret
 end
 
-book.endPage = function (self)
+book.endPage = function (_)
   book:moveTocNodes()
 
   if (book:oddPage() and SILE.scratch.headers.right) then
@@ -83,21 +83,22 @@ book.endPage = function (self)
   return plain.endPage(book)
 end
 
-SILE.registerCommand("left-running-head", function (options, content)
+SILE.registerCommand("left-running-head", function (_, content)
   local closure = SILE.settings.wrap()
   SILE.scratch.headers.left = function () closure(content) end
 end, "Text to appear on the top of the left page")
 
-SILE.registerCommand("right-running-head", function (options, content)
+SILE.registerCommand("right-running-head", function (_, content)
   local closure = SILE.settings.wrap()
   SILE.scratch.headers.right = function () closure(content) end
 end, "Text to appear on the top of the right page")
 
 SILE.registerCommand("book:sectioning", function (options, content)
-  local content = SU.subContent(content)
   local level = SU.required(options, "level", "book:sectioning")
-  SILE.call("increment-multilevel-counter", {id = "sectioning", level = options.level})
-  SILE.call("tocentry", {level = options.level}, content)
+  SILE.call("increment-multilevel-counter", {id = "sectioning", level = level})
+  if SU.boolean(options.toc, true) then
+    SILE.call("tocentry", {level = level}, SU.subContent(content))
+  end
   local lang = SILE.settings.get("document.language")
   if options.numbering == nil or options.numbering == "yes" then
     if options.prenumber then
@@ -136,6 +137,7 @@ SILE.registerCommand("chapter", function (options, content)
   SILE.call("book:chapterfont", {}, function ()
     SILE.call("book:sectioning", {
       numbering = options.numbering,
+      toc = options.toc,
       level = 1,
       prenumber = "book:chapter:pre",
       postnumber = "book:chapter:post"
@@ -160,6 +162,7 @@ SILE.registerCommand("section", function (options, content)
   SILE.call("book:sectionfont", {}, function ()
     SILE.call("book:sectioning", {
       numbering = options.numbering,
+      toc = options.toc,
       level = 2,
       postnumber = "book:section:post"
     }, content)
@@ -191,6 +194,7 @@ SILE.registerCommand("subsection", function (options, content)
   SILE.call("book:subsectionfont", {}, function ()
     SILE.call("book:sectioning", {
           numbering = options.numbering,
+          toc = options.toc,
           level = 3,
           postnumber = "book:subsection:post"
         }, content)
@@ -203,18 +207,18 @@ SILE.registerCommand("subsection", function (options, content)
   SILE.typesetter:inhibitLeading()
 end, "Begin a new subsection")
 
-SILE.registerCommand("book:chapterfont", function (options, content)
+SILE.registerCommand("book:chapterfont", function (_, content)
   SILE.settings.temporarily(function ()
     SILE.call("font", { weight = 800, size = "22pt" }, content)
   end)
 end)
-SILE.registerCommand("book:sectionfont", function (options, content)
+SILE.registerCommand("book:sectionfont", function (_, content)
   SILE.settings.temporarily(function ()
     SILE.call("font", { weight = 800, size = "15pt" }, content)
   end)
 end)
 
-SILE.registerCommand("book:subsectionfont", function (options, content)
+SILE.registerCommand("book:subsectionfont", function (_, content)
   SILE.settings.temporarily(function ()
     SILE.call("font", { weight = 800, size = "12pt" }, content)
   end)

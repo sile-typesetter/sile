@@ -1,7 +1,6 @@
-
 if not SILE.shapers then SILE.shapers = { } end
 local hb = require("justenoughharfbuzz")
-local bit32 = require("bit32-compat")
+local icu = require("justenoughicu")
 
 SILE.settings.declare({
   name = "harfbuzz.subshapers",
@@ -10,20 +9,12 @@ SILE.settings.declare({
   help = "Comma-separated shaper list to pass to Harfbuzz"
 })
 
--- XXX This shouldn't be in the shaper. But still...
-
-local fontconfig
-
-if not pcall(function () fontconfig = require("macfonts") end) then
-  fontconfig = require("justenoughfontconfig")
-end
-
 SILE.require("core/base-shaper")
 
 local smallTokenSize = 20 -- Small words will be cached
 local shapeCache = {}
-local _key = function(options, text)
-  return table.concat({ text, options.family, options.language, options.script, options.size, ("%d"):format(options.weight), options.style, options.variant, options.features, options.direction, options.filename },";")
+local _key = function (options, text)
+  return table.concat({ text, options.family, options.language, options.script, options.size, ("%d"):format(options.weight), options.style, options.variant, options.features, options.direction, options.filename }, ";")
 end
 
 local substwarnings = {}
@@ -32,8 +23,8 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
   shapeToken = function (self, text, options)
     local items
     if #text < smallTokenSize then items = shapeCache[_key(options, text)]; if items then return items end end
-    if #text < 1 then return {} end -- work around segfault in HB < 1.0.4
     local face = SILE.font.cache(options, self.getFace)
+    if self:checkHBProblems(text, face) then return {} end
     if not face then
       SU.error("Could not find requested font "..options.." or any suitable substitutes")
     end
@@ -59,10 +50,11 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
     if #text < smallTokenSize then shapeCache[_key(options, text)] = items end
     return items
   end,
-  getFace = function(opts)
-    local face = fontconfig._face(opts)
+  getFace = function (opts)
+    local face = SILE.fontManager:face(opts)
     SU.debug("fonts", "Resolved font family '"..opts.family.."' -> "..(face and face.filename))
-    if not face.filename then SU.error("Couldn't find face '"..opts.family.."'") end
+    if not face or not face.filename then SU.error("Couldn't find face '"..opts.family.."'") end
+    if SILE.makeDeps then SILE.makeDeps:add(face.filename) end
     if bit32.rshift(face.index, 16) ~= 0 then
       SU.warn("GX feature in '"..opts.family.."' is not supported, fallback to regular font face.")
       face.index = bit32.band(face.index, 0xff)
@@ -72,14 +64,14 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
     face.data = fh:read("*all")
     return face
   end,
-  preAddNodes = function(self, items, nnodeValue) -- Check for complex nodes
-    for i=1, #items do
+  preAddNodes = function (_, items, nnodeValue) -- Check for complex nodes
+    for i = 1, #items do
       if items[i].y_offset or items[i].x_offset or items[i].width ~= items[i].glyphAdvance then
         nnodeValue.complex = true; break
       end
     end
   end,
-  addShapedGlyphToNnodeValue = function (self, nnodevalue, shapedglyph)
+  addShapedGlyphToNnodeValue = function (_, nnodevalue, shapedglyph)
     if nnodevalue.complex then
 
       if not nnodevalue.items then nnodevalue.items = {} end
@@ -90,24 +82,36 @@ SILE.shapers.harfbuzz = SILE.shapers.base {
     table.insert(nnodevalue.glyphString, shapedglyph.gid)
     table.insert(nnodevalue.glyphNames, shapedglyph.name)
   end,
-  debugVersions = function()
+  debugVersions = function ()
     local ot = SILE.require("core/opentype-parser")
     print("Harfbuzz version: "..hb.version())
-    print("Shapers enabled: ".. table.concat({hb.shapers()}, ", "))
-    pcall( function () icu = require("justenoughicu") end)
+    print("Shapers enabled: ".. table.concat({ hb.shapers() }, ", "))
     if icu then
       print("ICU support enabled")
     end
     print("")
     print("Fonts used:")
-    for face,_ in pairs(usedfonts) do
+    for face, _ in pairs(usedfonts) do
       local font = ot.parseFont(face)
       local version = "Unknown version"
       if font and font.names and font.names[5] then
-        for l,v in pairs(font.names[5]) do version = v[1]; break end
+        for _, v in pairs(font.names[5]) do version = v[1]; break end
       end
       print(face.filename..":"..face.index, version)
     end
+  end,
+  checkHBProblems = function (_, text, face)
+    if hb.version_lessthan(1, 0, 4) and #text < 1 then
+      return true
+    end
+    if hb.version_lessthan(2, 3, 0)
+      and hb.get_table(face.data, face.index, "CFF "):len() > 0
+      and not substwarnings["CFF "] then
+      SILE.status.unsupported = true
+      SU.warn("Vertical spacing of CFF fonts may be subtly inconsistent between systems. Upgrade to Harfbuzz 2.3.0 if you need absolute consistency.")
+      substwarnings["CFF "] = true
+    end
+    return false
   end
 }
 

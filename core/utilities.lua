@@ -1,8 +1,6 @@
 local utilities = {}
 
-local bit32 = require("bit32-compat")
-
-math.epsilon = 1E-12
+local epsilon = 1E-12
 
 utilities.required = function (options, name, context)
   if not options[name] then utilities.error(context.." needs a "..name.." parameter") end
@@ -20,27 +18,27 @@ end
 if not table.maxn then
   table.maxn = function(tbl)
     local max = 0
-    for i,_ in pairs(tbl) do if i > max then max = i end end
+    for i, _ in pairs(tbl) do if i > max then max = i end end
     return max
   end
 end
 
-utilities.error = function (message, bug)
-  if(SILE.currentCommand and type(SILE.currentCommand) == "table") then
-    io.stderr:write("\n! "..message.. " at "..SILE.currentlyProcessingFile.." l."..(SILE.currentCommand.line)..", col."..(SILE.currentCommand.col))
-  else
-    io.stderr:write("\n! "..message.. " at "..SILE.currentlyProcessingFile)
-  end
-  if bug then io.stderr:write(debug.traceback()) end
-  io.stderr:write("\n")
+utilities.error = function(message, bug)
+  utilities.warn(message, bug)
+  io.stderr:flush()
   SILE.outputter:finish()
   os.exit(1)
 end
 
-utilities.warn = function (message)
-  io.stderr:write("\n! "..message.."\n")
-  --print(debug.traceback())
-  --os.exit(1)
+utilities.warn = function(message, bug)
+  io.stderr:write("\n! " .. message)
+  if SILE.traceback or bug then
+    io.stderr:write(" at:\n" .. SILE.traceStack:locationTrace())
+    io.stderr:write(debug.traceback(nil, 2))
+  else
+    io.stderr:write(" at " .. SILE.traceStack:locationHead())
+  end
+  io.stderr:write("\n")
 end
 
 utilities.debugging = function (category)
@@ -49,7 +47,7 @@ end
 
 utilities.feq = function (lhs, rhs) -- Float point equal
   local abs = math.abs
-  return abs(lhs - rhs) <= math.epsilon * (abs(lhs) + abs(rhs))
+  return abs(lhs - rhs) <= epsilon * (abs(lhs) + abs(rhs))
 end
 
 utilities.gtoke = function (string, pattern)
@@ -75,15 +73,14 @@ utilities.gtoke = function (string, pattern)
 end
 
 utilities.debug = function (category, ...)
-  local arg = { ... } -- Avoid things that Lua stuffs in arg like args to self()
   if utilities.debugging(category) then
-    print("["..category.."]", #arg == 1 and arg[1] or arg)
+    io.stderr:write("\n["..category.."] ", utilities.concat(table.pack(...), " "))
   end
 end
 
 utilities.dump = function (...)
   local arg = { ... } -- Avoid things that Lua stuffs in arg like args to self()
-  require("pl.pretty").dump(#arg == 1 and arg[1] or arg, "/dev/stderr")
+  pretty.dump(#arg == 1 and arg[1] or arg, "/dev/stderr")
 end
 
 utilities.concat = function (array, separator)
@@ -122,7 +119,7 @@ utilities.splice = function (array, start, stop, replacement)
     ptr = ptr + 1
   end
 
-  for i = 1, room do
+  for _ = 1, room do
       table.remove(array, ptr)
   end
   return array
@@ -150,7 +147,7 @@ table.nitems = function (tbl)
 end
 
 table.append = function (basetable, tbl)
-  if not basetable or not tbl then SU.error("table.append called with nil table!: "..basetable..", "..tbl,true) end
+  if not basetable or not tbl then SU.error("table.append called with nil table!: "..basetable..", "..tbl, true) end
   for i=1,#tbl do
       basetable[#basetable+1] = tbl[i]
   end
@@ -222,13 +219,25 @@ end
 -- Strip the top level command off a content object and keep only the child
 -- items — assuming that the current command is taking care of itself
 utilities.subContent = function (content)
-  out = { id="stuff" }
+  local out = { id="stuff" }
   for key, val in pairs(content) do
     if type(key) == "number" then
       out[#out+1] = val
     end
   end
   return out
+end
+
+-- Call `action` on each content AST node, recursively, including `content` itself.
+-- Not called on leaves, i.e. strings.
+utilities.walkContent = function (content, action)
+  if type(content) ~= "table" then
+    return
+  end
+  action(content)
+  for i = 1, #content do
+    utilities.walkContent(content[i], action)
+  end
 end
 
 utilities.rateBadness = function(inf_bad, shortfall, spring)
@@ -290,8 +299,8 @@ utilities.utf8codes = function (ustr)
     if pos > #ustr then
       return nil
     else
-      local c, ucv = 0, 0
-      local nbytes = 0
+      local c, ucv
+      local nbytes
       c = string.byte(ustr, pos)
       pos = pos + 1
       if c < 0x80 then
@@ -416,39 +425,86 @@ utilities.utf8_to_utf16le = function (str)
   return ustr
 end
 
+local icu = require("justenoughicu")
+
+local icuFormat = function (num, format)
+  local ok, result  = pcall(function() return icu.format_number(num, format) end)
+  return tostring(ok and result or num)
+end
+
+-- Language specific number formatters add functions to this table,
+-- see e.g. languages/tr.lua
+utilities.formatNumber = {
+  und = {
+
+    alpha = function (num)
+      local out = ""
+      local a = string.byte("a")
+      repeat
+        num = num - 1
+        out = string.char(num % 26 + a) .. out
+        num = (num - num % 26) / 26
+      until num < 1
+      return out
+    end
+
+  }
+}
+
+setmetatable (utilities.formatNumber, {
+    __call = function (self, num, format, case)
+      if math.abs(num) > 9223372036854775807 then
+        SU.warn("Integers larger than 64 bits do not reproduce properly in all formats")
+      end
+      if not case then
+        if format:match("^%l") then
+          case = "lower"
+        elseif format:match("^.%l") then
+          case = "title"
+        else
+          case = "upper"
+        end
+      end
+      local lang = SILE.settings.get("document.language")
+      format = format:lower()
+      local result
+      if self[lang] and type(self[lang][format]) == "function" then
+        result = self[lang][format](num)
+      elseif type(self["und"][format]) == "function" then
+        result = self.und[format](num)
+      else
+        result = icuFormat(num, format)
+      end
+      return icu.case(result, lang, case)
+    end
+})
+
 utilities.breadcrumbs = function ()
-  local breadcrumbs = { "document" }
+  local breadcrumbs = {}
 
   setmetatable (breadcrumbs, {
-      __call = function (self, name, func)
-          return function (...)
-              if name ~= "define" then
-                self[#self+1] = name
-                SU.debug("breadcrumbs", "Enter command " .. name)
-              end
-              local ret = func(...)
-              if name ~= "define" and self then
-                self[#self] = nil
-                SU.debug("breadcrumbs", "Leave command " .. name)
-              end
-              return ret
-            end
-        end,
+      __index = function(_, key)
+        local frame = SILE.traceStack[key]
+        return frame and frame.command or nil
+      end,
+      __len = function(_)
+        return #SILE.traceStack
+      end,
       __tostring = function (self)
-          return "B»" .. table.concat(self, "»")
-        end
+        return "B»" .. table.concat(self, "»")
+      end
     })
 
   function breadcrumbs:dump ()
     SU.dump(self)
   end
 
-  function breadcrumbs:parent (node)
-    return self[#self-(node or 1)]
+  function breadcrumbs:parent (count)
+    return self[#self-(count or 1)]
   end
 
-  function breadcrumbs:contains (cmd)
-    for i, name in ipairs(self) do if name == cmd then return #self-i end end
+  function breadcrumbs:contains (command)
+    for i, name in ipairs(self) do if name == command then return #self-i end end
     return -1
   end
 

@@ -1,7 +1,7 @@
-\begin[papersize=a5]{document}\nofolios
+\begin[papersize=a6]{document}
+\nofolios
 \font[family=Noto Naskh Arabic,language=urd,size=18pt]
- {}\break
-\skip[height=17cm]
+\hbox\skip[height=95%fh]
 کب سے ہیں اِسی کوشش میں اب\break\skip[height=2ex]
 کب سے ہیں اِسی کوشش میں اب\break
 \end{document}

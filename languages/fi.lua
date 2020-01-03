@@ -119,10 +119,10 @@ SILE.hyphenator.languages["fi"].patterns =
 "1vö",
 ------- Some common words borrowed from other languages -------
 ------- This part could be updated from time to time    -------
-1st2r  -- -stressi, -strategia etc.
+"1st2r",  -- -stressi, -strategia etc.
 ------ Some special cases occuring with compound words only ----
 ------ There still remains well known problem as 'kaivos\-aukko' etc.
-%a1y --   (common in borrowed words)
+"a1y", --   (common in borrowed words)
 "ä2y",
 "y1a2",
 "y1o2",
@@ -178,7 +178,7 @@ SILE.hyphenator.languages["fi"].patterns =
 "e1ää",
 "y1ää",
 "i1öö",  -- yhti-öön etc.
-"--i1eu"     -- keski-eurooppalainen
+"--i1eu",     -- keski-eurooppalainen
 --          vokaalikolmikkoja etc.  yhdyssanojen rajoissa
 -- -------- vowel triples by Fred Karlsson
 "a1ei",
@@ -237,11 +237,11 @@ SILE.hyphenator.languages["fi"].patterns =
 "1a2sian",     -- neuvottelu-asian  etc.
 "1a2siat",     -- koti-asian  (ei kotia-sian)
 "1a2sioi",     -- talous-asioita etc.
-"r2as l2as"   -- tikku-rasia  etc
+"r2asl2as",   -- tikku-rasia  etc
 "2s1o2pisk",   -- xs-opiskelija  etc
 "2n1o2pet",
 "2s1a2loi",
-"2n1o2pist"    -- kansan-opisto etc.
+"2n1o2pist",    -- kansan-opisto etc.
 "2s1o2pist",
 "2s1o2sa",      -- xxs-osakas etc.
 "2n1o2sa",      -- asian-osainen etc.
