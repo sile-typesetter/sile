@@ -306,8 +306,9 @@ local _vbox = _box {
     typesetter.frame:advancePageDirection(advanceamount)
     local initial = true
     for _, node in pairs(self.nodes) do
+      -- luacheck: ignore 542
+      -- (It's easier to understand a do-nothing branch than the logical inverse)
       if initial and (node:isGlue() or node:isPenalty()) then
-        -- do nothing
       else
         initial = false
         node:outputYourself(typesetter, line)
