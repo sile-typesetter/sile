@@ -322,7 +322,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   -- OK, we didn't fit. So now we have to split the insertion to fit the height
   -- we have within the insertion frame.
   SU.debug("insertions", "splitting")
-  local maxsize = math.min(target - totalHeight, options.maxHeight)
+  local maxsize = SU.min(target - totalHeight, options.maxHeight)
 
   -- If we're going to fit this insertion on the page, we will use the
   -- whole of topbox, so let's subtract the height of that now.

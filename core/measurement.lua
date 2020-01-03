@@ -141,7 +141,12 @@ local measurement = pl.class({
 
     __lt = function (self, other)
       return _tonumber(self) < _tonumber(other)
+    end,
+
+    __le = function (self, other)
+      return _tonumber(self) <= _tonumber(other)
     end
+
   })
 
 

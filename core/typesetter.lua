@@ -695,10 +695,10 @@ SILE.defaultTypesetter = std.object {
     if left < 0 then
       left = left / naturalTotals.shrink
       -- TODO: See bug 620
-      left.amount = math.max(left.amount, -1)
+      left.amount = SU.max(left.amount, -1)
     else
       left = left / naturalTotals.stretch
-      -- left.amount = math.min(left.amount, 1)
+      -- left.amount = SU.min(left.amount, 1)
     end
     return left:tonumber()
   end,

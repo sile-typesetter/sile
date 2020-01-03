@@ -134,6 +134,25 @@ utilities.sum = function (array)
   return total
 end
 
+-- Lua <= 5.2 can't handle objects in math functions
+utilities.max = function (...)
+  local input = pl.utils.pack(...)
+  local max = input[1]
+  for _, val in ipairs(input) do
+    if val > max then max = val end
+  end
+  return max
+end
+
+utilities.min = function (...)
+  local input = pl.utils.pack(...)
+  local min = input[1]
+  for _, val in ipairs(input) do
+    if val < min then min = val end
+  end
+  return min
+end
+
 utilities.compress = function (items)
   local rv = {}
   local max = math.max(table.unpack(pl.tablex.keys(items)))

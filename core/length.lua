@@ -135,6 +135,12 @@ return pl.class({
       return (a - b).length < 0
     end,
 
+    __le = function (self, other)
+      local a = SU.cast("length", self):absolute()
+      local b = SU.cast("length", other):absolute()
+      return (a - b).length <= 0
+    end,
+
     __eq = function (self, other)
       local a = SU.cast("length", self):absolute()
       local b = SU.cast("length", other):absolute()

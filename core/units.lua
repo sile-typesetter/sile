@@ -18,7 +18,7 @@ setmetatable(units, {
           rawset(self, unit, {
               relative = true,
               converter = function (value)
-                return  SU.cast("measurement", def):tonumber() * parsed.amount * value
+                return  value * self[parsed.unit].converter(parsed.amount)
               end
             })
         else
@@ -93,7 +93,7 @@ units["%pmin"] = {
   relative = true,
   definition = function (value)
     checkPaperDefined()
-    return value / 100 * math.min(SILE.documentState.orgPaperSize[1], SILE.documentState.orgPaperSize[2])
+    return value / 100 * SU.min(SILE.documentState.orgPaperSize[1], SILE.documentState.orgPaperSize[2])
   end
 }
 
@@ -101,7 +101,7 @@ units["%pmax"] = {
   relative = true,
   definition = function (value)
     checkPaperDefined()
-    return value / 100 * math.max(SILE.documentState.orgPaperSize[1], SILE.documentState.orgPaperSize[2])
+    return value / 100 * SU.max(SILE.documentState.orgPaperSize[1], SILE.documentState.orgPaperSize[2])
   end
 }
 
@@ -125,7 +125,7 @@ units["%fmin"] = {
   relative = true,
   definition = function (value)
     checkFrameDefined()
-    return value / 100 * math.min(SILE.typesetter.frame:width(), SILE.typesetter.frame:height())
+    return value / 100 * SU.min(SILE.typesetter.frame:width(), SILE.typesetter.frame:height())
   end
 }
 
@@ -133,7 +133,7 @@ units["%fmax"] = {
   relative = true,
   definition = function (value)
     checkFrameDefined()
-    return value / 100 * math.max(SILE.typesetter.frame:width(), SILE.typesetter.frame:height())
+    return value / 100 * SU.max(SILE.typesetter.frame:width(), SILE.typesetter.frame:height())
   end
 }
 
@@ -189,12 +189,9 @@ units["spc"] = {
   end
 }
 
--- Don't calculate this relative to EM because we don't want to absolutize at definition
 units["en"] = {
   relative = true,
-  definition = function (value)
-    return value * SILE.settings.get("font.size") / 2
-  end
+  definition = "0.5em"
 }
 
 return units

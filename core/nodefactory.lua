@@ -9,6 +9,11 @@ local infinity = SILE.measurement(1e13)
 -- several levels, and also customizes what happens at each level so we are
 -- directly calling back into the _init() functions we want.
 
+local function _maxnode (nodes, dim)
+  local dims = SU.map(function (node) return node[dim] end, nodes)
+  return SU.max(SILE.length(0), pl.utils.unpack(dims))
+end
+
 nodefactory.box = pl.class({
     type = "special",
     height = nil,
@@ -163,8 +168,8 @@ nodefactory.nnode = pl.class({
 
     _init = function (self, spec)
       nodefactory.box._init(self, spec)
-      if 0 == self.depth:tonumber() then self.depth = math.max(0, table.unpack(SU.map(function (node) return node.depth end, self.nodes))) end
-      if 0 == self.height:tonumber() then self.height = math.max(0, table.unpack(SU.map(function (node) return node.height end, self.nodes))) end
+      if 0 == self.depth:tonumber() then self.depth = _maxnode(self.nodes, "depth")  end
+      if 0 == self.height:tonumber() then self.height = _maxnode(self.nodes, "height") end
       if 0 == self.width:tonumber() then self.width = SU.sum(SU.map(function (node) return node.width end, self.nodes)) end
     end,
 
@@ -274,7 +279,7 @@ nodefactory.disc = pl.class({
     replacementWidth = function (self)
       if self.replacew then return self.replacew end
       local width = SILE.length(0)
-      for _, node in pairs(self.replacement) do width = width + node.width end
+      for _, node in pairs(self.replacement) do width:___add(node.width) end
       self.replacew = width
       return width
     end,
@@ -316,7 +321,7 @@ nodefactory.alt = pl.class({
     end,
 
     minWidth = function (self)
-      local minW = function (a, b) return math.min(a.width, b.width) end
+      local minW = function (a, b) return SU.min(a.width, b.width) end
       return pl.tablex.reduce(minW, self.options)
     end,
 
@@ -467,10 +472,8 @@ nodefactory.vbox = pl.class({
     _init = function (self, spec)
       self.nodes = {}
       nodefactory.box._init(self, spec)
-      for _, node in ipairs(self.nodes) do
-        self.depth  = math.max(node.depth, self.depth)
-        self.height = math.max(node.height, self.height)
-      end
+      self.depth = _maxnode(self.nodes, "depth")
+      self.height = _maxnode(self.nodes, "height")
     end,
 
     __tostring = function (self)
