@@ -1,4 +1,5 @@
 local std = require("std")
+-- luacheck: globals setfenv getfenv
 
 -- The following functions borrowed from Norman Ramsey's nbibtex,
 -- with permission.
