@@ -283,26 +283,20 @@ nodefactory.disc = pl.class({
 
     prebreakHeight = function (self)
       if self.prebh then return self.prebh end
-      local width = SILE.length(0)
-      for _, node in pairs(self.prebreak) do if node.height > width then width = node.height end end
-      self.prebh = width
-      return width
+      self.prebh = _maxnode(self.prebreak, "height")
+      return self.prebh
     end,
 
     postbreakHeight = function (self)
       if self.postbh then return self.postbh end
-      local width = SILE.length(0)
-      for _, node in pairs(self.postbreak) do if node.height > width then width = node.height end end
-      self.postbh = width
-      return width
+      self.postbh = _maxnode(self.postbreak, "height")
+      return self.postbh
     end,
 
     replacementHeight = function (self)
       if self.replaceh then return self.replaceh end
-      local width = SILE.length(0)
-      for _, node in pairs(self.replacement) do if node.height > width then width = node.height end end
-      self.replaceh = width
-      return width
+      self.replaceh = _maxnode(self.replacement, "height")
+      return self.replaceh
     end
 
   })
