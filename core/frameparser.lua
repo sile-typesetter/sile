@@ -1,12 +1,13 @@
-lpeg = require("lpeg")
+local lpeg = require("lpeg")
 local cassowary = require("cassowary")
-local R = lpeg.R
-local S = lpeg.S
+
+-- local R = lpeg.R
+-- local S = lpeg.S
 local P = lpeg.P
 local C = lpeg.C
 local V = lpeg.V
-local Cg = lpeg.Cg
-local Ct = lpeg.Ct
+-- local Cg = lpeg.Cg
+-- local Ct = lpeg.Ct
 
 local number = SILE.parserBits.number
 local identifier = SILE.parserBits.identifier
@@ -28,7 +29,7 @@ local primary = dimensioned_string + func + number.number
 		number = number,
 		identifier = identifier,
 		whitespace = whitespace,
-		units = units,
+		-- units = units,
 		dimensioned_string = dimensioned_string,
 		func = func,
 		primary = primary

@@ -21,7 +21,7 @@ if (WIN32)
     SOURCE_SUBDIR expat
     CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" -DBUILD_tools=OFF -DBUILD_examples=OFF -DBUILD_tests=OFF -DBUILD_shared=OFF -DBUILD_doc=OFF -DMSVC_USE_STATIC_CRT=OFF
     INSTALL_DIR "${TMP_INSTALL_DIR}")
-  
+
   ExternalProject_Add(icu
     GIT_REPOSITORY https://github.com/hunter-packages/icu
     GIT_TAG v63.1-p6
@@ -135,6 +135,10 @@ if (WIN32)
     COMMAND "${LUAROCKS_COMMAND}" install luasec 0.8-1 "OPENSSL_DIR=${TMP_INSTALL_DIR}" "LD=link -libpath:${TMP_INSTALL_DIR}/lib zlibstatic.lib Advapi32.lib User32.lib Crypt32.lib"
     DEPENDEES build)
   ExternalProject_Add_StepDependencies(luarocks install_luasec openssl)
+
+  ExternalProject_Add_Step(luarocks install_penlight
+    COMMAND "${LUAROCKS_COMMAND}" install penlight 1.5.4-1
+    DEPENDEES build)
 
   ExternalProject_Add(font_gentium
     URL https://software.sil.org/downloads/r/gentium/GentiumPlus-5.000.zip

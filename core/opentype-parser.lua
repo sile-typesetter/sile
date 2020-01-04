@@ -83,8 +83,6 @@ local parseName = function(str)
         language = MacintoshLanguages[record.language]
       elseif record.language < 0x8000 and record.platform == 3 then
         language = WindowsLanguages[record.language]
-      else
-        -- I don't actually care
       end
     end
     name.records[i].language = language
@@ -145,11 +143,10 @@ local function parseCpal(str)
   local cpal = {}
 
   local header = vstruct.read(">nPalettesEntries:u2 nPalettes:u2 nColors:u2 oFirstColor:u4", fd)
-  local colorIndices = vstruct.read("> " .. header.nPalettes .. "*u2", fd)
+  -- local colorIndices = vstruct.read("> " .. header.nPalettes .. "*u2", fd)
   local colors = vstruct.read(">@" .. header.oFirstColor .. " " .. header.nColors .. "*{b:u1 g:u1 r:u1 a:u1}", fd)
 
-  for i = 1, header.nPalettes do
-    local first = colorIndices[i] + 1
+  for _ = 1, header.nPalettes do
     local palette = {}
     for j = 1, header.nPalettesEntries do
       local color = colors[j]
