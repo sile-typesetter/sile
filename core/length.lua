@@ -6,9 +6,9 @@ end
 
 return pl.class({
     type = "length",
-    length = SILE.measurement(0),
-    stretch = SILE.measurement(0),
-    shrink = SILE.measurement(0),
+    length = nil,
+    stretch = nil,
+    shrink = nil,
 
     _init = function (self, spec, stretch, shrink)
       if stretch or shrink then
@@ -33,8 +33,9 @@ return pl.class({
           self:_init(parsed)
         end
       end
-      self.stretch.amount = self.stretch.amount
-      self.shrink.amount = self.shrink.amount
+      if not self.length then self.length = SILE.measurement() end
+      if not self.stretch then self.stretch = SILE.measurement() end
+      if not self.shrink then self.shrink = SILE.measurement() end
     end,
 
     absolute = function (self)

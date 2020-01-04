@@ -11,9 +11,9 @@ local infinity = SILE.measurement(1e13)
 
 nodefactory.box = pl.class({
     type = "special",
-    height = SILE.length(0),
-    depth = SILE.length(0),
-    width = SILE.length(0),
+    height = nil,
+    depth = nil,
+    width = nil,
     misfit = false,
     explicit = false,
     discardable = false,
@@ -37,6 +37,9 @@ nodefactory.box = pl.class({
       elseif SU.type(spec) ~= "nil" then
         SU.error("Unimplemented, creating " .. self.type .. " node from " .. SU.type(spec), 1)
       end
+      if not self.height then self.height = SILE.length() end
+      if not self.depth then self.depth = SILE.length() end
+      if not self.width then self.width = SILE.length() end
     end,
 
     tostring = function (self)
@@ -352,13 +355,19 @@ nodefactory.glue = pl.class({
 
 nodefactory.hfillglue = pl.class({
     _base = nodefactory.glue,
-    width = SILE.length(0, infinity)
+    _init = function (self, spec)
+      self.width = SILE.length(0, infinity)
+      nodefactory.glue._init(self, spec)
+    end
   })
 
 nodefactory.hssglue = pl.class({
   -- possible bug, deprecated constructor actually used vglue for this
     _base = nodefactory.glue,
-    width = SILE.length(0, infinity, infinity)
+    _init = function (self, spec)
+      self.width = SILE.length(0, infinity, infinity)
+      nodefactory.glue._init(self, spec)
+    end
   })
 
 nodefactory.kern = pl.class({
@@ -376,7 +385,12 @@ nodefactory.vglue = pl.class({
     type = "vglue",
     discardable = true,
     _default_length = "height",
-    adjustment = SILE.measurement(),
+    adjustment = nil,
+
+    _init = function (self, spec)
+      self.adjustment = SILE.measurement()
+      nodefactory.box._init(self, spec)
+    end,
 
     __tostring = function (self)
       return (self.explicit and "E:" or "") .. "VG<" .. self.height .. ">";
@@ -396,10 +410,7 @@ nodefactory.vglue = pl.class({
 
 nodefactory.vfillglue = pl.class({
     _base = nodefactory.vglue,
-    height = SILE.length(0, infinity),
     _init = function (self, spec)
-      -- TODO this shouldn't be necessary, but without it somehow new vfillglues
-      -- are getting heights inherited from previous page metrics!
       self.height = SILE.length(0, infinity)
       nodefactory.vglue._init(self, spec)
     end
