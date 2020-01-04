@@ -235,7 +235,7 @@ time.json: sile
 $(call make_worktree_rules,compare)
 
 onetest = $(firstword $(ACTUALS)),$(firstword $(TESTPDFS))
-compare_prerequisites = $(shell echo {,compare-$(BASESHA)/}{$(onetest)})
+compare_prerequisites = $(sort $(shell echo {compare-$(BASESHA)/,}{$(onetest)}))
 
 runapp ?= nohup $(1) > /dev/null &
 compare: $(call compare_prerequisites)

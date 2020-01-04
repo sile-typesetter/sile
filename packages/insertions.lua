@@ -223,17 +223,15 @@ local nextInterInsertionSkip = function (class)
 end
 
 local debugInsertion = function (ins, insbox, topBox, target, targetFrame, totalHeight)
-  if SU.debugging("insertions") then
-    local h = ins.contentHeight + topBox.height + topBox.depth + ins.contentDepth
-    io.stderr:write("[insertions]", "Incoming insertion")
-    io.stderr:write("top box height", topBox.height)
-    io.stderr:write("insertion", ins, ins.height, ins.depth)
-    io.stderr:write("Total incoming height", h)
-    io.stderr:write("Insertions already in this class ", insbox.height, insbox.depth)
-    io.stderr:write("Page target ", target)
-    io.stderr:write("Page frame ", targetFrame)
-    io.stderr:write(totalHeight.." worth of content on page so far")
-  end
+  local insertionsHeight = ins.contentHeight + topBox.height + topBox.depth + ins.contentDepth
+  SU.debug("insertions", "## Incoming insertion")
+  SU.debug("insertions", "Top box height", topBox.height)
+  SU.debug("insertions", "Insertion", ins, ins.height, ins.depth)
+  SU.debug("insertions", "Total incoming height", insertionsHeight)
+  SU.debug("insertions", "Insertions already in this class ", insbox.height, insbox.depth)
+  SU.debug("insertions", "Page target ", target)
+  SU.debug("insertions", "Page frame ", targetFrame)
+  SU.debug("insertions", totalHeight .. " worth of content on page so far")
 end
 
 local min = function (a, b) -- Defined funny to help Lua 5.1 compare overloaded tables
@@ -287,7 +285,9 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   initShrinkage(targetFrame)
   initShrinkage(SILE.typesetter.frame)
 
-  debugInsertion(ins, insbox, topBox, target, targetFrame, totalHeight)
+  if SU.debugging("insertions") then
+    debugInsertion(ins, insbox, topBox, target, targetFrame, totalHeight)
+  end
 
   local effectOnThisFrame = options.stealFrom[SILE.typesetter.frame.id]
   if effectOnThisFrame then effectOnThisFrame = effectOnThisFrame * h.length

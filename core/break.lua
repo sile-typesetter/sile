@@ -408,7 +408,7 @@ end
 
 function lineBreak.dumpBreakNode(_, node)
   if not SU.debugging("break") then return end
-  print(lineBreak:describeBreakNode(node))
+  SU.debug("break", lineBreak:describeBreakNode(node))
 end
 
 function lineBreak:describeBreakNode(node)
@@ -576,7 +576,7 @@ function lineBreak:dumpActiveRing()
   io.stderr:write("\n")
   repeat
     if p == self.r then io.stderr:write("-> ") else io.stderr:write("   ") end
-    print(lineBreak:describeBreakNode(p))
+    SU.debug("break", lineBreak:describeBreakNode(p))
     p = p.next
   until p == self.activeListHead
 end

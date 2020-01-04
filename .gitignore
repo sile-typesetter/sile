@@ -60,6 +60,9 @@ tests/*.pdf
 */*.toc
 time-*.json
 
+benchmark-*
+compare-*
+
 # Vendor stuff
 node_modules
 lua_modules
