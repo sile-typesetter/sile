@@ -94,6 +94,17 @@ return pl.class({
         self.shrink + other.shrink)
     end,
 
+    ___add = function (self, other)
+      if SU.type(other) ~= "length" then
+        self.length:___add(other)
+      else
+        self.length:___add(other.length)
+        self.stretch:___add(other.stretch)
+        self.shrink:___add(other.shrink)
+      end
+      return nil
+    end,
+
     __sub = function (self, other)
       local result = SILE.length(self)
       other = SU.cast("length", other)
@@ -101,6 +112,13 @@ return pl.class({
       result.stretch = result.stretch - other.stretch
       result.shrink = result.shrink - other.shrink
       return result
+    end,
+
+    ___sub = function (self, other)
+      self.length:___sub(other.length)
+      self.stretch:___sub(other.stretch)
+      self.shrink:___sub(other.shrink)
+      return nil
     end,
 
     __mul = function (self, other)

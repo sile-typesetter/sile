@@ -26,9 +26,19 @@ local function _amount (input)
   return type(input) == "number" and input or input.amount
 end
 
+local function _pt_amount (input)
+  return type(input) == "number" and input or not input and 0 or input._mutable and input.amount or input:tonumber()
+end
+
+local function _error_if_immutable (input)
+  if type(input) == "table" and not input._mutable then
+    SU.error("Not so fast, we can't do mutating arithmetic except on 'pt' unit measurements!", true)
+  end
+end
+
 local function _error_if_relative (a, b)
   if type(a) == "table" and a.relative or type(b) == "table" and b.relative then
-    SU.error("We tried to do arithmetic on a relative measurement without explicitly absolutizing it. (That's a bug)", true)
+    SU.error("Cannot do arithmetic on a relative measurement without explicitly absolutizing it.", true)
   end
 end
 
@@ -37,6 +47,7 @@ local measurement = pl.class({
     amount = 0,
     unit = "pt",
     relative = false,
+    _mutable = false,
 
     _init = function (self, amount, unit)
       if unit then self.unit = unit end
@@ -55,6 +66,7 @@ local measurement = pl.class({
       end
       if not SILE.units[self.unit] then SU.error("Unknown unit: " .. unit) end
       self.relative = SILE.units[self.unit].relative
+      if self.unit == "pt" then self._mutable = true end
     end,
 
     absolute = function (self)
@@ -84,6 +96,12 @@ local measurement = pl.class({
       end
     end,
 
+    ___add = function (self, other)
+      _error_if_immutable(self)
+      self.amount = self.amount + _pt_amount(other)
+      return nil
+    end,
+
     __sub = function (self, other)
       if _similarunit(self, other) then
         return SILE.measurement(_amount(self) - _amount(other), _unit(self, other))
@@ -91,6 +109,12 @@ local measurement = pl.class({
         _error_if_relative(self, other)
         return SILE.measurement(_tonumber(self) - _tonumber(other))
       end
+    end,
+
+    ___sub = function (self, other)
+      _error_if_immutable(self)
+      self.amount = self.amount - _pt_amount(other)
+      return nil
     end,
 
     __mul = function (self, other)
