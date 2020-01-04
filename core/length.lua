@@ -87,12 +87,11 @@ return pl.class({
     end,
 
     __add = function (self, other)
-      local result = SILE.length(self)
+      if type(self) == "number" then self, other = other, self end
       other = SU.cast("length", other)
-      result.length = result.length + other.length
-      result.stretch = result.stretch + other.stretch
-      result.shrink = result.shrink + other.shrink
-      return result
+      return SILE.length(self.length + other.length,
+        self.stretch + other.stretch,
+        self.shrink + other.shrink)
     end,
 
     __sub = function (self, other)

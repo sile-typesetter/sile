@@ -58,9 +58,7 @@ local measurement = pl.class({
     end,
 
     absolute = function (self)
-      local def = SILE.units[self.unit]
-      local amount = def.converter and def.converter(self.amount) or self.amount * def.value
-      return SILE.measurement(amount)
+      return SILE.measurement(self:tonumber())
     end,
 
     tostring = function (self)
@@ -68,7 +66,9 @@ local measurement = pl.class({
     end,
 
     tonumber = function (self)
-      return self:absolute().amount
+      local def = SILE.units[self.unit]
+      local amount = def.converter and def.converter(self.amount) or self.amount * def.value
+      return amount
     end,
 
     __tostring = function (self)
