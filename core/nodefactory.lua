@@ -501,15 +501,17 @@ nodefactory.vbox = pl.class({
       if nodes.type then
         nodes = box:unbox()
       end
-      local height = self.height:absolute() + self.depth:absolute()
-      local lastdepth = SILE.length(0)
+      self.height = self.height:absolute()
+      self.height:___add(self.depth)
+      local lastdepth = SILE.length()
       for i = 1, #nodes do
         table.insert(self.nodes, nodes[i])
-        height = height + nodes[i].height:absolute() + nodes[i].depth:absolute()
-        if nodes[i]:isVbox() then lastdepth = nodes[i].depth:absolute() end
+        self.height:___add(nodes[i].height)
+        self.height:___add(nodes[i].depth:absolute())
+        if nodes[i]:isVbox() then lastdepth = nodes[i].depth end
       end
+      self.height:___sub(lastdepth)
       self.ratio = 1
-      self.height = height - lastdepth
       self.depth = lastdepth
     end
 
