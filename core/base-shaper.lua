@@ -30,6 +30,7 @@ SILE.shapers.base = pl.class({
         SILE.settings.temporarily(function ()
           SILE.settings.set("font.size", options.size)
           SILE.settings.set("font.family", options.family)
+          SILE.settings.set("font.filename", options.filename)
           ss = ss:absolute()
         end)
         return ss
