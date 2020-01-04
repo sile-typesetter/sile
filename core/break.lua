@@ -422,32 +422,36 @@ function lineBreak:describeBreakNode(node)
   return "b "..from.."-"..to.." \""..(before and before:toText()).." | "..(after and after:toText()).."\" [".. node.totalDemerits..", "..node.fitness.."]"
 end
 
+-- NOTE: this function is called many thousands of times even in single
+-- page documents. Speed is more important than pretty code here.
 function lineBreak:checkForLegalBreak(node) -- 892
   if debugging then SU.debug("break", "considering node "..node); end
   local previous = self.nodes[self.place - 1]
   if node:isAlternative() then self.seenAlternatives = true end
   if self.sideways and node:isBox() then
-    self.activeWidth = self.activeWidth + node.height:absolute() + node.depth:absolute()
+    self.activeWidth:___add(node.height)
+    self.activeWidth:___add(node.depth)
   elseif self.sideways and node:isVglue() then
     if previous and previous:isBox() then
       self:tryBreak()
     end
-    self.activeWidth = self.activeWidth + node.height:absolute() + node.depth:absolute()
+    self.activeWidth:___add(node.height)
+    self.activeWidth:___add(node.depth)
   elseif node:isAlternative() then
-    self.activeWidth = self.activeWidth + node:minWidth():absolute()
+    self.activeWidth:___add(node:minWidth())
   elseif node:isBox() then
-    self.activeWidth = self.activeWidth + node:lineContribution()
+    self.activeWidth:___add(node:lineContribution())
   elseif node:isGlue() then
     -- 894 (We removed the auto_breaking parameter)
     if previous and previous:isBox() then self:tryBreak() end
-    self.activeWidth = self.activeWidth + node.width:absolute()
+    self.activeWidth:___add(node.width)
   elseif node:isKern() then
-    self.activeWidth = self.activeWidth + node.width:absolute()
+    self.activeWidth:___add(node.width)
   elseif node:isDiscretionary() then -- 895
-    self.activeWidth = self.activeWidth + node:prebreakWidth():absolute()
+    self.activeWidth:___add(node:prebreakWidth())
     self:tryBreak()
-    self.activeWidth = self.activeWidth - node:prebreakWidth():absolute()
-    self.activeWidth = self.activeWidth + node:replacementWidth():absolute()
+    self.activeWidth:___sub(node:prebreakWidth())
+    self.activeWidth:___add(node:replacementWidth())
   elseif node:isPenalty() then
     self:tryBreak()
   end

@@ -48,9 +48,10 @@ return pl.class({
         local vbox = vboxlist[i]
         SU.debug("pagebuilder", "Dealing with VBox " .. vbox)
         if vbox:isVbox() then
-          totalHeight = totalHeight + vbox.height:absolute() + vbox.depth:absolute()
+          totalHeight:___add(vbox.height)
+          totalHeight:___add(vbox.depth)
         elseif vbox:isVglue() then
-          totalHeight = totalHeight + vbox.height:absolute()
+          totalHeight:___add(vbox.height)
         elseif vbox:isInsertion() then
           target = SILE.insertions.processInsertion(vboxlist, i, totalHeight, target)
           vbox = vboxlist[i]

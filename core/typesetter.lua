@@ -410,11 +410,12 @@ SILE.defaultTypesetter = std.object {
     local totalHeight = SILE.length()
     for _, node in ipairs(pageNodeList) do
       if not node:isInsertion() then
-        totalHeight = totalHeight + node.height:absolute() + node.depth:absolute()
+        totalHeight:___add(node.height)
+        totalHeight:___add(node.depth)
       end
       if node:isVglue() then
         table.insert(glues, node)
-        gTotal = gTotal + node.height:absolute()
+        gTotal:___add(node.height)
       end
     end
     local adjustment = target - totalHeight
@@ -657,15 +658,15 @@ SILE.defaultTypesetter = std.object {
     for i, node in ipairs(slice) do
       if node:isBox() then
         skipping = false
-        naturalTotals = naturalTotals + node:lineContribution()
+        naturalTotals:___add(node:lineContribution())
       elseif node:isPenalty() and node.penalty == -inf_bad then
         skipping = false
       elseif node:isDiscretionary() then
         skipping = false
-        naturalTotals = naturalTotals + node:replacementWidth():absolute()
+        naturalTotals:___add(node:replacementWidth())
         slice[i].height = slice[i]:replacementHeight():absolute()
       elseif not skipping then
-        naturalTotals = naturalTotals + node.width:absolute()
+        naturalTotals:___add(node.width)
       end
     end
     local i = #slice
@@ -677,8 +678,8 @@ SILE.defaultTypesetter = std.object {
       elseif slice[i]:isDiscretionary() then
         slice[i].used = true
         if slice[i].parent then slice[i].parent.hyphenated = true end
-        naturalTotals = naturalTotals - slice[i]:replacementWidth():absolute()
-        naturalTotals = naturalTotals + slice[i]:prebreakWidth():absolute()
+        naturalTotals:___sub(slice[i]:replacementWidth())
+        naturalTotals:___add(slice[i]:prebreakWidth())
         slice[i].height = slice[i]:prebreakHeight()
         break
       else
@@ -687,8 +688,8 @@ SILE.defaultTypesetter = std.object {
       i = i - 1
     end
     if slice[1]:isDiscretionary() then
-      naturalTotals = naturalTotals - slice[1]:replacementWidth():absolute()
-      naturalTotals = naturalTotals + slice[1]:postbreakWidth():absolute()
+      naturalTotals:___sub(slice[1]:replacementWidth())
+      naturalTotals:___add(slice[1]:postbreakWidth())
       slice[1].height = slice[1]:postbreakHeight()
     end
     local left = breakwidth:absolute() - naturalTotals

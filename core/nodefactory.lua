@@ -262,26 +262,23 @@ nodefactory.disc = pl.class({
 
     prebreakWidth = function (self)
       if self.prebw then return self.prebw end
-      local width = SILE.length(0)
-      for _, node in pairs(self.prebreak) do width = width + node.width end
-      self.prebw = width
-      return width
+      self.prebw = SILE.length()
+      for _, node in pairs(self.prebreak) do self.prebw:___add(node.width) end
+      return self.prebw
     end,
 
     postbreakWidth = function (self)
       if self.postbw then return self.postbw end
-      local width = SILE.length(0)
-      for _, node in pairs(self.postbreak) do width = width + node.width end
-      self.postbw = width
-      return width
+      self.postbw = SILE.length()
+      for _, node in pairs(self.postbreak) do self.pastbw:___add(node.width) end
+      return self.postbw
     end,
 
     replacementWidth = function (self)
       if self.replacew then return self.replacew end
-      local width = SILE.length(0)
-      for _, node in pairs(self.replacement) do width:___add(node.width) end
-      self.replacew = width
-      return width
+      self.replacew = SILE.length()
+      for _, node in pairs(self.replacement) do self.replacew:___add(node.width) end
+      return self.replacew
     end,
 
     prebreakHeight = function (self)

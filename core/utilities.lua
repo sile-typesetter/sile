@@ -265,9 +265,9 @@ end
 
 utilities.rationWidth = function (target, width, ratio)
   if ratio < 0 and width.shrink > 0 then
-    target = target + width.shrink * ratio
+    target:___add(width.shrink * ratio)
   elseif ratio > 0 and width.stretch > 0 then
-    target = target + width.stretch * ratio
+    target:___add(width.stretch * ratio)
   end
   return target
 end

@@ -289,7 +289,11 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   -- We look into the page's insertion box and choose the appropriate skip,
   -- so we know how high the whole insertion is.
   local topBox = nextInterInsertionSkip(ins.class)
-  local insertionsHeight = ins.contentHeight + topBox.height:absolute() + topBox.depth:absolute() + ins.contentDepth:absolute()
+  local insertionsHeight = SILE.length()
+  insertionsHeight:___add(ins.contentHeight)
+  insertionsHeight:___add(topBox.height)
+  insertionsHeight:___add(topBox.depth)
+  insertionsHeight:___add(ins.contentDepth)
 
   local insbox = thisPageInsertionBoxForClass(ins.class)
   initShrinkage(targetFrame)
