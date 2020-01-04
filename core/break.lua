@@ -110,7 +110,7 @@ function lineBreak:tryBreak() -- 855
       if debugging then SU.debug("break", "We have moved the link  forward, ln is now "..(self.r.type == "delta" and "XX" or self.r.lineNumber)) end
       if self.r.type == "delta" then -- 858
         if debugging then SU.debug("break", " Adding delta node width of ".. tostring(self.r.width)) end
-        self.curActiveWidth = self.curActiveWidth + self.r.width
+        self.curActiveWidth:___add(self.r.width)
         self.prev_prev_r = self.prev_r
         self.prev_r = self.r
         break
@@ -209,7 +209,7 @@ function lineBreak:tryAlternatives(from, to)
     end
   end
   if debugging then SU.debug("break", "Choosing ", alternates[1].options[self.r.altSelections[1]]) end
-  -- self.curActiveWidth = self.curActiveWidth + selectedShortfall
+  -- self.curActiveWidth:___add(selectedShortfall)
   shortfall = self.lineWidth - self.curActiveWidth
   if debugging then SU.debug("break", "Is now ", shortfall) end
 end
@@ -257,7 +257,7 @@ function lineBreak:deactivateR() -- 886
     -- 887
     self.r = self.activeListHead.next
     if self.r.type == "delta" then
-      self.activeWidth = self.activeWidth + self.r.width
+      self.activeWidth:___add(self.r.width)
       self.curActiveWidth = SILE.length(self.activeWidth)
       self.activeListHead.next = self.r.next
     end
@@ -266,12 +266,12 @@ function lineBreak:deactivateR() -- 886
     if self.prev_r.type == "delta" then
       self.r = self.prev_r.next
       if self.r == self.activeListHead then
-        self.curActiveWidth = self.curActiveWidth - self.r.width
+        self.curActiveWidth:___sub(self.r.width)
         self.prev_prev_r.next = self.activeListHead
         self.prev_r = self.prev_prev_r
       elseif self.r.type == "delta" then
-        self.curActiveWidth = self.curActiveWidth + self.r.width
-        self.prev_r.width = self.prev_r.width + self.r.width
+        self.curActiveWidth:___add(self.r.width)
+        self.prev_r.width:___add(self.r.width)
         self.prev_r.next = self.r.next
       end
     end
@@ -336,13 +336,16 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
     local place = self.place
     local node = self.nodes[place]
     if node and node:isDiscretionary() then -- 866
-      self.breakWidth = self.breakWidth + node:prebreakWidth() + node:postbreakWidth() - node:replacementWidth()
+      self.breakWidth:___add(node:prebreakWidth())
+      self.breakWidth:___add(node:postbreakWidth())
+      self.breakWidth:___sub(node:replacementWidth())
     end
     while self.nodes[place] and not self.nodes[place]:isBox() do
       if self.sideways and self.nodes[place].height then
-        self.breakWidth = self.breakWidth - (self.nodes[place].height + self.nodes[place].depth)
+        self.breakWidth:___sub(self.nodes[place].height)
+        self.breakWidth:___sub(self.nodes[place].depth)
       elseif self.nodes[place].width then -- We use the fact that (a) nodes know if they have width and (b) width subtraction is polymorphic
-        self.breakWidth = self.breakWidth - self.nodes[place]:lineContribution()
+        self.breakWidth:___sub(self.nodes[place]:lineContribution())
       end
       place = place + 1
     end
@@ -350,7 +353,8 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
   end
   -- 869 (Add a new delta node)
   if self.prev_r.type == "delta" then
-    self.prev_r.width = self.prev_r.width - self.curActiveWidth + self.breakWidth
+    self.prev_r.width:___sub(self.curActiveWidth)
+    self.prev_r.width:___add(self.breakWidth)
   elseif self.prev_r == self.activeListHead then
     self.activeWidth = SILE.length(self.breakWidth)
   else
@@ -544,7 +548,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
       self.threshold = param("tolerance")
     else
       self.pass = "emergency"
-      self.background.stretch = self.background.stretch + param("emergencyStretch")
+      self.background.stretch:___add(param("emergencyStretch"))
       self.finalpass = true
     end
   end

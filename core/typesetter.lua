@@ -673,7 +673,7 @@ SILE.defaultTypesetter = std.object {
     while i > 1 do
       if slice[i]:isGlue() or slice[i]:isZero() then
         if slice[i].value ~= "margin" then
-          naturalTotals = naturalTotals - slice[i].width
+          naturalTotals:___sub(slice[i].width)
         end
       elseif slice[i]:isDiscretionary() then
         slice[i].used = true
