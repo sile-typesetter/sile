@@ -26,6 +26,8 @@ local function loadInSandbox(untrusted_code)
     if untrusted_code:byte(1) == 27 then return nil, "binary bytecode prohibited" end
     local untrusted_function, message = load(untrusted_code)
     if not untrusted_function then return nil, message end
+    -- luacheck: globals setfenv env
+    -- (At least there is in Lua 5.1)
     setfenv(untrusted_function, env)
     return pcall(untrusted_function)
   end
@@ -118,6 +120,8 @@ end
 
 -- These functions are global so they can be used from the REPL
 -- luacheck: ignore updatePackage
+-- luacheck: ignore installPackage
+
 function updatePackage(packageName, branch)
   local target = packageHome .. packageName
   -- Are we already there?
@@ -147,7 +151,6 @@ function updatePackage(packageName, branch)
   saveInstalled()
 end
 
--- luacheck: ignore installPackage
 function installPackage(packageName)
   if not recentlyUpdated  then updateCatalogue() end
   if not recentlyReloaded then reloadCatalogue() end

@@ -29,7 +29,7 @@ function jbook:init()
   return book.init(self)
 end
 
-function jbook:registerCommands()
+jbook.registerCommands = function(_)
   book:registerCommands()
   SILE.call("language", { main = "ja" })
 end

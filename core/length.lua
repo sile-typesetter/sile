@@ -57,7 +57,7 @@ return pl.class({
       return SILE.length(spec)
     end,
 
-    __index = function (_, key)
+    __index = function (_, key) -- luacheck: ignore
       -- SU.warn("Length method " .. key .. " is deprecated, just call SILE.length(...)")
       return SILE.length()
     end,

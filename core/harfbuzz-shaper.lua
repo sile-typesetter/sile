@@ -102,6 +102,8 @@ SILE.shapers.harfbuzz = pl.class({
         local font = ot.parseFont(face)
         local version = "Unknown version"
         if font and font.names and font.names[5] then
+          -- luacheck: ignore 512
+          -- (It's OK to grab the first version we find in the name table)
           for _, v in pairs(font.names[5]) do version = v[1]; break end
         end
         print(face.filename..":"..face.index, version)
