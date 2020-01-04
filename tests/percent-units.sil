@@ -18,7 +18,7 @@
 
 \hrule[width=50%lw,height=10pt]#
 
-\set[parameter=document.lskip,value=5em]
-\set[parameter=document.rskip,value=5em]
-\noindent\hrule[width=50%lw,height=10pt]#
+\set[parameter=document.lskip,value=1em]
+\set[parameter=document.rskip,value=1em]
+\noindent\hrule[width=50%lw,height=10pt,depth=2pt]#
 \end{document}
