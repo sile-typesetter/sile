@@ -301,7 +301,7 @@ nodefactory.disc = pl.class({
 
   })
 
-nodefactory.alt = pl.class({
+nodefactory.alternative = pl.class({
     _base = nodefactory.hbox,
     type = "alternative",
     options = {},
@@ -553,7 +553,7 @@ _deprecated_nodefactory.newDisc = function (spec)
 end
 
 _deprecated_nodefactory.newAlternative = function (spec)
-  return nodefactory.alt(spec)
+  return nodefactory.alternative(spec)
 end
 
 _deprecated_nodefactory.newGlue = function (spec)
