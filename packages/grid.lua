@@ -89,31 +89,32 @@ local gridPagebuilder = pl.class({
       end
       while i < #vboxlist do
         i = i + 1
-        if not vboxlist[i]:isVglue() then
+        if not vboxlist[i].is_vglue then
           i = i - 1
           break
         end
       end
       while i < #vboxlist do
         i = i + 1
-        local vbox = vboxlist[i]
-        SU.debug("pagebuilder", "Dealing with VBox " .. vbox)
-        if vbox:isVbox() then
-          totalHeight = totalHeight + vbox.height:absolute() + vbox.depth:absolute()
-        elseif vbox:isVglue() then
-          totalHeight = totalHeight + vbox.height:absolute()
-        elseif vbox:isInsertion() then
+        local node = vboxlist[i]
+        SU.debug("pagebuilder", "Dealing with VBox " .. node)
+        if node.is_vbox then
+          totalHeight = totalHeight + node.height:absolute() + node.depth:absolute()
+        elseif node.is_vglue then
+          totalHeight = totalHeight + node.height:absolute()
+        elseif node.is_insertion then
+          -- TODO: refactor as hook and without side effects!
           target = SILE.insertions.processInsertion(vboxlist, i, totalHeight, target)
-          vbox = vboxlist[i]
+          node = vboxlist[i]
         end
         local left = target - totalHeight
         SU.debug("pagebuilder", "I have " .. left .. "left")
         SU.debug("pagebuilder", "totalHeight " .. totalHeight .. " with target " .. target)
         local badness = 0
         if left < 0 then badness = 1000000 end
-        if vbox:isPenalty() then
-          if vbox.penalty < -3000 then badness = 100000
-          else badness = -left * left - vbox.penalty
+        if node.is_penalty then
+          if node.penalty < -3000 then badness = 100000
+          else badness = -left * left - node.penalty
           end
         end
       if badness > 0 then

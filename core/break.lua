@@ -69,7 +69,7 @@ end
 
 function lineBreak:trimGlue() -- 842
   local nodes = self.nodes
-  if nodes[#nodes]:isGlue() then nodes[#nodes] = nil end
+  if nodes[#nodes].is_glue then nodes[#nodes] = nil end
   nodes[#nodes+1] = SILE.nodefactory.penalty(inf_bad)
 end
 
@@ -95,7 +95,7 @@ function lineBreak:tryBreak() -- 855
   local pi, breakType
   local node = self.nodes[self.place]
   if not node then pi = ejectPenalty; breakType = "hyphenated"
-  elseif node:isDiscretionary() then breakType = "hyphenated"; pi = param("hyphenPenalty")
+  elseif node.is_discretionary then breakType = "hyphenated"; pi = param("hyphenPenalty")
   else breakType = "unhyphenated"; pi = node.penalty or 0 end
   if debugging then SU.debug("break", "Trying a "..breakType.." break p="..pi) end
   self.no_break_yet = true -- We have to store all this state crap in the object, or it's global variables all the way
@@ -182,7 +182,7 @@ function lineBreak:tryAlternatives(from, to)
   local altSizes = {}
   local alternates = {}
   for i = from, to do
-    if self.nodes[i] and self.nodes[i]:isAlternative() then
+    if self.nodes[i] and self.nodes[i].is_alternative then
       alternates[#alternates+1] = self.nodes[i]
       altSizes[#altSizes+1] = #(self.nodes[i].options)
     end
@@ -335,12 +335,12 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
     self.breakWidth = SILE.length(self.background)
     local place = self.place
     local node = self.nodes[place]
-    if node and node:isDiscretionary() then -- 866
+    if node and node.is_discretionary then -- 866
       self.breakWidth:___add(node:prebreakWidth())
       self.breakWidth:___add(node:postbreakWidth())
       self.breakWidth:___sub(node:replacementWidth())
     end
-    while self.nodes[place] and not self.nodes[place]:isBox() do
+    while self.nodes[place] and not self.nodes[place].is_box do
       if self.sideways and self.nodes[place].height then
         self.breakWidth:___sub(self.nodes[place].height)
         self.breakWidth:___sub(self.nodes[place].depth)
@@ -431,32 +431,32 @@ end
 function lineBreak:checkForLegalBreak(node) -- 892
   if debugging then SU.debug("break", "considering node "..node); end
   local previous = self.nodes[self.place - 1]
-  if node:isAlternative() then self.seenAlternatives = true end
-  if self.sideways and node:isBox() then
+  if node.is_alternative then self.seenAlternatives = true end
+  if self.sideways and node.is_box then
     self.activeWidth:___add(node.height)
     self.activeWidth:___add(node.depth)
-  elseif self.sideways and node:isVglue() then
-    if previous and previous:isBox() then
+  elseif self.sideways and node.is_vglue then
+    if previous and previous.is_box then
       self:tryBreak()
     end
     self.activeWidth:___add(node.height)
     self.activeWidth:___add(node.depth)
-  elseif node:isAlternative() then
+  elseif node.is_alternative then
     self.activeWidth:___add(node:minWidth())
-  elseif node:isBox() then
+  elseif node.is_box then
     self.activeWidth:___add(node:lineContribution())
-  elseif node:isGlue() then
+  elseif node.is_glue then
     -- 894 (We removed the auto_breaking parameter)
-    if previous and previous:isBox() then self:tryBreak() end
+    if previous and previous.is_box then self:tryBreak() end
     self.activeWidth:___add(node.width)
-  elseif node:isKern() then
+  elseif node.is_kern then
     self.activeWidth:___add(node.width)
-  elseif node:isDiscretionary() then -- 895
+  elseif node.is_discretionary then -- 895
     self.activeWidth:___add(node:prebreakWidth())
     self:tryBreak()
     self.activeWidth:___sub(node:prebreakWidth())
     self.activeWidth:___add(node:replacementWidth())
-  elseif node:isPenalty() then
+  elseif node.is_penalty then
     self:tryBreak()
   end
 end

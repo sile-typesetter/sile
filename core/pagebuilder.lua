@@ -36,7 +36,7 @@ return pl.class({
       end
       while not started and i < #vboxlist do
         i = i + 1
-        if not vboxlist[i]:isVglue() then
+        if not vboxlist[i].is_vglue then
           started = true
           i = i - 1
           break
@@ -47,12 +47,13 @@ return pl.class({
         i = i + 1
         local vbox = vboxlist[i]
         SU.debug("pagebuilder", "Dealing with VBox " .. vbox)
-        if vbox:isVbox() then
+        if vbox.is_vbox then
           totalHeight:___add(vbox.height)
           totalHeight:___add(vbox.depth)
-        elseif vbox:isVglue() then
+        elseif vbox.is_vglue then
           totalHeight:___add(vbox.height)
-        elseif vbox:isInsertion() then
+        elseif vbox.is_insertion then
+          -- TODO: refactor as hook and without side effects!
           target = SILE.insertions.processInsertion(vboxlist, i, totalHeight, target)
           vbox = vboxlist[i]
         end
@@ -60,11 +61,11 @@ return pl.class({
         SU.debug("pagebuilder", "I have " .. left .. " left")
         -- if left < -20 then SU.error("\nCatastrophic page breaking failure!"); end
         pi = 0
-        if vbox:isPenalty() then
+        if vbox.is_penalty then
           pi = vbox.penalty
           -- print("PI "..pi)
         end
-        if vbox:isPenalty() and vbox.penalty < self.inf_bad  or (vbox:isVglue() and i > 1 and not vboxlist[i-1].discardable) then
+        if vbox.is_penalty and vbox.penalty < self.inf_bad  or (vbox.is_vglue and i > 1 and not vboxlist[i-1].discardable) then
           local badness
           SU.debug("pagebuilder", "totalHeight " .. totalHeight .. " with target " .. target)
           if totalHeight.length < target then -- TeX #1039

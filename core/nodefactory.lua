@@ -45,6 +45,10 @@ nodefactory.box = pl.class({
       if not self.height then self.height = SILE.length() end
       if not self.depth then self.depth = SILE.length() end
       if not self.width then self.width = SILE.length() end
+      self["is_"..self.type] = true
+      self.is_box = self.is_hbox or self.is_vbox or self.is_zerohbox or self.is_alternative or self.is_nnode
+      self.is_zero = self.is_zerohbox or self.is_zerovglue
+      if self.is_migrating then self.is_hbox, self.is_box = true, true end
     end,
 
     tostring = function (self)
@@ -72,54 +76,67 @@ nodefactory.box = pl.class({
     end,
 
     isBox = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "hbox" or self.type == "zerohbox" or self.type == "alternative" or self.type == "nnode" or self.type == "vbox"
     end,
 
     isNnode = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type=="nnode"
     end,
 
     isGlue = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "glue"
     end,
 
     isVglue = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "vglue"
     end,
 
     isZero = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "zerohbox" or self.type == "zerovglue"
     end,
 
     isUnshaped = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "unshaped"
     end,
 
     isAlternative = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "alternative"
     end,
 
     isVbox = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "vbox"
     end,
 
     isInsertion = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "insertion"
     end,
 
     isMigrating = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.migrating
     end,
 
     isPenalty = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "penalty"
     end,
 
     isDiscretionary = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "discretionary"
     end,
 
     isKern = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "kern"
     end
 
@@ -246,7 +263,7 @@ nodefactory.disc = pl.class({
     outputYourself = function (self, typesetter, line)
       if self.used then
         local i = 1
-        while (line.nodes[i]:isGlue() and line.nodes[i].value == "lskip")
+        while (line.nodes[i].is_glue and line.nodes[i].value == "lskip")
           or line.nodes[i].type == "zerohbox" do
           i = i + 1
         end
@@ -351,6 +368,7 @@ nodefactory.glue = pl.class({
 
 nodefactory.hfillglue = pl.class({
     _base = nodefactory.glue,
+
     _init = function (self, spec)
       self.width = SILE.length(0, infinity)
       nodefactory.glue._init(self, spec)
@@ -360,6 +378,7 @@ nodefactory.hfillglue = pl.class({
 nodefactory.hssglue = pl.class({
   -- possible bug, deprecated constructor actually used vglue for this
     _base = nodefactory.glue,
+
     _init = function (self, spec)
       self.width = SILE.length(0, infinity, infinity)
       nodefactory.glue._init(self, spec)
@@ -406,6 +425,7 @@ nodefactory.vglue = pl.class({
 
 nodefactory.vfillglue = pl.class({
     _base = nodefactory.vglue,
+
     _init = function (self, spec)
       self.height = SILE.length(0, infinity)
       nodefactory.vglue._init(self, spec)
@@ -418,7 +438,7 @@ nodefactory.vssglue = pl.class({
   })
 
 nodefactory.zerovglue = pl.class({
-    _base = nodefactory.vglue,
+    _base = nodefactory.vglue
   })
 
 nodefactory.vkern = pl.class({
@@ -479,7 +499,7 @@ nodefactory.vbox = pl.class({
       typesetter.frame:advancePageDirection(self.height)
       local initial = true
       for _, node in pairs(self.nodes) do
-        if not (initial and (node:isGlue() or node:isPenalty())) then
+        if not (initial and (node.is_glue or node.is_penalty)) then
           initial = false
           node:outputYourself(typesetter, line)
         end
@@ -490,7 +510,7 @@ nodefactory.vbox = pl.class({
 
     unbox = function (self)
       for i = 1, #self.nodes do
-        if self.nodes[i]:isVbox() or self.nodes[i]:isVglue() then return self.nodes end
+        if self.nodes[i].is_vbox or self.nodes[i].is_vglue then return self.nodes end
       end
       return {self}
     end,
@@ -508,7 +528,7 @@ nodefactory.vbox = pl.class({
         table.insert(self.nodes, nodes[i])
         self.height:___add(nodes[i].height)
         self.height:___add(nodes[i].depth:absolute())
-        if nodes[i]:isVbox() then lastdepth = nodes[i].depth end
+        if nodes[i].is_vbox then lastdepth = nodes[i].depth end
       end
       self.height:___sub(lastdepth)
       self.ratio = 1
@@ -519,14 +539,10 @@ nodefactory.vbox = pl.class({
 
 nodefactory.migrating = pl.class({
     _base = nodefactory.hbox,
+    type = "migrating",
     material = {},
     value = {},
     nodes = {},
-    migrating = true,
-
-    _init = function (self, spec)
-      nodefactory.hbox._init(self, spec)
-    end,
 
     __tostring = function (self)
       return "<M: "..self.material .. ">"

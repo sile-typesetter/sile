@@ -85,10 +85,15 @@ typesetter and frame.
 --]]
 
 local insertionsThisPage = {}
-local _pageInsertionVbox = pl.class({
+SILE.nodefactory.insertionlist = pl.class({
     _base = SILE.nodefactory.vbox,
+    type = "insertionlist",
     frame = nil,
-    typesetter = SILE.defaultTypesetter {},
+
+    _init = function (self, spec)
+      SILE.nodefactory.vbox._init(self, spec)
+      self.typesetter = SILE.defaultTypesetter {}
+    end,
 
     __tostring = function (self)
       return "PI<" .. self.nodes .. ">"
@@ -104,7 +109,7 @@ local _pageInsertionVbox = pl.class({
 
 local thisPageInsertionBoxForClass = function (class)
   if not insertionsThisPage[class] then
-    insertionsThisPage[class] = _pageInsertionVbox({
+    insertionsThisPage[class] = SILE.nodefactory.insertionlist({
       frame = SILE.scratch.insertions.classes[class].insertInto.frame
     })
   end
@@ -237,7 +242,7 @@ local nextInterInsertionSkip = function (class)
 end
 
 local debugInsertion = function (ins, insbox, topBox, target, targetFrame, totalHeight)
-  local insertionsHeight = ins.contentHeight + topBox.height + topBox.depth + ins.contentDepth
+  local insertionsHeight = ins.contentHeight:absolute() + topBox.height:absolute() + topBox.depth:absolute() + ins.contentDepth:absolute()
   SU.debug("insertions", "## Incoming insertion")
   SU.debug("insertions", "Top box height", topBox.height)
   SU.debug("insertions", "Insertion", ins, ins.height, ins.depth)
@@ -390,8 +395,8 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
 
   --]]
   local lastbox = i
-  while not vboxlist[lastbox]:isVbox() do lastbox = lastbox - 1 end
-  while not (vboxlist[i]:isPenalty() and vboxlist[i].penalty == -20000) do
+  while not vboxlist[lastbox].is_vbox do lastbox = lastbox - 1 end
+  while not (vboxlist[i].is_penalty and vboxlist[i].penalty == -20000) do
     table.insert(vboxlist, lastbox, SILE.nodefactory.penalty(-20000))
   end
   return target
@@ -404,8 +409,8 @@ end)
 
 SILE.typesetter:registerPageEndHook(function (_, nl)
   pl.tablex.foreach(insertionsThisPage, SILE.insertions.increaseInsertionFrame)
-  for class, insertion in pairs(insertionsThisPage) do
-    insertion:outputYourself()
+  for class, insertionlist in pairs(insertionsThisPage) do
+    insertionlist:outputYourself()
     insertionsThisPage[class] = nil
   end
   if SU.debugging("insertions") then
@@ -418,20 +423,20 @@ end)
 local insert = function (_, classname, vbox)
   local thisclass = SILE.scratch.insertions.classes[classname]
   if not thisclass then SU.error("Uninitialized insertion class " .. classname) end
-  SILE.typesetter:pushMigratingMaterial({ material = {
-    SILE.nodefactory.penalty(SILE.settings.get("insertion.penalty"))
-  }})
-  SILE.typesetter:pushMigratingMaterial({ material = {
-    SILE.nodefactory.insertion({
-        class = classname,
-        nodes = vbox.nodes,
-        -- actual height and depth must remain zero for page glue calculations
-        contentHeight = vbox.height,
-        contentDepth = vbox.depth,
-        frame = thisclass.insertInto.frame,
-        parent = SILE.typesetter.frame
-      })
-  }})
+  SILE.typesetter:pushMigratingMaterial({
+      SILE.nodefactory.penalty(SILE.settings.get("insertion.penalty"))
+    })
+  SILE.typesetter:pushMigratingMaterial({
+      SILE.nodefactory.insertion({
+          class = classname,
+          nodes = vbox.nodes,
+          -- actual height and depth must remain zero for page glue calculations
+          contentHeight = vbox.height,
+          contentDepth = vbox.depth,
+          frame = thisclass.insertInto.frame,
+          parent = SILE.typesetter.frame
+        })
+    })
 end
 
 return {

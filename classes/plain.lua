@@ -159,7 +159,7 @@ SILE.registerCommand("hbox", function (_, content)
   local h, d = SILE.length(), SILE.length()
   for i = index, #(SILE.typesetter.state.nodes) do
     local node = SILE.typesetter.state.nodes[i]
-    if node:isUnshaped() then
+    if node.is_unshaped then
       local shape = node:shape()
       for _, attr in ipairs(shape) do
         recentContribution[#recentContribution+1] = attr

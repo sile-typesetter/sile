@@ -45,7 +45,7 @@ local getLineMetrics = function (l)
   if not l or not l.nodes then return linemetrics end
   for i = 1, #(l.nodes) do
     local node = l.nodes[i]
-    if node:isNnode() then
+    if node.is_nnode then
       local m = metricscache[SILE.font._key(node.options)]
       if not m then
         local face = SILE.font.cache(node.options, SILE.shaper.getFace)

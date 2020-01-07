@@ -197,9 +197,8 @@ SILE.defaultTypesetter = std.object {
     return self:pushHorizontal(node)
   end,
 
-  pushMigratingMaterial = function (self, spec)
-    -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
-    local node = SU.type(spec) == "migrating" and spec or SILE.nodefactory.migrating(spec)
+  pushMigratingMaterial = function (self, material)
+    local node = SILE.nodefactory.migrating({ material = material })
     return self:pushHorizontal(node)
   end,
 
@@ -278,7 +277,7 @@ SILE.defaultTypesetter = std.object {
   shapeAllNodes = function (_, nodelist)
     local newNl = {}
     for i = 1, #nodelist do
-      if nodelist[i]:isUnshaped() then
+      if nodelist[i].is_unshaped then
         pl.tablex.insertvalues(newNl, nodelist[i]:shape())
       else
         newNl[#newNl+1] = nodelist[i]
@@ -296,7 +295,7 @@ SILE.defaultTypesetter = std.object {
     local nodelist = self.state.nodes
     if #nodelist == 0 then return {} end
     for j = #nodelist, 1, -1 do
-      if not nodelist[j]:isMigrating() then
+      if not nodelist[j].is_migrating then
         if nodelist[j].discardable then
           table.remove(nodelist, j)
         else
@@ -304,7 +303,7 @@ SILE.defaultTypesetter = std.object {
         end
       end
     end
-    while (#nodelist > 0 and nodelist[1]:isPenalty()) do table.remove(nodelist, 1) end
+    while (#nodelist > 0 and nodelist[1].is_penalty) do table.remove(nodelist, 1) end
     if #nodelist == 0 then return {} end
     self:shapeAllNodes(nodelist)
     local parfillskip = SILE.settings.get("typesetter.parfillskip")
@@ -322,7 +321,7 @@ SILE.defaultTypesetter = std.object {
       local nodes = {}
       for i =1, #line.nodes do
         local node = line.nodes[i]
-        if node:isMigrating() then
+        if node.is_migrating then
           for j=1, #node.material do migrating[#migrating+1] = node.material[j] end
         else
           nodes[#nodes+1] = node
@@ -409,11 +408,11 @@ SILE.defaultTypesetter = std.object {
     local gTotal = SILE.length()
     local totalHeight = SILE.length()
     for _, node in ipairs(pageNodeList) do
-      if not node:isInsertion() then
+      if not node.is_insertion then
         totalHeight:___add(node.height)
         totalHeight:___add(node.depth)
       end
-      if node:isVglue() then
+      if node.is_vglue then
         table.insert(glues, node)
         gTotal:___add(node.height)
       end
@@ -498,10 +497,10 @@ SILE.defaultTypesetter = std.object {
         SU.debug("pushback", { "explicit", vbox })
         self:endline()
         self:pushExplicitVglue(vbox)
-      elseif vbox.type == "insertionVbox" then
+      elseif vbox.is_insertion then
         SU.debug("pushback", { "pushBack", "insertion", vbox })
         SILE.typesetter:pushMigratingMaterial({ material = { vbox } })
-      elseif not vbox:isVglue() and not vbox:isPenalty() then
+      elseif not vbox.is_vglue and not vbox.is_penalty then
         SU.debug("pushback", { "not vglue or penalty", vbox.type })
         local discardedFistInitLine = false
         if (#self.state.nodes == 0) then
@@ -509,11 +508,11 @@ SILE.defaultTypesetter = std.object {
           self.state.nodes[#self.state.nodes+1] = SILE.nodefactory.zerohbox()
         end
         for i, node in ipairs(vbox.nodes) do
-          if node:isGlue() and not node.discardable then
+          if node.is_glue and not node.discardable then
             self:pushHorizontal(node)
-          elseif node:isGlue() and node.value == "margin" then
+          elseif node.is_glue and node.value == "margin" then
             SU.debug("pushback", { "discard", node.value, node })
-          elseif node:isDiscretionary() then
+          elseif node.is_discretionary then
             SU.debug("pushback", { "re-mark discretionary as unused", node })
             node.used = false
             if i == 1 then
@@ -522,10 +521,10 @@ SILE.defaultTypesetter = std.object {
             else
               SU.debug("pushback", { "discard all other discretionaries", node })
             end
-          elseif node:isZero() then
+          elseif node.is_zero then
             if discardedFistInitLine then self:pushHorizontal(node) end
             discardedFistInitLine = true
-          elseif node:isPenalty() then
+          elseif node.is_penalty then
             if not discardedFistInitLine then self:pushHorizontal(node) end
           else
             node.bidiDone = true
@@ -539,8 +538,8 @@ SILE.defaultTypesetter = std.object {
       -- self:debugState()
     end
     while self.state.nodes[#self.state.nodes]
-    and (self.state.nodes[#self.state.nodes]:isPenalty()
-      or self.state.nodes[#self.state.nodes]:isZero()) do
+    and (self.state.nodes[#self.state.nodes].is_penalty
+      or self.state.nodes[#self.state.nodes].is_zero) do
       self.state.nodes[#self.state.nodes] = nil
     end
   end,
@@ -631,7 +630,7 @@ SILE.defaultTypesetter = std.object {
           slice[#slice+1] = nodes[j]
           if nodes[j] then
             -- toss = 0
-            if nodes[j]:isBox() or nodes[j]:isDiscretionary() then seenHbox = 1 end
+            if nodes[j].is_box or nodes[j].is_discretionary then seenHbox = 1 end
           end
         end
         if seenHbox == 0 then break end
@@ -641,7 +640,7 @@ SILE.defaultTypesetter = std.object {
         -- if math.abs(ratio) > 1 then SU.warn("Using ratio larger than 1" .. ratio) end
         local thisLine = { ratio = ratio, nodes = slice }
         lines[#lines+1] = thisLine
-        if slice[#slice]:isDiscretionary() then
+        if slice[#slice].is_discretionary then
           linestart = point.position
         else
           linestart = point.position + 1
@@ -656,12 +655,12 @@ SILE.defaultTypesetter = std.object {
     local naturalTotals = SILE.length()
     local skipping = true
     for i, node in ipairs(slice) do
-      if node:isBox() then
+      if node.is_box then
         skipping = false
         naturalTotals:___add(node:lineContribution())
-      elseif node:isPenalty() and node.penalty == -inf_bad then
+      elseif node.is_penalty and node.penalty == -inf_bad then
         skipping = false
-      elseif node:isDiscretionary() then
+      elseif node.is_discretionary then
         skipping = false
         naturalTotals:___add(node:replacementWidth())
         slice[i].height = slice[i]:replacementHeight():absolute()
@@ -671,11 +670,11 @@ SILE.defaultTypesetter = std.object {
     end
     local i = #slice
     while i > 1 do
-      if slice[i]:isGlue() or slice[i]:isZero() then
+      if slice[i].is_glue or slice[i].is_zero then
         if slice[i].value ~= "margin" then
           naturalTotals:___sub(slice[i].width)
         end
-      elseif slice[i]:isDiscretionary() then
+      elseif slice[i].is_discretionary then
         slice[i].used = true
         if slice[i].parent then slice[i].parent.hyphenated = true end
         naturalTotals:___sub(slice[i]:replacementWidth())
@@ -687,7 +686,7 @@ SILE.defaultTypesetter = std.object {
       end
       i = i - 1
     end
-    if slice[1]:isDiscretionary() then
+    if slice[1].is_discretionary then
       naturalTotals:___sub(slice[1]:replacementWidth())
       naturalTotals:___add(slice[1]:postbreakWidth())
       slice[1].height = slice[1]:postbreakHeight()
