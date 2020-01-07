@@ -94,6 +94,7 @@ return pl.class({
         self.shrink + other.shrink)
     end,
 
+    -- See usage comments on SILE.measurement:___add()
     ___add = function (self, other)
       if SU.type(other) ~= "length" then
         self.length:___add(other)
@@ -114,6 +115,7 @@ return pl.class({
       return result
     end,
 
+    -- See usage comments on SILE.measurement:___add()
     ___sub = function (self, other)
       self.length:___sub(other.length)
       self.stretch:___sub(other.stretch)

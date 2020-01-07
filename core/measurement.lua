@@ -96,6 +96,13 @@ local measurement = pl.class({
       end
     end,
 
+    -- Note all private math (_ + __func()) functions:
+    -- * Are much faster than regular math operations
+    -- * Are **not** intended for use outside of the most performance sensitive loops
+    -- * Modify the lhs input in-place, never instantiating new objects
+    -- * Always assume absolute lhs input and absolutize the rhs values at runtime
+    -- * Assmue the inputs are sane with much less error checking than regular math funcs
+    -- * Are not composable using chained methods since they return nil for safety
     ___add = function (self, other)
       _error_if_immutable(self)
       self.amount = self.amount + _pt_amount(other)
@@ -111,6 +118,7 @@ local measurement = pl.class({
       end
     end,
 
+    -- See usage comments on SILE.measurement:___add()
     ___sub = function (self, other)
       _error_if_immutable(self)
       self.amount = self.amount - _pt_amount(other)
