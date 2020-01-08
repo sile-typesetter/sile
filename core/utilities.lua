@@ -2,8 +2,11 @@ local utilities = {}
 
 local epsilon = 1E-12
 
-utilities.required = function (options, name, context)
+utilities.required = function (options, name, context, _type)
   if not options[name] then utilities.error(context.." needs a "..name.." parameter") end
+  if _type then
+    return utilities.cast(_type, options[name])
+  end
   return options[name]
 end
 
