@@ -150,10 +150,14 @@ function lineBreak:tryBreak() -- 855
   end
 end
 
+-- Note: This function gets called a lot and to optimize it we're assuming that
+-- the lengths being passed are already absolutized. This is not a safe
+-- assumption to make universally.
 local function fitclass(self, shortfall)
+  shortfall = shortfall.amount
   local badness, class
-  local stretch = self.curActiveWidth.stretch
-  local shrink = self.curActiveWidth.shrink
+  local stretch = self.curActiveWidth.stretch.amount
+  local shrink = self.curActiveWidth.shrink.amount
   if shortfall > 0 then
     if shortfall > 110 and stretch < 25 then
       badness = inf_bad
@@ -199,7 +203,8 @@ function lineBreak:tryAlternatives(from, to)
       if debugging then SU.debug("break", alternative.options[combination[i]], " width", addWidth) end
     end
     local ss = shortfall - addWidth
-    local badness = SU.rateBadness(inf_bad, ss, self.curActiveWidth[ss > 0 and "stretch" or "shrink"])
+    -- Warning, assumes abosolute
+    local badness = SU.rateBadness(inf_bad, ss.length.amount, self.curActiveWidth[ss > 0 and "stretch" or "shrink"].length.amount)
     if debugging then SU.debug("break", "  badness of " .. ss .. " (" .. self.curActiveWidth .. ") is " .. badness) end
     if badness < localMinimum then
       self.r.alternates = alternates

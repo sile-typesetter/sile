@@ -13,9 +13,15 @@ return pl.class({
       return output
     end,
 
+    -- Note: Almost 1/3 of the time in a typical SILE in taken iterating through
+    -- this function. As a result there are some micro-optimizations here that
+    -- make it a-typical of preferred coding styles. In particular note that
+    -- we absolutize heavily iterated lengths as early as possible and make
+    -- make direct calls to their integer amounts, assumed to be in points by
+    -- the point they are called **without actually checking**!
     findBestBreak = function(self, options)
       local vboxlist = SU.required(options, "vboxlist", "in findBestBreak")
-      local target   = SU.required(options, "target", "in findBestBreak")
+      local target   = SU.required(options, "target", "in findBestBreak", "length")
       local restart  = options.restart or false
       local force    = options.force or false
       local i = 0
@@ -71,12 +77,12 @@ return pl.class({
           or (vbox.is_vglue and i > 1 and not vboxlist[i-1].discardable) then
           local badness
           SU.debug("pagebuilder", function () return "totalHeight " .. totalHeight .. " with target " .. target end)
-          if totalHeight.length < target then -- TeX #1039
+          if totalHeight.length.amount < target.length.amount then -- TeX #1039
             -- Account for infinite stretch?
-            badness = SU.rateBadness(self.inf_bad, left, totalHeight.stretch)
+            badness = SU.rateBadness(self.inf_bad, left.length.amount, totalHeight.stretch.amount)
             -- print("Height == "..totalHeight.length, "target=="..target, "stretch=="..totalHeight.stretch)
-          elseif left < totalHeight.shrink then badness = self.awful_bad
-          else badness = SU.rateBadness(self.inf_bad, -left, totalHeight.shrink)
+          elseif left.length.amount < totalHeight.shrink.amount then badness = self.awful_bad
+          else badness = SU.rateBadness(self.inf_bad, -left.length.amount, totalHeight.shrink.amount)
           end
 
           local c

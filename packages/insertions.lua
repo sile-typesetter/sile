@@ -230,13 +230,13 @@ local nextInterInsertionSkip = function (class)
   local stuffSoFar = thisPageInsertionBoxForClass(class)
   if #stuffSoFar.nodes == 0 then
     if options["topBox"] then
-      return options["topBox"]
+      return options["topBox"]:absolute()
     elseif options["topSkip"] then
-      return SILE.nodefactory.vglue(options["topSkip"])
+      return SILE.nodefactory.vglue(options["topSkip"]:tonumber())
     end
   else
-    local skipSize = options["interInsertionSkip"]:absolute()
-    skipSize = skipSize - stuffSoFar.nodes[#stuffSoFar.nodes].depth:absolute()
+    local skipSize = options["interInsertionSkip"]:tonumber()
+    skipSize = skipSize - stuffSoFar.nodes[#stuffSoFar.nodes].depth:tonumber()
     return SILE.nodefactory.vglue(skipSize)
   end
 end
@@ -287,7 +287,6 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   if ins.seen then return target end
   local targetFrame = SILE.getFrame(ins.frame)
   local options = SILE.scratch.insertions.classes[ins.class]
-  totalHeight = totalHeight.length:absolute()
 
   ins:dropDiscardables()
 

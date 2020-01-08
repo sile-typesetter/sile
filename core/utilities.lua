@@ -267,8 +267,8 @@ utilities.walkContent = function (content, action)
 end
 
 utilities.rateBadness = function(inf_bad, shortfall, spring)
-  if spring:tonumber() == 0 then return inf_bad end
-  local bad = math.floor(100 * math.abs(shortfall:tonumber() / spring:tonumber()) ^ 3)
+  if spring == 0 then return inf_bad end
+  local bad = math.floor(100 * math.abs(shortfall / spring) ^ 3)
   return math.min(inf_bad, bad)
 end
 

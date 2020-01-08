@@ -84,6 +84,7 @@ local _margins = pl.class({
     __eq = function (self, other)
       return self.lskip.width == other.lskip.width and self.rskip.width == other.rskip.width
     end
+
   })
 
 SILE.defaultTypesetter = std.object {
