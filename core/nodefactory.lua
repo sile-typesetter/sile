@@ -14,6 +14,8 @@ local function _maxnode (nodes, dim)
   return SU.max(SILE.length(0), pl.utils.unpack(dims))
 end
 
+local _dims = pl.Set { "width", "height", "depth" }
+
 nodefactory.box = pl.class({
     type = "special",
     height = nil,
@@ -32,23 +34,25 @@ nodefactory.box = pl.class({
         or SU.type(spec) == "length" then
         self[self._default_length] = SU.cast("length", spec)
       elseif SU.type(spec) == "table" then
+        if spec._tospec then spec = spec:_tospec() end
         for k, v in pairs(spec) do
-          if k == "height" or k == "width" or k == "depth" then
-            self[k] = SU.cast("length", v)
-          else
-            self[k] = v
-          end
+          self[k] = _dims[k] and SU.cast("length", v) or v
         end
-      elseif SU.type(spec) ~= "nil" then
+      elseif type(spec) ~= "nil" and SU.type(spec) ~= self.type then
         SU.error("Unimplemented, creating " .. self.type .. " node from " .. SU.type(spec), 1)
       end
-      if not self.height then self.height = SILE.length() end
-      if not self.depth then self.depth = SILE.length() end
-      if not self.width then self.width = SILE.length() end
+      for dim in pairs(_dims) do
+        if not self[dim] then self[dim] = SILE.length() end
+      end
       self["is_"..self.type] = true
       self.is_box = self.is_hbox or self.is_vbox or self.is_zerohbox or self.is_alternative or self.is_nnode
       self.is_zero = self.is_zerohbox or self.is_zerovglue
       if self.is_migrating then self.is_hbox, self.is_box = true, true end
+    end,
+
+    -- De-init instances by shallow copying properties and removing meta table
+    _tospec = function (self)
+      return pl.tablex.copy(self)
     end,
 
     tostring = function (self)
@@ -60,6 +64,17 @@ nodefactory.box = pl.class({
     end,
 
     __concat = function (a, b) return tostring(a) .. tostring(b) end,
+
+    absolute = function (self)
+      local clone = nodefactory[self.type](self:_tospec())
+      for dim in pairs(_dims) do
+        clone[dim] = self[dim]:absolute()
+      end
+      if self.nodes then
+        clone.nodes = pl.tablex.map_named_method("absolute", self.nodes)
+      end
+      return clone
+    end,
 
     lineContribution = function (self)
       -- Regardless of the orientations, "width" is always in the
@@ -192,6 +207,10 @@ nodefactory.nnode = pl.class({
 
     __tostring = function (self)
       return "N<" .. self.width .. ">^" .. self.height .. "-" .. self.depth .. "v(" .. self:toText() .. ")";
+    end,
+
+    absolute = function (self)
+      return self
     end,
 
     outputYourself = function (self, typesetter, line)
