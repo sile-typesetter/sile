@@ -28,7 +28,9 @@ return pl.class({
         started = restart.started
       end
       local leastC = self.inf_bad
-      SU.debug("pagebuilder", "Page builder for frame " .. SILE.typesetter.frame.id .. " called with " .. #vboxlist .. " nodes, " .. target)
+      SU.debug("pagebuilder", function ()
+        return "Page builder for frame " .. SILE.typesetter.frame.id .. " called with " .. #vboxlist .. " nodes, " .. target
+      end)
       if SU.debugging("vboxes") then
         for j, box in ipairs(vboxlist) do
           SU.debug("vboxes", (j == i and " >" or "  ") .. j .. ": " .. box)
@@ -46,7 +48,7 @@ return pl.class({
       while i < #vboxlist do
         i = i + 1
         local vbox = vboxlist[i]
-        SU.debug("pagebuilder", "Dealing with VBox " .. vbox)
+        SU.debug("pagebuilder", function () return "Dealing with VBox " .. vbox end)
         if vbox.is_vbox then
           totalHeight:___add(vbox.height)
           totalHeight:___add(vbox.depth)
@@ -58,16 +60,17 @@ return pl.class({
           vbox = vboxlist[i]
         end
         local left = target - totalHeight
-        SU.debug("pagebuilder", "I have " .. left .. " left")
+        SU.debug("pagebuilder", function () return "I have " .. left .. " left" end)
         -- if left < -20 then SU.error("\nCatastrophic page breaking failure!"); end
         pi = 0
         if vbox.is_penalty then
           pi = vbox.penalty
           -- print("PI "..pi)
         end
-        if vbox.is_penalty and vbox.penalty < self.inf_bad  or (vbox.is_vglue and i > 1 and not vboxlist[i-1].discardable) then
+        if vbox.is_penalty and vbox.penalty < self.inf_bad
+          or (vbox.is_vglue and i > 1 and not vboxlist[i-1].discardable) then
           local badness
-          SU.debug("pagebuilder", "totalHeight " .. totalHeight .. " with target " .. target)
+          SU.debug("pagebuilder", function () return "totalHeight " .. totalHeight .. " with target " .. target end)
           if totalHeight.length < target then -- TeX #1039
             -- Account for infinite stretch?
             badness = SU.rateBadness(self.inf_bad, left, totalHeight.stretch)

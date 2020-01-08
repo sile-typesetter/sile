@@ -74,7 +74,13 @@ end
 
 utilities.debug = function (category, ...)
   if utilities.debugging(category) then
-    io.stderr:write("\n["..category.."] ", utilities.concat(table.pack(...), " "))
+    local inputs = table.pack(...)
+    for i, input in ipairs(inputs) do
+      if type(input) == "function" then
+        inputs[i] = input()
+      end
+    end
+    io.stderr:write("\n["..category.."] ", utilities.concat(inputs, " "))
   end
 end
 
