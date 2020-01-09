@@ -10,7 +10,12 @@ local infinity = SILE.measurement(1e13)
 -- directly calling back into the _init() functions we want.
 
 local function _maxnode (nodes, dim)
-  local dims = SU.map(function (node) return node[dim] end, nodes)
+  local dims = SU.map(function (node)
+    -- TODO there is a bug here because we shouldn't need to cast to lengths,
+    -- somebody is setting a height as a number value (test in Lua 5.1)
+    -- return node[dim]
+    return SU.cast("length", node[dim])
+  end, nodes)
   return SU.max(SILE.length(0), pl.utils.unpack(dims))
 end
 
