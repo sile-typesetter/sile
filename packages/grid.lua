@@ -66,7 +66,7 @@ end
 local function debugGrid ()
   local frame = SILE.typesetter.frame
   local gridCursor = gridSpacing
-  while gridCursor < frame:height() do
+  while SILE.measurement(gridCursor) < SILE.measurement(frame:height()) do
     SILE.outputter.rule(frame:left(), frame:top() + gridCursor, frame:width(), 0.1)
     gridCursor = gridCursor + gridSpacing
   end

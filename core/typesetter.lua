@@ -419,28 +419,28 @@ SILE.defaultTypesetter = std.object {
       end
     end
     local adjustment = target - totalHeight
-    if adjustment > 0 then
+    if adjustment:tonumber() > 0 then
       if adjustment > gTotal.stretch then
-        if (adjustment - gTotal.stretch) > SILE.settings.get("typesetter.underfulltolerance") then
+        if (adjustment - gTotal.stretch):tonumber() > SILE.settings.get("typesetter.underfulltolerance"):tonumber() then
           SU.warn("Underfull frame: " .. adjustment .. " stretchiness required to fill but only " .. gTotal.stretch .. " available")
         end
         adjustment = gTotal.stretch
       end
-      if gTotal.stretch > 0 then
+      if gTotal.stretch:tonumber() > 0 then
         for i = 1, #glues do
           local g = glues[i]
           g:adjustGlue(adjustment * g.height.stretch:absolute() / gTotal.stretch)
         end
       end
-    elseif adjustment < 0 then
+    elseif adjustment:tonumber() < 0 then
       adjustment = 0 - adjustment
       if adjustment > gTotal.shrink then
-        if (adjustment - gTotal.shrink) > SILE.settings.get("typesetter.overfulltolerance") then
+        if (adjustment - gTotal.shrink):tonumber() > SILE.settings.get("typesetter.overfulltolerance"):tonumber() then
           SU.warn("Overfull frame: " .. adjustment .. " shrinkability required to fit but only " .. gTotal.shrink .. " available")
         end
         adjustment = gTotal.shrink
       end
-      if gTotal.shrink > 0 then
+      if gTotal.shrink:tonumber() > 0 then
         for i = 1, #glues do
           local g  = glues[i]
           g:adjustGlue(-adjustment * g.height.shrink:absolute() / gTotal.shrink)

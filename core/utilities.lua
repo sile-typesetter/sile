@@ -273,9 +273,9 @@ utilities.rateBadness = function(inf_bad, shortfall, spring)
 end
 
 utilities.rationWidth = function (target, width, ratio)
-  if ratio < 0 and width.shrink > 0 then
+  if ratio < 0 and width.shrink:tonumber() > 0 then
     target:___add(width.shrink:tonumber() * ratio)
-  elseif ratio > 0 and width.stretch > 0 then
+  elseif ratio > 0 and width.stretch:tonumber() > 0 then
     target:___add(width.stretch:tonumber() * ratio)
   end
   return target

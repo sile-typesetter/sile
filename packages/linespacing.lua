@@ -71,7 +71,7 @@ local linespacingLeading = function (_, vbox, previous)
 
   local firstline = SILE.settings.get("linespacing.minimumfirstlineposition"):absolute()
   if not previous then
-    if firstline.length > 0 then
+    if firstline.length:tonumber() > 0 then
       local toAdd = SILE.length.new({ length = firstline.length -vbox.height })
       return SILE.nodefactory.newVKern({ height = toAdd })
     else

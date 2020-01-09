@@ -18,7 +18,7 @@ local firstfit = function (typesetter, nl, breakWidth)
       end
       SU.debug("break", " Length now " .. length .. " breakwidth " .. breakWidth)
       -- Can we break?
-      if length >= breakWidth then
+      if length:tonumber() >= breakWidth:tonumber() then
         SU.debug("break", "Breaking!")
         breaks[#breaks+1] = { position = i, width = breakWidth}
         length = SILE.length()
