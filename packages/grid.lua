@@ -108,13 +108,14 @@ local gridPagebuilder = pl.class({
           node = vboxlist[i]
         end
         local left = target - totalHeight
+        local _left = left:tonumber()
         SU.debug("pagebuilder", "I have " .. left .. "left")
         SU.debug("pagebuilder", "totalHeight " .. totalHeight .. " with target " .. target)
         local badness = 0
-        if left < 0 then badness = 1000000 end
+        if _left < 0 then badness = 1000000 end
         if node.is_penalty then
           if node.penalty < -3000 then badness = 100000
-          else badness = -left * left - node.penalty
+          else badness = -_left * _left - node.penalty
           end
         end
       if badness > 0 then

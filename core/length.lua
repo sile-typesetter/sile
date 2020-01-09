@@ -39,7 +39,7 @@ return pl.class({
     end,
 
     absolute = function (self)
-      return SILE.length(self.length:absolute(), self.stretch:absolute(), self.shrink:absolute())
+      return SILE.length(self.length:tonumber(), self.stretch:tonumber(), self.shrink:tonumber())
     end,
 
     negate = function (self)
@@ -149,20 +149,20 @@ return pl.class({
     end,
 
     __lt = function (self, other)
-      local a = SU.cast("length", self):absolute()
-      local b = SU.cast("length", other):absolute()
-      return (a - b).length < 0
+      local a = SU.cast("number", self)
+      local b = SU.cast("number", other)
+      return a - b < 0
     end,
 
     __le = function (self, other)
-      local a = SU.cast("length", self):absolute()
-      local b = SU.cast("length", other):absolute()
-      return (a - b).length <= 0
+      local a = SU.cast("number", self)
+      local b = SU.cast("number", other)
+      return a - b <= 0
     end,
 
     __eq = function (self, other)
-      local a = SU.cast("length", self):absolute()
-      local b = SU.cast("length", other):absolute()
+      local a = SU.cast("length", self)
+      local b = SU.cast("length", other)
       return a.length == b.length and a.stretch == b.stretch and a.shrink == b.shrink
     end
 

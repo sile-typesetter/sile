@@ -146,7 +146,7 @@ end
 -- Lua <= 5.2 can't handle objects in math functions
 utilities.max = function (...)
   local input = pl.utils.pack(...)
-  local max = input[1]
+  local max = table.remove(input, 1)
   for _, val in ipairs(input) do
     if val > max then max = val end
   end
@@ -274,9 +274,9 @@ end
 
 utilities.rationWidth = function (target, width, ratio)
   if ratio < 0 and width.shrink > 0 then
-    target:___add(width.shrink * ratio)
+    target:___add(width.shrink:tonumber() * ratio)
   elseif ratio > 0 and width.stretch > 0 then
-    target:___add(width.stretch * ratio)
+    target:___add(width.stretch:tonumber() * ratio)
   end
   return target
 end

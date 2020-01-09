@@ -692,16 +692,11 @@ SILE.defaultTypesetter = std.object {
       naturalTotals:___add(slice[1]:postbreakWidth())
       slice[1].height = slice[1]:postbreakHeight()
     end
-    local left = breakwidth:absolute() - naturalTotals
-    if left < 0 then
-      left = left / naturalTotals.shrink
-      -- TODO: See bug 620
-      left.amount = SU.max(left.amount, -1)
-    else
-      left = left / naturalTotals.stretch
-      -- left.amount = SU.min(left.amount, 1)
-    end
-    return left:tonumber()
+    local _left = breakwidth:tonumber() - naturalTotals:tonumber()
+    local ratio = _left / naturalTotals[_left < 0 and "shrink" or "stretch"]:tonumber()
+    -- TODO: See bug 620
+    ratio = math.max(ratio, -1)
+    return ratio
   end,
 
   chuck = function (self) -- emergency shipout everything

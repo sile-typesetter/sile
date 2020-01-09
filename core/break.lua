@@ -245,12 +245,13 @@ function lineBreak:considerDemerits(pi, breakType) -- 877
     nodeStaysActive = true
   end
 
+  local _shortfall = shortfall:tonumber()
   local function shortfallratio (metric)
     local prop = self.curActiveWidth[metric]:tonumber()
     local factor = prop ~= 0 and prop or awful_bad
-    return shortfall:tonumber() / factor
+    return _shortfall / factor
   end
-  self.lastRatio = shortfallratio(shortfall > 0 and "stretch" or "shrink")
+  self.lastRatio = shortfallratio(_shortfall > 0 and "stretch" or "shrink")
   self:recordFeasible(pi, breakType)
   if not nodeStaysActive then self:deactivateR() end
 end
