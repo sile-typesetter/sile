@@ -101,11 +101,12 @@ AS_IF([test "x$with_system_luarocks" != "xyes"], [], [
     AX_LUA_MODULE([cassowary], [cassowary])
     AS_IF([test "$LUA_SHORT_VERSION" -lt 53],
         AX_LUA_MODULE([compat53], [compat53])
-    ) 
+    )
     AX_LUA_MODULE([linenoise], [linenoise])
     AX_LUA_MODULE([zlib], [lua-zlib])
     AX_LUA_MODULE([cliargs], [lua_cliargs])
     AX_LUA_MODULE([epnf], [luaepnf])
+    AX_LUA_MODULE([expat], [luaexpat])
     AX_LUA_MODULE([lfs], [luafilesystem])
     AX_LUA_MODULE([repl], [luarepl])
     AX_LUA_MODULE([ssl], [luasec])
