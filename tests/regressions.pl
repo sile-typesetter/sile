@@ -24,10 +24,11 @@ for (@specifics ? @specifics : <tests/*.sil tests/*.xml>) {
         if (!system("head -n1 $_ | grep -q KNOWNBAD")) {
             $knownbad = 1;
         }
-        if (!system("grep -qx 'UNSUPPORTED' $actual")) {
+        if (! -f $actual) {
+            push @failed, $_;
+        } elsif (!system("grep -qx 'UNSUPPORTED' $actual")) {
             $unsupported = 1;
-        }
-        if (!system("diff -".($knownbad?"q":"")."U0 $expectation $actual")) {
+        } elsif (!system("diff -".($knownbad?"q":"")."U0 $expectation $actual")) {
             if ($knownbad) { push @knownbadbutpassing, $_;  }
             else { push @passed, $_; }
         } elsif ($knownbad) {
