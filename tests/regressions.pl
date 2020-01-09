@@ -9,9 +9,9 @@ my (@failed, @passed, @unsupported, @knownbad, @knownbadbutpassing, @missing);
 my @specifics = @ARGV;
 
 my $exit = 0;
-for (@specifics ? @specifics : <tests/*.sil>) {
-    my $expectation = $_; $expectation =~ s/\.sil$/\.expected/;
-    my $actual = $_; $actual =~ s/\.sil$/\.actual/;
+for (@specifics ? @specifics : <tests/*.sil tests/*.xml>) {
+    my $expectation = $_; $expectation =~ s/\.(sil|xml)$/\.expected/;
+    my $actual = $_; $actual =~ s/\.(sil|xml)$/\.actual/;
     my ($unsupported, $knownbad);
     if (-f $expectation) {
         open my $exp, $expectation or die $!;
