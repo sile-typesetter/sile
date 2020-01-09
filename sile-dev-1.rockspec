@@ -14,6 +14,7 @@ dependencies = {
   "lua-zlib == 1.2-0",
   "lua_cliargs == 2.3-3",
   "luaepnf == 0.3-1",
+  "luaexpat == 1.3.3-1",
   "luafilesystem == 1.7.0-2",
   "luarepl == 0.9-1",
   "luasec == 0.8.1-1",
