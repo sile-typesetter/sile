@@ -1,4 +1,4 @@
-.TH sile 1 "18 October 2019" "version @VERSION@"
+.TH sile 1 "18 October 2019" "version v@VERSION@"
 .SH NAME
 sile \- Simon's Improved Layout Engine
 .SH SYNOPSIS
