@@ -1,0 +1,15 @@
+\begin[papersize=a5]{document}
+\script[src=packages/gutenberg]
+\script[src=packages/frametricks]
+\script[src=packages/rules]
+\showframe[id=all]
+\set[parameter=shaper.variablespaces,value=0]
+\set[parameter=document.spaceskip,value=8pt plus 16pt]
+\nofolios%
+\nohyphenation\noindent%
+\font[size=30pt]%
+\hrule[width=330pt,height=5pt] \alt{a}{bb} \hrule[width=330pt,height=5pt].
+
+\noindent\hrule[width=330pt,height=5pt] {\alt{a}{bb}} \hrule[width=330pt,height=5pt] \alt{a}{bb} \hrule[width=50pt,height=5pt].
+
+\end{document}
