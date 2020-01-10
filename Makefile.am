@@ -6,7 +6,6 @@ else
 SUBDIRS = libtexpdf src
 endif
 
-dist_bin_SCRIPTS = sile
 dist_man_MANS = sile.1
 subdir_files = $(shell find core classes languages packages lua-libraries -type f -print)
 nobase_dist_pkgdata_DATA = $(subdir_files)
