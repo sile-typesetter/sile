@@ -9,8 +9,8 @@ LT_INIT([dlopen])
 
 AM_SILENT_RULES([yes])
 
-m4_include([build-aux/ax_lua.m4])
-m4_include([build-aux/adl_recursive_eval.m4])
+m4_include([m4/ax_lua.m4])
+m4_include([m4/adl_recursive_eval.m4])
 
 # Checks for programs.
 AC_PROG_CC_C99
