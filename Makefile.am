@@ -6,11 +6,10 @@ else
 SUBDIRS = libtexpdf src
 endif
 
-dist_bin_SCRIPTS = sile
 dist_man_MANS = sile.1
 subdir_files = $(shell find core classes languages packages lua-libraries -type f -print)
 nobase_dist_pkgdata_DATA = $(subdir_files)
-EXTRA_DIST=CHANGELOG.md README.md LICENSE tests examples documentation sile-dev-1.rockspec
+EXTRA_DIST = CHANGELOG.md README.md LICENSE tests examples documentation sile-dev-1.rockspec build-aux/git-version-gen .version
 
 SHELL = bash
 .ONESHELL:
@@ -27,31 +26,42 @@ genrockslock := $(LUAROCKS) list --porcelain | awk '{print $$1 " " $$2}'
 rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
 endif
 
+BUILT_SOURCES = .version
+
+.version: $(shell test -d .git && awk '{print ".git/" $$2}' .git/HEAD)
+	mv $@{,-prev} || touch $@-prev
+	( test -d .git && ./build-aux/git-version-gen .tarball-version || echo $(VERSION) ) > $@
+	cmp -s $@{,-prev} || autoreconf configure.ac -f
+
+dist-hook:
+	echo $(VERSION) > $(distdir)/.tarball-version
+
 # Whether to force tests to run from scratch
 CLEAN ?=
 
-# Make sure the embeded version number iterates with every commit
-configure.ac: .lastcommit
-
-.PHONY: .lastcommit
-.lastcommit:
-	@touch -t "$$(git log -n1 --date=format:'%Y%m%d%H%M.%S' --pretty=format:'%cd')" -- $@
+RELTYPE ?=
 
 .PHONY: tagrelease
-tagrelease: prerelease
+tagrelease:
 	test -z $$(git tag --points-at HEAD) || exit 0 # end if we are already on a release tag
 	git diff-index --quiet --cached HEAD || exit 1 # die if anything staged but not committed
 	git diff-files --quiet || exit 1 # die if any tracked files have unstagged changes
-	npm run release
+	npm run release -- $(and $(RELTYPE),--release-as $(RELTYPE))
 
 .PHONY: prerelease
-prerelease: sile test busted examples docs update_libtexpdf
+prerelease: all test busted examples docs update_libtexpdf
+
+.PHONY: release-preview
+release-preview:
+	npm run release -- --dry-run
 
 .PHONY: release
-release: tagrelease postrelease
+release: tagrelease
+
+dist: examples docs all
 
 .PHONY: postrelease
-postrelease:
+postrelease: dist
 	@echo "- [ ] Ping packagers: https://repology.org/project/sile/versions"
 
 .PHONY: update_libtexpdf
@@ -88,7 +98,7 @@ EXPECTEDS ?= $(filter $(addsuffix .expected,$(basename $(TESTSRCS))),$(wildcard 
 ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 
 .PHONY: test
-test: $(TESTSRCS) $(ACTUALS) sile testprep
+test: $(TESTSRCS) $(ACTUALS)
 	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
 
 .PHONY: lint
@@ -98,7 +108,7 @@ lint: luacheck
 luacheck:
 	luacheck -q .
 
-busted: $(wildcard spec/*_spec.lua) sile testprep
+busted: $(wildcard spec/*_spec.lua)
 	set -f; IFS=';'
 if SYSTEM_LUAROCKS
 	packagecpath=(./{,core/}?.$(SHARED_LIB_EXT))
@@ -158,14 +168,6 @@ clean-recursive: clean-tests
 clean-tests:
 	rm -rf tests/*.actual
 	rm -rf $(DEPDIR)/tests/*
-
-clean-recursive: clean-deps
-
-clean-recursive: clean-tests
-
-.PHONY: clean-tests
-clean-tests:
-	rm -rf tests/*.actual
 
 clean-recursive: clean-deps
 
@@ -275,9 +277,9 @@ DEPDIRS = $(sort $(dir $(DEPFILES)))
 $(DEPDIRS):
 	mkdir -p $@
 
-%.pdf: $(DEPDIR)/%.d
-%.expected: $(DEPDIR)/%.d
-%.actual: $(DEPDIR)/%.d
+%.pdf: $(DEPDIR)/%.d all testprep
+%.expected: $(DEPDIR)/%.d all testprep
+%.actual: $(DEPDIR)/%.d all testprep
 
 $(DEPFILES): | $(DEPDIRS)
 

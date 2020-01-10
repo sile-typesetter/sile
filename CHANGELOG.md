@@ -1,4 +1,4 @@
-# ChangeLog
+# Changelog
 
 <a name="0.9.5.1"></a>
 ## [0.9.5.1](https://github.com/sile-typesetter/sile/compare/v0.9.4...v0.9.5.1) (2019-01-13)

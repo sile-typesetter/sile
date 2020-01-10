@@ -1,5 +1,7 @@
 AC_PREREQ([2.68])
-AC_INIT([SILE], m4_esyscmd_s([git describe --always --tags --dirty=*]), [simon@simon-cozens.org])
+AC_INIT([SILE],
+        m4_esyscmd([build-aux/git-version-gen .tarball-version]),
+        [simon@simon-cozens.org])
 AM_INIT_AUTOMAKE([1.11.1 foreign tar-pax dist-bzip2 no-dist-gzip -Wall no-define color-tests -Wno-portability subdir-objects])
 AC_CONFIG_MACRO_DIR([m4])
 LT_PREREQ([2.2])
@@ -7,8 +9,8 @@ LT_INIT([dlopen])
 
 AM_SILENT_RULES([yes])
 
-m4_include([m4/ax_lua.m4])
-m4_include([m4/adl_recursive_eval.m4])
+m4_include([build-aux/ax_lua.m4])
+m4_include([build-aux/adl_recursive_eval.m4])
 
 # Checks for programs.
 AC_PROG_CC_C99
@@ -106,7 +108,7 @@ AS_IF([test "x$with_system_luarocks" != "xyes"], [], [
     AX_LUA_MODULE([zlib], [lua-zlib])
     AX_LUA_MODULE([cliargs], [lua_cliargs])
     AX_LUA_MODULE([epnf], [luaepnf])
-    AX_LUA_MODULE([expat], [luaexpat])
+    AX_LUA_MODULE([lxp], [luaexpat])
     AX_LUA_MODULE([lfs], [luafilesystem])
     AX_LUA_MODULE([repl], [luarepl])
     AX_LUA_MODULE([ssl], [luasec])
@@ -139,8 +141,6 @@ PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
 
 adl_RECURSIVE_EVAL(["${datadir}/${PACKAGE}"], [SILE_PATH])
 AC_DEFINE_UNQUOTED([SILE_PATH],["${SILE_PATH}"],[Path for SILE packages and classes])
-
-adl_RECURSIVE_EVAL(["${datadir}/${PACKAGE}"], m4_esyscmd_s[git describe --always --tags --dirty=*])
 
 adl_RECURSIVE_EVAL(["${libdir}/${PACKAGE}"], [SILE_LIB_PATH])
 AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"],[Path for SILE libraries])

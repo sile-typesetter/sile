@@ -15,6 +15,8 @@ Makefile.in
 /config.guess
 /config.sub
 /config.status
+/.version
+/.version-prev
 
 m4/libtool.m4
 m4/ltoptions.m4
@@ -41,7 +43,7 @@ ltmain.sh
 subfiles.mk
 
 # Build artifacts
-sile
+./sile
 confdefs.h
 config.log
 core/*.so
@@ -58,7 +60,7 @@ sile-v*
 tests/*.actual
 tests/*.pdf
 */*.toc
-time-*.json
+time*.json
 
 benchmark-*
 compare-*
