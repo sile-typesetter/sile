@@ -2,16 +2,20 @@
 local lua_version = _VERSION:sub(-3)
 if lua_version < "5.3" then require("compat53") end -- Backport of lots of Lua 5.3 features to Lua 5.[12]
 bit32 = bit32 or require("bit32") -- Backport of Lua 5.2+ bitwise functions to Lua 5.1
-require("pl") -- Penlight on-demand module loader
-lfs = require("lfs") -- luafilesystem
+pl = require("pl.import_into")() -- Penlight on-demand module loader
 if (os.getenv("SILE_COVERAGE")) then require("luacov") end
 
 -- Include lua-stdlib, but make sure debugging is turned off since newer
 -- versions enable it by default and it comes with a huge performance hit.
 -- Note we are phasing out stdlib in favor of Penlight. When adding or
 -- refactoring code, using the Penlight equivalent features is preferred.
+-- luacheck: push ignore _DEBUG
 _DEBUG = false
 std = require("std")
+-- luacheck: pop
+
+-- Includes for _this_ scope
+local lfs = require("lfs")
 
 -- Initialize SILE
 SILE = {}
@@ -24,7 +28,7 @@ SILE.nodeMakers = {}
 SILE.tokenizers = {}
 SILE.status = {}
 
-SILE.traceStack = require("core/tracestack")
+SILE.traceStack = require("core/tracestack")()
 SILE.documentState = std.object {}
 SILE.scratch = {}
 SILE.length = require("core/length")
@@ -38,7 +42,7 @@ require("core/inputs-xml")
 require("core/inputs-common")
 require("core/papersizes")
 require("core/colorparser")
-require("core/pagebuilder")
+SILE.pagebuilder = require("core/pagebuilder")()
 require("core/typesetter")
 require("core/hyphenator-liang")
 require("core/languages")
@@ -76,7 +80,7 @@ SILE.init = function ()
   end
   if SILE.dolua then
     for _, func in pairs(SILE.dolua) do
-      _, err = pcall(func)
+      local _, err = pcall(func)
       if err then error(err) end
     end
   end
@@ -97,8 +101,8 @@ local parser = std.optparse ("SILE "..SILE.version..[[
 Usage: sile [options] file.sil|file.xml
 
 The SILE typesetter reads a single input file in either SIL or XML format to
-generate an output in PDF format. The output will be writted to the same name
-as the input file with the extention changed to .pdf.
+generate an output in PDF format. The output will be written to the same name
+as the input file with the extension changed to .pdf.
 
 Options:
 
@@ -115,12 +119,12 @@ Options:
 ]])
 
   parser:on ('--', parser.finished)
-  _G.unparsed, _G.opts = parser:parse(_G.arg)
+  local unparsed, opts = parser:parse(_G.arg)
   -- Turn slashes around in the event we get passed a path from a Windows shell
-  if _G.unparsed[1] then
-    SILE.masterFilename = _G.unparsed[1]:gsub("\\", "/")
+  if unparsed[1] then
+    SILE.inputFile = unparsed[1]:gsub("\\", "/")
     -- Strip extension
-    SILE.masterFilename = string.match(SILE.masterFilename,"(.+)%..-$") or SILE.masterFilename
+    SILE.masterFilename = string.match(SILE.inputFile, "(.+)%..-$") or SILE.inputFile
     SILE.masterDir = SILE.masterFilename:match("(.-)[^%/]+$")
   end
   SILE.debugFlags = {}
@@ -154,7 +158,7 @@ Options:
   end
 
   -- http://lua-users.org/wiki/VarargTheSecondClassCitizen
-  local identity = function (...) return utils.unpack({...}, 1, select('#', ...)) end
+  local identity = function (...) return table.unpack({...}, 1, select('#', ...)) end
   SILE.errorHandler = opts.traceback and debug.traceback or identity
   SILE.traceback = opts.traceback
 end
@@ -198,7 +202,7 @@ end
 
 function SILE.readFile(filename)
   SILE.currentlyProcessingFile = filename
-  local doc = nil
+  local doc
   if filename == "-" then
     io.stderr:write("<STDIN>\n")
     doc = io.stdin:read("*a")
@@ -234,11 +238,6 @@ function SILE.readFile(filename)
     end
   end
   SU.error("No input processor available for "..filename.." (should never happen)", true)
-end
-
-local function file_exists (filename)
-   local file = io.open(filename, "r")
-   if file ~= nil then return io.close(file) else return false end
 end
 
 -- Sort through possible places files could be

@@ -1,8 +1,11 @@
 SILE.units = {
-  pt = {relative = false, value = 1}
+  pt = {
+    relative = false,
+    value = 1
+  }
 }
 
-SILE.registerUnit = function(unit, spec)
+SILE.registerUnit = function (unit, spec)
   local def = SU.required(spec, "definition", "registering unit " .. unit)
   local relative = spec.relative or false
   if type(def) == "string" then
@@ -11,7 +14,7 @@ SILE.registerUnit = function(unit, spec)
       SU.error("Unit " .. unit .. " defined in terms of unknown unit " .. baseunit)
     end
     if SILE.units[baseunit].relative then
-      SILE.units[unit] = {relative = true, convertor = function(value)
+      SILE.units[unit] = {relative = true, convertor = function (value)
           return factor * SILE.toPoints(value, baseunit)
         end}
     else
@@ -22,7 +25,7 @@ SILE.registerUnit = function(unit, spec)
   end
 end
 
-SILE.toPoints = function(factor, unit)
+SILE.toPoints = function (factor, unit)
   if (not unit) then
     if (type(factor) == "string") then -- split into factor and unit parts
       factor, unit = string.match(factor, "(-?[%d%.]+)%s*([%%%a]+)")
@@ -48,7 +51,7 @@ SILE.registerUnit("cm", {definition = "10mm"})
 
 SILE.registerUnit("in", {definition = "72pt"})
 
-local checkPaperDefined = function()
+local checkPaperDefined = function ()
   if not SILE.documentState or not SILE.documentState.orgPaperSize then
     SU.error("A measurement tried to measure the paper size before the paper was defined", true)
   end
@@ -136,28 +139,36 @@ end})
 
 SILE.registerUnit("en", { definition = "0.5em" })
 
-local _relativeMeasurement = std.object {
-  _type = "RelativeMeasurement",
-  __tostring = function (self) return "("..self.number..self.unit..")" end,
-  absolute = function(self)
-    return SILE.toPoints(self.number, self.unit)
-  end,
-  __add = function (self, other)
-    SU.error("We tried to do arithmetic on a relative measurement without explicitly absolutizing it. (That's a bug)", true)
-  end,
-  __sub = function (self, other)
-    SU.error("We tried to do arithmetic on a relative measurement without explicitly absolutizing it. (That's a bug)", true)
-  end
-}
+local _relativeMeasurement = pl.class({
+    type = "RelativeMeasurement",
+
+    _init = function (self, number, unit)
+      self.number = number
+      self.unit = unit
+    end,
+
+    __tostring = function (self) return "("..self.number..self.unit..")" end,
+
+    absolute = function (self)
+      return SILE.toPoints(self.number, self.unit)
+    end,
+
+    __add = function (_, _)
+      SU.error("We tried to do arithmetic on a relative measurement without explicitly absolutizing it. (That's a bug)", true)
+    end,
+
+    __sub = function (_, _)
+      SU.error("We tried to do arithmetic on a relative measurement without explicitly absolutizing it. (That's a bug)", true)
+    end
+  })
 
 SILE.toMeasurement = function (number, unit)
-  if not SILE.units[unit].relative then return SILE.toPoints(number,unit) end
-  return _relativeMeasurement { number = number, unit = unit }
+  if not SILE.units[unit].relative then return SILE.toPoints(number, unit) end
+  return _relativeMeasurement(number, unit)
 end
 
-SILE.toAbsoluteMeasurement = function(length)
-  if type(length) == "table" and length.prototype
-    and (length:prototype() == "RelativeMeasurement" or length:prototype() == "Length") then
+SILE.toAbsoluteMeasurement = function (length)
+  if type(length) == "table" and length.absolute then
     return length:absolute()
   else
     return length

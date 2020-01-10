@@ -1,9 +1,9 @@
 SILE.inputs.common = {
-  init = function(doc, tree)
+  init = function (_, tree)
     local dclass = tree.options.class or "plain"
     tree.options.papersize = tree.options.papersize or "a4"
     SILE.documentState.documentClass = SILE.require(dclass, "classes")
-    for k,v in pairs(tree.options) do
+    for k, v in pairs(tree.options) do
       if SILE.documentState.documentClass.options[k] then
         SILE.documentState.documentClass.options[k](v)
       end
@@ -27,33 +27,33 @@ SILE.inputs.common = {
   end
 }
 
-local function debugAST(ast,level)
+local function debugAST(ast, level)
   local out = string.rep("  ", 1+level)
   if level == 0 then SU.debug("ast", "["..SILE.currentlyProcessingFile) end
-  if type(ast) == "function" then SU.debug("ast",out.."(function)") end
+  if type(ast) == "function" then SU.debug("ast", out.."(function)") end
   if not ast then SU.error("SILE.process called with nil", true) end
   for i=1, #ast do
     local content = ast[i]
     if type(content) == "string" then
-      SU.debug("ast",out.."["..content.."]")
+      SU.debug("ast", out.."["..content.."]")
     elseif SILE.Commands[content.command] then
-      local options = table.nitems(content.options) > 0 and content.options or ""
-      SU.debug("ast",out.."\\"..content.command..options)
-      if (#content>=1) then debugAST(content,level+1) end
+      local options = pl.tablex.size(content.options) > 0 and content.options or ""
+      SU.debug("ast", out.."\\"..content.command..options)
+      if (#content>=1) then debugAST(content, level+1) end
     elseif content.id == "texlike_stuff" or (not content.command and not content.id) then
-      debugAST(content,level+1)
+      debugAST(content, level+1)
     else
-      SU.debug("ast",out.."?\\"..(content.command or content.id))
+      SU.debug("ast", out.."?\\"..(content.command or content.id))
     end
   end
   if level == 0 then SU.debug("ast", "]") end
 end
 
-SILE.process = function(input)
+SILE.process = function (input)
   if not input then SU.error("SILE.process called with nil", true) end
   if type(input) == "function" then return input() end
   if SU.debugging("ast") then
-    debugAST(input,0)
+    debugAST(input, 0)
   end
   for i=1, #input do
     local content = input[i]
@@ -76,8 +76,7 @@ end
 -- Just a simple one-level find. We're not reimplementing XPath here.
 SILE.findInTree = function (tree, command)
   for i=1, #tree do
-    if type(tree[i]) == "string" then
-    elseif tree[i].command == command then
+    if type(tree[i]) == "table" and tree[i].command == command then
       return tree[i]
     end
   end

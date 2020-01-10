@@ -12,7 +12,7 @@ fi
 
 autoreconf --install
 
-# See discussion in https://github.com/simoncozens/sile/issues/82
+# See discussion in https://github.com/sile-typesetter/sile/issues/82
 # http://blog.gaku.net/autoconf/
 case `uname` in
     Darwin*) glibtoolize ;;

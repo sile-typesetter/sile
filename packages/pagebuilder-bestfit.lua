@@ -1,6 +1,6 @@
 local MAX_PAGES = 5
 
-SILE.typesetter.pageBuilder = function (self, independent)
+SILE.typesetter.buildPage = function (self, independent)
   -- Find last penalty
   local q = self.state.outputQueue
   local lastpenalty = -1

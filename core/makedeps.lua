@@ -19,8 +19,8 @@ local makeDeps = {
       if resolvedFile then
         SU.debug("makedeps", "Resolved required file path", resolvedFile)
         deps[#deps+1] = resolvedFile
-      else
-        -- SU.warn("Could not resolve dependency path for required file "..file)
+      -- else
+        -- SU.warn("Could not resolve dependency path for required file "..dep)
       end
     end
     table.sort(deps, function (a, b) return a < b end)
