@@ -10,9 +10,10 @@ sile \- Simon's Improved Layout Engine
 .I filename.xml
 .B ]
 .SH DESCRIPTION
-The SILE typesetter reads a single input file in either SIL or XML format to
-generate an output in PDF format. The output will be written to the same name
-as the input file with the extension changed to .pdf.
+The SILE typesetter reads a single input file in either SIL or XML format and
+generates an output in PDF format. The output will be written to the same name
+as the input file with the extension changed to .pdf unless the --output flag
+is used.
 .SH OPTIONS
 .B sile
 accepts the following options:
@@ -37,7 +38,8 @@ define their own debug flags, the most commonly used ones are
 .IR profile ", and " versions "."
 .TP
 .BI -e, --evaluate= value
-Evaluate some Lua code before processing the input file.
+Evaluate some Lua code before processing the input file. May be specified
+more than once.
 .TP
 .BI -f, --fontmanager= value
 Choose an alternative font manager. The font manager is responsible for
@@ -49,7 +51,8 @@ on non-Mac systems and
 on OS X.
 .TP
 .BI -m, --makedeps [=file]
-Generate a list of dependencies in Makefile format.
+Generate a list of dependencies in Makefile format. If no filename is
+specified, the input filename with .d appended will be used.
 .TP
 .BI -o, --output= file
 Explicitly set the output file name.
@@ -57,7 +60,7 @@ Explicitly set the output file name.
 .BI -I, --include= file
 Include a class or SILE file before processing input. This is particularly
 useful if the input file is in an XML format and requires a SILE class to
-provide processing expectations for its tags.
+provide processing expectations for its tags. May be specified more than once.
 .TP
 .BI -t, --traceback
 Display detailed location trace on errors and warnings.
