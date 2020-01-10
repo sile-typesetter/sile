@@ -58,7 +58,7 @@ release-preview:
 .PHONY: release
 release: tagrelease
 
-dist: examples docs
+dist: examples docs all
 
 .PHONY: postrelease
 postrelease: dist
