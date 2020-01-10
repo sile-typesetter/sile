@@ -98,7 +98,7 @@ EXPECTEDS ?= $(filter $(addsuffix .expected,$(basename $(TESTSRCS))),$(wildcard 
 ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 
 .PHONY: test
-test: $(TESTSRCS) $(ACTUALS) all testprep
+test: $(TESTSRCS) $(ACTUALS)
 	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
 
 .PHONY: lint
@@ -108,7 +108,7 @@ lint: luacheck
 luacheck:
 	luacheck -q .
 
-busted: $(wildcard spec/*_spec.lua) all testprep
+busted: $(wildcard spec/*_spec.lua)
 	set -f; IFS=';'
 if SYSTEM_LUAROCKS
 	packagecpath=(./{,core/}?.$(SHARED_LIB_EXT))
@@ -277,9 +277,9 @@ DEPDIRS = $(sort $(dir $(DEPFILES)))
 $(DEPDIRS):
 	mkdir -p $@
 
-%.pdf: $(DEPDIR)/%.d all
-%.expected: $(DEPDIR)/%.d all
-%.actual: $(DEPDIR)/%.d all
+%.pdf: $(DEPDIR)/%.d all testprep
+%.expected: $(DEPDIR)/%.d all testprep
+%.actual: $(DEPDIR)/%.d all testprep
 
 $(DEPFILES): | $(DEPDIRS)
 
