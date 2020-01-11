@@ -23,8 +23,6 @@ SILE.registerCommand("process-jalt", function (_, content)
   SILE.typesetter:shapeAllNodes(SILE.typesetter.state.nodes)
   table.remove(SILE.typesetter.state.nodes,1)
   table.remove(SILE.typesetter.state.nodes,1)
-  -- Do bidi
-  bidi.reorder(SILE.typesetter.state, SILE.typesetter)
   local nodes1 = SILE.typesetter.state.nodes
 
   -- Process with +JALT
@@ -37,7 +35,6 @@ SILE.registerCommand("process-jalt", function (_, content)
     SILE.typesetter:shapeAllNodes(SILE.typesetter.state.nodes)
     table.remove(SILE.typesetter.state.nodes,1)
     table.remove(SILE.typesetter.state.nodes,1)
-    bidi.reorder(SILE.typesetter.state, SILE.typesetter)
     nodes2 = SILE.typesetter.state.nodes
   end)
 
