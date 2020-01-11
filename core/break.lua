@@ -211,12 +211,17 @@ function lineBreak:tryAlternatives(from, to)
   if debugging then SU.debug("break", "Shortfall was ", shortfall) end
   for combination in SU.allCombinations(altSizes) do
     local addWidth = 0
+    local penalty = 0
     for i = 1, #(self.alternates) do local alt = self.alternates[i]
       addWidth = (addWidth + alt.options[combination[i]].width - alt:minWidth()).length
+      if alt.options[combination[i]].penalty then
+        penalty = penalty + alt.options[combination[i]].penalty
+      end
       if debugging then SU.debug("break", alt.options[combination[i]], " width", addWidth) end
     end
     local ss = shortfall - addWidth
     local badness = SU.rateBadness(inf_bad, math.abs(ss), ss > 0 and self.curActiveWidth.stretch or self.curActiveWidth.shrink)
+    badness = badness + penalty * penalty
     if debugging then SU.debug("break", "  badness of "..ss.." ("..self.curActiveWidth.stretch..") is ".. badness) end
     if badness < localMinimum then
       selectedShortfall = addWidth
