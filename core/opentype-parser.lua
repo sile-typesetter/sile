@@ -258,6 +258,31 @@ local function parseJstfLangSysTable(fd, off)
   for i = 1, header.jstfPriorityCount do
       local suggestionOffset = suggestionOffsets[i] + off
       local suggestion = vstruct.read("> @"..suggestionOffset.." shrinkageEnableGSUB:u2 shrinkageDisableGSUB:u2 shrinkageEnableGPOS:u2 shrinkageDisableGPOS:u2 shrinkageJstfMax:u2 extensionEnableGSUB:u2 extensionDisableGSUB:u2 extensionEnableGPOS:u2 extensionDisableGPOS:u2 extensionJstfMax:u2",fd)
+      if suggestion.extensionEnableGSUB then
+        local tableOffset = suggestionOffset + suggestion.extensionEnableGSUB
+        local lookupCount = vstruct.read("> @"..tableOffset.." u2",fd)
+        local lookupIndices = vstruct.read("> "..lookupCount[1].."*u2",fd)
+        suggestion.extensionEnableGSUB = lookupIndices
+      end
+      if suggestion.shrinkageEnableGSUB then
+        local tableOffset = suggestionOffset + suggestion.shrinkageEnableGSUB
+        local lookupCount = vstruct.read("> @"..tableOffset.." u2",fd)
+        local lookupIndices = vstruct.read("> "..lookupCount[1].."*u2",fd)
+        suggestion.shrinkageEnableGSUB = lookupIndices
+      end
+      if suggestion.extensionEnableGPOS then
+        local tableOffset = suggestionOffset + suggestion.extensionEnableGPOS
+        local lookupCount = vstruct.read("> @"..tableOffset.." u2",fd)
+        local lookupIndices = vstruct.read("> "..lookupCount[1].."*u2",fd)
+        suggestion.extensionEnableGPOS = lookupIndices
+      end
+      if suggestion.shrinkageEnableGPOS then
+        local tableOffset = suggestionOffset + suggestion.shrinkageEnableGPOS
+        local lookupCount = vstruct.read("> @"..tableOffset.." u2",fd)
+        local lookupIndices = vstruct.read("> "..lookupCount[1].."*u2",fd)
+        suggestion.shrinkageEnableGPOS = lookupIndices
+      end
+
       if suggestion.extensionJstfMax then
         local jsftMaxOffset = (suggestionOffset + suggestion.extensionJstfMax)
         local lookupCount = vstruct.read(">@"..jsftMaxOffset.." u2",fd)
