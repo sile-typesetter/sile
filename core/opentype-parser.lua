@@ -220,7 +220,8 @@ local function parseCoverage(fd, off)
     covered = {}
     local rangecount = vstruct.read("> u2", fd)
     for i = 1,rangecount[1] do
-      local range = vstruct.read("> { RangeRecord }",fd)
+      local range = vstruct.read("> { &RangeRecord }",fd)
+      range = range[1]
       for j = range.startGlyphID,range.endGlyphID do
         covered[j] = true
       end
