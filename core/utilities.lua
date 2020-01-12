@@ -96,6 +96,18 @@ utilities.inherit = function (orig, spec)
   return new
 end
 
+-- Return sorted list of table keys
+utilities.keylist = function(t)
+  local keyset={}
+  local n=0
+  for k,v in pairs(t) do
+    n=n+1
+    keyset[n]=k
+  end
+  table.sort(keyset)
+  return keyset
+end
+
 utilities.map = function (func, array)
   local new_array = {}
   local last = #array
