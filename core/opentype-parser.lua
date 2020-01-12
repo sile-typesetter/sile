@@ -351,7 +351,48 @@ local function parseJstf(str)
   return scripts
 end
 
+local function parseGsub(str)
+  if str:len() <= 0 then return end
+  local fd = vstruct.cursor(str)
 
+  local offsets = {}
+  local header = vstruct.read(">version:u4 ScriptListOffset:u2 FeatureListOffset:u2 LookupListOffset:u2", fd)
+  -- for our purposes we just need the lookups (for now)
+  local lookupListTable = vstruct.read("> @"..header.LookupListOffset.." lookupCount:u2",fd)
+  local lookupOffsets = vstruct.read("> "..lookupListTable.lookupCount.."*u2",fd)
+  local lookups = {}
+  for i = 1, lookupListTable.lookupCount do
+    local lookupTableOffset = header.LookupListOffset+lookupOffsets[i]
+    local lookupTable = vstruct.read("> @"..lookupTableOffset.." lookupType:u2 lookupFlag:u2 subTableCount:u2",fd)
+    local subTableOffsets = vstruct.read("> "..lookupTable.subTableCount.."*u2", fd)
+    lookups[i-1] = {} -- OpenType lookups are zero indexed
+    for j = 1, lookupTable.subTableCount do
+      local subTableOffset = lookupTableOffset + subTableOffsets[j]
+      if lookupTable.lookupType == 1 then
+        local subTable = vstruct.read("> @"..subTableOffset.." substFormat:u2 coverageOffset:u2",fd)
+        if subTable.substFormat == 1 then
+          local deltaGlyphId =  vstruct.read("> u2",fd)[1]
+          local inputGlyphs = parseCoverage(fd, subTableOffset+subTable.coverageOffset)
+          inputGlyphs = SU.keylist(inputGlyphs)
+          for k = 1,#inputGlyphs do
+            local inputGlyphID = inputGlyphs[k]
+            lookups[i-1][inputGlyphID] = inputGlyphID + deltaGlyphId
+          end
+        else
+          local glyphCount =  vstruct.read("> u2",fd)
+          local replacementGlyphs =  vstruct.read("> "..glyphCount[1].."*u2",fd)
+          local inputGlyphs = parseCoverage(fd, subTableOffset+subTable.coverageOffset)
+          inputGlyphs = SU.keylist(inputGlyphs)
+          for k = 1,#inputGlyphs do
+            local inputGlyphID = inputGlyphs[k]
+            lookups[i-1][inputGlyphID] = replacementGlyphs[k]
+          end
+        end
+      end
+    end
+  end
+  return lookups
+end
 local parseFont = function(face)
   if not face.font then
     local font = {}
@@ -363,6 +404,7 @@ local parseFont = function(face)
     font.cpal = parseCpal(hb.get_table(face.data, face.index, "CPAL"))
     font.svg  = parseSvg(hb.get_table(face.data, face.index, "SVG"))
     font.jstf  = parseJstf(hb.get_table(face.data, face.index, "JSTF"))
+    font.gsub  = parseGsub(hb.get_table(face.data, face.index, "GSUB"))
     face.font = font
   end
 
