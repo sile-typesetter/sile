@@ -10,7 +10,7 @@ dist_man_MANS = sile.1
 bin_SCRIPTS = sile
 subdir_files = $(shell find core classes languages packages lua-libraries -type f -print)
 nobase_dist_pkgdata_DATA = $(subdir_files)
-EXTRA_DIST = CHANGELOG.md README.md LICENSE tests examples documentation sile-dev-1.rockspec build-aux/git-version-gen .version
+EXTRA_DIST = CHANGELOG.md README.md LICENSE tests examples documentation sile-dev-1.rockspec build-aux/git-version-gen .version fontconfig.conf
 
 SHELL = bash
 .ONESHELL:
@@ -143,6 +143,7 @@ pages = pdfinfo $@ | awk '$$1 == "Pages:" {print $$2}' || echo 0
 silepass = $(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@ && pg0=$${pg} pg=$$($(pages))
 define runsile =
 	pg0=$$($(pages)) hadtoc=$$($(hastoc))
+	mkdir -p $(DEPDIR)
 	$(silepass)
 	if $(hastoc); then
 		$${hadtoc} || $(silepass)
@@ -150,10 +151,12 @@ define runsile =
 	fi
 endef
 
-%.pdf: %.sil $(and $(SILE_COVERAGE)$(CLEAN),force)
+patterndeps = $(wildcard $(DEPDIR)/$*.d) all testprep
+
+%.pdf: %.sil $(and $(SILE_COVERAGE)$(CLEAN),force) $$(patterndeps)
 	$(runsile)
 
-%.pdf: %.xml $(and $(SILE_COVERAGE)$(CLEAN),force)
+%.pdf: %.xml $(and $(SILE_COVERAGE)$(CLEAN),force) $$(patterndeps)
 	$(runsile)
 
 .PHONY: coverage
@@ -252,10 +255,10 @@ force: ;
 .PHONY: update_expecteds
 update_expecteds: $(EXPECTEDS)
 
-tests/%.expected: tests/%.sil $(and $(CLEAN),force)
+tests/%.expected: tests/%.sil $(and $(CLEAN),force) $$(patterndeps)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-tests/%.expected: tests/%.xml $(and $(CLEAN),force)
+tests/%.expected: tests/%.xml $(and $(CLEAN),force) $$(patterndeps)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
 .PHONY: update_actuals
@@ -264,11 +267,11 @@ update_actuals: $(ACTUALS)
 .PHONY: test_previews
 test_previews: $(TESTPDFS)
 
-tests/%.actual: tests/%.sil $(and $(CLEAN),force)
+tests/%.actual: tests/%.sil $(and $(CLEAN),force) $$(patterndeps)
 	-$(if $(CLEAN),rm -f $@,:)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-tests/%.actual: tests/%.xml $(and $(CLEAN),force)
+tests/%.actual: tests/%.xml $(and $(CLEAN),force) $$(patterndeps)
 	-$(if $(CLEAN),rm -f $@,:)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
@@ -278,10 +281,6 @@ DEPDIRS = $(sort $(dir $(DEPFILES)))
 $(DEPDIRS):
 	mkdir -p $@
 
-%.pdf: $(DEPDIR)/%.d all testprep
-%.expected: $(DEPDIR)/%.d all testprep
-%.actual: $(DEPDIR)/%.d all testprep
-
 $(DEPFILES): | $(DEPDIRS)
 
 include $(wildcard $(DEPFILES))
@@ -290,8 +289,7 @@ include $(wildcard $(DEPFILES))
 .fonts/%: Makefile-fonts | .fonts
 
 .fonts: fontconfig.conf
-	[[ -h .fonts ]] && exit 1
-	mkdir -p $@
+	[[ -h .fonts ]] || mkdir -p $@
 
 # Actual rules for downloading test fonts are in a separate file
 include Makefile-fonts

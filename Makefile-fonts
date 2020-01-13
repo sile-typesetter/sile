@@ -34,7 +34,7 @@ TESTFONTFILES += Symbola_Hinted.ttf
 
 # Tell  make how to download font file bundles (when not downloadable individually)
 Symbola.zip:
-	curl -s -L http://users.teilar.gr/~g1951d/$(notdir $@) -o $@
+	curl -s -L https://web.archive.org/web/20190608100449/http://users.teilar.gr/~g1951d/$(notdir $@) -o $@
 
 GentiumPlus-5.000.zip:
 	curl -s -L https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
