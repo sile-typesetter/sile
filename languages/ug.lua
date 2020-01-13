@@ -6,7 +6,7 @@
 -- Uyghur is Turkish, right?
 SILE.languageSupport.loadLanguage("tr")
 
-local chardata = pl.pretty.load(pl.utils.readfile("lua-libraries/char-def.lua")).characters.data
+local chardata = require("char-def")
 
 SILE.settings.declare({
   name = "languages.ug.hyphenoffset",
