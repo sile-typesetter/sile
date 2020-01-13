@@ -143,6 +143,7 @@ pages = pdfinfo $@ | awk '$$1 == "Pages:" {print $$2}' || echo 0
 silepass = $(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@ && pg0=$${pg} pg=$$($(pages))
 define runsile =
 	pg0=$$($(pages)) hadtoc=$$($(hastoc))
+	mkdir -p $(DEPDIR)
 	$(silepass)
 	if $(hastoc); then
 		$${hadtoc} || $(silepass)
@@ -150,7 +151,7 @@ define runsile =
 	fi
 endef
 
-patterndeps = $(DEPDIR)/$*.d all testprep
+patterndeps = $(wildcard $(DEPDIR)/$*.d) all testprep
 
 %.pdf: %.sil $(and $(SILE_COVERAGE)$(CLEAN),force) $$(patterndeps)
 	$(runsile)
