@@ -165,5 +165,5 @@ SILE.hyphenator.languages.ug = function(n)
     prebreak = prebreak,
     postbreak = postbreak
   })
-  return {SILE.nodefactory.zeroHbox,d}
+  return { SILE.nodefactory.zerohbox(), d }
 end

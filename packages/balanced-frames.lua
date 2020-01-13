@@ -27,7 +27,7 @@ SILE.typesetter.buildPage = function (self, independent)
   local mustBalance = 0
   for i = 1, #q do
     totalHeight = totalHeight + q[i].height + q[i].depth
-    if q[i]:isPenalty() and q[i].penalty <= BALANCE_PENALTY then
+    if q[i].is_penalty and q[i].penalty <= BALANCE_PENALTY then
       mustBalance = i
       break
     end

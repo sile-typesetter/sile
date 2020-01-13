@@ -41,11 +41,11 @@ SILE.settings.declare({
 local metricscache = {}
 
 local getLineMetrics = function (l)
-  local linemetrics = {ascender = 0, descender = 0, lineheight = 0}
+  local linemetrics = { ascender = 0, descender = 0, lineheight = SILE.measurement(0) }
   if not l or not l.nodes then return linemetrics end
   for i = 1, #(l.nodes) do
     local node = l.nodes[i]
-    if node:isNnode() then
+    if node.is_nnode then
       local m = metricscache[SILE.font._key(node.options)]
       if not m then
         local face = SILE.font.cache(node.options, SILE.shaper.getFace)
@@ -56,7 +56,7 @@ local getLineMetrics = function (l)
       end
       SILE.settings.temporarily(function ()
         SILE.call("font", node.options, {})
-        m.lineheight = SILE.settings.get("linespacing.css.line-height"):absolute().length
+        m.lineheight = SILE.settings.get("linespacing.css.line-height").length:absolute()
       end)
       if m.ascender > linemetrics.ascender then linemetrics.ascender = m.ascender end
       if m.descender > linemetrics.descender then linemetrics.descender = m.descender end
@@ -71,7 +71,7 @@ local linespacingLeading = function (_, vbox, previous)
 
   local firstline = SILE.settings.get("linespacing.minimumfirstlineposition"):absolute()
   if not previous then
-    if firstline.length > 0 then
+    if firstline.length:tonumber() > 0 then
       local toAdd = SILE.length.new({ length = firstline.length -vbox.height })
       return SILE.nodefactory.newVKern({ height = toAdd })
     else

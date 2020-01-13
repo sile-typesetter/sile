@@ -1,8 +1,7 @@
 local lpeg = require("lpeg")
 local epnf = require("epnf")
 
-local ID = lpeg.C(  (SILE.parserBits.letter+SILE.parserBits.digit)^1 )
-local identifier = (ID + lpeg.S(":-"))^1
+local identifier = (SILE.parserBits.identifier + lpeg.S":-")^1
 
 local balanced = lpeg.C{ "{" * lpeg.P(" ")^0 * lpeg.C(((1 - lpeg.S"{}") + lpeg.V(1))^0) * "}" } / function (...) local t={...}; return t[2] end
 local doubleq = lpeg.C( lpeg.P '"' * lpeg.C(((1 - lpeg.S '"\r\n\f\\') + (lpeg.P '\\' * 1)) ^ 0) * '"' )
@@ -11,7 +10,7 @@ local doubleq = lpeg.C( lpeg.P '"' * lpeg.C(((1 - lpeg.S '"\r\n\f\\') + (lpeg.P 
 local bibtexparser = epnf.define(function (_ENV)
   local _ = WS^0
   local sep = lpeg.S(",;") * _
-  local myID = C( identifier + lpeg.P(1) ) / function (t) return t end
+  local myID = C(identifier + lpeg.P(1)) / function (t) return t end
   local value = balanced + doubleq + myID
   local pair = lpeg.Cg(myID * _ * "=" * _ * C(value)) * _ * sep^-1   / function (...) local t= {...}; return t[1], t[#t] end
   local list = lpeg.Cf(lpeg.Ct("") * pair^0, rawset)

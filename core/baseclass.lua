@@ -103,11 +103,11 @@ SILE.baseClass = std.object {
         SILE.typesetter:leaveHmode()
       end
       if SILE.typesetter:vmode() then
-        SILE.typesetter:pushVpenalty({ flagged = tonumber(options.flagged), penalty = tonumber(options.penalty) })
+        SILE.typesetter:pushVpenalty({ penalty = tonumber(options.penalty) })
       else
-        SILE.typesetter:pushPenalty({ flagged = tonumber(options.flagged), penalty = tonumber(options.penalty) })
+        SILE.typesetter:pushPenalty({ penalty = tonumber(options.penalty) })
       end
-    end, "Inserts a penalty node. Options are penalty= for the size of the penalty and flagged= if this is a flagged penalty.")
+    end, "Inserts a penalty node. Option is penalty= for the size of the penalty.")
 
     SILE.registerCommand("discretionary", function (options, _)
       local discretionary = SILE.nodefactory.newDiscretionary({})
@@ -258,13 +258,12 @@ SILE.baseClass = std.object {
   end,
 
   endPar = function (typesetter)
-    local g = SILE.settings.get("document.parskip")
-    typesetter:pushVglue(pl.tablex.deepcopy(g))
+    typesetter:pushVglue(SILE.settings.get("document.parskip"))
   end,
 
   options = {
     papersize = function (size)
-      SILE.documentState.paperSize = SILE.paperSizeParser(size)
+      SILE.documentState.paperSize = SILE.papersize(size)
       SILE.documentState.orgPaperSize = SILE.documentState.paperSize
       SILE.newFrame({
           id = "page",

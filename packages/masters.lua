@@ -25,11 +25,11 @@ local function defineMasters (self, list)
   end
 end
 
-local function doswitch(frames)
-  SILE.frames = {page = SILE.frames.page}
-  for id,f in pairs(frames) do
-    SILE.frames[id] =f
-    f:invalidate()
+local function doswitch (frames)
+  SILE.frames = { page = SILE.frames.page }
+  for id, frame in pairs(frames) do
+    SILE.frames[id] = frame
+    frame:invalidate()
   end
 end
 
@@ -60,7 +60,7 @@ SILE.registerCommand("define-master-template", function(options, content)
   -- Subvert the <frame> functionality from baseclass
   local spare = SILE.documentState.thisPageTemplate.frames
   local sp2 = SILE.frames
-  SILE.frames = {page = SILE.frames.page}
+  SILE.frames = { page = SILE.frames.page }
   SILE.documentState.thisPageTemplate.frames = {}
   SILE.process(content)
   SILE.scratch.masters[options.id] = {}
@@ -78,6 +78,7 @@ SILE.registerCommand("switch-master-one-page", function (options, _)
   switchMasterOnePage(options.id)
   SILE.typesetter:leaveHmode()
 end, "Switches the master for the current page")
+
 SILE.registerCommand("switch-master", function (options, _)
   SU.required(options, "id", "switching master")
   switchMaster(options.id)

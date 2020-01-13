@@ -8,18 +8,24 @@ return pl.class({
     end,
 
     collateVboxes = function(_, vboxlist)
-      local output = SILE.nodefactory.newVbox({nodes = {} })
+      local output = SILE.nodefactory.vbox()
       output:append(vboxlist)
       return output
     end,
 
+    -- Note: Almost 1/3 of the time in a typical SILE in taken iterating through
+    -- this function. As a result there are some micro-optimizations here that
+    -- make it a-typical of preferred coding styles. In particular note that
+    -- we absolutize heavily iterated lengths as early as possible and make
+    -- make direct calls to their integer amounts, assumed to be in points by
+    -- the point they are called **without actually checking**!
     findBestBreak = function(self, options)
       local vboxlist = SU.required(options, "vboxlist", "in findBestBreak")
-      local target   = SU.required(options, "target", "in findBestBreak")
+      local target   = SU.required(options, "target", "in findBestBreak", "length")
       local restart  = options.restart or false
       local force    = options.force or false
       local i = 0
-      local totalHeight = SILE.length.new()
+      local totalHeight = SILE.length()
       local bestBreak = nil
       local started = false
       if restart and restart.target == target then
@@ -28,15 +34,17 @@ return pl.class({
         started = restart.started
       end
       local leastC = self.inf_bad
-      SU.debug("pagebuilder", "Page builder for frame "..SILE.typesetter.frame.id.." called with "..#vboxlist.." nodes, "..target)
+      SU.debug("pagebuilder", function ()
+        return "Page builder for frame " .. SILE.typesetter.frame.id .. " called with " .. #vboxlist .. " nodes, " .. target
+      end)
       if SU.debugging("vboxes") then
-        for j = 1,#vboxlist do
-          SU.debug("vboxes", (j==i and " -> " or "    ")..j..": "..vboxlist[j])
+        for j, box in ipairs(vboxlist) do
+          SU.debug("vboxes", (j == i and " >" or "  ") .. j .. ": " .. box)
         end
       end
       while not started and i < #vboxlist do
         i = i + 1
-        if not vboxlist[i]:isVglue() then
+        if not vboxlist[i].is_vglue then
           started = true
           i = i - 1
           break
@@ -46,32 +54,35 @@ return pl.class({
       while i < #vboxlist do
         i = i + 1
         local vbox = vboxlist[i]
-        SU.debug("pagebuilder", "Dealing with VBox " .. vbox)
-        if (vbox:isVbox()) then
-          totalHeight = totalHeight + vbox.height + vbox.depth
-        elseif vbox:isVglue() then
-          totalHeight = totalHeight + vbox.height
-        elseif vbox.type == "insertionVbox" then
+        SU.debug("pagebuilder", function () return "Dealing with VBox " .. vbox end)
+        if vbox.is_vbox then
+          totalHeight:___add(vbox.height)
+          totalHeight:___add(vbox.depth)
+        elseif vbox.is_vglue then
+          totalHeight:___add(vbox.height)
+        elseif vbox.is_insertion then
+          -- TODO: refactor as hook and without side effects!
           target = SILE.insertions.processInsertion(vboxlist, i, totalHeight, target)
           vbox = vboxlist[i]
         end
-        local left = target - totalHeight.length
-        SU.debug("pagebuilder", "I have " .. tostring(left) .. "pts left")
-        -- if (left < -20) then SU.error("\nCatastrophic page breaking failure!"); end
+        local left = target - totalHeight
+        SU.debug("pagebuilder", function () return "I have " .. left .. " left" end)
+        -- if left < -20 then SU.error("\nCatastrophic page breaking failure!"); end
         pi = 0
-        if vbox:isPenalty() then
+        if vbox.is_penalty then
           pi = vbox.penalty
           -- print("PI "..pi)
         end
-        if vbox:isPenalty() and vbox.penalty < self.inf_bad  or (vbox:isVglue() and i > 1 and not vboxlist[i-1].discardable) then
+        if vbox.is_penalty and vbox.penalty < self.inf_bad
+          or (vbox.is_vglue and i > 1 and not vboxlist[i-1].discardable) then
           local badness
-          SU.debug("pagebuilder", "totalHeight " .. totalHeight .. " with target " .. target)
-          if totalHeight.length < target then -- TeX #1039
+          SU.debug("pagebuilder", function () return "totalHeight " .. totalHeight .. " with target " .. target end)
+          if totalHeight.length.amount < target.length.amount then -- TeX #1039
             -- Account for infinite stretch?
-            badness = SU.rateBadness(self.inf_bad, left, totalHeight.stretch)
+            badness = SU.rateBadness(self.inf_bad, left.length.amount, totalHeight.stretch.amount)
             -- print("Height == "..totalHeight.length, "target=="..target, "stretch=="..totalHeight.stretch)
-          elseif left < totalHeight.shrink then badness = self.awful_bad
-          else badness = SU.rateBadness(self.inf_bad, -left, totalHeight.shrink)
+          elseif left.length.amount < totalHeight.shrink.amount then badness = self.awful_bad
+          else badness = SU.rateBadness(self.inf_bad, -left.length.amount, totalHeight.shrink.amount)
           end
 
           local c

@@ -88,7 +88,7 @@ end
 local addBalancingGlue = function (height)
   allTypesetters(function (frame, typesetter)
     local glue = height - calculations[frame].heightOfNewMaterial
-    if glue.length > 0 then
+    if glue.length:tonumber() > 0 then
       SU.debug("parallel", "Adding "..glue.." to "..frame)
       typesetter:pushVglue({ height = glue })
     end

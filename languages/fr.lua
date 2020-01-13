@@ -1,7 +1,7 @@
 SILE.settings.declare({
     name = "languages.fr.punctuationspace",
     type = "kern",
-    default = SILE.nodefactory.newKern("0.2en"),
+    default = SILE.nodefactory.kern("0.2en"),
     help = "The amount of space before a punctuation"
   })
 

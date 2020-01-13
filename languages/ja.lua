@@ -5,9 +5,12 @@
 -- width of a full-width character. In SILE terms it isn't: measuring an "m" in
 -- a 10pt Japanese font gets you 5 points. So we measure a full-width character
 -- and use that as a unit. We call it zw following ptex (zenkaku width)
-SILE.registerUnit("zw", { relative = true, definition = function (v)
-  return v * SILE.shaper:measureChar("あ").width
-end})
+SILE.units["zw"] = {
+  relative = true,
+  definition = function (v)
+    return v * SILE.shaper:measureChar("あ").width
+  end
+}
 
 local hiragana = function (c) return c > 0x3040 and c <= 0x309f end
 local katakana = function (c) return c > 0x30a0 and c <= 0x30ff end
@@ -133,7 +136,7 @@ local function shrinkability(before, after)
   return 0
 end
 
--- local okbreak = SILE.nodefactory.newPenalty({ penalty = 0 })
+-- local okbreak = SILE.nodefactory.penalty(0)
 
 SILE.nodeMakers.ja = pl.class({
     _base = SILE.nodeMakers.base,
@@ -153,17 +156,17 @@ SILE.nodeMakers.ja = pl.class({
             db = db .. " S"
             coroutine.yield(SILE.shaper:makeSpaceNode(options, item))
           else
-            local length = SILE.length.new({
-                length = SILE.toPoints(intercharacterspace(lastcp, thiscp)),
-                stretch = SILE.toPoints(stretchability(lastcp, thiscp)),
-                shrink = SILE.toPoints(shrinkability(lastcp, thiscp))
-              })
+            local length = SILE.length(
+              intercharacterspace(lastcp, thiscp),
+              stretchability(lastcp, thiscp),
+              shrinkability(lastcp, thiscp)
+            )
             if breakAllowed(lastcp, thiscp) then
               db = db .." G ".. length
-              coroutine.yield(SILE.nodefactory.newGlue({ width = length }))
+              coroutine.yield(SILE.nodefactory.glue(length))
             elseif length.length ~= 0 or length.stretch ~= 0 or length.shrink ~= 0 then
               db = db .." K ".. length
-              coroutine.yield(SILE.nodefactory.newKern({ width = length }))
+              coroutine.yield(SILE.nodefactory.kern(length))
             else db = db .. " N"
             end
             if jisClass(thiscp) == 5 or jisClass(thiscp) == 6 then

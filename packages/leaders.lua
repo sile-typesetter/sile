@@ -1,34 +1,30 @@
-local leader = SILE.nodefactory.newGlue({})
+local leader = pl.class({
+    _base = SILE.nodefactory.glue,
 
-leader.outputYourself = function (self, typesetter, line)
-  local scaledWidth = self.width.length
-  if line.ratio and line.ratio < 0 and self.width.shrink > 0 then
-    scaledWidth = scaledWidth + self.width.shrink * line.ratio
-  elseif line.ratio and line.ratio > 0 and self.width.stretch > 0 then
-    scaledWidth = scaledWidth + self.width.stretch * line.ratio
-  end
-  local valwidth = self.value.width.length
-  local repetitions = math.floor(scaledWidth / valwidth)
-  if repetitions < 1 then
-    typesetter.frame:advanceWritingDirection(scaledWidth)
-    return
-  end
-
-  local remainder = scaledWidth - repetitions * valwidth
-  if repetitions == 1 then
-    typesetter.frame:advanceWritingDirection(remainder)
-    self.value:outputYourself(typesetter, line)
-  end
-
-  if repetitions > 1 then
-    local glue = remainder / (repetitions-1)
-    for _ = 1, (repetitions - 1) do
-      self.value:outputYourself(typesetter, line)
-      typesetter.frame:advanceWritingDirection(glue)
+    outputYourself = function (self, typesetter, line)
+      local outputWidth = SU.rationWidth(self.width, self.width, line.ratio)
+      local valwidth = self.value.width
+      local repetitions = math.floor(outputWidth:tonumber() / valwidth:tonumber())
+      if repetitions < 1 then
+        typesetter.frame:advanceWritingDirection(outputWidth)
+        return
+      end
+      local remainder = outputWidth - repetitions * valwidth
+      if repetitions == 1 then
+        typesetter.frame:advanceWritingDirection(remainder)
+        self.value:outputYourself(typesetter, line)
+      end
+      if repetitions > 1 then
+        local glue = remainder / (repetitions-1)
+        for _ = 1, (repetitions - 1) do
+          self.value:outputYourself(typesetter, line)
+          typesetter.frame:advanceWritingDirection(glue)
+        end
+        self.value:outputYourself(typesetter, line)
+      end
     end
-    self.value:outputYourself(typesetter, line)
-  end
-end
+
+  })
 
 SILE.registerCommand("leaders", function(options, content)
   local gluespec = SU.required(options, "width", "creating leaders")

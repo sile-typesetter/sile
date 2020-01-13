@@ -106,24 +106,24 @@ local reorder = function (n, self)
   local rv = {}
   -- for i = 1, #nl do print(i, nl[i], levels[i]) end
   for i = 1, #nl do
-    if nl[i]:isNnode() and levels[i].level %2 ~= base_level then
+    if nl[i].is_nnode and levels[i].level %2 ~= base_level then
       SU.flip_in_place(nl[i].nodes)
       reverse_each_node(nl[i].nodes)
-    elseif nl[i]:isDiscretionary() and levels[i].level %2 ~= base_level and not nl[i].bidiDone then
+    elseif nl[i].is_discretionary and levels[i].level %2 ~= base_level and not nl[i].bidiDone then
       for j = 1, #(nl[i].replacement) do
-        if nl[i].replacement[j]:isNnode() then
+        if nl[i].replacement[j].is_nnode then
           SU.flip_in_place(nl[i].replacement[j].nodes)
           reverse_each_node(nl[i].replacement[j].nodes)
         end
       end
       for j = 1, #(nl[i].prebreak) do
-        if nl[i].prebreak[j]:isNnode() then
+        if nl[i].prebreak[j].is_nnode then
           SU.flip_in_place(nl[i].prebreak[j].nodes)
           reverse_each_node(nl[i].prebreak[j].nodes)
         end
       end
       for j = 1, #(nl[i].postbreak) do
-        if nl[i].postbreak[j]:isNnode() then
+        if nl[i].postbreak[j].is_nnode then
           SU.flip_in_place(nl[i].postbreak[j].nodes)
           reverse_each_node(nl[i].postbreak[j].nodes)
         end
@@ -158,7 +158,7 @@ local nodeListToText = function (nl)
 end
 
 local splitNodeAtPos = function (n, splitstart, p)
-  if n:isUnshaped() then
+  if n.is_unshaped then
     local utf8chars = SU.splitUtf8(n.text)
     local n2 = SILE.nodefactory.newUnshaped({ text = "", options = pl.tablex.copy(n.options) })
     local n1 = SILE.nodefactory.newUnshaped({ text = "", options = pl.tablex.copy(n.options) })
@@ -240,7 +240,7 @@ local bidiBoxupNodes = function (self)
   -- Scan for out-of-direction material
   for i = 1, #vboxlist do
     local v = vboxlist[i]
-    if v:isVbox() then reorder(v, self) end
+    if v.is_vbox then reorder(v, self) end
   end
   return vboxlist
 end

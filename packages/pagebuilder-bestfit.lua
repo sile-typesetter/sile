@@ -6,7 +6,7 @@ SILE.typesetter.buildPage = function (self, independent)
   local lastpenalty = -1
   local cHeight = SILE.length.new()
   for j = #q,1,-1 do
-    if q[j]:isPenalty() and lastpenalty == -1 then
+    if q[j].is_penalty and lastpenalty == -1 then
       lastpenalty = q[j].penalty
     end
     cHeight = cHeight + q[j].height
