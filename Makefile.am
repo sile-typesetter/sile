@@ -305,6 +305,8 @@ else
 testprep: lua_modules | $(TESTPREPDEPS)
 endif
 
+CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS)
+
 gource.webm:
 	mkdir -p /tmp/gravatars
 	convert examples/images/sile-logo.jpg -negate -resize 50% /tmp/sile-logo.jpg
