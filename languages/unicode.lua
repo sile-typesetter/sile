@@ -1,6 +1,6 @@
 local icu = require("justenoughicu")
 
-local chardata = pl.pretty.load(pl.utils.readfile("lua-libraries/char-def.lua")).characters.data
+local chardata = require("char-def")
 
 -- luacheck: globals lasttype
 -- XXX - this is wrong and broken, but is also confusing. See bug #687
