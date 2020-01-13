@@ -48,6 +48,7 @@ require("core/hyphenator-liang")
 require("core/languages")
 require("core/font")
 require("core/packagemanager")
+require("core/math")
 
 SILE.fontManager = require("core/fontmanager")
 SILE.frameParser = require("core/frameparser")
