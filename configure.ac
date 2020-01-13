@@ -7,6 +7,12 @@ AC_CONFIG_MACRO_DIR([m4])
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
 
+if [[ -d .git ]]; then
+    MAN_DATE=$(git log -1 --format="%cd" --date=format:"%d %B %Y" -- sile.1.in)
+else
+    MAN_DATE=$(date "+%d %B %Y")
+fi
+
 AM_SILENT_RULES([yes])
 
 m4_include([m4/ax_lua.m4])
@@ -170,6 +176,7 @@ AC_SUBST([SILE_LIB_PATH])
 AC_SUBST([shared_ext])
 AC_SUBST([SYSTEM_LUAROCKS])
 AC_SUBST([APPKIT])
+AC_SUBST([MAN_DATE])
 AC_CONFIG_FILES([Makefile src/Makefile sile.1])
 AC_CONFIG_FILES([sile], [chmod +x sile])
 

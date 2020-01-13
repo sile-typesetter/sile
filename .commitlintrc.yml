@@ -45,6 +45,7 @@ rules:
     - azure
     - github
     - manual
+    - manpage
     - examples
     - installation
     - readme
