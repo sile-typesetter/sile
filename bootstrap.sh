@@ -18,8 +18,8 @@ case `uname` in
     Darwin*) glibtoolize ;;
     *)        libtoolize ;;
 esac
-aclocal
+aclocal --force
 automake --force-missing --add-missing
-autoreconf
+autoreconf --force
 
 (cd libtexpdf; autoreconf -I m4)
