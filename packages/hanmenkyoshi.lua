@@ -46,7 +46,6 @@ end)
 local declareHanmenFrame = function (self, id, spec)
   if id then
     spec.id = id
-    SILE.frames[id] = nil
   else
     spec = id
   end
