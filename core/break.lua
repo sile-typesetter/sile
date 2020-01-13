@@ -240,7 +240,7 @@ function lineBreak:considerDemerits(pi, breakType) -- 877
   local nodeStaysActive = false
   -- self:dumpActiveRing()
   local shortfall = self.lineWidth - self.curActiveWidth.length
-  if self.seenAlternatives then
+  if self.seenAlternatives and self.curActiveWidth > 0 then
     self:tryAlternatives(self.r.prevBreak and self.r.prevBreak.curBreak or 1, self.place, shortfall)
   end
   shortfall = self.lineWidth - self.curActiveWidth.length
