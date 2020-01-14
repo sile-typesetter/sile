@@ -3,15 +3,12 @@ if (not SILE.outputters) then SILE.outputters = {} end
 local outfile
 local cursorX = 0
 local cursorY = 0
-local hboxCount = 0
+local started = false
 
 local writeline = function (...)
   local args = table.pack(...)
-  if hboxCount >= 1 then outfile:write(" ") end
   for i=1, #args do
     outfile:write(args[i])
-    if i < #args then outfile:write(" ") end
-    hboxCount = hboxCount + 1
   end
 end
 
@@ -28,16 +25,24 @@ SILE.outputters.text = {
   setColor = function() end,
   pushColor = function () end,
   popColor = function () end,
-  outputHbox = function (value)
-    writeline(value.text)
+  outputHbox = function (value, width)
+    width = SU.cast("number", width)
+    if width > 0 then
+      writeline(value.text)
+      started = true
+      cursorX = cursorX + width
+    end
   end,
   setFont = function () end,
   drawImage = function () end,
   imageSize = function () end,
   moveTo = function (x, y)
-    if y > cursorY or x <= cursorX then
-      outfile:write("\n")
-      hboxCount = 0
+    if started then
+      if y > cursorY or x < cursorX then
+        outfile:write("\n")
+      elseif x > cursorX then
+        outfile:write(" ")
+      end
     end
     cursorY = y
     cursorX = x
