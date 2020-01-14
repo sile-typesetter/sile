@@ -15,8 +15,8 @@ file(DOWNLOAD https://github.com/googlefonts/noto-cjk/raw/NotoSansV2.001/NotoSan
 file(DOWNLOAD https://github.com/googlefonts/noto-fonts/raw/v2017-09-19-phase3-second/hinted/NotoSansKannada-Regular.ttf "${FONT_DIR}/NotoSansKannada-Regular.ttf" SHOW_PROGRESS EXPECTED_MD5 455c8452c925d5b900715919b2f5623e)
 file(DOWNLOAD https://github.com/googlefonts/noto-fonts/raw/v2017-09-19-phase3-second/hinted/NotoSansEthiopic-Regular.ttf "${FONT_DIR}/NotoSansEthiopic-Regular.ttf" SHOW_PROGRESS EXPECTED_MD5 fe438922eeed3374cb58b90ef2bc1d75)
 file(DOWNLOAD https://github.com/googlefonts/noto-fonts/raw/v2017-09-19-phase3-second/hinted/NotoSansMalayalam-Regular.ttf "${FONT_DIR}/NotoSansMalayalam-Regular.ttf" SHOW_PROGRESS EXPECTED_MD5 10749ea1f748cfaa131e4f6a48125735)
-file(DOWNLOAD http://www.sbl-site.org/Fonts/SBL_Hbrw.ttf "${FONT_DIR}/SBL_Hbrw.ttf" SHOW_PROGRESS EXPECTED_MD5 dbf49ba8a07d2e0e73b9b76aabd694f0)
-file(DOWNLOAD http://users.teilar.gr/~g1951d/Symbola.zip "${FONT_DIR}/Symbola.zip" SHOW_PROGRESS EXPECTED_MD5 be7b84a1e5ba3fce6bf73338aa7013cc)
+file(DOWNLOAD https://www.sbl-site.org/Fonts/SBL_Hbrw.ttf "${FONT_DIR}/SBL_Hbrw.ttf" SHOW_PROGRESS EXPECTED_MD5 dbf49ba8a07d2e0e73b9b76aabd694f0)
+file(DOWNLOAD https://web.archive.org/web/20190608100449/http://users.teilar.gr/~g1951d/Symbola.zip "${FONT_DIR}/Symbola.zip" SHOW_PROGRESS EXPECTED_MD5 be7b84a1e5ba3fce6bf73338aa7013cc)
 
 execute_process(COMMAND ${CMAKE_COMMAND} -E tar xfz "${FONT_DIR}/GentiumPlus-5.000.zip" WORKING_DIRECTORY ${FONT_DIR})
 execute_process(COMMAND ${CMAKE_COMMAND} -E tar xfz "${FONT_DIR}/Hack-v3.003-ttf.tar.xz" WORKING_DIRECTORY ${FONT_DIR})
