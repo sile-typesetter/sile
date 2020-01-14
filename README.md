@@ -30,7 +30,7 @@ A formula is available for [Homebrew][brew] that can install both stable and hea
 
 ### For Linux (prepackaged distros)
 
-* **Arch Linux** packages are available in the [AUR][aur] that can be installed using your prefered package manager (e.g. `yaourt -S sile`). Use [sile][aur-rel] for the latest stable release or [sile-git][aur-dev] to build from the latest git commit.
+* **Arch Linux** packages are available in the [AUR][aur] that can be installed using your prefered package manager (e.g. `yay -S sile`). Use [sile][aur-rel] for the latest stable release or [sile-git][aur-dev] to build from the latest git commit.
 
 * Track the status of **Ubuntu** packages in [issue #638](https://github.com/sile-typesetter/sile/issues/638).
 
