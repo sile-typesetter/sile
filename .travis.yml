@@ -29,16 +29,19 @@ env:
    - COVERAGE=false
    - MAKEFLAGS="--jobs=4"
   matrix:
-   - LUA=lua5.3 HARFBUZZ=2.6.2 COVERAGE=true TOGITHUB=true
+   - LUA=lua5.3 HARFBUZZ=2.6.2
    - LUA=lua5.3 HARFBUZZ=1.4.2
    - LUA=lua5.3 HARFBUZZ=1.1.3
    - LUA=lua5.2 HARFBUZZ=2.6.2
    - LUA=lua5.1 HARFBUZZ=2.6.2
    - LUA=luajit HARFBUZZ=2.6.2
+   - LUA=lua5.3 HARFBUZZ=2.6.2 COVERAGE=true TOGITHUB=true
 matrix:
   allow_failures:
    - compiler: gcc
      env: LUA=luajit HARFBUZZ=2.6.2
+   - compiler: gcc
+     env: LUA=lua5.3 HARFBUZZ=2.6.2 COVERAGE=true TOGITHUB=true
   fast_finish: true
 cache:
   directories:
