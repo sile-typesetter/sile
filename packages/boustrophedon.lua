@@ -29,7 +29,7 @@ SILE.registerCommand("boustrophedon", function (_, content)
     local nl = {}
     for i = 1, #vboxlist do
       nl[#nl+1] = vboxlist[i]
-      if nl[#nl]:isVbox() then
+      if nl[#nl].is_vbox then
         nl[#nl+1] = swap
         swaps = swaps + 1
       end

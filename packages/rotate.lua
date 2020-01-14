@@ -37,30 +37,31 @@ table.insert(SILE.framePrototype.leaveHooks, leave)
     --               -w Cos[theta]+h Sin[theta]  Sin[theta]>0&&Cos[theta]<=0
     --                w Cos[theta]+h Sin[theta]  True
 
-local outputRotatedHbox = function (self, typesetter,line)
+local outputRotatedHbox = function (self, typesetter, line)
   local origbox = self.value.orig
   local x = self.value.theta
   -- Find origin of untransformed hbox
   local save = typesetter.frame.state.cursorX
   typesetter.frame.state.cursorX = typesetter.frame.state.cursorX - (origbox.width.length-self.width)/2
 
-  local horigin = typesetter.frame.state.cursorX + origbox.width.length / 2
-  local vorigin = -(typesetter.frame.state.cursorY - (origbox.height) /2)
+  local horigin = (typesetter.frame.state.cursorX + origbox.width.length / 2):tonumber()
+  local vorigin = -(typesetter.frame.state.cursorY + origbox.height / 2):tonumber()
   pdf:gsave()
-  pdf.setmatrix(1,0,0,1,horigin,vorigin)
+  pdf.setmatrix(1, 0, 0, 1, horigin, vorigin)
   pdf.setmatrix(math.cos(x), math.sin(x), -math.sin(x), math.cos(x), 0, 0)
-  pdf.setmatrix(1,0,0,1,-horigin,-vorigin)
-  origbox:outputYourself(typesetter,line)
+  pdf.setmatrix(1, 0, 0, 1, -horigin, -vorigin)
+  origbox:outputYourself(typesetter, line)
   pdf:grestore()
   typesetter.frame.state.cursorX = save
   typesetter.frame:advanceWritingDirection(self.width)
 end
 
 SILE.registerCommand("rotate", function(options, content)
-  local theta = -math.rad(SU.required(options, "angle", "rotate command"))
+  local angle = SU.required(options, "angle", "rotate command")
+  local theta = -math.rad(angle)
   local origbox = SILE.call("hbox", {}, content)
   SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
-  local h = (origbox.height + origbox.depth)
+  local h = origbox.height + origbox.depth
   local w = origbox.width.length
   local st = math.sin(theta)
   local ct = math.cos(theta)

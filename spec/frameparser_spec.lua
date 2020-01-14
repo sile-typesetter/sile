@@ -3,14 +3,14 @@ SILE = require("core/sile")
 describe("The frame parser", function()
   it("should exist", function() assert.is.truthy(SILE.frameParser) end)
 
-  local n = SILE.frameParserBits.number
-  local f = SILE.frameParserBits.func
-  local d = SILE.frameParserBits.dimensioned_string
+  local n = SILE.parserBits.number
+  local m = SILE._frameParserBits.measurement
+  local r = SILE._frameParserBits.relation
 
-  describe("Number.number", function() -- also tests all the number subrules
-    it("should capture number information", function() assert.is.equal(0.35, n.number:match("0.35")) end)
-    it("should capture number information", function() assert.is.equal(-.85, n.number:match("-.85")) end)
-    it("should capture number information", function() assert.is.equal(44, n.number:match("44 xyz")) end)
+  describe("Number", function() -- also tests all the number subrules
+    it("should capture number information", function() assert.is.equal(0.35, n:match("0.35")) end)
+    it("should capture number information", function() assert.is.equal(-.85, n:match("-.85")) end)
+    it("should capture number information", function() assert.is.equal(44, n:match("44 xyz")) end)
   end)
 
   describe("function", function() -- also tests identifier
@@ -21,14 +21,14 @@ describe("The frame parser", function()
         }
       }
     }
-    --it("should match valid functions", function() assert.is.equal(30,f:match("left(a)")) end)
-    it("should match valid functions", function() assert.is.truthy(f:match("top(bb3)")) end)
-    it("should not match invalid functions", function() assert.is.falsy(f:match("xxx(a)")) end)
-    it("should not match invalid functions", function() assert.is.falsy(f:match("left(&)")) end)
+    --it("should match valid functions", function() assert.is.equal(30,r:match("left(a)")) end)
+    it("should match valid functions", function() assert.is.truthy(r:match("top(bb3)")) end)
+    it("should not match invalid functions", function() assert.is.falsy(r:match("xxx(a)")) end)
+    it("should not match invalid functions", function() assert.is.falsy(r:match("left(&)")) end)
   end)
 
   describe("dimensioned string", function()
-    it("should convert via SILE.measurements", function() assert.is.equal(14.4, d:match("0.2 in")) end)
+    it("should convert via SILE.measurements", function() assert.is.equal(14.4, m:match("0.2 in")) end)
   end)
 
 end)

@@ -4,7 +4,7 @@ local breakFrameVertical = function (after)
   if after then
     totalHeight = after
   else
-    totalHeight = 0
+    totalHeight = SILE.length(0)
     SILE.typesetter:leaveHmode(1)
     local queue = SILE.typesetter.state.outputQueue
     for i = 1, #queue do
@@ -12,8 +12,6 @@ local breakFrameVertical = function (after)
     end
     SILE.typesetter:chuck()
   end
-
-  if type(totalHeight) == "table" then totalHeight = totalHeight.length end
 
   local newFrame = SILE.newFrame({
     bottom = cFrame:bottom(),
@@ -70,10 +68,10 @@ end
 
 local shiftframeedge = function (frame, options)
   if options.left then
-    frame:constrain("left", frame:left() + SILE.length.parse(options.left).length)
+    frame:constrain("left", frame:left() + SILE.length(options.left))
   end
   if options.right then
-    frame:constrain("right", frame:right() + SILE.length.parse(options.right).length)
+    frame:constrain("right", frame:right() + SILE.length(options.right))
   end
 end
 
@@ -144,8 +142,8 @@ end, "Merge multiple columns into one")
 SILE.registerCommand("showframe", function (options, _)
   local id = options.id or SILE.typesetter.frame.id
   if id == "all" then
-    for _, f in pairs(SILE.frames) do
-      SILE.outputter:debugFrame(f)
+    for _, frame in pairs(SILE.frames) do
+      SILE.outputter:debugFrame(frame)
     end
   else
     SILE.outputter:debugFrame(SILE.getFrame(id))
@@ -160,7 +158,7 @@ SILE.registerCommand("shiftframeedge", function (options, _)
 end, "Adjusts the edge of the frame horizontally by amounts specified in <left> and <right>")
 
 SILE.registerCommand("breakframevertical", function (options, _)
-  breakFrameVertical(options.offset and SILE.length.parse(options.offset).length)
+  breakFrameVertical(options.offset)
 end, "Breaks the current frame in two vertically at the current location or at a point <offset> below the current location")
 
 SILE.registerCommand("makecolumns", function (options, _)
@@ -168,7 +166,7 @@ SILE.registerCommand("makecolumns", function (options, _)
 end, "Split the current frame into multiple columns")
 
 SILE.registerCommand("breakframehorizontal", function (options, _)
-  breakFrameHorizontalAt(options.offset and SILE.length.parse(options.offset).length)
+  breakFrameHorizontalAt(options.offset)
 end, "Breaks the current frame in two horizontally either at the current location or at a point <offset> from the left of the current frame")
 
 SILE.registerCommand("float", function (options, content)
@@ -176,22 +174,22 @@ SILE.registerCommand("float", function (options, content)
   local hbox = SILE.call("hbox", {}, content)
   table.remove(SILE.typesetter.state.nodes) -- steal it back
   local heightOfPageSoFar = SILE.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue).height
-  if SILE.length.make(heightOfPageSoFar + hbox.height - SILE.typesetter:getTargetLength()).length > 0 then
+  if SILE.length(heightOfPageSoFar + hbox.height - SILE.typesetter:getTargetLength()) > 0 then
     SILE.call("eject")
     SILE.typesetter:leaveHmode()
   end
   breakFrameVertical()
-  local boundary = hbox.width.length + SILE.toAbsoluteMeasurement(SILE.length.parse(options.rightboundary).length)
+  local boundary = hbox.width + SILE.length(options.rightboundary):absolute()
   breakFrameHorizontalAt(boundary)
   SILE.typesetNaturally(SILE.typesetter.frame.previous, function ()
     table.insert(SILE.typesetter.state.nodes, hbox)
   end)
-  local undoSkip = SILE.settings.get("document.baselineskip").height:negate().length + SILE.length.parse("1ex")
-  undoSkip.stretch = hbox.height
-  SILE.typesetter:pushHbox({value = {}})
-  -- SILE.typesetter:pushVglue({height = undoSkip })
-  breakFrameVertical(hbox.height + SILE.toAbsoluteMeasurement(SILE.length.parse(options.bottomboundary).length))
-  shiftframeedge(SILE.getFrame(SILE.typesetter.frame.next), {left = ""..tostring(SILE.length.new() - boundary)})
+  -- SILE.settings.set("document.baselineskip", SILE.length("1ex") - SILE.settings.get("document.baselineskip").height)
+  -- undoSkip.stretch = hbox.height
+  -- SILE.typesetter:pushHbox({ value = {} })
+  -- SILE.typesetter:pushVglue({ height = undoSkip })
+  breakFrameVertical(hbox.height + SILE.length(options.bottomboundary):absolute())
+  shiftframeedge(SILE.getFrame(SILE.typesetter.frame.next), { left = -boundary })
   --SILE.outputter:debugFrame(SILE.typesetter.frame)
 end, "Sets the given content in its own frame, flowing the remaining content around it")
 
@@ -208,15 +206,15 @@ SILE.registerCommand("fit-frame", function (options, _)
   if not SILE.frames[options.frame] then
     SU.error("Can't find frame "..options.frame.." to fit")
   end
-  local f = SILE.frames[options.frame]
-  local h = SILE.length.new()
-  SILE.typesetNaturally(f, function ()
+  local frame = SILE.frames[options.frame]
+  local height = SILE.length()
+  SILE.typesetNaturally(frame, function ()
     SILE.typesetter:leaveHmode()
     for i = 1, #SILE.typesetter.state.outputQueue do
-      h = h + SILE.typesetter.state.outputQueue[i].height
+      height = height + SILE.typesetter.state.outputQueue[i].height
     end
   end)
-  f:constrain("height", f:height() + h.length)
+  frame:constrain("height", frame:height() + height)
 end)
 
 return {

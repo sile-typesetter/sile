@@ -1,5 +1,8 @@
 local lpeg = require("lpeg")
 
+local S, P, C = lpeg.S, lpeg.P, lpeg.C
+local Cf, Ct = lpeg.Cf, lpeg.Ct
+
 local opentype = { -- Mapping of opentype features to friendly names
   Ligatures = {
     Required = "rlig",
@@ -91,11 +94,15 @@ local opentype = { -- Mapping of opentype features to friendly names
   }
 }
 
+local function tagpos (pos, k, v)
+  return k, { posneg = pos, value = v }
+end
+
 -- Parser for feature strings
-local featurename = lpeg.C((1-lpeg.S(",;:="))^1)
-local value = lpeg.C(SILE.parserBits.number.integer)
-local tag = lpeg.C(lpeg.S("+-")) * featurename * (lpeg.P("=") * value)^0 * lpeg.S(",;:")^-1 / function (pos, k, v) return k, { posneg = pos, value = v} end
-local featurestring = lpeg.Cf(lpeg.Ct("") * tag^0, rawset)
+local featurename = C((1 - S",;:=")^1)
+local value = C(SILE.parserBits.integer)
+local tag = C(S"+-") * featurename * (P"=" * value)^0 * S",;:"^-1 / tagpos
+local featurestring = Cf(Ct"" * tag^0, rawset)
 
 local featurestring2table = function (str)
   return featurestring:match(str) or SU.error("Unparsable Opentype feature string '"..str.."'")

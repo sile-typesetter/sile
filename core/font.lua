@@ -9,20 +9,16 @@ SILE.registerCommand("font", function (options, content)
     SILE.settings.set("font.family", options.family)
     SILE.settings.set("font.filename", "")
   end
-
   if options.size then
-    local size = SILE.parserBits.dimensioned_string:match(options.size)
-    if type(options.size) == "number" then size = options.size end
-    size = SILE.toAbsoluteMeasurement(size)
+    local size = SU.cast("measurement", options.size)
     if not size then SU.error("Couldn't parse font size "..options.size) end
-    SILE.settings.set("font.size", size)
+    SILE.settings.set("font.size", size:absolute())
   end
   if options.weight then SILE.settings.set("font.weight", 0+options.weight) end
   if options.style then SILE.settings.set("font.style", options.style) end
   if options.variant then SILE.settings.set("font.variant", options.variant) end
   if options.features then SILE.settings.set("font.features", options.features) end
   if options.direction then SILE.settings.set("font.direction", options.direction) end
-
   if (options.language) then
     if icu and icu.canonicalize_language then
       local newlang = icu.canonicalize_language(options.language)

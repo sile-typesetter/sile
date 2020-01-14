@@ -6,13 +6,11 @@ local pdf = require("justenoughlibtexpdf")
 SILE.registerCommand("pdf:destination", function (options, _)
   local name = SU.required(options, "name", "pdf:bookmark")
   SILE.typesetter:pushHbox({
-    value = nil,
-    height = 0,
-    width = 0,
-    depth = 0,
     outputYourself = function (_, typesetter, _)
       SILE.outputters.libtexpdf._init()
-      pdf.destination(name, typesetter.frame.state.cursorX, SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY)
+      local state = typesetter.frame.state
+      local y = SILE.documentState.paperSize[2] - state.cursorY
+      pdf.destination(name, state.cursorX:tonumber(), y:tonumber())
     end
   })
 end)
