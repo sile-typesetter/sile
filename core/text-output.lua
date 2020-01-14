@@ -27,8 +27,9 @@ SILE.outputters.text = {
   popColor = function () end,
   outputHbox = function (value, width)
     width = SU.cast("number", width)
+    if not value.text then return end
+    writeline(value.text)
     if width > 0 then
-      writeline(value.text)
       started = true
       cursorX = cursorX + width
     end
@@ -37,10 +38,12 @@ SILE.outputters.text = {
   drawImage = function () end,
   imageSize = function () end,
   moveTo = function (x, y)
+    local bs = SILE.measurement("0.8bs"):tonumber()
+    local spc = SILE.measurement("0.8spc"):tonumber()
     if started then
-      if y > cursorY or x < cursorX then
+      if y > cursorY and y - cursorY > bs or x < cursorX then
         outfile:write("\n")
-      elseif x > cursorX then
+      elseif x > cursorX and x - cursorX > spc then
         outfile:write(" ")
       end
     end
