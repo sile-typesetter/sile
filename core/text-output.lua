@@ -41,10 +41,20 @@ SILE.outputters.text = {
     local bs = SILE.measurement("0.8bs"):tonumber()
     local spc = SILE.measurement("0.8spc"):tonumber()
     if started then
-      if y > cursorY and y - cursorY > bs or x < cursorX then
-        outfile:write("\n")
-      elseif x > cursorX and x - cursorX > spc then
-        outfile:write(" ")
+      if x < cursorX then
+          outfile:write("\n")
+      elseif y > cursorY then
+        if y - cursorY > bs then
+          outfile:write("\n")
+        else
+          outfile:write("‫")
+        end
+      elseif x > cursorX then
+        if x - cursorX > spc then
+          outfile:write(" ")
+        else
+          outfile:write("‫")
+        end
       end
     end
     cursorY = y
