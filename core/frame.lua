@@ -60,7 +60,7 @@ SILE.framePrototype = pl.class({
     end,
 
     constrain = function (self, method, dimension)
-      self.constraints[method] = dimension
+      self.constraints[method] = tostring(dimension)
       self:invalidate()
     end,
 
@@ -246,7 +246,12 @@ SILE.getFrame = function (id)
   if type(id) == "table" then
     SU.error("Passed a table, expected a string", true)
   end
-  return SILE.frames[id] or SU.warn("Couldn't find frame ID "..id, true)
+  local frame
+  while not frame do
+    frame = SILE.frames[id]
+    id = id:gsub("_$", "")
+  end
+  return frame or SU.warn("Couldn't find frame ID "..id, true)
 end
 
 SILE.parseComplexFrameDimension = function (dimension)

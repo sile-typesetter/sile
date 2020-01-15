@@ -34,7 +34,7 @@ if cwd ~= "./" then extendPath(cwd) end
 extendPath(".")
 
 SILE = require("core/sile")
-SILE.version = "@VERSION@"
+SILE.version = "v@VERSION@"
 io.stdout:setvbuf 'no'
 SILE.parseArguments()
 if not os.getenv 'LUA_REPL_RLWRAP' then

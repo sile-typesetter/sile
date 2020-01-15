@@ -205,7 +205,6 @@ SILE.baseClass = std.object {
 
   declareFrame = function (self, id, spec)
     spec.id = id
-    SILE.frames[id] = nil
     self.pageTemplate.frames[id] = SILE.newFrame(spec)
     --   next = spec.next,
     --   left = spec.left and fW(spec.left),

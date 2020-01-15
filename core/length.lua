@@ -6,9 +6,9 @@ end
 
 return pl.class({
     type = "length",
-    length = SILE.measurement(0),
-    stretch = SILE.measurement(0),
-    shrink = SILE.measurement(0),
+    length = nil,
+    stretch = nil,
+    shrink = nil,
 
     _init = function (self, spec, stretch, shrink)
       if stretch or shrink then
@@ -33,12 +33,13 @@ return pl.class({
           self:_init(parsed)
         end
       end
-      self.stretch.amount = self.stretch.amount
-      self.shrink.amount = self.shrink.amount
+      if not self.length then self.length = SILE.measurement() end
+      if not self.stretch then self.stretch = SILE.measurement() end
+      if not self.shrink then self.shrink = SILE.measurement() end
     end,
 
     absolute = function (self)
-      return SILE.length(self.length:absolute(), self.stretch:absolute(), self.shrink:absolute())
+      return SILE.length(self.length:tonumber(), self.stretch:tonumber(), self.shrink:tonumber())
     end,
 
     negate = function (self)
@@ -86,12 +87,23 @@ return pl.class({
     end,
 
     __add = function (self, other)
-      local result = SILE.length(self)
+      if type(self) == "number" then self, other = other, self end
       other = SU.cast("length", other)
-      result.length = result.length + other.length
-      result.stretch = result.stretch + other.stretch
-      result.shrink = result.shrink + other.shrink
-      return result
+      return SILE.length(self.length + other.length,
+        self.stretch + other.stretch,
+        self.shrink + other.shrink)
+    end,
+
+    -- See usage comments on SILE.measurement:___add()
+    ___add = function (self, other)
+      if SU.type(other) ~= "length" then
+        self.length:___add(other)
+      else
+        self.length:___add(other.length)
+        self.stretch:___add(other.stretch)
+        self.shrink:___add(other.shrink)
+      end
+      return nil
     end,
 
     __sub = function (self, other)
@@ -101,6 +113,14 @@ return pl.class({
       result.stretch = result.stretch - other.stretch
       result.shrink = result.shrink - other.shrink
       return result
+    end,
+
+    -- See usage comments on SILE.measurement:___add()
+    ___sub = function (self, other)
+      self.length:___sub(other.length)
+      self.stretch:___sub(other.stretch)
+      self.shrink:___sub(other.shrink)
+      return nil
     end,
 
     __mul = function (self, other)
@@ -129,14 +149,20 @@ return pl.class({
     end,
 
     __lt = function (self, other)
-      local a = SU.cast("length", self):absolute()
-      local b = SU.cast("length", other):absolute()
-      return (a - b).length < 0
+      local a = SU.cast("number", self)
+      local b = SU.cast("number", other)
+      return a - b < 0
+    end,
+
+    __le = function (self, other)
+      local a = SU.cast("number", self)
+      local b = SU.cast("number", other)
+      return a - b <= 0
     end,
 
     __eq = function (self, other)
-      local a = SU.cast("length", self):absolute()
-      local b = SU.cast("length", other):absolute()
+      local a = SU.cast("length", self)
+      local b = SU.cast("length", other)
       return a.length == b.length and a.stretch == b.stretch and a.shrink == b.shrink
     end
 

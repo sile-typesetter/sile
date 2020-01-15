@@ -2,16 +2,25 @@ local utilities = {}
 
 local epsilon = 1E-12
 
-utilities.required = function (options, name, context)
+utilities.required = function (options, name, context, _type)
   if not options[name] then utilities.error(context.." needs a "..name.." parameter") end
+  if _type then
+    return utilities.cast(_type, options[name])
+  end
   return options[name]
 end
 
+local function preferbool ()
+  utilities.warn("Please use boolean values or strings such as 'true' and 'false' instead of 'yes' and 'no'.")
+end
+
 utilities.boolean = function (value, default)
-  if value == "false" then return false end
   if value == false then return false end
-  if value == "true" then return true end
   if value == true then return true end
+  if value == "false" then return false end
+  if value == "true" then return true end
+  if value == "no" then preferbool(); return false end
+  if value == "yes" then preferbool(); return true end
   return default
 end
 
@@ -68,7 +77,13 @@ end
 
 utilities.debug = function (category, ...)
   if utilities.debugging(category) then
-    io.stderr:write("\n["..category.."] ", utilities.concat(table.pack(...), " "))
+    local inputs = table.pack(...)
+    for i, input in ipairs(inputs) do
+      if type(input) == "function" then
+        inputs[i] = input()
+      end
+    end
+    io.stderr:write("\n["..category.."] ", utilities.concat(inputs, " "))
   end
 end
 
@@ -126,6 +141,25 @@ utilities.sum = function (array)
     total = total + array[i]
   end
   return total
+end
+
+-- Lua <= 5.2 can't handle objects in math functions
+utilities.max = function (...)
+  local input = pl.utils.pack(...)
+  local max = table.remove(input, 1)
+  for _, val in ipairs(input) do
+    if val > max then max = val end
+  end
+  return max
+end
+
+utilities.min = function (...)
+  local input = pl.utils.pack(...)
+  local min = input[1]
+  for _, val in ipairs(input) do
+    if val < min then min = val end
+  end
+  return min
 end
 
 utilities.compress = function (items)
@@ -233,16 +267,16 @@ utilities.walkContent = function (content, action)
 end
 
 utilities.rateBadness = function(inf_bad, shortfall, spring)
-  if spring:tonumber() == 0 then return inf_bad end
-  local bad = math.floor(100 * math.abs((shortfall:tonumber() / spring:tonumber())) ^ 3)
+  if spring == 0 then return inf_bad end
+  local bad = math.floor(100 * math.abs(shortfall / spring) ^ 3)
   return math.min(inf_bad, bad)
 end
 
 utilities.rationWidth = function (target, width, ratio)
-  if ratio < 0 and width.shrink > 0 then
-    target = target + width.shrink * ratio
-  elseif ratio > 0 and width.stretch > 0 then
-    target = target + width.stretch * ratio
+  if ratio < 0 and width.shrink:tonumber() > 0 then
+    target:___add(width.shrink:tonumber() * ratio)
+  elseif ratio > 0 and width.stretch:tonumber() > 0 then
+    target:___add(width.stretch:tonumber() * ratio)
   end
   return target
 end

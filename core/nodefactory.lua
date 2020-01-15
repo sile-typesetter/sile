@@ -9,11 +9,23 @@ local infinity = SILE.measurement(1e13)
 -- several levels, and also customizes what happens at each level so we are
 -- directly calling back into the _init() functions we want.
 
+local function _maxnode (nodes, dim)
+  local dims = SU.map(function (node)
+    -- TODO there is a bug here because we shouldn't need to cast to lengths,
+    -- somebody is setting a height as a number value (test in Lua 5.1)
+    -- return node[dim]
+    return SU.cast("length", node[dim])
+  end, nodes)
+  return SU.max(SILE.length(0), pl.utils.unpack(dims))
+end
+
+local _dims = pl.Set { "width", "height", "depth" }
+
 nodefactory.box = pl.class({
     type = "special",
-    height = SILE.length(0),
-    depth = SILE.length(0),
-    width = SILE.length(0),
+    height = nil,
+    depth = nil,
+    width = nil,
     misfit = false,
     explicit = false,
     discardable = false,
@@ -27,16 +39,25 @@ nodefactory.box = pl.class({
         or SU.type(spec) == "length" then
         self[self._default_length] = SU.cast("length", spec)
       elseif SU.type(spec) == "table" then
+        if spec._tospec then spec = spec:_tospec() end
         for k, v in pairs(spec) do
-          if k == "height" or k == "width" or k == "depth" then
-            self[k] = SU.cast("length", v)
-          else
-            self[k] = v
-          end
+          self[k] = _dims[k] and SU.cast("length", v) or v
         end
-      elseif SU.type(spec) ~= "nil" then
+      elseif type(spec) ~= "nil" and SU.type(spec) ~= self.type then
         SU.error("Unimplemented, creating " .. self.type .. " node from " .. SU.type(spec), 1)
       end
+      for dim in pairs(_dims) do
+        if not self[dim] then self[dim] = SILE.length() end
+      end
+      self["is_"..self.type] = true
+      self.is_box = self.is_hbox or self.is_vbox or self.is_zerohbox or self.is_alternative or self.is_nnode
+      self.is_zero = self.is_zerohbox or self.is_zerovglue
+      if self.is_migrating then self.is_hbox, self.is_box = true, true end
+    end,
+
+    -- De-init instances by shallow copying properties and removing meta table
+    _tospec = function (self)
+      return pl.tablex.copy(self)
     end,
 
     tostring = function (self)
@@ -48,6 +69,17 @@ nodefactory.box = pl.class({
     end,
 
     __concat = function (a, b) return tostring(a) .. tostring(b) end,
+
+    absolute = function (self)
+      local clone = nodefactory[self.type](self:_tospec())
+      for dim in pairs(_dims) do
+        clone[dim] = self[dim]:absolute()
+      end
+      if self.nodes then
+        clone.nodes = pl.tablex.map_named_method("absolute", self.nodes)
+      end
+      return clone
+    end,
 
     lineContribution = function (self)
       -- Regardless of the orientations, "width" is always in the
@@ -64,54 +96,67 @@ nodefactory.box = pl.class({
     end,
 
     isBox = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "hbox" or self.type == "zerohbox" or self.type == "alternative" or self.type == "nnode" or self.type == "vbox"
     end,
 
     isNnode = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type=="nnode"
     end,
 
     isGlue = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "glue"
     end,
 
     isVglue = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "vglue"
     end,
 
     isZero = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "zerohbox" or self.type == "zerovglue"
     end,
 
     isUnshaped = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "unshaped"
     end,
 
     isAlternative = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "alternative"
     end,
 
     isVbox = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "vbox"
     end,
 
     isInsertion = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "insertion"
     end,
 
     isMigrating = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.migrating
     end,
 
     isPenalty = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "penalty"
     end,
 
     isDiscretionary = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "discretionary"
     end,
 
     isKern = function (self)
+      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "kern"
     end
 
@@ -160,13 +205,17 @@ nodefactory.nnode = pl.class({
 
     _init = function (self, spec)
       nodefactory.box._init(self, spec)
-      if 0 == self.depth:tonumber() then self.depth = math.max(0, table.unpack(SU.map(function (node) return node.depth end, self.nodes))) end
-      if 0 == self.height:tonumber() then self.height = math.max(0, table.unpack(SU.map(function (node) return node.height end, self.nodes))) end
+      if 0 == self.depth:tonumber() then self.depth = _maxnode(self.nodes, "depth")  end
+      if 0 == self.height:tonumber() then self.height = _maxnode(self.nodes, "height") end
       if 0 == self.width:tonumber() then self.width = SU.sum(SU.map(function (node) return node.width end, self.nodes)) end
     end,
 
     __tostring = function (self)
       return "N<" .. self.width .. ">^" .. self.height .. "-" .. self.depth .. "v(" .. self:toText() .. ")";
+    end,
+
+    absolute = function (self)
+      return self
     end,
 
     outputYourself = function (self, typesetter, line)
@@ -238,7 +287,7 @@ nodefactory.disc = pl.class({
     outputYourself = function (self, typesetter, line)
       if self.used then
         local i = 1
-        while (line.nodes[i]:isGlue() and line.nodes[i].value == "lskip")
+        while (line.nodes[i].is_glue and line.nodes[i].value == "lskip")
           or line.nodes[i].type == "zerohbox" do
           i = i + 1
         end
@@ -254,55 +303,46 @@ nodefactory.disc = pl.class({
 
     prebreakWidth = function (self)
       if self.prebw then return self.prebw end
-      local width = SILE.length(0)
-      for _, node in pairs(self.prebreak) do width = width + node.width end
-      self.prebw = width
-      return width
+      self.prebw = SILE.length()
+      for _, node in pairs(self.prebreak) do self.prebw:___add(node.width) end
+      return self.prebw
     end,
 
     postbreakWidth = function (self)
       if self.postbw then return self.postbw end
-      local width = SILE.length(0)
-      for _, node in pairs(self.postbreak) do width = width + node.width end
-      self.postbw = width
-      return width
+      self.postbw = SILE.length()
+      for _, node in pairs(self.postbreak) do self.pastbw:___add(node.width) end
+      return self.postbw
     end,
 
     replacementWidth = function (self)
       if self.replacew then return self.replacew end
-      local width = SILE.length(0)
-      for _, node in pairs(self.replacement) do width = width + node.width end
-      self.replacew = width
-      return width
+      self.replacew = SILE.length()
+      for _, node in pairs(self.replacement) do self.replacew:___add(node.width) end
+      return self.replacew
     end,
 
     prebreakHeight = function (self)
       if self.prebh then return self.prebh end
-      local width = SILE.length(0)
-      for _, node in pairs(self.prebreak) do if node.height > width then width = node.height end end
-      self.prebh = width
-      return width
+      self.prebh = _maxnode(self.prebreak, "height")
+      return self.prebh
     end,
 
     postbreakHeight = function (self)
       if self.postbh then return self.postbh end
-      local width = SILE.length(0)
-      for _, node in pairs(self.postbreak) do if node.height > width then width = node.height end end
-      self.postbh = width
-      return width
+      self.postbh = _maxnode(self.postbreak, "height")
+      return self.postbh
     end,
 
     replacementHeight = function (self)
       if self.replaceh then return self.replaceh end
-      local width = SILE.length(0)
-      for _, node in pairs(self.replacement) do if node.height > width then width = node.height end end
-      self.replaceh = width
-      return width
+      self.replaceh = _maxnode(self.replacement, "height")
+      return self.replaceh
     end
 
   })
 
-nodefactory.alt = pl.class({
+nodefactory.alternative = pl.class({
     _base = nodefactory.hbox,
     type = "alternative",
     options = {},
@@ -313,7 +353,7 @@ nodefactory.alt = pl.class({
     end,
 
     minWidth = function (self)
-      local minW = function (a, b) return math.min(a.width, b.width) end
+      local minW = function (a, b) return SU.min(a.width, b.width) end
       return pl.tablex.reduce(minW, self.options)
     end,
 
@@ -352,13 +392,21 @@ nodefactory.glue = pl.class({
 
 nodefactory.hfillglue = pl.class({
     _base = nodefactory.glue,
-    width = SILE.length(0, infinity)
+
+    _init = function (self, spec)
+      self.width = SILE.length(0, infinity)
+      nodefactory.glue._init(self, spec)
+    end
   })
 
 nodefactory.hssglue = pl.class({
   -- possible bug, deprecated constructor actually used vglue for this
     _base = nodefactory.glue,
-    width = SILE.length(0, infinity, infinity)
+
+    _init = function (self, spec)
+      self.width = SILE.length(0, infinity, infinity)
+      nodefactory.glue._init(self, spec)
+    end
   })
 
 nodefactory.kern = pl.class({
@@ -376,19 +424,23 @@ nodefactory.vglue = pl.class({
     type = "vglue",
     discardable = true,
     _default_length = "height",
+    adjustment = nil,
+
+    _init = function (self, spec)
+      self.adjustment = SILE.measurement()
+      nodefactory.box._init(self, spec)
+    end,
 
     __tostring = function (self)
       return (self.explicit and "E:" or "") .. "VG<" .. self.height .. ">";
     end,
 
     adjustGlue = function (self, adjustment)
-      self.height.length = self.height.length:absolute() + adjustment
-      self.height.stretch = SILE.measurement(0)
-      self.height.shrink = SILE.measurement(0)
+      self.adjustment = adjustment
     end,
 
-    outputYourself = function (_, typesetter, line)
-      typesetter.frame:advancePageDirection(line.height:absolute() + line.depth:absolute())
+    outputYourself = function (self, typesetter, line)
+      typesetter.frame:advancePageDirection(line.height:absolute() + line.depth:absolute() + self.adjustment)
     end,
 
     unbox = function (self) return { self } end
@@ -397,7 +449,11 @@ nodefactory.vglue = pl.class({
 
 nodefactory.vfillglue = pl.class({
     _base = nodefactory.vglue,
-    height = SILE.length(0, infinity)
+
+    _init = function (self, spec)
+      self.height = SILE.length(0, infinity)
+      nodefactory.vglue._init(self, spec)
+    end
   })
 
 nodefactory.vssglue = pl.class({
@@ -406,7 +462,7 @@ nodefactory.vssglue = pl.class({
   })
 
 nodefactory.zerovglue = pl.class({
-    _base = nodefactory.vglue,
+    _base = nodefactory.vglue
   })
 
 nodefactory.vkern = pl.class({
@@ -451,10 +507,8 @@ nodefactory.vbox = pl.class({
     _init = function (self, spec)
       self.nodes = {}
       nodefactory.box._init(self, spec)
-      for _, node in ipairs(self.nodes) do
-        self.depth  = math.max(SU.cast("length", node.depth), self.depth)
-        self.height = math.max(SU.cast("length", node.height), self.height)
-      end
+      self.depth = _maxnode(self.nodes, "depth")
+      self.height = _maxnode(self.nodes, "height")
     end,
 
     __tostring = function (self)
@@ -469,7 +523,7 @@ nodefactory.vbox = pl.class({
       typesetter.frame:advancePageDirection(self.height)
       local initial = true
       for _, node in pairs(self.nodes) do
-        if not (initial and (node:isGlue() or node:isPenalty())) then
+        if not (initial and (node.is_glue or node.is_penalty)) then
           initial = false
           node:outputYourself(typesetter, line)
         end
@@ -480,7 +534,7 @@ nodefactory.vbox = pl.class({
 
     unbox = function (self)
       for i = 1, #self.nodes do
-        if self.nodes[i]:isVbox() or self.nodes[i]:isVglue() then return self.nodes end
+        if self.nodes[i].is_vbox or self.nodes[i].is_vglue then return self.nodes end
       end
       return {self}
     end,
@@ -491,15 +545,17 @@ nodefactory.vbox = pl.class({
       if nodes.type then
         nodes = box:unbox()
       end
-      local height = self.height:absolute() + self.depth:absolute()
-      local lastdepth = SILE.length(0)
+      self.height = self.height:absolute()
+      self.height:___add(self.depth)
+      local lastdepth = SILE.length()
       for i = 1, #nodes do
         table.insert(self.nodes, nodes[i])
-        height = height + nodes[i].height:absolute() + nodes[i].depth:absolute()
-        if nodes[i]:isVbox() then lastdepth = nodes[i].depth:absolute() end
+        self.height:___add(nodes[i].height)
+        self.height:___add(nodes[i].depth:absolute())
+        if nodes[i].is_vbox then lastdepth = nodes[i].depth end
       end
+      self.height:___sub(lastdepth)
       self.ratio = 1
-      self.height = height - lastdepth
       self.depth = lastdepth
     end
 
@@ -507,14 +563,10 @@ nodefactory.vbox = pl.class({
 
 nodefactory.migrating = pl.class({
     _base = nodefactory.hbox,
+    type = "migrating",
     material = {},
     value = {},
     nodes = {},
-    migrating = true,
-
-    _init = function (self, spec)
-      nodefactory.hbox._init(self, spec)
-    end,
 
     __tostring = function (self)
       return "<M: "..self.material .. ">"
@@ -541,7 +593,7 @@ _deprecated_nodefactory.newDisc = function (spec)
 end
 
 _deprecated_nodefactory.newAlternative = function (spec)
-  return nodefactory.alt(spec)
+  return nodefactory.alternative(spec)
 end
 
 _deprecated_nodefactory.newGlue = function (spec)

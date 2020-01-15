@@ -58,14 +58,18 @@ local initInsertionClass = function (_, classname, options)
   end
 
   -- Turn stealFrom into a hash, if it isn't one.
-  if type(options.stealFrom) == "string" then options.stealFrom = { options.stealFrom } end
+  if SU.type(options.stealFrom) ~= "table" then
+    options.stealFrom = { options.stealFrom }
+  end
   if options.stealFrom[1] then
     local rl = {}
     for i = 1, #(options.stealFrom) do rl[options.stealFrom[i]] = 1 end
     options.stealFrom = rl
   end
 
-  if type(options.insertInto) == "string" then options.insertInto = { frame = options.insertInto, ratio = 1} end
+  if SU.type(options.insertInto) ~= "table" then
+    options.insertInto = { frame = options.insertInto, ratio = 1 }
+  end
 
   options.maxHeight = SILE.length(options.maxHeight)
 
@@ -81,10 +85,15 @@ typesetter and frame.
 --]]
 
 local insertionsThisPage = {}
-local _pageInsertionVbox = pl.class({
+SILE.nodefactory.insertionlist = pl.class({
     _base = SILE.nodefactory.vbox,
+    type = "insertionlist",
     frame = nil,
-    typesetter = SILE.defaultTypesetter {},
+
+    _init = function (self, spec)
+      SILE.nodefactory.vbox._init(self, spec)
+      self.typesetter = SILE.defaultTypesetter {}
+    end,
 
     __tostring = function (self)
       return "PI<" .. self.nodes .. ">"
@@ -100,7 +109,7 @@ local _pageInsertionVbox = pl.class({
 
 local thisPageInsertionBoxForClass = function (class)
   if not insertionsThisPage[class] then
-    insertionsThisPage[class] = _pageInsertionVbox({
+    insertionsThisPage[class] = SILE.nodefactory.insertionlist({
       frame = SILE.scratch.insertions.classes[class].insertInto.frame
     })
   end
@@ -143,7 +152,6 @@ SILE.nodefactory.insertion = pl.class({
         })
       if firstpage then
         self.nodes = {}
-        self.height = SILE.length(0)
         self:append(materialToSplit)
         self.contentHeight = self.height
         self.contentDepth = self.depth
@@ -222,19 +230,19 @@ local nextInterInsertionSkip = function (class)
   local stuffSoFar = thisPageInsertionBoxForClass(class)
   if #stuffSoFar.nodes == 0 then
     if options["topBox"] then
-      return options["topBox"]
+      return options["topBox"]:absolute()
     elseif options["topSkip"] then
-      return SILE.nodefactory.vglue(options["topSkip"])
+      return SILE.nodefactory.vglue(options["topSkip"]:tonumber())
     end
   else
-    local skipSize = options["interInsertionSkip"]:absolute()
-    skipSize = skipSize - stuffSoFar.nodes[#stuffSoFar.nodes].depth:absolute()
+    local skipSize = options["interInsertionSkip"]:tonumber()
+    skipSize = skipSize - stuffSoFar.nodes[#stuffSoFar.nodes].depth:tonumber()
     return SILE.nodefactory.vglue(skipSize)
   end
 end
 
 local debugInsertion = function (ins, insbox, topBox, target, targetFrame, totalHeight)
-  local insertionsHeight = ins.contentHeight + topBox.height + topBox.depth + ins.contentDepth
+  local insertionsHeight = ins.contentHeight:absolute() + topBox.height:absolute() + topBox.depth:absolute() + ins.contentDepth:absolute()
   SU.debug("insertions", "## Incoming insertion")
   SU.debug("insertions", "Top box height", topBox.height)
   SU.debug("insertions", "Insertion", ins, ins.height, ins.depth)
@@ -279,14 +287,17 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   if ins.seen then return target end
   local targetFrame = SILE.getFrame(ins.frame)
   local options = SILE.scratch.insertions.classes[ins.class]
-  totalHeight = totalHeight.length:absolute()
 
   ins:dropDiscardables()
 
   -- We look into the page's insertion box and choose the appropriate skip,
   -- so we know how high the whole insertion is.
   local topBox = nextInterInsertionSkip(ins.class)
-  local insertionsHeight = ins.contentHeight + topBox.height:absolute() + topBox.depth:absolute() + ins.contentDepth:absolute()
+  local insertionsHeight = SILE.length()
+  insertionsHeight:___add(ins.contentHeight)
+  insertionsHeight:___add(topBox.height)
+  insertionsHeight:___add(topBox.depth)
+  insertionsHeight:___add(ins.contentDepth)
 
   local insbox = thisPageInsertionBoxForClass(ins.class)
   initShrinkage(targetFrame)
@@ -319,7 +330,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   -- OK, we didn't fit. So now we have to split the insertion to fit the height
   -- we have within the insertion frame.
   SU.debug("insertions", "splitting")
-  local maxsize = math.min(target - totalHeight, options.maxHeight)
+  local maxsize = SU.min(target - totalHeight, options.maxHeight)
 
   -- If we're going to fit this insertion on the page, we will use the
   -- whole of topbox, so let's subtract the height of that now.
@@ -332,7 +343,7 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
 
   if deferredInsertions then
     SU.debug("insertions", "Split. Remaining insertion is " .. ins)
-    SILE.insertions.setShrinkage(ins.class, topBox.height + deferredInsertions.height + deferredInsertions.depth)
+    SILE.insertions.setShrinkage(ins.class, topBox.height:absolute() + deferredInsertions.height:absolute() + deferredInsertions.depth:absolute())
     insbox:append(topBox)
     -- deferredInsertions.contentHeight = deferredInsertions.height
     -- deferredInsertions.contentDepth = deferredInsertions.depth
@@ -383,8 +394,8 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
 
   --]]
   local lastbox = i
-  while not vboxlist[lastbox]:isVbox() do lastbox = lastbox - 1 end
-  while not (vboxlist[i]:isPenalty() and vboxlist[i].penalty == -20000) do
+  while not vboxlist[lastbox].is_vbox do lastbox = lastbox - 1 end
+  while not (vboxlist[i].is_penalty and vboxlist[i].penalty == -20000) do
     table.insert(vboxlist, lastbox, SILE.nodefactory.penalty(-20000))
   end
   return target
@@ -397,8 +408,8 @@ end)
 
 SILE.typesetter:registerPageEndHook(function (_, nl)
   pl.tablex.foreach(insertionsThisPage, SILE.insertions.increaseInsertionFrame)
-  for class, insertion in pairs(insertionsThisPage) do
-    insertion:outputYourself()
+  for class, insertionlist in pairs(insertionsThisPage) do
+    insertionlist:outputYourself()
     insertionsThisPage[class] = nil
   end
   if SU.debugging("insertions") then
@@ -411,20 +422,20 @@ end)
 local insert = function (_, classname, vbox)
   local thisclass = SILE.scratch.insertions.classes[classname]
   if not thisclass then SU.error("Uninitialized insertion class " .. classname) end
-  SILE.typesetter:pushMigratingMaterial({ material = {
-    SILE.nodefactory.penalty(SILE.settings.get("insertion.penalty"))
-  }})
-  SILE.typesetter:pushMigratingMaterial({ material = {
-    SILE.nodefactory.insertion({
-        class = classname,
-        nodes = vbox.nodes,
-        -- actual height and depth must remain zero for page glue calculations
-        contentHeight = vbox.height,
-        contentDepth = vbox.depth,
-        frame = thisclass.insertInto.frame,
-        parent = SILE.typesetter.frame
-      })
-  }})
+  SILE.typesetter:pushMigratingMaterial({
+      SILE.nodefactory.penalty(SILE.settings.get("insertion.penalty"))
+    })
+  SILE.typesetter:pushMigratingMaterial({
+      SILE.nodefactory.insertion({
+          class = classname,
+          nodes = vbox.nodes,
+          -- actual height and depth must remain zero for page glue calculations
+          contentHeight = vbox.height,
+          contentDepth = vbox.depth,
+          frame = thisclass.insertInto.frame,
+          parent = SILE.typesetter.frame
+        })
+    })
 end
 
 return {

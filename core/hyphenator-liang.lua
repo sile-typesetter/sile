@@ -104,7 +104,7 @@ end
 
 local hyphenateNode = function (node)
   if not node.language then return { node } end
-  if not node:isNnode() or not node.text then return { node } end
+  if not node.is_nnode or not node.text then return { node } end
   if node.language and (type(SILE.hyphenator.languages[node.language]) == "function") then
     return SILE.hyphenator.languages[node.language](node)
   end
@@ -115,7 +115,7 @@ local hyphenateNode = function (node)
     for j, brk in ipairs(breaks) do
       if not(brk == "") then
         for _, newNode in pairs(SILE.shaper:createNnodes(brk, node.options)) do
-          if newNode:isNnode() then
+          if newNode.is_nnode then
             newNode.parent = node
             table.insert(newnodes, newNode)
           end

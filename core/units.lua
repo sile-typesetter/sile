@@ -18,7 +18,7 @@ setmetatable(units, {
           rawset(self, unit, {
               relative = true,
               converter = function (value)
-                return  SU.cast("measurement", def):tonumber() * parsed.amount * value
+                return  value * self[parsed.unit].converter(parsed.amount)
               end
             })
         else
@@ -93,7 +93,7 @@ units["%pmin"] = {
   relative = true,
   definition = function (value)
     checkPaperDefined()
-    return value / 100 * math.min(SILE.documentState.orgPaperSize[1], SILE.documentState.orgPaperSize[2])
+    return value / 100 * SU.min(SILE.documentState.orgPaperSize[1], SILE.documentState.orgPaperSize[2])
   end
 }
 
@@ -101,7 +101,7 @@ units["%pmax"] = {
   relative = true,
   definition = function (value)
     checkPaperDefined()
-    return value / 100 * math.max(SILE.documentState.orgPaperSize[1], SILE.documentState.orgPaperSize[2])
+    return value / 100 * SU.max(SILE.documentState.orgPaperSize[1], SILE.documentState.orgPaperSize[2])
   end
 }
 
@@ -109,7 +109,7 @@ units["%fw"] = {
   relative = true,
   definition = function (value)
     checkFrameDefined()
-    return value / 100 * SILE.typesetter.frame:width()
+    return value / 100 * SILE.typesetter.frame:width():tonumber()
   end
 }
 
@@ -117,7 +117,7 @@ units["%fh"] = {
   relative = true,
   definition = function (value)
     checkFrameDefined()
-    return value / 100 * SILE.typesetter.frame:height()
+    return value / 100 * SILE.typesetter.frame:height():tonumber()
   end
 }
 
@@ -125,7 +125,7 @@ units["%fmin"] = {
   relative = true,
   definition = function (value)
     checkFrameDefined()
-    return value / 100 * math.min(SILE.typesetter.frame:width(), SILE.typesetter.frame:height())
+    return value / 100 * SU.min(SILE.typesetter.frame:width():tonumber(), SILE.typesetter.frame:height():tonumber())
   end
 }
 
@@ -133,38 +133,37 @@ units["%fmax"] = {
   relative = true,
   definition = function (value)
     checkFrameDefined()
-    return value / 100 * math.max(SILE.typesetter.frame:width(), SILE.typesetter.frame:height())
+    return value / 100 * SU.max(SILE.typesetter.frame:width():tonumber(), SILE.typesetter.frame:height():tonumber())
   end
 }
 
 units["%lw"] = {
   relative = true,
   definition = function (value)
-    local lskip = SILE.settings.get("document.lskip") or SILE.length(0)
-    local rskip = SILE.settings.get("document.rskip") or SILE.length(0)
-    local left = lskip.width and lskip.width:absolute() or lskip:absolute()
-    local right = rskip.width and rskip.width:absolute() or rskip:absolute()
+    local lskip = SILE.settings.get("document.lskip")
+    local rskip = SILE.settings.get("document.rskip")
+    local left = lskip and lskip.width:tonumber() or 0
+    local right = rskip and rskip.width:tonumber() or 0
     checkFrameDefined()
-    local lw = SILE.typesetter.frame:getLineWidth() - left - right
-    return lw * value / 100
+    return value / 100 * SILE.typesetter.frame:getLineWidth():tonumber() - left - right
   end
 }
 
 units["ps"] = {
   relative = true,
   definition = function (value)
-    local ps = SILE.settings.get("document.parskip") or SILE.length()
-    ps = ps.height and ps.height:absolute() or ps:absolute()
-    return value * ps.length
+    local ps = SILE.settings.get("document.parskip")
+    ps = ps.height:tonumber() or 0
+    return value * ps
   end
 }
 
 units["bs"] = {
   relative = true,
   definition = function (value)
-    local bs = SILE.settings.get("document.baselineskip") or SILE.length()
-    bs = bs.height and bs.height:absolute() or bs:absolute()
-    return value * bs.length
+    local bs = SILE.settings.get("document.baselineskip")
+    bs = bs.height:tonumber() or 0
+    return value * bs
   end
 }
 
@@ -189,12 +188,9 @@ units["spc"] = {
   end
 }
 
--- Don't calculate this relative to EM because we don't want to absolutize at definition
 units["en"] = {
   relative = true,
-  definition = function (value)
-    return value * SILE.settings.get("font.size") / 2
-  end
+  definition = "0.5em"
 }
 
 return units

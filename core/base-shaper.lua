@@ -37,6 +37,7 @@ SILE.shapers.base = pl.class({
         SILE.settings.temporarily(function ()
           SILE.settings.set("font.size", options.size)
           SILE.settings.set("font.family", options.family)
+          SILE.settings.set("font.filename", options.filename)
           ss = ss:absolute()
         end)
         return ss
@@ -114,14 +115,14 @@ SILE.shapers.base = pl.class({
         end
         self:addShapedGlyphToNnodeValue(nnodeValue, glyph)
       end
-      table.insert(nnodeContents, SILE.nodefactory.newHbox({
+      table.insert(nnodeContents, SILE.nodefactory.hbox({
             depth = totalDepth,
             height = totalHeight,
             misfit = misfit,
-            width = SILE.length.new({ length = totalWidth }),
+            width = SILE.length(totalWidth),
             value = nnodeValue
         }))
-      return SILE.nodefactory.newNnode({
+      return SILE.nodefactory.nnode({
           nodes = nnodeContents,
           text = token,
           misfit = misfit,

@@ -26,9 +26,19 @@ local function _amount (input)
   return type(input) == "number" and input or input.amount
 end
 
+local function _pt_amount (input)
+  return type(input) == "number" and input or not input and 0 or input._mutable and input.amount or input:tonumber()
+end
+
+local function _error_if_immutable (input)
+  if type(input) == "table" and not input._mutable then
+    SU.error("Not so fast, we can't do mutating arithmetic except on 'pt' unit measurements!", true)
+  end
+end
+
 local function _error_if_relative (a, b)
   if type(a) == "table" and a.relative or type(b) == "table" and b.relative then
-    SU.error("We tried to do arithmetic on a relative measurement without explicitly absolutizing it. (That's a bug)", true)
+    SU.error("Cannot do arithmetic on a relative measurement without explicitly absolutizing it.", true)
   end
 end
 
@@ -37,6 +47,7 @@ local measurement = pl.class({
     amount = 0,
     unit = "pt",
     relative = false,
+    _mutable = false,
 
     _init = function (self, amount, unit)
       if unit then self.unit = unit end
@@ -55,12 +66,11 @@ local measurement = pl.class({
       end
       if not SILE.units[self.unit] then SU.error("Unknown unit: " .. unit) end
       self.relative = SILE.units[self.unit].relative
+      if self.unit == "pt" then self._mutable = true end
     end,
 
     absolute = function (self)
-      local def = SILE.units[self.unit]
-      local amount = def.converter and def.converter(self.amount) or self.amount * def.value
-      return SILE.measurement(amount)
+      return SILE.measurement(self:tonumber())
     end,
 
     tostring = function (self)
@@ -68,7 +78,9 @@ local measurement = pl.class({
     end,
 
     tonumber = function (self)
-      return self:absolute().amount
+      local def = SILE.units[self.unit]
+      local amount = def.converter and def.converter(self.amount) or self.amount * def.value
+      return amount
     end,
 
     __tostring = function (self)
@@ -84,6 +96,19 @@ local measurement = pl.class({
       end
     end,
 
+    -- Note all private math (_ + __func()) functions:
+    -- * Are much faster than regular math operations
+    -- * Are **not** intended for use outside of the most performance sensitive loops
+    -- * Modify the lhs input in-place, never instantiating new objects
+    -- * Always assume absolute lhs input and absolutize the rhs values at runtime
+    -- * Assmue the inputs are sane with much less error checking than regular math funcs
+    -- * Are not composable using chained methods since they return nil for safety
+    ___add = function (self, other)
+      _error_if_immutable(self)
+      self.amount = self.amount + _pt_amount(other)
+      return nil
+    end,
+
     __sub = function (self, other)
       if _similarunit(self, other) then
         return SILE.measurement(_amount(self) - _amount(other), _unit(self, other))
@@ -91,6 +116,13 @@ local measurement = pl.class({
         _error_if_relative(self, other)
         return SILE.measurement(_tonumber(self) - _tonumber(other))
       end
+    end,
+
+    -- See usage comments on SILE.measurement:___add()
+    ___sub = function (self, other)
+      _error_if_immutable(self)
+      self.amount = self.amount - _pt_amount(other)
+      return nil
     end,
 
     __mul = function (self, other)
@@ -141,7 +173,12 @@ local measurement = pl.class({
 
     __lt = function (self, other)
       return _tonumber(self) < _tonumber(other)
+    end,
+
+    __le = function (self, other)
+      return _tonumber(self) <= _tonumber(other)
     end
+
   })
 
 
