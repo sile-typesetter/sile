@@ -50,23 +50,23 @@ local declareHanmenFrame = function (self, id, spec)
     spec = id
   end
   spec.hanmen = {
-    gridsize = SILE.toPoints(SU.required(spec, "gridsize", "declaring the kihonhanmen")),
-    linegap = SILE.toPoints(SU.required(spec, "linegap", "declaring the kihonhanmen")),
-    linelength = SILE.toPoints(SU.required(spec, "linelength", "declaring the kihonhanmen")),
-    linecount = SILE.toPoints(SU.required(spec, "linecount", "declaring the kihonhanmen"))
+    gridsize = SU.required(spec, "gridsize", "declaring the kihonhanmen", "measurement"),
+    linegap = SU.required(spec, "linegap", "declaring the kihonhanmen", "measurement"),
+    linelength = SU.required(spec, "linelength", "declaring the kihonhanmen", "measurement"),
+    linecount = SU.required(spec, "linecount", "declaring the kihonhanmen")
   }
   if spec.tate then
-    spec.height = (spec.hanmen.gridsize * spec.hanmen.linelength) .. "pt"
-    spec.width = (spec.hanmen.gridsize * spec.hanmen.linecount +
-                  spec.hanmen.linegap * ( spec.hanmen.linecount -1 )) .. "pt"
+    spec.height = spec.hanmen.gridsize * spec.hanmen.linelength
+    spec.width = spec.hanmen.gridsize * spec.hanmen.linecount +
+                  spec.hanmen.linegap * ( spec.hanmen.linecount -1 )
   else
-    spec.width = (spec.hanmen.gridsize * spec.hanmen.linelength) .. "pt"
-    spec.height = (spec.hanmen.gridsize * spec.hanmen.linecount +
-                  spec.hanmen.linegap * ( spec.hanmen.linecount -1 )) .. "pt"
+    spec.width = spec.hanmen.gridsize * spec.hanmen.linelength
+    spec.height = spec.hanmen.gridsize * spec.hanmen.linecount +
+                  spec.hanmen.linegap * ( spec.hanmen.linecount -1 )
   end
   local skip = spec.hanmen.linegap + spec.hanmen.gridsize
-  SILE.settings.set("document.baselineskip", SILE.nodefactory.newVglue(skip.."pt"))
-  SILE.settings.set("document.parskip", SILE.nodefactory.newVglue("0pt"))
+  SILE.settings.set("document.baselineskip", SILE.nodefactory.vglue(skip))
+  SILE.settings.set("document.parskip", SILE.nodefactory.vglue())
   local frame = SILE.newFrame(spec, spec.tate and SILE.tateFramePrototype or SILE.framePrototype)
   if spec.id then
     self.pageTemplate.frames[spec.id] = frame
