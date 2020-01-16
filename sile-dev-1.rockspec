@@ -5,11 +5,11 @@ source = {
 }
 dependencies = {
   "lua >= 5.1",
-  "bit32",
+  "bit32", -- only needed if Lua < 5.2
   "luaepnf == 0.3-1",
   "lpeg == 1.0.2-1",
   "cassowary == 2.2-1",
-  "compat53 == 0.7-1",
+  "compat53 == 0.7-1", -- only needed if Lua < 5.3
   "linenoise == 0.9-1",
   "lua-zlib == 1.2-0",
   "lua_cliargs == 2.3-3",

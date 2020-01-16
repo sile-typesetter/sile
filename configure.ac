@@ -103,13 +103,15 @@ AX_LUA_HEADERS
 AX_LUA_LIBS
 
 AS_IF([test "x$with_system_luarocks" != "xyes"], [], [
-    AX_LUA_MODULE([bit32], [bit32])
+    AS_IF([test "$LUA_SHORT_VERSION" -lt 52], [
+        AX_LUA_MODULE([bit32], [bit32])
+    ])
     AX_LUA_MODULE([epnf], [luaepnf])
     AX_LUA_MODULE([lpeg], [lpeg])
     AX_LUA_MODULE([cassowary], [cassowary])
-    AS_IF([test "$LUA_SHORT_VERSION" -lt 53],
+    AS_IF([test "$LUA_SHORT_VERSION" -lt 53], [
         AX_LUA_MODULE([compat53], [compat53])
-    )
+    ])
     AX_LUA_MODULE([linenoise], [linenoise])
     AX_LUA_MODULE([zlib], [lua-zlib])
     AX_LUA_MODULE([cliargs], [lua_cliargs])
