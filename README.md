@@ -5,6 +5,7 @@
 [![Join the chat](https://badges.gitter.im/simoncozens/sile.svg)](https://gitter.im/simoncozens/sile?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+[![Docker Build Status](https://img.shields.io/docker/cloud/build/siletypesetter/sile)](https://hub.docker.com/repository/docker/siletypesetter/sile/builds)
 
 ## What is SILE?
 
@@ -33,6 +34,14 @@ A formula is available for [Homebrew][brew] that can install both stable and hea
 * **Arch Linux** packages are available in the [AUR][aur] that can be installed using your prefered package manager (e.g. `yay -S sile`). Use [sile][aur-rel] for the latest stable release or [sile-git][aur-dev] to build from the latest git commit.
 
 * Track the status of **Ubuntu** packages in [issue #638](https://github.com/sile-typesetter/sile/issues/638).
+
+* Docker images are available in [siletypesetter/sile](https://hub.docker.com/repository/docker/siletypesetter/sile). Released versions are tagged to match, the latest release will be tagged `latest`, and a `master` tag is also available with the freshest development build. In order to be useful, you need to tell the Docker run command how to connect your source documents (and hence give it place to write the output) as well as tell it who you are on the host machine so the output is generated inside the container with the expected ownership. You may find it easiest to run with an alias like this:
+
+    ```sh
+    alias sile-docker='docker run --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest sile'
+
+    sile-docker input.sil
+    ```
 
 * **Other** Linux distros may be compiled from their respective package managers, via [source](#from-source) or, optionally via [Nix][nix].
 

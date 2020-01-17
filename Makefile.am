@@ -305,6 +305,14 @@ endif
 
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS)
 
+.PHONY: docker
+docker: Dockerfile build-aux/docker-entrypoint.sh build-aux/docker-yay-runner.sh .dockerignore
+	docker build --tag siletypesetter/sile:HEAD ./
+
+.dockerignore: .version
+	echo "*" > $@
+	git ls-files | sed 's/^/!/' >> $@
+
 gource.webm:
 	mkdir -p /tmp/gravatars
 	convert examples/images/sile-logo.jpg -negate -resize 50% /tmp/sile-logo.jpg

@@ -28,6 +28,7 @@ rules:
     - cli
     - core
     - debug
+    - docker
     - examples
     - fonts
     - frames
