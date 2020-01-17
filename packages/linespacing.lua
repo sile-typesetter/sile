@@ -73,7 +73,7 @@ local linespacingLeading = function (_, vbox, previous)
   if not previous then
     if firstline.length:tonumber() > 0 then
       local toAdd = SILE.length(firstline.length - vbox.height)
-      return SILE.nodefactory.newVKern({ height = toAdd })
+      return SILE.nodefactory.vkern(toAdd)
     else
       return nil
     end
@@ -86,13 +86,13 @@ local linespacingLeading = function (_, vbox, previous)
   if method == "fit-glyph" then
     local extra = SILE.settings.get("linespacing.fit-glyph.extra-space"):absolute()
     local toAdd = SILE.length(extra)
-    return SILE.nodefactory.newVglue({ height = toAdd })
+    return SILE.nodefactory.vglue(toAdd)
   end
 
   if method == "fixed" then
     local btob = SILE.settings.get("linespacing.fixed.baselinedistance"):absolute()
     local toAdd = SILE.length(btob.length - (vbox.height + previous.depth), btob.stretch, btob.shrink)
-    return SILE.nodefactory.newVglue({ height = toAdd })
+    return SILE.nodefactory.vglue(toAdd)
   end
 
   -- For these methods, we need to read the font metrics
@@ -108,7 +108,7 @@ local linespacingLeading = function (_, vbox, previous)
     local extra = SILE.settings.get("linespacing.fit-font.extra-space"):absolute()
     local btob = prevmetrics.descender + thismetrics.ascender + extra
     local toAdd = btob - (vbox.height + (previous and previous.depth or 0))
-    return SILE.nodefactory.newVglue({ height = SILE.length(toAdd)})
+    return SILE.nodefactory.vglue(toAdd)
   end
 
   if method == "css" then
@@ -118,7 +118,7 @@ local linespacingLeading = function (_, vbox, previous)
       previous.height = previous.height + leading / 2
       previous.depth = previous.depth + leading / 2
     end
-    return SILE.nodefactory.newVglue({ height = SILE.length() })
+    return SILE.nodefactory.vglue()
 
   end
 

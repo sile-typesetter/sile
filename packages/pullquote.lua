@@ -34,8 +34,8 @@ SILE.registerCommand("pullquote", function (options, content)
   local scale = options.scale or 3
   local color = options.color or "#999999"
   SILE.settings.temporarily(function ()
-    SILE.settings.set("document.rskip", SILE.nodefactory.newGlue(setback))
-    SILE.settings.set("document.lskip", SILE.nodefactory.newGlue(setback))
+    SILE.settings.set("document.rskip", SILE.nodefactory.glue(setback))
+    SILE.settings.set("document.lskip", SILE.nodefactory.glue(setback))
     SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
     SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
     SILE.call("pullquote:font")
