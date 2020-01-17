@@ -10,7 +10,7 @@ dist_man_MANS = sile.1
 bin_SCRIPTS = sile
 subdir_files = $(shell find core classes languages packages lua-libraries -type f -print)
 nobase_dist_pkgdata_DATA = $(subdir_files)
-EXTRA_DIST = CHANGELOG.md README.md LICENSE tests examples documentation sile-dev-1.rockspec build-aux/git-version-gen .version fontconfig.conf
+EXTRA_DIST = CHANGELOG.md README.md LICENSE spec tests examples documentation sile-dev-1.rockspec build-aux/git-version-gen .version fontconfig.conf
 
 SHELL = bash
 .ONESHELL:
