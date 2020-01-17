@@ -52,7 +52,7 @@ SILE.shapers.pango = pl.class({
       local pal = SILE.font.cache(options, self.getFace)
       local rv = {}
       local items = pango.itemize(pango_context, text, 0, string.len(text), pal, nil)
-      local twidth = SILE.length.new({})
+      local twidth = SILE.length()
       for i = 1,#items do local item = items[i]
         local pgs = _shape(text, item)
         -- local text = string.sub(text,1+items[i].offset, items[i].length)

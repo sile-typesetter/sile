@@ -25,10 +25,10 @@ end)
 
 SILE.registerCommand("footnote:options", function (options, _)
   if options["maxHeight"] then
-    SILE.scratch.insertions.classes.footnote.maxHeight = SILE.length.parse(options["maxHeight"])
+    SILE.scratch.insertions.classes.footnote.maxHeight = SILE.length(options["maxHeight"])
   end
   if options["interInsertionSkip"] then
-    SILE.scratch.insertions.classes.footnote.interInsertionSkip = SILE.length.parse(options["interInsertionSkip"])
+    SILE.scratch.insertions.classes.footnote.interInsertionSkip = SILE.length(options["interInsertionSkip"])
   end
 end)
 

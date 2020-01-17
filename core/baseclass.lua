@@ -145,7 +145,7 @@ SILE.baseClass = std.object {
 
     SILE.registerCommand("skip", function (options, _)
       options.discardable = options.discardable or false
-      options.height = SILE.length.parse(options.height):absolute()
+      options.height = SILE.length(options.height):absolute()
       SILE.typesetter:leaveHmode()
       if options.discardable then
         SILE.typesetter:pushVglue(options)

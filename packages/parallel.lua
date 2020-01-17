@@ -98,7 +98,7 @@ end
 
 SILE.registerCommand("sync", function (_, _)
   local anybreak = false
-  local maxheight = SILE.length.new()
+  local maxheight = SILE.length()
   SU.debug("parallel", "Trying a sync")
   allTypesetters(function (_, typesetter)
     SU.debug("parallel", "Leaving hmode on "..typesetter.id)
@@ -118,7 +118,7 @@ SILE.registerCommand("sync", function (_, _)
   end
 
   allTypesetters(function (frame, typesetter)
-    calculations[frame].heightOfNewMaterial = SILE.length.new()
+    calculations[frame].heightOfNewMaterial = SILE.length()
     for i = calculations[frame].mark + 1, #typesetter.state.outputQueue do
       local thisHeight = typesetter.state.outputQueue[i].height + typesetter.state.outputQueue[i].depth
       calculations[frame].heightOfNewMaterial = calculations[frame].heightOfNewMaterial + thisHeight

@@ -9,32 +9,32 @@ SILE.settings.declare({
 
 SILE.settings.declare({
   name = "linespacing.fixed.baselinedistance",
-  default = SILE.length.parse("1.2em"),
+  default = SILE.length("1.2em"),
   type = "length",
   help = "Distance from baseline to baseline in the case of fixed line spacing"
 })
 
 SILE.settings.declare({
   name = "linespacing.minimumfirstlineposition",
-  default = SILE.length.parse("0"),
+  default = SILE.length("0"),
   type = "length"
 })
 
 SILE.settings.declare({
   name = "linespacing.fit-glyph.extra-space",
-  default = SILE.length.parse("0"),
+  default = SILE.length("0"),
   type = "length"
 })
 
 SILE.settings.declare({
   name = "linespacing.fit-font.extra-space",
-  default = SILE.length.parse("0"),
+  default = SILE.length("0"),
   type = "length"
 })
 
 SILE.settings.declare({
   name = "linespacing.css.line-height",
-  default = SILE.length.parse("1.2em"),
+  default = SILE.length("1.2em"),
   type = "length"
 })
 
@@ -56,7 +56,7 @@ local getLineMetrics = function (l)
       end
       SILE.settings.temporarily(function ()
         SILE.call("font", node.options, {})
-        m.lineheight = SILE.settings.get("linespacing.css.line-height").length:absolute()
+        m.lineheight = SILE.settings.get("linespacing.css.line-height"):absolute()
       end)
       if m.ascender > linemetrics.ascender then linemetrics.ascender = m.ascender end
       if m.descender > linemetrics.descender then linemetrics.descender = m.descender end
@@ -72,7 +72,7 @@ local linespacingLeading = function (_, vbox, previous)
   local firstline = SILE.settings.get("linespacing.minimumfirstlineposition"):absolute()
   if not previous then
     if firstline.length:tonumber() > 0 then
-      local toAdd = SILE.length.new({ length = firstline.length -vbox.height })
+      local toAdd = SILE.length(firstline.length - vbox.height)
       return SILE.nodefactory.newVKern({ height = toAdd })
     else
       return nil
@@ -85,13 +85,13 @@ local linespacingLeading = function (_, vbox, previous)
 
   if method == "fit-glyph" then
     local extra = SILE.settings.get("linespacing.fit-glyph.extra-space"):absolute()
-    local toAdd = SILE.length.new(extra)
+    local toAdd = SILE.length(extra)
     return SILE.nodefactory.newVglue({ height = toAdd })
   end
 
   if method == "fixed" then
     local btob = SILE.settings.get("linespacing.fixed.baselinedistance"):absolute()
-    local toAdd = SILE.length.new({ length = btob.length - (vbox.height + previous.depth), stretch = btob.stretch, shrink = btob.shrink })
+    local toAdd = SILE.length(btob.length - (vbox.height + previous.depth), btob.stretch, btob.shrink)
     return SILE.nodefactory.newVglue({ height = toAdd })
   end
 
@@ -108,7 +108,7 @@ local linespacingLeading = function (_, vbox, previous)
     local extra = SILE.settings.get("linespacing.fit-font.extra-space"):absolute()
     local btob = prevmetrics.descender + thismetrics.ascender + extra
     local toAdd = btob - (vbox.height + (previous and previous.depth or 0))
-    return SILE.nodefactory.newVglue({ height = SILE.length.make(toAdd)})
+    return SILE.nodefactory.newVglue({ height = SILE.length(toAdd)})
   end
 
   if method == "css" then
@@ -118,7 +118,7 @@ local linespacingLeading = function (_, vbox, previous)
       previous.height = previous.height + leading / 2
       previous.depth = previous.depth + leading / 2
     end
-    return SILE.nodefactory.newVglue({ height = SILE.length.new({ length = 0  }) })
+    return SILE.nodefactory.newVglue({ height = SILE.length() })
 
   end
 
