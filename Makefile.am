@@ -306,7 +306,7 @@ endif
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS)
 
 .PHONY: docker
-docker: .dockerignore
+docker: Dockerfile build-aux/docker-entrypoint.sh build-aux/docker-yay-runner.sh .dockerignore
 	docker build --tag siletypesetter/sile:HEAD ./
 
 .dockerignore: .version
