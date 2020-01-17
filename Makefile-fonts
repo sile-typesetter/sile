@@ -13,7 +13,7 @@ TESTFONTFILES += NotoSansKannada-Regular.ttf
 TESTFONTFILES += NotoSansEthiopic-Regular.ttf
 TESTFONTFILES += NotoSansMalayalam-Regular.ttf
 TESTFONTFILES += SBL_Hbrw.ttf
-TESTFONTFILES += Symbola_Hinted.ttf
+TESTFONTFILES += Symbola_hint.ttf
 
 # Tell make how to download individual font files (when available)
 .fonts/NotoSansCJK%: | .fonts
@@ -33,8 +33,8 @@ TESTFONTFILES += Symbola_Hinted.ttf
 	touch $@
 
 # Tell  make how to download font file bundles (when not downloadable individually)
-Symbola.zip:
-	curl -s -L https://web.archive.org/web/20190608100449/http://users.teilar.gr/~g1951d/$(notdir $@) -o $@
+symbola.zip:
+	curl -s -L https://fontlibrary.org/assets/downloads/symbola/cf81aeb303c13ce765877d31571dc5c7/$(notdir $@) -o $@
 
 GentiumPlus-5.000.zip:
 	curl -s -L https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
@@ -54,7 +54,7 @@ Hack-v3.003-ttf.tar.xz:
 	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
 	touch $@
 
-.fonts/Symbola%: Symbola.zip | .fonts
+.fonts/Symbola%: symbola.zip | .fonts
 	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
 	touch $@
 
