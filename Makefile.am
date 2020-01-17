@@ -306,8 +306,12 @@ endif
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS)
 
 .PHONY: docker
-docker:
+docker: .dockerignore
 	docker build --tag siletypesetter/sile:HEAD ./
+
+.dockerignore: .version
+	echo "*" > $@
+	git ls-files | sed 's/^/!/' >> $@
 
 gource.webm:
 	mkdir -p /tmp/gravatars
