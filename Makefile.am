@@ -305,6 +305,10 @@ endif
 
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS)
 
+.PHONY: docker
+docker:
+	docker build --tag siletypesetter/sile:HEAD ./
+
 gource.webm:
 	mkdir -p /tmp/gravatars
 	convert examples/images/sile-logo.jpg -negate -resize 50% /tmp/sile-logo.jpg

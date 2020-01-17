@@ -22,6 +22,7 @@ rules:
   - 1
   - 'always'
   - - core
+    - docker
     - utilities
     - settings
     - typesetter
