@@ -43,13 +43,11 @@ ltmain.sh
 subfiles.mk
 
 # Build artifacts
-./sile
 confdefs.h
 config.log
 core/*.so
 build/
 *.debug
-benchmark-*
 gh-pages
 sile-v*
 *.zip
@@ -78,3 +76,6 @@ documentation/*.pdf
 examples/*.pdf
 gource.webm
 *.tar.bz2
+.fonts/*
+sile
+sile.1
