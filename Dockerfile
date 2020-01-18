@@ -15,6 +15,9 @@ WORKDIR /src
 
 RUN mkdir /pkgdir
 
+RUN git fetch --unshallow ||:
+RUN git fetch --tags ||:
+
 RUN ./bootstrap.sh && ./configure --with-system-luarocks && make
 RUN make install DESTDIR=/pkgdir
 
