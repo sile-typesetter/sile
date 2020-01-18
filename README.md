@@ -1,11 +1,11 @@
-[![Linux Build Status](https://travis-ci.com/sile-typesetter/sile.svg?branch=master)](https://travis-ci.com/sile-typesetter/sile)
-[![Windows Build Status](https://dev.azure.com/sile-typesetter/sile/_apis/build/status/sile-typesetter.sile?branchName=master)](https://dev.azure.com/sile-typesetter/sile/_build/latest?definitionId=1&branchName=master)
-[![Docker Build Status](https://img.shields.io/docker/cloud/build/siletypesetter/sile)](https://hub.docker.com/repository/docker/siletypesetter/sile/builds)
-[![Luacheck](https://github.com/sile-typesetter/sile/workflows/Luacheck/badge.svg)](https://github.com/sile-typesetter/sile/actions?workflow=Luacheck)
-[![Coverage Status](https://coveralls.io/repos/github/sile-typesetter/sile/badge.svg?branch=master)](https://coveralls.io/github/sile-typesetter/sile?branch=master)
-[![Join the chat](https://badges.gitter.im/simoncozens/sile.svg)](https://gitter.im/simoncozens/sile?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
-[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+[![Travis Build Status](https://img.shields.io/travis/sile-typesetter/sile?label=Travis%20Build&logo=Travis)](https://travis-ci.com/sile-typesetter/sile)
+[![Azure Build Status](https://img.shields.io/azure-devops/build/sile-typesetter/069c3e31-ee59-4bd6-b395-1f1059acd8db/1?label=Azure%20Build&logo=Azuredevops)](https://dev.azure.com/sile-typesetter/sile/_build/latest?definitionId=1&branchName=master)
+[![Docker Build Status](https://img.shields.io/docker/cloud/build/siletypesetter/sile?label=Docker%20Build&logo=Docker)](https://hub.docker.com/repository/docker/siletypesetter/sile/builds)
+[![Luacheck Lint Status](https://img.shields.io/github/workflow/status/sile-typesetter/sile/Luacheck?label=Luacheck&logo=Github)](https://github.com/sile-typesetter/sile/actions?workflow=Luacheck)
+[![Coveralls Coverage Status](https://img.shields.io/coveralls/github/sile-typesetter/sile?label=Coverage&logo=Coveralls)](https://coveralls.io/github/sile-typesetter/sile?branch=master)<br />
+[![Chat on Gitter](https://img.shields.io/gitter/room/simoncozens/sile?color=blue&label=Chat&logo=Gitter)](https://gitter.im/simoncozens/sile?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-blue.svg)](https://conventionalcommits.org)
+[![Commitizen Friendly](https://img.shields.io/badge/Commitizen-friendly-blue.svg)](http://commitizen.github.io/cz-cli/)
 
 ## What is SILE?
 
