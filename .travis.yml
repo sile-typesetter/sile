@@ -72,7 +72,7 @@ before_install:
  - bash .travis/setup_harfbuzz.sh
 install:
  - luarocks install busted
- - luarocks install luacov 0.8-1
+ - luarocks install luacov
  - luarocks install luacov-coveralls
 before_script:
  - eval $(luarocks --tree lua_modules --local path)
