@@ -15,6 +15,7 @@ WORKDIR /src
 
 RUN mkdir /pkgdir
 
+RUN git clean -dxf ||:
 RUN git fetch --unshallow ||:
 RUN git fetch --tags ||:
 
