@@ -53,6 +53,7 @@ sile-v*
 *.zip
 *.xz
 *.rockslock
+.dockerignore
 
 # Test artifacts
 tests/*.actual

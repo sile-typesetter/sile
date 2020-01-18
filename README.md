@@ -1,11 +1,11 @@
-[![Linux Build Status](https://travis-ci.com/sile-typesetter/sile.svg?branch=master)](https://travis-ci.com/sile-typesetter/sile)
-[![Windows Build Status](https://dev.azure.com/sile-typesetter/sile/_apis/build/status/sile-typesetter.sile?branchName=master)](https://dev.azure.com/sile-typesetter/sile/_build/latest?definitionId=1&branchName=master)
-[![Luacheck](https://github.com/sile-typesetter/sile/workflows/Luacheck/badge.svg)](https://github.com/sile-typesetter/sile/actions?workflow=Luacheck)
-[![Coverage Status](https://coveralls.io/repos/github/sile-typesetter/sile/badge.svg?branch=master)](https://coveralls.io/github/sile-typesetter/sile?branch=master)
-[![Join the chat](https://badges.gitter.im/simoncozens/sile.svg)](https://gitter.im/simoncozens/sile?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
-[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
-[![Docker Build Status](https://img.shields.io/docker/cloud/build/siletypesetter/sile)](https://hub.docker.com/repository/docker/siletypesetter/sile/builds)
+[![Travis Build Status](https://img.shields.io/travis/sile-typesetter/sile?label=Travis%20Build&logo=Travis)](https://travis-ci.com/sile-typesetter/sile)
+[![Azure Build Status](https://img.shields.io/azure-devops/build/sile-typesetter/069c3e31-ee59-4bd6-b395-1f1059acd8db/1?label=Azure%20Build&logo=Azuredevops)](https://dev.azure.com/sile-typesetter/sile/_build/latest?definitionId=1&branchName=master)
+[![Docker Build Status](https://img.shields.io/docker/cloud/build/siletypesetter/sile?label=Docker%20Build&logo=Docker)](https://hub.docker.com/repository/docker/siletypesetter/sile/builds)
+[![Luacheck Lint Status](https://img.shields.io/github/workflow/status/sile-typesetter/sile/Luacheck?label=Luacheck&logo=Github)](https://github.com/sile-typesetter/sile/actions?workflow=Luacheck)
+[![Coveralls Coverage Status](https://img.shields.io/coveralls/github/sile-typesetter/sile?label=Coverage&logo=Coveralls)](https://coveralls.io/github/sile-typesetter/sile?branch=master)<br />
+[![Chat on Gitter](https://img.shields.io/gitter/room/simoncozens/sile?color=blue&label=Chat&logo=Gitter)](https://gitter.im/simoncozens/sile?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-blue.svg)](https://conventionalcommits.org)
+[![Commitizen Friendly](https://img.shields.io/badge/Commitizen-friendly-blue.svg)](http://commitizen.github.io/cz-cli/)
 
 ## What is SILE?
 
@@ -35,12 +35,18 @@ A formula is available for [Homebrew][brew] that can install both stable and hea
 
 * Track the status of **Ubuntu** packages in [issue #638](https://github.com/sile-typesetter/sile/issues/638).
 
-* Docker images are available in [siletypesetter/sile](https://hub.docker.com/repository/docker/siletypesetter/sile). Released versions are tagged to match, the latest release will be tagged `latest`, and a `master` tag is also available with the freshest development build. In order to be useful, you need to tell the Docker run command how to connect your source documents (and hence give it place to write the output) as well as tell it who you are on the host machine so the output is generated inside the container with the expected ownership. You may find it easiest to run with an alias like this:
+* **Docker** images are available as [siletypesetter/sile](https://hub.docker.com/repository/docker/siletypesetter/sile). Released versions are tagged to match (e.g. `v.0.10.0`), the latest release will be tagged `latest`, and a `master` tag is also available with the freshest development build. In order to be useful you need to tell the Docker run command how to connect your source documents (and hence give it place to write the output) as well as tell it who you are on the host machine so the output is generated inside the container with the expected ownership. You may find it easiest to run with an alias like this:
 
     ```sh
     alias sile-docker='docker run --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest sile'
 
     sile-docker input.sil
+    ```
+
+    If you wish to connect to the SILE interactive readline interface using Docker:
+
+    ```sh
+    docker run -it siletypesetter/sile:latest
     ```
 
 * **Other** Linux distros may be compiled from their respective package managers, via [source](#from-source) or, optionally via [Nix][nix].

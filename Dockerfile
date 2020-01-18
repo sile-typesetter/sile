@@ -4,16 +4,20 @@ FROM archlinux AS sile-base
 RUN pacman --needed --noconfirm -Syuq && yes | pacman -Sccq
 
 COPY build-aux/docker-yay-runner.sh /usr/local/bin
-RUN docker-yay-runner.sh "--needed --noconfirm --asexplicit -S fontconfig harfbuzz icu lua ttf-gentium-plus lua-{luaepnf,lpeg,cassowary,linenoise,zlib,cliargs,expat,filesystem,repl,sec,socket,penlight,stdlib,vstruct}"
+RUN docker-yay-runner.sh "--noconfirm --asexplicit -S fontconfig harfbuzz icu lua lua-{cassowary,cliargs,expat,filesystem,linenoise,lpeg,luaepnf,penlight,repl,sec,socket,stdlib,vstruct,zlib} ttf-gentium-plus"
 
 FROM sile-base AS sile-builder
 
-RUN pacman --needed --noconfirm -S git base-devel
+RUN pacman --needed --noconfirm -S git base-devel poppler
 
 COPY ./ /src
 WORKDIR /src
 
 RUN mkdir /pkgdir
+
+RUN git clean -dxf ||:
+RUN git fetch --unshallow ||:
+RUN git fetch --tags ||:
 
 RUN ./bootstrap.sh && ./configure --with-system-luarocks && make
 RUN make install DESTDIR=/pkgdir
