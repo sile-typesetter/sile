@@ -75,6 +75,12 @@ If you wish to connect to the SILE interactive readline interface using Docker:
 
     $ docker run -it siletypesetter/sile:latest
 
+One notable issue with using SILE from a Docker contaner is that it will not have access to your system's fonts by default. You can map a folder of fonts (any tree usable by fontconfig) into the container. This could be your system's default font directory, your user one, a project specific folder, or anything of your choosing. You can see where fonts are found on your system using `fc-list`. The path of your choosing from the host system should be passed as a volume mounted on `/fonts` inside the container like this:
+
+    $ docker run --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:master
+
+*(Note this feature is not currently in the latest released version, hence the use of `master` in this example.)*
+
 #### Nix
 
 [Nix packages][nix] are available and can ben installed on several platforms.
