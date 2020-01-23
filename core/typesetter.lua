@@ -168,7 +168,8 @@ SILE.defaultTypesetter = std.object {
 
   pushHbox = function (self, spec)
     -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
-    local node = SU.type(spec) == "hbox" and spec or SILE.nodefactory.hbox(spec)
+    local ntype = SU.type(spec)
+    local node = (ntype == "hbox" or ntype == "zerohbox") and spec or SILE.nodefactory.hbox(spec)
     return self:pushHorizontal(node)
   end,
 
