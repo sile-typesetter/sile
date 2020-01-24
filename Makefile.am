@@ -1,4 +1,5 @@
 ACLOCAL_AMFLAGS = -I m4
+AUTOMAKE_OPTIONS = foreign
 
 if SYSTEM_LIBTEXPDF
 SUBDIRS = src
@@ -29,13 +30,15 @@ endif
 
 BUILT_SOURCES = .version
 
-.version: $(shell test -d .git && awk '{print ".git/" $$2}' .git/HEAD)
+.version: $(shell test -e .git && awk '{print ".git/" $$2}' .git/HEAD)
 	mv $@{,-prev} || touch $@-prev
-	( test -d .git && ./build-aux/git-version-gen .tarball-version || echo $(VERSION) ) > $@
-	cmp -s $@{,-prev} || autoreconf configure.ac -f
+	( test -e .git && ./build-aux/git-version-gen .tarball-version || echo $(VERSION) ) > $@
+	cmp -s $@{,-prev} || autoreconf configure.ac --force -W none
+	sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
 
 dist-hook:
 	echo $(VERSION) > $(distdir)/.tarball-version
+	sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
 
 # Whether to force tests to run from scratch
 CLEAN ?=
@@ -163,8 +166,8 @@ patterndeps = $(wildcard $(DEPDIR)/$*.d) all testprep
 coverage: export SILE_COVERAGE=1
 coverage: test_previews
 
-HEADSHA ?= $(shell git rev-parse --short HEAD)
-BASESHA ?= $(shell git rev-parse --short $(HEADSHA)^)
+HEADSHA ?= $(shell test -e .git && git rev-parse --short HEAD)
+BASESHA ?= $(shell test -e .git && git rev-parse --short $(HEADSHA)^)
 
 clean-recursive: clean-tests
 
