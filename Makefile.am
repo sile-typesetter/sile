@@ -32,7 +32,7 @@ BUILT_SOURCES = .version
 .version: $(shell test -d .git && awk '{print ".git/" $$2}' .git/HEAD)
 	mv $@{,-prev} || touch $@-prev
 	( test -d .git && ./build-aux/git-version-gen .tarball-version || echo $(VERSION) ) > $@
-	cmp -s $@{,-prev} || autoreconf configure.ac -f
+	cmp -s $@{,-prev} || autoreconf configure.ac --force -W none
 
 dist-hook:
 	echo $(VERSION) > $(distdir)/.tarball-version

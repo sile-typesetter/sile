@@ -1,3 +1,5 @@
+ACLOCAL_AMFLAGS = -I m4
+
 if LINKLUA
 MY_LUA_LIB=$(LUA_LIB)
 UNDEFINED=-no-undefined
