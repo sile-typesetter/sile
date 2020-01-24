@@ -267,7 +267,7 @@ nodefactory.unshaped = pl.class({
 
   })
 
-nodefactory.disc = pl.class({
+nodefactory.discretionary = pl.class({
     _base = nodefactory.hbox,
     type = "discretionary",
     prebreak = {},
@@ -589,7 +589,11 @@ _deprecated_nodefactory.newUnshaped = function (spec)
 end
 
 _deprecated_nodefactory.newDisc = function (spec)
-  return nodefactory.disc(spec)
+  return nodefactory.discretionary(spec)
+end
+
+_deprecated_nodefactory.disc = function (spec)
+  return nodefactory.discretionary(spec)
 end
 
 _deprecated_nodefactory.newAlternative = function (spec)
@@ -617,7 +621,7 @@ _deprecated_nodefactory.newPenalty = function (spec)
 end
 
 _deprecated_nodefactory.newDiscretionary = function (spec)
-  return nodefactory.disc(spec)
+  return nodefactory.discretionary(spec)
 end
 
 _deprecated_nodefactory.newVbox = function (spec)
