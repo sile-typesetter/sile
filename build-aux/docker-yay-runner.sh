@@ -2,7 +2,7 @@
 set -e +o pipefail
 
 # Setup AUR helper
-pacman --needed --noconfirm -Syuq
+pacman --needed --noconfirm -Syyuq
 pacman --needed --noconfirm --asdeps -S git base-devel go
 useradd -m docker
 echo 'docker:' | chpasswd -e
