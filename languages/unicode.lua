@@ -32,6 +32,7 @@ SILE.nodeMakers.base = pl.class({
         coroutine.yield(SILE.shaper:makeSpaceNode(self.options, item))
       end
       self.lastnode = "glue"
+      self.lasttype = "sp"
     end,
     makePenalty = function (self, p)
       if self.lastnode ~= "penalty" and self.lastnode ~= "glue" then
@@ -72,17 +73,15 @@ SILE.nodeMakers.unicode = pl.class({
         self:makeToken()
         self:makeGlue(item)
       elseif self:isBreaking(item.text) then
-        self:addToken(char, item)
         self:makeToken()
         self:makePenalty(0)
-      elseif self.lasttype and (self.thistype and thistype ~= lasttype and not self.isWordType[thistype]) then
+      elseif self.lasttype and (thistype and thistype ~= self.lasttype and not self.isWordType[thistype]) then
         self:makeToken()
         self:addToken(char, item)
       else
         self:letterspace()
         self:addToken(char, item)
       end
-      if not self.isWordType[thistype] then lasttype = chardata[cp] and chardata[cp].linebreak end
       self.lasttype = thistype
     end,
     handleInitialGlue = function (self, items)
@@ -102,6 +101,7 @@ SILE.nodeMakers.unicode = pl.class({
         SU.debug("tokenizer", "Letter space glue: "..w)
         coroutine.yield(SILE.nodefactory.kern({ width = w }))
         self.lastnode = "glue"
+        self.lasttype = "sp"
       end
     end,
     isICUBreakHere = function (_, chunks, item)
@@ -147,7 +147,10 @@ SILE.nodeMakers.unicode = pl.class({
       -- soft and hard breaks.
       self:makeToken()
       self:makePenalty(subtype == "soft" and 0 or -1000)
-      self:addToken(item.text, item)
+      local char = item.next
+      self:addToken(char, item)
+      local cp = SU.codepoint(char)
+      self.lasttype = chardata[cp] and chardata[cp].linebreak
     end,
     iterator = function (self, items)
       local fulltext = ""
