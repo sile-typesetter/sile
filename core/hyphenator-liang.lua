@@ -121,10 +121,10 @@ local hyphenateNode = function (node)
           end
         end
         if not (j == #breaks) then
-          local discretionary = SILE.nodefactory.newDiscretionary({ prebreak = SILE.shaper:createNnodes(SILE.settings.get("font.hyphenchar"), node.options) })
+          local discretionary = SILE.nodefactory.discretionary({ prebreak = SILE.shaper:createNnodes(SILE.settings.get("font.hyphenchar"), node.options) })
           discretionary.parent = node
           table.insert(newnodes, discretionary)
-         --table.insert(newnodes, SILE.nodefactory.newPenalty({ value = SILE.settings.get("typesetter.hyphenpenalty") }))
+         --table.insert(newnodes, SILE.nodefactory.penalty({ value = SILE.settings.get("typesetter.hyphenpenalty") }))
         end
       end
     end

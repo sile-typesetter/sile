@@ -110,7 +110,7 @@ SILE.baseClass = std.object {
     end, "Inserts a penalty node. Option is penalty= for the size of the penalty.")
 
     SILE.registerCommand("discretionary", function (options, _)
-      local discretionary = SILE.nodefactory.newDiscretionary({})
+      local discretionary = SILE.nodefactory.discretionary({})
       if options.prebreak then
         SILE.call("hbox", {}, function () SILE.typesetter:typeset(options.prebreak) end)
         discretionary.prebreak = { SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] }

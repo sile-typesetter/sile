@@ -9,6 +9,6 @@ diglot:declareFrame("folio",{left = "left(a)",         right = "right(b)",      
 
 diglot:loadPackage("parallel", { frames = { left = "a", middle = "b", right= "c" } })
 SILE.settings.set("linebreak.tolerance", 5000)
-SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
+SILE.settings.set("document.parindent", SILE.nodefactory.glue())
 
 return diglot
