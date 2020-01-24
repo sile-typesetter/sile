@@ -130,22 +130,18 @@ SILE.baseClass = std.object {
     end, "Inserts a discretionary node.")
 
     SILE.registerCommand("glue", function (options, _)
-      SILE.typesetter:pushGlue({
-        width = SILE.length.parse(options.width):absolute()
-      })
+      local width = SU.cast("length", options.width):absolute()
+      SILE.typesetter:pushGlue(width)
     end, "Inserts a glue node. The width option denotes the glue dimension.")
 
     SILE.registerCommand("kern", function (options, _)
-      table.insert(SILE.typesetter.state.nodes,
-        SILE.nodefactory.newKern({
-          width = SILE.length.parse(options.width):absolute()
-        })
-      )
+      local width = SU.cast("length", options.width):absolute()
+      SILE.typesetter:pushHorizontal(SILE.nodefactory.kern(width))
     end, "Inserts a glue node. The width option denotes the glue dimension.")
 
     SILE.registerCommand("skip", function (options, _)
       options.discardable = options.discardable or false
-      options.height = SILE.length.parse(options.height):absolute()
+      options.height = SILE.length(options.height):absolute()
       SILE.typesetter:leaveHmode()
       if options.discardable then
         SILE.typesetter:pushVglue(options)

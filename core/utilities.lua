@@ -75,6 +75,16 @@ utilities.gtoke = function (string, pattern)
   end)
 end
 
+utilities.deprecated = function (old, new, warnat, errorat, extra)
+  local _semver = SILE.version:match("v([0-9]*.[0-9]*.[0-9]*)")
+  local msg = old .. "() was deprecated in SILE v" .. warnat .. ". Please use " .. new .. "() instead. " .. extra
+  if errorat and _semver >= errorat then
+    SU.error(msg)
+  elseif warnat and _semver >= warnat then
+    SU.warn(msg)
+  end
+end
+
 utilities.debug = function (category, ...)
   if utilities.debugging(category) then
     local inputs = table.pack(...)

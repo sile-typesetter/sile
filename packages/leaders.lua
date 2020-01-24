@@ -27,8 +27,7 @@ local leader = pl.class({
   })
 
 SILE.registerCommand("leaders", function(options, content)
-  local gluespec = SU.required(options, "width", "creating leaders")
-  local width = SILE.length.parse(gluespec)
+  local width = SU.required(options, "width", "creating leaders", "length")
   SILE.call("hbox", {}, content)
   local hbox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
   SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil

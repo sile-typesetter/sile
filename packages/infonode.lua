@@ -15,7 +15,7 @@ local _info = pl.class({
     type ="special",
     category = "",
     value = nil,
-    width = SILE.length.new({ length = 0, stretch = 0, shrink = 0 }),
+    width = SILE.length(),
 
     __tostring = function (self) return "I<" .. self.category .. "|" .. self.value.. ">"; end,
 

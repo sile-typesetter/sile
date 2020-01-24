@@ -29,7 +29,7 @@ end, "Draw a full width hrule centered on the current line")
 
 SILE.registerCommand("underline", function (_, content)
   local hbox = SILE.call("hbox", {}, content)
-  local gl = SILE.length.new() - hbox.width
+  local gl = SILE.length() - hbox.width
   SILE.call("lower", {height = "0.5pt"}, function()
     SILE.call("hrule", {width = gl.length, height = "0.5pt"})
   end)
@@ -38,7 +38,7 @@ end, "Underlines some content (badly)")
 
 SILE.registerCommand("boxaround", function (_, content)
   local hbox = SILE.call("hbox", {}, content)
-  local gl = SILE.length.new() - hbox.width
+  local gl = SILE.length() - hbox.width
   SILE.call("rebox", {width = 0}, function()
     SILE.call("hrule", {width = gl.length-1, height = "0.5pt"})
   end)

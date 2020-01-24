@@ -4,7 +4,7 @@ SILE.typesetter.buildPage = function (self, independent)
   -- Find last penalty
   local q = self.state.outputQueue
   local lastpenalty = -1
-  local cHeight = SILE.length.new()
+  local cHeight = SILE.length()
   for j = #q,1,-1 do
     if q[j].is_penalty and lastpenalty == -1 then
       lastpenalty = q[j].penalty

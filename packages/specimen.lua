@@ -9,8 +9,8 @@ SILE.registerCommand("repertoire", function(_, _)
   for i = 1 , maxg - 1 do
     local wd = metrics.glyphwidth(i, face.data, face.index)
     SILE.typesetter:pushHbox({
-      height= SILE.length.new({ length = 1.2 * fontoptions.size  }),
-      width= SILE.length.new({ length = wd * fontoptions.size }),
+      height= SILE.length(1.2 * fontoptions.size),
+      width= SILE.length(wd * fontoptions.size),
       depth= 0,
       value= { options = fontoptions, glyphString =  { i } },
     })
@@ -34,7 +34,7 @@ SILE.registerCommand("pangrams", function (_, _)
 end)
 
 SILE.registerCommand("set-to-width", function(options, content)
-  local width = SILE.length.parse(SU.required(options, "width", "set to width")):absolute()
+  local width = SU.required(options, "width", "set to width", "length"):absolute()
   local fontOptions = SILE.font.loadDefaults({})
   for line in SU.gtoke(content[1],"\n+") do
     if line.string then

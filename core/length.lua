@@ -55,27 +55,27 @@ return pl.class({
     end,
 
     new = function (spec)
-      -- SU.warn("Function SILE.length.new() is deprecated, just call SILE.length(...)")
+      SU.deprecated("SILE.length.new", "SILE.length", "0.10.0")
       return SILE.length(spec)
     end,
 
     make = function (spec)
-      -- SU.warn("Function SILE.length.make() is deprecated, just call SILE.length(...)")
+      SU.deprecated("SILE.length.make", "SILE.length", "0.10.0")
       return SILE.length(spec)
     end,
 
     parse = function (spec)
-      -- SU.warn("Function SILE.length.parse() is deprecated, just call SILE.length(...)")
+      SU.deprecated("SILE.length.parse", "SILE.length", "0.10.0")
       return SILE.length(spec)
     end,
 
     fromLengthOrNumber = function (_, spec)
-      -- SU.warn("Function SILE.length.fromLengthOrNumber() is deprecated, just call SILE.length(...)")
+      SU.deprecated("SILE.length.fromLengthOrNumber", "SILE.length", "0.10.0")
       return SILE.length(spec)
     end,
 
     __index = function (_, key) -- luacheck: ignore
-      -- SU.warn("Length method " .. key .. " is deprecated, just call SILE.length(...)")
+      SU.deprecated("SILE.length." .. key, "SILE.length", "0.10.0")
       return SILE.length()
     end,
 
