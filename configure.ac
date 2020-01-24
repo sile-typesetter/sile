@@ -182,3 +182,4 @@ AC_CONFIG_FILES([sile], [chmod +x sile])
 
 AC_OUTPUT
 m4_esyscmd_s([test -f configure && sed -i -e '/rm -f/s/ core / /' configure])
+m4_esyscmd_s([test -f aclocal.m4 && sed -i -e '/rm -f/s/ core / /' aclocal.m4])

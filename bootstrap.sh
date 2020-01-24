@@ -22,4 +22,6 @@ aclocal --force -W none
 automake --force-missing --add-missing -W none
 autoreconf --force -W none
 
+sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
+
 (cd libtexpdf; autoreconf)
