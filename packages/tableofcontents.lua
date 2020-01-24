@@ -46,7 +46,7 @@ end)
 
 SILE.registerCommand("tableofcontents:item", function (options, content)
   SILE.settings.temporarily(function ()
-    SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
+    SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
     SILE.call("tableofcontents:level" .. options.level .. "item", {}, function ()
       SILE.process(content)
       SILE.call("dotfill")

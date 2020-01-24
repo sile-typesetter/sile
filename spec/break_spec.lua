@@ -7,8 +7,8 @@ describe("SILE.linebreak", function()
 
   -- This is a list of boxes, with their dimensions, extracted from a specially hacked version of TeX.
   local hlist = {}
-  local function nnode(spec) table.insert(hlist, SILE.nodefactory.newNnode(spec)) end
-  local function glue(spec) table.insert(hlist, SILE.nodefactory.newGlue(spec)) end
+  local function nnode(spec) table.insert(hlist, SILE.nodefactory.nnode(spec)) end
+  local function glue(spec) table.insert(hlist, SILE.nodefactory.glue(spec)) end
   nnode({ text ="To", height =  6.15234, depth = 0.14647, width = 10.14648 })
   glue({ width = SILE.length({ length = 2.20215, stretch = 1.10107, shrink = 0.73404 }) })
   nnode({ text ="Sherlock", height =  7.56836, depth = 0.14647, width = 35.82031 })

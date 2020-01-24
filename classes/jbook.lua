@@ -34,5 +34,5 @@ jbook.registerCommands = function(_)
   SILE.call("language", { main = "ja" })
 end
 
-SILE.settings.set("document.parindent",SILE.nodefactory.newGlue("10pt"))
+SILE.settings.set("document.parindent",SILE.nodefactory.glue("10pt"))
 return jbook

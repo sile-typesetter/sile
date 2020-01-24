@@ -18,8 +18,8 @@ SILE.scratch.letter = {
 }
 
 SILE.registerCommand("letter", function (_, content)
-  SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
-  SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
+  SILE.settings.set("current.parindent", SILE.nodefactory.glue())
+  SILE.settings.set("document.parindent", SILE.nodefactory.glue())
   SILE.call("raggedright", {}, function ()
     SILE.call("letter:format:date")
     SILE.call("bigskip")

@@ -9,7 +9,7 @@ SILE.tateFramePrototype = pl.class({
           local bls = SILE.settings.get("document.baselineskip")
           local d = bls.height:absolute() - v.height
           local len = SILE.length(d.length, bls.height.stretch, bls.height.shrink)
-          return SILE.nodefactory.newVglue({height = len})
+          return SILE.nodefactory.vglue({height = len})
         end
         SILE.typesetter.breakIntoLines = SILE.require("packages/break-firstfit")
       end

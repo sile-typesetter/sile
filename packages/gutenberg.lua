@@ -10,7 +10,7 @@ SILE.registerCommand("alternative", function (_, content)
     options[#options + 1] = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
     SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
   end
-  local alternative = SILE.nodefactory.newAlternative({
+  local alternative = SILE.nodefactory.alternative({
     options=options,
     selected=1
     })

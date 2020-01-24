@@ -8,13 +8,13 @@ SILE.nodeMakers.grc = pl.class({
           self:addToken(items[i].text, items[i])
           self:makeToken()
           self:makePenalty()
-          coroutine.yield(SILE.nodefactory.newGlue("0pt plus 2pt"))
+          coroutine.yield(SILE.nodefactory.glue("0pt plus 2pt"))
         end
       end)
     end
   })
 
-local swap = SILE.nodefactory.newVbox({})
+local swap = SILE.nodefactory.vbox({})
 swap.outputYourself = function (_, typesetter, _)
   typesetter.frame.direction = typesetter.frame.direction == "LTR-TTB" and "RTL-TTB" or "LTR-TTB"
   typesetter.frame:newLine()

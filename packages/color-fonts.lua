@@ -66,7 +66,7 @@ SILE.shapers.harfbuzzWithColor = pl.class({
       for i=1, #run do
         options = pl.tablex.deepcopy(options)
         if run[i].color then
-          nodes[#nodes+1] = SILE.nodefactory.newHbox({
+          nodes[#nodes+1] = SILE.nodefactory.hbox({
               outputYourself = function () SILE.outputter:pushColor(run[i].color) end
             })
         end
@@ -74,7 +74,7 @@ SILE.shapers.harfbuzzWithColor = pl.class({
           nodes[#nodes+1] = node
         end
         if run[i].color then
-          nodes[#nodes+1] = SILE.nodefactory.newHbox({
+          nodes[#nodes+1] = SILE.nodefactory.hbox({
               outputYourself = function () SILE.outputter:popColor() end
             })
         end
