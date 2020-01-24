@@ -41,7 +41,7 @@ SILE.settings.declare({
 local metricscache = {}
 
 local getLineMetrics = function (l)
-  local linemetrics = { ascender = 0, descender = 0, lineheight = SILE.measurement(0) }
+  local linemetrics = { ascender = 0, descender = 0, lineheight = SILE.length() }
   if not l or not l.nodes then return linemetrics end
   for i = 1, #(l.nodes) do
     local node = l.nodes[i]
@@ -56,7 +56,7 @@ local getLineMetrics = function (l)
       end
       SILE.settings.temporarily(function ()
         SILE.call("font", node.options, {})
-        m.lineheight = SILE.settings.get("linespacing.css.line-height"):absolute()
+        m.lineheight = SU.cast("length", SILE.settings.get("linespacing.css.line-height")):absolute()
       end)
       if m.ascender > linemetrics.ascender then linemetrics.ascender = m.ascender end
       if m.descender > linemetrics.descender then linemetrics.descender = m.descender end
