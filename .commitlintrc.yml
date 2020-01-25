@@ -25,6 +25,7 @@ rules:
     - backends
     - build
     - classes
+    - cirrus
     - cli
     - core
     - debug
