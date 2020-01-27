@@ -39,9 +39,12 @@ SILE.registerCommand("tt", function(options, content)
 end)
 
 SILE.registerCommand("HorizontalRule", function (options, _)
-  options.height = options.height or "0.2pt"
-  options.width = options.width or SILE.typesetter.frame:lineWidth()
-  SILE.call("hrule", options)
+  SILE.call("raise", { height = options.raise or "0.8ex" }, function ()
+    SILE.call("hrule", {
+        height = options.height or "0.5pt",
+        width = options.width or "100%lw"
+      })
+  end)
 end)
 
 SILE.registerCommand("Span", function (options, content)
