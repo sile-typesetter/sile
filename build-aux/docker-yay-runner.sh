@@ -3,7 +3,7 @@ set -e +o pipefail
 
 # Setup AUR helper
 pacman --needed --noconfirm -Syyuq
-pacman --needed --noconfirm --asdeps -S git base-devel go
+pacman --needed --noconfirm --asdeps -Sq git base-devel go
 useradd -m docker
 echo 'docker:' | chpasswd -e
 mkdir -p /etc/sudoers.d
