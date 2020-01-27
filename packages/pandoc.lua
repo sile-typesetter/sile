@@ -1,8 +1,10 @@
-SILE.require("packages/url")
-SILE.require("packages/pdf")
-SILE.require("packages/image")
 SILE.require("packages/footnotes")
+SILE.require("packages/image")
+SILE.require("packages/pdf")
 SILE.require("packages/raiselower")
+SILE.require("packages/rules")
+SILE.require("packages/url")
+SILE.require("packages/verbatim")
 
 -- Process arguments that might not actually have that much to do with their
 -- immediate function but affect the document in other ways, such as setting
@@ -16,7 +18,11 @@ local handlePandocArgs = function (options)
     SU.debug("pandoc", "Set lang in tag: "..options.lang)
     local fontfunc = SILE.Commands[SILE.Commands["font:" .. options.lang] and "font:" .. options.lang or "font"]
     local innerWrapper = wrapper
-    wrapper = function (content) innerWrapper(function () fontfunc({ language = options.lang }, content) end) end
+    wrapper = function (content)
+      innerWrapper(function ()
+        fontfunc({ language = options.lang }, content)
+      end)
+    end
     options.lang = nil
   end
   if options.classes then
@@ -24,7 +30,11 @@ local handlePandocArgs = function (options)
       SU.debug("pandoc", "Add inner class wrapper: "..class)
       if SILE.Commands["class:"..class] then
         local innerWrapper = wrapper
-        wrapper = function (content) innerWrapper(function () SILE.Commands["class:"..class](options, content) end) end
+        wrapper = function (content)
+          innerWrapper(function ()
+            SILE.call("class:"..class, options, content)
+          end)
+        end
       end
     end
     options.classes = nil
@@ -39,9 +49,109 @@ end
 
 SILE.registerCommand("BlockQuote", function (_, content)
   SILE.call("quote", {}, content)
+  SILE.typesetter:leaveHmode()
+end)
+
+SILE.registerCommand("BulletList", function (_, content)
+  SILE.settings.temporarily(function ()
+    SILE.settings.set("document.rskip","10pt")
+    SILE.settings.set("document.lskip","20pt")
+    SILE.process(content)
+  end)
+  SILE.typesetter:leaveHmode()
+end)
+
+SILE.registerCommand("CodeBlock", function (options, content)
+  local wrapper, args = handlePandocArgs(options)
+  wrapper(function ()
+    SILE.call("verbatim", args, content)
+  end)
+  SILE.typesetter:leaveHmode()
+end)
+
+SILE.registerCommand("DefinitionList", function (_, content)
+  SILE.process(content)
+  SILE.typesetter:leaveHmode()
+end)
+
+SILE.registerCommand("Div", function (options, content)
+  handlePandocArgs(options)(content)
+  SILE.typesetter:leaveHmode()
+end, "Generic block wrapper")
+
+SILE.registerCommand("Header", function (options, content)
+  local analogs = { "part", "chapter", "section", "subsection" }
+  local analog = analogs[options.level+2] -- Pandoc's -1 level is \part
+  options.level = nil
+  local wrapper, args = handlePandocArgs(options)
+  wrapper(function ()
+    if analog and SILE.Commands[analog] then
+      SILE.call(analog, args, content)
+    else
+      SILE.process(content)
+    end
+  end)
+  SILE.typesetter:leaveHmode()
+end)
+
+SILE.registerCommand("HorizontalRule", function (_, _)
+  SILE.call("center", {}, function ()
+    SILE.call("raise", { height = "0.8ex" }, function ()
+      SILE.call("hrule", { height = "0.5pt", width = "50%lw" })
+      end)
+    end)
+  SILE.typesetter:leaveHmode()
+end)
+
+SILE.registerCommand("LineBlock", function (_, content)
+  SILE.process(content)
+  SILE.typesetter:leaveHmode()
+end)
+
+SILE.registerCommand("Null", function (_, _)
+  SILE.typesetter:leaveHmode()
+end)
+
+SILE.registerCommand("OrderedList", function (options, content)
+  -- TODO: handle listAttributes
+  handlePandocArgs(options)(function ()
+    SILE.settings.set("document.rskip","10pt")
+    SILE.settings.set("document.lskip","20pt")
+    SILE.process(content)
+  end)
+  SILE.typesetter:leaveHmode()
+end)
+
+SILE.registerCommand("Para", function (_, content)
+  SILE.process(content)
+  SILE.call("par")
+  SILE.typesetter:leaveHmode()
+end)
+
+SILE.registerCommand("Plain", function (_, content)
+  SILE.process(content)
+  SILE.typesetter:leaveHmode()
+end)
+
+SILE.registerCommand("RawBlock", function (options, content)
+  local format = options.format
+  -- TODO: execute as script? pass to different input parser?
+  SILE.process(content)
+  SILE.typesetter:leaveHmode()
+end)
+
+SILE.registerCommand("Table", function (options, content)
+  -- TODO: options.caption
+  -- TODO: options.align
+  -- TODO: options.width
+  -- TODO: options.headers
+  SILE.process(content)
+  SILE.typesetter:leaveHmode()
 end)
 
 -- Inlines
+
+-- -\define[command=listitem]{\smallskip{}\glue[width=-1em]• \glue[width=0.3em]\process\smallskip}%
 
 
 -- Needs refactoring
@@ -58,22 +168,8 @@ SILE.registerCommand("tt", function (options, content)
   SILE.call("verbatim:font", options, content)
 end)
 
-SILE.registerCommand("HorizontalRule", function (options, _)
-  SILE.call("raise", { height = options.raise or "0.8ex" }, function ()
-    SILE.call("hrule", {
-        height = options.height or "0.5pt",
-        width = options.width or "100%lw"
-      })
-  end)
-end)
-
 SILE.registerCommand("Span", function (options, content)
   handlePandocArgs(options)(content)
-end,"Generic inline wrapper")
-
-SILE.registerCommand("Div", function (options, content)
-  handlePandocArgs(options)(content)
-  SILE.call("par")
 end,"Generic inline wrapper")
 
 SILE.registerCommand("Emph", function (_, content)
