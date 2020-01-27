@@ -73,7 +73,7 @@ local getSpaceWidth = function(options)
       end
   end
   if maxStretch or maxShrink then
-    options.spaceWidth =  SILE.length.new({
+    options.spaceWidth =  SILE.length({
       length = items[1].width,
       shrink = items[1].width - maxShrink,
       stretch = maxStretch - items[1].width
@@ -87,7 +87,7 @@ end
 SILE.shaper.makeSpaceNode = function (self, options, item)
   local spaceWidth = getSpaceWidth(options)
   if spaceWidth then
-    return (SILE.nodefactory.newGlue({ width = spaceWidth }))
+    return (SILE.nodefactory.glue(spaceWidth))
   else
     return oldMakeSpaceNode(self,options,item)
   end

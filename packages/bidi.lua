@@ -128,7 +128,7 @@ local reorder = function (n, self)
           reverse_each_node(nl[i].postbreak[j].nodes)
         end
       end
-    elseif nl[i]:isAlternative() and levels[i].level %2 ~= base_level then
+    elseif nl[i]:is_alternative and levels[i].level %2 ~= base_level then
       for j = 1, #(nl[i].options) do
         if nl[i].options[j]:isNnode() then
           reverse_each_node(nl[i].options[j].nodes)
