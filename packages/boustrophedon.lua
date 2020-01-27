@@ -1,19 +1,20 @@
 SILE.hyphenator.languages.grc = { patterns={} }
-SILE.nodeMakers.grc = SILE.nodeMakers.unicode {
-  iterator = function (self, items)
-    return coroutine.wrap(function ()
-      self:init()
-      for i = 1, #items do
-        self:addToken(items[i].text, items[i])
-        self:makeToken()
-        self:makePenalty()
-        coroutine.yield(SILE.nodefactory.newGlue("0pt plus 2pt"))
-      end
-    end)
-  end
-}
 
-local swap = SILE.nodefactory.newVbox({})
+SILE.nodeMakers.grc = pl.class({
+    _base = SILE.nodeMakers.unicode,
+    iterator = function (self, items)
+      return coroutine.wrap(function ()
+        for i = 1, #items do
+          self:addToken(items[i].text, items[i])
+          self:makeToken()
+          self:makePenalty()
+          coroutine.yield(SILE.nodefactory.glue("0pt plus 2pt"))
+        end
+      end)
+    end
+  })
+
+local swap = SILE.nodefactory.vbox({})
 swap.outputYourself = function (_, typesetter, _)
   typesetter.frame.direction = typesetter.frame.direction == "LTR-TTB" and "RTL-TTB" or "LTR-TTB"
   typesetter.frame:newLine()
@@ -28,7 +29,7 @@ SILE.registerCommand("boustrophedon", function (_, content)
     local nl = {}
     for i = 1, #vboxlist do
       nl[#nl+1] = vboxlist[i]
-      if nl[#nl]:isVbox() then
+      if nl[#nl].is_vbox then
         nl[#nl+1] = swap
         swaps = swaps + 1
       end

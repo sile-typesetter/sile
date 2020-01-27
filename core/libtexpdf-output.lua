@@ -60,6 +60,7 @@ SILE.outputters.libtexpdf = {
   end,
 
   outputHbox = function (value, width)
+    width = SU.cast("number", width)
     ensureInit()
     if not value.glyphString then return end
     -- Nodes which require kerning or have offsets to the glyph
@@ -108,6 +109,10 @@ SILE.outputters.libtexpdf = {
   end,
 
   drawImage = function (src, x, y, width, height)
+    x = SU.cast("number", x)
+    y = SU.cast("number", y)
+    width = SU.cast("number", width)
+    height = SU.cast("number", height)
     ensureInit()
     pdf.drawimage(src, x, y, width, height)
   end,
@@ -119,11 +124,17 @@ SILE.outputters.libtexpdf = {
   end,
 
   moveTo = function (x, y)
+    x = SU.cast("number", x)
+    y = SU.cast("number", y)
     cursorX = x
     cursorY = SILE.documentState.paperSize[2] - y
   end,
 
   rule = function (x, y, width, depth)
+    x = SU.cast("number", x)
+    y = SU.cast("number", y)
+    width = SU.cast("number", width)
+    depth = SU.cast("number", depth)
     ensureInit()
     pdf.setrule(x, SILE.documentState.paperSize[2] - y - depth, width, depth)
   end,
@@ -146,7 +157,7 @@ SILE.outputters.libtexpdf = {
     end
     buf = table.concat(buf, "")
     if font == 0 then SILE.outputter.setFont(SILE.font.loadDefaults({})) end
-    pdf.setstring(frame:left(), SILE.documentState.paperSize[2] -frame:top(), buf, string.len(buf), font, 0)
+    pdf.setstring(frame:left():tonumber(), (SILE.documentState.paperSize[2] - frame:top()):tonumber(), buf, string.len(buf), font, 0)
     pdf.colorpop()
   end,
 

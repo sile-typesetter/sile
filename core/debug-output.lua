@@ -62,6 +62,10 @@ SILE.outputters.debug = {
   end,
 
   drawImage = function (src, x, y, width, height)
+    x = SU.cast("number", x)
+    y = SU.cast("number", y)
+    width = SU.cast("number", width)
+    height = SU.cast("number", height)
     writeline("Draw image", src, string.format("%.4f %.4f %.4f %.4f" , x, y, width, height))
   end,
 
@@ -72,11 +76,17 @@ SILE.outputters.debug = {
   end,
 
   moveTo = function (x, y)
+    x = SU.cast("number", x)
+    y = SU.cast("number", y)
     if string.format("%.4f", x) ~= string.format("%.4f", cx) then writeline("Mx ", string.format("%.4f", x)); cx = x end
     if string.format("%.4f", y) ~= string.format("%.4f", cy) then writeline("My ", string.format("%.4f", y)); cy = y end
   end,
 
   rule = function (x, y, width, depth)
+    x = SU.cast("number", x)
+    y = SU.cast("number", y)
+    width = SU.cast("number", width)
+    depth = SU.cast("number", depth)
     writeline("Draw line", string.format("%.4f %.4f %.4f %.4f", x, y, width, depth))
   end,
 

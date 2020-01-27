@@ -15,6 +15,8 @@ Makefile.in
 /config.guess
 /config.sub
 /config.status
+/.version
+/.version-prev
 
 m4/libtool.m4
 m4/ltoptions.m4
@@ -41,24 +43,26 @@ ltmain.sh
 subfiles.mk
 
 # Build artifacts
-sile
 confdefs.h
 config.log
 core/*.so
 build/
 *.debug
-benchmark-*
 gh-pages
 sile-v*
 *.zip
 *.xz
 *.rockslock
+.dockerignore
 
 # Test artifacts
 tests/*.actual
 tests/*.pdf
 */*.toc
-time-*.json
+time*.json
+
+benchmark-*
+compare-*
 
 # Vendor stuff
 node_modules
@@ -73,3 +77,6 @@ documentation/*.pdf
 examples/*.pdf
 gource.webm
 *.tar.bz2
+.fonts/*
+sile
+sile.1

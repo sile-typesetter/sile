@@ -6,14 +6,13 @@
 -- Uyghur is Turkish, right?
 SILE.languageSupport.loadLanguage("tr")
 
-require("char-def")
-local chardata = characters.data
+local chardata = require("char-def")
 
 SILE.settings.declare({
   name = "languages.ug.hyphenoffset",
   help = "Space added between text and hyphen",
-  type = "Glue or nil",
-  default = SILE.nodefactory.newGlue("1pt")
+  type = "glue or nil",
+  default = SILE.nodefactory.glue("1pt")
 })
 
 local transliteration = {
@@ -123,7 +122,7 @@ SILE.hyphenator.languages.ug = function(n)
   if SU.debugging("uyghur") then io.write("Original: ", n.text.." -> "..latin.." -> ") end
   local state = n.options
   -- Make "Turkish" nodes
-  local newoptions = std.tree.clone(n.options)
+  local newoptions = pl.tablex.deepcopy(n.options)
   newoptions.language = "lt"
   if not SILE.hyphenators.lt then
     SILE.hyphenate(SILE.shaper:createNnodes(latin, newoptions))
@@ -156,15 +155,15 @@ SILE.hyphenator.languages.ug = function(n)
   local prebreak = SILE.shaper:createNnodes(items[1] .. (lastjoinable(items[1]) and zwj or ""), state)
   if SILE.settings.get("languages.ug.hyphenoffset") then
     local w = SILE.settings.get("languages.ug.hyphenoffset").width
-    prebreak[#prebreak+1] = SILE.nodefactory.newKern({ width = w })
+    prebreak[#prebreak+1] = SILE.nodefactory.kern({ width = w })
   end
   local hnodes = SILE.shaper:createNnodes(hyphen, state)
   prebreak[#prebreak+1] = hnodes[1]
   local postbreak = SILE.shaper:createNnodes((lastjoinable(items[1]) and zwj or "")..items[2], state)
-  local d = SILE.nodefactory.newDiscretionary({
+  local d = SILE.nodefactory.discretionary({
     replacement = {n},
     prebreak = prebreak,
     postbreak = postbreak
   })
-  return {SILE.nodefactory.zeroHbox,d}
+  return { SILE.nodefactory.zerohbox(), d }
 end

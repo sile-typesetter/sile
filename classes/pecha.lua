@@ -31,7 +31,7 @@ function pecha:endPage()
   SILE.typesetNaturally(folioframe, function ()
     SILE.settings.pushState()
     SILE.settings.reset()
-    SILE.settings.set("typesetter.breakwidth", SILE.length.new({length = folioframe:height() }))
+    SILE.settings.set("typesetter.breakwidth", folioframe:height())
     SILE.typesetter:typeset(" ")
     SILE.call("vfill")
     SILE.call("pecha-folio-font")
@@ -53,9 +53,9 @@ end
 function pecha:registerCommands()
   self.base:registerCommands()
   SILE.call("language", { main = "bo" })
-  SILE.settings.set("document.lskip", SILE.nodefactory.hfillGlue)
-  SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
-  SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
+  SILE.settings.set("document.lskip", SILE.nodefactory.hfillglue())
+  SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
+  SILE.settings.set("document.parindent", SILE.nodefactory.glue())
 end
 
 return pecha

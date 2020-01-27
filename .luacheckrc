@@ -1,4 +1,4 @@
-std = "max"
+std = "lua53"
 include_files = {
   "**/*.lua",
   "sile.in",
@@ -7,6 +7,8 @@ include_files = {
   ".luacheckrc"
 }
 exclude_files = {
+  "benchmark-*",
+  "compare-*",
   "lua_modules",
   "lua-libraries",
   ".lua",

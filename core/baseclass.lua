@@ -46,7 +46,7 @@ SILE.registerCommand("define", function (options, content)
   SU.required(options, "command", "defining command")
   SILE.registerCommand(options["command"], function (_, _content)
     --local prevState = SILE.documentState
-    --SILE.documentState = std.tree.clone( prevState )
+    --SILE.documentState = pl.tablex.deepcopy( prevState )
     local depth = #macroStack
     table.insert(macroStack, _content)
     SU.debug("macros", "Processing a "..options["command"].." Stack depth is "..depth)
@@ -103,14 +103,14 @@ SILE.baseClass = std.object {
         SILE.typesetter:leaveHmode()
       end
       if SILE.typesetter:vmode() then
-        SILE.typesetter:pushVpenalty({ flagged = tonumber(options.flagged), penalty = tonumber(options.penalty) })
+        SILE.typesetter:pushVpenalty({ penalty = tonumber(options.penalty) })
       else
-        SILE.typesetter:pushPenalty({ flagged = tonumber(options.flagged), penalty = tonumber(options.penalty) })
+        SILE.typesetter:pushPenalty({ penalty = tonumber(options.penalty) })
       end
-    end, "Inserts a penalty node. Options are penalty= for the size of the penalty and flagged= if this is a flagged penalty.")
+    end, "Inserts a penalty node. Option is penalty= for the size of the penalty.")
 
     SILE.registerCommand("discretionary", function (options, _)
-      local discretionary = SILE.nodefactory.newDiscretionary({})
+      local discretionary = SILE.nodefactory.discretionary({})
       if options.prebreak then
         SILE.call("hbox", {}, function () SILE.typesetter:typeset(options.prebreak) end)
         discretionary.prebreak = { SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] }
@@ -130,22 +130,18 @@ SILE.baseClass = std.object {
     end, "Inserts a discretionary node.")
 
     SILE.registerCommand("glue", function (options, _)
-      SILE.typesetter:pushGlue({
-        width = SILE.length.parse(options.width):absolute()
-      })
+      local width = SU.cast("length", options.width):absolute()
+      SILE.typesetter:pushGlue(width)
     end, "Inserts a glue node. The width option denotes the glue dimension.")
 
     SILE.registerCommand("kern", function (options, _)
-      table.insert(SILE.typesetter.state.nodes,
-        SILE.nodefactory.newKern({
-          width = SILE.length.parse(options.width):absolute()
-        })
-      )
+      local width = SU.cast("length", options.width):absolute()
+      SILE.typesetter:pushHorizontal(SILE.nodefactory.kern(width))
     end, "Inserts a glue node. The width option denotes the glue dimension.")
 
     SILE.registerCommand("skip", function (options, _)
       options.discardable = options.discardable or false
-      options.height = SILE.length.parse(options.height):absolute()
+      options.height = SILE.length(options.height):absolute()
       SILE.typesetter:leaveHmode()
       if options.discardable then
         SILE.typesetter:pushVglue(options)
@@ -177,7 +173,7 @@ SILE.baseClass = std.object {
   init = function (self)
     SILE.settings.declare({
       name = "current.parindent",
-      type = "Glue or nil",
+      type = "glue or nil",
       default = nil,
       help = "Glue at start of paragraph"
     })
@@ -194,7 +190,7 @@ SILE.baseClass = std.object {
   end,
 
   initialFrame = function (self)
-    SILE.documentState.thisPageTemplate = std.tree.clone(self.pageTemplate)
+    SILE.documentState.thisPageTemplate = pl.tablex.deepcopy(self.pageTemplate)
     SILE.frames = { page = SILE.frames.page }
     for k, v in pairs(SILE.documentState.thisPageTemplate.frames) do
       SILE.frames[k] = v
@@ -205,7 +201,6 @@ SILE.baseClass = std.object {
 
   declareFrame = function (self, id, spec)
     spec.id = id
-    SILE.frames[id] = nil
     self.pageTemplate.frames[id] = SILE.newFrame(spec)
     --   next = spec.next,
     --   left = spec.left and fW(spec.left),
@@ -239,17 +234,17 @@ SILE.baseClass = std.object {
 
   finish = function (self)
     SILE.call("vfill")
-    while not (#SILE.typesetter.state.nodes == 0 and #SILE.typesetter.state.outputQueue == 0) do
+    while not SILE.typesetter:isQueueEmpty() do
       SILE.call("supereject")
       SILE.typesetter:leaveHmode(true)
-      SILE.typesetter:pageBuilder()
-      if not (#SILE.typesetter.state.nodes == 0 and #SILE.typesetter.state.outputQueue == 0) then
+      SILE.typesetter:buildPage()
+      if not SILE.typesetter:isQueueEmpty() then
         SILE.typesetter:initNextFrame()
       end
     end
     SILE.typesetter:runHooks("pageend") -- normally run by the typesetter
     self:endPage()
-    assert(#SILE.typesetter.state.nodes == 0 and #SILE.typesetter.state.outputQueue == 0, "queues not empty")
+    assert(SILE.typesetter:isQueueEmpty(), "queues not empty")
     SILE.outputter:finish()
   end,
 
@@ -259,13 +254,12 @@ SILE.baseClass = std.object {
   end,
 
   endPar = function (typesetter)
-    local g = SILE.settings.get("document.parskip")
-    typesetter:pushVglue(std.tree.clone(g))
+    typesetter:pushVglue(SILE.settings.get("document.parskip"))
   end,
 
   options = {
     papersize = function (size)
-      SILE.documentState.paperSize = SILE.paperSizeParser(size)
+      SILE.documentState.paperSize = SILE.papersize(size)
       SILE.documentState.orgPaperSize = SILE.documentState.paperSize
       SILE.newFrame({
           id = "page",

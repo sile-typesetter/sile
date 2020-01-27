@@ -74,9 +74,8 @@ end
 SILE.registerCommand("ch", function (options, content)
   local chordBox = SILE.call("hbox", {}, { options.name })
   SILE.typesetter.state.nodes[#(SILE.typesetter.state.nodes)] = nil
-  -- local chordLineHeight = SILE.toPoints("4", "mm", "h")
   local origWidth = chordBox.width
-  chordBox.width = SILE.length.zero
+  chordBox.width = SILE.length()
   chordBox.height = SILE.settings.get("chordmode.lineheight")
   SILE.call("raise", { height = SILE.settings.get("chordmode.offset") }, function ()
     SILE.call("chordmode:chordfont", {}, function ()
@@ -85,7 +84,7 @@ SILE.registerCommand("ch", function (options, content)
   end)
   local lyricBox = SILE.call("hbox", {}, content)
   if lyricBox.width < origWidth then
-    lyricBox.width = origWidth + SILE.toPoints("0.5em")
+    lyricBox.width = origWidth + SILE.length("0.5em"):absolute()
   end
 end, "Insert a a chord name above the text")
 
@@ -99,14 +98,14 @@ end, "Override this command to change chord style.")
 
 SILE.settings.declare({
     name = "chordmode.offset",
-    type = "string",
-    default = "2ex",
+    type = "length",
+    default = SILE.length("2ex"),
     help = "Vertical offset between the chord name and the text."
   })
 
 SILE.settings.declare({
     name = "chordmode.lineheight",
-    type = "Length",
-    default = SILE.length.parse("4mm"),
+    type = "length",
+    default = SILE.length("4mm"),
     help = "Length of the chord name line."
   })

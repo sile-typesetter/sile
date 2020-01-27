@@ -1,4 +1,5 @@
 local std = require("std")
+-- luacheck: globals setfenv getfenv
 
 -- The following functions borrowed from Norman Ramsey's nbibtex,
 -- with permission.
@@ -295,7 +296,7 @@ Bibliography = {
   end,
 
   buildEnv = function (cite,item, style)
-    local t = std.table.clone(getfenv and getfenv(1) or _ENV)
+    local t = pl.tablex.copy(getfenv and getfenv(1) or _ENV)
     t.cite = cite
     t.item = item
     for k,v in pairs(item) do t[k:lower()] = v end

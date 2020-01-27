@@ -25,10 +25,10 @@ end)
 
 SILE.registerCommand("footnote:options", function (options, _)
   if options["maxHeight"] then
-    SILE.scratch.insertions.classes.footnote.maxHeight = SILE.length.parse(options["maxHeight"])
+    SILE.scratch.insertions.classes.footnote.maxHeight = SILE.length(options["maxHeight"])
   end
   if options["interInsertionSkip"] then
-    SILE.scratch.insertions.classes.footnote.interInsertionSkip = SILE.length.parse(options["interInsertionSkip"])
+    SILE.scratch.insertions.classes.footnote.interInsertionSkip = SILE.length(options["interInsertionSkip"])
   end
 end)
 
@@ -39,7 +39,7 @@ SILE.registerCommand("footnote", function (options, content)
   local oldT = SILE.typesetter
   SILE.typesetter = SILE.typesetter {}
   SILE.typesetter:init(f)
-  SILE.typesetter.pageTarget = function () return 0xFFFFFF end
+  SILE.typesetter.getTargetLength = function () return SILE.length(0xFFFFFF) end
   SILE.settings.pushState()
   SILE.settings.reset()
   local material = SILE.call("vbox", {}, function ()
@@ -75,9 +75,9 @@ return {
     insertions.exports:initInsertionClass("footnote", {
         insertInto = args.insertInto,
         stealFrom = args.stealFrom,
-        maxHeight = SILE.length.new({ length = SILE.toPoints("75", "%ph") }),
-        topBox = SILE.nodefactory.newVglue({ height = SILE.length.parse("2ex") }),
-        interInsertionSkip = SILE.length.parse("1ex"),
+        maxHeight = SILE.length("75%ph"),
+        topBox = SILE.nodefactory.vglue("2ex"),
+        interInsertionSkip = SILE.length("1ex"),
       })
   end,
   exports = {

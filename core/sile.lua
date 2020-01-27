@@ -1,8 +1,8 @@
--- Initialize Lua environment
+-- Initialize Lua environment and global utilities
 local lua_version = _VERSION:sub(-3)
 if lua_version < "5.3" then require("compat53") end -- Backport of lots of Lua 5.3 features to Lua 5.[12]
 bit32 = bit32 or require("bit32") -- Backport of Lua 5.2+ bitwise functions to Lua 5.1
-require("pl") -- Penlight on-demand module loader
+pl = require("pl.import_into")() -- Penlight on-demand module loader
 if (os.getenv("SILE_COVERAGE")) then require("luacov") end
 
 -- Include lua-stdlib, but make sure debugging is turned off since newer
@@ -17,42 +17,44 @@ std = require("std")
 -- Includes for _this_ scope
 local lfs = require("lfs")
 
--- Initialize SILE
+-- Initialize SILE internals
 SILE = {}
-SILE.utilities = require("core/utilities")
-SU = SILE.utilities
+
+-- Internal data tables
 SILE.inputs = {}
 SILE.Commands = {}
 SILE.debugFlags = {}
 SILE.nodeMakers = {}
 SILE.tokenizers = {}
 SILE.status = {}
-
-SILE.traceStack = require("core/tracestack")
-SILE.documentState = std.object {}
 SILE.scratch = {}
+
+-- Internal functions / classes / factories
+SILE.utilities = require("core/utilities")
+SU = SILE.utilities -- alias
+SILE.traceStack = require("core/tracestack")()
+SILE.documentState = std.object {}
+SILE.parserBits = require("core/parserbits")
+SILE.units = require("core/units")
+SILE.measurement = require("core/measurement")
 SILE.length = require("core/length")
-require("core/parserbits")
-require("core/measurements")
+SILE.papersize = require("core/papersize")
 require("core/baseclass")
 SILE.nodefactory = require("core/nodefactory")
 require("core/settings")
 require("core/inputs-texlike")
 require("core/inputs-xml")
 require("core/inputs-common")
-require("core/papersizes")
 require("core/colorparser")
-require("core/pagebuilder")
+SILE.pagebuilder = require("core/pagebuilder")()
 require("core/typesetter")
 require("core/hyphenator-liang")
 require("core/languages")
 require("core/font")
 require("core/packagemanager")
-
 SILE.fontManager = require("core/fontmanager")
 SILE.frameParser = require("core/frameparser")
 SILE.linebreak = require("core/break")
-
 require("core/frame")
 
 SILE.init = function ()
@@ -95,8 +97,8 @@ SILE.require = function (dependency, pathprefix)
   return require(dependency)
 end
 
-SILE.parseArguments = function()
-local parser = std.optparse ("SILE "..SILE.version..[[
+SILE.parseArguments = function ()
+  local parser = std.optparse("SILE "..SILE.version..[[
 
 Usage: sile [options] file.sil|file.xml
 

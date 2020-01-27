@@ -1,8 +1,8 @@
 SILE.registerCommand("rebox", function (options, content)
   local box = SILE.call("hbox", {}, content)
-  if options.width then box.width = SILE.length.new({length = SILE.toPoints(options.width)}) end
-  if options.height then box.height = SILE.toPoints(options.height) end
-  if options.depth then box.depth = SILE.toPoints(options.depth) end
+  if options.width then box.width = SILE.length(options.width) end
+  if options.height then box.height = SILE.length(options.height) end
+  if options.depth then box.depth = SILE.length(options.depth) end
   if options.phantom then
     box.outputYourself = function (self, typesetter, line)
       typesetter.frame:advanceWritingDirection(self:scaledWidth(line))

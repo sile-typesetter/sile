@@ -31,7 +31,7 @@ end
 
 SILE.registerCommand("include-svg-file", function (options, _)
   local fn = SU.required(options, "src", "filename")
-  local height = SILE.length.parse(options.height):absolute().length or nil
+  local height = options.height and SU.cast("measurement", options.height):absolute() or nil
   local density = options.density or 72
   local fh = io.open(fn)
   local inp = fh:read("*all")
