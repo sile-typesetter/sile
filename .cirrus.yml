@@ -16,6 +16,6 @@ task:
     - luarocks-5.2 install stdlib
     - luarocks-5.2 install vstruct
     - sh bootstrap.sh
-    - ./configure --with-system-luarocks
+    - ./configure --with-system-luarocks LUA_LIB="-llua-5.2"
     - gmake install
   test_script: gmake test
