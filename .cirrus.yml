@@ -16,6 +16,6 @@ task:
     - luarocks-5.2 install stdlib
     - luarocks-5.2 install vstruct
     - sh bootstrap.sh
-    - ./configure --with-system-luarocks LDFLAGS="-L/usr/local/lib"
+    - ./configure --with-system-luarocks CFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
     - gmake install
   test_script: gmake test
