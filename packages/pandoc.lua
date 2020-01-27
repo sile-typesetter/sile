@@ -13,32 +13,48 @@ local handlePandocArgs = function (options)
     SU.debug("pandoc", "Set ID on tag")
   end
   if options.lang then
-    SU.debug("pandoc", "Set lang tag: "..options.lang)
+    SU.debug("pandoc", "Set lang in tag: "..options.lang)
     local fontfunc = SILE.Commands[SILE.Commands["font:" .. options.lang] and "font:" .. options.lang or "font"]
     local innerWrapper = wrapper
     wrapper = function (content) innerWrapper(function () fontfunc({ language = options.lang }, content) end) end
+    options.lang = nil
   end
   if options.classes then
-    for _,class in pairs(options.classes:split(",")) do
-      SU.debug("pandoc", "Add div class: "..class)
+    for _, class in pairs(options.classes:split(",")) do
+      SU.debug("pandoc", "Add inner class wrapper: "..class)
       if SILE.Commands["class:"..class] then
         local innerWrapper = wrapper
         wrapper = function (content) innerWrapper(function () SILE.Commands["class:"..class](options, content) end) end
       end
     end
+    options.classes = nil
   end
-  return wrapper
+  return wrapper, options
 end
 
-SILE.registerCommand("nbsp", function(_, _)
+-- Document level stuff
+
+
+-- Blocks
+
+SILE.registerCommand("BlockQuote", function (_, content)
+  SILE.call("quote", {}, content)
+end)
+
+-- Inlines
+
+
+-- Needs refactoring
+
+SILE.registerCommand("nbsp", function (_, _)
   SILE.call("kern", { width = "1spc" })
 end)
 
-SILE.registerCommand("label", function(options, content)
+SILE.registerCommand("label", function (options, content)
   SILE.call("pdf:bookmark", options, content)
 end)
 
-SILE.registerCommand("tt", function(options, content)
+SILE.registerCommand("tt", function (options, content)
   SILE.call("verbatim:font", options, content)
 end)
 
