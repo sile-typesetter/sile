@@ -13,7 +13,7 @@ local handlePandocArgs = function (options)
   local wrapper = SILE.settings.wrap()
   if options.id then
     SU.debug("pandoc", "Set ID on tag")
-    SILE.call("pdf:bookmark", options, content)
+    SILE.call("pdf:destination", { name = options.id })
   end
   if options.lang then
     SU.debug("pandoc", "Set lang in tag: "..options.lang)
@@ -54,6 +54,7 @@ SILE.registerCommand("BlockQuote", function (_, content)
 end)
 
 SILE.registerCommand("BulletList", function (_, content)
+  local pandocListType = "bullet"
   SILE.settings.temporarily(function ()
     SILE.settings.set("document.rskip","10pt")
     SILE.settings.set("document.lskip","20pt")
@@ -236,7 +237,6 @@ SILE.registerCommand("Superscript", function (_, content)
     SILE.call("font", { size = scriptSize }, content)
   end)
 end, "Creates a Superscript inline element")
--- -\define[command=listitem]{\smallskip{}\glue[width=-1em]• \glue[width=0.3em]\process\smallskip}%
 
 -- Utility wrapper classes
 
@@ -251,6 +251,22 @@ end,"Inline normal weight wrapper")
 SILE.registerCommand("class:csl-no-smallcaps", function (_, content)
   SILE.call("font", { features = "-smcp" }, content)
 end,"Inline smallcaps disable wrapper")
+
+-- Non native types
+
+SILE.registerCommand("ListItem", function (_, content)
+  SILE.call("smallskip")
+  SILE.call("glue", { width = "-1em"})
+  SILE.call("rebox", { width = "1em" }, function ()
+    if pandocListType == "bullet" then
+      SILE.typesetter:typeset("•")
+    else
+      SILE.typesetter:typeset("-")
+    end
+  end)
+  SILE.process(content)
+  SILE.call("smallskip")
+end)
 
 return { documentation = [[\begin{document}
 
