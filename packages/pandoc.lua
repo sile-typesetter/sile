@@ -13,6 +13,7 @@ local handlePandocArgs = function (options)
   local wrapper = SILE.settings.wrap()
   if options.id then
     SU.debug("pandoc", "Set ID on tag")
+    SILE.call("pdf:bookmark", options, content)
   end
   if options.lang then
     SU.debug("pandoc", "Set lang in tag: "..options.lang)
@@ -237,63 +238,22 @@ SILE.registerCommand("Superscript", function (_, content)
 end, "Creates a Superscript inline element")
 -- -\define[command=listitem]{\smallskip{}\glue[width=-1em]• \glue[width=0.3em]\process\smallskip}%
 
--- Needs refactoring
+-- Utility wrapper classes
 
-SILE.registerCommand("nbsp", function (_, _)
-  SILE.call("kern", { width = "1spc" })
-end)
-
-SILE.registerCommand("label", function (options, content)
-  SILE.call("pdf:bookmark", options, content)
-end)
-
-SILE.registerCommand("tt", function (options, content)
-  SILE.call("verbatim:font", options, content)
-end)
-
-SILE.registerCommand("csl-no-emph", function (_, content)
+SILE.registerCommand("class:csl-no-emph", function (_, content)
   SILE.call("font", { style = "Roman" }, content)
 end,"Inline upright wrapper")
 
-SILE.registerCommand("csl-no-strong", function (_, content)
+SILE.registerCommand("class:csl-no-strong", function (_, content)
   SILE.call("font", { weight = 400 }, content)
 end,"Inline normal weight wrapper")
 
-SILE.registerCommand("csl-no-smallcaps", function (_, content)
+SILE.registerCommand("class:csl-no-smallcaps", function (_, content)
   SILE.call("font", { features = "-smcp" }, content)
 end,"Inline smallcaps disable wrapper")
 
-SILE.registerCommand("unimplemented", function (_, content)
-  SU.debug("pandoc", "Un-implemented function")
-  SILE.process(content)
-end,"Unimplemented Pandoc function wrapper")
-
-SILE.Commands["strikeout"] = SILE.Commands["unimplemented"]
-
 return { documentation = [[\begin{document}
 
-Try to cover all the possible commands Pandoc's SILE export might throw at us.
-
-Provided by in base classes etc.:
-
-\listitem \code{listarea}
-\listitem \code{listitem}
-
-Modified from default:
-
-
-Provided specifically for Pandoc:
-
-\listitem \code{Span}
-\listitem \code{Div}
-\listitem \code{Emph}
-\listitem \code{Strong}
-\listitem \code{SmallCaps}
-\listitem \code{Strikeout}
-\listitem \code{csl-no-emph}
-\listitem \code{csl-no-strong}
-\listitem \code{csl-no-smallcaps}
-\listitem \code{Superscript}
-\listitem \code{Subscript}
+Cover all the possible commands Pandoc's SILE export might throw at us.
 
 \end{document}]] }
