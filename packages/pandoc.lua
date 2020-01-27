@@ -30,6 +30,10 @@ local handlePandocArgs = function (options)
   return wrapper
 end
 
+SILE.registerCommand("nbsp", function(_, _)
+  SILE.call("kern", { width = "1spc" })
+end)
+
 SILE.registerCommand("label", function(options, content)
   SILE.call("pdf:bookmark", options, content)
 end)
