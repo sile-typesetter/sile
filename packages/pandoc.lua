@@ -83,9 +83,8 @@ SILE.registerCommand("Div", function (options, content)
 end, "Generic block wrapper")
 
 SILE.registerCommand("Header", function (options, content)
-  local analogs = { "part", "chapter", "section", "subsection" }
-  local analog = analogs[options.level+2] -- Pandoc's -1 level is \part
-  options.level = nil
+  local analog = options.type
+  options.level, options.type = nil, nil
   local wrapper, args = handlePandocArgs(options)
   wrapper(function ()
     if analog and SILE.Commands[analog] then
@@ -273,6 +272,17 @@ SILE.registerCommand("ListItem", function (_, content)
       SILE.typesetter:typeset("-")
     end
   end)
+  SILE.process(content)
+  SILE.call("smallskip")
+end)
+
+SILE.registerCommand("ListItemTerm", function (_, content)
+  SILE.call("smallskip")
+  SILE.call("strong", content)
+  SILE.typesetter:typeset(" : ")
+end)
+
+SILE.registerCommand("ListItemDefinition", function (_, content)
   SILE.process(content)
   SILE.call("smallskip")
 end)
