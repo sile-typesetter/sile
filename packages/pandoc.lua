@@ -54,6 +54,7 @@ SILE.registerCommand("BlockQuote", function (_, content)
 end)
 
 SILE.registerCommand("BulletList", function (_, content)
+  -- luacheck: ignore pandocListType
   local pandocListType = "bullet"
   SILE.settings.temporarily(function ()
     SILE.settings.set("document.rskip","10pt")
@@ -137,12 +138,14 @@ end)
 
 SILE.registerCommand("RawBlock", function (options, content)
   local format = options.format
+  SU.debug("pandoc", format)
   -- TODO: execute as script? pass to different input parser?
   SILE.process(content)
   SILE.typesetter:leaveHmode()
 end)
 
 SILE.registerCommand("Table", function (options, content)
+  SU.debug("pandoc", options.caption)
   -- TODO: options.caption
   -- TODO: options.align
   -- TODO: options.width
@@ -154,6 +157,7 @@ end)
 -- Inlines
 
 SILE.registerCommand("Cite", function (options, content)
+  SU.debug("pandoc", options, content)
   -- TODO: options is citation list?
 end, "Creates a Cite inline element")
 
@@ -187,8 +191,9 @@ SILE.registerCommand("Link", function (options, content)
 end, "Creates a link inline element, usually a hyperlink.")
 
 SILE.registerCommand("Math", function (options, content)
+  SU.debug("pandoc", options)
   -- TODO options is math type
-  SILE.process("content")
+  SILE.process(content)
 end, "Creates a Math element, either inline or displayed.")
 
 SILE.registerCommand("Note", function (_, content)
@@ -196,12 +201,14 @@ SILE.registerCommand("Note", function (_, content)
 end, "Creates a Note inline element")
 
 SILE.registerCommand("Quoted", function (options, content)
+  SU.debug("pandoc", options.type)
   -- TODO: options.type
   SILE.process(content)
 end, "Creates a Quoted inline element given the quote type and quoted content.")
 
 SILE.registerCommand("RawInline", function (options, content)
   local format = options.format
+  SU.debug("pandoc", format)
   -- TODO: execute as script? pass to different input parser?
   SILE.process(content)
 end, "Creates a Quoted inline element given the quote type and quoted content.")
@@ -258,6 +265,8 @@ SILE.registerCommand("ListItem", function (_, content)
   SILE.call("smallskip")
   SILE.call("glue", { width = "-1em"})
   SILE.call("rebox", { width = "1em" }, function ()
+    -- Not: Relies on Lua scope shadowing to find immediate parent list type
+    -- luacheck: ignore pandocListType
     if pandocListType == "bullet" then
       SILE.typesetter:typeset("•")
     else
