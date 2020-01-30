@@ -49,7 +49,7 @@ core/*.so
 build/
 *.debug
 gh-pages
-sile-v*
+sile-*
 *.zip
 *.xz
 *.rockslock
