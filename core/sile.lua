@@ -1,7 +1,10 @@
 -- Initialize Lua environment and global utilities
 local lua_version = _VERSION:sub(-3)
-if lua_version < "5.3" then require("compat53") end -- Backport of lots of Lua 5.3 features to Lua 5.[12]
-bit32 = bit32 or require("bit32") -- Backport of Lua 5.2+ bitwise functions to Lua 5.1
+local lua_isjit = type(jit) == "table"
+if not lua_isjit then
+  if lua_version < "5.3" then require("compat53") end -- Backport of lots of Lua 5.3 features to Lua 5.[12]
+  bit32 = bit32 or require("bit32") -- Backport of Lua 5.2+ bitwise functions to Lua 5.1
+end
 pl = require("pl.import_into")() -- Penlight on-demand module loader
 if (os.getenv("SILE_COVERAGE")) then require("luacov") end
 
