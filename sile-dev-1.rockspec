@@ -6,7 +6,6 @@ source = {
 dependencies = {
   "lua >= 5.1",
   "bit32",
-  "luaepnf == 0.3-1",
   "lpeg == 1.0.2-1",
   "cassowary == 2.2-1",
   "compat53 == 0.7-1",
