@@ -193,7 +193,7 @@ AC_DEFUN([AX_PROG_LUA],
 
   dnl Find a Lua interpreter.
   m4_define_default([_AX_LUA_INTERPRETER_LIST],
-    [lua lua5.2 lua52 lua5.1 lua51 lua50])
+    [luajit lua lua5.3 lua53 lua5.2 lua52 lua5.1 lua51 lua50 lua50])
 
   m4_if([$1], [],
   [ dnl No version check is needed. Find any Lua interpreter.
@@ -401,7 +401,7 @@ AC_DEFUN([AX_LUA_HEADERS],
   AS_IF([test "x$LUA_VERSION" != 'x'],
     [AC_MSG_RESULT([yes])],
     [ AC_MSG_RESULT([no])
-      AC_MSG_ERROR([cannot check Lua headers without knowing LUA_VERSION])
+      AC_MSG_WARN([cannot check Lua headers without knowing LUA_VERSION])
     ])
 
   dnl Make LUA_INCLUDE a precious variable.
@@ -410,19 +410,26 @@ AC_DEFUN([AX_LUA_HEADERS],
   dnl Some default directories to search.
   LUA_SHORT_VERSION=`echo "$LUA_VERSION" | sed 's|\.||'`
   m4_define_default([_AX_LUA_INCLUDE_LIST],
-    [ /usr/include/lua$LUA_VERSION \
+    [ /usr/include/luajit$LUA_VERSION \
+      /usr/include/lua$LUA_VERSION \
+      /usr/include/luajit/$LUA_VERSION \
       /usr/include/lua/$LUA_VERSION \
+      /usr/include/luajit$LUA_SHORT_VERSION \
       /usr/include/lua$LUA_SHORT_VERSION \
+      /usr/local/include/luajit$LUA_VERSION \
       /usr/local/include/lua$LUA_VERSION \
+      /usr/local/include/luajit-$LUA_VERSION \
       /usr/local/include/lua-$LUA_VERSION \
+      /usr/local/include/luajit/$LUA_VERSION \
       /usr/local/include/lua/$LUA_VERSION \
+      /usr/local/include/luajit$LUA_SHORT_VERSION \
       /usr/local/include/lua$LUA_SHORT_VERSION \
     ])
 
   dnl Try to find the headers.
   _ax_lua_saved_cppflags=$CPPFLAGS
   CPPFLAGS="$CPPFLAGS $LUA_INCLUDE"
-  AC_CHECK_HEADERS([lua.h lualib.h lauxlib.h luaconf.h])
+  AC_CHECK_HEADERS([luajit.h lua.h lualib.h lauxlib.h luaconf.h])
   CPPFLAGS=$_ax_lua_saved_cppflags
 
   dnl Try some other directories if LUA_INCLUDE was not set.
@@ -442,7 +449,7 @@ AC_DEFUN([AX_LUA_HEADERS],
 
         _ax_lua_saved_cppflags=$CPPFLAGS
         CPPFLAGS="$CPPFLAGS -I$_ax_include_path"
-        AC_CHECK_HEADERS([lua.h lualib.h lauxlib.h luaconf.h])
+        AC_CHECK_HEADERS([luajit.h lua.h lualib.h lauxlib.h luaconf.h])
         CPPFLAGS=$_ax_lua_saved_cppflags
 
         AS_IF([test "x$ac_cv_header_lua_h" = 'xyes'],
@@ -497,11 +504,11 @@ int main(int argc, char ** argv)
   dnl Was LUA_INCLUDE specified?
   AS_IF([test "x$ax_header_version_match" != 'xyes' &&
          test "x$LUA_INCLUDE" != 'x'],
-    [AC_MSG_ERROR([cannot find headers for specified LUA_INCLUDE])])
+    [AC_MSG_WARN([cannot find headers for specified LUA_INCLUDE])])
 
   dnl Test the final result and run user code.
   AS_IF([test "x$ax_header_version_match" = 'xyes'], [$1],
-    [m4_default([$2], [AC_MSG_ERROR([cannot find Lua includes])])])
+    [m4_default([$2], [AC_MSG_WARN([cannot find Lua includes])])])
 ])
 
 dnl AX_LUA_HEADERS_VERSION no longer exists, use AX_LUA_HEADERS.
@@ -523,7 +530,7 @@ AC_DEFUN([AX_LUA_LIBS],
   AS_IF([test "x$LUA_VERSION" != 'x'],
     [AC_MSG_RESULT([yes])],
     [ AC_MSG_RESULT([no])
-      AC_MSG_ERROR([cannot check Lua libs without knowing LUA_VERSION])
+      AC_MSG_WARN([cannot check Lua libs without knowing LUA_VERSION])
     ])
 
   dnl Make LUA_LIB a precious variable.
@@ -540,7 +547,7 @@ AC_DEFUN([AX_LUA_LIBS],
 
     dnl Check the result.
     AS_IF([test "x$_ax_found_lua_libs" != 'xyes'],
-      [AC_MSG_ERROR([cannot find libs for specified LUA_LIB])])
+      [AC_MSG_WARN([cannot find libs for specified LUA_LIB])])
   ],
   [ dnl First search for extra libs.
     _ax_lua_extra_libs=''
@@ -563,16 +570,16 @@ AC_DEFUN([AX_LUA_LIBS],
     _ax_lua_saved_libs=$LIBS
     LIBS="$LIBS $LUA_LIB"
     AC_SEARCH_LIBS([lua_load],
-                   [ lua$LUA_VERSION \
-                     lua$LUA_SHORT_VERSION \
-                     lua-$LUA_VERSION \
-                     lua-$LUA_SHORT_VERSION \
-                     lua \
-                     luajit$LUA_VERSION \
+                   [ luajit$LUA_VERSION \
                      luajit$LUA_SHORT_VERSION \
                      luajit-$LUA_VERSION \
                      luajit-$LUA_SHORT_VERSION \
-                     luajit],
+                     luajit \
+                     lua$LUA_VERSION \
+                     lua$LUA_SHORT_VERSION \
+                     lua-$LUA_VERSION \
+                     lua-$LUA_SHORT_VERSION \
+                     lua],
                    [_ax_found_lua_libs='yes'],
                    [_ax_found_lua_libs='no'],
                    [$_ax_lua_extra_libs])
@@ -585,7 +592,7 @@ AC_DEFUN([AX_LUA_LIBS],
 
   dnl Test the result and run user code.
   AS_IF([test "x$_ax_found_lua_libs" = 'xyes'], [$1],
-    [m4_default([$2], [AC_MSG_ERROR([cannot find Lua libs])])])
+    [m4_default([$2], [AC_MSG_WARN([cannot find Lua libs])])])
 ])
 
 
@@ -608,7 +615,7 @@ AC_DEFUN([AX_LUA_MODULE],
   AC_MSG_CHECKING([for required Lua library $1])
   AS_IF([$LUA -e 'require("$1")' 2>/dev/null], [
   AC_MSG_RESULT([found])
-  $3], 
+  $3],
   [
   AC_MSG_RESULT([not found])
   m4_default([$4], [AC_MSG_ERROR([cannot find Lua library $1 - install from luarocks package $2])])])
