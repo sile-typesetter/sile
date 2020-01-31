@@ -67,6 +67,7 @@ compare-*
 # Vendor stuff
 node_modules
 lua_modules
+lua_modules_dist
 
 # Editor entrails
 .vscode/
