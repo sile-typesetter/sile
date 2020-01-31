@@ -166,8 +166,8 @@ patterndeps = $(wildcard $(DEPDIR)/$*.d) all testprep
 coverage: export SILE_COVERAGE=1
 coverage: test_previews
 
-HEADSHA ?= $(shell test -e .git && git rev-parse --short HEAD)
-BASESHA ?= $(shell test -e .git && git rev-parse --short $(HEADSHA)^)
+HEADSHA ?= $(shell test -e .git && git rev-parse HEAD)
+BASESHA ?= $(shell test -e .git && git rev-parse $(HEADSHA)^)
 
 clean-recursive: clean-tests
 
@@ -185,12 +185,24 @@ clean-deps:
 time-%.json: benchmark-%/time.json
 	cp $< $@
 
+clean-recursive: clean-worktrees
+
+.PHONY: clean-worktrees
+clean-worktrees:
+	if test -e .git; then
+		git worktree list --porcelain |
+			awk 'BEGIN { FS = "/" }; /^worktree .*-[0-9a-f]{7}/ { print $$(NF) }' |
+			while read worktree; do
+				git worktree remove --force $${worktree}
+			done
+	fi
+
 define time_action =
 	export TIMEFORMAT=$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
 	{ time (./sile documentation/sile.sil > /dev/null 2>&1) } 2> time.json
 endef
 
-make_worktree_rules = $(eval $(foreach SHA,$(HEADSHA) $(BASESHA),$(call worktree_sha,$(1),$(SHA))))
+make_worktree_rules = $(eval $(foreach SHA,$(HEADSHA) $(BASESHA),$(call worktree_sha,$(1),$(shell git rev-parse --short=7 $(SHA)))))
 
 define worktree_sha =
 
@@ -216,14 +228,6 @@ $(1)-$(2)/%: $(1)-$(2)
 $(1)-$(2)/time.json: $(1)-$(2) $(1)-$(2)/sile
 	cd $$<
 	$$(time_action)
-
-clean-recursive: clean-$(1)s
-
-.PHONY: clean-$(1)s
-clean-$(1)s:
-	rm -rf $(1)-*
-	git worktree prune
-	git branch --list | grep $(1)- | xargs git branch -D ||:
 
 endef
 
