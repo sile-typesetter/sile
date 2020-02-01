@@ -422,7 +422,7 @@ Once some of the basic document properties have been setup using these fixed
 size units, other dimensions may be specificed relative to them using relative
 units. Percentage units are available relative to the page width or height, the
 current frame width or height, and the line width (\code{\%pw}, \code{\%ph},
-\code{\%fw}, \code{\%fw}, and \code{\%lw} respectively). You can specify
+\code{\%fw}, \code{\%fh}, and \code{\%lw} respectively). You can specify
 lengths in terms of the current paragraph skip (\code{ps}) and baseline skip
 (\code{bs}), which will make sense later on. Additional units are available
 relative to the largest or smallest value of either axis
