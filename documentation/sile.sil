@@ -252,7 +252,7 @@ installing SILE is as easy as running:
 
 If you have not used Lua programs before, that will prompt you to manually
 install a couple dependencies. After running the commands it provides you can
-run the install comand again to complete the instalation.
+run the install command again to complete the installation.
 
 The formula also has instruction that can compile SILE from the current
 Git HEAD version. To test the latest unreleased code you can install using:
@@ -978,7 +978,7 @@ there must be no instances of \code{\\end\{script\}} inside the Lua code block,
 even inside a string that would otherwise be valid Lua code, (e.g. if it was
 inside a quoted string or Lua comment). The first instance of such and end tag
 terminates the block and there is currently no way to escape it. For the inline
-comand form (\code{\\script}) an exact matching number of open and closing
+command form (\code{\\script}) an exact matching number of open and closing
 braces may appear in the Lua code — the next closing brace at the same level as
 the opening brace will close the tag, even if it happens to be inside some
 quoted string in the Lua code. Including any nuber of nested opening and closing
