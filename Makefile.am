@@ -11,7 +11,7 @@ SUPPORTED_LUAS = 5.3 5.2 5.1
 
 dist_man_MANS = sile.1
 bin_SCRIPTS = sile
-nobase_dist_pkgdata_DATA = $(shell find core classes languages packages lua-libraries -type f -print)
+nobase_dist_pkgdata_DATA = $(filter-out %.so,$(shell find core classes languages packages lua-libraries -type f -print))
 EXTRA_DIST = CHANGELOG.md README.md LICENSE spec tests examples documentation sile-dev-1.rockspec build-aux/git-version-gen .version fontconfig.conf
 EXTRA_DIST += $(extra_dist)
 
