@@ -42,7 +42,11 @@ Arch Linux packages are available in the [AUR][aur] that can be installed using 
 
 #### Ubuntu
 
-Track the status of Ubuntu packages in [issue #638](https://github.com/sile-typesetter/sile/issues/638).
+An official [PPA][ppa] is available with precompiled packages for Ubuntu.
+
+    sudo add-apt-repository ppa:sile-typesetter/sile
+    sudo apt-get update
+    sudo apt-get install sile
 
 #### Void Linux
 
@@ -176,3 +180,4 @@ SILE is distributed under the [MIT licence][license].
   [list-ja]: https://groups.google.com/d/forum/sile-users-ja
   [nix]: https://nixos.org/nix
   [ports]: http://ports.su/print/sile
+  [ppa]: https://launchpad.net/~sile-typesetter/+archive/ubuntu/sile

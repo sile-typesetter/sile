@@ -49,7 +49,7 @@ core/*.so
 build/
 *.debug
 gh-pages
-sile-v*
+sile-*
 *.zip
 *.xz
 *.rockslock
@@ -67,6 +67,7 @@ compare-*
 # Vendor stuff
 node_modules
 lua_modules
+lua_modules_dist
 
 # Editor entrails
 .vscode/

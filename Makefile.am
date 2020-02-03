@@ -7,11 +7,13 @@ else
 SUBDIRS = libtexpdf src
 endif
 
+SUPPORTED_LUAS = 5.3 5.2 5.1
+
 dist_man_MANS = sile.1
 bin_SCRIPTS = sile
-subdir_files = $(shell find core classes languages packages lua-libraries -type f -print)
-nobase_dist_pkgdata_DATA = $(subdir_files)
+nobase_dist_pkgdata_DATA = $(filter-out %.so,$(shell find core classes languages packages lua-libraries -type f -print))
 EXTRA_DIST = CHANGELOG.md README.md LICENSE spec tests examples documentation sile-dev-1.rockspec build-aux/git-version-gen .version fontconfig.conf
+EXTRA_DIST += $(extra_dist)
 
 SHELL = bash
 .ONESHELL:
@@ -19,12 +21,12 @@ SHELL = bash
 .DELETE_ON_ERROR:
 
 if !SYSTEM_LUAROCKS
-subdir_files += $(shell find lua_modules -type f -print)
-LUAROCKS := luarocks --tree lua_modules
-LUAROCKSARGS ?=
+nobase_nodist_pkgdata_DATA = $(shell find lua_modules -type f -print)
+extra_dist = $(shell find lua_modules_dist -type f -print)
+LUAROCKS := luarocks --tree lua_modules --lua-version $(LUA_VERSION)
 LUAMODLOCK := sile-dev-1.rockslock
 LUAMODSPEC := sile-dev-1.rockspec
-genrockslock := $(LUAROCKS) list --porcelain | awk '{print $$1 " " $$2}'
+genrockslock := $(LUAROCKS) $(LUAROCKSARGS) list --porcelain | awk '{print $$1 " " $$2}'
 rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
 endif
 
@@ -36,7 +38,7 @@ BUILT_SOURCES = .version
 	cmp -s $@{,-prev} || autoreconf configure.ac --force -W none
 	sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
 
-dist-hook:
+dist-hook: lua_modules_dist
 	echo $(VERSION) > $(distdir)/.tarball-version
 	sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
 
@@ -83,13 +85,25 @@ if !SYSTEM_LUAROCKS
 installrocks: $(LUAMODLOCK) $(shell $(rocksmatch) || echo lua_modules)
 
 lua_modules: $(LUAMODSPEC) $(shell $(rocksmatch) || echo force)
-	$(LUAROCKS) $(LUAROCKSARGS) install --only-deps $<
+	if test -e .git; then
+		$(LUAROCKS) $(LUAROCKSARGS) install --only-deps $<
+	else
+		rm -rf lua_modules
+		cp -a lua_modules_dist lua_modules
+		$(foreach LUA,$(filter-out $(LUA_VERSION),$(SUPPORTED_LUAS)),
+		find lua_modules -maxdepth 3 -type d -name "*$(LUA)" -execdir rm -rf {} \;)
+	fi
 
 $(LUAMODLOCK): lua_modules $(LUAMODSPEC)
 	$(genrockslock) > $@
 
 sile: installrocks
 endif
+
+.PHONY: lua_modules_dist
+lua_modules_dist: $(LUAMODSPEC) force
+	$(foreach LUA,$(SUPPORTED_LUAS),
+	$(LUAROCKS) --tree lua_modules_dist --lua-version $(LUA) install --only-deps $<)
 
 DEPDIR := .deps
 REGRESSIONSCRIPT := ./tests/regressions.pl
@@ -166,8 +180,8 @@ patterndeps = $(wildcard $(DEPDIR)/$*.d) all testprep
 coverage: export SILE_COVERAGE=1
 coverage: test_previews
 
-HEADSHA ?= $(shell test -e .git && git rev-parse --short HEAD)
-BASESHA ?= $(shell test -e .git && git rev-parse --short $(HEADSHA)^)
+HEADSHA ?= $(shell test -e .git && git rev-parse HEAD)
+BASESHA ?= $(shell test -e .git && git rev-parse $(HEADSHA)^)
 
 clean-recursive: clean-tests
 
@@ -185,12 +199,24 @@ clean-deps:
 time-%.json: benchmark-%/time.json
 	cp $< $@
 
+clean-recursive: clean-worktrees
+
+.PHONY: clean-worktrees
+clean-worktrees:
+	if test -e .git; then
+		git worktree list --porcelain |
+			awk 'BEGIN { FS = "/" }; /^worktree .*-[0-9a-f]{7}/ { print $$(NF) }' |
+			while read worktree; do
+				git worktree remove --force $${worktree}
+			done
+	fi
+
 define time_action =
 	export TIMEFORMAT=$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
 	{ time (./sile documentation/sile.sil > /dev/null 2>&1) } 2> time.json
 endef
 
-make_worktree_rules = $(eval $(foreach SHA,$(HEADSHA) $(BASESHA),$(call worktree_sha,$(1),$(SHA))))
+make_worktree_rules = $(eval $(foreach SHA,$(HEADSHA) $(BASESHA),$(call worktree_sha,$(1),$(shell git rev-parse --short=7 $(SHA)))))
 
 define worktree_sha =
 
@@ -216,14 +242,6 @@ $(1)-$(2)/%: $(1)-$(2)
 $(1)-$(2)/time.json: $(1)-$(2) $(1)-$(2)/sile
 	cd $$<
 	$$(time_action)
-
-clean-recursive: clean-$(1)s
-
-.PHONY: clean-$(1)s
-clean-$(1)s:
-	rm -rf $(1)-*
-	git worktree prune
-	git branch --list | grep $(1)- | xargs git branch -D ||:
 
 endef
 
