@@ -21,8 +21,8 @@ SHELL = bash
 .DELETE_ON_ERROR:
 
 if !SYSTEM_LUAROCKS
-nobase_nodist_pkgdata_DATA = $(shell find lua_modules -type f -print)
-extra_dist = $(shell find lua_modules_dist -type f -print)
+nobase_nodist_pkgdata_DATA = $(shell find lua_modules -type f -print 2>/dev/null ||:)
+extra_dist = $(shell find lua_modules_dist -type f -print 2>/dev/null ||:)
 LUAROCKS := luarocks --tree lua_modules --lua-version $(LUA_VERSION)
 LUAMODLOCK := sile-dev-1.rockslock
 LUAMODSPEC := sile-dev-1.rockspec
