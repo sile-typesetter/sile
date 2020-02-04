@@ -64,7 +64,7 @@ release-preview:
 .PHONY: release
 release: tagrelease
 
-dist: examples docs all
+dist: examples docs all lua_modules_dist
 
 .PHONY: postrelease
 postrelease: dist
