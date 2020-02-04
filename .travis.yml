@@ -22,6 +22,7 @@ addons:
    - libexpat1-dev
    - libipc-run-perl
    - poppler-utils
+   - nodejs
 env:
   global:
    - LUAROCKS=2.4.2
@@ -72,6 +73,7 @@ install:
 before_scipt:
  - eval $(luarocks --tree lua_modules --local path)
 script:
+ - fold_unless_fail 'Linting' 'lint' npx editorconfig-checker
  - fold_unless_fail 'Building' 'build' sh -c './bootstrap.sh && ./configure && make'
  - fold_unless_fail 'Busted' 'busted'  make busted
  - fold_unless_fail 'Run regression tests' 'regression' make --output-sync test
