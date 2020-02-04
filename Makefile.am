@@ -20,6 +20,8 @@ SHELL = bash
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
 
+ISGNUMAKE=$(shell echo true)
+
 if !SYSTEM_LUAROCKS
 nobase_nodist_pkgdata_DATA = $(shell find lua_modules -type f -print 2>/dev/null ||:)
 extra_dist = $(shell find lua_modules_dist -type f -print 2>/dev/null ||:)
@@ -272,6 +274,12 @@ compare: $(call compare_prerequisites)
 
 .PHONY: force
 force: ;
+
+.PHONY: gnumake
+gnumake:
+	@[ "$(strip $(ISGNUMAKE))" = "true" ] || { echo GNU make required ; exit 70; }
+
+default $(MAKECMDGOALS): gnumake
 
 .PHONY: update_expecteds
 update_expecteds: $(EXPECTEDS)
