@@ -4,7 +4,7 @@ FROM archlinux AS sile-base
 RUN pacman --needed --noconfirm -Syyuq && yes | pacman -Sccq
 
 COPY build-aux/docker-yay-runner.sh /usr/local/bin
-RUN docker-yay-runner.sh "--noconfirm --asexplicit -Sq fontconfig harfbuzz icu lua lua-{cassowary,cliargs,expat,filesystem,linenoise,lpeg,luaepnf,penlight,repl,sec,socket,stdlib,vstruct,zlib} ttf-gentium-plus"
+RUN docker-yay-runner.sh "--noconfirm --asexplicit -Sq fontconfig harfbuzz icu lua lua-{cassowary,cosmo,cliargs,expat,filesystem,linenoise,lpeg,luaepnf,penlight,repl,sec,socket,stdlib,vstruct,zlib} ttf-gentium-plus"
 
 FROM sile-base AS sile-builder
 
