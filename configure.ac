@@ -88,7 +88,7 @@ PKG_CHECK_MODULES(HARFBUZZ, harfbuzz,
 
 AM_CONDITIONAL([SYSTEM_LIBTEXPDF], [test "x$with_system_libtexpdf" = "xyes"])
 AM_CONDITIONAL([SYSTEM_LUAROCKS], [test "x$with_system_luarocks" = "xyes"])
-
+AM_CONDITIONAL([LUAJIT], [test "x$with_luajit" = "xyes"])
 
 case $host_os in
   msys)
