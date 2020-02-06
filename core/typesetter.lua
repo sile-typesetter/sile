@@ -67,7 +67,7 @@ SILE.settings.declare({
 
 SILE.settings.declare({
   name = "typesetter.breakwidth",
-  type = "length or nil",
+  type = "measurement or nil",
   default = nil,
   help = "Width to break lines at"
 })
