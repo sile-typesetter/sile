@@ -11,7 +11,7 @@ The first thing you should know is that it makes your life significantly easier 
 consider writing the class file in \em{two} files; the first being a SILE file in TeX
 format, and the second as Lua code. This allows you to dispose of all the easy jobs in a
 convenient format, and then deal with the hard jobs in Lua. When you use the
-\code{-I \em{classname}} command line option to SILE, SILE first looks for \code{\em{classname}.sil}
+\code{-I \em{classname}.sil} command line option to SILE, SILE first looks for \code{\em{classname}.sil}
 and uses that as a wrapper around your file to be processed. If that then begins
 
 \begin{verbatim}

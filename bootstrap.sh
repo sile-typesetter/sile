@@ -10,18 +10,18 @@ if [ ! -f "libtexpdf/configure.ac" ] && [ -e ".git" ]; then
     git submodule update --init --recursive --remote
 fi
 
-autoreconf --install
+autoreconf --install -W none
 
-# See discussion in https://github.com/simoncozens/sile/issues/82
-# http://blog.gaku.net/autoconf/
+# See discussion in https://github.com/sile-typesetter/sile/issues/82 and
+# https://web.archive.org/web/20170111053341/http://blog.gaku.net/autoconf/
 case `uname` in
-    Darwin*) glibtoolize ;;
-    *)        libtoolize ;;
+    Darwin*) glibtoolize -W none ;;
+    *)        libtoolize -W none ;;
 esac
-aclocal
-automake --force-missing --add-missing
-autoreconf
+aclocal --force -W none
+automake --force-missing --add-missing -W none
+autoreconf --force -W none
 
-(cd libtexpdf; autoreconf -I m4)
+sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
 
-sed -i -e '/rm -f/s/ core / /' configure
+(cd libtexpdf; autoreconf)

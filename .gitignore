@@ -15,6 +15,8 @@ Makefile.in
 /config.guess
 /config.sub
 /config.status
+/.version
+/.version-prev
 
 m4/libtool.m4
 m4/ltoptions.m4
@@ -41,28 +43,32 @@ ltmain.sh
 subfiles.mk
 
 # Build artifacts
-sile
 confdefs.h
 config.log
 core/*.so
 build/
 *.debug
-benchmark-*
 gh-pages
-sile-v*
-*.zip
+sile-[0-9\.]*
+*.bz2
 *.xz
+*.zip
 *.rockslock
+.dockerignore
 
 # Test artifacts
 tests/*.actual
 tests/*.pdf
 */*.toc
-time-*.json
+time*.json
+
+benchmark-*
+compare-*
 
 # Vendor stuff
 node_modules
 lua_modules
+lua_modules_dist
 
 # Editor entrails
 .vscode/
@@ -72,4 +78,6 @@ tags
 documentation/*.pdf
 examples/*.pdf
 gource.webm
-*.tar.bz2
+.fonts/*
+#sile# Work around bug in standard-version by not ignoring this artifact
+sile.1

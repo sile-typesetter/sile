@@ -1,4 +1,4 @@
-plain = SILE.baseClass { id = "plain" }
+local plain = SILE.baseClass { id = "plain" }
 
 plain.options.direction = function (value)
   if value then plain.pageTemplate.frames["content"].direction = value end
@@ -10,6 +10,7 @@ plain:declareFrame("content", {
     top = "5%ph",
     bottom = "90%ph"
   })
+
 plain:declareFrame("folio", {
     left = "5%pw",
     right = "95%pw",
@@ -25,66 +26,66 @@ plain.endPage = function (self)
   return SILE.baseClass.endPage(self)
 end
 
-local options = {}
+local classopts = {}
 plain.declareOption = function (self, name, default)
-  options[name] = default
+  classopts[name] = default
   self.options[name] = function (value)
-    if value then options[name] = value end
-    return options[name]
+    if value then classopts[name] = value end
+    return classopts[name]
   end
 end
 
-SILE.registerCommand("noindent", function ( options, content )
-  SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
+SILE.registerCommand("noindent", function (_, content)
+  SILE.settings.set("current.parindent", SILE.nodefactory.glue())
   SILE.process(content)
 end, "Do not add an indent to the start of this paragraph")
 
-SILE.registerCommand("neverindent", function ( options, content )
-  SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
+SILE.registerCommand("neverindent", function (_, content)
+  SILE.settings.set("document.parindent", SILE.nodefactory.glue())
   SILE.process(content)
 end, "Turn off all indentation")
 
-SILE.registerCommand("indent", function ( options, content )
+SILE.registerCommand("indent", function (_, content)
   SILE.settings.set("current.parindent", SILE.settings.get("document.parindent"))
   SILE.process(content)
 end, "Do add an indent to the start of this paragraph, even if previously told otherwise")
 
 local skips = {
   small = "3pt plus 1pt minus 1pt",
-    med = "6pt plus 2pt minus 2pt",
-    big = "12pt plus 4pt minus 4pt"
+  med = "6pt plus 2pt minus 2pt",
+  big = "12pt plus 4pt minus 4pt"
 }
 
 for k, v in pairs(skips) do
   SILE.settings.declare({
-    name = "plain." .. k .. "skipamount",
-    type = "VGlue",
-    default = SILE.nodefactory.newVglue(v),
-    help = "The amount of a \\" .. k .. "skip"
-  })
-  SILE.registerCommand(k .. "skip", function (options, content)
+      name = "plain." .. k .. "skipamount",
+      type = "vglue",
+      default = SILE.nodefactory.vglue(v),
+      help = "The amount of a \\" .. k .. "skip"
+    })
+  SILE.registerCommand(k .. "skip", function (_, _)
     SILE.typesetter:leaveHmode()
     SILE.typesetter:pushExplicitVglue(SILE.settings.get("plain." .. k .. "skipamount"))
   end, "Skip vertically by a " .. k .. " amount")
 end
 
-SILE.registerCommand("hfill", function (options, content)
-  SILE.typesetter:pushExplicitGlue(SILE.nodefactory.hfillGlue)
+SILE.registerCommand("hfill", function (_, _)
+  SILE.typesetter:pushExplicitGlue(SILE.nodefactory.hfillglue())
 end, "Add a huge horizontal glue")
 
-SILE.registerCommand("vfill", function (options, content)
+SILE.registerCommand("vfill", function (_, _)
   SILE.typesetter:leaveHmode()
-  SILE.typesetter:pushExplicitVglue(SILE.nodefactory.vfillGlue)
+  SILE.typesetter:pushExplicitVglue(SILE.nodefactory.vfillglue())
 end, "Add huge vertical glue")
 
-SILE.registerCommand("hss", function (options, content)
+SILE.registerCommand("hss", function (_, _)
   SILE.typesetter:initline()
-  SILE.typesetter:pushGlue(SILE.nodefactory.hssGlue)
-  table.insert(SILE.typesetter.state.nodes, SILE.nodefactory.zeroHbox)
+  SILE.typesetter:pushGlue(SILE.nodefactory.hssglue())
+  table.insert(SILE.typesetter.state.nodes, SILE.nodefactory.zerohbox())
 end, "Add glue which stretches and shrinks horizontally (good for centering)")
 
-SILE.registerCommand("vss", function (options, content)
-  SILE.typesetter:pushExplicitVglue(SILE.nodefactory.vssGlue)
+SILE.registerCommand("vss", function (_, _)
+  SILE.typesetter:pushExplicitVglue(SILE.nodefactory.vssglue())
 end, "Add glue which stretches and shrinks vertically")
 
 plain.registerCommands = function ()
@@ -123,75 +124,76 @@ plain.registerCommands = function ()
 ]])
 end
 
-SILE.registerCommand("{", function (options, content) SILE.typesetter:typeset("{") end)
-SILE.registerCommand("}", function (options, content) SILE.typesetter:typeset("}") end)
-SILE.registerCommand("%", function (options, content) SILE.typesetter:typeset("%") end)
-SILE.registerCommand("\\", function (options, content) SILE.typesetter:typeset("\\") end)
+SILE.registerCommand("{", function (_, _) SILE.typesetter:typeset("{") end)
+SILE.registerCommand("}", function (_, _) SILE.typesetter:typeset("}") end)
+SILE.registerCommand("%", function (_, _) SILE.typesetter:typeset("%") end)
+SILE.registerCommand("\\", function (_, _) SILE.typesetter:typeset("\\") end)
 
 SILE.registerCommand("ragged", function (options, content)
   SILE.settings.temporarily(function ()
-    if options.left then SILE.settings.set("document.lskip", SILE.nodefactory.hfillGlue) end
-    if options.right then SILE.settings.set("document.rskip", SILE.nodefactory.hfillGlue) end
-    SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
-    SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
-    local space = SILE.length.parse("1spc")
-    space.stretch = 0
-    space.shrink = 0
-    SILE.settings.set("document.spaceskip", space)
+    if SU.boolean(options.left, false) then SILE.settings.set("document.lskip", SILE.nodefactory.hfillglue()) end
+    if SU.boolean(options.right, false) then SILE.settings.set("document.rskip", SILE.nodefactory.hfillglue()) end
+    SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
+    SILE.settings.set("document.parindent", SILE.nodefactory.glue())
+    SILE.settings.set("document.spaceskip", SILE.length("1spc", 0, 0))
     SILE.process(content)
     SILE.call("par")
   end)
 end)
 
-SILE.registerCommand("hbox", function (options, content)
+local _rtl_pre_post = function (box, typesetter, line)
+  local advance = function () typesetter.frame:advanceWritingDirection(box:scaledWidth(line)) end
+  if typesetter.frame:writingDirection() == "RTL" then
+    advance()
+    return function () end
+  else
+    return advance
+  end
+end
+
+SILE.registerCommand("hbox", function (_, content)
   local index = #(SILE.typesetter.state.nodes)+1
   local recentContribution = {}
   SILE.process(content)
-  local l = SILE.length.new()
-  local h,d = 0,0
+  local l = SILE.length()
+  local h, d = SILE.length(), SILE.length()
   for i = index, #(SILE.typesetter.state.nodes) do
     local node = SILE.typesetter.state.nodes[i]
-    if node:isUnshaped() then
-      local s = node:shape()
-      for i = 1, #s do
-        recentContribution[#recentContribution+1] = s[i]
-        h = s[i].height > h and s[i].height or h
-        d = s[i].depth > d and s[i].depth or d
-        l = l + s[i]:lineContribution()
+    if node.is_unshaped then
+      local shape = node:shape()
+      for _, attr in ipairs(shape) do
+        recentContribution[#recentContribution+1] = attr
+        h = attr.height > h and attr.height or h
+        d = attr.depth > d and attr.depth or d
+        l = l + attr:lineContribution():absolute()
       end
     else
       recentContribution[#recentContribution+1] = node
-      l = l + node:lineContribution()
+      l = l + node:lineContribution():absolute()
       h = node.height > h and node.height or h
       d = node.depth > d and node.depth or d
     end
     SILE.typesetter.state.nodes[i] = nil
   end
-  local hbox = SILE.nodefactory.newHbox({
-    height = h,
-    width = l,
-    depth = d,
-    value = recentContribution,
-    outputYourself = function (self, typesetter, line)
-      -- Yuck!
-      if typesetter.frame:writingDirection() == "RTL" then
-        typesetter.frame:advanceWritingDirection(self:scaledWidth(line))
+  local hbox = SILE.nodefactory.hbox({
+      height = h,
+      width = l,
+      depth = d,
+      value = recentContribution,
+      outputYourself = function (self, typesetter, line)
+        local _post = _rtl_pre_post(self, typesetter, line)
+        local ox = typesetter.frame.state.cursorX
+        local oy = typesetter.frame.state.cursorY
+        SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
+        for _, node in ipairs(self.value) do
+          node:outputYourself(typesetter, line)
+        end
+        typesetter.frame.state.cursorX = ox
+        typesetter.frame.state.cursorY = oy
+        _post()
+        if SU.debugging("hboxes") then SILE.outputter.debugHbox(self, self:scaledWidth(line)) end
       end
-      local ox = typesetter.frame.state.cursorX
-      local oy = typesetter.frame.state.cursorY
-      SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
-      for i = 1, #(self.value) do
-        local node = self.value[i]
-        node:outputYourself(typesetter, line)
-      end
-      typesetter.frame.state.cursorX = ox
-      typesetter.frame.state.cursorY = oy
-      if typesetter.frame:writingDirection() ~= "RTL" then
-        typesetter.frame:advanceWritingDirection(self:scaledWidth(line))
-      end
-      if SU.debugging("hboxes") then SILE.outputter.debugHbox(self, self:scaledWidth(line)) end
-    end
-  })
+    })
   table.insert(SILE.typesetter.state.nodes, hbox)
   return hbox
 end, "Compiles all the enclosed horizontal-mode material into a single hbox")
@@ -199,11 +201,11 @@ end, "Compiles all the enclosed horizontal-mode material into a single hbox")
 SILE.registerCommand("vbox", function (options, content)
   local vbox
   SILE.settings.temporarily(function ()
-    if (options.width) then SILE.settings.set("typesetter.breakwidth", SILE.length.parse(options.width)) end
+    if options.width then SILE.settings.set("typesetter.breakwidth", SILE.length(options.width)) end
     SILE.typesetter:pushState()
     SILE.process(content)
     SILE.typesetter:leaveHmode(1)
-    vbox = SILE.pagebuilder.collateVboxes(SILE.typesetter.state.outputQueue)
+    vbox = SILE.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue)
     SILE.typesetter:popState()
   end)
   return vbox

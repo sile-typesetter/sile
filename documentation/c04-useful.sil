@@ -124,7 +124,7 @@ running header.
 \note{Chapters, sections and subsections will be automatically
 numbered starting from 1; to alter the numbering, see the documentation for the
 \code{counters} package in the next chapter. To produce an unnumbered chapter,
-provide the parameter \code{[numbering=no]}.}
+provide the parameter \code{[numbering=false]}.}
 
 This subsection begins with the command \code{\\subsection\{Chapters and Sections\}.}
 

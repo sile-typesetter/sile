@@ -1,10 +1,24 @@
-SILE.inputs.TeXlike = {}
+local lpeg = require("lpeg")
 local epnf = require("epnf")
 
-local ID = lpeg.C( SILE.parserBits.letter * (SILE.parserBits.letter+SILE.parserBits.digit)^0 )
-SILE.inputs.TeXlike.identifier = (ID + lpeg.P"-" + lpeg.P":")^1
+SILE.inputs.TeXlike = {}
 
+local ID = lpeg.C(SILE.parserBits.letter * (SILE.parserBits.letter + SILE.parserBits.digit)^0)
+SILE.inputs.TeXlike.identifier = (ID + lpeg.S":-")^1
+
+SILE.inputs.TeXlike.passthroughCommands = {
+  script = true
+}
+setmetatable(SILE.inputs.TeXlike.passthroughCommands, {
+    __call = function(self, command)
+      return self[command]
+    end
+  })
+
+-- luacheck: push ignore
 SILE.inputs.TeXlike.parser = function (_ENV)
+  local isPassthrough = function (_, _, command) return SILE.inputs.TeXlike.passthroughCommands(command) end
+  local isNotPassThrough = function (...) return not isPassthrough(...) end
   local _ = WS^0
   local sep = S",;" * _
   local eol = S"\r\n"
@@ -52,8 +66,8 @@ SILE.inputs.TeXlike.parser = function (_ENV)
       Cg(myID, "command") *
       Cg(parameters,"options") *
       (
-        (Cmt(Cb"command", function(_, _, command) return command == "script" end) * V"passthrough_bracketed_stuff") +
-        (Cmt(Cb"command", function(_, _, command) return command ~= "script" end) * V"texlike_bracketed_stuff")
+        (Cmt(Cb"command", isPassthrough) * V"passthrough_bracketed_stuff") +
+        (Cmt(Cb"command", isNotPassThrough) * V"texlike_bracketed_stuff")
       )^0
     ) - P("\\end{")
   environment =
@@ -63,8 +77,8 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     Cg(myID, "command") *
     P"}" *
     (
-      (Cmt(Cb"command", function(_, _, command) return command == "script" end) * V"passthrough_env_stuff") +
-      (Cmt(Cb"command", function(_, _, command) return command ~= "script" end) * V"texlike_stuff")
+      (Cmt(Cb"command", isPassthrough) * V"passthrough_env_stuff") +
+      (Cmt(Cb"command", isNotPassThrough) * V"texlike_stuff")
     ) *
     (
       P"\\end{" *
@@ -74,6 +88,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
       ( P"}" * _ ) + E"Environment begun but never ended"
     )
 end
+-- luacheck: pop
 
 local linecache = {}
 local lno, col, lastpos
@@ -85,7 +100,7 @@ local function resetCache ()
 end
 
 local function getline (str, pos)
-  start = 1
+  local start = 1
   lno = 1
   if pos > lastpos then
     lno = linecache[#linecache].lno
@@ -147,8 +162,7 @@ function SILE.inputs.TeXlike.process (doc)
       SILE.inputs.common.init(doc, tree)
     end
     SILE.process(tree)
-  elseif pcall(function () assert(load(doc))() end) then
-  else
+  elseif not pcall(function () assert(load(doc))() end) then
     SU.error("Input not recognized as Lua or SILE content")
   end
   if root and not SILE.preamble then

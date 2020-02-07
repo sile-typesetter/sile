@@ -7,7 +7,7 @@
 
 SILE.scratch.tableofcontents = {}
 
-local moveNodes = function (self)
+local moveNodes = function (_)
   local node = SILE.scratch.info.thispage.toc
   if node then
     for i = 1, #node do
@@ -18,13 +18,14 @@ local moveNodes = function (self)
 end
 
 local writeToc = function ()
-  local contents = "return "..std.string.pickle(SILE.scratch.tableofcontents)
-  local tocfile,err = io.open(SILE.masterFilename .. '.toc', "w")
+  local tocdata = pl.pretty.write(SILE.scratch.tableofcontents)
+  local tocfile, err = io.open(SILE.masterFilename .. '.toc', "w")
   if not tocfile then return SU.error(err) end
-  tocfile:write(contents)
+  tocfile:write("return " .. tocdata)
+  tocfile:close()
 end
 
-SILE.registerCommand("tableofcontents", function (options, content)
+SILE.registerCommand("tableofcontents", function (_, _)
   local tocfile,_ = io.open(SILE.masterFilename .. '.toc')
   if not tocfile then
     SILE.call("tableofcontents:notocmessage")
@@ -45,7 +46,7 @@ end)
 
 SILE.registerCommand("tableofcontents:item", function (options, content)
   SILE.settings.temporarily(function ()
-    SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
+    SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
     SILE.call("tableofcontents:level" .. options.level .. "item", {}, function ()
       SILE.process(content)
       SILE.call("dotfill")

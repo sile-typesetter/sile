@@ -50,7 +50,7 @@ Once some of the basic document properties have been setup using these fixed
 size units, other dimensions may be specified relative to them, using \em{relative
 units}. Percentage units are available relative to the page width or height, the
 current frame width or height, and the line width (\code{\%pw}, \code{\%ph},
-\code{\%fw}, \code{\%fw}, and \code{\%lw} respectively). You can specify
+\code{\%fw}, \code{\%fh}, and \code{\%lw} respectively). You can specify
 lengths in terms of the current paragraph skip (\code{ps}) and baseline skip
 (\code{bs}), which will make sense later on. Additional units are available
 relative to the largest or smallest value of either axis
@@ -95,7 +95,7 @@ culpa qui officia deserunt mollit anim id est laborum.
 \line
 \end{verbatim}
 
-\noindent{}…you might not necessarily get a line break after ‘eiusmod’; you’ll
+\noindent{}…you might not necessarily get a line break after ‘tempor’; you’ll
 get a line break wherever is most appropriate. In the context of this document,
 you’ll get:
 

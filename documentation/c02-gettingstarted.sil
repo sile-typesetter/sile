@@ -56,7 +56,7 @@ installing SILE is as easy as running:
 
 If you have not used Lua programs before, that will prompt you to manually
 install a couple of dependencies. After running the commands it provides, you can
-run the install comand again to complete the instalation.
+run the install command again to complete the installation.
 
 The formula also has an instruction that can compile SILE from the current
 Git HEAD version. To test the latest unreleased code you can install using:
@@ -168,7 +168,7 @@ Turning \code{examples/article-template.xml} into
 
 \begin{verbatim}
 \line
-\% \em{./sile -I docbook examples/article-template.xml}
+\% \em{./sile -I docbook.sil examples/article-template.xml}
 This is SILE \sileversion
 Loading docbook
 <classes/docbook.sil><examples/article-template.xml>[1] [2] [3]

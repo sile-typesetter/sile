@@ -1,3 +1,8 @@
+local localeify = function (lang)
+  lang = lang == "en-u-va-posix" and "en" or lang
+  return lang .. "_" .. string.upper(lang) ..  ".utf-8"
+end
+
 local date = function (options)
   options.format = options.format or "%c"
   options.time = options.time or os.time()
@@ -6,12 +11,7 @@ local date = function (options)
   return os.date(options.format, options.time)
 end
 
-local localeify = function (lang)
-  lang = lang == "en-u-va-posix" and "en" or lang
-  return lang .. "_" .. string.upper(lang) ..  ".utf-8"
-end
-
-SILE.registerCommand("date", function(options, content)
+SILE.registerCommand("date", function (options, _)
   SILE.typesetter:typeset(date(options))
 end, "Output a timestamp using the system date function")
 

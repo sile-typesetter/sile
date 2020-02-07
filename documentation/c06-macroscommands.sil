@@ -37,7 +37,7 @@ S\\lower[height=0.5ex]\{I\}L\\glue[width=-.2em]\\raise[height=0.6ex]\{\\font[siz
 to that later.)
 
 We’ve used our logo four times already in this chapter, and we don‘t want to
-have to input that whole monostrosity each time we do so. What we would like
+have to input that whole monstrosity each time we do so. What we would like
 to do is tell the computer “this is \SILE’s logo; each time I enter \code{\\SILE},
 I want you to interpret that as \code{S\\lower[height=0.5ex]\{I\}L\\glue[\goodbreak{}width=-.2em]\\raise[height=0.6ex]\{\\font[size=0.8em]\{E\}\}}”.
 
@@ -75,8 +75,9 @@ may consist of any number of alphanumeric characters, hyphens or colons.
 Additionally, any single character is a valid TeX-flavor command name. (Hence
 \code{\\\\} for typesetting a backslash.)
 
-When it comes to defining commands, commands defined by an XML-flavor file can actually have
-any name that you like—even if they are not accessible from XML-favour! (You may define oddly-named commands in a XML-flavor SILE file
+When it comes to defining commands, commands defined by an XML-flavor file can
+actually have any name that you like—even if they are not accessible from
+XML-flavor! (You may define oddly-named commands in a XML-flavor SILE file
 and then use them in a TeX-flavor SILE file.) Commands defined in TeX-flavor
 obviously have to have names which are valid parameter values, or else they will
 not parse correctly either; parameter values happen to consist
@@ -166,7 +167,7 @@ Here is one way to define \code{\\note}, in XML flavour:
 
 <define command="narrower">
   <set parameter="document.lskip" value="24pt"/>
-  <process>
+  <process/>
   <set parameter="document.lskip" value="0pt"/>
 </end>
 

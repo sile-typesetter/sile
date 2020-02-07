@@ -27,7 +27,7 @@ frames:
 \begin{verbatim}
 \line
 local plain = SILE.require("plain", "classes");
-local diglot = std.tree.clone(plain);
+local diglot = pl.tablex.deepcopy(plain);
 SILE.require("packages/counters");
 SILE.scratch.counters.folio = \{ value = 1, display = "arabic" \};
 SILE.scratch.diglot = \{\}
@@ -93,7 +93,7 @@ the page. In other words, if the left typesetter has gone further down the page
 than the right one, we need to insert some blank space onto the right typesetter’s
 output queue to get them back in sync, and vice versa.
 
-SILE’s page builder has a method called \code{SILE.pagebuilder.collateVboxes}
+SILE’s page builder has a method called \code{SILE.pagebuilder:collateVboxes}
 which bundles a bunch of vertical boxes into one; we can use this to bundle up
 each typesetter’s output queue and measure the height of the combined vbox.
 (Of course it’s possible to sum the heights of each box on the output queue
@@ -101,8 +101,8 @@ by hand, but this achieves the same goal a bit more cleanly.)
 
 \begin{verbatim}
 SILE.registerCommand("sync", function()
-  local lVbox = SILE.pagebuilder.collateVboxes(diglot.leftTypesetter.state.outputQueue)
-  local rVbox = SILE.pagebuilder.collateVboxes(diglot.rightTypesetter.state.outputQueue)
+  local lVbox = SILE.pagebuilder:collateVboxes(diglot.leftTypesetter.state.outputQueue)
+  local rVbox = SILE.pagebuilder:collateVboxes(diglot.rightTypesetter.state.outputQueue)
   if (rVbox.height > lVbox.height) then
     diglot.leftTypesetter:pushVglue(\{ height = rVbox.height - lVbox.height \})
   elseif (rVbox.height < lVbox.height) then
@@ -314,8 +314,8 @@ on the current page by both the main typesetter and the cross-reference typesett
 \line
 discovery.typesetCrossReference = function(xref)
   discovery.innerTypesetter:leaveHmode(1)
-  local innerVbox = SILE.pagebuilder.collateVboxes(discovery.innerTypesetter.state.outputQueue)
-  local mainVbox = SILE.pagebuilder.collateVboxes(SILE.typesetter.state.outputQueue)
+  local innerVbox = SILE.pagebuilder:collateVboxes(discovery.innerTypesetter.state.outputQueue)
+  local mainVbox = SILE.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue)
 \end{verbatim}
 
 This deals with the material which has already been put into the output queue: in
@@ -338,11 +338,11 @@ we need to add to \code{mainVbox} to get the vertical position of the cross-refe
 mark.
 
 \begin{verbatim}
-  local unprocessedNodes = std.tree.clone(SILE.typesetter.state.nodes)
+  local unprocessedNodes = pl.tablex.deepcopy(SILE.typesetter.state.nodes)
   SILE.typesetter:pushState()
   SILE.typesetter.state.nodes = unprocessedNodes
   SILE.typesetter:leaveHmode(1)
-  local subsidiary = SILE.pagebuilder.collateVboxes(SILE.typesetter.state.outputQueue)
+  local subsidiary = SILE.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue)
   SILE.typesetter:popState()
   mainVbox.height = mainVbox.height + subsidiary.height
 \end{verbatim}
@@ -475,9 +475,9 @@ a particular operation:
 
 \begin{verbatim}
 \line
-SILE.debugFlags.typesetter = 1
+SILE.debugFlags.typesetter = true
 SILE.typesetter:leaveHmode()
-SILE.debugFlags.typesetter = nil
+SILE.debugFlags.typesetter = false
 \line
 \end{verbatim}
 

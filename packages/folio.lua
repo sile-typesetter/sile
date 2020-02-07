@@ -1,18 +1,29 @@
 -- Folios class
 SILE.require("packages/counters")
+
 SILE.scratch.counters.folio = { value = 1, display = "arabic" }
 
-SILE.registerCommand("folios", function () SILE.scratch.counters.folio.off = false end)
-SILE.registerCommand("nofolios", function () SILE.scratch.counters.folio.off = true end)
-SILE.registerCommand("nofoliosthispage", function () SILE.scratch.counters.folio.off = 2 end)
-SILE.registerCommand("foliostyle", function (options, content)
+SILE.registerCommand("folios", function (_, _)
+  SILE.scratch.counters.folio.off = false
+end)
+
+SILE.registerCommand("nofolios", function (_, _)
+  SILE.scratch.counters.folio.off = true
+end)
+
+SILE.registerCommand("nofoliosthispage", function (_, _)
+  SILE.scratch.counters.folio.off = 2
+end)
+
+SILE.registerCommand("foliostyle", function (_, content)
   SILE.call("center", {}, content)
 end)
 
 return {
   init = function () end,
   exports = {
-    outputFolio = function (this, frame)
+
+    outputFolio = function (_, frame)
       if not frame then frame = "folio" end
       io.stderr:write("[" .. SILE.formatCounter(SILE.scratch.counters.folio) .. "] ")
       if SILE.scratch.counters.folio.off then
@@ -34,7 +45,8 @@ return {
       SILE.scratch.counters.folio.value = SILE.scratch.counters.folio.value + 1
     end
   },
-  documentation= [[\begin{document}
+  documentation= [[
+\begin{document}
 The \code{folio} package (which is automatically loaded by the
 plain class, and therefore by nearly every SILE class) controls
 the output of folios - the old-time typesetter word for page numbers.
@@ -63,5 +75,6 @@ right side of odd pages, there are a couple of ways you can do that. The
 complicated way is to define a command in Lua which inspects the page number
 and then sets the number ragged left or ragged right appropriately. The easy
 way is just to put your folio frame where you want it on the master page...
-\end{document}]]
+\end{document}
+]]
 }

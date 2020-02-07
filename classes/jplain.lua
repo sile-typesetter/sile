@@ -19,5 +19,5 @@ function jplain:init()
 end
 
 SILE.languageSupport.loadLanguage("ja")
-SILE.settings.set("document.parindent",SILE.nodefactory.newGlue("10pt"))
+SILE.settings.set("document.parindent",SILE.nodefactory.glue("10pt"))
 return jplain

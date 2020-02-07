@@ -29,27 +29,24 @@ local pushSVG = function (string, desiredHeight, em, drop)
   })
 end
 
-SILE.registerCommand("include-svg-file", function (options, content)
+SILE.registerCommand("include-svg-file", function (options, _)
   local fn = SU.required(options, "src", "filename")
-  local height = SILE.length.parse(options.height):absolute().length or nil
+  local height = options.height and SU.cast("measurement", options.height):absolute() or nil
   local density = options.density or 72
   local fh = io.open(fn)
   local inp = fh:read("*all")
   pushSVG(inp, height, density)
 end)
 
-SILE.registerCommand("svg-glyph", function(options,content)
+SILE.registerCommand("svg-glyph", function(_, content)
   local fontoptions = SILE.font.loadDefaults({})
-  local items = SILE.shaper:shapeToken(content[1],fontoptions)
+  local items = SILE.shaper:shapeToken(content[1], fontoptions)
   local face = SILE.shaper.getFace(fontoptions)
   parser.parseFont(face)
   if not face.font.svg then return SILE.process(content) end
-  for i =1,#items do
-    local svg = parser.getSVG(face, items[i].gid)
-    if svg then pushSVG(svg,fontoptions.size,72,true)
-    else
-      -- XXX
-    end
+  for i = 1, #items do
+    local svg_data = parser.getSVG(face, items[i].gid)
+    if svg_data then pushSVG(svg_data, fontoptions.size, 72, true) end
   end
 end)
 

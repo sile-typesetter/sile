@@ -2,7 +2,7 @@ local lfs = require('lfs')
 
 SILE.scratch.converters = {}
 
-local register = function(sourceExt, targetExt, command)
+local register = function (sourceExt, targetExt, command)
   table.insert(SILE.scratch.converters, {
     sourceExt = sourceExt,
     targetExt = targetExt,
@@ -10,7 +10,7 @@ local register = function(sourceExt, targetExt, command)
   })
 end
 
-local applyConverter = function(source, converter)
+local applyConverter = function (source, converter)
   local extLen = string.len(converter.sourceExt)
   local targetFile = string.sub(source, 1, -extLen-1) .. converter.targetExt
 
@@ -27,7 +27,7 @@ local applyConverter = function(source, converter)
     return targetFile -- already converted
   end
 
-  command = string.gsub(converter.command, "%$(%w+)", {
+  local command = string.gsub(converter.command, "%$(%w+)", {
     SOURCE = source,
     TARGET = targetFile
   })
@@ -42,7 +42,7 @@ local applyConverter = function(source, converter)
   end
 end
 
-local checkConverters = function(source)
+local checkConverters = function (source)
   for _, converter in ipairs(SILE.scratch.converters) do
     local extLen = string.len(converter.sourceExt)
     if ((string.len(source) > extLen) and
@@ -53,19 +53,19 @@ local checkConverters = function(source)
   return source -- No conversion needed.
 end
 
-SILE.registerCommand("converters:register", function(o, c)
-  register(o.from, o.to, o.command)
+SILE.registerCommand("converters:register", function (options, _)
+  register(options.from, options.to, options.command)
 end)
 
-SILE.registerCommand("converters:check", function(o, c)
-  checkConverters(o.source)
+SILE.registerCommand("converters:check", function (options, _)
+  checkConverters(options.source)
 end)
 
 local function extendCommand(name, f)
   -- Wrap an existing command
   local original = SILE.Commands[name]
   if(original) then
-    SILE.Commands[name] = function(options, content)
+    SILE.Commands[name] = function (options, content)
       f(options, content, original)
     end
   else
@@ -73,19 +73,19 @@ local function extendCommand(name, f)
   end
 end
 
-extendCommand("include", function(o, c, original)
-  local result = checkConverters(o.src)
+extendCommand("include", function (options, content, original)
+  local result = checkConverters(options.src)
   if(result~=nil) then
-    o["src"] = result
-    original(o, c)
+    options["src"] = result
+    original(options, content)
   end
 end)
 
-extendCommand("img", function(o, c, original)
-  local result = checkConverters(o.src)
+extendCommand("img", function (options, content, original)
+  local result = checkConverters(options.src)
   if(result~=nil) then
-    o["src"] = result
-    original(o, c)
+    options["src"] = result
+    original(options, content)
   end
 end)
 

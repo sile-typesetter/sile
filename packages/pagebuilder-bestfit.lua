@@ -1,12 +1,12 @@
 local MAX_PAGES = 5
 
-SILE.typesetter.pageBuilder = function (self, independent)
+SILE.typesetter.buildPage = function (self, independent)
   -- Find last penalty
   local q = self.state.outputQueue
   local lastpenalty = -1
-  local cHeight = SILE.length.new()
+  local cHeight = SILE.length()
   for j = #q,1,-1 do
-    if q[j]:isPenalty() and lastpenalty == -1 then
+    if q[j].is_penalty and lastpenalty == -1 then
       lastpenalty = q[j].penalty
     end
     cHeight = cHeight + q[j].height

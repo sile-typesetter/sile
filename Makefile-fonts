@@ -2,20 +2,19 @@
 .PRECIOUS: .fonts/% %.zip %.xz
 
 # List of font files we _actually need_
-LOCALFONTFILES  = RobotoCondensed-Bold.ttf
-LOCALFONTFILES += GenBkBasR.ttf GenBkBasI.ttf GenBkBasB.ttf
-LOCALFONTFILES += GentiumPlus-R.ttf GentiumPlus-I.ttf
-LOCALFONTFILES += Amiri-Regular.ttf AmiriQuran.ttf
-LOCALFONTFILES += Hack-Regular.ttf
-LOCALFONTFILES += LateefGR-Regular.ttf
-LOCALFONTFILES += LibertinusSans-Bold.otf LibertinusSerif-Regular.otf
-LOCALFONTFILES += NotoNaskhArabic-Regular.ttf
-LOCALFONTFILES += NotoSansCJK-Regular.ttc
-LOCALFONTFILES += NotoSansKannada-Regular.ttf
-LOCALFONTFILES += NotoSansEthiopic-Regular.ttf
-LOCALFONTFILES += NotoSansMalayalam-Regular.ttf
-LOCALFONTFILES += SBL_Hbrw.ttf
-LOCALFONTFILES += Symbola_Hinted.ttf
+TESTFONTFILES  = GentiumPlus-R.ttf GentiumPlus-I.ttf
+TESTFONTFILES += Amiri-Regular.ttf AmiriQuran.ttf
+TESTFONTFILES += Hack-Regular.ttf
+TESTFONTFILES += LateefGR-Regular.ttf
+TESTFONTFILES += LibertinusSans-Bold.otf LibertinusSerif-Regular.otf
+TESTFONTFILES += NotoNaskhArabic-Regular.ttf
+TESTFONTFILES += NotoSansCJK-Regular.ttc
+TESTFONTFILES += NotoSansKannada-Regular.ttf
+TESTFONTFILES += NotoSansEthiopic-Regular.ttf
+TESTFONTFILES += NotoSansMalayalam-Regular.ttf
+TESTFONTFILES += RobotoCondensed-Bold.ttf
+TESTFONTFILES += SBL_Hbrw.ttf
+TESTFONTFILES += Symbola_hint.ttf
 
 # Tell make how to download individual font files (when available)
 .fonts/NotoSansCJK%: | .fonts
@@ -42,8 +41,8 @@ LOCALFONTFILES += Symbola_Hinted.ttf
 roboto-unhinted.zip:
 	curl -s -L https://github.com/google/roboto/releases/download/v2.138/$(notdir $@) -o $@
 
-Symbola.zip:
-	curl -s -L http://users.teilar.gr/~g1951d/$(notdir $@) -o $@
+symbola.zip:
+	curl -s -L https://fontlibrary.org/assets/downloads/symbola/cf81aeb303c13ce765877d31571dc5c7/$(notdir $@) -o $@
 
 GentiumBasic_1102.zip:
 	curl -s -L https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
@@ -70,7 +69,7 @@ Hack-v3.003-ttf.tar.xz:
 	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
 	touch $@
 
-.fonts/Symbola%: Symbola.zip | .fonts
+.fonts/Symbola%: symbola.zip | .fonts
 	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
 	touch $@
 

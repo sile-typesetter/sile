@@ -611,7 +611,7 @@ SILE.hyphenator.languages["el-polyton"].patterns =
 "4κ1ϲ",
 "4κ1φ",
 "4γ5κ2φ",   -- Frag-kfo'urth
-"4ν5κ2φ,"   -- Fran-kfo'urth
+"4ν5κ2φ",   -- Fran-kfo'urth
 "4κ1χ",
 "4κ1ψ",
 "4λ1β",
@@ -625,7 +625,7 @@ SILE.hyphenator.languages["el-polyton"].patterns =
 "4λ1ξ",
 "4λ1π",
 "4λ1ρ",
-"4λ1σ ",
+"4λ1σ",
 "4λ1ϲ",
 "4λ1τ",
 "4λ1φ",
@@ -796,7 +796,7 @@ SILE.hyphenator.languages["el-polyton"].patterns =
 "5γ2κραντ.",   -- B'olgko-gkrant (Rws'ia)
 "ἐμι5γ2κρ",   -- >emi-gkr'ec
 "ἰ5γ2κου",   -- >i-gkou'ana
-"ἴντρι5γ2κ"   -- >'intri-gka
+"ἴντρι5γ2κ",   -- >'intri-gka
 "ἰντρι5γ2κ",
 ".καρα5γ2κι",   -- kara-gki'ozhc
 ".μα5γ2κιό",
@@ -837,7 +837,7 @@ SILE.hyphenator.languages["el-polyton"].patterns =
 "ἄ5μ2ακ",   -- >'a-mpakoc
 "ἀ5μ2πάκ",
 "ἀ5μ2πάκ",
-"ἀ5μ2παν,"   -- >a-mpan'ozi >a-mpan-ton'arisma
+"ἀ5μ2παν",   -- >a-mpan'ozi >a-mpan-ton'arisma
 "ἀ5μ2πάρ",
 "ἀ5μ2πάρ",   -- >a-mp'ara >a-mpar'wnw
 "ἀ5μ2πᾶρ",
@@ -913,7 +913,7 @@ SILE.hyphenator.languages["el-polyton"].patterns =
 ".μπό5μ2πιρ",   -- mp'o-mpirac (??? not so sure)
 ".μπο5μ2πιρ",   -- mpo-mpiriasm'enoc (??? not so sure)
 ".μπο5μ2πότ",
-".μπο5μ2πότ"   -- mpo-mp'ota
+".μπο5μ2πότ",   -- mpo-mp'ota
 ".μπο5μ2ποτ",
 ".μπου5μ2πούν",
 ".μπου5μ2πούν",   -- mpou-mpoun'izw mpou-mpo'unac

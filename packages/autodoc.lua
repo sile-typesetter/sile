@@ -1,5 +1,5 @@
-SILE.registerCommand("package-documentation", function (o,c)
-  local package = SU.required(o, "src", "src for package documentation")
+SILE.registerCommand("package-documentation", function (options, _)
+  local package = SU.required(options, "src", "src for package documentation")
   io.stderr:write("<"..package..">")
   local exports = require(package)
   if type(exports) ~= "table" then

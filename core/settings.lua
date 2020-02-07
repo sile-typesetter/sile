@@ -5,7 +5,7 @@ SILE.settings = {
   defaults = {},
   pushState = function()
     table.insert(SILE.settings.stateQueue, SILE.settings.state)
-    SILE.settings.state = std.table.clone(SILE.settings.state)
+    SILE.settings.state = pl.tablex.copy(SILE.settings.state)
   end,
   popState = function()
     SILE.settings.state = table.remove(SILE.settings.stateQueue)
@@ -24,7 +24,11 @@ SILE.settings = {
     if not SILE.settings.declarations[name] then
       SU.error("Undefined setting '"..name.."'")
     end
-    return SILE.settings.state[name] or SILE.settings.defaults[name]
+    if type(SILE.settings.state[name]) ~= "nil" then
+      return SILE.settings.state[name]
+    else
+      return SILE.settings.defaults[name]
+    end
   end,
   set = function(name, value)
     if not SILE.settings.declarations[name] then
@@ -42,7 +46,7 @@ SILE.settings = {
     SILE.settings.popState()
   end,
   wrap = function() -- Returns a closure which applies the current state, later
-    local clSettings = std.table.clone(SILE.settings.state)
+    local clSettings = pl.tablex.copy(SILE.settings.state)
     return function(func)
       table.insert(SILE.settings.stateQueue, SILE.settings.state)
       SILE.settings.state = clSettings
@@ -54,59 +58,52 @@ SILE.settings = {
 
 SILE.settings.declare({
   name = "document.parindent",
-  type = "Glue",
-  default = SILE.nodefactory.newGlue("20pt"),
+  type = "glue",
+  default = SILE.nodefactory.glue("20pt"),
   help = "Glue at start of paragraph"
 })
 
 SILE.settings.declare({
   name = "document.baselineskip",
-  type = "VGlue",
-  default = SILE.nodefactory.newVglue("1.2em plus 1pt"),
+  type = "vglue",
+  default = SILE.nodefactory.vglue("1.2em plus 1pt"),
   help = "Leading"
 })
 
 SILE.settings.declare({
   name = "document.lineskip",
-  type = "VGlue",
-  default = SILE.nodefactory.newVglue("1pt"),
+  type = "vglue",
+  default = SILE.nodefactory.vglue("1pt"),
   help = "Leading"
 })
 
 SILE.settings.declare({
   name = "document.parskip",
-  type = "VGlue",
-  default = SILE.nodefactory.newVglue("0pt plus 1pt"),
+  type = "vglue",
+  default = SILE.nodefactory.vglue("0pt plus 1pt"),
   help = "Leading"
 })
 
 SILE.settings.declare({
   name = "document.spaceskip",
-  type = "Length or nil",
+  type = "length or nil",
   default = nil,
   help = "The length of a space (if nil, then measured from the font)"
 })
 
 SILE.settings.declare({
   name = "document.rskip",
-  type = "Glue or nil",
+  type = "glue or nil",
   default = nil,
   help = "Skip to be added to right side of line"
 })
 
 SILE.settings.declare({
   name = "document.lskip",
-  type = "Glue or nil",
+  type = "glue or nil",
   default = nil,
   help = "Skip to be added to left side of line"
 })
-
-local function toboolean(v)
-  if type(v) == "boolean" then return v end
-  if type(v) == "string" then return v == "true" end
-  if type(v) == "number" or type(v) == "integer" then return not (v == 0) end
-  return not not v
-end
 
 SILE.registerCommand("set", function(options, content)
   local parameter = SU.required(options, "parameter", "\\set command")

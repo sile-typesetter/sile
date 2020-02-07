@@ -1,9 +1,17 @@
 AC_PREREQ([2.68])
-AC_INIT([SILE], m4_esyscmd_s([git describe --always --tags --dirty=*]), [simon@simon-cozens.org])
+AC_INIT([SILE],
+        m4_esyscmd([build-aux/git-version-gen .tarball-version]),
+        [simon@simon-cozens.org])
 AM_INIT_AUTOMAKE([1.11.1 foreign tar-pax dist-bzip2 no-dist-gzip -Wall no-define color-tests -Wno-portability subdir-objects])
 AC_CONFIG_MACRO_DIR([m4])
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
+
+if [[ -d .git ]]; then
+    MAN_DATE=$(git log -1 --format="%cd" --date=format:"%d %B %Y" -- sile.1.in)
+else
+    MAN_DATE=$(date "+%d %B %Y")
+fi
 
 AM_SILENT_RULES([yes])
 
@@ -96,15 +104,17 @@ AX_LUA_LIBS
 
 AS_IF([test "x$with_system_luarocks" != "xyes"], [], [
     AX_LUA_MODULE([bit32], [bit32])
-    AX_LUA_MODULE([epnf], [luaepnf])
     AX_LUA_MODULE([lpeg], [lpeg])
     AX_LUA_MODULE([cassowary], [cassowary])
-    # TODO: Need compat53 only on lua < 5.3
-    # AX_LUA_MODULE([compat53], [compat53])
+    AS_IF([test "$LUA_SHORT_VERSION" -lt 53],
+        AX_LUA_MODULE([compat53], [compat53])
+    )
+    AX_LUA_MODULE([cosmo], [cosmo])
     AX_LUA_MODULE([linenoise], [linenoise])
     AX_LUA_MODULE([zlib], [lua-zlib])
     AX_LUA_MODULE([cliargs], [lua_cliargs])
     AX_LUA_MODULE([epnf], [luaepnf])
+    AX_LUA_MODULE([lxp], [luaexpat])
     AX_LUA_MODULE([lfs], [luafilesystem])
     AX_LUA_MODULE([repl], [luarepl])
     AX_LUA_MODULE([ssl], [luasec])
@@ -138,8 +148,6 @@ PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
 adl_RECURSIVE_EVAL(["${datadir}/${PACKAGE}"], [SILE_PATH])
 AC_DEFINE_UNQUOTED([SILE_PATH],["${SILE_PATH}"],[Path for SILE packages and classes])
 
-adl_RECURSIVE_EVAL(["${datadir}/${PACKAGE}"], m4_esyscmd_s[git describe --always --tags --dirty=*])
-
 adl_RECURSIVE_EVAL(["${libdir}/${PACKAGE}"], [SILE_LIB_PATH])
 AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"],[Path for SILE libraries])
 
@@ -166,8 +174,12 @@ AC_SUBST([LUAROCKSARGS])
 AC_SUBST([SILE_PATH])
 AC_SUBST([SILE_LIB_PATH])
 AC_SUBST([shared_ext])
+AC_SUBST([SYSTEM_LUAROCKS])
 AC_SUBST([APPKIT])
-AC_CONFIG_FILES([Makefile src/Makefile])
+AC_SUBST([MAN_DATE])
+AC_CONFIG_FILES([Makefile src/Makefile sile.1])
 AC_CONFIG_FILES([sile], [chmod +x sile])
 
 AC_OUTPUT
+m4_esyscmd_s([test -f configure && sed -i -e '/rm -f/s/ core / /' configure])
+m4_esyscmd_s([test -f aclocal.m4 && sed -i -e '/rm -f/s/ core / /' aclocal.m4])

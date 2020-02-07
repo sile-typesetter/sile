@@ -311,7 +311,7 @@ routine.
 \begin{verbatim}
 \line
 local writeToc = function (self)
-  local t = std.string.pickle(SILE.scratch.tableofcontents)
+  local t = pl.pretty.write(SILE.scratch.tableofcontents)
   saveFile(t, SILE.masterFilename .. '.toc')
 end
 \line

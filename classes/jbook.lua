@@ -6,11 +6,10 @@ SILE.call("bidi-off")
 jbook:declareOption("layout", "yoko")
 jbook:loadPackage("masters")
 
-jbook:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
-jbook:mirrorMaster("right", "left")
-
-jbook:loadPackage("hanmenkyoshi")
 function jbook:init()
+  jbook:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
+  jbook:mirrorMaster("right", "left")
+  jbook:loadPackage("hanmenkyoshi")
   jbook:defineMaster({ id = "right", firstContentFrame = "content",
     frames = {
       runningHead = {left = "left(content) + 9pt", right = "right(content) - 9pt", height = "20pt", bottom = "top(content)-9pt" },
@@ -27,13 +26,13 @@ function jbook:init()
   book:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
   book:mirrorMaster("right", "left")
   self.pageTemplate.firstContentFrame = self.pageTemplate.frames.content
-  return self.base.init(self)
+  return book.init(self)
 end
 
-function jbook:registerCommands()
-  self.base:registerCommands()
+jbook.registerCommands = function(_)
+  book:registerCommands()
   SILE.call("language", { main = "ja" })
 end
 
-SILE.settings.set("document.parindent",SILE.nodefactory.newGlue("10pt"))
+SILE.settings.set("document.parindent",SILE.nodefactory.glue("10pt"))
 return jbook

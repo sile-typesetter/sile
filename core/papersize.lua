@@ -1,4 +1,4 @@
-SILE.paperSizes = {
+local papersize = {
   letter = { 612, 792 },
   note = { 612, 792 },
   legal = { 612, 1008 },
@@ -54,13 +54,23 @@ SILE.paperSizes = {
   esheet = { 2448, 3168 }
 }
 
-SILE.paperSizeParser = function(size)
-  _, _, x, y = string.find(size, "(.+)%s+x%s+(.+)")
-  if x then
-    return { SILE.toPoints(x), SILE.toPoints(y) }
-  elseif (SILE.paperSizes[size]) then
-    return SILE.paperSizes[size]
-  else
-    SU.error("Unknown paper size "..size)
-  end
+setmetatable(papersize, {
+    __call = function (self, size)
+      local _, _, x, y = string.find(size, "(.+)%s+x%s+(.+)")
+      if x and y then
+        local a = { SILE.measurement(x):tonumber(), SILE.measurement(y):tonumber() }
+        return a
+      elseif self[size] then
+        return self[size]
+      else
+        SU.error("Unknown paper size "..size)
+      end
+    end
+  })
+
+SILE.paperSizeParser = function (size)
+  -- SU.warn("SILE.paperSizeParser(...) is deprecated, use SILE.papersize(...) instead")
+  return papersize(size)
 end
+
+return papersize

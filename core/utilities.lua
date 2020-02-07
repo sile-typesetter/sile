@@ -1,26 +1,27 @@
 local utilities = {}
 
-math.epsilon = 1E-12
+local epsilon = 1E-12
 
-utilities.required = function (options, name, context)
+utilities.required = function (options, name, context, _type)
   if not options[name] then utilities.error(context.." needs a "..name.." parameter") end
+  if _type then
+    return utilities.cast(_type, options[name])
+  end
   return options[name]
 end
 
-utilities.boolean = function (value, default)
-  if value == "false" then return false end
-  if value == false then return false end
-  if value == "true" then return true end
-  if value == true then return true end
-  return default
+local function preferbool ()
+  utilities.warn("Please use boolean values or strings such as 'true' and 'false' instead of 'yes' and 'no'.")
 end
 
-if not table.maxn then
-  table.maxn = function(tbl)
-    local max = 0
-    for i,_ in pairs(tbl) do if i > max then max = i end end
-    return max
-  end
+utilities.boolean = function (value, default)
+  if value == false then return false end
+  if value == true then return true end
+  if value == "false" then return false end
+  if value == "true" then return true end
+  if value == "no" then preferbool(); return false end
+  if value == "yes" then preferbool(); return true end
+  return default
 end
 
 utilities.error = function(message, bug)
@@ -46,8 +47,10 @@ utilities.debugging = function (category)
 end
 
 utilities.feq = function (lhs, rhs) -- Float point equal
+  lhs = SU.cast("number", lhs)
+  rhs = SU.cast("number", rhs)
   local abs = math.abs
-  return abs(lhs - rhs) <= math.epsilon * (abs(lhs) + abs(rhs))
+  return abs(lhs - rhs) <= epsilon * (abs(lhs) + abs(rhs))
 end
 
 utilities.gtoke = function (string, pattern)
@@ -72,15 +75,31 @@ utilities.gtoke = function (string, pattern)
   end)
 end
 
+utilities.deprecated = function (old, new, warnat, errorat, extra)
+  local _semver = SILE.version:match("v([0-9]*.[0-9]*.[0-9]*)")
+  local msg = old .. "() was deprecated in SILE v" .. warnat .. ". Please use " .. new .. "() instead. " .. extra
+  if errorat and _semver >= errorat then
+    SU.error(msg)
+  elseif warnat and _semver >= warnat then
+    SU.warn(msg)
+  end
+end
+
 utilities.debug = function (category, ...)
   if utilities.debugging(category) then
-    io.stderr:write("\n["..category.."] ", table.concat({ ... }, " "))
+    local inputs = table.pack(...)
+    for i, input in ipairs(inputs) do
+      if type(input) == "function" then
+        inputs[i] = input()
+      end
+    end
+    io.stderr:write("\n["..category.."] ", utilities.concat(inputs, " "))
   end
 end
 
 utilities.dump = function (...)
   local arg = { ... } -- Avoid things that Lua stuffs in arg like args to self()
-  pretty.dump(#arg == 1 and arg[1] or arg, "/dev/stderr")
+  pl.pretty.dump(#arg == 1 and arg[1] or arg, "/dev/stderr")
 end
 
 utilities.concat = function (array, separator)
@@ -88,7 +107,7 @@ utilities.concat = function (array, separator)
 end
 
 utilities.inherit = function (orig, spec)
-  local new = std.tree.clone(orig)
+  local new = pl.tablex.deepcopy(orig)
   if spec then
     for k,v in pairs(spec) do new[k] = v end
   end
@@ -119,7 +138,7 @@ utilities.splice = function (array, start, stop, replacement)
     ptr = ptr + 1
   end
 
-  for i = 1, room do
+  for _ = 1, room do
       table.remove(array, ptr)
   end
   return array
@@ -134,30 +153,39 @@ utilities.sum = function (array)
   return total
 end
 
+-- Lua <= 5.2 can't handle objects in math functions
+utilities.max = function (...)
+  local input = pl.utils.pack(...)
+  local max = table.remove(input, 1)
+  for _, val in ipairs(input) do
+    if val > max then max = val end
+  end
+  return max
+end
+
+utilities.min = function (...)
+  local input = pl.utils.pack(...)
+  local min = input[1]
+  for _, val in ipairs(input) do
+    if val < min then min = val end
+  end
+  return min
+end
+
 utilities.compress = function (items)
   local rv = {}
-  for i=1,table.maxn(items) do if items[i] then rv[#rv+1] = items[i] end end
+  local max = math.max(table.unpack(pl.tablex.keys(items)))
+  for i = 1, max do if items[i] then rv[#rv+1] = items[i] end end
   return rv
 end
 
-table.nitems = function (tbl)
-  local count = 0
-  for _ in pairs(tbl) do count = count + 1 end
-  return count
-end
-
-table.append = function (basetable, tbl)
-  if not basetable or not tbl then SU.error("table.append called with nil table!: "..basetable..", "..tbl, true) end
-  for i=1,#tbl do
-      basetable[#basetable+1] = tbl[i]
-  end
-end
-
-table.flip = function(tbl)
-  for i=1, math.floor(#tbl / 2) do
-    local tmp = tbl[i]
-    tbl[i] = tbl[#tbl - i + 1]
-    tbl[#tbl - i + 1] = tmp
+utilities.flip_in_place = function (tbl)
+  local tmp, j
+  for i = 1, math.floor(#tbl / 2) do
+    tmp = tbl[i]
+    j = #tbl - i + 1
+    tbl[i] = tbl[j]
+    tbl[j] = tmp
   end
 end
 
@@ -181,8 +209,10 @@ end
 utilities.type = function(value)
   if type(value) == "number" then
     return math.floor(value) == value and "integer" or "number"
-  elseif type(value) == "table" then
+  elseif type(value) == "table" and value.prototype then
     return value:prototype()
+  elseif type(value) == "table" and value.is_a then
+    return value.type
   else
     return type(value)
   end
@@ -190,16 +220,22 @@ end
 
 utilities.cast = function (wantedType, value)
   local actualType = SU.type(value)
+  wantedType = string.lower(wantedType)
   if string.match(wantedType, actualType)     then return value
   elseif actualType == "nil"
      and string.match(wantedType, "nil")      then return nil
-  elseif string.match(wantedType, "integer")  then return tonumber(value)
-  elseif string.match(wantedType, "number")   then return tonumber(value)
+  elseif string.match(wantedType, "integer") or string.match(wantedType, "number") then
+    if type(value) == "table" and type(value.tonumber) == "function" then
+      return value:tonumber()
+    end
+    return tonumber(value)
   elseif string.match(wantedType, "boolean")  then return SU.boolean(value)
-  elseif string.match(wantedType, "Length")   then return SILE.length.parse(value)
-  elseif string.match(wantedType, "VGlue")    then return SILE.nodefactory.newVglue(value)
-  elseif string.match(wantedType, "Glue")     then return SILE.nodefactory.newGlue(value)
-  elseif string.match(wantedType, "Kern")     then return SILE.nodefactory.newKern(value)
+  elseif string.match(wantedType, "string")   then return tostring(value)
+  elseif string.match(wantedType, "length")   then return SILE.length(value)
+  elseif string.match(wantedType, "measurement") then return SILE.measurement(value)
+  elseif string.match(wantedType, "vglue")    then return SILE.nodefactory.vglue(value)
+  elseif string.match(wantedType, "glue")     then return SILE.nodefactory.glue(value)
+  elseif string.match(wantedType, "kern")     then return SILE.nodefactory.kern(value)
   else SU.warn("Unrecognized type: "..wantedType); return value
   end
 end
@@ -219,7 +255,7 @@ end
 -- Strip the top level command off a content object and keep only the child
 -- items — assuming that the current command is taking care of itself
 utilities.subContent = function (content)
-  out = { id="stuff" }
+  local out = { id="stuff" }
   for key, val in pairs(content) do
     if type(key) == "number" then
       out[#out+1] = val
@@ -241,8 +277,18 @@ utilities.walkContent = function (content, action)
 end
 
 utilities.rateBadness = function(inf_bad, shortfall, spring)
-  local bad = math.floor(100 * (shortfall / spring) ^ 3)
-  return bad > inf_bad and inf_bad or bad
+  if spring == 0 then return inf_bad end
+  local bad = math.floor(100 * math.abs(shortfall / spring) ^ 3)
+  return math.min(inf_bad, bad)
+end
+
+utilities.rationWidth = function (target, width, ratio)
+  if ratio < 0 and width.shrink:tonumber() > 0 then
+    target:___add(width.shrink:tonumber() * ratio)
+  elseif ratio > 0 and width.stretch:tonumber() > 0 then
+    target:___add(width.stretch:tonumber() * ratio)
+  end
+  return target
 end
 
 -- Unicode-related utilities
@@ -299,8 +345,8 @@ utilities.utf8codes = function (ustr)
     if pos > #ustr then
       return nil
     else
-      local c, ucv = 0, 0
-      local nbytes = 0
+      local c, ucv
+      local nbytes
       c = string.byte(ustr, pos)
       pos = pos + 1
       if c < 0x80 then
@@ -427,12 +473,6 @@ end
 
 local icu = require("justenoughicu")
 
-local icuFormats = function (format)
-  if format == "roman" then return "romanlow" end
-  if format == "Roman" then return "roman" end
-  return format
-end
-
 local icuFormat = function (num, format)
   local ok, result  = pcall(function() return icu.format_number(num, format) end)
   return tostring(ok and result or num)
@@ -472,7 +512,7 @@ setmetatable (utilities.formatNumber, {
         end
       end
       local lang = SILE.settings.get("document.language")
-      local format = format:lower()
+      format = format:lower()
       local result
       if self[lang] and type(self[lang][format]) == "function" then
         result = self[lang][format](num)
@@ -489,11 +529,11 @@ utilities.breadcrumbs = function ()
   local breadcrumbs = {}
 
   setmetatable (breadcrumbs, {
-      __index = function(self, key)
+      __index = function(_, key)
         local frame = SILE.traceStack[key]
         return frame and frame.command or nil
       end,
-      __len = function(self)
+      __len = function(_)
         return #SILE.traceStack
       end,
       __tostring = function (self)
