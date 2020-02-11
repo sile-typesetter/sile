@@ -11,8 +11,6 @@ my @homebrew_depends = qw(expat fontconfig harfbuzz icu4c libpng lua openssl@1.1
 my %not_rocks = map {$_ => 1} qw(lua bit32 compat53);
 my %rocks = load_rockspec();
 
-$rocks{"luaexpat"} = "1.3.0"; # 1.3.3 is on luarocks, but there's no source release!
-
 my %rock_url_templates = (
     cassowary   => "https://github.com/sile-typesetter/cassowary.lua/archive/vVERSION.tar.gz",
     cosmo       => "https://github.com/mascarenhas/cosmo/archive/vVERSION.tar.gz",
@@ -20,7 +18,7 @@ my %rock_url_templates = (
     lpeg        => "http://www.inf.puc-rio.br/~roberto/lpeg/lpeg-VERSION.tar.gz",
     lua_cliargs => "https://github.com/amireh/lua_cliargs/archive/vUNSTRIPPEDVERSION.tar.gz",
     "lua-zlib"  => "https://github.com/brimworks/lua-zlib/archive/vVERSION.tar.gz",
-    luaexpat    => "https://matthewwild.co.uk/projects/luaexpat/luaexpat-VERSION.tar.gz",
+    luaexpat    => "https://github.com/tomasguisasola/luaexpat/archive/vVERSION.tar.gz",
     luaepnf     => "https://github.com/siffiejoe/lua-luaepnf/archive/vVERSION.tar.gz",
     luafilesystem => "https://github.com/keplerproject/luafilesystem/archive/vVERSIONUNDERSCORE.tar.gz",
     luarepl     => "https://github.com/hoelzro/lua-repl/archive/VERSION.tar.gz",
