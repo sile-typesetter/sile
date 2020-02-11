@@ -109,8 +109,9 @@ SILE.defaultTypesetter = std.object {
 
   initFrame = function (self, frame)
     self.frame = frame
+    self:runHooks("beforenewframe")
     self.frame:init()
-    self:runHooks("newframe")
+    self:runHooks("afternewframe")
   end,
 
   getMargins = function (_)
@@ -372,19 +373,18 @@ SILE.defaultTypesetter = std.object {
   end,
 
   registerFrameBreakHook = function (self, frame)
-    self:registerHook("framebreak", frame)
+    SU.deprecated("typesetter:registerFrameBreakHook", "typesetter:registerHook", "11.0", "12.0")
+    return self:registerHook("afterframebreak", frame)
   end,
 
   registerNewFrameHook = function (self, frame)
-    self:registerHook("newframe", frame)
-  end,
-
-  registerNextFrameHook = function (self, frame)
-    self:registerHook("nextframe", frame)
+    SU.deprecated("typesetter:registerNewFrameHook", "typesetter:registerHook", "11.0", "12.0")
+    return self:registerHook("afternewframe", frame)
   end,
 
   registerPageEndHook = function (self, frame)
-    self:registerHook("pageend", frame)
+    SU.deprecated("typesetter:registerPageEndHook", "typesetter:registerHook", "11.0", "12.0")
+    return self:registerHook("pageend", frame)
   end,
 
   buildPage = function (self)
@@ -457,6 +457,7 @@ SILE.defaultTypesetter = std.object {
   end,
 
   initNextFrame = function (self)
+    self:runHooks("beforenextframe")
     local oldframe = self.frame
     self.frame:leave()
     if #self.state.outputQueue == 0 then
@@ -473,7 +474,7 @@ SILE.defaultTypesetter = std.object {
       SILE.documentState.documentClass:endPage()
       self:initFrame(SILE.documentState.documentClass:newPage())
     end
-    self:runHooks("nextframe")
+    self:runHooks("afternextframe")
     if not SU.feq(oldframe:getLineWidth(), self.frame:getLineWidth()) then
       self:pushBack()
     else

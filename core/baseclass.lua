@@ -181,7 +181,7 @@ SILE.baseClass = std.object {
     self:registerCommands()
     -- Call all stored package init routines
     for i = 1, #(SILE.baseClass.deferredInit) do (SILE.baseClass.deferredInit[i])() end
-    SILE.typesetter:registerPageEndHook(function ()
+    SILE.typesetter:registerHook("pageend", function ()
       if SU.debugging("frames") then
         for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
       end

@@ -401,12 +401,12 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   return target
 end
 
-SILE.typesetter:registerFrameBreakHook(function (_, nl)
+SILE.typesetter:registerHook("afterframebreak", function (_, nl)
   pl.tablex.foreach(insertionsThisPage, SILE.insertions.commitShrinkage)
   return nl
 end)
 
-SILE.typesetter:registerPageEndHook(function (_, nl)
+SILE.typesetter:registerHook("pageend", function (_, nl)
   pl.tablex.foreach(insertionsThisPage, SILE.insertions.increaseInsertionFrame)
   for class, insertionlist in pairs(insertionsThisPage) do
     insertionlist:outputYourself()
