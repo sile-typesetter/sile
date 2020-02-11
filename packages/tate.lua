@@ -1,3 +1,6 @@
+-- Japaneese language support defines units which are useful here
+SILE.call("language", { main = "ja" }, {})
+
 SILE.tateFramePrototype = pl.class({
     _base = SILE.framePrototype,
     direction = "TTB-RTL",
