@@ -404,7 +404,7 @@ SILE.defaultTypesetter = std.object {
     end
     self.state.lastPenalty = res
     self.frame.state.pageRestart = nil
-    pageNodeList = self:runHooks("framebreak",pageNodeList)
+    pageNodeList = self:runHooks("framebreak", pageNodeList)
     self:setVerticalGlue(pageNodeList, self:getTargetLength())
     self:outputLinesToPage(pageNodeList)
     return true
