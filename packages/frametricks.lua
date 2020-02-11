@@ -32,8 +32,10 @@ local breakFrameVertical = function (after)
   newFrame:constrain("top", cFrame:top() + totalHeight)
   if (after) then
     SILE.typesetter:initFrame(cFrame)
+    SILE.typesetter:runHooks("nextframe")
   else
     SILE.typesetter:initFrame(newFrame)
+    SILE.typesetter:runHooks("nextframe")
   end
   -- SILE.outputter:debugFrame(cFrame)
   -- SILE.outputter:debugFrame(newFrame)
@@ -64,6 +66,7 @@ local breakFrameHorizontalAt = function (offset)
   -- SILE.outputter:debugFrame(cFrame)
   -- SILE.outputter:debugFrame(newFrame)
   SILE.typesetter:initFrame(newFrame)
+  SILE.typesetter:runHooks("nextframe")
 end
 
 local shiftframeedge = function (frame, options)
