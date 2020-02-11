@@ -1,3 +1,6 @@
+-- Japaneese language support defines units which are useful here
+SILE.call("language", { main = "ja" }, {})
+
 SILE.tateFramePrototype = pl.class({
     _base = SILE.framePrototype,
     direction = "TTB-RTL",
@@ -37,7 +40,7 @@ local outputLatinInTate = function (self, typesetter, line)
   local vorigin = -typesetter.frame.state.cursorY
   self:oldOutputYourself(typesetter,line)
   typesetter.frame.state.cursorY = -vorigin
-  typesetter.frame:advanceWritingDirection(self:lineContribution().length)
+  typesetter.frame:advanceWritingDirection(self:lineContribution())
   -- My baseline moved
   typesetter.frame:advanceWritingDirection(SILE.measurement("0.5zw") )
   typesetter.frame:advancePageDirection(-SILE.measurement("0.25zw"))
@@ -46,9 +49,9 @@ end
 
 local outputTateChuYoko = function (self, typesetter, line)
   -- My baseline moved
-  local em = SILE.toPoints("1zw")
-  typesetter.frame:advanceWritingDirection(-(em) + em/4 - self:lineContribution()/2)
-  typesetter.frame:advancePageDirection(2*self.height - self.width.length/2)
+  local em = SILE.measurement("1zw")
+  typesetter.frame:advanceWritingDirection(-em + em/4 - self:lineContribution()/2)
+  typesetter.frame:advancePageDirection(2*self.height - self.width/2)
   self:oldOutputYourself(typesetter,line)
   typesetter.frame:advanceWritingDirection(-self:lineContribution()*1.5+self.height*3/4)
 
