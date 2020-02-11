@@ -467,12 +467,13 @@ SILE.defaultTypesetter = std.object {
     elseif not self.frame:isMainContentFrame() then
       SU.warn("Overfull content for frame "..self.frame.id)
       self:chuck()
+      return
     else
       self:runHooks("pageend")
       SILE.documentState.documentClass:endPage()
       self:initFrame(SILE.documentState.documentClass:newPage())
     end
-
+    self:runHooks("nextframe")
     if not SU.feq(oldframe:getLineWidth(), self.frame:getLineWidth()) then
       self:pushBack()
     else
@@ -483,8 +484,6 @@ SILE.defaultTypesetter = std.object {
         if lead then table.insert(self.state.outputQueue,1,lead) end
       end
     end
-    self:runHooks("nextframe")
-
   end,
 
   pushBack = function (self)
