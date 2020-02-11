@@ -94,8 +94,8 @@ SILE.defaultTypesetter = std.object {
 
   init = function (self, frame)
     self.stateQueue = {}
-    self:initFrame(frame)
     self:initState()
+    self:initFrame(frame)
     return self
   end,
 
@@ -110,6 +110,7 @@ SILE.defaultTypesetter = std.object {
   initFrame = function (self, frame)
     self.frame = frame
     self.frame:init()
+    self:runHooks("newframe")
   end,
 
   getMargins = function (_)
@@ -378,6 +379,10 @@ SILE.defaultTypesetter = std.object {
     self:registerHook("newframe", frame)
   end,
 
+  registerNextFrameHook = function (self, frame)
+    self:registerHook("nextframe", frame)
+  end,
+
   registerPageEndHook = function (self, frame)
     self:registerHook("pageend", frame)
   end,
@@ -478,7 +483,7 @@ SILE.defaultTypesetter = std.object {
         if lead then table.insert(self.state.outputQueue,1,lead) end
       end
     end
-    self:runHooks("newframe")
+    self:runHooks("nextframe")
 
   end,
 

@@ -138,7 +138,7 @@ local oldPageBuilder, oldLeadingFor, oldPushVglue, oldPushExplicitVglue
 
 SILE.registerCommand("grid:debug", function (_, _)
   debugGrid()
-  SILE.typesetter:registerNewFrameHook(debugGrid)
+  SILE.typesetter:registerNextFrameHook(debugGrid)
 end)
 
 SILE.registerCommand("grid", function (options, _)
@@ -156,7 +156,7 @@ SILE.registerCommand("grid", function (options, _)
   if SILE.typesetter.frame then
     startGridInFrame(SILE.typesetter)
   end
-  SILE.typesetter:registerNewFrameHook(startGridInFrame)
+  SILE.typesetter:registerNextFrameHook(startGridInFrame)
 end, "Begins typesetting on a grid spaced at <spacing> intervals.")
 
 SILE.registerCommand("no-grid", function (_, _)

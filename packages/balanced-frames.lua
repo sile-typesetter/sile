@@ -58,7 +58,7 @@ SILE.typesetter.buildPage = function (self, independent)
     SILE.defaultTypesetter.buildPage(self, true)
     if self.frame.next and SILE.getFrame(self.frame.next).balanced == true then
       self:initFrame(SILE.getFrame(self.frame.next))
-      self:runHooks("newframe")
+      self:runHooks("nextframe")
     else
       break -- Break early, because when we return
     end
