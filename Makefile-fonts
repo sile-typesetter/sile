@@ -58,5 +58,5 @@ Hack-v3.003-ttf.tar.xz:
 	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
 	touch $@
 
-.fonts/SBL_Hbrw.ttf:
+.fonts/SBL_Hbrw.ttf: | .fonts
 	curl -s -L http://www.sbl-site.org/Fonts/$(notdir $@) -o $@
