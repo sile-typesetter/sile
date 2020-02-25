@@ -327,7 +327,7 @@ endif
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS)
 
 .PHONY: docker
-docker: Dockerfile build-aux/docker-entrypoint.sh build-aux/docker-yay-runner.sh
+docker: Dockerfile build-aux/docker-entrypoint.sh
 	docker build --tag siletypesetter/sile:HEAD ./
 
 gource.webm:
