@@ -15,6 +15,7 @@ task:
     - luarocks-5.2 install penlight
     - luarocks-5.2 install stdlib
     - luarocks-5.2 install vstruct
+    - luarocks-5.2 install cosmo
     - sh bootstrap.sh
     - ./configure --with-system-luarocks CFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
     - gmake install

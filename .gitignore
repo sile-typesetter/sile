@@ -49,9 +49,10 @@ core/*.so
 build/
 *.debug
 gh-pages
-sile-v*
-*.zip
+sile-[0-9\.]*
+*.bz2
 *.xz
+*.zip
 *.rockslock
 .dockerignore
 
@@ -67,6 +68,7 @@ compare-*
 # Vendor stuff
 node_modules
 lua_modules
+lua_modules_dist
 
 # Editor entrails
 .vscode/
@@ -76,7 +78,6 @@ tags
 documentation/*.pdf
 examples/*.pdf
 gource.webm
-*.tar.bz2
 .fonts/*
-sile
+#sile# Work around bug in standard-version by not ignoring this artifact
 sile.1
