@@ -19,6 +19,10 @@ return pl.class({
         self.length = SILE.measurement(spec)
       elseif SU.type(spec) == "measurement" then
         self.length = spec
+      elseif SU.type(spec) == "glue" then
+        self.length = SILE.measurement(spec.width.length or 0)
+        self.stretch = SILE.measurement(spec.width.stretch or 0)
+        self.shrink = SILE.measurement(spec.width.shrink or 0)
       elseif type(spec) == "table" then
         self.length = SILE.measurement(spec.length or 0)
         self.stretch = SILE.measurement(spec.stretch or 0)
