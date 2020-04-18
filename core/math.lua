@@ -981,26 +981,46 @@ end
 local mathGrammar = function(_ENV)
   local _ = WS^0
   local eol = S"\r\n"
+  local digit = R("09")
   local myID = C(SILE.inputs.TeXlike.identifier + P(1)) / 1
   local comment = (
       P"%" *
       P(1-eol)^0 *
       eol^-1
     )
+  local utf8cont = R("\128\191")
+  local utf8code = lpeg.R("\0\127")
+    + lpeg.R("\194\223") * utf8cont
+    + lpeg.R("\224\239") * utf8cont * utf8cont
+    + lpeg.R("\240\244") * utf8cont * utf8cont * utf8cont
+  -- Identifiers inside \mo and \mi tags
+  local mathMLID = (utf8code - S"\\{}%")^1 / function(...)
+    local ret = ""
+    local t = {...}
+    for _,b in ipairs(t) do
+      ret = ret .. b
+    end
+    return ret
+  end
+
   START "texlike_math"
   texlike_math = V"mathlist" * EOF"Unexpected character at end of math code"
   mathlist = (comment + (WS * _) + V"supsub" + V"subsup" + V"infix_element" + V"element")^0
   element =
+    V"mi" + V"mo" + V"mn" +
     V"command" +
     V"group" +
     V"atom"
+  mi = P"\\mi" * P"{" * C(mathMLID) * P"}"
+  mo = P"\\mo" * _ * P"{" * C(mathMLID) * P"}"
+  mn = P"\\mn" * _ * P"{" * C(digit^1) * P"}"
   infix_element = V"element" * _ * V"infix_op" * _ *
     (V"infix_element" + V"element")
   infix_op = C(S"^_")
   supsub = V"element" * _ * "^" * _ * V"element" * _ * "_" * _ * V"element"
   subsup = V"element" * _ * "_" * _ * V"element" * _ * "^" * _ * V"element"
   group = P"{" * V"mathlist" * (P"}" + E("`}` expected"))
-  atom = C(1 - S"\\{}%^_")
+  atom = C(utf8code - S"\\{}%^_")
   command = (
       P"\\" *
       Cg(myID, "tag") *
@@ -1022,6 +1042,8 @@ local function massageMathAst(tree)
     tree = tree[1]
   elseif tree.id == "mathlist" then
     tree.tag = "mrow"
+  elseif tree.id == "mi" or tree.id == "mo" or tree.id == "mn" then
+    tree.tag = tree.id
   end
 
   return tree
