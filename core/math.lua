@@ -998,6 +998,7 @@ local mathGrammar = function(_ENV)
   local _ = WS^0
   local eol = S"\r\n"
   local digit = R("09")
+  local number = C(digit^1)
   local myID = C(SILE.inputs.TeXlike.identifier + P(1)) / 1
   local comment = (
       P"%" *
@@ -1018,30 +1019,37 @@ local mathGrammar = function(_ENV)
     end
     return ret
   end
+  local group = P"{" * V"mathlist" * (P"}" + E("`}` expected"))
+  local element_no_infix =
+    V"mi" + V"mo" + V"mn" +
+    V"command" +
+    group +
+    V"atom"
+  local element =
+    V"supsub" +
+    V"subsup" +
+    V"sup" +
+    V"sub" +
+    element_no_infix
 
   START "texlike_math"
   texlike_math = V"mathlist" * EOF"Unexpected character at end of math code"
-  mathlist = (comment + (WS * _) + V"supsub" + V"subsup" + V"infix_element" + V"element")^0
-  element =
-    V"mi" + V"mo" + V"mn" +
-    V"command" +
-    V"group" +
-    V"atom"
-  mi = P"\\mi" * P"{" * C(mathMLID) * P"}"
-  mo = P"\\mo" * _ * P"{" * C(mathMLID) * P"}"
-  mn = P"\\mn" * _ * P"{" * C(digit^1) * P"}"
-  infix_element = V"element" * _ * V"infix_op" * _ *
-    (V"infix_element" + V"element")
-  infix_op = C(S"^_")
-  supsub = V"element" * _ * "^" * _ * V"element" * _ * "_" * _ * V"element"
-  subsup = V"element" * _ * "_" * _ * V"element" * _ * "^" * _ * V"element"
-  group = P"{" * V"mathlist" * (P"}" + E("`}` expected"))
+  mathlist = (comment + (WS * _) + element)^0
+  mi = P"\\" * Cg(P"mi", "tag") * P"{" * mathMLID * P"}"
+  mo = P"\\" * Cg(P"mo", "tag") * _ * P"{" * mathMLID * P"}"
+  mn = P"\\" * Cg(P"mn", "tag") * _ * P"{" * number * P"}"
+  supsub = element_no_infix * _ * P"^" * _ * element_no_infix * _ *
+    P"_" * _ * element_no_infix
+  subsup = element_no_infix * _ * P"_" * _ * element_no_infix * _ *
+    P"^" * _ * element_no_infix
+  sup = element_no_infix * _ * P"^" * _ * element_no_infix
+  sub = element_no_infix * _ * P"_" * _ * element_no_infix
   atom = C(utf8code - S"\\{}%^_")
   command = (
       P"\\" *
       Cg(myID, "tag") *
       (
-        V"group"
+        group
       )^0
     )
 end
@@ -1054,12 +1062,8 @@ local function massageMathAst(tree)
   end
   if tree.id == "texlike_math" then
     tree.tag = "math"
-  elseif tree.id == "element" or tree.id == "group" then
-    tree = tree[1]
   elseif tree.id == "mathlist" then
     tree.tag = "mrow"
-  elseif tree.id == "mi" or tree.id == "mo" or tree.id == "mn" then
-    tree.tag = tree.id
   end
 
   return tree
@@ -1079,14 +1083,10 @@ local function compileToMathML(tree)
     else
       tree.tag = "mo"
     end
-  elseif tree.id == "infix_element" then
-    if tree[2][1] == "^" then
-      tree.tag = "msup"
-    elseif tree[2][1] == "_" then
+  elseif tree.id == "sup" then
+    tree.tag = "msup"
+  elseif tree.id == "sub" then
       tree.tag = "msub"
-    end
-    tree[2] = tree[3]
-    tree[3] = nil
   elseif tree.id == "subsup" then
     tree.tag = "msubsup"
   elseif tree.id == "supsub" then
@@ -1095,6 +1095,7 @@ local function compileToMathML(tree)
     tree[2] = tree[3]
     tree[3] = tmp
   end
+  tree.id = nil
   print("compileToMathML end: "..tree)
   return tree
 end
