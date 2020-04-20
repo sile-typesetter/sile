@@ -97,6 +97,7 @@ local mathScriptConversionTable = {
 }
 
 SILE.settings.declare({name = "math.font.family", type = "string", default = "XITS Math"})
+SILE.settings.declare({name = "math.font.filename", type = "string", default = ""})
 SILE.settings.declare({name = "math.font.size", type = "integer", default = 10})
 -- Whether to show debug boxes around mboxes
 SILE.settings.declare({name = "math.debug.boxes", type = "boolean", default = false})
@@ -139,6 +140,9 @@ local function getMathMetrics()
     family=SILE.settings.get("math.font.family"),
     size=SILE.settings.get("math.font.size")
   }
+  local filename = SILE.settings.get("math.font.filename")
+  print("filename = " .. filename)
+  if filename and filename ~= "" then options.filename = filename end
   mathCache = retrieveMathTable(options)
   return mathCache
 end
@@ -262,6 +266,8 @@ local _mbox = _box {
       family=SILE.settings.get("math.font.family"),
       size=SILE.settings.get("math.font.size")
     }
+    local filename = SILE.settings.get("math.font.filename")
+    if filename and filename ~= "" then options.filename = filename end
     self.options = SILE.font.loadDefaults(options)
   end,
 
