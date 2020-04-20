@@ -745,38 +745,43 @@ local _text = _terminal {
     if isDisplayMode(self.mode) and self.atom == atomType.bigOperator then
       -- We copy the glyph list to avoid modifying the shaper's cache. Yes.
       glyphs = std.tree.clone(glyphs)
-      local displayVariants = mathMetrics.mathVariants
-        .vertGlyphConstructions[glyphs[1].gid].mathGlyphVariantRecord
-      -- We select the biggest variant. TODO: we shoud probably select the
-      -- first variant that is higher than displayOperatorMinHeight.
-      local biggest
-      local m = 0
-      for i, v in ipairs(displayVariants) do
-        if v.advanceMeasurement > m then
-          biggest = v
-          m = v.advanceMeasurement
+      local constructions = mathMetrics.mathVariants
+        .vertGlyphConstructions[glyphs[1].gid]
+      if constructions then
+        local displayVariants = constructions.mathGlyphVariantRecord
+        -- We select the biggest variant. TODO: we shoud probably select the
+        -- first variant that is higher than displayOperatorMinHeight.
+        local biggest
+        local m = 0
+        for i, v in ipairs(displayVariants) do
+          if v.advanceMeasurement > m then
+            biggest = v
+            m = v.advanceMeasurement
+          end
         end
-      end
-      if biggest then
-        glyphs[1].gid = biggest.variantGlyph
-        local dimen = hb.get_glyph_dimensions(face.data,
-          face.index, self.options.size, biggest.variantGlyph)
-        glyphs[1].width = dimen.width
-        glyphs[1].glyphAdvance = dimen.glyphAdvance
-        --[[ I am told (https://github.com/alif-type/xits/issues/90) that,
-        in fact, the relative height and depth of display-style big operators
-        in the font is not relevant, as these should be centered around the
-        axis. So the following code does that, while conserving their
-        vertical size (distance from top to bottom). ]]
-        local axisHeight = mathMetrics.constants.axisHeight * self:getScaleDown()
-        local y_size = dimen.height + dimen.depth
-        glyphs[1].height = y_size / 2 + axisHeight
-        glyphs[1].depth = y_size / 2 - axisHeight
-        -- We still need to store the font's height and depth somewhere,
-        -- because that's what will be used to draw the glyph, and we will need
-        -- to artificially compensate for that.
-        glyphs[1].fontHeight = dimen.height
-        glyphs[1].fontDepth = dimen.depth
+        if biggest then
+          glyphs[1].gid = biggest.variantGlyph
+          local dimen = hb.get_glyph_dimensions(face.data,
+            face.index, self.options.size, biggest.variantGlyph)
+          print("Dimensions of big glyph for " .. self.text .. ": ")
+          print(dimen)
+          glyphs[1].width = dimen.width
+          glyphs[1].glyphAdvance = dimen.glyphAdvance
+          --[[ I am told (https://github.com/alif-type/xits/issues/90) that,
+          in fact, the relative height and depth of display-style big operators
+          in the font is not relevant, as these should be centered around the
+          axis. So the following code does that, while conserving their
+          vertical size (distance from top to bottom). ]]
+          local axisHeight = mathMetrics.constants.axisHeight * self:getScaleDown()
+          local y_size = dimen.height + dimen.depth
+          glyphs[1].height = y_size / 2 + axisHeight
+          glyphs[1].depth = y_size / 2 - axisHeight
+          -- We still need to store the font's height and depth somewhere,
+          -- because that's what will be used to draw the glyph, and we will need
+          -- to artificially compensate for that.
+          glyphs[1].fontHeight = dimen.height
+          glyphs[1].fontDepth = dimen.depth
+        end
       end
     end
     SILE.shaper:preAddNodes(glyphs, self.value)
@@ -803,7 +808,8 @@ local _text = _terminal {
     if not self.value.glyphString then return end
     -- print('Output '..self.value.glyphString.." to "..x..", "..y)
     local compensatedY
-    if isDisplayMode(self.mode) and self.atom == atomType.bigOperator then
+    if isDisplayMode(self.mode) and self.atom == atomType.bigOperator
+        and self.value.items[1].fontDepth then
       compensatedY = SILE.length.make(y.length + self.value.items[1].depth
         - self.value.items[1].fontDepth)
     else
