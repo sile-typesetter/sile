@@ -1,5 +1,6 @@
 ARG sile_tag=master
-FROM archlinux AS sile-base
+FROM archlinux:20200306 AS sile-base
+RUN sed -i -e '/IgnorePkg *=/s/^.*$/IgnorePkg = coreutils/' /etc/pacman.conf
 
 RUN pacman --needed --noconfirm -Syuq && yes | pacman -Sccq
 
