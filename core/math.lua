@@ -599,8 +599,8 @@ local _bigOpSubscript = _subscript {
     end
     -- Determine relative Xs based on widest symbol
     local widest, a, b
-    if self.sub.width > self.base.width then
-      if self.sub.width > self.sup.width then
+    if self.sub and self.sub.width > self.base.width then
+      if self.sup and self.sub.width > self.sup.width then
         widest = self.sub
         a = self.base
         b = self.sup
@@ -610,20 +610,24 @@ local _bigOpSubscript = _subscript {
         b = self.sub
       end
     else
-      if self.base.width > self.sup.width then
+      if self.sup and self.base.width > self.sup.width then
         widest = self.base
         a = self.sub
         b = self.sup
-      else
+      elseif self.sup then
         widest = self.sup
         a = self.base
         b = self.sub
+      else
+        widest = self.base
+        a = self.sub
+        b = nil
       end
     end
     widest.relX = SILE.length.make(0)
     local c = widest.width / 2
-    a.relX = c - a.width / 2
-    b.relX = c - b.width / 2
+    if a then a.relX = c - a.width / 2 end
+    if b then b.relX = c - b.width / 2 end
     local itCorr = self:calculateItalicsCorrection() * scaleDown
     if self.sup then self.sup.relX = self.sup.relX + itCorr / 2 end
     if self.sub then self.sub.relX = self.sub.relX - itCorr / 2 end
