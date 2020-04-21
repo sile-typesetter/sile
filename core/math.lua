@@ -989,7 +989,7 @@ local function ConvertMathML(content)
     end
     return newFraction({ numerator=children[1], denominator=children[2] })
   else
-    return nil
+    SU.error("Unknown math command " .. content.tag)
   end
 end
 
@@ -998,8 +998,11 @@ local mathGrammar = function(_ENV)
   local _ = WS^0
   local eol = S"\r\n"
   local digit = R("09")
-  local number = C(digit^1)
-  local myID = C(SILE.inputs.TeXlike.identifier + P(1)) / 1
+  local natural = digit^1 / tonumber
+  local pos_natural = R("19") * digit^0 / tonumber
+  local ctrl_word = R("AZ", "az")^1
+  local ctrl_symbol = P(1)
+  local ctrl_sequence_name = C(ctrl_word + ctrl_symbol) / 1
   local comment = (
       P"%" *
       P(1-eol)^0 *
@@ -1022,8 +1025,10 @@ local mathGrammar = function(_ENV)
   local group = P"{" * V"mathlist" * (P"}" + E("`}` expected"))
   local element_no_infix =
     V"mi" + V"mo" + V"mn" +
+    V"def" +
     V"command" +
     group +
+    V"argument" +
     V"atom"
   local element =
     V"supsub" +
@@ -1037,7 +1042,7 @@ local mathGrammar = function(_ENV)
   mathlist = (comment + (WS * _) + element)^0
   mi = P"\\" * Cg(P"mi", "tag") * P"{" * mathMLID * P"}"
   mo = P"\\" * Cg(P"mo", "tag") * _ * P"{" * mathMLID * P"}"
-  mn = P"\\" * Cg(P"mn", "tag") * _ * P"{" * number * P"}"
+  mn = P"\\" * Cg(P"mn", "tag") * _ * P"{" * mathMLID * P"}"
   supsub = element_no_infix * _ * P"^" * _ * element_no_infix * _ *
     P"_" * _ * element_no_infix
   subsup = element_no_infix * _ * P"_" * _ * element_no_infix * _ *
@@ -1047,11 +1052,16 @@ local mathGrammar = function(_ENV)
   atom = C(utf8code - S"\\{}%^_")
   command = (
       P"\\" *
-      Cg(myID, "tag") *
+      Cg(ctrl_sequence_name, "tag") *
       (
         group
       )^0
     )
+  def = P"\\def" * _ * P"{" *
+    Cg(ctrl_sequence_name, "command-name") * P"}" * _ *
+    --P"[" * Cg(digit^1, "arity") * P"]" * _ *
+    P"{" * V"mathlist" * P"}"
+  argument = P"#" * Cg(pos_natural, "index")
 end
 local mathParser = epnf.define(mathGrammar)
 
@@ -1063,18 +1073,45 @@ local function massageMathAst(tree)
   if tree.id == "texlike_math" then
     tree.tag = "math"
   elseif tree.id == "mathlist" then
-    tree.tag = "mrow"
+    -- Turn mathlist into mrow except if it has exactly one child
+    if #tree == 1 then return tree[1]
+    else tree.tag = "mrow" end
   end
 
   return tree
 end
 
-local function compileToMathML(tree)
+local commands = {}
+local function registerCommand(name, fun)
+  commands[name] = fun
+end
+
+local function fold(fun, init, table)
+  local acc = init
+  for k,x in pairs(table) do
+    acc = fun(acc, k, x)
+  end
+  return acc
+end
+
+local function compileToMathML(arg_env, tree)
   print("compileToMathML begin: "..tree)
   if type(tree) == "string" then return tree end
-  for i,child in ipairs(tree) do
-    tree[i] = compileToMathML(tree[i])
-  end
+  tree = fold(function(acc, key, child)
+    if type(key) ~= "number" then
+      acc[key] = child
+      return acc
+    -- Compile each children, except if this node is a macro definition (no
+    -- evaluation "under lambda").
+    elseif tree.id ~= "def" then
+      local comp = compileToMathML(arg_env, child)
+      if comp then table.insert(acc, comp) end
+    else
+      -- Children of a `def` node should not be evaluated.
+      table.insert(acc, child)
+    end
+    return acc
+  end, {}, tree)
   if tree.id == "atom" then
     if lpeg.match(lpeg.R("az","AZ"), tree[1]) then
       tree.tag = "mi"
@@ -1094,6 +1131,35 @@ local function compileToMathML(tree)
     local tmp = tree[2]
     tree[2] = tree[3]
     tree[3] = tmp
+  elseif tree.id == "def" then
+    print("delaying evaluation of " .. tree[1])
+    registerCommand(tree["command-name"], function(application_tree)
+      print("evaluating command ".. tree["command-name"].." with body "..tree[1].." on app. tree "..application_tree)
+      -- Compile every argument
+      local compiled_args = {}
+      for i,arg in pairs(application_tree) do
+        if type(i) == "number" then
+          table.insert(compiled_args, compileToMathML(arg_env, arg))
+        else
+          compiled_args[i] = application_tree[i]
+        end
+      end
+      print("compiling body "..tree[1].." under env: "..compiled_args)
+      return compileToMathML(compiled_args, tree[1])
+    end)
+    return nil
+  elseif tree.id == "command" and commands[tree.tag] then
+    return commands[tree.tag](tree)
+  elseif tree.id == "argument" then
+    print("Encountered arg #"..tree.index..", arg_env = "..arg_env)
+    print("type(tree.index) == "..type(tree.index))
+    if arg_env[tree.index] then
+      print("in if")
+      return arg_env[tree.index]
+    else
+      print("in else")
+      SU.error("Argument #"..tree.index.." has escaped its scope (probably not fully applied command).")
+    end
   end
   tree.id = nil
   print("compileToMathML end: "..tree)
@@ -1148,7 +1214,7 @@ SILE.registerCommand("texmath", function(options, content)
 
   local mbox
   xpcall(function()
-    mbox = ConvertMathML(compileToMathML(convertTexlike(content)))
+    mbox = ConvertMathML(compileToMathML({}, convertTexlike(content)))
   end, function(err) print(err); print(debug.traceback()) end)
 
   handleMath(mbox, mode)
