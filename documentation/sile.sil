@@ -244,9 +244,9 @@ Downloads of SILE can be obtained from the home page at \silehp.
 
 \subsection{Installing Preconfigured Packages}
 
-For OS X machines the recommended way to install SILE is through the Homebrew
-package manager. Once you have Homebrew running (see \url{http://brew.sh}),
-installing SILE is as easy as running:
+For macOS the recommended way to install SILE is through the Homebrew package
+manager. Once you have Homebrew running (see \url{http://brew.sh}), installing
+SILE is as easy as running:
 
 \terminal{$ brew install sile}
 
@@ -254,18 +254,32 @@ If you have not used Lua programs before, that will prompt you to manually
 install a couple dependencies. After running the commands it provides you can
 run the install command again to complete the installation.
 
-The formula also has instruction that can compile SILE from the current
-Git HEAD version. To test the latest unreleased code you can install using:
+The formula also has an option that can compile SILE from the current Git HEAD
+version. To test the latest unreleased code you can install using:
 
 \terminal{$ brew install sile --HEAD}
 
-For Linux users, preconfigured package build files are available for Arch
-Linux. The \code{sile} package has the latest stable release while the
-\code{sile-git} package will build a package using the latest unreleased code
-from the Git repository. If you use a package manager with AUR support you can
-install either one as you would any other package:
+For Linux users, preconfigured package build files are available for
+somedistributions.
 
-\terminal{$ yay -S sile}
+On Arch Linux the \code{sile} package in the AUR has the latest stable release
+while \code{sile-git} will build a package using the latest unreleased code
+from the Git repository. These may be built and installed like any other AUR
+package. Precompiled versions of these packages and all the dependencies are
+available in an unofficial repository
+\footnote{\url{https://wiki.archlinux.org/index.php/Unofficial_user_repositories#alerque}}
+that can be instaled using pacman:
+
+\terminal{$ pacman -S sile}
+
+For Ubuntu and official PPA is available with precompiled packages:
+
+\begin{terminal}
+sudo add-apt-repository ppa:sile-typesetter/sile
+sudo apt-get update
+sudo apt-get install sile
+\end{terminal}
+
 
 For all other systems you will need to follow the steps to download and compile
 the source yourself.
