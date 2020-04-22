@@ -64,7 +64,10 @@ release-preview:
 .PHONY: release
 release: tagrelease
 
-dist: examples docs all lua_modules_dist
+dist: examples docs all lua_modules_dist sile-$(VERSION).pdf
+
+sile-$(VERSION).pdf: documentation/sile.pdf
+	cp $< $@
 
 .PHONY: postrelease
 postrelease: dist
