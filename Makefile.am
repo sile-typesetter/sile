@@ -69,10 +69,6 @@ dist: examples docs all lua_modules_dist sile-$(VERSION).pdf
 sile-$(VERSION).pdf: documentation/sile.pdf
 	cp $< $@
 
-.PHONY: postrelease
-postrelease: dist
-	@echo "- [ ] Ping packagers: https://repology.org/project/sile/versions"
-
 .PHONY: update_libtexpdf
 update_libtexpdf:
 	git diff-index --quiet --cached HEAD || exit 1 # die if anything already staged
