@@ -64,11 +64,10 @@ release-preview:
 .PHONY: release
 release: tagrelease
 
-dist: examples docs all lua_modules_dist
+dist: examples docs all lua_modules_dist sile-$(VERSION).pdf
 
-.PHONY: postrelease
-postrelease: dist
-	@echo "- [ ] Ping packagers: https://repology.org/project/sile/versions"
+sile-$(VERSION).pdf: documentation/sile.pdf
+	cp $< $@
 
 .PHONY: update_libtexpdf
 update_libtexpdf:
