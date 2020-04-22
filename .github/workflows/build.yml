@@ -1,0 +1,30 @@
+name: Build
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Fetch Tags
+        run: git fetch --prune --tags
+      - name: Install system deps
+        run: |
+          sudo apt-get install fonts-sil-gentiumplus libfontconfig1-dev libharfbuzz-dev libicu-dev liblua5.2-dev libpng-dev lua5.2 lua-cassowary lua-cliargs lua-compat53 lua-cosmo lua-epnf lua-expat lua-filesystem lua-linenoise lua-lpeg lua-penlight lua-repl lua-sec lua-socket lua-stdlib lua-vstruct lua-zlib-dev
+      - name: Get Info
+        run: |
+          sudo apt-get install libharfbuzz-bin
+          hb-shape --version
+      - name: Configure
+        run: |
+          export LIBRARY_PATH="$PWD/.lua/include"
+          export LUA_INCLUDE="-I$LIBRARY_PATH"
+          export LUA_PREFIX="$PWD/.luarocks"
+          export LUA_EXEC_PREFIX="$PWD/.lua"
+          ./bootstrap.sh
+          ./configure
+          make
