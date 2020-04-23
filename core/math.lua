@@ -49,6 +49,14 @@ local scriptType = {
   monospace = 14, -- also have digits
 }
 
+local mathVariantToScriptType = function(attr)
+  return
+    attr == "normal" and scriptType.upright or
+    attr == "italic" and scriptType.italic or
+    attr == "bold-italic" and scriptType.boldItalic or
+    SU.error("Invalid value \""..attr.."\" for attribute mathvariant")
+end
+
 local operatorAtomTypes = {
   ['+'] = atomType.binaryOperator,
   ['-'] = atomType.binaryOperator,
@@ -93,7 +101,9 @@ end
 
 local mathScriptConversionTable = {
   italicLatinUpper = function(codepoint) return codepoint + 0x1D434 - 0x41 end,
-  italicLatinLower = function(codepoint) return codepoint == 0x68 and 0x210E or codepoint + 0x1D44E - 0x61 end
+  italicLatinLower = function(codepoint) return codepoint == 0x68 and 0x210E or codepoint + 0x1D44E - 0x61 end,
+  boldItalicLatinUpper = function(codepoint) return codepoint + 0x1D468 - 0x41 end,
+  boldItalicLatinLower = function(codepoint) return codepoint + 0x1D482 - 0x61 end
 }
 
 SILE.settings.declare({name = "math.font.family", type = "string", default = "XITS Math"})
@@ -717,10 +727,14 @@ local _text = _terminal {
         if uchr >= 0x41 and uchr <= 0x5A then -- Latin capital letter
           if self.script == scriptType.italic then
             dst_char = SU.utf8char(mathScriptConversionTable.italicLatinUpper(uchr))
+          elseif self.script == scriptType.boldItalic then
+            dst_char = SU.utf8char(mathScriptConversionTable.boldItalicLatinUpper(uchr))
           end
         elseif uchr >= 0x61 and uchr <= 0x7A then -- Latin non-capital letter
           if self.script == scriptType.italic then
             dst_char = SU.utf8char(mathScriptConversionTable.italicLatinLower(uchr))
+          elseif self.script == scriptType.boldItalic then
+            dst_char = SU.utf8char(mathScriptConversionTable.boldItalicLatinLower(uchr))
           end
         end
         converted = converted..dst_char
@@ -965,7 +979,9 @@ local function ConvertMathML(content)
   elseif content.tag == 'mrow' then
     return newStackbox({ direction='H', children=convertChildren(content) })
   elseif content.tag == 'mi' then
-    return newText({ kind='identifier', script=scriptType.italic, text=content[1] })
+    local script = content.attr.mathvariant and
+      mathVariantToScriptType(content.attr.mathvariant) or scriptType.italic
+    return newText({ kind='identifier', script=script, text=content[1] })
   elseif content.tag == 'mo' then
     return newText({ kind='operator', script=scriptType.upright, text=content[1] })
   elseif content.tag == 'mn' then
@@ -1014,6 +1030,7 @@ local mathGrammar = function(_ENV)
     + lpeg.R("\224\239") * utf8cont * utf8cont
     + lpeg.R("\240\244") * utf8cont * utf8cont * utf8cont
   -- Identifiers inside \mo and \mi tags
+  local sileID = C(SILE.inputs.TeXlike.identifier + P(1)) / 1
   local mathMLID = (utf8code - S"\\{}%")^1 / function(...)
     local ret = ""
     local t = {...}
@@ -1036,13 +1053,30 @@ local mathGrammar = function(_ENV)
     V"sup" +
     V"sub" +
     element_no_infix
+  local sep = S",;" * _
+  local quotedString = (P'"' * C((1-P'"')^1) * P'"')
+  local value = ( quotedString + (1-S",;]")^1 )
+  local pair = Cg(sileID * _ * "=" * _ * C(value)) * sep^-1 / function (...)
+    local t = {...}; return t[1], t[#t] end
+  local list = Cf(Ct"" * pair^0, rawset)
+  local parameters = (
+      P"[" *
+      list *
+      P"]"
+    )^-1 / function (a) return type(a)=="table" and a or {} end
 
   START "texlike_math"
   texlike_math = V"mathlist" * EOF"Unexpected character at end of math code"
   mathlist = (comment + (WS * _) + element)^0
-  mi = P"\\" * Cg(P"mi", "tag") * P"{" * mathMLID * P"}"
-  mo = P"\\" * Cg(P"mo", "tag") * _ * P"{" * mathMLID * P"}"
-  mn = P"\\" * Cg(P"mn", "tag") * _ * P"{" * mathMLID * P"}"
+  mi = P"\\" * Cg(P"mi", "tag") *
+    Cg(parameters, "attr") *
+    P"{" * (V"argument" + mathMLID) * P"}"
+  mo = P"\\" * Cg(P"mo", "tag") * _ *
+    Cg(parameters, "attr") *
+    P"{" * mathMLID * P"}"
+  mn = P"\\" * Cg(P"mn", "tag") * _ *
+    Cg(parameters, "attr") *
+    P"{" * mathMLID * P"}"
   supsub = element_no_infix * _ * P"^" * _ * element_no_infix * _ *
     P"_" * _ * element_no_infix
   subsup = element_no_infix * _ * P"_" * _ * element_no_infix * _ *
@@ -1053,6 +1087,7 @@ local mathGrammar = function(_ENV)
   command = (
       P"\\" *
       Cg(ctrl_sequence_name, "tag") *
+      Cg(parameters, "attr") *
       (
         group
       )^0
@@ -1086,7 +1121,7 @@ local function registerCommand(name, fun)
   commands[name] = fun
 end
 
-local function fold(fun, init, table)
+local function fold_pairs(fun, init, table)
   local acc = init
   for k,x in pairs(table) do
     acc = fun(acc, k, x)
@@ -1094,10 +1129,19 @@ local function fold(fun, init, table)
   return acc
 end
 
+local function fold_tree(fun, init, tree)
+  local acc = init
+  if type(tree) == "table" then
+    for i, child in ipairs(tree) do
+      acc = fold_tree(fun, acc, child)
+    end
+  end
+  return fun(acc, tree)
+end
+
 local function compileToMathML(arg_env, tree)
-  print("compileToMathML begin: "..tree)
   if type(tree) == "string" then return tree end
-  tree = fold(function(acc, key, child)
+  tree = fold_pairs(function(acc, key, child)
     if type(key) ~= "number" then
       acc[key] = child
       return acc
@@ -1120,6 +1164,7 @@ local function compileToMathML(arg_env, tree)
     else
       tree.tag = "mo"
     end
+    tree.attr = {}
   elseif tree.id == "sup" then
     tree.tag = "msup"
   elseif tree.id == "sub" then
@@ -1162,7 +1207,6 @@ local function compileToMathML(arg_env, tree)
     end
   end
   tree.id = nil
-  print("compileToMathML end: "..tree)
   return tree
 end
 
