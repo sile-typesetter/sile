@@ -981,11 +981,23 @@ local function ConvertMathML(content)
   elseif content.tag == 'mi' then
     local script = content.attr.mathvariant and
       mathVariantToScriptType(content.attr.mathvariant) or scriptType.italic
-    return newText({ kind='identifier', script=script, text=content[1] })
+    local text = content[1]
+    if type(text) ~= "string" then
+      SU.error("mi tag contains "..text..", which is not text")
+    end
+    return newText({ kind='identifier', script=script, text=text })
   elseif content.tag == 'mo' then
-    return newText({ kind='operator', script=scriptType.upright, text=content[1] })
+    local text = content[1]
+    if type(text) ~= "string" then
+      SU.error("mo tag contains "..text..", which is not text")
+    end
+    return newText({ kind='operator', script=scriptType.upright, text=text })
   elseif content.tag == 'mn' then
-    return newText({ kind='number', script=scriptType.upright, text=content[1] })
+    local text = content[1]
+    if type(text) ~= "string" then
+      SU.error("mn tag contains "..text..", which is not text")
+    end
+    return newText({ kind='number', script=scriptType.upright, text=text })
   elseif content.tag == 'msub' then
     local children = convertChildren(content)
     if #children ~= 2 then SU.error('Wrong number of children in msub') end
@@ -1041,7 +1053,6 @@ local mathGrammar = function(_ENV)
   end
   local group = P"{" * V"mathlist" * (P"}" + E("`}` expected"))
   local element_no_infix =
-    V"mi" + V"mo" + V"mn" +
     V"def" +
     V"command" +
     group +
@@ -1068,15 +1079,6 @@ local mathGrammar = function(_ENV)
   START "texlike_math"
   texlike_math = V"mathlist" * EOF"Unexpected character at end of math code"
   mathlist = (comment + (WS * _) + element)^0
-  mi = P"\\" * Cg(P"mi", "tag") *
-    Cg(parameters, "attr") *
-    P"{" * (V"argument" + mathMLID) * P"}"
-  mo = P"\\" * Cg(P"mo", "tag") * _ *
-    Cg(parameters, "attr") *
-    P"{" * mathMLID * P"}"
-  mn = P"\\" * Cg(P"mn", "tag") * _ *
-    Cg(parameters, "attr") *
-    P"{" * mathMLID * P"}"
   supsub = element_no_infix * _ * P"^" * _ * element_no_infix * _ *
     P"_" * _ * element_no_infix
   subsup = element_no_infix * _ * P"_" * _ * element_no_infix * _ *
@@ -1117,8 +1119,73 @@ local function massageMathAst(tree)
 end
 
 local commands = {}
-local function registerCommand(name, fun)
-  commands[name] = fun
+
+-- A command type is a type for each argument it takes: either string or MathML
+-- tree. If a command has no type, it is assumed to take only trees.
+-- Tags like <mi>, <mo>, <mn> take a string, and this needs to be propagated in
+-- commands that use them.
+
+local objType = {
+  tree = 1,
+  str = 2
+}
+
+local function inferArgTypes_aux(acc, typeRequired, body)
+  print("inferArgTypes_aux")
+  print("  acc = "..acc)
+  print("  typeRequired = "..typeRequired)
+  print("  body = "..body)
+  if type(body) == "table" then
+    if body.id == "argument" then
+      local ret = acc
+      table.insert(ret, body.index, typeRequired)
+      return ret
+    elseif body.id == "command" then
+      if commands[body.tag] then
+        local cmdArgTypes = commands[body.tag][1]
+        if #cmdArgTypes ~= #body then
+          SU.error("Wrong number of arguments (" .. #body ..
+            ") for command " .. body.tag .. " (should be " ..
+            #cmdArgTypes .. ")")
+        else
+          for i = 1, #cmdArgTypes do
+            acc = inferArgTypes_aux(acc, cmdArgTypes[i], body[i])
+          end
+        end
+        return acc
+      elseif body.tag == "mi" or body.tag == "mo" or body.tag == "mn" then
+        if #body ~= 1 then
+          SU.error("Wrong number of arguments ("..#body..") for tag "..
+            body.tag.." (should be 1)")
+        end
+        acc = inferArgTypes_aux(acc, objType.str, body[1])
+        return acc
+      else
+        -- Not a macro, recurse on children assuming tree type for all
+        -- arguments
+        for _, child in ipairs(body) do
+          acc = inferArgTypes_aux(acc, objType.tree, child)
+        end
+        return acc
+      end
+    elseif body.id == "atom" then
+      return acc
+    else
+      -- Simply recurse on children
+      for _, child in ipairs(body) do
+        acc = inferArgTypes_aux(acc, typeRequired, child)
+      end
+      return acc
+    end
+  else SU.error("invalid argument to inferArgTypes_aux") end
+end
+
+local inferArgTypes = function(body)
+  return inferArgTypes_aux({}, objType.tree, body)
+end
+
+local function registerCommand(name, argTypes, fun)
+  commands[name] = {argTypes, fun}
 end
 
 local function fold_pairs(fun, init, table)
@@ -1139,20 +1206,43 @@ local function fold_tree(fun, init, tree)
   return fun(acc, tree)
 end
 
+local compileToStr = function(argEnv, atomlist)
+  print("compileToStr "..atomlist)
+  if #atomlist == 1 and atomlist.id == "atom" then
+    -- List is a single atom
+    return atomlist[1]
+  elseif atomlist.id == "argument" then
+    return argEnv[atomlist.index]
+  else
+    local ret = ""
+    for _,atom in ipairs(atomlist) do
+      if atom.id ~= "atom" then
+        SU.error("Encountered non-character token in command that takes a string")
+      end
+      ret = ret .. atom[1]
+    end
+    return ret
+  end
+end
+
 local function compileToMathML(arg_env, tree)
+  print("compileToMathML "..tree)
   if type(tree) == "string" then return tree end
   tree = fold_pairs(function(acc, key, child)
     if type(key) ~= "number" then
       acc[key] = child
       return acc
-    -- Compile each children, except if this node is a macro definition (no
-    -- evaluation "under lambda").
-    elseif tree.id ~= "def" then
+    -- Compile all children, except if this node is a macro definition (no
+    -- evaluation "under lambda") or the application of a registered macro
+    -- (since evaluating the nodes depends on the macro's signature, it is more
+    -- complex and done below)..
+    elseif tree.id == "def" or (tree.id == "command" and commands[tree.tag]) then
+      -- Conserve unevaluated children.
+      table.insert(acc, child)
+    else
+      -- Compile all children.
       local comp = compileToMathML(arg_env, child)
       if comp then table.insert(acc, comp) end
-    else
-      -- Children of a `def` node should not be evaluated.
-      table.insert(acc, child)
     end
     return acc
   end, {}, tree)
@@ -1177,24 +1267,46 @@ local function compileToMathML(arg_env, tree)
     tree[2] = tree[3]
     tree[3] = tmp
   elseif tree.id == "def" then
-    print("delaying evaluation of " .. tree[1])
-    registerCommand(tree["command-name"], function(application_tree)
-      print("evaluating command ".. tree["command-name"].." with body "..tree[1].." on app. tree "..application_tree)
-      -- Compile every argument
-      local compiled_args = {}
-      for i,arg in pairs(application_tree) do
-        if type(i) == "number" then
-          table.insert(compiled_args, compileToMathML(arg_env, arg))
-        else
-          compiled_args[i] = application_tree[i]
-        end
-      end
-      print("compiling body "..tree[1].." under env: "..compiled_args)
-      return compileToMathML(compiled_args, tree[1])
+    local commandName = tree["command-name"]
+    print("defining command " .. commandName)
+    local argTypes = inferArgTypes(tree[1])
+    print("argtypes inferred: "..argTypes)
+    registerCommand(commandName, argTypes, function(compiledArgs)
+      print("evaluating command ".. commandName .." with body "..tree[1].." on compiled args "..compiledArgs)
+      print("compiling body "..tree[1].." under env: "..compiledArgs)
+      return compileToMathML(compiledArgs, tree[1])
     end)
     return nil
   elseif tree.id == "command" and commands[tree.tag] then
-    return commands[tree.tag](tree)
+    local argTypes = commands[tree.tag][1]
+    local cmdFun = commands[tree.tag][2]
+    local applicationTree = tree
+    local cmdName = tree.tag
+    print("evaluating command ".. cmdName .." with body "..tree[1].." on app. tree "..applicationTree)
+    print("argTypes = "..argTypes)
+    if #applicationTree ~= #argTypes then
+      SU.error("Wrong number of arguments (" .. #applicationTree ..
+        ") for command " .. cmdName .. " (should be " ..
+        #argTypes .. ")")
+    end
+    -- Compile every argument
+    local compiledArgs = {}
+    for i,arg in pairs(applicationTree) do
+      if type(i) == "number" then
+        if argTypes[i] == objType.tree then
+          table.insert(compiledArgs, compileToMathML(arg_env, arg))
+        else
+          local x = compileToStr(arg_env, arg)
+          print("compileToStr returned "..x)
+          table.insert(compiledArgs, x)
+        end
+      else
+        -- Not an argument but an attribute. Add it to the compiled
+        -- argument tree as-is
+        compiledArgs[i] = applicationTree[i]
+      end
+    end
+    return cmdFun(compiledArgs)
   elseif tree.id == "argument" then
     print("Encountered arg #"..tree.index..", arg_env = "..arg_env)
     print("type(tree.index) == "..type(tree.index))
@@ -1207,6 +1319,7 @@ local function compileToMathML(arg_env, tree)
     end
   end
   tree.id = nil
+  print("compileToMathML results in "..tree)
   return tree
 end
 
@@ -1263,3 +1376,7 @@ SILE.registerCommand("texmath", function(options, content)
 
   handleMath(mbox, mode)
 end)
+
+registerCommand("mi", {[1]=objType.str}, function(x) return x end)
+registerCommand("mo", {[1]=objType.str}, function(x) return x end)
+registerCommand("mn", {[1]=objType.str}, function(x) return x end)
