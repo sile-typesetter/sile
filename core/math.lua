@@ -54,6 +54,7 @@ local mathVariantToScriptType = function(attr)
     attr == "normal" and scriptType.upright or
     attr == "italic" and scriptType.italic or
     attr == "bold-italic" and scriptType.boldItalic or
+    attr == "double-struck" and scriptType.doubleStruck or
     SU.error("Invalid value \""..attr.."\" for attribute mathvariant")
 end
 
@@ -64,6 +65,8 @@ local operatorAtomTypes = {
   ['>'] = atomType.relationalOperator,
   ['='] = atomType.relationalOperator,
   ['≠'] = atomType.relationalOperator,
+  ['∈'] = atomType.relationalOperator,
+  ['⊆'] = atomType.relationalOperator,
   ['∑'] = atomType.bigOperator,
   ['∏'] = atomType.bigOperator,
   ['⋀'] = atomType.bigOperator,
@@ -100,10 +103,25 @@ local function isScriptScriptMode(mode)
 end
 
 local mathScriptConversionTable = {
-  italicLatinUpper = function(codepoint) return codepoint + 0x1D434 - 0x41 end,
-  italicLatinLower = function(codepoint) return codepoint == 0x68 and 0x210E or codepoint + 0x1D44E - 0x61 end,
-  boldItalicLatinUpper = function(codepoint) return codepoint + 0x1D468 - 0x41 end,
-  boldItalicLatinLower = function(codepoint) return codepoint + 0x1D482 - 0x61 end
+  capital = {
+    [scriptType.italic] = function(codepoint) return codepoint + 0x1D434 - 0x41 end,
+    [scriptType.boldItalic] = function(codepoint) return codepoint + 0x1D468 - 0x41 end,
+    [scriptType.doubleStruck] = function(codepoint)
+      return codepoint == 0x43 and 0x2102 or
+        codepoint == 0x48 and 0x210D or
+        codepoint == 0x4E and 0x2115 or
+        codepoint == 0x50 and 0x2119 or
+        codepoint == 0x51 and 0x211A or
+        codepoint == 0x52 and 0x211D or
+        codepoint == 0x5A and 0x2124 or
+        codepoint + 0x1D538 - 0x41
+    end
+  },
+  small = {
+    [scriptType.italic] = function(codepoint) return codepoint == 0x68 and 0x210E or codepoint + 0x1D44E - 0x61 end,
+    [scriptType.boldItalic] = function(codepoint) return codepoint + 0x1D482 - 0x61 end,
+    [scriptType.doubleStruck] = function(codepoint) return codepoint + 0x1D552 - 0x61 end,
+  }
 }
 
 SILE.settings.declare({name = "math.font.family", type = "string", default = "XITS Math"})
@@ -725,17 +743,9 @@ local _text = _terminal {
       for uchr in SU.utf8codes(self.text) do
         local dst_char = SU.utf8char(uchr)
         if uchr >= 0x41 and uchr <= 0x5A then -- Latin capital letter
-          if self.script == scriptType.italic then
-            dst_char = SU.utf8char(mathScriptConversionTable.italicLatinUpper(uchr))
-          elseif self.script == scriptType.boldItalic then
-            dst_char = SU.utf8char(mathScriptConversionTable.boldItalicLatinUpper(uchr))
-          end
+          dst_char = SU.utf8char(mathScriptConversionTable.capital[self.script](uchr))
         elseif uchr >= 0x61 and uchr <= 0x7A then -- Latin non-capital letter
-          if self.script == scriptType.italic then
-            dst_char = SU.utf8char(mathScriptConversionTable.italicLatinLower(uchr))
-          elseif self.script == scriptType.boldItalic then
-            dst_char = SU.utf8char(mathScriptConversionTable.boldItalicLatinLower(uchr))
-          end
+          dst_char = SU.utf8char(mathScriptConversionTable.small[self.script](uchr))
         end
         converted = converted..dst_char
       end
