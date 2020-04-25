@@ -1112,22 +1112,6 @@ local mathGrammar = function(_ENV)
 end
 local mathParser = epnf.define(mathGrammar)
 
-local function massageMathAst(tree)
-  if type(tree) == "string" then return tree end
-  for i,child in ipairs(tree) do
-    tree[i] = massageMathAst(tree[i])
-  end
-  if tree.id == "texlike_math" then
-    tree.tag = "math"
-  elseif tree.id == "mathlist" then
-    -- Turn mathlist into mrow except if it has exactly one child
-    if #tree == 1 then return tree[1]
-    else tree.tag = "mrow" end
-  end
-
-  return tree
-end
-
 local commands = {}
 
 -- A command type is a type for each argument it takes: either string or MathML
@@ -1216,16 +1200,25 @@ local function fold_tree(fun, init, tree)
   return fun(acc, tree)
 end
 
-local compileToStr = function(argEnv, atomlist)
-  print("compileToStr "..atomlist)
-  if #atomlist == 1 and atomlist.id == "atom" then
+local function forall(pred, list)
+  for _,x in ipairs(list) do
+    if not pred(x) then return false end
+  end
+  return true
+end
+
+local compileToStr = function(argEnv, mathlist)
+  print("compileToStr "..mathlist)
+  if #mathlist == 1 and mathlist.id == "atom" then
     -- List is a single atom
-    return atomlist[1]
-  elseif atomlist.id == "argument" then
-    return argEnv[atomlist.index]
+    return mathlist[1]
+  elseif #mathlist == 1 and mathlist[1].id == "argument" then
+    return argEnv[mathlist[1].index]
+  elseif mathlist.id == "argument" then
+    return argEnv[mathlist.index]
   else
     local ret = ""
-    for _,atom in ipairs(atomlist) do
+    for _,atom in ipairs(mathlist) do
       if atom.id ~= "atom" then
         SU.error("Encountered non-character token in command that takes a string")
       end
@@ -1256,7 +1249,24 @@ local function compileToMathML(arg_env, tree)
     end
     return acc
   end, {}, tree)
-  if tree.id == "atom" then
+  if tree.id == "texlike_math" then
+    tree.tag = "math"
+    -- If the outermost `mrow` contains only other `mrow`s, remove it
+    -- (allowing vertical stacking).
+    if forall(function(c) return c.tag == "mrow" end, tree[1]) then
+      print("in if")
+      tree[1].tag = "math"
+      print("compileToMathML results in "..tree[1])
+      return tree[1]
+    end
+  elseif tree.id == "mathlist" then
+    -- Turn mathlist into `mrow` except if it has exactly one child.
+    -- Note that `def`s have already been compiled away at this point.
+    if #tree == 1 then
+      print("compileToMathML results in "..tree[1])
+      return tree[1]
+    else tree.tag = "mrow" end
+  elseif tree.id == "atom" then
     if lpeg.match(lpeg.R("az","AZ"), tree[1]) then
       tree.tag = "mi"
     elseif lpeg.match(lpeg.R("09")^1, tree[1]) then
@@ -1335,9 +1345,7 @@ end
 
 local function convertTexlike(content)
   local ret = epnf.parsestring(mathParser, content[1])
-  print("convertTexlike: before massaging: \n"..ret)
-  ret = massageMathAst(ret)
-  print("convertTexlike: after massaging: \n"..ret)
+  print("convertTexlike: after parsing: \n"..ret)
   return ret
 end
 
