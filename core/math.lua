@@ -1113,6 +1113,7 @@ end
 local mathParser = epnf.define(mathGrammar)
 
 local commands = {}
+local symbols = {}
 
 -- A command type is a type for each argument it takes: either string or MathML
 -- tree. If a command has no type, it is assumed to take only trees.
@@ -1218,11 +1219,14 @@ local compileToStr = function(argEnv, mathlist)
     return argEnv[mathlist.index]
   else
     local ret = ""
-    for _,atom in ipairs(mathlist) do
-      if atom.id ~= "atom" then
+    for _,elt in ipairs(mathlist) do
+      if elt.id == "atom" then
+        ret = ret .. elt[1]
+      elseif elt.id == "command" and symbols[elt.tag] then
+        ret = ret .. symbols[elt.tag]
+      else
         SU.error("Encountered non-character token in command that takes a string")
       end
-      ret = ret .. atom[1]
     end
     return ret
   end
@@ -1267,8 +1271,18 @@ local function compileToMathML(arg_env, tree)
       return tree[1]
     else tree.tag = "mrow" end
   elseif tree.id == "atom" then
-    if lpeg.match(lpeg.R("az","AZ"), tree[1]) then
-      tree.tag = "mi"
+    local codepoints = {}
+    for cp in SU.utf8codes(tree[1]) do
+      table.insert(codepoints, cp)
+    end
+    local cp = codepoints[1]
+    if #codepoints == 1 and ( -- If length of UTF-8 string is 1
+       cp >= SU.codepoint("A") and cp <= SU.codepoint("Z") or
+       cp >= SU.codepoint("a") and cp <= SU.codepoint("z") or
+       cp >= SU.codepoint("Α") and cp <= SU.codepoint("Ω") or
+       cp >= SU.codepoint("α") and cp <= SU.codepoint("ω")
+    ) then
+        tree.tag = "mi"
     elseif lpeg.match(lpeg.R("09")^1, tree[1]) then
       tree.tag = "mn"
     else
@@ -1327,6 +1341,9 @@ local function compileToMathML(arg_env, tree)
       end
     end
     return cmdFun(compiledArgs)
+  elseif tree.id == "command" and symbols[tree.tag] then
+    local atom = {id = "atom", [1] = symbols[tree.tag]}
+    tree = compileToMathML(arg_env, atom)
   elseif tree.id == "argument" then
     print("Encountered arg #"..tree.index..", arg_env = "..arg_env)
     print("type(tree.index) == "..type(tree.index))
@@ -1398,3 +1415,6 @@ end)
 registerCommand("mi", {[1]=objType.str}, function(x) return x end)
 registerCommand("mo", {[1]=objType.str}, function(x) return x end)
 registerCommand("mn", {[1]=objType.str}, function(x) return x end)
+
+symbols.alpha = 'α'
+symbols.pi = 'π'
