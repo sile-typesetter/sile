@@ -40,20 +40,45 @@ SILE.doTexlike = function (doc)
   SILE.currentlyProcessingFile = cpf
 end
 
+local function replaceProcessBy(replacement, tree)
+  if type(tree) ~= "table" then return tree end
+  local ret = pl.tablex.deepcopy(tree)
+  if tree.command == "process" then
+    return replacement
+  else
+    for i, child in ipairs(tree) do
+      ret[i] = replaceProcessBy(replacement, child)
+    end
+    return ret
+  end
+end
+
 -- Need the \define command *really* early on in SILE startup
-local macroStack = {}
 SILE.registerCommand("define", function (options, content)
   SU.required(options, "command", "defining command")
+  if type(content) == "function" then
+    -- A macro defined as a function can take no argument, so we register
+    -- it as-is.
+    SILE.registerCommand(options["command"], content)
+    return
+  elseif options.command == "process" then
+    SU.error("Defining a macro named `process`? Yeah, that won't go well.")
+  end
   SILE.registerCommand(options["command"], function (_, _content)
-    --local prevState = SILE.documentState
-    --SILE.documentState = pl.tablex.deepcopy( prevState )
-    local depth = #macroStack
-    table.insert(macroStack, _content)
-    SU.debug("macros", "Processing a "..options["command"].." Stack depth is "..depth)
-    SILE.process(content)
-    while (#macroStack > depth) do table.remove(macroStack) end
-    SU.debug("macros", "Finished processing "..options["command"].." Stack depth is "..#macroStack.."\n")
-    --SILE.documentState = prevState
+    SU.debug("macros", "Processing a "..options["command"].."\n")
+    local macroArg
+    if type(_content) == "function" then
+      macroArg = _content
+    else
+      macroArg = pl.tablex.copy(_content)
+      macroArg.command = nil
+      macroArg.id = nil
+    end
+    -- Replace every occurrence of \process in `content` (the macro
+    -- body) with `macroArg`, then have SILE go through the new `content`.
+    local newContent = replaceProcessBy(macroArg, content)
+    SILE.process(newContent)
+    SU.debug("macros", "Finished processing "..options["command"].."\n")
   end, options.help, SILE.currentlyProcessingFile)
 end, "Define a new macro. \\define[command=example]{ ... \\process }")
 
@@ -61,9 +86,7 @@ SILE.registerCommand("comment", function (_, _)
 end, "Ignores any text within this command's body.")
 
 SILE.registerCommand("process", function ()
-  local val = table.remove(macroStack)
-  if not val then SU.error("Macro stack underflow. Too many \\process calls?") end
-  SILE.process(val)
+  SU.error("Encountered unsubstituted \\process.")
 end, "Within a macro definition, processes the contents of the macro body.")
 
 SILE.baseClass = std.object {
