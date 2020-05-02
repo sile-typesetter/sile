@@ -57,33 +57,36 @@ local mathVariantToScriptType = function(attr)
     SU.error("Invalid value \""..attr.."\" for attribute mathvariant")
 end
 
-local operatorAtomTypes = {
-  ['+'] = atomType.binaryOperator,
-  ['-'] = atomType.binaryOperator,
-  ['<'] = atomType.relationalOperator,
-  ['>'] = atomType.relationalOperator,
-  ['='] = atomType.relationalOperator,
-  ['≠'] = atomType.relationalOperator,
-  ['∈'] = atomType.relationalOperator,
-  ['⊆'] = atomType.relationalOperator,
-  ['∑'] = atomType.bigOperator,
-  ['∏'] = atomType.bigOperator,
-  ['⋀'] = atomType.bigOperator,
-  ['⋁'] = atomType.bigOperator,
-  ['⋂'] = atomType.bigOperator,
-  ['⋃'] = atomType.bigOperator,
-  ['⨅'] = atomType.bigOperator,
-  ['⨆'] = atomType.bigOperator,
-  ['∫'] = atomType.bigOperator,
-  ['∰'] = atomType.bigOperator,
-  ['∮'] = atomType.bigOperator
+local operatorDefaults = {
+  ['+'] = { atomType = atomType.binaryOperator },
+  ['-'] = { atomType = atomType.binaryOperator },
+  ['<'] = { atomType = atomType.relationalOperator },
+  ['>'] = { atomType = atomType.relationalOperator },
+  ['='] = { atomType = atomType.relationalOperator },
+  ['≠'] = { atomType = atomType.relationalOperator },
+  ['∈'] = { atomType = atomType.relationalOperator },
+  ['⊆'] = { atomType = atomType.relationalOperator },
+  ['∑'] = { atomType = atomType.bigOperator },
+  ['∏'] = { atomType = atomType.bigOperator },
+  ['⋀'] = { atomType = atomType.bigOperator },
+  ['⋁'] = { atomType = atomType.bigOperator },
+  ['⋂'] = { atomType = atomType.bigOperator },
+  ['⋃'] = { atomType = atomType.bigOperator },
+  ['⨅'] = { atomType = atomType.bigOperator },
+  ['⨆'] = { atomType = atomType.bigOperator },
+  ['∫'] = { atomType = atomType.bigOperator },
+  ['∰'] = { atomType = atomType.bigOperator },
+  ['∮'] = { atomType = atomType.bigOperator },
+  [','] = { atomType = atomType.punctuationSymbol }
 }
 
+-- Big operators that should nevertheless have their limits drawn as subscript
+-- and superscript by default
 local subscriptBigOps =
   {'∫', '∮', '∰'}
 
 -- Foward declaration
-local newSpace
+local newStandardHspace
 
 local function isDisplayMode(mode)
   return mode <= 1
@@ -359,6 +362,64 @@ local _mbox = _box {
   end
 }
 
+local spaceKind = {
+  thin = "thin",
+  med = "med",
+  thick = "thick",
+}
+
+-- Indexed by left atom
+local spacingRules = {
+  [atomType.ordinary] = {
+    [atomType.bigOperator] = {spaceKind.thin},
+    [atomType.binaryOperator] = {spaceKind.med, notScript = true},
+    [atomType.relationalOperator] = {spaceKind.thick, notScript = true},
+    [atomType.inner] = {spaceKind.thin, notScript = true}
+  },
+  [atomType.bigOperator] = {
+    [atomType.ordinary] = {spaceKind.thin},
+    [atomType.bigOperator] = {spaceKind.thin},
+    [atomType.relationalOperator] = {spaceKind.thick, notScript = true},
+    [atomType.inner] = {spaceKind.thin, notScript = true},
+  },
+  [atomType.binaryOperator] = {
+    [atomType.ordinary] = {spaceKind.med, notScript = true},
+    [atomType.bigOperator] = {spaceKind.med, notScript = true},
+    [atomType.openingSymbol] = {spaceKind.med, notScript = true},
+    [atomType.inner] = {spaceKind.med, notScript = true}
+  },
+  [atomType.relationalOperator] = {
+    [atomType.ordinary] = {spaceKind.thick, notScript = true},
+    [atomType.bigOperator] = {spaceKind.thick, notScript = true},
+    [atomType.openingSymbol] = {spaceKind.thick, notScript = true},
+    [atomType.inner] = {spaceKind.thick, notScript = true}
+  },
+  [atomType.closeSymbol] = {
+    [atomType.bigOperator] = {spaceKind.thin},
+    [atomType.binaryOperator] = {spaceKind.med, notScript = true},
+    [atomType.relationalOperator] = {spaceKind.thick, notScript = true},
+    [atomType.inner] = {spaceKind.thin, notScript = true}
+  },
+  [atomType.punctuationSymbol] = {
+    [atomType.ordinary] = {spaceKind.thin, notScript = true},
+    [atomType.bigOperator] = {spaceKind.thin, notScript = true},
+    [atomType.relationalOperator] = {spaceKind.thin, notScript = true},
+    [atomType.openingSymbol] = {spaceKind.thin, notScript = true},
+    [atomType.closeSymbol] = {spaceKind.thin, notScript = true},
+    [atomType.punctuationSymbol] = {spaceKind.thin, notScript = true},
+    [atomType.inner] = {spaceKind.thin, notScript = true}
+  },
+  [atomType.inner] = {
+    [atomType.ordinary] = {spaceKind.thin, notScript = true},
+    [atomType.bigOperator] = {spaceKind.thin},
+    [atomType.binaryOperator] = {spaceKind.med, notScript = true},
+    [atomType.relationalOperator] = {spaceKind.thick, notScript = true},
+    [atomType.openingSymbol] = {spaceKind.thin, notScript = true},
+    [atomType.punctuationSymbol] = {spaceKind.thin, notScript = true},
+    [atomType.inner] = {spaceKind.thin, notScript = true}
+  }
+}
+
 -- _stackbox stacks its content one, either horizontally or vertically
 local _stackbox = _mbox {
   _type = "Stackbox",
@@ -384,25 +445,16 @@ local _stackbox = _mbox {
       n.mode = self.mode
     end
     if self.direction == "H" then
-      -- Add space between Ord and Bin/Rel
+      -- Insert spaces according to the atom type, following Knuth's guidelines
+      -- in the TeXbook
       local spaces = {}
-      for i, v in ipairs(self.children) do
-        if i < #self.children then
-          local v2 = self.children[i + 1]
-          if not (isScriptMode(self.mode) or isScriptScriptMode(self.mode)) then
-            if (v.atom == atomType.relationalOperator and v2.atom == atomType.ordinary) or
-                (v2.atom == atomType.relationalOperator and v.atom == atomType.ordinary) then
-              spaces[i + 1] = 'thick'
-            elseif (v.atom == atomType.binaryOperator and v2.atom == atomType.ordinary) or
-                (v2.atom == atomType.binaryOperator and v.atom == atomType.ordinary) then
-              spaces[i + 1] = 'med'
-            elseif (v.atom == atomType.bigOperator and v2.atom == atomType.relationalOperator) or
-                (v2.atom == atomType.bigOperator and v.atom == atomType.relationalOperator) then
-              spaces[i + 1] = 'thick'
-            end
-          end
-          if (v.atom == atomType.bigOperator and v2.atom == atomType.ordinary) then
-            spaces[i + 1] = 'thin'
+      for i = 1, #self.children-1 do
+        local v = self.children[i]
+        local v2 = self.children[i + 1]
+        if spacingRules[v.atom] and spacingRules[v.atom][v2.atom] then
+          local rule = spacingRules[v.atom][v2.atom]
+          if not (rule.notScript and (isScriptMode(self.mode) or isScriptScriptMode(self.mode))) then
+            spaces[i+1] = rule[1]
           end
         end
       end
@@ -413,7 +465,7 @@ local _stackbox = _mbox {
       end
       table.sort(spaceIdx, function(a, b) return a > b end)
       for _, idx in ipairs(spaceIdx) do
-        table.insert(self.children, idx, newSpace({kind = spaces[idx]}))
+        table.insert(self.children, idx, newStandardHspace(self.options.size * self:getScaleDown(), spaces[idx]))
         if idx <= self.anchor then self.anchor = self.anchor + 1 end
       end
     end
@@ -687,40 +739,16 @@ local _terminal = _mbox {
 
 local _space = _terminal {
   _type = "Space",
-  __tostring = function(self) return self.kind.."space" end,
-  kind = "thin",
+  __tostring = function(self)
+    return "space{w = "..self.width..", h = "..self.height..", d = "..self.depth.."}"
+  end,
+  width = SILE.length.make(0),
+  height = SILE.length.make(0),
+  depth = SILE.length.make(0),
   init = function(self)
     _terminal.init(self)
   end,
-  shape = function(self)
-    local fontSize = math.floor(self.options.size * self:getScaleDown())
-    local mu = fontSize / 18
-    if self.kind == "thin" then
-      self.length = SILE.length.new({
-        length = 3 * mu,
-        shrink = 0,
-        stretch = 0
-      })
-    elseif self.kind == "med" then
-      self.length = SILE.length.new({
-        length = 4 * mu,
-        shrink = 4 * mu,
-        stretch = 2 * mu
-      })
-    elseif self.kind == "thick" then
-      self.length = SILE.length.new({
-        length = 5 * mu,
-        shrink = 0,
-        stretch = 5 * mu
-      })
-    else
-      SU.error("Unknown space type "..kind)
-    end
-    self.width = self.length
-    -- Spaces say that they have height zero because they cannot guess
-    -- what the maximum height in the surrounding text is
-    self.height = SILE.length.make(0)
-    self.depth = SILE.length.make(0)
+  shape = function(_)
   end,
   output = function(self) end
 }
@@ -748,8 +776,8 @@ local _text = _terminal {
       self.originalText = self.text
       self.text = converted
     elseif self.kind == 'operator' then
-      if operatorAtomTypes[self.text] then
-        self.atom = operatorAtomTypes[self.text]
+      if operatorDefaults[self.text] then
+        self.atom = operatorDefaults[self.text].atomType
       end
       if self.text == "-" then
         self.text = "−"
@@ -944,7 +972,8 @@ local newSubscript = function(spec)
   local ret
   if spec.base and typeof(spec.base) == "Text"
       and spec.base.kind == "operator"
-      and operatorAtomTypes[spec.base.text] == atomType.bigOperator then
+      and operatorDefaults[spec.base.text]
+      and operatorDefaults[spec.base.text].atomType == atomType.bigOperator then
     ret = std.tree.clone(_bigOpSubscript(spec))
   else
     ret = std.tree.clone(_subscript(spec))
@@ -953,11 +982,39 @@ local newSubscript = function(spec)
   return ret
 end
 
--- not local, because used further up this file
-newSpace = function(spec)
+local newSpace = function(spec)
+  spec.width = type(spec.width) == "string" and SILE.length.parse(spec.width) or spec.width
+  spec.height = type(spec.height) == "string" and SILE.length.parse(spec.height) or spec.height
+  spec.depth = type(spec.depth) == "string" and SILE.length.parse(spec.depth) or spec.depth
   local ret = std.tree.clone(_space(spec))
   ret:init()
   return ret
+end
+
+-- not local, because used further up this file
+newStandardHspace = function(fontSize, kind)
+  local mu = fontSize / 18
+  if kind == "thin" then
+    return newSpace{width = SILE.length.new({
+      length = 3 * mu,
+      shrink = 0,
+      stretch = 0
+    }), height = SILE.length.make(0), depth = SILE.length.make(0)}
+  elseif kind == "med" then
+    return newSpace{width = SILE.length.new({
+      length = 4 * mu,
+      shrink = 4 * mu,
+      stretch = 2 * mu
+    }), height = SILE.length.make(0), depth = SILE.length.make(0)}
+  elseif kind == "thick" then
+    return newSpace{width = SILE.length.new({
+      length = 5 * mu,
+      shrink = 0,
+      stretch = 5 * mu
+    }), height = SILE.length.make(0), depth = SILE.length.make(0)}
+  else
+    SU.error("Unknown space type "..kind)
+  end
 end
 
 local newFraction = function(spec)
@@ -1001,6 +1058,9 @@ local function ConvertMathML(content)
       SU.error("mn tag contains "..text..", which is not text")
     end
     return newText({ kind='number', script=scriptType.upright, text=text })
+  elseif content.tag == "mspace" then
+    local ret = newSpace{width = content.attr.width, height = content.attr.height, depth = content.attr.depth}
+    return ret
   elseif content.tag == 'msub' then
     local children = convertChildren(content)
     if #children ~= 2 then SU.error('Wrong number of children in msub') end

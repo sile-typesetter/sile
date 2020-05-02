@@ -9,7 +9,7 @@ local mathGrammar = function(_ENV)
   local natural = digit^1 / tonumber
   local pos_natural = R("19") * digit^0 / tonumber
   local ctrl_word = R("AZ", "az")^1
-  local ctrl_symbol = P(1)
+  local ctrl_symbol = P(1) - S"{}"
   local ctrl_sequence_name = C(ctrl_word + ctrl_symbol) / 1
   local comment = (
       P"%" *
@@ -65,7 +65,8 @@ local mathGrammar = function(_ENV)
     P"^" * _ * element_no_infix
   sup = element_no_infix * _ * P"^" * _ * element_no_infix
   sub = element_no_infix * _ * P"_" * _ * element_no_infix
-  atom = C(utf8code - S"\\{}%^_")
+  atom = C(utf8code - S"\\{}%^_") +
+    (P"\\{" + P"\\}") / function(s) return string.sub(s, -1) end
   command = (
       P"\\" *
       Cg(ctrl_sequence_name, "tag") *
