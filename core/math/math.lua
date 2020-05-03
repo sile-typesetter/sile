@@ -1118,7 +1118,7 @@ local function handleMath(mbox, mode)
   end
 end
 
-SILE.registerCommand("math", function (options, content)
+SILE.registerCommand("mathml", function (options, content)
   local mode = (options and options.mode) and options.mode or 'text'
 
   local mbox
@@ -1129,7 +1129,7 @@ SILE.registerCommand("math", function (options, content)
   handleMath(mbox, mode)
 end)
 
-SILE.registerCommand("texmath", function(options, content)
+SILE.registerCommand("math", function(options, content)
   local mode = (options and options.mode) and options.mode or "text"
 
   local mbox

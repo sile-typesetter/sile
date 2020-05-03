@@ -15,7 +15,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1 / function (...) local t = {...}; return t[1], t[#t] end
   local list = Cf(Ct"" * pair^0, rawset)
   local function is_passthrough(tag)
-    return tag == "script" or tag == "texmath"
+    return tag == "script" or tag == "math"
   end
   local parameters = (
       P"[" *
