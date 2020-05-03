@@ -131,6 +131,7 @@ SILE.settings.declare({name = "math.font.filename", type = "string", default = "
 SILE.settings.declare({name = "math.font.size", type = "integer", default = 10})
 -- Whether to show debug boxes around mboxes
 SILE.settings.declare({name = "math.debug.boxes", type = "boolean", default = false})
+SILE.settings.declare({name = "math.displayskip", type = "VGlue", default = SILE.nodefactory.newVglue("2ex plus 1pt")})
 
 local function retrieveMathTable(options)
   local face = SILE.font.cache(options, SILE.shaper.getFace)
@@ -1101,7 +1102,17 @@ local function handleMath(mbox, mode)
 
   mbox:shapeTree()
 
-  SILE.typesetter:pushHorizontal(mbox)
+  if mode == "display" then
+    SILE.typesetter:endline()
+    SILE.typesetter:pushExplicitVglue(SILE.settings.get("math.displayskip"))
+    SILE.call("center", {}, function()
+      SILE.typesetter:pushHorizontal(mbox)
+    end)
+    SILE.typesetter:endline()
+    SILE.typesetter:pushExplicitVglue(SILE.settings.get("math.displayskip"))
+  else
+    SILE.typesetter:pushHorizontal(mbox)
+  end
 end
 
 SILE.registerCommand("math", function (options, content)
