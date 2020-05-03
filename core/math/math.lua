@@ -1058,6 +1058,9 @@ local function ConvertMathML(content)
     if type(text) ~= "string" then
       SU.error("mn tag contains "..text..", which is not text")
     end
+    if string.sub(text, 1, 1) == "-" then
+      text = "−"..string.sub(text, 2)
+    end
     return newText({ kind='number', script=scriptType.upright, text=text })
   elseif content.tag == "mspace" then
     local ret = newSpace{width = content.attr.width, height = content.attr.height, depth = content.attr.depth}
