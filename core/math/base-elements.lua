@@ -845,6 +845,10 @@ local _text = _terminal {
       for i = #glyphs, 1, -1 do
         self.width = i == #glyphs and SILE.length.make(glyphs[#glyphs].width) or self.width + glyphs[i].glyphAdvance
       end
+      local itCorr = mathMetrics.italicsCorrection[glyphs[#glyphs].gid]
+      if itCorr then
+        self.width = self.width + itCorr * self:getScaleDown()
+      end
       for i = 1, #glyphs do
         self.height = i == 1 and SILE.length.make(glyphs[i].height) or maxLength(self.height, glyphs[i].height)
         self.depth = i == 1 and SILE.length.make(glyphs[i].depth) or maxLength(self.depth, glyphs[i].depth)
@@ -1028,6 +1032,136 @@ local newFraction = function(spec)
   return ret
 end
 
+-- TODO replace with penlight equivalent
+local function mapList(f, l)
+  local ret = {}
+  for i,x in ipairs(l) do
+    ret[i] = f(i, x)
+  end
+  return ret
+end
+
+-- TODO replace with penlight equivalent
+local function foldList(f, init, l)
+  local acc = init
+  for _,x in ipairs(l) do
+    acc = f(acc, x)
+  end
+  return acc
+end
+
+local sum = function(l)
+  return foldList(function(x,y) return x+y end, 0, l)
+end
+
+local _mtr = _mbox {
+  init = function(self) end,
+  styleChildren = function(self)
+    for _,c in ipairs(self.children) do
+      c.mode = self.mode
+    end
+  end,
+  shape = function(self) end, -- done by parent table
+  output = function(self) end
+}
+
+local newMtr = function(spec)
+  local ret = std.tree.clone(_mtr(spec))
+  ret:init()
+  return ret
+end
+
+local _table = _mbox {
+  _type = "table",
+
+  init = function(self)
+  end,
+
+  styleChildren = function(self)
+    if self.mode == display and self.options.displaystyle ~= "false" then
+      for _,c in ipairs(self.children) do
+        c.mode = mathMode.display
+      end
+    else
+      for _,c in ipairs(self.children) do
+        c.mode = mathMode.text
+      end
+    end
+  end,
+
+  shape = function(self)
+    self.nrows = #self.children
+    self.ncols = math.max(table.unpack(mapList(function(i, c)
+      return #c.children end, self.children)))
+    -- Determine the height (resp. depth) of each row, which is the max
+    -- height (resp. depth) among its elements. Then we only need to add it to
+    -- the table's height and center every cell vertically.
+    for _,row in ipairs(self.children) do
+      row.height = SILE.length.make(0)
+      row.depth = SILE.length.make(0)
+      for _,cell in ipairs(row.children) do
+        row.height = maxLength(row.height, cell.height)
+        row.depth = maxLength(row.depth, cell.depth)
+      end
+    end
+    self.vertSize = SILE.length.make(0)
+    for i, row in ipairs(self.children) do
+      self.vertSize = self.vertSize + row.height + row.depth +
+        (i == self.nrows and SILE.length.make(0) or SILE.length.parse("1ex")) -- Spacing
+    end
+    local rowHeightSoFar = SILE.length.make(0)
+    for _, row in ipairs(self.children) do
+      row.relY = rowHeightSoFar + row.height - self.vertSize
+      rowHeightSoFar = rowHeightSoFar + row.height + row.depth +
+        (i == self.nrows and SILE.length.make(0) or SILE.length.parse("1ex")) -- Spacing
+      for _, cell in ipairs(row.children) do
+        -- If cell is smaller than height, raise it to center it vertically
+        --cell.relY = cell.relY - (row.height + row.depth - cell.height - cell.depth) / 2
+      end
+    end
+    self.width = SILE.length.make(0)
+    local thisColRelX = SILE.length.make(0)
+    -- For every column...
+    for i = 1,self.ncols do
+      -- Determine its width
+      local columnWidth = SILE.length.make(0)
+      for j = 1,self.nrows do
+        if self.children[j].children[i].width > columnWidth then
+          columnWidth = self.children[j].children[i].width
+        end
+      end
+      -- Use it to center every cell of the column horizontally.
+      for j = 1,self.nrows do
+        local cell = self.children[j].children[i]
+        cell.relX = thisColRelX + (columnWidth - cell.width) / 2
+      end
+      thisColRelX = thisColRelX + columnWidth +
+        (i == self.ncols and SILE.length.make(0) or SILE.length.parse("0.8em")) -- Spacing
+    end
+    self.width = thisColRelX
+
+    -- Center myself vertically around the axis, and update relative Ys of rows
+    -- accordingly
+    local axisHeight = getMathMetrics().constants.axisHeight * self:getScaleDown()
+    self.height = self.vertSize / 2 + axisHeight
+    self.depth = self.vertSize / 2 - axisHeight
+    for _,row in ipairs(self.children) do
+      row.relY = row.relY + self.vertSize / 2 - axisHeight
+      -- Also adjust width
+      row.width = self.width
+    end
+  end,
+
+  output = function(self)
+  end
+}
+
+local newTable = function(spec)
+  local ret = std.tree.clone(_table(spec))
+  ret:init()
+  return ret
+end
+
 return {
   mathMode = mathMode,
   atomType = atomType,
@@ -1049,4 +1183,6 @@ return {
   newSpace = newSpace,
   newStandardHspace = newStandardHspace,
   newFraction = newFraction,
+  newTable = newTable,
+  newMtr = newMtr,
 }
