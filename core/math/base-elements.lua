@@ -1,7 +1,6 @@
 local nodefactory = require("core/nodefactory")
 local hb = require("justenoughharfbuzz")
 local ot = require("core/opentype-parser")
-local tex = require("core/math/texlike")
 require("core/math/default-symbols")
 
 local mathMode = {
@@ -1024,118 +1023,25 @@ local newFraction = function(spec)
   return ret
 end
 
--- convert MathML into mbox
-local function ConvertMathML(content)
-  if content == nil or content.tag == nil then return nil end
-  local convertChildren = function(content)
-    local mboxes = {}
-    for i, n in ipairs(content) do
-      local box = ConvertMathML(n)
-      if box then table.insert(mboxes, box) end
-    end
-    return mboxes
-  end
-  if content.tag == 'math' then -- toplevel
-    return newStackbox({ direction='V', children=convertChildren(content) })
-  elseif content.tag == 'mrow' then
-    return newStackbox({ direction='H', children=convertChildren(content) })
-  elseif content.tag == 'mi' then
-    local script = content.attr.mathvariant and
-      mathVariantToScriptType(content.attr.mathvariant) or scriptType.italic
-    local text = content[1]
-    if type(text) ~= "string" then
-      SU.error("mi tag contains "..text..", which is not text")
-    end
-    return newText({ kind='identifier', script=script, text=text })
-  elseif content.tag == 'mo' then
-    local text = content[1]
-    if type(text) ~= "string" then
-      SU.error("mo tag contains "..text..", which is not text")
-    end
-    return newText({ kind='operator', script=scriptType.upright, text=text })
-  elseif content.tag == 'mn' then
-    local text = content[1]
-    if type(text) ~= "string" then
-      SU.error("mn tag contains "..text..", which is not text")
-    end
-    if string.sub(text, 1, 1) == "-" then
-      text = "−"..string.sub(text, 2)
-    end
-    return newText({ kind='number', script=scriptType.upright, text=text })
-  elseif content.tag == "mspace" then
-    local ret = newSpace{width = content.attr.width, height = content.attr.height, depth = content.attr.depth}
-    return ret
-  elseif content.tag == 'msub' then
-    local children = convertChildren(content)
-    if #children ~= 2 then SU.error('Wrong number of children in msub') end
-    return newSubscript({ kind="sub", base=children[1], sub=children[2] })
-  elseif content.tag == 'msup' then
-    local children = convertChildren(content)
-    if #children ~= 2 then SU.error('Wrong number of children in msup') end
-    return newSubscript({ kind="sup", base=children[1], sup=children[2] })
-  elseif content.tag == 'msubsup' then
-    local children = convertChildren(content)
-    if #children ~= 3 then SU.error('Wrong number of children in msubsup') end
-    return newSubscript({ kind="subsup", base=children[1], sub=children[2], sup=children[3] })
-  elseif content.tag == 'mfrac' then
-    local children = convertChildren(content)
-    if #children ~= 2 then SU.error('Wrong number of children in mfrac: '
-      ..#children)
-    end
-    return newFraction({ numerator=children[1], denominator=children[2] })
-  else
-    SU.error("Unknown math command " .. content.tag)
-  end
-end
-
-SILE.nodefactory.math = {
+return {
+  mathMode = mathMode,
+  atomType = atomType,
+  scriptType = scriptType,
+  mathVariantToScriptType = mathVariantToScriptType,
+  operatorDefaults = operatorDefaults,
+  newStandardHspace = newStandardHspace,
+  _mbox = _mbox,
+  _stackbox = _stackbox,
+  _subscript = _subscript,
+  _bigOpSubscript = _bigOpSubscript,
+  _terminal = _terminal,
+  _space = _space,
+  _text = _text,
+  _fraction = _fraction,
   newText = newText,
-  newStackbox = newStackbox
+  newStackbox = newStackbox,
+  newSubscript = newSubscript,
+  newSpace = newSpace,
+  newStandardHspace = newStandardHspace,
+  newFraction = newFraction,
 }
-
-local function handleMath(mbox, mode)
-  if mode == 'display' then
-    mbox.mode = mathMode.display
-  elseif mode == 'text' then
-    mbox.mode = mathMode.textCramped
-  else
-    SU.error('Unknown math mode '..mode)
-  end
-  mbox:styleDescendants()
-
-  mbox:shapeTree()
-
-  if mode == "display" then
-    SILE.typesetter:endline()
-    SILE.typesetter:pushExplicitVglue(SILE.settings.get("math.displayskip"))
-    SILE.call("center", {}, function()
-      SILE.typesetter:pushHorizontal(mbox)
-    end)
-    SILE.typesetter:endline()
-    SILE.typesetter:pushExplicitVglue(SILE.settings.get("math.displayskip"))
-  else
-    SILE.typesetter:pushHorizontal(mbox)
-  end
-end
-
-SILE.registerCommand("mathml", function (options, content)
-  local mode = (options and options.mode) and options.mode or 'text'
-
-  local mbox
-  xpcall(function()
-      mbox = ConvertMathML(content, mbox)
-  end, function(err) print(err); print(debug.traceback()) end)
-
-  handleMath(mbox, mode)
-end)
-
-SILE.registerCommand("math", function(options, content)
-  local mode = (options and options.mode) and options.mode or "text"
-
-  local mbox
-  xpcall(function()
-    mbox = ConvertMathML(tex.compileToMathML({}, tex.convertTexlike(content)))
-  end, function(err) print(err); print(debug.traceback()) end)
-
-  handleMath(mbox, mode)
-end)
