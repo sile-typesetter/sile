@@ -1090,10 +1090,6 @@ SILE.nodefactory.math = {
 }
 
 local function handleMath(mbox, mode)
-  if #(mbox.children) == 1 then
-    mbox = mbox.children[1]
-  end
-
   if mode == 'display' then
     mbox.mode = mathMode.display
   elseif mode == 'text' then
