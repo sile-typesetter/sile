@@ -179,8 +179,10 @@ patterndeps = $(wildcard $(DEPDIR)/$*.d) all testprep
 coverage: export SILE_COVERAGE=1
 coverage: test_previews
 
-HEADSHA ?= $(shell test -e .git && git rev-parse HEAD)
-BASESHA ?= $(shell test -e .git && git rev-parse $(HEADSHA)^)
+HEADSHA ?= HEAD
+_HEADSHA := $(shell test -e .git && git rev-parse --short=7 $(HEADSHA))
+BASESHA ?= $(HEADSHA)^
+_BASESHA := $(shell test -e .git && git rev-parse --short=7 $(BASESHA))
 
 clean-recursive: clean-tests
 
@@ -215,7 +217,7 @@ define time_action =
 	{ time (./sile documentation/sile.sil > /dev/null 2>&1) } 2> time.json
 endef
 
-make_worktree_rules = $(eval $(foreach SHA,$(HEADSHA) $(BASESHA),$(call worktree_sha,$(1),$(shell git rev-parse --short=7 $(SHA)))))
+make_worktree_rules = $(eval $(foreach SHA,$(_HEADSHA) $(_BASESHA),$(call worktree_sha,$(1),$(shell git rev-parse --short=7 $(SHA)))))
 
 define worktree_sha =
 
@@ -226,6 +228,7 @@ $(1)-$(2):
 	[[ -d libtexpdf ]] && rmdir libtexpdf
 	[[ -h libtexpdf ]] || ln -s ../libtexpdf
 	[[ -h lua_modules ]] || ln -s ../lua_modules
+	[[ -h lua_modules_dist ]] || ln -s ../lua_modules_dist
 	[[ -h node_modules ]] || ln -s ../node_modules
 	[[ -h .fonts ]] || ln -s ../.fonts
 	./bootstrap.sh
@@ -247,7 +250,7 @@ endef
 $(call make_worktree_rules,benchmark)
 
 .PHONY: benchmark
-benchmark: time-$(HEADSHA).json time-$(BASESHA).json
+benchmark: time-$(_HEADSHA).json time-$(_BASESHA).json
 	cat $^
 
 .PRECIOUS: time-%.json
@@ -261,7 +264,7 @@ time.json: sile
 $(call make_worktree_rules,compare)
 
 onetest = $(firstword $(ACTUALS)),$(firstword $(TESTPDFS))
-compare_prerequisites = $(sort $(shell echo {compare-$(BASESHA)/,}{$(onetest)}))
+compare_prerequisites = $(sort $(shell echo {compare-$(_BASESHA)/,}{$(onetest)}))
 
 runapp ?= nohup $(1) > /dev/null &
 compare: $(call compare_prerequisites)
