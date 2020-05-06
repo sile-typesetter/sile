@@ -62,7 +62,7 @@ SILE.registerCommand("define", function (options, content)
     SILE.registerCommand(options["command"], content)
     return
   elseif options.command == "process" then
-    SU.error("Defining a macro named `process`? Yeah, that won't go well.")
+    SU.warn("Did you mean to re-definine the `\\process` macro? That probably won't go well.")
   end
   SILE.registerCommand(options["command"], function (_, _content)
     SU.debug("macros", "Processing a "..options["command"].."\n")
