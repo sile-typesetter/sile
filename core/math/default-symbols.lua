@@ -6,6 +6,7 @@ symbols["in"] = '∈'
 symbols.sum = '∑'
 symbols.infty = '∞'
 symbols.dots = '⋯'
+symbols.implies = '⟹'
 
 -- Greek letters
 symbols.alpha = 'α'

@@ -76,7 +76,12 @@ local operatorDefaults = {
   ['∫'] = { atomType = atomType.bigOperator },
   ['∰'] = { atomType = atomType.bigOperator },
   ['∮'] = { atomType = atomType.bigOperator },
-  [','] = { atomType = atomType.punctuationSymbol }
+  [','] = { atomType = atomType.punctuationSymbol },
+  ['⟹'] = { atomType = atomType.relationalOperator },
+  ['/'] = { atomType = atomType.binaryOperator },
+  [':'] = { atomType = atomType.relationalOperator },
+  ['⟶'] = { atomType = atomType.relationalOperator },
+  ['|'] = { atomType = atomType.relationalOperator },
 }
 
 -- Big operators that should nevertheless have their limits drawn as subscript
