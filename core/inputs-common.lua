@@ -59,6 +59,8 @@ SILE.process = function (input)
     local content = input[i]
     if type(content) == "string" then
       SILE.typesetter:typeset(content)
+    elseif type(content) == "function" then
+      content()
     elseif SILE.Commands[content.command] then
       SILE.call(content.command, content.options, content)
     elseif content.id == "texlike_stuff" or (not content.command and not content.id) then
