@@ -1,5 +1,6 @@
-language: c
+os: linux
 dist: xenial
+language: c
 branches:
   except:
    - appveyor
@@ -27,7 +28,7 @@ env:
    - GRAPHITE=true
    - COVERAGE=false
    - MAKEFLAGS="--jobs=4"
-  matrix:
+  jobs:
    - LUA=lua5.3 HARFBUZZ=2.6.4
    - LUA=lua5.3 HARFBUZZ=1.4.2
    - LUA=lua5.3 HARFBUZZ=1.1.3
@@ -35,7 +36,7 @@ env:
    - LUA=lua5.1 HARFBUZZ=2.6.4
    - LUA=luajit HARFBUZZ=2.6.4
    - LUA=lua5.3 HARFBUZZ=2.6.4 COVERAGE=true TOGITHUB=true
-matrix:
+jobs:
   allow_failures:
    - compiler: gcc
      env: LUA=luajit HARFBUZZ=2.6.4
@@ -82,7 +83,7 @@ before_deploy:
  - make distcheck
 deploy:
   provider: releases
-  api_key:
+  token:
     secure: v+5nNaYCo5ZGFXxIoQMaNJvqVLBQNnPJw2xn/G6Sn+ntkPWGwh+y3OwxGYeD64JBxNNE5ded+kd59Vq/sSBtY4wF2axLaUV4uBk3pZ0JJgHdNGh6TJz7ZMlMfPgf1myKT1fMDH9ouvMOzjIZ7K6zU/Mu96pzzc/1ShFTQRtkIqI=
   draft: true
   cleanup: false
