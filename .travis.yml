@@ -1,6 +1,6 @@
-language: c
-sudo: false
+os: linux
 dist: xenial
+language: c
 branches:
   except:
    - appveyor
@@ -28,7 +28,7 @@ env:
    - GRAPHITE=true
    - COVERAGE=false
    - MAKEFLAGS="--jobs=4"
-  matrix:
+  jobs:
    - LUA=lua5.3 HARFBUZZ=2.6.4
    - LUA=lua5.3 HARFBUZZ=1.4.2
    - LUA=lua5.3 HARFBUZZ=1.1.3
@@ -36,7 +36,7 @@ env:
    - LUA=lua5.1 HARFBUZZ=2.6.4
    - LUA=luajit HARFBUZZ=2.6.4
    - LUA=lua5.3 HARFBUZZ=2.6.4 COVERAGE=true TOGITHUB=true
-matrix:
+jobs:
   allow_failures:
    - compiler: gcc
      env: LUA=luajit HARFBUZZ=2.6.4
@@ -69,7 +69,7 @@ install:
  - luarocks install busted
  - luarocks install luacov 0.8-1
  - luarocks install luacov-coveralls
-before_scipt:
+before_script:
  - eval $(luarocks --tree lua_modules --local path)
 script:
  - fold_unless_fail 'Building' 'build' sh -c './bootstrap.sh && ./configure && make'
@@ -83,10 +83,10 @@ before_deploy:
  - make distcheck
 deploy:
   provider: releases
-  api_key:
+  token:
     secure: v+5nNaYCo5ZGFXxIoQMaNJvqVLBQNnPJw2xn/G6Sn+ntkPWGwh+y3OwxGYeD64JBxNNE5ded+kd59Vq/sSBtY4wF2axLaUV4uBk3pZ0JJgHdNGh6TJz7ZMlMfPgf1myKT1fMDH9ouvMOzjIZ7K6zU/Mu96pzzc/1ShFTQRtkIqI=
   draft: true
-  skip_cleanup: true
+  cleanup: false
   file_glob: true
   file:
     - sile*.tar.bz2
