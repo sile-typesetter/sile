@@ -1,5 +1,4 @@
 language: c
-sudo: false
 dist: xenial
 branches:
   except:
@@ -69,7 +68,7 @@ install:
  - luarocks install busted
  - luarocks install luacov 0.8-1
  - luarocks install luacov-coveralls
-before_scipt:
+before_script:
  - eval $(luarocks --tree lua_modules --local path)
 script:
  - fold_unless_fail 'Building' 'build' sh -c './bootstrap.sh && ./configure && make'
@@ -86,7 +85,7 @@ deploy:
   api_key:
     secure: v+5nNaYCo5ZGFXxIoQMaNJvqVLBQNnPJw2xn/G6Sn+ntkPWGwh+y3OwxGYeD64JBxNNE5ded+kd59Vq/sSBtY4wF2axLaUV4uBk3pZ0JJgHdNGh6TJz7ZMlMfPgf1myKT1fMDH9ouvMOzjIZ7K6zU/Mu96pzzc/1ShFTQRtkIqI=
   draft: true
-  skip_cleanup: true
+  cleanup: false
   file_glob: true
   file:
     - sile*.tar.bz2
