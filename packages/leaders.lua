@@ -11,11 +11,12 @@ local leader = pl.class({
       end
       local remainder = outputWidth - repetitions * valwidth
       if repetitions == 1 then
-        typesetter.frame:advanceWritingDirection(remainder)
+        typesetter.frame:advanceWritingDirection(remainder / 2)
         self.value:outputYourself(typesetter, line)
+        typesetter.frame:advanceWritingDirection(remainder / 2)
       end
       if repetitions > 1 then
-        local glue = remainder / (repetitions-1)
+        local glue = remainder / (repetitions - 1)
         for _ = 1, (repetitions - 1) do
           self.value:outputYourself(typesetter, line)
           typesetter.frame:advanceWritingDirection(glue)
