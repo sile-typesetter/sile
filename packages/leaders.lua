@@ -16,12 +16,12 @@ local leader = pl.class({
         typesetter.frame:advanceWritingDirection(remainder / 2)
       end
       if repetitions > 1 then
-        local glue = remainder / (repetitions - 1)
-        for _ = 1, (repetitions - 1) do
+        local glue = remainder / (repetitions + 1)
+        typesetter.frame:advanceWritingDirection(glue)
+        for _ = 1, repetitions do
           self.value:outputYourself(typesetter, line)
           typesetter.frame:advanceWritingDirection(glue)
         end
-        self.value:outputYourself(typesetter, line)
       end
     end
 
