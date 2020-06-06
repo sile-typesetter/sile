@@ -180,9 +180,9 @@ coverage: export SILE_COVERAGE=1
 coverage: test_previews
 
 HEADSHA ?= HEAD
-_HEADSHA := $(shell test -e .git && git rev-parse --short=7 $(HEADSHA))
+_HEADSHA ?= $(shell test -e .git && git rev-parse --short=7 $(HEADSHA))
 BASESHA ?= $(HEADSHA)^
-_BASESHA := $(shell test -e .git && git rev-parse --short=7 $(BASESHA))
+_BASESHA ?= $(shell test -e .git && git rev-parse --short=7 $(BASESHA))
 
 clean-recursive: clean-tests
 
