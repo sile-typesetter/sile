@@ -34,7 +34,9 @@ TESTFONTFILES += Symbola.otf
 
 # Tell  make how to download font file bundles (when not downloadable individually)
 Symbola.zip:
-	curl -s -L https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
+	curl -s -L https://web.archive.org/web/20200416183402/https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
+
+#	curl -s -L https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
 
 GentiumPlus-5.000.zip:
 	curl -s -L https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
