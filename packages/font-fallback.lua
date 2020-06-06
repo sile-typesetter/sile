@@ -112,7 +112,7 @@ SILE.shapers.harfbuzzWithFallback = pl.class({
         end
       end
       local nItems = {} -- Remove holes
-      for i = 1, math.max(table.unpack(pl.tablex.keys(items))) do
+      for i = 1, math.max(0, table.unpack(pl.tablex.keys(items))) do
         if items[i] then
           nItems[#nItems+1] = items[i]
           while items[i].next do
