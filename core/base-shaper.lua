@@ -58,6 +58,7 @@ SILE.shapers.base = pl.class({
 
     measureChar = function (self, char)
       local options = SILE.font.loadDefaults({})
+      options.tracking = SILE.settings.get("shaper.tracking")
       local items = self:shapeToken(char, options)
       return { height = items[1].height, width = items[1].width }
     end,
@@ -82,6 +83,7 @@ SILE.shapers.base = pl.class({
     end,
 
     createNnodes = function (self, token, options)
+      options.tracking = SILE.settings.get("shaper.tracking")
       local items, _ = self:shapeToken(token, options)
       if #items < 1 then return {} end
       local lang = options.language

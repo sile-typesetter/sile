@@ -14,7 +14,7 @@ SILE.require("core/base-shaper")
 local smallTokenSize = 20 -- Small words will be cached
 local shapeCache = {}
 local _key = function (options, text)
-  return table.concat({ text, options.family, options.language, options.script, options.size, ("%d"):format(options.weight), options.style, options.variant, options.features, options.direction, options.filename }, ";")
+  return table.concat({ text, options.tracking or "1", options.family, options.language, options.script, options.size, ("%d"):format(options.weight), options.style, options.variant, options.features, options.direction, options.filename}, ";")
 end
 
 local substwarnings = {}
@@ -46,12 +46,11 @@ SILE.shapers.harfbuzz = pl.class({
           options.features,
           SILE.settings.get("harfbuzz.subshapers") or ""
         ) }
-      local tracking = SILE.settings.get("shaper.tracking")
       for i = 1, #items do
         local j = (i == #items) and #text or items[i+1].index
         items[i].text = text:sub(items[i].index+1, j) -- Lua strings are 1-indexed
-        if tracking then
-          items[i].width = items[i].width * tracking
+        if options.tracking then
+          items[i].width = items[i].width * options.tracking
         end
       end
       if #text < smallTokenSize then shapeCache[_key(options, text)] = items end
