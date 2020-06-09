@@ -46,9 +46,13 @@ SILE.shapers.harfbuzz = pl.class({
           options.features,
           SILE.settings.get("harfbuzz.subshapers") or ""
         ) }
+      local tracking = SILE.settings.get("shaper.tracking")
       for i = 1, #items do
         local j = (i == #items) and #text or items[i+1].index
         items[i].text = text:sub(items[i].index+1, j) -- Lua strings are 1-indexed
+        if tracking then
+          items[i].width = items[i].width * tracking
+        end
       end
       if #text < smallTokenSize then shapeCache[_key(options, text)] = items end
       return items

@@ -11,6 +11,12 @@ SILE.settings.declare({ name = "shaper.spaceenlargementfactor", type = "number o
 SILE.settings.declare({ name = "shaper.spacestretchfactor", type = "number or integer", default = 1/2 })
 SILE.settings.declare({ name = "shaper.spaceshrinkfactor", type = "number or integer", default = 1/3 })
 
+SILE.settings.declare({
+    name = "shaper.tracking",
+    type = "number or nil",
+    default = nil
+  })
+
 -- Function for testing shaping in the repl
 -- luacheck: ignore makenodes
 makenodes = function (token, options)
