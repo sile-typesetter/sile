@@ -1,0 +1,20 @@
+\begin[papersize=a6]{document}
+\nofolios
+\font[size=20pt]
+\set[parameter=document.parindent,value=0]
+% Defaults for comparison
+Stereotypical road
+
+% Should be no different
+\set[parameter=shaper.tracking,value=1]
+Stereotypical road
+
+% Should be 20% more than default
+\set[parameter=shaper.tracking,value=1.2]
+Stereotypical road
+
+% Leterspaceglue method for comparison
+\set[parameter=shaper.tracking]
+\set[parameter=document.letterspaceglue,value=.1em]
+Stereotypical road
+\end{document}
