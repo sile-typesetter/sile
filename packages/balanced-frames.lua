@@ -64,7 +64,7 @@ SILE.typesetter.buildPage = function (self, independent)
     end
   end
   SILE.pagebuilder = oldPageBuilder
-  SU.debug("balancer", "Finished this balance, frame id is now "..self.frame:toString())
+  SU.debug("balancer", "Finished this balance, frame id is now " .. self.frame)
   -- SILE.typesetter:debugState()
   -- We're done.
   return true
