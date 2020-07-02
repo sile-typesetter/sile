@@ -1,6 +1,6 @@
 name: Build
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -22,3 +22,29 @@ jobs:
       - name: Make
         run: |
           make
+      - name: Pass version info
+        run: |
+          echo "::set-output name=VERSION::$(cat .version)"
+      - name: Bundle Source
+        run: |
+          make dist
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2-preview
+        with:
+          name: sile-${{ steps.build.outputs.VERSION }}.tar.xz
+          path: sile-${{ steps.build.outputs.VERSION }}.tar.xz
+  publish:
+    needs:
+      - build
+    if: contains(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    name: Publish
+    steps:
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            sile-${{ needs.build.outputs.VERSION }}.zip
+            sile-${{ needs.build.outputs.VERSION }}.tar.xz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
