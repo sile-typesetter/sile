@@ -12,15 +12,13 @@ jobs:
           fetch-depth: 0
       - name: Fetch Tags
         run: git fetch --prune --tags
-      - name: Install system deps
+      - name: Install System Dependencies
         run: |
-          sudo apt-get install fonts-sil-gentiumplus libfontconfig1-dev libharfbuzz-dev libicu-dev liblua5.2-dev libpng-dev lua5.2 lua-cassowary lua-cliargs lua-compat53 lua-cosmo lua-epnf lua-expat lua-filesystem lua-linenoise lua-lpeg lua-penlight lua-repl lua-sec lua-socket lua-stdlib lua-vstruct lua-zlib-dev
-      - name: Get Info
-        run: |
-          sudo apt-get install libharfbuzz-bin
-          hb-shape --version
+          sudo apt-get install fonts-sil-gentiumplus libfontconfig1-dev libharfbuzz-dev libicu-dev liblua5.2-dev libpng-dev lua5.2 lua-sec lua-socket lua-zlib-dev luarocks
       - name: Configure
         run: |
           ./bootstrap.sh
-          ./configure --with-system-luarocks
+          ./configure
+      - name: Make
+        run: |
           make
