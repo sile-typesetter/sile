@@ -21,10 +21,6 @@ jobs:
           hb-shape --version
       - name: Configure
         run: |
-          export LIBRARY_PATH="$PWD/.lua/include"
-          export LUA_INCLUDE="-I$LIBRARY_PATH"
-          export LUA_PREFIX="$PWD/.luarocks"
-          export LUA_EXEC_PREFIX="$PWD/.lua"
           ./bootstrap.sh
-          ./configure
+          ./configure --with-system-luarocks
           make
