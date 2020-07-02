@@ -246,10 +246,12 @@ SILE.getFrame = function (id)
   if type(id) == "table" then
     SU.error("Passed a table, expected a string", true)
   end
-  local frame
+  local frame, last_attempt
   while not frame do
     frame = SILE.frames[id]
     id = id:gsub("_$", "")
+    if id == last_attempt then break end
+    last_attempt = id
   end
   return frame or SU.warn("Couldn't find frame ID "..id, true)
 end

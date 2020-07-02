@@ -13,7 +13,7 @@ TESTFONTFILES += NotoSansKannada-Regular.ttf
 TESTFONTFILES += NotoSansEthiopic-Regular.ttf
 TESTFONTFILES += NotoSansMalayalam-Regular.ttf
 TESTFONTFILES += SBL_Hbrw.ttf
-TESTFONTFILES += Symbola_hint.ttf
+TESTFONTFILES += Symbola.otf
 
 # Tell make how to download individual font files (when available)
 .fonts/NotoSansCJK%: | .fonts
@@ -33,8 +33,10 @@ TESTFONTFILES += Symbola_hint.ttf
 	touch $@
 
 # Tell  make how to download font file bundles (when not downloadable individually)
-symbola.zip:
-	curl -s -L https://fontlibrary.org/assets/downloads/symbola/cf81aeb303c13ce765877d31571dc5c7/$(notdir $@) -o $@
+Symbola.zip:
+	curl -s -L https://web.archive.org/web/20200416183402/https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
+
+#	curl -s -L https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
 
 GentiumPlus-5.000.zip:
 	curl -s -L https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
@@ -45,7 +47,7 @@ LateefGR-1.200.zip:
 Hack-v3.003-ttf.tar.xz:
 	curl -s -L https://github.com/source-foundry/Hack/releases/download/v3.003/$(notdir $@) -o $@
 
-# Tell make how to exctact individual files from bundles
+# Tell make how to extract individual files from bundles
 .fonts/LateefGR%: LateefGR-1.200.zip | .fonts
 	bsdtar -x -f $< -C $(dir $@) --strip-components 1 LateefGR-1.200/$(notdir $@)
 	touch $@
@@ -54,7 +56,7 @@ Hack-v3.003-ttf.tar.xz:
 	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
 	touch $@
 
-.fonts/Symbola%: symbola.zip | .fonts
+.fonts/Symbola%: Symbola.zip | .fonts
 	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
 	touch $@
 
