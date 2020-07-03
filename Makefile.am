@@ -60,7 +60,7 @@ prerelease: all test busted examples docs update_libtexpdf
 
 .PHONY: release-preview
 release-preview:
-	npm run release -- --dry-run
+	npm run release -- --dry-run $(and $(RELTYPE),--release-as $(RELTYPE))
 
 .PHONY: release
 release: tagrelease
