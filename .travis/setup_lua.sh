@@ -78,10 +78,13 @@ else
   elif [ "$LUA" == "lua5.3" ]; then
     curl https://www.lua.org/ftp/lua-5.3.5.tar.gz | tar xz
     cd lua-5.3.5;
+  elif [ "$LUA" == "lua5.4" ]; then
+    curl https://www.lua.org/ftp/lua-5.4.0.tar.gz | tar xz
+    cd lua-5.4.0;
   fi
 
   # Build Lua without backwards compatibility for testing
-  # perl -i -pe 's/-DLUA_COMPAT_(ALL|5_2)//' src/Makefile
+  perl -i -pe 's/-DLUA_COMPAT_\S+//' src/Makefile
   perl -i -pe 's/-DLUA_BUILD_AS_DLL/-DLUA_USE_POSIX -DLUA_DL_DLL -DLUA_BUILD_AS_DLL/' src/Makefile
   if [ "$PLATFORM" == "mingw" ]; then
     LUA_DLL=$(echo "$LUA.dll" | sed 's/\.//')
@@ -143,4 +146,6 @@ elif [ "$LUA" == "lua5.2" ]; then
   rm -rf lua-5.2.4;
 elif [ "$LUA" == "lua5.3" ]; then
   rm -rf lua-5.3.5;
+elif [ "$LUA" == "lua5.4" ]; then
+  rm -rf lua-5.4.0;
 fi
