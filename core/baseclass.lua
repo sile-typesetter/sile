@@ -65,20 +65,24 @@ SILE.registerCommand("define", function (options, content)
     SU.warn("Did you mean to re-definine the `\\process` macro? That probably won't go well.")
   end
   SILE.registerCommand(options["command"], function (_, _content)
-    SU.debug("macros", "Processing a "..options["command"].."\n")
+    SU.debug("macros", "Processing macro \\" .. options["command"])
     local macroArg
     if type(_content) == "function" then
       macroArg = _content
-    else
+    elseif type(_content) == "table" then
       macroArg = pl.tablex.copy(_content)
       macroArg.command = nil
       macroArg.id = nil
+    elseif _content == nil then
+      macroArg = {}
+    else
+      SU.error("Unhandled content type " .. type(_content) .. " passed to macro \\" .. options["command"], true)
     end
     -- Replace every occurrence of \process in `content` (the macro
     -- body) with `macroArg`, then have SILE go through the new `content`.
     local newContent = replaceProcessBy(macroArg, content)
     SILE.process(newContent)
-    SU.debug("macros", "Finished processing "..options["command"].."\n")
+    SU.debug("macros", "Finished processing \\" .. options["command"])
   end, options.help, SILE.currentlyProcessingFile)
 end, "Define a new macro. \\define[command=example]{ ... \\process }")
 
