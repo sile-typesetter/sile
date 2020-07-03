@@ -32,6 +32,7 @@ env:
    - COVERAGE=false
    - MAKEFLAGS="--jobs=4"
   jobs:
+   - LUA=lua5.4 HARFBUZZ=2.6.8
    - LUA=lua5.3 HARFBUZZ=2.6.8
    - LUA=lua5.3 HARFBUZZ=1.4.2
    - LUA=lua5.3 HARFBUZZ=1.1.3
