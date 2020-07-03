@@ -7,6 +7,13 @@ else
 SUBDIRS = libtexpdf src
 endif
 
+# Default to parallel builds with at least on job per threads the system can
+# run at a time. Note this only works for Make 4.3+, but is harmless on older
+# versions which won't process the variable in time to enact it. It can be set
+# at run time via a CLI flag or exporting this variable ahead of time.
+MAKEFLAGS ?=
+MAKEFLAGS += --jobs=$(shell nproc) --output-sync=target
+
 SUPPORTED_LUAS = 5.3 5.2 5.1
 
 dist_man_MANS = sile.1
