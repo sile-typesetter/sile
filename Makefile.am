@@ -175,7 +175,7 @@ define runsile =
 	fi
 endef
 
-patterndeps = $(wildcard $(DEPDIR)/$*.d) all $(and $(filter tests/%,$*),testprep)
+patterndeps = $(wildcard $(DEPDIR)/$*.d) all $(and $(filter tests/%,$@),testprep)
 
 %.pdf: %.sil $(and $(SILE_COVERAGE)$(CLEAN),force) $$(patterndeps)
 	$(runsile)
