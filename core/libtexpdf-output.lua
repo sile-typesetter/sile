@@ -148,14 +148,17 @@ SILE.outputters.libtexpdf = {
     self.rule(frame:left(), frame:bottom(), frame:width(), 0.5)
     --self.rule(frame:left() + frame:width()/2 - 5, (frame:top() + frame:bottom())/2+5, 10, 10)
     local stuff = SILE.shaper:createNnodes(frame.id, SILE.font.loadDefaults({}))
-    stuff = stuff[1].nodes[1].value.glyphString -- Horrible hack
-    local buf = {}
-    for i = 1, #stuff do
-      local glyph = stuff[i]
-      buf[#buf+1] = string.char(math.floor(glyph % 2^32 / 2^8))
-      buf[#buf+1] = string.char(glyph % 0x100)
+    local buf = "nil"
+    if stuff[1].nodes then -- Hide horrible hack from certain death
+      stuff = stuff[1].nodes[1].value.glyphString -- Horrible hack
+      buf = {}
+      for i = 1, #stuff do
+        local glyph = stuff[i]
+        buf[#buf+1] = string.char(math.floor(glyph % 2^32 / 2^8))
+        buf[#buf+1] = string.char(glyph % 0x100)
+      end
+      buf = table.concat(buf, "")
     end
-    buf = table.concat(buf, "")
     if font == 0 then SILE.outputter.setFont(SILE.font.loadDefaults({})) end
     pdf.setstring(frame:left():tonumber(), (SILE.documentState.paperSize[2] - frame:top()):tonumber(), buf, string.len(buf), font, 0)
     pdf.colorpop()
