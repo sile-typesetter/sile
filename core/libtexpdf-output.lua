@@ -147,7 +147,8 @@ SILE.outputters.libtexpdf = {
     self.rule(frame:right(), frame:top(), 0.5, frame:height())
     self.rule(frame:left(), frame:bottom(), frame:width(), 0.5)
     --self.rule(frame:left() + frame:width()/2 - 5, (frame:top() + frame:bottom())/2+5, 10, 10)
-    local stuff = SILE.shaper:createNnodes(frame.id, SILE.font.loadDefaults({}))
+    local gentium = SILE.font.loadDefaults({family="Gentium Plus", language="en"})
+    local stuff = SILE.shaper:createNnodes(frame.id, gentium)
     stuff = stuff[1].nodes[1].value.glyphString -- Horrible hack
     local buf = {}
     for i = 1, #stuff do
@@ -156,8 +157,13 @@ SILE.outputters.libtexpdf = {
       buf[#buf+1] = string.char(glyph % 0x100)
     end
     buf = table.concat(buf, "")
-    if font == 0 then SILE.outputter.setFont(SILE.font.loadDefaults({})) end
+    local oldfont = font
+    SILE.outputter.setFont(gentium)
     pdf.setstring(frame:left():tonumber(), (SILE.documentState.paperSize[2] - frame:top()):tonumber(), buf, string.len(buf), font, 0)
+    if oldfont then
+      pdf.loadfont(oldfont)
+      font = oldfont
+    end
     pdf.colorpop()
   end,
 
@@ -182,5 +188,5 @@ SILE.outputters.libtexpdf = {
 SILE.outputter = SILE.outputters.libtexpdf
 
 if not SILE.outputFilename and SILE.masterFilename then
-	SILE.outputFilename = SILE.masterFilename..".pdf"
+  SILE.outputFilename = SILE.masterFilename..".pdf"
 end
