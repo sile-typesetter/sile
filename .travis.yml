@@ -2,6 +2,9 @@ os: linux
 dist: xenial
 language: c
 branches:
+  only:
+    - master
+    - /^v\d+\.\d+\.\d+(-\S*)?$/
   except:
    - appveyor
    - /^untagged/
