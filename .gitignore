@@ -59,7 +59,7 @@ sile-[0-9\.]*
 # Test artifacts
 tests/*.actual
 tests/*.pdf
-*/*.toc
+*.toc
 time*.json
 
 benchmark-*
