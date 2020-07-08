@@ -1,5 +1,5 @@
 -- Japaneese language support defines units which are useful here
-SILE.call("language", { main = "ja" }, {})
+SILE.languageSupport.loadLanguage("ja")
 
 SILE.registerCommand("ruby:font", function (_, _)
   SILE.call("font", { size = "0.6zw", weight = 800 })
