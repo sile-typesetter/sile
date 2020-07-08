@@ -15,7 +15,7 @@ dependencies = {
   "cosmo == 16.06.04-1",
   "linenoise == 0.9-1",
   "lpeg == 1.0.2-1",
-  "lua-zlib == 1.2-0",
+  "lua-zlib == 1.2-1",
   "lua_cliargs == 2.3-3",
   "luaepnf == 0.3-2",
   "luaexpat == 1.3.3-1",
