@@ -31,6 +31,7 @@ rules:
     - core
     - debug
     - docker
+    - deps
     - examples
     - fonts
     - frames

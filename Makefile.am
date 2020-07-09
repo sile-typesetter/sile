@@ -118,8 +118,10 @@ TESTPDFS   = $(addsuffix      .pdf,$(basename $(TESTSRCS)))
 EXPECTEDS ?= $(filter $(addsuffix .expected,$(basename $(TESTSRCS))),$(wildcard tests/*.expected))
 ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 
-.PHONY: check
-check: all
+check: selfcheck
+
+.PHONY: selfcheck
+selfcheck: all
 	output=$$(mktemp --suffix=.pdf)
 	trap 'rm -f $$output' EXIT SIGHUP SIGTERM
 	./sile -o $$output - <<< "<sile>foo</sile>"
@@ -130,11 +132,15 @@ test: $(TESTSRCS) $(ACTUALS)
 	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
 
 .PHONY: lint
-lint: luacheck
+lint: luacheck luarocks-lint
+
+.PHONY: luarocks-lint
+luarocks-lint: $(LUAMODSPEC)
+	luarocks lint $<
 
 .PHONY: luacheck
 luacheck:
-	luacheck -q .
+	luacheck -j$(shell nproc) -q .
 
 busted: $(wildcard spec/*_spec.lua)
 	set -f; IFS=';'

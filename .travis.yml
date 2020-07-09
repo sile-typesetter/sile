@@ -2,6 +2,9 @@ os: linux
 dist: xenial
 language: c
 branches:
+  only:
+    - master
+    - /^v\d+\.\d+\.\d+(-\S*)?$/
   except:
    - appveyor
    - /^untagged/
@@ -29,19 +32,19 @@ env:
    - COVERAGE=false
    - MAKEFLAGS="--jobs=4"
   jobs:
-   - LUA=lua5.3 HARFBUZZ=2.6.4
+   - LUA=lua5.3 HARFBUZZ=2.6.8
    - LUA=lua5.3 HARFBUZZ=1.4.2
    - LUA=lua5.3 HARFBUZZ=1.1.3
-   - LUA=lua5.2 HARFBUZZ=2.6.4
-   - LUA=lua5.1 HARFBUZZ=2.6.4
-   - LUA=luajit HARFBUZZ=2.6.4
-   - LUA=lua5.3 HARFBUZZ=2.6.4 COVERAGE=true TOGITHUB=true
+   - LUA=lua5.2 HARFBUZZ=2.6.8
+   - LUA=lua5.1 HARFBUZZ=2.6.8
+   - LUA=luajit HARFBUZZ=2.6.8
+   - LUA=lua5.3 HARFBUZZ=2.6.8 COVERAGE=true TOGITHUB=true
 jobs:
   allow_failures:
    - compiler: gcc
-     env: LUA=luajit HARFBUZZ=2.6.4
+     env: LUA=luajit HARFBUZZ=2.6.8
    - compiler: gcc
-     env: LUA=lua5.3 HARFBUZZ=2.6.4 COVERAGE=true TOGITHUB=true
+     env: LUA=lua5.3 HARFBUZZ=2.6.8 COVERAGE=true TOGITHUB=true
   fast_finish: true
 cache:
   directories:
