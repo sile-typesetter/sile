@@ -19,20 +19,19 @@ jobs:
         run: |
           ./bootstrap.sh
           ./configure
+          echo "::set-output name=DISTDIR::sile-$(./build-aux/git-version-gen .tarball-version)"
       - name: Make
         run: |
           make
-      - name: Pass version info
-        run: |
-          echo "::set-output name=VERSION::$(cat .version)"
       - name: Bundle Source
         run: |
           make dist
       - name: Upload artifacts
         uses: actions/upload-artifact@v2-preview
         with:
-          name: sile-${{ steps.build.outputs.VERSION }}.tar.xz
-          path: sile-${{ steps.build.outputs.VERSION }}.tar.xz
+          name: ${{ steps.build.outputs.DISTDIR }}
+          path: ${{ steps.build.outputs.DISTDIR }}/**
+
   publish:
     needs:
       - build
@@ -44,7 +43,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            sile-${{ needs.build.outputs.VERSION }}.zip
-            sile-${{ needs.build.outputs.VERSION }}.tar.xz
+            ${{ needs.build.outputs.DISTDIR }}.zip
+            ${{ needs.build.outputs.DISTDIR }}.tar.xz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
