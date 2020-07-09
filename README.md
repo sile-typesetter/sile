@@ -1,4 +1,3 @@
-[![Travis Build Status](https://img.shields.io/travis/sile-typesetter/sile?label=Travis%20Build&logo=Travis)](https://travis-ci.com/sile-typesetter/sile)
 [![Actions Build Status](https://img.shields.io/github/workflow/status/sile-typesetter/sile/Build?label=Build&logo=Github)](https://github.com/sile-typesetter/sile/actions?workflow=Build)
 [![Azure Build Status](https://img.shields.io/azure-devops/build/sile-typesetter/069c3e31-ee59-4bd6-b395-1f1059acd8db/1?label=Azure%20Build&logo=Azuredevops)](https://dev.azure.com/sile-typesetter/sile/_build/latest?definitionId=1&branchName=master)
 [![Docker Build Status](https://img.shields.io/docker/cloud/build/siletypesetter/sile?label=Docker%20Build&logo=Docker)](https://hub.docker.com/repository/docker/siletypesetter/sile/builds)
