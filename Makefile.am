@@ -129,7 +129,11 @@ test: $(TESTSRCS) $(ACTUALS)
 	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
 
 .PHONY: lint
-lint: luacheck
+lint: luacheck luarocks-lint
+
+.PHONY: luarocks-lint
+luarocks-lint: $(LUAMODSPEC)
+	luarocks lint $<
 
 .PHONY: luacheck
 luacheck:
