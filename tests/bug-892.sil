@@ -1,0 +1,20 @@
+\begin{document}
+\begin{script}
+local plain = function () end
+local fancy = function (options, content) SILE.process(content) end
+SILE.registerCommand("plain", plain)
+SILE.registerCommand("fancy", fancy)
+SILE.registerCommand("bug892", function (options, content)
+	SILE.call("hbox", {}, plain)
+	SILE.call("hbox", {}, fancy)
+	SILE.call("hbox", {}, SILE.Commands["plain"])
+	SILE.call("hbox", {}, SILE.Commands["fancy"])
+	SILE.call("plain")
+	SILE.call("fancy")
+	SILE.call("plain", {}, { "bar" })
+	SILE.call("fancy", {}, { "bar" })
+	SILE.process(content)
+end)
+\end{script}
+foo\bug892{}baz
+\end{document}

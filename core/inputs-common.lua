@@ -28,10 +28,10 @@ SILE.inputs.common = {
 }
 
 local function debugAST(ast, level)
+  if not ast then SU.error("debugAST called with nil", true) end
   local out = string.rep("  ", 1+level)
   if level == 0 then SU.debug("ast", "["..SILE.currentlyProcessingFile) end
   if type(ast) == "function" then SU.debug("ast", out.."(function)") end
-  if not ast then SU.error("SILE.process called with nil", true) end
   for i=1, #ast do
     local content = ast[i]
     if type(content) == "string" then
@@ -50,7 +50,7 @@ local function debugAST(ast, level)
 end
 
 SILE.process = function (input)
-  if not input then SU.error("SILE.process called with nil", true) end
+  if not input then return end
   if type(input) == "function" then return input() end
   if SU.debugging("ast") then
     debugAST(input, 0)
@@ -59,6 +59,8 @@ SILE.process = function (input)
     local content = input[i]
     if type(content) == "string" then
       SILE.typesetter:typeset(content)
+    elseif type(content) == "function" then
+      content()
     elseif SILE.Commands[content.command] then
       SILE.call(content.command, content.options, content)
     elseif content.id == "texlike_stuff" or (not content.command and not content.id) then

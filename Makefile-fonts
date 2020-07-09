@@ -34,7 +34,10 @@ TESTFONTFILES += Symbola.otf
 
 # Tell  make how to download font file bundles (when not downloadable individually)
 Symbola.zip:
-	curl -s -L https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
+	curl -s -L https://web.archive.org/web/20200521203841if_/https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
+
+# Actual upstream server limits downloads which sometimes kills our CI runners
+#	curl -s -L https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
 
 GentiumPlus-5.000.zip:
 	curl -s -L https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
@@ -58,5 +61,5 @@ Hack-v3.003-ttf.tar.xz:
 	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
 	touch $@
 
-.fonts/SBL_Hbrw.ttf:
+.fonts/SBL_Hbrw.ttf: | .fonts
 	curl -s -L http://www.sbl-site.org/Fonts/$(notdir $@) -o $@

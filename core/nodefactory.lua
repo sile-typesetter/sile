@@ -662,9 +662,13 @@ end
 
 setmetatable(nodefactory, {
     __index = function (_, prop)
-      SU.deprecated("SILE.nodefactory." .. prop, "SILE.nodefactory." .. prop:match("n?e?w?(.*)"):lower(), "0.10.0")
-      local old_constructor = _deprecated_nodefactory[prop]
-      return string.find(prop, "^new") and old_constructor or old_constructor()
+      if _deprecated_nodefactory[prop] then
+        SU.deprecated("SILE.nodefactory." .. prop, "SILE.nodefactory." .. prop:match("n?e?w?(.*)"):lower(), "0.10.0")
+        local old_constructor = _deprecated_nodefactory[prop]
+        return string.find(prop, "^new") and old_constructor or old_constructor()
+      else
+        SU.error("Attempt to access non-existent SILE.nodefactory." .. prop)
+      end
     end
   })
 
