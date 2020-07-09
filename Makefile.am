@@ -115,8 +115,10 @@ TESTPDFS   = $(addsuffix      .pdf,$(basename $(TESTSRCS)))
 EXPECTEDS ?= $(filter $(addsuffix .expected,$(basename $(TESTSRCS))),$(wildcard tests/*.expected))
 ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 
-.PHONY: check
-check: all
+check: selfcheck
+
+.PHONY: selfcheck
+selfcheck: all
 	output=$$(mktemp --suffix=.pdf)
 	trap 'rm -f $$output' EXIT SIGHUP SIGTERM
 	./sile -o $$output - <<< "<sile>foo</sile>"
