@@ -81,7 +81,7 @@ else
   fi
 
   # Build Lua without backwards compatibility for testing
-  perl -i -pe 's/-DLUA_COMPAT_(ALL|5_2)//' src/Makefile
+  # perl -i -pe 's/-DLUA_COMPAT_(ALL|5_2)//' src/Makefile
   perl -i -pe 's/-DLUA_BUILD_AS_DLL/-DLUA_USE_POSIX -DLUA_DL_DLL -DLUA_BUILD_AS_DLL/' src/Makefile
   if [ "$PLATFORM" == "mingw" ]; then
     LUA_DLL=$(echo "$LUA.dll" | sed 's/\.//')

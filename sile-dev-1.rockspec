@@ -1,4 +1,8 @@
 package = "sile"
+description = {
+  summary = "Simon’s Improved Layout Engine",
+  license = "MIT"
+}
 version = "dev-1"
 source = {
 	url = "..."
