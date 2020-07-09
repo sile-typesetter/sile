@@ -137,7 +137,7 @@ luarocks-lint: $(LUAMODSPEC)
 
 .PHONY: luacheck
 luacheck:
-	luacheck -q .
+	luacheck -j$(shell nproc) -q .
 
 busted: $(wildcard spec/*_spec.lua)
 	set -f; IFS=';'
