@@ -21,7 +21,8 @@ rules:
   scope-enum:
   - 1
   - 'always'
-  - - azure
+  - - actions
+    - azure
     - backends
     - build
     - classes

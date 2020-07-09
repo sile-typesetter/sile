@@ -1,0 +1,50 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Fetch Tags
+        run: git fetch --prune --tags
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get install fonts-sil-gentiumplus libfontconfig1-dev libharfbuzz-dev libicu-dev liblua5.2-dev libpng-dev lua5.2 lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
+      - name: Configure
+        run: |
+          ./bootstrap.sh
+          ./configure
+          echo "::set-env name=DISTDIR::sile-$(./build-aux/git-version-gen .tarball-version)"
+          echo "::set-env name=MAKEFLAGS::-j$(nproc) -Otarget"
+      - name: Make
+        run: |
+          make
+      - name: Bundle Source
+        run: |
+          make dist
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.DISTDIR }}
+          path: '*${{ env.DISTDIR }}/'
+
+  publish:
+    needs:
+      - build
+    if: contains(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    name: Publish
+    steps:
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ${{ env.DISTDIR }}.zip
+            ${{ env.DISTDIR }}.tar.xz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

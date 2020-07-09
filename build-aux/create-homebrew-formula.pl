@@ -35,7 +35,7 @@ $version =~ s/^v//;
 print "Writing formula for SILE $version\n";
 
 print "Fetching tarball...\n";
-my $github_url = "https://github.com/sile-typesetter/sile/releases/download/v$version/sile-$version.tar.bz2";
+my $github_url = "https://github.com/sile-typesetter/sile/releases/download/v$version/sile-$version.tar.xz";
 my $tarball =  get($github_url);
 die "Couldn't download tarball - check $github_url !" unless defined $tarball;
 my $shasum_tarball = sha256_hex($tarball);
