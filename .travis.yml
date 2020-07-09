@@ -27,7 +27,7 @@ addons:
    - poppler-utils
 env:
   global:
-   - LUAROCKS=3.3.1
+   - LUAROCKS=2.4.2
    - GRAPHITE=true
    - COVERAGE=false
    - MAKEFLAGS="--jobs=4"
