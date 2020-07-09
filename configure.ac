@@ -2,7 +2,7 @@ AC_PREREQ([2.68])
 AC_INIT([SILE],
         m4_esyscmd([build-aux/git-version-gen .tarball-version]),
         [simon@simon-cozens.org])
-AM_INIT_AUTOMAKE([1.11.1 foreign tar-pax dist-bzip2 no-dist-gzip -Wall no-define color-tests -Wno-portability subdir-objects])
+AM_INIT_AUTOMAKE([1.11.1 foreign tar-pax dist-zip dist-xz no-dist-gzip -Wall no-define color-tests -Wno-portability subdir-objects])
 AC_CONFIG_MACRO_DIR([m4])
 LT_PREREQ([2.2])
 LT_INIT([dlopen])

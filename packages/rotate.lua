@@ -1,16 +1,15 @@
 local pdf = require("justenoughlibtexpdf")
 
-local enter = function(self)
+local enter = function (self)
   if not self.rotate then return end
   local x = -math.rad(self.rotate)
   -- Keep center point the same
   pdf:gsave()
-  local cx = self:left()
-  local cy = -self:bottom()
-
-  pdf.setmatrix(1,0,0,1,cx + math.sin(x) * self:height(),cy)
+  local cx = self:left():tonumber()
+  local cy = -self:bottom():tonumber()
+  pdf.setmatrix(1, 0, 0, 1, cx + math.sin(x) * self:height():tonumber(), cy)
   pdf.setmatrix(math.cos(x), math.sin(x), -math.sin(x), math.cos(x), 0, 0)
-  pdf.setmatrix(1,0,0,1,-cx,-cy)
+  pdf.setmatrix(1, 0, 0, 1, -cx, -cy)
 end
 
 local leave =   function(self)
@@ -46,6 +45,7 @@ local outputRotatedHbox = function (self, typesetter, line)
 
   local horigin = (typesetter.frame.state.cursorX + origbox.width.length / 2):tonumber()
   local vorigin = -(typesetter.frame.state.cursorY + origbox.height / 2):tonumber()
+  SILE.outputters.libtexpdf._init()
   pdf:gsave()
   pdf.setmatrix(1, 0, 0, 1, horigin, vorigin)
   pdf.setmatrix(math.cos(x), math.sin(x), -math.sin(x), math.cos(x), 0, 0)

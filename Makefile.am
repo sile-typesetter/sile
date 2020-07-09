@@ -20,6 +20,7 @@ SHELL = bash
 .ONESHELL:
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
+am__remove_distdir =
 
 if !SYSTEM_LUAROCKS
 nobase_nodist_pkgdata_DATA = $(shell find lua_modules -type f -print 2>/dev/null ||:)
@@ -29,6 +30,8 @@ LUAMODLOCK := sile-dev-1.rockslock
 LUAMODSPEC := sile-dev-1.rockspec
 genrockslock := $(LUAROCKS) $(LUAROCKSARGS) list --porcelain | awk '{print $$1 " " $$2}'
 rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
+else
+LUAROCKS := luarocks --tree lua_modules_dist --lua-version $(LUA_VERSION)
 endif
 
 BUILT_SOURCES = .version
@@ -103,7 +106,7 @@ endif
 .PHONY: lua_modules_dist
 lua_modules_dist: $(LUAMODSPEC) force
 	$(foreach LUA,$(SUPPORTED_LUAS),
-	$(LUAROCKS) --tree lua_modules_dist --lua-version $(LUA) install --only-deps $<)
+	$(LUAROCKS) $(LUAROCKSARGS) --lua-version $(LUA) install --only-deps $<)
 
 DEPDIR := .deps
 REGRESSIONSCRIPT := ./tests/regressions.pl

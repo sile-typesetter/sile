@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@master
+      uses: actions/checkout@v2
     - name: Setup Lua
       uses: leafo/gh-actions-lua@v6
       with:
@@ -18,5 +18,5 @@ jobs:
       run: |
         luarocks install luacheck
         luarocks install lanes
-    - name: Lint all the Lua code
+    - name: Run Linter
       run: luacheck -j$(nproc) .
