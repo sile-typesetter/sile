@@ -20,6 +20,7 @@ SHELL = bash
 .ONESHELL:
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
+am__remove_distdir =
 
 if !SYSTEM_LUAROCKS
 nobase_nodist_pkgdata_DATA = $(shell find lua_modules -type f -print 2>/dev/null ||:)

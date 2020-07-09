@@ -28,10 +28,10 @@ jobs:
         run: |
           make dist
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2-preview
+        uses: actions/upload-artifact@v2
         with:
-          name: ${{ env.DISTDIR }}.zip
-          path: ${{ env.DISTDIR }}.zip
+          name: ${{ env.DISTDIR }}
+          path: '*${{ env.DISTDIR }}/'
 
   publish:
     needs:
