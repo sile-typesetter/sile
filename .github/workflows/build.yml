@@ -44,6 +44,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
+            ${{ env.DISTDIR }}.pdf
             ${{ env.DISTDIR }}.zip
             ${{ env.DISTDIR }}.tar.xz
         env:
