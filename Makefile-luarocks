@@ -1,4 +1,4 @@
-SUPPORTED_LUAS = 5.3 5.2 5.1
+SUPPORTED_LUAS = 5.4 5.3 5.2 5.1
 
 LUAROCKS := luarocks --tree lua_modules --lua-version $(LUA_VERSION)
 
