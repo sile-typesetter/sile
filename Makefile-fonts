@@ -43,6 +43,9 @@ TESTFONTFILES += Symbola.otf
 
 # Tell  make how to download font file bundles (when not downloadable individually)
 
+Cormorant_Install_v3.601.zip:
+	curl -s -L https://github.com/CatharsisFonts/Cormorant/releases/download/v3.601/$(notdir $@) -o $@
+
 roboto-unhinted.zip:
 	curl -s -L https://github.com/google/roboto/releases/download/v2.138/$(notdir $@) -o $@
 
@@ -65,6 +68,9 @@ Hack-v3.003-ttf.tar.xz:
 	curl -s -L https://github.com/source-foundry/Hack/releases/download/v3.003/$(notdir $@) -o $@
 
 # Tell make how to extract individual files from bundles
+
+.fonts/Cormorant%: Cormorant_Install_v3.601.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 2 "Cormorant_Install_v3.601/1. TrueType Font Files/$(notdir $@)"
 
 .fonts/GenB%: GentiumBasic_1102.zip | .fonts
 	bsdtar -x -f $< -C $(dir $@) --strip-components 1 GentiumBasic_1102/$(notdir $@)
