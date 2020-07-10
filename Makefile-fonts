@@ -29,6 +29,18 @@ TESTFONTFILES += Symbola.otf
 .fonts/Amiri%: | .fonts
 	curl -s -L https://github.com/alif-type/amiri/raw/0.111/$(notdir $@) -o $@
 
+.fonts/Brill-Roman.ttf:
+	curl -s -L https://brill.com/fileasset/downloads_static/static_typefacedownload_typefaceroman_2.06_051.ttf -o $@
+
+.fonts/Brill-Italic.ttf:
+	curl -s -L https://brill.com/fileasset/downloads_static/static_typefacedownload_typefaceitalic_2.06_051.ttf -o $@
+
+.fonts/Brill-Bold.ttf:
+	curl -s -L https://brill.com/fileasset/downloads_static/static_typefacedownload_typefacebold_2.06_051.ttf -o $@
+
+.fonts/Brill-BoldItalic.ttf:
+	curl -s -L https://brill.com/fileasset/downloads_static/static_typefacedownload_typefacebolditalic_2.06_051.ttf -o $@
+
 # Tell  make how to download font file bundles (when not downloadable individually)
 
 roboto-unhinted.zip:
