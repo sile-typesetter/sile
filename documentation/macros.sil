@@ -22,7 +22,7 @@
 }
 \define[command=sectionsfont]{\font[weight=600,family=Roboto Condensed]{\process}}
 \define[command=tableofcontents:headerfont]{\font[weight=600,size=22pt,family=Roboto Condensed]{\process}}
-\define[command=examplefont]{\font[family=Libertinus Serif]{\process}}
+\define[command=examplefont]{\font[family=Cormorant Infant,size=1.1em]{\process}}
 \define[command=bf]{\font[weight=800]{\process}}
 \define[command=book:chapterfont]{\sectionsfont{\font[size=22pt]{\process}}}
 \define[command=book:sectionfont]{\sectionsfont{\font[size=15pt]{\process}}}
