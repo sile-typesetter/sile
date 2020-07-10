@@ -29,15 +29,8 @@ TESTFONTFILES += Symbola.otf
 .fonts/Amiri%: | .fonts
 	curl -s -L https://github.com/alif-type/amiri/raw/0.111/$(notdir $@) -o $@
 
-.fonts/GenB%: GentiumBasic_1102.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) --strip-components 1 GentiumBasic_1102/$(notdir $@)
-	touch $@
-
-.fonts/GentiumPlus%: GentiumPlus-5.000.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) --strip-components 1 GentiumPlus-5.000/$(notdir $@)
-	touch $@
-
 # Tell  make how to download font file bundles (when not downloadable individually)
+
 roboto-unhinted.zip:
 	curl -s -L https://github.com/google/roboto/releases/download/v2.138/$(notdir $@) -o $@
 
@@ -60,6 +53,15 @@ Hack-v3.003-ttf.tar.xz:
 	curl -s -L https://github.com/source-foundry/Hack/releases/download/v3.003/$(notdir $@) -o $@
 
 # Tell make how to extract individual files from bundles
+
+.fonts/GenB%: GentiumBasic_1102.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 1 GentiumBasic_1102/$(notdir $@)
+	touch $@
+
+.fonts/GentiumPlus%: GentiumPlus-5.000.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 1 GentiumPlus-5.000/$(notdir $@)
+	touch $@
+
 .fonts/LateefGR%: LateefGR-1.200.zip | .fonts
 	bsdtar -x -f $< -C $(dir $@) --strip-components 1 LateefGR-1.200/$(notdir $@)
 	touch $@
