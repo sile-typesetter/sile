@@ -2,21 +2,24 @@
 .PRECIOUS: .fonts/% %.zip %.xz
 
 # List of font files we _actually need_
-TESTFONTFILES  = GentiumPlus-R.ttf GentiumPlus-I.ttf
+DOCSFONTFILES  = GentiumPlus-R.ttf GentiumPlus-I.ttf
+DOCSFONTFILES += CormorantInfant-Italic.ttf CormorantInfant-Regular.ttf
+DOCSFONTFILES += GenBkBasR.ttf GenBkBasI.ttf GenBkBasB.ttf
+DOCSFONTFILES += Hack-Regular.ttf
+DOCSFONTFILES += LateefGR-Regular.ttf
+DOCSFONTFILES += LibertinusSerif-Regular.otf
+DOCSFONTFILES += NotoSansCJK-Regular.ttc
+DOCSFONTFILES += NotoSansEthiopic-Regular.ttf
+DOCSFONTFILES += RobotoCondensed-Bold.ttf
+DOCSFONTFILES += Symbola.otf
+
+TESTFONTFILES  = $(DOCSFONTFILES)
 TESTFONTFILES += Amiri-Regular.ttf AmiriQuran.ttf
-TESTFONTFILES += CormorantInfant-Italic.ttf CormorantInfant-Regular.ttf
-TESTFONTFILES += GenBkBasR.ttf GenBkBasI.ttf GenBkBasB.ttf
-TESTFONTFILES += Hack-Regular.ttf
-TESTFONTFILES += LateefGR-Regular.ttf
-TESTFONTFILES += LibertinusSans-Bold.otf LibertinusSerif-Regular.otf
+TESTFONTFILES += LibertinusSans-Bold.otf
 TESTFONTFILES += NotoNaskhArabic-Regular.ttf
-TESTFONTFILES += NotoSansCJK-Regular.ttc
 TESTFONTFILES += NotoSansKannada-Regular.ttf
-TESTFONTFILES += NotoSansEthiopic-Regular.ttf
 TESTFONTFILES += NotoSansMalayalam-Regular.ttf
-TESTFONTFILES += RobotoCondensed-Bold.ttf
 TESTFONTFILES += SBL_Hbrw.ttf
-TESTFONTFILES += Symbola.otf
 
 # Tell make how to download individual font files (when available)
 .fonts/NotoSansCJK%: | .fonts

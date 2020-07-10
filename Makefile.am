@@ -331,11 +331,14 @@ include Makefile-fonts
 
 # Make sure we have font files before running tests (ignoring timestamp of font files)
 .PHONY: prep
+DOCSPREPDEPS = $(DEPDIRS) $(addprefix .fonts/,$(DOCSFONTFILES))
 TESTPREPDEPS = $(DEPDIRS) $(addprefix .fonts/,$(TESTFONTFILES))
 if SYSTEM_LUAROCKS
-prep $(MANUAL): | $(TESTPREPDEPS)
+$(MANUAL): | $(DOCSPREPDEPS)
+prep: | $(TESTPREPDEPS)
 else
-prep $(MANUAL): installrocks | $(TESTPREPDEPS)
+$(MANUAL): installrocks | $(DOCSPREPDEPS)
+prep: installrocks | $(TESTPREPDEPS)
 endif
 
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS)
