@@ -43,6 +43,9 @@ TESTFONTFILES += Symbola.otf
 
 # Tell  make how to download font file bundles (when not downloadable individually)
 
+CrimsonPro.zip:
+	curl -s -L https://fonts.google.com/download?family=Crimson+Pro -o $@
+
 Cormorant_Install_v3.601.zip:
 	curl -s -L https://github.com/CatharsisFonts/Cormorant/releases/download/v3.601/$(notdir $@) -o $@
 
@@ -68,6 +71,10 @@ Hack-v3.003-ttf.tar.xz:
 	curl -s -L https://github.com/source-foundry/Hack/releases/download/v3.003/$(notdir $@) -o $@
 
 # Tell make how to extract individual files from bundles
+
+.fonts/CrimsonPro%: CrimsonPro.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 1 static/$(notdir $@)
+	touch $@
 
 .fonts/Cormorant%: Cormorant_Install_v3.601.zip | .fonts
 	bsdtar -x -f $< -C $(dir $@) --strip-components 2 "Cormorant_Install_v3.601/1. TrueType Font Files/$(notdir $@)"
