@@ -2,7 +2,7 @@ AC_PREREQ([2.68])
 AC_INIT([SILE],
         m4_esyscmd([build-aux/git-version-gen .tarball-version]),
         [simon@simon-cozens.org])
-AM_INIT_AUTOMAKE([1.11.1 foreign tar-pax dist-bzip2 no-dist-gzip -Wall no-define color-tests -Wno-portability subdir-objects])
+AM_INIT_AUTOMAKE([1.11.1 foreign tar-pax dist-zip dist-xz no-dist-gzip -Wall no-define color-tests -Wno-portability subdir-objects])
 AC_CONFIG_MACRO_DIR([m4])
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
@@ -102,7 +102,7 @@ esac
 AX_LUA_HEADERS
 AX_LUA_LIBS
 
-AS_IF([test "x$with_system_luarocks" != "xyes"], [], [
+AS_IF([test "x$with_system_luarocks" = "xyes"], [
     AX_LUA_MODULE([bit32], [bit32])
     AX_LUA_MODULE([lpeg], [lpeg])
     AX_LUA_MODULE([cassowary], [cassowary])
@@ -122,6 +122,9 @@ AS_IF([test "x$with_system_luarocks" != "xyes"], [], [
     AX_LUA_MODULE([pl], [penlight])
     AX_LUA_MODULE([std], [stdlib])
     AX_LUA_MODULE([vstruct], [vstruct])
+], [
+    AC_CHECK_PROG(HASLUAROCKS, luarocks, yes)
+    test "x$HASLUAROCKS" == "xyes" || AC_MSG_ERROR([luarocks is required])
 ])
 
 AC_ARG_ENABLE([linklua],

@@ -11,16 +11,17 @@ local leader = pl.class({
       end
       local remainder = outputWidth - repetitions * valwidth
       if repetitions == 1 then
-        typesetter.frame:advanceWritingDirection(remainder)
+        typesetter.frame:advanceWritingDirection(remainder / 2)
         self.value:outputYourself(typesetter, line)
+        typesetter.frame:advanceWritingDirection(remainder / 2)
       end
       if repetitions > 1 then
-        local glue = remainder / (repetitions-1)
-        for _ = 1, (repetitions - 1) do
+        local glue = remainder / (repetitions + 1)
+        typesetter.frame:advanceWritingDirection(glue)
+        for _ = 1, repetitions do
           self.value:outputYourself(typesetter, line)
           typesetter.frame:advanceWritingDirection(glue)
         end
-        self.value:outputYourself(typesetter, line)
       end
     end
 
@@ -36,7 +37,11 @@ SILE.registerCommand("leaders", function(options, content)
 end)
 
 SILE.registerCommand("dotfill", function(_, _)
-  SILE.call("leaders", { width = "0pt plus 100000pt" }, { " . " })
+  SILE.call("leaders", { width = "0pt plus 100000pt" }, function()
+    SILE.call("kern", { width = "1spc" })
+    SILE.typesetter:typeset(".")
+    SILE.call("kern", { width = "1spc" })
+    end)
 end)
 
 return {

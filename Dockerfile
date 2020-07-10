@@ -1,14 +1,14 @@
 ARG sile_tag=master
-FROM archlinux AS sile-base
+FROM archlinux:20200306 AS sile-base
+RUN sed -i -e '/IgnorePkg *=/s/^.*$/IgnorePkg = coreutils/' /etc/pacman.conf
 
-RUN pacman --needed --noconfirm -Syyuq && yes | pacman -Sccq
+RUN pacman --needed --noconfirm -Syuq && yes | pacman -Sccq
 
-COPY build-aux/docker-yay-runner.sh /usr/local/bin
-RUN docker-yay-runner.sh "--noconfirm --asexplicit -Sq fontconfig harfbuzz icu lua lua-{cassowary,cosmo,cliargs,expat,filesystem,linenoise,lpeg,luaepnf,penlight,repl,sec,socket,stdlib,vstruct,zlib} ttf-gentium-plus"
+RUN pacman --needed --noconfirm -Syq lua fontconfig harfbuzz icu gentium-plus-font && yes | pacman -Sccq
 
 FROM sile-base AS sile-builder
 
-RUN pacman --needed --noconfirm -Syyuq && pacman --needed --noconfirm -Sq git base-devel poppler && yes | pacman -Sccq
+RUN pacman --needed --noconfirm -Syq git base-devel poppler luarocks libpng
 
 COPY ./ /src
 WORKDIR /src
@@ -19,7 +19,9 @@ RUN git clean -dxf ||:
 RUN git fetch --unshallow ||:
 RUN git fetch --tags ||:
 
-RUN ./bootstrap.sh && ./configure --with-system-luarocks && make
+RUN ./bootstrap.sh
+RUN ./configure
+RUN make
 RUN make install DESTDIR=/pkgdir
 
 FROM sile-base AS sile

@@ -1,4 +1,5 @@
 [![Travis Build Status](https://img.shields.io/travis/sile-typesetter/sile?label=Travis%20Build&logo=Travis)](https://travis-ci.com/sile-typesetter/sile)
+[![Actions Build Status](https://img.shields.io/github/workflow/status/sile-typesetter/sile/Build?label=Build&logo=Github)](https://github.com/sile-typesetter/sile/actions?workflow=Build)
 [![Azure Build Status](https://img.shields.io/azure-devops/build/sile-typesetter/069c3e31-ee59-4bd6-b395-1f1059acd8db/1?label=Azure%20Build&logo=Azuredevops)](https://dev.azure.com/sile-typesetter/sile/_build/latest?definitionId=1&branchName=master)
 [![Docker Build Status](https://img.shields.io/docker/cloud/build/siletypesetter/sile?label=Docker%20Build&logo=Docker)](https://hub.docker.com/repository/docker/siletypesetter/sile/builds)
 [![Luacheck Lint Status](https://img.shields.io/github/workflow/status/sile-typesetter/sile/Luacheck?label=Luacheck&logo=Github)](https://github.com/sile-typesetter/sile/actions?workflow=Luacheck)
@@ -27,7 +28,7 @@ First, have a look at the [usage examples gallery][examples]. SILE allows you to
 
 ### For macOS
 
-A formula is available for [Homebrew][brew] that can install both stable and head versions. Just run `brew install sile` for the latest stable release or `brew install sile --HEAD` to build from the latest git commit.
+A formula is available for [Homebrew][brew] that can install either stable or head versions. Just run `brew install sile` for the latest stable release or `brew install sile --HEAD` to build from the latest git commit.
 
 Note the Homebrew package does not automatically install the [default font](#default-font). The easiest way to install Gentium Plus is through the [Homebrew Fonts caskroom][brewfonts]:
 
@@ -38,7 +39,7 @@ Note the Homebrew package does not automatically install the [default font](#def
 
 #### Arch Linux
 
-Arch Linux packages are available in the [AUR][aur] that can be installed using your prefered package manager (e.g. `yay -S sile`). Use [sile][aur-rel] for the latest stable release or [sile-git][aur-dev] to build from the latest git commit.
+Arch Linux packages are available in the [AUR][aur] that can be built manually or with an AUR helper (e.g. `yay -S sile`). Use [sile][aur-rel] for the latest stable release or [sile-git][aur-dev] to build from the latest git commit. Pre-built packages that may be directly installed with `pacman -S sile` are available in [@alerque’s package repository][alerque-arch].
 
 #### Ubuntu
 
@@ -93,7 +94,7 @@ One notable issue with using SILE from a Docker contaner is that it will not hav
 
 SILE source code can be downloaded from [its website][sile] or directly from [the Github releases page][releases].
 
-SILE is written in the Lua programming language, so you will need a working Lua installation on your system (Lua 5.1, 5.2, and 5.3 are fully supported. Lua 5.4, LuaJIT, and Lua Resty should work, but are not currently tested). It also relies on external libraries to access fonts and write PDF files. Its preferred combination of libraries is [Harfbuzz][harfbuzz] and [libtexpdf][], a PDF creation library extracted from TeX. Harfbuzz (minimum version 1.1.3) should be available from your operating system's package manager. For Harfbuzz to work you will also need fontconfig installed. SILE also requires the [ICU][icu] libraries for Unicode handling.
+SILE is written in the Lua programming language, so you will need a working Lua installation on your system (Lua 5.1, 5.2, and 5.3 are fully supported. Lua 5.4, LuaJIT, and Lua Resty should work, but are not currently tested).  It also relies on external libraries to access fonts and write PDF files. Its preferred combination of libraries is [Harfbuzz][harfbuzz] and [libtexpdf][], a PDF creation library extracted from TeX. Harfbuzz (minimum version 1.1.3) should be available from your operating system's package manager. For Harfbuzz to work you will also need fontconfig installed. SILE also requires the [ICU][icu] libraries for Unicode handling.
 
 On macOS, ICU can be installed via Homebrew:
 
@@ -104,7 +105,7 @@ After that, you might need to set environment variables. If you try to `brew lin
     For pkg-config to find icu4c you may need to set:
       export PKG_CONFIG_PATH="/usr/local/opt/icu4c/lib/pkgconfig"
 
-Optionally you may install the Lua libraries listed in the [rockspec][] to your system (using either your system's package manage or [luarocks][] (`luarocks install sile-dev-1.rockspec`). By default all the required Lua libraries will be downloaded and bundled alongside the SILE the instalation. If you downloaded a source tarball these dependencies are included, if you are using a git clone of the source repository the build system will require `luarocks` to fetch them during build. Note that *openssl-devel* will be required for one of the Lua modules to compile¹. If your system has all the required packages already you may add `--with-system-luarocks` to the `./configure` command to avoid bundling them.
+Optionally you may install the Lua libraries listed in the [rockspec][] to your system (using either your system's package manager or [luarocks][] (`luarocks install sile-dev-1.rockspec`). By default all the required Lua libraries will be downloaded and bundled alongside the SILE the instalation. If you downloaded a source tarball these dependencies are included, if you are using a git clone of the source repository the build system will require `luarocks` to fetch them during build. Note that OpenSSL development headers will be required for one of the Lua modules to compile¹. If your system has all the required packages already you may add `--with-system-luarocks` to the `./configure` command to avoid bundling them.
 
 ¹ <sub>OpenSSL development headers are required to build *luasec*, please make sure they are setup _BEFORE_ trying to build SILE! If you use your system's Luarocks packages this will be done for you, otherwise make sure you can compile luasec. You can try just this step in isolation before building SILE using `luarocks --tree=/tmp install luasec`.</sub>
 
@@ -127,7 +128,7 @@ On some systems you may also need to run:
 
 ### Default Font
 
-Since SILE v0.9.5, the default font has been Gentium Plus freely available from [SIL's site][gentium]. It is not required that you install it, but if this font is not installed on your system, you won't be able to use the examples without modification. (Previously we used Gentium Basic, but that's getting harder to get hold of.)
+Since SILE v0.9.5, the default font has been Gentium Plus which is freely available from [SIL’s site][gentium]. It is not required that you install it, but if this font is not installed on your system, you won't be able to use the examples without modification. (Previously we used Gentium Basic, but that's getting harder to get hold of.)
 
 ### Testing
 
@@ -181,3 +182,4 @@ SILE is distributed under the [MIT licence][license].
   [nix]: https://nixos.org/nix
   [ports]: http://ports.su/print/sile
   [ppa]: https://launchpad.net/~sile-typesetter/+archive/ubuntu/sile
+  [alerque-arch]: https://wiki.archlinux.org/index.php/Unofficial_user_repositories#alerque

@@ -65,13 +65,17 @@ SILE.registerCommand("tocentry", function (options, content)
   })
 end)
 
+SILE.registerCommand("tableofcontents:title", function (_, _)
+  local lang = SILE.settings.get("document.language")
+  SILE.call("tableofcontents:title:" .. lang)
+end)
+
 return {
   exports = { writeToc = writeToc, moveTocNodes = moveNodes },
   init = function (self)
     self:loadPackage("infonode")
     self:loadPackage("leaders")
 SILE.doTexlike([[%
-\define[command=tableofcontents:title]{}%
 \define[command=tableofcontents:notocmessage]{\tableofcontents:headerfont{Rerun SILE to process table of contents!}}%
 \define[command=tableofcontents:headerfont]{\font[size=24pt,weight=800]{\process}}%
 \define[command=tableofcontents:header]{\par\noindent\tableofcontents:headerfont{\tableofcontents:title}\medskip}%

@@ -49,9 +49,9 @@ mkdir -p "$LUA_HOME_DIR"
 if [ "$LUAJIT" == "yes" ]; then
 
   if [ "$LUA" == "luajit" ]; then
-    curl http://luajit.org/download/$LUAJIT_BASE.tar.gz | tar xz;
+    curl https://luajit.org/download/$LUAJIT_BASE.tar.gz | tar xz;
   else
-    git clone http://luajit.org/git/luajit-2.0.git $LUAJIT_BASE;
+    git clone https://luajit.org/git/luajit-2.0.git $LUAJIT_BASE;
   fi
 
   cd $LUAJIT_BASE
@@ -70,18 +70,18 @@ if [ "$LUAJIT" == "yes" ]; then
 else
 
   if [ "$LUA" == "lua5.1" ]; then
-    curl http://www.lua.org/ftp/lua-5.1.5.tar.gz | tar xz
+    curl https://www.lua.org/ftp/lua-5.1.5.tar.gz | tar xz
     cd lua-5.1.5;
   elif [ "$LUA" == "lua5.2" ]; then
-    curl http://www.lua.org/ftp/lua-5.2.4.tar.gz | tar xz
+    curl https://www.lua.org/ftp/lua-5.2.4.tar.gz | tar xz
     cd lua-5.2.4;
   elif [ "$LUA" == "lua5.3" ]; then
-    curl http://www.lua.org/ftp/lua-5.3.5.tar.gz | tar xz
+    curl https://www.lua.org/ftp/lua-5.3.5.tar.gz | tar xz
     cd lua-5.3.5;
   fi
 
   # Build Lua without backwards compatibility for testing
-  perl -i -pe 's/-DLUA_COMPAT_(ALL|5_2)//' src/Makefile
+  # perl -i -pe 's/-DLUA_COMPAT_(ALL|5_2)//' src/Makefile
   perl -i -pe 's/-DLUA_BUILD_AS_DLL/-DLUA_USE_POSIX -DLUA_DL_DLL -DLUA_BUILD_AS_DLL/' src/Makefile
   if [ "$PLATFORM" == "mingw" ]; then
     LUA_DLL=$(echo "$LUA.dll" | sed 's/\.//')
@@ -103,7 +103,7 @@ lua -v
 
 LUAROCKS_BASE=luarocks-$LUAROCKS
 
-curl --location http://luarocks.org/releases/$LUAROCKS_BASE.tar.gz | tar xz
+curl --location https://luarocks.org/releases/$LUAROCKS_BASE.tar.gz | tar xz
 
 cd $LUAROCKS_BASE
 

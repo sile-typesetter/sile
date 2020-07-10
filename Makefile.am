@@ -10,15 +10,17 @@ endif
 SUPPORTED_LUAS = 5.3 5.2 5.1
 
 dist_man_MANS = sile.1
+dist_doc_DATA = README.md CHANGELOG.md
 bin_SCRIPTS = sile
 nobase_dist_pkgdata_DATA = $(filter-out %.so,$(shell find core classes languages packages lua-libraries -type f -print))
-EXTRA_DIST = CHANGELOG.md README.md LICENSE spec tests examples documentation sile-dev-1.rockspec build-aux/git-version-gen .version fontconfig.conf
+EXTRA_DIST = LICENSE spec tests examples documentation sile-dev-1.rockspec build-aux/git-version-gen .version fontconfig.conf
 EXTRA_DIST += $(extra_dist)
 
 SHELL = bash
 .ONESHELL:
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
+am__remove_distdir =
 
 if !SYSTEM_LUAROCKS
 nobase_nodist_pkgdata_DATA = $(shell find lua_modules -type f -print 2>/dev/null ||:)
@@ -28,6 +30,8 @@ LUAMODLOCK := sile-dev-1.rockslock
 LUAMODSPEC := sile-dev-1.rockspec
 genrockslock := $(LUAROCKS) $(LUAROCKSARGS) list --porcelain | awk '{print $$1 " " $$2}'
 rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
+else
+LUAROCKS := luarocks --tree lua_modules_dist --lua-version $(LUA_VERSION)
 endif
 
 BUILT_SOURCES = .version
@@ -59,16 +63,15 @@ prerelease: all test busted examples docs update_libtexpdf
 
 .PHONY: release-preview
 release-preview:
-	npm run release -- --dry-run
+	npm run release -- --dry-run $(and $(RELTYPE),--release-as $(RELTYPE))
 
 .PHONY: release
 release: tagrelease
 
-dist: examples docs all lua_modules_dist
+dist: examples docs all lua_modules_dist sile-$(VERSION).pdf
 
-.PHONY: postrelease
-postrelease: dist
-	@echo "- [ ] Ping packagers: https://repology.org/project/sile/versions"
+sile-$(VERSION).pdf: documentation/sile.pdf
+	cp $< $@
 
 .PHONY: update_libtexpdf
 update_libtexpdf:
@@ -103,7 +106,7 @@ endif
 .PHONY: lua_modules_dist
 lua_modules_dist: $(LUAMODSPEC) force
 	$(foreach LUA,$(SUPPORTED_LUAS),
-	$(LUAROCKS) --tree lua_modules_dist --lua-version $(LUA) install --only-deps $<)
+	$(LUAROCKS) $(LUAROCKSARGS) --lua-version $(LUA) install --only-deps $<)
 
 DEPDIR := .deps
 REGRESSIONSCRIPT := ./tests/regressions.pl
@@ -115,16 +118,29 @@ TESTPDFS   = $(addsuffix      .pdf,$(basename $(TESTSRCS)))
 EXPECTEDS ?= $(filter $(addsuffix .expected,$(basename $(TESTSRCS))),$(wildcard tests/*.expected))
 ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 
+check: selfcheck
+
+.PHONY: selfcheck
+selfcheck: all
+	output=$$(mktemp --suffix=.pdf)
+	trap 'rm -f $$output' EXIT SIGHUP SIGTERM
+	./sile -o $$output - <<< "<sile>foo</sile>"
+	pdfinfo $$output | grep SILE
+
 .PHONY: test
 test: $(TESTSRCS) $(ACTUALS)
 	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
 
 .PHONY: lint
-lint: luacheck
+lint: luacheck luarocks-lint
+
+.PHONY: luarocks-lint
+luarocks-lint: $(LUAMODSPEC)
+	luarocks lint $<
 
 .PHONY: luacheck
 luacheck:
-	luacheck -q .
+	luacheck -j$(shell nproc) -q .
 
 busted: $(wildcard spec/*_spec.lua)
 	set -f; IFS=';'
@@ -163,7 +179,7 @@ define runsile =
 	fi
 endef
 
-patterndeps = $(wildcard $(DEPDIR)/$*.d) all testprep
+patterndeps = $(wildcard $(DEPDIR)/$*.d) all $(and $(filter tests/%,$@),prep)
 
 %.pdf: %.sil $(and $(SILE_COVERAGE)$(CLEAN),force) $$(patterndeps)
 	$(runsile)
@@ -175,8 +191,10 @@ patterndeps = $(wildcard $(DEPDIR)/$*.d) all testprep
 coverage: export SILE_COVERAGE=1
 coverage: test_previews
 
-HEADSHA ?= $(shell test -e .git && git rev-parse HEAD)
-BASESHA ?= $(shell test -e .git && git rev-parse $(HEADSHA)^)
+HEADSHA ?= HEAD
+_HEADSHA ?= $(shell test -e .git && git rev-parse --short=7 $(HEADSHA))
+BASESHA ?= $(HEADSHA)^
+_BASESHA ?= $(shell test -e .git && git rev-parse --short=7 $(BASESHA))
 
 clean-recursive: clean-tests
 
@@ -211,7 +229,7 @@ define time_action =
 	{ time (./sile documentation/sile.sil > /dev/null 2>&1) } 2> time.json
 endef
 
-make_worktree_rules = $(eval $(foreach SHA,$(HEADSHA) $(BASESHA),$(call worktree_sha,$(1),$(shell git rev-parse --short=7 $(SHA)))))
+make_worktree_rules = $(eval $(foreach SHA,$(_HEADSHA) $(_BASESHA),$(call worktree_sha,$(1),$(shell git rev-parse --short=7 $(SHA)))))
 
 define worktree_sha =
 
@@ -222,6 +240,7 @@ $(1)-$(2):
 	[[ -d libtexpdf ]] && rmdir libtexpdf
 	[[ -h libtexpdf ]] || ln -s ../libtexpdf
 	[[ -h lua_modules ]] || ln -s ../lua_modules
+	[[ -h lua_modules_dist ]] || ln -s ../lua_modules_dist
 	[[ -h node_modules ]] || ln -s ../node_modules
 	[[ -h .fonts ]] || ln -s ../.fonts
 	./bootstrap.sh
@@ -243,7 +262,7 @@ endef
 $(call make_worktree_rules,benchmark)
 
 .PHONY: benchmark
-benchmark: time-$(HEADSHA).json time-$(BASESHA).json
+benchmark: time-$(_HEADSHA).json time-$(_BASESHA).json
 	cat $^
 
 .PRECIOUS: time-%.json
@@ -257,7 +276,7 @@ time.json: sile
 $(call make_worktree_rules,compare)
 
 onetest = $(firstword $(ACTUALS)),$(firstword $(TESTPDFS))
-compare_prerequisites = $(sort $(shell echo {compare-$(BASESHA)/,}{$(onetest)}))
+compare_prerequisites = $(sort $(shell echo {compare-$(_BASESHA)/,}{$(onetest)}))
 
 runapp ?= nohup $(1) > /dev/null &
 compare: $(call compare_prerequisites)
@@ -314,15 +333,15 @@ include Makefile-fonts
 .PHONY: prep
 TESTPREPDEPS = $(DEPDIRS) $(addprefix .fonts/,$(TESTFONTFILES))
 if SYSTEM_LUAROCKS
-prep $(DOCS): | $(TESTPREPDEPS)
+prep $(MANUAL): | $(TESTPREPDEPS)
 else
-prep $(DOCS): installrocks | $(TESTPREPDEPS)
+prep $(MANUAL): installrocks | $(TESTPREPDEPS)
 endif
 
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS)
 
 .PHONY: docker
-docker: Dockerfile build-aux/docker-entrypoint.sh build-aux/docker-yay-runner.sh
+docker: Dockerfile build-aux/docker-entrypoint.sh
 	docker build --tag siletypesetter/sile:HEAD ./
 
 gource.webm:

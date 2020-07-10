@@ -222,18 +222,36 @@ for instance, you may wish to write a thesis like this:
 \begin{verbatim}
 \line
 \\begin[class=thesis]\{document\}
-\\include[src=macros]
-\\include[src=chap1]
-\\include[src=chap2]
-\\include[src=chap3]
+\\include[src=macros.xml]
+\\include[src=chap1.sil]
+\\include[src=chap2.sil]
+\\include[src=chap3.sil]
 \dots\par
-\\include[src=endmatter]
+\\include[src=endmatter.sil]
 \\end\{document\}
 \line
 \end{verbatim}
 
 \code{\\include}s may be nested, in that file A can include file B which includes
 file C.
+
+The contents of an included file should be put in a \code{\\sile} tag (or
+\code{<sile>} if the file is in XML flavour), like so:
+
+\begin{verbatim}
+\line
+\\begin\{sile\}
+
+\\chapter\{A Scandal In Bohemia\}
+
+To Sherlock Holmes she is always \em\{the woman\}.
+
+\\end\{sile\}
+\line
+\end{verbatim}
+
+This is because every file is required to contain a valid XML tree, which
+wouldn't be the case without a common root.
 
 SILE is written in the Lua programming language, and the Lua interpreter is
 available at runtime. Just as one can run Javascript code from within a HTML
