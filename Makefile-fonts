@@ -4,6 +4,7 @@
 # List of font files we _actually need_
 TESTFONTFILES  = GentiumPlus-R.ttf GentiumPlus-I.ttf
 TESTFONTFILES += Amiri-Regular.ttf AmiriQuran.ttf
+TESTFONTFILES += GenBkBasR.ttf GenBkBasI.ttf GenBkBasB.ttf
 TESTFONTFILES += Hack-Regular.ttf
 TESTFONTFILES += LateefGR-Regular.ttf
 TESTFONTFILES += LibertinusSans-Bold.otf LibertinusSerif-Regular.otf
