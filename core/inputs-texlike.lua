@@ -23,8 +23,8 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   local sep = S",;" * _
   local eol = S"\r\n"
   local quote = P'"'
-  local quotedString = ( quote * C((1-quote)^1) * quote )
-  local value = ( quotedString + (1-S",;]")^1 )
+  local quotedString = quote * C((1-quote)^1) * quote
+  local value = quotedString + (1-S",;]")^1
   local myID = C(SILE.inputs.TeXlike.identifier + P(1)) / 1
   local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1 / function (...) local tbl = {...}; return tbl[1], tbl[#tbl] end
   local list = Cf(Ct"" * pair^0, rawset)
@@ -64,7 +64,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   texlike_command = (
       ( P"\\"-P"\\begin" ) *
       Cg(myID, "command") *
-      Cg(parameters,"options") *
+      Cg(parameters, "options") *
       (
         (Cmt(Cb"command", isPassthrough) * V"passthrough_bracketed_stuff") +
         (Cmt(Cb"command", isNotPassThrough) * V"texlike_bracketed_stuff")
@@ -83,7 +83,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     (
       P"\\end{" *
       (
-        Cmt(myID * Cb"command", function (_,_,thisCommand,lastCommand) return thisCommand == lastCommand end) + E"Environment mismatch"
+        Cmt(myID * Cb"command", function (_, _, thisCommand, lastCommand) return thisCommand == lastCommand end) + E"Environment mismatch"
       ) *
       ( P"}" * _ ) + E"Environment begun but never ended"
     )
@@ -107,11 +107,11 @@ local function getline (str, pos)
     start = linecache[#linecache].pos + 1
     col = 1
   else
-    for j = 1,#linecache-1 do
+    for j = 1, #linecache-1 do
       if linecache[j+1].pos >= pos then
         lno = linecache[j].lno
         col = pos - linecache[j].pos
-        return lno,col
+        return lno, col
       end
     end
   end
