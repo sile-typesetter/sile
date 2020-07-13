@@ -39,6 +39,18 @@ return {
     uppercase = uppercase,
     lowercase = lowercase,
     titlecase = titlecase
-  }
+  },
+  documentation = [[
+\begin{document}
+The \font{textcase} package provides commands for language-aware case conversion
+of input text. For example, when language is set to English, then
+\code{\\uppercase\{hij\}} will return \examplefont{\uppercase{hij}}. However,
+when language is set to Turkish, it will return
+\examplefont{\font[language=tr]{\uppercase{hij}}}.
+
+As well as \code{\\uppercase}, the package provides the commands \code{\\lowercase}
+and \code{\\titlecase}.
+\end{document}
+]]
 }
 

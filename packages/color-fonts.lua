@@ -81,7 +81,16 @@ SILE.shapers.harfbuzzWithColor = pl.class({
       end
       return nodes
     end
-
   })
 
 SILE.shaper = SILE.shapers.harfbuzzWithColor()
+
+return {
+  documentation = [[
+\begin{document}
+  The \code{color-fonts} package adds support for fonts with a \code{COLR}
+  OpenType table. Just loading the package will allow for fonts which
+  define their own colors to be rendered in color.
+\end{document}
+]]
+}

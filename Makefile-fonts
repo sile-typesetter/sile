@@ -2,18 +2,24 @@
 .PRECIOUS: .fonts/% %.zip %.xz
 
 # List of font files we _actually need_
-TESTFONTFILES  = GentiumPlus-R.ttf GentiumPlus-I.ttf
+DOCSFONTFILES  = GentiumPlus-R.ttf GentiumPlus-I.ttf
+DOCSFONTFILES += CormorantInfant-Italic.ttf CormorantInfant-Regular.ttf
+DOCSFONTFILES += GenBkBasR.ttf GenBkBasI.ttf GenBkBasB.ttf
+DOCSFONTFILES += Hack-Regular.ttf
+DOCSFONTFILES += LateefGR-Regular.ttf
+DOCSFONTFILES += LibertinusSerif-Regular.otf
+DOCSFONTFILES += NotoSansCJK-Regular.ttc
+DOCSFONTFILES += NotoSansEthiopic-Regular.ttf
+DOCSFONTFILES += RobotoCondensed-Bold.ttf
+DOCSFONTFILES += Symbola.otf
+
+TESTFONTFILES  = $(DOCSFONTFILES)
 TESTFONTFILES += Amiri-Regular.ttf AmiriQuran.ttf
-TESTFONTFILES += Hack-Regular.ttf
-TESTFONTFILES += LateefGR-Regular.ttf
-TESTFONTFILES += LibertinusSans-Bold.otf LibertinusSerif-Regular.otf
+TESTFONTFILES += LibertinusSans-Bold.otf
 TESTFONTFILES += NotoNaskhArabic-Regular.ttf
-TESTFONTFILES += NotoSansCJK-Regular.ttc
 TESTFONTFILES += NotoSansKannada-Regular.ttf
-TESTFONTFILES += NotoSansEthiopic-Regular.ttf
 TESTFONTFILES += NotoSansMalayalam-Regular.ttf
 TESTFONTFILES += SBL_Hbrw.ttf
-TESTFONTFILES += Symbola.otf
 
 # Tell make how to download individual font files (when available)
 .fonts/NotoSansCJK%: | .fonts
@@ -28,16 +34,37 @@ TESTFONTFILES += Symbola.otf
 .fonts/Amiri%: | .fonts
 	curl -s -L https://github.com/alif-type/amiri/raw/0.111/$(notdir $@) -o $@
 
-.fonts/GentiumPlus%: GentiumPlus-5.000.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) --strip-components 1 GentiumPlus-5.000/$(notdir $@)
-	touch $@
+.fonts/Brill-Roman.ttf:
+	curl -s -L https://brill.com/fileasset/downloads_static/static_typefacedownload_typefaceroman_2.06_051.ttf -o $@
+
+.fonts/Brill-Italic.ttf:
+	curl -s -L https://brill.com/fileasset/downloads_static/static_typefacedownload_typefaceitalic_2.06_051.ttf -o $@
+
+.fonts/Brill-Bold.ttf:
+	curl -s -L https://brill.com/fileasset/downloads_static/static_typefacedownload_typefacebold_2.06_051.ttf -o $@
+
+.fonts/Brill-BoldItalic.ttf:
+	curl -s -L https://brill.com/fileasset/downloads_static/static_typefacedownload_typefacebolditalic_2.06_051.ttf -o $@
 
 # Tell  make how to download font file bundles (when not downloadable individually)
+
+CrimsonPro.zip:
+	curl -s -L https://fonts.google.com/download?family=Crimson+Pro -o $@
+
+Cormorant_Install_v3.601.zip:
+	curl -s -L https://github.com/CatharsisFonts/Cormorant/releases/download/v3.601/$(notdir $@) -o $@
+
+roboto-unhinted.zip:
+	curl -s -L https://github.com/google/roboto/releases/download/v2.138/$(notdir $@) -o $@
+
 Symbola.zip:
 	curl -s -L https://web.archive.org/web/20200521203841if_/https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
 
 # Actual upstream server limits downloads which sometimes kills our CI runners
 #	curl -s -L https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
+
+GentiumBasic_1102.zip:
+	curl -s -L https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
 
 GentiumPlus-5.000.zip:
 	curl -s -L https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
@@ -49,11 +76,31 @@ Hack-v3.003-ttf.tar.xz:
 	curl -s -L https://github.com/source-foundry/Hack/releases/download/v3.003/$(notdir $@) -o $@
 
 # Tell make how to extract individual files from bundles
+
+.fonts/CrimsonPro%: CrimsonPro.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 1 static/$(notdir $@)
+	touch $@
+
+.fonts/Cormorant%: Cormorant_Install_v3.601.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 2 "Cormorant_Install_v3.601/1. TrueType Font Files/$(notdir $@)"
+
+.fonts/GenB%: GentiumBasic_1102.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 1 GentiumBasic_1102/$(notdir $@)
+	touch $@
+
+.fonts/GentiumPlus%: GentiumPlus-5.000.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 1 GentiumPlus-5.000/$(notdir $@)
+	touch $@
+
 .fonts/LateefGR%: LateefGR-1.200.zip | .fonts
 	bsdtar -x -f $< -C $(dir $@) --strip-components 1 LateefGR-1.200/$(notdir $@)
 	touch $@
 
 .fonts/Hack%: Hack-v3.003-ttf.tar.xz | .fonts
+	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
+	touch $@
+
+.fonts/Roboto%: roboto-unhinted.zip | .fonts
 	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
 	touch $@
 

@@ -131,5 +131,16 @@ SILE.registerCommand("sync", function (_, _)
 end)
 
 return {
-  init = setupParallel
+  init = setupParallel,
+  documentation = [[
+\begin{document}
+The parallel package provides the mechanism for typesetting diglot or other
+parallel documents. When used by a class such as \code{classes/diglot.lua},
+it registers a command for each parallel frame, to allow you to select
+which frame you’re typesetting into. It also defines the \code{\\sync}
+command, which adds vertical spacing to each frame such that the \em{next}
+set of text is vertically aligned. See \code{examples/packages/parallel.sil}
+and \code{classes/diglot.lua} for an example which makes the operation clear.
+\end{document}
+]]
 }

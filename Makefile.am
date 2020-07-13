@@ -153,21 +153,16 @@ else
 endif
 	busted --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" spec
 
-DOCSSRCS = $(basename $(wildcard documentation/*.sil))
-DOCS = $(addsuffix .pdf,$(basename $(DOCSSRCS)))
+MANUAL = documentation/sile.pdf
 
 .PHONY: docs
-docs: $(DOCS)
+docs: $(MANUAL)
 
 EXAMPLESSRCS = $(basename $(wildcard examples/*.sil))
-EXAMPLES = $(addsuffix .pdf,$(DOCSSRCS))
+EXAMPLES = $(addsuffix .pdf,$(EXAMPLESSRCS))
 
 .PHONY: examples
 examples: $(EXAMPLES)
-
-# Use system wide fonts for docs and examples
-documentation/%.pdf: LOCALTESTFONTS=
-examples/%.pdf: LOCALTESTFONTS=
 
 # This is a monkey patch to figure out how many passes we have to to to
 # garantee the TOC is up to date, simplify when #230 is fixed.
@@ -184,7 +179,7 @@ define runsile =
 	fi
 endef
 
-patterndeps = $(wildcard $(DEPDIR)/$*.d) all $(and $(filter tests/%,$@),testprep)
+patterndeps = $(wildcard $(DEPDIR)/$*.d) all $(and $(filter tests/%,$@),prep)
 
 %.pdf: %.sil $(and $(SILE_COVERAGE)$(CLEAN),force) $$(patterndeps)
 	$(runsile)
@@ -315,7 +310,7 @@ tests/%.actual: tests/%.xml $(and $(CLEAN),force) $$(patterndeps)
 	-$(if $(CLEAN),rm -f $@,:)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-DEPFILES = $(addsuffix .d,$(addprefix $(DEPDIR)/,$(basename $(TESTSRCS) $(DOCS) $(EXAMPLES))))
+DEPFILES = $(addsuffix .d,$(addprefix $(DEPDIR)/,$(basename $(TESTSRCS) $(MANUAL) $(EXAMPLES))))
 DEPDIRS = $(sort $(dir $(DEPFILES)))
 
 $(DEPDIRS):
@@ -335,12 +330,15 @@ include $(wildcard $(DEPFILES))
 include Makefile-fonts
 
 # Make sure we have font files before running tests (ignoring timestamp of font files)
-.PHONY: testprep
+.PHONY: prep
+DOCSPREPDEPS = $(DEPDIRS) $(addprefix .fonts/,$(DOCSFONTFILES))
 TESTPREPDEPS = $(DEPDIRS) $(addprefix .fonts/,$(TESTFONTFILES))
 if SYSTEM_LUAROCKS
-testprep: | $(TESTPREPDEPS)
+$(MANUAL): | $(DOCSPREPDEPS)
+prep: | $(TESTPREPDEPS)
 else
-testprep: lua_modules | $(TESTPREPDEPS)
+$(MANUAL): installrocks | $(DOCSPREPDEPS)
+prep: installrocks | $(TESTPREPDEPS)
 endif
 
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS)

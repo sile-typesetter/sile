@@ -1,5 +1,5 @@
 SILE.registerCommand("verbatim:font", function(_, _)
-    SILE.settings.set("font.family", "Consolas")
+    SILE.settings.set("font.family", "Hack")
     SILE.settings.set("font.size", SILE.settings.get("font.size") - 3)
 end, "The font chosen for the verbatim environment")
 
@@ -29,7 +29,7 @@ SILE.registerCommand("obeylines", function(_, content)
   end)
 end)
 
-return [[\begin{document}
+return {documentation = [[\begin{document}
 
 The \code{verbatim} package is useful when quoting pieces of computer code and
 other text for which formatting is significant. It changes SILE’s settings
@@ -58,4 +58,4 @@ can redefine the \code{verbatim:font} command. The current document says:
    <font family="DejaVu Sans Mono" size="9pt"/>
 </define>
 \end{verbatim}
-\end{document}]]
+\end{document}]]}

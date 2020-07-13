@@ -442,6 +442,17 @@ return {
   init = function () end,
   exports = {
     initInsertionClass = initInsertionClass,
+    thisPageInsertionBoxForClass = thisPageInsertionBoxForClass,
     insert = insert,
-  }
+  },
+  documentation = [[
+\begin{document}
+The \code{footnotes} package works by taking auxiliary material (the
+footnote content), shrinking the current frame and inserting it into the
+footnote frame. This is powered by the \code{insertions} package; it doesn’t
+provide any user-visible SILE commands, but provides Lua functionality to
+other packages. TeX wizards may be interested to realise that insertions are
+implemented by an external add-on package, rather than being part of the SILE core.
+\end{document}
+]]
 }

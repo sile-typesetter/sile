@@ -14,7 +14,7 @@ SILE.tateFramePrototype = pl.class({
           local len = SILE.length(d.length, bls.height.stretch, bls.height.shrink)
           return SILE.nodefactory.vglue({height = len})
         end
-        SILE.typesetter.breakIntoLines = SILE.require("packages/break-firstfit")
+        SILE.typesetter.breakIntoLines = SILE.require("packages/break-firstfit").exports.breakIntoLines
       end
     },
     leaveHooks = {
@@ -125,3 +125,16 @@ SILE.registerCommand("tate-chu-yoko", function (_, content)
   -- })
 
 end)
+
+return {
+  documentation = [[
+\begin{document}
+The \code{tate} package provides support for Japanese vertical typesetting.
+It allows for the definition of vertical-oriented frames, as well
+as for two specific typesetting techniques required in vertical
+documents: \code{latin-in-tate} typesets its content as Latin
+text rotated 90 degrees, and \code{tate-chu-yoko} places (Latin)
+text horizontally within a single grid-square of the vertical \em{hanmen}.
+\end{document}
+]]
+}
