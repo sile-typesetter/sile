@@ -25,7 +25,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   local quote = P'"'
   local quotedString = quote * C((1-quote)^1) * quote
   local value = quotedString + (1-S",;]")^1
-  local myID = C(SILE.inputs.TeXlike.identifier + P(1)) / 1
+  local myID = C(SILE.inputs.TeXlike.identifier + S"{}\\%") / 1
   local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1 / function (...) local tbl = {...}; return tbl[1], tbl[#tbl] end
   local list = Cf(Ct"" * pair^0, rawset)
   local parameters = (
