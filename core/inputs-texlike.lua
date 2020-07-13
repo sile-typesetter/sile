@@ -23,7 +23,9 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   local sep = S",;" * _
   local eol = S"\r\n"
   local quote = P'"'
-  local quotedString = quote * C((1-quote)^1) * quote
+  local escaped_quote = B(P"\\") * quote
+  local unescapeQuote = function (str) local a = str:gsub('\\"', '"'); return a end
+  local quotedString = quote * C(((1-quote+escaped_quote)^1)/unescapeQuote) * quote
   local value = quotedString + (1-S",;]")^1
   local myID = C(SILE.inputs.TeXlike.identifier + S"{}\\%") / 1
   local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1 / function (...) local tbl = {...}; return tbl[1], tbl[#tbl] end

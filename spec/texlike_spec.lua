@@ -35,4 +35,10 @@ describe("#TeXlike #input", function ()
     assert.is.equal("bar", t[1][1])
   end)
 
+  it("command with quoted arg with escape", function()
+    local t = toTree([[\foo[baz="qiz \"qiz\""]{bar}]])
+    assert.is.equal("qiz \"qiz\"", t.options.baz)
+    assert.is.equal("bar", t[1][1])
+  end)
+
 end)
