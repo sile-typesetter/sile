@@ -74,7 +74,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     P"\\begin" *
     Cg(parameters, "options") *
     P"{" *
-    Cg(myID, "command") *
+    Cg(myID - P"begin" - P"end", "command") *
     P"}" *
     (
       (Cmt(Cb"command", isPassthrough) * V"passthrough_env_stuff") +
