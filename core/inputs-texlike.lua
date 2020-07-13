@@ -62,14 +62,14 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   passthrough_bracketed_stuff = P"{" * V"passthrough_stuff" * ( P"}" + E("} expected") )
   passthrough_debracketed_stuff = C(V"passthrough_bracketed_stuff")
   texlike_command = (
-      ( P"\\"-P"\\begin" ) *
-      Cg(myID, "command") *
+      P"\\" *
+      Cg(myID - P"begin" - P"end", "command") *
       Cg(parameters, "options") *
       (
         (Cmt(Cb"command", isPassthrough) * V"passthrough_bracketed_stuff") +
         (Cmt(Cb"command", isNotPassThrough) * V"texlike_bracketed_stuff")
       )^0
-    ) - P("\\end{")
+    )
   environment =
     P"\\begin" *
     Cg(parameters, "options") *
