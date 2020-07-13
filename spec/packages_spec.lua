@@ -25,9 +25,9 @@ describe("#packages like", function ()
         end)
 
         it("should have #documentation", function ()
-          local pkg = require("packages/" .. pkg)
-          assert.truthy(type(pkg) == "table")
-          assert.truthy(pkg.documentation)
+          local mod = require("packages/" .. pkg)
+          assert.truthy(type(mod) == "table")
+          assert.truthy(mod.documentation)
         end)
 
       end)
