@@ -45,12 +45,12 @@ SILE.inputs.TeXlike.parser = function (_ENV)
       V"environment" +
       comment +
       V"texlike_text" +
-      V"texlike_bracketed_stuff" +
+      V"texlike_braced_stuff" +
       V"texlike_command"
     )^0
   passthrough_stuff = C(Cg(
       V"passthrough_text" +
-      V"passthrough_debracketed_stuff"
+      V"passthrough_debraced_stuff"
     )^0)
   passthrough_env_stuff = Cg(
       V"passthrough_env_text"
@@ -58,16 +58,16 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   texlike_text = C((1-S("\\{}%"))^1)
   passthrough_text = C((1-S("{}"))^1)
   passthrough_env_text = C((1-(P"\\end{" * (myID * Cb"command") * P"}"))^1)
-  texlike_bracketed_stuff = P"{" * V"texlike_stuff" * ( P"}" + E("} expected") )
-  passthrough_bracketed_stuff = P"{" * V"passthrough_stuff" * ( P"}" + E("} expected") )
-  passthrough_debracketed_stuff = C(V"passthrough_bracketed_stuff")
+  texlike_braced_stuff = P"{" * V"texlike_stuff" * ( P"}" + E("} expected") )
+  passthrough_braced_stuff = P"{" * V"passthrough_stuff" * ( P"}" + E("} expected") )
+  passthrough_debraced_stuff = C(V"passthrough_braced_stuff")
   texlike_command = (
       P"\\" *
       Cg(myID - P"begin" - P"end", "command") *
       Cg(parameters, "options") *
       (
-        (Cmt(Cb"command", isPassthrough) * V"passthrough_bracketed_stuff") +
-        (Cmt(Cb"command", isNotPassThrough) * V"texlike_bracketed_stuff")
+        (Cmt(Cb"command", isPassthrough) * V"passthrough_braced_stuff") +
+        (Cmt(Cb"command", isNotPassThrough) * V"texlike_braced_stuff")
       )^0
     )
   environment =
@@ -134,8 +134,8 @@ local function massage_ast (tree, doc)
     tree.lno, tree.col = getline(doc, tree.pos)
   end
   if tree.id == "document"
-      or tree.id == "texlike_bracketed_stuff"
-      or tree.id == "passthrough_bracketed_stuff"
+      or tree.id == "texlike_braced_stuff"
+      or tree.id == "passthrough_braced_stuff"
     then return massage_ast(tree[1], doc) end
   if tree.id == "texlike_text"
       or tree.id == "passthrough_text"

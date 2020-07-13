@@ -4,7 +4,7 @@
 answer = { output = tostring(3 * 3 % 5) }
 escapes = "\\backslash & \ttab"
 \end{script}
-Normal {bracketed \% mark} and pure command \em{100\% italic}.
+Normal {braced \% mark} and pure command \em{100\% italic}.
 
 Modulus from environment: 3 * 3 \% 5 = \script{SILE.typesetter:typeset(answer.output)}
 
