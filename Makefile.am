@@ -9,8 +9,10 @@ endif
 
 SUPPORTED_LUAS = 5.3 5.2 5.1
 
+MANUAL = documentation/sile.pdf
+
 dist_man_MANS = sile.1
-dist_doc_DATA = README.md CHANGELOG.md
+dist_doc_DATA = README.md CHANGELOG.md $(MANUAL)
 bin_SCRIPTS = sile
 nobase_dist_pkgdata_DATA = $(filter-out %.so,$(shell find core classes languages packages lua-libraries -type f -print))
 EXTRA_DIST = LICENSE spec tests examples documentation sile-dev-1.rockspec build-aux/git-version-gen .version fontconfig.conf
@@ -70,7 +72,7 @@ release: tagrelease
 
 dist: examples docs all lua_modules_dist sile-$(VERSION).pdf
 
-sile-$(VERSION).pdf: documentation/sile.pdf
+sile-$(VERSION).pdf: $(MANUAL)
 	cp $< $@
 
 .PHONY: update_libtexpdf
@@ -152,8 +154,6 @@ else
 	packagepath=(./{,lua_modules/share/lua/$(LUA_VERSION)/,lua-libraries/}?{,/init}.lua)
 endif
 	busted --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" spec
-
-MANUAL = documentation/sile.pdf
 
 .PHONY: docs
 docs: $(MANUAL)
@@ -341,7 +341,7 @@ $(MANUAL): installrocks | $(DOCSPREPDEPS)
 prep: installrocks | $(TESTPREPDEPS)
 endif
 
-CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS)
+CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL)
 
 .PHONY: docker
 docker: Dockerfile build-aux/docker-entrypoint.sh
