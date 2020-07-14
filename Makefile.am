@@ -179,7 +179,7 @@ define runsile =
 	fi
 endef
 
-patterndeps = $(wildcard $(DEPDIR)/$*.d) all $(and $(filter tests/%,$@),prep)
+patterndeps = $(wildcard $(DEPDIR)/$*.d) libtexpdf src $(and $(filter tests/%,$@),prep) | sile
 
 %.pdf: %.sil $(and $(SILE_COVERAGE)$(CLEAN),force) $$(patterndeps)
 	$(runsile)
