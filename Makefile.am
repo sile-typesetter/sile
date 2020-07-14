@@ -320,11 +320,11 @@ $(DEPFILES): | $(DEPDIRS)
 
 include $(wildcard $(DEPFILES))
 
-# Make sure we have a local font directory before putting anything there
-.fonts/%: Makefile-fonts | .fonts
-
 .fonts: fontconfig.conf
 	[[ -h .fonts ]] || mkdir -p $@
+
+.sources:
+	[[ -h .sources ]] || mkdir -p $@
 
 # Actual rules for downloading test fonts are in a separate file
 include Makefile-fonts
