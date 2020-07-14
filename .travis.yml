@@ -52,6 +52,7 @@ cache:
    - $HOME/.lua
    - $HOME/.luarocks
    - $TRAVIS_BUILD_DIR/.fonts
+   - $TRAVIS_BUILD_DIR/.sources
    - $TRAVIS_BUILD_DIR/lua_modules
    - $TRAVIS_BUILD_DIR/libtexpdf
 before_install:
