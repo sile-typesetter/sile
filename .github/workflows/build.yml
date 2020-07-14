@@ -28,10 +28,7 @@ jobs:
           ./configure
           echo "::set-env name=DISTDIR::sile-$(./build-aux/git-version-gen .tarball-version)"
           echo "::set-env name=MAKEFLAGS::-j$(nproc) -Otarget"
-      - name: Make
-        run: |
-          make
-      - name: Bundle Source
+      - name: Make package
         run: |
           make dist
       - name: Upload Artifacts
