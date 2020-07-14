@@ -173,6 +173,7 @@ define runsile =
 	pg0=$$($(pages)) hadtoc=$$($(hastoc))
 	mkdir -p $(DEPDIR)
 	$(silepass)
+	export -n SILE_COVERAGE
 	if $(hastoc); then
 		$${hadtoc} || $(silepass)
 		[[ $${pg} -gt $${pg0} ]] && $(silepass) ||:
