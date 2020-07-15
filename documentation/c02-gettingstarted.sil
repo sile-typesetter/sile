@@ -114,14 +114,14 @@ packages yourself.
 There are a large number of lua dependencies required to run SILE. You may
 either install them to your system using your system’s package manager or
 \code{luarocks}, or let the SILE build process fetch and bundle them for you
-(this is the default unlessy you specify otherwise). You cannot mix and match
-these two methods, either the system path has to have all the dependencies or
+(this is the default unless you specify otherwise). You cannot mix and match
+these two methods; either the system path has to have all the dependencies, or
 all of them will be bundled with SILE.
 
-If you choose to the Lua rock dependencies to your system you may use any
+If you choose to install the lua dependencies to your system, you may use any
 combination of your system’s packages and installing them via \code{luarocks
-install}. The list of dependencies is the easiest way is to let Luarocks
-figure it out based on the included Rockspec:
+install}. The easiest way is to let Luarocks figure it out based on the
+included Rockspec:
 
 \terminal{$ luarocks install sile-dev-1.rockspec}
 
@@ -132,11 +132,11 @@ the location of the header files manually it install it:
 \terminal{$ luarocks install luasec OPENSSL_DIR=...}
 
 Once you have these requirements in place, you should then be able to unpack
-the file that you downloaded from SILE’s home page, change to that directory
+the file that you downloaded from SILE’s home page, change to that directory,%
 \footnote{If you downloaded a copy of the SILE source by cloning the git
-repository rather than dowloading one of the release packages you will also
+repository rather than downloading one of the release packages, you will also
 need to run \code{./bootstrap.sh} to setup the configure script at this point
-before continuing to the next step.}, and configure the build envirenment.
+before continuing to the next step.} and configure the build envirenment.
 
 If you supplied all the Lua dependencies yourself, run:
 
@@ -146,7 +146,7 @@ Otherwise to go with default of bundling them, just run:
 
 \terminal{$ ./configure}
 
-If that comand was successfull, you can build SILE itself:
+If that comand was successful, you can build SILE itself:
 
 \terminal{$ make}
 
