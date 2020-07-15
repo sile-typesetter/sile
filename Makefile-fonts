@@ -15,6 +15,10 @@ DOCSFONTFILES += NotoSansEthiopic-Regular.ttf
 DOCSFONTFILES += RobotoCondensed-Bold.ttf
 DOCSFONTFILES += Symbola.otf
 
+EXAMFONTFILES = $(DOCSFONTFILES)
+EXAMFONTFILES += DejaVuSansCondensed-Bold.ttf
+EXAMFONTFILES += Miama.otf
+
 TESTFONTFILES  = $(DOCSFONTFILES)
 TESTFONTFILES += Amiri-Regular.ttf AmiriQuran.ttf
 TESTFONTFILES += LibertinusSans-Bold.otf
