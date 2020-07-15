@@ -187,7 +187,7 @@ are multiple frames on a page—for instance, in a document with multiple column
 \code{\\pagebreak} (also known as \code{\\supereject}) is a more forceful variant,
 and ensures that a new page is opened even if there are remaining frames on the page.
 A less forceful variant is \code{\\goodbreak}, which suggests to SILE that this is
-a good point to break a page. The opposite is \code{\\nobreak} which requests that,
+a good point to break a frame. The opposite is \code{\\nobreak} which requests that,
 if at all possible, SILE does not break at the given point. A neutral variant is
 \code{\\allowbreak}, which allows SILE to break at a point that it would otherwise
 not consider as suitable for breaking.
