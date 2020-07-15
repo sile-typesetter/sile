@@ -60,6 +60,9 @@ TESTFONTFILES += SBL_Hbrw.ttf
 .sources/Cormorant_Install_v3.601.zip: | .sources
 	curl -s -L https://github.com/CatharsisFonts/Cormorant/releases/download/v3.601/$(notdir $@) -o $@
 
+.sources/dejavu-fonts-ttf-2.37.tar.bz2: | .sources
+	curl -s -L https://github.com/dejavu-fonts/dejavu-fonts/releases/download/version_2_37/$(notdir $@) -o $@
+
 .sources/GentiumBasic_1102.zip: | .sources
 	curl -s -L https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
 
@@ -87,6 +90,10 @@ TESTFONTFILES += SBL_Hbrw.ttf
 
 .fonts/CrimsonPro%: .sources/CrimsonPro.zip | .fonts
 	bsdtar -x -f $< -C $(dir $@) --strip-components 1 static/$(notdir $@)
+	touch $@
+
+.fonts/DejaVu%: .sources/dejavu-fonts-ttf-2.37.tar.bz2 | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 2 dejavu-fonts-ttf-2.37/ttf/$(notdir $@)
 	touch $@
 
 .fonts/GenB%: .sources/GentiumBasic_1102.zip | .fonts
