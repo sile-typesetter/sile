@@ -47,10 +47,10 @@ TESTFONTFILES += SBL_Hbrw.ttf
 .fonts/Libertinus%: | .fonts
 	curl -s -L https://github.com/alif-type/libertinus/raw/v6.9/$(notdir $@) -o $@
 
-.fonts/Noto%: | .fonts
+.fonts/Noto%.ttf: | .fonts
 	curl -s -L https://github.com/googlefonts/noto-fonts/raw/v2017-09-19-phase3-second/hinted/$(notdir $@) -o $@
 
-.fonts/NotoSansCJK%: | .fonts
+.fonts/Noto%.ttc: | .fonts
 	curl -s -L https://github.com/googlefonts/noto-cjk/raw/NotoSansV2.001/$(notdir $@) -o $@
 
 .fonts/SBL_Hbrw.ttf: | .fonts
