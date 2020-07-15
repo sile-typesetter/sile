@@ -12,11 +12,11 @@ SUPPORTED_LUAS = 5.3 5.2 5.1
 MANUAL = documentation/sile.pdf
 
 dist_man_MANS = sile.1
-dist_doc_DATA = README.md CHANGELOG.md $(MANUAL)
+dist_doc_DATA = README.md CHANGELOG.md
 bin_SCRIPTS = sile
 nobase_dist_pkgdata_DATA = $(filter %.lua %.sil,$(shell find core classes languages packages lua-libraries -type f -print))
 EXTRA_DIST = LICENSE spec tests examples documentation sile-dev-1.rockspec build-aux/git-version-gen .version fontconfig.conf
-EXTRA_DIST += $(extra_dist)
+EXTRA_DIST += $(extra_dist) $(MANUAL)
 
 SHELL = bash
 .ONESHELL:
@@ -44,9 +44,15 @@ BUILT_SOURCES = .version
 	cmp -s $@{,-prev} || autoreconf configure.ac --force -W none
 	sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
 
-dist-hook: lua_modules_dist
+dist-hook: lua_modules_dist $(MANUAL)
 	echo $(VERSION) > $(distdir)/.tarball-version
 	sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
+
+if MANUAL
+install-data-hook: $(MANUAL)
+	rm -f "$(DESTDIR)/$(datarootdir)/$<"
+	install -Dm644 -t "$(DESTDIR)$(docdir)" $<
+endif
 
 # Whether to force tests to run from scratch
 CLEAN ?=
