@@ -47,6 +47,7 @@ return {
     end
   },
   documentation = [[
+\begin{document}
 \note{This package is only for class designers.}
 
 While typesetting a document, SILE first breaks a paragraph into lines, then
@@ -84,6 +85,6 @@ local runningHead = SILE.shaper.shape(refs[1] .. " - " .. refs[#refs])
 SILE.typesetNaturally(rhFrame, runningHead);
 \line
 \end{verbatim}
-
+\end{document}
 ]]
 }
