@@ -177,11 +177,7 @@ Let’s move to a new directory, and in a text editor, create the file
 \code{hello.sil}. Copy in the content above and save the file. Now at your
 command line run:
 
-\terminal{$ sile hello}
-
-\note{SILE will automatically provide the extension \code{.sil} to input files
-if it is not provided by the user. If the input file is specified as the
-hyphen character (\code{-}) then the input is taken from standard input.}
+\terminal{$ sile hello.sil}
 
 Once again, this should produce an output file \code{hello.pdf}.
 Congratulations—you have just typeset your first document with SILE!
