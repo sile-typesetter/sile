@@ -190,21 +190,21 @@ if you wish to use SILE as part of a pipeline.}
 
 \section{Let’s Do Something Cool}
 
-In \code{examples/article-template.xml}, you will find a typical DocBook 5.0
+In \code{examples/docbook/article-template.xml}, you will find a typical DocBook 5.0
 article. Normally turning DocBook to print involves a curious dance of XSLT
 processors, format object processors and/or strange LaTeX packages. But SILE
 can read XML files and it also comes with a \code{docbook} class, which tells
 SILE how to render (admittedly, a subset of) the DocBook tags onto a page.
 
-Turning \code{examples/article-template.xml} into
-\code{examples/article-template.pdf} is now as simple as:
+Turning \code{examples/docbook/article-template.xml} into
+\code{examples/docbook/article-template.pdf} is now as simple as:
 
 \begin{verbatim}
 \line
-\% \em{./sile -I docbook.sil examples/article-template.xml}
+\% \em{./sile -I docbook.sil examples/docbook/article-template.xml}
 This is SILE \sileversion
 Loading docbook
-<classes/docbook.sil><examples/article-template.xml>[1] [2] [3]
+<classes/docbook.sil><examples/docbook/article-template.xml>[1] [2] [3]
 \line
 \end{verbatim}
 
