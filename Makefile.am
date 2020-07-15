@@ -191,12 +191,20 @@ define runsile =
 	fi
 endef
 
-patterndeps = $(wildcard $(DEPDIR)/$*.d) libtexpdf src $(and $(filter tests/%,$@),prep) | sile
 
-%.pdf: %.sil $(and $(SILE_COVERAGE)$(CLEAN),force) $$(patterndeps)
+if !SYSTEM_LUAROCKS
+_INSTALL = installrocks
+endif
+_FORCED = $(and $(SILE_COVERAGE)$(CLEAN),force)
+_MAKE_DEPS = $(wildcard $(DEPDIR)/$*.d)
+_TEST_DEPS = $(and $(filter tests/%,$@),$(addprefix .fonts/,$(TESTFONTFILES)))
+_DOCS_DEPS = $(and $(filter docs/% examples/%,$@),$(addprefix .fonts/,$(DOCSFONTFILES)))
+patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(_MAKE_DEPS) $(_INSTALL) all
+
+%.pdf: %.sil $$(patterndeps)
 	$(runsile)
 
-%.pdf: %.xml $(and $(SILE_COVERAGE)$(CLEAN),force) $$(patterndeps)
+%.pdf: %.xml $$(patterndeps)
 	$(runsile)
 
 .PHONY: coverage
@@ -302,10 +310,10 @@ force: ;
 .PHONY: update_expecteds
 update_expecteds: $(EXPECTEDS)
 
-tests/%.expected: tests/%.sil $(and $(CLEAN),force) $$(patterndeps)
+tests/%.expected: tests/%.sil $$(patterndeps)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-tests/%.expected: tests/%.xml $(and $(CLEAN),force) $$(patterndeps)
+tests/%.expected: tests/%.xml $$(patterndeps)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
 .PHONY: update_actuals
@@ -314,11 +322,11 @@ update_actuals: $(ACTUALS)
 .PHONY: test_previews
 test_previews: $(TESTPDFS)
 
-tests/%.actual: tests/%.sil $(and $(CLEAN),force) $$(patterndeps)
+tests/%.actual: tests/%.sil $$(patterndeps)
 	-$(if $(CLEAN),rm -f $@,:)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-tests/%.actual: tests/%.xml $(and $(CLEAN),force) $$(patterndeps)
+tests/%.actual: tests/%.xml $$(patterndeps)
 	-$(if $(CLEAN),rm -f $@,:)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
@@ -340,18 +348,6 @@ include $(wildcard $(DEPFILES))
 
 # Actual rules for downloading test fonts are in a separate file
 include Makefile-fonts
-
-# Make sure we have font files before running tests (ignoring timestamp of font files)
-.PHONY: prep
-DOCSPREPDEPS = $(DEPDIRS) $(addprefix .fonts/,$(DOCSFONTFILES))
-TESTPREPDEPS = $(DEPDIRS) $(addprefix .fonts/,$(TESTFONTFILES))
-if SYSTEM_LUAROCKS
-$(MANUAL): | $(DOCSPREPDEPS)
-prep: | $(TESTPREPDEPS)
-else
-$(MANUAL): installrocks | $(DOCSPREPDEPS)
-prep: installrocks | $(TESTPREPDEPS)
-endif
 
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL)
 
