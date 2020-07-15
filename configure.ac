@@ -93,6 +93,10 @@ AC_ARG_WITH([manual],
     AS_HELP_STRING([--with-manual], [Rebuild manual and install to system docs location]))
 AM_CONDITIONAL([MANUAL], [test "x$with_manual" = "xyes"])
 
+AC_ARG_WITH([examples],
+    AS_HELP_STRING([--with-examples], [Rebuild examples and install to system docs location]))
+AM_CONDITIONAL([EXAMPLES], [test "x$with_examples" = "xyes"])
+
 case $host_os in
   msys)
     LUA_VERSION=5.3 # By fiat. This is obviously not good.
