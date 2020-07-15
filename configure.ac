@@ -89,6 +89,13 @@ PKG_CHECK_MODULES(HARFBUZZ, harfbuzz,
 AM_CONDITIONAL([SYSTEM_LIBTEXPDF], [test "x$with_system_libtexpdf" = "xyes"])
 AM_CONDITIONAL([SYSTEM_LUAROCKS], [test "x$with_system_luarocks" = "xyes"])
 
+AC_ARG_WITH([manual],
+    AS_HELP_STRING([--with-manual], [Rebuild manual and install to system docs location]))
+AM_CONDITIONAL([MANUAL], [test "x$with_manual" = "xyes"])
+
+AC_ARG_WITH([examples],
+    AS_HELP_STRING([--with-examples], [Rebuild examples and install to system docs location]))
+AM_CONDITIONAL([EXAMPLES], [test "x$with_examples" = "xyes"])
 
 case $host_os in
   msys)

@@ -9,12 +9,14 @@ endif
 
 SUPPORTED_LUAS = 5.3 5.2 5.1
 
+MANUAL = documentation/sile.pdf
+
 dist_man_MANS = sile.1
 dist_doc_DATA = README.md CHANGELOG.md
 bin_SCRIPTS = sile
-nobase_dist_pkgdata_DATA = $(filter-out %.so,$(shell find core classes languages packages lua-libraries -type f -print))
+nobase_dist_pkgdata_DATA = $(filter %.lua %.sil,$(shell find core classes languages packages lua-libraries -type f -print))
 EXTRA_DIST = LICENSE spec tests examples documentation sile-dev-1.rockspec build-aux/git-version-gen .version fontconfig.conf
-EXTRA_DIST += $(extra_dist)
+EXTRA_DIST += $(extra_dist) $(MANUAL) $(EXAMPLES)
 
 SHELL = bash
 .ONESHELL:
@@ -22,9 +24,9 @@ SHELL = bash
 .DELETE_ON_ERROR:
 am__remove_distdir =
 
+extra_dist = $(shell find lua_modules_dist -type f -print 2>/dev/null ||:)
 if !SYSTEM_LUAROCKS
 nobase_nodist_pkgdata_DATA = $(shell find lua_modules -type f -print 2>/dev/null ||:)
-extra_dist = $(shell find lua_modules_dist -type f -print 2>/dev/null ||:)
 LUAROCKS := luarocks --tree lua_modules --lua-version $(LUA_VERSION)
 LUAMODLOCK := sile-dev-1.rockslock
 LUAMODSPEC := sile-dev-1.rockspec
@@ -42,9 +44,20 @@ BUILT_SOURCES = .version
 	cmp -s $@{,-prev} || autoreconf configure.ac --force -W none
 	sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
 
-dist-hook: lua_modules_dist
+dist-hook: lua_modules_dist $(MANUAL) $(EXAMPLES)
 	echo $(VERSION) > $(distdir)/.tarball-version
 	sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
+
+if MANUAL
+install-data-hook: $(MANUAL)
+	rm -f "$(DESTDIR)/$(datarootdir)/$<"
+	install -Dm644 -t "$(DESTDIR)$(docdir)" $<
+endif
+
+if EXAMPLES
+install-data-hook: $(EXAMPLES)
+	install -Dm644 -t "$(DESTDIR)$(docdir)/examples" $^
+endif
 
 # Whether to force tests to run from scratch
 CLEAN ?=
@@ -70,7 +83,7 @@ release: tagrelease
 
 dist: examples docs all lua_modules_dist sile-$(VERSION).pdf
 
-sile-$(VERSION).pdf: documentation/sile.pdf
+sile-$(VERSION).pdf: $(MANUAL)
 	cp $< $@
 
 .PHONY: update_libtexpdf
@@ -153,8 +166,6 @@ else
 endif
 	busted --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" spec
 
-MANUAL = documentation/sile.pdf
-
 .PHONY: docs
 docs: $(MANUAL)
 
@@ -173,18 +184,28 @@ define runsile =
 	pg0=$$($(pages)) hadtoc=$$($(hastoc))
 	mkdir -p $(DEPDIR)
 	$(silepass)
+	export -n SILE_COVERAGE
 	if $(hastoc); then
 		$${hadtoc} || $(silepass)
 		[[ $${pg} -gt $${pg0} ]] && $(silepass) ||:
 	fi
 endef
 
-patterndeps = $(wildcard $(DEPDIR)/$*.d) all $(and $(filter tests/%,$@),prep)
 
-%.pdf: %.sil $(and $(SILE_COVERAGE)$(CLEAN),force) $$(patterndeps)
+if !SYSTEM_LUAROCKS
+_INSTALL = installrocks
+endif
+_FORCED = $(and $(SILE_COVERAGE)$(CLEAN),force)
+_MAKE_DEPS = $(wildcard $(DEPDIR)/$*.d)
+_TEST_DEPS = $(and $(filter tests/%,$@),$(addprefix .fonts/,$(TESTFONTFILES)))
+_DOCS_DEPS = $(and $(filter docs/%,$@),$(addprefix .fonts/,$(DOCSFONTFILES)))
+_EXAM_DEPS = $(and $(filter examples/%,$@),$(addprefix .fonts/,$(EXAMFONTFILES)))
+patterndeps = $(_FORCED) $(_TEST_DEPS) $(_EXAM_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(_MAKE_DEPS) $(_INSTALL) all
+
+%.pdf: %.sil $$(patterndeps)
 	$(runsile)
 
-%.pdf: %.xml $(and $(SILE_COVERAGE)$(CLEAN),force) $$(patterndeps)
+%.pdf: %.xml $$(patterndeps)
 	$(runsile)
 
 .PHONY: coverage
@@ -290,10 +311,10 @@ force: ;
 .PHONY: update_expecteds
 update_expecteds: $(EXPECTEDS)
 
-tests/%.expected: tests/%.sil $(and $(CLEAN),force) $$(patterndeps)
+tests/%.expected: tests/%.sil $$(patterndeps)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-tests/%.expected: tests/%.xml $(and $(CLEAN),force) $$(patterndeps)
+tests/%.expected: tests/%.xml $$(patterndeps)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
 .PHONY: update_actuals
@@ -302,11 +323,11 @@ update_actuals: $(ACTUALS)
 .PHONY: test_previews
 test_previews: $(TESTPDFS)
 
-tests/%.actual: tests/%.sil $(and $(CLEAN),force) $$(patterndeps)
+tests/%.actual: tests/%.sil $$(patterndeps)
 	-$(if $(CLEAN),rm -f $@,:)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-tests/%.actual: tests/%.xml $(and $(CLEAN),force) $$(patterndeps)
+tests/%.actual: tests/%.xml $$(patterndeps)
 	-$(if $(CLEAN),rm -f $@,:)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
@@ -320,28 +341,16 @@ $(DEPFILES): | $(DEPDIRS)
 
 include $(wildcard $(DEPFILES))
 
-# Make sure we have a local font directory before putting anything there
-.fonts/%: Makefile-fonts | .fonts
-
 .fonts: fontconfig.conf
 	[[ -h .fonts ]] || mkdir -p $@
+
+.sources:
+	[[ -h .sources ]] || mkdir -p $@
 
 # Actual rules for downloading test fonts are in a separate file
 include Makefile-fonts
 
-# Make sure we have font files before running tests (ignoring timestamp of font files)
-.PHONY: prep
-DOCSPREPDEPS = $(DEPDIRS) $(addprefix .fonts/,$(DOCSFONTFILES))
-TESTPREPDEPS = $(DEPDIRS) $(addprefix .fonts/,$(TESTFONTFILES))
-if SYSTEM_LUAROCKS
-$(MANUAL): | $(DOCSPREPDEPS)
-prep: | $(TESTPREPDEPS)
-else
-$(MANUAL): installrocks | $(DOCSPREPDEPS)
-prep: installrocks | $(TESTPREPDEPS)
-endif
-
-CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS)
+CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL)
 
 .PHONY: docker
 docker: Dockerfile build-aux/docker-entrypoint.sh

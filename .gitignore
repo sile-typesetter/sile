@@ -50,9 +50,6 @@ build/
 *.debug
 gh-pages
 sile-[0-9\.]*
-*.bz2
-*.xz
-*.zip
 *.rockslock
 .dockerignore
 
@@ -79,5 +76,6 @@ documentation/*.pdf
 examples/*.pdf
 gource.webm
 .fonts/*
+.sources/*
 #sile# Work around bug in standard-version by not ignoring this artifact
 sile.1
