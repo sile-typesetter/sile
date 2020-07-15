@@ -18,14 +18,14 @@ DOCSFONTFILES += RobotoCondensed-Bold.ttf
 DOCSFONTFILES += Symbola.otf
 
 EXAMFONTFILES = $(DOCSFONTFILES)
+EXAMFONTFILES += Amiri-Regular.ttf AmiriQuran.ttf
 EXAMFONTFILES += DejaVuSansCondensed-Bold.ttf
 EXAMFONTFILES += LibreBaskerville-Italic.otf
 EXAMFONTFILES += Miama.otf
 EXAMFONTFILES += NotoSerifCJK-Regular.ttc
 EXAMFONTFILES += Roboto-Regular.ttf Roboto-Bold.ttf
 
-TESTFONTFILES  = $(DOCSFONTFILES)
-TESTFONTFILES += Amiri-Regular.ttf AmiriQuran.ttf
+TESTFONTFILES  = $(EXAMFONTFILES)
 TESTFONTFILES += LibertinusSans-Bold.otf
 TESTFONTFILES += NotoNaskhArabic-Regular.ttf
 TESTFONTFILES += NotoSansKannada-Regular.ttf
