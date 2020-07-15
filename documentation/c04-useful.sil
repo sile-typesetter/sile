@@ -52,10 +52,19 @@ Big text!
 
 As you can see, one possible attribute is \code{size}, which can be specified as
 a SILE \code{<dimension>}. A \code{<dimension>} is like a \code{<basic length>}
-(described above) but with a few extra possible dimensions: there are dimensions which are relative
-to the size of the \em{current} font (ex units, \code{ex}; em units,
-\code{em}; and en units, \code{en}), and dimensions which are relative to
-the size of the current page, frame or line. (such as percent of page width, \code{\%pw}; percentage of page height, \code{\%ph}; and so on).
+(described above) but with a few extra possible dimensions. There are dimensions
+which are relative to the size of the \em{current} font: an \code{em} is the
+size of the font’s current em square–for a 12pt font, this would be 12 points;
+an \code{en} is half the em square; an \em{ex} is the height of the character
+‘x’; a \em{spc} is the width of the space character.
+
+There are also dimensions which are defined as a percentage of the size of the
+current page width or height, the current frame width or height, and the line width
+(\code{\%pw}, \code{\%ph}, \code{\%fw}, \code{\%fh}, and \code{\%lw} respectively).
+You can specify lengths in terms of the current paragraph skip (\code{ps}) and
+baseline skip (\code{bs}), which will make sense later on. Additional units are
+available relative to the largest or smallest value of either axis (\code{\%pmax},
+\code{\%pmin}, \code{\%fmax, \code{\%fmin}}).
 
 The full list of attributes to the \code{\\font} command are:
 
