@@ -21,7 +21,7 @@ jobs:
         run: git fetch --prune --tags
       - name: Install System Dependencies
         run: |
-          sudo apt-get install fonts-sil-gentiumplus libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev liblua5.2-dev libpng-dev lua5.2 lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
+          sudo apt-get install fonts-sil-gentiumplus libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev liblua5.3-dev libpng-dev lua5.3 lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
       - name: Configure
         run: |
           ./bootstrap.sh
