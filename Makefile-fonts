@@ -7,9 +7,11 @@ DEFSFONTFILES  = GentiumPlus-R.ttf GentiumPlus-I.ttf
 DOCSFONTFILES  = $(DEFSFONTFILES)
 DOCSFONTFILES += CormorantInfant-Italic.ttf CormorantInfant-Regular.ttf
 DOCSFONTFILES += GenBkBasR.ttf GenBkBasI.ttf GenBkBasB.ttf
+DOCSFONTFILES += DejaVuSansCondensed-Bold.ttf
 DOCSFONTFILES += Hack-Regular.ttf
 DOCSFONTFILES += LateefGR-Regular.ttf
 DOCSFONTFILES += LibertinusSerif-Regular.otf
+DOCSFONTFILES += Miama.otf
 DOCSFONTFILES += NotoSansCJK-Regular.ttc
 DOCSFONTFILES += NotoSansEthiopic-Regular.ttf
 DOCSFONTFILES += RobotoCondensed-Bold.ttf
@@ -17,7 +19,10 @@ DOCSFONTFILES += Symbola.otf
 
 EXAMFONTFILES = $(DOCSFONTFILES)
 EXAMFONTFILES += DejaVuSansCondensed-Bold.ttf
+EXAMFONTFILES += LibreBaskerville-Italic.otf
 EXAMFONTFILES += Miama.otf
+EXAMFONTFILES += NotoSerifCJK-Regular.ttc
+EXAMFONTFILES += Roboto-Regular.ttf Roboto-Bold.ttf
 
 TESTFONTFILES  = $(DOCSFONTFILES)
 TESTFONTFILES += Amiri-Regular.ttf AmiriQuran.ttf
