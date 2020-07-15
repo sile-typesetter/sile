@@ -23,7 +23,7 @@ For example:
 
 \begin{verbatim}
 \line
-Hello \\\rebox[width=0pt]\{world\}overprint.
+Hello \\rebox[width=0pt]\{world\}overprint.
 
 Look I’m not \\rebox[phantom=true]\{here\}!
 \line
