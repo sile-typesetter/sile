@@ -24,7 +24,8 @@ jobs:
             lua_modules_dist
           key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile-dev-1.rockspec') }}
       - name: Fetch Tags
-        run: git fetch --prune --tags
+        run: |
+          git fetch --prune --tags ||:
       - name: Install System Dependencies
         run: |
           sudo apt-get install fonts-sil-gentiumplus libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev liblua5.3-dev libpng-dev lua5.3 lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
