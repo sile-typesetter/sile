@@ -51,13 +51,20 @@ dist-hook: lua_modules_dist $(MANUAL) $(EXAMPLES)
 
 if MANUAL
 install-data-hook: $(MANUAL)
-	rm -f "$(DESTDIR)/$(datarootdir)/$<"
-	install -Dm644 -t "$(DESTDIR)$(docdir)" $<
 endif
 
 if EXAMPLES
 install-data-hook: $(EXAMPLES)
-	install -Dm644 -t "$(DESTDIR)$(docdir)/examples" $^
+endif
+
+install-data-hook:
+	:
+if MANUAL
+	rm -f "$(DESTDIR)/$(datarootdir)/$<"
+	install -Dm644 -t "$(DESTDIR)$(docdir)" $(MANUAL)
+endif
+if EXAMPLES
+	install -Dm644 -t "$(DESTDIR)$(docdir)/examples" $(EXAMPLES)
 endif
 
 # Whether to force tests to run from scratch
