@@ -7,16 +7,20 @@ else
 SUBDIRS = libtexpdf src
 endif
 
-SUPPORTED_LUAS = 5.3 5.2 5.1
-
 MANUAL = documentation/sile.pdf
+
+Makefile-distfiles: build-aux/list-dist-files.sh .version
+	$< 2>/dev/null > $@
+
+include Makefile-distfiles
 
 dist_man_MANS = sile.1
 dist_doc_DATA = README.md CHANGELOG.md
 bin_SCRIPTS = sile
-nobase_dist_pkgdata_DATA = $(filter %.lua %.sil,$(shell find core classes languages packages lua-libraries -type f -print))
-EXTRA_DIST = LICENSE spec tests examples documentation sile-dev-1.rockspec build-aux/git-version-gen .version fontconfig.conf
-EXTRA_DIST += $(extra_dist) $(MANUAL) $(EXAMPLES)
+EXTRA_DIST = LICENSE spec tests examples documentation sile-dev-1.rockspec fontconfig.conf
+EXTRA_DIST += .version Makefile-distfiles
+EXTRA_DIST += build-aux/git-version-gen build-aux/list-dist-files.sh
+EXTRA_DIST += $(LUAMODULESDIST) $(MANUAL) $(EXAMPLES)
 
 SHELL = bash
 .ONESHELL:
@@ -25,39 +29,36 @@ SHELL = bash
 .DELETE_ON_ERROR:
 am__remove_distdir =
 
-extra_dist = $(shell find lua_modules_dist -type f -print 2>/dev/null ||:)
-if !SYSTEM_LUAROCKS
-nobase_nodist_pkgdata_DATA = $(shell find lua_modules -type f -print 2>/dev/null ||:)
-LUAROCKS := luarocks --tree lua_modules --lua-version $(LUA_VERSION)
-LUAMODLOCK := sile-dev-1.rockslock
-LUAMODSPEC := sile-dev-1.rockspec
-genrockslock := $(LUAROCKS) $(LUAROCKSARGS) list --porcelain | awk '{print $$1 " " $$2}'
-rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
-else
-LUAROCKS := luarocks --tree lua_modules_dist --lua-version $(LUA_VERSION)
-endif
-
 BUILT_SOURCES = .version
 
 .version: $(shell test -e .git && awk '{print ".git/" $$2}' .git/HEAD)
-	mv $@{,-prev} || touch $@-prev
+	mv $@{,-prev} 2>/dev/null || touch $@-prev
 	( test -e .git && ./build-aux/git-version-gen .tarball-version || echo $(VERSION) ) > $@
 	cmp -s $@{,-prev} || autoreconf configure.ac --force -W none
 	sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
 
-dist-hook: lua_modules_dist $(MANUAL) $(EXAMPLES)
+dist-hook: lua_modules_dist | $(MANUAL) $(EXAMPLES)
 	echo $(VERSION) > $(distdir)/.tarball-version
+	cp -fa $< $(distdir)/
 	sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
 
+_DATA_HOOK_DEPS =
 if MANUAL
-install-data-hook: $(MANUAL)
-	rm -f "$(DESTDIR)/$(datarootdir)/$<"
-	install -Dm644 -t "$(DESTDIR)$(docdir)" $<
+_DATA_HOOK_DEPS += $(MANUAL)
 endif
 
 if EXAMPLES
-install-data-hook: $(EXAMPLES)
-	install -Dm644 -t "$(DESTDIR)$(docdir)/examples" $^
+_DATA_HOOK_DEPS += $(EXAMPLES)
+endif
+
+install-data-hook: $(_DATA_HOOK_DEPS)
+	:
+if MANUAL
+	rm -f "$(DESTDIR)/$(datarootdir)/$<"
+	install -Dm644 -t "$(DESTDIR)$(docdir)" $(MANUAL)
+endif
+if EXAMPLES
+	install -Dm644 -t "$(DESTDIR)$(docdir)/examples" $(EXAMPLES)
 endif
 
 # Whether to force tests to run from scratch
@@ -97,39 +98,13 @@ update_libtexpdf:
 gh-pages:
 	git worktree add -f $@ $@
 
-.PHONY: installrocks
-if !SYSTEM_LUAROCKS
-installrocks: $(LUAMODLOCK) $(shell $(rocksmatch) || echo lua_modules)
-
-lua_modules: $(LUAMODSPEC) $(shell $(rocksmatch) || echo force)
-	if test -e .git; then
-		$(LUAROCKS) $(LUAROCKSARGS) install --only-deps $<
-	else
-		rm -rf lua_modules
-		cp -a lua_modules_dist lua_modules
-		$(foreach LUA,$(filter-out $(LUA_VERSION),$(SUPPORTED_LUAS)),
-		find lua_modules -maxdepth 3 -type d -name "*$(LUA)" -execdir rm -rf {} \;)
-	fi
-
-$(LUAMODLOCK): lua_modules $(LUAMODSPEC)
-	$(genrockslock) > $@
-
-sile: installrocks
-endif
-
-.PHONY: lua_modules_dist
-lua_modules_dist: $(LUAMODSPEC) force
-	$(foreach LUA,$(SUPPORTED_LUAS),
-	$(LUAROCKS) $(LUAROCKSARGS) --lua-version $(LUA) install --only-deps $<)
-
 DEPDIR := .deps
 REGRESSIONSCRIPT := ./tests/regressions.pl
 LOCALTESTFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
 SILEFLAGS ?= -m $(DEPDIR)/$(basename $@).d -d versions -f fontconfig
 
-TESTSRCS  ?= $(wildcard tests/*.sil tests/*.xml)
 TESTPDFS   = $(addsuffix      .pdf,$(basename $(TESTSRCS)))
-EXPECTEDS ?= $(filter $(addsuffix .expected,$(basename $(TESTSRCS))),$(wildcard tests/*.expected))
+EXPECTEDS ?= $(filter $(addsuffix .expected,$(basename $(TESTSRCS))),$(TESTEXPECTS))
 ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 
 check: selfcheck
@@ -156,7 +131,8 @@ luarocks-lint: $(LUAMODSPEC)
 luacheck:
 	luacheck -j$(shell nproc) -q .
 
-busted: $(wildcard spec/*_spec.lua)
+.PHONY: busted
+busted: | $(_INSTALL) all
 	set -f; IFS=';'
 if SYSTEM_LUAROCKS
 	packagecpath=(./{,core/}?.$(SHARED_LIB_EXT))
@@ -170,8 +146,7 @@ endif
 .PHONY: docs
 docs: $(MANUAL)
 
-EXAMPLESSRCS = $(basename $(wildcard examples/*.sil) examples/docbook/article-template.xml)
-EXAMPLES = $(addsuffix .pdf,$(EXAMPLESSRCS))
+EXAMPLES = $(addsuffix .pdf,$(basename $(EXAMPLESSRCS)))
 
 .PHONY: examples
 examples: $(EXAMPLES)
@@ -197,11 +172,10 @@ if !SYSTEM_LUAROCKS
 _INSTALL = installrocks
 endif
 _FORCED = $(and $(SILE_COVERAGE)$(CLEAN),force)
-_MAKE_DEPS = $(wildcard $(DEPDIR)/$*.d)
 _TEST_DEPS = $(and $(filter tests/%,$@),$(addprefix .fonts/,$(TESTFONTFILES)))
 _DOCS_DEPS = $(and $(filter docs/%,$@),$(addprefix .fonts/,$(DOCSFONTFILES)))
 _EXAM_DEPS = $(and $(filter examples/%,$@),$(addprefix .fonts/,$(EXAMFONTFILES)))
-patterndeps = $(_FORCED) $(_TEST_DEPS) $(_EXAM_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(_MAKE_DEPS) $(_INSTALL) all
+patterndeps = $(_FORCED) $(_TEST_DEPS) $(_EXAM_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(_INSTALL) all
 
 %.pdf: %.sil $$(patterndeps)
 	$(runsile)
@@ -353,7 +327,10 @@ include $(wildcard $(DEPFILES))
 # Actual rules for downloading test fonts are in a separate file
 include Makefile-fonts
 
-CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL)
+# All LuaRocks handling stuff consolidated
+include Makefile-luarocks
+
+CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles
 
 .PHONY: docker
 docker: Dockerfile build-aux/docker-entrypoint.sh

@@ -17,6 +17,12 @@ jobs:
             .fonts
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
+      - name: Cache Lua Rocks
+        uses: actions/cache@v2
+        with:
+          path: |
+            lua_modules_dist
+          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile-dev-1.rockspec') }}
       - name: Fetch Tags
         run: git fetch --prune --tags
       - name: Install System Dependencies
