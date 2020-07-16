@@ -163,7 +163,8 @@ luarocks-lint: $(LUAMODSPEC)
 luacheck:
 	luacheck -j$(shell nproc) -q .
 
-busted: $(wildcard spec/*_spec.lua)
+.PHONY: busted
+busted: | $(_INSTALL) all
 	set -f; IFS=';'
 if SYSTEM_LUAROCKS
 	packagecpath=(./{,core/}?.$(SHARED_LIB_EXT))
