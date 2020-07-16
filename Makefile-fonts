@@ -1,5 +1,5 @@
 # Don't let make delete things we had to download
-.PRECIOUS: .fonts/% %.zip %.xz
+.PRECIOUS: .fonts/% .sources/%
 
 # List of font files we _actually need_
 DEFSFONTFILES  = GentiumPlus-R.ttf GentiumPlus-I.ttf

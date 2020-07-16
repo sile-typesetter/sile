@@ -20,6 +20,7 @@ EXTRA_DIST += $(extra_dist) $(MANUAL) $(EXAMPLES)
 
 SHELL = bash
 .ONESHELL:
+.SECONDARY:
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
 am__remove_distdir =
