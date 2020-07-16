@@ -11,7 +11,7 @@ SUPPORTED_LUAS = 5.3 5.2 5.1
 
 MANUAL = documentation/sile.pdf
 
-Makefile-distfiles: build-aux/list-dist-files.sh .version $(wildcard lua_modules_dist)
+Makefile-distfiles: build-aux/list-dist-files.sh .version
 	$< 2>/dev/null > $@
 
 include Makefile-distfiles
@@ -22,7 +22,7 @@ bin_SCRIPTS = sile
 EXTRA_DIST = LICENSE spec tests examples documentation sile-dev-1.rockspec fontconfig.conf
 EXTRA_DIST += .version Makefile-distfiles
 EXTRA_DIST += build-aux/git-version-gen build-aux/list-dist-files.sh
-EXTRA_DIST += $(extra_dist) $(MANUAL) $(EXAMPLES)
+EXTRA_DIST += $(LUAMODULESDIST) $(MANUAL) $(EXAMPLES)
 
 SHELL = bash
 .ONESHELL:
@@ -31,15 +31,13 @@ SHELL = bash
 .DELETE_ON_ERROR:
 am__remove_distdir =
 
-if !SYSTEM_LUAROCKS
-nobase_nodist_pkgdata_DATA = $(LUADISTFILES)
 LUAROCKS := luarocks --tree lua_modules --lua-version $(LUA_VERSION)
+if !SYSTEM_LUAROCKS
+nobase_nodist_pkgdata_DATA = $(LUAMODULES)
 LUAMODLOCK := sile-dev-1.rockslock
 LUAMODSPEC := sile-dev-1.rockspec
 genrockslock := $(LUAROCKS) $(LUAROCKSARGS) list --porcelain | awk '{print $$1 " " $$2}'
 rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
-else
-LUAROCKS := luarocks --tree lua_modules_dist --lua-version $(LUA_VERSION)
 endif
 
 BUILT_SOURCES = .version
@@ -54,15 +52,16 @@ dist-hook: lua_modules_dist $(MANUAL) $(EXAMPLES)
 	echo $(VERSION) > $(distdir)/.tarball-version
 	sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
 
+_DATA_HOOK_DEPS =
 if MANUAL
-install-data-hook: $(MANUAL)
+_DATA_HOOK_DEPS += $(MANUAL)
 endif
 
 if EXAMPLES
-install-data-hook: $(EXAMPLES)
+_DATA_HOOK_DEPS += $(EXAMPLES)
 endif
 
-install-data-hook:
+install-data-hook: $(_DATA_HOOK_DEPS)
 	:
 if MANUAL
 	rm -f "$(DESTDIR)/$(datarootdir)/$<"
@@ -136,6 +135,7 @@ disallow-dist-with-system-luarocks:
 endif
 
 .PHONY: lua_modules_dist
+lua_modules_dist: LUAROCKS = luarocks --tree lua_modules_dist
 lua_modules_dist: $(LUAMODSPEC) force disallow-dist-with-system-luarocks
 	$(foreach LUA,$(SUPPORTED_LUAS),
 	$(LUAROCKS) $(LUAROCKSARGS) --lua-version $(LUA) install --only-deps $<)

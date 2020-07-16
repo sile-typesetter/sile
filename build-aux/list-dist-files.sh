@@ -6,11 +6,11 @@ echo -n "nobase_dist_pkgdata_DATA ="
 find core classes languages packages lua-libraries -type f -name '*.lua' -printf ' %p'
 find classes -type f -name '*.sil' -printf ' %p'
 
-echo -ne "\nextra_dist ="
-find lua_modules_dist -type f -printf ' %p' ||:
+echo -ne "\nLUAMODULES ="
+find lua_modules -type f -not -name '*~' -printf ' %p' ||:
 
-echo -ne "\nLUADISTFILES ="
-find lua_modules -type f -printf ' %p' ||:
+echo -ne "\nLUAMODULESDIST ="
+find lua_modules_dist -type f -not -name '*~' -printf ' %p' ||:
 
 echo -ne "\nTESTSRCS ?="
 find tests -maxdepth 1 -type f -name '*.sil' -printf ' %p'
