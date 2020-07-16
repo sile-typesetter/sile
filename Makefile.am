@@ -7,8 +7,6 @@ else
 SUBDIRS = libtexpdf src
 endif
 
-SUPPORTED_LUAS = 5.3 5.2 5.1
-
 MANUAL = documentation/sile.pdf
 
 Makefile-distfiles: build-aux/list-dist-files.sh .version
@@ -30,15 +28,6 @@ SHELL = bash
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
 am__remove_distdir =
-
-LUAROCKS := luarocks --tree lua_modules --lua-version $(LUA_VERSION)
-if !SYSTEM_LUAROCKS
-nobase_nodist_pkgdata_DATA = $(LUAMODULES)
-LUAMODLOCK := sile-dev-1.rockslock
-LUAMODSPEC := sile-dev-1.rockspec
-genrockslock := $(LUAROCKS) $(LUAROCKSARGS) list --porcelain | awk '{print $$1 " " $$2}'
-rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
-endif
 
 BUILT_SOURCES = .version
 
@@ -108,38 +97,6 @@ update_libtexpdf:
 
 gh-pages:
 	git worktree add -f $@ $@
-
-.PHONY: installrocks disallow-dist-with-system-luarocks
-if !SYSTEM_LUAROCKS
-installrocks: $(LUAMODLOCK) $(shell $(rocksmatch) || echo lua_modules)
-
-lua_modules: $(LUAMODSPEC) $(shell $(rocksmatch) || echo force)
-	if test -e .git; then
-		$(LUAROCKS) $(LUAROCKSARGS) install --only-deps $<
-	else
-		rm -rf lua_modules
-		cp -a lua_modules_dist lua_modules
-		$(foreach LUA,$(filter-out $(LUA_VERSION),$(SUPPORTED_LUAS)),
-		find lua_modules -maxdepth 3 -type d -name "*$(LUA)" -execdir rm -rf {} \;)
-	fi
-
-$(LUAMODLOCK): lua_modules $(LUAMODSPEC)
-	$(genrockslock) > $@
-
-sile: installrocks
-
-disallow-dist-with-system-luarocks: ;
-else
-disallow-dist-with-system-luarocks:
-	$(error In order to make dist you must configure --without-system-luarocks)
-	exit 1
-endif
-
-.PHONY: lua_modules_dist
-lua_modules_dist: LUAROCKS = luarocks --tree lua_modules_dist
-lua_modules_dist: $(LUAMODSPEC) force disallow-dist-with-system-luarocks
-	$(foreach LUA,$(SUPPORTED_LUAS),
-	$(LUAROCKS) $(LUAROCKSARGS) --lua-version $(LUA) install --only-deps $<)
 
 DEPDIR := .deps
 REGRESSIONSCRIPT := ./tests/regressions.pl
@@ -369,6 +326,9 @@ include $(wildcard $(DEPFILES))
 
 # Actual rules for downloading test fonts are in a separate file
 include Makefile-fonts
+
+# All LuaRocks handling stuff consolidated
+include Makefile-luarocks
 
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles
 
