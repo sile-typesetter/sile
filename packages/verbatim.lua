@@ -51,7 +51,8 @@ end
 \end{verbatim}
 
 If you want to specify what font the verbatim environment should use, you
-can redefine the \code{verbatim:font} command. The current document says:
+can redefine the \code{verbatim:font} command. For example you could change
+it from XML like this:
 
 \begin{verbatim}
 <define command="verbatim:font">
