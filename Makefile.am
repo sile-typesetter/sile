@@ -11,11 +11,15 @@ SUPPORTED_LUAS = 5.3 5.2 5.1
 
 MANUAL = documentation/sile.pdf
 
+Makefile-distfiles: build-aux/list-dist-files.sh .version
+	$< 2>/dev/null > $@
+
+include Makefile-distfiles
+
 dist_man_MANS = sile.1
 dist_doc_DATA = README.md CHANGELOG.md
 bin_SCRIPTS = sile
-nobase_dist_pkgdata_DATA = $(filter %.lua %.sil,$(shell find core classes languages packages lua-libraries -type f -print))
-EXTRA_DIST = LICENSE spec tests examples documentation sile-dev-1.rockspec build-aux/git-version-gen .version fontconfig.conf
+EXTRA_DIST = LICENSE spec tests examples documentation sile-dev-1.rockspec build-aux/git-version-gen .version fontconfig.conf Makefile-distfiles
 EXTRA_DIST += $(extra_dist) $(MANUAL) $(EXAMPLES)
 
 SHELL = bash
@@ -25,9 +29,7 @@ SHELL = bash
 .DELETE_ON_ERROR:
 am__remove_distdir =
 
-extra_dist = $(shell find lua_modules_dist -type f -print 2>/dev/null ||:)
 if !SYSTEM_LUAROCKS
-nobase_nodist_pkgdata_DATA = $(shell find lua_modules -type f -print 2>/dev/null ||:)
 LUAROCKS := luarocks --tree lua_modules --lua-version $(LUA_VERSION)
 LUAMODLOCK := sile-dev-1.rockslock
 LUAMODSPEC := sile-dev-1.rockspec
@@ -40,7 +42,7 @@ endif
 BUILT_SOURCES = .version
 
 .version: $(shell test -e .git && awk '{print ".git/" $$2}' .git/HEAD)
-	mv $@{,-prev} || touch $@-prev
+	mv $@{,-prev} 2>/dev/null || touch $@-prev
 	( test -e .git && ./build-aux/git-version-gen .tarball-version || echo $(VERSION) ) > $@
 	cmp -s $@{,-prev} || autoreconf configure.ac --force -W none
 	sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
@@ -134,9 +136,8 @@ REGRESSIONSCRIPT := ./tests/regressions.pl
 LOCALTESTFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
 SILEFLAGS ?= -m $(DEPDIR)/$(basename $@).d -d versions -f fontconfig
 
-TESTSRCS  ?= $(wildcard tests/*.sil tests/*.xml)
 TESTPDFS   = $(addsuffix      .pdf,$(basename $(TESTSRCS)))
-EXPECTEDS ?= $(filter $(addsuffix .expected,$(basename $(TESTSRCS))),$(wildcard tests/*.expected))
+EXPECTEDS ?= $(filter $(addsuffix .expected,$(basename $(TESTSRCS))),$(TESTEXPECTS))
 ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 
 check: selfcheck
@@ -178,8 +179,7 @@ endif
 .PHONY: docs
 docs: $(MANUAL)
 
-EXAMPLESSRCS = $(basename $(wildcard examples/*.sil) examples/docbook/article-template.xml)
-EXAMPLES = $(addsuffix .pdf,$(EXAMPLESSRCS))
+EXAMPLES = $(addsuffix .pdf,$(basename $(EXAMPLESSRCS)))
 
 .PHONY: examples
 examples: $(EXAMPLES)
@@ -361,7 +361,7 @@ include $(wildcard $(DEPFILES))
 # Actual rules for downloading test fonts are in a separate file
 include Makefile-fonts
 
-CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL)
+CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles
 
 .PHONY: docker
 docker: Dockerfile build-aux/docker-entrypoint.sh
