@@ -54,6 +54,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
+          body_path: ${{ env.DISTDIR }}.md
           files: |
             ${{ env.DISTDIR }}.pdf
             ${{ env.DISTDIR }}.zip
