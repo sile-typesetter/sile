@@ -11,7 +11,7 @@ SUPPORTED_LUAS = 5.3 5.2 5.1
 
 MANUAL = documentation/sile.pdf
 
-Makefile-distfiles: build-aux/list-dist-files.sh .version
+Makefile-distfiles: build-aux/list-dist-files.sh .version $(wildcard lua_modules_dist)
 	$< 2>/dev/null > $@
 
 include Makefile-distfiles
@@ -19,7 +19,9 @@ include Makefile-distfiles
 dist_man_MANS = sile.1
 dist_doc_DATA = README.md CHANGELOG.md
 bin_SCRIPTS = sile
-EXTRA_DIST = LICENSE spec tests examples documentation sile-dev-1.rockspec build-aux/git-version-gen .version fontconfig.conf Makefile-distfiles
+EXTRA_DIST = LICENSE spec tests examples documentation sile-dev-1.rockspec fontconfig.conf
+EXTRA_DIST += .version Makefile-distfiles
+EXTRA_DIST += build-aux/git-version-gen build-aux/list-dist-files.sh
 EXTRA_DIST += $(extra_dist) $(MANUAL) $(EXAMPLES)
 
 SHELL = bash
@@ -30,6 +32,7 @@ SHELL = bash
 am__remove_distdir =
 
 if !SYSTEM_LUAROCKS
+nobase_nodist_pkgdata_DATA = $(LUADISTFILES)
 LUAROCKS := luarocks --tree lua_modules --lua-version $(LUA_VERSION)
 LUAMODLOCK := sile-dev-1.rockslock
 LUAMODSPEC := sile-dev-1.rockspec

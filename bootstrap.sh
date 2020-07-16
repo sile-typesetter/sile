@@ -10,6 +10,8 @@ if [ ! -f "libtexpdf/configure.ac" ] && [ -e ".git" ]; then
     git submodule update --init --recursive --remote
 fi
 
+touch -d @0 Makefile-distfiles
+
 autoreconf --install -W none
 
 # See discussion in https://github.com/sile-typesetter/sile/issues/82 and

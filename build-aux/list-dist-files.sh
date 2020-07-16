@@ -9,10 +9,8 @@ find classes -type f -name '*.sil' -printf ' %p'
 echo -ne "\nextra_dist ="
 find lua_modules_dist -type f -printf ' %p' ||:
 
-echo -e "\nif !SYSTEM_LUAROCKS"
-echo -n "nobase_nodist_pkgdata_DATA ="
+echo -ne "\nLUADISTFILES ="
 find lua_modules -type f -printf ' %p' ||:
-echo -ne "\nendif"
 
 echo -ne "\nTESTSRCS ?="
 find tests -maxdepth 1 -type f -name '*.sil' -printf ' %p'
