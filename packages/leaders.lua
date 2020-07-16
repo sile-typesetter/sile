@@ -65,12 +65,12 @@ allow you to define your own leaders. For example:
 
 \begin{verbatim}
 \line
-A \\leaders[width=30pt]\{\\font[features="+ornm"]{iI}\} B
+A \\leaders[width=40pt]\{/\\\\\} B
 \line
 \end{verbatim}
 
 \begin{examplefont}
-A \leaders[width=40pt]{\font[features="+ornm"]{iI}} B
+A \leaders[width=40pt]{/\\} B
 \end{examplefont}
 
 \end{document}

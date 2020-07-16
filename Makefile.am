@@ -20,6 +20,7 @@ EXTRA_DIST += $(extra_dist) $(MANUAL) $(EXAMPLES)
 
 SHELL = bash
 .ONESHELL:
+.SECONDARY:
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
 am__remove_distdir =
@@ -169,7 +170,7 @@ endif
 .PHONY: docs
 docs: $(MANUAL)
 
-EXAMPLESSRCS = $(basename $(wildcard examples/*.sil))
+EXAMPLESSRCS = $(basename $(wildcard examples/*.sil) examples/docbook/article-template.xml)
 EXAMPLES = $(addsuffix .pdf,$(EXAMPLESSRCS))
 
 .PHONY: examples
@@ -207,6 +208,8 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_EXAM_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) 
 
 %.pdf: %.xml $$(patterndeps)
 	$(runsile)
+
+examples/docbook/article-template.pdf: SILEFLAGS += -I docbook.sil
 
 .PHONY: coverage
 coverage: export SILE_COVERAGE=1

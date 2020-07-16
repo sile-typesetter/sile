@@ -43,20 +43,14 @@ SILE knows a number of ways of specifying lengths. A \code{<basic length>} as
 mentioned above can be specified as a floating-point number followed by
 a dimension abbreviation. Acceptable dimensions are printer’s points
 (\code{pt}), millimeters (\code{mm}), centimeters (\code{cm}) or inches.
-(\code{in}) For instance, a standard B-format book can be specified by
-\code{papersize=198mm x 129mm}.
+(\code{in}) (You can even use \code{ft} and \code{m} for feet and meters
+if you are typesetting \em{particularly} large documents.) For instance, a
+standard B-format book can be specified by \code{papersize=198mm x 129mm}.
 
 Once some of the basic document properties have been setup using these fixed
 size units, other dimensions may be specified relative to them, using \em{relative
-units}. Percentage units are available relative to the page width or height, the
-current frame width or height, and the line width (\code{\%pw}, \code{\%ph},
-\code{\%fw}, \code{\%fh}, and \code{\%lw} respectively). You can specify
-lengths in terms of the current paragraph skip (\code{ps}) and baseline skip
-(\code{bs}), which will make sense later on. Additional units are available
-relative to the largest or smallest value of either axis
-(\code{\%pmax}, \code{\%pmin}, \code{\%fmax, \code{\%fmin}}).
-
-Later we will meet some other ways of specifying lengths to make them
+units}. In chapter 4 we will meet some of these relative units, and in chapter 7
+we will meet some other ways of specifying lengths to make them
 stretchable or shrinkable.
 
 \section{Ordinary text}

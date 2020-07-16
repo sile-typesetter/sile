@@ -222,7 +222,7 @@ return {
   exports = {
     breakFrameVertical = breakFrameVertical
   }, documentation = [[
-
+\begin{document}
 As we mentioned in the first chapter, SILE uses frames as an indication
 of where to put text onto the page. The \code{frametricks} package assists
 package authors by providing a number of commands to manipulate frames.
@@ -293,5 +293,6 @@ similar applications handle floats, drop caps, tables and so on inside the
 context of a content frame rather than by messing with the frames themselves.
 If you feel tempted to play with \code{frametricks}, there’s almost always
 a better way to achieve what you want without it.
+\end{document}
 ]]
 }
