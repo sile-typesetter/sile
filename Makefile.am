@@ -172,8 +172,11 @@ docs: $(MANUAL)
 EXAMPLESSRCS = $(basename $(wildcard examples/*.sil))
 EXAMPLES = $(addsuffix .pdf,$(EXAMPLESSRCS))
 
+.PHONY: nonstandard-examples
+nonstandard-examples: examples/docbook/article-template.pdf
+
 .PHONY: examples
-examples: $(EXAMPLES)
+examples: $(EXAMPLES) nonstandard-examples
 
 # This is a monkey patch to figure out how many passes we have to to to
 # garantee the TOC is up to date, simplify when #230 is fixed.
@@ -207,6 +210,10 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_EXAM_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) 
 
 %.pdf: %.xml $$(patterndeps)
 	$(runsile)
+
+examples/docbook/article-template.pdf: examples/docbook/article-template.xml
+	mkdir -p $(DEPDIR)/examples/docbook
+	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -I docbook.sil $< -o $@
 
 .PHONY: coverage
 coverage: export SILE_COVERAGE=1
