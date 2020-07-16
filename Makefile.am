@@ -83,10 +83,14 @@ release-preview:
 .PHONY: release
 release: tagrelease
 
-dist: examples docs all lua_modules_dist sile-$(VERSION).pdf
+dist: examples docs all lua_modules_dist sile-$(VERSION).pdf sile-$(VERSION).md
 
 sile-$(VERSION).pdf: $(MANUAL)
 	cp $< $@
+
+sile-%.md: CHANGELOG.md
+	sed -e '/\.\.\.v$*/,/\.\.\.v/!d' $< |
+		sed -e 'N;$$!P;$$!D;$$d' > $@
 
 .PHONY: update_libtexpdf
 update_libtexpdf:
