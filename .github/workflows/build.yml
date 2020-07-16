@@ -39,20 +39,14 @@ jobs:
         run: |
           make dist
       - name: Upload Artifacts
+        if: ${{ !contains(github.ref, 'refs/tags/v') }}
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.DISTDIR }}
           path: '*${{ env.DISTDIR }}/'
-
-  publish:
-    needs:
-      - build
-    if: contains(github.ref, 'refs/tags/v')
-    runs-on: ubuntu-latest
-    name: Publish
-    steps:
       - name: Release
         uses: softprops/action-gh-release@v1
+        if: contains(github.ref, 'refs/tags/v')
         with:
           body_path: ${{ env.DISTDIR }}.md
           files: |
