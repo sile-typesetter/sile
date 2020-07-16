@@ -48,8 +48,9 @@ BUILT_SOURCES = .version
 	cmp -s $@{,-prev} || autoreconf configure.ac --force -W none
 	sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
 
-dist-hook: lua_modules_dist $(MANUAL) $(EXAMPLES)
+dist-hook: lua_modules_dist | $(MANUAL) $(EXAMPLES)
 	echo $(VERSION) > $(distdir)/.tarball-version
+	cp -fa $< $(distdir)/
 	sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
 
 _DATA_HOOK_DEPS =
