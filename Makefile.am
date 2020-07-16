@@ -90,7 +90,7 @@ sile-$(VERSION).pdf: $(MANUAL)
 
 sile-%.md: CHANGELOG.md
 	sed -e '/\.\.\.v$*/,/\.\.\.v/!d' $< |
-		sed -e 'N;$$!P;$$!D;$$d' > $@
+		sed -e '1,3d;N;$$!P;$$!D;$$d' > $@
 
 .PHONY: update_libtexpdf
 update_libtexpdf:
