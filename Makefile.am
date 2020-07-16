@@ -109,7 +109,7 @@ update_libtexpdf:
 gh-pages:
 	git worktree add -f $@ $@
 
-.PHONY: installrocks
+.PHONY: installrocks disallow-dist-with-system-luarocks
 if !SYSTEM_LUAROCKS
 installrocks: $(LUAMODLOCK) $(shell $(rocksmatch) || echo lua_modules)
 
@@ -127,10 +127,16 @@ $(LUAMODLOCK): lua_modules $(LUAMODSPEC)
 	$(genrockslock) > $@
 
 sile: installrocks
+
+disallow-dist-with-system-luarocks: ;
+else
+disallow-dist-with-system-luarocks:
+	$(error In order to make dist you must configure --without-system-luarocks)
+	exit 1
 endif
 
 .PHONY: lua_modules_dist
-lua_modules_dist: $(LUAMODSPEC) force
+lua_modules_dist: $(LUAMODSPEC) force disallow-dist-with-system-luarocks
 	$(foreach LUA,$(SUPPORTED_LUAS),
 	$(LUAROCKS) $(LUAROCKSARGS) --lua-version $(LUA) install --only-deps $<)
 
