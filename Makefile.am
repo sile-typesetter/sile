@@ -205,11 +205,10 @@ if !SYSTEM_LUAROCKS
 _INSTALL = installrocks
 endif
 _FORCED = $(and $(SILE_COVERAGE)$(CLEAN),force)
-_MAKE_DEPS = $(wildcard $(DEPDIR)/$*.d)
 _TEST_DEPS = $(and $(filter tests/%,$@),$(addprefix .fonts/,$(TESTFONTFILES)))
 _DOCS_DEPS = $(and $(filter docs/%,$@),$(addprefix .fonts/,$(DOCSFONTFILES)))
 _EXAM_DEPS = $(and $(filter examples/%,$@),$(addprefix .fonts/,$(EXAMFONTFILES)))
-patterndeps = $(_FORCED) $(_TEST_DEPS) $(_EXAM_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(_MAKE_DEPS) $(_INSTALL) all
+patterndeps = $(_FORCED) $(_TEST_DEPS) $(_EXAM_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(_INSTALL) all
 
 %.pdf: %.sil $$(patterndeps)
 	$(runsile)
