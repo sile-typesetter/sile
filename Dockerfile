@@ -22,6 +22,7 @@ RUN git fetch --tags ||:
 RUN ./bootstrap.sh
 RUN ./configure
 RUN make
+RUN make check
 RUN make install DESTDIR=/pkgdir
 
 FROM sile-base AS sile
@@ -32,6 +33,7 @@ LABEL version="$sile_tag"
 COPY build-aux/docker-fontconfig.conf /etc/fonts/conf.d/99-docker.conf
 
 COPY --from=sile-builder /pkgdir /
+RUN sile --version
 
 WORKDIR /data
 ENTRYPOINT ["sile"]
