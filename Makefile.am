@@ -9,7 +9,7 @@ endif
 
 MANUAL = documentation/sile.pdf
 
-Makefile-distfiles: build-aux/list-dist-files.sh .version
+Makefile-distfiles: build-aux/list-dist-files.sh .version sile-dev-1.rockslock
 	$< 2>/dev/null > $@
 
 include Makefile-distfiles
@@ -51,7 +51,7 @@ if EXAMPLES
 _DATA_HOOK_DEPS += $(EXAMPLES)
 endif
 
-install-data-hook: $(_DATA_HOOK_DEPS)
+install-data-hook: Makefile-distfiles $(_DATA_HOOK_DEPS)
 	:
 if MANUAL
 	rm -f "$(DESTDIR)/$(datarootdir)/$<"
