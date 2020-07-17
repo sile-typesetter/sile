@@ -337,7 +337,7 @@ include Makefile-luarocks
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles
 
 .PHONY: docker
-docker: Dockerfile build-aux/docker-entrypoint.sh
+docker: Dockerfile
 	docker build --tag siletypesetter/sile:HEAD ./
 
 gource.webm:

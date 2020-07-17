@@ -30,9 +30,8 @@ LABEL maintainer="Caleb Maclennan <caleb@alerque.com>"
 LABEL version="$sile_tag"
 
 COPY build-aux/docker-fontconfig.conf /etc/fonts/conf.d/99-docker.conf
-COPY build-aux/docker-entrypoint.sh /usr/local/bin
 
 COPY --from=sile-builder /pkgdir /
 
 WORKDIR /data
-ENTRYPOINT ["docker-entrypoint.sh"]
+ENTRYPOINT ["sile"]
