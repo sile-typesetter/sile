@@ -22,6 +22,7 @@ RUN git fetch --tags ||:
 RUN ./bootstrap.sh
 RUN ./configure
 RUN make
+RUN make check
 RUN make install DESTDIR=/pkgdir
 
 FROM sile-base AS sile
@@ -30,9 +31,9 @@ LABEL maintainer="Caleb Maclennan <caleb@alerque.com>"
 LABEL version="$sile_tag"
 
 COPY build-aux/docker-fontconfig.conf /etc/fonts/conf.d/99-docker.conf
-COPY build-aux/docker-entrypoint.sh /usr/local/bin
 
 COPY --from=sile-builder /pkgdir /
+RUN sile --version
 
 WORKDIR /data
-ENTRYPOINT ["docker-entrypoint.sh"]
+ENTRYPOINT ["sile"]

@@ -73,18 +73,12 @@ Users of WSL (Windows Subsytem for Linux) may use the package manager of their c
 
 Docker images are available as [siletypesetter/sile](https://hub.docker.com/repository/docker/siletypesetter/sile). Released versions are tagged to match (e.g. `v.0.10.0`), the latest release will be tagged `latest`, and a `master` tag is also available with the freshest development build. In order to be useful you need to tell the Docker run command how to connect your source documents (and hence give it place to write the output) as well as tell it who you are on the host machine so the output is generated inside the container with the expected ownership. You may find it easiest to run with an alias like this:
 
-    $ alias sile-docker='docker run --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest sile'
-    $ sile-docker input.sil
-
-If you wish to connect to the SILE interactive readline interface using Docker:
-
-    $ docker run -it siletypesetter/sile:latest
+    $ alias sile='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest'
+    $ sile input.sil
 
 One notable issue with using SILE from a Docker contaner is that it will not have access to your system's fonts by default. You can map a folder of fonts (any tree usable by fontconfig) into the container. This could be your system's default font directory, your user one, a project specific folder, or anything of your choosing. You can see where fonts are found on your system using `fc-list`. The path of your choosing from the host system should be passed as a volume mounted on `/fonts` inside the container like this:
 
-    $ docker run --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:master
-
-*(Note this feature is not currently in the latest released version, hence the use of `master` in this example.)*
+    $ docker run -it --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest
 
 #### Nix
 
