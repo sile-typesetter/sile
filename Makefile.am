@@ -30,9 +30,12 @@ SHELL = bash
 
 BUILT_SOURCES = .version
 
+CONFIGURE_DEPENDENCIES = .version
+
 .version: $(shell test -e .git && awk '{print ".git/" $$2}' .git/HEAD)
 	mv $@{,-prev} 2>/dev/null || touch $@-prev
 	( test -e .git && ./build-aux/git-version-gen .tarball-version || echo $(VERSION) ) > $@
+	touch -r $(or $<,configure) $@
 	cmp -s $@{,-prev} || autoreconf configure.ac --force -W none
 	sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
 
