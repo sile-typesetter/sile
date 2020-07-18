@@ -110,7 +110,9 @@ AX_LUA_HEADERS
 AX_LUA_LIBS
 
 AS_IF([test "x$with_system_luarocks" = "xyes"], [
-    AX_LUA_MODULE([bit32], [bit32])
+    AS_IF([test "$LUA_SHORT_VERSION" -lt 52],
+        AX_LUA_MODULE([bit32], [bit32])
+    )
     AX_LUA_MODULE([lpeg], [lpeg])
     AX_LUA_MODULE([cassowary], [cassowary])
     AS_IF([test "$LUA_SHORT_VERSION" -lt 53],

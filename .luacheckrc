@@ -25,7 +25,6 @@ globals = {
   "SU",
   "std",
   "pl",
-  "bit32",
   "SYSTEM_SILE_PATH",
   "SHARED_LIB_EXT",
   "ProFi"
