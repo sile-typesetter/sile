@@ -1,6 +1,8 @@
-if not SILE.shapers then SILE.shapers = { } end
 local hb = require("justenoughharfbuzz")
 local icu = require("justenoughicu")
+local bitshim = require("bitshim")
+
+if not SILE.shapers then SILE.shapers = { } end
 
 SILE.settings.declare({
   name = "harfbuzz.subshapers",
@@ -62,9 +64,9 @@ SILE.shapers.harfbuzz = pl.class({
       SU.debug("fonts", "Resolved font family '"..opts.family.."' -> "..(face and face.filename))
       if not face or not face.filename then SU.error("Couldn't find face '"..opts.family.."'") end
       if SILE.makeDeps then SILE.makeDeps:add(face.filename) end
-      if bit32.rshift(face.index, 16) ~= 0 then
+      if bitshim.rshift(face.index, 16) ~= 0 then
         SU.warn("GX feature in '"..opts.family.."' is not supported, fallback to regular font face.")
-        face.index = bit32.band(face.index, 0xff)
+        face.index = bitshim.band(face.index, 0xff)
       end
       local fh, err = io.open(face.filename, "rb")
       if err then SU.error("Can't open font file '"..face.filename.."': "..err) end
