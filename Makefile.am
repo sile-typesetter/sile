@@ -9,7 +9,7 @@ endif
 
 MANUAL = documentation/sile.pdf
 
-Makefile-distfiles: build-aux/list-dist-files.sh .version sile-dev-1.rockslock
+Makefile-distfiles: build-aux/list-dist-files.sh $(wildcard .version sile-dev-1.rockslock)
 	$< 2>/dev/null > $@
 
 include Makefile-distfiles
