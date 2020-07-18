@@ -16,6 +16,7 @@ task:
     - luarocks52 install penlight
     - luarocks52 install stdlib
     - luarocks52 install vstruct
+    - git fetch --prune --tags ||:
     - ./bootstrap.sh
     - ./configure --with-system-luarocks CFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
     - gmake all
