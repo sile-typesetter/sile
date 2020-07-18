@@ -27,7 +27,6 @@ SHELL = bash
 .SECONDARY:
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
-am__remove_distdir =
 
 BUILT_SOURCES = .version
 
