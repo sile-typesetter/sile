@@ -1,6 +1,6 @@
 {
   "name": "sile",
-  "version": "0.10.7",
+  "version": "0.10.8",
   "description": "SILE Typesetter",
   "main": "sile",
   "scripts": {
