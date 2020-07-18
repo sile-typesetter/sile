@@ -49,6 +49,7 @@ rules:
     - pdf
     - readme
     - settings
+    - release
     - shaper
     - tooling
     - travis
