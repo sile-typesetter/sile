@@ -25,9 +25,14 @@ fi
 
 # Make
 # directory. This enables easy building from Github's snapshot archives
-if [ ! -e ".git" ] && [ ! -f ".tarball-version" ]; then
+if [ ! -e ".git" ]; then
+    if [ ! -f ".tarball-version" ]; then
     incomplete_source "No version information found" \
         "identify the correct version with \`echo \$version > .tarball-version\`"
+    fi
+else
+    # Just a head start to save a ./configure cycle
+    ./build-aux/git-version-gen .tarball-version > .version
 fi
 
 touch -t 197001010200 Makefile-distfiles

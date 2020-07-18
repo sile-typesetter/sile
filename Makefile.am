@@ -39,7 +39,7 @@ BUILT_SOURCES = .version
 dist-hook: lua_modules_dist | $(MANUAL) $(EXAMPLES)
 	echo $(VERSION) > $(distdir)/.tarball-version
 	cp -fa $< $(distdir)/
-	sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
+	sed -i -e '/rm -f/s/ core / /' $(distdir)/configure $(distdir)/aclocal.m4 ||:
 
 _DATA_HOOK_DEPS =
 if MANUAL
