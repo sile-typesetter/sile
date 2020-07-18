@@ -18,5 +18,6 @@ task:
     - luarocks52 install vstruct
     - ./bootstrap.sh
     - ./configure --with-system-luarocks CFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
+    - gmake all
     - gmake install
   test_script: gmake test
