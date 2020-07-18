@@ -17,6 +17,8 @@ if _VERSION == "Lua 5.3" then
 		band = function(a, b) return a & b end;
 		bor = function(a, b) return a | b end;
 		bxor = function(a, b) return a ~ b end;
+		lshift = function(a, b) return a << b end;
+		rshift = function(a, b) return a >> b end;
 	}]], info.source))()
 end
 
@@ -28,6 +30,8 @@ if has_bit then
 		band = bit.band;
 		bor = bit.bor;
 		bxor = bit.bxor;
+		lshift = bit.lshift;
+		rshift = bit.rshift;
 	}
 end
 
@@ -38,6 +42,8 @@ if has_bit32 then
 		band = bit32.band;
 		bor = bit32.bor;
 		bxor = bit32.bxor;
+		lshift = bit32.lshift;
+		rshift = bit32.rshift;
 	}
 end
 
