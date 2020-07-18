@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -37,7 +37,7 @@ jobs:
           echo "::set-env name=MAKEFLAGS::-j$(nproc) -Otarget"
       - name: Make package
         run: |
-          make dist
+          make am__remove_distdir= dist
       - name: Upload Artifacts
         if: ${{ !contains(github.ref, 'refs/tags/v') }}
         uses: actions/upload-artifact@v2

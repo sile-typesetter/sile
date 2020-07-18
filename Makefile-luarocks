@@ -20,8 +20,9 @@ lua_modules: $(LUAMODSPEC) $(shell $(rocksmatch) || echo force)
 	else
 		rm -rf lua_modules
 		cp -a lua_modules_dist lua_modules
-		$(foreach LUA,$(filter-out $(LUA_VERSION),$(SUPPORTED_LUAS)),
-		find lua_modules -maxdepth 3 -type d -name "*$(LUA)" -execdir rm -rf {} \;)
+		for luaver in $(filter-out $(LUA_VERSION),$(SUPPORTED_LUAS)); do
+			find lua_modules -maxdepth 3 -type d -name "*$$luaver" -execdir rm -rf {} \;
+		done
 	fi
 
 $(LUAMODLOCK): lua_modules $(LUAMODSPEC)
@@ -37,8 +38,9 @@ disallow-dist-with-system-luarocks:
 endif
 
 .PHONY: lua_modules_dist
-lua_modules_dist: LUAROCKS = luarocks --tree lua_modules_dist
-lua_modules_dist: $(LUAMODSPEC) force disallow-dist-with-system-luarocks
-	$(foreach LUA,$(SUPPORTED_LUAS),
-	$(LUAROCKS) $(LUAROCKSARGS) --lua-version $(LUA) install --only-deps $<)
+lua_modules_dist: $(foreach LUA,$(SUPPORTED_LUAS),lua_modules_dist_$(LUA))
 
+.PHONY: lua_modules_dist_%
+lua_modules_dist_%: LUAROCKS = luarocks --tree lua_modules_dist --lua-version $*
+lua_modules_dist_%: $(LUAMODSPEC) disallow-dist-with-system-luarocks
+	$(LUAROCKS) $(LUAROCKSARGS) install --only-deps $<

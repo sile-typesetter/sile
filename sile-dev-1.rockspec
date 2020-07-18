@@ -10,11 +10,11 @@ source = {
 dependencies = {
   "lua >= 5.1",
   "bit32",
-  "lpeg == 1.0.2-1",
   "cassowary == 2.2-1",
-  "cosmo == 16.06.04-1",
   "compat53 == 0.8-1",
+  "cosmo == 16.06.04-1",
   "linenoise == 0.9-1",
+  "lpeg == 1.0.2-1",
   "lua-zlib == 1.2-0",
   "lua_cliargs == 2.3-3",
   "luaepnf == 0.3-2",
