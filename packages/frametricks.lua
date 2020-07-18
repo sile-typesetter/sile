@@ -1,4 +1,5 @@
 local breakFrameVertical = function (after)
+  SILE.typesetter:runHooks("beforesplitframe")
   local cFrame = SILE.typesetter.frame
   local totalHeight
   if after then
@@ -30,16 +31,20 @@ local breakFrameVertical = function (after)
   cFrame.next = newFrame.id
   SILE.documentState.thisPageTemplate.frames[newFrame.id] = newFrame
   newFrame:constrain("top", cFrame:top() + totalHeight)
+  SILE.typesetter:runHooks("beforenextframe")
   if (after) then
     SILE.typesetter:initFrame(cFrame)
   else
     SILE.typesetter:initFrame(newFrame)
   end
+  SILE.typesetter:runHooks("afternextframe")
+  SILE.typesetter:runHooks("aftersplitframe")
   -- SILE.outputter:debugFrame(cFrame)
   -- SILE.outputter:debugFrame(newFrame)
 end
 
 local breakFrameHorizontalAt = function (offset)
+  SILE.typesetter:runHooks("beforesplitframe")
   local cFrame = SILE.typesetter.frame
   if not offset or not (offset > 0) then
     SILE.typesetter:chuck()
@@ -63,7 +68,10 @@ local breakFrameHorizontalAt = function (offset)
   cFrame:constrain("right", oldLeft + offset)
   -- SILE.outputter:debugFrame(cFrame)
   -- SILE.outputter:debugFrame(newFrame)
+  SILE.typesetter:runHooks("beforenextframe")
   SILE.typesetter:initFrame(newFrame)
+  SILE.typesetter:runHooks("afternextframe")
+  SILE.typesetter:runHooks("aftersplitframe")
 end
 
 local shiftframeedge = function (frame, options)

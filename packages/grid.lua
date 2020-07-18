@@ -63,6 +63,18 @@ local function startGridInFrame (typesetter)
   end
 end
 
+local function saveGridCursor (typesetter)
+  -- TODO: fix the assumption that top() is the anchor for the page advance direction
+  SILE.scratch.savedGridCursor = typesetter.frame:top() + typesetter.frame.state.totals.gridCursor
+  SU.debug("que", "save")
+end
+
+local function restoreGridCursor (typesetter)
+  local currentCursor = typesetter.frame:top() + typesetter.frame.state.totals.gridCursor
+  typesetter.frame.state.totals.gridCursor = currentCursor - SILE.scratch.savedGridCursor
+  SU.debug("que", "restore", currentCursor, SILE.scratch.savedGridCursor)
+end
+
 local function debugGrid ()
   local frame = SILE.typesetter.frame
   local gridCursor = gridSpacing
@@ -138,7 +150,7 @@ local oldPageBuilder, oldLeadingFor, oldPushVglue, oldPushExplicitVglue
 
 SILE.registerCommand("grid:debug", function (_, _)
   debugGrid()
-  SILE.typesetter:registerNewFrameHook(debugGrid)
+  SILE.typesetter:registerHook("afternextframe", debugGrid)
 end)
 
 SILE.registerCommand("grid", function (options, _)
@@ -156,7 +168,9 @@ SILE.registerCommand("grid", function (options, _)
   if SILE.typesetter.frame then
     startGridInFrame(SILE.typesetter)
   end
-  SILE.typesetter:registerNewFrameHook(startGridInFrame)
+  SILE.typesetter:registerHook("beforesplitframe", saveGridCursor)
+  SILE.typesetter:registerHook("afternextframe", startGridInFrame)
+  SILE.typesetter:registerHook("aftersplitframe", restoreGridCursor)
 end, "Begins typesetting on a grid spaced at <spacing> intervals.")
 
 SILE.registerCommand("no-grid", function (_, _)
