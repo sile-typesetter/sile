@@ -180,7 +180,7 @@ _FORCED = $(and $(SILE_COVERAGE)$(CLEAN),force)
 _TEST_DEPS = $(and $(filter tests/%,$@),$(addprefix .fonts/,$(TESTFONTFILES)))
 _DOCS_DEPS = $(and $(filter docs/%,$@),$(addprefix .fonts/,$(DOCSFONTFILES)))
 _EXAM_DEPS = $(and $(filter examples/%,$@),$(addprefix .fonts/,$(EXAMFONTFILES)))
-patterndeps = $(_FORCED) $(_TEST_DEPS) $(_EXAM_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(_INSTALLROCKS) all
+patterndeps = $(_FORCED) $(_TEST_DEPS) $(_EXAM_DEPS) $(_DOCS_DEPS) sile | $(DEPDIRS) $(_INSTALLROCKS) all
 
 %.pdf: %.sil $$(patterndeps)
 	$(runsile)
