@@ -9,7 +9,7 @@ endif
 
 MANUAL = documentation/sile.pdf
 
-Makefile-distfiles: build-aux/list-dist-files.sh .version sile-dev-1.rockslock
+Makefile-distfiles: build-aux/list-dist-files.sh $(wildcard .version sile-dev-1.rockslock)
 	$< 2>/dev/null > $@
 
 include Makefile-distfiles
@@ -27,7 +27,6 @@ SHELL = bash
 .SECONDARY:
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
-am__remove_distdir =
 
 BUILT_SOURCES = .version
 
@@ -40,7 +39,7 @@ BUILT_SOURCES = .version
 dist-hook: lua_modules_dist | $(MANUAL) $(EXAMPLES)
 	echo $(VERSION) > $(distdir)/.tarball-version
 	cp -fa $< $(distdir)/
-	sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
+	sed -i -e '/rm -f/s/ core / /' $(distdir)/configure $(distdir)/aclocal.m4 ||:
 
 _DATA_HOOK_DEPS =
 if MANUAL
