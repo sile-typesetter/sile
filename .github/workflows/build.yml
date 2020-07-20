@@ -21,7 +21,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            lua_modules_dist
+            lua_modules
           key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile-dev-1.rockspec') }}
       - name: Fetch Tags
         run: |
@@ -37,13 +37,13 @@ jobs:
           echo "::set-env name=MAKEFLAGS::-j$(nproc) -Otarget"
       - name: Make package
         run: |
-          make am__remove_distdir= dist
+          make dist
       - name: Upload Artifacts
         if: ${{ !contains(github.ref, 'refs/tags/v') }}
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.DISTDIR }}
-          path: '*${{ env.DISTDIR }}/'
+          path: ${{ env.DISTDIR }}.zip
       - name: Release
         uses: softprops/action-gh-release@v1
         if: contains(github.ref, 'refs/tags/v')

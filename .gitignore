@@ -1,5 +1,6 @@
 # http://www.gnu.org/software/automake
 
+Makefile
 Makefile.in
 
 # http://www.gnu.org/software/autoconf
@@ -34,7 +35,6 @@ AUTHORS
 COPYING
 INSTALL
 ChangeLog
-Makefile
 NEWS
 README
 THANKS
@@ -72,8 +72,9 @@ lua_modules_dist
 tags
 
 # Generated resources
+Makefile-distfiles
 documentation/*.pdf
-examples/*.pdf
+examples/**/*.pdf
 gource.webm
 .fonts/*
 .sources/*

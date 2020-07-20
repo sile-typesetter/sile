@@ -21,4 +21,4 @@ task:
     - ./configure --with-system-luarocks CFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
     - gmake all
     - gmake install
-  test_script: gmake test
+  test_script: gmake regressions

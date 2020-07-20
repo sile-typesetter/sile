@@ -79,7 +79,7 @@ before_script:
 script:
  - fold_unless_fail 'Building' 'build' sh -c './bootstrap.sh && ./configure && make'
  - fold_unless_fail 'Busted' 'busted'  make busted
- - fold_unless_fail 'Run regression tests' 'regression' make --output-sync test
+ - fold_unless_fail 'Run regression tests' 'regression' make --output-sync regressions
  - fold_unless_fail 'Compile documentation and examples' 'compile_docs' make --output-sync docs examples
 after_success:
  - $COVERAGE && travis_wait make coverage
