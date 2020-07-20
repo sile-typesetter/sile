@@ -37,11 +37,11 @@ BUILT_SOURCES = .version
 	mv $@{,-prev} 2>/dev/null || touch $@-prev
 	( test -e .git && ./build-aux/git-version-gen .tarball-version || echo $(VERSION) ) > $@
 	cmp -s $@{,-prev} || autoreconf configure.ac --force -W none
-	sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
+	build-aux/decore-automake.sh
 
 dist-hook: $(MANUAL) $(EXAMPLES)
 	echo $(VERSION) > $(distdir)/.tarball-version
-	sed -i -e '/rm -f/s/ core / /' $(distdir)/configure $(distdir)/aclocal.m4 ||:
+	cd $(distdir) && build-aux/decore-automake.sh
 
 _DATA_HOOK_DEPS =
 if MANUAL
