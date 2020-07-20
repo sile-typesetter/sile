@@ -27,11 +27,12 @@ addons:
    - poppler-utils
 env:
   global:
-   - LUAROCKS=2.4.2
+   - LUAROCKS=3.3.1
    - GRAPHITE=true
    - COVERAGE=false
    - MAKEFLAGS="--jobs=4"
   jobs:
+   - LUA=lua5.4 HARFBUZZ=2.6.8
    - LUA=lua5.3 HARFBUZZ=2.6.8
    - LUA=lua5.3 HARFBUZZ=1.4.2
    - LUA=lua5.3 HARFBUZZ=1.1.3
