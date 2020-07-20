@@ -3,29 +3,28 @@
 set -e
 set -o pipefail
 
-echo -n "nobase_dist_pkgdata_DATA = "
-{
-find core classes languages packages lua-libraries -type f -name '*.lua'
-find classes -type f -name '*.sil'
-} | xargs
+finder () {
+    echo -n ' '
+    find $@ -type f | sort | xargs echo -n ||:
+}
 
-echo -ne "\nLUAMODULES = "
-find lua_modules -type f ! -name '*~' | xargs ||:
+echo -n "nobase_dist_pkgdata_DATA ="
+finder core classes languages packages lua-libraries -name '*.lua'
+finder classes -name '*.sil'
 
-echo -ne "\nLUAMODULESDIST = "
-find lua_modules_dist -type f ! -name '*~' | xargs ||:
+echo -ne "\nLUAMODULES ="
+finder lua_modules ! -name "'*~'"
 
-echo -ne "\nTESTSRCS ?= "
-{
-find tests -maxdepth 1 -type f -name '*.sil'
-find tests -maxdepth 1 -type f -name '*.xml'
-} | xargs
+echo -ne "\nLUAMODULESDIST ="
+finder lua_modules_dist ! -name "'*~'"
 
-echo -ne "\nTESTEXPECTS ?= "
-find tests -maxdepth 1 -type f -name '*.expected' | xargs
+echo -ne "\nTESTSRCS ?="
+finder tests -maxdepth 1 -name '*.sil'
+finder tests -maxdepth 1 -name '*.xml'
 
-echo -ne "\nEXAMPLESSRCS = "
-{
-find examples -maxdepth 1 -type f -name '*.sil'
-find examples/docbook -maxdepth 1 -type f -name '*.xml'
-} | xargs
+echo -ne "\nTESTEXPECTS ?="
+finder tests -maxdepth 1 -name '*.expected'
+
+echo -ne "\nEXAMPLESSRCS ="
+finder examples -maxdepth 1 -name '*.sil'
+finder examples/docbook -maxdepth 1 -name '*.xml'
