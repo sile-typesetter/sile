@@ -21,7 +21,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            lua_modules_dist
+            lua_modules
           key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile-dev-1.rockspec') }}
       - name: Fetch Tags
         run: |
