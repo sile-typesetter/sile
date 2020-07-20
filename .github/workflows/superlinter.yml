@@ -1,0 +1,13 @@
+name: Superlinter
+
+on: [push, pull_request]
+
+jobs:
+  superlinter:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Lint Code Base
+        uses: docker://github/super-linter:v3
