@@ -9,7 +9,7 @@ endif
 
 MANUAL = documentation/sile.pdf
 
-Makefile-distfiles: build-aux/list-dist-files.sh $(wildcard .version sile-dev-1.rockslock)
+Makefile-distfiles: build-aux/list-dist-files.sh $(wildcard .version .tarball-version sile-dev-1.rockslock)
 	$< 2>/dev/null > $@
 
 include Makefile-luarocks
@@ -40,8 +40,11 @@ BUILT_SOURCES = .version
 	build-aux/decore-automake.sh
 
 dist-hook: $(MANUAL) $(EXAMPLES)
-	echo $(VERSION) > $(distdir)/.tarball-version
-	cd $(distdir) && build-aux/decore-automake.sh
+	cd $(distdir)
+	sed -i -e '/^LUAMODULES =/s/=.*/=/' Makefile-distfiles
+	echo $(VERSION) > .tarball-version
+	build-aux/decore-automake.sh
+	sed -i -e '/^LUAMODULES/d;/^\tlua_modules/d' Makefile.in
 
 _DATA_HOOK_DEPS =
 if MANUAL
