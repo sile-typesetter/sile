@@ -121,9 +121,12 @@ selfcheck: all
 	./sile -o $$output - <<< "<sile>foo</sile>"
 	pdfinfo $$output | grep SILE
 
-.PHONY: test
-test: $(TESTSRCS) $(ACTUALS)
+.PHONY: regressions
+regressions: $(TESTSRCS) $(ACTUALS)
 	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
+
+.PHONY: test
+test: regressions busted
 
 .PHONY: lint
 lint: luacheck luarocks-lint

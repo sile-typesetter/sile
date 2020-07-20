@@ -4,7 +4,7 @@
   "description": "SILE Typesetter",
   "main": "sile",
   "scripts": {
-    "test": "make test && make busted",
+    "test": "make test",
     "release": "standard-version"
   },
   "repository": {
