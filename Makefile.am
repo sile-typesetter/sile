@@ -12,15 +12,18 @@ MANUAL = documentation/sile.pdf
 Makefile-distfiles: build-aux/list-dist-files.sh $(wildcard .version sile-dev-1.rockslock)
 	$< 2>/dev/null > $@
 
+include Makefile-luarocks
+
 include Makefile-distfiles
 
+nobase_nodist_pkgdata_DATA = $(LUAMODULES)
 dist_man_MANS = sile.1
 dist_doc_DATA = README.md CHANGELOG.md
 bin_SCRIPTS = sile
 EXTRA_DIST = LICENSE spec tests examples documentation sile-dev-1.rockspec fontconfig.conf
 EXTRA_DIST += .version Makefile-distfiles
 EXTRA_DIST += build-aux/git-version-gen build-aux/list-dist-files.sh
-EXTRA_DIST += $(LUAMODULESDIST) $(MANUAL) $(EXAMPLES)
+EXTRA_DIST += $(MANUAL) $(EXAMPLES)
 
 SHELL = bash
 .ONESHELL:
@@ -36,9 +39,8 @@ BUILT_SOURCES = .version
 	cmp -s $@{,-prev} || autoreconf configure.ac --force -W none
 	sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
 
-dist-hook: lua_modules_dist | $(MANUAL) $(EXAMPLES)
+dist-hook: $(MANUAL) $(EXAMPLES)
 	echo $(VERSION) > $(distdir)/.tarball-version
-	cp -fa $< $(distdir)/
 	sed -i -e '/rm -f/s/ core / /' $(distdir)/configure $(distdir)/aclocal.m4 ||:
 
 _DATA_HOOK_DEPS =
@@ -82,7 +84,7 @@ release-preview:
 .PHONY: release
 release: tagrelease
 
-dist: examples docs all lua_modules_dist sile-$(VERSION).pdf sile-$(VERSION).md
+dist: examples docs all sile-$(VERSION).pdf sile-$(VERSION).md
 
 sile-$(VERSION).pdf: $(MANUAL)
 	cp $< $@
@@ -135,7 +137,7 @@ luacheck:
 	luacheck -j$(shell nproc) -q .
 
 .PHONY: busted
-busted: | $(_INSTALL) all
+busted: | $(_INSTALLROCKS) all
 	set -f; IFS=';'
 if SYSTEM_LUAROCKS
 	packagecpath=(./{,core/}?.$(SHARED_LIB_EXT))
@@ -171,14 +173,11 @@ define runsile =
 endef
 
 
-if !SYSTEM_LUAROCKS
-_INSTALL = installrocks
-endif
 _FORCED = $(and $(SILE_COVERAGE)$(CLEAN),force)
 _TEST_DEPS = $(and $(filter tests/%,$@),$(addprefix .fonts/,$(TESTFONTFILES)))
 _DOCS_DEPS = $(and $(filter docs/%,$@),$(addprefix .fonts/,$(DOCSFONTFILES)))
 _EXAM_DEPS = $(and $(filter examples/%,$@),$(addprefix .fonts/,$(EXAMFONTFILES)))
-patterndeps = $(_FORCED) $(_TEST_DEPS) $(_EXAM_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(_INSTALL) all
+patterndeps = $(_FORCED) $(_TEST_DEPS) $(_EXAM_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(_INSTALLROCKS) all
 
 %.pdf: %.sil $$(patterndeps)
 	$(runsile)
@@ -241,7 +240,6 @@ $(1)-$(2):
 	[[ -d libtexpdf ]] && rmdir libtexpdf
 	[[ -h libtexpdf ]] || ln -s ../libtexpdf
 	[[ -h lua_modules ]] || ln -s ../lua_modules
-	[[ -h lua_modules_dist ]] || ln -s ../lua_modules_dist
 	[[ -h node_modules ]] || ln -s ../node_modules
 	[[ -h .fonts ]] || ln -s ../.fonts
 	./bootstrap.sh
@@ -329,9 +327,6 @@ include $(wildcard $(DEPFILES))
 
 # Actual rules for downloading test fonts are in a separate file
 include Makefile-fonts
-
-# All LuaRocks handling stuff consolidated
-include Makefile-luarocks
 
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles
 

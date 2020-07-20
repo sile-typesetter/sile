@@ -17,14 +17,6 @@ finder lua-libraries -name '*.lua'
 echo -ne "\nLUAMODULES ="
 finder lua_modules ! -name "'*~'"
 
-echo -ne "\nLUAMODULESDIST = \$(LUAMODULESDIST51) \$(LUAMODULESDIST52) \$(LUAMODULESDIST53)"
-echo -ne "\nLUAMODULESDIST51 ="
-finder lua_modules_dist -path '*5.1/*' ! -name "'*~'"
-echo -ne "\nLUAMODULESDIST52 ="
-finder lua_modules_dist -path '*5.2/*' ! -name "'*~'"
-echo -ne "\nLUAMODULESDIST53 ="
-finder lua_modules_dist -path '*5.3/*' ! -name "'*~'"
-
 echo -ne "\nTESTSRCS ?="
 finder tests -maxdepth 1 -name '*.sil'
 finder tests -maxdepth 1 -name '*.xml'
