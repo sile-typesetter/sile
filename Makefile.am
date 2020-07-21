@@ -1,44 +1,60 @@
 ACLOCAL_AMFLAGS = -I m4
 AUTOMAKE_OPTIONS = foreign
 
-if SYSTEM_LIBTEXPDF
-SUBDIRS = src
-else
-SUBDIRS = libtexpdf src
-endif
-
-MANUAL = documentation/sile.pdf
-
-Makefile-distfiles: build-aux/list-dist-files.sh $(wildcard .version .tarball-version sile-dev-1.rockslock)
-	$< 2>/dev/null > $@
-
-include Makefile-luarocks
-
-include Makefile-distfiles
-
-nobase_nodist_pkgdata_DATA = $(LUAMODULES)
-dist_man_MANS = sile.1
-dist_doc_DATA = README.md CHANGELOG.md
-bin_SCRIPTS = sile
-EXTRA_DIST = LICENSE spec tests examples documentation sile-dev-1.rockspec fontconfig.conf
-EXTRA_DIST += .version Makefile-distfiles
-EXTRA_DIST += build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
-EXTRA_DIST += $(MANUAL) $(EXAMPLES)
-
-if MANUAL
-pdf_DATA = $(MANUAL)
-endif
-if EXAMPLES
-nobase_pdf_DATA = $(EXAMPLES)
-endif
-
 SHELL = bash
 .ONESHELL:
 .SECONDARY:
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
 
-BUILT_SOURCES = .version
+if SYSTEM_LIBTEXPDF
+SUBDIRS = src
+else
+SUBDIRS = libtexpdf src
+endif
+
+# Rules for installing LuaRocks locally as pkgdata_DATA
+include Makefile-luarocks
+
+# Actual rules for downloading test fonts are in a separate file
+include Makefile-fonts
+
+# Since we can't use $(wildcard ...) in automake file lists, we generate a file
+# with a script that builds our dynamic file lists instead. This is tricky,
+# because if we just include the file automake will flatten this include. By
+# using $(wildcard ...) to include it (the very function we couldn't use because
+# of the race condition it creates) we actually keep it from being flattened and
+# hence evaluated when we want it to be. Since the file always exists (see
+# BUILT_SOURCES and EXTRA_DIST) this doesn't induce a race.
+include $(wildcard Makefile-distfiles)
+
+MANUAL = documentation/sile.pdf
+EXAMPLES = $(addsuffix .pdf,$(basename $(EXAMPLESSRCS)))
+
+if MANUAL
+_MANUAL = $(MANUAL)
+endif
+
+if EXAMPLES
+_EXAMPLES = $(EXAMPLES)
+endif
+
+nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
+nobase_nodist_pkgdata_DATA = $(LUAMODULES)
+dist_man_MANS = sile.1
+dist_doc_DATA = README.md CHANGELOG.md
+dist_pdf_DATA = $(_MANUAL)
+nobase_dist_pdf_DATA = $(_EXAMPLES)
+bin_SCRIPTS = sile
+EXTRA_DIST = LICENSE spec tests examples documentation sile-dev-1.rockspec fontconfig.conf
+EXTRA_DIST += .version Makefile-distfiles
+EXTRA_DIST += build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
+EXTRA_DIST += $(MANUAL) $(EXAMPLES)
+
+Makefile-distfiles: build-aux/list-dist-files.sh $(wildcard .version .tarball-version) | $(LUAMODLOCK)
+	$< 2>/dev/null > $@
+
+BUILT_SOURCES = .version Makefile-distfiles $(dist_pdf_DATA) $(nobase_dist_pdf_DATA) $(LUAMODLOCK)
 
 .version: $(shell test -e .git && awk '{print ".git/" $$2}' .git/HEAD)
 	mv $@{,-prev} 2>/dev/null || touch $@-prev
@@ -53,7 +69,7 @@ dist-hook: $(MANUAL) $(EXAMPLES)
 	build-aux/decore-automake.sh
 	sed -i -e '/^LUAMODULES/d;/^\tlua_modules/d' Makefile.in
 
-install-data-hook: Makefile-distfiles
+install-exec-hook: all
 
 # Whether to force tests to run from scratch
 CLEAN ?=
@@ -133,7 +149,7 @@ luacheck:
 	luacheck -j$(shell nproc) -q .
 
 .PHONY: busted
-busted: | $(_INSTALLROCKS) all
+busted: sile
 	set -f; IFS=';'
 if SYSTEM_LUAROCKS
 	packagecpath=(./{,core/}?.$(SHARED_LIB_EXT))
@@ -147,8 +163,6 @@ endif
 .PHONY: docs
 docs: $(MANUAL)
 
-EXAMPLES = $(addsuffix .pdf,$(basename $(EXAMPLESSRCS)))
-
 .PHONY: examples
 examples: $(EXAMPLES)
 
@@ -159,7 +173,7 @@ pages = pdfinfo $@ | awk '$$1 == "Pages:" {print $$2}' || echo 0
 silepass = $(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@ && pg0=$${pg} pg=$$($(pages))
 define runsile =
 	pg0=$$($(pages)) hadtoc=$$($(hastoc))
-	mkdir -p $(DEPDIR)
+	mkdir -p $(DEPDIR)/$$(dirname $@)
 	$(silepass)
 	export -n SILE_COVERAGE
 	if $(hastoc); then
@@ -168,12 +182,11 @@ define runsile =
 	fi
 endef
 
-
 _FORCED = $(and $(SILE_COVERAGE)$(CLEAN),force)
 _TEST_DEPS = $(and $(filter tests/%,$@),$(addprefix .fonts/,$(TESTFONTFILES)))
 _DOCS_DEPS = $(and $(filter docs/%,$@),$(addprefix .fonts/,$(DOCSFONTFILES)))
 _EXAM_DEPS = $(and $(filter examples/%,$@),$(addprefix .fonts/,$(EXAMFONTFILES)))
-patterndeps = $(_FORCED) $(_TEST_DEPS) $(_EXAM_DEPS) $(_DOCS_DEPS) sile | $(DEPDIRS) $(_INSTALLROCKS) all
+patterndeps = $(_FORCED) $(_TEST_DEPS) $(_EXAM_DEPS) $(_DOCS_DEPS) sile | $(DEPDIRS) $(LUAMODLOCK)
 
 %.pdf: %.sil $$(patterndeps)
 	$(runsile)
@@ -308,7 +321,7 @@ tests/%.actual: tests/%.xml $$(patterndeps)
 DEPFILES = $(addsuffix .d,$(addprefix $(DEPDIR)/,$(basename $(TESTSRCS) $(MANUAL) $(EXAMPLES))))
 DEPDIRS = $(sort $(dir $(DEPFILES)))
 
-$(DEPDIRS):
+$(DEPDIRS): Makefile-distfiles
 	mkdir -p $@
 
 $(DEPFILES): | $(DEPDIRS)
@@ -320,9 +333,6 @@ include $(wildcard $(DEPFILES))
 
 .sources:
 	[[ -h .sources ]] || mkdir -p $@
-
-# Actual rules for downloading test fonts are in a separate file
-include Makefile-fonts
 
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles
 
