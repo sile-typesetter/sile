@@ -25,6 +25,13 @@ EXTRA_DIST += .version Makefile-distfiles
 EXTRA_DIST += build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
 EXTRA_DIST += $(MANUAL) $(EXAMPLES)
 
+if MANUAL
+pdf_DATA = $(MANUAL)
+endif
+if EXAMPLES
+nobase_pdf_DATA = $(EXAMPLES)
+endif
+
 SHELL = bash
 .ONESHELL:
 .SECONDARY:
@@ -46,24 +53,7 @@ dist-hook: $(MANUAL) $(EXAMPLES)
 	build-aux/decore-automake.sh
 	sed -i -e '/^LUAMODULES/d;/^\tlua_modules/d' Makefile.in
 
-_DATA_HOOK_DEPS =
-if MANUAL
-_DATA_HOOK_DEPS += $(MANUAL)
-endif
-
-if EXAMPLES
-_DATA_HOOK_DEPS += $(EXAMPLES)
-endif
-
-install-data-hook: Makefile-distfiles $(_DATA_HOOK_DEPS)
-	:
-if MANUAL
-	rm -f "$(DESTDIR)/$(datarootdir)/$<"
-	install -Dm644 -t "$(DESTDIR)$(docdir)" $(MANUAL)
-endif
-if EXAMPLES
-	install -Dm644 -t "$(DESTDIR)$(docdir)/examples" $(EXAMPLES)
-endif
+install-data-hook: Makefile-distfiles
 
 # Whether to force tests to run from scratch
 CLEAN ?=
