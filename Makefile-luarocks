@@ -16,5 +16,5 @@ lua_modules: $(LUAMODSPEC) $(shell $(rocksmatch) || echo force)
 $(LUAMODLOCK): lua_modules $(LUAMODSPEC)
 	$(genrockslock) > $@
 
-sile: installrocks
+sile: $(LUAMODLOCK)
 endif

@@ -101,6 +101,7 @@ TESTFONTFILES += SBL_Hbrw.ttf
 
 .fonts/Cormorant%: .sources/Cormorant_Install_v3.601.zip | .fonts
 	bsdtar -x -f $< -C $(dir $@) --strip-components 2 "Cormorant_Install_v3.601/1. TrueType Font Files/$(notdir $@)"
+	touch $@
 
 .fonts/CrimsonPro%: .sources/CrimsonPro.zip | .fonts
 	bsdtar -x -f $< -C $(dir $@) --strip-components 1 static/$(notdir $@)
