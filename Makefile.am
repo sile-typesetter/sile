@@ -22,7 +22,7 @@ dist_doc_DATA = README.md CHANGELOG.md
 bin_SCRIPTS = sile
 EXTRA_DIST = LICENSE spec tests examples documentation sile-dev-1.rockspec fontconfig.conf
 EXTRA_DIST += .version Makefile-distfiles
-EXTRA_DIST += build-aux/git-version-gen build-aux/list-dist-files.sh
+EXTRA_DIST += build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
 EXTRA_DIST += $(MANUAL) $(EXAMPLES)
 
 SHELL = bash
