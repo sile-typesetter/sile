@@ -170,14 +170,14 @@ SILE.outputters.libtexpdf = {
   debugHbox = function (hbox, scaledWidth)
     ensureInit()
     pdf.colorpush_rgb(0.8, 0.3, 0.3)
-    pdf.setrule(cursorX, cursorY+(hbox.height), scaledWidth+0.5, 0.5)
-    pdf.setrule(cursorX, cursorY, 0.5, hbox.height)
-    pdf.setrule(cursorX, cursorY, scaledWidth+0.5, 0.5)
-    pdf.setrule(cursorX+scaledWidth, cursorY, 0.5, hbox.height)
+    pdf.setrule(cursorX, cursorY+(hbox.height:tonumber()), scaledWidth:tonumber()+0.5, 0.5)
+    pdf.setrule(cursorX, cursorY, 0.5, hbox.height:tonumber())
+    pdf.setrule(cursorX, cursorY, scaledWidth:tonumber()+0.5, 0.5)
+    pdf.setrule(cursorX+scaledWidth:tonumber(), cursorY, 0.5, hbox.height:tonumber())
     if hbox.depth then
-      pdf.setrule(cursorX, cursorY-(hbox.depth), scaledWidth, 0.5)
-      pdf.setrule(cursorX+scaledWidth, cursorY-(hbox.depth), 0.5, hbox.depth)
-      pdf.setrule(cursorX, cursorY-(hbox.depth), 0.5, hbox.depth)
+      pdf.setrule(cursorX, cursorY-(hbox.depth:tonumber()), scaledWidth:tonumber(), 0.5)
+      pdf.setrule(cursorX+scaledWidth:tonumber(), cursorY-(hbox.depth:tonumber()), 0.5, hbox.depth:tonumber())
+      pdf.setrule(cursorX, cursorY-(hbox.depth:tonumber()), 0.5, hbox.depth:tonumber())
 
     end
     pdf.colorpop()
