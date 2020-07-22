@@ -1,18 +1,19 @@
 local function transformContent(content, transformFunction, extraArgs)
   local newContent = {}
-  for k, v in pairs(content) do
-    if type(k) == "number" then
-      if type(v) == "string" then
-        local transformed = transformFunction(v, content, extraArgs)
-        if type(transformed) == "table" then
-          for i = 1, #transformed do newContent[#newContent+1] = transformed[i] end
-        else
-          newContent[#newContent+1] = transformed
-        end
+  for k, v in ipairs(content) do
+    if type(v) == "string" then
+      local transformed = transformFunction(v, content, extraArgs)
+      if type(transformed) == "table" then
+        for i = 1, #transformed do newContent[#newContent+1] = transformed[i] end
       else
-        newContent[#newContent+1] = transformContent(v, transformFunction, extraArgs)
+        newContent[#newContent+1] = transformed
       end
     else
+      newContent[#newContent+1] = transformContent(v, transformFunction, extraArgs)
+    end
+  end
+  for k, v in pairs(content) do
+    if type(k) ~= "number" then
       newContent[k] = v
     end
   end
