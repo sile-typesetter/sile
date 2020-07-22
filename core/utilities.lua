@@ -125,6 +125,22 @@ utilities.map = function (func, array)
   return new_array
 end
 
+utilities.sortedpairs = function (t)
+  local keyset={}
+  for k,v in pairs(t) do
+    keyset[#keyset+1]=k
+  end
+  table.sort(keyset, function(a,b)
+    if type(a) ~= type(b) then return false end
+    return a < b
+  end)
+  return coroutine.wrap(function()
+    for i =1,#keyset do
+      coroutine.yield(keyset[i], t[keyset[i]])
+    end
+  end)
+end
+
 utilities.splice = function (array, start, stop, replacement)
   local ptr = start
   local room = stop - start + 1
