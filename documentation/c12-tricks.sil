@@ -442,32 +442,63 @@ When you are experimenting with SILE and its API, you may find it necessary
 to get further information about what SILE is up to. SILE has a variety of
 debugging switches that can be turned on by the command line or by Lua code.
 
-Running SILE with the \code{--debug \em{facility}} switch will turn on debugging
-for a particular area of SILE’s operation:
+Running SILE with the \code{--debug \em{facility}} switch will turn on
+debugging for a particular area or areas of SILE’s operation:
+
+% Scan code for currently used flags:
+% rg -I '.*SU.debug(ging)?\("(\w+)".*' -r '$2' | =sort -u
+
+\noindent{}• \code{ast} provides information about how SILE parsed the document
+into an abstract syntax tree.
+
+\noindent{}• \code{break} provides (copious) information about the line
+breaking algorithm.
+
+\noindent{}• \code{fonts} shows what font families and attributes were
+attempted and what font files were used to supply them.
+
+\noindent{}• \code{frames} draws red boxes around the frames on the page.
+
+\noindent{}• \code{hboxes} draws red boxes around all the hboxes on the page.
+
+\noindent{}• \code{pagebuilder} helps to debug problems when determining page
+breaks.
+
+\noindent{}• \code{macros} notes when new functions are defined from TeXlike
+macro syntax.
+
+\noindent{}• \code{makedeps} lists resources that were determined to be
+dependencies (use with \code{-m}).
+
+\noindent{}• \code{profile} turns on Lua profiling, which gives a report on
+where the Lua interpreter is spending its time while processing your document.
+It also makes SILE go really, really slow.
+
+\noindent{}• \code{pushback} notes how already-shaped content that didn't fit
+in frames is processed as it migrates to following ones.
+
+\noindent{}• \code{tokenizer} shows how input content gets broken up into
+segments before shaping.
 
 \noindent{}• \code{typesetter} provides general debugging for the typesetter:
 turning characters into boxes, boxes into lines, lines into paragraphs, and
 paragraphs into pages.
 
-\noindent{}• \code{pagebuilder} helps to debug problems when determining page
-breaks.
+\noindent{}• \code{vboxes} provides even more information about page break
+decisions, showing you what vboxes were in SILE's queue when considering the
+breaking.
 
-\noindent{}• \code{vboxes} provides even more information about page break decisions, showing you what vboxes were in SILE's queue when considering the breaking.
+\noindent{}• \code{versions} gives a report on the versions of libraries and
+fonts in use; please include this information when reporting bugs in SILE!
 
-\noindent{}• \code{break} provides (copious) information about the line breaking
-algorithm.
+\noindent{}• Any package or other area of SILE’s operation may define their own
+debugging tags; the \code{insertions} package does this, as do the Japanese and
+Uyghur language support systems (\code{--debug uyghur}). Often the debug flag
+is the name of the package or the function.
 
-\noindent{}• \code{frames} puts red boxes around the frames on the page.
-
-\noindent{}• \code{profile} turns on Lua profiling, which gives a report on where the Lua interpreter is spending its time while processing your document. It also makes SILE go really, really slow.
-
-\noindent{}• \code{versions} gives a report on the versions of libraries and fonts in use; please include this information when reporting bugs in SILE!
-
-\noindent{}• Any package or other area of SILE’s operation may define their own debugging facility; the \code{insertions} package does this, as does the Uyghur language support system (\code{--debug uyghur}).
-
-Multiple facilities can be turned on by separating them with commas:
-\code{--debug typesetter,break} will turn on debugging information for the
-typesetter and line breaker.
+Multiple facilities can be turned on by adding the flag multiple times or by
+separating them with commas: \code{--debug typesetter,break} will turn on
+debugging information for the typesetter and line breaker.
 
 From Lua, you can add entries to the \code{SILE.debugFlags} table to turn on
 debugging for a given facility. This can be useful for temporarily debugging

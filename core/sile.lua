@@ -108,7 +108,7 @@ as the input file with the extension changed to .pdf.
 Options:
 
   -b, --backend=VALUE      choose an alternative output backend
-  -d, --debug=VALUE        debug SILE's operation
+  -d, --debug=VALUE        show debug information for tagged aspects of SILE's operation
   -e, --evaluate=VALUE     evaluate some Lua code before processing file
   -f, --fontmanager=VALUE  choose an alternative font manager
   -m, --makedeps=[FILE]    generate a list of dependencies in Makefile format
@@ -133,7 +133,13 @@ Options:
     SILE.backend = opts.backend
   end
   if opts.debug then
-    for _, v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = true end
+    if type(opts.debug) ~= "table" then opts.debug = { opts.debug } end
+    for _, value in ipairs(opts.debug) do
+        SU.dump(value)
+      for _, flag in ipairs(std.string.split(value, ",")) do
+        SILE.debugFlags[flag] = true
+      end
+    end
   end
   if opts.evaluate then
     local statements = type(opts.evaluate) == "table" and opts.evaluate or { opts.evaluate }
