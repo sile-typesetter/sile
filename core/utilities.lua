@@ -125,18 +125,19 @@ utilities.map = function (func, array)
   return new_array
 end
 
-utilities.sortedpairs = function (t)
-  local keyset={}
-  for k,v in pairs(t) do
-    keyset[#keyset+1]=k
+-- TODO: Replace with pl.tablex.sort()?
+utilities.sortedpairs = function (input)
+  local keys = {}
+  for k, _ in pairs(input) do
+    keys[#keys+1] = k
   end
-  table.sort(keyset, function(a,b)
+  table.sort(keys, function(a, b)
     if type(a) ~= type(b) then return false end
     return a < b
   end)
   return coroutine.wrap(function()
-    for i =1,#keyset do
-      coroutine.yield(keyset[i], t[keyset[i]])
+    for i = 1, #keys do
+      coroutine.yield(keys[i], input[keys[i]])
     end
   end)
 end
