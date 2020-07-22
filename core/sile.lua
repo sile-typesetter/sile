@@ -108,7 +108,7 @@ as the input file with the extension changed to .pdf.
 Options:
 
   -b, --backend=VALUE      choose an alternative output backend
-  -d, --debug=VALUE        debug SILE's operation
+  -d, --debug=VALUE        show debug information for tagged aspects of SILE's operation
   -e, --evaluate=VALUE     evaluate some Lua code before processing file
   -f, --fontmanager=VALUE  choose an alternative font manager
   -m, --makedeps=[FILE]    generate a list of dependencies in Makefile format

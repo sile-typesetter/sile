@@ -443,7 +443,7 @@ to get further information about what SILE is up to. SILE has a variety of
 debugging switches that can be turned on by the command line or by Lua code.
 
 Running SILE with the \code{--debug \em{facility}} switch will turn on debugging
-for a particular area of SILE’s operation:
+for a particular area or areas of SILE’s operation:
 
 \noindent{}• \code{typesetter} provides general debugging for the typesetter:
 turning characters into boxes, boxes into lines, lines into paragraphs, and
@@ -465,9 +465,9 @@ algorithm.
 
 \noindent{}• Any package or other area of SILE’s operation may define their own debugging facility; the \code{insertions} package does this, as does the Uyghur language support system (\code{--debug uyghur}).
 
-Multiple facilities can be turned on by separating them with commas:
-\code{--debug typesetter,break} will turn on debugging information for the
-typesetter and line breaker.
+Multiple facilities can be turned on by adding the flag multiple times or by
+separating them with commas: \code{--debug typesetter,break} will turn on
+debugging information for the typesetter and line breaker.
 
 From Lua, you can add entries to the \code{SILE.debugFlags} table to turn on
 debugging for a given facility. This can be useful for temporarily debugging
