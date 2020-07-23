@@ -243,11 +243,7 @@ clean-worktrees:
 			done
 	fi
 
-define time_action =
-	export TIMEFORMAT=$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
-	{ time (./sile documentation/sile.sil > /dev/null 2>&1) } 2> time.json
-endef
-
+time_action ?= ./sile documentation/sile.sil
 make_worktree_rules = $(eval $(foreach SHA,$(_HEADSHA) $(_BASESHA),$(call worktree_sha,$(1),$(shell git rev-parse --short=7 $(SHA)))))
 
 define worktree_sha =
@@ -261,7 +257,9 @@ $(1)-$(2):
 	[[ -h lua_modules ]] || ln -s ../lua_modules
 	[[ -h node_modules ]] || ln -s ../node_modules
 	[[ -h .fonts ]] || ln -s ../.fonts
+	[[ -h .sources ]] || ln -s ../.sources
 	./bootstrap.sh
+	cp ../config.status .
 	./configure
 	make
 
@@ -271,9 +269,10 @@ $(1)-$(2)/%: $(1)-$(2)
 	make $$*
 
 .PRECIOUS: $(1)-$(2)/time.json
-$(1)-$(2)/time.json: $(1)-$(2) $(1)-$(2)/sile
+$(1)-$(2)/time.json: $(1)-$(2)
 	cd $$<
-	$$(time_action)
+	export TIMEFORMAT=$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
+	{ time ($$(time_action) > /dev/null 2>&1) } 2> time.json
 
 endef
 
@@ -289,7 +288,8 @@ time-%.json: benchmark-%/time.json
 
 .PRECIOUS: time.json
 time.json: | $(_BUILT_SUBDIRS)
-	$(time_action)
+	export TIMEFORMAT=$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
+	{ time ($(time_action) > /dev/null 2>&1) } 2> time.json
 
 $(call make_worktree_rules,compare)
 
@@ -331,7 +331,7 @@ tests/%.actual: tests/%.xml $$(patterndeps)
 DEPFILES = $(addsuffix .d,$(addprefix $(DEPDIR)/,$(basename $(TESTSRCS) $(MANUAL) $(EXAMPLES))))
 DEPDIRS = $(sort $(dir $(DEPFILES)))
 
-$(DEPDIRS): Makefile-distfiles
+$(DEPDIRS): | Makefile-distfiles
 	mkdir -p $@
 
 $(DEPFILES): | $(DEPDIRS)
