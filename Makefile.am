@@ -54,7 +54,7 @@ EXTRA_DIST += $(MANUAL) $(EXAMPLES)
 Makefile-distfiles: build-aux/list-dist-files.sh $(wildcard .version .tarball-version) | $(LUAMODLOCK)
 	$< 2>/dev/null > $@
 
-BUILT_SOURCES = .version Makefile-distfiles $(dist_pdf_DATA) $(nobase_dist_pdf_DATA) $(LUAMODLOCK)
+BUILT_SOURCES = .version Makefile-distfiles
 
 .version: $(shell test -e .git && awk '{print ".git/" $$2}' .git/HEAD)
 	mv $@{,-prev} 2>/dev/null || touch $@-prev
@@ -68,8 +68,6 @@ dist-hook: $(MANUAL) $(EXAMPLES)
 	echo $(VERSION) > .tarball-version
 	build-aux/decore-automake.sh
 	sed -i -e '/^LUAMODULES/d;/^\tlua_modules/d' Makefile.in
-
-install-exec-hook: all
 
 # Whether to force tests to run from scratch
 CLEAN ?=
@@ -124,7 +122,7 @@ ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 check: selfcheck
 
 .PHONY: selfcheck
-selfcheck: all
+selfcheck: | $(_BUILT_SUBDIRS)
 	output=$$(mktemp --suffix=.pdf)
 	trap 'rm -f $$output' EXIT SIGHUP SIGTERM
 	./sile -o $$output - <<< "<sile>foo</sile>"
@@ -186,7 +184,19 @@ _FORCED = $(and $(SILE_COVERAGE)$(CLEAN),force)
 _TEST_DEPS = $(and $(filter tests/%,$@),$(addprefix .fonts/,$(TESTFONTFILES)))
 _DOCS_DEPS = $(and $(filter documentation/%,$@),$(addprefix .fonts/,$(DOCSFONTFILES)))
 _EXAM_DEPS = $(and $(filter examples/%,$@),$(addprefix .fonts/,$(EXAMFONTFILES)))
-patterndeps = $(_FORCED) $(_TEST_DEPS) $(_EXAM_DEPS) $(_DOCS_DEPS) sile | $(DEPDIRS) $(LUAMODLOCK)
+
+# TODO: remove _BUILT_SUBDIRS hack and replace it with something sensible when
+# these subdirs don't do crazy things like copying files outside of their own trees!
+_BUILT_SUBDIRS = .built-subdirs
+_SUBDIR_TELLS = core/justenoughharfbuzz.so libtexpdf/.libs/libtexpdf.so.0.0.0
+$(_BUILT_SUBDIRS): $(_SUBDIR_TELLS)
+	touch $@
+
+$(_SUBDIR_TELLS):
+	$(MAKE) $(AM_MAKEFLAGS) all-recursive
+#	$(error Running `make install`, `make dist`, or other end-game targets before `make all` unspported.)
+
+patterndeps = $(_FORCED) $(_TEST_DEPS) $(_EXAM_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(LUAMODLOCK) $(_BUILT_SUBDIRS)
 
 %.pdf: %.sil $$(patterndeps)
 	$(runsile)
@@ -278,7 +288,7 @@ time-%.json: benchmark-%/time.json
 	cp $< $@
 
 .PRECIOUS: time.json
-time.json: sile
+time.json: | $(_BUILT_SUBDIRS)
 	$(time_action)
 
 $(call make_worktree_rules,compare)
@@ -334,7 +344,7 @@ include $(wildcard $(DEPFILES))
 .sources:
 	[[ -h .sources ]] || mkdir -p $@
 
-CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles
+CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles $(_BUILT_SUBDIRS)
 
 .PHONY: docker
 docker: Dockerfile
