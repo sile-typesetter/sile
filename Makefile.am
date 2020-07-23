@@ -82,7 +82,7 @@ tagrelease:
 	npm run release -- $(and $(RELTYPE),--release-as $(RELTYPE))
 
 .PHONY: prerelease
-prerelease: all test busted examples docs update_libtexpdf
+prerelease: test examples docs update_libtexpdf
 
 .PHONY: release-preview
 release-preview:
@@ -91,7 +91,7 @@ release-preview:
 .PHONY: release
 release: tagrelease
 
-dist: examples docs all sile-$(VERSION).pdf sile-$(VERSION).md
+dist: sile-$(VERSION).pdf sile-$(VERSION).md
 
 sile-$(VERSION).pdf: $(MANUAL)
 	cp $< $@
