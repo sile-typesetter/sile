@@ -8,9 +8,10 @@ finder () {
     find $@ -type f | sort -bdi | xargs echo -n ||:
 }
 
-echo -n "nobase_dist_pkgdata_DATA = \$(LUALIBRARIES)"
+echo -n "SILEDATA ="
 finder core classes languages packages -name '*.lua'
 finder classes -name '*.sil'
+
 echo -ne "\nLUALIBRARIES ="
 finder lua-libraries -name '*.lua'
 

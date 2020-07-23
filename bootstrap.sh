@@ -35,8 +35,6 @@ else
     ./build-aux/git-version-gen .tarball-version > .version
 fi
 
-touch -t 197001010200 Makefile-distfiles
-
 autoreconf --install -W none
 
 # See discussion in https://github.com/sile-typesetter/sile/issues/82 and

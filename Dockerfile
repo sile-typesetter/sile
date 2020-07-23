@@ -15,7 +15,7 @@ WORKDIR /src
 
 RUN mkdir /pkgdir
 
-RUN git clean -dxf ||:
+RUN git clean -dxf -e .fonts -e .sources ||:
 RUN git fetch --unshallow ||:
 RUN git fetch --tags ||:
 

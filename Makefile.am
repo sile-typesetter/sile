@@ -1,37 +1,60 @@
 ACLOCAL_AMFLAGS = -I m4
 AUTOMAKE_OPTIONS = foreign
 
-if SYSTEM_LIBTEXPDF
-SUBDIRS = src
-else
-SUBDIRS = libtexpdf src
-endif
-
-MANUAL = documentation/sile.pdf
-
-Makefile-distfiles: build-aux/list-dist-files.sh $(wildcard .version sile-dev-1.rockslock)
-	$< 2>/dev/null > $@
-
-include Makefile-luarocks
-
-include Makefile-distfiles
-
-nobase_nodist_pkgdata_DATA = $(LUAMODULES)
-dist_man_MANS = sile.1
-dist_doc_DATA = README.md CHANGELOG.md
-bin_SCRIPTS = sile
-EXTRA_DIST = LICENSE spec tests examples documentation sile-dev-1.rockspec fontconfig.conf
-EXTRA_DIST += .version Makefile-distfiles
-EXTRA_DIST += build-aux/git-version-gen build-aux/list-dist-files.sh
-EXTRA_DIST += $(MANUAL) $(EXAMPLES)
-
 SHELL = bash
 .ONESHELL:
 .SECONDARY:
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
 
-BUILT_SOURCES = .version
+if SYSTEM_LIBTEXPDF
+SUBDIRS = src
+else
+SUBDIRS = libtexpdf src
+endif
+
+# Rules for installing LuaRocks locally as pkgdata_DATA
+include Makefile-luarocks
+
+# Actual rules for downloading test fonts are in a separate file
+include Makefile-fonts
+
+# Since we can't use $(wildcard ...) in automake file lists, we generate a file
+# with a script that builds our dynamic file lists instead. This is tricky,
+# because if we just include the file automake will flatten this include. By
+# using $(wildcard ...) to include it (the very function we couldn't use because
+# of the race condition it creates) we actually keep it from being flattened and
+# hence evaluated when we want it to be. Since the file always exists (see
+# BUILT_SOURCES and EXTRA_DIST) this doesn't induce a race.
+include $(wildcard Makefile-distfiles)
+
+MANUAL = documentation/sile.pdf
+EXAMPLES = $(addsuffix .pdf,$(basename $(EXAMPLESSRCS)))
+
+if MANUAL
+_MANUAL = $(MANUAL)
+endif
+
+if EXAMPLES
+_EXAMPLES = $(EXAMPLES)
+endif
+
+nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
+nobase_nodist_pkgdata_DATA = $(LUAMODULES)
+dist_man_MANS = sile.1
+dist_doc_DATA = README.md CHANGELOG.md
+dist_pdf_DATA = $(_MANUAL)
+nobase_dist_pdf_DATA = $(_EXAMPLES)
+bin_SCRIPTS = sile
+EXTRA_DIST = LICENSE spec tests examples documentation sile-dev-1.rockspec fontconfig.conf
+EXTRA_DIST += .version Makefile-distfiles
+EXTRA_DIST += build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
+EXTRA_DIST += $(MANUAL) $(EXAMPLES)
+
+Makefile-distfiles: build-aux/list-dist-files.sh $(wildcard .version .tarball-version) | $(LUAMODLOCK)
+	$< 2>/dev/null > $@
+
+BUILT_SOURCES = .version Makefile-distfiles
 
 .version: $(shell test -e .git && awk '{print ".git/" $$2}' .git/HEAD)
 	mv $@{,-prev} 2>/dev/null || touch $@-prev
@@ -40,27 +63,11 @@ BUILT_SOURCES = .version
 	build-aux/decore-automake.sh
 
 dist-hook: $(MANUAL) $(EXAMPLES)
-	echo $(VERSION) > $(distdir)/.tarball-version
-	cd $(distdir) && build-aux/decore-automake.sh
-
-_DATA_HOOK_DEPS =
-if MANUAL
-_DATA_HOOK_DEPS += $(MANUAL)
-endif
-
-if EXAMPLES
-_DATA_HOOK_DEPS += $(EXAMPLES)
-endif
-
-install-data-hook: Makefile-distfiles $(_DATA_HOOK_DEPS)
-	:
-if MANUAL
-	rm -f "$(DESTDIR)/$(datarootdir)/$<"
-	install -Dm644 -t "$(DESTDIR)$(docdir)" $(MANUAL)
-endif
-if EXAMPLES
-	install -Dm644 -t "$(DESTDIR)$(docdir)/examples" $(EXAMPLES)
-endif
+	cd $(distdir)
+	sed -i -e '/^LUAMODULES =/s/=.*/=/' Makefile-distfiles
+	echo $(VERSION) > .tarball-version
+	build-aux/decore-automake.sh
+	sed -i -e '/^LUAMODULES/d;/^\tlua_modules/d' Makefile.in
 
 # Whether to force tests to run from scratch
 CLEAN ?=
@@ -75,7 +82,7 @@ tagrelease:
 	npm run release -- $(and $(RELTYPE),--release-as $(RELTYPE))
 
 .PHONY: prerelease
-prerelease: all test busted examples docs update_libtexpdf
+prerelease: test examples docs update_libtexpdf
 
 .PHONY: release-preview
 release-preview:
@@ -84,7 +91,7 @@ release-preview:
 .PHONY: release
 release: tagrelease
 
-dist: examples docs all sile-$(VERSION).pdf sile-$(VERSION).md
+dist: sile-$(VERSION).pdf sile-$(VERSION).md
 
 sile-$(VERSION).pdf: $(MANUAL)
 	cp $< $@
@@ -115,7 +122,7 @@ ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 check: selfcheck
 
 .PHONY: selfcheck
-selfcheck: all
+selfcheck: | $(_BUILT_SUBDIRS)
 	output=$$(mktemp --suffix=.pdf)
 	trap 'rm -f $$output' EXIT SIGHUP SIGTERM
 	./sile -o $$output - <<< "<sile>foo</sile>"
@@ -140,7 +147,7 @@ luacheck:
 	luacheck -j$(shell nproc) -q .
 
 .PHONY: busted
-busted: | $(_INSTALLROCKS) all
+busted: sile
 	set -f; IFS=';'
 if SYSTEM_LUAROCKS
 	packagecpath=(./{,core/}?.$(SHARED_LIB_EXT))
@@ -154,8 +161,6 @@ endif
 .PHONY: docs
 docs: $(MANUAL)
 
-EXAMPLES = $(addsuffix .pdf,$(basename $(EXAMPLESSRCS)))
-
 .PHONY: examples
 examples: $(EXAMPLES)
 
@@ -166,7 +171,7 @@ pages = pdfinfo $@ | awk '$$1 == "Pages:" {print $$2}' || echo 0
 silepass = $(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@ && pg0=$${pg} pg=$$($(pages))
 define runsile =
 	pg0=$$($(pages)) hadtoc=$$($(hastoc))
-	mkdir -p $(DEPDIR)
+	mkdir -p $(DEPDIR)/$$(dirname $@)
 	$(silepass)
 	export -n SILE_COVERAGE
 	if $(hastoc); then
@@ -175,12 +180,23 @@ define runsile =
 	fi
 endef
 
-
 _FORCED = $(and $(SILE_COVERAGE)$(CLEAN),force)
 _TEST_DEPS = $(and $(filter tests/%,$@),$(addprefix .fonts/,$(TESTFONTFILES)))
-_DOCS_DEPS = $(and $(filter docs/%,$@),$(addprefix .fonts/,$(DOCSFONTFILES)))
+_DOCS_DEPS = $(and $(filter documentation/%,$@),$(addprefix .fonts/,$(DOCSFONTFILES)))
 _EXAM_DEPS = $(and $(filter examples/%,$@),$(addprefix .fonts/,$(EXAMFONTFILES)))
-patterndeps = $(_FORCED) $(_TEST_DEPS) $(_EXAM_DEPS) $(_DOCS_DEPS) sile | $(DEPDIRS) $(_INSTALLROCKS) all
+
+# TODO: remove _BUILT_SUBDIRS hack and replace it with something sensible when
+# these subdirs don't do crazy things like copying files outside of their own trees!
+_BUILT_SUBDIRS = .built-subdirs
+_SUBDIR_TELLS = core/justenoughharfbuzz.so libtexpdf/.libs/libtexpdf.so.0.0.0
+$(_BUILT_SUBDIRS): $(_SUBDIR_TELLS)
+	touch $@
+
+$(_SUBDIR_TELLS):
+	$(MAKE) $(AM_MAKEFLAGS) all-recursive
+#	$(error Running `make install`, `make dist`, or other end-game targets before `make all` unspported.)
+
+patterndeps = $(_FORCED) $(_TEST_DEPS) $(_EXAM_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(LUAMODLOCK) $(_BUILT_SUBDIRS)
 
 %.pdf: %.sil $$(patterndeps)
 	$(runsile)
@@ -227,11 +243,7 @@ clean-worktrees:
 			done
 	fi
 
-define time_action =
-	export TIMEFORMAT=$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
-	{ time (./sile documentation/sile.sil > /dev/null 2>&1) } 2> time.json
-endef
-
+time_action ?= ./sile documentation/sile.sil
 make_worktree_rules = $(eval $(foreach SHA,$(_HEADSHA) $(_BASESHA),$(call worktree_sha,$(1),$(shell git rev-parse --short=7 $(SHA)))))
 
 define worktree_sha =
@@ -245,7 +257,9 @@ $(1)-$(2):
 	[[ -h lua_modules ]] || ln -s ../lua_modules
 	[[ -h node_modules ]] || ln -s ../node_modules
 	[[ -h .fonts ]] || ln -s ../.fonts
+	[[ -h .sources ]] || ln -s ../.sources
 	./bootstrap.sh
+	cp ../config.status .
 	./configure
 	make
 
@@ -255,9 +269,10 @@ $(1)-$(2)/%: $(1)-$(2)
 	make $$*
 
 .PRECIOUS: $(1)-$(2)/time.json
-$(1)-$(2)/time.json: $(1)-$(2) $(1)-$(2)/sile
+$(1)-$(2)/time.json: $(1)-$(2)
 	cd $$<
-	$$(time_action)
+	export TIMEFORMAT=$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
+	{ time ($$(time_action) > /dev/null 2>&1) } 2> time.json
 
 endef
 
@@ -272,8 +287,9 @@ time-%.json: benchmark-%/time.json
 	cp $< $@
 
 .PRECIOUS: time.json
-time.json: sile
-	$(time_action)
+time.json: | $(_BUILT_SUBDIRS)
+	export TIMEFORMAT=$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
+	{ time ($(time_action) > /dev/null 2>&1) } 2> time.json
 
 $(call make_worktree_rules,compare)
 
@@ -315,7 +331,7 @@ tests/%.actual: tests/%.xml $$(patterndeps)
 DEPFILES = $(addsuffix .d,$(addprefix $(DEPDIR)/,$(basename $(TESTSRCS) $(MANUAL) $(EXAMPLES))))
 DEPDIRS = $(sort $(dir $(DEPFILES)))
 
-$(DEPDIRS):
+$(DEPDIRS): | Makefile-distfiles
 	mkdir -p $@
 
 $(DEPFILES): | $(DEPDIRS)
@@ -328,10 +344,7 @@ include $(wildcard $(DEPFILES))
 .sources:
 	[[ -h .sources ]] || mkdir -p $@
 
-# Actual rules for downloading test fonts are in a separate file
-include Makefile-fonts
-
-CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles
+CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles $(_BUILT_SUBDIRS)
 
 .PHONY: docker
 docker: Dockerfile
