@@ -274,7 +274,7 @@ end
 -- items — assuming that the current command is taking care of itself
 utilities.subContent = function (content)
   local out = { id="stuff" }
-  for key, val in pairs(content) do
+  for key, val in utilities.sortedpairs(content) do
     if type(key) == "number" then
       out[#out+1] = val
     end
