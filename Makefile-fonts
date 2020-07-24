@@ -17,7 +17,7 @@ DOCSFONTFILES += Symbola.otf
 
 EXAMFONTFILES  = $(DOCSFONTFILES)
 EXAMFONTFILES += Amiri-Regular.ttf
-EXAMFONTFILES += DejaVuSansCondensed-Bold.ttf
+EXAMFONTFILES += DejaVuSansCondensed-Bold.ttf DejaVuSans-Bold.ttf DejaVuSans-Oblique.ttf
 EXAMFONTFILES += LibreBaskerville-Italic.otf
 EXAMFONTFILES += Miama.otf
 EXAMFONTFILES += NotoSerifCJK-Regular.ttc
