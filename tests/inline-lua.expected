@@ -4,26 +4,26 @@ Mx 	54.8208
 My 	76.6203
 Set font 	Gentium Plus;10;400;;normal;;LTR
 T	49 82 85 80 68 79	(Normal)
-Mx 	88.2817
-T	69 85 68 70 78 72 87 72 71	(bracketed)
-Mx 	131.6888
+Mx 	88.2831
+T	69 85 68 70 72 71	(braced)
+Mx 	118.7522
 T	8	(%)
-Mx 	141.2386
+Mx 	128.3034
 T	80 68 85 78	(mark)
-Mx 	165.3488
+Mx 	152.4151
 T	68 81 71	(and)
-Mx 	183.3068
+Mx 	170.3744
 T	83 88 85 72	(pure)
-Mx 	205.1319
+Mx 	192.2010
 T	70 82 80 80 68 81 71	(command)
-Mx 	248.5537
+Mx 	235.6242
 Set font 	Gentium Plus;10;400;Italic;normal;;LTR
 T	20 19 19	(100)
-Mx 	260.6094
+Mx 	247.6799
 T	8	(%)
-Mx 	269.4397
+Mx 	256.5115
 T	76 87 68 79 76 70	(italic)
-Mx 	288.1652
+Mx 	275.2371
 Set font 	Gentium Plus;10;400;;normal;;LTR
 T	17	(.)
 Mx 	54.8208

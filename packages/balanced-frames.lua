@@ -64,8 +64,21 @@ SILE.typesetter.buildPage = function (self, independent)
     end
   end
   SILE.pagebuilder = oldPageBuilder
-  SU.debug("balancer", "Finished this balance, frame id is now "..self.frame:toString())
+  SU.debug("balancer", "Finished this balance, frame id is now " .. self.frame)
   -- SILE.typesetter:debugState()
   -- We're done.
   return true
 end
+
+return {
+  documentation=[[\begin{document}
+This package attempts to ensure that the main content frames on a
+page are balanced; that is, that they have the same height. In your
+frame definitions for the columns, you will need to ensure that they
+have the parameter \code{balanced} set to a true value. See the example
+in \code{tests/balanced.sil}.
+
+The current algorithm does not work particularly well, and a better solution
+to the column problem is being developed.
+\end{document}]]
+}

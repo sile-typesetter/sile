@@ -1,3 +1,6 @@
+-- Japaneese language support defines units which are useful here
+SILE.languageSupport.loadLanguage("ja")
+
 SILE.tateFramePrototype = pl.class({
     _base = SILE.framePrototype,
     direction = "TTB-RTL",
@@ -11,7 +14,7 @@ SILE.tateFramePrototype = pl.class({
           local len = SILE.length(d.length, bls.height.stretch, bls.height.shrink)
           return SILE.nodefactory.vglue({height = len})
         end
-        SILE.typesetter.breakIntoLines = SILE.require("packages/break-firstfit")
+        SILE.typesetter.breakIntoLines = SILE.require("packages/break-firstfit").exports.breakIntoLines
       end
     },
     leaveHooks = {
@@ -37,7 +40,7 @@ local outputLatinInTate = function (self, typesetter, line)
   local vorigin = -typesetter.frame.state.cursorY
   self:oldOutputYourself(typesetter,line)
   typesetter.frame.state.cursorY = -vorigin
-  typesetter.frame:advanceWritingDirection(self:lineContribution().length)
+  typesetter.frame:advanceWritingDirection(self:lineContribution())
   -- My baseline moved
   typesetter.frame:advanceWritingDirection(SILE.measurement("0.5zw") )
   typesetter.frame:advancePageDirection(-SILE.measurement("0.25zw"))
@@ -46,9 +49,9 @@ end
 
 local outputTateChuYoko = function (self, typesetter, line)
   -- My baseline moved
-  local em = SILE.toPoints("1zw")
-  typesetter.frame:advanceWritingDirection(-(em) + em/4 - self:lineContribution()/2)
-  typesetter.frame:advancePageDirection(2*self.height - self.width.length/2)
+  local em = SILE.measurement("1zw")
+  typesetter.frame:advanceWritingDirection(-em + em/4 - self:lineContribution()/2)
+  typesetter.frame:advancePageDirection(2*self.height - self.width/2)
   self:oldOutputYourself(typesetter,line)
   typesetter.frame:advanceWritingDirection(-self:lineContribution()*1.5+self.height*3/4)
 
@@ -122,3 +125,16 @@ SILE.registerCommand("tate-chu-yoko", function (_, content)
   -- })
 
 end)
+
+return {
+  documentation = [[
+\begin{document}
+The \code{tate} package provides support for Japanese vertical typesetting.
+It allows for the definition of vertical-oriented frames, as well
+as for two specific typesetting techniques required in vertical
+documents: \code{latin-in-tate} typesets its content as Latin
+text rotated 90 degrees, and \code{tate-chu-yoko} places (Latin)
+text horizontally within a single grid-square of the vertical \em{hanmen}.
+\end{document}
+]]
+}

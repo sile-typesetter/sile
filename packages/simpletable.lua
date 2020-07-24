@@ -1,19 +1,3 @@
--- A very simple table formatting class
-
--- Calling conventions:
--- myClass:loadPackage("simpletable", {
---  tableTag = "a",
---  trTag = "b",
---  tdTag = "c"
--- })
-
--- Defines commands \a, \b and \c equivalent to HTML
--- <table>, <tr> and <td> tags.
-
--- Todo: Set a maximum width for the whole table and ensure
--- vbox width is no greater than this. In fact, we should use
--- the complete CSS2.1 two-pass table layout algorithm.
-
 SILE.scratch.simpletable = { tables = {} }
 
 return {
@@ -81,5 +65,26 @@ return {
       SILE.scratch.simpletable.tables[#(SILE.scratch.simpletable.tables)] = nil
     end)
 
-  end
+  end,
+  documentation = [[
+\begin{document}
+this implements (badly) a very simple table formatting class.
+
+it should be called as so:
+
+\begin{verbatim}
+myclass:loadpackage("simpletable", \{
+ tabletag = "a",
+ trtag = "b",
+ tdtag = "c"
+\})
+\end{verbatim}
+
+this will define commands \code{\\a}, \code{\\b} and \code{\\c} which
+are equivalent to the \code{<table>, \code{<tr>} and \code{td} tags.
+
+this is not a complete table implementation, and should be replaced by
+one which implements the css2.1 two-pass table formatting algorithm.
+\end{document}
+]]
 }

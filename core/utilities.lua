@@ -1,3 +1,4 @@
+local bitshim = require("bitshim")
 local utilities = {}
 
 local epsilon = 1E-12
@@ -122,6 +123,23 @@ utilities.map = function (func, array)
     new_array[i] = func(array[i])
   end
   return new_array
+end
+
+-- TODO: Replace with pl.tablex.sort()?
+utilities.sortedpairs = function (input)
+  local keys = {}
+  for k, _ in pairs(input) do
+    keys[#keys+1] = k
+  end
+  table.sort(keys, function(a, b)
+    if type(a) ~= type(b) then return false end
+    return a < b
+  end)
+  return coroutine.wrap(function()
+    for i = 1, #keys do
+      coroutine.yield(keys[i], input[keys[i]])
+    end
+  end)
 end
 
 utilities.splice = function (array, start, stop, replacement)
@@ -256,7 +274,7 @@ end
 -- items — assuming that the current command is taking care of itself
 utilities.subContent = function (content)
   local out = { id="stuff" }
-  for key, val in pairs(content) do
+  for key, val in utilities.sortedpairs(content) do
     if type(key) == "number" then
       out[#out+1] = val
     end
@@ -314,9 +332,9 @@ utilities.codepoint = function (uchar)
       seq = c < 0x80 and 1 or c < 0xE0 and 2 or c < 0xF0 and 3 or
             c < 0xF8 and 4 or --c < 0xFC and 5 or c < 0xFE and 6 or
           error("invalid UTF-8 character sequence")
-      val = bit32.band(c, 2^(8-seq) - 1)
+      val = bitshim.band(c, 2^(8-seq) - 1)
     else
-      val = bit32.bor(bit32.lshift(val, 6), bit32.band(c, 0x3F))
+      val = bitshim.bor(bitshim.lshift(val, 6), bitshim.band(c, 0x3F))
     end
     seq = seq - 1
   end
@@ -403,10 +421,10 @@ utilities.splitUtf8 = function (str) -- Return an array of UTF8 strings each rep
       seq = c < 0x80 and 1 or c < 0xE0 and 2 or c < 0xF0 and 3 or
             c < 0xF8 and 4 or --c < 0xFC and 5 or c < 0xFE and 6 or
           error("invalid UTF-8 character sequence")
-      val = bit32.band(c, 2^(8-seq) - 1)
+      val = bitshim.band(c, 2^(8-seq) - 1)
       this = this .. str[i]
     else
-      val = bit32.bor(bit32.lshift(val, 6), bit32.band(c, 0x3F))
+      val = bitshim.bor(bitshim.lshift(val, 6), bitshim.band(c, 0x3F))
       this = this .. str[i]
     end
     seq = seq - 1

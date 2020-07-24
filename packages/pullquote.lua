@@ -36,7 +36,6 @@ SILE.registerCommand("pullquote", function (options, content)
   SILE.settings.temporarily(function ()
     SILE.settings.set("document.rskip", SILE.nodefactory.glue(setback))
     SILE.settings.set("document.lskip", SILE.nodefactory.glue(setback))
-    SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
     SILE.settings.set("current.parindent", SILE.nodefactory.glue())
     SILE.call("pullquote:font")
     typesetMark(true, setback, scale, color, "“")
@@ -73,10 +72,10 @@ do not know.
 
 Optional values are available for:
 
-\listitem \code{author} to add an attribution line
-\listitem \code{setback} to set the bilateral margins around the block
-\listitem \code{color} to change the color of the quote marks
-\listitem \code{scale} to change the relative size of the quote marks
+• \code{author} to add an attribution line\par
+• \code{setback} to set the bilateral margins around the block\par
+• \code{color} to change the color of the quote marks\par
+• \code{scale} to change the relative size of the quote marks\par
 
 If you want to specify what font the pullquote environment should use, you
 can redefine the \code{pullquote:font} command. By default it will be the same

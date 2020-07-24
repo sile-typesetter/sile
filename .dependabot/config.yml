@@ -23,7 +23,7 @@ update_configs:
     default_labels:
       - "todo"
     commit_message:
-      prefix: "chore(tooling)"
+      prefix: "chore(deps)"
       include_scope: false
 
   # Catch updates to Github Actions CI tooling
@@ -35,5 +35,5 @@ update_configs:
     default_labels:
       - "todo"
     commit_message:
-      prefix: "chore(tooling)"
+      prefix: "chore(deps)"
       include_scope: false

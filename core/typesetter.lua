@@ -67,7 +67,7 @@ SILE.settings.declare({
 
 SILE.settings.declare({
   name = "typesetter.breakwidth",
-  type = "length or nil",
+  type = "measurement or nil",
   default = nil,
   help = "Width to break lines at"
 })
@@ -143,7 +143,7 @@ SILE.defaultTypesetter = std.object {
 
   debugState = function (self)
     print("\n---\nI am in "..(self:vmode() and "vertical" or "horizontal").." mode")
-    print("Writing into "..self.frame:toString())
+    print("Writing into " .. self.frame)
     print("Recent contributions: ")
     for i = 1, #(self.state.nodes) do
       io.stderr:write(self.state.nodes[i].. " ")

@@ -147,7 +147,8 @@ SILE.outputters.libtexpdf = {
     self.rule(frame:right(), frame:top(), 0.5, frame:height())
     self.rule(frame:left(), frame:bottom(), frame:width(), 0.5)
     --self.rule(frame:left() + frame:width()/2 - 5, (frame:top() + frame:bottom())/2+5, 10, 10)
-    local stuff = SILE.shaper:createNnodes(frame.id, SILE.font.loadDefaults({}))
+    local gentium = SILE.font.loadDefaults({family="Gentium Plus", language="en"})
+    local stuff = SILE.shaper:createNnodes(frame.id, gentium)
     stuff = stuff[1].nodes[1].value.glyphString -- Horrible hack
     local buf = {}
     for i = 1, #stuff do
@@ -156,22 +157,27 @@ SILE.outputters.libtexpdf = {
       buf[#buf+1] = string.char(glyph % 0x100)
     end
     buf = table.concat(buf, "")
-    if font == 0 then SILE.outputter.setFont(SILE.font.loadDefaults({})) end
+    local oldfont = font
+    SILE.outputter.setFont(gentium)
     pdf.setstring(frame:left():tonumber(), (SILE.documentState.paperSize[2] - frame:top()):tonumber(), buf, string.len(buf), font, 0)
+    if oldfont then
+      pdf.loadfont(oldfont)
+      font = oldfont
+    end
     pdf.colorpop()
   end,
 
   debugHbox = function (hbox, scaledWidth)
     ensureInit()
     pdf.colorpush_rgb(0.8, 0.3, 0.3)
-    pdf.setrule(cursorX, cursorY+(hbox.height), scaledWidth+0.5, 0.5)
-    pdf.setrule(cursorX, cursorY, 0.5, hbox.height)
-    pdf.setrule(cursorX, cursorY, scaledWidth+0.5, 0.5)
-    pdf.setrule(cursorX+scaledWidth, cursorY, 0.5, hbox.height)
+    pdf.setrule(cursorX, cursorY+(hbox.height:tonumber()), scaledWidth:tonumber()+0.5, 0.5)
+    pdf.setrule(cursorX, cursorY, 0.5, hbox.height:tonumber())
+    pdf.setrule(cursorX, cursorY, scaledWidth:tonumber()+0.5, 0.5)
+    pdf.setrule(cursorX+scaledWidth:tonumber(), cursorY, 0.5, hbox.height:tonumber())
     if hbox.depth then
-      pdf.setrule(cursorX, cursorY-(hbox.depth), scaledWidth, 0.5)
-      pdf.setrule(cursorX+scaledWidth, cursorY-(hbox.depth), 0.5, hbox.depth)
-      pdf.setrule(cursorX, cursorY-(hbox.depth), 0.5, hbox.depth)
+      pdf.setrule(cursorX, cursorY-(hbox.depth:tonumber()), scaledWidth:tonumber(), 0.5)
+      pdf.setrule(cursorX+scaledWidth:tonumber(), cursorY-(hbox.depth:tonumber()), 0.5, hbox.depth:tonumber())
+      pdf.setrule(cursorX, cursorY-(hbox.depth:tonumber()), 0.5, hbox.depth:tonumber())
 
     end
     pdf.colorpop()
@@ -182,5 +188,5 @@ SILE.outputters.libtexpdf = {
 SILE.outputter = SILE.outputters.libtexpdf
 
 if not SILE.outputFilename and SILE.masterFilename then
-	SILE.outputFilename = SILE.masterFilename..".pdf"
+  SILE.outputFilename = SILE.masterFilename..".pdf"
 end

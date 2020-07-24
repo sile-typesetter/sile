@@ -1,5 +1,6 @@
 # http://www.gnu.org/software/automake
 
+Makefile
 Makefile.in
 
 # http://www.gnu.org/software/autoconf
@@ -34,7 +35,6 @@ AUTHORS
 COPYING
 INSTALL
 ChangeLog
-Makefile
 NEWS
 README
 THANKS
@@ -50,16 +50,13 @@ build/
 *.debug
 gh-pages
 sile-[0-9\.]*
-*.bz2
-*.xz
-*.zip
 *.rockslock
 .dockerignore
 
 # Test artifacts
 tests/*.actual
 tests/*.pdf
-*/*.toc
+*.toc
 time*.json
 
 benchmark-*
@@ -75,9 +72,11 @@ lua_modules_dist
 tags
 
 # Generated resources
+Makefile-distfiles
 documentation/*.pdf
-examples/*.pdf
+examples/**/*.pdf
 gource.webm
 .fonts/*
+.sources/*
 #sile# Work around bug in standard-version by not ignoring this artifact
 sile.1

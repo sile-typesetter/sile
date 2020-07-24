@@ -1,5 +1,5 @@
 SILE.registerCommand("verbatim:font", function(_, _)
-    SILE.settings.set("font.family", "Consolas")
+    SILE.settings.set("font.family", "Hack")
     SILE.settings.set("font.size", SILE.settings.get("font.size") - 3)
 end, "The font chosen for the verbatim environment")
 
@@ -29,7 +29,7 @@ SILE.registerCommand("obeylines", function(_, content)
   end)
 end)
 
-return [[\begin{document}
+return {documentation = [[\begin{document}
 
 The \code{verbatim} package is useful when quoting pieces of computer code and
 other text for which formatting is significant. It changes SILE’s settings
@@ -51,11 +51,12 @@ end
 \end{verbatim}
 
 If you want to specify what font the verbatim environment should use, you
-can redefine the \code{verbatim:font} command. The current document says:
+can redefine the \code{verbatim:font} command. For example you could change
+it from XML like this:
 
 \begin{verbatim}
 <define command="verbatim:font">
    <font family="DejaVu Sans Mono" size="9pt"/>
 </define>
 \end{verbatim}
-\end{document}]]
+\end{document}]]}

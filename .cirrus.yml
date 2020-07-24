@@ -5,17 +5,20 @@ task:
   name: Cirrus CI (FreeBSD)
   install_script:
     - pkg install -y git autoconf automake libtool pkgconf harfbuzz lua52 lua52-luarocks lua52-luafilesystem lua52-lpeg lua52-lzlib fontconfig png gmake bash lua52-luasec lua52-luasocket lua52-luaexpat
-    - luarocks-5.2 install luaepnf
-    - luarocks-5.2 install linenoise
-    - luarocks-5.2 install cassowary
-    - luarocks-5.2 install compat53
-    - luarocks-5.2 install lua-zlib
-    - luarocks-5.2 install lua_cliargs
-    - luarocks-5.2 install luarepl
-    - luarocks-5.2 install penlight
-    - luarocks-5.2 install stdlib
-    - luarocks-5.2 install vstruct
-    - sh bootstrap.sh
+    - luarocks52 install cassowary
+    - luarocks52 install compat53
+    - luarocks52 install cosmo
+    - luarocks52 install linenoise
+    - luarocks52 install lua-zlib
+    - luarocks52 install lua_cliargs
+    - luarocks52 install luaepnf
+    - luarocks52 install luarepl
+    - luarocks52 install penlight
+    - luarocks52 install stdlib
+    - luarocks52 install vstruct
+    - git fetch --prune --tags ||:
+    - ./bootstrap.sh
     - ./configure --with-system-luarocks CFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
+    - gmake all
     - gmake install
-  test_script: gmake test
+  test_script: gmake regressions

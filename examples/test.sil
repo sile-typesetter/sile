@@ -1,7 +1,7 @@
 \begin[class=book,papersize=129mm x 198mm]{document}
 \define[command=headline]{%
 \medskip%
-\font[family=DejaVu Sans,style=Bold Condensed,weight=700,size=20pt]{\center{\process}}
+\font[family=DejaVu Sans,style=Condensed,weight=800,size=20pt]{\center{\process}}
 \bigskip%
 }
 \left-running-head{A Scandal in Bohemia}
@@ -530,7 +530,7 @@ I slept at Baker Street that night, and we were engaged upon our toast and coffe
      "We shall see." He pushed past the servant and rushed into the drawing-room, followed by the King and myself. The furniture was scattered about in every direction, with dismantled shelves and open drawers, as if the lady had hurriedly ransacked them before her flight. Holmes rushed at the bell-pull, tore back a small sliding shutter, and, plunging in his hand, pulled out a photograph and a letter. The photograph was of Irene Adler herself in evening dress, the letter was superscribed to "Sherlock Holmes, Esq. To be left till called for." My friend tore it open and we all three read it together. It was dated at midnight of the preceding night and ran in this way:
 
 \medskip
-\begin[family=Snell Roundhand]{font}
+\begin[family=Miama]{font}
 My Dear Mr Sherlock Holmes,
 
      You really did it very well. You took me in completely. Until after the alarm of fire, I had not a suspicion. But then, when I found how I had betrayed myself, I began to think. I had been warned against you months ago. I had been told that if the King employed an agent it would certainly be you. And your address had been given me. Yet, with all this, you made me reveal what you wanted to know. Even after I became suspicious, I found it hard to think evil of such a dear, kind old clergyman. But, you know, I have been trained as an actress myself. Male costume is nothing new to me. I often take advantage of the freedom which it gives. I sent John, the coachman, to watch you, ran up stairs, got into my walking-clothes, as I call them, and came down just as you departed.

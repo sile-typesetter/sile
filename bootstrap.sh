@@ -1,13 +1,38 @@
 #!/usr/bin/env sh
 set -e
 
+incomplete_source () {
+    echo -e "$1. Please either:\n" \
+            "* $2,\n" \
+            "* or use the source packages instead of a repo archive\n" \
+            "* or use a full Git clone.\n" >&2
+    exit 1
+}
+
 # We neet a local copy of the libtexpdf library to compile. If this was
 # downloaded as a src distibution package this will exist already, but if not
 # and we are part of a git repository that the user has not fully initialized,
 # go ahead and do the step of fetching the the submodule so the compile process
 # can run.
-if [ ! -f "libtexpdf/configure.ac" ] && [ -e ".git" ]; then
-    git submodule update --init --recursive --remote
+if [ ! -f "libtexpdf/configure.ac" ]; then
+    if [ -e ".git" ]; then
+        git submodule update --init --recursive --remote
+    else
+        incomplete_source "No libtexpdf sources found" \
+            "download and extract a copy yourself"
+    fi
+fi
+
+# Make
+# directory. This enables easy building from Github's snapshot archives
+if [ ! -e ".git" ]; then
+    if [ ! -f ".tarball-version" ]; then
+    incomplete_source "No version information found" \
+        "identify the correct version with \`echo \$version > .tarball-version\`"
+    fi
+else
+    # Just a head start to save a ./configure cycle
+    ./build-aux/git-version-gen .tarball-version > .version
 fi
 
 autoreconf --install -W none
@@ -22,6 +47,6 @@ aclocal --force -W none
 automake --force-missing --add-missing -W none
 autoreconf --force -W none
 
-sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
+build-aux/decore-automake.sh
 
 (cd libtexpdf; autoreconf)

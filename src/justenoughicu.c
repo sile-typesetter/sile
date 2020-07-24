@@ -236,7 +236,7 @@ int icu_bidi_runs(lua_State *L) {
   }
 
   int count = ubidi_countRuns(bidi,&err);
-  int start, length;
+  int start, length, codepointlength;
 
   lua_checkstack(L,count);
   for (int i=0; i < count; i++) {
@@ -270,10 +270,11 @@ int icu_bidi_runs(lua_State *L) {
     lua_settable(L, -3);
 
     lua_pushstring(L, "length");
+    codepointlength = length;
     for (int j=start; j< start+length; j++) {
-      if (U_IS_TRAIL(*(input_as_uchar+j))) length--;
+      if (U_IS_TRAIL(*(input_as_uchar+j))) codepointlength--;
     }
-    lua_pushinteger(L, length);
+    lua_pushinteger(L, codepointlength);
     lua_settable(L, -3);
 
     lua_pushstring(L, "dir");

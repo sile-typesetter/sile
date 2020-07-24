@@ -1,10 +1,7 @@
 -- Initialize Lua environment and global utilities
 local lua_version = _VERSION:sub(-3)
 local lua_isjit = type(jit) == "table"
-if not lua_isjit then
-  if lua_version < "5.3" then require("compat53") end -- Backport of lots of Lua 5.3 features to Lua 5.[12]
-  bit32 = bit32 or require("bit32") -- Backport of Lua 5.2+ bitwise functions to Lua 5.1
-end
+if not lua_isjit and lua_version < "5.3" then require("compat53") end -- Backport of lots of Lua 5.3 features to Lua 5.[12]
 pl = require("pl.import_into")() -- Penlight on-demand module loader
 if (os.getenv("SILE_COVERAGE")) then require("luacov") end
 
@@ -112,7 +109,7 @@ as the input file with the extension changed to .pdf.
 Options:
 
   -b, --backend=VALUE      choose an alternative output backend
-  -d, --debug=VALUE        debug SILE's operation
+  -d, --debug=VALUE        show debug information for tagged aspects of SILE's operation
   -e, --evaluate=VALUE     evaluate some Lua code before processing file
   -f, --fontmanager=VALUE  choose an alternative font manager
   -m, --makedeps=[FILE]    generate a list of dependencies in Makefile format
@@ -137,7 +134,13 @@ Options:
     SILE.backend = opts.backend
   end
   if opts.debug then
-    for _, v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = true end
+    if type(opts.debug) ~= "table" then opts.debug = { opts.debug } end
+    for _, value in ipairs(opts.debug) do
+        SU.dump(value)
+      for _, flag in ipairs(std.string.split(value, ",")) do
+        SILE.debugFlags[flag] = true
+      end
+    end
   end
   if opts.evaluate then
     local statements = type(opts.evaluate) == "table" and opts.evaluate or { opts.evaluate }

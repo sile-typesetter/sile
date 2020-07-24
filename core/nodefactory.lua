@@ -304,21 +304,21 @@ nodefactory.discretionary = pl.class({
     prebreakWidth = function (self)
       if self.prebw then return self.prebw end
       self.prebw = SILE.length()
-      for _, node in pairs(self.prebreak) do self.prebw:___add(node.width) end
+      for _, node in ipairs(self.prebreak) do self.prebw:___add(node.width) end
       return self.prebw
     end,
 
     postbreakWidth = function (self)
       if self.postbw then return self.postbw end
       self.postbw = SILE.length()
-      for _, node in pairs(self.postbreak) do self.pastbw:___add(node.width) end
+      for _, node in ipairs(self.postbreak) do self.pastbw:___add(node.width) end
       return self.postbw
     end,
 
     replacementWidth = function (self)
       if self.replacew then return self.replacew end
       self.replacew = SILE.length()
-      for _, node in pairs(self.replacement) do self.replacew:___add(node.width) end
+      for _, node in ipairs(self.replacement) do self.replacew:___add(node.width) end
       return self.replacew
     end,
 
@@ -522,7 +522,7 @@ nodefactory.vbox = pl.class({
     outputYourself = function (self, typesetter, line)
       typesetter.frame:advancePageDirection(self.height)
       local initial = true
-      for _, node in pairs(self.nodes) do
+      for _, node in ipairs(self.nodes) do
         if not (initial and (node.is_glue or node.is_penalty)) then
           initial = false
           node:outputYourself(typesetter, line)
@@ -662,9 +662,13 @@ end
 
 setmetatable(nodefactory, {
     __index = function (_, prop)
-      SU.deprecated("SILE.nodefactory." .. prop, "SILE.nodefactory." .. prop:match("n?e?w?(.*)"):lower(), "0.10.0")
-      local old_constructor = _deprecated_nodefactory[prop]
-      return string.find(prop, "^new") and old_constructor or old_constructor()
+      if _deprecated_nodefactory[prop] then
+        SU.deprecated("SILE.nodefactory." .. prop, "SILE.nodefactory." .. prop:match("n?e?w?(.*)"):lower(), "0.10.0")
+        local old_constructor = _deprecated_nodefactory[prop]
+        return string.find(prop, "^new") and old_constructor or old_constructor()
+      else
+        SU.error("Attempt to access non-existent SILE.nodefactory." .. prop)
+      end
     end
   })
 

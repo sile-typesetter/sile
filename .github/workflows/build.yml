@@ -1,0 +1,60 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Cache fonts
+        uses: actions/cache@v2
+        with:
+          path: |
+            .fonts
+            .sources
+          key: fonts-${{ hashFiles('Makefile-fonts') }}
+      - name: Cache Lua Rocks
+        uses: actions/cache@v2
+        with:
+          path: |
+            lua_modules
+          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile-dev-1.rockspec') }}
+      - name: Fetch Tags
+        run: |
+          git fetch --prune --tags ||:
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get install fonts-sil-gentiumplus libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev liblua5.3-dev libpng-dev lua5.3 lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
+      - name: Configure
+        run: |
+          ./bootstrap.sh
+          ./configure --with-manual --with-examples
+          echo "::set-env name=DISTDIR::sile-$(./build-aux/git-version-gen .tarball-version)"
+          echo "::set-env name=MAKEFLAGS::-j$(nproc) -Otarget"
+      - name: Make
+        run: |
+          make
+      - name: Make package
+        run: |
+          make dist
+      - name: Upload Artifacts
+        if: ${{ !contains(github.ref, 'refs/tags/v') }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.DISTDIR }}
+          path: ${{ env.DISTDIR }}.zip
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: contains(github.ref, 'refs/tags/v')
+        with:
+          body_path: ${{ env.DISTDIR }}.md
+          files: |
+            ${{ env.DISTDIR }}.pdf
+            ${{ env.DISTDIR }}.zip
+            ${{ env.DISTDIR }}.tar.xz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

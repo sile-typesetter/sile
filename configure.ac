@@ -2,7 +2,7 @@ AC_PREREQ([2.68])
 AC_INIT([SILE],
         m4_esyscmd([build-aux/git-version-gen .tarball-version]),
         [simon@simon-cozens.org])
-AM_INIT_AUTOMAKE([1.11.1 foreign tar-pax dist-bzip2 no-dist-gzip -Wall no-define color-tests -Wno-portability subdir-objects])
+AM_INIT_AUTOMAKE([1.11.1 foreign tar-pax dist-zip dist-xz no-dist-gzip -Wall no-define color-tests -Wno-portability subdir-objects])
 AC_CONFIG_MACRO_DIR([m4])
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
@@ -90,6 +90,14 @@ AM_CONDITIONAL([SYSTEM_LIBTEXPDF], [test "x$with_system_libtexpdf" = "xyes"])
 AM_CONDITIONAL([SYSTEM_LUAROCKS], [test "x$with_system_luarocks" = "xyes"])
 AM_CONDITIONAL([LUAJIT], [test "x$with_luajit" = "xyes"])
 
+AC_ARG_WITH([manual],
+    AS_HELP_STRING([--with-manual], [Rebuild manual and install to system docs location]))
+AM_CONDITIONAL([MANUAL], [test "x$with_manual" = "xyes"])
+
+AC_ARG_WITH([examples],
+    AS_HELP_STRING([--with-examples], [Rebuild examples and install to system docs location]))
+AM_CONDITIONAL([EXAMPLES], [test "x$with_examples" = "xyes"])
+
 case $host_os in
   msys)
     LUA_VERSION=5.3 # By fiat. This is obviously not good.
@@ -102,15 +110,17 @@ esac
 AX_LUA_HEADERS
 AX_LUA_LIBS
 
-AS_IF([test "x$with_system_luarocks" != "xyes"], [], [
-    AX_LUA_MODULE([bit32], [bit32])
-    AX_LUA_MODULE([lpeg], [lpeg])
+AS_IF([test "x$with_system_luarocks" = "xyes"], [
+    AS_IF([test "$LUA_SHORT_VERSION" -lt 52],
+        AX_LUA_MODULE([bit32], [bit32])
+    )
     AX_LUA_MODULE([cassowary], [cassowary])
     AS_IF([test "$LUA_SHORT_VERSION" -lt 53],
         AX_LUA_MODULE([compat53], [compat53])
     )
     AX_LUA_MODULE([cosmo], [cosmo])
     AX_LUA_MODULE([linenoise], [linenoise])
+    AX_LUA_MODULE([lpeg], [lpeg])
     AX_LUA_MODULE([zlib], [lua-zlib])
     AX_LUA_MODULE([cliargs], [lua_cliargs])
     AX_LUA_MODULE([epnf], [luaepnf])
@@ -122,6 +132,9 @@ AS_IF([test "x$with_system_luarocks" != "xyes"], [], [
     AX_LUA_MODULE([pl], [penlight])
     AX_LUA_MODULE([std], [stdlib])
     AX_LUA_MODULE([vstruct], [vstruct])
+], [
+    AC_CHECK_PROG(HASLUAROCKS, luarocks, yes)
+    test "x$HASLUAROCKS" == "xyes" || AC_MSG_ERROR([luarocks is required])
 ])
 
 AC_ARG_ENABLE([linklua],
@@ -181,5 +194,4 @@ AC_CONFIG_FILES([Makefile src/Makefile sile.1])
 AC_CONFIG_FILES([sile], [chmod +x sile])
 
 AC_OUTPUT
-m4_esyscmd_s([test -f configure && sed -i -e '/rm -f/s/ core / /' configure])
-m4_esyscmd_s([test -f aclocal.m4 && sed -i -e '/rm -f/s/ core / /' aclocal.m4])
+m4_esyscmd_s([build-aux/decore-automake.sh])
