@@ -1,7 +1,7 @@
 \begin[class=book,papersize=b6]{document}
 \define[command=headline]{%
 \medskip%
-\font[family=DejaVu Sans,style=Bold Condensed,weight=700,size=20pt]{\center{\process}}
+\font[family=DejaVu Sans,style=Condensed,weight=800,size=20pt]{\center{\process}}
 \bigskip%
 }
 \left-running-head{A Scandal in Bohemia}
@@ -505,7 +505,7 @@ The door of Briony Lodge was open, and an elderly woman stood upon the steps. Sh
 “We shall see.” He pushed past the servant and rushed into the drawing-room, followed by the King and myself. The furniture was scattered about in every direction, with dismantled shelves and open drawers, as if the lady had hurriedly ransacked them before her flight. Holmes rushed at the bell-pull, tore back a small sliding shutter, and, plunging in his hand, pulled out a photograph and a letter. The photograph was of Irene Adler herself in evening dress, the letter was superscribed to “Sherlock Holmes, Esq. To be left till called for.” My friend tore it open and we all three read it together. It was dated at midnight of the preceding night and ran in this way:
 
 \pagebreak
-\begin[family=Snell Roundhand Script]{font}
+\begin[family=Miama]{font}
 \noindent
 My Dear Mr Sherlock Holmes,
 

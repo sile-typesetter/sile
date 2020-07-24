@@ -27,15 +27,15 @@ function pecha:init()
 end
 
 function pecha:endPage()
-  f = SILE.getFrame("folio")
-  SILE.typesetNaturally(f, function()
+  local folioframe = SILE.getFrame("folio")
+  SILE.typesetNaturally(folioframe, function ()
     SILE.settings.pushState()
     SILE.settings.reset()
-    SILE.settings.set("typesetter.breakwidth", SILE.length.new({length = f:height() }))
+    SILE.settings.set("typesetter.breakwidth", folioframe:height())
     SILE.typesetter:typeset(" ")
     SILE.call("vfill")
     SILE.call("pecha-folio-font")
-    SILE.call("center", {}, function()
+    SILE.call("center", {}, function ()
         SILE.typesetter:typeset(tibetanNumber(SILE.scratch.counters.folio.value))
     end)
     SILE.call("vfill")
@@ -53,9 +53,9 @@ end
 function pecha:registerCommands()
   self.base:registerCommands()
   SILE.call("language", { main = "bo" })
-  SILE.settings.set("document.lskip", SILE.nodefactory.hfillGlue)
-  SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
-  SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
+  SILE.settings.set("document.lskip", SILE.nodefactory.hfillglue())
+  SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
+  SILE.settings.set("document.parindent", SILE.nodefactory.glue())
 end
 
 return pecha

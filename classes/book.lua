@@ -58,24 +58,24 @@ book.finish = function ()
   return ret
 end
 
-book.endPage = function (self)
+book.endPage = function (_)
   book:moveTocNodes()
 
   if (book:oddPage() and SILE.scratch.headers.right) then
     SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
-      SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
-      SILE.settings.set("document.lskip", SILE.nodefactory.zeroGlue)
-      SILE.settings.set("document.rskip", SILE.nodefactory.zeroGlue)
-      -- SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
+      SILE.settings.set("current.parindent", SILE.nodefactory.glue())
+      SILE.settings.set("document.lskip", SILE.nodefactory.glue())
+      SILE.settings.set("document.rskip", SILE.nodefactory.glue())
+      -- SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
       SILE.process(SILE.scratch.headers.right)
       SILE.call("par")
     end)
   elseif (not(book:oddPage()) and SILE.scratch.headers.left) then
       SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
-        SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
-        SILE.settings.set("document.lskip", SILE.nodefactory.zeroGlue)
-        SILE.settings.set("document.rskip", SILE.nodefactory.zeroGlue)
-          -- SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.zeroGlue)
+        SILE.settings.set("current.parindent", SILE.nodefactory.glue())
+        SILE.settings.set("document.lskip", SILE.nodefactory.glue())
+        SILE.settings.set("document.rskip", SILE.nodefactory.glue())
+          -- SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
         SILE.process(SILE.scratch.headers.left)
         SILE.call("par")
       end)
@@ -83,21 +83,22 @@ book.endPage = function (self)
   return plain.endPage(book)
 end
 
-SILE.registerCommand("left-running-head", function (options, content)
+SILE.registerCommand("left-running-head", function (_, content)
   local closure = SILE.settings.wrap()
   SILE.scratch.headers.left = function () closure(content) end
 end, "Text to appear on the top of the left page")
 
-SILE.registerCommand("right-running-head", function (options, content)
+SILE.registerCommand("right-running-head", function (_, content)
   local closure = SILE.settings.wrap()
   SILE.scratch.headers.right = function () closure(content) end
 end, "Text to appear on the top of the right page")
 
 SILE.registerCommand("book:sectioning", function (options, content)
-  local content = SU.subContent(content)
   local level = SU.required(options, "level", "book:sectioning")
-  SILE.call("increment-multilevel-counter", {id = "sectioning", level = options.level})
-  SILE.call("tocentry", {level = options.level}, content)
+  SILE.call("increment-multilevel-counter", {id = "sectioning", level = level})
+  if SU.boolean(options.toc, true) then
+    SILE.call("tocentry", {level = level}, SU.subContent(content))
+  end
   local lang = SILE.settings.get("document.language")
   if options.numbering == nil or options.numbering == "yes" then
     if options.prenumber then
@@ -136,13 +137,14 @@ SILE.registerCommand("chapter", function (options, content)
   SILE.call("book:chapterfont", {}, function ()
     SILE.call("book:sectioning", {
       numbering = options.numbering,
+      toc = options.toc,
       level = 1,
       prenumber = "book:chapter:pre",
       postnumber = "book:chapter:post"
     }, content)
   end)
-  SILE.Commands["book:chapterfont"]({}, content)
-  SILE.Commands["left-running-head"]({}, function ()
+  SILE.call("book:chapterfont", {}, content)
+  SILE.call("left-running-head", {}, function ()
     SILE.settings.temporarily(function ()
       SILE.call("book:left-running-head-font")
       SILE.process(content)
@@ -157,16 +159,17 @@ SILE.registerCommand("section", function (options, content)
   SILE.call("goodbreak")
   SILE.call("bigskip")
   SILE.call("noindent")
-  SILE.Commands["book:sectionfont"]({}, function ()
+  SILE.call("book:sectionfont", {}, function ()
     SILE.call("book:sectioning", {
       numbering = options.numbering,
+      toc = options.toc,
       level = 2,
       postnumber = "book:section:post"
     }, content)
     SILE.process(content)
   end)
   if not SILE.scratch.counters.folio.off then
-    SILE.Commands["right-running-head"]({}, function ()
+    SILE.call("right-running-head", {}, function ()
       SILE.call("book:right-running-head-font")
       SILE.call("rightalign", {}, function ()
         SILE.settings.temporarily(function ()
@@ -188,9 +191,10 @@ SILE.registerCommand("subsection", function (options, content)
   SILE.call("goodbreak")
   SILE.call("noindent")
   SILE.call("medskip")
-  SILE.Commands["book:subsectionfont"]({}, function ()
+  SILE.call("book:subsectionfont", {}, function ()
     SILE.call("book:sectioning", {
           numbering = options.numbering,
+          toc = options.toc,
           level = 3,
           postnumber = "book:subsection:post"
         }, content)
@@ -203,20 +207,20 @@ SILE.registerCommand("subsection", function (options, content)
   SILE.typesetter:inhibitLeading()
 end, "Begin a new subsection")
 
-SILE.registerCommand("book:chapterfont", function (options, content)
+SILE.registerCommand("book:chapterfont", function (_, content)
   SILE.settings.temporarily(function ()
-    SILE.Commands["font"]({ weight = 800, size = "22pt" }, content)
+    SILE.call("font", { weight = 800, size = "22pt" }, content)
   end)
 end)
-SILE.registerCommand("book:sectionfont", function (options, content)
+SILE.registerCommand("book:sectionfont", function (_, content)
   SILE.settings.temporarily(function ()
-    SILE.Commands["font"]({ weight = 800, size = "15pt" }, content)
+    SILE.call("font", { weight = 800, size = "15pt" }, content)
   end)
 end)
 
-SILE.registerCommand("book:subsectionfont", function (options, content)
+SILE.registerCommand("book:subsectionfont", function (_, content)
   SILE.settings.temporarily(function ()
-    SILE.Commands["font"]({ weight = 800, size = "12pt" }, content)
+    SILE.call("font", { weight = 800, size = "12pt" }, content)
   end)
 end)
 

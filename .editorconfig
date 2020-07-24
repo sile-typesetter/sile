@@ -1,0 +1,19 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+trim_trailing_whitespace = true
+
+[{*.lua,sile.in,*rockspec,.busted,.luacheckrc}]
+indent_style = space
+indent_size = 2
+
+[*.pl]
+indent_style = space
+indent_size = 4
+
+[makefile*]
+indent_style = tab
+indent_size = 4
