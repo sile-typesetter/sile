@@ -40,10 +40,23 @@ SILE.registerCommand("url", function (options, content)
   SILE.call("code", {}, result)
 end)
 
-SILE.registerCommand("code", function(options, content)
+SILE.registerCommand("code", function(_, content)
   SILE.settings.temporarily(function()
     SILE.call("verbatim:font")
     SILE.process(content)
     SILE.typesetter:typeset(" ")
   end)
 end)
+
+return {
+  documentation = [[
+\begin{document}
+This package enhances the typesetting of URLs in two ways. First, the
+\code{\\url} command will automatically insert breakpoints into unwieldy
+URLs like \url{https://github.com/simoncozens/sile/tree/master/examples/packages}
+so that they can be broken up over multiple lines. It also provides the
+\code{\\href[src=...]\{\}} command which inserts PDF hyperlinks,
+\href[src=http://www.sile-typesetter.org/]{like this}.
+\end{document}
+]]
+}

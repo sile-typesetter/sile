@@ -2,8 +2,8 @@
 \script[src=packages/lorem]
 \script[src=packages/rules]
 \script{
- SILE.scratch.insertions.classes.footnote.topSkip = SILE.length.parse("5pt")
- SILE.scratch.insertions.classes.footnote.interInsertionSkip = SILE.length.parse("24pt")
+ SILE.scratch.insertions.classes.footnote.topSkip = SILE.length("5pt")
+ SILE.scratch.insertions.classes.footnote.interInsertionSkip = SILE.length("24pt")
  SILE.typesetter:registerPageEndHook(function()
     for _,f in pairs(SILE.frames) do
       --SILE.outputter:debugFrame(f)

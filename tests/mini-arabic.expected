@@ -1,105 +1,101 @@
-Set paper size 	419.5275636	595.275597
+Set paper size 	297.6377985	419.5275636
 Begin page
-Mx 	337.3832
-My 	42.7980
-Set font 	Noto Naskh Arabic;18;400;;normal;;LTR
-T	1491 1499 1495 1495	(1955)
-Mx 	307.3556
-Set font 	Noto Naskh Arabic;18;400;;normal;;RTL
-T	365 408 495	(میں)
-Mx 	287.7167
-T	70 39	(ان)
-Mx 	270.8990
-T	434 354	(کا)
-Mx 	228.1448
-T	68 434 487 441 498 39	(انتقال)
-Mx 	205.6758
-T	39 503 369	(ہوا)
-Mx 	201.2989
-T	212	(۔)
-Mx 	337.3832
-My 	64.3980
-Set font 	Noto Naskh Arabic;18;400;;normal;;LTR
-T	1491 1499 1495 1495	(1955)
-Mx 	307.3747
-Set font 	Noto Naskh Arabic;18;400;;normal;;RTL
-T	365 408 495	(میں)
-Mx 	287.7548
-T	70 39	(ان)
-Mx 	270.9562
-T	434 354	(کا)
-Mx 	228.2211
-T	68 434 487 441 498 39	(انتقال)
-Mx 	205.7712
-T	39 503 369	(ہوا)
-Mx 	201.3942
-T	212	(۔)
-Mx 	160.2262
-Set font 	Noto Naskh Arabic;18;400;;normal;;LTR
-T	1491 1499 1494 1497	(1947)
-Mx 	130.2177
-Set font 	Noto Naskh Arabic;18;400;;normal;;RTL
-T	365 408 495	(میں)
-Mx 	109.6574
-T	193 72	(وہ)
-Mx 	105.2805
-T	212	(۔)
-Mx 	337.3832
-My 	85.9980
-Set font 	Noto Naskh Arabic;18;400;;normal;;LTR
-T	1491 1499 1495 1495	(1955)
-Mx 	307.3756
-Set font 	Noto Naskh Arabic;18;400;;normal;;RTL
-T	365 408 495	(میں)
-Mx 	287.7567
-T	70 39	(ان)
-Mx 	270.9591
-T	434 354	(کا)
-Mx 	228.2249
-T	68 434 487 441 498 39	(انتقال)
-Mx 	205.7759
-T	39 503 369	(ہوا)
-Mx 	201.3990
-T	212	(۔)
-Mx 	155.4480
-Set font 	Noto Naskh Arabic;18;400;;normal;;LTR
-T	1491 1499 1494 1497	(1947)
-Mx 	125.4404
-Set font 	Noto Naskh Arabic;18;400;;normal;;RTL
-T	365 408 495	(میں)
-Mx 	104.8811
-T	193 72	(وہ)
-Mx 	100.5041
-T	212	(۔)
-Mx 	353.3266
-My 	107.5980
-T	365 408 495	(میں)
-Mx 	307.3491
-Set font 	Noto Naskh Arabic;18;400;;normal;;LTR
-T	1491 1499 1495 1495	(1955)
-Mx 	277.3150
-Set font 	Noto Naskh Arabic;18;400;;normal;;RTL
-T	365 408 495	(میں)
-Mx 	257.4938
-T	434 407 34	(آیا)
-Mx 	233.9373
-T	434 373 440	(تھا)
-Mx 	353.3266
-My 	129.1980
-T	365 408 495	(میں)
-Mx 	312.1586
-Set font 	Noto Naskh Arabic;18;400;;normal;;LTR
-T	1491 1499 1495 1495	(1955)
-Mx 	282.1236
-Set font 	Noto Naskh Arabic;18;400;;normal;;RTL
-T	365 408 495	(میں)
-Mx 	262.3014
-T	434 407 34	(آیا)
-Mx 	238.7439
-T	434 373 440	(تھا)
-Mx 	207.4176
-My 	553.7327
-Set font 	Gentium Plus;10;400;;normal;;LTR
-T	20	(1)
+Mx 	232.9512
+My 	32.0233
+Set font 	Amiri;14;400;;normal;;LTR
+T	20 28 24 24	(1955)
+Mx 	211.9017
+Set font 	Amiri;14;400;;normal;;RTL
+T	3978 3974 2335	(میں)
+Mx 	195.8903
+T	417 386	(ان)
+Mx 	180.0840
+T	4764 4686	(کا)
+Mx 	148.9310
+T	415 2019 2189 3067 3756 386	(انتقال)
+Mx 	129.7682
+T	386 2440 2256	(ہوا)
+Mx 	122.8844
+T	559	(۔)
+Mx 	232.9512
+My 	48.8233
+Set font 	Amiri;14;400;;normal;;LTR
+T	20 28 24 24	(1955)
+Mx 	211.9168
+Set font 	Amiri;14;400;;normal;;RTL
+T	3978 3974 2335	(میں)
+Mx 	195.9204
+T	417 386	(ان)
+Mx 	180.1291
+T	4764 4686	(کا)
+Mx 	148.9912
+T	415 2019 2189 3067 3756 386	(انتقال)
+Mx 	129.8434
+T	386 2440 2256	(ہوا)
+Mx 	122.9596
+T	559	(۔)
+Mx 	93.1550
+Set font 	Amiri;14;400;;normal;;LTR
+T	20 28 23 26	(1947)
+Mx 	72.1205
+Set font 	Amiri;14;400;;normal;;RTL
+T	3978 3974 2335	(میں)
+Mx 	56.4113
+T	540 419	(وہ)
+Mx 	49.5275
+T	559	(۔)
+Mx 	232.9512
+My 	65.6233
+Set font 	Amiri;14;400;;normal;;LTR
+T	20 28 24 24	(1955)
+Mx 	211.9178
+Set font 	Amiri;14;400;;normal;;RTL
+T	3978 3974 2335	(میں)
+Mx 	195.9224
+T	417 386	(ان)
+Mx 	180.1322
+T	4764 4686	(کا)
+Mx 	148.9952
+T	415 2019 2189 3067 3756 386	(انتقال)
+Mx 	129.8485
+T	386 2440 2256	(ہوا)
+Mx 	122.9647
+T	559	(۔)
+Mx 	88.2320
+Set font 	Amiri;14;400;;normal;;LTR
+T	20 28 23 26	(1947)
+Mx 	67.1986
+Set font 	Amiri;14;400;;normal;;RTL
+T	3978 3974 2335	(میں)
+Mx 	51.4903
+T	540 419	(وہ)
+Mx 	44.6066
+T	559	(۔)
+Mx 	246.6504
+My 	83.3576
+T	3978 3974 2335	(میں)
+Mx 	211.8940
+Set font 	Amiri;14;400;;normal;;LTR
+T	20 28 24 24	(1955)
+Mx 	190.8367
+Set font 	Amiri;14;400;;normal;;RTL
+T	3978 3974 2335	(میں)
+Mx 	176.9572
+T	2019 2107 381	(آیا)
+Mx 	160.6578
+T	2019 6169 2094	(تھا)
+Mx 	246.6504
+My 	100.8186
+T	3978 3974 2335	(میں)
+Mx 	216.8458
+Set font 	Amiri;14;400;;normal;;LTR
+T	20 28 24 24	(1955)
+Mx 	195.7875
+Set font 	Amiri;14;400;;normal;;RTL
+T	3978 3974 2335	(میں)
+Mx 	181.9070
+T	2019 2107 381	(آیا)
+Mx 	165.6065
+T	2019 6169 2094	(تھا)
 End page
 Finish

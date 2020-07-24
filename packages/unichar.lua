@@ -1,7 +1,13 @@
-SILE.registerCommand("unichar", function(options, content)
+SILE.registerCommand("unichar", function(_, content)
   local cp = content[1]
   if type(cp) ~= "string" then SU.error("Bad argument to \\unicode") end
-  SILE.typesetter:typeset(SU.utf8charfromcodepoint(cp))
+  local hlist = SILE.typesetter.state.nodes
+  local char = SU.utf8charfromcodepoint(cp)
+  if #hlist > 1 and hlist[#hlist].is_unshaped then
+    hlist[#hlist].text = hlist[#hlist].text .. char
+  else
+    SILE.typesetter:typeset(char)
+  end
 end)
 
 return { documentation = [[\begin{document}

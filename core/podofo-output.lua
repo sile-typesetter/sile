@@ -9,39 +9,38 @@ local document
 local page
 local painter
 local pagesize
-local font
-local lastfont
+local lastkey
 
 local podofoFaces = {}
 
 local cursorX = 0
 local cursorY = 0
 SILE.outputters.podofo = {
-  init = function()
+  init = function ()
     document = pdf.PdfMemDocument()
     pagesize = pdf.PdfRect()
     pagesize:SetWidth(SILE.documentState.paperSize[1])
     pagesize:SetHeight(SILE.documentState.paperSize[2])
     page = document:CreatePage(pagesize)
-    painter = podofo.PdfPainter()
+    painter = pdf.PdfPainter()
     painter:SetPage(page)
   end,
-  newPage = function()
+  newPage = function ()
     painter:FinishPage()
     page = document:CreatePage(pagesize)
     painter:SetPage(page)
   end,
-  finish = function()
+  finish = function ()
     painter:FinishPage()
     document:Write(SILE.outputFilename)
   end,
-  setColor = function (self, color)
+  setColor = function (_, color)
     painter:SetColor(color.r, color.g, color.b)
   end,
   outputHbox = function (value)
     if not value.glyphNames then return end
-    for i = 1,#(value.glyphNames) do
-      painter:DrawGlyph(document,cursorX, cursorY, value.glyphNames[i])
+    for i = 1, #(value.glyphNames) do
+      painter:DrawGlyph(document, cursorX, cursorY, value.glyphNames[i])
     end
   end,
   setFont = function (options)
@@ -57,33 +56,33 @@ SILE.outputters.podofo = {
     -- Podofo trashes the font, so we need to recompute.
     SILE.fontCache[lastkey] = nil
   end,
-  drawPNG = function (src, x,y,width,height)
+  drawPNG = function (_, _, _, _, _)
   end,
   imageSize = function (src)
-    local box_width,box_height, err = imagesize.imgsize(src)imagesize.imgsize(src)
+    local box_width, box_height, err = imagesize.imgsize(src)imagesize.imgsize(src)
     if not box_width then
       SU.error(err.." loading image")
     end
     return box_width, box_height
   end,
-  moveTo = function (x,y)
+  moveTo = function (x, y)
     cursorX = x
     cursorY = SILE.documentState.paperSize[2] - y
   end,
-  rule = function (x,y,width,depth)
-    painter:Rectangle(x,SILE.documentState.paperSize[2] - y,width,depth)
+  rule = function (x, y, width, depth)
+    painter:Rectangle(x, SILE.documentState.paperSize[2] - y, width, depth)
     painter:Close()
     painter:Fill()
   end,
-  debugFrame = function (self,frame)
+  debugFrame = function (_, _)
   end,
-  debugHbox = function(typesetter, hbox, scaledWidth)
-    painter:SetColor(0.9,0.9,0.9)
+  debugHbox = function (typesetter, hbox, scaledWidth)
+    painter:SetColor(0.9, 0.9, 0.9)
     painter:SetStrokeWidth(0.5)
     painter:Rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY+(hbox.height), scaledWidth, hbox.height+hbox.depth)
     if (hbox.depth) then painter:Rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY+(hbox.height), scaledWidth, hbox.height); end
     painter:Stroke()
-    painter:SetColor(0,0,0)
+    painter:SetColor(0, 0, 0)
     --cr:move_to(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
   end
 }

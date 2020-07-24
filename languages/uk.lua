@@ -1,9 +1,9 @@
 SILE.hyphenator.languages["uk"] = {}
 SILE.hyphenator.languages["uk"].patterns =
    {
----- break words into syllables (rules60 \S 30);
----- breakpoints between consecutive consonants
----- according to the phonetical principles
+-- break words into syllables (rules60 \S 30);
+-- breakpoints between consecutive consonants
+-- according to the phonetical principles
 "2а1",
 "а3а",
 "а3е",
@@ -428,7 +428,7 @@ SILE.hyphenator.languages["uk"].patterns =
 "6ь",
 -- don't cut off one letter at the beginning
 -- and the end of the word (rules60 \S 30 p. 5)
--- -- this will be done by lefhyphenmin and righthyphenmin
+-- this will be done by lefhyphenmin and righthyphenmin
 -- prevents cutting off series of consecutive consonants
 -- not forming a syllable at the beginning and the end of word
 ".б'8",
@@ -995,8 +995,8 @@ SILE.hyphenator.languages["uk"].patterns =
 "нао4р",
 "прио4р",
 "неу4к",
-"-- don't break part of root not forming syllable",
-"-- (rules60 \S 30 pp. 7, 8, 9)",
+-- don't break part of root not forming syllable",
+-- (rules60 \S 30 pp. 7, 8, 9)",
 "3в4б4лаг",
 "3в4к4лад",
 "3в4п4лив",

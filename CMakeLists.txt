@@ -136,6 +136,10 @@ if (WIN32)
     DEPENDEES build)
   ExternalProject_Add_StepDependencies(luarocks install_luasec openssl)
 
+  ExternalProject_Add_Step(luarocks install_penlight
+    COMMAND "${LUAROCKS_COMMAND}" install penlight 1.5.4-1
+    DEPENDEES build)
+
   ExternalProject_Add(font_gentium
     URL https://software.sil.org/downloads/r/gentium/GentiumPlus-5.000.zip
     URL_MD5 acedcd2696ea14d1a9296ba6d3075288

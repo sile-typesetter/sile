@@ -5,7 +5,7 @@
 \script[src=packages/bidi]
 \set[parameter=linebreak.tolerance,value=10000]
 \noindent
-\define[command=tableofcontents:headerfont]{\font[size=24pt,family=Baskerville,style=italic]{\process}}%
+\define[command=tableofcontents:headerfont]{\font[size=20pt,family=Libre Baskerville,style=italic]{\process}}%
 % Of course this is a bit complicated. We're showing off doing complicated things.
 \begin[first-content-frame=title]{pagetemplate}
   \frame[id=gutter,width=3%pw]
@@ -16,7 +16,7 @@
   \frame[id=bottomBox,bottom=bottom(content),left=left(content),right=right(rightCol),height=90pt]
 \end{pagetemplate}
 % Main title
-\center{\font[family=Baskerville,size=35pt]{\em{The SILE Show-off Document}}}
+\center{\font[family=Libre Baskerville,size=30pt]{\em{The SILE Show-off Document}}}
 \framebreak
 
 \typeset-into[frame=sidebar]{\tableofcontents}%
@@ -44,7 +44,7 @@ columns.
 Now I will typeset some text on the other frames of this page.
 
 \typeset-into[frame=bottomBox]{%
-\font[family=Gill Sans]\font[size=15pt,weight=600]{The Bottom Frame}
+\font[family=Roboto]\font[size=15pt,weight=600]{The Bottom Frame}
 
 \bigskip%
 \noindent{}Here we are in the bottom frame. This frame stretches across the full width of the first two columns
@@ -56,7 +56,7 @@ Here’s an image, because SILE supports those too: \img[src=examples/docbook/im
 
 \eject%
 \left-running-head{Multilingual capabilities}% Again, normally called automatically.
-\noindent\font[family=Baskerville,size=25pt]{\em{Multilingual capabilities}}
+\noindent\font[family=Libre Baskerville,size=20pt]{\em{Multilingual capabilities}}
 \tocentry{Multilingual capabilities}
 \set[parameter=linebreak.tolerance,value=500]\bigskip
 
@@ -67,22 +67,22 @@ and conventions of typesetting in particular languages. For instance, here’s s
 
 \medskip
 
-\noindent\font[family=Hiragino Mincho Pro,language=ja]{日本語の植字（「文字の組み合わせ」ということ）では、いくつがのルールがあります。その中の一つは、禁則処理というルールです。
+\noindent\font[family=Noto Serif CJK JP,language=ja]{日本語の植字（「文字の組み合わせ」ということ）では、いくつがのルールがあります。その中の一つは、禁則処理というルールです。
 }
 
 \medskip
 
 Please notice the following features in the above: first, where two full-width Japanese punctuation characters appear
-next to each other, as in \font[family=Hiragino Mincho Pro,language=ja]{字（{}「文}, these are kerned together so
+next to each other, as in \font[family=Noto Serif CJK JP,language=ja]{字（{}「文}, these are kerned together so
 that each occupies a half-space. Second, although SILE would really like to break the line
-after \font[family=Hiragino Mincho Pro,language=ja]{一つは}, this would leave the full width comma
-\font[family=Hiragino Mincho Pro,language=ja]{、} at the start of a line, which is forbidden under Japanese
-typesetting principles. SILE understands these principles and refuses to allow a line to begin with 
+after \font[family=Noto Serif CJK JP,language=ja]{一つは}, this would leave the full width comma
+\font[family=Noto Serif CJK JP,language=ja]{、} at the start of a line, which is forbidden under Japanese
+typesetting principles. SILE understands these principles and refuses to allow a line to begin with
 certain punctuation characters.
 
 But even so, Japanese typesetting is pretty easy because it’s still fundamentally left-to-right typesetting.
 Multilingual typesetting only gets difficult when you have to mix left-to-right and right-to-left typesetting,
-such as when you have English and \font[family=Scheherazade,size=12pt,language=ar,script=Arab]{الخط العربي
+such as when you have English and \font[family=Amiri,size=12pt,language=ar,script=Arab]{الخط العربي
 }
 in the same document.
 
@@ -92,7 +92,7 @@ and insert some left-to-right text in them. But don’t worry. SILE can do that 
 \medskip
 \breakframevertical
 \thisframeRTL
-\font[family=Scheherazade,size=12pt,direction=RTL,language=ar,script=Arab]{\noindent{}عندما يريد العالم أن ‪يتكلّم ‬ ، فهو يتحدّث بلغة يونيكود. تسجّل الآن لحضور المؤتمر الدولي العاشر ليونيكود (Unicode Conference) ، الذي سيعقد في 10–12 آذار 1997 بمدينة مَايِنْتْس، ألمانيا. و سيجمع المؤتمر بين خبراء من كافة قطاعات الصناعة على الشبكة العالمية انترنيت ويونيكود، حيث ستتم، على الصعيدين الدولي والمحلي على حد سواء مناقشة سبل استخدام يونكود في النظم القائمة وفيما يخص التطبيقات الحاسوبية، الخطوط، تصميم النصوص والحوسبة متعددة اللغات.
+\font[family=Amiri,size=12pt,direction=RTL,language=ar,script=Arab]{\noindent{}عندما يريد العالم أن ‪يتكلّم ‬ ، فهو يتحدّث بلغة يونيكود. تسجّل الآن لحضور المؤتمر الدولي العاشر ليونيكود (Unicode Conference) ، الذي سيعقد في 10–12 آذار 1997 بمدينة مَايِنْتْس، ألمانيا. و سيجمع المؤتمر بين خبراء من كافة قطاعات الصناعة على الشبكة العالمية انترنيت ويونيكود، حيث ستتم، على الصعيدين الدولي والمحلي على حد سواء مناقشة سبل استخدام يونكود في النظم القائمة وفيما يخص التطبيقات الحاسوبية، الخطوط، تصميم النصوص والحوسبة متعددة اللغات.
 }
 
 \medskip
@@ -101,14 +101,14 @@ and insert some left-to-right text in them. But don’t worry. SILE can do that 
 
 SILE also understands the difference between various languages, applying an appropriate shaper for each language;
 for instance, we will typeset the same Unicode text three times. First, in standard Arabic
-\font[family=Scheherazade,direction=RTL,language=ar,script=Arab]{ههه}; then in Sindi
-\font[family=Scheherazade,direction=RTL,language=snd,script=Arab]{ههه}; and then in Urdu
-\font[family=Scheherazade,direction=RTL,language=urd,script=Arab]{ههه}.
+\font[family=LateefGR,direction=RTL,language=ar,script=Arab]{ههه}; then in Sindi
+\font[family=LateefGR,direction=RTL,language=snd,script=Arab]{ههه}; and then in Urdu
+\font[family=LateefGR,direction=RTL,language=urd,script=Arab]{ههه}.
 
 \supereject
 
 \right-running-head{\hfill Typesetting on a grid}%
-\noindent\font[family=Baskerville,size=25pt]{\em{Typesetting on a grid}}
+\noindent\font[family=Libre Baskerville,size=25pt]{\em{Typesetting on a grid}}
 \tocentry{Typesetting on a grid}\bigskip
 \script[src=packages/grid]
 \grid[spacing=15pt]

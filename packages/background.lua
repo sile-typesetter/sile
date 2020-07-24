@@ -1,6 +1,6 @@
 SILE.require("packages/color")
 
-local outputBackground = function(color)
+local outputBackground = function (color)
   local page = SILE.getFrame("page")
   local backgroundColor = SILE.colorparser(color)
   SILE.outputter:pushColor(backgroundColor)
@@ -8,13 +8,13 @@ local outputBackground = function(color)
   SILE.outputter:popColor()
 end
 
-SILE.registerCommand("background", function (options, content)
+SILE.registerCommand("background", function (options, _)
   options.color = options.color or "white"
   options.allpages = options.allpages or true
   outputBackground(options.color)
   if options.allpages and options.allpages ~= "false" then
     local oldNewPage = SILE.documentState.documentClass.newPage
-    SILE.documentState.documentClass.newPage = function(self)
+    SILE.documentState.documentClass.newPage = function (self)
       local page = oldNewPage(self)
       outputBackground(options.color)
       return page

@@ -1,11 +1,16 @@
-\begin[papersize=a5]{document}
+\begin[papersize=a6]{document}
+\nofolios
 \language[main=tr]
+% Current default hyphenator has incorrect hyphen points (ra-b-'-bin)
+% This test will need updating if the default hyphenation ever gets it right
+\script{SILE.typesetter:typeset(SILE.showHyphenationPoints("rab'bin", "tr"))}
+
 \hyphenator:add-exceptions{rab’-bin rab'-bin}
 
-\script{SILE.typesetter:typeset(showHyphenationPoints("rab'bin", "tr"))}
+\script{SILE.typesetter:typeset(SILE.showHyphenationPoints("rab'bin", "tr"))}
 
-\script{SILE.typesetter:typeset(showHyphenationPoints("rab’bin", "tr"))}
+\script{SILE.typesetter:typeset(SILE.showHyphenationPoints("rab’bin", "tr"))}
 
-\script{SILE.typesetter:typeset(showHyphenationPoints("volksemosie", "af"))}
+\script{SILE.typesetter:typeset(SILE.showHyphenationPoints("volksemosie", "af"))}
 
 \end{document}

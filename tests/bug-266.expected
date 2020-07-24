@@ -11,7 +11,7 @@ T	87 75 72	(the)
 Mx 	89.4878
 T	90 76 86 72	(wise)
 Mx 	34.8819
-My 	44.8279
+My 	52.5447
 Set font 	Gentium Plus;20;400;;normal;;LTR
 T	58 82 85 71	(Word)
 Mx 	89.3448
@@ -20,9 +20,5 @@ Mx 	111.5958
 T	87 75 72	(the)
 Mx 	144.0617
 T	90 76 86 72	(wise)
-Mx 	146.4727
-My 	392.0445
-Set font 	Gentium Plus;10;400;;normal;;LTR
-T	20	(1)
 End page
 Finish

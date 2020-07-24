@@ -1,27 +1,25 @@
 local metrics = require("fontmetrics")
 
-SILE.registerCommand("repertoire", function(o,c)
-  local columns = o.columns or 5
+SILE.registerCommand("repertoire", function(_, _)
   local ot = SILE.require("core/opentype-parser")
-  local options = SILE.font.loadDefaults({})
-  local face = SILE.font.cache(options, SILE.shaper.getFace)
+  local fontoptions = SILE.font.loadDefaults({})
+  local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
   local font = ot.parseFont(face)
   local maxg = font.maxp.numGlyphs
-  local em = SILE.toPoints("1em")
-  for i = 1,maxg-1 do
-    wd = metrics.glyphwidth(i, face.data, face.index)
+  for i = 1 , maxg - 1 do
+    local wd = metrics.glyphwidth(i, face.data, face.index)
     SILE.typesetter:pushHbox({
-      height= SILE.length.new({ length = 1.2 * options.size  }),
-      width= SILE.length.new({ length = wd * options.size }),
+      height= SILE.length(1.2 * fontoptions.size),
+      width= SILE.length(wd * fontoptions.size),
       depth= 0,
-      value= { options = options, glyphString =  { i } },
+      value= { options = fontoptions, glyphString =  { i } },
     })
-    SILE.typesetter:pushGlue(((1-wd)*options.size).."pt plus 1pt minus 1pt")
+    SILE.typesetter:pushGlue(((1-wd) * fontoptions.size).."pt plus 1pt minus 1pt")
   end
 end)
 
-SILE.registerCommand("pangrams", function (o,c)
-  pg = {
+SILE.registerCommand("pangrams", function (_, _)
+  local pg = {
     "Sphinx of black quartz, judge my vow!",
     "The five boxing wizards jump quickly.",
     "Five quacking zephyrs jolt my wax bed.",
@@ -35,8 +33,8 @@ SILE.registerCommand("pangrams", function (o,c)
   SILE.call("bigskip")
 end)
 
-SILE.registerCommand("set-to-width", function(options,content)
-  local width = SILE.length.parse(SU.required(options, "width", "set to width")):absolute()
+SILE.registerCommand("set-to-width", function(options, content)
+  local width = SU.required(options, "width", "set to width", "length"):absolute()
   local fontOptions = SILE.font.loadDefaults({})
   for line in SU.gtoke(content[1],"\n+") do
     if line.string then
@@ -51,3 +49,39 @@ SILE.registerCommand("set-to-width", function(options,content)
     end
   end
 end)
+
+return {
+  documentation = [[
+\begin{document}
+SILE has found itself becoming well used by type designers, who often
+want to create specimen documents to show off their new fonts. This package
+provides a few commands to help create test documents. (The \code{fontproof}
+class, available from the package manager, contains many more tools for creating
+specimens.) The \code{\\repertoire} command prints out every glyph in the
+font, in a simple table. The \code{\\pangrams} command prints out a few
+pangrams for the Latin script. Finally, \code{\\set-to-width[width=...]\{...\}}
+will process each line of content, changing the font size so that the output
+is a constant width.
+
+\begin{verbatim}
+\line
+\\begin[width=4cm]\{set-to-width\}
+CAPERCAILLIE
+LAMMERGEYER
+CASSOWARY
+ACCENTOR DOWITCHER DOTTEREL
+\\end\{set-to-width\}
+\line
+\end{verbatim}
+
+\begin{examplefont}
+\begin[width=4cm]{set-to-width}
+CAPERCAILLIE
+LAMMERGEYER
+CASSOWARY
+ACCENTOR DOWITCHER DOTTEREL
+\end{set-to-width}
+\end{examplefont}
+\end{document}
+]]
+}
