@@ -1,27 +1,31 @@
-\begin[class=book]{document}%
+\begin[class=book]{document}
 \script[src=packages/frametricks]
 \script[src=packages/lorem]
 \script[src=packages/image]
 \script[src=packages/bidi]
 \set[parameter=linebreak.tolerance,value=10000]
+\set[parameter=shaper.spaceshrinkfactor,value=0.3]
+\set[parameter=shaper.spacestretchfactor,value=0.8]
+\set[parameter=linebreak.emergencyStretch,value=2spc]
 \noindent
-\define[command=tableofcontents:headerfont]{\font[size=20pt,family=Libre Baskerville,style=italic]{\process}}%
+\define[command=tableofcontents:headerfont]{\font[size=18pt,family=Libre Baskerville,style=Italic]{\hfill\process}}
 % Of course this is a bit complicated. We're showing off doing complicated things.
 \begin[first-content-frame=title]{pagetemplate}
-  \frame[id=gutter,width=3%pw]
-  \frame[id=title, top=top(content), bottom=top(title)+5%pw, left=left(content), right=95%pw,next=leftCol]
+  \frame[id=gutter,width=2%pw]
+  \frame[id=title,top=top(content),bottom=top(title)+7%ph,left=left(content),right=91.7%pw,next=leftCol]
   \frame[id=leftCol,left=left(content),right=left(gutter),top=bottom(title)+2%ph,bottom=top(bottomBox)-2%ph,next=rightCol]
   \frame[id=rightCol,left=right(gutter),top=top(leftCol),bottom=top(bottomBox)-2%ph,width=width(leftCol)]
-  \frame[id=sidebar,width=200pt,left=right(rightCol)+3%pw,right=right(title),top=top(leftCol),bottom=bottom(content)]
+  \frame[id=sidebar,width=200pt,left=right(rightCol)+width(gutter),right=right(title),top=top(leftCol),bottom=bottom(content)]
   \frame[id=bottomBox,bottom=bottom(content),left=left(content),right=right(rightCol),height=90pt]
 \end{pagetemplate}
 % Main title
-\center{\font[family=Libre Baskerville,size=30pt]{\em{The SILE Show-off Document}}}
+\center{\font[family=Libre Baskerville,style=Italic,size=30pt]{\em{The SILE Show-off Document}}}
 \framebreak
+\nofoliosthispage
 
-\typeset-into[frame=sidebar]{\tableofcontents}%
+\typeset-into[frame=sidebar]{\tableofcontents}
 % First frame
-\noindent\float[bottomboundary=5pt]{\font[size=60pt]{S}}ILE is a typesetting system. Its job is to produce beautiful printed documents. It’s similar to TeX, but with some ideas borrowed from InDesign, and written with modern technologies in mind.
+\noindent\float[bottomboundary=5pt]{\font[size=50pt]{S}}ILE is a typesetting system. Its job is to produce beautiful printed documents. It’s similar to TeX, but with some ideas borrowed from InDesign, and written with modern technologies in mind.
 
 Let’s demonstrate some of the things which are interesting about SILE.
 \tocentry{Frames}% Normally called automatically but we are not using sectioning commands.
@@ -43,10 +47,10 @@ columns.
 
 Now I will typeset some text on the other frames of this page.
 
-\typeset-into[frame=bottomBox]{%
+\typeset-into[frame=bottomBox]{\neverindent
 \font[family=Roboto]\font[size=15pt,weight=600]{The Bottom Frame}
 
-\bigskip%
+\bigskip
 \noindent{}Here we are in the bottom frame. This frame stretches across the full width of the first two columns
 on the page, but it doesn’t stretch as far as the third column. I’ve defined this frame to be precisely 90pt high,
 and so the two columns have adjusted their height to fit in with this one.
@@ -54,11 +58,13 @@ and so the two columns have adjusted their height to fit in with this one.
 Here’s an image, because SILE supports those too: \img[src=examples/docbook/images/sile-logo.jpg,height=20pt]
 }
 
-\eject%
-\left-running-head{Multilingual capabilities}% Again, normally called automatically.
+\eject
+\set[parameter=linebreak.tolerance,value=500]
+\left-running-head{\noindent{}Multilingual capabilities}% Again, normally called automatically.
 \noindent\font[family=Libre Baskerville,size=20pt]{\em{Multilingual capabilities}}
 \tocentry{Multilingual capabilities}
-\set[parameter=linebreak.tolerance,value=500]\bigskip
+
+\bigskip
 
 \noindent{}SILE uses the \em{Harfbuzz} shaping engine, which provides excellent support for handling text containing
 different languages. It’s very easy to use multiple languages, multiple text directions, and multiple text
@@ -101,20 +107,21 @@ and insert some left-to-right text in them. But don’t worry. SILE can do that 
 
 SILE also understands the difference between various languages, applying an appropriate shaper for each language;
 for instance, we will typeset the same Unicode text three times. First, in standard Arabic
-\font[family=LateefGR,direction=RTL,language=ar,script=Arab]{ههه}; then in Sindi
-\font[family=LateefGR,direction=RTL,language=snd,script=Arab]{ههه}; and then in Urdu
-\font[family=LateefGR,direction=RTL,language=urd,script=Arab]{ههه}.
+\font[family=LateefGR,direction=RTL,language=ar,script=Arab,size=1.5em]{ههه}; then in Sindi
+\font[family=LateefGR,direction=RTL,language=snd,script=Arab,size=1.5em]{ههه}; and then in Urdu
+\font[family=LateefGR,direction=RTL,language=urd,script=Arab,size=1.5em]{ههه}.
 
 \supereject
 
-\right-running-head{\hfill Typesetting on a grid}%
-\noindent\font[family=Libre Baskerville,size=25pt]{\em{Typesetting on a grid}}
-\tocentry{Typesetting on a grid}\bigskip
 \script[src=packages/grid]
 \grid[spacing=15pt]
+\grid:debug
+\hbox\par
+\right-running-head{\hfill Typesetting on a grid}
+\noindent\font[family=Libre Baskerville,size=25pt]{\em{Typesetting on a grid}}
+\tocentry{Typesetting on a grid}
 
-Because SILE is written in an interpreted language (Lua), it’s possible—in fact, it’s actually quite easy—to change the way that its typesetting algorithms work, at runtime and even during the course of a document. As an
-example, we’re currently using the grid package to typeset text on a fixed, 15 point grid.
+Because SILE is written in an interpreted language (Lua), it’s possible—in fact, it’s actually quite easy—to change the way that its typesetting algorithms work, even at runtime during the course of a document. As an example, we’re currently using the grid package to typeset text on a fixed, 15 point grid.
 
 Spacing is quantised to this grid size, so even if I add some irregular sized vertical spacing here:
 
