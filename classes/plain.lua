@@ -36,6 +36,9 @@ plain.declareOption = function (self, name, default)
 end
 
 SILE.registerCommand("noindent", function (_, content)
+  if #SILE.typesetter.state.nodes ~= 0 then
+    SU.warn("\\noindent called after nodes already recieved in a paragraph, the setting will have no effect because the parindent (if any) has already been output")
+  end
   SILE.settings.set("current.parindent", SILE.nodefactory.glue())
   SILE.process(content)
 end, "Do not add an indent to the start of this paragraph")
