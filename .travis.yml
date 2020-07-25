@@ -83,7 +83,7 @@ script:
  - fold_unless_fail 'Compile documentation and examples' 'compile_docs' make --output-sync docs examples
 after_success:
  - $COVERAGE && travis_wait make coverage
- - $COVERAGE && travis_wait luacov-coveralls -e lua-libraries -e lua_modules
+ - $COVERAGE && travis_wait luacov-coveralls -e lua.libraries -e lua.modules -e usr
 before_deploy:
  - make distcheck
 deploy:
