@@ -52,6 +52,7 @@ cache:
    - $HOME/local
    - $HOME/.lua
    - $HOME/.luarocks
+   - $HOME/.setup_lua
    - $TRAVIS_BUILD_DIR/.fonts
    - $TRAVIS_BUILD_DIR/.sources
    - $TRAVIS_BUILD_DIR/lua_modules
@@ -60,7 +61,7 @@ before_install:
  - export PATH=.travis:$HOME/.lua:$PATH:$HOME/.local/bin:$HOME/.luarocks/bin
  - export LUA_HOME_DIR=$HOME/local/lua
  - export LR_HOME_DIR=$HOME/.luarocks
- - bash .travis/setup_lua.sh
+ - setup_lua.sh
  - eval $(luarocks --tree lua_modules --local path)
  - export LD_LIBRARY_PATH=$HOME/local/lib:$LUA_HOME_DIR/lib:$LD_LIBRARY_PATH
  - export LIBRARY_PATH=$HOME/local/lib:$LUA_HOME_DIR/lib:$LD_LIBRARY_PATH
@@ -69,7 +70,7 @@ before_install:
  - export LUA=~/.lua/lua
  - export LUA_INCLUDE="$(find $LUA_HOME_DIR -name '*.pc' -execdir pkg-config {} --cflags \;)"
  - export LUA_INCLUDE=${LUA_INCLUDE:--I$LUA_HOME_DIR/include}
- - bash .travis/setup_harfbuzz.sh
+ - setup_harfbuzz.sh
 install:
  - luarocks install busted
  - $COVERAGE && luarocks install luacov

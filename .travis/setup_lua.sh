@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Don't mess with it if these are already setup (as should be the case if we
+# get a cache hit on Travis)
+which lua && which luarocks && exit 0 ||:
+
 # A script for setting up environment for travis-ci testing.
 # Sets up Lua and Luarocks.
 # LUA must be "lua5.1", "lua5.2" or "luajit".
@@ -45,6 +49,9 @@ elif [ "$(expr substr $LUA 1 6)" == "luajit" ]; then
 fi
 
 mkdir -p "$LUA_HOME_DIR"
+
+mkdir -p $HOME/.setup_lua
+cd $HOME/.setup_lua
 
 if [ "$LUAJIT" == "yes" ]; then
 
@@ -100,7 +107,7 @@ else
   fi
 fi
 
-cd $TRAVIS_BUILD_DIR
+cd $HOME/.setup_lua
 
 lua -v
 
@@ -134,18 +141,4 @@ variables.CC = "gcc"
 variables.LD = "gcc"
 variables.LIBFLAG = "-shared -llua"
 EOF
-fi
-
-rm -rf $LUAROCKS_BASE
-
-if [ "$LUAJIT" == "yes" ]; then
-  rm -rf $LUAJIT_BASE;
-elif [ "$LUA" == "lua5.1" ]; then
-  rm -rf lua-5.1.5;
-elif [ "$LUA" == "lua5.2" ]; then
-  rm -rf lua-5.2.4;
-elif [ "$LUA" == "lua5.3" ]; then
-  rm -rf lua-5.3.5;
-elif [ "$LUA" == "lua5.4" ]; then
-  rm -rf lua-5.4.0;
 fi
