@@ -30,7 +30,7 @@ env:
    - LUAROCKS=3.3.1
    - GRAPHITE=true
    - COVERAGE=false
-   - MAKEFLAGS="--jobs=4"
+   - MAKEFLAGS="--jobs=4 --output-sync"
   jobs:
    - LUA=lua5.4 HARFBUZZ=2.7.0
    - LUA=lua5.3 HARFBUZZ=2.7.0
@@ -79,8 +79,8 @@ before_script:
 script:
  - fold_unless_fail 'Building' 'build' sh -c './bootstrap.sh && ./configure && make'
  - fold_unless_fail 'Busted' 'busted'  make busted
- - fold_unless_fail 'Run regression tests' 'regression' make --output-sync regressions
- - fold_unless_fail 'Compile documentation and examples' 'compile_docs' make --output-sync docs examples
+ - fold_unless_fail 'Run regression tests' 'regression' make regressions
+ - fold_unless_fail 'Compile documentation and examples' 'compile_docs' make docs examples
 after_success:
  - $COVERAGE && travis_wait make coverage
  - $COVERAGE && travis_wait luacov-coveralls -e lua-libraries -e lua_modules
