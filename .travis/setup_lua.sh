@@ -6,93 +6,59 @@ which lua && which luarocks && exit 0 ||:
 
 set -eufo pipefail
 
-LUAJIT_BASE="LuaJIT-2.0.4"
-PLATFORM="linux"
-
-mkdir -p $HOME/.lua
-
-LUAJIT="no"
-
-if [ "$(expr substr $LUA 1 6)" == "luajit" ]; then
-  LUAJIT="yes";
+if [[ $1 == 2* ]]; then
+    LUAJIT=true
+    BASE="LuaJIT-$1"
+    URL=https://luajit.org/download/$BASE.tar.gz
+    BIN=luajit
+else
+    LUAJIT=false
+    BASE="lua-$1"
+    URL=https://www.lua.org/ftp/$BASE.tar.gz
+    BIN=lua
 fi
 
+mkdir -p "$HOME/.lua"
 mkdir -p "$LUA_HOME_DIR"
+mkdir -p "$HOME/.setup_lua"
 
-mkdir -p $HOME/.setup_lua
-cd $HOME/.setup_lua
+cd "$HOME/.setup_lua"
 
-if [ "$LUAJIT" == "yes" ]; then
+curl --location "$URL" | tar xz;
+pushd $BASE
 
-  if [ "$LUA" == "luajit" ]; then
-    curl https://luajit.org/download/$LUAJIT_BASE.tar.gz | tar xz;
-  else
-    git clone https://luajit.org/git/luajit-2.0.git $LUAJIT_BASE;
-  fi
-
-  cd $LUAJIT_BASE
-
-  if [ "$LUA" == "luajit2.1" ]; then
-    git checkout v2.1;
-    # force the INSTALL_TNAME to be luajit
-    perl -i -pe 's/INSTALL_TNAME=.+/INSTALL_TNAME= luajit/' Makefile
-  fi
-
-  make && make install PREFIX="$LUA_HOME_DIR"
-
-  ln -sf $LUA_HOME_DIR/bin/luajit $HOME/.lua/luajit
-  ln -sf $LUA_HOME_DIR/bin/luajit $HOME/.lua/lua;
-
+if $LUAJIT; then
+    make
+    make install PREFIX="$LUA_HOME_DIR"
 else
-
-  if [ "$LUA" == "lua5.1" ]; then
-    curl https://www.lua.org/ftp/lua-5.1.5.tar.gz | tar xz
-    cd lua-5.1.5;
-  elif [ "$LUA" == "lua5.2" ]; then
-    curl https://www.lua.org/ftp/lua-5.2.4.tar.gz | tar xz
-    cd lua-5.2.4;
-  elif [ "$LUA" == "lua5.3" ]; then
-    curl https://www.lua.org/ftp/lua-5.3.5.tar.gz | tar xz
-    cd lua-5.3.5;
-  elif [ "$LUA" == "lua5.4" ]; then
-    curl https://www.lua.org/ftp/lua-5.4.0.tar.gz | tar xz
-    cd lua-5.4.0;
-  fi
-
   # Build Lua without backwards compatibility for testing
   perl -i -pe 's/-DLUA_COMPAT_\S+//' src/Makefile
   perl -i -pe 's/-DLUA_BUILD_AS_DLL/-DLUA_USE_POSIX -DLUA_DL_DLL -DLUA_BUILD_AS_DLL/' src/Makefile
-  make $PLATFORM CC="gcc -std=gnu99 -fPIC"
-  make INSTALL_TOP="$LUA_HOME_DIR" install;
-
-  ln -sf $LUA_HOME_DIR/bin/lua $HOME/.lua/lua
-  ln -sf $LUA_HOME_DIR/bin/luac $HOME/.lua/luac;
+  make linux CC="gcc -std=gnu99 -fPIC"
+  make install INSTALL_TOP="$LUA_HOME_DIR"
 fi
 
-cd $HOME/.setup_lua
+ln -sf $LUA_HOME_DIR/bin/$BIN $HOME/.lua/$BIN
 
-lua -v
+popd
+$BIN -v
 
-LUAROCKS_BASE=luarocks-$LUAROCKS
+LUAROCKS_BASE=luarocks-$2
 
 curl --location https://luarocks.org/releases/$LUAROCKS_BASE.tar.gz | tar xz
 
-cd $LUAROCKS_BASE
+pushd $LUAROCKS_BASE
 
-if [ "$LUA" == "luajit" ]; then
-  ./configure --lua-suffix=jit --with-lua-include="$LUA_HOME_DIR/include/luajit-2.0" --prefix="$LR_HOME_DIR";
-elif [ "$LUA" == "luajit2.0" ]; then
-  ./configure --lua-suffix=jit --with-lua-include="$LUA_HOME_DIR/include/luajit-2.0" --prefix="$LR_HOME_DIR";
-elif [ "$LUA" == "luajit2.1" ]; then
-  ./configure --lua-suffix=jit --with-lua-include="$LUA_HOME_DIR/include/luajit-2.1" --prefix="$LR_HOME_DIR";
+if $LUAJIT; then
+  ./configure --lua-suffix=jit --with-lua-include="$LUA_HOME_DIR/include/luajit-2.0" --prefix="$LR_HOME_DIR"
 else
   ./configure --with-lua="$LUA_HOME_DIR" --prefix="$LR_HOME_DIR"
 fi
 
-make build && make install
+make build
+make install
 
 ln -sf $LR_HOME_DIR/bin/luarocks $HOME/.lua/luarocks
 
-cd $HOME/.setup_lua
-
+popd
 luarocks --version
