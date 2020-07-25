@@ -72,14 +72,14 @@ before_install:
  - bash .travis/setup_harfbuzz.sh
 install:
  - luarocks install busted
- - luarocks install luacov
- - luarocks install luacov-coveralls
+ - $COVERAGE && luarocks install luacov
+ - $COVERAGE && luarocks install luacov-coveralls
 before_script:
  - eval $(luarocks --tree lua_modules --local path)
 script:
- - fold_unless_fail 'Building' 'build' sh -c './bootstrap.sh && ./configure && make'
- - fold_unless_fail 'Busted' 'busted'  make busted
- - fold_unless_fail 'Run regression tests' 'regression' make --output-sync regressions
+ - fold_unless_fail 'Configure & build' 'build' sh -c './bootstrap.sh && ./configure && make'
+ - fold_unless_fail 'Run busted tests' 'busted' $COVERAGE || make busted
+ - fold_unless_fail 'Run regression tests' 'regression' $COVERAGE || make --output-sync regressions
 after_success:
  - $COVERAGE && travis_wait make coverage
  - $COVERAGE && travis_wait luacov-coveralls -e lua.libraries -e lua.modules -e usr
