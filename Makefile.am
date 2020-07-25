@@ -208,7 +208,7 @@ examples/docbook/article-template.pdf: SILEFLAGS += -I docbook.sil
 
 .PHONY: coverage
 coverage: export SILE_COVERAGE=1
-coverage: test_previews
+coverage: test_previews busted
 
 HEADSHA ?= HEAD
 _HEADSHA ?= $(shell test -e .git && git rev-parse --short=7 $(HEADSHA))

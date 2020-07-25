@@ -36,11 +36,15 @@ plain.declareOption = function (self, name, default)
 end
 
 SILE.registerCommand("noindent", function (_, content)
+  if #SILE.typesetter.state.nodes ~= 0 then
+    SU.warn("\\noindent called after nodes already recieved in a paragraph, the setting will have no effect because the parindent (if any) has already been output")
+  end
   SILE.settings.set("current.parindent", SILE.nodefactory.glue())
   SILE.process(content)
 end, "Do not add an indent to the start of this paragraph")
 
 SILE.registerCommand("neverindent", function (_, content)
+  SILE.settings.set("current.parindent", SILE.nodefactory.glue())
   SILE.settings.set("document.parindent", SILE.nodefactory.glue())
   SILE.process(content)
 end, "Turn off all indentation")
@@ -116,13 +120,23 @@ plain.registerCommands = function ()
 \define[command=nohyphenation]{\font[language=und]{\process}}%
 \define[command=raggedright]{\ragged[right=true]{\process}}%
 \define[command=raggedleft]{\ragged[left=true]{\process}}%
-\define[command=center]{\ragged[left=true,right=true]{\process}}%
 \define[command=quote]{\smallskip\par\set[parameter=document.lskip,value=2.5em]\set[parameter=document.rskip,value=2.5em]\font[size=0.8em]{\noindent\process}\par\set[parameter=document.lskip]\set[parameter="document.rskip"]\smallskip}%
 \define[command=listitem]{\medskip{}• \process\medskip}%
 \define[command=sloppy]{\set[parameter=linebreak.tolerance,value=9999]}%
 \define[command=awful]{\set[parameter=linebreak.tolerance,value=10000]}%
 ]])
 end
+
+SILE.registerCommand("center", function (_, content)
+  if #SILE.typesetter.state.nodes ~= 0 then
+    SU.warn("\\center environment started after other nodes in a paragraph, may not center as expected")
+  end
+  SILE.settings.temporarily(function()
+    SILE.settings.set("current.parindent", 0)
+    SILE.settings.set("document.parindent", 0)
+    SILE.call("ragged", { left = true, right = true }, content)
+  end)
+end)
 
 SILE.registerCommand("{", function (_, _) SILE.typesetter:typeset("{") end)
 SILE.registerCommand("}", function (_, _) SILE.typesetter:typeset("}") end)

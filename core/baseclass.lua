@@ -115,10 +115,12 @@ SILE.baseClass = std.object {
     end, "Includes a SILE file for processing.")
 
     SILE.registerCommand("pagetemplate", function (options, content)
+      SILE.typesetter:pushState()
       SILE.documentState.thisPageTemplate = { frames = {} }
       SILE.process(content)
       SILE.documentState.thisPageTemplate.firstContentFrame = SILE.getFrame(options["first-content-frame"])
       SILE.typesetter:initFrame(SILE.documentState.thisPageTemplate.firstContentFrame)
+      SILE.typesetter:popState()
     end, "Defines a new page template for the current page and sets the typesetter to use it.")
 
     SILE.registerCommand("frame", function (options, _)
