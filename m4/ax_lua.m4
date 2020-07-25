@@ -192,8 +192,10 @@ AC_DEFUN([AX_PROG_LUA],
   AC_ARG_VAR([LUA], [The Lua interpreter, e.g. /usr/bin/lua5.1])
 
   dnl Find a Lua interpreter.
-  m4_define_default([_AX_LUA_INTERPRETER_LIST],
-    [luajit lua lua5.3 lua53 lua5.2 lua52 lua5.1 lua51 lua5.0 lua50])
+  AS_IF([test "x$with_luajit" = "xyes"],
+	  [m4_define_default([_AX_LUA_INTERPRETER_LIST], [luajit luajit-2.1.0-beta3 luajit-2.0.5 luajit-2.0.4 luajit-2.0.3])],
+	  [m4_define_default([_AX_LUA_INTERPRETER_LIST], [lua lua5.4 lua54 lua5.3 lua53 lua5.2 lua52 lua5.1 lua51 lua5.0 lua50])],
+	  )
 
   m4_if([$1], [],
   [ dnl No version check is needed. Find any Lua interpreter.
