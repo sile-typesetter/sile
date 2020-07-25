@@ -49,6 +49,9 @@ curl --location https://luarocks.org/releases/$LUAROCKS_BASE.tar.gz | tar xz
 
 pushd $LUAROCKS_BASE
 
+# Travis dies if luarocks' configure script runs a command that's redirected to dev null
+sed -i -e '/^make clean/s/>.*//' ./configure
+
 if $LUAJIT; then
   ./configure --lua-suffix=jit --with-lua-include="$LUA_HOME_DIR/include/luajit-2.0" --prefix="$LR_HOME_DIR"
 else
