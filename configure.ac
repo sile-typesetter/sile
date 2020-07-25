@@ -62,6 +62,9 @@ AC_ARG_WITH([system-libtexpdf],
 AC_ARG_WITH([system-luarocks],
     AS_HELP_STRING([--with-system-luarocks], [Don't bundle lua rocks, use the installed versions]))
 
+AC_ARG_WITH([luajit],
+    AS_HELP_STRING([--with-luajit], [Run under LuaJIT instead of Lua]))
+
 PKG_CHECK_MODULES(HARFBUZZ, harfbuzz,
   [
    PKG_CHECK_MODULES(FREETYPE, freetype2,[],[AC_MSG_FAILURE([Harfbuzz found but not freetype2])])
