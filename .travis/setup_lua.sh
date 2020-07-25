@@ -9,7 +9,7 @@ set -eufo pipefail
 if [[ $1 == 2* ]]; then
     LUAJIT=true
     BASE="LuaJIT-$1"
-    URL=https://luajit.org/download/$BASE.tar.gz
+    URL=https://github.com/LuaJIT/LuaJIT/archive/v$1.tar.gz
     BIN=luajit
 else
     LUAJIT=false

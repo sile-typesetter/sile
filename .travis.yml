@@ -38,8 +38,9 @@ env:
    - LUAVER=5.3.5 HARFBUZZ=1.1.3
    - LUAVER=5.2.4 HARFBUZZ=2.7.0
    - LUAVER=5.1.5 HARFBUZZ=2.7.0
-   - LUAVER=2.0.4 HARFBUZZ=2.7.0
-   - LUAVER=5.3.5 HARFBUZZ=2.7.0 COVERAGE=true
+   - LUAVER=2.0.5 HARFBUZZ=2.7.0
+   - LUAVER=2.1.0-beta3 HARFBUZZ=2.7.0
+   - LUAVER=5.4.0 HARFBUZZ=2.7.0 COVERAGE=true
 jobs:
   allow_failures:
    - compiler: gcc
