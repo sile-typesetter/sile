@@ -4,47 +4,16 @@
 # get a cache hit on Travis)
 which lua && which luarocks && exit 0 ||:
 
-# A script for setting up environment for travis-ci testing.
-# Sets up Lua and Luarocks.
-# LUA must be "lua5.1", "lua5.2" or "luajit".
-# luajit2.0 - master v2.0
-# luajit2.1 - master v2.1
-
 set -eufo pipefail
 
 LUAJIT_BASE="LuaJIT-2.0.4"
-
-if [ -z "${PLATFORM:-}" ]; then
-  PLATFORM=$TRAVIS_OS_NAME;
-fi
-
-if [ "$PLATFORM" == "osx" ]; then
-  PLATFORM="macosx";
-fi
-
-if [ -z "$PLATFORM" ]; then
-  if [ "$(uname)" == "Linux" ]; then
-    PLATFORM="linux";
-  else
-    PLATFORM="macosx";
-  fi;
-fi
+PLATFORM="linux"
 
 mkdir -p $HOME/.lua
 
 LUAJIT="no"
 
-if [ "$PLATFORM" == "macosx" ]; then
-  if [ "$LUA" == "luajit" ]; then
-    LUAJIT="yes";
-  fi
-  if [ "$LUA" == "luajit2.0" ]; then
-    LUAJIT="yes";
-  fi
-  if [ "$LUA" == "luajit2.1" ]; then
-    LUAJIT="yes";
-  fi;
-elif [ "$(expr substr $LUA 1 6)" == "luajit" ]; then
+if [ "$(expr substr $LUA 1 6)" == "luajit" ]; then
   LUAJIT="yes";
 fi
 
@@ -93,18 +62,11 @@ else
   # Build Lua without backwards compatibility for testing
   perl -i -pe 's/-DLUA_COMPAT_\S+//' src/Makefile
   perl -i -pe 's/-DLUA_BUILD_AS_DLL/-DLUA_USE_POSIX -DLUA_DL_DLL -DLUA_BUILD_AS_DLL/' src/Makefile
-  if [ "$PLATFORM" == "mingw" ]; then
-    LUA_DLL=$(echo "$LUA.dll" | sed 's/\.//')
-    perl -i -pe "s/TO_BIN= lua luac/TO_BIN= lua.exe luac.exe $LUA_DLL/" Makefile;
-  fi
   make $PLATFORM CC="gcc -std=gnu99 -fPIC"
   make INSTALL_TOP="$LUA_HOME_DIR" install;
 
   ln -sf $LUA_HOME_DIR/bin/lua $HOME/.lua/lua
   ln -sf $LUA_HOME_DIR/bin/luac $HOME/.lua/luac;
-  if [ "$PLATFORM" == "mingw" ]; then
-    ln -sf $LUA_HOME_DIR/bin/$LUA_DLL $HOME/.lua/$LUA_DLL;
-  fi
 fi
 
 cd $HOME/.setup_lua
@@ -133,12 +95,3 @@ ln -sf $LR_HOME_DIR/bin/luarocks $HOME/.lua/luarocks
 
 cd $TRAVIS_BUILD_DIR
 
-if [ "$PLATFORM" == "mingw" ]; then # XXX Fix version thing later
-  mkdir -p ~/.luarocks/
-cat > ~/.luarocks/config-5.3.lua <<EOF
-variables = {}
-variables.CC = "gcc"
-variables.LD = "gcc"
-variables.LIBFLAG = "-shared -llua"
-EOF
-fi
