@@ -72,8 +72,8 @@ before_install:
  - fold_unless_fail "Setup HarfBuzz" "harfbuzz" setup_harfbuzz.sh $HARFBUZZ
 install:
  - luarocks install busted
- - $COVERAGE && luarocks install luacov
- - $COVERAGE && luarocks install luacov-coveralls
+ - $COVERAGE && luarocks install luacov || true
+ - $COVERAGE && luarocks install luacov-coveralls || true
 before_script:
  - eval $(luarocks --tree lua_modules --local path)
 script:
@@ -83,5 +83,5 @@ script:
  - $COVERAGE || fold_unless_fail 'Run busted tests' 'test' make busted
  - $COVERAGE || fold_unless_fail 'Run regression tests' 'test' make regressions
 after_success:
- - $COVERAGE && travis_wait 30 make coverage
- - $COVERAGE && luacov-coveralls -e lua.libraries -e lua.modules -e usr
+ - $COVERAGE && travis_wait 30 make coverage || true
+ - $COVERAGE && luacov-coveralls -e lua.libraries -e lua.modules -e usr || true
