@@ -1,7 +1,10 @@
+-- Initialize SILE internals
+SILE = {}
+
 -- Initialize Lua environment and global utilities
-local lua_version = _VERSION:sub(-3)
-local lua_isjit = type(jit) == "table"
-if not lua_isjit and lua_version < "5.3" then require("compat53") end -- Backport of lots of Lua 5.3 features to Lua 5.[12]
+SILE.lua_version = _VERSION:sub(-3)
+SILE.lua_isjit = type(jit) == "table"
+if not SILE.lua_isjit and SILE.lua_version < "5.3" then require("compat53") end -- Backport of lots of Lua 5.3 features to Lua 5.[12]
 pl = require("pl.import_into")() -- Penlight on-demand module loader
 if (os.getenv("SILE_COVERAGE")) then require("luacov") end
 
@@ -16,9 +19,6 @@ std = require("std")
 
 -- Includes for _this_ scope
 local lfs = require("lfs")
-
--- Initialize SILE internals
-SILE = {}
 
 -- Internal data tables
 SILE.inputs = {}
