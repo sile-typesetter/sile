@@ -93,5 +93,6 @@ make build && make install
 
 ln -sf $LR_HOME_DIR/bin/luarocks $HOME/.lua/luarocks
 
-cd $TRAVIS_BUILD_DIR
+cd $HOME/.setup_lua
 
+luarocks --version
