@@ -239,22 +239,21 @@ end
 utilities.cast = function (wantedType, value)
   local actualType = SU.type(value)
   wantedType = string.lower(wantedType)
-  if string.match(wantedType, actualType)     then return value
-  elseif actualType == "nil"
-     and string.match(wantedType, "nil")      then return nil
-  elseif string.match(wantedType, "integer") or string.match(wantedType, "number") then
+  if wantedType:match(actualType)     then return value
+  elseif actualType == "nil" and wantedType:match("nil") then return nil
+  elseif wantedType:match("integer") or wantedType:match("number") then
     if type(value) == "table" and type(value.tonumber) == "function" then
       return value:tonumber()
     end
     return tonumber(value)
-  elseif string.match(wantedType, "boolean")  then return SU.boolean(value)
-  elseif string.match(wantedType, "string")   then return tostring(value)
-  elseif string.match(wantedType, "length")   then return SILE.length(value)
-  elseif string.match(wantedType, "measurement") then return SILE.measurement(value)
-  elseif string.match(wantedType, "vglue")    then return SILE.nodefactory.vglue(value)
-  elseif string.match(wantedType, "glue")     then return SILE.nodefactory.glue(value)
-  elseif string.match(wantedType, "kern")     then return SILE.nodefactory.kern(value)
-  else SU.warn("Unrecognized type: "..wantedType); return value
+  elseif wantedType:match("boolean")     then return SU.boolean(value)
+  elseif wantedType:match("string")      then return tostring(value)
+  elseif wantedType:match("length")      then return SILE.length(value)
+  elseif wantedType:match("measurement") then return SILE.measurement(value)
+  elseif wantedType:match("vglue")       then return SILE.nodefactory.vglue(value)
+  elseif wantedType:match("glue")        then return SILE.nodefactory.glue(value)
+  elseif wantedType:match("kern")        then return SILE.nodefactory.kern(value)
+  else SU.warn("Unrecognized type: " .. wantedType); return value
   end
 end
 
