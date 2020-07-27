@@ -77,7 +77,12 @@ utilities.gtoke = function (string, pattern)
 end
 
 utilities.deprecated = function (old, new, warnat, errorat, extra)
-  local _semver = SILE.version:match("v([0-9]*.[0-9]*.[0-9]*)")
+  -- SILE.version is defined *after* most of SILE loads. It’s available at
+  -- runtime but not useful if we encounter deprecated code in core code. Users
+  -- will never encounter this failure, but as a developer it’s hard to test a
+  -- deprecation when core code refactoring is an all-or-nothing proposition.
+  -- Hence we fake it ‘till we make it, all deprecations internally are warings.
+  local _semver = SILE.version and SILE.version:match("v([0-9]*.[0-9]*.[0-9]*)") or warnat
   local msg = old .. "() was deprecated in SILE v" .. warnat .. ". Please use " .. new .. "() instead. " .. extra
   if errorat and _semver >= errorat then
     SU.error(msg)
