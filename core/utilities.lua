@@ -125,15 +125,16 @@ utilities.map = function (func, array)
   return new_array
 end
 
--- TODO: Replace with pl.tablex.sort()?
 utilities.sortedpairs = function (input)
   local keys = {}
   for k, _ in pairs(input) do
     keys[#keys+1] = k
   end
   table.sort(keys, function(a, b)
-    if type(a) ~= type(b) then return false end
-    return a < b
+    if type(a) == type(b) then return a < b
+    elseif type(a) == "number" then return true
+    else return false
+    end
   end)
   return coroutine.wrap(function()
     for i = 1, #keys do
