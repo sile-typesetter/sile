@@ -35,14 +35,14 @@ SILE.settings = {
       return SILE.settings.defaults[parameter]
     end
   end,
-  set = function(parameter, value)
+  set = function(parameter, value, makedefault)
     if not SILE.settings.declarations[parameter] then
       SU.error("Undefined setting '"..parameter.."'")
     end
-    if type(value) == "nil" then
-      SILE.settings.state[parameter] = nil
-    else
-      SILE.settings.state[parameter] = SU.cast(SILE.settings.declarations[parameter].type, value)
+    value = SU.cast(SILE.settings.declarations[parameter].type, value)
+    SILE.settings.state[parameter] = value
+    if makedefault then
+      SILE.settings.defaults[parameter] = value
     end
   end,
   temporarily = function(func)
@@ -115,15 +115,14 @@ SILE.registerCommand("set", function(options, content)
   local makedefault = SU.boolean(options.makedefault, false)
   local value = options.value
   if content and (type(content) == "function" or content[1]) then
+    if makedefault then
+      SU.warn("Are you sure meant to set default settings *and* pass content to ostensibly apply them to temporarily?")
+    end
     SILE.settings.temporarily(function()
-      SILE.settings.set(parameter, value)
+      SILE.settings.set(parameter, value, makedefault)
       SILE.process(content)
     end)
   else
-    SILE.settings.set(parameter, value)
-  end
-  if makedefault then
-    SILE.settings.declarations[parameter].default = value
-    SILE.settings.defaults[parameter] = value
+    SILE.settings.set(parameter, value, makedefault)
   end
 end, "Set a SILE parameter <parameter> to value <value> (restoring the value afterwards if <content> is provided)")
