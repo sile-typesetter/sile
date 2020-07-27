@@ -18,7 +18,7 @@ SILE.scratch.insertions = { classes = {} }
 SILE.insertions = {}
 
 SILE.settings.declare({
-  name = "insertion.penalty",
+  parameter = "insertion.penalty",
   type = "integer",
   default = -3000,
   help = "Penalty to be applied before insertion"

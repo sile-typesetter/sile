@@ -62,7 +62,7 @@ local skips = {
 
 for k, v in pairs(skips) do
   SILE.settings.declare({
-      name = "plain." .. k .. "skipamount",
+      parameter = "plain." .. k .. "skipamount",
       type = "vglue",
       default = SILE.nodefactory.vglue(v),
       help = "The amount of a \\" .. k .. "skip"
