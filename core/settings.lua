@@ -17,8 +17,7 @@ SILE.settings = {
       spec.name = nil
     end
     SILE.settings.declarations[spec.parameter] = spec
-    SILE.settings.defaults[spec.parameter] = spec.default
-    SILE.settings.set(spec.parameter)
+    SILE.settings.set(spec.parameter, spec.default, true)
   end,
   reset = function()
     for k,_ in pairs(SILE.settings.state) do
