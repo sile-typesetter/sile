@@ -251,14 +251,15 @@ utilities.cast = function (wantedType, value)
       return value:tonumber()
     end
     return tonumber(value)
-  elseif wantedType:match("boolean")     then return SU.boolean(value)
-  elseif wantedType:match("string")      then return tostring(value)
   elseif wantedType:match("length")      then return SILE.length(value)
   elseif wantedType:match("measurement") then return SILE.measurement(value)
   elseif wantedType:match("vglue")       then return SILE.nodefactory.vglue(value)
   elseif wantedType:match("glue")        then return SILE.nodefactory.glue(value)
   elseif wantedType:match("kern")        then return SILE.nodefactory.kern(value)
-  else SU.warn("Unrecognized type: " .. wantedType); return value
+  elseif actualType == "nil" then SU.error("Cannot cast nil to " .. wantedType)
+  elseif wantedType:match("boolean")     then return SU.boolean(value)
+  elseif wantedType:match("string")      then return tostring(value)
+  else SU.error("Cannot cast to unrecognized type " .. wantedType)
   end
 end
 
