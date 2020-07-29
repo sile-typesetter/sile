@@ -58,6 +58,29 @@ setting is localised to the content of the argument. In other words, this code:
 will change the orphan penalty to 250, typeset 50 words of dummy text, and then
 return the orphan penalty to its previous value.
 
+If you are working in Lua, you have two choices to work with. As with any
+registered command you can call it using \code{SILE.call()}. For example:
+
+\begin{verbatim}
+\line
+SILE.call("set", { parameter = "typesetter.orphanpenalty", value = 250 })
+\line
+\end{verbatim}
+
+There is nothing wrong with this and it allows you to optionally pass content
+that is wrapped in those settings. However there is also a slightly lower level
+function that is more ideomatic of Lua code than SILE that uses positional
+arguments instead of named options:
+
+\begin{verbatim}
+\line
+SILE.settings.set("typesetter.orphanpenalty", 250)
+\line
+\end{verbatim}
+
+The 3rd and 4th optional arguments are for \em{makedefault} and \em{reset}
+respectively.
+
 Now, let’s begin looking at what each of the built-in settings does, starting
 from the most obvious and moving towards the most subtle.
 
