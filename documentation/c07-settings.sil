@@ -16,9 +16,10 @@ the setting which changes how the typesetter penalizes orphan (end-of-paragraph)
 lines.
 
 The interface to changing settings from within a SILE document is the
-\code{\\set} commmand. It takes two options: a \em{parameter} option which
-expresses which setting is being changed, and a \em{value} option which expresses
-the value to which the setting is being changed. As an example:
+\code{\\set} commmand. It takes several options, the most basic one being
+\em{parameter}, which expresses which setting is being changed. The \em{value}
+option expresses the value to which the setting is being changed. As an
+example:
 
 \begin{verbatim}
 \line
@@ -26,12 +27,31 @@ the value to which the setting is being changed. As an example:
 \line
 \end{verbatim}
 
-If the \code{\\set} command is provided with an argument, then the change of
+Two additional options are accepted. The \em{makedefault} option can added so
+that whatever value you set sticks as the new default. The \em{reset} can be
+used without a \em{value} option to reset whatever the current value is back to
+the default Note these two options are mutually exclusive.
+
+\begin{verbatim}
+\line
+\\set[parameter=typesetter.orphanpenalty, value=250, makedefault=true]
+\line
+\end{verbatim}
+
+or:
+
+\begin{verbatim}
+\line
+\\set[parameter=typesetter.orphanpenalty, reset=true]
+\line
+\end{verbatim}
+
+If the \code{\\set} command is provided with any content, then the change of
 setting is localised to the content of the argument. In other words, this code:
 
 \begin{verbatim}
 \line
-\\set[parameter=typesetter.orphanpenalty, value=250]\{ \\lorem \}
+\\set[parameter=typesetter.orphanpenalty, value=250]\{\\lorem\}
 \line
 \end{verbatim}
 
