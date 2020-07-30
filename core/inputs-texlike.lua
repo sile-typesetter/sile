@@ -27,8 +27,10 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   local unescapeQuote = function (str) local a = str:gsub('\\"', '"'); return a end
   local quotedString = quote * C(((1-quote+escaped_quote)^1)/unescapeQuote) * quote
   local specials = S"{}%\\"
+  local escaped_specials = P"\\" * specials
+  local unescapeSpecials = function (str) local a = str:gsub('\\([{}%%\\])', '%1'); return a end
   local value = quotedString + (1-S",;]")^1
-  local myID = C(SILE.inputs.TeXlike.identifier + specials) / 1
+  local myID = C(SILE.inputs.TeXlike.identifier) / 1
   local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1 / function (...) local tbl = {...}; return tbl[1], tbl[#tbl] end
   local list = Cf(Ct"" * pair^0, rawset)
   local parameters = (
@@ -58,7 +60,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   passthrough_env_stuff = Cg(
       V"passthrough_env_text"
     )^0
-  texlike_text = C((1-specials)^1)
+  texlike_text = C((1-specials+escaped_specials)^1)/unescapeSpecials
   passthrough_text = C((1-S("{}"))^1)
   passthrough_env_text = C((1-(P"\\end{" * (myID * Cb"command") * P"}"))^1)
   texlike_braced_stuff = P"{" * V"texlike_stuff" * ( P"}" + E("} expected") )
