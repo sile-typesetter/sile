@@ -20,6 +20,7 @@ EXAMFONTFILES += Amiri-Regular.ttf
 EXAMFONTFILES += DejaVuSansCondensed-Bold.ttf DejaVuSans-Bold.ttf DejaVuSans-Oblique.ttf
 EXAMFONTFILES += LibreBaskerville-Italic.otf
 EXAMFONTFILES += Miama.otf
+EXAMFONTFILES += mnglwhiteotf.ttf
 EXAMFONTFILES += NotoSerifCJK-Regular.ttc
 EXAMFONTFILES += Roboto-Regular.ttf Roboto-Bold.ttf
 
@@ -50,6 +51,9 @@ TESTFONTFILES += SBL_Hbrw.ttf
 
 .fonts/Libertinus%: | .fonts
 	curl -s -L https://github.com/alif-type/libertinus/raw/v6.9/$(notdir $@) -o $@
+
+.fonts/mngl%.ttf: | .fonts
+	curl -s -L http://mongolfont.com/jAlmas/cms/documents/mongolfont/font/$(notdir $@) -o $@
 
 .fonts/Noto%.ttf: | .fonts
 	curl -s -L https://github.com/googlefonts/noto-fonts/raw/v2017-09-19-phase3-second/hinted/$(notdir $@) -o $@
