@@ -40,7 +40,7 @@ env:
    - LUAVER=5.1.5 HARFBUZZ=2.7.0
    - LUAVER=2.0.5 HARFBUZZ=2.7.0
    - LUAVER=2.1.0-beta3 HARFBUZZ=2.7.0
-   - LUAVER=5.4.0 HARFBUZZ=2.7.0 COVERAGE=true
+   - LUAVER=5.3.5 HARFBUZZ=2.7.0 COVERAGE=true
 jobs:
   allow_failures:
    - compiler: gcc
@@ -73,7 +73,7 @@ before_install:
  - fold_unless_fail "Setup HarfBuzz" "harfbuzz" setup_harfbuzz.sh $HARFBUZZ
 install:
  - luarocks install busted
- - $COVERAGE && luarocks install luacov || true
+ - $COVERAGE && luarocks install cluacov || true
  - $COVERAGE && luarocks install luacov-coveralls || true
 before_script:
  - eval $(luarocks --tree lua_modules --local path)

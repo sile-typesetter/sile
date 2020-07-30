@@ -52,27 +52,28 @@ case $host_os in
     AC_MSG_RESULT([no])
     ;;
 esac
+
 AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
 
-AM_CONDITIONAL([SYSTEM_LIBTEXPDF], [test "x$with_system_libtexpdf" = "xyes"])
 AC_ARG_WITH([system-libtexpdf],
             AS_HELP_STRING([--with-system-libtexpdf], [Don’t bundle libtexpdf, use system provided version]))
+AM_CONDITIONAL([SYSTEM_LIBTEXPDF], [test "x$with_system_libtexpdf" = "xyes"])
 
-AM_CONDITIONAL([SYSTEM_LUAROCKS], [test "x$with_system_luarocks" = "xyes"])
 AC_ARG_WITH([system-luarocks],
             AS_HELP_STRING([--with-system-luarocks], [Don’t bundle LuaRocks, use system provided versions]))
+AM_CONDITIONAL([SYSTEM_LUAROCKS], [test "x$with_system_luarocks" = "xyes"])
 
-AM_CONDITIONAL([LUAJIT], [test "x$with_luajit" = "xyes"])
 AC_ARG_WITH([luajit],
             AS_HELP_STRING([--with-luajit], [Run under LuaJIT instead of Lua]))
+AM_CONDITIONAL([LUAJIT], [test "x$with_luajit" = "xyes"])
 
-AM_CONDITIONAL([MANUAL], [test "x$with_manual" = "xyes"])
 AC_ARG_WITH([manual],
             AS_HELP_STRING([--with-manual], [Rebuild manual and install to system’s PDF documentation directory]))
+AM_CONDITIONAL([MANUAL], [test "x$with_manual" = "xyes"])
 
-AM_CONDITIONAL([EXAMPLES], [test "x$with_examples" = "xyes"])
 AC_ARG_WITH([examples],
             AS_HELP_STRING([--with-examples], [Rebuild examples and install to system’s PDF documentation directory]))
+AM_CONDITIONAL([EXAMPLES], [test "x$with_examples" = "xyes"])
 
 PKG_CHECK_MODULES(HARFBUZZ, harfbuzz,
   [

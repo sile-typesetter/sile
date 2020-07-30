@@ -6,14 +6,14 @@ SILE.registerCommand("ruby:font", function (_, _)
 end)
 
 SILE.settings.declare({
-    name = "ruby.height",
+    parameter = "ruby.height",
     type = "measurement",
     default = SILE.measurement("1zw"),
     help = "Vertical offset between the ruby and the main text"
   })
 
 SILE.settings.declare({
-    name = "ruby.latinspacer",
+    parameter = "ruby.latinspacer",
     type = "glue",
     default = SILE.nodefactory.glue("0.25em"),
     help = "Glue added between consecutive Latin ruby"

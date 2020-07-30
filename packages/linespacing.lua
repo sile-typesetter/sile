@@ -1,39 +1,39 @@
 local metrics = require("fontmetrics")
 
 SILE.settings.declare({
-  name = "linespacing.method",
+  parameter = "linespacing.method",
   default = "tex",
   type = "string",
   help = "How to set the line spacing (tex, fixed, fit-font, fit-glyph, css)"
 })
 
 SILE.settings.declare({
-  name = "linespacing.fixed.baselinedistance",
+  parameter = "linespacing.fixed.baselinedistance",
   default = SILE.length("1.2em"),
   type = "length",
   help = "Distance from baseline to baseline in the case of fixed line spacing"
 })
 
 SILE.settings.declare({
-  name = "linespacing.minimumfirstlineposition",
-  default = SILE.length("0"),
+  parameter = "linespacing.minimumfirstlineposition",
+  default = SILE.length(0),
   type = "length"
 })
 
 SILE.settings.declare({
-  name = "linespacing.fit-glyph.extra-space",
-  default = SILE.length("0"),
+  parameter = "linespacing.fit-glyph.extra-space",
+  default = SILE.length(0),
   type = "length"
 })
 
 SILE.settings.declare({
-  name = "linespacing.fit-font.extra-space",
-  default = SILE.length("0"),
+  parameter = "linespacing.fit-font.extra-space",
+  default = SILE.length(0),
   type = "length"
 })
 
 SILE.settings.declare({
-  name = "linespacing.css.line-height",
+  parameter = "linespacing.css.line-height",
   default = SILE.length("1.2em"),
   type = "length"
 })

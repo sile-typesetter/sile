@@ -97,14 +97,14 @@ SILE.registerCommand("chordmode:chordfont", function (_, content)
 end, "Override this command to change chord style.")
 
 SILE.settings.declare({
-    name = "chordmode.offset",
+    parameter = "chordmode.offset",
     type = "length",
     default = SILE.length("2ex"),
     help = "Vertical offset between the chord name and the text."
   })
 
 SILE.settings.declare({
-    name = "chordmode.lineheight",
+    parameter = "chordmode.lineheight",
     type = "length",
     default = SILE.length("4mm"),
     help = "Length of the chord name line."
