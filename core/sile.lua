@@ -222,6 +222,9 @@ function SILE.readFile(filename)
     if mode ~= "file" and mode ~= "named pipe" then
       SU.error(filename.." isn't a file or named pipe, it's a ".. mode .."!")
     end
+    if SILE.makeDeps then
+      SILE.makeDeps:add(filename)
+    end
     local file, err = io.open(filename)
     if not file then
       print("Could not open "..filename..": "..err)

@@ -5,7 +5,7 @@ set -o pipefail
 
 finder () {
     echo -n ' '
-    find $@ -type f | sort -bdi | xargs echo -n ||:
+    find "$@" -type f | sort -bdi | xargs echo -n ||:
 }
 
 echo -n "SILEDATA ="
