@@ -3,6 +3,8 @@ freebsd_instance:
 
 task:
   name: Cirrus CI (FreeBSD)
+  env:
+    MAKEFLAGS: -j2 -Otarget
   fonts_cache:
     folder: .fonts
     reupload_on_changes: false
