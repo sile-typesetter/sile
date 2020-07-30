@@ -1,0 +1,23 @@
+\begin[papersize=a6]{document}
+\nofolios
+\neverindent
+\pagetemplate[first-content-frame=ltr]{
+\frame[id=ltr,direction=LTR-TTB,top=top(content),left=left(content),right=right(content),height=25%ph,next=rtl]
+\frame[id=rtl,direction=RTL-TTB,top=bottom(ltr),left=left(content),right=right(content),height=25%ph,next=ttb]
+\frame[id=ttb,direction=TTB-LTR,top=bottom(rtl),left=left(content),right=50%pw,bottom=bottom(content),next=btt]
+\frame[id=btt,direction=BTT-RTL,top=bottom(rtl),left=right(ttb),right=right(content),bottom=bottom(content)]
+}
+\script[src=packages/rules]
+Hello \hrule[width=30%pw,height=1ex] World\par
+\framebreak
+
+\font[family=LateefGR,language=ar]
+مرحبا \hrule[width=30%pw,height=1ex] بالعالم\par
+\framebreak
+
+\font[family=Mongolian White,language=mn]
+ᠡᠷᠲᠡ \hrule[width=30%pw,height=1ex] ᠤᠷᠢᠳᠠ\par
+\framebreak
+
+foo \hrule[width=30%pw,height=1ex] bar\par
+\end{document}
