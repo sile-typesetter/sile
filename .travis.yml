@@ -72,7 +72,7 @@ before_install:
  - fold_unless_fail "Setup HarfBuzz" "harfbuzz" setup_harfbuzz.sh $HARFBUZZ
 install:
  - luarocks install busted
- - $COVERAGE && luarocks install luacov || true
+ - $COVERAGE && luarocks install cluacov || true
  - $COVERAGE && luarocks install luacov-coveralls || true
 before_script:
  - eval $(luarocks --tree lua_modules --local path)
