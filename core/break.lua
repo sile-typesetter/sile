@@ -1,17 +1,17 @@
-SILE.settings.declare({ name = "linebreak.parShape", type = "string or nil", default = nil }) -- unimplemented
-SILE.settings.declare({ name = "linebreak.tolerance", type = "integer or nil", default = 500 })
-SILE.settings.declare({ name = "linebreak.pretolerance", type = "integer or nil", default = 100 })
-SILE.settings.declare({ name = "linebreak.hangIndent", type = "nil", default = nil }) -- unimplemented
-SILE.settings.declare({ name = "linebreak.adjdemerits", type = "integer", default = 10000,
+SILE.settings.declare({ parameter = "linebreak.parShape", type = "string or nil", default = nil }) -- unimplemented
+SILE.settings.declare({ parameter = "linebreak.tolerance", type = "integer or nil", default = 500 })
+SILE.settings.declare({ parameter = "linebreak.pretolerance", type = "integer or nil", default = 100 })
+SILE.settings.declare({ parameter = "linebreak.hangIndent", type = "nil", default = nil }) -- unimplemented
+SILE.settings.declare({ parameter = "linebreak.adjdemerits", type = "integer", default = 10000,
   help = "Additional demerits which are accumulated in the course of paragraph building when two consecutive lines are visually incompatible. In these cases, one line is built with much space for justification, and the other one with little space." })
-SILE.settings.declare({ name = "linebreak.looseness", type = "integer", default = 0 })
-SILE.settings.declare({ name = "linebreak.prevGraf", type = "integer", default = 0 })
-SILE.settings.declare({ name = "linebreak.emergencyStretch", type = "measurement", default = SILE.measurement(0) })
-SILE.settings.declare({ name = "linebreak.doLastLineFit", type = "boolean", default = false }) -- unimplemented
-SILE.settings.declare({ name = "linebreak.linePenalty", type = "integer", default = 10 })
-SILE.settings.declare({ name = "linebreak.hyphenPenalty", type = "integer", default = 50 })
-SILE.settings.declare({ name = "linebreak.doubleHyphenDemerits", type = "integer", default = 10000 })
-SILE.settings.declare({ name = "linebreak.finalHyphenDemerits", type = "integer", default = 5000 })
+SILE.settings.declare({ parameter = "linebreak.looseness", type = "integer", default = 0 })
+SILE.settings.declare({ parameter = "linebreak.prevGraf", type = "integer", default = 0 })
+SILE.settings.declare({ parameter = "linebreak.emergencyStretch", type = "measurement", default = SILE.measurement(0) })
+SILE.settings.declare({ parameter = "linebreak.doLastLineFit", type = "boolean", default = false }) -- unimplemented
+SILE.settings.declare({ parameter = "linebreak.linePenalty", type = "integer", default = 10 })
+SILE.settings.declare({ parameter = "linebreak.hyphenPenalty", type = "integer", default = 50 })
+SILE.settings.declare({ parameter = "linebreak.doubleHyphenDemerits", type = "integer", default = 10000 })
+SILE.settings.declare({ parameter = "linebreak.finalHyphenDemerits", type = "integer", default = 5000 })
 
 -- doubleHyphenDemerits
 -- hyphenPenalty

@@ -77,7 +77,12 @@ utilities.gtoke = function (string, pattern)
 end
 
 utilities.deprecated = function (old, new, warnat, errorat, extra)
-  local _semver = SILE.version:match("v([0-9]*.[0-9]*.[0-9]*)")
+  -- SILE.version is defined *after* most of SILE loads. It’s available at
+  -- runtime but not useful if we encounter deprecated code in core code. Users
+  -- will never encounter this failure, but as a developer it’s hard to test a
+  -- deprecation when core code refactoring is an all-or-nothing proposition.
+  -- Hence we fake it ‘till we make it, all deprecations internally are warings.
+  local _semver = SILE.version and SILE.version:match("v([0-9]*.[0-9]*.[0-9]*)") or warnat
   local msg = old .. "() was deprecated in SILE v" .. warnat .. ". Please use " .. new .. "() instead. " .. extra
   if errorat and _semver >= errorat then
     SU.error(msg)
@@ -240,22 +245,22 @@ end
 utilities.cast = function (wantedType, value)
   local actualType = SU.type(value)
   wantedType = string.lower(wantedType)
-  if string.match(wantedType, actualType)     then return value
-  elseif actualType == "nil"
-     and string.match(wantedType, "nil")      then return nil
-  elseif string.match(wantedType, "integer") or string.match(wantedType, "number") then
+  if wantedType:match(actualType)     then return value
+  elseif actualType == "nil" and wantedType:match("nil") then return nil
+  elseif wantedType:match("integer") or wantedType:match("number") then
     if type(value) == "table" and type(value.tonumber) == "function" then
       return value:tonumber()
     end
     return tonumber(value)
-  elseif string.match(wantedType, "boolean")  then return SU.boolean(value)
-  elseif string.match(wantedType, "string")   then return tostring(value)
-  elseif string.match(wantedType, "length")   then return SILE.length(value)
-  elseif string.match(wantedType, "measurement") then return SILE.measurement(value)
-  elseif string.match(wantedType, "vglue")    then return SILE.nodefactory.vglue(value)
-  elseif string.match(wantedType, "glue")     then return SILE.nodefactory.glue(value)
-  elseif string.match(wantedType, "kern")     then return SILE.nodefactory.kern(value)
-  else SU.warn("Unrecognized type: "..wantedType); return value
+  elseif wantedType:match("length")      then return SILE.length(value)
+  elseif wantedType:match("measurement") then return SILE.measurement(value)
+  elseif wantedType:match("vglue")       then return SILE.nodefactory.vglue(value)
+  elseif wantedType:match("glue")        then return SILE.nodefactory.glue(value)
+  elseif wantedType:match("kern")        then return SILE.nodefactory.kern(value)
+  elseif actualType == "nil" then SU.error("Cannot cast nil to " .. wantedType)
+  elseif wantedType:match("boolean")     then return SU.boolean(value)
+  elseif wantedType:match("string")      then return tostring(value)
+  else SU.error("Cannot cast to unrecognized type " .. wantedType)
   end
 end
 
@@ -568,8 +573,10 @@ utilities.breadcrumbs = function ()
     return self[#self-(count or 1)]
   end
 
-  function breadcrumbs:contains (command)
-    for i, name in ipairs(self) do if name == command then return #self-i end end
+  function breadcrumbs:contains (needle)
+    for i, command in ipairs(self) do
+      if command == needle then return #self - i end
+    end
     return -1
   end
 

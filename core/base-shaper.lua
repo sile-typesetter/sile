@@ -6,13 +6,13 @@ if not SILE.shapers then SILE.shapers = { } end
 --   return table.concat({ options.family;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename }, ";")
 -- end
 
-SILE.settings.declare({ name = "shaper.variablespaces", type = "boolean", default = true })
-SILE.settings.declare({ name = "shaper.spaceenlargementfactor", type = "number or integer", default = 1.2 })
-SILE.settings.declare({ name = "shaper.spacestretchfactor", type = "number or integer", default = 1/2 })
-SILE.settings.declare({ name = "shaper.spaceshrinkfactor", type = "number or integer", default = 1/3 })
+SILE.settings.declare({ parameter = "shaper.variablespaces", type = "boolean", default = true })
+SILE.settings.declare({ parameter = "shaper.spaceenlargementfactor", type = "number or integer", default = 1.2 })
+SILE.settings.declare({ parameter = "shaper.spacestretchfactor", type = "number or integer", default = 1/2 })
+SILE.settings.declare({ parameter = "shaper.spaceshrinkfactor", type = "number or integer", default = 1/3 })
 
 SILE.settings.declare({
-    name = "shaper.tracking",
+    parameter = "shaper.tracking",
     type = "number or nil",
     default = nil
   })

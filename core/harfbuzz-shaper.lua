@@ -5,7 +5,7 @@ local bitshim = require("bitshim")
 if not SILE.shapers then SILE.shapers = { } end
 
 SILE.settings.declare({
-  name = "harfbuzz.subshapers",
+  parameter = "harfbuzz.subshapers",
   type = "string or nil",
   default = "",
   help = "Comma-separated shaper list to pass to Harfbuzz"

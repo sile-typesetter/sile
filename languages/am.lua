@@ -1,5 +1,5 @@
 SILE.settings.declare({
-  name = "languages.am.justification",
+  parameter = "languages.am.justification",
   type = "string",
   default = "left",
   help = "Justification method for Ethiopic word separators: left or centered"

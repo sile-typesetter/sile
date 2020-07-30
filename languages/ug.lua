@@ -9,7 +9,7 @@ SILE.languageSupport.loadLanguage("tr")
 local chardata = require("char-def")
 
 SILE.settings.declare({
-  name = "languages.ug.hyphenoffset",
+  parameter = "languages.ug.hyphenoffset",
   help = "Space added between text and hyphen",
   type = "glue or nil",
   default = SILE.nodefactory.glue("1pt")
