@@ -5,6 +5,8 @@ task:
   name: Cirrus CI (FreeBSD)
   env:
     MAKEFLAGS: -j2 -Otarget
+    CFLAGS: -I/usr/local/include
+    LDFLAGS: -L/usr/local/lib
   fonts_cache:
     folder: .fonts
     reupload_on_changes: false
@@ -42,7 +44,7 @@ task:
     - git fetch --prune --tags ||:
     - ./bootstrap.sh
   configure_script:
-    - ./configure --with-system-luarocks CFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
+    - ./configure --with-system-luarocks
   make_script:
     - gmake all
     - gmake install
