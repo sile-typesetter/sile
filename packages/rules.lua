@@ -12,7 +12,8 @@ SILE.registerCommand("hrule", function (options, _)
     value = options.src,
     outputYourself= function (self, typesetter, line)
       local outputWidth = SU.rationWidth(self.width, self.width, line.ratio)
-      SILE.outputter.rule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY - self.height, outputWidth, self.height + self.depth)
+      local advance = typesetter.frame:writingDirection() == "RTL" and -outputWidth or outputWidth
+      SILE.outputter.rule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY - self.height, advance, self.height + self.depth)
       typesetter.frame:advanceWritingDirection(outputWidth)
     end
   })
