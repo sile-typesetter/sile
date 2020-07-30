@@ -15,9 +15,6 @@ fi
 
 AM_SILENT_RULES([yes])
 
-m4_include([m4/ax_lua.m4])
-m4_include([m4/adl_recursive_eval.m4])
-
 # Checks for programs.
 AC_PROG_CC_C99
 AC_PROG_OBJC
@@ -99,6 +96,7 @@ PKG_CHECK_MODULES(HARFBUZZ, harfbuzz,
    fi
   ])
 
+m4_include([m4/ax_lua.m4])
 
 case $host_os in
   msys)
@@ -159,6 +157,8 @@ PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
     AC_MSG_FAILURE([Required ICU library not found])
   fi
 ])
+
+m4_include([m4/adl_recursive_eval.m4])
 
 adl_RECURSIVE_EVAL(["${datadir}/${PACKAGE}"], [SILE_PATH])
 AC_DEFINE_UNQUOTED([SILE_PATH],["${SILE_PATH}"],[Path for SILE packages and classes])
