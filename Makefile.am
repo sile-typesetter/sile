@@ -243,7 +243,7 @@ clean-worktrees:
 			done
 	fi
 
-time_action ?= ./sile documentation/sile.sil
+time_action ?= ./sile documentation/sile.sil -o /dev/null
 make_worktree_rules = $(eval $(foreach SHA,$(_HEADSHA) $(_BASESHA),$(call worktree_sha,$(1),$(shell git rev-parse --short=7 $(SHA)))))
 
 define worktree_sha =
@@ -269,9 +269,9 @@ $(1)-$(2)/%: $(1)-$(2)
 	make $$*
 
 .PRECIOUS: $(1)-$(2)/time.json
-$(1)-$(2)/time.json: $(1)-$(2)
+$(1)-$(2)/time.json: $(1)-$(2) force
 	cd $$<
-	export TIMEFORMAT=$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
+	export TIMEFORMAT=$$$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
 	{ time ($$(time_action) > /dev/null 2>&1) } 2> time.json
 
 endef
@@ -280,14 +280,14 @@ $(call make_worktree_rules,benchmark)
 
 .PHONY: benchmark
 benchmark: time-$(_HEADSHA).json time-$(_BASESHA).json
-	cat $^
+	head $^
 
 .PRECIOUS: time-%.json
 time-%.json: benchmark-%/time.json
 	cp $< $@
 
 .PRECIOUS: time.json
-time.json: | $(_BUILT_SUBDIRS)
+time.json: force | $(_BUILT_SUBDIRS)
 	export TIMEFORMAT=$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
 	{ time ($(time_action) > /dev/null 2>&1) } 2> time.json
 
