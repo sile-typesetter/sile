@@ -12,9 +12,13 @@ SILE.registerCommand("hrule", function (options, _)
     value = options.src,
     outputYourself= function (self, typesetter, line)
       local outputWidth = SU.rationWidth(self.width, self.width, line.ratio)
-      local advance = typesetter.frame:writingDirection() == "RTL" and -outputWidth or outputWidth
-      SILE.outputter.rule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY - self.height, advance, self.height + self.depth)
+      local invert = typesetter.frame:writingDirection() == "TTB" and typesetter.frame:pageAdvanceDirection() == "LTR" and -1 or 1
+      typesetter.frame:advancePageDirection(invert * -self.height)
+      local x = typesetter.frame.state.cursorX
+      local y = typesetter.frame.state.cursorY
       typesetter.frame:advanceWritingDirection(outputWidth)
+      typesetter.frame:advancePageDirection(invert * (self.height + self.depth))
+      SILE.outputter.rule(x, y, typesetter.frame.state.cursorX - x, typesetter.frame.state.cursorY - y)
     end
   })
 end, "Creates a line of width <width> and height <height>")
