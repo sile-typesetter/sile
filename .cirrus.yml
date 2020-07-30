@@ -3,6 +3,14 @@ freebsd_instance:
 
 task:
   name: Cirrus CI (FreeBSD)
+  fonts_cache:
+    folder: .fonts
+    reupload_on_changes: false
+    fingerprint_script: cat Makefile-fonts
+  sources_cache:
+    folder: .sources
+    reupload_on_changes: false
+    fingerprint_script: cat Makefile-fonts
   install_script:
     - pkg install -y git autoconf automake libtool pkgconf harfbuzz lua52 lua52-luarocks lua52-luafilesystem lua52-lpeg lua52-lzlib fontconfig png gmake bash lua52-luasec lua52-luasocket lua52-luaexpat
     - luarocks52 install cassowary
