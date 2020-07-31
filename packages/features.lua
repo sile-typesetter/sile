@@ -19,6 +19,9 @@ local opentype = { -- Mapping of opentype features to friendly names
   StylisticSet = function (i)
     return string.format("ss%02i", tonumber(i))
   end,
+  CharacterVariant = function (i)
+    return string.format("cv%02i", tonumber(i))
+  end,
   Letters = {
     Uppercase = "case",
     SmallCaps = "smcp",
