@@ -1,0 +1,84 @@
+Set paper size 	419.5275636	595.275597
+Begin page
+Mx 	20.9764
+My 	37.3321
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	55 75 76 86	(This)
+Mx 	38.5740
+T	29	(:)
+Mx 	20.9764
+My 	53.9610
+Set font 	Gentium Plus;24;400;;normal;+smcp;LTR
+T	36 3607 3825 3879 3906 4091 3850 3648 3626 3719 3648 3871 3648 3879 4024 4007	(Acknowledgements)
+My 	65.9610
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	54 75 82 88 79 71	(Should)
+Mx 	52.1641
+T	80 68 87 70 75	(match)
+Mx 	80.6369
+T	87 75 76 86	(this)
+Mx 	98.8412
+T	72 91 68 70 87 79 92	(exactly)
+Mx 	128.3822
+T	29	(:)
+Mx 	20.9764
+My 	84.8360
+Set font 	Gentium Plus;24;400;;normal;+smcp;;LTR
+T	36 3607 3825 3879 3906 4091 3850 3648 3626 3719 3648 3871 3648 3879 4024 4007	(Acknowledgements)
+My 	96.8360
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	36 86	(As)
+Mx 	33.4683
+T	86 75 82 88 79 71	(should)
+Mx 	63.7630
+T	87 75 76 86	(this)
+Mx 	79.2952
+T	29	(:)
+Mx 	20.9764
+My 	116.1954
+Set font 	Gentium Plus;24;400;;normal;+hlig;+dlig;LTR
+T	44 10 80	(I'm)
+Mx 	59.8057
+T	14	(+)
+Mx 	69.6494
+T	71 79 76 74	(dlig)
+Mx 	106.8447
+T	15	(,)
+Mx 	118.7443
+T	14	(+)
+Mx 	128.5881
+T	75 79 76 74	(hlig)
+Mx 	20.9764
+My 	130.6232
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	36 81 71	(And)
+Mx 	40.3264
+T	87 75 76 86	(this)
+Mx 	55.8586
+T	29	(:)
+Mx 	20.9764
+My 	149.9825
+Set font 	Gentium Plus;24;400;;normal;+hlig;+dlig;;LTR
+T	44 10 80	(I'm)
+Mx 	59.8057
+T	14	(+)
+Mx 	69.6494
+T	71 79 76 74	(dlig)
+Mx 	106.8447
+T	15	(,)
+Mx 	118.7443
+T	14	(+)
+Mx 	128.5881
+T	75 79 76 74	(hlig)
+Mx 	20.9764
+My 	185.9825
+Set font 	Gentium Plus;30;400;;normal;;LTR
+T	55 72 86 87	(Test)
+Mx 	72.0994
+T	17	(.)
+Mx 	78.9695
+T	17	(.)
+Mx 	85.8397
+T	17	(.)
+End page
+Finish
