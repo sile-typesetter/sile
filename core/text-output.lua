@@ -13,18 +13,25 @@ local writeline = function (...)
 end
 
 SILE.outputters.text = {
+
   init = function()
     outfile = io.open(SILE.outputFilename, "w+")
   end,
+
   newPage = function()
     outfile:write("")
   end,
+
   finish = function()
     outfile:close()
   end,
+
   setColor = function() end,
+
   pushColor = function () end,
+
   popColor = function () end,
+
   outputHbox = function (value, width)
     width = SU.cast("number", width)
     if not value.text then return end
@@ -34,9 +41,13 @@ SILE.outputters.text = {
       cursorX = cursorX + width
     end
   end,
+
   setFont = function () end,
+
   drawImage = function () end,
+
   imageSize = function () end,
+
   moveTo = function (x, y)
     local bs = SILE.measurement("0.8bs"):tonumber()
     local spc = SILE.measurement("0.8spc"):tonumber()
@@ -60,9 +71,13 @@ SILE.outputters.text = {
     cursorY = y
     cursorX = x
   end,
+
   rule = function () end,
+
   debugFrame = function (_) end,
+
   debugHbox = function() end
+
 }
 
 SILE.outputter = SILE.outputters.text
