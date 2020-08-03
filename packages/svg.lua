@@ -1,5 +1,5 @@
 local svg = require("svg")
-local parser = require("core/opentype-parser")
+local otparser = require("core/opentype-parser")
 
 local _drawSVG = function (svgdata, height, density, drop)
   local svgfigure, svgwidth, svgheight = svg.svg_to_ps(svgdata, density)
@@ -31,10 +31,10 @@ SILE.registerCommand("svg-glyph", function(_, content)
   local fontoptions = SILE.font.loadDefaults({})
   local items = SILE.shaper:shapeToken(content[1], fontoptions)
   local face = SILE.shaper.getFace(fontoptions)
-  parser.parseFont(face)
+  otparser.parseFont(face)
   if not face.font.svg then return SILE.process(content) end
   for i = 1, #items do
-    local svg_data = parser.getSVG(face, items[i].gid)
+    local svg_data = otparser.getSVG(face, items[i].gid)
     if svg_data then
       _drawSVG(svg_data, fontoptions.size, 72, true)
     end
