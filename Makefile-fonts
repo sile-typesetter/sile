@@ -60,6 +60,9 @@ TESTFONTFILES += SBL_Hbrw.ttf
 .fonts/SBL_Hbrw.ttf: | .fonts
 	curl -s -L http://www.sbl-site.org/Fonts/$(notdir $@) -o $@
 
+.fonts/Symbola.otf: | .fonts
+	curl -s -L https://github.com/ChiefMikeK/ttf-symbola/raw/master/Symbola-13.otf -o $@
+
 # Tell  make how to download font file bundles (when not downloadable individually)
 
 .sources/CrimsonPro.zip: | .sources
