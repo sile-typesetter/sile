@@ -28,8 +28,12 @@ curl --location "$URL" | tar xz;
 pushd $BASE
 
 if $LUAJIT; then
+    sed -i -e '/echo.*SYMLINK/{s/^.*"  /\t/;s/"$//}' Makefile
     make
-    make install PREFIX="$LUA_HOME_DIR"
+    make install \
+        PREFIX="$LUA_HOME_DIR" \
+        INSTALL_INC='$(DPREFIX)/include' \
+        INSTALL_LJLIBD='$(INSTALL_SHARE)'
 else
   # Build Lua without backwards compatibility for testing
   perl -i -pe 's/-DLUA_COMPAT_\S+//' src/Makefile
