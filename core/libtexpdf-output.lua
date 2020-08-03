@@ -118,7 +118,18 @@ SILE.outputters.libtexpdf = {
     pdf.drawimage(src, x, y, width, height)
   end,
 
-  drawSVG = function ()
+  drawSVG = function (self, figure, x, y, _, height, scalefactor)
+    ensureInit()
+    x = SU.cast("number", x)
+    y = SU.cast("number", y)
+    height = SU.cast("number", height)
+    pdf.add_content("q")
+    self.moveTo(x, y)
+    x, y = self.cursor()
+    local newy = y - SILE.documentState.paperSize[2] + height
+    pdf.add_content(table.concat({ scalefactor, 0, 0, -scalefactor, x, newy, "cm" }, " "))
+    pdf.add_content(figure)
+    pdf.add_content("Q")
   end,
 
   imageSize = function (src)
