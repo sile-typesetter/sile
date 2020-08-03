@@ -10,12 +10,12 @@ if [[ $1 == 2* ]]; then
     LUAJIT=true
     BASE="LuaJIT-$1"
     URL=https://github.com/LuaJIT/LuaJIT/archive/v$1.tar.gz
-    BIN=luajit
+    BIN=luajit-$1
 else
     LUAJIT=false
     BASE="lua-$1"
     URL=https://www.lua.org/ftp/$BASE.tar.gz
-    BIN=lua
+    BIN=lua-$1
 fi
 
 mkdir -p "$HOME/.lua"
@@ -53,7 +53,7 @@ pushd $LUAROCKS_BASE
 sed -i -e '/^make clean/s/>.*//' ./configure
 
 if $LUAJIT; then
-  ./configure --lua-suffix=jit --with-lua-include="$LUA_HOME_DIR/include/luajit-2.0" --prefix="$LR_HOME_DIR"
+  ./configure --lua-suffix=jit --with-lua-include="$LUA_HOME_DIR/include/$BIN" --prefix="$LR_HOME_DIR"
 else
   ./configure --with-lua="$LUA_HOME_DIR" --prefix="$LR_HOME_DIR"
 fi
