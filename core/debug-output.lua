@@ -69,6 +69,8 @@ SILE.outputters.debug = {
     writeline("Draw image", src, string.format("%.4f %.4f %.4f %.4f" , x, y, width, height))
   end,
 
+  drawSVG = function () end,
+
   imageSize = function (src)
     local pdf = require("justenoughlibtexpdf")
     local llx, lly, urx, ury = pdf.imagebbox(src)

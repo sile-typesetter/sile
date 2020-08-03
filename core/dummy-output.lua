@@ -12,6 +12,7 @@ SILE.outputters.dummy = {
   outputHbox = dummy,
   setFont = dummy,
   drawImage = dummy,
+  drawSVG = dummy,
   imageSize = dummy,
   moveTo = dummy,
   rule = dummy,

@@ -46,6 +46,8 @@ SILE.outputters.text = {
 
   drawImage = function () end,
 
+  drawSVG = function () end,
+
   imageSize = function () end,
 
   moveTo = function (x, y)

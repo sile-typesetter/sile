@@ -118,6 +118,9 @@ SILE.outputters.libtexpdf = {
     pdf.drawimage(src, x, y, width, height)
   end,
 
+  drawSVG = function ()
+  end,
+
   imageSize = function (src)
     ensureInit() -- in case it's a PDF file
     local llx, lly, urx, ury = pdf.imagebbox(src)

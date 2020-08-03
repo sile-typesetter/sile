@@ -64,8 +64,9 @@ SILE.outputters.podofo = {
     SILE.fontCache[lastkey] = nil
   end,
 
-  drawPNG = function (_, _, _, _, _)
-  end,
+  drawPNG = function (_, _, _, _, _) end,
+
+  drawSVG = function () end,
 
   imageSize = function (src)
     local box_width, box_height, err = imagesize.imgsize(src)imagesize.imgsize(src)
