@@ -2,8 +2,8 @@ local svg = require("svg")
 local pdf = require("justenoughlibtexpdf")
 local parser = require("core/opentype-parser")
 
-local pushSVG = function (string, desiredHeight, em, drop)
-  local figure, width, height = svg.svg_to_ps(string,em)
+local pushSVG = function (str, desiredHeight, em, drop)
+  local figure, width, height = svg.svg_to_ps(str, em)
   local scalefactor = 1
   if desiredHeight then
     scalefactor = desiredHeight / height
