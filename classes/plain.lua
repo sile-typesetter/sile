@@ -138,11 +138,6 @@ SILE.registerCommand("center", function (_, content)
   end)
 end)
 
-SILE.registerCommand("{", function (_, _) SILE.typesetter:typeset("{") end)
-SILE.registerCommand("}", function (_, _) SILE.typesetter:typeset("}") end)
-SILE.registerCommand("%", function (_, _) SILE.typesetter:typeset("%") end)
-SILE.registerCommand("\\", function (_, _) SILE.typesetter:typeset("\\") end)
-
 SILE.registerCommand("ragged", function (options, content)
   SILE.settings.temporarily(function ()
     if SU.boolean(options.left, false) then SILE.settings.set("document.lskip", SILE.nodefactory.hfillglue()) end
