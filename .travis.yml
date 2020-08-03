@@ -30,6 +30,7 @@ env:
    - LUAROCKS=3.3.1
    - GRAPHITE=true
    - COVERAGE=false
+   - LUAJIT=false
    - MAKEFLAGS="--jobs=4 --output-sync"
   jobs:
    - LUAVER=5.4.0 HARFBUZZ=2.7.0
@@ -38,8 +39,8 @@ env:
    - LUAVER=5.3.5 HARFBUZZ=1.1.3
    - LUAVER=5.2.4 HARFBUZZ=2.7.0
    - LUAVER=5.1.5 HARFBUZZ=2.7.0
-   - LUAVER=2.0.5 HARFBUZZ=2.7.0
-   - LUAVER=2.1.0-beta3 HARFBUZZ=2.7.0
+   - LUAJIT=true LUAVER=2.0.5 HARFBUZZ=2.7.0
+   - LUAJIT=true LUAVER=2.1.0-beta3 HARFBUZZ=2.7.0
    - LUAVER=5.3.5 HARFBUZZ=2.7.0 COVERAGE=true
 jobs:
   allow_failures:
@@ -79,7 +80,7 @@ before_script:
  - eval $(luarocks --tree lua_modules --local path)
 script:
  - fold_unless_fail 'Bootstrap' 'build' ./bootstrap.sh
- - fold_unless_fail 'Configure' 'build' ./configure
+ - fold_unless_fail 'Configure' 'build' ./configure $($LUAJIT && echo --with-luajit)
  - fold_unless_fail 'Make' 'build' make
  - $COVERAGE || fold_unless_fail 'Run busted tests' 'test' make busted
  - $COVERAGE || fold_unless_fail 'Run regression tests' 'test' make regressions
