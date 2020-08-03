@@ -111,7 +111,7 @@ int face_from_options(lua_State* L) {
 
   if (FcPatternGetString (matched, FC_FILE, 0, &font_path) != FcResultMatch)
     return 0;
-  
+
   FcPatternGetInteger(matched, FC_INDEX, 0, &index);
   font_path = (FcChar8 *)strdup((char*)font_path);
   if (!font_path) {

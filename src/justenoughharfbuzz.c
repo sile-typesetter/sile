@@ -47,7 +47,7 @@ read_tag_with_param(const char* cp, int* param)
 
 static hb_feature_t* scan_feature_string(const char* cp1, int* ret) {
   hb_feature_t* features = NULL;
-  hb_tag_t  tag;  
+  hb_tag_t  tag;
   int nFeatures = 0;
   const char* cp2;
   const char* cp3;
@@ -62,7 +62,7 @@ static hb_feature_t* scan_feature_string(const char* cp1, int* ret) {
     cp2 = cp1;
     while (*cp2 && (*cp2 != ':') && (*cp2 != ';') && (*cp2 != ','))
       ++cp2;
-    
+
     if (*cp1 == '+') {
       int param = 0;
       tag = read_tag_with_param(cp1 + 1, &param);
@@ -76,7 +76,7 @@ static hb_feature_t* scan_feature_string(const char* cp1, int* ret) {
       nFeatures++;
       goto next_option;
     }
-    
+
     if (*cp1 == '-') {
       ++cp1;
       tag = hb_tag_from_string(cp1, cp2 - cp1);
@@ -88,10 +88,10 @@ static hb_feature_t* scan_feature_string(const char* cp1, int* ret) {
       nFeatures++;
       goto next_option;
     }
-    
+
   bad_option:
     //fontfeaturewarning(cp1, cp2 - cp1, 0, 0);
-  
+
   next_option:
     cp1 = cp2;
   }
