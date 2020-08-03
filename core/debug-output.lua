@@ -69,7 +69,13 @@ SILE.outputters.debug = {
     writeline("Draw image", src, string.format("%.4f %.4f %.4f %.4f" , x, y, width, height))
   end,
 
-  drawSVG = function () end,
+  drawSVG = function (_, _, x, y, width, height, scalefactor)
+    x = SU.cast("number", x)
+    y = SU.cast("number", y)
+    width = SU.cast("number", width)
+    height = SU.cast("number", height)
+    writeline("Draw SVG", string.format("%.4f %.4f %.4f %.4f" , x, y, width, height), scalefactor)
+  end,
 
   imageSize = function (src)
     local pdf = require("justenoughlibtexpdf")
