@@ -45,8 +45,6 @@ env:
 jobs:
   allow_failures:
    - compiler: gcc
-     env: LUAVER=2.0.4 HARFBUZZ=2.7.0
-   - compiler: gcc
      env: LUAVER=5.3.5 HARFBUZZ=2.7.0 COVERAGE=true
   fast_finish: true
 cache:
