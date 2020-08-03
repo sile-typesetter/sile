@@ -41,7 +41,7 @@ end
 
 local breakFrameHorizontalAt = function (offset)
   local cFrame = SILE.typesetter.frame
-  if not offset or not (offset > 0) then
+  if not offset or not (offset > SILE.length(0)) then
     SILE.typesetter:chuck()
     offset = SILE.typesetter.frame.state.cursorX
   end
@@ -174,7 +174,8 @@ SILE.registerCommand("float", function (options, content)
   local hbox = SILE.call("hbox", {}, content)
   table.remove(SILE.typesetter.state.nodes) -- steal it back
   local heightOfPageSoFar = SILE.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue).height
-  if SILE.length(heightOfPageSoFar + hbox.height - SILE.typesetter:getTargetLength()) > 0 then
+  local overshoot = SILE.length(heightOfPageSoFar + hbox.height - SILE.typesetter:getTargetLength())
+  if overshoot > SILE.length(0) then
     SILE.call("eject")
     SILE.typesetter:leaveHmode()
   end

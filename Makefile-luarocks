@@ -1,6 +1,6 @@
 .PHONY: installrocks
-if !SYSTEM_LUAROCKS
 LUAMODSPEC := sile-dev-1.rockspec
+if !SYSTEM_LUAROCKS
 LUAMODLOCK := sile-dev-1.rockslock
 
 LUAROCKS := luarocks --tree lua_modules --lua-version $(LUA_VERSION)

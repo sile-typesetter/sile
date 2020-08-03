@@ -36,7 +36,7 @@ utilities.warn = function(message, bug)
   io.stderr:write("\n! " .. message)
   if SILE.traceback or bug then
     io.stderr:write(" at:\n" .. SILE.traceStack:locationTrace())
-    io.stderr:write(debug.traceback(nil, 2))
+    io.stderr:write(debug.traceback(nil, 2) or "\t! debug.traceback() did not identify code location")
   else
     io.stderr:write(" at " .. SILE.traceStack:locationHead())
   end

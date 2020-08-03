@@ -9,13 +9,13 @@ set -eufo pipefail
 if [[ $1 == 2* ]]; then
     LUAJIT=true
     BASE="LuaJIT-$1"
-    URL=https://luajit.org/download/$BASE.tar.gz
-    BIN=luajit
+    URL=https://github.com/LuaJIT/LuaJIT/archive/v$1.tar.gz
+    BIN=luajit-$1
 else
     LUAJIT=false
     BASE="lua-$1"
     URL=https://www.lua.org/ftp/$BASE.tar.gz
-    BIN=lua
+    BIN=lua-$1
 fi
 
 mkdir -p "$HOME/.lua"
@@ -28,8 +28,12 @@ curl --location "$URL" | tar xz;
 pushd $BASE
 
 if $LUAJIT; then
+    sed -i -e '/echo.*SYMLINK/{s/^.*"  /\t/;s/"$//}' Makefile
     make
-    make install PREFIX="$LUA_HOME_DIR"
+    make install \
+        PREFIX="$LUA_HOME_DIR" \
+        INSTALL_INC='$(DPREFIX)/include' \
+        INSTALL_LJLIBD='$(INSTALL_SHARE)'
 else
   # Build Lua without backwards compatibility for testing
   perl -i -pe 's/-DLUA_COMPAT_\S+//' src/Makefile
@@ -52,12 +56,7 @@ pushd $LUAROCKS_BASE
 # Travis dies if luarocks' configure script runs a command that's redirected to dev null
 sed -i -e '/^make clean/s/>.*//' ./configure
 
-if $LUAJIT; then
-  ./configure --lua-suffix=jit --with-lua-include="$LUA_HOME_DIR/include/luajit-2.0" --prefix="$LR_HOME_DIR"
-else
-  ./configure --with-lua="$LUA_HOME_DIR" --prefix="$LR_HOME_DIR"
-fi
-
+./configure --with-lua="$LUA_HOME_DIR" --prefix="$LR_HOME_DIR"
 make build
 make install
 

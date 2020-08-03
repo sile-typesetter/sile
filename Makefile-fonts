@@ -60,6 +60,9 @@ TESTFONTFILES += SBL_Hbrw.ttf
 .fonts/SBL_Hbrw.ttf: | .fonts
 	curl -s -L http://www.sbl-site.org/Fonts/$(notdir $@) -o $@
 
+.fonts/Symbola.otf: | .fonts
+	curl -s -L https://github.com/ChiefMikeK/ttf-symbola/raw/master/Symbola-13.otf -o $@
+
 # Tell  make how to download font file bundles (when not downloadable individually)
 
 .sources/CrimsonPro.zip: | .sources
@@ -93,7 +96,7 @@ TESTFONTFILES += SBL_Hbrw.ttf
 	curl -s -L https://github.com/google/roboto/releases/download/v2.138/$(notdir $@) -o $@
 
 .sources/Symbola.zip: | .sources
-	curl -s -L https://web.archive.org/web/20200521203841if_/https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
+	curl -s -L https://web.archive.org/web/20200617144517/https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
 #	Canonical upstream server limits downloads which sometimes kills our CI runners
 #	curl -s -L https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
 
