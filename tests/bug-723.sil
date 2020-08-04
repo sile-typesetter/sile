@@ -1,23 +1,55 @@
 \begin[papersize=a6]{document}
 \nofolios
 \neverindent
-\pagetemplate[first-content-frame=ltr]{
-\frame[id=ltr,direction=LTR-TTB,top=top(content),left=left(content),right=right(content),height=25%ph,next=rtl]
-\frame[id=rtl,direction=RTL-TTB,top=bottom(ltr),left=left(content),right=right(content),height=25%ph,next=ttb]
-\frame[id=ttb,direction=TTB-LTR,top=bottom(rtl),left=left(content),right=50%pw,bottom=bottom(content),next=btt]
-\frame[id=btt,direction=BTT-RTL,top=bottom(rtl),left=right(ttb),right=right(content),bottom=bottom(content)]
-}
+\begin[first-content-frame=ltrttb]{pagetemplate}
+\frame[id=ltrttb,direction=LTR-TTB,top=top(content),left=left(content),right=right(content),height=10%ph,next=ltrbtt]
+\frame[id=ltrbtt,direction=LTR-BTT,top=bottom(ltrttb),left=left(content),right=right(content),height=10%ph,next=rtlttb]
+\frame[id=rtlttb,direction=RTL-TTB,top=bottom(ltrbtt),left=left(content),right=right(content),height=10%ph,next=rtlbtt]
+\frame[id=rtlbtt,direction=RTL-BTT,top=bottom(rtlttb),left=left(content),right=right(content),height=10%ph,next=ttbltr]
+\frame[id=ttbltr,direction=TTB-LTR,top=bottom(rtlbtt),left=left(content),width=10%ph,bottom=bottom(content),next=ttbrtl]
+\frame[id=ttbrtl,direction=TTB-RTL,top=top(ttbltr),left=right(ttbltr),width=10%ph,bottom=bottom(ttbltr),next=bttltr]
+\frame[id=bttltr,direction=BTT-LTR,top=top(ttbrtl),left=right(ttbrtl),width=10%ph,bottom=bottom(ttbrtl),next=bttrtl]
+\frame[id=bttrtl,direction=BTT-RTL,top=top(bttltr),left=right(bttltr),width=10%ph,bottom=bottom(bttltr)]
+\end{pagetemplate}
 \script[src=packages/rules]
-Hello \hrule[width=30%pw,height=1ex] World\par
-\framebreak
 
-\font[family=LateefGR,language=ar]
-مرحبا \hrule[width=30%pw,height=1ex] بالعالم\par
-\framebreak
+\hrule[width=1em,height=1em]
+\hrule[width=40%pw,height=2em]
+\hrule[width=1em,height=1em]
+\par\framebreak
 
-\font[family=Mongolian White,language=mn]
-ᠡᠷᠲᠡ \hrule[width=30%pw,height=1ex] ᠤᠷᠢᠳᠠ\par
-\framebreak
+\hrule[width=1em,height=1em]
+\hrule[width=40%pw,height=2em]
+\hrule[width=1em,height=1em]
+\par\framebreak
 
-foo \hrule[width=30%pw,height=1ex] bar\par
+\hrule[width=1em,height=1em]
+\hrule[width=40%pw,height=2em]
+\hrule[width=1em,height=1em]
+\par\framebreak
+
+\hrule[width=1em,height=1em]
+\hrule[width=40%pw,height=2em]
+\hrule[width=1em,height=1em]
+\par\framebreak
+
+\hrule[width=1em,height=1em]
+\hrule[width=40%pw,height=2em]
+\hrule[width=1em,height=1em]
+\par\framebreak
+
+\hrule[width=1em,height=1em]
+\hrule[width=40%pw,height=2em]
+\hrule[width=1em,height=1em]
+\par\framebreak
+
+\hrule[width=1em,height=1em]
+\hrule[width=40%pw,height=2em]
+\hrule[width=1em,height=1em]
+\par\framebreak
+
+\hrule[width=1em,height=1em]
+\hrule[width=40%pw,height=2em]
+\hrule[width=1em,height=1em]
+\par
 \end{document}
