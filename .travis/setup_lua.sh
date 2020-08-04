@@ -10,12 +10,12 @@ if [[ $1 == 2* ]]; then
     LUAJIT=true
     BASE="LuaJIT-$1"
     URL=https://github.com/LuaJIT/LuaJIT/archive/v$1.tar.gz
-    BIN=luajit-$1
+    BINNAME=luajit
 else
     LUAJIT=false
     BASE="lua-$1"
     URL=https://www.lua.org/ftp/$BASE.tar.gz
-    BIN=lua-$1
+    BINNAME=lua
 fi
 
 mkdir -p "$HOME/.lua"
@@ -42,10 +42,10 @@ else
   make install INSTALL_TOP="$LUA_HOME_DIR"
 fi
 
-ln -sf $LUA_HOME_DIR/bin/$BIN $HOME/.lua/$BIN
+ln -sf $LUA_HOME_DIR/bin/$BINNAME $HOME/.lua/$BINNAME
 
 popd
-$BIN -v
+$BINNAME -v
 
 LUAROCKS_BASE=luarocks-$2
 
