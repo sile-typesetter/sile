@@ -19,23 +19,25 @@ SILE.outputters.dummy = {
 
   moveTo = dummy,
 
+  setCursor = dummy,
+
   setColor = dummy,
 
   pushColor = dummy,
 
   popColor = dummy,
 
-  outputHbox = dummy,
+  drawHbox = dummy,
 
   setFont = dummy,
 
   drawImage = dummy,
 
-  imageSize = dummy,
+  getImageSize = dummy,
 
   drawSVG = dummy,
 
-  rule = dummy,
+  drawRule = dummy,
 
   debugFrame = dummy,
 

@@ -48,12 +48,24 @@ SILE.outputters.podofo = {
     document:Write(SILE.outputFilename)
   end,
 
-  cursor = function()
+  cursor = function (self)
+    _deprecationCheck(self)
+    SU.deprecated("SILE.outputter:cursor", "SILE.outputter:getCursor", "0.10.10", "0.11.0")
+    return self:getCursor()
+  end,
+
+  getCursor = function (self)
     _deprecationCheck(self)
     return cursorX, cursorY
   end,
 
   moveTo = function (self, x, y)
+    _deprecationCheck(self)
+    SU.deprecated("SILE.outputter:moveTo", "SILE.outputter:setCursor", "0.10.10", "0.11.0")
+    return self:setCursor(x, y)
+  end,
+
+  setCursor = function (self, x, y)
     _deprecationCheck(self)
     cursorX = x
     cursorY = SILE.documentState.paperSize[2] - y
@@ -65,6 +77,12 @@ SILE.outputters.podofo = {
   end,
 
   outputHbox = function (self, value, width)
+    _deprecationCheck(self)
+    SU.deprecated("SILE.outputter:outputHbox", "SILE.outputter:drawHbox", "0.10.10", "0.11.0")
+    return self:drawHbox(value, width)
+  end,
+
+  drawHbox = function (self, value, _)
     _deprecationCheck(self)
     if not value.glyphNames then return end
     for i = 1, #(value.glyphNames) do
@@ -93,6 +111,12 @@ SILE.outputters.podofo = {
 
   imageSize = function (self, src)
     _deprecationCheck(self)
+    SU.deprecated("SILE.outputter:imageSize", "SILE.outputter:getImageSize", "0.10.10", "0.11.0")
+    return self:getImageSize(src)
+  end,
+
+  getImageSize = function (self, src)
+    _deprecationCheck(self)
     local box_width, box_height, err = imagesize.imgsize(src)imagesize.imgsize(src)
     if not box_width then
       SU.error(err.." loading image")
@@ -105,6 +129,12 @@ SILE.outputters.podofo = {
   end,
 
   rule = function (self, x, y, width, depth)
+    _deprecationCheck(self)
+    SU.deprecated("SILE.outputter:rule", "SILE.outputter:drawRule", "0.10.10", "0.11.0")
+    return self:drawRule(x, y, width, depth)
+  end,
+
+  drawRule = function (self, x, y, width, depth)
     _deprecationCheck(self)
     painter:Rectangle(x, SILE.documentState.paperSize[2] - y, width, depth)
     painter:Close()
