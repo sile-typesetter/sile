@@ -3,7 +3,7 @@ SILE.registerCommand("img", function (options, _)
   local width =  SILE.parseComplexFrameDimension(options.width or 0) or 0
   local height = SILE.parseComplexFrameDimension(options.height or 0) or 0
   local src = SILE.resolveFile(options.src) or SU.error("Couldn't find file "..options.src)
-  local box_width, box_height = SILE.outputter:imageSize(src)
+  local box_width, box_height = SILE.outputter:getImageSize(src)
   local sx, sy = 1, 1
   if width > 0 or height > 0 then
     sx = width > 0 and box_width / width

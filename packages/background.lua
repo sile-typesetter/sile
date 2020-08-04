@@ -4,7 +4,7 @@ local outputBackground = function (color)
   local page = SILE.getFrame("page")
   local backgroundColor = SILE.colorparser(color)
   SILE.outputter:pushColor(backgroundColor)
-  SILE.outputter:rule(page:left(), page:top(), page:right(), page:bottom())
+  SILE.outputter:drawRule(page:left(), page:top(), page:right(), page:bottom())
   SILE.outputter:popColor()
 end
 

@@ -3,14 +3,14 @@ SILE.require("packages/tate")
 local showHanmenYoko = function (frame)
   local g = frame:top()
   while g < frame:bottom() do
-    SILE.outputter:rule(frame:left(), g - 0.25, frame:width(), 0.5)
+    SILE.outputter:drawRule(frame:left(), g - 0.25, frame:width(), 0.5)
     local l = frame:left()
     while l <= frame:right() do
-      SILE.outputter:rule(l-0.25, g + frame.hanmen.gridsize - 0.25, 0.5, -frame.hanmen.gridsize)
+      SILE.outputter:drawRule(l-0.25, g + frame.hanmen.gridsize - 0.25, 0.5, -frame.hanmen.gridsize)
       l = l + frame.hanmen.gridsize
     end
     g = g + frame.hanmen.gridsize
-    SILE.outputter:rule(frame:left(), g - 0.25, frame:width(), 0.5)
+    SILE.outputter:drawRule(frame:left(), g - 0.25, frame:width(), 0.5)
     g = g + frame.hanmen.linegap
   end
 end
@@ -18,14 +18,14 @@ end
 local showHanmenTate = function (frame)
   local g = frame:right()
   while g > frame:left() do
-    SILE.outputter:rule( g - 0.25, frame:top(), 0.5, -frame:height())
+    SILE.outputter:drawRule( g - 0.25, frame:top(), 0.5, -frame:height())
     local l = frame:top()
     while l < frame:bottom() do
-      SILE.outputter:rule(g - frame.hanmen.gridsize - 0.25, l-0.25, frame.hanmen.gridsize, 0.5)
+      SILE.outputter:drawRule(g - frame.hanmen.gridsize - 0.25, l-0.25, frame.hanmen.gridsize, 0.5)
       l = l + frame.hanmen.gridsize
     end
     g = g - frame.hanmen.gridsize
-    SILE.outputter:rule( g - 0.25, frame:top(), 0.5, -frame:height())
+    SILE.outputter:drawRule( g - 0.25, frame:top(), 0.5, -frame:height())
     g = g - frame.hanmen.linegap
   end
 end

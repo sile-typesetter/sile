@@ -18,8 +18,8 @@ SILE.registerCommand("hrule", function (options, _)
       local y = typesetter.frame.state.cursorY
       typesetter.frame:advanceWritingDirection(outputWidth)
       typesetter.frame:advancePageDirection(invert * (self.height + self.depth))
-      SILE.outputter:rule(x, y, typesetter.frame.state.cursorX - x, typesetter.frame.state.cursorY - y)
-      local x, y = SILE.outputter:cursor()
+      SILE.outputter:drawRule(x, y, typesetter.frame.state.cursorX - x, typesetter.frame.state.cursorY - y)
+      local x, y = SILE.outputter:getCursor()
       SU.dump{x, y}
     end
   })
