@@ -71,6 +71,8 @@ SILE.outputters.cairo = {
     cr:restore()
   end,
 
+  drawSVG = function () end,
+
   imageSize = function (src)
     local box_width, box_height, err = imagesize.imgsize(src)imagesize.imgsize(src)
     if not box_width then

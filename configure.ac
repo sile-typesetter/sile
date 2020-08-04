@@ -15,9 +15,6 @@ fi
 
 AM_SILENT_RULES([yes])
 
-m4_include([m4/ax_lua.m4])
-m4_include([m4/adl_recursive_eval.m4])
-
 # Checks for programs.
 AC_PROG_CC_C99
 AC_PROG_OBJC
@@ -55,12 +52,25 @@ esac
 
 AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
 
-# Checks for HB/libtexpdf combination
 AC_ARG_WITH([system-libtexpdf],
-    AS_HELP_STRING([--with-system-libtexpdf], [Don't build libtexpdf, use the installed version]))
+            AS_HELP_STRING([--with-system-libtexpdf], [Don’t bundle libtexpdf, use system provided version]))
+AM_CONDITIONAL([SYSTEM_LIBTEXPDF], [test "x$with_system_libtexpdf" = "xyes"])
 
 AC_ARG_WITH([system-luarocks],
-    AS_HELP_STRING([--with-system-luarocks], [Don't bundle lua rocks, use the installed versions]))
+            AS_HELP_STRING([--with-system-luarocks], [Don’t bundle LuaRocks, use system provided versions]))
+AM_CONDITIONAL([SYSTEM_LUAROCKS], [test "x$with_system_luarocks" = "xyes"])
+
+AC_ARG_WITH([luajit],
+            AS_HELP_STRING([--with-luajit], [Run under LuaJIT instead of Lua]))
+AM_CONDITIONAL([LUAJIT], [test "x$with_luajit" = "xyes"])
+
+AC_ARG_WITH([manual],
+            AS_HELP_STRING([--with-manual], [Rebuild manual and install to system’s PDF documentation directory]))
+AM_CONDITIONAL([MANUAL], [test "x$with_manual" = "xyes"])
+
+AC_ARG_WITH([examples],
+            AS_HELP_STRING([--with-examples], [Rebuild examples and install to system’s PDF documentation directory]))
+AM_CONDITIONAL([EXAMPLES], [test "x$with_examples" = "xyes"])
 
 PKG_CHECK_MODULES(HARFBUZZ, harfbuzz,
   [
@@ -86,16 +96,7 @@ PKG_CHECK_MODULES(HARFBUZZ, harfbuzz,
    fi
   ])
 
-AM_CONDITIONAL([SYSTEM_LIBTEXPDF], [test "x$with_system_libtexpdf" = "xyes"])
-AM_CONDITIONAL([SYSTEM_LUAROCKS], [test "x$with_system_luarocks" = "xyes"])
-
-AC_ARG_WITH([manual],
-    AS_HELP_STRING([--with-manual], [Rebuild manual and install to system docs location]))
-AM_CONDITIONAL([MANUAL], [test "x$with_manual" = "xyes"])
-
-AC_ARG_WITH([examples],
-    AS_HELP_STRING([--with-examples], [Rebuild examples and install to system docs location]))
-AM_CONDITIONAL([EXAMPLES], [test "x$with_examples" = "xyes"])
+m4_include([m4/ax_lua.m4])
 
 case $host_os in
   msys)
@@ -156,6 +157,8 @@ PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
     AC_MSG_FAILURE([Required ICU library not found])
   fi
 ])
+
+m4_include([m4/adl_recursive_eval.m4])
 
 adl_RECURSIVE_EVAL(["${datadir}/${PACKAGE}"], [SILE_PATH])
 AC_DEFINE_UNQUOTED([SILE_PATH],["${SILE_PATH}"],[Path for SILE packages and classes])

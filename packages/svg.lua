@@ -1,32 +1,21 @@
 local svg = require("svg")
-local pdf = require("justenoughlibtexpdf")
-local parser = require("core/opentype-parser")
+local otparser = require("core/opentype-parser")
 
-local pushSVG = function (string, desiredHeight, em, drop)
-  local figure, width, height = svg.svg_to_ps(string,em)
-  local scalefactor = 1
-  if desiredHeight then
-    scalefactor = desiredHeight / height
-    height = desiredHeight
-    width = width * scalefactor
-  end
-  scalefactor = scalefactor * em / 72
+local _drawSVG = function (svgdata, height, density, drop)
+  local svgfigure, svgwidth, svgheight = svg.svg_to_ps(svgdata, density)
+  local scalefactor = height and (height:tonumber() / svgheight) or 1
+  local width = SILE.measurement(svgwidth * scalefactor)
+  scalefactor = scalefactor * density / 72
   SILE.typesetter:pushHbox({
-    value = nil,
-    height = height,
-    width = width,
-    depth = 0,
-    outputYourself= function (self, typesetter)
-      pdf.add_content("q")
-      SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
-      local x,y = SILE.outputter.cursor()
-      y = y - SILE.documentState.paperSize[2] + (drop and 0 or height)
-      pdf.add_content(scalefactor:tonumber() .." 0 0 "..-(scalefactor:tonumber()).." "..x.." "..(y:tonumber()).." cm")
-      pdf.add_content(figure)
-      pdf.add_content("Q")
-      typesetter.frame:advanceWritingDirection(self.width)
-    end
-  })
+      value = nil,
+      height = height,
+      width = width,
+      depth = 0,
+      outputYourself = function (self, typesetter)
+        SILE.outputter:drawSVG(svgfigure, typesetter.frame.state.cursorX, typesetter.frame.state.cursorY, self.width, drop and 0 or self.height, scalefactor)
+        typesetter.frame:advanceWritingDirection(self.width)
+      end
+    })
 end
 
 SILE.registerCommand("include-svg-file", function (options, _)
@@ -34,19 +23,21 @@ SILE.registerCommand("include-svg-file", function (options, _)
   local height = options.height and SU.cast("measurement", options.height):absolute() or nil
   local density = options.density or 72
   local fh = io.open(fn)
-  local inp = fh:read("*all")
-  pushSVG(inp, height, density)
+  local svgdata = fh:read("*all")
+  _drawSVG(svgdata, height, density)
 end)
 
 SILE.registerCommand("svg-glyph", function(_, content)
   local fontoptions = SILE.font.loadDefaults({})
   local items = SILE.shaper:shapeToken(content[1], fontoptions)
   local face = SILE.shaper.getFace(fontoptions)
-  parser.parseFont(face)
+  otparser.parseFont(face)
   if not face.font.svg then return SILE.process(content) end
   for i = 1, #items do
-    local svg_data = parser.getSVG(face, items[i].gid)
-    if svg_data then pushSVG(svg_data, fontoptions.size, 72, true) end
+    local svg_data = otparser.getSVG(face, items[i].gid)
+    if svg_data then
+      _drawSVG(svg_data, fontoptions.size, 72, true)
+    end
   end
 end)
 

@@ -1,4 +1,4 @@
-std = "lua53"
+std = "max"
 include_files = {
   "**/*.lua",
   "sile.in",

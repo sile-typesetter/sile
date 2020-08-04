@@ -159,6 +159,21 @@ If all has gone well, this should produce a file \code{examples/simple.pdf}.
 Most users of SILE will want to install the \code{sile} command and SILE’s
 library files onto their system; this can be done with:
 
+\begin{note}
+SILE can be built to run using LuaJIT under which it runs almost exactly twice
+as fast! Because SILE lets your documents, classes, and packages use Lua code
+from your system –and because the ecosystem for Lua software is more developed
+around the regular Lua versions– we default to using the newest plain Lua
+installation found. If your system has LuaJIT and you prefer to use it you can
+ask the configure process to use it like this:
+
+\terminal{$ ./configure --with-luajit}
+
+Keep in mind that any Lua code you write will need to be JIT compatible. The
+vast majority of Lua code will be fine, but there are a few limitations. See
+the documentation for your version of LuaJIT for details.
+\end{note}
+
 \terminal{$ make install}
 
 Now the \code{sile} command is available from any directory.
@@ -166,7 +181,7 @@ Now the \code{sile} command is available from any directory.
 \subsection{Notes for Windows users}
 
 SILE may be built on Windows using CMake and Visual Studio. There is not an
-installer (yet), but Windows executables are generated uzing Azure for every
+installer (yet), but Windows executables are generated using Azure for every
 commit. You may download these executables by selecting the latest build from
 \url{https://simoncozens-github.visualstudio.com/sile/_build} and downloading
 the "sile" artifact from the Artifacts drop down.
