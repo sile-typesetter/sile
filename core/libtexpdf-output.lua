@@ -1,8 +1,10 @@
 local pdf = require("justenoughlibtexpdf")
 
 if (not SILE.outputters) then SILE.outputters = {} end
+
 local cursorX = 0
 local cursorY = 0
+
 local font = 0
 local started = false
 local lastkey
@@ -37,6 +39,17 @@ SILE.outputters.libtexpdf = {
     lastkey = nil
   end,
 
+  cursor = function (_)
+    return cursorX, cursorY
+  end,
+
+  moveTo = function (x, y)
+    x = SU.cast("number", x)
+    y = SU.cast("number", y)
+    cursorX = x
+    cursorY = SILE.documentState.paperSize[2] - y
+  end,
+
   setColor = function (_, color)
     ensureInit()
     if color.r then pdf.setcolor_rgb(color.r, color.g, color.b) end
@@ -54,10 +67,6 @@ SILE.outputters.libtexpdf = {
   popColor = function (_)
     ensureInit()
     pdf.colorpop()
-  end,
-
-  cursor = function (_)
-    return cursorX, cursorY
   end,
 
   outputHbox = function (value, width)
@@ -118,6 +127,12 @@ SILE.outputters.libtexpdf = {
     pdf.drawimage(src, x, y, width, height)
   end,
 
+  imageSize = function (src)
+    ensureInit() -- in case it's a PDF file
+    local llx, lly, urx, ury = pdf.imagebbox(src)
+    return (urx-llx), (ury-lly)
+  end,
+
   drawSVG = function (self, figure, x, y, _, height, scalefactor)
     ensureInit()
     x = SU.cast("number", x)
@@ -130,19 +145,6 @@ SILE.outputters.libtexpdf = {
     pdf.add_content(table.concat({ scalefactor, 0, 0, -scalefactor, x, newy, "cm" }, " "))
     pdf.add_content(figure)
     pdf.add_content("Q")
-  end,
-
-  imageSize = function (src)
-    ensureInit() -- in case it's a PDF file
-    local llx, lly, urx, ury = pdf.imagebbox(src)
-    return (urx-llx), (ury-lly)
-  end,
-
-  moveTo = function (x, y)
-    x = SU.cast("number", x)
-    y = SU.cast("number", y)
-    cursorX = x
-    cursorY = SILE.documentState.paperSize[2] - y
   end,
 
   rule = function (x, y, width, depth)

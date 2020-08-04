@@ -1,5 +1,8 @@
 if (not SILE.outputters) then SILE.outputters = {} end
 
+local cursorX = 0
+local cursorY = 0
+
 local dummy = function() end
 
 SILE.outputters.dummy = {
@@ -9,6 +12,12 @@ SILE.outputters.dummy = {
   newPage = dummy,
 
   finish = dummy,
+
+  cursor = function()
+    return cursorX, cursorY
+  end,
+
+  moveTo = dummy,
 
   setColor = dummy,
 
@@ -22,11 +31,9 @@ SILE.outputters.dummy = {
 
   drawImage = dummy,
 
-  drawSVG = dummy,
-
   imageSize = dummy,
 
-  moveTo = dummy,
+  drawSVG = dummy,
 
   rule = dummy,
 

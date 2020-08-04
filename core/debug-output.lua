@@ -1,5 +1,9 @@
 if (not SILE.outputters) then SILE.outputters = {} end
 
+local cursorX = 0
+local cursorY = 0
+
+
 local lastFont
 local outfile
 local writeline = function (...)
@@ -10,8 +14,6 @@ local writeline = function (...)
 	end
 	outfile:write("\n")
 end
-local cx
-local cy
 
 SILE.outputters.debug = {
 
@@ -30,6 +32,17 @@ SILE.outputters.debug = {
     writeline("End page")
     writeline("Finish")
     outfile:close()
+  end,
+
+  cursor = function (_)
+    return cursorX, cursorY
+  end,
+
+  moveTo = function (x, y)
+    x = SU.cast("number", x)
+    y = SU.cast("number", y)
+    if string.format("%.4f", x) ~= string.format("%.4f", cursorX) then writeline("Mx ", string.format("%.4f", x)); cursorX = x end
+    if string.format("%.4f", y) ~= string.format("%.4f", cursorY) then writeline("My ", string.format("%.4f", y)); cursorY = y end
   end,
 
   setColor = function (_, color)
@@ -69,25 +82,18 @@ SILE.outputters.debug = {
     writeline("Draw image", src, string.format("%.4f %.4f %.4f %.4f" , x, y, width, height))
   end,
 
-  drawSVG = function (_, _, x, y, width, height, scalefactor)
-    x = SU.cast("number", x)
-    y = SU.cast("number", y)
-    width = SU.cast("number", width)
-    height = SU.cast("number", height)
-    writeline("Draw SVG", string.format("%.4f %.4f %.4f %.4f" , x, y, width, height), scalefactor)
-  end,
-
   imageSize = function (src)
     local pdf = require("justenoughlibtexpdf")
     local llx, lly, urx, ury = pdf.imagebbox(src)
     return (urx-llx), (ury-lly)
   end,
 
-  moveTo = function (x, y)
+  drawSVG = function (_, _, x, y, width, height, scalefactor)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
-    if string.format("%.4f", x) ~= string.format("%.4f", cx) then writeline("Mx ", string.format("%.4f", x)); cx = x end
-    if string.format("%.4f", y) ~= string.format("%.4f", cy) then writeline("My ", string.format("%.4f", y)); cy = y end
+    width = SU.cast("number", width)
+    height = SU.cast("number", height)
+    writeline("Draw SVG", string.format("%.4f %.4f %.4f %.4f" , x, y, width, height), scalefactor)
   end,
 
   rule = function (x, y, width, depth)
@@ -108,6 +114,6 @@ SILE.outputters.debug = {
 
 SILE.outputter = SILE.outputters.debug
 
-if not SILE.outputFilename then
+if not SILE.outputFilename and SILE.masterFilename then
   SILE.outputFilename = SILE.masterFilename..".debug"
 end

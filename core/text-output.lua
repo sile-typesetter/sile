@@ -1,8 +1,9 @@
 if (not SILE.outputters) then SILE.outputters = {} end
 
-local outfile
 local cursorX = 0
 local cursorY = 0
+
+local outfile
 local started = false
 
 local writeline = function (...)
@@ -26,29 +27,9 @@ SILE.outputters.text = {
     outfile:close()
   end,
 
-  setColor = function() end,
-
-  pushColor = function () end,
-
-  popColor = function () end,
-
-  outputHbox = function (value, width)
-    width = SU.cast("number", width)
-    if not value.text then return end
-    writeline(value.text)
-    if width > 0 then
-      started = true
-      cursorX = cursorX + width
-    end
+  cursor = function()
+    return cursorX, cursorY
   end,
-
-  setFont = function () end,
-
-  drawImage = function () end,
-
-  drawSVG = function () end,
-
-  imageSize = function () end,
 
   moveTo = function (x, y)
     local bs = SILE.measurement("0.8bs"):tonumber()
@@ -73,6 +54,30 @@ SILE.outputters.text = {
     cursorY = y
     cursorX = x
   end,
+
+  setColor = function() end,
+
+  pushColor = function () end,
+
+  popColor = function () end,
+
+  outputHbox = function (value, width)
+    width = SU.cast("number", width)
+    if not value.text then return end
+    writeline(value.text)
+    if width > 0 then
+      started = true
+      cursorX = cursorX + width
+    end
+  end,
+
+  setFont = function () end,
+
+  drawImage = function () end,
+
+  imageSize = function () end,
+
+  drawSVG = function () end,
 
   rule = function () end,
 

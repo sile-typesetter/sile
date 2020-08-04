@@ -5,6 +5,9 @@ local pdf = require("podofo")
 local imagesize = SILE.require("imagesize")
 if (not SILE.outputters) then SILE.outputters = {} end
 
+local cursorX = 0
+local cursorY = 0
+
 local document
 local page
 local painter
@@ -12,9 +15,6 @@ local pagesize
 local lastkey
 
 local podofoFaces = {}
-
-local cursorX = 0
-local cursorY = 0
 
 SILE.outputters.podofo = {
 
@@ -37,6 +37,15 @@ SILE.outputters.podofo = {
   finish = function ()
     painter:FinishPage()
     document:Write(SILE.outputFilename)
+  end,
+
+  cursor = function()
+    return cursorX, cursorY
+  end,
+
+  moveTo = function (x, y)
+    cursorX = x
+    cursorY = SILE.documentState.paperSize[2] - y
   end,
 
   setColor = function (_, color)
@@ -64,9 +73,7 @@ SILE.outputters.podofo = {
     SILE.fontCache[lastkey] = nil
   end,
 
-  drawPNG = function (_, _, _, _, _) end,
-
-  drawSVG = function () end,
+  drawImage = function () end,
 
   imageSize = function (src)
     local box_width, box_height, err = imagesize.imgsize(src)imagesize.imgsize(src)
@@ -76,10 +83,7 @@ SILE.outputters.podofo = {
     return box_width, box_height
   end,
 
-  moveTo = function (x, y)
-    cursorX = x
-    cursorY = SILE.documentState.paperSize[2] - y
-  end,
+  drawSVG = function () end,
 
   rule = function (x, y, width, depth)
     painter:Rectangle(x, SILE.documentState.paperSize[2] - y, width, depth)

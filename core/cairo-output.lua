@@ -10,6 +10,9 @@ local imagesize = SILE.require("imagesize")
 
 if (not SILE.outputters) then SILE.outputters = {} end
 
+local cursorX = 0
+local cursorY = 0
+
 local cr
 local move -- See https://github.com/pavouk/lgi/issues/48
 local sgs
@@ -30,9 +33,21 @@ SILE.outputters.cairo = {
   finish = function ()
   end,
 
+  cursor = function ()
+    return cursorX, cursorY
+  end,
+
+  moveTo = function (x, y)
+    move(cr, x, y)
+  end,
+
   setColor = function (_, color)
     cr:set_source_rgb(color.r, color.g, color.b)
   end,
+
+  pushColor = function () end,
+
+  popColor = function () end,
 
   outputHbox = function (value)
     if not value then return end
@@ -71,8 +86,6 @@ SILE.outputters.cairo = {
     cr:restore()
   end,
 
-  drawSVG = function () end,
-
   imageSize = function (src)
     local box_width, box_height, err = imagesize.imgsize(src)imagesize.imgsize(src)
     if not box_width then
@@ -81,9 +94,7 @@ SILE.outputters.cairo = {
     return box_width, box_height
   end,
 
-  moveTo = function (x, y)
-    move(cr, x, y)
-  end,
+  drawSVG = function () end,
 
   rule = function (x, y, width, depth)
     cr:rectangle(x, y, width, depth)
