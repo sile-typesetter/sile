@@ -193,14 +193,14 @@ SILE.registerCommand("hbox", function (_, content)
         local _post = _rtl_pre_post(self, typesetter, line)
         local ox = typesetter.frame.state.cursorX
         local oy = typesetter.frame.state.cursorY
-        SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
+        SILE.outputter:moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
         for _, node in ipairs(self.value) do
           node:outputYourself(typesetter, line)
         end
         typesetter.frame.state.cursorX = ox
         typesetter.frame.state.cursorY = oy
         _post()
-        if SU.debugging("hboxes") then SILE.outputter.debugHbox(self, self:scaledWidth(line)) end
+        if SU.debugging("hboxes") then SILE.outputter:debugHbox(self, self:scaledWidth(line)) end
       end
     })
   table.insert(SILE.typesetter.state.nodes, hbox)
