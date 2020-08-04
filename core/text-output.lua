@@ -15,15 +15,15 @@ end
 
 SILE.outputters.text = {
 
-  init = function()
+  init = function(self)
     outfile = io.open(SILE.outputFilename, "w+")
   end,
 
-  newPage = function()
+  newPage = function(self)
     outfile:write("")
   end,
 
-  finish = function()
+  finish = function(self)
     outfile:close()
   end,
 
@@ -31,7 +31,7 @@ SILE.outputters.text = {
     return cursorX, cursorY
   end,
 
-  moveTo = function (x, y)
+  moveTo = function (self, x, y)
     local bs = SILE.measurement("0.8bs"):tonumber()
     local spc = SILE.measurement("0.8spc"):tonumber()
     if started then
@@ -55,13 +55,14 @@ SILE.outputters.text = {
     cursorX = x
   end,
 
-  setColor = function() end,
+  setColor = function(self)
+  end,
 
   pushColor = function () end,
 
   popColor = function () end,
 
-  outputHbox = function (value, width)
+  outputHbox = function (_, value, width)
     width = SU.cast("number", width)
     if not value.text then return end
     writeline(value.text)
@@ -71,19 +72,19 @@ SILE.outputters.text = {
     end
   end,
 
-  setFont = function () end,
+  setFont = function (_, _) end,
 
-  drawImage = function () end,
+  drawImage = function (_, _, _, _, _) end,
 
-  imageSize = function () end,
+  imageSize = function (_, _) end,
 
-  drawSVG = function () end,
+  drawSVG = function (_, _, _, _, _) end,
 
-  rule = function () end,
+  rule = function (_, _, _, _, _) end,
 
-  debugFrame = function (_) end,
+  debugFrame = function (_, _) end,
 
-  debugHbox = function() end
+  debugHbox = function(_, _, _, _) end
 
 }
 

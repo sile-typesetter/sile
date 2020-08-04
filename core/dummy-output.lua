@@ -13,7 +13,7 @@ SILE.outputters.dummy = {
 
   finish = dummy,
 
-  cursor = function()
+  getCursor = function (_)
     return cursorX, cursorY
   end,
 

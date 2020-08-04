@@ -25,13 +25,13 @@ SILE.outputters.libtexpdf = {
 
   _init = ensureInit,
 
-  newPage = function ()
+  newPage = function (_)
     ensureInit()
     pdf.endpage()
     pdf.beginpage()
   end,
 
-  finish = function ()
+  finish = function (_)
     if not started then return end
     pdf.endpage()
     pdf.finish()
@@ -43,7 +43,7 @@ SILE.outputters.libtexpdf = {
     return cursorX, cursorY
   end,
 
-  moveTo = function (x, y)
+  moveTo = function (_, x, y)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     cursorX = x
@@ -69,7 +69,7 @@ SILE.outputters.libtexpdf = {
     pdf.colorpop()
   end,
 
-  outputHbox = function (value, width)
+  outputHbox = function (_, value, width)
     width = SU.cast("number", width)
     ensureInit()
     if not value.glyphString then return end
@@ -100,7 +100,7 @@ SILE.outputters.libtexpdf = {
     pdf.setstring(cursorX, cursorY, buf, string.len(buf), font, width)
   end,
 
-  setFont = function (options)
+  setFont = function (self, options)
     ensureInit()
     if SILE.font._key(options) == lastkey then return end
     lastkey = SILE.font._key(options)
@@ -118,7 +118,7 @@ SILE.outputters.libtexpdf = {
     font = pdffont
   end,
 
-  drawImage = function (src, x, y, width, height)
+  drawImage = function (self, src, x, y, width, height)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     width = SU.cast("number", width)
@@ -127,7 +127,7 @@ SILE.outputters.libtexpdf = {
     pdf.drawimage(src, x, y, width, height)
   end,
 
-  imageSize = function (src)
+  imageSize = function (self, src)
     ensureInit() -- in case it's a PDF file
     local llx, lly, urx, ury = pdf.imagebbox(src)
     return (urx-llx), (ury-lly)
@@ -139,15 +139,15 @@ SILE.outputters.libtexpdf = {
     y = SU.cast("number", y)
     height = SU.cast("number", height)
     pdf.add_content("q")
-    self.moveTo(x, y)
-    x, y = self.cursor()
+    self:moveTo(x, y)
+    x, y = self:cursor()
     local newy = y - SILE.documentState.paperSize[2] + height
     pdf.add_content(table.concat({ scalefactor, 0, 0, -scalefactor, x, newy, "cm" }, " "))
     pdf.add_content(figure)
     pdf.add_content("Q")
   end,
 
-  rule = function (x, y, width, depth)
+  rule = function (_, x, y, width, depth)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     width = SU.cast("number", width)
@@ -159,11 +159,11 @@ SILE.outputters.libtexpdf = {
   debugFrame = function (self, frame)
     ensureInit()
     pdf.colorpush_rgb(0.8, 0, 0)
-    self.rule(frame:left(), frame:top(), frame:width(), 0.5)
-    self.rule(frame:left(), frame:top(), 0.5, frame:height())
-    self.rule(frame:right(), frame:top(), 0.5, frame:height())
-    self.rule(frame:left(), frame:bottom(), frame:width(), 0.5)
-    --self.rule(frame:left() + frame:width()/2 - 5, (frame:top() + frame:bottom())/2+5, 10, 10)
+    self:rule(frame:left(), frame:top(), frame:width(), 0.5)
+    self:rule(frame:left(), frame:top(), 0.5, frame:height())
+    self:rule(frame:right(), frame:top(), 0.5, frame:height())
+    self:rule(frame:left(), frame:bottom(), frame:width(), 0.5)
+    --self:rule(frame:left() + frame:width()/2 - 5, (frame:top() + frame:bottom())/2+5, 10, 10)
     local gentium = SILE.font.loadDefaults({family="Gentium Plus", language="en"})
     local stuff = SILE.shaper:createNnodes(frame.id, gentium)
     stuff = stuff[1].nodes[1].value.glyphString -- Horrible hack
@@ -175,7 +175,7 @@ SILE.outputters.libtexpdf = {
     end
     buf = table.concat(buf, "")
     local oldfont = font
-    SILE.outputter.setFont(gentium)
+    self:setFont(gentium)
     pdf.setstring(frame:left():tonumber(), (SILE.documentState.paperSize[2] - frame:top()):tonumber(), buf, string.len(buf), font, 0)
     if oldfont then
       pdf.loadfont(oldfont)
@@ -184,7 +184,7 @@ SILE.outputters.libtexpdf = {
     pdf.colorpop()
   end,
 
-  debugHbox = function (hbox, scaledWidth)
+  debugHbox = function (_, hbox, scaledWidth)
     ensureInit()
     pdf.colorpush_rgb(0.8, 0.3, 0.3)
     pdf.setrule(cursorX, cursorY+(hbox.height:tonumber()), scaledWidth:tonumber()+0.5, 0.5)

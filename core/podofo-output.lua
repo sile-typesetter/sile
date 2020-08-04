@@ -43,7 +43,7 @@ SILE.outputters.podofo = {
     return cursorX, cursorY
   end,
 
-  moveTo = function (x, y)
+  moveTo = function (self, x, y)
     cursorX = x
     cursorY = SILE.documentState.paperSize[2] - y
   end,
@@ -52,14 +52,14 @@ SILE.outputters.podofo = {
     painter:SetColor(color.r, color.g, color.b)
   end,
 
-  outputHbox = function (value)
+  outputHbox = function (self, value, width)
     if not value.glyphNames then return end
     for i = 1, #(value.glyphNames) do
       painter:DrawGlyph(document, cursorX, cursorY, value.glyphNames[i])
     end
   end,
 
-  setFont = function (options)
+  setFont = function (_, options)
     if SILE.font._key(options) == lastkey then return end
     lastkey = SILE.font._key(options)
     if not podofoFaces[lastkey] then
@@ -73,9 +73,9 @@ SILE.outputters.podofo = {
     SILE.fontCache[lastkey] = nil
   end,
 
-  drawImage = function () end,
+  drawImage = function (_, _, _, _, _) end,
 
-  imageSize = function (src)
+  imageSize = function (_, src)
     local box_width, box_height, err = imagesize.imgsize(src)imagesize.imgsize(src)
     if not box_width then
       SU.error(err.." loading image")
@@ -83,9 +83,9 @@ SILE.outputters.podofo = {
     return box_width, box_height
   end,
 
-  drawSVG = function () end,
+  drawSVG = function (_, _, _, _, _) end,
 
-  rule = function (x, y, width, depth)
+  rule = function (_, x, y, width, depth)
     painter:Rectangle(x, SILE.documentState.paperSize[2] - y, width, depth)
     painter:Close()
     painter:Fill()
@@ -94,7 +94,7 @@ SILE.outputters.podofo = {
   debugFrame = function (_, _)
   end,
 
-  debugHbox = function (typesetter, hbox, scaledWidth)
+  debugHbox = function (_, typesetter, hbox, scaledWidth)
     painter:SetColor(0.9, 0.9, 0.9)
     painter:SetStrokeWidth(0.5)
     painter:Rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY+(hbox.height), scaledWidth, hbox.height+hbox.depth)

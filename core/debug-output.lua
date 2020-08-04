@@ -17,7 +17,7 @@ end
 
 SILE.outputters.debug = {
 
-  init = function ()
+  init = function (_)
     outfile = io.open(SILE.outputFilename, "w+")
     writeline("Set paper size ", SILE.documentState.paperSize[1], SILE.documentState.paperSize[2])
     writeline("Begin page")
@@ -27,7 +27,7 @@ SILE.outputters.debug = {
     writeline("New page")
   end,
 
-  finish = function ()
+  finish = function (_)
     if SILE.status.unsupported then writeline("UNSUPPORTED") end
     writeline("End page")
     writeline("Finish")
@@ -38,7 +38,7 @@ SILE.outputters.debug = {
     return cursorX, cursorY
   end,
 
-  moveTo = function (x, y)
+  moveTo = function (_, x, y)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     if string.format("%.4f", x) ~= string.format("%.4f", cursorX) then writeline("Mx ", string.format("%.4f", x)); cursorX = x end
@@ -57,7 +57,7 @@ SILE.outputters.debug = {
     writeline("Pop color")
   end,
 
-  outputHbox = function (value, _)
+  outputHbox = function (self, value, width)
     local buf = {}
     for i=1, #(value.glyphString) do
       buf[#buf+1] = value.glyphString[i]
@@ -66,7 +66,7 @@ SILE.outputters.debug = {
     writeline("T", buf, "("..value.text..")")
   end,
 
-  setFont = function (options)
+  setFont = function (_, options)
     local font = SILE.font._key(options)
     if lastFont ~= font then
       writeline("Set font ", SILE.font._key(options))
@@ -74,7 +74,7 @@ SILE.outputters.debug = {
     end
   end,
 
-  drawImage = function (src, x, y, width, height)
+  drawImage = function (_, src, x, y, width, height)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     width = SU.cast("number", width)
@@ -82,13 +82,13 @@ SILE.outputters.debug = {
     writeline("Draw image", src, string.format("%.4f %.4f %.4f %.4f" , x, y, width, height))
   end,
 
-  imageSize = function (src)
+  imageSize = function (_, src)
     local pdf = require("justenoughlibtexpdf")
     local llx, lly, urx, ury = pdf.imagebbox(src)
     return (urx-llx), (ury-lly)
   end,
 
-  drawSVG = function (_, _, x, y, width, height, scalefactor)
+  drawSVG = function (_, _, _, x, y, width, height, scalefactor)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     width = SU.cast("number", width)
@@ -96,7 +96,7 @@ SILE.outputters.debug = {
     writeline("Draw SVG", string.format("%.4f %.4f %.4f %.4f" , x, y, width, height), scalefactor)
   end,
 
-  rule = function (x, y, width, depth)
+  rule = function (_, x, y, width, depth)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     width = SU.cast("number", width)
@@ -104,10 +104,10 @@ SILE.outputters.debug = {
     writeline("Draw line", string.format("%.4f %.4f %.4f %.4f", x, y, width, depth))
   end,
 
-  debugFrame = function (_, _)
+  debugFrame = function (_, _, _)
   end,
 
-  debugHbox = function (_, _, _)
+  debugHbox = function (self, _, _, _)
   end
 
 }
