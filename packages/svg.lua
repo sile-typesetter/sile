@@ -27,7 +27,7 @@ local _drawSVG = function (svgdata, width, height, density, drop)
     })
 end
 
-SILE.registerCommand("include-svg-file", function (options, _)
+SILE.registerCommand("svg", function (options, _)
   local fn = SU.required(options, "src", "filename")
   local width = options.width and SU.cast("measurement", options.width):absolute() or nil
   local height = options.height and SU.cast("measurement", options.height):absolute() or nil
@@ -35,6 +35,11 @@ SILE.registerCommand("include-svg-file", function (options, _)
   local svgfile = io.open(fn)
   local svgdata = svgfile:read("*all")
   _drawSVG(svgdata, width, height, density)
+end)
+
+SILE.registerCommand("include-svg-file", function (options, _)
+  SU.deprecated("include-svg-file", "svg", "0.10.10", "0.11.0")
+  SILE.call("svg", options)
 end)
 
 SILE.registerCommand("svg-glyph", function(_, content)
@@ -56,15 +61,15 @@ return {
   documentation = [[\begin{document}
 This package provides two commands.
 
-The first is \code{\\include-svg-file[src=...,[width=...,][height=...,][density=...]]}.
+The first is \code{\\svg[src=...,[width=...,]{}[height=...,]{}[density=...]{}]}.
 This loads and parses an SVG file and attempts to render it in the current
 document. Optional width or height options will scale the SVG canvas to the
 given size calculated at a given density option (which defaults to 72 ppi). For
 example, the command
-\code{\\include-svg-file[src=examples/packages/smiley.svg,\goodbreak{}height=12pt]}
+\code{\\svg[src=examples/packages/smiley.svg,\goodbreak{}height=12pt]}
 produces the following:
 
-\include-svg-file[src=examples/packages/smiley.svg,height=12pt]
+\svg[src=examples/packages/smiley.svg,height=12pt]
 
 The second is a more experimental \code{\\svg-glyph}. When the current font is
 set to an SVG font, SILE does not currently render the SVG glyphs
