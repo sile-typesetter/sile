@@ -1,10 +1,19 @@
 local svg = require("svg")
 local otparser = require("core/opentype-parser")
 
-local _drawSVG = function (svgdata, height, density, drop)
+local _drawSVG = function (svgdata, width, height, density, drop)
   local svgfigure, svgwidth, svgheight = svg.svg_to_ps(svgdata, density)
-  local scalefactor = height and (height:tonumber() / svgheight) or 1
-  local width = SILE.measurement(svgwidth * scalefactor)
+  local scalefactor = 1
+  if width and height then
+    -- local aspect = svgwidth / svgheight
+    SU.error("SILE cannot yet change SVG aspect ratios, specify either width or height but not both")
+  elseif width then
+    scalefactor = width:tonumber() / svgwidth
+  elseif height then
+    scalefactor = height:tonumber() / svgheight
+  end
+  width = SILE.measurement(svgwidth * scalefactor)
+  height = SILE.measurement(svgheight * scalefactor)
   scalefactor = scalefactor * density / 72
   SILE.typesetter:pushHbox({
       value = nil,
@@ -20,11 +29,12 @@ end
 
 SILE.registerCommand("include-svg-file", function (options, _)
   local fn = SU.required(options, "src", "filename")
+  local width = options.width and SU.cast("measurement", options.width):absolute() or nil
   local height = options.height and SU.cast("measurement", options.height):absolute() or nil
   local density = options.density or 72
-  local fh = io.open(fn)
-  local svgdata = fh:read("*all")
-  _drawSVG(svgdata, height, density)
+  local svgfile = io.open(fn)
+  local svgdata = svgfile:read("*all")
+  _drawSVG(svgdata, width, height, density)
 end)
 
 SILE.registerCommand("svg-glyph", function(_, content)
@@ -36,7 +46,7 @@ SILE.registerCommand("svg-glyph", function(_, content)
   for i = 1, #items do
     local svg_data = otparser.getSVG(face, items[i].gid)
     if svg_data then
-      _drawSVG(svg_data, fontoptions.size, 72, true)
+      _drawSVG(svg_data, nil, fontoptions.size, 72, true)
     end
   end
 end)
