@@ -17,21 +17,30 @@ local function ensureInit ()
   end
 end
 
+local _deprecationCheck = function (caller)
+  if type(caller) ~= "table" or type(caller.debugHbox) ~= "function" then
+    SU.deprecated("SILE.outputter.*", "SILE.outputter:*", "0.10.9", "0.10.10")
+  end
+end
+
 SILE.outputters.libtexpdf = {
 
-  init = function ()
+  init = function (self)
+    _deprecationCheck(self)
     -- We don't do anything yet because this commits us to a page size.
   end,
 
   _init = ensureInit,
 
-  newPage = function (_)
+  newPage = function (self)
+    _deprecationCheck(self)
     ensureInit()
     pdf.endpage()
     pdf.beginpage()
   end,
 
-  finish = function (_)
+  finish = function (self)
+    _deprecationCheck(self)
     if not started then return end
     pdf.endpage()
     pdf.finish()
@@ -39,37 +48,43 @@ SILE.outputters.libtexpdf = {
     lastkey = nil
   end,
 
-  cursor = function (_)
+  cursor = function (self)
+    _deprecationCheck(self)
     return cursorX, cursorY
   end,
 
-  moveTo = function (_, x, y)
+  moveTo = function (self, x, y)
+    _deprecationCheck(self)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     cursorX = x
     cursorY = SILE.documentState.paperSize[2] - y
   end,
 
-  setColor = function (_, color)
+  setColor = function (self, color)
+    _deprecationCheck(self)
     ensureInit()
     if color.r then pdf.setcolor_rgb(color.r, color.g, color.b) end
     if color.c then pdf.setcolor_cmyk(color.c, color.m, color.y, color.k) end
     if color.l then pdf.setcolor_gray(color.l) end
   end,
 
-  pushColor = function (_, color)
+  pushColor = function (self, color)
+    _deprecationCheck(self)
     ensureInit()
     if color.r then pdf.colorpush_rgb(color.r, color.g, color.b) end
     if color.c then pdf.colorpush_cmyk(color.c, color.m, color.y, color.k) end
     if color.l then pdf.colorpush_gray(color.l) end
   end,
 
-  popColor = function (_)
+  popColor = function (self)
+    _deprecationCheck(self)
     ensureInit()
     pdf.colorpop()
   end,
 
-  outputHbox = function (_, value, width)
+  outputHbox = function (self, value, width)
+    _deprecationCheck(self)
     width = SU.cast("number", width)
     ensureInit()
     if not value.glyphString then return end
@@ -101,6 +116,7 @@ SILE.outputters.libtexpdf = {
   end,
 
   setFont = function (self, options)
+    _deprecationCheck(self)
     ensureInit()
     if SILE.font._key(options) == lastkey then return end
     lastkey = SILE.font._key(options)
@@ -119,6 +135,7 @@ SILE.outputters.libtexpdf = {
   end,
 
   drawImage = function (self, src, x, y, width, height)
+    _deprecationCheck(self)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     width = SU.cast("number", width)
@@ -128,12 +145,14 @@ SILE.outputters.libtexpdf = {
   end,
 
   imageSize = function (self, src)
+    _deprecationCheck(self)
     ensureInit() -- in case it's a PDF file
     local llx, lly, urx, ury = pdf.imagebbox(src)
     return (urx-llx), (ury-lly)
   end,
 
   drawSVG = function (self, figure, x, y, _, height, scalefactor)
+    _deprecationCheck(self)
     ensureInit()
     x = SU.cast("number", x)
     y = SU.cast("number", y)
@@ -147,7 +166,8 @@ SILE.outputters.libtexpdf = {
     pdf.add_content("Q")
   end,
 
-  rule = function (_, x, y, width, depth)
+  rule = function (self, x, y, width, depth)
+    _deprecationCheck(self)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     width = SU.cast("number", width)
@@ -157,6 +177,7 @@ SILE.outputters.libtexpdf = {
   end,
 
   debugFrame = function (self, frame)
+    _deprecationCheck(self)
     ensureInit()
     pdf.colorpush_rgb(0.8, 0, 0)
     self:rule(frame:left(), frame:top(), frame:width(), 0.5)
@@ -184,7 +205,8 @@ SILE.outputters.libtexpdf = {
     pdf.colorpop()
   end,
 
-  debugHbox = function (_, hbox, scaledWidth)
+  debugHbox = function (self, hbox, scaledWidth)
+    _deprecationCheck(self)
     ensureInit()
     pdf.colorpush_rgb(0.8, 0.3, 0.3)
     pdf.setrule(cursorX, cursorY+(hbox.height:tonumber()), scaledWidth:tonumber()+0.5, 0.5)

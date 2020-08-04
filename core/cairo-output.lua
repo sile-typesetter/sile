@@ -17,39 +17,56 @@ local cr
 local move -- See https://github.com/pavouk/lgi/issues/48
 local sgs
 
+local _deprecationCheck = function (caller)
+  if type(caller) ~= "table" or type(caller.debugHbox) ~= "function" then
+    SU.deprecated("SILE.outputter.*", "SILE.outputter:*", "0.10.9", "0.10.10")
+  end
+end
+
 SILE.outputters.cairo = {
 
-  init = function (_)
+  init = function (self)
+    _deprecationCheck(self)
     local surface = cairo.PdfSurface.create(SILE.outputFilename, SILE.documentState.paperSize[1], SILE.documentState.paperSize[2])
     cr = cairo.Context.create(surface)
     move = cr.move_to
     sgs = cr.show_glyph_string
   end,
 
-  newPage = function (_)
+  newPage = function (self)
+    _deprecationCheck(self)
     cr:show_page()
   end,
 
-  finish = function (_)
+  finish = function (self)
+    _deprecationCheck(self)
   end,
 
-  cursor = function (_)
+  cursor = function (self)
+    _deprecationCheck(self)
     return cursorX, cursorY
   end,
 
-  moveTo = function (_, x, y)
+  moveTo = function (self, x, y)
+    _deprecationCheck(self)
     move(cr, x, y)
   end,
 
-  setColor = function (_, color)
+  setColor = function (self, color)
+    _deprecationCheck(self)
     cr:set_source_rgb(color.r, color.g, color.b)
   end,
 
-  pushColor = function (_) end,
+  pushColor = function (self)
+    _deprecationCheck(self)
+  end,
 
-  popColor = function (_) end,
+  popColor = function (self)
+    _deprecationCheck(self)
+  end,
 
-  outputHbox = function (_, value, width)
+  outputHbox = function (self, value, width)
+    _deprecationCheck(self)
     if not value then return end
     if value.pgs then
       sgs(cr, value.font, value.pgs)
@@ -58,12 +75,14 @@ SILE.outputters.cairo = {
     end
   end,
 
-  setFont = function (_, options)
+  setFont = function (self, options)
+    _deprecationCheck(self)
     cr:select_font_face(options.font, options.style:lower() == "italic" and 1 or 0, options.weight > 100 and 0 or 1)
     cr:set_font_size(options.size)
   end,
 
-  drawImage = function (_, src, x, y, width, height)
+  drawImage = function (self, src, x, y, width, height)
+    _deprecationCheck(self)
     local image = cairo.ImageSurface.create_from_png(src)
     if not image then SU.error("Could not load image "..src) end
     local src_width = image:get_width()
@@ -86,7 +105,8 @@ SILE.outputters.cairo = {
     cr:restore()
   end,
 
-  imageSize = function (_, src)
+  imageSize = function (self, src)
+    _deprecationCheck(self)
     local box_width, box_height, err = imagesize.imgsize(src)imagesize.imgsize(src)
     if not box_width then
       SU.error(err.." loading image")
@@ -94,14 +114,18 @@ SILE.outputters.cairo = {
     return box_width, box_height
   end,
 
-  drawSVG = function () end,
+  drawSVG = function (self)
+    _deprecationCheck(self)
+  end,
 
-  rule = function (_, x, y, width, depth)
+  rule = function (self, x, y, width, depth)
+    _deprecationCheck(self)
     cr:rectangle(x, y, width, depth)
     cr:fill()
   end,
 
-  debugFrame = function (_, frame)
+  debugFrame = function (self, frame)
+    _deprecationCheck(self)
     cr:set_source_rgb(0.8, 0, 0)
     cr:set_line_width(0.5)
     cr:rectangle(frame:left(), frame:top(), frame:width(), frame:height())
@@ -112,6 +136,7 @@ SILE.outputters.cairo = {
   end,
 
   debugHbox = function (self, typesetter, hbox, scaledWidth)
+    _deprecationCheck(self)
     cr:set_source_rgb(0.9, 0.9, 0.9)
     cr:set_line_width(0.5)
     cr:rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-(hbox.height), scaledWidth, hbox.height+hbox.depth)

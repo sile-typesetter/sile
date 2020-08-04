@@ -13,25 +13,36 @@ local writeline = function (...)
   end
 end
 
+local _deprecationCheck = function (caller)
+  if type(caller) ~= "table" or type(caller.debugHbox) ~= "function" then
+    SU.deprecated("SILE.outputter.*", "SILE.outputter:*", "0.10.9", "0.10.10")
+  end
+end
+
 SILE.outputters.text = {
 
   init = function(self)
+    _deprecationCheck(self)
     outfile = io.open(SILE.outputFilename, "w+")
   end,
 
   newPage = function(self)
+    _deprecationCheck(self)
     outfile:write("")
   end,
 
   finish = function(self)
+    _deprecationCheck(self)
     outfile:close()
   end,
 
   cursor = function()
+    _deprecationCheck(self)
     return cursorX, cursorY
   end,
 
   moveTo = function (self, x, y)
+    _deprecationCheck(self)
     local bs = SILE.measurement("0.8bs"):tonumber()
     local spc = SILE.measurement("0.8spc"):tonumber()
     if started then
@@ -56,13 +67,19 @@ SILE.outputters.text = {
   end,
 
   setColor = function(self)
+    _deprecationCheck(self)
   end,
 
-  pushColor = function () end,
+  pushColor = function (self)
+    _deprecationCheck(self)
+  end,
 
-  popColor = function () end,
+  popColor = function (self)
+    _deprecationCheck(self)
+  end,
 
-  outputHbox = function (_, value, width)
+  outputHbox = function (self, value, width)
+    _deprecationCheck(self)
     width = SU.cast("number", width)
     if not value.text then return end
     writeline(value.text)
@@ -72,19 +89,34 @@ SILE.outputters.text = {
     end
   end,
 
-  setFont = function (_, _) end,
+  setFont = function (self, _)
+    _deprecationCheck(self)
+  end,
 
-  drawImage = function (_, _, _, _, _) end,
 
-  imageSize = function (_, _) end,
+  drawImage = function (self, src, _, _, _)
+    _deprecationCheck(self)
+  end,
 
-  drawSVG = function (_, _, _, _, _) end,
+  imageSize = function (self, src)
+    _deprecationCheck(self)
+  end,
 
-  rule = function (_, _, _, _, _) end,
+  drawSVG = function (self, _, _, _, _)
+    _deprecationCheck(self)
+  end,
 
-  debugFrame = function (_, _) end,
+  rule = function (self, _, _, _, _)
+    _deprecationCheck(self)
+  end,
 
-  debugHbox = function(_, _, _, _) end
+  debugFrame = function (self, _)
+    _deprecationCheck(self)
+  end,
+
+  debugHbox = function(self, _, _, _)
+    _deprecationCheck(self)
+  end
 
 }
 

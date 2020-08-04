@@ -15,49 +15,65 @@ local writeline = function (...)
 	outfile:write("\n")
 end
 
+local _deprecationCheck = function (caller)
+  if type(caller) ~= "table" or type(caller.debugHbox) ~= "function" then
+    SU.deprecated("SILE.outputter.*", "SILE.outputter:*", "0.10.9", "0.10.10")
+  end
+end
+
 SILE.outputters.debug = {
 
-  init = function (_)
+  init = function (self)
+    _deprecationCheck(self)
     outfile = io.open(SILE.outputFilename, "w+")
     writeline("Set paper size ", SILE.documentState.paperSize[1], SILE.documentState.paperSize[2])
     writeline("Begin page")
   end,
 
-  newPage = function ()
+  newPage = function (self)
+    _deprecationCheck(self)
     writeline("New page")
   end,
 
-  finish = function (_)
+  finish = function (self)
+    _deprecationCheck(self)
     if SILE.status.unsupported then writeline("UNSUPPORTED") end
     writeline("End page")
     writeline("Finish")
     outfile:close()
   end,
 
-  cursor = function (_)
+  cursor = function (self)
+    _deprecationCheck(self)
     return cursorX, cursorY
   end,
 
-  moveTo = function (_, x, y)
+  moveTo = function (self, x, y)
+    _deprecationCheck(self)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     if string.format("%.4f", x) ~= string.format("%.4f", cursorX) then writeline("Mx ", string.format("%.4f", x)); cursorX = x end
     if string.format("%.4f", y) ~= string.format("%.4f", cursorY) then writeline("My ", string.format("%.4f", y)); cursorY = y end
   end,
 
-  setColor = function (_, color)
+  setColor = function (self, color)
+    _deprecationCheck(self)
     writeline("Set color", color.r, color.g, color.b)
   end,
 
-  pushColor = function (_, color)
+  pushColor = function (self, color)
+    _deprecationCheck(self)
     writeline("Push color", ("%.4g"):format(color.r), ("%.4g"):format(color.g), ("%.4g"):format(color.b))
   end,
 
-  popColor = function (_)
+  popColor = function (self)
+    _deprecationCheck(self)
     writeline("Pop color")
   end,
 
   outputHbox = function (self, value, width)
+    SU.deprecated("SILE.outputter:outputHbox", "SILE.outputter:drawHbox", "0.10.10", "0.11.0")
+    _deprecationCheck(self)
     local buf = {}
     for i=1, #(value.glyphString) do
       buf[#buf+1] = value.glyphString[i]
@@ -66,7 +82,8 @@ SILE.outputters.debug = {
     writeline("T", buf, "("..value.text..")")
   end,
 
-  setFont = function (_, options)
+  setFont = function (self, options)
+    _deprecationCheck(self)
     local font = SILE.font._key(options)
     if lastFont ~= font then
       writeline("Set font ", SILE.font._key(options))
@@ -74,7 +91,8 @@ SILE.outputters.debug = {
     end
   end,
 
-  drawImage = function (_, src, x, y, width, height)
+  drawImage = function (self, src, x, y, width, height)
+    _deprecationCheck(self)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     width = SU.cast("number", width)
@@ -82,13 +100,15 @@ SILE.outputters.debug = {
     writeline("Draw image", src, string.format("%.4f %.4f %.4f %.4f" , x, y, width, height))
   end,
 
-  imageSize = function (_, src)
+  imageSize = function (self, src)
+    _deprecationCheck(self)
     local pdf = require("justenoughlibtexpdf")
     local llx, lly, urx, ury = pdf.imagebbox(src)
     return (urx-llx), (ury-lly)
   end,
 
-  drawSVG = function (_, _, _, x, y, width, height, scalefactor)
+  drawSVG = function (self, _, _, x, y, width, height, scalefactor)
+    _deprecationCheck(self)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     width = SU.cast("number", width)
@@ -96,7 +116,8 @@ SILE.outputters.debug = {
     writeline("Draw SVG", string.format("%.4f %.4f %.4f %.4f" , x, y, width, height), scalefactor)
   end,
 
-  rule = function (_, x, y, width, depth)
+  rule = function (self, x, y, width, depth)
+    _deprecationCheck(self)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     width = SU.cast("number", width)
@@ -104,10 +125,12 @@ SILE.outputters.debug = {
     writeline("Draw line", string.format("%.4f %.4f %.4f %.4f", x, y, width, depth))
   end,
 
-  debugFrame = function (_, _, _)
+  debugFrame = function (self, _, _)
+    _deprecationCheck(self)
   end,
 
   debugHbox = function (self, _, _, _)
+    _deprecationCheck(self)
   end
 
 }
