@@ -17,8 +17,9 @@ setmetatable(SILE.inputs.TeXlike.passthroughCommands, {
 
 -- luacheck: push ignore
 SILE.inputs.TeXlike.parser = function (_ENV)
-  local isPassthrough = function (_, _, command) return SILE.inputs.TeXlike.passthroughCommands(command) end
+  local isPassthrough = function (_, _, command) return SILE.inputs.TeXlike.passthroughCommands(command) or false end
   local isNotPassthrough = function (...) return not isPassthrough(...) end
+  local isMatchingEndEnv = function (a, b, thisCommand, lastCommand) return thisCommand == lastCommand end
   local _ = WS^0
   local sep = S",;" * _
   local eol = S"\r\n"
@@ -63,7 +64,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     )^0
   texlike_text = C((1-specials+escaped_specials)^1)/unescapeSpecials
   passthrough_text = C((1-S("{}"))^1)
-  passthrough_env_text = C((1-(P"\\end{" * (cmdID * Cb"command") * P"}"))^1)
+  passthrough_env_text = C((1-(P"\\end{" * Cmt(cmdID * Cb"command", isMatchingEndEnv) * P"}"))^1)
   texlike_braced_stuff = P"{" * V"texlike_stuff" * ( P"}" + E("} expected") )
   passthrough_braced_stuff = P"{" * V"passthrough_stuff" * ( P"}" + E("} expected") )
   passthrough_debraced_stuff = C(V"passthrough_braced_stuff")
@@ -76,6 +77,14 @@ SILE.inputs.TeXlike.parser = function (_ENV)
         (Cmt(Cb"command", isNotPassthrough) * V"texlike_braced_stuff")
       )^0
     )
+  local notpass_end =
+      P"\\end{" *
+      ( Cmt(cmdID * Cb"command", isMatchingEndEnv) + E"Environment mismatch") *
+      ( P"}" * _ ) + E"Environment begun but never ended"
+  local pass_end =
+      P"\\end{" *
+      ( cmdID * Cb"command" ) *
+      ( P"}" * _ ) + E"Environment begun but never ended"
   environment =
     P"\\begin" *
     Cg(parameters, "options") *
@@ -83,15 +92,8 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     Cg(cmdID, "command") *
     P"}" *
     (
-      (Cmt(Cb"command", isPassthrough) * V"passthrough_env_stuff") +
-      (Cmt(Cb"command", isNotPassthrough) * V"texlike_stuff")
-    ) *
-    (
-      P"\\end{" *
-      (
-        Cmt(myID * Cb"command", function (_, _, thisCommand, lastCommand) return thisCommand == lastCommand end) + E"Environment mismatch"
-      ) *
-      ( P"}" * _ ) + E"Environment begun but never ended"
+      (Cmt(Cb"command", isPassthrough) * V"passthrough_env_stuff" * pass_end) +
+      (Cmt(Cb"command", isNotPassthrough) * V"texlike_stuff" * notpass_end)
     )
 end
 -- luacheck: pop
