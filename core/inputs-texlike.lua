@@ -18,7 +18,7 @@ setmetatable(SILE.inputs.TeXlike.passthroughCommands, {
 -- luacheck: push ignore
 SILE.inputs.TeXlike.parser = function (_ENV)
   local isPassthrough = function (_, _, command) return SILE.inputs.TeXlike.passthroughCommands(command) end
-  local isNotPassThrough = function (...) return not isPassthrough(...) end
+  local isNotPassthrough = function (...) return not isPassthrough(...) end
   local _ = WS^0
   local sep = S",;" * _
   local eol = S"\r\n"
@@ -72,7 +72,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
       Cg(parameters, "options") *
       (
         (Cmt(Cb"command", isPassthrough) * V"passthrough_braced_stuff") +
-        (Cmt(Cb"command", isNotPassThrough) * V"texlike_braced_stuff")
+        (Cmt(Cb"command", isNotPassthrough) * V"texlike_braced_stuff")
       )^0
     )
   environment =
@@ -83,7 +83,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     P"}" *
     (
       (Cmt(Cb"command", isPassthrough) * V"passthrough_env_stuff") +
-      (Cmt(Cb"command", isNotPassThrough) * V"texlike_stuff")
+      (Cmt(Cb"command", isNotPassthrough) * V"texlike_stuff")
     ) *
     (
       P"\\end{" *
