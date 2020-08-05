@@ -32,6 +32,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   local value = quotedString + (1-S",;]")^1
   local myID = C(SILE.inputs.TeXlike.identifier) / 1
   local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1 / function (...) local tbl = {...}; return tbl[1], tbl[#tbl] end
+  local cmdID = myID - P"beign" - P"end"
   local list = Cf(Ct"" * pair^0, rawset)
   local parameters = (
       P"[" *
@@ -62,13 +63,13 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     )^0
   texlike_text = C((1-specials+escaped_specials)^1)/unescapeSpecials
   passthrough_text = C((1-S("{}"))^1)
-  passthrough_env_text = C((1-(P"\\end{" * (myID * Cb"command") * P"}"))^1)
+  passthrough_env_text = C((1-(P"\\end{" * (cmdID * Cb"command") * P"}"))^1)
   texlike_braced_stuff = P"{" * V"texlike_stuff" * ( P"}" + E("} expected") )
   passthrough_braced_stuff = P"{" * V"passthrough_stuff" * ( P"}" + E("} expected") )
   passthrough_debraced_stuff = C(V"passthrough_braced_stuff")
   texlike_command = (
       P"\\" *
-      Cg(myID - P"begin" - P"end", "command") *
+      Cg(cmdID, "command") *
       Cg(parameters, "options") *
       (
         (Cmt(Cb"command", isPassthrough) * V"passthrough_braced_stuff") +
@@ -79,7 +80,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     P"\\begin" *
     Cg(parameters, "options") *
     P"{" *
-    Cg(myID - P"begin" - P"end", "command") *
+    Cg(cmdID, "command") *
     P"}" *
     (
       (Cmt(Cb"command", isPassthrough) * V"passthrough_env_stuff") +
