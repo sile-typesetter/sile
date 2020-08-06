@@ -1,4 +1,5 @@
-\begin{document}
+\begin[class=book]{document}
+\include[src=documentation/macros.sil]
 \chapter{The Nitty Gritty}
 
 \noindent{}We are finally at the bottom of our delve into SILE’s commands
@@ -121,6 +122,62 @@ end\});
 Adding horizontal and vertical penalties to the typesetter’s queues is similarly
 done with the \code{SILE.typesetter:pushPenalty(\{penalty = x\})} and
 \code{SILE.typesetter:pushVpenalty(\{penalty = y\})} methods.
+
+\subsection{Kerns}
+
+\define[command=SILEkern]{\font[family=Gentium Plus]{% Book Basic has no +smcp, but readers don't need to know, since we're only using Book Basic as a holdover from old SILE which did.
+S\lower[height=0.5ex]{I}L\kern[width=-.2em]\raise[height=0.6ex]{\font[features=+smcp]{e}}}}
+\define[command=SILEglue]{\font[family=Gentium Plus]{%
+S\lower[height=0.5ex]{I}L\glue[width=-.2em]\raise[height=0.6ex]{\font[features=+smcp]{e}}}}
+\code{\\kern}’s are a type of \code{\\glue}. The difference between the two is
+that, while a \code{\\glue} can be broken at the end of a line, a \code{\\kern}
+can’t be. Hearkening back to our \SILEkern example from the \em{Macros and
+Commands} chapter, consider that example, repeated enough times to cause a
+linebreak, but with \code{\\glue}’s everywhere \code{\\kern}’s are used
+instead:
+
+\line
+\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
+\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
+\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
+\SILEglue\SILEglue\color[color=#dd0000]{\SILEglue}\SILEglue\SILEglue%
+\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
+\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
+\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
+\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
+\line
+
+The 27\sup{th} of the 60 \SILEglue’s, in \color[color=#dd0000]{red}, is broken
+between its ‘L’ and ‘\raise[height=0.6ex]{\font[family=Gentium Plus,features=+smcp]{e}}’.
+Meanwhile, if we typeset the same line, except using \code{\\kern}’s as we had
+originally instead…
+
+\line
+\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
+\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
+\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
+\SILEkern\SILEkern\color[color=#dd0000]{\SILEkern}\SILEkern\SILEkern%
+\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
+\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
+\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
+\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
+\line
+
+The line just continues on right off the page. Why this is a useful feature is
+more obvious if there are spaces between them:
+
+\line
+Glues:
+
+\SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \color[color=#dd0000]{\SILEglue} \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue
+\line
+
+\line
+Kerns:
+
+\SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \color[color=#dd0000]{\SILEkern} \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern
+\line
+
 
 \section{Frames}
 
