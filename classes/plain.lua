@@ -193,7 +193,7 @@ SILE.registerCommand("hbox", function (_, content)
         local _post = _rtl_pre_post(self, typesetter, line)
         local ox = typesetter.frame.state.cursorX
         local oy = typesetter.frame.state.cursorY
-        SILE.outputter:moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
+        SILE.outputter:setCursor(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
         for _, node in ipairs(self.value) do
           node:outputYourself(typesetter, line)
         end
