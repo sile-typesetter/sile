@@ -38,8 +38,8 @@ L\%
 \line
 \end{verbatim}
 
-(Don‘t worry about the \code{\\kern} command for the moment; we’ll come back
-to that later. The \code{\%}'s prevent newlines from becoming spaces.)
+(Don’t worry about the \code{\\kern} command for the moment; we’ll come back
+to that later. The \code{\%}’s prevent newlines from becoming spaces.)
 
 We’ve used our logo four times already in this chapter, and we don‘t want to
 have to input that whole monstrosity each time we do so. What we would like
