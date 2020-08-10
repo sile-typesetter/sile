@@ -242,15 +242,15 @@ SILE.outputters.libtexpdf = {
     _deprecationCheck(self)
     ensureInit()
     self:pushColor({ r = 0.8, g = 0.3, b = 0.3 })
-    pdf.setrule(cursorX, cursorY+(hbox.height:tonumber()), scaledWidth:tonumber()+0.5, 0.5)
-    pdf.setrule(cursorX, cursorY, 0.5, hbox.height:tonumber())
-    pdf.setrule(cursorX, cursorY, scaledWidth:tonumber()+0.5, 0.5)
-    pdf.setrule(cursorX+scaledWidth:tonumber(), cursorY, 0.5, hbox.height:tonumber())
-    if hbox.depth then
-      pdf.setrule(cursorX, cursorY-(hbox.depth:tonumber()), scaledWidth:tonumber(), 0.5)
-      pdf.setrule(cursorX+scaledWidth:tonumber(), cursorY-(hbox.depth:tonumber()), 0.5, hbox.depth:tonumber())
-      pdf.setrule(cursorX, cursorY-(hbox.depth:tonumber()), 0.5, hbox.depth:tonumber())
-
+    local paperY = SILE.documentState.paperSize[2]
+    local x, y = self:getCursor()
+    y = paperY - y
+    self:drawRule(x-_dl/2, y-_dl/2-hbox.height, scaledWidth+_dl, _dl)
+    self:drawRule(x-_dl/2, y-hbox.height-_dl/2, _dl, hbox.height+hbox.depth+_dl)
+    self:drawRule(x-_dl/2, y-_dl/2, scaledWidth+_dl, _dl)
+    self:drawRule(x+scaledWidth-_dl/2, y-hbox.height-_dl/2, _dl, hbox.height+hbox.depth+_dl)
+    if hbox.depth > SILE.length(0) then
+      self:drawRule(x-_dl/2, y+hbox.depth-_dl/2, scaledWidth+_dl, _dl)
     end
     self:popColor()
   end
