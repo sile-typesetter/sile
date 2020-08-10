@@ -17,22 +17,34 @@ setmetatable(SILE.inputs.TeXlike.passthroughCommands, {
 
 -- luacheck: push ignore
 SILE.inputs.TeXlike.parser = function (_ENV)
-  local isPassthrough = function (_, _, command) return SILE.inputs.TeXlike.passthroughCommands(command) or false end
-  local isNotPassthrough = function (...) return not isPassthrough(...) end
-  local isMatchingEndEnv = function (a, b, thisCommand, lastCommand) return thisCommand == lastCommand end
+  local isPassthrough = function (_, _, command)
+    return SILE.inputs.TeXlike.passthroughCommands(command) or false
+  end
+  local isNotPassthrough = function (...)
+    return not isPassthrough(...)
+  end
+  local isMatchingEndEnv = function (a, b, thisCommand, lastCommand)
+    return thisCommand == lastCommand
+  end
   local _ = WS^0
   local sep = S",;" * _
   local eol = S"\r\n"
   local quote = P'"'
   local escaped_quote = B(P"\\") * quote
   local unescapeQuote = function (str) local a = str:gsub('\\"', '"'); return a end
-  local quotedString = quote * C(((1-quote+escaped_quote)^1)/unescapeQuote) * quote
+  local quotedString = quote * C((1 - quote + escaped_quote)^1 / unescapeQuote) * quote
   local specials = S"{}%\\"
   local escaped_specials = P"\\" * specials
-  local unescapeSpecials = function (str) local a = str:gsub('\\([{}%%\\])', '%1'); return a end
+  local unescapeSpecials = function (str)
+    return str:gsub('\\([{}%%\\])', '%1')
+  end
   local value = quotedString + (1-S",;]")^1
   local myID = C(SILE.inputs.TeXlike.identifier) / 1
-  local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1 / function (...) local tbl = {...}; return tbl[1], tbl[#tbl] end
+  local unwrapper = function (...)
+    local tbl = {...}
+    return tbl[1], tbl[#tbl]
+  end
+  local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1 / unwrapper
   local cmdID = myID - P"beign" - P"end"
   local list = Cf(Ct"" * pair^0, rawset)
   local parameters = (
@@ -62,9 +74,9 @@ SILE.inputs.TeXlike.parser = function (_ENV)
   passthrough_env_stuff = Cg(
       V"passthrough_env_text"
     )^0
-  texlike_text = C((1-specials+escaped_specials)^1)/unescapeSpecials
+  texlike_text = C((1 - specials + escaped_specials)^1) / unescapeSpecials
   passthrough_text = C((1-S("{}"))^1)
-  passthrough_env_text = C((1-(P"\\end{" * Cmt(cmdID * Cb"command", isMatchingEndEnv) * P"}"))^1)
+  passthrough_env_text = C((1 - (P"\\end{" * Cmt(cmdID * Cb"command", isMatchingEndEnv) * P"}"))^1)
   texlike_braced_stuff = P"{" * V"texlike_stuff" * ( P"}" + E("} expected") )
   passthrough_braced_stuff = P"{" * V"passthrough_stuff" * ( P"}" + E("} expected") )
   passthrough_debraced_stuff = C(V"passthrough_braced_stuff")
