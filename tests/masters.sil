@@ -14,30 +14,30 @@
 \frame[id=r,left=right(gutter),right=95%pw,top=top(l),bottom=bottom(l),width=width(l)]%
 }%
 \switch-master[id=title]%
-\lorem[words=50]%
+\lorem[words=50]\par
 \nofolios%
 \showframe[id=all]%
 \framebreak%
-\lorem[words=50]%
+\lorem[words=50]\par
 \supereject%
 \par%
 
 \switch-master-one-page[id=columns]%
 \font[size=20pt]{Column master\par}
-\lorem[words=50]%
+\lorem[words=50]\par
 \showframe[id=all]%
 
 \framebreak%
-\lorem[words=50]%
+\lorem[words=50]\par
 \pagebreak%
 \par%
 
 \font[size=20pt]{Should return to title master\par}
-\lorem[words=50]%
+\lorem[words=50]\par
 \showframe[id=all]%
 
 \framebreak%
-\lorem[words=50]%
+\lorem[words=50]\par
 \pagebreak%
 \par%
 
