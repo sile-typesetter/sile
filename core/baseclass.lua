@@ -206,7 +206,7 @@ SILE.baseClass = std.object {
       default = nil,
       help = "Glue at start of paragraph"
     })
-    SILE.outputter.init(self)
+    SILE.outputter:init(self)
     self:registerCommands()
     -- Call all stored package init routines
     for i = 1, #(SILE.baseClass.deferredInit) do (SILE.baseClass.deferredInit[i])() end

@@ -1,8 +1,10 @@
 local pdf = require("justenoughlibtexpdf")
 
 if (not SILE.outputters) then SILE.outputters = {} end
+
 local cursorX = 0
 local cursorY = 0
+
 local font = 0
 local started = false
 local lastkey
@@ -15,21 +17,30 @@ local function ensureInit ()
   end
 end
 
+local _deprecationCheck = function (caller)
+  if type(caller) ~= "table" or type(caller.debugHbox) ~= "function" then
+    SU.deprecated("SILE.outputter.*", "SILE.outputter:*", "0.10.9", "0.10.10")
+  end
+end
+
 SILE.outputters.libtexpdf = {
 
-  init = function ()
+  init = function (self)
+    _deprecationCheck(self)
     -- We don't do anything yet because this commits us to a page size.
   end,
 
   _init = ensureInit,
 
-  newPage = function ()
+  newPage = function (self)
+    _deprecationCheck(self)
     ensureInit()
     pdf.endpage()
     pdf.beginpage()
   end,
 
-  finish = function ()
+  finish = function (self)
+    _deprecationCheck(self)
     if not started then return end
     pdf.endpage()
     pdf.finish()
@@ -37,30 +48,61 @@ SILE.outputters.libtexpdf = {
     lastkey = nil
   end,
 
-  setColor = function (_, color)
+  cursor = function (self)
+    _deprecationCheck(self)
+    SU.deprecated("SILE.outputter:cursor", "SILE.outputter:getCursor", "0.10.10", "0.11.0")
+    return self:getCursor()
+  end,
+
+  getCursor = function (self)
+    _deprecationCheck(self)
+    return cursorX, cursorY
+  end,
+
+  moveTo = function (self, x, y)
+    _deprecationCheck(self)
+    SU.deprecated("SILE.outputter:moveTo", "SILE.outputter:setCursor", "0.10.10", "0.11.0")
+    return self:setCursor(x, y)
+  end,
+
+  setCursor = function (self, x, y)
+    _deprecationCheck(self)
+    x = SU.cast("number", x)
+    y = SU.cast("number", y)
+    cursorX = x
+    cursorY = SILE.documentState.paperSize[2] - y
+  end,
+
+  setColor = function (self, color)
+    _deprecationCheck(self)
     ensureInit()
     if color.r then pdf.setcolor_rgb(color.r, color.g, color.b) end
     if color.c then pdf.setcolor_cmyk(color.c, color.m, color.y, color.k) end
     if color.l then pdf.setcolor_gray(color.l) end
   end,
 
-  pushColor = function (_, color)
+  pushColor = function (self, color)
+    _deprecationCheck(self)
     ensureInit()
     if color.r then pdf.colorpush_rgb(color.r, color.g, color.b) end
     if color.c then pdf.colorpush_cmyk(color.c, color.m, color.y, color.k) end
     if color.l then pdf.colorpush_gray(color.l) end
   end,
 
-  popColor = function (_)
+  popColor = function (self)
+    _deprecationCheck(self)
     ensureInit()
     pdf.colorpop()
   end,
 
-  cursor = function (_)
-    return cursorX, cursorY
+  outputHbox = function (self, value, width)
+    _deprecationCheck(self)
+    SU.deprecated("SILE.outputter:outputHbox", "SILE.outputter:drawHbox", "0.10.10", "0.11.0")
+    return self:drawHbox(value, width)
   end,
 
-  outputHbox = function (value, width)
+  drawHbox = function (self, value, width)
+    _deprecationCheck(self)
     width = SU.cast("number", width)
     ensureInit()
     if not value.glyphString then return end
@@ -91,7 +133,8 @@ SILE.outputters.libtexpdf = {
     pdf.setstring(cursorX, cursorY, buf, string.len(buf), font, width)
   end,
 
-  setFont = function (options)
+  setFont = function (self, options)
+    _deprecationCheck(self)
     ensureInit()
     if SILE.font._key(options) == lastkey then return end
     lastkey = SILE.font._key(options)
@@ -109,7 +152,8 @@ SILE.outputters.libtexpdf = {
     font = pdffont
   end,
 
-  drawImage = function (src, x, y, width, height)
+  drawImage = function (self, src, x, y, width, height)
+    _deprecationCheck(self)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     width = SU.cast("number", width)
@@ -118,34 +162,42 @@ SILE.outputters.libtexpdf = {
     pdf.drawimage(src, x, y, width, height)
   end,
 
+  imageSize = function (self, src)
+    _deprecationCheck(self)
+    SU.deprecated("SILE.outputter:imageSize", "SILE.outputter:getImageSize", "0.10.10", "0.11.0")
+    return self:getImageSize(src)
+  end,
+
+  getImageSize = function (self, src)
+    _deprecationCheck(self)
+    ensureInit() -- in case it's a PDF file
+    local llx, lly, urx, ury = pdf.imagebbox(src)
+    return (urx-llx), (ury-lly)
+  end,
+
   drawSVG = function (self, figure, x, y, _, height, scalefactor)
+    _deprecationCheck(self)
     ensureInit()
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     height = SU.cast("number", height)
     pdf.add_content("q")
-    self.moveTo(x, y)
-    x, y = self.cursor()
+    self:moveTo(x, y)
+    x, y = self:getCursor()
     local newy = y - SILE.documentState.paperSize[2] + height
     pdf.add_content(table.concat({ scalefactor, 0, 0, -scalefactor, x, newy, "cm" }, " "))
     pdf.add_content(figure)
     pdf.add_content("Q")
   end,
 
-  imageSize = function (src)
-    ensureInit() -- in case it's a PDF file
-    local llx, lly, urx, ury = pdf.imagebbox(src)
-    return (urx-llx), (ury-lly)
+  rule = function (self, x, y, width, depth)
+    _deprecationCheck(self)
+    SU.deprecated("SILE.outputter:rule", "SILE.outputter:drawRule", "0.10.10", "0.11.0")
+    return self:drawRule(x, y, width, depth)
   end,
 
-  moveTo = function (x, y)
-    x = SU.cast("number", x)
-    y = SU.cast("number", y)
-    cursorX = x
-    cursorY = SILE.documentState.paperSize[2] - y
-  end,
-
-  rule = function (x, y, width, depth)
+  drawRule = function (self, x, y, width, depth)
+    _deprecationCheck(self)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     width = SU.cast("number", width)
@@ -155,13 +207,14 @@ SILE.outputters.libtexpdf = {
   end,
 
   debugFrame = function (self, frame)
+    _deprecationCheck(self)
     ensureInit()
     pdf.colorpush_rgb(0.8, 0, 0)
-    self.rule(frame:left(), frame:top(), frame:width(), 0.5)
-    self.rule(frame:left(), frame:top(), 0.5, frame:height())
-    self.rule(frame:right(), frame:top(), 0.5, frame:height())
-    self.rule(frame:left(), frame:bottom(), frame:width(), 0.5)
-    --self.rule(frame:left() + frame:width()/2 - 5, (frame:top() + frame:bottom())/2+5, 10, 10)
+    self:drawRule(frame:left(), frame:top(), frame:width(), 0.5)
+    self:drawRule(frame:left(), frame:top(), 0.5, frame:height())
+    self:drawRule(frame:right(), frame:top(), 0.5, frame:height())
+    self:drawRule(frame:left(), frame:bottom(), frame:width(), 0.5)
+    --self:drawRule(frame:left() + frame:width()/2 - 5, (frame:top() + frame:bottom())/2+5, 10, 10)
     local gentium = SILE.font.loadDefaults({family="Gentium Plus", language="en"})
     local stuff = SILE.shaper:createNnodes(frame.id, gentium)
     stuff = stuff[1].nodes[1].value.glyphString -- Horrible hack
@@ -173,7 +226,7 @@ SILE.outputters.libtexpdf = {
     end
     buf = table.concat(buf, "")
     local oldfont = font
-    SILE.outputter.setFont(gentium)
+    self:setFont(gentium)
     pdf.setstring(frame:left():tonumber(), (SILE.documentState.paperSize[2] - frame:top()):tonumber(), buf, string.len(buf), font, 0)
     if oldfont then
       pdf.loadfont(oldfont)
@@ -182,7 +235,8 @@ SILE.outputters.libtexpdf = {
     pdf.colorpop()
   end,
 
-  debugHbox = function (hbox, scaledWidth)
+  debugHbox = function (self, hbox, scaledWidth)
+    _deprecationCheck(self)
     ensureInit()
     pdf.colorpush_rgb(0.8, 0.3, 0.3)
     pdf.setrule(cursorX, cursorY+(hbox.height:tonumber()), scaledWidth:tonumber()+0.5, 0.5)

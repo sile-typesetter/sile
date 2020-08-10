@@ -1,5 +1,9 @@
 if (not SILE.outputters) then SILE.outputters = {} end
 
+local cursorX = 0
+local cursorY = 0
+
+
 local lastFont
 local outfile
 local writeline = function (...)
@@ -10,41 +14,83 @@ local writeline = function (...)
 	end
 	outfile:write("\n")
 end
-local cx
-local cy
+
+local _deprecationCheck = function (caller)
+  if type(caller) ~= "table" or type(caller.debugHbox) ~= "function" then
+    SU.deprecated("SILE.outputter.*", "SILE.outputter:*", "0.10.9", "0.10.10")
+  end
+end
 
 SILE.outputters.debug = {
 
-  init = function ()
+  init = function (self)
+    _deprecationCheck(self)
     outfile = io.open(SILE.outputFilename, "w+")
     writeline("Set paper size ", SILE.documentState.paperSize[1], SILE.documentState.paperSize[2])
     writeline("Begin page")
   end,
 
-  newPage = function ()
+  newPage = function (self)
+    _deprecationCheck(self)
     writeline("New page")
   end,
 
-  finish = function ()
+  finish = function (self)
+    _deprecationCheck(self)
     if SILE.status.unsupported then writeline("UNSUPPORTED") end
     writeline("End page")
     writeline("Finish")
     outfile:close()
   end,
 
-  setColor = function (_, color)
+  cursor = function (self)
+    _deprecationCheck(self)
+    SU.deprecated("SILE.outputter:cursor", "SILE.outputter:getCursor", "0.10.10", "0.11.0")
+    return self:getCursor()
+  end,
+
+  getCursor = function (self)
+    _deprecationCheck(self)
+    return cursorX, cursorY
+  end,
+
+  moveTo = function (self, x, y)
+    _deprecationCheck(self)
+    SU.deprecated("SILE.outputter:moveTo", "SILE.outputter:setCursor", "0.10.10", "0.11.0")
+    return self:setCursor(x, y)
+  end,
+
+  setCursor = function (self, x, y)
+    _deprecationCheck(self)
+    x = SU.cast("number", x)
+    y = SU.cast("number", y)
+    if string.format("%.4f", x) ~= string.format("%.4f", cursorX) then writeline("Mx ", string.format("%.4f", x)); cursorX = x end
+    if string.format("%.4f", y) ~= string.format("%.4f", cursorY) then writeline("My ", string.format("%.4f", y)); cursorY = y end
+  end,
+
+  setColor = function (self, color)
+    _deprecationCheck(self)
     writeline("Set color", color.r, color.g, color.b)
   end,
 
-  pushColor = function (_, color)
+  pushColor = function (self, color)
+    _deprecationCheck(self)
     writeline("Push color", ("%.4g"):format(color.r), ("%.4g"):format(color.g), ("%.4g"):format(color.b))
   end,
 
-  popColor = function (_)
+  popColor = function (self)
+    _deprecationCheck(self)
     writeline("Pop color")
   end,
 
-  outputHbox = function (value, _)
+  outputHbox = function (self, value, width)
+    _deprecationCheck(self)
+    SU.deprecated("SILE.outputter:outputHbox", "SILE.outputter:drawHbox", "0.10.10", "0.11.0")
+    return self:drawHbox(value, width)
+  end,
+
+  drawHbox = function (self, value, _)
+    _deprecationCheck(self)
     local buf = {}
     for i=1, #(value.glyphString) do
       buf[#buf+1] = value.glyphString[i]
@@ -53,7 +99,8 @@ SILE.outputters.debug = {
     writeline("T", buf, "("..value.text..")")
   end,
 
-  setFont = function (options)
+  setFont = function (self, options)
+    _deprecationCheck(self)
     local font = SILE.font._key(options)
     if lastFont ~= font then
       writeline("Set font ", SILE.font._key(options))
@@ -61,7 +108,8 @@ SILE.outputters.debug = {
     end
   end,
 
-  drawImage = function (src, x, y, width, height)
+  drawImage = function (self, src, x, y, width, height)
+    _deprecationCheck(self)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     width = SU.cast("number", width)
@@ -69,7 +117,21 @@ SILE.outputters.debug = {
     writeline("Draw image", src, string.format("%.4f %.4f %.4f %.4f" , x, y, width, height))
   end,
 
-  drawSVG = function (_, _, x, y, width, height, scalefactor)
+  imageSize = function (self, src)
+    _deprecationCheck(self)
+    SU.deprecated("SILE.outputter:imageSize", "SILE.outputter:getImageSize", "0.10.10", "0.11.0")
+    return self:getImageSize(src)
+  end,
+
+  getImageSize = function (self, src)
+    _deprecationCheck(self)
+    local pdf = require("justenoughlibtexpdf")
+    local llx, lly, urx, ury = pdf.imagebbox(src)
+    return (urx-llx), (ury-lly)
+  end,
+
+  drawSVG = function (self, _, _, x, y, width, height, scalefactor)
+    _deprecationCheck(self)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     width = SU.cast("number", width)
@@ -77,20 +139,14 @@ SILE.outputters.debug = {
     writeline("Draw SVG", string.format("%.4f %.4f %.4f %.4f" , x, y, width, height), scalefactor)
   end,
 
-  imageSize = function (src)
-    local pdf = require("justenoughlibtexpdf")
-    local llx, lly, urx, ury = pdf.imagebbox(src)
-    return (urx-llx), (ury-lly)
+  rule = function (self, x, y, width, depth)
+    _deprecationCheck(self)
+    SU.deprecated("SILE.outputter:rule", "SILE.outputter:drawRule", "0.10.10", "0.11.0")
+    return self:drawRule(x, y, width, depth)
   end,
 
-  moveTo = function (x, y)
-    x = SU.cast("number", x)
-    y = SU.cast("number", y)
-    if string.format("%.4f", x) ~= string.format("%.4f", cx) then writeline("Mx ", string.format("%.4f", x)); cx = x end
-    if string.format("%.4f", y) ~= string.format("%.4f", cy) then writeline("My ", string.format("%.4f", y)); cy = y end
-  end,
-
-  rule = function (x, y, width, depth)
+  drawRule = function (self, x, y, width, depth)
+    _deprecationCheck(self)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     width = SU.cast("number", width)
@@ -98,16 +154,18 @@ SILE.outputters.debug = {
     writeline("Draw line", string.format("%.4f %.4f %.4f %.4f", x, y, width, depth))
   end,
 
-  debugFrame = function (_, _)
+  debugFrame = function (self, _, _)
+    _deprecationCheck(self)
   end,
 
-  debugHbox = function (_, _, _)
+  debugHbox = function (self, _, _, _)
+    _deprecationCheck(self)
   end
 
 }
 
 SILE.outputter = SILE.outputters.debug
 
-if not SILE.outputFilename then
+if not SILE.outputFilename and SILE.masterFilename then
   SILE.outputFilename = SILE.masterFilename..".debug"
 end

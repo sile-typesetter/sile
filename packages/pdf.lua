@@ -105,7 +105,7 @@ SILE.registerCommand("pdf:metadata", function (options, _)
     width = SILE.measurement(0),
     depth = SILE.measurement(0),
     outputYourself = function (_, _, _)
-      SILE.outputter._init()
+      SILE.outputter:_init()
       pdf.metadata(key, val)
     end
   })
