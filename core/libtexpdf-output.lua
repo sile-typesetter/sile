@@ -23,6 +23,8 @@ local _deprecationCheck = function (caller)
   end
 end
 
+local _dl = 0.5
+
 SILE.outputters.libtexpdf = {
 
   init = function (self)
@@ -196,25 +198,26 @@ SILE.outputters.libtexpdf = {
     return self:drawRule(x, y, width, depth)
   end,
 
-  drawRule = function (self, x, y, width, depth)
+  drawRule = function (self, x, y, width, height)
     _deprecationCheck(self)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     width = SU.cast("number", width)
-    depth = SU.cast("number", depth)
+    height = SU.cast("number", height)
     ensureInit()
-    pdf.setrule(x, SILE.documentState.paperSize[2] - y - depth, width, depth)
+    local paperY = SILE.documentState.paperSize[2]
+    pdf.setrule(x, paperY - y - height, width, height)
   end,
 
   debugFrame = function (self, frame)
     _deprecationCheck(self)
     ensureInit()
-    pdf.colorpush_rgb(0.8, 0, 0)
-    self:drawRule(frame:left(), frame:top(), frame:width(), 0.5)
-    self:drawRule(frame:left(), frame:top(), 0.5, frame:height())
-    self:drawRule(frame:right(), frame:top(), 0.5, frame:height())
-    self:drawRule(frame:left(), frame:bottom(), frame:width(), 0.5)
-    --self:drawRule(frame:left() + frame:width()/2 - 5, (frame:top() + frame:bottom())/2+5, 10, 10)
+    self:pushColor({ r = 0.8, g = 0, b = 0 })
+    self:drawRule(frame:left()-_dl/2, frame:top()-_dl/2, frame:width()+_dl, _dl)
+    self:drawRule(frame:left()-_dl/2, frame:top()-_dl/2, _dl, frame:height()+_dl)
+    self:drawRule(frame:right()-_dl/2, frame:top()-_dl/2, _dl, frame:height()+_dl)
+    self:drawRule(frame:left()-_dl/2, frame:bottom()-_dl/2, frame:width()+_dl, _dl)
+    -- self:drawRule(frame:left() + frame:width()/2 - 5, (frame:top() + frame:bottom())/2+5, 10, 10)
     local gentium = SILE.font.loadDefaults({family="Gentium Plus", language="en"})
     local stuff = SILE.shaper:createNnodes(frame.id, gentium)
     stuff = stuff[1].nodes[1].value.glyphString -- Horrible hack
@@ -227,18 +230,18 @@ SILE.outputters.libtexpdf = {
     buf = table.concat(buf, "")
     local oldfont = font
     self:setFont(gentium)
-    pdf.setstring(frame:left():tonumber(), (SILE.documentState.paperSize[2] - frame:top()):tonumber(), buf, string.len(buf), font, 0)
+    pdf.setstring(frame:left():tonumber() - _dl/2, (SILE.documentState.paperSize[2] - frame:top()):tonumber() + _dl/2, buf, string.len(buf), font, 0)
     if oldfont then
       pdf.loadfont(oldfont)
       font = oldfont
     end
-    pdf.colorpop()
+    self:popColor()
   end,
 
   debugHbox = function (self, hbox, scaledWidth)
     _deprecationCheck(self)
     ensureInit()
-    pdf.colorpush_rgb(0.8, 0.3, 0.3)
+    self:pushColor({ r = 0.8, g = 0.3, b = 0.3 })
     pdf.setrule(cursorX, cursorY+(hbox.height:tonumber()), scaledWidth:tonumber()+0.5, 0.5)
     pdf.setrule(cursorX, cursorY, 0.5, hbox.height:tonumber())
     pdf.setrule(cursorX, cursorY, scaledWidth:tonumber()+0.5, 0.5)
@@ -249,7 +252,7 @@ SILE.outputters.libtexpdf = {
       pdf.setrule(cursorX, cursorY-(hbox.depth:tonumber()), 0.5, hbox.depth:tonumber())
 
     end
-    pdf.colorpop()
+    self:popColor()
   end
 
 }
