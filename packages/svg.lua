@@ -1,10 +1,19 @@
 local svg = require("svg")
 local otparser = require("core/opentype-parser")
 
-local _drawSVG = function (svgdata, height, density, drop)
+local _drawSVG = function (svgdata, width, height, density, drop)
   local svgfigure, svgwidth, svgheight = svg.svg_to_ps(svgdata, density)
-  local scalefactor = height and (height:tonumber() / svgheight) or 1
-  local width = SILE.measurement(svgwidth * scalefactor)
+  local scalefactor = 1
+  if width and height then
+    -- local aspect = svgwidth / svgheight
+    SU.error("SILE cannot yet change SVG aspect ratios, specify either width or height but not both")
+  elseif width then
+    scalefactor = width:tonumber() / svgwidth
+  elseif height then
+    scalefactor = height:tonumber() / svgheight
+  end
+  width = SILE.measurement(svgwidth * scalefactor)
+  height = SILE.measurement(svgheight * scalefactor)
   scalefactor = scalefactor * density / 72
   SILE.typesetter:pushHbox({
       value = nil,
@@ -18,13 +27,19 @@ local _drawSVG = function (svgdata, height, density, drop)
     })
 end
 
-SILE.registerCommand("include-svg-file", function (options, _)
+SILE.registerCommand("svg", function (options, _)
   local fn = SU.required(options, "src", "filename")
+  local width = options.width and SU.cast("measurement", options.width):absolute() or nil
   local height = options.height and SU.cast("measurement", options.height):absolute() or nil
   local density = options.density or 72
-  local fh = io.open(fn)
-  local svgdata = fh:read("*all")
-  _drawSVG(svgdata, height, density)
+  local svgfile = io.open(fn)
+  local svgdata = svgfile:read("*all")
+  _drawSVG(svgdata, width, height, density)
+end)
+
+SILE.registerCommand("include-svg-file", function (options, _)
+  SU.deprecated("include-svg-file", "svg", "0.10.10", "0.11.0")
+  SILE.call("svg", options)
 end)
 
 SILE.registerCommand("svg-glyph", function(_, content)
@@ -36,29 +51,32 @@ SILE.registerCommand("svg-glyph", function(_, content)
   for i = 1, #items do
     local svg_data = otparser.getSVG(face, items[i].gid)
     if svg_data then
-      _drawSVG(svg_data, fontoptions.size, 72, true)
+      _drawSVG(svg_data, nil, fontoptions.size, 72, true)
     end
   end
 end)
 
 return {
-  documentation = [[\begin{document}
-This experimental package provides two commands.
 
-The first is \code{\\include-svg-file[src=...,height=...,[density=...]{}]}.
+  documentation = [[\begin{document}
+This package provides two commands.
+
+The first is \code{\\svg[src=...,[width=...,]{}[height=...,]{}[density=...]{}]}.
 This loads and parses an SVG file and attempts to render it in the current
-document with the given height and density (which defaults to 72 ppi). For
-example, the command \code{\\include-svg-file[src=examples/packages/smiley.svg,\goodbreak{}height=12pt]}
+document. Optional width or height options will scale the SVG canvas to the
+given size calculated at a given density option (which defaults to 72 ppi). For
+example, the command
+\code{\\svg[src=examples/packages/smiley.svg,\goodbreak{}height=12pt]}
 produces the following:
 
-\include-svg-file[src=examples/packages/smiley.svg,height=12pt]
+\svg[src=examples/packages/smiley.svg,height=12pt]
 
-The second is \code{\\svg-glyph}. When the current font is set to an SVG font,
-SILE does not currently render the SVG glyphs automatically. This command is
-intended to be used as a means of eventually implementing SVG fonts; it retrieves
-the SVG glyph provided and renders it.
+The second is a more experimental \code{\\svg-glyph}. When the current font is
+set to an SVG font, SILE does not currently render the SVG glyphs
+automatically. This command is intended to be used as a means of eventually
+implementing SVG fonts; it retrieves the SVG glyph provided and renders it.
 
-The rendering is done with our own SVG drawing library; it is currently
+In both cases the rendering is done with our own SVG drawing library; it is currently
 very minimal, only handling lines, curves, strokes and fills. For a fuller
 implementation, consider using a \code{converters} registration to render
 your SVG file to PDF and include it on the fly.
