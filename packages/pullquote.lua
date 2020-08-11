@@ -16,31 +16,37 @@ end, "The font from which to pull the quotation marks.")
 local typesetMark = function (open, setback, scale, color, mark)
   SILE.settings.temporarily(function ()
     SILE.call("pullquote:mark-font")
-    local setwidth = SU.cast("length", setback)
-    SILE.typesetter:pushGlue({ width = open and -setwidth or setwidth })
     SILE.call("raise", { height = -(open and (scale+1) or scale) .. "ex" }, function ()
       SILE.settings.set("font.size", SILE.settings.get("font.size")*scale)
       SILE.call("color", { color = color }, function ()
-        SILE.call("rebox", { width = 0, height = 0 }, { mark })
+        if open then
+          SILE.typesetter:pushGlue({ width = -setback })
+          SILE.call("rebox", { width = setback, height = 0 }, { mark })
+        else
+          SILE.typesetter:pushGlue(SILE.nodefactory.hfillglue())
+          local hbox = SILE.call("hbox", {}, { mark })
+          table.remove(SILE.typesetter.state.nodes) -- steal it back
+          SILE.typesetter:pushGlue({ width = setback - hbox.width })
+          SILE.call("rebox", { width = hbox.width, height = 0 }, { mark })
+          SILE.typesetter:pushGlue({ width = -setback })
+        end
       end)
     end)
-    SILE.typesetter:pushGlue({width = open and setwidth or -setwidth })
   end)
 end
 
 SILE.registerCommand("pullquote", function (options, content)
   local author = options.author or nil
-  local setback = options.setback or "2em"
   local scale = options.scale or 3
   local color = options.color or "#999999"
   SILE.settings.temporarily(function ()
+    SILE.call("pullquote:font")
+    local setback = SU.cast("length", options.setback or "2em"):absolute()
     SILE.settings.set("document.rskip", SILE.nodefactory.glue(setback))
     SILE.settings.set("document.lskip", SILE.nodefactory.glue(setback))
     SILE.settings.set("current.parindent", SILE.nodefactory.glue())
-    SILE.call("pullquote:font")
     typesetMark(true, setback, scale, color, "“")
     SILE.process(content)
-    SILE.typesetter:pushGlue(SILE.nodefactory.hfillglue())
     typesetMark(false, setback, scale, color, "”")
     if author then
       SILE.settings.temporarily(function ()
