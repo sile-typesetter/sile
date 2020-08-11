@@ -184,7 +184,7 @@ SILE.outputters.libtexpdf = {
     y = SU.cast("number", y)
     height = SU.cast("number", height)
     pdf.add_content("q")
-    self:moveTo(x, y)
+    self:setCursor(x, y)
     x, y = self:getCursor()
     local newy = y - SILE.documentState.paperSize[2] + height
     pdf.add_content(table.concat({ scalefactor, 0, 0, -scalefactor, x, newy, "cm" }, " "))

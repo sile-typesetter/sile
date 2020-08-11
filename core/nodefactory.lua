@@ -180,7 +180,7 @@ nodefactory.hbox = pl.class({
       if typesetter.frame:writingDirection() == "RTL" then
         typesetter.frame:advanceWritingDirection(outputWidth)
       end
-      SILE.outputter:moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
+      SILE.outputter:setCursor(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
       SILE.outputter:setFont(self.value.options)
       SILE.outputter:drawHbox(self.value, outputWidth)
       if typesetter.frame:writingDirection() ~= "RTL" then
