@@ -1,8 +1,15 @@
-\begin[papersize=a5]{document}
+\begin[papersize=a6]{document}
+\nofolios
+\neverindent
 \script[src=packages/features]
 \set[parameter=harfbuzz.subshapers,value=ot]
-\neverindent\nofolios
-\par\font[CharacterVariant="{75,81}"]{Hoa hồng đẹp. «Һ» хәрефе төрки һәм...
-\par\font[CharacterVariant=No75]{Hoa hồng đẹp}. \font[CharacterVariant=No81]{«Һ» хәрефе төрки һәм...}
-\par\font[CharacterVariant="{No75, No81}"]{Hoa hồng đẹp. «Һ» хәрефе төрки һәм...}}
+һ ồ
+
+\begin[CharacterVariant="{75,81}"]{font}
+һ ồ
+
+\font[CharacterVariant=No81]{һ} \font[CharacterVariant=No75]{ồ}
+
+\font[CharacterVariant="{No75, No81}"]{һ ồ}
+\end{font}
 \end{document}

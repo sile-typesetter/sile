@@ -1,19 +1,19 @@
-\begin[papersize=a5]{document}
+\begin[papersize=a6]{document}
+\neverindent
+\nofolios
 \script[src=packages/features]
 \set[parameter=harfbuzz.subshapers,value=ot]
-\neverindent\nofolios
-\par This:
-\par \font[size=24pt, Letters=SmallCaps]{Acknowledgements}
-\par Should match this exactly:
+\font[Letters=SmallCaps]{SmallCaps}
+
 \add-font-feature[Letters=SmallCaps]
-\par \font[size=24pt]{Acknowledgements}
+SmallCaps
 \remove-font-feature[Letters=SmallCaps]
 
-\par As should this:
-\par \font[size=24pt, Ligatures=" { Historic, Discretionary } "]{I'm +dlig, +hlig}
-\par And this:
-\add-font-feature[Ligatures=" { Historic, Discretionary } "]
-\par \font[size=24pt]{I'm +dlig, +hlig}
-\remove-font-feature[Ligatures=" { Historic, Discretionary } "]
-\par\font[size=3em]Test...
+\font[Ligatures="{ Historic, Discretionary }"]{Ligatures}
+
+\add-font-feature[Ligatures="{ Historic, Discretionary }"]
+Ligatures
+\remove-font-feature[Ligatures="{ Historic, Discretionary }"]
+
+Normal
 \end{document}
