@@ -109,42 +109,45 @@ local featurestring = Cf(Ct"" * tag^0, rawset)
 
 -- Parser for fontspec strings
 -- Refer to fontspec.pdf (see doc), Chapter 3, Table 4 (p. 37)
-local fontspecsafe = R('AZ', 'az', '09') + P':'
+local fontspecsafe = R("AZ", "az", "09") + P":"
 local fontspecws = SILE.parserBits.whitespace^0
-local fontspecsep = P',' * fontspecws
+local fontspecsep = P"," * fontspecws
 local fontspecname = C(fontspecsafe^1)
-local fontspeclist = fontspecws * P'{' *
+local fontspeclist = fontspecws * P"{" *
                      Ct(fontspecws * fontspecname *
                         (fontspecsep * fontspecname * fontspecws)^0) *
-                     P'}' * fontspecws
+                     P"}" * fontspecws
 
-local debugString = function(self)
-    return pl.pretty.write(self, nil):gsub('[%s]+', ' ')
+local dumpTable = function (self)
+    return pl.pretty.write(self, "")
 end
 
 local featurestring2table = function (str)
   local ret = featurestring:match(str)
-  if ret then setmetatable(ret, {__tostring = debugString}) end
+  setmetatable(ret, { __tostring = dumpTable })
   return ret or SU.error("Unparsable Opentype feature string '"..str.."'")
 end
 
 local table2featurestring = function (tbl)
   local t2 = {}
-  if not tbl then return "" end
   for k, v in pairs(tbl) do t2[#t2+1] = v.posneg..k..(v.value and "="..v.value or "") end
   return table.concat(t2, ";")
 end
 
-local _parsefontfeaturevalue = function(k, v)
+local _parsefontfeaturevalue = function (k, v)
     local posneg = "+"
     v = v:gsub("^No", function () posneg= "-"; return "" end)
     local res
-    if type(opentype[k]) == "function" then res = opentype[k](v) else res = opentype[k][v] end
+    if type(opentype[k]) == "function" then
+      res = opentype[k](v)
+    else
+      res = opentype[k][v]
+    end
     if not res then SU.error("Bad OpenType value "..v.." for feature "..k) end
     if type(res) == "string" then
-        return res, {posneg = posneg}
+        return res, { posneg = posneg }
     else
-        return res.key, {posneg = posneg, value = res.value}
+        return res.key, { posneg = posneg, value = res.value }
     end
 end
 
@@ -161,65 +164,60 @@ end
 -- that odd.  Junicode, for example, a common font among medievalists, has many
 -- Stylistic Sets and Character Variations, many of which make sense to enable
 -- simultaneously.
-local parsefontfeatures = function (options, _)
-  local t = featurestring2table(SILE.settings.get("font.features"))
+local parsefontfeatures = function (options)
+  local otfeatures = featurestring2table(SILE.settings.get("font.features"))
   for k, v in pairs(options) do
     if not opentype[k] then SU.warn("Unknown Opentype feature "..k)
     else
-      local feats = {}
+      local features = {}
+      setmetatable(features, { __tostring = dumpTable })
       local m = lpeg.match(fontspeclist, v)
-
       if m then
         for i, match in pairs(m) do
-          feats[i] = match
+          features[i] = match
         end
       else
-          feats[k] = v
+          features[k] = v
       end
-
-      setmetatable(feats, {__tostring = debugString})
-      SU.debug("features", string.format("Built feats: %s", feats))
-
-      for _, vv in pairs(feats) do
+      SU.debug("features", "Parsed features:", features)
+      for _, vv in pairs(features) do
         local pk, pv = _parsefontfeaturevalue(k, vv)
-        t[pk] = pv
+        otfeatures[pk] = pv
       end
     end
   end
-  setmetatable(t, {__tostring = debugString})
-  setmetatable(options, {__tostring = debugString})
-  SU.debug("features", string.format("Interpreted features %s as %s.", options, t))
-  return t
+  SU.debug("features", "Interpreted features as:", otfeatures)
+  return otfeatures
 end
 
 -- We do it this way so that we can use a SILE.temporarily in \font,
 -- instead of calling these user-facing functions in it.
-SILE.registerCommand("add-font-feature", function(options, _)
-    local t = parsefontfeatures(options, nil)
-    local features_s = table2featurestring(t)
+SILE.registerCommand("add-font-feature", function (options, _)
+    local otfeatures = parsefontfeatures(options)
+    local features_s = table2featurestring(otfeatures)
     SILE.settings.set("font.features", features_s)
-    SU.debug("features", string.format("Added feature(s) %s", features_s))
+    SU.debug("features", "Added features:", features_s)
 end)
 
 local removefontfeatures = function (options, _)
     local t_cur = featurestring2table(SILE.settings.get("font.features"))
-    local t_rm = parsefontfeatures(options, nil)
-    local t = pl.tablex.deepcopy(t_cur)
-
+    local t_rm = parsefontfeatures(options)
+    local otfeatures = pl.tablex.deepcopy(t_cur)
     for k, v in pairs(t_rm) do
-        -- \remove-font-features{Ligatures=NoHistoric} should not remove
-        -- Historic
-        if t[k] and t[k].posneg == v.posneg then t[k] = nil end
+      -- \remove-font-features{Ligatures=NoHistoric} should not remove Historic
+      if otfeatures[k] and otfeatures[k].posneg == v.posneg then
+        otfeatures[k] = nil
+      end
     end
-
-    SILE.settings.set("font.features", table2featurestring(t))
-    SU.debug("features", string.format("Features were: %s\nRemoved features: %s\nFeatures are now: %s",
-                                       t_cur, t_rm, t))
+    SILE.settings.set("font.features", table2featurestring(otfeatures))
+    SU.debug("features", "Features were:", t_cur)
+    SU.debug("features", "Removed features: ", t_rm)
+    SU.debug("features", "Features are now:", otfeatures)
 end
 SILE.registerCommand("remove-font-feature", removefontfeatures)
 
 local fontfn = SILE.Commands.font
-SILE.registerCommand("font", function(options, content)
+SILE.registerCommand("font", function (options, content)
     -- It is guaranteed that future releases of SILE will not implement non-OT \font
     -- features with capital letters.
     -- Cf. https://github.com/sile-typesetter/sile/issues/992#issuecomment-665575353
@@ -236,23 +234,20 @@ SILE.registerCommand("font", function(options, content)
             nfeatures = nfeatures + 1
         end
     end
-
-    local feats = nil
+    local feats = {}
     if nfeatures > 0 then
         feats = parsefontfeatures(features)
     end
-
     local features_s = SILE.settings.get("font.features")
     local features_temp = ''
     if string.len(features_s) > 0 then features_temp = features_s .. ';' end
     features_temp = features_temp .. table2featurestring(feats)
     SILE.settings.set("font.features", features_temp)
-    SU.debug("features", string.format("Font features temporarily set to %s by "..
-                                       "\\font", features_temp)                  )
+    SU.debug("features", "Font features temporarily set to:", features_temp)
     fontfn(options, content)
     SILE.settings.set("font.features", features_s)
-end, "Set current font family, size, weight, style, variant, script, direction, language, "..
-     "and features (overridden)")
+end, "Set current font family, size, weight, style, variant, script, direction, language,\
+      and features (overridden)")
 
 return { documentation = [[\begin{document}
 As mentioned in Chapter 3, SILE automatically applies ligatures defined by the fonts
