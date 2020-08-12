@@ -1,0 +1,21 @@
+\begin[papersize=a6,class=book]{document}
+\nofolios
+\script[src=packages/lorem]
+% \script[src=packages/debug]
+% \disable-pushback
+\define[command=foo]{\bar \bar \bar \bar \bar \bar \bar\par}
+\define[command=bar]{\lorem[words=3]\footnote{\lorem[words=5]}}
+\begin{script}
+local _newPage = SILE.documentState.documentClass.newPage
+SILE.documentState.documentClass.newPage = function (self)
+  local ret = _newPage(self)
+  SILE.call("set-counter", { id = "footnote", value = 1 })
+  return ret
+end
+\end{script}
+\foo
+\foo
+\foo
+\foo
+\foo
+\end{document}
