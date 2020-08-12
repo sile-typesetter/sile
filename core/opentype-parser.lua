@@ -92,7 +92,9 @@ local parseName = function(str)
     local language = record.language
     if language then
       if not names[record.name] then names[record.name] = {} end
-      names[record.name][language] = vstruct.read(">@"..name.sOffset+record.offset.."s"..record.length, fd)
+      if record.length > 0 then
+        names[record.name][language] = vstruct.read(">@"..name.sOffset+record.offset.."s"..record.length, fd)
+      end
     end
   end
 
