@@ -39,14 +39,17 @@ if EXAMPLES
 _EXAMPLES = $(EXAMPLES)
 endif
 
+licensedir = $(datarootdir)/licenses/sile
+
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
 nobase_nodist_pkgdata_DATA = $(LUAMODULES)
 dist_man_MANS = sile.1
 dist_doc_DATA = README.md CHANGELOG.md
 dist_pdf_DATA = $(_MANUAL)
+dist_license_DATA = LICENSE
 nobase_dist_pdf_DATA = $(_EXAMPLES)
 bin_SCRIPTS = sile
-EXTRA_DIST = LICENSE spec tests examples documentation sile-dev-1.rockspec fontconfig.conf
+EXTRA_DIST = spec tests examples documentation sile-dev-1.rockspec fontconfig.conf
 EXTRA_DIST += .version Makefile-distfiles
 EXTRA_DIST += build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
 EXTRA_DIST += $(MANUAL) $(EXAMPLES)
