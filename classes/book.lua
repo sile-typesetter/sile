@@ -47,21 +47,21 @@ book.init = function (self)
 end
 
 book.newPage = function (self)
-  book:switchPage()
-  book:newPageInfo()
+  self:switchPage()
+  self:newPageInfo()
   return plain.newPage(self)
 end
 
-book.finish = function ()
+book.finish = function (self)
   local ret = plain.finish(book)
-  book:writeToc()
+  self:writeToc()
   return ret
 end
 
-book.endPage = function (_)
-  book:moveTocNodes()
+book.endPage = function (self)
+  self:moveTocNodes()
 
-  if (book:oddPage() and SILE.scratch.headers.right) then
+  if (self:oddPage() and SILE.scratch.headers.right) then
     SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
       SILE.settings.set("current.parindent", SILE.nodefactory.glue())
       SILE.settings.set("document.lskip", SILE.nodefactory.glue())
@@ -70,7 +70,7 @@ book.endPage = function (_)
       SILE.process(SILE.scratch.headers.right)
       SILE.call("par")
     end)
-  elseif (not(book:oddPage()) and SILE.scratch.headers.left) then
+  elseif (not(self:oddPage()) and SILE.scratch.headers.left) then
       SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
         SILE.settings.set("current.parindent", SILE.nodefactory.glue())
         SILE.settings.set("document.lskip", SILE.nodefactory.glue())
@@ -212,6 +212,7 @@ SILE.registerCommand("book:chapterfont", function (_, content)
     SILE.call("font", { weight = 800, size = "22pt" }, content)
   end)
 end)
+
 SILE.registerCommand("book:sectionfont", function (_, content)
   SILE.settings.temporarily(function ()
     SILE.call("font", { weight = 800, size = "15pt" }, content)
