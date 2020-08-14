@@ -9,8 +9,11 @@ SILE.registerCommand("pdf:destination", function (options, _)
     outputYourself = function (_, typesetter, line)
       SILE.outputters.libtexpdf._init()
       local state = typesetter.frame.state
-      local y = SILE.documentState.paperSize[2] - state.cursorY + line.height
-      pdf.destination(name, state.cursorX:tonumber(), y:tonumber())
+      typesetter.frame:advancePageDirection(-line.height)
+      local x, y = state.cursorX, state.cursorY
+      typesetter.frame:advancePageDirection(line.height)
+      local _y = SILE.documentState.paperSize[2] - y
+      pdf.destination(name, x:tonumber(), _y:tonumber())
     end
   })
 end)
