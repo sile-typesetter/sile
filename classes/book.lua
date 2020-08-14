@@ -95,9 +95,9 @@ end, "Text to appear on the top of the right page")
 
 SILE.registerCommand("book:sectioning", function (options, content)
   local level = SU.required(options, "level", "book:sectioning")
-  SILE.call("increment-multilevel-counter", {id = "sectioning", level = level})
+  SILE.call("increment-multilevel-counter", { id = "sectioning", level = level })
   if SU.boolean(options.toc, true) then
-    SILE.call("tocentry", {level = level}, SU.subContent(content))
+    SILE.call("tocentry", { level = level }, SU.subContent(content))
   end
   local lang = SILE.settings.get("document.language")
   if options.numbering == nil or options.numbering == "yes" then
@@ -107,7 +107,7 @@ SILE.registerCommand("book:sectioning", function (options, content)
       end
       SILE.call(options.prenumber)
     end
-    SILE.call("show-multilevel-counter", {id="sectioning"})
+    SILE.call("show-multilevel-counter", { id = "sectioning" })
     if options.postnumber then
       if SILE.Commands[options.postnumber .. ":" .. lang] then
         options.postnumber = options.postnumber .. ":" .. lang
@@ -133,7 +133,7 @@ SILE.registerCommand("chapter", function (options, content)
   SILE.call("open-double-page")
   SILE.call("noindent")
   SILE.scratch.headers.right = nil
-  SILE.call("set-counter", {id = "footnote", value = 1})
+  SILE.call("set-counter", { id = "footnote", value = 1 })
   SILE.call("book:chapterfont", {}, function ()
     SILE.call("book:sectioning", {
       numbering = options.numbering,
