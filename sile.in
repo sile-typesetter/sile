@@ -38,7 +38,7 @@ SILE.version = "v@VERSION@"
 io.stdout:setvbuf 'no'
 SILE.parseArguments()
 if not os.getenv 'LUA_REPL_RLWRAP' then
-  io.stderr:write('This is SILE '..SILE.version..'\n')
+  io.stderr:write('This is ' .. SILE.full_version .. '\n')
 end
 if SILE.makeDeps then SILE.makeDeps:add(executable) end
 SILE.init()
