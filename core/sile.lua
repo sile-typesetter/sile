@@ -98,7 +98,9 @@ SILE.require = function (dependency, pathprefix)
 end
 
 SILE.parseArguments = function ()
-  local parser = std.optparse("SILE "..SILE.version..[[
+  local parser = std.optparse(
+    string.format("SILE %s (%s)", SILE.version, SILE.lua_isjit and jit.version or _VERSION) ..
+    [[
 
 Usage: sile [options] file.sil|file.xml
 
