@@ -528,7 +528,7 @@ When an error occurs, for example when writing custom scripts, its traceback
 \begin{verbatim}
 \line
 $ sile -t broken.sil
-This is SILE \sileversion
+\sileversion
 <broken.sil>
 
 Error detected:
@@ -552,7 +552,7 @@ print the results back to you. If you call SILE with no input file name, it
 enters the REPL:
 
 \begin{verbatim}
-This is SILE \sileversion
+\sileversion
 > \em{l = SILE.length.parse("22mm")}
 > \em{l.length}
 62.3622054

@@ -216,8 +216,8 @@ Turning \code{examples/docbook/article-template.xml} into
 
 \begin{verbatim}
 \line
-\% \em{./sile -I docbook.sil examples/docbook/article-template.xml}
-This is SILE \sileversion
+$ ./sile -I docbook.sil examples/docbook/article-template.xml
+\sileversion
 Loading docbook
 <classes/docbook.sil><examples/docbook/article-template.xml>[1] [2] [3]
 \line
