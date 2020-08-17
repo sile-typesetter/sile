@@ -11,7 +11,7 @@ local lastkey
 
 local function ensureInit ()
   if not started then
-    pdf.init(SILE.outputFilename, SILE.documentState.paperSize[1], SILE.documentState.paperSize[2])
+    pdf.init(SILE.outputFilename, SILE.documentState.paperSize[1], SILE.documentState.paperSize[2], SILE.full_version)
     pdf.beginpage()
     started = true
   end

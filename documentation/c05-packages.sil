@@ -197,7 +197,7 @@ The package manager is accessed from the SILE REPL, like so:
 \begin{verbatim}
 \line
  $ sile
-This is SILE \sileversion
+\sileversion
 > installPackage("endnotes")
 Loading catalogue from https://raw.githubusercontent.com/simoncozens/sile-packages/master/packages.lua
 \line

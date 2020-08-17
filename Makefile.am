@@ -129,7 +129,7 @@ selfcheck: | $(_BUILT_SUBDIRS)
 	output=$$(mktemp --suffix=.pdf)
 	trap 'rm -f $$output' EXIT SIGHUP SIGTERM
 	./sile -o $$output - <<< "<sile>foo</sile>"
-	pdfinfo $$output | grep SILE
+	pdfinfo $$output | grep "SILE v@VERSION@"
 
 .PHONY: regressions
 regressions: $(TESTSRCS) $(ACTUALS)
