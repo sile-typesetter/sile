@@ -107,7 +107,7 @@ TESTFONTFILES += SBL_Hbrw.ttf
 # Tell make how to extract individual files from bundles
 
 .fonts/Cormorant%: .sources/Cormorant_Install_v3.601.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) --strip-components 2 "Cormorant_Install_v3.601/1. TrueType Font Files/$(notdir $@)"
+	bsdtar -x -f $< -C $(dir $@) --strip-components 2 "$(basename $(<F))/1. TrueType Font Files/$(notdir $@)"
 	touch $@
 
 .fonts/CrimsonPro%: .sources/CrimsonPro.zip | .fonts
@@ -115,15 +115,15 @@ TESTFONTFILES += SBL_Hbrw.ttf
 	touch $@
 
 .fonts/DejaVu%: .sources/dejavu-fonts-ttf-2.37.tar.bz2 | .fonts
-	bsdtar -x -f $< -C $(dir $@) --strip-components 2 dejavu-fonts-ttf-2.37/ttf/$(notdir $@)
+	bsdtar -x -f $< -C $(dir $@) --strip-components 2 $(basename $(<F))/ttf/$(notdir $@)
 	touch $@
 
 .fonts/GenB%: .sources/GentiumBasic_1102.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) --strip-components 1 GentiumBasic_1102/$(notdir $@)
+	bsdtar -x -f $< -C $(dir $@) --strip-components 1 $(basename $(<F))/$(notdir $@)
 	touch $@
 
 .fonts/GentiumPlus%: .sources/GentiumPlus-5.000.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) --strip-components 1 GentiumPlus-5.000/$(notdir $@)
+	bsdtar -x -f $< -C $(dir $@) --strip-components 1 $(basename $(<F))/$(notdir $@)
 	touch $@
 
 .fonts/Hack%: .sources/Hack-v3.003-ttf.tar.xz | .fonts
@@ -135,7 +135,7 @@ TESTFONTFILES += SBL_Hbrw.ttf
 	touch $@
 
 .fonts/LateefGR%: .sources/LateefGR-1.200.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) --strip-components 1 LateefGR-1.200/$(notdir $@)
+	bsdtar -x -f $< -C $(dir $@) --strip-components 1 $(basename $(<F))/$(notdir $@)
 	touch $@
 
 .fonts/LibreBaskerville%: .sources/libre-baskerville.zip | .fonts
