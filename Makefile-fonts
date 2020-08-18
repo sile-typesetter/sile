@@ -49,9 +49,6 @@ TESTFONTFILES += SBL_Hbrw.ttf
 .fonts/Brill-Roman.ttf: | .fonts
 	curl -s -L https://brill.com/fileasset/downloads_static/static_typefacedownload_typefaceroman_2.06_051.ttf -o $@
 
-.fonts/Libertinus%: | .fonts
-	curl -s -L https://github.com/alif-type/libertinus/raw/v6.9/$(notdir $@) -o $@
-
 .fonts/mngl%.ttf: | .fonts
 	curl -s -L http://mongolfont.com/jAlmas/cms/documents/mongolfont/font/$(notdir $@) -o $@
 
@@ -89,6 +86,9 @@ TESTFONTFILES += SBL_Hbrw.ttf
 
 .sources/LateefGR-1.200.zip: | .sources
 	curl -s -L https://software.sil.org/downloads/r/lateef/$(notdir $@) -o $@
+
+.sources/Libertinus-%.tar.xz: | .sources
+	curl -s -L https://github.com/alerque/libertinus/releases/download/v$*/$(notdir $@) -o $@
 
 .sources/libre-baskerville.zip: | .sources
 	curl -s -L https://www.fontsquirrel.com/fonts/download/$(notdir $@) -o $@
@@ -128,6 +128,10 @@ TESTFONTFILES += SBL_Hbrw.ttf
 
 .fonts/Hack%: .sources/Hack-v3.003-ttf.tar.xz | .fonts
 	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
+	touch $@
+
+.fonts/Libertinus%: .sources/Libertinus-7.000.tar.xz | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 3 $(basename $(basename $(<F)))/static/OTF/$(notdir $@)
 	touch $@
 
 .fonts/LateefGR%: .sources/LateefGR-1.200.zip | .fonts
