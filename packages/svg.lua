@@ -3,6 +3,7 @@ local otparser = require("core/opentype-parser")
 
 local _drawSVG = function (svgdata, width, height, density, drop)
   local svgfigure, svgwidth, svgheight = svg.svg_to_ps(svgdata, density)
+  SU.debug("svg", string.format("PS: %s\n", svgfigure))
   local scalefactor = 1
   if width and height then
     -- local aspect = svgwidth / svgheight

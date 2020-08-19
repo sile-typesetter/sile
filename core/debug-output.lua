@@ -130,13 +130,13 @@ SILE.outputters.debug = {
     return (urx-llx), (ury-lly)
   end,
 
-  drawSVG = function (self, _, _, x, y, width, height, scalefactor)
+  drawSVG = function (self, figure, _, x, y, width, height, scalefactor)
     _deprecationCheck(self)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
     width = SU.cast("number", width)
     height = SU.cast("number", height)
-    writeline("Draw SVG", string.format("%.4f %.4f %.4f %.4f" , x, y, width, height), scalefactor)
+    writeline("Draw SVG", string.format("%.4f %.4f %.4f %.4f %s" , x, y, width, height, figure), scalefactor)
   end,
 
   rule = function (self, x, y, width, depth)
