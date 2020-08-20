@@ -65,10 +65,11 @@ SILE.outputters.podofo = {
     return self:setCursor(x, y)
   end,
 
-  setCursor = function (self, x, y)
+  setCursor = function (self, x, y, relative)
     _deprecationCheck(self)
-    cursorX = x
-    cursorY = SILE.documentState.paperSize[2] - y
+    local offset = relative and { x = cursorX, y = cursorY } or { x = 0, y = 0 }
+    cursorX = offset.x + x
+    cursorY = offset.y + SILE.documentState.paperSize[2] - y
   end,
 
   setColor = function (self, color)
