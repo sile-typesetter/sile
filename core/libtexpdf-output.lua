@@ -5,7 +5,6 @@ if (not SILE.outputters) then SILE.outputters = {} end
 local cursorX = 0
 local cursorY = 0
 
-local font = 0
 local started = false
 local lastkey
 
@@ -120,7 +119,7 @@ SILE.outputters.libtexpdf = {
       for i = 1, #(value.items) do
         local glyph = value.items[i].gid
         local buf = string.char(math.floor(glyph % 2^32 / 2^8)) .. string.char(glyph % 0x100)
-        pdf.setstring(cursorX + (value.items[i].x_offset or 0), cursorY + (value.items[i].y_offset or 0), buf, string.len(buf), font, value.items[i].glyphAdvance)
+        pdf.setstring(cursorX + (value.items[i].x_offset or 0), cursorY + (value.items[i].y_offset or 0), buf, string.len(buf), self._font, value.items[i].glyphAdvance)
         cursorX = cursorX + value.items[i].width
       end
       return
@@ -132,15 +131,17 @@ SILE.outputters.libtexpdf = {
       buf[#buf+1] = string.char(glyph % 0x100)
     end
     buf = table.concat(buf, "")
-    pdf.setstring(cursorX, cursorY, buf, string.len(buf), font, width)
+    pdf.setstring(cursorX, cursorY, buf, string.len(buf), self._font, width)
   end,
+
+  _font = nil,
 
   setFont = function (self, options)
     _deprecationCheck(self)
     ensureInit()
     if SILE.font._key(options) == lastkey then return end
     lastkey = SILE.font._key(options)
-    font = SILE.font.cache(options, SILE.shaper.getFace)
+    local font = SILE.font.cache(options, SILE.shaper.getFace)
     if options.direction == "TTB" then
       font.layout_dir = 1
     end
@@ -149,9 +150,9 @@ SILE.outputters.libtexpdf = {
     else
       pdf.setdirmode(0)
     end
-    local pdffont = pdf.loadfont(font)
-    if pdffont < 0 then SU.error("Font loading error for "..options) end
-    font = pdffont
+    self._font = pdf.loadfont(font)
+    if self._font < 0 then SU.error("Font loading error for "..options) end
+    return self._font
   end,
 
   drawImage = function (self, src, x, y, width, height)
@@ -228,12 +229,12 @@ SILE.outputters.libtexpdf = {
       buf[#buf+1] = string.char(glyph % 0x100)
     end
     buf = table.concat(buf, "")
-    local oldfont = font
+    local oldfont = self._font
     self:setFont(gentium)
-    pdf.setstring(frame:left():tonumber() - _dl/2, (SILE.documentState.paperSize[2] - frame:top()):tonumber() + _dl/2, buf, string.len(buf), font, 0)
+    pdf.setstring(frame:left():tonumber() - _dl/2, (SILE.documentState.paperSize[2] - frame:top()):tonumber() + _dl/2, buf, string.len(buf), self._font, 0)
     if oldfont then
       pdf.loadfont(oldfont)
-      font = oldfont
+      self._font = oldfont
     end
     self:popColor()
   end,
