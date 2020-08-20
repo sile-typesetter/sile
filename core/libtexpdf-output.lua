@@ -22,6 +22,10 @@ local _deprecationCheck = function (caller)
   end
 end
 
+local glyph2string = function (glyph)
+  return string.char(math.floor(glyph % 2^32 / 2^8)) .. string.char(glyph % 0x100)
+end
+
 local _dl = 0.5
 
 SILE.outputters.libtexpdf = {
@@ -117,8 +121,7 @@ SILE.outputters.libtexpdf = {
     -- is actually the shaped x_advance).
     if value.complex then
       for i = 1, #(value.items) do
-        local glyph = value.items[i].gid
-        local buf = string.char(math.floor(glyph % 2^32 / 2^8)) .. string.char(glyph % 0x100)
+        local buf = glyph2string(value.items[i].gid)
         pdf.setstring(cursorX + (value.items[i].x_offset or 0), cursorY + (value.items[i].y_offset or 0), buf, string.len(buf), self._font, value.items[i].glyphAdvance)
         cursorX = cursorX + value.items[i].width
       end
@@ -126,9 +129,7 @@ SILE.outputters.libtexpdf = {
     end
     local buf = {}
     for i = 1, #(value.glyphString) do
-      local glyph = value.glyphString[i]
-      buf[#buf+1] = string.char(math.floor(glyph % 2^32 / 2^8))
-      buf[#buf+1] = string.char(glyph % 0x100)
+      buf[i] = glyph2string(value.glyphString[i])
     end
     buf = table.concat(buf, "")
     pdf.setstring(cursorX, cursorY, buf, string.len(buf), self._font, width)
@@ -224,9 +225,7 @@ SILE.outputters.libtexpdf = {
     stuff = stuff[1].nodes[1].value.glyphString -- Horrible hack
     local buf = {}
     for i = 1, #stuff do
-      local glyph = stuff[i]
-      buf[#buf+1] = string.char(math.floor(glyph % 2^32 / 2^8))
-      buf[#buf+1] = string.char(glyph % 0x100)
+      buf[i] = glyph2string(stuff[i])
     end
     buf = table.concat(buf, "")
     local oldfont = self._font
