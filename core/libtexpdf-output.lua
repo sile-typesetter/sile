@@ -120,19 +120,19 @@ SILE.outputters.libtexpdf = {
     -- position (cursorX + width - remember that the box's "width"
     -- is actually the shaped x_advance).
     if value.complex then
-      for i = 1, #(value.items) do
+      for i = 1, #value.items do
         local buf = glyph2string(value.items[i].gid)
         pdf.setstring(cursorX + (value.items[i].x_offset or 0), cursorY + (value.items[i].y_offset or 0), buf, string.len(buf), self._font, value.items[i].glyphAdvance)
         cursorX = cursorX + value.items[i].width
       end
-      return
+    else
+      local buf = {}
+      for i = 1, #value.glyphString do
+        buf[i] = glyph2string(value.glyphString[i])
+      end
+      buf = table.concat(buf, "")
+      pdf.setstring(cursorX, cursorY, buf, string.len(buf), self._font, width)
     end
-    local buf = {}
-    for i = 1, #(value.glyphString) do
-      buf[i] = glyph2string(value.glyphString[i])
-    end
-    buf = table.concat(buf, "")
-    pdf.setstring(cursorX, cursorY, buf, string.len(buf), self._font, width)
   end,
 
   _font = nil,
@@ -140,8 +140,8 @@ SILE.outputters.libtexpdf = {
   setFont = function (self, options)
     _deprecationCheck(self)
     ensureInit()
-    if SILE.font._key(options) == lastkey then return end
-    lastkey = SILE.font._key(options)
+    local key = SILE.font._key(options)
+    if key == lastkey then return end
     local font = SILE.font.cache(options, SILE.shaper.getFace)
     if options.direction == "TTB" then
       font.layout_dir = 1
@@ -153,6 +153,7 @@ SILE.outputters.libtexpdf = {
     end
     self._font = pdf.loadfont(font)
     if self._font < 0 then SU.error("Font loading error for "..options) end
+    lastkey = key
     return self._font
   end,
 
