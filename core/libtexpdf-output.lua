@@ -8,6 +8,8 @@ local cursorY = 0
 local started = false
 local lastkey
 
+local debugfont = SILE.font.loadDefaults({ family = "Gentium Plus", language = "en", size = 10 })
+
 local function ensureInit ()
   if not started then
     pdf.init(SILE.outputFilename, SILE.documentState.paperSize[1], SILE.documentState.paperSize[2], SILE.full_version)
@@ -142,6 +144,18 @@ SILE.outputters.libtexpdf = {
     end
   end,
 
+  _debugfont = nil,
+
+  _withDebugFont = function (self, callback)
+    if not self._debugfont then
+      self._debugfont = self:setFont(debugfont)
+    end
+    local oldfont = self._font
+    self._font = self._debugfont
+    callback()
+    self._font = oldfont
+  end,
+
   _font = nil,
 
   setFont = function (self, options)
@@ -228,22 +242,17 @@ SILE.outputters.libtexpdf = {
     self:drawRule(frame:right()-_dl/2, frame:top()-_dl/2, _dl, frame:height()+_dl)
     self:drawRule(frame:left()-_dl/2, frame:bottom()-_dl/2, frame:width()+_dl, _dl)
     -- self:drawRule(frame:left() + frame:width()/2 - 5, (frame:top() + frame:bottom())/2+5, 10, 10)
-    local gentium = SILE.font.loadDefaults({family="Gentium Plus", language="en"})
-    local stuff = SILE.shaper:createNnodes(frame.id, gentium)
+    local stuff = SILE.shaper:createNnodes(frame.id, debugfont)
     stuff = stuff[1].nodes[1].value.glyphString -- Horrible hack
     local buf = {}
     for i = 1, #stuff do
       buf[i] = glyph2string(stuff[i])
     end
     buf = table.concat(buf, "")
-    local oldfont = self._font
-    self:setFont(gentium)
-    self:setCursor(frame:left():tonumber() - _dl/2, frame:top():tonumber() + _dl/2)
-    self:_drawString(buf, 0)
-    if oldfont then
-      pdf.loadfont(oldfont)
-      self._font = oldfont
-    end
+    self:_withDebugFont(function ()
+      self:setCursor(frame:left():tonumber() - _dl/2, frame:top():tonumber() + _dl/2)
+      self:_drawString(buf, 0)
+    end)
     self:popColor()
   end,
 
