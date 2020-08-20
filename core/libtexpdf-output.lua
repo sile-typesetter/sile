@@ -107,6 +107,11 @@ SILE.outputters.libtexpdf = {
     return self:drawHbox(value, width)
   end,
 
+  _drawString = function(self, str, width)
+    local x, y = self:getCursor()
+    pdf.setstring(x, y, str, string.len(str), self._font, width)
+  end,
+
   drawHbox = function (self, value, width)
     _deprecationCheck(self)
     width = SU.cast("number", width)
@@ -123,8 +128,9 @@ SILE.outputters.libtexpdf = {
     if value.complex then
       for i = 1, #value.items do
         local buf = glyph2string(value.items[i].gid)
-        pdf.setstring(cursorX + (value.items[i].x_offset or 0), cursorY + (value.items[i].y_offset or 0), buf, string.len(buf), self._font, value.items[i].glyphAdvance)
-        cursorX = cursorX + value.items[i].width
+        self:setCursor(value.items[i].x_offset or 0, value.items[i].y_offset or 0, true)
+        self:_drawString(buf, value.items[i].glyphAdvance)
+        self:setCursor(value.items[i].width, 0, true)
       end
     else
       local buf = {}
@@ -132,7 +138,7 @@ SILE.outputters.libtexpdf = {
         buf[i] = glyph2string(value.glyphString[i])
       end
       buf = table.concat(buf, "")
-      pdf.setstring(cursorX, cursorY, buf, string.len(buf), self._font, width)
+      self:_drawString(buf, width)
     end
   end,
 
@@ -232,7 +238,8 @@ SILE.outputters.libtexpdf = {
     buf = table.concat(buf, "")
     local oldfont = self._font
     self:setFont(gentium)
-    pdf.setstring(frame:left():tonumber() - _dl/2, (SILE.documentState.paperSize[2] - frame:top()):tonumber() + _dl/2, buf, string.len(buf), self._font, 0)
+    self:setCursor(frame:left():tonumber() - _dl/2, frame:top():tonumber() + _dl/2)
+    self:_drawString(buf, 0)
     if oldfont then
       pdf.loadfont(oldfont)
       self._font = oldfont
