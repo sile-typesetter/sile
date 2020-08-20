@@ -5,7 +5,7 @@ My 	47.2138
 Set font 	SBL Hebrew;25;400;;normal;;LTR
 T	46 90	(My)
 Mx 	62.3532
-T	73 80 87 70 83 68 83 66 2373	(hovercraft)
+T	73 80 87 70 83 68 83 66 2382	(hovercraft)
 Mx 	174.5801
 T	74 84	(is)
 Mx 	198.6319
@@ -59,7 +59,7 @@ My 	163.2138
 Set font 	SBL Hebrew;25;400;;normal;;LTR
 T	46 90	(My)
 Mx 	60.2430
-T	73 80 87 70 83 68 83 66 2373	(hovercraft)
+T	73 80 87 70 83 68 83 66 2382	(hovercraft)
 Mx 	20.9764
 My 	192.2138
 T	74 84	(is)
@@ -93,7 +93,7 @@ T	71 86 77 77	(full)
 Mx 	265.9956
 T	74 84	(is)
 Mx 	153.7688
-T	73 80 87 70 83 68 83 66 2373	(hovercraft)
+T	73 80 87 70 83 68 83 66 2382	(hovercraft)
 Mx 	112.3919
 T	46 90	(My)
 Mx 	106.8919
@@ -139,7 +139,7 @@ T	1189 1172 1195 1171	(ארבע)
 Mx 	293.8512
 My 	395.9388
 Set font 	SBL Hebrew;25;400;;normal;;LTR
-T	73 80 87 70 83 68 83 66 2373	(hovercraft)
+T	73 80 87 70 83 68 83 66 2382	(hovercraft)
 Mx 	254.5845
 T	46 90	(My)
 Mx 	359.6762

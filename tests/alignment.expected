@@ -5,7 +5,7 @@ My 	27.9564
 Set font 	Libertinus Serif;10;400;Italic;normal;;LTR
 T	51 66 72 72 70 69	(Ragged)
 Mx 	62.9459
-T	77 70 2373	(left)
+T	77 70 2382	(left)
 Mx 	79.0159
 Set font 	Libertinus Serif;10;400;;normal;;LTR
 T	77 80 83 70 78	(lorem)
@@ -273,7 +273,7 @@ T	72 86 67 70 83 72 83 70 79	(gubergren)
 Mx 	34.8819
 My 	255.9564
 Set font 	Libertinus Serif;10;400;Italic;normal;;LTR
-T	43 86 84 85 74 2349 70 69	(Justified)
+T	43 86 84 85 74 2358 70 69	(Justified)
 Mx 	72.4725
 Set font 	Libertinus Serif;10;400;;normal;;LTR
 T	77 80 83 70 78	(lorem)
