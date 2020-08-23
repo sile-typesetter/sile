@@ -9,12 +9,13 @@
 #include <lualib.h>
 
 static char* safe_append(char* output, int* output_l, int* max_output, char* s2) {
-  if (*output_l + strlen(s2) > *max_output) {
+  int append_len = strlen(s2) + 1; // strlen doesn't count \0
+  if (*output_l + append_len > *max_output) {
     *max_output *= 2;
     output = realloc(output, *max_output);
   }
-  strncat(output, s2, *max_output);
-  *output_l += strlen(s2);
+  strcat(output, s2);
+  *output_l += (append_len - 1); // tracks w/o \0
   return output;
 }
 
@@ -26,12 +27,12 @@ int svg_to_ps(lua_State *L) {
   }
   struct NSVGimage* image;
   image = nsvgParse((char*)input, "pt", em);
-  int max_output = 512;
+  int max_output = 256;
   int output_l = 0;
   char *output = malloc(max_output);
   output[0] = '\0';
   for (NSVGshape *shape = image->shapes; shape != NULL; shape = shape->next) {
-    char* strokeFillOper = "s"; // Just stroke
+    char* strokeFillOper = "s "; // Just stroke
     for (NSVGpath *path = shape->paths; path != NULL; path = path->next) {
       double lastx = -1;
       double lasty = -1;
@@ -51,7 +52,7 @@ int svg_to_ps(lua_State *L) {
         output = safe_append(output, &output_l, &max_output, thisPath);
       }
       if (!path->closed)
-        strokeFillOper = "S";
+        strokeFillOper = "S ";
       if (shape->stroke.type == NSVG_PAINT_COLOR) {
         int r = shape->stroke.color        & 0xff;
         int g = (shape->stroke.color >> 8) & 0xff;
@@ -72,30 +73,21 @@ int svg_to_ps(lua_State *L) {
 
         switch (shape->fillRule) {
             case NSVG_FILLRULE_NONZERO:
-                strokeFillOper = "f"; break;
+                strokeFillOper = "f "; break;
             case NSVG_FILLRULE_EVENODD:
             default:
-                strokeFillOper = "f*"; break;
+                strokeFillOper = "f* "; break;
         }
 
         if (shape->stroke.type == NSVG_PAINT_COLOR) {
-          strokeFillOper = "B";
+          strokeFillOper = "B ";
         } else {
-          if (output_l + 2 > max_output) {
-            output = realloc(output, max_output + 2);
-          }
-          output[output_l++] = 'h';
-          output[output_l++] = ' ';
+          static char appendme[3] = {'h', ' ', '\0'};
+          output = safe_append(output, &output_l, &max_output, appendme);
         }
       }
     }
-    for (char* c = strokeFillOper; *c != '\0'; c++)
-        output[output_l++] = *c;
-    if (output_l + 4 > max_output) {
-      output = realloc(output, max_output + 4);
-    }
-    output[output_l++] = ' ';
-    output[output_l] = '\0';
+    output = safe_append(output, &output_l, &max_output, strokeFillOper);
   }
   lua_pushstring(L, output);
   lua_pushnumber(L, image->width);
