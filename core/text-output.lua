@@ -53,29 +53,31 @@ cursor = function (self)
     return self:setCursor(x, y)
   end,
 
-  setCursor = function (self, x, y)
+  setCursor = function (self, x, y, relative)
     _deprecationCheck(self)
     local bs = SILE.measurement("0.8bs"):tonumber()
     local spc = SILE.measurement("0.8spc"):tonumber()
+    local offset = relative and { x = cursorX, y = cursorY } or { x = 0, y = 0 }
+    local newx, newy = offset.x + x, offset.y - y
     if started then
-      if x < cursorX then
+      if newx < cursorX then
           outfile:write("\n")
-      elseif y > cursorY then
-        if y - cursorY > bs then
+      elseif newy > cursorY then
+        if newy - cursorY > bs then
           outfile:write("\n")
         else
           outfile:write("‫")
         end
-      elseif x > cursorX then
-        if x - cursorX > spc then
+      elseif newx > cursorX then
+        if newx - cursorX > spc then
           outfile:write(" ")
         else
           outfile:write("‫")
         end
       end
     end
-    cursorY = y
-    cursorX = x
+    cursorY = newy
+    cursorX = newx
   end,
 
   setColor = function(self)

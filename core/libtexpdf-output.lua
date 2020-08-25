@@ -5,9 +5,10 @@ if (not SILE.outputters) then SILE.outputters = {} end
 local cursorX = 0
 local cursorY = 0
 
-local font = 0
 local started = false
 local lastkey
+
+local debugfont = SILE.font.loadDefaults({ family = "Gentium Plus", language = "en", size = 10 })
 
 local function ensureInit ()
   if not started then
@@ -21,6 +22,10 @@ local _deprecationCheck = function (caller)
   if type(caller) ~= "table" or type(caller.debugHbox) ~= "function" then
     SU.deprecated("SILE.outputter.*", "SILE.outputter:*", "0.10.9", "0.10.10")
   end
+end
+
+local glyph2string = function (glyph)
+  return string.char(math.floor(glyph % 2^32 / 2^8)) .. string.char(glyph % 0x100)
 end
 
 local _dl = 0.5
@@ -67,12 +72,13 @@ SILE.outputters.libtexpdf = {
     return self:setCursor(x, y)
   end,
 
-  setCursor = function (self, x, y)
+  setCursor = function (self, x, y, relative)
     _deprecationCheck(self)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
-    cursorX = x
-    cursorY = SILE.documentState.paperSize[2] - y
+    local offset = relative and { x = cursorX, y = cursorY } or { x = 0, y = 0 }
+    cursorX = offset.x + x
+    cursorY = offset.y + (relative and 0 or SILE.documentState.paperSize[2]) - y
   end,
 
   setColor = function (self, color)
@@ -103,6 +109,11 @@ SILE.outputters.libtexpdf = {
     return self:drawHbox(value, width)
   end,
 
+  _drawString = function(self, str, width)
+    local x, y = self:getCursor()
+    pdf.setstring(x, y, str, string.len(str), self._font, width)
+  end,
+
   drawHbox = function (self, value, width)
     _deprecationCheck(self)
     width = SU.cast("number", width)
@@ -117,30 +128,42 @@ SILE.outputters.libtexpdf = {
     -- position (cursorX + width - remember that the box's "width"
     -- is actually the shaped x_advance).
     if value.complex then
-      for i = 1, #(value.items) do
-        local glyph = value.items[i].gid
-        local buf = string.char(math.floor(glyph % 2^32 / 2^8)) .. string.char(glyph % 0x100)
-        pdf.setstring(cursorX + (value.items[i].x_offset or 0), cursorY + (value.items[i].y_offset or 0), buf, string.len(buf), font, value.items[i].glyphAdvance)
-        cursorX = cursorX + value.items[i].width
+      for i = 1, #value.items do
+        local buf = glyph2string(value.items[i].gid)
+        self:setCursor(value.items[i].x_offset or 0, value.items[i].y_offset or 0, true)
+        self:_drawString(buf, value.items[i].glyphAdvance)
+        self:setCursor(value.items[i].width, 0, true)
       end
-      return
+    else
+      local buf = {}
+      for i = 1, #value.glyphString do
+        buf[i] = glyph2string(value.glyphString[i])
+      end
+      buf = table.concat(buf, "")
+      self:_drawString(buf, width)
     end
-    local buf = {}
-    for i = 1, #(value.glyphString) do
-      local glyph = value.glyphString[i]
-      buf[#buf+1] = string.char(math.floor(glyph % 2^32 / 2^8))
-      buf[#buf+1] = string.char(glyph % 0x100)
-    end
-    buf = table.concat(buf, "")
-    pdf.setstring(cursorX, cursorY, buf, string.len(buf), font, width)
   end,
+
+  _debugfont = nil,
+
+  _withDebugFont = function (self, callback)
+    if not self._debugfont then
+      self._debugfont = self:setFont(debugfont)
+    end
+    local oldfont = self._font
+    self._font = self._debugfont
+    callback()
+    self._font = oldfont
+  end,
+
+  _font = nil,
 
   setFont = function (self, options)
     _deprecationCheck(self)
     ensureInit()
-    if SILE.font._key(options) == lastkey then return end
-    lastkey = SILE.font._key(options)
-    font = SILE.font.cache(options, SILE.shaper.getFace)
+    local key = SILE.font._key(options)
+    if key == lastkey then return end
+    local font = SILE.font.cache(options, SILE.shaper.getFace)
     if options.direction == "TTB" then
       font.layout_dir = 1
     end
@@ -149,9 +172,10 @@ SILE.outputters.libtexpdf = {
     else
       pdf.setdirmode(0)
     end
-    local pdffont = pdf.loadfont(font)
-    if pdffont < 0 then SU.error("Font loading error for "..options) end
-    font = pdffont
+    self._font = pdf.loadfont(font)
+    if self._font < 0 then SU.error("Font loading error for "..options) end
+    lastkey = key
+    return self._font
   end,
 
   drawImage = function (self, src, x, y, width, height)
@@ -218,23 +242,17 @@ SILE.outputters.libtexpdf = {
     self:drawRule(frame:right()-_dl/2, frame:top()-_dl/2, _dl, frame:height()+_dl)
     self:drawRule(frame:left()-_dl/2, frame:bottom()-_dl/2, frame:width()+_dl, _dl)
     -- self:drawRule(frame:left() + frame:width()/2 - 5, (frame:top() + frame:bottom())/2+5, 10, 10)
-    local gentium = SILE.font.loadDefaults({family="Gentium Plus", language="en"})
-    local stuff = SILE.shaper:createNnodes(frame.id, gentium)
+    local stuff = SILE.shaper:createNnodes(frame.id, debugfont)
     stuff = stuff[1].nodes[1].value.glyphString -- Horrible hack
     local buf = {}
     for i = 1, #stuff do
-      local glyph = stuff[i]
-      buf[#buf+1] = string.char(math.floor(glyph % 2^32 / 2^8))
-      buf[#buf+1] = string.char(glyph % 0x100)
+      buf[i] = glyph2string(stuff[i])
     end
     buf = table.concat(buf, "")
-    local oldfont = font
-    self:setFont(gentium)
-    pdf.setstring(frame:left():tonumber() - _dl/2, (SILE.documentState.paperSize[2] - frame:top()):tonumber() + _dl/2, buf, string.len(buf), font, 0)
-    if oldfont then
-      pdf.loadfont(oldfont)
-      font = oldfont
-    end
+    self:_withDebugFont(function ()
+      self:setCursor(frame:left():tonumber() - _dl/2, frame:top():tonumber() + _dl/2)
+      self:_drawString(buf, 0)
+    end)
     self:popColor()
   end,
 

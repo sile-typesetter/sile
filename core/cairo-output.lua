@@ -59,9 +59,12 @@ SILE.outputters.cairo = {
     return self:setCursor(x, y)
   end,
 
-  setCursor = function (self, x, y)
+  setCursor = function (self, x, y, relative)
     _deprecationCheck(self)
-    move(cr, x, y)
+    local offset = relative and { x = cursorX, y = cursorY } or { x = 0, y = 0 }
+    cursorX = offset.x + x
+    cursorY = offset.y - y
+    move(cr, cursorX, cursorY)
   end,
 
   setColor = function (self, color)

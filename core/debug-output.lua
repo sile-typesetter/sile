@@ -60,12 +60,16 @@ SILE.outputters.debug = {
     return self:setCursor(x, y)
   end,
 
-  setCursor = function (self, x, y)
+  setCursor = function (self, x, y, relative)
     _deprecationCheck(self)
     x = SU.cast("number", x)
     y = SU.cast("number", y)
-    if string.format("%.4f", x) ~= string.format("%.4f", cursorX) then writeline("Mx ", string.format("%.4f", x)); cursorX = x end
-    if string.format("%.4f", y) ~= string.format("%.4f", cursorY) then writeline("My ", string.format("%.4f", y)); cursorY = y end
+    local oldx, oldy = self:getCursor()
+    local offset = relative and { x = cursorX, y = cursorY } or { x = 0, y = 0 }
+    cursorX = offset.x + x
+    cursorY = offset.y - y
+    if string.format("%.4f", oldx) ~= string.format("%.4f", cursorX) then writeline("Mx ", string.format("%.4f", x)) end
+    if string.format("%.4f", oldy) ~= string.format("%.4f", cursorY) then writeline("My ", string.format("%.4f", y)) end
   end,
 
   setColor = function (self, color)
