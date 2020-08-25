@@ -54,10 +54,6 @@ SILE is as easy as running:
 
 \terminal{$ brew install sile}
 
-If you have not used Lua programs before, that will prompt you to manually
-install a couple of dependencies. After running the commands it provides, you can
-run the install command again to complete the installation.
-
 The formula also has an option that can compile SILE from the current Git HEAD
 version. To test the latest unreleased code you can install using:
 
