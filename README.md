@@ -89,7 +89,7 @@ One notable issue with using SILE from a Docker contaner is that it will not hav
 
 SILE source code can be downloaded from [its website][sile] or directly from [the Github releases page][releases].
 
-SILE is written in the Lua programming language, so you will need a working Lua installation on your system (Lua 5.1, 5.2, and 5.3 are fully supported. Lua 5.4, LuaJIT, and Lua Resty should work, but are not currently tested).  It also relies on external libraries to access fonts and write PDF files. Its preferred combination of libraries is [Harfbuzz][harfbuzz] and [libtexpdf][], a PDF creation library extracted from TeX. Harfbuzz (minimum version 1.1.3) should be available from your operating system's package manager. For Harfbuzz to work you will also need fontconfig installed. SILE also requires the [ICU][icu] libraries for Unicode handling.
+SILE is written in the Lua programming language, so you will need a working Lua installation on your system (Lua 5.1, 5.2, 5.3, 5.4, and LuaJIT (2.0, 2.1, or OpenResty) are fully supported). It also relies on external libraries to access fonts and write PDF files. Its preferred combination of libraries is [Harfbuzz][harfbuzz] and [libtexpdf][], a PDF creation library extracted from TeX. Harfbuzz (minimum version 1.1.3) should be available from your operating system's package manager. For Harfbuzz to work you will also need fontconfig installed. SILE also requires the [ICU][icu] libraries for Unicode handling.
 
 On macOS, ICU can be installed via Homebrew:
 
