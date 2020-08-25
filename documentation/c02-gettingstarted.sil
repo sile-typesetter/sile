@@ -54,27 +54,27 @@ SILE is as easy as running:
 
 \terminal{$ brew install sile}
 
-If you have not used Lua programs before, that will prompt you to manually
-install a couple of dependencies. After running the commands it provides, you can
-run the install command again to complete the installation.
-
 The formula also has an option that can compile SILE from the current Git HEAD
 version. To test the latest unreleased code you can install using:
 
 \terminal{$ brew install sile --HEAD}
 
 For Linux users, preconfigured package build files are available for
-somedistributions.
+some distributions.
 
-On Arch Linux the \code{sile} package in the AUR has the latest stable release
+On Arch Linux, the \code{sile} package in the AUR has the latest stable release
 while \code{sile-git} will build a package using the latest unreleased code
 from the Git repository. These may be built and installed like any other AUR
 package. Precompiled versions of these packages and all the dependencies are
 available in an unofficial repository
 \footnote{\url{https://wiki.archlinux.org/index.php/Unofficial_user_repositories#alerque}}
-that can be instaled using pacman:
+that can be instaled using pacman after adding the repository to your system configuration:
 
 \terminal{$ pacman -S sile}
+
+Alternate packages \code{sile-luajit} and \code{sile-luajit-git} are also
+available that are pre-configured to use LuaJIT instead of Lua. See the note
+about LuaJIT in the section \em{Installing From Source} for applicable caveats.
 
 For Ubuntu an official PPA is available with precompiled packages:
 

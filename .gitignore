@@ -68,6 +68,7 @@ compare-*
 node_modules
 lua_modules
 lua_modules_dist
+package-lock.json
 
 # Editor entrails
 .vscode/
