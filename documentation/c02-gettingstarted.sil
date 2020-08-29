@@ -87,6 +87,39 @@ sudo apt-get install sile
 For all other systems you will need to follow the steps to download and compile
 the source yourself.
 
+\subsection{Running via Docker}
+
+Another way of getting SILE up and running in a pre-compiled state is to use prebuilt Docker containers.
+If your system has Docker installed already, you can run SILE simply by issuing a run command.
+The first time it is used Docker will fetch the necessary layers and assemble the image for you.
+Thereafter only a small amount of CPU time and memory overhead goes into running the container compared to a regular system install.
+
+The catch is that because SILE is running \em{inside} the container, in order to do anything useful with it you must first pass your sources (including things like fonts) in and give it a way to write files back out.
+The easiest way to do that is by mounting your entire project inside the container.
+This makes the actual invocation command quite a mouthful.
+For most shells, a single alias can be created to hide that complexity and make it pretty simple to run:
+
+\begin{terminal}
+$ alias sile='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest'
+\end{terminal}
+
+Docker images are tagged to match releases (e.g. \code{v.0.10.0}).
+Additionally the latest release will be tagged \code{latest}, and a \code{master} tag is also available with the freshest development build.
+You can substitute \code{latest} in the alias above to run a specific version.
+
+One notable issue with using SILE from a Docker container is that it will not have access to your system’s fonts by default.
+You can map a folder of fonts (any tree usable by fontconfig) into the container.
+This could be your system’s default font directory, your user one, a project specific folder, or anything of your choosing.
+You can see where fonts are found on your system using \code{fc-list}.
+The path of your choosing from the host system should be passed as a volume mounted on \code{/fonts} inside the container like this:
+
+\begin{terminal}
+$ docker run -it --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest
+\end{terminal}
+
+Armed with commands (or aliases) like these to take care of the actual invocation, you should be able to use all other aspects of SILE as documented in the rest of the manual.
+Just be aware when it comes to things like fonts, images, or other resources about where your files are relative to the container.
+
 \subsection{Installing From Source}
 
 SILE requires a number of other software packages to be installed on the
