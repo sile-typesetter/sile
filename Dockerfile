@@ -1,4 +1,3 @@
-ARG sile_tag=master
 FROM docker.io/library/archlinux:20200705 AS sile-base
 
 # Downgrade coreutils to avoid filesystem bug on DockerHub host kernels
@@ -28,6 +27,9 @@ FROM sile-base AS sile-builder
 RUN pacman --needed --noconfirm -Syq \
 	base-devel git poppler luarocks libpng
 
+# Set at build time, forces Docker's layer caching to reset at this point
+ARG VCS_REF=0
+
 COPY ./ /src
 WORKDIR /src
 
@@ -46,7 +48,7 @@ RUN make install DESTDIR=/pkgdir
 FROM sile-base AS sile
 
 LABEL maintainer="Caleb Maclennan <caleb@alerque.com>"
-LABEL version="$sile_tag"
+LABEL version="$VCS_REF"
 
 COPY build-aux/docker-fontconfig.conf /etc/fonts/conf.d/99-docker.conf
 

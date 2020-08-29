@@ -351,7 +351,10 @@ CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) 
 
 .PHONY: docker
 docker: Dockerfile
-	docker build --tag siletypesetter/sile:HEAD ./
+	docker build \
+		--build-arg VCS_REF="$(VERSION)" \
+		--tag siletypesetter/sile:HEAD \
+		./
 
 gource.webm:
 	mkdir -p /tmp/gravatars
