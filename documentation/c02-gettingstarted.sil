@@ -263,4 +263,51 @@ is loaded, DocBook files can be processed directly as SILE documents.
 
 In Chapter 9, we’ll look at how the \code{docbook} class works, and how you
 can define processing expectations for other XML formats.
+
+\section{Running SILE remotely as a CI job}
+
+It may be useful for some work flows to run SILE remotely on a CI server as part of a job that renders documents automatically from sources.
+This comes with the caveats mentioned in the section \em{Running via Docker} above, but if you plan ahead and arrange your projects right it can be quite useful.
+
+There are actually many ways to run SILE remotely as part of a CI work flow.
+Because packages are available for many platforms, one way would be to just use your platforms native package installation system to pull them into whatever CI runner environment you already use.
+Another way is to pull in the prebuilt Docker container and run that.
+
+As a case study, here is how a work flow could be setup in GitHub Actions:
+
+\begin{verbatim}
+\line
+name: SILE
+on: [push, pull_request]
+jobs:
+  sile:
+    runs-on: ubuntu-20.04
+    name: SILE
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: SILE
+        id: sile
+        uses: docker://siletypesetter/sile:latest
+        with:
+          args: my-document.sil
+\line
+\end{verbatim}
+
+Add to your repository as \code{.github/workflows/sile.yaml}.
+This work flow assumes your project has a source file \code{my-document.sil} and will leave behind a \code{my-document.pdf}.
+Note that this Actions work flow explicitly uses a container fetched from Docker Hub because this is the fastest way to get rolling, and the comments in the section about Docker regarding tagged versions besides \code{latest} apply equally here.
+
+Because this repository is itself a GitHub Action you can also use the standard \code{uses} syntax like this:
+
+\begin{verbatim}
+\line
+        uses: sile-typesetter/sile@latest
+\line
+\end{verbatim}
+
+But be warned that since GitHub rebuilds containers from scratch on every such invocation, this syntax is not recommended for regular use.
+Pulling the prebuilt Docker images is recommended instead.
+
+With these ideas in mind, other CI systems should be easy to support as well.
 \end{document}
