@@ -13,6 +13,10 @@
 
 SILE is a [typesetting][typesetting] system; its job is to produce beautiful printed documents. Conceptually, SILE is similar to [TeX][tex]—from which it borrows some concepts and even syntax and algorithms—but the similarities end there. Rather than being a derivative of the TeX family SILE is a new typesetting and layout engine written from the ground up using modern technologies and borrowing some ideas from graphical systems such as [InDesign][indesign].
 
+## Where does it run?
+
+SILE can be [downloaded & installed](#download-and-installation) to your system or [run remotely as a CI job](#use-as-a-CI-job).
+
 ## What can I do with SILE (that I can’t do with TeX)?
 
 First, have a look at the [usage examples gallery][examples]. SILE allows you to:
@@ -72,7 +76,7 @@ Users of WSL (Windows Subsytem for Linux) may use the package manager of their c
 
 #### Docker
 
-Docker images are available as [siletypesetter/sile](https://hub.docker.com/repository/docker/siletypesetter/sile). Released versions are tagged to match (e.g. `v.0.10.0`), the latest release will be tagged `latest`, and a `master` tag is also available with the freshest development build. In order to be useful you need to tell the Docker run command how to connect your source documents (and hence give it place to write the output) as well as tell it who you are on the host machine so the output is generated inside the container with the expected ownership. You may find it easiest to run with an alias like this:
+Docker images are available as [siletypesetter/sile](https://hub.docker.com/repository/docker/siletypesetter/sile). Released versions are tagged to match (e.g. `v.0.10.0`), the latest release will be tagged `latest`, and a `master` tag is also available with the freshest development build. In order to be useful you need to tell the Docker run command a way to reach your source documents (and hence also to give it a place to write the output) as well as tell it who you are on the host machine so the output generated inside the container can be created with the expected ownership properties. You may find it easiest to run with an alias like this:
 
     $ alias sile='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest'
     $ sile input.sil
@@ -87,7 +91,7 @@ One notable issue with using SILE from a Docker contaner is that it will not hav
 
 ### From Source
 
-SILE source code can be downloaded from [its website][sile] or directly from [the Github releases page][releases].
+SILE source code can be downloaded from [its website][sile] or directly from [the GitHub releases page][releases].
 
 SILE is written in the Lua programming language, so you will need a working Lua installation on your system (Lua 5.1, 5.2, 5.3, 5.4, and LuaJIT (2.0, 2.1, or OpenResty) are fully supported). It also relies on external libraries to access fonts and write PDF files. Its preferred combination of libraries is [Harfbuzz][harfbuzz] and [libtexpdf][], a PDF creation library extracted from TeX. Harfbuzz (minimum version 1.1.3) should be available from your operating system's package manager. For Harfbuzz to work you will also need fontconfig installed. SILE also requires the [ICU][icu] libraries for Unicode handling.
 
@@ -120,6 +124,43 @@ On some systems you may also need to run:
     $ sudo ldconfig
 
 … before trying to execute `sile` to make the system aware of the newly installed libraries.
+
+### Use as a CI job
+
+There are actually many ways to run SILE remotely as part of a CI work flow.
+Because packages are available for many platforms, one way would be to just use your platforms native package installation system to pull them into whatever CI runner environment you already use.
+Another way is to pull in the prebuilt Docker container and run that.
+
+As a case study, here is how a workflow could be setup in GitHub Actions:
+
+```yaml
+name: SILE
+on: [push, pull_request]
+jobs:
+  sile:
+    runs-on: ubuntu-20.04
+    name: SILE
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: SILE
+        id: sile
+        uses: docker://siletypesetter/sile:latest
+        with:
+          args: my-document.sil
+```
+
+Add to your repository as `.github/workflows/sile.yaml`.
+This work flow assumes your project has a source file `my-document.sil` and will leave behind a `my-document.pdf`.
+Note that this Actions work flow explicitly uses a container fetched from Docker Hub because this is the fastest way to get rolling, and the comments in [the section about Docker](#docker) regarding tagged versions besides `latest` apply equally here.
+
+Because this repository is itself a GitHub Action you can also use the standard `uses` syntax like this:
+
+```yaml
+        uses: sile-typesetter/sile@latest
+```
+
+But be warned that since GitHub rebuilds containers from scratch on every such invocation, this syntax is not recommended for regular use.
 
 ### Default Font
 
