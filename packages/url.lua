@@ -40,12 +40,8 @@ SILE.registerCommand("url", function (options, content)
   SILE.call("code", {}, result)
 end)
 
-SILE.registerCommand("code", function(_, content)
-  SILE.settings.temporarily(function()
-    SILE.call("verbatim:font")
-    SILE.process(content)
-    SILE.typesetter:typeset(" ")
-  end)
+SILE.registerCommand("code", function(options, content)
+  SILE.call("verbatim:font", options, content)
 end)
 
 return {
