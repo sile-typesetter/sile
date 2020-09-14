@@ -44,7 +44,6 @@ SILE.registerCommand("code", function(_, content)
   SILE.settings.temporarily(function()
     SILE.call("verbatim:font")
     SILE.process(content)
-    SILE.typesetter:typeset(" ")
   end)
 end)
 
