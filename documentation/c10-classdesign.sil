@@ -114,7 +114,6 @@ bringhurst:defineMaster(\{
     folio = \{ ... as before ... \},
     footnotes = \{ ... as before ... \},
     runningHead = \{ ... as before ... \},
-    \},
   \}
 \})
 bringhurst:mirrorMaster("right", "left")
