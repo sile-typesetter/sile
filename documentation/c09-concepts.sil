@@ -267,11 +267,11 @@ column.
 
 \begin{verbatim}
 \line
-\\frame[id=leftCol, left=left(r), right=left(gutter),
-       top=top(r), bottom=bottom(r),
+\\frame[id=leftCol, left=left(content), right=left(gutter),
+       top=top(content), bottom=bottom(content),
        next=rightCol]
-\\frame[id=rightCol, left=right(gutter), right=right(r),
-       top=top(r), bottom=bottom(r),
+\\frame[id=rightCol, left=right(gutter), right=right(content),
+       top=top(content), bottom=bottom(content),
        width=width(leftCol)]
 \line
 \end{verbatim}
