@@ -5,28 +5,6 @@ plain.options.direction = function (value)
   if value then plain.pageTemplate.frames["content"].direction = value end
 end
 
-plain:declareFrame("content", {
-    left = "5%pw",
-    right = "95%pw",
-    top = "5%ph",
-    bottom = "90%ph"
-  })
-
-plain:declareFrame("folio", {
-    left = "5%pw",
-    right = "95%pw",
-    top = "92%ph",
-    bottom = "97%ph"
-  })
-
-plain.pageTemplate.firstContentFrame = plain.pageTemplate.frames["content"]
-plain:loadPackage("folio")
-
-plain.endPage = function (self)
-  plain:outputFolio()
-  return base.endPage(self)
-end
-
 local classopts = {}
 plain.declareOption = function (self, name, default)
   classopts[name] = default
@@ -34,6 +12,29 @@ plain.declareOption = function (self, name, default)
     if value then classopts[name] = value end
     return classopts[name]
   end
+end
+
+function plain:init ()
+  self:declareFrame("content", {
+      left = "5%pw",
+      right = "95%pw",
+      top = "5%ph",
+      bottom = "90%ph"
+    })
+  self:declareFrame("folio", {
+      left = "5%pw",
+      right = "95%pw",
+      top = "92%ph",
+      bottom = "97%ph"
+    })
+  self.pageTemplate.firstContentFrame = self.pageTemplate.frames["content"]
+  self:loadPackage("folio")
+  return base.init(self)
+end
+
+plain.endPage = function (self)
+  self:outputFolio()
+  return base.endPage(self)
 end
 
 SILE.registerCommand("noindent", function (_, content)

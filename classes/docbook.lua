@@ -6,12 +6,15 @@ SILE.scratch.docbook = {
   seccount = {}
 }
 
-docbook:loadPackage("image")
-docbook:loadPackage("simpletable", {
-  tableTag = "tgroup",
-  trTag = "row",
-  tdTag = "entry"
-})
+function docbook:init ()
+  self:loadPackage("image")
+  self:loadPackage("simpletable", {
+      tableTag = "tgroup",
+      trTag = "row",
+      tdTag = "entry"
+    })
+  return plain.init(self)
+end
 
 function docbook.push(t, val)
   if not SILE.scratch.docbook[t] then SILE.scratch.docbook[t] = {} end

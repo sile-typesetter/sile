@@ -1,48 +1,44 @@
 local plain = SILE.require("plain", "classes")
 local book = plain { id = "book" }
 
-book:loadPackage("masters")
-book:defineMaster({
-    id = "right",
-    firstContentFrame = "content",
-    frames = {
-      content = {
-        left = "8.3%pw",
-        right = "86%pw",
-        top = "11.6%ph",
-        bottom = "top(footnotes)"
-      },
-      folio = {
-        left = "left(content)",
-        right = "right(content)",
-        top = "bottom(footnotes)+3%ph",
-        bottom = "bottom(footnotes)+5%ph"
-      },
-      runningHead = {
-        left = "left(content)",
-        right = "right(content)",
-        top = "top(content)-8%ph",
-        bottom = "top(content)-3%ph"
-      },
-      footnotes = {
-        left = "left(content)",
-        right = "right(content)",
-        height = "0",
-        bottom = "83.3%ph"
+function book:init ()
+  self:loadPackage("masters")
+  self:defineMaster({
+      id = "right",
+      firstContentFrame = "content",
+      frames = {
+        content = {
+          left = "8.3%pw",
+          right = "86%pw",
+          top = "11.6%ph",
+          bottom = "top(footnotes)"
+        },
+        folio = {
+          left = "left(content)",
+          right = "right(content)",
+          top = "bottom(footnotes)+3%ph",
+          bottom = "bottom(footnotes)+5%ph"
+        },
+        runningHead = {
+          left = "left(content)",
+          right = "right(content)",
+          top = "top(content)-8%ph",
+          bottom = "top(content)-3%ph"
+        },
+        footnotes = {
+          left = "left(content)",
+          right = "right(content)",
+          height = "0",
+          bottom = "83.3%ph"
+        }
       }
-    }
-  })
-
-book:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
-
-book:loadPackage("tableofcontents")
-
-if not SILE.scratch.headers then SILE.scratch.headers = {} end
-
-book.init = function (self)
-  book:mirrorMaster("right", "left")
+    })
+  self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
+  self:mirrorMaster("right", "left")
   book.pageTemplate = SILE.scratch.masters["right"]
-  book:loadPackage("footnotes", { insertInto = "footnotes", stealFrom = { "content" } })
+  self:loadPackage("tableofcontents")
+  if not SILE.scratch.headers then SILE.scratch.headers = {} end
+  self:loadPackage("footnotes", { insertInto = "footnotes", stealFrom = { "content" } })
   return plain.init(self)
 end
 
