@@ -1,6 +1,6 @@
 -- Basic! Transitional! In development! Not very good! Don't use it!
 local plain = SILE.require("plain", "classes")
-local jplain = plain { id = "jplain", base = plain }
+local jplain = plain { id = "jplain"}
 
 SILE.call("bidi-off")
 
@@ -15,7 +15,7 @@ function jplain:init()
     tate = self.options.layout() == "tate"
   })
   self.pageTemplate.firstContentFrame = self.pageTemplate.frames.content
-  return self.base:init()
+  return plain.init(self)
 end
 
 SILE.languageSupport.loadLanguage("ja")

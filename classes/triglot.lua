@@ -1,5 +1,6 @@
 local plain = SILE.require("book", "classes")
-local triglot = pl.tablex.deepcopy(plain)
+local triglot = plain { id = "triglot" }
+
 SILE.require("packages/counters")
 SILE.scratch.counters.folio = { value = 1, display = "arabic" }
 triglot:declareFrame("a",    {left = "5%pw",            right = "28%pw",            top = "11.6%ph",       bottom = "80%ph"        })

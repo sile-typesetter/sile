@@ -1,5 +1,5 @@
 local plain = SILE.require("plain", "classes")
-local bible = plain { id = "bible", base = plain }
+local bible = plain { id = "bible" }
 
 if not SILE.scratch.headers then SILE.scratch.headers = {} end
 
@@ -218,9 +218,7 @@ bible.newPage = function (self)
 end
 
 bible.finish = function (self)
-  local r = plain.finish(self)
-  --bible:writeToc()
-  return r
+  return plain.finish(self)
 end
 
 bible.endPage = function (self)

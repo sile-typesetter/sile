@@ -1,5 +1,5 @@
 local bible = SILE.require("bible", "classes")
-local usx = bible { id = "usx", base = bible }
+local usx = bible { id = "usx" }
 
 SILE.registerCommand("para", function (options, content)
   SILE.call("style-" .. options.style, options, content)

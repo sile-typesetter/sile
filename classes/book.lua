@@ -117,7 +117,7 @@ SILE.registerCommand("book:sectioning", function (options, content)
   end
 end)
 
-book.registerCommands = function ()
+book.registerCommands = function (_)
   plain.registerCommands()
 SILE.doTexlike([[%
 \define[command=book:chapter:pre]{}%

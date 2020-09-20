@@ -1,5 +1,5 @@
 local plain = SILE.require("plain", "classes")
-local pecha = plain { id = "pecha", base = plain }
+local pecha = plain { id = "pecha" }
 
 pecha:declareFrame("content", {left = "5%pw",  right = "95%pw",  top = "5%ph",  bottom = "90%ph" })
 pecha:declareFrame("folio",   {left = "right(content)", rotate = -90, width = "2.5%pw", top = "top(content)", height = "height(content)" })
@@ -19,11 +19,10 @@ local tibetanNumber = function (n)
 end
 
 function pecha:init()
-  local v = self.base.init(self)
   -- SILE.outputter:debugFrame(SILE.getFrame("content"))
   -- SILE.outputter:debugFrame(SILE.getFrame("runningHead"))
   -- SILE.outputter:debugFrame(SILE.getFrame("folio"))
-  return v
+  return plain.init(self)
 end
 
 function pecha:endPage()
@@ -42,7 +41,7 @@ function pecha:endPage()
     SILE.typesetter:leaveHmode()
     SILE.settings.popState()
   end)
-  return SILE.baseClass.endPage(self)
+  return plain.endPage(self)
 end
 
 function pecha:newPage()
@@ -52,7 +51,7 @@ function pecha:newPage()
 end
 
 function pecha:registerCommands()
-  self.base:registerCommands()
+  plain.registerCommands(self)
   SILE.call("language", { main = "bo" })
   SILE.settings.set("document.lskip", SILE.nodefactory.hfillglue())
   SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())

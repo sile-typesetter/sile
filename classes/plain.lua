@@ -1,4 +1,5 @@
-local plain = SILE.baseClass { id = "plain" }
+local base = SILE.baseClass
+local plain = base { id = "plain" }
 
 plain.options.direction = function (value)
   if value then plain.pageTemplate.frames["content"].direction = value end
@@ -23,7 +24,7 @@ plain:loadPackage("folio")
 
 plain.endPage = function (self)
   plain:outputFolio()
-  return SILE.baseClass.endPage(self)
+  return base.endPage(self)
 end
 
 local classopts = {}
@@ -93,7 +94,7 @@ SILE.registerCommand("vss", function (_, _)
 end, "Add glue which stretches and shrinks vertically")
 
 plain.registerCommands = function ()
-  SILE.baseClass.registerCommands()
+  base.registerCommands()
   SILE.doTexlike([[\define[command=thinspace]{\glue[width=0.16667em]}%
 \define[command=negthinspace]{\glue[width=-0.16667em]}%
 \define[command=enspace]{\glue[width=0.5em]}%

@@ -27,7 +27,7 @@ frames:
 \begin{verbatim}
 \line
 local plain = SILE.require("plain", "classes");
-local diglot = pl.tablex.deepcopy(plain);
+local diglot = plain \{ id = "diglot" \}
 SILE.require("packages/counters");
 SILE.scratch.counters.folio = \{ value = 1, display = "arabic" \};
 SILE.scratch.diglot = \{\}
