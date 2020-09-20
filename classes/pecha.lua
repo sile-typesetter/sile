@@ -50,6 +50,7 @@ function pecha:newPage()
   SILE.outputter:debugFrame(SILE.getFrame("content"))
   return self:initialFrame()
 end
+
 function pecha:registerCommands()
   self.base:registerCommands()
   SILE.call("language", { main = "bo" })

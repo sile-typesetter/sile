@@ -18,14 +18,17 @@ function docbook.push(t, val)
   local q = SILE.scratch.docbook[t]
   q[#q+1] = val
 end
+
 function docbook.pop(t)
   local q = SILE.scratch.docbook[t]
   q[#q] = nil
 end
+
 function docbook.val(t)
   local q = SILE.scratch.docbook[t]
   return q[#q]
 end
+
 function docbook.wipe(tbl)
   while((#tbl) > 0) do tbl[#tbl] = nil end
 end
@@ -159,4 +162,5 @@ SILE.registerCommand("link", function (options, content)
     SILE.typesetter:typeset(")")
   end
 end)
+
 return docbook
