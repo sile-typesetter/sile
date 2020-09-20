@@ -13,16 +13,17 @@ replicates the layout of the Hartley & Marks edition of Robert Bringhurst’s
 \em{The Elements of Typographical Style}.
 
 We are designing a book-like class, and so we will inherit from SILE’s
-standard \code{book} class, \code{classes/book.lua}.
+standard \code{book} class found in \code{classes/book.lua}.
 
 Let’s briefly have a look at \code{book.lua} to see how it works;
-after the initial class definition, we see that it loads the \code{masters}
-package, and defines a master the following frames:
+after the initial class definition an init callback function is defined.
+We see that it loads the \code{masters} package and defines a master the following frames:
 (wrapped for legibility)
 
 \begin{verbatim}
 \line
-book:defineMaster(\{
+
+self:defineMaster(\{
   id = "right",
   firstContentFrame = "content",
   frames = \{
@@ -102,21 +103,24 @@ terms like so:
 
 \begin{verbatim}
 \line
-bringhurst:defineMaster(\{
-  id = "right", firstContentFrame = "content",
-  frames = \{
-    content = \{
-      left = "width(page)/13",
-      top = "left(content) * 8 / 5",
-      right = "100\%pw - 2*top(content)",
-      bottom = "top(footnotes)"
-    \},
-    folio = \{ ... as before ... \},
-    footnotes = \{ ... as before ... \},
-    runningHead = \{ ... as before ... \},
-  \}
-\})
-bringhurst:mirrorMaster("right", "left")
+function bringhurst:init ()
+  self:defineMaster(\{
+    id = "right", firstContentFrame = "content",
+    frames = \{
+      content = \{
+        left = "width(page)/13",
+        top = "left(content) * 8 / 5",
+        right = "100\%pw - 2*top(content)",
+        bottom = "top(footnotes)"
+      \},
+      folio = \{ ... as before ... \},
+      footnotes = \{ ... as before ... \},
+      runningHead = \{ ... as before ... \},
+    \}
+  \})
+  self:mirrorMaster("right", "left")
+  return book.init(self)
+end
 \line
 \end{verbatim}
 
