@@ -10,15 +10,14 @@ jbook.defaultFrameset = {
     height = "20pt",
     bottom = "top(content)-9pt"
   },
-  content = self:declareHanmenFrame( "content", {
+  content = {
     left = "8.3%pw",
     top = "12%ph",
     gridsize = 10,
     linegap = 7,
     linelength = 40,
-    linecount = 35,
-    tate = self.options.layout() == "tate"
-  }),
+    linecount = 35
+  },
   folio = {
     left = "left(content)",
     right = "right(content)",
@@ -35,17 +34,9 @@ jbook.defaultFrameset = {
 
 function jbook:init ()
   SILE.call("bidi-off")
-  self:loadPackage("masters")
-  self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
-  self:mirrorMaster("right", "left")
   self:loadPackage("hanmenkyoshi")
-  self:defineMaster({
-      id = "right",
-      firstContentFrame = self.firstContentFrame,
-      frames = self.defaultFrameset
-    })
-  self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
-  self:mirrorMaster("right", "left")
+  self.defaultFrameset.content.tate = self.options.layout() == "tate"
+  self.defaultFrameset.content = self:declareHanmenFrame("content", self.defaultFrameset.content)
   SILE.settings.set("document.parindent", SILE.nodefactory.glue("10pt"))
   return book.init(self)
 end
