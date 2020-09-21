@@ -3,72 +3,47 @@ local bible = plain { id = "bible" }
 
 if not SILE.scratch.headers then SILE.scratch.headers = {} end
 
+bible.defaultFrameset = {
+  content = {
+    left = "8.3%pw",
+    right = "86%pw",
+    top = "11.6%ph",
+    bottom = "top(footnotes)"
+  },
+  folio = {
+    left = "left(content)",
+    right = "right(content)",
+    top = "bottom(footnotes)+3%ph",
+    bottom = "bottom(footnotes)+5%ph"
+  },
+  runningHead = {
+    left = "left(content)",
+    right = "right(content)",
+    top = "top(content) - 8%ph",
+    bottom = "top(content)-3%ph"
+  },
+  footnotes = {
+    left = "left(content)",
+    right = "right(content)",
+    height = "0",
+    bottom = "83.3%ph"
+  }
+}
+
 function bible:singleColumnMaster()
   self:defineMaster({
-      id = "right",
-      firstContentFrame = "content",
-      frames = {
-        content = {
-          left = "8.3%pw",
-          right = "86%pw",
-          top = "11.6%ph",
-          bottom = "top(footnotes)"
-        },
-        folio = {
-          left = "left(content)",
-          right = "right(content)",
-          top = "bottom(footnotes)+3%ph",
-          bottom = "bottom(footnotes)+5%ph"
-        },
-        runningHead = {
-          left = "left(content)",
-          right = "right(content)",
-          top = "top(content) - 8%ph",
-          bottom = "top(content)-3%ph"
-        },
-        footnotes = {
-          left = "left(content)",
-          right = "right(content)",
-          height = "0",
-          bottom = "83.3%ph"
-        }
-      }
-    })
-  self:defineMaster({
-      id = "left",
-      firstContentFrame = "content",
-      frames = {
-        content = {
-          left = "14%pw",
-          right = "91.7%pw",
-          top = "11.6%ph",
-          bottom = "top(footnotes)"
-        },
-        folio = {
-          left = "left(content)",
-          right = "right(content)",
-          top = "bottom(footnotes)+3%ph",
-          bottom = "bottom(footnotes)+5%ph"
-        },
-        runningHead = {
-          left = "left(content)",
-          right = "right(content)",
-          top = "top(content) - 8%ph",
-          bottom = "top(content)-3%ph"
-        },
-        footnotes = {
-          left = "left(content)",
-          right = "right(content)",
-          height = "0",
-          bottom = "83.3%ph"
-        }
-      }
-    })
+    id = "right",
+    firstContentFrame = self.firstContentFrame,
+    frames = self.defaultFrameset
+  })
+  self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
+  self:mirrorMaster("right", "left")
   self:loadPackage("footnotes", { insertInto = "footnotes", stealFrom = { "content" } })
 end
 
 function bible:twoColumnMaster()
   local gutterWidth = self.options.gutter or "3%pw"
+  self.firstContentFrame = "contentA"
   self:defineMaster({
       id = "right",
       firstContentFrame = "contentA",

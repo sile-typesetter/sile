@@ -11,15 +11,31 @@ local tibetanNumber = function (n)
   return out
 end
 
+pecha.defaultFrameset = {
+  content = {
+    left = "5%pw",
+    right = "95%pw",
+    top = "5%ph",
+    bottom = "90%ph"
+  },
+  folio =   {
+    left = "right(content)",
+    rotate = -90,
+    width = "2.5%pw",
+    top = "top(content)",
+    height = "height(content)"
+  },
+  runningHead = {
+    width = "2.5%pw",
+    rotate = -90,
+    right = "left(content)",
+    top = "top(content)",
+    height = "height(content)"
+  }
+}
+
 function pecha:init()
-  self:declareFrame("content", {left = "5%pw",  right = "95%pw",  top = "5%ph",  bottom = "90%ph" })
-  self:declareFrame("folio",   {left = "right(content)", rotate = -90, width = "2.5%pw", top = "top(content)", height = "height(content)" })
-  self:declareFrame("runningHead", { width = "2.5%pw", rotate = -90, right = "left(content)", top = "top(content)", height = "height(content)"})
-  self.pageTemplate.firstContentFrame = self.pageTemplate.frames["content"]
   self:loadPackage("rotate")
-  -- SILE.outputter:debugFrame(SILE.getFrame("content"))
-  -- SILE.outputter:debugFrame(SILE.getFrame("runningHead"))
-  -- SILE.outputter:debugFrame(SILE.getFrame("folio"))
   return plain.init(self)
 end
 

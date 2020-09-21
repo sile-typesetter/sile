@@ -1,10 +1,6 @@
 local base = SILE.baseClass
 local plain = base { id = "plain" }
 
-plain.options.direction = function (value)
-  if value then plain.pageTemplate.frames["content"].direction = value end
-end
-
 local classopts = {}
 plain.declareOption = function (self, name, default)
   classopts[name] = default
@@ -14,20 +10,30 @@ plain.declareOption = function (self, name, default)
   end
 end
 
+plain.defaultFrameset = {
+  content = {
+    left = "5%pw",
+    right = "95%pw",
+    top = "5%ph",
+    bottom = "90%ph"
+  },
+  folio = {
+    left = "5%pw",
+    right = "95%pw",
+    top = "92%ph",
+    bottom = "97%ph"
+  }
+}
+
+plain.firstContentFrame = "content"
+
+plain.options.direction = function (value)
+  if value then plain.defaultFrameset.content.direction = value end
+end
+
 function plain:init ()
-  self:declareFrame("content", {
-      left = "5%pw",
-      right = "95%pw",
-      top = "5%ph",
-      bottom = "90%ph"
-    })
-  self:declareFrame("folio", {
-      left = "5%pw",
-      right = "95%pw",
-      top = "92%ph",
-      bottom = "97%ph"
-    })
-  self.pageTemplate.firstContentFrame = self.pageTemplate.frames["content"]
+  self:declareFrames(self.defaultFrameset)
+  self.pageTemplate.firstContentFrame = self.pageTemplate.frames[self.firstContentFrame]
   self:loadPackage("folio")
   return base.init(self)
 end
