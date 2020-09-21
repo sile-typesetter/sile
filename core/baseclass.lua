@@ -244,7 +244,7 @@ SILE.baseClass = std.object {
 
   declareFrames = function (self, specs)
     if specs then
-      for k, v in ipairs(specs) do self:declareFrame(k, v) end
+      for k, v in pairs(specs) do self:declareFrame(k, v) end
     end
   end,
 
