@@ -211,7 +211,7 @@ examples/docbook/article-template.pdf: SILEFLAGS += -I docbook.sil
 
 .PHONY: coverage
 coverage: export SILE_COVERAGE=1
-coverage: test_previews busted
+coverage: regression_previews busted
 
 HEADSHA ?= HEAD
 _HEADSHA ?= $(shell test -e .git && git rev-parse --short=7 $(HEADSHA))
@@ -320,8 +320,8 @@ tests/%.expected: tests/%.xml $$(patterndeps)
 .PHONY: update_actuals
 update_actuals: $(ACTUALS)
 
-.PHONY: test_previews
-test_previews: $(TESTPDFS)
+.PHONY: regression_previews
+regression_previews: $(TESTPDFS)
 
 tests/%.actual: tests/%.sil $$(patterndeps)
 	-$(if $(CLEAN),rm -f $@,:)
