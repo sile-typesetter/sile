@@ -14,75 +14,96 @@ replicates the layout of the Hartley & Marks edition of Robert Bringhurst’s
 
 We are designing a book-like class, and so we will inherit from SILE’s
 standard \code{book} class found in \code{classes/book.lua}.
-
-Let’s briefly have a look at \code{book.lua} to see how it works;
-after the initial class definition an init callback function is defined.
-We see that it loads the \code{masters} package and defines a master the following frames:
-(wrapped for legibility)
+Let’s briefly have a look at \code{book.lua} to see how it works.
+First, a table is populated with a description of the default frameset.
 
 \begin{verbatim}
 \line
 
-self:defineMaster(\{
-  id = "right",
-  firstContentFrame = "content",
-  frames = \{
-
-    content = \{
-      left = "8.3\%pw", right = "86\%pw",
-      top = "11.6\%ph", bottom = "top(footnotes)"
-    \},
-
-    folio = \{
-      left = "left(content)", right = "right(content)",
-      top = "bottom(footnotes)+3\%ph",bottom = "bottom(footnotes)+5\%ph"
-    \},
-
-    runningHead = \{
-      left = "left(content)", right = "right(content)",
-      top = "top(content) - 8\%ph", bottom = "top(content)-3\%ph"
-    \},
-
-    footnotes = \{
-      left ="left(content)", right = "right(content)",
-      height = "0", bottom="83.3\%ph"
-    \}
+book.defaultFrameset = \{
+  content = \{
+    left = "8.3\%pw",
+    right = "86\%pw",
+    top = "11.6\%ph",
+    bottom = "top(footnotes)"
+  \},
+  folio = \{
+    left = "left(content)",
+    right = "right(content)",
+    top = "bottom(footnotes)+3\%ph",
+    bottom = "bottom(footnotes)+5\%ph"
+  \},
+  runningHead = \{
+    left = "left(content)",
+    right = "right(content)",
+    top = "top(content)-8\%ph",
+    bottom = "top(content)-3\%ph"
+  \},
+  footnotes = \{
+    left = "left(content)",
+    right = "right(content)",
+    height = "0",
+    bottom = "83.3\%ph"
   \}
-\})
+\}
+
 \line
 \end{verbatim}
 
-So there are four frames directly declared; the first is the
-content frame, which by SILE convention is called
-\code{content}. Directly abutting the \code{content} frame at the bottom is
-the \code{footnotes} frame. The top of the typeblock
-and the bottom of the footnote frame have fixed positions, but the
-boundary between typeblock and footnote is variable. Initially
-the height of the footnotes is zero (and so the typeblock takes up
-the full height of the page) but as footnotes are inserted
-into the footnote frame, its height will be adjusted; its bottom
-is fixed and therefore its top will be adjusted, and the bottom
-of the main typeblock frame will also be correspondingly adjusted.
+So there are four frames directly declared.
+The first is the content frame,
+which by SILE convention is called \code{content}.
+Directly abutting the \code{content} frame at the bottom is the \code{footnotes} frame.
+The top of the typeblock and the bottom of the footnote frame have fixed positions,
+but the boundary between typeblock and footnote is variable.
+Initially the height of the footnotes is zero
+(and so the typeblock takes up the full height of the page)
+but as footnotes are inserted into the footnote frame its height will be adjusted;
+its bottom is fixed and therefore its top will be adjusted,
+and the bottom of the main typeblock frame will also be correspondingly adjusted.
+The folio frame (which holds the page number) lives below the footnotes,
+and the running headers live above the \code{content} frame.
 
-The folio frame (the page number) lives below the footnotes, and the
-running headers live above the \code{content} frame.
-
-Next, we use the \code{twoside} package to mirror our right-page
-master into a left-page master:
+Normally, as in the \code{plain} class and anything inheriting from it,
+this would be enough to populate the pages’ frameset.
+Instead the \code{book} class includes its own extension to the class with a callback init function.
+We see that it loads the \code{masters} package and generates a master frameset using the above defined default frameset.
 
 \begin{verbatim}
 \line
-book:loadPackage("twoside", \{ oddPageMaster = "right", evenPageMaster = "left" \});
-book:mirrorMaster("left", "right")
+
+function book:init ()
+  self:loadPackage("masters")
+  self:defineMaster(\{
+      id = "right",
+      firstContentFrame = self.firstContentFrame,
+      frames = self.defaultFrameset
+    \})
+  ...
+  return plain.init(self)
+end
+
 \line
 \end{verbatim}
 
-The book class also sets up commands for sectioning, and declares various
-things that need to be done at the start and end of each page.
-Since we will be inheriting from the book class, we will have all
-these definitions already available to us. All we need to do is set
-up our new class, and then define what is different about it. Here is
-how we set up the inheritance:
+Next, we use the \code{twoside} package to mirror our right-page master into a left-page master:
+
+\begin{verbatim}
+\line
+
+  self:loadPackage("twoside", \{ oddPageMaster = "right", evenPageMaster = "left" \})
+  self:mirrorMaster("right", "left")
+
+\line
+\end{verbatim}
+
+The book class also loads the table of contents package which sets up commands for sectioning,
+and declares various things that need to be done at the start and end of each page.
+Since we will be inheriting from the book class,
+we will have all these definitions already available to us.
+All we need to do is set up our new class,
+and then define what is different about it.
+Here is how we set up the inheritance:
 
 \begin{verbatim}
 \line
@@ -95,56 +116,58 @@ return bringhurst
 
 Now we need to define our frame masters.
 
-The LaTeX memoir class’ \em{A Few Notes
-On Book Design} tells us that Bringhurst’s book has a spine margin one thirteenth
-of the page width; a top margin eight-fifths of the spine margin; a front margin
-and bottom margin both sixteen-fifths of the spine margin. We can define this in SILE
-terms like so:
+The LaTeX memoir class’ \em{A Few Notes On Book Design} tells us that Bringhurst’s book has a spine margin one thirteenth of the page width;
+a top margin eight-fifths of the spine margin;
+a front margin and bottom margin both sixteen-fifths of the spine margin.
+We can define this in SILE terms like so:
 
 \begin{verbatim}
 \line
-function bringhurst:init ()
-  self:defineMaster(\{
-    id = "right", firstContentFrame = "content",
-    frames = \{
-      content = \{
-        left = "width(page)/13",
-        top = "left(content) * 8 / 5",
-        right = "100\%pw - 2*top(content)",
-        bottom = "top(footnotes)"
-      \},
-      folio = \{ ... as before ... \},
-      footnotes = \{ ... as before ... \},
-      runningHead = \{ ... as before ... \},
-    \}
-  \})
-  self:mirrorMaster("right", "left")
-  return book.init(self)
-end
-\line
-\end{verbatim}
 
-We are nearly finished!
-
-If we try this class as-is, we’ll
-actually find that the running headers are too high, because the typeblock is
-higher on the page than the standard book class, and the running heads are
-defined relative to them.
-
-So, we need to change the definition the running header frame to bring them
-down a bit lower:
-
-\begin{verbatim}
-\line
-  runningHead = \{
-    left = "left(content)", right = "right(content)",
-    top = "top(content) - 4\%ph", bottom = "top(content)-2\%ph"
+bringhurst.defaultFrameset = \{
+  content = \{
+    left = "width(page)/13",
+    top = "left(content) * 8 / 5",
+    right = "100\%pw - 2*top(content)",
+    bottom = "top(footnotes)"
   \},
+  folio = book.defaultFrameset.folio,
+  runningHead = \{
+    left = "left(content)",
+    right = "right(content)",
+    top = "top(content) - 4\%ph",
+    bottom = "top(content)-2\%ph"
+  \},
+  footnotes = book.defaultFrameset.footnotes
+\}
+
 \line
 \end{verbatim}
+
+Note that we’ve deliberately copied the frame definitions for the folio and footnote frames from the book class,
+but if we had tried to reuse the runningHead frame definition it would have been too high
+because the typeblock is higher on the page than the standard book class,
+and the running heads are defined relative to them.
+So, we needed to change the definition the running header frame to bring them down a bit lower.
 
 If all we want to do in our new class is to create a different page shape,
 this is all we need.
+The init function inherited from the book class will take care of setting these frames up with mirrored masters.
+
+If we had wanted to load additionall packages into our class as, say, the \code{bible} class does,
+we would need to define out own init function and call our parent class’s init function as well.
+For example to load the \code{infonode} package into our class, we could add this init function:
+
+\begin{verbatim}
+\line
+
+function bringhurst:init()
+  self:loadPackage("infonode")
+  return book.init(self)
+end
+
+\line
+\end{verbatim}
 
 \section{Defining Commands}
 
