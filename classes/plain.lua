@@ -1,30 +1,5 @@
-local plain = SILE.baseClass { id = "plain" }
-
-plain.options.direction = function (value)
-  if value then plain.pageTemplate.frames["content"].direction = value end
-end
-
-plain:declareFrame("content", {
-    left = "5%pw",
-    right = "95%pw",
-    top = "5%ph",
-    bottom = "90%ph"
-  })
-
-plain:declareFrame("folio", {
-    left = "5%pw",
-    right = "95%pw",
-    top = "92%ph",
-    bottom = "97%ph"
-  })
-
-plain.pageTemplate.firstContentFrame = plain.pageTemplate.frames["content"]
-plain:loadPackage("folio")
-
-plain.endPage = function (self)
-  plain:outputFolio()
-  return SILE.baseClass.endPage(self)
-end
+local base = SILE.baseClass
+local plain = base { id = "plain" }
 
 local classopts = {}
 plain.declareOption = function (self, name, default)
@@ -33,6 +8,39 @@ plain.declareOption = function (self, name, default)
     if value then classopts[name] = value end
     return classopts[name]
   end
+end
+
+plain.defaultFrameset = {
+  content = {
+    left = "5%pw",
+    right = "95%pw",
+    top = "5%ph",
+    bottom = "90%ph"
+  },
+  folio = {
+    left = "5%pw",
+    right = "95%pw",
+    top = "92%ph",
+    bottom = "97%ph"
+  }
+}
+
+plain.firstContentFrame = "content"
+
+plain.options.direction = function (value)
+  if value then plain.defaultFrameset.content.direction = value end
+end
+
+function plain:init ()
+  self:declareFrames(self.defaultFrameset)
+  self.pageTemplate.firstContentFrame = self.pageTemplate.frames[self.firstContentFrame]
+  self:loadPackage("folio")
+  return base.init(self)
+end
+
+plain.endPage = function (self)
+  self:outputFolio()
+  return base.endPage(self)
 end
 
 SILE.registerCommand("noindent", function (_, content)
@@ -93,7 +101,7 @@ SILE.registerCommand("vss", function (_, _)
 end, "Add glue which stretches and shrinks vertically")
 
 plain.registerCommands = function ()
-  SILE.baseClass.registerCommands()
+  base.registerCommands()
   SILE.doTexlike([[\define[command=thinspace]{\glue[width=0.16667em]}%
 \define[command=negthinspace]{\glue[width=-0.16667em]}%
 \define[command=enspace]{\glue[width=0.5em]}%

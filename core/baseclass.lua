@@ -230,7 +230,11 @@ SILE.baseClass = std.object {
 
   declareFrame = function (self, id, spec)
     spec.id = id
-    self.pageTemplate.frames[id] = SILE.newFrame(spec)
+    if spec.solve then
+      self.pageTemplate.frames[id] = spec
+    else
+      self.pageTemplate.frames[id] = SILE.newFrame(spec)
+    end
     --   next = spec.next,
     --   left = spec.left and fW(spec.left),
     --   right = spec.right and fW(spec.right),
@@ -244,7 +248,7 @@ SILE.baseClass = std.object {
 
   declareFrames = function (self, specs)
     if specs then
-      for k, v in ipairs(specs) do self:declareFrame(k, v) end
+      for k, v in pairs(specs) do self:declareFrame(k, v) end
     end
   end,
 

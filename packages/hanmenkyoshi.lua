@@ -44,7 +44,7 @@ SILE.registerCommand("show-hanmen", function (_, _)
 end)
 
 local declareHanmenFrame = function (self, id, spec)
-  if id then
+  if spec then
     spec.id = id
   else
     spec = id

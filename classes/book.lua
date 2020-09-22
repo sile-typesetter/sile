@@ -1,67 +1,63 @@
 local plain = SILE.require("plain", "classes")
 local book = plain { id = "book" }
 
-book:loadPackage("masters")
-book:defineMaster({
-    id = "right",
-    firstContentFrame = "content",
-    frames = {
-      content = {
-        left = "8.3%pw",
-        right = "86%pw",
-        top = "11.6%ph",
-        bottom = "top(footnotes)"
-      },
-      folio = {
-        left = "left(content)",
-        right = "right(content)",
-        top = "bottom(footnotes)+3%ph",
-        bottom = "bottom(footnotes)+5%ph"
-      },
-      runningHead = {
-        left = "left(content)",
-        right = "right(content)",
-        top = "top(content)-8%ph",
-        bottom = "top(content)-3%ph"
-      },
-      footnotes = {
-        left = "left(content)",
-        right = "right(content)",
-        height = "0",
-        bottom = "83.3%ph"
-      }
-    }
-  })
+book.defaultFrameset = {
+  content = {
+    left = "8.3%pw",
+    right = "86%pw",
+    top = "11.6%ph",
+    bottom = "top(footnotes)"
+  },
+  folio = {
+    left = "left(content)",
+    right = "right(content)",
+    top = "bottom(footnotes)+3%ph",
+    bottom = "bottom(footnotes)+5%ph"
+  },
+  runningHead = {
+    left = "left(content)",
+    right = "right(content)",
+    top = "top(content)-8%ph",
+    bottom = "top(content)-3%ph"
+  },
+  footnotes = {
+    left = "left(content)",
+    right = "right(content)",
+    height = "0",
+    bottom = "83.3%ph"
+  }
+}
 
-book:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
-
-book:loadPackage("tableofcontents")
-
-if not SILE.scratch.headers then SILE.scratch.headers = {} end
-
-book.init = function (self)
-  book:mirrorMaster("right", "left")
-  book.pageTemplate = SILE.scratch.masters["right"]
-  book:loadPackage("footnotes", { insertInto = "footnotes", stealFrom = { "content" } })
+function book:init ()
+  self:loadPackage("masters")
+  self:defineMaster({
+      id = "right",
+      firstContentFrame = self.firstContentFrame,
+      frames = self.defaultFrameset
+    })
+  self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
+  self:mirrorMaster("right", "left")
+  self:loadPackage("tableofcontents")
+  if not SILE.scratch.headers then SILE.scratch.headers = {} end
+  self:loadPackage("footnotes", { insertInto = "footnotes", stealFrom = { "content" } })
   return plain.init(self)
 end
 
 book.newPage = function (self)
-  book:switchPage()
-  book:newPageInfo()
+  self:switchPage()
+  self:newPageInfo()
   return plain.newPage(self)
 end
 
-book.finish = function ()
-  local ret = plain.finish(book)
-  book:writeToc()
+book.finish = function (self)
+  local ret = plain.finish(self)
+  self:writeToc()
   return ret
 end
 
-book.endPage = function (_)
-  book:moveTocNodes()
-
-  if (book:oddPage() and SILE.scratch.headers.right) then
+book.endPage = function (self)
+  self:moveTocNodes()
+  if (self:oddPage() and SILE.scratch.headers.right) then
     SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
       SILE.settings.set("current.parindent", SILE.nodefactory.glue())
       SILE.settings.set("document.lskip", SILE.nodefactory.glue())
@@ -70,7 +66,7 @@ book.endPage = function (_)
       SILE.process(SILE.scratch.headers.right)
       SILE.call("par")
     end)
-  elseif (not(book:oddPage()) and SILE.scratch.headers.left) then
+  elseif (not(self:oddPage()) and SILE.scratch.headers.left) then
       SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
         SILE.settings.set("current.parindent", SILE.nodefactory.glue())
         SILE.settings.set("document.lskip", SILE.nodefactory.glue())
@@ -80,7 +76,7 @@ book.endPage = function (_)
         SILE.call("par")
       end)
   end
-  return plain.endPage(book)
+  return plain.endPage(self)
 end
 
 SILE.registerCommand("left-running-head", function (_, content)
@@ -117,7 +113,7 @@ SILE.registerCommand("book:sectioning", function (options, content)
   end
 end)
 
-book.registerCommands = function ()
+book.registerCommands = function (_)
   plain.registerCommands()
 SILE.doTexlike([[%
 \define[command=book:chapter:pre]{}%
