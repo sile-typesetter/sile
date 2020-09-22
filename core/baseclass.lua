@@ -96,10 +96,6 @@ end, "Within a macro definition, processes the contents of the macro body.")
 SILE.baseClass = std.object {
   registerCommands = (function ()
 
-    SILE.registerCommand("\\", function (_, _)
-      SILE.typesetter:typeset("\\")
-    end)
-
     SILE.registerCommand("script", function (options, content)
       if (options["src"]) then
         require(options["src"])
