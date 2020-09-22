@@ -93,4 +93,6 @@ SILE.registerCommand("process", function ()
   SU.error("Encountered unsubstituted \\process.")
 end, "Within a macro definition, processes the contents of the macro body.")
 
-return require("classes/base")
+return {
+  base = require("classes/base")
+}

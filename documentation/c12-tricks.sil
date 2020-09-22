@@ -128,7 +128,7 @@ that each typesetter is linked to the appropriate frame:
 diglot.init = function(self)
   diglot.leftTypesetter:init(SILE.getFrame("a"))
   diglot.rightTypesetter:init(SILE.getFrame("b"))
-  return SILE.baseClass.init(self)
+  return SILE.classes.base.init(self)
 end
 \end{verbatim}
 
@@ -291,7 +291,7 @@ discovery.init = function()
                  SILE.getFrame("rGutter") or SILE.getFrame("lGutter")
   discovery.innerTypesetter:init(gutter)
   ...
-  return SILE.baseClass:init()
+  return SILE.classes.base:init()
 end
 
 discovery.newPage = function ()
@@ -301,7 +301,7 @@ discovery.newPage = function ()
                  SILE.getFrame("rGutter") or SILE.getFrame("lGutter")
   discovery.innerTypesetter:init(gutter)
   ...
-  return SILE.baseClass.newPage(discovery);
+  return SILE.classes.base.newPage(discovery);
 end
 \line
 \end{verbatim}

@@ -95,7 +95,7 @@ return std.object {
     if type(pack) == "table" then
       if pack.exports then self:mapfields(pack.exports) end
       if pack.init then
-        table.insert(SILE.baseClass.deferredInit, function () pack.init(self, args) end)
+        table.insert(SILE.classes.base.deferredInit, function () pack.init(self, args) end)
       end
     end
   end,
@@ -110,7 +110,7 @@ return std.object {
     SILE.outputter:init(self)
     self:registerCommands()
     -- Call all stored package init routines
-    for i = 1, #(SILE.baseClass.deferredInit) do (SILE.baseClass.deferredInit[i])() end
+    for i = 1, #(SILE.classes.base.deferredInit) do (SILE.classes.base.deferredInit[i])() end
     SILE.typesetter:registerPageEndHook(function ()
       if SU.debugging("frames") then
         for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end

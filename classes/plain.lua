@@ -1,4 +1,4 @@
-local base = SILE.baseClass
+local base = SILE.classes.base
 local plain = base { id = "plain" }
 
 local classopts = {}
