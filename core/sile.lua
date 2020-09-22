@@ -57,6 +57,27 @@ SILE.frameParser = require("core/frameparser")
 SILE.linebreak = require("core/break")
 require("core/frame")
 
+-- Class system deprecation shims
+SILE.baseClass = {}
+local _classdeprecation = function ()
+  SU.warn([[
+  The inheritance system for SILE classes has been refactored using a
+    different object model, please update your code as use of the old
+    model will cause unexpected errors and will eventually be removed.
+  ]])
+  SU.deprecated("SILE.baseclass", "SILE.classes.base", "0.10.13", "0.12.0")
+end
+setmetatable(SILE.baseClass, {
+    __index = function(_, key)
+      _classdeprecation()
+      return SILE.classes.base[key]
+    end,
+    __call = function (_, ...)
+      _classdeprecation()
+      return SILE.classes.base(...)
+    end
+  })
+
 SILE.init = function ()
   if not SILE.backend then
     if pcall(function () require("justenoughharfbuzz") end) then
