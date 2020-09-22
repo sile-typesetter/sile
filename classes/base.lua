@@ -1,5 +1,5 @@
-return std.object {
-  registerCommands = (function ()
+local _oldbase = {
+  registerCommands = function ()
 
     SILE.registerCommand("script", function (options, content)
       if (options["src"]) then
@@ -84,7 +84,7 @@ return std.object {
       SILE.typesetter:endline()
     end, "Ends the current paragraph.")
 
-  end),
+  end,
 
   pageTemplate = std.object { frames = {}, firstContentFrame = nil },
 
@@ -98,25 +98,6 @@ return std.object {
         table.insert(SILE.classes.base.deferredInit, function () pack.init(self, args) end)
       end
     end
-  end,
-
-  init = function (self)
-    SILE.settings.declare({
-      parameter = "current.parindent",
-      type = "glue or nil",
-      default = nil,
-      help = "Glue at start of paragraph"
-    })
-    SILE.outputter:init(self)
-    self:registerCommands()
-    -- Call all stored package init routines
-    for i = 1, #(SILE.classes.base.deferredInit) do (SILE.classes.base.deferredInit[i])() end
-    SILE.typesetter:registerPageEndHook(function ()
-      if SU.debugging("frames") then
-        for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
-      end
-    end)
-    return self:initialFrame()
   end,
 
   initialFrame = function (self)
@@ -190,18 +171,81 @@ return std.object {
   endPar = function (typesetter)
     typesetter:pushVglue(SILE.settings.get("document.parskip"))
   end,
-
-  options = {
-    papersize = function (size)
-      SILE.documentState.paperSize = SILE.papersize(size)
-      SILE.documentState.orgPaperSize = SILE.documentState.paperSize
-      SILE.newFrame({
-          id = "page",
-          left = 0,
-          top = 0,
-          right = SILE.documentState.paperSize[1],
-          bottom = SILE.documentState.paperSize[2]
-        })
-    end
-  }
 }
+
+local base = pl.class({
+    type = "class",
+    deferredInit = {},
+    pageTemplate = _oldbase.pageTemplate,
+    defaultFrameset = {},
+    firstContentFrame = "page",
+    options = {},
+
+    _init = function (self, options)
+      if not options then options = {} end
+      self:declareOption("class", function (name) return name end)
+      self:declareOption("papersize", function (size)
+          SILE.documentState.paperSize = SILE.papersize(size)
+          SILE.documentState.orgPaperSize = SILE.documentState.paperSize
+          SILE.newFrame({
+              id = "page",
+              left = 0,
+              top = 0,
+              right = SILE.documentState.paperSize[1],
+              bottom = SILE.documentState.paperSize[2]
+            })
+          return size
+        end)
+      for k, v in pairs(options) do
+        self.options[k] = v
+      end
+      SILE.outputter:init(self)
+      self:declareSettings()
+      self:registerCommands()
+      self:declareFrames(self.defaultFrameset)
+      self.pageTemplate.firstContentFrame = self.pageTemplate.frames[self.firstContentFrame]
+      for i = 1, #(SILE.classes.base.deferredInit) do (SILE.classes.base.deferredInit[i])() end
+      SILE.typesetter:registerPageEndHook(function ()
+        if SU.debugging("frames") then
+          for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
+        end
+      end)
+    end,
+
+    declareOption = function (self, option, setter)
+      if not getmetatable(self.options) then
+        setmetatable(self.options, {
+            __newindex = function (self, key, value)
+              local setter = getmetatable(self)[key]
+              if not setter then
+                SU.error("Attempted to set a class option '" .. key .. "' that isn’t registered.")
+              end
+              rawset(self, key, setter(value))
+            end
+          })
+      end
+      getmetatable(self.options)[option] = setter
+    end,
+
+    declareSettings = function (_)
+      SILE.settings.declare({
+          parameter = "current.parindent",
+          type = "glue or nil",
+          default = nil,
+          help = "Glue at start of paragraph"
+        })
+    end,
+
+    loadPackage = _oldbase.loadPackage,
+    registerCommands = _oldbase.registerCommands,
+    initialFrame = _oldbase.initialFrame,
+    declareFrame = _oldbase.declareFrame,
+    declareFrames = _oldbase.declareFrames,
+    newPar = _oldbase.newPar,
+    endPar = _oldbase.endPar,
+    newPage = _oldbase.newPage,
+    endPage = _oldbase.endPage,
+    finish = _oldbase.finish
+  })
+
+return base

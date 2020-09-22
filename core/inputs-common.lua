@@ -1,14 +1,10 @@
 SILE.inputs.common = {
 
   init = function (_, tree)
-    local dclass = tree.options.class or "plain"
+    local class = tree.options.class or "plain"
+    SILE.require(class, "classes")
     tree.options.papersize = tree.options.papersize or "a4"
-    SILE.documentState.documentClass = SILE.require(dclass, "classes")
-    for option, value in pairs(tree.options) do
-      if SILE.documentState.documentClass.options[option] then
-        SILE.documentState.documentClass.options[option](value)
-      end
-    end
+    SILE.documentState.documentClass = SILE.classes[class](tree.options)
     -- Prepend the dirname of the input file to the Lua search path
     local dirname = SILE.masterFilename:match("(.-)[^%/]+$")
     package.path = dirname.."?;"..dirname.."?.lua;"..package.path
@@ -21,7 +17,7 @@ SILE.inputs.common = {
         SILE.outputFilename = "/dev/stdout"
       end
     end
-    local ff = SILE.documentState.documentClass:init()
+    local ff = SILE.documentState.documentClass:initialFrame()
     SILE.typesetter:init(ff)
   end
 }
