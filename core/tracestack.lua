@@ -66,7 +66,7 @@ traceStack.commandFrame = pl.class({
 traceStack.contentFrame = pl.class({
     _base = traceStack.commandFrame,
     _init = function (self, command, content)
-      self:super(command, content, content.options)
+      self._base._init(self, command, content, content.options)
     end
   })
 
