@@ -1,8 +1,6 @@
 -- Quotes may be part of a word in Turkish
-SILE.nodeMakers.tr = pl.class({
-    _base = SILE.nodeMakers.unicode,
-    isWordType = { cm = true, qu = true },
-  })
+SILE.nodeMakers.tr = pl.class(SILE.nodeMakers.unicode)
+SILE.nodeMakers.tr.isWordType = { cm = true, qu = true }
 
 SILE.hyphenator.languages["tr"] = {}
 SILE.hyphenator.languages["tr"].patterns =
