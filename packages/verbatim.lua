@@ -1,6 +1,7 @@
-SILE.registerCommand("verbatim:font", function(_, _)
-    SILE.settings.set("font.family", "Hack")
-    SILE.settings.set("font.size", SILE.settings.get("font.size") - 3)
+SILE.registerCommand("verbatim:font", function(options, content)
+  options.family = options.family or "Hack"
+  options.size = options.size or SILE.settings.get("font.size") - 3
+  SILE.call("font", options, content)
 end, "The font chosen for the verbatim environment")
 
 SILE.registerCommand("verbatim", function(_, content)
