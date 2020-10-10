@@ -84,6 +84,14 @@ sudo apt-get update
 sudo apt-get install sile
 \end{terminal}
 
+For NetBSD, package sources are available in \code{print/sile}.
+Use the usual command \code{bmake install} to build and install.
+A binary package can be installed using \code{pkgin}
+
+\begin{terminal}
+pkgin install sile
+\end{terminal}
+
 For all other systems you will need to follow the steps to download and compile
 the source yourself.
 
