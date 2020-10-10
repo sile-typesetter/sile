@@ -109,9 +109,9 @@ SILE.outputters.libtexpdf = {
     return self:drawHbox(value, width)
   end,
 
-  _drawString = function(self, str, width)
+  _drawString = function(self, str, width, x_offset, y_offset)
     local x, y = self:getCursor()
-    pdf.setstring(x, y, str, string.len(str), self._font, width)
+    pdf.setstring(x+x_offset, y+y_offset, str, string.len(str), self._font, width)
   end,
 
   drawHbox = function (self, value, width)
@@ -130,8 +130,7 @@ SILE.outputters.libtexpdf = {
     if value.complex then
       for i = 1, #value.items do
         local buf = glyph2string(value.items[i].gid)
-        self:setCursor(value.items[i].x_offset or 0, value.items[i].y_offset or 0, true)
-        self:_drawString(buf, value.items[i].glyphAdvance)
+        self:_drawString(buf, value.items[i].glyphAdvance, value.items[i].x_offset or 0, value.items[i].y_offset or 0)
         self:setCursor(value.items[i].width, 0, true)
       end
     else
@@ -140,7 +139,7 @@ SILE.outputters.libtexpdf = {
         buf[i] = glyph2string(value.glyphString[i])
       end
       buf = table.concat(buf, "")
-      self:_drawString(buf, width)
+      self:_drawString(buf, width, 0, 0)
     end
   end,
 
@@ -251,7 +250,7 @@ SILE.outputters.libtexpdf = {
     buf = table.concat(buf, "")
     self:_withDebugFont(function ()
       self:setCursor(frame:left():tonumber() - _dl/2, frame:top():tonumber() + _dl/2)
-      self:_drawString(buf, 0)
+      self:_drawString(buf, 0, 0, 0)
     end)
     self:popColor()
   end,
