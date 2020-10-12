@@ -134,7 +134,7 @@ AS_IF([test "x$with_system_luarocks" = "xyes"], [
     AX_LUA_MODULE([vstruct], [vstruct])
 ], [
     AC_CHECK_PROG(HASLUAROCKS, luarocks, yes)
-    test "x$HASLUAROCKS" == "xyes" || AC_MSG_ERROR([luarocks is required])
+    test "x$HASLUAROCKS" = "xyes" || AC_MSG_ERROR([luarocks is required])
 ])
 
 AC_ARG_ENABLE([linklua],
