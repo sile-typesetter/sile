@@ -21,6 +21,10 @@ local _deprecationCheck = function (caller)
   end
 end
 
+local function _round (input)
+  return string.format("%.4f", input)
+end
+
 SILE.outputters.debug = {
 
   init = function (self)
@@ -68,8 +72,8 @@ SILE.outputters.debug = {
     local offset = relative and { x = cursorX, y = cursorY } or { x = 0, y = 0 }
     cursorX = offset.x + x
     cursorY = offset.y - y
-    if string.format("%.4f", oldx) ~= string.format("%.4f", cursorX) then writeline("Mx ", string.format("%.4f", x)) end
-    if string.format("%.4f", oldy) ~= string.format("%.4f", cursorY) then writeline("My ", string.format("%.4f", y)) end
+    if _round(oldx) ~= _round(cursorX) then writeline("Mx ", _round(x)) end
+    if _round(oldy) ~= _round(cursorY) then writeline("My ", _round(y)) end
   end,
 
   setColor = function (self, color)
@@ -79,7 +83,7 @@ SILE.outputters.debug = {
 
   pushColor = function (self, color)
     _deprecationCheck(self)
-    writeline("Push color", ("%.4g"):format(color.r), ("%.4g"):format(color.g), ("%.4g"):format(color.b))
+    writeline("Push color", _round(color.r), _round(color.g), _round(color.b))
   end,
 
   popColor = function (self)
@@ -118,7 +122,7 @@ SILE.outputters.debug = {
     y = SU.cast("number", y)
     width = SU.cast("number", width)
     height = SU.cast("number", height)
-    writeline("Draw image", src, string.format("%.4f %.4f %.4f %.4f" , x, y, width, height))
+    writeline("Draw image", src, _round(x), _round(y), _round(width), _round(height))
   end,
 
   imageSize = function (self, src)
@@ -140,7 +144,7 @@ SILE.outputters.debug = {
     y = SU.cast("number", y)
     width = SU.cast("number", width)
     height = SU.cast("number", height)
-    writeline("Draw SVG", string.format("%.4f %.4f %.4f %.4f %s" , x, y, width, height, figure), scalefactor)
+    writeline("Draw SVG", _round(x), _round(y), _round(width), _round(height), figure, scalefactor)
   end,
 
   rule = function (self, x, y, width, depth)
@@ -155,7 +159,7 @@ SILE.outputters.debug = {
     y = SU.cast("number", y)
     width = SU.cast("number", width)
     depth = SU.cast("number", depth)
-    writeline("Draw line", string.format("%.4f %.4f %.4f %.4f", x, y, width, depth))
+    writeline("Draw line", _round(x), _round(y), _round(width), _round(depth))
   end,
 
   debugFrame = function (self, _, _)
