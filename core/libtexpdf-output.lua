@@ -109,9 +109,9 @@ SILE.outputters.libtexpdf = {
     return self:drawHbox(value, width)
   end,
 
-  _drawString = function(self, str, width)
+  _drawString = function(self, str, width, x_offset, y_offset)
     local x, y = self:getCursor()
-    pdf.setstring(x, y, str, string.len(str), self._font, width)
+    pdf.setstring(x+x_offset, y+y_offset, str, string.len(str), self._font, width)
   end,
 
   drawHbox = function (self, value, width)
@@ -131,8 +131,7 @@ SILE.outputters.libtexpdf = {
       for i = 1, #value.items do
         local item = value.items[i]
         local buf = glyph2string(item.gid)
-        self:setCursor(item.x_offset or 0, item.y_offset or 0, true)
-        self:_drawString(buf, item.glyphAdvance)
+        self:_drawString(buf, item.glyphAdvance, item.x_offset or 0, item.y_offset or 0)
         self:setCursor(item.width, 0, true)
       end
     else
@@ -141,7 +140,7 @@ SILE.outputters.libtexpdf = {
         buf[i] = glyph2string(value.glyphString[i])
       end
       buf = table.concat(buf, "")
-      self:_drawString(buf, width)
+      self:_drawString(buf, width, 0, 0)
     end
   end,
 
@@ -252,7 +251,7 @@ SILE.outputters.libtexpdf = {
     buf = table.concat(buf, "")
     self:_withDebugFont(function ()
       self:setCursor(frame:left():tonumber() - _dl/2, frame:top():tonumber() + _dl/2)
-      self:_drawString(buf, 0)
+      self:_drawString(buf, 0, 0, 0)
     end)
     self:popColor()
   end,
