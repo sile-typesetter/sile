@@ -3,17 +3,17 @@ Begin page
 Mx 	14.8819
 My 	33.9139
 Set font 	Libertinus Serif;16;400;;normal;;LTR
-T	41 70 77 77 80	(Hello)
+T	41 70 77 77 80 w=35.3440	(Hello)
 Mx 	55.0481
-T	52 42 45 38	(SILE)
+T	52 42 45 38 w=29.8720	(SILE)
 Mx 	84.9201
-T	2	(!)
+T	2 w=4.6080	(!)
 Mx 	94.3502
 Set font 	Noto Sans Kannada;16;400;;normal;;LTR
-T	39 44 163 57 97 46	(ನಮಸ್ಕಾರ)
+T	39 44 163 57 97 46 w=61.6094	(ನಮಸ್ಕಾರ)
 Mx 	161.5164
-T	422	(:)
+T	422 w=4.2891	(:)
 Mx 	165.8054
-T	405	())
+T	405 w=6.1250	())
 End page
 Finish
