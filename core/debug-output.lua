@@ -97,13 +97,26 @@ SILE.outputters.debug = {
     return self:drawHbox(value, width)
   end,
 
-  drawHbox = function (self, value, _)
+  drawHbox = function (self, value, width)
     _deprecationCheck(self)
-    local buf = {}
-    for i=1, #(value.glyphString) do
-      buf[#buf+1] = value.glyphString[i]
+    if not value.glyphString then return end
+    width = SU.cast("number", width)
+    local buf
+    if value.complex then
+      local cluster = {}
+      for i = 1, #value.items do
+        local item = value.items[i]
+        cluster[#cluster+1] = item.gid
+        -- For the sake of terseness we're only dumping non-zero values
+        if item.glyphAdvance ~= 0 then cluster[#cluster+1] = "a=".._round(item.glyphAdvance) end
+        if item.x_offset then cluster[#cluster+1] = "x=".._round(item.x_offset) end
+        if item.y_offset then cluster[#cluster+1] = "y=".._round(item.y_offset) end
+        self:setCursor(item.width, 0, true)
+      end
+      buf = table.concat(cluster, " ")
+    else
+      buf = table.concat(value.glyphString, " ") .. " w=" .. _round(width)
     end
-    buf = table.concat(buf, " ")
     writeline("T", buf, "("..value.text..")")
   end,
 

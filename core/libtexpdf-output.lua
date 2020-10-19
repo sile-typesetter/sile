@@ -129,10 +129,11 @@ SILE.outputters.libtexpdf = {
     -- is actually the shaped x_advance).
     if value.complex then
       for i = 1, #value.items do
-        local buf = glyph2string(value.items[i].gid)
-        self:setCursor(value.items[i].x_offset or 0, value.items[i].y_offset or 0, true)
-        self:_drawString(buf, value.items[i].glyphAdvance)
-        self:setCursor(value.items[i].width, 0, true)
+        local item = value.items[i]
+        local buf = glyph2string(item.gid)
+        self:setCursor(item.x_offset or 0, item.y_offset or 0, true)
+        self:_drawString(buf, item.glyphAdvance)
+        self:setCursor(item.width, 0, true)
       end
     else
       local buf = {}
