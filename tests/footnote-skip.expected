@@ -681,13 +681,13 @@ Set font 	Gentium Plus;9;400;;normal;;LTR
 T	20	(1)
 Mx 	39.0439
 T	17	(.)
-Draw line	59.1050 412.0404 2.0000 19.8242
+Draw line	59.1050	412.0404	2.0000	19.8242
 Mx 	34.8208
 My 	495.6888
 T	21	(2)
 Mx 	39.0439
 T	17	(.)
-Draw line	59.1050 455.8646 2.0000 39.8242
+Draw line	59.1050	455.8646	2.0000	39.8242
 Mx 	195.4611
 My 	519.8019
 Set font 	Gentium Plus;10;400;;normal;;LTR

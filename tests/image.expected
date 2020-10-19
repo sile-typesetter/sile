@@ -6,7 +6,7 @@ Set font 	Gentium Plus;10;400;;normal;;LTR
 T	50 81 72	(One)
 Mx 	59.7837
 T	87 90 82	(two)
-Draw image	documentation/fig1.png	77.9856 29.7638 50.0000 69.2429
+Draw image	documentation/fig1.png	77.9856	29.7638	50.0000	69.2429
 Mx 	130.6552
 T	87 75 85 72 72	(three)
 Mx 	40.9764
@@ -14,7 +14,7 @@ My 	162.1532
 T	50 81 72	(One)
 Mx 	59.7852
 T	87 90 82	(two)
-Draw image	documentation/fig1.png	77.9886 112.1532 36.1048 50.0000
+Draw image	documentation/fig1.png	77.9886	112.1532	36.1048	50.0000
 Mx 	116.7646
 T	87 75 85 72 72	(three)
 Mx 	207.4176
