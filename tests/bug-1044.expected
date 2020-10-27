@@ -3,8 +3,10 @@ Begin page
 Mx 	14.8819
 My 	27.9564
 Set font 	Libertinus Serif;10;400;;normal;;LTR
-T	53 66	(Ta)
+Mx 	5.4800
+Mx 	4.5700
+T	53 a=5.9700 66 a=4.5700	(Ta)
 Mx 	27.9627
-T	80 71	(of)
+T	80 71 w=8.1400	(of)
 End page
 Finish
