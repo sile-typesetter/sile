@@ -22,6 +22,16 @@ local _deprecationCheck = function (caller)
 end
 
 local function _round (input)
+  -- LuaJIT 2.1 betas (and inheritors such as OpenResty and Moonjit) are biased
+  -- towards rounding 0.5 up to 1, all other Lua interpreters are biased
+  -- towards rounding such floating point numbers down.  This hack shaves off
+  -- just enough to fix the bias so our test suite works across interpreters.
+  -- Note that even a true rounding function here will fail because the bias is
+  -- inherent to the floating point type. Also note we are erroring in favor of
+  -- the *less* common option beacuse the LuaJIT VMS are hopelessly broken
+  -- whereas normal LUA VMs can be cooerced.
+  if input > 0 then input = input + .00000000000001 end
+  if input < 0 then input = input - .00000000000001 end
   return string.format("%.4f", input)
 end
 
