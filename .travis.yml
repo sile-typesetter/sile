@@ -1,14 +1,20 @@
+os: linux
+dist: bionic
 language: c
-sudo: false
 branches:
+  only:
+    - master
+    - /^v\d+\.\d+\.\d+(-\S*)?$/
   except:
-    - appveyor
+   - appveyor
+   - /^untagged/
 compiler:
  - gcc
 addons:
  apt:
   packages:
    - pkg-config
+   - bsdtar
    - libgraphite2-dev
    - libicu-dev
    - libreadline-dev
@@ -18,73 +24,64 @@ addons:
    - libpng-dev
    - libexpat1-dev
    - libipc-run-perl
+   - poppler-utils
 env:
   global:
-   - LUAROCKS=2.4.2
-   - HARFBUZZ_BASE=harfbuzz-1.7.1
+   - LUAROCKS=3.3.1
    - GRAPHITE=true
    - COVERAGE=false
-  matrix:
-   - LUA=lua5.3 COVERAGE=true
-   #- LUA=lua5.3 GRAPHITE=false
-   - LUA=lua5.2
-   #- LUA=lua5.2 GRAPHITE=false
-   - LUA=lua5.1
-   #- LUA=lua5.1 GRAPHITE=false
+   - LUAJIT=false
+   - MAKEFLAGS="--jobs=4 --output-sync"
+  jobs:
+   - LUAVER=5.4.0 HARFBUZZ=2.7.0
+   - LUAVER=5.3.5 HARFBUZZ=2.7.0
+   - LUAVER=5.3.5 HARFBUZZ=1.4.2
+   - LUAVER=5.3.5 HARFBUZZ=1.1.3
+   - LUAVER=5.2.4 HARFBUZZ=2.7.0
+   - LUAVER=5.1.5 HARFBUZZ=2.7.0
+   - LUAJIT=true LUAVER=2.0.5 HARFBUZZ=2.7.0
+   - LUAJIT=true LUAVER=2.1.0-beta3 HARFBUZZ=2.7.0
+   - LUAVER=5.3.5 HARFBUZZ=2.7.0 COVERAGE=true
+jobs:
+  allow_failures:
+   - compiler: gcc
+     env: LUAVER=5.3.5 HARFBUZZ=2.7.0 COVERAGE=true
+  fast_finish: true
 cache:
+  apt: true
   directories:
-  - $HOME/.fonts
-  - $HOME/local
-  # Cache object files etc. to speed up build
-  - $TRAVIS_BUILD_DIR/libtexpdf
+   - $HOME/local
+   - $HOME/.lua
+   - $HOME/.luarocks
+   - $HOME/.setup_lua
+   - $TRAVIS_BUILD_DIR/.fonts
+   - $TRAVIS_BUILD_DIR/.sources
+   - $TRAVIS_BUILD_DIR/lua_modules
+   - $TRAVIS_BUILD_DIR/libtexpdf
 before_install:
- - source .travis/setenv_lua.sh
- - export LD_LIBRARY_PATH=$HOME/local/lib:$LD_LIBRARY_PATH
- - export LIBRARY_PATH=$HOME/local/lib:$LD_LIBRARY_PATH
- - export LD_RUN_PATH=$HOME/local/lib:$LD_RUN_PATH
+ - export PATH=.travis:$HOME/.lua:$PATH:$HOME/.local/bin:$HOME/.luarocks/bin
+ - export LUA_HOME_DIR=$HOME/local/lua
+ - export LR_HOME_DIR=$HOME/.luarocks
+ - fold_unless_fail "Setup Lua & LuaRocks" "lua" setup_lua.sh $LUAVER $LUAROCKS
+ - eval $(luarocks --tree lua_modules --local path)
+ - export LD_LIBRARY_PATH=$HOME/local/lib:$LUA_HOME_DIR/lib:$LD_LIBRARY_PATH
+ - export LIBRARY_PATH=$HOME/local/lib:$LUA_HOME_DIR/lib:$LD_LIBRARY_PATH
+ - export LD_RUN_PATH=$HOME/local/lib:$LUA_HOME_DIR/lib:$LD_RUN_PATH
  - export PKG_CONFIG_PATH=$HOME/local/lib/pkgconfig:$PKG_CONFIG_PATH
- - if [ ! -f ~/.fonts/NotoSansMalayalam-Regular.ttf ]; then
-      pushd ~/.fonts/ ;
-      wget http://dealer.simon-cozens.org/~simon/tmp/silefonts.tar.gz ;
-      tar xvf silefonts.tar.gz ;
-      popd ;
-   fi
- - if [ ! -f ~/local/include/harfbuzz/hb.h ]; then
-      mkdir ~/local/ || true;
-      mkdir ~/builddeps / || true;
-      pushd ~/builddeps/ ;
-      wget http://www.freedesktop.org/software/harfbuzz/release/$HARFBUZZ_BASE.tar.bz2 ;
-      tar xfj $HARFBUZZ_BASE.tar.bz2 ;
-      cd $HARFBUZZ_BASE ;
-      ./configure --with$($GRAPHITE || echo 'out')-graphite2 --prefix=$HOME/local/ ;
-      make ;
-      make install ;
-      popd ;
-   fi
- - export LUA_HOME_DIR=$TRAVIS_BUILD_DIR/install/lua
- - export LUA=~/.lua/lua
- - export LUA_INCLUDE=-I$LUA_HOME_DIR/include
- - export LD_LIBRARY_PATH=$LUA_HOME_DIR/lib:$LD_LIBRARY_PATH
- - export LIBRARY_PATH=$LUA_HOME_DIR/lib:$LD_LIBRARY_PATH
- - export LD_RUN_PATH=$LUA_HOME_DIR/lib:$LD_RUN_PATH
- - export PATH=.travis:$PATH
+ - export LUA_INCLUDE=${LUA_INCLUDE:--I$LUA_HOME_DIR/include}
+ - fold_unless_fail "Setup HarfBuzz" "harfbuzz" setup_harfbuzz.sh $HARFBUZZ
 install:
- - luarocks install lpeg
- - luarocks install lua-zlib
- - luarocks install luaexpat
- - luarocks install luafilesystem
- - luarocks install luasocket
- - luarocks install luasec
- - luarocks install lua_cliargs 2.3-3
  - luarocks install busted
- - luarocks install luacov 0.8-1
- - luarocks install luacov-coveralls
+ - $COVERAGE && luarocks install cluacov || true
+ - $COVERAGE && luarocks install luacov-coveralls || true
+before_script:
+ - eval $(luarocks --tree lua_modules --local path)
 script:
- - fold_unless_fail 'Building' 'build' sh -c './bootstrap.sh && ./configure && make'
- - fold_unless_fail 'busted' 'busted'  busted --cpath="core/?.so" -m './lua-libraries/?.lua;./lua-libraries/?/init.lua' tests
- - fold_unless_fail 'Run regression tests' 'regression' make test
- - fold_unless_fail 'Compile documentation and examples' 'compile_docs' make docs
- - fold_unless_fail 'Versions' 'versions' ./sile --debug=fonts,versions tests/bug-117.sil
+ - fold_unless_fail 'Bootstrap' 'build' ./bootstrap.sh
+ - fold_unless_fail 'Configure' 'build' ./configure $($LUAJIT && echo --with-luajit)
+ - fold_unless_fail 'Make' 'build' make
+ - $COVERAGE || fold_unless_fail 'Run busted tests' 'test' make busted
+ - $COVERAGE || fold_unless_fail 'Run regression tests' 'test' make regressions
 after_success:
- - $COVERAGE && travis_wait make coverage
- - $COVERAGE && travis_wait luacov-coveralls -e lua.libraries
+ - $COVERAGE && travis_wait 30 make coverage || true
+ - $COVERAGE && luacov-coveralls -e lua.libraries -e lua.modules -e usr || true

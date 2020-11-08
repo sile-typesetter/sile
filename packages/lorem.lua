@@ -64,29 +64,41 @@ ipsum dolor sit amet
 
 ]]
 
-local _, nwords = lorem:gsub("%S+","")
+local _, nwords = lorem:gsub("%S+", "")
 local floor = math.floor
 
-SILE.registerCommand("lorem", function(options, content)
+SILE.registerCommand("lorem", function (options, _)
   local words = tonumber(options.words) or 50
   local counter = options.counter or false
   local times = floor(words/nwords)
   words = words - times*nwords
-  local i, j = 0, 0
-  for n = 1, words do
-    i, j = lorem:find("%S+", j+1)
+  local pos = 0
+  for _ = 1, words do
+    _, pos = lorem:find("%S+", pos + 1)
   end
-  local s = string.rep(lorem,times)..lorem:sub(1,j)
+  local text = string.rep(lorem, times) .. lorem:sub(1, pos)
   if counter then
     local c = 0
-    s = string.gsub(s, "(%s+)", function(x)
-      c=c+1
-      return " "..c.." "
+    text = string.gsub(text, "(%s+)", function (_)
+      c = c + 1
+      return " " .. c .. " "
     end)
   end
-  SILE.settings.temporarily(function()
-    SILE.settings.set("document.language","la")
-    SILE.typesetter:typeset(s)
-    SILE.typesetter:leaveHmode()
+  SILE.settings.temporarily(function ()
+    SILE.settings.set("document.language", "la")
+    SILE.typesetter:typeset(text)
   end)
 end)
+
+return {
+  documentation = [[
+\begin{document}
+Sometimes you just need some dummy text. The command \code{\\lorem}
+produces fifty words of “lorem ipsum”; you can choose a different
+number of words with the \code{[words=...]} parameter. Here’s
+\code{\\lorem[words=20]}:
+
+\examplefont{\lorem[words=20]}
+\end{document}
+]]
+}

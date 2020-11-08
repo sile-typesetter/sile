@@ -1,6 +1,8 @@
 \begin{document}
-\script[src=packages/linespacing]%
-\script[src=packages/frametricks]\showframe%
+\nofolios
+\font[family=Libertinus Serif,size=11pt]
+\script[src=packages/linespacing]
+\script[src=packages/frametricks]\showframe
 \set[parameter=linespacing.minimumfirstlineposition,value=50pt]
 First baseline should be positioned 50 points from the top of the frame.
 

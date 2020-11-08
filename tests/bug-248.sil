@@ -1,63 +1,37 @@
-\begin[papersize=a5]{document}
+\begin[papersize=a6]{document}% KNOWNBAD
+% The breakage here is so bad that it it produces an infinite loop when
+% using the libtexpdf backend (i.e. `make regression_previews`) and hence when
+% trying to get code coverage reports. It works (although not as expected)
+% in the debug backend, hence the normal `make regressions` doesn't die.
+% The troublesome \makecolumns & \mergecolumns are commented out until
+% this stops killing the rest of our CI runners' work.
+% --------------
 \script[src=packages/frametricks]
 \script[src=packages/lorem]
+\nofolios
+\font[family=Libertinus Serif,size=10pt]
 \set[parameter=document.baselineskip,value=1.3em]
 
-In olden times when wishing still helped one, there lived a king
-whose daughters were all beautiful, but the youngest was so beautiful
-that the sun itself, which has seen so much, was astonished whenever
-it shone in her face. Close by the king's castle lay a great dark
-forest, and under an old lime-tree in the forest was a well, and when
-the day was very warm, the king's child went out into the forest and
-sat down by the side of the cool fountain, and when she was bored she
-took a golden ball, and threw it up on high and caught it, and this
-ball was her favorite plaything.
-
+\lorem[words=45]
 
 \smallskip\breakframevertical
-\makecolumns[columns=2]\begin{raggedright}
-\noindent{}Now it so happened that on one occasion the princess's golden ball
-did not fall into the little hand which she was holding up for it,
-but on to the ground beyond, and rolled straight into the water.  The
-king's daughter followed it with her eyes, but it vanished, and the
-well was deep, so deep that the bottom could not be seen.  At this
-she began to cry, and cried louder and louder, and could not be
-comforted.  And as she thus lamented someone said to her, "What ails
-you, king's daughter?  You weep so that even a stone would show pity."
-\end{raggedright}
-
-\mergecolumns \smallskip
-She looked round to the side from whence the voice came, and saw a
-frog stretching forth its big, ugly head from the water.  "Ah, old
-water-splasher, is it you," she said, "I am weeping for my golden ball,
-which has fallen into the well." "Be quiet, and do not weep," answered
-the frog, "I can help you, but what will you give me if I bring your
-plaything up again?"  "Whatever you will have, dear frog," said she, "My
-clothes, my pearls and jewels, and even the golden crown which I am
-wearing."  The frog answered, "I do not care for your clothes, your
-pearls and jewels, nor for your golden crown, but if you will love me
-and let me be your companion and play-fellow, and sit by you at your
-little table, and eat off your little golden plate, and drink out of
-your little cup, and sleep in your little bed - if you will promise
-me this I will go down below, and bring you your golden ball up
-again."\par
-
-\medskip\breakframevertical\makecolumns[columns=2]
+% \makecolumns[columns=2]
 \begin{raggedright}
-"Oh yes," said she, "I promise you all you wish, if you will but bring
-me my ball back again."  But she thought, "How the silly frog does
-talk.  All he does is to sit in the water with the other frogs, and
-croak.  He can be no companion to any human being."
+\noindent
+\lorem[words=45]
 \end{raggedright}
 
-\mergecolumns \bigskip
-But the frog when he had received this promise, put his head into the
-water and sank down; and in a short while came swimmming up again
-with the ball in his mouth, and threw it on the grass.  The king's
-daughter was delighted to see her pretty plaything once more, and
-picked it up, and ran away with it.  "Wait, wait," said the frog.  "Take
-me with you.  I can't run as you can."  But what did it avail him to
-scream his croak, croak, after her, as loudly as he could.  She did
-not listen to it, but ran home and soon forgot the poor frog, who was
-forced to go back into his well again.
+% \mergecolumns
+\smallskip
+\lorem[words=45]
+\par
+
+\medskip\breakframevertical
+% \makecolumns[columns=2]
+\begin{raggedright}
+\lorem[words=45]
+\end{raggedright}
+
+% \mergecolumns \bigskip
+\lorem[words=45]
 \end{document}

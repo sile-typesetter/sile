@@ -1,6 +1,0 @@
-\begin[papersize=a5]{document}
-\script[src=packages/bidi]%
-\thisframeLTR%
-\font[family=Kohinoor Devanagari,size=10pt,language=hi]
-यह दाग़ दाग़ उजाला
-\end{document}

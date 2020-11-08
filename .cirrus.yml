@@ -1,0 +1,52 @@
+freebsd_instance:
+  image_family: freebsd-12-1
+
+task:
+  name: Cirrus CI (FreeBSD)
+  env:
+    MAKEFLAGS: -j2 -Otarget
+    CFLAGS: -I/usr/local/include
+    LDFLAGS: -L/usr/local/lib
+  fonts_cache:
+    folder: .fonts
+    reupload_on_changes: false
+    fingerprint_script: cat Makefile-fonts
+  sources_cache:
+    folder: .sources
+    reupload_on_changes: false
+    fingerprint_script: cat Makefile-fonts
+  luarocks_cache:
+    folder: /usr/local/lib/luarocks
+    reupload_on_changes: false
+    fingerprint_script: cat sile-dev-1.rockspec
+  luarocks_lua_cache:
+    folder: /usr/local/share/lua
+    reupload_on_changes: false
+    fingerprint_script: cat sile-dev-1.rockspec
+  luarocks_lib_cache:
+    folder: /usr/local/lib/lua
+    reupload_on_changes: false
+    fingerprint_script: cat sile-dev-1.rockspec
+  dependencies_script:
+    - pkg install -y git autoconf automake libtool pkgconf harfbuzz lua52 lua52-luarocks lua52-luafilesystem lua52-lpeg lua52-lzlib fontconfig png gmake bash lua52-luasec lua52-luasocket lua52-luaexpat
+    - luarocks52 install cassowary
+    - luarocks52 install compat53
+    - luarocks52 install cosmo
+    - luarocks52 install linenoise
+    - luarocks52 install lua-zlib
+    - luarocks52 install lua_cliargs
+    - luarocks52 install luaepnf
+    - luarocks52 install luarepl
+    - luarocks52 install penlight
+    - luarocks52 install stdlib
+    - luarocks52 install vstruct
+  bootstrap_script:
+    - git fetch --prune --tags ||:
+    - ./bootstrap.sh
+  configure_script:
+    - ./configure --with-system-luarocks
+  make_script:
+    - gmake all
+    - gmake install
+  regressions_script:
+    - gmake regressions

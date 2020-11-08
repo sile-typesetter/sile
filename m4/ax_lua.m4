@@ -1,187 +1,3 @@
-# ===========================================================================
-#          http://www.gnu.org/software/autoconf-archive/ax_lua.html
-# ===========================================================================
-#
-# SYNOPSIS
-#
-#   AX_PROG_LUA[([MINIMUM-VERSION], [TOO-BIG-VERSION], [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])]
-#   AX_LUA_HEADERS[([ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])]
-#   AX_LUA_LIBS[([ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])]
-#   AX_LUA_READLINE[([ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])]
-#
-# DESCRIPTION
-#
-#   Detect a Lua interpreter, optionally specifying a minimum and maximum
-#   version number. Set up important Lua paths, such as the directories in
-#   which to install scripts and modules (shared libraries).
-#
-#   Also detect Lua headers and libraries. The Lua version contained in the
-#   header is checked to match the Lua interpreter version exactly. When
-#   searching for Lua libraries, the version number is used as a suffix.
-#   This is done with the goal of supporting multiple Lua installs (5.1 and
-#   5.2 side-by-side).
-#
-#   A note on compatibility with previous versions: This file has been
-#   mostly rewritten for serial 18. Most developers should be able to use
-#   these macros without needing to modify configure.ac. Care has been taken
-#   to preserve each macro's behavior, but there are some differences:
-#
-#   1) AX_WITH_LUA is deprecated; it now expands to the exact same thing as
-#   AX_PROG_LUA with no arguments.
-#
-#   2) AX_LUA_HEADERS now checks that the version number defined in lua.h
-#   matches the interpreter version. AX_LUA_HEADERS_VERSION is therefore
-#   unnecessary, so it is deprecated and does not expand to anything.
-#
-#   3) The configure flag --with-lua-suffix no longer exists; the user
-#   should instead specify the LUA precious variable on the command line.
-#   See the AX_PROG_LUA description for details.
-#
-#   Please read the macro descriptions below for more information.
-#
-#   This file was inspired by Andrew Dalke's and James Henstridge's
-#   python.m4 and Tom Payne's, Matthieu Moy's, and Reuben Thomas's ax_lua.m4
-#   (serial 17). Basically, this file is a mash-up of those two files. I
-#   like to think it combines the best of the two!
-#
-#   AX_PROG_LUA: Search for the Lua interpreter, and set up important Lua
-#   paths. Adds precious variable LUA, which may contain the path of the Lua
-#   interpreter. If LUA is blank, the user's path is searched for an
-#   suitable interpreter.
-#
-#   If MINIMUM-VERSION is supplied, then only Lua interpreters with a
-#   version number greater or equal to MINIMUM-VERSION will be accepted. If
-#   TOO-BIG- VERSION is also supplied, then only Lua interpreters with a
-#   version number greater or equal to MINIMUM-VERSION and less than
-#   TOO-BIG-VERSION will be accepted.
-#
-#   The Lua version number, LUA_VERSION, is found from the interpreter, and
-#   substituted. LUA_PLATFORM is also found, but not currently supported (no
-#   standard representation).
-#
-#   Finally, the macro finds four paths:
-#
-#     luadir             Directory to install Lua scripts.
-#     pkgluadir          $luadir/$PACKAGE
-#     luaexecdir         Directory to install Lua modules.
-#     pkgluaexecdir      $luaexecdir/$PACKAGE
-#
-#   These paths a found based on $prefix, $exec_prefix, Lua's package.path,
-#   and package.cpath. The first path of package.path beginning with $prefix
-#   is selected as luadir. The first path of package.cpath beginning with
-#   $exec_prefix is used as luaexecdir. This should work on all reasonable
-#   Lua installations. If a path cannot be determined, a default path is
-#   used. Of course, the user can override these later when invoking make.
-#
-#     luadir             Default: $prefix/share/lua/$LUA_VERSION
-#     luaexecdir         Default: $exec_prefix/lib/lua/$LUA_VERSION
-#
-#   These directories can be used by Automake as install destinations. The
-#   variable name minus 'dir' needs to be used as a prefix to the
-#   appropriate Automake primary, e.g. lua_SCRIPS or luaexec_LIBRARIES.
-#
-#   If an acceptable Lua interpreter is found, then ACTION-IF-FOUND is
-#   performed, otherwise ACTION-IF-NOT-FOUND is preformed. If ACTION-IF-NOT-
-#   FOUND is blank, then it will default to printing an error. To prevent
-#   the default behavior, give ':' as an action.
-#
-#   AX_LUA_HEADERS: Search for Lua headers. Requires that AX_PROG_LUA be
-#   expanded before this macro. Adds precious variable LUA_INCLUDE, which
-#   may contain Lua specific include flags, e.g. -I/usr/include/lua5.1. If
-#   LUA_INCLUDE is blank, then this macro will attempt to find suitable
-#   flags.
-#
-#   LUA_INCLUDE can be used by Automake to compile Lua modules or
-#   executables with embedded interpreters. The *_CPPFLAGS variables should
-#   be used for this purpose, e.g. myprog_CPPFLAGS = $(LUA_INCLUDE).
-#
-#   This macro searches for the header lua.h (and others). The search is
-#   performed with a combination of CPPFLAGS, CPATH, etc, and LUA_INCLUDE.
-#   If the search is unsuccessful, then some common directories are tried.
-#   If the headers are then found, then LUA_INCLUDE is set accordingly.
-#
-#   The paths automatically searched are:
-#
-#     * /usr/include/luaX.Y
-#     * /usr/include/lua/X.Y
-#     * /usr/include/luaXY
-#     * /usr/local/include/luaX.Y
-#     * /usr/local/include/lua-X.Y
-#     * /usr/local/include/lua/X.Y
-#     * /usr/local/include/luaXY
-#
-#   (Where X.Y is the Lua version number, e.g. 5.1.)
-#
-#   The Lua version number found in the headers is always checked to match
-#   the Lua interpreter's version number. Lua headers with mismatched
-#   version numbers are not accepted.
-#
-#   If headers are found, then ACTION-IF-FOUND is performed, otherwise
-#   ACTION-IF-NOT-FOUND is performed. If ACTION-IF-NOT-FOUND is blank, then
-#   it will default to printing an error. To prevent the default behavior,
-#   set the action to ':'.
-#
-#   AX_LUA_LIBS: Search for Lua libraries. Requires that AX_PROG_LUA be
-#   expanded before this macro. Adds precious variable LUA_LIB, which may
-#   contain Lua specific linker flags, e.g. -llua5.1. If LUA_LIB is blank,
-#   then this macro will attempt to find suitable flags.
-#
-#   LUA_LIB can be used by Automake to link Lua modules or executables with
-#   embedded interpreters. The *_LIBADD and *_LDADD variables should be used
-#   for this purpose, e.g. mymod_LIBADD = $(LUA_LIB).
-#
-#   This macro searches for the Lua library. More technically, it searches
-#   for a library containing the function lua_load. The search is performed
-#   with a combination of LIBS, LIBRARY_PATH, and LUA_LIB.
-#
-#   If the search determines that some linker flags are missing, then those
-#   flags will be added to LUA_LIB.
-#
-#   If libraries are found, then ACTION-IF-FOUND is performed, otherwise
-#   ACTION-IF-NOT-FOUND is performed. If ACTION-IF-NOT-FOUND is blank, then
-#   it will default to printing an error. To prevent the default behavior,
-#   set the action to ':'.
-#
-#   AX_LUA_READLINE: Search for readline headers and libraries. Requires the
-#   AX_LIB_READLINE macro, which is provided by ax_lib_readline.m4 from the
-#   Autoconf Archive.
-#
-#   If a readline compatible library is found, then ACTION-IF-FOUND is
-#   performed, otherwise ACTION-IF-NOT-FOUND is performed.
-#
-# LICENSE
-#
-#   Copyright (c) 2014 Reuben Thomas <rrt@sc3d.org>
-#   Copyright (c) 2013 Tim Perkins <tprk77@gmail.com>
-#
-#   This program is free software: you can redistribute it and/or modify it
-#   under the terms of the GNU General Public License as published by the
-#   Free Software Foundation, either version 3 of the License, or (at your
-#   option) any later version.
-#
-#   This program is distributed in the hope that it will be useful, but
-#   WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-#   Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License along
-#   with this program. If not, see <http://www.gnu.org/licenses/>.
-#
-#   As a special exception, the respective Autoconf Macro's copyright owner
-#   gives unlimited permission to copy, distribute and modify the configure
-#   scripts that are the output of Autoconf when processing the Macro. You
-#   need not follow the terms of the GNU General Public License when using
-#   or distributing such scripts, even though portions of the text of the
-#   Macro appear in them. The GNU General Public License (GPL) does govern
-#   all other use of the material that constitutes the Autoconf Macro.
-#
-#   This special exception to the GPL applies to versions of the Autoconf
-#   Macro released by the Autoconf Archive. When you make and distribute a
-#   modified version of the Autoconf Macro, you may extend this special
-#   exception to the GPL to apply to your modified version as well.
-
-#serial 28
-
 dnl =========================================================================
 dnl AX_PROG_LUA([MINIMUM-VERSION], [TOO-BIG-VERSION],
 dnl             [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])
@@ -192,13 +8,14 @@ AC_DEFUN([AX_PROG_LUA],
   AC_ARG_VAR([LUA], [The Lua interpreter, e.g. /usr/bin/lua5.1])
 
   dnl Find a Lua interpreter.
-  m4_define_default([_AX_LUA_INTERPRETER_LIST],
-    [lua lua5.2 lua52 lua5.1 lua51 lua50])
+  AM_COND_IF([LUAJIT],
+	  [_ax_lua_interpreter_list="luajit luajit-2.1.0-beta3 luajit-2.0.5 luajit-2.0.4 luajit-2.0.3"],
+	  [_ax_lua_interpreter_list="lua lua5.4 lua54 lua5.3 lua53 lua5.2 lua52 lua5.1 lua51 lua5.0 lua50"])
 
   m4_if([$1], [],
   [ dnl No version check is needed. Find any Lua interpreter.
     AS_IF([test "x$LUA" = 'x'],
-      [AC_PATH_PROGS([LUA], [_AX_LUA_INTERPRETER_LIST], [:])])
+      [AC_PATH_PROGS([LUA], [_ax_lua_interpreter_list], [:])])
     ax_display_LUA='lua'
 
     dnl At least check if this is a Lua interpreter.
@@ -235,7 +52,7 @@ AC_DEFUN([AX_PROG_LUA],
         [_ax_check_text="for a Lua interpreter with version >= $1, < $2"])
       AC_CACHE_CHECK([$_ax_check_text],
         [ax_cv_pathless_LUA],
-        [ for ax_cv_pathless_LUA in _AX_LUA_INTERPRETER_LIST none; do
+        [ for ax_cv_pathless_LUA in $_ax_lua_interpreter_list none; do
             test "x$ax_cv_pathless_LUA" = 'xnone' && break
             _AX_LUA_CHK_IS_INTRP([$ax_cv_pathless_LUA], [], [continue])
             _AX_LUA_CHK_VER([$ax_cv_pathless_LUA], [$1], [$2], [break])
@@ -254,12 +71,21 @@ AC_DEFUN([AX_PROG_LUA],
     m4_default([$4], [AC_MSG_ERROR([cannot find suitable Lua interpreter])])
   ],
   [ dnl Query Lua for its version number.
-    AC_CACHE_CHECK([for $ax_display_LUA version], [ax_cv_lua_version],
-      [ ax_cv_lua_version=`$LUA -e 'print(_VERSION:match "(%d+%.%d+)")'` ])
-    AS_IF([test "x$ax_cv_lua_version" = 'x'],
-      [AC_MSG_ERROR([invalid Lua version number])])
-    AC_SUBST([LUA_VERSION], [$ax_cv_lua_version])
-    AC_SUBST([LUA_SHORT_VERSION], [`echo "$LUA_VERSION" | sed 's|\.||'`])
+	AC_CACHE_CHECK([for $ax_display_LUA version], [ax_cv_lua_version],
+		[ ax_cv_lua_version=`$LUA -e 'print(_VERSION:match "(%d+%.%d+)")'` ])
+	AS_IF([test "x$ax_cv_lua_version" = 'x'],
+		[AC_MSG_ERROR([invalid Lua version number])])
+	AC_SUBST([LUA_VERSION], [$ax_cv_lua_version])
+	AC_SUBST([LUA_SHORT_VERSION], [`echo "$LUA_VERSION" | sed 's|\.||'`])
+
+	AM_COND_IF([LUAJIT], [
+		AC_CACHE_CHECK([for $ax_display_LUA jit version], [ax_cv_luajit_version],
+			[ ax_cv_luajit_version=`$LUA -e 'print(jit and jit.version:match "(%d+%..+)")'` ])
+		AS_IF([test "x$ax_cv_luajit_version" = 'x'],
+			[AC_MSG_ERROR([invalid Lua version number])])
+		AC_SUBST([LUAJIT_VERSION], [$ax_cv_luajit_version])
+		AC_SUBST([LUAJIT_SHORT_VERSION], [`echo "$LUAJIT_VERSION" | sed 's|\.|§|;s|\..*||;s|§|.|'`])
+	])
 
     dnl The following check is not supported:
     dnl At times (like when building shared libraries) you may want to know
@@ -367,6 +193,17 @@ AC_DEFUN([_AX_LUA_CHK_VER],
     [$4], [$5])
 ])
 
+AC_DEFUN([_AX_LUAJIT_CHK_VER],
+[
+  AS_IF([$1 2>/dev/null -e '
+		function norm (v)
+		  i,j=v:match "(%d+)%.(%d+)" if i then return 100 * i + j end
+		end
+		v, toobig=norm (jit.version), norm "$3" or math.huge
+		os.exit ((v >= norm ("$2") and v < toobig) and 0 or 1)'],
+	[$4], [$5])
+])
+
 
 dnl =========================================================================
 dnl _AX_LUA_FND_PRFX_PTH(PROG, PREFIX, LUA-PATH-VARIABLE)
@@ -407,35 +244,32 @@ AC_DEFUN([AX_LUA_HEADERS],
   dnl Make LUA_INCLUDE a precious variable.
   AC_ARG_VAR([LUA_INCLUDE], [The Lua includes, e.g. -I/usr/include/lua5.1])
 
-  dnl Some default directories to search.
-  LUA_SHORT_VERSION=`echo "$LUA_VERSION" | sed 's|\.||'`
-  m4_define_default([_AX_LUA_INCLUDE_LIST],
-    [ /usr/include/lua$LUA_VERSION \
-      /usr/include/lua/$LUA_VERSION \
-      /usr/include/lua$LUA_SHORT_VERSION \
-      /usr/local/include/lua$LUA_VERSION \
-      /usr/local/include/lua-$LUA_VERSION \
-      /usr/local/include/lua/$LUA_VERSION \
-      /usr/local/include/lua$LUA_SHORT_VERSION \
-    ])
+  dnl  Some default directories to search.
+  AM_COND_IF([LUAJIT],
+	  [_ax_lua_include_list="/usr/include/luajit-$LUAJIT_VERSION /usr/include/luajit-$LUAJIT_SHORT_VERSION /usr/local/include/luajit-$LUAJIT_VERSION /usr/local/include/luajit-$LUAJIT_SHORT_VERSION"],
+	  [_ax_lua_include_list="/usr/include/lua$LUA_VERSION /usr/include/lua/$LUA_VERSION /usr/include/lua$LUA_SHORT_VERSION /usr/local/include/lua$LUA_VERSION /usr/local/include/lua-$LUA_VERSION /usr/local/include/lua/$LUA_VERSION /usr/local/include/lua$LUA_SHORT_VERSION"])
 
   dnl Try to find the headers.
   _ax_lua_saved_cppflags=$CPPFLAGS
   CPPFLAGS="$CPPFLAGS $LUA_INCLUDE"
   AC_CHECK_HEADERS([lua.h lualib.h lauxlib.h luaconf.h])
+  AM_COND_IF([LUAJIT], [AC_CHECK_HEADERS([luajit.h])])
   CPPFLAGS=$_ax_lua_saved_cppflags
 
   dnl Try some other directories if LUA_INCLUDE was not set.
   AS_IF([test "x$LUA_INCLUDE" = 'x' &&
-         test "x$ac_cv_header_lua_h" != 'xyes'],
+		 test "x$ac_cv_header_lua_h" != "xyes" ||
+		 test "x$with_luajit" = "xyes" &&
+		 test "x$ac_cv_header_luajit_h" != 'xyes'],
     [ dnl Try some common include paths.
-      for _ax_include_path in _AX_LUA_INCLUDE_LIST; do
+	for _ax_include_path in $_ax_lua_include_list; do
         test ! -d "$_ax_include_path" && continue
 
         AC_MSG_CHECKING([for Lua headers in])
         AC_MSG_RESULT([$_ax_include_path])
 
         AS_UNSET([ac_cv_header_lua_h])
+        AS_UNSET([ac_cv_header_luajit_h])
         AS_UNSET([ac_cv_header_lualib_h])
         AS_UNSET([ac_cv_header_lauxlib_h])
         AS_UNSET([ac_cv_header_luaconf_h])
@@ -443,6 +277,7 @@ AC_DEFUN([AX_LUA_HEADERS],
         _ax_lua_saved_cppflags=$CPPFLAGS
         CPPFLAGS="$CPPFLAGS -I$_ax_include_path"
         AC_CHECK_HEADERS([lua.h lualib.h lauxlib.h luaconf.h])
+		AM_COND_IF([LUAJIT], [AC_CHECK_HEADERS([luajit.h])])
         CPPFLAGS=$_ax_lua_saved_cppflags
 
         AS_IF([test "x$ac_cv_header_lua_h" = 'xyes'],
@@ -562,16 +397,18 @@ AC_DEFUN([AX_LUA_LIBS],
     dnl Try to find the Lua libs.
     _ax_lua_saved_libs=$LIBS
     LIBS="$LIBS $LUA_LIB"
-    AC_SEARCH_LIBS([lua_load],
-                   [ lua$LUA_VERSION \
-                     lua$LUA_SHORT_VERSION \
-                     lua-$LUA_VERSION \
-                     lua-$LUA_SHORT_VERSION \
-                     lua],
-                   [_ax_found_lua_libs='yes'],
-                   [_ax_found_lua_libs='no'],
-                   [$_ax_lua_extra_libs])
-    LIBS=$_ax_lua_saved_libs
+	AM_COND_IF([LUAJIT],
+			[AC_SEARCH_LIBS([lua_load],
+				[luajit$LUA_VERSION luajit$LUA_SHORT_VERSION luajit-$LUA_VERSION luajit-$LUA_SHORT_VERSION luajit],
+				[_ax_found_lua_libs='yes'],
+				[_ax_found_lua_libs='no'],
+				[$_ax_lua_extra_libs])],
+			[AC_SEARCH_LIBS([lua_load],
+				[lua$LUA_VERSION lua$LUA_SHORT_VERSION lua-$LUA_VERSION lua-$LUA_SHORT_VERSION lua],
+				[_ax_found_lua_libs='yes'],
+				[_ax_found_lua_libs='no'],
+				[$_ax_lua_extra_libs])])
+	LIBS=$_ax_lua_saved_libs
 
     AS_IF([test "x$ac_cv_search_lua_load" != 'xno' &&
            test "x$ac_cv_search_lua_load" != 'xnone required'],
@@ -603,7 +440,7 @@ AC_DEFUN([AX_LUA_MODULE],
   AC_MSG_CHECKING([for required Lua library $1])
   AS_IF([$LUA -e 'require("$1")' 2>/dev/null], [
   AC_MSG_RESULT([found])
-  $3], 
+  $3],
   [
   AC_MSG_RESULT([not found])
   m4_default([$4], [AC_MSG_ERROR([cannot find Lua library $1 - install from luarocks package $2])])])

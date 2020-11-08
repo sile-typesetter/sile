@@ -1,0 +1,8 @@
+name: 'SILE-Typesetter'
+description: Simon’s Improved Layout Engine
+runs:
+  using: docker
+  image: Dockerfile
+branding:
+  icon: book-open
+  color: orange

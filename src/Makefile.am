@@ -1,3 +1,5 @@
+ACLOCAL_AMFLAGS = -I m4
+
 if LINKLUA
 MY_LUA_LIB=$(LUA_LIB)
 UNDEFINED=-no-undefined
@@ -9,7 +11,7 @@ endif
 if SYSTEM_LIBTEXPDF
 LIBTEXPDF_LIB=-ltexpdf
 else
-LIBTEXPDF_LIB=../libtexpdf/.libs/libtexpdf.la
+LIBTEXPDF_LIB=../libtexpdf/libtexpdf.la
 endif
 
 pkglib_LTLIBRARIES = justenoughharfbuzz.la justenoughlibtexpdf.la justenoughfontconfig.la fontmetrics.la svg.la

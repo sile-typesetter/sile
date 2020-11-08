@@ -1,13 +1,10 @@
-\begin[class=book]{document}%
+\begin[class=book,papersize=a6]{document}
+\nofolios
 \script[src=packages/frametricks]
 \begin[first-content-frame=column1]{pagetemplate}
-  \frame[id=gutter,width=3%pw]
-  \frame[id=title, top=top(content), bottom=top(title)+5%ph, left=left(content), right=right(content),next=column1]
-  \frame[id=column1,left=left(content),top=bottom(title)+2,bottom=bottom(content),width=53pt]
+  \frame[id=column1,left=left(content),top=top(content),bottom=bottom(content),width=53pt]
 \end{pagetemplate}
-\par
 \font[family=Noto Sans Malayalam,language=ml,size=12pt]
-
-\noindent{}
-സംസാരിച്ചിരിക്കുക 
+\noindent
+സംസാരിച്ചിരിക്കുക
 \end{document}

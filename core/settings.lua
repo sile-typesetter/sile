@@ -1,9 +1,3 @@
-local _type = function(v)
-  if type(v) == "number" then return math.floor(v)==v and "integer" or "number" end
-  if not(type(v) == "table") then return type(v) end
-  return v:prototype()
-end
-
 SILE.settings = {
   state = {},
   declarations = {},
@@ -11,135 +5,131 @@ SILE.settings = {
   defaults = {},
   pushState = function()
     table.insert(SILE.settings.stateQueue, SILE.settings.state)
-    SILE.settings.state = std.table.clone(SILE.settings.state)
+    SILE.settings.state = pl.tablex.copy(SILE.settings.state)
   end,
   popState = function()
     SILE.settings.state = table.remove(SILE.settings.stateQueue)
   end,
-  declare = function(t)
-    SILE.settings.declarations[t.name] = t
-    SILE.settings.set(t.name, t.default)
-    SILE.settings.defaults[t.name] = t.default
+  declare = function(spec)
+    if spec.name then
+      SU.deprecated("'name' argument of SILE.settings.declare", "'parameter' argument of SILE.settings.declare", "0.10.10", "0.11.0")
+      spec.parameter = spec.name
+      spec.name = nil
+    end
+    SILE.settings.declarations[spec.parameter] = spec
+    SILE.settings.set(spec.parameter, spec.default, true)
   end,
-  reset = function(t)
+  reset = function()
     for k,_ in pairs(SILE.settings.state) do
-      SILE.settings.set(k,SILE.settings.defaults[k])
+      SILE.settings.set(k, SILE.settings.defaults[k])
     end
   end,
-  get = function(name)
-    if not SILE.settings.declarations[name] then
-      SU.error("Undefined setting '"..name.."'")
+  get = function(parameter)
+    if not SILE.settings.declarations[parameter] then
+      SU.error("Undefined setting '"..parameter.."'")
     end
-    return SILE.settings.state[name]
+    if type(SILE.settings.state[parameter]) ~= "nil" then
+      return SILE.settings.state[parameter]
+    else
+      return SILE.settings.defaults[parameter]
+    end
   end,
-  set = function(name, value)
-    if not SILE.settings.declarations[name] then
-      SU.error("Undefined setting '"..name.."'")
+  set = function(parameter, value, makedefault, reset)
+    if not SILE.settings.declarations[parameter] then
+      SU.error("Undefined setting '"..parameter.."'")
     end
-    local t = _type(value)
-    local wantedType = SILE.settings.declarations[name].type
-    if not (string.find(wantedType, t) == 1 or string.find(wantedType, "or "..t) ) then
-      SU.error("Setting "..name.." must be of type "..wantedType..", not "..t.." "..value.."\n"..name..": "..SILE.settings.declarations[name].help)
+    if reset then
+      if makedefault then
+        SU.error("Can't set a new default and revert to and old default setting at the same time!")
+      end
+      value = SILE.settings.defaults[parameter]
+    else
+      value = SU.cast(SILE.settings.declarations[parameter].type, value)
     end
-    SILE.settings.state[name] = value
+    SILE.settings.state[parameter] = value
+    if makedefault then
+      SILE.settings.defaults[parameter] = value
+    end
   end,
-  temporarily = function(f)
+  temporarily = function(func)
     SILE.settings.pushState()
-    f()
+    func()
     SILE.settings.popState()
   end,
   wrap = function() -- Returns a closure which applies the current state, later
-    local clSettings = std.table.clone(SILE.settings.state)
-    return function(f)
+    local clSettings = pl.tablex.copy(SILE.settings.state)
+    return function(func)
       table.insert(SILE.settings.stateQueue, SILE.settings.state)
       SILE.settings.state = clSettings
-      SILE.process(f)
+      SILE.process(func)
       SILE.settings.popState()
     end
   end,
-
 }
 
 SILE.settings.declare({
-  name = "document.parindent",
-  type = "Glue",
-  default = SILE.nodefactory.newGlue("20pt"),
+  parameter = "document.parindent",
+  type = "glue",
+  default = SILE.nodefactory.glue("20pt"),
   help = "Glue at start of paragraph"
 })
 
 SILE.settings.declare({
-  name = "document.baselineskip",
-  type = "VGlue",
-  default = SILE.nodefactory.newVglue("1.2em plus 1pt"),
+  parameter = "document.baselineskip",
+  type = "vglue",
+  default = SILE.nodefactory.vglue("1.2em plus 1pt"),
   help = "Leading"
 })
 
 SILE.settings.declare({
-  name = "document.lineskip",
-  type = "VGlue",
-  default = SILE.nodefactory.newVglue("1pt"),
+  parameter = "document.lineskip",
+  type = "vglue",
+  default = SILE.nodefactory.vglue("1pt"),
   help = "Leading"
 })
 
 SILE.settings.declare({
-  name = "document.parskip",
-  type = "VGlue",
-  default = SILE.nodefactory.newVglue("0pt plus 1pt"),
+  parameter = "document.parskip",
+  type = "vglue",
+  default = SILE.nodefactory.vglue("0pt plus 1pt"),
   help = "Leading"
 })
 
 SILE.settings.declare({
-  name = "document.spaceskip",
-  type = "Length or nil",
+  parameter = "document.spaceskip",
+  type = "length or nil",
   default = nil,
   help = "The length of a space (if nil, then measured from the font)"
 })
 
 SILE.settings.declare({
-  name = "document.rskip",
-  type = "Glue or nil",
+  parameter = "document.rskip",
+  type = "glue or nil",
   default = nil,
   help = "Skip to be added to right side of line"
 })
 
 SILE.settings.declare({
-  name = "document.lskip",
-  type = "Glue or nil",
+  parameter = "document.lskip",
+  type = "glue or nil",
   default = nil,
   help = "Skip to be added to left side of line"
 })
 
-local function toboolean(v)
-  if type(v) == "boolean" then return v end
-  if type(v) == "string" then return v == "true" end
-  if type(v) == "number" or type(v) == "integer" then return not (v == 0) end
-  return not not v
-end
-
 SILE.registerCommand("set", function(options, content)
-  local p = SU.required(options, "parameter", "\\set command")
-  local v = options.value -- could be nil!
-  local def = SILE.settings.declarations[p]
+  local parameter = SU.required(options, "parameter", "\\set command")
   local makedefault = SU.boolean(options.makedefault, false)
-  if not def then SU.error("Unknown parameter "..p.." in \\set command") end
-  if     string.match(def.type, "nil") and type(v) == "nil" then -- ok
-  elseif  string.match(def.type, "integer") then v = tonumber(v)
-  elseif  string.match(def.type, "number") then v = tonumber(v)
-  elseif  string.match(def.type, "boolean") then v = toboolean(v)
-  elseif  string.match(def.type, "Length") then v = SILE.length.parse(v)
-  elseif string.match(def.type, "VGlue") then v = SILE.nodefactory.newVglue(v)
-  elseif string.match(def.type, "Glue") then v = SILE.nodefactory.newGlue(v)
-  elseif string.match(def.type, "Kern") then v = SILE.nodefactory.newKern(v) end
+  local reset = SU.boolean(options.reset, false)
+  local value = options.value
   if content and (type(content) == "function" or content[1]) then
+    if makedefault then
+      SU.warn("Are you sure meant to set default settings *and* pass content to ostensibly apply them to temporarily?")
+    end
     SILE.settings.temporarily(function()
-      SILE.settings.set(p,v)
+      SILE.settings.set(parameter, value, makedefault, reset)
       SILE.process(content)
     end)
   else
-    SILE.settings.set(p,v)
-  end
-  if makedefault then
-    SILE.settings.declarations[p].default = v
-    SILE.settings.defaults[p] = v
+    SILE.settings.set(parameter, value, makedefault, reset)
   end
 end, "Set a SILE parameter <parameter> to value <value> (restoring the value afterwards if <content> is provided)")

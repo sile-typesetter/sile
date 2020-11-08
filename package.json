@@ -1,0 +1,80 @@
+{
+  "name": "sile",
+  "version": "0.10.12",
+  "description": "SILE Typesetter",
+  "main": "sile",
+  "scripts": {
+    "test": "make test",
+    "release": "standard-version"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sile-typesetter/sile.git"
+  },
+  "author": "Simon Cozens",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sile-typesetter/sile/issues"
+  },
+  "homepage": "http://sile-typesetter.org",
+  "devDependencies": {
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
+    "@commitlint/prompt": "^11.0.0",
+    "commitizen": "^4.2.1",
+    "conventional-changelog-cli": "^2.1.0",
+    "github-release-cli": "^2.0.0",
+    "husky": "^4.2.5",
+    "standard-version": "^9.0.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/prompt"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "standard-version": {
+    "infile": "CHANGELOG.md",
+    "types": [
+      {
+        "type": "feat",
+        "section": "New Features"
+      },
+      {
+        "type": "fix",
+        "section": "Bug Fixes"
+      },
+      {
+        "type": "chore",
+        "section": "Behind the Scenes",
+        "hidden": true
+      },
+      {
+        "type": "docs",
+        "hidden": true
+      },
+      {
+        "type": "style",
+        "hidden": true
+      },
+      {
+        "type": "refactor",
+        "section": "Changes",
+        "hidden": true
+      },
+      {
+        "type": "perf",
+        "section": "Optimizations"
+      },
+      {
+        "type": "test",
+        "hidden": true
+      }
+    ],
+    "preset": "conventionalcommits"
+  }
+}

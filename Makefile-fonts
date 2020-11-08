@@ -1,0 +1,155 @@
+# Don't let make delete things we had to download
+.PRECIOUS: .fonts/% .sources/%
+
+# List of font files we _actually need_
+DEFSFONTFILES  = GentiumPlus-R.ttf GentiumPlus-I.ttf
+
+DOCSFONTFILES  = $(DEFSFONTFILES)
+DOCSFONTFILES += CormorantInfant-Italic.ttf CormorantInfant-Regular.ttf
+DOCSFONTFILES += GenBkBasR.ttf GenBkBasI.ttf GenBkBasB.ttf
+DOCSFONTFILES += Hack-Regular.ttf
+DOCSFONTFILES += LateefGR-Regular.ttf
+DOCSFONTFILES += LibertinusSerif-Regular.otf
+DOCSFONTFILES += NotoSansCJK-Regular.ttc
+DOCSFONTFILES += NotoSansEthiopic-Regular.ttf
+DOCSFONTFILES += RobotoCondensed-Bold.ttf
+DOCSFONTFILES += Symbola.otf
+
+EXAMFONTFILES  = $(DOCSFONTFILES)
+EXAMFONTFILES += Amiri-Regular.ttf
+EXAMFONTFILES += DejaVuSansCondensed-Bold.ttf DejaVuSans-Bold.ttf DejaVuSans-Oblique.ttf
+EXAMFONTFILES += LibreBaskerville-Italic.otf
+EXAMFONTFILES += Miama.otf
+EXAMFONTFILES += mnglwhiteotf.ttf
+EXAMFONTFILES += NotoSerifCJK-Regular.ttc
+EXAMFONTFILES += Roboto-Regular.ttf Roboto-Bold.ttf
+
+TESTFONTFILES  = $(EXAMFONTFILES)
+TESTFONTFILES += AmiriQuran.ttf
+TESTFONTFILES += LibertinusSans-Bold.otf
+TESTFONTFILES += NotoNaskhArabic-Regular.ttf
+TESTFONTFILES += NotoSansKannada-Regular.ttf
+TESTFONTFILES += NotoSansMalayalam-Regular.ttf
+TESTFONTFILES += SBL_Hbrw.ttf
+
+# Tell make how to download individual font files directly (when available)
+
+.fonts/Amiri%: | .fonts
+	curl -s -L https://github.com/alif-type/amiri/raw/0.113/$(notdir $@) -o $@
+
+.fonts/Brill-Bold.ttf: | .fonts
+	curl -s -L https://brill.com/fileasset/downloads_static/static_typefacedownload_typefacebold_2.06_051.ttf -o $@
+
+.fonts/Brill-BoldItalic.ttf: | .fonts
+	curl -s -L https://brill.com/fileasset/downloads_static/static_typefacedownload_typefacebolditalic_2.06_051.ttf -o $@
+
+.fonts/Brill-Italic.ttf: | .fonts
+	curl -s -L https://brill.com/fileasset/downloads_static/static_typefacedownload_typefaceitalic_2.06_051.ttf -o $@
+
+.fonts/Brill-Roman.ttf: | .fonts
+	curl -s -L https://brill.com/fileasset/downloads_static/static_typefacedownload_typefaceroman_2.06_051.ttf -o $@
+
+.fonts/mngl%.ttf: | .fonts
+	curl -s -L http://mongolfont.com/jAlmas/cms/documents/mongolfont/font/$(notdir $@) -o $@
+
+.fonts/Noto%.ttf: | .fonts
+	curl -s -L https://github.com/googlefonts/noto-fonts/raw/v2017-09-19-phase3-second/hinted/$(notdir $@) -o $@
+
+.fonts/Noto%.ttc: | .fonts
+	curl -s -L https://github.com/googlefonts/noto-cjk/raw/NotoSansV2.001/$(notdir $@) -o $@
+
+.fonts/SBL_Hbrw.ttf: | .fonts
+	curl -s -L http://www.sbl-site.org/Fonts/$(notdir $@) -o $@
+
+.fonts/Symbola.otf: | .fonts
+	curl -s -L https://github.com/ChiefMikeK/ttf-symbola/raw/master/Symbola-13.otf -o $@
+
+# Tell  make how to download font file bundles (when not downloadable individually)
+
+.sources/CrimsonPro.zip: | .sources
+	curl -s -L https://fonts.google.com/download?family=Crimson+Pro -o $@
+
+.sources/Cormorant_Install_v3.601.zip: | .sources
+	curl -s -L https://github.com/CatharsisFonts/Cormorant/releases/download/v3.601/$(notdir $@) -o $@
+
+.sources/dejavu-fonts-ttf-2.37.tar.bz2: | .sources
+	curl -s -L https://github.com/dejavu-fonts/dejavu-fonts/releases/download/version_2_37/$(notdir $@) -o $@
+
+.sources/GentiumBasic_1102.zip: | .sources
+	curl -s -L https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
+
+.sources/GentiumPlus-5.000.zip: | .sources
+	curl -s -L https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
+
+.sources/Hack-v3.003-ttf.tar.xz: | .sources
+	curl -s -L https://github.com/source-foundry/Hack/releases/download/v3.003/$(notdir $@) -o $@
+
+.sources/LateefGR-1.200.zip: | .sources
+	curl -s -L https://software.sil.org/downloads/r/lateef/$(notdir $@) -o $@
+
+.sources/Libertinus-%.tar.xz: | .sources
+	curl -s -L https://github.com/alerque/libertinus/releases/download/v$*/$(notdir $@) -o $@
+
+.sources/libre-baskerville.zip: | .sources
+	curl -s -L https://www.fontsquirrel.com/fonts/download/$(notdir $@) -o $@
+
+.sources/Miama.zip: | .sources
+	curl -s -L https://www.fontsquirrel.com/fonts/download/$(notdir $@) -o $@
+
+.sources/roboto-unhinted.zip: | .sources
+	curl -s -L https://github.com/google/roboto/releases/download/v2.138/$(notdir $@) -o $@
+
+.sources/Symbola.zip: | .sources
+	curl -s -L https://web.archive.org/web/20200617144517/https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
+#	Canonical upstream server limits downloads which sometimes kills our CI runners
+#	curl -s -L https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
+
+# Tell make how to extract individual files from bundles
+
+.fonts/Cormorant%: .sources/Cormorant_Install_v3.601.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 2 "$(basename $(<F))/1. TrueType Font Files/$(notdir $@)"
+	touch $@
+
+.fonts/CrimsonPro%: .sources/CrimsonPro.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 1 static/$(notdir $@)
+	touch $@
+
+.fonts/DejaVu%: .sources/dejavu-fonts-ttf-2.37.tar.bz2 | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 2 $(basename $(<F))/ttf/$(notdir $@)
+	touch $@
+
+.fonts/GenB%: .sources/GentiumBasic_1102.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 1 $(basename $(<F))/$(notdir $@)
+	touch $@
+
+.fonts/GentiumPlus%: .sources/GentiumPlus-5.000.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 1 $(basename $(<F))/$(notdir $@)
+	touch $@
+
+.fonts/Hack%: .sources/Hack-v3.003-ttf.tar.xz | .fonts
+	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
+	touch $@
+
+.fonts/Libertinus%: .sources/Libertinus-7.020.tar.xz | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 3 $(basename $(basename $(<F)))/static/OTF/$(notdir $@)
+	touch $@
+
+.fonts/LateefGR%: .sources/LateefGR-1.200.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 1 $(basename $(<F))/$(notdir $@)
+	touch $@
+
+.fonts/LibreBaskerville%: .sources/libre-baskerville.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
+	touch $@
+
+.fonts/Miama%: .sources/Miama.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
+	touch $@
+
+.fonts/Roboto%: .sources/roboto-unhinted.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
+	touch $@
+
+.fonts/Symbola%: .sources/Symbola.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
+	touch $@

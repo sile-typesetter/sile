@@ -1,0 +1,19 @@
+.PHONY: installrocks
+LUAMODSPEC := sile-dev-1.rockspec
+if !SYSTEM_LUAROCKS
+LUAMODLOCK := sile-dev-1.rockslock
+
+LUAROCKS := luarocks --tree lua_modules --lua-version $(LUA_VERSION)
+genrockslock := $(LUAROCKS) $(LUAROCKSARGS) list --porcelain | awk '{print $$1 " " $$2}'
+rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
+
+installrocks: $(LUAMODLOCK) $(shell $(rocksmatch) || echo lua_modules)
+
+lua_modules: $(LUAMODSPEC) $(shell $(rocksmatch) || echo force)
+	$(LUAROCKS) $(LUAROCKSARGS) install --only-deps $<
+
+$(LUAMODLOCK): lua_modules $(LUAMODSPEC)
+	$(genrockslock) > $@
+else
+LUAMODLOCK :=
+endif

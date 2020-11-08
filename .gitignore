@@ -1,9 +1,6 @@
-*/*.actual
-tests/*.pdf
-examples/*.pdf
-*/*.toc
 # http://www.gnu.org/software/automake
 
+Makefile
 Makefile.in
 
 # http://www.gnu.org/software/autoconf
@@ -19,6 +16,9 @@ Makefile.in
 /config.guess
 /config.sub
 /config.status
+/.version
+/.version-prev
+/.built-subdirs
 
 m4/libtool.m4
 m4/ltoptions.m4
@@ -36,18 +36,50 @@ AUTHORS
 COPYING
 INSTALL
 ChangeLog
-Makefile
 NEWS
 README
 THANKS
-
 libtool
 ltmain.sh
 subfiles.mk
 
-sile
+# Build artifacts
 confdefs.h
 config.log
 core/*.so
-build/ 
-.vscode/ 
+build/
+*.debug
+gh-pages
+sile-[0-9\.]*
+*.rockslock
+.dockerignore
+luacov.*.out
+
+# Test artifacts
+tests/*.actual
+tests/*.pdf
+*.toc
+time*.json
+
+benchmark-*
+compare-*
+
+# Vendor stuff
+node_modules
+lua_modules
+lua_modules_dist
+package-lock.json
+
+# Editor entrails
+.vscode/
+tags
+
+# Generated resources
+Makefile-distfiles
+documentation/*.pdf
+examples/**/*.pdf
+gource.webm
+.fonts/*
+.sources/*
+#sile# Work around bug in standard-version by not ignoring this artifact
+sile.1

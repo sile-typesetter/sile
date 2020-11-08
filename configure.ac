@@ -1,14 +1,19 @@
 AC_PREREQ([2.68])
-AC_INIT([SILE], [0.9.5.1], [simon@simon-cozens.org])
-AM_INIT_AUTOMAKE([1.11.1 foreign tar-pax dist-bzip2 no-dist-gzip -Wall no-define color-tests -Wno-portability subdir-objects])
+AC_INIT([SILE],
+        m4_esyscmd([build-aux/git-version-gen .tarball-version]),
+        [simon@simon-cozens.org])
+AM_INIT_AUTOMAKE([1.11.1 foreign tar-pax dist-zip dist-xz no-dist-gzip -Wall no-define color-tests -Wno-portability subdir-objects])
 AC_CONFIG_MACRO_DIR([m4])
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
 
-AM_SILENT_RULES([yes])
+if [[ -d .git ]]; then
+    MAN_DATE=$(git log -1 --format="%cd" --date=format:"%d %B %Y" -- sile.1.in)
+else
+    MAN_DATE=$(date "+%d %B %Y")
+fi
 
-m4_include([m4/ax_lua.m4])
-m4_include([m4/adl_recursive_eval.m4])
+AM_SILENT_RULES([yes])
 
 # Checks for programs.
 AC_PROG_CC_C99
@@ -47,9 +52,25 @@ esac
 
 AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
 
-# Checks for HB/libtexpdf combination
 AC_ARG_WITH([system-libtexpdf],
-    AS_HELP_STRING([--with-system-libtexpdf], [Don't build libtexpdf, use the installed version]))
+            AS_HELP_STRING([--with-system-libtexpdf], [Don’t bundle libtexpdf, use system provided version]))
+AM_CONDITIONAL([SYSTEM_LIBTEXPDF], [test "x$with_system_libtexpdf" = "xyes"])
+
+AC_ARG_WITH([system-luarocks],
+            AS_HELP_STRING([--with-system-luarocks], [Don’t bundle LuaRocks, use system provided versions]))
+AM_CONDITIONAL([SYSTEM_LUAROCKS], [test "x$with_system_luarocks" = "xyes"])
+
+AC_ARG_WITH([luajit],
+            AS_HELP_STRING([--with-luajit], [Run under LuaJIT instead of Lua]))
+AM_CONDITIONAL([LUAJIT], [test "x$with_luajit" = "xyes"])
+
+AC_ARG_WITH([manual],
+            AS_HELP_STRING([--with-manual], [Rebuild manual and install to system’s PDF documentation directory]))
+AM_CONDITIONAL([MANUAL], [test "x$with_manual" = "xyes"])
+
+AC_ARG_WITH([examples],
+            AS_HELP_STRING([--with-examples], [Rebuild examples and install to system’s PDF documentation directory]))
+AM_CONDITIONAL([EXAMPLES], [test "x$with_examples" = "xyes"])
 
 PKG_CHECK_MODULES(HARFBUZZ, harfbuzz,
   [
@@ -75,8 +96,7 @@ PKG_CHECK_MODULES(HARFBUZZ, harfbuzz,
    fi
   ])
 
-AM_CONDITIONAL([SYSTEM_LIBTEXPDF], [test "x$with_system_libtexpdf" = "xyes"])
-
+m4_include([m4/ax_lua.m4])
 
 case $host_os in
   msys)
@@ -89,13 +109,33 @@ esac
 
 AX_LUA_HEADERS
 AX_LUA_LIBS
-# Check for Lua modules
-AX_LUA_MODULE([lpeg], [lpeg])
-AX_LUA_MODULE([lxp], [luaexpat])
-AX_LUA_MODULE([zlib], [lua-zlib])
-AX_LUA_MODULE([lfs], [luafilesystem])
-AX_LUA_MODULE([socket], [luasocket])
-AX_LUA_MODULE([ssl], [luasec])
+
+AS_IF([test "x$with_system_luarocks" = "xyes"], [
+    AS_IF([test "$LUA_SHORT_VERSION" -lt 52],
+        AX_LUA_MODULE([bit32], [bit32])
+    )
+    AX_LUA_MODULE([cassowary], [cassowary])
+    AS_IF([test "$LUA_SHORT_VERSION" -lt 53],
+        AX_LUA_MODULE([compat53], [compat53])
+    )
+    AX_LUA_MODULE([cosmo], [cosmo])
+    AX_LUA_MODULE([linenoise], [linenoise])
+    AX_LUA_MODULE([lpeg], [lpeg])
+    AX_LUA_MODULE([zlib], [lua-zlib])
+    AX_LUA_MODULE([cliargs], [lua_cliargs])
+    AX_LUA_MODULE([epnf], [luaepnf])
+    AX_LUA_MODULE([lxp], [luaexpat])
+    AX_LUA_MODULE([lfs], [luafilesystem])
+    AX_LUA_MODULE([repl], [luarepl])
+    AX_LUA_MODULE([ssl], [luasec])
+    AX_LUA_MODULE([socket], [luasocket])
+    AX_LUA_MODULE([pl], [penlight])
+    AX_LUA_MODULE([std], [stdlib])
+    AX_LUA_MODULE([vstruct], [vstruct])
+], [
+    AC_CHECK_PROG(HASLUAROCKS, luarocks, yes)
+    test "x$HASLUAROCKS" = "xyes" || AC_MSG_ERROR([luarocks is required])
+])
 
 AC_ARG_ENABLE([linklua],
     AS_HELP_STRING([--disable-linklua], [Don't link lua library with dylibs]))
@@ -118,6 +158,8 @@ PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
   fi
 ])
 
+m4_include([m4/adl_recursive_eval.m4])
+
 adl_RECURSIVE_EVAL(["${datadir}/${PACKAGE}"], [SILE_PATH])
 AC_DEFINE_UNQUOTED([SILE_PATH],["${SILE_PATH}"],[Path for SILE packages and classes])
 
@@ -129,6 +171,10 @@ AM_CONDITIONAL([LINKLUA], [test "x$enable_linklua" != "xno"])
 
 AC_CANONICAL_HOST
 case $host_os in
+  darwin*)
+    LUAROCKSARGS="EXPAT_DIR=/usr/local/opt/expat OPENSSL_DIR=/usr/local/opt/openssl ZLIB_DIR=/usr/local/opt/zlib"
+    SHARED_LIB_EXT="so"
+    ;;
   cygwin* | mingw* )
       SHARED_LIB_EXT="dll"
       ;;
@@ -139,16 +185,15 @@ esac
 AC_SUBST([SHARED_LIB_EXT])
 AC_SUBST([HARFBUZZ_CFLAGS])
 AC_SUBST([HARFBUZZ_LIBS])
+AC_SUBST([LUAROCKSARGS])
 AC_SUBST([SILE_PATH])
 AC_SUBST([SILE_LIB_PATH])
 AC_SUBST([shared_ext])
+AC_SUBST([SYSTEM_LUAROCKS])
 AC_SUBST([APPKIT])
-AC_CONFIG_FILES([Makefile src/Makefile])
+AC_SUBST([MAN_DATE])
+AC_CONFIG_FILES([Makefile src/Makefile sile.1])
 AC_CONFIG_FILES([sile], [chmod +x sile])
 
-# Configure list of data files
-echo 'subdir_files = \' > subfiles.mk
-find core classes languages packages lua-libraries -type f -print | sed 's/^/  /;$q;s/$/ \\/' >> subfiles.mk
-
-
 AC_OUTPUT
+m4_esyscmd_s([build-aux/decore-automake.sh])

@@ -1,0 +1,22 @@
+name: Luacheck
+
+on: [push, pull_request]
+
+jobs:
+  luacheck:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Setup Lua
+      uses: leafo/gh-actions-lua@v7
+      with:
+        luaVersion: 5.3
+    - name: Setup Lua Rocks
+      uses: leafo/gh-actions-luarocks@v3
+    - name: Install Luacheck
+      run: |
+        luarocks install luacheck
+        luarocks install lanes
+    - name: Run Linter
+      run: luacheck -j$(nproc) .

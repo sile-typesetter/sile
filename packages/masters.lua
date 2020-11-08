@@ -1,35 +1,34 @@
 SILE.scratch.masters = {}
 local _currentMaster
 
-local function defineMaster (self, args)
+local function defineMaster (_, args)
   SU.required(args, "id", "defining master")
   SU.required(args, "frames", "defining master")
   SU.required(args, "firstContentFrame", "defining master")
-  SILE.scratch.masters[args.id] = {frames = {}, firstContentFrame = nil}
-  for k,spec in pairs(args.frames) do
-    spec.id=k
+  SILE.scratch.masters[args.id] = { frames = {}, firstContentFrame = nil }
+  for frame, spec in pairs(args.frames) do
+    spec.id = frame
     if spec.solve then
-      SILE.scratch.masters[args.id].frames[k] = spec
+      SILE.scratch.masters[args.id].frames[frame] = spec
     else
-      SILE.scratch.masters[args.id].frames[k] = SILE.newFrame(spec)
+      SILE.scratch.masters[args.id].frames[frame] = SILE.newFrame(spec)
     end
   end
-  SILE.frames = {page = SILE.frames.page}
-
+  SILE.frames = { page = SILE.frames.page }
   SILE.scratch.masters[args.id].firstContentFrame = SILE.scratch.masters[args.id].frames[args.firstContentFrame]
 end
 
 local function defineMasters (self, list)
   if list then
-    for i=1,#list do defineMaster(self, list[i]) end
+    for i = 1, #list do defineMaster(self, list[i]) end
   end
 end
 
-local function doswitch(frames)
-  SILE.frames = {page = SILE.frames.page}
-  for id,f in pairs(frames) do
-    SILE.frames[id] =f
-    f:invalidate()
+local function doswitch (frames)
+  SILE.frames = { page = SILE.frames.page }
+  for id, frame in pairs(frames) do
+    SILE.frames[id] = frame
+    frame:invalidate()
   end
 end
 
@@ -49,7 +48,7 @@ local function switchMaster (id)
     SU.error("Can't find master "..id)
   end
   SILE.documentState.documentClass.pageTemplate = SILE.scratch.masters[id]
-  SILE.documentState.thisPageTemplate = std.tree.clone(SILE.documentState.documentClass.pageTemplate)
+  SILE.documentState.thisPageTemplate = pl.tablex.deepcopy(SILE.documentState.documentClass.pageTemplate)
   doswitch(SILE.scratch.masters[id].frames)
   SILE.typesetter:initFrame(SILE.scratch.masters[id].firstContentFrame)
 end
@@ -60,7 +59,7 @@ SILE.registerCommand("define-master-template", function(options, content)
   -- Subvert the <frame> functionality from baseclass
   local spare = SILE.documentState.thisPageTemplate.frames
   local sp2 = SILE.frames
-  SILE.frames = {page = SILE.frames.page}
+  SILE.frames = { page = SILE.frames.page }
   SILE.documentState.thisPageTemplate.frames = {}
   SILE.process(content)
   SILE.scratch.masters[options.id] = {}
@@ -73,16 +72,16 @@ SILE.registerCommand("define-master-template", function(options, content)
   SILE.frames = sp2
 end)
 
-SILE.registerCommand("switch-master-one-page", function ( options, content )
+SILE.registerCommand("switch-master-one-page", function (options, _)
   SU.required(options, "id", "switching master")
   switchMasterOnePage(options.id)
   SILE.typesetter:leaveHmode()
 end, "Switches the master for the current page")
-SILE.registerCommand("switch-master", function ( options, content )
+
+SILE.registerCommand("switch-master", function (options, _)
   SU.required(options, "id", "switching master")
   switchMaster(options.id)
 end, "Switches the master for the current page")
-
 
 return {
   init = defineMasters,
@@ -92,5 +91,17 @@ return {
     defineMaster = defineMaster,
     defineMasters = defineMasters,
     currentMaster = function () return _currentMaster end
-  }
+  },
+  documentation = [[
+\begin{document}
+
+The masters functionality is also itself an add-on package. It allows a class to
+define sets of frames and switch between them either temporarily or permanently.
+It defines the commands \command{\\define-master-template} (which is pattern
+on the \command{\\pagetemplate} function we will meet in chapter 8), \command{\\switch-master}
+and \command{\\switch-master-one-page}. See \code{tests/masters.sil} for more
+about this package.
+
+\end{document}
+]]
 }

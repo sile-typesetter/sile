@@ -1,136 +1,66 @@
-#! /bin/bash
+#!/usr/bin/env bash
 
-# A script for setting up environment for travis-ci testing.
-# Sets up Lua and Luarocks.
-# LUA must be "lua5.1", "lua5.2" or "luajit".
-# luajit2.0 - master v2.0
-# luajit2.1 - master v2.1
+# Don't mess with it if these are already setup (as should be the case if we
+# get a cache hit on Travis)
+which lua && which luarocks && exit 0 ||:
 
 set -eufo pipefail
 
-LUAJIT_BASE="LuaJIT-2.0.4"
-
-source .travis/platform.sh
-
-LUA_HOME_DIR=$TRAVIS_BUILD_DIR/install/lua
-
-LR_HOME_DIR=$TRAVIS_BUILD_DIR/install/luarocks
-
-mkdir $HOME/.lua
-
-LUAJIT="no"
-
-if [ "$PLATFORM" == "macosx" ]; then
-  if [ "$LUA" == "luajit" ]; then
-    LUAJIT="yes";
-  fi
-  if [ "$LUA" == "luajit2.0" ]; then
-    LUAJIT="yes";
-  fi
-  if [ "$LUA" == "luajit2.1" ]; then
-    LUAJIT="yes";
-  fi;
-elif [ "$(expr substr $LUA 1 6)" == "luajit" ]; then
-  LUAJIT="yes";
+if [[ $1 == 2* ]]; then
+    LUAJIT=true
+    BASE="LuaJIT-$1"
+    URL=https://github.com/LuaJIT/LuaJIT/archive/v$1.tar.gz
+    BINNAME=luajit
+else
+    LUAJIT=false
+    BASE="lua-$1"
+    URL=https://www.lua.org/ftp/$BASE.tar.gz
+    BINNAME=lua
 fi
 
+mkdir -p "$HOME/.lua"
 mkdir -p "$LUA_HOME_DIR"
+mkdir -p "$HOME/.setup_lua"
 
-if [ "$LUAJIT" == "yes" ]; then
+cd "$HOME/.setup_lua"
 
-  if [ "$LUA" == "luajit" ]; then
-    curl http://luajit.org/download/$LUAJIT_BASE.tar.gz | tar xz;
-  else
-    git clone http://luajit.org/git/luajit-2.0.git $LUAJIT_BASE;
-  fi
+curl --location "$URL" | tar xz;
+pushd $BASE
 
-  cd $LUAJIT_BASE
-
-  if [ "$LUA" == "luajit2.1" ]; then
-    git checkout v2.1;
-    # force the INSTALL_TNAME to be luajit
-    perl -i -pe 's/INSTALL_TNAME=.+/INSTALL_TNAME= luajit/' Makefile
-  fi
-
-  make && make install PREFIX="$LUA_HOME_DIR"
-
-  ln -s $LUA_HOME_DIR/bin/luajit $HOME/.lua/luajit
-  ln -s $LUA_HOME_DIR/bin/luajit $HOME/.lua/lua;
-
+if $LUAJIT; then
+    sed -i -e '/echo.*SYMLINK/{s/^.*"  /\t/;s/"$//}' Makefile
+    make
+    make install \
+        PREFIX="$LUA_HOME_DIR" \
+        INSTALL_INC='$(DPREFIX)/include' \
+        INSTALL_LJLIBD='$(INSTALL_SHARE)'
 else
-
-  if [ "$LUA" == "lua5.1" ]; then
-    curl http://www.lua.org/ftp/lua-5.1.5.tar.gz | tar xz
-    cd lua-5.1.5;
-  elif [ "$LUA" == "lua5.2" ]; then
-    curl http://www.lua.org/ftp/lua-5.2.4.tar.gz | tar xz
-    cd lua-5.2.4;
-  elif [ "$LUA" == "lua5.3" ]; then
-    curl http://www.lua.org/ftp/lua-5.3.1.tar.gz | tar xz
-    cd lua-5.3.1;
-  fi
-
   # Build Lua without backwards compatibility for testing
-  perl -i -pe 's/-DLUA_COMPAT_(ALL|5_2)//' src/Makefile
+  perl -i -pe 's/-DLUA_COMPAT_\S+//' src/Makefile
   perl -i -pe 's/-DLUA_BUILD_AS_DLL/-DLUA_USE_POSIX -DLUA_DL_DLL -DLUA_BUILD_AS_DLL/' src/Makefile
-  if [ "$PLATFORM" == "mingw" ]; then
-    LUA_DLL=$(echo "$LUA.dll" | sed 's/\.//')
-    perl -i -pe "s/TO_BIN= lua luac/TO_BIN= lua.exe luac.exe $LUA_DLL/" Makefile;
-  fi
-  make $PLATFORM CC="gcc -std=gnu99 -fPIC"
-  make INSTALL_TOP="$LUA_HOME_DIR" install;
-
-  ln -s $LUA_HOME_DIR/bin/lua $HOME/.lua/lua
-  ln -s $LUA_HOME_DIR/bin/luac $HOME/.lua/luac;
-  if [ "$PLATFORM" == "mingw" ]; then
-    ln -s $LUA_HOME_DIR/bin/$LUA_DLL $HOME/.lua/$LUA_DLL;
-  fi
+  make linux CC="gcc -std=gnu99 -fPIC"
+  make install INSTALL_TOP="$LUA_HOME_DIR"
 fi
 
-cd $TRAVIS_BUILD_DIR
+ln -sf $LUA_HOME_DIR/bin/$BINNAME $HOME/.lua/$BINNAME
 
-lua -v
+popd
+$BINNAME -v
 
-LUAROCKS_BASE=luarocks-$LUAROCKS
+LUAROCKS_BASE=luarocks-$2
 
-curl --location http://luarocks.org/releases/$LUAROCKS_BASE.tar.gz | tar xz
+curl --location https://luarocks.org/releases/$LUAROCKS_BASE.tar.gz | tar xz
 
-cd $LUAROCKS_BASE
+pushd $LUAROCKS_BASE
 
-if [ "$LUA" == "luajit" ]; then
-  ./configure --lua-suffix=jit --with-lua-include="$LUA_HOME_DIR/include/luajit-2.0" --prefix="$LR_HOME_DIR";
-elif [ "$LUA" == "luajit2.0" ]; then
-  ./configure --lua-suffix=jit --with-lua-include="$LUA_HOME_DIR/include/luajit-2.0" --prefix="$LR_HOME_DIR";
-elif [ "$LUA" == "luajit2.1" ]; then
-  ./configure --lua-suffix=jit --with-lua-include="$LUA_HOME_DIR/include/luajit-2.1" --prefix="$LR_HOME_DIR";
-else
-  ./configure --with-lua="$LUA_HOME_DIR" --prefix="$LR_HOME_DIR"
-fi
+# Travis dies if luarocks' configure script runs a command that's redirected to dev null
+sed -i -e '/^make clean/s/>.*//' ./configure
 
-make build && make install
+./configure --with-lua="$LUA_HOME_DIR" --prefix="$LR_HOME_DIR"
+make build
+make install
 
-ln -s $LR_HOME_DIR/bin/luarocks $HOME/.lua/luarocks
+ln -sf $LR_HOME_DIR/bin/luarocks $HOME/.lua/luarocks
 
-cd $TRAVIS_BUILD_DIR
-
-if [ "$PLATFORM" == "mingw" ]; then # XXX Fix version thing later
-  mkdir -p ~/.luarocks/
-cat > ~/.luarocks/config-5.3.lua <<EOF
-variables = {}
-variables.CC = "gcc"
-variables.LD = "gcc"
-variables.LIBFLAG = "-shared -llua"
-EOF
-fi
-
-rm -rf $LUAROCKS_BASE
-
-if [ "$LUAJIT" == "yes" ]; then
-  rm -rf $LUAJIT_BASE;
-elif [ "$LUA" == "lua5.1" ]; then
-  rm -rf lua-5.1.5;
-elif [ "$LUA" == "lua5.2" ]; then
-  rm -rf lua-5.2.4;
-elif [ "$LUA" == "lua5.3" ]; then
-  rm -rf lua-5.3.1;
-fi
+popd
+luarocks --version

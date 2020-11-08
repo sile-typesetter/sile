@@ -1,6 +1,6 @@
 local function transformContent(content, transformFunction, extraArgs)
   local newContent = {}
-  for k, v in pairs(content) do
+  for k, v in SU.sortedpairs(content) do
     if type(k) == "number" then
       if type(v) == "string" then
         local transformed = transformFunction(v, content, extraArgs)
@@ -19,13 +19,13 @@ local function transformContent(content, transformFunction, extraArgs)
   return newContent
 end
 
-local function createCommand(pos, col, line, tag, attr, content)
+local function createCommand(pos, col, line, command, options, content)
   local result = { content }
   result.col = col
   result.line = line
   result.pos = pos
-  result.attr = attr
-  result.tag = tag
+  result.options = options
+  result.command = command
   result.id = "command"
   return result
 end

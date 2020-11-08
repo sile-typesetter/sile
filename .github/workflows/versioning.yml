@@ -1,0 +1,19 @@
+name: Versioning
+
+on:
+  release:
+    types: [published, edited]
+
+jobs:
+  actions-tagger:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: Actions-R-Us/actions-tagger@latest
+        env:
+          GITHUB_TOKEN: "${{ github.token }}"
+        with:
+          publish_latest_tag: true

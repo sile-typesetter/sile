@@ -3,20 +3,22 @@ if SILE.outputter ~= SILE.outputters.libtexpdf then
 end
 local pdf = require("justenoughlibtexpdf")
 
-SILE.registerCommand("pdf:destination", function (options, content)
+SILE.registerCommand("pdf:destination", function (options, _)
   local name = SU.required(options, "name", "pdf:bookmark")
   SILE.typesetter:pushHbox({
-    value = nil,
-    height = 0,
-    width = 0,
-    depth = 0,
-    outputYourself = function (self, typesetter)
-      pdf.destination(name, typesetter.frame.state.cursorX, SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY)
+    outputYourself = function (_, typesetter, line)
+      SILE.outputters.libtexpdf._init()
+      local state = typesetter.frame.state
+      typesetter.frame:advancePageDirection(-line.height)
+      local x, y = state.cursorX, state.cursorY
+      typesetter.frame:advancePageDirection(line.height)
+      local _y = SILE.documentState.paperSize[2] - y
+      pdf.destination(name, x:tonumber(), _y:tonumber())
     end
   })
 end)
 
-SILE.registerCommand("pdf:bookmark", function (options, content)
+SILE.registerCommand("pdf:bookmark", function (options, _)
   local dest = SU.required(options, "dest", "pdf:bookmark")
   local title = SU.required(options, "title", "pdf:bookmark")
   local level = options.level or 1
@@ -27,9 +29,13 @@ SILE.registerCommand("pdf:bookmark", function (options, content)
   -- European languages, we use UTF-16BE for internationalization.
   local ustr = SU.utf8_to_utf16be_hexencoded(title)
   SILE.typesetter:pushHbox({
-    value = nil, height = 0, width = 0, depth = 0,
+    value = nil,
+    height = SILE.measurement(0),
+    width = SILE.measurement(0),
+    depth = SILE.measurement(0),
     outputYourself = function ()
       local d = "<</Title<" .. ustr .. ">/A<</S/GoTo/D(" .. dest .. ")>>>>"
+      SILE.outputters.libtexpdf._init()
       pdf.bookmark(d, level)
     end
   })
@@ -47,13 +53,14 @@ if SILE.Commands.tocentry then
   end
 end
 
-SILE.registerCommand("pdf:literal", function (options, content)
+SILE.registerCommand("pdf:literal", function (_, content)
   SILE.typesetter:pushHbox({
       value = nil,
-      height = 0,
-      width = 0,
-      depth = 0,
-      outputYourself = function (self, typesetter)
+      height = SILE.measurement(0),
+      width = SILE.measurement(0),
+      depth = SILE.measurement(0),
+      outputYourself = function (_, _, _)
+        SILE.outputters.libtexpdf._init()
         pdf.add_content(content[1])
       end
     })
@@ -65,38 +72,61 @@ SILE.registerCommand("pdf:link", function (options, content)
   local llx, lly
   SILE.typesetter:pushHbox({
     value = nil,
-    height = 0,
-    width = 0,
-    depth = 0,
-    outputYourself = function (self,typesetter)
-      llx = typesetter.frame.state.cursorX
-      lly = SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY
+    height = SILE.measurement(0),
+    width = SILE.measurement(0),
+    depth = SILE.measurement(0),
+    outputYourself = function (_, typesetter, _)
+      llx = typesetter.frame.state.cursorX:tonumber()
+      lly = (SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY):tonumber()
+      SILE.outputters.libtexpdf._init()
       pdf.begin_annotation()
     end
   })
 
-  local hbox = SILE.Commands["hbox"]({}, content) -- hack
+  local hbox = SILE.call("hbox", {}, content) -- hack
 
   SILE.typesetter:pushHbox({
     value = nil,
-    height = 0,
-    width = 0,
-    depth = 0,
-    outputYourself = function (self,typesetter)
+    height = SILE.measurement(0),
+    width = SILE.measurement(0),
+    depth = SILE.measurement(0),
+    outputYourself = function (_, typesetter, _)
       local d = "<</Type/Annot/Subtype/Link/C [ 1 0 0 ]/A<<" .. target .. "(" .. dest .. ")>>>>"
-      pdf.end_annotation(d, llx, lly, typesetter.frame.state.cursorX, SILE.documentState.paperSize[2] -typesetter.frame.state.cursorY + hbox.height)
+      local x = typesetter.frame.state.cursorX:tonumber()
+      local y = (SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY + hbox.height):tonumber()
+      pdf.end_annotation(d, llx, lly, x, y)
+    end
+  })
+end)
+
+SILE.registerCommand("pdf:metadata", function (options, _)
+  local key = SU.required(options, "key", "pdf:metadata")
+  local val = SU.required(options, "val", "pdf:metadata")
+  SILE.typesetter:pushHbox({
+    value = nil,
+    height = SILE.measurement(0),
+    width = SILE.measurement(0),
+    depth = SILE.measurement(0),
+    outputYourself = function (_, _, _)
+      SILE.outputter:_init()
+      pdf.metadata(key, val)
     end
   })
 end)
 
 return { documentation = [[\begin{document}
 The \code{pdf} package enables (basic) support for PDF links and table-of-contents
-entries. It provides the three commands \command{\\pdf:destination}, \command{\\pdf:link}
-and \command{\\pdf:bookmark}.
+entries. It provides the four commands \command{\\pdf:destination}, \command{\\pdf:link},
+\command{\\pdf:bookmark}, and \command{\\pdf:metadata}.
 
 The \command{\\pdf:destination} parameter creates a link target; it expects a
 parameter called \code{name} to uniquely identify the target. To create a link to
 that location in the document, use \code{\\pdf:link[dest=\goodbreak{}name]\{link content\}}.
+
+To set arbitrary key-value metadata, use something like \code{\\pdf:metadata[key=Author,
+value=J. Smith]}. The PDF metadata field names are case-sensitive. Common keys include
+\code{Title}, \code{Author}, \code{Subject}, \code{Keywords}, \code{CreationDate}, and
+\code{ModDate}.
 
 If the \code{pdf} package is loaded after the \code{tableofcontents} package (e.g.
 in a document with the \code{book} class), then a PDF document outline will be generated.

@@ -175,7 +175,7 @@ T	70 88 79 83 68	(culpa)
 Mx 	51.8043
 T	84 88 76	(qui)
 Mx 	66.9139
-T	82 1010 70 76 68	(officia)
+T	82 741 70 76 68	(officia)
 Mx 	94.4941
 T	71 72 86 72 85 88 81 87	(deserunt)
 Mx 	132.9631
@@ -298,18 +298,12 @@ Mx 	56.1495
 T	88 79 79 68 80 70 82	(ullamco)
 Mx 	85.6148
 T	17	(.)
-Mx 	96.5574
-My 	262.9405
-Set font 	Gentium Plus;10;400;;normal;;LTR
-T	20	(1)
 New page
 Mx 	29.3669
 My 	39.2135
+Set font 	Gentium Plus;10;400;;normal;;LTR
 T	88 88 91	(uux)
 Mx 	44.9919
 T	17	(.)
-Mx 	108.5140
-My 	262.8917
-T	21	(2)
 End page
 Finish

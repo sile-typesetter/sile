@@ -47,7 +47,7 @@ read_tag_with_param(const char* cp, int* param)
 
 static hb_feature_t* scan_feature_string(const char* cp1, int* ret) {
   hb_feature_t* features = NULL;
-  hb_tag_t  tag;  
+  hb_tag_t  tag;
   int nFeatures = 0;
   const char* cp2;
   const char* cp3;
@@ -62,7 +62,7 @@ static hb_feature_t* scan_feature_string(const char* cp1, int* ret) {
     cp2 = cp1;
     while (*cp2 && (*cp2 != ':') && (*cp2 != ';') && (*cp2 != ','))
       ++cp2;
-    
+
     if (*cp1 == '+') {
       int param = 0;
       tag = read_tag_with_param(cp1 + 1, &param);
@@ -76,7 +76,7 @@ static hb_feature_t* scan_feature_string(const char* cp1, int* ret) {
       nFeatures++;
       goto next_option;
     }
-    
+
     if (*cp1 == '-') {
       ++cp1;
       tag = hb_tag_from_string(cp1, cp2 - cp1);
@@ -88,10 +88,10 @@ static hb_feature_t* scan_feature_string(const char* cp1, int* ret) {
       nFeatures++;
       goto next_option;
     }
-    
+
   bad_option:
     //fontfeaturewarning(cp1, cp2 - cp1, 0, 0);
-  
+
   next_option:
     cp1 = cp2;
   }
@@ -129,6 +129,12 @@ static char** scan_shaper_list(char* cp1) {
   res = realloc (res, sizeof (char*) * (n_elems+1));
   res[n_elems] = 0;
   return res;
+}
+
+int can_use_ot_funcs (hb_face_t* face) {
+  if (hb_version_atleast(2,3,0)) return 1;
+  hb_blob_t *cff = hb_face_reference_table(face, hb_tag_from_string("CFF ", 4));
+  return hb_blob_get_length(cff) == 0;
 }
 
 int shape (lua_State *L) {
@@ -174,13 +180,14 @@ int shape (lua_State *L) {
     unsigned int upem = hb_face_get_upem(hbFace);
     hb_font_set_scale(hbFont, upem, upem);
 
-    /* Harfbuzz's support for OT fonts is great, but
-       there's currently no support for CFF fonts, so
-       downgrade to Freetype for those. */
-    if (strncmp(font_s, "OTTO", 4) == 0 || strncmp(font_s, "ttcf", 4) == 0) {
-      hb_ft_font_set_funcs(hbFont);
-    } else {
+    if (can_use_ot_funcs(hbFace)) {
       hb_ot_font_set_funcs(hbFont);
+    } else {
+      /*
+        Note that using FT may cause differing vertical metrics for CFF fonts.
+        SILE will give a one-time warning if this is the case.
+      */
+      hb_ft_font_set_funcs(hbFont);
     }
 
     buf = hb_buffer_create();
@@ -345,6 +352,14 @@ int get_harfbuzz_version (lua_State *L) {
   return 1;
 }
 
+int version_lessthan (lua_State *L) {
+  unsigned int major = luaL_checknumber(L, 1);
+  unsigned int minor = luaL_checknumber(L, 2);
+  unsigned int micro = luaL_checknumber(L, 3);
+  lua_pushboolean(L, !hb_version_atleast(major,minor,micro));
+  return 1;
+}
+
 int list_shapers (lua_State *L) {
   const char **shaper_list = hb_shape_list_shapers ();
   int i = 0;
@@ -387,7 +402,7 @@ int get_table (lua_State *L) {
 /*
 ** Adapted from Lua 5.2.0
 */
-static void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
+void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
   luaL_checkstack(L, nup+1, "too many upvalues");
   for (; l->name != NULL; l++) {  /* fill the table with given functions */
     int i;
@@ -407,6 +422,7 @@ static const struct luaL_Reg lib_table [] = {
   {"version", get_harfbuzz_version},
   {"shapers", list_shapers},
   {"get_table", get_table},
+  {"version_lessthan", version_lessthan},
   {NULL, NULL}
 };
 

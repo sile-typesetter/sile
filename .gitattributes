@@ -1,0 +1,12 @@
+# Code we didn't write that Linguist doesn't already detect as vendored
+cmake/* linguist-vendored
+build-aux/* linguist-vendored
+lua-libraries/* linguist-vendored
+m4/* linguist-vendored
+node-pangocairo linguist-vendored
+
+# Documentation not detected by Linguist
+examples/* linguist-documentation
+
+# Language overrides that Linguist doesn't know about
+*.silejs linguist-language=Javascript

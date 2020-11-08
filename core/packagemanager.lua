@@ -1,4 +1,6 @@
-local catalogueURL = "https://raw.githubusercontent.com/simoncozens/sile-packages/master/packages.lua"
+local lfs = require("lfs")
+
+local catalogueURL = "https://raw.githubusercontent.com/sile-typesetter/sile-packages/master/packages.lua"
 local packageHome = SYSTEM_SILE_PATH .. "/packagemanager/"
 local catalogueHome = packageHome .. "catalogue.lua"
 local installedCatalogue = packageHome .. "installed.lua"
@@ -22,46 +24,48 @@ local function loadInSandbox(untrusted_code)
     return pcall(untrusted_function)
   else
     if untrusted_code:byte(1) == 27 then return nil, "binary bytecode prohibited" end
-    local untrusted_function, message = loadstring(untrusted_code)
+    local untrusted_function, message = load(untrusted_code)
     if not untrusted_function then return nil, message end
+    -- luacheck: globals setfenv env
+    -- (At least there is in Lua 5.1)
     setfenv(untrusted_function, env)
     return pcall(untrusted_function)
   end
 end
 
-local function dumpTable(o)
-   if type(o) == 'table' then
-      local s = '{ '
-      for k,v in pairs(o) do
-         if type(k) ~= 'number' then k = '"'..k..'"' end
-         s = s .. '['..k..'] = ' .. dumpTable(v) .. ','
-      end
-      return s .. '} '
-   else
-      -- This only works because we are only storing strings!
-      return '"' .. tostring(o) .. '"'
-   end
+local function dumpTable(tbl)
+  if type(tbl) == 'table' then
+    local str = '{ '
+    for k, v in pairs(tbl) do
+      if type(k) ~= 'number' then k = '"'..k..'"' end
+      str = str .. '['..k..'] = ' .. dumpTable(v) .. ','
+    end
+    return str .. '} '
+  else
+    -- This only works because we are only storing strings!
+    return '"' .. tostring(tbl) .. '"'
+  end
 end
 
 local function fixupPaths()
   local paths = ""
   local cpaths = ""
-  for k,v in pairs(SILE.PackageManager.installed) do
-    paths = paths .. packageHome .. k .. '/?.lua;'
-    cpaths = cpaths .. packagehome .. k .. "/?."..SHARED_LIB_EXT.. ";"
+  for pkg, _ in pairs(SILE.PackageManager.installed) do
+    paths = paths .. packageHome .. pkg .. '/?.lua;'
+    cpaths = cpaths .. packageHome .. pkg .. "/?."..SHARED_LIB_EXT.. ";"
   end
-  package.path = origpath:gsub("?.lua","?.lua;"..paths,1)
+  package.path = origpath:gsub("?.lua", "?.lua;"..paths, 1)
   package.cpath = origcpath .. ";" .. cpaths
 end
 
 local function saveInstalled()
   local dump = dumpTable(SILE.PackageManager.installed)
-  local fh,e = io.open(installedCatalogue, "w")
-  if e then
-    SU.error("Could not write installed package list at"..installedCatalogue..": "..e)
+  local file, err = io.open(installedCatalogue, "w")
+  if err then
+    SU.error("Could not write installed package list at"..installedCatalogue..": "..err)
   end
-  fh:write("return "..dump)
-  fh:close()
+  file:write("return "..dump)
+  file:close()
   fixupPaths()
 end
 
@@ -72,72 +76,75 @@ local function updateCatalogue ()
     end
   end
   print("Loading catalogue from "..catalogueURL)
-  result, statuscode, content = http.request(catalogueURL)
+  local result, statuscode, _ = http.request(catalogueURL)
   if statuscode ~= 200 then
     SU.error("Could not load catalogue from "..catalogueURL..": "..statuscode)
   end
-  local fh,e = io.open(catalogueHome, "w")
-  if e then
-    SU.error("Could not write package catalogue at"..catalogueHome..": "..e)
+  local file, err = io.open(catalogueHome, "w")
+  if err then
+    SU.error("Could not write package catalogue at"..catalogueHome..": "..err)
   end
   print("Writing "..(#result).." bytes to "..catalogueHome)
-  fh:write(result)
-  fh:close()
+  file:write(result)
+  file:close()
   recentlyUpdated = true
   recentlyReloaded = false
 end
 
 local function loadInstalledCatalogue()
-   f = io.open(installedCatalogue, "r")
-   if f~=nil then
-    local contents = f:read("*all")
-    success,res = loadInSandbox(contents)
+  local file = io.open(installedCatalogue, "r")
+  if file ~= nil then
+    local contents = file:read("*all")
+    local success, res = loadInSandbox(contents)
     if not success then
       SU.error("Error loading installed package list: "..res)
     end
     SILE.PackageManager.installed = res
-   end
+  end
 end
 
 local function reloadCatalogue()
-   local f=io.open(catalogueHome,"r")
-   if f~=nil then
-    local contents = f:read("*all")
-    local success,res = loadInSandbox(contents)
+  local file = io.open(catalogueHome, "r")
+  if file ~= nil then
+    local contents = file:read("*all")
+    local success, res = loadInSandbox(contents)
     if not success then
       SU.error("Error loading package catalogue: "..res)
     end
     SILE.PackageManager.Catalogue = res
-   end
-   loadInstalledCatalogue()
-   print("Package catalogue reloaded")
-   recentlyReloaded = true
- end
+  end
+  loadInstalledCatalogue()
+  print("Package catalogue reloaded")
+  recentlyReloaded = true
+end
 
 -- These functions are global so they can be used from the REPL
-function updatePackage(packageName,branch)
+-- luacheck: ignore updatePackage
+-- luacheck: ignore installPackage
+
+function updatePackage(packageName, branch)
   local target = packageHome .. packageName
   -- Are we already there?
-  if SILE.PackageManager.installed[packageName] == branch and branch ~= "HEAD" then
+  if SILE.PackageManager.installed[packageName] == branch and branch ~= "master" then
     print("Nothing to do!")
     return true
   end
   local cwd = lfs.currentdir()
-  local r,e = lfs.chdir(target)
-  if e then
+  local _, err = lfs.chdir(target)
+  if err then
     SU.warn("Package directory "..target.." went away! Trying again...")
     SILE.PackageManager.installed[packageName] = nil
     saveInstalled()
     installPackage(packageName)
   end
 
-  local rv = os.execute("git pull")
-  if not rv then
-    SU.error("Error updating repository for package "..packageName..": "..rv)
+  local ret = os.execute("git pull")
+  if not ret then
+    SU.error("Error updating repository for package "..packageName..": "..ret)
   end
-  local rv = os.execute("git checkout "..branch)
-  if not rv then
-    SU.error("Error updating repository for package "..packageName..": "..rv)
+  ret = os.execute("git checkout "..branch)
+  if not ret then
+    SU.error("Error updating repository for package "..packageName..": "..ret)
   end
   lfs.chdir(cwd)
   SILE.PackageManager.installed[packageName] = branch
@@ -156,24 +163,24 @@ function installPackage(packageName)
 
   -- Check dependencies
   if metadata.depends then
-    for k,v in ipairs(metadata.depends) do
-      if not SILE.PackageManager.installed[v] then
-        print(packageName.." requires "..v..", installing that...")
-        installPackage(v)
+    for _, pkg in ipairs(metadata.depends) do
+      if not SILE.PackageManager.installed[pkg] then
+        print(packageName.." requires "..pkg..", installing that...")
+        installPackage(pkg)
       end
     end
   end
 
   -- Clone repo in temp directory
   if metadata.repository then
-    local branch = metadata.version or "HEAD"
+    local branch = metadata.version or "master"
     local target = packageHome .. packageName
     if lfs.attributes(target) then
       updatePackage(packageName, branch)
     else
-      local rv = os.execute("git clone -c advice.detachedHead=false -b "..branch.." "..metadata.repository.." "..target)
-      if not rv then -- This should return status code but it's returning true for me...
-        SU.error("Error cloning repository for package "..packageName..": "..rv)
+      local ret = os.execute("git clone -c advice.detachedHead=false -b "..branch.." "..metadata.repository.." "..target)
+      if not ret then -- This should return status code but it's returning true for me...
+        SU.error("Error cloning repository for package "..packageName..": "..ret)
       end
     end
     SILE.PackageManager.installed[packageName] = branch
