@@ -91,6 +91,12 @@ SILE.registerCommand("latin-in-tate", function (_, content)
         SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes+1] = nodes[i]
       end)
       local n = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
+      -- Turn off all complex flags.
+      for j = 1,#(n.value) do
+        for k = 1,#(n.value[j].nodes) do
+          n.value[j].nodes[k].value.complex = false
+        end
+      end
       n.oldOutputYourself = n.outputYourself
       n.outputYourself = outputLatinInTate
     end
