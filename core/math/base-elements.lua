@@ -1086,13 +1086,13 @@ elements.table = pl.class({
     self.vertSize = SILE.length(0)
     for i, row in ipairs(self.children) do
       self.vertSize = self.vertSize + row.height + row.depth +
-        (i == self.nrows and SILE.length(0) or SILE.length("1ex")) -- Spacing
+        (i == self.nrows and SILE.length(0) or SILE.length("5pt")) -- Spacing
     end
     local rowHeightSoFar = SILE.length(0)
     for _, row in ipairs(self.children) do
       row.relY = rowHeightSoFar + row.height - self.vertSize
       rowHeightSoFar = rowHeightSoFar + row.height + row.depth +
-        (i == self.nrows and SILE.length(0) or SILE.length("1ex")) -- Spacing
+        (i == self.nrows and SILE.length(0) or SILE.length("5pt")) -- Spacing
       for _, cell in ipairs(row.children) do
         -- If cell is smaller than height, raise it to center it vertically
         --cell.relY = cell.relY - (row.height + row.depth - cell.height - cell.depth) / 2
@@ -1115,7 +1115,7 @@ elements.table = pl.class({
         cell.relX = thisColRelX + (columnWidth - cell.width) / 2
       end
       thisColRelX = thisColRelX + columnWidth +
-        (i == self.ncols and SILE.length(0) or SILE.length("0.8em")) -- Spacing
+        (i == self.ncols and SILE.length(0) or SILE.length("3pt")) -- Spacing
     end
     self.width = thisColRelX
 
