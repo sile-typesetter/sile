@@ -70,7 +70,7 @@ local mathGrammar = function(_ENV)
     (P"\\{" + P"\\}") / function(s) return string.sub(s, -1) end
   command = (
       P"\\" *
-      Cg(ctrl_sequence_name, "tag") *
+      Cg(ctrl_sequence_name, "command") *
       Cg(parameters, "options") *
       (
         group
@@ -104,11 +104,11 @@ local function inferArgTypes_aux(acc, typeRequired, body)
       table.insert(ret, body.index, typeRequired)
       return ret
     elseif body.id == "command" then
-      if commands[body.tag] then
-        local cmdArgTypes = commands[body.tag][1]
+      if commands[body.command] then
+        local cmdArgTypes = commands[body.command][1]
         if #cmdArgTypes ~= #body then
           SU.error("Wrong number of arguments (" .. #body ..
-            ") for command " .. body.tag .. " (should be " ..
+            ") for command " .. body.command .. " (should be " ..
             #cmdArgTypes .. ")")
         else
           for i = 1, #cmdArgTypes do
@@ -116,10 +116,10 @@ local function inferArgTypes_aux(acc, typeRequired, body)
           end
         end
         return acc
-      elseif body.tag == "mi" or body.tag == "mo" or body.tag == "mn" then
+      elseif body.command == "mi" or body.command == "mo" or body.command == "mn" then
         if #body ~= 1 then
-          SU.error("Wrong number of arguments ("..#body..") for tag "..
-            body.tag.." (should be 1)")
+          SU.error("Wrong number of arguments ("..#body..") for command "..
+            body.command.." (should be 1)")
         end
         acc = inferArgTypes_aux(acc, objType.str, body[1])
         return acc
@@ -189,8 +189,8 @@ local compileToStr = function(argEnv, mathlist)
     for _,elt in ipairs(mathlist) do
       if elt.id == "atom" then
         ret = ret .. elt[1]
-      elseif elt.id == "command" and symbols[elt.tag] then
-        ret = ret .. symbols[elt.tag]
+      elseif elt.id == "command" and symbols[elt.command] then
+        ret = ret .. symbols[elt.command]
       else
         SU.error("Encountered non-character token in command that takes a string")
       end
@@ -209,7 +209,7 @@ local function compileToMathML(arg_env, tree)
     -- evaluation "under lambda") or the application of a registered macro
     -- (since evaluating the nodes depends on the macro's signature, it is more
     -- complex and done below)..
-    elseif tree.id == "def" or (tree.id == "command" and commands[tree.tag]) then
+    elseif tree.id == "def" or (tree.id == "command" and commands[tree.command]) then
       -- Conserve unevaluated children.
       table.insert(acc, child)
     else
@@ -270,11 +270,11 @@ local function compileToMathML(arg_env, tree)
       return compileToMathML(compiledArgs, tree[1])
     end)
     return nil
-  elseif tree.id == "command" and commands[tree.tag] then
-    local argTypes = commands[tree.tag][1]
-    local cmdFun = commands[tree.tag][2]
+  elseif tree.id == "command" and commands[tree.command] then
+    local argTypes = commands[tree.command][1]
+    local cmdFun = commands[tree.command][2]
     local applicationTree = tree
-    local cmdName = tree.tag
+    local cmdName = tree.command
     if #applicationTree ~= #argTypes then
       SU.error("Wrong number of arguments (" .. #applicationTree ..
         ") for command " .. cmdName .. " (should be " ..
@@ -297,8 +297,8 @@ local function compileToMathML(arg_env, tree)
       end
     end
     return cmdFun(compiledArgs)
-  elseif tree.id == "command" and symbols[tree.tag] then
-    local atom = {id = "atom", [1] = symbols[tree.tag]}
+  elseif tree.id == "command" and symbols[tree.command] then
+    local atom = {id = "atom", [1] = symbols[tree.command]}
     tree = compileToMathML(arg_env, atom)
   elseif tree.id == "argument" then
     if arg_env[tree.index] then

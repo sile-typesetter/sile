@@ -574,7 +574,7 @@ elements.subscript = pl.class({
         self.sub.height - constants.subscriptTopMax * scaleDown
       )
       if (self:is_a(elements.bigOpSubscript)
-          or self:is_a(elments.stackbox)) then
+          or self:is_a(elements.stackbox)) then
         self.sub.relY = maxLength(self.sub.relY,
           self.base.depth + constants.subscriptBaselineDropMin*scaleDown)
       end
@@ -589,7 +589,7 @@ elements.subscript = pl.class({
         self.sup.depth + constants.superscriptBottomMin * scaleDown
       ) * (-1)
       if (self:is_a(elements.bigOpSubscript)
-          or self:is_a(elments.stackbox)) then
+          or self:is_a(elements.stackbox)) then
         self.sup.relY = maxLength(
           (0-self.sup.relY),
           self.base.height - constants.superscriptBaselineDropMax
@@ -747,11 +747,11 @@ elements.space = pl.class({
   end,
   _init = function(self, width, height, depth)
     elements.terminal._init(self)
-    self.width = type(width) == "string" and SILE.length.parse(width)
+    self.width = type(width) == "string" and SILE.length(width)
       or width
-    self.height = type(height) == "string" and SILE.length.parse(height)
+    self.height = type(height) == "string" and SILE.length(height)
       or height
-    self.depth = type(depth) == "string" and SILE.length.parse(depth)
+    self.depth = type(depth) == "string" and SILE.length(depth)
       or depth
   end,
   shape = function(_)
@@ -966,7 +966,7 @@ elements.fraction = pl.class({
     end
   end,
   output = function(self, x, y, line)
-    SILE.outputter:rule(
+    SILE.outputter:drawRule(
       scaleWidth(x, line),
       y.length - self.axisHeight - self.ruleThickness / 2,
       scaleWidth(self.width, line), self.ruleThickness)
@@ -1086,13 +1086,13 @@ elements.table = pl.class({
     self.vertSize = SILE.length(0)
     for i, row in ipairs(self.children) do
       self.vertSize = self.vertSize + row.height + row.depth +
-        (i == self.nrows and SILE.length(0) or SILE.length.parse("1ex")) -- Spacing
+        (i == self.nrows and SILE.length(0) or SILE.length("1ex")) -- Spacing
     end
     local rowHeightSoFar = SILE.length(0)
     for _, row in ipairs(self.children) do
       row.relY = rowHeightSoFar + row.height - self.vertSize
       rowHeightSoFar = rowHeightSoFar + row.height + row.depth +
-        (i == self.nrows and SILE.length(0) or SILE.length.parse("1ex")) -- Spacing
+        (i == self.nrows and SILE.length(0) or SILE.length("1ex")) -- Spacing
       for _, cell in ipairs(row.children) do
         -- If cell is smaller than height, raise it to center it vertically
         --cell.relY = cell.relY - (row.height + row.depth - cell.height - cell.depth) / 2
@@ -1115,7 +1115,7 @@ elements.table = pl.class({
         cell.relX = thisColRelX + (columnWidth - cell.width) / 2
       end
       thisColRelX = thisColRelX + columnWidth +
-        (i == self.ncols and SILE.length(0) or SILE.length.parse("0.8em")) -- Spacing
+        (i == self.ncols and SILE.length(0) or SILE.length("0.8em")) -- Spacing
     end
     self.width = thisColRelX
 
