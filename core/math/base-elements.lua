@@ -258,7 +258,7 @@ local function minLength(...)
   return -maxLength(args)
 end
 
-local function getNumberFromLength(length, line)
+local function scaleWidth(length, line)
   local number = length.length
   if line.ratio and line.ratio < 0 and length.shrink > 0 then
     number = number + length.shrink * line.ratio
@@ -344,11 +344,11 @@ elements.mbox = pl.class({
     self:output(x, y, line)
     local debug = SILE.settings.get("math.debug.boxes")
     if debug and not (self:is_a(elements.space)) then
-      SILE.outputter:setCursor(getNumberFromLength(x, line), y.length)
+      SILE.outputter:setCursor(scaleWidth(x, line), y.length)
       SILE.outputter:debugHbox(
         { height = self.height.length,
           depth = self.depth.length },
-        getNumberFromLength(self.width, line)
+        scaleWidth(self.width, line)
       )
     end
     for i, n in ipairs(self.children) do
@@ -513,7 +513,7 @@ elements.stackbox = pl.class({
     local mathX = typesetter.frame.state.cursorX
     local mathY = typesetter.frame.state.cursorY
     self:outputTree(self.relX + mathX, self.relY + mathY, line)
-    typesetter.frame:advanceWritingDirection(getNumberFromLength(self.width, line))
+    typesetter.frame:advanceWritingDirection(scaleWidth(self.width, line))
   end,
   output = function(self, x, y, line) end
 })
@@ -874,9 +874,9 @@ elements.text = pl.class({
     else
       compensatedY = y
     end
-    SILE.outputter:setCursor(getNumberFromLength(x, line), compensatedY.length)
+    SILE.outputter:setCursor(scaleWidth(x, line), compensatedY.length)
     SILE.outputter:setFont(self.options)
-    SILE.outputter:drawHbox(self.value, getNumberFromLength(self.width, line))
+    SILE.outputter:drawHbox(self.value, scaleWidth(self.width, line))
   end
 })
 
@@ -967,9 +967,9 @@ elements.fraction = pl.class({
   end,
   output = function(self, x, y, line)
     SILE.outputter:rule(
-      getNumberFromLength(x, line),
+      scaleWidth(x, line),
       y.length - self.axisHeight - self.ruleThickness / 2,
-      getNumberFromLength(self.width, line), self.ruleThickness)
+      scaleWidth(self.width, line), self.ruleThickness)
   end
 })
 
