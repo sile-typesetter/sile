@@ -13,6 +13,6 @@ jobs:
         with:
           fetch-depth: 0
       - name: Run Commitlint
-        uses: wagoid/commitlint-github-action@v2.1.0
+        uses: wagoid/commitlint-github-action@v2.1.1
         with:
           configFile: '.commitlintrc.yml'
