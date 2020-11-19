@@ -2,17 +2,17 @@ name: Versioning
 
 on:
   release:
-    types: [published, edited]
+    types: [created, published, edited]
 
 jobs:
+
   actions-tagger:
-
     runs-on: ubuntu-20.04
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - uses: Actions-R-Us/actions-tagger@latest
+      - name: Update release tags
+        uses: Actions-R-Us/actions-tagger@v2
         env:
           GITHUB_TOKEN: "${{ github.token }}"
         with:
