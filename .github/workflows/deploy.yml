@@ -2,18 +2,16 @@ name: Deploy
 
 on:
   push:
-    tags:
-      - '*'
+    tags: [ 'v*' ]
 
 jobs:
+
   deploy:
-
     runs-on: ubuntu-20.04
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Push to GitHub Packages
+      - name: Publish to GitHub Packages
         uses: docker/build-push-action@v1
         with:
           username: ${{ github.actor }}
