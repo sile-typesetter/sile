@@ -1,8 +1,4 @@
-FROM docker.io/library/archlinux:20200705 AS sile-base
-
-# Downgrade coreutils to avoid filesystem bug on DockerHub host kernels
-RUN pacman --noconfirm -U https://archive.archlinux.org/packages/c/coreutils/coreutils-8.31-3-x86_64.pkg.tar.xz
-RUN sed -i -e '/IgnorePkg *=/s/^.*$/IgnorePkg = coreutils/' /etc/pacman.conf
+FROM docker.io/library/archlinux:base AS sile-base
 
 # This is a hack to convince Docker Hub that its cache is behind the times.
 # This happens when the contents of our dependencies changes but the base
@@ -10,7 +6,7 @@ RUN sed -i -e '/IgnorePkg *=/s/^.*$/IgnorePkg = coreutils/' /etc/pacman.conf
 # because it saves a lot of time for local builds, but it does periodically
 # need a poke. Incrementing this when changing dependencies or just when the
 # remote Docker Hub builds die should be enough.
-ARG DOCKER_HUB_CACHE=1
+ARG DOCKER_HUB_CACHE=0
 
 # Freshen all base system packages
 RUN pacman --needed --noconfirm -Syuq && yes | pacman -Sccq
