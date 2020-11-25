@@ -18,9 +18,9 @@ plain.defaultFrameset = {
     bottom = "90%ph"
   },
   folio = {
-    left = "5%pw",
-    right = "95%pw",
-    top = "92%ph",
+    left = "left(content)",
+    right = "right(content)",
+    top = "bottom(content)+2%ph",
     bottom = "97%ph"
   }
 }
