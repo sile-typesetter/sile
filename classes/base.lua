@@ -97,7 +97,7 @@ local _oldbase = {
 
   initPackage = function (self, pack, args)
     if type(pack) == "table" then
-      if pack.exports then self:mapfields(pack.exports) end
+      if pack.exports then pl.tablex.update(self, pack.exports) end
       if type(pack.init) == "function" then
         table.insert(SILE.classes.base.deferredInit, function () pack.init(self, args) end)
         if self._initialized then
