@@ -15,13 +15,19 @@ plain.defaultFrameset = {
     left = "5%pw",
     right = "95%pw",
     top = "5%ph",
-    bottom = "90%ph"
+    bottom = "top(footnotes)"
   },
   folio = {
-    left = "5%pw",
-    right = "95%pw",
-    top = "92%ph",
+    left = "left(content)",
+    right = "right(content)",
+    top = "bottom(footnotes)+2%ph",
     bottom = "97%ph"
+  },
+  footnotes = {
+    left = "left(content)",
+    right = "right(content)",
+    height = "0",
+    bottom = "90%ph"
   }
 }
 

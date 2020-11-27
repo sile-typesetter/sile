@@ -94,6 +94,8 @@ SILE.registerCommand("process", function ()
 end, "Within a macro definition, processes the contents of the macro body.")
 
 SILE.baseClass = std.object {
+  _initialized = false,
+
   registerCommands = (function ()
 
     SILE.registerCommand("\\", function (_, _)
@@ -191,10 +193,17 @@ SILE.baseClass = std.object {
 
   loadPackage = function (self, packname, args)
     local pack = require("packages/" .. packname)
+    self:initPackage(pack, args)
+  end,
+
+  initPackage = function (self, pack, args)
     if type(pack) == "table" then
       if pack.exports then self:mapfields(pack.exports) end
-      if pack.init then
+      if type(pack.init) == "function" then
         table.insert(SILE.baseClass.deferredInit, function () pack.init(self, args) end)
+        if self._initialized then
+          pack.init(self, args)
+        end
       end
     end
   end,
@@ -215,6 +224,7 @@ SILE.baseClass = std.object {
         for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
       end
     end)
+    self._initialized = true
     return self:initialFrame()
   end,
 

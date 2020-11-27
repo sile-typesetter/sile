@@ -6,7 +6,7 @@ local cursorX = 0
 local cursorY = 0
 
 local started = false
-local lastkey
+local lastkey = false
 
 local debugfont = SILE.font.loadDefaults({ family = "Gentium Plus", language = "en", size = 10 })
 
@@ -162,7 +162,7 @@ SILE.outputters.libtexpdf = {
     _deprecationCheck(self)
     ensureInit()
     local key = SILE.font._key(options)
-    if key == lastkey then return end
+    if lastkey and key == lastkey then return self._font end
     local font = SILE.font.cache(options, SILE.shaper.getFace)
     if options.direction == "TTB" then
       font.layout_dir = 1
