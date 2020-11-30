@@ -200,7 +200,7 @@ local base = pl.class({
           different object model, please update your code as use of the old
           model will cause unexpected errors and will eventually be removed.
         ]])
-        SU.deprecated("std.object x", "pl.class", "0.10.13", "0.11.0")
+        SU.deprecated("std.object x", "pl.class", "0.11.0", "0.12.0")
       end
       if not options then options = {} end
       self:declareOption("class", function (name) return name end)
