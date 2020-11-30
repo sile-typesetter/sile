@@ -58,38 +58,154 @@ local _oldplain = {
       SILE.typesetter:pushExplicitVglue(SILE.nodefactory.vssglue())
     end, "Add glue which stretches and shrinks vertically")
 
-    SILE.doTexlike([[
-    \define[command=thinspace]{\glue[width=0.16667em]}%
-    \define[command=negthinspace]{\glue[width=-0.16667em]}%
-    \define[command=enspace]{\glue[width=0.5em]}%
-    \define[command=relax]{}%
-    \define[command=enskip]{\enspace}%
-    \define[command=quad]{\glue[width=1em]}%
-    \define[command=qquad]{\glue[width=2em]}%
-    \define[command=slash]{/\penalty[penalty=50]}%
-    \define[command=break]{\penalty[penalty=-10000]}%
-    \define[command=cr]{\hfill\break}%
-    \define[command=framebreak]{\break}%
-    \define[command=pagebreak]{\penalty[penalty=-20000]}%
-    \define[command=nobreak]{\penalty[penalty=10000]}%
-    \define[command=novbreak]{\penalty[penalty=10000,vertical=1]}%
-    \define[command=allowbreak]{\penalty[penalty=0]}%
-    \define[command=filbreak]{\vfill\penalty[penalty=-200]}%
-    \define[command=goodbreak]{\penalty[penalty=-500]}%
-    \define[command=eject]{\vfill\break}%
-    \define[command=supereject]{\vfill\penalty[penalty=-20000]}%
-    \define[command=justified]{\set[parameter=document.rskip]\set[parameter=document.spaceskip]{\process\par}}%
-    \define[command=rightalign]{\raggedleft{\process\par}}%
-    \define[command=em]{\font[style=Italic]{\process}}%
-    \define[command=strong]{\font[weight=700]{\process}}%
-    \define[command=nohyphenation]{\font[language=und]{\process}}%
-    \define[command=raggedright]{\ragged[right=true]{\process}}%
-    \define[command=raggedleft]{\ragged[left=true]{\process}}%
-    \define[command=quote]{\smallskip\par\set[parameter=document.lskip,value=2.5em]\set[parameter=document.rskip,value=2.5em]\font[size=0.8em]{\noindent\process}\par\set[parameter=document.lskip]\set[parameter="document.rskip"]\smallskip}%
-    \define[command=listitem]{\medskip{}• \process\medskip}%
-    \define[command=sloppy]{\set[parameter=linebreak.tolerance,value=9999]}%
-    \define[command=awful]{\set[parameter=linebreak.tolerance,value=10000]}%
-    ]])
+    local _thinspacewidth = SILE.measurement(0.16667, "em")
+
+    SILE.registerCommand("thinspace", function (_, _)
+      SILE.call("glue", { width = _thinspacewidth })
+    end)
+
+    SILE.registerCommand("negthinspace", function (_, _)
+      SILE.call("glue", { width = -_thinspacewidth })
+    end)
+
+    SILE.registerCommand("enspace", function (_, _)
+      SILE.call("glue", { width = SILE.measurement(1, "en") })
+    end)
+
+    SILE.registerCommand("relax", function (_, _)
+    end)
+
+    SILE.registerCommand("enskip", function (_, _)
+      SILE.call("enspace")
+    end)
+
+    local _quadwidth = SILE.measurement(1, "em")
+
+    SILE.registerCommand("quad", function (_, _)
+      SILE.call("glue", { width = _quadwidth })
+    end)
+
+    SILE.registerCommand("qquad", function (_, _)
+      SILE.call("glue", { width = _quadwidth * 2 })
+    end)
+
+    SILE.registerCommand("slash", function (_, _)
+      SILE.typesetter:typeset("/")
+      SILE.call("penalty", { penalty = 50 })
+    end)
+
+    SILE.registerCommand("break", function (_, _)
+      SILE.call("penalty", { penalty = -10000 })
+    end)
+
+    SILE.registerCommand("cr", function (_, _)
+      SILE.call("hfill")
+      SILE.call("break")
+    end)
+
+    SILE.registerCommand("framebreak", function (_, _)
+      SILE.call("break")
+    end)
+
+    SILE.registerCommand("pagebreak", function (_, _)
+      SILE.call("penalty", { penalty = -20000 })
+    end)
+
+    SILE.registerCommand("nobreak", function (_, _)
+      SILE.call("penalty", { penalty = 10000 })
+    end)
+
+    SILE.registerCommand("novbreak", function (_, _)
+      SILE.call("penalty", { penalty = 10000, vertical = true })
+    end)
+
+    SILE.registerCommand("allowbreak", function (_, _)
+      SILE.call("penalty", { penalty = 0 })
+    end)
+
+    SILE.registerCommand("filbreak", function (_, _)
+      SILE.call("vfill")
+      SILE.call("penalty", { penalty = -200 })
+    end)
+
+    SILE.registerCommand("goodbreak", function (_, _)
+      SILE.call("penalty", { penalty = -500 })
+    end)
+
+    SILE.registerCommand("eject", function (_, _)
+      SILE.call("vfill")
+      SILE.call("break")
+    end)
+
+    SILE.registerCommand("supereject", function (_, _)
+      SILE.call("vfill")
+      SILE.call("penalty", { penalty = -20000 })
+    end)
+
+    SILE.registerCommand("justified", function (_, content)
+      SILE.settings.set("document.rskip", nil)
+      SILE.settings.set("document.spaceskip", nil)
+      SILE.process(content)
+      SILE.call("par")
+    end)
+
+    SILE.registerCommand("rightalign", function (_, content)
+      SILE.call("raggedleft", {}, function ()
+        SILE.process(content)
+        SILE.call("par")
+      end)
+    end)
+
+    SILE.registerCommand("em", function (_, content)
+      SILE.call("font", { style = "Italic" }, content)
+    end)
+
+    SILE.registerCommand("strong", function (_, content)
+      SILE.call("font", { weight = 700 }, content)
+    end)
+
+    SILE.registerCommand("nohyphenation", function (_, content)
+      SILE.call("font", { language = "und" }, content)
+    end)
+
+    SILE.registerCommand("raggedright", function (_, content)
+      SILE.call("ragged", { right = true }, content)
+    end)
+
+    SILE.registerCommand("raggedleft", function (_, content)
+      SILE.call("ragged", { left = true }, content)
+    end)
+
+    SILE.registerCommand("quote", function (_, content)
+      SILE.call("smallskip")
+      SILE.call("par")
+      local margin = SILE.measurement(2.5, "em")
+      SILE.settings.set("document.lskip", margin)
+      SILE.settings.set("document.lskip", margin)
+      SILE.call("font", { size = SILE.measurement(0.8, "em") }, function ()
+        SILE.call("noindent")
+        SILE.process(content)
+      end)
+      SILE.call("par")
+      SILE.settings.set("document.lskip", nil)
+      SILE.settings.set("document.rskip", nil)
+      SILE.call("smallskip")
+    end)
+
+    SILE.registerCommand("listitem", function (_, content)
+      SILE.call("medskip")
+      SILE.typesetter:typeset("• ")
+      SILE.process(content)
+      SILE.call("medskip")
+    end)
+
+    SILE.registerCommand("sloppy", function (_, _)
+      SILE.settings.set("linebreak.tolerance", 9999)
+    end)
+
+    SILE.registerCommand("awful", function (_, _)
+      SILE.settings.set("linebreak.tolerance", 10000)
+    end)
 
     SILE.registerCommand("center", function (_, content)
       if #SILE.typesetter.state.nodes ~= 0 then
