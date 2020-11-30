@@ -17,41 +17,45 @@ SILE.settings.declare({
     help = "A list of punctuation marks which should be preceded by a punctuationspace"
   })
 
-SILE.nodeMakers.fr = pl.class({
-    _base = SILE.nodeMakers.unicode,
-    isHighPunctuation = function (_, text)
-      return string.find(SILE.settings.get("languages.fr.highpunctuation"), text, nil, true)
-    end,
-    makeUnbreakableSpace = function (self)
-      self:makeToken()
-      self.lastnode = "glue"
-      coroutine.yield(SILE.settings.get("languages.fr.punctuationspace"))
-    end,
-    previousIsHighPunctuation = function (self)
-      return self.i >1 and self:isHighPunctuation(self.items[self.i-1].text)
-    end,
-    nextIsHighPunctuation = function (self)
-      return self.items[self.i+1] and self:isHighPunctuation(self.items[self.i+1].text)
-    end,
-    previousIsSpace = function (self)
-      return self.lastnode == "glue"
-    end,
-    handleICUBreak = function (self, chunks, item)
-      if self:isHighPunctuation(item.text) and self:previousIsHighPunctuation() then
-        return self._base.handleICUBreak(self, chunks, item)
-      end
-      if self:nextIsHighPunctuation() and not self:isHighPunctuation(item.text) then
-        self:makeUnbreakableSpace()
-        while chunks[1] and item.index >= chunks[1].index do
-          table.remove(chunks, 1)
-        end
-        return chunks
-      elseif self:isHighPunctuation(item.text) and not self:previousIsSpace() then
-        self:makeUnbreakableSpace()
-      end
-      return self._base.handleICUBreak(self, chunks, item)
+SILE.nodeMakers.fr = pl.class(SILE.nodeMakers.unicode)
+
+function SILE.nodeMakers.fr:isHighPunctuation (text)
+  return string.find(SILE.settings.get("languages.fr.highpunctuation"), text, nil, true)
+end
+
+function SILE.nodeMakers.fr:makeUnbreakableSpace ()
+  self:makeToken()
+  self.lastnode = "glue"
+  coroutine.yield(SILE.settings.get("languages.fr.punctuationspace"))
+end
+
+function SILE.nodeMakers.fr:previousIsHighPunctuation ()
+  return self.i >1 and self:isHighPunctuation(self.items[self.i-1].text)
+end
+
+function SILE.nodeMakers.fr:nextIsHighPunctuation ()
+  return self.items[self.i+1] and self:isHighPunctuation(self.items[self.i+1].text)
+end
+
+function SILE.nodeMakers.fr:previousIsSpace ()
+  return self.lastnode == "glue"
+end
+
+function SILE.nodeMakers.fr:handleICUBreak (chunks, item)
+  if self:isHighPunctuation(item.text) and self:previousIsHighPunctuation() then
+    return self._base.handleICUBreak(self, chunks, item)
+  end
+  if self:nextIsHighPunctuation() and not self:isHighPunctuation(item.text) then
+    self:makeUnbreakableSpace()
+    while chunks[1] and item.index >= chunks[1].index do
+      table.remove(chunks, 1)
     end
-  })
+    return chunks
+  elseif self:isHighPunctuation(item.text) and not self:previousIsSpace() then
+    self:makeUnbreakableSpace()
+  end
+  return self._base.handleICUBreak(self, chunks, item)
+end
 
 SILE.hyphenator.languages["fr"] = {}
 SILE.hyphenator.languages["fr"].patterns =

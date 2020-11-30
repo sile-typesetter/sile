@@ -74,7 +74,7 @@ local setupParallel = function (klass, options)
     allTypesetters(function (frame, _)
       calculations[frame] = { mark = 0 }
     end)
-    SILE.baseClass:newPage()
+    SILE.classes.base:newPage()
     SILE.call("sync")
   end
   allTypesetters(function (frame, _) calculations[frame] = { mark = 0 } end)

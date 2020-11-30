@@ -1,31 +1,28 @@
-local leader = pl.class({
-    _base = SILE.nodefactory.glue,
+local leader = pl.class(SILE.nodefactory.glue)
 
-    outputYourself = function (self, typesetter, line)
-      local outputWidth = SU.rationWidth(self.width, self.width, line.ratio)
-      local valwidth = self.value.width
-      local repetitions = math.floor(outputWidth:tonumber() / valwidth:tonumber())
-      if repetitions < 1 then
-        typesetter.frame:advanceWritingDirection(outputWidth)
-        return
-      end
-      local remainder = outputWidth - repetitions * valwidth
-      if repetitions == 1 then
-        typesetter.frame:advanceWritingDirection(remainder / 2)
-        self.value:outputYourself(typesetter, line)
-        typesetter.frame:advanceWritingDirection(remainder / 2)
-      end
-      if repetitions > 1 then
-        local glue = remainder / (repetitions + 1)
-        typesetter.frame:advanceWritingDirection(glue)
-        for _ = 1, repetitions do
-          self.value:outputYourself(typesetter, line)
-          typesetter.frame:advanceWritingDirection(glue)
-        end
-      end
+function leader:outputYourself (typesetter, line)
+  local outputWidth = SU.rationWidth(self.width, self.width, line.ratio)
+  local valwidth = self.value.width
+  local repetitions = math.floor(outputWidth:tonumber() / valwidth:tonumber())
+  if repetitions < 1 then
+    typesetter.frame:advanceWritingDirection(outputWidth)
+    return
+  end
+  local remainder = outputWidth - repetitions * valwidth
+  if repetitions == 1 then
+    typesetter.frame:advanceWritingDirection(remainder / 2)
+    self.value:outputYourself(typesetter, line)
+    typesetter.frame:advanceWritingDirection(remainder / 2)
+  end
+  if repetitions > 1 then
+    local glue = remainder / (repetitions + 1)
+    typesetter.frame:advanceWritingDirection(glue)
+    for _ = 1, repetitions do
+      self.value:outputYourself(typesetter, line)
+      typesetter.frame:advanceWritingDirection(glue)
     end
-
-  })
+  end
+end
 
 SILE.registerCommand("leaders", function(options, content)
   local width = SU.required(options, "width", "creating leaders", "length")

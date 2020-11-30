@@ -1,6 +1,9 @@
 SILE = require("core/sile")
+SILE.backend = "dummy"
+SILE.init()
 
-local tClass = SILE.baseClass {}
+local tClass = SILE.classes.base({})
+
 tClass:declareFrame("a", { left = "1pt", right = "12pt", top = "1pt", bottom = "top(b)" })
 tClass:declareFrame("b", { left = "1pt", right = "12pt", bottom = "12pt", height="4pt" })
 

@@ -33,36 +33,34 @@ jv.syllable = (jv.consonant * jv.V)^-1 * jv.consonant *
   (jv.M * jv.tarung^-1)^-1 *
   jv.consonant_sign^0
 
-  SILE.nodeMakers.jv = pl.class({
-      _base = SILE.nodeMakers.unicode,
-      iterator = function (self, items)
-        return coroutine.wrap(function ()
-          local chunk = ""
-          for i = 1, #items do
-            local char = items[i].text
-            chunk = chunk .. char
-          end
-          local i = 1
-          local total = 0
-          while total < #chunk do
-            local syll = (lpeg.P(total) * lpeg.C(jv.syllable)):match(chunk)
-            if syll then
-              while i < #items do
-                if items[i].index >= total + #syll then break end
-                self:addToken(items[i].text, items[i])
-                i = i + 1
-              end
-              total = total + #syll
-              self:makeToken()
-              self:makePenalty(0)
-            else
-              self:dealWith(items[i])
-              i = i + 1
-              if i > #items then break end
-              total = items[i].index
-            end
-          end
-          self:makeToken()
-        end)
+SILE.nodeMakers.jv = pl.class(SILE.nodeMakers.unicode)
+function SILE.nodeMakers.jv:iterator (items)
+  return coroutine.wrap(function ()
+    local chunk = ""
+    for i = 1, #items do
+      local char = items[i].text
+      chunk = chunk .. char
+    end
+    local i = 1
+    local total = 0
+    while total < #chunk do
+      local syll = (lpeg.P(total) * lpeg.C(jv.syllable)):match(chunk)
+      if syll then
+        while i < #items do
+          if items[i].index >= total + #syll then break end
+          self:addToken(items[i].text, items[i])
+          i = i + 1
+        end
+        total = total + #syll
+        self:makeToken()
+        self:makePenalty(0)
+      else
+        self:dealWith(items[i])
+        i = i + 1
+        if i > #items then break end
+        total = items[i].index
       end
-    })
+    end
+    self:makeToken()
+  end)
+end

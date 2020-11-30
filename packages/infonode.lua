@@ -10,25 +10,25 @@ SILE.scratch.info = {
   thispage = {}
 }
 
-local _info = pl.class({
-    _base = SILE.nodefactory.hbox,
-    type ="special",
-    category = "",
-    value = nil,
-    width = SILE.length(),
+local _info = pl.class(SILE.nodefactory.hbox)
 
-    __tostring = function (self) return "I<" .. self.category .. "|" .. self.value.. ">"; end,
+_info.type ="special"
+_info.category = ""
+_info.value = nil
+_info.width = SILE.length()
 
-    outputYourself = function (self, _, _)
-      if not SILE.scratch.info.thispage[self.category] then
-        SILE.scratch.info.thispage[self.category] = {self.value}
-      else
-        local i = #(SILE.scratch.info.thispage[self.category]) + 1
-        SILE.scratch.info.thispage[self.category][i] = self.value
-      end
-    end
+function _info:__tostring ()
+  return "I<" .. self.category .. "|" .. self.value.. ">"
+end
 
-  })
+function _info:outputYourself ()
+  if not SILE.scratch.info.thispage[self.category] then
+    SILE.scratch.info.thispage[self.category] = {self.value}
+  else
+    local i = #(SILE.scratch.info.thispage[self.category]) + 1
+    SILE.scratch.info.thispage[self.category][i] = self.value
+  end
+end
 
 SILE.registerCommand("info", function (options, _)
   SU.required(options, "category", "info node")

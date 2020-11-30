@@ -1,106 +1,5 @@
-SILE.Help = {}
-
-SILE.registerCommand = function (name, func, help, pack)
-  SILE.Commands[name] = func
-  if not pack then
-    local where = debug.getinfo(2).source
-    pack = where:match("(%w+).lua")
-  end
-  --if not help and not pack:match(".sil") then SU.error("Could not define command '"..name.."' (in package "..pack..") - no help text" ) end
-  SILE.Help[name] = {
-    description = help,
-    where = pack
-  }
-end
-
-SILE.setCommandDefaults = function (command, defaults)
-  local oldCommand = SILE.Commands[command]
-  SILE.Commands[command] = function (options, content)
-    for k, v in pairs(defaults) do
-      options[k] = options[k] or v
-    end
-    return oldCommand(options, content)
-  end
-end
-
-SILE.doTexlike = function (doc)
-  -- Setup new "fake" file in which the doc exists
-  local cpf = SILE.currentlyProcessingFile
-  local caller = debug.getinfo(2, "Sl")
-  local temporaryFile = "<"..caller.short_src..":"..caller.currentline..">"
-  SILE.currentlyProcessingFile = temporaryFile
-  -- NOTE: this messes up column numbers on first line, but most places start with newline, so it isn't a problem
-  doc = "\\begin{document}" .. doc .. "\\end{document}"
-  local tree = SILE.inputs.TeXlike.docToTree(doc)
-  -- Since elements of the tree may be used long after currentlyProcessingFile has changed (e.g. through \define)
-  -- supply the file in which the node was found explicitly.
-  SU.walkContent(tree, function (c) c.file = temporaryFile end)
-  SILE.process(tree)
-  -- Revert the processed file
-  SILE.currentlyProcessingFile = cpf
-end
-
-local function replaceProcessBy(replacement, tree)
-  if type(tree) ~= "table" then return tree end
-  local ret = pl.tablex.deepcopy(tree)
-  if tree.command == "process" then
-    return replacement
-  else
-    for i, child in ipairs(tree) do
-      ret[i] = replaceProcessBy(replacement, child)
-    end
-    return ret
-  end
-end
-
--- Need the \define command *really* early on in SILE startup
-SILE.registerCommand("define", function (options, content)
-  SU.required(options, "command", "defining command")
-  if type(content) == "function" then
-    -- A macro defined as a function can take no argument, so we register
-    -- it as-is.
-    SILE.registerCommand(options["command"], content)
-    return
-  elseif options.command == "process" then
-    SU.warn("Did you mean to re-definine the `\\process` macro? That probably won't go well.")
-  end
-  SILE.registerCommand(options["command"], function (_, _content)
-    SU.debug("macros", "Processing macro \\" .. options["command"])
-    local macroArg
-    if type(_content) == "function" then
-      macroArg = _content
-    elseif type(_content) == "table" then
-      macroArg = pl.tablex.copy(_content)
-      macroArg.command = nil
-      macroArg.id = nil
-    elseif _content == nil then
-      macroArg = {}
-    else
-      SU.error("Unhandled content type " .. type(_content) .. " passed to macro \\" .. options["command"], true)
-    end
-    -- Replace every occurrence of \process in `content` (the macro
-    -- body) with `macroArg`, then have SILE go through the new `content`.
-    local newContent = replaceProcessBy(macroArg, content)
-    SILE.process(newContent)
-    SU.debug("macros", "Finished processing \\" .. options["command"])
-  end, options.help, SILE.currentlyProcessingFile)
-end, "Define a new macro. \\define[command=example]{ ... \\process }")
-
-SILE.registerCommand("comment", function (_, _)
-end, "Ignores any text within this command's body.")
-
-SILE.registerCommand("process", function ()
-  SU.error("Encountered unsubstituted \\process.")
-end, "Within a macro definition, processes the contents of the macro body.")
-
-SILE.baseClass = std.object {
-  _initialized = false,
-
-  registerCommands = (function ()
-
-    SILE.registerCommand("\\", function (_, _)
-      SILE.typesetter:typeset("\\")
-    end)
+local _oldbase = {
+  registerCommands = function ()
 
     SILE.registerCommand("script", function (options, content)
       if (options["src"]) then
@@ -185,7 +84,7 @@ SILE.baseClass = std.object {
       SILE.typesetter:endline()
     end, "Ends the current paragraph.")
 
-  end),
+  end,
 
   pageTemplate = std.object { frames = {}, firstContentFrame = nil },
 
@@ -198,34 +97,14 @@ SILE.baseClass = std.object {
 
   initPackage = function (self, pack, args)
     if type(pack) == "table" then
-      if pack.exports then self:mapfields(pack.exports) end
+      if pack.exports then pl.tablex.update(self, pack.exports) end
       if type(pack.init) == "function" then
-        table.insert(SILE.baseClass.deferredInit, function () pack.init(self, args) end)
+        table.insert(SILE.classes.base.deferredInit, function () pack.init(self, args) end)
         if self._initialized then
           pack.init(self, args)
         end
       end
     end
-  end,
-
-  init = function (self)
-    SILE.settings.declare({
-      parameter = "current.parindent",
-      type = "glue or nil",
-      default = nil,
-      help = "Glue at start of paragraph"
-    })
-    SILE.outputter:init(self)
-    self:registerCommands()
-    -- Call all stored package init routines
-    for i = 1, #(SILE.baseClass.deferredInit) do (SILE.baseClass.deferredInit[i])() end
-    SILE.typesetter:registerPageEndHook(function ()
-      if SU.debugging("frames") then
-        for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
-      end
-    end)
-    self._initialized = true
-    return self:initialFrame()
   end,
 
   initialFrame = function (self)
@@ -299,18 +178,96 @@ SILE.baseClass = std.object {
   endPar = function (typesetter)
     typesetter:pushVglue(SILE.settings.get("document.parskip"))
   end,
-
-  options = {
-    papersize = function (size)
-      SILE.documentState.paperSize = SILE.papersize(size)
-      SILE.documentState.orgPaperSize = SILE.documentState.paperSize
-      SILE.newFrame({
-          id = "page",
-          left = 0,
-          top = 0,
-          right = SILE.documentState.paperSize[1],
-          bottom = SILE.documentState.paperSize[2]
-        })
-    end
-  }
 }
+
+local base = pl.class({
+    type = "class",
+    _initialized = false,
+    deferredInit = {},
+    pageTemplate = _oldbase.pageTemplate,
+    defaultFrameset = {},
+    firstContentFrame = "page",
+    options = {},
+
+    _init = function (self, options)
+      if not options then options = {} end
+      self:declareOption("id", function (_)
+        -- The old std.object inheritence for classes called the base class with
+        -- and arg of a table which had an ID. Since the new system doesn't have
+        -- an ID arg, we can assume this is unported code. See also core/sile.lua
+        -- for the actual deprecation mechanism for the old SILE.baseClass.
+        SU.warn([[
+        The inheritance system for SILE classes has been refactored using a
+          different object model, please update your code as use of the old
+          model will cause unexpected errors and will eventually be removed.
+        ]])
+        SU.deprecated("std.object x", "pl.class", "0.11.0", "0.12.0")
+      end)
+      self:declareOption("class", function (name) return name end)
+      self:declareOption("papersize", function (size)
+        SILE.documentState.paperSize = SILE.papersize(size)
+        SILE.documentState.orgPaperSize = SILE.documentState.paperSize
+        SILE.newFrame({
+            id = "page",
+            left = 0,
+            top = 0,
+            right = SILE.documentState.paperSize[1],
+            bottom = SILE.documentState.paperSize[2]
+          })
+        return size
+      end)
+      for k, v in pairs(options) do
+        self.options[k] = v
+      end
+      SILE.outputter:init(self)
+      self:declareSettings()
+      self:registerCommands()
+      self:declareFrames(self.defaultFrameset)
+      self.pageTemplate.firstContentFrame = self.pageTemplate.frames[self.firstContentFrame]
+      for i = 1, #(SILE.classes.base.deferredInit) do (SILE.classes.base.deferredInit[i])() end
+      SILE.typesetter:registerPageEndHook(function ()
+        if SU.debugging("frames") then
+          for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
+        end
+      end)
+      self._initialized = true
+    end,
+
+    declareOption = function (self, option, setter)
+      if not getmetatable(self.options) then
+        setmetatable(self.options, {
+            __newindex = function (self, key, value)
+              local setter = getmetatable(self)[key]
+              if not setter then
+                SU.error("Attempted to set a class option '" .. key .. "' that isn’t registered.")
+              end
+              rawset(self, key, setter(value))
+            end
+          })
+      end
+      getmetatable(self.options)[option] = setter
+    end,
+
+    declareSettings = function (_)
+      SILE.settings.declare({
+          parameter = "current.parindent",
+          type = "glue or nil",
+          default = nil,
+          help = "Glue at start of paragraph"
+        })
+    end,
+
+    loadPackage = _oldbase.loadPackage,
+    initPackage = _oldbase.initPackage,
+    registerCommands = _oldbase.registerCommands,
+    initialFrame = _oldbase.initialFrame,
+    declareFrame = _oldbase.declareFrame,
+    declareFrames = _oldbase.declareFrames,
+    newPar = _oldbase.newPar,
+    endPar = _oldbase.endPar,
+    newPage = _oldbase.newPage,
+    endPage = _oldbase.endPage,
+    finish = _oldbase.finish
+  })
+
+return base
