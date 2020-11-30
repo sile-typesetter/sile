@@ -81,7 +81,7 @@ local _oldplain = {
     \define[command=justified]{\set[parameter=document.rskip]\set[parameter=document.spaceskip]{\process\par}}%
     \define[command=rightalign]{\raggedleft{\process\par}}%
     \define[command=em]{\font[style=Italic]{\process}}%
-    \define[command=strong]{\font[weight=600]{\process}}%
+    \define[command=strong]{\font[weight=700]{\process}}%
     \define[command=nohyphenation]{\font[language=und]{\process}}%
     \define[command=raggedright]{\ragged[right=true]{\process}}%
     \define[command=raggedleft]{\ragged[left=true]{\process}}%
@@ -194,13 +194,19 @@ plain.defaultFrameset = {
     left = "5%pw",
     right = "95%pw",
     top = "5%ph",
-    bottom = "90%ph"
+    bottom = "top(footnotes)"
   },
   folio = {
-    left = "5%pw",
-    right = "95%pw",
-    top = "92%ph",
+    left = "left(content)",
+    right = "right(content)",
+    top = "bottom(footnotes)+2%ph",
     bottom = "97%ph"
+  },
+  footnotes = {
+    left = "left(content)",
+    right = "right(content)",
+    height = "0",
+    bottom = "90%ph"
   }
 }
 plain.firstContentFrame = "content"

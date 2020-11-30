@@ -48,6 +48,7 @@ jobs:
      env: LUAVER=5.3.5 HARFBUZZ=2.7.0 COVERAGE=true
   fast_finish: true
 cache:
+  apt: true
   directories:
    - $HOME/local
    - $HOME/.lua

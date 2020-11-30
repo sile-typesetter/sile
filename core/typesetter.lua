@@ -448,7 +448,7 @@ SILE.defaultTypesetter = std.object {
         end
       end
     end
-    SU.debug("pagebuilder", "Glues for self page adjusted by", adjustment, "drawn from", gTotal)
+    SU.debug("pagebuilder", "Glues for this page adjusted by", adjustment, "drawn from", gTotal)
   end,
 
   initNextFrame = function (self)

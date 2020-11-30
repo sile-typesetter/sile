@@ -115,7 +115,12 @@ SILE.require = function (dependency, pathprefix)
     local status, lib = pcall(require, std.io.catfile(pathprefix, dependency))
     if status then return lib end
   end
-  return require(dependency)
+  local dep = require(dependency)
+  local class = SILE.documentState.documentClass
+  if type(class) == "table" then
+    class:initPackage(dep)
+  end
+  return dep
 end
 
 SILE.parseArguments = function ()

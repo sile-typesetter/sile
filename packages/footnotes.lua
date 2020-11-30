@@ -72,9 +72,10 @@ end)
 
 return {
   init = function (_, args)
+    args = args or {}
     insertions.exports:initInsertionClass("footnote", {
-        insertInto = args.insertInto,
-        stealFrom = args.stealFrom,
+        insertInto = args.insertInto or "footnotes",
+        stealFrom = args.stealFrom or { "content" },
         maxHeight = SILE.length("75%ph"),
         topBox = SILE.nodefactory.vglue("2ex"),
         interInsertionSkip = SILE.length("1ex"),

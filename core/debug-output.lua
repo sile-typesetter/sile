@@ -21,6 +21,20 @@ local _deprecationCheck = function (caller)
   end
 end
 
+local function _round (input)
+  -- LuaJIT 2.1 betas (and inheritors such as OpenResty and Moonjit) are biased
+  -- towards rounding 0.5 up to 1, all other Lua interpreters are biased
+  -- towards rounding such floating point numbers down.  This hack shaves off
+  -- just enough to fix the bias so our test suite works across interpreters.
+  -- Note that even a true rounding function here will fail because the bias is
+  -- inherent to the floating point type. Also note we are erroring in favor of
+  -- the *less* common option beacuse the LuaJIT VMS are hopelessly broken
+  -- whereas normal LUA VMs can be cooerced.
+  if input > 0 then input = input + .00000000000001 end
+  if input < 0 then input = input - .00000000000001 end
+  return string.format("%.4f", input)
+end
+
 SILE.outputters.debug = {
 
   init = function (self)
@@ -68,8 +82,8 @@ SILE.outputters.debug = {
     local offset = relative and { x = cursorX, y = cursorY } or { x = 0, y = 0 }
     cursorX = offset.x + x
     cursorY = offset.y - y
-    if string.format("%.4f", oldx) ~= string.format("%.4f", cursorX) then writeline("Mx ", string.format("%.4f", x)) end
-    if string.format("%.4f", oldy) ~= string.format("%.4f", cursorY) then writeline("My ", string.format("%.4f", y)) end
+    if _round(oldx) ~= _round(cursorX) then writeline("Mx ", _round(x)) end
+    if _round(oldy) ~= _round(cursorY) then writeline("My ", _round(y)) end
   end,
 
   setColor = function (self, color)
@@ -79,7 +93,7 @@ SILE.outputters.debug = {
 
   pushColor = function (self, color)
     _deprecationCheck(self)
-    writeline("Push color", ("%.4g"):format(color.r), ("%.4g"):format(color.g), ("%.4g"):format(color.b))
+    writeline("Push color", _round(color.r), _round(color.g), _round(color.b))
   end,
 
   popColor = function (self)
@@ -93,13 +107,26 @@ SILE.outputters.debug = {
     return self:drawHbox(value, width)
   end,
 
-  drawHbox = function (self, value, _)
+  drawHbox = function (self, value, width)
     _deprecationCheck(self)
-    local buf = {}
-    for i=1, #(value.glyphString) do
-      buf[#buf+1] = value.glyphString[i]
+    if not value.glyphString then return end
+    width = SU.cast("number", width)
+    local buf
+    if value.complex then
+      local cluster = {}
+      for i = 1, #value.items do
+        local item = value.items[i]
+        cluster[#cluster+1] = item.gid
+        -- For the sake of terseness we're only dumping non-zero values
+        if item.glyphAdvance ~= 0 then cluster[#cluster+1] = "a=".._round(item.glyphAdvance) end
+        if item.x_offset then cluster[#cluster+1] = "x=".._round(item.x_offset) end
+        if item.y_offset then cluster[#cluster+1] = "y=".._round(item.y_offset) end
+        self:setCursor(item.width, 0, true)
+      end
+      buf = table.concat(cluster, " ")
+    else
+      buf = table.concat(value.glyphString, " ") .. " w=" .. _round(width)
     end
-    buf = table.concat(buf, " ")
     writeline("T", buf, "("..value.text..")")
   end,
 
@@ -118,7 +145,7 @@ SILE.outputters.debug = {
     y = SU.cast("number", y)
     width = SU.cast("number", width)
     height = SU.cast("number", height)
-    writeline("Draw image", src, string.format("%.4f %.4f %.4f %.4f" , x, y, width, height))
+    writeline("Draw image", src, _round(x), _round(y), _round(width), _round(height))
   end,
 
   imageSize = function (self, src)
@@ -140,7 +167,7 @@ SILE.outputters.debug = {
     y = SU.cast("number", y)
     width = SU.cast("number", width)
     height = SU.cast("number", height)
-    writeline("Draw SVG", string.format("%.4f %.4f %.4f %.4f %s" , x, y, width, height, figure), scalefactor)
+    writeline("Draw SVG", _round(x), _round(y), _round(width), _round(height), figure, scalefactor)
   end,
 
   rule = function (self, x, y, width, depth)
@@ -155,7 +182,7 @@ SILE.outputters.debug = {
     y = SU.cast("number", y)
     width = SU.cast("number", width)
     depth = SU.cast("number", depth)
-    writeline("Draw line", string.format("%.4f %.4f %.4f %.4f", x, y, width, depth))
+    writeline("Draw line", _round(x), _round(y), _round(width), _round(depth))
   end,
 
   debugFrame = function (self, _, _)

@@ -84,6 +84,14 @@ sudo apt-get update
 sudo apt-get install sile
 \end{terminal}
 
+For NetBSD, package sources are available in \code{print/sile}.
+Use the usual command \code{bmake install} to build and install.
+A binary package can be installed using \code{pkgin}
+
+\begin{terminal}
+pkgin install sile
+\end{terminal}
+
 For all other systems you will need to follow the steps to download and compile
 the source yourself.
 
@@ -156,7 +164,7 @@ combination of your system’s packages and installing them via \code{luarocks
 install}. The easiest way is to let Luarocks figure it out based on the
 included Rockspec:
 
-\terminal{$ luarocks install sile-dev-1.rockspec}
+\terminal{$ luarocks install --deps-only sile-dev-1.rockspec}
 
 Note that the \code{luasec} package requires OpenSSL libraries on your system
 in order to compile. On some systems such as macOS you may need to configure

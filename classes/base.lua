@@ -92,10 +92,17 @@ local _oldbase = {
 
   loadPackage = function (self, packname, args)
     local pack = require("packages/" .. packname)
+    self:initPackage(pack, args)
+  end,
+
+  initPackage = function (self, pack, args)
     if type(pack) == "table" then
       if pack.exports then self:mapfields(pack.exports) end
-      if pack.init then
+      if type(pack.init) == "function" then
         table.insert(SILE.classes.base.deferredInit, function () pack.init(self, args) end)
+        if self._initialized then
+          pack.init(self, args)
+        end
       end
     end
   end,
@@ -175,6 +182,7 @@ local _oldbase = {
 
 local base = pl.class({
     type = "class",
+    _initialized = false,
     deferredInit = {},
     pageTemplate = _oldbase.pageTemplate,
     defaultFrameset = {},
@@ -222,6 +230,7 @@ local base = pl.class({
           for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
         end
       end)
+      self._initialized = true
     end,
 
     declareOption = function (self, option, setter)
@@ -249,6 +258,7 @@ local base = pl.class({
     end,
 
     loadPackage = _oldbase.loadPackage,
+    initPackage = _oldbase.initPackage,
     registerCommands = _oldbase.registerCommands,
     initialFrame = _oldbase.initialFrame,
     declareFrame = _oldbase.declareFrame,
