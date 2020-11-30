@@ -190,19 +190,19 @@ local base = pl.class({
     options = {},
 
     _init = function (self, options)
-      if options.id then
+      if not options then options = {} end
+      self:declareOption("id", function (_)
         -- The old std.object inheritence for classes called the base class with
         -- and arg of a table which had an ID. Since the new system doesn't have
         -- an ID arg, we can assume this is unported code. See also core/sile.lua
-        -- for deprecation system for the old SILE.baseClass.
+        -- for the actual deprecation mechanism for the old SILE.baseClass.
         SU.warn([[
         The inheritance system for SILE classes has been refactored using a
           different object model, please update your code as use of the old
           model will cause unexpected errors and will eventually be removed.
         ]])
         SU.deprecated("std.object x", "pl.class", "0.11.0", "0.12.0")
-      end
-      if not options then options = {} end
+      end)
       self:declareOption("class", function (name) return name end)
       self:declareOption("papersize", function (size)
         SILE.documentState.paperSize = SILE.papersize(size)
