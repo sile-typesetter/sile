@@ -205,17 +205,17 @@ local base = pl.class({
       if not options then options = {} end
       self:declareOption("class", function (name) return name end)
       self:declareOption("papersize", function (size)
-          SILE.documentState.paperSize = SILE.papersize(size)
-          SILE.documentState.orgPaperSize = SILE.documentState.paperSize
-          SILE.newFrame({
-              id = "page",
-              left = 0,
-              top = 0,
-              right = SILE.documentState.paperSize[1],
-              bottom = SILE.documentState.paperSize[2]
-            })
-          return size
-        end)
+        SILE.documentState.paperSize = SILE.papersize(size)
+        SILE.documentState.orgPaperSize = SILE.documentState.paperSize
+        SILE.newFrame({
+            id = "page",
+            left = 0,
+            top = 0,
+            right = SILE.documentState.paperSize[1],
+            bottom = SILE.documentState.paperSize[2]
+          })
+        return size
+      end)
       for k, v in pairs(options) do
         self.options[k] = v
       end
