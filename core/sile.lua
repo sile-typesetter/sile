@@ -112,7 +112,8 @@ end
 SILE.require = function (dependency, pathprefix)
   dependency = dependency:gsub(".lua$", "")
   if pathprefix then
-    local status, lib = pcall(require, std.io.catfile(pathprefix, dependency))
+    local path = pl.path.join(pathprefix, dependency)
+    local status, lib = pcall(require, path)
     if status then return lib end
   end
   local dep = require(dependency)
