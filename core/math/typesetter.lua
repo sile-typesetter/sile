@@ -5,9 +5,9 @@ local tex = require("core/math/texlike")
 -- convert MathML into mbox
 local function ConvertMathML(content)
   if content == nil or content.command == nil then return nil end
-  local convertChildren = function(content)
+  local convertChildren = function(tree)
     local mboxes = {}
-    for i, n in ipairs(content) do
+    for _, n in ipairs(tree) do
       local box = ConvertMathML(n)
       if box then table.insert(mboxes, box) end
     end

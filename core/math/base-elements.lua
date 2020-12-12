@@ -209,10 +209,9 @@ local function getDenominatorMode(mode)
   if mode == mathMode.display or mode == mathMode.displayCramped then return mathMode.textCramped    -- D, D' -> T'
   elseif mode == mathMode.text or mode == mathMode.textCramped then return mathMode.scriptCramped    -- T, T' -> S'
   else return mathMode.scriptScriptCramped end                                                           -- S, SS, S', SS' -> SS'
-end 
+end
 
 local function getRightMostGlyphId(node)
-  local textNode = node
   while node:is_a(elements.stackbox) and node.direction == 'H' do
     node = node.children[#(node.children)]
   end
@@ -253,7 +252,7 @@ end
 local function minLength(...)
   local args = {...}
   for i, v in ipairs(args) do
-    args[i] = args[i] * (-1)
+    args[i] = v * (-1)
   end
   return -maxLength(args)
 end
@@ -323,7 +322,7 @@ elements.mbox = pl.class({
   -- Determine the mode of its descendants
   styleDescendants = function(self)
     self:styleChildren()
-    for i, n in ipairs(self.children) do
+    for _, n in ipairs(self.children) do
       if n then n:styleDescendants() end
     end
   end,
@@ -333,7 +332,7 @@ elements.mbox = pl.class({
   -- During the process, each node will determine its size by (width, height, depth)
   -- and (relX, relY) which the relative position to its parent
   shapeTree = function(self)
-    for i, n in ipairs(self.children) do
+    for _, n in ipairs(self.children) do
       if n then n:shapeTree() end
     end
     self:shape()
@@ -351,7 +350,7 @@ elements.mbox = pl.class({
         scaleWidth(self.width, line)
       )
     end
-    for i, n in ipairs(self.children) do
+    for _, n in ipairs(self.children) do
       if n then n:outputTree(x + n.relX, y + n.relY, line) end
     end
   end
@@ -441,7 +440,7 @@ elements.stackbox = pl.class({
     end
   end,
   styleChildren = function(self)
-    for i, n in ipairs(self.children) do
+    for _, n in ipairs(self.children) do
       n.mode = self.mode
     end
     if self.direction == "H" then
@@ -811,7 +810,7 @@ elements.text = pl.class({
         -- first variant that is higher than displayOperatorMinHeight.
         local biggest
         local m = 0
-        for i, v in ipairs(displayVariants) do
+        for _, v in ipairs(displayVariants) do
           if v.advanceMeasurement > m then
             biggest = v
             m = v.advanceMeasurement
@@ -974,7 +973,6 @@ elements.fraction = pl.class({
 })
 
 local newSubscript = function(spec)
-  local ret
   if spec.base and spec.base:is_a(elements.text)
       and spec.base.kind == "operator"
       and operatorDefaults[spec.base.text]
@@ -1020,19 +1018,6 @@ local function mapList(f, l)
   return ret
 end
 
--- TODO replace with penlight equivalent
-local function foldList(f, init, l)
-  local acc = init
-  for _,x in ipairs(l) do
-    acc = f(acc, x)
-  end
-  return acc
-end
-
-local sum = function(l)
-  return foldList(function(x,y) return x+y end, 0, l)
-end
-
 elements.mtr = pl.class({
   _base = elements.mbox,
   _init = function(self, children)
@@ -1057,7 +1042,7 @@ elements.table = pl.class({
   end,
 
   styleChildren = function(self)
-    if self.mode == display and self.options.displaystyle ~= "false" then
+    if self.mode == mathMode.display and self.options.displaystyle ~= "false" then
       for _,c in ipairs(self.children) do
         c.mode = mathMode.display
       end
@@ -1070,7 +1055,7 @@ elements.table = pl.class({
 
   shape = function(self)
     self.nrows = #self.children
-    self.ncols = math.max(table.unpack(mapList(function(i, c)
+    self.ncols = math.max(table.unpack(mapList(function(_, c)
       return #c.children end, self.children)))
     -- Determine the height (resp. depth) of each row, which is the max
     -- height (resp. depth) among its elements. Then we only need to add it to
@@ -1089,14 +1074,10 @@ elements.table = pl.class({
         (i == self.nrows and SILE.length(0) or SILE.length("5pt")) -- Spacing
     end
     local rowHeightSoFar = SILE.length(0)
-    for _, row in ipairs(self.children) do
+    for i, row in ipairs(self.children) do
       row.relY = rowHeightSoFar + row.height - self.vertSize
       rowHeightSoFar = rowHeightSoFar + row.height + row.depth +
         (i == self.nrows and SILE.length(0) or SILE.length("5pt")) -- Spacing
-      for _, cell in ipairs(row.children) do
-        -- If cell is smaller than height, raise it to center it vertically
-        --cell.relY = cell.relY - (row.height + row.depth - cell.height - cell.depth) / 2
-      end
     end
     self.width = SILE.length(0)
     local thisColRelX = SILE.length(0)

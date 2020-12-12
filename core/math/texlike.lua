@@ -159,16 +159,6 @@ local function fold_pairs(fun, init, table)
   return acc
 end
 
-local function fold_tree(fun, init, tree)
-  local acc = init
-  if type(tree) == "table" then
-    for i, child in ipairs(tree) do
-      acc = fold_tree(fun, acc, child)
-    end
-  end
-  return fun(acc, tree)
-end
-
 local function forall(pred, list)
   for _,x in ipairs(list) do
     if not pred(x) then return false end

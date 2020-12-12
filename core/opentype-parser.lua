@@ -266,7 +266,7 @@ local function parseMath(s)
       mathConstantFormat = mathConstantFormat.." "..mathConstantNames[i]..":"..mathConstantTypes[i]
     end
     local mathConstants = vstruct.read(mathConstantFormat, fd)
-    for k,v in pairs(mathConstants) do
+    for _,v in pairs(mathConstants) do
       if v and type(v) == "table" then
         fetchMathValueRecord(v, offset, fd)
       end
@@ -281,10 +281,10 @@ local function parseMath(s)
     elseif coverageFormat == 2 then
       local rangeCount = vstruct.readvals("> u2", fd)
       local ranges = vstruct.read("> "..rangeCount.."*{ &RangeRecord }", fd)
-      coverage = {}
+      local coverage = {}
       for i = 1, #(ranges) do
         for glyphID = ranges[i].startGlyphID, ranges[i].endGlyphID do
-          index = ranges[i].startCoverageIndex + glyphID - ranges[i].startGlyphID + 1 -- array in lua is one-based
+          local index = ranges[i].startCoverageIndex + glyphID - ranges[i].startGlyphID + 1 -- array in lua is one-based
           if coverage[index] then
             SU.error(glyphID .. " already exist in converage when processing " .. ranges[i])
           end
