@@ -372,8 +372,8 @@ local function parseMath(s)
   end
 
 
-  local offsets = {}
   local header = vstruct.read(">majorVersion:u2 minorVersion:u2 mathConstantsOffset:u2 mathGlyphInfoOffset:u2 mathVariantsOffset:u2", fd)
+  SU.debug("opentype-parser", "header = "..header)
   if header.majorVersion > 1 then return end
   vstruct.compile("MathValueRecord", "value:i2 deviceTableOffset:u2")
   vstruct.compile("RangeRecord", "startGlyphID:u2 endGlyphID:u2 startCoverageIndex:u2")
@@ -388,10 +388,26 @@ local function parseMath(s)
                                      " mathTopAccentAttachmentOffset:u2"..
                                      " extendedShapeCoverageOffset:u2"..
                                      " mathKernInfoOffset:u2", fd)
-  local mathItalicsCorrection = parsePerGlyphTable(header.mathGlyphInfoOffset + mathGlyphInfo.mathItalicsCorrectionInfoOffset, "&MathValueRecord", fd)
-  local mathTopAccentAttachment = parsePerGlyphTable(header.mathGlyphInfoOffset + mathGlyphInfo.mathTopAccentAttachmentOffset, "&MathValueRecord", fd)
-  local extendedShapeCoverage = parseCoverage(header.mathGlyphInfoOffset + mathGlyphInfo.extendedShapeCoverageOffset, fd)
-  local mathKernInfo = parsePerGlyphTable(header.mathGlyphInfoOffset + mathGlyphInfo.mathKernInfoOffset, "&MathKernInfoRecord", fd)
+  SU.debug("opentype-parser", "mathGlyphInfoOffset = "..header.mathGlyphInfoOffset)
+  SU.debug("opentype-parser", "mathGlyphInfo = "..mathGlyphInfo)
+  local parseIfPresent = function(baseOffset, subtableOffset, f)
+    if subtableOffset == 0 then return nil
+    else return f(baseOffset + subtableOffset)
+    end
+  end
+  local mathItalicsCorrection = parseIfPresent(header.mathGlyphInfoOffset, mathGlyphInfo.mathItalicsCorrectionInfoOffset, function(offset)
+    return parsePerGlyphTable(offset, "&MathValueRecord", fd)
+  end)
+  local mathTopAccentAttachment = parseIfPresent(header.mathGlyphInfoOffset, mathGlyphInfo.mathTopAccentAttachmentOffset, function(offset)
+    return parsePerGlyphTable(offset, "&MathValueRecord", fd)
+  end)
+  local extendedShapeCoverage = parseIfPresent(header.mathGlyphInfoOffset, mathGlyphInfo.extendedShapeCoverageOffset, function(offset)
+    return parseCoverage(offset, fd)
+  end)
+  local mathKernInfo = parseIfPresent(header.mathGlyphInfoOffset, mathGlyphInfo.mathKernInfoOffset, function(offset)
+    return parsePerGlyphTable(offset, "&MathKernInfoRecord", fd)
+  end)
+
   local mathVariants = parseMathVariants(header.mathVariantsOffset, fd)
 
   return {
@@ -399,7 +415,7 @@ local function parseMath(s)
     mathItalicsCorrection = mathItalicsCorrection,
     mathTopAccentAttachment = mathTopAccentAttachment,
     extendedShapeCoverage = extendedShapeCoverage,
-    mathKern = mathKern,
+    mathKernInfo = mathKernInfo,
     mathVariants = mathVariants
   }
 end
