@@ -191,30 +191,55 @@ local function parseHead(s)
   return vstruct.read(">majorVersion:u2 minorVersion:u2 fontRevision:u4 checkSumAdjustment:u4 magicNumber:u4 flags:u2 unitsPerEm:u2 created:u8 modified:u8 xMin:i2 yMin:i2 xMax:i2 yMax:i2 macStyle:u2 lowestRecPPEM:u2 fontDirectionHint:i2 indexToLocFormat:i2 glyphDataFormat:i2", fd)
 end
 
+local parseDeviceTable = function(offset, fd)
+  local header = vstruct.read(">@"..offset.." startSize:u2 endSize:u2 deltaFormat:u2", fd)
+  local size = header.endSize - header.startSize + 1
+  local buf = {}
+  if header.deltaFormat == 0x0001 then
+    buf = vstruct.read("> "..math.ceil(size+7/8).."*[2| i2 i2 i2 i2 i2 i2 i2 i2 ]", fd)
+  elseif header.deltaFormat == 0x0002 then
+    buf = vstruct.read("> "..math.ceil(size/4).."*[2| i4 i4 i4 i4 ]", fd)
+  elseif header.deltaFormat == 0x0003 then
+    buf = vstruct.read("> "..math.ceil(size/2).."*[2| i8 i8 ]", fd)
+  else
+    SU.warn('DeltaFormat '..header.deltaFormat.." in Device Table is not supported. Ignore the table.")
+    return nil
+  end
+  local deviceTable = {}
+  for i = 1, size do
+    deviceTable[header.startSize + i - 1] = buf[i]
+  end
+  return deviceTable
+end
+
+local parseCoverage = function (offset, fd)
+  local coverageFormat = vstruct.readvals(">@"..offset.." u2", fd)
+  if coverageFormat == 1 then
+    local glyphCount = vstruct.readvals("> u2", fd)
+    return vstruct.read("> "..glyphCount.."*u2", fd)
+  elseif coverageFormat == 2 then
+    local rangeCount = vstruct.readvals("> u2", fd)
+    local ranges = vstruct.read("> "..rangeCount.."*{ &RangeRecord }", fd)
+    local coverage = {}
+    for i = 1, #(ranges) do
+      for glyphID = ranges[i].startGlyphID, ranges[i].endGlyphID do
+        local index = ranges[i].startCoverageIndex + glyphID - ranges[i].startGlyphID + 1 -- array in lua is one-based
+        if coverage[index] then
+          SU.error(glyphID .. " already exist in converage when processing " .. ranges[i])
+        end
+        coverage[index] = glyphID
+      end
+    end
+    return coverage
+  else
+    SU.error('Unsupported coverage table format '..coverageFormat)
+  end
+end
+
 local function parseMath(s)
   if s:len() <= 0 then return end
   local fd = vstruct.cursor(s)
 
-  local parseDeviceTable = function(offset, fd)
-    local header = vstruct.read(">@"..offset.." startSize:u2 endSize:u2 deltaFormat:u2", fd)
-    local size = header.endSize - header.startSize + 1
-    local buf = {}
-    if header.deltaFormat == 0x0001 then
-      buf = vstruct.read("> "..math.ceil(size+7/8).."*[2| i2 i2 i2 i2 i2 i2 i2 i2 ]", fd)
-    elseif header.deltaFormat == 0x0002 then
-      buf = vstruct.read("> "..math.ceil(size/4).."*[2| i4 i4 i4 i4 ]", fd)
-    elseif header.deltaFormat == 0x0003 then
-      buf = vstruct.read("> "..math.ceil(size/2).."*[2| i8 i8 ]", fd)
-    else
-      SU.warn('DeltaFormat '..header.deltaFormat.." in Device Table is not supported. Ignore the table.")
-      return nil
-    end
-    local deviceTable = {}
-    for i = 1, size do
-      deviceTable[header.startSize + i - 1] = buf[i]
-    end
-    return deviceTable
-  end
   local fetchMathValueRecord = function(record, parent_offset, fd)
     if record.deviceTableOffset ~= 0 then
       record.deviceTable = parseDeviceTable(parent_offset + record.deviceTableOffset, fd)
@@ -272,29 +297,6 @@ local function parseMath(s)
       end
     end
     return mathConstants
-  end
-  local parseCoverage = function (offset, fd)
-    local coverageFormat = vstruct.readvals(">@"..offset.." u2", fd)
-    if coverageFormat == 1 then
-      local glyphCount = vstruct.readvals("> u2", fd)
-      return vstruct.read("> "..glyphCount.."*u2", fd)
-    elseif coverageFormat == 2 then
-      local rangeCount = vstruct.readvals("> u2", fd)
-      local ranges = vstruct.read("> "..rangeCount.."*{ &RangeRecord }", fd)
-      local coverage = {}
-      for i = 1, #(ranges) do
-        for glyphID = ranges[i].startGlyphID, ranges[i].endGlyphID do
-          local index = ranges[i].startCoverageIndex + glyphID - ranges[i].startGlyphID + 1 -- array in lua is one-based
-          if coverage[index] then
-            SU.error(glyphID .. " already exist in converage when processing " .. ranges[i])
-          end
-          coverage[index] = glyphID
-        end
-      end
-      return coverage
-    else
-      SU.error('Unsupported coverage table format '..coverageFormat)
-    end
   end
   local parseMathKern = function(offset, fd)
     local heightCount	= vstruct.readvals(">@"..offset.." u2", fd)
