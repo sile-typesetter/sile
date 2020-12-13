@@ -300,13 +300,14 @@ int get_glyph_dimensions(lua_State *L) {
   unsigned int upem = hb_face_get_upem(hbFace);
   hb_font_set_scale(hbFont, upem, upem);
 
-  /* Harfbuzz's support for OT fonts is great, but
-     there's currently no support for CFF fonts, so
-     downgrade to Freetype for those. */
-  if (strncmp(font_s, "OTTO", 4) == 0 || strncmp(font_s, "ttcf", 4) == 0) {
-    hb_ft_font_set_funcs(hbFont);
-  } else {
+  if (can_use_ot_funcs(hbFace)) {
     hb_ot_font_set_funcs(hbFont);
+  } else {
+    /*
+      Note that using FT may cause differing vertical metrics for CFF fonts.
+      SILE will give a one-time warning if this is the case.
+    */
+    hb_ft_font_set_funcs(hbFont);
   }
 
   hb_glyph_extents_t extents = {0,0,0,0};
