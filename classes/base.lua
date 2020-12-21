@@ -199,6 +199,41 @@ local _oldbase = {
   end,
 }
 
+-- This is essentially of a self destruct mechanism that monkey patches the old
+-- stdlib object model definition to return a Penlight class constructor
+-- instead of the old std.object model.
+local _deprecator = function (self, options)
+  if not options then options = {} end
+  if options.id then
+    -- The old std.object inheritence for classes called the base class with
+    -- and arg of a table which had an ID. Since the new system doesn't have
+    -- an ID arg, we can assume this is unported code. See also core/sile.lua
+    -- for the actual deprecation mechanism for the old SILE.baseClass.
+    SU.warn([[
+      The inheritance system for SILE classes has been refactored using a
+        different object model, please update your code as use of the old
+        model will cause unexpected errors and will eventually be removed.
+      ]])
+    SU.deprecated("std.object x", "pl.class", "0.13.0", "0.14.0")
+    options.id = nil
+    local constructor = pl.class(self)
+    pl.tablex.update(constructor, options)
+    constructor._init = function(self, options)
+      return self:init(options)
+    end
+    -- Regress to the legacy declareOption functionality
+    self.legacyopts = {}
+    rawset(constructor, "declareOption", function(self, option, setter)
+      self.legacyopts[option] = setter
+      self.options[option] = function (value)
+        if value then self.legacyopts[option] = value end
+        return self.legacyopts[option]
+      end
+    end)
+    return constructor
+  end
+end
+
 local base = pl.class({
     type = "class",
     _initialized = false,
@@ -207,21 +242,12 @@ local base = pl.class({
     defaultFrameset = {},
     firstContentFrame = "page",
     options = {},
+    _deprecator = _deprecator,
 
     _init = function (self, options)
       if not options then options = {} end
-      self:declareOption("id", function (_)
-        -- The old std.object inheritence for classes called the base class with
-        -- and arg of a table which had an ID. Since the new system doesn't have
-        -- an ID arg, we can assume this is unported code. See also core/sile.lua
-        -- for the actual deprecation mechanism for the old SILE.baseClass.
-        SU.warn([[
-        The inheritance system for SILE classes has been refactored using a
-          different object model, please update your code as use of the old
-          model will cause unexpected errors and will eventually be removed.
-        ]])
-        SU.deprecated("std.object x", "pl.class", "0.11.0", "0.12.0")
-      end)
+      local legacy = self._deprecator(options)
+      if legacy then return legacy end
       self:declareOption("class", function (name) return name end)
       self:declareOption("papersize", function (size)
         SILE.documentState.paperSize = SILE.papersize(size)

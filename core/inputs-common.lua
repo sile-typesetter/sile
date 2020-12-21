@@ -2,9 +2,9 @@ SILE.inputs.common = {
 
   init = function (_, tree)
     local class = tree.options.class or "plain"
-    SILE.require(class, "classes")
+    local class_constructor = SILE.require(class, "classes")
     tree.options.papersize = tree.options.papersize or "a4"
-    SILE.documentState.documentClass = SILE.classes[class](tree.options)
+    SILE.documentState.documentClass = class_constructor(tree.options)
     for option, value in pairs(tree.options) do
       if SILE.documentState.documentClass.options[option] then
         SILE.documentState.documentClass.options[option](value)
