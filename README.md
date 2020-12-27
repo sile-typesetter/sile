@@ -41,8 +41,8 @@ Just run `brew install sile` for the latest stable release or `brew install sile
 Note the Homebrew package does not automatically install the [default font](#default-font).
 The easiest way to install Gentium Plus is through the [Homebrew Fonts caskroom][brewfonts]:
 
-    $ brew tap caskroom/fonts
-    $ brew cask install font-gentium-plus
+    $ brew tap homebrew/cask-fonts
+    $ brew install --cask font-gentium-plus
 
 ### For Linux
 
