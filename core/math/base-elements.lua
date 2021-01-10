@@ -1,7 +1,10 @@
 local nodefactory = require("core/nodefactory")
 local hb = require("justenoughharfbuzz")
 local ot = require("core/opentype-parser")
-require("core/math/default-symbols")
+local syms = require("core/math/default-symbols")
+
+local atomType = syms.atomType
+local symbolDefaults = syms.symbolDefaults
 
 local elements = {}
 
@@ -14,22 +17,6 @@ local mathMode = {
   scriptCramped = 5,
   scriptScript = 6,
   scriptScriptCramped = 7
-}
-
-local atomType = {
-  ordinary = 0,
-  bigOperator = 1,
-  binaryOperator = 2,
-  relationalOperator = 3,
-  openingSymbol = 4,
-  closeSymbol = 5,
-  punctuationSymbol = 6,
-  inner = 7,
-  overlinedSymbol = 8,
-  underlinedSymbol = 9,
-  accentedSymbol = 10,
-  radicalSymbol = 11,
-  vcenter = 12
 }
 
 local scriptType = {
@@ -57,48 +44,6 @@ local mathVariantToScriptType = function(attr)
     attr == "double-struck" and scriptType.doubleStruck or
     SU.error("Invalid value \""..attr.."\" for option mathvariant")
 end
-
-local operatorDefaults = {
-  ['+'] = { atomType = atomType.binaryOperator },
-  ['−'] = { atomType = atomType.binaryOperator },
-  ['<'] = { atomType = atomType.relationalOperator },
-  ['⩽'] = { atomType = atomType.relationalOperator },
-  ['>'] = { atomType = atomType.relationalOperator },
-  ['⩾'] = { atomType = atomType.relationalOperator },
-  ['='] = { atomType = atomType.relationalOperator },
-  ['≠'] = { atomType = atomType.relationalOperator },
-  ['∈'] = { atomType = atomType.relationalOperator },
-  ['⊆'] = { atomType = atomType.relationalOperator },
-  ['∑'] = { atomType = atomType.bigOperator },
-  ['∏'] = { atomType = atomType.bigOperator },
-  ['⋀'] = { atomType = atomType.bigOperator },
-  ['⋁'] = { atomType = atomType.bigOperator },
-  ['⋂'] = { atomType = atomType.bigOperator },
-  ['⋃'] = { atomType = atomType.bigOperator },
-  ['⨅'] = { atomType = atomType.bigOperator },
-  ['⨆'] = { atomType = atomType.bigOperator },
-  ['∫'] = { atomType = atomType.bigOperator },
-  ['∰'] = { atomType = atomType.bigOperator },
-  ['∮'] = { atomType = atomType.bigOperator },
-  [','] = { atomType = atomType.punctuationSymbol },
-  ['⟹'] = { atomType = atomType.relationalOperator },
-  ['/'] = { atomType = atomType.binaryOperator },
-  [':'] = { atomType = atomType.relationalOperator },
-  ['⟶'] = { atomType = atomType.relationalOperator },
-  ['|'] = { atomType = atomType.relationalOperator },
-  ['('] = { atomType = atomType.openingSymbol,
-            stretchy = true },
-  [')'] = { atomType = atomType.closeSymbol,
-            stretchy = true},
-  ['['] = { atomType = atomType.openingSymbol,
-            stretchy = true },
-  [']'] = { atomType = atomType.closeSymbol,
-            stretchy = true},
-  ['{'] = { atomType = atomType.openingSymbol,
-            stretchy = true },
-  ['}'] = { atomType = atomType.closeSymbol,
-            stretchy = true},
-}
 
 -- Big operators that should nevertheless have their limits drawn as subscript
 -- and superscript by default
@@ -824,9 +769,9 @@ elements.text = pl.class({
       if self.text == "-" then
         self.text = "−"
       end
-      if operatorDefaults[self.text] then
-        self.atom = operatorDefaults[self.text].atomType
-        self.stretchy = operatorDefaults[self.text].stretchy
+      if symbolDefaults[self.text] then
+        self.atom = symbolDefaults[self.text].atomType
+        self.stretchy = symbolDefaults[self.text].stretchy
       end
     end
   end,
@@ -1073,8 +1018,8 @@ elements.fraction = pl.class({
 local newSubscript = function(spec)
   if spec.base and spec.base:is_a(elements.text)
       and spec.base.kind == "operator"
-      and operatorDefaults[spec.base.text]
-      and operatorDefaults[spec.base.text].atomType == atomType.bigOperator then
+      and symbolDefaults[spec.base.text]
+      and symbolDefaults[spec.base.text].atomType == atomType.bigOperator then
     return elements.bigOpSubscript(spec.kind, spec.base, spec.sub, spec.sup)
   else
     return elements.subscript(spec.kind, spec.base, spec.sub, spec.sup)
@@ -1218,7 +1163,7 @@ elements.mathMode = mathMode
 elements.atomType = atomType
 elements.scriptType = scriptType
 elements.mathVariantToScriptType = mathVariantToScriptType
-elements.operatorDefaults = operatorDefaults
+elements.symbolDefaults = symbolDefaults
 elements.newStandardHspace = newStandardHspace
 elements.newSubscript = newSubscript
 elements.newStandardHspace = newStandardHspace
