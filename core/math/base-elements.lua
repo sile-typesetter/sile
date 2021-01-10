@@ -126,6 +126,7 @@ end
 
 local mathScriptConversionTable = {
   capital = {
+    [scriptType.upright] = function(codepoint) return codepoint end,
     [scriptType.italic] = function(codepoint) return codepoint + 0x1D434 - 0x41 end,
     [scriptType.boldItalic] = function(codepoint) return codepoint + 0x1D468 - 0x41 end,
     [scriptType.doubleStruck] = function(codepoint)
@@ -140,6 +141,7 @@ local mathScriptConversionTable = {
     end
   },
   small = {
+    [scriptType.upright] = function(codepoint) return codepoint end,
     [scriptType.italic] = function(codepoint) return codepoint == 0x68 and 0x210E or codepoint + 0x1D44E - 0x61 end,
     [scriptType.boldItalic] = function(codepoint) return codepoint + 0x1D482 - 0x61 end,
     [scriptType.doubleStruck] = function(codepoint) return codepoint + 0x1D552 - 0x61 end,
