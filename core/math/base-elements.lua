@@ -60,9 +60,11 @@ end
 
 local operatorDefaults = {
   ['+'] = { atomType = atomType.binaryOperator },
-  ['-'] = { atomType = atomType.binaryOperator },
+  ['−'] = { atomType = atomType.binaryOperator },
   ['<'] = { atomType = atomType.relationalOperator },
+  ['⩽'] = { atomType = atomType.relationalOperator },
   ['>'] = { atomType = atomType.relationalOperator },
+  ['⩾'] = { atomType = atomType.relationalOperator },
   ['='] = { atomType = atomType.relationalOperator },
   ['≠'] = { atomType = atomType.relationalOperator },
   ['∈'] = { atomType = atomType.relationalOperator },
