@@ -86,6 +86,18 @@ local operatorDefaults = {
   [':'] = { atomType = atomType.relationalOperator },
   ['⟶'] = { atomType = atomType.relationalOperator },
   ['|'] = { atomType = atomType.relationalOperator },
+  ['('] = { atomType = atomType.openingSymbol,
+            stretchy = true },
+  [')'] = { atomType = atomType.closeSymbol,
+            stretchy = true},
+  ['['] = { atomType = atomType.openingSymbol,
+            stretchy = true },
+  [']'] = { atomType = atomType.closeSymbol,
+            stretchy = true},
+  ['{'] = { atomType = atomType.openingSymbol,
+            stretchy = true },
+  ['}'] = { atomType = atomType.closeSymbol,
+            stretchy = true},
 }
 
 -- Big operators that should nevertheless have their limits drawn as subscript
@@ -436,11 +448,12 @@ elements.stackbox = pl.class({
     end
     self.direction = direction
     self.children = children
-    self.anchor = 1 -- The index of the child whose relX and relY will be 0
+    self.anchor = 1 -- The index of the child whose relY will be 0
     if self.anchor < 1 or self.anchor > #(self.children) then
       SU.error('Wrong index of the anchor children: '..self.anchor)
     end
   end,
+
   styleChildren = function(self)
     for _, n in ipairs(self.children) do
       n.mode = self.mode
@@ -471,44 +484,62 @@ elements.stackbox = pl.class({
       end
     end
   end,
+
   shape = function(self)
-    if self.children and #(self.children) > 0 then
-      for i, n in ipairs(self.children) do
-        if self.direction == "H" then
-          -- Horizontal stackbox
-          if i == self.anchor then
-            n.relX = SILE.length(0)
-          elseif i > self.anchor then
-            n.relX = self.children[i - 1].relX + self.children[i - 1].width
-          end
-          n.relY = SILE.length(0)
-          self.width = i == 1 and self.children[i].width or (self.width + self.children[i].width)
-          self.height = i == 1 and self.children[i].height or maxLength(self.height, self.children[i].height)
-          self.depth = i == 1 and self.children[i].depth or maxLength(self.depth, self.children[i].depth)
-        else -- self.direction == "V"
-          n.relX = SILE.length(0)
-          if i == self.anchor then
-            n.relY = SILE.length(0)
-            self.height = n.height
-            self.depth = n.depth
-          elseif i > self.anchor then
-            n.relY = self.children[i - 1].relY + self.children[i - 1].depth + n.height
-            self.depth = self.depth + n.height + n.depth
-          end
-          self.width = i == 1 and self.children[i].width or maxLength(self.width, self.children[i].width)
+    -- For a horizontal stackbox (i.e. mrow):
+    -- 1. set self.height and self.depth to max element height & depth
+    -- 2. handle stretchy operators
+    -- 3. set self.width
+    -- For a vertical stackbox:
+    -- 1. set self.width to max element width
+    -- 2. set self.height
+    -- And finally set children's relative coordinates
+    if self.direction == "H" then
+      for i,n in ipairs(self.children) do
+        n.relY = SILE.length(0)
+        self.height = i == 1 and n.height or maxLength(self.height, n.height)
+        self.depth = i == 1 and n.depth or maxLength(self.depth, n.depth)
+      end
+      -- Handle stretchy operators
+      for _,elt in ipairs(self.children) do
+        if elt.is_a(elements.text) and elt.kind == 'operator'
+            and elt.stretchy then
+          elt:stretchyReshape(self.depth, self.height)
+        end
+      end
+      -- Set self.width
+      self.width = SILE.length(0)
+      for i,n in ipairs(self.children) do
+        n.relX = self.width
+        self.width = i == 1 and n.width or self.width + n.width
+      end
+    else -- self.direction == "V"
+      for i,n in ipairs(self.children) do
+        n.relX = SILE.length(0)
+        self.width = i == 1 and n.width or maxLength(self.width, n.width)
+      end
+      -- Set self.height and self.depth
+      for i,n in ipairs(self.children) do
+        self.depth = i == 1 and n.depth or self.depth + n.depth
+      end
+      for i = self.anchor, #self.children do
+        local n = self.children[i]
+        if i == self.anchor then
+          self.height = n.height
+          self.depth = n.depth
+        elseif i > self.anchor then
+          n.relY = self.children[i - 1].relY + self.children[i - 1].depth + n.height
+          self.depth = self.depth + n.height + n.depth
         end
       end
       for i = self.anchor - 1, 1, -1 do
         local n = self.children[i]
-        if self.direction == "H" then
-          n.relX = self.children[i + 1].relX - n.width
-        else -- self.direction == "V"
-          n.relY = self.children[i + 1].relY - self.children[i + 1].height - n.depth
-          self.height  = self.height + n.depth + n.height
-        end
+        n.relY = self.children[i + 1].relY - self.children[i + 1].height - n.depth
+        self.height  = self.height + n.depth + n.height
       end
     end
   end,
+
   -- Despite of its name, this function actually output the whole tree of nodes recursively.
   outputYourself = function(self, typesetter, line)
     local mathX = typesetter.frame.state.cursorX
@@ -516,6 +547,7 @@ elements.stackbox = pl.class({
     self:outputTree(self.relX + mathX, self.relY + mathY, line)
     typesetter.frame:advanceWritingDirection(scaleWidth(self.width, line))
   end,
+
   output = function(self, x, y, line) end
 })
 
@@ -787,14 +819,16 @@ elements.text = pl.class({
       self.originalText = self.text
       self.text = converted
     elseif self.kind == 'operator' then
-      if operatorDefaults[self.text] then
-        self.atom = operatorDefaults[self.text].atomType
-      end
       if self.text == "-" then
         self.text = "−"
       end
+      if operatorDefaults[self.text] then
+        self.atom = operatorDefaults[self.text].atomType
+        self.stretchy = operatorDefaults[self.text].stretchy
+      end
     end
   end,
+
   shape = function(self)
     self.options.size = self.options.size * self:getScaleDown()
     local face = SILE.font.cache(self.options, SILE.shaper.getFace)
@@ -865,6 +899,65 @@ elements.text = pl.class({
       self.depth = SILE.length(0)
     end
   end,
+
+  stretchyReshape = function(self, depth, height)
+    -- Required depth+height of stretched glyph, in font units
+    local mathMetrics = getMathMetrics()
+    local upem = mathMetrics.unitsPerEm
+    local sz = self.options.size
+    local requiredAdvance = (depth + height):tonumber() * upem/sz
+    SU.debug("math", "stretch: rA = "..requiredAdvance)
+    -- Choose variant of the closest size. The criterion we use is to have
+    -- an advance measurement as close as possible as the required one.
+    -- The advance measurement is simply the depth+height of the glyph.
+    -- Therefore, the selected glyph may be smaller or bigger than
+    -- required.  TODO: implement assembly of stretchable glyphs form
+    -- their parts for cases when the biggest variant is not big enough.
+    -- We copy the glyph list to avoid modifying the shaper's cache. Yes.
+    local glyphs = std.tree.clone(self.value.items)
+    local constructions = getMathMetrics().mathVariants
+      .vertGlyphConstructions[glyphs[1].gid]
+    if constructions then
+      local variants = constructions.mathGlyphVariantRecord
+      SU.debug("math", "stretch: variants = " .. variants)
+      local closest
+      local closestI
+      local m = requiredAdvance - (self.depth+self.height):tonumber() * upem/sz
+      SU.debug("math", "strech: m = " .. m)
+      for i,v in ipairs(variants) do
+        local diff = math.abs(v.advanceMeasurement - requiredAdvance)
+        SU.debug("math", "stretch: diff = " .. diff)
+        if diff < m then
+          closest = v
+          closestI = i
+          m = diff
+        end
+      end
+      SU.debug("math", "stretch: closestI = " .. closestI)
+      if closest then
+        -- Now we have to re-shape the glyph chain. We will assume there
+        -- is only one glyph.
+        -- TODO: this code is probably wrong when the vertical
+        -- variants have a different width than the original, because
+        -- the shaping phase is already done. Need to do better.
+        glyphs[1].gid = closest.variantGlyph
+        local face = SILE.font.cache(self.options, SILE.shaper.getFace)
+        local dimen = hb.get_glyph_dimensions(face.data,
+          face.index, self.options.size, closest.variantGlyph)
+        glyphs[1].width = dimen.width
+        glyphs[1].height = dimen.height
+        glyphs[1].depth = dimen.depth
+        glyphs[1].glyphAdvance = dimen.glyphAdvance
+        self.width = SILE.length(dimen.glyphAdvance)
+        self.depth = SILE.length(dimen.depth)
+        self.height = SILE.length(dimen.height)
+        SILE.shaper:preAddNodes(glyphs, self.value)
+        self.value.items = glyphs
+        self.value.glyphString = {glyphs[1].gid}
+      end
+    end
+  end,
+
   output = function(self, x, y, line)
     if not self.value.glyphString then return end
     local compensatedY
