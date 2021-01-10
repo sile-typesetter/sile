@@ -884,8 +884,9 @@ elements.text = pl.class({
       for i = 1, #glyphs do
         table.insert(self.value.glyphString, glyphs[i].gid)
       end
+      self.width = SILE.length(0)
       for i = #glyphs, 1, -1 do
-        self.width = i == #glyphs and SILE.length(glyphs[#glyphs].width) or self.width + glyphs[i].glyphAdvance
+        self.width = self.width + glyphs[i].glyphAdvance
       end
       local itCorr = mathMetrics.italicsCorrection[glyphs[#glyphs].gid]
       if itCorr then
