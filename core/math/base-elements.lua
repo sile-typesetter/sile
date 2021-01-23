@@ -395,10 +395,6 @@ elements.stackbox = pl.class({
     end
     self.direction = direction
     self.children = children
-    self.anchor = 1 -- The index of the child whose relY will be 0
-    if self.anchor < 1 or self.anchor > #(self.children) then
-      SU.error('Wrong index of the anchor children: '..self.anchor)
-    end
   end,
 
   styleChildren = function(self)
@@ -427,7 +423,6 @@ elements.stackbox = pl.class({
       table.sort(spaceIdx, function(a, b) return a > b end)
       for _, idx in ipairs(spaceIdx) do
         table.insert(self.children, idx, newStandardHspace(self.options.size * self:getScaleDown(), spaces[idx]))
-        if idx <= self.anchor then self.anchor = self.anchor + 1 end
       end
     end
   end,
@@ -469,20 +464,15 @@ elements.stackbox = pl.class({
       for i,n in ipairs(self.children) do
         self.depth = i == 1 and n.depth or self.depth + n.depth
       end
-      for i = self.anchor, #self.children do
+      for i = 1, #self.children do
         local n = self.children[i]
-        if i == self.anchor then
+        if i == 1 then
           self.height = n.height
           self.depth = n.depth
-        elseif i > self.anchor then
+        elseif i > 1 then
           n.relY = self.children[i - 1].relY + self.children[i - 1].depth + n.height
           self.depth = self.depth + n.height + n.depth
         end
-      end
-      for i = self.anchor - 1, 1, -1 do
-        local n = self.children[i]
-        n.relY = self.children[i + 1].relY - self.children[i + 1].height - n.depth
-        self.height  = self.height + n.depth + n.height
       end
     end
   end,
