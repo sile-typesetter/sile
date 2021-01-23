@@ -60,7 +60,7 @@ local function ConvertMathML(content)
       ..#children)
     end
     return b.fraction(children[1], children[2])
-  elseif content.command == "mtable" then
+  elseif content.command == "mtable" or content.command == "table" then
     local children = convertChildren(content)
     return b.table(children, content.options)
   elseif content.command == "mtr" then

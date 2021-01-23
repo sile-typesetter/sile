@@ -7,10 +7,10 @@ local mathGrammar = function(_ENV)
   local _ = WS^0
   local eol = S"\r\n"
   local digit = R("09")
-  local natural = digit^1 / tonumber
+  local natural = digit^1 / tostring
   local pos_natural = R("19") * digit^0 / tonumber
   local ctrl_word = R("AZ", "az")^1
-  local ctrl_symbol = P(1) - S"{}"
+  local ctrl_symbol = P(1) - S"{}\\"
   local ctrl_sequence_name = C(ctrl_word + ctrl_symbol) / 1
   local comment = (
       P"%" *
@@ -57,6 +57,24 @@ local mathGrammar = function(_ENV)
       P"]"
     )^-1 / function (a) return type(a)=="table" and a or {} end
 
+  local dim2_arg_inner = Ct(V"mathlist" * (P"&" * V"mathlist")^0) /
+    function(t)
+      t.id = "mathlist"
+      return t
+    end
+  local dim2_arg =
+    Cg(P"{" *
+       dim2_arg_inner *
+       (P"\\\\" * dim2_arg_inner)^1 *
+       (P"}" + E("`}` expected"))
+      ) / function(...)
+        local t = {...}
+        -- Remove the last mathlist if empty. This way,
+        -- `inner1 \\ inner2 \\` is the same as `inner1 \\ inner2`.
+        if not t[#t][1] or not t[#t][1][1] then table.remove(t) end
+        return table.unpack(t)
+      end
+
   START "texlike_math"
   texlike_math = V"mathlist" * EOF"Unexpected character at end of math code"
   mathlist = (comment + (WS * _) + element)^0
@@ -66,15 +84,13 @@ local mathGrammar = function(_ENV)
     P"^" * _ * element_no_infix
   sup = element_no_infix * _ * P"^" * _ * element_no_infix
   sub = element_no_infix * _ * P"_" * _ * element_no_infix
-  atom = natural / tostring + C(utf8code - S"\\{}%^_") +
+  atom = natural + C(utf8code - S"\\{}%^_&") +
     (P"\\{" + P"\\}") / function(s) return string.sub(s, -1) end
   command = (
       P"\\" *
       Cg(ctrl_sequence_name, "command") *
       Cg(parameters, "options") *
-      (
-        group
-      )^0
+      (dim2_arg + group^0)
     )
   def = P"\\def" * _ * P"{" *
     Cg(ctrl_sequence_name, "command-name") * P"}" * _ *
@@ -218,11 +234,13 @@ local function compileToMathML(arg_env, tree)
       return tree[1]
     end
   elseif tree.id == "mathlist" then
-    -- Turn mathlist into `mrow` except if it has exactly one child.
+    -- Turn mathlist into `mrow` except if it has exactly one `mtr` or `mtd`
+    -- child.
     -- Note that `def`s have already been compiled away at this point.
-    if #tree == 1 then
+    if #tree == 1 and (tree[1].command == "mtr" or tree[1].command == "mtd") then
       return tree[1]
     else tree.command = "mrow" end
+    tree.command = "mrow"
   elseif tree.id == "atom" then
     local codepoints = {}
     for cp in SU.utf8codes(tree[1]) do

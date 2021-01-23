@@ -436,6 +436,8 @@ elements.stackbox = pl.class({
     -- 1. set self.width to max element width
     -- 2. set self.height
     -- And finally set children's relative coordinates
+    self.height = SILE.length(0)
+    self.depth = SILE.length(0)
     if self.direction == "H" then
       for i,n in ipairs(self.children) do
         n.relY = SILE.length(0)
@@ -1072,6 +1074,43 @@ elements.table = pl.class({
   _init = function(self, children, options)
     self.children = children
     self.options = options
+    self.nrows = #self.children
+    self.ncols = math.max(table.unpack(mapList(function(_, row)
+      return #row.children end, self.children)))
+    SU.debug("math", "self.ncols = "..self.ncols)
+    self.rowspacing = self.options.rowspacing and SILE.length(self.options.rowspacing)
+      or SILE.length("10pt")
+    self.columnspacing = self.options.columnspacing and SILE.length(self.options.columnspacing)
+      or SILE.length("6pt")
+    -- Pad rows that do not have enough cells by adding cells to the
+    -- right.
+    for i,row in ipairs(self.children) do
+      for j = 1, (self.ncols - #row.children) do
+        SU.debug("math", "padding i = "..i..", j = "..j)
+        table.insert(row.children, elements.stackbox('H', {}))
+        SU.debug("math", "size "..#row.children)
+      end
+    end
+    if options.columnalign then
+      local l = {}
+      for w in string.gmatch(options.columnalign, "[^%s]+") do
+        if not (w == "left" or w == "center" or w == "right") then
+          SU.error("Invalid specifier in `columnalign` attribute: "..w)
+        end
+        table.insert(l, w)
+      end
+      -- Pad with last value of l if necessary
+      for _ = 1, (self.ncols - #l), 1 do
+        table.insert(l, l[#l])
+      end
+      -- On the contrary, remove excess values in l if necessary
+      for _ = 1, (#l - self.ncols), 1 do
+        table.remove(l)
+      end
+      self.options.columnalign = l
+    else
+      self.options.columnalign = pl.List.range(1, self.ncols):map(function(_) return "center" end)
+    end
   end,
 
   styleChildren = function(self)
@@ -1087,9 +1126,6 @@ elements.table = pl.class({
   end,
 
   shape = function(self)
-    self.nrows = #self.children
-    self.ncols = math.max(table.unpack(mapList(function(_, c)
-      return #c.children end, self.children)))
     -- Determine the height (resp. depth) of each row, which is the max
     -- height (resp. depth) among its elements. Then we only need to add it to
     -- the table's height and center every cell vertically.
@@ -1104,13 +1140,13 @@ elements.table = pl.class({
     self.vertSize = SILE.length(0)
     for i, row in ipairs(self.children) do
       self.vertSize = self.vertSize + row.height + row.depth +
-        (i == self.nrows and SILE.length(0) or SILE.length("5pt")) -- Spacing
+        (i == self.nrows and SILE.length(0) or self.rowspacing) -- Spacing
     end
     local rowHeightSoFar = SILE.length(0)
     for i, row in ipairs(self.children) do
       row.relY = rowHeightSoFar + row.height - self.vertSize
       rowHeightSoFar = rowHeightSoFar + row.height + row.depth +
-        (i == self.nrows and SILE.length(0) or SILE.length("5pt")) -- Spacing
+        (i == self.nrows and SILE.length(0) or self.rowspacing) -- Spacing
     end
     self.width = SILE.length(0)
     local thisColRelX = SILE.length(0)
@@ -1123,13 +1159,21 @@ elements.table = pl.class({
           columnWidth = self.children[j].children[i].width
         end
       end
-      -- Use it to center every cell of the column horizontally.
+      -- Use it to align the contents of every cell as required.
       for j = 1,self.nrows do
         local cell = self.children[j].children[i]
-        cell.relX = thisColRelX + (columnWidth - cell.width) / 2
+        if self.options.columnalign[i] == "left" then
+          cell.relX = thisColRelX
+        elseif self.options.columnalign[i] == "center" then
+          cell.relX = thisColRelX + (columnWidth - cell.width) / 2
+        elseif self.options.columnalign[i] == "right" then
+          cell.relX = thisColRelX + (columnWidth - cell.width)
+        else
+          SU.error("invalid columnalign parameter")
+        end
       end
       thisColRelX = thisColRelX + columnWidth +
-        (i == self.ncols and SILE.length(0) or SILE.length("3pt")) -- Spacing
+        (i == self.ncols and SILE.length(0) or self.columnspacing) -- Spacing
     end
     self.width = thisColRelX
 
