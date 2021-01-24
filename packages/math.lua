@@ -213,11 +213,12 @@ equivalently the \code{mtable} MathML tag). For instance, to typeset a matrix:
 \begin{verbatim}
 \line
 \\begin[mode=display]\{math\}
-  \\\{ \\table[columnalign=right center left]\{
-       u_0 &=& 1 \\\\
-       u_1 &=& 1 \\\\
-       u_\{n+2\} &=& u_\{n+1\} + u_n, \\forall n ⩾ 2 \\\\
-     \}
+    \\\{
+    \\table[columnalign=right center left]\{
+        u_0 &=& 1 \\\\
+        u_1 &=& 1 \\\\
+        u_n &=& u_\{n−1\} + u_{n−2}, \\forall n ⩾ 2 \\\\
+    \}
 \\end\{math\}
 \line
 \end{verbatim}
@@ -227,7 +228,7 @@ equivalently the \code{mtable} MathML tag). For instance, to typeset a matrix:
     \table[columnalign=right center left]{
         u_0 &=& 1 \\
         u_1 &=& 1 \\
-        u_{n+2} &=& u_{n+1} + u_n, \forall n ⩾ 2 \\
+        u_n &=& u_{n−1} + u_{n−2}, \forall n ⩾ 2 \\
     }
 \end{math}
 
@@ -265,7 +266,7 @@ Finally, here is a little secret. This notation:
 \noindent In other words, the notation using \code{&} and \code{\\\\} is only a
 syntactic sugar for a two-dimensional array constructed with braces.
 
-When macros are enough, creating new mathematical elements is quite simple: one
+When macros are not enough, creating new mathematical elements is quite simple: one
 only needs to create a new class deriving from \code{mbox} (defined in
 \code{packages/math/base-elements.lua}) and define the \code{shape} and
 \code{output} methods. \code{shape} must define the \code{width},
