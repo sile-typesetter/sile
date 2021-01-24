@@ -1,7 +1,8 @@
 local nodefactory = require("core/nodefactory")
 local hb = require("justenoughharfbuzz")
 local ot = require("core/opentype-parser")
-local syms = require("core/math/default-symbols")
+local syms = require("packages/math/unicode-symbols")
+local pdf = require("justenoughlibtexpdf")
 
 local atomType = syms.atomType
 local symbolDefaults = syms.symbolDefaults
@@ -93,7 +94,7 @@ local mathScriptConversionTable = {
   }
 }
 
-SILE.settings.declare({parameter = "math.font.family", type = "string", default = "XITS Math"})
+SILE.settings.declare({parameter = "math.font.family", type = "string", default = "Libertinus Math"})
 SILE.settings.declare({parameter = "math.font.filename", type = "string", default = ""})
 SILE.settings.declare({parameter = "math.font.size", type = "integer", default = 10})
 -- Whether to show debug boxes around mboxes
@@ -744,7 +745,7 @@ elements.text = pl.class({
     self.kind = kind
     self.script = script
     self.text = text
-    if self.kind == 'identifier' then
+    if self.script ~= 'upright' then
       local converted = ""
       for uchr in SU.utf8codes(self.text) do
         local dst_char = SU.utf8char(uchr)
@@ -757,7 +758,8 @@ elements.text = pl.class({
       end
       self.originalText = self.text
       self.text = converted
-    elseif self.kind == 'operator' then
+    end
+    if self.kind == 'operator' then
       if self.text == "-" then
         self.text = "−"
       end
@@ -910,6 +912,8 @@ elements.text = pl.class({
     end
     SILE.outputter:setCursor(scaleWidth(x, line), compensatedY.length)
     SILE.outputter:setFont(self.options)
+    pdf.colorpush_rgb(0,0,0)
+    pdf.colorpop()
     SILE.outputter:drawHbox(self.value, scaleWidth(self.width, line))
   end
 })

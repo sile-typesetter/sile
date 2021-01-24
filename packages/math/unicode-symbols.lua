@@ -1,4 +1,4 @@
-local tex = require("core/math/texlike")
+local tex = require("packages/math/texlike")
 local symbols = tex.symbols
 
 local atomType = {

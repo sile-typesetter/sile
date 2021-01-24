@@ -1,6 +1,6 @@
 -- Interpret a MathML or TeX-like AST, typeset it and add it to the output.
-local b = require("core/math/base-elements")
-local tex = require("core/math/texlike")
+local b = require("packages/math/base-elements")
+local tex = require("packages/math/texlike")
 
 -- convert MathML into mbox
 local function ConvertMathML(content)
@@ -26,12 +26,16 @@ local function ConvertMathML(content)
     end
     return b.text('identifier', script, text)
   elseif content.command == 'mo' then
+    local script = content.options.mathvariant and
+      b.mathVariantToScriptType(content.options.mathvariant) or b.scriptType.upright
     local text = content[1]
     if type(text) ~= "string" then
       SU.error("mo command contains "..text..", which is not text")
     end
-    return b.text('operator', b.scriptType.upright, text)
+    return b.text('operator', script, text)
   elseif content.command == 'mn' then
+    local script = content.options.mathvariant and
+      b.mathVariantToScriptType(content.options.mathvariant) or b.scriptType.upright
     local text = content[1]
     if type(text) ~= "string" then
       SU.error("mn command contains "..text..", which is not text")
@@ -39,7 +43,7 @@ local function ConvertMathML(content)
     if string.sub(text, 1, 1) == "-" then
       text = "−"..string.sub(text, 2)
     end
-    return b.text('number', b.scriptType.upright, text)
+    return b.text('number', script, text)
   elseif content.command == "mspace" then
     return b.space(content.options.width, content.options.height, content.options.depth)
   elseif content.command == 'msub' then
