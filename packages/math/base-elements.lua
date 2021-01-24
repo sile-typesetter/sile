@@ -1083,7 +1083,7 @@ elements.table = pl.class({
       return #row.children end, self.children)))
     SU.debug("math", "self.ncols = "..self.ncols)
     self.rowspacing = self.options.rowspacing and SILE.length(self.options.rowspacing)
-      or SILE.length("10pt")
+      or SILE.length("7pt")
     self.columnspacing = self.options.columnspacing and SILE.length(self.options.columnspacing)
       or SILE.length("6pt")
     -- Pad rows that do not have enough cells by adding cells to the
