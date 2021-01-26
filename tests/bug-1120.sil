@@ -1,0 +1,15 @@
+\begin[papersize=a6]{document}
+\nofolios
+\font[family=Libertinus Serif]
+\set[parameter=document.parskip,value=10pt]
+
+X
+
+\script{
+  local ot = SILE.require("core/opentype-parser")
+	local font = ot.parseFont(SILE.shaper:getFace({}))
+	for _, v in pairs(font.names[5]) do version = v[1]; break end
+	SILE.typesetter:typeset(version)
+	SILE.call("par")
+}
+\end{document}
