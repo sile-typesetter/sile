@@ -24,6 +24,7 @@ my %rock_url_templates = (
     luarepl     => "https://github.com/hoelzro/lua-repl/archive/VERSION.tar.gz",
     luasocket   => "https://github.com/diegonehab/luasocket/archive/vVERSION.tar.gz",
     luasec      => "https://github.com/brunoos/luasec/archive/luasec-VERSION.tar.gz",
+    luautf8     => "https://github.com/starwing/luautf8/archive/VERSION.tar.gz",
     penlight    => "https://github.com/Tieske/Penlight/archive/VERSION.tar.gz",
     vstruct     => "https://github.com/ToxicFrog/vstruct/archive/vVERSION.tar.gz",
     stdlib      => "https://github.com/lua-stdlib/lua-stdlib/archive/release-vVERSION.tar.gz"
