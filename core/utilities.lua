@@ -440,7 +440,7 @@ utilities.utf16codes = function (ustr, endian)
       else
         lowchar = c4 * 256 + c3
       end
-      return 0x10000 + (wchar & 0x03FF) << 10 + (lowchar & 0x03FF)
+      return 0x10000 + bitshim.lshift(bitshim.band(wchar, 0x03FF), 10) + bitshim.band(lowchar, 0x03FF)
     end
   end
 end
