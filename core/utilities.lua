@@ -412,6 +412,39 @@ utilities.utf8codes = function (ustr)
   end
 end
 
+utilities.utf16codes = function (ustr, endian)
+  local pos = 1
+  return function()
+    if pos > #ustr then
+      return nil
+    else
+      local c1, c2, c3, c4, wchar, lowchar
+      c1 = string.byte(ustr, pos)
+      pos = pos + 1
+      c2 = string.byte(ustr, pos)
+      pos = pos + 1
+      if endian == "be" then
+        wchar = c1 * 256 + c2
+      else
+        wchar = c2 * 256 + c1
+      end
+      if not (wchar >= 0xD800 and wchar <= 0xDBFF) then
+        return wchar
+      end
+      c3 = string.byte(ustr, pos)
+      pos = pos + 1
+      c4 = string.byte(ustr, pos)
+      pos = pos + 1
+      if endian == "be" then
+        lowchar = c3 * 256 + c4
+      else
+        lowchar = c4 * 256 + c3
+      end
+      return 0x10000 + bitshim.lshift(bitshim.band(wchar, 0x03FF), 10) + bitshim.band(lowchar, 0x03FF)
+    end
+  end
+end
+
 utilities.splitUtf8 = function (str) -- Return an array of UTF8 strings each representing a Unicode char
   local seq = 0
   local rv = {}
@@ -491,6 +524,22 @@ utilities.utf8_to_utf16le = function (str)
       local sur_lo = (uchr - 0x10000) % 0x400 + 0xdc00
       ustr = ustr..string.format("%c%c%c%c", sur_hi % 256, sur_hi / 256 , sur_lo % 256, sur_lo / 256)
     end
+  end
+  return ustr
+end
+
+utilities.utf16le_to_utf8 = function (str)
+  local ustr = ""
+  for uchr in utilities.utf16codes(str, "le") do
+    ustr = ustr..utilities.utf8char(uchr)
+  end
+  return ustr
+end
+
+utilities.utf16be_to_utf8 = function (str)
+  local ustr = ""
+  for uchr in utilities.utf16codes(str, "be") do
+    ustr = ustr..utilities.utf8char(uchr)
   end
   return ustr
 end
