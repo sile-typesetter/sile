@@ -5,7 +5,7 @@ local tibetanNumber = function (n)
   local out = ""
   local a = 0x0f20
   repeat
-    out = SU.utf8char(n%10 + a) .. out
+    out = luautf8.char(n%10 + a) .. out
     n = (n - n%10)/10
   until n < 1
   return out

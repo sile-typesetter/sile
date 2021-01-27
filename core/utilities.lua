@@ -317,15 +317,8 @@ end
 
 -- Unicode-related utilities
 utilities.utf8char = function (c)
-    if     c < 128 then
-        return string.char(c)
-    elseif c < 2048 then
-        return string.char(math.floor(192 + c/64), 128 + c%64)
-    elseif c < 55296 or 57343 < c and c < 65536 then
-        return  string.char(math.floor(224 + c/4096), math.floor(128 + c/64%64), 128 + c%64)
-    elseif c < 1114112 then
-        return string.char(math.floor(240 + c/262144), math.floor(128 + c/4096%64), math.floor(128 + c/64%64), 128 + c%64)
-    end
+  utilities.deprecated("SU.utf8char", "luautf8.char", "0.11.0", "0.12.0")
+  return luautf8.char(c)
 end
 
 utilities.codepoint = function (uchar)
@@ -358,58 +351,14 @@ utilities.utf8charfromcodepoint = function (codepoint)
   end
 
   if type(cp) == "number" then
-    val = SU.utf8char(cp)
+    val = luautf8.char(cp)
   end
   return val
 end
 
 utilities.utf8codes = function (ustr)
-  local pos = 1
-  return function()
-    if pos > #ustr then
-      return nil
-    else
-      local c, ucv
-      local nbytes
-      c = string.byte(ustr, pos)
-      pos = pos + 1
-      if c < 0x80 then
-        ucv    = c
-        nbytes = 0
-      elseif c >= 0xc0 and c < 0xe0 then -- 110x xxxx
-        ucv    = c - 0xc0
-        nbytes = 1
-      elseif c >= 0xe0 and c < 0xf0 then -- 1110 xxxx
-        ucv    = c - 0xe0
-        nbytes = 2
-      elseif c >= 0xf0 and c < 0xf8 then -- 1111 0xxx
-        ucv    = c - 0xf0
-        nbytes = 3
-      elseif c >= 0xf8 and c < 0xfc then -- 1111 10xx
-        ucv    = c - 0xf8
-        nbytes = 4
-      elseif c >= 0xfc and c < 0xfe then -- 1111 110x
-        ucv    = c - 0xfc
-        nbytes = 5
-      else -- Invalid
-        return nil
-      end
-      if pos + nbytes > #ustr + 1 then -- Invalid
-        return nil
-      end
-      while nbytes > 0 do
-        nbytes = nbytes - 1
-        c = string.byte(ustr, pos)
-        pos = pos + 1
-        if c < 0x80 or c >= 0xc0 then -- Invalid
-          return nil
-        else
-          ucv = ucv * 64 + (c - 0x80)
-        end
-      end
-      return ucv
-    end
-  end
+  utilities.deprecated("SU.utf8codes", "luautf8.codes", "0.11.0", "0.12.0")
+  return luautf8.codes(ustr)
 end
 
 utilities.utf16codes = function (ustr, endian)
@@ -488,7 +437,7 @@ end
 
 utilities.utf8_to_utf16be_hexencoded = function (str)
   local ustr = string.format("%04x", 0xfeff) -- BOM
-  for uchr in utilities.utf8codes(str) do
+  for uchr in luautf8.codes(str) do
     if (uchr < 0x10000) then
       ustr = ustr..string.format("%04x", uchr)
     else -- Surrogate pair
@@ -502,7 +451,7 @@ end
 
 utilities.utf8_to_utf16be = function (str)
   local ustr = ""
-  for uchr in utilities.utf8codes(str) do
+  for uchr in luautf8.codes(str) do
     if (uchr < 0x10000) then
       ustr = ustr..string.format("%c%c", uchr / 256, uchr % 256 )
     else -- Surrogate pair
@@ -516,7 +465,7 @@ end
 
 utilities.utf8_to_utf16le = function (str)
   local ustr = ""
-  for uchr in utilities.utf8codes(str) do
+  for uchr in luautf8.codes(str) do
     if (uchr < 0x10000) then
       ustr = ustr..string.format("%c%c", uchr % 256, uchr / 256 )
     else -- Surrogate pair
@@ -531,7 +480,7 @@ end
 utilities.utf16le_to_utf8 = function (str)
   local ustr = ""
   for uchr in utilities.utf16codes(str, "le") do
-    ustr = ustr..utilities.utf8char(uchr)
+    ustr = ustr..luautf8.char(uchr)
   end
   return ustr
 end
@@ -539,7 +488,7 @@ end
 utilities.utf16be_to_utf8 = function (str)
   local ustr = ""
   for uchr in utilities.utf16codes(str, "be") do
-    ustr = ustr..utilities.utf8char(uchr)
+    ustr = ustr..luautf8.char(uchr)
   end
   return ustr
 end
