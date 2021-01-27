@@ -23,6 +23,7 @@ globals = {
   "SILE",
   "SU",
   "std",
+  "luautf8",
   "pl",
   "SYSTEM_SILE_PATH",
   "SHARED_LIB_EXT",

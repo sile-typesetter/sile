@@ -17,6 +17,11 @@ _DEBUG = false
 std = require("std")
 -- luacheck: pop
 
+-- Lua 5.3+ has a UTF-8 safe string function module but it is somewhat
+-- underwhelming. This module includes more functions and supports older Lua
+-- versions. Docs: https://github.com/starwing/luautf8
+luautf8 = require("lua-utf8")
+
 -- Includes for _this_ scope
 local lfs = require("lfs")
 

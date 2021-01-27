@@ -129,6 +129,7 @@ AS_IF([test "x$with_system_luarocks" = "xyes"], [
     AX_LUA_MODULE([repl], [luarepl])
     AX_LUA_MODULE([ssl], [luasec])
     AX_LUA_MODULE([socket], [luasocket])
+    AX_LUA_MODULE([lua-utf8], [luautf8])
     AX_LUA_MODULE([pl], [penlight])
     AX_LUA_MODULE([std], [stdlib])
     AX_LUA_MODULE([vstruct], [vstruct])
