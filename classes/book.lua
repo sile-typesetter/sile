@@ -39,7 +39,10 @@ function book:init ()
   self:mirrorMaster("right", "left")
   self:loadPackage("tableofcontents")
   if not SILE.scratch.headers then SILE.scratch.headers = {} end
-  self:loadPackage("footnotes", { insertInto = "footnotes", stealFrom = { "content" } })
+  self:loadPackage("footnotes", {
+    insertInto = "footnotes",
+    stealFrom = { "content" }
+  })
   return plain.init(self)
 end
 

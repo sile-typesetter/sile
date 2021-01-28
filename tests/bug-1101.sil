@@ -1,0 +1,7 @@
+\begin[class=jplain,layout=tate,papersize=a4]{document}
+\script[src=packages/tate]
+\neverindent\nofolios
+\font[family=Noto Sans CJK JP,language=ja]
+
+\latin-in-tate{SILE}と\latin-in-tate{Latin}。
+\end{document}

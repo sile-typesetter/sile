@@ -37,6 +37,7 @@ task:
     - luarocks52 install lua_cliargs
     - luarocks52 install luaepnf
     - luarocks52 install luarepl
+    - luarocks52 install luautf8
     - luarocks52 install penlight
     - luarocks52 install stdlib
     - luarocks52 install vstruct

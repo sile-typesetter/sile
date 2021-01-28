@@ -3,16 +3,15 @@ name: Commitlint
 on: [push, pull_request]
 
 jobs:
+
   commitlint:
-    runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Run Commitlint
-        uses: wagoid/commitlint-github-action@v2.1.0
+      - name: Run ‘commitlint’ linter
+        uses: wagoid/commitlint-github-action@v2
         with:
           configFile: '.commitlintrc.yml'
