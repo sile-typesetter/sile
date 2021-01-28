@@ -7,13 +7,13 @@ return {
 \set[parameter=math.font.family, value=Libertinus Math]
 \set[parameter=math.font.size, value=11]
 
-This package provides typesetting of formulas directly into a SILE document.
+This package provides typesetting of formulas directly in a SILE document.
 
-\note{Mathematical typesetting in SILE is still in its infancy. As such, it may
-lacks some features or contain bugs. Feedback and contributions are always
+\note{Mathematical typesetting in SILE is still in its infancy. As such, it
+lacks some features and may contain bugs. Feedback and contributions are always
 welcome.}
 
-\noindent To typeset mathematics, you will need a math font installed on your
+\noindent To typeset mathematics, you will need an OpenType math font installed on your
 system\footnote{A list of freely available math fonts can be found at
 \href[src=https://www.ctan.org/pkg/unicode-math]{https://www.ctan.org/pkg/unicode-math}}.
 By default, this package uses Libertinus Math, so it will fail if Libertinus
@@ -62,7 +62,7 @@ To render an equation encoded in MathML, one simply has to put it in a
 \end{verbatim}
 
 \noindent By default, formulas are integrated into the flow of text. To typeset
-them on their own line, one must use the \code{[mode=display]} option:
+them on their own line, one may use the \code{[mode=display]} option:
 
 \mathml[mode=display]{
     \mrow{
@@ -74,9 +74,9 @@ them on their own line, one must use the \code{[mode=display]} option:
     }
 }
 
-As this example demonstrates, MathML is not intended to be written by humans and
-quickly becomes very verbose. That is why this package also provides the
-\code{math} command, which understands a syntax similar to the syntax of TeX. To
+As this example code illustrates, MathML is not really intended to be written by
+humans and quickly becomes very verbose. That is why this package also provides a
+\code{math} command, which understands a syntax similar to the math syntax of TeX. To
 typeset the above equation, one only has to type \code{\\math\{a^2 + b^2 = c^2\}}.
 
 Here is a slightly more involved equation:
@@ -89,7 +89,7 @@ Here is a slightly more involved equation:
 \line
 \end{verbatim}
 
-\noindent It renders as:
+\noindent This renders as:
 
 \begin[mode=display]{math}
     \sum_{n=1}^\infty \frac{1}{n^2} = \frac{\pi^2}{6}
@@ -144,14 +144,15 @@ In the \code{math} syntax, every individual letter is an identifier (MathML tag
 are operators (tag \code{mo}). If it does not suit you, you can explicitly use
 the \code{\\mi}, \code{\\mn} or \code{\\mo} tags. For instance, \code{sin(x)}
 will be rendered as \math{sin(x)}, because SILE considers the letters s, i and n
-to be individual identifiers, and identifiers are by default italicized. To
+to be individual identifiers, and identifiers are italicized by default. To
 avoid that, you can specify that \math{\mo{sin}} is actually an operator by
 writing \code{\\mo\{sin\}(x)} and get: \math{\mo{sin}(x)}. If you prefer it in
 “double struck” style, this is permitted by the \code{mathvariant} attribute:
 \code{\\mo[mathvariant=double-struck]\{sin\}(x)} renders as
 \math{\mo[mathvariant=double-struck]{sin}(x)}.
 
-To save you some typing, the math syntax lets you define macros with the following syntax:
+To save you some typing, the math syntax lets you define macros with the
+following syntax:
 
 \begin{verbatim}
 \line
@@ -232,8 +233,8 @@ equivalently the \code{mtable} MathML tag). For instance, to typeset a matrix:
     }
 \end{math}
 
-\noindent Tables currently do not support all attributes required by the MathML standard,
-but they do allow to control spacing using the \code{rowspacing} and
+\noindent Tables currently do not support all attributes required by the MathML
+standard, but they do allow to control spacing using the \code{rowspacing} and
 \code{columnspacing} options.
 
 Finally, here is a little secret. This notation:
@@ -266,8 +267,8 @@ Finally, here is a little secret. This notation:
 \noindent In other words, the notation using \code{&} and \code{\\\\} is only a
 syntactic sugar for a two-dimensional array constructed with braces.
 
-When macros are not enough, creating new mathematical elements is quite simple: one
-only needs to create a new class deriving from \code{mbox} (defined in
+When macros are not enough, creating new mathematical elements is quite simple:
+one only needs to create a new class deriving from \code{mbox} (defined in
 \code{packages/math/base-elements.lua}) and define the \code{shape} and
 \code{output} methods. \code{shape} must define the \code{width},
 \code{height} and \code{depth} attributes of the element, while \code{output}
