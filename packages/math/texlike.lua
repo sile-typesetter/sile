@@ -243,7 +243,7 @@ local function compileToMathML(arg_env, tree)
     tree.command = "mrow"
   elseif tree.id == "atom" then
     local codepoints = {}
-    for cp in SU.utf8codes(tree[1]) do
+    for _, cp in luautf8.codes(tree[1]) do
       table.insert(codepoints, cp)
     end
     local cp = codepoints[1]

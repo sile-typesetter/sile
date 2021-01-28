@@ -37,7 +37,7 @@ local mkAtomType = {
 }
 
 local function addSymbol(codepoint, command, typ, description)
-  local str = SU.utf8char(codepoint)
+  local str = luautf8.char(codepoint)
   symbols[command] = str
   symbolDefaults[str] = { atomType = mkAtomType[typ] }
 end

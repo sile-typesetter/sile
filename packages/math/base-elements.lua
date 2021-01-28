@@ -747,12 +747,12 @@ elements.text = pl.class({
     self.text = text
     if self.script ~= 'upright' then
       local converted = ""
-      for uchr in SU.utf8codes(self.text) do
-        local dst_char = SU.utf8char(uchr)
+      for _, uchr in luautf8.codes(self.text) do
+        local dst_char = luautf8.char(uchr)
         if uchr >= 0x41 and uchr <= 0x5A then -- Latin capital letter
-          dst_char = SU.utf8char(mathScriptConversionTable.capital[self.script](uchr))
+          dst_char = luautf8.char(mathScriptConversionTable.capital[self.script](uchr))
         elseif uchr >= 0x61 and uchr <= 0x7A then -- Latin non-capital letter
-          dst_char = SU.utf8char(mathScriptConversionTable.small[self.script](uchr))
+          dst_char = luautf8.char(mathScriptConversionTable.small[self.script](uchr))
         end
         converted = converted..dst_char
       end
