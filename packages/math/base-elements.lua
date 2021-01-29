@@ -720,12 +720,9 @@ elements.space = pl.class({
   end,
   _init = function(self, width, height, depth)
     elements.terminal._init(self)
-    self.width = type(width) == "string" and SILE.length(width)
-      or width
-    self.height = type(height) == "string" and SILE.length(height)
-      or height
-    self.depth = type(depth) == "string" and SILE.length(depth)
-      or depth
+    self.width = width
+    self.height = height
+    self.depth = depth
   end,
   shape = function (_) end,
   output = function (_) end
