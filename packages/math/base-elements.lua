@@ -211,13 +211,13 @@ local function maxLength(...)
   return result
 end
 
-local function minLength(...)
-  local args = {...}
-  for i, v in ipairs(args) do
-    args[i] = v * (-1)
-  end
-  return -maxLength(args)
-end
+-- local function minLength(...)
+--   local args = {...}
+--   for i, v in ipairs(args) do
+--     args[i] = v * (-1)
+--   end
+--   return -maxLength(args)
+-- end
 
 local function scaleWidth(length, line)
   local number = length.length
@@ -256,15 +256,15 @@ elements.mbox = pl.class({
     self.options = SILE.font.loadDefaults(options)
   end,
 
-  styleChildren = function(self)
+  styleChildren = function(_)
     SU.error("styleChildren is a virtual function that need to be overriden by its child classes")
   end,
 
-  shape = function(self, x, y)
+  shape = function(_, _, _)
     SU.error("shape is a virtual function that need to be overriden by its child classes")
   end,
 
-  output = function(self, x, y, line)
+  output = function(_, _, _, _)
     SU.error("output is a virtual function that need to be overriden by its child classes")
   end,
 
@@ -488,7 +488,7 @@ elements.stackbox = pl.class({
     typesetter.frame:advanceWritingDirection(scaleWidth(self.width, line))
   end,
 
-  output = function(self, x, y, line) end
+  output = function(_, _, _, _) end
 })
 
 elements.subscript = pl.class({
@@ -600,7 +600,7 @@ elements.subscript = pl.class({
       self.sup and (self.sup.depth + self.sup.relY) or 0
     )
   end,
-  output = function(self, x, y, line) end
+  output = function(_, _, _, _) end
 })
 
 elements.bigOpSubscript = pl.class({
@@ -701,15 +701,15 @@ elements.bigOpSubscript = pl.class({
       self.depth = self.base and self.base.depth or 0
     end
   end,
-  output = function(self, x, y, line) end
+  output = function(_, _, _, _) end
 })
 
 -- terminal is the base class for leaf node
 elements.terminal = pl.class({
   _base = elements.mbox,
   _type = "Terminal",
-  styleChildren = function(self) end,
-  shape = function(self) end
+  styleChildren = function(_) end,
+  shape = function(_) end
 })
 
 elements.space = pl.class({
@@ -727,9 +727,8 @@ elements.space = pl.class({
     self.depth = type(depth) == "string" and SILE.length(depth)
       or depth
   end,
-  shape = function(_)
-  end,
-  output = function(self) end
+  shape = function (_) end,
+  output = function (_) end
 })
 
 -- text node. For any actual text output
@@ -903,10 +902,10 @@ elements.text = pl.class({
   output = function(self, x, y, line)
     if not self.value.glyphString then return end
     local compensatedY
-    if isDisplayMode(self.mode) and self.atom == atomType.bigOperator
+    if isDisplayMode(self.mode)
+        and self.atom == atomType.bigOperator
         and self.value.items[1].fontDepth then
-      compensatedY = SILE.length(y.length + self.value.items[1].depth
-        - self.value.items[1].fontDepth)
+      compensatedY = SILE.length(y.length + self.value.items[1].depth - self.value.items[1].fontDepth)
     else
       compensatedY = y
     end
@@ -1067,8 +1066,8 @@ elements.mtr = pl.class({
       c.mode = self.mode
     end
   end,
-  shape = function(self) end, -- done by parent table
-  output = function(self) end
+  shape = function(_) end, -- done by parent table
+  output = function(_) end
 })
 
 elements.table = pl.class({
@@ -1193,8 +1192,7 @@ elements.table = pl.class({
     end
   end,
 
-  output = function(self)
-  end
+  output = function(_) end
 })
 
 elements.mathMode = mathMode

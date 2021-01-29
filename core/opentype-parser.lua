@@ -197,7 +197,7 @@ end
 local parseDeviceTable = function(offset, fd)
   local header = vstruct.read(">@"..offset.." startSize:u2 endSize:u2 deltaFormat:u2", fd)
   local size = header.endSize - header.startSize + 1
-  local buf = {}
+  local buf
   if header.deltaFormat == 0x0001 then
     buf = vstruct.read("> "..math.ceil(size+7/8).."*[2| i2 i2 i2 i2 i2 i2 i2 i2 ]", fd)
   elseif header.deltaFormat == 0x0002 then

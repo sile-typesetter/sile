@@ -19,8 +19,6 @@ local atomType = {
 
 local symbolDefaults = {}
 
-local SU = require("core/utilities")
-
 local mkAtomType = {
   mathopen = atomType.openingSymbol,
   mathclose = atomType.closeSymbol,
@@ -36,12 +34,12 @@ local mkAtomType = {
   mathop = atomType.ordinary,
 }
 
-local function addSymbol(codepoint, command, typ, description)
+-- TODO: Stuff 4th argument (description) into help string for symbol command
+local function addSymbol(codepoint, command, typ, _)
   local str = luautf8.char(codepoint)
   symbols[command] = str
   symbolDefaults[str] = { atomType = mkAtomType[typ] }
 end
-
 
 -- Generated from the unicode-math-table.tex in the unicode-math LaTeX package
 -- <wspr.io/unicode-math>

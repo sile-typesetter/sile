@@ -3,6 +3,7 @@ local lpeg = require("lpeg")
 require("core/parserbits")
 
 -- Grammar to parse TeX-like math
+-- luacheck: push ignore
 local mathGrammar = function(_ENV)
   local _ = WS^0
   local eol = S"\r\n"
@@ -98,6 +99,8 @@ local mathGrammar = function(_ENV)
     P"{" * V"mathlist" * P"}"
   argument = P"#" * Cg(pos_natural, "index")
 end
+-- luacheck: pop
+
 local mathParser = epnf.define(mathGrammar)
 
 local commands = {}
@@ -316,13 +319,8 @@ local function compileToMathML(arg_env, tree)
     end
   end
   tree.id = nil
+  SU.debug("texmath", "Resulting MathML:\n"..tree)
   return tree
-end
-
-local compileToMathML = function(argEnv, tree)
-  local ret = compileToMathML(argEnv, tree)
-  SU.debug("texmath", "Resulting MathML:\n"..ret)
-  return ret
 end
 
 local function convertTexlike(content)
