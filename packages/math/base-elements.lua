@@ -913,7 +913,10 @@ elements.text = pl.class({
     SILE.outputter:setFont(self.options)
     pdf.colorpush_rgb(0,0,0)
     pdf.colorpop()
-    SILE.outputter:drawHbox(self.value, scaleWidth(self.width, line))
+    -- There should be no stretch or shrink on the width of a text
+    -- element.
+    local width = self.width.length
+    SILE.outputter:drawHbox(self.value, width)
   end
 })
 
