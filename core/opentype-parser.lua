@@ -346,6 +346,7 @@ local function parseMath(s)
       assembly.italicsCorrection = fetchMathValueRecord(assembly.italicsCorrection, offset, fd)
       assembly.partRecords = vstruct.read("> "..assembly.partCount.."*{ &GlyphPartRecord }", fd)
       assembly.partCount = nil
+      return assembly
     end
     local parseMathGlyphConstruction = function(offset, fd)
       local construction = vstruct.read(">@"..offset.." glyphAssemblyOffset:u2 variantCount:u2", fd)
