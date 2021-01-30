@@ -243,11 +243,14 @@ local function parseMath(s)
   if s:len() <= 0 then return end
   local fd = vstruct.cursor(s)
 
+  -- Removes the indirection in a MathValueRecord by replacing the
+  -- deviceTableOffset field by an actual device table in the deviceTable field.
   local fetchMathValueRecord = function(record, parent_offset, fd)
+    local newRecord = { value = record.value }
     if record.deviceTableOffset ~= 0 then
-      record.deviceTable = parseDeviceTable(parent_offset + record.deviceTableOffset, fd)
+      newRecord.deviceTable = parseDeviceTable(parent_offset + record.deviceTableOffset, fd)
     end
-    record.deviceTableOffset = nil
+    return newRecord
   end
   local parseConstants = function(offset, fd)
     local mathConstantNames = {
@@ -294,9 +297,9 @@ local function parseMath(s)
       mathConstantFormat = mathConstantFormat.." "..mathConstantNames[i]..":"..mathConstantTypes[i]
     end
     local mathConstants = vstruct.read(mathConstantFormat, fd)
-    for _,v in pairs(mathConstants) do
+    for k,v in pairs(mathConstants) do
       if v and type(v) == "table" then
-        fetchMathValueRecord(v, offset, fd)
+        mathConstants[k] = fetchMathValueRecord(v, offset, fd)
       end
     end
     return mathConstants
@@ -305,10 +308,10 @@ local function parseMath(s)
     local heightCount	= vstruct.readvals(">@"..offset.." u2", fd)
     local mathKern = vstruct.read("> correctionHeight:{ "..heightCount.."*{ &MathValueRecord } } kernValues:{ "..(heightCount+1).."*{ &MathValueRecord } }", fd)
     for i = 1, #(mathKern.correctionHeight) do
-      fetchMathValueRecord(mathKern.correctionHeight[i], offset, fd)
+      mathKern.correctionHeight[i] = fetchMathValueRecord(mathKern.correctionHeight[i], offset, fd)
     end
     for i = 1, #(mathKern.kernValues) do
-      fetchMathValueRecord(mathKern.kernValues[i], offset, fd)
+      mathKern.kernValues[i] = fetchMathValueRecord(mathKern.kernValues[i], offset, fd)
     end
     return mathKern
   end
@@ -323,8 +326,7 @@ local function parseMath(s)
     local result = {}
     for i = 1, count do
       if type == "&MathValueRecord" then
-        fetchMathValueRecord(table[i], offset, fd)
-        result[coverageTable[i]] = table[i]
+        result[coverageTable[i]] = fetchMathValueRecord(table[i], offset, fd)
       elseif type == "&MathKernInfoRecord" then
         result[coverageTable[i]] = {
           topRightMathKern = table[i].topRightMathKernOffset ~= 0 and parseMathKern(offset + table[i].topRightMathKernOffset, fd) or nil,
@@ -341,7 +343,7 @@ local function parseMath(s)
   local parseMathVariants = function(offset, fd)
     local parseGlyphAssembly = function(offset, fd)
       local assembly = vstruct.read(">@"..offset.." italicsCorrection:{ &MathValueRecord } partCount:u2", fd)
-      fetchMathValueRecord(assembly.italicsCorrection, offset, fd)
+      assembly.italicsCorrection = fetchMathValueRecord(assembly.italicsCorrection, offset, fd)
       assembly.partRecords = vstruct.read("> "..assembly.partCount.."*{ &GlyphPartRecord }", fd)
       assembly.partCount = nil
     end
