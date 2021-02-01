@@ -2,10 +2,9 @@
 \nofolios
 \script[src=packages/frametricks]
 \begin[first-content-frame=column1]{pagetemplate}
-  \frame[id=column1,left=5%ph,top=5%ph,bottom=90%ph,width=53pt]
+  \frame[id=column1,left=left(content),top=top(content),bottom=bottom(content),width=53pt]
 \end{pagetemplate}
-\par
 \font[family=Noto Sans Malayalam,language=ml,size=12pt]
 \noindent
-സംസാരിച്ചിരിക്കുക 
+സംസാരിച്ചിരിക്കുക
 \end{document}

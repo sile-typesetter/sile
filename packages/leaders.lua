@@ -43,3 +43,36 @@ SILE.registerCommand("dotfill", function(_, _)
     SILE.call("kern", { width = "1spc" })
     end)
 end)
+
+return {
+  documentation = [[
+\begin{document}
+The leaders package allows you to create repeating patterns which fill a
+given space. It provides the \code{\\dotfill} command, which does this:
+
+\begin{verbatim}
+\line
+A \\dotfill B
+\line
+\end{verbatim}
+
+\begin{examplefont}
+A \dotfill B
+\end{examplefont}
+
+It also provides the \code{\\leaders[width=...]\{content\}} command which
+allow you to define your own leaders. For example:
+
+\begin{verbatim}
+\line
+A \\leaders[width=40pt]\{/\\\\\} B
+\line
+\end{verbatim}
+
+\begin{examplefont}
+A \leaders[width=40pt]{/\\} B
+\end{examplefont}
+
+\end{document}
+]]
+}

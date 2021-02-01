@@ -24,6 +24,7 @@ my %rock_url_templates = (
     luarepl     => "https://github.com/hoelzro/lua-repl/archive/VERSION.tar.gz",
     luasocket   => "https://github.com/diegonehab/luasocket/archive/vVERSION.tar.gz",
     luasec      => "https://github.com/brunoos/luasec/archive/luasec-VERSION.tar.gz",
+    luautf8     => "https://github.com/starwing/luautf8/archive/VERSION.tar.gz",
     penlight    => "https://github.com/Tieske/Penlight/archive/VERSION.tar.gz",
     vstruct     => "https://github.com/ToxicFrog/vstruct/archive/vVERSION.tar.gz",
     stdlib      => "https://github.com/lua-stdlib/lua-stdlib/archive/release-vVERSION.tar.gz"
@@ -35,7 +36,7 @@ $version =~ s/^v//;
 print "Writing formula for SILE $version\n";
 
 print "Fetching tarball...\n";
-my $github_url = "https://github.com/sile-typesetter/sile/releases/download/v$version/sile-$version.tar.bz2";
+my $github_url = "https://github.com/sile-typesetter/sile/releases/download/v$version/sile-$version.tar.xz";
 my $tarball =  get($github_url);
 die "Couldn't download tarball - check $github_url !" unless defined $tarball;
 my $shasum_tarball = sha256_hex($tarball);

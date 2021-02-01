@@ -48,17 +48,17 @@ SILE.registerCommand("font", function (options, content)
   end
 end, "Set current font family, size, weight, style, variant, script, direction and language")
 
-SILE.settings.declare({ name = "font.family", type = "string", default = "Gentium Plus" })
-SILE.settings.declare({ name = "font.size", type = "number or integer", default = 10 })
-SILE.settings.declare({ name = "font.weight", type = "integer", default = 400 })
-SILE.settings.declare({ name = "font.variant", type = "string", default = "normal" })
-SILE.settings.declare({ name = "font.script", type = "string", default = "" })
-SILE.settings.declare({ name = "font.style", type = "string", default = "" })
-SILE.settings.declare({ name = "font.direction", type = "string", default = "" })
-SILE.settings.declare({ name = "font.filename", type = "string", default = "" })
-SILE.settings.declare({ name = "font.features", type = "string", default = "" })
-SILE.settings.declare({ name = "font.hyphenchar", type = "string", default = "-" })
-SILE.settings.declare({ name = "document.language", type = "string", default = "en" })
+SILE.settings.declare({ parameter = "font.family", type = "string or nil", default = "Gentium Plus" })
+SILE.settings.declare({ parameter = "font.size", type = "number or integer", default = 10 })
+SILE.settings.declare({ parameter = "font.weight", type = "integer", default = 400 })
+SILE.settings.declare({ parameter = "font.variant", type = "string", default = "normal" })
+SILE.settings.declare({ parameter = "font.script", type = "string", default = "" })
+SILE.settings.declare({ parameter = "font.style", type = "string", default = "" })
+SILE.settings.declare({ parameter = "font.direction", type = "string", default = "" })
+SILE.settings.declare({ parameter = "font.filename", type = "string or nil", default = "" })
+SILE.settings.declare({ parameter = "font.features", type = "string", default = "" })
+SILE.settings.declare({ parameter = "font.hyphenchar", type = "string", default = "-" })
+SILE.settings.declare({ parameter = "document.language", type = "string", default = "en" })
 
 SILE.fontCache = {}
 

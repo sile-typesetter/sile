@@ -65,20 +65,24 @@ SILE.registerCommand("define", function (options, content)
     SU.warn("Did you mean to re-definine the `\\process` macro? That probably won't go well.")
   end
   SILE.registerCommand(options["command"], function (_, _content)
-    SU.debug("macros", "Processing a "..options["command"].."\n")
+    SU.debug("macros", "Processing macro \\" .. options["command"])
     local macroArg
     if type(_content) == "function" then
       macroArg = _content
-    else
+    elseif type(_content) == "table" then
       macroArg = pl.tablex.copy(_content)
       macroArg.command = nil
       macroArg.id = nil
+    elseif _content == nil then
+      macroArg = {}
+    else
+      SU.error("Unhandled content type " .. type(_content) .. " passed to macro \\" .. options["command"], true)
     end
     -- Replace every occurrence of \process in `content` (the macro
     -- body) with `macroArg`, then have SILE go through the new `content`.
     local newContent = replaceProcessBy(macroArg, content)
     SILE.process(newContent)
-    SU.debug("macros", "Finished processing "..options["command"].."\n")
+    SU.debug("macros", "Finished processing \\" .. options["command"])
   end, options.help, SILE.currentlyProcessingFile)
 end, "Define a new macro. \\define[command=example]{ ... \\process }")
 
@@ -90,6 +94,8 @@ SILE.registerCommand("process", function ()
 end, "Within a macro definition, processes the contents of the macro body.")
 
 SILE.baseClass = std.object {
+  _initialized = false,
+
   registerCommands = (function ()
 
     SILE.registerCommand("\\", function (_, _)
@@ -111,10 +117,12 @@ SILE.baseClass = std.object {
     end, "Includes a SILE file for processing.")
 
     SILE.registerCommand("pagetemplate", function (options, content)
+      SILE.typesetter:pushState()
       SILE.documentState.thisPageTemplate = { frames = {} }
       SILE.process(content)
       SILE.documentState.thisPageTemplate.firstContentFrame = SILE.getFrame(options["first-content-frame"])
       SILE.typesetter:initFrame(SILE.documentState.thisPageTemplate.firstContentFrame)
+      SILE.typesetter:popState()
     end, "Defines a new page template for the current page and sets the typesetter to use it.")
 
     SILE.registerCommand("frame", function (options, _)
@@ -185,22 +193,29 @@ SILE.baseClass = std.object {
 
   loadPackage = function (self, packname, args)
     local pack = require("packages/" .. packname)
+    self:initPackage(pack, args)
+  end,
+
+  initPackage = function (self, pack, args)
     if type(pack) == "table" then
       if pack.exports then self:mapfields(pack.exports) end
-      if pack.init then
+      if type(pack.init) == "function" then
         table.insert(SILE.baseClass.deferredInit, function () pack.init(self, args) end)
+        if self._initialized then
+          pack.init(self, args)
+        end
       end
     end
   end,
 
   init = function (self)
     SILE.settings.declare({
-      name = "current.parindent",
+      parameter = "current.parindent",
       type = "glue or nil",
       default = nil,
       help = "Glue at start of paragraph"
     })
-    SILE.outputter.init(self)
+    SILE.outputter:init(self)
     self:registerCommands()
     -- Call all stored package init routines
     for i = 1, #(SILE.baseClass.deferredInit) do (SILE.baseClass.deferredInit[i])() end
@@ -209,6 +224,7 @@ SILE.baseClass = std.object {
         for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
       end
     end)
+    self._initialized = true
     return self:initialFrame()
   end,
 
@@ -224,7 +240,11 @@ SILE.baseClass = std.object {
 
   declareFrame = function (self, id, spec)
     spec.id = id
-    self.pageTemplate.frames[id] = SILE.newFrame(spec)
+    if spec.solve then
+      self.pageTemplate.frames[id] = spec
+    else
+      self.pageTemplate.frames[id] = SILE.newFrame(spec)
+    end
     --   next = spec.next,
     --   left = spec.left and fW(spec.left),
     --   right = spec.right and fW(spec.right),
@@ -238,7 +258,7 @@ SILE.baseClass = std.object {
 
   declareFrames = function (self, specs)
     if specs then
-      for k, v in ipairs(specs) do self:declareFrame(k, v) end
+      for k, v in pairs(specs) do self:declareFrame(k, v) end
     end
   end,
 

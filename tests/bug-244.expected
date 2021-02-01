@@ -3,13 +3,13 @@ Begin page
 Mx 	543.8630
 My 	117.7320
 Set font 	Gentium Plus;10;400;;normal;;LTR
-T	43 72 79 79 82	(Hello)
+T	43 72 79 79 82 w=21.6064	(Hello)
 My 	142.0279
-T	90 82 85 79 71	(world)
+T	90 82 85 79 71 w=23.9600	(world)
 My 	165.9879
-T	17	(.)
-Mx 	295.2916
+T	17 w=2.2900	(.)
+Mx 	298.5617
 My 	780.6177
-T	20	(1)
+T	20 w=4.6924	(1)
 End page
 Finish

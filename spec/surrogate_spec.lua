@@ -5,7 +5,7 @@ describe("SILE.linebreak", function()
   local chars = { 0x10000, 0x10001, 0x10002 }
   local utf8string = ""
   for i = 1,#chars do
-    utf8string = utf8string .. SU.utf8char(chars[i])
+    utf8string = utf8string .. luautf8.char(chars[i])
   end
 
   it("should be the right length in UTF8", function()

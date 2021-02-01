@@ -1,19 +1,19 @@
 -- Japaneese language support defines units which are useful here
-SILE.call("language", { main = "ja" }, {})
+SILE.languageSupport.loadLanguage("ja")
 
 SILE.registerCommand("ruby:font", function (_, _)
   SILE.call("font", { size = "0.6zw", weight = 800 })
 end)
 
 SILE.settings.declare({
-    name = "ruby.height",
+    parameter = "ruby.height",
     type = "measurement",
     default = SILE.measurement("1zw"),
     help = "Vertical offset between the ruby and the main text"
   })
 
 SILE.settings.declare({
-    name = "ruby.latinspacer",
+    parameter = "ruby.latinspacer",
     type = "glue",
     default = SILE.nodefactory.glue("0.25em"),
     help = "Glue added between consecutive Latin ruby"
@@ -62,7 +62,7 @@ SILE.registerCommand("ruby", function (options, content)
     local oy = typesetter.frame.state.cursorY
     typesetter.frame:advanceWritingDirection(rubybox.width)
     typesetter.frame:advancePageDirection(-SILE.settings.get("ruby.height"))
-    SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
+    SILE.outputter:setCursor(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
     for i = 1, #(self.value) do
       local node = self.value[i]
       node:outputYourself(typesetter, line)
@@ -93,3 +93,36 @@ SILE.registerCommand("ruby", function (options, content)
   SILE.scratch.lastRubyBox = rubybox
   SILE.scratch.lastRubyText = reading
 end)
+
+return {
+  documentation = [[
+\begin{document}
+Japanese texts often contain pronunciation hints (called \em{furigana}) for
+difficult kanji or foreign words. These hints are traditionally placed either
+above (in horizontal typesetting) or beside (in vertical typesetting) the word
+that they explain. The typesetting term for these glosses is \em{ruby}.
+
+The \code{ruby} package provides the \code{\\ruby[reading=...]\{...\}} command
+which sets a piece of ruby above or beside the base text. For example:
+
+\set[parameter=ruby.height, value=12pt]
+\language[main=ja]{}
+
+\define[command=ruby:font]{\font[family=Noto Sans CJK JP,size=6pt]}
+\begin{verbatim}
+\line
+\\ruby[reading=\font[family=Noto Sans CJK JP]{れいわ}]\{\font[family=Noto Sans CJK JP]{令和}\}
+\line
+\end{verbatim}
+
+Produces:
+\medskip
+\font[family=Noto Sans CJK JP]{
+  \ruby[reading=れいわ]{令和}
+}
+
+\language[main=en]
+
+\end{document}
+]]
+}

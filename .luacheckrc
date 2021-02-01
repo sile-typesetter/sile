@@ -1,4 +1,4 @@
-std = "lua53"
+std = "max"
 include_files = {
   "**/*.lua",
   "sile.in",
@@ -9,8 +9,8 @@ include_files = {
 exclude_files = {
   "benchmark-*",
   "compare-*",
+  "sile-*",
   "lua_modules",
-  "lua_modules_dist",
   "lua-libraries",
   ".lua",
   ".luarocks",
@@ -23,8 +23,8 @@ globals = {
   "SILE",
   "SU",
   "std",
+  "luautf8",
   "pl",
-  "bit32",
   "SYSTEM_SILE_PATH",
   "SHARED_LIB_EXT",
   "ProFi"

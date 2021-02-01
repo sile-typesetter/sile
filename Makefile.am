@@ -1,49 +1,76 @@
 ACLOCAL_AMFLAGS = -I m4
 AUTOMAKE_OPTIONS = foreign
 
+SHELL = bash
+.ONESHELL:
+.SECONDARY:
+.SECONDEXPANSION:
+.DELETE_ON_ERROR:
+
 if SYSTEM_LIBTEXPDF
 SUBDIRS = src
 else
 SUBDIRS = libtexpdf src
 endif
 
-SUPPORTED_LUAS = 5.3 5.2 5.1
+# Rules for installing LuaRocks locally as pkgdata_DATA
+include Makefile-luarocks
 
-dist_man_MANS = sile.1
-dist_doc_DATA = README.md CHANGELOG.md
-bin_SCRIPTS = sile
-nobase_dist_pkgdata_DATA = $(filter-out %.so,$(shell find core classes languages packages lua-libraries -type f -print))
-EXTRA_DIST = LICENSE spec tests examples documentation sile-dev-1.rockspec build-aux/git-version-gen .version fontconfig.conf
-EXTRA_DIST += $(extra_dist)
+# Actual rules for downloading test fonts are in a separate file
+include Makefile-fonts
 
-SHELL = bash
-.ONESHELL:
-.SECONDEXPANSION:
-.DELETE_ON_ERROR:
+# Since we can't use $(wildcard ...) in automake file lists, we generate a file
+# with a script that builds our dynamic file lists instead. This is tricky,
+# because if we just include the file automake will flatten this include. By
+# using $(wildcard ...) to include it (the very function we couldn't use because
+# of the race condition it creates) we actually keep it from being flattened and
+# hence evaluated when we want it to be. Since the file always exists (see
+# BUILT_SOURCES and EXTRA_DIST) this doesn't induce a race.
+include $(wildcard Makefile-distfiles)
 
-if !SYSTEM_LUAROCKS
-nobase_nodist_pkgdata_DATA = $(shell find lua_modules -type f -print 2>/dev/null ||:)
-extra_dist = $(shell find lua_modules_dist -type f -print 2>/dev/null ||:)
-LUAROCKS := luarocks --tree lua_modules --lua-version $(LUA_VERSION)
-LUAMODLOCK := sile-dev-1.rockslock
-LUAMODSPEC := sile-dev-1.rockspec
-genrockslock := $(LUAROCKS) $(LUAROCKSARGS) list --porcelain | awk '{print $$1 " " $$2}'
-rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
-else
-LUAROCKS := luarocks --tree lua_modules_dist --lua-version $(LUA_VERSION)
+MANUAL = documentation/sile.pdf
+EXAMPLES = $(addsuffix .pdf,$(basename $(EXAMPLESSRCS)))
+
+if MANUAL
+_MANUAL = $(MANUAL)
 endif
 
-BUILT_SOURCES = .version
+if EXAMPLES
+_EXAMPLES = $(EXAMPLES)
+endif
+
+licensedir = $(datarootdir)/licenses/sile
+
+nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
+nobase_nodist_pkgdata_DATA = $(LUAMODULES)
+dist_man_MANS = sile.1
+dist_doc_DATA = README.md CHANGELOG.md
+dist_pdf_DATA = $(_MANUAL)
+dist_license_DATA = LICENSE
+nobase_dist_pdf_DATA = $(_EXAMPLES)
+bin_SCRIPTS = sile
+EXTRA_DIST = spec tests examples documentation sile-dev-1.rockspec fontconfig.conf
+EXTRA_DIST += .version Makefile-distfiles
+EXTRA_DIST += build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
+EXTRA_DIST += $(MANUAL) $(EXAMPLES)
+
+Makefile-distfiles: build-aux/list-dist-files.sh $(wildcard .version .tarball-version) | $(LUAMODLOCK)
+	$< 2>/dev/null > $@
+
+BUILT_SOURCES = .version Makefile-distfiles
 
 .version: $(shell test -e .git && awk '{print ".git/" $$2}' .git/HEAD)
-	mv $@{,-prev} || touch $@-prev
+	mv $@{,-prev} 2>/dev/null || touch $@-prev
 	( test -e .git && ./build-aux/git-version-gen .tarball-version || echo $(VERSION) ) > $@
 	cmp -s $@{,-prev} || autoreconf configure.ac --force -W none
-	sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
+	build-aux/decore-automake.sh
 
-dist-hook: lua_modules_dist
-	echo $(VERSION) > $(distdir)/.tarball-version
-	sed -i -e '/rm -f/s/ core / /' configure aclocal.m4 ||:
+dist-hook: $(MANUAL) $(EXAMPLES)
+	cd $(distdir)
+	sed -i -e '/^LUAMODULES =/s/=.*/=/' Makefile-distfiles
+	echo $(VERSION) > .tarball-version
+	build-aux/decore-automake.sh
+	sed -i -e '/^LUAMODULES/d;/^\tlua_modules/d' Makefile.in
 
 # Whether to force tests to run from scratch
 CLEAN ?=
@@ -58,7 +85,7 @@ tagrelease:
 	npm run release -- $(and $(RELTYPE),--release-as $(RELTYPE))
 
 .PHONY: prerelease
-prerelease: all test busted examples docs update_libtexpdf
+prerelease: test examples docs update_libtexpdf
 
 .PHONY: release-preview
 release-preview:
@@ -67,10 +94,14 @@ release-preview:
 .PHONY: release
 release: tagrelease
 
-dist: examples docs all lua_modules_dist sile-$(VERSION).pdf
+dist: sile-$(VERSION).pdf sile-$(VERSION).md
 
-sile-$(VERSION).pdf: documentation/sile.pdf
+sile-$(VERSION).pdf: $(MANUAL)
 	cp $< $@
+
+sile-%.md: CHANGELOG.md
+	sed -e '/\.\.\.v$*/,/\.\.\.v/!d' $< |
+		sed -e '1,3d;N;$$!P;$$!D;$$d' > $@
 
 .PHONY: update_libtexpdf
 update_libtexpdf:
@@ -82,60 +113,44 @@ update_libtexpdf:
 gh-pages:
 	git worktree add -f $@ $@
 
-.PHONY: installrocks
-if !SYSTEM_LUAROCKS
-installrocks: $(LUAMODLOCK) $(shell $(rocksmatch) || echo lua_modules)
-
-lua_modules: $(LUAMODSPEC) $(shell $(rocksmatch) || echo force)
-	if test -e .git; then
-		$(LUAROCKS) $(LUAROCKSARGS) install --only-deps $<
-	else
-		rm -rf lua_modules
-		cp -a lua_modules_dist lua_modules
-		$(foreach LUA,$(filter-out $(LUA_VERSION),$(SUPPORTED_LUAS)),
-		find lua_modules -maxdepth 3 -type d -name "*$(LUA)" -execdir rm -rf {} \;)
-	fi
-
-$(LUAMODLOCK): lua_modules $(LUAMODSPEC)
-	$(genrockslock) > $@
-
-sile: installrocks
-endif
-
-.PHONY: lua_modules_dist
-lua_modules_dist: $(LUAMODSPEC) force
-	$(foreach LUA,$(SUPPORTED_LUAS),
-	$(LUAROCKS) $(LUAROCKSARGS) --lua-version $(LUA) install --only-deps $<)
-
 DEPDIR := .deps
 REGRESSIONSCRIPT := ./tests/regressions.pl
 LOCALTESTFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
 SILEFLAGS ?= -m $(DEPDIR)/$(basename $@).d -d versions -f fontconfig
 
-TESTSRCS  ?= $(wildcard tests/*.sil tests/*.xml)
 TESTPDFS   = $(addsuffix      .pdf,$(basename $(TESTSRCS)))
-EXPECTEDS ?= $(filter $(addsuffix .expected,$(basename $(TESTSRCS))),$(wildcard tests/*.expected))
+EXPECTEDS ?= $(filter $(addsuffix .expected,$(basename $(TESTSRCS))),$(TESTEXPECTS))
 ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 
-.PHONY: check
-check: all
+check: selfcheck
+
+.PHONY: selfcheck
+selfcheck: | $(_BUILT_SUBDIRS)
 	output=$$(mktemp --suffix=.pdf)
 	trap 'rm -f $$output' EXIT SIGHUP SIGTERM
 	./sile -o $$output - <<< "<sile>foo</sile>"
-	pdfinfo $$output | grep SILE
+	pdfinfo $$output | grep "SILE v@VERSION@"
 
-.PHONY: test
-test: $(TESTSRCS) $(ACTUALS)
+.PHONY: regressions
+regressions: $(TESTSRCS) $(ACTUALS)
 	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
 
+.PHONY: test
+test: regressions busted
+
 .PHONY: lint
-lint: luacheck
+lint: luacheck luarocks-lint
+
+.PHONY: luarocks-lint
+luarocks-lint: $(LUAMODSPEC)
+	luarocks lint $<
 
 .PHONY: luacheck
 luacheck:
-	luacheck -q .
+	luacheck -j$(shell nproc) -q .
 
-busted: $(wildcard spec/*_spec.lua)
+.PHONY: busted
+busted: sile $(addprefix .fonts/,$(TESTFONTFILES))
 	set -f; IFS=';'
 if SYSTEM_LUAROCKS
 	packagecpath=(./{,core/}?.$(SHARED_LIB_EXT))
@@ -144,23 +159,13 @@ else
 	packagecpath=(./{,core/,lua_modules/lib/lua/$(LUA_VERSION)/}?.$(SHARED_LIB_EXT))
 	packagepath=(./{,lua_modules/share/lua/$(LUA_VERSION)/,lua-libraries/}?{,/init}.lua)
 endif
-	busted --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" spec
-
-DOCSSRCS = $(basename $(wildcard documentation/*.sil))
-DOCS = $(addsuffix .pdf,$(basename $(DOCSSRCS)))
+	$(LOCALTESTFONTS) busted --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" spec
 
 .PHONY: docs
-docs: $(DOCS)
-
-EXAMPLESSRCS = $(basename $(wildcard examples/*.sil))
-EXAMPLES = $(addsuffix .pdf,$(DOCSSRCS))
+docs: $(MANUAL)
 
 .PHONY: examples
 examples: $(EXAMPLES)
-
-# Use system wide fonts for docs and examples
-documentation/%.pdf: LOCALTESTFONTS=
-examples/%.pdf: LOCALTESTFONTS=
 
 # This is a monkey patch to figure out how many passes we have to to to
 # garantee the TOC is up to date, simplify when #230 is fixed.
@@ -169,25 +174,44 @@ pages = pdfinfo $@ | awk '$$1 == "Pages:" {print $$2}' || echo 0
 silepass = $(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@ && pg0=$${pg} pg=$$($(pages))
 define runsile =
 	pg0=$$($(pages)) hadtoc=$$($(hastoc))
-	mkdir -p $(DEPDIR)
+	mkdir -p $(DEPDIR)/$$(dirname $@)
 	$(silepass)
+	export -n SILE_COVERAGE
 	if $(hastoc); then
 		$${hadtoc} || $(silepass)
 		[[ $${pg} -gt $${pg0} ]] && $(silepass) ||:
 	fi
 endef
 
-patterndeps = $(wildcard $(DEPDIR)/$*.d) all $(and $(filter tests/%,$*),testprep)
+_FORCED = $(and $(SILE_COVERAGE)$(CLEAN),force)
+_TEST_DEPS = $(and $$(filter tests/%,$@),$(addprefix .fonts/,$(TESTFONTFILES)))
+_DOCS_DEPS = $(and $$(filter documentation/%,$@),$(addprefix .fonts/,$(DOCSFONTFILES)))
+_EXAM_DEPS = $(and $$(filter examples/%,$@),$(addprefix .fonts/,$(EXAMFONTFILES)))
 
-%.pdf: %.sil $(and $(SILE_COVERAGE)$(CLEAN),force) $$(patterndeps)
+# TODO: remove _BUILT_SUBDIRS hack and replace it with something sensible when
+# these subdirs don't do crazy things like copying files outside of their own trees!
+_BUILT_SUBDIRS = .built-subdirs
+_SUBDIR_TELLS = core/justenoughharfbuzz.so libtexpdf/.libs/libtexpdf.so.0.0.0
+$(_BUILT_SUBDIRS): $(_SUBDIR_TELLS)
+	touch $@
+
+$(_SUBDIR_TELLS):
+	$(MAKE) $(AM_MAKEFLAGS) all-recursive
+#	$(error Running `make install`, `make dist`, or other end-game targets before `make all` unspported.)
+
+patterndeps = $(_FORCED) $(_TEST_DEPS) $(_EXAM_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(LUAMODLOCK) $(_BUILT_SUBDIRS)
+
+%.pdf: %.sil $$(patterndeps)
 	$(runsile)
 
-%.pdf: %.xml $(and $(SILE_COVERAGE)$(CLEAN),force) $$(patterndeps)
+%.pdf: %.xml $$(patterndeps)
 	$(runsile)
+
+examples/docbook/article-template.pdf: SILEFLAGS += -I docbook.sil
 
 .PHONY: coverage
 coverage: export SILE_COVERAGE=1
-coverage: test_previews
+coverage: regression_previews busted
 
 HEADSHA ?= HEAD
 _HEADSHA ?= $(shell test -e .git && git rev-parse --short=7 $(HEADSHA))
@@ -222,11 +246,7 @@ clean-worktrees:
 			done
 	fi
 
-define time_action =
-	export TIMEFORMAT=$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
-	{ time (./sile documentation/sile.sil > /dev/null 2>&1) } 2> time.json
-endef
-
+time_action ?= ./sile documentation/sile.sil -o /dev/null
 make_worktree_rules = $(eval $(foreach SHA,$(_HEADSHA) $(_BASESHA),$(call worktree_sha,$(1),$(shell git rev-parse --short=7 $(SHA)))))
 
 define worktree_sha =
@@ -238,10 +258,11 @@ $(1)-$(2):
 	[[ -d libtexpdf ]] && rmdir libtexpdf
 	[[ -h libtexpdf ]] || ln -s ../libtexpdf
 	[[ -h lua_modules ]] || ln -s ../lua_modules
-	[[ -h lua_modules_dist ]] || ln -s ../lua_modules_dist
 	[[ -h node_modules ]] || ln -s ../node_modules
 	[[ -h .fonts ]] || ln -s ../.fonts
+	[[ -h .sources ]] || ln -s ../.sources
 	./bootstrap.sh
+	cp ../config.status .
 	./configure
 	make
 
@@ -251,9 +272,10 @@ $(1)-$(2)/%: $(1)-$(2)
 	make $$*
 
 .PRECIOUS: $(1)-$(2)/time.json
-$(1)-$(2)/time.json: $(1)-$(2) $(1)-$(2)/sile
+$(1)-$(2)/time.json: $(1)-$(2) force
 	cd $$<
-	$$(time_action)
+	export TIMEFORMAT=$$$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
+	{ time ($$(time_action) > /dev/null 2>&1) } 2> time.json
 
 endef
 
@@ -261,15 +283,16 @@ $(call make_worktree_rules,benchmark)
 
 .PHONY: benchmark
 benchmark: time-$(_HEADSHA).json time-$(_BASESHA).json
-	cat $^
+	head $^
 
 .PRECIOUS: time-%.json
 time-%.json: benchmark-%/time.json
 	cp $< $@
 
 .PRECIOUS: time.json
-time.json: sile
-	$(time_action)
+time.json: force | $(_BUILT_SUBDIRS)
+	export TIMEFORMAT=$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
+	{ time ($(time_action) > /dev/null 2>&1) } 2> time.json
 
 $(call make_worktree_rules,compare)
 
@@ -288,59 +311,50 @@ force: ;
 .PHONY: update_expecteds
 update_expecteds: $(EXPECTEDS)
 
-tests/%.expected: tests/%.sil $(and $(CLEAN),force) $$(patterndeps)
+tests/%.expected: tests/%.sil $$(patterndeps)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-tests/%.expected: tests/%.xml $(and $(CLEAN),force) $$(patterndeps)
+tests/%.expected: tests/%.xml $$(patterndeps)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
 .PHONY: update_actuals
 update_actuals: $(ACTUALS)
 
-.PHONY: test_previews
-test_previews: $(TESTPDFS)
+.PHONY: regression_previews
+regression_previews: $(TESTPDFS)
 
-tests/%.actual: tests/%.sil $(and $(CLEAN),force) $$(patterndeps)
+tests/%.actual: tests/%.sil $$(patterndeps)
 	-$(if $(CLEAN),rm -f $@,:)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-tests/%.actual: tests/%.xml $(and $(CLEAN),force) $$(patterndeps)
+tests/%.actual: tests/%.xml $$(patterndeps)
 	-$(if $(CLEAN),rm -f $@,:)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-DEPFILES = $(addsuffix .d,$(addprefix $(DEPDIR)/,$(basename $(TESTSRCS) $(DOCS) $(EXAMPLES))))
+DEPFILES = $(addsuffix .d,$(addprefix $(DEPDIR)/,$(basename $(TESTSRCS) $(MANUAL) $(EXAMPLES))))
 DEPDIRS = $(sort $(dir $(DEPFILES)))
 
-$(DEPDIRS):
+$(DEPDIRS): | Makefile-distfiles
 	mkdir -p $@
 
 $(DEPFILES): | $(DEPDIRS)
 
 include $(wildcard $(DEPFILES))
 
-# Make sure we have a local font directory before putting anything there
-.fonts/%: Makefile-fonts | .fonts
-
 .fonts: fontconfig.conf
 	[[ -h .fonts ]] || mkdir -p $@
 
-# Actual rules for downloading test fonts are in a separate file
-include Makefile-fonts
+.sources:
+	[[ -h .sources ]] || mkdir -p $@
 
-# Make sure we have font files before running tests (ignoring timestamp of font files)
-.PHONY: testprep
-TESTPREPDEPS = $(DEPDIRS) $(addprefix .fonts/,$(TESTFONTFILES))
-if SYSTEM_LUAROCKS
-testprep: | $(TESTPREPDEPS)
-else
-testprep: lua_modules | $(TESTPREPDEPS)
-endif
-
-CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS)
+CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles $(_BUILT_SUBDIRS)
 
 .PHONY: docker
-docker: Dockerfile build-aux/docker-entrypoint.sh
-	docker build --tag siletypesetter/sile:HEAD ./
+docker: Dockerfile
+	docker build \
+		--build-arg VCS_REF="$(VERSION)" \
+		--tag siletypesetter/sile:HEAD \
+		./
 
 gource.webm:
 	mkdir -p /tmp/gravatars

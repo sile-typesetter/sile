@@ -31,6 +31,7 @@ rules:
     - core
     - debug
     - docker
+    - deps
     - examples
     - fonts
     - frames
@@ -48,6 +49,7 @@ rules:
     - pdf
     - readme
     - settings
+    - release
     - shaper
     - tooling
     - travis

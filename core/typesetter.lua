@@ -10,63 +10,63 @@ if std.string.monkey_patch then -- stdlib >= 40
 end
 
 SILE.settings.declare({
-  name = "typesetter.widowpenalty",
+  parameter = "typesetter.widowpenalty",
   type = "integer",
   default = 3000,
   help = "Penalty to be applied to widow lines (at the start of a paragraph)"
 })
 
 SILE.settings.declare({
-  name = "typesetter.parseppattern",
+  parameter = "typesetter.parseppattern",
   type = "string or integer",
   default = "\r?\n[\r\n]+",
   help = "Lua pattern used to separate paragraphs"
 })
 
 SILE.settings.declare({
-  name = "typesetter.obeyspaces",
+  parameter = "typesetter.obeyspaces",
   type = "boolean or nil",
   default = nil,
   help = "Whether to ignore paragraph initial spaces"
 })
 
 SILE.settings.declare({
-  name = "typesetter.orphanpenalty",
+  parameter = "typesetter.orphanpenalty",
   type = "integer",
   default = 3000,
   help = "Penalty to be applied to orphan lines (at the end of a paragraph)"
 })
 
 SILE.settings.declare({
-  name = "typesetter.parfillskip",
+  parameter = "typesetter.parfillskip",
   type = "glue",
   default = SILE.nodefactory.glue("0pt plus 10000pt"),
   help = "Glue added at the end of a paragraph"
 })
 
 SILE.settings.declare({
-  name = "document.letterspaceglue",
+  parameter = "document.letterspaceglue",
   type = "glue or nil",
   default = nil,
   help = "Glue added between tokens"
 })
 
 SILE.settings.declare({
-  name = "typesetter.underfulltolerance",
+  parameter = "typesetter.underfulltolerance",
   type = "length or nil",
   default = SILE.length("1em"),
   help = "Amount a page can be underfull without warning"
 })
 
 SILE.settings.declare({
-  name = "typesetter.overfulltolerance",
+  parameter = "typesetter.overfulltolerance",
   type = "length or nil",
   default = SILE.length("5pt"),
   help = "Amount a page can be overfull without warning"
 })
 
 SILE.settings.declare({
-  name = "typesetter.breakwidth",
+  parameter = "typesetter.breakwidth",
   type = "measurement or nil",
   default = nil,
   help = "Width to break lines at"
@@ -448,7 +448,7 @@ SILE.defaultTypesetter = std.object {
         end
       end
     end
-    SU.debug("pagebuilder", "Glues for self page adjusted by", adjustment, "drawn from", gTotal)
+    SU.debug("pagebuilder", "Glues for this page adjusted by", adjustment, "drawn from", gTotal)
   end,
 
   initNextFrame = function (self)

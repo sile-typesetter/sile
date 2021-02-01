@@ -3,24 +3,24 @@ Begin page
 Mx 	43.2283
 My 	30.0584
 Set font 	Gentium Plus;12;400;;normal;;LTR
-T	41 76 85 86 87	(First)
+T	41 76 85 86 87 w=22.5059	(First)
 Mx 	68.9264
-T	83 68 85 68 74 85 68 83 75	(paragraph)
+T	83 68 85 68 74 85 68 83 75 w=51.2168	(paragraph)
 Mx 	120.1432
-T	17	(.)
+T	17 w=2.7480	(.)
 Mx 	43.2283
 My 	44.4584
-T	54 72 70 82 81 71	(Second)
+T	54 72 70 82 81 71 w=35.3965	(Second)
 Mx 	81.8153
-T	83 68 85 68 74 85 68 83 75	(paragraph)
+T	83 68 85 68 74 85 68 83 75 w=51.2168	(paragraph)
 Mx 	133.0321
-T	17	(.)
+T	17 w=2.7480	(.)
 Mx 	43.2283
 My 	58.8584
-T	55 75 76 85 71	(Third)
+T	55 75 76 85 71 w=27.4746	(Third)
 Mx 	73.8945
-T	83 68 85 68 74 85 68 83 75	(paragraph)
+T	83 68 85 68 74 85 68 83 75 w=51.2168	(paragraph)
 Mx 	125.1113
-T	17	(.)
+T	17 w=2.7480	(.)
 End page
 Finish

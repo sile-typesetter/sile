@@ -6,16 +6,15 @@ local function defineMaster (_, args)
   SU.required(args, "frames", "defining master")
   SU.required(args, "firstContentFrame", "defining master")
   SILE.scratch.masters[args.id] = { frames = {}, firstContentFrame = nil }
-  for k,spec in pairs(args.frames) do
-    spec.id=k
+  for frame, spec in pairs(args.frames) do
+    spec.id = frame
     if spec.solve then
-      SILE.scratch.masters[args.id].frames[k] = spec
+      SILE.scratch.masters[args.id].frames[frame] = spec
     else
-      SILE.scratch.masters[args.id].frames[k] = SILE.newFrame(spec)
+      SILE.scratch.masters[args.id].frames[frame] = SILE.newFrame(spec)
     end
   end
-  SILE.frames = {page = SILE.frames.page}
-
+  SILE.frames = { page = SILE.frames.page }
   SILE.scratch.masters[args.id].firstContentFrame = SILE.scratch.masters[args.id].frames[args.firstContentFrame]
 end
 
@@ -92,5 +91,17 @@ return {
     defineMaster = defineMaster,
     defineMasters = defineMasters,
     currentMaster = function () return _currentMaster end
-  }
+  },
+  documentation = [[
+\begin{document}
+
+The masters functionality is also itself an add-on package. It allows a class to
+define sets of frames and switch between them either temporarily or permanently.
+It defines the commands \command{\\define-master-template} (which is pattern
+on the \command{\\pagetemplate} function we will meet in chapter 8), \command{\\switch-master}
+and \command{\\switch-master-one-page}. See \code{tests/masters.sil} for more
+about this package.
+
+\end{document}
+]]
 }

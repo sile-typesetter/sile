@@ -16,32 +16,38 @@ end, "The font from which to pull the quotation marks.")
 local typesetMark = function (open, setback, scale, color, mark)
   SILE.settings.temporarily(function ()
     SILE.call("pullquote:mark-font")
-    local setwidth = SU.cast("length", setback)
-    SILE.typesetter:pushGlue({ width = open and -setwidth or setwidth })
     SILE.call("raise", { height = -(open and (scale+1) or scale) .. "ex" }, function ()
       SILE.settings.set("font.size", SILE.settings.get("font.size")*scale)
       SILE.call("color", { color = color }, function ()
-        SILE.call("rebox", { width = 0, height = 0 }, { mark })
+        if open then
+          SILE.typesetter:pushGlue({ width = -setback })
+          SILE.call("rebox", { width = setback, height = 0 }, { mark })
+        else
+          SILE.typesetter:pushGlue(SILE.nodefactory.hfillglue())
+          local hbox = SILE.call("hbox", {}, { mark })
+          table.remove(SILE.typesetter.state.nodes) -- steal it back
+          SILE.typesetter:pushGlue({ width = setback - hbox.width })
+          SILE.call("rebox", { width = hbox.width, height = 0 }, { mark })
+          SILE.typesetter:pushGlue({ width = -setback })
+        end
       end)
     end)
-    SILE.typesetter:pushGlue({width = open and setwidth or -setwidth })
   end)
 end
 
 SILE.registerCommand("pullquote", function (options, content)
   local author = options.author or nil
-  local setback = options.setback or "2em"
   local scale = options.scale or 3
   local color = options.color or "#999999"
   SILE.settings.temporarily(function ()
+    SILE.call("pullquote:font")
+    local setback = SU.cast("length", options.setback or "2em"):absolute()
     SILE.settings.set("document.rskip", SILE.nodefactory.glue(setback))
     SILE.settings.set("document.lskip", SILE.nodefactory.glue(setback))
-    SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
-    SILE.settings.set("current.parindent", SILE.nodefactory.glue())
-    SILE.call("pullquote:font")
+    SILE.call("noindent")
     typesetMark(true, setback, scale, color, "“")
+    SILE.call("indent")
     SILE.process(content)
-    SILE.typesetter:pushGlue(SILE.nodefactory.hfillglue())
     typesetMark(false, setback, scale, color, "”")
     if author then
       SILE.settings.temporarily(function ()
@@ -73,10 +79,10 @@ do not know.
 
 Optional values are available for:
 
-\listitem \code{author} to add an attribution line
-\listitem \code{setback} to set the bilateral margins around the block
-\listitem \code{color} to change the color of the quote marks
-\listitem \code{scale} to change the relative size of the quote marks
+• \code{author} to add an attribution line\par
+• \code{setback} to set the bilateral margins around the block\par
+• \code{color} to change the color of the quote marks\par
+• \code{scale} to change the relative size of the quote marks\par
 
 If you want to specify what font the pullquote environment should use, you
 can redefine the \code{pullquote:font} command. By default it will be the same

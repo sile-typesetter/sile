@@ -86,7 +86,7 @@ SILE.registerCommand("ch", function (options, content)
   if lyricBox.width < origWidth then
     lyricBox.width = origWidth + SILE.length("0.5em"):absolute()
   end
-end, "Insert a a chord name above the text")
+end, "Insert a chord name above the text")
 
 SILE.registerCommand("chordmode", function (_, content)
   SILE.process(inputfilter.transformContent(content, addChords))
@@ -97,15 +97,41 @@ SILE.registerCommand("chordmode:chordfont", function (_, content)
 end, "Override this command to change chord style.")
 
 SILE.settings.declare({
-    name = "chordmode.offset",
+    parameter = "chordmode.offset",
     type = "length",
     default = SILE.length("2ex"),
     help = "Vertical offset between the chord name and the text."
   })
 
 SILE.settings.declare({
-    name = "chordmode.lineheight",
+    parameter = "chordmode.lineheight",
     type = "length",
     default = SILE.length("4mm"),
     help = "Length of the chord name line."
   })
+
+return {
+  documentation = [[
+\begin{document}
+
+This package provides the \code{chordmode} environment, which transforms
+lines like:
+
+\begin{verbatim}
+  I've be<G>en a wild rover for many's a <C>year
+\end{verbatim}
+
+into:
+
+\begin{chordmode}
+  I've be<G>en a wild rover for many's a <C>year
+\end{chordmode}
+\par
+
+The chords can be styled by redefining the \code{chordmode:chordfont}
+command, and the offset between the chord name and text set with the
+\code{chordmode:offset} parameter.
+
+\end{document}
+]]
+}

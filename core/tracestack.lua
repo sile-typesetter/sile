@@ -66,7 +66,7 @@ traceStack.commandFrame = pl.class({
 traceStack.contentFrame = pl.class({
     _base = traceStack.commandFrame,
     _init = function (self, command, content)
-      self:super(command, content, content.options)
+      self._base._init(self, command, content, content.options)
     end
   })
 
@@ -77,7 +77,7 @@ traceStack.textFrame = pl.class({
     end,
     __tostring = function (self)
       if self.text:len() > 20 then
-        self.text = self.text:sub(1, 18) .. "…"
+        self.text = luautf8.sub(self.text, 1, 18) .. "…"
       end
       self.text = self.text:gsub("\n", "␤"):gsub("\t", "␉"):gsub("\v", "␋")
       return '"' .. self.text .. '"'

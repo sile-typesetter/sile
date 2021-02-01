@@ -1,6 +1,6 @@
 local function transformContent(content, transformFunction, extraArgs)
   local newContent = {}
-  for k, v in pairs(content) do
+  for k, v in SU.sortedpairs(content) do
     if type(k) == "number" then
       if type(v) == "string" then
         local transformed = transformFunction(v, content, extraArgs)
