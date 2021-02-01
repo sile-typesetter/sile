@@ -132,12 +132,18 @@ SILE.parseArguments = function ()
   cli:flag("-t, --traceback", "display detailed location trace on errors and warnings")
   cli:flag("-h, --help", "display this help, then exit")
   cli:flag("-v, --version", "display version information, then exit", print_version)
-  local opts, parse_err = cli:parse(_G.arg)
+  -- Work around cliargs not processing - as an alias for STDIO streams:
+  -- https://github.com/amireh/lua_cliargs/issues/67
+  local _arg = pl.tablex.imap(luautf8.gsub, _G.arg, "^-$", "STDIO")
+  local opts, parse_err = cli:parse(_arg)
   if not opts and parse_err then
     print(parse_err)
     os.exit(1)
   end
   if opts.INPUT then
+    if opts.INPUT == "STDIO" then
+      opts.INPUT = "/dev/stdin"
+    end
     -- Turn slashes around in the event we get passed a path from a Windows shell
     SILE.inputFile = opts.INPUT:gsub("\\", "/")
     -- Strip extension
@@ -167,6 +173,9 @@ SILE.parseArguments = function ()
     SILE.makeDeps.filename = opts.makedeps
   end
   if opts.output then
+    if opts.output == "STDIO" then
+      opts.output = "/dev/stdout"
+    end
     SILE.outputFilename = opts.output
   end
   for _, include in ipairs(opts.include) do
