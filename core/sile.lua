@@ -96,7 +96,7 @@ end
 SILE.require = function (dependency, pathprefix)
   dependency = dependency:gsub(".lua$", "")
   if pathprefix then
-    local status, lib = pcall(require, std.io.catfile(pathprefix, dependency))
+    local status, lib = pcall(require, pl.path.join(pathprefix, dependency))
     if status then return lib end
   end
   local dep = require(dependency)
@@ -271,7 +271,7 @@ end
 function SILE.resolveFile(filename, pathprefix)
   local candidates = {}
   -- Start with the raw file name as given prefixed with a path if requested
-  if pathprefix then candidates[#candidates+1] = std.io.catfile(pathprefix, "?") end
+  if pathprefix then candidates[#candidates+1] = pl.path.join(pathprefix, "?") end
   -- Also check the raw file name without a path
   candidates[#candidates+1] = "?"
   -- Iterate through the directory of the master file, the SILE_PATH variable, and the current directory
@@ -279,8 +279,8 @@ function SILE.resolveFile(filename, pathprefix)
   if SILE.masterFilename then
     for path in SU.gtoke(SILE.masterDir..";"..tostring(os.getenv("SILE_PATH")), ";") do
       if path.string and path.string ~= "nil" then
-        if pathprefix then candidates[#candidates+1] = std.io.catfile(path.string, pathprefix, "?") end
-        candidates[#candidates+1] = std.io.catfile(path.string, "?")
+        if pathprefix then candidates[#candidates+1] = pl.path.join(path.string, pathprefix, "?") end
+        candidates[#candidates+1] = pl.path.join(path.string, "?")
       end
     end
   end
