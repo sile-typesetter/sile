@@ -16,17 +16,17 @@ dependencies = {
   "linenoise == 0.9-1",
   "lpeg == 1.0.2-1",
   "lua-zlib == 1.2-1",
-  "lua_cliargs == 2.3-3",
+  "lua_cliargs == 3.0-1",
   "luaepnf == 0.3-2",
   "luaexpat == 1.3.3-1",
   "luafilesystem == 1.8.0-1",
   "luarepl == 0.9-1",
-  "luasec == 0.9-1",
+  "luasec == 1.0-1",
   "luasocket == 3.0rc1-2",
   "luautf8 == 0.1.3",
-  "penlight == 1.8.0-1",
+  "penlight == 1.9.2-1",
   "stdlib == 41.2.2-1",
-  "vstruct == 2.0.1-1"
+  "vstruct == 2.1.1-1"
 }
 build = {
 	type = "builtin",
