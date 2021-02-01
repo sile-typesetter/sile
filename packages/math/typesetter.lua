@@ -2,17 +2,20 @@
 local b = require("packages/math/base-elements")
 local tex = require("packages/math/texlike")
 
--- convert MathML into mbox
-local function ConvertMathML(content)
-  if content == nil or content.command == nil then return nil end
-  local convertChildren = function(tree)
-    local mboxes = {}
-    for _, n in ipairs(tree) do
-      local box = ConvertMathML(n)
-      if box then table.insert(mboxes, box) end
-    end
-    return mboxes
+local ConvertMathML
+
+local function convertChildren(tree)
+  local mboxes = {}
+  for _, n in ipairs(tree) do
+    local box = ConvertMathML(n)
+    if box then table.insert(mboxes, box) end
   end
+  return mboxes
+end
+
+-- convert MathML into mbox
+function ConvertMathML(content)
+  if content == nil or content.command == nil then return nil end
   if content.command == 'math' or content.command == 'mathml' then -- toplevel
     return b.stackbox('V', convertChildren(content))
   elseif content.command == 'mrow' then
