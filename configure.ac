@@ -1,7 +1,5 @@
-AC_PREREQ([2.68])
-AC_INIT([SILE],
-        m4_esyscmd([build-aux/git-version-gen .tarball-version]),
-        [simon@simon-cozens.org])
+AC_PREREQ([2.69])
+AC_INIT([SILE],[m4_esyscmd(build-aux/git-version-gen .tarball-version)],[simon@simon-cozens.org])
 AM_INIT_AUTOMAKE([1.11.1 foreign tar-pax dist-zip dist-xz no-dist-gzip -Wall no-define color-tests -Wno-portability subdir-objects])
 AC_CONFIG_MACRO_DIR([m4])
 LT_PREREQ([2.2])
@@ -16,7 +14,7 @@ fi
 AM_SILENT_RULES([yes])
 
 # Checks for programs.
-AC_PROG_CC_C99
+AC_PROG_CC
 AC_PROG_OBJC
 
 AC_CANONICAL_HOST
