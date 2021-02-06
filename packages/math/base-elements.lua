@@ -174,10 +174,10 @@ local function getDenominatorMode(mode)
 end
 
 local function getRightMostGlyphId(node)
-  while node:is_a(elements.stackbox) and node.direction == 'H' do
+  while node and node:is_a(elements.stackbox) and node.direction == 'H' do
     node = node.children[#(node.children)]
   end
-  if node:is_a(elements.text) then
+  if node and node:is_a(elements.text) then
     return node.value.glyphString[#(node.value.glyphString)]
   else
     return 0
