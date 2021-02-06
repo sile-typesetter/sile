@@ -2,7 +2,6 @@ local nodefactory = require("core/nodefactory")
 local hb = require("justenoughharfbuzz")
 local ot = require("core/opentype-parser")
 local syms = require("packages/math/unicode-symbols")
-local pdf = require("justenoughlibtexpdf")
 
 local atomType = syms.atomType
 local symbolDefaults = syms.symbolDefaults
@@ -908,8 +907,6 @@ elements.text = pl.class({
     end
     SILE.outputter:setCursor(scaleWidth(x, line), compensatedY.length)
     SILE.outputter:setFont(self.options)
-    pdf.colorpush_rgb(0,0,0)
-    pdf.colorpop()
     -- There should be no stretch or shrink on the width of a text
     -- element.
     local width = self.width.length
