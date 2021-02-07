@@ -2567,8 +2567,11 @@ symbolDefaults['⋃'] = { atomType = atomType.bigOperator }
 symbolDefaults['⨅'] = { atomType = atomType.bigOperator }
 symbolDefaults['⨆'] = { atomType = atomType.bigOperator }
 symbolDefaults['∫'] = { atomType = atomType.bigOperator }
-symbolDefaults['∰'] = { atomType = atomType.bigOperator }
+symbolDefaults['∬'] = { atomType = atomType.bigOperator }
+symbolDefaults['∭'] = { atomType = atomType.bigOperator }
 symbolDefaults['∮'] = { atomType = atomType.bigOperator }
+symbolDefaults['∯'] = { atomType = atomType.bigOperator }
+symbolDefaults['∰'] = { atomType = atomType.bigOperator }
 symbolDefaults[','] = { atomType = atomType.punctuationSymbol }
 symbolDefaults['⟹'] = { atomType = atomType.relationalOperator }
 symbolDefaults['/'] = { atomType = atomType.binaryOperator }

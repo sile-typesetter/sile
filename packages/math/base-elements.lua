@@ -49,7 +49,7 @@ end
 -- Big operators that should nevertheless have their limits drawn as subscript
 -- and superscript by default
 local subscriptBigOps =
-  {'∫', '∮', '∰'}
+  {'∫', '∬', '∭', '∮', '∯', '∰'}
 
 -- Foward declaration
 local newStandardHspace
