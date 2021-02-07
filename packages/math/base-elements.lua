@@ -39,6 +39,7 @@ local scriptType = {
 local mathVariantToScriptType = function(attr)
   return
     attr == "normal" and scriptType.upright or
+    attr == "bold" and scriptType.bold or
     attr == "italic" and scriptType.italic or
     attr == "bold-italic" and scriptType.boldItalic or
     attr == "double-struck" and scriptType.doubleStruck or
@@ -72,6 +73,9 @@ end
 local mathScriptConversionTable = {
   capital = {
     [scriptType.upright] = function(codepoint) return codepoint end,
+    [scriptType.bold] = function(codepoint)
+      return codepoint + 0x1D400 - 0x41
+    end,
     [scriptType.italic] = function(codepoint) return codepoint + 0x1D434 - 0x41 end,
     [scriptType.boldItalic] = function(codepoint) return codepoint + 0x1D468 - 0x41 end,
     [scriptType.doubleStruck] = function(codepoint)
@@ -87,6 +91,7 @@ local mathScriptConversionTable = {
   },
   small = {
     [scriptType.upright] = function(codepoint) return codepoint end,
+    [scriptType.bold] = function(codepoint) return codepoint + 0x1D41A - 0x61 end,
     [scriptType.italic] = function(codepoint) return codepoint == 0x68 and 0x210E or codepoint + 0x1D44E - 0x61 end,
     [scriptType.boldItalic] = function(codepoint) return codepoint + 0x1D482 - 0x61 end,
     [scriptType.doubleStruck] = function(codepoint) return codepoint + 0x1D552 - 0x61 end,
