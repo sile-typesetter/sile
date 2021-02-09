@@ -54,6 +54,7 @@ bin_SCRIPTS = sile
 EXTRA_DIST = spec tests examples documentation sile-dev-1.rockspec fontconfig.conf
 EXTRA_DIST += .version Makefile-distfiles
 EXTRA_DIST += build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
+EXTRA_DIST += Dockerfile build-aux/bootstrap-docker.sh build-aux/docker-fontconfig.conf hooks/build
 EXTRA_DIST += $(MANUAL) $(EXAMPLES)
 
 Makefile-distfiles: build-aux/list-dist-files.sh $(wildcard .version .tarball-version) | $(LUAMODLOCK)
@@ -352,11 +353,8 @@ include $(wildcard $(DEPFILES))
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles $(_BUILT_SUBDIRS)
 
 .PHONY: docker
-docker: Dockerfile
-	docker build \
-		--build-arg VCS_REF="$(VERSION)" \
-		--tag siletypesetter/sile:HEAD \
-		./
+docker: Dockerfile hooks/build .version
+	IMAGE_NAME=siletypesetter/$(_sile):HEAD ./hooks/build $(VERSION)
 
 gource.webm:
 	mkdir -p /tmp/gravatars
