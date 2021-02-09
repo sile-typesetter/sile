@@ -33,6 +33,9 @@ RUN make
 RUN make check
 RUN make install DESTDIR=/pkgdir
 
+# Work around BuiltKit / buildx bug, they can’t copy to symlinks only dirs
+RUN mv /pkgdir/usr/local/{share/,}/man
+
 FROM docker.io/library/archlinux:base-20210131.0.14634 AS final
 
 # Same args as above, repeated because they went out of scope with FROM
