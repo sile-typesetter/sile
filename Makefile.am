@@ -7,6 +7,8 @@ SHELL = bash
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
 
+_sile = $(program_prefix)$(shell sed -e "$(program_transform_name)" <<< sile)$(program_suffix)
+
 if SYSTEM_LIBTEXPDF
 SUBDIRS = src
 else
