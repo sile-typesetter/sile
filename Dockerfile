@@ -1,4 +1,6 @@
-FROM docker.io/library/archlinux:base-devel-20210131.0.14634 AS builder
+ARG ARCHTAG
+
+FROM docker.io/library/archlinux:base-devel-$ARCHTAG AS builder
 
 # This is a hack to convince Docker Hub that its cache is behind the times.
 # This happens when the contents of our dependencies changes but the base
@@ -36,7 +38,7 @@ RUN make install DESTDIR=/pkgdir
 # Work around BuiltKit / buildx bug, they can’t copy to symlinks only dirs
 RUN mv /pkgdir/usr/local/{share/,}/man
 
-FROM docker.io/library/archlinux:base-20210131.0.14634 AS final
+FROM docker.io/library/archlinux:base-$ARCHTAG AS final
 
 # Same args as above, repeated because they went out of scope with FROM
 ARG VCS_REF=0
