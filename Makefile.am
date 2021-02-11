@@ -356,7 +356,7 @@ docker: Dockerfile hooks/build .version
 
 gource.webm:
 	mkdir -p /tmp/gravatars
-	convert examples/images/sile-logo.jpg -negate -resize 50% /tmp/sile-logo.jpg
+	convert examples/docbook/images/sile-logo.jpg -negate -resize 50% /tmp/sile-logo.jpg
 	git log --pretty=format:"%an—%ae" |
 		sort -u |
 		while IFS=— read name email; do
