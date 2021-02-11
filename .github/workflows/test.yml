@@ -16,6 +16,7 @@ jobs:
           - [ 'luajit', 'XCFLAGS=-fPIC' ]
           - [ 'luajit-openresty', 'XCFLAGS=-fPIC' ]
     runs-on: ubuntu-20.04
+    name: Test on Lua ${{ matrix.luaVersion[0] }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
