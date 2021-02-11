@@ -27,7 +27,7 @@ jobs:
         with:
           path: |
             lua_modules
-          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile-dev-1.rockspec') }}
+          key: luarocks-${{ matrix.luaVersion }}-${{ hashFiles('Makefile-luarocks', 'sile-dev-1.rockspec') }}
       - name: Fetch tags
         run: |
           git fetch --prune --tags ||:
@@ -68,5 +68,5 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: test-actuals
+          name: test-${{ matrix.luaVersion }}-actuals
           path: tests/*.actual
