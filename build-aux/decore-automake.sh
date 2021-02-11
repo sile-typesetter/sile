@@ -1,16 +1,14 @@
-#!/usr/bin/env bash
-
+#!/usr/bin/env sh
 set -e
-set -o pipefail
 
 TS=$(mktemp)
-trap 'rm -rf $TS' EXIT SIGHUP SIGTERM
+trap 'rm -rf $TS' EXIT HUP TERM
 
 for f in configure aclocal.m4; do
-    if [[ -f $f ]]; then
-        touch -r $f $TS
-        sed -i -e '/rm -f/s/ core / /' $f
-        touch -r $TS $f
+    if [ -f $f ]; then
+        touch -r "$f" "$TS"
+        sed -i -e '/rm -f/s/ core / /' "$f"
+        touch -r "$TS" "$f"
     fi
 done
 
