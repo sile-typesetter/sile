@@ -1,6 +1,5 @@
 ACLOCAL_AMFLAGS = -I build-aux
 
-SHELL = bash
 .ONESHELL:
 .SECONDARY:
 .SECONDEXPANSION:
@@ -57,7 +56,7 @@ EXTRA_DIST += Dockerfile build-aux/bootstrap-docker.sh build-aux/docker-fontconf
 EXTRA_DIST += $(MANUAL) $(EXAMPLES)
 
 Makefile-distfiles: build-aux/list-dist-files.sh $(wildcard .version .tarball-version) | $(LUAMODLOCK)
-	$< 2>/dev/null > $@
+	$< > $@
 
 BUILT_SOURCES = .version Makefile-distfiles
 
@@ -129,8 +128,8 @@ check: selfcheck
 .PHONY: selfcheck
 selfcheck: | $(_BUILT_SUBDIRS)
 	output=$$(mktemp --suffix=.pdf)
-	trap 'rm -f $$output' EXIT SIGHUP SIGTERM
-	./sile -o $$output - <<< "<sile>foo</sile>"
+	trap 'rm -f $$output' EXIT HUP TERM
+	echo "<sile>foo</sile>" | ./sile -o $$output -
 	pdfinfo $$output | grep "SILE v@VERSION@"
 
 .PHONY: regressions
@@ -171,7 +170,7 @@ examples: $(EXAMPLES)
 
 # This is a monkey patch to figure out how many passes we have to to to
 # garantee the TOC is up to date, simplify when #230 is fixed.
-hastoc = [[ -f $(subst .pdf,.toc,$@) ]] && echo true || echo false
+hastoc = [ -f $(subst .pdf,.toc,$@) ] && echo true || echo false
 pages = pdfinfo $@ | awk '$$1 == "Pages:" {print $$2}' || echo 0
 silepass = $(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@ && pg0=$${pg} pg=$$($(pages))
 define runsile =
@@ -181,7 +180,7 @@ define runsile =
 	export -n SILE_COVERAGE
 	if $(hastoc); then
 		$${hadtoc} || $(silepass)
-		[[ $${pg} -gt $${pg0} ]] && $(silepass) ||:
+		[ "$${pg}" -eq "$${pg0}" ] || $(silepass)
 	fi
 endef
 
@@ -255,14 +254,14 @@ define worktree_sha =
 
 .PRECIOUS: $(1)-$(2)
 $(1)-$(2):
-	[[ -d $$@ ]] || git worktree add --detach $$@ $(2)
+	[ -d $$@ ] || git worktree add --detach $$@ $(2)
 	cd $$@
-	[[ -d libtexpdf ]] && rmdir libtexpdf
-	[[ -h libtexpdf ]] || ln -s ../libtexpdf
-	[[ -h lua_modules ]] || ln -s ../lua_modules
-	[[ -h node_modules ]] || ln -s ../node_modules
-	[[ -h .fonts ]] || ln -s ../.fonts
-	[[ -h .sources ]] || ln -s ../.sources
+	[ -d libtexpdf ] && rm -r libtexpdf ||:
+	[ -h libtexpdf ] || ln -s ../libtexpdf
+	[ -h lua_modules ] || ln -s ../lua_modules
+	[ -h node_modules ] || ln -s ../node_modules
+	[ -h .fonts ] || ln -s ../.fonts
+	[ -h .sources ] || ln -s ../.sources
 	./bootstrap.sh
 	cp ../config.status .
 	./configure
@@ -344,10 +343,10 @@ $(DEPFILES): | $(DEPDIRS)
 include $(wildcard $(DEPFILES))
 
 .fonts: fontconfig.conf
-	[[ -h .fonts ]] || mkdir -p $@
+	[ -h .fonts ] || mkdir -p $@
 
 .sources:
-	[[ -h .sources ]] || mkdir -p $@
+	[ -h .sources ] || mkdir -p $@
 
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles $(_BUILT_SUBDIRS)
 
@@ -358,12 +357,12 @@ docker: Dockerfile hooks/build .version
 gource.webm:
 	mkdir -p /tmp/gravatars
 	convert examples/images/sile-logo.jpg -negate -resize 50% /tmp/sile-logo.jpg
-	git log --pretty=format:"%an—%ae" | \
-		sort -u | \
-		while IFS=— read name email; do \
-			test -f "/tmp/gravatars/$$name.jpg" || curl -S "https://www.gravatar.com/avatar/$$(echo -n $$email | md5sum | cut -d\  -f1)?d=identicon&s=256" -o "/tmp/gravatars/$$name.jpg" ;\
+	git log --pretty=format:"%an—%ae" |
+		sort -u |
+		while IFS=— read name email; do
+			test -f "/tmp/gravatars/$$name.jpg" || curl -S "https://www.gravatar.com/avatar/$$(echo -n $$email | md5sum | cut -d\  -f1)?d=identicon&s=256" -o "/tmp/gravatars/$$name.jpg"
 		done
-	gource -a 0.2 -s 0.2 -i 0 --logo /tmp/sile-logo.jpg -b 000000 --max-file-lag 5 --hide filenames --date-format '%Y-%m-%d' --user-image-dir /tmp/gravatars --user-filter simoncozens --key -1920x1080 -o - \
-		| ffmpeg -y -r 60 -f image2pipe -vcodec ppm -i - -vcodec libvpx -b 10000K $@
+	gource -a 0.2 -s 0.2 -i 0 --logo /tmp/sile-logo.jpg -b 000000 --max-file-lag 5 --hide filenames --date-format '%Y-%m-%d' --user-image-dir /tmp/gravatars --user-filter simoncozens --key -1920x1080 -o - |
+		ffmpeg -y -r 60 -f image2pipe -vcodec ppm -i - -vcodec libvpx -b 10000K $@
 
 # vim: ft=make
