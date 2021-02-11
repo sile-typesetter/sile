@@ -28,7 +28,7 @@ task:
     reupload_on_changes: false
     fingerprint_script: cat sile-dev-1.rockspec
   dependencies_script:
-    - pkg install -y git autoconf automake libtool pkgconf harfbuzz lua52 lua52-luarocks lua52-luafilesystem lua52-lpeg lua52-lzlib fontconfig png gmake bash lua52-luasec lua52-luasocket lua52-luaexpat
+    - pkg install -y git autoconf automake libtool pkgconf harfbuzz lua52 lua52-luarocks lua52-luafilesystem lua52-lpeg lua52-lzlib fontconfig png gmake lua52-luasec lua52-luasocket lua52-luaexpat
     - luarocks52 install cassowary
     - luarocks52 install compat53
     - luarocks52 install cosmo
