@@ -1,4 +1,4 @@
-ACLOCAL_AMFLAGS = -I m4
+ACLOCAL_AMFLAGS = -I ../build-aux
 
 if LINKLUA
 MY_LUA_LIB=$(LUA_LIB)
