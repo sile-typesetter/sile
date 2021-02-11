@@ -8,7 +8,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        luaVersion: ["5.4", "5.3", "5.2", "5.1", "luajit", "luajit-openresty"]
+        luaVersion:
+          - [ '5.4', 'MYCFLAGS=-fPIC' ]
+          - [ '5.3', 'MYCFLAGS=-fPIC' ]
+          - [ '5.2', 'MYCFLAGS=-fPIC' ]
+          - [ '5.1', 'CFLAGS=-O2 -Wall -DLUA_USE_LINUX -fPIC']
+          - [ 'luajit', 'XCFLAGS=-fPIC' ]
+          - [ 'luajit-openresty', 'XCFLAGS=-fPIC' ]
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
@@ -27,14 +33,15 @@ jobs:
         with:
           path: |
             lua_modules
-          key: luarocks-${{ matrix.luaVersion }}-${{ hashFiles('Makefile-luarocks', 'sile-dev-1.rockspec') }}
+          key: luarocks-${{ matrix.luaVersion[0] }}-${{ hashFiles('Makefile-luarocks', 'sile-dev-1.rockspec') }}
       - name: Fetch tags
         run: |
           git fetch --prune --tags ||:
       - name: Setup ‘lua’
         uses: leafo/gh-actions-lua@v8
         with:
-          luaVersion: ${{ matrix.luaVersion }}
+          luaVersion: ${{ matrix.luaVersion[0] }}
+          luaCompileFlags: ${{ matrix.luaVersion[1] }}
       - name: Setup ‘luarocks’
         uses: leafo/gh-actions-luarocks@v4
       - name: Prep system Lua for use
@@ -55,7 +62,7 @@ jobs:
       - name: Configure
         run: |
           ./bootstrap.sh
-          ./configure --without-system-luarocks --with${{ startsWith(matrix.luaVersion, '5') && 'out' || '' }}-luajit --without-manual --without-examples
+          ./configure --without-system-luarocks --with${{ startsWith(matrix.luaVersion[0], '5') && 'out' || '' }}-luajit --without-manual --without-examples
       - name: Make
         run: |
           make
@@ -68,5 +75,5 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: test-${{ matrix.luaVersion }}-actuals
+          name: test-${{ matrix.luaVersion[0] }}-actuals
           path: tests/*.actual
