@@ -1,5 +1,4 @@
-ACLOCAL_AMFLAGS = -I m4
-AUTOMAKE_OPTIONS = foreign
+ACLOCAL_AMFLAGS = -I build-aux
 
 SHELL = bash
 .ONESHELL:

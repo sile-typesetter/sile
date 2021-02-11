@@ -1,7 +1,7 @@
 AC_PREREQ([2.69])
 AC_INIT([SILE],[m4_esyscmd(build-aux/git-version-gen .tarball-version)],[simon@simon-cozens.org])
 AM_INIT_AUTOMAKE([1.11.1 foreign tar-pax dist-zip dist-xz no-dist-gzip -Wall no-define color-tests -Wno-portability subdir-objects])
-AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_MACRO_DIR([build-aux])
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
 
@@ -94,8 +94,6 @@ PKG_CHECK_MODULES(HARFBUZZ, harfbuzz,
    fi
   ])
 
-m4_include([m4/ax_lua.m4])
-
 case $host_os in
   msys)
     LUA_VERSION=5.3 # By fiat. This is obviously not good.
@@ -156,8 +154,6 @@ PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
     AC_MSG_FAILURE([Required ICU library not found])
   fi
 ])
-
-m4_include([m4/adl_recursive_eval.m4])
 
 adl_RECURSIVE_EVAL(["${datadir}/${PACKAGE}"], [SILE_PATH])
 AC_DEFINE_UNQUOTED([SILE_PATH],["${SILE_PATH}"],[Path for SILE packages and classes])
