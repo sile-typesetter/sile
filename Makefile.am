@@ -52,7 +52,7 @@ bin_SCRIPTS = sile
 EXTRA_DIST = spec tests examples documentation sile-dev-1.rockspec fontconfig.conf
 EXTRA_DIST += .version Makefile-distfiles
 EXTRA_DIST += build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
-EXTRA_DIST += Dockerfile build-aux/bootstrap-docker.sh build-aux/docker-fontconfig.conf hooks/build
+EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconfig.conf build-aux/docker-glibc-workaround.sh hooks/build
 EXTRA_DIST += $(MANUAL) $(EXAMPLES)
 
 Makefile-distfiles: build-aux/list-dist-files.sh $(wildcard .version .tarball-version) | $(LUAMODLOCK)

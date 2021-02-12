@@ -59,7 +59,7 @@ TESTFONTFILES += SBL_Hbrw.ttf
 	curl -s -L https://github.com/googlefonts/noto-cjk/raw/NotoSansV2.001/$(notdir $@) -o $@
 
 .fonts/SBL_Hbrw.ttf: | .fonts
-	curl -s -L http://www.sbl-site.org/Fonts/$(notdir $@) -o $@
+	curl -s -L https://www.sbl-site.org/Fonts/$(notdir $@) -o $@
 
 .fonts/Symbola.otf: | .fonts
 	curl -s -L https://github.com/ChiefMikeK/ttf-symbola/raw/master/Symbola-13.otf -o $@
