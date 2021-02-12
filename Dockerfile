@@ -1,3 +1,5 @@
+#syntax=docker/dockerfile:1.2
+
 ARG ARCHTAG
 
 FROM docker.io/library/archlinux:base-devel-$ARCHTAG AS builder
@@ -12,6 +14,9 @@ ARG DOCKER_HUB_CACHE=0
 
 ARG RUNTIME_DEPS
 ARG BUILD_DEPS
+
+# Monkey patch glibc to avoid issues with old kernels on hosts
+RUN --mount=type=bind,target=/mp,source=build-aux/docker-glibc-workaround.sh /mp
 
 # Freshen all base system packages
 RUN pacman --needed --noconfirm -Syuq
@@ -44,6 +49,9 @@ FROM docker.io/library/archlinux:base-$ARCHTAG AS final
 ARG VCS_REF=0
 ARG DOCKER_HUB_CACHE=0
 ARG RUNTIME_DEPS
+
+# Monkey patch glibc to avoid issues with old kernels on hosts
+RUN --mount=type=bind,target=/mp,source=build-aux/docker-glibc-workaround.sh /mp
 
 # Freshen all base system packages (and cleanup cache)
 RUN pacman --needed --noconfirm -Syuq && yes | pacman -Sccq
