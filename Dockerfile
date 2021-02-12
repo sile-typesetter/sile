@@ -32,7 +32,7 @@ WORKDIR /src
 
 # GitHub Actions builder stopped providing git history :(
 # See feature request at https://github.com/actions/runner/issues/767
-RUN build-aux/bootstrap-docker.sh
+RUN build-aux/docker-bootstrap.sh
 
 RUN ./bootstrap.sh
 RUN ./configure
