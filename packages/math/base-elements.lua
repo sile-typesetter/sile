@@ -195,33 +195,22 @@ local function contains(table, elt)
   return false
 end
 
+-- Compares two SILE length, without considering shrink or stretch values,
+-- and returns the biggest.
 local function maxLength(...)
   local arg = {...}
-  local result
+  local m
   for i, v in ipairs(arg) do
-    if type(v) == "number" then v = SILE.length(v) end
     if i == 1 then
-      result = v
-    elseif v.is_a and v:is_a(SILE.length) then
-      result = SILE.length({
-        length = math.max(result.length, v.length),
-        shrink = math.max(result.length, v.length) - math.max(result.length - result.shrink, v.length - v.shrink),
-        stretch = math.max(result.length + result.stretch, v.length + v.stretch) - math.max(result.length, v.length),
-      })
+      m = v
     else
-      SU.error("Unknown type of length: "..v)
+      if v.length:tonumber() > m.length:tonumber() then
+        m = v
+      end
     end
   end
-  return result
+  return m
 end
-
--- local function minLength(...)
---   local args = {...}
---   for i, v in ipairs(args) do
---     args[i] = v * (-1)
---   end
---   return -maxLength(args)
--- end
 
 local function scaleWidth(length, line)
   local number = length.length
@@ -545,11 +534,11 @@ elements.subscript = pl.class({
     local itCorr = self:calculateItalicsCorrection() * scaleDown
     if self.sub then
       self.sub.relX = self.width - itCorr / 2
-      self.sub.relY = maxLength(
+      self.sub.relY = SILE.length(math.max(
         constants.subscriptShiftDown * scaleDown,
         --self.base.depth + constants.subscriptBaselineDropMin * scaleDown,
-        self.sub.height - constants.subscriptTopMax * scaleDown
-      )
+        (self.sub.height - constants.subscriptTopMax * scaleDown):tonumber()
+      ))
       if (self:is_a(elements.bigOpSubscript)
           or self:is_a(elements.stackbox)) then
         self.sub.relY = maxLength(self.sub.relY,
@@ -558,13 +547,13 @@ elements.subscript = pl.class({
     end
     if self.sup then
       self.sup.relX = self.width + itCorr / 2
-      self.sup.relY = maxLength(
+      self.sup.relY = SILE.length(math.max(
         isCrampedMode(self.mode)
         and constants.superscriptShiftUpCramped * scaleDown
         or constants.superscriptShiftUp * scaleDown, -- or cramped
         --self.base.height - constants.superscriptBaselineDropMax * scaleDown,
-        self.sup.depth + constants.superscriptBottomMin * scaleDown
-      ) * (-1)
+        (self.sup.depth + constants.superscriptBottomMin * scaleDown):tonumber()
+      )) * (-1)
       if (self:is_a(elements.bigOpSubscript)
           or self:is_a(elements.stackbox)) then
         self.sup.relY = maxLength(
@@ -590,18 +579,18 @@ elements.subscript = pl.class({
     end
 
     self.width = self.width + maxLength(
-      self.sub and self.sub.width - itCorr / 2 or 0,
-      self.sup and self.sup.width + itCorr / 2 or 0
+      self.sub and self.sub.width - itCorr / 2 or SILE.length(0),
+      self.sup and self.sup.width + itCorr / 2 or SILE.length(0)
     ) + constants.spaceAfterScript * scaleDown
     self.height = maxLength(
-      self.base and self.base.height or 0,
-      self.sub and (self.sub.height - self.sub.relY) or 0,
-      self.sup and (self.sup.height - self.sup.relY) or 0
+      self.base and self.base.height or SILE.length(0),
+      self.sub and (self.sub.height - self.sub.relY) or SILE.length(0),
+      self.sup and (self.sup.height - self.sup.relY) or SILE.length(0)
     )
     self.depth = maxLength(
-      self.base and self.base.depth or 0,
-      self.sub and (self.sub.depth + self.sub.relY) or 0,
-      self.sup and (self.sup.depth + self.sup.relY) or 0
+      self.base and self.base.depth or SILE.length(0),
+      self.sub and (self.sub.depth + self.sub.relY) or SILE.length(0),
+      self.sup and (self.sup.depth + self.sup.relY) or SILE.length(0)
     )
   end,
   output = function(_, _, _, _) end
@@ -643,14 +632,14 @@ elements.bigOpSubscript = pl.class({
       self.base.relY = SILE.length(0)
     end
     if self.sub then
-      self.sub.relY = self.base.depth + maxLength(
-        self.sub.height + constants.lowerLimitGapMin * scaleDown,
-        constants.lowerLimitBaselineDropMin * scaleDown)
+      self.sub.relY = self.base.depth + SILE.length(math.max(
+        (self.sub.height + constants.lowerLimitGapMin * scaleDown):tonumber(),
+        constants.lowerLimitBaselineDropMin * scaleDown))
     end
     if self.sup then
-      self.sup.relY = 0 - self.base.height - maxLength(
-        constants.upperLimitGapMin * scaleDown + self.sup.depth,
-        constants.upperLimitBaselineRiseMin * scaleDown)
+      self.sup.relY = 0 - self.base.height - SILE.length(math.max(
+        (constants.upperLimitGapMin * scaleDown + self.sup.depth):tonumber(),
+        constants.upperLimitBaselineRiseMin * scaleDown))
     end
     -- Determine relative Xs based on widest symbol
     local widest, a, b
@@ -688,11 +677,9 @@ elements.bigOpSubscript = pl.class({
     if self.sub then self.sub.relX = self.sub.relX - itCorr / 2 end
     -- Determine width and height
     self.width = maxLength(
-      self.base and self.base.width or 0,
-      maxLength(
-        self.sub and self.sub.width or 0,
-        self.sup and self.sup.width or 0
-      )
+      self.base and self.base.width or SILE.length(0),
+      self.sub and self.sub.width or SILE.length(0),
+      self.sup and self.sup.width or SILE.length(0)
     )
     if self.sup then
       self.height = 0 - self.sup.relY + self.sup.height
@@ -832,8 +819,8 @@ elements.text = pl.class({
         self.width = self.width + itCorr * self:getScaleDown()
       end
       for i = 1, #glyphs do
-        self.height = i == 1 and SILE.length(glyphs[i].height) or maxLength(self.height, glyphs[i].height)
-        self.depth = i == 1 and SILE.length(glyphs[i].depth) or maxLength(self.depth, glyphs[i].depth)
+        self.height = i == 1 and SILE.length(glyphs[i].height) or SILE.length(math.max(self.height:tonumber(), glyphs[i].height))
+        self.depth = i == 1 and SILE.length(glyphs[i].depth) or SILE.length(math.max(self.depth:tonumber(), glyphs[i].depth))
       end
     else
       self.width = SILE.length(0)
@@ -967,30 +954,30 @@ elements.fraction = pl.class({
     self.ruleThickness = constants.fractionRuleThickness * scaleDown
     if self.numerator then
       if isDisplayMode(self.mode) then
-        self.numerator.relY = -self.axisHeight - self.ruleThickness/2 - maxLength(
-          constants.fractionNumDisplayStyleGapMin*scaleDown + self.numerator.depth,
+        self.numerator.relY = -self.axisHeight - self.ruleThickness/2 - SILE.length(math.max(
+          (constants.fractionNumDisplayStyleGapMin*scaleDown + self.numerator.depth):tonumber(),
           constants.fractionNumeratorDisplayStyleShiftUp * scaleDown
-            - self.axisHeight - self.ruleThickness/2)
+            - self.axisHeight - self.ruleThickness/2))
       else
-        self.numerator.relY = -self.axisHeight - self.ruleThickness/2 - maxLength(
-          constants.fractionNumeratorGapMin*scaleDown + self.numerator.depth,
+        self.numerator.relY = -self.axisHeight - self.ruleThickness/2 - SILE.length(math.max(
+          (constants.fractionNumeratorGapMin*scaleDown + self.numerator.depth):tonumber(),
           constants.fractionNumeratorShiftUp * scaleDown - self.axisHeight
-            - self.ruleThickness/2)
+            - self.ruleThickness/2))
       end
     end
     if self.denominator then
       if isDisplayMode(self.mode) then
-        self.denominator.relY = -self.axisHeight + self.ruleThickness/2 + maxLength(
-          constants.fractionDenomDisplayStyleGapMin * scaleDown
-            + self.denominator.height,
+        self.denominator.relY = -self.axisHeight + self.ruleThickness/2 + SILE.length(math.max(
+          (constants.fractionDenomDisplayStyleGapMin * scaleDown
+            + self.denominator.height):tonumber(),
           constants.fractionDenominatorDisplayStyleShiftDown * scaleDown
-            + self.axisHeight - self.ruleThickness/2)
+            + self.axisHeight - self.ruleThickness/2))
       else
-        self.denominator.relY = -self.axisHeight + self.ruleThickness/2 + maxLength(
-          constants.fractionDenominatorGapMin * scaleDown
-            + self.denominator.height,
+        self.denominator.relY = -self.axisHeight + self.ruleThickness/2 + SILE.length(math.max(
+          (constants.fractionDenominatorGapMin * scaleDown
+            + self.denominator.height):tonumber(),
           constants.fractionDenominatorShiftDown * scaleDown
-           + self.axisHeight - self.ruleThickness/2)
+           + self.axisHeight - self.ruleThickness/2))
       end
     end
     if self.numerator then
