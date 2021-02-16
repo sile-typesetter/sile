@@ -45,7 +45,7 @@ task:
     - git fetch --prune --tags ||:
     - ./bootstrap.sh
   configure_script:
-    - ./configure --with-system-luarocks
+    - ./configure --with-system-luarocks MAKE="gmake"
   make_script:
     - gmake all
     - gmake install
