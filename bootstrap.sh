@@ -38,16 +38,6 @@ fi
 
 autoreconf --install -W none
 
-# See discussion in https://github.com/sile-typesetter/sile/issues/82 and
-# https://web.archive.org/web/20170111053341/http://blog.gaku.net/autoconf/
-case $(uname) in
-    Darwin*) glibtoolize -W none ;;
-    *)        libtoolize -W none ;;
-esac
-aclocal --force -W none
-automake --force-missing --add-missing -W none
-autoreconf --force -W none
-
 build-aux/decore-automake.sh
 
 (cd libtexpdf; autoreconf)
