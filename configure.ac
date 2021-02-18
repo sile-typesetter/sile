@@ -136,7 +136,7 @@ AS_IF([test "x$with_system_luarocks" = "xyes"], [
 ])
 
 AC_ARG_ENABLE([linklua],
-    AS_HELP_STRING([--disable-linklua], [Don't link lua library with dylibs]))
+    AS_HELP_STRING([--disable-linklua], [Don’t link lua library with dylibs]))
 
 PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
   AC_DEFINE([ICU], [1], [Build using icu4c])
@@ -192,4 +192,5 @@ AC_CONFIG_FILES([Makefile src/Makefile sile.1])
 AC_CONFIG_FILES([sile], [chmod +x sile])
 
 AC_OUTPUT
+AC_MSG_NOTICE([monkey-patching configure to ignore core directory])
 m4_esyscmd_s([build-aux/decore-automake.sh])
