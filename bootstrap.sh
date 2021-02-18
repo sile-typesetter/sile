@@ -36,8 +36,6 @@ else
     ./build-aux/git-version-gen .tarball-version > .version
 fi
 
-autoreconf --install -W none
+autoreconf --install
 
 build-aux/decore-automake.sh
-
-(cd libtexpdf; autoreconf)
