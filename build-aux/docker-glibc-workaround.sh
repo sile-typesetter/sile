@@ -30,6 +30,8 @@ check_checksum ||
     curl -LO "https://repo.archlinuxcn.org/x86_64/$patched_glibc" &&
     check_checksum
 
-bsdtar -C / -xvf "$patched_glibc"
+bsdtar -C / -xvf "$patched_glibc" 2>/dev/null
+
+sed -e '/^#?HoldPkg/{s/^#//;s/=.*/= glibc/}' -i /etc/pacman.conf
 
 rm "$patched_glibc"
