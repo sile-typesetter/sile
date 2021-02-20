@@ -55,16 +55,16 @@ EXTRA_DIST += build-aux/decore-automake.sh build-aux/git-version-gen build-aux/l
 EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconfig.conf build-aux/docker-glibc-workaround.sh hooks/build
 EXTRA_DIST += $(MANUAL) $(EXAMPLES)
 
-Makefile-distfiles: build-aux/list-dist-files.sh $(wildcard .version .tarball-version) | $(LUAMODLOCK)
-	$< > $@
+Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
+	build-aux/list-dist-files.sh > $@
 
 BUILT_SOURCES = .version Makefile-distfiles
 
-.version: $(shell test -e .git && awk '{print ".git/" $$2}' .git/HEAD)
-	mv $@{,-prev} 2>/dev/null || touch $@-prev
-	( test -e .git && ./build-aux/git-version-gen .tarball-version || echo $(VERSION) ) > $@
-	cmp -s $@{,-prev} || autoreconf configure.ac --force -W none
-	build-aux/decore-automake.sh
+.version: $(shell awk '{print ".git/" $$2}' .git/HEAD 2>/dev/null ||:)
+	[ -e "$@" ] && mv "$@" "$@-prev" || touch "$@-prev"
+	$(if $<,./build-aux/git-version-gen .tarball-version,printf "$(VERSION)") > "$@"
+	cmp -s "$@" "$@-prev" ||
+		( autoreconf configure.ac --force && build-aux/decore-automake.sh )
 
 dist-hook: $(MANUAL) $(EXAMPLES)
 	cd $(distdir)
