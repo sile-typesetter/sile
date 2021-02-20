@@ -10,7 +10,7 @@ Note using these functions one must me careful to do bit operations only:
 ]]
 
 -- Lua 5.3 has built-in bit operators, wrap them in a function.
-if _VERSION == "Lua 5.3" then
+if _VERSION == "Lua 5.3" or _VERSION == "Lua 5.4" then
 	-- Use debug.getinfo to get correct file+line numbers for loaded snippet
 	local info = debug.getinfo(1, "Sl")
 	return assert(load(("\n"):rep(info.currentline+1)..[[return {
