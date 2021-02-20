@@ -19,19 +19,24 @@ set -e
 
 cd /tmp
 
-patched_glibc=glibc-linux4-2.33-4-x86_64.pkg.tar.zst
-sha256sum=a89f4d23ae7cde78b4258deec4fcda975ab53c8cda8b5e0a0735255c0cdc05cc
+pkgfile='glibc-linux4-2.33-4-x86_64.pkg.tar.zst'
+sha256sum='a89f4d23ae7cde78b4258deec4fcda975ab53c8cda8b5e0a0735255c0cdc05cc'
 
 check_checksum () {
-    echo "$sha256sum $patched_glibc" | sha256sum -c
+    echo "$sha256sum $pkgfile" | sha256sum -c
 }
 
 check_checksum ||
-    curl -LO "https://repo.archlinuxcn.org/x86_64/$patched_glibc" &&
+    curl -LO "https://repo.archlinuxcn.org/x86_64/$pkgfile" &&
     check_checksum
 
-bsdtar -C / -xvf "$patched_glibc" 2>/dev/null
+bsdtar -C / -xvf "$pkgfile" 2>/dev/null
 
-sed -e '/^#?HoldPkg/{s/^#//;s/=.*/= glibc/}' -i /etc/pacman.conf
+sed -e '/^HoldPkg/s/^/#/' -i /etc/pacman.conf
 
-rm "$patched_glibc"
+pacman --noconfirm --dbonly -Rdd glibc
+pacman --noconfirm --overwrite '*' -Udd "$pkgfile"
+
+sed -e '/^#\?IgnorePkg/{s/^#//;s/$/ glibc/}' -i /etc/pacman.conf
+
+rm "$pkgfile"
