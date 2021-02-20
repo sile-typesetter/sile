@@ -35,13 +35,25 @@ First, have a look at the [usage examples gallery][examples]. SILE allows you to
 ### For macOS
 
 A formula is available for [Homebrew][brew] that can install either stable or head versions.
-Just run `brew install sile` for the latest stable release or `brew install sile --HEAD` to build from the latest git commit.
+For the latest prebuilt stable release:
+
+```console
+$ brew install sile
+```
+
+Or to build and install from the latest git commit:
+
+```console
+$ brew install sile --HEAD
+```
 
 Note the Homebrew package does not automatically install the [default font](#default-font).
 The easiest way to install Gentium Plus is through the [Homebrew Fonts caskroom][brewfonts]:
 
-    $ brew tap homebrew/cask-fonts
-    $ brew install --cask font-gentium-plus
+```console
+$ brew tap homebrew/cask-fonts
+$ brew install --cask font-gentium-plus
+```
 
 ### For Linux
 
@@ -55,9 +67,11 @@ Pre-built packages that may be directly installed with `pacman -S sile` are avai
 
 An official [PPA][ppa] is available with precompiled packages for Ubuntu.
 
-    sudo add-apt-repository ppa:sile-typesetter/sile
-    sudo apt-get update
-    sudo apt-get install sile
+```console
+$ sudo add-apt-repository ppa:sile-typesetter/sile
+$ sudo apt-get update
+$ sudo apt-get install sile
+```
 
 #### Void Linux
 
@@ -87,8 +101,10 @@ Released versions are tagged to match (e.g. `v.0.10.0`), the latest release will
 In order to be useful you need to tell the Docker run command a way to reach your source documents (and hence also to give it a place to write the output) as well as tell it who you are on the host machine so the output generated inside the container can be created with the expected ownership properties.
 You may find it easiest to run with an alias like this:
 
-    $ alias sile='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest'
-    $ sile input.sil
+```console
+$ alias sile='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest'
+$ sile input.sil
+```
 
 One notable issue with using SILE from a Docker container is that it will not have access to your system's fonts by default.
 You can map a folder of fonts (any tree usable by fontconfig) into the container.
@@ -96,7 +112,9 @@ This could be your system's default font directory, your user one, a project spe
 You can see where fonts are found on your system using `fc-list`.
 The path of your choosing from the host system should be passed as a volume mounted on `/fonts` inside the container like this:
 
-    $ docker run -it --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest
+```console
+$ docker run -it --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest
+```
 
 #### Nix
 
@@ -114,7 +132,9 @@ SILE also requires the [ICU][icu] libraries for Unicode handling.
 
 On macOS, ICU can be installed via Homebrew:
 
-    $ brew install icu4c
+```console
+$ brew install icu4c
+```
 
 After that, you might need to set environment variables.
 If you try to `brew link` and you get a series of messages including something like these two lines, you will need to run that export line to correctly set your path:
@@ -134,18 +154,24 @@ You can try just this step in isolation before building SILE using `luarocks --t
 
 If you are building from a a git clone, start by running the script to setup your environment (if you are using the source tarball this is unnecessary):
 
-    $ ./bootstrap.sh
+```console
+$ ./bootstrap.sh
+```
 
 Once your dependencies are installed, run:
 
-    $ ./configure
-    $ make install
+```console
+$ ./configure
+$ make install
+```
 
 This will place the SILE libraries and executable in a sensible location.
 
 On some systems you may also need to run:
 
-    $ sudo ldconfig
+```console
+$ sudo ldconfig
+```
 
 … before trying to execute `sile` to make the system aware of the newly installed libraries.
 
@@ -196,10 +222,12 @@ It is not required that you install it, but if this font is not installed on you
 
 If all goes well you should be able to compile one of the sample documents like this:
 
-    $ sile examples/book.sil
-    SILE v0.10.10 (Lua 5.4)
-    <examples/book.sil>
-    [1] [2] [3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20] [21] [22] [23] [24] [25] [26] [27] [28] [29] [30] [31]
+```console
+$ sile examples/book.sil
+SILE v0.10.10 (Lua 5.4)
+<examples/book.sil>
+[1] [2] [3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20] [21] [22] [23] [24] [25] [26] [27] [28] [29] [30] [31]
+```
 
 You should now have `examples/book.pdf` ready for review.
 
