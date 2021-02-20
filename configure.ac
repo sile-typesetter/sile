@@ -1,6 +1,7 @@
 AC_PREREQ([2.69])
 AC_INIT([SILE],[m4_esyscmd(build-aux/git-version-gen .tarball-version)],[simon@simon-cozens.org])
-AM_INIT_AUTOMAKE([1.11.1 foreign tar-pax dist-zip dist-xz no-dist-gzip -Wall no-define color-tests -Wno-portability subdir-objects])
+AC_CONFIG_AUX_DIR([build-aux])
+AM_INIT_AUTOMAKE([foreign tar-pax dist-zip dist-xz no-dist-gzip color-tests subdir-objects])
 AC_CONFIG_MACRO_DIR([build-aux])
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
@@ -135,7 +136,7 @@ AS_IF([test "x$with_system_luarocks" = "xyes"], [
 ])
 
 AC_ARG_ENABLE([linklua],
-    AS_HELP_STRING([--disable-linklua], [Don't link lua library with dylibs]))
+    AS_HELP_STRING([--disable-linklua], [Don’t link lua library with dylibs]))
 
 PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
   AC_DEFINE([ICU], [1], [Build using icu4c])
@@ -191,4 +192,5 @@ AC_CONFIG_FILES([Makefile src/Makefile sile.1])
 AC_CONFIG_FILES([sile], [chmod +x sile])
 
 AC_OUTPUT
+AC_MSG_NOTICE([monkey-patching configure to ignore core directory])
 m4_esyscmd_s([build-aux/decore-automake.sh])
