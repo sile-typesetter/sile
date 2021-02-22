@@ -94,6 +94,8 @@ SILE.registerCommand("process", function ()
 end, "Within a macro definition, processes the contents of the macro body.")
 
 SILE.baseClass = std.object {
+  _initialized = false,
+
   registerCommands = (function ()
 
     SILE.registerCommand("\\", function (_, _)
@@ -191,10 +193,17 @@ SILE.baseClass = std.object {
 
   loadPackage = function (self, packname, args)
     local pack = require("packages/" .. packname)
+    self:initPackage(pack, args)
+  end,
+
+  initPackage = function (self, pack, args)
     if type(pack) == "table" then
       if pack.exports then self:mapfields(pack.exports) end
-      if pack.init then
+      if type(pack.init) == "function" then
         table.insert(SILE.baseClass.deferredInit, function () pack.init(self, args) end)
+        if self._initialized then
+          pack.init(self, args)
+        end
       end
     end
   end,
@@ -206,7 +215,7 @@ SILE.baseClass = std.object {
       default = nil,
       help = "Glue at start of paragraph"
     })
-    SILE.outputter.init(self)
+    SILE.outputter:init(self)
     self:registerCommands()
     -- Call all stored package init routines
     for i = 1, #(SILE.baseClass.deferredInit) do (SILE.baseClass.deferredInit[i])() end
@@ -215,6 +224,7 @@ SILE.baseClass = std.object {
         for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
       end
     end)
+    self._initialized = true
     return self:initialFrame()
   end,
 
@@ -230,7 +240,11 @@ SILE.baseClass = std.object {
 
   declareFrame = function (self, id, spec)
     spec.id = id
-    self.pageTemplate.frames[id] = SILE.newFrame(spec)
+    if spec.solve then
+      self.pageTemplate.frames[id] = spec
+    else
+      self.pageTemplate.frames[id] = SILE.newFrame(spec)
+    end
     --   next = spec.next,
     --   left = spec.left and fW(spec.left),
     --   right = spec.right and fW(spec.right),
@@ -244,7 +258,7 @@ SILE.baseClass = std.object {
 
   declareFrames = function (self, specs)
     if specs then
-      for k, v in ipairs(specs) do self:declareFrame(k, v) end
+      for k, v in pairs(specs) do self:declareFrame(k, v) end
     end
   end,
 

@@ -89,8 +89,8 @@ return {
   documentation = [[
 \begin{document}
   The \code{color-fonts} package adds support for fonts with a \code{COLR}
-  OpenType table. Just loading the package will allow for fonts which
-  define their own colors to be rendered in color.
+  OpenType table. This package is automatically loaded when such a font is
+  detected.
 \end{document}
 ]]
 }

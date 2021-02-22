@@ -14,32 +14,37 @@ that you need to keep entering again and again.
 
 \section{A simple macro}
 
-\define[command=SILE]{S\lower[height=0.5ex]{I}L\glue[width=-.2em]\raise[height=0.6ex]{\font[size=0.8em]{E}}}
+\define[command=SILE]{\font[family=Gentium Plus]{% Book Basic has no +smcp, but readers don't need to know, since we're only using Book Basic as a holdover from old SILE which did.
+S\lower[height=0.5ex]{I}L\kern[width=-.2em]\raise[height=0.6ex]{\font[features=+smcp]{e}}}}
 For instance, let’s suppose that we want to design a nice little
-“bumpy road” logo for SILE. (Afficionados of T\glue[width=-.1667em]\lower[height=0.5ex]{E}\glue[width=-.125em]X and friends will be familar with the concept of
+“bumpy road” logo for SILE. (Afficionados of T\kern[width=-.1667em]\lower[height=0.5ex]{E}\kern[width=-.125em]X and friends will be familar with the concept of
 bumpy road logos.) Our logo will look like this: \SILE. It’s not a great
 logo, but we’ll use it as \SILE’s logo for the purposes of this section.
 
 To typeset
 this logo, we need to ask \SILE to: typeset an ‘S’; typeset an ‘I’ lowered by
 a certain amount (half an ex, as it happens); typeset an ‘L’; walk backwards
-along the line a tiny bit; typeset a smaller-sized ‘E’ raised by a certain amount.
+along the line a tiny bit; typeset a smaller-sized ‘E’ raised by a certain
+amount, using the \code{features} package to choose a small capital ‘E’.
 
 In \SILE code, that looks like:
 
 \begin{verbatim}
 \line
-S\\lower[height=0.5ex]\{I\}L\\glue[width=-.2em]\\raise[height=0.6ex]\{\\font[size=0.8em]\{E\}\}
+S\%
+\\lower[height=0.5ex]\{I\}\%
+L\%
+\\kern[width=-.2em]\\raise[height=0.6ex]\{\\font[features=+smcp]\{e\}\}\%
 \line
 \end{verbatim}
 
-(Don‘t worry about the \code{\\glue} command for the moment; we’ll come back
-to that later.)
+(Don’t worry about the \code{\\kern} command for the moment; we’ll come back
+to that later. The \code{\%}’s prevent newlines from becoming spaces.)
 
 We’ve used our logo four times already in this chapter, and we don‘t want to
 have to input that whole monstrosity each time we do so. What we would like
 to do is tell the computer “this is \SILE’s logo; each time I enter \code{\\SILE},
-I want you to interpret that as \code{S\\lower[height=0.5ex]\{I\}L\\glue[\goodbreak{}width=-.2em]\\raise[height=0.6ex]\{\\font[size=0.8em]\{E\}\}}”.
+I want you to interpret that as \code{S\\lower[height=0.5ex]\{I\}L\\kern[\goodbreak{}width=-.2em]\\raise[height=0.6ex]\{\\font[features=+smcp]\{e\}\}}”.
 
 In other words, we want to define our own commands.
 
@@ -54,8 +59,11 @@ very file, we entered:
 
 \begin{verbatim}
 \line
-\\define[command=SILE]\{
-S\\lower[height=0.5ex]\{I\}L\\glue[width=-.2em]\\raise[height=0.6ex]\{\\font[size=0.8em]\{E\}\}
+\\define[command=SILE]\{\%
+S\%
+\\lower[height=0.5ex]\{I\}\%
+L\%
+\\kern[width=-.2em]\\raise[height=0.6ex]\{\\font[features=+smcp]\{e\}\}\%
 \}
 \line
 \end{verbatim}

@@ -92,7 +92,12 @@ local parseName = function(str)
     local language = record.language
     if language then
       if not names[record.name] then names[record.name] = {} end
-      names[record.name][language] = vstruct.read(">@"..name.sOffset+record.offset.."s"..record.length, fd)
+      if record.length > 0 then
+        names[record.name][language] = vstruct.read(">@"..name.sOffset+record.offset.."s"..record.length, fd)
+        if record.platform == 3 then
+          names[record.name][language] = { SU.utf16be_to_utf8(names[record.name][language][1]) }
+        end
+      end
     end
   end
 

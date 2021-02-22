@@ -2,10 +2,11 @@
 set -e
 
 incomplete_source () {
-    echo -e "$1. Please either:\n" \
-            "* $2,\n" \
-            "* or use the source packages instead of a repo archive\n" \
-            "* or use a full Git clone.\n" >&2
+    printf '%s\n' \
+        "$1. Please either:" \
+        "* $2," \
+        "* or use the source packages instead of a repo archive" \
+        "* or use a full Git clone." >&2
     exit 1
 }
 
@@ -35,18 +36,15 @@ else
     ./build-aux/git-version-gen .tarball-version > .version
 fi
 
-autoreconf --install -W none
+autoreconf --install
 
 # See discussion in https://github.com/sile-typesetter/sile/issues/82 and
 # https://web.archive.org/web/20170111053341/http://blog.gaku.net/autoconf/
-case `uname` in
-    Darwin*) glibtoolize -W none ;;
-    *)        libtoolize -W none ;;
+case $(uname) in
+    Darwin*)
+        glibtoolize -W none
+        autoreconf --force -W none
+        ;;
 esac
-aclocal --force -W none
-automake --force-missing --add-missing -W none
-autoreconf --force -W none
 
 build-aux/decore-automake.sh
-
-(cd libtexpdf; autoreconf)

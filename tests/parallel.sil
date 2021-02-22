@@ -5,7 +5,6 @@ local class = SILE.documentState.documentClass
 class:declareFrame("left", { top = "top(content)", left = "left(content)", right = "52%pw" })
 class:declareFrame("right", { top = "top(content)", left = "50%pw", right = "right(content)" })
 class:loadPackage("parallel", { frames = { left = "left", right = "right" }})
-class:init()
 \end{script}
 \left
 Left

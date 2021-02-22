@@ -150,8 +150,8 @@ like: ‘\examplefont{affluent fishing}.’ If you specifically want to break up
 the ligatures, then insert empty groups (using the grouping characters
 \code{\{} and \code{\}}) in the middle of the possible ligatures: \code{af\{\}f\{\}luent
 f\{\}ishing}: \examplefont{af{}f{}luent f{}ishing}. See the section on
-\em{OpenType Features} for more information on how to control the display of
-ligatures and other font features.
+the \code{features} package for more information on how to control the display
+of ligatures and other font features.
 
 \section{Commands}
 

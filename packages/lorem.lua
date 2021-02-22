@@ -87,7 +87,6 @@ SILE.registerCommand("lorem", function (options, _)
   SILE.settings.temporarily(function ()
     SILE.settings.set("document.language", "la")
     SILE.typesetter:typeset(text)
-    SILE.typesetter:leaveHmode()
   end)
 end)
 

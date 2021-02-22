@@ -1,4 +1,4 @@
-ACLOCAL_AMFLAGS = -I m4
+ACLOCAL_AMFLAGS = -I ../build-aux
 
 if LINKLUA
 MY_LUA_LIB=$(LUA_LIB)
@@ -11,7 +11,7 @@ endif
 if SYSTEM_LIBTEXPDF
 LIBTEXPDF_LIB=-ltexpdf
 else
-LIBTEXPDF_LIB=../libtexpdf/.libs/libtexpdf.la
+LIBTEXPDF_LIB=../libtexpdf/libtexpdf.la
 endif
 
 pkglib_LTLIBRARIES = justenoughharfbuzz.la justenoughlibtexpdf.la justenoughfontconfig.la fontmetrics.la svg.la

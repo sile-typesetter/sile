@@ -2,7 +2,7 @@
 local gridSpacing = SILE.measurement()
 
 local function makeUp (totals)
-  local toadd = gridSpacing - totals.gridCursor % gridSpacing
+  local toadd = gridSpacing - SILE.measurement(totals.gridCursor) % gridSpacing
   totals.gridCursor = totals.gridCursor + toadd
   SU.debug("typesetter", "Makeup height = " .. toadd)
   return SILE.nodefactory.vglue(toadd)
@@ -15,8 +15,8 @@ local function leadingFor (typesetter, vbox, previous)
   if not previous then return SILE.nodefactory.vglue() end
   SU.debug("typesetter", "   Depth of previous line was " .. previous.depth)
   local totals = typesetter.frame.state.totals
-  local oldCursor = totals.gridCursor
-  totals.gridCursor = totals.gridCursor + vbox.height:absolute() + previous.depth
+  local oldCursor = SILE.measurement(totals.gridCursor)
+  totals.gridCursor = oldCursor + vbox.height:absolute() + previous.depth
   SU.debug("typesetter", "   Cursor change = " .. totals.gridCursor - oldCursor)
   return makeUp(typesetter.frame.state.totals)
 end
@@ -67,7 +67,7 @@ local function debugGrid ()
   local frame = SILE.typesetter.frame
   local gridCursor = gridSpacing
   while SILE.measurement(gridCursor) < SILE.measurement(frame:height()) do
-    SILE.outputter.rule(frame:left(), frame:top() + gridCursor, frame:width(), 0.1)
+    SILE.outputter:drawRule(frame:left(), frame:top() + gridCursor, frame:width(), 0.1)
     gridCursor = gridCursor + gridSpacing
   end
 end

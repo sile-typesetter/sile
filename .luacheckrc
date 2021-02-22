@@ -1,4 +1,4 @@
-std = "lua53"
+std = "max"
 include_files = {
   "**/*.lua",
   "sile.in",
@@ -23,6 +23,7 @@ globals = {
   "SILE",
   "SU",
   "std",
+  "luautf8",
   "pl",
   "SYSTEM_SILE_PATH",
   "SHARED_LIB_EXT",

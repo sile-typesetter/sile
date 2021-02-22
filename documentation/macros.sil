@@ -36,6 +36,7 @@
 \define[command=changed]{
 \note{\bf{The material in this section has changed significantly since the previous release of SILE.}}
 }
+\define[command=sup]{\raise[height=0.6ex]{\font[size=0.8em]{\process}}}
 \script{
 -- Well, this is a hack
 local simpletable = SILE.require("packages/simpletable")

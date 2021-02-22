@@ -3,6 +3,11 @@ SILE.scratch.simpletable = { tables = {} }
 return {
   exports = {},
   init = function (_, args)
+    args = args or {
+      tableTag = "table",
+      trTag = "tr",
+      tdTag = "td"
+    }
     local tableTag = SU.required(args, "tableTag", "setting up table class")
     local trTag = SU.required(args, "trTag", "setting up table class")
     local tdTag = SU.required(args, "tdTag", "setting up table class")

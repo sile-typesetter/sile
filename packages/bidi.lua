@@ -150,7 +150,7 @@ local nodeListToText = function (nl)
       end
     else
       owners[p] = { node = n }
-      text[p] = SU.utf8char(0xFFFC)
+      text[p] = luautf8.char(0xFFFC)
       p = p + 1
     end
   end

@@ -54,27 +54,27 @@ SILE is as easy as running:
 
 \terminal{$ brew install sile}
 
-If you have not used Lua programs before, that will prompt you to manually
-install a couple of dependencies. After running the commands it provides, you can
-run the install command again to complete the installation.
-
 The formula also has an option that can compile SILE from the current Git HEAD
 version. To test the latest unreleased code you can install using:
 
 \terminal{$ brew install sile --HEAD}
 
 For Linux users, preconfigured package build files are available for
-somedistributions.
+some distributions.
 
-On Arch Linux the \code{sile} package in the AUR has the latest stable release
+On Arch Linux, the \code{sile} package in the AUR has the latest stable release
 while \code{sile-git} will build a package using the latest unreleased code
 from the Git repository. These may be built and installed like any other AUR
 package. Precompiled versions of these packages and all the dependencies are
 available in an unofficial repository
 \footnote{\url{https://wiki.archlinux.org/index.php/Unofficial_user_repositories#alerque}}
-that can be instaled using pacman:
+that can be instaled using pacman after adding the repository to your system configuration:
 
 \terminal{$ pacman -S sile}
+
+Alternate packages \code{sile-luajit} and \code{sile-luajit-git} are also
+available that are pre-configured to use LuaJIT instead of Lua. See the note
+about LuaJIT in the section \em{Installing From Source} for applicable caveats.
 
 For Ubuntu an official PPA is available with precompiled packages:
 
@@ -84,8 +84,49 @@ sudo apt-get update
 sudo apt-get install sile
 \end{terminal}
 
+For NetBSD, package sources are available in \code{print/sile}.
+Use the usual command \code{bmake install} to build and install.
+A binary package can be installed using \code{pkgin}
+
+\begin{terminal}
+pkgin install sile
+\end{terminal}
+
 For all other systems you will need to follow the steps to download and compile
 the source yourself.
+
+\subsection{Running via Docker}
+
+Another way of getting SILE up and running in a pre-compiled state is to use prebuilt Docker containers.
+If your system has Docker installed already, you can run SILE simply by issuing a run command.
+The first time it is used Docker will fetch the necessary layers and assemble the image for you.
+Thereafter only a small amount of CPU time and memory overhead goes into running the container compared to a regular system install.
+
+The catch is that because SILE is running \em{inside} the container, in order to do anything useful with it you must first pass your sources (including things like fonts) in and give it a way to write files back out.
+The easiest way to do that is by mounting your entire project inside the container.
+This makes the actual invocation command quite a mouthful.
+For most shells, a single alias can be created to hide that complexity and make it pretty simple to run:
+
+\begin{terminal}
+$ alias sile='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest'
+\end{terminal}
+
+Docker images are tagged to match releases (e.g. \code{v.0.10.0}).
+Additionally the latest release will be tagged \code{latest}, and a \code{master} tag is also available with the freshest development build.
+You can substitute \code{latest} in the alias above to run a specific version.
+
+One notable issue with using SILE from a Docker container is that it will not have access to your system’s fonts by default.
+You can map a folder of fonts (any tree usable by fontconfig) into the container.
+This could be your system’s default font directory, your user one, a project specific folder, or anything of your choosing.
+You can see where fonts are found on your system using \code{fc-list}.
+The path of your choosing from the host system should be passed as a volume mounted on \code{/fonts} inside the container like this:
+
+\begin{terminal}
+$ docker run -it --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest
+\end{terminal}
+
+Armed with commands (or aliases) like these to take care of the actual invocation, you should be able to use all other aspects of SILE as documented in the rest of the manual.
+Just be aware when it comes to things like fonts, images, or other resources about where your files are relative to the container.
 
 \subsection{Installing From Source}
 
@@ -123,7 +164,7 @@ combination of your system’s packages and installing them via \code{luarocks
 install}. The easiest way is to let Luarocks figure it out based on the
 included Rockspec:
 
-\terminal{$ luarocks install sile-dev-1.rockspec}
+\terminal{$ luarocks install --deps-only sile-dev-1.rockspec}
 
 Note that the \code{luasec} package requires OpenSSL libraries on your system
 in order to compile. On some systems such as macOS you may need to configure
@@ -159,6 +200,21 @@ If all has gone well, this should produce a file \code{examples/simple.pdf}.
 Most users of SILE will want to install the \code{sile} command and SILE’s
 library files onto their system; this can be done with:
 
+\begin{note}
+SILE can be built to run using LuaJIT under which it runs almost exactly twice
+as fast! Because SILE lets your documents, classes, and packages use Lua code
+from your system –and because the ecosystem for Lua software is more developed
+around the regular Lua versions– we default to using the newest plain Lua
+installation found. If your system has LuaJIT and you prefer to use it you can
+ask the configure process to use it like this:
+
+\terminal{$ ./configure --with-luajit}
+
+Keep in mind that any Lua code you write will need to be JIT compatible. The
+vast majority of Lua code will be fine, but there are a few limitations. See
+the documentation for your version of LuaJIT for details.
+\end{note}
+
 \terminal{$ make install}
 
 Now the \code{sile} command is available from any directory.
@@ -166,7 +222,7 @@ Now the \code{sile} command is available from any directory.
 \subsection{Notes for Windows users}
 
 SILE may be built on Windows using CMake and Visual Studio. There is not an
-installer (yet), but Windows executables are generated uzing Azure for every
+installer (yet), but Windows executables are generated using Azure for every
 commit. You may download these executables by selecting the latest build from
 \url{https://simoncozens-github.visualstudio.com/sile/_build} and downloading
 the "sile" artifact from the Artifacts drop down.
@@ -201,8 +257,8 @@ Turning \code{examples/docbook/article-template.xml} into
 
 \begin{verbatim}
 \line
-\% \em{./sile -I docbook.sil examples/docbook/article-template.xml}
-This is SILE \sileversion
+$ ./sile -I docbook.sil examples/docbook/article-template.xml
+\sileversion
 Loading docbook
 <classes/docbook.sil><examples/docbook/article-template.xml>[1] [2] [3]
 \line
@@ -215,4 +271,51 @@ is loaded, DocBook files can be processed directly as SILE documents.
 
 In Chapter 9, we’ll look at how the \code{docbook} class works, and how you
 can define processing expectations for other XML formats.
+
+\section{Running SILE remotely as a CI job}
+
+It may be useful for some work flows to run SILE remotely on a CI server as part of a job that renders documents automatically from sources.
+This comes with the caveats mentioned in the section \em{Running via Docker} above, but if you plan ahead and arrange your projects right it can be quite useful.
+
+There are actually many ways to run SILE remotely as part of a CI work flow.
+Because packages are available for many platforms, one way would be to just use your platforms native package installation system to pull them into whatever CI runner environment you already use.
+Another way is to pull in the prebuilt Docker container and run that.
+
+As a case study, here is how a work flow could be setup in GitHub Actions:
+
+\begin{verbatim}
+\line
+name: SILE
+on: [push, pull_request]
+jobs:
+  sile:
+    runs-on: ubuntu-20.04
+    name: SILE
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: SILE
+        id: sile
+        uses: docker://siletypesetter/sile:latest
+        with:
+          args: my-document.sil
+\line
+\end{verbatim}
+
+Add to your repository as \code{.github/workflows/sile.yaml}.
+This work flow assumes your project has a source file \code{my-document.sil} and will leave behind a \code{my-document.pdf}.
+Note that this Actions work flow explicitly uses a container fetched from Docker Hub because this is the fastest way to get rolling, and the comments in the section about Docker regarding tagged versions besides \code{latest} apply equally here.
+
+Because this repository is itself a GitHub Action you can also use the standard \code{uses} syntax like this:
+
+\begin{verbatim}
+\line
+        uses: sile-typesetter/sile@latest
+\line
+\end{verbatim}
+
+But be warned that since GitHub rebuilds containers from scratch on every such invocation, this syntax is not recommended for regular use.
+Pulling the prebuilt Docker images is recommended instead.
+
+With these ideas in mind, other CI systems should be easy to support as well.
 \end{document}
