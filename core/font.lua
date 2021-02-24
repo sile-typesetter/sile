@@ -68,7 +68,16 @@ SILE.settings.declare({ parameter = "document.language", type = "string", defaul
 SILE.fontCache = {}
 
 local _key = function (options)
-  return table.concat({ options.family;("%g"):format(options.size);("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename }, ";")
+  return table.concat({
+      options.family,
+      ("%g"):format(options.size),
+      ("%d"):format(options.weight),
+      options.style,
+      options.variant,
+      options.features,
+      options.direction,
+      options.filename,
+    }, ";")
 end
 
 SILE.font = {
