@@ -130,7 +130,7 @@ end
 
 local table2featurestring = function (tbl)
   local t2 = {}
-  for k, v in pairs(tbl) do t2[#t2+1] = v.posneg..k..(v.value and "="..v.value or "") end
+  for k, v in pl.tablex.sort(tbl) do t2[#t2+1] = v.posneg..k..(v.value and "="..v.value or "") end
   return table.concat(t2, ";")
 end
 
