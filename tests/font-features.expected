@@ -3,16 +3,36 @@ Begin page
 Mx 	14.8819
 My 	27.2752
 Set font 	Gentium Plus;10;400;;normal;+smcp;LTR
-T	54 3871 3490 3850 3850 38 3490 3964 4007	(SmallCaps)
+T	54 3871 3490 3850 3850 38 3490 3964 4007 w=47.2266	(SmallCaps)
 My 	39.2752
-T	54 3871 3490 3850 3850 38 3490 3964 4007	(SmallCaps)
+T	54 3871 3490 3850 3850 38 3490 3964 4007 w=47.2266	(SmallCaps)
 My 	51.2752
-Set font 	Gentium Plus;10;400;;normal;+hlig;+dlig;LTR
-T	47 76 74 68 87 88 85 72 86	(Ligatures)
+Set font 	Gentium Plus;10;400;;normal;+dlig;+hlig;LTR
+Mx 	4.7607
+Mx 	2.7100
+Mx 	4.8779
+Mx 	4.5898
+Mx 	3.4424
+Mx 	5.2979
+Mx 	3.8086
+Mx 	4.6191
+Mx 	3.8623
+T	47 a=4.7607 76 a=2.7100 74 a=4.8779 68 a=4.5898 87 a=3.4424 88 a=5.2979 85 a=3.9600 72 a=4.6191 86 a=3.8623	(Ligatures)
+Mx 	14.8819
 My 	63.2752
-T	47 76 74 68 87 88 85 72 86	(Ligatures)
+Mx 	4.7607
+Mx 	2.7100
+Mx 	4.8779
+Mx 	4.5898
+Mx 	3.4424
+Mx 	5.2979
+Mx 	3.8086
+Mx 	4.6191
+Mx 	3.8623
+T	47 a=4.7607 76 a=2.7100 74 a=4.8779 68 a=4.5898 87 a=3.4424 88 a=5.2979 85 a=3.9600 72 a=4.6191 86 a=3.8623	(Ligatures)
+Mx 	14.8819
 My 	75.2752
 Set font 	Gentium Plus;10;400;;normal;;LTR
-T	49 82 85 80 68 79	(Normal)
+T	49 82 85 80 68 79 w=30.8105	(Normal)
 End page
 Finish

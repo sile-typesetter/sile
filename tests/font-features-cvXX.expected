@@ -3,27 +3,27 @@ Begin page
 Mx 	14.8819
 My 	30.4442
 Set font 	Gentium Plus;10;400;;normal;;LTR
-T	858	(һ)
+T	858 w=5.5176	(һ)
 Mx 	23.0701
-T	1306	(ồ)
+T	1306 w=5.0293	(ồ)
 Mx 	14.8819
 My 	42.4442
 Set font 	Gentium Plus;10;400;;normal;+cv75;+cv81;LTR
-T	859	(һ)
+T	859 w=5.2148	(һ)
 Mx 	22.7674
-T	1307	(ồ)
+T	1307 w=5.0293	(ồ)
 Mx 	14.8819
 My 	54.4442
 Set font 	Gentium Plus;10;400;;normal;+cv75;+cv81;+cv75;-cv81;LTR
-T	858	(һ)
+T	858 w=5.5176	(һ)
 Mx 	23.0701
 Set font 	Gentium Plus;10;400;;normal;+cv75;+cv81;-cv75;+cv81;LTR
-T	1306	(ồ)
+T	1306 w=5.0293	(ồ)
 Mx 	14.8819
 My 	66.4442
 Set font 	Gentium Plus;10;400;;normal;+cv75;+cv81;-cv75;-cv81;LTR
-T	858	(һ)
+T	858 w=5.5176	(һ)
 Mx 	23.0701
-T	1306	(ồ)
+T	1306 w=5.0293	(ồ)
 End page
 Finish
