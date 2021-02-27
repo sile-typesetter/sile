@@ -34,7 +34,7 @@ Formulas, text, MathML:
       <mtd><mn>1</mn></mtd>
     </mtr>
     <mtr>
-      <mtd><msub><mi>u</mi><mn>n</mn></msub></mtd>
+      <mtd><msub><mi>u</mi><mi>n</mi></msub></mtd>
       <mtd><mo>=</mo></mtd>
       <mtd>
         <msub><mi>u</mi><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></msub>
@@ -61,7 +61,7 @@ Formulas, display, MathML:
       <mtd><mn>1</mn></mtd>
     </mtr>
     <mtr>
-      <mtd><msub><mi>u</mi><mn>n</mn></msub></mtd>
+      <mtd><msub><mi>u</mi><mi>n</mi></msub></mtd>
       <mtd><mo>=</mo></mtd>
       <mtd>
         <msub><mi>u</mi><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></msub>

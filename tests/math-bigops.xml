@@ -91,6 +91,10 @@ Integrals, text, MathML:
     <mfrac> <mn>1</mn> <msub><mi>ε</mi><mn>0</mn></msub> </mfrac>
     <msub><mo>∭</mo><mi>V</mi></msub> <mi>ρ</mi>
     <mi mathvariant="normal">dV</mi>
+    <mo>=</mo> <msubsup><mo>∫</mo> <mn>0</mn> <mi>x</mi></msubsup>
+    <mrow>
+      <mi>f</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>d</mo><mi>t</mi>
+    </mrow>
   </mrow>
 </mathml>
 
@@ -103,6 +107,10 @@ Integrals, text, MathML:
     <mfrac> <mn>1</mn> <msub><mi>ε</mi><mn>0</mn></msub> </mfrac>
     <msub><mo>∭</mo><mi>V</mi></msub> <mi>ρ</mi>
     <mi mathvariant="normal">dV</mi>
+    <mo>=</mo> <msubsup><mo>∫</mo> <mn>0</mn> <mi>x</mi></msubsup>
+    <mrow>
+      <mi>f</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>d</mo><mi>t</mi>
+    </mrow>
   </mrow>
 </mathml>
 
@@ -111,6 +119,7 @@ Integrals, text, TeX:
   \oiint_S \mi[mathvariant=bold]{E} \cdot
   \mi[mathvariant=bold]{dS} = \frac{1}{\epsilon_0}
   \iiint_V \rho \mi[mathvariant=normal]{dV}
+  = \int_0^x {f(t)\mo{d}t}
 </math>
 
 Integrals, display, TeX:
@@ -118,6 +127,7 @@ Integrals, display, TeX:
   \oiint_S \mi[mathvariant=bold]{E} \cdot
   \mi[mathvariant=bold]{dS} = \frac{1}{\epsilon_0}
   \iiint_V \rho \mi[mathvariant=normal]{dV}
+  = \int_0^x {f(t)\mo{d}t}
 </math>
 
 </sile>

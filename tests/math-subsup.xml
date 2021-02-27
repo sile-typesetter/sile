@@ -8,7 +8,7 @@ Sub-superscripts, text, MathML:
     <mo>+</mo>
     <msub> <mi>x</mi> <mn>2</mn> </msub>
     <mo>−</mo>
-    <msubsup> <mi>ζ</mi> <mn>0</mn> <mi>z</mi> </msubsup>
+    <msubsup> <mi>ζ</mi> <mn>0</mn> <mi>2</mi> </msubsup>
     <mo>,</mo>
     <msubsup> <mrow></mrow> <mn>12</mn> <mn>14</mn> </msubsup>
     <mi mathvariant="normal">C</mi>
@@ -22,7 +22,7 @@ Sub-superscripts, display, MathML:
     <mo>+</mo>
     <msub> <mi>x</mi> <mn>2</mn> </msub>
     <mo>−</mo>
-    <msubsup> <mi>ζ</mi> <mn>0</mn> <mi>z</mi> </msubsup>
+    <msubsup> <mi>ζ</mi> <mn>0</mn> <mi>2</mi> </msubsup>
     <mo>,</mo>
     <msubsup> <mrow></mrow> <mn>12</mn> <mn>14</mn> </msubsup>
     <mi mathvariant="normal">C</mi>

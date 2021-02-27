@@ -527,13 +527,23 @@ elements.subscript = pl.class({
     if self.base then
       self.base.relX = SILE.length(0)
       self.base.relY = SILE.length(0)
-      self.width = self.base.width
+      -- Use widthForSubscript of base, if available
+      self.width = self.base.widthForSubscript or self.base.width
     else
       self.width = SILE.length(0)
     end
     local itCorr = self:calculateItalicsCorrection() * scaleDown
+    local subShift
+    local supShift
     if self.sub then
-      self.sub.relX = self.width - itCorr / 2
+      if self.isBigOp then
+        -- Ad hoc correction on integral limits, following LuaTeX's
+        -- `\mathnolimitsmode=0` (see LuaTeX Reference Manual).
+        subShift = -itCorr
+      else
+        subShift = 0
+      end
+      self.sub.relX = self.width + subShift
       self.sub.relY = SILE.length(math.max(
         constants.subscriptShiftDown * scaleDown,
         --self.base.depth + constants.subscriptBaselineDropMin * scaleDown,
@@ -546,7 +556,14 @@ elements.subscript = pl.class({
       end
     end
     if self.sup then
-      self.sup.relX = self.width + itCorr / 2
+      if self.isBigOp then
+        -- Ad hoc correction on integral limits, following LuaTeX's
+        -- `\mathnolimitsmode=0` (see LuaTeX Reference Manual).
+        supShift = 0
+      else
+        supShift = itCorr
+      end
+      self.sup.relX = self.width + supShift
       self.sup.relY = SILE.length(math.max(
         isCrampedMode(self.mode)
         and constants.superscriptShiftUpCramped * scaleDown
@@ -579,8 +596,8 @@ elements.subscript = pl.class({
     end
 
     self.width = self.width + maxLength(
-      self.sub and self.sub.width - itCorr / 2 or SILE.length(0),
-      self.sup and self.sup.width + itCorr / 2 or SILE.length(0)
+      self.sub and self.sub.width + subShift or SILE.length(0),
+      self.sup and self.sup.width + supShift or SILE.length(0)
     ) + constants.spaceAfterScript * scaleDown
     self.height = maxLength(
       self.base and self.base.height or SILE.length(0),
@@ -622,6 +639,7 @@ elements.bigOpSubscript = pl.class({
     if not (self.mode == mathMode.display
           or self.mode == mathMode.displayCramped)
         or (self.base and contains(subscriptBigOps, self.base.text)) then
+      self.isBigOp = true
       elements.subscript.shape(self)
       return
     end
@@ -811,9 +829,12 @@ elements.text = pl.class({
         table.insert(self.value.glyphString, glyphs[i].gid)
       end
       self.width = SILE.length(0)
+      self.widthForSubscript = SILE.length(0)
       for i = #glyphs, 1, -1 do
         self.width = self.width + glyphs[i].glyphAdvance
       end
+      -- Store width without italic correction somewhere
+      self.widthForSubscript = self.width
       local itCorr = mathMetrics.italicsCorrection[glyphs[#glyphs].gid]
       if itCorr then
         self.width = self.width + itCorr * self:getScaleDown()

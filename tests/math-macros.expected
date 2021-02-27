@@ -52,33 +52,33 @@ T	2735 w=5.4100	(nil)
 Mx 	349.3836
 Mx 	2.9900
 T	3654 a=4.2100	(nil)
-Draw line	275.0157	84.0086	11.3900	0.6500
-Mx 	275.0157
+Draw line	274.7307	84.0086	11.3900	0.6500
+Mx 	274.7307
 My 	79.6886
 T	69 w=5.0600	(nil)
-Mx 	280.0757
+Mx 	279.7907
 T	2779 w=6.3300	(nil)
-Mx 	276.6657
+Mx 	276.3807
 My 	93.9336
 T	69 w=5.0600	(nil)
-Mx 	281.7257
+Mx 	281.4407
 T	2731 w=3.0300	(nil)
-Mx 	289.1835
+Mx 	288.8985
 My 	86.9336
 T	30 w=6.4800	(nil)
-Mx 	298.4412
+Mx 	298.1562
 My 	86.8386
 Mx 	10.6300
 T	3665 a=12.4300	(nil)
-Mx 	303.7402
+Mx 	303.4552
 My 	97.5426
 Set font 	Libertinus Math;8;400;;normal;;LTR
 T	2720 w=1.8320	(nil)
-Mx 	312.5379
+Mx 	312.2529
 My 	86.9336
 Set font 	Libertinus Math;10;400;;normal;;LTR
 T	2743 w=6.0300	(nil)
-Mx 	317.9979
+Mx 	318.2829
 My 	89.0336
 Set font 	Libertinus Math;8;400;;normal;;LTR
 T	2720 w=1.8320	(nil)
