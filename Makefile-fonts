@@ -115,7 +115,7 @@ TESTFONTFILES += SBL_Hbrw.ttf
 	touch $@
 
 .fonts/DejaVu%: .sources/dejavu-fonts-ttf-2.37.tar.bz2 | .fonts
-	bsdtar -x -f $< -C $(dir $@) --strip-components 2 $(basename $(<F))/ttf/$(notdir $@)
+	bsdtar -x -f $< -C $(dir $@) --strip-components 2 $(basename $(basename $(<F)))/ttf/$(notdir $@)
 	touch $@
 
 .fonts/GenB%: .sources/GentiumBasic_1102.zip | .fonts
