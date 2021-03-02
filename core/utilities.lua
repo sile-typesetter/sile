@@ -437,7 +437,7 @@ end
 
 utilities.utf8_to_utf16be_hexencoded = function (str)
   local ustr = string.format("%04x", 0xfeff) -- BOM
-  for uchr in luautf8.codes(str) do
+  for _, uchr in luautf8.codes(str) do
     if (uchr < 0x10000) then
       ustr = ustr..string.format("%04x", uchr)
     else -- Surrogate pair
@@ -451,7 +451,7 @@ end
 
 utilities.utf8_to_utf16be = function (str)
   local ustr = ""
-  for uchr in luautf8.codes(str) do
+  for _, uchr in luautf8.codes(str) do
     if (uchr < 0x10000) then
       ustr = ustr..string.format("%c%c", uchr / 256, uchr % 256 )
     else -- Surrogate pair
@@ -465,7 +465,7 @@ end
 
 utilities.utf8_to_utf16le = function (str)
   local ustr = ""
-  for uchr in luautf8.codes(str) do
+  for _, uchr in luautf8.codes(str) do
     if (uchr < 0x10000) then
       ustr = ustr..string.format("%c%c", uchr % 256, uchr / 256 )
     else -- Surrogate pair
