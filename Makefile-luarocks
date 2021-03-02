@@ -4,8 +4,9 @@ if !SYSTEM_LUAROCKS
 LUAMODLOCK := sile-dev-1.rockslock
 
 LUAROCKS := luarocks --tree lua_modules --lua-version $(LUA_VERSION)
+TMPFILE != mktemp
 genrockslock := $(LUAROCKS) $(LUAROCKSARGS) list --porcelain | awk '{print $$1 " " $$2}'
-rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
+rocksmatch := ( T=$$(mktemp); trap 'rm -f "$$T"' EXIT HUP TERM; $(genrockslock) > "$$T"; cmp -s $(LUAMODLOCK) "$$T" )
 
 installrocks: $(LUAMODLOCK) $(shell $(rocksmatch) || echo lua_modules)
 
