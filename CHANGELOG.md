@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.10.15](https://github.com/sile-typesetter/sile/compare/v0.10.14...v0.10.15) (2021-03-02)
+
+
+### Features
+
+* **fonts:** Allow for code to be run when a font is first loaded ([bdf05ab](https://github.com/sile-typesetter/sile/commit/bdf05ab8bfef72da4f251d471646d1387aedd905))
+* **packages:** Add \font-feature command ([e2cf008](https://github.com/sile-typesetter/sile/commit/e2cf00842a71b090080a101613f5d6d4a70d4c37))
+* **packages:** Add complex-spaces package ([#1148](https://github.com/sile-typesetter/sile/issues/1148)) ([b7451ae](https://github.com/sile-typesetter/sile/commit/b7451ae513b003b76531f24bebb35204488b6b0b))
+
+
+### Bug Fixes
+
+* **cli:** Re-enable access to repl, input argument not required ([a6434ee](https://github.com/sile-typesetter/sile/commit/a6434ee414fc870efd22f50f5da239f902cd5b94))
+* **core:** Allow builtin Lua bitwise operators on Lua 5.4 ([5f0c2c7](https://github.com/sile-typesetter/sile/commit/5f0c2c7e929bc9c040b28019e3be648feddbd846))
+* **docker:** Switch to BuildKit and make Docker Hub cooperate ([783b104](https://github.com/sile-typesetter/sile/commit/783b104df99a99ef3271322ba8086f995abab945))
+* **docker:** Use patched glibc to work around outdated hosts ([fa2532c](https://github.com/sile-typesetter/sile/commit/fa2532c140383ea414867340f047c9e8cc05ec7f))
+* **docker:** Use patched glibc to work around outdated hosts ([#1141](https://github.com/sile-typesetter/sile/issues/1141)) ([bf74417](https://github.com/sile-typesetter/sile/commit/bf74417aee5f9cc671f8a53b6802a5d242076875))
+* **docker:** Work around libtexpdf build having side effects ([33510d9](https://github.com/sile-typesetter/sile/commit/33510d90b5b74396eac8c9e46f6bbbb952010415))
+* **packages:** Add CharacterVariant to features ([929eca2](https://github.com/sile-typesetter/sile/commit/929eca2ea45cc3adeab8c3780d94980a7012541a))
+* **utilities:** Correct UTF-8/UTF-16 conversions ([4863ed6](https://github.com/sile-typesetter/sile/commit/4863ed679f25fd7f1761879098ffb80e4e4e55ea))
+
+
+### Reverts
+
+* Revert "chore(build): Remove obsolete macOS workarounds" ([f5cf7c0](https://github.com/sile-typesetter/sile/commit/f5cf7c0dc29934ef6f55870c9f04ab0bc66e40b9))
+
 ### [0.10.14](https://github.com/sile-typesetter/sile/compare/v0.10.13...v0.10.14) (2021-02-03)
 
 
