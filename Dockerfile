@@ -4,14 +4,6 @@ ARG ARCHTAG
 
 FROM docker.io/library/archlinux:base-devel-$ARCHTAG AS builder
 
-# This is a hack to convince Docker Hub that its cache is behind the times.
-# This happens when the contents of our dependencies changes but the base
-# system hasn’t been refreshed. It’s helpful to have this as a separate layer
-# because it saves a lot of time for local builds, but it does periodically
-# need a poke. Incrementing this when changing dependencies or just when the
-# remote Docker Hub builds die should be enough.
-ARG DOCKER_HUB_CACHE=0
-
 ARG RUNTIME_DEPS
 ARG BUILD_DEPS
 
@@ -21,7 +13,7 @@ RUN --mount=type=bind,target=/mp,source=build-aux/docker-glibc-workaround.sh /mp
 # Freshen all base system packages
 RUN pacman --needed --noconfirm -Syuq
 
-# Install run-time dependecies (increment cache var above)
+# Install run-time dependecies
 RUN pacman --needed --noconfirm -Sq $RUNTIME_DEPS $BUILD_DEPS
 
 # Set at build time, forces Docker’s layer caching to reset at this point
@@ -47,7 +39,6 @@ FROM docker.io/library/archlinux:base-$ARCHTAG AS final
 
 # Same args as above, repeated because they went out of scope with FROM
 ARG VCS_REF=0
-ARG DOCKER_HUB_CACHE=0
 ARG RUNTIME_DEPS
 
 # Monkey patch glibc to avoid issues with old kernels on hosts
