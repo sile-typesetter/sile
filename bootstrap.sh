@@ -24,8 +24,7 @@ if [ ! -f "libtexpdf/configure.ac" ]; then
     fi
 fi
 
-# Make
-# directory. This enables easy building from Github's snapshot archives
+# This enables easy building from Github's snapshot archives
 if [ ! -e ".git" ]; then
     if [ ! -f ".tarball-version" ]; then
     incomplete_source "No version information found" \
