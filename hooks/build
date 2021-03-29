@@ -16,5 +16,5 @@ docker build \
 	--build-arg VCS_REF="${1:-$DESC}" \
 	--build-arg RUNTIME_DEPS="$RUNTIME_DEPS" \
 	--build-arg BUILD_DEPS="$BUILD_DEPS" \
-	--tag $IMAGE_NAME \
+	--tag $DOCKER_REPO:$DOCKER_TAG \
 	./

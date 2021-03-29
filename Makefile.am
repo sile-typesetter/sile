@@ -350,9 +350,13 @@ include $(wildcard $(DEPFILES))
 
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles $(_BUILT_SUBDIRS)
 
+export DOCKER_REGISTRY ?= docker.io
+export DOCKER_REPO ?= siletypesetter/$(_sile)
+export DOCKER_TAG ?= HEAD
+
 .PHONY: docker
 docker: Dockerfile hooks/build .version
-	IMAGE_NAME=siletypesetter/$(_sile):HEAD ./hooks/build $(VERSION)
+	./hooks/build $(VERSION)
 
 gource.webm:
 	mkdir -p /tmp/gravatars
