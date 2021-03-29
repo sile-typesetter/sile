@@ -5,7 +5,8 @@
   "main": "sile",
   "scripts": {
     "test": "make test",
-    "release": "standard-version"
+    "release": "standard-version",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -24,17 +25,12 @@
     "commitizen": "^4.2.3",
     "conventional-changelog-cli": "^2.1.1",
     "github-release-cli": "^2.0.0",
-    "husky": "^5.1.3",
+    "husky": "^6.0.0",
     "standard-version": "^9.1.1"
   },
   "config": {
     "commitizen": {
       "path": "@commitlint/prompt"
-    }
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
   "standard-version": {
