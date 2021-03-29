@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 set -e
 
-: "${ARCHTAG:=20210307.0.16708}"
+: "${ARCHTAG:=20210321.0.17674}"
 
 DESC=$(git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g')
 
@@ -16,5 +16,5 @@ docker build \
 	--build-arg VCS_REF="${1:-$DESC}" \
 	--build-arg RUNTIME_DEPS="$RUNTIME_DEPS" \
 	--build-arg BUILD_DEPS="$BUILD_DEPS" \
-	--tag $IMAGE_NAME \
+	--tag $DOCKER_REPO:$DOCKER_TAG \
 	./

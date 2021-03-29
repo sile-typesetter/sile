@@ -51,7 +51,7 @@ nobase_dist_pdf_DATA = $(_EXAMPLES)
 bin_SCRIPTS = sile
 EXTRA_DIST = spec tests examples documentation sile-dev-1.rockspec fontconfig.conf
 EXTRA_DIST += .version Makefile-distfiles
-EXTRA_DIST += build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
+EXTRA_DIST += build-aux/action-updater.js build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
 EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconfig.conf build-aux/docker-glibc-workaround.sh hooks/build
 EXTRA_DIST += $(MANUAL) $(EXAMPLES)
 
@@ -350,9 +350,27 @@ include $(wildcard $(DEPFILES))
 
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles $(_BUILT_SUBDIRS)
 
+export DOCKER_REGISTRY ?= docker.io
+export DOCKER_REPO ?= siletypesetter/$(_sile)
+export DOCKER_TAG ?= HEAD
+
 .PHONY: docker
 docker: Dockerfile hooks/build .version
-	IMAGE_NAME=siletypesetter/$(_sile):HEAD ./hooks/build $(VERSION)
+	./hooks/build $(VERSION)
+
+.PHONY: docker-build-push
+docker-build-push: docker
+	docker tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
+	test -z "$(DOCKER_PAT)" || \
+		docker login https://$(DOCKER_REGISTRY) -u $(DOCKER_USERNAME) -p $(DOCKER_PAT)
+	docker push $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
+	if [[ "$(DOCKER_TAG)" == v*.*.* ]]; then \
+		tag=$(DOCKER_TAG) ;\
+		docker tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):latest ;\
+		docker tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$${tag//.*} ;\
+		docker push $(DOCKER_REGISTRY)/$(DOCKER_REPO):latest ;\
+		docker push $(DOCKER_REGISTRY)/$(DOCKER_REPO):$${tag//.*} ;\
+	fi
 
 gource.webm:
 	mkdir -p /tmp/gravatars
