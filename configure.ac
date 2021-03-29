@@ -76,7 +76,6 @@ AS_IF([test "x$enable_dependency_checks" != "xno"], [
             AC_MSG_RESULT([no])
             ;;
     esac
-    AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
 
     PKG_CHECK_MODULES(HARFBUZZ, harfbuzz, [
         PKG_CHECK_MODULES(FREETYPE, freetype2,[],[AC_MSG_FAILURE([Harfbuzz found but not freetype2])])
@@ -87,6 +86,24 @@ AS_IF([test "x$enable_dependency_checks" != "xno"], [
         if test "x$with_harfbuzz" != xcheck; then
             AC_MSG_FAILURE([--with-harfbuzz was given, but test for harfbuzz failed])
         fi
+    ])
+
+    PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
+    AC_DEFINE([ICU], [1], [Build using icu4c])
+    with_icu=yes
+    AC_SUBST([ICU_CFLAGS])
+    AC_SUBST([ICU_LIBS])
+    ],[
+    AC_CHECK_TOOL(ICU_CONFIG, icu-config, no)
+    AC_MSG_CHECKING([for ICU by using icu-config fallback])
+    if test "$ICU_CONFIG" != "no" && "$ICU_CONFIG" --version >/dev/null; then
+        ICU_LIBS=`icu-config  --ldflags-libsonly --ldflags-icuio`
+        ICU_CFLAGS=`icu-config --cppflags`
+        with_icu=yes
+        AC_MSG_RESULT([yes])
+    else
+        AC_MSG_FAILURE([Required ICU library not found])
+    fi
     ])
 
     case $host_os in
@@ -130,23 +147,8 @@ AS_IF([test "x$enable_dependency_checks" != "xno"], [
     ])
 ])
 
-PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
-  AC_DEFINE([ICU], [1], [Build using icu4c])
-  with_icu=yes
-  AC_SUBST([ICU_CFLAGS])
-  AC_SUBST([ICU_LIBS])
-],[
-  AC_CHECK_TOOL(ICU_CONFIG, icu-config, no)
-  AC_MSG_CHECKING([for ICU by using icu-config fallback])
-  if test "$ICU_CONFIG" != "no" && "$ICU_CONFIG" --version >/dev/null; then
-    ICU_LIBS=`icu-config  --ldflags-libsonly --ldflags-icuio`
-    ICU_CFLAGS=`icu-config --cppflags`
-    with_icu=yes
-    AC_MSG_RESULT([yes])
-  else
-    AC_MSG_FAILURE([Required ICU library not found])
-  fi
-])
+AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
+
 AM_CONDITIONAL([ICU], [test "x$with_icu" = "xyes"])
 
 adl_RECURSIVE_EVAL(["${datadir}/${PACKAGE}"], [SILE_PATH])
