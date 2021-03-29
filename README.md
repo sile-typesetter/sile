@@ -97,7 +97,7 @@ Users of WSL (Windows Subsytem for Linux) may use the package manager of their c
 #### Docker
 
 Docker images are available as [siletypesetter/sile](https://hub.docker.com/repository/docker/siletypesetter/sile).
-Released versions are tagged to match (e.g. `v.0.10.0`), the latest release will be tagged `latest`, and a `master` tag is also available with the freshest development build.
+Released versions are tagged to match (e.g. `v0.10.0`), the latest release will be tagged `latest`, and a `master` tag is also available with the freshest development build.
 In order to be useful you need to tell the Docker run command a way to reach your source documents (and hence also to give it a place to write the output) as well as tell it who you are on the host machine so the output generated inside the container can be created with the expected ownership properties.
 You may find it easiest to run with an alias like this:
 
@@ -188,29 +188,19 @@ name: SILE
 on: [push, pull_request]
 jobs:
   sile:
-    runs-on: ubuntu-20.04
-    name: SILE
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: SILE
-        id: sile
-        uses: docker://siletypesetter/sile:latest
+      - name: The SILE Typesetter
+        uses: sile-typesetter/sile@v0
         with:
           args: my-document.sil
 ```
 
 Add to your repository as `.github/workflows/sile.yaml`.
 This work flow assumes your project has a source file `my-document.sil` and will leave behind a `my-document.pdf`.
-Note that this Actions work flow explicitly uses a container fetched from Docker Hub because this is the fastest way to get rolling, and the comments in [the section about Docker](#docker) regarding tagged versions besides `latest` apply equally here.
-
-Because this repository is itself a GitHub Action you can also use the standard `uses` syntax like this:
-
-```yaml
-        uses: sile-typesetter/sile@latest
-```
-
-But be warned that since GitHub rebuilds containers from scratch on every such invocation, this syntax is not recommended for regular use.
+Note the comments in [the section about Docker](#docker) regarding version tags.
 
 ### Default Font
 
