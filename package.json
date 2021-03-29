@@ -1,7 +1,7 @@
 {
   "name": "sile",
   "version": "0.10.15",
-  "description": "SILE Typesetter",
+  "description": "The SILE Typesetter",
   "main": "sile",
   "scripts": {
     "test": "make test",

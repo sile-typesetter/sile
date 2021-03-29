@@ -1,4 +1,4 @@
-name: SILE-Typesetter
+name: The SILE Typesetter
 description: Simon’s Improved Layout Engine
 inputs:
   args:
