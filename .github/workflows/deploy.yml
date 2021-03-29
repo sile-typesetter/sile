@@ -2,20 +2,37 @@ name: Deploy
 
 on:
   push:
-    tags: [ 'v*' ]
+    branches:
+      - master
+    tags:
+      - latest
+      - v*
 
 jobs:
 
-  deploy:
-    runs-on: ubuntu-20.04
+  ghcr:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Publish to GitHub Packages
-        uses: docker/build-push-action@v1
         with:
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
-          registry: docker.pkg.github.com
-          repository: sile-typesetter/sile/sile
-          tag_with_ref: true
+          fetch-depth: 0
+      - name: Fetch tags
+        run: |
+          git fetch --prune --tags ||:
+      - name: Configure
+        run: |
+          echo "REF=${GITHUB_REF##refs/*/}" >> $GITHUB_ENV
+          ./bootstrap.sh
+          ./configure --disable-dependency-checks
+      - name: Publish Docker Image to GH Pakcages
+        run: |
+          make docker-build-push
+        env:
+          DOCKER_REGISTRY: ghcr.io
+          DOCKER_REPO: ${{ github.repository }}
+          DOCKER_TAG: ${{ env.REF }}
+          DOCKER_USERNAME: ${{ github.actor }}
+          DOCKER_PAT: ${{ secrets.CR_SILE_TYPESETTER }}
