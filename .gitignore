@@ -77,7 +77,7 @@ examples/**/*.pdf
 gource.webm
 .fonts/*
 .sources/*
-#sile# Work around bug in standard-version by not ignoring this artifact
+/sile
 sile.1
 /.version
 /.version-prev
