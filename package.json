@@ -26,7 +26,8 @@
     "conventional-changelog-cli": "^2.1.1",
     "github-release-cli": "^2.0.0",
     "husky": "^6.0.0",
-    "standard-version": "^9.1.1"
+    "standard-version": "^9.1.1",
+    "yaml": "^1.10.2"
   },
   "config": {
     "commitizen": {
@@ -34,6 +35,16 @@
     }
   },
   "standard-version": {
+    "bumpFiles": [
+      {
+        "filename": "action.yml",
+        "updater": "build-aux/action-updater.js"
+      },
+      {
+        "filename": "package.json",
+        "type": "json"
+      }
+    ],
     "infile": "CHANGELOG.md",
     "types": [
       {
