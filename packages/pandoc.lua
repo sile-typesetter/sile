@@ -189,6 +189,10 @@ SILE.registerCommand("Link", function (options, content)
   end)
 end, "Creates a link inline element, usually a hyperlink.")
 
+SILE.registerCommand("Nbsp", function (_, _)
+  SILE.typesetter:typeset(" ")
+end, "Output a non-breaking space.")
+
 SILE.registerCommand("Math", function (options, content)
   SU.debug("pandoc", options)
   -- TODO options is math type
