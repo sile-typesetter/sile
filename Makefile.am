@@ -60,10 +60,10 @@ Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
 
 BUILT_SOURCES = .version Makefile-distfiles
 
-.version: $(shell awk '{print ".git/" $$2}' .git/HEAD 2>/dev/null ||:)
+.version: $(shell $(AWK) '{print ".git/" $$2}' .git/HEAD 2>/dev/null ||:)
 	[ -e "$@" ] && mv "$@" "$@-prev" || touch "$@-prev"
 	$(if $<,./build-aux/git-version-gen .tarball-version,printf "$(VERSION)") > "$@"
-	cmp -s "$@" "$@-prev" ||
+	$(CMP) -s "$@" "$@-prev" ||
 		( autoreconf configure.ac --force && build-aux/decore-automake.sh )
 
 dist-hook: $(MANUAL) $(EXAMPLES)
@@ -130,7 +130,7 @@ selfcheck: | $(_BUILT_SUBDIRS)
 	output=$$(mktemp --suffix=.pdf)
 	trap 'rm -f $$output' EXIT HUP TERM
 	echo "<sile>foo</sile>" | ./sile -o $$output -
-	pdfinfo $$output | grep "SILE v@VERSION@"
+	$(PDFINFO) $$output | $(GREP) "SILE v@VERSION@"
 
 .PHONY: regressions
 regressions: $(TESTSRCS) $(ACTUALS)
@@ -171,7 +171,7 @@ examples: $(EXAMPLES)
 # This is a monkey patch to figure out how many passes we have to to to
 # garantee the TOC is up to date, simplify when #230 is fixed.
 hastoc = [ -f $(subst .pdf,.toc,$@) ] && echo true || echo false
-pages = pdfinfo $@ | awk '$$1 == "Pages:" {print $$2}' || echo 0
+pages = $(PDFINFO) $@ | $(AWK) '$$1 == "Pages:" {print $$2}' || echo 0
 silepass = $(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@ && pg0=$${pg} pg=$$($(pages))
 define runsile =
 	pg0=$$($(pages)) hadtoc=$$($(hastoc))
@@ -241,7 +241,7 @@ clean-recursive: clean-worktrees
 clean-worktrees:
 	if test -e .git; then
 		git worktree list --porcelain |
-			awk 'BEGIN { FS = "/" }; /^worktree .*-[0-9a-f]{7}/ { print $$(NF) }' |
+			$(AWK) 'BEGIN { FS = "/" }; /^worktree .*-[0-9a-f]{7}/ { print $$(NF) }' |
 			while read worktree; do
 				git worktree remove --force $${worktree}
 			done

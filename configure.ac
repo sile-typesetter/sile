@@ -45,11 +45,20 @@ AS_IF([test "x$with_system_libtexpdf" != "xyes"],
     )]
 )
 
+AC_DEFUN([AX_PROGVAR], [AC_PATH_PROG(m4_toupper($1), m4_default($2,$1))test -n "$m4_toupper($1)" || AC_MSG_ERROR([m4_default($2,$1) is required])])
+
 AS_IF([test "x$enable_dependency_checks" != "xno"], [
 
     # Checks for programs.
+    AC_PROG_AWK
     AC_PROG_CC
+    AC_PROG_GREP
     AC_PROG_OBJC
+    AC_PROG_SED
+
+    AX_PROGVAR([cmp])
+
+    AC_PATH_PROG([PDFINFO], [pdfinfo])
 
     AC_MSG_CHECKING([for OS X])
     have_appkit=no
@@ -142,8 +151,7 @@ AS_IF([test "x$enable_dependency_checks" != "xno"], [
         AX_LUA_MODULE([std], [stdlib])
         AX_LUA_MODULE([vstruct], [vstruct])
     ], [
-        AC_CHECK_PROG(HASLUAROCKS, luarocks, yes)
-        test "x$HASLUAROCKS" = "xyes" || AC_MSG_ERROR([luarocks is required])
+        AX_PROGVAR([luarocks])
     ])
 ])
 
