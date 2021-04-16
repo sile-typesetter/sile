@@ -7,6 +7,10 @@ AC_CONFIG_MACRO_DIR([build-aux])
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
 
+AC_PROG_AWK
+AC_PROG_GREP
+AC_PROG_SED
+
 if [[ -d .git ]]; then
     MAN_DATE=$(git log -1 --format="%cd" --date=format:"%d %B %Y" -- sile.1.in)
 else
@@ -52,11 +56,8 @@ AC_DEFUN([AX_PROGVAR], [AC_PATH_PROG(m4_toupper($1), m4_default($2,$1))test -n "
 AS_IF([test "x$enable_dependency_checks" != "xno"], [
 
     # Checks for programs.
-    AC_PROG_AWK
     AC_PROG_CC
-    AC_PROG_GREP
     AC_PROG_OBJC
-    AC_PROG_SED
 
     AX_PROGVAR([cmp])
 
