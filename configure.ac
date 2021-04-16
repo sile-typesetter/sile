@@ -162,15 +162,6 @@ AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
 AC_SUBST([APPKIT])
 
 AM_CONDITIONAL([ICU], [test "x$with_icu" = "xyes"])
-
-adl_RECURSIVE_EVAL(["${datadir}/${PACKAGE}"], [SILE_PATH])
-AC_DEFINE_UNQUOTED([SILE_PATH],["${SILE_PATH}"],[Path for SILE packages and classes])
-AC_SUBST([SILE_PATH])
-
-adl_RECURSIVE_EVAL(["${libdir}/${PACKAGE}"], [SILE_LIB_PATH])
-AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"],[Path for SILE libraries])
-AC_SUBST([SILE_LIB_PATH])
-
 AC_ARG_ENABLE([linklua],
     AS_HELP_STRING([--disable-linklua], [Don’t link lua library with dylibs]))
 AM_CONDITIONAL([LINKLUA], [test "x$enable_linklua" != "xno"])
@@ -197,6 +188,15 @@ AC_SUBST([shared_ext])
 
 TRANSFORMED_PACKAGE_NAME="$(printf "$PACKAGE_NAME" | $SED -e "${program_transform_name//\$\$/\$}")"
 AC_SUBST([TRANSFORMED_PACKAGE_NAME])
+
+adl_RECURSIVE_EVAL(["${datadir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_PATH])
+AC_DEFINE_UNQUOTED([SILE_PATH],["${SILE_PATH}"],[Path for SILE packages and classes])
+AC_SUBST([SILE_PATH])
+
+adl_RECURSIVE_EVAL(["${libdir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_LIB_PATH])
+AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"],[Path for SILE libraries])
+AC_SUBST([SILE_LIB_PATH])
+
 
 AC_CONFIG_FILES([Makefile src/Makefile sile.1])
 AC_CONFIG_FILES([sile], [chmod +x sile])

@@ -11,6 +11,11 @@ else
 SUBDIRS = libtexpdf src
 endif
 
+licensedir = $(datarootdir)/licenses/$(TRANSFORMED_PACKAGE_NAME)
+docdir = $(datarootdir)/doc/$(TRANSFORMED_PACKAGE_NAME)
+datadir = $(datarootdir)/$(TRANSFORMED_PACKAGE_NAME)
+pkgdatadir = $(datadir)
+
 # Rules for installing LuaRocks locally as pkgdata_DATA
 include Makefile-luarocks
 
@@ -36,8 +41,6 @@ endif
 if EXAMPLES
 _EXAMPLES = $(EXAMPLES)
 endif
-
-licensedir = $(datarootdir)/licenses/sile
 
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
 nobase_nodist_pkgdata_DATA = $(LUAMODULES)
