@@ -51,7 +51,7 @@ dist_license_DATA = LICENSE
 nobase_dist_pdf_DATA = $(_EXAMPLES)
 bin_SCRIPTS = sile
 EXTRA_DIST = spec tests examples documentation sile-dev-1.rockspec fontconfig.conf
-EXTRA_DIST += .version Makefile-distfiles
+EXTRA_DIST += Makefile-distfiles
 EXTRA_DIST += build-aux/action-updater.js build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
 EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconfig.conf build-aux/docker-glibc-workaround.sh hooks/build
 EXTRA_DIST += $(MANUAL) $(EXAMPLES)
@@ -62,17 +62,17 @@ Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
 BUILT_SOURCES = .version Makefile-distfiles
 
 .version: $(shell $(AWK) '{print ".git/" $$2}' .git/HEAD 2>/dev/null ||:)
-	[ -e "$@" ] && mv "$@" "$@-prev" || touch "$@-prev"
-	$(if $<,./build-aux/git-version-gen .tarball-version,printf "$(VERSION)") > "$@"
+	[ -e "$@" ] && mv "$@" "$@-prev" || $(if $<,touch,cp "$(srcdir)/.tarball-version") "$@-prev"
+	$(if $<,./build-aux/git-version-gen "$(srcdir)/.tarball-version",printf "$(VERSION)") > "$@"
 	$(CMP) -s "$@" "$@-prev" ||
 		( autoreconf configure.ac --force && build-aux/decore-automake.sh )
 
 dist-hook: $(MANUAL) $(EXAMPLES)
 	cd $(distdir)
-	sed -i -e '/^LUAMODULES =/s/=.*/=/' Makefile-distfiles
-	echo $(VERSION) > .tarball-version
-	build-aux/decore-automake.sh
-	sed -i -e '/^LUAMODULES/d;/^\tlua_modules/d' Makefile.in
+	printf "$(VERSION)" > .tarball-version
+	$(SED) -i -e '/^LUAMODULES =/s/=.*/=/' Makefile-distfiles
+	$(top_srcdir)/build-aux/decore-automake.sh
+	$(SED) -i -e '/^LUAMODULES/d;/^\tlua_modules/d' Makefile.in
 
 # Whether to force tests to run from scratch
 CLEAN ?=
@@ -102,8 +102,8 @@ sile-$(VERSION).pdf: $(MANUAL)
 	cp $< $@
 
 sile-%.md: CHANGELOG.md
-	sed -e '/\.\.\.v$*/,/\.\.\.v/!d' $< |
-		sed -e '1,3d;N;$$!P;$$!D;$$d' > $@
+	$(SED) -e '/\.\.\.v$*/,/\.\.\.v/!d' $< |
+		$(SED) -e '1,3d;N;$$!P;$$!D;$$d' > $@
 
 .PHONY: update_libtexpdf
 update_libtexpdf:
@@ -349,7 +349,7 @@ include $(wildcard $(DEPFILES))
 .sources:
 	[ -h .sources ] || mkdir -p $@
 
-CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles $(_BUILT_SUBDIRS)
+CLEANFILES = $(BUILT_SOURCES) .version-prev $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles $(_BUILT_SUBDIRS)
 
 export DOCKER_REGISTRY ?= docker.io
 export DOCKER_REPO ?= siletypesetter/$(TRANSFORMED_PACKAGE_NAME)
