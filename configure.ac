@@ -1,5 +1,5 @@
 AC_PREREQ([2.69])
-AC_INIT([SILE],[m4_esyscmd(build-aux/git-version-gen .tarball-version)],[simon@simon-cozens.org])
+AC_INIT([sile],[m4_esyscmd(build-aux/git-version-gen .tarball-version)],[simon@simon-cozens.org])
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([foreign tar-pax dist-xz dist-zip no-dist-gzip color-tests subdir-objects])
 AM_SILENT_RULES([yes])
@@ -195,8 +195,13 @@ AC_SUBST([HARFBUZZ_CFLAGS])
 AC_SUBST([HARFBUZZ_LIBS])
 AC_SUBST([shared_ext])
 
+TRANSFORMED_PACKAGE_NAME="$(printf "$PACKAGE_NAME" | $SED -e "${program_transform_name//\$\$/\$}")"
+AC_SUBST([TRANSFORMED_PACKAGE_NAME])
+
 AC_CONFIG_FILES([Makefile src/Makefile sile.1])
 AC_CONFIG_FILES([sile], [chmod +x sile])
+
+AC_ARG_PROGRAM
 
 AC_OUTPUT
 

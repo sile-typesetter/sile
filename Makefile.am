@@ -5,8 +5,6 @@ ACLOCAL_AMFLAGS = -I build-aux
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
 
-_sile = $(program_prefix)$(shell sed -e "$(program_transform_name)" <<< sile)$(program_suffix)
-
 if SYSTEM_LIBTEXPDF
 SUBDIRS = src
 else
@@ -351,7 +349,7 @@ include $(wildcard $(DEPFILES))
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles $(_BUILT_SUBDIRS)
 
 export DOCKER_REGISTRY ?= docker.io
-export DOCKER_REPO ?= siletypesetter/$(_sile)
+export DOCKER_REPO ?= siletypesetter/$(TRANSFORMED_PACKAGE_NAME)
 export DOCKER_TAG ?= HEAD
 
 .PHONY: docker
@@ -382,5 +380,3 @@ gource.webm:
 		done
 	gource -a 0.2 -s 0.2 -i 0 --logo /tmp/sile-logo.jpg -b 000000 --max-file-lag 5 --hide filenames --date-format '%Y-%m-%d' --user-image-dir /tmp/gravatars --user-filter simoncozens --key -1920x1080 -o - |
 		ffmpeg -y -r 60 -f image2pipe -vcodec ppm -i - -vcodec libvpx -b 10000K $@
-
-# vim: ft=make
