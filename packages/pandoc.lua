@@ -28,14 +28,19 @@ local handlePandocArgs = function (options)
   end
   if options.classes then
     for _, class in pairs(options.classes:split(",")) do
-      SU.debug("pandoc", "Add inner class wrapper: "..class)
-      if SILE.Commands["class:"..class] then
+      if class == "unnumbered" then
+        SU.debug("pandoc", "Convert unnumbered class to legacy heading function option")
+        options.numbering = false
+      elseif SILE.Commands["class:"..class] then
+        SU.debug("pandoc", "Add inner class wrapper: "..class)
         local innerWrapper = wrapper
         wrapper = function (content)
           innerWrapper(function ()
             SILE.call("class:"..class, options, content)
           end)
         end
+      else
+        SU.warning("Unhandled class ‘"..class.."’, not mapped to legacy option and no matching wrapper function")
       end
     end
     options.classes = nil
