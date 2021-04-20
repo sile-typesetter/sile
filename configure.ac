@@ -1,15 +1,23 @@
 AC_PREREQ([2.69])
 AC_INIT([sile],[m4_esyscmd(build-aux/git-version-gen .tarball-version)],[simon@simon-cozens.org])
 AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_MACRO_DIR([build-aux])
 AM_INIT_AUTOMAKE([foreign tar-pax dist-xz dist-zip no-dist-gzip color-tests subdir-objects])
 AM_SILENT_RULES([yes])
-AC_CONFIG_MACRO_DIR([build-aux])
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
+
+AC_DEFUN([AX_PROGVAR],
+		 [
+		  test -n "$m4_toupper($1)" || { AC_PATH_PROG(m4_toupper($1), m4_default($2,$1)) }
+		  test -n "$m4_toupper($1)" || AC_MSG_ERROR([m4_default($2,$1) is required])
+		 ])
 
 AC_PROG_AWK
 AC_PROG_GREP
 AC_PROG_SED
+
+AX_PROGVAR([cmp])
 
 if [[ -d .git ]]; then
     MAN_DATE=$(git log -1 --format="%cd" --date=format:"%d %B %Y" -- sile.1.in)
@@ -51,15 +59,11 @@ AS_IF([test "x$with_system_libtexpdf" != "xyes"],
     )]
 )
 
-AC_DEFUN([AX_PROGVAR], [AC_PATH_PROG(m4_toupper($1), m4_default($2,$1))test -n "$m4_toupper($1)" || AC_MSG_ERROR([m4_default($2,$1) is required])])
-
 AS_IF([test "x$enable_dependency_checks" != "xno"], [
 
     # Checks for programs.
     AC_PROG_CC
     AC_PROG_OBJC
-
-    AX_PROGVAR([cmp])
 
     AC_PATH_PROG([PDFINFO], [pdfinfo])
 
