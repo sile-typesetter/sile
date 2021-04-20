@@ -1,17 +1,30 @@
 AC_PREREQ([2.69])
-AC_INIT([SILE],[m4_esyscmd(build-aux/git-version-gen .tarball-version)],[simon@simon-cozens.org])
+AC_INIT([sile],[m4_esyscmd(build-aux/git-version-gen .tarball-version)],[simon@simon-cozens.org])
 AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_MACRO_DIR([build-aux])
 AM_INIT_AUTOMAKE([foreign tar-pax dist-xz dist-zip no-dist-gzip color-tests subdir-objects])
 AM_SILENT_RULES([yes])
-AC_CONFIG_MACRO_DIR([build-aux])
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
+
+AC_DEFUN([AX_PROGVAR],
+		 [
+		  test -n "$m4_toupper($1)" || { AC_PATH_PROG(m4_toupper($1), m4_default($2,$1)) }
+		  test -n "$m4_toupper($1)" || AC_MSG_ERROR([m4_default($2,$1) is required])
+		 ])
+
+AC_PROG_AWK
+AC_PROG_GREP
+AC_PROG_SED
+
+AX_PROGVAR([cmp])
 
 if [[ -d .git ]]; then
     MAN_DATE=$(git log -1 --format="%cd" --date=format:"%d %B %Y" -- sile.1.in)
 else
     MAN_DATE=$(date "+%d %B %Y")
 fi
+AC_SUBST([MAN_DATE])
 
 AC_ARG_ENABLE([dependency-checks],
               AS_HELP_STRING([--disable-dependency-checks], [Disable dependency checks]))
@@ -25,6 +38,7 @@ AM_CONDITIONAL([SYSTEM_LIBTEXPDF], [test "x$with_system_libtexpdf" = "xyes"])
 AC_ARG_WITH([system-luarocks],
             AS_HELP_STRING([--with-system-luarocks], [Don’t bundle LuaRocks, use system provided versions]))
 AM_CONDITIONAL([SYSTEM_LUAROCKS], [test "x$with_system_luarocks" = "xyes"])
+AC_SUBST([SYSTEM_LUAROCKS])
 
 AC_ARG_WITH([luajit],
             AS_HELP_STRING([--with-luajit], [Run under LuaJIT instead of Lua]))
@@ -50,6 +64,8 @@ AS_IF([test "x$enable_dependency_checks" != "xno"], [
     # Checks for programs.
     AC_PROG_CC
     AC_PROG_OBJC
+
+    AC_PATH_PROG([PDFINFO], [pdfinfo])
 
     AC_MSG_CHECKING([for OS X])
     have_appkit=no
@@ -91,8 +107,6 @@ AS_IF([test "x$enable_dependency_checks" != "xno"], [
     PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
     AC_DEFINE([ICU], [1], [Build using icu4c])
     with_icu=yes
-    AC_SUBST([ICU_CFLAGS])
-    AC_SUBST([ICU_LIBS])
     ],[
     AC_CHECK_TOOL(ICU_CONFIG, icu-config, no)
     AC_MSG_CHECKING([for ICU by using icu-config fallback])
@@ -142,21 +156,16 @@ AS_IF([test "x$enable_dependency_checks" != "xno"], [
         AX_LUA_MODULE([std], [stdlib])
         AX_LUA_MODULE([vstruct], [vstruct])
     ], [
-        AC_CHECK_PROG(HASLUAROCKS, luarocks, yes)
-        test "x$HASLUAROCKS" = "xyes" || AC_MSG_ERROR([luarocks is required])
+        AX_PROGVAR([luarocks])
     ])
 ])
+AC_SUBST([ICU_CFLAGS])
+AC_SUBST([ICU_LIBS])
 
 AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
+AC_SUBST([APPKIT])
 
 AM_CONDITIONAL([ICU], [test "x$with_icu" = "xyes"])
-
-adl_RECURSIVE_EVAL(["${datadir}/${PACKAGE}"], [SILE_PATH])
-AC_DEFINE_UNQUOTED([SILE_PATH],["${SILE_PATH}"],[Path for SILE packages and classes])
-
-adl_RECURSIVE_EVAL(["${libdir}/${PACKAGE}"], [SILE_LIB_PATH])
-AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"],[Path for SILE libraries])
-
 AC_ARG_ENABLE([linklua],
     AS_HELP_STRING([--disable-linklua], [Don’t link lua library with dylibs]))
 AM_CONDITIONAL([LINKLUA], [test "x$enable_linklua" != "xno"])
@@ -174,19 +183,29 @@ case $host_os in
       SHARED_LIB_EXT="so"
      ;;
 esac
-
 AC_SUBST([SHARED_LIB_EXT])
+AC_SUBST([LUAROCKSARGS])
+
 AC_SUBST([HARFBUZZ_CFLAGS])
 AC_SUBST([HARFBUZZ_LIBS])
-AC_SUBST([LUAROCKSARGS])
-AC_SUBST([SILE_PATH])
-AC_SUBST([SILE_LIB_PATH])
 AC_SUBST([shared_ext])
-AC_SUBST([SYSTEM_LUAROCKS])
-AC_SUBST([APPKIT])
-AC_SUBST([MAN_DATE])
+
+TRANSFORMED_PACKAGE_NAME="$(printf "$PACKAGE_NAME" | $SED -e "${program_transform_name//\$\$/\$}")"
+AC_SUBST([TRANSFORMED_PACKAGE_NAME])
+
+adl_RECURSIVE_EVAL(["${datadir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_PATH])
+AC_DEFINE_UNQUOTED([SILE_PATH],["${SILE_PATH}"],[Path for SILE packages and classes])
+AC_SUBST([SILE_PATH])
+
+adl_RECURSIVE_EVAL(["${libdir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_LIB_PATH])
+AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"],[Path for SILE libraries])
+AC_SUBST([SILE_LIB_PATH])
+
+
 AC_CONFIG_FILES([Makefile src/Makefile sile.1])
 AC_CONFIG_FILES([sile], [chmod +x sile])
+
+AC_ARG_PROGRAM
 
 AC_OUTPUT
 

@@ -5,13 +5,16 @@ ACLOCAL_AMFLAGS = -I build-aux
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
 
-_sile = $(program_prefix)$(shell sed -e "$(program_transform_name)" <<< sile)$(program_suffix)
-
 if SYSTEM_LIBTEXPDF
 SUBDIRS = src
 else
 SUBDIRS = libtexpdf src
 endif
+
+licensedir = $(datarootdir)/licenses/$(TRANSFORMED_PACKAGE_NAME)
+docdir = $(datarootdir)/doc/$(TRANSFORMED_PACKAGE_NAME)
+datadir = $(datarootdir)/$(TRANSFORMED_PACKAGE_NAME)
+pkgdatadir = $(datadir)
 
 # Rules for installing LuaRocks locally as pkgdata_DATA
 include Makefile-luarocks
@@ -39,8 +42,6 @@ if EXAMPLES
 _EXAMPLES = $(EXAMPLES)
 endif
 
-licensedir = $(datarootdir)/licenses/sile
-
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
 nobase_nodist_pkgdata_DATA = $(LUAMODULES)
 dist_man_MANS = sile.1
@@ -50,7 +51,7 @@ dist_license_DATA = LICENSE
 nobase_dist_pdf_DATA = $(_EXAMPLES)
 bin_SCRIPTS = sile
 EXTRA_DIST = spec tests examples documentation sile-dev-1.rockspec fontconfig.conf
-EXTRA_DIST += .version Makefile-distfiles
+EXTRA_DIST += Makefile-distfiles
 EXTRA_DIST += build-aux/action-updater.js build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
 EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconfig.conf build-aux/docker-glibc-workaround.sh hooks/build
 EXTRA_DIST += $(MANUAL) $(EXAMPLES)
@@ -60,18 +61,18 @@ Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
 
 BUILT_SOURCES = .version Makefile-distfiles
 
-.version: $(shell awk '{print ".git/" $$2}' .git/HEAD 2>/dev/null ||:)
-	[ -e "$@" ] && mv "$@" "$@-prev" || touch "$@-prev"
-	$(if $<,./build-aux/git-version-gen .tarball-version,printf "$(VERSION)") > "$@"
-	cmp -s "$@" "$@-prev" ||
+.version: $(shell $(AWK) '{print ".git/" $$2}' .git/HEAD 2>/dev/null ||:)
+	[ -e "$@" ] && mv "$@" "$@-prev" || $(if $<,touch,cp "$(srcdir)/.tarball-version") "$@-prev"
+	$(if $<,./build-aux/git-version-gen "$(srcdir)/.tarball-version",printf "$(VERSION)") > "$@"
+	$(CMP) -s "$@" "$@-prev" ||
 		( autoreconf configure.ac --force && build-aux/decore-automake.sh )
 
 dist-hook: $(MANUAL) $(EXAMPLES)
 	cd $(distdir)
-	sed -i -e '/^LUAMODULES =/s/=.*/=/' Makefile-distfiles
-	echo $(VERSION) > .tarball-version
-	build-aux/decore-automake.sh
-	sed -i -e '/^LUAMODULES/d;/^\tlua_modules/d' Makefile.in
+	printf "$(VERSION)" > .tarball-version
+	$(SED) -i -e '/^LUAMODULES =/s/=.*/=/' Makefile-distfiles
+	$(top_srcdir)/build-aux/decore-automake.sh
+	$(SED) -i -e '/^LUAMODULES/d;/^\tlua_modules/d' Makefile.in
 
 # Whether to force tests to run from scratch
 CLEAN ?=
@@ -101,8 +102,8 @@ sile-$(VERSION).pdf: $(MANUAL)
 	cp $< $@
 
 sile-%.md: CHANGELOG.md
-	sed -e '/\.\.\.v$*/,/\.\.\.v/!d' $< |
-		sed -e '1,3d;N;$$!P;$$!D;$$d' > $@
+	$(SED) -e '/\.\.\.v$*/,/\.\.\.v/!d' $< |
+		$(SED) -e '1,3d;N;$$!P;$$!D;$$d' > $@
 
 .PHONY: update_libtexpdf
 update_libtexpdf:
@@ -130,7 +131,7 @@ selfcheck: | $(_BUILT_SUBDIRS)
 	output=$$(mktemp --suffix=.pdf)
 	trap 'rm -f $$output' EXIT HUP TERM
 	echo "<sile>foo</sile>" | ./sile -o $$output -
-	pdfinfo $$output | grep "SILE v@VERSION@"
+	$(PDFINFO) $$output | $(GREP) "SILE v@VERSION@"
 
 .PHONY: regressions
 regressions: $(TESTSRCS) $(ACTUALS)
@@ -171,7 +172,7 @@ examples: $(EXAMPLES)
 # This is a monkey patch to figure out how many passes we have to to to
 # garantee the TOC is up to date, simplify when #230 is fixed.
 hastoc = [ -f $(subst .pdf,.toc,$@) ] && echo true || echo false
-pages = pdfinfo $@ | awk '$$1 == "Pages:" {print $$2}' || echo 0
+pages = $(PDFINFO) $@ | $(AWK) '$$1 == "Pages:" {print $$2}' || echo 0
 silepass = $(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@ && pg0=$${pg} pg=$$($(pages))
 define runsile =
 	pg0=$$($(pages)) hadtoc=$$($(hastoc))
@@ -241,7 +242,7 @@ clean-recursive: clean-worktrees
 clean-worktrees:
 	if test -e .git; then
 		git worktree list --porcelain |
-			awk 'BEGIN { FS = "/" }; /^worktree .*-[0-9a-f]{7}/ { print $$(NF) }' |
+			$(AWK) 'BEGIN { FS = "/" }; /^worktree .*-[0-9a-f]{7}/ { print $$(NF) }' |
 			while read worktree; do
 				git worktree remove --force $${worktree}
 			done
@@ -348,10 +349,10 @@ include $(wildcard $(DEPFILES))
 .sources:
 	[ -h .sources ] || mkdir -p $@
 
-CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles $(_BUILT_SUBDIRS)
+CLEANFILES = $(BUILT_SOURCES) .version-prev $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles $(_BUILT_SUBDIRS)
 
 export DOCKER_REGISTRY ?= docker.io
-export DOCKER_REPO ?= siletypesetter/$(_sile)
+export DOCKER_REPO ?= siletypesetter/$(TRANSFORMED_PACKAGE_NAME)
 export DOCKER_TAG ?= HEAD
 
 .PHONY: docker
@@ -382,5 +383,3 @@ gource.webm:
 		done
 	gource -a 0.2 -s 0.2 -i 0 --logo /tmp/sile-logo.jpg -b 000000 --max-file-lag 5 --hide filenames --date-format '%Y-%m-%d' --user-image-dir /tmp/gravatars --user-filter simoncozens --key -1920x1080 -o - |
 		ffmpeg -y -r 60 -f image2pipe -vcodec ppm -i - -vcodec libvpx -b 10000K $@
-
-# vim: ft=make

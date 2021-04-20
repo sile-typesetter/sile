@@ -1,8 +1,8 @@
-.TH sile 1 "@MAN_DATE@" "version v@VERSION@"
+.TH @TRANSFORMED_PACKAGE_NAME@ 1 "@MAN_DATE@" "version v@VERSION@"
 .SH NAME
-sile \- Simon's Improved Layout Engine
+@TRANSFORMED_PACKAGE_NAME@ \- Simon's Improved Layout Engine
 .SH SYNOPSIS
-.B sile [
+.B @TRANSFORMED_PACKAGE_NAME@ [
 .I options
 .B ] [
 .I filename.sil
@@ -13,7 +13,7 @@ sile \- Simon's Improved Layout Engine
 The SILE typesetter reads a single input file in either SIL or XML format and generates an output in PDF format.
 The output will be written to the same name as the input file with the extension changed to .pdf unless the \fB\-\-output\fR flag is used.
 .SH OPTIONS
-.B sile
+.B @TRANSFORMED_PACKAGE_NAME@
 accepts the following options:
 .TP
 .BR \-h ", " \-\-help
