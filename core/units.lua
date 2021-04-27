@@ -57,6 +57,10 @@ units["m"] = {
   definition = "100cm"
 }
 
+units["hm"] = {
+  definition = "0.01mm"
+}
+
 units["in"] = {
   definition = "72pt"
 }
