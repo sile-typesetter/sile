@@ -17,9 +17,11 @@ SILE.shapers.harfbuzzWithColor = pl.class({
               local item = items[i]
               local layer = layers[j]
               local width = 0
+              local height = 0
               local text = ""
               if j == #layers then
                 width = item.width
+                height = item.height
                 text = item.text
               end
               -- XXX: handle multiple palette, add a font option?
@@ -28,7 +30,7 @@ SILE.shapers.harfbuzzWithColor = pl.class({
                 gid = layer.gid,
                 glyphAdvance = item.glyphAdvance,
                 width = width,
-                height= item.height,
+                height = height,
                 depth = item.depth,
                 index = item.index,
                 text = text,
