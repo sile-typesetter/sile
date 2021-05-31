@@ -1,21 +1,8 @@
 Set paper size 	595.275597	841.8897729
 Begin page
-Mx 	542.4079
-My 	107.6592
-Set font 	Noto Serif CJK JP;10;400;;normal;;TTB
-T	64423 w=10.0000	(い)
-My 	117.6592
-T	64423 w=10.0000	(い)
-My 	127.6592
-T	64458 w=10.0000	(で)
-My 	137.6592
-T	64444 w=10.0000	(す)
-My 	147.6592
-T	64491 w=10.0000	(よ)
-My 	157.6592
-T	59878 w=10.0000	(。)
 Push color	1.0000	0.8000	0.3020
-My 	167.6592
+Mx 	542.4079
+My 	97.6592
 Set font 	Twemoji Mozilla;10;400;;normal;;TTB
 T	7876 a=10.0000	()
 Pop color
@@ -25,7 +12,7 @@ T	7893 a=10.0000 7894 a=10.0000	(😉)
 Pop color
 Push color	1.0000	0.7961	0.2980
 Mx 	542.4079
-My 	180.8077
+My 	110.8167
 T	9105 a=10.0000	()
 Pop color
 Push color	0.3961	0.2784	0.1059
@@ -40,9 +27,5 @@ Pop color
 Push color	0.3922	0.6667	0.8667
 T	9109 w=10.0000	(🤣)
 Pop color
-Mx 	298.2129
-My 	781.9286
-Set font 	Noto Serif CJK JP;10;400;;normal;;LTR
-T	18 w=5.3900	(1)
 End page
 Finish
