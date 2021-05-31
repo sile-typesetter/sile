@@ -31,6 +31,7 @@ TESTFONTFILES += NotoNaskhArabic-Regular.ttf
 TESTFONTFILES += NotoSansKannada-Regular.ttf
 TESTFONTFILES += NotoSansMalayalam-Regular.ttf
 TESTFONTFILES += SBL_Hbrw.ttf
+TESTFONTFILES += TwemojiMozilla.ttf
 
 # Tell make how to download individual font files directly (when available)
 
@@ -63,6 +64,9 @@ TESTFONTFILES += SBL_Hbrw.ttf
 
 .fonts/Symbola.otf: | .fonts
 	curl -s -L https://github.com/ChiefMikeK/ttf-symbola/raw/master/Symbola-13.otf -o $@
+
+.fonts/TwemojiMozilla.ttf: | .fonts
+	curl -s -L https://github.com/mozilla/twemoji-colr/releases/download/v0.5.1/$(notdir $@) -o $@
 
 # Tell  make how to download font file bundles (when not downloadable individually)
 
