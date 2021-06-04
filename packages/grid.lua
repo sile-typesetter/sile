@@ -2,7 +2,7 @@
 local gridSpacing = SILE.measurement()
 
 local function makeUp (totals)
-  local toadd = gridSpacing - SILE.measurement(totals.gridCursor) % gridSpacing
+  local toadd = (gridSpacing - SILE.measurement(totals.gridCursor)) % gridSpacing
   totals.gridCursor = totals.gridCursor + toadd
   SU.debug("typesetter", "Makeup height = " .. toadd)
   return SILE.nodefactory.vglue(toadd)
