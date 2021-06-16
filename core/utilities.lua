@@ -573,9 +573,9 @@ utilities.breadcrumbs = function ()
 
   function breadcrumbs:contains (needle)
     for i, command in ipairs(self) do
-      if command == needle then return #self - i end
+      if command == needle then return true, #self - i end
     end
-    return -1
+    return false, -1
   end
 
   return breadcrumbs
