@@ -4,7 +4,7 @@ trigger:
 jobs:
 - job: Windows
   pool:
-    vmImage: 'vs2017-win2016'
+    vmImage: 'windows-2019'
   steps:
     - checkout: self
       submodules: true
@@ -14,16 +14,42 @@ jobs:
 
       displayName: Set git user name and email
 
-    - script: cmake -G "Visual Studio 15 2017" -A x64 "-DCMAKE_INSTALL_PREFIX=$(Build.ArtifactStagingDirectory)" -S $(Build.SourcesDirectory) -B $(Build.BinariesDirectory)
+    - script: cmake -G "Visual Studio 16 2019" -A x64 "-DCMAKE_INSTALL_PREFIX=$(Build.ArtifactStagingDirectory)\sile" -S "$(Build.SourcesDirectory)" -B "$(Build.BinariesDirectory)"
       displayName: Configure solution with CMake script
 
-    - script: cmake --build $(Build.BinariesDirectory) --config Release
+    - script: cmake --build "$(Build.BinariesDirectory)" --config Release
       displayName: Build solution
 
-    - script: cmake --build $(Build.BinariesDirectory) --config Release --target Install
+    - task: CmdLine@2
+      inputs:
+        script: ctest -R .* -C Release --output-on-failure --progress -T Test
+        workingDirectory: $(Build.BinariesDirectory)\tests
+      displayName: Run tests
+      continueOnError: true
+
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: cTest
+        testResultsFiles: $(Build.BinariesDirectory)\tests\Testing\*\Test.xml
+        buildPlatform: x64
+        buildConfiguration: Release
+        failTaskOnFailedTests: false
+      displayName: Publish test results
+
+    - script: cmake --build "$(Build.BinariesDirectory)" --config Release --target Install
       displayName: Install solution
+
+    - script: |
+        "$(Build.SourcesDirectory)\.inno\build_installer.bat" "$(Build.SourcesDirectory)" "$(Build.ArtifactStagingDirectory)\sile" "$(Build.ArtifactStagingDirectory)\installer"
+
+      displayName: Build installer
 
     - task: PublishBuildArtifacts@1
       inputs:
-        pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        pathtoPublish: $(Build.ArtifactStagingDirectory)\sile
         artifactName: sile
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathtoPublish: $(Build.ArtifactStagingDirectory)\installer
+        artifactName: installer
