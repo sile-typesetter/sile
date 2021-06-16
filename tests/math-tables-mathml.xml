@@ -1,0 +1,77 @@
+<sile>
+
+<script src="packages/math" />
+
+Number matrix, text, MathML:
+<mathml>
+  <mtable>
+    <mtr> <mtd><mn>1</mn></mtd> <mtd><mn>2</mn></mtd> <mtd><mn>7</mn></mtd> </mtr>
+    <mtr> <mtd><mn>0</mn></mtd> <mtd><mn>5</mn></mtd> <mtd><mn>3</mn></mtd> </mtr>
+    <mtr> <mtd><mn>8</mn></mtd> <mtd><mn>2</mn></mtd> <mtd><mn>1</mn></mtd> </mtr>
+  </mtable>
+</mathml>
+
+Number matrix, display, MathML:
+<mathml mode="display">
+  <mtable>
+    <mtr> <mtd><mn>1</mn></mtd> <mtd><mn>2</mn></mtd> <mtd><mn>7</mn></mtd> </mtr>
+    <mtr> <mtd><mn>0</mn></mtd> <mtd><mn>5</mn></mtd> <mtd><mn>3</mn></mtd> </mtr>
+    <mtr> <mtd><mn>8</mn></mtd> <mtd><mn>2</mn></mtd> <mtd><mn>1</mn></mtd> </mtr>
+  </mtable>
+</mathml>
+
+Formulas, text, MathML:
+<mathml>
+  <mtable columnalign="right center left">
+    <mtr>
+      <mtd><msub><mi>u</mi><mn>0</mn></msub></mtd>
+      <mtd><mo>=</mo></mtd>
+      <mtd><mn>1</mn></mtd>
+    </mtr>
+    <mtr>
+      <mtd><msub><mi>u</mi><mn>1</mn></msub></mtd>
+      <mtd><mo>=</mo></mtd>
+      <mtd><mn>1</mn></mtd>
+    </mtr>
+    <mtr>
+      <mtd><msub><mi>u</mi><mi>n</mi></msub></mtd>
+      <mtd><mo>=</mo></mtd>
+      <mtd>
+        <msub><mi>u</mi><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></msub>
+        <mo>+</mo>
+        <msub><mi>u</mi><mrow><mi>n</mi><mo>−</mo><mn>2</mn></mrow></msub>
+        <mo>,</mo>
+        <mo>∀</mo> <mi>n</mi><mo>⩾</mo><mn>2</mn>
+      </mtd>
+    </mtr>
+  </mtable>
+</mathml>
+
+Formulas, display, MathML:
+<mathml mode="display">
+  <mtable columnalign="right center left">
+    <mtr>
+      <mtd><msub><mi>u</mi><mn>0</mn></msub></mtd>
+      <mtd><mo>=</mo></mtd>
+      <mtd><mn>1</mn></mtd>
+    </mtr>
+    <mtr>
+      <mtd><msub><mi>u</mi><mn>1</mn></msub></mtd>
+      <mtd><mo>=</mo></mtd>
+      <mtd><mn>1</mn></mtd>
+    </mtr>
+    <mtr>
+      <mtd><msub><mi>u</mi><mi>n</mi></msub></mtd>
+      <mtd><mo>=</mo></mtd>
+      <mtd>
+        <msub><mi>u</mi><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></msub>
+        <mo>+</mo>
+        <msub><mi>u</mi><mrow><mi>n</mi><mo>−</mo><mn>2</mn></mrow></msub>
+        <mo>,</mo>
+        <mo>∀</mo> <mi>n</mi><mo>⩾</mo><mn>2</mn>
+      </mtd>
+    </mtr>
+  </mtable>
+</mathml>
+
+</sile>

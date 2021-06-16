@@ -181,6 +181,9 @@ basic functionality to other packages and classes. Classes such as the
 \subsection{indexer}
 \package-documentation[src=packages/indexer]
 
+\subsection{math}
+\package-documentation[src=packages/math]
+
 \subsection{pdfstructure}
 \package-documentation[src=packages/pdfstructure]
 
