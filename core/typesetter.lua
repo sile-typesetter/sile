@@ -696,7 +696,7 @@ SILE.defaultTypesetter = std.object {
     local _left = breakwidth:tonumber() - naturalTotals:tonumber()
     local ratio = _left / naturalTotals[_left < 0 and "shrink" or "stretch"]:tonumber()
     -- TODO: See bug 620
-    ratio = math.max(ratio, -1)
+    ratio = math.min(math.max(ratio, -1), 1)
     return ratio
   end,
 
