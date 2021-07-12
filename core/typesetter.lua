@@ -9,6 +9,10 @@ if std.string.monkey_patch then -- stdlib >= 40
   std.string.monkey_patch()
 end
 
+-- Track whether we've output a deprecation warning for baselineskip without
+-- outputting a flood of them on every use.
+local _warned = false
+
 SILE.settings.declare({
   parameter = "typesetter.widowpenalty",
   type = "integer",
@@ -581,6 +585,10 @@ SILE.defaultTypesetter = std.object {
   end,
 
   leadingFor = function (_, vbox, previous)
+    if not _warned then
+      SU.deprecated("settings.baselineskip", "linespacing", "0.10.13", "1.1.1",
+        "Default leading mechanism is going to be changed in the future.")
+    end
     -- Insert leading
     SU.debug("typesetter", "   Considering leading between two lines:")
     SU.debug("typesetter", "   1) "..previous)
