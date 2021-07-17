@@ -2,7 +2,7 @@
 
 ARG ARCHTAG
 
-FROM docker.io/library/archlinux:base-devel-$ARCHTAG AS builder
+FROM docker.io/library/archlinux:base-devel$ARCHTAG AS builder
 
 ARG RUNTIME_DEPS
 ARG BUILD_DEPS
@@ -35,7 +35,7 @@ RUN make install DESTDIR=/pkgdir
 # Work around BuiltKit / buildx bug, they can’t copy to symlinks only dirs
 RUN mv /pkgdir/usr/local/{share/,}/man
 
-FROM docker.io/library/archlinux:base-$ARCHTAG AS final
+FROM docker.io/library/archlinux:base$ARCHTAG AS final
 
 # Same args as above, repeated because they went out of scope with FROM
 ARG VCS_REF=0
