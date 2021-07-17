@@ -5,7 +5,7 @@ task:
   name: Cirrus CI (FreeBSD)
   env:
     MAKEFLAGS: -j2 -Otarget
-    CFLAGS: -I/usr/local/include
+    CFLAGS: -I/usr/local/include -fPIC
     LDFLAGS: -L/usr/local/lib
   assets_cache:
     folders:
