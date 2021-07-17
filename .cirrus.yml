@@ -5,27 +5,21 @@ task:
   name: Cirrus CI (FreeBSD)
   env:
     MAKEFLAGS: -j2 -Otarget
-    CFLAGS: -I/usr/local/include
+    CFLAGS: -I/usr/local/include -fPIC
     LDFLAGS: -L/usr/local/lib
-  fonts_cache:
-    folder: .fonts
-    reupload_on_changes: false
-    fingerprint_script: cat Makefile-fonts
-  sources_cache:
-    folder: .sources
-    reupload_on_changes: false
+  assets_cache:
+    folders:
+      - .fonts
+      - .sources
     fingerprint_script: cat Makefile-fonts
   luarocks_cache:
     folder: /usr/local/lib/luarocks
-    reupload_on_changes: false
-    fingerprint_script: cat sile-dev-1.rockspec
+    fingerprint_script: cat sile-dev-1.rockspec && echo 1
   luarocks_lua_cache:
     folder: /usr/local/share/lua
-    reupload_on_changes: false
     fingerprint_script: cat sile-dev-1.rockspec
   luarocks_lib_cache:
     folder: /usr/local/lib/lua
-    reupload_on_changes: false
     fingerprint_script: cat sile-dev-1.rockspec
   dependencies_script:
     - pkg install -y autoconf automake fontconfig git gmake harfbuzz libtool pkgconf png
