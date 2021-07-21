@@ -96,67 +96,67 @@ nodefactory.box = pl.class({
     end,
 
     isBox = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "hbox" or self.type == "zerohbox" or self.type == "alternative" or self.type == "nnode" or self.type == "vbox"
     end,
 
     isNnode = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type=="nnode"
     end,
 
     isGlue = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "glue"
     end,
 
     isVglue = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "vglue"
     end,
 
     isZero = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "zerohbox" or self.type == "zerovglue"
     end,
 
     isUnshaped = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "unshaped"
     end,
 
     isAlternative = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "alternative"
     end,
 
     isVbox = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "vbox"
     end,
 
     isInsertion = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "insertion"
     end,
 
     isMigrating = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.migrating
     end,
 
     isPenalty = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "penalty"
     end,
 
     isDiscretionary = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "discretionary"
     end,
 
     isKern = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "kern"
     end
 
