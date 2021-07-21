@@ -40,7 +40,7 @@ local handlePandocArgs = function (options)
           end)
         end
       else
-        SU.warning("Unhandled class ‘"..class.."’, not mapped to legacy option and no matching wrapper function")
+        SU.warn("Unhandled class ‘"..class.."’, not mapped to legacy option and no matching wrapper function")
       end
     end
     options.classes = nil
