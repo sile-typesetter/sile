@@ -297,7 +297,9 @@ SILE.baseClass = std.object {
   end,
 
   endPar = function (typesetter)
-    typesetter:pushVglue(SILE.settings.get("document.parskip"))
+    local parskip  = SILE.settings.get("document.parskip")
+    typesetter:pushVglue(parskip)
+    SILE.typesetter:leaveHmode()
   end,
 
   options = {
