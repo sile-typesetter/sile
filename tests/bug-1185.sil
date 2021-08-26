@@ -1,0 +1,10 @@
+\begin[papersize=a6]{document}
+\script[src=packages/frametricks]
+\font[size=15pt]
+Foobarbazfoobarbaz foobarbazfoobarbaz foobarbazfoobarbaz foobarbazfoobarbaz foobarbazfoobarbaz
+
+\noindent
+\float[rightboundary=1spc,bottomboundary=1spc]{\font[size=3em]{F}}oobarbazfoobarbaz foobarbazfoobarbaz foobarbazfoobarbaz foobarbazfoobarbaz foobarbazfoobarbaz foobarbazfoobarbaz foobarbazfoobarbaz foobarbazfoobarbaz
+
+Foobarbazfoobarbaz foobarbazfoobarbaz foobarbazfoobarbaz foobarbazfoobarbaz
+\end{document}
