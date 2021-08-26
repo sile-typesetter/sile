@@ -489,21 +489,21 @@ SILE.defaultTypesetter = std.object {
     self.state.previousVbox = nil
     local lastMargins = self:getMargins()
     for _, vbox in ipairs(oldqueue) do
-      SU.debug("pushback", { "process box", vbox })
+      SU.debug("pushback", "process box", vbox)
       if vbox.margins and vbox.margins ~= lastMargins then
         SU.debug("pushback", { "new margins", lastMargins, vbox.margins })
         if not self.state.grid then self:endline() end
         self:setMargins(vbox.margins)
       end
       if vbox.explicit then
-        SU.debug("pushback", { "explicit", vbox })
+        SU.debug("pushback", "explicit", vbox)
         self:endline()
         self:pushExplicitVglue(vbox)
       elseif vbox.is_insertion then
-        SU.debug("pushback", { "pushBack", "insertion", vbox })
+        SU.debug("pushback", "pushBack", "insertion", vbox)
         SILE.typesetter:pushMigratingMaterial({ material = { vbox } })
       elseif not vbox.is_vglue and not vbox.is_penalty then
-        SU.debug("pushback", { "not vglue or penalty", vbox.type })
+        SU.debug("pushback", "not vglue or penalty", vbox.type)
         local discardedFistInitLine = false
         if (#self.state.nodes == 0) then
           -- Setup queue but avoid calling newPar
@@ -513,15 +513,15 @@ SILE.defaultTypesetter = std.object {
           if node.is_glue and not node.discardable then
             self:pushHorizontal(node)
           elseif node.is_glue and node.value == "margin" then
-            SU.debug("pushback", { "discard", node.value, node })
+            SU.debug("pushback", "discard", node.value, node)
           elseif node.is_discretionary then
-            SU.debug("pushback", { "re-mark discretionary as unused", node })
+            SU.debug("pushback", "re-mark discretionary as unused", node)
             node.used = false
             if i == 1 then
-              SU.debug("pushback", { "keep first discretionary", node })
+              SU.debug("pushback", "keep first discretionary", node)
               self:pushHorizontal(node)
             else
-              SU.debug("pushback", { "discard all other discretionaries", node })
+              SU.debug("pushback", "discard all other discretionaries", node)
             end
           elseif node.is_zero then
             if discardedFistInitLine then self:pushHorizontal(node) end
@@ -534,7 +534,7 @@ SILE.defaultTypesetter = std.object {
           end
         end
       else
-        SU.debug("pushback", { "discard", vbox.type })
+        SU.debug("pushback", "discard", vbox.type)
       end
       lastMargins = vbox.margins
       -- self:debugState()
