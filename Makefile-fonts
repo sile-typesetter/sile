@@ -38,18 +38,6 @@ TESTFONTFILES += TwemojiMozilla.ttf
 .fonts/Amiri%: | .fonts
 	curl -s -L https://github.com/alif-type/amiri/raw/0.113/$(notdir $@) -o $@
 
-.fonts/Brill-Bold.ttf: | .fonts
-	curl -s -L https://brill.com/fileasset/downloads_static/static_typefacedownload_typefacebold_2.06_051.ttf -o $@
-
-.fonts/Brill-BoldItalic.ttf: | .fonts
-	curl -s -L https://brill.com/fileasset/downloads_static/static_typefacedownload_typefacebolditalic_2.06_051.ttf -o $@
-
-.fonts/Brill-Italic.ttf: | .fonts
-	curl -s -L https://brill.com/fileasset/downloads_static/static_typefacedownload_typefaceitalic_2.06_051.ttf -o $@
-
-.fonts/Brill-Roman.ttf: | .fonts
-	curl -s -L https://brill.com/fileasset/downloads_static/static_typefacedownload_typefaceroman_2.06_051.ttf -o $@
-
 .fonts/mngl%.ttf: | .fonts
 	curl -s -L http://mongolfont.com/jAlmas/cms/documents/mongolfont/font/$(notdir $@) -o $@
 
@@ -69,6 +57,9 @@ TESTFONTFILES += TwemojiMozilla.ttf
 	curl -s -L https://github.com/mozilla/twemoji-colr/releases/download/v0.5.1/$(notdir $@) -o $@
 
 # Tell  make how to download font file bundles (when not downloadable individually)
+
+.sources/The_Brill_Typeface_Package_v_4_0.zip: | .sources
+	curl -fsSLJO https://brill.com/fileasset/$(notdir $@)
 
 .sources/CrimsonPro.zip: | .sources
 	curl -s -L https://fonts.google.com/download?family=Crimson+Pro -o $@
@@ -109,6 +100,10 @@ TESTFONTFILES += TwemojiMozilla.ttf
 #	curl -s -L https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
 
 # Tell make how to extract individual files from bundles
+
+.fonts/Brill%: .sources/The_Brill_Typeface_Package_v_4_0.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) "$(basename $(<F))/$(notdir $@)"
+	touch $@
 
 .fonts/Cormorant%: .sources/Cormorant_Install_v3.601.zip | .fonts
 	bsdtar -x -f $< -C $(dir $@) --strip-components 2 "$(basename $(<F))/1. TrueType Font Files/$(notdir $@)"
