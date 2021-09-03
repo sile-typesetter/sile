@@ -7,11 +7,12 @@ AM_SILENT_RULES([yes])
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
 
-AC_DEFUN([AX_PROGVAR],
-		 [
-		  test -n "$m4_toupper($1)" || { AC_PATH_PROG(m4_toupper($1), m4_default($2,$1)) }
-		  test -n "$m4_toupper($1)" || AC_MSG_ERROR([m4_default($2,$1) is required])
-		 ])
+AM_CONDITIONAL([IS_SDIST], [test ! -e .gitignore])
+
+AC_DEFUN([AX_PROGVAR], [
+          test -n "$m4_toupper($1)" || { AC_PATH_PROG(m4_toupper($1), m4_default($2,$1)) }
+          test -n "$m4_toupper($1)" || AC_MSG_ERROR([m4_default($2,$1) is required])
+         ])
 
 AC_PROG_AWK
 AC_PROG_GREP
@@ -19,15 +20,19 @@ AC_PROG_SED
 
 AX_PROGVAR([cmp])
 
-if [[ -d .git ]]; then
-    MAN_DATE=$(git log -1 --format="%cd" --date=format:"%d %B %Y" -- sile.1.in)
-else
-    MAN_DATE=$(date "+%d %B %Y")
-fi
+AM_COND_IF([IS_SDIST],
+           [
+            AX_PROGVAR([date])
+            MAN_DATE=$($DATE "+%d %B %Y")
+           ], [
+            AX_PROGVAR([git])
+            MAN_DATE=$($GIT log -1 --format="%cd" --date=format:"%d %B %Y" -- sile.1.in)
+           ])
 AC_SUBST([MAN_DATE])
 
 AC_ARG_ENABLE([dependency-checks],
               AS_HELP_STRING([--disable-dependency-checks], [Disable dependency checks]))
+AM_CONDITIONAL([DEPENDENCY_CHECKS], [test "x$enable_dependency_checks" != "xno"])
 
 AC_CANONICAL_HOST
 
@@ -52,14 +57,13 @@ AC_ARG_WITH([examples],
             AS_HELP_STRING([--with-examples], [Rebuild examples and install to system’s PDF documentation directory]))
 AM_CONDITIONAL([EXAMPLES], [test "x$with_examples" = "xyes"])
 
-AS_IF([test "x$with_system_libtexpdf" != "xyes"],
-    [ AC_CONFIG_SUBDIRS([libtexpdf]) ],
-    [ AC_CHECK_LIB([texpdf],[texpdf_doc_set_verbose],[],
-        [AC_MSG_FAILURE([--with-system-libtexpdf was given, but test for libtexpdf failed])]
-    )]
-)
+AM_COND_IF([SYSTEM_LIBTEXPDF],
+           [AC_CHECK_LIB([texpdf],[texpdf_doc_set_verbose],
+                         [],
+                         [AC_MSG_FAILURE([--with-system-libtexpdf was given, but test for libtexpdf failed])]) ],
+           [AC_CONFIG_SUBDIRS([libtexpdf])])
 
-AS_IF([test "x$enable_dependency_checks" != "xno"], [
+AM_COND_IF([DEPENDENCY_CHECKS], [
 
     # Checks for programs.
     AC_PROG_CC
@@ -132,7 +136,7 @@ AS_IF([test "x$enable_dependency_checks" != "xno"], [
     AX_LUA_HEADERS
     AX_LUA_LIBS
 
-    AS_IF([test "x$with_system_luarocks" = "xyes"], [
+    AM_COND_IF([SYSTEM_LUAROCKS], [
         AS_IF([test "$LUA_SHORT_VERSION" -lt 52],
             AX_LUA_MODULE([bit32], [bit32])
         )

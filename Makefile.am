@@ -81,9 +81,9 @@ RELTYPE ?=
 
 .PHONY: tagrelease
 tagrelease:
-	test -z $$(git tag --points-at HEAD) || exit 0 # end if we are already on a release tag
-	git diff-index --quiet --cached HEAD || exit 1 # die if anything staged but not committed
-	git diff-files --quiet || exit 1 # die if any tracked files have unstagged changes
+	test -z $$($(GIT) tag --points-at HEAD) || exit 0 # end if we are already on a release tag
+	$(GIT) diff-index --quiet --cached HEAD || exit 1 # die if anything staged but not committed
+	$(GIT) diff-files --quiet || exit 1 # die if any tracked files have unstagged changes
 	npm run release -- $(and $(RELTYPE),--release-as $(RELTYPE))
 
 .PHONY: prerelease
@@ -107,13 +107,13 @@ sile-%.md: CHANGELOG.md
 
 .PHONY: update_libtexpdf
 update_libtexpdf:
-	git diff-index --quiet --cached HEAD || exit 1 # die if anything already staged
-	git submodule update --init --remote -- libtexpdf
-	git add -- libtexpdf
-	git diff-index --quiet --cached HEAD || git commit -m "chore(build): Pin latest libtexpdf library submodule"
+	$(GIT) diff-index --quiet --cached HEAD || exit 1 # die if anything already staged
+	$(GIT) submodule update --init --remote -- libtexpdf
+	$(GIT) add -- libtexpdf
+	$(GIT) diff-index --quiet --cached HEAD || $(GIT) commit -m "chore(build): Pin latest libtexpdf library submodule"
 
 gh-pages:
-	git worktree add -f $@ $@
+	$(GIT) worktree add -f $@ $@
 
 DEPDIR := .deps
 REGRESSIONSCRIPT := ./tests/regressions.pl
@@ -216,9 +216,9 @@ coverage: export SILE_COVERAGE=1
 coverage: regression_previews busted
 
 HEADSHA ?= HEAD
-_HEADSHA ?= $(shell test -e .git && git rev-parse --short=7 $(HEADSHA))
+_HEADSHA ?= $(shell test -e .git && $(GIT) rev-parse --short=7 $(HEADSHA))
 BASESHA ?= $(HEADSHA)^
-_BASESHA ?= $(shell test -e .git && git rev-parse --short=7 $(BASESHA))
+_BASESHA ?= $(shell test -e .git && $(GIT) rev-parse --short=7 $(BASESHA))
 
 clean-recursive: clean-tests
 
@@ -241,21 +241,21 @@ clean-recursive: clean-worktrees
 .PHONY: clean-worktrees
 clean-worktrees:
 	if test -e .git; then \
-		git worktree list --porcelain | \
+		$(GIT) worktree list --porcelain | \
 			$(AWK) 'BEGIN { FS = "/" }; /^worktree .*-[0-9a-f]{7}/ { print $$(NF) }' | \
 			while read worktree; do \
-				git worktree remove --force $${worktree} ; \
+				$(GIT) worktree remove --force $${worktree} ; \
 			done ; \
 	fi
 
 time_action ?= ./sile documentation/sile.sil -o /dev/null
-make_worktree_rules = $(eval $(foreach SHA,$(_HEADSHA) $(_BASESHA),$(call worktree_sha,$(1),$(shell git rev-parse --short=7 $(SHA)))))
+make_worktree_rules = $(eval $(foreach SHA,$(_HEADSHA) $(_BASESHA),$(call worktree_sha,$(1),$(shell $(GIT) rev-parse --short=7 $(SHA)))))
 
 define worktree_sha =
 
 .PRECIOUS: $(1)-$(2)
 $(1)-$(2):
-	[ -d $$@ ] || git worktree add --detach $$@ $(2)
+	[ -d $$@ ] || $(GIT) worktree add --detach $$@ $(2)
 	cd $$@
 	[ -d libtexpdf ] && rm -r libtexpdf ||:
 	[ -h libtexpdf ] || ln -s ../libtexpdf
@@ -376,7 +376,7 @@ docker-build-push: docker
 gource.webm:
 	mkdir -p /tmp/gravatars
 	convert examples/docbook/images/sile-logo.jpg -negate -resize 50% /tmp/sile-logo.jpg
-	git log --pretty=format:"%an—%ae" | \
+	$(GIT) log --pretty=format:"%an—%ae" | \
 		sort -u | \
 		while IFS=— read name email; do \
 			test -f "/tmp/gravatars/$$name.jpg" || \
