@@ -64,7 +64,7 @@ BUILT_SOURCES = .version Makefile-distfiles
 .version: $(shell $(AWK) '{print ".git/" $$2}' .git/HEAD 2>/dev/null ||:)
 	[ -e "$@" ] && mv "$@" "$@-prev" || $(if $<,touch,cp "$(srcdir)/.tarball-version") "$@-prev"
 	$(if $<,./build-aux/git-version-gen "$(srcdir)/.tarball-version",printf "$(VERSION)") > "$@"
-	$(CMP) -s "$@" "$@-prev" ||
+	$(CMP) -s "$@" "$@-prev" || \
 		( autoreconf configure.ac --force && build-aux/decore-automake.sh )
 
 dist-hook: $(MANUAL) $(EXAMPLES)
@@ -102,7 +102,7 @@ sile-$(VERSION).pdf: $(MANUAL)
 	cp $< $@
 
 sile-%.md: CHANGELOG.md
-	$(SED) -e '/\.\.\.v$*/,/\.\.\.v/!d' $< |
+	$(SED) -e '/\.\.\.v$*/,/\.\.\.v/!d' $< | \
 		$(SED) -e '1,3d;N;$$!P;$$!D;$$d' > $@
 
 .PHONY: update_libtexpdf
@@ -240,12 +240,12 @@ clean-recursive: clean-worktrees
 
 .PHONY: clean-worktrees
 clean-worktrees:
-	if test -e .git; then
-		git worktree list --porcelain |
-			$(AWK) 'BEGIN { FS = "/" }; /^worktree .*-[0-9a-f]{7}/ { print $$(NF) }' |
-			while read worktree; do
-				git worktree remove --force $${worktree}
-			done
+	if test -e .git; then \
+		git worktree list --porcelain | \
+			$(AWK) 'BEGIN { FS = "/" }; /^worktree .*-[0-9a-f]{7}/ { print $$(NF) }' | \
+			while read worktree; do \
+				git worktree remove --force $${worktree} ; \
+			done ; \
 	fi
 
 time_action ?= ./sile documentation/sile.sil -o /dev/null
@@ -366,20 +366,21 @@ docker-build-push: docker
 		docker login https://$(DOCKER_REGISTRY) -u $(DOCKER_USERNAME) -p $(DOCKER_PAT)
 	docker push $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
 	if [[ "$(DOCKER_TAG)" == v*.*.* ]]; then \
-		tag=$(DOCKER_TAG) ;\
-		docker tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):latest ;\
-		docker tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$${tag//.*} ;\
-		docker push $(DOCKER_REGISTRY)/$(DOCKER_REPO):latest ;\
-		docker push $(DOCKER_REGISTRY)/$(DOCKER_REPO):$${tag//.*} ;\
+		tag=$(DOCKER_TAG) ; \
+		docker tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):latest ; \
+		docker tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$${tag//.*} ; \
+		docker push $(DOCKER_REGISTRY)/$(DOCKER_REPO):latest ; \
+		docker push $(DOCKER_REGISTRY)/$(DOCKER_REPO):$${tag//.*} ; \
 	fi
 
 gource.webm:
 	mkdir -p /tmp/gravatars
 	convert examples/docbook/images/sile-logo.jpg -negate -resize 50% /tmp/sile-logo.jpg
-	git log --pretty=format:"%an—%ae" |
-		sort -u |
-		while IFS=— read name email; do
-			test -f "/tmp/gravatars/$$name.jpg" || curl -S "https://www.gravatar.com/avatar/$$(echo -n $$email | md5sum | cut -d\  -f1)?d=identicon&s=256" -o "/tmp/gravatars/$$name.jpg"
-		done
-	gource -a 0.2 -s 0.2 -i 0 --logo /tmp/sile-logo.jpg -b 000000 --max-file-lag 5 --hide filenames --date-format '%Y-%m-%d' --user-image-dir /tmp/gravatars --user-filter simoncozens --key -1920x1080 -o - |
+	git log --pretty=format:"%an—%ae" | \
+		sort -u | \
+		while IFS=— read name email; do \
+			test -f "/tmp/gravatars/$$name.jpg" || \
+				curl -S "https://www.gravatar.com/avatar/$$(echo -n $$email | md5sum | cut -d\  -f1)?d=identicon&s=256" -o "/tmp/gravatars/$$name.jpg" ; \
+		done ;\
+	gource -a 0.2 -s 0.2 -i 0 --logo /tmp/sile-logo.jpg -b 000000 --max-file-lag 5 --hide filenames --date-format '%Y-%m-%d' --user-image-dir /tmp/gravatars --user-filter simoncozens --key -1920x1080 -o - | \
 		ffmpeg -y -r 60 -f image2pipe -vcodec ppm -i - -vcodec libvpx -b 10000K $@
