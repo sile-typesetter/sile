@@ -19,13 +19,13 @@ AC_PROG_GREP
 AC_PROG_SED
 
 AX_PROGVAR([cmp])
+AX_PROGVAR([git])
 
 AM_COND_IF([IS_SDIST],
            [
             AX_PROGVAR([date])
             MAN_DATE=$($DATE "+%d %B %Y")
            ], [
-            AX_PROGVAR([git])
             MAN_DATE=$($GIT log -1 --format="%cd" --date=format:"%d %B %Y" -- sile.1.in)
            ])
 AC_SUBST([MAN_DATE])
