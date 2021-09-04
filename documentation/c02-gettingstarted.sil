@@ -62,19 +62,15 @@ version. To test the latest unreleased code you can install using:
 For Linux users, preconfigured package build files are available for
 some distributions.
 
-On Arch Linux, the \code{sile} package in the AUR has the latest stable release
-while \code{sile-git} will build a package using the latest unreleased code
-from the Git repository. These may be built and installed like any other AUR
-package. Precompiled versions of these packages and all the dependencies are
-available in an unofficial repository
-\footnote{\url{https://wiki.archlinux.org/index.php/Unofficial_user_repositories#alerque}}
-that can be instaled using pacman after adding the repository to your system configuration:
+Arch Linux has prebuilt packages in the official package repository:
 
 \terminal{$ pacman -S sile}
 
-Alternate packages \code{sile-luajit} and \code{sile-luajit-git} are also
-available that are pre-configured to use LuaJIT instead of Lua. See the note
-about LuaJIT in the section \em{Installing From Source} for applicable caveats.
+The official package uses Lua 5.4.
+Alternatively, a package that uses LuaJIT may be built manually from the Arch User Repository using \code{sile-luajit}.
+See the note about LuaJIT in the section \em{Installing From Source} for applicable caveats.
+A VCS package is also available as \code{sile-git} to build from the latest Git commit.
+These may be built and installed like any other AUR\footnote{\url{https://wiki.archlinux.org/title/Arch_User_Repository}} package.
 
 For Ubuntu an official PPA is available with precompiled packages:
 
