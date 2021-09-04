@@ -95,6 +95,10 @@ Packages are available for NixOS:
 
 The Nix package manager is also available on many other Linux distributions, as well as for macOS.
 
+Void Linux packages are available in the default package manager.
+
+\terminal{$ xbps-install sile}
+
 For all other systems that either don’t have native packages and can’t use \code{nix} or \code{brew} you will need to follow the steps to download and compile the source yourself.
 
 \subsection{Running via Docker}
