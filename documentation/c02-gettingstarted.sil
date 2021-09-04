@@ -117,7 +117,7 @@ For most shells, a single alias can be created to hide that complexity and make 
 $ alias sile='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest'
 \end{terminal}
 
-Docker images are tagged to match releases (e.g. \code{v.0.10.0}).
+Docker images are tagged to match releases (e.g. \code{v0.10.0}).
 Additionally the latest release will be tagged \code{latest}, and a \code{master} tag is also available with the freshest development build.
 You can substitute \code{latest} in the alias above to run a specific version.
 
