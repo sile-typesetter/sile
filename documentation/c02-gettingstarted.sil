@@ -48,19 +48,20 @@ Downloads of SILE can be obtained from the home page at \silehp.
 
 \subsection{Installing Preconfigured Packages}
 
-For macOS the recommended way to install SILE is through the Homebrew package
-manager. Once you have Homebrew running (see \url{http://brew.sh}), installing
-SILE is as easy as running:
+For macOS the recommended way to install SILE is through the Homebrew package manager.
+Once you have Homebrew running (see \url{http://brew.sh}), installing SILE is as easy as running:
 
 \terminal{$ brew install sile}
 
-The formula also has an option that can compile SILE from the current Git HEAD
-version. To test the latest unreleased code you can install using:
+The formula also has an option that can compile SILE from the current Git HEAD version.
+To test the latest unreleased code you can install using:
 
 \terminal{$ brew install sile --HEAD}
 
-For Linux users, preconfigured package build files are available for
-some distributions.
+The \code{brew} package manager is also available as Linuxbrew for many Linux distributions.
+As an alternative, the \code{nix} package manager is also available for macOS, see below.
+
+For Linux users, preconfigured package build files are available for some distributions.
 
 Arch Linux has prebuilt packages in the official package repository:
 
@@ -88,8 +89,13 @@ A binary package can be installed using \code{pkgin}
 pkgin install sile
 \end{terminal}
 
-For all other systems you will need to follow the steps to download and compile
-the source yourself.
+Packages are available for NixOS:
+
+\terminal{$ nix-env -i sile}
+
+The Nix package manager is also available on many other Linux distributions, as well as for macOS.
+
+For all other systems that either don’t have native packages and can’t use \code{nix} or \code{brew} you will need to follow the steps to download and compile the source yourself.
 
 \subsection{Running via Docker}
 
