@@ -124,7 +124,7 @@ $ docker run -it --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" --us
 
 #### Nix
 
-[Nix packages][nix] are available and can ben installed on several platforms.
+[Nix packages][nix] are available and can be installed on several platforms, including NixOS, other Linux distros, and even macOS.
 
 ### From Source
 
