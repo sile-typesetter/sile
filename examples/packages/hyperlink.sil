@@ -1,4 +1,12 @@
 \begin[papersize=a5]{document}\nofolios
 \script[src=packages/url]
 Have you tried \href[src="http://sile-typesetter.org/"]{The SILE Typesetter} yet?
+
+The above hyperlink example uses the default options, but...
+
+Maybe you prefer a link without border: \href[src="http://sile-typesetter.org/", border=0]{The SILE Typesetter}
+(\href[src="http://sile-typesetter.org/", border=false]{like this})?
+
+Or a link with a different border style:
+\href[src=http://www.sile-typesetter.org/, color=blue, underline=true, border="0.4pt"]{The SILE Typesetter}?
 \end{document}
