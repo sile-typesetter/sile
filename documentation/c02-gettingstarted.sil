@@ -44,9 +44,13 @@ number (1) centered at the bottom. How are we going to get to that PDF?
 \section{Installing}
 
 First of all, we need to get ahold of SILE and get it running on our computer.
-Downloads of SILE can be obtained from the home page at \silehp.
+Ready to use packages are available for macOS and many Linux distributions.
+Details for those we know about are listed in the sections below.
+Many other Linux distros without native packages can also take advantage of either Linuxbrew or Nix packaging.
+For all other systems you will need to follow the steps to download and compile the source yourself.
+Alternatively Docker containers are also available for use on any system that can run them.
 
-\subsection{Installing Preconfigured Packages}
+\subsection{macOS}
 
 For macOS the recommended way to install SILE is through the Homebrew package manager.
 Once you have Homebrew running (see \url{http://brew.sh}), installing SILE is as easy as running:
@@ -61,25 +65,29 @@ To test the latest unreleased code you can install using:
 The \code{brew} package manager is also available as Linuxbrew for many Linux distributions.
 As an alternative, the \code{nix} package manager is also available for macOS, see below.
 
-For Linux users, preconfigured package build files are available for some distributions.
+\subsection{Arch Linux}
 
-Arch Linux has prebuilt packages in the official package repository:
+Arch Linux (and derivatives such as Manjaro, Parabola, and others) have prebuilt packages in the official package repository:
 
 \terminal{$ pacman -S sile}
 
-The official package uses Lua 5.4.
+The official package builds use Lua 5.4.
 Alternatively, a package that uses LuaJIT may be built manually from the Arch User Repository using \code{sile-luajit}.
 See the note about LuaJIT in the section \em{Installing From Source} for applicable caveats.
 A VCS package is also available as \code{sile-git} to build from the latest Git commit.
 These may be built and installed like any other AUR\footnote{\url{https://wiki.archlinux.org/title/Arch_User_Repository}} package.
 
-For Ubuntu an official PPA is available with precompiled packages:
+\subsection{Ubuntu}
+
+For Ubuntu an official PPA is available with precompiled packages for all currently supported releases since 18.04 (currently Bionic, Focal, Hirsute):
 
 \begin{terminal}
 sudo add-apt-repository ppa:sile-typesetter/sile
 sudo apt-get update
 sudo apt-get install sile
 \end{terminal}
+
+\subsection{NetBSD}
 
 For NetBSD, package sources are available in \code{print/sile}.
 Use the usual command \code{bmake install} to build and install.
@@ -89,17 +97,19 @@ A binary package can be installed using \code{pkgin}
 pkgin install sile
 \end{terminal}
 
+\subsection{NixOS}
+
 Packages are available for NixOS:
 
 \terminal{$ nix-env -i sile}
 
 The Nix package manager is also available on many other Linux distributions, as well as for macOS.
 
+\subsection{Void Linux}
+
 Void Linux packages are available in the default package manager.
 
 \terminal{$ xbps-install sile}
-
-For all other systems that either don’t have native packages and can’t use \code{nix} or \code{brew} you will need to follow the steps to download and compile the source yourself.
 
 \subsection{Running via Docker}
 
@@ -135,6 +145,8 @@ Armed with commands (or aliases) like these to take care of the actual invocatio
 Just be aware when it comes to things like fonts, images, or other resources about where your files are relative to the container.
 
 \subsection{Installing From Source}
+
+Downloads of SILE can be obtained from the home page at \silehp.
 
 SILE requires a number of other software packages to be installed on the
 computer before it can work—the Lua programming language, and the Harfbuzz text
