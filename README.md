@@ -59,9 +59,15 @@ $ brew install --cask font-gentium-plus
 
 #### Arch Linux
 
-Arch Linux packages are available in the [AUR][aur] that can be built manually or with an AUR helper (e.g. `yay -S sile`).
-Use [sile][aur-rel] for the latest stable release or [sile-git][aur-dev] to build from the latest git commit.
-Pre-built packages that may be directly installed with `pacman -S sile` are available in [@alerque’s package repository][alerque-arch].
+Arch Linux has a prebuilt [SILE package][arch-sile] in the official package repository:
+
+```console
+$ pacman -S sile
+```
+
+The official package uses Lua 5.4.
+Alternatively, a package that uses LuaJIT may be built manually from the [Arch User Repository][aur] using [sile-luajit][aur-sile-luajit].
+A VCS package is also available as [sile-git][aur-sile-git] to build from the latest Git commit.
 
 #### Ubuntu
 
@@ -118,7 +124,7 @@ $ docker run -it --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" --us
 
 #### Nix
 
-[Nix packages][nix] are available and can ben installed on several platforms.
+[Nix packages][nix] are available and can be installed on several platforms, including NixOS, other Linux distros, and even macOS.
 
 ### From Source
 
@@ -253,9 +259,10 @@ SILE is distributed under the [MIT licence][license].
   [harfbuzz]: http://www.freedesktop.org/wiki/Software/HarfBuzz/
   [icu]: http://icu-project.org
   [libtexpdf]: https://github.com/sile-typesetter/libtexpdf
+  [arch-sile]: https://archlinux.org/packages/community/x86_64/sile/
   [aur]: https://wiki.archlinux.org/index.php/Arch_User_Repository
-  [aur-rel]: https://aur.archlinux.org/packages/sile/
-  [aur-dev]: https://aur.archlinux.org/packages/sile-git/
+  [aur-sile-luajit]: https://aur.archlinux.org/packages/sile-luajit/
+  [aur-sile-git]: https://aur.archlinux.org/packages/sile-git/
   [typesetting]: https://en.wikipedia.org/wiki/Typesetting
   [tex]: https://en.wikipedia.org/wiki/TeX
   [indesign]: https://en.wikipedia.org/wiki/Adobe_InDesign
