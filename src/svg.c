@@ -9,12 +9,13 @@
 #include <lualib.h>
 
 static char* safe_append(char* output, int* output_l, int* max_output, char* s2) {
-  if (*output_l + strlen(s2) > *max_output) {
+  int append_len = strlen(s2) + 1; // strlen doesn't count \0
+  if (*output_l + append_len > *max_output) {
     *max_output *= 2;
     output = realloc(output, *max_output);
   }
-  strncat(output, s2, *max_output);
-  *output_l += strlen(s2);
+  strcat(output, s2);
+  *output_l += (append_len - 1); // tracks w/o \0
   return output;
 }
 
@@ -31,6 +32,7 @@ int svg_to_ps(lua_State *L) {
   char *output = malloc(max_output);
   output[0] = '\0';
   for (NSVGshape *shape = image->shapes; shape != NULL; shape = shape->next) {
+    char* strokeFillOper = "s "; // Just stroke
     for (NSVGpath *path = shape->paths; path != NULL; path = path->next) {
       double lastx = -1;
       double lasty = -1;
@@ -49,9 +51,8 @@ int svg_to_ps(lua_State *L) {
         lasty = p[7];
         output = safe_append(output, &output_l, &max_output, thisPath);
       }
-      char strokeFillOper = 's'; // Just stroke
       if (!path->closed)
-        strokeFillOper = 'S';
+        strokeFillOper = "S ";
       if (shape->stroke.type == NSVG_PAINT_COLOR) {
         int r = shape->stroke.color        & 0xff;
         int g = (shape->stroke.color >> 8) & 0xff;
@@ -61,6 +62,7 @@ int svg_to_ps(lua_State *L) {
           r/256.0, g/256.0, b/256.0);
         output = safe_append(output, &output_l, &max_output, color);
       }
+
       if (shape->fill.type == NSVG_PAINT_COLOR) {
         int r = shape->fill.color        & 0xff;
         int g = (shape->fill.color >> 8) & 0xff;
@@ -69,24 +71,23 @@ int svg_to_ps(lua_State *L) {
         snprintf(color, 256, "%f %f %f rg ", r/256.0, g/256.0, b/256.0);
         output = safe_append(output, &output_l, &max_output, color);
 
-        strokeFillOper = 'f';
+        switch (shape->fillRule) {
+            case NSVG_FILLRULE_NONZERO:
+                strokeFillOper = "f "; break;
+            case NSVG_FILLRULE_EVENODD:
+            default:
+                strokeFillOper = "f* "; break;
+        }
+
         if (shape->stroke.type == NSVG_PAINT_COLOR) {
-          strokeFillOper = 'B';
+          strokeFillOper = "B ";
         } else {
-          if (output_l + 2 > max_output) {
-            output = realloc(output, max_output + 2);
-          }
-          output[output_l++] = 'h';
-          output[output_l++] = ' ';
+          static char appendme[3] = {'h', ' ', '\0'};
+          output = safe_append(output, &output_l, &max_output, appendme);
         }
       }
-      if (output_l + 3 > max_output) {
-        output = realloc(output, max_output + 3);
-      }
-      output[output_l++] = strokeFillOper;
-      output[output_l++] = ' ';
-      output[output_l] = '\0';
     }
+    output = safe_append(output, &output_l, &max_output, strokeFillOper);
   }
   lua_pushstring(L, output);
   lua_pushnumber(L, image->width);
@@ -106,7 +107,7 @@ int svg_to_ps(lua_State *L) {
 /*
 ** Adapted from Lua 5.2.0
 */
-static void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
+void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
   luaL_checkstack(L, nup+1, "too many upvalues");
   for (; l->name != NULL; l++) {  /* fill the table with given functions */
     int i;

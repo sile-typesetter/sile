@@ -1,7 +1,8 @@
 -- Quotes may be part of a word in Turkish
-SILE.nodeMakers.tr = SILE.nodeMakers.unicode {
-  isWordType = { cm = true, qu = true },
-}
+SILE.nodeMakers.tr = pl.class({
+    _base = SILE.nodeMakers.unicode,
+    isWordType = { cm = true, qu = true },
+  })
 
 SILE.hyphenator.languages["tr"] = {}
 SILE.hyphenator.languages["tr"].patterns =
@@ -614,11 +615,12 @@ SILE.hyphenator.languages["tr"].patterns =
    }
 
 -- Internationalisation stuff
-local sum_tens = function (val, loc, digits)
-  local ten = string.sub(digits, loc+1, loc+1)
-  if ten:len() == 1 then val = val + tonumber(ten) * 10 end
-  return val
-end
+
+-- local sum_tens = function (val, loc, digits)
+--   local ten = string.sub(digits, loc+1, loc+1)
+--   if ten:len() == 1 then val = val + tonumber(ten) * 10 end
+--   return val
+-- end
 
 local sum_hundreds = function (val, loc, digits)
   local ten = string.sub(digits, loc+1, loc+1)
@@ -633,7 +635,7 @@ local tr_nums = function (num, ordinal)
   if abs >= 1e+36 then
     SU.error("Numbers past decillions not supported in Turkish")
   end
-  local ordinal = SU.boolean(ordinal, false)
+  ordinal = SU.boolean(ordinal, false)
   local minus =  "eksi"
   local zero =  "sıfır"
   local ones = { "bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz" }
@@ -680,7 +682,7 @@ local tr_nums = function (num, ordinal)
   if abs > num then
     words[#words+1] = minus
   end
-  table.flip(words)
+  SU.flip_in_place(words)
   return table.concat(words, " ")
 end
 

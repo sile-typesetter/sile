@@ -3,33 +3,33 @@ Begin page
 Mx 	37.4104
 My 	40.7760
 Set font 	Gentium Plus;10;400;;normal;;LTR
-T	41 82 82 87 81 82 87 72	(Footnote)
+T	41 82 82 87 81 82 87 72 w=36.8896	(Footnote)
 New page
 Mx 	49.3669
 My 	42.0943
-T	80 68 85 78 72 85	(marker)
+T	80 68 85 78 72 85 w=30.0391	(marker)
 Mx 	79.4060
-T	17	(.)
+T	17 w=2.2900	(.)
 Mx 	81.6960
 My 	38.9156
 Set font 	Gentium Plus;6.81152;400;;normal;;LTR
-T	20	(1)
+T	20 w=3.1962	(1)
 Mx 	29.3669
 My 	235.7565
 Set font 	Gentium Plus;9;400;;normal;;LTR
-T	20	(1)
+T	20 w=4.2231	(1)
 Mx 	33.5901
-T	17	(.)
+T	17 w=2.0610	(.)
 Mx 	53.6511
-T	54 68 80 72	(Same)
+T	54 68 80 72 w=19.8018	(Same)
 Mx 	75.8312
-T	83 68 74 72	(page)
+T	83 68 74 72 w=17.4463	(page)
 Mx 	29.3669
 My 	247.7565
-T	68 86	(as)
+T	68 86 w=7.6069	(as)
 Mx 	39.3643
-T	80 68 85 78 72 85	(marker)
+T	80 68 85 78 72 85 w=27.0352	(marker)
 Mx 	66.3994
-T	34	(?)
+T	34 w=3.8979	(?)
 End page
 Finish

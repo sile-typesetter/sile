@@ -1,48 +1,55 @@
 local plain = SILE.require("plain", "classes")
-docbook = plain { id = "docbook" }
+local docbook = plain { id = "docbook" }
+
 SILE.scratch.docbook = {
   seclevel = 0,
   seccount = {}
 }
 
-docbook:loadPackage("image")
-docbook:loadPackage("simpletable", {
-  tableTag = "tgroup",
-  trTag = "row",
-  tdTag = "entry"
-})
+function docbook:init ()
+  self:loadPackage("image")
+  self:loadPackage("simpletable", {
+      tableTag = "tgroup",
+      trTag = "row",
+      tdTag = "entry"
+    })
+  return plain.init(self)
+end
 
 function docbook.push(t, val)
   if not SILE.scratch.docbook[t] then SILE.scratch.docbook[t] = {} end
   local q = SILE.scratch.docbook[t]
   q[#q+1] = val
 end
+
 function docbook.pop(t)
   local q = SILE.scratch.docbook[t]
   q[#q] = nil
 end
+
 function docbook.val(t)
   local q = SILE.scratch.docbook[t]
   return q[#q]
 end
+
 function docbook.wipe(tbl)
   while((#tbl) > 0) do tbl[#tbl] = nil end
 end
 
-SILE.registerCommand("article", function (options, content)
+SILE.registerCommand("article", function (_, content)
   local info = SILE.findInTree(content, "info") or SILE.findInTree(content, "articleinfo")
   local title = SILE.findInTree(content, "title") or (info and SILE.findInTree(info, "title"))
   local author = SILE.findInTree(content, "author") or (info and SILE.findInTree(info, "author"))
 
   if title then
-    SILE.call("docbook-article-title",{},title)
+    SILE.call("docbook-article-title", {}, title)
     docbook.wipe(title)
   end
   if author then
-    SILE.call("docbook-main-author",{},function()
-      for _,t in ipairs(author) do
+    SILE.call("docbook-main-author", {}, function ()
+      for _, t in ipairs(author) do
         if type(t) == "table" then
-          SILE.call(t.command,{},t)
+          SILE.call(t.command, {}, t)
           SILE.typesetter:leaveHmode()
           SILE.call("bigskip")
         end
@@ -53,9 +60,9 @@ SILE.registerCommand("article", function (options, content)
   SILE.typesetter:chuck()
 end)
 
-SILE.registerCommand("info", function()end)
+SILE.registerCommand("info", function ()end)
 
-SILE.registerCommand("section", function (options, content)
+SILE.registerCommand("section", function (_, content)
   SILE.scratch.docbook.seclevel = SILE.scratch.docbook.seclevel + 1
   SILE.scratch.docbook.seccount[SILE.scratch.docbook.seclevel] = (SILE.scratch.docbook.seccount[SILE.scratch.docbook.seclevel] or 0) + 1
   while #(SILE.scratch.docbook.seccount) > SILE.scratch.docbook.seclevel do
@@ -64,7 +71,7 @@ SILE.registerCommand("section", function (options, content)
   local title = SILE.findInTree(content, "title")
   local number = table.concat(SILE.scratch.docbook.seccount, '.')
   if title then
-    SILE.call("docbook-section-"..SILE.scratch.docbook.seclevel.."-title",{},function()
+    SILE.call("docbook-section-"..SILE.scratch.docbook.seclevel.."-title", {}, function ()
       SILE.typesetter:typeset(number.." ")
       SILE.process(title)
     end)
@@ -74,11 +81,11 @@ SILE.registerCommand("section", function (options, content)
   SILE.scratch.docbook.seclevel = SILE.scratch.docbook.seclevel - 1
 end)
 
-function countedThing(thing, options, content)
+local function countedThing(thing, _, content)
   SILE.call("increment-counter", {id=thing})
   SILE.call("bigskip")
   SILE.call("docbook-line")
-  SILE.call("docbook-titling", {}, function()
+  SILE.call("docbook-titling", {}, function ()
     SILE.typesetter:typeset(thing.." ".. SILE.formatCounter(SILE.scratch.counters[thing]))
     local t = SILE.findInTree(content, "title")
     if t then
@@ -93,18 +100,18 @@ function countedThing(thing, options, content)
   SILE.call("bigskip")
 end
 
-SILE.registerCommand("example", function(options,content)
+SILE.registerCommand("example", function (options, content)
   countedThing("Example", options, content)
 end)
 
-SILE.registerCommand("table", function(options,content)
+SILE.registerCommand("table", function (options, content)
   countedThing("Table", options, content)
 end)
-SILE.registerCommand("figure", function(options, content)
+SILE.registerCommand("figure", function (options, content)
   countedThing("Figure", options, content)
 end)
 
-SILE.registerCommand("imagedata", function(options, content)
+SILE.registerCommand("imagedata", function (options, _)
   local width = SILE.parseComplexFrameDimension(options.width or "100%pw") or 0
   SILE.call("img", {
     src = options.fileref,
@@ -113,7 +120,7 @@ SILE.registerCommand("imagedata", function(options, content)
 end)
 
 
-SILE.registerCommand("itemizedlist", function(options,content)
+SILE.registerCommand("itemizedlist", function (_, content)
   docbook.push("list", {type = "itemized"})
   SILE.call("medskip")
   -- Indentation
@@ -123,7 +130,7 @@ SILE.registerCommand("itemizedlist", function(options,content)
 end)
 
 
-SILE.registerCommand("orderedlist", function(options,content)
+SILE.registerCommand("orderedlist", function (_, content)
   docbook.push("list", {type = "ordered", ctr = 1})
   SILE.call("medskip")
   -- Indentation
@@ -131,25 +138,26 @@ SILE.registerCommand("orderedlist", function(options,content)
   SILE.call("medskip")
   docbook.pop("list")
 end)
-SILE.registerCommand("listitem", function(options,content)
+
+SILE.registerCommand("listitem", function (_, content)
   local ctx = docbook.val("list")
   if ctx and ctx.type == "ordered" then
     SILE.typesetter:typeset( ctx.ctr ..". ")
     ctx.ctr = ctx.ctr + 1
   elseif ctx and ctx.type == "itemized" then
     SILE.typesetter:typeset( "• ")
-  elseif ctx and ctx.type == "" then
-    -- Other types?
+  -- elseif ctx and ctx.type == "" then
+  --   -- Other types?
   else
     SU.error("Listitem in outer space")
   end
   SILE.call("noindent")
-  for i=1, #ctx-1 do SILE.call("qquad") end -- Setting lskip better?
+  for _=1, #ctx-1 do SILE.call("qquad") end -- Setting lskip better?
   SILE.process(content)
   SILE.call("medskip")
 end)
 
-SILE.registerCommand("link", function(options, content)
+SILE.registerCommand("link", function (options, content)
   SILE.process(content)
   if (options["xl:href"]) then
     SILE.typesetter:typeset(" (")
@@ -157,4 +165,5 @@ SILE.registerCommand("link", function(options, content)
     SILE.typesetter:typeset(")")
   end
 end)
+
 return docbook

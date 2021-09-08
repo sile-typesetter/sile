@@ -1,0 +1,14 @@
+\begin[papersize=a6]{document}
+\nofolios
+\begin{script}
+local class = SILE.documentState.documentClass
+class:declareFrame("left", { top = "top(content)", left = "left(content)", right = "52%pw" })
+class:declareFrame("right", { top = "top(content)", left = "50%pw", right = "right(content)" })
+class:loadPackage("parallel", { frames = { left = "left", right = "right" }})
+\end{script}
+\left
+Left
+\right
+Right
+\sync
+\end{document}
