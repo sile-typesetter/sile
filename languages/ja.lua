@@ -187,7 +187,7 @@ SILE.nodeMakers.ja = pl.class({
 
 SILE.hyphenator.languages.ja = { patterns={} }
 
--- Internationalisation stuff
-SILE.doTexlike([[%
-\define[command=book:chapter:post:ja]{\fluent{book-chapter-post}\medskip}%
-]])
+SILE.registerCommand("book:chapter:post:ja", function (_, _)
+  SILE.call("fluent", { "book-chapter-post" })
+  SILE.call("medskip")
+end)
