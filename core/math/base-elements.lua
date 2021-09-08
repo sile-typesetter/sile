@@ -3,6 +3,8 @@ local hb = require("justenoughharfbuzz")
 local ot = require("core/opentype-parser")
 require("core/math/default-symbols")
 
+local elements = {}
+
 local mathMode = {
   display = 0,
   displayCramped = 1,
@@ -53,7 +55,7 @@ local mathVariantToScriptType = function(attr)
     attr == "italic" and scriptType.italic or
     attr == "bold-italic" and scriptType.boldItalic or
     attr == "double-struck" and scriptType.doubleStruck or
-    SU.error("Invalid value \""..attr.."\" for attribute mathvariant")
+    SU.error("Invalid value \""..attr.."\" for option mathvariant")
 end
 
 local operatorDefaults = {
@@ -130,12 +132,12 @@ local mathScriptConversionTable = {
   }
 }
 
-SILE.settings.declare({name = "math.font.family", type = "string", default = "XITS Math"})
-SILE.settings.declare({name = "math.font.filename", type = "string", default = ""})
-SILE.settings.declare({name = "math.font.size", type = "integer", default = 10})
+SILE.settings.declare({parameter = "math.font.family", type = "string", default = "XITS Math"})
+SILE.settings.declare({parameter = "math.font.filename", type = "string", default = ""})
+SILE.settings.declare({parameter = "math.font.size", type = "integer", default = 10})
 -- Whether to show debug boxes around mboxes
-SILE.settings.declare({name = "math.debug.boxes", type = "boolean", default = false})
-SILE.settings.declare({name = "math.displayskip", type = "VGlue", default = SILE.nodefactory.newVglue("2ex plus 1pt")})
+SILE.settings.declare({parameter = "math.debug.boxes", type = "boolean", default = false})
+SILE.settings.declare({parameter = "math.displayskip", type = "VGlue", default = SILE.nodefactory.vglue("2ex plus 1pt")})
 
 local function retrieveMathTable(options)
   local face = SILE.font.cache(options, SILE.shaper.getFace)
@@ -209,25 +211,12 @@ local function getDenominatorMode(mode)
   else return mathMode.scriptScriptCramped end                                                           -- S, SS, S', SS' -> SS'
 end 
 
-local function typeof(var)
-  local _type = type(var)
-  if(_type ~= "table" and _type ~= "userdata") then
-      return _type
-  end
-  local _meta = getmetatable(var)
-  if(_meta ~= nil and _meta._type ~= nil) then
-      return _meta._type;
-  else
-      return _type;
-  end
-end
-
 local function getRightMostGlyphId(node)
   local textNode = node
-  while typeof(node) == "Stackbox" and node.direction == 'H' do
+  while node:is_a(elements.stackbox) and node.direction == 'H' do
     node = node.children[#(node.children)]
   end
-  if typeof(node) == "Text" then
+  if node:is_a(elements.text) then
     return node.value.glyphString[#(node.value.glyphString)]
   else
     return 0
@@ -245,17 +234,17 @@ local function maxLength(...)
   local arg = {...}
   local result
   for i, v in ipairs(arg) do
-    if typeof(v) == "number" then v = SILE.length.make(v) end
+    if type(v) == "number" then v = SILE.length(v) end
     if i == 1 then
       result = v
-    elseif typeof(v) == "Length" then
-      result = SILE.length.new({
+    elseif v.is_a and v:is_a(SILE.length) then
+      result = SILE.length({
         length = math.max(result.length, v.length),
         shrink = math.max(result.length, v.length) - math.max(result.length - result.shrink, v.length - v.shrink),
         stretch = math.max(result.length + result.stretch, v.length + v.stretch) - math.max(result.length, v.length),
       })
     else
-      SU.error("Unknown type: "..typeof(v))
+      SU.error("Unknown type of length: "..v)
     end
   end
   return result
@@ -279,23 +268,24 @@ local function getNumberFromLength(length, line)
   return number
 end
 
--- math box, box with a horizontal shift value and could contain zero or more _mbox'es (or its child classes)
+-- math box, box with a horizontal shift value and could contain zero or more mbox'es (or its child classes)
 -- the entire math environment itself is a top-level mbox.
 -- Typesetting of mbox evolves four steps:
 --   1. Determine the mode for each mbox according to their parent.
 --   2. Shape the mbox hierarchy from leaf to top. Get the shape and relative position.
 --   3. Convert mbox into _nnode's to put in SILE's typesetting framwork
-local _mbox = _box {
+elements.mbox = pl.class({
+  _base = nodefactory.box,
   _type = "Mbox",
-  options = {},
-  children = {}, -- The child nodes
-  relX = SILE.length.make(0), -- x position relative to its parent box
-  relY = SILE.length.make(0), -- y position relative to its parent box
-  value = {},
-  mode = mathMode.display,
-  atom = atomType.ordinary,
   __tostring = function (s) return s.type end,
-  init = function(self)
+  _init = function(self)
+    self.options = {}
+    self.children = {} -- The child nodes
+    self.relX = SILE.length(0) -- x position relative to its parent box
+    self.relY = SILE.length(0) -- y position relative to its parent box
+    self.value = {}
+    self.mode = mathMode.display
+    self.atom = atomType.ordinary
     local options = {
       family=SILE.settings.get("math.font.family"),
       size=SILE.settings.get("math.font.size")
@@ -353,9 +343,9 @@ local _mbox = _box {
   outputTree = function(self, x, y, line)
     self:output(x, y, line)
     local debug = SILE.settings.get("math.debug.boxes")
-    if debug and typeof(self) ~= "Space" then
-      SILE.outputter.moveTo(getNumberFromLength(x, line), y.length)
-      SILE.outputter.debugHbox(
+    if debug and not (self:is_a(elements.space)) then
+      SILE.outputter:setCursor(getNumberFromLength(x, line), y.length)
+      SILE.outputter:debugHbox(
         { height = self.height.length,
           depth = self.depth.length },
         getNumberFromLength(self.width, line)
@@ -365,7 +355,7 @@ local _mbox = _box {
       if n then n:outputTree(x + n.relX, y + n.relY, line) end
     end
   end
-}
+})
 
 local spaceKind = {
   thin = "thin",
@@ -426,10 +416,9 @@ local spacingRules = {
 }
 
 -- _stackbox stacks its content one, either horizontally or vertically
-local _stackbox = _mbox {
+elements.stackbox = pl.class({
+  _base = elements.mbox,
   _type = "Stackbox",
-  direction = "H", -- 'H' for horizontal, 'V' for vertical
-  anchor = 1, -- The index of the child whose relX and relY will be 0
   __tostring = function (self)
     local result = self.direction.."Box("
     for i, n in ipairs(self.children) do
@@ -439,8 +428,14 @@ local _stackbox = _mbox {
     return result
   end,
 
-  init = function(self)
-    _mbox.init(self)
+  _init = function(self, direction, children)
+    elements.mbox._init(self)
+    if not (direction == "H" or direction == "V") then
+      SU.error("Wrong direction '"..direction.."'; should be H or V")
+    end
+    self.direction = direction
+    self.children = children
+    self.anchor = 1 -- The index of the child whose relX and relY will be 0
     if self.anchor < 1 or self.anchor > #(self.children) then
       SU.error('Wrong index of the anchor children: '..self.anchor)
     end
@@ -481,18 +476,18 @@ local _stackbox = _mbox {
         if self.direction == "H" then
           -- Horizontal stackbox
           if i == self.anchor then
-            n.relX = SILE.length.make(0)
+            n.relX = SILE.length(0)
           elseif i > self.anchor then
             n.relX = self.children[i - 1].relX + self.children[i - 1].width
           end
-          n.relY = SILE.length.make(0)
+          n.relY = SILE.length(0)
           self.width = i == 1 and self.children[i].width or (self.width + self.children[i].width)
           self.height = i == 1 and self.children[i].height or maxLength(self.height, self.children[i].height)
           self.depth = i == 1 and self.children[i].depth or maxLength(self.depth, self.children[i].depth)
         else -- self.direction == "V"
-          n.relX = SILE.length.make(0)
+          n.relX = SILE.length(0)
           if i == self.anchor then
-            n.relY = SILE.length.make(0)
+            n.relY = SILE.length(0)
             self.height = n.height
             self.depth = n.depth
           elseif i > self.anchor then
@@ -521,17 +516,17 @@ local _stackbox = _mbox {
     typesetter.frame:advanceWritingDirection(getNumberFromLength(self.width, line))
   end,
   output = function(self, x, y, line) end
-}
+})
 
-local _subscript = _mbox {
+elements.subscript = pl.class({
+  _base = elements.mbox,
   _type = "Subscript",
-  kind = "sub",
-  base = nil,
-  sub = nil,
-  sup = nil,
-  atom = nil,
-  init = function(self)
-    _mbox.init(self)
+  _init = function(self, kind, base, sub, sup)
+    elements.mbox._init(self)
+    self.kind = kind
+    self.base = base
+    self.sub = sub
+    self.sup = sup
     if self.base then table.insert(self.children, self.base) end
     if self.sub then table.insert(self.children, self.sub) end
     if self.sup then table.insert(self.children, self.sup) end
@@ -551,7 +546,7 @@ local _subscript = _mbox {
         -- If this is a big operator, and we are in display style, then the
         -- base glyph may be bigger than the font size. We need to adjust the
         -- italic correction accordingly.
-        if typeof(self) == "BigOpSubscript" and isDisplayMode(self.mode) then
+        if self:is_a(elements.bigOpSubscript) and isDisplayMode(self.mode) then
           c = c * (self.base and self.base.options.size / self.options.size or 1.0)
         end
         return c
@@ -564,11 +559,11 @@ local _subscript = _mbox {
     local constants = mathMetrics.constants
     local scaleDown = self:getScaleDown()
     if self.base then
-      self.base.relX = SILE.length.make(0)
-      self.base.relY = SILE.length.make(0)
+      self.base.relX = SILE.length(0)
+      self.base.relY = SILE.length(0)
       self.width = self.base.width
     else
-      self.width = SILE.length.make(0)
+      self.width = SILE.length(0)
     end
     local itCorr = self:calculateItalicsCorrection() * scaleDown
     if self.sub then
@@ -578,8 +573,8 @@ local _subscript = _mbox {
         --self.base.depth + constants.subscriptBaselineDropMin * scaleDown,
         self.sub.height - constants.subscriptTopMax * scaleDown
       )
-      local t = typeof(self)
-      if (t == "BigOpSubscript" or t == "Stackbox") then
+      if (self:is_a(elements.bigOpSubscript)
+          or self:is_a(elments.stackbox)) then
         self.sub.relY = maxLength(self.sub.relY,
           self.base.depth + constants.subscriptBaselineDropMin*scaleDown)
       end
@@ -593,8 +588,8 @@ local _subscript = _mbox {
         --self.base.height - constants.superscriptBaselineDropMax * scaleDown,
         self.sup.depth + constants.superscriptBottomMin * scaleDown
       ) * (-1)
-      local t = typeof(self)
-      if t == "BigOpSubscript" or t == "Stackbox" then
+      if (self:is_a(elements.bigOpSubscript)
+          or self:is_a(elments.stackbox)) then
         self.sup.relY = maxLength(
           (0-self.sup.relY),
           self.base.height - constants.superscriptBaselineDropMax
@@ -633,17 +628,18 @@ local _subscript = _mbox {
     )
   end,
   output = function(self, x, y, line) end
-}
+})
 
-local _bigOpSubscript = _subscript {
+elements.bigOpSubscript = pl.class({
+  _base = elements.subscript,
   _type = "BigOpSubscript",
-  kind = "sub",
-  atom = atomType.bigOperator,
-  base = nil,
-  sub = nil,
-  sup = nil,
-  init = function(self)
-    _mbox.init(self)
+  _init = function(self, kind, base, sub, sup)
+    elements.mbox._init(self)
+    self.atom = atomType.bigOperator
+    self.kind = kind
+    self.base = base
+    self.sub = sub
+    self.sup = sup
     if self.sup then table.insert(self.children, self.sup) end
     if self.base then
       table.insert(self.children, self.base)
@@ -660,14 +656,14 @@ local _bigOpSubscript = _subscript {
     if not (self.mode == mathMode.display
           or self.mode == mathMode.displayCramped)
         or (self.base and contains(subscriptBigOps, self.base.text)) then
-      _subscript.shape(self)
+      elements.subscript.shape(self)
       return
     end
     local constants = getMathMetrics().constants
     local scaleDown = self:getScaleDown()
     -- Determine relative Ys
     if self.base then
-      self.base.relY = SILE.length.make(0)
+      self.base.relY = SILE.length(0)
     end
     if self.sub then
       self.sub.relY = self.base.depth + maxLength(
@@ -706,7 +702,7 @@ local _bigOpSubscript = _subscript {
         b = nil
       end
     end
-    widest.relX = SILE.length.make(0)
+    widest.relX = SILE.length(0)
     local c = widest.width / 2
     if a then a.relX = c - a.width / 2 end
     if b then b.relX = c - b.width / 2 end
@@ -733,40 +729,49 @@ local _bigOpSubscript = _subscript {
     end
   end,
   output = function(self, x, y, line) end
-}
+})
 
--- _terminal is the base class for leaf node
-local _terminal = _mbox {
+-- terminal is the base class for leaf node
+elements.terminal = pl.class({
+  _base = elements.mbox,
   _type = "Terminal",
   styleChildren = function(self) end,
   shape = function(self) end
-}
+})
 
-local _space = _terminal {
+elements.space = pl.class({
+  _base = elements.terminal,
   _type = "Space",
   __tostring = function(self)
     return "space{w = "..self.width..", h = "..self.height..", d = "..self.depth.."}"
   end,
-  width = SILE.length.make(0),
-  height = SILE.length.make(0),
-  depth = SILE.length.make(0),
-  init = function(self)
-    _terminal.init(self)
+  _init = function(self, width, height, depth)
+    elements.terminal._init(self)
+    self.width = type(width) == "string" and SILE.length.parse(width)
+      or width
+    self.height = type(height) == "string" and SILE.length.parse(height)
+      or height
+    self.depth = type(depth) == "string" and SILE.length.parse(depth)
+      or depth
   end,
   shape = function(_)
   end,
   output = function(self) end
-}
+})
 
 -- text node. For any actual text output
-local _text = _terminal {
+elements.text = pl.class({
+  _base = elements.terminal,
   _type = "Text",
-  text = "",
-  kind = "number", -- may also be identifier or operator
-  script = scriptType.upright,
   __tostring = function(self) return "Text("..(self.originalText or self.text)..")" end,
-  init = function(self)
-    _terminal.init(self)
+  _init = function(self, kind, script, text)
+    elements.terminal._init(self)
+    if not (kind == "number" or kind == "identifier" or kind == "operator") then
+      SU.error("Unknown text node kind '"..kind.."'; should be one of: number, identifier, operator.")
+    end
+    self.kind = kind
+    self.script = script
+    self.text = text
     if self.kind == 'identifier' then
       local converted = ""
       for uchr in SU.utf8codes(self.text) do
@@ -843,20 +848,20 @@ local _text = _terminal {
         table.insert(self.value.glyphString, glyphs[i].gid)
       end
       for i = #glyphs, 1, -1 do
-        self.width = i == #glyphs and SILE.length.make(glyphs[#glyphs].width) or self.width + glyphs[i].glyphAdvance
+        self.width = i == #glyphs and SILE.length(glyphs[#glyphs].width) or self.width + glyphs[i].glyphAdvance
       end
       local itCorr = mathMetrics.italicsCorrection[glyphs[#glyphs].gid]
       if itCorr then
         self.width = self.width + itCorr * self:getScaleDown()
       end
       for i = 1, #glyphs do
-        self.height = i == 1 and SILE.length.make(glyphs[i].height) or maxLength(self.height, glyphs[i].height)
-        self.depth = i == 1 and SILE.length.make(glyphs[i].depth) or maxLength(self.depth, glyphs[i].depth)
+        self.height = i == 1 and SILE.length(glyphs[i].height) or maxLength(self.height, glyphs[i].height)
+        self.depth = i == 1 and SILE.length(glyphs[i].depth) or maxLength(self.depth, glyphs[i].depth)
       end
     else
-      self.width = SILE.length.make(0)
-      self.height = SILE.length.make(0)
-      self.depth = SILE.length.make(0)
+      self.width = SILE.length(0)
+      self.height = SILE.length(0)
+      self.depth = SILE.length(0)
     end
   end,
   output = function(self, x, y, line)
@@ -864,21 +869,24 @@ local _text = _terminal {
     local compensatedY
     if isDisplayMode(self.mode) and self.atom == atomType.bigOperator
         and self.value.items[1].fontDepth then
-      compensatedY = SILE.length.make(y.length + self.value.items[1].depth
+      compensatedY = SILE.length(y.length + self.value.items[1].depth
         - self.value.items[1].fontDepth)
     else
       compensatedY = y
     end
-    SILE.outputter.moveTo(getNumberFromLength(x, line), compensatedY.length)
-    SILE.outputter.setFont(self.options)
-    SILE.outputter.outputHbox(self.value, getNumberFromLength(self.width, line))
+    SILE.outputter:setCursor(getNumberFromLength(x, line), compensatedY.length)
+    SILE.outputter:setFont(self.options)
+    SILE.outputter:drawHbox(self.value, getNumberFromLength(self.width, line))
   end
-}
+})
 
-local _fraction = _mbox {
+elements.fraction = pl.class({
+  _base = elements.mbox,
   _type = "Fraction",
-  init = function(self)
-    _mbox.init(self)
+  _init = function(self, numerator, denominator)
+    elements.mbox._init(self)
+    self.numerator = numerator
+    self.denominator = denominator
     if self.numerator then table.insert(self.children, self.numerator)
     end
     if self.denominator then table.insert(self.children, self.denominator)
@@ -909,7 +917,7 @@ local _fraction = _mbox {
     else
       error("Fraction cannot have both no numerator and no denominator")
     end
-    widest.relX = SILE.length.make(0)
+    widest.relX = SILE.length(0)
     other.relX = (widest.width - other.width) / 2
     self.width = widest.width
 
@@ -954,82 +962,53 @@ local _fraction = _mbox {
     if self.denominator then
       self.depth = self.denominator.relY + self.denominator.depth
     else
-      self.depth = SILE.length.make(0)
+      self.depth = SILE.length(0)
     end
   end,
   output = function(self, x, y, line)
-    SILE.outputter.rule(
+    SILE.outputter:rule(
       getNumberFromLength(x, line),
       y.length - self.axisHeight - self.ruleThickness / 2,
       getNumberFromLength(self.width, line), self.ruleThickness)
   end
-}
-
-local newText = function(spec)
-  local ret = std.tree.clone(_text(spec))
-  ret:init()
-  return ret
-end
-
-local newStackbox = function(spec)
-  local ret = std.tree.clone(_stackbox(spec))
-  ret:init()
-  return ret
-end
+})
 
 local newSubscript = function(spec)
   local ret
-  if spec.base and typeof(spec.base) == "Text"
+  if spec.base and spec.base:is_a(elements.text)
       and spec.base.kind == "operator"
       and operatorDefaults[spec.base.text]
       and operatorDefaults[spec.base.text].atomType == atomType.bigOperator then
-    ret = std.tree.clone(_bigOpSubscript(spec))
+    return elements.bigOpSubscript(spec.kind, spec.base, spec.sub, spec.sup)
   else
-    ret = std.tree.clone(_subscript(spec))
+    return elements.subscript(spec.kind, spec.base, spec.sub, spec.sup)
   end
-  ret:init()
-  return ret
-end
-
-local newSpace = function(spec)
-  spec.width = type(spec.width) == "string" and SILE.length.parse(spec.width) or spec.width
-  spec.height = type(spec.height) == "string" and SILE.length.parse(spec.height) or spec.height
-  spec.depth = type(spec.depth) == "string" and SILE.length.parse(spec.depth) or spec.depth
-  local ret = std.tree.clone(_space(spec))
-  ret:init()
-  return ret
 end
 
 -- not local, because used further up this file
 newStandardHspace = function(fontSize, kind)
   local mu = fontSize / 18
   if kind == "thin" then
-    return newSpace{width = SILE.length.new({
+    return elements.space(SILE.length({
       length = 3 * mu,
       shrink = 0,
       stretch = 0
-    }), height = SILE.length.make(0), depth = SILE.length.make(0)}
+    }), SILE.length(0), SILE.length(0))
   elseif kind == "med" then
-    return newSpace{width = SILE.length.new({
+    return elements.space(SILE.length({
       length = 4 * mu,
       shrink = 4 * mu,
       stretch = 2 * mu
-    }), height = SILE.length.make(0), depth = SILE.length.make(0)}
+    }), SILE.length(0), SILE.length(0))
   elseif kind == "thick" then
-    return newSpace{width = SILE.length.new({
+    return elements.space(SILE.length({
       length = 5 * mu,
       shrink = 0,
       stretch = 5 * mu
-    }), height = SILE.length.make(0), depth = SILE.length.make(0)}
+    }), SILE.length(0), SILE.length(0))
   else
     SU.error("Unknown space type "..kind)
   end
-end
-
-local newFraction = function(spec)
-  local ret = std.tree.clone(_fraction(spec))
-  ret:init()
-  return ret
 end
 
 -- TODO replace with penlight equivalent
@@ -1054,8 +1033,11 @@ local sum = function(l)
   return foldList(function(x,y) return x+y end, 0, l)
 end
 
-local _mtr = _mbox {
-  init = function(self) end,
+elements.mtr = pl.class({
+  _base = elements.mbox,
+  _init = function(self, children)
+    self.children = children
+  end,
   styleChildren = function(self)
     for _,c in ipairs(self.children) do
       c.mode = self.mode
@@ -1063,18 +1045,15 @@ local _mtr = _mbox {
   end,
   shape = function(self) end, -- done by parent table
   output = function(self) end
-}
+})
 
-local newMtr = function(spec)
-  local ret = std.tree.clone(_mtr(spec))
-  ret:init()
-  return ret
-end
-
-local _table = _mbox {
+elements.table = pl.class({
+  _base = elements.mbox,
   _type = "table",
 
-  init = function(self)
+  _init = function(self, children, options)
+    self.children = children
+    self.options = options
   end,
 
   styleChildren = function(self)
@@ -1097,34 +1076,34 @@ local _table = _mbox {
     -- height (resp. depth) among its elements. Then we only need to add it to
     -- the table's height and center every cell vertically.
     for _,row in ipairs(self.children) do
-      row.height = SILE.length.make(0)
-      row.depth = SILE.length.make(0)
+      row.height = SILE.length(0)
+      row.depth = SILE.length(0)
       for _,cell in ipairs(row.children) do
         row.height = maxLength(row.height, cell.height)
         row.depth = maxLength(row.depth, cell.depth)
       end
     end
-    self.vertSize = SILE.length.make(0)
+    self.vertSize = SILE.length(0)
     for i, row in ipairs(self.children) do
       self.vertSize = self.vertSize + row.height + row.depth +
-        (i == self.nrows and SILE.length.make(0) or SILE.length.parse("1ex")) -- Spacing
+        (i == self.nrows and SILE.length(0) or SILE.length.parse("1ex")) -- Spacing
     end
-    local rowHeightSoFar = SILE.length.make(0)
+    local rowHeightSoFar = SILE.length(0)
     for _, row in ipairs(self.children) do
       row.relY = rowHeightSoFar + row.height - self.vertSize
       rowHeightSoFar = rowHeightSoFar + row.height + row.depth +
-        (i == self.nrows and SILE.length.make(0) or SILE.length.parse("1ex")) -- Spacing
+        (i == self.nrows and SILE.length(0) or SILE.length.parse("1ex")) -- Spacing
       for _, cell in ipairs(row.children) do
         -- If cell is smaller than height, raise it to center it vertically
         --cell.relY = cell.relY - (row.height + row.depth - cell.height - cell.depth) / 2
       end
     end
-    self.width = SILE.length.make(0)
-    local thisColRelX = SILE.length.make(0)
+    self.width = SILE.length(0)
+    local thisColRelX = SILE.length(0)
     -- For every column...
     for i = 1,self.ncols do
       -- Determine its width
-      local columnWidth = SILE.length.make(0)
+      local columnWidth = SILE.length(0)
       for j = 1,self.nrows do
         if self.children[j].children[i].width > columnWidth then
           columnWidth = self.children[j].children[i].width
@@ -1136,7 +1115,7 @@ local _table = _mbox {
         cell.relX = thisColRelX + (columnWidth - cell.width) / 2
       end
       thisColRelX = thisColRelX + columnWidth +
-        (i == self.ncols and SILE.length.make(0) or SILE.length.parse("0.8em")) -- Spacing
+        (i == self.ncols and SILE.length(0) or SILE.length.parse("0.8em")) -- Spacing
     end
     self.width = thisColRelX
 
@@ -1154,35 +1133,15 @@ local _table = _mbox {
 
   output = function(self)
   end
-}
+})
 
-local newTable = function(spec)
-  local ret = std.tree.clone(_table(spec))
-  ret:init()
-  return ret
-end
+elements.mathMode = mathMode
+elements.atomType = atomType
+elements.scriptType = scriptType
+elements.mathVariantToScriptType = mathVariantToScriptType
+elements.operatorDefaults = operatorDefaults
+elements.newStandardHspace = newStandardHspace
+elements.newSubscript = newSubscript
+elements.newStandardHspace = newStandardHspace
 
-return {
-  mathMode = mathMode,
-  atomType = atomType,
-  scriptType = scriptType,
-  mathVariantToScriptType = mathVariantToScriptType,
-  operatorDefaults = operatorDefaults,
-  newStandardHspace = newStandardHspace,
-  _mbox = _mbox,
-  _stackbox = _stackbox,
-  _subscript = _subscript,
-  _bigOpSubscript = _bigOpSubscript,
-  _terminal = _terminal,
-  _space = _space,
-  _text = _text,
-  _fraction = _fraction,
-  newText = newText,
-  newStackbox = newStackbox,
-  newSubscript = newSubscript,
-  newSpace = newSpace,
-  newStandardHspace = newStandardHspace,
-  newFraction = newFraction,
-  newTable = newTable,
-  newMtr = newMtr,
-}
+return elements

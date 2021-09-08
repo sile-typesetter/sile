@@ -1,4 +1,5 @@
 local epnf = require("epnf")
+local lpeg = require("lpeg")
 require("core/parserbits")
 
 -- Grammar to parse TeX-like math
@@ -70,7 +71,7 @@ local mathGrammar = function(_ENV)
   command = (
       P"\\" *
       Cg(ctrl_sequence_name, "tag") *
-      Cg(parameters, "attr") *
+      Cg(parameters, "options") *
       (
         group
       )^0
@@ -219,11 +220,11 @@ local function compileToMathML(arg_env, tree)
     return acc
   end, {}, tree)
   if tree.id == "texlike_math" then
-    tree.tag = "math"
+    tree.command = "math"
     -- If the outermost `mrow` contains only other `mrow`s, remove it
     -- (allowing vertical stacking).
-    if forall(function(c) return c.tag == "mrow" end, tree[1]) then
-      tree[1].tag = "math"
+    if forall(function(c) return c.command == "mrow" end, tree[1]) then
+      tree[1].command = "math"
       return tree[1]
     end
   elseif tree.id == "mathlist" then
@@ -231,7 +232,7 @@ local function compileToMathML(arg_env, tree)
     -- Note that `def`s have already been compiled away at this point.
     if #tree == 1 then
       return tree[1]
-    else tree.tag = "mrow" end
+    else tree.command = "mrow" end
   elseif tree.id == "atom" then
     local codepoints = {}
     for cp in SU.utf8codes(tree[1]) do
@@ -244,21 +245,21 @@ local function compileToMathML(arg_env, tree)
        cp >= SU.codepoint("Α") and cp <= SU.codepoint("Ω") or
        cp >= SU.codepoint("α") and cp <= SU.codepoint("ω")
     ) then
-        tree.tag = "mi"
+        tree.command = "mi"
     elseif lpeg.match(lpeg.R("09")^1, tree[1]) then
-      tree.tag = "mn"
+      tree.command = "mn"
     else
-      tree.tag = "mo"
+      tree.command = "mo"
     end
-    tree.attr = {}
+    tree.options = {}
   elseif tree.id == "sup" then
-    tree.tag = "msup"
+    tree.command = "msup"
   elseif tree.id == "sub" then
-      tree.tag = "msub"
+      tree.command = "msub"
   elseif tree.id == "subsup" then
-    tree.tag = "msubsup"
+    tree.command = "msubsup"
   elseif tree.id == "supsub" then
-    tree.tag = "msubsup"
+    tree.command = "msubsup"
     local tmp = tree[2]
     tree[2] = tree[3]
     tree[3] = tmp

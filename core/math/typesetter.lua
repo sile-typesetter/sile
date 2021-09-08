@@ -4,7 +4,7 @@ local tex = require("core/math/texlike")
 
 -- convert MathML into mbox
 local function ConvertMathML(content)
-  if content == nil or content.tag == nil then return nil end
+  if content == nil or content.command == nil then return nil end
   local convertChildren = function(content)
     local mboxes = {}
     for i, n in ipairs(content) do
@@ -13,69 +13,64 @@ local function ConvertMathML(content)
     end
     return mboxes
   end
-  if content.tag == 'math' then -- toplevel
-    return b.newStackbox({ direction='V', children=convertChildren(content) })
-  elseif content.tag == 'mrow' then
-    return b.newStackbox({ direction='H', children=convertChildren(content) })
-  elseif content.tag == 'mi' then
-    local script = content.attr.mathvariant and
-      b.mathVariantToScriptType(content.attr.mathvariant) or b.scriptType.italic
+  if content.command == 'math' or content.command == 'mathml' then -- toplevel
+    return b.stackbox('V', convertChildren(content))
+  elseif content.command == 'mrow' then
+    return b.stackbox('H', convertChildren(content))
+  elseif content.command == 'mi' then
+    local script = content.options.mathvariant and
+      b.mathVariantToScriptType(content.options.mathvariant) or b.scriptType.italic
     local text = content[1]
     if type(text) ~= "string" then
-      SU.error("mi tag contains "..text..", which is not text")
+      SU.error("mi command contains "..text..", which is not text")
     end
-    return b.newText({ kind='identifier', script=script, text=text })
-  elseif content.tag == 'mo' then
+    return b.text('identifier', script, text)
+  elseif content.command == 'mo' then
     local text = content[1]
     if type(text) ~= "string" then
-      SU.error("mo tag contains "..text..", which is not text")
+      SU.error("mo command contains "..text..", which is not text")
     end
-    return b.newText({ kind='operator', script=b.scriptType.upright, text=text })
-  elseif content.tag == 'mn' then
+    return b.text('operator', b.scriptType.upright, text)
+  elseif content.command == 'mn' then
     local text = content[1]
     if type(text) ~= "string" then
-      SU.error("mn tag contains "..text..", which is not text")
+      SU.error("mn command contains "..text..", which is not text")
     end
     if string.sub(text, 1, 1) == "-" then
       text = "−"..string.sub(text, 2)
     end
-    return b.newText({ kind='number', script=b.scriptType.upright, text=text })
-  elseif content.tag == "mspace" then
-    return b.newSpace{width = content.attr.width, height = content.attr.height, depth = content.attr.depth}
-  elseif content.tag == 'msub' then
+    return b.text('number', b.scriptType.upright, text)
+  elseif content.command == "mspace" then
+    return b.space(content.options.width, content.options.height, content.options.depth)
+  elseif content.command == 'msub' then
     local children = convertChildren(content)
     if #children ~= 2 then SU.error('Wrong number of children in msub') end
     return b.newSubscript({ kind="sub", base=children[1], sub=children[2] })
-  elseif content.tag == 'msup' then
+  elseif content.command == 'msup' then
     local children = convertChildren(content)
     if #children ~= 2 then SU.error('Wrong number of children in msup') end
     return b.newSubscript({ kind="sup", base=children[1], sup=children[2] })
-  elseif content.tag == 'msubsup' then
+  elseif content.command == 'msubsup' then
     local children = convertChildren(content)
     if #children ~= 3 then SU.error('Wrong number of children in msubsup') end
     return b.newSubscript({ kind="subsup", base=children[1], sub=children[2], sup=children[3] })
-  elseif content.tag == 'mfrac' then
+  elseif content.command == 'mfrac' then
     local children = convertChildren(content)
     if #children ~= 2 then SU.error('Wrong number of children in mfrac: '
       ..#children)
     end
-    return b.newFraction({ numerator=children[1], denominator=children[2] })
-  elseif content.tag == "mtable" then
+    return b.fraction(children[1], children[2])
+  elseif content.command == "mtable" then
     local children = convertChildren(content)
-    return b.newTable{children = children, options = content.attr}
-  elseif content.tag == "mtr" then
-    return b.newMtr{children = convertChildren(content)}
-  elseif content.tag == "mtd" then
-    return b.newStackbox{direction="H", children = convertChildren(content)}
+    return b.table(children, content.options)
+  elseif content.command == "mtr" then
+    return b.mtr(convertChildren(content))
+  elseif content.command == "mtd" then
+    return b.stackbox("H", convertChildren(content))
   else
-    SU.error("Unknown math command " .. content.tag)
+    SU.error("Unknown math command " .. content.command)
   end
 end
-
-SILE.nodefactory.math = {
-  newText = b.newText,
-  newStackbox = b.newStackbox
-}
 
 local function handleMath(mbox, mode)
   if mode == 'display' then
