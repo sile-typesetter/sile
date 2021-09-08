@@ -11,7 +11,7 @@ dependencies = {
   "lua >= 5.1",
   "bit32",
   "cassowary == 2.3.1-2",
-  "cldr == 0.0.0",
+  "cldr == 0.1.0",
   "compat53 == 0.8-1",
   "cosmo == 16.06.04-1",
   "fluent == 0.0.4",
