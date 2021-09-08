@@ -341,18 +341,18 @@ local parsePerGlyphTable = function(offset, type, fd)
 end
 
 local parseMathVariants = function(offset, fd)
-  local parseGlyphAssembly = function(offset, fd)
-    local assembly = vstruct.read(">@"..offset.." italicsCorrection:{ &MathValueRecord } partCount:u2", fd)
-    assembly.italicsCorrection = fetchMathValueRecord(assembly.italicsCorrection, offset, fd)
-    assembly.partRecords = vstruct.read("> "..assembly.partCount.."*{ &GlyphPartRecord }", fd)
+  local parseGlyphAssembly = function(_offset, _fd)
+    local assembly = vstruct.read(">@".._offset.." italicsCorrection:{ &MathValueRecord } partCount:u2", _fd)
+    assembly.italicsCorrection = fetchMathValueRecord(assembly.italicsCorrection, _offset, _fd)
+    assembly.partRecords = vstruct.read("> "..assembly.partCount.."*{ &GlyphPartRecord }", _fd)
     assembly.partCount = nil
     return assembly
   end
-  local parseMathGlyphConstruction = function(offset, fd)
-    local construction = vstruct.read(">@"..offset.." glyphAssemblyOffset:u2 variantCount:u2", fd)
-    local mathGlyphVariantRecord = vstruct.read("> "..construction.variantCount.."*{ &MathGlyphVariantRecord }", fd)
+  local parseMathGlyphConstruction = function(_offset, _fd)
+    local construction = vstruct.read(">@".._offset.." glyphAssemblyOffset:u2 variantCount:u2", _fd)
+    local mathGlyphVariantRecord = vstruct.read("> "..construction.variantCount.."*{ &MathGlyphVariantRecord }", _fd)
     return {
-      glyphAssembly = construction.glyphAssemblyOffset ~= 0 and parseGlyphAssembly(offset + construction.glyphAssemblyOffset, fd) or nil,
+      glyphAssembly = construction.glyphAssemblyOffset ~= 0 and parseGlyphAssembly(_offset + construction.glyphAssemblyOffset, _fd) or nil,
       mathGlyphVariantRecord = mathGlyphVariantRecord
     }
   end
