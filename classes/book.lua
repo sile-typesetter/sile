@@ -119,7 +119,7 @@ end)
 book.registerCommands = function (_)
   plain.registerCommands()
   SILE.registerCommand("book:chapter:pre", function (options, content)
-    SILE.fluent["book-chapter-title-pre"]()
+    SILE.call("book-chapter-title-pre")
   end)
 SILE.doTexlike([[%
 \define[command=book:chapter:post]{\par}%
