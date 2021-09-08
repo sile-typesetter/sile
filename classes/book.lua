@@ -122,7 +122,7 @@ book.registerCommands = function (_)
     SILE.call("book-chapter-title-pre")
   end)
 SILE.doTexlike([[%
-\define[command=book:chapter:post]{\par}%
+\define[command=book:chapter:post]{\fluent{book-chapter-post}\par}%
 \define[command=book:section:post]{ }%
 \define[command=book:subsection:post]{ }%
 \define[command=book:left-running-head-font]{\font[size=9pt]}%

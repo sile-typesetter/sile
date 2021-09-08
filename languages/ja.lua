@@ -189,5 +189,5 @@ SILE.hyphenator.languages.ja = { patterns={} }
 
 -- Internationalisation stuff
 SILE.doTexlike([[%
-\define[command=book:chapter:post]{\thinspace章 \medskip}%
+\define[command=book:chapter:post:ja]{\fluent{book-chapter-post}\medskip}%
 ]])
