@@ -9,6 +9,7 @@ DOCSFONTFILES += CormorantInfant-Italic.ttf CormorantInfant-Regular.ttf
 DOCSFONTFILES += GenBkBasR.ttf GenBkBasI.ttf GenBkBasB.ttf
 DOCSFONTFILES += Hack-Regular.ttf
 DOCSFONTFILES += LateefGR-Regular.ttf
+DOCSFONTFILES += LibertinusMath-Regular.otf
 DOCSFONTFILES += LibertinusSerif-Regular.otf
 DOCSFONTFILES += NotoSansCJK-Regular.ttc
 DOCSFONTFILES += NotoSansEthiopic-Regular.ttf

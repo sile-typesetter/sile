@@ -7,7 +7,8 @@ local ID = lpeg.C(SILE.parserBits.letter * (SILE.parserBits.letter + SILE.parser
 SILE.inputs.TeXlike.identifier = (ID + lpeg.S":-")^1
 
 SILE.inputs.TeXlike.passthroughCommands = {
-  script = true
+  script = true,
+  math = true
 }
 setmetatable(SILE.inputs.TeXlike.passthroughCommands, {
     __call = function(self, command)
