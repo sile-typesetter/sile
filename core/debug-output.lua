@@ -134,7 +134,7 @@ SILE.outputters.debug = {
     _deprecationCheck(self)
     local font = SILE.font._key(options)
     if lastFont ~= font then
-      writeline("Set font ", SILE.font._key(options))
+      writeline("Set font ", font)
       lastFont = font
     end
   end,

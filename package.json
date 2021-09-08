@@ -1,11 +1,12 @@
 {
   "name": "sile",
-  "version": "0.10.14",
-  "description": "SILE Typesetter",
+  "version": "0.11.1",
+  "description": "The SILE Typesetter",
   "main": "sile",
   "scripts": {
     "test": "make test",
-    "release": "standard-version"
+    "release": "standard-version",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -18,26 +19,31 @@
   },
   "homepage": "http://sile-typesetter.org",
   "devDependencies": {
-    "@commitlint/cli": "^11.0.0",
-    "@commitlint/config-conventional": "^11.0.0",
-    "@commitlint/prompt": "^11.0.0",
-    "commitizen": "^4.2.3",
+    "@commitlint/cli": "^13.1.0",
+    "@commitlint/config-conventional": "^13.1.0",
+    "@commitlint/prompt": "^13.1.0",
+    "commitizen": "^4.2.4",
     "conventional-changelog-cli": "^2.1.1",
-    "github-release-cli": "^2.0.0",
-    "husky": "^4.3.8",
-    "standard-version": "^9.1.0"
+    "husky": "^7.0.2",
+    "standard-version": "^9.3.1",
+    "yaml": "^1.10.2"
   },
   "config": {
     "commitizen": {
       "path": "@commitlint/prompt"
     }
   },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
-  },
   "standard-version": {
+    "bumpFiles": [
+      {
+        "filename": "action.yml",
+        "updater": "build-aux/action-updater.js"
+      },
+      {
+        "filename": "package.json",
+        "type": "json"
+      }
+    ],
     "infile": "CHANGELOG.md",
     "types": [
       {

@@ -28,14 +28,19 @@ local handlePandocArgs = function (options)
   end
   if options.classes then
     for _, class in pairs(options.classes:split(",")) do
-      SU.debug("pandoc", "Add inner class wrapper: "..class)
-      if SILE.Commands["class:"..class] then
+      if class == "unnumbered" then
+        SU.debug("pandoc", "Convert unnumbered class to legacy heading function option")
+        options.numbering = false
+      elseif SILE.Commands["class:"..class] then
+        SU.debug("pandoc", "Add inner class wrapper: "..class)
         local innerWrapper = wrapper
         wrapper = function (content)
           innerWrapper(function ()
             SILE.call("class:"..class, options, content)
           end)
         end
+      else
+        SU.warn("Unhandled class ‘"..class.."’, not mapped to legacy option and no matching wrapper function")
       end
     end
     options.classes = nil
@@ -188,6 +193,10 @@ SILE.registerCommand("Link", function (options, content)
     SILE.call("url", args, content)
   end)
 end, "Creates a link inline element, usually a hyperlink.")
+
+SILE.registerCommand("Nbsp", function (_, _)
+  SILE.typesetter:typeset(" ")
+end, "Output a non-breaking space.")
 
 SILE.registerCommand("Math", function (options, content)
   SU.debug("pandoc", options)

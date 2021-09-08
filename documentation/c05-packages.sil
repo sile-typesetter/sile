@@ -82,9 +82,6 @@ path to them.}
 \section{chordmode}
 \package-documentation[src=packages/chordmode]
 
-\section{color-fonts}
-\package-documentation[src=packages/color-fonts]
-
 \section{converters}
 \package-documentation[src=packages/converters]
 
@@ -121,6 +118,9 @@ basic functionality to other packages and classes. Classes such as the
 
 \subsection{footnotes}
 \package-documentation[src=packages/footnotes]
+
+\section{color-fonts}
+\package-documentation[src=packages/color-fonts]
 
 \subsection{counters}
 \package-documentation[src=packages/counters]

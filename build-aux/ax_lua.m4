@@ -76,7 +76,7 @@ AC_DEFUN([AX_PROG_LUA],
 	AS_IF([test "x$ax_cv_lua_version" = 'x'],
 		[AC_MSG_ERROR([invalid Lua version number])])
 	AC_SUBST([LUA_VERSION], [$ax_cv_lua_version])
-	AC_SUBST([LUA_SHORT_VERSION], [`echo "$LUA_VERSION" | sed 's|\.||'`])
+	AC_SUBST([LUA_SHORT_VERSION], [`echo "$LUA_VERSION" | $SED 's|\.||'`])
 
 	AM_COND_IF([LUAJIT], [
 		AC_CACHE_CHECK([for $ax_display_LUA jit version], [ax_cv_luajit_version],
@@ -84,7 +84,7 @@ AC_DEFUN([AX_PROG_LUA],
 		AS_IF([test "x$ax_cv_luajit_version" = 'x'],
 			[AC_MSG_ERROR([invalid Lua version number])])
 		AC_SUBST([LUAJIT_VERSION], [$ax_cv_luajit_version])
-		AC_SUBST([LUAJIT_SHORT_VERSION], [`echo "$LUAJIT_VERSION" | sed 's|\.|§|;s|\..*||;s|§|.|'`])
+		AC_SUBST([LUAJIT_SHORT_VERSION], [`echo "$LUAJIT_VERSION" | $SED 's|\.|§|;s|\..*||;s|§|.|'`])
 	])
 
     dnl The following check is not supported:
@@ -119,9 +119,9 @@ AC_DEFUN([AX_PROG_LUA],
         _AX_LUA_FND_PRFX_PTH([$LUA], [$ax_lua_prefix], [package.path])
         AS_IF([test "x$ax_lua_prefixed_path" != 'x'],
         [ dnl Fix the prefix.
-          _ax_strip_prefix=`echo "$ax_lua_prefix" | sed 's|.|.|g'`
+          _ax_strip_prefix=`echo "$ax_lua_prefix" | $SED 's|.|.|g'`
           ax_cv_lua_luadir=`echo "$ax_lua_prefixed_path" | \
-            sed "s,^$_ax_strip_prefix,$LUA_PREFIX,"`
+            $SED "s,^$_ax_strip_prefix,$LUA_PREFIX,"`
         ])
       ])
     AC_SUBST([luadir], [$ax_cv_lua_luadir])
@@ -146,9 +146,9 @@ AC_DEFUN([AX_PROG_LUA],
           [$ax_lua_exec_prefix], [package.cpath])
         AS_IF([test "x$ax_lua_prefixed_path" != 'x'],
         [ dnl Fix the prefix.
-          _ax_strip_prefix=`echo "$ax_lua_exec_prefix" | sed 's|.|.|g'`
+          _ax_strip_prefix=`echo "$ax_lua_exec_prefix" | $SED 's|.|.|g'`
           ax_cv_lua_luaexecdir=`echo "$ax_lua_prefixed_path" | \
-            sed "s,^$_ax_strip_prefix,$LUA_EXEC_PREFIX,"`
+            $SED "s,^$_ax_strip_prefix,$LUA_EXEC_PREFIX,"`
         ])
       ])
     AC_SUBST([luaexecdir], [$ax_cv_lua_luaexecdir])
@@ -308,8 +308,8 @@ int main(int argc, char ** argv)
 ]])
             ],
             [ ax_cv_lua_header_version=`./conftest$EXEEXT p | \
-                sed "s|^Lua \(.*\)|\1|" | \
-                grep -E -o "^@<:@0-9@:>@+\.@<:@0-9@:>@+"`
+                $SED "s|^Lua \(.*\)|\1|" | \
+                $GREP -E -o "^@<:@0-9@:>@+\.@<:@0-9@:>@+"`
             ],
             [ax_cv_lua_header_version='unknown'])
           CPPFLAGS=$_ax_lua_saved_cppflags

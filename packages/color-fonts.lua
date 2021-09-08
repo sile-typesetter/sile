@@ -17,9 +17,11 @@ SILE.shapers.harfbuzzWithColor = pl.class({
               local item = items[i]
               local layer = layers[j]
               local width = 0
+              local height = 0
               local text = ""
               if j == #layers then
                 width = item.width
+                height = item.height
                 text = item.text
               end
               -- XXX: handle multiple palette, add a font option?
@@ -28,7 +30,7 @@ SILE.shapers.harfbuzzWithColor = pl.class({
                 gid = layer.gid,
                 glyphAdvance = item.glyphAdvance,
                 width = width,
-                height= item.height,
+                height = height,
                 depth = item.depth,
                 index = item.index,
                 text = text,
@@ -89,8 +91,8 @@ return {
   documentation = [[
 \begin{document}
   The \code{color-fonts} package adds support for fonts with a \code{COLR}
-  OpenType table. Just loading the package will allow for fonts which
-  define their own colors to be rendered in color.
+  OpenType table. This package is automatically loaded when such a font is
+  detected.
 \end{document}
 ]]
 }

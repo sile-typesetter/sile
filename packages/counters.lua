@@ -111,10 +111,17 @@ value of the counter according to the counter’s declared display type.
 \code{display=\em{<display-type>}} parameter
 to set the \em{display type} of the counter.
 
-The available built-in display types are: \code{arabic}, the default;
-\code{alpha}, for alphabetic counting;
-\code{roman}, for lower-case Roman numerals; and \code{Roman} for upper-case
-Roman numerals.
+The available built-in display types are:
+
+• \code{arabic}, the default;
+
+• \code{alpha}, for lower-case alphabetic counting;
+
+• \code{Alpha}, for upper-case alphabetic counting;
+
+• \code{roman}, for lower-case Roman numerals; and,
+
+• \code{Roman} for upper-case Roman numerals.
 
 The ICU library also provides ways of formatting numbers in global (non-Latin)
 scripts. You can use any of the display types in this list:

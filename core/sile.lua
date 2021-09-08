@@ -121,7 +121,7 @@ SILE.parseArguments = function ()
       generate an output in PDF format. The output will be written to the same name
       as the input file with the extension changed to .pdf.
     ]])
-  cli:argument("INPUT", "input file, SIL or XML format")
+  cli:splat("INPUT", "input file, SIL or XML format")
   cli:option("-b, --backend=VALUE", "choose an alternative output backend")
   cli:option("-d, --debug=VALUE", "show debug information for tagged aspects of SILE’s operation", {})
   cli:option("-e, --evaluate=VALUE", "evaluate some Lua code before processing file", {})

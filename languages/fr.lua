@@ -1,5 +1,5 @@
 SILE.settings.declare({
-    name = "languages.fr.punctuationspace",
+    parameter = "languages.fr.punctuationspace",
     type = "kern",
     default = SILE.nodefactory.kern("0.2en"),
     help = "The amount of space before a punctuation"
@@ -11,7 +11,7 @@ SILE.settings.declare({
 -- for everything and need our language-specific typesetting
 -- processors.
 SILE.settings.declare({
-    name = "languages.fr.highpunctuation",
+    parameter = "languages.fr.highpunctuation",
     type = "string",
     default = "?:;!",
     help = "A list of punctuation marks which should be preceded by a punctuationspace"

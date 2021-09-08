@@ -57,5 +57,3 @@ jobs:
             sile-${{ env.VERSION }}.pdf
             sile-${{ env.VERSION }}.zip
             sile-${{ env.VERSION }}.tar.xz
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
