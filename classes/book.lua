@@ -96,11 +96,13 @@ end, "Text to appear on the top of the right page")
 
 SILE.registerCommand("book:sectioning", function (options, content)
   local level = SU.required(options, "level", "book:sectioning")
+  local number
   if SU.boolean(options.numbering, true) then
     SILE.call("increment-multilevel-counter", { id = "sectioning", level = level })
+    number = SILE.formatMultilevelCounter(counters.getMultilevelCounter("sectioning"))
   end
   if SU.boolean(options.toc, true) then
-    SILE.call("tocentry", { level = level }, SU.subContent(content))
+    SILE.call("tocentry", { level = level, number = number }, SU.subContent(content))
   end
   local lang = SILE.settings.get("document.language")
   if SU.boolean(options.numbering, true) then
