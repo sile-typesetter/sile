@@ -27,6 +27,7 @@ end
 
 SILE.registerCommand("tableofcontents", function (options, _)
   local depth = SU.cast("integer", options.depth or 3)
+  local linking = SU.boolean(options.linking, true)
   local tocfile,_ = io.open(SILE.masterFilename .. '.toc')
   if not tocfile then
     SILE.call("tableofcontents:notocmessage")
@@ -41,39 +42,62 @@ SILE.registerCommand("tableofcontents", function (options, _)
       SILE.call("tableofcontents:item", {
         level = item.level,
         pageno = item.pageno,
-        number = item.number
+        number = item.number,
+        link = linking and item.link
       }, item.label)
     end
   end
   SILE.call("tableofcontents:footer")
 end)
 
+local linkWrapper = function (dest, func)
+  if dest and SILE.Commands["pdf:link"] then
+    return function()
+      SILE.call("pdf:link", { dest = dest }, func)
+    end
+  else
+    return func
+  end
+end
+
 SILE.registerCommand("tableofcontents:item", function (options, content)
   SILE.settings.temporarily(function ()
     SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
     SILE.call("tableofcontents:level" .. options.level .. "item", {
-    }, function ()
-      SILE.call("tableofcontents:level" .. options.level .. "number", {
-      }, function ()
-        if options.number then
-          SILE.typesetter:typeset(options.number or "")
-          SILE.call("kern", { width = "1spc" })
-        end
+    }, linkWrapper(options.link,
+      function ()
+        SILE.call("tableofcontents:level" .. options.level .. "number", {
+        }, function ()
+          if options.number then
+            SILE.typesetter:typeset(options.number or "")
+            SILE.call("kern", { width = "1spc" })
+          end
+        end)
+        SILE.process(content)
+        SILE.call("dotfill")
+        SILE.typesetter:typeset(options.pageno)
       end)
-      SILE.process(content)
-      SILE.call("dotfill")
-      SILE.typesetter:typeset(options.pageno)
-    end)
+    )
   end)
 end)
 
+local dc = 1
 SILE.registerCommand("tocentry", function (options, content)
+  local dest
+  if SILE.Commands["pdf:destination"] then
+    dest = "dest" .. dc
+    SILE.call("pdf:destination", { name = dest })
+    local title = SU.contentToString(content)
+    SILE.call("pdf:bookmark", { title = title, dest = dest, level = options.level })
+    dc = dc + 1
+  end
   SILE.call("info", {
     category = "toc",
     value = {
       label = content,
       level = (options.level or 1),
-      number = options.number
+      number = options.number,
+      link = dest
     }
   })
 end)
@@ -121,6 +145,12 @@ then to write the table of contents.
 
 The \code{\\tableofcontents} command accepts a \code{depth} option to
 control the depth of the content added to the table.
+
+If the \code{pdf} package is loaded before using sectioning commands,
+then a PDF document outline will be generated.
+Moreover, entries in the table of contents will be active links to the
+relevant sections. To disable the latter behavior, pass \code{linking=false} to
+the \code{\\tableofcontents} command.
 
 Class designers can also style the table of contents by overriding the
 following commands:
