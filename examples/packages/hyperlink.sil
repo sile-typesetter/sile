@@ -2,11 +2,17 @@
 \script[src=packages/url]
 Have you tried \href[src="http://sile-typesetter.org/"]{The SILE Typesetter} yet?
 
-The above hyperlink example uses the default options, but...
+\smallskip
+By default, links are typeset without any border. SILE provides several options for customizing border
+characteristics of PDF link annotations:
 
-Maybe you prefer a link without border: \href[src="http://sile-typesetter.org/", border=0]{The SILE Typesetter}
-(\href[src="http://sile-typesetter.org/", border=false]{like this})?
+\smallskip
+• \href[src="http://sile-typesetter.org/", border=0.3pt]{The SILE Typesetter}.
 
-Or a link with a different border style:
-\href[src=http://www.sile-typesetter.org/, color=blue, underline=true, border="0.4pt"]{The SILE Typesetter}?
+• \href[src=http://www.sile-typesetter.org/, border=0.3pt, bordercolor=red, borderstyle=underline]{The SILE Typesetter}.
+
+• \href[src=http://www.sile-typesetter.org/, border=0.7pt, bordercolor=#7c5ea8, borderstyle=dashed]{The SILE Typesetter}.
+
+\smallskip
+Note that PDF renderers may vary on how they honor these border styling features on link annotations.
 \end{document}

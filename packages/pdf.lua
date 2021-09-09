@@ -75,25 +75,19 @@ local function borderColor(color)
   return ""
 end
 
-local function borderStyle(underline, border)
-  return underline and ("/BS<</Type/Border/S/U/W " .. border .. ">>") or ("/Border[0 0 " .. border .. "]")
+local function borderStyle(borderstyle, border)
+  if borderstyle == "underline" then return "/BS<</Type/Border/S/U/W " .. border .. ">>" end
+  if borderstyle == "dashed" then return "/BS<</Type/Border/S/D/D[3 2]/W " .. border .. ">>" end
+  return "/Border[0 0 " .. border .. "]"
 end
 
 SILE.registerCommand("pdf:link", function (options, content)
   local dest = SU.required(options, "dest", "pdf:link")
   local target = options.external and "/Type/Action/S/URI/URI" or "/S/GoTo/D"
-  local color = borderColor(SILE.colorparser(options.color or "red")) -- Red was SILE's defaults before introducing options.
-  local underline = SU.boolean(options.underline, false)
-  local offset = SU.cast("measurement", options.offset or "1pt"):tonumber()
-
-  local border
-  if SU.boolean(options.border, true) then
-    border = options.border and SU.cast("measurement", options.border):tonumber() or 1 -- 1pt is the standard PDF default.
-  else
-    border = 0
-  end
-
-  local bs = borderStyle(underline, border)
+  local border = options.border and SU.cast("measurement", options.border):tonumber() or 0
+  local bordercolor = borderColor(SILE.colorparser(options.bordercolor or "blue"))
+  local borderoffset = SU.cast("measurement", options.borderoffset or "1pt"):tonumber()
+  local borderstyle = borderStyle(options.borderstyle, border)
   local llx, lly
   SILE.typesetter:pushHbox({
     value = nil,
@@ -116,10 +110,10 @@ SILE.registerCommand("pdf:link", function (options, content)
     width = SILE.measurement(0),
     depth = SILE.measurement(0),
     outputYourself = function (_, typesetter, _)
-      local d = "<</Type/Annot/Subtype/Link" .. bs .. color .. "/A<<" .. target .. "(" .. dest .. ")>>>>"
+      local d = "<</Type/Annot/Subtype/Link" .. borderstyle .. bordercolor .. "/A<<" .. target .. "(" .. dest .. ")>>>>"
       local x = typesetter.frame.state.cursorX:tonumber()
       local y = (SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY + hbox.height):tonumber()
-      pdf.end_annotation(d, llx, lly - offset, x, y)
+      pdf.end_annotation(d, llx , lly - borderoffset, x, y + borderoffset)
     end
   })
 end)
@@ -149,13 +143,13 @@ parameter called \code{name} to uniquely identify the target. To create a link t
 that location in the document, use \code{\\pdf:link[dest=\goodbreak{}name]\{link content\}}.
 
 The \command{\\pdf:link} command accepts several options defining its border style:
-a \code{border} length setting the border width (0 or false disables the border),
-a boolean \code{underline} specifying if the link should be underlined rather than having
-a rectangle border around it (defaults to false),
-a \code{color} specification for this border (defaults to red),
-and finally an \code{offset} length for lowering the bottom line of the border with
-respect to the base line (defaults to 1pt). Note that PDF renderers may vary on how
-they honor these features on link annotations.
+a \code{border} length setting the border width (defaults to 0, meaning no border),
+a \code{borderstyle} string (can be set to "underline" or "dashed", otherwise a
+solid box),
+a \code{bordercolor} color specification for this border (defaults to blue),
+and finally a \code{borderoffset} length for adjusting the border with some vertical space
+above the content and below the baseline (defaults to 1pt). Note that PDF renderers may vary on how
+they honor these border styling features on link annotations.
 
 It also has an \code{external} option for URL links, which is not intended to be used
 directly - refer to the \code{url} package for more flexibility typesetting external
