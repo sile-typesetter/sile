@@ -25,7 +25,8 @@ local writeToc = function ()
   tocfile:close()
 end
 
-SILE.registerCommand("tableofcontents", function (_, _)
+SILE.registerCommand("tableofcontents", function (options, _)
+  local depth = SU.cast("integer", options.depth or 3)
   local tocfile,_ = io.open(SILE.masterFilename .. '.toc')
   if not tocfile then
     SILE.call("tableofcontents:notocmessage")
@@ -36,10 +37,13 @@ SILE.registerCommand("tableofcontents", function (_, _)
   SILE.call("tableofcontents:header")
   for i = 1, #toc do
     local item = toc[i]
-    SILE.call("tableofcontents:item", {
-      level = item.level,
-      pageno = item.pageno
-    }, item.label)
+    if item.level <= depth then
+      SILE.call("tableofcontents:item", {
+        level = item.level,
+        pageno = item.pageno,
+        number = item.number
+      }, item.label)
+    end
   end
   SILE.call("tableofcontents:footer")
 end)
@@ -47,7 +51,15 @@ end)
 SILE.registerCommand("tableofcontents:item", function (options, content)
   SILE.settings.temporarily(function ()
     SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
-    SILE.call("tableofcontents:level" .. options.level .. "item", {}, function ()
+    SILE.call("tableofcontents:level" .. options.level .. "item", {
+    }, function ()
+      SILE.call("tableofcontents:level" .. options.level .. "number", {
+      }, function ()
+        if options.number then
+          SILE.typesetter:typeset(options.number or "")
+          SILE.call("kern", { width = "1spc" })
+        end
+      end)
       SILE.process(content)
       SILE.call("dotfill")
       SILE.typesetter:typeset(options.pageno)
@@ -60,7 +72,8 @@ SILE.registerCommand("tocentry", function (options, content)
     category = "toc",
     value = {
       label = content,
-      level = (options.level or 1)
+      level = (options.level or 1),
+      number = options.number
     }
   })
 end)
@@ -83,6 +96,9 @@ SILE.doTexlike([[%
 \define[command=tableofcontents:level1item]{\bigskip\noindent\font[size=14pt,weight=800]{\process}\medskip}%
 \define[command=tableofcontents:level2item]{\noindent\font[size=12pt]{\process}\medskip}%
 \define[command=tableofcontents:level3item]{\indent\font[size=10pt]{\process}\smallskip}%
+\define[command=tableofcontents:level1number]{}%
+\define[command=tableofcontents:level2number]{}%
+\define[command=tableofcontents:level3number]{}%
 ]])
 
   end,
@@ -103,6 +119,9 @@ this, documents with a table of contents need to be processed at least
 twice—once to collect the entries and work out which pages they’re on,
 then to write the table of contents.
 
+The \code{\\tableofcontents} command accepts a \code{depth} option to
+control the depth of the content added to the table.
+
 Class designers can also style the table of contents by overriding the
 following commands:
 
@@ -112,6 +131,10 @@ following commands:
 
 \noindent{}• \code{\\tableofcontents:level1item}, \code{\\tableofcontents:level2item}, etc. - styling
 for entries.
+
+\noindent{}• \code{\\tableofcontents:level1number}, \code{\\tableofcontents:level2number}, etc. - deciding
+what to do with entry section number, if defined: by default, nothing (so they do not show
+up in the table of contents).
 
 \end{document}
 ]]
