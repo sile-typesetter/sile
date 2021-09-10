@@ -4,7 +4,7 @@ end
 local pdf = require("justenoughlibtexpdf")
 
 SILE.registerCommand("pdf:destination", function (options, _)
-  local name = SU.required(options, "name", "pdf:bookmark")
+  local name = SU.required(options, "name", "pdf:destination")
   SILE.typesetter:pushHbox({
     outputYourself = function (_, typesetter, line)
       SILE.outputters.libtexpdf._init()
@@ -54,9 +54,28 @@ SILE.registerCommand("pdf:literal", function (_, content)
     })
 end)
 
+local function borderColor(color)
+  if color then
+    if color.r then return "/C [" .. color.r .. " " .. color.g .. " " .. color.b .. "]" end
+    if color.c then return "/C [" .. color.c .. " " .. color.m .. " " .. color.y .. " " .. color.k .. "]" end
+    if color.l then return "/C [" .. color.l .. "]" end
+  end
+  return ""
+end
+
+local function borderStyle(style, width)
+  if style == "underline" then return "/BS<</Type/Border/S/U/W " .. width .. ">>" end
+  if style == "dashed" then return "/BS<</Type/Border/S/D/D[3 2]/W " .. width .. ">>" end
+  return "/Border[0 0 " .. width .. "]"
+end
+
 SILE.registerCommand("pdf:link", function (options, content)
   local dest = SU.required(options, "dest", "pdf:link")
   local target = options.external and "/Type/Action/S/URI/URI" or "/S/GoTo/D"
+  local borderwidth = options.borderwidth and SU.cast("measurement", options.borderwidth):tonumber() or 0
+  local bordercolor = borderColor(SILE.colorparser(options.bordercolor or "blue"))
+  local borderoffset = SU.cast("measurement", options.borderoffset or "1pt"):tonumber()
+  local borderstyle = borderStyle(options.borderstyle, borderwidth)
   local llx, lly
   SILE.typesetter:pushHbox({
     value = nil,
@@ -79,10 +98,10 @@ SILE.registerCommand("pdf:link", function (options, content)
     width = SILE.measurement(0),
     depth = SILE.measurement(0),
     outputYourself = function (_, typesetter, _)
-      local d = "<</Type/Annot/Subtype/Link/C [ 1 0 0 ]/A<<" .. target .. "(" .. dest .. ")>>>>"
+      local d = "<</Type/Annot/Subtype/Link" .. borderstyle .. bordercolor .. "/A<<" .. target .. "(" .. dest .. ")>>>>"
       local x = typesetter.frame.state.cursorX:tonumber()
       local y = (SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY + hbox.height):tonumber()
-      pdf.end_annotation(d, llx, lly, x, y)
+      pdf.end_annotation(d, llx , lly - borderoffset, x, y + borderoffset)
     end
   })
 end)
@@ -110,6 +129,19 @@ entries. It provides the four commands \command{\\pdf:destination}, \command{\\p
 The \command{\\pdf:destination} parameter creates a link target; it expects a
 parameter called \code{name} to uniquely identify the target. To create a link to
 that location in the document, use \code{\\pdf:link[dest=\goodbreak{}name]\{link content\}}.
+
+The \command{\\pdf:link} command accepts several options defining its border style:
+a \code{borderwidth} length setting the border width (defaults to 0, meaning no border),
+a \code{borderstyle} string (can be set to "underline" or "dashed", otherwise a
+solid box),
+a \code{bordercolor} color specification for this border (defaults to blue),
+and finally a \code{borderoffset} length for adjusting the border with some vertical space
+above the content and below the baseline (defaults to 1pt). Note that PDF renderers may vary on how
+they honor these border styling features on link annotations.
+
+It also has an \code{external} option for URL links, which is not intended to be used
+directly - refer to the \code{url} package for more flexibility typesetting external
+links.
 
 To set arbitrary key-value metadata, use something like \code{\\pdf:metadata[key=Author,
 value=J. Smith]}. The PDF metadata field names are case-sensitive. Common keys include
