@@ -7,11 +7,11 @@ By default, links are typeset without any border. SILE provides several options 
 characteristics of PDF link annotations:
 
 \smallskip
-• \href[src="http://sile-typesetter.org/", border=0.3pt]{The SILE Typesetter}.
+• \href[src="http://sile-typesetter.org/", borderwidth=0.3pt]{The SILE Typesetter}.
 
-• \href[src=http://www.sile-typesetter.org/, border=0.3pt, bordercolor=red, borderstyle=underline]{The SILE Typesetter}.
+• \href[src=http://www.sile-typesetter.org/, borderwidth=0.3pt, bordercolor=red, borderstyle=underline]{The SILE Typesetter}.
 
-• \href[src=http://www.sile-typesetter.org/, border=0.7pt, bordercolor=#7c5ea8, borderstyle=dashed]{The SILE Typesetter}.
+• \href[src=http://www.sile-typesetter.org/, borderwidth=0.7pt, bordercolor=#7c5ea8, borderstyle=dashed]{The SILE Typesetter}.
 
 \smallskip
 Note that PDF renderers may vary on how they honor these border styling features on link annotations.

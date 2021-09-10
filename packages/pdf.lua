@@ -75,19 +75,19 @@ local function borderColor(color)
   return ""
 end
 
-local function borderStyle(borderstyle, border)
-  if borderstyle == "underline" then return "/BS<</Type/Border/S/U/W " .. border .. ">>" end
-  if borderstyle == "dashed" then return "/BS<</Type/Border/S/D/D[3 2]/W " .. border .. ">>" end
-  return "/Border[0 0 " .. border .. "]"
+local function borderStyle(style, width)
+  if style == "underline" then return "/BS<</Type/Border/S/U/W " .. width .. ">>" end
+  if style == "dashed" then return "/BS<</Type/Border/S/D/D[3 2]/W " .. width .. ">>" end
+  return "/Border[0 0 " .. width .. "]"
 end
 
 SILE.registerCommand("pdf:link", function (options, content)
   local dest = SU.required(options, "dest", "pdf:link")
   local target = options.external and "/Type/Action/S/URI/URI" or "/S/GoTo/D"
-  local border = options.border and SU.cast("measurement", options.border):tonumber() or 0
+  local borderwidth = options.borderwidth and SU.cast("measurement", options.borderwidth):tonumber() or 0
   local bordercolor = borderColor(SILE.colorparser(options.bordercolor or "blue"))
   local borderoffset = SU.cast("measurement", options.borderoffset or "1pt"):tonumber()
-  local borderstyle = borderStyle(options.borderstyle, border)
+  local borderstyle = borderStyle(options.borderstyle, borderwidth)
   local llx, lly
   SILE.typesetter:pushHbox({
     value = nil,
@@ -143,7 +143,7 @@ parameter called \code{name} to uniquely identify the target. To create a link t
 that location in the document, use \code{\\pdf:link[dest=\goodbreak{}name]\{link content\}}.
 
 The \command{\\pdf:link} command accepts several options defining its border style:
-a \code{border} length setting the border width (defaults to 0, meaning no border),
+a \code{borderwidth} length setting the border width (defaults to 0, meaning no border),
 a \code{borderstyle} string (can be set to "underline" or "dashed", otherwise a
 solid box),
 a \code{bordercolor} color specification for this border (defaults to blue),

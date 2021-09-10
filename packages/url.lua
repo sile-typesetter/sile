@@ -26,7 +26,7 @@ SILE.registerCommand("href", function (options, content)
   if not pdf then return SILE.process(content) end
   if options.src then
     SILE.call("pdf:link", { dest = options.src, external = true,
-      border = options.border,
+      borderwidth = options.borderwidth,
       borderstyle = options.borderstyle,
       bordercolor = options.bordercolor,
       borderoffset = options.borderoffset },
@@ -36,7 +36,7 @@ SILE.registerCommand("href", function (options, content)
     local breakpat = options.breakpat or "/"
     content = inputfilter.transformContent(content, urlFilter, breakpat)
     SILE.call("pdf:link", { dest = options.src, external = true,
-      border = options.border,
+      borderwidth = options.borderwidth,
       borderstyle = options.borderstyle,
       bordercolor = options.bordercolor,
       borderoffset = options.borderoffset },
@@ -67,9 +67,9 @@ It also provides the
 \code{\\href[src=...]\{\}} command which inserts PDF hyperlinks,
 \href[src=http://www.sile-typesetter.org/]{like this}.
 
-The \code{\\href} command accepts the same \code{border}, \code{bordercolor},
+The \code{\\href} command accepts the same \code{borderwidth}, \code{bordercolor},
 \code{borderstyle} and \code{borderoffset} styling options as the \code{\\pdf:link} command
 from the \code{pdf} package, for instance
-\href[src=http://www.sile-typesetter.org/, border=0.4pt, bordercolor=blue, borderstyle=underline]{like this}.
+\href[src=http://www.sile-typesetter.org/, borderwidth=0.4pt, bordercolor=blue, borderstyle=underline]{like this}.
 \end{document}]]
 }
