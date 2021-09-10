@@ -6,6 +6,7 @@
 --          moveTocNodes (call this in endPage)
 
 SILE.scratch.tableofcontents = {}
+local _tableofcontents = {}
 
 local moveNodes = function (_)
   local node = SILE.scratch.info.thispage.toc
@@ -23,6 +24,10 @@ local writeToc = function ()
   if not tocfile then return SU.error(err) end
   tocfile:write("return " .. tocdata)
   tocfile:close()
+
+  if not pl.tablex.deepcompare(SILE.scratch.tableofcontents, _tableofcontents) then
+    io.stderr:write("\n! Warning: table of contents has changed, please rerun SILE to update it.")
+  end
 end
 
 SILE.registerCommand("tableofcontents", function (options, _)
@@ -48,6 +53,7 @@ SILE.registerCommand("tableofcontents", function (options, _)
     end
   end
   SILE.call("tableofcontents:footer")
+  _tableofcontents = toc
 end)
 
 local linkWrapper = function (dest, func)
