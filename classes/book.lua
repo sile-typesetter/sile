@@ -1,6 +1,8 @@
 local plain = SILE.require("plain", "classes")
 local book = plain { id = "book" }
 
+local counters = SILE.require("packages/counters").exports
+
 book.defaultFrameset = {
   content = {
     left = "8.3%pw",
@@ -94,12 +96,16 @@ end, "Text to appear on the top of the right page")
 
 SILE.registerCommand("book:sectioning", function (options, content)
   local level = SU.required(options, "level", "book:sectioning")
-  SILE.call("increment-multilevel-counter", { id = "sectioning", level = level })
+  local number
+  if SU.boolean(options.numbering, true) then
+    SILE.call("increment-multilevel-counter", { id = "sectioning", level = level })
+    number = SILE.formatMultilevelCounter(counters.getMultilevelCounter("sectioning"))
+  end
   if SU.boolean(options.toc, true) then
-    SILE.call("tocentry", { level = level }, SU.subContent(content))
+    SILE.call("tocentry", { level = level, number = number }, SU.subContent(content))
   end
   local lang = SILE.settings.get("document.language")
-  if options.numbering == nil or options.numbering == "yes" then
+  if SU.boolean(options.numbering, true) then
     if options.prenumber then
       if SILE.Commands[options.prenumber .. ":"  .. lang] then
         options.prenumber = options.prenumber .. ":" .. lang

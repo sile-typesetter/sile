@@ -41,18 +41,6 @@ SILE.registerCommand("pdf:bookmark", function (options, _)
   })
 end)
 
-if SILE.Commands.tocentry then
-  SILE.scratch.pdf = { dests = {}, dc = 1 }
-  local oldtoc = SILE.Commands.tocentry
-  SILE.Commands.tocentry = function (options, content)
-    SILE.call("pdf:destination", { name = "dest" .. SILE.scratch.pdf.dc } )
-    local title = SU.contentToString(content)
-    SILE.call("pdf:bookmark", { title = title, dest = "dest" .. SILE.scratch.pdf.dc, level = options.level })
-    oldtoc(options, content)
-    SILE.scratch.pdf.dc = SILE.scratch.pdf.dc + 1
-  end
-end
-
 SILE.registerCommand("pdf:literal", function (_, content)
   SILE.typesetter:pushHbox({
       value = nil,
@@ -127,7 +115,4 @@ To set arbitrary key-value metadata, use something like \code{\\pdf:metadata[key
 value=J. Smith]}. The PDF metadata field names are case-sensitive. Common keys include
 \code{Title}, \code{Author}, \code{Subject}, \code{Keywords}, \code{CreationDate}, and
 \code{ModDate}.
-
-If the \code{pdf} package is loaded after the \code{tableofcontents} package (e.g.
-in a document with the \code{book} class), then a PDF document outline will be generated.
 \end{document}]] }
