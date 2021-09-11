@@ -22,6 +22,13 @@ SILE.settings = {
       SILE.settings.set(k, SILE.settings.defaults[k])
     end
   end,
+  toplevelState = function()
+    if #SILE.settings.stateQueue ~= 0 then
+      for k,_ in pairs(SILE.settings.state) do
+        SILE.settings.set(k, SILE.settings.stateQueue[1][k])
+      end
+    end
+  end,
   get = function(parameter)
     if not SILE.settings.declarations[parameter] then
       SU.error("Undefined setting '"..parameter.."'")
