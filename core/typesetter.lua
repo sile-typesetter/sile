@@ -601,16 +601,22 @@ SILE.defaultTypesetter = std.object {
     end
   end,
 
-  addrlskip = function (self, slice, margins)
+  addrlskip = function (self, slice, margins, hangIndent)
     local LTR = self.frame:writingDirection() == "LTR"
     local rskip = margins[LTR and "rskip" or "lskip"]
     if not rskip then rskip = SILE.nodefactory.glue(0) end
+    if hangIndent < 0 then
+      rskip = SILE.nodefactory.glue({ width = rskip.width:absolute() - hangIndent })
+    end
     rskip.value = "margin"
     -- while slice[#slice].discardable do table.remove(slice, #slice) end
     table.insert(slice, rskip)
     table.insert(slice, SILE.nodefactory.zerohbox())
     local lskip = margins[LTR and "lskip" or "rskip"]
     if not lskip then lskip = SILE.nodefactory.glue(0) end
+    if hangIndent > 0 then
+      lskip = SILE.nodefactory.glue({ width = lskip.width:absolute() + hangIndent })
+    end
     lskip.value = "margin"
     while slice[1].discardable do table.remove(slice, 1) end
     table.insert(slice, 1, lskip)
@@ -636,7 +642,8 @@ SILE.defaultTypesetter = std.object {
           end
         end
         if seenHbox == 0 then break end
-        self:addrlskip(slice, self:getMargins())
+        local mrg = self:getMargins()
+        self:addrlskip(slice, mrg, point.indent)
         local ratio = self:computeLineRatio(point.width, slice)
         -- TODO see bug 620
         -- if math.abs(ratio) > 1 then SU.warn("Using ratio larger than 1" .. ratio) end
