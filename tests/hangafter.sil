@@ -1,0 +1,39 @@
+\begin[papersize=6in x 9in]{document}
+\script[src=packages/lorem]
+\script[src=packages/color]
+\set[parameter=document.parskip, value=1ex]
+
+\define[command=loremx]{\lorem[words=100]}
+\define[command=markx]{\color[color=red]{\process}}
+\script{
+SILE.registerCommand("hang", function (options, content)
+  local after = SU.cast("integer", options.after or 0)
+  local indent = SU.cast("length", options.indent or 0):tonumber()
+  SILE.typesetter:leaveHmode()
+  SILE.settings.temporarily(function ()
+    SILE.call("noindent")
+    SILE.settings.set("linebreak.hangAfter", after)
+    SILE.settings.set("linebreak.hangIndent", indent)
+    SILE.process(content)
+    SILE.typesetter:leaveHmode()
+  end)
+end)
+}
+
+This a normal paragraph: \loremx
+
+\hang[after=-3, indent=2cm]{This paragraph has (\markx{-3, 2cm}) as hang parameters: \loremx}
+
+This a normal paragraph: \loremx
+
+\hang[after=3, indent=2cm]{This paragraph has (\markx{3, 2cm}) as hang parameters: \loremx}
+
+This a normal paragraph: \loremx
+
+\hang[after=-3, indent=-2cm]{This paragraph has (\markx{-3, -2cm}) as hang parameters: \loremx}
+
+This a normal paragraph: \loremx
+
+\hang[after=3, indent=-2cm]{This paragraph has (\markx{3, -2cm}) as hang parameters: \loremx}
+
+\end{document}
