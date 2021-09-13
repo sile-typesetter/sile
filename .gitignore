@@ -73,7 +73,6 @@ tags
 # Generated resources
 Makefile-distfiles
 documentation/*.pdf
-examples/**/*.pdf
 gource.webm
 .fonts/*
 .sources/*
