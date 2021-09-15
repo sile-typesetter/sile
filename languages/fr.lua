@@ -188,9 +188,21 @@ SILE.nodeMakers.fr = pl.class({
     end,
 
     handleLineBreak = function (self, item, subtype)
+      if self:isSpace(item.text) then
+        self:handleWordBreak(item)
+        return
+      end
       if self:handleSpaceBefore(item) then return end
       if self:handleSpaceAfter(item) then return end
-      self._base.handleLineBreak(self, item, subtype)
+
+      -- Honor explicit hard line breaks, but ignore the soft ones, as we do
+      -- the paragraphing and have hyphenation patterns. Moreover ICU seems to
+      -- return soft breaks where it shouldn't !?
+      self:makeToken()
+      if (subtype == "hard") then
+        self:makePenalty(-1000)
+      end
+      self:addToken(item.text, item)
     end,
 
     iterator = function (self, items)
