@@ -51,7 +51,7 @@ notobase = $(shell sed -e 's/-.*//' <<< $(notdir $1))
 	curl -fsSL http://mongolfont.com/jAlmas/cms/documents/mongolfont/font/$(notdir $@) -o $@
 
 .fonts/Noto%.ttf: | .fonts
-	curl -fsSL https://github.com/googlefonts/noto-fonts/raw/v2017-09-19-phase3-second/hinted/$(notdir $@) -o $@
+	curl -fsSL https://github.com/googlefonts/noto-fonts/raw/v20201206-phase3/hinted/ttf/$(call notobase,$@)/$(notdir $@) -o $@
 
 .fonts/Noto%.ttc: | .fonts
 	curl -fsSL https://github.com/googlefonts/noto-cjk/raw/NotoSansV2.001/$(notdir $@) -o $@
