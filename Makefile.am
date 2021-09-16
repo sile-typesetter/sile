@@ -331,12 +331,6 @@ $(DEPFILES): | $(DEPDIRS)
 
 include $(wildcard $(DEPFILES))
 
-.fonts: fontconfig.conf
-	[ -h .fonts ] || mkdir -p $@
-
-.sources:
-	[ -h .sources ] || mkdir -p $@
-
 CLEANFILES = $(BUILT_SOURCES) .version-prev $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles $(_BUILT_SUBDIRS)
 
 export DOCKER_REGISTRY ?= docker.io

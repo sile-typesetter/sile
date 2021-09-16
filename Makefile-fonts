@@ -1,3 +1,9 @@
+.fonts: fontconfig.conf
+	[ -h .fonts ] || mkdir -p $@
+
+.sources:
+	[ -h .sources ] || mkdir -p $@
+
 # Don't let make delete things we had to download
 .PRECIOUS: .fonts/% .sources/%
 
@@ -33,6 +39,8 @@ TESTFONTFILES += NotoSansKannada-Regular.ttf
 TESTFONTFILES += NotoSansMalayalam-Regular.ttf
 TESTFONTFILES += SBL_Hbrw.ttf
 TESTFONTFILES += TwemojiMozilla.ttf
+
+notobase = $(shell sed -e 's/-.*//' <<< $(notdir $1))
 
 # Tell make how to download individual font files directly (when available)
 
