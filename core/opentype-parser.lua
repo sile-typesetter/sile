@@ -359,8 +359,14 @@ local parseMathVariants = function(offset, fd)
   local variants = vstruct.read(">@"..offset.." minConnectorOverlap:u2 vertGlyphCoverageOffset:u2 horizGlyphCoverageOffset:u2 vertGlyphCount:u2 horizGlyphCount:u2", fd)
   local vertGlyphConstructionOffsets = vstruct.read("> "..variants.vertGlyphCount.."*u2", fd)
   local horizGlyphConstructionOffsets = vstruct.read("> "..variants.horizGlyphCount.."*u2", fd)
-  local vertGlyphCoverage = parseCoverage(offset + variants.vertGlyphCoverageOffset, fd)
-  local horizGlyphCoverage = parseCoverage(offset + variants.horizGlyphCoverageOffset, fd)
+  local vertGlyphCoverage = {}
+  if variants.vertGlyphCoverageOffset > 0 then
+    vertGlyphCoverage = parseCoverage(offset + variants.vertGlyphCoverageOffset, fd)
+  end
+  local horizGlyphCoverage = {}
+  if variants.horizGlyphCoverageOffset > 0 then
+    horizGlyphCoverage = parseCoverage(offset + variants.horizGlyphCoverageOffset, fd)
+  end
   if variants.vertGlyphCount ~= #(vertGlyphCoverage) or variants.horizGlyphCount ~= #(horizGlyphCoverage) then
     SU.error('MathVariants Table corrupted')
   end
