@@ -1,5 +1,5 @@
-SILE.hyphenator.languages["ar"] = {}
-SILE.hyphenator.languages["ar"].patterns = {
+SILE.hyphenator.languages["hy"] = {}
+SILE.hyphenator.languages["hy"].patterns = {
 "և1ա",
 "և1ե",
 "և1է",
