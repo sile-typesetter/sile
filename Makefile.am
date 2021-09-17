@@ -109,7 +109,8 @@ sile-%.md: CHANGELOG.md
 update_libtexpdf:
 	$(GIT) diff-index --quiet --cached HEAD || exit 1 # die if anything already staged
 	$(GIT) submodule update --init --remote -- libtexpdf
-	$(GIT) add -- libtexpdf
+	$(GIT) submodule status -- libtexpdf | $(AWK) '{ print $$1 }' > libtexpdf.git-rev
+	$(GIT) add -- libtexpdf libtexpdf.git-rev
 	$(GIT) diff-index --quiet --cached HEAD || $(GIT) commit -m "chore(build): Pin latest libtexpdf library submodule"
 
 gh-pages:
