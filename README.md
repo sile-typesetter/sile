@@ -126,6 +126,12 @@ $ docker run -it --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" --us
 
 [Nix packages][nix] are available and can be installed on several platforms, including NixOS, other Linux distros, and even macOS.
 
+If you have [flakes support][nix-flakes] enabled, you can run sile with:
+
+```console
+$ nix run github:sile-typesetter/sile <sile arguments>
+```
+
 ### From Source
 
 SILE source code can be downloaded from [its website][sile] or directly from [the GitHub releases page][releases].
@@ -271,6 +277,7 @@ SILE is distributed under the [MIT licence][license].
   [list-en]: https://groups.google.com/d/forum/sile-users
   [list-ja]: https://groups.google.com/d/forum/sile-users-ja
   [nix]: https://nixos.org/nix
+  [nix-flakes]: https://nixos.wiki/wiki/Flakes#Installing_flakes
   [ports]: http://ports.su/print/sile
   [ppa]: https://launchpad.net/~sile-typesetter/+archive/ubuntu/sile
   [alerque-arch]: https://wiki.archlinux.org/index.php/Unofficial_user_repositories#alerque
