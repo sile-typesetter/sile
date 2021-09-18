@@ -57,3 +57,29 @@ jobs:
             sile-${{ env.VERSION }}.pdf
             sile-${{ env.VERSION }}.zip
             sile-${{ env.VERSION }}.tar.xz
+
+  nix-flake:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v14
+        # https://github.com/cachix/install-nix-action/#usage-with-flakes
+        with:
+          install_url: https://nixos-nix-install-tests.cachix.org/serve/i6laym9jw3wg9mw6ncyrk6gjx4l34vvx/install
+          install_options: '--tarball-url-prefix https://nixos-nix-install-tests.cachix.org/serve'
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+      - name: Check nix build
+        run: |
+          nix build
+      - name: Check nix flake
+        run: |
+          nix flake check
+      - name: Check nix shell
+        run: |
+          nix shell -c true
