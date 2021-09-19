@@ -46,11 +46,6 @@ local mathVariantToScriptType = function(attr)
     SU.error("Invalid value \""..attr.."\" for option mathvariant")
 end
 
--- Big operators that should nevertheless have their limits drawn as subscript
--- and superscript by default
-local subscriptBigOps =
-  {'∫', '∬', '∭', '∮', '∯', '∰'}
-
 -- Foward declaration
 local newStandardHspace
 
@@ -106,6 +101,7 @@ SILE.settings.declare({parameter = "math.debug.boxes", type = "boolean", default
 SILE.settings.declare({parameter = "math.displayskip", type = "VGlue", default = SILE.nodefactory.vglue("2ex plus 1pt")})
 
 local function retrieveMathTable(options)
+  print("options.family = " .. options.family)
   local face = SILE.font.cache(options, SILE.shaper.getFace)
   if not face then
     SU.error("Could not find requested font "..options.." or any suitable substitutes")
@@ -487,9 +483,8 @@ elements.stackbox = pl.class({
 elements.subscript = pl.class({
   _base = elements.mbox,
   _type = "Subscript",
-  _init = function(self, kind, base, sub, sup)
+  _init = function(self, base, sub, sup)
     elements.mbox._init(self)
-    self.kind = kind
     self.base = base
     self.sub = sub
     self.sup = sup
@@ -508,14 +503,7 @@ elements.subscript = pl.class({
     if lastGid > 0 then
       local mathMetrics = getMathMetrics()
       if mathMetrics.italicsCorrection[lastGid] then
-        local c = mathMetrics.italicsCorrection[lastGid]
-        -- If this is a big operator, and we are in display style, then the
-        -- base glyph may be bigger than the font size. We need to adjust the
-        -- italic correction accordingly.
-        if self:is_a(elements.bigOpSubscript) and isDisplayMode(self.mode) then
-          c = c * (self.base and self.base.options.size / self.options.size or 1.0)
-        end
-        return c
+        return mathMetrics.italicsCorrection[lastGid]
       end
     end
     return 0
@@ -536,7 +524,7 @@ elements.subscript = pl.class({
     local subShift
     local supShift
     if self.sub then
-      if self.isBigOp then
+      if self.isUnderOver or self.base.largeop then
         -- Ad hoc correction on integral limits, following LuaTeX's
         -- `\mathnolimitsmode=0` (see LuaTeX Reference Manual).
         subShift = -itCorr
@@ -549,14 +537,14 @@ elements.subscript = pl.class({
         --self.base.depth + constants.subscriptBaselineDropMin * scaleDown,
         (self.sub.height - constants.subscriptTopMax * scaleDown):tonumber()
       ))
-      if (self:is_a(elements.bigOpSubscript)
-          or self:is_a(elements.stackbox)) then
+      if (self:is_a(elements.underOver)
+          or self:is_a(elements.stackbox) or self.base.largeop) then
         self.sub.relY = maxLength(self.sub.relY,
           self.base.depth + constants.subscriptBaselineDropMin*scaleDown)
       end
     end
     if self.sup then
-      if self.isBigOp then
+      if self.isUnderOver or self.base.largeop then
         -- Ad hoc correction on integral limits, following LuaTeX's
         -- `\mathnolimitsmode=0` (see LuaTeX Reference Manual).
         supShift = 0
@@ -571,8 +559,8 @@ elements.subscript = pl.class({
         --self.base.height - constants.superscriptBaselineDropMax * scaleDown,
         (self.sup.depth + constants.superscriptBottomMin * scaleDown):tonumber()
       )) * (-1)
-      if (self:is_a(elements.bigOpSubscript)
-          or self:is_a(elements.stackbox)) then
+      if (self:is_a(elements.underOver)
+          or self:is_a(elements.stackbox) or self.base.largeop) then
         self.sup.relY = maxLength(
           (0-self.sup.relY),
           self.base.height - constants.superscriptBaselineDropMax
@@ -613,20 +601,18 @@ elements.subscript = pl.class({
   output = function(_, _, _, _) end
 })
 
-elements.bigOpSubscript = pl.class({
+elements.underOver = pl.class({
   _base = elements.subscript,
-  _type = "BigOpSubscript",
-  _init = function(self, kind, base, sub, sup)
+  _type = "UnderOver",
+  _init = function(self, base, sub, sup)
     elements.mbox._init(self)
-    self.atom = atomType.bigOperator
-    self.kind = kind
+    self.atom = base.atom
     self.base = base
     self.sub = sub
     self.sup = sup
     if self.sup then table.insert(self.children, self.sup) end
     if self.base then
       table.insert(self.children, self.base)
-      self.base.atom = atomType.bigOperator
     end
     if self.sub then table.insert(self.children, self.sub) end
   end,
@@ -637,9 +623,8 @@ elements.bigOpSubscript = pl.class({
   end,
   shape = function(self)
     if not (self.mode == mathMode.display
-          or self.mode == mathMode.displayCramped)
-        or (self.base and contains(subscriptBigOps, self.base.text)) then
-      self.isBigOp = true
+          or self.mode == mathMode.displayCramped) then
+      self.isUnderOver = true
       elements.subscript.shape(self)
       return
     end
@@ -710,6 +695,23 @@ elements.bigOpSubscript = pl.class({
       self.depth = self.base and self.base.depth or 0
     end
   end,
+  calculateItalicsCorrection = function(self)
+    local lastGid = getRightMostGlyphId(self.base)
+    if lastGid > 0 then
+      local mathMetrics = getMathMetrics()
+      if mathMetrics.italicsCorrection[lastGid] then
+        local c = mathMetrics.italicsCorrection[lastGid]
+        -- If this is a big operator, and we are in display style, then the
+        -- base glyph may be bigger than the font size. We need to adjust the
+        -- italic correction accordingly.
+        if self.base.atom == atomType.bigOperator and isDisplayMode(self.mode) then
+          c = c * (self.base and self.base.options.size / self.options.size or 1.0)
+        end
+        return c
+      end
+    end
+    return 0
+  end,
   output = function(_, _, _, _) end
 })
 
@@ -742,7 +744,7 @@ elements.text = pl.class({
   _base = elements.terminal,
   _type = "Text",
   __tostring = function(self) return "Text("..(self.originalText or self.text)..")" end,
-  _init = function(self, kind, script, text)
+  _init = function(self, kind, attributes, script, text)
     elements.terminal._init(self)
     if not (kind == "number" or kind == "identifier" or kind == "operator") then
       SU.error("Unknown text node kind '"..kind.."'; should be one of: number, identifier, operator.")
@@ -773,6 +775,10 @@ elements.text = pl.class({
         self.stretchy = symbolDefaults[self.text].stretchy
       end
     end
+    for attribute,value in pairs(attributes) do
+      SU.debug("math", "attribute = "..attribute..", value = "..value)
+      self[attribute] = value
+    end
   end,
 
   shape = function(self)
@@ -781,7 +787,7 @@ elements.text = pl.class({
     local mathMetrics = getMathMetrics()
     local glyphs = SILE.shaper:shapeToken(self.text, self.options)
     -- Use bigger variants for big operators in display style
-    if isDisplayMode(self.mode) and self.atom == atomType.bigOperator then
+    if isDisplayMode(self.mode) and self.largeop then
       -- We copy the glyph list to avoid modifying the shaper's cache. Yes.
       glyphs = std.tree.clone(glyphs)
       local constructions = mathMetrics.mathVariants
@@ -1021,14 +1027,18 @@ elements.fraction = pl.class({
 })
 
 local newSubscript = function(spec)
-  if spec.base and spec.base:is_a(elements.text)
-      and spec.base.kind == "operator"
-      and symbolDefaults[spec.base.text]
-      and symbolDefaults[spec.base.text].atomType == atomType.bigOperator then
-    return elements.bigOpSubscript(spec.kind, spec.base, spec.sub, spec.sup)
-  else
-    return elements.subscript(spec.kind, spec.base, spec.sub, spec.sup)
-  end
+--  if spec.base and spec.base:is_a(elements.text)
+--      and spec.base.kind == "operator"
+--      and symbolDefaults[spec.base.text]
+--      and symbolDefaults[spec.base.text].atomType == atomType.bigOperator then
+--    return elements.bigOpSubscript(spec.kind, spec.base, spec.sub, spec.sup)
+--  else
+    return elements.subscript(spec.base, spec.sub, spec.sup)
+--  end
+end
+
+local newUnderOver = function(spec)
+  return elements.underOver(spec.base, spec.sub, spec.sup)
 end
 
 -- not local, because used further up this file
@@ -1212,6 +1222,7 @@ elements.mathVariantToScriptType = mathVariantToScriptType
 elements.symbolDefaults = symbolDefaults
 elements.newStandardHspace = newStandardHspace
 elements.newSubscript = newSubscript
+elements.newUnderOver = newUnderOver
 elements.newStandardHspace = newStandardHspace
 
 return elements
