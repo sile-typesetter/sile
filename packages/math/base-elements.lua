@@ -147,30 +147,56 @@ end
 
 -- Style transition functions for superscript and subscript
 local function getSuperscriptMode(mode)
-  if mode == mathMode.display or mode == mathMode.text then return mathMode.script                          -- D, T -> S
-  elseif mode == mathMode.displayCramped or mode == mathMode.textCramped then return mathMode.scriptCramped -- D', T' -> S'
-  elseif mode == mathMode.script or mode == mathMode.scriptScript then return mathMode.scriptScript         -- S, SS -> SS
-  else return mathMode.scriptScriptCramped end                                                              -- S', SS' -> SS'
+  -- D, T -> S
+  if mode == mathMode.display or mode == mathMode.text then
+    return mathMode.script
+  -- D', T' -> S'
+  elseif mode == mathMode.displayCramped or mode == mathMode.textCramped then
+    return mathMode.scriptCramped
+  -- S, SS -> SS
+  elseif mode == mathMode.script or mode == mathMode.scriptScript then
+    return mathMode.scriptScript
+  -- S', SS' -> SS'
+  else return mathMode.scriptScriptCramped end
 end
 local function getSubscriptMode(mode)
+  -- D, T, D', T' -> S'
   if mode == mathMode.display or mode == mathMode.text
-      or mode == mathMode.displayCramped or mode == mathMode.textCramped then return mathMode.scriptCramped  -- D, T, D', T' -> S'
-  else return mathMode.scriptScriptCramped end                                                               -- S, SS, S', SS' -> SS'
+      or mode == mathMode.displayCramped or mode == mathMode.textCramped then
+      return mathMode.scriptCramped
+  -- S, SS, S', SS' -> SS'
+  else return mathMode.scriptScriptCramped end
 end
 
 -- Style transition functions for fraction (numerator and denominator)
 local function getNumeratorMode(mode)
-  if mode == mathMode.display then return mathMode.text                                                -- D -> T
-  elseif mode == mathMode.displayCramped then return mathMode.textCramped                              -- D' -> T'
-  elseif mode == mathMode.text then return mathMode.script                                             -- T -> S
-  elseif mode == mathMode.textCramped then return mathMode.scriptCramped                               -- T' -> S'
-  elseif mode == mathMode.script or mode == mathMode.scriptScript then return mathMode.scriptScript  -- S, SS -> SS
-  else return mathMode.scriptScriptCramped end                                                           -- S', SS' -> SS'
+  -- D -> T
+  if mode == mathMode.display then
+    return mathMode.text
+  -- D' -> T'
+  elseif mode == mathMode.displayCramped then
+    return mathMode.textCramped
+  -- T -> S
+  elseif mode == mathMode.text then
+    return mathMode.script
+  -- T' -> S'
+  elseif mode == mathMode.textCramped then
+    return mathMode.scriptCramped
+  -- S, SS -> SS
+  elseif mode == mathMode.script or mode == mathMode.scriptScript then
+    return mathMode.scriptScript
+  -- S', SS' -> SS'
+  else return mathMode.scriptScriptCramped end
 end
 local function getDenominatorMode(mode)
-  if mode == mathMode.display or mode == mathMode.displayCramped then return mathMode.textCramped    -- D, D' -> T'
-  elseif mode == mathMode.text or mode == mathMode.textCramped then return mathMode.scriptCramped    -- T, T' -> S'
-  else return mathMode.scriptScriptCramped end                                                           -- S, SS, S', SS' -> SS'
+  -- D, D' -> T'
+  if mode == mathMode.display or mode == mathMode.displayCramped then
+    return mathMode.textCramped
+  -- T, T' -> S'
+  elseif mode == mathMode.text or mode == mathMode.textCramped then
+    return mathMode.scriptCramped
+  -- S, SS, S', SS' -> SS'
+  else return mathMode.scriptScriptCramped end
 end
 
 local function getRightMostGlyphId(node)
@@ -184,8 +210,8 @@ local function getRightMostGlyphId(node)
   end
 end
 
--- Compares two SILE length, without considering shrink or stretch values,
--- and returns the biggest.
+-- Compares two SILE length, without considering shrink or stretch values, and
+-- returns the biggest.
 local function maxLength(...)
   local arg = {...}
   local m
@@ -211,8 +237,9 @@ local function scaleWidth(length, line)
   return number
 end
 
--- math box, box with a horizontal shift value and could contain zero or more mbox'es (or its child classes)
--- the entire math environment itself is a top-level mbox.
+-- math box, box with a horizontal shift value and could contain zero or more
+-- mbox'es (or its child classes) the entire math environment itself is
+-- a top-level mbox.
 -- Typesetting of mbox evolves four steps:
 --   1. Determine the mode for each mbox according to their parent.
 --   2. Shape the mbox hierarchy from leaf to top. Get the shape and relative position.
@@ -405,7 +432,8 @@ elements.stackbox = pl.class({
       end
       table.sort(spaceIdx, function(a, b) return a > b end)
       for _, idx in ipairs(spaceIdx) do
-        table.insert(self.children, idx, newStandardHspace(self.options.size * self:getScaleDown(), spaces[idx]))
+        local hsp = newStandardHspace(self.options.size * self:getScaleDown(), spaces[idx])
+        table.insert(self.children, idx, hsp)
       end
     end
   end,
@@ -1020,21 +1048,14 @@ elements.fraction = pl.class({
 })
 
 local newSubscript = function(spec)
---  if spec.base and spec.base:is_a(elements.text)
---      and spec.base.kind == "operator"
---      and symbolDefaults[spec.base.text]
---      and symbolDefaults[spec.base.text].atomType == atomType.bigOperator then
---    return elements.bigOpSubscript(spec.kind, spec.base, spec.sub, spec.sup)
---  else
     return elements.subscript(spec.base, spec.sub, spec.sup)
---  end
 end
 
 local newUnderOver = function(spec)
   return elements.underOver(spec.base, spec.sub, spec.sup)
 end
 
--- not local, because used further up this file
+-- not local, because scope defined further up this file
 newStandardHspace = function(fontSize, kind)
   local mu = fontSize / 18
   if kind == "thin" then
@@ -1193,8 +1214,7 @@ elements.table = pl.class({
     end
     self.width = thisColRelX
 
-    -- Center myself vertically around the axis, and update relative Ys of rows
-    -- accordingly
+    -- Center myself vertically around the axis, and update relative Ys of rows accordingly
     local axisHeight = getMathMetrics().constants.axisHeight * self:getScaleDown()
     self.height = self.vertSize / 2 + axisHeight
     self.depth = self.vertSize / 2 - axisHeight
