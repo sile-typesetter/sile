@@ -184,13 +184,6 @@ local function getRightMostGlyphId(node)
   end
 end
 
-local function contains(table, elt)
-  for _,x in pairs(table) do
-    if x == elt then return true end
-  end
-  return false
-end
-
 -- Compares two SILE length, without considering shrink or stretch values,
 -- and returns the biggest.
 local function maxLength(...)

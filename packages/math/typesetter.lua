@@ -33,7 +33,7 @@ function ConvertMathML(content)
     local script = content.options.mathvariant and
       b.mathVariantToScriptType(content.options.mathvariant) or b.scriptType.upright
     local text = content[1]
-    attributes = {}
+    local attributes = {}
     if syms.symbolDefaults[text] then
       for attribute,value in pairs(syms.symbolDefaults[text]) do
         SU.debug("math", "attribute = "..attribute..", value = "..value)
