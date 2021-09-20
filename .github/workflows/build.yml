@@ -72,8 +72,22 @@ jobs:
         with:
           install_url: https://nixos-nix-install-tests.cachix.org/serve/i6laym9jw3wg9mw6ncyrk6gjx4l34vvx/install
           install_options: '--tarball-url-prefix https://nixos-nix-install-tests.cachix.org/serve'
+          nix_path: nixpkgs=channel:nixos-unstable
           extra_nix_config: |
             experimental-features = nix-command flakes
+
+      - name: Print nixpkgs version
+        run: nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
+
+      - name: Print whether nixpkgs' stdenv is darwin
+        run: nix-instantiate --eval -E '(import <nixpkgs> {}).stdenv.isDarwin'
+
+      - name: Evaluate nixpkgs' sile.meta
+        run: nix eval --json nixpkgs#sile.meta
+
+      - name: Evaluate nixpkgs' sile.meta
+        run: nix eval --json .#sile.meta
+
       - name: Check nix build
         run: |
           nix build
