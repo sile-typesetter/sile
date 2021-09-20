@@ -22,11 +22,13 @@ function ConvertMathML(content)
     return b.stackbox('H', convertChildren(content))
   elseif content.command == 'mi' then
     local script = content.options.mathvariant and
-      b.mathVariantToScriptType(content.options.mathvariant) or b.scriptType.italic
+      b.mathVariantToScriptType(content.options.mathvariant)
     local text = content[1]
     if type(text) ~= "string" then
       SU.error("mi command contains "..text..", which is not text")
     end
+    script = script or (luautf8.len(text) == 1
+      and b.scriptType.italic or b.scriptType.upright)
     return b.text('identifier', script, text)
   elseif content.command == 'mo' then
     local script = content.options.mathvariant and
