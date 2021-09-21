@@ -173,15 +173,16 @@ examples: $(EXAMPLES)
 # garantee the TOC is up to date, simplify when #230 is fixed.
 hastoc = [ -f $(subst .pdf,.toc,$@) ] && echo true || echo false
 pages = $(PDFINFO) $@ | $(AWK) '$$1 == "Pages:" {print $$2}' || echo 0
-silepass = $(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@ && pg0=$${pg} pg=$$($(pages))
+silepass = $(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@ && pg0=$${pg} pg=$$($(pages)) || false
 define runsile =
-	pg0=$$($(pages)) hadtoc=$$($(hastoc))
+	set -e
+	pg=$$($(pages)) hadtoc=$$($(hastoc))
 	mkdir -p $(DEPDIR)/$$(dirname $@)
 	$(silepass)
 	export -n SILE_COVERAGE
 	if $(hastoc); then
 		$${hadtoc} || $(silepass)
-		[ "$${pg}" -eq "$${pg0}" ] || $(silepass)
+		[ "$${pg}" == "$${pg0}" ] || $(silepass)
 	fi
 endef
 
