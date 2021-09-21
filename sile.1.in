@@ -28,8 +28,10 @@ The default backend for producing PDF files is \fIlibtexpdf\fR.
 Other available backends include \fIcairo\fR, \fIdebug\fR, \fItext\fR, and \fIdummy\fR.
 .TP
 .BR \-d ", " \-\-debug= \fIvalue\fR[,\fIvalue\fR]
-Debug SILE's operation. Debug flags are comma separated.
+Debug SILE's operation.
+Multiple debug flags may be given as a comma separated list.
 While packages may define their own debug flags, the most commonly used ones are \fItypesetter\fR, \fIpagebuilder\fR, \fIvboxes\fR, \fIbreak\fR, \fIframes\fR, \fIprofile\fR, and \fIversions\fR.
+May be specified more than once.
 .TP
 .BR \-e ", " \-\-evaluate= \fIvalue\fR
 Evaluate some Lua code before processing the input file.
@@ -40,9 +42,8 @@ Choose an alternative font manager.
 The font manager is responsible for discovering the locations on font files on the system given a font name.
 The default font manager is \fIfontconfig\fR on non-Mac systems and \fImacfonts\fR on OS X.
 .TP
-.BR \-m ", " \-\-makedeps [\fB=\fIfile\fR]
+.BR \-m ", " \-\-makedeps \fIfile\fR
 Generate a list of dependencies in Makefile format.
-If no filename is specified, the input filename with .d appended will be used.
 .TP
 .BR \-o ", " \-\-output= \fIfile\fR
 Explicitly set the output file name.
