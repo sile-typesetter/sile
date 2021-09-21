@@ -6,7 +6,7 @@ further programming.
 
 \section{Parallel Text}
 
-The file \code{examples/parallel.sil} contains a rendering of chapter 1 of
+The example \url{https://sile-typesetter.org/examples/parallel.sil} contains a rendering of chapter 1 of
 Matthew’s Gospel in English and Greek. It uses the \code{diglot} class to align
 the two texts side-by-side. \code{diglot} provides the \code{\\left} and \code{\\right}
 commands to start entering text on the left column or the right column respectively,
@@ -398,7 +398,7 @@ an existing document. But what if you have a program which produces or munges
 data, and you would like to produce PDFs from within your application?
 In that case, it may be easier and provide more flexibility to use SILE as a library.
 
-In the \code{examples/} directory of the SILE distribution, you will find an
+At \url{https://sile-typesetter.org/examples/byhand.lua}, you will find an
 example of a Lua script which produces a PDF from SILE. It’s actually fairly
 simple to use SILE from within Lua; the difficult part is setting things up.
 Here’s how to do it.

@@ -5,8 +5,5 @@ lua-libraries/* linguist-vendored
 m4/* linguist-vendored
 node-pangocairo linguist-vendored
 
-# Documentation not detected by Linguist
-examples/* linguist-documentation
-
 # Language overrides that Linguist doesn't know about
 *.silejs linguist-language=Javascript

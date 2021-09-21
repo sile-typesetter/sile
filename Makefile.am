@@ -32,14 +32,9 @@ include Makefile-fonts
 include $(wildcard Makefile-distfiles)
 
 MANUAL = documentation/sile.pdf
-EXAMPLES = $(addsuffix .pdf,$(basename $(EXAMPLESSRCS)))
 
 if MANUAL
 _MANUAL = $(MANUAL)
-endif
-
-if EXAMPLES
-_EXAMPLES = $(EXAMPLES)
 endif
 
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
@@ -48,15 +43,14 @@ dist_man_MANS = sile.1
 dist_doc_DATA = README.md CHANGELOG.md
 dist_pdf_DATA = $(_MANUAL)
 dist_license_DATA = LICENSE
-nobase_dist_pdf_DATA = $(_EXAMPLES)
 bin_SCRIPTS = sile
-EXTRA_DIST = spec tests examples documentation sile-dev-1.rockspec fontconfig.conf
+EXTRA_DIST = spec tests documentation sile-dev-1.rockspec fontconfig.conf
 EXTRA_DIST += Makefile-distfiles
 EXTRA_DIST += build-aux/action-updater.js build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
 EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconfig.conf build-aux/docker-glibc-workaround.sh hooks/build
 EXTRA_DIST += default.nix flake.nix flake.lock libtexpdf.git-rev shell.nix
 EXTRA_DIST += package.json # imported by both Nix and Docker
-EXTRA_DIST += $(MANUAL) $(EXAMPLES)
+EXTRA_DIST += $(MANUAL)
 
 Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
 	build-aux/list-dist-files.sh > $@
@@ -74,7 +68,7 @@ _BRANCH_REF := $(shell $(AWK) '{print ".git/" $$2}' .git/HEAD 2>/dev/null ||:)
 libtexpdf.git-rev: $(_BRANCH_REF)
 	$(GIT) submodule status -- libtexpdf | $(AWK) '{ print $$1 }' > $@
 
-dist-hook: $(MANUAL) $(EXAMPLES)
+dist-hook: $(MANUAL)
 	cd $(distdir)
 	printf "$(VERSION)" > .tarball-version
 	$(SED) -i -e '/^LUAMODULES =/s/=.*/=/' Makefile-distfiles
@@ -94,7 +88,7 @@ tagrelease:
 	npm run release -- $(and $(RELTYPE),--release-as $(RELTYPE))
 
 .PHONY: prerelease
-prerelease: test examples docs update_libtexpdf
+prerelease: test docs update_libtexpdf
 
 .PHONY: release-preview
 release-preview:
@@ -174,9 +168,6 @@ endif
 .PHONY: docs
 docs: $(MANUAL)
 
-.PHONY: examples
-examples: $(EXAMPLES)
-
 # This is a monkey patch to figure out how many passes we have to to to
 # garantee the TOC is up to date, simplify when #230 is fixed.
 hastoc = [ -f $(subst .pdf,.toc,$@) ] && echo true || echo false
@@ -197,7 +188,6 @@ endef
 _FORCED = $(and $(SILE_COVERAGE)$(CLEAN),force)
 _TEST_DEPS = $(and $$(filter tests/%,$@),$(addprefix .fonts/,$(TESTFONTFILES)))
 _DOCS_DEPS = $(and $$(filter documentation/%,$@),$(addprefix .fonts/,$(DOCSFONTFILES)))
-_EXAM_DEPS = $(and $$(filter examples/%,$@),$(addprefix .fonts/,$(EXAMFONTFILES)))
 
 # TODO: remove _BUILT_SUBDIRS hack and replace it with something sensible when
 # these subdirs don't do crazy things like copying files outside of their own trees!
@@ -210,15 +200,13 @@ $(_SUBDIR_TELLS):
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 #	$(error Running `make install`, `make dist`, or other end-game targets before `make all` unspported.)
 
-patterndeps = $(_FORCED) $(_TEST_DEPS) $(_EXAM_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(LUAMODLOCK) $(_BUILT_SUBDIRS)
+patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(LUAMODLOCK) $(_BUILT_SUBDIRS)
 
 %.pdf: %.sil $$(patterndeps)
 	$(runsile)
 
 %.pdf: %.xml $$(patterndeps)
 	$(runsile)
-
-examples/docbook/article-template.pdf: SILEFLAGS += -I docbook.sil
 
 .PHONY: coverage
 coverage: export SILE_COVERAGE=1
@@ -342,7 +330,7 @@ tests/%.actual: tests/%.xml $$(patterndeps)
 	-$(if $(CLEAN),rm -f $@,:)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-DEPFILES = $(addsuffix .d,$(addprefix $(DEPDIR)/,$(basename $(TESTSRCS) $(MANUAL) $(EXAMPLES))))
+DEPFILES = $(addsuffix .d,$(addprefix $(DEPDIR)/,$(basename $(TESTSRCS) $(MANUAL))))
 DEPDIRS = $(sort $(dir $(DEPFILES)))
 
 $(DEPDIRS): | Makefile-distfiles
@@ -351,12 +339,6 @@ $(DEPDIRS): | Makefile-distfiles
 $(DEPFILES): | $(DEPDIRS)
 
 include $(wildcard $(DEPFILES))
-
-.fonts: fontconfig.conf
-	[ -h .fonts ] || mkdir -p $@
-
-.sources:
-	[ -h .sources ] || mkdir -p $@
 
 CLEANFILES = $(BUILT_SOURCES) .version-prev $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles $(_BUILT_SUBDIRS)
 
@@ -384,7 +366,7 @@ docker-build-push: docker
 
 gource.webm:
 	mkdir -p /tmp/gravatars
-	convert examples/docbook/images/sile-logo.jpg -negate -resize 50% /tmp/sile-logo.jpg
+	magick documentation/sile-logo.pdf[0] -density 300 -colorspace RGB -negate -resize 50% /tmp/sile-logo.jpg
 	$(GIT) log --pretty=format:"%an—%ae" | \
 		sort -u | \
 		while IFS=— read name email; do \

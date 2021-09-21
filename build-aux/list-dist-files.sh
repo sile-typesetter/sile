@@ -22,7 +22,3 @@ finder tests -maxdepth 1 -name '*.xml'
 
 printf '\n%s' "TESTEXPECTS ?="
 finder tests -maxdepth 1 -name '*.expected'
-
-printf '\n%s' "EXAMPLESSRCS ="
-finder examples -maxdepth 1 -name '*.sil'
-finder examples/docbook -maxdepth 1 -name '*.xml'

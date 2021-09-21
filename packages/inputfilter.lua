@@ -43,7 +43,7 @@ this by allowing you to rewrite the abstract syntax tree representing the docume
 Loading \code{inputfilter} into your class with \code{class:loadPackage("inputfilter")}
 provides you with two new Lua functions: \code{transformContent} and \code{createCommand}.
 \code{transformContent} takes a content tree and applies a transformation function to the
-text within it. See \code{examples/inputfilter.sil} for a simple example, and
+text within it. See \url{https://sile-typesetter.org/examples/inputfilter.sil} for a simple example, and
 \code{packages/chordmode.sil} for a more complete one.
 \end{document}
 ]]}

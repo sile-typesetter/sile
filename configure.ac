@@ -53,10 +53,6 @@ AC_ARG_WITH([manual],
             AS_HELP_STRING([--with-manual], [Rebuild manual and install to system’s PDF documentation directory]))
 AM_CONDITIONAL([MANUAL], [test "x$with_manual" = "xyes"])
 
-AC_ARG_WITH([examples],
-            AS_HELP_STRING([--with-examples], [Rebuild examples and install to system’s PDF documentation directory]))
-AM_CONDITIONAL([EXAMPLES], [test "x$with_examples" = "xyes"])
-
 AM_COND_IF([SYSTEM_LIBTEXPDF],
            [AC_CHECK_LIB([texpdf],[texpdf_doc_set_verbose],
                          [],
