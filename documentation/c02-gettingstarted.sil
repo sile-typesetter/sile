@@ -231,6 +231,22 @@ library files onto their system; this can be done with:
 
 Now the \code{sile} command is available from any directory.
 
+\begin{note}
+If you wish you can skip the install step and use the compiled SILE executable diretly from the source directory.
+As configured above this will only work from a shell with the CWD set to the SILE source.
+To make it usable from anywhere, you can configure it with the source directory baked in as the installation location.
+
+\begin{terminal}
+$ ./configure --datarootdir=$(cd ..;pwd)
+$ make
+\end{terminal}
+
+Now to run SILE from anywhere you just need to supply the full path to the source directory.
+
+\terminal{$ /full/path/to/sile/sile}
+
+\end{note}
+
 \subsection{Notes for Windows users}
 
 SILE may be built on Windows using CMake and Visual Studio. There is not an
