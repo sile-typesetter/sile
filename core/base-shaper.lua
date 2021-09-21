@@ -60,7 +60,11 @@ SILE.shapers.base = pl.class({
       local options = SILE.font.loadDefaults({})
       options.tracking = SILE.settings.get("shaper.tracking")
       local items = self:shapeToken(char, options)
-      return { height = items[1].height, width = items[1].width }
+      if #items > 0 then
+        return { height = items[1].height, width = items[1].width }
+      else
+        SU.error("Unable to measure character", char)
+      end
     end,
 
     -- Given a text and some font options, return a bunch of boxes

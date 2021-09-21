@@ -54,6 +54,10 @@ SILE.registerCommand("font:add-fallback", function (options, _)
   fontlist[#fontlist+1] = options
 end)
 
+SILE.registerCommand("font:remove-fallback", function ()
+  fontlist[#fontlist] = nil
+end, "Pop last added fallback from fallback stack")
+
 SILE.shapers.harfbuzzWithFallback = pl.class({
     _base = SILE.shapers.harfbuzz,
 
@@ -200,6 +204,7 @@ Now we can say:
 
 \font:add-fallback[family=Symbola]
 \font:add-fallback[family=Noto Sans CJK JP]
+
 \begin{verbatim}
 あば x 😼 Hello world. あ
 \end{verbatim}
@@ -208,8 +213,13 @@ and SILE will produce:
 
 \examplefont{あば x 😼 Hello world. あ}
 
+\font:remove-fallback
+\font:remove-fallback
+
 \command{\\font:clear-fallbacks} removes all font fallbacks from the list
 of fonts to try.
 
-\font:clear-fallbacks
+\command{\\font:remove-fallback} removes the last added fallback from the
+list of fonts to try.
+
 \end{document} ]]}

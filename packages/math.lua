@@ -7,6 +7,10 @@ return {
 \set[parameter=math.font.family, value=Libertinus Math]
 \set[parameter=math.font.size, value=11]
 
+% Default verbatim font (Hack) is missing a few math symbols
+\script[src=packages/font-fallback]
+\font:add-fallback[family=Symbola]
+
 This package provides typesetting of formulas directly in a SILE document.
 
 \note{Mathematical typesetting in SILE is still in its infancy. As such, it
@@ -282,6 +286,7 @@ hopefully we’ll get there. Among unsupported constructs are: decorating symbol
 with so-called accents, such as arrows or hats, “over” or “under” braces, and
 line breaking inside a formula.
 
+\font:remove-fallback
 \end{document}
 ]]
 }

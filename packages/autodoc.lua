@@ -1,18 +1,13 @@
 SILE.registerCommand("package-documentation", function (options, _)
   local package = SU.required(options, "src", "src for package documentation")
-  io.stderr:write("<"..package..">")
+  SU.debug("autodoc", package)
   local exports = require(package)
-  if type(exports) ~= "table" then
+  if type(exports) ~= "table" or not exports.documentation then
     SU.error("Undocumented package "..package)
   end
-  local doc = exports.documentation
-  if not doc then
-    SU.error("Undocumented package "..package)
-  end
-
   SILE.process(
     SILE.inputs.TeXlike.docToTree(
-      require(package).documentation
+      exports.documentation
     )
   )
 end)

@@ -4,11 +4,14 @@ SILE.languageSupport = {
     if SILE.languageSupport.languages[language] then return end
     if SILE.hyphenator.languages[language] then return end
     if not(language) or language == "" then language = "en" end
-    local _, fail = pcall(function () SILE.require("languages/" .. language) end)
+    local lang, fail = pcall(function () SILE.require("languages/" .. language) end)
     if fail then
       if fail:match("not found") then fail = "no support for this language" end
       SU.warn("Error loading language " .. language .. ": " .. fail)
       SILE.languageSupport.languages[language] = {} -- Don't try again
+    end
+    if type(lang) == "table" and lang.init then
+      lang.init()
     end
   end
 }
