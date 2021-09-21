@@ -209,12 +209,6 @@ If that comand was successful, you can build SILE itself:
 
 \terminal{$ make}
 
-You can now run SILE as is, uninstalled:
-
-\terminal{$ ./sile examples/simple.sil}
-
-If all has gone well, this should produce a file \code{examples/simple.pdf}.
-
 Most users of SILE will want to install the \code{sile} command and SILE’s
 library files onto their system; this can be done with:
 
@@ -264,21 +258,20 @@ if you wish to use SILE as part of a pipeline.}
 
 \section{Let’s Do Something Cool}
 
-In \code{examples/docbook/article-template.xml}, you will find a typical DocBook 5.0
+In \url{https://sile-typesetter.org/examples/docbook.xml}, you will find a typical DocBook 5.0
 article. Normally turning DocBook to print involves a curious dance of XSLT
 processors, format object processors and/or strange LaTeX packages. But SILE
 can read XML files and it also comes with a \code{docbook} class, which tells
 SILE how to render (admittedly, a subset of) the DocBook tags onto a page.
 
-Turning \code{examples/docbook/article-template.xml} into
-\code{examples/docbook/article-template.pdf} is now as simple as:
+Turning \code{dockbook.xml} into \code{docbook.pdf} is now as simple as:
 
 \begin{verbatim}
 \line
-$ ./sile -I docbook.sil examples/docbook/article-template.xml
+$ ./sile -I docbook.sil docbook.xml
 \sileversion
 Loading docbook
-<classes/docbook.sil><examples/docbook/article-template.xml>[1] [2] [3]
+<classes/docbook.sil><docbook.xml>[1] [2] [3]
 \line
 \end{verbatim}
 

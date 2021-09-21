@@ -90,7 +90,7 @@ To change the writing direction for a single frame, use
 \code{\\thisframedirection[direction=...]}.
 
 SILE uses the Unicode bidirectional algorithm to handle texts written in
-mixed directionalities. See \code{examples/examples/global-scripts/i18n.sil}
+mixed directionalities. See \url{https://sile-typesetter.org/examples/i18n.sil}
 for an example which brings together multiple scripts and directionalities.
 
 \section{Hyphenation}

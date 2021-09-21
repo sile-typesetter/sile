@@ -60,7 +60,7 @@ return {
   documentation = [[\begin{document}
 This package enhances the typesetting of URLs in two ways.
 First, the \code{\\url} command will automatically insert breakpoints into unwieldy
-URLs like \url{https://github.com/simoncozens/sile/tree/master/examples/packages}
+URLs like \url{https://github.com/sile-typesetter/sile-typesetter.github.io/tree/master/examples}
 so that they can be broken up over multiple lines.
 
 It also provides the
