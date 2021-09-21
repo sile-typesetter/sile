@@ -1,23 +1,6 @@
--- Japaneese language support defines units which are useful here
-SILE.languageSupport.loadLanguage("ja")
-
 SILE.registerCommand("ruby:font", function (_, _)
   SILE.call("font", { size = "0.6zw", weight = 800 })
 end)
-
-SILE.settings.declare({
-    parameter = "ruby.height",
-    type = "measurement",
-    default = SILE.measurement("1zw"),
-    help = "Vertical offset between the ruby and the main text"
-  })
-
-SILE.settings.declare({
-    parameter = "ruby.latinspacer",
-    type = "glue",
-    default = SILE.nodefactory.glue("0.25em"),
-    help = "Glue added between consecutive Latin ruby"
-  })
 
 local isLatin = function (char)
   return (char > 0x20 and char <= 0x24F) or (char >= 0x300 and char <= 0x36F)
@@ -95,6 +78,24 @@ SILE.registerCommand("ruby", function (options, content)
 end)
 
 return {
+
+  init = function (_, _)
+    -- Japaneese language support defines units which are useful here
+    SILE.languageSupport.loadLanguage("ja")
+    SILE.settings.declare({
+      parameter = "ruby.height",
+      type = "measurement",
+      default = SILE.measurement("1zw"),
+      help = "Vertical offset between the ruby and the main text"
+    })
+    SILE.settings.declare({
+      parameter = "ruby.latinspacer",
+      type = "glue",
+      default = SILE.nodefactory.glue("0.25em"),
+      help = "Glue added between consecutive Latin ruby"
+    })
+  end,
+
   documentation = [[
 \begin{document}
 Japanese texts often contain pronunciation hints (called \em{furigana}) for
@@ -125,4 +126,5 @@ Produces:
 
 \end{document}
 ]]
+
 }
