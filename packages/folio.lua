@@ -35,7 +35,8 @@ return {
         if (folioFrame) then
           SILE.typesetNaturally(folioFrame, function ()
             SILE.settings.pushState()
-            SILE.settings.reset()
+            -- Restore the settings to the top of the queue, which should be the document #986
+            SILE.settings.toplevelState()
             SILE.call("foliostyle", {}, { SILE.formatCounter(SILE.scratch.counters.folio) })
             SILE.typesetter:leaveHmode()
             SILE.settings.popState()
