@@ -147,11 +147,13 @@ to control which style is used. The default is \code{left}
 
 \subsection{French}
 
-In French typesetting, there is normally a thin space between text and “high”
-punctuation (question marks, exclamation marks, colons, semicolons). SILE
-will automatically insert this space if it is not present, and “thin” a normal
-space if it is. The size of the space is determined by
-\code{languages.fr.punctuationspace}.
+In French typesetting, there is normally a non-breakable space between text
+and “high” punctuation (a thin fixed space before question marks, exclamation
+marks, semicolons and an inter-word space before colons), and also spaces
+within "guillemets" (quotation marks). SILE will automatically apply the
+correct space. The size of these spaces is determined by
+\code{languages.fr.thinspace}, \code{languages.fr.colonspace} and
+\code{languages.fr.guillspace}.
 
 \subsection{Japanese / Chinese}
 

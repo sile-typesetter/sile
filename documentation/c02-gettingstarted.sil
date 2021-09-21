@@ -105,6 +105,12 @@ Packages are available for NixOS:
 
 The Nix package manager is also available on many other Linux distributions, as well as for macOS.
 
+If you have flakes support\footnote{\url{https://nixos.wiki/wiki/Flakes#Installing_flakes}} enabled, you can run sile with:
+
+\begin{terminal}
+nix run github:sile-typesetter/sile <sile arguments>
+\end{terminal}
+
 \subsection{Void Linux}
 
 Void Linux packages are available in the default package manager.

@@ -48,6 +48,8 @@ EXTRA_DIST = spec tests documentation sile-dev-1.rockspec fontconfig.conf
 EXTRA_DIST += Makefile-distfiles
 EXTRA_DIST += build-aux/action-updater.js build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
 EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconfig.conf build-aux/docker-glibc-workaround.sh hooks/build
+EXTRA_DIST += default.nix flake.nix flake.lock libtexpdf.git-rev shell.nix
+EXTRA_DIST += package.json # imported by both Nix and Docker
 EXTRA_DIST += $(MANUAL)
 
 Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
@@ -55,11 +57,16 @@ Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
 
 BUILT_SOURCES = .version Makefile-distfiles
 
-.version: $(shell $(AWK) '{print ".git/" $$2}' .git/HEAD 2>/dev/null ||:)
+_BRANCH_REF := $(shell $(AWK) '{print ".git/" $$2}' .git/HEAD 2>/dev/null ||:)
+
+.version: $(_BRANCH_REF)
 	[ -e "$@" ] && mv "$@" "$@-prev" || $(if $<,touch,cp "$(srcdir)/.tarball-version") "$@-prev"
 	$(if $<,./build-aux/git-version-gen "$(srcdir)/.tarball-version",printf "$(VERSION)") > "$@"
 	$(CMP) -s "$@" "$@-prev" || \
 		( autoreconf configure.ac --force && build-aux/decore-automake.sh )
+
+libtexpdf.git-rev: $(_BRANCH_REF)
+	$(GIT) submodule status -- libtexpdf | $(AWK) '{ print $$1 }' > $@
 
 dist-hook: $(MANUAL)
 	cd $(distdir)
@@ -103,7 +110,8 @@ sile-%.md: CHANGELOG.md
 update_libtexpdf:
 	$(GIT) diff-index --quiet --cached HEAD || exit 1 # die if anything already staged
 	$(GIT) submodule update --init --remote -- libtexpdf
-	$(GIT) add -- libtexpdf
+	$(GIT) submodule status -- libtexpdf | $(AWK) '{ print $$1 }' > libtexpdf.git-rev
+	$(GIT) add -- libtexpdf libtexpdf.git-rev
 	$(GIT) diff-index --quiet --cached HEAD || $(GIT) commit -m "chore(build): Pin latest libtexpdf library submodule"
 
 gh-pages:

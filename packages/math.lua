@@ -144,12 +144,12 @@ In the \code{math} syntax, every individual letter is an identifier (MathML tag
 are operators (tag \code{mo}). If it does not suit you, you can explicitly use
 the \code{\\mi}, \code{\\mn} or \code{\\mo} tags. For instance, \code{sin(x)}
 will be rendered as \math{sin(x)}, because SILE considers the letters s, i and n
-to be individual identifiers, and identifiers are italicized by default. To
-avoid that, you can specify that \math{\mo{sin}} is actually an operator by
-writing \code{\\mo\{sin\}(x)} and get: \math{\mo{sin}(x)}. If you prefer it in
-“double struck” style, this is permitted by the \code{mathvariant} attribute:
-\code{\\mo[mathvariant=double-struck]\{sin\}(x)} renders as
-\math{\mo[mathvariant=double-struck]{sin}(x)}.
+to be individual identifiers, and identifiers made of one character are
+italicized by default. To avoid that, you can specify that \math{\mi{sin}} is an
+identifier by writing \code{\\mi\{sin\}(x)} and get: \math{\mi{sin}(x)}. If you
+prefer it in “double struck” style, this is permitted by the \code{mathvariant}
+attribute: \code{\\mi[mathvariant=double-struck]\{sin\}(x)} renders as
+\math{\mi[mathvariant=double-struck]{sin}(x)}.
 
 To save you some typing, the math syntax lets you define macros with the
 following syntax:
