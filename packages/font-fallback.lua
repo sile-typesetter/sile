@@ -54,6 +54,10 @@ SILE.registerCommand("font:add-fallback", function (options, _)
   fontlist[#fontlist+1] = options
 end)
 
+SILE.registerCommand("font:remove-fallback", function ()
+  fontlist[#fontlist] = nil
+end, "Pop last added fallback from fallback stack")
+
 SILE.shapers.harfbuzzWithFallback = pl.class({
     _base = SILE.shapers.harfbuzz,
 
@@ -210,6 +214,9 @@ and SILE will produce:
 
 \command{\\font:clear-fallbacks} removes all font fallbacks from the list
 of fonts to try.
+
+\command{\\font:remove-fallback} removes the last added fallback from the
+list of fonts to try.
 
 \font:clear-fallbacks
 \end{document} ]]}
