@@ -205,13 +205,6 @@ Otherwise to go with default of bundling them, just run:
 
 \terminal{$ ./configure}
 
-If that comand was successful, you can build SILE itself:
-
-\terminal{$ make}
-
-Most users of SILE will want to install the \code{sile} command and SILE’s
-library files onto their system; this can be done with:
-
 \begin{note}
 SILE can be built to run using LuaJIT under which it runs almost exactly twice
 as fast! Because SILE lets your documents, classes, and packages use Lua code
@@ -226,6 +219,13 @@ Keep in mind that any Lua code you write will need to be JIT compatible. The
 vast majority of Lua code will be fine, but there are a few limitations. See
 the documentation for your version of LuaJIT for details.
 \end{note}
+
+If that comand was successful, you can build SILE itself:
+
+\terminal{$ make}
+
+Most users of SILE will want to install the \code{sile} command and SILE’s
+library files onto their system; this can be done with:
 
 \terminal{$ make install}
 
