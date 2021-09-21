@@ -1,6 +1,11 @@
 local epnf = require("epnf")
 local lpeg = require("lpeg")
+local syms = require("packages/math/unicode-symbols")
 require("core/parserbits")
+
+local atomType = syms.atomType
+local symbolDefaults = syms.symbolDefaults
+local symbols = syms.symbols
 
 -- Grammar to parse TeX-like math
 -- luacheck: push ignore
@@ -104,7 +109,6 @@ end
 local mathParser = epnf.define(mathGrammar)
 
 local commands = {}
-local symbols = {}
 
 -- A command type is a type for each argument it takes: either string or MathML
 -- tree. If a command has no type, it is assumed to take only trees.
@@ -263,6 +267,23 @@ local function compileToMathML(arg_env, tree)
       tree.command = "mo"
     end
     tree.options = {}
+  -- Translate TeX-like sub/superscripts to `munderover` or `msubsup`,
+  -- depending on whether the base is a big operator
+  elseif tree.id == "sup" and tree[1].command == "mo"
+      and tree[1].atomType == atomType.bigOperator then
+    tree.command = "mover"
+  elseif tree.id == "sub" and tree[1].command == "mo"
+      and symbolDefaults[tree[1][1]].atomType == atomType.bigOperator then
+      tree.command = "munder"
+  elseif tree.id == "subsup" and tree[1].command == "mo"
+      and symbolDefaults[tree[1][1]].atomType == atomType.bigOperator then
+    tree.command = "munderover"
+  elseif tree.id == "supsub" and tree[1].command == "mo"
+      and symbolDefaults[tree[1][1]].atomType == atomType.bigOperator then
+    tree.command = "munderover"
+    local tmp = tree[2]
+    tree[2] = tree[3]
+    tree[3] = tmp
   elseif tree.id == "sup" then
     tree.command = "msup"
   elseif tree.id == "sub" then
@@ -343,5 +364,4 @@ return {
   convertTexlike = convertTexlike,
   compileToMathML = compileToMathML,
   registerCommand = registerCommand,
-  symbols = symbols
 }
