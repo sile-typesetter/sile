@@ -15,6 +15,8 @@ jplain.defaultFrameset.content = {
 
 function jplain:init ()
   SILE.call("bidi-off")
+  self:loadPackage("font-fallback")
+  SILE.call("font:add-fallback", { family = "Noto Sans CJK JP" })
   SILE.languageSupport.loadLanguage("ja")
   self:loadPackage("hanmenkyoshi")
   self.defaultFrameset.content.tate = self.options.layout() == "tate"

@@ -133,6 +133,8 @@ end)
 return {
   init = function (_, _)
     -- Japaneese language support defines units which are useful here
+    SILE.require("packages/font-fallback.lua")
+    SILE.call("font:add-fallback", { family = "Noto Sans CJK JP" })
     SILE.languageSupport.loadLanguage("ja")
   end,
   documentation = [[

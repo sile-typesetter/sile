@@ -204,6 +204,7 @@ Now we can say:
 
 \font:add-fallback[family=Symbola]
 \font:add-fallback[family=Noto Sans CJK JP]
+
 \begin{verbatim}
 あば x 😼 Hello world. あ
 \end{verbatim}
@@ -212,11 +213,13 @@ and SILE will produce:
 
 \examplefont{あば x 😼 Hello world. あ}
 
+\font:remove-fallback
+\font:remove-fallback
+
 \command{\\font:clear-fallbacks} removes all font fallbacks from the list
 of fonts to try.
 
 \command{\\font:remove-fallback} removes the last added fallback from the
 list of fonts to try.
 
-\font:clear-fallbacks
 \end{document} ]]}

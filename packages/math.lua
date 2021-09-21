@@ -286,7 +286,7 @@ hopefully we’ll get there. Among unsupported constructs are: decorating symbol
 with so-called accents, such as arrows or hats, “over” or “under” braces, and
 line breaking inside a formula.
 
-\font:clear-fallbacks
+\font:remove-fallback
 \end{document}
 ]]
 }

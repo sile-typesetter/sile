@@ -81,6 +81,8 @@ return {
 
   init = function (_, _)
     -- Japaneese language support defines units which are useful here
+    SILE.require("packages/font-fallback.lua")
+    SILE.call("font:add-fallback", { family = "Noto Sans CJK JP" })
     SILE.languageSupport.loadLanguage("ja")
     SILE.settings.declare({
       parameter = "ruby.height",
@@ -106,24 +108,24 @@ that they explain. The typesetting term for these glosses is \em{ruby}.
 The \code{ruby} package provides the \code{\\ruby[reading=...]\{...\}} command
 which sets a piece of ruby above or beside the base text. For example:
 
-\set[parameter=ruby.height, value=12pt]
-\language[main=ja]{}
+% Unit zw throws errors if there is not way to shape あ
+\script[src=packages/font-fallback]
+\font:add-fallback[family=Noto Sans CJK JP]
 
-\define[command=ruby:font]{\font[family=Noto Sans CJK JP,size=6pt]}
+\set[parameter=ruby.height,value=12pt]
+\define[command=ja]{\font[family=Noto Sans CJK JP,language=ja]{\process}}
+
 \begin{verbatim}
 \line
-\\ruby[reading=\font[family=Noto Sans CJK JP]{れいわ}]\{\font[family=Noto Sans CJK JP]{令和}\}
+\\ruby[reading=\ja{れいわ}]\{\ja{令和}\}
 \line
 \end{verbatim}
 
 Produces:
 \medskip
-\font[family=Noto Sans CJK JP]{
-  \ruby[reading=れいわ]{令和}
-}
+\ja{\ruby[reading=れいわ]{令和}}
 
-\language[main=en]
-
+\font:remove-fallback
 \end{document}
 ]]
 
