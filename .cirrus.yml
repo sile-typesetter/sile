@@ -11,10 +11,10 @@ task:
     folders:
       - .fonts
       - .sources
-    fingerprint_script: cat Makefile-fonts
+    fingerprint_script: cat Makefile-fonts && echo 1
   luarocks_cache:
     folder: /usr/local/lib/luarocks
-    fingerprint_script: cat sile-dev-1.rockspec && echo 1
+    fingerprint_script: cat sile-dev-1.rockspec
   luarocks_lua_cache:
     folder: /usr/local/share/lua
     fingerprint_script: cat sile-dev-1.rockspec
