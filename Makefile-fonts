@@ -41,10 +41,10 @@ notobase = $(shell sed -e 's/-.*//' <<< $(notdir $1))
 	curl -fsSL https://github.com/alif-type/amiri/raw/0.113/$(notdir $@) -o $@
 
 .fonts/Noto%.ttf: | .fonts
-	curl -fsSL https://github.com/googlefonts/noto-fonts/raw/v20201206-phase3/hinted/ttf/$(call notobase,$@)/$(notdir $@) -o $@
+	curl -fsSL https://raw.githubusercontent.com/googlefonts/noto-fonts/v20201206-phase3/hinted/ttf/$(call notobase,$@)/$(notdir $@) -o $@
 
 .fonts/Noto%.ttc: | .fonts
-	curl -fsSL https://github.com/googlefonts/noto-cjk/raw/NotoSansV2.001/$(notdir $@) -o $@
+	curl -fsSL https://raw.githubusercontent.com/googlefonts/noto-cjk/v20201206-cjk/$(notdir $@) -o $@
 
 .fonts/SBL_Hbrw.ttf: | .fonts
 	curl -fsSL https://www.sbl-site.org/Fonts/$(notdir $@) -o $@
