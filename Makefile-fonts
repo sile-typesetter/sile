@@ -33,7 +33,7 @@ TESTFONTFILES += NotoSerifCJK-Regular.ttc
 TESTFONTFILES += SBL_Hbrw.ttf
 TESTFONTFILES += TwemojiMozilla.ttf
 
-notobase = $(shell sed -e 's/-.*//' <<< $(notdir $1))
+notobase = $(shell echo $(notdir $1) | sed -e 's/-.*//')
 
 # Tell make how to download individual font files directly (when available)
 
