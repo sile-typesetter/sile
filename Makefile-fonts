@@ -57,9 +57,6 @@ notobase = $(shell sed -e 's/-.*//' <<< $(notdir $1))
 
 # Tell  make how to download font file bundles (when not downloadable individually)
 
-.sources/The_Brill_Typeface_Package_v_4_0.zip: | .sources
-	curl -fsSL https://brill.com/fileasset/$(notdir $@) -o $@
-
 .sources/CrimsonPro.zip: | .sources
 	curl -fsSL https://fonts.google.com/download?family=Crimson+Pro -o $@
 
@@ -90,10 +87,6 @@ notobase = $(shell sed -e 's/-.*//' <<< $(notdir $1))
 #	curl -fsSL https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
 
 # Tell make how to extract individual files from bundles
-
-.fonts/Brill%: .sources/The_Brill_Typeface_Package_v_4_0.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) "$(basename $(<F))/$(notdir $@)"
-	touch $@
 
 .fonts/Cormorant%: .sources/Cormorant_Install_v3.601.zip | .fonts
 	bsdtar -x -f $< -C $(dir $@) --strip-components 2 "$(basename $(<F))/1. TrueType Font Files/$(notdir $@)"
