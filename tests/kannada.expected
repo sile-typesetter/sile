@@ -1,7 +1,7 @@
 Set paper size 	297.6377985	419.5275636
 Begin page
 Mx 	14.8819
-My 	33.9139
+My 	33.6644
 Set font 	Libertinus Serif;16;400;;normal;;LTR
 T	41 70 77 77 80 w=35.3440	(Hello)
 Mx 	55.0481
@@ -10,10 +10,10 @@ Mx 	84.9201
 T	2 w=4.6080	(!)
 Mx 	94.3502
 Set font 	Noto Sans Kannada;16;400;;normal;;LTR
-T	39 44 163 57 97 46 w=61.6094	(ನಮಸ್ಕಾರ)
-Mx 	161.5164
-T	422 w=4.2891	(:)
-Mx 	165.8054
-T	405 w=6.1250	())
+T	42 47 164 60 96 49 w=61.6160	(ನಮಸ್ಕಾರ)
+Mx 	161.5213
+T	429 w=4.2880	(:)
+Mx 	165.8093
+T	412 w=6.1280	())
 End page
 Finish
