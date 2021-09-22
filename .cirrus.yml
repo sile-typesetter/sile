@@ -1,17 +1,17 @@
 freebsd_instance:
-  image_family: freebsd-12-2
+  image_family: freebsd-13-0
 
 task:
   name: Cirrus CI (FreeBSD)
   env:
-    MAKEFLAGS: -j2 -Otarget
+    MAKEFLAGS: -j$(nproc) -Otarget
     CFLAGS: -I/usr/local/include -fPIC
     LDFLAGS: -L/usr/local/lib
   assets_cache:
     folders:
       - .fonts
       - .sources
-    fingerprint_script: cat Makefile-fonts && echo 1
+    fingerprint_script: cat Makefile-fonts
   luarocks_cache:
     folder: /usr/local/lib/luarocks
     fingerprint_script: cat sile-dev-1.rockspec
