@@ -672,10 +672,14 @@ elements.underOver = pl.class({
         widest = self.sub
         a = self.base
         b = self.sup
-      else
+      elseif self.sup then
         widest = self.sup
         a = self.base
         b = self.sub
+      else
+        widest = self.sub
+        a = self.base
+        b = nil
       end
     else
       if self.sup and self.base.width > self.sup.width then
