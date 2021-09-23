@@ -1,39 +1,39 @@
-\begin[papersize=6in x 9in]{document}
+\begin[papersize=a6]{document}
+\nofolios
 \script[src=packages/lorem]
-\script[src=packages/color]
-\set[parameter=document.parskip, value=1ex]
+\set[parameter=document.parskip,value=1ex]
+\begin{script}
 
-\define[command=loremx]{\lorem[words=100]}
-\define[command=markx]{\color[color=red]{\process}}
-\script{
-SILE.registerCommand("hang", function (options, content)
+SILE.registerCommand("testhang", function (options, content)
   local after = SU.cast("integer", options.after or 0)
-  local indent = SU.cast("length", options.indent or 0):tonumber()
+  local indent = SU.cast("length", options.indent or 0)
   SILE.typesetter:leaveHmode()
   SILE.settings.temporarily(function ()
     SILE.call("noindent")
     SILE.settings.set("linebreak.hangAfter", after)
     SILE.settings.set("linebreak.hangIndent", indent)
-    SILE.process(content)
+    SILE.typesetter:typeset(string.format("With hang parameters (%s, %s): ", after, indent))
+    SILE.call("lorem", { words = 64 })
     SILE.typesetter:leaveHmode()
   end)
+  SILE.call("par")
 end)
-}
 
-This a normal paragraph: \loremx
+\end{script}
 
-\hang[after=-3, indent=2cm]{This paragraph has (\markx{-3, 2cm}) as hang parameters: \loremx}
+\lorem[words=30]
 
-This a normal paragraph: \loremx
+\testhang[after=-3,indent=4em]
 
-\hang[after=3, indent=2cm]{This paragraph has (\markx{3, 2cm}) as hang parameters: \loremx}
+\lorem[words=30]
 
-This a normal paragraph: \loremx
+\testhang[after=3,indent=4em]
 
-\hang[after=-3, indent=-2cm]{This paragraph has (\markx{-3, -2cm}) as hang parameters: \loremx}
+\lorem[words=30]
 
-This a normal paragraph: \loremx
+\testhang[after=-5,indent=-4cm]
 
-\hang[after=3, indent=-2cm]{This paragraph has (\markx{3, -2cm}) as hang parameters: \loremx}
+\lorem[words=30]
 
+\testhang[after=2,indent=-1cm]
 \end{document}
