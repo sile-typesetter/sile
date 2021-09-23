@@ -150,7 +150,7 @@ local nodeListToText = function (nl)
       end
     else
       owners[p] = { node = n }
-      text[p] = SU.utf8char(0xFFFC)
+      text[p] = luautf8.char(0xFFFC)
       p = p + 1
     end
   end
@@ -160,8 +160,8 @@ end
 local splitNodeAtPos = function (n, splitstart, p)
   if n.is_unshaped then
     local utf8chars = SU.splitUtf8(n.text)
-    local n2 = SILE.nodefactory.newUnshaped({ text = "", options = pl.tablex.copy(n.options) })
-    local n1 = SILE.nodefactory.newUnshaped({ text = "", options = pl.tablex.copy(n.options) })
+    local n2 = SILE.nodefactory.unshaped({ text = "", options = pl.tablex.copy(n.options) })
+    local n1 = SILE.nodefactory.unshaped({ text = "", options = pl.tablex.copy(n.options) })
     for i = splitstart, #utf8chars do
       if i <= p then n1.text = n1.text .. utf8chars[i]
       else n2.text = n2.text .. utf8chars[i]

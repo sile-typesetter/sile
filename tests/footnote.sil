@@ -17,5 +17,4 @@ Paragraph four.\footnote{Footnote four \lorem[words=30]}
 Paragraph five.\footnote{Footnote five \lorem[words=30]} \lorem[words=60]
 
 Paragraph six.\footnote{Footnote six \lorem[words=30]}
-
 \end{document}

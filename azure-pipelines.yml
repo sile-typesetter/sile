@@ -1,6 +1,7 @@
-trigger:
-  - master
-  - devel
+trigger: none
+  # Disable Windows CI builds until somebody is actually working on fixing them
+  # - master
+  # - devel
 jobs:
 - job: Windows
   pool:

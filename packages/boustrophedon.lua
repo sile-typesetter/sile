@@ -8,13 +8,13 @@ SILE.nodeMakers.grc = pl.class({
           self:addToken(items[i].text, items[i])
           self:makeToken()
           self:makePenalty()
-          coroutine.yield(SILE.nodefactory.newGlue("0pt plus 2pt"))
+          coroutine.yield(SILE.nodefactory.glue("0pt plus 2pt"))
         end
       end)
     end
   })
 
-local swap = SILE.nodefactory.newVbox({})
+local swap = SILE.nodefactory.vbox({})
 swap.outputYourself = function (_, typesetter, _)
   typesetter.frame.direction = typesetter.frame.direction == "LTR-TTB" and "RTL-TTB" or "LTR-TTB"
   typesetter.frame:newLine()
@@ -43,3 +43,26 @@ SILE.registerCommand("boustrophedon", function (_, content)
     SILE.typesetter:pushVbox(swap)
   end
 end)
+
+return {
+documentation = [[\begin{document}
+
+Partly designed to show off SILE’s extensibility, and partly designed for
+real use by classicists, the boustrophedon package allows you to typeset
+ancient Greek texts in the ‘ox-turning’ layout - the first line is
+written left to right as normal, but the next is set right to
+left, then left to right, and so on. To use it, you will need to set the font's language to ancient
+Greek (\code{grc}) and wrap text in a \code{boustrophedon} environment:
+
+\set[parameter=document.parindent,value=0]{\par
+\begin{boustrophedon}
+\font[size=22pt,family=Gentium Plus,language=grc]
+\noindent{}ΧΑΙΡΕΔΕΜΟΤΟΔΕΣΕΜΑΠΑΤΕΡΕΣΤΕΣΕΘΑΝΟΝΤΟΣΑΝΦΙΧΑΡΕΣΑΓΑΘΟΝΠΑΙΔΑΟΛΟΦΘΡΟΜΕΝΟΣΦΑΙΔΙΜΟΣΕΠΟΙΕ
+\end{boustrophedon}
+}
+
+(Under normal circumstances, that line would appear as \font[language=grc,family=Gentium Plus]{
+ΧΑΙΡΕΔΕΜΟΤΟΔΕΣΕΜΑΠΑΤΕΡΕΣΤΕΣΕΘΑΝΟΝΤΟΣΑΝΦΙΧΑΡΕΣΑΓΑΘΟΝΠΑΙΔΑΟΛΟΦΘΡΟΜΕΝΟΣΦΑΙΔΙΜΟΣΕΠΟΙΕ
+}.)
+
+\end{document}]] }

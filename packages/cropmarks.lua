@@ -3,14 +3,14 @@ local date = SILE.require("packages.date").exports
 
 local outputMarks = function ()
   local page = SILE.getFrame("page")
-  SILE.outputter.rule(page:left() - 10, page:top(), -10, 0.5)
-  SILE.outputter.rule(page:left(), page:top() - 10, 0.5, -10)
-  SILE.outputter.rule(page:right() + 10, page:top(), 10, 0.5)
-  SILE.outputter.rule(page:right(), page:top() - 10, 0.5, -10)
-  SILE.outputter.rule(page:left() - 10, page:bottom(), -10, 0.5)
-  SILE.outputter.rule(page:left(), page:bottom() + 10, 0.5, 10)
-  SILE.outputter.rule(page:right() + 10, page:bottom(), 10, 0.5)
-  SILE.outputter.rule(page:right(), page:bottom() + 10, 0.5, 10)
+  SILE.outputter:drawRule(page:left() - 10, page:top(), -10, 0.5)
+  SILE.outputter:drawRule(page:left(), page:top() - 10, 0.5, -10)
+  SILE.outputter:drawRule(page:right() + 10, page:top(), 10, 0.5)
+  SILE.outputter:drawRule(page:right(), page:top() - 10, 0.5, -10)
+  SILE.outputter:drawRule(page:left() - 10, page:bottom(), -10, 0.5)
+  SILE.outputter:drawRule(page:left(), page:bottom() + 10, 0.5, 10)
+  SILE.outputter:drawRule(page:right() + 10, page:bottom(), 10, 0.5)
+  SILE.outputter:drawRule(page:right(), page:bottom() + 10, 0.5, 10)
 
   SILE.call("hbox", {}, function ()
     SILE.settings.temporarily(function ()
@@ -83,3 +83,27 @@ SILE.registerCommand("crop:setup", function (options, _)
     outputMarks()
   end
 end)
+
+
+
+return {
+documentation = [[\begin{document}
+  When preparing a document for printing, you may be asked by the printer
+  to add crop marks. This means that you need to output the document on
+  a slightly larger page size than your target paper and add printers
+  crop marks to show where the paper should be trimmed down to the correct
+  size. (This is to ensure that pages where the content “bleeds” off
+  the side of the page are correctly cut.)
+
+  This package provides the \code{crop:setup} command which should be
+  run early in your document file. It takes one argument, \code{papersize},
+  which is the true target paper size. It place cropmarks around the
+  true page content.
+
+  It also adds a header at the top of the page with the filename, date
+  and output sheet number. You can customize this header by redefining
+  \code{crop:header}.
+
+\end{document}]]
+}
+

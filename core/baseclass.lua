@@ -40,20 +40,49 @@ SILE.doTexlike = function (doc)
   SILE.currentlyProcessingFile = cpf
 end
 
+local function replaceProcessBy(replacement, tree)
+  if type(tree) ~= "table" then return tree end
+  local ret = pl.tablex.deepcopy(tree)
+  if tree.command == "process" then
+    return replacement
+  else
+    for i, child in ipairs(tree) do
+      ret[i] = replaceProcessBy(replacement, child)
+    end
+    return ret
+  end
+end
+
 -- Need the \define command *really* early on in SILE startup
-local macroStack = {}
 SILE.registerCommand("define", function (options, content)
   SU.required(options, "command", "defining command")
+  if type(content) == "function" then
+    -- A macro defined as a function can take no argument, so we register
+    -- it as-is.
+    SILE.registerCommand(options["command"], content)
+    return
+  elseif options.command == "process" then
+    SU.warn("Did you mean to re-definine the `\\process` macro? That probably won't go well.")
+  end
   SILE.registerCommand(options["command"], function (_, _content)
-    --local prevState = SILE.documentState
-    --SILE.documentState = pl.tablex.deepcopy( prevState )
-    local depth = #macroStack
-    table.insert(macroStack, _content)
-    SU.debug("macros", "Processing a "..options["command"].." Stack depth is "..depth)
-    SILE.process(content)
-    while (#macroStack > depth) do table.remove(macroStack) end
-    SU.debug("macros", "Finished processing "..options["command"].." Stack depth is "..#macroStack.."\n")
-    --SILE.documentState = prevState
+    SU.debug("macros", "Processing macro \\" .. options["command"])
+    local macroArg
+    if type(_content) == "function" then
+      macroArg = _content
+    elseif type(_content) == "table" then
+      macroArg = pl.tablex.copy(_content)
+      macroArg.command = nil
+      macroArg.id = nil
+    elseif _content == nil then
+      macroArg = {}
+    else
+      SU.error("Unhandled content type " .. type(_content) .. " passed to macro \\" .. options["command"], true)
+    end
+    -- Replace every occurrence of \process in `content` (the macro
+    -- body) with `macroArg`, then have SILE go through the new `content`.
+    local newContent = replaceProcessBy(macroArg, content)
+    SILE.process(newContent)
+    SU.debug("macros", "Finished processing \\" .. options["command"])
   end, options.help, SILE.currentlyProcessingFile)
 end, "Define a new macro. \\define[command=example]{ ... \\process }")
 
@@ -61,12 +90,12 @@ SILE.registerCommand("comment", function (_, _)
 end, "Ignores any text within this command's body.")
 
 SILE.registerCommand("process", function ()
-  local val = table.remove(macroStack)
-  if not val then SU.error("Macro stack underflow. Too many \\process calls?") end
-  SILE.process(val)
+  SU.error("Encountered unsubstituted \\process.")
 end, "Within a macro definition, processes the contents of the macro body.")
 
 SILE.baseClass = std.object {
+  _initialized = false,
+
   registerCommands = (function ()
 
     SILE.registerCommand("\\", function (_, _)
@@ -75,7 +104,10 @@ SILE.baseClass = std.object {
 
     SILE.registerCommand("script", function (options, content)
       if (options["src"]) then
-        require(options["src"])
+        local script, _ = require(options["src"])
+        if type(script) == "table" and script.init then
+          script.init()
+        end
       else
         local func, err = load(content[1])
         if not func then SU.error(err) end
@@ -88,10 +120,12 @@ SILE.baseClass = std.object {
     end, "Includes a SILE file for processing.")
 
     SILE.registerCommand("pagetemplate", function (options, content)
+      SILE.typesetter:pushState()
       SILE.documentState.thisPageTemplate = { frames = {} }
       SILE.process(content)
       SILE.documentState.thisPageTemplate.firstContentFrame = SILE.getFrame(options["first-content-frame"])
       SILE.typesetter:initFrame(SILE.documentState.thisPageTemplate.firstContentFrame)
+      SILE.typesetter:popState()
     end, "Defines a new page template for the current page and sets the typesetter to use it.")
 
     SILE.registerCommand("frame", function (options, _)
@@ -110,7 +144,7 @@ SILE.baseClass = std.object {
     end, "Inserts a penalty node. Option is penalty= for the size of the penalty.")
 
     SILE.registerCommand("discretionary", function (options, _)
-      local discretionary = SILE.nodefactory.newDiscretionary({})
+      local discretionary = SILE.nodefactory.discretionary({})
       if options.prebreak then
         SILE.call("hbox", {}, function () SILE.typesetter:typeset(options.prebreak) end)
         discretionary.prebreak = { SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] }
@@ -130,22 +164,18 @@ SILE.baseClass = std.object {
     end, "Inserts a discretionary node.")
 
     SILE.registerCommand("glue", function (options, _)
-      SILE.typesetter:pushGlue({
-        width = SILE.length.parse(options.width):absolute()
-      })
+      local width = SU.cast("length", options.width):absolute()
+      SILE.typesetter:pushGlue(width)
     end, "Inserts a glue node. The width option denotes the glue dimension.")
 
     SILE.registerCommand("kern", function (options, _)
-      table.insert(SILE.typesetter.state.nodes,
-        SILE.nodefactory.newKern({
-          width = SILE.length.parse(options.width):absolute()
-        })
-      )
+      local width = SU.cast("length", options.width):absolute()
+      SILE.typesetter:pushHorizontal(SILE.nodefactory.kern(width))
     end, "Inserts a glue node. The width option denotes the glue dimension.")
 
     SILE.registerCommand("skip", function (options, _)
       options.discardable = options.discardable or false
-      options.height = SILE.length.parse(options.height):absolute()
+      options.height = SILE.length(options.height):absolute()
       SILE.typesetter:leaveHmode()
       if options.discardable then
         SILE.typesetter:pushVglue(options)
@@ -166,22 +196,29 @@ SILE.baseClass = std.object {
 
   loadPackage = function (self, packname, args)
     local pack = require("packages/" .. packname)
+    self:initPackage(pack, args)
+  end,
+
+  initPackage = function (self, pack, args)
     if type(pack) == "table" then
       if pack.exports then self:mapfields(pack.exports) end
-      if pack.init then
+      if type(pack.init) == "function" then
         table.insert(SILE.baseClass.deferredInit, function () pack.init(self, args) end)
+        if self._initialized then
+          pack.init(self, args)
+        end
       end
     end
   end,
 
   init = function (self)
     SILE.settings.declare({
-      name = "current.parindent",
+      parameter = "current.parindent",
       type = "glue or nil",
       default = nil,
       help = "Glue at start of paragraph"
     })
-    SILE.outputter.init(self)
+    SILE.outputter:init(self)
     self:registerCommands()
     -- Call all stored package init routines
     for i = 1, #(SILE.baseClass.deferredInit) do (SILE.baseClass.deferredInit[i])() end
@@ -190,6 +227,7 @@ SILE.baseClass = std.object {
         for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
       end
     end)
+    self._initialized = true
     return self:initialFrame()
   end,
 
@@ -205,7 +243,11 @@ SILE.baseClass = std.object {
 
   declareFrame = function (self, id, spec)
     spec.id = id
-    self.pageTemplate.frames[id] = SILE.newFrame(spec)
+    if spec.solve then
+      self.pageTemplate.frames[id] = spec
+    else
+      self.pageTemplate.frames[id] = SILE.newFrame(spec)
+    end
     --   next = spec.next,
     --   left = spec.left and fW(spec.left),
     --   right = spec.right and fW(spec.right),
@@ -219,7 +261,7 @@ SILE.baseClass = std.object {
 
   declareFrames = function (self, specs)
     if specs then
-      for k, v in ipairs(specs) do self:declareFrame(k, v) end
+      for k, v in pairs(specs) do self:declareFrame(k, v) end
     end
   end,
 

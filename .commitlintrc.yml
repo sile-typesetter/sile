@@ -21,23 +21,26 @@ rules:
   scope-enum:
   - 1
   - 'always'
-  - - azure
+  - - actions
+    - azure
     - backends
     - build
     - classes
+    - cirrus
     - cli
     - core
     - debug
-    - examples
+    - docker
+    - deps
     - fonts
     - frames
-    - github
     - images
     - inputs
     - installation
     - languages
     - manpage
     - manual
+    - math
     - measurements
     - nodes
     - package-manager
@@ -45,21 +48,21 @@ rules:
     - pdf
     - readme
     - settings
+    - release
     - shaper
     - tooling
-    - travis
     - typesetter
     - utilities
 help: |
   **Possible types**:
   `chore`:        Improves existing functions or features
-                      (Not for new features, bug fixes, or refactoring)
+                      (Not for new features, fixes to bugs in releases, or refactoring)
   `ci`:           Changes CI configuration files and scripts
-                      (relevanat scopes: build, tooling, travis, azure, github)
+                      (relevanat scopes: build, deps, tooling, cirrus, azure, actions)
   `docs`:         Adds or alters documentation.
   `feat`:         Adds a new user facing feature.
   `fix`:          Solves a user facing bug in previously released code
-                      (Not for use if the bug isn't in master yet, clutters changelog)
+                      (Not for use if the bug isn't in a release yet, clutters changelog)
   `perf`:         Improves performance.
   `refactor`:     Rewrites code without feature, performance, or bug changes.
   `revert`:       Changes that reverting other changes

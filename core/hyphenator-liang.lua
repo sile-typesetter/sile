@@ -47,9 +47,9 @@ local function loadPatterns(hyphenator, language)
     print("No patterns for language "..language)
     return
   end
-  for _, pattern in pairs(languageset.patterns) do addPattern(hyphenator, pattern) end
+  for _, pattern in ipairs(languageset.patterns) do addPattern(hyphenator, pattern) end
   if not languageset.exceptions then languageset.exceptions = {} end
-  for _, exception in pairs(languageset.exceptions) do
+  for _, exception in ipairs(languageset.exceptions) do
     registerException(hyphenator, exception)
   end
 end
@@ -114,17 +114,17 @@ local hyphenateNode = function (node)
     local newnodes = {}
     for j, brk in ipairs(breaks) do
       if not(brk == "") then
-        for _, newNode in pairs(SILE.shaper:createNnodes(brk, node.options)) do
+        for _, newNode in ipairs(SILE.shaper:createNnodes(brk, node.options)) do
           if newNode.is_nnode then
             newNode.parent = node
             table.insert(newnodes, newNode)
           end
         end
         if not (j == #breaks) then
-          local discretionary = SILE.nodefactory.newDiscretionary({ prebreak = SILE.shaper:createNnodes(SILE.settings.get("font.hyphenchar"), node.options) })
+          local discretionary = SILE.nodefactory.discretionary({ prebreak = SILE.shaper:createNnodes(SILE.settings.get("font.hyphenchar"), node.options) })
           discretionary.parent = node
           table.insert(newnodes, discretionary)
-         --table.insert(newnodes, SILE.nodefactory.newPenalty({ value = SILE.settings.get("typesetter.hyphenpenalty") }))
+         --table.insert(newnodes, SILE.nodefactory.penalty({ value = SILE.settings.get("typesetter.hyphenpenalty") }))
         end
       end
     end

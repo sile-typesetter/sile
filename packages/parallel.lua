@@ -55,7 +55,7 @@ local setupParallel = function (klass, options)
     end
     -- Fixed leading here is obviously a bug, but n-way leading calculations
     -- get very complicated...
-    -- typesetterPool[frame].leadingFor = function() return SILE.nodefactory.newVglue(SILE.settings.get("document.lineskip")) end
+    -- typesetterPool[frame].leadingFor = function() return SILE.nodefactory.vglue(SILE.settings.get("document.lineskip")) end
     SILE.registerCommand(frame, function (_, _) -- \left ...
       SILE.typesetter = typesetterPool[frame]
       SILE.call(frame..":font")
@@ -98,7 +98,7 @@ end
 
 SILE.registerCommand("sync", function (_, _)
   local anybreak = false
-  local maxheight = SILE.length.new()
+  local maxheight = SILE.length()
   SU.debug("parallel", "Trying a sync")
   allTypesetters(function (_, typesetter)
     SU.debug("parallel", "Leaving hmode on "..typesetter.id)
@@ -118,7 +118,7 @@ SILE.registerCommand("sync", function (_, _)
   end
 
   allTypesetters(function (frame, typesetter)
-    calculations[frame].heightOfNewMaterial = SILE.length.new()
+    calculations[frame].heightOfNewMaterial = SILE.length()
     for i = calculations[frame].mark + 1, #typesetter.state.outputQueue do
       local thisHeight = typesetter.state.outputQueue[i].height + typesetter.state.outputQueue[i].depth
       calculations[frame].heightOfNewMaterial = calculations[frame].heightOfNewMaterial + thisHeight
@@ -131,5 +131,16 @@ SILE.registerCommand("sync", function (_, _)
 end)
 
 return {
-  init = setupParallel
+  init = setupParallel,
+  documentation = [[
+\begin{document}
+The parallel package provides the mechanism for typesetting diglot or other
+parallel documents. When used by a class such as \code{classes/diglot.lua},
+it registers a command for each parallel frame, to allow you to select
+which frame you’re typesetting into. It also defines the \code{\\sync}
+command, which adds vertical spacing to each frame such that the \em{next}
+set of text is vertically aligned. See \url{https://sile-typesetter.org/examples/parallel.sil}
+and the source of \code{classes/diglot.lua} for examples which makes the operation clear.
+\end{document}
+]]
 }

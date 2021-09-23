@@ -3649,6 +3649,6 @@ SILE.hyphenator.languages["cs"].exceptions =
 
 -- Internationalisation stuff
 SILE.doTexlike([[%
-\define[command=tableofcontents:title]{Obsah}%
+\define[command=tableofcontents:title:cs]{Obsah}%
 \define[command=book:chapter:pre:cs]{Kapitola }%
 ]])

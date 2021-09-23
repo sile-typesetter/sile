@@ -1,0 +1,18 @@
+\begin[papersize=a6]{document}
+\neverindent
+\nofolios
+\begin{center}
+\begin{raggedright}
+foo
+\end{raggedright}
+\begin{script}
+-- \\begin{foo}
+b = "\\begin{bar}"
+-- \\end{foo}
+local e = "\\end{bar}"
+SILE.typesetter:typeset(b..e)
+\end{script}
+\par
+bar
+\end{center}
+\end{document}

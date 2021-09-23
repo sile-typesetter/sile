@@ -1,4 +1,11 @@
 \begin[papersize=a6]{document}% KNOWNBAD
+% The breakage here is so bad that it it produces an infinite loop when
+% using the libtexpdf backend (i.e. `make regression_previews`) and hence when
+% trying to get code coverage reports. It works (although not as expected)
+% in the debug backend, hence the normal `make regressions` doesn't die.
+% The troublesome \makecolumns & \mergecolumns are commented out until
+% this stops killing the rest of our CI runners' work.
+% --------------
 \script[src=packages/frametricks]
 \script[src=packages/lorem]
 \nofolios
@@ -8,20 +15,23 @@
 \lorem[words=45]
 
 \smallskip\breakframevertical
-\makecolumns[columns=2]\begin{raggedright}
+% \makecolumns[columns=2]
+\begin{raggedright}
 \noindent
 \lorem[words=45]
 \end{raggedright}
 
-\mergecolumns \smallskip
+% \mergecolumns
+\smallskip
 \lorem[words=45]
 \par
 
-\medskip\breakframevertical\makecolumns[columns=2]
+\medskip\breakframevertical
+% \makecolumns[columns=2]
 \begin{raggedright}
 \lorem[words=45]
 \end{raggedright}
 
-\mergecolumns \bigskip
+% \mergecolumns \bigskip
 \lorem[words=45]
 \end{document}

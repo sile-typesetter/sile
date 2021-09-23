@@ -12,8 +12,14 @@ SILE.registerCommand("hrule", function (options, _)
     value = options.src,
     outputYourself= function (self, typesetter, line)
       local outputWidth = SU.rationWidth(self.width, self.width, line.ratio)
-      SILE.outputter.rule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY - self.height, outputWidth, self.height + self.depth)
+      typesetter.frame:advancePageDirection(-self.height)
+      local oldx = typesetter.frame.state.cursorX
+      local oldy = typesetter.frame.state.cursorY
       typesetter.frame:advanceWritingDirection(outputWidth)
+      typesetter.frame:advancePageDirection(self.height + self.depth)
+      local newx = typesetter.frame.state.cursorX
+      local newy = typesetter.frame.state.cursorY
+      SILE.outputter:drawRule(oldx, oldy, newx - oldx, newy - oldy)
     end
   })
 end, "Creates a line of width <width> and height <height>")
@@ -29,7 +35,7 @@ end, "Draw a full width hrule centered on the current line")
 
 SILE.registerCommand("underline", function (_, content)
   local hbox = SILE.call("hbox", {}, content)
-  local gl = SILE.length.new() - hbox.width
+  local gl = SILE.length() - hbox.width
   SILE.call("lower", {height = "0.5pt"}, function()
     SILE.call("hrule", {width = gl.length, height = "0.5pt"})
   end)
@@ -38,7 +44,7 @@ end, "Underlines some content (badly)")
 
 SILE.registerCommand("boxaround", function (_, content)
   local hbox = SILE.call("hbox", {}, content)
-  local gl = SILE.length.new() - hbox.width
+  local gl = SILE.length() - hbox.width
   SILE.call("rebox", {width = 0}, function()
     SILE.call("hrule", {width = gl.length-1, height = "0.5pt"})
   end)

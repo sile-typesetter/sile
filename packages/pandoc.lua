@@ -1,8 +1,10 @@
-SILE.require("packages/url")
-SILE.require("packages/pdf")
-SILE.require("packages/image")
 SILE.require("packages/footnotes")
+SILE.require("packages/image")
+SILE.require("packages/pdf")
 SILE.require("packages/raiselower")
+SILE.require("packages/rules")
+SILE.require("packages/url")
+SILE.require("packages/verbatim")
 
 -- Process arguments that might not actually have that much to do with their
 -- immediate function but affect the document in other ways, such as setting
@@ -11,118 +13,291 @@ local handlePandocArgs = function (options)
   local wrapper = SILE.settings.wrap()
   if options.id then
     SU.debug("pandoc", "Set ID on tag")
+    SILE.call("pdf:destination", { name = options.id })
   end
   if options.lang then
-    SU.debug("pandoc", "Set lang tag: "..options.lang)
+    SU.debug("pandoc", "Set lang in tag: "..options.lang)
     local fontfunc = SILE.Commands[SILE.Commands["font:" .. options.lang] and "font:" .. options.lang or "font"]
     local innerWrapper = wrapper
-    wrapper = function (content) innerWrapper(function () fontfunc({ language = options.lang }, content) end) end
+    wrapper = function (content)
+      innerWrapper(function ()
+        fontfunc({ language = options.lang }, content)
+      end)
+    end
+    options.lang = nil
   end
   if options.classes then
-    for _,class in pairs(options.classes:split(",")) do
-      SU.debug("pandoc", "Add div class: "..class)
-      if SILE.Commands["class:"..class] then
+    for _, class in pairs(options.classes:split(",")) do
+      if class == "unnumbered" then
+        SU.debug("pandoc", "Convert unnumbered class to legacy heading function option")
+        options.numbering = false
+      elseif SILE.Commands["class:"..class] then
+        SU.debug("pandoc", "Add inner class wrapper: "..class)
         local innerWrapper = wrapper
-        wrapper = function (content) innerWrapper(function () SILE.Commands["class:"..class](options, content) end) end
+        wrapper = function (content)
+          innerWrapper(function ()
+            SILE.call("class:"..class, options, content)
+          end)
+        end
+      else
+        SU.warn("Unhandled class ‘"..class.."’, not mapped to legacy option and no matching wrapper function")
       end
     end
+    options.classes = nil
   end
-  return wrapper
+  return wrapper, options
 end
 
-SILE.registerCommand("label", function(options, content)
-  SILE.call("pdf:bookmark", options, content)
+-- Document level stuff
+
+
+-- Blocks
+
+SILE.registerCommand("BlockQuote", function (_, content)
+  SILE.call("quote", {}, content)
+  SILE.typesetter:leaveHmode()
 end)
 
-SILE.registerCommand("tt", function(options, content)
-  SILE.call("verbatim:font", options, content)
+SILE.registerCommand("BulletList", function (_, content)
+  -- luacheck: ignore pandocListType
+  local pandocListType = "bullet"
+  SILE.settings.temporarily(function ()
+    SILE.settings.set("document.rskip","10pt")
+    SILE.settings.set("document.lskip","20pt")
+    SILE.process(content)
+  end)
+  SILE.typesetter:leaveHmode()
 end)
 
-SILE.registerCommand("HorizontalRule", function (options, _)
-  options.height = options.height or "0.2pt"
-  options.width = options.width or SILE.typesetter.frame:lineWidth()
-  SILE.call("hrule", options)
+SILE.registerCommand("CodeBlock", function (options, content)
+  local wrapper, args = handlePandocArgs(options)
+  wrapper(function ()
+    SILE.call("verbatim", args, content)
+  end)
+  SILE.typesetter:leaveHmode()
 end)
 
-SILE.registerCommand("Span", function (options, content)
-  handlePandocArgs(options)(content)
-end,"Generic inline wrapper")
+SILE.registerCommand("DefinitionList", function (_, content)
+  SILE.process(content)
+  SILE.typesetter:leaveHmode()
+end)
 
 SILE.registerCommand("Div", function (options, content)
   handlePandocArgs(options)(content)
+  SILE.typesetter:leaveHmode()
+end, "Generic block wrapper")
+
+SILE.registerCommand("Header", function (options, content)
+  local analog = options.type
+  options.level, options.type = nil, nil
+  local wrapper, args = handlePandocArgs(options)
+  wrapper(function ()
+    if analog and SILE.Commands[analog] then
+      SILE.call(analog, args, content)
+    else
+      SILE.process(content)
+    end
+  end)
+  SILE.typesetter:leaveHmode()
+end)
+
+SILE.registerCommand("HorizontalRule", function (_, _)
+  SILE.call("center", {}, function ()
+    SILE.call("raise", { height = "0.8ex" }, function ()
+      SILE.call("hrule", { height = "0.5pt", width = "50%lw" })
+      end)
+    end)
+  SILE.typesetter:leaveHmode()
+end)
+
+SILE.registerCommand("LineBlock", function (_, content)
+  SILE.process(content)
+  SILE.typesetter:leaveHmode()
+end)
+
+SILE.registerCommand("Null", function (_, _)
+  SILE.typesetter:leaveHmode()
+end)
+
+SILE.registerCommand("OrderedList", function (options, content)
+  -- TODO: handle listAttributes
+  handlePandocArgs(options)(function ()
+    SILE.settings.set("document.rskip","10pt")
+    SILE.settings.set("document.lskip","20pt")
+    SILE.process(content)
+  end)
+  SILE.typesetter:leaveHmode()
+end)
+
+SILE.registerCommand("Para", function (_, content)
+  SILE.process(content)
   SILE.call("par")
-end,"Generic inline wrapper")
+  SILE.typesetter:leaveHmode()
+end)
+
+SILE.registerCommand("Plain", function (_, content)
+  SILE.process(content)
+  SILE.typesetter:leaveHmode()
+end)
+
+SILE.registerCommand("RawBlock", function (options, content)
+  local format = options.format
+  SU.debug("pandoc", format)
+  -- TODO: execute as script? pass to different input parser?
+  SILE.process(content)
+  SILE.typesetter:leaveHmode()
+end)
+
+SILE.registerCommand("Table", function (options, content)
+  SU.debug("pandoc", options.caption)
+  -- TODO: options.caption
+  -- TODO: options.align
+  -- TODO: options.width
+  -- TODO: options.headers
+  SILE.process(content)
+  SILE.typesetter:leaveHmode()
+end)
+
+-- Inlines
+
+SILE.registerCommand("Cite", function (options, content)
+  SU.debug("pandoc", options, content)
+  -- TODO: options is citation list?
+end, "Creates a Cite inline element")
+
+SILE.registerCommand("Code", function (options, content)
+  local wrapper, args = handlePandocArgs(options)
+  wrapper(function ()
+    SILE.call("code", args, content)
+  end)
+end, "Creates a Code inline element")
 
 SILE.registerCommand("Emph", function (_, content)
   SILE.call("em", {}, content)
-end,"Inline emphasis wrapper")
+end, "Creates an inline element representing emphasised text.")
 
-SILE.registerCommand("Strong", function (_, content)
-  SILE.call("strong", {}, content)
-end,"Inline strong wrapper")
+SILE.registerCommand("Image", function (options, _)
+  local wrapper, args = handlePandocArgs(options)
+  wrapper(function ()
+    SILE.call("img", args)
+  end)
+end, "Creates a Image inline element")
+
+SILE.registerCommand("LineBreak", function (_, _)
+  SILE.call("break")
+end, "Create a LineBreak inline element")
+
+SILE.registerCommand("Link", function (options, content)
+  local wrapper, args = handlePandocArgs(options)
+  wrapper(function ()
+    SILE.call("url", args, content)
+  end)
+end, "Creates a link inline element, usually a hyperlink.")
+
+SILE.registerCommand("Nbsp", function (_, _)
+  SILE.typesetter:typeset(" ")
+end, "Output a non-breaking space.")
+
+SILE.registerCommand("Math", function (options, content)
+  SU.debug("pandoc", options)
+  -- TODO options is math type
+  SILE.process(content)
+end, "Creates a Math element, either inline or displayed.")
+
+SILE.registerCommand("Note", function (_, content)
+  SILE.call("footnote", {}, content)
+end, "Creates a Note inline element")
+
+SILE.registerCommand("Quoted", function (options, content)
+  SU.debug("pandoc", options.type)
+  -- TODO: options.type
+  SILE.process(content)
+end, "Creates a Quoted inline element given the quote type and quoted content.")
+
+SILE.registerCommand("RawInline", function (options, content)
+  local format = options.format
+  SU.debug("pandoc", format)
+  -- TODO: execute as script? pass to different input parser?
+  SILE.process(content)
+end, "Creates a Quoted inline element given the quote type and quoted content.")
 
 SILE.registerCommand("SmallCaps", function (_, content)
   SILE.call("font", { features = "+smcp" }, content)
-end,"Inline small caps wrapper")
+end, "Creates text rendered in small caps")
 
-SILE.registerCommand("csl-no-emph", function (_, content)
-  SILE.call("font", { style = "Roman" }, content)
-end,"Inline upright wrapper")
+SILE.registerCommand("Span", function (options, content)
+  handlePandocArgs(options)(content)
+end, "Creates a Span inline element")
 
-SILE.registerCommand("csl-no-strong", function (_, content)
-  SILE.call("font", { weight = 400 }, content)
-end,"Inline normal weight wrapper")
+SILE.registerCommand("Strikeout", function (_, content)
+  -- TODO: cross it out, unicode munging?
+  SILE.process(content)
+end, "Creates text which is striked out.")
 
-SILE.registerCommand("csl-no-smallcaps", function (_, content)
-  SILE.call("font", { features = "-smcp" }, content)
-end,"Inline smallcaps disable wrapper")
+SILE.registerCommand("Strong", function (_, content)
+  SILE.call("strong", {}, content)
+end, "Creates a Strong element, whose text is usually displayed in a bold font.")
 
 local scriptOffset = "0.7ex"
 local scriptSize = "1.5ex"
-
-SILE.registerCommand("Superscript", function (_, content)
-  SILE.call("raise", { height = scriptOffset }, function ()
-    SILE.call("font", { size = scriptSize }, content)
-  end)
-end,"Inline superscript wrapper")
 
 SILE.registerCommand("Subscript", function (_, content)
   SILE.call("lower", { height = scriptOffset }, function ()
     SILE.call("font", { size = scriptSize }, content)
   end)
-end,"Inline subscript wrapper")
+end, "Creates a Subscript inline element")
 
-SILE.registerCommand("unimplemented", function (_, content)
-  SU.debug("pandoc", "Un-implemented function")
+SILE.registerCommand("Superscript", function (_, content)
+  SILE.call("raise", { height = scriptOffset }, function ()
+    SILE.call("font", { size = scriptSize }, content)
+  end)
+end, "Creates a Superscript inline element")
+
+-- Utility wrapper classes
+
+SILE.registerCommand("class:csl-no-emph", function (_, content)
+  SILE.call("font", { style = "Roman" }, content)
+end,"Inline upright wrapper")
+
+SILE.registerCommand("class:csl-no-strong", function (_, content)
+  SILE.call("font", { weight = 400 }, content)
+end,"Inline normal weight wrapper")
+
+SILE.registerCommand("class:csl-no-smallcaps", function (_, content)
+  SILE.call("font", { features = "-smcp" }, content)
+end,"Inline smallcaps disable wrapper")
+
+-- Non native types
+
+SILE.registerCommand("ListItem", function (_, content)
+  SILE.call("smallskip")
+  SILE.call("glue", { width = "-1em"})
+  SILE.call("rebox", { width = "1em" }, function ()
+    -- Not: Relies on Lua scope shadowing to find immediate parent list type
+    -- luacheck: ignore pandocListType
+    if pandocListType == "bullet" then
+      SILE.typesetter:typeset("•")
+    else
+      SILE.typesetter:typeset("-")
+    end
+  end)
   SILE.process(content)
-end,"Unimplemented Pandoc function wrapper")
+  SILE.call("smallskip")
+end)
 
-SILE.Commands["strikeout"] = SILE.Commands["unimplemented"]
+SILE.registerCommand("ListItemTerm", function (_, content)
+  SILE.call("smallskip")
+  SILE.call("strong", content)
+  SILE.typesetter:typeset(" : ")
+end)
+
+SILE.registerCommand("ListItemDefinition", function (_, content)
+  SILE.process(content)
+  SILE.call("smallskip")
+end)
 
 return { documentation = [[\begin{document}
 
-Try to cover all the possible commands Pandoc's SILE export might throw at us.
-
-Provided by in base classes etc.:
-
-\listitem \code{listarea}
-\listitem \code{listitem}
-
-Modified from default:
-
-
-Provided specifically for Pandoc:
-
-\listitem \code{Span}
-\listitem \code{Div}
-\listitem \code{Emph}
-\listitem \code{Strong}
-\listitem \code{SmallCaps}
-\listitem \code{Strikeout}
-\listitem \code{csl-no-emph}
-\listitem \code{csl-no-strong}
-\listitem \code{csl-no-smallcaps}
-\listitem \code{Superscript}
-\listitem \code{Subscript}
+Cover all the possible commands Pandoc's SILE export might throw at us.
 
 \end{document}]] }

@@ -1,25 +1,26 @@
 local plain = SILE.require("classes/plain")
 local letter = plain { id = "letter" }
 
-letter:declareFrame("content", {
-  left = "5%pw",
-  right = "95%pw",
-  top = "2in",
-  bottom = "90%ph"
-})
-
-letter.pageTemplate.firstContentFrame = letter.pageTemplate.frames["content"]
-
-SILE.scratch.letter = {
-  sender = nil,
-  date = nil,
-  recipient = "",
-  salutation = ""
-}
+function letter:init ()
+  self:declareFrame("content", {
+      left = "5%pw",
+      right = "95%pw",
+      top = "2in",
+      bottom = "90%ph"
+    })
+  self.pageTemplate.firstContentFrame = self.pageTemplate.frames["content"]
+  SILE.scratch.letter = {
+    sender = nil,
+    date = nil,
+    recipient = "",
+    salutation = ""
+  }
+  return plain.init(self)
+end
 
 SILE.registerCommand("letter", function (_, content)
-  SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
-  SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
+  SILE.settings.set("current.parindent", SILE.nodefactory.glue())
+  SILE.settings.set("document.parindent", SILE.nodefactory.glue())
   SILE.call("raggedright", {}, function ()
     SILE.call("letter:format:date")
     SILE.call("bigskip")

@@ -9,8 +9,8 @@ SILE.registerCommand("repertoire", function(_, _)
   for i = 1 , maxg - 1 do
     local wd = metrics.glyphwidth(i, face.data, face.index)
     SILE.typesetter:pushHbox({
-      height= SILE.length.new({ length = 1.2 * fontoptions.size  }),
-      width= SILE.length.new({ length = wd * fontoptions.size }),
+      height= SILE.length(1.2 * fontoptions.size),
+      width= SILE.length(wd * fontoptions.size),
       depth= 0,
       value= { options = fontoptions, glyphString =  { i } },
     })
@@ -34,7 +34,7 @@ SILE.registerCommand("pangrams", function (_, _)
 end)
 
 SILE.registerCommand("set-to-width", function(options, content)
-  local width = SILE.length.parse(SU.required(options, "width", "set to width")):absolute()
+  local width = SU.required(options, "width", "set to width", "length"):absolute()
   local fontOptions = SILE.font.loadDefaults({})
   for line in SU.gtoke(content[1],"\n+") do
     if line.string then
@@ -49,3 +49,39 @@ SILE.registerCommand("set-to-width", function(options, content)
     end
   end
 end)
+
+return {
+  documentation = [[
+\begin{document}
+SILE has found itself becoming well used by type designers, who often
+want to create specimen documents to show off their new fonts. This package
+provides a few commands to help create test documents. (The \code{fontproof}
+class, available from the package manager, contains many more tools for creating
+specimens.) The \code{\\repertoire} command prints out every glyph in the
+font, in a simple table. The \code{\\pangrams} command prints out a few
+pangrams for the Latin script. Finally, \code{\\set-to-width[width=...]\{...\}}
+will process each line of content, changing the font size so that the output
+is a constant width.
+
+\begin{verbatim}
+\line
+\\begin[width=4cm]\{set-to-width\}
+CAPERCAILLIE
+LAMMERGEYER
+CASSOWARY
+ACCENTOR DOWITCHER DOTTEREL
+\\end\{set-to-width\}
+\line
+\end{verbatim}
+
+\begin{examplefont}
+\begin[width=4cm]{set-to-width}
+CAPERCAILLIE
+LAMMERGEYER
+CASSOWARY
+ACCENTOR DOWITCHER DOTTEREL
+\end{set-to-width}
+\end{examplefont}
+\end{document}
+]]
+}

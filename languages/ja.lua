@@ -1,17 +1,6 @@
 -- "jlreq" refers to http://www.w3.org/TR/jlreq/
 -- "JIS" refers to JIS X 4051
 
--- jlreq measures distances in units of 1em, but also assumes that an em is the
--- width of a full-width character. In SILE terms it isn't: measuring an "m" in
--- a 10pt Japanese font gets you 5 points. So we measure a full-width character
--- and use that as a unit. We call it zw following ptex (zenkaku width)
-SILE.units["zw"] = {
-  relative = true,
-  definition = function (v)
-    return v * SILE.shaper:measureChar("あ").width
-  end
-}
-
 local hiragana = function (c) return c > 0x3040 and c <= 0x309f end
 local katakana = function (c) return c > 0x30a0 and c <= 0x30ff end
 local kanji = function (c) return c >= 0x4e00 and c <= 0x9fcc end
@@ -190,5 +179,20 @@ SILE.hyphenator.languages.ja = { patterns={} }
 -- Internationalisation stuff
 SILE.doTexlike([[%
 \define[command=book:chapter:pre:ja]{第\thinspace}%
-\define[command=book:chapter:post]{\thinspace章 \medskip}%
+\define[command=book:chapter:post:ja]{\thinspace章 \medskip}%
 ]])
+
+return {
+  init = function ()
+    -- jlreq measures distances in units of 1em, but also assumes that an em is the
+    -- width of a full-width character. In SILE terms it isn't: measuring an "m" in
+    -- a 10pt Japanese font gets you 5 points. So we measure a full-width character
+    -- and use that as a unit. We call it zw following ptex (zenkaku width)
+    SILE.units["zw"] = {
+      relative = true,
+      definition = function (v)
+        return v * SILE.shaper:measureChar("あ").width
+      end
+    }
+  end
+}

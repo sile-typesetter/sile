@@ -27,7 +27,7 @@ SILE.registerCommand("pdf:structure", function (options, content)
   local node = stNode(notetype)
   addChild(node)
   node.lang = SILE.settings.get("document.language")
-  SILE.outputter._init()
+  SILE.outputter:_init()
   node.page = pdf.get_dictionary("@THISPAGE")
   node.mcid = mcid
   local oldstPointer = stPointer
@@ -114,3 +114,24 @@ SILE.outputters.libtexpdf.finish = function ()
   if structureTree then pdf.release(structureTree) end
   pdf.finish()
 end
+
+return {
+  documentation = [[
+\begin{document}
+\pdf:structure[type=P]{
+For PDF documents to be considered accessible, they must contain a
+description of the PDF’s document structure. This package allows
+structure trees to be created and saved to the PDF file. Currently
+this provides a low-level interface to creating nodes in the tree;
+classes which require PDF accessibility should use the \code{\\pdf:structure}
+command in their sectioning implementation to declare the document
+structure.
+}
+
+\pdf:structure[type=P]{
+See \code{tests/pdf.sil} for an example of using the \code{pdfstructure}
+package to create a PDF/UA compatible document.
+}
+\end{document}
+]]
+}

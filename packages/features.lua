@@ -1,9 +1,9 @@
 local lpeg = require("lpeg")
 
-local S, P, C = lpeg.S, lpeg.P, lpeg.C
+local R, S, P, C = lpeg.R, lpeg.S, lpeg.P, lpeg.C
 local Cf, Ct = lpeg.Cf, lpeg.Ct
 
-local opentype = { -- Mapping of opentype features to friendly names
+local otFeatureMap = {
   Ligatures = {
     Required = "rlig",
     Common = "liga",
@@ -18,6 +18,9 @@ local opentype = { -- Mapping of opentype features to friendly names
   },
   StylisticSet = function (i)
     return string.format("ss%02i", tonumber(i))
+  end,
+  CharacterVariant = function (i)
+    return string.format("cv%02i", tonumber(i))
   end,
   Letters = {
     Uppercase = "case",
@@ -53,7 +56,6 @@ local opentype = { -- Mapping of opentype features to friendly names
     ScientificInferior = "sinf",
     Ordinal = "ordn"
   },
-  -- XXX Character variant support not implemented yet
   Style = {
     Alternate = "salt",
     Italic = "ital",
@@ -104,53 +106,105 @@ local value = C(SILE.parserBits.integer)
 local tag = C(S"+-") * featurename * (P"=" * value)^0 * S",;:"^-1 / tagpos
 local featurestring = Cf(Ct"" * tag^0, rawset)
 
-local featurestring2table = function (str)
-  return featurestring:match(str) or SU.error("Unparsable Opentype feature string '"..str.."'")
+-- Parser for fontspec strings
+-- Refer to fontspec.pdf (see doc), Chapter 3, Table 4 (p. 37)
+local fontspecsafe = R("AZ", "az", "09") + P":"
+local fontspecws = SILE.parserBits.whitespace^0
+local fontspecsep = P"," * fontspecws
+local fontspecname = C(fontspecsafe^1)
+local fontspeclist = fontspecws * P"{" *
+                     Ct(fontspecws * fontspecname *
+                        (fontspecsep * fontspecname * fontspecws)^0) *
+                     P"}" * fontspecws
+
+local otFeatures = pl.class(pl.Map)
+
+function otFeatures:_init ()
+  self:super()
+  local str = SILE.settings.get("font.features")
+  local tbl = featurestring:match(str)
+  if not tbl then
+    SU.error("Unparsable Opentype feature string '"..str.."'")
+  end
+  for feat, flag in pairs(tbl) do
+    self:set(feat, flag.posneg == "+")
+  end
 end
 
-local table2featurestring = function (tbl)
-  local t2 = {}
-  for k, v in pairs(tbl) do t2[#t2+1] = v.posneg..k..(v.value and "="..v.value or "") end
-  return table.concat(t2, ";")
+function otFeatures:__tostring ()
+  local ret = {}
+  for _, f in ipairs(self:items()) do
+    ret[#ret+1] = (f[2] and "+" or "-") .. f[1]
+  end
+  return table.concat(ret, ";")
 end
 
-SILE.registerCommand("add-font-feature", function (options, _)
-  local t = featurestring2table(SILE.settings.get("font.features"))
-  for k, v in pairs(options) do
-    if not opentype[k] then SU.warn("Unknown Opentype feature "..k)
-    else
-      local posneg = "+"
-      v = v:gsub("^No", function () posneg= "-"; return "" end)
-      local res
-      if type(opentype[k]) == "function" then res = opentype[k](v) else res = opentype[k][v] end
-      if not res then SU.error("Bad OpenType value "..v.." for feature "..k) end
-      if type(res) == "string" then
-        t[res] = {posneg = posneg}
+function otFeatures:loadOption (name, val, invert)
+  local posneg = not invert
+  local key = otFeatureMap[name]
+  if not key then
+    SU.warn("Unknown OpenType feature " .. name)
+  else
+    local matches = lpeg.match(fontspeclist, val)
+    for _, v in ipairs(matches or { val }) do
+      v = v:gsub("^No", function () posneg = false; return "" end)
+      local feat = type(key) == "function" and key(v) or key[v]
+      if not feat then
+        SU.warn("Bad OpenType value " .. v .. " for feature " .. name)
       else
-        t[res.key] = { posneg = posneg, value = res.value}
+        self:set(feat, posneg)
       end
     end
   end
+end
 
-  SILE.settings.set("font.features", table2featurestring(t))
+-- Input like {Ligatures = Historic} or {Ligatures = "{Historic, Discretionary}"}
+--
+-- Most real-world use should be single value, but multiple value use is not
+-- that odd.  Junicode, for example, a common font among medievalists, has many
+-- Stylistic Sets and Character Variations, many of which make sense to enable
+-- simultaneously.
+function otFeatures:loadOptions (options, invert)
+  SU.debug("features", "Features was", self)
+  for k, v in pairs(options) do
+    self:loadOption(k, v, invert)
+  end
+  SU.debug("features", "Features interpreted as", self)
+end
+
+function otFeatures:unloadOptions (options)
+  self:loadOptions(options, true)
+end
+
+SILE.registerCommand("add-font-feature", function (options, _)
+  local otfeatures = otFeatures()
+  otfeatures:loadOptions(options)
+  SILE.settings.set("font.features", tostring(otfeatures))
 end)
 
-SILE.registerCommand("remove-font-feature", function (options, _)
-  local t = featurestring2table(SILE.settings.get("font.features"))
+SILE.registerCommand("remove-font-feature", function(options, _)
+  local otfeatures = otFeatures()
+  otfeatures:unloadOptions(options)
+  SILE.settings.set("font.features", tostring(otfeatures))
+end)
 
+local fontfn = SILE.Commands.font
+SILE.registerCommand("font", function (options, content)
+  local otfeatures = otFeatures()
+  -- It is guaranteed that future releases of SILE will not implement non-OT \font
+  -- features with capital letters.
+  -- Cf. https://github.com/sile-typesetter/sile/issues/992#issuecomment-665575353
+  -- So, we reserve 'em all. ⍩⃝
   for k, v in pairs(options) do
-    if not opentype[k] then SU.warn("Unknown Opentype feature "..k)
-    else
-      v = v:gsub("^No", "")
-      local res
-      if type(opentype[k]) == "function" then res = opentype[k](v) else res = opentype[k][v] end
-      if not res then SU.error("Bad OpenType value "..v.." for feature "..k) end
-      if type(res) == "string" then t[res] = nil else t[res.key] = nil end
+    if k:match('^[A-Z]') then
+      otfeatures:loadOption(k, v)
+      options[k] = nil
     end
   end
-
-  SILE.settings.set("font.features", table2featurestring(t))
-end)
+  SU.debug("features", "Font features parsed as:", otfeatures)
+  options.features = (options.features and options.features .. ";" or "") .. tostring(otfeatures)
+  return fontfn(options, content)
+end, SILE.Help.font .. " (overridden)")
 
 return { documentation = [[\begin{document}
 As mentioned in Chapter 3, SILE automatically applies ligatures defined by the fonts

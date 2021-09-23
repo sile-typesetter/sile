@@ -11,3 +11,13 @@ SILE.registerCommand("ifnotattop", function (_, content)
     SILE.process(content)
   end
 end)
+
+return {
+  documentation = [[
+\begin{document}
+This package provides two commands: \code{\\ifattop} and \code{\\ifnotattop}.
+The argument of the command is processed only if the typesetter is at the top
+of a frame or is not at the top of a frame respectively.
+\end{document}
+]]
+}

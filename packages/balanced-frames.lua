@@ -10,7 +10,7 @@ SILE.typesetter.buildPage = function (self, independent)
   if not (frame.balanced == true) then return SILE.defaultTypesetter.buildPage(self, independent) end
 
   local colCount = 0
-  local target = SILE.length.new({  })
+  local target = SILE.length()
   while frame and frame.balanced == true do
     target = target + frame:height()
     colCount = colCount + 1
@@ -23,7 +23,7 @@ SILE.typesetter.buildPage = function (self, independent)
   -- of frame space on the page, and there are no magic requests to balance the
   -- columns, then we have a full page. Just send it out normally.
   local q = self.state.outputQueue
-  local totalHeight = SILE.length.new({  })
+  local totalHeight = SILE.length()
   local mustBalance = 0
   for i = 1, #q do
     totalHeight = totalHeight + q[i].height + q[i].depth
@@ -64,8 +64,21 @@ SILE.typesetter.buildPage = function (self, independent)
     end
   end
   SILE.pagebuilder = oldPageBuilder
-  SU.debug("balancer", "Finished this balance, frame id is now "..self.frame:toString())
+  SU.debug("balancer", "Finished this balance, frame id is now " .. self.frame)
   -- SILE.typesetter:debugState()
   -- We're done.
   return true
 end
+
+return {
+  documentation=[[\begin{document}
+This package attempts to ensure that the main content frames on a
+page are balanced; that is, that they have the same height. In your
+frame definitions for the columns, you will need to ensure that they
+have the parameter \code{balanced} set to a true value. See the example
+in \code{tests/balanced.sil}.
+
+The current algorithm does not work particularly well, and a better solution
+to the column problem is being developed.
+\end{document}]]
+}
