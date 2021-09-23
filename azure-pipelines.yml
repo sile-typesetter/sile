@@ -1,7 +1,6 @@
-trigger: none
-  # Disable Windows CI builds until somebody is actually working on fixing them
-  # - master
-  # - devel
+trigger:
+  - master
+  - devel
 jobs:
 - job: Windows
   pool:
@@ -44,11 +43,6 @@ jobs:
         "$(Build.SourcesDirectory)\.inno\build_installer.bat" "$(Build.SourcesDirectory)" "$(Build.ArtifactStagingDirectory)\sile" "$(Build.ArtifactStagingDirectory)\installer"
 
       displayName: Build installer
-
-    - task: PublishBuildArtifacts@1
-      inputs:
-        pathtoPublish: $(Build.ArtifactStagingDirectory)\sile
-        artifactName: sile
 
     - task: PublishBuildArtifacts@1
       inputs:
