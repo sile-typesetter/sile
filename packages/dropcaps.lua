@@ -1,87 +1,77 @@
--- Initial capitals ("Drop Caps") for SILE
--- This implementation relies on the hangafter/hangindent feature of Knuth's line-breaking algorithm.
--- Usage:
---   \dropcaps[lines=N, family=Font Family, joined=true|false, letter=L]{Paragraph content}
+SILE.require("packages/rebox")
+SILE.require("packages/raiselower")
 
-SILE.registerCommand("dropcaps", function (options, content)
-  local lines = SU.cast("integer", options.lines or 3)
-  local joined = SU.boolean(options.joined, false)
-  local letter = SU.required(options, "letter", "dropcaps")
-  if string.len(letter) ~= 1 then SU.error("Parameter letter for dropcaps must have exactly one character.") end
-
-  -- We want the drop cap to span over N lines, but what does it mean? Actually, N-1 baseline skips
-  -- plus a little extra for the top text line.
-  -- We arbitrarily choosed the height of an "i" in the current font, so to have something slightly
-  -- greater (in theory) than an "x", but conceivably smaller than letters with ascenders.
-  local bsHeight = SILE.length((lines - 1).."bs")
-  local size = bsHeight:tonumber() + SILE.shaper:measureChar('i').height
-
-  -- Now we need to pick a font size where the target letter takes that size but in height.
-  -- So we temporarily set the font to 50pt, measure the character's height, and apply the ratio.
-  local SZ = 50
-  local m
-  SILE.settings.temporarily(function ()
-    SILE.settings.set("font.size", SZ)
-    if options.family then SILE.settings.set("font.family", options.family) end
-    m = SILE.shaper:measureChar(letter)
+local shapeHbox = function (options, initial)
+  -- Clear irrelevant values before passing to font
+  options.lines, options.join, options.initial = nil, nil, nil
+  SILE.call("noindent")
+  local hbox = SILE.call("hbox", {}, function ()
+    SILE.call("font", options, { initial })
   end)
-  local targetSize = SZ / m.height * size
+  table.remove(SILE.typesetter.state.nodes)
+  return hbox
+end
 
-  SILE.settings.temporarily(function ()
-    -- We are are ready to typeset.
-    -- Put the letter in a box, but remove it from the node queue
-    local hbox = SILE.call("hbox", {}, function()
-      SILE.call("noindent")
-      SILE.call("font", { family = options.family, size = targetSize}, function ()
-        SILE.typesetter:typeset(letter)
-      end)
+-- This implementation relies on the hangafter and hangindent features of Knuth's line-breaking algorithm.
+-- These features in core line breaking algorithm supply the blank space in the paragraph shape but don't fill it with anything.
+SILE.registerCommand("dropcap", function (options, content)
+  local lines = SU.cast("integer", options.lines or 3)
+  local join = SU.boolean(options.join, false)
+  local initial = SU.required(options, "initial", "dropcap")
+
+  -- We want the drop cap to spanning N lines is N-1 baselineskip plus the height of the first line.
+  -- We Define the height of the first line based on measuring the size the initial would have been.
+  local tmpHbox = shapeHbox(options, initial)
+  local extraHeight = SILE.length((lines - 1).."bs"):tonumber()
+  local targetHeight = tmpHbox.height:tonumber() + extraHeight
+  SU.debug("dropcaps", "Target height", targetHeight)
+
+  -- Now we need to figure out how to scale the dropcap font to get an initial of targetHeight.
+  -- From that we can also figure out the width it will be at that height.
+  local curSize = SILE.length(SILE.settings.get("font.size")):tonumber()
+  local curHeight, curWidth = tmpHbox.height:tonumber(), tmpHbox.width:tonumber()
+  local targetSize = targetHeight / curHeight * curSize
+  local targetWidth = curWidth / curSize * targetSize
+  SU.debug("dropcaps", "Target font size", targetSize)
+  SU.debug("dropcaps", "Target width", targetWidth)
+
+  -- Typeset the dropcap with its final shape, but don't output it yet
+  options.size = targetSize
+  local hbox = shapeHbox(options, initial)
+
+  -- Setup up the necessary indents for the final paragraph content
+  local joinOffset = SILE.length(join and "1spc" or 0):tonumber()
+  SILE.settings.set("linebreak.hangAfter", -lines)
+  SILE.settings.set("linebreak.hangIndent", targetWidth + joinOffset)
+  SU.debug("dropcaps", "joinOffset", joinOffset)
+
+  -- The paragraph is indented so as to leave enough space for the drop cap.
+  -- We "trick" the typesetter with a zero-dimension box wrapping our original box.
+  SILE.call("rebox", { height = 0, width = -joinOffset }, function ()
+    SILE.call("glue", { width = -(targetWidth + joinOffset) })
+    SILE.call("lower", { height = extraHeight }, function ()
+      SILE.typesetter:pushHbox(hbox)
     end)
-    table.remove(SILE.typesetter.state.nodes)
+  end)
 
-    -- Measure the width it takes
-    local width = hbox.width:tonumber()
+  -- And finally process the content and finish the paragraph
+  SILE.process(content)
+end, "Show an 'initial capital' (also known as a 'drop cap') at the start of the content paragraph.")
 
-    -- Activate the hang parameters.
-    -- With the jointed=true option, we want the initial line to be slightly closer to the
-    -- drop cap than the subsequent indented lines.
-    -- We arbitrarily choosed a space width.
-    local joinOffset = joined and SILE.length("1spc") or SILE.length(0)
-    SILE.settings.set("current.parindent", -joinOffset)
-    SILE.settings.set("linebreak.hangAfter", -lines)
-    SILE.settings.set("linebreak.hangIndent", width + joinOffset:tonumber())
-
-    -- Now the paragraph are idented so as to leave enough space for the drop cap.
-    -- We "trick" the typesetter with a zero-dimension box wrapping our original box.
-    SILE.typesetter:pushHbox({
-      width = 0,
-      height = 0,
-      depth = 0,
-      value = hbox,
-      outputYourself= function (self, typesetter, line)
-        local saveX = typesetter.frame.state.cursorX
-        local saveY = typesetter.frame.state.cursorY
-        typesetter.frame.state.cursorX = saveX - width
-        typesetter.frame.state.cursorY = saveY + bsHeight
-        self.value:outputYourself(typesetter, line)
-        typesetter.frame.state.cursorX = saveX
-        typesetter.frame.state.cursorY = saveY
-      end
-    })
-
-    -- And finally process the content and finish the pragraph
-    SILE.process(content)
-    SILE.typesetter:leaveHmode()
-   end)
-end, "Shows an 'initial capital' (also known as 'drop cap') at the start of the content paragraph.")
-
-return { documentation = [[\begin{document}
+return {
+  documentation = [[
+\begin{document}
 The \code{dropcaps} package allows you to format paragraphs with an 'initial capital' (also commonly
-referred as a 'drop' cap), that is, a large capital letter used as a decorative element at the beginning
-of a paragraph.
+referred as a 'drop cap'), that is, a large capital, typically one letter, used
+as a decorative element at the beginning of a paragraph.
 
-It just provides the \code{\\dropcaps} command, which takes as options the number of lines the initial
-should span over, the font family to use and the initial letter. Provide the rest of the text as
-argument to the command, and you are done. Old-style typographers also have the possibility to
-enable, at their convenience, the join option, for use when the initial belongs to the first word of
-the sentence. In that case, the first line is closer to the initial than subsequent indented lines.
-\end{document}]] }
+It provides the \code{\\dropcap} command, which takes as options the number of lines the initial should span,
+the font family to use, and the initial character(s) to typeset.
+Provide the rest of the paragraph text as content to the command.
+Old-style typographers also have the possibility to enable, at their convenience, the join option,
+for use when the initial belongs to the first word of the sentence.
+In that case, the first line is closer to the initial than subsequent indented lines.
+Other options passed to \\dropcap will be passed through to \\font when drawing the initial letter(s).
+This may be useful for passing OpenType options or other font preferences.
+\end{document}
+]] }
