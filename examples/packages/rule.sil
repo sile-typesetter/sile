@@ -1,8 +1,0 @@
-\begin[papersize=132mm x 138mm]{document}\nofolios
-\script[src=packages/rules]
-\script[src=packages/raiselower]
-S\glue[width=-0.1en]\raise[height=-0.5ex]{\font[size=9pt]{I}}\glue[width=-0.1en]L\glue[width=-0.4en]\raise[height=0.5ex]{\font[size=7pt]{E}} comes with a number of packages which provide additional functionality.
-A box: \raise[height=1ex]{\hrule[width=3em, height=0.4pt]} here.
-
-Test \underline{underlining several words}.
-\end{document}

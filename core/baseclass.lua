@@ -104,7 +104,10 @@ SILE.baseClass = std.object {
 
     SILE.registerCommand("script", function (options, content)
       if (options["src"]) then
-        require(options["src"])
+        local script, _ = require(options["src"])
+        if type(script) == "table" and script.init then
+          script.init()
+        end
       else
         local func, err = load(content[1])
         if not func then SU.error(err) end

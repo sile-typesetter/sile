@@ -5,29 +5,29 @@
 Big operators, text, MathML:
 <mathml>
   <mrow>
-    <msubsup>
+    <munderover>
       <mo>⋀</mo>
       <mrow><mi>j</mi><mo>=</mo><mn>0</mn></mrow>
       <mo>∞</mo>
-    </msubsup>
-    <msubsup>
+    </munderover>
+    <munderover>
       <mo>∏</mo>
       <mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow>
       <mo>∞</mo>
-    </msubsup>
-    <msubsup>
+    </munderover>
+    <munderover>
       <mo>∑</mo>
       <mrow><mi>m</mi><mo>=</mo><mn>0</mn></mrow>
       <mo>n</mo>
-    </msubsup>
+    </munderover>
     <msup>
       <mi mathvariant="normal">e</mi>
       <mrow>
-        <msubsup>
+        <munderover>
           <mo>∑</mo>
           <mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow>
           <mo>m</mo>
-        </msubsup>
+        </munderover>
         <msub> <mi>δ</mi> <mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow> </msub>
       </mrow>
     </msup>
@@ -39,29 +39,29 @@ Big operators, text, MathML:
 Big operators, display, MathML:
 <mathml mode="display">
   <mrow>
-    <msubsup>
+    <munderover>
       <mo>⋀</mo>
       <mrow><mi>j</mi><mo>=</mo><mn>0</mn></mrow>
       <mo>∞</mo>
-    </msubsup>
-    <msubsup>
+    </munderover>
+    <munderover>
       <mo>∏</mo>
       <mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow>
       <mo>∞</mo>
-    </msubsup>
-    <msubsup>
+    </munderover>
+    <munderover>
       <mo>∑</mo>
       <mrow><mi>m</mi><mo>=</mo><mn>0</mn></mrow>
       <mo>n</mo>
-    </msubsup>
+    </munderover>
     <msup>
       <mi mathvariant="normal">e</mi>
       <mrow>
-        <msubsup>
+        <munderover>
           <mo>∑</mo>
           <mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow>
           <mo>m</mo>
-        </msubsup>
+        </munderover>
         <msub> <mi>δ</mi> <mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow> </msub>
       </mrow>
     </msup>
@@ -98,7 +98,7 @@ Integrals, text, MathML:
   </mrow>
 </mathml>
 
-Integrals, text, MathML:
+Integrals, display, MathML:
 <mathml mode="display">
   <mrow>
     <msub><mo>∯</mo><mi>S</mi></msub> <mi mathvariant="bold">E</mi>

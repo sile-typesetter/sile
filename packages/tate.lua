@@ -1,6 +1,3 @@
--- Japaneese language support defines units which are useful here
-SILE.languageSupport.loadLanguage("ja")
-
 SILE.tateFramePrototype = pl.class({
     _base = SILE.framePrototype,
     direction = "TTB-RTL",
@@ -132,7 +129,14 @@ SILE.registerCommand("tate-chu-yoko", function (_, content)
 
 end)
 
+
 return {
+  init = function (_, _)
+    -- Japaneese language support defines units which are useful here
+    SILE.require("packages/font-fallback.lua")
+    SILE.call("font:add-fallback", { family = "Noto Sans CJK JP" })
+    SILE.languageSupport.loadLanguage("ja")
+  end,
   documentation = [[
 \begin{document}
 The \code{tate} package provides support for Japanese vertical typesetting.

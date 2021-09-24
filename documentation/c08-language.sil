@@ -90,7 +90,7 @@ To change the writing direction for a single frame, use
 \code{\\thisframedirection[direction=...]}.
 
 SILE uses the Unicode bidirectional algorithm to handle texts written in
-mixed directionalities. See \code{examples/examples/global-scripts/i18n.sil}
+mixed directionalities. See \url{https://sile-typesetter.org/examples/i18n.sil}
 for an example which brings together multiple scripts and directionalities.
 
 \section{Hyphenation}
@@ -147,11 +147,13 @@ to control which style is used. The default is \code{left}
 
 \subsection{French}
 
-In French typesetting, there is normally a thin space between text and “high”
-punctuation (question marks, exclamation marks, colons, semicolons). SILE
-will automatically insert this space if it is not present, and “thin” a normal
-space if it is. The size of the space is determined by
-\code{languages.fr.punctuationspace}.
+In French typesetting, there is normally a non-breakable space between text
+and “high” punctuation (a thin fixed space before question marks, exclamation
+marks, semicolons and an inter-word space before colons), and also spaces
+within "guillemets" (quotation marks). SILE will automatically apply the
+correct space. The size of these spaces is determined by
+\code{languages.fr.thinspace}, \code{languages.fr.colonspace} and
+\code{languages.fr.guillspace}.
 
 \subsection{Japanese / Chinese}
 
@@ -162,6 +164,9 @@ shori) and intercharacter spacing is fully supported on selecting the
 Japanese language. The easiest way to set up the other elements of Japanese
 typesetting such as the \em{hanmen} grid and optional vertical typesetting
 support is by using the \code{jplain} class.
+
+% See https://github.com/sile-typesetter/sile/issues/1245
+\script[src=packages/ruby]
 
 \package-documentation[src=packages/hanmenkyoshi]
 
