@@ -17,6 +17,7 @@ end
 SILE.registerCommand("dropcap", function (options, content)
   local lines = SU.cast("integer", options.lines or 3)
   local join = SU.boolean(options.join, false)
+  local standoff = SU.cast("measurement", options.standoff or "1spc")
   local raise = SU.cast("measurement", options.raise or 0)
   local shift = SU.cast("measurement", options.shift or 0)
   local size = SU.cast("measurement or nil", options.size or nil)
@@ -42,7 +43,7 @@ SILE.registerCommand("dropcap", function (options, content)
   local hbox = shapeHbox(options, content)
 
   -- Setup up the necessary indents for the final paragraph content
-  local joinOffset = SILE.measurement(join and "1spc" or 0):tonumber()
+  local joinOffset = join and standoff:tonumber() or 0
   SILE.settings.set("linebreak.hangAfter", -lines)
   SILE.settings.set("linebreak.hangIndent", targetWidth + joinOffset)
   SU.debug("dropcaps", "joinOffset", joinOffset)
@@ -65,13 +66,10 @@ referred as a 'drop cap'), typically one large capital letter used as a decorati
 
 It provides the \code{\\dropcap} command.
 The content passed will be the initial character(s).
-The primary option is \code{lines}, an integer specifying the number of lines to span.
-The default value is 3.
-The \code{join} is a boolean for whether to join the dropcap to the first line, defaults to false.
+The primary option is \code{lines}, an integer specifying the number of lines to span (defaults to 3).
+The \code{join} is a boolean for whether to join the dropcap to the first line (defaults to false).
+If \code{join} is true, the value of the \code{standoff} option (defaults to 1spc) is applied to all but the first line.
 To tweak the position of the dropcap, measurements may be passed to the \code{raise} and \code{shift} options.
-Old-style typographers also have the possibility to enable, at their convenience, the join option,
-for use when the initial belongs to the first word of the sentence.
-In that case, the first line is closer to the initial than subsequent indented lines.
 Other options passed to \\dropcap will be passed through to \\font when drawing the initial letter(s).
 This may be useful for passing OpenType options or other font preferences.
 \end{document}
