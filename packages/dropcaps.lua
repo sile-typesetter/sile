@@ -3,7 +3,7 @@ SILE.require("packages/raiselower")
 
 local shapeHbox = function (options, content)
   -- Clear irrelevant values before passing to font
-  options.lines, options.join, options.raise, options.shift = nil, nil, nil, nil
+  options.lines, options.join, options.raise, options.shift, options.color = nil, nil, nil, nil, nil
   SILE.call("noindent")
   local hbox = SILE.call("hbox", {}, function ()
     SILE.call("font", options, content)
@@ -21,7 +21,10 @@ SILE.registerCommand("dropcap", function (options, content)
   local raise = SU.cast("measurement", options.raise or 0)
   local shift = SU.cast("measurement", options.shift or 0)
   local size = SU.cast("measurement or nil", options.size or nil)
+  local color = options.color
   options.size = nil -- we need to measure the "would have been" size before using this
+
+  if color then SILE.require("packages/color") end
 
   -- We want the drop cap to spanning N lines is N-1 baselineskip plus the height of the first line.
   -- We Define the height of the first line based on measuring the size the initial would have been.
@@ -53,7 +56,9 @@ SILE.registerCommand("dropcap", function (options, content)
   SILE.call("rebox", { height = 0, width = -joinOffset }, function ()
     SILE.call("glue", { width = shift - targetWidth - joinOffset })
     SILE.call("lower", { height = extraHeight - raise }, function ()
-      SILE.typesetter:pushHbox(hbox)
+      SILE.call(color and "color" or "noop", { color = color }, function ()
+        SILE.typesetter:pushHbox(hbox)
+      end)
     end)
   end)
 end, "Show an 'initial capital' (also known as a 'drop cap') at the start of the content paragraph.")
@@ -69,6 +74,7 @@ The content passed will be the initial character(s).
 The primary option is \code{lines}, an integer specifying the number of lines to span (defaults to 3).
 The \code{join} is a boolean for whether to join the dropcap to the first line (defaults to false).
 If \code{join} is true, the value of the \code{standoff} option (defaults to 1spc) is applied to all but the first line.
+Optionally \code{color} can be passed to change the typeface color.
 To tweak the position of the dropcap, measurements may be passed to the \code{raise} and \code{shift} options.
 Other options passed to \\dropcap will be passed through to \\font when drawing the initial letter(s).
 This may be useful for passing OpenType options or other font preferences.
