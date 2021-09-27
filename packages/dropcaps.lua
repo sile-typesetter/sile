@@ -44,8 +44,8 @@ SILE.registerCommand("dropcap", function (options, content)
 
   -- Setup up the necessary indents for the final paragraph content
   local joinOffset = join and standoff:tonumber() or 0
-  SILE.settings.set("linebreak.hangAfter", -lines)
-  SILE.settings.set("linebreak.hangIndent", targetWidth + joinOffset)
+  SILE.settings.set("current.hangAfter", -lines)
+  SILE.settings.set("current.hangIndent", targetWidth + joinOffset)
   SU.debug("dropcaps", "joinOffset", joinOffset)
 
   -- The paragraph is indented so as to leave enough space for the drop cap.

@@ -218,6 +218,18 @@ SILE.baseClass = std.object {
       default = nil,
       help = "Glue at start of paragraph"
     })
+    SILE.settings.declare({
+      parameter = "current.hangIndent",
+      type = "integer or nil",
+      default = nil,
+      help = "Size of hanging indent"
+    })
+    SILE.settings.declare({
+      parameter = "current.hangAfter",
+      type = "integer or nil",
+      default = nil,
+      help = "Number of lines affected by handIndent"
+    })
     SILE.outputter:init(self)
     self:registerCommands()
     -- Call all stored package init routines
@@ -297,10 +309,26 @@ SILE.baseClass = std.object {
   newPar = function (typesetter)
     typesetter:pushGlue(SILE.settings.get("current.parindent") or SILE.settings.get("document.parindent"))
     SILE.settings.set("current.parindent", nil)
+    local hangIndent = SILE.settings.get("current.hangIndent")
+    if hangIndent then
+      SILE.settings.set("linebreak.hangIndent", hangIndent)
+    end
+    local hangAfter = SILE.settings.get("current.hangAfter")
+    if hangAfter then
+      SILE.settings.set("linebreak.hangAfter", hangAfter)
+    end
   end,
 
   endPar = function (typesetter)
     typesetter:pushVglue(SILE.settings.get("document.parskip"))
+    if SILE.settings.get("current.hangIndent") then
+      SILE.settings.set("current.hangIndent", nil)
+      SILE.settings.set("linebreak.hangIndent", nil)
+    end
+    if SILE.settings.get("current.hangAfter") then
+      SILE.settings.set("current.hangAfter", nil)
+      SILE.settings.set("linebreak.hangAfter", nil)
+    end
   end,
 
   options = {
