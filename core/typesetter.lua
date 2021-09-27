@@ -605,8 +605,8 @@ SILE.defaultTypesetter = std.object {
     local LTR = self.frame:writingDirection() == "LTR"
     local rskip = margins[LTR and "rskip" or "lskip"]
     if not rskip then rskip = SILE.nodefactory.glue(0) end
-    if hangIndent < 0 then
-      rskip = SILE.nodefactory.glue({ width = rskip.width:absolute() - hangIndent })
+    if hangIndent and hangIndent < 0 then
+      rskip = SILE.nodefactory.glue({ width = rskip.width:tonumber() - hangIndent })
     end
     rskip.value = "margin"
     -- while slice[#slice].discardable do table.remove(slice, #slice) end
@@ -614,8 +614,8 @@ SILE.defaultTypesetter = std.object {
     table.insert(slice, SILE.nodefactory.zerohbox())
     local lskip = margins[LTR and "lskip" or "rskip"]
     if not lskip then lskip = SILE.nodefactory.glue(0) end
-    if hangIndent > 0 then
-      lskip = SILE.nodefactory.glue({ width = lskip.width:absolute() + hangIndent })
+    if hangIndent and hangIndent > 0 then
+      lskip = SILE.nodefactory.glue({ width = lskip.width:tonumber() + hangIndent })
     end
     lskip.value = "margin"
     while slice[1].discardable do table.remove(slice, 1) end
