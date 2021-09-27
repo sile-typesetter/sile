@@ -86,6 +86,11 @@ SILE.registerCommand("define", function (options, content)
   end, options.help, SILE.currentlyProcessingFile)
 end, "Define a new macro. \\define[command=example]{ ... \\process }")
 
+-- A utility function that allows SILE.call() to be used as a noop wrapper.
+SILE.registerCommand("noop", function (_, content)
+  SILE.process(content)
+end)
+
 SILE.registerCommand("comment", function (_, _)
 end, "Ignores any text within this command's body.")
 
