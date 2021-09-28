@@ -63,10 +63,10 @@ SILE.settings = {
   end,
   wrap = function() -- Returns a closure which applies the current state, later
     local clSettings = pl.tablex.copy(SILE.settings.state)
-    return function(func)
+    return function(content)
       table.insert(SILE.settings.stateQueue, SILE.settings.state)
       SILE.settings.state = clSettings
-      SILE.process(func)
+      SILE.process(content)
       SILE.settings.popState()
     end
   end,
