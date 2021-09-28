@@ -26,8 +26,10 @@ SILE.registerCommand("dropcap", function (options, content)
 
   if color then SILE.require("packages/color") end
 
-  -- We want the drop cap to spanning N lines is N-1 baselineskip plus the height of the first line.
-  -- We Define the height of the first line based on measuring the size the initial would have been.
+  -- We want the drop cap to span over N lines, that is N - 1 baselineskip + the height of the first line.
+  -- Note this only works for the default linespace mechanism.
+  -- We determine the height of the first line by measuring the size the initial content *would have* been.
+  -- This gives the font some control over its relative size, sometimes desired sometimes undesired.
   local tmpHbox = shapeHbox(options, content)
   local extraHeight = SILE.measurement((lines - 1).."bs"):tonumber()
   local targetHeight = tmpHbox.height:tonumber() + extraHeight
@@ -74,9 +76,17 @@ The content passed will be the initial character(s).
 The primary option is \code{lines}, an integer specifying the number of lines to span (defaults to 3).
 The \code{join} is a boolean for whether to join the dropcap to the first line (defaults to false).
 If \code{join} is true, the value of the \code{standoff} option (defaults to 1spc) is applied to all but the first line.
-Optionally \code{color} can be passed to change the typeface color.
+Optionally \code{color} can be passed to change the typeface color, sometimes useful to offset the apparent weight of a large glyph.
 To tweak the position of the dropcap, measurements may be passed to the \code{raise} and \code{shift} options.
 Other options passed to \\dropcap will be passed through to \\font when drawing the initial letter(s).
 This may be useful for passing OpenType options or other font preferences.
+
+\begin{note}
+One caveat is that the size of the initials is calculated using the default linespacing mechanism.
+If you are using an alternative method from the linespacing package, you might see strange results.
+Set the \code{document.baselineskip} to approximate your effective leading value for best results.
+If that doesn't work set the size manually.
+Using \code{SILE.setCommandDefaults()} can be helpful for so you don't have to set the size every time.
+\end{note}
 \end{document}
 ]] }
