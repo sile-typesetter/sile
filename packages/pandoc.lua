@@ -10,7 +10,7 @@ SILE.require("packages/verbatim")
 -- immediate function but affect the document in other ways, such as setting
 -- bookmarks on anything tagged with an ID attribute.
 local handlePandocArgs = function (options)
-  local wrapper = SILE.settings.wrap()
+  local wrapper = SILE.process
   if options.id then
     SU.debug("pandoc", "Set ID on tag")
     SILE.call("pdf:destination", { name = options.id })
@@ -119,9 +119,9 @@ SILE.registerCommand("Null", function (_, _)
   SILE.typesetter:leaveHmode()
 end)
 
-SILE.registerCommand("OrderedList", function (options, content)
+SILE.registerCommand("OrderedList", function (_, content)
   -- TODO: handle listAttributes
-  handlePandocArgs(options)(function ()
+  SILE.settings.temporarily(function ()
     SILE.settings.set("document.rskip","10pt")
     SILE.settings.set("document.lskip","20pt")
     SILE.process(content)
@@ -273,7 +273,7 @@ SILE.registerCommand("ListItem", function (_, content)
   SILE.call("smallskip")
   SILE.call("glue", { width = "-1em"})
   SILE.call("rebox", { width = "1em" }, function ()
-    -- Not: Relies on Lua scope shadowing to find immediate parent list type
+    -- Note: Relies on Lua scope shadowing to find immediate parent list type
     -- luacheck: ignore pandocListType
     if pandocListType == "bullet" then
       SILE.typesetter:typeset("•")
