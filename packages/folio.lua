@@ -37,6 +37,17 @@ return {
             SILE.settings.pushState()
             -- Restore the settings to the top of the queue, which should be the document #986
             SILE.settings.toplevelState()
+
+            -- Reset settings the document may have but should not be applied to footnotes
+            -- See also same resets in footnote package
+            for _, v in ipairs({
+              "current.hangAfter",
+              "current.hangIndent",
+              "linebreak.hangAfter",
+              "linebreak.hangIndent" }) do
+              SILE.settings.set(v, SILE.settings.defaults[v])
+            end
+
             SILE.call("foliostyle", {}, { SILE.formatCounter(SILE.scratch.counters.folio) })
             SILE.typesetter:leaveHmode()
             SILE.settings.popState()
