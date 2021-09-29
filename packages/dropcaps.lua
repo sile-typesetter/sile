@@ -3,7 +3,7 @@ SILE.require("packages/raiselower")
 
 local shapeHbox = function (options, content)
   -- Clear irrelevant values before passing to font
-  options.lines, options.join, options.raise, options.shift, options.color = nil, nil, nil, nil, nil
+  options.lines, options.join, options.raise, options.shift, options.color, options.scale = nil, nil, nil, nil, nil, nil
   SILE.call("noindent")
   local hbox = SILE.call("hbox", {}, function ()
     SILE.call("font", options, content)
@@ -21,6 +21,7 @@ SILE.registerCommand("dropcap", function (options, content)
   local raise = SU.cast("measurement", options.raise or 0)
   local shift = SU.cast("measurement", options.shift or 0)
   local size = SU.cast("measurement or nil", options.size or nil)
+  local scale = SU.cast("number", options.scale or 1.0)
   local color = options.color
   options.size = nil -- we need to measure the "would have been" size before using this
 
@@ -32,7 +33,7 @@ SILE.registerCommand("dropcap", function (options, content)
   -- This gives the font some control over its relative size, sometimes desired sometimes undesired.
   local tmpHbox = shapeHbox(options, content)
   local extraHeight = SILE.measurement((lines - 1).."bs"):tonumber()
-  local targetHeight = tmpHbox.height:tonumber() + extraHeight
+  local targetHeight = tmpHbox.height:tonumber() * scale + extraHeight
   SU.debug("dropcaps", "Target height", targetHeight)
 
   -- Now we need to figure out how to scale the dropcap font to get an initial of targetHeight.
@@ -74,6 +75,7 @@ referred as a 'drop cap'), typically one large capital letter used as a decorati
 It provides the \code{\\dropcap} command.
 The content passed will be the initial character(s).
 The primary option is \code{lines}, an integer specifying the number of lines to span (defaults to 3).
+The scale of can be adjusted relative to the first line using the \code{scale} option (defaults to 1.0).
 The \code{join} is a boolean for whether to join the dropcap to the first line (defaults to false).
 If \code{join} is true, the value of the \code{standoff} option (defaults to 1spc) is applied to all but the first line.
 Optionally \code{color} can be passed to change the typeface color, sometimes useful to offset the apparent weight of a large glyph.
