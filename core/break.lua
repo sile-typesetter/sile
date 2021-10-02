@@ -1,7 +1,8 @@
 SILE.settings.declare({ parameter = "linebreak.parShape", type = "string or nil", default = nil }) -- unimplemented
 SILE.settings.declare({ parameter = "linebreak.tolerance", type = "integer or nil", default = 500 })
 SILE.settings.declare({ parameter = "linebreak.pretolerance", type = "integer or nil", default = 100 })
-SILE.settings.declare({ parameter = "linebreak.hangIndent", type = "nil", default = nil }) -- unimplemented
+SILE.settings.declare({ parameter = "linebreak.hangIndent", type = "integer or nil", default = nil })
+SILE.settings.declare({ parameter = "linebreak.hangAfter", type = "integer or nil", default = nil })
 SILE.settings.declare({ parameter = "linebreak.adjdemerits", type = "integer", default = 10000,
   help = "Additional demerits which are accumulated in the course of paragraph building when two consecutive lines are visually incompatible. In these cases, one line is built with much space for justification, and the other one with little space." })
 SILE.settings.declare({ parameter = "linebreak.looseness", type = "integer", default = 0 })
@@ -75,12 +76,25 @@ end
 
 function lineBreak:setupLineLengths() -- 874
   self.parShape = param("parShape")
+  self.hangAfter = param("hangAfter") or 0
+  self.hangIndent = param("hangIndent") or 0
   if not self.parShape then
-    if not param("hangIndent") then
+    if self.hangIndent == 0 then
       self.lastSpecialLine = 0
       self.secondWidth = self.hsize or SU.error("No hsize")
-    else
-      SU.error("Hanging indents not supported yet. Implement node 875 from TeX!", true)
+    else -- 875
+      self.lastSpecialLine = math.abs(self.hangAfter)
+      if self.hangAfter < 0 then
+        self.secondWidth = self.hsize or SU.error("No hsize")
+        self.secondIndent = 0
+        self.firstWidth = self.hsize - math.abs(self.hangIndent)
+        self.firstIndent = self.hangIndent -- keep the signed value for later
+      else
+        self.firstWidth = self.hsize or SU.error("No hsize")
+        self.firstIndent = 0
+        self.secondWidth = self.hsize - math.abs(self.hangIndent)
+        self.secondIndent = self.hangIndent -- keep the signed value for later
+      end
     end
   else
     self.lastSpecialLine = #param("parShape")
@@ -88,7 +102,6 @@ function lineBreak:setupLineLengths() -- 874
   end
   if param("looseness") == 0 then self.easy_line = self.lastSpecialLine else self.easy_line = awful_bad end
   -- self.easy_line = awful_bad
-
 end
 
 function lineBreak:tryBreak() -- 855
@@ -131,8 +144,15 @@ function lineBreak:tryBreak() -- 855
           self.old_l = awful_bad -1
         else
           self.old_l = self.r.lineNumber
-          if self.r.lineNumber > self.lastSpecialLine then self.lineWidth = self.secondWidth
-          elseif not self.parShape then self.lineWidth = self.firstWidth else self.lineWidth = self.parShape[self.r.lineNumber]
+          if self.r.lineNumber > self.lastSpecialLine then
+            self.lineWidth = self.secondWidth
+            self.lineIndent = self.secondIndent
+          elseif not self.parShape then
+            self.lineWidth = self.firstWidth
+            self.lineIndent = self.fistIndent
+          else
+            self.lineWidth = self.parShape[self.r.lineNumber]
+            --FIXME self.lineIndent: parShape needs it too (its supposed to l1 i1 l2 i2... lN iN).
           end
         end
         if debugging then SU.debug("break", "line width = "..self.lineWidth) end
@@ -272,7 +292,10 @@ function lineBreak:deactivateR() -- 886
     if self.prev_r.type == "delta" then
       self.r = self.prev_r.next
       if self.r == self.activeListHead then
-        self.curActiveWidth:___sub(self.r.width)
+        self.curActiveWidth:___sub(self.prev_r.width)
+        -- FIXME It was crashing here, so changed from:
+        -- self.curActiveWidth:___sub(self.r.width)
+        -- But I'm not so sure reading Knuth here...
         self.prev_prev_r.next = self.activeListHead
         self.prev_r = self.prev_prev_r
       elseif self.r.type == "delta" then
@@ -566,10 +589,33 @@ function lineBreak:postLineBreak() -- 903
   local p = self.bestBet
   local breaks = {}
   local line  = 1
+
+  local nbLines = 0
+  local p2 = p
   repeat
+    nbLines = nbLines + 1
+    p2 = p2.prevBreak
+  until not p2
+
+  repeat
+    -- local width
+    local indent
+    -- ParShape case should be handled too here.
+    if self.hangAfter > 0 then
+      -- width = line > nbLines - self.hangAfter and self.firstWidth or self.secondWidth
+      indent = line > nbLines - self.hangAfter and self.firstIndent or self.secondIndent
+    elseif self.hangAfter == 0 then
+      -- width = self.hsize
+      indent = 0
+    else
+      -- width = line > nbLines + self.hangAfter and self.firstWidth or self.secondWidth
+      indent = line > nbLines + self.hangAfter and self.firstIndent or self.secondIndent
+    end
+
     table.insert(breaks, 1,  {
         position = p.curBreak,
-        width = self.parShape and self.parShape[line] or self.hsize
+        width = self.parShape and self.parShape[line] or self.hsize,
+        indent = indent
       })
     if p.alternates then
       for i = 1, #p.alternates do
