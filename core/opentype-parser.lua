@@ -433,6 +433,18 @@ local function parseMath(s)
   }
 end
 
+local function parsePost(s)
+  if s:len() <= 0 then return end
+  local fd = vstruct.cursor(s)
+  local header = vstruct.read(">majorVersion:u2 minorVersion:u2 italicAngle:i4 underlinePosition:i2 underlineThickness:i2 isFixedPitch:u4", fd)
+  local italicAngle = header.italicAngle / 65536 -- 1 << 16
+  return {
+    italicAngle = italicAngle,
+    underlinePosition = header.underlinePosition,
+    underlineThickness = header.underlineThickness
+  }
+end
+
 local parseFont = function(face)
   if not face.font then
     local font = {}
@@ -443,6 +455,7 @@ local parseFont = function(face)
     font.cpal = parseCpal(hb.get_table(face.data, face.index, "CPAL"))
     font.svg  = parseSvg(hb.get_table(face.data, face.index, "SVG"))
     font.math = parseMath(hb.get_table(face.data, face.index, "MATH"))
+    font.post = parsePost(hb.get_table(face.data, face.index, "post"))
     face.font = font
   end
   return face.font
