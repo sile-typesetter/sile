@@ -34,13 +34,21 @@ SILE.registerCommand("fullrule", function (options, _)
 end, "Draw a full width hrule centered on the current line")
 
 SILE.registerCommand("underline", function (_, content)
+  local ot = SILE.require("core/opentype-parser")
+  local fontoptions = SILE.font.loadDefaults({})
+  local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
+  local font = ot.parseFont(face)
+  local upem = font.head.unitsPerEm
+  local underlinePosition = -font.post.underlinePosition / upem * fontoptions.size
+  local underlineThickness = font.post.underlineThickness / upem * fontoptions.size
+
   local hbox = SILE.call("hbox", {}, content)
   local gl = SILE.length() - hbox.width
-  SILE.call("lower", {height = "0.5pt"}, function()
-    SILE.call("hrule", {width = gl.length, height = "0.5pt"})
+  SILE.call("lower", {height = SU.cast("measurement", underlinePosition)}, function()
+    SILE.call("hrule", {width = gl.length, height = underlineThickness})
   end)
   SILE.typesetter:pushGlue({width = hbox.width})
-end, "Underlines some content (badly)")
+end, "Underlines some content")
 
 SILE.registerCommand("boxaround", function (_, content)
   local hbox = SILE.call("hbox", {}, content)
