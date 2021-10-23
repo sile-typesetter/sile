@@ -1,0 +1,91 @@
+\begin{document}
+\language[main=en]
+\hyphenator:add-exceptions[lang=en]{iso-pe-ri-me-t-ric}% No idea where that weird word should really break.
+\nofolios
+
+\script{
+-- A pre-computed circle, assuming the default Gentium Plus font.
+-- If changes, the test may fail.
+local circle = {
+  { width = SILE.measurement("36.779999477581pt"), indent=149.44200026121 },
+  { width = SILE.measurement("89.148920336526pt"), indent=123.25753983174 },
+  { width = SILE.measurement("116.65835432049pt"), indent=109.50282283975 },
+  { width = SILE.measurement("135.41673924727pt"), indent=100.12363037636 },
+  { width = SILE.measurement("148.77195603998pt"), indent=93.446021980012 },
+  { width = SILE.measurement("158.09926166671pt"), indent=88.782369166646 },
+  { width = SILE.measurement("164.08698356407pt"), indent=85.788508217965 },
+  { width = SILE.measurement("167.09452358097pt"), indent=84.284738209513 },
+  { width = SILE.measurement("167.28269918420pt"), indent=84.190650407902 },
+  { width = SILE.measurement("164.66117660805pt"), indent=85.501411695975 },
+  { width = SILE.measurement("159.09112080046pt"), indent=88.286439599772 },
+  { width = SILE.measurement("150.24495450145pt"), indent=92.709522749275 },
+  { width = SILE.measurement("137.49177425846pt"), indent=99.086112870769 },
+  { width = SILE.measurement("119.58808312009pt"), indent=108.03795843996 },
+  { width = SILE.measurement("93.624309129279pt"), indent=121.01984543536 },
+  { width = SILE.measurement("47.922780548840pt"), indent=143.87060972558 },
+  { width = SILE.measurement("167.54343340503pt"), indent=84.060283297483 }
+}
+
+SILE.registerCommand("testparshaping", function (options, content)
+  local oldParShape = SILE.linebreak.parShape
+
+  -- Ship out previous content and start a new paragraph.
+  SILE.typesetter:leaveHmode()
+
+  SILE.settings.temporarily(function()
+    SILE.settings.set("font.size", 9)
+    -- Ensure reasonably fixed baselineskip, and some more tolerance
+    -- as circles are hard.
+    SILE.settings.set("linebreak.tolerance", 2000)
+    SILE.settings.set("document.baselineskip", "1.2em")
+    SILE.settings.set("document.parindent", 0)
+    -- Activate parshaping
+    SILE.settings.set("linebreak.parShape", true)
+
+    -- Override linebreak setup to implement our parshape
+    SILE.linebreak.parShape = function (self, line)    
+      if circle[line] then
+        -- Our pre-computed circle was originally built for book page masters
+        -- and a 6in x 9in papersize. For this test we relaxed these constraints,
+        -- so just fix one side.
+        local right = self.hsize - circle[line].width - circle[line].indent
+        return {
+          width = circle[line].width,
+          left = circle[line].indent,
+          right = right:tonumber()
+        }
+      end
+      -- Paragraphs that extend beyond the circle...
+      return {
+        width = self.hsize,
+        left = 0,
+        right = 0
+      }
+    end 
+
+    SILE.process(content)
+    SILE.typesetter:leaveHmode();
+
+    -- Restore the original paragraph shaper (if wanted).
+    SILE.linebreak.parShape = oldParShape
+  end)
+end, "Format paragraphs in a fixed circle")
+}
+
+
+% Galileo, 1638:
+
+\begin{testparshaping}
+The area of a circle is a mean proportional
+between any two regular and similar polygons of which one
+circumscribes it and the other is isoperimetric with it.
+In addition, the area of the circle is less than that of any
+circumscribed polygon and greater than that of any
+isoperimetric polygon. And further, of these
+circumscribed polygons, the one that has the greater number of sides
+has a smaller area than the one that has a lesser number;
+but, on the other hand, the isoperimetric polygon that
+has the greater number of sides is the larger.
+\end{testparshaping}
+
+\end{document}
