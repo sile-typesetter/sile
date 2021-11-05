@@ -119,7 +119,7 @@ basic functionality to other packages and classes. Classes such as the
 \subsection{footnotes}
 \package-documentation[src=packages/footnotes]
 
-\section{color-fonts}
+\subsection{color-fonts}
 \package-documentation[src=packages/color-fonts]
 
 \subsection{counters}
