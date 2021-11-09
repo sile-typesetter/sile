@@ -259,7 +259,7 @@ SILE may be built on Windows using CMake and Visual Studio. There is not an
 installer (yet), but Windows executables are generated using Azure for every
 commit. You may download these executables by selecting the latest build from
 \url{https://simoncozens-github.visualstudio.com/sile/_build} and downloading
-the "sile" artifact from the Artifacts drop down.
+the “sile” artifact from the Artifacts drop down.
 
 \section{Running SILE}
 

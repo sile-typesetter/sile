@@ -260,7 +260,7 @@ To Sherlock Holmes she is always \em\{the woman\}.
 \end{verbatim}
 
 This is because every file is required to contain a valid XML tree, which
-wouldn't be the case without a common root.
+wouldn’t be the case without a common root.
 
 SILE is written in the Lua programming language, and the Lua interpreter is
 available at runtime. Just as one can run Javascript code from within a HTML
@@ -305,7 +305,7 @@ produces the following output:
 
 There is one notable caveat when embedding Lua code documents written with the
 TeX-flavor markup. Since SILE has to first parse the TeX markup to find the
-start and end of such script commands \em{without} understanding what's in
+start and end of such script commands \em{without} understanding what’s in
 between, it is strictly necessary that no end tags appear inside the Lua code.
 This means that for the environment block version (\code{\\begin\{script\}})
 there must be no instances of \code{\\end\{script\}} inside the Lua code block,

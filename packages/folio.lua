@@ -61,7 +61,7 @@ return {
 \begin{document}
 The \code{folio} package (which is automatically loaded by the
 plain class, and therefore by nearly every SILE class) controls
-the output of folios - the old-time typesetter word for page numbers.
+the output of folios—the old-time typesetter word for page numbers.
 
 It provides four commands to users:
 

@@ -68,7 +68,7 @@ L\%
 \line
 \end{verbatim}
 
-We're using the built-in SILE command \code{\\define}. \code{\\define} takes
+We are using the built-in SILE command \code{\\define}. \code{\\define} takes
 an option called \code{command}; its value is the name of the command we
 are defining. The content of the \code{\\define} command is a series of SILE instructions to
 be executed when the command is used.

@@ -166,7 +166,7 @@ tall glue to the other typesetter’s queue to help the process along:
 
 \begin{verbatim}
 diglot.finish = function(self)
-  table.insert(SILE.typesetter.other.state.outputQueue, SILE.nodefactory.vfillGlue)
+  table.insert(SILE.typesetter.other.state.outputQueue, SILE.nodefactory.vfillglue())
   SILE.typesetter.other:chuck()
   plain.finish(self)
 end
@@ -362,13 +362,13 @@ can output the cross-reference itself.
 
 \begin{verbatim}
   SILE.settings.temporarily(function()
-    SILE.settings.set("document.baselineskip", SILE.nodefactory.newVglue("7pt"))
+    SILE.settings.set("document.baselineskip", SILE.nodefactory.vglue("7pt"))
     SILE.call("font", \{size = "6pt", family="Helvetica", weight="800"\}, \{\})
     discovery.innerTypesetter:typeset(SILE.scratch.chapter..":"..SILE.scratch.verse.." ")
     SILE.call("font", \{size = "6pt", family="Helvetica", weight="200"\}, \{\})
     discovery.innerTypesetter:typeset(xref)
     discovery.innerTypesetter:leaveHmode()
-    discovery.innerTypesetter:pushVglue(\{ height = SILE.length.new(\{length = 4\}) \})
+    discovery.innerTypesetter:pushVglue(\{ height = SILE.length(\{length = 4\}) \})
   end)
 end
 \line
