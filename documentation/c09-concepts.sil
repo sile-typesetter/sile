@@ -58,7 +58,7 @@ shrink. To construct a \code{SILE.length}:
 
 \begin{verbatim}
 \line
-local l = SILE.length.new(\{ length = x, stretch = y, shrink = z\})
+local l = SILE.length(\{ length = x, stretch = y, shrink = z\})
 \line
 \end{verbatim}
 
@@ -66,8 +66,8 @@ Now we can construct horizontal and vertical glue:
 
 \begin{verbatim}
 \line
-local glue  = SILE.nodefactory.newGlue (\{ width =  l\})
-local vglue = SILE.nodefactory.newVglue(\{ height = l\})
+local glue  = SILE.nodefactory.glue(\{ width =  l\})
+local vglue = SILE.nodefactory.vglue(\{ height = l\})
 \line
 \end{verbatim}
 
