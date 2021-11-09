@@ -148,7 +148,7 @@ The indentation at the start of each paragraph is controlled by the
 setting \code{document.parindent}; this is a glue parameter, and by default it’s
 set to 20pt with no stretch and shrink. Actually, the amount added to the
 start of the paragraph is \code{current.parindent}. After each paragraph,
-\code{current.parident} is reset to the value of \code{document.parindent}. The
+\code{current.parindent} is reset to the value of \code{document.parindent}. The
 \code{\\noindent} command works by setting \code{current.parindent} to zero.
 
 \medskip%

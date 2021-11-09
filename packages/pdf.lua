@@ -132,7 +132,7 @@ that location in the document, use \code{\\pdf:link[dest=\goodbreak{}name]\{link
 
 The \command{\\pdf:link} command accepts several options defining its border style:
 a \code{borderwidth} length setting the border width (defaults to 0, meaning no border),
-a \code{borderstyle} string (can be set to "underline" or "dashed", otherwise a
+a \code{borderstyle} string (can be set to “underline” or “dashed”, otherwise a
 solid box),
 a \code{bordercolor} color specification for this border (defaults to blue),
 and finally a \code{borderoffset} length for adjusting the border with some vertical space
@@ -140,7 +140,7 @@ above the content and below the baseline (defaults to 1pt). Note that PDF render
 they honor these border styling features on link annotations.
 
 It also has an \code{external} option for URL links, which is not intended to be used
-directly - refer to the \code{url} package for more flexibility typesetting external
+directly—refer to the \code{url} package for more flexibility typesetting external
 links.
 
 To set arbitrary key-value metadata, use something like \code{\\pdf:metadata[key=Author,

@@ -118,13 +118,13 @@ This package provides the \code{chordmode} environment, which transforms
 lines like:
 
 \begin{verbatim}
-  I've be<G>en a wild rover for many's a <C>year
+  I’ve be<G>en a wild rover for many’s a <C>year
 \end{verbatim}
 
 into:
 
 \begin{chordmode}
-  I've be<G>en a wild rover for many's a <C>year
+  I’ve be<G>en a wild rover for many’s a <C>year
 \end{chordmode}
 \par
 

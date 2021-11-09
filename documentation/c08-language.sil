@@ -59,9 +59,9 @@ written in the same way, but traditionally is typeset down the page with
 lines of text moving from the right of the page to the left.
 
 To describe this, SILE uses the concept of a \em{writing direction},
-which denotes the way each individual line appears on the page - left
+which denotes the way each individual line appears on the page —left
 to right for Latin scripts, right to left for Arabic, Hebrew and so on,
-top to bottom for traditional Japanese - and a \em{page advance direction},
+top to bottom for traditional Japanese— and a \em{page advance direction},
 which denotes the way the lines “stack up”. Each of these directions can
 take one of four values: \code{LTR}, \code{RTL}, \code{TTB} and \code{BTT}.
 A \em{direction specification} is made up of either a writing direction
@@ -150,7 +150,7 @@ to control which style is used. The default is \code{left}
 In French typesetting, there is normally a non-breakable space between text
 and “high” punctuation (a thin fixed space before question marks, exclamation
 marks, semicolons and an inter-word space before colons), and also spaces
-within "guillemets" (quotation marks). SILE will automatically apply the
+within “guillemets” (quotation marks). SILE will automatically apply the
 correct space. The size of these spaces is determined by
 \code{languages.fr.thinspace}, \code{languages.fr.colonspace} and
 \code{languages.fr.guillspace}.
