@@ -323,14 +323,14 @@ int pdf_end_annotation(lua_State *L) {
 
 int pdf_metadata(lua_State *L) {
   const char* key = luaL_checkstring(L, 1);
-  const char* val = luaL_checkstring(L, 2);
+  const char* value = luaL_checkstring(L, 2);
   int len = lua_rawlen(L, 2);
   ASSERT(p);
   ASSERT(key);
-  ASSERT(val);
+  ASSERT(value);
   texpdf_add_dict(p->info,
                texpdf_new_name(key),
-               texpdf_new_string(val, len));
+               texpdf_new_string(value, len));
 }
 /* Images */
 

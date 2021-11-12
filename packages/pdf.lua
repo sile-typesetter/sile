@@ -108,9 +108,16 @@ end)
 
 SILE.registerCommand("pdf:metadata", function (options, _)
   local key = SU.required(options, "key", "pdf:metadata")
-  local val = SU.required(options, "val", "pdf:metadata")
+  local value
+  if options.val ~= nil then
+    SU.deprecated("\\pdf:metadata[…, val=…]", "\\pdf:metadata[…, value=…]", "0.12.0", "0.13.0")
+    value = SU.required(options, "val", "pdf:metadata")
+  else
+    value = SU.required(options, "value", "pdf:metadata")
+  end
+
   -- see comment in pdf:bookmark
-  val = SU.utf8_to_utf16be(val)
+  value = SU.utf8_to_utf16be(value)
   SILE.typesetter:pushHbox({
     value = nil,
     height = SILE.measurement(0),
@@ -118,7 +125,7 @@ SILE.registerCommand("pdf:metadata", function (options, _)
     depth = SILE.measurement(0),
     outputYourself = function (_, _, _)
       SILE.outputter:_init()
-      pdf.metadata(key, val)
+      pdf.metadata(key, value)
     end
   })
 end)
