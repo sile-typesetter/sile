@@ -431,67 +431,71 @@ utilities.firstChar = function (str)
   return chars[1]
 end
 
+local byte, floor, reverse = string.byte, math.floor, string.reverse
+
 utilities.utf8charat = function (str, index)
   return str:sub(index):match("([%z\1-\127\194-\244][\128-\191]*)")
 end
 
-utilities.utf8_to_utf16be_hexencoded = function (str)
-  local ustr = string.format("%04x", 0xfeff) -- BOM
-  for _, uchr in luautf8.codes(str) do
-    if (uchr < 0x10000) then
-      ustr = ustr..string.format("%04x", uchr)
-    else -- Surrogate pair
-      local sur_hi = (uchr - 0x10000) / 0x400 + 0xd800
-      local sur_lo = (uchr - 0x10000) % 0x400 + 0xdc00
-      ustr = ustr..string.format("%04x%04x", sur_hi, sur_lo)
-    end
+local utf16bom = function(endianness)
+  return endianness == "be" and "\xfe\xff" or endianness == "le" and "\xff\xfe" or SU.error("Unrecognized endianness")
+end
+
+utilities.hexencoded = function (str)
+  local ustr = ""
+  for i = 1, #str do
+    ustr = ustr..string.format("%02x", byte(str[i]))
   end
   return ustr
 end
 
-utilities.utf8_to_utf16be = function (str)
+utilities.hexdecoded = function (str)
+  if #str % 2 == 1 then SU.error("Cannot decode hex string with odd len") end
   local ustr = ""
-  for _, uchr in luautf8.codes(str) do
-    if (uchr < 0x10000) then
-      ustr = ustr..string.format("%c%c", uchr / 256, uchr % 256 )
-    else -- Surrogate pair
-      local sur_hi = (uchr - 0x10000) / 0x400 + 0xd800
-      local sur_lo = (uchr - 0x10000) % 0x400 + 0xdc00
-      ustr = ustr..string.format("%c%c%c%c", sur_hi / 256, sur_hi % 256 , sur_lo / 256, sur_lo % 256)
-    end
+  for i = 1, #str, 2 do
+    ustr = ustr..string.format("%c", tonumber(string.sub(str, i, i+1), 16))
   end
   return ustr
 end
 
-utilities.utf8_to_utf16le = function (str)
-  local ustr = ""
+local uchr_to_surrogate_pair = function(uchr, endianness)
+  local hi, lo = floor((uchr - 0x10000) / 0x400) + 0xd800, (uchr - 0x10000) % 0x400 + 0xdc00
+  local s_hi, s_lo = string.format("%c%c", floor(hi / 256), hi % 256), string.format("%c%c", floor(lo / 256), lo % 256)
+  return endianness == "le" and (reverse(s_hi) .. reverse(s_lo)) or s_hi .. s_lo
+end
+
+local uchr_to_utf16_double_byte = function(uchr, endianness)
+  local ustr = string.format("%c%c", floor(uchr / 256), uchr % 256 )
+  return endianness == "le" and reverse(ustr) or ustr
+end
+
+local utf8_to_utf16 = function(str, endianness)
+  local ustr = utf16bom(endianness)
   for _, uchr in luautf8.codes(str) do
-    if (uchr < 0x10000) then
-      ustr = ustr..string.format("%c%c", uchr % 256, uchr / 256 )
-    else -- Surrogate pair
-      local sur_hi = (uchr - 0x10000) / 0x400 + 0xd800
-      local sur_lo = (uchr - 0x10000) % 0x400 + 0xdc00
-      ustr = ustr..string.format("%c%c%c%c", sur_hi % 256, sur_hi / 256 , sur_lo % 256, sur_lo / 256)
-    end
+    ustr = ustr..(uchr < 0x10000 and uchr_to_utf16_double_byte(uchr, endianness)
+                  or uchr_to_surrogate_pair(uchr, endianness))
   end
   return ustr
 end
 
-utilities.utf16le_to_utf8 = function (str)
+utilities.utf8_to_utf16be = function (str) return utf8_to_utf16(str, "be") end
+utilities.utf8_to_utf16le = function (str) return utf8_to_utf16(str, "le") end
+utilities.utf8_to_utf16be_hexencoded = function (str) return utilities.hexencoded(utilities.utf8_to_utf16be(str)) end
+utilities.utf8_to_utf16le_hexencoded = function (str) return utilities.hexencoded(utilities.utf8_to_utf16le(str)) end
+
+local utf16_to_utf8 = function (str, endianness)
+  local bom = utf16bom(endianness)
+
+  if str:find(bom) == 1 then str = string.sub(str, 3, #str) end
   local ustr = ""
-  for uchr in utilities.utf16codes(str, "le") do
+  for uchr in utilities.utf16codes(str, endianness) do
     ustr = ustr..luautf8.char(uchr)
   end
   return ustr
 end
 
-utilities.utf16be_to_utf8 = function (str)
-  local ustr = ""
-  for uchr in utilities.utf16codes(str, "be") do
-    ustr = ustr..luautf8.char(uchr)
-  end
-  return ustr
-end
+utilities.utf16be_to_utf8 = function (str) return utf16_to_utf8(str, "be") end
+utilities.utf16le_to_utf8 = function (str) return utf16_to_utf8(str, "le") end
 
 local icu = require("justenoughicu")
 
