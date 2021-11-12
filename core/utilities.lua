@@ -82,8 +82,9 @@ utilities.deprecated = function (old, new, warnat, errorat, extra)
   -- will never encounter this failure, but as a developer it’s hard to test a
   -- deprecation when core code refactoring is an all-or-nothing proposition.
   -- Hence we fake it ‘till we make it, all deprecations internally are warings.
+  local brackets = old:sub(1,1) == '\\' and "" or "()"
   local _semver = SILE.version and SILE.version:match("v([0-9]*.[0-9]*.[0-9]*)") or warnat
-  local msg = old .. "() was deprecated in SILE v" .. warnat .. ". Please use " .. new .. "() instead. " .. extra
+  local msg = (old .. brackets) .. " was deprecated in SILE v" .. warnat .. ". Please use " .. (new .. brackets) .. " instead. " .. (extra or "")
   if errorat and _semver >= errorat then
     SU.error(msg)
   elseif warnat and _semver >= warnat then
