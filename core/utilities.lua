@@ -368,9 +368,9 @@ utilities.utf16codes = function (ustr, endian)
       return nil
     else
       local c1, c2, c3, c4, wchar, lowchar
-      c1 = string.byte(ustr, pos)
+      c1 = string.byte(ustr, pos, pos+1)
       pos = pos + 1
-      c2 = string.byte(ustr, pos)
+      c2 = string.byte(ustr, pos, pos+1)
       pos = pos + 1
       if endian == "be" then
         wchar = c1 * 256 + c2
@@ -380,9 +380,9 @@ utilities.utf16codes = function (ustr, endian)
       if not (wchar >= 0xD800 and wchar <= 0xDBFF) then
         return wchar
       end
-      c3 = string.byte(ustr, pos)
+      c3 = string.byte(ustr, pos, pos+1)
       pos = pos + 1
-      c4 = string.byte(ustr, pos)
+      c4 = string.byte(ustr, pos, pos+1)
       pos = pos + 1
       if endian == "be" then
         lowchar = c3 * 256 + c4
@@ -438,13 +438,13 @@ utilities.utf8charat = function (str, index)
 end
 
 local utf16bom = function(endianness)
-  return endianness == "be" and "\xfe\xff" or endianness == "le" and "\xff\xfe" or SU.error("Unrecognized endianness")
+  return endianness == "be" and "\254\255" or endianness == "le" and "\255\254" or SU.error("Unrecognized endianness")
 end
 
 utilities.hexencoded = function (str)
   local ustr = ""
   for i = 1, #str do
-    ustr = ustr..string.format("%02x", byte(str[i]))
+    ustr = ustr..string.format("%02x", byte(str, i, i+1))
   end
   return ustr
 end
@@ -453,19 +453,19 @@ utilities.hexdecoded = function (str)
   if #str % 2 == 1 then SU.error("Cannot decode hex string with odd len") end
   local ustr = ""
   for i = 1, #str, 2 do
-    ustr = ustr..string.format("%c", tonumber(string.sub(str, i, i+1), 16))
+    ustr = ustr..string.char(tonumber(string.sub(str, i, i+1), 16))
   end
   return ustr
 end
 
 local uchr_to_surrogate_pair = function(uchr, endianness)
   local hi, lo = floor((uchr - 0x10000) / 0x400) + 0xd800, (uchr - 0x10000) % 0x400 + 0xdc00
-  local s_hi, s_lo = string.format("%c%c", floor(hi / 256), hi % 256), string.format("%c%c", floor(lo / 256), lo % 256)
+  local s_hi, s_lo = string.char(floor(hi / 256)) .. string.char(hi % 256), string.char(floor(lo / 256)) .. string.char(lo % 256)
   return endianness == "le" and (reverse(s_hi) .. reverse(s_lo)) or s_hi .. s_lo
 end
 
 local uchr_to_utf16_double_byte = function(uchr, endianness)
-  local ustr = string.format("%c%c", floor(uchr / 256), uchr % 256 )
+  local ustr = string.char(floor(uchr / 256)) .. string.char(uchr % 256)
   return endianness == "le" and reverse(ustr) or ustr
 end
 
