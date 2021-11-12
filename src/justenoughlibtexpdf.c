@@ -7,6 +7,10 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
+#if !defined LUA_VERSION_NUM || LUA_VERSION_NUM==501
+#define lua_rawlen lua_strlen
+#endif
+
 pdf_doc *p = NULL;
 double height = 0.0;
 double precision = 65536.0;
@@ -405,10 +409,6 @@ int pdf_grestore(lua_State *L) {
   texpdf_dev_grestore(p);
   return 0;
 }
-
-#if !defined LUA_VERSION_NUM || LUA_VERSION_NUM==501
-#define lua_rawlen lua_strlen
-#endif
 
 int pdf_add_content(lua_State *L) {
   const char* input = luaL_checkstring(L, 1);
