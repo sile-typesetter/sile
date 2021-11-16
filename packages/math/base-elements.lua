@@ -1237,7 +1237,6 @@ elements.atomType = atomType
 elements.scriptType = scriptType
 elements.mathVariantToScriptType = mathVariantToScriptType
 elements.symbolDefaults = symbolDefaults
-elements.newStandardHspace = newStandardHspace
 elements.newSubscript = newSubscript
 elements.newUnderOver = newUnderOver
 elements.newStandardHspace = newStandardHspace
