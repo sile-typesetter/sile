@@ -73,4 +73,9 @@ Fractions, display, TeX:
   + \frac{1}{2}
 </math>
 
+<math>
+  \frac{i+1}{}
+  \frac{}{i+1}
+</math>
+
 </sile>

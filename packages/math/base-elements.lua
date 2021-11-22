@@ -965,35 +965,20 @@ elements.fraction = pl.class({
     elements.mbox._init(self)
     self.numerator = numerator
     self.denominator = denominator
-    if self.numerator then table.insert(self.children, self.numerator)
-    end
-    if self.denominator then table.insert(self.children, self.denominator)
-    end
+    table.insert(self.children, numerator)
+    table.insert(self.children, denominator)
   end,
   styleChildren = function(self)
-    if not (self.numerator or self.denominator) then
-      SU.error("Fraction cannot have both no numerator and no denominator")
-    end
-    if self.numerator then
-      self.numerator.mode = getNumeratorMode(self.mode)
-    end
-    if self.denominator then
-      self.denominator.mode = getDenominatorMode(self.mode)
-    end
+    self.numerator.mode = getNumeratorMode(self.mode)
+    self.denominator.mode = getDenominatorMode(self.mode)
   end,
   shape = function(self)
     -- Determine relative abscissas and width
     local widest, other
-    if self.numerator and self.denominator then
-      if self.denominator.width > self.numerator.width then
-        widest, other = self.denominator, self.numerator
-      else
-        widest, other = self.numerator, self.denominator
-      end
-    elseif self.numerator then widest, other = self.numerator, nil
-    elseif self.denominator then widest, other = self.denominator, nil
+    if self.denominator.width > self.numerator.width then
+      widest, other = self.denominator, self.numerator
     else
-      error("Fraction cannot have both no numerator and no denominator")
+      widest, other = self.numerator, self.denominator
     end
     widest.relX = SILE.length(0)
     other.relX = (widest.width - other.width) / 2
@@ -1004,44 +989,34 @@ elements.fraction = pl.class({
     local scaleDown = self:getScaleDown()
     self.axisHeight = constants.axisHeight * scaleDown
     self.ruleThickness = constants.fractionRuleThickness * scaleDown
-    if self.numerator then
-      if isDisplayMode(self.mode) then
-        self.numerator.relY = -self.axisHeight - self.ruleThickness/2 - SILE.length(math.max(
-          (constants.fractionNumDisplayStyleGapMin*scaleDown + self.numerator.depth):tonumber(),
-          constants.fractionNumeratorDisplayStyleShiftUp * scaleDown
-            - self.axisHeight - self.ruleThickness/2))
-      else
-        self.numerator.relY = -self.axisHeight - self.ruleThickness/2 - SILE.length(math.max(
-          (constants.fractionNumeratorGapMin*scaleDown + self.numerator.depth):tonumber(),
-          constants.fractionNumeratorShiftUp * scaleDown - self.axisHeight
-            - self.ruleThickness/2))
-      end
-    end
-    if self.denominator then
-      if isDisplayMode(self.mode) then
-        self.denominator.relY = -self.axisHeight + self.ruleThickness/2 + SILE.length(math.max(
-          (constants.fractionDenomDisplayStyleGapMin * scaleDown
-            + self.denominator.height):tonumber(),
-          constants.fractionDenominatorDisplayStyleShiftDown * scaleDown
-            + self.axisHeight - self.ruleThickness/2))
-      else
-        self.denominator.relY = -self.axisHeight + self.ruleThickness/2 + SILE.length(math.max(
-          (constants.fractionDenominatorGapMin * scaleDown
-            + self.denominator.height):tonumber(),
-          constants.fractionDenominatorShiftDown * scaleDown
-           + self.axisHeight - self.ruleThickness/2))
-      end
-    end
-    if self.numerator then
-      self.height = 0 - self.numerator.relY + self.numerator.height
+    if isDisplayMode(self.mode) then
+      self.numerator.relY = -self.axisHeight - self.ruleThickness/2 - SILE.length(math.max(
+        (constants.fractionNumDisplayStyleGapMin*scaleDown + self.numerator.depth):tonumber(),
+        constants.fractionNumeratorDisplayStyleShiftUp * scaleDown
+          - self.axisHeight - self.ruleThickness/2))
     else
-      self.height = self.axisHeight + self.ruleThickness / 2
+      self.numerator.relY = -self.axisHeight - self.ruleThickness/2 - SILE.length(math.max(
+        (constants.fractionNumeratorGapMin*scaleDown + self.numerator.depth):tonumber(),
+        constants.fractionNumeratorShiftUp * scaleDown - self.axisHeight
+          - self.ruleThickness/2))
     end
-    if self.denominator then
-      self.depth = self.denominator.relY + self.denominator.depth
+
+    if isDisplayMode(self.mode) then
+      self.denominator.relY = -self.axisHeight + self.ruleThickness/2 + SILE.length(math.max(
+        (constants.fractionDenomDisplayStyleGapMin * scaleDown
+          + self.denominator.height):tonumber(),
+        constants.fractionDenominatorDisplayStyleShiftDown * scaleDown
+          + self.axisHeight - self.ruleThickness/2))
     else
-      self.depth = SILE.length(0)
+      self.denominator.relY = -self.axisHeight + self.ruleThickness/2 + SILE.length(math.max(
+        (constants.fractionDenominatorGapMin * scaleDown
+          + self.denominator.height):tonumber(),
+        constants.fractionDenominatorShiftDown * scaleDown
+         + self.axisHeight - self.ruleThickness/2))
     end
+
+    self.height = self.numerator.height - self.numerator.relY
+    self.depth = self.denominator.relY + self.denominator.depth
   end,
   output = function(self, x, y, line)
     SILE.outputter:drawRule(
