@@ -106,6 +106,10 @@ SILE.registerCommand("pdf:link", function (options, content)
   })
 end)
 
+local function validate_date(date)
+  return string.match(date, [[^D:%d+%s*-%s*%d%d%s*'%s*%d%d%s*'?$]]) ~= nil
+end
+
 SILE.registerCommand("pdf:metadata", function (options, _)
   local key = SU.required(options, "key", "pdf:metadata")
   local value
@@ -116,8 +120,20 @@ SILE.registerCommand("pdf:metadata", function (options, _)
     value = SU.required(options, "value", "pdf:metadata")
   end
 
-  -- see comment in pdf:bookmark
-  value = SU.utf8_to_utf16be(value)
+  if key == "Trapped" then
+    SU.warn("Skipping special metadata key \\Trapped")
+    return
+  end
+
+  if key == "ModDate" or key == "CreationDate" then
+    if not validate_date(value) then
+      SU.warn("Invalid date: " .. value)
+      return
+    end
+  else
+    -- see comment in pdf:bookmark
+    value = SU.utf8_to_utf16be(value)
+  end
   SILE.typesetter:pushHbox({
     value = nil,
     height = SILE.measurement(0),

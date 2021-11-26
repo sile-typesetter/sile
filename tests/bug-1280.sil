@@ -49,6 +49,9 @@
     SILE.registerCommand("pdf:metadata", function (_, _) end)
   end
 }
-\pdf:metadata[key=Author, val=Erwin Schrödinger]
-\pdf:metadata[key=Title, val=Erwin Schrödinger’s 猫🐈]
+\pdf:metadata[key=Author, value=Erwin Schrödinger]
+\pdf:metadata[key=Title, value=Erwin Schrödinger’s 猫🐈]
+\pdf:metadata[key=CreationDate, value=D:19990209153925 - 08 ' 00 ']
+\pdf:metadata[key=ModDate, value=should fail]
+\pdf:metadata[key=Trapped, value=should be skipped]
 \end{document}
