@@ -220,14 +220,14 @@ SILE.nodeMakers.fr = pl.class({
 SILE.hyphenator.languages["fr"] = {}
 SILE.hyphenator.languages["fr"].patterns =
 {
----------------------%-----------------------%
--- phonetic patterns % etymological patterns %
----------------------%-----------------------%
+------------------------------------------------
+-- phonetic patterns -- etymological patterns --
+------------------------------------------------
 ----*
 "2'2",
----------------------%-----------------------%
--- phonetic patterns % etymological patterns %
----------------------%-----------------------%
+------------------------------------------------
+-- phonetic patterns -- etymological patterns --
+------------------------------------------------
 ----a
 ".a4",
 "'a4",
@@ -241,12 +241,14 @@ SILE.hyphenator.languages["fr"].patterns =
 ".ae3s4ch",
 "'ae3s4ch",
 "1alcool",
+"'2alcool",
 "a2l1algi",
 ".amino1a2c",
 "'amino1a2c",
 ".ana3s4tr",
 "'ana3s4tr",
 "1a2nesthési",
+"'2a2nesthési",
 ".anti1a2",
 "'anti1a2",
 ".anti1e2",
@@ -264,9 +266,9 @@ SILE.hyphenator.languages["fr"].patterns =
 ".as2ta",
 "'as2ta",
 "a2s3tro",
-"---------------------%-----------------------%",
-"-- phonetic patterns % etymological patterns %",
-"---------------------%-----------------------%",
+------------------------------------------------
+-- phonetic patterns -- etymological patterns --
+------------------------------------------------
 ----b
 "1ba",
 "1bâ",
@@ -299,9 +301,9 @@ SILE.hyphenator.languages["fr"].patterns =
 "1bu",
 "1bû",
 "1by",
-"---------------------%-----------------------%",
-"-- phonetic patterns % etymological patterns %",
-"---------------------%-----------------------%",
+------------------------------------------------
+-- phonetic patterns -- etymological patterns --
+------------------------------------------------
 ----c
 "1ç",
 "1ca",
@@ -326,6 +328,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "acquies4cent.",
 "is3cent.",
 "immis4cent.",
+--
 ".ch4",
 "1c2h",
 "4ch.",
@@ -399,7 +402,8 @@ SILE.hyphenator.languages["fr"].patterns =
 "1cû",
 "1cy",
 ".cul4", -- -- as .con4 .cons4 (march 92)
----------------------%-----------------------%"-- phonetic patterns -- etymological patterns --
+------------------------------------------------
+-- phonetic patterns -- etymological patterns --
 ------------------------------------------------
 ----d
 "1d'",
@@ -430,18 +434,24 @@ SILE.hyphenator.languages["fr"].patterns =
 ".dé1io",
 ".dé1o2",
 ".dé2s", -- originaly in JD file
+-- .dé2s1a2 removed 09/17/92 because wrong for the
+--  original JD 500 words test
 ".dé3s2a3cr",
 ".dés2a3m", -- .dés2a2mi introduced 09/17/92 bec. i
-                               -- can't see why désamidonner ran in JD.
-                               -- Moved to .dés2a3m df 12/27/93
+-- can't see why désamidonner ran in JD.
+-- Moved to .dés2a3m df 12/27/93.
 ".dé3s2a3tell",
 ".dé3s2astr",
-".dé3s2c", -- 1 moved 3 due to .dé2s 09/17/92",
+".dé3s2c", -- 1 moved 3 due to .dé2s 09/17/92
+--.dé2s1e2 removed 09/17/92 because wrong for the
+-- original JD 500 words test
 ".dé2s1é2",
 ".dé3s2é3gr",
 ".dé3s2ensib",
 ".dé3s2ert",
 ".dé3s2exu",
+--.dé2s3h removed 09/17/92 because wrong for the
+-- original JD 500 words test
 ".dé2s1i2",
 ".dé3s2i3d",
 ".dé3s2i3gn",
@@ -450,6 +460,8 @@ SILE.hyphenator.languages["fr"].patterns =
 ".dé3s2invo",
 ".dé3s2i3r",
 ".dé3s2ist",
+--.dé2s1o2 removed 09/17/92 because wrong for the
+-- original JD 500 words test
 ".dé3s2o3dé",
 ".dé2s1œ",
 ".dé3s2o3l",
@@ -472,13 +484,13 @@ SILE.hyphenator.languages["fr"].patterns =
 ".di1a2tom",
 ".di1e2n",
 ".di2s3h",
-"2dlent.", -- mute syllable: jodlent (df) 28/02/94",
+"2dlent.", -- mute syllable: jodlent (df) 28/02/94
 "1do",
 "1dô",
 "1d2r",
 "4dre.",
 "4dres.",
-"2drent.", -- mute syllable: engendrent (df) 28/02/94",
+"2drent.", -- mute syllable: engendrent (df) 28/02/94
 "d1s2",
 "1du",
 "1dû",
@@ -486,11 +498,11 @@ SILE.hyphenator.languages["fr"].patterns =
 ".dy2s3",
 ".dy2s1a2",
 ".dy2s1i2",
-".dy2s1o2", -- missing from nb list",
+".dy2s1o2", -- missing from nb list
 ".dy2s1u2",
----------------------%-----------------------%
+------------------------------------------------
 -- phonetic patterns -- etymological patterns --
----------------------%-----------------------%
+------------------------------------------------
 ----e
 ".e4",
 "'e4",
@@ -520,7 +532,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "extra1",
 "extra2c",
 "extra2i",
----------------------%-------------------------
+------------------------------------------------
 -- phonetic patterns -- etymological patterns --
 ------------------------------------------------
 ----f
@@ -533,6 +545,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "4fe.",
 "4fes.",
 "2fent.", -- mute syllable: agrafent chauffent (df) 22/02/94
+--
 "1fi",
 "1fî",
 "1f2l",
@@ -577,6 +590,57 @@ SILE.hyphenator.languages["fr"].patterns =
 "ser3gent.",
 "ter3gent.",
 "résur3gent.",
+--
+"1g2ha",
+"1g2he",
+"1g2hi",
+"1g2ho",
+"1g2hy",
+"1gi",
+"1gî",
+"1g2l",
+"4gle.",
+"4gles.",
+"2glent.", -- mute syllable: meuglent (df) 28/02/94
+"1g2n",
+"'a2g3nat", -- (df) 16/01/02
+".a2g3nat", -- (df) 16/01/02
+"a2g3nos", -- (df) 16/01/02 (pattern dia2g3n deleted)
+"co2g3niti", -- (df) 16/01/02
+"'i2g3né", -- (df) 16/01/02
+".i2g3né", -- (df) 16/01/02
+"'i2g3ni", -- (df) 16/01/02
+".i2g3ni", -- (df) 16/01/02
+".ma2g3nicide", -- (df) 16/01/02
+".ma2g3nificat", -- (df) 16/01/02
+".ma2g3num", -- (df) 16/01/02
+"o2g3nomoni", -- (df) 16/01/02
+"o2g3nosi", -- (df) 16/01/02
+".pro2g3nath", -- (df) 16/01/02
+"pu2g3nable", -- (df) 16/01/02
+"pu2g3nac", -- (df) 16/01/02
+".sta2g3n",
+".syn2g3nath", -- (df) 16/01/02
+"wa2g3n",
+"4gne.",
+"4gnes.",
+"2gnent.", -- mute syllable: accompagnent (df) 28/02/94
+"1go",
+"1gô",
+"1g2r",
+"4gre.",
+"4gres.",
+"2grent.", -- mute syllable: immigrent (df) 28/02/94
+"1gu",
+"1gû",
+"g1s2",
+"4gue.",
+"4gues.",
+-- words ending with -guent (df) 22/02/94
+"2guent.",
+".on3guent.",
+"'on3guent.",
+--
 "1gy",
 ------------------------------------------------
 -- phonetic patterns -- etymological patterns --
@@ -616,7 +680,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "hypo1u2",
 ------------------------------------------------
 -- phonetic patterns -- etymological patterns --
------------------------------------------------
+------------------------------------------------
 ----i
 ".i4",
 "'i4",
@@ -667,6 +731,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "xil3l",
 -- end of ill patterns
 "1informat", -- missing from nb list
+"'2informat",
 ".in1a2",
 "'in1a2",
 ".in2a3nit",
@@ -796,6 +861,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "corpu3lent.",
 "ru3lent.",
 "sporu4lent.",
+--
 "1li",
 "1lî",
 "1lo",
@@ -895,6 +961,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "bru2ment.",
 "su2ment.",
 "tu2ment.",
+--
 "1mi",
 "1mî",
 ".milli1am",
@@ -943,6 +1010,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "conti3nent.",
 "perti3nent.",
 "absti3nent.",
+--
 "1ni",
 "1nî",
 "1no",
@@ -963,8 +1031,10 @@ SILE.hyphenator.languages["fr"].patterns =
 "'o4",
 "'ô4",
 ".ô4",
+--'ö2 -- mjf -- deleted 3/1/94 df-bg
 "o2b3long",
 "1octet", -- missing from nb list
+"'2octet",
 "o1d2l",
 "o1è2dre",
 "o1ioni",
@@ -1012,6 +1082,7 @@ SILE.hyphenator.languages["fr"].patterns =
 ".ar3pent.",
 "'ar3pent.",
 "ser3pent.",
+--
 ".pen2ta", -- pent- or penta- but never pen-ta bg 12/27/93
 "per3h",
 "pé2nul", -- pé2n1ul moved back 09/17/92 to JD def.
@@ -1047,6 +1118,9 @@ SILE.hyphenator.languages["fr"].patterns =
 "2pht",
 "3ph2talé",
 "3ph2tis",
+-------- Here is an example of a pb involving phonetic and etymologic patterns 5/94
+--------                .phyto3ph2 -- originaly, but wrong for phy-toph-thora   9/92
+--------                .phy2topha -- for -pharmacie but wrong for phyto-biol.. 5/94
 "1pi",
 "1pî",
 "1p2l",
@@ -1163,7 +1237,8 @@ SILE.hyphenator.languages["fr"].patterns =
 ".re4s5trin",
 ".re3s4tu",
 ".re3s4ty",
-".réu2",
+".réu2", --.ré1u2 -- pattern rejected 12/2/92
+-- (don't hyphenate as ré-union nor réu-nion)
 ".ré2uss",
 ".rétro1a2",
 "4re.",
@@ -1176,7 +1251,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "é3rent.",
 "tor3rent.",
 "cur3rent.",
-"--",
+--
 "1r2h",
 "4rhe.",
 "4rhes.",
@@ -1220,7 +1295,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "ab3sent.",
 "pré3sent.",
 ".res3sent.",
-"--",
+--
 ".seu2le", -- jbb
 ".sh4",
 "1s2h",
@@ -1317,6 +1392,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "équipo3tent.",
 "impo3tent.",
 "mit3tent.",
+--
 ".th4",
 "1t2h",
 "4th.",
@@ -1366,7 +1442,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "uni1o2v",
 "uni1a2x",
 "u2s3tr",
------------------------------------------------
+------------------------------------------------
 -- phonetic patterns -- etymological patterns --
 ------------------------------------------------
 ----v
@@ -1383,7 +1459,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "2vent.",
 "conni3vent.",
 ".sou3vent.",
-"--",
+--
 "1vi",
 "1vî",
 "1vo",
@@ -1436,6 +1512,7 @@ SILE.hyphenator.languages["fr"].patterns =
 -- words ending with -zent (df) 22/02/94
 "2zent.",
 "privatdo3zent.",
+--
 "1zi",
 "1zo",
 "1zu",
