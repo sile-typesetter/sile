@@ -80,6 +80,9 @@ SILE.nodeMakers.fr = pl.class({
     -- of exceptions. French typography is a delicate beast.
     spaceExceptions = { "!", "?", ":", ".", "…", "(", "[", "{", "<", "«", "‹", "“", "‘", "?!", "!!", "!?" },
 
+    -- overriden properties from parent class
+    isQuoteType = { qu = true }, -- split tokens at apostrophes &c.
+
     -- methods defined in this class
 
     isIn = function(_, set, text)
