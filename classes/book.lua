@@ -180,8 +180,10 @@ SILE.registerCommand("section", function (options, content)
       SILE.call("book:right-running-head-font")
       SILE.call("rightalign", {}, function ()
         SILE.settings.temporarily(function ()
-          SILE.call("show-multilevel-counter", { id = "sectioning", level = 2 })
-          SILE.typesetter:typeset(" ")
+          if SU.boolean(options.numbering, true) then
+            SILE.call("show-multilevel-counter", { id = "sectioning", level = 2 })
+            SILE.typesetter:typeset(" ")
+          end
           SILE.process(content)
         end)
       end)
