@@ -156,7 +156,7 @@ SILE.registerCommand("chapter", function (options, content)
     end)
   end)
   SILE.call("bigskip")
-  SILE.call("nofoliosthispage")
+  SILE.call("nofoliothispage")
 end, "Begin a new chapter")
 
 SILE.registerCommand("section", function (options, content)
