@@ -1,15 +1,16 @@
 SILE.registerCommand("rebox", function (options, content)
-  local box = SILE.call("hbox", {}, content)
-  if options.width then box.width = SILE.length(options.width) end
-  if options.height then box.height = SILE.length(options.height) end
-  if options.depth then box.depth = SILE.length(options.depth) end
+  local hbox = SILE.call("hbox", {}, content)
+  table.remove(SILE.typesetter.state.nodes) -- steal it back
+  if options.width then hbox.width = SILE.length(options.width) end
+  if options.height then hbox.height = SILE.length(options.height) end
+  if options.depth then hbox.depth = SILE.length(options.depth) end
   if options.phantom then
-    box.outputYourself = function (self, typesetter, line)
+    hbox.outputYourself = function (self, typesetter, line)
       typesetter.frame:advanceWritingDirection(self:scaledWidth(line))
     end
   end
-  table.insert(SILE.typesetter.state.nodes, box)
-end, "Place the output within a box of specified width, height, depth and visibility")
+  table.insert(SILE.typesetter.state.nodes, hbox)
+end, "Place the output within a hbox of specified width, height, depth and visibility")
 
 return {
   documentation = [[
