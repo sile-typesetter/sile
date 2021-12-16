@@ -2,8 +2,6 @@ local icu = require("justenoughicu")
 
 local chardata = require("char-def")
 
--- luacheck: globals lasttype
--- XXX - this is wrong and broken, but is also confusing. See bug #687
 
 SILE.nodeMakers.base = pl.class({
     _init = function (self, options)
@@ -11,7 +9,8 @@ SILE.nodeMakers.base = pl.class({
       self.options = options
       self.token = ""
       self.lastnode = false
-      self.lasttype = false
+      -- The whole lasttype logic below was wrong and broken, and confusing. See #687 and #1297
+      -- self.lasttype = false
     end,
     makeToken = function (self)
       if #self.contents > 0 then
@@ -55,6 +54,9 @@ SILE.nodeMakers.base = pl.class({
     end,
     isBreaking = function (self, char)
       return self.isBreakingType[self:charData(char).linebreak]
+    end,
+    isQuote = function (self, char)
+      return self.isQuoteType[self:charData(char).linebreak]
     end
   })
 
@@ -64,10 +66,11 @@ SILE.nodeMakers.unicode = pl.class({
     isSpaceType = { sp = true },
     isBreakingType = { ba = true, zw = true },
     isPunctuationType = { po = true },
+    isQuoteType = {}, -- quote linebreak category is ambiguous depending on the language
     dealWith = function (self, item)
       local char = item.text
-      local cp = SU.codepoint(char)
-      local thistype = chardata[cp] and chardata[cp].linebreak
+      -- local cp = SU.codepoint(char)
+      -- local thistype = chardata[cp] and chardata[cp].linebreak
       if self:isSpace(item.text) then
         self:makeToken()
         self:makeGlue(item)
@@ -75,15 +78,18 @@ SILE.nodeMakers.unicode = pl.class({
         self:addToken(char, item)
         self:makeToken()
         self:makePenalty(0)
-      elseif self.lasttype and (self.thistype and thistype ~= lasttype and not self.isWordType[thistype]) then
-        self:makeToken()
+      elseif self:isQuote(item.text) then
         self:addToken(char, item)
+        self:makeToken()
+      -- elseif self.lasttype and (thistype and thistype ~= self.lasttype and not self.isWordType[thistype]) then
+      --   self:makeToken()
+      --   self:addToken(char, item)
       else
         self:letterspace()
         self:addToken(char, item)
       end
-      if not self.isWordType[thistype] then lasttype = chardata[cp] and chardata[cp].linebreak end
-      self.lasttype = thistype
+      -- if not self.isWordType[thistype] then self.lasttype = chardata[cp] and chardata[cp].linebreak end
+      -- self.lasttype = thistype
     end,
     handleInitialGlue = function (self, items)
       local i = 1
