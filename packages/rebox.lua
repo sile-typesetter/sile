@@ -1,5 +1,6 @@
 SILE.registerCommand("rebox", function (options, content)
   local box = SILE.call("hbox", {}, content)
+  table.remove(SILE.typesetter.state.nodes) -- steal it back
   if options.width then box.width = SILE.length(options.width) end
   if options.height then box.height = SILE.length(options.height) end
   if options.depth then box.depth = SILE.length(options.depth) end
