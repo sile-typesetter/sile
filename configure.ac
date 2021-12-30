@@ -25,17 +25,7 @@ DATEFMT='%d %B %Y'
 AM_COND_IF([IS_SDIST],
            [
             AX_PROGVAR([date])
-            if test -n "$SOURCE_DATE_EPOCH"; then
-                AX_PROG_DATE([date])
-                AS_VAR_IF([ax_cv_prog_date_gnu], [yes], [
-                           MAN_DATE=$(LC_ALL=C $DATE --utc --date=@$SOURCE_DATE_EPOCH +"$DATEFMT")
-                          ])
-                AS_VAR_IF([ax_cv_prog_date_bsd], [yes], [
-                           MAN_DATE=$(LC_ALL=C TZ=UTC $DATE -r $SOURCE_DATE_EPOCH +"$DATEFMT")
-                          ])
-            else
-                MAN_DATE=$($DATE +"$DATEFMT")
-            fi
+            AX_BUILD_DATE_EPOCH(MAN_DATE, "$DATEFMT")
            ], [
             MAN_DATE=$($GIT log -1 --format="%cd" --date=format:"$DATEFMT" -- sile.1.in)
            ])
