@@ -21,7 +21,7 @@
   "devDependencies": {
     "@commitlint/cli": "^15.0.0",
     "@commitlint/config-conventional": "^15.0.0",
-    "@commitlint/prompt": "^15.0.0",
+    "@commitlint/prompt": "^16.0.0",
     "commitizen": "^4.2.4",
     "conventional-changelog-cli": "^2.1.1",
     "husky": "^7.0.4",
