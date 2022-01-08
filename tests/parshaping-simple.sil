@@ -8,8 +8,8 @@ local testshape = {
   { 40, 50, nil },
   { 0, 120, nil },
   { 10, 30, nil },
-  { 10, 20, nil },
-  { 10, 10, nil },
+  { 10, nil, 90 },
+  { 10, nil, 40 },
 }
 
 SILE.settings.set("linebreak.tolerance", 2000)
@@ -26,7 +26,7 @@ SILE.linebreak.parShape = function (self, line)
 	end
 end
 
-SILE.call("lorem", { words = 20 })
+SILE.call("lorem", { words = 30 })
 
 \end{script}
 \end{document}
