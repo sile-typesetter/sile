@@ -4,12 +4,12 @@
 \begin{script}
 
 local testshape = {
-  { width = 30, indent = 60 },
-  { width = 50, indent = 40 },
-  { width = 120, indent = 0 },
-  { width = 30, indent = 10 },
-  { width = 20, indent = 10 },
-  { width = 10, indent = 10 },
+  { 60, 30, nil },
+  { 40, 50, nil },
+  { 0, 120, nil },
+  { 10, 30, nil },
+  { 10, 20, nil },
+  { 10, 10, nil },
 }
 
 SILE.settings.set("linebreak.tolerance", 2000)
@@ -18,19 +18,12 @@ SILE.settings.set("document.parindent", 0)
 SILE.settings.set("linebreak.parShape", true)
 
 SILE.linebreak.parShape = function (self, line)
-	if testshape[line] then
-		local right = self.hsize - testshape[line].width - testshape[line].indent
-		return {
-			width = SILE.measurement(testshape[line].width),
-			left = testshape[line].indent,
-			right = right
-		}
+  local shape = testshape[line]
+	if shape then
+		return shape[1], shape[2], shape[3]
+	else
+		return nil, nil, nil
 	end
-	return {
-		width = self.hsize,
-		left = 0,
-		right = 0
-	}
 end
 
 SILE.call("lorem", { words = 20 })

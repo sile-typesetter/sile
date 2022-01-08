@@ -75,34 +75,26 @@ function lineBreak:trimGlue() -- 842
   nodes[#nodes+1] = SILE.nodefactory.penalty(inf_bad)
 end
 
-function lineBreak:parShape()
-  return { width = self.hsize, left = 0, right = 0 }
-  -- NOTE FOR DEVELOPERS: this method is called when the linebreak.parShape
-  -- setting is true.
-  -- The default implementation does nothing fancy and just outputs regular
-  -- paragraphs (at the cost of an extra function call).
-  -- Extended paragraph shapes are intended to be provided by overriding
-  -- this method.
-  --
-  -- The expected return value is a table:
-  --    { width=..., left=..., right=... }
-  -- defining the width, left indent and right indent for the given line.
-  --
-  -- The width must be a SILE.measurement()'s, and the indents absolute
-  -- numbers.
-  --
-  -- (Obviously, one should ensure left + right + width = self.hsize, so
-  -- returning the two indents could have been avoided, but it feels more
-  -- readable and natural this way, and easier afterwards back into the
-  -- typesetter).
-  --
-  -- Using a Lua function rather than a fixed array allows one to perform
-  -- computations, but remember the linebreak methods will be called multiple
-  -- times to try good breaks, so it is strongly recommended to "memoize"
-  -- values for lines already computed.
-  --
-  -- TeX wizards shall also note that this is slighty different from
-  -- Knuth's definition "nline l1 i1 l2 i2 ... lN iN".
+-- NOTE FOR DEVELOPERS: this method is called when the linebreak.parShape
+-- setting is true. The arguments passed are self (the linebreaker instance)
+-- and a counter representing the current line number.
+--
+-- The default implementation does nothing but waste a function call, resulting
+-- in normal paragraph shapes. Extended paragraph shapes are intended to be
+-- provided by overriding this method.
+--
+-- The expected return is three values, any of which may be nil to use default
+-- values or a measurement to override the defaults. The values are considered
+-- as left, width, and right respectively.
+--
+-- Since self.hsize holds the current line width, these three values should add
+-- up to the that total. Returning values that don't add up may produce
+-- unexpected results.
+--
+-- TeX wizards shall also note that this is slighty different from
+-- Knuth's definition "nline l1 i1 l2 i2 ... lN iN".
+function lineBreak:parShape(_)
+  return 0, self.hsize, 0
 end
 
 function lineBreak:setupLineLengths() -- 874
@@ -173,10 +165,14 @@ function lineBreak:tryBreak() -- 855
           self.old_l = self.r.lineNumber
           if self.lastSpecialLine and self.r.lineNumber > self.lastSpecialLine then
             self.lineWidth = self.secondWidth
-          elseif not self.parShaping then
-            self.lineWidth = self.firstWidth
+          elseif self.parShaping then
+            local l, w, r = self:parShape(self.r.lineNumber)
+            local width = SILE.measurement(w or self.hsize)
+            if not w and l then width = width - SILE.measurement(l) end
+            if not w and r then width = width - SILE.measurement(r) end
+            self.lineWidth = width
           else
-            self.lineWidth = self:parShape(self.r.lineNumber).width
+            self.lineWidth = self.firstWidth
           end
         end
         if debugging then SU.debug("break", "line width = "..self.lineWidth) end
@@ -628,10 +624,12 @@ function lineBreak:postLineBreak() -- 903
     -- be needed at some point, the exact width are commented out
     -- below.
     if self.parShaping then
-      local parShape = self:parShape(nbLines + 1 - line)
-      -- width = parShape.width
-      left = parShape and parShape.left or 0
-      right = parShape and parShape.right or 0
+      local l, w, r = self:parShape(nbLines + 1 - line)
+      width = SILE.measurement(w or self.hsize)
+      if not w and l then width = width - SILE.measurement(l) end
+      if not w and r then width = width - SILE.measurement(r) end
+      left =  SU.cast("number", l or (self.hsize - width - SILE.measurement(l)) or SILE.measurement(0))
+      right = SU.cast("number", r or (self.hsize - width - SILE.measurement(r)) or SILE.measurement(0))
     else
       if self.hangAfter == 0 then
         -- width = self.hsize
