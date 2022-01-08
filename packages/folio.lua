@@ -11,8 +11,13 @@ SILE.registerCommand("nofolios", function (_, _)
   SILE.scratch.counters.folio.off = true
 end)
 
-SILE.registerCommand("nofoliosthispage", function (_, _)
+SILE.registerCommand("nofoliothispage", function (_, _)
   SILE.scratch.counters.folio.off = 2
+end)
+
+SILE.registerCommand("nofoliosthispage", function (_, _)
+  SU.deprecated("nofoliosthispage", "nofoliothispage", "0.12.1", "0.14.0")
+  return SILE.Commands["nofoliothispage"]()
 end)
 
 SILE.registerCommand("foliostyle", function (_, content)
@@ -61,7 +66,7 @@ return {
 \begin{document}
 The \code{folio} package (which is automatically loaded by the
 plain class, and therefore by nearly every SILE class) controls
-the output of folios - the old-time typesetter word for page numbers.
+the output of folios—the old-time typesetter word for page numbers.
 
 It provides four commands to users:
 

@@ -106,9 +106,34 @@ SILE.registerCommand("pdf:link", function (options, content)
   })
 end)
 
+local function validate_date(date)
+  return string.match(date, [[^D:%d+%s*-%s*%d%d%s*'%s*%d%d%s*'?$]]) ~= nil
+end
+
 SILE.registerCommand("pdf:metadata", function (options, _)
   local key = SU.required(options, "key", "pdf:metadata")
-  local val = SU.required(options, "val", "pdf:metadata")
+  local value
+  if options.val ~= nil then
+    SU.deprecated("\\pdf:metadata[…, val=…]", "\\pdf:metadata[…, value=…]", "0.12.0", "0.13.0")
+    value = SU.required(options, "val", "pdf:metadata")
+  else
+    value = SU.required(options, "value", "pdf:metadata")
+  end
+
+  if key == "Trapped" then
+    SU.warn("Skipping special metadata key \\Trapped")
+    return
+  end
+
+  if key == "ModDate" or key == "CreationDate" then
+    if not validate_date(value) then
+      SU.warn("Invalid date: " .. value)
+      return
+    end
+  else
+    -- see comment in pdf:bookmark
+    value = SU.utf8_to_utf16be(value)
+  end
   SILE.typesetter:pushHbox({
     value = nil,
     height = SILE.measurement(0),
@@ -116,7 +141,7 @@ SILE.registerCommand("pdf:metadata", function (options, _)
     depth = SILE.measurement(0),
     outputYourself = function (_, _, _)
       SILE.outputter:_init()
-      pdf.metadata(key, val)
+      pdf.metadata(key, value)
     end
   })
 end)
@@ -132,7 +157,7 @@ that location in the document, use \code{\\pdf:link[dest=\goodbreak{}name]\{link
 
 The \command{\\pdf:link} command accepts several options defining its border style:
 a \code{borderwidth} length setting the border width (defaults to 0, meaning no border),
-a \code{borderstyle} string (can be set to "underline" or "dashed", otherwise a
+a \code{borderstyle} string (can be set to “underline” or “dashed”, otherwise a
 solid box),
 a \code{bordercolor} color specification for this border (defaults to blue),
 and finally a \code{borderoffset} length for adjusting the border with some vertical space
@@ -140,7 +165,7 @@ above the content and below the baseline (defaults to 1pt). Note that PDF render
 they honor these border styling features on link annotations.
 
 It also has an \code{external} option for URL links, which is not intended to be used
-directly - refer to the \code{url} package for more flexibility typesetting external
+directly—refer to the \code{url} package for more flexibility typesetting external
 links.
 
 To set arbitrary key-value metadata, use something like \code{\\pdf:metadata[key=Author,

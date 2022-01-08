@@ -260,6 +260,23 @@ My 	194.3421
 T	18 w=4.6500	(nil)
 My 	207.1421
 T	19 w=4.6500	(nil)
+Draw line	49.7638	240.4851	10.7360	0.6500
+Mx 	49.7638
+My 	238.6101
+Set font 	Libertinus Math;8;400;;normal;;LTR
+T	2720 w=1.8320	(nil)
+Mx 	51.5958
+T	12 w=5.1840	(nil)
+Mx 	56.7798
+T	18 w=3.7200	(nil)
+Draw line	49.7638	250.0851	10.7360	0.6500
+Mx 	49.7638
+My 	257.8101
+T	2720 w=1.8320	(nil)
+Mx 	51.5958
+T	12 w=5.1840	(nil)
+Mx 	56.7798
+T	18 w=3.7200	(nil)
 Mx 	295.2916
 My 	780.6177
 Set font 	Gentium Plus;10;400;;normal;;LTR

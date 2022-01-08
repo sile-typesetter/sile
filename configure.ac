@@ -21,12 +21,13 @@ AC_PROG_SED
 AX_PROGVAR([cmp])
 AX_PROGVAR([git])
 
+DATEFMT='%d %B %Y'
 AM_COND_IF([IS_SDIST],
            [
             AX_PROGVAR([date])
-            MAN_DATE=$($DATE "+%d %B %Y")
+            AX_BUILD_DATE_EPOCH(MAN_DATE, "$DATEFMT")
            ], [
-            MAN_DATE=$($GIT log -1 --format="%cd" --date=format:"%d %B %Y" -- sile.1.in)
+            MAN_DATE=$($GIT log -1 --format="%cd" --date=format:"$DATEFMT" -- sile.1.in)
            ])
 AC_SUBST([MAN_DATE])
 

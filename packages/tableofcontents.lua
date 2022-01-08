@@ -140,7 +140,7 @@ as \code{\\chapter} or \code{\\section}, your classes should call the
 \code{\\tocentry[level=...]\{Entry\}} command to register a table of
 contents entry. At the end of each page, the exported Lua function
 \code{moveTocNodes} should be called to collate the table of contents
-entries and store which page they're on. At the end of the document,
+entries and store which page they’re on. At the end of the document,
 the \code{writeToc} Lua function writes the table of contents data
 to a file. This is because the table of contents (written out with
 the \code{\\tableofcontents} command) is usually found at the

@@ -32,6 +32,8 @@ SILE.shapers.harfbuzzWithColor = pl.class({
                 height = height,
                 depth = item.depth,
                 index = item.index,
+                x_offset = item.x_offset,
+                y_offset = item.y_offset,
                 text = text,
                 color = color,
               }

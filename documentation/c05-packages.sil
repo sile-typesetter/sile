@@ -10,7 +10,7 @@ do anything that it’s possible to do in Lua.
 
 As mentioned above, loading a package is done through the \code{\\script} command,
 which runs Lua code. By convention packages live in the \code{packages/} subdirectory
-of either your input file's location, your current working directory or SILE’s
+of either your input file’s location, your current working directory or SILE’s
 installation directory. For instance, we’ll soon be talking about the
 \code{grid} package, which normally can be found as
 \code{/usr/local/lib/sile/packages/grid.lua}. To load this, we’d say:
@@ -119,7 +119,7 @@ basic functionality to other packages and classes. Classes such as the
 \subsection{footnotes}
 \package-documentation[src=packages/footnotes]
 
-\section{color-fonts}
+\subsection{color-fonts}
 \package-documentation[src=packages/color-fonts]
 
 \subsection{counters}
