@@ -97,6 +97,27 @@ function lineBreak:parShape(_)
   return 0, self.hsize, 0
 end
 
+local parShapeCache = {}
+
+-- Wrap linebreak:parShape in a memoized table for fast access
+function lineBreak:parShapeCache(n)
+  local cache = parShapeCache[n]
+  if not cache then
+    local l, w, r = self:parShape(n)
+    local width = SILE.measurement(w or self.hsize)
+    if not w and l then width = width - SILE.measurement(l) end
+    if not w and r then width = width - SILE.measurement(r) end
+    local left =  SU.cast("number", l or (self.hsize:tonumber() - width:tonumber() - SU.cast("number", r or 0)) or 0)
+    local right = SU.cast("number", r or (self.hsize:tonumber() - width:tonumber() - SU.cast("number", l or 0)) or 0)
+    cache = { left, width, right }
+  end
+  return cache[1], cache[2], cache[3]
+end
+
+function lineBreak.parShapeCacheClear(_)
+  pl.tablex.clear(parShapeCache)
+end
+
 function lineBreak:setupLineLengths() -- 874
   self.parShaping = param("parShape") or false
   if self.parShaping then
@@ -166,11 +187,8 @@ function lineBreak:tryBreak() -- 855
           if self.lastSpecialLine and self.r.lineNumber > self.lastSpecialLine then
             self.lineWidth = self.secondWidth
           elseif self.parShaping then
-            local l, w, r = self:parShape(self.r.lineNumber)
-            local width = SILE.measurement(w or self.hsize)
-            if not w and l then width = width - SILE.measurement(l) end
-            if not w and r then width = width - SILE.measurement(r) end
-            self.lineWidth = width
+            local _
+            _, self.lineWidth, _ = self:parShapeCache(self.r.lineNumber)
           else
             self.lineWidth = self.firstWidth
           end
@@ -618,18 +636,13 @@ function lineBreak:postLineBreak() -- 903
   until not p2
 
   repeat
-    local left, right
+    local left, _, right
     -- SILE handles the actual line width differently than TeX,
     -- so below always return a width of self.hsize. Would they
     -- be needed at some point, the exact width are commented out
     -- below.
     if self.parShaping then
-      local l, w, r = self:parShape(nbLines + 1 - line)
-      width = SILE.measurement(w or self.hsize)
-      if not w and l then width = width - SILE.measurement(l) end
-      if not w and r then width = width - SILE.measurement(r) end
-      left =  SU.cast("number", l or (self.hsize - width - SILE.measurement(l)) or SILE.measurement(0))
-      right = SU.cast("number", r or (self.hsize - width - SILE.measurement(r)) or SILE.measurement(0))
+      left, _, right = self:parShapeCache(nbLines + 1 - line)
     else
       if self.hangAfter == 0 then
         -- width = self.hsize
