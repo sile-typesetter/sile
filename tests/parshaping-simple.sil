@@ -27,6 +27,8 @@ SILE.linebreak.parShape = function (self, line)
 end
 
 SILE.call("lorem", { words = 30 })
+SILE.call("par")
+SILE.call("lorem", { words = 30 })
 
 \end{script}
 \end{document}
