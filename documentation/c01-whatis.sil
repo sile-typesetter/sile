@@ -112,6 +112,13 @@ The other tool that people reach for when designing printed material on
 a computer is InDesign (or similar Desktop Publishing software, such as
 Scribus).
 
+% Reduce bug reports about this buggy float with a hack-around
+% https://github.com/sile-typesetter/sile/issues/860
+\skip{height=1bs}
+\skip{height=1ps}
+\par
+
+\noindent
 \float[rightboundary=7pt,bottomboundary=10pt]{\img[src=documentation/fig1.png,width=140]}
 DTP software is similar to Word Processing Software in that they are
 both graphical and largely WYSIWYG, but the paradigm is different. The focus is
