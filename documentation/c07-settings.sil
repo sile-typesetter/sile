@@ -282,15 +282,22 @@ off the filling glue at the end of the paragraph.
 \section{Linebreaking settings}
 
 SILE’s linebreaking algorithm is lifted entirely from TeX, and so maintains the
-same level of customizability as TeX. Here is a quick run-down of the settings
+same level of customizability as TeX. Only the API interfaces and units have
+been adapted as appropriate. Here is a quick run-down of the settings
 applicable to the line-breaking algorithm. You are expected to know what you
 are doing with these.
 
 \noindent• \code{linebreak.tolerance}: How bad a breakpoint is before it is rejected
 by the algorithm. (Default: 500)
 
+\noindent• \code{linebreak.parshape}: Whether to utilize a callback to \code{SILE.linebreak:parShape()} to get a customized shape for each line in a paragraph. (Default: false)
+
 \noindent• \code{linebreak.pretolerance}: If there are no breakpoints better than
 this, the paragraph is considered for hyphenation. (Default: 100)
+
+\noindent• \code{linebreak.hangIndent}: How far to indent initial line(s) of a paragraph. (Default: 0)
+
+\noindent• \code{linebreak.hangAfter}: An integer count of how many lines should have \code{linebreak.hangIndent} applied. (Default: nil)
 
 \noindent• \code{linebreak.adjdemerits}: Additional demerits which are accumulated in the course of paragraph building when two consecutive lines are visually incompatible. In these cases, one line is built with much space for justification, and the other one with little space. (Default: 10000)
 
