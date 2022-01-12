@@ -99,16 +99,22 @@ end
 
 local parShapeCache = {}
 
+local grantLeftoverWidth = function (hsize, l, w, r)
+  local width = SILE.measurement(w or hsize)
+  if not w and l then width = width - SILE.measurement(l) end
+  if not w and r then width = width - SILE.measurement(r) end
+  local remaining = hsize:tonumber() - width:tonumber()
+  local left = SU.cast("number", l or (r and (remaining - SU.cast("number", r))) or 0)
+  local right = SU.cast("number", r or (l and (remaining - SU.cast("number", l))) or remaining)
+  return left, width, right
+end
+
 -- Wrap linebreak:parShape in a memoized table for fast access
 function lineBreak:parShapeCache(n)
   local cache = parShapeCache[n]
   if not cache then
     local l, w, r = self:parShape(n)
-    local width = SILE.measurement(w or self.hsize)
-    if not w and l then width = width - SILE.measurement(l) end
-    if not w and r then width = width - SILE.measurement(r) end
-    local left =  SU.cast("number", l or (self.hsize:tonumber() - width:tonumber() - SU.cast("number", r or 0)) or 0)
-    local right = SU.cast("number", r or (self.hsize:tonumber() - width:tonumber() - SU.cast("number", l or 0)) or 0)
+    local left, width, right = grantLeftoverWidth(self.hsize, l, w, r)
     cache = { left, width, right }
   end
   return cache[1], cache[2], cache[3]
