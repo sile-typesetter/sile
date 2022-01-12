@@ -94,6 +94,9 @@ path to them.}
 \section{debug}
 \package-documentation[src=packages/debug]
 
+\section{dropcaps}
+\package-documentation[src=packages/dropcaps]
+
 \section{leaders}
 \package-documentation[src=packages/leaders]
 
