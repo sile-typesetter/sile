@@ -682,6 +682,7 @@ function lineBreak:postLineBreak() -- 903
     p = p.prevBreak
     line = line + 1
   until not p
+  self:parShapeCacheClear()
   return breaks
 end
 
