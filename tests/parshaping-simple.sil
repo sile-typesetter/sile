@@ -4,16 +4,15 @@
 \begin{script}
 
 local testshape = {
-  { 60, 30, nil },
-  { 40, 50, nil },
-  { 0, 120, nil },
-  { 10, 30, nil },
-  { 10, nil, 90 },
-  { 10, nil, 40 },
+  { 50, 30, nil },
+  { 50, 60, nil },
+  { nil, 120, nil },
+  { nil, 30, 40 },
+  { nil, nil, nil },
+  { 50, nil, 50 },
 }
 
 SILE.settings.set("linebreak.tolerance", 2000)
-SILE.settings.set("document.baselineskip", "1.2em")
 SILE.settings.set("document.parindent", 0)
 SILE.settings.set("linebreak.parShape", true)
 
@@ -26,7 +25,7 @@ SILE.linebreak.parShape = function (self, line)
 	end
 end
 
-SILE.call("lorem", { words = 30 })
+SILE.call("lorem", { words = 20 })
 SILE.call("par")
 SILE.call("lorem", { words = 30 })
 
