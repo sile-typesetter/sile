@@ -25,6 +25,7 @@ DOCSFONTFILES += Symbola.otf
 TESTFONTFILES  = $(DOCSFONTFILES)
 TESTFONTFILES += Amiri-Regular.ttf
 TESTFONTFILES += AmiriQuran.ttf
+TESTFONTFILES += AwamiNastaliq-Regular.ttf
 TESTFONTFILES += LibertinusSans-Bold.otf
 TESTFONTFILES += NotoNaskhArabic-Regular.ttf
 TESTFONTFILES += NotoSansKannada-Regular.ttf
@@ -57,6 +58,9 @@ notobase = $(shell echo $(notdir $1) | sed -e 's/-.*//')
 
 # Tell  make how to download font file bundles (when not downloadable individually)
 
+.sources/AwamiNastaliq-2.200.zip: | .sources
+	curl -fsSL https://software.sil.org/downloads/r/awami/$(notdir $@) -o $@
+
 .sources/CrimsonPro.zip: | .sources
 	curl -fsSL https://fonts.google.com/download?family=Crimson+Pro -o $@
 
@@ -75,6 +79,9 @@ notobase = $(shell echo $(notdir $1) | sed -e 's/-.*//')
 .sources/LateefGR-1.200.zip: | .sources
 	curl -fsSL https://software.sil.org/downloads/r/lateef/$(notdir $@) -o $@
 
+.sources/LateefGR-1.200.zip: | .sources
+	curl -fsSL https://software.sil.org/downloads/r/lateef/$(notdir $@) -o $@
+
 .sources/Libertinus-%.tar.xz: | .sources
 	curl -fsSL https://github.com/alerque/libertinus/releases/download/v$*/$(notdir $@) -o $@
 
@@ -87,6 +94,10 @@ notobase = $(shell echo $(notdir $1) | sed -e 's/-.*//')
 #	curl -fsSL https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
 
 # Tell make how to extract individual files from bundles
+
+.fonts/AwamiNastaliq%: .sources/AwamiNastaliq-2.200.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 1 $(basename $(<F))/$(notdir $@)
+	touch $@
 
 .fonts/Cormorant%: .sources/Cormorant_Install_v3.601.zip | .fonts
 	bsdtar -x -f $< -C $(dir $@) --strip-components 2 "$(basename $(<F))/1. TrueType Font Files/$(notdir $@)"
