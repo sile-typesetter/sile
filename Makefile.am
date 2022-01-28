@@ -350,9 +350,7 @@ export DOCKER_TAG ?= HEAD
 docker: Dockerfile hooks/build .version
 	./hooks/build $(VERSION)
 
-.PHONY: docker-build-push
-docker-build-push: docker
-	docker tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
+define docker_push =
 	test -z "$(DOCKER_PAT)" || \
 		docker login https://$(DOCKER_REGISTRY) -u $(DOCKER_USERNAME) -p $(DOCKER_PAT)
 	docker push $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
@@ -363,6 +361,18 @@ docker-build-push: docker
 		docker push $(DOCKER_REGISTRY)/$(DOCKER_REPO):latest ; \
 		docker push $(DOCKER_REGISTRY)/$(DOCKER_REPO):$${tag//.*} ; \
 	fi
+endef
+
+.PHONY: docker-ghcr-to-hub
+docker-ghcr-to-hub:
+	docker pull ghrc.io/sile-typesetter/sile:$(DOCKER_TAG)
+	docker tag  ghrc.io/sile-typesetter/sile:$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
+	$(docker_push)
+
+.PHONY: docker-build-push
+docker-build-push: docker
+	docker tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
+	$(docker_push)
 
 gource.webm:
 	mkdir -p /tmp/gravatars
