@@ -79,9 +79,6 @@ notobase = $(shell echo $(notdir $1) | sed -e 's/-.*//')
 .sources/LateefGR-1.200.zip: | .sources
 	curl -fsSL https://software.sil.org/downloads/r/lateef/$(notdir $@) -o $@
 
-.sources/LateefGR-1.200.zip: | .sources
-	curl -fsSL https://software.sil.org/downloads/r/lateef/$(notdir $@) -o $@
-
 .sources/Libertinus-%.tar.xz: | .sources
 	curl -fsSL https://github.com/alerque/libertinus/releases/download/v$*/$(notdir $@) -o $@
 
