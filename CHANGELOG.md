@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.12.2](https://github.com/sile-typesetter/sile/compare/v0.12.1...v0.12.2) (2022-01-28)
+
+
+### Bug Fixes
+
+* **shaper:** Fix line length calcs with negative width word spacing ([685d12d](https://github.com/sile-typesetter/sile/commit/685d12dc71797d69c7f24a6c6ced0d47dc404704)), closes [#579](https://github.com/sile-typesetter/sile/issues/579)
+
 ### [0.12.1](https://github.com/sile-typesetter/sile/compare/v0.12.0...v0.12.1) (2022-01-12)
 
 
