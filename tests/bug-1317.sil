@@ -5,18 +5,23 @@
 \begin{script}
 
 SILE.documentState.documentClass:declareFrame("other", {
-    left = "left(content) + 20%pw",
-    right = "right(content) - 20%pw",
-    top = "top(content) + 20%ph",
-    bottom = "bottom(content) - 20%ph",
+    left = "left(content)",
+    right = "right(content)",
+    top = "top(content) + 50%ph",
+    bottom = "bottom(content)",
     direction = "RTL"
   })
 
 SILE.typesetNaturally(SILE.getFrame("other"), function()
-  SILE.typesetter:typeset("عَرَبي")
+  SILE.typesetter:typeset("عَرَبي pass")
 end)
 
-SILE.typesetter:typeset("عَرَبي")
+SILE.typesetter:typeset("عَرَبي pass")
+
+SILE.call("bigskip")
+
+SILE.call("bidi-off")
+SILE.typesetter:typeset("عَرَبي fail")
 
 \end{script}
 \end{document}
