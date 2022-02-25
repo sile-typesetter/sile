@@ -43,11 +43,32 @@ SILE.registerCommand("underline", function (_, content)
   local underlineThickness = font.post.underlineThickness / upem * fontoptions.size
 
   local hbox = SILE.call("hbox", {}, content)
-  local gl = SILE.length() - hbox.width
-  SILE.call("lower", {height = SU.cast("measurement", underlinePosition)}, function()
-    SILE.call("hrule", {width = gl.length, height = underlineThickness})
-  end)
-  SILE.typesetter:pushGlue({width = hbox.width})
+  table.remove(SILE.typesetter.state.nodes) -- steal it back...
+
+  -- Re-wrap the hbox in another hbox responsible for boxing it at output
+  -- time, when we will know the line contribution and can compute the scaled width
+  -- of the box, taking into account possible stretching and shrinking.
+  SILE.typesetter:pushHbox({
+    inner = hbox,
+    width = hbox.width,
+    height = hbox.height,
+    depth = hbox.depth,
+    outputYourself = function(self, typesetter, line)
+      local oldX = typesetter.frame.state.cursorX
+      local Y = typesetter.frame.state.cursorY
+
+      -- Build the original hbox.
+      -- Cursor will be moved by the actual definitive size.
+      self.inner:outputYourself(SILE.typesetter, line)
+      local newX = typesetter.frame.state.cursorX
+
+      -- Output a line.
+      -- NOTE: According to the OpenType specs, underlinePosition is "the suggested distance of
+      -- the top of the underline from the baseline" so it seems implied that the thickness
+      -- should expand downwards
+      SILE.outputter:drawRule(oldX, Y + underlinePosition, newX - oldX, underlineThickness)
+    end
+  })
 end, "Underlines some content")
 
 SILE.registerCommand("boxaround", function (_, content)
