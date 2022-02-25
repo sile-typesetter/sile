@@ -72,6 +72,10 @@ SILE.registerCommand("underline", function (_, content)
 end, "Underlines some content")
 
 SILE.registerCommand("boxaround", function (_, content)
+  -- This command was not documented and lacks feature.
+  -- Plan replacement with a better suited package.
+  SU.deprecated("\\boxaround (undocumented)", "\\framebox (package)", "0.12.0", "0.13.0")
+
   local hbox = SILE.call("hbox", {}, content)
   table.remove(SILE.typesetter.state.nodes) -- steal it back...
 
