@@ -34,7 +34,14 @@ plain.defaultFrameset = {
 plain.firstContentFrame = "content"
 
 plain.options.direction = function (value)
-  if value then plain.defaultFrameset.content.direction = value end
+  SILE.documentState.direction = value
+  if value then
+    for _, frame in pairs(plain.defaultFrameset) do
+      if not frame.direction then
+        frame.direction = value
+      end
+    end
+  end
 end
 
 function plain:init ()
