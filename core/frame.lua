@@ -19,6 +19,10 @@ SILE.framePrototype = pl.class({
 
     -- This gets called by Penlght when creating the frame instance
     _init = function (self, spec, dummy)
+      local direction = SILE.documentState.direction
+      if direction then
+        self.direction = direction
+      end
       self.constraints = {}
       self.variables = {}
       self.id = spec.id
