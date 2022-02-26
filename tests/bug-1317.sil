@@ -1,0 +1,27 @@
+\begin[direction=RTL,papersize=a7]{document}
+\font[family=Amiri,size=30pt]
+\nofolios
+\neverindent
+\begin{script}
+
+SILE.documentState.documentClass:declareFrame("other", {
+    left = "left(content)",
+    right = "right(content)",
+    top = "top(content) + 50%ph",
+    bottom = "bottom(content)",
+    direction = "RTL"
+  })
+
+SILE.typesetNaturally(SILE.getFrame("other"), function()
+  SILE.typesetter:typeset("عَرَبي pass")
+end)
+
+SILE.typesetter:typeset("عَرَبي pass")
+
+SILE.call("bigskip")
+
+SILE.call("bidi-off")
+SILE.typesetter:typeset("عَرَبي fail")
+
+\end{script}
+\end{document}
