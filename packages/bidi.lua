@@ -246,14 +246,18 @@ local bidiBoxupNodes = function (self)
 end
 
 local bidiEnableTypesetter = function (typesetter)
+  if typesetter.nobidi_boxUpNodes then
+    return SU.warn("BiDi already enabled, nothing to turn on")
+  end
   typesetter.nobidi_boxUpNodes = typesetter.boxUpNodes
   typesetter.boxUpNodes = bidiBoxupNodes
 end
 
 local bidiDisableTypesetter = function (typesetter)
-  if typesetter.nobidi_boxUpNodes then
-    typesetter.boxUpNodes = typesetter.nobidi_boxUpNodes
+  if not typesetter.nobidi_boxUpNodes then
+    return SU.warn("BiDi not enabled, nothing to turn off")
   end
+  typesetter.boxUpNodes = typesetter.nobidi_boxUpNodes
   typesetter.nobidi_boxUpNodes = nil
 end
 
