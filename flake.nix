@@ -35,7 +35,7 @@
       };
       inherit (gitignore.lib) gitignoreSource;
       # https://discourse.nixos.org/t/passing-git-commit-hash-and-tag-to-build-with-flakes/11355/2
-      version_rev = if (self ? rev) then (builtins.substring 0 8 self.rev) else "dirty";
+      version_rev = if (self ? rev) then (builtins.substring 0 7 self.rev) else "dirty";
       # Use the expression from Nixpkgs instead of rewriting it here.
       sile = pkgs.sile.overrideAttrs(oldAttr: rec {
         version = "${(pkgs.lib.importJSON ./package.json).version}-${version_rev}-flake";
