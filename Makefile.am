@@ -342,6 +342,9 @@ include $(wildcard $(DEPFILES))
 
 CLEANFILES = $(BUILT_SOURCES) .version-prev $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles $(_BUILT_SUBDIRS)
 
+export GHCR_REGISTRY ?= ghcr.io
+export GHCR_REPO ?= sile-typesetter/$(TRANSFORMED_PACKAGE_NAME)
+
 export DOCKER_REGISTRY ?= docker.io
 export DOCKER_REPO ?= siletypesetter/$(TRANSFORMED_PACKAGE_NAME)
 export DOCKER_TAG ?= HEAD
@@ -365,8 +368,8 @@ endef
 
 .PHONY: docker-ghcr-to-hub
 docker-ghcr-to-hub:
-	docker pull ghrc.io/sile-typesetter/sile:$(DOCKER_TAG)
-	docker tag  ghrc.io/sile-typesetter/sile:$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
+	docker pull $(GHCR_REGISTRY)/$(GHCR_REPO):$(DOCKER_TAG)
+	docker tag  $(GHCR_REGISTRY)/$(GHCR_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
 	$(docker_push)
 
 .PHONY: docker-build-push
