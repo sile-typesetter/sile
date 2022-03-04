@@ -83,6 +83,28 @@ local _margins = pl.class({
 
   })
 
+-- Other packages can register a named hook (category) that will be invoked
+-- when at the end of lines where a multiline element hasn't been terminated.
+-- This relies on typesetter.support.multiline being set to true and applies
+-- to commands using sequences such as
+--    SILE.typesetter:enterMultiliner("category", data)
+--    SILE.process(content)
+--    SILE.typesetter:leaveMultiliner("category")
+-- The data is stored and passed to the handler each time it is invoked.
+SILE.multiliner = pl.class({
+  multiliners = {
+    void = function () end -- a noop default multiliner just for tests.
+  },
+  register = function (self, category, handler)
+    self.multiliners[category] = handler
+  end,
+  apply = function (self, category, x0, y0, x1, y1, height, depth, args)
+    local handler = self.multiliners[category]
+    if type(handler) ~= "function" then SU.error("Unregistered multiliner group ("..category..")") end
+    handler(x0, y0, x1, y1, height, depth, args)
+  end,
+})()
+
 SILE.defaultTypesetter = pl.class()
 SILE.defaultTypesetter.hooks = {}
 
@@ -105,6 +127,7 @@ end
 function SILE.defaultTypesetter:_init (frame)
   self.frame = nil
   self.stateQueue = {}
+  self.multilines = {}
   self:initFrame(frame)
   self:initState()
   -- In case people use stdlib prototype syntax off of the instantiated typesetter...
@@ -244,6 +267,34 @@ function SILE.defaultTypesetter:pushVpenalty (spec)
   local node = SU.type(spec) == "penalty" and spec or SILE.nodefactory.penalty(spec)
   return self:pushVertical(node)
 end
+
+-- Multiline stuff
+function SILE.defaultTypesetter:enterMultiliner (category, data)
+  self:pushHbox({
+    outputYourself = function (_, typesetter, _)
+      if typesetter.multilines[category] then SU.error("Nested multiliners are forbidden ("..category..")") end
+      typesetter.multilines[category] = {
+        x = typesetter.frame.state.cursorX,
+        y = typesetter.frame.state.cursorY,
+        data = data,
+      }
+    end
+  })
+end
+
+function SILE.defaultTypesetter:leaveMultiliner (category)
+  self:pushHbox({
+    outputYourself = function (_, typesetter, line)
+      local x = typesetter.frame.state.cursorX
+      local y = typesetter.frame.state.cursorY
+      local start = typesetter.multilines[category]
+      if not start then SU.error("Leaving an extraneous multiliner ("..category..")") end
+      typesetter.multilines[category] = nil -- clear
+      SILE.multiliner:apply(category, start.x, start.y, x, y, line.height:tonumber(), line.depth:tonumber(), start.data)
+    end
+  })
+end
+
 
 -- Actual typesetting functions
 function SILE.defaultTypesetter:typeset (text)
@@ -642,6 +693,55 @@ function SILE.defaultTypesetter:addrlskip (slice, margins, hangLeft, hangRight)
   table.insert(slice, 1, SILE.nodefactory.zerohbox())
 end
 
+function SILE.defaultTypesetter.addmarks (_, slice)
+  -- This method is called after a line has been built, its ratio computed etc. so it's
+  -- ready for insertion in a list of lines vbox. It aims at inserting start and end of
+  -- end of content markers, skipping any glue, zerohbox etc. that might have been
+  -- added by the previous steps, so that the markers are expected to be around the
+  -- actual content (nnodes, hboxes, etc.)...
+  local startp
+  for s = 1, #slice do
+    if not(slice[s].is_glue or slice[s].is_zerohbox or slice[s].is_migrating or slice[s].is_penalty) then
+      startp = s
+      break
+    end
+  end
+  if startp then
+    -- Start of content marker
+    table.insert(slice, startp, SILE.nodefactory.zerohbox({
+      outputYourself = function (_, typesetter, _)
+        -- Check for unterminated multiline wrappers and move them to the current
+        -- position.
+        for _, start in pairs(typesetter.multilines) do
+          start.x = typesetter.frame.state.cursorX
+          start.y = typesetter.frame.state.cursorY
+        end
+      end
+    }))
+  end
+  local endp
+  for e = #slice, 1, -1 do
+    if not(slice[e].is_glue or slice[e].is_zerohbox or slice[e].is_migrating or slice[e].is_penalty) then
+      endp = e + 1
+      break
+    end
+  end
+  if endp then
+    -- end of content marker
+    table.insert(slice, endp, SILE.nodefactory.hbox({
+      outputYourself = function (_, typesetter, line)
+        local x = typesetter.frame.state.cursorX
+        local y = typesetter.frame.state.cursorY
+        -- Check for unterminated multiline wrappers and trigger their
+        -- output.
+        for category, start in pairs(typesetter.multilines) do
+          SILE.multiliner:apply(category, start.x, start.y, x, y, line.height, line.depth, start.data)
+        end
+      end
+    }))
+  end
+end
+
 function SILE.defaultTypesetter:breakpointsToLines (breakpoints)
   local linestart = 0
   local lines = {}
@@ -666,6 +766,7 @@ function SILE.defaultTypesetter:breakpointsToLines (breakpoints)
       local ratio = self:computeLineRatio(point.width, slice)
       -- TODO see bug 620
       -- if math.abs(ratio) > 1 then SU.warn("Using ratio larger than 1" .. ratio) end
+      self:addmarks(slice)
       local thisLine = { ratio = ratio, nodes = slice }
       lines[#lines+1] = thisLine
       if slice[#slice].is_discretionary then
