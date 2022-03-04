@@ -82,38 +82,27 @@ function package:registerCommands ()
     })
   end)
 
-  self:registerCommand("pdf:link", function (options, content)
+  SILE.multiliner:register("pdf:link", function(x0, y0, x1, y1, height, _, options)
     local dest = SU.required(options, "dest", "pdf:link")
     local target = options.external and "/Type/Action/S/URI/URI" or "/S/GoTo/D"
     local borderwidth = options.borderwidth and SU.cast("measurement", options.borderwidth):tonumber() or 0
     local bordercolor = borderColor(SILE.color(options.bordercolor or "blue"))
     local borderoffset = SU.cast("measurement", options.borderoffset or "1pt"):tonumber()
     local borderstyle = borderStyle(options.borderstyle, borderwidth)
-    local llx, lly
-    SILE.typesetter:pushHbox({
-      value = nil,
-      height = SILE.measurement(0),
-      width = SILE.measurement(0),
-      depth = SILE.measurement(0),
-      outputYourself = function (_, typesetter, _)
-        llx = typesetter.frame.state.cursorX:tonumber()
-        lly = (SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY):tonumber()
-        pdf.begin_annotation()
-      end
-    })
-    local hbox = SILE.call("hbox", {}, content) -- hack
-    SILE.typesetter:pushHbox({
-      value = nil,
-      height = SILE.measurement(0),
-      width = SILE.measurement(0),
-      depth = SILE.measurement(0),
-      outputYourself = function (_, typesetter, _)
-        local d = "<</Type/Annot/Subtype/Link" .. borderstyle .. bordercolor .. "/A<<" .. target .. "(" .. dest .. ")>>>>"
-        local x = typesetter.frame.state.cursorX:tonumber()
-        local y = (SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY + hbox.height):tonumber()
-        pdf.end_annotation(d, llx , lly - borderoffset, x, y + borderoffset)
-      end
-    })
+
+    local llx = x0:tonumber()
+    local lly = (SILE.documentState.paperSize[2] - y0):tonumber()
+    pdf.begin_annotation()
+    local d = "<</Type/Annot/Subtype/Link" .. borderstyle .. bordercolor .. "/A<<" .. target .. "(" .. dest .. ")>>>>"
+    local x = x1:tonumber()
+    local y = (SILE.documentState.paperSize[2] - y1 + height):tonumber()
+    pdf.end_annotation(d, llx , lly - borderoffset, x, y + borderoffset)
+  end)
+
+  self:registerCommand("pdf:link", function (options, content)
+    SILE.typesetter:enterMultiliner("pdf:link", options)
+    SILE.process(content)
+    SILE.typesetter:leaveMultiliner("pdf:link")
   end)
 
   self:registerCommand("pdf:metadata", function (options, _)
