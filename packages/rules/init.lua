@@ -146,65 +146,41 @@ function package:registerCommands ()
     SILE.typesetter:leaveHmode()
   end, "Draw a full width hrule centered on the current line")
 
+  SILE.multiliner:register("underline", function(x0, y0, x1, _, _, _, options)
+    -- Output a line.
+    -- NOTE: According to the OpenType specs, underlinePosition is "the suggested distance of
+    -- the top of the underline from the baseline" so it seems implied that the thickness
+    -- should expand downwards.
+    SILE.outputter:drawRule(x0, y0 + options.underlinePosition, x1 - x0, options.underlineThickness)
+  end)
+
+  SILE.multiliner:register("strikethrough", function(x0, y0, x1, _, _, _, options)
+    -- Output a line.
+    -- NOTE: The OpenType spec is not explicit regarding how the size
+    -- (thickness) affects the position. We opt to distribute evenly
+    SILE.outputter:drawRule(x0, y0 - options.yStrikeoutPosition - options.yStrikeoutSize / 2, x1 - x0, options.yStrikeoutSize)
+  end)
+
   self:registerCommand("underline", function (_, content)
     local underlinePosition, underlineThickness = getUnderlineParameters()
 
-    local hbox = SILE.call("hbox", {}, content)
-    table.remove(SILE.typesetter.state.nodes) -- steal it back...
-
-    -- Re-wrap the hbox in another hbox responsible for boxing it at output
-    -- time, when we will know the line contribution and can compute the scaled width
-    -- of the box, taking into account possible stretching and shrinking.
-    SILE.typesetter:pushHbox({
-      inner = hbox,
-      width = hbox.width,
-      height = hbox.height,
-      depth = hbox.depth,
-      outputYourself = function (node, typesetter, line)
-        local oldX = typesetter.frame.state.cursorX
-        local Y = typesetter.frame.state.cursorY
-
-        -- Build the original hbox.
-        -- Cursor will be moved by the actual definitive size.
-        node.inner:outputYourself(SILE.typesetter, line)
-        local newX = typesetter.frame.state.cursorX
-
-        -- Output a line.
-        -- NOTE: According to the OpenType specs, underlinePosition is "the suggested distance of
-        -- the top of the underline from the baseline" so it seems implied that the thickness
-        -- should expand downwards
-        SILE.outputter:drawRule(oldX, Y - underlinePosition, newX - oldX, underlineThickness)
-      end
+    SILE.typesetter:enterMultiliner("underline", {
+      underlinePosition = -underlinePosition,
+      underlineThickness = underlineThickness,
     })
+    SILE.process(content)
+    SILE.typesetter:leaveMultiliner("underline")
   end, "Underlines some content")
 
   self:registerCommand("strikethrough", function (_, content)
     local yStrikeoutPosition, yStrikeoutSize = getStrikethroughParameters()
 
-    local hbox = SILE.call("hbox", {}, content)
-    table.remove(SILE.typesetter.state.nodes) -- steal it back...
-
-    -- Re-wrap the hbox in another hbox responsible for boxing it at output
-    -- time, when we will know the line contribution and can compute the scaled width
-    -- of the box, taking into account possible stretching and shrinking.
-    SILE.typesetter:pushHbox({
-      inner = hbox,
-      width = hbox.width,
-      height = hbox.height,
-      depth = hbox.depth,
-      outputYourself = function (node, typesetter, line)
-        local oldX = typesetter.frame.state.cursorX
-        local Y = typesetter.frame.state.cursorY
-        -- Build the original hbox.
-        -- Cursor will be moved by the actual definitive size.
-        node.inner:outputYourself(SILE.typesetter, line)
-        local newX = typesetter.frame.state.cursorX
-        -- Output a line.
-        -- NOTE: The OpenType spec is not explicit regarding how the size
-        -- (thickness) affects the position. We opt to distribute evenly
-        SILE.outputter:drawRule(oldX, Y - yStrikeoutPosition - yStrikeoutSize / 2, newX - oldX, yStrikeoutSize)
-      end
+    SILE.typesetter:enterMultiliner("strikethrough", {
+      yStrikeoutPosition = yStrikeoutPosition,
+      yStrikeoutSize = yStrikeoutSize,
     })
+    SILE.process(content)
+    SILE.typesetter:leaveMultiliner("strikethrough")
   end, "Strikes out some content")
 
   self:registerCommand("boxaround", function (_, content)
