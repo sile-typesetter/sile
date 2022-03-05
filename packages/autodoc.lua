@@ -77,14 +77,10 @@ containing their documentation, as a SILE document.
 For documenters and package designers, it also provides commands that can be used in their package
 documentations to present various pieces of information in a consistent way.
 
-Settings are usually namespaced and be fairly long (\em{namespace.area.some-stuff}).
+Setting names can be fairly long (\em{namespace.area.some-stuff}).
 The \code{\\autodoc:setting} command helps line-breaking them automatically at
 appropriate points, so that package designers do not have care about it
 manually.
-
-\note{
-  This is just a start. More helper commands are planned.
-}
 
 \end{document}]]
 }

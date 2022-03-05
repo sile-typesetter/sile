@@ -172,6 +172,9 @@ basic functionality to other packages and classes. Classes such as the
 
 \section{Experimental packages}
 
+\subsection{autodoc}
+\package-documentation[src=packages/autodoc]
+
 \subsection{balanced-frames}
 \package-documentation[src=packages/balanced-frames]
 
