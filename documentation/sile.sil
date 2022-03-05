@@ -5,8 +5,8 @@
 \set[parameter=document.baselineskip,value=3ex]
 \font[size=11pt,family=Gentium Book Basic]
 \nofolios
-\pdf:metadata[key=Title, val=The SILE Book]
-\pdf:metadata[key=Author, val=Simon Cozens]
+\pdf:metadata[key=Title, value=The SILE Book]
+\pdf:metadata[key=Author, value=Simon Cozens]
 
 \begin[family=Roboto Condensed,weight=600,size=50pt]{font}
 \begin[parameter=document.baselineskip,value=1.5ex]{set}
