@@ -128,8 +128,8 @@ and instructions to the output engine to display the image:
 \begin{verbatim}
 \line
 SILE.typesetter:pushHbox(\{
-  width= \dots,
-  height= \dots,
+  width= …,
+  height= …,
   depth= 0,
   value= options.src,
   outputYourself= function (this, typesetter, line)

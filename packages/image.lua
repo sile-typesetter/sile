@@ -32,8 +32,8 @@ As well as processing text, SILE can also include images.
 
 Loading the \code{image} package gives you the \code{\\img} command, fashioned
 after the HTML equivalent. \code{\\img} takes the following parameters:
-\code{src=\dots} must be the path to an image file;
-you may also give \code{height=\dots} and/or \code{width=\dots} parameters
+\code{src=…} must be the path to an image file;
+you may also give \code{height=…} and/or \code{width=…} parameters
 to specify the output size of the image on the paper. If the size parameters
 are not given, then the image will be output at its ‘natural’ size,
 honoring its resolution if available.

@@ -107,8 +107,8 @@ in \code{[Uu]+<code>} or Hexadecimal \code{0[Xx]<code>} format – for instance
 
 SILE comes with a special “language” called \code{und}, which has no hyphenation
 patterns available. If you switch to this language, text will not be hyphenated.
-The command \code{\\nohyphenation\{\dots\}} is provided as a shortcut for
-\code{\\font[language=und]\{\dots\}}.
+The command \code{\\nohyphenation\{…\}} is provided as a shortcut for
+\code{\\font[language=und]\{…\}}.
 
 The hyphenator uses the same algorithm as TeX and can use TeX hyphenation
 pattern files if they are converted to Lua format. To implement hyphenation
