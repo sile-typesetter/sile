@@ -130,7 +130,7 @@ into:
 
 The chords can be styled by redefining the \code{chordmode:chordfont}
 command, and the offset between the chord name and text set with the
-\code{chordmode:offset} parameter.
+\autodoc:setting{chordmode.offset} parameter.
 
 \end{document}
 ]]
