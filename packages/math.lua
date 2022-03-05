@@ -22,7 +22,7 @@ system\footnote{A list of freely available math fonts can be found at
 \href[src=https://www.ctan.org/pkg/unicode-math]{https://www.ctan.org/pkg/unicode-math}}.
 By default, this package uses Libertinus Math, so it will fail if Libertinus
 Math can’t be found. Another font may be specified via the setting
-\code{math.font.family}.
+\autodoc:setting{math.font.family}.
 
 The first way to typeset math formulas is to enter them in the MathML format.
 MathML is a standard for encoding mathematical notation for the Web and for

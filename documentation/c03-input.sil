@@ -173,11 +173,11 @@ a moment.}
 
 The parameters to a command are enclosed in square brackets and take the form
 \code{\em{key}=\em{value}};\break{}multiple parameters are separated by commas
-or semicolons, as in \code{[key1=value1,key2=value2,\dots]} Spaces around the
+or semicolons, as in \code{[key1=value1,key2=value2,…]} Spaces around the
 keys are not significant; we could equally write that as \code{[key1 = value1;
-key2 = value2; \dots]}. If you need to include a comma or semicolon within the
+key2 = value2; …]}. If you need to include a comma or semicolon within the
 value to a parameter, you can enclose the value in quotes: \code{[key1
-= "value1, still value 1", key2 = value2; \dots]}.
+= "value1, still value 1", key2 = value2; …]}.
 
 The optional argument (of which there can only be at most one) is enclosed in
 curly braces.\footnote{TeX users may forget this and try adding a command

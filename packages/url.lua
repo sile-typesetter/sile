@@ -168,9 +168,9 @@ To typeset an URL and at the same type have it as active hyperlink,
 one can use the \code{\\href} command without the \code{src} option,
 but with the URL passed as argument.
 
-The breaks are controlled by two penalty settings, \code{url.linebreak.primaryPenalty}
+The breaks are controlled by two penalty settings, \autodoc:setting{url.linebreak.primaryPenalty}
 for preferred breakpoints and, for less acceptable but still tolerable breakpoints,
-\code{url.linebreak.secondaryPenalty}—its value should
+\autodoc:setting{url.linebreak.secondaryPenalty}—its value should
 logically be higher than the previous one.
 \end{document}]]
 }

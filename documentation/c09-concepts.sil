@@ -97,7 +97,7 @@ useful while writing a document). A related but higher level command,
 \code{\\par}, is more frequently used when writing a document and embeded in
 the content. The \code{\\par} command first calls
 \code{SILE.typesetter:leaveHmode()}, then inserts a vertical skip according to
-the \\code{document.parskip} setting, then goes on to reset a number of
+the \autodoc:setting{document.parskip} setting, then goes on to reset a number of
 settings that are typically paragraph related such as hanging indents.
 
 When writing a custom command, if you want to manually add a vertical space to
@@ -128,8 +128,8 @@ and instructions to the output engine to display the image:
 \begin{verbatim}
 \line
 SILE.typesetter:pushHbox(\{
-  width= \dots,
-  height= \dots,
+  width= …,
+  height= …,
   depth= 0,
   value= options.src,
   outputYourself= function (this, typesetter, line)

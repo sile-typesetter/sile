@@ -107,8 +107,8 @@ in \code{[Uu]+<code>} or Hexadecimal \code{0[Xx]<code>} format – for instance
 
 SILE comes with a special “language” called \code{und}, which has no hyphenation
 patterns available. If you switch to this language, text will not be hyphenated.
-The command \code{\\nohyphenation\{\dots\}} is provided as a shortcut for
-\code{\\font[language=und]\{\dots\}}.
+The command \code{\\nohyphenation\{…\}} is provided as a shortcut for
+\code{\\font[language=und]\{…\}}.
 
 The hyphenator uses the same algorithm as TeX and can use TeX hyphenation
 pattern files if they are converted to Lua format. To implement hyphenation
@@ -127,7 +127,7 @@ selection:
 SILE inserts word break opportunities after Ethiopic word spaces and full
 stops. Amharic can be typeset in two styles: with space surrounding
 punctuation or space after punctuation. You can set the setting
-\code{languages.am.justification} to either \code{left} or \code{centered}
+\autodoc:setting[check=false]{languages.am.justification} to either \code{left} or \code{centered}
 to control which style is used. The default is \code{left}
 
 \begin{verbatim}
@@ -152,8 +152,9 @@ and “high” punctuation (a thin fixed space before question marks, exclamatio
 marks, semicolons and an inter-word space before colons), and also spaces
 within “guillemets” (quotation marks). SILE will automatically apply the
 correct space. The size of these spaces is determined by
-\code{languages.fr.thinspace}, \code{languages.fr.colonspace} and
-\code{languages.fr.guillspace}.
+\autodoc:setting[check=false]{languages.fr.thinspace},
+\autodoc:setting[check=false]{languages.fr.colonspace} and
+\autodoc:setting[check=false]{languages.fr.guillspace}.
 
 \subsection{Japanese / Chinese}
 
@@ -184,7 +185,7 @@ Uyghur is the only Arabic script based language which uses hyphenation,
 and SILE supports hyphenation. Because Arabic fonts aren’t normally designed
 with hyphenation in mind, you may need to tweak some settings to ensure that
 Uyghur is typeset correctly. As well as choosing the \code{hyphenchar} (see
-the hyphenation section above), the setting \code{languages.ug.hyphenoffset}
+the hyphenation section above), the setting \autodoc:setting[check=false]{languages.ug.hyphenoffset}
 inserts a space between the text and the hyphen.
 
 \end{document}
