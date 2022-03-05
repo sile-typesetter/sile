@@ -63,23 +63,23 @@ end, "Outputs a settings name in code, ensuring good line breaks and possibly ch
 
 return {
   documentation = [[\begin{document}
-This package extracts documentation from other packages. It’s used to
-construct the SILE documentation. Doing this allows us to keep the
-documentation near the implementation, which (in theory) makes it easy
+This package extracts documentation information from other packages. It’s used to
+construct the SILE manual. Keeping package documentation in the package itself
+keeps the documentation near the implementation, which (in theory) makes it easy
 for documentation and implementation to be in sync.
 
-For that purpose, it provides the code{\\package-documentation[src=\em{package}]}
+For that purpose, it provides the \code{\\package-documentation[src=\em{package}]}
 command.
 
 Properly documented packages should export a \code{documentation} string
 containing their documentation, as a SILE document.
 
-For documenters and package designers, it also provides commands that can be used in their package
-documentations to present various pieces of information in a consistent way.
+For documenters and package authors, it also provides commands that can be used in their package
+documentation to present various pieces of information in a consistent way.
 
-Setting names can be fairly long (\em{namespace.area.some-stuff}).
+Setting names can be fairly long (e.g. \em{namespace.area.some-stuff}).
 The \code{\\autodoc:setting} command helps line-breaking them automatically at
-appropriate points, so that package designers do not have care about it
+appropriate points, so that package authors do not have care about them
 manually.
 
 \end{document}]]
