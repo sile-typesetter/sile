@@ -228,7 +228,7 @@ As we mentioned in the first chapter, SILE uses frames as an indication
 of where to put text onto the page. The \code{frametricks} package assists
 package authors by providing a number of commands to manipulate frames.
 
-The most immediately useful is \code{\\showframe}. This asks the output
+The most immediately useful is \autodoc:command{\showframe}. This asks the output
 engine to draw a box and label around a particular frame. It takes an optional
 parameter \code{id=\em{<frame id>}}; if this is not supplied, the current
 frame is used. If the ID is \code{all}, then all frames declared by the
@@ -237,7 +237,7 @@ current class are displayed.
 It’s possible to define frames such as sidebars which are not connected
 to the main text flow of a page. We’ll see how to do that in a later chapter, but
 this raises the obvious question: if they’re not part of the text flow, how do we
-get stuff into them? \code{frametricks} provides the \command{\\typeset-into}
+get stuff into them? \code{frametricks} provides the \autodoc:command{\typeset-into}
 command, which allows you to write text into a specified frame:
 
 \begin{verbatim}
@@ -251,28 +251,28 @@ honest, we \em{thought} were going to be useful, but haven’t quite ended up
 being as useful as all that.
 
 \breakframevertical\par
-The command \code{\\breakframevertical} breaks the current frame in two
+The command \autodoc:command{\breakframevertical} breaks the current frame in two
 at the specified location into an upper and lower frame. If the frame initially had the ID
 \code{main}, then \code{main} becomes the upper frame (before the command)
 and the lower frame (after the command) is called \code{main_}. We just
-issued a \code{\\breakframevertical} command at the start of this paragraph,
-and now we will issue the command \code{\\showframe}. \showframe As you can
+issued a \autodoc:command{\breakframevertical} command at the start of this paragraph,
+and now we will issue the command \autodoc:command{\showframe}. \showframe As you can
 see, the current frame is called
 \code{\script{SILE.typesetter:typeset(SILE.typesetter.frame.id)}}
 and now begins at the start of the paragraph.
 
-Similarly, the \code{\\breakframehorizontal} command breaks the frame in two
+Similarly, the \autodoc:command{\breakframehorizontal} command breaks the frame in two
 into a left and a right frame.
 The command takes an optional argument \code{offset=<dimension>}, specifying
 where on the line the frame should be split. If it is not supplied, the
 frame is split at the current position in the line.
 
-The command \code{\\shiftframeedge} allows you to reposition the current
+The command \autodoc:command{\shiftframeedge} allows you to reposition the current
 frame left or right. It takes \code{left=} and/or \code{right=} parameters,
 which can be positive or negative dimensions. It should only be used at the
 top of a frame, as it reinitializes the typesetter object.
 
-Combining all of these commands, the \code{\\float} command breaks the current
+Combining all of these commands, the \autodoc:command{\float} command breaks the current
 frame, creates a small frame to hold a floating object, flows text into
 the surrounding frame, and then, once text has descended past the floating object,
 moves the frame back into place again. It takes two optional parameters, \code{bottomboundary=\em{<dimension>}} and/or \code{rightboundary=\em{<dimension>}}, which

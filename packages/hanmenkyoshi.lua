@@ -85,10 +85,10 @@ Japanese documents are traditionally typeset on a grid layout called a
 \code{hanmen}, with each character essentially monospaced inside the
 grid. (It’s like writing on graph paper.) The \code{hanmenkyoshi} package
 provides tools to Japanese class designers for creating hanmen frames with
-correctly spaced grids. It also provides the \code{\\show-hanmen}
+correctly spaced grids. It also provides the \autodoc:command{\show-hanmen}
 command for debugging the grid.
 
-The name \code{hanmenkyoshi} is a terrible pun.
+The name \em{hanmenkyoshi} is a terrible pun.
 \end{document}
   ]]
 }

@@ -60,7 +60,7 @@ for a particular element.
 To get around this problem, the \code{infonode} allows you to insert \em{information
 nodes} into the text stream; when a page is outputted, these nodes are collected into
 a list, and a class’s output routine can examine this list to determine which nodes
-fell on a particular page. \code{infonode} provides the \code{\\info} command
+fell on a particular page. \code{infonode} provides the \autodoc:command{\info} command
 to put an information node into the text stream; it has two required parameters,
 \code{category=} and \code{value=}. Categories are used to group similar sets of
 node together.
@@ -71,7 +71,7 @@ a new verse, you would insert an information node with the verse reference:
 
 \begin{verbatim}
 \line
-SILE.call("info", { category = "references", value = ref }, {})
+SILE.call("info", \{ category = "references", value = ref \}, \{\})
 \line
 \end{verbatim}
 

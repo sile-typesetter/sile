@@ -85,9 +85,9 @@ Optional values are available for:
 • \code{scale} to change the relative size of the quote marks\par
 
 If you want to specify what font the pullquote environment should use, you
-can redefine the \code{pullquote:font} command. By default it will be the same
+can redefine the \autodoc:command{\pullquote:font} command. By default it will be the same
 as the surrounding document. The font style used for the attribution line
-can likewise be set using \code{pullquote:author-font} and the font used for
-the quote marks can be set using \code{pullquote:mark-font}.
+can likewise be set redefining \autodoc:command{\pullquote:author-font} and the font used for
+the quote marks can be set redefining \autodoc:command{\pullquote:mark-font}.
 
 \end{document}]] }

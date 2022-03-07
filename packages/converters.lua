@@ -105,7 +105,7 @@ What \code{converters} does is allow you to teach SILE how to get the GIF
 format into something that \em{is} supported. We can use the ImageMagick
 toolkit to turn a GIF into a JPG, and JPGs are supported.
 
-We do this by registering a converter with the \code{converters:register}
+We do this by registering a converter with the \autodoc:command{\converters:register}
 command:
 
 \begin{verbatim}

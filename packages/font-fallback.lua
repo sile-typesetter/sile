@@ -188,9 +188,10 @@ in one, SILE should try the other. The \code{font-fallback} package gives you
 a way to specify a list of font specifications, and it will try each one in
 turn if glyphs cannot be found.
 
-It provides two commands, \command{\\font:add-fallback} and
-\command{\\font:clear-fallbacks}. The parameters to \command{\\font:add-fallback}
-are the same as the parameters to \command{\\font}. So this code:
+It provides two commands, \autodoc:command{\font:add-fallback} and
+\autodoc:command{\font:clear-fallbacks}.
+The parameters to \autodoc:command{\font:add-fallback} are the same as the
+parameters to \autodoc:command{\font}. So this code:
 
 \begin{verbatim}
 \line
@@ -216,10 +217,10 @@ and SILE will produce:
 \font:remove-fallback
 \font:remove-fallback
 
-\command{\\font:clear-fallbacks} removes all font fallbacks from the list
+\autodoc:command{\font:clear-fallbacks} removes all font fallbacks from the list
 of fonts to try.
 
-\command{\\font:remove-fallback} removes the last added fallback from the
+\autodoc:command{\font:remove-fallback} removes the last added fallback from the
 list of fonts to try.
 
 \end{document} ]]}

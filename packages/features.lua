@@ -218,7 +218,7 @@ some fonts come with documentation explaining their supported features. Discussi
 of OpenType features is beyond the scope of this manual.
 
 These features can be turned on and off by passing ‘raw’ feature names to the
-\code{\\font} command like so:
+\autodoc:command{\font} command like so:
 
 \begin{verbatim}
 \line
@@ -227,7 +227,7 @@ These features can be turned on and off by passing ‘raw’ feature names to th
 \end{verbatim}
 
 However, this is unwieldy and requires memorizing the feature codes. \code{features}
-provides two commands, \code{\\add-font-feature} and \code{\\remove-font-feature},
+provides two commands, \autodoc:command{\add-font-feature} and \autodoc:command{\remove-font-feature},
 which make it easier to access OpenType features. The interface is patterned on the
 TeX package \code{fontspec}; for full documentation of the OpenType features supported,
 see the documentation for that package.\footnote{\code{http://texdoc.net/texmf-dist/doc/latex/fontspec/fontspec.pdf}}

@@ -97,14 +97,14 @@ footnote number, the chapter number, and so on. The counters package
 allows you to set up, increment and typeset named counters. It
 provides the following commands:
 
-• \code{\\set-counter[id=\em{<counter-name>},value=\em{<value>}]} — sets
+• \autodoc:command{\set-counter[id=<counter-name>, value=<value>]} — sets
 the counter called \code{<counter-name>} to the \code{<value>} given.
 
-• \code{\\increment-counter[id=\em{<counter-name>}]} — does the
-same as \code{\\set-counter} except that when no \code{value} parameter
+• \autodoc:command{\increment-counter[id=<counter-name>]} — does the
+same as \autodoc:command{\set-counter} except that when no \code{value} parameter
 is given, the counter is incremented by one.
 
-• \code{\\show-counter[id=\em{<counter-name>}]} — this typesets the
+• \autodoc:command{\show-counter[id=<counter-name>]} — this typesets the
 value of the counter according to the counter’s declared display type.
 
 \note{All of the commands in the counters package take an optional

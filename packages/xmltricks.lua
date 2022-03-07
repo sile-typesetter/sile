@@ -17,13 +17,13 @@ Most of the work of typesetting XML with SILE is creating processing
 expectations for particular XML tags. \code{xmltricks} makes the process
 somewhat easier by providing commands to handle two common cases.
 
-\code{\\xmltricks:ignore\{tag1 tag2 tag3\}} instructs SILE not to bother
+\autodoc:command{\xmltricks:ignore{tag1 tag2 tag3}} instructs SILE not to bother
 investigating the given tags. For instance, when processing a HTML document,
 you probably don’t need to typeset the \code{head} tag or anything inside it.
 
 Similarly, some tags are just wrappers; you want to process their content,
 but there’s nothing specific about the tag itself that needs any styling.
-List those tags in a \code{\\xmltricks:passthru\{...\}} command, and SILE
+List those tags in a \autodoc:command{\xmltricks:passthru{...}} command, and SILE
 will descend into the content without requiring a specific command for the
 tag itself.
 \end{document}]]

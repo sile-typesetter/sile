@@ -15,7 +15,7 @@ end, "Place the output within a hbox of specified width, height, depth and visib
 return {
   documentation = [[
 \begin{document}
-This package provides the \code{\\rebox} command, which allows you to
+This package provides the \autodoc:command{\rebox} command, which allows you to
 lie to SILE about the size of content. You can change the \code{width},
 \code{height}, or \code{depth} of your content with the respective
 parameters, or make it invisible by using the \code{phantom} parameter.
