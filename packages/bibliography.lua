@@ -25,7 +25,8 @@ local function split(str, pat, find) --- return list of substrings separated by 
   local len = string.len(str)
   local t = { }
   local insert = table.insert
-  local i, j, k = 1, true
+  local i, j = 1, true
+  local k
   while j and i <= len + 1 do
     j, k = find(str, pat, i)
     if j then
