@@ -81,7 +81,7 @@ of each page, and the command \autodoc:command{\printindex} will deposit them in
 The entry can be styled using the \autodoc:command{\index:item} command.
 
 Multiple indexes are available and an index can be selected by passing the
-\code{index=...} parameter to \autodoc:command{\indexentry} and \autodoc:command{\printindex}.
+\autodoc:parameter{index=<name>} parameter to \autodoc:command{\indexentry} and \autodoc:command{\printindex}.
 
 Classes using the indexer will need to call its exported function \code{buildIndex}
 as part of the end page routine.

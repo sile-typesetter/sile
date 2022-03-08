@@ -141,8 +141,8 @@ First, it provides the \autodoc:command{\href[src=...]\{\}} command which
 inserts PDF hyperlinks,
   \href[src=http://www.sile-typesetter.org/]{like this}.
 
-The \autodoc:command{\href} command accepts the same \code{borderwidth},
-\code{bordercolor}, \code{borderstyle} and \code{borderoffset} styling
+The \autodoc:command{\href} command accepts the same \autodoc:parameter{borderwidth},
+\autodoc:parameter{bordercolor}, \autodoc:parameter{borderstyle} and \autodoc:parameter{borderoffset} styling
 options as the \autodoc:command[check=false]{\pdf:link} command from the \code{pdf} package,
 for instance
 \href[src=http://www.sile-typesetter.org/, borderwidth=0.4pt,
@@ -159,13 +159,13 @@ It allows line breaks after the colon, and before or after appropriate
 segments of an URL (path elements, query parts, fragments, etc.).
 By default, the \autodoc:command{\url} command ignores the current language,
 as one would not want hyphenation to occur in URL segments. If you have no
-other choice, however, you can pass it a \code{language} option
+other choice, however, you can pass it a \autodoc:parameter{language} option
 to enforce a language to be applied. Note that if French (\code{fr})
 is selected, the special typographic rules applying to punctuations
 in this language are disabled.
 
 To typeset an URL and at the same type have it as active hyperlink,
-one can use the \autodoc:command{\href} command without the \code{src} option,
+one can use the \autodoc:command{\href} command without the \autodoc:parameter{src} option,
 but with the URL passed as argument.
 
 The breaks are controlled by two penalty settings, \autodoc:setting{url.linebreak.primaryPenalty}

@@ -79,10 +79,10 @@ do not know.
 
 Optional values are available for:
 
-• \code{author} to add an attribution line\par
-• \code{setback} to set the bilateral margins around the block\par
-• \code{color} to change the color of the quote marks\par
-• \code{scale} to change the relative size of the quote marks\par
+• \autodoc:parameter{author} to add an attribution line\par
+• \autodoc:parameter{setback} to set the bilateral margins around the block\par
+• \autodoc:parameter{color} to change the color of the quote marks\par
+• \autodoc:parameter{scale} to change the relative size of the quote marks\par
 
 If you want to specify what font the pullquote environment should use, you
 can redefine the \autodoc:command{\pullquote:font} command. By default it will be the same

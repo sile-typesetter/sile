@@ -62,8 +62,8 @@ nodes} into the text stream; when a page is outputted, these nodes are collected
 a list, and a class’s output routine can examine this list to determine which nodes
 fell on a particular page. \code{infonode} provides the \autodoc:command{\info} command
 to put an information node into the text stream; it has two required parameters,
-\code{category=} and \code{value=}. Categories are used to group similar sets of
-node together.
+\autodoc:parameter{category=<name>} and \autodoc:parameter{value=<any object>}.
+Categories are used to group similar sets of node together.
 
 As an example, when typesetting a Bible, you may wish to display which range
 of verses are on each page as a running header. During the command which starts

@@ -76,7 +76,7 @@ does the same but for the chapter and verse reference respectively.
 \noindent{}• \autodoc:command{\format-reference} is expected to be called from
 Lua code with a content table of \code{\{book = ..., chapter = ..., verse = ...\}}
 and typesets the reference in the form \code{cc:vv}.
-If the parameter \code{[showbook=true]} is given then the book name
+If the parameter \autodoc:parameter{showbook=true} is given then the book name
 is also output. (You can override this command to output your references
 in a different format.)
 

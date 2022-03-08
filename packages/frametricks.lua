@@ -230,7 +230,7 @@ package authors by providing a number of commands to manipulate frames.
 
 The most immediately useful is \autodoc:command{\showframe}. This asks the output
 engine to draw a box and label around a particular frame. It takes an optional
-parameter \code{id=\em{<frame id>}}; if this is not supplied, the current
+parameter \autodoc:parameter{id=<frame id>}; if this is not supplied, the current
 frame is used. If the ID is \code{all}, then all frames declared by the
 current class are displayed.
 
@@ -263,20 +263,21 @@ and now begins at the start of the paragraph.
 
 Similarly, the \autodoc:command{\breakframehorizontal} command breaks the frame in two
 into a left and a right frame.
-The command takes an optional argument \code{offset=<dimension>}, specifying
+The command takes an optional argument \autodoc:parameter{offset=<dimension>}, specifying
 where on the line the frame should be split. If it is not supplied, the
 frame is split at the current position in the line.
 
 The command \autodoc:command{\shiftframeedge} allows you to reposition the current
-frame left or right. It takes \code{left=} and/or \code{right=} parameters,
+frame left or right. It takes \autodoc:parameter{left} and/or \autodoc:parameter{right} parameters,
 which can be positive or negative dimensions. It should only be used at the
 top of a frame, as it reinitializes the typesetter object.
 
 Combining all of these commands, the \autodoc:command{\float} command breaks the current
 frame, creates a small frame to hold a floating object, flows text into
 the surrounding frame, and then, once text has descended past the floating object,
-moves the frame back into place again. It takes two optional parameters, \code{bottomboundary=\em{<dimension>}} and/or \code{rightboundary=\em{<dimension>}}, which
-open up additional space around the frame. At the start of this paragraph, I issued
+moves the frame back into place again. It takes two optional parameters,
+\autodoc:parameter{bottomboundary=<dimension>} and/or \autodoc:parameter{rightboundary=<dimension>},
+which open up additional space around the frame. At the start of this paragraph, I issued
 the command
 
 \medskip

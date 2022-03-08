@@ -116,7 +116,7 @@ The \code{rules} package draws lines. It provides three commands.
 
 The first command is \autodoc:command{\hrule},
 which draws a line of a given length and thickness, although it calls these
-\code{width} and \code{height}. (A box is just a square line.)
+\autodoc:parameter{width} and \autodoc:parameter{height}. (A box is just a square line.)
 
 Lines are treated just like other text to be output, and so can appear in the
 middle of a paragraph, like this: \hrule[width=20pt, height=0.5pt] (that one

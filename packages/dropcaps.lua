@@ -74,12 +74,12 @@ referred as a 'drop cap'), typically one large capital letter used as a decorati
 
 It provides the \autodoc:command{\dropcap} command.
 The content passed will be the initial character(s).
-The primary option is \code{lines}, an integer specifying the number of lines to span (defaults to 3).
-The scale of can be adjusted relative to the first line using the \code{scale} option (defaults to 1.0).
-The \code{join} is a boolean for whether to join the dropcap to the first line (defaults to false).
-If \code{join} is true, the value of the \code{standoff} option (defaults to 1spc) is applied to all but the first line.
-Optionally \code{color} can be passed to change the typeface color, sometimes useful to offset the apparent weight of a large glyph.
-To tweak the position of the dropcap, measurements may be passed to the \code{raise} and \code{shift} options.
+The primary option is \autodoc:parameter{lines}, an integer specifying the number of lines to span (defaults to 3).
+The scale of can be adjusted relative to the first line using the \autodoc:parameter{scale} option (defaults to 1.0).
+The \autodoc:parameter{join} is a boolean for whether to join the dropcap to the first line (defaults to false).
+If \autodoc:parameter{join} is true, the value of the \autodoc:parameter{standoff} option (defaults to 1spc) is applied to all but the first line.
+Optionally \autodoc:parameter{color} can be passed to change the typeface color, sometimes useful to offset the apparent weight of a large glyph.
+To tweak the position of the dropcap, measurements may be passed to the \autodoc:parameter{raise} and \autodoc:parameter{shift} options.
 Other options passed to \autodoc:command{\dropcap} will be passed through to \autodoc:command{\font} when drawing the initial letter(s).
 This may be useful for passing OpenType options or other font preferences.
 

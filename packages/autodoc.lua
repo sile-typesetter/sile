@@ -211,6 +211,30 @@ SILE.registerCommand("autodoc:command", function (options, content)
   SILE.call("autodoc:ast", options, content)
 end, "Outputs a formatted command, possibly checking its validity.")
 
+-- Documenting a parameter
+
+SILE.registerCommand("autodoc:parameter", function (_, content)
+  if type(content) ~= "table" then SU.error("Expected a table content") end
+  if #content ~= 1 then SU.error("Expected a single element") end
+  local param = type(content[1] == "string") and content[1]
+
+  local parts = {}
+  for v in string.gmatch(param, "[^=]+") do
+    parts[#parts+1] = v
+  end
+  SILE.call("autodoc:style", { type = "ast" }, function ()
+    if #parts < 1 or #parts > 2 then SU.error("Unexpected parameter '"..param.."'") end
+    SILE.call("autodoc:style", { type = "parameter" }, { parts[1] })
+    if #parts == 2 then
+      SILE.typesetter:typeset("=")
+
+      SILE.call("penalty", { penalty = 100 }, nil) -- Quite decent to break here if need be.
+      SILE.call("autodoc:value", {}, { parts[2] })
+    end
+  end)
+end, "Outputs a nicely presented parameter, possibly with a value.")
+
+
 return {
   documentation = [[\begin{document}
 This package extracts documentation information from other packages. It’s used to
@@ -247,8 +271,12 @@ to math-related commands. So it comes with many benefits, but also at a cost.
 Both \autodoc:command{\autodoc:setting} and \autodoc:command{\autodoc:command} check
 the validity and existence of their inputs. Would you want to disable this feature (e.g. to
 refer to a setting or command defined in another package or module that might not be loaded
-at this point), you can set the optional parameter \code{check} to false. Note, however, that
-for commands, it is applied recursively to the parsed AST (so it is a all-or-none trade-off).
+at this point), you can set the optional parameter \autodoc:parameter{check} to false.
+Note, however, that for commands, it is applied recursively to the parsed AST
+(so it is a all-or-none trade-off).
+
+The \autodoc:command{\autodoc:parameter} commands takes either a parameter name, possibly
+with a value (which as above, may be bracketed) and typesets it in the same fashion.
 
 \end{document}]]
 }

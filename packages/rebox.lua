@@ -16,9 +16,9 @@ return {
   documentation = [[
 \begin{document}
 This package provides the \autodoc:command{\rebox} command, which allows you to
-lie to SILE about the size of content. You can change the \code{width},
-\code{height}, or \code{depth} of your content with the respective
-parameters, or make it invisible by using the \code{phantom} parameter.
+lie to SILE about the size of content. You can change the \autodoc:parameter{width},
+\autodoc:parameter{height}, or \autodoc:parameter{depth} of your content with the respective
+parameters, or make it invisible by setting the \autodoc:parameter{phantom} parameter to true.
 
 For example:
 

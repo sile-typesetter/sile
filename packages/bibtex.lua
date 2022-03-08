@@ -87,7 +87,7 @@ This experimental package allows SILE to read and process BibTeX
 (It doesn’t currently produce full bibliography listings.)
 
 To load a BibTeX file, issue the command
-\autodoc:command{\loadbibliography[file=whatever.bib]}
+\autodoc:command{\loadbibliography[file=<whatever.bib>]}
 
 To produce an inline citation, call \autodoc:command{\cite{<key>}}, which
 will typeset something like “Jones 1982”. If you want to cite a

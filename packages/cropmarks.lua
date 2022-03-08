@@ -96,7 +96,7 @@ documentation = [[\begin{document}
   the side of the page are correctly cut.)
 
   This package provides the \autodoc:command{\crop:setup} command which should be
-  run early in your document file. It takes one argument, \code{papersize},
+  run early in your document file. It takes one argument, \autodoc:parameter{papersize},
   which is the true target paper size. It place cropmarks around the
   true page content.
 

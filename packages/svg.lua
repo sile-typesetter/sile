@@ -64,10 +64,10 @@ This package provides two commands.
 
 The first is \autodoc:command{\svg[src=<file>]}.
 This loads and parses an SVG file and attempts to render it in the current
-document. Optional \code{width} or \code{height} options will scale the SVG canvas to the
-given size calculated at a given \code{density} option (which defaults to 72 ppi). For
-example, the command
-\autodoc:command{\svg[src=packages/svg/smiley.svg,height=12pt]}
+document. Optional \autodoc:parameter{width} or \autodoc:parameter{height}
+options will scale the SVG canvas to the given size calculated at a given
+\autodoc:parameter{density} option (which defaults to 72 ppi). For
+example, the command \autodoc:command{\svg[src=packages/svg/smiley.svg,height=12pt]}
 produces the following:
 
 \svg[src=packages/svg/smiley.svg,height=12pt]
