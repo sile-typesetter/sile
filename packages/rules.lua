@@ -112,7 +112,7 @@ SILE.registerCommand("boxaround", function (_, content)
 end, "Draws a box around some content")
 
 return { documentation = [[\begin{document}
-The \code{rules} package draws lines. It provides three commands.
+The \autodoc:package{rules} package draws lines. It provides three commands.
 
 The first command is \autodoc:command{\hrule},
 which draws a line of a given length and thickness, although it calls these
@@ -124,7 +124,7 @@ was generated with \autodoc:command{\hrule[width=20pt, height=0.5pt]}.)
 
 Like images, rules are placed along the baseline of a line of text.
 
-The second command provided by \code{rules} is \autodoc:command{\underline}, which
+The second command provided by this package is \autodoc:command{\underline}, which
 underlines its contents.
 
 \note{

@@ -225,7 +225,7 @@ return {
   }, documentation = [[
 \begin{document}
 As we mentioned in the first chapter, SILE uses frames as an indication
-of where to put text onto the page. The \code{frametricks} package assists
+of where to put text onto the page. The \autodoc:package{frametricks} package assists
 package authors by providing a number of commands to manipulate frames.
 
 The most immediately useful is \autodoc:command{\showframe}. This asks the output
@@ -237,7 +237,7 @@ current class are displayed.
 It’s possible to define frames such as sidebars which are not connected
 to the main text flow of a page. We’ll see how to do that in a later chapter, but
 this raises the obvious question: if they’re not part of the text flow, how do we
-get stuff into them? \code{frametricks} provides the \autodoc:command{\typeset-into}
+get stuff into them? \autodoc:package{frametricks} provides the \autodoc:command{\typeset-into}
 command, which allows you to write text into a specified frame:
 
 \begin{verbatim}
@@ -246,7 +246,7 @@ command, which allows you to write text into a specified frame:
 \line
 \end{verbatim}
 
-\code{frametricks} also provides a number of commands which, to be perfectly
+\autodoc:package{frametricks} also provides a number of commands which, to be perfectly
 honest, we \em{thought} were going to be useful, but haven’t quite ended up
 being as useful as all that.
 
@@ -292,7 +292,7 @@ live on the page, but messing about with them dynamically seems to create
 more problems than it solves. There’s probably a reason why InDesign and
 similar applications handle floats, drop caps, tables and so on inside the
 context of a content frame rather than by messing with the frames themselves.
-If you feel tempted to play with \code{frametricks}, there’s almost always
+If you feel tempted to play with \autodoc:package{frametricks}, there’s almost always
 a better way to achieve what you want without it.
 \end{document}
 ]]

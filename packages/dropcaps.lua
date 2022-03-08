@@ -69,7 +69,7 @@ end, "Show an 'initial capital' (also known as a 'drop cap') at the start of the
 return {
   documentation = [[
 \begin{document}
-The \code{dropcaps} package allows you to format paragraphs with an 'initial capital' (also commonly
+The \autodoc:package{dropcaps} package allows you to format paragraphs with an 'initial capital' (also commonly
 referred as a 'drop cap'), typically one large capital letter used as a decorative element at the beginning of a paragraph.
 
 It provides the \autodoc:command{\dropcap} command.

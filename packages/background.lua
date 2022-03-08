@@ -23,7 +23,7 @@ SILE.registerCommand("background", function (options, _)
 end, "Draws a solid background color <color> on pages after initialization.")
 
 return { documentation = [[\begin{document}
-The \code{background} package allows you to set the color of the canvas
+The \autodoc:package{background} package allows you to set the color of the canvas
 background (by drawing a solid color block the full size of the page on page
 initialization). The package provides a \autodoc:command{\background} command which
 requires at least one parameter,
@@ -31,7 +31,7 @@ requires at least one parameter,
 current and all following pages to that color. If setting only the current page
 background different from the default is desired, an extra parameter
 \autodoc:parameter{allpages=false} can be passed. The color specification in the same as
-specified in the \code{color} package.
+specified in the \autodoc:package{color} package.
 
 \background[color=#e9d8ba,allpages=false]
 

@@ -203,7 +203,7 @@ the paper; on the right, no such guarantee is made.
 \img[src=documentation/grid-1.png,height=130]
 \img[src=documentation/grid-2.png,height=130]
 
-The \code{grid} package alters the way that the SILE’s typesetter operates so that
+The \autodoc:package{grid} package alters the way that the SILE’s typesetter operates so that
 the two rules above do not apply; lines are always aligned on a fixed grid, and
 spaces between paragraphs etc. are adjusted to conform to the grid. Loading the package
 adds two new commands to SILE: \autodoc:command{\grid[spacing=<dimension>]} and \autodoc:command{\no-grid}.

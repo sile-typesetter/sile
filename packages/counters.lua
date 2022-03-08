@@ -91,7 +91,7 @@ return {
   },
   documentation = [[\begin{document}
 
-Various parts of SILE such as the \code{footnotes} package and the
+Various parts of SILE such as the \autodoc:package{footnotes} package and the
 sectioning commands keep a counter of things going on: the current
 footnote number, the chapter number, and so on. The counters package
 allows you to set up, increment and typeset named counters. It

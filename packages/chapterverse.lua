@@ -61,7 +61,7 @@ end)
 return {
   documentation = [[
 \begin{document}
-The \code{chapterverse} package is designed as a helper package for
+The \autodoc:package{chapterverse} package is designed as a helper package for
 book classes which deal with versified content such as scriptures. It
 provides commands which will generally be called by the higher-level
 \code{\\verse} and \code{\\chapter} (or moral equivalent) commands of the

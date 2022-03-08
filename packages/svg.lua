@@ -79,7 +79,7 @@ implementing SVG fonts; it retrieves the SVG glyph provided and renders it.
 
 In both cases the rendering is done with our own SVG drawing library; it is currently
 very minimal, only handling lines, curves, strokes and fills. For a fuller
-implementation, consider using a \code{converters} registration to render
+implementation, consider using a \autodoc:package{converters} registration to render
 your SVG file to PDF and include it on the fly.
 \end{document}]]
 

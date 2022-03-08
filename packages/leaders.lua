@@ -106,7 +106,7 @@ end)
 return {
   documentation = [[
 \begin{document}
-The leaders package allows you to create repeating patterns which fill a
+The \autodoc:package{leaders} package allows you to create repeating patterns which fill a
 given space. It provides the \autodoc:command{\dotfill} command, which does this:
 
 \begin{verbatim}

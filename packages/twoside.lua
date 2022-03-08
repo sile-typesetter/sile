@@ -53,7 +53,7 @@ return {
   }, documentation = [[
 \begin{document}
 The \code{book} class described in chapter 4 sets up left and right mirrored
-page masters; the \code{twoside} package is responsible for swapping between
+page masters; the \autodoc:package{twoside} package is responsible for swapping between
 the two left and right frames, running headers and so on. It has no user-serviceable
 parts.
 \end{document}

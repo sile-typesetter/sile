@@ -140,7 +140,7 @@ return { documentation = [[\begin{document}
 
 SILE’s default method of inserting leading between lines should be familiar to
 users of TeX, but it is not the most friendly system for book designers. The
-\code{linespacing} package provides a better choice of leading systems.
+\autodoc:package{linespacing} package provides a better choice of leading systems.
 
 After loading the package, you are able to choose the linespacing mode by setting
 the \autodoc:setting{linespacing.method} parameter. The following examples have

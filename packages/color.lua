@@ -10,7 +10,7 @@ SILE.registerCommand("color", function (options, content)
 end, "Changes the active ink color to the color <color>.")
 
 return { documentation = [[\begin{document}
-The \code{color} package allows you to temporarily change the color of the
+The \autodoc:package{color} package allows you to temporarily change the color of the
 (virtual) ink that SILE uses to output text and rules. The package provides
 a \autodoc:command{\color} command which takes one parameter,
 \autodoc:parameter{color=<color specification>}, and typesets

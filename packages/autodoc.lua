@@ -24,19 +24,9 @@ SILE.scratch.autodoc = {
     parameter = "#3f5218", -- some sort of dark green
     setting = "#42280e", -- some kind of dark brown
     bracketed = "#656565", -- some grey
+    package = "#172557", -- saturated space blue
   }
 }
--- DEBUGs:
--- SILE.scratch.autodoc = {
---   theme = {
---     command = "red", -- oil blue
---     parameter = "red", -- some sort of dark green
---     setting = "red", -- some kind of dark orange/brown
---     bracketed = "#333333" -- some dark grey
---   }
--- }
-
-
 local colorWrapper = function (ctype, content)
   local color = SILE.scratch.autodoc.theme[ctype]
   if color and SILE.Commands["color"] then
@@ -51,7 +41,7 @@ SILE.registerCommand("autodoc:style", function (options, content)
   -- it accordingly.
   if options.type == "ast" then
     SILE.call("code", {}, content)
-  elseif options.type == "setting" then
+  elseif options.type == "setting" or options.type == "package" then
     SILE.call("code", {}, function()
       colorWrapper(options.type, content)
     end)
@@ -253,6 +243,18 @@ SILE.registerCommand("autodoc:environment", function (options, content)
   SILE.call("autodoc:style", { type = "environment" }, name)
 end, "Outputs a command name in code, checking its validity.")
 
+-- Documenting a package name
+
+SILE.registerCommand("autodoc:package", function (_, content)
+  if type(content) ~= "table" then SU.error("Expected a table content") end
+  if #content ~= 1 then SU.error("Expected a single element") end
+  local name = type(content[1] == "string") and content[1]
+  if not name then SU.error("Unexpected package name") end
+  -- We cannot really check package name to exist!
+
+  SILE.call("autodoc:style", { type = "package" }, { name })
+end, "Outputs a package name in code, checking its validity.")
+
 return {
   documentation = [[\begin{document}
 This package extracts documentation information from other packages. It’s used to
@@ -277,7 +279,7 @@ manually.
 With the \autodoc:command{\autodoc:command} command, one can pass a simple command, or even
 a full commands (with parameters and arguments), without the need for escaping special
 characters. This relies on SILE’s AST (abstract syntax tree) parsing, so you benefit from
-typing simplicity, syntax check, and even more –such as styling\footnote{If the \code{color}
+typing simplicity, syntax check, and even more –such as styling\footnote{If the \autodoc:package{color}
 package is loaded, you get syntax highlighting.}.
 Moreover, for text content in parameter values or command arguments, if they are enclosed
 between angle brackets, they will be presented with an distinguishable style.

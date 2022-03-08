@@ -26,8 +26,8 @@ return {
 \begin{document}
 
 If you don’t want your images, rules or text to be placed along
-the baseline, you can use the \code{raiselower} package to move them up
-and down. (The \code{footnote} package uses this to superscript the
+the baseline, you can use the \autodoc:package{raiselower} package to move them up
+and down. (The \autodoc:package{footnote} package uses this to superscript the
 footnote reference numbers.)
 
 It provides two simple commands, \autodoc:command{\raise} and \autodoc:command{\lower} which

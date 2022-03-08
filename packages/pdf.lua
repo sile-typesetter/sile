@@ -147,7 +147,7 @@ SILE.registerCommand("pdf:metadata", function (options, _)
 end)
 
 return { documentation = [[\begin{document}
-The \code{pdf} package enables (basic) support for PDF links and table-of-contents
+The \autodoc:package{pdf} package enables (basic) support for PDF links and table-of-contents
 entries. It provides the four commands \autodoc:command{\pdf:destination}, \autodoc:command{\pdf:link},
 \autodoc:command{\pdf:bookmark}, and \autodoc:command{\pdf:metadata}.
 
@@ -165,7 +165,7 @@ above the content and below the baseline (defaults to 1pt). Note that PDF render
 they honor these border styling features on link annotations.
 
 It also has an \autodoc:parameter{external} option for URL links, which is not intended to be used
-directly—refer to the \code{url} package for more flexibility typesetting external
+directly—refer to the \autodoc:package{url} package for more flexibility typesetting external
 links.
 
 To set arbitrary key-value metadata, use something like \autodoc:command{\pdf:metadata[key=Author,

@@ -184,7 +184,7 @@ instead.
 But there are times when this is just too strict. If you’re typesetting
 a document in English and Japanese, you should be able to choose your
 English font and choose your Japanese font, and if the glyph isn’t available
-in one, SILE should try the other. The \code{font-fallback} package gives you
+in one, SILE should try the other. The \autodoc:package{font-fallback} package gives you
 a way to specify a list of font specifications, and it will try each one in
 turn if glyphs cannot be found.
 

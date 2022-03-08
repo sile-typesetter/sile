@@ -130,7 +130,7 @@ structure.
 }
 
 \pdf:structure[type=P]{%
-See \code{tests/pdf.sil} for an example of using the \code{pdfstructure}
+See \code{tests/pdf.sil} for an example of using the \autodoc:package{pdfstructure}
 package to create a PDF/UA compatible document.
 }
 \end{document}
