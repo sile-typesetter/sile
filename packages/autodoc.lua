@@ -18,6 +18,13 @@ end)
 
 -- Styling hook
 
+SILE.settings.declare({
+  parameter = "autodoc.highlighting",
+  default = false,
+  type = "boolean",
+  help = "Whether audodoc enables syntax highlighting"
+})
+
 SILE.scratch.autodoc = {
   theme = {
     command = "#1d4851", -- oil blue
@@ -29,19 +36,27 @@ SILE.scratch.autodoc = {
 }
 local colorWrapper = function (ctype, content)
   local color = SILE.scratch.autodoc.theme[ctype]
-  if color and SILE.Commands["color"] then
+  if color and SILE.settings.get("autodoc.highlighting") and SILE.Commands["color"] then
     SILE.call("color", { color = color }, content)
   else
     SILE.process(content)
   end
 end
 
-SILE.registerCommand("autodoc:style", function (options, content)
-  -- options.type can be used to distinguish the type of item and style
-  -- it accordingly.
+SILE.registerCommand("autodoc:package:style", function (_, content)
+  SILE.call("font", { weight = 700 }, function()
+    colorWrapper("package", content)
+  end)
+end)
+
+SILE.registerCommand("autodoc:code:style", function (options, content)
+  -- options.type is used to distinguish the type of code element and style
+  -- it accordingly: "ast", "setting", "environment" shall select the font
+  -- (by default, using \code) and color, the other (lower-level in an AST)
+  -- shall select only the color.
   if options.type == "ast" then
     SILE.call("code", {}, content)
-  elseif options.type == "setting" or options.type == "package" then
+  elseif options.type == "setting" then
     SILE.call("code", {}, function()
       colorWrapper(options.type, content)
     end)
@@ -87,7 +102,7 @@ SILE.registerCommand("autodoc:setting", function (options, content)
   -- Inserts breakpoints after dots
   local nameWithBreaks = inputfilter.transformContent(content, settingFilter)
 
-  SILE.call("autodoc:style", { type = "setting" }, nameWithBreaks)
+  SILE.call("autodoc:code:style", { type = "setting" }, nameWithBreaks)
 end, "Outputs a settings name in code, ensuring good line breaks and possibly checking their existence.")
 
 -- Documenting a command, benefiting from AST parsing
@@ -101,9 +116,6 @@ local function optionSorter(o1, o2)
   if o1 == "name" then return true end
   if o2 == "name" then return false end
   return o1 < o2
-end
-
-local function typesetOptions(options)
 end
 
 local function typesetAST(options, content)
@@ -122,7 +134,7 @@ local function typesetAST(options, content)
         seenCommandWithoutArg = false
       end
       if ast:sub(1, 1) == "<" and ast:sub(-1) == ">" then
-        SILE.call("autodoc:bracketed", {}, { ast:sub(2, -2) })
+        SILE.call("autodoc:internal:bracketed", {}, { ast:sub(2, -2) })
       else
         SILE.typesetter:typeset(ast)
       end
@@ -133,16 +145,15 @@ local function typesetAST(options, content)
         SU.error("Unexpected command '"..ast.command.."'")
       end
       SILE.typesetter:typeset("\\")
-      SILE.call("autodoc:style", { type = "command" }, { ast.command })
+      SILE.call("autodoc:code:style", { type = "command" }, { ast.command })
 
       local sortedOpts = {}
       for k, _ in pairs(ast.options) do table.insert(sortedOpts, k) end
       table.sort(sortedOpts, optionSorter)
       if #sortedOpts > 0 then
-        local iOpt = 0
         SILE.typesetter:typeset("[")
         for iOpt, option in ipairs(sortedOpts) do
-          SILE.call("autodoc:style", { type = "parameter" }, { option })
+          SILE.call("autodoc:code:style", { type = "parameter" }, { option })
           SILE.typesetter:typeset("=")
           SILE.call("penalty", { penalty = 100 }, nil) -- Quite decent to break here if need be.
           SILE.call("autodoc:value", {}, { ast.options[option] })
@@ -168,16 +179,16 @@ local function typesetAST(options, content)
   end
 end
 
-SILE.registerCommand("autodoc:ast", function (options, content)
+SILE.registerCommand("autodoc:internal:ast", function (options, content)
   if type(content) ~= "table" then SU.error("Expected a table content") end
-  SILE.call("autodoc:style", { type = "ast" }, function ()
+  SILE.call("autodoc:code:style", { type = "ast" }, function ()
     typesetAST(options, content)
   end)
 end, "Outputs a nicely typeset AST (low-level command).")
 
-SILE.registerCommand("autodoc:bracketed", function (_, content)
+SILE.registerCommand("autodoc:internal:bracketed", function (_, content)
   SILE.typesetter:typeset("⟨")
-  SILE.call("autodoc:style", { type = "bracketed" }, function()
+  SILE.call("autodoc:code:style", { type = "bracketed" }, function()
     SILE.call("em", {}, content)
   end)
   SILE.call("kern", { width = "0.1em" }) -- fake italic correction.
@@ -189,12 +200,12 @@ SILE.registerCommand("autodoc:value", function (_, content)
   if type(value) ~= "string" then SU.error("Expected a string") end
 
   if value:sub(1, 1) == "<" and value:sub(-1) == ">" then
-    SILE.call("autodoc:bracketed", {}, { value:sub(2, -2) })
+    SILE.call("autodoc:internal:bracketed", {}, { value:sub(2, -2) })
   else
     -- Here we should check for comma/semicolon, or surrounding spaces, and in that
     -- case add quotes around the value. This is a bit of an edge-case though, esp.
     -- for documentation needs.
-    SILE.call("autodoc:style", { type = "value" }, content)
+    SILE.call("autodoc:code:style", { type = "value" }, content)
   end
 end, "Outputs a nicely formatted argument within <brackets>.")
 
@@ -202,7 +213,7 @@ SILE.registerCommand("autodoc:command", function (options, content)
   if type(content) ~= "table" then SU.error("Expected a table content") end
   if type(content[1]) ~= "table" then SU.error("Expected a command, got "..type(content[1]).." '"..content[1].."'") end
 
-  SILE.call("autodoc:ast", options, content)
+  SILE.call("autodoc:internal:ast", options, content)
 end, "Outputs a formatted command, possibly checking its validity.")
 
 -- Documenting a parameter
@@ -216,9 +227,9 @@ SILE.registerCommand("autodoc:parameter", function (_, content)
   for v in string.gmatch(param, "[^=]+") do
     parts[#parts+1] = v
   end
-  SILE.call("autodoc:style", { type = "ast" }, function ()
+  SILE.call("autodoc:code:style", { type = "ast" }, function ()
     if #parts < 1 or #parts > 2 then SU.error("Unexpected parameter '"..param.."'") end
-    SILE.call("autodoc:style", { type = "parameter" }, { parts[1] })
+    SILE.call("autodoc:code:style", { type = "parameter" }, { parts[1] })
     if #parts == 2 then
       SILE.typesetter:typeset("=")
 
@@ -240,7 +251,7 @@ SILE.registerCommand("autodoc:environment", function (options, content)
     if not SILE.Commands[name] then SU.error("Unknown command "..name) end
   end
 
-  SILE.call("autodoc:style", { type = "environment" }, name)
+  SILE.call("autodoc:code:style", { type = "environment" }, name)
 end, "Outputs a command name in code, checking its validity.")
 
 -- Documenting a package name
@@ -252,7 +263,7 @@ SILE.registerCommand("autodoc:package", function (_, content)
   if not name then SU.error("Unexpected package name") end
   -- We cannot really check package name to exist!
 
-  SILE.call("autodoc:style", { type = "package" }, { name })
+  SILE.call("autodoc:package:style", {}, { name })
 end, "Outputs a package name in code, checking its validity.")
 
 return {
@@ -280,7 +291,8 @@ With the \autodoc:command{\autodoc:command} command, one can pass a simple comma
 a full commands (with parameters and arguments), without the need for escaping special
 characters. This relies on SILE’s AST (abstract syntax tree) parsing, so you benefit from
 typing simplicity, syntax check, and even more –such as styling\footnote{If the \autodoc:package{color}
-package is loaded, you get syntax highlighting.}.
+package is loaded and the \autodoc:setting{autodoc.highlighting} setting is set to true, you get syntax
+highlighting.}.
 Moreover, for text content in parameter values or command arguments, if they are enclosed
 between angle brackets, they will be presented with an distinguishable style.
 Just type the command as it would appear in code, and it will be nicely typeset. It comes with
