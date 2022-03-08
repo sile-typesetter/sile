@@ -55,6 +55,10 @@ SILE.registerCommand("autodoc:style", function (options, content)
     SILE.call("code", {}, function()
       colorWrapper(options.type, content)
     end)
+  elseif options.type == "environment" then
+    SILE.call("code", {}, function()
+      colorWrapper("command", content)
+    end)
   else
     colorWrapper(options.type, content)
   end
@@ -84,7 +88,7 @@ SILE.registerCommand("autodoc:setting", function (options, content)
   if type(content) ~= "table" then SU.error("Expected a table content") end
   if #content ~= 1 then SU.error("Expected a single element") end
   local name = type(content[1] == "string") and content[1]
-  if not name then SU.error("Unexpected setting '"..name.."'") end
+  if not name then SU.error("Unexpected setting") end
   -- Conditional existence check (can be disable is passing check=false), e.g.
   -- for settings that would be define in another context.
   if SU.boolean(options.check, true) then
@@ -234,6 +238,20 @@ SILE.registerCommand("autodoc:parameter", function (_, content)
   end)
 end, "Outputs a nicely presented parameter, possibly with a value.")
 
+-- Documenting an environment
+
+SILE.registerCommand("autodoc:environment", function (options, content)
+  if type(content) ~= "table" then SU.error("Expected a table content") end
+  if #content ~= 1 then SU.error("Expected a single element") end
+  local name = type(content[1] == "string") and content[1]
+  if not name then SU.error("Unexpected environment") end
+  -- Conditional existence check
+  if SU.boolean(options.check, true) then
+    if not SILE.Commands[name] then SU.error("Unknown command "..name) end
+  end
+
+  SILE.call("autodoc:style", { type = "environment" }, name)
+end, "Outputs a command name in code, checking its validity.")
 
 return {
   documentation = [[\begin{document}
@@ -268,10 +286,14 @@ a few caveats, though: parameters are not guaranteed to appear in the order you 
 some purely syntactic sequences are just skipped and not reconstructed. Also, it is not adapted
 to math-related commands. So it comes with many benefits, but also at a cost.
 
-Both \autodoc:command{\autodoc:setting} and \autodoc:command{\autodoc:command} check
-the validity and existence of their inputs. Would you want to disable this feature (e.g. to
-refer to a setting or command defined in another package or module that might not be loaded
-at this point), you can set the optional parameter \autodoc:parameter{check} to false.
+The \autodoc:command{\autodoc:environment} command just takes an environment name, so
+basically a command, but just displays it without leading backslash.
+
+The \autodoc:command{\autodoc:setting}, \autodoc:command{\autodoc:command} and
+\autodoc:command{\autodoc:environment} commands all check the validity and existence of
+their inputs. Would you want to disable this feature (e.g. to refer to a setting or command
+defined in another package or module that might not be loaded at this point), you can set the
+optional parameter \autodoc:parameter{check} to false.
 Note, however, that for commands, it is applied recursively to the parsed AST
 (so it is a all-or-none trade-off).
 

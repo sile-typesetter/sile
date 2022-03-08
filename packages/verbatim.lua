@@ -38,11 +38,11 @@ so that text is set ragged right, with no hyphenation, no indentation and
 regular spacing. It tells SILE to honor multiple spaces, and sets a monospaced
 font.
 
-\note{Despite the name, \code{verbatim} does not alter the way that SILE
+\note{Despite the name, \autodoc:environment{verbatim} does not alter the way that SILE
 sees special characters. You still need to escape backslashes and braces:
 to produce a backslash, you need to write \code{\\\\}.}
 
-Here is some text set in the verbatim environment:
+Here is some text set in the \autodoc:environment{verbatim} environment:
 
 \begin{verbatim}
 function SILE.repl()

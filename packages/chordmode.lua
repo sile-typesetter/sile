@@ -114,7 +114,7 @@ return {
   documentation = [[
 \begin{document}
 
-This package provides the \code{chordmode} environment, which transforms
+This package provides the \autodoc:environment{chordmode} environment, which transforms
 lines like:
 
 \begin{verbatim}

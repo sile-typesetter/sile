@@ -66,12 +66,12 @@ end, "Typesets its contents in a formatted blockquote with decorative quotation\
 
 return { documentation = [[\begin{document}
 
-The \code{pullquote} command formats longer quotations in an indented
+The \autodoc:environment{pullquote} environment formats longer quotations in an indented
 blockquote block with decorative quotation marks in the margins.
 
 Here is some text set in a pullquote environment:
 
-\begin[author=Anatole France]{pullquote}
+\begin[author=Anatole France]{pullquote}%
 An education is not how much you have committed to memory, or even how much you
 know. It is being able to differentiate between what you do know and what you
 do not know.
