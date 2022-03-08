@@ -167,6 +167,9 @@ basic functionality to other packages and classes. Classes such as the
 \subsection{tableofcontents}
 \package-documentation{tableofcontents}
 
+\subsection{labelrefs}
+\package-documentation{labelrefs}
+
 \subsection{xmltricks}
 \package-documentation{xmltricks}
 
