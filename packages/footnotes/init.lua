@@ -70,6 +70,11 @@ function package:registerCommands ()
       SILE.settings:set(v, SILE.settings.defaults[v])
     end
 
+    local labelRefs = self.class.packages.labelrefs
+    if labelRefs then
+      -- Cross-reference suppport.
+      labelRefs:pushLabelRef(self.class.packages.counters:formatCounter(SILE.scratch.counters.footnote))
+    end
     -- Apply the font before boxing, so relative baselineskip applies #1027
     local material
     SILE.call("footnote:font", {}, function ()
@@ -79,6 +84,7 @@ function package:registerCommands ()
         SILE.process(content)
       end)
     end)
+    if labelRefs then labelRefs:popLabelRef() end
     SILE.settings:popState()
     SILE.typesetter.getTargetLength = oldGetTargetLength
     SILE.typesetter.frame = oldFrame

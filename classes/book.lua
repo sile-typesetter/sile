@@ -43,6 +43,7 @@ function class:_init (options)
     })
   plain._init(self, options)
   self:loadPackage("tableofcontents")
+  self:loadPackage("labelrefs") -- Must be after tableofcontents
   self:loadPackage("footnotes", {
       insertInto = "footnotes",
       stealFrom = { "content" }
