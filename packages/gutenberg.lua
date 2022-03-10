@@ -1,6 +1,6 @@
 SILE.registerCommand("alt", function (_, content)
-  SILE.warn("Use of \\alt  is deprecated, please use \\alternative.")
-  SILE.call("alternative", nil, content)
+  SU.warn("Use of \\alt  is deprecated, please use \\alternative.")
+  SILE.call("alternative", {}, content)
 end)
 
 SILE.registerCommand("alternative", function (_, content)
@@ -29,7 +29,7 @@ extending SILE’s justification engine, the \code{gutenberg} package allows
 SILE to choose between a number of different options for a particular
 piece of text, depending on what would improve the line fitting.
 
-For instance, issuing the command \code{\\alt\{\{and\}\{&\}\}} would insert
+For instance, issuing the command \code{\\alternative\{\{and\}\{&\}\}} would insert
 either the text \examplefont{and} or an ampersand, depending on what best
 fits the current line.
 \end{document}

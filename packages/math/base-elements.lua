@@ -46,11 +46,6 @@ local mathVariantToScriptType = function(attr)
     SU.error("Invalid value \""..attr.."\" for option mathvariant")
 end
 
--- Big operators that should nevertheless have their limits drawn as subscript
--- and superscript by default
-local subscriptBigOps =
-  {'∫', '∬', '∭', '∮', '∯', '∰'}
-
 -- Foward declaration
 local newStandardHspace
 
@@ -106,6 +101,7 @@ SILE.settings.declare({parameter = "math.debug.boxes", type = "boolean", default
 SILE.settings.declare({parameter = "math.displayskip", type = "VGlue", default = SILE.nodefactory.vglue("2ex plus 1pt")})
 
 local function retrieveMathTable(options)
+  print("options.family = " .. options.family)
   local face = SILE.font.cache(options, SILE.shaper.getFace)
   if not face then
     SU.error("Could not find requested font "..options.." or any suitable substitutes")
@@ -151,30 +147,56 @@ end
 
 -- Style transition functions for superscript and subscript
 local function getSuperscriptMode(mode)
-  if mode == mathMode.display or mode == mathMode.text then return mathMode.script                          -- D, T -> S
-  elseif mode == mathMode.displayCramped or mode == mathMode.textCramped then return mathMode.scriptCramped -- D', T' -> S'
-  elseif mode == mathMode.script or mode == mathMode.scriptScript then return mathMode.scriptScript         -- S, SS -> SS
-  else return mathMode.scriptScriptCramped end                                                              -- S', SS' -> SS'
+  -- D, T -> S
+  if mode == mathMode.display or mode == mathMode.text then
+    return mathMode.script
+  -- D', T' -> S'
+  elseif mode == mathMode.displayCramped or mode == mathMode.textCramped then
+    return mathMode.scriptCramped
+  -- S, SS -> SS
+  elseif mode == mathMode.script or mode == mathMode.scriptScript then
+    return mathMode.scriptScript
+  -- S', SS' -> SS'
+  else return mathMode.scriptScriptCramped end
 end
 local function getSubscriptMode(mode)
+  -- D, T, D', T' -> S'
   if mode == mathMode.display or mode == mathMode.text
-      or mode == mathMode.displayCramped or mode == mathMode.textCramped then return mathMode.scriptCramped  -- D, T, D', T' -> S'
-  else return mathMode.scriptScriptCramped end                                                               -- S, SS, S', SS' -> SS'
+      or mode == mathMode.displayCramped or mode == mathMode.textCramped then
+      return mathMode.scriptCramped
+  -- S, SS, S', SS' -> SS'
+  else return mathMode.scriptScriptCramped end
 end
 
 -- Style transition functions for fraction (numerator and denominator)
 local function getNumeratorMode(mode)
-  if mode == mathMode.display then return mathMode.text                                                -- D -> T
-  elseif mode == mathMode.displayCramped then return mathMode.textCramped                              -- D' -> T'
-  elseif mode == mathMode.text then return mathMode.script                                             -- T -> S
-  elseif mode == mathMode.textCramped then return mathMode.scriptCramped                               -- T' -> S'
-  elseif mode == mathMode.script or mode == mathMode.scriptScript then return mathMode.scriptScript  -- S, SS -> SS
-  else return mathMode.scriptScriptCramped end                                                           -- S', SS' -> SS'
+  -- D -> T
+  if mode == mathMode.display then
+    return mathMode.text
+  -- D' -> T'
+  elseif mode == mathMode.displayCramped then
+    return mathMode.textCramped
+  -- T -> S
+  elseif mode == mathMode.text then
+    return mathMode.script
+  -- T' -> S'
+  elseif mode == mathMode.textCramped then
+    return mathMode.scriptCramped
+  -- S, SS -> SS
+  elseif mode == mathMode.script or mode == mathMode.scriptScript then
+    return mathMode.scriptScript
+  -- S', SS' -> SS'
+  else return mathMode.scriptScriptCramped end
 end
 local function getDenominatorMode(mode)
-  if mode == mathMode.display or mode == mathMode.displayCramped then return mathMode.textCramped    -- D, D' -> T'
-  elseif mode == mathMode.text or mode == mathMode.textCramped then return mathMode.scriptCramped    -- T, T' -> S'
-  else return mathMode.scriptScriptCramped end                                                           -- S, SS, S', SS' -> SS'
+  -- D, D' -> T'
+  if mode == mathMode.display or mode == mathMode.displayCramped then
+    return mathMode.textCramped
+  -- T, T' -> S'
+  elseif mode == mathMode.text or mode == mathMode.textCramped then
+    return mathMode.scriptCramped
+  -- S, SS, S', SS' -> SS'
+  else return mathMode.scriptScriptCramped end
 end
 
 local function getRightMostGlyphId(node)
@@ -188,15 +210,8 @@ local function getRightMostGlyphId(node)
   end
 end
 
-local function contains(table, elt)
-  for _,x in pairs(table) do
-    if x == elt then return true end
-  end
-  return false
-end
-
--- Compares two SILE length, without considering shrink or stretch values,
--- and returns the biggest.
+-- Compares two SILE length, without considering shrink or stretch values, and
+-- returns the biggest.
 local function maxLength(...)
   local arg = {...}
   local m
@@ -222,8 +237,9 @@ local function scaleWidth(length, line)
   return number
 end
 
--- math box, box with a horizontal shift value and could contain zero or more mbox'es (or its child classes)
--- the entire math environment itself is a top-level mbox.
+-- math box, box with a horizontal shift value and could contain zero or more
+-- mbox'es (or its child classes) the entire math environment itself is
+-- a top-level mbox.
 -- Typesetting of mbox evolves four steps:
 --   1. Determine the mode for each mbox according to their parent.
 --   2. Shape the mbox hierarchy from leaf to top. Get the shape and relative position.
@@ -416,7 +432,8 @@ elements.stackbox = pl.class({
       end
       table.sort(spaceIdx, function(a, b) return a > b end)
       for _, idx in ipairs(spaceIdx) do
-        table.insert(self.children, idx, newStandardHspace(self.options.size * self:getScaleDown(), spaces[idx]))
+        local hsp = newStandardHspace(self.options.size * self:getScaleDown(), spaces[idx])
+        table.insert(self.children, idx, hsp)
       end
     end
   end,
@@ -487,9 +504,8 @@ elements.stackbox = pl.class({
 elements.subscript = pl.class({
   _base = elements.mbox,
   _type = "Subscript",
-  _init = function(self, kind, base, sub, sup)
+  _init = function(self, base, sub, sup)
     elements.mbox._init(self)
-    self.kind = kind
     self.base = base
     self.sub = sub
     self.sup = sup
@@ -508,14 +524,7 @@ elements.subscript = pl.class({
     if lastGid > 0 then
       local mathMetrics = getMathMetrics()
       if mathMetrics.italicsCorrection[lastGid] then
-        local c = mathMetrics.italicsCorrection[lastGid]
-        -- If this is a big operator, and we are in display style, then the
-        -- base glyph may be bigger than the font size. We need to adjust the
-        -- italic correction accordingly.
-        if self:is_a(elements.bigOpSubscript) and isDisplayMode(self.mode) then
-          c = c * (self.base and self.base.options.size / self.options.size or 1.0)
-        end
-        return c
+        return mathMetrics.italicsCorrection[lastGid]
       end
     end
     return 0
@@ -536,7 +545,7 @@ elements.subscript = pl.class({
     local subShift
     local supShift
     if self.sub then
-      if self.isBigOp then
+      if self.isUnderOver or self.base.largeop then
         -- Ad hoc correction on integral limits, following LuaTeX's
         -- `\mathnolimitsmode=0` (see LuaTeX Reference Manual).
         subShift = -itCorr
@@ -549,14 +558,14 @@ elements.subscript = pl.class({
         --self.base.depth + constants.subscriptBaselineDropMin * scaleDown,
         (self.sub.height - constants.subscriptTopMax * scaleDown):tonumber()
       ))
-      if (self:is_a(elements.bigOpSubscript)
-          or self:is_a(elements.stackbox)) then
+      if (self:is_a(elements.underOver)
+          or self:is_a(elements.stackbox) or self.base.largeop) then
         self.sub.relY = maxLength(self.sub.relY,
           self.base.depth + constants.subscriptBaselineDropMin*scaleDown)
       end
     end
     if self.sup then
-      if self.isBigOp then
+      if self.isUnderOver or self.base.largeop then
         -- Ad hoc correction on integral limits, following LuaTeX's
         -- `\mathnolimitsmode=0` (see LuaTeX Reference Manual).
         supShift = 0
@@ -571,8 +580,8 @@ elements.subscript = pl.class({
         --self.base.height - constants.superscriptBaselineDropMax * scaleDown,
         (self.sup.depth + constants.superscriptBottomMin * scaleDown):tonumber()
       )) * (-1)
-      if (self:is_a(elements.bigOpSubscript)
-          or self:is_a(elements.stackbox)) then
+      if (self:is_a(elements.underOver)
+          or self:is_a(elements.stackbox) or self.base.largeop) then
         self.sup.relY = maxLength(
           (0-self.sup.relY),
           self.base.height - constants.superscriptBaselineDropMax
@@ -613,20 +622,18 @@ elements.subscript = pl.class({
   output = function(_, _, _, _) end
 })
 
-elements.bigOpSubscript = pl.class({
+elements.underOver = pl.class({
   _base = elements.subscript,
-  _type = "BigOpSubscript",
-  _init = function(self, kind, base, sub, sup)
+  _type = "UnderOver",
+  _init = function(self, base, sub, sup)
     elements.mbox._init(self)
-    self.atom = atomType.bigOperator
-    self.kind = kind
+    self.atom = base.atom
     self.base = base
     self.sub = sub
     self.sup = sup
     if self.sup then table.insert(self.children, self.sup) end
     if self.base then
       table.insert(self.children, self.base)
-      self.base.atom = atomType.bigOperator
     end
     if self.sub then table.insert(self.children, self.sub) end
   end,
@@ -637,9 +644,8 @@ elements.bigOpSubscript = pl.class({
   end,
   shape = function(self)
     if not (self.mode == mathMode.display
-          or self.mode == mathMode.displayCramped)
-        or (self.base and contains(subscriptBigOps, self.base.text)) then
-      self.isBigOp = true
+          or self.mode == mathMode.displayCramped) then
+      self.isUnderOver = true
       elements.subscript.shape(self)
       return
     end
@@ -666,10 +672,14 @@ elements.bigOpSubscript = pl.class({
         widest = self.sub
         a = self.base
         b = self.sup
-      else
+      elseif self.sup then
         widest = self.sup
         a = self.base
         b = self.sub
+      else
+        widest = self.sub
+        a = self.base
+        b = nil
       end
     else
       if self.sup and self.base.width > self.sup.width then
@@ -710,6 +720,23 @@ elements.bigOpSubscript = pl.class({
       self.depth = self.base and self.base.depth or 0
     end
   end,
+  calculateItalicsCorrection = function(self)
+    local lastGid = getRightMostGlyphId(self.base)
+    if lastGid > 0 then
+      local mathMetrics = getMathMetrics()
+      if mathMetrics.italicsCorrection[lastGid] then
+        local c = mathMetrics.italicsCorrection[lastGid]
+        -- If this is a big operator, and we are in display style, then the
+        -- base glyph may be bigger than the font size. We need to adjust the
+        -- italic correction accordingly.
+        if self.base.atom == atomType.bigOperator and isDisplayMode(self.mode) then
+          c = c * (self.base and self.base.options.size / self.options.size or 1.0)
+        end
+        return c
+      end
+    end
+    return 0
+  end,
   output = function(_, _, _, _) end
 })
 
@@ -742,7 +769,7 @@ elements.text = pl.class({
   _base = elements.terminal,
   _type = "Text",
   __tostring = function(self) return "Text("..(self.originalText or self.text)..")" end,
-  _init = function(self, kind, script, text)
+  _init = function(self, kind, attributes, script, text)
     elements.terminal._init(self)
     if not (kind == "number" or kind == "identifier" or kind == "operator") then
       SU.error("Unknown text node kind '"..kind.."'; should be one of: number, identifier, operator.")
@@ -773,6 +800,10 @@ elements.text = pl.class({
         self.stretchy = symbolDefaults[self.text].stretchy
       end
     end
+    for attribute,value in pairs(attributes) do
+      SU.debug("math", "attribute = "..attribute..", value = "..value)
+      self[attribute] = value
+    end
   end,
 
   shape = function(self)
@@ -781,7 +812,7 @@ elements.text = pl.class({
     local mathMetrics = getMathMetrics()
     local glyphs = SILE.shaper:shapeToken(self.text, self.options)
     -- Use bigger variants for big operators in display style
-    if isDisplayMode(self.mode) and self.atom == atomType.bigOperator then
+    if isDisplayMode(self.mode) and self.largeop then
       -- We copy the glyph list to avoid modifying the shaper's cache. Yes.
       glyphs = std.tree.clone(glyphs)
       local constructions = mathMetrics.mathVariants
@@ -934,35 +965,20 @@ elements.fraction = pl.class({
     elements.mbox._init(self)
     self.numerator = numerator
     self.denominator = denominator
-    if self.numerator then table.insert(self.children, self.numerator)
-    end
-    if self.denominator then table.insert(self.children, self.denominator)
-    end
+    table.insert(self.children, numerator)
+    table.insert(self.children, denominator)
   end,
   styleChildren = function(self)
-    if not (self.numerator or self.denominator) then
-      SU.error("Fraction cannot have both no numerator and no denominator")
-    end
-    if self.numerator then
-      self.numerator.mode = getNumeratorMode(self.mode)
-    end
-    if self.denominator then
-      self.denominator.mode = getDenominatorMode(self.mode)
-    end
+    self.numerator.mode = getNumeratorMode(self.mode)
+    self.denominator.mode = getDenominatorMode(self.mode)
   end,
   shape = function(self)
     -- Determine relative abscissas and width
     local widest, other
-    if self.numerator and self.denominator then
-      if self.denominator.width > self.numerator.width then
-        widest, other = self.denominator, self.numerator
-      else
-        widest, other = self.numerator, self.denominator
-      end
-    elseif self.numerator then widest, other = self.numerator, nil
-    elseif self.denominator then widest, other = self.denominator, nil
+    if self.denominator.width > self.numerator.width then
+      widest, other = self.denominator, self.numerator
     else
-      error("Fraction cannot have both no numerator and no denominator")
+      widest, other = self.numerator, self.denominator
     end
     widest.relX = SILE.length(0)
     other.relX = (widest.width - other.width) / 2
@@ -973,44 +989,34 @@ elements.fraction = pl.class({
     local scaleDown = self:getScaleDown()
     self.axisHeight = constants.axisHeight * scaleDown
     self.ruleThickness = constants.fractionRuleThickness * scaleDown
-    if self.numerator then
-      if isDisplayMode(self.mode) then
-        self.numerator.relY = -self.axisHeight - self.ruleThickness/2 - SILE.length(math.max(
-          (constants.fractionNumDisplayStyleGapMin*scaleDown + self.numerator.depth):tonumber(),
-          constants.fractionNumeratorDisplayStyleShiftUp * scaleDown
-            - self.axisHeight - self.ruleThickness/2))
-      else
-        self.numerator.relY = -self.axisHeight - self.ruleThickness/2 - SILE.length(math.max(
-          (constants.fractionNumeratorGapMin*scaleDown + self.numerator.depth):tonumber(),
-          constants.fractionNumeratorShiftUp * scaleDown - self.axisHeight
-            - self.ruleThickness/2))
-      end
-    end
-    if self.denominator then
-      if isDisplayMode(self.mode) then
-        self.denominator.relY = -self.axisHeight + self.ruleThickness/2 + SILE.length(math.max(
-          (constants.fractionDenomDisplayStyleGapMin * scaleDown
-            + self.denominator.height):tonumber(),
-          constants.fractionDenominatorDisplayStyleShiftDown * scaleDown
-            + self.axisHeight - self.ruleThickness/2))
-      else
-        self.denominator.relY = -self.axisHeight + self.ruleThickness/2 + SILE.length(math.max(
-          (constants.fractionDenominatorGapMin * scaleDown
-            + self.denominator.height):tonumber(),
-          constants.fractionDenominatorShiftDown * scaleDown
-           + self.axisHeight - self.ruleThickness/2))
-      end
-    end
-    if self.numerator then
-      self.height = 0 - self.numerator.relY + self.numerator.height
+    if isDisplayMode(self.mode) then
+      self.numerator.relY = -self.axisHeight - self.ruleThickness/2 - SILE.length(math.max(
+        (constants.fractionNumDisplayStyleGapMin*scaleDown + self.numerator.depth):tonumber(),
+        constants.fractionNumeratorDisplayStyleShiftUp * scaleDown
+          - self.axisHeight - self.ruleThickness/2))
     else
-      self.height = self.axisHeight + self.ruleThickness / 2
+      self.numerator.relY = -self.axisHeight - self.ruleThickness/2 - SILE.length(math.max(
+        (constants.fractionNumeratorGapMin*scaleDown + self.numerator.depth):tonumber(),
+        constants.fractionNumeratorShiftUp * scaleDown - self.axisHeight
+          - self.ruleThickness/2))
     end
-    if self.denominator then
-      self.depth = self.denominator.relY + self.denominator.depth
+
+    if isDisplayMode(self.mode) then
+      self.denominator.relY = -self.axisHeight + self.ruleThickness/2 + SILE.length(math.max(
+        (constants.fractionDenomDisplayStyleGapMin * scaleDown
+          + self.denominator.height):tonumber(),
+        constants.fractionDenominatorDisplayStyleShiftDown * scaleDown
+          + self.axisHeight - self.ruleThickness/2))
     else
-      self.depth = SILE.length(0)
+      self.denominator.relY = -self.axisHeight + self.ruleThickness/2 + SILE.length(math.max(
+        (constants.fractionDenominatorGapMin * scaleDown
+          + self.denominator.height):tonumber(),
+        constants.fractionDenominatorShiftDown * scaleDown
+         + self.axisHeight - self.ruleThickness/2))
     end
+
+    self.height = self.numerator.height - self.numerator.relY
+    self.depth = self.denominator.relY + self.denominator.depth
   end,
   output = function(self, x, y, line)
     SILE.outputter:drawRule(
@@ -1021,17 +1027,14 @@ elements.fraction = pl.class({
 })
 
 local newSubscript = function(spec)
-  if spec.base and spec.base:is_a(elements.text)
-      and spec.base.kind == "operator"
-      and symbolDefaults[spec.base.text]
-      and symbolDefaults[spec.base.text].atomType == atomType.bigOperator then
-    return elements.bigOpSubscript(spec.kind, spec.base, spec.sub, spec.sup)
-  else
-    return elements.subscript(spec.kind, spec.base, spec.sub, spec.sup)
-  end
+    return elements.subscript(spec.base, spec.sub, spec.sup)
 end
 
--- not local, because used further up this file
+local newUnderOver = function(spec)
+  return elements.underOver(spec.base, spec.sub, spec.sup)
+end
+
+-- not local, because scope defined further up this file
 newStandardHspace = function(fontSize, kind)
   local mu = fontSize / 18
   if kind == "thin" then
@@ -1190,8 +1193,7 @@ elements.table = pl.class({
     end
     self.width = thisColRelX
 
-    -- Center myself vertically around the axis, and update relative Ys of rows
-    -- accordingly
+    -- Center myself vertically around the axis, and update relative Ys of rows accordingly
     local axisHeight = getMathMetrics().constants.axisHeight * self:getScaleDown()
     self.height = self.vertSize / 2 + axisHeight
     self.depth = self.vertSize / 2 - axisHeight
@@ -1210,8 +1212,8 @@ elements.atomType = atomType
 elements.scriptType = scriptType
 elements.mathVariantToScriptType = mathVariantToScriptType
 elements.symbolDefaults = symbolDefaults
-elements.newStandardHspace = newStandardHspace
 elements.newSubscript = newSubscript
+elements.newUnderOver = newUnderOver
 elements.newStandardHspace = newStandardHspace
 
 return elements

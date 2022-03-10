@@ -1,28 +1,25 @@
 \begin{document}
 \chapter{Further Tricks}
 
-We’ll conclude our tour of SILE by looking at some tricky situations which require
-further programming.
+We’ll conclude our tour of SILE by looking at some tricky situations which require further programming.
 
 \section{Parallel Text}
 
-The file \code{examples/parallel.sil} contains a rendering of chapter 1 of
-Matthew’s Gospel in English and Greek. It uses the \code{diglot} class to align
-the two texts side-by-side. \code{diglot} provides the \code{\\left} and \code{\\right}
+The example \url{https://sile-typesetter.org/examples/parallel.sil}
+contains a rendering of chapter 1 of Matthew’s Gospel in English and Greek.
+It uses the \code{diglot} class to align the two texts side-by-side.
+\code{diglot} provides the \code{\\left} and \code{\\right}
 commands to start entering text on the left column or the right column respectively,
-and the \code{\\sync} command to ensure that the two columns are in sync with each
-other. It’s an instructive example of what can be done in a SILE class, so we
-will take it apart and see how it works.
+and the \code{\\sync} command to ensure that the two columns are in sync with each other.
+It’s an instructive example of what can be done in a SILE class, so we will take it apart and see how it works.
 
-The key thing to note is that the SILE typesetter is an object. (in the object-oriented
-programming sense) Normally, it’s a singleton object—i.e. one typesetter is used for
-typesetting everything in a document. But there’s no reason why we can’t have more
-than one. In fact, for typesetting parallel texts, the simplest way to do things is
-to have two typesetters, one for each column, and have them communicate with each
-other at various points in the operation.
+The key thing to note is that the SILE typesetter is an object (in the object-oriented programming sense).
+Normally, it’s a singleton object—i.e. one typesetter is used for typesetting everything in a document.
+But there’s no reason why we can’t have more than one.
+In fact, for typesetting parallel texts, the simplest way to do things is to have two typesetters,
+one for each column, and have them communicate with each other at various points in the operation.
 
-Let’s begin \code{diglot.lua} as usual by setting up the class and declaring our
-frames:
+Let’s begin \code{diglot.lua} as usual by setting up the class and declaring our frames:
 
 \begin{verbatim}
 \line
@@ -39,8 +36,7 @@ diglot:declareFrame("folio",\{left = "left(a)", right = "right(b)",
             top = "bottom(a)+3\%ph",bottom = "bottom(a)+8\%ph" \});
 \end{verbatim}
 
-Now we create two new typesetters, one for each column, and we tell each one
-how to find the other:
+Now we create two new typesetters, one for each column, and we tell each one how to find the other:
 
 \begin{verbatim}
 diglot.leftTypesetter = SILE.defaultTypesetter \{\}
@@ -50,10 +46,9 @@ diglot.leftTypesetter.other = diglot.rightTypesetter
 \end{verbatim}
 
 Each column needs its own font, so we provide commands to store this information.
-The \code{\\leftfont} and \code{\\rightfont} macros simply store their options to
-be passed to the \code{\\font} command every time \code{\\left} and \code{\\right}
-are called. (Because the fonts are controlled by global settings rather than being
-typesetter-specific.)
+The \code{\\leftfont} and \code{\\rightfont} macros simply store their options
+to be passed to the \code{\\font} command every time \code{\\left} and \code{\\right} are called.
+(Because the fonts are controlled by global settings rather than being typesetter-specific.)
 
 \begin{verbatim}
 SILE.registerCommand("leftfont", function(options, content)
@@ -65,12 +60,12 @@ SILE.registerCommand("rightfont", function(options, content)
 end, "Set the font for the right side")
 \end{verbatim}
 
-Next come the commands for sending text to the appropriate typesetter. The current
-typesetter object used by the system is stored in the variable \code{SILE.typesetter};
-many commands and packages call methods on this variable, so we need to ensure
-that this is set to the typesetter object that we want to use. We also want to
-turn off paragraph detection, as we will be handling the paragraphing manually
-using the \code{\\sync} command:
+Next come the commands for sending text to the appropriate typesetter.
+The current typesetter object used by the system is stored in the variable \code{SILE.typesetter};
+many commands and packages call methods on this variable,
+so we need to ensure that this is set to the typesetter object that we want to use.
+We also want to turn off paragraph detection,
+as we will be handling the paragraphing manually using the \code{\\sync} command:
 
 \begin{verbatim}
 SILE.registerCommand("left", function(options, content)
@@ -87,17 +82,16 @@ end, "Begin entering text on the right side")
 \end{verbatim}
 
 The meat of the \code{diglot} package comes in the \code{sync} command,
-which ensures that the two typesetters are aligned. Every time we call
-\code{sync}, we want to ensure that they are both at the same position on
-the page. In other words, if the left typesetter has gone further down the page
-than the right one, we need to insert some blank space onto the right typesetter’s
-output queue to get them back in sync, and vice versa.
+which ensures that the two typesetters are aligned.
+Every time we call \code{sync}, we want to ensure that they are both at the same position on the page.
+In other words, if the left typesetter has gone further down the page than the right one,
+we need to insert some blank space onto the right typesetter’s output queue to get them back in sync,
+and vice versa.
 
-SILE’s page builder has a method called \code{SILE.pagebuilder:collateVboxes}
-which bundles a bunch of vertical boxes into one; we can use this to bundle up
-each typesetter’s output queue and measure the height of the combined vbox.
-(Of course it’s possible to sum the heights of each box on the output queue
-by hand, but this achieves the same goal a bit more cleanly.)
+SILE’s page builder has a method called \code{SILE.pagebuilder:collateVboxes} which bundles a bunch of vertical boxes into one;
+we can use this to bundle up each typesetter’s output queue and measure the height of the combined vbox.
+(Of course it’s possible to sum the heights of each box on the output queue by hand,
+but this achieves the same goal a bit more cleanly.)
 
 \begin{verbatim}
 SILE.registerCommand("sync", function()
@@ -172,7 +166,7 @@ tall glue to the other typesetter’s queue to help the process along:
 
 \begin{verbatim}
 diglot.finish = function(self)
-  table.insert(SILE.typesetter.other.state.outputQueue, SILE.nodefactory.vfillGlue)
+  table.insert(SILE.typesetter.other.state.outputQueue, SILE.nodefactory.vfillglue())
   SILE.typesetter.other:chuck()
   plain.finish(self)
 end
@@ -350,7 +344,7 @@ mark.
 \note{The \code{1} argument to \code{leaveHmode} means “you may not create
 a new page here.”}
 
-In most cases, the cross-reference typesetter hasn't got as far down the page
+In most cases, the cross-reference typesetter hasn’t got as far down the page
 as the body text typesetter, so we tell the cross-reference typesetter to shift itself
 down the page by the difference. Unlike the parallel example, where either typesetter
 could tell the other to open up additional vertical space, in this case it’s OK if
@@ -368,13 +362,13 @@ can output the cross-reference itself.
 
 \begin{verbatim}
   SILE.settings.temporarily(function()
-    SILE.settings.set("document.baselineskip", SILE.nodefactory.newVglue("7pt"))
+    SILE.settings.set("document.baselineskip", SILE.nodefactory.vglue("7pt"))
     SILE.call("font", \{size = "6pt", family="Helvetica", weight="800"\}, \{\})
     discovery.innerTypesetter:typeset(SILE.scratch.chapter..":"..SILE.scratch.verse.." ")
     SILE.call("font", \{size = "6pt", family="Helvetica", weight="200"\}, \{\})
     discovery.innerTypesetter:typeset(xref)
     discovery.innerTypesetter:leaveHmode()
-    discovery.innerTypesetter:pushVglue(\{ height = SILE.length.new(\{length = 4\}) \})
+    discovery.innerTypesetter:pushVglue(\{ height = SILE.length(\{length = 4\}) \})
   end)
 end
 \line
@@ -398,7 +392,7 @@ an existing document. But what if you have a program which produces or munges
 data, and you would like to produce PDFs from within your application?
 In that case, it may be easier and provide more flexibility to use SILE as a library.
 
-In the \code{examples/} directory of the SILE distribution, you will find an
+At \url{https://sile-typesetter.org/examples/byhand.lua}, you will find an
 example of a Lua script which produces a PDF from SILE. It’s actually fairly
 simple to use SILE from within Lua; the difficult part is setting things up.
 Here’s how to do it.
@@ -438,71 +432,56 @@ plain:finish()
 
 \section{Debugging}
 
-When you are experimenting with SILE and its API, you may find it necessary
-to get further information about what SILE is up to. SILE has a variety of
-debugging switches that can be turned on by the command line or by Lua code.
+When you are experimenting with SILE and its API, you may find it necessary to get further information about what SILE is up to.
+SILE has a variety of debugging switches that can be turned on by the command line or by Lua code.
 
-Running SILE with the \code{--debug \em{facility}} switch will turn on
-debugging for a particular area or areas of SILE’s operation:
+Running SILE with the \code{--debug \em{facility}} switch will turn on debugging for a particular area or areas of SILE’s operation:
 
 % Scan code for currently used flags:
 % rg -I '.*SU.debug(ging)?\("(\w+)".*' -r '$2' | =sort -u
 
-\noindent{}• \code{ast} provides information about how SILE parsed the document
-into an abstract syntax tree.
+\noindent{}• \code{ast} provides information about how SILE parsed the document into an abstract syntax tree.
 
-\noindent{}• \code{break} provides (copious) information about the line
-breaking algorithm.
+\noindent{}• \code{break} provides (copious) information about the line breaking algorithm.
 
-\noindent{}• \code{fonts} shows what font families and attributes were
-attempted and what font files were used to supply them.
+\noindent{}• \code{fonts} shows what font families and attributes were attempted and what font files were used to supply them.
 
 \noindent{}• \code{frames} draws red boxes around the frames on the page.
 
 \noindent{}• \code{hboxes} draws red boxes around all the hboxes on the page.
 
-\noindent{}• \code{pagebuilder} helps to debug problems when determining page
-breaks.
+\noindent{}• \code{pagebuilder} helps to debug problems when determining page breaks.
 
-\noindent{}• \code{macros} notes when new functions are defined from TeXlike
-macro syntax.
+\noindent{}• \code{macros} notes when new functions are defined from TeXlike macro syntax.
 
-\noindent{}• \code{makedeps} lists resources that were determined to be
-dependencies (use with \code{-m}).
+\noindent{}• \code{makedeps} lists resources that were determined to be dependencies (use with \code{-m}).
 
-\noindent{}• \code{profile} turns on Lua profiling, which gives a report on
-where the Lua interpreter is spending its time while processing your document.
+\noindent{}• \code{profile} turns on Lua profiling,
+which gives a report on where the Lua interpreter is spending its time while processing your document.
 It also makes SILE go really, really slow.
 
-\noindent{}• \code{pushback} notes how already-shaped content that didn't fit
-in frames is processed as it migrates to following ones.
+\noindent{}• \code{pushback} notes how already-shaped content that didn’t fit in frames is processed as it migrates to following ones.
 
-\noindent{}• \code{tokenizer} shows how input content gets broken up into
-segments before shaping.
+\noindent{}• \code{tokenizer} shows how input content gets broken up into segments before shaping.
 
 \noindent{}• \code{typesetter} provides general debugging for the typesetter:
-turning characters into boxes, boxes into lines, lines into paragraphs, and
-paragraphs into pages.
+turning characters into boxes, boxes into lines, lines into paragraphs, and paragraphs into pages.
 
-\noindent{}• \code{vboxes} provides even more information about page break
-decisions, showing you what vboxes were in SILE's queue when considering the
-breaking.
+\noindent{}• \code{vboxes} provides even more information about page break decisions,
+showing you what vboxes were in SILE’s queue when considering the breaking.
 
-\noindent{}• \code{versions} gives a report on the versions of libraries and
-fonts in use; please include this information when reporting bugs in SILE!
+\noindent{}• \code{versions} gives a report on the versions of libraries and fonts in use;
+please include this information when reporting bugs in SILE!
 
-\noindent{}• Any package or other area of SILE’s operation may define their own
-debugging tags; the \code{insertions} package does this, as do the Japanese and
-Uyghur language support systems (\code{--debug uyghur}). Often the debug flag
-is the name of the package or the function.
+\noindent{}• Any package or other area of SILE’s operation may define their own debugging tags;
+the \code{insertions} package does this, as do the Japanese and Uyghur language support systems (\code{--debug uyghur}).
+Often the debug flag is the name of the package or the function.
 
-Multiple facilities can be turned on by adding the flag multiple times or by
-separating them with commas: \code{--debug typesetter,break} will turn on
-debugging information for the typesetter and line breaker.
+Multiple facilities can be turned on by adding the flag multiple times or by separating them with commas:
+\code{--debug typesetter,break} will turn on debugging information for the typesetter and line breaker.
 
-From Lua, you can add entries to the \code{SILE.debugFlags} table to turn on
-debugging for a given facility. This can be useful for temporarily debugging
-a particular operation:
+From Lua, you can add entries to the \code{SILE.debugFlags} table to turn on debugging for a given facility.
+This can be useful for temporarily debugging a particular operation:
 
 \begin{verbatim}
 \line
@@ -512,9 +491,8 @@ SILE.debugFlags.typesetter = false
 \line
 \end{verbatim}
 
-From a package’s point of view, you can write debugging information by
-calling the \code{SU.debug} function (\code{SU} stands for SILE Utilities,
-and contains a variety of auxiliary functions used throughout SILE):
+From a package’s point of view, you can write debugging information by calling the \code{SU.debug} function
+(\code{SU} stands for SILE Utilities, and contains a variety of auxiliary functions used throughout SILE):
 
 \begin{verbatim}
 \line
@@ -522,8 +500,8 @@ SU.debug("mypackage", "Doing a thing")
 \line
 \end{verbatim}
 
-When an error occurs, for example when writing custom scripts, its traceback
-(\em{stack trace}) can be printed via the \code{--trace}, or \code{-t} switch:
+When an error occurs, for example when writing custom scripts,
+its traceback (\em{stack trace}) can be printed via the \code{--trace}, or \code{-t} switch:
 
 \begin{verbatim}
 \line
@@ -547,9 +525,8 @@ stack traceback:
 \end{verbatim}
 
 Sometimes it’s useful for you to try out Lua code within the SILE environment;
-SILE contains a REPL (read-evaluate-print loop) for you to enter Lua code and
-print the results back to you. If you call SILE with no input file name, it
-enters the REPL:
+SILE contains a REPL (read-evaluate-print loop) for you to enter Lua code and print the results back to you.
+If you call SILE with no input file name, it enters the REPL:
 
 \begin{verbatim}
 \sileversion
@@ -558,24 +535,20 @@ enters the REPL:
 62.3622054
 \end{verbatim}
 
-At any point during the evaluation of Lua commands, you can call \code{SILE.repl()}
-to enter the REPL and poke around; hitting Ctrl-D will end the REPL and
-return to processing the document.
+At any point during the evaluation of Lua commands, you can call \code{SILE.repl()} to enter the REPL and poke around;
+hitting Ctrl-D will end the REPL and return to processing the document.
 
-Two alternative backends are also useful for debugging. Both use the same
-shaping engine as the default \code{libtexpdf} backend, but instead of
-actually generating a PDF they only output some textual information about
-what's going on. The \code{debug} backend (activated by calling
-\code{sile -b debug <input>}) will generate a log file with a \code{.debug}
-extension detailing each string and it's exact output loction. A simpler
-\code{text} backend (\code{sile -b text <input>}) will output a \code{.txt}
+Two alternative backends are also useful for debugging.
+Both use the same shaping engine as the default \code{libtexpdf} backend,
+but instead of actually generating a PDF they only output some textual information about what’s going on.
+The \code{debug} backend (activated by calling \code{sile -b debug <input>})
+will generate a log file with a \code{.debug} extension detailing each string and it’s exact output loction.
+A simpler \code{text} backend (\code{sile -b text <input>}) will output a \code{.txt}
 file with just the text strings with rough approximations of line breaks.
 Either may be sent to STDOUT instead of files using \code{-o /dev/stdout}.
 
 \section{Conclusion}
 
-We’ve seen not just the basic functionality of SILE but also given you some
-examples of how to extend it in new directions; how to use the SILE API to
-solve difficult problems in typesetting. Go forth and create your own SILE
-packages!
+We’ve seen not just the basic functionality of SILE but also given you some examples of how to extend it in new directions;
+how to use the SILE API to solve difficult problems in typesetting. Go forth and create your own SILE packages!
 \end{document}

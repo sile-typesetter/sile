@@ -1,9 +1,8 @@
-local ot = SILE.require("core/opentype-parser")
-
 SILE.shapers.harfbuzzWithColor = pl.class({
     _base = SILE.shapers.harfbuzz,
 
     shapeToken = function (self, str, options)
+      local ot = SILE.require("core/opentype-parser")
       if not options.family then return {} end
       local face = SILE.font.cache(options, SILE.shaper.getFace)
       local font = ot.parseFont(face)
@@ -33,6 +32,8 @@ SILE.shapers.harfbuzzWithColor = pl.class({
                 height = height,
                 depth = item.depth,
                 index = item.index,
+                x_offset = item.x_offset,
+                y_offset = item.y_offset,
                 text = text,
                 color = color,
               }
@@ -85,9 +86,10 @@ SILE.shapers.harfbuzzWithColor = pl.class({
     end
   })
 
-SILE.shaper = SILE.shapers.harfbuzzWithColor()
-
 return {
+  init = function (_, _)
+    SILE.shaper = SILE.shapers.harfbuzzWithColor()
+  end,
   documentation = [[
 \begin{document}
   The \code{color-fonts} package adds support for fonts with a \code{COLR}

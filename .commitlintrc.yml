@@ -32,7 +32,6 @@ rules:
     - debug
     - docker
     - deps
-    - examples
     - fonts
     - frames
     - images

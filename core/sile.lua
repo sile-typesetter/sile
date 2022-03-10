@@ -67,6 +67,7 @@ SILE.linebreak = require("core/break")
 require("core/frame")
 
 SILE.init = function ()
+  -- Set by def
   if not SILE.backend then
     if pcall(function () require("justenoughharfbuzz") end) then
       SILE.backend = "libtexpdf"
@@ -128,9 +129,9 @@ SILE.parseArguments = function ()
   cli:option("-d, --debug=VALUE", "show debug information for tagged aspects of SILE’s operation", {})
   cli:option("-e, --evaluate=VALUE", "evaluate some Lua code before processing file", {})
   cli:option("-f, --fontmanager=VALUE", "choose an alternative font manager")
-  cli:option("-m, --makedeps=[FILE]", "generate a list of dependencies in Makefile format")
-  cli:option("-o, --output=[FILE]", "explicitly set output file name")
-  cli:option("-I, --include=[FILE]", "include a class or SILE file before processing input", {})
+  cli:option("-m, --makedeps=FILE", "generate a list of dependencies in Makefile format")
+  cli:option("-o, --output=FILE", "explicitly set output file name")
+  cli:option("-I, --include=FILE", "include a class or SILE file before processing input", {})
   cli:flag("-t, --traceback", "display detailed location trace on errors and warnings")
   cli:flag("-h, --help", "display this help, then exit")
   cli:flag("-v, --version", "display version information, then exit", print_version)

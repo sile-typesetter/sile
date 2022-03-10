@@ -32,28 +32,31 @@ As well as processing text, SILE can also include images.
 
 Loading the \code{image} package gives you the \code{\\img} command, fashioned
 after the HTML equivalent. \code{\\img} takes the following parameters:
-\code{src=\dots} must be the path to an image file;
-you may also give \code{height=\dots} and/or \code{width=\dots} parameters
+\code{src=…} must be the path to an image file;
+you may also give \code{height=…} and/or \code{width=…} parameters
 to specify the output size of the image on the paper. If the size parameters
-are not given, then the image will be output at its ‘natural’ pixel size.
+are not given, then the image will be output at its ‘natural’ size,
+honoring its resolution if available.
 
 \begin{note}
 With the libtexpdf backend (the default), the images can be in JPEG, PNG,
 EPS or PDF formats.
 \end{note}
 
-Here is a 200x243 pixel image output with \code{\\img[src=documentation/gutenberg.png]}:\par
+Here is a 200x243 pixel image output with \code{\\img[src=documentation/gutenberg.png]}.
+The image has a claimed resolution of 100 pixels per inch, so ends up being 2 inches (144pt)
+wide on the page:\par
 \img[src=documentation/gutenberg.png]
 
 \raggedright{
 Here it is with (respectively)
-\code{\\img[src=documentation/gutenberg.png,width=120px]},
-\code{\\img[src=documentation/gutenberg.png,height=200px]}, and
-\code{\\img[src=documentation/gutenberg.png,width=120px,height=200px]}:}
+\code{\\img[src=documentation/gutenberg.png,width=120pt]},
+\code{\\img[src=documentation/gutenberg.png,height=200pt]}, and
+\code{\\img[src=documentation/gutenberg.png,width=120pt,height=200pt]}:}
 
-\img[src=documentation/gutenberg.png,width=120px]
-\img[src=documentation/gutenberg.png,height=200px]
-\img[src=documentation/gutenberg.png,width=120px,height=200px]
+\img[src=documentation/gutenberg.png,width=120pt]
+\img[src=documentation/gutenberg.png,height=200pt]
+\img[src=documentation/gutenberg.png,width=120pt,height=200pt]
 
 Notice that images are typeset on the baseline of a line of text, rather like
 a very big letter.

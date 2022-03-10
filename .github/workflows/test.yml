@@ -19,7 +19,7 @@ jobs:
     name: Test on Lua ${{ matrix.luaVersion[0] }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Cache test fonts
@@ -63,7 +63,7 @@ jobs:
       - name: Configure
         run: |
           ./bootstrap.sh
-          ./configure --without-system-luarocks --with${{ startsWith(matrix.luaVersion[0], '5') && 'out' || '' }}-luajit --without-manual --without-examples
+          ./configure --without-system-luarocks --with${{ startsWith(matrix.luaVersion[0], '5') && 'out' || '' }}-luajit --without-manual
       - name: Make
         run: |
           make

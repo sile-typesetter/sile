@@ -67,10 +67,10 @@ This loads and parses an SVG file and attempts to render it in the current
 document. Optional width or height options will scale the SVG canvas to the
 given size calculated at a given density option (which defaults to 72 ppi). For
 example, the command
-\code{\\svg[src=examples/packages/smiley.svg,\goodbreak{}height=12pt]}
+\code{\\svg[src=packages/svg/smiley.svg,\goodbreak{}height=12pt]}
 produces the following:
 
-\svg[src=examples/packages/smiley.svg,height=12pt]
+\svg[src=packages/svg/smiley.svg,height=12pt]
 
 The second is a more experimental \code{\\svg-glyph}. When the current font is
 set to an SVG font, SILE does not currently render the SVG glyphs

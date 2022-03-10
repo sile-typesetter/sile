@@ -20,7 +20,7 @@ represents a hexadecimal digit (\code{#000} is black, \code{#fff} is white,
 
 \note{The HTML and CSS named colors can be found at \code{http://dev.w3.org/csswg/css-color/#named-colors}.}
 
-So, for example, \color[color=red]{this text is typeset with \code{\\color[color=red]\{\dots\}}}.
+So, for example, \color[color=red]{this text is typeset with \code{\\color[color=red]\{…\}}}.
 
 Here is a rule typeset with \code{\\color[color=#22dd33]}:
 \color[color=#ffdd33]{\hrule[width=120pt,height=0.5pt]}

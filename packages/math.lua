@@ -7,6 +7,10 @@ return {
 \set[parameter=math.font.family, value=Libertinus Math]
 \set[parameter=math.font.size, value=11]
 
+% Default verbatim font (Hack) is missing a few math symbols
+\script[src=packages/font-fallback]
+\font:add-fallback[family=Symbola]
+
 This package provides typesetting of formulas directly in a SILE document.
 
 \note{Mathematical typesetting in SILE is still in its infancy. As such, it
@@ -18,7 +22,7 @@ system\footnote{A list of freely available math fonts can be found at
 \href[src=https://www.ctan.org/pkg/unicode-math]{https://www.ctan.org/pkg/unicode-math}}.
 By default, this package uses Libertinus Math, so it will fail if Libertinus
 Math can’t be found. Another font may be specified via the setting
-\code{math.font.family}.
+\autodoc:setting{math.font.family}.
 
 The first way to typeset math formulas is to enter them in the MathML format.
 MathML is a standard for encoding mathematical notation for the Web and for
@@ -144,12 +148,12 @@ In the \code{math} syntax, every individual letter is an identifier (MathML tag
 are operators (tag \code{mo}). If it does not suit you, you can explicitly use
 the \code{\\mi}, \code{\\mn} or \code{\\mo} tags. For instance, \code{sin(x)}
 will be rendered as \math{sin(x)}, because SILE considers the letters s, i and n
-to be individual identifiers, and identifiers are italicized by default. To
-avoid that, you can specify that \math{\mo{sin}} is actually an operator by
-writing \code{\\mo\{sin\}(x)} and get: \math{\mo{sin}(x)}. If you prefer it in
-“double struck” style, this is permitted by the \code{mathvariant} attribute:
-\code{\\mo[mathvariant=double-struck]\{sin\}(x)} renders as
-\math{\mo[mathvariant=double-struck]{sin}(x)}.
+to be individual identifiers, and identifiers made of one character are
+italicized by default. To avoid that, you can specify that \math{\mi{sin}} is an
+identifier by writing \code{\\mi\{sin\}(x)} and get: \math{\mi{sin}(x)}. If you
+prefer it in “double struck” style, this is permitted by the \code{mathvariant}
+attribute: \code{\\mi[mathvariant=double-struck]\{sin\}(x)} renders as
+\math{\mi[mathvariant=double-struck]{sin}(x)}.
 
 To save you some typing, the math syntax lets you define macros with the
 following syntax:
@@ -282,6 +286,7 @@ hopefully we’ll get there. Among unsupported constructs are: decorating symbol
 with so-called accents, such as arrows or hats, “over” or “under” braces, and
 line breaking inside a formula.
 
+\font:remove-fallback
 \end{document}
 ]]
 }

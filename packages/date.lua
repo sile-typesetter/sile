@@ -21,7 +21,7 @@ return {
   },
 documentation = [[\begin{document}
 The \code{date} package provides the \code{date} command, which simply
-outputs the date using the system's date function. You can customize
+outputs the date using the system’s date function. You can customize
 the format by passing the \code{format} parameter, following the
 formatting codes in the Lua manual. (\url{https://www.lua.org/pil/22.1.html})
 \end{document}

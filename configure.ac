@@ -21,12 +21,13 @@ AC_PROG_SED
 AX_PROGVAR([cmp])
 AX_PROGVAR([git])
 
+DATEFMT='%d %B %Y'
 AM_COND_IF([IS_SDIST],
            [
             AX_PROGVAR([date])
-            MAN_DATE=$($DATE "+%d %B %Y")
+            AX_BUILD_DATE_EPOCH(MAN_DATE, "$DATEFMT")
            ], [
-            MAN_DATE=$($GIT log -1 --format="%cd" --date=format:"%d %B %Y" -- sile.1.in)
+            MAN_DATE=$($GIT log -1 --format="%cd" --date=format:"$DATEFMT" -- sile.1.in)
            ])
 AC_SUBST([MAN_DATE])
 
@@ -52,10 +53,6 @@ AM_CONDITIONAL([LUAJIT], [test "x$with_luajit" = "xyes"])
 AC_ARG_WITH([manual],
             AS_HELP_STRING([--with-manual], [Rebuild manual and install to system’s PDF documentation directory]))
 AM_CONDITIONAL([MANUAL], [test "x$with_manual" = "xyes"])
-
-AC_ARG_WITH([examples],
-            AS_HELP_STRING([--with-examples], [Rebuild examples and install to system’s PDF documentation directory]))
-AM_CONDITIONAL([EXAMPLES], [test "x$with_examples" = "xyes"])
 
 AM_COND_IF([SYSTEM_LIBTEXPDF],
            [AC_CHECK_LIB([texpdf],[texpdf_doc_set_verbose],

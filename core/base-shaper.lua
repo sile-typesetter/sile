@@ -25,9 +25,12 @@ end
 
 local function shapespace (spacewidth)
   spacewidth = SU.cast("measurement", spacewidth)
+  -- In some scripts with word-level kerning, glue can be negative.
+  -- Use absolute value to ensure stretch and shrink work as expected.
+  local absoluteSpaceWidth = math.abs(spacewidth:tonumber())
   local length = spacewidth * SILE.settings.get("shaper.spaceenlargementfactor")
-  local stretch = spacewidth * SILE.settings.get("shaper.spacestretchfactor")
-  local shrink = spacewidth * SILE.settings.get("shaper.spaceshrinkfactor")
+  local stretch = absoluteSpaceWidth * SILE.settings.get("shaper.spacestretchfactor")
+  local shrink = absoluteSpaceWidth * SILE.settings.get("shaper.spaceshrinkfactor")
   return SILE.length(length, stretch, shrink)
 end
 
@@ -60,7 +63,11 @@ SILE.shapers.base = pl.class({
       local options = SILE.font.loadDefaults({})
       options.tracking = SILE.settings.get("shaper.tracking")
       local items = self:shapeToken(char, options)
-      return { height = items[1].height, width = items[1].width }
+      if #items > 0 then
+        return { height = items[1].height, width = items[1].width }
+      else
+        SU.error("Unable to measure character", char)
+      end
     end,
 
     -- Given a text and some font options, return a bunch of boxes

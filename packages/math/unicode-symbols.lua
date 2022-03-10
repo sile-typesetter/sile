@@ -1,6 +1,3 @@
-local tex = require("packages/math/texlike")
-local symbols = tex.symbols
-
 local atomType = {
   ordinary = 0,
   bigOperator = 1,
@@ -26,13 +23,15 @@ local mkAtomType = {
   mathfence = atomType.ordinary,
   mathalpha = atomType.ordinary,
   mathbin = atomType.binaryOperator,
-  mathaccent = atomType.accentedSymbol,
+  mathaccent = atomType.accentSymbol,
   mathaccentwide = atomType.accentSymbol,
   mathrel = atomType.relationalOperator,
   mathunder = atomType.underSymbol,
   mathover = atomType.overSymbol,
   mathop = atomType.ordinary,
 }
+
+local symbols = {}
 
 -- TODO: Stuff 4th argument (description) into help string for symbol command
 local function addSymbol(codepoint, command, typ, _)
@@ -2558,20 +2557,36 @@ symbolDefaults['='] = { atomType = atomType.relationalOperator }
 symbolDefaults['≠'] = { atomType = atomType.relationalOperator }
 symbolDefaults['∈'] = { atomType = atomType.relationalOperator }
 symbolDefaults['⊆'] = { atomType = atomType.relationalOperator }
-symbolDefaults['∑'] = { atomType = atomType.bigOperator }
-symbolDefaults['∏'] = { atomType = atomType.bigOperator }
-symbolDefaults['⋀'] = { atomType = atomType.bigOperator }
-symbolDefaults['⋁'] = { atomType = atomType.bigOperator }
-symbolDefaults['⋂'] = { atomType = atomType.bigOperator }
-symbolDefaults['⋃'] = { atomType = atomType.bigOperator }
-symbolDefaults['⨅'] = { atomType = atomType.bigOperator }
-symbolDefaults['⨆'] = { atomType = atomType.bigOperator }
-symbolDefaults['∫'] = { atomType = atomType.bigOperator }
-symbolDefaults['∬'] = { atomType = atomType.bigOperator }
-symbolDefaults['∭'] = { atomType = atomType.bigOperator }
-symbolDefaults['∮'] = { atomType = atomType.bigOperator }
-symbolDefaults['∯'] = { atomType = atomType.bigOperator }
-symbolDefaults['∰'] = { atomType = atomType.bigOperator }
+symbolDefaults['∑'] = { atomType = atomType.bigOperator,
+  largeop = true
+}
+symbolDefaults['∏'] = { atomType = atomType.bigOperator,
+  largeop = true
+}
+symbolDefaults['⋀'] = { atomType = atomType.bigOperator,
+  largeop = true
+}
+symbolDefaults['⋁'] = { atomType = atomType.bigOperator,
+  largeop = true
+}
+symbolDefaults['⋂'] = { atomType = atomType.bigOperator,
+  largeop = true
+}
+symbolDefaults['⋃'] = { atomType = atomType.bigOperator,
+  largeop = true
+}
+symbolDefaults['⨅'] = { atomType = atomType.bigOperator,
+  largeop = true
+}
+symbolDefaults['⨆'] = { atomType = atomType.bigOperator,
+  largeop = true
+}
+symbolDefaults['∫'] = { largeop = true }
+symbolDefaults['∬'] = { largeop = true }
+symbolDefaults['∭'] = { largeop = true }
+symbolDefaults['∮'] = { largeop = true }
+symbolDefaults['∯'] = { largeop = true }
+symbolDefaults['∰'] = { largeop = true }
 symbolDefaults[','] = { atomType = atomType.punctuationSymbol }
 symbolDefaults['⟹'] = { atomType = atomType.relationalOperator }
 symbolDefaults['/'] = { atomType = atomType.binaryOperator }
@@ -2592,6 +2607,7 @@ symbolDefaults['}'] = { atomType = atomType.closeSymbol,
             stretchy = true}
 
 return {
+  symbols = symbols,
   atomType = atomType,
   symbolDefaults = symbolDefaults,
 }

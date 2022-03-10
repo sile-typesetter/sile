@@ -1,6 +1,7 @@
 -- Interpret a MathML or TeX-like AST, typeset it and add it to the output.
 local b = require("packages/math/base-elements")
 local tex = require("packages/math/texlike")
+local syms = require("packages/math/unicode-symbols")
 
 local ConvertMathML
 
@@ -22,20 +23,29 @@ function ConvertMathML(content)
     return b.stackbox('H', convertChildren(content))
   elseif content.command == 'mi' then
     local script = content.options.mathvariant and
-      b.mathVariantToScriptType(content.options.mathvariant) or b.scriptType.italic
+      b.mathVariantToScriptType(content.options.mathvariant)
     local text = content[1]
     if type(text) ~= "string" then
       SU.error("mi command contains "..text..", which is not text")
     end
-    return b.text('identifier', script, text)
+    script = script or (luautf8.len(text) == 1
+      and b.scriptType.italic or b.scriptType.upright)
+    return b.text('identifier', {}, script, text)
   elseif content.command == 'mo' then
     local script = content.options.mathvariant and
       b.mathVariantToScriptType(content.options.mathvariant) or b.scriptType.upright
     local text = content[1]
+    local attributes = {}
+    if syms.symbolDefaults[text] then
+      for attribute,value in pairs(syms.symbolDefaults[text]) do
+        SU.debug("math", "attribute = "..attribute..", value = "..value)
+        attributes[attribute] = value
+      end
+    end
     if type(text) ~= "string" then
       SU.error("mo command contains "..text..", which is not text")
     end
-    return b.text('operator', script, text)
+    return b.text('operator', attributes, script, text)
   elseif content.command == 'mn' then
     local script = content.options.mathvariant and
       b.mathVariantToScriptType(content.options.mathvariant) or b.scriptType.upright
@@ -46,7 +56,7 @@ function ConvertMathML(content)
     if string.sub(text, 1, 1) == "-" then
       text = "−"..string.sub(text, 2)
     end
-    return b.text('number', script, text)
+    return b.text('number', {}, script, text)
   elseif content.command == "mspace" then
     return b.space(
       SILE.length(content.options.width),
@@ -55,15 +65,27 @@ function ConvertMathML(content)
   elseif content.command == 'msub' then
     local children = convertChildren(content)
     if #children ~= 2 then SU.error('Wrong number of children in msub') end
-    return b.newSubscript({ kind="sub", base=children[1], sub=children[2] })
+    return b.newSubscript({ base=children[1], sub=children[2] })
   elseif content.command == 'msup' then
     local children = convertChildren(content)
     if #children ~= 2 then SU.error('Wrong number of children in msup') end
-    return b.newSubscript({ kind="sup", base=children[1], sup=children[2] })
+    return b.newSubscript({ base=children[1], sup=children[2] })
   elseif content.command == 'msubsup' then
     local children = convertChildren(content)
     if #children ~= 3 then SU.error('Wrong number of children in msubsup') end
-    return b.newSubscript({ kind="subsup", base=children[1], sub=children[2], sup=children[3] })
+    return b.newSubscript({ base=children[1], sub=children[2], sup=children[3] })
+  elseif content.command == 'munder' then
+    local children = convertChildren(content)
+    if #children ~= 2 then SU.error('Wrong number of children in munder') end
+    return b.newUnderOver({ base=children[1], sub=children[2] })
+  elseif content.command == 'mover' then
+    local children = convertChildren(content)
+    if #children ~= 2 then SU.error('Wrong number of children in mover') end
+    return b.newUnderOver({ base=children[1], sup=children[2] })
+  elseif content.command == 'munderover' then
+    local children = convertChildren(content)
+    if #children ~= 3 then SU.error('Wrong number of children in munderover') end
+    return b.newUnderOver({ base=children[1], sub=children[2], sup=children[3] })
   elseif content.command == 'mfrac' then
     local children = convertChildren(content)
     if #children ~= 2 then SU.error('Wrong number of children in mfrac: '

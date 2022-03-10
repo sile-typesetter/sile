@@ -1,3 +1,9 @@
+.fonts:
+	[ -h .fonts ] || mkdir -p $@
+
+.sources:
+	[ -h .sources ] || mkdir -p $@
+
 # Don't let make delete things we had to download
 .PRECIOUS: .fonts/% .sources/%
 
@@ -16,37 +22,30 @@ DOCSFONTFILES += NotoSansEthiopic-Regular.ttf
 DOCSFONTFILES += RobotoCondensed-Bold.ttf
 DOCSFONTFILES += Symbola.otf
 
-EXAMFONTFILES  = $(DOCSFONTFILES)
-EXAMFONTFILES += Amiri-Regular.ttf
-EXAMFONTFILES += DejaVuSansCondensed-Bold.ttf DejaVuSans-Bold.ttf DejaVuSans-Oblique.ttf
-EXAMFONTFILES += LibreBaskerville-Italic.otf
-EXAMFONTFILES += Miama.otf
-EXAMFONTFILES += mnglwhiteotf.ttf
-EXAMFONTFILES += NotoSerifCJK-Regular.ttc
-EXAMFONTFILES += Roboto-Regular.ttf Roboto-Bold.ttf
-
-TESTFONTFILES  = $(EXAMFONTFILES)
+TESTFONTFILES  = $(DOCSFONTFILES)
+TESTFONTFILES += Amiri-Regular.ttf
 TESTFONTFILES += AmiriQuran.ttf
+TESTFONTFILES += AwamiNastaliq-Regular.ttf
 TESTFONTFILES += LibertinusSans-Bold.otf
 TESTFONTFILES += NotoNaskhArabic-Regular.ttf
 TESTFONTFILES += NotoSansKannada-Regular.ttf
 TESTFONTFILES += NotoSansMalayalam-Regular.ttf
+TESTFONTFILES += NotoSerifCJK-Regular.ttc
 TESTFONTFILES += SBL_Hbrw.ttf
 TESTFONTFILES += TwemojiMozilla.ttf
+
+notobase = $(shell echo $(notdir $1) | sed -e 's/-.*//')
 
 # Tell make how to download individual font files directly (when available)
 
 .fonts/Amiri%: | .fonts
 	curl -fsSL https://github.com/alif-type/amiri/raw/0.113/$(notdir $@) -o $@
 
-.fonts/mngl%.ttf: | .fonts
-	curl -fsSL http://mongolfont.com/jAlmas/cms/documents/mongolfont/font/$(notdir $@) -o $@
-
 .fonts/Noto%.ttf: | .fonts
-	curl -fsSL https://github.com/googlefonts/noto-fonts/raw/v2017-09-19-phase3-second/hinted/$(notdir $@) -o $@
+	curl -fsSL https://raw.githubusercontent.com/googlefonts/noto-fonts/v20201206-phase3/hinted/ttf/$(call notobase,$@)/$(notdir $@) -o $@
 
 .fonts/Noto%.ttc: | .fonts
-	curl -fsSL https://github.com/googlefonts/noto-cjk/raw/NotoSansV2.001/$(notdir $@) -o $@
+	curl -fsSL https://raw.githubusercontent.com/googlefonts/noto-cjk/v20201206-cjk/$(notdir $@) -o $@
 
 .fonts/SBL_Hbrw.ttf: | .fonts
 	curl -fsSL https://www.sbl-site.org/Fonts/$(notdir $@) -o $@
@@ -59,17 +58,14 @@ TESTFONTFILES += TwemojiMozilla.ttf
 
 # Tell  make how to download font file bundles (when not downloadable individually)
 
-.sources/The_Brill_Typeface_Package_v_4_0.zip: | .sources
-	curl -fsSL https://brill.com/fileasset/$(notdir $@) -o $@
+.sources/AwamiNastaliq-2.200.zip: | .sources
+	curl -fsSL https://software.sil.org/downloads/r/awami/$(notdir $@) -o $@
 
 .sources/CrimsonPro.zip: | .sources
 	curl -fsSL https://fonts.google.com/download?family=Crimson+Pro -o $@
 
 .sources/Cormorant_Install_v3.601.zip: | .sources
 	curl -fsSL https://github.com/CatharsisFonts/Cormorant/releases/download/v3.601/$(notdir $@) -o $@
-
-.sources/dejavu-fonts-ttf-2.37.tar.bz2: | .sources
-	curl -fsSL https://github.com/dejavu-fonts/dejavu-fonts/releases/download/version_2_37/$(notdir $@) -o $@
 
 .sources/GentiumBasic_1102.zip: | .sources
 	curl -fsSL https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
@@ -86,12 +82,6 @@ TESTFONTFILES += TwemojiMozilla.ttf
 .sources/Libertinus-%.tar.xz: | .sources
 	curl -fsSL https://github.com/alerque/libertinus/releases/download/v$*/$(notdir $@) -o $@
 
-.sources/libre-baskerville.zip: | .sources
-	curl -fsSL https://www.fontsquirrel.com/fonts/download/$(notdir $@) -o $@
-
-.sources/Miama.zip: | .sources
-	curl -fsSL https://www.fontsquirrel.com/fonts/download/$(notdir $@) -o $@
-
 .sources/roboto-unhinted.zip: | .sources
 	curl -fsSL https://github.com/google/roboto/releases/download/v2.138/$(notdir $@) -o $@
 
@@ -102,8 +92,8 @@ TESTFONTFILES += TwemojiMozilla.ttf
 
 # Tell make how to extract individual files from bundles
 
-.fonts/Brill%: .sources/The_Brill_Typeface_Package_v_4_0.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) "$(basename $(<F))/$(notdir $@)"
+.fonts/AwamiNastaliq%: .sources/AwamiNastaliq-2.200.zip | .fonts
+	bsdtar -x -f $< -C $(dir $@) --strip-components 1 $(basename $(<F))/$(notdir $@)
 	touch $@
 
 .fonts/Cormorant%: .sources/Cormorant_Install_v3.601.zip | .fonts
@@ -112,10 +102,6 @@ TESTFONTFILES += TwemojiMozilla.ttf
 
 .fonts/CrimsonPro%: .sources/CrimsonPro.zip | .fonts
 	bsdtar -x -f $< -C $(dir $@) --strip-components 1 static/$(notdir $@)
-	touch $@
-
-.fonts/DejaVu%: .sources/dejavu-fonts-ttf-2.37.tar.bz2 | .fonts
-	bsdtar -x -f $< -C $(dir $@) --strip-components 2 $(basename $(basename $(<F)))/ttf/$(notdir $@)
 	touch $@
 
 .fonts/GenB%: .sources/GentiumBasic_1102.zip | .fonts
@@ -136,14 +122,6 @@ TESTFONTFILES += TwemojiMozilla.ttf
 
 .fonts/LateefGR%: .sources/LateefGR-1.200.zip | .fonts
 	bsdtar -x -f $< -C $(dir $@) --strip-components 1 $(basename $(<F))/$(notdir $@)
-	touch $@
-
-.fonts/LibreBaskerville%: .sources/libre-baskerville.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
-	touch $@
-
-.fonts/Miama%: .sources/Miama.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
 	touch $@
 
 .fonts/Roboto%: .sources/roboto-unhinted.zip | .fonts

@@ -105,6 +105,12 @@ Packages are available for NixOS:
 
 The Nix package manager is also available on many other Linux distributions, as well as for macOS.
 
+If you have flakes support\footnote{\url{https://nixos.wiki/wiki/Flakes#Installing_flakes}} enabled, you can run sile with:
+
+\begin{terminal}
+nix run github:sile-typesetter/sile <sile arguments>
+\end{terminal}
+
 \subsection{Void Linux}
 
 Void Linux packages are available in the default package manager.
@@ -205,19 +211,6 @@ Otherwise to go with default of bundling them, just run:
 
 \terminal{$ ./configure}
 
-If that comand was successful, you can build SILE itself:
-
-\terminal{$ make}
-
-You can now run SILE as is, uninstalled:
-
-\terminal{$ ./sile examples/simple.sil}
-
-If all has gone well, this should produce a file \code{examples/simple.pdf}.
-
-Most users of SILE will want to install the \code{sile} command and SILE’s
-library files onto their system; this can be done with:
-
 \begin{note}
 SILE can be built to run using LuaJIT under which it runs almost exactly twice
 as fast! Because SILE lets your documents, classes, and packages use Lua code
@@ -233,9 +226,32 @@ vast majority of Lua code will be fine, but there are a few limitations. See
 the documentation for your version of LuaJIT for details.
 \end{note}
 
+If that comand was successful, you can build SILE itself:
+
+\terminal{$ make}
+
+Most users of SILE will want to install the \code{sile} command and SILE’s
+library files onto their system; this can be done with:
+
 \terminal{$ make install}
 
 Now the \code{sile} command is available from any directory.
+
+\begin{note}
+If you wish you can skip the install step and use the compiled SILE executable diretly from the source directory.
+As configured above this will only work from a shell with the CWD set to the SILE source.
+To make it usable from anywhere, you can configure it with the source directory baked in as the installation location.
+
+\begin{terminal}
+$ ./configure --datarootdir=$(cd ..;pwd)
+$ make
+\end{terminal}
+
+Now to run SILE from anywhere you just need to supply the full path to the source directory.
+
+\terminal{$ /full/path/to/sile/sile}
+
+\end{note}
 
 \subsection{Notes for Windows users}
 
@@ -243,7 +259,7 @@ SILE may be built on Windows using CMake and Visual Studio. There is not an
 installer (yet), but Windows executables are generated using Azure for every
 commit. You may download these executables by selecting the latest build from
 \url{https://simoncozens-github.visualstudio.com/sile/_build} and downloading
-the "sile" artifact from the Artifacts drop down.
+the “sile” artifact from the Artifacts drop down.
 
 \section{Running SILE}
 
@@ -264,21 +280,20 @@ if you wish to use SILE as part of a pipeline.}
 
 \section{Let’s Do Something Cool}
 
-In \code{examples/docbook/article-template.xml}, you will find a typical DocBook 5.0
+In \url{https://sile-typesetter.org/examples/docbook.xml}, you will find a typical DocBook 5.0
 article. Normally turning DocBook to print involves a curious dance of XSLT
 processors, format object processors and/or strange LaTeX packages. But SILE
 can read XML files and it also comes with a \code{docbook} class, which tells
 SILE how to render (admittedly, a subset of) the DocBook tags onto a page.
 
-Turning \code{examples/docbook/article-template.xml} into
-\code{examples/docbook/article-template.pdf} is now as simple as:
+Turning \code{dockbook.xml} into \code{docbook.pdf} is now as simple as:
 
 \begin{verbatim}
 \line
-$ ./sile -I docbook.sil examples/docbook/article-template.xml
+$ ./sile -I docbook.sil docbook.xml
 \sileversion
 Loading docbook
-<classes/docbook.sil><examples/docbook/article-template.xml>[1] [2] [3]
+<classes/docbook.sil><docbook.xml>[1] [2] [3]
 \line
 \end{verbatim}
 

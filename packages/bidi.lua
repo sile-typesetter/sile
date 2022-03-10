@@ -232,11 +232,11 @@ local bidiBoxupNodes = function (self)
   for i = 1, #self.state.nodes do
     if not self.state.nodes[i].bidiDone then allDone = false end
   end
-  if allDone then return SILE.defaultTypesetter.boxUpNodes(self) end
+  if allDone then return self:nobidi_boxUpNodes() end
   local newNodeList = splitNodelistIntoBidiRuns(self)
   self:shapeAllNodes(newNodeList)
   self.state.nodes = newNodeList
-  local vboxlist = SILE.defaultTypesetter.boxUpNodes(self)
+  local vboxlist = self:nobidi_boxUpNodes()
   -- Scan for out-of-direction material
   for i = 1, #vboxlist do
     local v = vboxlist[i]
@@ -245,18 +245,37 @@ local bidiBoxupNodes = function (self)
   return vboxlist
 end
 
-SILE.typesetter.boxUpNodes = bidiBoxupNodes
+local bidiEnableTypesetter = function (typesetter)
+  if typesetter.nobidi_boxUpNodes then
+    return SU.warn("BiDi already enabled, nothing to turn on")
+  end
+  typesetter.nobidi_boxUpNodes = typesetter.boxUpNodes
+  typesetter.boxUpNodes = bidiBoxupNodes
+end
+
+local bidiDisableTypesetter = function (typesetter)
+  if not typesetter.nobidi_boxUpNodes then
+    return SU.warn("BiDi not enabled, nothing to turn off")
+  end
+  typesetter.boxUpNodes = typesetter.nobidi_boxUpNodes
+  typesetter.nobidi_boxUpNodes = nil
+end
+
+bidiEnableTypesetter(SILE.typesetter)
+bidiEnableTypesetter(SILE.defaultTypesetter)
 
 SILE.registerCommand("bidi-on", function (_, _)
-  SILE.typesetter.boxUpNodes = bidiBoxupNodes
+  bidiEnableTypesetter(SILE.typesetter)
 end)
 
 SILE.registerCommand("bidi-off", function (_, _)
-  SILE.typesetter.boxUpNodes = SILE.defaultTypesetter.boxUpNodes
+  bidiDisableTypesetter(SILE.typesetter)
 end)
 
 return {
 reorder = reorder,
+bidiEnableTypesetter = bidiEnableTypesetter,
+bidiDisableTypesetter = bidiDisableTypesetter,
 documentation = [[\begin{document}
 
 Scripts like the Latin alphabet you are currently reading are normally written left to

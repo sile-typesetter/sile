@@ -46,9 +46,10 @@ SILE.registerCommand("pdf:structure", function (options, content)
   stPointer = oldstPointer
 end)
 
+local _typeset = SILE.typesetter.typeset
 SILE.typesetter.typeset = function (self, text)
   actualtext[#actualtext] = actualtext[#actualtext] .. text
-  SILE.defaultTypesetter.typeset(self, text)
+  _typeset(self, text)
 end
 
 local structureNumberTree

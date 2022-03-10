@@ -272,9 +272,8 @@ frame left or right. It takes \code{left=} and/or \code{right=} parameters,
 which can be positive or negative dimensions. It should only be used at the
 top of a frame, as it reinitializes the typesetter object.
 
-\float[bottomboundary=4ex]{\font[size=60pt]{C}}\noindent{}ombining all of these commands, the \code{\\float}
-command breaks the current frame, creates a small frame to hold a floating
-object (like the dropcap at the start of this sentence), flows text into
+Combining all of these commands, the \code{\\float} command breaks the current
+frame, creates a small frame to hold a floating object, flows text into
 the surrounding frame, and then, once text has descended past the floating object,
 moves the frame back into place again. It takes two optional parameters, \code{bottomboundary=\em{<dimension>}} and/or \code{rightboundary=\em{<dimension>}}, which
 open up additional space around the frame. At the start of this paragraph, I issued

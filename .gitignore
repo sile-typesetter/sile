@@ -73,7 +73,6 @@ tags
 # Generated resources
 Makefile-distfiles
 documentation/*.pdf
-examples/**/*.pdf
 gource.webm
 .fonts/*
 .sources/*
@@ -83,3 +82,6 @@ sile.1
 /.version-prev
 /.tarball-version
 /.built-subdirs
+
+# Nix symlink to builds
+/result

@@ -112,9 +112,9 @@ $ alias sile='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" 
 $ sile input.sil
 ```
 
-One notable issue with using SILE from a Docker container is that it will not have access to your system's fonts by default.
+One notable issue with using SILE from a Docker container is that it will not have access to your system’s fonts by default.
 You can map a folder of fonts (any tree usable by fontconfig) into the container.
-This could be your system's default font directory, your user one, a project specific folder, or anything of your choosing.
+This could be your system’s default font directory, your user one, a project specific folder, or anything of your choosing.
 You can see where fonts are found on your system using `fc-list`.
 The path of your choosing from the host system should be passed as a volume mounted on `/fonts` inside the container like this:
 
@@ -125,6 +125,12 @@ $ docker run -it --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" --us
 #### Nix
 
 [Nix packages][nix] are available and can be installed on several platforms, including NixOS, other Linux distros, and even macOS.
+
+If you have [flakes support][nix-flakes] enabled, you can run sile with:
+
+```console
+$ nix run github:sile-typesetter/sile <sile arguments>
+```
 
 ### From Source
 
@@ -155,7 +161,7 @@ Note that OpenSSL development headers will be required for one of the Lua module
 If your system has all the required packages already you may add `--with-system-luarocks` to the `./configure` command to avoid bundling them.
 
 ¹ <sub>OpenSSL development headers are required to build *luasec*, please make sure they are setup _BEFORE_ trying to build SILE!
-If you use your system's Luarocks packages this will be done for you, otherwise make sure you can compile luasec.
+If you use your system’s Luarocks packages this will be done for you, otherwise make sure you can compile luasec.
 You can try just this step in isolation before building SILE using `luarocks --tree=/tmp install luasec`.</sub>
 
 If you are building from a a git clone, start by running the script to setup your environment (if you are using the source tarball this is unnecessary):
@@ -271,6 +277,7 @@ SILE is distributed under the [MIT licence][license].
   [list-en]: https://groups.google.com/d/forum/sile-users
   [list-ja]: https://groups.google.com/d/forum/sile-users-ja
   [nix]: https://nixos.org/nix
+  [nix-flakes]: https://nixos.wiki/wiki/Flakes#Installing_flakes
   [ports]: http://ports.su/print/sile
   [ppa]: https://launchpad.net/~sile-typesetter/+archive/ubuntu/sile
   [alerque-arch]: https://wiki.archlinux.org/index.php/Unofficial_user_repositories#alerque

@@ -19,8 +19,8 @@ set -e
 
 cd /tmp
 
-pkgfile='glibc-linux4-2.33-5-x86_64.pkg.tar.zst'
-sha256sum='971e57d8328c5bbd355c735e77eb1c8628ae9c412c1b2f110f4e5bd1ecdc10c3'
+pkgfile='glibc-linux4-2.35-2-x86_64.pkg.tar.zst'
+sha256sum='0f4e89387e71426fb193e4a68fe01bd8400f50ee89bb70963aa881d296b479d5'
 
 check_checksum () {
     echo "$sha256sum $pkgfile" | sha256sum -c

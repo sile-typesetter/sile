@@ -460,8 +460,10 @@ SILE.defaultTypesetter = std.object {
     if (self.frame.next and not (self.state.lastPenalty <= supereject_penalty )) then
       self:initFrame(SILE.getFrame(self.frame.next))
     elseif not self.frame:isMainContentFrame() then
-      SU.warn("Overfull content for frame "..self.frame.id)
-      self:chuck()
+      if #self.state.outputQueue > 0 then
+        SU.warn("Overfull content for frame "..self.frame.id)
+        self:chuck()
+      end
     else
       self:runHooks("pageend")
       SILE.documentState.documentClass:endPage()
@@ -601,16 +603,22 @@ SILE.defaultTypesetter = std.object {
     end
   end,
 
-  addrlskip = function (self, slice, margins)
+  addrlskip = function (self, slice, margins, hangLeft, hangRight)
     local LTR = self.frame:writingDirection() == "LTR"
     local rskip = margins[LTR and "rskip" or "lskip"]
     if not rskip then rskip = SILE.nodefactory.glue(0) end
+    if hangRight and hangRight > 0 then
+      rskip = SILE.nodefactory.glue({ width = rskip.width:tonumber() + hangRight })
+    end
     rskip.value = "margin"
     -- while slice[#slice].discardable do table.remove(slice, #slice) end
     table.insert(slice, rskip)
     table.insert(slice, SILE.nodefactory.zerohbox())
     local lskip = margins[LTR and "lskip" or "rskip"]
     if not lskip then lskip = SILE.nodefactory.glue(0) end
+    if hangLeft and hangLeft > 0 then
+      lskip = SILE.nodefactory.glue({ width = lskip.width:tonumber() + hangLeft })
+    end
     lskip.value = "margin"
     while slice[1].discardable do table.remove(slice, 1) end
     table.insert(slice, 1, lskip)
@@ -636,7 +644,8 @@ SILE.defaultTypesetter = std.object {
           end
         end
         if seenHbox == 0 then break end
-        self:addrlskip(slice, self:getMargins())
+        local mrg = self:getMargins()
+        self:addrlskip(slice, mrg, point.left, point.right)
         local ratio = self:computeLineRatio(point.width, slice)
         -- TODO see bug 620
         -- if math.abs(ratio) > 1 then SU.warn("Using ratio larger than 1" .. ratio) end

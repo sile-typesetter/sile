@@ -38,7 +38,7 @@ one or more content frames. These frame descriptions provide the containers
 where content will later be typeset, including information about how it might
 flow from one frame to the next. Content is written separately, and SILE works
 out automatically how it best flows from frame to frame and from page to page.
-So when you are preparing content for SILE, you don't know where the lines
+So when you are preparing content for SILE, you don’t know where the lines
 will break until after it has been processed. You may use your text editor to
 type and type and type as long a line as you like, and when SILE comes to
 process your instructions, it will consider your input (up to) three times
@@ -82,7 +82,7 @@ and embedded programming languages, not macro languages (\tt{xmltex},
 are 1) the box-and-glue model, 2) the hyphenation algorithm, and 3) the
 line-breaking algorithm.
 
-SILE follows exactly in TeX's footsteps for each of these three areas that have
+SILE follows exactly in TeX’s footsteps for each of these three areas that have
 stood the test of time; it contains a slavish port of the TeX line-breaking
 algorithm which has been tested to produce exactly the same output as TeX given
 equivalent input. But as SILE is itself written in an interpreted
@@ -112,6 +112,13 @@ The other tool that people reach for when designing printed material on
 a computer is InDesign (or similar Desktop Publishing software, such as
 Scribus).
 
+% Reduce bug reports about this buggy float with a hack-around
+% https://github.com/sile-typesetter/sile/issues/860
+\skip{height=1bs}
+\skip{height=1ps}
+\par
+
+\noindent
 \float[rightboundary=7pt,bottomboundary=10pt]{\img[src=documentation/fig1.png,width=140]}
 DTP software is similar to Word Processing Software in that they are
 both graphical and largely WYSIWYG, but the paradigm is different. The focus is

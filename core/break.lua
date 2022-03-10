@@ -1,12 +1,14 @@
-SILE.settings.declare({ parameter = "linebreak.parShape", type = "string or nil", default = nil }) -- unimplemented
+SILE.settings.declare({ parameter = "linebreak.parShape", type = "boolean", default = false,
+  help = "If set to true, the paragraph shaping method is activated." })
 SILE.settings.declare({ parameter = "linebreak.tolerance", type = "integer or nil", default = 500 })
 SILE.settings.declare({ parameter = "linebreak.pretolerance", type = "integer or nil", default = 100 })
-SILE.settings.declare({ parameter = "linebreak.hangIndent", type = "nil", default = nil }) -- unimplemented
+SILE.settings.declare({ parameter = "linebreak.hangIndent", type = "measurement", default = 0 })
+SILE.settings.declare({ parameter = "linebreak.hangAfter", type = "integer or nil", default = nil })
 SILE.settings.declare({ parameter = "linebreak.adjdemerits", type = "integer", default = 10000,
   help = "Additional demerits which are accumulated in the course of paragraph building when two consecutive lines are visually incompatible. In these cases, one line is built with much space for justification, and the other one with little space." })
 SILE.settings.declare({ parameter = "linebreak.looseness", type = "integer", default = 0 })
 SILE.settings.declare({ parameter = "linebreak.prevGraf", type = "integer", default = 0 })
-SILE.settings.declare({ parameter = "linebreak.emergencyStretch", type = "measurement", default = SILE.measurement(0) })
+SILE.settings.declare({ parameter = "linebreak.emergencyStretch", type = "measurement", default = 0 })
 SILE.settings.declare({ parameter = "linebreak.doLastLineFit", type = "boolean", default = false }) -- unimplemented
 SILE.settings.declare({ parameter = "linebreak.linePenalty", type = "integer", default = 10 })
 SILE.settings.declare({ parameter = "linebreak.hyphenPenalty", type = "integer", default = 50 })
@@ -73,22 +75,79 @@ function lineBreak:trimGlue() -- 842
   nodes[#nodes+1] = SILE.nodefactory.penalty(inf_bad)
 end
 
+-- NOTE FOR DEVELOPERS: this method is called when the linebreak.parShape
+-- setting is true. The arguments passed are self (the linebreaker instance)
+-- and a counter representing the current line number.
+--
+-- The default implementation does nothing but waste a function call, resulting
+-- in normal paragraph shapes. Extended paragraph shapes are intended to be
+-- provided by overriding this method.
+--
+-- The expected return is three values, any of which may be nil to use default
+-- values or a measurement to override the defaults. The values are considered
+-- as left, width, and right respectively.
+--
+-- Since self.hsize holds the current line width, these three values should add
+-- up to the that total. Returning values that don't add up may produce
+-- unexpected results.
+--
+-- TeX wizards shall also note that this is slighty different from
+-- Knuth's definition "nline l1 i1 l2 i2 ... lN iN".
+function lineBreak:parShape(_)
+  return 0, self.hsize, 0
+end
+
+local parShapeCache = {}
+
+local grantLeftoverWidth = function (hsize, l, w, r)
+  local width = SILE.measurement(w or hsize)
+  if not w and l then width = width - SILE.measurement(l) end
+  if not w and r then width = width - SILE.measurement(r) end
+  local remaining = hsize:tonumber() - width:tonumber()
+  local left = SU.cast("number", l or (r and (remaining - SU.cast("number", r))) or 0)
+  local right = SU.cast("number", r or (l and (remaining - SU.cast("number", l))) or remaining)
+  return left, width, right
+end
+
+-- Wrap linebreak:parShape in a memoized table for fast access
+function lineBreak:parShapeCache(n)
+  local cache = parShapeCache[n]
+  if not cache then
+    local l, w, r = self:parShape(n)
+    local left, width, right = grantLeftoverWidth(self.hsize, l, w, r)
+    cache = { left, width, right }
+  end
+  return cache[1], cache[2], cache[3]
+end
+
+function lineBreak.parShapeCacheClear(_)
+  pl.tablex.clear(parShapeCache)
+end
+
 function lineBreak:setupLineLengths() -- 874
-  self.parShape = param("parShape")
-  if not self.parShape then
-    if not param("hangIndent") then
+  self.parShaping = param("parShape") or false
+  if self.parShaping then
+    self.lastSpecialLine = nil
+    self.easy_line = nil
+  else
+    self.hangAfter = param("hangAfter") or 0
+    self.hangIndent = param("hangIndent"):tonumber()
+    if self.hangIndent == 0 then
       self.lastSpecialLine = 0
       self.secondWidth = self.hsize or SU.error("No hsize")
-    else
-      SU.error("Hanging indents not supported yet. Implement node 875 from TeX!", true)
+    else -- 875
+      self.lastSpecialLine = math.abs(self.hangAfter)
+      if self.hangAfter < 0 then
+        self.secondWidth = self.hsize or SU.error("No hsize")
+        self.firstWidth = self.hsize - math.abs(self.hangIndent)
+      else
+        self.firstWidth = self.hsize or SU.error("No hsize")
+        self.secondWidth = self.hsize - math.abs(self.hangIndent)
+      end
     end
-  else
-    self.lastSpecialLine = #param("parShape")
-    self.secondWidth = SU.error("Oops")
+    if param("looseness") == 0 then self.easy_line = self.lastSpecialLine else self.easy_line = awful_bad end
+    -- self.easy_line = awful_bad
   end
-  if param("looseness") == 0 then self.easy_line = self.lastSpecialLine else self.easy_line = awful_bad end
-  -- self.easy_line = awful_bad
-
 end
 
 function lineBreak:tryBreak() -- 855
@@ -126,13 +185,18 @@ function lineBreak:tryBreak() -- 855
           return
         end
         -- 876
-        if self.r.lineNumber > self.easy_line then
+        if self.easy_line and self.r.lineNumber > self.easy_line then
           self.lineWidth = self.secondWidth
           self.old_l = awful_bad -1
         else
           self.old_l = self.r.lineNumber
-          if self.r.lineNumber > self.lastSpecialLine then self.lineWidth = self.secondWidth
-          elseif not self.parShape then self.lineWidth = self.firstWidth else self.lineWidth = self.parShape[self.r.lineNumber]
+          if self.lastSpecialLine and self.r.lineNumber > self.lastSpecialLine then
+            self.lineWidth = self.secondWidth
+          elseif self.parShaping then
+            local _
+            _, self.lineWidth, _ = self:parShapeCache(self.r.lineNumber)
+          else
+            self.lineWidth = self.firstWidth
           end
         end
         if debugging then SU.debug("break", "line width = "..self.lineWidth) end
@@ -272,7 +336,10 @@ function lineBreak:deactivateR() -- 886
     if self.prev_r.type == "delta" then
       self.r = self.prev_r.next
       if self.r == self.activeListHead then
-        self.curActiveWidth:___sub(self.r.width)
+        self.curActiveWidth:___sub(self.prev_r.width)
+        -- FIXME It was crashing here, so changed from:
+        -- self.curActiveWidth:___sub(self.r.width)
+        -- But I'm not so sure reading Knuth here...
         self.prev_prev_r.next = self.activeListHead
         self.prev_r = self.prev_prev_r
       elseif self.r.type == "delta" then
@@ -566,10 +633,51 @@ function lineBreak:postLineBreak() -- 903
   local p = self.bestBet
   local breaks = {}
   local line  = 1
+
+  local nbLines = 0
+  local p2 = p
   repeat
+    nbLines = nbLines + 1
+    p2 = p2.prevBreak
+  until not p2
+
+  repeat
+    local left, _, right
+    -- SILE handles the actual line width differently than TeX,
+    -- so below always return a width of self.hsize. Would they
+    -- be needed at some point, the exact width are commented out
+    -- below.
+    if self.parShaping then
+      left, _, right = self:parShapeCache(nbLines + 1 - line)
+    else
+      if self.hangAfter == 0 then
+        -- width = self.hsize
+        left = 0
+        right = 0
+      else
+        local indent
+        if self.hangAfter > 0 then
+          -- width = line > nbLines - self.hangAfter and self.firstWidth or self.secondWidth
+          indent = line > nbLines - self.hangAfter and 0 or self.hangIndent
+        else
+          -- width = line > nbLines + self.hangAfter and self.firstWidth or self.secondWidth
+          indent = line > nbLines + self.hangAfter and self.hangIndent or 0
+        end
+        if indent > 0 then
+          left = indent
+          right = 0
+        else
+          left = 0
+          right = -indent
+        end
+      end
+    end
+
     table.insert(breaks, 1,  {
         position = p.curBreak,
-        width = self.parShape and self.parShape[line] or self.hsize
+        width = self.hsize,
+        left = left,
+        right = right
       })
     if p.alternates then
       for i = 1, #p.alternates do
@@ -580,6 +688,7 @@ function lineBreak:postLineBreak() -- 903
     p = p.prevBreak
     line = line + 1
   until not p
+  self:parShapeCacheClear()
   return breaks
 end
 

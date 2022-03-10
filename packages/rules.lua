@@ -34,26 +34,81 @@ SILE.registerCommand("fullrule", function (options, _)
 end, "Draw a full width hrule centered on the current line")
 
 SILE.registerCommand("underline", function (_, content)
+  local ot = SILE.require("core/opentype-parser")
+  local fontoptions = SILE.font.loadDefaults({})
+  local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
+  local font = ot.parseFont(face)
+  local upem = font.head.unitsPerEm
+  local underlinePosition = -font.post.underlinePosition / upem * fontoptions.size
+  local underlineThickness = font.post.underlineThickness / upem * fontoptions.size
+
   local hbox = SILE.call("hbox", {}, content)
-  local gl = SILE.length() - hbox.width
-  SILE.call("lower", {height = "0.5pt"}, function()
-    SILE.call("hrule", {width = gl.length, height = "0.5pt"})
-  end)
-  SILE.typesetter:pushGlue({width = hbox.width})
-end, "Underlines some content (badly)")
+  table.remove(SILE.typesetter.state.nodes) -- steal it back...
+
+  -- Re-wrap the hbox in another hbox responsible for boxing it at output
+  -- time, when we will know the line contribution and can compute the scaled width
+  -- of the box, taking into account possible stretching and shrinking.
+  SILE.typesetter:pushHbox({
+    inner = hbox,
+    width = hbox.width,
+    height = hbox.height,
+    depth = hbox.depth,
+    outputYourself = function(self, typesetter, line)
+      local oldX = typesetter.frame.state.cursorX
+      local Y = typesetter.frame.state.cursorY
+
+      -- Build the original hbox.
+      -- Cursor will be moved by the actual definitive size.
+      self.inner:outputYourself(SILE.typesetter, line)
+      local newX = typesetter.frame.state.cursorX
+
+      -- Output a line.
+      -- NOTE: According to the OpenType specs, underlinePosition is "the suggested distance of
+      -- the top of the underline from the baseline" so it seems implied that the thickness
+      -- should expand downwards
+      SILE.outputter:drawRule(oldX, Y + underlinePosition, newX - oldX, underlineThickness)
+    end
+  })
+end, "Underlines some content")
 
 SILE.registerCommand("boxaround", function (_, content)
+  -- This command was not documented and lacks feature.
+  -- Plan replacement with a better suited package.
+  SU.deprecated("\\boxaround (undocumented)", "\\framebox (package)", "0.12.0", "0.13.0")
+
   local hbox = SILE.call("hbox", {}, content)
-  local gl = SILE.length() - hbox.width
-  SILE.call("rebox", {width = 0}, function()
-    SILE.call("hrule", {width = gl.length-1, height = "0.5pt"})
-  end)
-  SILE.call("raise", {height = hbox.height}, function ()
-    SILE.call("hrule", {width = gl.length-1, height = "0.5pt"})
-  end)
-  SILE.call("hrule", { height = hbox.height, width = "0.5pt"})
-  SILE.typesetter:pushGlue({width = hbox.width})
-  SILE.call("hrule", { height = hbox.height, width = "0.5pt"})
+  table.remove(SILE.typesetter.state.nodes) -- steal it back...
+
+  -- Re-wrap the hbox in another hbox responsible for boxing it at output
+  -- time, when we will know the line contribution and can compute the scaled width
+  -- of the box, taking into account possible stretching and shrinking.
+  SILE.typesetter:pushHbox({
+    inner = hbox,
+    width = hbox.width,
+    height = hbox.height,
+    depth = hbox.depth,
+    outputYourself = function(self, typesetter, line)
+      local oldX = typesetter.frame.state.cursorX
+      local Y = typesetter.frame.state.cursorY
+
+      -- Build the original hbox.
+      -- Cursor will be moved by the actual definitive size.
+      self.inner:outputYourself(SILE.typesetter, line)
+      local newX = typesetter.frame.state.cursorX
+
+      -- Output a border
+      -- NOTE: Drawn inside the hbox, so borders overlap with inner content.
+      local w = newX - oldX
+      local h = self.height:tonumber()
+      local d = self.depth:tonumber()
+      local thickness = 0.5
+
+      SILE.outputter:drawRule(oldX, Y + d - thickness, w, thickness)
+      SILE.outputter:drawRule(oldX, Y - h, w, thickness)
+      SILE.outputter:drawRule(oldX, Y - h, thickness, h + d)
+      SILE.outputter:drawRule(oldX + w - thickness, Y - h, thickness, h + d)
+    end
+  })
 end, "Draws a box around some content")
 
 return { documentation = [[\begin{document}

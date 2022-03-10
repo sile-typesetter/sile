@@ -1,6 +1,8 @@
 local plain = SILE.require("plain", "classes")
 local book = plain { id = "book" }
 
+local counters = SILE.require("packages/counters").exports
+
 book.defaultFrameset = {
   content = {
     left = "8.3%pw",
@@ -62,6 +64,7 @@ book.endPage = function (self)
   self:moveTocNodes()
   if (self:oddPage() and SILE.scratch.headers.right) then
     SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
+      SILE.settings.toplevelState()
       SILE.settings.set("current.parindent", SILE.nodefactory.glue())
       SILE.settings.set("document.lskip", SILE.nodefactory.glue())
       SILE.settings.set("document.rskip", SILE.nodefactory.glue())
@@ -71,6 +74,7 @@ book.endPage = function (self)
     end)
   elseif (not(self:oddPage()) and SILE.scratch.headers.left) then
       SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
+        SILE.settings.toplevelState()
         SILE.settings.set("current.parindent", SILE.nodefactory.glue())
         SILE.settings.set("document.lskip", SILE.nodefactory.glue())
         SILE.settings.set("document.rskip", SILE.nodefactory.glue())
@@ -94,12 +98,16 @@ end, "Text to appear on the top of the right page")
 
 SILE.registerCommand("book:sectioning", function (options, content)
   local level = SU.required(options, "level", "book:sectioning")
-  SILE.call("increment-multilevel-counter", { id = "sectioning", level = level })
+  local number
+  if SU.boolean(options.numbering, true) then
+    SILE.call("increment-multilevel-counter", { id = "sectioning", level = level })
+    number = SILE.formatMultilevelCounter(counters.getMultilevelCounter("sectioning"))
+  end
   if SU.boolean(options.toc, true) then
-    SILE.call("tocentry", { level = level }, SU.subContent(content))
+    SILE.call("tocentry", { level = level, number = number }, SU.subContent(content))
   end
   local lang = SILE.settings.get("document.language")
-  if options.numbering == nil or options.numbering == "yes" then
+  if SU.boolean(options.numbering, true) then
     if options.prenumber then
       if SILE.Commands[options.prenumber .. ":"  .. lang] then
         options.prenumber = options.prenumber .. ":" .. lang
@@ -164,7 +172,7 @@ SILE.registerCommand("chapter", function (options, content)
     end)
   end)
   SILE.call("bigskip")
-  SILE.call("nofoliosthispage")
+  SILE.call("nofoliothispage")
 end, "Begin a new chapter")
 
 SILE.registerCommand("section", function (options, content)
@@ -186,8 +194,10 @@ SILE.registerCommand("section", function (options, content)
       SILE.call("book:right-running-head-font")
       SILE.call("rightalign", {}, function ()
         SILE.settings.temporarily(function ()
-          SILE.call("show-multilevel-counter", { id = "sectioning", level = 2 })
-          SILE.typesetter:typeset(" ")
+          if SU.boolean(options.numbering, true) then
+            SILE.call("show-multilevel-counter", { id = "sectioning", level = 2 })
+            SILE.typesetter:typeset(" ")
+          end
           SILE.process(content)
         end)
       end)

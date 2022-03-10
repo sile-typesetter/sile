@@ -118,19 +118,19 @@ This package provides the \code{chordmode} environment, which transforms
 lines like:
 
 \begin{verbatim}
-  I've be<G>en a wild rover for many's a <C>year
+  I’ve be<G>en a wild rover for many’s a <C>year
 \end{verbatim}
 
 into:
 
 \begin{chordmode}
-  I've be<G>en a wild rover for many's a <C>year
+  I’ve be<G>en a wild rover for many’s a <C>year
 \end{chordmode}
 \par
 
 The chords can be styled by redefining the \code{chordmode:chordfont}
 command, and the offset between the chord name and text set with the
-\code{chordmode:offset} parameter.
+\autodoc:setting{chordmode.offset} parameter.
 
 \end{document}
 ]]

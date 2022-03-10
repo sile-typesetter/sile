@@ -58,7 +58,7 @@ shrink. To construct a \code{SILE.length}:
 
 \begin{verbatim}
 \line
-local l = SILE.length.new(\{ length = x, stretch = y, shrink = z\})
+local l = SILE.length(\{ length = x, stretch = y, shrink = z\})
 \line
 \end{verbatim}
 
@@ -66,23 +66,46 @@ Now we can construct horizontal and vertical glue:
 
 \begin{verbatim}
 \line
-local glue  = SILE.nodefactory.newGlue (\{ width =  l\})
-local vglue = SILE.nodefactory.newVglue(\{ height = l\})
+local glue  = SILE.nodefactory.glue(\{ width =  l\})
+local vglue = SILE.nodefactory.vglue(\{ height = l\})
 \line
 \end{verbatim}
 
-SILE’s typesetting is organised by the \code{SILE.typesetter} object; it maintains
-two queues of material that it is working on—the node queues (\code{SILE.typesetter.state.nodes}) contains new horizontal boxes and glue that are going to be broken up into lines soon; and the output queue (\code{SILE.typesetter.state.outputQueue}) which consists
-of vertical material (lines) which are going to be broken up into pages. Line breaking
-and page breaking happens when the typesetter moves between horizontal and vertical
-mode; you can force this to happen by calling the function \code{SILE.typesetter:leaveHmode()}.
-The SILE-level command for forcing a paragraph end is \code{\\par}.
+SILE’s typesetting is organised by the \code{SILE.typesetter} object; it
+maintains two queues of material that it is still working on: the node queue
+the output queue. Material in these queues is content that has been parsed but
+not yet rendered to the canvas and can still be manipulated. The node queue
+(\code{SILE.typesetter.state.nodes}) contains new horizontal boxes and glue
+that have not yet been broken up into lines. The output queue
+(\code{SILE.typesetter.state.outputQueue}) consists of vertical material
+(lines) which have not yet been broken up into pages. Line breaking and page
+breaking happen when the typesetter moves between horizontal and vertical mode.
 
-So, if you want to manually add a vertical space to the output, first ensure that material in the current paragraph
-has been all properly boxed-up and moved onto the output queue
-by calling
-\code{SILE.typesetter:leaveHmode()}; then add your
-desired glue to the output queue.
+As new content is parsed is is added to the node queue in as small chunks as
+possible—chunks that must remain together no matter where they end up on
+a line. For example this might individual symbols, sylables, or objects such as
+images. As soon as new content which requires a vertical break is encountered,
+the node queue is processed to derivce any missing shaping information about
+each node, then the sequence of node is broken up into  lines. Once all the
+"horizontal mode" nodes are broken into lines and those lines are added to the
+output queue, the other new vertical content can be processed. At any point you
+can force the current queue of horizantal content (the node queue) to be shaped
+into lines and added to the vertical output queue by calling the function
+\code{SILE.typesetter:leaveHmode()}. This is a handy move for writing custom
+functions, but it is a fairly low level control (i.e. it is unlikely to be
+useful while writing a document). A related but higher level command,
+\code{\\par}, is more frequently used when writing a document and embeded in
+the content. The \code{\\par} command first calls
+\code{SILE.typesetter:leaveHmode()}, then inserts a vertical skip according to
+the \autodoc:setting{document.parskip} setting, then goes on to reset a number of
+settings that are typically paragraph related such as hanging indents.
+
+When writing a custom command, if you want to manually add a vertical space to
+the output first ensure that material in the current paragraph has been all
+properly boxed-up and moved onto the output queue by calling
+\code{SILE.typesetter:leaveHmode()}; then add your desired glue to the output
+queue.
+This is exactly what the \code{\\skip} and similar commands do.
 
 Adding boxes and glue to the typesetter’s queues is
 such a common operation that the typesetter has some utility methods to construct
@@ -105,8 +128,8 @@ and instructions to the output engine to display the image:
 \begin{verbatim}
 \line
 SILE.typesetter:pushHbox(\{
-  width= \dots,
-  height= \dots,
+  width= …,
+  height= …,
   depth= 0,
   value= options.src,
   outputYourself= function (this, typesetter, line)

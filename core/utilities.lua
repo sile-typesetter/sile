@@ -82,8 +82,9 @@ utilities.deprecated = function (old, new, warnat, errorat, extra)
   -- will never encounter this failure, but as a developer it’s hard to test a
   -- deprecation when core code refactoring is an all-or-nothing proposition.
   -- Hence we fake it ‘till we make it, all deprecations internally are warings.
+  local brackets = old:sub(1,1) == '\\' and "" or "()"
   local _semver = SILE.version and SILE.version:match("v([0-9]*.[0-9]*.[0-9]*)") or warnat
-  local msg = old .. "() was deprecated in SILE v" .. warnat .. ". Please use " .. new .. "() instead. " .. extra
+  local msg = (old .. brackets) .. " was deprecated in SILE v" .. warnat .. ". Please use " .. (new .. brackets) .. " instead. " .. (extra or "")
   if errorat and _semver >= errorat then
     SU.error(msg)
   elseif warnat and _semver >= warnat then
@@ -368,9 +369,9 @@ utilities.utf16codes = function (ustr, endian)
       return nil
     else
       local c1, c2, c3, c4, wchar, lowchar
-      c1 = string.byte(ustr, pos)
+      c1 = string.byte(ustr, pos, pos+1)
       pos = pos + 1
-      c2 = string.byte(ustr, pos)
+      c2 = string.byte(ustr, pos, pos+1)
       pos = pos + 1
       if endian == "be" then
         wchar = c1 * 256 + c2
@@ -380,9 +381,9 @@ utilities.utf16codes = function (ustr, endian)
       if not (wchar >= 0xD800 and wchar <= 0xDBFF) then
         return wchar
       end
-      c3 = string.byte(ustr, pos)
+      c3 = string.byte(ustr, pos, pos+1)
       pos = pos + 1
-      c4 = string.byte(ustr, pos)
+      c4 = string.byte(ustr, pos, pos+1)
       pos = pos + 1
       if endian == "be" then
         lowchar = c3 * 256 + c4
@@ -431,67 +432,71 @@ utilities.firstChar = function (str)
   return chars[1]
 end
 
+local byte, floor, reverse = string.byte, math.floor, string.reverse
+
 utilities.utf8charat = function (str, index)
   return str:sub(index):match("([%z\1-\127\194-\244][\128-\191]*)")
 end
 
-utilities.utf8_to_utf16be_hexencoded = function (str)
-  local ustr = string.format("%04x", 0xfeff) -- BOM
-  for _, uchr in luautf8.codes(str) do
-    if (uchr < 0x10000) then
-      ustr = ustr..string.format("%04x", uchr)
-    else -- Surrogate pair
-      local sur_hi = (uchr - 0x10000) / 0x400 + 0xd800
-      local sur_lo = (uchr - 0x10000) % 0x400 + 0xdc00
-      ustr = ustr..string.format("%04x%04x", sur_hi, sur_lo)
-    end
+local utf16bom = function(endianness)
+  return endianness == "be" and "\254\255" or endianness == "le" and "\255\254" or SU.error("Unrecognized endianness")
+end
+
+utilities.hexencoded = function (str)
+  local ustr = ""
+  for i = 1, #str do
+    ustr = ustr..string.format("%02x", byte(str, i, i+1))
   end
   return ustr
 end
 
-utilities.utf8_to_utf16be = function (str)
+utilities.hexdecoded = function (str)
+  if #str % 2 == 1 then SU.error("Cannot decode hex string with odd len") end
   local ustr = ""
-  for _, uchr in luautf8.codes(str) do
-    if (uchr < 0x10000) then
-      ustr = ustr..string.format("%c%c", uchr / 256, uchr % 256 )
-    else -- Surrogate pair
-      local sur_hi = (uchr - 0x10000) / 0x400 + 0xd800
-      local sur_lo = (uchr - 0x10000) % 0x400 + 0xdc00
-      ustr = ustr..string.format("%c%c%c%c", sur_hi / 256, sur_hi % 256 , sur_lo / 256, sur_lo % 256)
-    end
+  for i = 1, #str, 2 do
+    ustr = ustr..string.char(tonumber(string.sub(str, i, i+1), 16))
   end
   return ustr
 end
 
-utilities.utf8_to_utf16le = function (str)
-  local ustr = ""
+local uchr_to_surrogate_pair = function(uchr, endianness)
+  local hi, lo = floor((uchr - 0x10000) / 0x400) + 0xd800, (uchr - 0x10000) % 0x400 + 0xdc00
+  local s_hi, s_lo = string.char(floor(hi / 256)) .. string.char(hi % 256), string.char(floor(lo / 256)) .. string.char(lo % 256)
+  return endianness == "le" and (reverse(s_hi) .. reverse(s_lo)) or s_hi .. s_lo
+end
+
+local uchr_to_utf16_double_byte = function(uchr, endianness)
+  local ustr = string.char(floor(uchr / 256)) .. string.char(uchr % 256)
+  return endianness == "le" and reverse(ustr) or ustr
+end
+
+local utf8_to_utf16 = function(str, endianness)
+  local ustr = utf16bom(endianness)
   for _, uchr in luautf8.codes(str) do
-    if (uchr < 0x10000) then
-      ustr = ustr..string.format("%c%c", uchr % 256, uchr / 256 )
-    else -- Surrogate pair
-      local sur_hi = (uchr - 0x10000) / 0x400 + 0xd800
-      local sur_lo = (uchr - 0x10000) % 0x400 + 0xdc00
-      ustr = ustr..string.format("%c%c%c%c", sur_hi % 256, sur_hi / 256 , sur_lo % 256, sur_lo / 256)
-    end
+    ustr = ustr..(uchr < 0x10000 and uchr_to_utf16_double_byte(uchr, endianness)
+                  or uchr_to_surrogate_pair(uchr, endianness))
   end
   return ustr
 end
 
-utilities.utf16le_to_utf8 = function (str)
+utilities.utf8_to_utf16be = function (str) return utf8_to_utf16(str, "be") end
+utilities.utf8_to_utf16le = function (str) return utf8_to_utf16(str, "le") end
+utilities.utf8_to_utf16be_hexencoded = function (str) return utilities.hexencoded(utilities.utf8_to_utf16be(str)) end
+utilities.utf8_to_utf16le_hexencoded = function (str) return utilities.hexencoded(utilities.utf8_to_utf16le(str)) end
+
+local utf16_to_utf8 = function (str, endianness)
+  local bom = utf16bom(endianness)
+
+  if str:find(bom) == 1 then str = string.sub(str, 3, #str) end
   local ustr = ""
-  for uchr in utilities.utf16codes(str, "le") do
+  for uchr in utilities.utf16codes(str, endianness) do
     ustr = ustr..luautf8.char(uchr)
   end
   return ustr
 end
 
-utilities.utf16be_to_utf8 = function (str)
-  local ustr = ""
-  for uchr in utilities.utf16codes(str, "be") do
-    ustr = ustr..luautf8.char(uchr)
-  end
-  return ustr
-end
+utilities.utf16be_to_utf8 = function (str) return utf16_to_utf8(str, "be") end
+utilities.utf16le_to_utf8 = function (str) return utf16_to_utf8(str, "le") end
 
 local icu = require("justenoughicu")
 
@@ -533,7 +538,7 @@ setmetatable (utilities.formatNumber, {
           case = "upper"
         end
       end
-      local lang = SILE.settings.get("document.language")
+      local lang = format:match("[Rr][Oo][Mm][Aa][Nn]") and "la" or SILE.settings.get("document.language")
       format = format:lower()
       local result
       if self[lang] and type(self[lang][format]) == "function" then

@@ -41,9 +41,23 @@ SILE.registerCommand("footnote", function (options, content)
   SILE.typesetter:init(f)
   SILE.typesetter.getTargetLength = function () return SILE.length(0xFFFFFF) end
   SILE.settings.pushState()
-  SILE.settings.reset()
-  local material = SILE.call("vbox", {}, function ()
-    SILE.call("footnote:font", {}, function ()
+  -- Restore the settings to the top of the queue, which should be the document #986
+  SILE.settings.toplevelState()
+
+  -- Reset settings the document may have but should not be applied to footnotes
+  -- See also same resets in folio package
+  for _, v in ipairs({
+    "current.hangAfter",
+    "current.hangIndent",
+    "linebreak.hangAfter",
+    "linebreak.hangIndent" }) do
+    SILE.settings.set(v, SILE.settings.defaults[v])
+  end
+
+  -- Apply the font before boxing, so relative baselineskip applies #1027
+  local material
+  SILE.call("footnote:font", {}, function ()
+      material = SILE.call("vbox", {}, function ()
       SILE.call("footnote:atstart", options)
       SILE.call("footnote:counter", options)
       SILE.process(content)
@@ -56,7 +70,10 @@ SILE.registerCommand("footnote", function (options, content)
 end)
 
 SILE.registerCommand("footnote:font", function (_, content)
-  SILE.call("font", { size = "9pt" }, function ()
+  -- The footnote frame has is settings reset to the toplevel state, so if one does
+  -- something relative (as below), it is expected to be the main value from the
+  -- document.
+  SILE.call("font", { size = SILE.settings.get("font.size") * 0.9 }, function ()
     SILE.process(content)
   end)
 end)

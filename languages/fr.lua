@@ -1,69 +1,233 @@
-SILE.settings.declare({
-    parameter = "languages.fr.punctuationspace",
-    type = "kern",
-    default = SILE.nodefactory.kern("0.2en"),
-    help = "The amount of space before a punctuation"
-  })
+-- French language rules
 
--- Unfortunately, there is nothing in the Unicode properties
--- database which distinguishes between high and low punctuation.
--- But in a way that's precisely why we can't just rely on Unicode
--- for everything and need our language-specific typesetting
--- processors.
+local computeSpaces = function()
+  -- Computes:
+  --  -  regular inter-word space,
+  --  -  half inter-word fixed space,
+  --  -  "guillemet space", as defined in LaTeX's babel-french which is based
+  --     on Thierry Bouche's recommendations,
+  --  These should be usual for France and Canada. The Swiss may prefer a thin
+  --  space for guillemets, that's why we are having settings hereafter.
+  local enlargement = SILE.settings.get("shaper.spaceenlargementfactor")
+  local stretch = SILE.settings.get("shaper.spacestretchfactor")
+  local shrink = SILE.settings.get("shaper.spaceshrinkfactor")
+  return {
+    colonspace = SILE.length(enlargement.."spc plus "..stretch.."spc minus "..shrink.."spc"),
+    thinspace = SILE.length((0.5 * enlargement).."spc"),
+    guillspace = SILE.length((0.8 * enlargement).."spc plus "..(0.3 * stretch).."spc minus "..(0.8 * shrink).."spc")
+  }
+end
+
+local spaces = computeSpaces()
+-- NOTE: We are only doing it at load time. We don't expect the shaper settings to be often
+-- changed arbitrarily _after_ having selected a language...
+
 SILE.settings.declare({
-    parameter = "languages.fr.highpunctuation",
-    type = "string",
-    default = "?:;!",
-    help = "A list of punctuation marks which should be preceded by a punctuationspace"
-  })
+  parameter = "languages.fr.colonspace",
+  type = "kern",
+  default = SILE.nodefactory.kern(spaces.colonspace),
+  help = "The amount of space before a colon, theoretically a non-breakable, shrinkable, strechable inter-word space"
+})
+
+SILE.settings.declare({
+  parameter = "languages.fr.thinspace",
+  type = "kern",
+  default = SILE.nodefactory.kern(spaces.thinspace),
+  help = "The amount of space before high punctuations, theoretically a fixed, non-breakable space, around half the inter-word space"
+})
+
+SILE.settings.declare({
+  parameter = "languages.fr.guillspace",
+  type = "kern",
+  default = SILE.nodefactory.kern(spaces.guillspace),
+  help = "The amount of space applying to guillemets, theoretically smaller than a non-breakable inter-word space, with reduced stretchability"
+})
+
+SILE.settings.declare({
+  parameter = "languages.fr.debugspace",
+  type = "boolean",
+  default = false,
+  help = "If switched to true, uses large spaces instead of the regular punctuation ones"
+})
+
+local getSpaceGlue = function(parameter)
+  if SILE.settings.get("languages.fr.debugspace") then
+    return SILE.nodefactory.kern("5spc")
+  end
+  return SILE.settings.get(parameter)
+end
 
 SILE.nodeMakers.fr = pl.class({
     _base = SILE.nodeMakers.unicode,
-    isHighPunctuation = function (_, text)
-      return string.find(SILE.settings.get("languages.fr.highpunctuation"), text, nil, true)
+
+    -- Unfortunately, there is nothing in the Unicode properties
+    -- database which distinguishes between high and low punctuation, etc.
+    -- But in a way that's precisely why we can't just rely on Unicode
+    -- for everything and need our language-specific typesetting
+    -- processors.
+    colonPunctuations = { ":" },
+    openingQuotes = { "«", "‹" },
+    closingQuotes = { "»", "›" },
+    -- There's catch below: the shaper may have already processed common ligatures (!!, ?!, !?)
+    -- as a single item...
+    highPunctuations = { ";", "!", "?", "!!", "?!", "!?" },
+    -- High punctuations have some (kern) space before them... except in some cases!
+    -- By the books, they have it "after a letter or digit", at least. After a closing
+    -- punctuation, too, seems usual.
+    -- Otherwise, one shall have no space inside e.g. (?), ?!, [!], …?, !!! etc.
+    -- As a simplication, we reverse the rule and define after which characters the space
+    -- shall not be added. This is by no mean perfect, I couldn't find an explicit list
+    -- of exceptions. French typography is a delicate beast.
+    spaceExceptions = { "!", "?", ":", ".", "…", "(", "[", "{", "<", "«", "‹", "“", "‘", "?!", "!!", "!?" },
+
+    -- overriden properties from parent class
+    isQuoteType = { qu = true }, -- split tokens at apostrophes &c.
+
+    -- methods defined in this class
+
+    isIn = function(_, set, text)
+      for _, v in ipairs(set) do
+        if v == text then
+          return true
+        end
+      end
+      return false
     end,
-    makeUnbreakableSpace = function (self)
+
+    isOpeningQuote = function (self, text)
+      return self:isIn(self.openingQuotes, text)
+    end,
+    isClosingQuote = function (self, text)
+      return self:isIn(self.closingQuotes, text)
+    end,
+    isColonPunctuation = function (self, text)
+      return self:isIn(self.colonPunctuations, text)
+    end,
+    isHighPunctuation = function (self, text)
+      return self:isIn(self.highPunctuations, text)
+    end,
+    isSpaceException = function (self, text)
+      return self:isIn(self.spaceExceptions, text)
+    end,
+
+    isPrevSpaceException = function (self)
+      return self.i > 1 and self:isSpaceException(self.items[self.i-1].text) or false
+    end,
+
+    makeUnbreakableSpace = function (self, parameter)
       self:makeToken()
       self.lastnode = "glue"
-      coroutine.yield(SILE.settings.get("languages.fr.punctuationspace"))
+      coroutine.yield(getSpaceGlue(parameter))
     end,
-    previousIsHighPunctuation = function (self)
-      return self.i >1 and self:isHighPunctuation(self.items[self.i-1].text)
-    end,
-    nextIsHighPunctuation = function (self)
-      return self.items[self.i+1] and self:isHighPunctuation(self.items[self.i+1].text)
-    end,
-    previousIsSpace = function (self)
-      return self.lastnode == "glue"
-    end,
-    handleICUBreak = function (self, chunks, item)
-      if self:isHighPunctuation(item.text) and self:previousIsHighPunctuation() then
-        return self._base.handleICUBreak(self, chunks, item)
+
+    handleSpaceBefore = function (self, item)
+      if self:isHighPunctuation(item.text) and not self:isPrevSpaceException() then
+        self:makeUnbreakableSpace("languages.fr.thinspace")
+        self:makeToken()
+        self:addToken(item.text, item)
+        return true
       end
-      if self:nextIsHighPunctuation() and not self:isHighPunctuation(item.text) then
-        self:makeUnbreakableSpace()
-        while chunks[1] and item.index >= chunks[1].index do
-          table.remove(chunks, 1)
+      if self:isColonPunctuation(item.text) and not self:isPrevSpaceException() then
+        self:makeUnbreakableSpace("languages.fr.colonspace")
+        self:makeToken()
+        self:addToken(item.text, item)
+        return true
+      end
+      if self:isClosingQuote(item.text) then
+        self:makeUnbreakableSpace("languages.fr.guillspace")
+        self:makeToken()
+        self:addToken(item.text, item)
+        return true
+      end
+      return false
+    end,
+
+    handleSpaceAfter = function (self, item)
+      if self:isOpeningQuote(item.text) then
+        self:addToken(item.text, item)
+        self:makeUnbreakableSpace("languages.fr.guillspace")
+        self:makeToken()
+        return true
+      end
+      return false
+    end,
+
+    mustRemove = function (self, i, items)
+      -- Clear "manual" spaces we do not want, so that later we only have to
+      -- insert the relevant kerns.
+      local curr = items[i].text
+      if self:isSpace(curr) then
+        if i < #items then
+          local next = items[i+1].text
+          if self:isSpace(next)
+              or self:isHighPunctuation(next)
+              or self:isColonPunctuation(next)
+              or self:isClosingQuote(next) then
+            return true
+          end
         end
-        return chunks
-      elseif self:isHighPunctuation(item.text) and not self:previousIsSpace() then
-        self:makeUnbreakableSpace()
+        if i > 1 then
+          local prev= items[i-1].text
+          if self:isOpeningQuote(prev) then
+            return true
+          end
+        end
       end
-      return self._base.handleICUBreak(self, chunks, item)
+      return false
+    end,
+
+    -- overriden methods from parent class
+
+    dealWith = function (self, item)
+      if self:handleSpaceBefore(item) then return end
+      if self:handleSpaceAfter(item) then return end
+      self._base.dealWith(self, item)
+    end,
+
+    handleWordBreak = function (self, item)
+      if self:handleSpaceBefore(item) then return end
+      if self:handleSpaceAfter(item) then return end
+      self._base.handleWordBreak(self, item)
+    end,
+
+    handleLineBreak = function (self, item, subtype)
+      if self:isSpace(item.text) then
+        self:handleWordBreak(item)
+        return
+      end
+      if self:handleSpaceBefore(item) then return end
+      if self:handleSpaceAfter(item) then return end
+
+      self._base.handleLineBreak(self, item, subtype)
+    end,
+
+    iterator = function (self, items)
+      -- We start by cleaning up the input once for all.
+      local cleanItems = {}
+      local removed = 0
+      for k = 1, #items do
+        if self:mustRemove(k, items) then
+          removed = removed + 1
+        else
+          items[k].index = items[k].index - removed -- index has changed due to removals
+          table.insert(cleanItems, items[k])
+        end
+      end
+      return self._base.iterator(self, cleanItems)
     end
   })
 
 SILE.hyphenator.languages["fr"] = {}
 SILE.hyphenator.languages["fr"].patterns =
 {
----------------------%-----------------------%
--- phonetic patterns % etymological patterns %
----------------------%-----------------------%
+------------------------------------------------
+-- phonetic patterns -- etymological patterns --
+------------------------------------------------
 ----*
 "2'2",
----------------------%-----------------------%
--- phonetic patterns % etymological patterns %
----------------------%-----------------------%
+------------------------------------------------
+-- phonetic patterns -- etymological patterns --
+------------------------------------------------
 ----a
 ".a4",
 "'a4",
@@ -77,12 +241,14 @@ SILE.hyphenator.languages["fr"].patterns =
 ".ae3s4ch",
 "'ae3s4ch",
 "1alcool",
+"'2alcool",
 "a2l1algi",
 ".amino1a2c",
 "'amino1a2c",
 ".ana3s4tr",
 "'ana3s4tr",
 "1a2nesthési",
+"'2a2nesthési",
 ".anti1a2",
 "'anti1a2",
 ".anti1e2",
@@ -100,9 +266,9 @@ SILE.hyphenator.languages["fr"].patterns =
 ".as2ta",
 "'as2ta",
 "a2s3tro",
-"---------------------%-----------------------%",
-"-- phonetic patterns % etymological patterns %",
-"---------------------%-----------------------%",
+------------------------------------------------
+-- phonetic patterns -- etymological patterns --
+------------------------------------------------
 ----b
 "1ba",
 "1bâ",
@@ -135,9 +301,9 @@ SILE.hyphenator.languages["fr"].patterns =
 "1bu",
 "1bû",
 "1by",
-"---------------------%-----------------------%",
-"-- phonetic patterns % etymological patterns %",
-"---------------------%-----------------------%",
+------------------------------------------------
+-- phonetic patterns -- etymological patterns --
+------------------------------------------------
 ----c
 "1ç",
 "1ca",
@@ -162,6 +328,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "acquies4cent.",
 "is3cent.",
 "immis4cent.",
+--
 ".ch4",
 "1c2h",
 "4ch.",
@@ -235,7 +402,8 @@ SILE.hyphenator.languages["fr"].patterns =
 "1cû",
 "1cy",
 ".cul4", -- -- as .con4 .cons4 (march 92)
----------------------%-----------------------%"-- phonetic patterns -- etymological patterns --
+------------------------------------------------
+-- phonetic patterns -- etymological patterns --
 ------------------------------------------------
 ----d
 "1d'",
@@ -266,18 +434,24 @@ SILE.hyphenator.languages["fr"].patterns =
 ".dé1io",
 ".dé1o2",
 ".dé2s", -- originaly in JD file
+-- .dé2s1a2 removed 09/17/92 because wrong for the
+--  original JD 500 words test
 ".dé3s2a3cr",
 ".dés2a3m", -- .dés2a2mi introduced 09/17/92 bec. i
-                               -- can't see why désamidonner ran in JD.
-                               -- Moved to .dés2a3m df 12/27/93
+-- can't see why désamidonner ran in JD.
+-- Moved to .dés2a3m df 12/27/93.
 ".dé3s2a3tell",
 ".dé3s2astr",
-".dé3s2c", -- 1 moved 3 due to .dé2s 09/17/92",
+".dé3s2c", -- 1 moved 3 due to .dé2s 09/17/92
+--.dé2s1e2 removed 09/17/92 because wrong for the
+-- original JD 500 words test
 ".dé2s1é2",
 ".dé3s2é3gr",
 ".dé3s2ensib",
 ".dé3s2ert",
 ".dé3s2exu",
+--.dé2s3h removed 09/17/92 because wrong for the
+-- original JD 500 words test
 ".dé2s1i2",
 ".dé3s2i3d",
 ".dé3s2i3gn",
@@ -286,6 +460,8 @@ SILE.hyphenator.languages["fr"].patterns =
 ".dé3s2invo",
 ".dé3s2i3r",
 ".dé3s2ist",
+--.dé2s1o2 removed 09/17/92 because wrong for the
+-- original JD 500 words test
 ".dé3s2o3dé",
 ".dé2s1œ",
 ".dé3s2o3l",
@@ -308,13 +484,13 @@ SILE.hyphenator.languages["fr"].patterns =
 ".di1a2tom",
 ".di1e2n",
 ".di2s3h",
-"2dlent.", -- mute syllable: jodlent (df) 28/02/94",
+"2dlent.", -- mute syllable: jodlent (df) 28/02/94
 "1do",
 "1dô",
 "1d2r",
 "4dre.",
 "4dres.",
-"2drent.", -- mute syllable: engendrent (df) 28/02/94",
+"2drent.", -- mute syllable: engendrent (df) 28/02/94
 "d1s2",
 "1du",
 "1dû",
@@ -322,11 +498,11 @@ SILE.hyphenator.languages["fr"].patterns =
 ".dy2s3",
 ".dy2s1a2",
 ".dy2s1i2",
-".dy2s1o2", -- missing from nb list",
+".dy2s1o2", -- missing from nb list
 ".dy2s1u2",
----------------------%-----------------------%
+------------------------------------------------
 -- phonetic patterns -- etymological patterns --
----------------------%-----------------------%
+------------------------------------------------
 ----e
 ".e4",
 "'e4",
@@ -356,7 +532,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "extra1",
 "extra2c",
 "extra2i",
----------------------%-------------------------
+------------------------------------------------
 -- phonetic patterns -- etymological patterns --
 ------------------------------------------------
 ----f
@@ -369,6 +545,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "4fe.",
 "4fes.",
 "2fent.", -- mute syllable: agrafent chauffent (df) 22/02/94
+--
 "1fi",
 "1fî",
 "1f2l",
@@ -413,6 +590,57 @@ SILE.hyphenator.languages["fr"].patterns =
 "ser3gent.",
 "ter3gent.",
 "résur3gent.",
+--
+"1g2ha",
+"1g2he",
+"1g2hi",
+"1g2ho",
+"1g2hy",
+"1gi",
+"1gî",
+"1g2l",
+"4gle.",
+"4gles.",
+"2glent.", -- mute syllable: meuglent (df) 28/02/94
+"1g2n",
+"'a2g3nat", -- (df) 16/01/02
+".a2g3nat", -- (df) 16/01/02
+"a2g3nos", -- (df) 16/01/02 (pattern dia2g3n deleted)
+"co2g3niti", -- (df) 16/01/02
+"'i2g3né", -- (df) 16/01/02
+".i2g3né", -- (df) 16/01/02
+"'i2g3ni", -- (df) 16/01/02
+".i2g3ni", -- (df) 16/01/02
+".ma2g3nicide", -- (df) 16/01/02
+".ma2g3nificat", -- (df) 16/01/02
+".ma2g3num", -- (df) 16/01/02
+"o2g3nomoni", -- (df) 16/01/02
+"o2g3nosi", -- (df) 16/01/02
+".pro2g3nath", -- (df) 16/01/02
+"pu2g3nable", -- (df) 16/01/02
+"pu2g3nac", -- (df) 16/01/02
+".sta2g3n",
+".syn2g3nath", -- (df) 16/01/02
+"wa2g3n",
+"4gne.",
+"4gnes.",
+"2gnent.", -- mute syllable: accompagnent (df) 28/02/94
+"1go",
+"1gô",
+"1g2r",
+"4gre.",
+"4gres.",
+"2grent.", -- mute syllable: immigrent (df) 28/02/94
+"1gu",
+"1gû",
+"g1s2",
+"4gue.",
+"4gues.",
+-- words ending with -guent (df) 22/02/94
+"2guent.",
+".on3guent.",
+"'on3guent.",
+--
 "1gy",
 ------------------------------------------------
 -- phonetic patterns -- etymological patterns --
@@ -452,7 +680,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "hypo1u2",
 ------------------------------------------------
 -- phonetic patterns -- etymological patterns --
------------------------------------------------
+------------------------------------------------
 ----i
 ".i4",
 "'i4",
@@ -503,6 +731,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "xil3l",
 -- end of ill patterns
 "1informat", -- missing from nb list
+"'2informat",
 ".in1a2",
 "'in1a2",
 ".in2a3nit",
@@ -632,6 +861,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "corpu3lent.",
 "ru3lent.",
 "sporu4lent.",
+--
 "1li",
 "1lî",
 "1lo",
@@ -731,6 +961,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "bru2ment.",
 "su2ment.",
 "tu2ment.",
+--
 "1mi",
 "1mî",
 ".milli1am",
@@ -779,6 +1010,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "conti3nent.",
 "perti3nent.",
 "absti3nent.",
+--
 "1ni",
 "1nî",
 "1no",
@@ -799,8 +1031,10 @@ SILE.hyphenator.languages["fr"].patterns =
 "'o4",
 "'ô4",
 ".ô4",
+--'ö2 -- mjf -- deleted 3/1/94 df-bg
 "o2b3long",
 "1octet", -- missing from nb list
+"'2octet",
 "o1d2l",
 "o1è2dre",
 "o1ioni",
@@ -848,6 +1082,7 @@ SILE.hyphenator.languages["fr"].patterns =
 ".ar3pent.",
 "'ar3pent.",
 "ser3pent.",
+--
 ".pen2ta", -- pent- or penta- but never pen-ta bg 12/27/93
 "per3h",
 "pé2nul", -- pé2n1ul moved back 09/17/92 to JD def.
@@ -883,6 +1118,9 @@ SILE.hyphenator.languages["fr"].patterns =
 "2pht",
 "3ph2talé",
 "3ph2tis",
+-------- Here is an example of a pb involving phonetic and etymologic patterns 5/94
+--------                .phyto3ph2 -- originaly, but wrong for phy-toph-thora   9/92
+--------                .phy2topha -- for -pharmacie but wrong for phyto-biol.. 5/94
 "1pi",
 "1pî",
 "1p2l",
@@ -999,7 +1237,8 @@ SILE.hyphenator.languages["fr"].patterns =
 ".re4s5trin",
 ".re3s4tu",
 ".re3s4ty",
-".réu2",
+".réu2", --.ré1u2 -- pattern rejected 12/2/92
+-- (don't hyphenate as ré-union nor réu-nion)
 ".ré2uss",
 ".rétro1a2",
 "4re.",
@@ -1012,7 +1251,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "é3rent.",
 "tor3rent.",
 "cur3rent.",
-"--",
+--
 "1r2h",
 "4rhe.",
 "4rhes.",
@@ -1056,7 +1295,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "ab3sent.",
 "pré3sent.",
 ".res3sent.",
-"--",
+--
 ".seu2le", -- jbb
 ".sh4",
 "1s2h",
@@ -1153,6 +1392,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "équipo3tent.",
 "impo3tent.",
 "mit3tent.",
+--
 ".th4",
 "1t2h",
 "4th.",
@@ -1202,7 +1442,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "uni1o2v",
 "uni1a2x",
 "u2s3tr",
------------------------------------------------
+------------------------------------------------
 -- phonetic patterns -- etymological patterns --
 ------------------------------------------------
 ----v
@@ -1219,7 +1459,7 @@ SILE.hyphenator.languages["fr"].patterns =
 "2vent.",
 "conni3vent.",
 ".sou3vent.",
-"--",
+--
 "1vi",
 "1vî",
 "1vo",
@@ -1272,6 +1512,7 @@ SILE.hyphenator.languages["fr"].patterns =
 -- words ending with -zent (df) 22/02/94
 "2zent.",
 "privatdo3zent.",
+--
 "1zi",
 "1zo",
 "1zu",

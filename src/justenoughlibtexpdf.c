@@ -7,6 +7,10 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
+#if !defined LUA_VERSION_NUM || LUA_VERSION_NUM==501
+#define lua_rawlen lua_strlen
+#endif
+
 pdf_doc *p = NULL;
 double height = 0.0;
 double precision = 65536.0;
@@ -319,13 +323,14 @@ int pdf_end_annotation(lua_State *L) {
 
 int pdf_metadata(lua_State *L) {
   const char* key = luaL_checkstring(L, 1);
-  const char* val = luaL_checkstring(L, 2);
+  const char* value = luaL_checkstring(L, 2);
+  int len = lua_rawlen(L, 2);
   ASSERT(p);
   ASSERT(key);
-  ASSERT(val);
+  ASSERT(value);
   texpdf_add_dict(p->info,
                texpdf_new_name(key),
-               texpdf_new_string(val, strlen(val)));
+               texpdf_new_string(value, len));
 }
 /* Images */
 
@@ -404,10 +409,6 @@ int pdf_grestore(lua_State *L) {
   texpdf_dev_grestore(p);
   return 0;
 }
-
-#if !defined LUA_VERSION_NUM || LUA_VERSION_NUM==501
-#define lua_rawlen lua_strlen
-#endif
 
 int pdf_add_content(lua_State *L) {
   const char* input = luaL_checkstring(L, 1);

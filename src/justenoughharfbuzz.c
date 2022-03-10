@@ -280,6 +280,8 @@ int shape (lua_State *L) {
     /* Cleanup */
     hb_buffer_destroy(buf);
     hb_font_destroy(hbFont);
+    hb_face_destroy(hbFace);
+    hb_blob_destroy(blob);
     hb_shape_plan_destroy(shape_plan);
 
     free(features);

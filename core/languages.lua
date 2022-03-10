@@ -14,7 +14,7 @@ SILE.languageSupport = {
     if SILE.hyphenator.languages[language] then return end
     if not(language) or language == "" then language = "en" end
     language = SILE.cldr.locales[language] and language or "und"
-    local _, fail = pcall(function () SILE.require("languages/" .. language) end)
+    local lang, fail = pcall(function () SILE.require("languages/" .. language) end)
     if fail then
       if fail:match("not found") then fail = "no support for this language" end
       SU.warn("Error loading language " .. language .. ": " .. fail)
@@ -22,6 +22,9 @@ SILE.languageSupport = {
     end
     SILE.fluent:set_locale(language)
     loadftl("i18n/"..language..".ftl")
+    if type(lang) == "table" and lang.init then
+      lang.init()
+    end
   end
 }
 
@@ -57,6 +60,7 @@ require("languages/unicode")
 
 -- The following languages neither have hyphenation nor specific
 -- language support at present. This code is here to suppress warnings.
+SILE.hyphenator.languages.ar = { patterns = {} }
 SILE.hyphenator.languages.bo = { patterns = {} }
 SILE.hyphenator.languages.ur = { patterns = {} }
 SILE.hyphenator.languages.sd = { patterns = {} }
