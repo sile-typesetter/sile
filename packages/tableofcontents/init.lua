@@ -191,9 +191,11 @@ return {
   },
   documentation = [[
 \begin{document}
-The \autodoc:package{tableofcontents} package provides tools for class authors to create tables of contents.
-When you are writing sectioning commands such as \code{\\chapter} or \code{\\section},
-your classes should call the \autodoc:command{\tocentry[level=<number>, number=<strings>]{<title>}} command to add a table of contents entry.
+The \autodoc:package{tableofcontents} package provides tools for class authors to
+create tables of contents. When you are writing sectioning commands such
+as \code{\\chapter} or \code{\\section}, your classes should call the
+\autodoc:command{\tocentry[level=<number>, number=<strings>]{<title>}}
+command to register a table of contents entry.
 At the end of each page the class will call a hook function (\code{moveTocNodes}) that collates the table of contents entries from that pages and logs which page they’re on.
 At the end of the document another hook function (\code{writeToc}) will write this data to a file.
 The next time the document is built, any use of the \autodoc:command{\tableofcontents} (typically near the beginning of a document) will be able to read that index data and output the TOC.
@@ -202,22 +204,26 @@ the TOC will not render until at least the second pass.
 If by chance rendering the TOC itself changes the document pagination (e.g. the TOC spans more than one page) it might be necessary to run SILE 3 times to get accurate page numbers shown in the TOC.
 
 
-The \autodoc:command{\tableofcontents} command accepts a \autodoc:parameter{depth} option to control the depth of the content added to the table.
+The \autodoc:command{\tableofcontents} command accepts a \autodoc:parameter{depth} option to
+control the depth of the content added to the table.
 
 If the \autodoc:package{pdf} package is loaded before using sectioning commands,
 then a PDF document outline will be generated.
-Moreover, entries in the table of contents will be active links to the relevant sections.
-To disable the latter behavior, pass \autodoc:parameter{linking=false} to the \autodoc:command{\tableofcontents} command.
+Moreover, entries in the table of contents will be active links to the
+relevant sections. To disable the latter behavior, pass \autodoc:parameter{linking=false} to
+the \autodoc:command{\tableofcontents} command.
 
-Class designers can also style the table of contents by overriding the following commands:
+Class designers can also style the table of contents by overriding the
+following commands:
 
-\noindent{}• \autodoc:command{\tableofcontents:headerfont} - the font used for the header.
-
-\noindent{}• \autodoc:command{\tableofcontents:level1item}, \autodoc:command{\tableofcontents:level2item}, etc. - styling
-for entries.
-
-\noindent{}• \autodoc:command{\tableofcontents:level1number}, \autodoc:command{\tableofcontents:level2number}, etc. - deciding what to do with entry section number, if defined: by default, nothing (so they do not show
-up in the table of contents).
+\begin{itemize}
+\item{\autodoc:command{\tableofcontents:headerfont} - the font used for the header.}
+\item{\autodoc:command{\tableofcontents:level1item}, \autodoc:command{\tableofcontents:level2item},
+      etc. - styling for entries.}
+\item{\autodoc:command{\tableofcontents:level1number}, \autodoc:command{\tableofcontents:level2number},
+      etc. - deciding what to do with entry section number, if defined: by default, nothing (so they
+      do not show up in the table of contents).}
+\end{itemize}
 
 \end{document}
 ]]

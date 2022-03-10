@@ -33,6 +33,7 @@ Didier Willis\break
 \end{font}
 \end{center}
 \set[parameter=document.parskip,value=4pt plus 1pt]
+\set[parameter=lists.parskip,value=2pt plus 1pt]
 
 \open-double-page
 \tableofcontents
