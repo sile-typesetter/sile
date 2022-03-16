@@ -4,11 +4,11 @@ ARG ARCHTAG
 
 FROM docker.io/library/archlinux:base-devel$ARCHTAG AS builder
 
-ARG RUNTIME_DEPS
-ARG BUILD_DEPS
-
 # Monkey patch glibc to avoid issues with old kernels on hosts
 RUN --mount=type=bind,target=/mp,source=build-aux/docker-glibc-workaround.sh /mp
+
+ARG RUNTIME_DEPS
+ARG BUILD_DEPS
 
 # Freshen all base system packages
 RUN pacman --needed --noconfirm -Syuq
@@ -17,7 +17,7 @@ RUN pacman --needed --noconfirm -Syuq
 RUN pacman --needed --noconfirm -Sq $RUNTIME_DEPS $BUILD_DEPS
 
 # Set at build time, forces Docker’s layer caching to reset at this point
-ARG VCS_REF=0
+ARG REVISION
 
 COPY ./ /src
 WORKDIR /src
@@ -38,8 +38,8 @@ RUN mv /pkgdir/usr/local/{share/,}/man
 FROM docker.io/library/archlinux:base$ARCHTAG AS final
 
 # Same args as above, repeated because they went out of scope with FROM
-ARG VCS_REF=0
-ARG RUNTIME_DEPS
+ARG REVISION
+ARG VERSION
 
 # Monkey patch glibc to avoid issues with old kernels on hosts
 RUN --mount=type=bind,target=/mp,source=build-aux/docker-glibc-workaround.sh /mp
@@ -50,8 +50,14 @@ RUN pacman --needed --noconfirm -Syuq && yes | pacman -Sccq
 # Install run-time dependecies
 RUN pacman --needed --noconfirm -Sq $RUNTIME_DEPS && yes | pacman -Sccq
 
-LABEL maintainer="Caleb Maclennan <caleb@alerque.com>"
-LABEL version="$VCS_REF"
+LABEL org.opencontainers.image.title="SILE"
+LABEL org.opencontainers.image.description="A containerized version of the SILE typesetter"
+LABEL org.opencontainers.image.authors="Caleb Maclennan <caleb@alerque.com>"
+LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.url="https://github.com/sile-typesetter/sile/pkgs/container/sile"
+LABEL org.opencontainers.image.source="https://github.com/sile-typesetter/sile"
+LABEL org.opencontainers.image.version="v$VERSION"
+LABEL org.opencontainers.image.revision="$REVISION"
 
 COPY build-aux/docker-fontconfig.conf /etc/fonts/conf.d/99-docker.conf
 
