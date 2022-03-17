@@ -1,0 +1,70 @@
+\begin[papersize=a6]{document}
+\neverindent
+\nofolios
+\script[src=packages/parbox]
+\script[src=packages/rules]
+\script{
+SILE.registerCommand("test:fancymargins", function (options, content)
+  SILE.settings:set("document.lskip", SILE.length("1em"))
+  SILE.settings:set("document.rskip", SILE.nodefactory.hfillglue())
+  SILE.settings:set("document.parindent", SILE.length("-1em"))
+  SILE.process(content)
+end)
+}%
+%
+% End-to-end complex scenarios that push the alignment subtleties
+% to the battle ground.
+
+% Just an hrule as visual guideline
+0.
+\hrule[width=50%fw, height=0.1pt]
+
+% Minimization width re-computation check:
+% Parbox with a long line-broken text and some negative spaces.
+% 1: with a negative width explicitly introduced via a kern (cancelling a quad)
+% 2: negative parindent, ragged right
+% 3: negative parindent, justified (regular line-breaking)
+1.
+\parbox[valign=top, strut=character, width=50%fw, border=0.5pt,
+  minimize=true]{\quad{}\kern[width=-1em]{}Lorem ipsum.}
+
+2.
+\parbox[strut=character, width=50%fw, border=0.5pt,
+  minimize=true]{%
+\test:fancymargins{Lorem ipsum dolor sit amet consetetur sadipscing}}
+
+3.
+\parbox[strut=character, width=50%fw, border=0.5pt,
+  minimize=true]{\test:fancymargins{\set[parameter=document.rskip, value=0]Lorem ipsum dolor sit amet consetetur sadipscing}}
+
+% Verticcal strech/shrink cancellation
+% (medskip is variable, so if cancellation is not perfect, the box layout and the
+% rendered lines get may misaligned vertically).
+4.
+\parbox[width=50%fw, strut=character, border=0.5pt]{Lorem ipsum dolor sit amet consetetur sadipscing
+
+\center{centered}
+
+\raggedleft{I am ragged\break left}
+
+\medskip
+
+A paragraph after a skip.
+}
+
+\smallskip
+
+% Proper vertical baseline aligment check when the parbox content is bigger
+% that the strut (due to font change, images, etc. = emulated here with hrules).
+5.
+\parbox[valign=top, strut=character, width=25%fw, border=0.5pt]{Lorem
+  ipsum \hrule[height=2em, width=2pt]\hrule[depth=1em, width=2pt]\par
+  Sit \hrule[height=1em, width=2pt]\hrule[depth=1.5em, width=2pt]}%
+...\parbox[valign=bottom, strut=character, width=25%fw, border=0.5pt]{Lorem
+  ipsum \hrule[height=2em, width=2pt]\hrule[depth=1em, width=2pt]\par
+  Sit \hrule[height=1em, width=2pt]\hrule[depth=1.5em, width=2pt]}%
+...\parbox[valign=middle, strut=character, width=25%fw, border=0.5pt]{Lorem
+  ipsum \hrule[height=2em, width=2pt]\hrule[depth=1em, width=2pt]\par
+  Sit \hrule[height=1em, width=2pt]\hrule[depth=1.5em, width=2pt]}
+
+\end{document}

@@ -1,0 +1,43 @@
+\begin[papersize=a6]{document}
+\nofolios
+\script[src=packages/ptable]
+% Table with cell border and padding configuration at cell level:
+% This table example is in the LaTeX booktabs package, let us try to reproduce it.
+
+\center{\parbox[width=80%fw, strut=character]{%
+\begin[cols=34%fw 33%fw 33%fw, cellborder=0]{ptable}
+  \begin{row}
+    \cell[span=2,border=0.8pt 0.4pt 0 0]{\center{Item}}
+    \cell[border=0.8pt 0 0 0]{}
+  \end{row}
+  \begin{row}
+    \cell[border=0 0.8pt 0 0, padding=4pt 4pt 0 4pt]{\noindent{}Animal}
+    \cell[border=0 0.8pt 0 0]{Description}
+    \cell[border=0 0.8pt 0 0, padding=4pt 4pt 4pt 0]{\raggedleft{Price ($)}}
+  \end{row}
+  \begin{row}
+    \cell[valign=top, padding=4pt 1pt 0 4pt]{\noindent{}Gnat}
+    \celltable[span=2]{
+      \row{\cell[padding=4pt 1pt 4pt 4pt]{per gram}\cell[padding=4pt 1pt 4pt 0]{\raggedleft{13.65}}}
+      \row{\cell[padding=1pt 1pt 4pt 4pt]{each}\cell[padding=1pt 1pt 4pt 0]{\raggedleft{0.01}}}
+    }
+  \end{row}
+  \begin{row}
+    \cell[padding=2pt 1pt 0 4pt]{\noindent{}Gnu}
+    \cell[padding=2pt 1pt 4pt 4pt]{stuffed}
+    \cell[padding=2pt 1pt 4pt 0]{\raggedleft{92.50}}
+  \end{row}
+  \begin{row}
+    \cell[padding=2pt 1pt 0 4pt]{\noindent{}Emu}
+    \cell[padding=2pt 1pt 4pt 4pt]{stuffed}
+    \cell[padding=2pt 1pt 4pt 0]{\raggedleft{33.33}}
+  \end{row}
+  \begin{row}
+    \cell[border=0 0.8pt 0 0, padding=2pt 4pt 0 4pt]{\noindent{}Armadillo}
+    \cell[border=0 0.8pt 0 0, padding=2pt 4pt 4pt 4pt]{frozen}
+    \cell[border=0 0.8pt 0 0, padding=2pt 4pt 4pt 0]{\raggedleft{8.99}}
+  \end{row}
+\end{ptable}
+}}
+
+\end{document}

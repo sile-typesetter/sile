@@ -1,0 +1,42 @@
+\begin[papersize=a6]{document}
+\script[src=packages/framebox]
+\script[src=packages/struts]
+\nofolios
+\neverindent
+% Test case: \bracebox basics
+
+A default \bracebox{\strut{}left-braced} box
+
+\medskip
+
+A default \bracebox[side=right]{\strut{}right-braced} box
+
+\medskip
+
+A default \bracebox[side=both]{\strut{}braced} box
+
+\medskip
+
+No thickness \bracebox[bracethickness=0, side=both]{\strut{}braced} box
+
+\medskip
+
+Not so curvy \bracebox[side=both, curvyness=0.5]{\strut{}braced} box
+
+\medskip
+
+More curvy \bracebox[side=both, curvyness=0.725]{\strut{}braced} box
+
+\medskip
+
+Blue \bracebox[side=both, bracecolor=blue]{\strut{}braced} box
+
+\medskip
+
+Larger \bracebox[side=both, bracewidth=0.5em]{\strut{}braced} box
+
+\medskip
+
+Heavy \bracebox[side=both, strokewidth=0.1em]{\strut{}braced} box
+
+\end{document}
