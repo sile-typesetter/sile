@@ -1,0 +1,38 @@
+\begin[papersize=a6]{document}
+\script[src=packages/framebox]
+\script[src=packages/struts]
+\nofolios
+\neverindent
+% Test case: \roughbox basics
+
+A default \roughbox{\strut{}rough box.}
+
+\medskip
+
+A default \roughbox[enlarge=true]{\strut{}rough box} with extra spacing.
+
+\medskip
+
+A filled colored \roughbox[bordercolor=#b94051,fillcolor=220]{\strut{}rough box.}
+
+\medskip
+
+A single-stroked \roughbox[singlestroke=true]{\strut{}rough box.}
+
+\medskip
+
+A vertice-preserving single-stroked \roughbox[singlestroke=true, preserve=true]{\strut{}rough box.}
+
+\medskip
+
+A (strongly-)bowed single-stroked \roughbox[singlestroke=true, bowing=10]{\strut{}rough box.}
+
+\medskip
+
+A (strongly-)rough single-stroked \roughbox[singlestroke=true, roughness=2.5]{\strut{}rough box.}
+
+\medskip
+
+A stretched \roughbox[enlarge=true]{\strut{}rough\hfill box} for test.
+
+\end{document}

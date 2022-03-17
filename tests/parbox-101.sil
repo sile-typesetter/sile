@@ -1,0 +1,57 @@
+\begin[papersize=a6]{document}
+\neverindent
+\nofolios
+\script[src=packages/parbox]
+\script[src=packages/rules]
+\script[src=packages/lorem]
+% An end-to-end test covering all alignement cases (top, bottom, middle)
+% with all alignement options (no strut, character, rule strut)
+% and with varying paddings on the last test.
+
+\define[command=checkguide]{\rebox[width=0]{\hrule[width=100%lw, height=0.1pt]}}
+\checkguide{}(1) \parbox[width=25%fw, valign=top, border=0.5pt]{para one\par
+\lorem[words=5]\par
+para two} \hfill \parbox[width=25%fw, valign=top, strut=character, border=0.5pt]{para one\par
+\lorem[words=5]\par
+para two} \hfill \parbox[width=25%fw, valign=top, strut=rule, border=0.5pt]{para one\par
+\lorem[words=5]\par
+para two}
+
+\smallskip
+
+\checkguide{}(2) \parbox[width=25%fw, valign=bottom, border=0.5pt]{para one\par
+\lorem[words=5]\par
+para two} \hfill \parbox[width=25%fw, valign=bottom, strut=character, border=0.5pt]{para one\par
+\lorem[words=5]\par
+para two} \hfill \parbox[width=25%fw, valign=bottom, strut=rule, border=0.5pt]{para one\par
+\lorem[words=5]\par
+para two}
+
+\smallskip
+
+\checkguide{}(3) \parbox[width=25%fw, valign=middle, border=0.5pt]{para one\par
+\lorem[words=5]\par
+para two} \hfill \parbox[width=25%fw, valign=middle, strut=character, border=0.5pt]{para one\par
+\lorem[words=5]\par
+para two} \hfill \parbox[width=25%fw, valign=middle, strut=rule, border=0.5pt]{para one\par
+\lorem[words=5]\par
+para two}
+
+\bigskip
+
+\checkguide{}(4) \parbox[width=25%fw, valign=top, border=0.5pt, padding=2pt 7pt 0pt 0pt]{para one\par
+para two} \hfill \parbox[width=25%fw, valign=top, strut=character, border=0.5pt, padding=3pt 2pt 0pt 0pt]{para one\par
+para two} \hfill \parbox[width=25%fw, valign=top, strut=rule, border=0.5pt, padding=14pt 3pt 0pt 0pt]{para one\par
+para two}
+
+\checkguide{}(5) \parbox[width=25%fw, valign=bottom, border=0.5pt, padding=2pt 7pt 0pt 0pt]{para one\par
+para two} \hfill \parbox[width=25%fw, valign=bottom, strut=character, border=0.5pt, padding=3pt 2pt 0pt 0pt]{para one\par
+para two} \hfill \parbox[width=25%fw, valign=bottom, strut=rule, border=0.5pt, padding=14pt 3pt 0pt 0pt]{para one\par
+para two}
+
+\checkguide{}(6) \parbox[width=25%fw, valign=middle, border=0.5pt, padding=2pt 7pt 0pt 0pt]{para one\par
+para two} \hfill \parbox[width=25%fw, valign=middle, strut=character, border=0.5pt, padding=3pt 2pt 0pt 0pt]{para one\par
+para two} \hfill \parbox[width=25%fw, valign=middle, strut=rule, border=0.5pt, padding=14pt 3pt 0pt 0pt]{para one\par
+para two}
+
+\end{document}
