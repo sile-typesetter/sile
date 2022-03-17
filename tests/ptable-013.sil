@@ -1,0 +1,63 @@
+\begin[papersize=a6]{document}
+\nofolios
+\neverindent
+\font[size=9pt]
+\script[src=packages/ptable]
+
+\begin[cols=20%fw 16%fw 16%fw 48%fw]{ptable}
+  \begin[background=#ddd]{row}
+    \cell[valign=top]{Day}
+    \begin[span=3]{celltable}
+      \begin{row}
+        \cell[span=3, halign=center]{Seminar}
+      \end{row}
+      \begin{row}
+        \begin[span=2]{celltable}
+          \begin{row}
+            \cell[span=2, halign=center]{Schedule}
+          \end{row}
+          \begin{row}
+            \cell[halign=left]{Begin}
+            \cell[halign=right]{End}
+          \end{row}
+        \end{celltable}
+        \cell{Topic}
+      \end{row}
+    \end{celltable}
+  \end{row}
+  \begin{row}
+    \cell[background=#eee]{Monday}
+    \cell[halign=left]{9:30 AM}
+    \cell[halign=right]{5:30 PM}
+    \celltable{
+        \row{\cell{Introduction to SILE}}
+        \row{\cell{Classes & packages}}
+    }
+  \end{row}
+    \begin{row}
+    \cell[background=#eee]{Tuesday}
+    \celltable[span=2]{
+        \row{\cell[halign=left]{9:30 AM}\cell[halign=right]{11:00 AM}}
+        \row{\cell[halign=left]{11:00 AM}\cell[halign=right]{12:00 PM}}
+        \row{\cell[halign=left]{12:00 PM}\cell[halign=right]{5:00 PM}}
+    }
+    \celltable{
+        \row{\cell{Math & advanced typesetting}}
+        \row{\cell{The internals of SILE}}
+    }
+  \end{row}
+  \begin{row}
+    \cell[background=#eee]{Wednesday}
+    \cell[halign=left]{8:00 AM}
+    \cell[halign=right]{12:00 PM}
+    \cell{SILE as an XML processor}
+  \end{row}
+  \begin{row}
+    \cell[background=#eee]{Thuesday}
+    \cell[halign=left]{8:00 AM}
+    \cell[halign=right]{12:00 PM}
+    \cell{Mardown conversion use cases, strategies and solutions}
+  \end{row}
+\end{ptable}
+
+\end{document}

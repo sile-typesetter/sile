@@ -1,0 +1,19 @@
+\begin[papersize=a6]{document}
+\script[src=packages/framebox]
+\nofolios
+\neverindent
+% Test case: \framebox and \roundbox basics
+
+A \framebox{square box.}
+
+A \framebox[shadow=true]{square box with dropped shadow.}
+
+A \framebox[shadow=true, bordercolor=#b94051, fillcolor=#ecb0b8, shadowcolor=220]{colored square box.}
+
+A \roundbox{plain rounded box.}
+
+A \roundbox[shadow=true]{rounded box with dropped shadow.}
+
+A \roundbox[shadow=true, bordercolor=#b94051, fillcolor=#ecb0b8, shadowcolor=220]{fancy colored rounded box.}
+
+\end{document}

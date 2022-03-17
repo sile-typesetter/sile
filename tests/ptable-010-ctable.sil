@@ -1,0 +1,52 @@
+\begin[papersize=a6]{document}
+\nofolios
+\script[src=packages/ptable]
+\script[src=packages/raiselower]
+% Table with cell border configuration at cell level:
+% This table example is in the LaTeX ctable package, let us try to reproduce it.
+
+\define[command=mysuper]{\raise[height=0.77ex]{\font[size=1.414ex]{\process}}}
+
+\center{\parbox[width=80%fw, strut=character]{%
+\begin[cols=20%fw 40%fw 40%fw, cellborder=0]{ptable}
+  \begin{row}
+    \cell[border=0.8pt 0.4pt 0 0]{}
+    \cell[border=0.8pt 0.4pt 0 0, style=center]{H(Mu) + F\mysuper{2}}
+    \cell[border=0.8pt 0.4pt 0 0, style=center]{H(Mu) + Cl\mysuper{2}}
+  \end{row}
+  \begin{row}
+    \cell{\em{β}\kern[width=0.1em](H)}
+    \cell[style=center]{80.9°}
+    \cell[style=center]{83.2°}
+  \end{row}
+  \begin{row}
+    \cell[border=0 0.8pt 0 0]{\em{β}\kern[width=0.1em](Mu)}
+    \cell[border=0 0.8pt 0 0, style=center]{86.7°}
+    \cell[border=0 0.8pt 0 0, style=center]{87.7°}
+  \end{row}
+\end{ptable}
+}}
+
+% Again done differently.
+
+\center{%
+\begin[cols=16%fw 32%fw 32%fw, cellborder=0]{ptable}
+  \begin{row}
+    \cell[border=0.8pt 0.4pt 0 0]{}
+    \cell[border=0.8pt 0.4pt 0 0, style=center]{H(Mu) + F\mysuper{2}}
+    \cell[border=0.8pt 0.4pt 0 0, style=center]{H(Mu) + Cl\mysuper{2}}
+  \end{row}
+  \begin{row}
+    \cell{\em{β}\kern[width=0.1em](H)}
+    \cell[style=center]{80.9°}
+    \cell[style=center]{83.2°}
+  \end{row}
+  \begin{row}
+    \cell[border=0 0.8pt 0 0]{\em{β}\kern[width=0.1em](Mu)}
+    \cell[border=0 0.8pt 0 0, style=center]{86.7°}
+    \cell[border=0 0.8pt 0 0, style=center]{87.7°}
+  \end{row}
+\end{ptable}
+}
+
+\end{document}

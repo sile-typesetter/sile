@@ -1,0 +1,34 @@
+\begin[papersize=a6, class=book]{document}% Needs book class for footnotes
+\neverindent
+\nofolios
+\set[parameter=document.parskip, value=5pt]
+\script[src=packages/parbox]
+\script[src=packages/lorem]
+% An end-to-end test for parbox inception and footnotes cascading,
+% covering also parbox minimization.
+
+% No minimization
+A. \parbox[width=70%fw, strut=character, padding=5pt, border=0.5pt]{%
+I am a parbox\footnote{Main parbox footnote A.}
+
+\parbox[width=70%fw, strut=character, padding=5pt, border=0.5pt]{%
+I am an insider parbox\footnote{Insider parbox footnote A.}}
+}
+
+% Minimize outer frame
+B. \parbox[width=70%fw, strut=character, padding=5pt, border=0.5pt, minimize=true]{%
+I am a parbox\footnote{Main parbox footnote B.}
+
+\parbox[width=70%fw, strut=character, padding=5pt, border=0.5pt]{%
+I am an insider parbox\footnote{Insider parbox footnote B.}}
+}
+
+% Minimize inner frame too.
+C. \parbox[width=70%fw, strut=character, padding=5pt, border=0.5pt, minimize=true]{%
+I am a parbox\footnote{Main parbox footnote C.}
+
+\parbox[width=70%fw, strut=character, padding=5pt, border=0.5pt, minimize=true]{%
+I am an insider parbox\footnote{Insider parbox footnote C.}}
+}
+
+\end{document}
