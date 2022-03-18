@@ -44,7 +44,7 @@ jobs:
           make dist
       - name: Upload artifacts
         if: ${{ !contains(github.ref, 'refs/tags/v') }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: sile-${{ env.VERSION }}
           path: sile-${{ env.VERSION }}.zip
