@@ -12,7 +12,7 @@ jobs:
           - [ '5.4', 'MYCFLAGS=-fPIC' ]
           - [ '5.3', 'MYCFLAGS=-fPIC' ]
           - [ '5.2', 'MYCFLAGS=-fPIC' ]
-          - [ '5.1', 'CFLAGS=-O2 -Wall -DLUA_USE_LINUX -fPIC']
+          - [ '5.1', 'CFLAGS="-O2 -Wall -DLUA_USE_LINUX -fPIC"']
           - [ 'luajit', 'XCFLAGS=-fPIC' ]
           - [ 'luajit-openresty', 'XCFLAGS=-fPIC' ]
     runs-on: ubuntu-20.04
