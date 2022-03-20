@@ -37,7 +37,7 @@ SILE.registerCommand("leaders", function(options, content)
 end)
 
 SILE.registerCommand("dotfill", function(_, _)
-  SILE.call("leaders", { width = "0pt plus 100000pt" }, function()
+  SILE.call("leaders", { width = SILE.nodefactory.hfillglue() }, function()
     SILE.call("kern", { width = "1spc" })
     SILE.typesetter:typeset(".")
     SILE.call("kern", { width = "1spc" })
