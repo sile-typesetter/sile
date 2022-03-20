@@ -9,7 +9,8 @@ SILE.inputs.TeXlike.identifier = (ID + lpeg.S":-")^1
 SILE.inputs.TeXlike.passthroughCommands = {
   ftl = true,
   math = true,
-  script = true
+  raw = true,
+  script = true,
 }
 setmetatable(SILE.inputs.TeXlike.passthroughCommands, {
     __call = function(self, command)

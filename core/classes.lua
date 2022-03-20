@@ -23,6 +23,11 @@ SILE.setCommandDefaults = function (command, defaults)
   end
 end
 
+SILE.rawHandlers = {}
+SILE.registerRawHandler = function (format, callback)
+  SILE.rawHandlers[format] = callback
+end
+
 SILE.doTexlike = function (doc)
   -- Setup new "fake" file in which the doc exists
   local cpf = SILE.currentlyProcessingFile
@@ -97,6 +102,21 @@ end, "Ignores any text within this command's body.")
 SILE.registerCommand("process", function ()
   SU.error("Encountered unsubstituted \\process.")
 end, "Within a macro definition, processes the contents of the macro body.")
+
+SILE.registerCommand("raw", function (options, content)
+  local rawtype = SU.required(options, "type", "raw")
+  local handler = SILE.rawHandlers[rawtype]
+  if not handler then SU.error("No inline handler for '"..rawtype.."'") end
+  handler(options, content)
+end, "Invoke a raw passthrough handler")
+
+SILE.registerRawHandler("text", function (_, content)
+  SILE.settings:temporarily(function()
+    SILE.settings:set("typesetter.parseppattern", "\n")
+    SILE.settings:set("typesetter.obeyspaces", true)
+    SILE.typesetter:typeset(content[1])
+  end)
+end)
 
 return {
   base = require("classes.base")

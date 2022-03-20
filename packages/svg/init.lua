@@ -58,6 +58,17 @@ local function registerCommands (_)
     end
   end)
 
+  SILE.registerRawHandler("svg", function(options, content)
+    local svgdata = content[1]
+    local width = options.width and SU.cast("measurement", options.width):absolute() or nil
+    local height = options.height and SU.cast("measurement", options.height):absolute() or nil
+    local density = options.density or 72
+    -- See issue #1375: svg.svg_to_ps() called in _drawSVG has a apparently a side effect
+    -- on the internal representation of the Lua string and corrupts it.
+    -- So as a workaround, for the original string to be able to be reused, we must get a
+    -- copy... So let's force some stupid comment concatenation here.
+    _drawSVG("<!-- copy -->"..svgdata, width, height, density)
+  end)
 end
 
 return {
