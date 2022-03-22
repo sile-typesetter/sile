@@ -1,0 +1,15 @@
+\begin[papersize=a5]{document}
+\script[src=packages/leaders]
+\nofolios
+\neverindent
+% Test case: vertical alignment for \dotfill
+\font[size=50pt]
+|\dotfill{}|\par
+1\dotfill{}1\par
+1a\dotfill{}1a\par
+1 2\dotfill{}2 1\par
+1 2a\dotfill{}2a 1\par
+1 2 3 4\dotfill{}4 3 2 1\par
+1 2 3 4 5\dotfill{}5 4 3 2 1\par
+1 2 3 4 5 |\dotfill{}5 4 3 2 1\par
+\end{document}
