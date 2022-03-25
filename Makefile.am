@@ -353,6 +353,23 @@ export DOCKER_TAG ?= HEAD
 docker: Dockerfile hooks/build .version
 	./hooks/build $(VERSION)
 
+.PHONY: docker-dep-check
+docker-dep-check: .docker_deps .aur_deps
+	diff -u $^
+
+CLEANFILES += .docker_deps
+.docker_deps: hooks/build
+	$(SHELL) -c 'source <($(SED) -nE "/^(RUN|'"'"')/{s/.*=/echo /;p}" $<)' | \
+		tr ' ' '\n' | \
+		sort > $@
+
+CLEANFILES += .aur_deps
+.aur_deps:
+	curl -Ls 'https://aur.archlinux.org/cgit/aur.git/plain/.SRCINFO?h=sile-git' | \
+		$(SED) -nE '/\bdepends =/{s/.*= //;p}' | \
+		$(GREP) -vxE '(lua-.*|.*\.so|git|glibc)' | \
+		sort > $@
+
 define docker_push =
 	test -z "$(DOCKER_PAT)" || \
 		docker login https://$(DOCKER_REGISTRY) -u $(DOCKER_USERNAME) -p $(DOCKER_PAT)
