@@ -23,14 +23,14 @@ jobs:
         with:
           fetch-depth: 0
       - name: Cache test fonts
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             .fonts
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Cache lua_modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             lua_modules
