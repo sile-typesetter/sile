@@ -30,3 +30,6 @@ globals = {
   "ProFi"
 }
 max_line_length = false
+ignore = {
+  "581"
+}
