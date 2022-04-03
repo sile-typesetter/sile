@@ -9,4 +9,6 @@ Foo f\dotfill{}bar\par
 Foo foo\dotfill{}bar\par
 Foo foo f\dotfill{}bar\par
 Foo foo foo\dotfill{}bar\par
+Foo foo foo\dotfill{}\hbox{}\par
+
 \end{document}
