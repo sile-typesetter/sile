@@ -13,7 +13,7 @@ local widthToFrameEdge = function (frame)
   elseif frame:writingDirection() == "BTT" then
     w = frame.state.cursorY - frame:top()
   else
-    SU.error("Unknwown writing direction")
+    SU.error("Unknown writing direction")
   end
   return w
 end
@@ -31,7 +31,7 @@ local leader = pl.class({
       -- We want leaders on different lines to be aligned vertically in the frame,
       -- from its end edge (e.g. the right edge in LTR writing direction).
 
-      -- Compute how many leader we can fit from the current initial position.
+      -- Compute how many leaders we can fit from the current initial position.
       local fitWidth = widthToFrameEdge(typesetter.frame):tonumber()
       local maxRepetitions = math.floor(fitWidth / leaderWidth) -- round down!
       -- Compute how many leaders we have to skip after our final position.
