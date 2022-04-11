@@ -5,15 +5,17 @@
 -- 2021-2022 Didier Willis
 -- License: MIT
 --
+-- Known limitations: LTR-TTB writing direction is assumed.
+--
 SILE.require("packages/rebox")
 SILE.require("packages/struts")
 
 -- PARBOXING FUNCTIONS
 
--- Function for build a new temporary frame which only constraint is to honor
--- the target width of the paragraph box. This frame does not have to be
--- registered in SILE.documentState.thisPageTemplate.frames since we will
--- throw it out after boxing.
+-- Function for building a new temporary frame which only constraint is to
+-- honor the target width of the paragraph box. This frame does not have to
+-- be registered in SILE.documentState.thisPageTemplate.frames since we will
+-- throw it away after boxing.
 local nb_ = 1
 local parboxTempFrame = function (options)
   local id = "parbox_"..nb_
@@ -73,13 +75,7 @@ local parboxFraming = function (options, content)
     -- NEVER output, just gather the nodes, hence the enforced 1 here.
     originalLeaveHmode(self, 1)
   end
-  -- (This comment just kept as it was a false start, for reminder)
-  -- Finally we don't need to override the endline
-  -- method, as we enforced the 1 in leaveHMode.
-  -- parboxTypesetter.endline = function (self)
-  --   self:leaveHmode(1)
-  --   SILE.documentState.documentClass.endPar(self)
-  -- end
+
   local parboxFrame = parboxTempFrame(options)
   parboxTypesetter:init(parboxFrame)
   SILE.typesetter = parboxTypesetter
@@ -114,22 +110,27 @@ local drawBorders = function (x, y, w, h, border, bordercolor)
   if bordercolor then SILE.outputter:popColor() end
 end
 
-local insertStruts = function (vboxlist, strut)
-  -- The core assumption here is that first/last vboxes are actual text
-  -- lines. Could be wrong...
-  local h, d = SU.cast("length", strut.height), SU.cast("length", strut.depth)
+local getBaselineExtents = function (vboxlist)
+  -- The core assumption here is that first/last vboxes are actual text lines.
+  -- This could be wrong...
+  -- Anyhow, the function then returns the height of the first line and the
+  -- depthof the last line, so we can use these to vertically align the parbox
+  -- with the surrounding content.
+  -- The way we do it likely assumes top-to-bottom writing...
+  local baseHeight, baseDepth = SILE.length(), SILE.length()
   for i = 1, #vboxlist do
-    if vboxlist[i].is_vbox and vboxlist[i].height < h then
-      vboxlist[i].height = h -- Hack height of first vbox
+    if vboxlist[i].is_vbox and vboxlist[i].height then
+      baseHeight = vboxlist[i].height
       break
     end
   end
   for i = #vboxlist, 1, - 1 do
-    if vboxlist[i].is_vbox and vboxlist[i].depth < d then
-      vboxlist[i].depth = d -- Hack depth of first vbox
+    if vboxlist[i].is_vbox and vboxlist[i].depth then
+      baseDepth = vboxlist[i].depth
       break
     end
   end
+  return baseHeight, baseDepth
 end
 
 local parseBorderOrPadding = function (rawspec, opt)
@@ -152,6 +153,25 @@ local parseBorderOrPadding = function (rawspec, opt)
   return spec
 end
 
+local naturalWidth = function (width, slice)
+  -- Since PR #1378, computeLineRatio() also returns the natural width of
+  -- the line, in addition to the stretch/shring ratio.
+  --
+  -- IMPLEMENTATION REMARK / PERFORMANCE IMPROVEMENT
+  -- This is to so efficient and could be improved:
+  -- We could have modified the typesetter to store it in the line vbox, to
+  -- avoid recomputing it. The typesetter has other more important things to
+  -- fix/refactor, let's not annoy it with our little parbox case now.
+  local _, totalWidth = SILE.typesetter:computeLineRatio(width, slice)
+  return totalWidth
+end
+
+local recomputeLineRatio = function (targetWidth, originalWidth)
+  local left = targetWidth:tonumber() - originalWidth:tonumber()
+  local ratio = left / originalWidth[left < 0 and "shrink" or "stretch"]:tonumber()
+  return math.max(ratio, -1)
+end
+
 SILE.registerCommand("parbox", function (options, content)
   local width = SU.required(options, "width", "parbox")
   local strut = options.strut or "none"
@@ -168,21 +188,22 @@ SILE.registerCommand("parbox", function (options, content)
   local strutDimen
   if strut == "rule" then
     strutDimen = SILE.call("strut", { method = "rule" })
-    insertStruts(vboxes, strutDimen)
   elseif strut == "character" then
     strutDimen = SILE.call("strut", { method = "character" })
-    insertStruts(vboxes, strutDimen)
   else
     strutDimen = { height = SILE.length(0), depth = SILE.length(0) }
   end
 
+  local baseHeight, baseDepth = getBaselineExtents(vboxes)
+
   local wmax = SILE.length()
   local totalHeight = SILE.length()
+  local vboxWidths = {}
   for i = 1, #vboxes do
     -- Try to cancel vertical stretching/shrinking
     if vboxes[i].is_vglue then
       -- Important: many vglues are just the _same_ node, which will be "adjusted"
-      -- by the page builder. We cannot tweak directly its height or depth as we
+      -- by the page builder. We cannot tweak directly their height or depth as we
       -- sometimes do with other boxes, as it would have a side effect. So we have
       -- to re-create a new vglue with the appropriate fixed dimension.
       vboxes[i] = SILE.nodefactory.vglue(SILE.length(vboxes[i].height.length))
@@ -190,49 +211,44 @@ SILE.registerCommand("parbox", function (options, content)
     totalHeight = totalHeight + vboxes[i].height:absolute() + vboxes[i].depth:absolute()
 
     if minimize then
-      -- We go through all nodes in the line to compute the maximal line width.
-      -- This is not so efficient, we could have modified the typesetter to
-      -- compute it when it was processing the lines...But is is buried deep
-      -- in its breakpointsToLines() method, which some packages may moreover
-      -- overload, so we went for the easiest solution, albeit CPU-intensive.
+      -- We go through all lines to retrieve their natural line.
       local w = SILE.length()
-        if vboxes[i].nodes then
-          for n in ipairs(vboxes[i].nodes) do
-            if vboxes[i].nodes[n].width > SILE.length(0) then
-              w = w + vboxes[i].nodes[n].width:absolute()
-            end
-          end
-        end
-      if w > wmax then wmax = w end
+      if vboxes[i].nodes then
+        w = naturalWidth(width, vboxes[i].nodes)
+        if w > wmax then wmax = w end
+      end
+      vboxWidths[i] = w
     end
   end
 
   if minimize then
-    -- Again not so effective: we recompute all line ratios based on the new
-    -- width...
+    -- The max line width can actually be bigger than our target width,
+    -- (i.e. notwithstanding its shrinkeability).
+    width = SU.min(wmax.length, width)
+    -- We recompute all line ratios based on the new target width.
     for i = 1, #vboxes do
-      if vboxes[i].nodes then
-        local r = SILE.typesetter:computeLineRatio(wmax, vboxes[i].nodes)
+      if vboxes[i].nodes and vboxes[i].ratio then
+        local r = recomputeLineRatio(width, vboxWidths[i])
         vboxes[i].ratio = r
       end
     end
-    width = wmax
   end
 
+  local adjustDepth = SU.max(baseDepth, strutDimen.depth) - baseDepth
+  local adjustHeight = SU.max(baseHeight, strutDimen.height) - baseHeight
   local z0 = SILE.length(0)
   local depth, height
   if valign == "bottom" then
-    depth = z0 + strutDimen.depth + SILE.length(padding[2])
-    height = totalHeight - strutDimen.depth + SILE.length(padding[1])
+    depth = z0 + SILE.length(padding[2]) + SU.max(baseDepth, strutDimen.depth)
+    height = totalHeight + SILE.length(padding[1]) - baseDepth + adjustHeight
   elseif valign == "middle" then
     local padwidth = SILE.length(padding[2] + padding[1])
-    local d2 = (totalHeight - strutDimen.height + strutDimen.depth + padwidth)
-    local h2 = (totalHeight + strutDimen.height - strutDimen.depth + padwidth)
-    depth = SILE.length(d2:tonumber() / 2)
-    height = SILE.length(h2:tonumber() / 2)
+    local half = (totalHeight + adjustHeight + adjustDepth + padwidth) / 2
+    depth = half
+    height = half
   else -- valign == top
-    depth = totalHeight - strutDimen.height + SILE.length(padding[1])
-    height = z0 + strutDimen.height + SILE.length(padding[1])
+    depth = totalHeight + SILE.length(padding[2]) - baseHeight + adjustDepth
+    height = z0 + SILE.length(padding[1]) + SU.max(baseHeight, strutDimen.height)
   end
 
   return SILE.typesetter:pushHbox({
@@ -242,6 +258,7 @@ SILE.registerCommand("parbox", function (options, content)
     inner = vboxes,
     valign = valign,
     padding = padding,
+    yAdjust = adjustHeight, -- TTB is assumed
     offset = SILE.measurement(), -- INTERNAL: See comment below.
     border = border,
     bordercolor = bordercolor,
@@ -258,6 +275,8 @@ SILE.registerCommand("parbox", function (options, content)
         self.border,
         self.bordercolor
       )
+
+      typesetter.frame.state.cursorY = typesetter.frame.state.cursorY + self.yAdjust
 
       -- Process each vbox
       typesetter.frame.state.cursorY = typesetter.frame.state.cursorY + self.padding[1] - self.offset:tonumber()

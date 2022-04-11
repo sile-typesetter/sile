@@ -1,7 +1,7 @@
 --
 -- A table package for SILE
 -- Or rather "parbox-based tables", using the parbox package as a building block.
--- 2021 Didier Willis
+-- 2021-2022 Didier Willis
 -- License: MIT
 --
 SILE.require("packages/parbox")
@@ -395,6 +395,9 @@ SILE.registerCommand("ptable", function (options, content)
           end
           -- end header row logic.
           SILE.typesetter:leaveHmode() -- Now we should be allowed to output to page, if it wants to.
+          if SU.boolean(options.header, false) and iRow == 1 then
+            SILE.call("novbreak") -- We wouldn't a page break just after the initial header only.
+          end
           iRow = iRow + 1
         else
             SU.error("Unexpected '"..content[i].command.."' in table")
@@ -408,8 +411,22 @@ SILE.registerCommand("ptable", function (options, content)
   SILE.call("medskip")  -- Also I don't like much hard-coded skips...
 end)
 
-SILE.registerCommand("ptable:cell:hook", function (_, content)
-  SILE.process(content)
+-- The default implementation adds an "halign" option for horizontal
+-- cell alignment, which is handy e.g. for Markdown support.
+-- Other packages and classes could redefine this hook to support
+-- their own options (such as cell styles etc.)
+SILE.registerCommand("ptable:cell:hook", function(options, content)
+  if options.halign == "center" then
+    SILE.call("center", {}, content)
+  elseif options.halign == "left" then
+    SILE.call("noindent")
+    SILE.call("raggedright", {}, content)
+  elseif options.halign == "right" then
+    SILE.call("noindent")
+    SILE.call("raggedleft", {}, content)
+  else
+    SILE.process(content)
+  end
 end)
 
 return {
@@ -648,9 +665,10 @@ merged?}
 \novbreak
 
 Each cell being a mini-frame, it resets its settings to their top-level (i.e. document) values.
-Cell content and options, though, are passed to a \autodoc:command{\ptable:cell:hook} which is just
-a pass-through command by default. Would you want to define specific styling for some cells,
-you can re-define that command to achieve it.
+Cell content and options, though, are passed to a \autodoc:command{\ptable:cell:hook}.
+Would you want to define specific styling for some cells, you can re-define that command to
+achieve it\footnote{The default implementation supports an \autodoc:parameter{halign}
+option for horizontal cell alignement (left, right or center, or justified if not set).}.
 
 \smallskip
 
