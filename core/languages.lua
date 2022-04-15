@@ -44,10 +44,20 @@ end)
 
 SILE.registerCommand("fluent", function (options, content)
   local locale = SILE.settings.get("document.language")
+  SU.debug("fluent", function () return string.format("Looking for %s in %s", key, locale) end)
   local key = content[1]
-  local language = SILE.settings.get("document.language")
-  SILE.fluent:set_locale(language)
-  local message = SILE.fluent:get_message(key):format(options)
+  local entry
+  if key then
+    entry = SILE.fluent:get_message(key, locale)
+  else
+    SU.warn("Fluent localization function called without passing a valid message id")
+  end
+  local message
+  if entry then
+    message = entry:format(options)
+  else
+    SU.warn(string.format("No localized message for %s found in locale %s", key, locale))
+  end
   SILE.process({ message })
 end)
 
