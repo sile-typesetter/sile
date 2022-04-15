@@ -130,7 +130,7 @@ check: selfcheck
 
 .PHONY: selfcheck
 selfcheck: | $(_BUILT_SUBDIRS)
-	output=$$(mktemp --suffix=.pdf)
+	output=$$(mktemp -t selfcheck-XXXXXX.pdf)
 	trap 'rm -f $$output' EXIT HUP TERM
 	echo "<sile>foo</sile>" | ./sile -o $$output -
 	$(PDFINFO) $$output | $(GREP) "SILE v@VERSION@"
