@@ -128,11 +128,11 @@ book.registerCommands = function (_)
   plain.registerCommands()
 
   SILE.registerCommand("book:chapter:pre", function (_, _)
-    SILE.call("book-chapter-title-pre")
+    SILE.call("fluent", {}, { "book-chapter-title-pre" })
   end)
 
   SILE.registerCommand("book:chapter:post", function (_, _)
-    SILE.call("fluent", { "book:chapter:post" })
+    SILE.call("fluent", {}, { "book-chapter-post" })
     SILE.call("par")
   end)
 
