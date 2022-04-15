@@ -1,8 +1,8 @@
-local loadftl = function(path)
+local loadftl = function(path, locale)
   local ftl, err = io.open(path, "r")
   if not err then
     local ftl_entries = ftl:read("*all")
-    SILE.fluent:add_messages(ftl_entries)
+    SILE.fluent:add_messages(ftl_entries, locale)
     io.close(ftl)
   end
 end
@@ -14,13 +14,15 @@ SILE.languageSupport = {
     if SILE.hyphenator.languages[language] then return end
     if not(language) or language == "" then language = "en" end
     language = SILE.cldr.locales[language] and language or "und"
+    SILE.fluent:set_locale(language)
+    SU.debug("fluent", "load", language)
     local lang, fail = pcall(function () SILE.require("languages/" .. language) end)
     if fail then
       if fail:match("not found") then fail = "no support for this language" end
       SU.warn("Error loading language " .. language .. ": " .. fail)
       SILE.languageSupport.languages[language] = {} -- Don't try again
     end
-    loadftl("i18n/"..language..".ftl")
+    loadftl("i18n/"..language..".ftl", language)
     if type(lang) == "table" and lang.init then
       lang.init()
     end
@@ -41,6 +43,7 @@ SILE.registerCommand("language", function (options, content)
 end)
 
 SILE.registerCommand("fluent", function (options, content)
+  local locale = SILE.settings.get("document.language")
   local key = content[1]
   local language = SILE.settings.get("document.language")
   SILE.fluent:set_locale(language)
@@ -49,11 +52,13 @@ SILE.registerCommand("fluent", function (options, content)
 end)
 
 SILE.registerCommand("ftl", function (options, content)
+  local locale = options.locale or SILE.settings.get("document.language")
   local input = content[1]
+  SU.debug("fluent", "Loading message(s) into locale", locale)
   if (options["src"]) then
-    loadftl(options["src"])
+    loadftl(options["src"], locale)
   else
-    SILE.fluent:add_messages(input)
+    SILE.fluent:add_messages(input, locale)
   end
 end)
 
