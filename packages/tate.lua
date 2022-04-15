@@ -136,11 +136,11 @@ return {
   end,
   documentation = [[
 \begin{document}
-The \code{tate} package provides support for Japanese vertical typesetting.
+The \autodoc:package{tate} package provides support for Japanese vertical typesetting.
 It allows for the definition of vertical-oriented frames, as well
 as for two specific typesetting techniques required in vertical
-documents: \code{latin-in-tate} typesets its content as Latin
-text rotated 90 degrees, and \code{tate-chu-yoko} places (Latin)
+documents: \autodoc:command{\latin-in-tate} typesets its content as Latin
+text rotated 90 degrees, and \autodoc:command{\tate-chu-yoko} places (Latin)
 text horizontally within a single grid-square of the vertical \em{hanmen}.
 \end{document}
 ]]

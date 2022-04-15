@@ -95,14 +95,14 @@ documentation = [[\begin{document}
   size. (This is to ensure that pages where the content “bleeds” off
   the side of the page are correctly cut.)
 
-  This package provides the \code{crop:setup} command which should be
-  run early in your document file. It takes one argument, \code{papersize},
+  This package provides the \autodoc:command{\crop:setup} command which should be
+  run early in your document file. It takes one argument, \autodoc:parameter{papersize},
   which is the true target paper size. It place cropmarks around the
   true page content.
 
   It also adds a header at the top of the page with the filename, date
   and output sheet number. You can customize this header by redefining
-  \code{crop:header}.
+  \autodoc:command{\crop:header}.
 
 \end{document}]]
 }

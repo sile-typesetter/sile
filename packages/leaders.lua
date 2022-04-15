@@ -106,8 +106,8 @@ end)
 return {
   documentation = [[
 \begin{document}
-The leaders package allows you to create repeating patterns which fill a
-given space. It provides the \code{\\dotfill} command, which does this:
+The \autodoc:package{leaders} package allows you to create repeating patterns which fill a
+given space. It provides the \autodoc:command{\dotfill} command, which does this:
 
 \begin{verbatim}
 \line
@@ -119,7 +119,7 @@ A\\dotfill\{\}B
 A\dotfill{}B\par
 \end{examplefont}
 
-It also provides the \code{\\leaders[width=...]\{content\}} command which
+It also provides the \autodoc:command{\leaders[width=<dimension>]{<content>}} command which
 allow you to define your own leaders. For example:
 
 \begin{verbatim}
@@ -133,7 +133,7 @@ A\leaders[width=40pt]{/\\}B\par
 \end{examplefont}
 
 If the width is omitted, the leaders extend as much as possible (as a
-\code{\\dotfill} or \code{\\hfill}).
+\autodoc:command{\dotfill} or \autodoc:command{\hfill}).
 
 Leader patterns are always vertically aligned, respectively to the end
 edge of the frame they appear in, for a given font.

@@ -75,7 +75,7 @@ return {
 This package attempts to ensure that the main content frames on a
 page are balanced; that is, that they have the same height. In your
 frame definitions for the columns, you will need to ensure that they
-have the parameter \code{balanced} set to a true value. See the example
+have the parameter \autodoc:parameter{balanced} set to a true value. See the example
 in \code{tests/balanced.sil}.
 
 The current algorithm does not work particularly well, and a better solution

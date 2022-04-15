@@ -57,9 +57,9 @@ SILE has found itself becoming well used by type designers, who often
 want to create specimen documents to show off their new fonts. This package
 provides a few commands to help create test documents. (The \code{fontproof}
 class, available from the package manager, contains many more tools for creating
-specimens.) The \code{\\repertoire} command prints out every glyph in the
-font, in a simple table. The \code{\\pangrams} command prints out a few
-pangrams for the Latin script. Finally, \code{\\set-to-width[width=...]\{...\}}
+specimens.) The \autodoc:command{\repertoire} command prints out every glyph in the
+font, in a simple table. The \autodoc:command{\pangrams} command prints out a few
+pangrams for the Latin script. Finally, \autodoc:command{\set-to-width[width=<dimension>]{<content>}}
 will process each line of content, changing the font size so that the output
 is a constant width.
 

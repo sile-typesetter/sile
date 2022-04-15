@@ -114,7 +114,7 @@ return {
   documentation = [[
 \begin{document}
 
-This package provides the \code{chordmode} environment, which transforms
+This package provides the \autodoc:environment{chordmode} environment, which transforms
 lines like:
 
 \begin{verbatim}
@@ -128,9 +128,9 @@ into:
 \end{chordmode}
 \par
 
-The chords can be styled by redefining the \code{chordmode:chordfont}
+The chords can be styled by redefining the \autodoc:command{\chordmode:chordfont}
 command, and the offset between the chord name and text set with the
-\autodoc:setting{chordmode.offset} parameter.
+\autodoc:setting{chordmode.offset} setting.
 
 \end{document}
 ]]

@@ -87,13 +87,13 @@ This experimental package allows SILE to read and process BibTeX
 (It doesn’t currently produce full bibliography listings.)
 
 To load a BibTeX file, issue the command
-\code{\\loadbibliography[file=whatever.bib]}
+\autodoc:command{\loadbibliography[file=<whatever.bib>]}
 
-To produce an inline citation, call \code{\\cite\{key\}}, which
+To produce an inline citation, call \autodoc:command{\cite{<key>}}, which
 will typeset something like “Jones 1982”. If you want to cite a
-particular page number, use \code{\\cite[page=22]\{key\}}.
+particular page number, use \autodoc:command{\cite[page=22]{<key>}}.
 
-To produce a full reference, use \code{\\reference\{key\}}.
+To produce a full reference, use \autodoc:command{\reference{<key>}}.
 
 Currently, the only supported bibliography style is Chicago referencing,
 but other styles should be easy to implement if there is interest.

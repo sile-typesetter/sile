@@ -62,24 +62,24 @@ return {
   documentation = [[\begin{document}
 This package provides two commands.
 
-The first is \code{\\svg[src=...,[width=...,]{}[height=...,]{}[density=...]{}]}.
+The first is \autodoc:command{\svg[src=<file>]}.
 This loads and parses an SVG file and attempts to render it in the current
-document. Optional width or height options will scale the SVG canvas to the
-given size calculated at a given density option (which defaults to 72 ppi). For
-example, the command
-\code{\\svg[src=packages/svg/smiley.svg,\goodbreak{}height=12pt]}
+document. Optional \autodoc:parameter{width} or \autodoc:parameter{height}
+options will scale the SVG canvas to the given size calculated at a given
+\autodoc:parameter{density} option (which defaults to 72 ppi). For
+example, the command \autodoc:command{\svg[src=packages/svg/smiley.svg,height=12pt]}
 produces the following:
 
 \svg[src=packages/svg/smiley.svg,height=12pt]
 
-The second is a more experimental \code{\\svg-glyph}. When the current font is
+The second is a more experimental \autodoc:command{\svg-glyph}. When the current font is
 set to an SVG font, SILE does not currently render the SVG glyphs
 automatically. This command is intended to be used as a means of eventually
 implementing SVG fonts; it retrieves the SVG glyph provided and renders it.
 
 In both cases the rendering is done with our own SVG drawing library; it is currently
 very minimal, only handling lines, curves, strokes and fills. For a fuller
-implementation, consider using a \code{converters} registration to render
+implementation, consider using a \autodoc:package{converters} registration to render
 your SVG file to PDF and include it on the fly.
 \end{document}]]
 

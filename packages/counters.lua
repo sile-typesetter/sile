@@ -91,24 +91,24 @@ return {
   },
   documentation = [[\begin{document}
 
-Various parts of SILE such as the \code{footnotes} package and the
+Various parts of SILE such as the \autodoc:package{footnotes} package and the
 sectioning commands keep a counter of things going on: the current
 footnote number, the chapter number, and so on. The counters package
 allows you to set up, increment and typeset named counters. It
 provides the following commands:
 
-• \code{\\set-counter[id=\em{<counter-name>},value=\em{<value>}]} — sets
-the counter called \code{<counter-name>} to the \code{<value>} given.
+• \autodoc:command{\set-counter[id=<counter-name>, value=<value>]} — sets
+the counter with the specified name to the given value.
 
-• \code{\\increment-counter[id=\em{<counter-name>}]} — does the
-same as \code{\\set-counter} except that when no \code{value} parameter
+• \autodoc:command{\increment-counter[id=<counter-name>]} — does the
+same as \autodoc:command{\set-counter} except that when no \autodoc:parameter{value} parameter
 is given, the counter is incremented by one.
 
-• \code{\\show-counter[id=\em{<counter-name>}]} — this typesets the
+• \autodoc:command{\show-counter[id=<counter-name>]} — this typesets the
 value of the counter according to the counter’s declared display type.
 
 \note{All of the commands in the counters package take an optional
-\code{display=\em{<display-type>}} parameter
+\autodoc:parameter{display=<display-type>} parameter
 to set the \em{display type} of the counter.
 
 The available built-in display types are:
@@ -126,7 +126,7 @@ The available built-in display types are:
 The ICU library also provides ways of formatting numbers in global (non-Latin)
 scripts. You can use any of the display types in this list:
 \url{http://www.unicode.org/repos/cldr/tags/latest/common/bcp47/number.xml}.
-For example, \code{display=beng} will format your numbers in Bengali digits.
+For example, \autodoc:parameter{display=beng} will format your numbers in Bengali digits.
 }
 
 
