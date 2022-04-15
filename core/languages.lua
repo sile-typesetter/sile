@@ -20,7 +20,6 @@ SILE.languageSupport = {
       SU.warn("Error loading language " .. language .. ": " .. fail)
       SILE.languageSupport.languages[language] = {} -- Don't try again
     end
-    SILE.fluent:set_locale(language)
     loadftl("i18n/"..language..".ftl")
     if type(lang) == "table" and lang.init then
       lang.init()
@@ -43,8 +42,10 @@ end)
 
 SILE.registerCommand("fluent", function (options, content)
   local key = content[1]
+  local language = SILE.settings.get("document.language")
+  SILE.fluent:set_locale(language)
   local message = SILE.fluent:get_message(key):format(options)
-  SILE.process({message})
+  SILE.process({ message })
 end)
 
 SILE.registerCommand("ftl", function (options, content)
