@@ -96,16 +96,16 @@ return {
   },
   documentation= [[
 \begin{document}
-The \code{converters} package allows you to register additional handlers
+The \autodoc:package{converters} package allows you to register additional handlers
 to process included files and images. That sounds a bit abstract, so it’s
 best explained by example. Suppose you have a GIF image that you would
 like to include in your document. You read the documentation for the
-\code{image} package and you discover that sadly GIF images are not supported.
-What \code{converters} does is allow you to teach SILE how to get the GIF
+\autodoc:package{image} package and you discover that sadly GIF images are not supported.
+What \autodoc:package{converters} does is allow you to teach SILE how to get the GIF
 format into something that \em{is} supported. We can use the ImageMagick
 toolkit to turn a GIF into a JPG, and JPGs are supported.
 
-We do this by registering a converter with the \code{converters:register}
+We do this by registering a converter with the \autodoc:command{\converters:register}
 command:
 
 \begin{verbatim}

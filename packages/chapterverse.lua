@@ -61,27 +61,27 @@ end)
 return {
   documentation = [[
 \begin{document}
-The \code{chapterverse} package is designed as a helper package for
+The \autodoc:package{chapterverse} package is designed as a helper package for
 book classes which deal with versified content such as scriptures. It
 provides commands which will generally be called by the higher-level
 \code{\\verse} and \code{\\chapter} (or moral equivalent) commands of the
 classes which handle this kind of content:
 
-\noindent{}• \code{\\save-book-title} takes its argument and squirrels
+\noindent{}• \autodoc:command{\save-book-title} takes its argument and squirrels
 it away as the current book name.
 
-\noindent{}• \code{\\save-chapter-number} and \code{\\save-verse-number}
+\noindent{}• \autodoc:command{\save-chapter-number} and \autodoc:command{\save-verse-number}
 does the same but for the chapter and verse reference respectively.
 
-\noindent{}• \code{\\format-reference} is expected to be called from
+\noindent{}• \autodoc:command{\format-reference} is expected to be called from
 Lua code with a content table of \code{\{book = ..., chapter = ..., verse = ...\}}
 and typesets the reference in the form \code{cc:vv}.
-If the parameter \code{[showbook=true]} is given then the book name
+If the parameter \autodoc:parameter{showbook=true} is given then the book name
 is also output. (You can override this command to output your references
 in a different format.)
 
-\noindent{}• \code{\\first-reference} and \code{\\last-reference}
-typeset (using \code{\\format-reference}) the first reference on the
+\noindent{}• \autodoc:command{\first-reference} and \autodoc:command{\last-reference}
+typeset (using \autodoc:command{\format-reference}) the first reference on the
 page and the last reference on the page respectively. This is helpful for
 running headers.
 

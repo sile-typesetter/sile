@@ -4,11 +4,11 @@ ARG ARCHTAG
 
 FROM docker.io/library/archlinux:base-devel$ARCHTAG AS builder
 
-# Monkey patch glibc to avoid issues with old kernels on hosts
-RUN --mount=type=bind,target=/mp,source=build-aux/docker-glibc-workaround.sh /mp
-
 ARG RUNTIME_DEPS
 ARG BUILD_DEPS
+
+# Monkey patch glibc to avoid issues with old kernels on hosts
+RUN --mount=type=bind,target=/mp,source=build-aux/docker-glibc-workaround.sh /mp
 
 # Freshen all base system packages
 RUN pacman --needed --noconfirm -Syuq
@@ -38,8 +38,9 @@ RUN mv /pkgdir/usr/local/{share/,}/man
 FROM docker.io/library/archlinux:base$ARCHTAG AS final
 
 # Same args as above, repeated because they went out of scope with FROM
-ARG REVISION
+ARG RUNTIME_DEPS
 ARG VERSION
+ARG REVISION
 
 # Monkey patch glibc to avoid issues with old kernels on hosts
 RUN --mount=type=bind,target=/mp,source=build-aux/docker-glibc-workaround.sh /mp

@@ -9,10 +9,10 @@ jobs:
       fail-fast: false
       matrix:
         luaVersion:
-          - [ '5.4', 'MYCFLAGS=-fPIC' ]
+          - [ '5.4.2', 'MYCFLAGS=-fPIC' ] # https://github.com/luarocks/luarocks/issues/1302
           - [ '5.3', 'MYCFLAGS=-fPIC' ]
           - [ '5.2', 'MYCFLAGS=-fPIC' ]
-          - [ '5.1', 'CFLAGS=-O2 -Wall -DLUA_USE_LINUX -fPIC']
+          - [ '5.1', 'CFLAGS="-O2 -Wall -DLUA_USE_LINUX -fPIC"']
           - [ 'luajit', 'XCFLAGS=-fPIC' ]
           - [ 'luajit-openresty', 'XCFLAGS=-fPIC' ]
     runs-on: ubuntu-20.04
@@ -23,14 +23,14 @@ jobs:
         with:
           fetch-depth: 0
       - name: Cache test fonts
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             .fonts
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Cache lua_modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             lua_modules
@@ -39,7 +39,7 @@ jobs:
         run: |
           git fetch --prune --tags ||:
       - name: Setup ‘lua’
-        uses: leafo/gh-actions-lua@v8
+        uses: leafo/gh-actions-lua@v9
         with:
           luaVersion: ${{ matrix.luaVersion[0] }}
           luaCompileFlags: ${{ matrix.luaVersion[1] }}
@@ -59,6 +59,7 @@ jobs:
           EOF
       - name: Install system dependencies
         run: |
+          sudo apt-get update
           sudo apt-get install libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libpng-dev poppler-utils
       - name: Configure
         run: |
@@ -74,7 +75,7 @@ jobs:
         run: |
           make regressions
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: test-${{ matrix.luaVersion[0] }}-actuals
           path: tests/*.actual

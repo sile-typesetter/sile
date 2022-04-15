@@ -24,7 +24,7 @@ dependencies = {
   "luafilesystem == 1.8.0-1",
   "luarepl == 0.9-1",
   "luasec == 1.0-1",
-  "luasocket == 3.0rc1-2",
+  "luasocket == 3.0.0-1",
   "luautf8 == 0.1.3",
   "penlight == 1.12.0-1",
   "stdlib == 41.2.2-1",

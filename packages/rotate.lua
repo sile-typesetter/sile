@@ -95,10 +95,10 @@ SILE.registerCommand("rotate", function(options, content)
 end)
 
 return { documentation = [[\begin{document}
-The \code{rotate} package allows you to rotate things. You can rotate entire
-frames, by adding the \code{rotate=<angle>} declaration to your frame declaration,
-and you can rotate any content by issuing the command \code{\\rotate[angle=<angle>]\{...\}},
-where \code{<angle>} is measured in degrees.
+The \autodoc:package{rotate} package allows you to rotate things. You can rotate entire
+frames, by adding the \autodoc:parameter{rotate=<angle>} declaration to your frame declaration,
+and you can rotate any content by issuing the command \autodoc:command{\rotate[angle=<angle>]{<content>}},
+where the angle is measured in degrees.
 
 Content which is rotated is placed in a box and rotated. The height and width of
 the rotated box is measured, and then put into the normal horizontal list for

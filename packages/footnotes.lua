@@ -104,10 +104,10 @@ return {
   documentation = [[
 \begin{document}
 We’ve seen that the \code{book} class allows you to add
-footnotes to text with the \code{\\footnote} command. This command is
-actually provided by the \code{footnotes} package. The \code{book}
+footnotes to text with the \autodoc:command{\footnote} command. This command is
+actually provided by the \autodoc:package{footnotes} package. The \code{book}
 class loads up the package and tells it where to put the footnotes
-that are typeset, and the \code{footnotes} package takes care of
+that are typeset, and the \autodoc:package{footnotes} package takes care of
 formatting the footnotes. It does this by using a number of other
 packages that we will describe below.
 \end{document}

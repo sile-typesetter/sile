@@ -130,7 +130,7 @@ check: selfcheck
 
 .PHONY: selfcheck
 selfcheck: | $(_BUILT_SUBDIRS)
-	output=$$(mktemp --suffix=.pdf)
+	output=$$(mktemp -t selfcheck-XXXXXX.pdf)
 	trap 'rm -f $$output' EXIT HUP TERM
 	echo "<sile>foo</sile>" | ./sile -o $$output -
 	$(PDFINFO) $$output | $(GREP) "SILE v@VERSION@"
@@ -192,7 +192,7 @@ _DOCS_DEPS = $(and $$(filter documentation/%,$@),$(addprefix .fonts/,$(DOCSFONTF
 # TODO: remove _BUILT_SUBDIRS hack and replace it with something sensible when
 # these subdirs don't do crazy things like copying files outside of their own trees!
 _BUILT_SUBDIRS = .built-subdirs
-_SUBDIR_TELLS = core/justenoughharfbuzz.so libtexpdf/.libs/libtexpdf.so.0.0.0
+_SUBDIR_TELLS = core/justenoughfontconfig.so core/justenoughharfbuzz.so core/justenoughicu.so core/justenoughlibtexpdf.so libtexpdf/.libs/libtexpdf.so.0.0.0
 $(_BUILT_SUBDIRS): $(_SUBDIR_TELLS)
 	touch $@
 
@@ -352,6 +352,23 @@ export DOCKER_TAG ?= HEAD
 .PHONY: docker
 docker: Dockerfile hooks/build .version
 	./hooks/build $(VERSION)
+
+.PHONY: docker-dep-check
+docker-dep-check: .docker_deps .aur_deps
+	diff -u $^
+
+CLEANFILES += .docker_deps
+.docker_deps: hooks/build
+	$(SHELL) -c 'source <($(SED) -nE "/^(RUN|'"'"')/{s/.*=/echo /;p}" $<)' | \
+		tr ' ' '\n' | \
+		sort > $@
+
+CLEANFILES += .aur_deps
+.aur_deps:
+	curl -Ls 'https://aur.archlinux.org/cgit/aur.git/plain/.SRCINFO?h=sile-git' | \
+		$(SED) -nE '/\bdepends =/{s/.*= //;p}' | \
+		$(GREP) -vxE '(lua-.*|.*\.so|git|glibc)' | \
+		sort > $@
 
 define docker_push =
 	test -z "$(DOCKER_PAT)" || \

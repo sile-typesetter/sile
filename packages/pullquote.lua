@@ -66,12 +66,12 @@ end, "Typesets its contents in a formatted blockquote with decorative quotation\
 
 return { documentation = [[\begin{document}
 
-The \code{pullquote} command formats longer quotations in an indented
+The \autodoc:environment{pullquote} environment formats longer quotations in an indented
 blockquote block with decorative quotation marks in the margins.
 
 Here is some text set in a pullquote environment:
 
-\begin[author=Anatole France]{pullquote}
+\begin[author=Anatole France]{pullquote}%
 An education is not how much you have committed to memory, or even how much you
 know. It is being able to differentiate between what you do know and what you
 do not know.
@@ -79,15 +79,15 @@ do not know.
 
 Optional values are available for:
 
-• \code{author} to add an attribution line\par
-• \code{setback} to set the bilateral margins around the block\par
-• \code{color} to change the color of the quote marks\par
-• \code{scale} to change the relative size of the quote marks\par
+• \autodoc:parameter{author} to add an attribution line\par
+• \autodoc:parameter{setback} to set the bilateral margins around the block\par
+• \autodoc:parameter{color} to change the color of the quote marks\par
+• \autodoc:parameter{scale} to change the relative size of the quote marks\par
 
 If you want to specify what font the pullquote environment should use, you
-can redefine the \code{pullquote:font} command. By default it will be the same
+can redefine the \autodoc:command{\pullquote:font} command. By default it will be the same
 as the surrounding document. The font style used for the attribution line
-can likewise be set using \code{pullquote:author-font} and the font used for
-the quote marks can be set using \code{pullquote:mark-font}.
+can likewise be set redefining \autodoc:command{\pullquote:author-font} and the font used for
+the quote marks can be set redefining \autodoc:command{\pullquote:mark-font}.
 
 \end{document}]] }

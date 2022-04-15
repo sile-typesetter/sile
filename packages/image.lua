@@ -30,10 +30,10 @@ return {
 
 As well as processing text, SILE can also include images.
 
-Loading the \code{image} package gives you the \code{\\img} command, fashioned
-after the HTML equivalent. \code{\\img} takes the following parameters:
-\code{src=…} must be the path to an image file;
-you may also give \code{height=…} and/or \code{width=…} parameters
+Loading the \autodoc:package{image} package gives you the \autodoc:command{\img} command, fashioned
+after the HTML equivalent. It takes the following parameters:
+\autodoc:parameter{src=<file>} must be the path to an image file;
+you may also give \autodoc:parameter{height} and/or \autodoc:parameter{width} parameters
 to specify the output size of the image on the paper. If the size parameters
 are not given, then the image will be output at its ‘natural’ size,
 honoring its resolution if available.
@@ -43,16 +43,16 @@ With the libtexpdf backend (the default), the images can be in JPEG, PNG,
 EPS or PDF formats.
 \end{note}
 
-Here is a 200x243 pixel image output with \code{\\img[src=documentation/gutenberg.png]}.
+Here is a 200x243 pixel image output with \autodoc:command{\img[src=documentation/gutenberg.png]}.
 The image has a claimed resolution of 100 pixels per inch, so ends up being 2 inches (144pt)
 wide on the page:\par
 \img[src=documentation/gutenberg.png]
 
 \raggedright{
 Here it is with (respectively)
-\code{\\img[src=documentation/gutenberg.png,width=120pt]},
-\code{\\img[src=documentation/gutenberg.png,height=200pt]}, and
-\code{\\img[src=documentation/gutenberg.png,width=120pt,height=200pt]}:}
+\autodoc:command{\img[src=documentation/gutenberg.png,width=120pt]},
+\autodoc:command{\img[src=documentation/gutenberg.png,height=200pt]}, and
+\autodoc:command{\img[src=documentation/gutenberg.png,width=120pt,height=200pt]}:}
 
 \img[src=documentation/gutenberg.png,width=120pt]
 \img[src=documentation/gutenberg.png,height=200pt]

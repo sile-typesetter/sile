@@ -92,7 +92,7 @@ return {
   end,
   documentation = [[
 \begin{document}
-  The \code{color-fonts} package adds support for fonts with a \code{COLR}
+  The \autodoc:package{color-fonts} package adds support for fonts with a \code{COLR}
   OpenType table. This package is automatically loaded when such a font is
   detected.
 \end{document}
