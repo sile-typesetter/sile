@@ -142,6 +142,8 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
             AX_LUA_MODULE([compat53], [compat53])
         )
         AX_LUA_MODULE([cosmo], [cosmo])
+        AX_LUA_MODULE([cldr], [cldr])
+        AX_LUA_MODULE([fluent], [fluent])
         AX_LUA_MODULE([linenoise], [linenoise])
         AX_LUA_MODULE([lpeg], [lpeg])
         AX_LUA_MODULE([zlib], [lua-zlib])
