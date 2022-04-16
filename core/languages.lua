@@ -1,28 +1,23 @@
-local loadftl = function(path, locale)
-  local ftl, err = io.open(path, "r")
-  if not err then
-    local ftl_entries = ftl:read("*all")
-    SILE.fluent:add_messages(ftl_entries, locale)
-    io.close(ftl)
-  end
-end
-
 SILE.languageSupport = {
   languages = {},
   loadLanguage = function (language)
+    language = language or SILE.settings.get("document.language")
+    language = SILE.cldr.locales[language] and language or "und"
     if SILE.languageSupport.languages[language] then return end
     if SILE.hyphenator.languages[language] then return end
-    if not(language) or language == "" then language = "en" end
-    language = SILE.cldr.locales[language] and language or "und"
-    SILE.fluent:set_locale(language)
-    SU.debug("fluent", "load", language)
     local lang, fail = pcall(function () SILE.require("languages/" .. language) end)
     if fail then
       if fail:match("not found") then fail = "no support for this language" end
       SU.warn("Error loading language " .. language .. ": " .. fail)
       SILE.languageSupport.languages[language] = {} -- Don't try again
     end
-    loadftl("i18n/"..language..".ftl", language)
+    local path = string.format("%s/i18n/%s.ftl", SYSTEM_SILE_PATH, language)
+    SU.debug("fluent", "Loading file", path, "into locale", language)
+    SILE.fluent:set_locale(language)
+    local _, ftlfail = pcall(function () SILE.fluent:load_file(path) end)
+    if ftlfail then
+      SU.warn("Error loading localizations " .. language .. ": " .. ftlfail)
+    end
     if type(lang) == "table" and lang.init then
       lang.init()
     end
@@ -48,7 +43,8 @@ SILE.registerCommand("fluent", function (options, content)
   SU.debug("fluent", "Looking for", key, "in", locale)
   local entry
   if key then
-    entry = SILE.fluent:get_message(key, locale)
+    SILE.fluent:set_locale(locale)
+    entry = SILE.fluent:get_message(key)
   else
     SU.warn("Fluent localization function called without passing a valid message id")
   end
@@ -63,11 +59,12 @@ end)
 
 SILE.registerCommand("ftl", function (options, content)
   local locale = options.locale or SILE.settings.get("document.language")
-  local input = content[1]
   SU.debug("fluent", "Loading message(s) into locale", locale)
-  if (options["src"]) then
-    loadftl(options["src"], locale)
-  else
+  SILE.fluent:set_locale(locale)
+  if options.src then
+    SILE.fluent:load_file(options.src, locale)
+  elseif SU.hasContent(content) then
+    local input = content[1]
     SILE.fluent:add_messages(input, locale)
   end
 end)
