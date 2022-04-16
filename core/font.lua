@@ -63,7 +63,6 @@ SILE.settings.declare({ parameter = "font.direction", type = "string", default =
 SILE.settings.declare({ parameter = "font.filename", type = "string or nil", default = "" })
 SILE.settings.declare({ parameter = "font.features", type = "string", default = "" })
 SILE.settings.declare({ parameter = "font.hyphenchar", type = "string", default = "-" })
-SILE.settings.declare({ parameter = "document.language", type = "string", default = "en" })
 
 SILE.fontCache = {}
 

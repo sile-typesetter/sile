@@ -73,6 +73,13 @@ SILE.settings = {
 }
 
 SILE.settings.declare({
+  parameter = "document.language",
+  type = "string",
+  default = "en",
+  help = "Locale for localized language support"
+})
+
+SILE.settings.declare({
   parameter = "document.parindent",
   type = "glue",
   default = SILE.nodefactory.glue("20pt"),
