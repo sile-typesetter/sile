@@ -14,7 +14,7 @@ dependencies = {
   "cldr == 0.2.0-0",
   "compat53 == 0.8-1",
   "cosmo == 16.06.04-1",
-  "fluent == 0.1.3-0",
+  "fluent == 0.2.0-0",
   "linenoise == 0.9-1",
   "lpeg == 1.0.2-1",
   "lua-zlib == 1.2-1",
