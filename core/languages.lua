@@ -43,9 +43,9 @@ SILE.registerCommand("language", function (options, content)
 end)
 
 SILE.registerCommand("fluent", function (options, content)
-  local locale = SILE.settings.get("document.language")
-  SU.debug("fluent", function () return string.format("Looking for %s in %s", key, locale) end)
   local key = content[1]
+  local locale = options.locale or SILE.settings.get("document.language")
+  SU.debug("fluent", "Looking for", key, "in", locale)
   local entry
   if key then
     entry = SILE.fluent:get_message(key, locale)
