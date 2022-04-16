@@ -1,27 +1,37 @@
 \begin{document}
 \chapter{Multilingual Typesetting}
 
-One thing we’re pretty proud of is SILE’s language support. Typesetting
-conventions differ both from script to script and from language to language,
-and SILE aims to support quality typesetting across script and language
-families. As an open source typesetting engine, we can implement the
-typographic conventions of scripts that the commercial systems would not
-consider worthwhile, and we want to make it easy for minority languages
-and scripts to implement their own typographic conventions.
+One thing we’re pretty proud of is SILE’s language support.
+Typesetting conventions differ both from script to script and from language to language.
+SILE aims to support quality typesetting across all script and language families.
+As an open source project we can collaborate on support for locales that commercial systems do not consider worthwhile.
+We want to make it easy for minority languages and scripts to implement their own typographic conventions.
 
 \section{Selecting languages}
 
-For SILE to know how to typeset text in your language, you will need to
-tell it what language your text is in! There are two ways to do this:
-as part of the \code{\\font[language=...]} command, as detailed in chapter
-4, or by use of the \code{\\language[main=...]} command. Both of these
-take a ISO639-1 language code such as \code{en} for English, \code{ar}
-for Arabic, and so on.
+For SILE to know how to typeset text you will need to tell it what language your text is in!
+There are two ways to do this:
+as part of the \code{\\font[language=...]} command as detailed in chapter 4,
+or by use of the \code{\\language[main=...]} command.
+Both of these expect an ISO639-1 language code such as \code{en} for English, \code{ar} for Arabic, and so on.
 
-Selecting a language loads up the \em{language support} file for that
-language and turns on processing of typesetting conventions. This can
-change the hyphenation patterns, line breaking and justification
-schemes, spacing, choice of glyphs within a font, and more.
+Selecting a language by either method loads up the \em{language support} file(s) for that language.
+These in turn enable various localization and typesetting conventions.
+Language support may include and combination of:
+
+\noindent{}• hyphenation patterns,
+
+\noindent{}• line breaking and justification schemes,
+
+\noindent{}• frame advance and writing direction,
+
+\noindent{}• spacing,
+
+\noindent{}• choice of glyphs within a font,
+
+\noindent{}• localization of programatially inserted strings,
+
+\noindent{}• and more.
 
 For example, Sindhi and Urdu users will expect the Arabic letter
 \em{heh} to combine with other letters in different ways to standard
