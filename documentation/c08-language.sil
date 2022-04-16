@@ -32,11 +32,11 @@ the appropriate language before processing the text:
 \begin{verbatim}
 \line
 Standard Arabic:
-\\font[family=LateefGR,language=ar]\{ه{}ه{}ه\};
+\\font[family=LateefGR,language=ar]\{\font[family=LateefGR]{ه{}ه{}ه}\};
 then in Sindi:
-\\font[family=LateefGR,language=snd]\{ه{}ه{}ه\};
+\\font[family=LateefGR,language=snd]\{\font[family=LateefGR]{ه{}ه{}ه}\};
 then in Urdu:
-\\font[family=LateefGR,language=urd]\{ه{}ه{}ه\}.
+\\font[family=LateefGR,language=urd]\{\font[family=LateefGR]{ه{}ه{}ه}\}.
 \line
 \end{verbatim}
 
