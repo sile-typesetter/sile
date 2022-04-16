@@ -1,9 +1,7 @@
 local icu = require("justenoughicu")
 
 SILE.registerCommand("font", function (options, content)
-  if type(content) == "function" or content[1] then
-    SILE.settings.pushState()
-  end
+  if SU.hasContent(content) then SILE.settings.pushState() end
   if options.filename then SILE.settings.set("font.filename", options.filename) end
   if options.family then
     SILE.settings.set("font.family", options.family)
@@ -47,7 +45,7 @@ SILE.registerCommand("font", function (options, content)
   -- that the post-load hook might want to do.
   SILE.font.cache(SILE.font.loadDefaults({}), SILE.shaper.getFace)
 
-  if type(content) == "function" or content[1] then
+  if SU.hasContent(content) then
     SILE.process(content)
     SILE.settings.popState()
   end

@@ -265,6 +265,10 @@ utilities.cast = function (wantedType, value)
   end
 end
 
+utilities.hasContent = function(content)
+  return type(content) == "function" or type(content) == "table" and #content > 0
+end
+
 -- Flatten content trees into just the string components (allows passing
 -- objects with complex structures to functions that need plain strings)
 utilities.contentToString = function (content)
