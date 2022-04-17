@@ -16,6 +16,7 @@ dependencies = {
   "cosmo == 16.06.04-1",
   "fluent == 0.2.0-0",
   "linenoise == 0.9-1",
+  "loadkit == 1.1.0-1",
   "lpeg == 1.0.2-1",
   "lua-zlib == 1.2-1",
   "lua_cliargs == 3.0-2",

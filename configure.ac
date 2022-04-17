@@ -145,6 +145,7 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
         AX_LUA_MODULE([cldr], [cldr])
         AX_LUA_MODULE([fluent], [fluent])
         AX_LUA_MODULE([linenoise], [linenoise])
+        AX_LUA_MODULE([loadkit], [loadkit])
         AX_LUA_MODULE([lpeg], [lpeg])
         AX_LUA_MODULE([zlib], [lua-zlib])
         AX_LUA_MODULE([cliargs], [lua_cliargs])
