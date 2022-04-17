@@ -1,3 +1,11 @@
+local loadkit = require("loadkit")
+
+loadkit.register("ftl", function (file)
+  local contents = assert(file:read("*a"))
+  file:close()
+  return assert(SILE.fluent:add_messages(contents))
+end)
+
 SILE.languageSupport = {
   languages = {},
   loadLanguage = function (language)
@@ -11,11 +19,11 @@ SILE.languageSupport = {
       SU.warn("Error loading language " .. language .. ": " .. fail)
       SILE.languageSupport.languages[language] = {} -- Don't try again
     end
-    local path = string.format("%s/i18n/%s.ftl", SYSTEM_SILE_PATH, language)
-    SU.debug("fluent", "Loading file", path, "into locale", language)
+    local ftlresource = string.format("i18n.%s", language)
+    SU.debug("fluent", "Loading FTL resource", ftlresource, "into locale", language)
     SILE.fluent:set_locale(language)
-    local _, ftlfail = pcall(function () SILE.fluent:load_file(path) end)
-    if ftlfail then
+    local _, ftlfail = pcall(function () return require(ftlresource) end)
+    if not ftlfail then
       SU.warn("Error loading localizations " .. language .. ": " .. ftlfail)
     end
     if type(lang) == "table" and lang.init then
