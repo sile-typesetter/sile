@@ -615,10 +615,6 @@ SILE.hyphenator.languages["tr"].patterns =
    }
 
 -- Internationalisation stuff
-SILE.doTexlike([[%
-\define[command=tableofcontents:title:tr]{İçindekiler}%
-\define[command=book:chapter:pre:tr]{Bölüm }%
-]])
 
 -- local sum_tens = function (val, loc, digits)
 --   local ten = string.sub(digits, loc+1, loc+1)

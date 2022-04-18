@@ -1,9 +1,7 @@
 local icu = require("justenoughicu")
 
 SILE.registerCommand("font", function (options, content)
-  if type(content) == "function" or content[1] then
-    SILE.settings.pushState()
-  end
+  if SU.hasContent(content) then SILE.settings.pushState() end
   if options.filename then SILE.settings.set("font.filename", options.filename) end
   if options.family then
     SILE.settings.set("font.family", options.family)
@@ -28,6 +26,7 @@ SILE.registerCommand("font", function (options, content)
       options.language = newlang
     end
     SILE.settings.set("document.language", options.language)
+    SILE.fluent:set_locale(options.language)
     SILE.languageSupport.loadLanguage(options.language)
   end
   if options.script then SILE.settings.set("font.script", options.script)
@@ -47,7 +46,7 @@ SILE.registerCommand("font", function (options, content)
   -- that the post-load hook might want to do.
   SILE.font.cache(SILE.font.loadDefaults({}), SILE.shaper.getFace)
 
-  if type(content) == "function" or content[1] then
+  if SU.hasContent(content) then
     SILE.process(content)
     SILE.settings.popState()
   end
@@ -63,7 +62,6 @@ SILE.settings.declare({ parameter = "font.direction", type = "string", default =
 SILE.settings.declare({ parameter = "font.filename", type = "string or nil", default = "" })
 SILE.settings.declare({ parameter = "font.features", type = "string", default = "" })
 SILE.settings.declare({ parameter = "font.hyphenchar", type = "string", default = "-" })
-SILE.settings.declare({ parameter = "document.language", type = "string", default = "en" })
 
 SILE.fontCache = {}
 

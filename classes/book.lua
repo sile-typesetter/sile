@@ -126,11 +126,29 @@ end)
 
 book.registerCommands = function (_)
   plain.registerCommands()
+
+  SILE.registerCommand("book:chapter:pre", function (_, _)
+    SILE.call("fluent", {}, { "book-chapter-title-pre" })
+  end)
+
+  SILE.registerCommand("book:chapter:post", function (_, _)
+    SILE.call("fluent", {}, { "book-chapter-post" })
+    SILE.call("par")
+  end)
+
+  SILE.registerCommand("book:chapter:post", function (_, _)
+    SILE.call("par")
+  end)
+
+  SILE.registerCommand("book:section:post", function (_, _)
+    SILE.process({ " " })
+  end)
+
+  SILE.registerCommand("book:subsection:post", function (_, _)
+    SILE.process({ " " })
+  end)
+
 SILE.doTexlike([[%
-\define[command=book:chapter:pre]{}%
-\define[command=book:chapter:post]{\par}%
-\define[command=book:section:post]{ }%
-\define[command=book:subsection:post]{ }%
 \define[command=book:left-running-head-font]{\font[size=9pt]}%
 \define[command=book:right-running-head-font]{\font[size=9pt,style=italic]}%
 ]])

@@ -37,6 +37,8 @@ SILE.dolua = {}
 SILE.preamble = {}
 
 -- Internal functions / classes / factories
+SILE.cldr = require("cldr")
+SILE.fluent = require("fluent")()
 SILE.utilities = require("core/utilities")
 SU = SILE.utilities -- alias
 SILE.traceStack = require("core/tracestack")()

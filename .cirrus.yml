@@ -26,9 +26,12 @@ task:
     - pkg install -y autoconf automake fontconfig git gmake harfbuzz libtool pkgconf png
     - pkg install -y lua54 lua54-lpeg lua54-luaexpat lua54-luafilesystem lua54-luarocks lua54-luasec lua54-luasocket lua54-stdlib
     - luarocks54 install cassowary
+    - luarocks54 install cldr
     - luarocks54 install compat53
     - luarocks54 install cosmo
+    - luarocks54 install fluent
     - luarocks54 install linenoise
+    - luarocks54 install loadkit
     - luarocks54 install lua-zlib
     - luarocks54 install lua_cliargs
     - luarocks54 install luaepnf

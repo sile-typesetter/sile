@@ -176,11 +176,10 @@ SILE.nodeMakers.ja = pl.class({
 
 SILE.hyphenator.languages.ja = { patterns={} }
 
--- Internationalisation stuff
-SILE.doTexlike([[%
-\define[command=book:chapter:pre:ja]{第\thinspace}%
-\define[command=book:chapter:post:ja]{\thinspace章 \medskip}%
-]])
+SILE.registerCommand("book:chapter:post:ja", function (_, _)
+  SILE.call("fluent", { locale = "ja" }, { "book-chapter-post" })
+  SILE.call("medskip")
+end)
 
 return {
   init = function ()
