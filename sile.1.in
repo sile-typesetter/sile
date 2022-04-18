@@ -34,7 +34,11 @@ While packages may define their own debug flags, the most commonly used ones are
 May be specified more than once.
 .TP
 .BR \-e ", " \-\-evaluate= \fIvalue\fR
-Evaluate some Lua code before processing the input file.
+Evaluate Lua expression before processing input.
+May be specified more than once.
+.TP
+.BR \-E ", " \-\-evaluate-after= \fIvalue\fR
+Evaluate Lua expression after processing input.
 May be specified more than once.
 .TP
 .BR \-f ", " \-\-fontmanager= \fIvalue\fR

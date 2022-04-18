@@ -49,6 +49,7 @@ SILE.status = {}
 SILE.scratch = {}
 SILE.dolua = {}
 SILE.preamble = {}
+SILE.preamble = {}
 SILE.documentState = {}
 
 -- Internal functions / classes / factories
@@ -166,7 +167,8 @@ SILE.parseArguments = function ()
   cli:splat("INPUT", "input file, SIL or XML format")
   cli:option("-b, --backend=VALUE", "choose an alternative output backend")
   cli:option("-d, --debug=VALUE", "show debug information for tagged aspects of SILE’s operation", {})
-  cli:option("-e, --evaluate=VALUE", "evaluate some Lua code before processing file", {})
+  cli:option("-e, --evaluate=VALUE", "evaluate Lua expression before processing input", {})
+  cli:option("-E, --evaluate-after=VALUE", "evaluate Lua expression after processing input", {})
   cli:option("-f, --fontmanager=VALUE", "choose an alternative font manager")
   cli:option("-m, --makedeps=FILE", "generate a list of dependencies in Makefile format")
   cli:option("-o, --output=FILE", "explicitly set output file name")
