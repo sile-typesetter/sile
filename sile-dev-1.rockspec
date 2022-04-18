@@ -9,7 +9,7 @@ source = {
 }
 dependencies = {
   "lua >= 5.1",
-  "bit32",
+  "bit32", -- versions vary on different VMs
   "cassowary == 2.3.1-2",
   "compat53 == 0.8-1",
   "cosmo == 16.06.04-1",
@@ -23,7 +23,7 @@ dependencies = {
   "luarepl == 0.9-1",
   "luasec == 1.0-1",
   "luasocket == 3.0.0-1",
-  "luautf8 == 0.1.3",
+  "luautf8 == 0.1.3-1",
   "penlight == 1.12.0-1",
   "stdlib == 41.2.2-1",
   "vstruct == 2.1.1-1"
