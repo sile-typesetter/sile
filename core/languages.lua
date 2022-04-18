@@ -3,7 +3,7 @@ local loadkit = require("loadkit")
 loadkit.register("ftl", function (file)
   local contents = assert(file:read("*a"))
   file:close()
-  return assert(SILE.fluent:add_messages(contents))
+  return contents
 end)
 
 SILE.languageSupport = {
@@ -13,18 +13,20 @@ SILE.languageSupport = {
     language = SILE.cldr.locales[language] and language or "und"
     if SILE.languageSupport.languages[language] then return end
     if SILE.hyphenator.languages[language] then return end
-    local lang, fail = pcall(function () SILE.require("languages/" .. language) end)
-    if fail then
-      if fail:match("not found") then fail = "no support for this language" end
-      SU.warn("Error loading language " .. language .. ": " .. fail)
+    local ret1, lang = pcall(SILE.require, "languages/" .. language)
+    if not ret1 then
+      if lang:match("not found") then lang = "no support for this language" end
+      SU.warn("Error loading language " .. language .. ": " .. lang)
       SILE.languageSupport.languages[language] = {} -- Don't try again
     end
     local ftlresource = string.format("i18n.%s", language)
     SU.debug("fluent", "Loading FTL resource", ftlresource, "into locale", language)
     SILE.fluent:set_locale(language)
-    local _, ftlfail = pcall(function () return require(ftlresource) end)
-    if not ftlfail then
-      SU.warn("Error loading localizations " .. language .. ": " .. ftlfail)
+    local ret2, ftl = pcall(require, ftlresource)
+    if ret2 then
+      SILE.fluent:add_messages(ftl)
+    else
+      SU.warn("No document localizations found for " .. language .. ": " .. ftl)
     end
     if type(lang) == "table" and lang.init then
       lang.init()
