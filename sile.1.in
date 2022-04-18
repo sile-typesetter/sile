@@ -22,6 +22,10 @@ Print help message and exit.
 .BR \-v ", " \-\-version
 Print version information and exit.
 .TP
+.BR \-l ", " \-\-locale= \fIvalue\fR
+Interface locale for localized messages.
+Also sets the default document language.
+.TP
 .BR \-b ", " \-\-backend= \fIvalue\fR
 Choose an alternative output backend.
 The default backend for producing PDF files is \fIlibtexpdf\fR.
