@@ -112,26 +112,26 @@ SILE.registerCommand("boxaround", function (_, content)
 end, "Draws a box around some content")
 
 return { documentation = [[\begin{document}
-The \code{rules} package draws lines. It provides three commands.
+The \autodoc:package{rules} package draws lines. It provides three commands.
 
-The first command is \code{\\hrule},
+The first command is \autodoc:command{\hrule},
 which draws a line of a given length and thickness, although it calls these
-\code{width} and \code{height}. (A box is just a square line.)
+\autodoc:parameter{width} and \autodoc:parameter{height}. (A box is just a square line.)
 
 Lines are treated just like other text to be output, and so can appear in the
 middle of a paragraph, like this: \hrule[width=20pt, height=0.5pt] (that one
-was generated with \code{\\hrule[width=20pt, height=0.5pt]}.)
+was generated with \autodoc:command{\hrule[width=20pt, height=0.5pt]}.)
 
 Like images, rules are placed along the baseline of a line of text.
 
-The second command provided by \code{rules} is \code{\\underline}, which
+The second command provided by this package is \autodoc:command{\underline}, which
 underlines its contents.
 
 \note{
 Underlining is horrible typographic practice, and
 you should \underline{never} do it.}
 
-(That was produced with \code{\\underline\{never\}}.)
+(That was produced with \autodoc:command{\underline{never}}.)
 
-Finally, \code{fullrule} draws a thin line across the width of the current frame.
+Finally, \autodoc:command{\fullrule} draws a thin line across the width of the current frame.
 \end{document}]] }

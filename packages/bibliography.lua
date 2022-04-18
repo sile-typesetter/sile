@@ -403,7 +403,7 @@ Bibliography = {
 
 Bibliography.documentation = [[
 \begin{document}
-This package provides backend functions used by the \code{bibtex} package;
+This package provides backend functions used by the \autodoc:package{bibtex} package;
 see that instead.
 \end{document}
 ]]

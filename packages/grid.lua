@@ -203,13 +203,13 @@ the paper; on the right, no such guarantee is made.
 \img[src=documentation/grid-1.png,height=130]
 \img[src=documentation/grid-2.png,height=130]
 
-The \code{grid} package alters the way that the SILE’s typesetter operates so that
+The \autodoc:package{grid} package alters the way that the SILE’s typesetter operates so that
 the two rules above do not apply; lines are always aligned on a fixed grid, and
 spaces between paragraphs etc. are adjusted to conform to the grid. Loading the package
-adds two new commands to SILE: \code{\\grid[spacing=\em{<dimension>}]} and \code{\\no-grid}.
+adds two new commands to SILE: \autodoc:command{\grid[spacing=<dimension>]} and \autodoc:command{\no-grid}.
 The first turns on grid typesetting for the remainder of the document; the second turns it off again.
 
-At the start of this section, we issued the command \code{\\grid[spacing=15pt]} to
+At the start of this section, we issued the command \autodoc:command{\grid[spacing=15pt]} to
 set up a regular 15-point grid. Here is some text typeset with the grid set up:
 
 \smallskip
@@ -221,7 +221,7 @@ cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
 proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 \smallskip
 
-And here is the same text after we issue \code{\\no-grid}:
+And here is the same text after we issue \autodoc:command{\no-grid}:
 
 \no-grid\smallskip
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod

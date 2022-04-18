@@ -191,7 +191,8 @@ AC_SUBST([HARFBUZZ_CFLAGS])
 AC_SUBST([HARFBUZZ_LIBS])
 AC_SUBST([shared_ext])
 
-TRANSFORMED_PACKAGE_NAME="$(printf "$PACKAGE_NAME" | $SED -e "${program_transform_name//\$\$/\$}")"
+sed_program_transform_name="$(printf "$program_transform_name" | $SED -e 's,$$,$,g')"
+TRANSFORMED_PACKAGE_NAME="$(printf "$PACKAGE_NAME" | $SED -e "$sed_program_transform_name")"
 AC_SUBST([TRANSFORMED_PACKAGE_NAME])
 
 adl_RECURSIVE_EVAL(["${datadir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_PATH])

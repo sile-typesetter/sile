@@ -66,7 +66,7 @@ To render an equation encoded in MathML, one simply has to put it in a
 \end{verbatim}
 
 \noindent By default, formulas are integrated into the flow of text. To typeset
-them on their own line, one may use the \code{[mode=display]} option:
+them on their own line, one may use the \autodoc:parameter{mode=display} option:
 
 \mathml[mode=display]{
     \mrow{

@@ -147,28 +147,28 @@ SILE.registerCommand("pdf:metadata", function (options, _)
 end)
 
 return { documentation = [[\begin{document}
-The \code{pdf} package enables (basic) support for PDF links and table-of-contents
-entries. It provides the four commands \command{\\pdf:destination}, \command{\\pdf:link},
-\command{\\pdf:bookmark}, and \command{\\pdf:metadata}.
+The \autodoc:package{pdf} package enables (basic) support for PDF links and table-of-contents
+entries. It provides the four commands \autodoc:command{\pdf:destination}, \autodoc:command{\pdf:link},
+\autodoc:command{\pdf:bookmark}, and \autodoc:command{\pdf:metadata}.
 
-The \command{\\pdf:destination} parameter creates a link target; it expects a
-parameter called \code{name} to uniquely identify the target. To create a link to
-that location in the document, use \code{\\pdf:link[dest=\goodbreak{}name]\{link content\}}.
+The \autodoc:command{\pdf:destination} parameter creates a link target; it expects a
+parameter called \autodoc:parameter{name} to uniquely identify the target. To create a link to
+that location in the document, use \autodoc:command{\pdf:link[dest=<name>]{<content>}}.
 
-The \command{\\pdf:link} command accepts several options defining its border style:
-a \code{borderwidth} length setting the border width (defaults to 0, meaning no border),
-a \code{borderstyle} string (can be set to “underline” or “dashed”, otherwise a
+The \autodoc:command{\pdf:link} command accepts several options defining its border style:
+a \autodoc:parameter{borderwidth} length setting the border width (defaults to 0, meaning no border),
+a \autodoc:parameter{borderstyle} string (can be set to “underline” or “dashed”, otherwise a
 solid box),
-a \code{bordercolor} color specification for this border (defaults to blue),
-and finally a \code{borderoffset} length for adjusting the border with some vertical space
+a \autodoc:parameter{bordercolor} color specification for this border (defaults to blue),
+and finally a \autodoc:parameter{borderoffset} length for adjusting the border with some vertical space
 above the content and below the baseline (defaults to 1pt). Note that PDF renderers may vary on how
 they honor these border styling features on link annotations.
 
-It also has an \code{external} option for URL links, which is not intended to be used
-directly—refer to the \code{url} package for more flexibility typesetting external
+It also has an \autodoc:parameter{external} option for URL links, which is not intended to be used
+directly—refer to the \autodoc:package{url} package for more flexibility typesetting external
 links.
 
-To set arbitrary key-value metadata, use something like \code{\\pdf:metadata[key=Author,
+To set arbitrary key-value metadata, use something like \autodoc:command{\pdf:metadata[key=Author,
 value=J. Smith]}. The PDF metadata field names are case-sensitive. Common keys include
 \code{Title}, \code{Author}, \code{Subject}, \code{Keywords}, \code{CreationDate}, and
 \code{ModDate}.
