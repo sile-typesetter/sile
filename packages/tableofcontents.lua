@@ -87,13 +87,42 @@ SILE.registerCommand("tableofcontents:item", function (options, content)
   end)
 end)
 
+-- Flatten a node list into just its string representation.
+-- (Similar to SU.contentToString(), but allows passing typeset
+-- objects to functions that need plain strings).
+local nodesToText = function (nodes)
+  local string = ""
+  for i = 1, #nodes do
+    local node = nodes[i]
+    if node.is_nnode or node.is_unshaped then
+      string = string .. node:toText()
+    elseif node.is_glue then
+      -- Not so sure about this one...
+      if node.width:tonumber() > 0 then
+        string = string .. " "
+      end
+    elseif not (node.is_zerohbox or node.is_migrating) then
+      -- Here, typically, the main case is an hbox.
+      -- Even if extracting its content could be possible in regular cases
+      -- (e.g. \raise), we cannot take a general decision, as it is a versatile
+      -- object (e.g. \rebox) and its outputYourself could moreover have been
+      -- redefine to do fancy things. Better warn and skip.
+      SU.warn("Some content could not be converted to text: "..node)
+    end
+  end
+  return string
+end
+
 local dc = 1
 SILE.registerCommand("tocentry", function (options, content)
   local dest
   if SILE.Commands["pdf:destination"] then
     dest = "dest" .. dc
     SILE.call("pdf:destination", { name = dest })
-    local title = SU.contentToString(content)
+    SILE.typesetter:pushState()
+    SILE.process(content)
+    local title = nodesToText(SILE.typesetter.state.nodes)
+    SILE.typesetter:popState()
     SILE.call("pdf:bookmark", { title = title, dest = dest, level = options.level })
     dc = dc + 1
   end
