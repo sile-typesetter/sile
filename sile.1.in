@@ -48,9 +48,26 @@ Generate a list of dependencies in Makefile format.
 .BR \-o ", " \-\-output= \fIfile\fR
 Explicitly set the output file name.
 .TP
-.BR \-I ", " \-\-include= \fIfile\fR
-Include a class or SILE file before processing input.
-This is particularly useful if the input file is in an XML format and requires a SILE class to provide processing expectations for its tags.
+.BR \-I ", " \-\-include= \fIfilename\fR
+Deprecated, will be removed.
+Please use \-\-require, \-\-preamble, or \-\-postamble.
+.TP
+.BR \-r ", " \-\-require= \fImodule\fR
+Require a class, package, or other resources to be loaded before processing the main input.
+The value should be a loadable module name (without a file extension) and will be loaded using SILE's module search path.
+This is particularly useful when the input document is not a natively recognized SIL or XML format where SILE needs to be taught how to read and process the input.
+If a class is supplied, it will replace \fIplain\fR as the default class for processing documents.
+Because this executes before loading the document, it may even change the way the parser works or add a parser for new formats.
+May be specified more than once.
+.TP
+.BR \-p ", " \-\-preamble= \fIfilename\fR
+Include an SIL, XML, or other content resource before the input document.
+The value should be a full filename with a path relative to PWD or an absolute path.
+May be specified more than once.
+.TP
+.BR \-P ", " \-\-postamble= \fIfilename\fR
+Include an SIL, XML, or other content resource after the input document.
+The value should be a full filename with a path relative to PWD or an absolute path.
 May be specified more than once.
 .TP
 .BR \-t ", " \-\-traceback
