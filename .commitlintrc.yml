@@ -38,6 +38,7 @@ rules:
     - inputs
     - installation
     - languages
+    - l10n
     - manpage
     - manual
     - math
