@@ -84,6 +84,7 @@ local measurement = pl.class({
     end,
 
     __tostring = function (self)
+      SU.debug("l10n", "measurement to string")
       return self.amount .. self.unit
     end,
 
