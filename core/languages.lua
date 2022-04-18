@@ -34,6 +34,22 @@ SILE.languageSupport = {
   end
 }
 
+-- Function to load UI localizations for SILE itself. Also sets the default
+-- document language, but this is primarily about the UI not the document.
+SILE.set_locale = function (locale)
+  locale = SILE.cldr.locales[locale] and locale or "en"
+  SILE.languageSupport.loadLanguage(locale)
+  SILE.settings.set("document.language", locale, true)
+  SILE.l10n:set_locale(locale)
+  local ftlresource = string.format("l10n.%s", locale)
+  local ret, ftl = pcall(require, ftlresource)
+  if ret then
+    SILE.l10n:add_messages(ftl)
+  else
+    SU.warn("Error loading UI localizations " .. locale .. ": " .. ftl)
+  end
+end
+
 SILE.registerCommand("language", function (options, content)
   local main = SU.required(options, "main", "language setting")
   SILE.languageSupport.loadLanguage(main)

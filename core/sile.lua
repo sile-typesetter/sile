@@ -38,7 +38,8 @@ SILE.preamble = {}
 
 -- Internal functions / classes / factories
 SILE.cldr = require("cldr")
-SILE.fluent = require("fluent")()
+SILE.fluent = require("fluent")() -- for document localizations
+SILE.l10n = require("fluent")() -- for UI localizations
 SILE.utilities = require("core/utilities")
 SU = SILE.utilities -- alias
 SILE.traceStack = require("core/tracestack")()
