@@ -6,7 +6,7 @@ SILE.inputs.common = {
     tree.options.papersize = tree.options.papersize or "a4"
     SILE.documentState.documentClass = class_constructor(tree.options)
     for option, value in pairs(tree.options) do
-      if SILE.documentState.documentClass.options[option] then
+      if SILE.documentState.documentClass.options[option] == "function" then
         SILE.documentState.documentClass.options[option](value)
       end
     end

@@ -246,6 +246,16 @@ local base = pl.class({
 
     _init = function (self, options)
       if not options then options = {} end
+      setmetatable(self.options, {
+        __newindex = function (self_, key, value)
+          if type(value) ~= "function" then
+            SU.error("Option "..key.." must be declared as a setter function before being set")
+          end
+        end,
+        __index = function (self_, key)
+          SU.error("Attempted to get/set a class option '" .. key .. "' that isn’t registered.")
+        end
+      })
       local legacy = self._deprecator(options)
       if legacy then return legacy end
       self:declareOption("class", function (name) return name end)
@@ -262,7 +272,7 @@ local base = pl.class({
         return size
       end)
       for k, v in pairs(options) do
-        self.options[k] = v
+        self.options[k](v)
       end
       SILE.outputter:init(self)
       self:declareSettings()
@@ -279,18 +289,7 @@ local base = pl.class({
     end,
 
     declareOption = function (self, option, setter)
-      if not getmetatable(self.options) then
-        setmetatable(self.options, {
-            __newindex = function (self_, key, value)
-              local setter_ = getmetatable(self_)[key]
-              if not setter then
-                SU.error("Attempted to set a class option '" .. key .. "' that isn’t registered.")
-              end
-              rawset(self_, key, setter_(value))
-            end
-          })
-      end
-      getmetatable(self.options)[option] = setter
+      rawset(self.options, option, setter)
     end,
 
     declareSettings = function (_)
