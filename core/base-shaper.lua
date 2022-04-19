@@ -6,10 +6,16 @@ if not SILE.shapers then SILE.shapers = { } end
 --   return table.concat({ options.family;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename }, ";")
 -- end
 
-SILE.settings.declare({ name = "shaper.variablespaces", type = "boolean", default = true })
-SILE.settings.declare({ name = "shaper.spaceenlargementfactor", type = "number or integer", default = 1.2 })
-SILE.settings.declare({ name = "shaper.spacestretchfactor", type = "number or integer", default = 1/2 })
-SILE.settings.declare({ name = "shaper.spaceshrinkfactor", type = "number or integer", default = 1/3 })
+SILE.settings.declare({ parameter = "shaper.variablespaces", type = "boolean", default = true })
+SILE.settings.declare({ parameter = "shaper.spaceenlargementfactor", type = "number or integer", default = 1.2 })
+SILE.settings.declare({ parameter = "shaper.spacestretchfactor", type = "number or integer", default = 1/2 })
+SILE.settings.declare({ parameter = "shaper.spaceshrinkfactor", type = "number or integer", default = 1/3 })
+
+SILE.settings.declare({
+    parameter = "shaper.tracking",
+    type = "number or nil",
+    default = nil
+  })
 
 -- Function for testing shaping in the repl
 -- luacheck: ignore makenodes
@@ -19,9 +25,12 @@ end
 
 local function shapespace (spacewidth)
   spacewidth = SU.cast("measurement", spacewidth)
+  -- In some scripts with word-level kerning, glue can be negative.
+  -- Use absolute value to ensure stretch and shrink work as expected.
+  local absoluteSpaceWidth = math.abs(spacewidth:tonumber())
   local length = spacewidth * SILE.settings.get("shaper.spaceenlargementfactor")
-  local stretch = spacewidth * SILE.settings.get("shaper.spacestretchfactor")
-  local shrink = spacewidth * SILE.settings.get("shaper.spaceshrinkfactor")
+  local stretch = absoluteSpaceWidth * SILE.settings.get("shaper.spacestretchfactor")
+  local shrink = absoluteSpaceWidth * SILE.settings.get("shaper.spaceshrinkfactor")
   return SILE.length(length, stretch, shrink)
 end
 
@@ -52,8 +61,13 @@ SILE.shapers.base = pl.class({
 
     measureChar = function (self, char)
       local options = SILE.font.loadDefaults({})
+      options.tracking = SILE.settings.get("shaper.tracking")
       local items = self:shapeToken(char, options)
-      return { height = items[1].height, width = items[1].width }
+      if #items > 0 then
+        return { height = items[1].height, width = items[1].width }
+      else
+        SU.error("Unable to measure character", char)
+      end
     end,
 
     -- Given a text and some font options, return a bunch of boxes
@@ -76,6 +90,7 @@ SILE.shapers.base = pl.class({
     end,
 
     createNnodes = function (self, token, options)
+      options.tracking = SILE.settings.get("shaper.tracking")
       local items, _ = self:shapeToken(token, options)
       if #items < 1 then return {} end
       local lang = options.language

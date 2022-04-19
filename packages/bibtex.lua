@@ -76,3 +76,27 @@ SILE.registerCommand("reference", function (options, content)
   end
   SILE.doTexlike(cite)
 end)
+
+return {
+  documentation = [[\begin{document}
+BibTeX is a citation management system. It was originally designed
+for TeX but has since been integrated into a variety of situations.
+
+This experimental package allows SILE to read and process BibTeX
+\code{.bib} files and output citations and full text references.
+(It doesn’t currently produce full bibliography listings.)
+
+To load a BibTeX file, issue the command
+\autodoc:command{\loadbibliography[file=<whatever.bib>]}
+
+To produce an inline citation, call \autodoc:command{\cite{<key>}}, which
+will typeset something like “Jones 1982”. If you want to cite a
+particular page number, use \autodoc:command{\cite[page=22]{<key>}}.
+
+To produce a full reference, use \autodoc:command{\reference{<key>}}.
+
+Currently, the only supported bibliography style is Chicago referencing,
+but other styles should be easy to implement if there is interest.
+Check out \code{packages/bibstyles/chicago.lua} and adapt as necessary.
+\end{document}]]
+}

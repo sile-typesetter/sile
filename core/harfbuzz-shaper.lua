@@ -1,9 +1,11 @@
-if not SILE.shapers then SILE.shapers = { } end
 local hb = require("justenoughharfbuzz")
 local icu = require("justenoughicu")
+local bitshim = require("bitshim")
+
+if not SILE.shapers then SILE.shapers = { } end
 
 SILE.settings.declare({
-  name = "harfbuzz.subshapers",
+  parameter = "harfbuzz.subshapers",
   type = "string or nil",
   default = "",
   help = "Comma-separated shaper list to pass to Harfbuzz"
@@ -14,7 +16,7 @@ SILE.require("core/base-shaper")
 local smallTokenSize = 20 -- Small words will be cached
 local shapeCache = {}
 local _key = function (options, text)
-  return table.concat({ text, options.family, options.language, options.script, options.size, ("%d"):format(options.weight), options.style, options.variant, options.features, options.direction, options.filename }, ";")
+  return table.concat({ text, options.tracking or "1", options.family, options.language, options.script, options.size, ("%d"):format(options.weight), options.style, options.variant, options.features, options.direction, options.filename}, ";")
 end
 
 local substwarnings = {}
@@ -49,6 +51,9 @@ SILE.shapers.harfbuzz = pl.class({
       for i = 1, #items do
         local j = (i == #items) and #text or items[i+1].index
         items[i].text = text:sub(items[i].index+1, j) -- Lua strings are 1-indexed
+        if options.tracking then
+          items[i].width = items[i].width * options.tracking
+        end
       end
       if #text < smallTokenSize then shapeCache[_key(options, text)] = items end
       return items
@@ -59,9 +64,9 @@ SILE.shapers.harfbuzz = pl.class({
       SU.debug("fonts", "Resolved font family '"..opts.family.."' -> "..(face and face.filename))
       if not face or not face.filename then SU.error("Couldn't find face '"..opts.family.."'") end
       if SILE.makeDeps then SILE.makeDeps:add(face.filename) end
-      if bit32.rshift(face.index, 16) ~= 0 then
+      if bitshim.rshift(face.index, 16) ~= 0 then
         SU.warn("GX feature in '"..opts.family.."' is not supported, fallback to regular font face.")
-        face.index = bit32.band(face.index, 0xff)
+        face.index = bitshim.band(face.index, 0xff)
       end
       local fh, err = io.open(face.filename, "rb")
       if err then SU.error("Can't open font file '"..face.filename.."': "..err) end

@@ -93,6 +93,49 @@ return {
   exports = {
     register= register,
     check= checkConverters
-  }
+  },
+  documentation= [[
+\begin{document}
+The \autodoc:package{converters} package allows you to register additional handlers
+to process included files and images. That sounds a bit abstract, so it’s
+best explained by example. Suppose you have a GIF image that you would
+like to include in your document. You read the documentation for the
+\autodoc:package{image} package and you discover that sadly GIF images are not supported.
+What \autodoc:package{converters} does is allow you to teach SILE how to get the GIF
+format into something that \em{is} supported. We can use the ImageMagick
+toolkit to turn a GIF into a JPG, and JPGs are supported.
+
+We do this by registering a converter with the \autodoc:command{\converters:register}
+command:
+
+\begin{verbatim}
+\line
+\\script[src=packages/converters]
+\\converters:register[from=.gif,to=.jpg,command=convert $SOURCE $TARGET]
+\line
+\end{verbatim}
+
+And now it just magically works:
+
+\begin{verbatim}
+\line
+\\img[src=hello.gif, width=50px]
+\line
+\end{verbatim}
+
+This will execute the command \code{convert hello.gif hello.jpg} and include
+the converted \code{hello.jpg} file.
+
+This trick also works for text file:
+
+\begin{verbatim}
+\line
+\\converters:register[from=.md, to=.sil, command=pandoc -o $TARGET $SOURCE]
+
+\\include[src=document.md]
+\line
+\end{verbatim}
+\end{document}
+]]
 }
 

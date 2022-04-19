@@ -10,64 +10,64 @@ if std.string.monkey_patch then -- stdlib >= 40
 end
 
 SILE.settings.declare({
-  name = "typesetter.widowpenalty",
+  parameter = "typesetter.widowpenalty",
   type = "integer",
   default = 3000,
   help = "Penalty to be applied to widow lines (at the start of a paragraph)"
 })
 
 SILE.settings.declare({
-  name = "typesetter.parseppattern",
+  parameter = "typesetter.parseppattern",
   type = "string or integer",
   default = "\r?\n[\r\n]+",
   help = "Lua pattern used to separate paragraphs"
 })
 
 SILE.settings.declare({
-  name = "typesetter.obeyspaces",
+  parameter = "typesetter.obeyspaces",
   type = "boolean or nil",
   default = nil,
   help = "Whether to ignore paragraph initial spaces"
 })
 
 SILE.settings.declare({
-  name = "typesetter.orphanpenalty",
+  parameter = "typesetter.orphanpenalty",
   type = "integer",
   default = 3000,
   help = "Penalty to be applied to orphan lines (at the end of a paragraph)"
 })
 
 SILE.settings.declare({
-  name = "typesetter.parfillskip",
+  parameter = "typesetter.parfillskip",
   type = "glue",
   default = SILE.nodefactory.glue("0pt plus 10000pt"),
   help = "Glue added at the end of a paragraph"
 })
 
 SILE.settings.declare({
-  name = "document.letterspaceglue",
+  parameter = "document.letterspaceglue",
   type = "glue or nil",
   default = nil,
   help = "Glue added between tokens"
 })
 
 SILE.settings.declare({
-  name = "typesetter.underfulltolerance",
+  parameter = "typesetter.underfulltolerance",
   type = "length or nil",
   default = SILE.length("1em"),
   help = "Amount a page can be underfull without warning"
 })
 
 SILE.settings.declare({
-  name = "typesetter.overfulltolerance",
+  parameter = "typesetter.overfulltolerance",
   type = "length or nil",
   default = SILE.length("5pt"),
   help = "Amount a page can be overfull without warning"
 })
 
 SILE.settings.declare({
-  name = "typesetter.breakwidth",
-  type = "length or nil",
+  parameter = "typesetter.breakwidth",
+  type = "measurement or nil",
   default = nil,
   help = "Width to break lines at"
 })
@@ -143,7 +143,7 @@ SILE.defaultTypesetter = std.object {
 
   debugState = function (self)
     print("\n---\nI am in "..(self:vmode() and "vertical" or "horizontal").." mode")
-    print("Writing into "..self.frame:toString())
+    print("Writing into " .. self.frame)
     print("Recent contributions: ")
     for i = 1, #(self.state.nodes) do
       io.stderr:write(self.state.nodes[i].. " ")
@@ -168,7 +168,8 @@ SILE.defaultTypesetter = std.object {
 
   pushHbox = function (self, spec)
     -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
-    local node = SU.type(spec) == "hbox" and spec or SILE.nodefactory.hbox(spec)
+    local ntype = SU.type(spec)
+    local node = (ntype == "hbox" or ntype == "zerohbox") and spec or SILE.nodefactory.hbox(spec)
     return self:pushHorizontal(node)
   end,
 
@@ -447,7 +448,7 @@ SILE.defaultTypesetter = std.object {
         end
       end
     end
-    SU.debug("pagebuilder", "Glues for self page adjusted by", adjustment, "drawn from", gTotal)
+    SU.debug("pagebuilder", "Glues for this page adjusted by", adjustment, "drawn from", gTotal)
   end,
 
   initNextFrame = function (self)
@@ -459,8 +460,10 @@ SILE.defaultTypesetter = std.object {
     if (self.frame.next and not (self.state.lastPenalty <= supereject_penalty )) then
       self:initFrame(SILE.getFrame(self.frame.next))
     elseif not self.frame:isMainContentFrame() then
-      SU.warn("Overfull content for frame "..self.frame.id)
-      self:chuck()
+      if #self.state.outputQueue > 0 then
+        SU.warn("Overfull content for frame "..self.frame.id)
+        self:chuck()
+      end
     else
       self:runHooks("pageend")
       SILE.documentState.documentClass:endPage()
@@ -600,16 +603,22 @@ SILE.defaultTypesetter = std.object {
     end
   end,
 
-  addrlskip = function (self, slice, margins)
+  addrlskip = function (self, slice, margins, hangLeft, hangRight)
     local LTR = self.frame:writingDirection() == "LTR"
     local rskip = margins[LTR and "rskip" or "lskip"]
     if not rskip then rskip = SILE.nodefactory.glue(0) end
+    if hangRight and hangRight > 0 then
+      rskip = SILE.nodefactory.glue({ width = rskip.width:tonumber() + hangRight })
+    end
     rskip.value = "margin"
     -- while slice[#slice].discardable do table.remove(slice, #slice) end
     table.insert(slice, rskip)
     table.insert(slice, SILE.nodefactory.zerohbox())
     local lskip = margins[LTR and "lskip" or "rskip"]
     if not lskip then lskip = SILE.nodefactory.glue(0) end
+    if hangLeft and hangLeft > 0 then
+      lskip = SILE.nodefactory.glue({ width = lskip.width:tonumber() + hangLeft })
+    end
     lskip.value = "margin"
     while slice[1].discardable do table.remove(slice, 1) end
     table.insert(slice, 1, lskip)
@@ -635,7 +644,8 @@ SILE.defaultTypesetter = std.object {
           end
         end
         if seenHbox == 0 then break end
-        self:addrlskip(slice, self:getMargins())
+        local mrg = self:getMargins()
+        self:addrlskip(slice, mrg, point.left, point.right)
         local ratio = self:computeLineRatio(point.width, slice)
         -- TODO see bug 620
         -- if math.abs(ratio) > 1 then SU.warn("Using ratio larger than 1" .. ratio) end

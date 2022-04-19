@@ -1,6 +1,6 @@
 local function transformContent(content, transformFunction, extraArgs)
   local newContent = {}
-  for k, v in pairs(content) do
+  for k, v in SU.sortedpairs(content) do
     if type(k) == "number" then
       if type(v) == "string" then
         local transformed = transformFunction(v, content, extraArgs)
@@ -36,14 +36,14 @@ return {
     transformContent = transformContent
   },
   documentation = [[\begin{document}
-The \code{inputfilter} package provides ways for class authors to transform the
+The \autodoc:package{inputfilter} package provides ways for class authors to transform the
 input of a SILE document after it is parsed but before it is processed. It does
 this by allowing you to rewrite the abstract syntax tree representing the document.
 
-Loading \code{inputfilter} into your class with \code{class:loadPackage("inputfilter")}
+Loading \autodoc:package{inputfilter} into your class with \code{class:loadPackage("inputfilter")}
 provides you with two new Lua functions: \code{transformContent} and \code{createCommand}.
 \code{transformContent} takes a content tree and applies a transformation function to the
-text within it. See \code{examples/inputfilter.sil} for a simple example, and
+text within it. See \url{https://sile-typesetter.org/examples/inputfilter.sil} for a simple example, and
 \code{packages/chordmode.sil} for a more complete one.
 \end{document}
 ]]}

@@ -34,10 +34,10 @@ return P{
   "additive",
   additive = V"plus" + V"minus" + V"multiplicative",
   multiplicative = V"times" + V"divide" + V"primary",
-  primary = (ws * primary * ws) + V"bracketed",
+  primary = (ws * primary * ws) + V"braced",
   plus = ws * V"multiplicative" * ws * P"+" * ws * V"additive" * ws / cassowary.plus,
   minus = ws * V"multiplicative" * ws * P"-" * ws * V"additive" * ws / cassowary.minus,
   times = ws * V"primary" * ws * P"*" * ws * V"multiplicative" * ws / cassowary.times,
   divide = ws * V"primary" * ws * P"/" * ws * V"multiplicative" * ws / cassowary.divide,
-  bracketed = ws * P"(" * ws * V"additive" * ws * P")" * ws
+  braced = ws * P"(" * ws * V"additive" * ws * P")" * ws
 }

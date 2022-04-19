@@ -1,4 +1,9 @@
-ACLOCAL_AMFLAGS = -I m4
+ACLOCAL_AMFLAGS = -I build-aux
+
+.ONESHELL:
+.SECONDARY:
+.SECONDEXPANSION:
+.DELETE_ON_ERROR:
 
 if SYSTEM_LIBTEXPDF
 SUBDIRS = src
@@ -6,36 +11,69 @@ else
 SUBDIRS = libtexpdf src
 endif
 
-dist_man_MANS = sile.1
-bin_SCRIPTS = sile
-subdir_files = $(shell find core classes languages packages lua-libraries -type f -print)
-nobase_dist_pkgdata_DATA = $(subdir_files)
-EXTRA_DIST = CHANGELOG.md README.md LICENSE spec tests examples documentation sile-dev-1.rockspec build-aux/git-version-gen .version fontconfig.conf
+licensedir = $(datarootdir)/licenses/$(TRANSFORMED_PACKAGE_NAME)
+docdir = $(datarootdir)/doc/$(TRANSFORMED_PACKAGE_NAME)
+datadir = $(datarootdir)/$(TRANSFORMED_PACKAGE_NAME)
+pkgdatadir = $(datadir)
 
-SHELL = bash
-.ONESHELL:
-.SECONDEXPANSION:
-.DELETE_ON_ERROR:
+# Rules for installing LuaRocks locally as pkgdata_DATA
+include Makefile-luarocks
 
-if !SYSTEM_LUAROCKS
-subdir_files += $(shell find lua_modules -type f -print)
-LUAROCKS := luarocks --tree lua_modules
-LUAROCKSARGS ?=
-LUAMODLOCK := sile-dev-1.rockslock
-LUAMODSPEC := sile-dev-1.rockspec
-genrockslock := $(LUAROCKS) list --porcelain | awk '{print $$1 " " $$2}'
-rocksmatch := cmp -s $(LUAMODLOCK) <($(genrockslock))
+# Actual rules for downloading test fonts are in a separate file
+include Makefile-fonts
+
+# Since we can't use $(wildcard ...) in automake file lists, we generate a file
+# with a script that builds our dynamic file lists instead. This is tricky,
+# because if we just include the file automake will flatten this include. By
+# using $(wildcard ...) to include it (the very function we couldn't use because
+# of the race condition it creates) we actually keep it from being flattened and
+# hence evaluated when we want it to be. Since the file always exists (see
+# BUILT_SOURCES and EXTRA_DIST) this doesn't induce a race.
+include $(wildcard Makefile-distfiles)
+
+MANUAL = documentation/sile.pdf
+
+if MANUAL
+_MANUAL = $(MANUAL)
 endif
 
-BUILT_SOURCES = .version
+nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
+nobase_nodist_pkgdata_DATA = $(LUAMODULES)
+dist_man_MANS = sile.1
+dist_doc_DATA = README.md CHANGELOG.md
+dist_pdf_DATA = $(_MANUAL)
+dist_license_DATA = LICENSE
+bin_SCRIPTS = sile
+EXTRA_DIST = spec tests documentation sile-dev-1.rockspec fontconfig.conf
+EXTRA_DIST += Makefile-distfiles
+EXTRA_DIST += build-aux/action-updater.js build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
+EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconfig.conf build-aux/docker-glibc-workaround.sh hooks/build
+EXTRA_DIST += default.nix flake.nix flake.lock libtexpdf.git-rev shell.nix
+EXTRA_DIST += package.json # imported by both Nix and Docker
+EXTRA_DIST += $(MANUAL)
 
-.version: $(shell test -d .git && awk '{print ".git/" $$2}' .git/HEAD)
-	mv $@{,-prev} || touch $@-prev
-	( test -d .git && ./build-aux/git-version-gen .tarball-version || echo $(VERSION) ) > $@
-	cmp -s $@{,-prev} || autoreconf configure.ac -f
+Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
+	build-aux/list-dist-files.sh > $@
 
-dist-hook:
-	echo $(VERSION) > $(distdir)/.tarball-version
+BUILT_SOURCES = .version Makefile-distfiles
+
+_BRANCH_REF := $(shell $(AWK) '{print ".git/" $$2}' .git/HEAD 2>/dev/null ||:)
+
+.version: $(_BRANCH_REF)
+	[ -e "$@" ] && mv "$@" "$@-prev" || $(if $<,touch,cp "$(srcdir)/.tarball-version") "$@-prev"
+	$(if $<,./build-aux/git-version-gen "$(srcdir)/.tarball-version",printf "$(VERSION)") > "$@"
+	$(CMP) -s "$@" "$@-prev" || \
+		( autoreconf configure.ac --force && build-aux/decore-automake.sh )
+
+libtexpdf.git-rev: $(_BRANCH_REF)
+	$(GIT) submodule status -- libtexpdf | $(AWK) '{ print $$1 }' > $@
+
+dist-hook: $(MANUAL)
+	cd $(distdir)
+	printf "$(VERSION)" > .tarball-version
+	$(SED) -i -e '/^LUAMODULES =/s/=.*/=/' Makefile-distfiles
+	$(top_srcdir)/build-aux/decore-automake.sh
+	$(SED) -i -e '/^LUAMODULES/d;/^\tlua_modules/d' Makefile.in
 
 # Whether to force tests to run from scratch
 CLEAN ?=
@@ -44,72 +82,79 @@ RELTYPE ?=
 
 .PHONY: tagrelease
 tagrelease:
-	test -z $$(git tag --points-at HEAD) || exit 0 # end if we are already on a release tag
-	git diff-index --quiet --cached HEAD || exit 1 # die if anything staged but not committed
-	git diff-files --quiet || exit 1 # die if any tracked files have unstagged changes
+	test -z $$($(GIT) tag --points-at HEAD) || exit 0 # end if we are already on a release tag
+	$(GIT) diff-index --quiet --cached HEAD || exit 1 # die if anything staged but not committed
+	$(GIT) diff-files --quiet || exit 1 # die if any tracked files have unstagged changes
 	npm run release -- $(and $(RELTYPE),--release-as $(RELTYPE))
 
 .PHONY: prerelease
-prerelease: all test busted examples docs update_libtexpdf
+prerelease: test docs update_libtexpdf
 
 .PHONY: release-preview
 release-preview:
-	npm run release -- --dry-run
+	npm run release -- --dry-run $(and $(RELTYPE),--release-as $(RELTYPE))
 
 .PHONY: release
 release: tagrelease
 
-dist: examples docs all
+dist: sile-$(VERSION).pdf sile-$(VERSION).md
 
-.PHONY: postrelease
-postrelease: dist
-	@echo "- [ ] Ping packagers: https://repology.org/project/sile/versions"
+sile-$(VERSION).pdf: $(MANUAL)
+	cp $< $@
+
+sile-%.md: CHANGELOG.md
+	$(SED) -e '/\.\.\.v$*/,/\.\.\.v/!d' $< | \
+		$(SED) -e '1,3d;N;$$!P;$$!D;$$d' > $@
 
 .PHONY: update_libtexpdf
 update_libtexpdf:
-	git diff-index --quiet --cached HEAD || exit 1 # die if anything already staged
-	git submodule update --init --remote -- libtexpdf
-	git add -- libtexpdf
-	git diff-index --quiet --cached HEAD || git commit -m "chore(build): Pin latest libtexpdf library submodule"
+	$(GIT) diff-index --quiet --cached HEAD || exit 1 # die if anything already staged
+	$(GIT) submodule update --init --remote -- libtexpdf
+	$(GIT) submodule status -- libtexpdf | $(AWK) '{ print $$1 }' > libtexpdf.git-rev
+	$(GIT) add -- libtexpdf libtexpdf.git-rev
+	$(GIT) diff-index --quiet --cached HEAD || $(GIT) commit -m "chore(build): Pin latest libtexpdf library submodule"
 
 gh-pages:
-	git worktree add -f $@ $@
-
-.PHONY: installrocks
-if !SYSTEM_LUAROCKS
-installrocks: $(LUAMODLOCK) $(shell $(rocksmatch) || echo lua_modules)
-
-lua_modules: $(LUAMODSPEC) $(shell $(rocksmatch) || echo force)
-	$(LUAROCKS) $(LUAROCKSARGS) install --only-deps $<
-
-$(LUAMODLOCK): lua_modules $(LUAMODSPEC)
-	$(genrockslock) > $@
-
-sile: installrocks
-endif
+	$(GIT) worktree add -f $@ $@
 
 DEPDIR := .deps
 REGRESSIONSCRIPT := ./tests/regressions.pl
 LOCALTESTFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
 SILEFLAGS ?= -m $(DEPDIR)/$(basename $@).d -d versions -f fontconfig
 
-TESTSRCS  ?= $(wildcard tests/*.sil tests/*.xml)
 TESTPDFS   = $(addsuffix      .pdf,$(basename $(TESTSRCS)))
-EXPECTEDS ?= $(filter $(addsuffix .expected,$(basename $(TESTSRCS))),$(wildcard tests/*.expected))
+EXPECTEDS ?= $(filter $(addsuffix .expected,$(basename $(TESTSRCS))),$(TESTEXPECTS))
 ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 
-.PHONY: test
-test: $(TESTSRCS) $(ACTUALS)
+check: selfcheck
+
+.PHONY: selfcheck
+selfcheck: | $(_BUILT_SUBDIRS)
+	output=$$(mktemp -t selfcheck-XXXXXX.pdf)
+	trap 'rm -f $$output' EXIT HUP TERM
+	echo "<sile>foo</sile>" | ./sile -o $$output -
+	$(PDFINFO) $$output | $(GREP) "SILE v@VERSION@"
+
+.PHONY: regressions
+regressions: $(TESTSRCS) $(ACTUALS)
 	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
 
+.PHONY: test
+test: regressions busted
+
 .PHONY: lint
-lint: luacheck
+lint: luacheck luarocks-lint
+
+.PHONY: luarocks-lint
+luarocks-lint: $(LUAMODSPEC)
+	luarocks lint $<
 
 .PHONY: luacheck
 luacheck:
-	luacheck -q .
+	luacheck -j$(shell nproc) -q .
 
-busted: $(wildcard spec/*_spec.lua)
+.PHONY: busted
+busted: sile $(addprefix .fonts/,$(TESTFONTFILES))
 	set -f; IFS=';'
 if SYSTEM_LUAROCKS
 	packagecpath=(./{,core/}?.$(SHARED_LIB_EXT))
@@ -118,53 +163,59 @@ else
 	packagecpath=(./{,core/,lua_modules/lib/lua/$(LUA_VERSION)/}?.$(SHARED_LIB_EXT))
 	packagepath=(./{,lua_modules/share/lua/$(LUA_VERSION)/,lua-libraries/}?{,/init}.lua)
 endif
-	busted --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" spec
-
-DOCSSRCS = $(basename $(wildcard documentation/*.sil))
-DOCS = $(addsuffix .pdf,$(basename $(DOCSSRCS)))
+	$(LOCALTESTFONTS) busted --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" spec
 
 .PHONY: docs
-docs: $(DOCS)
-
-EXAMPLESSRCS = $(basename $(wildcard examples/*.sil))
-EXAMPLES = $(addsuffix .pdf,$(DOCSSRCS))
-
-.PHONY: examples
-examples: $(EXAMPLES)
-
-# Use system wide fonts for docs and examples
-documentation/%.pdf: LOCALTESTFONTS=
-examples/%.pdf: LOCALTESTFONTS=
+docs: $(MANUAL)
 
 # This is a monkey patch to figure out how many passes we have to to to
 # garantee the TOC is up to date, simplify when #230 is fixed.
-hastoc = [[ -f $(subst .pdf,.toc,$@) ]] && echo true || echo false
-pages = pdfinfo $@ | awk '$$1 == "Pages:" {print $$2}' || echo 0
-silepass = $(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@ && pg0=$${pg} pg=$$($(pages))
+hastoc = [ -f $(subst .pdf,.toc,$@) ] && echo true || echo false
+pages = $(PDFINFO) $@ | $(AWK) '$$1 == "Pages:" {print $$2}' || echo 0
+silepass = $(LOCALTESTFONTS) ./sile $(SILEFLAGS) $< -o $@ && pg0=$${pg} pg=$$($(pages)) || false
 define runsile =
-	pg0=$$($(pages)) hadtoc=$$($(hastoc))
-	mkdir -p $(DEPDIR)
+	set -e
+	pg=$$($(pages)) hadtoc=$$($(hastoc))
+	mkdir -p $(DEPDIR)/$$(dirname $@)
 	$(silepass)
+	export -n SILE_COVERAGE
 	if $(hastoc); then
 		$${hadtoc} || $(silepass)
-		[[ $${pg} -gt $${pg0} ]] && $(silepass) ||:
+		[ "$${pg}" == "$${pg0}" ] || $(silepass)
 	fi
 endef
 
-patterndeps = $(wildcard $(DEPDIR)/$*.d) all testprep
+_FORCED = $(and $(SILE_COVERAGE)$(CLEAN),force)
+_TEST_DEPS = $(and $$(filter tests/%,$@),$(addprefix .fonts/,$(TESTFONTFILES)))
+_DOCS_DEPS = $(and $$(filter documentation/%,$@),$(addprefix .fonts/,$(DOCSFONTFILES)))
 
-%.pdf: %.sil $(and $(SILE_COVERAGE)$(CLEAN),force) $$(patterndeps)
+# TODO: remove _BUILT_SUBDIRS hack and replace it with something sensible when
+# these subdirs don't do crazy things like copying files outside of their own trees!
+_BUILT_SUBDIRS = .built-subdirs
+_SUBDIR_TELLS = core/justenoughfontconfig.so core/justenoughharfbuzz.so core/justenoughicu.so core/justenoughlibtexpdf.so libtexpdf/.libs/libtexpdf.so.0.0.0
+$(_BUILT_SUBDIRS): $(_SUBDIR_TELLS)
+	touch $@
+
+$(_SUBDIR_TELLS):
+	$(MAKE) $(AM_MAKEFLAGS) all-recursive
+#	$(error Running `make install`, `make dist`, or other end-game targets before `make all` unspported.)
+
+patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(LUAMODLOCK) $(_BUILT_SUBDIRS)
+
+%.pdf: %.sil $$(patterndeps)
 	$(runsile)
 
-%.pdf: %.xml $(and $(SILE_COVERAGE)$(CLEAN),force) $$(patterndeps)
+%.pdf: %.xml $$(patterndeps)
 	$(runsile)
 
 .PHONY: coverage
 coverage: export SILE_COVERAGE=1
-coverage: test_previews
+coverage: regression_previews busted
 
-HEADSHA ?= $(shell git rev-parse --short HEAD)
-BASESHA ?= $(shell git rev-parse --short $(HEADSHA)^)
+HEADSHA ?= HEAD
+_HEADSHA ?= $(shell test -e .git && $(GIT) rev-parse --short=7 $(HEADSHA))
+BASESHA ?= $(HEADSHA)^
+_BASESHA ?= $(shell test -e .git && $(GIT) rev-parse --short=7 $(BASESHA))
 
 clean-recursive: clean-tests
 
@@ -182,25 +233,35 @@ clean-deps:
 time-%.json: benchmark-%/time.json
 	cp $< $@
 
-define time_action =
-	export TIMEFORMAT=$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
-	{ time (./sile documentation/sile.sil > /dev/null 2>&1) } 2> time.json
-endef
+clean-recursive: clean-worktrees
 
-make_worktree_rules = $(eval $(foreach SHA,$(HEADSHA) $(BASESHA),$(call worktree_sha,$(1),$(SHA))))
+.PHONY: clean-worktrees
+clean-worktrees:
+	if test -e .git; then \
+		$(GIT) worktree list --porcelain | \
+			$(AWK) 'BEGIN { FS = "/" }; /^worktree .*-[0-9a-f]{7}/ { print $$(NF) }' | \
+			while read worktree; do \
+				$(GIT) worktree remove --force $${worktree} ; \
+			done ; \
+	fi
+
+time_action ?= ./sile documentation/sile.sil -o /dev/null
+make_worktree_rules = $(eval $(foreach SHA,$(_HEADSHA) $(_BASESHA),$(call worktree_sha,$(1),$(shell $(GIT) rev-parse --short=7 $(SHA)))))
 
 define worktree_sha =
 
 .PRECIOUS: $(1)-$(2)
 $(1)-$(2):
-	[[ -d $$@ ]] || git worktree add --detach $$@ $(2)
+	[ -d $$@ ] || $(GIT) worktree add --detach $$@ $(2)
 	cd $$@
-	[[ -d libtexpdf ]] && rmdir libtexpdf
-	[[ -h libtexpdf ]] || ln -s ../libtexpdf
-	[[ -h lua_modules ]] || ln -s ../lua_modules
-	[[ -h node_modules ]] || ln -s ../node_modules
-	[[ -h .fonts ]] || ln -s ../.fonts
+	[ -d libtexpdf ] && rm -r libtexpdf ||:
+	[ -h libtexpdf ] || ln -s ../libtexpdf
+	[ -h lua_modules ] || ln -s ../lua_modules
+	[ -h node_modules ] || ln -s ../node_modules
+	[ -h .fonts ] || ln -s ../.fonts
+	[ -h .sources ] || ln -s ../.sources
 	./bootstrap.sh
+	cp ../config.status .
 	./configure
 	make
 
@@ -210,38 +271,32 @@ $(1)-$(2)/%: $(1)-$(2)
 	make $$*
 
 .PRECIOUS: $(1)-$(2)/time.json
-$(1)-$(2)/time.json: $(1)-$(2) $(1)-$(2)/sile
+$(1)-$(2)/time.json: $(1)-$(2) force
 	cd $$<
-	$$(time_action)
-
-clean-recursive: clean-$(1)s
-
-.PHONY: clean-$(1)s
-clean-$(1)s:
-	rm -rf $(1)-*
-	git worktree prune
-	git branch --list | grep $(1)- | xargs git branch -D ||:
+	export TIMEFORMAT=$$$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
+	{ time ($$(time_action) > /dev/null 2>&1) } 2> time.json
 
 endef
 
 $(call make_worktree_rules,benchmark)
 
 .PHONY: benchmark
-benchmark: time-$(HEADSHA).json time-$(BASESHA).json
-	cat $^
+benchmark: time-$(_HEADSHA).json time-$(_BASESHA).json
+	head $^
 
 .PRECIOUS: time-%.json
 time-%.json: benchmark-%/time.json
 	cp $< $@
 
 .PRECIOUS: time.json
-time.json: sile
-	$(time_action)
+time.json: force | $(_BUILT_SUBDIRS)
+	export TIMEFORMAT=$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
+	{ time ($(time_action) > /dev/null 2>&1) } 2> time.json
 
 $(call make_worktree_rules,compare)
 
 onetest = $(firstword $(ACTUALS)),$(firstword $(TESTPDFS))
-compare_prerequisites = $(sort $(shell echo {compare-$(BASESHA)/,}{$(onetest)}))
+compare_prerequisites = $(sort $(shell echo {compare-$(_BASESHA)/,}{$(onetest)}))
 
 runapp ?= nohup $(1) > /dev/null &
 compare: $(call compare_prerequisites)
@@ -255,65 +310,98 @@ force: ;
 .PHONY: update_expecteds
 update_expecteds: $(EXPECTEDS)
 
-tests/%.expected: tests/%.sil $(and $(CLEAN),force) $$(patterndeps)
+tests/%.expected: tests/%.sil $$(patterndeps)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-tests/%.expected: tests/%.xml $(and $(CLEAN),force) $$(patterndeps)
+tests/%.expected: tests/%.xml $$(patterndeps)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
 .PHONY: update_actuals
 update_actuals: $(ACTUALS)
 
-.PHONY: test_previews
-test_previews: $(TESTPDFS)
+.PHONY: regression_previews
+regression_previews: $(TESTPDFS)
 
-tests/%.actual: tests/%.sil $(and $(CLEAN),force) $$(patterndeps)
+tests/%.actual: tests/%.sil $$(patterndeps)
 	-$(if $(CLEAN),rm -f $@,:)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-tests/%.actual: tests/%.xml $(and $(CLEAN),force) $$(patterndeps)
+tests/%.actual: tests/%.xml $$(patterndeps)
 	-$(if $(CLEAN),rm -f $@,:)
 	$(LOCALTESTFONTS) ./sile $(SILEFLAGS) -b debug $< -o $@
 
-DEPFILES = $(addsuffix .d,$(addprefix $(DEPDIR)/,$(basename $(TESTSRCS) $(DOCS) $(EXAMPLES))))
+DEPFILES = $(addsuffix .d,$(addprefix $(DEPDIR)/,$(basename $(TESTSRCS) $(MANUAL))))
 DEPDIRS = $(sort $(dir $(DEPFILES)))
 
-$(DEPDIRS):
+$(DEPDIRS): | Makefile-distfiles
 	mkdir -p $@
 
 $(DEPFILES): | $(DEPDIRS)
 
 include $(wildcard $(DEPFILES))
 
-# Make sure we have a local font directory before putting anything there
-.fonts/%: Makefile-fonts | .fonts
+CLEANFILES = $(BUILT_SOURCES) .version-prev $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) Makefile-distfiles $(_BUILT_SUBDIRS)
 
-.fonts: fontconfig.conf
-	[[ -h .fonts ]] || mkdir -p $@
+export GHCR_REGISTRY ?= ghcr.io
+export GHCR_REPO ?= sile-typesetter/$(TRANSFORMED_PACKAGE_NAME)
 
-# Actual rules for downloading test fonts are in a separate file
-include Makefile-fonts
+export DOCKER_REGISTRY ?= docker.io
+export DOCKER_REPO ?= siletypesetter/$(TRANSFORMED_PACKAGE_NAME)
+export DOCKER_TAG ?= HEAD
 
-# Make sure we have font files before running tests (ignoring timestamp of font files)
-.PHONY: testprep
-TESTPREPDEPS = $(DEPDIRS) $(addprefix .fonts/,$(TESTFONTFILES))
-if SYSTEM_LUAROCKS
-testprep: | $(TESTPREPDEPS)
-else
-testprep: lua_modules | $(TESTPREPDEPS)
-endif
+.PHONY: docker
+docker: Dockerfile hooks/build .version
+	./hooks/build $(VERSION)
 
-CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(DEPFILES) $(ACTUALS) $(TESTPDFS)
+.PHONY: docker-dep-check
+docker-dep-check: .docker_deps .aur_deps
+	diff -u $^
+
+CLEANFILES += .docker_deps
+.docker_deps: hooks/build
+	$(SHELL) -c 'source <($(SED) -nE "/^(RUN|'"'"')/{s/.*=/echo /;p}" $<)' | \
+		tr ' ' '\n' | \
+		sort > $@
+
+CLEANFILES += .aur_deps
+.aur_deps:
+	curl -Ls 'https://aur.archlinux.org/cgit/aur.git/plain/.SRCINFO?h=sile-git' | \
+		$(SED) -nE '/\bdepends =/{s/.*= //;p}' | \
+		$(GREP) -vxE '(lua-.*|.*\.so|git|glibc)' | \
+		sort > $@
+
+define docker_push =
+	test -z "$(DOCKER_PAT)" || \
+		docker login https://$(DOCKER_REGISTRY) -u $(DOCKER_USERNAME) -p $(DOCKER_PAT)
+	docker push $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
+	if [[ "$(DOCKER_TAG)" == v*.*.* ]]; then \
+		tag=$(DOCKER_TAG) ; \
+		docker tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):latest ; \
+		docker tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$${tag//.*} ; \
+		docker push $(DOCKER_REGISTRY)/$(DOCKER_REPO):latest ; \
+		docker push $(DOCKER_REGISTRY)/$(DOCKER_REPO):$${tag//.*} ; \
+	fi
+endef
+
+.PHONY: docker-ghcr-to-hub
+docker-ghcr-to-hub:
+	docker pull $(GHCR_REGISTRY)/$(GHCR_REPO):$(DOCKER_TAG)
+	docker tag  $(GHCR_REGISTRY)/$(GHCR_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
+	$(docker_push)
+
+.PHONY: docker-build-push
+docker-build-push: docker
+	docker tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
+	$(docker_push)
 
 gource.webm:
 	mkdir -p /tmp/gravatars
-	convert examples/images/sile-logo.jpg -negate -resize 50% /tmp/sile-logo.jpg
-	git log --pretty=format:"%an—%ae" | \
+	magick documentation/sile-logo.pdf[0] -density 300 -colorspace RGB -negate -resize 50% /tmp/sile-logo.jpg
+	$(GIT) log --pretty=format:"%an—%ae" | \
 		sort -u | \
 		while IFS=— read name email; do \
-			test -f "/tmp/gravatars/$$name.jpg" || curl -S "https://www.gravatar.com/avatar/$$(echo -n $$email | md5sum | cut -d\  -f1)?d=identicon&s=256" -o "/tmp/gravatars/$$name.jpg" ;\
-		done
-	gource -a 0.2 -s 0.2 -i 0 --logo /tmp/sile-logo.jpg -b 000000 --max-file-lag 5 --hide filenames --date-format '%Y-%m-%d' --user-image-dir /tmp/gravatars --user-filter simoncozens --key -1920x1080 -o - \
-		| ffmpeg -y -r 60 -f image2pipe -vcodec ppm -i - -vcodec libvpx -b 10000K $@
-
-# vim: ft=make
+			test -f "/tmp/gravatars/$$name.jpg" || \
+				curl -S "https://www.gravatar.com/avatar/$$(echo -n $$email | md5sum | cut -d\  -f1)?d=identicon&s=256" -o "/tmp/gravatars/$$name.jpg" ; \
+		done ;\
+	gource -a 0.2 -s 0.2 -i 0 --logo /tmp/sile-logo.jpg -b 000000 --max-file-lag 5 --hide filenames --date-format '%Y-%m-%d' --user-image-dir /tmp/gravatars --user-filter simoncozens --key -1920x1080 -o - | \
+		ffmpeg -y -r 60 -f image2pipe -vcodec ppm -i - -vcodec libvpx -b 10000K $@

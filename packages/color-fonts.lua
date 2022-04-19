@@ -1,9 +1,8 @@
-local ot = SILE.require("core/opentype-parser")
-
 SILE.shapers.harfbuzzWithColor = pl.class({
     _base = SILE.shapers.harfbuzz,
 
     shapeToken = function (self, str, options)
+      local ot = SILE.require("core/opentype-parser")
       if not options.family then return {} end
       local face = SILE.font.cache(options, SILE.shaper.getFace)
       local font = ot.parseFont(face)
@@ -17,9 +16,11 @@ SILE.shapers.harfbuzzWithColor = pl.class({
               local item = items[i]
               local layer = layers[j]
               local width = 0
+              local height = 0
               local text = ""
               if j == #layers then
                 width = item.width
+                height = item.height
                 text = item.text
               end
               -- XXX: handle multiple palette, add a font option?
@@ -28,9 +29,11 @@ SILE.shapers.harfbuzzWithColor = pl.class({
                 gid = layer.gid,
                 glyphAdvance = item.glyphAdvance,
                 width = width,
-                height= item.height,
+                height = height,
                 depth = item.depth,
                 index = item.index,
+                x_offset = item.x_offset,
+                y_offset = item.y_offset,
                 text = text,
                 color = color,
               }
@@ -66,7 +69,7 @@ SILE.shapers.harfbuzzWithColor = pl.class({
       for i=1, #run do
         options = pl.tablex.deepcopy(options)
         if run[i].color then
-          nodes[#nodes+1] = SILE.nodefactory.newHbox({
+          nodes[#nodes+1] = SILE.nodefactory.hbox({
               outputYourself = function () SILE.outputter:pushColor(run[i].color) end
             })
         end
@@ -74,14 +77,24 @@ SILE.shapers.harfbuzzWithColor = pl.class({
           nodes[#nodes+1] = node
         end
         if run[i].color then
-          nodes[#nodes+1] = SILE.nodefactory.newHbox({
+          nodes[#nodes+1] = SILE.nodefactory.hbox({
               outputYourself = function () SILE.outputter:popColor() end
             })
         end
       end
       return nodes
     end
-
   })
 
-SILE.shaper = SILE.shapers.harfbuzzWithColor()
+return {
+  init = function (_, _)
+    SILE.shaper = SILE.shapers.harfbuzzWithColor()
+  end,
+  documentation = [[
+\begin{document}
+  The \autodoc:package{color-fonts} package adds support for fonts with a \code{COLR}
+  OpenType table. This package is automatically loaded when such a font is
+  detected.
+\end{document}
+]]
+}

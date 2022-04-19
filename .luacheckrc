@@ -1,4 +1,4 @@
-std = "lua53"
+std = "max"
 include_files = {
   "**/*.lua",
   "sile.in",
@@ -9,6 +9,7 @@ include_files = {
 exclude_files = {
   "benchmark-*",
   "compare-*",
+  "sile-*",
   "lua_modules",
   "lua-libraries",
   ".lua",
@@ -22,10 +23,13 @@ globals = {
   "SILE",
   "SU",
   "std",
+  "luautf8",
   "pl",
-  "bit32",
   "SYSTEM_SILE_PATH",
   "SHARED_LIB_EXT",
   "ProFi"
 }
 max_line_length = false
+ignore = {
+  "581"
+}

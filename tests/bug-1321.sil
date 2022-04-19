@@ -1,0 +1,37 @@
+\begin[direction=RTL,papersize=a7]{document}
+\nofolios
+\neverindent
+\script[src=packages/footnotes]
+\font[family=Amiri]
+عَرَبي\footnote{عَرَبي}
+\begin{script}
+
+SILE.documentState.documentClass:declareFrame("inherit", {
+    left = "left(content)",
+    right = "right(content)",
+    top = "top(content) + 20%ph",
+    bottom = "top(content) + 30%ph"
+  })
+
+SILE.documentState.documentClass:declareFrame("setleft", {
+    left = "left(content)",
+    right = "right(content)",
+    top = "top(content) + 40%ph",
+    bottom = "top(content) + 50%ph",
+    direction = "LTR"
+  })
+
+SILE.typesetNaturally(SILE.getFrame("folio"), function()
+  SILE.typesetter:typeset("عَرَبي")
+end)
+
+SILE.typesetNaturally(SILE.getFrame("setleft"), function()
+  SILE.typesetter:typeset("foo")
+end)
+
+SILE.typesetNaturally(SILE.getFrame("inherit"), function()
+  SILE.typesetter:typeset("عَرَبي")
+end)
+
+\end{script}
+\end{document}

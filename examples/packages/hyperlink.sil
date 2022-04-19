@@ -1,4 +1,0 @@
-\begin[papersize=a5]{document}\nofolios
-\script[src=packages/url]
-Have you tried \href[src="http://sile-typesetter.org/"]{The SILE Typesetter} yet?
-\end{document}

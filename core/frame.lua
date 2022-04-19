@@ -19,6 +19,10 @@ SILE.framePrototype = pl.class({
 
     -- This gets called by Penlght when creating the frame instance
     _init = function (self, spec, dummy)
+      local direction = SILE.documentState.direction
+      if direction then
+        self.direction = direction
+      end
       self.constraints = {}
       self.variables = {}
       self.id = spec.id
@@ -29,9 +33,9 @@ SILE.framePrototype = pl.class({
       if not dummy then
         for method in pairs(alldims) do
           self.variables[method] = cassowary.Variable({ name = spec.id .. "_" .. method })
-          self[method] = function (_self)
-            _self:solve()
-            return SILE.measurement(_self.variables[method].value)
+          self[method] = function (instance_self)
+            instance_self:solve()
+            return SILE.measurement(instance_self.variables[method].value)
           end
         end
         -- Add definitions of width and height
@@ -246,10 +250,12 @@ SILE.getFrame = function (id)
   if type(id) == "table" then
     SU.error("Passed a table, expected a string", true)
   end
-  local frame
+  local frame, last_attempt
   while not frame do
     frame = SILE.frames[id]
     id = id:gsub("_$", "")
+    if id == last_attempt then break end
+    last_attempt = id
   end
   return frame or SU.warn("Couldn't find frame ID "..id, true)
 end

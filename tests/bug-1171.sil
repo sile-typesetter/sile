@@ -1,0 +1,7 @@
+\begin[class=jplain,layout=tate]{document}
+\nofolios
+\noindent
+\set[parameter=font.family,value=Noto Serif CJK JP,makedefault=true]
+\define[command=emoji]{\font[family=Twemoji Mozilla]{\process}}
+\emoji{😉} \emoji{🤣}
+\end{document}

@@ -111,7 +111,7 @@ int face_from_options(lua_State* L) {
 
   if (FcPatternGetString (matched, FC_FILE, 0, &font_path) != FcResultMatch)
     return 0;
-  
+
   FcPatternGetInteger(matched, FC_INDEX, 0, &index);
   font_path = (FcChar8 *)strdup((char*)font_path);
   if (!font_path) {
@@ -165,7 +165,7 @@ int face_from_options(lua_State* L) {
 /*
 ** Adapted from Lua 5.2.0
 */
-static void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
+void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
   luaL_checkstack(L, nup+1, "too many upvalues");
   for (; l->name != NULL; l++) {  /* fill the table with given functions */
     int i;

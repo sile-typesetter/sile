@@ -1,37 +1,27 @@
 SILE.inputs.common = {
+
   init = function (_, tree)
     local dclass = tree.options.class or "plain"
     tree.options.papersize = tree.options.papersize or "a4"
     SILE.documentState.documentClass = SILE.require(dclass, "classes")
-    for k, v in pairs(tree.options) do
-      if SILE.documentState.documentClass.options[k] then
-        SILE.documentState.documentClass.options[k](v)
+    for option, value in pairs(tree.options) do
+      if SILE.documentState.documentClass.options[option] then
+        SILE.documentState.documentClass.options[option](value)
       end
     end
-
     -- Prepend the dirname of the input file to the Lua search path
     local dirname = SILE.masterFilename:match("(.-)[^%/]+$")
     package.path = dirname.."?;"..dirname.."?.lua;"..package.path
-
-    if not SILE.outputFilename and SILE.masterFilename then
-      -- TODO: This hack works on *nix systems because /dev/stdout is usable as
-      -- a filename to refer to STDOUT. Libtexpdf works fine with this, but it's
-      -- not going to work on Windows quite the same way. Normal filnames will
-      -- still work but explicitly using piped streams won't.
-      if SILE.masterFilename == "-" then
-        SILE.outputFilename = "/dev/stdout"
-      end
-    end
     local ff = SILE.documentState.documentClass:init()
     SILE.typesetter:init(ff)
   end
 }
 
 local function debugAST(ast, level)
+  if not ast then SU.error("debugAST called with nil", true) end
   local out = string.rep("  ", 1+level)
   if level == 0 then SU.debug("ast", "["..SILE.currentlyProcessingFile) end
   if type(ast) == "function" then SU.debug("ast", out.."(function)") end
-  if not ast then SU.error("SILE.process called with nil", true) end
   for i=1, #ast do
     local content = ast[i]
     if type(content) == "string" then
@@ -50,7 +40,7 @@ local function debugAST(ast, level)
 end
 
 SILE.process = function (input)
-  if not input then SU.error("SILE.process called with nil", true) end
+  if not input then return end
   if type(input) == "function" then return input() end
   if SU.debugging("ast") then
     debugAST(input, 0)
@@ -59,6 +49,8 @@ SILE.process = function (input)
     local content = input[i]
     if type(content) == "string" then
       SILE.typesetter:typeset(content)
+    elseif type(content) == "function" then
+      content()
     elseif SILE.Commands[content.command] then
       SILE.call(content.command, content.options, content)
     elseif content.id == "texlike_stuff" or (not content.command and not content.id) then

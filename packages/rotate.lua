@@ -1,16 +1,15 @@
 local pdf = require("justenoughlibtexpdf")
 
-local enter = function(self)
+local enter = function (self)
   if not self.rotate then return end
   local x = -math.rad(self.rotate)
   -- Keep center point the same
   pdf:gsave()
-  local cx = self:left()
-  local cy = -self:bottom()
-
-  pdf.setmatrix(1,0,0,1,cx + math.sin(x) * self:height(),cy)
+  local cx = self:left():tonumber()
+  local cy = -self:bottom():tonumber()
+  pdf.setmatrix(1, 0, 0, 1, cx + math.sin(x) * self:height():tonumber(), cy)
   pdf.setmatrix(math.cos(x), math.sin(x), -math.sin(x), math.cos(x), 0, 0)
-  pdf.setmatrix(1,0,0,1,-cx,-cy)
+  pdf.setmatrix(1, 0, 0, 1, -cx, -cy)
 end
 
 local leave =   function(self)
@@ -46,6 +45,7 @@ local outputRotatedHbox = function (self, typesetter, line)
 
   local horigin = (typesetter.frame.state.cursorX + origbox.width.length / 2):tonumber()
   local vorigin = -(typesetter.frame.state.cursorY + origbox.height / 2):tonumber()
+  SILE.outputters.libtexpdf._init()
   pdf:gsave()
   pdf.setmatrix(1, 0, 0, 1, horigin, vorigin)
   pdf.setmatrix(math.cos(x), math.sin(x), -math.sin(x), math.cos(x), 0, 0)
@@ -84,7 +84,7 @@ SILE.registerCommand("rotate", function(options, content)
     depth  = 0.5*(h-h*ct-w*st)
   end
   depth = -depth
-  if depth < 0 then depth = 0 end
+  if depth < SILE.length(0) then depth = SILE.length(0) end
   SILE.typesetter:pushHbox({
     value = { orig = origbox, theta = theta},
     height = height,
@@ -95,10 +95,10 @@ SILE.registerCommand("rotate", function(options, content)
 end)
 
 return { documentation = [[\begin{document}
-The \code{rotate} package allows you to rotate things. You can rotate entire
-frames, by adding the \code{rotate=<angle>} declaration to your frame declaration,
-and you can rotate any content by issuing the command \code{\\rotate[angle=<angle>]\{...\}},
-where \code{<angle>} is measured in degrees.
+The \autodoc:package{rotate} package allows you to rotate things. You can rotate entire
+frames, by adding the \autodoc:parameter{rotate=<angle>} declaration to your frame declaration,
+and you can rotate any content by issuing the command \autodoc:command{\rotate[angle=<angle>]{<content>}},
+where the angle is measured in degrees.
 
 Content which is rotated is placed in a box and rotated. The height and width of
 the rotated box is measured, and then put into the normal horizontal list for

@@ -2,7 +2,7 @@
 local gridSpacing = SILE.measurement()
 
 local function makeUp (totals)
-  local toadd = gridSpacing - totals.gridCursor % gridSpacing
+  local toadd = (gridSpacing - SILE.measurement(totals.gridCursor)) % gridSpacing
   totals.gridCursor = totals.gridCursor + toadd
   SU.debug("typesetter", "Makeup height = " .. toadd)
   return SILE.nodefactory.vglue(toadd)
@@ -15,8 +15,8 @@ local function leadingFor (typesetter, vbox, previous)
   if not previous then return SILE.nodefactory.vglue() end
   SU.debug("typesetter", "   Depth of previous line was " .. previous.depth)
   local totals = typesetter.frame.state.totals
-  local oldCursor = totals.gridCursor
-  totals.gridCursor = totals.gridCursor + vbox.height:absolute() + previous.depth
+  local oldCursor = SILE.measurement(totals.gridCursor)
+  totals.gridCursor = oldCursor + vbox.height:absolute() + previous.depth
   SU.debug("typesetter", "   Cursor change = " .. totals.gridCursor - oldCursor)
   return makeUp(typesetter.frame.state.totals)
 end
@@ -67,7 +67,7 @@ local function debugGrid ()
   local frame = SILE.typesetter.frame
   local gridCursor = gridSpacing
   while SILE.measurement(gridCursor) < SILE.measurement(frame:height()) do
-    SILE.outputter.rule(frame:left(), frame:top() + gridCursor, frame:width(), 0.1)
+    SILE.outputter:drawRule(frame:left(), frame:top() + gridCursor, frame:width(), 0.1)
     gridCursor = gridCursor + gridSpacing
   end
 end
@@ -166,3 +166,70 @@ SILE.registerCommand("no-grid", function (_, _)
   SILE.typesetter.pushExplicitVglue = oldPushExplicitVglue
   SILE.pagebuilder = oldPageBuilder
 end, "Stops grid typesetting.")
+
+return {
+  documentation = [[
+\begin{document}
+\grid[spacing=15pt]
+In normal typesetting, SILE determines the spacing between lines of type
+according to the following two rules:
+
+\noindent• SILE tries to insert space between two successive lines so that their baselines
+are separated by a fixed distance called the \code{baselineskip}.
+
+\noindent• If this first rule would mean that the bottom and the top of the lines are less
+than two points apart, then they are forced to be two points apart. (This distance
+is configurable, and called the \code{lineskip})
+
+The second rule is designed to avoid the situation where the first line has a long
+descender (letters such as g, q, j, p, etc.) which abuts a high ascender on the second
+line. (k, l, capitals, etc.)
+
+In addition, the \code{baselineskip} contains a certain amount of ‘stretch’, so that
+the lines can expand if this would help with producing a page break at an optimal
+location, and similarly spacing between paragraphs can stretch or shrink.
+
+The combination of all of these rules means that a line may begin at practically any
+point on the page.
+
+An alternative way of typesetting is to require that lines begin at fixed points on
+a regular grid. Some people prefer the ‘color’ of pages produced by grid typesetting,
+and the method is often used when typesetting on very thin paper as lining up the
+lines of type on both sides of a page ensures that ink does not bleed through from
+the back to the front. Compare the following examples: on the left, the lines are
+guaranteed to fall in the same places on the recto (front) and the verso (back) of
+the paper; on the right, no such guarantee is made.
+
+\img[src=documentation/grid-1.png,height=130]
+\img[src=documentation/grid-2.png,height=130]
+
+The \autodoc:package{grid} package alters the way that the SILE’s typesetter operates so that
+the two rules above do not apply; lines are always aligned on a fixed grid, and
+spaces between paragraphs etc. are adjusted to conform to the grid. Loading the package
+adds two new commands to SILE: \autodoc:command{\grid[spacing=<dimension>]} and \autodoc:command{\no-grid}.
+The first turns on grid typesetting for the remainder of the document; the second turns it off again.
+
+At the start of this section, we issued the command \autodoc:command{\grid[spacing=15pt]} to
+set up a regular 15-point grid. Here is some text typeset with the grid set up:
+
+\smallskip
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+\smallskip
+
+And here is the same text after we issue \autodoc:command{\no-grid}:
+
+\no-grid\smallskip
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+\end{document}
+]]
+}

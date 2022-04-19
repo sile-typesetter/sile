@@ -25,7 +25,8 @@ local function split(str, pat, find) --- return list of substrings separated by 
   local len = string.len(str)
   local t = { }
   local insert = table.insert
-  local i, j, k = 1, true
+  local i, j = 1, true
+  local k
   while j and i <= len + 1 do
     j, k = find(str, pat, i)
     if j then
@@ -331,7 +332,7 @@ Bibliography = {
           local author = parse_name(authors[i])
           authors[i] = author.ll.. ", "..author.f.."."
         end
-        return table.concat(authors, " and ")
+        return table.concat(authors, " "..SILE.fluent["bibliography-and"].." ")
       end
     end,
 
@@ -339,7 +340,7 @@ Bibliography = {
       return function(item)
         local authors = namesplit(item.Author)
         if #authors > max then
-          return parse_name(authors[1]).ll .. " et al."
+          return parse_name(authors[1]).ll .. SILE.fluent["bibliography-et-al"]()
         else
           for i = 1,#authors do authors[i] = parse_name(authors[i]).ll end
           return Bibliography.Style.commafy(authors)
@@ -349,8 +350,12 @@ Bibliography = {
 
     transEditor = function(item)
       local r = {}
-      if item.Editor then r[#r+1] = "Edited by "..item.Editor end
-      if item.Translator then r[#r+1] = "Translated by "..item.Translator end
+      if item.Editor then
+        r[#r+1] = SILE.fluent["bibliography-edited-by"]({ name = item.Editor })
+      end
+      if item.Translator then
+        r[#r+1] = SILE.fluent["bibliography-translated-by"]({ name = item.Translator })
+      end
       if #r then return table.concat(r, ", ") end
       return nil
     end,
@@ -384,7 +389,7 @@ Bibliography = {
     end,
 
     commafy = function (t, andword) -- also stolen from nbibtex
-      andword = andword or 'and'
+      andword = andword or SILE.fluent["bibliography-and"]()
       if #t == 1 then
         return t[1]
       elseif #t == 2 then
@@ -399,5 +404,12 @@ Bibliography = {
     end
   }
 }
+
+Bibliography.documentation = [[
+\begin{document}
+This package provides backend functions used by the \autodoc:package{bibtex} package;
+see that instead.
+\end{document}
+]]
 
 return Bibliography
