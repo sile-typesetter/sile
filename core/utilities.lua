@@ -3,10 +3,10 @@ local utilities = {}
 
 local epsilon = 1E-12
 
-utilities.required = function (options, name, context, _type)
+utilities.required = function (options, name, context, required_type)
   if not options[name] then utilities.error(context.." needs a "..name.." parameter") end
-  if _type then
-    return utilities.cast(_type, options[name])
+  if required_type then
+    return utilities.cast(required_type, options[name])
   end
   return options[name]
 end
@@ -82,8 +82,9 @@ utilities.deprecated = function (old, new, warnat, errorat, extra)
   -- will never encounter this failure, but as a developer it’s hard to test a
   -- deprecation when core code refactoring is an all-or-nothing proposition.
   -- Hence we fake it ‘till we make it, all deprecations internally are warings.
+  local brackets = old:sub(1,1) == '\\' and "" or "()"
   local _semver = SILE.version and SILE.version:match("v([0-9]*.[0-9]*.[0-9]*)") or warnat
-  local msg = old .. "() was deprecated in SILE v" .. warnat .. ". Please use " .. new .. "() instead. " .. extra
+  local msg = (old .. brackets) .. " was deprecated in SILE v" .. warnat .. ". Please use " .. (new .. brackets) .. " instead. " .. (extra or "")
   if errorat and _semver >= errorat then
     SU.error(msg)
   elseif warnat and _semver >= warnat then
@@ -264,6 +265,10 @@ utilities.cast = function (wantedType, value)
   end
 end
 
+utilities.hasContent = function(content)
+  return type(content) == "function" or type(content) == "table" and #content > 0
+end
+
 -- Flatten content trees into just the string components (allows passing
 -- objects with complex structures to functions that need plain strings)
 utilities.contentToString = function (content)
@@ -317,15 +322,8 @@ end
 
 -- Unicode-related utilities
 utilities.utf8char = function (c)
-    if     c < 128 then
-        return string.char(c)
-    elseif c < 2048 then
-        return string.char(math.floor(192 + c/64), 128 + c%64)
-    elseif c < 55296 or 57343 < c and c < 65536 then
-        return  string.char(math.floor(224 + c/4096), math.floor(128 + c/64%64), 128 + c%64)
-    elseif c < 1114112 then
-        return string.char(math.floor(240 + c/262144), math.floor(128 + c/4096%64), math.floor(128 + c/64%64), 128 + c%64)
-    end
+  utilities.deprecated("SU.utf8char", "luautf8.char", "0.11.0", "0.12.0")
+  return luautf8.char(c)
 end
 
 utilities.codepoint = function (uchar)
@@ -358,56 +356,45 @@ utilities.utf8charfromcodepoint = function (codepoint)
   end
 
   if type(cp) == "number" then
-    val = SU.utf8char(cp)
+    val = luautf8.char(cp)
   end
   return val
 end
 
 utilities.utf8codes = function (ustr)
+  utilities.deprecated("SU.utf8codes", "luautf8.codes", "0.11.0", "0.12.0")
+  return luautf8.codes(ustr)
+end
+
+utilities.utf16codes = function (ustr, endian)
   local pos = 1
   return function()
     if pos > #ustr then
       return nil
     else
-      local c, ucv
-      local nbytes
-      c = string.byte(ustr, pos)
+      local c1, c2, c3, c4, wchar, lowchar
+      c1 = string.byte(ustr, pos, pos+1)
       pos = pos + 1
-      if c < 0x80 then
-        ucv    = c
-        nbytes = 0
-      elseif c >= 0xc0 and c < 0xe0 then -- 110x xxxx
-        ucv    = c - 0xc0
-        nbytes = 1
-      elseif c >= 0xe0 and c < 0xf0 then -- 1110 xxxx
-        ucv    = c - 0xe0
-        nbytes = 2
-      elseif c >= 0xf0 and c < 0xf8 then -- 1111 0xxx
-        ucv    = c - 0xf0
-        nbytes = 3
-      elseif c >= 0xf8 and c < 0xfc then -- 1111 10xx
-        ucv    = c - 0xf8
-        nbytes = 4
-      elseif c >= 0xfc and c < 0xfe then -- 1111 110x
-        ucv    = c - 0xfc
-        nbytes = 5
-      else -- Invalid
-        return nil
+      c2 = string.byte(ustr, pos, pos+1)
+      pos = pos + 1
+      if endian == "be" then
+        wchar = c1 * 256 + c2
+      else
+        wchar = c2 * 256 + c1
       end
-      if pos + nbytes > #ustr + 1 then -- Invalid
-        return nil
+      if not (wchar >= 0xD800 and wchar <= 0xDBFF) then
+        return wchar
       end
-      while nbytes > 0 do
-        nbytes = nbytes - 1
-        c = string.byte(ustr, pos)
-        pos = pos + 1
-        if c < 0x80 or c >= 0xc0 then -- Invalid
-          return nil
-        else
-          ucv = ucv * 64 + (c - 0x80)
-        end
+      c3 = string.byte(ustr, pos, pos+1)
+      pos = pos + 1
+      c4 = string.byte(ustr, pos, pos+1)
+      pos = pos + 1
+      if endian == "be" then
+        lowchar = c3 * 256 + c4
+      else
+        lowchar = c4 * 256 + c3
       end
-      return ucv
+      return 0x10000 + bitshim.lshift(bitshim.band(wchar, 0x03FF), 10) + bitshim.band(lowchar, 0x03FF)
     end
   end
 end
@@ -449,51 +436,71 @@ utilities.firstChar = function (str)
   return chars[1]
 end
 
+local byte, floor, reverse = string.byte, math.floor, string.reverse
+
 utilities.utf8charat = function (str, index)
   return str:sub(index):match("([%z\1-\127\194-\244][\128-\191]*)")
 end
 
-utilities.utf8_to_utf16be_hexencoded = function (str)
-  local ustr = string.format("%04x", 0xfeff) -- BOM
-  for uchr in utilities.utf8codes(str) do
-    if (uchr < 0x10000) then
-      ustr = ustr..string.format("%04x", uchr)
-    else -- Surrogate pair
-      local sur_hi = (uchr - 0x10000) / 0x400 + 0xd800
-      local sur_lo = (uchr - 0x10000) % 0x400 + 0xdc00
-      ustr = ustr..string.format("%04x%04x", sur_hi, sur_lo)
-    end
+local utf16bom = function(endianness)
+  return endianness == "be" and "\254\255" or endianness == "le" and "\255\254" or SU.error("Unrecognized endianness")
+end
+
+utilities.hexencoded = function (str)
+  local ustr = ""
+  for i = 1, #str do
+    ustr = ustr..string.format("%02x", byte(str, i, i+1))
   end
   return ustr
 end
 
-utilities.utf8_to_utf16be = function (str)
+utilities.hexdecoded = function (str)
+  if #str % 2 == 1 then SU.error("Cannot decode hex string with odd len") end
   local ustr = ""
-  for uchr in utilities.utf8codes(str) do
-    if (uchr < 0x10000) then
-      ustr = ustr..string.format("%c%c", uchr / 256, uchr % 256 )
-    else -- Surrogate pair
-      local sur_hi = (uchr - 0x10000) / 0x400 + 0xd800
-      local sur_lo = (uchr - 0x10000) % 0x400 + 0xdc00
-      ustr = ustr..string.format("%c%c%c%c", sur_hi / 256, sur_hi % 256 , sur_lo / 256, sur_lo % 256)
-    end
+  for i = 1, #str, 2 do
+    ustr = ustr..string.char(tonumber(string.sub(str, i, i+1), 16))
   end
   return ustr
 end
 
-utilities.utf8_to_utf16le = function (str)
-  local ustr = ""
-  for uchr in utilities.utf8codes(str) do
-    if (uchr < 0x10000) then
-      ustr = ustr..string.format("%c%c", uchr % 256, uchr / 256 )
-    else -- Surrogate pair
-      local sur_hi = (uchr - 0x10000) / 0x400 + 0xd800
-      local sur_lo = (uchr - 0x10000) % 0x400 + 0xdc00
-      ustr = ustr..string.format("%c%c%c%c", sur_hi % 256, sur_hi / 256 , sur_lo % 256, sur_lo / 256)
-    end
+local uchr_to_surrogate_pair = function(uchr, endianness)
+  local hi, lo = floor((uchr - 0x10000) / 0x400) + 0xd800, (uchr - 0x10000) % 0x400 + 0xdc00
+  local s_hi, s_lo = string.char(floor(hi / 256)) .. string.char(hi % 256), string.char(floor(lo / 256)) .. string.char(lo % 256)
+  return endianness == "le" and (reverse(s_hi) .. reverse(s_lo)) or s_hi .. s_lo
+end
+
+local uchr_to_utf16_double_byte = function(uchr, endianness)
+  local ustr = string.char(floor(uchr / 256)) .. string.char(uchr % 256)
+  return endianness == "le" and reverse(ustr) or ustr
+end
+
+local utf8_to_utf16 = function(str, endianness)
+  local ustr = utf16bom(endianness)
+  for _, uchr in luautf8.codes(str) do
+    ustr = ustr..(uchr < 0x10000 and uchr_to_utf16_double_byte(uchr, endianness)
+                  or uchr_to_surrogate_pair(uchr, endianness))
   end
   return ustr
 end
+
+utilities.utf8_to_utf16be = function (str) return utf8_to_utf16(str, "be") end
+utilities.utf8_to_utf16le = function (str) return utf8_to_utf16(str, "le") end
+utilities.utf8_to_utf16be_hexencoded = function (str) return utilities.hexencoded(utilities.utf8_to_utf16be(str)) end
+utilities.utf8_to_utf16le_hexencoded = function (str) return utilities.hexencoded(utilities.utf8_to_utf16le(str)) end
+
+local utf16_to_utf8 = function (str, endianness)
+  local bom = utf16bom(endianness)
+
+  if str:find(bom) == 1 then str = string.sub(str, 3, #str) end
+  local ustr = ""
+  for uchr in utilities.utf16codes(str, endianness) do
+    ustr = ustr..luautf8.char(uchr)
+  end
+  return ustr
+end
+
+utilities.utf16be_to_utf8 = function (str) return utf16_to_utf8(str, "be") end
+utilities.utf16le_to_utf8 = function (str) return utf16_to_utf8(str, "le") end
 
 local icu = require("justenoughicu")
 
@@ -535,7 +542,7 @@ setmetatable (utilities.formatNumber, {
           case = "upper"
         end
       end
-      local lang = SILE.settings.get("document.language")
+      local lang = format:match("[Rr][Oo][Mm][Aa][Nn]") and "la" or SILE.settings.get("document.language")
       format = format:lower()
       local result
       if self[lang] and type(self[lang][format]) == "function" then
@@ -575,9 +582,9 @@ utilities.breadcrumbs = function ()
 
   function breadcrumbs:contains (needle)
     for i, command in ipairs(self) do
-      if command == needle then return #self - i end
+      if command == needle then return true, #self - i end
     end
-    return -1
+    return false, -1
   end
 
   return breadcrumbs

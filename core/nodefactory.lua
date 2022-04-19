@@ -91,67 +91,67 @@ nodefactory.box = pl.class({
     end,
 
     isBox = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "hbox" or self.type == "zerohbox" or self.type == "alternative" or self.type == "nnode" or self.type == "vbox"
     end,
 
     isNnode = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type=="nnode"
     end,
 
     isGlue = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "glue"
     end,
 
     isVglue = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "vglue"
     end,
 
     isZero = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "zerohbox" or self.type == "zerovglue"
     end,
 
     isUnshaped = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "unshaped"
     end,
 
     isAlternative = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "alternative"
     end,
 
     isVbox = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "vbox"
     end,
 
     isInsertion = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "insertion"
     end,
 
     isMigrating = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.migrating
     end,
 
     isPenalty = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "penalty"
     end,
 
     isDiscretionary = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "discretionary"
     end,
 
     isKern = function (self)
-      SU.warning("Deprecated function, please use boolean is_<type> property to check types", true)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
       return self.type == "kern"
     end
 
@@ -234,7 +234,7 @@ function nodefactory.unshaped:__tostring ()
   return "U(" .. self:toText() .. ")";
 end
 
-getmetatable(nodefactory.unshaped).__index = function (self, k)
+getmetatable(nodefactory.unshaped).__index = function (_, _)
   -- if k == "width" then SU.error("Can't get width of unshaped node", true) end
   -- TODO: No idea why porting to proper Penlight classes this ^^^^^^ started
   -- killing everything. Perhaps becaus this function started working and would
@@ -249,7 +249,7 @@ function nodefactory.unshaped:shape ()
   return node
 end
 
-function nodefactory.unshaped:outputYourself ()
+function nodefactory.unshaped.outputYourself (_)
   SU.error("An unshaped node made it to output", true)
 end
 
@@ -362,7 +362,7 @@ function nodefactory.glue:__tostring ()
   return (self.explicit and "E:" or "") .. "G<" .. self.width .. ">"
 end
 
-function nodefactory.glue:toText ()
+function nodefactory.glue.toText (_)
   return " "
 end
 
@@ -453,10 +453,10 @@ function nodefactory.penalty:__tostring ()
   return "P(" .. self.penalty .. ")";
 end
 
-function nodefactory.penalty:outputYourself ()
+function nodefactory.penalty.outputYourself (_)
 end
 
-function nodefactory.penalty:toText ()
+function nodefactory.penalty.toText (_)
   return "(!)"
 end
 

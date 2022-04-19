@@ -41,6 +41,10 @@ SILE.registerUnit = function (unit, spec)
   units[unit] = spec
 end
 
+units["twip"] = {
+  definition = "0.05pt"
+}
+
 units["mm"] = {
   definition = "2.8346457pt"
 }
@@ -51,6 +55,10 @@ units["cm"] = {
 
 units["m"] = {
   definition = "100cm"
+}
+
+units["hm"] = {
+  definition = "0.01mm"
 }
 
 units["in"] = {

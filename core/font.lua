@@ -1,9 +1,7 @@
 local icu = require("justenoughicu")
 
 SILE.registerCommand("font", function (options, content)
-  if type(content) == "function" or content[1] then
-    SILE.settings.pushState()
-  end
+  if SU.hasContent(content) then SILE.settings.pushState() end
   if options.filename then SILE.settings.set("font.filename", options.filename) end
   if options.family then
     SILE.settings.set("font.family", options.family)
@@ -28,6 +26,7 @@ SILE.registerCommand("font", function (options, content)
       options.language = newlang
     end
     SILE.settings.set("document.language", options.language)
+    SILE.fluent:set_locale(options.language)
     SILE.languageSupport.loadLanguage(options.language)
   end
   if options.script then SILE.settings.set("font.script", options.script)
@@ -42,7 +41,12 @@ SILE.registerCommand("font", function (options, content)
     SILE.settings.set("font.hyphenchar", SU.utf8charfromcodepoint(options.hyphenchar))
   end
 
-  if type(content) == "function" or content[1] then
+  -- We must *actually* load the font here, because by the time we're inside
+  -- SILE.shaper.shapeToken, it's too late to respond appropriately to things
+  -- that the post-load hook might want to do.
+  SILE.font.cache(SILE.font.loadDefaults({}), SILE.shaper.getFace)
+
+  if SU.hasContent(content) then
     SILE.process(content)
     SILE.settings.popState()
   end
@@ -58,12 +62,20 @@ SILE.settings.declare({ parameter = "font.direction", type = "string", default =
 SILE.settings.declare({ parameter = "font.filename", type = "string or nil", default = "" })
 SILE.settings.declare({ parameter = "font.features", type = "string", default = "" })
 SILE.settings.declare({ parameter = "font.hyphenchar", type = "string", default = "-" })
-SILE.settings.declare({ parameter = "document.language", type = "string", default = "en" })
 
 SILE.fontCache = {}
 
 local _key = function (options)
-  return table.concat({ options.family;("%g"):format(options.size);("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename }, ";")
+  return table.concat({
+      options.family,
+      ("%g"):format(options.size),
+      ("%d"):format(options.weight),
+      options.style,
+      options.variant,
+      options.features,
+      options.direction,
+      options.filename,
+    }, ";")
 end
 
 SILE.font = {
@@ -95,9 +107,19 @@ SILE.font = {
     local key = _key(options)
     if not SILE.fontCache[key] then
       SU.debug("fonts", "Looking for "..key)
-      SILE.fontCache[key] = callback(options)
+      local face = callback(options)
+      SILE.font.postLoadHook(face)
+      SILE.fontCache[key] = face
     end
     return SILE.fontCache[key]
+  end,
+
+  postLoadHook = function(face)
+    local ot = SILE.require("core/opentype-parser")
+    local font = ot.parseFont(face)
+    if font.cpal then
+      SILE.require("packages/color-fonts")
+    end
   end,
 
   _key = _key

@@ -13,8 +13,6 @@ SILE.settings = {
   declare = function(spec)
     if spec.name then
       SU.deprecated("'name' argument of SILE.settings.declare", "'parameter' argument of SILE.settings.declare", "0.10.10", "0.11.0")
-      spec.parameter = spec.name
-      spec.name = nil
     end
     SILE.settings.declarations[spec.parameter] = spec
     SILE.settings.set(spec.parameter, spec.default, true)
@@ -22,6 +20,13 @@ SILE.settings = {
   reset = function()
     for k,_ in pairs(SILE.settings.state) do
       SILE.settings.set(k, SILE.settings.defaults[k])
+    end
+  end,
+  toplevelState = function()
+    if #SILE.settings.stateQueue ~= 0 then
+      for k,_ in pairs(SILE.settings.state) do
+        SILE.settings.set(k, SILE.settings.stateQueue[1][k])
+      end
     end
   end,
   get = function(parameter)
@@ -58,14 +63,21 @@ SILE.settings = {
   end,
   wrap = function() -- Returns a closure which applies the current state, later
     local clSettings = pl.tablex.copy(SILE.settings.state)
-    return function(func)
+    return function(content)
       table.insert(SILE.settings.stateQueue, SILE.settings.state)
       SILE.settings.state = clSettings
-      SILE.process(func)
+      SILE.process(content)
       SILE.settings.popState()
     end
   end,
 }
+
+SILE.settings.declare({
+  parameter = "document.language",
+  type = "string",
+  default = "en",
+  help = "Locale for localized language support"
+})
 
 SILE.settings.declare({
   parameter = "document.parindent",

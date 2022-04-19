@@ -16,9 +16,9 @@ if (WIN32)
     GIT_REPOSITORY https://github.com/libexpat/libexpat
     GIT_TAG R_2_2_6
     SOURCE_SUBDIR expat
-    CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" -DBUILD_tools=OFF -DBUILD_examples=OFF -DBUILD_tests=OFF -DBUILD_shared=OFF -DBUILD_doc=OFF -DMSVC_USE_STATIC_CRT=OFF
+    CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" -DBUILD_tools=OFF -DBUILD_tests=OFF -DBUILD_shared=OFF -DBUILD_doc=OFF -DMSVC_USE_STATIC_CRT=OFF
     INSTALL_DIR "${TMP_INSTALL_DIR}")
-  
+
   ExternalProject_Add(icu
     GIT_REPOSITORY https://github.com/hunter-packages/icu
     GIT_TAG v63.1-p5

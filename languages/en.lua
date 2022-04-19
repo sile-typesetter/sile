@@ -598,11 +598,6 @@ SILE.hyphenator.languages["en"].exceptions = {"as-so-ciate", "as-so-ciates",
 "ref-or-ma-tion", "ret-ri-bu-tion", "ta-ble"}
 
 -- Internationalisation stuff
-SILE.doTexlike([[%
-\define[command=tableofcontents:title:en]{Table of Contents}%
-\define[command=book:chapter:pre:en]{Chapter }%
-]])
-
 local en_nth = function (num)
   local mod100, mod10 = num % 100, num % 10
   if mod100 > 3 and mod100 < 21 then return "th" end

@@ -74,7 +74,7 @@ function SILE.shapers.harfbuzz.getFace (opts)
   return face
 end
 
-function SILE.shapers.harfbuzz:preAddNodes (items, nnodeValue) -- Check for complex nodes
+function SILE.shapers.harfbuzz.preAddNodes (_, items, nnodeValue) -- Check for complex nodes
   for i = 1, #items do
     if items[i].y_offset or items[i].x_offset or items[i].width ~= items[i].glyphAdvance then
       nnodeValue.complex = true; break
@@ -82,7 +82,7 @@ function SILE.shapers.harfbuzz:preAddNodes (items, nnodeValue) -- Check for comp
   end
 end
 
-function SILE.shapers.harfbuzz:addShapedGlyphToNnodeValue (nnodevalue, shapedglyph)
+function SILE.shapers.harfbuzz.addShapedGlyphToNnodeValue (_, nnodevalue, shapedglyph)
   if nnodevalue.complex then
 
     if not nnodevalue.items then nnodevalue.items = {} end
@@ -94,7 +94,7 @@ function SILE.shapers.harfbuzz:addShapedGlyphToNnodeValue (nnodevalue, shapedgly
   table.insert(nnodevalue.glyphNames, shapedglyph.name)
 end
 
-function SILE.shapers.harfbuzz:debugVersions ()
+function SILE.shapers.harfbuzz.debugVersions (_)
   local ot = SILE.require("core/opentype-parser")
   print("Harfbuzz version: "..hb.version())
   print("Shapers enabled: ".. table.concat({ hb.shapers() }, ", "))
@@ -115,7 +115,7 @@ function SILE.shapers.harfbuzz:debugVersions ()
   end
 end
 
-function SILE.shapers.harfbuzz:checkHBProblems (text, face)
+function SILE.shapers.harfbuzz.checkHBProblems (_, text, face)
   if hb.version_lessthan(1, 0, 4) and #text < 1 then
     return true
   end

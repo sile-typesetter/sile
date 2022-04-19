@@ -23,9 +23,13 @@ globals = {
   "SILE",
   "SU",
   "std",
+  "luautf8",
   "pl",
   "SYSTEM_SILE_PATH",
   "SHARED_LIB_EXT",
   "ProFi"
 }
 max_line_length = false
+ignore = {
+  "581"
+}

@@ -15,7 +15,7 @@ local types = {
   "Nd", "Nd",  "x",  "x",  "x",  "x",  "x",  "x"
 }
 local jv = {}
-local P8 = function (c) return lpeg.P(SU.utf8char(c)) end
+local P8 = function (c) return lpeg.P(luautf8.char(c)) end
 
 for i = 1, #types do
   local cp = i - 1 + 0xA980

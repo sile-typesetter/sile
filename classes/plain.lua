@@ -330,7 +330,13 @@ plain.firstContentFrame = "content"
 function plain:_init (options)
   SILE.require("packages/bidi")
   self:declareOption("direction", function (value)
-    self.defaultFrameset.content.direction = value
+    if value then
+      for _, frame in pairs(self.defaultFrameset) do
+        if not frame.direction then
+          frame.direction = value
+        end
+      end
+    end
     return value
   end)
   self:super(options)

@@ -2,9 +2,6 @@ local icu = require("justenoughicu")
 
 local chardata = require("char-def")
 
--- luacheck: globals lasttype
--- XXX - this is wrong and broken, but is also confusing. See bug #687
-
 SILE.nodeMakers.base = pl.class({
 
     _init = function (self, options)
@@ -12,7 +9,8 @@ SILE.nodeMakers.base = pl.class({
       self.options = options
       self.token = ""
       self.lastnode = false
-      self.lasttype = false
+      -- The whole lasttype logic below was wrong and broken, and confusing. See #687 and #1297
+      -- self.lasttype = false
     end,
 
     makeToken = function (self)
@@ -65,6 +63,9 @@ SILE.nodeMakers.base = pl.class({
 
     isBreaking = function (self, char)
       return self.isBreakingType[self:charData(char).linebreak]
+    end,
+    isQuote = function (self, char)
+      return self.isQuoteType[self:charData(char).linebreak]
     end
 
   })
@@ -75,11 +76,12 @@ SILE.nodeMakers.unicode.isWordType = { cm = true }
 SILE.nodeMakers.unicode.isSpaceType = { sp = true }
 SILE.nodeMakers.unicode.isBreakingType = { ba = true, zw = true }
 SILE.nodeMakers.unicode.isPunctuationType = { po = true }
+SILE.nodeMakers.unicode.isQuoteType = {} -- quote linebreak category is ambiguous depending on the language
 
 function SILE.nodeMakers.unicode:dealWith (item)
   local char = item.text
-  local cp = SU.codepoint(char)
-  local thistype = chardata[cp] and chardata[cp].linebreak
+  -- local cp = SU.codepoint(char)
+  -- local thistype = chardata[cp] and chardata[cp].linebreak
   if self:isSpace(item.text) then
     self:makeToken()
     self:makeGlue(item)
@@ -87,15 +89,18 @@ function SILE.nodeMakers.unicode:dealWith (item)
     self:addToken(char, item)
     self:makeToken()
     self:makePenalty(0)
-  elseif self.lasttype and (self.thistype and thistype ~= lasttype and not self.isWordType[thistype]) then
-    self:makeToken()
+  elseif self:isQuote(item.text) then
     self:addToken(char, item)
+    self:makeToken()
+  -- elseif self.lasttype and (thistype and thistype ~= self.lasttype and not self.isWordType[thistype]) then
+  --   self:makeToken()
+  --   self:addToken(char, item)
   else
     self:letterspace()
     self:addToken(char, item)
   end
-  if not self.isWordType[thistype] then lasttype = chardata[cp] and chardata[cp].linebreak end
-  self.lasttype = thistype
+  -- if not self.isWordType[thistype] then self.lasttype = chardata[cp] and chardata[cp].linebreak end
+  -- self.lasttype = thistype
 end
 
 function SILE.nodeMakers.unicode:handleInitialGlue (items)
@@ -119,7 +124,7 @@ function SILE.nodeMakers.unicode:letterspace ()
   end
 end
 
-function SILE.nodeMakers.unicode:isICUBreakHere (chunks, item)
+function SILE.nodeMakers.unicode.isICUBreakHere (_, chunks, item)
   return chunks[1] and (item.index >= chunks[1].index)
 end
 

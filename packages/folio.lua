@@ -11,8 +11,13 @@ SILE.registerCommand("nofolios", function (_, _)
   SILE.scratch.counters.folio.off = true
 end)
 
-SILE.registerCommand("nofoliosthispage", function (_, _)
+SILE.registerCommand("nofoliothispage", function (_, _)
   SILE.scratch.counters.folio.off = 2
+end)
+
+SILE.registerCommand("nofoliosthispage", function (_, _)
+  SU.deprecated("nofoliosthispage", "nofoliothispage", "0.12.1", "0.14.0")
+  return SILE.Commands["nofoliothispage"]()
 end)
 
 SILE.registerCommand("foliostyle", function (_, content)
@@ -35,7 +40,19 @@ return {
         if (folioFrame) then
           SILE.typesetNaturally(folioFrame, function ()
             SILE.settings.pushState()
-            SILE.settings.reset()
+            -- Restore the settings to the top of the queue, which should be the document #986
+            SILE.settings.toplevelState()
+
+            -- Reset settings the document may have but should not be applied to footnotes
+            -- See also same resets in footnote package
+            for _, v in ipairs({
+              "current.hangAfter",
+              "current.hangIndent",
+              "linebreak.hangAfter",
+              "linebreak.hangIndent" }) do
+              SILE.settings.set(v, SILE.settings.defaults[v])
+            end
+
             SILE.call("foliostyle", {}, { SILE.formatCounter(SILE.scratch.counters.folio) })
             SILE.typesetter:leaveHmode()
             SILE.settings.popState()
@@ -47,19 +64,19 @@ return {
   },
   documentation= [[
 \begin{document}
-The \code{folio} package (which is automatically loaded by the
+The \autodoc:package{folio} package (which is automatically loaded by the
 plain class, and therefore by nearly every SILE class) controls
-the output of folios - the old-time typesetter word for page numbers.
+the output of folios—the old-time typesetter word for page numbers.
 
 It provides four commands to users:
 
-\noindent{}• \code{\\nofolios}: turns page numbers off.
+\noindent{}• \autodoc:command{\nofolios}: turns page numbers off.
 
-\noindent{}• \code{\\nofoliothispage}: turns page numbers off for one page, then on again afterward.
+\noindent{}• \autodoc:command{\nofoliothispage}: turns page numbers off for one page, then on again afterward.
 
-\noindent{}• \code{\\folios}: turns page numbers back on.
+\noindent{}• \autodoc:command{\folios}: turns page numbers back on.
 
-\noindent{}• \code{\\foliostyle}: a command you can override to style the page numbers. By default, they are centered on the page.
+\noindent{}• \autodoc:command{\foliostyle}: a command you can override to style the page numbers. By default, they are centered on the page.
 
 If, for instance, you want to set page numbers in a different font
 you can redefine the command like so:

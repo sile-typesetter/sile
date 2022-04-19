@@ -1,0 +1,15 @@
+\begin[papersize=a6]{document}
+\neverindent
+\nofolios
+% Output a message with variable replacement
+\language[main=en]
+\fluent[name=World]{hello}
+
+% Switch languages and use the same command
+\language[main=tr]
+\fluent[name=Dünya]{hello}
+
+% Override the default messages and use the same command
+\ftl{hello = { $name }’ya Selam!}
+\fluent[name=Dünya]{hello}
+\end{document}

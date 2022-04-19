@@ -64,19 +64,19 @@ SILE.registerCommand("define", function (options, content)
   elseif options.command == "process" then
     SU.warn("Did you mean to re-definine the `\\process` macro? That probably won't go well.")
   end
-  SILE.registerCommand(options["command"], function (_, _content)
+  SILE.registerCommand(options["command"], function (_, inner_content)
     SU.debug("macros", "Processing macro \\" .. options["command"])
     local macroArg
-    if type(_content) == "function" then
-      macroArg = _content
-    elseif type(_content) == "table" then
-      macroArg = pl.tablex.copy(_content)
+    if type(inner_content) == "function" then
+      macroArg = inner_content
+    elseif type(inner_content) == "table" then
+      macroArg = pl.tablex.copy(inner_content)
       macroArg.command = nil
       macroArg.id = nil
-    elseif _content == nil then
+    elseif inner_content == nil then
       macroArg = {}
     else
-      SU.error("Unhandled content type " .. type(_content) .. " passed to macro \\" .. options["command"], true)
+      SU.error("Unhandled content type " .. type(inner_content) .. " passed to macro \\" .. options["command"], true)
     end
     -- Replace every occurrence of \process in `content` (the macro
     -- body) with `macroArg`, then have SILE go through the new `content`.
@@ -85,6 +85,11 @@ SILE.registerCommand("define", function (options, content)
     SU.debug("macros", "Finished processing \\" .. options["command"])
   end, options.help, SILE.currentlyProcessingFile)
 end, "Define a new macro. \\define[command=example]{ ... \\process }")
+
+-- A utility function that allows SILE.call() to be used as a noop wrapper.
+SILE.registerCommand("noop", function (_, content)
+  SILE.process(content)
+end)
 
 SILE.registerCommand("comment", function (_, _)
 end, "Ignores any text within this command's body.")

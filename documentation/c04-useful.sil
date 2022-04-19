@@ -11,9 +11,9 @@ obscure corners as the documentation progresses.
 The most basic command for altering the look of the text is the \code{\\font}
 command; it takes two forms:
 
-\noindent{}• \code{\\font[\em{parameters\dots}]\{\em{argument}\}}
+\noindent{}• \code{\\font[\em{parameters…}]\{\em{argument}\}}
 
-\noindent{}• \code{\\font[\em{parameters\dots}]}
+\noindent{}• \code{\\font[\em{parameters…}]}
 
 The first form sets the given argument text in the specified font; the
 second form changes the font used to typeset text from this point on.
@@ -102,8 +102,8 @@ text. This will affect both font shaping and hyphenation.
 \medskip
 
 It’s quite fiddly to be always changing font specifications manually; later
-we’ll see some ways to automate the process. SILE provides the \code{\\em\{\dots\}}
-command as a shortcut for \code{\\font[style=italic]\{\dots\}}.
+we’ll see some ways to automate the process. SILE provides the \code{\\em\{…\}}
+command as a shortcut for \code{\\font[style=italic]\{…\}}.
 There is no shortcut for boldface, because boldface isn’t good typographic
 practice and so we don’t want to make it easy for you to make bad books.
 
@@ -123,8 +123,8 @@ for example, the document you are currently reading begins with the command
 \subsection{Chapters and Sections}
 
 If you choose the book class, you can divide your document into different
-sections using the commands \code{\\chapter\{\dots\}},
-\code{\\section\{\dots\}} and \code{\\subsection\{\dots\}}. The argument to
+sections using the commands \code{\\chapter\{…\}},
+\code{\\section\{…\}} and \code{\\subsection\{…\}}. The argument to
 each command is the name of the chapter or section respectively; chapters will
 be opened on a new right-hand page, and the chapter name will form the left
 running header. Additionally, the section name and number will form the right
@@ -139,7 +139,7 @@ This subsection begins with the command \code{\\subsection\{Chapters and Section
 
 \subsection{Footnotes}
 
-Footnotes can be added to a book with the \code{\\footnote\{\dots\}} command.\footnote{Like this: \code{\\footnote\{Like this.\}}} The
+Footnotes can be added to a book with the \code{\\footnote\{…\}} command.\footnote{Like this: \code{\\footnote\{Like this.\}}} The
 argument to the command will be set as a footnote at the bottom of the page;
 footnotes are automatically numbered from 1 at the start of each chapter.
 
@@ -166,7 +166,7 @@ the smallest to the largest, \code{\\thinspace} (1/6th of an em), \code{\\enspac
 
 \begin{center}
 You can center a paragraph of text by wrapping it in the \code{center} environment.
-(\code{\\begin\{center\} \dots \\end\{center\}}). This paragraph is centered on the
+(\code{\\begin\{center\} … \\end\{center\}}). This paragraph is centered on the
 page.
 \end{center}
 
@@ -235,7 +235,7 @@ for instance, you may wish to write a thesis like this:
 \\include[src=chap1.sil]
 \\include[src=chap2.sil]
 \\include[src=chap3.sil]
-\dots\par
+…\par
 \\include[src=endmatter.sil]
 \\end\{document\}
 \line
@@ -260,19 +260,19 @@ To Sherlock Holmes she is always \em\{the woman\}.
 \end{verbatim}
 
 This is because every file is required to contain a valid XML tree, which
-wouldn't be the case without a common root.
+wouldn’t be the case without a common root.
 
 SILE is written in the Lua programming language, and the Lua interpreter is
 available at runtime. Just as one can run Javascript code from within a HTML
 document using a \code{<script>} tag, one can run Lua code from within a SILE
 document using a \code{\\script} command. (It looks better in XML-flavor.) This
 command has two forms: \code{\\script[src=\em{<filename>}]} which includes a Lua
-file, and \code{\\script\{\dots\}} which runs Lua code inline.
+file, and \code{\\script\{…\}} which runs Lua code inline.
 
 Doing anything interesting inline requires knowledge of the internals of SILE,
 (thankfully the code is not that hard to read)
-but to get you started, the Lua function \code{SILE.typesetter:typeset(\dots)}
-will add text to a page, \code{SILE.call("\dots")} will call a SILE command,
+but to get you started, the Lua function \code{SILE.typesetter:typeset(…)}
+will add text to a page, \code{SILE.call("…")} will call a SILE command,
 and \code{SILE.typesetter:leaveHmode()} ends the current paragraph and outputs the
 text. So, for example:
 
@@ -305,7 +305,7 @@ produces the following output:
 
 There is one notable caveat when embedding Lua code documents written with the
 TeX-flavor markup. Since SILE has to first parse the TeX markup to find the
-start and end of such script commands \em{without} understanding what's in
+start and end of such script commands \em{without} understanding what’s in
 between, it is strictly necessary that no end tags appear inside the Lua code.
 This means that for the environment block version (\code{\\begin\{script\}})
 there must be no instances of \code{\\end\{script\}} inside the Lua code block,

@@ -42,14 +42,14 @@ return {
   },
   documentation = [[
 \begin{document}
-The \font{textcase} package provides commands for language-aware case conversion
+The \autodoc:package{textcase} package provides commands for language-aware case conversion
 of input text. For example, when language is set to English, then
-\code{\\uppercase\{hij\}} will return \examplefont{\uppercase{hij}}. However,
+\autodoc:command{\uppercase{hij}} will return \examplefont{\uppercase{hij}}. However,
 when language is set to Turkish, it will return
 \examplefont{\font[language=tr]{\uppercase{hij}}}.
 
-As well as \code{\\uppercase}, the package provides the commands \code{\\lowercase}
-and \code{\\titlecase}.
+As well as \autodoc:command{\uppercase}, the package provides the commands \autodoc:command{\lowercase}
+and \autodoc:command{\titlecase}.
 \end{document}
 ]]
 }

@@ -10,7 +10,7 @@ SILE.require("packages/verbatim")
 -- immediate function but affect the document in other ways, such as setting
 -- bookmarks on anything tagged with an ID attribute.
 local handlePandocArgs = function (options)
-  local wrapper = SILE.settings.wrap()
+  local wrapper = SILE.process
   if options.id then
     SU.debug("pandoc", "Set ID on tag")
     SILE.call("pdf:destination", { name = options.id })
@@ -28,14 +28,19 @@ local handlePandocArgs = function (options)
   end
   if options.classes then
     for _, class in pairs(options.classes:split(",")) do
-      SU.debug("pandoc", "Add inner class wrapper: "..class)
-      if SILE.Commands["class:"..class] then
+      if class == "unnumbered" then
+        SU.debug("pandoc", "Convert unnumbered class to legacy heading function option")
+        options.numbering = false
+      elseif SILE.Commands["class:"..class] then
+        SU.debug("pandoc", "Add inner class wrapper: "..class)
         local innerWrapper = wrapper
         wrapper = function (content)
           innerWrapper(function ()
             SILE.call("class:"..class, options, content)
           end)
         end
+      else
+        SU.warn("Unhandled class ‘"..class.."’, not mapped to legacy option and no matching wrapper function")
       end
     end
     options.classes = nil
@@ -114,9 +119,9 @@ SILE.registerCommand("Null", function (_, _)
   SILE.typesetter:leaveHmode()
 end)
 
-SILE.registerCommand("OrderedList", function (options, content)
+SILE.registerCommand("OrderedList", function (_, content)
   -- TODO: handle listAttributes
-  handlePandocArgs(options)(function ()
+  SILE.settings.temporarily(function ()
     SILE.settings.set("document.rskip","10pt")
     SILE.settings.set("document.lskip","20pt")
     SILE.process(content)
@@ -188,6 +193,10 @@ SILE.registerCommand("Link", function (options, content)
     SILE.call("url", args, content)
   end)
 end, "Creates a link inline element, usually a hyperlink.")
+
+SILE.registerCommand("Nbsp", function (_, _)
+  SILE.typesetter:typeset(" ")
+end, "Output a non-breaking space.")
 
 SILE.registerCommand("Math", function (options, content)
   SU.debug("pandoc", options)
@@ -264,7 +273,7 @@ SILE.registerCommand("ListItem", function (_, content)
   SILE.call("smallskip")
   SILE.call("glue", { width = "-1em"})
   SILE.call("rebox", { width = "1em" }, function ()
-    -- Not: Relies on Lua scope shadowing to find immediate parent list type
+    -- Note: Relies on Lua scope shadowing to find immediate parent list type
     -- luacheck: ignore pandocListType
     if pandocListType == "bullet" then
       SILE.typesetter:typeset("•")

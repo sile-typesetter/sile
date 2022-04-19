@@ -54,6 +54,10 @@ SILE.registerCommand("font:add-fallback", function (options, _)
   fontlist[#fontlist+1] = options
 end)
 
+SILE.registerCommand("font:remove-fallback", function ()
+  fontlist[#fontlist] = nil
+end, "Pop last added fallback from fallback stack")
+
 SILE.shapers.harfbuzzWithFallback = pl.class(SILE.shapers.harfbuzz)
 
 function SILE.shapers.harfbuzzWithFallback:shapeToken (text, options)
@@ -169,7 +173,7 @@ Many applications will find another font on the system containing the
 appropriate character and use that font instead. But which font should
 be chosen? SILE is designed for typesetting situations where the document
 or class author wants complete control over the typographic appearance
-of the output, so it’s not appropriate for it to make a guess - besides,
+of the output, so it’s not appropriate for it to make a guess—besides,
 you asked for Gentium. So where the glyph is not defined, SILE will give
 you the current font’s “glyph not defined” symbol (a glyph called \code{.notdef})
 instead.
@@ -177,13 +181,14 @@ instead.
 But there are times when this is just too strict. If you’re typesetting
 a document in English and Japanese, you should be able to choose your
 English font and choose your Japanese font, and if the glyph isn’t available
-in one, SILE should try the other. The \code{font-fallback} package gives you
+in one, SILE should try the other. The \autodoc:package{font-fallback} package gives you
 a way to specify a list of font specifications, and it will try each one in
 turn if glyphs cannot be found.
 
-It provides two commands, \command{\\font:add-fallback} and
-\command{\\font:clear-fallbacks}. The parameters to \command{\\font:add-fallback}
-are the same as the parameters to \command{\\font}. So this code:
+It provides two commands, \autodoc:command{\font:add-fallback} and
+\autodoc:command{\font:clear-fallbacks}.
+The parameters to \autodoc:command{\font:add-fallback} are the same as the
+parameters to \autodoc:command{\font}. So this code:
 
 \begin{verbatim}
 \line
@@ -197,6 +202,7 @@ Now we can say:
 
 \font:add-fallback[family=Symbola]
 \font:add-fallback[family=Noto Sans CJK JP]
+
 \begin{verbatim}
 あば x 😼 Hello world. あ
 \end{verbatim}
@@ -205,8 +211,13 @@ and SILE will produce:
 
 \examplefont{あば x 😼 Hello world. あ}
 
-\command{\\font:clear-fallbacks} removes all font fallbacks from the list
+\font:remove-fallback
+\font:remove-fallback
+
+\autodoc:command{\font:clear-fallbacks} removes all font fallbacks from the list
 of fonts to try.
 
-\font:clear-fallbacks
+\autodoc:command{\font:remove-fallback} removes the last added fallback from the
+list of fonts to try.
+
 \end{document} ]]}

@@ -75,12 +75,12 @@ function SILE.shapers.pango:shapeToken (text, options)
   return rv, twidth
 end
 
-function SILE.shapers.pango:addShapedGlyphToNnodeValue (nnodevalue, shapedglyph)
+function SILE.shapers.pango.addShapedGlyphToNnodeValue (_, nnodevalue, shapedglyph)
   nnodevalue.pgs = shapedglyph.pgs
   nnodevalue.font = shapedglyph.font
 end
 
-function SILE.shapers.pango:debugVersions ()
+function SILE.shapers.pango.debugVersions (_)
   -- I have nothing here.
 end
 

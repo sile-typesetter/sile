@@ -1,47 +1,50 @@
-local ot = SILE.require("core/opentype-parser")
-
 SILE.shapers.harfbuzzWithColor = pl.class(SILE.shapers.harfbuzz)
 
 function SILE.shapers.harfbuzzWithColor:shapeToken (str, options)
-    if not options.family then return {} end
-    local face = SILE.font.cache(options, SILE.shaper.getFace)
-    local font = ot.parseFont(face)
-    local items = self._base.shapeToken(self, str, options)
-    if font.colr and font.cpal then
+  local ot = SILE.require("core/opentype-parser")
+  if not options.family then return {} end
+  local face = SILE.font.cache(options, SILE.shaper.getFace)
+  local font = ot.parseFont(face)
+  local items = self._base.shapeToken(self, str, options)
+  if font.colr and font.cpal then
     local newItems = {}
     for i = 1, #items do
-        local layers = font.colr[items[i].gid]
-        if layers then
+      local layers = font.colr[items[i].gid]
+      if layers then
         for j = 1, #layers do
-            local item = items[i]
-            local layer = layers[j]
-            local width = 0
-            local text = ""
-            if j == #layers then
+          local item = items[i]
+          local layer = layers[j]
+          local width = 0
+          local height = 0
+          local text = ""
+          if j == #layers then
             width = item.width
+            height = item.height
             text = item.text
-            end
-            -- XXX: handle multiple palette, add a font option?
-            local color = font.cpal[1][layer.paletteIndex]
-            local newItem = {
+          end
+          -- XXX: handle multiple palette, add a font option?
+          local color = font.cpal[1][layer.paletteIndex]
+          local newItem = {
             gid = layer.gid,
             glyphAdvance = item.glyphAdvance,
             width = width,
-            height= item.height,
+            height = height,
             depth = item.depth,
             index = item.index,
+            x_offset = item.x_offset,
+            y_offset = item.y_offset,
             text = text,
             color = color,
-            }
-            newItems[#newItems+1] = newItem
+          }
+          newItems[#newItems+1] = newItem
         end
-        else
+      else
         newItems[#newItems+1] = items[i]
-        end
+      end
     end
     return newItems
-    end
-    return items
+  end
+  return items
 end
 
 function SILE.shapers.harfbuzzWithColor:createNnodes (token, options)
@@ -81,14 +84,15 @@ function SILE.shapers.harfbuzzWithColor:createNnodes (token, options)
     return nodes
 end
 
-SILE.shaper = SILE.shapers.harfbuzzWithColor()
-
 return {
+  init = function (_, _)
+    SILE.shaper = SILE.shapers.harfbuzzWithColor()
+  end,
   documentation = [[
 \begin{document}
-  The \code{color-fonts} package adds support for fonts with a \code{COLR}
-  OpenType table. Just loading the package will allow for fonts which
-  define their own colors to be rendered in color.
+  The \autodoc:package{color-fonts} package adds support for fonts with a \code{COLR}
+  OpenType table. This package is automatically loaded when such a font is
+  detected.
 \end{document}
 ]]
 }

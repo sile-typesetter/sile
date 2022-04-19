@@ -5,7 +5,7 @@ local tibetanNumber = function (n)
   local out = ""
   local a = 0x0f20
   repeat
-    out = SU.utf8char(n%10 + a) .. out
+    out = luautf8.char(n%10 + a) .. out
     n = (n - n%10)/10
   until n < 1
   return out
@@ -43,7 +43,8 @@ function pecha:endPage()
   local folioframe = SILE.getFrame("folio")
   SILE.typesetNaturally(folioframe, function ()
     SILE.settings.pushState()
-    SILE.settings.reset()
+    -- Restore the settings to the top of the queue, which should be the document #986
+    SILE.settings.toplevelState()
     SILE.settings.set("typesetter.breakwidth", folioframe:height())
     SILE.typesetter:typeset(" ")
     SILE.call("vfill")

@@ -17,6 +17,11 @@ _DEBUG = false
 std = require("std")
 -- luacheck: pop
 
+-- Lua 5.3+ has a UTF-8 safe string function module but it is somewhat
+-- underwhelming. This module includes more functions and supports older Lua
+-- versions. Docs: https://github.com/starwing/luautf8
+luautf8 = require("lua-utf8")
+
 -- Includes for _this_ scope
 local lfs = require("lfs")
 
@@ -28,8 +33,12 @@ SILE.nodeMakers = {}
 SILE.tokenizers = {}
 SILE.status = {}
 SILE.scratch = {}
+SILE.dolua = {}
+SILE.preamble = {}
 
 -- Internal functions / classes / factories
+SILE.cldr = require("cldr")
+SILE.fluent = require("fluent")()
 SILE.utilities = require("core/utilities")
 SU = SILE.utilities -- alias
 SILE.traceStack = require("core/tracestack")()
@@ -79,6 +88,7 @@ setmetatable(SILE.baseClass, {
   })
 
 SILE.init = function ()
+  -- Set by def
   if not SILE.backend then
     if pcall(function () require("justenoughharfbuzz") end) then
       SILE.backend = "libtexpdf"
@@ -101,11 +111,9 @@ SILE.init = function ()
     require("core/harfbuzz-shaper")
     require("core/dummy-output")
   end
-  if SILE.dolua then
-    for _, func in pairs(SILE.dolua) do
-      local _, err = pcall(func)
-      if err then error(err) end
-    end
+  for _, func in ipairs(SILE.dolua) do
+    local _, err = pcall(func)
+    if err then error(err) end
   end
 end
 
@@ -126,55 +134,57 @@ end
 
 SILE.parseArguments = function ()
   SILE.full_version = string.format("SILE %s (%s)", SILE.version, SILE.lua_isjit and jit.version or _VERSION)
-
-  local parser = std.optparse(SILE.full_version .. [[
-
-Usage: sile [options] file.sil|file.xml
-
-The SILE typesetter reads a single input file in either SIL or XML format to
-generate an output in PDF format. The output will be written to the same name
-as the input file with the extension changed to .pdf.
-
-Options:
-
-  -b, --backend=VALUE      choose an alternative output backend
-  -d, --debug=VALUE        show debug information for tagged aspects of SILE's operation
-  -e, --evaluate=VALUE     evaluate some Lua code before processing file
-  -f, --fontmanager=VALUE  choose an alternative font manager
-  -m, --makedeps=[FILE]    generate a list of dependencies in Makefile format
-  -o, --output=[FILE]      explicitly set output file name
-  -I, --include=[FILE]     include a class or SILE file before processing input
-  -t, --traceback          display detailed location trace on errors and warnings
-  -h, --help               display this help, then exit
-  -v, --version            display version information, then exit
-]])
-
-  parser:on ('--', parser.finished)
-  local unparsed, opts = parser:parse(_G.arg)
-  -- Turn slashes around in the event we get passed a path from a Windows shell
-  if unparsed[1] then
-    SILE.inputFile = unparsed[1]:gsub("\\", "/")
+  local cli = require("cliargs")
+  local print_version = function()
+    print(SILE.full_version)
+    os.exit(0)
+  end
+  cli:set_colsz(0, 120)
+  cli:set_name("sile")
+  cli:set_description([[
+      The SILE typesetter reads a single input file in either SIL or XML format to
+      generate an output in PDF format. The output will be written to the same name
+      as the input file with the extension changed to .pdf.
+    ]])
+  cli:splat("INPUT", "input file, SIL or XML format")
+  cli:option("-b, --backend=VALUE", "choose an alternative output backend")
+  cli:option("-d, --debug=VALUE", "show debug information for tagged aspects of SILE’s operation", {})
+  cli:option("-e, --evaluate=VALUE", "evaluate some Lua code before processing file", {})
+  cli:option("-f, --fontmanager=VALUE", "choose an alternative font manager")
+  cli:option("-m, --makedeps=FILE", "generate a list of dependencies in Makefile format")
+  cli:option("-o, --output=FILE", "explicitly set output file name")
+  cli:option("-I, --include=FILE", "include a class or SILE file before processing input", {})
+  cli:flag("-t, --traceback", "display detailed location trace on errors and warnings")
+  cli:flag("-h, --help", "display this help, then exit")
+  cli:flag("-v, --version", "display version information, then exit", print_version)
+  -- Work around cliargs not processing - as an alias for STDIO streams:
+  -- https://github.com/amireh/lua_cliargs/issues/67
+  local _arg = pl.tablex.imap(luautf8.gsub, _G.arg, "^-$", "STDIO")
+  local opts, parse_err = cli:parse(_arg)
+  if not opts and parse_err then
+    print(parse_err)
+    os.exit(1)
+  end
+  if opts.INPUT then
+    if opts.INPUT == "STDIO" then
+      opts.INPUT = "/dev/stdin"
+    end
+    -- Turn slashes around in the event we get passed a path from a Windows shell
+    SILE.inputFile = opts.INPUT:gsub("\\", "/")
     -- Strip extension
     SILE.masterFilename = string.match(SILE.inputFile, "(.+)%..-$") or SILE.inputFile
     SILE.masterDir = SILE.masterFilename:match("(.-)[^%/]+$")
   end
-  SILE.debugFlags = {}
   if opts.backend then
     SILE.backend = opts.backend
   end
-  if opts.debug then
-    if type(opts.debug) ~= "table" then opts.debug = { opts.debug } end
-    for _, value in ipairs(opts.debug) do
-        SU.dump(value)
-      for _, flag in ipairs(std.string.split(value, ",")) do
-        SILE.debugFlags[flag] = true
-      end
+  for _, flags in ipairs(opts.debug) do
+    for _, flag in ipairs(pl.stringx.split(flags, ",")) do
+      SILE.debugFlags[flag] = true
     end
   end
   if opts.evaluate then
-    local statements = type(opts.evaluate) == "table" and opts.evaluate or { opts.evaluate }
-    SILE.dolua = {}
-    for _, statement in ipairs(statements) do
+    for _, statement in ipairs(opts.evaluate) do
       local func, err = load(statement)
       if err then SU.error(err) end
       SILE.dolua[#SILE.dolua+1] = func
@@ -188,12 +198,14 @@ Options:
     SILE.makeDeps.filename = opts.makedeps
   end
   if opts.output then
+    if opts.output == "STDIO" then
+      opts.output = "/dev/stdout"
+    end
     SILE.outputFilename = opts.output
   end
-  if opts.include then
-    SILE.preamble = type(opts.include) == "table" and opts.include or { opts.include }
+  for _, include in ipairs(opts.include) do
+    SILE.preamble[#SILE.preamble+1] = include
   end
-
   -- http://lua-users.org/wiki/VarargTheSecondClassCitizen
   local identity = function (...) return table.unpack({...}, 1, select('#', ...)) end
   SILE.errorHandler = opts.traceback and debug.traceback or identity
@@ -284,7 +296,7 @@ end
 function SILE.resolveFile(filename, pathprefix)
   local candidates = {}
   -- Start with the raw file name as given prefixed with a path if requested
-  if pathprefix then candidates[#candidates+1] = std.io.catfile(pathprefix, "?") end
+  if pathprefix then candidates[#candidates+1] = pl.path.join(pathprefix, "?") end
   -- Also check the raw file name without a path
   candidates[#candidates+1] = "?"
   -- Iterate through the directory of the master file, the SILE_PATH variable, and the current directory
@@ -292,8 +304,8 @@ function SILE.resolveFile(filename, pathprefix)
   if SILE.masterFilename then
     for path in SU.gtoke(SILE.masterDir..";"..tostring(os.getenv("SILE_PATH")), ";") do
       if path.string and path.string ~= "nil" then
-        if pathprefix then candidates[#candidates+1] = std.io.catfile(path.string, pathprefix, "?") end
-        candidates[#candidates+1] = std.io.catfile(path.string, "?")
+        if pathprefix then candidates[#candidates+1] = pl.path.join(path.string, pathprefix, "?") end
+        candidates[#candidates+1] = pl.path.join(path.string, "?")
       end
     end
   end

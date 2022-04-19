@@ -1,30 +1,24 @@
-#!/usr/bin/env bash
-
+#!/usr/bin/env sh
 set -e
-set -o pipefail
 
 finder () {
-    echo -n ' '
-    find "$@" -type f | sort -bdi | xargs echo -n ||:
+    test -d "$1" || return 0
+    find "$@" -type f | sort -bdi | xargs printf ' %s'
 }
 
-echo -n "SILEDATA ="
+printf '%s' "SILEDATA ="
 finder core classes languages packages -name '*.lua'
 finder classes -name '*.sil'
 
-echo -ne "\nLUALIBRARIES ="
+printf '\n%s' "LUALIBRARIES ="
 finder lua-libraries -name '*.lua'
 
-echo -ne "\nLUAMODULES ="
+printf '\n%s' "LUAMODULES ="
 finder lua_modules ! -name "'*~'"
 
-echo -ne "\nTESTSRCS ?="
+printf '\n%s' "TESTSRCS ?="
 finder tests -maxdepth 1 -name '*.sil'
 finder tests -maxdepth 1 -name '*.xml'
 
-echo -ne "\nTESTEXPECTS ?="
+printf '\n%s' "TESTEXPECTS ?="
 finder tests -maxdepth 1 -name '*.expected'
-
-echo -ne "\nEXAMPLESSRCS ="
-finder examples -maxdepth 1 -name '*.sil'
-finder examples/docbook -maxdepth 1 -name '*.xml'

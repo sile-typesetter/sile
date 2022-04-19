@@ -10,7 +10,7 @@ do anything that it’s possible to do in Lua.
 
 As mentioned above, loading a package is done through the \code{\\script} command,
 which runs Lua code. By convention packages live in the \code{packages/} subdirectory
-of either your input file's location, your current working directory or SILE’s
+of either your input file’s location, your current working directory or SILE’s
 installation directory. For instance, we’ll soon be talking about the
 \code{grid} package, which normally can be found as
 \code{/usr/local/lib/sile/packages/grid.lua}. To load this, we’d say:
@@ -82,9 +82,6 @@ path to them.}
 \section{chordmode}
 \package-documentation[src=packages/chordmode]
 
-\section{color-fonts}
-\package-documentation[src=packages/color-fonts]
-
 \section{converters}
 \package-documentation[src=packages/converters]
 
@@ -96,6 +93,9 @@ path to them.}
 
 \section{debug}
 \package-documentation[src=packages/debug]
+
+\section{dropcaps}
+\package-documentation[src=packages/dropcaps]
 
 \section{leaders}
 \package-documentation[src=packages/leaders]
@@ -121,6 +121,9 @@ basic functionality to other packages and classes. Classes such as the
 
 \subsection{footnotes}
 \package-documentation[src=packages/footnotes]
+
+\subsection{color-fonts}
+\package-documentation[src=packages/color-fonts]
 
 \subsection{counters}
 \package-documentation[src=packages/counters]
@@ -169,6 +172,9 @@ basic functionality to other packages and classes. Classes such as the
 
 \section{Experimental packages}
 
+\subsection{autodoc}
+\package-documentation[src=packages/autodoc]
+
 \subsection{balanced-frames}
 \package-documentation[src=packages/balanced-frames]
 
@@ -180,6 +186,9 @@ basic functionality to other packages and classes. Classes such as the
 
 \subsection{indexer}
 \package-documentation[src=packages/indexer]
+
+\subsection{math}
+\package-documentation[src=packages/math]
 
 \subsection{pdfstructure}
 \package-documentation[src=packages/pdfstructure]

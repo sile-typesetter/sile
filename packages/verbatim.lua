@@ -32,17 +32,17 @@ end)
 
 return {documentation = [[\begin{document}
 
-The \code{verbatim} package is useful when quoting pieces of computer code and
+The \autodoc:package{verbatim} package is useful when quoting pieces of computer code and
 other text for which formatting is significant. It changes SILE’s settings
 so that text is set ragged right, with no hyphenation, no indentation and
 regular spacing. It tells SILE to honor multiple spaces, and sets a monospaced
 font.
 
-\note{Despite the name, \code{verbatim} does not alter the way that SILE
+\note{Despite the name, \autodoc:environment{verbatim} does not alter the way that SILE
 sees special characters. You still need to escape backslashes and braces:
 to produce a backslash, you need to write \code{\\\\}.}
 
-Here is some text set in the verbatim environment:
+Here is some text set in the \autodoc:environment{verbatim} environment:
 
 \begin{verbatim}
 function SILE.repl()
@@ -52,7 +52,7 @@ end
 \end{verbatim}
 
 If you want to specify what font the verbatim environment should use, you
-can redefine the \code{verbatim:font} command. For example you could change
+can redefine the \autodoc:command{\verbatim:font} command. For example you could change
 it from XML like this:
 
 \begin{verbatim}

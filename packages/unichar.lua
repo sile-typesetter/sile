@@ -16,8 +16,8 @@ SILE is Unicode compatible, and expects its input files to be in the UTF-8 encod
 (The actual range of Unicode characters supported will depend on the supported ranges
 of the fonts that SILE is using to typeset.) Some Unicode characters are hard to
 locate on a standard keyboard, and so are difficult to enter into SILE documents.
-The \code{unichar} package helps with this problem by providing a command to enter
-Unicode codepoints. After loading \code{unichar}, the \code{\\unichar} command becomes
+The \autodoc:package{unichar} package helps with this problem by providing a command to enter
+Unicode codepoints. After loading \autodoc:package{unichar}, the \autodoc:command{\unichar} command becomes
 available:
 
 \begin{verbatim}
@@ -26,7 +26,7 @@ available:
 \line
 \end{verbatim}
 
-If the argument to \code{\\unichar} begins \code{U+}, \code{u+}, \code{0x} or \code{0X},
+If the argument to \autodoc:command{\unichar} begins \code{U+}, \code{u+}, \code{0x} or \code{0X},
 then it is assumed to be a hexadecimal value. Otherwise it is assumed to be a
 decimal codepoint.
 \end{document}]] }

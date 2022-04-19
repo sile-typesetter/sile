@@ -5,18 +5,14 @@ SILE.inputs.common = {
     SILE.require(class, "classes")
     tree.options.papersize = tree.options.papersize or "a4"
     SILE.documentState.documentClass = SILE.classes[class](tree.options)
+    for option, value in pairs(tree.options) do
+      if SILE.documentState.documentClass.options[option] then
+        SILE.documentState.documentClass.options[option](value)
+      end
+    end
     -- Prepend the dirname of the input file to the Lua search path
     local dirname = SILE.masterFilename:match("(.-)[^%/]+$")
     package.path = dirname.."?;"..dirname.."?.lua;"..package.path
-    if not SILE.outputFilename and SILE.masterFilename then
-      -- TODO: This hack works on *nix systems because /dev/stdout is usable as
-      -- a filename to refer to STDOUT. Libtexpdf works fine with this, but it's
-      -- not going to work on Windows quite the same way. Normal filnames will
-      -- still work but explicitly using piped streams won't.
-      if SILE.masterFilename == "-" then
-        SILE.outputFilename = "/dev/stdout"
-      end
-    end
     local ff = SILE.documentState.documentClass:initialFrame()
     SILE.typesetter:init(ff)
   end

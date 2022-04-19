@@ -77,13 +77,13 @@ end
 
 function traceStack.textFrame:__tostring ()
   if self.text:len() > 20 then
-    self.text = self.text:sub(1, 18) .. "…"
+    self.text = luautf8.sub(self.text, 1, 18) .. "…"
   end
   self.text = self.text:gsub("\n", "␤"):gsub("\t", "␉"):gsub("\v", "␋")
   return '"' .. self.text .. '"'
 end
 
-local function formatTraceLine(string)
+local function formatTraceLine (string)
   local prefix = "\t"
   return prefix .. string .. "\n"
 end
