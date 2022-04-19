@@ -351,7 +351,7 @@ end
 
 function plain:endPage ()
   self:outputFolio()
-  self._base.endPage(self)
+  return base.endPage(self)
 end
 
 SILE.classes.plain = plain

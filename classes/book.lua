@@ -60,12 +60,6 @@ function book:newPage ()
   return plain.newPage(self)
 end
 
-function book:finish ()
-  local ret = plain.finish(self)
-  self:writeToc()
-  return ret
-end
-
 function book:endPage ()
   self:moveTocNodes()
   if (self:oddPage() and SILE.scratch.headers.right) then
@@ -90,6 +84,12 @@ function book:endPage ()
       end)
   end
   return plain.endPage(self)
+end
+
+function book:finish ()
+  local ret = plain.finish(self)
+  self:writeToc()
+  return ret
 end
 
 book.registerCommands = function (_)
