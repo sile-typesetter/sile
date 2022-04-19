@@ -22,6 +22,11 @@ SILE.require("packages/url")
 SILE.require("packages/image")
 
 local book = SILE.require("book", "classes")
+local markdown = book { id = "markdown" }
+
+function markdown:init ()
+  return book.init(self)
+end
 
 SILE.registerCommand("sect1", function (options, content)
   SILE.call("chapter", options, content)
@@ -49,13 +54,11 @@ SILE.registerCommand("bulletlist", function (_, content)
 end)
 
 SILE.registerCommand("link", function (_, content)
-  -- SILE.settings.temporarily(function ()
-    -- SILE.call("verbatim:font")
-    SILE.process(content)
-  -- end)
+    SILE.call("verbatim:font", {}, content)
 end)
 
 SILE.registerCommand("image", function (_, content)
   SILE.call("img", {src=content.src})
-  end)
-return book
+end)
+
+return markdown

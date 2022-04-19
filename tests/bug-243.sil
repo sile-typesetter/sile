@@ -1,4 +1,5 @@
 \begin[papersize=a5]{document}
+\nofolios
 \script[src=packages/leaders]
 \font[size=50pt]
 \set[parameter=typesetter.parfillskip,value=0pt]
@@ -8,4 +9,6 @@ Foo f\dotfill{}bar\par
 Foo foo\dotfill{}bar\par
 Foo foo f\dotfill{}bar\par
 Foo foo foo\dotfill{}bar\par
+Foo foo foo\dotfill{}\hbox{}\par
+
 \end{document}

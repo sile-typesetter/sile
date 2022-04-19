@@ -25,7 +25,7 @@ local parallelPagebreak = function ()
       if #typesetter.state.outputQueue > 0 and calculations[frame].mark == 0 then
         -- More than one page worth of stuff here.
         -- Just ship out one page and hope for the best.
-        SILE.defaultTypesetter.pageBuilder(typesetter)
+        SILE.defaultTypesetter.buildPage(typesetter)
       else
         for l = 1, calculations[frame].mark do
           thispage[l] = table.remove(typesetter.state.outputQueue, 1)
@@ -50,12 +50,12 @@ local setupParallel = function (klass, options)
     typesetterPool[frame] = SILE.typesetter {}
     typesetterPool[frame].id = typesetter
     typesetterPool[frame]:init(SILE.getFrame(typesetter))
-    typesetterPool[frame].pageBuilder = function ()
+    typesetterPool[frame].buildPage = function ()
       -- No thank you, I will do that.
     end
     -- Fixed leading here is obviously a bug, but n-way leading calculations
     -- get very complicated...
-    -- typesetterPool[frame].leadingFor = function() return SILE.nodefactory.newVglue(SILE.settings.get("document.lineskip")) end
+    -- typesetterPool[frame].leadingFor = function() return SILE.nodefactory.vglue(SILE.settings.get("document.lineskip")) end
     SILE.registerCommand(frame, function (_, _) -- \left ...
       SILE.typesetter = typesetterPool[frame]
       SILE.call(frame..":font")
@@ -64,19 +64,20 @@ local setupParallel = function (klass, options)
   end
   if not options.folios then
     folioOrder = { {} }
-    for frame, _ in pairs(options.frames) do table.insert(folioOrder[1], frame) end
+    -- Note output order doesn't matter for PDF, but for our test suite it is
+    -- essential that the output order is deterministic, hence this sort()
+    for frame, _ in pl.tablex.sort(options.frames) do table.insert(folioOrder[1], frame) end
   else
     folioOrder = options.folios -- As usual we trust the user knows what they're doing
   end
-  local oldnewpage = klass.newPage
-  klass.newPage = function (_)
+  klass.newPage = function(_)
     allTypesetters(function (frame, _)
-      calculations[frame] = { mark = oldnewpage }
+      calculations[frame] = { mark = 0 }
     end)
     SILE.baseClass:newPage()
     SILE.call("sync")
   end
-  allTypesetters(function (frame, _) calculations[frame] = { mark = oldnewpage } end)
+  allTypesetters(function (frame, _) calculations[frame] = { mark = 0 } end)
   local oldfinish = klass.finish
   klass.finish = function (self)
     parallelPagebreak()
@@ -87,7 +88,7 @@ end
 local addBalancingGlue = function (height)
   allTypesetters(function (frame, typesetter)
     local glue = height - calculations[frame].heightOfNewMaterial
-    if glue.length > 0 then
+    if glue.length:tonumber() > 0 then
       SU.debug("parallel", "Adding "..glue.." to "..frame)
       typesetter:pushVglue({ height = glue })
     end
@@ -97,7 +98,7 @@ end
 
 SILE.registerCommand("sync", function (_, _)
   local anybreak = false
-  local maxheight = SILE.length.new()
+  local maxheight = SILE.length()
   SU.debug("parallel", "Trying a sync")
   allTypesetters(function (_, typesetter)
     SU.debug("parallel", "Leaving hmode on "..typesetter.id)
@@ -105,8 +106,8 @@ SILE.registerCommand("sync", function (_, _)
     -- Now we have each typesetter's content boxed up onto the output stream
     -- but page breaking has not been run. See if page breaking would cause a
     -- break
-    local lines = std.table.clone(typesetter.state.outputQueue)
-    if SILE.pagebuilder.findBestBreak({ vboxlist = lines, target = typesetter:pageTarget() }) then
+    local lines = pl.tablex.copy(typesetter.state.outputQueue)
+    if SILE.pagebuilder:findBestBreak({ vboxlist = lines, target = typesetter:getTargetLength() }) then
       anybreak = true
     end
   end)
@@ -117,7 +118,7 @@ SILE.registerCommand("sync", function (_, _)
   end
 
   allTypesetters(function (frame, typesetter)
-    calculations[frame].heightOfNewMaterial = SILE.length.new()
+    calculations[frame].heightOfNewMaterial = SILE.length()
     for i = calculations[frame].mark + 1, #typesetter.state.outputQueue do
       local thisHeight = typesetter.state.outputQueue[i].height + typesetter.state.outputQueue[i].depth
       calculations[frame].heightOfNewMaterial = calculations[frame].heightOfNewMaterial + thisHeight
@@ -130,5 +131,16 @@ SILE.registerCommand("sync", function (_, _)
 end)
 
 return {
-  init = setupParallel
+  init = setupParallel,
+  documentation = [[
+\begin{document}
+The \autodoc:package{parallel} package provides the mechanism for typesetting diglot or other
+parallel documents. When used by a class such as \code{classes/diglot.lua},
+it registers a command for each parallel frame, to allow you to select
+which frame you’re typesetting into. It also defines the \autodoc:command{\sync}
+command, which adds vertical spacing to each frame such that the \em{next}
+set of text is vertically aligned. See \url{https://sile-typesetter.org/examples/parallel.sil}
+and the source of \code{classes/diglot.lua} for examples which makes the operation clear.
+\end{document}
+]]
 }

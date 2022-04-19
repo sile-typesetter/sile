@@ -1,8 +1,11 @@
--- Initialize Lua environment
-local lua_version = _VERSION:sub(-3)
-if lua_version < "5.3" then require("compat53") end -- Backport of lots of Lua 5.3 features to Lua 5.[12]
-bit32 = bit32 or require("bit32") -- Backport of Lua 5.2+ bitwise functions to Lua 5.1
-require("pl") -- Penlight on-demand module loader
+-- Initialize SILE internals
+SILE = {}
+
+-- Initialize Lua environment and global utilities
+SILE.lua_version = _VERSION:sub(-3)
+SILE.lua_isjit = type(jit) == "table"
+if not SILE.lua_isjit and SILE.lua_version < "5.3" then require("compat53") end -- Backport of lots of Lua 5.3 features to Lua 5.[12]
+pl = require("pl.import_into")() -- Penlight on-demand module loader
 if (os.getenv("SILE_COVERAGE")) then require("luacov") end
 
 -- Include lua-stdlib, but make sure debugging is turned off since newer
@@ -14,48 +17,57 @@ _DEBUG = false
 std = require("std")
 -- luacheck: pop
 
+-- Lua 5.3+ has a UTF-8 safe string function module but it is somewhat
+-- underwhelming. This module includes more functions and supports older Lua
+-- versions. Docs: https://github.com/starwing/luautf8
+luautf8 = require("lua-utf8")
+
 -- Includes for _this_ scope
 local lfs = require("lfs")
 
--- Initialize SILE
-SILE = {}
-SILE.utilities = require("core/utilities")
-SU = SILE.utilities
+-- Internal data tables
 SILE.inputs = {}
 SILE.Commands = {}
 SILE.debugFlags = {}
 SILE.nodeMakers = {}
 SILE.tokenizers = {}
 SILE.status = {}
-
-SILE.traceStack = require("core/tracestack")
-SILE.documentState = std.object {}
 SILE.scratch = {}
+SILE.dolua = {}
+SILE.preamble = {}
+
+-- Internal functions / classes / factories
+SILE.cldr = require("cldr")
+SILE.fluent = require("fluent")()
+SILE.utilities = require("core/utilities")
+SU = SILE.utilities -- alias
+SILE.traceStack = require("core/tracestack")()
+SILE.documentState = std.object {}
+SILE.parserBits = require("core/parserbits")
+SILE.units = require("core/units")
+SILE.measurement = require("core/measurement")
 SILE.length = require("core/length")
-require("core/parserbits")
-require("core/measurements")
+SILE.papersize = require("core/papersize")
 require("core/baseclass")
 SILE.nodefactory = require("core/nodefactory")
 require("core/settings")
 require("core/inputs-texlike")
 require("core/inputs-xml")
 require("core/inputs-common")
-require("core/papersizes")
 require("core/colorparser")
-require("core/pagebuilder")
+SILE.pagebuilder = require("core/pagebuilder")()
 require("core/typesetter")
 require("core/hyphenator-liang")
 require("core/languages")
 require("core/font")
 require("core/packagemanager")
-
 SILE.fontManager = require("core/fontmanager")
 SILE.frameParser = require("core/frameparser")
 SILE.linebreak = require("core/break")
-
 require("core/frame")
 
 SILE.init = function ()
+  -- Set by def
   if not SILE.backend then
     if pcall(function () require("justenoughharfbuzz") end) then
       SILE.backend = "libtexpdf"
@@ -78,66 +90,79 @@ SILE.init = function ()
     require("core/harfbuzz-shaper")
     require("core/dummy-output")
   end
-  if SILE.dolua then
-    for _, func in pairs(SILE.dolua) do
-      local _, err = pcall(func)
-      if err then error(err) end
-    end
+  for _, func in ipairs(SILE.dolua) do
+    local _, err = pcall(func)
+    if err then error(err) end
   end
 end
 
 SILE.require = function (dependency, pathprefix)
   dependency = dependency:gsub(".lua$", "")
   if pathprefix then
-    local status, lib = pcall(require, std.io.catfile(pathprefix, dependency))
+    local status, lib = pcall(require, pl.path.join(pathprefix, dependency))
     if status then return lib end
   end
-  return require(dependency)
+  local dep = require(dependency)
+  local class = SILE.documentState.documentClass
+  if type(class) == "table" then
+    class:initPackage(dep)
+  end
+  return dep
 end
 
-SILE.parseArguments = function()
-local parser = std.optparse ("SILE "..SILE.version..[[
-
-Usage: sile [options] file.sil|file.xml
-
-The SILE typesetter reads a single input file in either SIL or XML format to
-generate an output in PDF format. The output will be written to the same name
-as the input file with the extension changed to .pdf.
-
-Options:
-
-  -b, --backend=VALUE      choose an alternative output backend
-  -d, --debug=VALUE        debug SILE's operation
-  -e, --evaluate=VALUE     evaluate some Lua code before processing file
-  -f, --fontmanager=VALUE  choose an alternative font manager
-  -m, --makedeps=[FILE]    generate a list of dependencies in Makefile format
-  -o, --output=[FILE]      explicitly set output file name
-  -I, --include=[FILE]     include a class or SILE file before processing input
-  -t, --traceback          display detailed location trace on errors and warnings
-  -h, --help               display this help, then exit
-  -v, --version            display version information, then exit
-]])
-
-  parser:on ('--', parser.finished)
-  local unparsed, opts = parser:parse(_G.arg)
-  -- Turn slashes around in the event we get passed a path from a Windows shell
-  if unparsed[1] then
-    SILE.inputFile = unparsed[1]:gsub("\\", "/")
+SILE.parseArguments = function ()
+  SILE.full_version = string.format("SILE %s (%s)", SILE.version, SILE.lua_isjit and jit.version or _VERSION)
+  local cli = require("cliargs")
+  local print_version = function()
+    print(SILE.full_version)
+    os.exit(0)
+  end
+  cli:set_colsz(0, 120)
+  cli:set_name("sile")
+  cli:set_description([[
+      The SILE typesetter reads a single input file in either SIL or XML format to
+      generate an output in PDF format. The output will be written to the same name
+      as the input file with the extension changed to .pdf.
+    ]])
+  cli:splat("INPUT", "input file, SIL or XML format")
+  cli:option("-b, --backend=VALUE", "choose an alternative output backend")
+  cli:option("-d, --debug=VALUE", "show debug information for tagged aspects of SILE’s operation", {})
+  cli:option("-e, --evaluate=VALUE", "evaluate some Lua code before processing file", {})
+  cli:option("-f, --fontmanager=VALUE", "choose an alternative font manager")
+  cli:option("-m, --makedeps=FILE", "generate a list of dependencies in Makefile format")
+  cli:option("-o, --output=FILE", "explicitly set output file name")
+  cli:option("-I, --include=FILE", "include a class or SILE file before processing input", {})
+  cli:flag("-t, --traceback", "display detailed location trace on errors and warnings")
+  cli:flag("-h, --help", "display this help, then exit")
+  cli:flag("-v, --version", "display version information, then exit", print_version)
+  -- Work around cliargs not processing - as an alias for STDIO streams:
+  -- https://github.com/amireh/lua_cliargs/issues/67
+  local _arg = pl.tablex.imap(luautf8.gsub, _G.arg, "^-$", "STDIO")
+  local opts, parse_err = cli:parse(_arg)
+  if not opts and parse_err then
+    print(parse_err)
+    os.exit(1)
+  end
+  if opts.INPUT then
+    if opts.INPUT == "STDIO" then
+      opts.INPUT = "/dev/stdin"
+    end
+    -- Turn slashes around in the event we get passed a path from a Windows shell
+    SILE.inputFile = opts.INPUT:gsub("\\", "/")
     -- Strip extension
     SILE.masterFilename = string.match(SILE.inputFile, "(.+)%..-$") or SILE.inputFile
     SILE.masterDir = SILE.masterFilename:match("(.-)[^%/]+$")
   end
-  SILE.debugFlags = {}
   if opts.backend then
     SILE.backend = opts.backend
   end
-  if opts.debug then
-    for _, v in ipairs(std.string.split(opts.debug, ",")) do SILE.debugFlags[v] = true end
+  for _, flags in ipairs(opts.debug) do
+    for _, flag in ipairs(pl.stringx.split(flags, ",")) do
+      SILE.debugFlags[flag] = true
+    end
   end
   if opts.evaluate then
-    local statements = type(opts.evaluate) == "table" and opts.evaluate or { opts.evaluate }
-    SILE.dolua = {}
-    for _, statement in ipairs(statements) do
+    for _, statement in ipairs(opts.evaluate) do
       local func, err = load(statement)
       if err then SU.error(err) end
       SILE.dolua[#SILE.dolua+1] = func
@@ -151,12 +176,14 @@ Options:
     SILE.makeDeps.filename = opts.makedeps
   end
   if opts.output then
+    if opts.output == "STDIO" then
+      opts.output = "/dev/stdout"
+    end
     SILE.outputFilename = opts.output
   end
-  if opts.include then
-    SILE.preamble = type(opts.include) == "table" and opts.include or { opts.include }
+  for _, include in ipairs(opts.include) do
+    SILE.preamble[#SILE.preamble+1] = include
   end
-
   -- http://lua-users.org/wiki/VarargTheSecondClassCitizen
   local identity = function (...) return table.unpack({...}, 1, select('#', ...)) end
   SILE.errorHandler = opts.traceback and debug.traceback or identity
@@ -215,6 +242,9 @@ function SILE.readFile(filename)
     if mode ~= "file" and mode ~= "named pipe" then
       SU.error(filename.." isn't a file or named pipe, it's a ".. mode .."!")
     end
+    if SILE.makeDeps then
+      SILE.makeDeps:add(filename)
+    end
     local file, err = io.open(filename)
     if not file then
       print("Could not open "..filename..": "..err)
@@ -244,7 +274,7 @@ end
 function SILE.resolveFile(filename, pathprefix)
   local candidates = {}
   -- Start with the raw file name as given prefixed with a path if requested
-  if pathprefix then candidates[#candidates+1] = std.io.catfile(pathprefix, "?") end
+  if pathprefix then candidates[#candidates+1] = pl.path.join(pathprefix, "?") end
   -- Also check the raw file name without a path
   candidates[#candidates+1] = "?"
   -- Iterate through the directory of the master file, the SILE_PATH variable, and the current directory
@@ -252,8 +282,8 @@ function SILE.resolveFile(filename, pathprefix)
   if SILE.masterFilename then
     for path in SU.gtoke(SILE.masterDir..";"..tostring(os.getenv("SILE_PATH")), ";") do
       if path.string and path.string ~= "nil" then
-        if pathprefix then candidates[#candidates+1] = std.io.catfile(path.string, pathprefix, "?") end
-        candidates[#candidates+1] = std.io.catfile(path.string, "?")
+        if pathprefix then candidates[#candidates+1] = pl.path.join(path.string, pathprefix, "?") end
+        candidates[#candidates+1] = pl.path.join(path.string, "?")
       end
     end
   end

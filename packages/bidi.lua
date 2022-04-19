@@ -66,8 +66,8 @@ end
 local reverse_each_node = function (nodelist)
   for j = 1, #nodelist do
     if nodelist[j].type =="hbox" then
-      if nodelist[j].value.items then table.flip(nodelist[j].value.items) end
-      table.flip(nodelist[j].value.glyphString)
+      if nodelist[j].value.items then SU.flip_in_place(nodelist[j].value.items) end
+      SU.flip_in_place(nodelist[j].value.glyphString)
     end
   end
 end
@@ -106,25 +106,25 @@ local reorder = function (n, self)
   local rv = {}
   -- for i = 1, #nl do print(i, nl[i], levels[i]) end
   for i = 1, #nl do
-    if nl[i]:isNnode() and levels[i].level %2 ~= base_level then
-      table.flip(nl[i].nodes)
+    if nl[i].is_nnode and levels[i].level %2 ~= base_level then
+      SU.flip_in_place(nl[i].nodes)
       reverse_each_node(nl[i].nodes)
-    elseif nl[i]:isDiscretionary() and levels[i].level %2 ~= base_level and not nl[i].bidiDone then
+    elseif nl[i].is_discretionary and levels[i].level %2 ~= base_level and not nl[i].bidiDone then
       for j = 1, #(nl[i].replacement) do
-        if nl[i].replacement[j]:isNnode() then
-          table.flip(nl[i].replacement[j].nodes)
+        if nl[i].replacement[j].is_nnode then
+          SU.flip_in_place(nl[i].replacement[j].nodes)
           reverse_each_node(nl[i].replacement[j].nodes)
         end
       end
       for j = 1, #(nl[i].prebreak) do
-        if nl[i].prebreak[j]:isNnode() then
-          table.flip(nl[i].prebreak[j].nodes)
+        if nl[i].prebreak[j].is_nnode then
+          SU.flip_in_place(nl[i].prebreak[j].nodes)
           reverse_each_node(nl[i].prebreak[j].nodes)
         end
       end
       for j = 1, #(nl[i].postbreak) do
-        if nl[i].postbreak[j]:isNnode() then
-          table.flip(nl[i].postbreak[j].nodes)
+        if nl[i].postbreak[j].is_nnode then
+          SU.flip_in_place(nl[i].postbreak[j].nodes)
           reverse_each_node(nl[i].postbreak[j].nodes)
         end
       end
@@ -150,7 +150,7 @@ local nodeListToText = function (nl)
       end
     else
       owners[p] = { node = n }
-      text[p] = SU.utf8char(0xFFFC)
+      text[p] = luautf8.char(0xFFFC)
       p = p + 1
     end
   end
@@ -158,10 +158,10 @@ local nodeListToText = function (nl)
 end
 
 local splitNodeAtPos = function (n, splitstart, p)
-  if n:isUnshaped() then
+  if n.is_unshaped then
     local utf8chars = SU.splitUtf8(n.text)
-    local n2 = SILE.nodefactory.newUnshaped({ text = "", options = std.table.clone(n.options) })
-    local n1 = SILE.nodefactory.newUnshaped({ text = "", options = std.table.clone(n.options) })
+    local n2 = SILE.nodefactory.unshaped({ text = "", options = pl.tablex.copy(n.options) })
+    local n1 = SILE.nodefactory.unshaped({ text = "", options = pl.tablex.copy(n.options) })
     for i = splitstart, #utf8chars do
       if i <= p then n1.text = n1.text .. utf8chars[i]
       else n2.text = n2.text .. utf8chars[i]
@@ -232,46 +232,65 @@ local bidiBoxupNodes = function (self)
   for i = 1, #self.state.nodes do
     if not self.state.nodes[i].bidiDone then allDone = false end
   end
-  if allDone then return SILE.defaultTypesetter.boxUpNodes(self) end
+  if allDone then return self:nobidi_boxUpNodes() end
   local newNodeList = splitNodelistIntoBidiRuns(self)
   self:shapeAllNodes(newNodeList)
   self.state.nodes = newNodeList
-  local vboxlist = SILE.defaultTypesetter.boxUpNodes(self)
+  local vboxlist = self:nobidi_boxUpNodes()
   -- Scan for out-of-direction material
   for i = 1, #vboxlist do
     local v = vboxlist[i]
-    if v:isVbox() then reorder(v, self) end
+    if v.is_vbox then reorder(v, self) end
   end
   return vboxlist
 end
 
-SILE.typesetter.boxUpNodes = bidiBoxupNodes
+local bidiEnableTypesetter = function (typesetter)
+  if typesetter.nobidi_boxUpNodes then
+    return SU.warn("BiDi already enabled, nothing to turn on")
+  end
+  typesetter.nobidi_boxUpNodes = typesetter.boxUpNodes
+  typesetter.boxUpNodes = bidiBoxupNodes
+end
+
+local bidiDisableTypesetter = function (typesetter)
+  if not typesetter.nobidi_boxUpNodes then
+    return SU.warn("BiDi not enabled, nothing to turn off")
+  end
+  typesetter.boxUpNodes = typesetter.nobidi_boxUpNodes
+  typesetter.nobidi_boxUpNodes = nil
+end
+
+bidiEnableTypesetter(SILE.typesetter)
+bidiEnableTypesetter(SILE.defaultTypesetter)
 
 SILE.registerCommand("bidi-on", function (_, _)
-  SILE.typesetter.boxUpNodes = bidiBoxupNodes
+  bidiEnableTypesetter(SILE.typesetter)
 end)
 
 SILE.registerCommand("bidi-off", function (_, _)
-  SILE.typesetter.boxUpNodes = SILE.defaultTypesetter.boxUpNodes
+  bidiDisableTypesetter(SILE.typesetter)
 end)
 
 return {
 reorder = reorder,
+bidiEnableTypesetter = bidiEnableTypesetter,
+bidiDisableTypesetter = bidiDisableTypesetter,
 documentation = [[\begin{document}
 
 Scripts like the Latin alphabet you are currently reading are normally written left to
 right; however, some scripts, such as Arabic and Hebrew, are written right to left.
-The \code{bidi} package, which is loaded by default, provides SILE with the ability to
+The \autodoc:package{bidi} package, which is loaded by default, provides SILE with the ability to
 correctly typeset right-to-left text and also documents which mix right-to-left and
 left-to-right typesetting. Because it is loaded by default, you can use both
 LTR and RTL text within a paragraph and SILE will ensure that the output
 characters appear in the correct order.
 
-The \code{bidi} package provides two commands, \command{\\thisframeLTR} and
-\command{\\thisframeRTL}, which set the default text direction for the current frame.
+The \autodoc:package{bidi} package provides two commands, \autodoc:command{\thisframeLTR} and
+\autodoc:command{\thisframeRTL}, which set the default text direction for the current frame.
 That is, if you tell SILE that a frame is RTL, the text will start in the right margin
-and proceed leftward. It also provides the commands \command{\\bidi-off} and
-\command{\\bidi-on}, which allow you to trade off bidirectional support for a dubious
-increase in speed.
+and proceed leftward. It also provides the commands \autodoc:command{\bidi-off} and
+\autodoc:command{\bidi-on}, which allow you to trade off bidirectional support for a
+dubious increase in speed.
 
 \end{document}]] }

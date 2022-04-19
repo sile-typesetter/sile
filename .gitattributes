@@ -1,0 +1,4 @@
+# Code we didn't write that Linguist doesn't already detect as vendored
+cmake/* linguist-vendored
+build-aux/* linguist-vendored
+lua-libraries/* linguist-vendored

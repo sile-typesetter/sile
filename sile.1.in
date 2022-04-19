@@ -1,63 +1,57 @@
-.TH sile 1 "18 October 2019" "version @VERSION@"
+.TH @TRANSFORMED_PACKAGE_NAME@ 1 "@MAN_DATE@" "version v@VERSION@"
 .SH NAME
-sile \- Simon's Improved Layout Engine
+@TRANSFORMED_PACKAGE_NAME@ \- Simon's Improved Layout Engine
 .SH SYNOPSIS
-.B sile [
+.B @TRANSFORMED_PACKAGE_NAME@ [
 .I options
-.B ] (
+.B ] [
 .I filename.sil
 .B |
 .I filename.xml
-.B )
+.B ]
 .SH DESCRIPTION
-The SILE typesetter reads a single input file in either SIL or XML format to
-generate an output in PDF format. The output will be written to the same name
-as the input file with the extension changed to .pdf.
+The SILE typesetter reads a single input file in either SIL or XML format and generates an output in PDF format.
+The output will be written to the same name as the input file with the extension changed to .pdf unless the \fB\-\-output\fR flag is used.
 .SH OPTIONS
-.B sile
+.B @TRANSFORMED_PACKAGE_NAME@
 accepts the following options:
 .TP
-.B --help
+.BR \-h ", " \-\-help
 Print help message and exit.
 .TP
-.B --version
+.BR \-v ", " \-\-version
 Print version information and exit.
 .TP
-.BI --backend= value
-Choose an alternative output backend. The default backend for producing PDF
-files is
-.IR libtexpdf .
-Other available backends include
-.IR cairo ", " debug ", " text ", and " dummy "."
+.BR \-b ", " \-\-backend= \fIvalue\fR
+Choose an alternative output backend.
+The default backend for producing PDF files is \fIlibtexpdf\fR.
+Other available backends include \fIcairo\fR, \fIdebug\fR, \fItext\fR, and \fIdummy\fR.
 .TP
-.BI --debug= value
-Debug SILE's operation. Debug flags are comma separated. While packages may
-define their own debug flags, the most commonly used ones are
-.IR typesetter ", " pagebuilder ", " vboxes ", " break ", " frames ", "
-.IR profile ", and " versions "."
+.BR \-d ", " \-\-debug= \fIvalue\fR[,\fIvalue\fR]
+Debug SILE's operation.
+Multiple debug flags may be given as a comma separated list.
+While packages may define their own debug flags, the most commonly used ones are \fItypesetter\fR, \fIpagebuilder\fR, \fIvboxes\fR, \fIbreak\fR, \fIframes\fR, \fIprofile\fR, and \fIversions\fR.
+May be specified more than once.
 .TP
-.BI --evaluate= value
+.BR \-e ", " \-\-evaluate= \fIvalue\fR
 Evaluate some Lua code before processing the input file.
+May be specified more than once.
 .TP
-.BI --fontmanager= value
-Choose an alternative font manager. The font manager is responsible for
-discovering the locations on font files on the system given a font name.
-The default font manager is
-.I fontconfig
-on non-Mac systems and
-.I macfonts
-on OS X.
+.BR \-f ", " \-\-fontmanager= \fIvalue\fR
+Choose an alternative font manager.
+The font manager is responsible for discovering the locations on font files on the system given a font name.
+The default font manager is \fIfontconfig\fR on non-Mac systems and \fImacfonts\fR on OS X.
 .TP
-.BI --makedeps [=file]
+.BR \-m ", " \-\-makedeps \fIfile\fR
 Generate a list of dependencies in Makefile format.
 .TP
-.BI --output [=file]
+.BR \-o ", " \-\-output= \fIfile\fR
 Explicitly set the output file name.
 .TP
-.BI --include [=file]
-Include a class or SILE file before processing input. This is particularly
-useful if the input file is in an XML format and requires a SILE class to
-provide processing expectations for its tags.
+.BR \-I ", " \-\-include= \fIfile\fR
+Include a class or SILE file before processing input.
+This is particularly useful if the input file is in an XML format and requires a SILE class to provide processing expectations for its tags.
+May be specified more than once.
 .TP
-.BI --traceback
+.BR \-t ", " \-\-traceback
 Display detailed location trace on errors and warnings.

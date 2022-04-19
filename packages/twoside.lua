@@ -8,7 +8,7 @@ local mirrorMaster = function(_, existing, new)
     SU.error("Can't find master "..existing)
   end
   for name, frame in pairs(SILE.scratch.masters[existing].frames) do
-    local newframe  = std.tree.clone(frame)
+    local newframe = pl.tablex.deepcopy(frame)
     if frame:isAbsoluteConstraint("right") then
       newframe.constraints.left = "100%pw-("..frame.constraints.right..")"
     end
@@ -50,5 +50,12 @@ return {
         self.switchMaster(self.oddPageMaster)
       end
     end
-  }
+  }, documentation = [[
+\begin{document}
+The \code{book} class described in chapter 4 sets up left and right mirrored
+page masters; the \autodoc:package{twoside} package is responsible for swapping between
+the two left and right frames, running headers and so on. It has no user-serviceable
+parts.
+\end{document}
+]]
 }

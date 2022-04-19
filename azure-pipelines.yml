@@ -1,10 +1,11 @@
-trigger:
-  - master
-  - devel
+trigger: none
+  # Disable Windows CI builds until somebody is actually working on fixing them
+  # - master
+  # - devel
 jobs:
 - job: Windows
   pool:
-    vmImage: 'vs2017-win2016'
+    vmImage: 'windows-2019'
   steps:
     - checkout: self
       submodules: true
@@ -14,7 +15,7 @@ jobs:
 
       displayName: Set git user name and email
 
-    - script: cmake -G "Visual Studio 15 2017" -A x64 "-DCMAKE_INSTALL_PREFIX=$(Build.ArtifactStagingDirectory)" -S $(Build.SourcesDirectory) -B $(Build.BinariesDirectory)
+    - script: cmake -G "Visual Studio 16 2019" -A x64 "-DCMAKE_INSTALL_PREFIX=$(Build.ArtifactStagingDirectory)" -S $(Build.SourcesDirectory) -B $(Build.BinariesDirectory)
       displayName: Configure solution with CMake script
 
     - script: cmake --build $(Build.BinariesDirectory) --config Release

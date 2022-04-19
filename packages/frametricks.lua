@@ -4,7 +4,7 @@ local breakFrameVertical = function (after)
   if after then
     totalHeight = after
   else
-    totalHeight = 0
+    totalHeight = SILE.length(0)
     SILE.typesetter:leaveHmode(1)
     local queue = SILE.typesetter.state.outputQueue
     for i = 1, #queue do
@@ -12,8 +12,6 @@ local breakFrameVertical = function (after)
     end
     SILE.typesetter:chuck()
   end
-
-  if type(totalHeight) == "table" then totalHeight = totalHeight.length end
 
   local newFrame = SILE.newFrame({
     bottom = cFrame:bottom(),
@@ -43,7 +41,7 @@ end
 
 local breakFrameHorizontalAt = function (offset)
   local cFrame = SILE.typesetter.frame
-  if not offset or not (offset > 0) then
+  if not offset or not (offset > SILE.length(0)) then
     SILE.typesetter:chuck()
     offset = SILE.typesetter.frame.state.cursorX
   end
@@ -70,10 +68,10 @@ end
 
 local shiftframeedge = function (frame, options)
   if options.left then
-    frame:constrain("left", frame:left() + SILE.length.parse(options.left).length)
+    frame:constrain("left", frame:left() + SILE.length(options.left))
   end
   if options.right then
-    frame:constrain("right", frame:right() + SILE.length.parse(options.right).length)
+    frame:constrain("right", frame:right() + SILE.length(options.right))
   end
 end
 
@@ -115,7 +113,7 @@ local mergeColumns = function ()
   -- 1) Balance all remaining material.
 
   -- 1.1) Run the pagebuilder once to clear out any full pages
-  SILE.typesetter:pageBuilder()
+  SILE.typesetter:buildPage()
 
   -- 1.2) Find out the shape of the columnset. (It will change after we balance it)
   local frame = SILE.typesetter.frame
@@ -128,7 +126,7 @@ local mergeColumns = function ()
 
   -- 1.3) Now force a balance, which will resize the frames
   SILE.call("balancecolumns")
-  SILE.typesetter:pageBuilder()
+  SILE.typesetter:buildPage()
 
   -- 2) Add a new frame, the width of the old frameset and the height of
   -- old frameset - new height, at the end of the current frame
@@ -144,8 +142,8 @@ end, "Merge multiple columns into one")
 SILE.registerCommand("showframe", function (options, _)
   local id = options.id or SILE.typesetter.frame.id
   if id == "all" then
-    for _, f in pairs(SILE.frames) do
-      SILE.outputter:debugFrame(f)
+    for _, frame in pairs(SILE.frames) do
+      SILE.outputter:debugFrame(frame)
     end
   else
     SILE.outputter:debugFrame(SILE.getFrame(id))
@@ -160,7 +158,7 @@ SILE.registerCommand("shiftframeedge", function (options, _)
 end, "Adjusts the edge of the frame horizontally by amounts specified in <left> and <right>")
 
 SILE.registerCommand("breakframevertical", function (options, _)
-  breakFrameVertical(options.offset and SILE.length.parse(options.offset).length)
+  breakFrameVertical(options.offset)
 end, "Breaks the current frame in two vertically at the current location or at a point <offset> below the current location")
 
 SILE.registerCommand("makecolumns", function (options, _)
@@ -168,30 +166,31 @@ SILE.registerCommand("makecolumns", function (options, _)
 end, "Split the current frame into multiple columns")
 
 SILE.registerCommand("breakframehorizontal", function (options, _)
-  breakFrameHorizontalAt(options.offset and SILE.length.parse(options.offset).length)
+  breakFrameHorizontalAt(options.offset)
 end, "Breaks the current frame in two horizontally either at the current location or at a point <offset> from the left of the current frame")
 
 SILE.registerCommand("float", function (options, content)
   SILE.typesetter:leaveHmode()
   local hbox = SILE.call("hbox", {}, content)
   table.remove(SILE.typesetter.state.nodes) -- steal it back
-  local heightOfPageSoFar = SILE.pagebuilder.collateVboxes(SILE.typesetter.state.outputQueue).height
-  if SILE.length.make(heightOfPageSoFar + hbox.height - SILE.typesetter:pageTarget()).length > 0 then
+  local heightOfPageSoFar = SILE.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue).height
+  local overshoot = SILE.length(heightOfPageSoFar + hbox.height - SILE.typesetter:getTargetLength())
+  if overshoot > SILE.length(0) then
     SILE.call("eject")
     SILE.typesetter:leaveHmode()
   end
   breakFrameVertical()
-  local boundary = hbox.width.length + SILE.toAbsoluteMeasurement(SILE.length.parse(options.rightboundary).length)
+  local boundary = hbox.width + SILE.length(options.rightboundary):absolute()
   breakFrameHorizontalAt(boundary)
   SILE.typesetNaturally(SILE.typesetter.frame.previous, function ()
     table.insert(SILE.typesetter.state.nodes, hbox)
   end)
-  local undoSkip = SILE.settings.get("document.baselineskip").height:negate().length + SILE.length.parse("1ex")
-  undoSkip.stretch = hbox.height
-  SILE.typesetter:pushHbox({value = {}})
-  -- SILE.typesetter:pushVglue({height = undoSkip })
-  breakFrameVertical(hbox.height + SILE.toAbsoluteMeasurement(SILE.length.parse(options.bottomboundary).length))
-  shiftframeedge(SILE.getFrame(SILE.typesetter.frame.next), {left = ""..tostring(SILE.length.new() - boundary)})
+  -- SILE.settings.set("document.baselineskip", SILE.length("1ex") - SILE.settings.get("document.baselineskip").height)
+  -- undoSkip.stretch = hbox.height
+  -- SILE.typesetter:pushHbox({ value = {} })
+  -- SILE.typesetter:pushVglue({ height = undoSkip })
+  breakFrameVertical(hbox.height + SILE.length(options.bottomboundary):absolute())
+  shiftframeedge(SILE.getFrame(SILE.typesetter.frame.next), { left = -boundary })
   --SILE.outputter:debugFrame(SILE.typesetter.frame)
 end, "Sets the given content in its own frame, flowing the remaining content around it")
 
@@ -208,20 +207,93 @@ SILE.registerCommand("fit-frame", function (options, _)
   if not SILE.frames[options.frame] then
     SU.error("Can't find frame "..options.frame.." to fit")
   end
-  local f = SILE.frames[options.frame]
-  local h = SILE.length.new()
-  SILE.typesetNaturally(f, function ()
+  local frame = SILE.frames[options.frame]
+  local height = SILE.length()
+  SILE.typesetNaturally(frame, function ()
     SILE.typesetter:leaveHmode()
     for i = 1, #SILE.typesetter.state.outputQueue do
-      h = h + SILE.typesetter.state.outputQueue[i].height
+      height = height + SILE.typesetter.state.outputQueue[i].height
     end
   end)
-  f:constrain("height", f:height() + h.length)
+  frame:constrain("height", frame:height() + height)
 end)
 
 return {
   init = function () end,
   exports = {
     breakFrameVertical = breakFrameVertical
-  }
+  }, documentation = [[
+\begin{document}
+As we mentioned in the first chapter, SILE uses frames as an indication
+of where to put text onto the page. The \autodoc:package{frametricks} package assists
+package authors by providing a number of commands to manipulate frames.
+
+The most immediately useful is \autodoc:command{\showframe}. This asks the output
+engine to draw a box and label around a particular frame. It takes an optional
+parameter \autodoc:parameter{id=<frame id>}; if this is not supplied, the current
+frame is used. If the ID is \code{all}, then all frames declared by the
+current class are displayed.
+
+It’s possible to define frames such as sidebars which are not connected
+to the main text flow of a page. We’ll see how to do that in a later chapter, but
+this raises the obvious question: if they’re not part of the text flow, how do we
+get stuff into them? \autodoc:package{frametricks} provides the \autodoc:command{\typeset-into}
+command, which allows you to write text into a specified frame:
+
+\begin{verbatim}
+\line
+\\typeset-into[frame=sidebar]\{ ... frame content here ... \}
+\line
+\end{verbatim}
+
+\autodoc:package{frametricks} also provides a number of commands which, to be perfectly
+honest, we \em{thought} were going to be useful, but haven’t quite ended up
+being as useful as all that.
+
+\breakframevertical\par
+The command \autodoc:command{\breakframevertical} breaks the current frame in two
+at the specified location into an upper and lower frame. If the frame initially had the ID
+\code{main}, then \code{main} becomes the upper frame (before the command)
+and the lower frame (after the command) is called \code{main_}. We just
+issued a \autodoc:command{\breakframevertical} command at the start of this paragraph,
+and now we will issue the command \autodoc:command{\showframe}. \showframe As you can
+see, the current frame is called
+\code{\script{SILE.typesetter:typeset(SILE.typesetter.frame.id)}}
+and now begins at the start of the paragraph.
+
+Similarly, the \autodoc:command{\breakframehorizontal} command breaks the frame in two
+into a left and a right frame.
+The command takes an optional argument \autodoc:parameter{offset=<dimension>}, specifying
+where on the line the frame should be split. If it is not supplied, the
+frame is split at the current position in the line.
+
+The command \autodoc:command{\shiftframeedge} allows you to reposition the current
+frame left or right. It takes \autodoc:parameter{left} and/or \autodoc:parameter{right} parameters,
+which can be positive or negative dimensions. It should only be used at the
+top of a frame, as it reinitializes the typesetter object.
+
+Combining all of these commands, the \autodoc:command{\float} command breaks the current
+frame, creates a small frame to hold a floating object, flows text into
+the surrounding frame, and then, once text has descended past the floating object,
+moves the frame back into place again. It takes two optional parameters,
+\autodoc:parameter{bottomboundary=<dimension>} and/or \autodoc:parameter{rightboundary=<dimension>},
+which open up additional space around the frame. At the start of this paragraph, I issued
+the command
+
+\medskip
+\begin{verbatim}
+\\float[bottomboundary=5pt]\{\\font[size=60pt]\{C\}\}.
+\end{verbatim}
+
+To reiterate: we started playing around with frames like this in the early
+days of SILE and they have not really proved a good solution to the things
+we wanted to do with them. They’re great for arranging where content should
+live on the page, but messing about with them dynamically seems to create
+more problems than it solves. There’s probably a reason why InDesign and
+similar applications handle floats, drop caps, tables and so on inside the
+context of a content frame rather than by messing with the frames themselves.
+If you feel tempted to play with \autodoc:package{frametricks}, there’s almost always
+a better way to achieve what you want without it.
+\end{document}
+]]
 }

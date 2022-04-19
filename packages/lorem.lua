@@ -87,6 +87,18 @@ SILE.registerCommand("lorem", function (options, _)
   SILE.settings.temporarily(function ()
     SILE.settings.set("document.language", "la")
     SILE.typesetter:typeset(text)
-    SILE.typesetter:leaveHmode()
   end)
 end)
+
+return {
+  documentation = [[
+\begin{document}
+Sometimes you just need some dummy text. The command \autodoc:command{\lorem}
+produces fifty words of “lorem ipsum”; you can choose a different
+number of words with the \autodoc:parameter{words=<number>} parameter. Here’s
+\autodoc:command{\lorem[words=20]}:
+
+\examplefont{\lorem[words=20]}
+\end{document}
+]]
+}
