@@ -1,5 +1,46 @@
-local _oldplain = {
-  registerCommands = function ()
+local plain = pl.class(SILE.classes.base)
+
+plain.defaultFrameset = {
+  content = {
+    left = "5%pw",
+    right = "95%pw",
+    top = "5%ph",
+    bottom = "top(footnotes)"
+  },
+  folio = {
+    left = "left(content)",
+    right = "right(content)",
+    top = "bottom(footnotes)+2%ph",
+    bottom = "97%ph"
+  },
+  footnotes = {
+    left = "left(content)",
+    right = "right(content)",
+    height = "0",
+    bottom = "90%ph"
+  }
+}
+plain.firstContentFrame = "content"
+
+function plain:_init (options)
+  SILE.require("packages/bidi")
+  self:declareOption("direction", function (value)
+    if value then
+      for _, frame in pairs(self.defaultFrameset) do
+        if not frame.direction then
+          frame.direction = value
+        end
+      end
+    end
+    return value
+  end)
+  self:super(options)
+  self:loadPackage("folio")
+end
+
+function plain:registerCommands ()
+
+  SILE.classes.base.registerCommands(self)
 
     SILE.registerCommand("noindent", function (_, content)
       if #SILE.typesetter.state.nodes ~= 0 then
@@ -256,11 +297,10 @@ local _oldplain = {
             d = attr.depth > d and attr.depth or d
             l = l + attr:lineContribution():absolute()
           end
-        else
-          recentContribution[#recentContribution+1] = node
-          l = l + node:lineContribution():absolute()
-          h = node.height > h and node.height or h
-          d = node.depth > d and node.depth or d
+          typesetter.frame.state.cursorX = ox
+          typesetter.frame.state.cursorY = oy
+          _post()
+          if SU.debugging("hboxes") then SILE.outputter:debugHbox(self, self:scaledWidth(line)) end
         end
         SILE.typesetter.state.nodes[i] = nil
       end
@@ -300,52 +340,6 @@ local _oldplain = {
       return vbox
     end, "Compiles all the enclosed material into a single vbox")
 
-  end
-}
-
-local plain = pl.class(SILE.classes.base)
-
-plain.defaultFrameset = {
-  content = {
-    left = "5%pw",
-    right = "95%pw",
-    top = "5%ph",
-    bottom = "top(footnotes)"
-  },
-  folio = {
-    left = "left(content)",
-    right = "right(content)",
-    top = "bottom(footnotes)+2%ph",
-    bottom = "97%ph"
-  },
-  footnotes = {
-    left = "left(content)",
-    right = "right(content)",
-    height = "0",
-    bottom = "90%ph"
-  }
-}
-plain.firstContentFrame = "content"
-
-function plain:_init (options)
-  SILE.require("packages/bidi")
-  self:declareOption("direction", function (value)
-    if value then
-      for _, frame in pairs(self.defaultFrameset) do
-        if not frame.direction then
-          frame.direction = value
-        end
-      end
-    end
-    return value
-  end)
-  self:super(options)
-  self:loadPackage("folio")
-end
-
-function plain:registerCommands ()
-  self._base.registerCommands()
-  _oldplain.registerCommands()
 end
 
 function plain:endPage ()
