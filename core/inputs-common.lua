@@ -4,12 +4,8 @@ SILE.inputs.common = {
     local class = tree.options.class or "plain"
     local class_constructor = SILE.require(class, "classes")
     tree.options.papersize = tree.options.papersize or "a4"
+    tree.options.class = nil
     SILE.documentState.documentClass = class_constructor(tree.options)
-    for option, value in pairs(tree.options) do
-      if SILE.documentState.documentClass.options[option] == "function" then
-        SILE.documentState.documentClass.options[option](value)
-      end
-    end
     -- Prepend the dirname of the input file to the Lua search path
     local dirname = SILE.masterFilename:match("(.-)[^%/]+$")
     package.path = dirname.."?;"..dirname.."?.lua;"..package.path

@@ -30,7 +30,8 @@ return {
 
     outputFolio = function (_, frame)
       if not frame then frame = "folio" end
-      io.stderr:write("[" .. SILE.formatCounter(SILE.scratch.counters.folio) .. "] ")
+      local folio = SILE.formatCounter(SILE.scratch.counters.folio)
+      io.stderr:write("[" .. folio .. "] ")
       if SILE.scratch.counters.folio.off then
         if SILE.scratch.counters.folio.off == 2 then
           SILE.scratch.counters.folio.off = false

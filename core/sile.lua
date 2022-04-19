@@ -119,17 +119,13 @@ end
 
 SILE.require = function (dependency, pathprefix)
   dependency = dependency:gsub(".lua$", "")
-  if pathprefix then
-    local path = pl.path.join(pathprefix, dependency)
-    local status, lib = pcall(require, path)
-    if status then return lib end
-  end
-  local dep = require(dependency)
+  local path = pathprefix and pl.path.join(pathprefix, dependency) or dependency
+  local lib = require(path)
   local class = SILE.documentState.documentClass
-  if type(class) == "table" then
-    class:initPackage(dep)
+  if lib and class then
+    class:initPackage(lib)
   end
-  return dep
+  return lib
 end
 
 SILE.parseArguments = function ()

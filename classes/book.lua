@@ -1,8 +1,7 @@
-local plain = SILE.require("plain", "classes")
+local plain = require("classes.plain")
 
 local book = pl.class(plain)
-
-local counters = SILE.require("packages/counters").exports
+book._name = "book"
 
 book.defaultFrameset = {
   content = {
@@ -31,8 +30,9 @@ book.defaultFrameset = {
   }
 }
 
-function book:_init ()
-  plain._init(self)
+function book:_init (options)
+  plain._init(self, options)
+  self:loadPackage("counters")
   self:loadPackage("masters")
   self:defineMaster({
       id = "right",
@@ -40,13 +40,17 @@ function book:_init ()
       frames = self.defaultFrameset
     })
   self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
-  self:mirrorMaster("right", "left")
+  self:registerPostinit(function(self_)
+      self_:mirrorMaster("right", "left")
+      if not SILE.scratch.headers then SILE.scratch.headers = {} end
+  end)
   self:loadPackage("tableofcontents")
-  if not SILE.scratch.headers then SILE.scratch.headers = {} end
   self:loadPackage("footnotes", {
-    insertInto = "footnotes",
-    stealFrom = { "content" }
-  })
+      insertInto = "footnotes",
+      stealFrom = { "content" }
+    })
+  -- Avoid calling this (yet) if we're the parant of some child class
+  if self._name == "book" then self:post_init() end
   return self
 end
 
@@ -107,6 +111,7 @@ book.registerCommands = function (_)
     local number
     if SU.boolean(options.numbering, true) then
       SILE.call("increment-multilevel-counter", { id = "sectioning", level = level })
+      -- TODO: counters isn't a global any more, where did it go on loadPackage?
       number = SILE.formatMultilevelCounter(counters.getMultilevelCounter("sectioning"))
     end
     if SU.boolean(options.toc, true) then

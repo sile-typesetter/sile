@@ -1,8 +1,7 @@
--- foo
 local base = pl.class()
+base._name = "base"
 
 -- base.type = "class"
-base._name = "base"
 base._initialized = false
 base.deferredInit = {}
 base.pageTemplate = std.object { frames = {}, firstContentFrame = nil }
@@ -45,12 +44,20 @@ function base:_init (options)
   self:registerCommands()
   self:declareFrames(self.defaultFrameset)
   self.pageTemplate.firstContentFrame = self.pageTemplate.frames[self.firstContentFrame]
-  for _, f in ipairs(self.deferredInit) do f() end
   SILE.typesetter:registerPageEndHook(function ()
     if SU.debugging("frames") then
       for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
     end
   end)
+  -- Avoid calling this (yet) if we're the parant of some child class
+  if self._name == "base" then self:post_init() end
+  return self
+end
+
+function base:post_init ()
+  for _, pkginit in ipairs(self.deferredInit) do
+    pkginit(self)
+  end
   self._initialized = true
 end
 
@@ -133,12 +140,19 @@ function base:initPackage (pack, args)
   if type(pack) == "table" then
     if pack.exports then pl.tablex.update(self, pack.exports) end
     if type(pack.init) == "function" then
-      table.insert(self.deferredInit, function () pack.init(self, args) end)
       if self._initialized then
         pack.init(self, args)
+      else
+        self:registerPostinit(pack.init, args)
       end
     end
   end
+end
+
+function base:registerPostinit (func, args)
+  table.insert(self.deferredInit, function (self_)
+      func(self_, args)
+    end)
 end
 
 base.registerCommands = function (_)
