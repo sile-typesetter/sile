@@ -459,11 +459,11 @@ SILE.defaultTypesetter = std.object {
     end
     if (self.frame.next and not (self.state.lastPenalty <= supereject_penalty )) then
       self:initFrame(SILE.getFrame(self.frame.next))
+    elseif #self.state.outputQueue == 0 then
+        self:leaveHmode(true)
     elseif not self.frame:isMainContentFrame() then
-      if #self.state.outputQueue > 0 then
-        SU.warn("Overfull content for frame "..self.frame.id)
-        self:chuck()
-      end
+      SU.warn("Overfull content for frame "..self.frame.id)
+      self:chuck()
     else
       self:runHooks("pageend")
       SILE.documentState.documentClass:endPage()
