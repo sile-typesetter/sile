@@ -5,10 +5,6 @@ local inf_bad = 10000
 local supereject_penalty = 2 * -inf_bad
 -- local deplorable = 100000
 
-if std.string.monkey_patch then -- stdlib >= 40
-  std.string.monkey_patch()
-end
-
 SILE.settings.declare({
   parameter = "typesetter.widowpenalty",
   type = "integer",
