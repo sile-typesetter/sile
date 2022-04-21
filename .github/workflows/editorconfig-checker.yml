@@ -1,0 +1,18 @@
+name: EditorConfig checker
+
+on: [push, pull_request]
+
+jobs:
+
+  editorconfig-checker:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install EditorConfig checker
+        uses: editorconfig-checker/action-editorconfig-checker@d4fca16fc71adef10fbe101903b654449fa9570c
+
+      - name: Check all files
+        run: editorconfig-checker
+
