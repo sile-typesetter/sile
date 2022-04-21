@@ -9,6 +9,8 @@ Default: \show-counter[id=test]
 
 Alpha: \show-counter[id=test,display=alpha]
 
+N'th: \show-counter[id=test,display=nth]
+
 Roman: \show-counter[id=test,display=ROMAN]
 
 Greek: \font[language=el]{\show-counter[id=test,display=greklow]}
@@ -16,6 +18,8 @@ Greek: \font[language=el]{\show-counter[id=test,display=greklow]}
 Japanese: \font[family=Noto Sans CJK JP,language=ja]{\show-counter[id=test,display=jpan]}
 
 Arabic-Indic: \font[family=Noto Naskh Arabic,language=ar]{\show-counter[id=test,display=arabext]}
+
+English String: \show-counter[id=test,display=String]
 
 Turkish String: \font[language=tr]{\show-counter[id=test,display=String]}
 

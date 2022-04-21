@@ -1,0 +1,20 @@
+# Default
+*	@alerque @simoncozens
+
+# Language expertise
+languages/fr*	@sile-typesetter/lang-fr
+languages/ja*	@sile-typesetter/lang-ja @sile-typesetter/lang-cjk
+languages/tr*	@sile-typesetter/lang-tr
+
+# Package expertise
+packages/math*	@sile-typesetter/math
+packages/pandoc*	@alerque
+
+packages/hanmenkyoshi*	@sile-typesetter/lang-cjk
+packages/ruby*	@sile-typesetter/lang-cjk
+packages/tate*	@sile-typesetter/lang-cjk
+
+# Distro Packaging
+*.nix	@alerque @doronbehar
+
+# vim: ts=24 sw=24 noet

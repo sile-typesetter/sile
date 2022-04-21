@@ -1,0 +1,45 @@
+version: 2
+updates:
+
+  # Catch libtexpdf updates that didn't get explicitly updated
+  - package-ecosystem: "gitsubmodule"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - "alerque"
+      - "simoncozens"
+    labels:
+      - "todo"
+    commit-message:
+      prefix: "chore(backends)"
+
+  # Catch tooling updates (commitlint, etc.), nothing critical here
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    reviewers:
+      - "alerque"
+    labels:
+      - "todo"
+    commit-message:
+      prefix: "chore(deps)"
+    open-pull-requests-limit: 1
+
+  # Catch updates to Github Actions CI tooling
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - "alerque"
+    labels:
+      - "todo"
+    commit-message:
+      prefix: "chore(deps)"
+    ignore:
+      - dependency-name: "docker/build-push-action"
+        versions: [ "2.x" ]
+      - dependency-name: "actions/cache"
+        versions: [ "2.x" ]

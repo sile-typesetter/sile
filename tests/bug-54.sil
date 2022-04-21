@@ -1,8 +1,10 @@
-\begin[papersize=a5]{document}
+\begin[papersize=a6]{document}
+\nofolios
+\font[family=Gentium Plus,size=12pt]
 \set[parameter=document.parindent,value=10mm]
 \set[parameter=current.parindent,value=10mm]
-First line \par
-First word, first paragraph.
+First paragraph. \par
+Second paragraph.
 
-First word, second paragraph.
+Third paragraph.
 \end{document}

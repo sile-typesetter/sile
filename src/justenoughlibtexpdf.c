@@ -7,9 +7,14 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
+#if !defined LUA_VERSION_NUM || LUA_VERSION_NUM==501
+#define lua_rawlen lua_strlen
+#endif
+
 pdf_doc *p = NULL;
 double height = 0.0;
 double precision = 65536.0;
+char* producer = "SILE";
 
 #define ASSERT_PDF_OPENED(p) \
   if (!p) { \
@@ -22,6 +27,7 @@ int pdf_init (lua_State *L) {
   const char*  fn = luaL_checkstring(L, 1);
   double w = luaL_checknumber(L, 2);
   height = luaL_checknumber(L, 3);
+  producer = luaL_checkstring(L, 4);
 
   p = texpdf_open_document(fn, 0, w, height, 0,0,0);
   texpdf_init_device(p, 1/precision, 2, 0);
@@ -36,7 +42,7 @@ int pdf_init (lua_State *L) {
   texpdf_doc_set_mediabox(p, 0, &mediabox);
   texpdf_add_dict(p->info,
                texpdf_new_name("Producer"),
-               texpdf_new_string("SILE", 4));
+               texpdf_new_string(producer, strlen(producer)));
   return 0;
 }
 
@@ -317,13 +323,14 @@ int pdf_end_annotation(lua_State *L) {
 
 int pdf_metadata(lua_State *L) {
   const char* key = luaL_checkstring(L, 1);
-  const char* val = luaL_checkstring(L, 2);
+  const char* value = luaL_checkstring(L, 2);
+  int len = lua_rawlen(L, 2);
   ASSERT(p);
   ASSERT(key);
-  ASSERT(val);
+  ASSERT(value);
   texpdf_add_dict(p->info,
                texpdf_new_name(key),
-               texpdf_new_string(val, strlen(val)));
+               texpdf_new_string(value, len));
 }
 /* Images */
 
@@ -402,10 +409,6 @@ int pdf_grestore(lua_State *L) {
   texpdf_dev_grestore(p);
   return 0;
 }
-
-#if !defined LUA_VERSION_NUM || LUA_VERSION_NUM==501
-#define lua_rawlen lua_strlen
-#endif
 
 int pdf_add_content(lua_State *L) {
   const char* input = luaL_checkstring(L, 1);
@@ -529,7 +532,7 @@ int pdf_version(lua_State *L) {
 /*
 ** Adapted from Lua 5.2.0
 */
-static void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
+void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
   luaL_checkstack(L, nup+1, "too many upvalues");
   for (; l->name != NULL; l++) {  /* fill the table with given functions */
     int i;

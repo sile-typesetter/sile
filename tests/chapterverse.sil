@@ -1,7 +1,9 @@
 \begin[papersize=a7,class=bible]{document}
-\script[src=packages/lorem]
+\nofolios
+\font[family=Gentium Plus]
 \begin{script}
 SILE.registerCommand("format-reference", function (options, content)
+  SILE.call("font", { family = "Gentium Plus" })
   local ref
   if content.book then
 	ref =  content.book .. " " .. content.chapter .. ", " .. content.verse
@@ -15,6 +17,11 @@ SILE.registerCommand("bible:verse-number", function(options, content) end)
 \save-book-title{Gn}
 \save-chapter-number{1}
 \verse-number{1}
-\verse-number{2}
 foo
+\verse-number{2}
+bar\par
+\pagebreak
+
+\verse-number{3}
+baz
 \end{document}
