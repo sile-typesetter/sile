@@ -26,7 +26,7 @@
     "conventional-changelog-cli": "^2.2.2",
     "husky": "^7.0.4",
     "standard-version": "^9.3.2",
-    "yaml": "^1.10.2"
+    "yaml": "^2.0.1"
   },
   "config": {
     "commitizen": {
