@@ -69,7 +69,7 @@ local _key = function (options)
   return table.concat({
       options.family,
       ("%g"):format(options.size),
-      ("%d"):format(options.weight),
+      ("%d"):format(options.weight or 0),
       options.style,
       options.variant,
       options.features,

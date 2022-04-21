@@ -61,7 +61,7 @@ SILE.shapers.harfbuzz = pl.class({
 
     getFace = function (opts)
       local face = SILE.fontManager:face(opts)
-      SU.debug("fonts", "Resolved font family '"..opts.family.."' -> "..(face and face.filename))
+      SU.debug("fonts", "Resolved font family '" .. tostring(opts.family) .. "' -> " .. tostring(face and face.filename))
       if not face or not face.filename then SU.error("Couldn't find face '"..opts.family.."'") end
       if SILE.makeDeps then SILE.makeDeps:add(face.filename) end
       if bitshim.rshift(face.index, 16) ~= 0 then

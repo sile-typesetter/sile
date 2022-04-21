@@ -151,10 +151,10 @@ SILE.nodeMakers.ja = pl.class({
               shrinkability(lastcp, thiscp)
             )
             if breakAllowed(lastcp, thiscp) then
-              db = db .." G ".. length
+              db = db .." G ".. tostring(length)
               coroutine.yield(SILE.nodefactory.glue(length))
             elseif length.length ~= 0 or length.stretch ~= 0 or length.shrink ~= 0 then
-              db = db .." K ".. length
+              db = db .." K ".. tostring(length)
               coroutine.yield(SILE.nodefactory.kern(length))
             else db = db .. " N"
             end

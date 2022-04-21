@@ -187,7 +187,7 @@ SILE.insertions.setShrinkage = function (classname, amount)
     local frame = SILE.getFrame(fName)
     if frame then
       initShrinkage(frame)
-      SU.debug("insertions", "Shrinking " .. fName .. " by " .. amount * ratio)
+      SU.debug("insertions", "Shrinking " .. fName .. " by " .. tostring(amount * ratio))
       frame.state.totals.shrinkage = frame.state.totals.shrinkage + amount * ratio
     end
   end
@@ -215,7 +215,7 @@ end
 SILE.insertions.increaseInsertionFrame = function (insertionvbox, classname)
   local amount = insertionvbox.height + insertionvbox.depth
   local opts = SILE.scratch.insertions.classes[classname]
-  SU.debug("insertions", "Increasing insertion frame by "..amount)
+  SU.debug("insertions", "Increasing insertion frame by " .. tostring(amount))
   local stealPosition = opts["steal-position"] or "bottom"
   local insertionFrame = SILE.getFrame(opts["insertInto"].frame)
   local oldHeight = insertionFrame:height()
