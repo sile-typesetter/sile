@@ -11,6 +11,8 @@ base.options = {}
 
 function base:_init (options)
   if not options then options = {} end
+  local legacy = self._deprecator(options)
+  if legacy then return legacy end
   setmetatable(self.options, {
     __newindex = function (_, key, value)
       if type(value) ~= "function" then
@@ -21,8 +23,6 @@ function base:_init (options)
       SU.error("Attempted to get/set a class option '" .. key .. "' that isn’t registered.")
     end
   })
-  local legacy = self._deprecator(options)
-  if legacy then return legacy end
   self:declareOption("class", function (name) return name end)
   self:declareOption("papersize", function (size)
     SILE.documentState.paperSize = SILE.papersize(size)
@@ -65,22 +65,26 @@ end
 -- stdlib object model definition to return a Penlight class constructor
 -- instead of the old std.object model.
 function base:_deprecator (options)
-  if not options then options = {} end
-  if options.id then
+  if self.id then
     -- The old std.object inheritence for classes called the base class with
     -- and arg of a table which had an ID. Since the new system doesn't have
     -- an ID arg, we can assume this is unported code. See also core/sile.lua
     -- for the actual deprecation mechanism for the old SILE.baseClass.
-    SU.warn([[
-      The inheritance system for SILE classes has been refactored using a
-        different object model, please update your code as use of the old
-        model will cause unexpected errors and will eventually be removed.
-      ]])
+    SU.warn(string.format([[
+      The document class inheritance system for SILE classes has been
+        refactored using a different object model. Your class (%s), has been
+        instantiated with a shim immitating the stdlib based model, but it is
+        *not* fully backwards compatible, *will* cause unexpected errors, and
+        *will* eventually be removed. Please update your code to use the new
+        Penlight based inheritance model.
+      ]], self.id))
     SU.deprecated("std.object x", "pl.class", "0.13.0", "0.14.0")
+    self.id = nil
     options.id = nil
     local constructor = pl.class(self)
     pl.tablex.update(constructor, options)
     constructor._init = function(self_, options_)
+      self:_init() -- here self is actually the parent class
       return self_:init(options_)
     end
     -- Regress to the legacy declareOption functionality
