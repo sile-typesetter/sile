@@ -105,7 +105,7 @@ SILE.nodeMakers.unicode = pl.class({
       if self.token then self:makeToken() end
       if self.lastnode and self.lastnode ~= "glue" then
         local w = SILE.settings.get("document.letterspaceglue").width
-        SU.debug("tokenizer", "Letter space glue: "..w)
+        SU.debug("tokenizer", "Letter space glue: " .. tostring(w))
         coroutine.yield(SILE.nodefactory.kern({ width = w }))
         self.lastnode = "glue"
       end

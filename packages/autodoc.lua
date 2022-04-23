@@ -251,7 +251,7 @@ SILE.registerCommand("autodoc:environment", function (options, content)
     if not SILE.Commands[name] then SU.error("Unknown command "..name) end
   end
 
-  SILE.call("autodoc:code:style", { type = "environment" }, name)
+  SILE.call("autodoc:code:style", { type = "environment" }, { name })
 end, "Outputs a command name in code, checking its validity.")
 
 -- Documenting a package name

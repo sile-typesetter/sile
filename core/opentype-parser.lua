@@ -395,7 +395,7 @@ local function parseMath(s)
   if s:len() <= 0 then return end
   local fd = vstruct.cursor(s)
   local header = vstruct.read(">majorVersion:u2 minorVersion:u2 mathConstantsOffset:u2 mathGlyphInfoOffset:u2 mathVariantsOffset:u2", fd)
-  SU.debug("opentype-parser", "header = "..header)
+  SU.debug("opentype-parser", "header = " .. tostring(header))
   if header.majorVersion > 1 then return end
   vstruct.compile("MathValueRecord", "value:i2 deviceTableOffset:u2")
   vstruct.compile("RangeRecord", "startGlyphID:u2 endGlyphID:u2 startCoverageIndex:u2")
@@ -409,7 +409,7 @@ local function parseMath(s)
                                      " extendedShapeCoverageOffset:u2"..
                                      " mathKernInfoOffset:u2", fd)
   SU.debug("opentype-parser", "mathGlyphInfoOffset = "..header.mathGlyphInfoOffset)
-  SU.debug("opentype-parser", "mathGlyphInfo = "..mathGlyphInfo)
+  SU.debug("opentype-parser", "mathGlyphInfo = " .. tostring(mathGlyphInfo))
   local mathItalicsCorrection = parseIfPresent(header.mathGlyphInfoOffset, mathGlyphInfo.mathItalicsCorrectionInfoOffset, function(offset)
     return parsePerGlyphTable(offset, "&MathValueRecord", fd)
   end)

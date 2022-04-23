@@ -71,7 +71,7 @@ SILE.shapers.harfbuzzWithFallback = pl.class({
       end
       local shapeQueue = fallbackQueue(text, optionSet)
       while shapeQueue:continuing() do
-        SU.debug("fonts", "Queue: ".. shapeQueue.q)
+        SU.debug("fonts", "Queue: ".. tostring(shapeQueue.q))
         options = shapeQueue:currentFont()
         if not (options.family or options.filename) then return end
         SU.debug("fonts", shapeQueue:currentJob())
@@ -88,7 +88,7 @@ SILE.shapers.harfbuzzWithFallback = pl.class({
               if startOfNotdefRun > -1 then
                 shapeQueue:addJob(start + newItems[startOfNotdefRun].index,
                   start + newItems[i].index - 1)
-                SU.debug("fonts", "adding run "..shapeQueue:lastJob())
+                SU.debug("fonts", "adding run " .. tostring(shapeQueue:lastJob()))
                 startOfNotdefRun = -1
               end
               newItems[i].fontOptions = options

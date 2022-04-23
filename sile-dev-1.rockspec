@@ -10,7 +10,7 @@ source = {
 dependencies = {
   "lua >= 5.1",
   "bit32", -- versions vary on different VMs
-  "cassowary == 2.3.1-2",
+  "cassowary == 2.3.2-1",
   "cldr == 0.2.0-0",
   "compat53 == 0.8-1",
   "cosmo == 16.06.04-1",

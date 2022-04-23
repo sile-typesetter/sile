@@ -88,7 +88,7 @@ return {
       else
         local diff = rubybox:lineContribution() - cbox:lineContribution()
         local to_insert = SILE.length(diff / 2)
-        SU.debug("ruby", "Ruby is longer, inserting " .. to_insert .. " either side of base")
+        SU.debug("ruby", "Ruby is longer, inserting " .. tostring(to_insert) .. " either side of base")
         cbox.width = rubybox:lineContribution()
         rubybox.height = 0
         rubybox.width = 0

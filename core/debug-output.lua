@@ -127,7 +127,7 @@ SILE.outputters.debug = {
     else
       buf = table.concat(value.glyphString, " ") .. " w=" .. _round(width)
     end
-    writeline("T", buf, "("..value.text..")")
+    writeline("T", buf, "(" .. tostring(value.text) .. ")")
   end,
 
   setFont = function (self, options)
