@@ -2,10 +2,21 @@ SILE.inputs.common = {
 
   init = function (_, tree)
     local class = tree.options.class or "plain"
-    local class_constructor = SILE.require(class, "classes")
+    local constructor = SILE.require(class, "classes")
     tree.options.papersize = tree.options.papersize or "a4"
-    tree.options.class = nil
-    SILE.documentState.documentClass = class_constructor(tree.options)
+    -- Shim legacy stdlib based classes (most shim work done by here)
+    local cl
+    if constructor._deprecated then
+      if type(constructor._base.init) == "function" then
+        SU.error("Double inheritance of legacy classes detected. I (Caleb) spent"
+               .."*way too much* time making the shim work for one level, I'm"
+               .."not going here. Convert your classes already.")
+      end
+      cl = pl.class(constructor)
+    else
+      cl = constructor
+    end
+    SILE.documentState.documentClass = constructor:_init(tree.options)
     -- Prepend the dirname of the input file to the Lua search path
     local dirname = SILE.masterFilename:match("(.-)[^%/]+$")
     package.path = dirname.."?;"..dirname.."?.lua;"..package.path

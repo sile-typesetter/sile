@@ -1,6 +1,6 @@
 local base = require("classes.base")
 
-local plain = pl.class(SILE.classes.base)
+local plain = pl.class(base)
 plain._name = "plain"
 
 plain.defaultFrameset = {
@@ -26,6 +26,7 @@ plain.defaultFrameset = {
 plain.firstContentFrame = "content"
 
 function plain:_init (options)
+  if self._legacy and not self._deprecated then return self:_deprecator(plain, options) end
   base._init(self, options)
   SILE.require("packages/bidi")
   self:declareOption("direction", function (value)

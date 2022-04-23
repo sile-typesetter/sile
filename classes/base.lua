@@ -1,18 +1,32 @@
 local base = pl.class()
 base._name = "base"
 
--- base.type = "class"
 base._initialized = false
+base._legacy = false
+base._deprecated = false
 base.deferredInit = {}
 base.pageTemplate = std.object { frames = {}, firstContentFrame = nil }
 base.defaultFrameset = {}
 base.firstContentFrame = "page"
 base.options = {}
 
+-- Part of stdlib deprecation hack: class constructors in the new model should
+-- *never* be called with an id. If it does we know somebody is using the
+-- legacy model and setup shims to get them out of trouble. Notable we want to
+-- skip the normal init process the first time around (and even walk it back).
+-- Normal _init() will be called again later, possibly with legacy init() mixins.
+function base:_create ()
+  if self.id then
+    self._legacy = true
+    self._name = self.id
+    self.id = nil
+  end
+  return self
+end
+
 function base:_init (options)
   if not options then options = {} end
-  local legacy = self._deprecator(options)
-  if legacy then return legacy end
+  if self._legacy and not self._deprecated then return self:_deprecator(base, options) end
   setmetatable(self.options, {
     __newindex = function (_, key, value)
       if type(value) ~= "function" then
@@ -20,10 +34,12 @@ function base:_init (options)
       end
     end,
     __index = function (_, key)
+      if key == "super" then return nil end
+      if type(key) == "number" then return nil end
       SU.error("Attempted to get/set a class option '" .. key .. "' that isn’t registered.")
     end
   })
-  self:declareOption("class", function (name) return name end)
+  self:declareOption("class", function (name) return self._name end)
   self:declareOption("papersize", function (size)
     SILE.documentState.paperSize = SILE.papersize(size)
     SILE.documentState.orgPaperSize = SILE.documentState.paperSize
@@ -37,26 +53,43 @@ function base:_init (options)
     return size
   end)
   for k, v in pairs(options) do
-    self.options[k](v)
+    if type(rawget(self.options, k)) == "function" then
+      self.options[k](v)
+    end
   end
   SILE.outputter:init(self)
   self:declareSettings()
   self:registerCommands()
   self:declareFrames(self.defaultFrameset)
-  self.pageTemplate.firstContentFrame = self.pageTemplate.frames[self.firstContentFrame]
+  if type(self.firstContentFrame) == "string" then
+    self.pageTemplate.firstContentFrame = self.pageTemplate.frames[self.firstContentFrame]
+  end
   SILE.typesetter:registerPageEndHook(function ()
     if SU.debugging("frames") then
       for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
     end
   end)
-  -- Avoid calling this (yet) if we're the parant of some child class
+  -- Avoid calling this (yet) if we're the parent of some child class
   if self._name == "base" then self:post_init() end
   return self
 end
 
+-- Penlight hook, currently only used to help shim stdlib based calls to the
+-- new constructors.
+function base:_post_init ()
+  SU.debug("destd", "in _post")
+  if self._legacy then
+    self._legacy = false
+  end
+end
+
+-- SILE's deffered inits, migrate to Penlight's builtin when it's not used for
+-- deprecation of the old system
 function base:post_init ()
-  for _, pkginit in ipairs(self.deferredInit) do
+  SU.debug("destd", "in other post")
+  for i, pkginit in ipairs(self.deferredInit) do
     pkginit(self)
+    self.deferredInit[i] = nil
   end
   self._initialized = true
 end
@@ -64,40 +97,38 @@ end
 -- This is essentially of a self destruct mechanism that monkey patches the old
 -- stdlib object model definition to return a Penlight class constructor
 -- instead of the old std.object model.
-function base:_deprecator (options)
-  if self.id then
-    -- The old std.object inheritence for classes called the base class with
-    -- and arg of a table which had an ID. Since the new system doesn't have
-    -- an ID arg, we can assume this is unported code. See also core/sile.lua
-    -- for the actual deprecation mechanism for the old SILE.baseClass.
-    SU.warn(string.format([[
-      The document class inheritance system for SILE classes has been
-        refactored using a different object model. Your class (%s), has been
-        instantiated with a shim immitating the stdlib based model, but it is
-        *not* fully backwards compatible, *will* cause unexpected errors, and
-        *will* eventually be removed. Please update your code to use the new
-        Penlight based inheritance model.
-      ]], self.id))
-    SU.deprecated("std.object x", "pl.class", "0.13.0", "0.14.0")
-    self.id = nil
-    options.id = nil
-    local constructor = pl.class(self)
-    pl.tablex.update(constructor, options)
-    constructor._init = function(self_, options_)
-      self:_init() -- here self is actually the parent class
-      return self_:init(options_)
-    end
-    -- Regress to the legacy declareOption functionality
-    self.legacyopts = {}
-    rawset(constructor, "declareOption", function(self_, option, setter)
-      self_.legacyopts[option] = setter
-      self_.options[option] = function (value)
+function base:_deprecator (parent, options)
+  self._deprecated = true
+  SU.warn(string.format([[
+    The document class inheritance system for SILE classes has been
+      refactored using a different object model. Your class (%s), has been
+      instantiated with a shim immitating the stdlib based model, but it is
+      *not* fully backwards compatible, *will* cause unexpected errors, and
+      *will* eventually be removed. Please update your code to use the new
+      Penlight based inheritance model.
+
+    ]], self._name))
+  SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0")
+  rawset(self, "_init", function (self_, options_)
+    parent:_init(options_)
+    self_:registerPostinit(self_.init, options_)
+    self_:post_init()
+    return self_
+  end)
+  rawset(self, "declareOption", function(self_, option, setter)
+    self_.legacyopts = {}
+    if type(setter) ~= "function" then
+      default = setter
+      setter = function (value)
         if value then self_.legacyopts[option] = value end
         return self_.legacyopts[option]
       end
-    end)
-    return constructor
-  end
+      self_.legacyopts[option] = setter(default)
+    end
+    parent:declareOption(option, setter)
+  end)
+  parent.init = function () end
+  return self
 end
 
 function base:setOptions (options)
