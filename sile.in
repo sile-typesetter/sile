@@ -36,6 +36,12 @@ extendPath(".")
 SILE = require("core/sile")
 SILE.version = "v@VERSION@"
 io.stdout:setvbuf 'no'
+
+-- Load at least a default locale, may be overridden shortly when we parse arguments
+-- but we will always want to be able to fall back to these localizations for any
+-- messages that are not localized anyway so this is not a waste.
+SILE.set_locale("en")
+
 SILE.parseArguments()
 if not os.getenv 'LUA_REPL_RLWRAP' then
   io.stderr:write(SILE.full_version .. '\n')

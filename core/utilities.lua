@@ -45,6 +45,25 @@ utilities.warn = function(message, bug)
   io.stderr:write("\n")
 end
 
+utilities.info = function(message, ...)
+  SU.msg(message, ...)
+end
+
+utilities.msg = function(message, ...)
+  local inputs = pl.utils.pack(...)
+  for i, v in ipairs(inputs) do
+    inputs[i] = nil
+    inputs[string.char(96+i)] = tostring(v)
+  end
+  local msg = SILE.l10n[message](inputs)
+  SU.debug("l10n", msg)
+  -- SU.dump{ message, callback }
+  -- local arg = { ... } -- Avoid things that Lua stuffs in arg like args to self()
+  -- pl.pretty.dump(#arg == 1 and arg[1] or arg, "/dev/stderr")
+    -- local inputs = table.pack(...)
+    -- for i, input in ipairs(inputs) do
+end
+
 utilities.debugging = function (category)
   return SILE.debugFlags.all or SILE.debugFlags[category]
 end

@@ -38,7 +38,8 @@ SILE.preamble = {}
 
 -- Internal functions / classes / factories
 SILE.cldr = require("cldr")
-SILE.fluent = require("fluent")()
+SILE.fluent = require("fluent")() -- for document localizations
+SILE.l10n = require("fluent")() -- for UI localizations
 SILE.utilities = require("core/utilities")
 SU = SILE.utilities -- alias
 SILE.traceStack = require("core/tracestack")()
@@ -128,6 +129,7 @@ SILE.parseArguments = function ()
   cli:splat("INPUT", "input file, SIL or XML format")
   cli:option("-b, --backend=VALUE", "choose an alternative output backend")
   cli:option("-d, --debug=VALUE", "show debug information for tagged aspects of SILE’s operation", {})
+  cli:option("-l, --locale=VALUE", "locale for SILE interface and default document language", {})
   cli:option("-e, --evaluate=VALUE", "evaluate some Lua code before processing file", {})
   cli:option("-f, --fontmanager=VALUE", "choose an alternative font manager")
   cli:option("-m, --makedeps=FILE", "generate a list of dependencies in Makefile format")
@@ -153,6 +155,11 @@ SILE.parseArguments = function ()
     -- Strip extension
     SILE.masterFilename = string.match(SILE.inputFile, "(.+)%..-$") or SILE.inputFile
     SILE.masterDir = SILE.masterFilename:match("(.-)[^%/]+$")
+  end
+  if opts.locale then
+    for _, locale in ipairs(opts.locale) do
+      SILE.set_locale(locale)
+    end
   end
   if opts.backend then
     SILE.backend = opts.backend
