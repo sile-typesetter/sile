@@ -1,3 +1,5 @@
+local luautf8 = require("lua-utf8")
+
 -- Thanks to Tom Milo of Decotype for challenging me to implement
 -- Uyghur support, providing the methodology and basic algorithms,
 -- and preventing me from leaving the Granshan 2015 conference until
@@ -94,10 +96,9 @@ local zwj = SU.utf8charfromcodepoint("U+200D")
 --   return n
 -- end
 
-local lastjoinable = function (t)
-  t = SU.splitUtf8(t)
-  local last = t[#t]
-  local jointype = chardata[SU.codepoint(last)] and chardata[SU.codepoint(last)].arabic
+local lastjoinable = function (text)
+  local _, last_cp = luautf8.next(luautf8.reverse(text))
+  local jointype = chardata[last_cp] and chardata[last_cp].arabic
   local joinable = jointype == "d" or jointype == "l"
   return joinable
 end
