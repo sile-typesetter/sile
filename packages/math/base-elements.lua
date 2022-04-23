@@ -801,7 +801,7 @@ elements.text = pl.class({
       end
     end
     for attribute,value in pairs(attributes) do
-      SU.debug("math", "attribute = "..attribute..", value = "..value)
+      SU.debug("math", "attribute = " .. attribute .. ", value = " .. tostring(value))
       self[attribute] = value
     end
   end,
@@ -900,7 +900,7 @@ elements.text = pl.class({
       .vertGlyphConstructions[glyphs[1].gid]
     if constructions then
       local variants = constructions.mathGlyphVariantRecord
-      SU.debug("math", "stretch: variants = " .. variants)
+      SU.debug("math", "stretch: variants = " .. tostring(variants))
       local closest
       local closestI
       local m = requiredAdvance - (self.depth+self.height):tonumber() * upem/sz
@@ -914,7 +914,7 @@ elements.text = pl.class({
           m = diff
         end
       end
-      SU.debug("math", "stretch: closestI = " .. closestI)
+      SU.debug("math", "stretch: closestI = " .. tostring(closestI))
       if closest then
         -- Now we have to re-shape the glyph chain. We will assume there
         -- is only one glyph.

@@ -20,15 +20,15 @@ SILE.registerCommand("save-verse-number", function (_, content)
     chapter = SILE.scratch.chapterverse.chapter,
     verse = SILE.scratch.chapterverse.verse
   }
-  SU.debug("chapterverse", "ref: " .. ref)
+  SU.debug("chapterverse", "ref: " .. tostring(ref))
   SILE.call("info", { category = "references", value = ref }, {})
 end)
 
 SILE.registerCommand("first-reference", function (_, _)
   local refs = SILE.scratch.info.thispage.references
-  SU.debug("chapterverse", "first-reference: " .. SILE.scratch.info)
+  SU.debug("chapterverse", "first-reference: " .. tostring(SILE.scratch.info))
   if refs then
-    SU.debug("chapterverse", "first-reference: " .. refs[1])
+    SU.debug("chapterverse", "first-reference: " .. tostring(refs[1]))
     SILE.call("format-reference", {}, refs[1])
   else
     SU.debug("chapterverse", "first-reference: none")
@@ -38,7 +38,7 @@ end)
 SILE.registerCommand("last-reference", function (options, _)
   local refs = SILE.scratch.info.thispage.references
   if refs then
-    SU.debug("chapterverse", "last-reference: " .. refs[#(refs)])
+    SU.debug("chapterverse", "last-reference: " .. tostring(refs[#(refs)]))
     SILE.call("format-reference", options, refs[#(refs)])
   else
     SU.debug("chapterverse", "last-reference: none")
@@ -47,14 +47,14 @@ end)
 
 SILE.registerCommand("format-reference", function (options, content)
   if type(options.showbook) == "nil" then options.showbook = true end
-  SU.debug("chapterverse", "formatting: " .. content)
+  SU.debug("chapterverse", "formatting: " .. tostring(content))
   local ref
   if content.book and options.showbook then
-    ref = content.book .. " " .. content.chapter .. ":" .. content.verse
+    ref = tostring(content.book) .. " " .. tostring(content.chapter) .. ":" .. tostring(content.verse)
   else
-    ref = content.chapter .. ":" .. content.verse
+    ref = tostring(content.chapter) .. ":" .. tostring(content.verse)
   end
-  SU.debug("chapterverse", "formatting: " .. ref)
+  SU.debug("chapterverse", "formatting: " .. tostring(ref))
   SILE.typesetter:typeset(ref)
 end)
 

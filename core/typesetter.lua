@@ -5,10 +5,6 @@ local inf_bad = 10000
 local supereject_penalty = 2 * -inf_bad
 -- local deplorable = 100000
 
-if std.string.monkey_patch then -- stdlib >= 40
-  std.string.monkey_patch()
-end
-
 SILE.settings.declare({
   parameter = "typesetter.widowpenalty",
   type = "integer",
@@ -585,14 +581,14 @@ SILE.defaultTypesetter = std.object {
   leadingFor = function (_, vbox, previous)
     -- Insert leading
     SU.debug("typesetter", "   Considering leading between two lines:")
-    SU.debug("typesetter", "   1) "..previous)
-    SU.debug("typesetter", "   2) "..vbox)
+    SU.debug("typesetter", "   1) " .. tostring(previous))
+    SU.debug("typesetter", "   2) " .. tostring(vbox))
     if not previous then return SILE.nodefactory.vglue() end
     local prevDepth = previous.depth
-    SU.debug("typesetter", "   Depth of previous line was " .. prevDepth)
+    SU.debug("typesetter", "   Depth of previous line was " .. tostring(prevDepth))
     local bls = SILE.settings.get("document.baselineskip")
     local depth = bls.height:absolute() - vbox.height:absolute() - prevDepth:absolute()
-    SU.debug("typesetter", "   Leading height = " .. bls.height .. " - " .. vbox.height .. " - " .. prevDepth .. " = "..depth)
+    SU.debug("typesetter", "   Leading height = " .. tostring(bls.height) .. " - " .. tostring(vbox.height) .. " - " .. tostring(prevDepth) .. " = " .. tostring(depth))
 
     -- the lineskip setting is a vglue, but we need a version absolutized at this point, see #526
     local lead = SILE.settings.get("document.lineskip").height:absolute()

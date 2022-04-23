@@ -10,10 +10,10 @@ end
 
 local function leadingFor (typesetter, vbox, previous)
   SU.debug("typesetter", "   Considering leading between two lines (grid mode):")
-  SU.debug("typesetter", "   1) "..previous)
-  SU.debug("typesetter", "   2) "..vbox)
+  SU.debug("typesetter", "   1) " .. tostring(previous))
+  SU.debug("typesetter", "   2) " .. vbox)
   if not previous then return SILE.nodefactory.vglue() end
-  SU.debug("typesetter", "   Depth of previous line was " .. previous.depth)
+  SU.debug("typesetter", "   Depth of previous line was " .. tostring(previous.depth))
   local totals = typesetter.frame.state.totals
   local oldCursor = SILE.measurement(totals.gridCursor)
   totals.gridCursor = oldCursor + vbox.height:absolute() + previous.depth
@@ -109,7 +109,7 @@ function gridPagebuilder.findBestBreak (_, options)
     local left = target - totalHeight
     local _left = left:tonumber()
     SU.debug("pagebuilder", "I have " .. left .. "left")
-    SU.debug("pagebuilder", "totalHeight " .. totalHeight .. " with target " .. target)
+    SU.debug("pagebuilder", "totalHeight " .. tostring(totalHeight) .. " with target " .. tostring(target))
     local badness = 0
     if _left < 0 then badness = 1000000 end
     if node.is_penalty then

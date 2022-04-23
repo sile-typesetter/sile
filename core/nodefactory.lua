@@ -63,7 +63,9 @@ nodefactory.box = pl.class({
       return self.type
     end,
 
-    __concat = function (a, b) return tostring(a) .. tostring(b) end,
+    __concat = function (a, b)
+      return tostring(a) .. tostring(b)
+    end,
 
     absolute = function (self)
       local clone = nodefactory[self.type](self:_tospec())
@@ -161,7 +163,7 @@ nodefactory.hbox = pl.class(nodefactory.box)
 nodefactory.hbox.type = "hbox"
 
 function nodefactory.hbox:__tostring ()
-  return "H<" .. self.width .. ">^" .. self.height .. "-" .. self.depth .. "v"
+  return "H<" .. tostring(self.width) .. ">^" .. tostring(self.height) .. "-" .. tostring(self.depth) .. "v"
 end
 
 function nodefactory.hbox:scaledWidth (line)
@@ -200,7 +202,7 @@ function nodefactory.nnode:_init (spec)
 end
 
 function nodefactory.nnode:__tostring ()
-  return "N<" .. self.width .. ">^" .. self.height .. "-" .. self.depth .. "v(" .. self:toText() .. ")"
+  return "N<" .. tostring(self.width) .. ">^" .. tostring(self.height) .. "-" .. tostring(self.depth) .. "v(" .. self:toText() .. ")"
 end
 
 function nodefactory.nnode:absolute ()
@@ -359,7 +361,7 @@ nodefactory.glue.type = "glue"
 nodefactory.glue.discardable = true
 
 function nodefactory.glue:__tostring ()
-  return (self.explicit and "E:" or "") .. "G<" .. self.width .. ">"
+  return (self.explicit and "E:" or "") .. "G<" .. tostring(self.width) .. ">"
 end
 
 function nodefactory.glue.toText (_)
@@ -389,7 +391,7 @@ nodefactory.kern.type = "kern"
 nodefactory.kern.discardable = false
 
 function nodefactory.kern:__tostring ()
-  return "K<" .. self.width .. ">"
+  return "K<" .. tostring(self.width) .. ">"
 end
 
 nodefactory.vglue = pl.class(nodefactory.box)
@@ -404,7 +406,7 @@ function nodefactory.vglue:_init (spec)
 end
 
 function nodefactory.vglue:__tostring ()
-  return (self.explicit and "E:" or "") .. "VG<" .. self.height .. ">";
+  return (self.explicit and "E:" or "") .. "VG<" .. tostring(self.height) .. ">";
 end
 
 function nodefactory.vglue:adjustGlue (adjustment)
@@ -434,7 +436,7 @@ nodefactory.vkern = pl.class(nodefactory.vglue)
 nodefactory.vkern.discardable = false
 
 function nodefactory.vkern:__tostring ()
-  return "VK<" .. self.height .. ">"
+  return "VK<" .. tostring(self.height) .. ">"
 end
 
 nodefactory.penalty = pl.class(nodefactory.box)
@@ -450,7 +452,7 @@ function nodefactory.penalty:_init (spec)
 end
 
 function nodefactory.penalty:__tostring ()
-  return "P(" .. self.penalty .. ")";
+  return "P(" .. tostring(self.penalty) .. ")";
 end
 
 function nodefactory.penalty.outputYourself (_)
@@ -477,7 +479,7 @@ function nodefactory.vbox:_init (spec)
 end
 
 function nodefactory.vbox:__tostring ()
-  return "VB<" .. self.height .. "|" .. self:toText() .. "v".. self.depth ..")";
+  return "VB<" .. tostring(self.height) .. "|" .. self:toText() .. "v".. tostring(self.depth) ..")";
 end
 
 function nodefactory.vbox:toText ()
@@ -531,7 +533,7 @@ nodefactory.migrating.value = {}
 nodefactory.migrating.nodes = {}
 
 function nodefactory.migrating:__tostring ()
-  return "<M: "..self.material .. ">"
+  return "<M: " .. tostring(self.material) .. ">"
 end
 
 local _deprecated_nodefactory = {}

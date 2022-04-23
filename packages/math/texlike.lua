@@ -340,13 +340,13 @@ local function compileToMathML(arg_env, tree)
     end
   end
   tree.id = nil
-  SU.debug("texmath", "Resulting MathML:\n"..tree)
+  SU.debug("texmath", "Resulting MathML:\n" .. tostring(tree))
   return tree
 end
 
 local function convertTexlike(content)
   local ret = epnf.parsestring(mathParser, content[1])
-  SU.debug("texmath", "parsed TeX math:\n"..ret)
+  SU.debug("texmath", "parsed TeX math:\n" .. tostring(ret))
   return ret
 end
 

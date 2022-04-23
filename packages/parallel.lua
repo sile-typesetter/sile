@@ -89,7 +89,7 @@ local addBalancingGlue = function (height)
   allTypesetters(function (frame, typesetter)
     local glue = height - calculations[frame].heightOfNewMaterial
     if glue.length:tonumber() > 0 then
-      SU.debug("parallel", "Adding "..glue.." to "..frame)
+      SU.debug("parallel", "Adding " .. tostring(glue) .. " to " .. tostring(frame))
       typesetter:pushVglue({ height = glue })
     end
     calculations[frame].mark = #typesetter.state.outputQueue
@@ -124,7 +124,7 @@ SILE.registerCommand("sync", function (_, _)
       calculations[frame].heightOfNewMaterial = calculations[frame].heightOfNewMaterial + thisHeight
     end
     if maxheight < calculations[frame].heightOfNewMaterial then maxheight = calculations[frame].heightOfNewMaterial end
-    SU.debug("parallel", frame..": pre-sync content="..calculations[frame].mark..", now "..#typesetter.state.outputQueue..", height of material: "..calculations[frame].heightOfNewMaterial)
+    SU.debug("parallel", frame .. ": pre-sync content=" .. calculations[frame].mark .. ", now " .. #typesetter.state.outputQueue .. ", height of material: " .. tostring(calculations[frame].heightOfNewMaterial))
   end)
   addBalancingGlue(maxheight)
   SILE.typesetter = nulTypesetter
