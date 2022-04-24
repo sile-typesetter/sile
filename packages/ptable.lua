@@ -414,7 +414,7 @@ end)
 
 return {
   documentation = [[\begin{document}
-The \code{ptable} package provides commands to typeset flexible tables.\footnote{The
+The \autodoc:package{ptable} package provides commands to typeset flexible tables.\footnote{The
 name stands for \em{perfect table}… No, just kidding, it stands for \em{parbox-based table},
 as the so-called “parbox” is the underlying building block. You don’t have to understand it to
 use this package, though.}
@@ -431,7 +431,7 @@ influenced by some of them, does not try to mimic a specific one in particular.
 \novbreak
 
 The tables proposed here are based on pre-determined column widths, provided
-via the mandatory \code{cols} option of the \code{\\ptable} environment.
+via the mandatory \autodoc:parameter{cols} option of the \autodoc:environment{ptable} environment.
 It implies that the column widths do not automatically adapt to the content,
 but inversely that the content will be line-broken etc. to horizontally fit in
 fixed-width cells.
@@ -451,34 +451,35 @@ of columns). Let us illustrate it with “50\%fw 50\%fw”.
   \end{row}
 \end{ptable}
 
-The other options are \code{cellpadding} (defaults to 4pt) and
-\code{cellborder} (defaults to 0.4pt; set it to zero to disable
+The other options are \autodoc:parameter{cellpadding} (defaults to 4pt) and
+\autodoc:parameter{cellborder} (defaults to 0.4pt; set it to zero to disable
 the borders). Both can be either a single length (applying to all
 sides) or four space-separated lengths (top, bottom, left, right).
-The \code{bordercolor} option (defaults to unset, i.e. black)
+The \autodoc:parameter{bordercolor} option (defaults to unset, i.e. black)
 defines the color of any border defined here or later overriddden.
-Finally, there is the \code{header} boolean option, which is false
+Finally, there is the \autodoc:parameter{header} boolean option, which is false
 by default. If set to true, the first row of the table is considered to be a header,
 repeated on each page if the table spans over multiple pages.
 
-A \code{\\ptable} can only contain \code{\\row} elements. Any other element causes
-an error to be reported, and any text content is silently ignored.
+A \autodoc:command{\ptable} can only contain \autodoc:command[check=false]{\row} elements.
+Any other element causes an error to be reported, and any text content is silently ignored.
 
-In turn, a \code{\\row} can only contain \code{\\cell} or \code{\\celltable}
-elements, with the same rules applying. It only has one option, \code{background}.
+In turn, a \autodoc:command[check=false]{\row} can only contain \autodoc:command[check=false]{\cell}
+or \autodoc:command[check=false]{\celltable} elements, with the same rules applying. It only has one
+option, \autodoc:parameter{background}.
 
-The \code{\\cell} is the final element containing text or actually anything
+The \autodoc:command[check=false]{\cell} is the final element containing text or actually anything
 you may want, including complete paragraphs, images, etc. It has two options
-(\code{span} and \code{valign}) that will be described later, besides
-the \code{border} and \code{padding} specifications and the \code{background} color.
+(\autodoc:parameter{span} and \autodoc:parameter{valign}) that will be described later, besides
+the \autodoc:parameter{border} and \autodoc:parameter{padding} specifications and the \autodoc:parameter{background} color.
 All options (including additional ones you may set) are also passed to a cell “hook”.
 
-The \code{\\celltable} is a specific type of cell related to cells spanning over
-multiple rows. It has only one option (\code{span}) and will be addressed later
+The \autodoc:command[check=false]{\celltable} is a specific type of cell related to cells spanning over
+multiple rows. It has only one option (\autodoc:parameter{span}) and will be addressed later
 too.
 
 Rows and regular cells, as noted, can have background color. The color specification is the
-same as defined in the \code{color} package. The global cell border and padding specifications
+same as defined in the \autodoc:package{color} package. The global cell border and padding specifications
 from the table can be overridden on each cell.
 
 \center{\parbox[width=70%fw, strut=character]{%
@@ -540,7 +541,7 @@ with tables-within-tables, all using “60\%fw 40\%fw” as column specification
 
 Notice how each embedded table is relative to its parent cell width,
 and the column heights are automatically adjusted. By default,
-the content is middle-aligned but this is where the \code{valign}
+the content is middle-aligned but this is where the \autodoc:parameter{valign}
 cell option may be used. Let’s set it to “top” for C and
 “bottom” for D.
 
@@ -570,7 +571,7 @@ cell option may be used. Let’s set it to “top” for C and
 
 By default, each cell takes up the width of one column.
 You can allow some cells to span over multiple columns, using
-the \code{span} option with the appropriate value, e.g. 2 below
+the \autodoc:parameter{span} option with the appropriate value, e.g. 2 below
 on cell A. This is also what some office programs call “merging”.
 
 \begin[cols=50%fw 50%fw]{ptable}
@@ -590,7 +591,7 @@ table package, one cannot change that fact.
 Instead of “merging”, we however have “splitting”, in that
 direction. You will still specify a \em{single cell}, but of a special type
 which turns out to be a (sub-)table. The command
-for that purpose is the abovementioned \code{celltable}.
+for that purpose is the abovementioned \autodoc:environment[check=false]{celltable}.
 It can only contain rows, so it is really an inner table used
 as a cell.
 
@@ -613,7 +614,7 @@ the second cell is divided into two sub-rows. Other
 than that, this special type of cell remains a cell,
 so the column heights will automatically be adjusted
 if need be (evenly distributed between the sub-rows)…
-and as a cell, too, it supports the \code{span} option
+and as a cell, too, it supports the \autodoc:parameter{span} option
 for column spanning. One might thus achieve fairly
 complex layouts.\footnote{Exercise left to the reader: can
 you craft the same table but with the C and E columns
@@ -647,7 +648,7 @@ merged?}
 \novbreak
 
 Each cell being a mini-frame, it resets its settings to their top-level (i.e. document) values.
-Cell content and options, though, are passed to a \code{ptable:cell:hook} which is just
+Cell content and options, though, are passed to a \autodoc:command{\ptable:cell:hook} which is just
 a pass-through command by default. Would you want to define specific styling for some cells,
 you can re-define that command to achieve it.
 
