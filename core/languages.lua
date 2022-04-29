@@ -13,18 +13,20 @@ SILE.languageSupport = {
     language = SILE.cldr.locales[language] and language or "und"
     if SILE.languageSupport.languages[language] then return end
     if SILE.hyphenator.languages[language] then return end
-    local lang, fail = pcall(function () SILE.require("languages/" .. language) end)
-    if fail then
-      if fail:match("not found") then fail = "no support for this language" end
-      SU.warn("Error loading language " .. language .. ": " .. fail)
+    local langresource = string.format("languages.%s", language)
+    local gotlang, lang = pcall(require, langresource)
+    if not gotlang then
+      if lang:match("not found") then lang = "no support for this language" end
+      SU.warn("Error loading language " .. language .. ": " .. lang)
       SILE.languageSupport.languages[language] = {} -- Don't try again
     end
     local ftlresource = string.format("i18n.%s", language)
     SU.debug("fluent", "Loading FTL resource", ftlresource, "into locale", language)
     SILE.fluent:set_locale(language)
-    local _, ftlfail = pcall(function () return require(ftlresource) end)
-    if not ftlfail then
-      SU.warn("Error loading localizations " .. language .. ": " .. ftlfail)
+    local gotftl, ftl = pcall(require, ftlresource)
+    if not gotftl then
+      if ftl:match("not found") then ftl = "no localizations for this language" end
+      SU.warn("Error loading localizations " .. language .. ": " .. ftl)
     end
     if type(lang) == "table" and lang.init then
       lang.init()
@@ -83,5 +85,5 @@ require("languages/unicode")
 -- language support at present. This code is here to suppress warnings.
 SILE.hyphenator.languages.ar = { patterns = {} }
 SILE.hyphenator.languages.bo = { patterns = {} }
-SILE.hyphenator.languages.ur = { patterns = {} }
 SILE.hyphenator.languages.sd = { patterns = {} }
+SILE.hyphenator.languages.ur = { patterns = {} }

@@ -69,7 +69,7 @@ require("core/frame")
 SILE.init = function ()
   -- Set by def
   if not SILE.backend then
-    if pcall(function () require("justenoughharfbuzz") end) then
+    if pcall(require, "justenoughharfbuzz") then
       SILE.backend = "libtexpdf"
     else
       SU.error("libtexpdf backend not available!")

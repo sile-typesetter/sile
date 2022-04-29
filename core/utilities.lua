@@ -488,7 +488,7 @@ utilities.utf16le_to_utf8 = function (str) return utf16_to_utf8(str, "le") end
 local icu = require("justenoughicu")
 
 local icuFormat = function (num, format)
-  local ok, result  = pcall(function() return icu.format_number(num, format) end)
+  local ok, result  = pcall(icu.format_number, num, format)
   return tostring(ok and result or num)
 end
 
