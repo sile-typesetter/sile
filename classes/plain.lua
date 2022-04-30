@@ -40,7 +40,7 @@ function plain:_init (options)
     return value
   end)
   self:loadPackage("folio")
-  -- Avoid calling this (yet) if we're the parant of some child class
+  -- Avoid calling this (yet) if we're the parent of some child class
   if self._name == "plain" then self:post_init() end
   return self
 end

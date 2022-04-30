@@ -78,7 +78,10 @@ local _classdeprecation = function ()
 end
 setmetatable(SILE.baseClass, {
     __index = function(_, key)
-      _classdeprecation()
+      -- Likely at attempt to iterate (or dump) the table, sort of safe to ignore
+      if type(key) ~= "number" then
+        _classdeprecation()
+      end
       return SILE.classes.base[key]
     end,
     __call = function (_, ...)
