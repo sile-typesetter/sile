@@ -30,17 +30,24 @@ function base:_init (options)
   setmetatable(self.options, {
     __newindex = function (_, key, value)
       if type(value) ~= "function" then
-        SU.error("Option "..key.." must be declared as a setter function before being set")
+        SU.error("Option " .. key .. " must be declared with a combo setter/getter function before being set")
       end
     end,
     __index = function (_, key)
       if key == "super" then return nil end
       if type(key) == "number" then return nil end
-      SU.error("Attempted to get/set a class option '" .. key .. "' that isn’t registered.")
+      SU.error("Attempted to set/get unregistered class option '" .. key)
     end
   })
-  self:declareOption("class", function (name) return self._name end)
+  self:declareOption("class", function (name)
+    if name ~= self._name then
+      SU.error("Cannot change class name after instantiation, derive a new class instead.")
+    end
+    return self._name
+  end)
   self:declareOption("papersize", function (size)
+    local omt = getmetatable(self.options)
+    omt.papersize = size
     SILE.documentState.paperSize = SILE.papersize(size)
     SILE.documentState.orgPaperSize = SILE.documentState.paperSize
     SILE.newFrame({
@@ -50,7 +57,7 @@ function base:_init (options)
         right = SILE.documentState.paperSize[1],
         bottom = SILE.documentState.paperSize[2]
       })
-    return size
+    return omt.papersize
   end)
   for k, v in pairs(options) do
     if type(rawget(self.options, k)) == "function" then
@@ -116,14 +123,14 @@ function base:_deprecator (parent, options)
     return self_
   end)
   rawset(self, "declareOption", function(self_, option, setter)
-    self_.legacyopts = {}
     if type(setter) ~= "function" then
       default = setter
       setter = function (value)
-        if value then self_.legacyopts[option] = value end
-        return self_.legacyopts[option]
+        local omt = getmetatable(self_.options)
+        if value then omt[option] = value end
+        return omt[option]
       end
-      self_.legacyopts[option] = setter(default)
+      setter(default)
     end
     parent:declareOption(option, setter)
   end)
