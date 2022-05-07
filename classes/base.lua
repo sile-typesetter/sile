@@ -39,14 +39,14 @@ function base:_init (options)
       SU.error("Attempted to set/get unregistered class option '" .. key)
     end
   })
-  self:declareOption("class", function (name)
-    if name ~= self._name then
+  self:declareOption("class", function (self_, name)
+    if name ~= self_._name then
       SU.error("Cannot change class name after instantiation, derive a new class instead.")
     end
-    return self._name
+    return self_._name
   end)
-  self:declareOption("papersize", function (size)
-    local omt = getmetatable(self.options)
+  self:declareOption("papersize", function (self_, size)
+    local omt = getmetatable(self_.options)
     omt.papersize = size
     SILE.documentState.paperSize = SILE.papersize(size)
     SILE.documentState.orgPaperSize = SILE.documentState.paperSize
@@ -61,7 +61,7 @@ function base:_init (options)
   end)
   for k, v in pairs(options) do
     if type(rawget(self.options, k)) == "function" then
-      self.options[k](v)
+      self.options[k](self, v)
     end
   end
   SILE.outputter:init(self)
@@ -125,8 +125,8 @@ function base:_deprecator (parent, options)
   rawset(self, "declareOption", function(self_, option, setter)
     if type(setter) ~= "function" then
       default = setter
-      setter = function (value)
-        local omt = getmetatable(self_.options)
+      setter = function (self__, value)
+        local omt = getmetatable(self__.options)
         if value then omt[option] = value end
         return omt[option]
       end

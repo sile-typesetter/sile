@@ -4,11 +4,11 @@ local plain = SILE.require("classes.plain")
 local jplain = pl.class(plain)
 jplain._name = "jplain"
 
-jplain:declareOption("layout", function (value)
-  local omt = getmetatable(jplain.options)
-  if value then omt.layout = value end
-  return omt.layout
-end)
+jplain:declareOption("layout", function (self_, value)
+    local omt = getmetatable(self_.options)
+    if value then omt.layout = value end
+    return omt.layout
+  end)
 
 jplain.defaultFrameset.content = {
   left = "8.3%pw",

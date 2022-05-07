@@ -29,9 +29,9 @@ function plain:_init (options)
   if self._legacy and not self._deprecated then return self:_deprecator(plain, options) end
   base._init(self, options)
   SILE.require("packages/bidi")
-  self:declareOption("direction", function (value)
+  self:declareOption("direction", function (self_, value)
     if value then
-      for _, frame in pairs(self.defaultFrameset) do
+      for _, frame in pairs(self_.defaultFrameset) do
         if not frame.direction then
           frame.direction = value
         end
