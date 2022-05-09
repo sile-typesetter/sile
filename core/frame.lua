@@ -229,7 +229,7 @@ SILE.framePrototype = pl.class({
 
     __tostring = function(self)
       local str = "<Frame: " .. self.id .. ": "
-      str = str .. " next=" .. self.next .. " "
+      str = str .. " next=" .. (self.next or "nil") .. " "
       for method, dimension in pairs(self.constraints) do
         str = str .. method .. "=" .. dimension .. "; "
       end
