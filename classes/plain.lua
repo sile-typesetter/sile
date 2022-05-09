@@ -26,7 +26,7 @@ plain.defaultFrameset = {
 plain.firstContentFrame = "content"
 
 function plain:_init (options)
-  if self._legacy and not self._deprecated then return self:_deprecator(plain, options) end
+  if self._legacy and not self._deprecated then return self:_deprecator(base) end
   if not options then options = {} end
   self:declareOption("direction", function (_, value)
     if value then
@@ -319,18 +319,18 @@ function plain:registerCommands ()
         width = l,
         depth = d,
         value = recentContribution,
-        outputYourself = function (self, typesetter, line)
-          local _post = _rtl_pre_post(self, typesetter, line)
+        outputYourself = function (self_, typesetter, line)
+          local _post = _rtl_pre_post(self_, typesetter, line)
           local ox = typesetter.frame.state.cursorX
           local oy = typesetter.frame.state.cursorY
           SILE.outputter:setCursor(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
-          for _, node in ipairs(self.value) do
+          for _, node in ipairs(self_.value) do
             node:outputYourself(typesetter, line)
           end
           typesetter.frame.state.cursorX = ox
           typesetter.frame.state.cursorY = oy
           _post()
-          if SU.debugging("hboxes") then SILE.outputter:debugHbox(self, self:scaledWidth(line)) end
+          if SU.debugging("hboxes") then SILE.outputter:debugHbox(self_, self_:scaledWidth(line)) end
         end
       })
     table.insert(SILE.typesetter.state.nodes, hbox)

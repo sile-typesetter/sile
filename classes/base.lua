@@ -54,7 +54,7 @@ end
 function base:_init (options)
   if not options then options = {} end
   options.papersize = options.papersize or "a4"
-  if self._legacy and not self._deprecated then return self:_deprecator(base, options) end
+  if self._legacy and not self._deprecated then return self:_deprecator(base) end
   self:declareOption("class", function (_, name)
     if name then
       if self._deprecated then
@@ -121,7 +121,7 @@ end
 -- This is essentially of a self destruct mechanism that monkey patches the old
 -- stdlib object model definition to return a Penlight class constructor
 -- instead of the old std.object model.
-function base:_deprecator (parent, options)
+function base:_deprecator (parent)
   self._deprecated = true
   SU.warn(string.format([[
     The document class inheritance system for SILE classes has been
@@ -139,11 +139,11 @@ function base:_deprecator (parent, options)
     parent:post_init()
     return self_
   end)
-  rawset(self, "declareOption", function(self_, option, setter)
+  rawset(self, "declareOption", function(_, option, setter)
     if not getmetatable(parent.options)._opts[option] then
       if type(setter) ~= "function" then
-        default = setter
-        setter = function (self__, value)
+        local default = setter
+        setter = function (_, value)
           local k = "_legacy_option_" .. option
           if value then parent[k] = value end
           return function() return parent[k] end
