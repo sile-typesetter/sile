@@ -93,9 +93,9 @@ function book:finish ()
   return ret
 end
 
-book.registerCommands = function (_)
+book.registerCommands = function (self)
 
-  plain.registerCommands()
+  plain.registerCommands(self)
 
   SILE.registerCommand("left-running-head", function (_, content)
     local closure = SILE.settings.wrap()
@@ -112,8 +112,7 @@ book.registerCommands = function (_)
     local number
     if SU.boolean(options.numbering, true) then
       SILE.call("increment-multilevel-counter", { id = "sectioning", level = level })
-      -- TODO: counters isn't a global any more, where did it go on loadPackage?
-      number = SILE.formatMultilevelCounter(counters.getMultilevelCounter("sectioning"))
+      number = SILE.formatMultilevelCounter(self.getMultilevelCounter("sectioning"))
     end
     if SU.boolean(options.toc, true) then
       SILE.call("tocentry", { level = level, number = number }, SU.subContent(content))
