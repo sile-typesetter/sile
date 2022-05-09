@@ -121,7 +121,6 @@ end
 -- instead of the old std.object model.
 function base:_deprecator (parent, options)
   self._deprecated = true
-  parent._deprecated = true
   SU.warn(string.format([[
     The document class inheritance system for SILE classes has been
       refactored using a different object model. Your class (%s), has been
@@ -133,26 +132,26 @@ function base:_deprecator (parent, options)
     ]], self._name))
   SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0")
   rawset(self, "_init", function (self_, options_)
-    parent:_init(options_)
-    self_:registerPostinit(self_.init, options_)
-    self_:post_init()
+    self:registerPostinit(self_.init, options_)
+    parent._init(self_, options_)
+    parent:post_init()
     return self_
   end)
   rawset(self, "declareOption", function(self_, option, setter)
-    if not getmetatable(self_.options)._opts[option] then
+    if not getmetatable(parent.options)._opts[option] then
       if type(setter) ~= "function" then
         default = setter
         setter = function (self__, value)
           local k = "_legacy_option_" .. option
-          if value then self_[k] = value end
-          return function() return self_[k] end
+          if value then parent[k] = value end
+          return function() return parent[k] end
         end
-        setter(self_, default)
+        setter(parent, default)
       end
-      parent:declareOption(option, setter)
+      base.declareOption(parent, option, setter)
     end
   end)
-  parent.init = function (self_) return self_ end
+  parent.init = function () return parent end
   return self
 end
 
@@ -210,8 +209,8 @@ function base:initPackage (pack, args)
 end
 
 function base:registerPostinit (func, args)
-  table.insert(self.deferredInit, function (self_)
-      func(self_, args)
+  table.insert(self.deferredInit, function (_)
+      func(self, args)
     end)
 end
 
