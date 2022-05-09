@@ -16,6 +16,8 @@ base.options = setmetatable({}, {
         opts[key](base, value)
       elseif type(value) == "function" then
         opts[key] = value
+      elseif type(key) == "number" then
+        return nil
       else
         SU.error("Attempted to set an undeclared class option '" .. key .. "'")
       end
