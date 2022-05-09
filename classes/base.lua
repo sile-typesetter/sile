@@ -85,9 +85,6 @@ function base:_init (options)
   self:declareSettings()
   self:registerCommands()
   self:declareFrames(self.defaultFrameset)
-  if type(self.firstContentFrame) == "string" then
-    self.pageTemplate.firstContentFrame = self.pageTemplate.frames[self.firstContentFrame]
-  end
   SILE.typesetter:registerPageEndHook(function ()
     if SU.debugging("frames") then
       for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
@@ -112,6 +109,9 @@ function base:post_init ()
   for i, pkginit in ipairs(self.deferredInit) do
     pkginit(self)
     self.deferredInit[i] = nil
+  end
+  if type(self.firstContentFrame) == "string" then
+    self.pageTemplate.firstContentFrame = self.pageTemplate.frames[self.firstContentFrame]
   end
   self._initialized = true
 end

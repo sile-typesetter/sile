@@ -18,7 +18,10 @@ function jplain:_init (options)
   if not options then options = {} end
   options.layout = options.layout or "yoko"
   self:declareOption("layout", function (_, value)
-    if value then self.layout = value end
+    if value then
+      self.layout = value
+      if value == "tate" then self:loadPackage("tate") end
+    end
     return self.layout
   end)
   plain._init(self, options)
@@ -28,7 +31,7 @@ function jplain:_init (options)
   SILE.languageSupport.loadLanguage("ja")
   self:loadPackage("hanmenkyoshi")
   self.defaultFrameset.content.tate = self.options.layout == "tate"
-  self.defaultFrameset.content = self:declareHanmenFrame("content", self.defaultFrameset.content)
+  self:declareHanmenFrame("content", self.defaultFrameset.content)
   SILE.settings.set("document.parindent", SILE.nodefactory.glue("10pt"))
   -- Avoid calling this (yet) if we're the parent of some child class
   if self._name == "jplain" then self:post_init() end
