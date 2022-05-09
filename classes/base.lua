@@ -8,7 +8,32 @@ base.deferredInit = {}
 base.pageTemplate = std.object { frames = {}, firstContentFrame = nil }
 base.defaultFrameset = {}
 base.firstContentFrame = "page"
-base.options = {}
+base.options = setmetatable({}, {
+    _opts = {},
+    __newindex = function (self, key, value)
+      local opts = getmetatable(self)._opts
+      if type(opts[key]) == "function" then
+        opts[key](base, value)
+      elseif type(value) == "function" then
+        opts[key] = value
+      else
+        SU.error("Attempted to set an undeclared class option '" .. key .. "'")
+      end
+    end,
+    __index = function (self, key)
+      if key == "super" then return nil end
+      if type(key) == "number" then return nil end
+      local opt = getmetatable(self)._opts[key]
+      if type(opt) == "function" then
+        return opt(base)
+      elseif opt then
+        return opt
+      else
+        SU.error("Attempted to get an undeclared class option '" .. key .. "'")
+      end
+    end
+  })
+
 
 -- Part of stdlib deprecation hack: class constructors in the new model should
 -- *never* be called with an id. If it does we know somebody is using the
@@ -26,43 +51,35 @@ end
 
 function base:_init (options)
   if not options then options = {} end
+  options.papersize = options.papersize or "a4"
   if self._legacy and not self._deprecated then return self:_deprecator(base, options) end
-  setmetatable(self.options, {
-    __newindex = function (_, key, value)
-      if type(value) ~= "function" then
-        SU.error("Option " .. key .. " must be declared with a combo setter/getter function before being set")
+  self:declareOption("class", function (_, name)
+    if name then
+      if self._deprecated then
+        self._name = name
+      elseif name ~= self._name then
+        SU.error("Cannot change class name after instantiation, derive a new class instead.")
       end
-    end,
-    __index = function (_, key)
-      if key == "super" then return nil end
-      if type(key) == "number" then return nil end
-      SU.error("Attempted to set/get unregistered class option '" .. key)
     end
-  })
-  self:declareOption("class", function (self_, name)
-    if name ~= self_._name then
-      SU.error("Cannot change class name after instantiation, derive a new class instead.")
-    end
-    return self_._name
+    return self._name
   end)
-  self:declareOption("papersize", function (self_, size)
-    local omt = getmetatable(self_.options)
-    omt.papersize = size
-    SILE.documentState.paperSize = SILE.papersize(size)
-    SILE.documentState.orgPaperSize = SILE.documentState.paperSize
-    SILE.newFrame({
+  self:declareOption("papersize", function (_, size)
+    if size then
+      self.papersize = size
+      SILE.documentState.paperSize = SILE.papersize(size)
+      SILE.documentState.orgPaperSize = SILE.documentState.paperSize
+      SILE.newFrame({
         id = "page",
         left = 0,
         top = 0,
         right = SILE.documentState.paperSize[1],
         bottom = SILE.documentState.paperSize[2]
       })
-    return omt.papersize
+    end
+    return self.papersize
   end)
   for k, v in pairs(options) do
-    if type(rawget(self.options, k)) == "function" then
-      self.options[k](self, v)
-    end
+    self.options[k] = v
   end
   SILE.outputter:init(self)
   self:declareSettings()
@@ -84,7 +101,6 @@ end
 -- Penlight hook, currently only used to help shim stdlib based calls to the
 -- new constructors.
 function base:_post_init ()
-  SU.debug("destd", "in _post")
   if self._legacy then
     self._legacy = false
   end
@@ -93,7 +109,6 @@ end
 -- SILE's deffered inits, migrate to Penlight's builtin when it's not used for
 -- deprecation of the old system
 function base:post_init ()
-  SU.debug("destd", "in other post")
   for i, pkginit in ipairs(self.deferredInit) do
     pkginit(self)
     self.deferredInit[i] = nil
@@ -106,6 +121,7 @@ end
 -- instead of the old std.object model.
 function base:_deprecator (parent, options)
   self._deprecated = true
+  parent._deprecated = true
   SU.warn(string.format([[
     The document class inheritance system for SILE classes has been
       refactored using a different object model. Your class (%s), has been
@@ -123,18 +139,20 @@ function base:_deprecator (parent, options)
     return self_
   end)
   rawset(self, "declareOption", function(self_, option, setter)
-    if type(setter) ~= "function" then
-      default = setter
-      setter = function (self__, value)
-        local omt = getmetatable(self__.options)
-        if value then omt[option] = value end
-        return omt[option]
+    if not getmetatable(self_.options)._opts[option] then
+      if type(setter) ~= "function" then
+        default = setter
+        setter = function (self__, value)
+          local k = "_legacy_option_" .. option
+          if value then self_[k] = value end
+          return function() return self_[k] end
+        end
+        setter(self_, default)
       end
-      setter(default)
+      parent:declareOption(option, setter)
     end
-    parent:declareOption(option, setter)
   end)
-  parent.init = function () end
+  parent.init = function (self_) return self_ end
   return self
 end
 
@@ -149,7 +167,7 @@ function base:setOptions (options)
 end
 
 function base:declareOption (option, setter)
-  rawset(self.options, option, setter)
+  self.options[option] = setter
 end
 
 function base.declareSettings (_)

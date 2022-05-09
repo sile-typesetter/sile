@@ -27,18 +27,21 @@ plain.firstContentFrame = "content"
 
 function plain:_init (options)
   if self._legacy and not self._deprecated then return self:_deprecator(plain, options) end
-  base._init(self, options)
-  SILE.require("packages/bidi")
-  self:declareOption("direction", function (self_, value)
+  if not options then options = {} end
+  options.direction = options.direction or "LTR"
+  self:declareOption("direction", function (_, value)
     if value then
-      for _, frame in pairs(self_.defaultFrameset) do
+      SILE.documentState.direction = value
+      for _, frame in pairs(self.defaultFrameset) do
         if not frame.direction then
           frame.direction = value
         end
       end
     end
-    return value
+    return SILE.documentState.direction
   end)
+  base._init(self, options)
+  self:loadPackage("bidi")
   self:loadPackage("folio")
   -- Avoid calling this (yet) if we're the parent of some child class
   if self._name == "plain" then self:post_init() end

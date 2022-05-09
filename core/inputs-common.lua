@@ -3,7 +3,6 @@ SILE.inputs.common = {
   init = function (_, tree)
     local class = tree.options.class or "plain"
     local constructor = SILE.require(class, "classes")
-    tree.options.papersize = tree.options.papersize or "a4"
     -- Shim legacy stdlib based classes (most shim work done by here)
     local cl
     if constructor._deprecated then
