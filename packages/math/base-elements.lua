@@ -814,7 +814,7 @@ elements.text = pl.class({
     -- Use bigger variants for big operators in display style
     if isDisplayMode(self.mode) and self.largeop then
       -- We copy the glyph list to avoid modifying the shaper's cache. Yes.
-      glyphs = std.tree.clone(glyphs)
+      glyphs = pl.tablex.deepcopy(glyphs)
       local constructions = mathMetrics.mathVariants
         .vertGlyphConstructions[glyphs[1].gid]
       if constructions then
@@ -895,7 +895,7 @@ elements.text = pl.class({
     -- required.  TODO: implement assembly of stretchable glyphs form
     -- their parts for cases when the biggest variant is not big enough.
     -- We copy the glyph list to avoid modifying the shaper's cache. Yes.
-    local glyphs = std.tree.clone(self.value.items)
+    local glyphs = pl.tablex.deepcopy(self.value.items)
     local constructions = getMathMetrics().mathVariants
       .vertGlyphConstructions[glyphs[1].gid]
     if constructions then
