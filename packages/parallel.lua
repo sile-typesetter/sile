@@ -44,7 +44,7 @@ local parallelPagebreak = function ()
   end
 end
 
-local setupParallel = function (klass, options)
+local setupParallel = function (class, options)
   nulTypesetter:init(SILE.getFrame("page"))
   for frame, typesetter in pairs(options.frames) do
     typesetterPool[frame] = SILE.typesetter {}
@@ -70,16 +70,16 @@ local setupParallel = function (klass, options)
   else
     folioOrder = options.folios -- As usual we trust the user knows what they're doing
   end
-  klass.newPage = function(_)
+  class.newPage = function(self)
     allTypesetters(function (frame, _)
       calculations[frame] = { mark = 0 }
     end)
-    SILE.baseClass:newPage()
+    class._base.newPage(self)
     SILE.call("sync")
   end
   allTypesetters(function (frame, _) calculations[frame] = { mark = 0 } end)
-  local oldfinish = klass.finish
-  klass.finish = function (self)
+  local oldfinish = class.finish
+  class.finish = function (self)
     parallelPagebreak()
     oldfinish(self)
   end

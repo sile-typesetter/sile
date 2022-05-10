@@ -1,25 +1,25 @@
-SILE.tateFramePrototype = pl.class({
-    _base = SILE.framePrototype,
-    direction = "TTB-RTL",
-    enterHooks = {
-      function (self)
-        self.oldtypesetter = SILE.typesetter
-        SILE.typesetter.leadingFor = function(_, v)
-          v.height = SILE.length("1zw"):absolute()
-          local bls = SILE.settings.get("document.baselineskip")
-          local d = bls.height:absolute() - v.height
-          local len = SILE.length(d.length, bls.height.stretch, bls.height.shrink)
-          return SILE.nodefactory.vglue({height = len})
-        end
-        SILE.typesetter.breakIntoLines = SILE.require("packages/break-firstfit").exports.breakIntoLines
+SILE.tateFramePrototype = pl.class(SILE.framePrototype)
+SILE.tateFramePrototype.direction = "TTB-RTL"
+
+SILE.tateFramePrototype.enterHooks = {
+    function (self)
+      self.oldtypesetter = SILE.typesetter
+      SILE.typesetter.leadingFor = function(_, v)
+        v.height = SILE.length("1zw"):absolute()
+        local bls = SILE.settings.get("document.baselineskip")
+        local d = bls.height:absolute() - v.height
+        local len = SILE.length(d.length, bls.height.stretch, bls.height.shrink)
+        return SILE.nodefactory.vglue({height = len})
       end
-    },
-    leaveHooks = {
-      function (self)
-        SILE.typesetter = self.oldtypesetter
-      end
-    }
-  })
+      SILE.typesetter.breakIntoLines = SILE.require("packages/break-firstfit").exports.breakIntoLines
+    end
+  }
+
+SILE.tateFramePrototype.leaveHooks = {
+    function (self)
+      SILE.typesetter = self.oldtypesetter
+    end
+  }
 
 SILE.newTateFrame = function (spec)
   return SILE.newFrame(spec, SILE.tateFramePrototype)

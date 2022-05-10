@@ -229,9 +229,16 @@ SILE.framePrototype = pl.class({
 
     __tostring = function(self)
       local str = "<Frame: " .. self.id .. ": "
-      str = str .. " next=" .. self.next .. " "
+      str = str .. " next=" .. (self.next or "nil") .. " "
       for method, dimension in pairs(self.constraints) do
         str = str .. method .. "=" .. dimension .. "; "
+      end
+      if self.hanmen then
+        str = str .. "tate=" .. (self.tate and "true" or "false") .. "; "
+        str = str .. "gridsize=" .. self.gridsize .. "; "
+        str = str .. "linegap=" .. self.linegap .. "; "
+        str = str .. "linelength=" .. self.linelength .. "; "
+        str = str .. "linecount=" .. self.linecount .. "; "
       end
       str = str .. ">"
       return str

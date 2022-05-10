@@ -18,67 +18,65 @@ local widthToFrameEdge = function (frame)
   return w
 end
 
-local leader = pl.class({
-    _base = SILE.nodefactory.glue,
+local leader = pl.class(SILE.nodefactory.glue)
 
-    outputYourself = function (self, typesetter, line)
-      local outputWidth = SU.rationWidth(self.width, self.width, line.ratio):tonumber()
-      local leaderWidth = self.value.width:tonumber()
-      local ox = typesetter.frame.state.cursorX
-      local oy = typesetter.frame.state.cursorY
+function leader:outputYourself (typesetter, line)
+  local outputWidth = SU.rationWidth(self.width, self.width, line.ratio):tonumber()
+  local leaderWidth = self.value.width:tonumber()
+  local ox = typesetter.frame.state.cursorX
+  local oy = typesetter.frame.state.cursorY
 
-      -- Implementation note:
-      -- We want leaders on different lines to be aligned vertically in the frame,
-      -- from its end edge (e.g. the right edge in LTR writing direction).
+  -- Implementation note:
+  -- We want leaders on different lines to be aligned vertically in the frame,
+  -- from its end edge (e.g. the right edge in LTR writing direction).
 
-      -- Compute how many leaders we can fit from the current initial position.
-      local fitWidth = widthToFrameEdge(typesetter.frame):tonumber()
-      local maxRepetitions = math.floor(fitWidth / leaderWidth) -- round down!
-      -- Compute how many leaders we have to skip after our final position.
-      typesetter.frame:advanceWritingDirection(outputWidth)
-      local skipWidth = widthToFrameEdge(typesetter.frame):tonumber()
-      skipWidth = math.floor(skipWidth * 1e6) / 1e6 -- accept some rounding imprecision
-      local skipRepetitions = math.ceil(skipWidth / leaderWidth) -- round up!
+  -- Compute how many leaders we can fit from the current initial position.
+  local fitWidth = widthToFrameEdge(typesetter.frame):tonumber()
+  local maxRepetitions = math.floor(fitWidth / leaderWidth) -- round down!
+  -- Compute how many leaders we have to skip after our final position.
+  typesetter.frame:advanceWritingDirection(outputWidth)
+  local skipWidth = widthToFrameEdge(typesetter.frame):tonumber()
+  skipWidth = math.floor(skipWidth * 1e6) / 1e6 -- accept some rounding imprecision
+  local skipRepetitions = math.ceil(skipWidth / leaderWidth) -- round up!
 
-      local repetitions = maxRepetitions - skipRepetitions
-      local remainder = fitWidth - maxRepetitions * leaderWidth
-      SU.debug("leaders", "Leader repetitions: "..repetitions
-        ..", skipped: "..skipRepetitions..", remainder: "..remainder.."pt")
+  local repetitions = maxRepetitions - skipRepetitions
+  local remainder = fitWidth - maxRepetitions * leaderWidth
+  SU.debug("leaders", "Leader repetitions: "..repetitions
+    ..", skipped: "..skipRepetitions..", remainder: "..remainder.."pt")
 
-      -- Return back to our start position
-      typesetter.frame:advanceWritingDirection(-outputWidth)
-      -- Handle the leader element repetitions
-      if repetitions > 0 then
-        typesetter.frame:advanceWritingDirection(remainder)
-        for _ = 1, repetitions do
-          if SU.debugging("leaders") then
-            -- Draw some visible lines around leader repetitions.
-            -- N.B. This might be wrong for other directions than LTR-TTB, but heh it's debug stuff.
-            SILE.outputter:drawRule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-leaderWidth, leaderWidth-0.3, 0.3)
-            SILE.outputter:drawRule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-leaderWidth, 0.3, leaderWidth-0.3)
-          end
-
-          self.value:outputYourself(typesetter, line)
-        end
-
-        if SU.debugging("leaders") then
-          -- Draw some visible lines around skipped leader repetitions.
-          -- N.B. This might be wrong for other directions than LTR-TTB, but it's debug stuff again.
-          for _ = 0, skipRepetitions-1 do
-            SILE.outputter:drawRule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY, leaderWidth, 0.3)
-            SILE.outputter:drawRule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-leaderWidth, 0.3, leaderWidth)
-            typesetter.frame:advanceWritingDirection(leaderWidth)
-          end
-        end
+  -- Return back to our start position
+  typesetter.frame:advanceWritingDirection(-outputWidth)
+  -- Handle the leader element repetitions
+  if repetitions > 0 then
+    typesetter.frame:advanceWritingDirection(remainder)
+    for _ = 1, repetitions do
+      if SU.debugging("leaders") then
+        -- Draw some visible lines around leader repetitions.
+        -- N.B. This might be wrong for other directions than LTR-TTB, but heh it's debug stuff.
+        SILE.outputter:drawRule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-leaderWidth, leaderWidth-0.3, 0.3)
+        SILE.outputter:drawRule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-leaderWidth, 0.3, leaderWidth-0.3)
       end
-      -- Return to our start (saved) position and move to the full leaders width.
-      -- (So we are sure to safely get the correct width, whathever we did above
-      -- with the remainder space and the leader repetitions).
-      typesetter.frame.state.cursorX = ox
-      typesetter.frame.state.cursorY = oy
-      typesetter.frame:advanceWritingDirection(outputWidth)
+
+      self.value:outputYourself(typesetter, line)
     end
-  })
+
+    if SU.debugging("leaders") then
+      -- Draw some visible lines around skipped leader repetitions.
+      -- N.B. This might be wrong for other directions than LTR-TTB, but it's debug stuff again.
+      for _ = 0, skipRepetitions-1 do
+        SILE.outputter:drawRule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY, leaderWidth, 0.3)
+        SILE.outputter:drawRule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-leaderWidth, 0.3, leaderWidth)
+        typesetter.frame:advanceWritingDirection(leaderWidth)
+      end
+    end
+  end
+  -- Return to our start (saved) position and move to the full leaders width.
+  -- (So we are sure to safely get the correct width, whathever we did above
+  -- with the remainder space and the leader repetitions).
+  typesetter.frame.state.cursorX = ox
+  typesetter.frame.state.cursorY = oy
+  typesetter.frame:advanceWritingDirection(outputWidth)
+end
 
 SILE.registerCommand("leaders", function(options, content)
   local width = options.width and SU.cast("glue", options.width) or SILE.nodefactory.hfillglue()

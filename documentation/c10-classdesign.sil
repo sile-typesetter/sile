@@ -72,7 +72,7 @@ We see that it loads the \code{masters} package and generates a master frameset 
 \begin{verbatim}
 \line
 
-function book:init ()
+function book:_init (options)
   self:loadPackage("masters")
   self:defineMaster(\{
       id = "right",
@@ -80,7 +80,8 @@ function book:init ()
       frames = self.defaultFrameset
     \})
   ...
-  return plain.init(self)
+  plain._init(self, options)
+  return self
 end
 
 \line
@@ -107,8 +108,9 @@ Here is how we set up the inheritance:
 
 \begin{verbatim}
 \line
-local book = SILE.require("book", "classes")
-local bringhurst = book \{ id = "bringhurst" \}
+local book = require("classes.book")
+local bringhurst = pl.class(book)
+bringhurst._name = "bringhurst"
 ...
 return bringhurst
 \line
@@ -126,9 +128,9 @@ We can define this in SILE terms like so:
 
 bringhurst.defaultFrameset = \{
   content = \{
-    left = "width(page)/13",
+    left = "width(page) / 13",
     top = "left(content) * 8 / 5",
-    right = "100\%pw - 2*top(content)",
+    right = "100\%pw - 2 * top(content)",
     bottom = "top(footnotes)"
   \},
   folio = book.defaultFrameset.folio,
@@ -136,7 +138,7 @@ bringhurst.defaultFrameset = \{
     left = "left(content)",
     right = "right(content)",
     top = "top(content) - 4\%ph",
-    bottom = "top(content)-2\%ph"
+    bottom = "top(content) - 2\%ph"
   \},
   footnotes = book.defaultFrameset.footnotes
 \}
@@ -155,19 +157,26 @@ this is all we need.
 The init function inherited from the book class will take care of setting these frames up with mirrored masters.
 
 If we had wanted to load additionall packages into our class as, say, the \code{bible} class does,
-we would need to define out own init function and call our parent class’s init function as well.
+we would need to define our own init function and call our parent class’s init function as well.
 For example to load the \code{infonode} package into our class, we could add this init function:
 
 \begin{verbatim}
 \line
 
-function bringhurst:init()
+function bringhurst:_init(options)
   self:loadPackage("infonode")
-  return book.init(self)
+  book.init(self, options)
+  if self._name == "bringhurst" then self:post_init() end
+  return self
 end
 
 \line
 \end{verbatim}
+
+Note that the official SILE classes have some extra tooling to handle legacy class models trying to inherit from them.
+You don't need the deprecation shims if your own classes when following these examples.
+The extra step of manually calling post_init() only if the current class name matches ourselves allows this to be used as a parent class.
+This extra step will also become unneccessary when we remove the shims supporting legacy classes.
 
 \section{Defining Commands}
 
@@ -178,20 +187,18 @@ investigate bits of state information, and so on. We’ll look briefly
 at some of the principles involved in those things here, and in the next
 chapters will run through some worked examples.
 
-To define your own command at the Lua level, you use the \code{SILE.registerCommand}
-function. It takes three parameters: a command name, a function to implement
-the command, and some help text. The
-signature of a function representing a SILE command is fixed: you need
-to take two parameters, \code{options} and \code{content} (of course you
-can name your parameters whatever you like, but these are the most common
-names). Both of these parameters are Lua tables. The \code{options} parameter
-contains the command’s parameters or XML attributes as a key-value table,
-and the \code{content}
-is an abstract syntax tree reflecting the input being currently processed.
+To define your own command at the Lua level, you use the \code{SILE.registerCommand} function.
+It takes three parameters: a command name,
+a function to implement the command, and some help text.
+The signature of a function representing a SILE command is fixed:
+you need to take two parameters, \code{options} and \code{content}
+(of course you can name your parameters whatever you like, but these are the most common names).
+Both of these parameters are Lua tables.
+The \code{options} parameter contains the command’s parameters or XML attributes as a key-value table,
+and the \code{content} is an abstract syntax tree reflecting the input being currently processed.
 
 So in the case of \code{\\mycommand[size=12pt]\{Hello \\break world\}},
-the first parameter will contain the table \code{\{size = "12pt"\}} and
-the second parameter will contain the table
+the first parameter will contain the table \code{\{size = "12pt"\}} and the second parameter will contain the table:
 
 \begin{verbatim}
 \line
@@ -218,14 +225,21 @@ the content, and then we need to do something with the attribute:
 
 \begin{verbatim}
 \line
-SILE.registerCommand("link", function(options, content)
-  SILE.process(content)
-  if (options["xl:href"]) then
-    SILE.typesetter:typeset(" (")
-    SILE.call("code", \{\}, \{options["xl:href"]\})
-    SILE.typesetter:typeset(")")
-  end
-end)
+
+bringhurst.registerCommands = function (self)
+
+  book.registerCommands(self)
+
+  SILE.registerCommand("link", function(options, content)
+    SILE.process(content)
+    if (options["xl:href"]) then
+    	SILE.typesetter:typeset(" (")
+    	SILE.call("code", \{\}, \{options["xl:href"]\})
+    	SILE.typesetter:typeset(")")
+    end
+  end)
+
+end
 \line
 \end{verbatim}
 
@@ -239,54 +253,46 @@ them into points.}
 
 \section{Output Routines}
 
-As well as defining frames and packages, different classes also alter
-the way that SILE performs its output—what it should do at the start or
-end of a page, for instance, which controls things like swapping between
-different master frames, displaying page numbers, and so on.
+As well as defining frames and packages,
+different classes also alter the way that SILE performs its output—what it should do at the start or end of a page,
+for instance, which controls things like swapping between different master frames,
+displaying page numbers, and so on.
 
 The key methods for defining the \em{output routine} are:
 
-\noindent{}• \code{newPar} and \code{endPar} are called at the start and end of each
-paragraph.
+\noindent{}• \code{newPar} and \code{endPar} are called at the start and end of each paragraph.
 
-\noindent{}• \code{newPage} and \code{endPage} are called at the start
-and each of each page.
+\noindent{}• \code{newPage} and \code{endPage} are called at the start and each of each page.
 
-\noindent{}• \code{init} and \code{finish} are called at the start and
-end of the document.
+\noindent{}• \code{init} and \code{finish} are called at the start and end of the document.
 
-Once again this is done in an object-oriented way, with derived classes
-overriding their superclass’ methods where necessary.
+Once again this is done in an object-oriented way,
+with derived classes overriding their superclass’ methods where necessary.
 
-When you are loading packages which affect the output routine, the composition of
-such packages into a class is not completely automatic\footnote{Because the
-order of events is sometimes significant.}; in other words, loading the package
-will not necessarily by itself change the output routines. You need to
-explicitly plug the various features provided by those packages into the output routine
-yourself.
+When you are loading packages which affect the output routine,
+the composition of such packages into a class is not completely automatic\footnote{Because the order of events is sometimes significant.};
+in other words, loading the package will not necessarily by itself change the output routines.
+You need to explicitly plug the various features provided by those packages into the output routine yourself.
 
-So, for instance, the \code{footnote} or \code{insertions} packages
-provide a \code{outputInsertions} method which needs to be called at the end
-of each page. If you want to build a document class that inherits from \code{plain}
-but also has footnote functionality, you will want your \code{endPage} method
-to look like this:
+So, for instance,
+the \code{footnote} or \code{insertions} packages provide a \code{outputInsertions} method which needs to be called at the end of each page.
+If you want to build a document class that inherits from \code{plain} but also has footnote functionality,
+you will want your \code{endPage} method to look like this:
 
 \begin{verbatim}
 \line
-myClass.endPage = function(self)
-  myClass:outputInsertions()
-  plain.endPage(self)
+function myClass:endPage ()
+  self:outputInsertions()
+  return plain.endPage(self)
 end
 \line
 \end{verbatim}
 
-Let’s demonstrate roughly how the \code{tableofcontents} package works. We’ll
-be using the \code{infonodes} package to collect the information about which
-pages contain table of content items.
+Let’s demonstrate roughly how the \code{tableofcontents} package works.
+We’ll be using the \code{infonodes} package to collect the information about which pages contain table of content items.
 
-First, we set up our infonodes by creating a command that can be called
-by sectioning commands. In other words, \code{\\chapter}, \code{\\section}, etc.
-should call \code{\\tocentry} to store the page reference for this section.
+First, we set up our infonodes by creating a command that can be called by sectioning commands.
+In other words, \code{\\chapter}, \code{\\section}, etc. should call \code{\\tocentry} to store the page reference for this section.
 
 \begin{verbatim}
 \line
@@ -310,8 +316,7 @@ table. We also need to make sure we store their page numbers!
 global information in; you should use a portion of this table namespaced to
 your class or package.}
 
-So, here is a routine we can call at the end of each page to move the
-TOC nodes.
+So, here is a routine we can call at the end of each page to move the TOC nodes.
 
 \begin{verbatim}
 \line
@@ -343,8 +348,7 @@ end
 \line
 \end{verbatim}
 
-And then the \code{\\tableofcontents} command reads that file if it is
-present, and typesets the TOC nodes appropriately:
+And then the \code{\\tableofcontents} command reads that file if it is present, and typesets the TOC nodes appropriately:
 
 \begin{verbatim}
 \line
@@ -363,52 +367,47 @@ end)
 \line
 \end{verbatim}
 
-And the job is done. Well, nearly. The \code{tableofcontents} package now contains a
-couple of functions—\code{moveNodes} and \code{writeToc}—that need to be called at
-various points in the output routine of a class which uses this package. How do we
-do that?
+And the job is done.
+Well, nearly.
+The \code{tableofcontents} package now contains a couple of functions –\code{moveNodes} and \code{writeToc}– that need to be called at various points in the output routine of a class which uses this package.
+How do we do that?
 
 \section{Exports}
 
-Packages which are primarily used for providing functionality to other classes
-and packages need a way of supplying these composible bits of functionality to
-the code which is going to use them. This is called the \em{export mechanism}.
+Packages which are primarily used for providing functionality to other classes and packages need a way of supplying these composible bits of functionality to the code which is going to use them.
+This is called the \em{export mechanism}.
 
-As well as defining commands, each package may also return a Lua table consisting
-of two entries, \code{init} and \code{exports}.
+As well as defining commands, each package may also return a Lua table consisting of two entries,
+\code{init} and \code{exports}.
 
-\code{init} allows you to perform some initialization actions, optionally
-based on arguments supplied by the loading class. When the
-package is loaded with \code{class:loadPackage(package, args)}, the initializer
-is called with two arguments, \code{class} and \code{args}. For instance, the
-\code{twoside} package receives information about the IDs of the main right
-and left master frames so that it can set up the code to switch masters on page change.
-In our case, we will want to ensure that the \code{infonode} package is loaded into
-our caller:
+The \code{init} function allows you to perform some initialization actions,
+optionally based on arguments supplied by the loading class.
+When the package is loaded with \code{class:loadPackage(package, args)},
+the initializer is called with two arguments, \code{class} and \code{args}.
+For instance, the \code{twoside} package receives information about the IDs of the main right and left master frames so that it can set up the code to switch masters on page change.
+In our case, we will want to ensure that the \code{infonode} package is loaded into our caller:
 
 \begin{verbatim}
 \line
 return \{
-  init = function (caller)
-    caller:loadPackage("infonode")
+  init = function (class)
+    class:loadPackage("infonode")
   end,
 \line
 \end{verbatim}
 
 The other entry to be returned from the package is \code{exports},
-which contains names and functions to be mixed into the caller’s namespace.
+which contains names and functions to be mixed into the class namespace.
 In other words, after:
 
 \begin{verbatim}
 \line
-  exports = \{writeToc = writeToc, moveTocNodes = moveNodes\}
+  exports = \{ writeToc = writeToc, moveTocNodes = moveNodes \}
 \}
 \line
 \end{verbatim}
 
-\noindent{}any class which loads \code{tableofcontents} can call \code{self:writeToc()}
-and \code{self:moveTocNodes()} (note that we renamed this function when exporting it).
-It is the class’s responsibility for calling these methods at the appropriate point into
-the output routine.
+\noindent{}any class which loads \code{tableofcontents} can call \code{self:writeToc()} and \code{self:moveTocNodes()} (note that we renamed this function when exporting it).
+It is the class’s responsibility for calling these methods at the appropriate point into the output routine.
 
 \end{document}

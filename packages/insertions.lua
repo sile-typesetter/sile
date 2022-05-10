@@ -85,27 +85,26 @@ typesetter and frame.
 --]]
 
 local insertionsThisPage = {}
-SILE.nodefactory.insertionlist = pl.class({
-    _base = SILE.nodefactory.vbox,
-    type = "insertionlist",
-    frame = nil,
+SILE.nodefactory.insertionlist = pl.class(SILE.nodefactory.vbox)
 
-    _init = function (self, spec)
-      SILE.nodefactory.vbox._init(self, spec)
-      self.typesetter = SILE.defaultTypesetter {}
-    end,
+SILE.nodefactory.insertionlist.type = "insertionlist"
+SILE.nodefactory.insertionlist.frame = nil
 
-    __tostring = function (self)
-      return "PI<" .. self.nodes .. ">"
-    end,
+function SILE.nodefactory.insertionlist:_init (spec)
+  SILE.nodefactory.vbox._init(self, spec)
+  self.typesetter = SILE.defaultTypesetter {}
+end
 
-    outputYourself = function (self)
-      self.typesetter:init(SILE.getFrame(self.frame))
-      for _, node in ipairs(self.nodes) do
-        node:outputYourself(self.typesetter, node)
-      end
-    end
-  })
+function SILE.nodefactory.insertionlist:__tostring ()
+  return "PI<" .. self.nodes .. ">"
+end
+
+function SILE.nodefactory.insertionlist:outputYourself ()
+  self.typesetter:init(SILE.getFrame(self.frame))
+  for _, node in ipairs(self.nodes) do
+    node:outputYourself(self.typesetter, node)
+  end
+end
 
 local thisPageInsertionBoxForClass = function (class)
   if not insertionsThisPage[class] then
@@ -125,43 +124,44 @@ So we stick the material into an insertion vbox, and when the pagebuilder
 sees this, magic will happen.
 
 --]]
-SILE.nodefactory.insertion = pl.class({
-    _base = SILE.nodefactory.vbox,
-    discardable = true,
-    type = "insertion",
-    seen = false,
+SILE.nodefactory.insertion = pl.class(SILE.nodefactory.vbox)
 
-    __tostring = function (self) return "I<"..self.nodes[1].."...>" end,
+SILE.nodefactory.insertion.discardable = true
+SILE.nodefactory.insertion.type = "insertion"
+SILE.nodefactory.insertion.seen = false
 
-    outputYourself = function (_, _, _) end,
+function SILE.nodefactory.insertion:__tostring ()
+  return "I<"..self.nodes[1].."...>"
+end
 
-    -- And some utility methods to make the insertion processing code
-    -- easier to read.
-    dropDiscardables = function (self)
-      while #self.nodes > 1 and self.nodes[#self.nodes].discardable do
-        self.nodes[#self.nodes] = nil
-      end
-    end,
+function SILE.nodefactory.insertion.outputYourself (_)
+end
 
-    split = function (self, materialToSplit, maxsize)
-      local firstpage = SILE.pagebuilder:findBestBreak({
-          vboxlist = materialToSplit,
-          target   = maxsize,
-          restart  = false,
-          force    = true
-        })
-      if firstpage then
-        self.nodes = {}
-        self:append(materialToSplit)
-        self.contentHeight = self.height
-        self.contentDepth = self.depth
-        self.depth = SILE.length(0)
-        self.height = SILE.length(0)
-        return SILE.pagebuilder:collateVboxes(firstpage)
-      end
-    end
+-- And some utility methods to make the insertion processing code
+-- easier to read.
+function SILE.nodefactory.insertion:dropDiscardables ()
+  while #self.nodes > 1 and self.nodes[#self.nodes].discardable do
+    self.nodes[#self.nodes] = nil
+  end
+end
 
-})
+function SILE.nodefactory.insertion:split (materialToSplit, maxsize)
+  local firstpage = SILE.pagebuilder:findBestBreak({
+      vboxlist = materialToSplit,
+      target   = maxsize,
+      restart  = false,
+      force    = true
+    })
+  if firstpage then
+    self.nodes = {}
+    self:append(materialToSplit)
+    self.contentHeight = self.height
+    self.contentDepth = self.depth
+    self.depth = SILE.length(0)
+    self.height = SILE.length(0)
+    return SILE.pagebuilder:collateVboxes(firstpage)
+  end
+end
 
 --[[
 

@@ -1,5 +1,5 @@
-SILE.baseClass:loadPackage("raiselower")
-SILE.baseClass:loadPackage("rebox")
+SILE.classes.base:loadPackage("raiselower")
+SILE.classes.base:loadPackage("rebox")
 
 SILE.registerCommand("hrule", function (options, _)
   local width = SU.cast("length", options.width)
