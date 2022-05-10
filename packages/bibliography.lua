@@ -1,4 +1,3 @@
-local std = require("std")
 -- luacheck: globals setfenv getfenv
 
 -- The following functions borrowed from Norman Ramsey's nbibtex,
@@ -301,7 +300,7 @@ Bibliography = {
     t.cite = cite
     t.item = item
     for k,v in pairs(item) do t[k:lower()] = v end
-    return std.table.merge(t, style)
+    return pl.tablex.update(t, style)
   end,
 
   _process = function (item, t, dStart, dEnd)
@@ -322,7 +321,7 @@ Bibliography = {
     UNKNOWN_REFERENCE = 1,
   },
 
-  Style = std.object {
+  Style = {
     andAuthors = function(item)
       local authors = namesplit(item.Author)
       if #authors == 1 then

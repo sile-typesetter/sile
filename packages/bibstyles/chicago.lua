@@ -1,6 +1,6 @@
 local Bibliography = SILE.require("packages/bibliography")
 
-return Bibliography.Style {
+return pl.tablex.merge(Bibliography.Style, {
   CitationStyle = Bibliography.CitationStyles.AuthorYear,
 
   -- luacheck: push ignore
@@ -15,4 +15,4 @@ return Bibliography.Style {
       parens(volume), number, optional(":", pages)
   end
   -- luacheck: pop
-}
+})
