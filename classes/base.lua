@@ -5,7 +5,7 @@ base._initialized = false
 base._legacy = false
 base._deprecated = false
 base.deferredInit = {}
-base.pageTemplate = std.object { frames = {}, firstContentFrame = nil }
+base.pageTemplate = { frames = {}, firstContentFrame = nil }
 base.defaultFrameset = {}
 base.firstContentFrame = "page"
 base.options = setmetatable({}, {
