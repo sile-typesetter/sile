@@ -164,9 +164,9 @@ For example to load the \code{infonode} package into our class, we could add thi
 \line
 
 function bringhurst:_init(options)
+  book._init(self, options)
   self:loadPackage("infonode")
-  book.init(self, options)
-  if self._name == "bringhurst" then self:post_init() end
+  self:post_init()
   return self
 end
 
