@@ -19,13 +19,6 @@ SILE.inputs.common = {
     -- Prepend the dirname of the input file to the Lua search path
     local dirname = SILE.masterFilename:match("(.-)[^%/]+$")
     package.path = dirname.."?;"..dirname.."?.lua;"..package.path
-    local ff = SILE.documentState.documentClass:initialFrame()
-    SILE.typesetter = SILE.defaultTypesetter(ff)
-    SILE.typesetter:registerPageEndHook(function ()
-      if SU.debugging("frames") then
-        for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
-      end
-    end)
   end
 }
 

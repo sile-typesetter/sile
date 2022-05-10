@@ -43,7 +43,7 @@ base.options = setmetatable({}, {
 -- skip the normal init process the first time around (and even walk it back).
 -- Normal _init() will be called again later, possibly with legacy init() mixins.
 function base:_create ()
-  if self.id then
+  if type(self) == "table" and self.id then
     self._legacy = true
     self._name = self.id
     self.id = nil
@@ -103,12 +103,23 @@ end
 -- SILE's deffered inits, migrate to Penlight's builtin when it's not used for
 -- deprecation of the old system
 function base:post_init ()
+  if type(self.firstContentFrame) == "string" then
+    self.pageTemplate.firstContentFrame = self.pageTemplate.frames[self.firstContentFrame]
+  end
   for i, pkginit in ipairs(self.deferredInit) do
     pkginit(self)
     self.deferredInit[i] = nil
   end
-  if type(self.firstContentFrame) == "string" then
-    self.pageTemplate.firstContentFrame = self.pageTemplate.frames[self.firstContentFrame]
+  local frame = self:initialFrame()
+  SILE.typesetter = SILE.defaultTypesetter(frame)
+  SILE.typesetter:registerPageEndHook(function ()
+    if SU.debugging("frames") then
+      for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
+    end
+  end)
+  for i, pkginit in ipairs(self.deferredInit) do
+    pkginit(self)
+    self.deferredInit[i] = nil
   end
   self._initialized = true
 end
