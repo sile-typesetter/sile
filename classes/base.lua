@@ -87,11 +87,6 @@ function base:_init (options)
   self:declareSettings()
   self:registerCommands()
   self:declareFrames(self.defaultFrameset)
-  SILE.typesetter:registerPageEndHook(function ()
-    if SU.debugging("frames") then
-      for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
-    end
-  end)
   -- Avoid calling this (yet) if we're the parent of some child class
   if self._name == "base" then self:post_init() end
   return self

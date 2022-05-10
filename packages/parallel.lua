@@ -11,7 +11,7 @@ local allTypesetters = function (callback)
   SILE.typesetter = oldtypesetter
 end
 
-local nulTypesetter = SILE.typesetter {} -- we ignore this
+local nulTypesetter = pl.class(SILE.defaultTypesetter) -- we ignore this
 nulTypesetter.outputLinesToPage = function () end
 
 local parallelPagebreak = function ()
@@ -44,12 +44,12 @@ local parallelPagebreak = function ()
   end
 end
 
-local setupParallel = function (class, options)
-  nulTypesetter:init(SILE.getFrame("page"))
+local function init (class, options)
+
+  SILE.typesetter = nulTypesetter(SILE.getFrame("page"))
   for frame, typesetter in pairs(options.frames) do
-    typesetterPool[frame] = SILE.typesetter {}
+    typesetterPool[frame] = SILE.defaultTypesetter(SILE.getFrame(typesetter))
     typesetterPool[frame].id = typesetter
-    typesetterPool[frame]:init(SILE.getFrame(typesetter))
     typesetterPool[frame].buildPage = function ()
       -- No thank you, I will do that.
     end
@@ -126,9 +126,8 @@ SILE.registerCommand("sync", function (_, _)
     if maxheight < calculations[frame].heightOfNewMaterial then maxheight = calculations[frame].heightOfNewMaterial end
     SU.debug("parallel", frame .. ": pre-sync content=" .. calculations[frame].mark .. ", now " .. #typesetter.state.outputQueue .. ", height of material: " .. tostring(calculations[frame].heightOfNewMaterial))
   end)
-  addBalancingGlue(maxheight)
-  SILE.typesetter = nulTypesetter
-end)
+
+end
 
 return {
   init = setupParallel,
