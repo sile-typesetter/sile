@@ -1,5 +1,6 @@
-local plain = SILE.require("plain", "classes")
-local pecha = plain { id = "pecha" }
+local plain = require("classes.plain")
+local pecha = pl.class(plain)
+pecha._name = "pecha"
 
 local tibetanNumber = function (n)
   local out = ""
@@ -34,9 +35,16 @@ pecha.defaultFrameset = {
   }
 }
 
-function pecha:init()
+function pecha:_init(options)
+  self._init(self, options)
   self:loadPackage("rotate")
-  return plain.init(self)
+  SILE.call("language", { main = "bo" })
+  SILE.settings.set("document.lskip", SILE.nodefactory.hfillglue())
+  SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
+  SILE.settings.set("document.parindent", SILE.nodefactory.glue())
+  -- Avoid calling this (yet) if we're the parent of some child class
+  if self._name == "pecha" then self:post_init() end
+  return self
 end
 
 function pecha:endPage()
@@ -63,14 +71,6 @@ function pecha:newPage()
   SILE.outputter:newPage()
   SILE.outputter:debugFrame(SILE.getFrame("content"))
   return self:initialFrame()
-end
-
-function pecha:registerCommands()
-  plain.registerCommands(self)
-  SILE.call("language", { main = "bo" })
-  SILE.settings.set("document.lskip", SILE.nodefactory.hfillglue())
-  SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
-  SILE.settings.set("document.parindent", SILE.nodefactory.glue())
 end
 
 return pecha
