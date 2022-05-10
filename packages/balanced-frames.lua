@@ -1,6 +1,6 @@
 local BALANCE_PENALTY = -17777
 
-local function initBalanced (_)
+local function init (_, _)
 
   SILE.registerCommand("balancecolumns", function (_, _)
     SILE.typesetter:leaveHmode()
@@ -75,7 +75,7 @@ local function initBalanced (_)
 end
 
 return {
-  init = initBalanced,
+  init = init,
   documentation=[[\begin{document}
 This package attempts to ensure that the main content frames on a
 page are balanced; that is, that they have the same height. In your

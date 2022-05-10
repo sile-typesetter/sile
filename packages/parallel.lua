@@ -83,54 +83,55 @@ local function init (class, options)
     parallelPagebreak()
     oldfinish(self)
   end
-end
 
-local addBalancingGlue = function (height)
-  allTypesetters(function (frame, typesetter)
-    local glue = height - calculations[frame].heightOfNewMaterial
-    if glue.length:tonumber() > 0 then
-      SU.debug("parallel", "Adding " .. tostring(glue) .. " to " .. tostring(frame))
-      typesetter:pushVglue({ height = glue })
-    end
-    calculations[frame].mark = #typesetter.state.outputQueue
-  end)
-end
-
-SILE.registerCommand("sync", function (_, _)
-  local anybreak = false
-  local maxheight = SILE.length()
-  SU.debug("parallel", "Trying a sync")
-  allTypesetters(function (_, typesetter)
-    SU.debug("parallel", "Leaving hmode on "..typesetter.id)
-    typesetter:leaveHmode(true)
-    -- Now we have each typesetter's content boxed up onto the output stream
-    -- but page breaking has not been run. See if page breaking would cause a
-    -- break
-    local lines = pl.tablex.copy(typesetter.state.outputQueue)
-    if SILE.pagebuilder:findBestBreak({ vboxlist = lines, target = typesetter:getTargetLength() }) then
-      anybreak = true
-    end
-  end)
-
-  if anybreak then
-    parallelPagebreak()
-    return
+  local addBalancingGlue = function (height)
+    allTypesetters(function (frame, typesetter)
+      local glue = height - calculations[frame].heightOfNewMaterial
+      if glue.length:tonumber() > 0 then
+        SU.debug("parallel", "Adding " .. tostring(glue) .. " to " .. tostring(frame))
+        typesetter:pushVglue({ height = glue })
+      end
+      calculations[frame].mark = #typesetter.state.outputQueue
+    end)
   end
 
-  allTypesetters(function (frame, typesetter)
-    calculations[frame].heightOfNewMaterial = SILE.length()
-    for i = calculations[frame].mark + 1, #typesetter.state.outputQueue do
-      local thisHeight = typesetter.state.outputQueue[i].height + typesetter.state.outputQueue[i].depth
-      calculations[frame].heightOfNewMaterial = calculations[frame].heightOfNewMaterial + thisHeight
+  SILE.registerCommand("sync", function (_, _)
+    local anybreak = false
+    local maxheight = SILE.length()
+    SU.debug("parallel", "Trying a sync")
+    allTypesetters(function (_, typesetter)
+      SU.debug("parallel", "Leaving hmode on "..typesetter.id)
+      typesetter:leaveHmode(true)
+      -- Now we have each typesetter's content boxed up onto the output stream
+      -- but page breaking has not been run. See if page breaking would cause a
+      -- break
+      local lines = pl.tablex.copy(typesetter.state.outputQueue)
+      if SILE.pagebuilder:findBestBreak({ vboxlist = lines, target = typesetter:getTargetLength() }) then
+        anybreak = true
+      end
+    end)
+
+    if anybreak then
+      parallelPagebreak()
+      return
     end
-    if maxheight < calculations[frame].heightOfNewMaterial then maxheight = calculations[frame].heightOfNewMaterial end
-    SU.debug("parallel", frame .. ": pre-sync content=" .. calculations[frame].mark .. ", now " .. #typesetter.state.outputQueue .. ", height of material: " .. tostring(calculations[frame].heightOfNewMaterial))
+
+    allTypesetters(function (frame, typesetter)
+      calculations[frame].heightOfNewMaterial = SILE.length()
+      for i = calculations[frame].mark + 1, #typesetter.state.outputQueue do
+        local thisHeight = typesetter.state.outputQueue[i].height + typesetter.state.outputQueue[i].depth
+        calculations[frame].heightOfNewMaterial = calculations[frame].heightOfNewMaterial + thisHeight
+      end
+      if maxheight < calculations[frame].heightOfNewMaterial then maxheight = calculations[frame].heightOfNewMaterial end
+      SU.debug("parallel", frame .. ": pre-sync content=" .. calculations[frame].mark .. ", now " .. #typesetter.state.outputQueue .. ", height of material: " .. tostring(calculations[frame].heightOfNewMaterial))
+    end)
+    addBalancingGlue(maxheight)
   end)
 
 end
 
 return {
-  init = setupParallel,
+  init = init,
   documentation = [[
 \begin{document}
 The \autodoc:package{parallel} package provides the mechanism for typesetting diglot or other

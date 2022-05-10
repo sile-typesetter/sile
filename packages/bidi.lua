@@ -1,23 +1,5 @@
 local icu = require("justenoughicu")
 
-SILE.registerCommand("thisframeLTR", function (_, _)
-  SILE.typesetter.frame.direction = "LTR"
-  SILE.typesetter:leaveHmode()
-  SILE.typesetter.frame:newLine()
-end)
-
-SILE.registerCommand("thisframedirection", function (options, _)
-  SILE.typesetter.frame.direction = SU.required(options, "direction", "frame direction")
-  SILE.typesetter:leaveHmode()
-  SILE.typesetter.frame:init()
-end)
-
-SILE.registerCommand("thisframeRTL", function (_, _)
-  SILE.typesetter.frame.direction = "RTL"
-  SILE.typesetter:leaveHmode()
-  SILE.typesetter.frame:newLine()
-end)
-
 local function reverse_portion(tbl, s, e)
   local rv = {}
   for i = 1, s-1 do rv[#rv+1] = tbl[i] end
@@ -72,12 +54,12 @@ local reverse_each_node = function (nodelist)
   end
 end
 
-local reorder = function (n, self)
+local reorder = function (n, typesetter)
   local nl = n.nodes
   -- local newNl = {}
   -- local matrix = {}
   local levels = {}
-  local base_level = self.frame:writingDirection() == "RTL" and 1 or 0
+  local base_level = typesetter.frame:writingDirection() == "RTL" and 1 or 0
   for i = 1, #nl do
     if nl[i].options and nl[i].options.bidilevel then
       levels[i] = { level = nl[i].options.bidilevel }
@@ -173,12 +155,12 @@ local splitNodeAtPos = function (n, splitstart, p)
   end
 end
 
-local splitNodelistIntoBidiRuns = function (self)
-  local nl = self.state.nodes
+local splitNodelistIntoBidiRuns = function (typesetter)
+  local nl = typesetter.state.nodes
   if #nl == 0 then return nl end
   local owners, text = nodeListToText(nl)
-  local base_level = self.frame:writingDirection() == "RTL" and 1 or 0
-  local runs = { icu.bidi_runs(table.concat(text), self.frame:writingDirection()) }
+  local base_level = typesetter.frame:writingDirection() == "RTL" and 1 or 0
+  local runs = { icu.bidi_runs(table.concat(text), typesetter.frame:writingDirection()) }
   table.sort(runs, function (a, b) return a.start < b.start end)
   -- local newNl = {}
   -- Split nodes on run boundaries
@@ -227,41 +209,47 @@ local splitNodelistIntoBidiRuns = function (self)
   return nl
 end
 
-local bidiBoxupNodes = function (self)
+local bidiBoxupNodes = function (typesetter)
   local allDone = true
-  for i = 1, #self.state.nodes do
-    if not self.state.nodes[i].bidiDone then allDone = false end
+  for i = 1, #typesetter.state.nodes do
+    if not typesetter.state.nodes[i].bidiDone then allDone = false end
   end
-  if allDone then return self:nobidi_boxUpNodes() end
-  local newNodeList = splitNodelistIntoBidiRuns(self)
-  self:shapeAllNodes(newNodeList)
-  self.state.nodes = newNodeList
-  local vboxlist = self:nobidi_boxUpNodes()
+  if allDone then return typesetter:nobidi_boxUpNodes() end
+  local newNodeList = splitNodelistIntoBidiRuns(typesetter)
+  typesetter:shapeAllNodes(newNodeList)
+  typesetter.state.nodes = newNodeList
+  local vboxlist = typesetter:nobidi_boxUpNodes()
   -- Scan for out-of-direction material
   for i = 1, #vboxlist do
     local v = vboxlist[i]
-    if v.is_vbox then reorder(v, self) end
+    if v.is_vbox then reorder(v, typesetter) end
   end
   return vboxlist
 end
 
-local bidiEnableTypesetter = function (typesetter)
-  if typesetter.nobidi_boxUpNodes then
+local bidiEnableTypesetter = function (class, typesetter)
+  if typesetter.nobidi_boxUpNodes and class._initialized then
     return SU.warn("BiDi already enabled, nothing to turn on")
   end
   typesetter.nobidi_boxUpNodes = typesetter.boxUpNodes
   typesetter.boxUpNodes = bidiBoxupNodes
 end
 
-local bidiDisableTypesetter = function (typesetter)
-  if not typesetter.nobidi_boxUpNodes then
+local bidiDisableTypesetter = function (class, typesetter)
+  if not typesetter.nobidi_boxUpNodes and class._initialized then
     return SU.warn("BiDi not enabled, nothing to turn off")
   end
   typesetter.boxUpNodes = typesetter.nobidi_boxUpNodes
   typesetter.nobidi_boxUpNodes = nil
 end
 
-local function initBidi (self)
+local function init (class, _)
+
+  bidiEnableTypesetter(class, SILE.defaultTypesetter)
+
+  if SILE.typesetter then
+    bidiEnableTypesetter(class, SILE.typesetter)
+  end
 
   SILE.registerCommand("thisframeLTR", function (_, _)
     SILE.typesetter.frame.direction = "LTR"
@@ -275,19 +263,30 @@ local function initBidi (self)
     SILE.typesetter.frame:init()
   end)
 
-SILE.registerCommand("bidi-on", function (_, _)
-  bidiEnableTypesetter(SILE.typesetter)
-end)
+  SILE.registerCommand("thisframeRTL", function (_, _)
+    SILE.typesetter.frame.direction = "RTL"
+    SILE.typesetter:leaveHmode()
+    SILE.typesetter.frame:newLine()
+  end)
 
-SILE.registerCommand("bidi-off", function (_, _)
-  bidiDisableTypesetter(SILE.typesetter)
-end)
+  SILE.registerCommand("bidi-on", function (_, _)
+    bidiEnableTypesetter(class, SILE.typesetter)
+  end)
+
+  SILE.registerCommand("bidi-off", function (_, _)
+    bidiDisableTypesetter(class, SILE.typesetter)
+  end)
+
+end
 
 return {
-reorder = reorder,
-bidiEnableTypesetter = bidiEnableTypesetter,
-bidiDisableTypesetter = bidiDisableTypesetter,
-documentation = [[\begin{document}
+  init = init,
+  exports = {
+    reorder = reorder,
+    bidiEnableTypesetter = bidiEnableTypesetter,
+    bidiDisableTypesetter = bidiDisableTypesetter
+  },
+  documentation = [[\begin{document}
 
 Scripts like the Latin alphabet you are currently reading are normally written left to
 right; however, some scripts, such as Arabic and Hebrew, are written right to left.
@@ -304,4 +303,5 @@ and proceed leftward. It also provides the commands \autodoc:command{\bidi-off} 
 \autodoc:command{\bidi-on}, which allow you to trade off bidirectional support for a
 dubious increase in speed.
 
-\end{document}]] }
+\end{document}]]
+}

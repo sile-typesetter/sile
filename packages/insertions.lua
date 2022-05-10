@@ -253,7 +253,7 @@ local debugInsertion = function (ins, insbox, topBox, target, targetFrame, total
   SU.debug("insertions", totalHeight .. " worth of content on page so far")
 end
 
-local function initInsertions (_)
+local function init(_, _)
 
   local pt = SILE.typesetter.getTargetLength
   SILE.typesetter.getTargetLength = function (self)
@@ -443,7 +443,7 @@ local insert = function (_, classname, vbox)
 end
 
 return {
-  init = initInsertions,
+  init = init,
   exports = {
     initInsertionClass = initInsertionClass,
     thisPageInsertionBoxForClass = thisPageInsertionBoxForClass,
