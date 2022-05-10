@@ -261,8 +261,19 @@ local bidiDisableTypesetter = function (typesetter)
   typesetter.nobidi_boxUpNodes = nil
 end
 
-bidiEnableTypesetter(SILE.typesetter)
-bidiEnableTypesetter(SILE.defaultTypesetter)
+local function initBidi (self)
+
+  SILE.registerCommand("thisframeLTR", function (_, _)
+    SILE.typesetter.frame.direction = "LTR"
+    SILE.typesetter:leaveHmode()
+    SILE.typesetter.frame:newLine()
+  end)
+
+  SILE.registerCommand("thisframedirection", function (options, _)
+    SILE.typesetter.frame.direction = SU.required(options, "direction", "frame direction")
+    SILE.typesetter:leaveHmode()
+    SILE.typesetter.frame:init()
+  end)
 
 SILE.registerCommand("bidi-on", function (_, _)
   bidiEnableTypesetter(SILE.typesetter)

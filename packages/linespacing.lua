@@ -125,17 +125,23 @@ local linespacingLeading = function (_, vbox, previous)
   SU.error("Unknown line spacing method "..method)
 end
 
-SILE.typesetter.leadingFor = linespacingLeading
+local function init (_, _)
 
-SILE.registerCommand("linespacing-on", function ()
   SILE.typesetter.leadingFor = linespacingLeading
-end)
 
-SILE.registerCommand("linespacing-off", function ()
-  SILE.typesetter.leadingFor = SILE.defaultTypesetter.leadingFor
-end)
+  SILE.registerCommand("linespacing-on", function ()
+    SILE.typesetter.leadingFor = linespacingLeading
+  end)
 
-return { documentation = [[\begin{document}
+  SILE.registerCommand("linespacing-off", function ()
+    SILE.typesetter.leadingFor = SILE.defaultTypesetter.leadingFor
+  end)
+
+end
+
+return {
+  init = init,
+  documentation = [[\begin{document}
 \linespacing-on
 
 SILE’s default method of inserting leading between lines should be familiar to

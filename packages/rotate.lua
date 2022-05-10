@@ -17,14 +17,6 @@ local leave =   function(self)
   pdf:grestore()
 end
 
-if SILE.typesetter.frame then
-  enter(SILE.typesetter.frame)
-  table.insert(SILE.typesetter.frame.leaveHooks, leave)
-end
-
-table.insert(SILE.framePrototype.enterHooks, enter)
-table.insert(SILE.framePrototype.leaveHooks, leave)
-
 -- What is the width, depth and height of a rectangle width w and height h rotated by angle theta?
 -- rect1 = Rectangle[{0, 0}, {w, h}]
 -- {{xmin, xmax}, {ymin, ymax}} = Refine[RegionBounds[TransformedRegion[rect1,
@@ -56,45 +48,59 @@ local outputRotatedHbox = function (self, typesetter, line)
   typesetter.frame:advanceWritingDirection(self.width)
 end
 
-SILE.registerCommand("rotate", function(options, content)
-  local angle = SU.required(options, "angle", "rotate command")
-  local theta = -math.rad(angle)
-  local origbox = SILE.call("hbox", {}, content)
-  SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
-  local h = origbox.height + origbox.depth
-  local w = origbox.width.length
-  local st = math.sin(theta)
-  local ct = math.cos(theta)
-  local height, width, depth
-  if st <= 0 and ct <= 0    then
-    width  = -w * ct - h * st
-    height = 0.5*(h-h*ct-w*st)
-    depth  = 0.5*(h+h*ct+w*st)
-  elseif st <=0 and ct > 0  then
-    width  =  w * ct - h * st
-    height = 0.5*(h+h*ct-w*st)
-    depth  = 0.5*(h-h*ct+w*st)
-  elseif st > 0 and ct <= 0 then
-    width  = -w * ct + h * st
-    height = 0.5*(h-h*ct+w*st)
-    depth  = 0.5*(h+h*ct-w*st)
-  else
-    width  =  w * ct + h * st
-    height = 0.5*(h+h*ct+w*st)
-    depth  = 0.5*(h-h*ct-w*st)
-  end
-  depth = -depth
-  if depth < SILE.length(0) then depth = SILE.length(0) end
-  SILE.typesetter:pushHbox({
-    value = { orig = origbox, theta = theta},
-    height = height,
-    width = width,
-    depth = depth,
-    outputYourself= outputRotatedHbox
-  })
-end)
+local function init (_, _)
 
-return { documentation = [[\begin{document}
+  if SILE.typesetter.frame then
+    enter(SILE.typesetter.frame)
+    table.insert(SILE.typesetter.frame.leaveHooks, leave)
+  end
+
+  table.insert(SILE.framePrototype.enterHooks, enter)
+  table.insert(SILE.framePrototype.leaveHooks, leave)
+
+  SILE.registerCommand("rotate", function(options, content)
+    local angle = SU.required(options, "angle", "rotate command")
+    local theta = -math.rad(angle)
+    local origbox = SILE.call("hbox", {}, content)
+    SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
+    local h = origbox.height + origbox.depth
+    local w = origbox.width.length
+    local st = math.sin(theta)
+    local ct = math.cos(theta)
+    local height, width, depth
+    if st <= 0 and ct <= 0    then
+      width  = -w * ct - h * st
+      height = 0.5*(h-h*ct-w*st)
+      depth  = 0.5*(h+h*ct+w*st)
+    elseif st <=0 and ct > 0  then
+      width  =  w * ct - h * st
+      height = 0.5*(h+h*ct-w*st)
+      depth  = 0.5*(h-h*ct+w*st)
+    elseif st > 0 and ct <= 0 then
+      width  = -w * ct + h * st
+      height = 0.5*(h-h*ct+w*st)
+      depth  = 0.5*(h+h*ct-w*st)
+    else
+      width  =  w * ct + h * st
+      height = 0.5*(h+h*ct+w*st)
+      depth  = 0.5*(h-h*ct-w*st)
+    end
+    depth = -depth
+    if depth < SILE.length(0) then depth = SILE.length(0) end
+    SILE.typesetter:pushHbox({
+      value = { orig = origbox, theta = theta},
+      height = height,
+      width = width,
+      depth = depth,
+      outputYourself = outputRotatedHbox
+    })
+  end)
+
+end
+
+return {
+  init = init,
+  documentation = [[\begin{document}
 The \autodoc:package{rotate} package allows you to rotate things. You can rotate entire
 frames, by adding the \autodoc:parameter{rotate=<angle>} declaration to your frame declaration,
 and you can rotate any content by issuing the command \autodoc:command{\rotate[angle=<angle>]{<content>}},

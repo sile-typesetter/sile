@@ -253,10 +253,31 @@ local debugInsertion = function (ins, insbox, topBox, target, targetFrame, total
   SU.debug("insertions", totalHeight .. " worth of content on page so far")
 end
 
-local pt = SILE.typesetter.getTargetLength
-SILE.typesetter.getTargetLength = function (self)
-  initShrinkage(self.frame)
-  return pt(self) - self.frame.state.totals.shrinkage
+local function initInsertions (_)
+
+  local pt = SILE.typesetter.getTargetLength
+  SILE.typesetter.getTargetLength = function (self)
+    initShrinkage(self.frame)
+    return pt(self) - self.frame.state.totals.shrinkage
+  end
+
+  SILE.typesetter:registerFrameBreakHook(function (_, nl)
+    pl.tablex.foreach(insertionsThisPage, SILE.insertions.commitShrinkage)
+    return nl
+  end)
+
+  SILE.typesetter:registerPageEndHook(function (_, nl)
+    pl.tablex.foreach(insertionsThisPage, SILE.insertions.increaseInsertionFrame)
+    for class, insertionlist in pairs(insertionsThisPage) do
+      insertionlist:outputYourself()
+      insertionsThisPage[class] = nil
+    end
+    if SU.debugging("insertions") then
+      for _, frame in pairs(SILE.frames) do SILE.outputter:debugFrame(frame) end
+    end
+    return nl
+  end)
+
 end
 
 --[[
@@ -401,23 +422,6 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   return target
 end
 
-SILE.typesetter:registerFrameBreakHook(function (_, nl)
-  pl.tablex.foreach(insertionsThisPage, SILE.insertions.commitShrinkage)
-  return nl
-end)
-
-SILE.typesetter:registerPageEndHook(function (_, nl)
-  pl.tablex.foreach(insertionsThisPage, SILE.insertions.increaseInsertionFrame)
-  for class, insertionlist in pairs(insertionsThisPage) do
-    insertionlist:outputYourself()
-    insertionsThisPage[class] = nil
-  end
-  if SU.debugging("insertions") then
-    for _, frame in pairs(SILE.frames) do SILE.outputter:debugFrame(frame) end
-  end
-  return nl
-end)
-
 -- This just puts the insertion vbox into the typesetter's queues.
 local insert = function (_, classname, vbox)
   local thisclass = SILE.scratch.insertions.classes[classname]
@@ -439,7 +443,7 @@ local insert = function (_, classname, vbox)
 end
 
 return {
-  init = function () end,
+  init = initInsertions,
   exports = {
     initInsertionClass = initInsertionClass,
     thisPageInsertionBoxForClass = thisPageInsertionBoxForClass,
