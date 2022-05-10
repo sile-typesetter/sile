@@ -129,16 +129,16 @@ We can define this in SILE terms like so:
 bringhurst.defaultFrameset = \{
   content = \{
     left = "width(page) / 13",
-    top = "left(content) * 8 / 5",
-    right = "100\%pw - 2 * top(content)",
+    top = "width(page) / 8",
+    right = "width(page) * .75",
     bottom = "top(footnotes)"
   \},
   folio = book.defaultFrameset.folio,
   runningHead = \{
     left = "left(content)",
     right = "right(content)",
-    top = "top(content) - 4\%ph",
-    bottom = "top(content) - 2\%ph"
+    top = "top(content) / 2",
+    bottom = "top(content) * .75"
   \},
   footnotes = book.defaultFrameset.footnotes
 \}
