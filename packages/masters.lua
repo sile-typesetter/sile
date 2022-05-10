@@ -1,4 +1,7 @@
-SILE.scratch.masters = {}
+if not SILE.scratch.masters then
+  SILE.scratch.masters = {}
+end
+
 local _currentMaster
 
 local function defineMaster (_, args)
