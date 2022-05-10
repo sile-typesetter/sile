@@ -43,7 +43,9 @@ function jbook:_init (options)
     return self.layout
   end)
   book._init(self, options)
-  SILE.call("bidi-off")
+  self:registerPostinit(function ()
+      SILE.call("bidi-off")
+    end)
   SILE.languageSupport.loadLanguage("ja")
   self:loadPackage("hanmenkyoshi")
   self.defaultFrameset.content.tate = self.options.layout == "tate"

@@ -106,10 +106,6 @@ function base:post_init ()
   if type(self.firstContentFrame) == "string" then
     self.pageTemplate.firstContentFrame = self.pageTemplate.frames[self.firstContentFrame]
   end
-  for i, pkginit in ipairs(self.deferredInit) do
-    pkginit(self)
-    self.deferredInit[i] = nil
-  end
   local frame = self:initialFrame()
   SILE.typesetter = SILE.defaultTypesetter(frame)
   SILE.typesetter:registerPageEndHook(function ()
@@ -117,11 +113,11 @@ function base:post_init ()
       for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
     end
   end)
+  self._initialized = true
   for i, pkginit in ipairs(self.deferredInit) do
     pkginit(self)
     self.deferredInit[i] = nil
   end
-  self._initialized = true
 end
 
 -- This is essentially of a self destruct mechanism that monkey patches the old
@@ -222,13 +218,13 @@ function base:registerPostinit (func, args)
     end)
 end
 
-base.registerCommands = function (_)
+function base:registerCommands ()
 
   SILE.registerCommand("script", function (options, content)
     if (options["src"]) then
       local script, _ = require(options["src"])
       if type(script) == "table" and script.init then
-        script.init()
+        script.init(self, options)
       end
     else
       local func, err = load(content[1])
