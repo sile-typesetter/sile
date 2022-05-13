@@ -9,10 +9,10 @@ source = {
 }
 dependencies = {
   "lua >= 5.1",
-  "bit32", -- versions vary on different VMs
+  "bit32", -- only required on Lua < 5.2, versions vary between Rock and VM provided
   "cassowary == 2.3.2-1",
   "cldr == 0.2.0-0",
-  "compat53 == 0.8-1",
+  "compat53 == 0.8-1", -- only required on Lua < 5.3
   "cosmo == 16.06.04-1",
   "fluent == 0.2.0-0",
   "linenoise == 0.9-1",
