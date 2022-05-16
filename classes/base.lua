@@ -394,7 +394,9 @@ function base:finish ()
   end
   SILE.typesetter:runHooks("pageend") -- normally run by the typesetter
   self:endPage()
-  assert(SILE.typesetter:isQueueEmpty(), "queues not empty")
+    if SILE.typesetter then
+      assert(SILE.typesetter:isQueueEmpty(), "queues not empty")
+    end
   SILE.outputter:finish()
 end
 

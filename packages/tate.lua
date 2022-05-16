@@ -59,16 +59,24 @@ local function init (class, _)
   -- Eventually will be automatically called by script detection, but for now
   -- called manually
   SILE.registerCommand("latin-in-tate", function (_, content)
+    if SILE.typesetter.frame:writingDirection() ~= "TTB" then
+      return SILE.process(content)
+    end
     local nodes
     local oldT = SILE.typesetter
     local prevDirection = oldT.frame.direction
-    if oldT.frame:writingDirection() ~= "TTB" then return SILE.process(content) end
     SILE.require("packages/rotate")
     SILE.settings.temporarily(function()
-      local latinT = SILE.defaultTypesetter {}
-      latinT.frame = SILE.framePrototype({}, true) -- not fully initialized, just a dummy
-      latinT:initState()
-      SILE.typesetter = latinT
+      local latinTypesetter = pl.class(SILE.defaultTypesetter)
+      local dummyFrame = pl.class(SILE.framePrototype)
+      dummyFrame.init = function (self)
+        self.state = {}
+      end
+      latinTypesetter.initFrame = function (self, frame)
+        self.frame = frame
+      end
+      local frame = dummyFrame({}, true)
+      SILE.typesetter = latinTypesetter(frame)
       SILE.settings.set("document.language", "und")
       SILE.settings.set("font.direction", "LTR")
       SILE.process(content)
