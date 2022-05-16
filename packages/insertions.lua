@@ -92,7 +92,7 @@ SILE.nodefactory.insertionlist.frame = nil
 
 function SILE.nodefactory.insertionlist:_init (spec)
   SILE.nodefactory.vbox._init(self, spec)
-  self.typesetter = SILE.defaultTypesetter {}
+  self.typesetter = SILE.defaultTypesetter()
 end
 
 function SILE.nodefactory.insertionlist:__tostring ()
@@ -100,7 +100,7 @@ function SILE.nodefactory.insertionlist:__tostring ()
 end
 
 function SILE.nodefactory.insertionlist:outputYourself ()
-  self.typesetter:init(SILE.getFrame(self.frame))
+  self.typesetter:initFrame(SILE.getFrame(self.frame))
   for _, node in ipairs(self.nodes) do
     node:outputYourself(self.typesetter, node)
   end
@@ -253,12 +253,15 @@ local debugInsertion = function (ins, insbox, topBox, target, targetFrame, total
   SU.debug("insertions", tostring(totalHeight) .. " worth of content on page so far")
 end
 
-local function init(_, _)
+local function init (_, _)
 
-  local pt = SILE.typesetter.getTargetLength
-  SILE.typesetter.getTargetLength = function (self)
-    initShrinkage(self.frame)
-    return pt(self) - self.frame.state.totals.shrinkage
+  local typesetter = SILE.typesetter
+  if not typesetter.noinsertion_getTargetLength then
+    typesetter.noinsertion_getTargetLength = typesetter.getTargetLength
+    typesetter.getTargetLength = function (self)
+      initShrinkage(self.frame)
+      return typesetter.noinsertion_getTargetLength(self) - self.frame.state.totals.shrinkage
+    end
   end
 
   SILE.typesetter:registerFrameBreakHook(function (_, nl)
@@ -424,8 +427,8 @@ end
 
 -- This just puts the insertion vbox into the typesetter's queues.
 local insert = function (_, classname, vbox)
-  local thisclass = SILE.scratch.insertions.classes[classname]
-  if not thisclass then SU.error("Uninitialized insertion class " .. classname) end
+  local insertion = SILE.scratch.insertions.classes[classname]
+  if not insertion then SU.error("Uninitialized insertion class " .. classname) end
   SILE.typesetter:pushMigratingMaterial({
       SILE.nodefactory.penalty(SILE.settings.get("insertion.penalty"))
     })
@@ -436,7 +439,7 @@ local insert = function (_, classname, vbox)
           -- actual height and depth must remain zero for page glue calculations
           contentHeight = vbox.height,
           contentDepth = vbox.depth,
-          frame = thisclass.insertInto.frame,
+          frame = insertion.insertInto.frame,
           parent = SILE.typesetter.frame
         })
     })
