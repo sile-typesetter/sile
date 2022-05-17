@@ -450,7 +450,7 @@ function SILE.defaultTypesetter.setVerticalGlue (_, pageNodeList, target)
     if gTotal.stretch:tonumber() > 0 then
       for i = 1, #glues do
         local g = glues[i]
-        g:adjustGlue(adjustment * g.height.stretch:absolute() / gTotal.stretch)
+        g:adjustGlue(adjustment:tonumber() * g.height.stretch:absolute() / gTotal.stretch)
       end
     end
   elseif adjustment:tonumber() < 0 then
@@ -464,7 +464,7 @@ function SILE.defaultTypesetter.setVerticalGlue (_, pageNodeList, target)
     if gTotal.shrink:tonumber() > 0 then
       for i = 1, #glues do
         local g  = glues[i]
-        g:adjustGlue(-adjustment * g.height.shrink:absolute() / gTotal.shrink)
+        g:adjustGlue(-adjustment:tonumber() * g.height.shrink:absolute() / gTotal.shrink)
       end
     end
   end
