@@ -250,7 +250,7 @@ local debugInsertion = function (ins, insbox, topBox, target, targetFrame, total
   SU.debug("insertions", "Insertions already in this class ", insbox.height, insbox.depth)
   SU.debug("insertions", "Page target ", target)
   SU.debug("insertions", "Page frame ", targetFrame)
-  SU.debug("insertions", totalHeight .. " worth of content on page so far")
+  SU.debug("insertions", tostring(totalHeight) .. " worth of content on page so far")
 end
 
 local function init(_, _)
