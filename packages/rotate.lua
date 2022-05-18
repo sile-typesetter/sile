@@ -1,6 +1,6 @@
 local pdf = require("justenoughlibtexpdf")
 
-local enter = function (self)
+local enter = function (self, _)
   if not self.rotate then return end
   local x = -math.rad(self.rotate)
   -- Keep center point the same
@@ -12,7 +12,7 @@ local enter = function (self)
   pdf.setmatrix(1, 0, 0, 1, -cx, -cy)
 end
 
-local leave =   function(self)
+local leave =   function(self, _)
   if not self.rotate then return end
   pdf:grestore()
 end
@@ -51,7 +51,7 @@ end
 local function init (_, _)
 
   if SILE.typesetter.frame then
-    enter(SILE.typesetter.frame)
+    enter(SILE.typesetter.frame, SILE.typesetter)
     table.insert(SILE.typesetter.frame.leaveHooks, leave)
   end
 

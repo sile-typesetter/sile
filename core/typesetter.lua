@@ -128,7 +128,7 @@ end
 function SILE.defaultTypesetter:initFrame (frame)
   if frame then
     self.frame = frame
-    self.frame:init()
+    self.frame:init(self)
   end
 end
 
@@ -473,7 +473,7 @@ end
 
 function SILE.defaultTypesetter:initNextFrame ()
   local oldframe = self.frame
-  self.frame:leave()
+  self.frame:leave(self)
   if #self.state.outputQueue == 0 then
     self.state.previousVbox = nil
   end
@@ -737,12 +737,12 @@ end
 
 SILE.typesetNaturally = function (frame, func)
   local saveTypesetter = SILE.typesetter
-  if SILE.typesetter.frame then SILE.typesetter.frame:leave() end
+  if SILE.typesetter.frame then SILE.typesetter.frame:leave(SILE.typesetter) end
   SILE.typesetter = SILE.defaultTypesetter(frame)
   SILE.settings.temporarily(func)
   SILE.typesetter:leaveHmode()
   SILE.typesetter:chuck()
-  SILE.typesetter.frame:leave()
+  SILE.typesetter.frame:leave(SILE.typesetter)
   SILE.typesetter = saveTypesetter
-  if SILE.typesetter.frame then SILE.typesetter.frame:enter() end
+  if SILE.typesetter.frame then SILE.typesetter.frame:enter(SILE.typesetter) end
 end

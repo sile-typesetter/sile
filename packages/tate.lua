@@ -2,9 +2,9 @@ SILE.tateFramePrototype = pl.class(SILE.framePrototype)
 SILE.tateFramePrototype.direction = "TTB-RTL"
 
 SILE.tateFramePrototype.enterHooks = {
-    function (self)
-      self.oldtypesetter = SILE.typesetter
-      local typesetter = SILE.typesetter or SILE.defaultTypesetter()
+    function (_, typesetter)
+      typesetter.old_leadingFor = typesetter.leadingFor
+      typesetter.old_breakIntoLines = typesetter.breakIntoLines
       typesetter.leadingFor = function(_, v)
         v.height = SILE.length("1zw"):absolute()
         local bls = SILE.settings.get("document.baselineskip")
@@ -17,8 +17,9 @@ SILE.tateFramePrototype.enterHooks = {
   }
 
 SILE.tateFramePrototype.leaveHooks = {
-    function (self)
-      SILE.typesetter = self.oldtypesetter
+    function (_, typesetter)
+      typesetter.leadingFor = typesetter.old_leadingFor
+      typesetter.breakIntoLines = typesetter.old_breakIntoLines
     end
   }
 
