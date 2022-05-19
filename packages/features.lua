@@ -204,7 +204,7 @@ SILE.registerCommand("font", function (options, content)
   SU.debug("features", "Font features parsed as:", otfeatures)
   options.features = (options.features and options.features .. ";" or "") .. tostring(otfeatures)
   return fontfn(options, content)
-end, SILE.Help.font .. " (overridden)")
+end, tostring(SILE.Help.font) .. " (overridden)")
 
 return { documentation = [[\begin{document}
 As mentioned in Chapter 3, SILE automatically applies ligatures defined by the fonts

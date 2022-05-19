@@ -1,4 +1,3 @@
-local std = require("std")
 -- luacheck: globals setfenv getfenv
 
 -- The following functions borrowed from Norman Ramsey's nbibtex,
@@ -301,7 +300,7 @@ Bibliography = {
     t.cite = cite
     t.item = item
     for k,v in pairs(item) do t[k:lower()] = v end
-    return std.table.merge(t, style)
+    return pl.tablex.update(t, style)
   end,
 
   _process = function (item, t, dStart, dEnd)
@@ -322,7 +321,7 @@ Bibliography = {
     UNKNOWN_REFERENCE = 1,
   },
 
-  Style = std.object {
+  Style = {
     andAuthors = function(item)
       local authors = namesplit(item.Author)
       if #authors == 1 then
@@ -332,7 +331,7 @@ Bibliography = {
           local author = parse_name(authors[i])
           authors[i] = author.ll.. ", "..author.f.."."
         end
-        return table.concat(authors, " and ")
+        return table.concat(authors, " "..SILE.fluent["bibliography-and"].." ")
       end
     end,
 
@@ -340,7 +339,7 @@ Bibliography = {
       return function(item)
         local authors = namesplit(item.Author)
         if #authors > max then
-          return parse_name(authors[1]).ll .. " et al."
+          return parse_name(authors[1]).ll .. SILE.fluent["bibliography-et-al"]()
         else
           for i = 1,#authors do authors[i] = parse_name(authors[i]).ll end
           return Bibliography.Style.commafy(authors)
@@ -350,8 +349,12 @@ Bibliography = {
 
     transEditor = function(item)
       local r = {}
-      if item.Editor then r[#r+1] = "Edited by "..item.Editor end
-      if item.Translator then r[#r+1] = "Translated by "..item.Translator end
+      if item.Editor then
+        r[#r+1] = SILE.fluent["bibliography-edited-by"]({ name = item.Editor })
+      end
+      if item.Translator then
+        r[#r+1] = SILE.fluent["bibliography-translated-by"]({ name = item.Translator })
+      end
       if #r then return table.concat(r, ", ") end
       return nil
     end,
@@ -385,7 +388,7 @@ Bibliography = {
     end,
 
     commafy = function (t, andword) -- also stolen from nbibtex
-      andword = andword or 'and'
+      andword = andword or SILE.fluent["bibliography-and"]()
       if #t == 1 then
         return t[1]
       elseif #t == 2 then

@@ -5,13 +5,14 @@
 SILE.registerCommand("package-documentation", function (options, _)
   local package = SU.required(options, "src", "src for package documentation")
   SU.debug("autodoc", package)
-  local exports = require(package)
-  if type(exports) ~= "table" or not exports.documentation then
+  local pkg = require(package)
+  if type(pkg) ~= "table" or not pkg.documentation then
     SU.error("Undocumented package "..package)
   end
+  if type(pkg.registerCommands) == "function" then pkg.registerCommands(SILE.documentState.documentClass) end
   SILE.process(
     SILE.inputs.TeXlike.docToTree(
-      exports.documentation
+      pkg.documentation
     )
   )
 end)
@@ -251,7 +252,7 @@ SILE.registerCommand("autodoc:environment", function (options, content)
     if not SILE.Commands[name] then SU.error("Unknown command "..name) end
   end
 
-  SILE.call("autodoc:code:style", { type = "environment" }, name)
+  SILE.call("autodoc:code:style", { type = "environment" }, { name })
 end, "Outputs a command name in code, checking its validity.")
 
 -- Documenting a package name

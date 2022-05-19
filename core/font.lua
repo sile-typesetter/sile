@@ -1,9 +1,7 @@
 local icu = require("justenoughicu")
 
 SILE.registerCommand("font", function (options, content)
-  if type(content) == "function" or content[1] then
-    SILE.settings.pushState()
-  end
+  if SU.hasContent(content) then SILE.settings.pushState() end
   if options.filename then SILE.settings.set("font.filename", options.filename) end
   if options.family then
     SILE.settings.set("font.family", options.family)
@@ -28,6 +26,7 @@ SILE.registerCommand("font", function (options, content)
       options.language = newlang
     end
     SILE.settings.set("document.language", options.language)
+    SILE.fluent:set_locale(options.language)
     SILE.languageSupport.loadLanguage(options.language)
   end
   if options.script then SILE.settings.set("font.script", options.script)
@@ -47,7 +46,7 @@ SILE.registerCommand("font", function (options, content)
   -- that the post-load hook might want to do.
   SILE.font.cache(SILE.font.loadDefaults({}), SILE.shaper.getFace)
 
-  if type(content) == "function" or content[1] then
+  if SU.hasContent(content) then
     SILE.process(content)
     SILE.settings.popState()
   end
@@ -63,7 +62,6 @@ SILE.settings.declare({ parameter = "font.direction", type = "string", default =
 SILE.settings.declare({ parameter = "font.filename", type = "string or nil", default = "" })
 SILE.settings.declare({ parameter = "font.features", type = "string", default = "" })
 SILE.settings.declare({ parameter = "font.hyphenchar", type = "string", default = "-" })
-SILE.settings.declare({ parameter = "document.language", type = "string", default = "en" })
 
 SILE.fontCache = {}
 
@@ -71,7 +69,7 @@ local _key = function (options)
   return table.concat({
       options.family,
       ("%g"):format(options.size),
-      ("%d"):format(options.weight),
+      ("%d"):format(options.weight or 0),
       options.style,
       options.variant,
       options.features,
@@ -97,7 +95,7 @@ SILE.font = {
     if not options.direction then
       options.direction = SILE.settings.get("font.direction")
       if not options.direction or options.direction == "" then
-        options.direction = SILE.typesetter.frame and SILE.typesetter.frame:writingDirection() or "LTR"
+        options.direction = SILE.typesetter and SILE.typesetter.frame and SILE.typesetter.frame:writingDirection() or "LTR"
       end
     end
     if not options.features then options.features = SILE.settings.get("font.features") end

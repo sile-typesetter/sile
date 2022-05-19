@@ -48,7 +48,7 @@ end)
 
 local _typeset = SILE.typesetter.typeset
 SILE.typesetter.typeset = function (self, text)
-  actualtext[#actualtext] = actualtext[#actualtext] .. text
+  actualtext[#actualtext] = tostring(actualtext[#actualtext]) .. text
   _typeset(self, text)
 end
 

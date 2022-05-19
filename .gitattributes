@@ -2,8 +2,3 @@
 cmake/* linguist-vendored
 build-aux/* linguist-vendored
 lua-libraries/* linguist-vendored
-m4/* linguist-vendored
-node-pangocairo linguist-vendored
-
-# Language overrides that Linguist doesn't know about
-*.silejs linguist-language=Javascript

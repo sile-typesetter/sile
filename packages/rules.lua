@@ -1,5 +1,5 @@
-SILE.baseClass:loadPackage("raiselower")
-SILE.baseClass:loadPackage("rebox")
+SILE.classes.base:loadPackage("raiselower")
+SILE.classes.base:loadPackage("rebox")
 
 SILE.registerCommand("hrule", function (options, _)
   local width = SU.cast("length", options.width)
@@ -20,9 +20,10 @@ SILE.registerCommand("hrule", function (options, _)
       local newx = typesetter.frame.state.cursorX
       local newy = typesetter.frame.state.cursorY
       SILE.outputter:drawRule(oldx, oldy, newx - oldx, newy - oldy)
+      typesetter.frame:advancePageDirection(-self.depth)
     end
   })
-end, "Creates a line of width <width> and height <height>")
+end, "Draws a blob of ink of width <width>, height <height> and depth <depth>")
 
 SILE.registerCommand("fullrule", function (options, _)
   SILE.call("raise", { height = options.raise or "0.5em" }, function ()
@@ -115,14 +116,13 @@ return { documentation = [[\begin{document}
 The \autodoc:package{rules} package draws lines. It provides three commands.
 
 The first command is \autodoc:command{\hrule},
-which draws a line of a given length and thickness, although it calls these
-\autodoc:parameter{width} and \autodoc:parameter{height}. (A box is just a square line.)
-
-Lines are treated just like other text to be output, and so can appear in the
-middle of a paragraph, like this: \hrule[width=20pt, height=0.5pt] (that one
-was generated with \autodoc:command{\hrule[width=20pt, height=0.5pt]}.)
-
-Like images, rules are placed along the baseline of a line of text.
+which draws a blob of ink of a given \autodoc:parameter{width} (length),
+\autodoc:parameter{height} (above the current baseline) and \autodoc:parameter{depth}
+(below the current baseline).
+Such rules are horizontal boxes, placed along the baseline of a line of text and treated
+just like other text to be output. So, they can appear in the middle of a paragraph, like this:
+\hrule[width=20pt, height=0.5pt] (that one was generated with
+\autodoc:command{\hrule[width=20pt, height=0.5pt]}.)
 
 The second command provided by this package is \autodoc:command{\underline}, which
 underlines its contents.

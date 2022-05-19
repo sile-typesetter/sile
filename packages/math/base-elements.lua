@@ -801,7 +801,7 @@ elements.text = pl.class({
       end
     end
     for attribute,value in pairs(attributes) do
-      SU.debug("math", "attribute = "..attribute..", value = "..value)
+      SU.debug("math", "attribute = " .. attribute .. ", value = " .. tostring(value))
       self[attribute] = value
     end
   end,
@@ -814,7 +814,7 @@ elements.text = pl.class({
     -- Use bigger variants for big operators in display style
     if isDisplayMode(self.mode) and self.largeop then
       -- We copy the glyph list to avoid modifying the shaper's cache. Yes.
-      glyphs = std.tree.clone(glyphs)
+      glyphs = pl.tablex.deepcopy(glyphs)
       local constructions = mathMetrics.mathVariants
         .vertGlyphConstructions[glyphs[1].gid]
       if constructions then
@@ -895,12 +895,12 @@ elements.text = pl.class({
     -- required.  TODO: implement assembly of stretchable glyphs form
     -- their parts for cases when the biggest variant is not big enough.
     -- We copy the glyph list to avoid modifying the shaper's cache. Yes.
-    local glyphs = std.tree.clone(self.value.items)
+    local glyphs = pl.tablex.deepcopy(self.value.items)
     local constructions = getMathMetrics().mathVariants
       .vertGlyphConstructions[glyphs[1].gid]
     if constructions then
       local variants = constructions.mathGlyphVariantRecord
-      SU.debug("math", "stretch: variants = " .. variants)
+      SU.debug("math", "stretch: variants = " .. tostring(variants))
       local closest
       local closestI
       local m = requiredAdvance - (self.depth+self.height):tonumber() * upem/sz
@@ -914,7 +914,7 @@ elements.text = pl.class({
           m = diff
         end
       end
-      SU.debug("math", "stretch: closestI = " .. closestI)
+      SU.debug("math", "stretch: closestI = " .. tostring(closestI))
       if closest then
         -- Now we have to re-shape the glyph chain. We will assume there
         -- is only one glyph.

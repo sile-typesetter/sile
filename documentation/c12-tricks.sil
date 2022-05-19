@@ -23,17 +23,23 @@ Let’s begin \code{diglot.lua} as usual by setting up the class and declaring o
 
 \begin{verbatim}
 \line
-local plain = SILE.require("plain", "classes");
-local diglot = plain \{ id = "diglot" \}
-SILE.require("packages/counters");
-SILE.scratch.counters.folio = \{ value = 1, display = "arabic" \};
-SILE.scratch.diglot = \{\}
-diglot:declareFrame("a",    \{left = "8.3\%pw", right = "48\%pw",
-            top = "11.6\%ph", bottom = "80\%ph" \});
-diglot:declareFrame("b",    \{left = "52\%pw",  right = "100\% - left(a)",
-            top = "top(a)", bottom = "bottom(a)" \});
-diglot:declareFrame("folio",\{left = "left(a)", right = "right(b)",
-            top = "bottom(a)+3\%ph",bottom = "bottom(a)+8\%ph" \});
+local plain = require("classes.plain");
+local diglot = pl.class(plain)
+diglot._name = "diglot"
+
+function diglot:_init(options)
+  plain._init(self, options)
+  self:loadPackage("counters")
+    SILE.scratch.counters.folio = \{ value = 1, display = "arabic" \};
+    diglot:declareFrame("a",    \{left = "8.3\%pw", right = "48\%pw",
+                top = "11.6\%ph", bottom = "80\%ph" \});
+    diglot:declareFrame("b",    \{left = "52\%pw",  right = "100\% - left(a)",
+                top = "top(a)", bottom = "bottom(a)" \});
+    diglot:declareFrame("folio",\{left = "left(a)", right = "right(b)",
+                top = "bottom(a)+3\%ph",bottom = "bottom(a)+8\%ph" \});
+  if self._name == "diglot" then self:post_init() end
+  return self
+end
 \end{verbatim}
 
 Now we create two new typesetters, one for each column, and we tell each one how to find the other:
@@ -122,7 +128,7 @@ that each typesetter is linked to the appropriate frame:
 diglot.init = function(self)
   diglot.leftTypesetter:init(SILE.getFrame("a"))
   diglot.rightTypesetter:init(SILE.getFrame("b"))
-  return SILE.baseClass.init(self)
+  return SILE.classes.base.init(self)
 end
 \end{verbatim}
 
@@ -285,7 +291,7 @@ discovery.init = function()
                  SILE.getFrame("rGutter") or SILE.getFrame("lGutter")
   discovery.innerTypesetter:init(gutter)
   ...
-  return SILE.baseClass:init()
+  return SILE.classes.base:init()
 end
 
 discovery.newPage = function ()
@@ -295,7 +301,7 @@ discovery.newPage = function ()
                  SILE.getFrame("rGutter") or SILE.getFrame("lGutter")
   discovery.innerTypesetter:init(gutter)
   ...
-  return SILE.baseClass.newPage(discovery);
+  return SILE.classes.base.newPage(discovery);
 end
 \line
 \end{verbatim}

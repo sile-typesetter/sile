@@ -37,16 +37,18 @@ SILE.dolua = {}
 SILE.preamble = {}
 
 -- Internal functions / classes / factories
+SILE.cldr = require("cldr")
+SILE.fluent = require("fluent")()
 SILE.utilities = require("core/utilities")
 SU = SILE.utilities -- alias
 SILE.traceStack = require("core/tracestack")()
-SILE.documentState = std.object {}
+SILE.documentState = {}
 SILE.parserBits = require("core/parserbits")
 SILE.units = require("core/units")
 SILE.measurement = require("core/measurement")
 SILE.length = require("core/length")
 SILE.papersize = require("core/papersize")
-require("core/baseclass")
+SILE.classes = require("core/classes")
 SILE.nodefactory = require("core/nodefactory")
 require("core/settings")
 require("core/inputs-texlike")
@@ -64,10 +66,34 @@ SILE.frameParser = require("core/frameparser")
 SILE.linebreak = require("core/break")
 require("core/frame")
 
+-- Class system deprecation shims
+SILE.baseClass = {}
+local _classdeprecation = function ()
+  SU.warn([[
+  The inheritance system for SILE classes has been refactored using a
+    different object model, please update your code as use of the old
+    model will cause unexpected errors and will eventually be removed.
+  ]])
+  SU.deprecated("SILE.baseclass", "SILE.classes.base", "0.13.0", "0.14.0")
+end
+setmetatable(SILE.baseClass, {
+    __index = function(_, key)
+      -- Likely at attempt to iterate (or dump) the table, sort of safe to ignore
+      if type(key) ~= "number" then
+        _classdeprecation()
+      end
+      return SILE.classes.base[key]
+    end,
+    __call = function (_, ...)
+      _classdeprecation()
+      return SILE.classes.base(...)
+    end
+  })
+
 SILE.init = function ()
   -- Set by def
   if not SILE.backend then
-    if pcall(function () require("justenoughharfbuzz") end) then
+    if pcall(require, "justenoughharfbuzz") then
       SILE.backend = "libtexpdf"
     else
       SU.error("libtexpdf backend not available!")
@@ -77,6 +103,7 @@ SILE.init = function ()
     require("core/harfbuzz-shaper")
     require("core/libtexpdf-output")
   elseif SILE.backend == "cairo" then
+    require("core/pango-shaper")
     require("core/cairo-output")
   elseif SILE.backend == "debug" then
     require("core/harfbuzz-shaper")
@@ -96,16 +123,13 @@ end
 
 SILE.require = function (dependency, pathprefix)
   dependency = dependency:gsub(".lua$", "")
-  if pathprefix then
-    local status, lib = pcall(require, pl.path.join(pathprefix, dependency))
-    if status then return lib end
-  end
-  local dep = require(dependency)
+  local path = pathprefix and pl.path.join(pathprefix, dependency) or dependency
+  local lib = require(path)
   local class = SILE.documentState.documentClass
-  if type(class) == "table" then
-    class:initPackage(dep)
+  if lib and class then
+    class:initPackage(lib)
   end
-  return dep
+  return lib
 end
 
 SILE.parseArguments = function ()

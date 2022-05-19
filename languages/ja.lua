@@ -127,60 +127,57 @@ end
 
 -- local okbreak = SILE.nodefactory.penalty(0)
 
-SILE.nodeMakers.ja = pl.class({
-    _base = SILE.nodeMakers.base,
-    iterator = function (self, items)
-      local options = self.options
-      return coroutine.wrap(function ()
-        local db
-        local lastcp = -1
-        local lastchar = ""
-        local space = "%s" -- XXX
-        for i = 1, #items do
-          local item = items[i]
-          local uchar = items[i].text
-          local thiscp = SU.codepoint(uchar)
-          db = lastchar.. "|" .. uchar
-          if string.match(uchar, space) then
-            db = db .. " S"
-            coroutine.yield(SILE.shaper:makeSpaceNode(options, item))
-          else
-            local length = SILE.length(
-              intercharacterspace(lastcp, thiscp),
-              stretchability(lastcp, thiscp),
-              shrinkability(lastcp, thiscp)
-            )
-            if breakAllowed(lastcp, thiscp) then
-              db = db .." G ".. length
-              coroutine.yield(SILE.nodefactory.glue(length))
-            elseif length.length ~= 0 or length.stretch ~= 0 or length.shrink ~= 0 then
-              db = db .." K ".. length
-              coroutine.yield(SILE.nodefactory.kern(length))
-            else db = db .. " N"
-            end
-            if jisClass(thiscp) == 5 or jisClass(thiscp) == 6 then
-              local node = SILE.shaper:formNnode({ item }, uchar, options)
-              node.hangable = true
-              coroutine.yield(node)
-            else
-              coroutine.yield(SILE.shaper:formNnode({ item }, uchar, options))
-            end
-          end
-          lastcp =thiscp
-          lastchar = uchar
-          SU.debug("ja", db)
+SILE.nodeMakers.ja = pl.class(SILE.nodeMakers.base)
+function SILE.nodeMakers.ja:iterator (items)
+  local options = self.options
+  return coroutine.wrap(function ()
+    local db
+    local lastcp = -1
+    local lastchar = ""
+    local space = "%s" -- XXX
+    for i = 1, #items do
+      local item = items[i]
+      local uchar = items[i].text
+      local thiscp = SU.codepoint(uchar)
+      db = lastchar.. "|" .. uchar
+      if string.match(uchar, space) then
+        db = db .. " S"
+        coroutine.yield(SILE.shaper:makeSpaceNode(options, item))
+      else
+        local length = SILE.length(
+          intercharacterspace(lastcp, thiscp),
+          stretchability(lastcp, thiscp),
+          shrinkability(lastcp, thiscp)
+        )
+        if breakAllowed(lastcp, thiscp) then
+          db = db .." G ".. tostring(length)
+          coroutine.yield(SILE.nodefactory.glue(length))
+        elseif length.length ~= 0 or length.stretch ~= 0 or length.shrink ~= 0 then
+          db = db .." K ".. tostring(length)
+          coroutine.yield(SILE.nodefactory.kern(length))
+        else db = db .. " N"
         end
-      end)
+        if jisClass(thiscp) == 5 or jisClass(thiscp) == 6 then
+          local node = SILE.shaper:formNnode({ item }, uchar, options)
+          node.hangable = true
+          coroutine.yield(node)
+        else
+          coroutine.yield(SILE.shaper:formNnode({ item }, uchar, options))
+        end
+      end
+      lastcp =thiscp
+      lastchar = uchar
+      SU.debug("ja", db)
     end
-  })
+  end)
+end
 
 SILE.hyphenator.languages.ja = { patterns={} }
 
--- Internationalisation stuff
-SILE.doTexlike([[%
-\define[command=book:chapter:pre:ja]{第\thinspace}%
-\define[command=book:chapter:post:ja]{\thinspace章 \medskip}%
-]])
+SILE.registerCommand("book:chapter:post:ja", function (_, _)
+  SILE.call("fluent", { locale = "ja" }, { "book-chapter-post" })
+  SILE.call("medskip")
+end)
 
 return {
   init = function ()

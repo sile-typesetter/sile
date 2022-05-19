@@ -38,7 +38,7 @@ function ConvertMathML(content)
     local attributes = {}
     if syms.symbolDefaults[text] then
       for attribute,value in pairs(syms.symbolDefaults[text]) do
-        SU.debug("math", "attribute = "..attribute..", value = "..value)
+        SU.debug("math", "attribute = " .. attribute .. ", value = " .. tostring(value))
         attributes[attribute] = value
       end
     end

@@ -1,7 +1,6 @@
-local book = SILE.require("book", "classes")
-local jbook = book { id = "jbook" }
-
-jbook:declareOption("layout", "yoko")
+local book = require("classes.book")
+local jbook = pl.class(book)
+jbook._name = "jbook"
 
 jbook.defaultFrameset = {
   runningHead = {
@@ -32,18 +31,29 @@ jbook.defaultFrameset = {
   }
 }
 
-function jbook:init ()
-  SILE.call("bidi-off")
+function jbook:_init (options)
+  if self._legacy and not self._deprecated then return self:_deprecator(book) end
+  if not options then options = {} end
+  options.layout = options.layout or "yoko"
+  self:declareOption("layout", function (_, value)
+    if value then
+      self.layout = value
+      if value == "tate" then self:loadPackage("tate") end
+    end
+    return self.layout
+  end)
+  book._init(self, options)
+  self:registerPostinit(function ()
+      SILE.call("bidi-off")
+    end)
+  SILE.languageSupport.loadLanguage("ja")
   self:loadPackage("hanmenkyoshi")
-  self.defaultFrameset.content.tate = self.options.layout() == "tate"
-  self.defaultFrameset.content = self:declareHanmenFrame("content", self.defaultFrameset.content)
+  self.defaultFrameset.content.tate = self.options.layout == "tate"
+  self:declareHanmenFrame("content", self.defaultFrameset.content)
   SILE.settings.set("document.parindent", SILE.nodefactory.glue("10pt"))
-  return book.init(self)
-end
-
-jbook.registerCommands = function(_)
-  book:registerCommands()
-  SILE.call("language", { main = "ja" })
+  -- Avoid calling this (yet) if we're the parent of some child class
+  if self._name == "jbook" then self:post_init() end
+  return self
 end
 
 return jbook

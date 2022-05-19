@@ -87,6 +87,10 @@ local measurement = pl.class({
       return self.amount .. self.unit
     end,
 
+    __concat = function (a, b)
+      return tostring(a) .. tostring(b)
+    end,
+
     __add = function (self, other)
       if _similarunit(self, other) then
         return SILE.measurement(_amount(self) + _amount(other), _unit(self, other))

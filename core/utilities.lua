@@ -1,4 +1,6 @@
 local bitshim = require("bitshim")
+local luautf8 = require("lua-utf8")
+
 local utilities = {}
 
 local epsilon = 1E-12
@@ -265,6 +267,10 @@ utilities.cast = function (wantedType, value)
   end
 end
 
+utilities.hasContent = function(content)
+  return type(content) == "function" or type(content) == "table" and #content > 0
+end
+
 -- Flatten content trees into just the string components (allows passing
 -- objects with complex structures to functions that need plain strings)
 utilities.contentToString = function (content)
@@ -396,29 +402,10 @@ utilities.utf16codes = function (ustr, endian)
 end
 
 utilities.splitUtf8 = function (str) -- Return an array of UTF8 strings each representing a Unicode char
-  local seq = 0
   local rv = {}
-  local val = -1
-  local this = ""
-  for i = 1, #str do
-    local c = string.byte(str, i)
-    if seq == 0 then
-      if val > -1 then
-        rv[1+#rv] = this
-        this = ""
-      end
-      seq = c < 0x80 and 1 or c < 0xE0 and 2 or c < 0xF0 and 3 or
-            c < 0xF8 and 4 or --c < 0xFC and 5 or c < 0xFE and 6 or
-          error("invalid UTF-8 character sequence")
-      val = bitshim.band(c, 2^(8-seq) - 1)
-      this = this .. str[i]
-    else
-      val = bitshim.bor(bitshim.lshift(val, 6), bitshim.band(c, 0x3F))
-      this = this .. str[i]
-    end
-    seq = seq - 1
+  for _, cp in luautf8.next, str do
+    table.insert(rv, luautf8.char(cp))
   end
-  rv[1+#rv] = this
   return rv
 end
 
@@ -501,7 +488,7 @@ utilities.utf16le_to_utf8 = function (str) return utf16_to_utf8(str, "le") end
 local icu = require("justenoughicu")
 
 local icuFormat = function (num, format)
-  local ok, result  = pcall(function() return icu.format_number(num, format) end)
+  local ok, result  = pcall(icu.format_number, num, format)
   return tostring(ok and result or num)
 end
 

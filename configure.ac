@@ -4,10 +4,12 @@ AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([build-aux])
 AM_INIT_AUTOMAKE([foreign tar-pax dist-xz dist-zip no-dist-gzip color-tests subdir-objects])
 AM_SILENT_RULES([yes])
-LT_PREREQ([2.2])
-LT_INIT([dlopen])
 
 AM_CONDITIONAL([IS_SDIST], [test ! -e .gitignore])
+
+# Checks for programs.
+AC_PROG_CC
+AC_PROG_OBJC
 
 AC_DEFUN([AX_PROGVAR], [
           test -n "$m4_toupper($1)" || { AC_PATH_PROG(m4_toupper($1), m4_default($2,$1)) }
@@ -20,6 +22,9 @@ AC_PROG_SED
 
 AX_PROGVAR([cmp])
 AX_PROGVAR([git])
+
+LT_PREREQ([2.2])
+LT_INIT([dlopen])
 
 DATEFMT='%d %B %Y'
 AM_COND_IF([IS_SDIST],
@@ -61,10 +66,6 @@ AM_COND_IF([SYSTEM_LIBTEXPDF],
            [AC_CONFIG_SUBDIRS([libtexpdf])])
 
 AM_COND_IF([DEPENDENCY_CHECKS], [
-
-    # Checks for programs.
-    AC_PROG_CC
-    AC_PROG_OBJC
 
     AC_PATH_PROG([PDFINFO], [pdfinfo])
 
@@ -142,7 +143,10 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
             AX_LUA_MODULE([compat53], [compat53])
         )
         AX_LUA_MODULE([cosmo], [cosmo])
+        AX_LUA_MODULE([cldr], [cldr])
+        AX_LUA_MODULE([fluent], [fluent])
         AX_LUA_MODULE([linenoise], [linenoise])
+        AX_LUA_MODULE([loadkit], [loadkit])
         AX_LUA_MODULE([lpeg], [lpeg])
         AX_LUA_MODULE([zlib], [lua-zlib])
         AX_LUA_MODULE([cliargs], [lua_cliargs])

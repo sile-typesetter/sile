@@ -187,6 +187,33 @@ $ sudo ldconfig
 
 … before trying to execute `sile` to make the system aware of the newly installed libraries.
 
+### Default Font
+
+Since SILE v0.9.5, the default font has been Gentium Plus which is freely available from [SIL’s site][gentium].
+It is not required that you install it, but if this font is not installed on your system, you won't be able to use the examples without modification.
+(Previously we used Gentium Basic, but that's getting harder to get hold of.)
+
+### Testing
+
+If all goes well after installation you should be able to compile a sample documents. Try creating a file `test.sil` with this content:
+
+```sil
+\begin{document}
+Hello world!
+\end{document}
+```
+
+And render it to a PDF like this:
+
+```console
+$ sile test.sil
+SILE v0.12.5 (Lua 5.4)
+<test.sil>
+[1]
+```
+
+You should now have `test.pdf` ready for review.
+
 ### Use as a CI job
 
 There are actually many ways to run SILE remotely as part of a CI work flow.
@@ -213,25 +240,6 @@ jobs:
 Add to your repository as `.github/workflows/sile.yaml`.
 This work flow assumes your project has a source file `my-document.sil` and will leave behind a `my-document.pdf`.
 Note the comments in [the section about Docker](#docker) regarding version tags.
-
-### Default Font
-
-Since SILE v0.9.5, the default font has been Gentium Plus which is freely available from [SIL’s site][gentium].
-It is not required that you install it, but if this font is not installed on your system, you won't be able to use the examples without modification.
-(Previously we used Gentium Basic, but that's getting harder to get hold of.)
-
-### Testing
-
-If all goes well you should be able to compile one of the sample documents like this:
-
-```console
-$ sile examples/book.sil
-SILE v0.10.10 (Lua 5.4)
-<examples/book.sil>
-[1] [2] [3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20] [21] [22] [23] [24] [25] [26] [27] [28] [29] [30] [31]
-```
-
-You should now have `examples/book.pdf` ready for review.
 
 ## Finding Out More
 

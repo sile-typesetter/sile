@@ -1,4 +1,5 @@
-\begin[papersize=a5,class=book]{document}
+\begin[papersize=a6,class=book]{document}
+\neverindent
 \define[command="open-double-page"]{}
 \nofolios
 \language[main=cs]
