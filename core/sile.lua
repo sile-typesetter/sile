@@ -16,7 +16,7 @@ SILE.full_version = string.format("SILE %s (%s)", SILE.version, SILE.lua_isjit a
 -- versions enable it by default and it comes with a huge performance hit.
 -- Note we are phasing out stdlib in favor of Penlight. When adding or
 -- refactoring code, using the Penlight equivalent features is preferred.
--- luacheck: push ignore _DEBUG
+-- luacheck: push ignore _DEBUG std
 _DEBUG = false
 std = require("std")
 -- luacheck: pop
