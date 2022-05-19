@@ -1,0 +1,27 @@
+\begin[papersize=a5]{document}
+\neverindent
+\nofolios
+\language[main=en]
+\set[parameter=shaper.spacestretchfactor,value=1.2]% This 1.2 is the default
+% value in SILE 0.12. It should have been 1 (see #1371) and if it ever changed later,
+% we'd like the hyphenations below to occur at the same place...
+\font[family=Libertinus Serif, features="+liga"]% We pick a font that has
+% ligatures, and where those have a smaller width than the non-ligatured text.
+
+% This text should be line-broken at "consecu-tively".
+% We'd expect ligatures to apply (in "difficult", "effects", "affairs" and
+% "finition") and yet the text to be also correctly justified.
+% The partial workaround for #1362 does it...
+Lorem ipsum dolor difficult effects affairs of finition lorem ipsum dolor sit amet
+consecutively sadipscing elitr sed diam nonumy eirmod tempor invidunt ut labore
+et dolore magna aliquyam
+
+% This text should be line-broken at diffi-cult.
+% We'd expect the line to be correctly justified, but also the ffi ligature in
+% the hyphenated word to be applied. The workaround for #1362 is NOT sufficient
+% for that...
+xxxxxxxxx xxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx difficult
+difficult affairs effects of finition lorem ipsum dolor sit amet
+consetetur sadipscing elitr sed diam nonumy eirmod tempor invidunt ut labore
+
+\end{document}
