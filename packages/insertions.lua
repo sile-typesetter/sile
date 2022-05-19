@@ -13,9 +13,13 @@
 
 --]]
 
-SILE.scratch.insertions = { classes = {} }
+if not SILE.scratch.insertions then
+  SILE.scratch.insertions = { classes = {} }
+end
 
-SILE.insertions = {}
+if not SILE.insertions then
+  SILE.insertions = {}
+end
 
 SILE.settings.declare({
   parameter = "insertion.penalty",
