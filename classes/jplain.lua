@@ -1,5 +1,5 @@
 -- Basic! Transitional! In development! Not very good! Don't use it!
-local plain = SILE.require("classes.plain")
+local plain = require("classes.plain")
 
 local jplain = pl.class(plain)
 jplain._name = "jplain"

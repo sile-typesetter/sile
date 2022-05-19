@@ -126,6 +126,17 @@ SILE.init = function ()
 end
 
 SILE.require = function (dependency, pathprefix)
+  if pathprefix then
+    SU.warn(string.format([[
+    Please don't use the path prefix mechanism; it was intended to provide
+      alternate paths to override core components but never worked well and is
+      causing portability problems. Just use Lua idiomatic module loading:
+
+      SILE.require("%s", "%s") → SILE.require("%s.%s")
+
+    ]], dependency, pathprefix, pathprefix, dependency))
+    SU.deprecated("SILE.require", "SILE.require", "0.13.0", "0.14.0")
+  end
   dependency = dependency:gsub(".lua$", "")
   local path = pathprefix and pl.path.join(pathprefix, dependency) or dependency
   local lib = require(path)
