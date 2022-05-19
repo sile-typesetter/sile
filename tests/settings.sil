@@ -9,7 +9,7 @@ foo
 
 foo
 \script{SILE.settings.set("font.family", "Cormorant Infant")}bar
-\script{SILE.settings.reset("font.family", nil, nil, true)}baz
+\script{SILE.settings.set("font.family", nil, nil, true)}baz
 \script{SILE.settings.set("font.family", "Cormorant Infant", true)}bar
 \script{SILE.settings.set("font.family", nil, nil, true)}qiz
 \end{document}
