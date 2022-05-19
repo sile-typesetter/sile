@@ -245,11 +245,15 @@ end
 
 local function init (class, _)
 
-  bidiEnableTypesetter(class, SILE.defaultTypesetter)
-
   if SILE.typesetter then
     bidiEnableTypesetter(class, SILE.typesetter)
   end
+
+  bidiEnableTypesetter(class, SILE.defaultTypesetter)
+
+end
+
+local function registerCommands (class)
 
   SILE.registerCommand("thisframeLTR", function (_, _)
     SILE.typesetter.frame.direction = "LTR"
@@ -281,6 +285,7 @@ end
 
 return {
   init = init,
+  registerCommands = registerCommands,
   exports = {
     reorder = reorder,
     bidiEnableTypesetter = bidiEnableTypesetter,
