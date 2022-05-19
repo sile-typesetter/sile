@@ -75,13 +75,13 @@ as we will be handling the paragraphing manually using the \code{\\sync} command
 
 \begin{verbatim}
 SILE.registerCommand("left", function(options, content)
-  SILE.settings.set("typesetter.parseppattern", -1)
+  SILE.settings:set("typesetter.parseppattern", -1)
   SILE.typesetter = diglot.leftTypesetter;
   SILE.call("font", SILE.scratch.diglot.leftfont, \{\})
 end, "Begin entering text on the left side")
 
 SILE.registerCommand("right", function(options, content)
-  SILE.settings.set("typesetter.parseppattern", -1)
+  SILE.settings:set("typesetter.parseppattern", -1)
   SILE.typesetter = diglot.rightTypesetter;
   SILE.call("font", SILE.scratch.diglot.rightfont, \{\})
 end, "Begin entering text on the right side")
@@ -116,7 +116,7 @@ do not get in the way), and go back to handling paragraphing as normal:
 \begin{verbatim}
   diglot.rightTypesetter:leaveHmode();
   diglot.leftTypesetter:leaveHmode();
-  SILE.settings.set("typesetter.parseppattern", "\\n\\n+")
+  SILE.settings:set("typesetter.parseppattern", "\\n\\n+")
 end)
 \end{verbatim}
 
@@ -367,8 +367,8 @@ typesetter has gone further down the page than the verse it refers to. Now we
 can output the cross-reference itself.
 
 \begin{verbatim}
-  SILE.settings.temporarily(function()
-    SILE.settings.set("document.baselineskip", SILE.nodefactory.vglue("7pt"))
+  SILE.settings:temporarily(function()
+    SILE.settings:set("document.baselineskip", SILE.nodefactory.vglue("7pt"))
     SILE.call("font", \{size = "6pt", family="Helvetica", weight="800"\}, \{\})
     discovery.innerTypesetter:typeset(SILE.scratch.chapter..":"..SILE.scratch.verse.." ")
     SILE.call("font", \{size = "6pt", family="Helvetica", weight="200"\}, \{\})

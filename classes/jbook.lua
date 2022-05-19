@@ -50,7 +50,7 @@ function jbook:_init (options)
   self:loadPackage("hanmenkyoshi")
   self.defaultFrameset.content.tate = self.options.layout == "tate"
   self:declareHanmenFrame("content", self.defaultFrameset.content)
-  SILE.settings.set("document.parindent", SILE.nodefactory.glue("10pt"))
+  SILE.settings:set("document.parindent", SILE.nodefactory.glue("10pt"))
   -- Avoid calling this (yet) if we're the parent of some child class
   if self._name == "jbook" then self:post_init() end
   return self

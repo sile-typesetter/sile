@@ -5,63 +5,63 @@ local inf_bad = 10000
 local supereject_penalty = 2 * -inf_bad
 -- local deplorable = 100000
 
-SILE.settings.declare({
+SILE.settings:declare({
   parameter = "typesetter.widowpenalty",
   type = "integer",
   default = 3000,
   help = "Penalty to be applied to widow lines (at the start of a paragraph)"
 })
 
-SILE.settings.declare({
+SILE.settings:declare({
   parameter = "typesetter.parseppattern",
   type = "string or integer",
   default = "\r?\n[\r\n]+",
   help = "Lua pattern used to separate paragraphs"
 })
 
-SILE.settings.declare({
+SILE.settings:declare({
   parameter = "typesetter.obeyspaces",
   type = "boolean or nil",
   default = nil,
   help = "Whether to ignore paragraph initial spaces"
 })
 
-SILE.settings.declare({
+SILE.settings:declare({
   parameter = "typesetter.orphanpenalty",
   type = "integer",
   default = 3000,
   help = "Penalty to be applied to orphan lines (at the end of a paragraph)"
 })
 
-SILE.settings.declare({
+SILE.settings:declare({
   parameter = "typesetter.parfillskip",
   type = "glue",
   default = SILE.nodefactory.glue("0pt plus 10000pt"),
   help = "Glue added at the end of a paragraph"
 })
 
-SILE.settings.declare({
+SILE.settings:declare({
   parameter = "document.letterspaceglue",
   type = "glue or nil",
   default = nil,
   help = "Glue added between tokens"
 })
 
-SILE.settings.declare({
+SILE.settings:declare({
   parameter = "typesetter.underfulltolerance",
   type = "length or nil",
   default = SILE.length("1em"),
   help = "Amount a page can be underfull without warning"
 })
 
-SILE.settings.declare({
+SILE.settings:declare({
   parameter = "typesetter.overfulltolerance",
   type = "length or nil",
   default = SILE.length("5pt"),
   help = "Amount a page can be overfull without warning"
 })
 
-SILE.settings.declare({
+SILE.settings:declare({
   parameter = "typesetter.breakwidth",
   type = "measurement or nil",
   default = nil,
@@ -133,12 +133,12 @@ function SILE.defaultTypesetter:initFrame (frame)
 end
 
 function SILE.defaultTypesetter.getMargins ()
-  return _margins(SILE.settings.get("document.lskip"), SILE.settings.get("document.rskip"))
+  return _margins(SILE.settings:get("document.lskip"), SILE.settings:get("document.rskip"))
 end
 
 function SILE.defaultTypesetter.setMargins (_, margins)
-  SILE.settings.set("document.lskip", margins.lskip)
-  SILE.settings.set("document.rskip", margins.rskip)
+  SILE.settings:set("document.lskip", margins.lskip)
+  SILE.settings:set("document.rskip", margins.rskip)
 end
 
 function SILE.defaultTypesetter:pushState ()
@@ -254,7 +254,7 @@ end
 function SILE.defaultTypesetter:typeset (text)
   if text:match("^%\r?\n$") then return end
   local pId = SILE.traceStack:pushText(text)
-  for token in SU.gtoke(text,SILE.settings.get("typesetter.parseppattern")) do
+  for token in SU.gtoke(text,SILE.settings:get("typesetter.parseppattern")) do
     if (token.separator) then
       self:endline()
     else
@@ -280,7 +280,7 @@ end
 function SILE.defaultTypesetter:setpar (text)
   text = text:gsub("\r?\n", " "):gsub("\t", " ")
   if (#self.state.nodes == 0) then
-    if not SILE.settings.get("typesetter.obeyspaces") then
+    if not SILE.settings:get("typesetter.obeyspaces") then
       text = text:gsub("^%s+", "")
     end
     self:initline()
@@ -328,12 +328,12 @@ function SILE.defaultTypesetter:boxUpNodes ()
   while (#nodelist > 0 and nodelist[1].is_penalty) do table.remove(nodelist, 1) end
   if #nodelist == 0 then return {} end
   self:shapeAllNodes(nodelist)
-  local parfillskip = SILE.settings.get("typesetter.parfillskip")
+  local parfillskip = SILE.settings:get("typesetter.parfillskip")
   parfillskip.discardable = false
   self:pushGlue(parfillskip)
   self:pushPenalty(-inf_bad)
   SU.debug("typesetter", "Boxed up "..(#nodelist > 500 and (#nodelist).." nodes" or SU.contentToString(nodelist)))
-  local breakWidth = SILE.settings.get("typesetter.breakwidth") or self.frame:getLineWidth()
+  local breakWidth = SILE.settings:get("typesetter.breakwidth") or self.frame:getLineWidth()
   local lines = self:breakIntoLines(nodelist, breakWidth)
   local vboxes = {}
   for index=1, #lines do
@@ -352,9 +352,9 @@ function SILE.defaultTypesetter:boxUpNodes ()
     local vbox = SILE.nodefactory.vbox({ nodes = nodes, ratio = line.ratio })
     local pageBreakPenalty = 0
     if (#lines > 1 and index == 1) then
-      pageBreakPenalty = SILE.settings.get("typesetter.widowpenalty")
+      pageBreakPenalty = SILE.settings:get("typesetter.widowpenalty")
     elseif (#lines > 1 and index == (#lines-1)) then
-      pageBreakPenalty = SILE.settings.get("typesetter.orphanpenalty")
+      pageBreakPenalty = SILE.settings:get("typesetter.orphanpenalty")
     end
     vboxes[#vboxes+1] = self:leadingFor(vbox, self.state.previousVbox)
     vboxes[#vboxes+1] = vbox
@@ -442,7 +442,7 @@ function SILE.defaultTypesetter.setVerticalGlue (_, pageNodeList, target)
   local adjustment = target - totalHeight
   if adjustment:tonumber() > 0 then
     if adjustment > gTotal.stretch then
-      if (adjustment - gTotal.stretch):tonumber() > SILE.settings.get("typesetter.underfulltolerance"):tonumber() then
+      if (adjustment - gTotal.stretch):tonumber() > SILE.settings:get("typesetter.underfulltolerance"):tonumber() then
         SU.warn("Underfull frame: " .. adjustment .. " stretchiness required to fill but only " .. gTotal.stretch .. " available")
       end
       adjustment = gTotal.stretch
@@ -456,7 +456,7 @@ function SILE.defaultTypesetter.setVerticalGlue (_, pageNodeList, target)
   elseif adjustment:tonumber() < 0 then
     adjustment = 0 - adjustment
     if adjustment > gTotal.shrink then
-      if (adjustment - gTotal.shrink):tonumber() > SILE.settings.get("typesetter.overfulltolerance"):tonumber() then
+      if (adjustment - gTotal.shrink):tonumber() > SILE.settings:get("typesetter.overfulltolerance"):tonumber() then
         SU.warn("Overfull frame: " .. adjustment .. " shrinkability required to fit but only " .. gTotal.shrink .. " available")
       end
       adjustment = gTotal.shrink
@@ -610,12 +610,12 @@ function SILE.defaultTypesetter.leadingFor (_, vbox, previous)
   if not previous then return SILE.nodefactory.vglue() end
   local prevDepth = previous.depth
   SU.debug("typesetter", "   Depth of previous line was " .. tostring(prevDepth))
-  local bls = SILE.settings.get("document.baselineskip")
+  local bls = SILE.settings:get("document.baselineskip")
   local depth = bls.height:absolute() - vbox.height:absolute() - prevDepth:absolute()
   SU.debug("typesetter", "   Leading height = " .. tostring(bls.height) .. " - " .. tostring(vbox.height) .. " - " .. tostring(prevDepth) .. " = " .. tostring(depth))
 
   -- the lineskip setting is a vglue, but we need a version absolutized at this point, see #526
-  local lead = SILE.settings.get("document.lineskip").height:absolute()
+  local lead = SILE.settings:get("document.lineskip").height:absolute()
   if depth > lead then
     return SILE.nodefactory.vglue(SILE.length(depth.length, bls.height.stretch, bls.height.shrink))
   else
@@ -758,7 +758,7 @@ SILE.typesetNaturally = function (frame, func)
   local saveTypesetter = SILE.typesetter
   if SILE.typesetter.frame then SILE.typesetter.frame:leave(SILE.typesetter) end
   SILE.typesetter = SILE.defaultTypesetter(frame)
-  SILE.settings.temporarily(func)
+  SILE.settings:temporarily(func)
   SILE.typesetter:leaveHmode()
   SILE.typesetter:chuck()
   SILE.typesetter.frame:leave(SILE.typesetter)

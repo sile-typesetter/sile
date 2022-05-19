@@ -62,14 +62,14 @@ local urlFilter = function (node, content, options)
   return result
 end
 
-SILE.settings.declare({
+SILE.settings:declare({
   parameter = "url.linebreak.primaryPenalty",
   type = "integer",
   default = 100,
   help = "Penalty for breaking lines in URLs at preferred breakpoints"
 })
 
-SILE.settings.declare({
+SILE.settings:declare({
   parameter = "url.linebreak.secondaryPenalty",
   type = "integer",
   default = 200,
@@ -99,9 +99,9 @@ SILE.registerCommand("href", function (options, content)
 end, "Inserts a PDF hyperlink.")
 
 SILE.registerCommand("url", function (options, content)
-  SILE.settings.temporarily(function ()
-    local primaryPenalty = SILE.settings.get("url.linebreak.primaryPenalty")
-    local secondaryPenalty = SILE.settings.get("url.linebreak.secondaryPenalty")
+  SILE.settings:temporarily(function ()
+    local primaryPenalty = SILE.settings:get("url.linebreak.primaryPenalty")
+    local secondaryPenalty = SILE.settings:get("url.linebreak.secondaryPenalty")
     local worsePenalty = primaryPenalty + secondaryPenalty
 
     if options.language then
@@ -113,12 +113,12 @@ SILE.registerCommand("url", function (options, content)
         -- Not needed (the engine already defaults to SILE.nodeMakers.unicode if
         -- the language is not found):
         -- SILE.nodeMakers._fr_noSpacingRules = SILE.nodeMakers.unicode
-        SILE.settings.set("document.language", "_fr_noSpacingRules")
+        SILE.settings:set("document.language", "_fr_noSpacingRules")
       else
-        SILE.settings.set("document.language", options.language)
+        SILE.settings:set("document.language", options.language)
       end
     else
-      SILE.settings.set("document.language", 'und')
+      SILE.settings:set("document.language", 'und')
     end
 
     local result = inputfilter.transformContent(content, urlFilter, {

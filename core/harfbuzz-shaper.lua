@@ -4,7 +4,7 @@ local bitshim = require("bitshim")
 
 if not SILE.shapers then SILE.shapers = { } end
 
-SILE.settings.declare({
+SILE.settings:declare({
   parameter = "harfbuzz.subshapers",
   type = "string or nil",
   default = "",
@@ -45,7 +45,7 @@ function SILE.shapers.harfbuzz:shapeToken (text, options)
       options.language,
       options.size,
       options.features,
-      SILE.settings.get("harfbuzz.subshapers") or ""
+      SILE.settings:get("harfbuzz.subshapers") or ""
     ) }
   for i = 1, #items do
     local j = (i == #items) and #text or items[i+1].index

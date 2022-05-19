@@ -32,10 +32,10 @@ local function registerCommands (class)
   end)
 
   SILE.registerCommand("footnote:separator", function (_, content)
-    SILE.settings.pushState()
+    SILE.settings:pushState()
     local material = SILE.call("vbox", {}, content)
     SILE.scratch.insertions.classes.footnote.topBox = material
-    SILE.settings.popState()
+    SILE.settings:popState()
   end)
 
   SILE.registerCommand("footnote:options", function (options, _)
@@ -54,9 +54,9 @@ local function registerCommands (class)
     local oldGetTargetLength = SILE.typesetter.getTargetLength
     local oldFrame = SILE.typesetter.frame
     SILE.typesetter.getTargetLength = function () return SILE.length(0xFFFFFF) end
-    SILE.settings.pushState()
+    SILE.settings:pushState()
     -- Restore the settings to the top of the queue, which should be the document #986
-    SILE.settings.toplevelState()
+    SILE.settings:toplevelState()
     SILE.typesetter:initFrame(frame)
 
     -- Reset settings the document may have but should not be applied to footnotes
@@ -66,7 +66,7 @@ local function registerCommands (class)
       "current.hangIndent",
       "linebreak.hangAfter",
       "linebreak.hangIndent" }) do
-      SILE.settings.set(v, SILE.settings.defaults[v])
+      SILE.settings:set(v, SILE.settings.defaults[v])
     end
 
     -- Apply the font before boxing, so relative baselineskip applies #1027
@@ -78,7 +78,7 @@ local function registerCommands (class)
         SILE.process(content)
       end)
     end)
-    SILE.settings.popState()
+    SILE.settings:popState()
     SILE.typesetter.getTargetLength = oldGetTargetLength
     SILE.typesetter.frame = oldFrame
     class:insert("footnote", material)
@@ -89,7 +89,7 @@ local function registerCommands (class)
     -- The footnote frame has is settings reset to the toplevel state, so if one does
     -- something relative (as below), it is expected to be the main value from the
     -- document.
-    SILE.call("font", { size = SILE.settings.get("font.size") * 0.9 }, function ()
+    SILE.call("font", { size = SILE.settings:get("font.size") * 0.9 }, function ()
       SILE.process(content)
     end)
   end)

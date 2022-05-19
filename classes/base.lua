@@ -174,19 +174,19 @@ function base:declareOption (option, setter)
 end
 
 function base.declareSettings (_)
-  SILE.settings.declare({
+  SILE.settings:declare({
     parameter = "current.parindent",
     type = "glue or nil",
     default = nil,
     help = "Glue at start of paragraph"
   })
-  SILE.settings.declare({
+  SILE.settings:declare({
     parameter = "current.hangIndent",
     type = "integer or nil",
     default = nil,
     help = "Size of hanging indent"
   })
-  SILE.settings.declare({
+  SILE.settings:declare({
     parameter = "current.hangAfter",
     type = "integer or nil",
     default = nil,
@@ -352,28 +352,28 @@ end
 
 -- WARNING: not called as class method
 function base.newPar (typesetter)
-  typesetter:pushGlue(SILE.settings.get("current.parindent") or SILE.settings.get("document.parindent"))
-  SILE.settings.set("current.parindent", nil)
-  local hangIndent = SILE.settings.get("current.hangIndent")
+  typesetter:pushGlue(SILE.settings:get("current.parindent") or SILE.settings:get("document.parindent"))
+  SILE.settings:set("current.parindent", nil)
+  local hangIndent = SILE.settings:get("current.hangIndent")
   if hangIndent then
-    SILE.settings.set("linebreak.hangIndent", hangIndent)
+    SILE.settings:set("linebreak.hangIndent", hangIndent)
   end
-  local hangAfter = SILE.settings.get("current.hangAfter")
+  local hangAfter = SILE.settings:get("current.hangAfter")
   if hangAfter then
-    SILE.settings.set("linebreak.hangAfter", hangAfter)
+    SILE.settings:set("linebreak.hangAfter", hangAfter)
   end
 end
 
 -- WARNING: not called as class method
 function base.endPar (typesetter)
-  typesetter:pushVglue(SILE.settings.get("document.parskip"))
-  if SILE.settings.get("current.hangIndent") then
-    SILE.settings.set("current.hangIndent", nil)
-    SILE.settings.set("linebreak.hangIndent", nil)
+  typesetter:pushVglue(SILE.settings:get("document.parskip"))
+  if SILE.settings:get("current.hangIndent") then
+    SILE.settings:set("current.hangIndent", nil)
+    SILE.settings:set("linebreak.hangIndent", nil)
   end
-  if SILE.settings.get("current.hangAfter") then
-    SILE.settings.set("current.hangAfter", nil)
-    SILE.settings.set("linebreak.hangAfter", nil)
+  if SILE.settings:get("current.hangAfter") then
+    SILE.settings:set("current.hangAfter", nil)
+    SILE.settings:set("linebreak.hangAfter", nil)
   end
 end
 

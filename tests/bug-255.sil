@@ -2,13 +2,13 @@
 \script[src=packages/frametricks]
 \script{
   SILE.registerCommand("donothing", function (options, content)
-    SILE.settings.pushState()
-    SILE.settings.temporarily(function ()
-      SILE.settings.set("document.lskip", SILE.nodefactory.glue("0pt"))
+    SILE.settings:pushState()
+    SILE.settings:temporarily(function ()
+      SILE.settings:set("document.lskip", SILE.nodefactory.glue("0pt"))
       SILE.process(content)
       SILE.call("par")
     end)
-    SILE.settings.popState()
+    SILE.settings:popState()
   end)
 }
 

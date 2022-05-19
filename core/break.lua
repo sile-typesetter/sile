@@ -1,19 +1,19 @@
-SILE.settings.declare({ parameter = "linebreak.parShape", type = "boolean", default = false,
+SILE.settings:declare({ parameter = "linebreak.parShape", type = "boolean", default = false,
   help = "If set to true, the paragraph shaping method is activated." })
-SILE.settings.declare({ parameter = "linebreak.tolerance", type = "integer or nil", default = 500 })
-SILE.settings.declare({ parameter = "linebreak.pretolerance", type = "integer or nil", default = 100 })
-SILE.settings.declare({ parameter = "linebreak.hangIndent", type = "measurement", default = 0 })
-SILE.settings.declare({ parameter = "linebreak.hangAfter", type = "integer or nil", default = nil })
-SILE.settings.declare({ parameter = "linebreak.adjdemerits", type = "integer", default = 10000,
+SILE.settings:declare({ parameter = "linebreak.tolerance", type = "integer or nil", default = 500 })
+SILE.settings:declare({ parameter = "linebreak.pretolerance", type = "integer or nil", default = 100 })
+SILE.settings:declare({ parameter = "linebreak.hangIndent", type = "measurement", default = 0 })
+SILE.settings:declare({ parameter = "linebreak.hangAfter", type = "integer or nil", default = nil })
+SILE.settings:declare({ parameter = "linebreak.adjdemerits", type = "integer", default = 10000,
   help = "Additional demerits which are accumulated in the course of paragraph building when two consecutive lines are visually incompatible. In these cases, one line is built with much space for justification, and the other one with little space." })
-SILE.settings.declare({ parameter = "linebreak.looseness", type = "integer", default = 0 })
-SILE.settings.declare({ parameter = "linebreak.prevGraf", type = "integer", default = 0 })
-SILE.settings.declare({ parameter = "linebreak.emergencyStretch", type = "measurement", default = 0 })
-SILE.settings.declare({ parameter = "linebreak.doLastLineFit", type = "boolean", default = false }) -- unimplemented
-SILE.settings.declare({ parameter = "linebreak.linePenalty", type = "integer", default = 10 })
-SILE.settings.declare({ parameter = "linebreak.hyphenPenalty", type = "integer", default = 50 })
-SILE.settings.declare({ parameter = "linebreak.doubleHyphenDemerits", type = "integer", default = 10000 })
-SILE.settings.declare({ parameter = "linebreak.finalHyphenDemerits", type = "integer", default = 5000 })
+SILE.settings:declare({ parameter = "linebreak.looseness", type = "integer", default = 0 })
+SILE.settings:declare({ parameter = "linebreak.prevGraf", type = "integer", default = 0 })
+SILE.settings:declare({ parameter = "linebreak.emergencyStretch", type = "measurement", default = 0 })
+SILE.settings:declare({ parameter = "linebreak.doLastLineFit", type = "boolean", default = false }) -- unimplemented
+SILE.settings:declare({ parameter = "linebreak.linePenalty", type = "integer", default = 10 })
+SILE.settings:declare({ parameter = "linebreak.hyphenPenalty", type = "integer", default = 50 })
+SILE.settings:declare({ parameter = "linebreak.doubleHyphenDemerits", type = "integer", default = 10000 })
+SILE.settings:declare({ parameter = "linebreak.finalHyphenDemerits", type = "integer", default = 5000 })
 
 -- doubleHyphenDemerits
 -- hyphenPenalty
@@ -40,7 +40,7 @@ local lineBreak = {}
 ]]
 
 local param = function (key)
-  local value = SILE.settings.get("linebreak."..key)
+  local value = SILE.settings:get("linebreak."..key)
   return type(value) == "table" and value:absolute() or value
 end
 
@@ -55,8 +55,8 @@ function lineBreak:init()
   self.curActiveWidth = SILE.length()
   self.breakWidth = SILE.length()
   -- 853
-  local rskip = (SILE.settings.get("document.rskip") or SILE.nodefactory.glue()).width:absolute()
-  local lskip = (SILE.settings.get("document.lskip") or SILE.nodefactory.glue()).width:absolute()
+  local rskip = (SILE.settings:get("document.rskip") or SILE.nodefactory.glue()).width:absolute()
+  local lskip = (SILE.settings:get("document.lskip") or SILE.nodefactory.glue()).width:absolute()
   self.background = rskip + lskip
   -- 860
   self.bestInClass = {}

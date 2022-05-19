@@ -84,8 +84,8 @@ SILE.registerCommand("lorem", function (options, _)
       return " " .. c .. " "
     end)
   end
-  SILE.settings.temporarily(function ()
-    SILE.settings.set("document.language", "la")
+  SILE.settings:temporarily(function ()
+    SILE.settings:set("document.language", "la")
     SILE.typesetter:typeset(text)
   end)
 end)

@@ -148,8 +148,8 @@ units["%fmax"] = {
 units["%lw"] = {
   relative = true,
   definition = function (value)
-    local lskip = SILE.settings.get("document.lskip")
-    local rskip = SILE.settings.get("document.rskip")
+    local lskip = SILE.settings:get("document.lskip")
+    local rskip = SILE.settings:get("document.rskip")
     local left = lskip and lskip.width:tonumber() or 0
     local right = rskip and rskip.width:tonumber() or 0
     checkFrameDefined()
@@ -160,7 +160,7 @@ units["%lw"] = {
 units["ps"] = {
   relative = true,
   definition = function (value)
-    local ps = SILE.settings.get("document.parskip")
+    local ps = SILE.settings:get("document.parskip")
     ps = ps.height:tonumber() or 0
     return value * ps
   end
@@ -169,7 +169,7 @@ units["ps"] = {
 units["bs"] = {
   relative = true,
   definition = function (value)
-    local bs = SILE.settings.get("document.baselineskip")
+    local bs = SILE.settings:get("document.baselineskip")
     bs = bs.height:tonumber() or 0
     return value * bs
   end
@@ -178,7 +178,7 @@ units["bs"] = {
 units["em"] = {
   relative = true,
   definition = function (value)
-    return value * SILE.settings.get("font.size")
+    return value * SILE.settings:get("font.size")
   end
 }
 

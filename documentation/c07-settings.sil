@@ -74,7 +74,7 @@ arguments instead of named options:
 
 \begin{verbatim}
 \line
-SILE.settings.set("typesetter.orphanpenalty", 250)
+SILE.settings:set("typesetter.orphanpenalty", 250)
 \line
 \end{verbatim}
 
@@ -356,22 +356,22 @@ Most of the time you will not be fiddling with these settings at the SILE layer,
 because complex layout commands are expected to be implemented in Lua. The
 following SILE functions access the settings system from inside Lua:
 
-\noindent• \code{SILE.settings.set(\em{<parameter>}, \em{value})}: sets a setting.
+\noindent• \code{SILE.settings:set(\em{<parameter>}, \em{value})}: sets a setting.
 
 \note{
 You should note that, while in the SILE layer, the \code{\\set} command does its
 best to turn the textual description of a type into the appropriate Lua type
-for the value. \code{SILE.settings.set} does not do that; it expects the value
+for the value. \code{SILE.settings:set} does not do that; it expects the value
 to be of the appropriate type: lengths need to be a \code{SILE.length} object,
 glue must be \code{SILE.nodefactory.glue} and so on.}
 
-\noindent• \code{SILE.settings.get(\em{<parameter>})}: retrieves the current
+\noindent• \code{SILE.settings:get(\em{<parameter>})}: retrieves the current
 setting of the parameter.
 
-\noindent• \code{SILE.settings.temporarily(\em{function})}: Saves all settings,
+\noindent• \code{SILE.settings:temporarily(\em{function})}: Saves all settings,
 runs the function and then restores all settings afterwards.
 
-\noindent• \code{SILE.settings.declare(\em{<specification>})}: Declares a new
+\noindent• \code{SILE.settings:declare(\em{<specification>})}: Declares a new
 setting. See the base settings in \code{settings.lua} for examples of how to
 call this. A class or package should namespace its settings with \code{<package>.<setting>}.
 \end{document}

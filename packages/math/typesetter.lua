@@ -118,12 +118,12 @@ local function handleMath(mbox, mode)
 
   if mode == "display" then
     SILE.typesetter:endline()
-    SILE.typesetter:pushExplicitVglue(SILE.settings.get("math.displayskip"))
+    SILE.typesetter:pushExplicitVglue(SILE.settings:get("math.displayskip"))
     SILE.call("center", {}, function()
       SILE.typesetter:pushHorizontal(mbox)
     end)
     SILE.typesetter:endline()
-    SILE.typesetter:pushExplicitVglue(SILE.settings.get("math.displayskip"))
+    SILE.typesetter:pushExplicitVglue(SILE.settings:get("math.displayskip"))
   else
     SILE.typesetter:pushHorizontal(mbox)
   end

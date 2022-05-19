@@ -21,7 +21,7 @@ if not SILE.insertions then
   SILE.insertions = {}
 end
 
-SILE.settings.declare({
+SILE.settings:declare({
   parameter = "insertion.penalty",
   type = "integer",
   default = -3000,
@@ -434,7 +434,7 @@ local insert = function (_, classname, vbox)
   local insertion = SILE.scratch.insertions.classes[classname]
   if not insertion then SU.error("Uninitialized insertion class " .. classname) end
   SILE.typesetter:pushMigratingMaterial({
-      SILE.nodefactory.penalty(SILE.settings.get("insertion.penalty"))
+      SILE.nodefactory.penalty(SILE.settings:get("insertion.penalty"))
     })
   SILE.typesetter:pushMigratingMaterial({
       SILE.nodefactory.insertion({

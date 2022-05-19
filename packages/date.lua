@@ -6,7 +6,7 @@ end
 local date = function (options)
   options.format = options.format or "%c"
   options.time = options.time or os.time()
-  options.locale = options.locale or localeify(SILE.settings.get("document.language"))
+  options.locale = options.locale or localeify(SILE.settings:get("document.language"))
   os.setlocale(options.locale, "time")
   return os.date(options.format, options.time)
 end

@@ -65,8 +65,8 @@ local declareHanmenFrame = function (self, id, spec)
                   spec.hanmen.linegap * ( spec.hanmen.linecount -1 )
   end
   local skip = spec.hanmen.linegap + spec.hanmen.gridsize
-  SILE.settings.set("document.baselineskip", SILE.nodefactory.vglue(skip))
-  SILE.settings.set("document.parskip", SILE.nodefactory.vglue())
+  SILE.settings:set("document.baselineskip", SILE.nodefactory.vglue(skip))
+  SILE.settings:set("document.parskip", SILE.nodefactory.vglue())
   local frame = SILE.newFrame(spec, spec.tate and SILE.tateFramePrototype or SILE.framePrototype)
   if spec.id then
     self.pageTemplate.frames[spec.id] = frame

@@ -121,10 +121,10 @@ local hyphenateNode = function (node)
           end
         end
         if not (j == #breaks) then
-          local discretionary = SILE.nodefactory.discretionary({ prebreak = SILE.shaper:createNnodes(SILE.settings.get("font.hyphenchar"), node.options) })
+          local discretionary = SILE.nodefactory.discretionary({ prebreak = SILE.shaper:createNnodes(SILE.settings:get("font.hyphenchar"), node.options) })
           discretionary.parent = node
           table.insert(newnodes, discretionary)
-         --table.insert(newnodes, SILE.nodefactory.penalty({ value = SILE.settings.get("typesetter.hyphenpenalty") }))
+         --table.insert(newnodes, SILE.nodefactory.penalty({ value = SILE.settings:get("typesetter.hyphenpenalty") }))
         end
       end
     end
@@ -139,7 +139,7 @@ end
 SILE.showHyphenationPoints = function (word, language)
   language = language or "en"
   initHyphenator(language)
-  return SU.concat(SILE._hyphenate(SILE._hyphenators[language], word), SILE.settings.get("font.hyphenchar"))
+  return SU.concat(SILE._hyphenate(SILE._hyphenators[language], word), SILE.settings:get("font.hyphenchar"))
 end
 
 SILE.hyphenate = function (nodelist)
@@ -156,7 +156,7 @@ SILE.hyphenate = function (nodelist)
 end
 
 SILE.registerCommand("hyphenator:add-exceptions", function (options, content)
-  local language = options.lang or SILE.settings.get("document.language") or "und"
+  local language = options.lang or SILE.settings:get("document.language") or "und"
   SILE.languageSupport.loadLanguage(language)
   initHyphenator(language)
   for token in SU.gtoke(content[1]) do

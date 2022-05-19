@@ -55,18 +55,18 @@ function plain:registerCommands ()
     if #SILE.typesetter.state.nodes ~= 0 then
       SU.warn("\\noindent called after nodes already recieved in a paragraph, the setting will have no effect because the parindent (if any) has already been output")
     end
-    SILE.settings.set("current.parindent", SILE.nodefactory.glue())
+    SILE.settings:set("current.parindent", SILE.nodefactory.glue())
     SILE.process(content)
   end, "Do not add an indent to the start of this paragraph")
 
   SILE.registerCommand("neverindent", function (_, content)
-    SILE.settings.set("current.parindent", SILE.nodefactory.glue())
-    SILE.settings.set("document.parindent", SILE.nodefactory.glue())
+    SILE.settings:set("current.parindent", SILE.nodefactory.glue())
+    SILE.settings:set("document.parindent", SILE.nodefactory.glue())
     SILE.process(content)
   end, "Turn off all indentation")
 
   SILE.registerCommand("indent", function (_, content)
-    SILE.settings.set("current.parindent", SILE.settings.get("document.parindent"))
+    SILE.settings:set("current.parindent", SILE.settings:get("document.parindent"))
     SILE.process(content)
   end, "Do add an indent to the start of this paragraph, even if previously told otherwise")
 
@@ -77,7 +77,7 @@ function plain:registerCommands ()
   }
 
   for k, v in pairs(skips) do
-    SILE.settings.declare({
+    SILE.settings:declare({
         parameter = "plain." .. k .. "skipamount",
         type = "vglue",
         default = SILE.nodefactory.vglue(v),
@@ -85,7 +85,7 @@ function plain:registerCommands ()
       })
     SILE.registerCommand(k .. "skip", function (_, _)
       SILE.typesetter:leaveHmode()
-      SILE.typesetter:pushExplicitVglue(SILE.settings.get("plain." .. k .. "skipamount"))
+      SILE.typesetter:pushExplicitVglue(SILE.settings:get("plain." .. k .. "skipamount"))
     end, "Skip vertically by a " .. k .. " amount")
   end
 
@@ -193,8 +193,8 @@ function plain:registerCommands ()
   end)
 
   SILE.registerCommand("justified", function (_, content)
-    SILE.settings.set("document.rskip", nil)
-    SILE.settings.set("document.spaceskip", nil)
+    SILE.settings:set("document.rskip", nil)
+    SILE.settings:set("document.spaceskip", nil)
     SILE.process(content)
     SILE.call("par")
   end)
@@ -230,15 +230,15 @@ function plain:registerCommands ()
     SILE.call("smallskip")
     SILE.call("par")
     local margin = SILE.measurement(2.5, "em")
-    SILE.settings.set("document.lskip", margin)
-    SILE.settings.set("document.lskip", margin)
+    SILE.settings:set("document.lskip", margin)
+    SILE.settings:set("document.lskip", margin)
     SILE.call("font", { size = SILE.measurement(0.8, "em") }, function ()
       SILE.call("noindent")
       SILE.process(content)
     end)
     SILE.call("par")
-    SILE.settings.set("document.lskip", nil)
-    SILE.settings.set("document.rskip", nil)
+    SILE.settings:set("document.lskip", nil)
+    SILE.settings:set("document.rskip", nil)
     SILE.call("smallskip")
   end)
 
@@ -250,31 +250,31 @@ function plain:registerCommands ()
   end)
 
   SILE.registerCommand("sloppy", function (_, _)
-    SILE.settings.set("linebreak.tolerance", 9999)
+    SILE.settings:set("linebreak.tolerance", 9999)
   end)
 
   SILE.registerCommand("awful", function (_, _)
-    SILE.settings.set("linebreak.tolerance", 10000)
+    SILE.settings:set("linebreak.tolerance", 10000)
   end)
 
   SILE.registerCommand("center", function (_, content)
     if #SILE.typesetter.state.nodes ~= 0 then
       SU.warn("\\center environment started after other nodes in a paragraph, may not center as expected")
     end
-    SILE.settings.temporarily(function()
-      SILE.settings.set("current.parindent", 0)
-      SILE.settings.set("document.parindent", 0)
+    SILE.settings:temporarily(function()
+      SILE.settings:set("current.parindent", 0)
+      SILE.settings:set("document.parindent", 0)
       SILE.call("ragged", { left = true, right = true }, content)
     end)
   end)
 
   SILE.registerCommand("ragged", function (options, content)
-    SILE.settings.temporarily(function ()
-      if SU.boolean(options.left, false) then SILE.settings.set("document.lskip", SILE.nodefactory.hfillglue()) end
-      if SU.boolean(options.right, false) then SILE.settings.set("document.rskip", SILE.nodefactory.hfillglue()) end
-      SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
-      SILE.settings.set("document.parindent", SILE.nodefactory.glue())
-      SILE.settings.set("document.spaceskip", SILE.length("1spc", 0, 0))
+    SILE.settings:temporarily(function ()
+      if SU.boolean(options.left, false) then SILE.settings:set("document.lskip", SILE.nodefactory.hfillglue()) end
+      if SU.boolean(options.right, false) then SILE.settings:set("document.rskip", SILE.nodefactory.hfillglue()) end
+      SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
+      SILE.settings:set("document.parindent", SILE.nodefactory.glue())
+      SILE.settings:set("document.spaceskip", SILE.length("1spc", 0, 0))
       SILE.process(content)
       SILE.call("par")
     end)
@@ -339,8 +339,8 @@ function plain:registerCommands ()
 
   SILE.registerCommand("vbox", function (options, content)
     local vbox
-    SILE.settings.temporarily(function ()
-      if options.width then SILE.settings.set("typesetter.breakwidth", SILE.length(options.width)) end
+    SILE.settings:temporarily(function ()
+      if options.width then SILE.settings:set("typesetter.breakwidth", SILE.length(options.width)) end
       SILE.typesetter:pushState()
       SILE.process(content)
       SILE.typesetter:leaveHmode(1)

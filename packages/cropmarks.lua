@@ -13,7 +13,7 @@ local outputMarks = function ()
   SILE.outputter:drawRule(page:right(), page:bottom() + 10, 0.5, 10)
 
   SILE.call("hbox", {}, function ()
-    SILE.settings.temporarily(function ()
+    SILE.settings:temporarily(function ()
       SILE.call("noindent")
       SILE.call("font", { size="6pt" })
       SILE.call("crop:header")

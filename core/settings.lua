@@ -102,7 +102,7 @@ end
 function settings:declare (spec)
   if not spec then self, spec = deprecator(), self end
   if spec.name then
-    SU.deprecated("'name' argument of SILE.settings.declare", "'parameter' argument of SILE.settings.declare", "0.10.10", "0.11.0")
+    SU.deprecated("'name' argument of SILE.settings:declare", "'parameter' argument of SILE.settings:declare", "0.10.10", "0.11.0")
   end
   self.declarations[spec.parameter] = spec
   self:set(spec.parameter, spec.default, true)

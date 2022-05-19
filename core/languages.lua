@@ -10,7 +10,7 @@ end)
 SILE.languageSupport = {
   languages = {},
   loadLanguage = function (language)
-    language = language or SILE.settings.get("document.language")
+    language = language or SILE.settings:get("document.language")
     language = cldr.locales[language] and language or "und"
     if SILE.languageSupport.languages[language] then return end
     if SILE.hyphenator.languages[language] then return end
@@ -39,18 +39,18 @@ SILE.registerCommand("language", function (options, content)
   local main = SU.required(options, "main", "language setting")
   SILE.languageSupport.loadLanguage(main)
   if content[1] then
-    SILE.settings.temporarily(function ()
-      SILE.settings.set("document.language", main)
+    SILE.settings:temporarily(function ()
+      SILE.settings:set("document.language", main)
       SILE.process(content)
     end)
   else
-    SILE.settings.set("document.language", main)
+    SILE.settings:set("document.language", main)
   end
 end)
 
 SILE.registerCommand("fluent", function (options, content)
   local key = content[1]
-  local locale = options.locale or SILE.settings.get("document.language")
+  local locale = options.locale or SILE.settings:get("document.language")
   SU.debug("fluent", "Looking for", key, "in", locale)
   local entry
   if key then
@@ -69,7 +69,7 @@ SILE.registerCommand("fluent", function (options, content)
 end)
 
 SILE.registerCommand("ftl", function (options, content)
-  local locale = options.locale or SILE.settings.get("document.language")
+  local locale = options.locale or SILE.settings:get("document.language")
   SU.debug("fluent", "Loading message(s) into locale", locale)
   SILE.fluent:set_locale(locale)
   if options.src then

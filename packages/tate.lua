@@ -7,7 +7,7 @@ SILE.tateFramePrototype.enterHooks = {
       typesetter.old_breakIntoLines = typesetter.breakIntoLines
       typesetter.leadingFor = function(_, v)
         v.height = SILE.length("1zw"):absolute()
-        local bls = SILE.settings.get("document.baselineskip")
+        local bls = SILE.settings:get("document.baselineskip")
         local d = bls.height:absolute() - v.height
         local len = SILE.length(d.length, bls.height.stretch, bls.height.shrink)
         return SILE.nodefactory.vglue({height = len})
@@ -67,7 +67,7 @@ local function init (class, _)
     local oldT = SILE.typesetter
     local prevDirection = oldT.frame.direction
     SILE.require("packages.rotate")
-    SILE.settings.temporarily(function()
+    SILE.settings:temporarily(function()
       local latinTypesetter = pl.class(SILE.defaultTypesetter)
       local dummyFrame = pl.class(SILE.framePrototype)
       dummyFrame.init = function (self)
@@ -78,8 +78,8 @@ local function init (class, _)
       end
       local frame = dummyFrame({}, true)
       SILE.typesetter = latinTypesetter(frame)
-      SILE.settings.set("document.language", "und")
-      SILE.settings.set("font.direction", "LTR")
+      SILE.settings:set("document.language", "und")
+      SILE.settings:set("font.direction", "LTR")
       SILE.process(content)
       nodes = SILE.typesetter.state.nodes
       SILE.typesetter:shapeAllNodes(nodes)
@@ -117,9 +117,9 @@ local function init (class, _)
     --                             shrink = SILE.toPoints("0.25zw")
     --                           })
     -- })
-    SILE.settings.temporarily(function()
-      SILE.settings.set("document.language", "und")
-      SILE.settings.set("font.direction", "LTR")
+    SILE.settings:temporarily(function()
+      SILE.settings:set("document.language", "und")
+      SILE.settings:set("font.direction", "LTR")
       SILE.call("rotate",{angle =-90}, function ()
         SILE.call("hbox", {}, content)
         local n = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
