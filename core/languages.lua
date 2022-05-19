@@ -1,4 +1,5 @@
 local loadkit = require("loadkit")
+local cldr = require("cldr")
 
 loadkit.register("ftl", function (file)
   local contents = assert(file:read("*a"))
@@ -10,7 +11,7 @@ SILE.languageSupport = {
   languages = {},
   loadLanguage = function (language)
     language = language or SILE.settings.get("document.language")
-    language = SILE.cldr.locales[language] and language or "und"
+    language = cldr.locales[language] and language or "und"
     if SILE.languageSupport.languages[language] then return end
     if SILE.hyphenator.languages[language] then return end
     local langresource = string.format("languages.%s", language)

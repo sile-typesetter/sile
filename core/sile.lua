@@ -6,11 +6,16 @@ SILE.version = require("core.version")
 -- Initialize Lua environment and global utilities
 SILE.lua_version = _VERSION:sub(-3)
 SILE.lua_isjit = type(jit) == "table"
-if not SILE.lua_isjit and SILE.lua_version < "5.3" then require("compat53") end -- Backport of lots of Lua 5.3 features to Lua 5.[12]
-pl = require("pl.import_into")() -- Penlight on-demand module loader
-if (os.getenv("SILE_COVERAGE")) then require("luacov") end
-
 SILE.full_version = string.format("SILE %s (%s)", SILE.version, SILE.lua_isjit and jit.version or _VERSION)
+
+-- Backport of lots of Lua 5.3 features to Lua 5.[12]
+if not SILE.lua_isjit and SILE.lua_version < "5.3" then require("compat53") end
+
+-- Penlight on-demand module loader, provided for SILE and document usage
+pl = require("pl.import_into")()
+
+-- For developer testing only, usually in CI
+if os.getenv("SILE_COVERAGE") then require("luacov") end
 
 -- Include lua-stdlib, but make sure debugging is turned off since newer
 -- versions enable it by default and it comes with a huge performance hit.
@@ -39,14 +44,13 @@ SILE.status = {}
 SILE.scratch = {}
 SILE.dolua = {}
 SILE.preamble = {}
+SILE.documentState = {}
 
 -- Internal functions / classes / factories
-SILE.cldr = require("cldr")
 SILE.fluent = require("fluent")()
 SILE.utilities = require("core.utilities")
 SU = SILE.utilities -- alias
 SILE.traceStack = require("core.tracestack")()
-SILE.documentState = {}
 SILE.parserBits = require("core.parserbits")
 SILE.units = require("core.units")
 SILE.measurement = require("core.measurement")
