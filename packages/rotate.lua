@@ -58,6 +58,10 @@ local function init (_, _)
   table.insert(SILE.framePrototype.enterHooks, enter)
   table.insert(SILE.framePrototype.leaveHooks, leave)
 
+end
+
+local function registerCommands (_)
+
   SILE.registerCommand("rotate", function(options, content)
     local angle = SU.required(options, "angle", "rotate command")
     local theta = -math.rad(angle)
@@ -100,7 +104,9 @@ end
 
 return {
   init = init,
+  registerCommands = registerCommands,
   documentation = [[\begin{document}
+\script[src=packages/rotate]
 The \autodoc:package{rotate} package allows you to rotate things. You can rotate entire
 frames, by adding the \autodoc:parameter{rotate=<angle>} declaration to your frame declaration,
 and you can rotate any content by issuing the command \autodoc:command{\rotate[angle=<angle>]{<content>}},

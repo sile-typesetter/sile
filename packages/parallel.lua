@@ -44,6 +44,17 @@ local parallelPagebreak = function ()
   end
 end
 
+local addBalancingGlue = function (height)
+  allTypesetters(function (frame, typesetter)
+    local glue = height - calculations[frame].heightOfNewMaterial
+    if glue.length:tonumber() > 0 then
+      SU.debug("parallel", "Adding " .. tostring(glue) .. " to " .. tostring(frame))
+      typesetter:pushVglue({ height = glue })
+    end
+    calculations[frame].mark = #typesetter.state.outputQueue
+  end)
+end
+
 local function init (class, options)
 
   SILE.typesetter = nulTypesetter(SILE.getFrame("page"))
@@ -84,16 +95,9 @@ local function init (class, options)
     oldfinish(self)
   end
 
-  local addBalancingGlue = function (height)
-    allTypesetters(function (frame, typesetter)
-      local glue = height - calculations[frame].heightOfNewMaterial
-      if glue.length:tonumber() > 0 then
-        SU.debug("parallel", "Adding " .. tostring(glue) .. " to " .. tostring(frame))
-        typesetter:pushVglue({ height = glue })
-      end
-      calculations[frame].mark = #typesetter.state.outputQueue
-    end)
-  end
+end
+
+local function registerCommands (_)
 
   SILE.registerCommand("sync", function (_, _)
     local anybreak = false
@@ -132,6 +136,7 @@ end
 
 return {
   init = init,
+  registerCommands = registerCommands,
   documentation = [[
 \begin{document}
 The \autodoc:package{parallel} package provides the mechanism for typesetting diglot or other

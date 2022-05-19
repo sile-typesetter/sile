@@ -209,6 +209,13 @@ function base:initPackage (pack, args)
         self:registerPostinit(pack.init, args)
       end
     end
+    if type(pack.registerCommands) == "function" then
+      if self._initialized then
+        pack.registerCommands(self)
+      else
+        self:registerPostinit(pack.registerCommands)
+      end
+    end
   end
 end
 
@@ -223,8 +230,9 @@ function base:registerCommands ()
   SILE.registerCommand("script", function (options, content)
     if (options["src"]) then
       local script, _ = require(options["src"])
-      if type(script) == "table" and script.init then
-        script.init(self, options)
+      if type(script) == "table" then
+        if type(script.init) == "function" then script.init(self, options) end
+        if type(script.registerCommands) == "function" then script.registerCommands(self) end
       end
     else
       local func, err = load(content[1])

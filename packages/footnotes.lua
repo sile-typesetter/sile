@@ -18,6 +18,11 @@ local function init (class, args)
     interInsertionSkip = SILE.length("1ex"),
   })
 
+end
+
+local function registerCommands (class)
+  if not class then SU.error("NO CLASS ACTION") end
+
   SILE.registerCommand("footnotemark", function (_, _)
     SILE.call("raise", { height = "0.7ex" }, function ()
       SILE.call("font", { size = "1.5ex" }, function ()
@@ -44,8 +49,8 @@ local function init (class, args)
 
   SILE.registerCommand("footnote", function (options, content)
     SILE.call("footnotemark")
-    local opts = SILE.scratch.insertions.classes.footnote
-    local frame = SILE.getFrame(opts["insertInto"].frame)
+    local opts = SILE.scratch.insertions.classes.footnote or {}
+    local frame = opts.insertInto and SILE.getFrame(opts.insertInto.frame)
     local oldGetTargetLength = SILE.typesetter.getTargetLength
     local oldFrame = SILE.typesetter.frame
     SILE.typesetter.getTargetLength = function () return SILE.length(0xFFFFFF) end
@@ -102,6 +107,7 @@ end
 
 return {
   init = init,
+  registerCommands = registerCommands,
   exports = {},
   documentation = [[
 \begin{document}
