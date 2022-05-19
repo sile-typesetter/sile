@@ -149,7 +149,7 @@ local colorsRGB = {
   yellowgreen = {154, 205, 50}
 }
 
-SILE.colorparser = function (col)
+local colorparser = function (col)
   local r, g, b, c, m, y, k, l
   if colorsRGB[col] then
     c = colorsRGB[col]
@@ -177,3 +177,5 @@ SILE.colorparser = function (col)
   end
   SU.error("Unparsable color "..col)
 end
+
+return colorparser

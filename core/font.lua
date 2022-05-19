@@ -78,7 +78,7 @@ local _key = function (options)
     }, ";")
 end
 
-SILE.font = {
+local font = {
 
   loadDefaults = function (options)
     if not options.family then options.family = SILE.settings:get("font.family") end
@@ -124,3 +124,5 @@ SILE.font = {
 
   _key = _key
 }
+
+return font
