@@ -72,7 +72,7 @@ local function debugGrid ()
   end
 end
 
-local gridPagebuilder = pl.class(require("core/pagebuilder"))
+local gridPagebuilder = pl.class(require("core.pagebuilder"))
 
 function gridPagebuilder.findBestBreak (_, options)
   local vboxlist = SU.required(options, "vboxlist", "in findBestBreak")

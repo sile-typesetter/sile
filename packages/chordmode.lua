@@ -1,6 +1,6 @@
-local inputfilter = SILE.require("packages/inputfilter").exports
+local inputfilter = SILE.require("packages.inputfilter").exports
 
-SILE.require("packages/raiselower")
+SILE.require("packages.raiselower")
 
 local function addChords(text, content)
   local result = {}

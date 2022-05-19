@@ -1,5 +1,5 @@
 local icu = require("justenoughicu")
-local inputfilter = SILE.require("packages/inputfilter").exports
+local inputfilter = SILE.require("packages.inputfilter").exports
 
 local uppercase = function (input, extraArgs)
   if not extraArgs then extraArgs = {} end

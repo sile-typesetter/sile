@@ -1,9 +1,9 @@
-SILE.require("packages/verbatim")
+SILE.require("packages.verbatim")
 local pdf
 pcall(function() pdf = require("justenoughlibtexpdf") end)
-if pdf then SILE.require("packages/pdf") end
+if pdf then SILE.require("packages.pdf") end
 
-local inputfilter = SILE.require("packages/inputfilter").exports
+local inputfilter = SILE.require("packages.inputfilter").exports
 
 -- URL escape sequence, URL fragment:
 local preferBreakBefore = "%#"

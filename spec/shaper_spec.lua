@@ -1,4 +1,4 @@
-SILE = require("core/sile")
+SILE = require("core.sile")
 SILE.backend = "debug"
 SILE.init()
 

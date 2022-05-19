@@ -1,5 +1,5 @@
 -- Folios class
-SILE.require("packages/counters")
+SILE.require("packages.counters")
 
 SILE.scratch.counters.folio = { value = 1, display = "arabic" }
 

@@ -72,7 +72,7 @@ end)
 
 -- Documenting a setting with good line-breaks
 
-local inputfilter = SILE.require("packages/inputfilter").exports
+local inputfilter = SILE.require("packages.inputfilter").exports
 local settingFilter = function (node, content)
   if type(node) == "table" then return node end
   local result = {}

@@ -1,9 +1,9 @@
-SILE = require("core/sile")
+SILE = require("core.sile")
 local lfs = require("lfs")
 
 describe("#packages like", function ()
 
-  local _, dir_obj = lfs.dir("packages/")
+  local _, dir_obj = lfs.dir("packages")
   local file = dir_obj:next()
 
   it("foo", function() end)
@@ -21,11 +21,11 @@ describe("#packages like", function ()
       describe(pkg, function ()
 
         it("should load", function ()
-          assert.has.no.error(function() require("packages/" .. pkg) end)
+          assert.has.no.error(function() require("packages." .. pkg) end)
         end)
 
         it("should have #documentation", function ()
-          local mod = require("packages/" .. pkg)
+          local mod = require("packages." .. pkg)
           assert.truthy(type(mod) == "table")
           assert.truthy(mod.documentation)
         end)

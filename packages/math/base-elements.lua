@@ -1,7 +1,7 @@
-local nodefactory = require("core/nodefactory")
+local nodefactory = require("core.nodefactory")
 local hb = require("justenoughharfbuzz")
-local ot = require("core/opentype-parser")
-local syms = require("packages/math/unicode-symbols")
+local ot = require("core.opentype-parser")
+local syms = require("packages.math.unicode-symbols")
 
 local atomType = syms.atomType
 local symbolDefaults = syms.symbolDefaults

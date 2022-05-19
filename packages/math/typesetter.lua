@@ -1,7 +1,7 @@
 -- Interpret a MathML or TeX-like AST, typeset it and add it to the output.
-local b = require("packages/math/base-elements")
-local tex = require("packages/math/texlike")
-local syms = require("packages/math/unicode-symbols")
+local b = require("packages.math.base-elements")
+local tex = require("packages.math.texlike")
+local syms = require("packages.math.unicode-symbols")
 
 local ConvertMathML
 

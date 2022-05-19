@@ -8,7 +8,7 @@ local stNode = function (notetype) return {
   }
 end
 
-SILE.require("packages/pdf")
+SILE.require("packages.pdf")
 local pdf = require("justenoughlibtexpdf")
 
 local stRoot = stNode("Document")

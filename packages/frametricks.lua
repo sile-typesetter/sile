@@ -108,7 +108,7 @@ local makecolumns = function (options)
 end
 
 local mergeColumns = function ()
-  SILE.require("packages/balanced-frames")
+  SILE.require("packages.balanced-frames")
 
   -- 1) Balance all remaining material.
 

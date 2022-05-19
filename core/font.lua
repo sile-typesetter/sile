@@ -115,10 +115,10 @@ SILE.font = {
   end,
 
   postLoadHook = function(face)
-    local ot = SILE.require("core/opentype-parser")
+    local ot = SILE.require("core.opentype-parser")
     local font = ot.parseFont(face)
     if font.cpal then
-      SILE.require("packages/color-fonts")
+      SILE.require("packages.color-fonts")
     end
   end,
 

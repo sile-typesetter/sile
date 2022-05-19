@@ -55,7 +55,7 @@ local function init (_, _)
     end
     self.state.lastPenalty = 0
     local oldPageBuilder = SILE.pagebuilder
-    SILE.pagebuilder = require("core/pagebuilder")()
+    SILE.pagebuilder = require("core.pagebuilder")()
     while self.frame and self.frame.balanced do
       SILE.defaultTypesetter.buildPage(self, true)
       if self.frame.next and SILE.getFrame(self.frame.next).balanced == true then

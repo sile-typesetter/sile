@@ -1,4 +1,4 @@
-SILE = require("core/sile")
+SILE = require("core.sile")
 SILE.backend = "debug"
 SILE.init()
 
@@ -11,7 +11,7 @@ local fcf = os.getenv("FONTCONFIG_FILE")
 if not fcf then return end
 
 describe("The OpenType loader/parser", function()
-  local ot = SILE.require("core/opentype-parser")
+  local ot = SILE.require("core.opentype-parser")
   local face = SILE.shaper:getFace({ family = "Libertinus Serif" })
   local font = ot.parseFont(face)
 

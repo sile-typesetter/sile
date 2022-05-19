@@ -1,4 +1,4 @@
-SILE.require("packages/color")
+SILE.require("packages.color")
 
 local outputBackground = function (color)
   local page = SILE.getFrame("page")

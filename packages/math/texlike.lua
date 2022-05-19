@@ -1,7 +1,7 @@
 local epnf = require("epnf")
 local lpeg = require("lpeg")
-local syms = require("packages/math/unicode-symbols")
-require("core/parserbits")
+local syms = require("packages.math.unicode-symbols")
+require("core.parserbits")
 
 local atomType = syms.atomType
 local symbolDefaults = syms.symbolDefaults

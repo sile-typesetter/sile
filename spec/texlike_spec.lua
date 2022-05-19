@@ -1,4 +1,4 @@
-SILE = require("core/sile")
+SILE = require("core.sile")
 
 describe("#TeXlike #input parser", function ()
   local parse = SILE.inputs.TeXlike.docToTree

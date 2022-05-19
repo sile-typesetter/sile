@@ -1,4 +1,4 @@
-SILE = require("core/sile")
+SILE = require("core.sile")
 
 describe("The frame parser", function()
   it("should exist", function() assert.is.truthy(SILE.frameParser) end)

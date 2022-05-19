@@ -11,7 +11,7 @@ SILE.settings.declare({
   help = "Comma-separated shaper list to pass to Harfbuzz"
 })
 
-SILE.require("core/base-shaper")
+SILE.require("core.base-shaper")
 
 local smallTokenSize = 20 -- Small words will be cached
 local shapeCache = {}
@@ -95,7 +95,7 @@ function SILE.shapers.harfbuzz.addShapedGlyphToNnodeValue (_, nnodevalue, shaped
 end
 
 function SILE.shapers.harfbuzz.debugVersions (_)
-  local ot = SILE.require("core/opentype-parser")
+  local ot = SILE.require("core.opentype-parser")
   print("Harfbuzz version: "..hb.version())
   print("Shapers enabled: ".. table.concat({ hb.shapers() }, ", "))
   if icu then

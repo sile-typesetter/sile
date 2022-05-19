@@ -35,7 +35,7 @@ SILE.registerCommand("fullrule", function (options, _)
 end, "Draw a full width hrule centered on the current line")
 
 SILE.registerCommand("underline", function (_, content)
-  local ot = SILE.require("core/opentype-parser")
+  local ot = SILE.require("core.opentype-parser")
   local fontoptions = SILE.font.loadDefaults({})
   local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
   local font = ot.parseFont(face)

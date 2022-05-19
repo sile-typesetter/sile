@@ -1,5 +1,5 @@
-SILE.require("packages/rebox")
-SILE.require("packages/raiselower")
+SILE.require("packages.rebox")
+SILE.require("packages.raiselower")
 
 local shapeHbox = function (options, content)
   -- Clear irrelevant values before passing to font
@@ -25,7 +25,7 @@ SILE.registerCommand("dropcap", function (options, content)
   local color = options.color
   options.size = nil -- we need to measure the "would have been" size before using this
 
-  if color then SILE.require("packages/color") end
+  if color then SILE.require("packages.color") end
 
   -- We want the drop cap to span over N lines, that is N - 1 baselineskip + the height of the first line.
   -- Note this only works for the default linespace mechanism.

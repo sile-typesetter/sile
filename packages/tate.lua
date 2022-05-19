@@ -12,7 +12,7 @@ SILE.tateFramePrototype.enterHooks = {
         local len = SILE.length(d.length, bls.height.stretch, bls.height.shrink)
         return SILE.nodefactory.vglue({height = len})
       end
-      typesetter.breakIntoLines = SILE.require("packages/break-firstfit").exports.breakIntoLines
+      typesetter.breakIntoLines = SILE.require("packages.break-firstfit").exports.breakIntoLines
     end
   }
 
@@ -66,7 +66,7 @@ local function init (class, _)
     local nodes
     local oldT = SILE.typesetter
     local prevDirection = oldT.frame.direction
-    SILE.require("packages/rotate")
+    SILE.require("packages.rotate")
     SILE.settings.temporarily(function()
       local latinTypesetter = pl.class(SILE.defaultTypesetter)
       local dummyFrame = pl.class(SILE.framePrototype)

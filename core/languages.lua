@@ -79,7 +79,7 @@ SILE.registerCommand("ftl", function (options, content)
   end
 end)
 
-require("languages/unicode")
+require("languages.unicode")
 
 -- The following languages neither have hyphenation nor specific
 -- language support at present. This code is here to suppress warnings.

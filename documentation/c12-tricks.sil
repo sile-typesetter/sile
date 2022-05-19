@@ -405,7 +405,7 @@ Here’s how to do it.
 
 \begin{verbatim}
 \line
-require("core/sile")
+require("core.sile")
 SILE.outputFilename = "byhand.pdf"
 local plain = require("plain", "classes")
 SILE.documentState.documentClass = plain;

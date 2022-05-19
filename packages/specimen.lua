@@ -1,7 +1,7 @@
 local metrics = require("fontmetrics")
 
 SILE.registerCommand("repertoire", function(_, _)
-  local ot = SILE.require("core/opentype-parser")
+  local ot = SILE.require("core.opentype-parser")
   local fontoptions = SILE.font.loadDefaults({})
   local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
   local font = ot.parseFont(face)

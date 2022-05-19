@@ -1,6 +1,6 @@
-SILE.require("packages/color")
-SILE.require("packages/raiselower")
-SILE.require("packages/rebox")
+SILE.require("packages.color")
+SILE.require("packages.raiselower")
+SILE.require("packages.rebox")
 
 SILE.registerCommand("pullquote:font", function (_, _)
 end, "The font chosen for the pullquote environment")

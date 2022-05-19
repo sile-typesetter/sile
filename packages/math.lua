@@ -1,4 +1,4 @@
-require("packages/math/typesetter")
+require("packages.math.typesetter")
 
 return {
   documentation = [[

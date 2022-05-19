@@ -1,4 +1,4 @@
-SILE.require("packages/tate")
+SILE.require("packages.tate")
 
 local showHanmenYoko = function (frame)
   local g = frame:top()

@@ -1,10 +1,10 @@
-SILE.require("packages/footnotes")
-SILE.require("packages/image")
-SILE.require("packages/pdf")
-SILE.require("packages/raiselower")
-SILE.require("packages/rules")
-SILE.require("packages/url")
-SILE.require("packages/verbatim")
+SILE.require("packages.footnotes")
+SILE.require("packages.image")
+SILE.require("packages.pdf")
+SILE.require("packages.raiselower")
+SILE.require("packages.rules")
+SILE.require("packages.url")
+SILE.require("packages.verbatim")
 
 -- Process arguments that might not actually have that much to do with their
 -- immediate function but affect the document in other ways, such as setting

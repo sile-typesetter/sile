@@ -44,7 +44,7 @@ local parseBibtex = function (fn)
 end
 
 SILE.scratch.bibtex = { bib = {}, bibstyle = {} }
-local Bibliography = SILE.require("packages/bibliography")
+local Bibliography = SILE.require("packages.bibliography")
 
 SILE.registerCommand("loadbibliography", function (options, _)
   local file = SU.required(options, "file", "loadbibliography")
@@ -52,7 +52,7 @@ SILE.registerCommand("loadbibliography", function (options, _)
 end)
 
 SILE.registerCommand("bibstyle", function (_, content)
-  SILE.scratch.bibtex.bibstyle = SILE.require("packages/bibstyles/"..content)
+  SILE.scratch.bibtex.bibstyle = SILE.require("packages.bibstyles/"..content)
 end)
 
 SILE.call("bibstyle", {}, "chicago") -- Load some default
