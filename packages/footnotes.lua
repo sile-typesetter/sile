@@ -111,13 +111,10 @@ return {
   exports = {},
   documentation = [[
 \begin{document}
-We’ve seen that the \code{book} class allows you to add
-footnotes to text with the \autodoc:command{\footnote} command. This command is
-actually provided by the \autodoc:package{footnotes} package. The \code{book}
-class loads up the package and tells it where to put the footnotes
-that are typeset, and the \autodoc:package{footnotes} package takes care of
-formatting the footnotes. It does this by using a number of other
-packages that we will describe below.
+We’ve seen that the \code{book} class allows you to add footnotes to text with the \autodoc:command{\footnote} command.
+This functionality exists in the class because the class loads the \autodoc:package{footnotes} package.
+The \code{book} class loads up the \autodoc:package{insertions} package and tells it which frame should recieve the footnotes that are typeset.
+After commands provided by the \autodoc:package{footnotes} package take care of formatting the footnotes.
 \end{document}
 ]]
 }
