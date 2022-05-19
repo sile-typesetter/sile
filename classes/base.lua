@@ -2,8 +2,6 @@ local base = pl.class()
 base._name = "base"
 
 base._initialized = false
-base._legacy = false
-base._deprecated = false
 base.deferredInit = {}
 base.pageTemplate = { frames = {}, firstContentFrame = nil }
 base.defaultFrameset = {}
@@ -44,22 +42,24 @@ base.options = setmetatable({}, {
 -- Normal _init() will be called again later, possibly with legacy init() mixins.
 function base:_create ()
   if type(self) == "table" and self.id then
-    self._legacy = true
-    self._name = self.id
-    self.id = nil
+    SU.warn(string.format([[
+      The document class inheritance system for SILE classes was refactored
+        using a different object model in v0.13.0. Your class (%s) attempted
+        instantiation using the legacy stdlib based model. The shim making
+        attempting to paper over the differences has been removed. Please
+        update your code using the new Penlight based model.
+
+      ]], self.id))
+    SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0")
   end
-  return self
 end
 
 function base:_init (options)
   if not options then options = {} end
   options.papersize = options.papersize or "a4"
-  if self._legacy and not self._deprecated then return self:_deprecator(base) end
   self:declareOption("class", function (_, name)
     if name then
-      if self._deprecated then
-        self._name = name
-      elseif name ~= self._name then
+      if name ~= self._name then
         SU.error("Cannot change class name after instantiation, derive a new class instead.")
       end
     end
@@ -95,9 +95,6 @@ end
 -- Penlight hook, currently only used to help shim stdlib based calls to the
 -- new constructors.
 function base:_post_init ()
-  if self._legacy then
-    self._legacy = false
-  end
 end
 
 -- SILE's deffered inits, migrate to Penlight's builtin when it's not used for
@@ -120,43 +117,7 @@ function base:post_init ()
   end
 end
 
--- This is essentially of a self destruct mechanism that monkey patches the old
--- stdlib object model definition to return a Penlight class constructor
--- instead of the old std.object model.
-function base:_deprecator (parent)
-  self._deprecated = true
-  SU.warn(string.format([[
-    The document class inheritance system for SILE classes has been
-      refactored using a different object model. Your class (%s), has been
-      instantiated with a shim immitating the stdlib based model, but it is
-      *not* fully backwards compatible, *will* cause unexpected errors, and
-      *will* eventually be removed. Please update your code to use the new
-      Penlight based inheritance model.
-
-    ]], self._name))
-  SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0")
-  rawset(self, "_init", function (self_, options_)
-    self:registerPostinit(self_.init, options_)
-    parent._init(self_, options_)
-    parent:post_init()
-    return self_
-  end)
-  rawset(self, "declareOption", function(_, option, setter)
-    if not getmetatable(parent.options)._opts[option] then
-      if type(setter) ~= "function" then
-        local default = setter
-        setter = function (_, value)
-          local k = "_legacy_option_" .. option
-          if value then parent[k] = value end
-          return function() return parent[k] end
-        end
-        setter(parent, default)
-      end
-      base.declareOption(parent, option, setter)
-    end
-  end)
-  parent.init = function () return parent end
-  return self
+local function deprecator (id)
 end
 
 function base:setOptions (options)

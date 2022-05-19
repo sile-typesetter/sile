@@ -14,7 +14,6 @@ jplain.defaultFrameset.content = {
 }
 
 function jplain:_init (options)
-  if self._legacy and not self._deprecated then return self:_deprecator(plain) end
   if not options then options = {} end
   options.layout = options.layout or "yoko"
   self:declareOption("layout", function (_, value)

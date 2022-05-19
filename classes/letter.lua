@@ -3,7 +3,6 @@ local letter = pl.class(plain)
 letter._name = "letter"
 
 function letter:_init (options)
-  if self._legacy and not self._deprecated then return self:_deprecator(plain) end
   plain._init(self, options)
   self:declareFrame("content", {
       left = "5%pw",

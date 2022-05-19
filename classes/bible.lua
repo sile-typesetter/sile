@@ -170,7 +170,6 @@ local _twocolumns
 local _gutterwidth
 
 function bible:_init(options)
-  if self._legacy and not self._deprecated then return self:_deprecator(plain) end
   options.twocolumns = options.twocolumns or false
   options.gutter = options.gutter or "3%pw"
   self:declareOption("twocolumns", function(_, value)
