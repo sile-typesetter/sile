@@ -13,9 +13,13 @@
 
 --]]
 
-SILE.scratch.insertions = { classes = {} }
+if not SILE.scratch.insertions then
+  SILE.scratch.insertions = { classes = {} }
+end
 
-SILE.insertions = {}
+if not SILE.insertions then
+  SILE.insertions = {}
+end
 
 SILE.settings.declare({
   parameter = "insertion.penalty",
@@ -92,7 +96,7 @@ SILE.nodefactory.insertionlist.frame = nil
 
 function SILE.nodefactory.insertionlist:_init (spec)
   SILE.nodefactory.vbox._init(self, spec)
-  self.typesetter = SILE.defaultTypesetter {}
+  self.typesetter = SILE.defaultTypesetter()
 end
 
 function SILE.nodefactory.insertionlist:__tostring ()
@@ -100,7 +104,7 @@ function SILE.nodefactory.insertionlist:__tostring ()
 end
 
 function SILE.nodefactory.insertionlist:outputYourself ()
-  self.typesetter:init(SILE.getFrame(self.frame))
+  self.typesetter:initFrame(SILE.getFrame(self.frame))
   for _, node in ipairs(self.nodes) do
     node:outputYourself(self.typesetter, node)
   end
@@ -250,13 +254,37 @@ local debugInsertion = function (ins, insbox, topBox, target, targetFrame, total
   SU.debug("insertions", "Insertions already in this class ", insbox.height, insbox.depth)
   SU.debug("insertions", "Page target ", target)
   SU.debug("insertions", "Page frame ", targetFrame)
-  SU.debug("insertions", totalHeight .. " worth of content on page so far")
+  SU.debug("insertions", tostring(totalHeight) .. " worth of content on page so far")
 end
 
-local pt = SILE.typesetter.getTargetLength
-SILE.typesetter.getTargetLength = function (self)
-  initShrinkage(self.frame)
-  return pt(self) - self.frame.state.totals.shrinkage
+local function init (_, _)
+
+  local typesetter = SILE.typesetter
+  if not typesetter.noinsertion_getTargetLength then
+    typesetter.noinsertion_getTargetLength = typesetter.getTargetLength
+    typesetter.getTargetLength = function (self)
+      initShrinkage(self.frame)
+      return typesetter.noinsertion_getTargetLength(self) - self.frame.state.totals.shrinkage
+    end
+  end
+
+  SILE.typesetter:registerFrameBreakHook(function (_, nl)
+    pl.tablex.foreach(insertionsThisPage, SILE.insertions.commitShrinkage)
+    return nl
+  end)
+
+  SILE.typesetter:registerPageEndHook(function (_, nl)
+    pl.tablex.foreach(insertionsThisPage, SILE.insertions.increaseInsertionFrame)
+    for class, insertionlist in pairs(insertionsThisPage) do
+      insertionlist:outputYourself()
+      insertionsThisPage[class] = nil
+    end
+    if SU.debugging("insertions") then
+      for _, frame in pairs(SILE.frames) do SILE.outputter:debugFrame(frame) end
+    end
+    return nl
+  end)
+
 end
 
 --[[
@@ -401,27 +429,10 @@ SILE.insertions.processInsertion = function (vboxlist, i, totalHeight, target)
   return target
 end
 
-SILE.typesetter:registerFrameBreakHook(function (_, nl)
-  pl.tablex.foreach(insertionsThisPage, SILE.insertions.commitShrinkage)
-  return nl
-end)
-
-SILE.typesetter:registerPageEndHook(function (_, nl)
-  pl.tablex.foreach(insertionsThisPage, SILE.insertions.increaseInsertionFrame)
-  for class, insertionlist in pairs(insertionsThisPage) do
-    insertionlist:outputYourself()
-    insertionsThisPage[class] = nil
-  end
-  if SU.debugging("insertions") then
-    for _, frame in pairs(SILE.frames) do SILE.outputter:debugFrame(frame) end
-  end
-  return nl
-end)
-
 -- This just puts the insertion vbox into the typesetter's queues.
 local insert = function (_, classname, vbox)
-  local thisclass = SILE.scratch.insertions.classes[classname]
-  if not thisclass then SU.error("Uninitialized insertion class " .. classname) end
+  local insertion = SILE.scratch.insertions.classes[classname]
+  if not insertion then SU.error("Uninitialized insertion class " .. classname) end
   SILE.typesetter:pushMigratingMaterial({
       SILE.nodefactory.penalty(SILE.settings.get("insertion.penalty"))
     })
@@ -432,14 +443,14 @@ local insert = function (_, classname, vbox)
           -- actual height and depth must remain zero for page glue calculations
           contentHeight = vbox.height,
           contentDepth = vbox.depth,
-          frame = thisclass.insertInto.frame,
+          frame = insertion.insertInto.frame,
           parent = SILE.typesetter.frame
         })
     })
 end
 
 return {
-  init = function () end,
+  init = init,
   exports = {
     initInsertionClass = initInsertionClass,
     thisPageInsertionBoxForClass = thisPageInsertionBoxForClass,

@@ -5,7 +5,7 @@ base._initialized = false
 base._legacy = false
 base._deprecated = false
 base.deferredInit = {}
-base.pageTemplate = std.object { frames = {}, firstContentFrame = nil }
+base.pageTemplate = { frames = {}, firstContentFrame = nil }
 base.defaultFrameset = {}
 base.firstContentFrame = "page"
 base.options = setmetatable({}, {
@@ -43,7 +43,7 @@ base.options = setmetatable({}, {
 -- skip the normal init process the first time around (and even walk it back).
 -- Normal _init() will be called again later, possibly with legacy init() mixins.
 function base:_create ()
-  if self.id then
+  if type(self) == "table" and self.id then
     self._legacy = true
     self._name = self.id
     self.id = nil
@@ -87,11 +87,6 @@ function base:_init (options)
   self:declareSettings()
   self:registerCommands()
   self:declareFrames(self.defaultFrameset)
-  SILE.typesetter:registerPageEndHook(function ()
-    if SU.debugging("frames") then
-      for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
-    end
-  end)
   -- Avoid calling this (yet) if we're the parent of some child class
   if self._name == "base" then self:post_init() end
   return self
@@ -108,14 +103,21 @@ end
 -- SILE's deffered inits, migrate to Penlight's builtin when it's not used for
 -- deprecation of the old system
 function base:post_init ()
+  if type(self.firstContentFrame) == "string" then
+    self.pageTemplate.firstContentFrame = self.pageTemplate.frames[self.firstContentFrame]
+  end
+  local frame = self:initialFrame()
+  SILE.typesetter = SILE.defaultTypesetter(frame)
+  SILE.typesetter:registerPageEndHook(function ()
+    if SU.debugging("frames") then
+      for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
+    end
+  end)
+  self._initialized = true
   for i, pkginit in ipairs(self.deferredInit) do
     pkginit(self)
     self.deferredInit[i] = nil
   end
-  if type(self.firstContentFrame) == "string" then
-    self.pageTemplate.firstContentFrame = self.pageTemplate.frames[self.firstContentFrame]
-  end
-  self._initialized = true
 end
 
 -- This is essentially of a self destruct mechanism that monkey patches the old
@@ -207,6 +209,13 @@ function base:initPackage (pack, args)
         self:registerPostinit(pack.init, args)
       end
     end
+    if type(pack.registerCommands) == "function" then
+      if self._initialized then
+        pack.registerCommands(self)
+      else
+        self:registerPostinit(pack.registerCommands)
+      end
+    end
   end
 end
 
@@ -216,13 +225,14 @@ function base:registerPostinit (func, args)
     end)
 end
 
-base.registerCommands = function (_)
+function base:registerCommands ()
 
   SILE.registerCommand("script", function (options, content)
     if (options["src"]) then
       local script, _ = require(options["src"])
-      if type(script) == "table" and script.init then
-        script.init()
+      if type(script) == "table" then
+        if type(script.init) == "function" then script.init(self, options) end
+        if type(script.registerCommands) == "function" then script.registerCommands(self) end
       end
     else
       local func, err = load(content[1])
@@ -374,7 +384,7 @@ function base:newPage ()
 end
 
 function base.endPage (_)
-  SILE.typesetter.frame:leave()
+  SILE.typesetter.frame:leave(SILE.typesetter)
   -- I'm trying to call up a new frame here, don't cause a page break in the current one
   -- SILE.typesetter:leaveHmode()
   -- Any other output-routiney things will be done here by inheritors
@@ -392,7 +402,9 @@ function base:finish ()
   end
   SILE.typesetter:runHooks("pageend") -- normally run by the typesetter
   self:endPage()
-  assert(SILE.typesetter:isQueueEmpty(), "queues not empty")
+    if SILE.typesetter then
+      assert(SILE.typesetter:isQueueEmpty(), "queues not empty")
+    end
   SILE.outputter:finish()
 end
 

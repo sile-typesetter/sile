@@ -95,7 +95,7 @@ SILE.font = {
     if not options.direction then
       options.direction = SILE.settings.get("font.direction")
       if not options.direction or options.direction == "" then
-        options.direction = SILE.typesetter.frame and SILE.typesetter.frame:writingDirection() or "LTR"
+        options.direction = SILE.typesetter and SILE.typesetter.frame and SILE.typesetter.frame:writingDirection() or "LTR"
       end
     end
     if not options.features then options.features = SILE.settings.get("font.features") end

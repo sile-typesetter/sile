@@ -48,10 +48,10 @@ SILE.framePrototype = pl.class({
     end,
 
     -- This gets called by us in typesetter before we start to use the frame
-    init = function (self)
+    init = function (self, typesetter)
       self.state = { totals = { height = SILE.measurement(0), pastTop = false } }
-      self:enter()
-      self:newLine()
+      self:enter(typesetter)
+      self:newLine(typesetter)
       if self:pageAdvanceDirection() == "TTB" then
         self.state.cursorY = self:top()
       elseif self:pageAdvanceDirection() == "LTR" then
@@ -154,7 +154,7 @@ SILE.framePrototype = pl.class({
       end
     end,
 
-    newLine = function(self)
+    newLine = function(self, _)
       if self:writingDirection() == "LTR" then
         self.state.cursorX = self:left()
       elseif self:writingDirection() == "RTL" then
@@ -193,15 +193,15 @@ SILE.framePrototype = pl.class({
       end
     end,
 
-    enter = function (self)
+    enter = function (self, typesetter)
       for i = 1, #self.enterHooks do
-        self.enterHooks[i](self)
+        self.enterHooks[i](self, typesetter)
       end
     end,
 
-    leave = function (self)
+    leave = function (self, typesetter)
       for i = 1, #self.leaveHooks do
-        self.leaveHooks[i](self)
+        self.leaveHooks[i](self, typesetter)
       end
     end,
 
