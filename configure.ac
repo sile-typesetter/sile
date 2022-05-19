@@ -208,7 +208,7 @@ AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"],[Path for SILE libraries
 AC_SUBST([SILE_LIB_PATH])
 
 
-AC_CONFIG_FILES([Makefile src/Makefile sile.1])
+AC_CONFIG_FILES([Makefile src/Makefile sile.1 core/version.lua])
 AC_CONFIG_FILES([sile], [chmod +x sile])
 
 AC_ARG_PROGRAM

@@ -1,12 +1,16 @@
 -- Initialize SILE internals
 SILE = {}
 
+SILE.version = require("core.version")
+
 -- Initialize Lua environment and global utilities
 SILE.lua_version = _VERSION:sub(-3)
 SILE.lua_isjit = type(jit) == "table"
 if not SILE.lua_isjit and SILE.lua_version < "5.3" then require("compat53") end -- Backport of lots of Lua 5.3 features to Lua 5.[12]
 pl = require("pl.import_into")() -- Penlight on-demand module loader
 if (os.getenv("SILE_COVERAGE")) then require("luacov") end
+
+SILE.full_version = string.format("SILE %s (%s)", SILE.version, SILE.lua_isjit and jit.version or _VERSION)
 
 -- Include lua-stdlib, but make sure debugging is turned off since newer
 -- versions enable it by default and it comes with a huge performance hit.
@@ -133,7 +137,6 @@ SILE.require = function (dependency, pathprefix)
 end
 
 SILE.parseArguments = function ()
-  SILE.full_version = string.format("SILE %s (%s)", SILE.version, SILE.lua_isjit and jit.version or _VERSION)
   local cli = require("cliargs")
   local print_version = function()
     print(SILE.full_version)

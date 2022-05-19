@@ -7,14 +7,14 @@ finder () {
 }
 
 printf '%s' "SILEDATA ="
-finder core classes languages packages -name '*.lua'
+finder core classes languages packages -name '*.lua' -not -name 'version.lua'
 finder classes -name '*.sil'
 
 printf '\n%s' "LUALIBRARIES ="
 finder lua-libraries -name '*.lua'
 
 printf '\n%s' "LUAMODULES ="
-finder lua_modules ! -name "'*~'"
+finder lua_modules -not -name "'*~'"
 
 printf '\n%s' "TESTSRCS ?="
 finder tests -maxdepth 1 -name '*.sil'
