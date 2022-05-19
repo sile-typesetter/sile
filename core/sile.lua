@@ -8,14 +8,17 @@ if not SILE.lua_isjit and SILE.lua_version < "5.3" then require("compat53") end 
 pl = require("pl.import_into")() -- Penlight on-demand module loader
 if (os.getenv("SILE_COVERAGE")) then require("luacov") end
 
--- Include lua-stdlib, but make sure debugging is turned off since newer
--- versions enable it by default and it comes with a huge performance hit.
--- Note we are phasing out stdlib in favor of Penlight. When adding or
--- refactoring code, using the Penlight equivalent features is preferred.
--- luacheck: push ignore _DEBUG
-_DEBUG = false
-std = require("std")
--- luacheck: pop
+local nostd = function ()
+  SU.warning([[Lua stdlib (std.*) is no longer provided by SILE, you may use
+      local std = require("std")
+    in your project directly if needed. Note you may need to install the Lua
+    rock as well since it no longer ships as a dependency.]])
+  SU.deprecated("std.object", "pl.class", "0.14.0", "0.14.0")
+end
+std = setmetatable({}, {
+  __call = nostd
+  __index = nostd
+end
 
 -- Lua 5.3+ has a UTF-8 safe string function module but it is somewhat
 -- underwhelming. This module includes more functions and supports older Lua
