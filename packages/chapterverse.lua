@@ -1,4 +1,4 @@
-SILE.require("packages/infonode")
+SILE.require("packages.infonode")
 
 SILE.scratch.chapterverse = {}
 

@@ -55,9 +55,9 @@ SILE.registerCommand("printindex", function (options, _)
 end)
 
 SILE.registerCommand("index:item", function (options, content)
-  SILE.settings.temporarily(function ()
-    SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
-    SILE.settings.set("current.parindent", SILE.nodefactory.glue())
+  SILE.settings:temporarily(function ()
+    SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
+    SILE.settings:set("current.parindent", SILE.nodefactory.glue())
     SILE.call("code", {}, content)
     -- Ideally, leaders
     SILE.call("hss")

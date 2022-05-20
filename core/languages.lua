@@ -1,4 +1,5 @@
 local loadkit = require("loadkit")
+local cldr = require("cldr")
 
 loadkit.register("ftl", function (file)
   local contents = assert(file:read("*a"))
@@ -9,8 +10,8 @@ end)
 SILE.languageSupport = {
   languages = {},
   loadLanguage = function (language)
-    language = language or SILE.settings.get("document.language")
-    language = SILE.cldr.locales[language] and language or "und"
+    language = language or SILE.settings:get("document.language")
+    language = cldr.locales[language] and language or "und"
     if SILE.languageSupport.languages[language] then return end
     if SILE.hyphenator.languages[language] then return end
     local langresource = string.format("languages.%s", language)
@@ -38,18 +39,18 @@ SILE.registerCommand("language", function (options, content)
   local main = SU.required(options, "main", "language setting")
   SILE.languageSupport.loadLanguage(main)
   if content[1] then
-    SILE.settings.temporarily(function ()
-      SILE.settings.set("document.language", main)
+    SILE.settings:temporarily(function ()
+      SILE.settings:set("document.language", main)
       SILE.process(content)
     end)
   else
-    SILE.settings.set("document.language", main)
+    SILE.settings:set("document.language", main)
   end
 end)
 
 SILE.registerCommand("fluent", function (options, content)
   local key = content[1]
-  local locale = options.locale or SILE.settings.get("document.language")
+  local locale = options.locale or SILE.settings:get("document.language")
   SU.debug("fluent", "Looking for", key, "in", locale)
   local entry
   if key then
@@ -68,7 +69,7 @@ SILE.registerCommand("fluent", function (options, content)
 end)
 
 SILE.registerCommand("ftl", function (options, content)
-  local locale = options.locale or SILE.settings.get("document.language")
+  local locale = options.locale or SILE.settings:get("document.language")
   SU.debug("fluent", "Loading message(s) into locale", locale)
   SILE.fluent:set_locale(locale)
   if options.src then
@@ -79,7 +80,7 @@ SILE.registerCommand("ftl", function (options, content)
   end
 end)
 
-require("languages/unicode")
+require("languages.unicode")
 
 -- The following languages neither have hyphenation nor specific
 -- language support at present. This code is here to suppress warnings.

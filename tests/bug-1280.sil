@@ -44,7 +44,7 @@
     check()
   end
   if SILE.backend ~= "debug" then
-    require("packages/pdf")
+    require("packages.pdf")
   else
     SILE.registerCommand("pdf:metadata", function (_, _) end)
   end

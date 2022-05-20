@@ -1,7 +1,7 @@
 -- Interpret a MathML or TeX-like AST, typeset it and add it to the output.
-local b = require("packages/math/base-elements")
-local tex = require("packages/math/texlike")
-local syms = require("packages/math/unicode-symbols")
+local b = require("packages.math.base-elements")
+local tex = require("packages.math.texlike")
+local syms = require("packages.math.unicode-symbols")
 
 local ConvertMathML
 
@@ -118,12 +118,12 @@ local function handleMath(mbox, mode)
 
   if mode == "display" then
     SILE.typesetter:endline()
-    SILE.typesetter:pushExplicitVglue(SILE.settings.get("math.displayskip"))
+    SILE.typesetter:pushExplicitVglue(SILE.settings:get("math.displayskip"))
     SILE.call("center", {}, function()
       SILE.typesetter:pushHorizontal(mbox)
     end)
     SILE.typesetter:endline()
-    SILE.typesetter:pushExplicitVglue(SILE.settings.get("math.displayskip"))
+    SILE.typesetter:pushExplicitVglue(SILE.settings:get("math.displayskip"))
   else
     SILE.typesetter:pushHorizontal(mbox)
   end

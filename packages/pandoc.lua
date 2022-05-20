@@ -1,10 +1,10 @@
-SILE.require("packages/footnotes")
-SILE.require("packages/image")
-SILE.require("packages/pdf")
-SILE.require("packages/raiselower")
-SILE.require("packages/rules")
-SILE.require("packages/url")
-SILE.require("packages/verbatim")
+SILE.require("packages.footnotes")
+SILE.require("packages.image")
+SILE.require("packages.pdf")
+SILE.require("packages.raiselower")
+SILE.require("packages.rules")
+SILE.require("packages.url")
+SILE.require("packages.verbatim")
 
 -- Process arguments that might not actually have that much to do with their
 -- immediate function but affect the document in other ways, such as setting
@@ -61,9 +61,9 @@ end)
 SILE.registerCommand("BulletList", function (_, content)
   -- luacheck: ignore pandocListType
   local pandocListType = "bullet"
-  SILE.settings.temporarily(function ()
-    SILE.settings.set("document.rskip","10pt")
-    SILE.settings.set("document.lskip","20pt")
+  SILE.settings:temporarily(function ()
+    SILE.settings:set("document.rskip","10pt")
+    SILE.settings:set("document.lskip","20pt")
     SILE.process(content)
   end)
   SILE.typesetter:leaveHmode()
@@ -121,9 +121,9 @@ end)
 
 SILE.registerCommand("OrderedList", function (_, content)
   -- TODO: handle listAttributes
-  SILE.settings.temporarily(function ()
-    SILE.settings.set("document.rskip","10pt")
-    SILE.settings.set("document.lskip","20pt")
+  SILE.settings:temporarily(function ()
+    SILE.settings:set("document.rskip","10pt")
+    SILE.settings:set("document.lskip","20pt")
     SILE.process(content)
   end)
   SILE.typesetter:leaveHmode()

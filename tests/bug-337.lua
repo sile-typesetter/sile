@@ -1,5 +1,5 @@
-local book = SILE.require("book", "classes")
-SILE.require("packages/cropmarks")
+local book = require("classes.book")
+SILE.require("packages.cropmarks")
 
 book:loadPackage("masters")
 book:defineMaster({

@@ -525,7 +525,7 @@ setmetatable (utilities.formatNumber, {
           case = "upper"
         end
       end
-      local lang = format:match("[Rr][Oo][Mm][Aa][Nn]") and "la" or SILE.settings.get("document.language")
+      local lang = format:match("[Rr][Oo][Mm][Aa][Nn]") and "la" or SILE.settings:get("document.language")
       format = format:lower()
       local result
       if self[lang] and type(self[lang][format]) == "function" then

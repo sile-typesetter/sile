@@ -1,24 +1,24 @@
 local icu = require("justenoughicu")
-local inputfilter = SILE.require("packages/inputfilter").exports
+local inputfilter = SILE.require("packages.inputfilter").exports
 
 local uppercase = function (input, extraArgs)
   if not extraArgs then extraArgs = {} end
   if not extraArgs.options then extraArgs.options = {} end
-  local lang = extraArgs.options.language or SILE.settings.get("document.language")
+  local lang = extraArgs.options.language or SILE.settings:get("document.language")
   return icu.case(input, lang, "upper")
 end
 
 local lowercase = function (input, extraArgs)
   if not extraArgs then extraArgs = {} end
   if not extraArgs.options then extraArgs.options = {} end
-  local lang = extraArgs.options.language or SILE.settings.get("document.language")
+  local lang = extraArgs.options.language or SILE.settings:get("document.language")
   return icu.case(input, lang, "lower")
 end
 
 local titlecase = function (input, extraArgs)
   if not extraArgs then extraArgs = {} end
   if not extraArgs.options then extraArgs.options = {} end
-  local lang = extraArgs.options.language or SILE.settings.get("document.language")
+  local lang = extraArgs.options.language or SILE.settings:get("document.language")
   return icu.case(input, lang, "title")
 end
 

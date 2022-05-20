@@ -8,7 +8,7 @@ SILE.nodeMakers["x-spaces-are-nodes"] = pl.class({
 
 SILE.languageSupport.languages["x-spaces-are-nodes"] = true
 
-SILE.settings.declare({
+SILE.settings:declare({
   parameter = "shaper.complexspaces",
   default = true,
   type = "boolean",
@@ -19,7 +19,7 @@ if SILE.shaper then
   local origSpaceNode = SILE.shaper.makeSpaceNode
 
   SILE.shaper.makeSpaceNode = function (_, options, item)
-    if SILE.settings.get("shaper.complexspaces") then
+    if SILE.settings:get("shaper.complexspaces") then
       local myoptions = pl.tablex.deepcopy(options)
       myoptions.language = "x-spaces-are-nodes"
       local nnodes = SILE.shaper:createNnodes( " ", myoptions)

@@ -9,6 +9,6 @@
 \ruby[reading=Latin]{私}\ruby[reading=日本語]{私}
 
 \ruby[reading=Latin]{私}\ruby[reading=Latin]{私}
-\script{assert(SILE.settings.get("document.language") == "en")}
+\script{assert(SILE.settings:get("document.language") == "en")}
 
 \end{document}

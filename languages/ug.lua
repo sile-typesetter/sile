@@ -8,7 +8,7 @@ SILE.languageSupport.loadLanguage("tr")
 
 local chardata = require("char-def")
 
-SILE.settings.declare({
+SILE.settings:declare({
   parameter = "languages.ug.hyphenoffset",
   help = "Space added between text and hyphen",
   type = "glue or nil",
@@ -151,10 +151,10 @@ SILE.hyphenator.languages.ug = function(n)
   state.language = "ug"
   items[1] = latinToArabic(items[1])
   items[2] = latinToArabic(items[2])
-  local hyphen = SILE.settings.get("font.hyphenchar")
+  local hyphen = SILE.settings:get("font.hyphenchar")
   local prebreak = SILE.shaper:createNnodes(items[1] .. (lastjoinable(items[1]) and zwj or ""), state)
-  if SILE.settings.get("languages.ug.hyphenoffset") then
-    local w = SILE.settings.get("languages.ug.hyphenoffset").width
+  if SILE.settings:get("languages.ug.hyphenoffset") then
+    local w = SILE.settings:get("languages.ug.hyphenoffset").width
     prebreak[#prebreak+1] = SILE.nodefactory.kern({ width = w })
   end
   local hnodes = SILE.shaper:createNnodes(hyphen, state)

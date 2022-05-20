@@ -29,7 +29,7 @@ SILE.nodeMakers.base = pl.class({
     end,
 
     makeGlue = function (self, item)
-      if SILE.settings.get("typesetter.obeyspaces") or self.lastnode ~= "glue" then
+      if SILE.settings:get("typesetter.obeyspaces") or self.lastnode ~= "glue" then
         SU.debug("tokenizer", "Space node")
         coroutine.yield(SILE.shaper:makeSpaceNode(self.options, item))
       end
@@ -114,10 +114,10 @@ function SILE.nodeMakers.unicode:handleInitialGlue (items)
 end
 
 function SILE.nodeMakers.unicode:letterspace ()
-  if not SILE.settings.get("document.letterspaceglue") then return end
+  if not SILE.settings:get("document.letterspaceglue") then return end
   if self.token then self:makeToken() end
   if self.lastnode and self.lastnode ~= "glue" then
-    local w = SILE.settings.get("document.letterspaceglue").width
+    local w = SILE.settings:get("document.letterspaceglue").width
     SU.debug("tokenizer", "Letter space glue: " .. tostring(w))
     coroutine.yield(SILE.nodefactory.kern({ width = w }))
     self.lastnode = "glue"

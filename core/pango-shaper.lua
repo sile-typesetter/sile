@@ -7,7 +7,7 @@ local pango = lgi.Pango
 local fm = lgi.PangoCairo.FontMap.get_default()
 local pango_context = lgi.Pango.FontMap.create_context(fm)
 
-SILE.require("core/base-shaper")
+SILE.require("core.base-shaper")
 
 local palcache = {}
 

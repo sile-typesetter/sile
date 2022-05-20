@@ -99,5 +99,5 @@ SILE.registerCommand("process", function ()
 end, "Within a macro definition, processes the contents of the macro body.")
 
 return {
-  base = require("classes/base")
+  base = require("classes.base")
 }

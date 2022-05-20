@@ -108,7 +108,7 @@ local makecolumns = function (options)
 end
 
 local mergeColumns = function ()
-  SILE.require("packages/balanced-frames")
+  SILE.require("packages.balanced-frames")
 
   -- 1) Balance all remaining material.
 
@@ -185,7 +185,7 @@ SILE.registerCommand("float", function (options, content)
   SILE.typesetNaturally(SILE.typesetter.frame.previous, function ()
     table.insert(SILE.typesetter.state.nodes, hbox)
   end)
-  -- SILE.settings.set("document.baselineskip", SILE.length("1ex") - SILE.settings.get("document.baselineskip").height)
+  -- SILE.settings:set("document.baselineskip", SILE.length("1ex") - SILE.settings:get("document.baselineskip").height)
   -- undoSkip.stretch = hbox.height
   -- SILE.typesetter:pushHbox({ value = {} })
   -- SILE.typesetter:pushVglue({ height = undoSkip })

@@ -1,7 +1,7 @@
-local nodefactory = require("core/nodefactory")
+local nodefactory = require("core.nodefactory")
 local hb = require("justenoughharfbuzz")
-local ot = require("core/opentype-parser")
-local syms = require("packages/math/unicode-symbols")
+local ot = require("core.opentype-parser")
+local syms = require("packages.math.unicode-symbols")
 
 local atomType = syms.atomType
 local symbolDefaults = syms.symbolDefaults
@@ -93,12 +93,12 @@ local mathScriptConversionTable = {
   }
 }
 
-SILE.settings.declare({parameter = "math.font.family", type = "string", default = "Libertinus Math"})
-SILE.settings.declare({parameter = "math.font.filename", type = "string", default = ""})
-SILE.settings.declare({parameter = "math.font.size", type = "integer", default = 10})
+SILE.settings:declare({parameter = "math.font.family", type = "string", default = "Libertinus Math"})
+SILE.settings:declare({parameter = "math.font.filename", type = "string", default = ""})
+SILE.settings:declare({parameter = "math.font.size", type = "integer", default = 10})
 -- Whether to show debug boxes around mboxes
-SILE.settings.declare({parameter = "math.debug.boxes", type = "boolean", default = false})
-SILE.settings.declare({parameter = "math.displayskip", type = "VGlue", default = SILE.nodefactory.vglue("2ex plus 1pt")})
+SILE.settings:declare({parameter = "math.debug.boxes", type = "boolean", default = false})
+SILE.settings:declare({parameter = "math.displayskip", type = "VGlue", default = SILE.nodefactory.vglue("2ex plus 1pt")})
 
 local function retrieveMathTable(options)
   print("options.family = " .. options.family)
@@ -136,10 +136,10 @@ local mathCache
 local function getMathMetrics()
   if mathCache then return mathCache end
   local options = {
-    family=SILE.settings.get("math.font.family"),
-    size=SILE.settings.get("math.font.size")
+    family=SILE.settings:get("math.font.family"),
+    size=SILE.settings:get("math.font.size")
   }
-  local filename = SILE.settings.get("math.font.filename")
+  local filename = SILE.settings:get("math.font.filename")
   if filename and filename ~= "" then options.filename = filename end
   mathCache = retrieveMathTable(options)
   return mathCache
@@ -257,10 +257,10 @@ elements.mbox = pl.class({
     self.mode = mathMode.display
     self.atom = atomType.ordinary
     local options = {
-      family=SILE.settings.get("math.font.family"),
-      size=SILE.settings.get("math.font.size")
+      family=SILE.settings:get("math.font.family"),
+      size=SILE.settings:get("math.font.size")
     }
-    local filename = SILE.settings.get("math.font.filename")
+    local filename = SILE.settings:get("math.font.filename")
     if filename and filename ~= "" then options.filename = filename end
     self.options = SILE.font.loadDefaults(options)
   end,
@@ -312,7 +312,7 @@ elements.mbox = pl.class({
   -- Output the node and all its descendants
   outputTree = function(self, x, y, line)
     self:output(x, y, line)
-    local debug = SILE.settings.get("math.debug.boxes")
+    local debug = SILE.settings:get("math.debug.boxes")
     if debug and not (self:is_a(elements.space)) then
       SILE.outputter:setCursor(scaleWidth(x, line), y.length)
       SILE.outputter:debugHbox(

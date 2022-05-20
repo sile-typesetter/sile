@@ -121,7 +121,7 @@ local otFeatures = pl.class(pl.Map)
 
 function otFeatures:_init ()
   self:super()
-  local str = SILE.settings.get("font.features")
+  local str = SILE.settings:get("font.features")
   local tbl = featurestring:match(str)
   if not tbl then
     SU.error("Unparsable Opentype feature string '"..str.."'")
@@ -179,13 +179,13 @@ end
 SILE.registerCommand("add-font-feature", function (options, _)
   local otfeatures = otFeatures()
   otfeatures:loadOptions(options)
-  SILE.settings.set("font.features", tostring(otfeatures))
+  SILE.settings:set("font.features", tostring(otfeatures))
 end)
 
 SILE.registerCommand("remove-font-feature", function(options, _)
   local otfeatures = otFeatures()
   otfeatures:unloadOptions(options)
-  SILE.settings.set("font.features", tostring(otfeatures))
+  SILE.settings:set("font.features", tostring(otfeatures))
 end)
 
 local fontfn = SILE.Commands.font

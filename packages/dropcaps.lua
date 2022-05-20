@@ -1,5 +1,5 @@
-SILE.require("packages/rebox")
-SILE.require("packages/raiselower")
+SILE.require("packages.rebox")
+SILE.require("packages.raiselower")
 
 local shapeHbox = function (options, content)
   -- Clear irrelevant values before passing to font
@@ -25,7 +25,7 @@ SILE.registerCommand("dropcap", function (options, content)
   local color = options.color
   options.size = nil -- we need to measure the "would have been" size before using this
 
-  if color then SILE.require("packages/color") end
+  if color then SILE.require("packages.color") end
 
   -- We want the drop cap to span over N lines, that is N - 1 baselineskip + the height of the first line.
   -- Note this only works for the default linespace mechanism.
@@ -38,7 +38,7 @@ SILE.registerCommand("dropcap", function (options, content)
 
   -- Now we need to figure out how to scale the dropcap font to get an initial of targetHeight.
   -- From that we can also figure out the width it will be at that height.
-  local curSize = SILE.measurement(SILE.settings.get("font.size")):tonumber()
+  local curSize = SILE.measurement(SILE.settings:get("font.size")):tonumber()
   local curHeight, curWidth = tmpHbox.height:tonumber(), tmpHbox.width:tonumber()
   options.size = size and size:tonumber() or (targetHeight / curHeight * curSize)
   local targetWidth = curWidth / curSize * options.size
@@ -50,8 +50,8 @@ SILE.registerCommand("dropcap", function (options, content)
 
   -- Setup up the necessary indents for the final paragraph content
   local joinOffset = join and standoff:tonumber() or 0
-  SILE.settings.set("current.hangAfter", -lines)
-  SILE.settings.set("current.hangIndent", targetWidth + joinOffset)
+  SILE.settings:set("current.hangAfter", -lines)
+  SILE.settings:set("current.hangIndent", targetWidth + joinOffset)
   SU.debug("dropcaps", "joinOffset", joinOffset)
 
   -- The paragraph is indented so as to leave enough space for the drop cap.

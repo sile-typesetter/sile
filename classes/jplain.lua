@@ -1,5 +1,5 @@
 -- Basic! Transitional! In development! Not very good! Don't use it!
-local plain = SILE.require("classes.plain")
+local plain = require("classes.plain")
 
 local jplain = pl.class(plain)
 jplain._name = "jplain"
@@ -26,6 +26,7 @@ function jplain:_init (options)
   end)
   plain._init(self, options)
   self:registerPostinit(function (class)
+    class:bidiDisableTypesetter(SILE.typesetter)
     class:bidiDisableTypesetter(SILE.defaultTypesetter)
   end)
   self:loadPackage("font-fallback")
@@ -34,7 +35,7 @@ function jplain:_init (options)
   self:loadPackage("hanmenkyoshi")
   self.defaultFrameset.content.tate = self.options.layout == "tate"
   self:declareHanmenFrame("content", self.defaultFrameset.content)
-  SILE.settings.set("document.parindent", SILE.nodefactory.glue("10pt"))
+  SILE.settings:set("document.parindent", SILE.nodefactory.glue("10pt"))
   -- Avoid calling this (yet) if we're the parent of some child class
   if self._name == "jplain" then self:post_init() end
   return self

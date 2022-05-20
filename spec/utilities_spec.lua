@@ -1,4 +1,4 @@
-SILE = require("core/sile")
+SILE = require("core.sile")
 
 describe("SILE.utilities", function()
   it("should exist", function()

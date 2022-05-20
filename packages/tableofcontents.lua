@@ -67,8 +67,8 @@ local linkWrapper = function (dest, func)
 end
 
 SILE.registerCommand("tableofcontents:item", function (options, content)
-  SILE.settings.temporarily(function ()
-    SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
+  SILE.settings:temporarily(function ()
+    SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
     SILE.call("tableofcontents:level" .. options.level .. "item", {
     }, linkWrapper(options.link,
       function ()
@@ -138,7 +138,7 @@ SILE.registerCommand("tocentry", function (options, content)
 end)
 
 SILE.registerCommand("tableofcontents:title", function (_, _)
-  local lang = SILE.settings.get("document.language")
+  local lang = SILE.settings:get("document.language")
   SILE.call("tableofcontents:title:" .. lang)
 end)
 

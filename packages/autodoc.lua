@@ -19,7 +19,7 @@ end)
 
 -- Styling hook
 
-SILE.settings.declare({
+SILE.settings:declare({
   parameter = "autodoc.highlighting",
   default = false,
   type = "boolean",
@@ -37,7 +37,7 @@ SILE.scratch.autodoc = {
 }
 local colorWrapper = function (ctype, content)
   local color = SILE.scratch.autodoc.theme[ctype]
-  if color and SILE.settings.get("autodoc.highlighting") and SILE.Commands["color"] then
+  if color and SILE.settings:get("autodoc.highlighting") and SILE.Commands["color"] then
     SILE.call("color", { color = color }, content)
   else
     SILE.process(content)
@@ -72,7 +72,7 @@ end)
 
 -- Documenting a setting with good line-breaks
 
-local inputfilter = SILE.require("packages/inputfilter").exports
+local inputfilter = SILE.require("packages.inputfilter").exports
 local settingFilter = function (node, content)
   if type(node) == "table" then return node end
   local result = {}
@@ -98,7 +98,7 @@ SILE.registerCommand("autodoc:setting", function (options, content)
   -- Conditional existence check (can be disable is passing check=false), e.g.
   -- for settings that would be define in another context.
   if SU.boolean(options.check, true) then
-    SILE.settings.get(name) -- will issue an error if unknown
+    SILE.settings:get(name) -- will issue an error if unknown
   end
   -- Inserts breakpoints after dots
   local nameWithBreaks = inputfilter.transformContent(content, settingFilter)

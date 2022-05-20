@@ -6,12 +6,12 @@ if not SILE.shapers then SILE.shapers = { } end
 --   return table.concat({ options.family;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename }, ";")
 -- end
 
-SILE.settings.declare({ parameter = "shaper.variablespaces", type = "boolean", default = true })
-SILE.settings.declare({ parameter = "shaper.spaceenlargementfactor", type = "number or integer", default = 1.2 })
-SILE.settings.declare({ parameter = "shaper.spacestretchfactor", type = "number or integer", default = 1/2 })
-SILE.settings.declare({ parameter = "shaper.spaceshrinkfactor", type = "number or integer", default = 1/3 })
+SILE.settings:declare({ parameter = "shaper.variablespaces", type = "boolean", default = true })
+SILE.settings:declare({ parameter = "shaper.spaceenlargementfactor", type = "number or integer", default = 1.2 })
+SILE.settings:declare({ parameter = "shaper.spacestretchfactor", type = "number or integer", default = 1/2 })
+SILE.settings:declare({ parameter = "shaper.spaceshrinkfactor", type = "number or integer", default = 1/3 })
 
-SILE.settings.declare({
+SILE.settings:declare({
     parameter = "shaper.tracking",
     type = "number or nil",
     default = nil
@@ -28,9 +28,9 @@ local function shapespace (spacewidth)
   -- In some scripts with word-level kerning, glue can be negative.
   -- Use absolute value to ensure stretch and shrink work as expected.
   local absoluteSpaceWidth = math.abs(spacewidth:tonumber())
-  local length = spacewidth * SILE.settings.get("shaper.spaceenlargementfactor")
-  local stretch = absoluteSpaceWidth * SILE.settings.get("shaper.spacestretchfactor")
-  local shrink = absoluteSpaceWidth * SILE.settings.get("shaper.spaceshrinkfactor")
+  local length = spacewidth * SILE.settings:get("shaper.spaceenlargementfactor")
+  local stretch = absoluteSpaceWidth * SILE.settings:get("shaper.spacestretchfactor")
+  local shrink = absoluteSpaceWidth * SILE.settings:get("shaper.spaceshrinkfactor")
   return SILE.length(length, stretch, shrink)
 end
 
@@ -41,12 +41,12 @@ SILE.shapers.base = pl.class({
     -- giving preference to document.spaceskip
     -- Caching this has no significant speedup
     measureSpace = function (self, options)
-      local ss = SILE.settings.get("document.spaceskip")
+      local ss = SILE.settings:get("document.spaceskip")
       if ss then
-        SILE.settings.temporarily(function ()
-          SILE.settings.set("font.size", options.size)
-          SILE.settings.set("font.family", options.family)
-          SILE.settings.set("font.filename", options.filename)
+        SILE.settings:temporarily(function ()
+          SILE.settings:set("font.size", options.size)
+          SILE.settings:set("font.family", options.family)
+          SILE.settings:set("font.filename", options.filename)
           ss = ss:absolute()
         end)
         return ss
@@ -61,7 +61,7 @@ SILE.shapers.base = pl.class({
 
     measureChar = function (self, char)
       local options = SILE.font.loadDefaults({})
-      options.tracking = SILE.settings.get("shaper.tracking")
+      options.tracking = SILE.settings:get("shaper.tracking")
       local items = self:shapeToken(char, options)
       if #items > 0 then
         return { height = items[1].height, width = items[1].width }
@@ -90,7 +90,7 @@ SILE.shapers.base = pl.class({
     end,
 
     createNnodes = function (self, token, options)
-      options.tracking = SILE.settings.get("shaper.tracking")
+      options.tracking = SILE.settings:get("shaper.tracking")
       local items, _ = self:shapeToken(token, options)
       if #items < 1 then return {} end
       local lang = options.language
@@ -148,7 +148,7 @@ SILE.shapers.base = pl.class({
 
     makeSpaceNode = function (_, options, item)
       local width
-      if SILE.settings.get("shaper.variablespaces") then
+      if SILE.settings:get("shaper.variablespaces") then
         width = shapespace(item.width)
       else
         width = SILE.shaper:measureSpace(options)

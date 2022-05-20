@@ -2,13 +2,13 @@ local stPointer
 
 local stNode = function (notetype) return {
     notetype = notetype,
-    lang = SILE.settings.get("document.language"),
+    lang = SILE.settings:get("document.language"),
     kids = {},
     parent = stPointer
   }
 end
 
-SILE.require("packages/pdf")
+SILE.require("packages.pdf")
 local pdf = require("justenoughlibtexpdf")
 
 local stRoot = stNode("Document")
@@ -26,7 +26,7 @@ SILE.registerCommand("pdf:structure", function (options, content)
   local notetype = SU.required(options, "type", "pdf structure")
   local node = stNode(notetype)
   addChild(node)
-  node.lang = SILE.settings.get("document.language")
+  node.lang = SILE.settings:get("document.language")
   SILE.outputter:_init()
   node.page = pdf.get_dictionary("@THISPAGE")
   node.mcid = mcid

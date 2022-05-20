@@ -19,26 +19,26 @@ local checkIfSpacerNeeded = function (reading)
   -- Does the previous reading end with a latin?
   if not isLatin(SU.codepoint(SU.lastChar(SILE.scratch.lastRubyText))) then return end
   -- OK, we need a spacer!
-  SILE.typesetter:pushGlue(SILE.settings.get("ruby.latinspacer"))
+  SILE.typesetter:pushGlue(SILE.settings:get("ruby.latinspacer"))
 end
 
 return {
 
   init = function (_, _)
     -- Japaneese language support defines units which are useful here
-    SILE.require("packages/font-fallback.lua")
+    SILE.require("packages.font-fallback")
     SILE.call("font:add-fallback", { family = "Noto Sans CJK JP" })
 
     SILE.languageSupport.loadLanguage("ja")
 
-    SILE.settings.declare({
+    SILE.settings:declare({
       parameter = "ruby.height",
       type = "measurement",
       default = SILE.measurement("1zw"),
       help = "Vertical offset between the ruby and the main text"
     })
 
-    SILE.settings.declare({
+    SILE.settings:declare({
       parameter = "ruby.latinspacer",
       type = "glue",
       default = SILE.nodefactory.glue("0.25em"),
@@ -56,7 +56,7 @@ return {
       checkIfSpacerNeeded(reading)
 
       SILE.call("hbox", {}, function ()
-        SILE.settings.temporarily(function ()
+        SILE.settings:temporarily(function ()
           SILE.call("noindent")
           SILE.call("ruby:font")
           SILE.typesetter:typeset(reading)
@@ -67,7 +67,7 @@ return {
         local ox = typesetter.frame.state.cursorX
         local oy = typesetter.frame.state.cursorY
         typesetter.frame:advanceWritingDirection(rubybox.width)
-        typesetter.frame:advancePageDirection(-SILE.settings.get("ruby.height"))
+        typesetter.frame:advancePageDirection(-SILE.settings:get("ruby.height"))
         SILE.outputter:setCursor(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
         for i = 1, #(self.value) do
           local node = self.value[i]

@@ -1,18 +1,27 @@
 -- Initialize SILE internals
 SILE = {}
 
+SILE.version = require("core.version")
+
 -- Initialize Lua environment and global utilities
 SILE.lua_version = _VERSION:sub(-3)
 SILE.lua_isjit = type(jit) == "table"
-if not SILE.lua_isjit and SILE.lua_version < "5.3" then require("compat53") end -- Backport of lots of Lua 5.3 features to Lua 5.[12]
-pl = require("pl.import_into")() -- Penlight on-demand module loader
-if (os.getenv("SILE_COVERAGE")) then require("luacov") end
+SILE.full_version = string.format("SILE %s (%s)", SILE.version, SILE.lua_isjit and jit.version or _VERSION)
+
+-- Backport of lots of Lua 5.3 features to Lua 5.[12]
+if not SILE.lua_isjit and SILE.lua_version < "5.3" then require("compat53") end
+
+-- Penlight on-demand module loader, provided for SILE and document usage
+pl = require("pl.import_into")()
+
+-- For developer testing only, usually in CI
+if os.getenv("SILE_COVERAGE") then require("luacov") end
 
 -- Include lua-stdlib, but make sure debugging is turned off since newer
 -- versions enable it by default and it comes with a huge performance hit.
 -- Note we are phasing out stdlib in favor of Penlight. When adding or
 -- refactoring code, using the Penlight equivalent features is preferred.
--- luacheck: push ignore _DEBUG
+-- luacheck: push ignore _DEBUG std
 _DEBUG = false
 std = require("std")
 -- luacheck: pop
@@ -35,36 +44,35 @@ SILE.status = {}
 SILE.scratch = {}
 SILE.dolua = {}
 SILE.preamble = {}
+SILE.documentState = {}
 
 -- Internal functions / classes / factories
-SILE.cldr = require("cldr")
 SILE.fluent = require("fluent")()
-SILE.utilities = require("core/utilities")
+SILE.utilities = require("core.utilities")
 SU = SILE.utilities -- alias
-SILE.traceStack = require("core/tracestack")()
-SILE.documentState = {}
-SILE.parserBits = require("core/parserbits")
-SILE.units = require("core/units")
-SILE.measurement = require("core/measurement")
-SILE.length = require("core/length")
-SILE.papersize = require("core/papersize")
-SILE.classes = require("core/classes")
-SILE.nodefactory = require("core/nodefactory")
-require("core/settings")
-require("core/inputs-texlike")
-require("core/inputs-xml")
-require("core/inputs-common")
-require("core/colorparser")
-SILE.pagebuilder = require("core/pagebuilder")()
-require("core/typesetter")
-require("core/hyphenator-liang")
-require("core/languages")
-require("core/font")
-require("core/packagemanager")
-SILE.fontManager = require("core/fontmanager")
-SILE.frameParser = require("core/frameparser")
-SILE.linebreak = require("core/break")
-require("core/frame")
+SILE.traceStack = require("core.tracestack")()
+SILE.parserBits = require("core.parserbits")
+SILE.units = require("core.units")
+SILE.measurement = require("core.measurement")
+SILE.length = require("core.length")
+SILE.papersize = require("core.papersize")
+SILE.classes = require("core.classes")
+SILE.nodefactory = require("core.nodefactory")
+SILE.settings = require("core.settings")()
+require("core.inputs-texlike")
+require("core.inputs-xml")
+require("core.inputs-common")
+SILE.colorparser = require("core.colorparser")
+SILE.pagebuilder = require("core.pagebuilder")()
+require("core.typesetter")
+require("core.hyphenator-liang")
+require("core.languages")
+SILE.font = require("core.font")
+require("core.packagemanager")
+SILE.fontManager = require("core.fontmanager")
+SILE.frameParser = require("core.frameparser")
+SILE.linebreak = require("core.break")
+require("core.frame")
 
 -- Class system deprecation shims
 SILE.baseClass = {}
@@ -100,20 +108,20 @@ SILE.init = function ()
     end
   end
   if SILE.backend == "libtexpdf" then
-    require("core/harfbuzz-shaper")
-    require("core/libtexpdf-output")
+    require("core.harfbuzz-shaper")
+    require("core.libtexpdf-output")
   elseif SILE.backend == "cairo" then
-    require("core/pango-shaper")
-    require("core/cairo-output")
+    require("core.pango-shaper")
+    require("core.cairo-output")
   elseif SILE.backend == "debug" then
-    require("core/harfbuzz-shaper")
-    require("core/debug-output")
+    require("core.harfbuzz-shaper")
+    require("core.debug-output")
   elseif SILE.backend == "text" then
-    require("core/harfbuzz-shaper")
-    require("core/text-output")
+    require("core.harfbuzz-shaper")
+    require("core.text-output")
   elseif SILE.backend == "dummy" then
-    require("core/harfbuzz-shaper")
-    require("core/dummy-output")
+    require("core.harfbuzz-shaper")
+    require("core.dummy-output")
   end
   for _, func in ipairs(SILE.dolua) do
     local _, err = pcall(func)
@@ -122,6 +130,17 @@ SILE.init = function ()
 end
 
 SILE.require = function (dependency, pathprefix)
+  if pathprefix then
+    SU.warn(string.format([[
+    Please don't use the path prefix mechanism; it was intended to provide
+      alternate paths to override core components but never worked well and is
+      causing portability problems. Just use Lua idiomatic module loading:
+
+      SILE.require("%s", "%s") → SILE.require("%s.%s")
+
+    ]], dependency, pathprefix, pathprefix, dependency))
+    SU.deprecated("SILE.require", "SILE.require", "0.13.0", "0.14.0")
+  end
   dependency = dependency:gsub(".lua$", "")
   local path = pathprefix and pl.path.join(pathprefix, dependency) or dependency
   local lib = require(path)
@@ -133,7 +152,6 @@ SILE.require = function (dependency, pathprefix)
 end
 
 SILE.parseArguments = function ()
-  SILE.full_version = string.format("SILE %s (%s)", SILE.version, SILE.lua_isjit and jit.version or _VERSION)
   local cli = require("cliargs")
   local print_version = function()
     print(SILE.full_version)

@@ -1,5 +1,5 @@
 local svg = require("svg")
-local otparser = require("core/opentype-parser")
+local otparser = require("core.opentype-parser")
 
 local _drawSVG = function (svgdata, width, height, density, drop)
   local svgfigure, svgwidth, svgheight = svg.svg_to_ps(svgdata, density)

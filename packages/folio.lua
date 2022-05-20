@@ -1,5 +1,5 @@
 -- Folios class
-SILE.require("packages/counters")
+SILE.require("packages.counters")
 
 SILE.scratch.counters.folio = { value = 1, display = "arabic" }
 
@@ -40,9 +40,9 @@ return {
         local folioFrame = SILE.getFrame(frame)
         if (folioFrame) then
           SILE.typesetNaturally(folioFrame, function ()
-            SILE.settings.pushState()
+            SILE.settings:pushState()
             -- Restore the settings to the top of the queue, which should be the document #986
-            SILE.settings.toplevelState()
+            SILE.settings:toplevelState()
 
             -- Reset settings the document may have but should not be applied to footnotes
             -- See also same resets in footnote package
@@ -51,12 +51,12 @@ return {
               "current.hangIndent",
               "linebreak.hangAfter",
               "linebreak.hangIndent" }) do
-              SILE.settings.set(v, SILE.settings.defaults[v])
+              SILE.settings:set(v, SILE.settings.defaults[v])
             end
 
             SILE.call("foliostyle", {}, { SILE.formatCounter(SILE.scratch.counters.folio) })
             SILE.typesetter:leaveHmode()
-            SILE.settings.popState()
+            SILE.settings:popState()
           end)
         end
       end
