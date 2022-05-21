@@ -322,6 +322,9 @@ function base:initialFrame ()
   for k, v in pairs(SILE.documentState.thisPageTemplate.frames) do
     SILE.frames[k] = v
   end
+  if not SILE.documentState.thisPageTemplate.firstContentFrame then
+    SILE.documentState.thisPageTemplate.firstContentFrame = SILE.frames[self.firstContentFrame]
+  end
   SILE.documentState.thisPageTemplate.firstContentFrame:invalidate()
   return SILE.documentState.thisPageTemplate.firstContentFrame
 end
