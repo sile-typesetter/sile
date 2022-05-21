@@ -32,7 +32,7 @@ jbook.defaultFrameset = {
 }
 
 function jbook:_init (options)
-  if self._legacy and not self._deprecated then return self:_deprecator(book) end
+  if self._legacy and not self._deprecated then return self:_deprecator(jbook) end
   if not options then options = {} end
   options.layout = options.layout or "yoko"
   self:declareOption("layout", function (_, value)
