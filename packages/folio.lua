@@ -1,31 +1,38 @@
 -- Folios class
-SILE.require("packages.counters")
 
-SILE.scratch.counters.folio = { value = 1, display = "arabic" }
+local function init (class, _)
+  class:loadPackage("counters")
+  SILE.scratch.counters.folio = { value = 1, display = "arabic" }
+end
 
-SILE.registerCommand("folios", function (_, _)
-  SILE.scratch.counters.folio.off = false
-end)
+local function registerCommands (_)
 
-SILE.registerCommand("nofolios", function (_, _)
-  SILE.scratch.counters.folio.off = true
-end)
+  SILE.registerCommand("folios", function (_, _)
+    SILE.scratch.counters.folio.off = false
+  end)
 
-SILE.registerCommand("nofoliothispage", function (_, _)
-  SILE.scratch.counters.folio.off = 2
-end)
+  SILE.registerCommand("nofolios", function (_, _)
+    SILE.scratch.counters.folio.off = true
+  end)
 
-SILE.registerCommand("nofoliosthispage", function (_, _)
-  SU.deprecated("nofoliosthispage", "nofoliothispage", "0.12.1", "0.14.0")
-  return SILE.Commands["nofoliothispage"]()
-end)
+  SILE.registerCommand("nofoliothispage", function (_, _)
+    SILE.scratch.counters.folio.off = 2
+  end)
 
-SILE.registerCommand("foliostyle", function (_, content)
-  SILE.call("center", {}, content)
-end)
+  SILE.registerCommand("nofoliosthispage", function (_, _)
+    SU.deprecated("nofoliosthispage", "nofoliothispage", "0.12.1", "0.14.0")
+    return SILE.Commands["nofoliothispage"]()
+  end)
+
+  SILE.registerCommand("foliostyle", function (_, content)
+    SILE.call("center", {}, content)
+  end)
+
+end
 
 return {
-  init = function () end,
+  init = init,
+  registerCommands = registerCommands,
   exports = {
 
     outputFolio = function (_, frame)
