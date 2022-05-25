@@ -6,7 +6,7 @@ local cairo = lgi.cairo
 -- local pango = lgi.Pango
 -- local fm = lgi.PangoCairo.FontMap.get_default()
 -- local pango_context = lgi.Pango.FontMap.create_context(fm)
-local imagesize = SILE.require("imagesize")
+local imagesize = require("imagesize")
 
 if (not SILE.outputters) then SILE.outputters = {} end
 
