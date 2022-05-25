@@ -145,6 +145,16 @@ SILE.require = function (dependency, pathprefix)
   local path = pathprefix and pl.path.join(pathprefix, dependency) or dependency
   local lib = require(path)
   local class = SILE.documentState.documentClass
+  if not class then
+    SU.warn(string.format([[
+    Use of SILE.require() is only supported in documents, packages, or class
+      init functions. It cannot be used before the class is instantiated.
+      Please just use the Lua require() function directly.
+
+      SILE.require("%s") → require("%s")
+
+    ]], path, path))
+  end
   if lib and class then
     class:initPackage(lib)
   end
