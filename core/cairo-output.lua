@@ -134,7 +134,7 @@ SILE.outputters.cairo = {
 
   getImageSize = function (self, src)
     _deprecationCheck(self)
-    local box_width, box_height, err = imagesize.imgsize(src)imagesize.imgsize(src)
+    local box_width, box_height, err = imagesize.imgsize(src)
     if not box_width then
       SU.error(err.." loading image")
     end
