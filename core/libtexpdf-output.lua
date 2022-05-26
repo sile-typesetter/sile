@@ -48,7 +48,7 @@ SILE.outputters.libtexpdf = {
 
   finish = function (self)
     _deprecationCheck(self)
-    if not started then return end
+    ensureInit()
     pdf.endpage()
     pdf.finish()
     started = false
