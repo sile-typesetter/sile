@@ -2,11 +2,6 @@ local BALANCE_PENALTY = -17777
 
 local function init (_, _)
 
-  SILE.registerCommand("balancecolumns", function (_, _)
-    SILE.typesetter:leaveHmode()
-    SILE.call("penalty", { penalty = BALANCE_PENALTY })
-  end)
-
   SILE.typesetter.buildPage = function (self, independent)
     local frame = self.frame
     if not (frame.balanced == true) then return SILE.defaultTypesetter.buildPage(self, independent) end
@@ -74,8 +69,18 @@ local function init (_, _)
 
 end
 
+local function registerCommands (_)
+
+  SILE.registerCommand("balancecolumns", function (_, _)
+    SILE.typesetter:leaveHmode()
+    SILE.call("penalty", { penalty = BALANCE_PENALTY })
+  end)
+
+end
+
 return {
   init = init,
+  registerCommands = registerCommands,
   documentation=[[\begin{document}
 This package attempts to ensure that the main content frames on a
 page are balanced; that is, that they have the same height. In your
