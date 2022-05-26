@@ -142,8 +142,11 @@ SILE.require = function (dependency, pathprefix)
     SU.deprecated("SILE.require", "SILE.require", "0.13.0", "0.14.0")
   end
   dependency = dependency:gsub(".lua$", "")
-  local path = pathprefix and pl.path.join(pathprefix, dependency) or dependency
-  local lib = require(path)
+  local status, lib
+  if pathprefix then
+    status, lib = pcall(require, pl.path.join(pathprefix, dependency))
+  end
+  if not status then lib = require(dependency) end
   local class = SILE.documentState.documentClass
   if not class then
     SU.warn(string.format([[
@@ -153,7 +156,7 @@ SILE.require = function (dependency, pathprefix)
 
       SILE.require("%s") → require("%s")
 
-    ]], path, path))
+    ]], dependency, dependency))
   end
   if lib and class then
     class:initPackage(lib)
