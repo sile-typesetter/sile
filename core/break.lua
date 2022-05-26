@@ -199,16 +199,16 @@ function lineBreak:tryBreak() -- 855
             self.lineWidth = self.firstWidth
           end
         end
-        if debugging then SU.debug("break", "line width = "..self.lineWidth) end
+        if debugging then SU.debug("break", "line width = " .. tostring(self.lineWidth)) end
       end
       if debugging then
-        SU.debug("break", " ---> (2) cuaw is ".. self.curActiveWidth)
-        SU.debug("break", " ---> aw is ".. self.activeWidth)
+        SU.debug("break", " ---> (2) cuaw is " .. tostring(self.curActiveWidth))
+        SU.debug("break", " ---> aw is " .. tostring(self.activeWidth))
       end
       self:considerDemerits(pi, breakType)
       if debugging then
-        SU.debug("break", " <--- cuaw is ".. self.curActiveWidth)
-        SU.debug("break", " <--- aw is ".. self.activeWidth)
+        SU.debug("break", " <--- cuaw is " .. tostring(self.curActiveWidth))
+        SU.debug("break", " <--- aw is " .. tostring(self.activeWidth))
       end
     end
   end

@@ -36,8 +36,8 @@ local function init (_, _)
     -- Have we been explicitly asked to find a pagebreak at this point?
     -- If not, don't bother
     if mustBalance == 0 and not independent then return false end
-    SU.debug("balancer", "Balancing "..totalHeight.." of material over " ..colCount.." frames (total of "..target.."pts)")
-    SU.debug("balancer", "Must balance because mustBalance="..mustBalance.." and independent = "..independent)
+    SU.debug("balancer", "Balancing " .. tostring(totalHeight) .. " of material over " .. colCount .. " frames (total of ".. tostring(target) .. ")")
+    SU.debug("balancer", "Must balance because mustBalance=" .. mustBalance .. " and independent = " .. tostring(independent))
     -- OK. Now we have to balance the frames. We are going to cheat and
     -- adjust the height of each frame to be an appropriate fraction of
     -- the content height
@@ -61,7 +61,7 @@ local function init (_, _)
       end
     end
     SILE.pagebuilder = oldPageBuilder
-    SU.debug("balancer", "Finished this balance, frame id is now " .. self.frame)
+    SU.debug("balancer", "Finished this balance, frame id is now " .. tostring(self.frame))
     -- SILE.typesetter:debugState()
     -- We're done.
     return true
