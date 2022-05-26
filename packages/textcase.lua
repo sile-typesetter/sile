@@ -1,5 +1,4 @@
 local icu = require("justenoughicu")
-local inputfilter = SILE.require("packages.inputfilter").exports
 
 local uppercase = function (input, extraArgs)
   if not extraArgs then extraArgs = {} end
@@ -22,19 +21,31 @@ local titlecase = function (input, extraArgs)
   return icu.case(input, lang, "title")
 end
 
-SILE.registerCommand("uppercase", function(options, content)
-  SILE.process(inputfilter.transformContent(content, uppercase, options))
-end, "Typeset the enclosed text as uppercase")
+local function init (class, _)
 
-SILE.registerCommand("lowercase", function(options, content)
-  SILE.process(inputfilter.transformContent(content, lowercase, options))
-end, "Typeset the enclosed text as lowercase")
+  class:loadPackage("inputfilter")
 
-SILE.registerCommand("titlecase", function(options, content)
-  SILE.process(inputfilter.transformContent(content, titlecase, options))
-end, "Typeset the enclosed text as titlecase")
+end
+
+local function registerCommands (class)
+
+  SILE.registerCommand("uppercase", function(options, content)
+    SILE.process(class.transformContent(content, uppercase, options))
+  end, "Typeset the enclosed text as uppercase")
+
+  SILE.registerCommand("lowercase", function(options, content)
+    SILE.process(class.transformContent(content, lowercase, options))
+  end, "Typeset the enclosed text as lowercase")
+
+  SILE.registerCommand("titlecase", function(options, content)
+    SILE.process(class.transformContent(content, titlecase, options))
+  end, "Typeset the enclosed text as titlecase")
+
+end
 
 return {
+  init = init,
+  registerCommands = registerCommands,
   exports = {
     uppercase = uppercase,
     lowercase = lowercase,
@@ -42,6 +53,7 @@ return {
   },
   documentation = [[
 \begin{document}
+\script[src=packages/textcase]
 The \autodoc:package{textcase} package provides commands for language-aware case conversion
 of input text. For example, when language is set to English, then
 \autodoc:command{\uppercase{hij}} will return \examplefont{\uppercase{hij}}. However,

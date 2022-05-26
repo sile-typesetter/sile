@@ -1,5 +1,3 @@
-SILE.require("packages.tate")
-
 local showHanmenYoko = function (frame)
   local g = frame:top()
   while g < frame:bottom() do
@@ -29,19 +27,6 @@ local showHanmenTate = function (frame)
     g = g - frame.hanmen.linegap
   end
 end
-
-
-SILE.registerCommand("show-hanmen", function (_, _)
-  local frame = SILE.typesetter.frame
-  if not frame.hanmen then SU.error("show-hanmen called on a frame with no hanmen") end
-  SILE.outputter:pushColor({r = 1, g= 0.9, b = 0.9 })
-  if frame:writingDirection() == "TTB" then
-    showHanmenTate(frame)
-  else
-    showHanmenYoko(frame)
-  end
-  SILE.outputter:popColor()
-end)
 
 local declareHanmenFrame = function (self, id, spec)
   if spec then
@@ -74,8 +59,31 @@ local declareHanmenFrame = function (self, id, spec)
   return frame
 end
 
+local function init (class, _)
+
+  class:loadPackage("tate")
+
+end
+
+local function registerCommands (_)
+
+  SILE.registerCommand("show-hanmen", function (_, _)
+    local frame = SILE.typesetter.frame
+    if not frame.hanmen then SU.error("show-hanmen called on a frame with no hanmen") end
+    SILE.outputter:pushColor({r = 1, g= 0.9, b = 0.9 })
+    if frame:writingDirection() == "TTB" then
+      showHanmenTate(frame)
+    else
+      showHanmenYoko(frame)
+    end
+    SILE.outputter:popColor()
+  end)
+
+end
+
 return {
-  init = function () end,
+  init = init,
+  registerCommands = registerCommands,
   exports = {
     declareHanmenFrame = declareHanmenFrame
   },

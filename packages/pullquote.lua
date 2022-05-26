@@ -1,18 +1,3 @@
-SILE.require("packages.color")
-SILE.require("packages.raiselower")
-SILE.require("packages.rebox")
-
-SILE.registerCommand("pullquote:font", function (_, _)
-end, "The font chosen for the pullquote environment")
-
-SILE.registerCommand("pullquote:author-font", function (_, _)
-  SILE.settings:set("font.style", "italic")
-end, "The font style with which to typeset the author attribution.")
-
-SILE.registerCommand("pullquote:mark-font", function (_, _)
-  SILE.settings:set("font.family", "Libertinus Serif")
-end, "The font from which to pull the quotation marks.")
-
 local typesetMark = function (open, setback, scale, color, mark)
   SILE.settings:temporarily(function ()
     SILE.call("pullquote:mark-font")
@@ -35,36 +20,62 @@ local typesetMark = function (open, setback, scale, color, mark)
   end)
 end
 
-SILE.registerCommand("pullquote", function (options, content)
-  local author = options.author or nil
-  local scale = options.scale or 3
-  local color = options.color or "#999999"
-  SILE.settings:temporarily(function ()
-    SILE.call("pullquote:font")
-    local setback = SU.cast("length", options.setback or "2em"):absolute()
-    SILE.settings:set("document.rskip", SILE.nodefactory.glue(setback))
-    SILE.settings:set("document.lskip", SILE.nodefactory.glue(setback))
-    SILE.call("noindent")
-    typesetMark(true, setback, scale, color, "“")
-    SILE.call("indent")
-    SILE.process(content)
-    typesetMark(false, setback, scale, color, "”")
-    if author then
-      SILE.settings:temporarily(function ()
-        SILE.typesetter:leaveHmode()
-        SILE.call("pullquote:author-font")
-        SILE.call("raggedleft", {}, function ()
-          SILE.typesetter:typeset("— " .. author)
-        end)
-      end)
-    else
-      SILE.call("par")
-    end
-  end)
-end, "Typesets its contents in a formatted blockquote with decorative quotation\
-      marks in the margins.")
+local function init (class, _)
 
-return { documentation = [[\begin{document}
+  class:loadPackage("color")
+  class:loadPackage("raiselower")
+  class:loadPackage("rebox")
+
+end
+
+local function registerCommands (_)
+
+  SILE.registerCommand("pullquote:font", function (_, _)
+  end, "The font chosen for the pullquote environment")
+
+  SILE.registerCommand("pullquote:author-font", function (_, _)
+    SILE.settings:set("font.style", "italic")
+  end, "The font style with which to typeset the author attribution.")
+
+  SILE.registerCommand("pullquote:mark-font", function (_, _)
+    SILE.settings:set("font.family", "Libertinus Serif")
+  end, "The font from which to pull the quotation marks.")
+
+  SILE.registerCommand("pullquote", function (options, content)
+    local author = options.author or nil
+    local scale = options.scale or 3
+    local color = options.color or "#999999"
+    SILE.settings:temporarily(function ()
+      SILE.call("pullquote:font")
+      local setback = SU.cast("length", options.setback or "2em"):absolute()
+      SILE.settings:set("document.rskip", SILE.nodefactory.glue(setback))
+      SILE.settings:set("document.lskip", SILE.nodefactory.glue(setback))
+      SILE.call("noindent")
+      typesetMark(true, setback, scale, color, "“")
+      SILE.call("indent")
+      SILE.process(content)
+      typesetMark(false, setback, scale, color, "”")
+      if author then
+        SILE.settings:temporarily(function ()
+          SILE.typesetter:leaveHmode()
+          SILE.call("pullquote:author-font")
+          SILE.call("raggedleft", {}, function ()
+            SILE.typesetter:typeset("— " .. author)
+          end)
+        end)
+      else
+        SILE.call("par")
+      end
+    end)
+  end, "Typesets its contents in a formatted blockquote with decorative quotation\
+        marks in the margins.")
+
+end
+
+return {
+  init = init,
+  registerCommands = registerCommands,
+  documentation = [[\begin{document}
 
 The \autodoc:environment{pullquote} environment formats longer quotations in an indented
 blockquote block with decorative quotation marks in the margins.

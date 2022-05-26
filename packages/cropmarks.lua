@@ -1,5 +1,4 @@
 local outcounter = 1
-local date = SILE.require("packages.date").exports
 
 local outputMarks = function ()
   local page = SILE.getFrame("page")
@@ -51,42 +50,52 @@ local function reconstrainFrameset(fs)
   end
 end
 
-SILE.registerCommand("crop:header", function (_, _)
-  local info = SILE.masterFilename .. " - " .. date.date("%x %X") .. " -  " .. outcounter
-  SILE.typesetter:typeset(info)
-end)
+local function init (class, _)
 
-SILE.registerCommand("crop:setup", function (options, _)
-  local papersize = SU.required(options, "papersize", "setting up crop marks")
-  local size = SILE.papersize(papersize)
-  local oldsize = SILE.documentState.paperSize
-  SILE.documentState.paperSize = size
-  local offsetx = ( SILE.documentState.paperSize[1] - oldsize[1] ) /2
-  local offsety = ( SILE.documentState.paperSize[2] - oldsize[2] ) /2
-  local page = SILE.getFrame("page")
-  page:constrain("right", page:right() + offsetx)
-  page:constrain("left", offsetx)
-  page:constrain("bottom", page:bottom() + offsety)
-  page:constrain("top", offsety)
-  if SILE.scratch.masters then
-    for _, v in pairs(SILE.scratch.masters) do
-      reconstrainFrameset(v.frames)
+  class:loadPackage("date")
+
+end
+
+local function registerCommands (class)
+
+  SILE.registerCommand("crop:header", function (_, _)
+    local info = SILE.masterFilename .. " - " .. class.date("%x %X") .. " -  " .. outcounter
+    SILE.typesetter:typeset(info)
+  end)
+
+  SILE.registerCommand("crop:setup", function (options, _)
+    local papersize = SU.required(options, "papersize", "setting up crop marks")
+    local size = SILE.papersize(papersize)
+    local oldsize = SILE.documentState.paperSize
+    SILE.documentState.paperSize = size
+    local offsetx = ( SILE.documentState.paperSize[1] - oldsize[1] ) /2
+    local offsety = ( SILE.documentState.paperSize[2] - oldsize[2] ) /2
+    local page = SILE.getFrame("page")
+    page:constrain("right", page:right() + offsetx)
+    page:constrain("left", offsetx)
+    page:constrain("bottom", page:bottom() + offsety)
+    page:constrain("top", offsety)
+    if SILE.scratch.masters then
+      for _, v in pairs(SILE.scratch.masters) do
+        reconstrainFrameset(v.frames)
+      end
+    else
+      reconstrainFrameset(SILE.documentState.documentClass.pageTemplate.frames)
     end
-  else
-    reconstrainFrameset(SILE.documentState.documentClass.pageTemplate.frames)
-  end
-  if SILE.typesetter.frame then SILE.typesetter.frame:init() end
+    if SILE.typesetter.frame then SILE.typesetter.frame:init() end
+    local oldEndPage = SILE.documentState.documentClass.endPage
+    SILE.documentState.documentClass.endPage = function (self)
+      oldEndPage(self)
+      outputMarks()
+    end
+  end)
 
-  local oldEndPage = SILE.documentState.documentClass.endPage
-  SILE.documentState.documentClass.endPage = function (self)
-    oldEndPage(self)
-    outputMarks()
-  end
-end)
-
+end
 
 
 return {
+  init = init,
+  registerCommands = registerCommands,
 documentation = [[\begin{document}
   When preparing a document for printing, you may be asked by the printer
   to add crop marks. This means that you need to output the document on

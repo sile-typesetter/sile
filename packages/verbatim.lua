@@ -1,36 +1,41 @@
-SILE.registerCommand("verbatim:font", function(options, content)
-  options.family = options.family or "Hack"
-  options.size = options.size or SILE.settings:get("font.size") - 3
-  SILE.call("font", options, content)
-end, "The font chosen for the verbatim environment")
+local function registerCommands (_)
 
-SILE.registerCommand("verbatim", function(_, content)
-  SILE.typesetter:pushVglue(6)
-  SILE.typesetter:leaveHmode()
-  SILE.settings:temporarily(function()
-    SILE.settings:set("typesetter.parseppattern", "\n")
-    SILE.settings:set("typesetter.obeyspaces", true)
-    SILE.settings:set("document.rskip", SILE.nodefactory.glue("0 plus 10000pt"))
-    SILE.settings:set("document.parindent", SILE.nodefactory.glue("0"))
-    SILE.settings:set("document.baselineskip", SILE.nodefactory.vglue("0"))
-    SILE.settings:set("document.lineskip", SILE.nodefactory.vglue("2pt"))
-    SILE.call("verbatim:font")
-    SILE.settings:set("document.spaceskip", SILE.length("1spc"))
-    SILE.settings:set("shaper.variablespaces", false)
-    SILE.settings:set("document.language", "und")
-    SILE.process(content)
+  SILE.registerCommand("verbatim:font", function (options, content)
+    options.family = options.family or "Hack"
+    options.size = options.size or SILE.settings:get("font.size") - 3
+    SILE.call("font", options, content)
+  end, "The font chosen for the verbatim environment")
+
+  SILE.registerCommand("verbatim", function (_, content)
+    SILE.typesetter:pushVglue(6)
+    SILE.typesetter:leaveHmode()
+    SILE.settings:temporarily(function()
+      SILE.settings:set("typesetter.parseppattern", "\n")
+      SILE.settings:set("typesetter.obeyspaces", true)
+      SILE.settings:set("document.rskip", SILE.nodefactory.glue("0 plus 10000pt"))
+      SILE.settings:set("document.parindent", SILE.nodefactory.glue("0"))
+      SILE.settings:set("document.baselineskip", SILE.nodefactory.vglue("0"))
+      SILE.settings:set("document.lineskip", SILE.nodefactory.vglue("2pt"))
+      SILE.call("verbatim:font")
+      SILE.settings:set("document.spaceskip", SILE.length("1spc"))
+      SILE.settings:set("shaper.variablespaces", false)
+      SILE.settings:set("document.language", "und")
+      SILE.process(content)
+    end)
+    SILE.typesetter:leaveHmode()
+  end, "Typesets its contents in a monospaced font.")
+
+  SILE.registerCommand("obeylines", function (_, content)
+    SILE.settings:temporarily(function()
+      SILE.settings:set("typesetter.parseppattern", "\n")
+      SILE.process(content)
+    end)
   end)
-  SILE.typesetter:leaveHmode()
-end, "Typesets its contents in a monospaced font.")
 
-SILE.registerCommand("obeylines", function(_, content)
-  SILE.settings:temporarily(function()
-    SILE.settings:set("typesetter.parseppattern", "\n")
-    SILE.process(content)
-  end)
-end)
-
-return {documentation = [[\begin{document}
+end
+return {
+  registerCommands = registerCommands,
+  documentation = [[\begin{document}
 
 The \autodoc:package{verbatim} package is useful when quoting pieces of computer code and
 other text for which formatting is significant. It changes SILE’s settings

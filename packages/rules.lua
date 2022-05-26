@@ -1,118 +1,129 @@
-SILE.classes.base:loadPackage("raiselower")
-SILE.classes.base:loadPackage("rebox")
+local function init (class, _)
 
-SILE.registerCommand("hrule", function (options, _)
-  local width = SU.cast("length", options.width)
-  local height = SU.cast("length", options.height)
-  local depth = SU.cast("length", options.depth)
-  SILE.typesetter:pushHbox({
-    width = width:absolute(),
-    height = height:absolute(),
-    depth = depth:absolute(),
-    value = options.src,
-    outputYourself= function (self, typesetter, line)
-      local outputWidth = SU.rationWidth(self.width, self.width, line.ratio)
-      typesetter.frame:advancePageDirection(-self.height)
-      local oldx = typesetter.frame.state.cursorX
-      local oldy = typesetter.frame.state.cursorY
-      typesetter.frame:advanceWritingDirection(outputWidth)
-      typesetter.frame:advancePageDirection(self.height + self.depth)
-      local newx = typesetter.frame.state.cursorX
-      local newy = typesetter.frame.state.cursorY
-      SILE.outputter:drawRule(oldx, oldy, newx - oldx, newy - oldy)
-      typesetter.frame:advancePageDirection(-self.depth)
-    end
-  })
-end, "Draws a blob of ink of width <width>, height <height> and depth <depth>")
+  class:loadPackage("raiselower")
+  class:loadPackage("rebox")
 
-SILE.registerCommand("fullrule", function (options, _)
-  SILE.call("raise", { height = options.raise or "0.5em" }, function ()
-    SILE.call("hrule", {
-        height = options.height or "0.2pt",
-        width = options.width or "100%lw"
-      })
-  end)
-end, "Draw a full width hrule centered on the current line")
+end
 
-SILE.registerCommand("underline", function (_, content)
-  local ot = SILE.require("core.opentype-parser")
-  local fontoptions = SILE.font.loadDefaults({})
-  local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
-  local font = ot.parseFont(face)
-  local upem = font.head.unitsPerEm
-  local underlinePosition = -font.post.underlinePosition / upem * fontoptions.size
-  local underlineThickness = font.post.underlineThickness / upem * fontoptions.size
+local function registerCommands (_)
 
-  local hbox = SILE.call("hbox", {}, content)
-  table.remove(SILE.typesetter.state.nodes) -- steal it back...
+  SILE.registerCommand("hrule", function (options, _)
+    local width = SU.cast("length", options.width)
+    local height = SU.cast("length", options.height)
+    local depth = SU.cast("length", options.depth)
+    SILE.typesetter:pushHbox({
+      width = width:absolute(),
+      height = height:absolute(),
+      depth = depth:absolute(),
+      value = options.src,
+      outputYourself= function (self, typesetter, line)
+        local outputWidth = SU.rationWidth(self.width, self.width, line.ratio)
+        typesetter.frame:advancePageDirection(-self.height)
+        local oldx = typesetter.frame.state.cursorX
+        local oldy = typesetter.frame.state.cursorY
+        typesetter.frame:advanceWritingDirection(outputWidth)
+        typesetter.frame:advancePageDirection(self.height + self.depth)
+        local newx = typesetter.frame.state.cursorX
+        local newy = typesetter.frame.state.cursorY
+        SILE.outputter:drawRule(oldx, oldy, newx - oldx, newy - oldy)
+        typesetter.frame:advancePageDirection(-self.depth)
+      end
+    })
+  end, "Draws a blob of ink of width <width>, height <height> and depth <depth>")
 
-  -- Re-wrap the hbox in another hbox responsible for boxing it at output
-  -- time, when we will know the line contribution and can compute the scaled width
-  -- of the box, taking into account possible stretching and shrinking.
-  SILE.typesetter:pushHbox({
-    inner = hbox,
-    width = hbox.width,
-    height = hbox.height,
-    depth = hbox.depth,
-    outputYourself = function(self, typesetter, line)
-      local oldX = typesetter.frame.state.cursorX
-      local Y = typesetter.frame.state.cursorY
+  SILE.registerCommand("fullrule", function (options, _)
+    SILE.call("raise", { height = options.raise or "0.5em" }, function ()
+      SILE.call("hrule", {
+          height = options.height or "0.2pt",
+          width = options.width or "100%lw"
+        })
+    end)
+  end, "Draw a full width hrule centered on the current line")
 
-      -- Build the original hbox.
-      -- Cursor will be moved by the actual definitive size.
-      self.inner:outputYourself(SILE.typesetter, line)
-      local newX = typesetter.frame.state.cursorX
+  SILE.registerCommand("underline", function (_, content)
+    local ot = require("core.opentype-parser")
+    local fontoptions = SILE.font.loadDefaults({})
+    local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
+    local font = ot.parseFont(face)
+    local upem = font.head.unitsPerEm
+    local underlinePosition = -font.post.underlinePosition / upem * fontoptions.size
+    local underlineThickness = font.post.underlineThickness / upem * fontoptions.size
 
-      -- Output a line.
-      -- NOTE: According to the OpenType specs, underlinePosition is "the suggested distance of
-      -- the top of the underline from the baseline" so it seems implied that the thickness
-      -- should expand downwards
-      SILE.outputter:drawRule(oldX, Y + underlinePosition, newX - oldX, underlineThickness)
-    end
-  })
-end, "Underlines some content")
+    local hbox = SILE.call("hbox", {}, content)
+    table.remove(SILE.typesetter.state.nodes) -- steal it back...
 
-SILE.registerCommand("boxaround", function (_, content)
-  -- This command was not documented and lacks feature.
-  -- Plan replacement with a better suited package.
-  SU.deprecated("\\boxaround (undocumented)", "\\framebox (package)", "0.12.0", "0.13.0")
+    -- Re-wrap the hbox in another hbox responsible for boxing it at output
+    -- time, when we will know the line contribution and can compute the scaled width
+    -- of the box, taking into account possible stretching and shrinking.
+    SILE.typesetter:pushHbox({
+      inner = hbox,
+      width = hbox.width,
+      height = hbox.height,
+      depth = hbox.depth,
+      outputYourself = function(self, typesetter, line)
+        local oldX = typesetter.frame.state.cursorX
+        local Y = typesetter.frame.state.cursorY
 
-  local hbox = SILE.call("hbox", {}, content)
-  table.remove(SILE.typesetter.state.nodes) -- steal it back...
+        -- Build the original hbox.
+        -- Cursor will be moved by the actual definitive size.
+        self.inner:outputYourself(SILE.typesetter, line)
+        local newX = typesetter.frame.state.cursorX
 
-  -- Re-wrap the hbox in another hbox responsible for boxing it at output
-  -- time, when we will know the line contribution and can compute the scaled width
-  -- of the box, taking into account possible stretching and shrinking.
-  SILE.typesetter:pushHbox({
-    inner = hbox,
-    width = hbox.width,
-    height = hbox.height,
-    depth = hbox.depth,
-    outputYourself = function(self, typesetter, line)
-      local oldX = typesetter.frame.state.cursorX
-      local Y = typesetter.frame.state.cursorY
+        -- Output a line.
+        -- NOTE: According to the OpenType specs, underlinePosition is "the suggested distance of
+        -- the top of the underline from the baseline" so it seems implied that the thickness
+        -- should expand downwards
+        SILE.outputter:drawRule(oldX, Y + underlinePosition, newX - oldX, underlineThickness)
+      end
+    })
+  end, "Underlines some content")
 
-      -- Build the original hbox.
-      -- Cursor will be moved by the actual definitive size.
-      self.inner:outputYourself(SILE.typesetter, line)
-      local newX = typesetter.frame.state.cursorX
+  SILE.registerCommand("boxaround", function (_, content)
+    -- This command was not documented and lacks feature.
+    -- Plan replacement with a better suited package.
+    SU.deprecated("\\boxaround (undocumented)", "\\framebox (package)", "0.12.0", "0.13.0")
 
-      -- Output a border
-      -- NOTE: Drawn inside the hbox, so borders overlap with inner content.
-      local w = newX - oldX
-      local h = self.height:tonumber()
-      local d = self.depth:tonumber()
-      local thickness = 0.5
+    local hbox = SILE.call("hbox", {}, content)
+    table.remove(SILE.typesetter.state.nodes) -- steal it back...
 
-      SILE.outputter:drawRule(oldX, Y + d - thickness, w, thickness)
-      SILE.outputter:drawRule(oldX, Y - h, w, thickness)
-      SILE.outputter:drawRule(oldX, Y - h, thickness, h + d)
-      SILE.outputter:drawRule(oldX + w - thickness, Y - h, thickness, h + d)
-    end
-  })
-end, "Draws a box around some content")
+    -- Re-wrap the hbox in another hbox responsible for boxing it at output
+    -- time, when we will know the line contribution and can compute the scaled width
+    -- of the box, taking into account possible stretching and shrinking.
+    SILE.typesetter:pushHbox({
+      inner = hbox,
+      width = hbox.width,
+      height = hbox.height,
+      depth = hbox.depth,
+      outputYourself = function(self, typesetter, line)
+        local oldX = typesetter.frame.state.cursorX
+        local Y = typesetter.frame.state.cursorY
 
-return { documentation = [[\begin{document}
+        -- Build the original hbox.
+        -- Cursor will be moved by the actual definitive size.
+        self.inner:outputYourself(SILE.typesetter, line)
+        local newX = typesetter.frame.state.cursorX
+
+        -- Output a border
+        -- NOTE: Drawn inside the hbox, so borders overlap with inner content.
+        local w = newX - oldX
+        local h = self.height:tonumber()
+        local d = self.depth:tonumber()
+        local thickness = 0.5
+
+        SILE.outputter:drawRule(oldX, Y + d - thickness, w, thickness)
+        SILE.outputter:drawRule(oldX, Y - h, w, thickness)
+        SILE.outputter:drawRule(oldX, Y - h, thickness, h + d)
+        SILE.outputter:drawRule(oldX + w - thickness, Y - h, thickness, h + d)
+      end
+    })
+  end, "Draws a box around some content")
+
+end
+
+return {
+  init = init,
+  registerCommands = registerCommands,
+  documentation = [[\begin{document}
 The \autodoc:package{rules} package draws lines. It provides three commands.
 
 The first command is \autodoc:command{\hrule},
