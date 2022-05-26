@@ -260,6 +260,7 @@ end
 local function init (_, _)
 
   local typesetter = SILE.typesetter
+
   if not typesetter.noinsertion_getTargetLength then
     typesetter.noinsertion_getTargetLength = typesetter.getTargetLength
     typesetter.getTargetLength = function (self)

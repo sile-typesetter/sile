@@ -40,16 +40,16 @@ function book:_init (options)
       firstContentFrame = self.firstContentFrame,
       frames = self.defaultFrameset
     })
-  self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
-  self:registerPostinit(function(self_)
-      self_:mirrorMaster("right", "left")
-      if not SILE.scratch.headers then SILE.scratch.headers = {} end
-  end)
+  self:loadPackage("twoside", {
+      oddPageMaster = "right",
+      evenPageMaster = "left"
+    })
   self:loadPackage("tableofcontents")
   self:loadPackage("footnotes", {
       insertInto = "footnotes",
       stealFrom = { "content" }
     })
+  if not SILE.scratch.headers then SILE.scratch.headers = {} end
   -- Avoid calling this (yet) if we're the parant of some child class
   if self._name == "book" then self:post_init() end
   return self
