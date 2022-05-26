@@ -235,18 +235,10 @@ function base:initPackage (pack, args)
   if type(pack) == "table" then
     if pack.exports then pl.tablex.update(self, pack.exports) end
     if type(pack.init) == "function" then
-      if self._initialized then
-        pack.init(self, args)
-      else
-        self:registerPostinit(pack.init, args)
-      end
+      self:registerPostinit(pack.init, args)
     end
     if type(pack.registerCommands) == "function" then
-      if self._initialized then
-        pack.registerCommands(self)
-      else
-        self:registerPostinit(pack.registerCommands)
-      end
+      self:registerPostinit(pack.registerCommands)
     end
   end
 end
