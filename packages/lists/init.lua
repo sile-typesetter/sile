@@ -53,11 +53,13 @@ local styles = {
 -- END "SIMPLIFIED" STYLES
 
 local trimLeft = function (str)
-  return (str:gsub("^%s*", ""))
+  return str:gsub("^%s*", "")
 end
+
 local trimRight = function (str)
-  return (str:gsub("%s*$", ""))
+  return str:gsub("%s*$", "")
 end
+
 local trim = function (str)
   return trimRight(trimLeft(str))
 end
@@ -251,6 +253,8 @@ local function registerCommands (_)
 end
 
 return {
+  init = init,
+  registerCommands = registerCommands,
   documentation = [[\begin{document}
 The \autodoc:package{lists} package provides enumerations and bullet lists
 (a.k.a. \em{itemization}\kern[width=0.1em]) which can be nested together.
