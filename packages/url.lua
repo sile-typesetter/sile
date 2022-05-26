@@ -147,8 +147,9 @@ return {
   init = init,
   registerCommands = registerCommands,
   documentation = [[\begin{document}
+\script[src=packages/url]
 This package enhances the typesetting of URLs in two ways.
-First, it provides the \autodoc:command{\href[src=...]\{\}} command which
+First, it provides the \autodoc:command{\href[src=<url>]{<content>}} command which
 inserts PDF hyperlinks,
   \href[src=http://www.sile-typesetter.org/]{like this}.
 
