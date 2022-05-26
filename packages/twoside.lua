@@ -29,10 +29,10 @@ end
 local function switchPage (class)
   if class:oddPage() then
     tp = "even"
-    class.switchMaster(class.evenPageMaster)
+    class:switchMaster(class.evenPageMaster)
   else
     tp = "odd"
-    class.switchMaster(class.oddPageMaster)
+    class:switchMaster(class.oddPageMaster)
   end
 end
 
