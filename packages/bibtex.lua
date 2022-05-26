@@ -43,41 +43,54 @@ local parseBibtex = function (fn)
   return entries
 end
 
-SILE.scratch.bibtex = { bib = {}, bibstyle = {} }
-local Bibliography = SILE.require("packages.bibliography")
+local function init (class, _)
 
-SILE.registerCommand("loadbibliography", function (options, _)
-  local file = SU.required(options, "file", "loadbibliography")
-  SILE.scratch.bibtex.bib = parseBibtex(file) -- Later we'll do multiple bibliogs, but not now
-end)
+  SILE.scratch.bibtex = { bib = {}, bibstyle = {} }
 
-SILE.registerCommand("bibstyle", function (_, content)
-  SILE.scratch.bibtex.bibstyle = SILE.require("packages.bibstyles/"..content)
-end)
+  class:loadPackage("bibliography")
 
-SILE.call("bibstyle", {}, "chicago") -- Load some default
+  SILE.call("bibstyle", {}, "chicago") -- Load some default
 
-SILE.registerCommand("cite", function (options, content)
-  if not options.key then options.key = content[1] end
-  local cite = Bibliography.produceCitation(options, SILE.scratch.bibtex.bib, SILE.scratch.bibtex.bibstyle)
-  if cite == Bibliography.Errors.UNKNOWN_REFERENCE then
-    SU.warn("Unknown reference in citation "..options)
-    return
-  end
-  SILE.doTexlike(cite)
-end)
+end
 
-SILE.registerCommand("reference", function (options, content)
-  if not options.key then options.key = content[1] end
-  local cite = Bibliography.produceReference(options, SILE.scratch.bibtex.bib, SILE.scratch.bibtex.bibstyle)
-  if cite == Bibliography.Errors.UNKNOWN_REFERENCE then
-    SU.warn("Unknown reference in citation "..options)
-    return
-  end
-  SILE.doTexlike(cite)
-end)
+local function registerCommands (_)
+
+  local Bibliography = require("packages.bibliography")
+
+  SILE.registerCommand("loadbibliography", function (options, _)
+    local file = SU.required(options, "file", "loadbibliography")
+    SILE.scratch.bibtex.bib = parseBibtex(file) -- Later we'll do multiple bibliogs, but not now
+  end)
+
+  SILE.registerCommand("bibstyle", function (_, content)
+    SILE.scratch.bibtex.bibstyle = require("packages.bibstyles/"..content)
+  end)
+
+  SILE.registerCommand("cite", function (options, content)
+    if not options.key then options.key = content[1] end
+    local cite = Bibliography.produceCitation(options, SILE.scratch.bibtex.bib, SILE.scratch.bibtex.bibstyle)
+    if cite == Bibliography.Errors.UNKNOWN_REFERENCE then
+      SU.warn("Unknown reference in citation "..options)
+      return
+    end
+    SILE.doTexlike(cite)
+  end)
+
+  SILE.registerCommand("reference", function (options, content)
+    if not options.key then options.key = content[1] end
+    local cite = Bibliography.produceReference(options, SILE.scratch.bibtex.bib, SILE.scratch.bibtex.bibstyle)
+    if cite == Bibliography.Errors.UNKNOWN_REFERENCE then
+      SU.warn("Unknown reference in citation "..options)
+      return
+    end
+    SILE.doTexlike(cite)
+  end)
+
+end
 
 return {
+  init = init,
+  registerCommands = registerCommands,
   documentation = [[\begin{document}
 BibTeX is a citation management system. It was originally designed
 for TeX but has since been integrated into a variety of situations.

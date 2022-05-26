@@ -12,7 +12,7 @@ SILE.tateFramePrototype.enterHooks = {
         local len = SILE.length(d.length, bls.height.stretch, bls.height.shrink)
         return SILE.nodefactory.vglue({height = len})
       end
-      typesetter.breakIntoLines = SILE.require("packages.break-firstfit").exports.breakIntoLines
+      typesetter.breakIntoLines = require("packages.break-firstfit").exports.breakIntoLines
     end
   }
 
@@ -53,6 +53,15 @@ end
 
 local function init (class, _)
 
+  -- Japaneese language support defines units which are useful here
+  class:loadPackage("font-fallback")
+  SILE.call("font:add-fallback", { family = "Noto Sans CJK JP" })
+  SILE.languageSupport.loadLanguage("ja")
+
+end
+
+local function registerCommands (class)
+
   SILE.registerCommand("tate-frame", function (options, _)
     SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newTateFrame(options)
   end, "Declares (or re-declares) a frame on this page.")
@@ -66,7 +75,7 @@ local function init (class, _)
     local nodes
     local oldT = SILE.typesetter
     local prevDirection = oldT.frame.direction
-    SILE.require("packages.rotate")
+    class:loadPackage("rotate")
     SILE.settings:temporarily(function()
       local latinTypesetter = pl.class(SILE.defaultTypesetter)
       local dummyFrame = pl.class(SILE.framePrototype)
@@ -138,15 +147,11 @@ local function init (class, _)
 
   end)
 
-  -- Japaneese language support defines units which are useful here
-  class:loadPackage("font-fallback")
-  SILE.call("font:add-fallback", { family = "Noto Sans CJK JP" })
-  SILE.languageSupport.loadLanguage("ja")
-
 end
 
 return {
   init = init,
+  registerCommands = registerCommands,
   documentation = [[
 \begin{document}
 The \autodoc:package{tate} package provides support for Japanese vertical typesetting.

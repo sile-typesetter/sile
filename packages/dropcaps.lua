@@ -1,5 +1,7 @@
-SILE.require("packages.rebox")
-SILE.require("packages.raiselower")
+local function init (class, _)
+  class:loadPackage("rebox")
+  class:loadPackage("raiselower")
+end
 
 local shapeHbox = function (options, content)
   -- Clear irrelevant values before passing to font
@@ -12,61 +14,67 @@ local shapeHbox = function (options, content)
   return hbox
 end
 
--- This implementation relies on the hangafter and hangindent features of Knuth's line-breaking algorithm.
--- These features in core line breaking algorithm supply the blank space in the paragraph shape but don't fill it with anything.
-SILE.registerCommand("dropcap", function (options, content)
-  local lines = SU.cast("integer", options.lines or 3)
-  local join = SU.boolean(options.join, false)
-  local standoff = SU.cast("measurement", options.standoff or "1spc")
-  local raise = SU.cast("measurement", options.raise or 0)
-  local shift = SU.cast("measurement", options.shift or 0)
-  local size = SU.cast("measurement or nil", options.size or nil)
-  local scale = SU.cast("number", options.scale or 1.0)
-  local color = options.color
-  options.size = nil -- we need to measure the "would have been" size before using this
+local function registerCommands (class)
 
-  if color then SILE.require("packages.color") end
+  -- This implementation relies on the hangafter and hangindent features of Knuth's line-breaking algorithm.
+  -- These features in core line breaking algorithm supply the blank space in the paragraph shape but don't fill it with anything.
+  SILE.registerCommand("dropcap", function (options, content)
+    local lines = SU.cast("integer", options.lines or 3)
+    local join = SU.boolean(options.join, false)
+    local standoff = SU.cast("measurement", options.standoff or "1spc")
+    local raise = SU.cast("measurement", options.raise or 0)
+    local shift = SU.cast("measurement", options.shift or 0)
+    local size = SU.cast("measurement or nil", options.size or nil)
+    local scale = SU.cast("number", options.scale or 1.0)
+    local color = options.color
+    options.size = nil -- we need to measure the "would have been" size before using this
 
-  -- We want the drop cap to span over N lines, that is N - 1 baselineskip + the height of the first line.
-  -- Note this only works for the default linespace mechanism.
-  -- We determine the height of the first line by measuring the size the initial content *would have* been.
-  -- This gives the font some control over its relative size, sometimes desired sometimes undesired.
-  local tmpHbox = shapeHbox(options, content)
-  local extraHeight = SILE.measurement((lines - 1).."bs"):tonumber()
-  local targetHeight = tmpHbox.height:tonumber() * scale + extraHeight
-  SU.debug("dropcaps", "Target height", targetHeight)
+    if color then class:loadPackage("packages.color") end
 
-  -- Now we need to figure out how to scale the dropcap font to get an initial of targetHeight.
-  -- From that we can also figure out the width it will be at that height.
-  local curSize = SILE.measurement(SILE.settings:get("font.size")):tonumber()
-  local curHeight, curWidth = tmpHbox.height:tonumber(), tmpHbox.width:tonumber()
-  options.size = size and size:tonumber() or (targetHeight / curHeight * curSize)
-  local targetWidth = curWidth / curSize * options.size
-  SU.debug("dropcaps", "Target font size", options.size)
-  SU.debug("dropcaps", "Target width", targetWidth)
+    -- We want the drop cap to span over N lines, that is N - 1 baselineskip + the height of the first line.
+    -- Note this only works for the default linespace mechanism.
+    -- We determine the height of the first line by measuring the size the initial content *would have* been.
+    -- This gives the font some control over its relative size, sometimes desired sometimes undesired.
+    local tmpHbox = shapeHbox(options, content)
+    local extraHeight = SILE.measurement((lines - 1).."bs"):tonumber()
+    local targetHeight = tmpHbox.height:tonumber() * scale + extraHeight
+    SU.debug("dropcaps", "Target height", targetHeight)
 
-  -- Typeset the dropcap with its final shape, but don't output it yet
-  local hbox = shapeHbox(options, content)
+    -- Now we need to figure out how to scale the dropcap font to get an initial of targetHeight.
+    -- From that we can also figure out the width it will be at that height.
+    local curSize = SILE.measurement(SILE.settings:get("font.size")):tonumber()
+    local curHeight, curWidth = tmpHbox.height:tonumber(), tmpHbox.width:tonumber()
+    options.size = size and size:tonumber() or (targetHeight / curHeight * curSize)
+    local targetWidth = curWidth / curSize * options.size
+    SU.debug("dropcaps", "Target font size", options.size)
+    SU.debug("dropcaps", "Target width", targetWidth)
 
-  -- Setup up the necessary indents for the final paragraph content
-  local joinOffset = join and standoff:tonumber() or 0
-  SILE.settings:set("current.hangAfter", -lines)
-  SILE.settings:set("current.hangIndent", targetWidth + joinOffset)
-  SU.debug("dropcaps", "joinOffset", joinOffset)
+    -- Typeset the dropcap with its final shape, but don't output it yet
+    local hbox = shapeHbox(options, content)
 
-  -- The paragraph is indented so as to leave enough space for the drop cap.
-  -- We "trick" the typesetter with a zero-dimension box wrapping our original box.
-  SILE.call("rebox", { height = 0, width = -joinOffset }, function ()
-    SILE.call("glue", { width = shift - targetWidth - joinOffset })
-    SILE.call("lower", { height = extraHeight - raise }, function ()
-      SILE.call(color and "color" or "noop", { color = color }, function ()
-        SILE.typesetter:pushHbox(hbox)
+    -- Setup up the necessary indents for the final paragraph content
+    local joinOffset = join and standoff:tonumber() or 0
+    SILE.settings:set("current.hangAfter", -lines)
+    SILE.settings:set("current.hangIndent", targetWidth + joinOffset)
+    SU.debug("dropcaps", "joinOffset", joinOffset)
+
+    -- The paragraph is indented so as to leave enough space for the drop cap.
+    -- We "trick" the typesetter with a zero-dimension box wrapping our original box.
+    SILE.call("rebox", { height = 0, width = -joinOffset }, function ()
+      SILE.call("glue", { width = shift - targetWidth - joinOffset })
+      SILE.call("lower", { height = extraHeight - raise }, function ()
+        SILE.call(color and "color" or "noop", { color = color }, function ()
+          SILE.typesetter:pushHbox(hbox)
+        end)
       end)
     end)
-  end)
-end, "Show an 'initial capital' (also known as a 'drop cap') at the start of the content paragraph.")
+  end, "Show an 'initial capital' (also known as a 'drop cap') at the start of the content paragraph.")
+
+end
 
 return {
+  init = init,
+  registerCommands = registerCommands,
   documentation = [[
 \begin{document}
 The \autodoc:package{dropcaps} package allows you to format paragraphs with an 'initial capital' (also commonly

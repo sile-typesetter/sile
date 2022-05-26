@@ -4,6 +4,7 @@ base._name = "base"
 base._initialized = false
 base._legacy = false
 base._deprecated = false
+base.deferredLegacyInit = {}
 base.deferredInit = {}
 base.pageTemplate = { frames = {}, firstContentFrame = nil }
 base.defaultFrameset = {}
@@ -36,7 +37,6 @@ base.options = setmetatable({}, {
     end
   })
 
-
 -- Part of stdlib deprecation hack: class constructors in the new model should
 -- *never* be called with an id. If it does we know somebody is using the
 -- legacy model and setup shims to get them out of trouble. Notable we want to
@@ -52,12 +52,12 @@ function base:_create ()
 end
 
 function base:_init (options)
-  if not options then options = {} end
-  options.papersize = options.papersize or "a4"
   if self._legacy and not self._deprecated then return self:_deprecator(base) end
+  if not options or self == options then options = {} end
+  options.papersize = options.papersize or "a4"
   self:declareOption("class", function (_, name)
     if name then
-      if self._deprecated then
+      if self._legacy then
         self._name = name
       elseif name ~= self._name then
         SU.error("Cannot change class name after instantiation, derive a new class instead.")
@@ -92,17 +92,25 @@ function base:_init (options)
   return self
 end
 
+local mt
+
 -- Penlight hook, currently only used to help shim stdlib based calls to the
 -- new constructors.
 function base:_post_init ()
   if self._legacy then
-    self._legacy = false
+    setmetatable(self, mt)
   end
 end
 
 -- SILE's deffered inits, migrate to Penlight's builtin when it's not used for
 -- deprecation of the old system
 function base:post_init ()
+  if self._legacy then
+    for i, func in ipairs(self.deferredLegacyInit) do
+      func(self)
+      self.deferredLegacyInit[i] = nil
+    end
+  end
   if type(self.firstContentFrame) == "string" then
     self.pageTemplate.firstContentFrame = self.pageTemplate.frames[self.firstContentFrame]
   end
@@ -114,8 +122,8 @@ function base:post_init ()
     end
   end)
   self._initialized = true
-  for i, pkginit in ipairs(self.deferredInit) do
-    pkginit(self)
+  for i, func in ipairs(self.deferredInit) do
+    func(self)
     self.deferredInit[i] = nil
   end
 end
@@ -124,7 +132,10 @@ end
 -- stdlib object model definition to return a Penlight class constructor
 -- instead of the old std.object model.
 function base:_deprecator (parent)
-  self._deprecated = true
+  local id = self._name
+  self = pl.class(parent)
+  self._name = id
+  self._legacy = true
   SU.warn(string.format([[
     The document class inheritance system for SILE classes has been
       refactored using a different object model. Your class (%s), has been
@@ -135,27 +146,48 @@ function base:_deprecator (parent)
 
     ]], self._name))
   SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0")
-  rawset(self, "_init", function (self_, options_)
-    self:registerPostinit(self_.init, options_)
-    parent._init(self_, options_)
-    parent:post_init()
-    return self_
-  end)
-  rawset(self, "declareOption", function(_, option, setter)
-    if not getmetatable(parent.options)._opts[option] then
+  self.declareOption = function (self_, option, setter)
+    if not getmetatable(self_.options)._opts[option] then
       if type(setter) ~= "function" then
         local default = setter
         setter = function (_, value)
           local k = "_legacy_option_" .. option
-          if value then parent[k] = value end
-          return function() return parent[k] end
+          if value then self_[k] = value end
+          return function() return self_[k] end
         end
-        setter(parent, default)
+        setter(self_, default)
       end
-      base.declareOption(parent, option, setter)
+      parent.declareOption(self_, option, setter)
     end
-  end)
-  parent.init = function () return parent end
+  end
+  -- Legacy classes from old example code run declareFrame and loadPackage before instantializing,
+  -- stash them in a post init callback instead so we have frames and a typesetter
+  self.declareFrame = function (self_, id_, spec)
+    self_:registerLegacyPostinit(function ()
+      parent.declareFrame(self_, id_, spec)
+    end)
+    return self_
+  end
+  self.loadPackage = function (self_, packname, args)
+    self_:registerLegacyPostinit(function ()
+      parent.loadPackage(self_, packname, args)
+    end)
+    return self_
+  end
+  -- Just in case the legacy class calls this directly, make it a noop
+  parent.init = function (self_) return self_ end
+  self._init = function (self_, options_)
+    if type(self_.init) == "function" then
+      self_:registerLegacyPostinit(self_.init, options_)
+    end
+    parent._init(self_, options_)
+    self_:post_init()
+    return self_
+  end
+  self._deprecated = true
+  -- The function we are in (Penlight's constructor) is going to blow away the
+  -- meta table after we return here so stash it and re-apply it on _post_init
+  mt = getmetatable(self)
   return self
 end
 
@@ -219,7 +251,15 @@ function base:initPackage (pack, args)
   end
 end
 
+function base:registerLegacyPostinit (func, args)
+  if self._initialized then return func(self, args) end
+  table.insert(self.deferredLegacyInit, function (_)
+      func(self, args)
+    end)
+end
+
 function base:registerPostinit (func, args)
+  if self._initialized then return func(self, args) end
   table.insert(self.deferredInit, function (_)
       func(self, args)
     end)
@@ -321,6 +361,9 @@ function base:initialFrame ()
   SILE.frames = { page = SILE.frames.page }
   for k, v in pairs(SILE.documentState.thisPageTemplate.frames) do
     SILE.frames[k] = v
+  end
+  if not SILE.documentState.thisPageTemplate.firstContentFrame then
+    SILE.documentState.thisPageTemplate.firstContentFrame = SILE.frames[self.firstContentFrame]
   end
   SILE.documentState.thisPageTemplate.firstContentFrame:invalidate()
   return SILE.documentState.thisPageTemplate.firstContentFrame

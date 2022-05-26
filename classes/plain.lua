@@ -26,7 +26,7 @@ plain.defaultFrameset = {
 plain.firstContentFrame = "content"
 
 function plain:_init (options)
-  if self._legacy and not self._deprecated then return self:_deprecator(base) end
+  if self._legacy and not self._deprecated then return self:_deprecator(plain) end
   if not options then options = {} end
   self:declareOption("direction", function (_, value)
     if value then

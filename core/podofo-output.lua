@@ -2,7 +2,7 @@
 -- example of how to create alternative output backends, in comparison
 -- with the libtexpdf and debug backends.
 local pdf = require("podofo")
-local imagesize = SILE.require("imagesize")
+local imagesize = require("imagesize")
 if (not SILE.outputters) then SILE.outputters = {} end
 
 local cursorX = 0
@@ -118,7 +118,7 @@ SILE.outputters.podofo = {
 
   getImageSize = function (self, src)
     _deprecationCheck(self)
-    local box_width, box_height, err = imagesize.imgsize(src)imagesize.imgsize(src)
+    local box_width, box_height, err = imagesize.imgsize(src)
     if not box_width then
       SU.error(err.." loading image")
     end

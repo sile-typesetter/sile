@@ -1,4 +1,4 @@
-local Bibliography = SILE.require("packages.bibliography")
+local Bibliography = require("packages.bibliography")
 
 return pl.tablex.merge(Bibliography.Style, {
   CitationStyle = Bibliography.CitationStyles.AuthorYear,

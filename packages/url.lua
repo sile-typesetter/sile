@@ -1,9 +1,8 @@
-SILE.require("packages.verbatim")
 local pdf
 pcall(function() pdf = require("justenoughlibtexpdf") end)
-if pdf then SILE.require("packages.pdf") end
+if pdf then require("packages.pdf") end
 
-local inputfilter = SILE.require("packages.inputfilter").exports
+local inputfilter = require("packages.inputfilter").exports
 
 -- URL escape sequence, URL fragment:
 local preferBreakBefore = "%#"
@@ -62,82 +61,95 @@ local urlFilter = function (node, content, options)
   return result
 end
 
-SILE.settings:declare({
-  parameter = "url.linebreak.primaryPenalty",
-  type = "integer",
-  default = 100,
-  help = "Penalty for breaking lines in URLs at preferred breakpoints"
-})
+local function init (class, _)
 
-SILE.settings:declare({
-  parameter = "url.linebreak.secondaryPenalty",
-  type = "integer",
-  default = 200,
-  help = "Penalty for breaking lines in URLs at tolerable breakpoints (should be higher than url.linebreak.primaryPenalty)"
-})
+  class:loadPackage("verbatim")
 
-SILE.registerCommand("href", function (options, content)
-  if not pdf then return SILE.process(content) end
-  if options.src then
-    SILE.call("pdf:link", { dest = options.src, external = true,
-      borderwidth = options.borderwidth,
-      borderstyle = options.borderstyle,
-      bordercolor = options.bordercolor,
-      borderoffset = options.borderoffset },
-      content)
-  else
-    options.src = content[1]
-    SILE.call("pdf:link", { dest = options.src, external = true,
-      borderwidth = options.borderwidth,
-      borderstyle = options.borderstyle,
-      bordercolor = options.bordercolor,
-      borderoffset = options.borderoffset },
-      function (_, _)
-        SILE.call("url", { language = options.language }, content)
-      end)
-  end
-end, "Inserts a PDF hyperlink.")
+  SILE.settings:declare({
+    parameter = "url.linebreak.primaryPenalty",
+    type = "integer",
+    default = 100,
+    help = "Penalty for breaking lines in URLs at preferred breakpoints"
+  })
 
-SILE.registerCommand("url", function (options, content)
-  SILE.settings:temporarily(function ()
-    local primaryPenalty = SILE.settings:get("url.linebreak.primaryPenalty")
-    local secondaryPenalty = SILE.settings:get("url.linebreak.secondaryPenalty")
-    local worsePenalty = primaryPenalty + secondaryPenalty
+  SILE.settings:declare({
+    parameter = "url.linebreak.secondaryPenalty",
+    type = "integer",
+    default = 200,
+    help = "Penalty for breaking lines in URLs at tolerable breakpoints (should be higher than url.linebreak.primaryPenalty)"
+  })
 
-    if options.language then
-      SILE.languageSupport.loadLanguage(options.language)
-      if options.language == "fr" then
-        -- Trick the engine by declaring a "fake"" language that doesn't apply
-        -- the typographic rules for punctuations
-        SILE.hyphenator.languages["_fr_noSpacingRules"] = SILE.hyphenator.languages.fr
-        -- Not needed (the engine already defaults to SILE.nodeMakers.unicode if
-        -- the language is not found):
-        -- SILE.nodeMakers._fr_noSpacingRules = SILE.nodeMakers.unicode
-        SILE.settings:set("document.language", "_fr_noSpacingRules")
-      else
-        SILE.settings:set("document.language", options.language)
-      end
+end
+
+local function registerCommands (_)
+
+  SILE.registerCommand("href", function (options, content)
+    if not pdf then return SILE.process(content) end
+    if options.src then
+      SILE.call("pdf:link", { dest = options.src, external = true,
+        borderwidth = options.borderwidth,
+        borderstyle = options.borderstyle,
+        bordercolor = options.bordercolor,
+        borderoffset = options.borderoffset },
+        content)
     else
-      SILE.settings:set("document.language", 'und')
+      options.src = content[1]
+      SILE.call("pdf:link", { dest = options.src, external = true,
+        borderwidth = options.borderwidth,
+        borderstyle = options.borderstyle,
+        bordercolor = options.bordercolor,
+        borderoffset = options.borderoffset },
+        function (_, _)
+          SILE.call("url", { language = options.language }, content)
+        end)
     end
+  end, "Inserts a PDF hyperlink.")
 
-    local result = inputfilter.transformContent(content, urlFilter, {
-      primaryPenalty = primaryPenalty,
-      secondaryPenalty = secondaryPenalty,
-      worsePenalty = worsePenalty
-    })
-    SILE.call("code", {}, result)
+  SILE.registerCommand("url", function (options, content)
+    SILE.settings:temporarily(function ()
+      local primaryPenalty = SILE.settings:get("url.linebreak.primaryPenalty")
+      local secondaryPenalty = SILE.settings:get("url.linebreak.secondaryPenalty")
+      local worsePenalty = primaryPenalty + secondaryPenalty
+
+      if options.language then
+        SILE.languageSupport.loadLanguage(options.language)
+        if options.language == "fr" then
+          -- Trick the engine by declaring a "fake"" language that doesn't apply
+          -- the typographic rules for punctuations
+          SILE.hyphenator.languages["_fr_noSpacingRules"] = SILE.hyphenator.languages.fr
+          -- Not needed (the engine already defaults to SILE.nodeMakers.unicode if
+          -- the language is not found):
+          -- SILE.nodeMakers._fr_noSpacingRules = SILE.nodeMakers.unicode
+          SILE.settings:set("document.language", "_fr_noSpacingRules")
+        else
+          SILE.settings:set("document.language", options.language)
+        end
+      else
+        SILE.settings:set("document.language", 'und')
+      end
+
+      local result = inputfilter.transformContent(content, urlFilter, {
+        primaryPenalty = primaryPenalty,
+        secondaryPenalty = secondaryPenalty,
+        worsePenalty = worsePenalty
+      })
+      SILE.call("code", {}, result)
+    end)
+  end, "Inserts penalties in an URL so it can be broken over multiple lines at appropriate places.")
+
+  SILE.registerCommand("code", function (options, content)
+    SILE.call("verbatim:font", options, content)
   end)
-end, "Inserts penalties in an URL so it can be broken over multiple lines at appropriate places.")
 
-SILE.registerCommand("code", function(options, content)
-  SILE.call("verbatim:font", options, content)
-end)
+end
 
 return {
+  init = init,
+  registerCommands = registerCommands,
   documentation = [[\begin{document}
+\script[src=packages/url]
 This package enhances the typesetting of URLs in two ways.
-First, it provides the \autodoc:command{\href[src=...]\{\}} command which
+First, it provides the \autodoc:command{\href[src=<url>]{<content>}} command which
 inserts PDF hyperlinks,
   \href[src=http://www.sile-typesetter.org/]{like this}.
 

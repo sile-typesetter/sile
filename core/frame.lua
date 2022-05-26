@@ -219,7 +219,8 @@ SILE.framePrototype = pl.class({
     end,
 
     isMainContentFrame = function (self)
-      local frame =  SILE.documentState.thisPageTemplate.firstContentFrame
+      local tpt = SILE.documentState.thisPageTemplate
+      local frame = tpt.firstContentFrame
       while frame do
         if frame == self then return true end
         if frame.next then frame = SILE.getFrame(frame.next) else return false end

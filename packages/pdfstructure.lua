@@ -1,3 +1,5 @@
+local pdf = require("justenoughlibtexpdf")
+
 local stPointer
 
 local stNode = function (notetype) return {
@@ -7,9 +9,6 @@ local stNode = function (notetype) return {
     parent = stPointer
   }
 end
-
-SILE.require("packages.pdf")
-local pdf = require("justenoughlibtexpdf")
 
 local stRoot = stNode("Document")
 stPointer = stRoot
@@ -21,31 +20,6 @@ local addChild = function (node)
 end
 
 local actualtext = {}
-
-SILE.registerCommand("pdf:structure", function (options, content)
-  local notetype = SU.required(options, "type", "pdf structure")
-  local node = stNode(notetype)
-  addChild(node)
-  node.lang = SILE.settings:get("document.language")
-  SILE.outputter:_init()
-  node.page = pdf.get_dictionary("@THISPAGE")
-  node.mcid = mcid
-  local oldstPointer = stPointer
-  stPointer = node
-  actualtext[#actualtext+1] = ""
-  if not options.block then
-    SILE.call("pdf:literal", {}, {"/"..notetype.." <</MCID "..mcid.." >>BDC"})
-    mcid = mcid + 1
-    SILE.process(content)
-    SILE.call("pdf:literal", {}, {"EMC"})
-  else
-    SILE.process(content)
-  end
-  stPointer.actualtext = actualtext[#actualtext]
-  actualtext[#actualtext] = nil
-  stPointer = oldstPointer
-end)
-
 local _typeset = SILE.typesetter.typeset
 SILE.typesetter.typeset = function (self, text)
   actualtext[#actualtext] = tostring(actualtext[#actualtext]) .. text
@@ -116,7 +90,43 @@ SILE.outputters.libtexpdf.finish = function ()
   pdf.finish()
 end
 
+local function init (class, _)
+
+  class:loadPackage("pdf")
+
+end
+
+local function registerCommands (_)
+
+  SILE.registerCommand("pdf:structure", function (options, content)
+    local notetype = SU.required(options, "type", "pdf structure")
+    local node = stNode(notetype)
+    addChild(node)
+    node.lang = SILE.settings:get("document.language")
+    SILE.outputter:_init()
+    node.page = pdf.get_dictionary("@THISPAGE")
+    node.mcid = mcid
+    local oldstPointer = stPointer
+    stPointer = node
+    actualtext[#actualtext+1] = ""
+    if not options.block then
+      SILE.call("pdf:literal", {}, {"/"..notetype.." <</MCID "..mcid.." >>BDC"})
+      mcid = mcid + 1
+      SILE.process(content)
+      SILE.call("pdf:literal", {}, {"EMC"})
+    else
+      SILE.process(content)
+    end
+    stPointer.actualtext = actualtext[#actualtext]
+    actualtext[#actualtext] = nil
+    stPointer = oldstPointer
+  end)
+
+end
+
 return {
+  init = init,
+  registerCommands = registerCommands,
   documentation = [[
 \begin{document}
 \pdf:structure[type=P]{%
