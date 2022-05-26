@@ -129,8 +129,8 @@ SILE.init = function ()
   end
 end
 
-SILE.require = function (dependency, pathprefix)
-  if pathprefix then
+SILE.require = function (dependency, pathprefix, deprecation_ack)
+  if pathprefix and not deprecation_ack then
     SU.warn(string.format([[
     Please don't use the path prefix mechanism; it was intended to provide
       alternate paths to override core components but never worked well and is

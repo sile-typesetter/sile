@@ -2,7 +2,7 @@ SILE.inputs.common = {
 
   init = function (_, tree)
     local class = tree.options.class or "plain"
-    local constructor = require("classes."..class)
+    local constructor = SILE.require(class, "classes", true)
     -- Shim legacy stdlib based classes (most shim work done by here)
     if constructor._deprecated then
       if constructor._base._deprecated then
