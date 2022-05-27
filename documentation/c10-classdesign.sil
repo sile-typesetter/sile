@@ -274,16 +274,16 @@ the composition of such packages into a class is not completely automatic\footno
 in other words, loading the package will not necessarily by itself change the output routines.
 You need to explicitly plug the various features provided by those packages into the output routine yourself.
 
-So, for instance,
-the \code{footnote} or \code{insertions} packages provide a \code{outputInsertions} method which needs to be called at the end of each page.
-If you want to build a document class that inherits from \code{plain} but also has footnote functionality,
-you will want your \code{endPage} method to look like this:
+So, for instance, the \code{twoside} package provides a \code{switchPage} method which needs to be called when creating a new page.
+The \code{book} class adds this call to it's \code{book:newPage()} function.
+If you want to bulid a document class that inherits from \code{plain} instead of \code{book} but want to include the \code{twoside} functionality you will want to add this yourself.
+Note this is in addition to loading and configuring the package in your class's \code{_init()} function.
 
 \begin{verbatim}
 \line
-function myClass:endPage ()
-  self:outputInsertions()
-  return plain.endPage(self)
+function myClass:newPage ()
+  self:switchPage()
+  return plain.newPage(self)
 end
 \line
 \end{verbatim}

@@ -1,6 +1,3 @@
--- Exports: The \footnote command
---          outputInsertions (call this in endPage)
-
 local function init (class, args)
 
   class:loadPackage("counters")
