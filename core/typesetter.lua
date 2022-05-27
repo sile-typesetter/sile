@@ -377,29 +377,29 @@ function SILE.defaultTypesetter:getTargetLength ()
   return self.frame:getTargetLength()
 end
 
-function SILE.defaultTypesetter:registerHook (category, frame)
+function SILE.defaultTypesetter:registerHook (category, func)
   if not self.hooks[category] then self.hooks[category] = {} end
-  self.hooks[category][1+#(self.hooks[category])] = frame
+  table.insert(self.hooks[category], func)
 end
 
 function SILE.defaultTypesetter:runHooks (category, data)
   if not self.hooks[category] then return data end
-  for i = 1, #self.hooks[category] do
-    data = self.hooks[category][i](self, data)
+  for _, func in ipairs(self.hooks[category]) do
+    data = func(self, data)
   end
   return data
 end
 
-function SILE.defaultTypesetter:registerFrameBreakHook (frame)
-  self:registerHook("framebreak", frame)
+function SILE.defaultTypesetter:registerFrameBreakHook (func)
+  self:registerHook("framebreak", func)
 end
 
-function SILE.defaultTypesetter:registerNewFrameHook (frame)
-  self:registerHook("newframe", frame)
+function SILE.defaultTypesetter:registerNewFrameHook (func)
+  self:registerHook("newframe", func)
 end
 
-function SILE.defaultTypesetter:registerPageEndHook (frame)
-  self:registerHook("pageend", frame)
+function SILE.defaultTypesetter:registerPageEndHook (func)
+  self:registerHook("pageend", func)
 end
 
 function SILE.defaultTypesetter:buildPage ()
@@ -419,7 +419,7 @@ function SILE.defaultTypesetter:buildPage ()
   end
   self.state.lastPenalty = res
   self.frame.state.pageRestart = nil
-  pageNodeList = self:runHooks("framebreak",pageNodeList)
+  pageNodeList = self:runHooks("framebreak", pageNodeList)
   self:setVerticalGlue(pageNodeList, self:getTargetLength())
   self:outputLinesToPage(pageNodeList)
   return true
