@@ -260,6 +260,7 @@ end
 local function init (_, _)
 
   local typesetter = SILE.typesetter
+
   if not typesetter.noinsertion_getTargetLength then
     typesetter.noinsertion_getTargetLength = typesetter.getTargetLength
     typesetter.getTargetLength = function (self)
@@ -268,12 +269,12 @@ local function init (_, _)
     end
   end
 
-  SILE.typesetter:registerFrameBreakHook(function (_, nl)
+  typesetter:registerFrameBreakHook(function (_, nodelist)
     pl.tablex.foreach(insertionsThisPage, SILE.insertions.commitShrinkage)
-    return nl
+    return nodelist
   end)
 
-  SILE.typesetter:registerPageEndHook(function (_, nl)
+  typesetter:registerPageEndHook(function (_)
     pl.tablex.foreach(insertionsThisPage, SILE.insertions.increaseInsertionFrame)
     for class, insertionlist in pairs(insertionsThisPage) do
       insertionlist:outputYourself()
@@ -282,7 +283,6 @@ local function init (_, _)
     if SU.debugging("insertions") then
       for _, frame in pairs(SILE.frames) do SILE.outputter:debugFrame(frame) end
     end
-    return nl
   end)
 
 end

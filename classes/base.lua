@@ -87,6 +87,18 @@ function base:_init (options)
   self:declareSettings()
   self:registerCommands()
   self:declareFrames(self.defaultFrameset)
+  self:registerPostinit(function (self_)
+      if type(self.firstContentFrame) == "string" then
+        self_.pageTemplate.firstContentFrame = self_.pageTemplate.frames[self_.firstContentFrame]
+      end
+      local frame = self_:initialFrame()
+      SILE.typesetter = SILE.defaultTypesetter(frame)
+      SILE.typesetter:registerPageEndHook(function ()
+        if SU.debugging("frames") then
+          for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
+        end
+      end)
+    end)
   -- Avoid calling this (yet) if we're the parent of some child class
   if self._name == "base" then self:post_init() end
   return self
@@ -111,16 +123,6 @@ function base:post_init ()
       self.deferredLegacyInit[i] = nil
     end
   end
-  if type(self.firstContentFrame) == "string" then
-    self.pageTemplate.firstContentFrame = self.pageTemplate.frames[self.firstContentFrame]
-  end
-  local frame = self:initialFrame()
-  SILE.typesetter = SILE.defaultTypesetter(frame)
-  SILE.typesetter:registerPageEndHook(function ()
-    if SU.debugging("frames") then
-      for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
-    end
-  end)
   self._initialized = true
   for i, func in ipairs(self.deferredInit) do
     func(self)
@@ -235,18 +237,10 @@ function base:initPackage (pack, args)
   if type(pack) == "table" then
     if pack.exports then pl.tablex.update(self, pack.exports) end
     if type(pack.init) == "function" then
-      if self._initialized then
-        pack.init(self, args)
-      else
-        self:registerPostinit(pack.init, args)
-      end
+      self:registerPostinit(pack.init, args)
     end
     if type(pack.registerCommands) == "function" then
-      if self._initialized then
-        pack.registerCommands(self)
-      else
-        self:registerPostinit(pack.registerCommands)
-      end
+      self:registerPostinit(pack.registerCommands)
     end
   end
 end

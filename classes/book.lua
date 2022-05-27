@@ -32,24 +32,23 @@ book.defaultFrameset = {
 
 function book:_init (options)
   if self._legacy and not self._deprecated then return self:_deprecator(book) end
-  plain._init(self, options)
   self:loadPackage("counters")
-  self:loadPackage("masters")
-  self:defineMaster({
+  self:loadPackage("masters", {{
       id = "right",
       firstContentFrame = self.firstContentFrame,
       frames = self.defaultFrameset
+    }})
+  self:loadPackage("twoside", {
+      oddPageMaster = "right",
+      evenPageMaster = "left"
     })
-  self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
-  self:registerPostinit(function(self_)
-      self_:mirrorMaster("right", "left")
-      if not SILE.scratch.headers then SILE.scratch.headers = {} end
-  end)
+  plain._init(self, options)
   self:loadPackage("tableofcontents")
   self:loadPackage("footnotes", {
       insertInto = "footnotes",
       stealFrom = { "content" }
     })
+  if not SILE.scratch.headers then SILE.scratch.headers = {} end
   -- Avoid calling this (yet) if we're the parant of some child class
   if self._name == "book" then self:post_init() end
   return self

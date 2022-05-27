@@ -148,7 +148,7 @@ SILE.require = function (dependency, pathprefix, deprecation_ack)
   end
   if not status then lib = require(dependency) end
   local class = SILE.documentState.documentClass
-  if not class then
+  if not class and not deprecation_ack then
     SU.warn(string.format([[
     Use of SILE.require() is only supported in documents, packages, or class
       init functions. It cannot be used before the class is instantiated.
