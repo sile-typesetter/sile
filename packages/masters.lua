@@ -17,13 +17,14 @@ local function defineMaster (_, args)
       SILE.scratch.masters[args.id].frames[frame] = SILE.newFrame(spec)
     end
   end
-  SILE.frames = { page = SILE.frames.page }
   SILE.scratch.masters[args.id].firstContentFrame = SILE.scratch.masters[args.id].frames[args.firstContentFrame]
 end
 
 local function defineMasters (self, list)
   if list then
-    for i = 1, #list do defineMaster(self, list[i]) end
+    for i = 1, #list do
+      defineMaster(self, list[i])
+    end
   end
 end
 
