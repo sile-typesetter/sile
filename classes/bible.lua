@@ -185,18 +185,22 @@ function bible:_init(options)
     end
     return _gutterwidth
   end)
-  plain._init(self, options)
   self:loadPackage("masters")
+  plain._init(self, options)
   self:loadPackage("infonode")
   self:loadPackage("chapterverse")
-  if self.options.twocolumns then
-    self:twoColumnMaster()
-    SILE.settings:set("linebreak.tolerance", 9000)
-  else
-    self:singleColumnMaster()
-  end
-  self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
-  self.pageTemplate = SILE.scratch.masters["right"]
+  self:registerPostinit(function (self_)
+    if self_.options.twocolumns then
+      self_:twoColumnMaster()
+      SILE.settings:set("linebreak.tolerance", 9000)
+    else
+      self_:singleColumnMaster()
+    end
+  end)
+  self:loadPackage("twoside", {
+    oddPageMaster = "right",
+    evenPageMaster = "left"
+  })
   -- Avoid calling this (yet) if we're the parant of some child class
   if self._name == "bible" then self:post_init() end
   return self
