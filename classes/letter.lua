@@ -1,17 +1,20 @@
 local plain = require("classes.plain")
+
 local letter = pl.class(plain)
 letter._name = "letter"
 
-function letter:_init (options)
-  if self._legacy and not self._deprecated then return self:_deprecator(letter) end
-  plain._init(self, options)
-  self:declareFrame("content", {
+letter.defaultFrameset = {
+  content = {
       left = "5%pw",
       right = "95%pw",
       top = "2in",
       bottom = "90%ph"
-    })
-  self.pageTemplate.firstContentFrame = self.pageTemplate.frames["content"]
+    }
+}
+
+function letter:_init (options)
+  if self._legacy and not self._deprecated then return self:_deprecator(letter) end
+  plain._init(self, options)
   SILE.scratch.letter = {
     sender = nil,
     date = nil,

@@ -33,7 +33,16 @@ local skips = {
 
 function plain:_init (options)
   if self._legacy and not self._deprecated then return self:_deprecator(plain) end
-  if not options then options = {} end
+  base._init(self, options)
+  self:loadPackage("bidi")
+  self:loadPackage("folio")
+  -- Avoid calling this (yet) if we're the parent of some child class
+  if self._name == "plain" then self:post_init() end
+  return self
+end
+
+function plain:declareOptions ()
+  base.declareOptions(self)
   self:declareOption("direction", function (_, value)
     if value then
       SILE.documentState.direction = value
@@ -45,12 +54,11 @@ function plain:_init (options)
     end
     return SILE.documentState.direction
   end)
-  base._init(self, options)
-  self:loadPackage("bidi")
-  self:loadPackage("folio")
-  -- Avoid calling this (yet) if we're the parent of some child class
-  if self._name == "plain" then self:post_init() end
-  return self
+end
+
+function plain:setOptions (options)
+  -- TODO: set a default direction here?
+  base.setOptions(self, options)
 end
 
 function plain:declareSettings ()

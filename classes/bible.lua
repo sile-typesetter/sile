@@ -171,20 +171,6 @@ local _gutterwidth
 
 function bible:_init(options)
   if self._legacy and not self._deprecated then return self:_deprecator(bible) end
-  options.twocolumns = options.twocolumns or false
-  options.gutter = options.gutter or "3%pw"
-  self:declareOption("twocolumns", function(_, value)
-    if value then
-      _twocolumns = value
-    end
-    return _twocolumns
-  end)
-  self:declareOption("gutter", function(_, value)
-    if value then
-      _gutterwidth = value
-    end
-    return _gutterwidth
-  end)
   self:loadPackage("masters")
   plain._init(self, options)
   self:loadPackage("infonode")
@@ -233,6 +219,28 @@ function bible:endPage ()
       end)
   end
   return plain.endPage(self)
+end
+
+function bible:declareOptions ()
+  plain.declareOptions(self)
+  self:declareOption("twocolumns", function(_, value)
+    if value then
+      _twocolumns = value
+    end
+    return _twocolumns
+  end)
+  self:declareOption("gutter", function(_, value)
+    if value then
+      _gutterwidth = value
+    end
+    return _gutterwidth
+  end)
+end
+
+function bible:setOptions (options)
+  options.twocolumns = options.twocolumns or false
+  options.gutter = options.gutter or "3%pw"
+  plain.setOptions(self, options)
 end
 
 bible.registerCommands = function (self)

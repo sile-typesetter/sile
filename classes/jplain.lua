@@ -13,22 +13,11 @@ jplain.defaultFrameset.content = {
   linecount = 30
 }
 
-function jplain:_init (options)
-  if self._legacy and not self._deprecated then return self:_deprecator(jplain) end
-  if not options then options = {} end
-  options.layout = options.layout or "yoko"
-  self:declareOption("layout", function (_, value)
-    if value then
-      self.layout = value
-      if value == "tate" then self:loadPackage("tate") end
-    end
-    return self.layout
-  end)
-  plain._init(self, options)
+function jplain:_j_common ()
   self:registerPostinit(function (class)
-    class:bidiDisableTypesetter(SILE.typesetter)
-    class:bidiDisableTypesetter(SILE.defaultTypesetter)
-  end)
+      class:bidiDisableTypesetter(SILE.typesetter)
+      class:bidiDisableTypesetter(SILE.defaultTypesetter)
+    end)
   self:loadPackage("font-fallback")
   SILE.call("font:add-fallback", { family = "Noto Sans CJK JP" })
   SILE.languageSupport.loadLanguage("ja")
@@ -36,9 +25,31 @@ function jplain:_init (options)
   self.defaultFrameset.content.tate = self.options.layout == "tate"
   self:declareHanmenFrame("content", self.defaultFrameset.content)
   SILE.settings:set("document.parindent", SILE.nodefactory.glue("10pt"))
+end
+
+function jplain:_init (options)
+  if self._legacy and not self._deprecated then return self:_deprecator(jplain) end
+  plain._init(self, options)
+  self:_j_common()
   -- Avoid calling this (yet) if we're the parent of some child class
   if self._name == "jplain" then self:post_init() end
   return self
+end
+
+function jplain:declareOptions ()
+  plain.declareOptions(self)
+  self:declareOption("layout", function (_, value)
+    if value then
+      self.layout = value
+      if value == "tate" then self:loadPackage("tate") end
+    end
+    return self.layout
+  end)
+end
+
+function jplain:setOptions (options)
+  options.layout = options.layout or "yoko"
+  plain.setOptions(self, options)
 end
 
 return jplain

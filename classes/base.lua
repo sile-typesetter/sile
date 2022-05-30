@@ -53,36 +53,9 @@ end
 
 function base:_init (options)
   if self._legacy and not self._deprecated then return self:_deprecator(base) end
-  if not options or self == options then options = {} end
-  options.papersize = options.papersize or "a4"
-  self:declareOption("class", function (_, name)
-    if name then
-      if self._legacy then
-        self._name = name
-      elseif name ~= self._name then
-        SU.error("Cannot change class name after instantiation, derive a new class instead.")
-      end
-    end
-    return self._name
-  end)
-  self:declareOption("papersize", function (_, size)
-    if size then
-      self.papersize = size
-      SILE.documentState.paperSize = SILE.papersize(size)
-      SILE.documentState.orgPaperSize = SILE.documentState.paperSize
-      SILE.newFrame({
-        id = "page",
-        left = 0,
-        top = 0,
-        right = SILE.documentState.paperSize[1],
-        bottom = SILE.documentState.paperSize[2]
-      })
-    end
-    return self.papersize
-  end)
-  for k, v in pairs(options) do
-    self.options[k] = v
-  end
+  if self == options then options = {} end
+  self:declareOptions()
+  self:setOptions(options)
   SILE.outputter:init(self)
   self:declareSettings()
   self:registerCommands()
@@ -194,17 +167,43 @@ function base:_deprecator (parent)
 end
 
 function base:setOptions (options)
+  options = options or {}
+  options.papersize = options.papersize or "a4"
   for option, value in pairs(options) do
-    if type(self.options[option]) == "function" then
-      self.options[option](value)
-    else
-      SU.warn("Attempted to set undeclared class option "..option)
-    end
+    self.options[option] = value
   end
 end
 
 function base:declareOption (option, setter)
   self.options[option] = setter
+end
+
+function base:declareOptions ()
+  self:declareOption("class", function (_, name)
+    if name then
+      if self._legacy then
+        self._name = name
+      elseif name ~= self._name then
+        SU.error("Cannot change class name after instantiation, derive a new class instead.")
+      end
+    end
+    return self._name
+  end)
+  self:declareOption("papersize", function (_, size)
+    if size then
+      self.papersize = size
+      SILE.documentState.paperSize = SILE.papersize(size)
+      SILE.documentState.orgPaperSize = SILE.documentState.paperSize
+      SILE.newFrame({
+        id = "page",
+        left = 0,
+        top = 0,
+        right = SILE.documentState.paperSize[1],
+        bottom = SILE.documentState.paperSize[2]
+      })
+    end
+    return self.papersize
+  end)
 end
 
 function base.declareSettings (_)

@@ -1,4 +1,6 @@
 local book = require("classes.book")
+local jplain = require("classes.jplain")
+
 local jbook = pl.class(book)
 jbook._name = "jbook"
 
@@ -33,27 +35,15 @@ jbook.defaultFrameset = {
 
 function jbook:_init (options)
   if self._legacy and not self._deprecated then return self:_deprecator(jbook) end
-  if not options then options = {} end
-  options.layout = options.layout or "yoko"
-  self:declareOption("layout", function (_, value)
-    if value then
-      self.layout = value
-      if value == "tate" then self:loadPackage("tate") end
-    end
-    return self.layout
-  end)
   book._init(self, options)
-  self:registerPostinit(function ()
-      SILE.call("bidi-off")
-    end)
-  SILE.languageSupport.loadLanguage("ja")
-  self:loadPackage("hanmenkyoshi")
-  self.defaultFrameset.content.tate = self.options.layout == "tate"
-  self:declareHanmenFrame("content", self.defaultFrameset.content)
-  SILE.settings:set("document.parindent", SILE.nodefactory.glue("10pt"))
+  jplain._j_common(self)
   -- Avoid calling this (yet) if we're the parent of some child class
   if self._name == "jbook" then self:post_init() end
   return self
 end
+
+jbook.declareOptions = jplain.declareOptions
+
+jbook.setOptions = jplain.setOptions
 
 return jbook
