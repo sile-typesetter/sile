@@ -37,8 +37,6 @@ function jbook:_init (options)
   if self._legacy and not self._deprecated then return self:_deprecator(jbook) end
   book._init(self, options)
   jplain._j_common(self)
-  -- Avoid calling this (yet) if we're the parent of some child class
-  if self._name == "jbook" then self:post_init() end
   return self
 end
 

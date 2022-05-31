@@ -27,8 +27,6 @@ function markdown:_init (options)
   book._init(self, options)
   self:loadPackage("url")
   self:loadPackage("image")
-  -- Avoid calling this (yet) if we're the parent of some child class
-  if self._name == "markdown" then self:post_init() end
   return self
 end
 

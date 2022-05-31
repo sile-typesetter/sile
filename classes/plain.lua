@@ -36,8 +36,6 @@ function plain:_init (options)
   base._init(self, options)
   self:loadPackage("bidi")
   self:loadPackage("folio")
-  -- Avoid calling this (yet) if we're the parent of some child class
-  if self._name == "plain" then self:post_init() end
   return self
 end
 

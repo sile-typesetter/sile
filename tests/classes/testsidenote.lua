@@ -19,7 +19,6 @@ function testsidenote:_init (options)
     insertInto = { frame = "sidenotes", ratio = 0 },
     stealFrom = {  },
   })
-  self:post_init()
   return self
 end
 

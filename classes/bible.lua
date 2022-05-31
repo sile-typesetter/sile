@@ -187,8 +187,6 @@ function bible:_init(options)
     oddPageMaster = "right",
     evenPageMaster = "left"
   })
-  -- Avoid calling this (yet) if we're the parant of some child class
-  if self._name == "bible" then self:post_init() end
   return self
 end
 

@@ -72,8 +72,6 @@ function base:_init (options)
         end
       end)
     end)
-  -- Avoid calling this (yet) if we're the parent of some child class
-  if self._name == "base" then self:post_init() end
   return self
 end
 
@@ -87,9 +85,7 @@ function base:_post_init ()
   end
 end
 
--- SILE's deffered inits, migrate to Penlight's builtin when it's not used for
--- deprecation of the old system
-function base:post_init ()
+function base:start ()
   if self._legacy then
     for i, func in ipairs(self.deferredLegacyInit) do
       func(self)
@@ -156,7 +152,6 @@ function base:_deprecator (parent)
       self_:registerLegacyPostinit(self_.init, options_)
     end
     parent._init(self_, options_)
-    self_:post_init()
     return self_
   end
   self._deprecated = true

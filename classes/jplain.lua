@@ -31,8 +31,6 @@ function jplain:_init (options)
   if self._legacy and not self._deprecated then return self:_deprecator(jplain) end
   plain._init(self, options)
   self:_j_common()
-  -- Avoid calling this (yet) if we're the parent of some child class
-  if self._name == "jplain" then self:post_init() end
   return self
 end
 

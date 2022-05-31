@@ -21,8 +21,6 @@ function letter:_init (options)
     recipient = "",
     salutation = ""
   }
-  -- Avoid calling this (yet) if we're the parent of some child class
-  if self._name == "letter" then self:post_init() end
   return self
 end
 
