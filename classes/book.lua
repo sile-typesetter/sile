@@ -118,14 +118,20 @@ book.registerCommands = function (self)
     if SU.boolean(options.numbering, true) then
       if options.prenumber then
         if SILE.Commands[options.prenumber .. ":"  .. lang] then
+          local nonlocal = options.prenumber
           options.prenumber = options.prenumber .. ":" .. lang
+          SU.warn("Please output appropriate localizations in your \\" .. nonlocal .. " function using Fluent.")
+          SU.deprecated("\\" .. options.prenumber, "\\" .. nonlocal, "0.13.0", "0.14.0")
         end
         SILE.call(options.prenumber)
       end
       SILE.call("show-multilevel-counter", { id = "sectioning" })
       if options.postnumber then
         if SILE.Commands[options.postnumber .. ":" .. lang] then
+          local nonlocal = options.postnumber
           options.postnumber = options.postnumber .. ":" .. lang
+          SU.warn("Please set appropriate localizations in your \\" .. nonlocal .. " function using Fluent.")
+          SU.deprecated("\\" .. options.postnumber, "\\" .. nonlocal, "0.13.0", "0.14.0")
         end
         SILE.call(options.postnumber)
       end

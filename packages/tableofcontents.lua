@@ -138,8 +138,8 @@ SILE.registerCommand("tocentry", function (options, content)
 end)
 
 SILE.registerCommand("tableofcontents:title", function (_, _)
-  local lang = SILE.settings:get("document.language")
-  SILE.call("tableofcontents:title:" .. lang)
+  SU.deprecated("\\tableofcontents:title", "\\fluent{toc-title}", "0.13.0", "0.14.0")
+  SILE.call("fluent", {}, { "toc-title" })
 end)
 
 return {
