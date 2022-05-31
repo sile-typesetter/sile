@@ -14,8 +14,6 @@ function triglot:_init (options)
   self:loadPackage("parallel", { frames = { left = "a", middle = "b", right= "c" } })
   SILE.settings:set("linebreak.tolerance", 5000)
   SILE.settings:set("document.parindent", SILE.nodefactory.glue())
-  -- Avoid calling this (yet) if we're the parent of some child class
-  if self._name == "triglot" then self:post_init() end
   return self
 end
 

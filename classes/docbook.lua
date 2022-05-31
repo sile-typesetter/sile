@@ -16,8 +16,6 @@ function docbook:_init (options)
       trTag = "row",
       tdTag = "entry"
     })
-  -- Avoid calling this (yet) if we're the parent of some child class
-  if self._name == "docbook" then self:post_init() end
   return self
 end
 

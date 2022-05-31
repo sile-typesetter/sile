@@ -25,9 +25,22 @@ plain.defaultFrameset = {
 }
 plain.firstContentFrame = "content"
 
+local skips = {
+  small = "3pt plus 1pt minus 1pt",
+  med = "6pt plus 2pt minus 2pt",
+  big = "12pt plus 4pt minus 4pt"
+}
+
 function plain:_init (options)
   if self._legacy and not self._deprecated then return self:_deprecator(plain) end
-  if not options then options = {} end
+  base._init(self, options)
+  self:loadPackage("bidi")
+  self:loadPackage("folio")
+  return self
+end
+
+function plain:declareOptions ()
+  base.declareOptions(self)
   self:declareOption("direction", function (_, value)
     if value then
       SILE.documentState.direction = value
@@ -39,12 +52,23 @@ function plain:_init (options)
     end
     return SILE.documentState.direction
   end)
-  base._init(self, options)
-  self:loadPackage("bidi")
-  self:loadPackage("folio")
-  -- Avoid calling this (yet) if we're the parent of some child class
-  if self._name == "plain" then self:post_init() end
-  return self
+end
+
+function plain:setOptions (options)
+  -- TODO: set a default direction here?
+  base.setOptions(self, options)
+end
+
+function plain:declareSettings ()
+  base.declareSettings(self)
+  for k, v in pairs(skips) do
+    SILE.settings:declare({
+        parameter = "plain." .. k .. "skipamount",
+        type = "vglue",
+        default = SILE.nodefactory.vglue(v),
+        help = "The amount of a \\" .. k .. "skip"
+      })
+  end
 end
 
 function plain:registerCommands ()
@@ -70,19 +94,7 @@ function plain:registerCommands ()
     SILE.process(content)
   end, "Do add an indent to the start of this paragraph, even if previously told otherwise")
 
-  local skips = {
-    small = "3pt plus 1pt minus 1pt",
-    med = "6pt plus 2pt minus 2pt",
-    big = "12pt plus 4pt minus 4pt"
-  }
-
-  for k, v in pairs(skips) do
-    SILE.settings:declare({
-        parameter = "plain." .. k .. "skipamount",
-        type = "vglue",
-        default = SILE.nodefactory.vglue(v),
-        help = "The amount of a \\" .. k .. "skip"
-      })
+  for k, _ in pairs(skips) do
     SILE.registerCommand(k .. "skip", function (_, _)
       SILE.typesetter:leaveHmode()
       SILE.typesetter:pushExplicitVglue(SILE.settings:get("plain." .. k .. "skipamount"))

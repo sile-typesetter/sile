@@ -19,7 +19,7 @@ local handlePandocArgs = function (options)
     options.lang = nil
   end
   if options.classes then
-    for _, class in pairs(options.classes:split(",")) do
+    for _, class in pairs(pl.stringx.split(options.classes, ",")) do
       if class == "unnumbered" then
         SU.debug("pandoc", "Convert unnumbered class to legacy heading function option")
         options.numbering = false

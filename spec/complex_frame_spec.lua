@@ -26,11 +26,11 @@ tClass.firstContentFrame = "a"
 
 function tClass:_init ()
   base._init(self)
-  self:post_init()
   return self
 end
 
 SILE.documentState.documentClass = tClass()
+SILE.documentState.documentClass:start()
 
 describe("Overlapping frame definitions", function()
   it("should work", function()

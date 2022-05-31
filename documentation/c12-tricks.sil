@@ -37,7 +37,6 @@ function diglot:_init(options)
                 top = "top(a)", bottom = "bottom(a)" \});
     diglot:declareFrame("folio",\{left = "left(a)", right = "right(b)",
                 top = "bottom(a)+3\%ph",bottom = "bottom(a)+8\%ph" \});
-  if self._name == "diglot" then self:post_init() end
   return self
 end
 \end{verbatim}

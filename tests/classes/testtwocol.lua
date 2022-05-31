@@ -14,7 +14,6 @@ function testtwocol:_init (options)
   self:declareFrame("gutter", {left = "right(contentA)", right = "left(contentB)", width = gutterWidth })
   self:declareFrame("footnotes", { left="left(contentB)", right = "right(contentB)", height = "0", bottom="83.3%ph"})
   self:loadPackage("footnotes", { insertInto = "footnotes", stealFrom = { contentB = 1 } } )
-  self:post_init()
   return self
 end
 

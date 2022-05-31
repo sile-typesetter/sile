@@ -49,8 +49,6 @@ function book:_init (options)
       stealFrom = { "content" }
     })
   if not SILE.scratch.headers then SILE.scratch.headers = {} end
-  -- Avoid calling this (yet) if we're the parant of some child class
-  if self._name == "book" then self:post_init() end
   return self
 end
 

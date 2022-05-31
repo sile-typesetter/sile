@@ -11,8 +11,6 @@ function diglot:_init (options)
   self:declareFrame("b",    { left = "52%pw",   right = "100%pw-left(a)", top = "top(a)",         bottom = "bottom(a)"      })
   self:declareFrame("folio",{ left = "left(a)", right = "right(b)",       top = "bottom(a)+3%ph", bottom = "bottom(a)+8%ph" })
   self:loadPackage("parallel", { frames = { left = "a", right = "b" } })
-  -- Avoid calling this (yet) if we're the parent of some child class
-  if self._name == "diglot" then self:post_init() end
   return self
 end
 

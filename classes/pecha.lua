@@ -42,8 +42,6 @@ function pecha:_init(options)
   SILE.settings:set("document.lskip", SILE.nodefactory.hfillglue())
   SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
   SILE.settings:set("document.parindent", SILE.nodefactory.glue())
-  -- Avoid calling this (yet) if we're the parent of some child class
-  if self._name == "pecha" then self:post_init() end
   return self
 end
 

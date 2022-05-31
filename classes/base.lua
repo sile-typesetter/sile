@@ -53,39 +53,12 @@ end
 
 function base:_init (options)
   if self._legacy and not self._deprecated then return self:_deprecator(base) end
-  if not options or self == options then options = {} end
-  options.papersize = options.papersize or "a4"
-  self:declareOption("class", function (_, name)
-    if name then
-      if self._legacy then
-        self._name = name
-      elseif name ~= self._name then
-        SU.error("Cannot change class name after instantiation, derive a new class instead.")
-      end
-    end
-    return self._name
-  end)
-  self:declareOption("papersize", function (_, size)
-    if size then
-      self.papersize = size
-      SILE.documentState.paperSize = SILE.papersize(size)
-      SILE.documentState.orgPaperSize = SILE.documentState.paperSize
-      SILE.newFrame({
-        id = "page",
-        left = 0,
-        top = 0,
-        right = SILE.documentState.paperSize[1],
-        bottom = SILE.documentState.paperSize[2]
-      })
-    end
-    return self.papersize
-  end)
-  for k, v in pairs(options) do
-    self.options[k] = v
-  end
-  SILE.outputter:init(self)
-  self:declareSettings()
+  if self == options then options = {} end
+  self:declareOptions()
   self:registerCommands()
+  self:declareSettings()
+  self:setOptions(options)
+  SILE.outputter:init(self)
   self:declareFrames(self.defaultFrameset)
   self:registerPostinit(function (self_)
       if type(self.firstContentFrame) == "string" then
@@ -99,8 +72,6 @@ function base:_init (options)
         end
       end)
     end)
-  -- Avoid calling this (yet) if we're the parent of some child class
-  if self._name == "base" then self:post_init() end
   return self
 end
 
@@ -114,9 +85,7 @@ function base:_post_init ()
   end
 end
 
--- SILE's deffered inits, migrate to Penlight's builtin when it's not used for
--- deprecation of the old system
-function base:post_init ()
+function base:start ()
   if self._legacy then
     for i, func in ipairs(self.deferredLegacyInit) do
       func(self)
@@ -183,7 +152,6 @@ function base:_deprecator (parent)
       self_:registerLegacyPostinit(self_.init, options_)
     end
     parent._init(self_, options_)
-    self_:post_init()
     return self_
   end
   self._deprecated = true
@@ -194,17 +162,43 @@ function base:_deprecator (parent)
 end
 
 function base:setOptions (options)
+  options = options or {}
+  options.papersize = options.papersize or "a4"
   for option, value in pairs(options) do
-    if type(self.options[option]) == "function" then
-      self.options[option](value)
-    else
-      SU.warn("Attempted to set undeclared class option "..option)
-    end
+    self.options[option] = value
   end
 end
 
 function base:declareOption (option, setter)
   self.options[option] = setter
+end
+
+function base:declareOptions ()
+  self:declareOption("class", function (_, name)
+    if name then
+      if self._legacy then
+        self._name = name
+      elseif name ~= self._name then
+        SU.error("Cannot change class name after instantiation, derive a new class instead.")
+      end
+    end
+    return self._name
+  end)
+  self:declareOption("papersize", function (_, size)
+    if size then
+      self.papersize = size
+      SILE.documentState.paperSize = SILE.papersize(size)
+      SILE.documentState.orgPaperSize = SILE.documentState.paperSize
+      SILE.newFrame({
+        id = "page",
+        left = 0,
+        top = 0,
+        right = SILE.documentState.paperSize[1],
+        bottom = SILE.documentState.paperSize[2]
+      })
+    end
+    return self.papersize
+  end)
 end
 
 function base.declareSettings (_)
@@ -236,11 +230,11 @@ end
 function base:initPackage (pack, args)
   if type(pack) == "table" then
     if pack.exports then pl.tablex.update(self, pack.exports) end
+    if type(pack.registerCommands) == "function" then
+      pack.registerCommands(self)
+    end
     if type(pack.init) == "function" then
       self:registerPostinit(pack.init, args)
-    end
-    if type(pack.registerCommands) == "function" then
-      self:registerPostinit(pack.registerCommands)
     end
   end
 end
@@ -265,8 +259,8 @@ function base:registerCommands ()
     if (options["src"]) then
       local script, _ = require(options["src"])
       if type(script) == "table" then
-        if type(script.init) == "function" then script.init(self, options) end
         if type(script.registerCommands) == "function" then script.registerCommands(self) end
+        if type(script.init) == "function" then script.init(self, options) end
       end
     else
       local func, err = load(content[1])

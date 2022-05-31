@@ -166,7 +166,6 @@ For example to load the \code{infonode} package into our class, we could add thi
 function bringhurst:_init(options)
   book._init(self, options)
   self:loadPackage("infonode")
-  self:post_init()
   return self
 end
 
@@ -174,9 +173,7 @@ end
 \end{verbatim}
 
 Note that the official SILE classes have some extra tooling to handle legacy class models trying to inherit from them.
-You don't need the deprecation shims if your own classes when following these examples.
-The extra step of manually calling post_init() only if the current class name matches ourselves allows this to be used as a parent class.
-This extra step will also become unneccessary when we remove the shims supporting legacy classes.
+You don't need those deprecation shims if your own classes when following these examples.
 
 \section{Defining Commands}
 
