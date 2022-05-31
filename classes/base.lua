@@ -55,10 +55,10 @@ function base:_init (options)
   if self._legacy and not self._deprecated then return self:_deprecator(base) end
   if self == options then options = {} end
   self:declareOptions()
+  self:registerCommands()
+  self:declareSettings()
   self:setOptions(options)
   SILE.outputter:init(self)
-  self:declareSettings()
-  self:registerCommands()
   self:declareFrames(self.defaultFrameset)
   self:registerPostinit(function (self_)
       if type(self.firstContentFrame) == "string" then
@@ -235,11 +235,11 @@ end
 function base:initPackage (pack, args)
   if type(pack) == "table" then
     if pack.exports then pl.tablex.update(self, pack.exports) end
+    if type(pack.registerCommands) == "function" then
+      pack.registerCommands(self)
+    end
     if type(pack.init) == "function" then
       self:registerPostinit(pack.init, args)
-    end
-    if type(pack.registerCommands) == "function" then
-      self:registerPostinit(pack.registerCommands)
     end
   end
 end
@@ -264,8 +264,8 @@ function base:registerCommands ()
     if (options["src"]) then
       local script, _ = require(options["src"])
       if type(script) == "table" then
-        if type(script.init) == "function" then script.init(self, options) end
         if type(script.registerCommands) == "function" then script.registerCommands(self) end
+        if type(script.init) == "function" then script.init(self, options) end
       end
     else
       local func, err = load(content[1])
