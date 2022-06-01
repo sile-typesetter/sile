@@ -76,6 +76,9 @@ local function init (class, _)
   class:loadPackage("infonode")
   class:loadPackage("leaders")
 
+  class:registerHook("endpage", class.moveTocNodes)
+  class:registerHook("finish", class.writeToc)
+
 class:registerPostinit(function ()
   SILE.doTexlike([[%
 \define[command=tableofcontents:notocmessage]{\tableofcontents:headerfont{\fluent{toc-not-generated}}}%

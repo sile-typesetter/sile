@@ -59,7 +59,6 @@ function book:newPage ()
 end
 
 function book:endPage ()
-  self:moveTocNodes()
   if (self:oddPage() and SILE.scratch.headers.right) then
     SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
       SILE.settings:toplevelState()
@@ -86,7 +85,6 @@ end
 
 function book:finish ()
   local ret = plain.finish(self)
-  self:writeToc()
   return ret
 end
 
