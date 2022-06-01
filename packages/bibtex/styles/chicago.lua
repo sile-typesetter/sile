@@ -1,4 +1,4 @@
-local Bibliography = require("packages.bibliography")
+local Bibliography = require("packages.bibtex.bibliography")
 
 return pl.tablex.merge(Bibliography.Style, {
   CitationStyle = Bibliography.CitationStyles.AuthorYear,
