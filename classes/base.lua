@@ -36,6 +36,10 @@ base.options = setmetatable({}, {
       end
     end
   })
+base.hooks = {
+  endpage = {},
+  finish = {},
+}
 
 -- Part of stdlib deprecation hack: class constructors in the new model should
 -- *never* be called with an id. If it does we know somebody is using the
@@ -253,6 +257,17 @@ function base:registerPostinit (func, args)
     end)
 end
 
+function base:registerHook (category, func)
+  table.insert(self.hooks[category], func)
+end
+
+function base:runHooks (category, args)
+  for _, func in ipairs(self.hooks[category]) do
+    SU.debug("classhooks", "Running hook from " .. category, args and "with args " .. #args)
+    func(self, args)
+  end
+end
+
 function base:registerCommands ()
 
   SILE.registerCommand("script", function (options, content)
@@ -414,11 +429,12 @@ function base:newPage ()
   return self:initialFrame()
 end
 
-function base.endPage (_)
+function base:endPage ()
   SILE.typesetter.frame:leave(SILE.typesetter)
   -- I'm trying to call up a new frame here, don't cause a page break in the current one
   -- SILE.typesetter:leaveHmode()
   -- Any other output-routiney things will be done here by inheritors
+  self:runHooks("endpage")
 end
 
 function base:finish ()
@@ -437,6 +453,7 @@ function base:finish ()
       assert(SILE.typesetter:isQueueEmpty(), "queues not empty")
     end
   SILE.outputter:finish()
+  self:runHooks("finish")
 end
 
 return base
