@@ -234,6 +234,9 @@ end
 function base:initPackage (pack, args)
   if type(pack) == "table" then
     if pack.exports then pl.tablex.update(self, pack.exports) end
+    if type(pack.declareSettings) == "function" then
+      pack.declareSettings(self)
+    end
     if type(pack.registerCommands) == "function" then
       pack.registerCommands(self)
     end
@@ -274,6 +277,7 @@ function base:registerCommands ()
     if (options["src"]) then
       local script, _ = require(options["src"])
       if type(script) == "table" then
+        if type(script.declareSettings) == "function" then script.declareSettings(self) end
         if type(script.registerCommands) == "function" then script.registerCommands(self) end
         if type(script.init) == "function" then script.init(self, options) end
       end
