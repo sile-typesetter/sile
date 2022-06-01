@@ -27,7 +27,7 @@ local plain = require("classes.plain");
 local diglot = pl.class(plain)
 diglot._name = "diglot"
 
-function diglot:_init(options)
+function diglot:_init (options)
   plain._init(self, options)
   self:loadPackage("counters")
     SILE.scratch.counters.folio = \{ value = 1, display = "arabic" \};
@@ -124,10 +124,10 @@ we need to ensure, at the start of each document and the start of each page,
 that each typesetter is linked to the appropriate frame:
 
 \begin{verbatim}
-diglot.init = function(self)
-  diglot.leftTypesetter:init(SILE.getFrame("a"))
-  diglot.rightTypesetter:init(SILE.getFrame("b"))
-  return SILE.classes.base.init(self)
+function diglot:_init (options)
+  self.leftTypesetter:init(SILE.getFrame("a"))
+  self.rightTypesetter:init(SILE.getFrame("b"))
+  return plain.init(self)
 end
 \end{verbatim}
 
