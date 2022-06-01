@@ -1,4 +1,5 @@
 local plain = require("classes.plain")
+
 local pecha = pl.class(plain)
 pecha._name = "pecha"
 

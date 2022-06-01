@@ -369,5 +369,4 @@ function plain:endPage ()
   return base.endPage(self)
 end
 
-SILE.classes.plain = plain
 return plain

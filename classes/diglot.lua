@@ -1,4 +1,5 @@
 local plain = require("classes.plain")
+
 local diglot = pl.class(plain)
 diglot._name = "diglot"
 
