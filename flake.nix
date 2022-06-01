@@ -85,6 +85,13 @@
         nativeBuildInputs = oldAttr.nativeBuildInputs ++ [
           pkgs.autoreconfHook
         ];
+        buildInputs = oldAttr.buildInputs ++ [
+          (pkgs.lua.withPackages(ps: with ps; [
+            cldr
+            fluent
+            loadkit
+          ]))
+        ];
         # TODO: This switch between the hooks can be moved to Nixpkgs'
         postPatch = oldAttr.preConfigure;
         preConfigure = "";
