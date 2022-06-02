@@ -37,8 +37,8 @@ local function registerCommands (_)
   end)
 
   SILE.registerCommand(tableTag, function(_, content)
-    SILE.scratch.simpletable.tables[#SILE.scratch.simpletable.tables+1] = {}
-    local tbl = SILE.scratch.simpletable.tables[#SILE.scratch.simpletable.tables]
+    local tbl = {}
+    table.insert(SILE.scratch.simpletable.tables, tbl)
     SILE.settings:temporarily(function ()
       SILE.settings:set("document.parindent", SILE.nodefactory.glue())
       SILE.process(content)
@@ -75,7 +75,7 @@ local function registerCommands (_)
       end
     end)
     SILE.typesetter:leaveHmode()
-    SILE.scratch.simpletable.tables[#SILE.scratch.simpletable.tables] = nil
+    table.remove(SILE.scratch.simpletable.tables)
   end)
 
 end
