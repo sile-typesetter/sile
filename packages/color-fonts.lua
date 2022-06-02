@@ -1,6 +1,6 @@
-SILE.shapers.harfbuzzWithColor = pl.class(SILE.shapers.harfbuzz)
+local harfbuzzWithColor = pl.class(SILE.shapers.harfbuzz)
 
-function SILE.shapers.harfbuzzWithColor:shapeToken (str, options)
+function harfbuzzWithColor:shapeToken (str, options)
   local ot = require("core.opentype-parser")
   if not options.family then return {} end
   local face = SILE.font.cache(options, SILE.shaper.getFace)
@@ -47,7 +47,7 @@ function SILE.shapers.harfbuzzWithColor:shapeToken (str, options)
   return items
 end
 
-function SILE.shapers.harfbuzzWithColor:createNnodes (token, options)
+function harfbuzzWithColor:createNnodes (token, options)
     local items, _ = self:shapeToken(token, options)
     if #items < 1 then return {} end
     local lang = options.language
@@ -86,7 +86,7 @@ end
 
 return {
   init = function (_, _)
-    SILE.shaper = SILE.shapers.harfbuzzWithColor()
+    SILE.shaper = harfbuzzWithColor()
   end,
   documentation = [[
 \begin{document}
