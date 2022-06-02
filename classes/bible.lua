@@ -183,16 +183,7 @@ function bible:_init(options)
       self_:singleColumnMaster()
     end
   end)
-  self:loadPackage("twoside", {
-    oddPageMaster = "right",
-    evenPageMaster = "left"
-  })
   return self
-end
-
-function bible:newPage ()
-  self:switchPage()
-  return plain.newPage(self)
 end
 
 function bible:endPage ()

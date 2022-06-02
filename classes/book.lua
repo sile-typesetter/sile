@@ -52,11 +52,6 @@ function book:_init (options)
   return self
 end
 
-function book:newPage ()
-  self:switchPage()
-  return plain.newPage(self)
-end
-
 function book:endPage ()
   if (self:oddPage() and SILE.scratch.headers.right) then
     SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()

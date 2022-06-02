@@ -262,6 +262,11 @@ function base:registerPostinit (func, args)
 end
 
 function base:registerHook (category, func)
+  for _, func_ in ipairs(self.hooks[category]) do
+    if func_ == func then
+      return SU.warn("Attempted to set the same function hook twice, probably unintended, skipping.")
+    end
+  end
   table.insert(self.hooks[category], func)
 end
 
