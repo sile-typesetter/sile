@@ -1,4 +1,37 @@
--- Folios class
+local function outputFolio (class, frame)
+      if not frame then frame = "folio" end
+      local folio = class:formatCounter(SILE.scratch.counters.folio)
+      io.stderr:write("[" .. folio .. "] ")
+      if SILE.scratch.counters.folio.off then
+        if SILE.scratch.counters.folio.off == 2 then
+          SILE.scratch.counters.folio.off = false
+        end
+      else
+        local folioFrame = SILE.getFrame(frame)
+        if (folioFrame) then
+          SILE.typesetNaturally(folioFrame, function ()
+            SILE.settings:pushState()
+            -- Restore the settings to the top of the queue, which should be the document #986
+            SILE.settings:toplevelState()
+
+            -- Reset settings the document may have but should not be applied to footnotes
+            -- See also same resets in footnote package
+            for _, v in ipairs({
+              "current.hangAfter",
+              "current.hangIndent",
+              "linebreak.hangAfter",
+              "linebreak.hangIndent" }) do
+              SILE.settings:set(v, SILE.settings.defaults[v])
+            end
+
+            SILE.call("foliostyle", {}, { class:formatCounter(SILE.scratch.counters.folio) })
+            SILE.typesetter:leaveHmode()
+            SILE.settings:popState()
+          end)
+        end
+      end
+      SILE.scratch.counters.folio.value = SILE.scratch.counters.folio.value + 1
+    end
 
 local function init (class, _)
   class:loadPackage("counters")
@@ -34,41 +67,7 @@ return {
   init = init,
   registerCommands = registerCommands,
   exports = {
-
-    outputFolio = function (class, frame)
-      if not frame then frame = "folio" end
-      local folio = class:formatCounter(SILE.scratch.counters.folio)
-      io.stderr:write("[" .. folio .. "] ")
-      if SILE.scratch.counters.folio.off then
-        if SILE.scratch.counters.folio.off == 2 then
-          SILE.scratch.counters.folio.off = false
-        end
-      else
-        local folioFrame = SILE.getFrame(frame)
-        if (folioFrame) then
-          SILE.typesetNaturally(folioFrame, function ()
-            SILE.settings:pushState()
-            -- Restore the settings to the top of the queue, which should be the document #986
-            SILE.settings:toplevelState()
-
-            -- Reset settings the document may have but should not be applied to footnotes
-            -- See also same resets in footnote package
-            for _, v in ipairs({
-              "current.hangAfter",
-              "current.hangIndent",
-              "linebreak.hangAfter",
-              "linebreak.hangIndent" }) do
-              SILE.settings:set(v, SILE.settings.defaults[v])
-            end
-
-            SILE.call("foliostyle", {}, { class:formatCounter(SILE.scratch.counters.folio) })
-            SILE.typesetter:leaveHmode()
-            SILE.settings:popState()
-          end)
-        end
-      end
-      SILE.scratch.counters.folio.value = SILE.scratch.counters.folio.value + 1
-    end
+    outputFolio = outputFolio
   },
   documentation= [[
 \begin{document}

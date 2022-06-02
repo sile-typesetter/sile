@@ -37,5 +37,4 @@ For instance, issuing the command \autodoc:command{\alternative{\{and\}\{&\}}} w
 either the text \examplefont{and} or an ampersand, depending on what best
 fits the current line.
 \end{document}
-]]
-}
+]]}

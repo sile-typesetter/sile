@@ -20,7 +20,6 @@ local function init (class, args)
 end
 
 local function registerCommands (class)
-  if not class then SU.error("NO CLASS ACTION") end
 
   SILE.registerCommand("footnotemark", function (_, _)
     SILE.call("raise", { height = "0.7ex" }, function ()
@@ -115,5 +114,4 @@ This functionality exists in the class because the class loads the \autodoc:pack
 The \code{book} class loads up the \autodoc:package{insertions} package and tells it which frame should recieve the footnotes that are typeset.
 After commands provided by the \autodoc:package{footnotes} package take care of formatting the footnotes.
 \end{document}
-]]
-}
+]]}

@@ -173,7 +173,8 @@ end
 return {
   init = init,
   registerCommands = registerCommands,
-  documentation = [[\begin{document}
+  documentation = [[
+\begin{document}
 
 What happens when SILE is asked to typeset a character which is not in the
 current font? For instance, we are currently using the “Gentium” font, which
@@ -232,4 +233,5 @@ of fonts to try.
 \autodoc:command{\font:remove-fallback} removes the last added fallback from the
 list of fonts to try.
 
-\end{document} ]]}
+\end{document}
+]]}

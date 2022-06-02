@@ -66,5 +66,4 @@ Here it is with (respectively)
 Notice that images are typeset on the baseline of a line of text, rather like
 a very big letter.
 \end{document}
-]]
-}
+]]}
