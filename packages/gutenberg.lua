@@ -6,17 +6,16 @@ local function registerCommands (_)
   end)
 
   SILE.registerCommand("alternative", function (_, content)
-    local options = {}
+    local alts = {}
     for _, fragment in ipairs(content) do
       SILE.call("hbox", {}, { fragment })
-      options[#options + 1] = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
-      SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
+      table.insert(alts, table.remove(SILE.typesetter.state.nodes))
     end
     local alternative = SILE.nodefactory.alternative({
-      options=options,
-      selected=1
+      options = alts,
+      selected = 1
       })
-    alternative.width=nil
+    alternative.width = nil
     SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes+1] = alternative
   end)
 
