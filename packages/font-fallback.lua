@@ -46,9 +46,9 @@ local fallbackQueue = pl.class({
 
 local fontlist = {}
 
-local harfbuzzWithFallback = pl.class(SILE.shapers.harfbuzz)
+SILE.shapers.harfbuzzWithFallback = pl.class(SILE.shapers.harfbuzz)
 
-function harfbuzzWithFallback:shapeToken (text, options)
+function SILE.shapers.harfbuzzWithFallback:shapeToken (text, options)
   local items = {}
   local optionSet = { options }
   for i = 1, #fontlist do
@@ -118,7 +118,7 @@ function harfbuzzWithFallback:shapeToken (text, options)
   return nItems
 end
 
-function harfbuzzWithFallback:createNnodes (token, options)
+function SILE.shapers.harfbuzzWithFallback:createNnodes (token, options)
   local items, _ = self:shapeToken(token, options)
   if #items < 1 then return {} end
   local lang = options.language
@@ -147,12 +147,7 @@ function harfbuzzWithFallback:createNnodes (token, options)
   return nodes
 end
 
-
-local function init (_, _)
-
-  SILE.shaper = harfbuzzWithFallback()
-
-end
+SILE.shaper = SILE.shapers.harfbuzzWithFallback()
 
 local function registerCommands (_)
 
@@ -171,7 +166,6 @@ local function registerCommands (_)
 end
 
 return {
-  init = init,
   registerCommands = registerCommands,
   documentation = [[
 \begin{document}
