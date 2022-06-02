@@ -1,13 +1,6 @@
--- Table of contents class
-
--- Exports: The \tableofcontents command
---          The \tocentry command (call this in your sectioning commands)
---          writeToc (call this in finish)
---          moveTocNodes (call this in endPage)
-
 local _tableofcontents = {}
 
-local function moveNodes (_)
+local function _moveTocNodes (_)
   local node = SILE.scratch.info.thispage.toc
   if node then
     for i = 1, #node do
@@ -17,7 +10,7 @@ local function moveNodes (_)
   end
 end
 
-local function writeToc (_)
+local function _writeToc (_)
   local tocdata = pl.pretty.write(SILE.scratch.tableofcontents)
   local tocfile, err = io.open(SILE.masterFilename .. '.toc', "w")
   if not tocfile then return SU.error(err) end
@@ -76,8 +69,8 @@ local function init (class, _)
   class:loadPackage("infonode")
   class:loadPackage("leaders")
 
-  class:registerHook("endpage", class.moveTocNodes)
-  class:registerHook("finish", class.writeToc)
+  class:registerHook("endpage", _moveTocNodes)
+  class:registerHook("finish", _writeToc)
 
 class:registerPostinit(function ()
   SILE.doTexlike([[%
@@ -175,12 +168,27 @@ local function registerCommands (_)
 
 end
 
+local _deprecate  = [[
+Directly calling tableofcontents handling functions is no longer
+necessary. All the SILE core classes and anything inheriting from them
+will take care of this automatically using hooks. Custom classes that
+override the class:endPage() and class:finish() functions may need to
+handle this in other ways. By calling these hooks directly you are
+likely causting them to run twice and duplicate entries.
+]]
+
 return {
   init = init,
   registerCommands = registerCommands,
   exports = {
-    writeToc = writeToc,
-    moveTocNodes = moveNodes
+    writeToc = function (_)
+      SU.deprecated("class:writeToc", nil, "0.13.0", "0.14.0", _deprecate)
+      return _writeToc()
+    end,
+    moveTocNodes = function (_)
+      SU.deprecated("class:moveTocNodes", nil, "0.13.0", "0.14.0", _deprecate)
+      return _moveTocNodes()
+    end
   },
   documentation = [[
 \begin{document}
