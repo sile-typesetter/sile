@@ -46,21 +46,9 @@ local fallbackQueue = pl.class({
 
 local fontlist = {}
 
-SILE.registerCommand("font:clear-fallbacks", function ()
-  fontlist = {}
-end)
+local harfbuzzWithFallback = pl.class(SILE.shapers.harfbuzz)
 
-SILE.registerCommand("font:add-fallback", function (options, _)
-  fontlist[#fontlist+1] = options
-end)
-
-SILE.registerCommand("font:remove-fallback", function ()
-  fontlist[#fontlist] = nil
-end, "Pop last added fallback from fallback stack")
-
-SILE.shapers.harfbuzzWithFallback = pl.class(SILE.shapers.harfbuzz)
-
-function SILE.shapers.harfbuzzWithFallback:shapeToken (text, options)
+function harfbuzzWithFallback:shapeToken (text, options)
   local items = {}
   local optionSet = { options }
   for i = 1, #fontlist do
@@ -86,7 +74,7 @@ function SILE.shapers.harfbuzzWithFallback:shapeToken (text, options)
           local start = shapeQueue:currentJob().start
           if startOfNotdefRun > -1 then
             shapeQueue:addJob(start + newItems[startOfNotdefRun].index,
-              start + newItems[i].index - 1)
+            start + newItems[i].index - 1)
             SU.debug("fonts", "adding run " .. tostring(shapeQueue:lastJob()))
             startOfNotdefRun = -1
           end
@@ -106,9 +94,9 @@ function SILE.shapers.harfbuzzWithFallback:shapeToken (text, options)
       end
       if startOfNotdefRun > -1 then
         shapeQueue:addJob(
-          shapeQueue:currentJob().start + newItems[startOfNotdefRun].index,
-          shapeQueue:currentJob().stop
-          )
+        shapeQueue:currentJob().start + newItems[startOfNotdefRun].index,
+        shapeQueue:currentJob().stop
+        )
         SU.warn("Some glyph(s) not available in any fallback font, run with '-d font-fallback' for more detail")
       end
       shapeQueue:shift()
@@ -130,7 +118,7 @@ function SILE.shapers.harfbuzzWithFallback:shapeToken (text, options)
   return nItems
 end
 
-function SILE.shapers.harfbuzzWithFallback:createNnodes (token, options)
+function harfbuzzWithFallback:createNnodes (token, options)
   local items, _ = self:shapeToken(token, options)
   if #items < 1 then return {} end
   local lang = options.language
@@ -159,9 +147,33 @@ function SILE.shapers.harfbuzzWithFallback:createNnodes (token, options)
   return nodes
 end
 
-SILE.shaper = SILE.shapers.harfbuzzWithFallback()
 
-return { documentation = [[\begin{document}
+local function init (_, _)
+
+  SILE.shaper = harfbuzzWithFallback()
+
+end
+
+local function registerCommands (_)
+
+  SILE.registerCommand("font:clear-fallbacks", function ()
+    fontlist = {}
+  end)
+
+  SILE.registerCommand("font:add-fallback", function (options, _)
+    fontlist[#fontlist+1] = options
+  end)
+
+  SILE.registerCommand("font:remove-fallback", function ()
+    fontlist[#fontlist] = nil
+  end, "Pop last added fallback from fallback stack")
+
+end
+
+return {
+  init = init,
+  registerCommands = registerCommands,
+  documentation = [[\begin{document}
 
 What happens when SILE is asked to typeset a character which is not in the
 current font? For instance, we are currently using the “Gentium” font, which
