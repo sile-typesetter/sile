@@ -28,38 +28,43 @@ local _drawSVG = function (svgdata, width, height, density, drop)
     })
 end
 
-SILE.registerCommand("svg", function (options, _)
-  local fn = SU.required(options, "src", "filename")
-  local width = options.width and SU.cast("measurement", options.width):absolute() or nil
-  local height = options.height and SU.cast("measurement", options.height):absolute() or nil
-  local density = options.density or 72
-  local svgfile = io.open(fn)
-  local svgdata = svgfile:read("*all")
-  _drawSVG(svgdata, width, height, density)
-end)
+local function registerCommands (_)
 
-SILE.registerCommand("include-svg-file", function (options, _)
-  SU.deprecated("include-svg-file", "svg", "0.10.10", "0.11.0")
-  SILE.call("svg", options)
-end)
+  SILE.registerCommand("svg", function (options, _)
+    local fn = SU.required(options, "src", "filename")
+    local width = options.width and SU.cast("measurement", options.width):absolute() or nil
+    local height = options.height and SU.cast("measurement", options.height):absolute() or nil
+    local density = options.density or 72
+    local svgfile = io.open(fn)
+    local svgdata = svgfile:read("*all")
+    _drawSVG(svgdata, width, height, density)
+  end)
 
-SILE.registerCommand("svg-glyph", function(_, content)
-  local fontoptions = SILE.font.loadDefaults({})
-  local items = SILE.shaper:shapeToken(content[1], fontoptions)
-  local face = SILE.shaper.getFace(fontoptions)
-  otparser.parseFont(face)
-  if not face.font.svg then return SILE.process(content) end
-  for i = 1, #items do
-    local svg_data = otparser.getSVG(face, items[i].gid)
-    if svg_data then
-      _drawSVG(svg_data, nil, fontoptions.size, 72, true)
+  SILE.registerCommand("include-svg-file", function (options, _)
+    SU.deprecated("include-svg-file", "svg", "0.10.10", "0.11.0")
+    SILE.call("svg", options)
+  end)
+
+  SILE.registerCommand("svg-glyph", function(_, content)
+    local fontoptions = SILE.font.loadDefaults({})
+    local items = SILE.shaper:shapeToken(content[1], fontoptions)
+    local face = SILE.shaper.getFace(fontoptions)
+    otparser.parseFont(face)
+    if not face.font.svg then return SILE.process(content) end
+    for i = 1, #items do
+      local svg_data = otparser.getSVG(face, items[i].gid)
+      if svg_data then
+        _drawSVG(svg_data, nil, fontoptions.size, 72, true)
+      end
     end
-  end
-end)
+  end)
+
+end
 
 return {
-
-  documentation = [[\begin{document}
+  registerCommands = registerCommands,
+  documentation = [[
+\begin{document}
 This package provides two commands.
 
 The first is \autodoc:command{\svg[src=<file>]}.
@@ -81,6 +86,5 @@ In both cases the rendering is done with our own SVG drawing library; it is curr
 very minimal, only handling lines, curves, strokes and fills. For a fuller
 implementation, consider using a \autodoc:package{converters} registration to render
 your SVG file to PDF and include it on the fly.
-\end{document}]]
-
-}
+\end{document}
+]]}
