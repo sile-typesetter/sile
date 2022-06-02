@@ -192,7 +192,6 @@ end
 
 function bible:newPage ()
   self:switchPage()
-  self:newPageInfo()
   return plain.newPage(self)
 end
 

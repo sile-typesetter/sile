@@ -37,6 +37,7 @@ base.options = setmetatable({}, {
     end
   })
 base.hooks = {
+  newpage = {},
   endpage = {},
   finish = {},
 }
@@ -429,6 +430,7 @@ end
 
 function base:newPage ()
   SILE.outputter:newPage()
+  self:runHooks("newpage")
   -- Any other output-routiney things will be done here by inheritors
   return self:initialFrame()
 end

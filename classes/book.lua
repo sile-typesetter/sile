@@ -54,7 +54,6 @@ end
 
 function book:newPage ()
   self:switchPage()
-  self:newPageInfo()
   return plain.newPage(self)
 end
 
