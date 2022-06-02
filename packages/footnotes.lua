@@ -4,7 +4,9 @@ local function init (class, args)
   class:loadPackage("raiselower")
   class:loadPackage("insertions")
 
-  SILE.scratch.counters.footnote = { value= 1, display= "arabic" }
+  if not SILE.scratch.counters.footnotes then
+    SILE.scratch.counters.footnote = { value = 1, display = "arabic" }
+  end
 
   args = args or {}
   class:initInsertionClass("footnote", {
