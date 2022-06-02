@@ -1,22 +1,3 @@
-SILE.registerCommand("indexentry", function (options, content)
-  if not options.label then
-    -- Reconstruct the text.
-    SILE.typesetter:pushState()
-    SILE.process(content)
-    local text = ""
-    local nl = SILE.typesetter.state.nodes
-    for i = 2, #nl do
-      text = text .. nl[i]:toText()
-    end
-    options.label = text
-    SILE.typesetter:popState()
-  end
-  if not options.index then options.index = "main" end
-  SILE.call("info", { category="index", value = { index = options.index, label = options.label }})
-end)
-
-SILE.scratch.index = {}
-
 local moveNodes = function (class)
   local nodes = SILE.scratch.info.thispage.index
   local thisPage = class:formatCounter(SILE.scratch.counters.folio)
@@ -39,8 +20,32 @@ end
   --   end
   -- end
 
+local function init (_, _)
+
+  if not SILE.scratch.index then
+    SILE.scratch.index = {}
+  end
+
+end
 
 local function registerCommands (class)
+
+  SILE.registerCommand("indexentry", function (options, content)
+    if not options.label then
+      -- Reconstruct the text.
+      SILE.typesetter:pushState()
+      SILE.process(content)
+      local text = ""
+      local nl = SILE.typesetter.state.nodes
+      for i = 2, #nl do
+        text = text .. nl[i]:toText()
+      end
+      options.label = text
+      SILE.typesetter:popState()
+    end
+    if not options.index then options.index = "main" end
+    SILE.call("info", { category ="index", value = { index = options.index, label = options.label }})
+  end)
 
   SILE.registerCommand("printindex", function (options, _)
     moveNodes(class)
@@ -71,7 +76,7 @@ local function registerCommands (class)
 end
 
 return {
-  init = function () end,
+  init = init,
   registerCommands = registerCommands,
   exports = {
     buildIndex = moveNodes
