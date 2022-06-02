@@ -1,6 +1,6 @@
 local inputfilter = require("packages.inputfilter").exports
 
-local function addChords(text, content)
+local function _addChords (text, content)
   local result = {}
   local chordName
   local currentText = ""
@@ -73,6 +73,10 @@ local function init (class, _)
 
   class:loadPackage("raiselower")
 
+end
+
+local function declareSettings (_)
+
   SILE.settings:declare({
     parameter = "chordmode.offset",
     type = "length",
@@ -86,7 +90,6 @@ local function init (class, _)
     default = SILE.length("4mm"),
     help = "Length of the chord name line."
   })
-
 end
 
 local function registerCommands (_)
@@ -109,7 +112,7 @@ local function registerCommands (_)
   end, "Insert a chord name above the text")
 
   SILE.registerCommand("chordmode", function (_, content)
-    SILE.process(inputfilter.transformContent(content, addChords))
+    SILE.process(inputfilter.transformContent(content, _addChords))
   end, "Transform embedded chords to 'ch' commands")
 
   SILE.registerCommand("chordmode:chordfont", function (_, content)
@@ -121,6 +124,7 @@ end
 return {
   init = init,
   registerCommands = registerCommands,
+  declareSettings = declareSettings,
   documentation = [[
 \begin{document}
 \script[src=packages/chordmode]
