@@ -6,9 +6,6 @@
 
 -- Exports
 --    newPageInfo (call this in endPage to empty the info node list)
-SILE.scratch.info = {
-  thispage = {}
-}
 
 local _info = pl.class(SILE.nodefactory.hbox)
 
@@ -30,21 +27,36 @@ function _info:outputYourself ()
   end
 end
 
-SILE.registerCommand("info", function (options, _)
-  SU.required(options, "category", "info node")
-  SU.required(options, "value", "info node")
-  table.insert(SILE.typesetter.state.nodes, _info({
-        category = options.category,
-        value = options.value
-    }))
-end, "Inserts an info node onto the current page")
+local function newPageInfo (_)
+  SILE.scratch.info = { thispage = {} }
+end
+
+local function init (_, _)
+
+  if not SILE.scratch.info then
+    SILE.scratch.info = { thispage = {} }
+  end
+
+end
+
+local function registerCommands (_)
+
+  SILE.registerCommand("info", function (options, _)
+    SU.required(options, "category", "info node")
+    SU.required(options, "value", "info node")
+    table.insert(SILE.typesetter.state.nodes, _info({
+          category = options.category,
+          value = options.value
+      }))
+  end, "Inserts an info node onto the current page")
+
+end
 
 return {
-  init = function () end,
+  init = init,
+  registerCommands = registerCommands,
   exports = {
-    newPageInfo = function ()
-      SILE.scratch.info = { thispage = {} }
-    end
+    newPageInfo = newPageInfo
   },
   documentation = [[
 \begin{document}
