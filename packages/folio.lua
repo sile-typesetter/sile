@@ -35,9 +35,9 @@ return {
   registerCommands = registerCommands,
   exports = {
 
-    outputFolio = function (_, frame)
+    outputFolio = function (class, frame)
       if not frame then frame = "folio" end
-      local folio = SILE.formatCounter(SILE.scratch.counters.folio)
+      local folio = class:formatCounter(SILE.scratch.counters.folio)
       io.stderr:write("[" .. folio .. "] ")
       if SILE.scratch.counters.folio.off then
         if SILE.scratch.counters.folio.off == 2 then
@@ -61,7 +61,7 @@ return {
               SILE.settings:set(v, SILE.settings.defaults[v])
             end
 
-            SILE.call("foliostyle", {}, { SILE.formatCounter(SILE.scratch.counters.folio) })
+            SILE.call("foliostyle", {}, { class:formatCounter(SILE.scratch.counters.folio) })
             SILE.typesetter:leaveHmode()
             SILE.settings:popState()
           end)

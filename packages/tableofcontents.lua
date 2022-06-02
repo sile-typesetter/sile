@@ -1,11 +1,11 @@
 local _tableofcontents = {}
 
-local function _moveTocNodes (_)
+local function _moveTocNodes (class)
   local node = SILE.scratch.info.thispage.toc
   if node then
     for i = 1, #node do
-      node[i].pageno = SILE.formatCounter(SILE.scratch.counters.folio)
-      SILE.scratch.tableofcontents[#(SILE.scratch.tableofcontents)+1] = node[i]
+      node[i].pageno = class:formatCounter(SILE.scratch.counters.folio)
+      table.insert(SILE.scratch.tableofcontents, node[i])
     end
   end
 end
@@ -185,9 +185,9 @@ return {
       SU.deprecated("class:writeToc", nil, "0.13.0", "0.14.0", _deprecate)
       return _writeToc()
     end,
-    moveTocNodes = function (_)
+    moveTocNodes = function (class)
       SU.deprecated("class:moveTocNodes", nil, "0.13.0", "0.14.0", _deprecate)
-      return _moveTocNodes()
+      return _moveTocNodes(class)
     end
   },
   documentation = [[

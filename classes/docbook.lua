@@ -93,7 +93,7 @@ docbook.registerCommands = function (self)
     SILE.call("bigskip")
     SILE.call("docbook-line")
     SILE.call("docbook-titling", {}, function ()
-      SILE.typesetter:typeset(thing.." ".. SILE.formatCounter(SILE.scratch.counters[thing]))
+      SILE.typesetter:typeset(thing.." ".. self:formatCounter(SILE.scratch.counters[thing]))
       local t = SILE.findInTree(content, "title")
       if t then
         SILE.typesetter:typeset(": ")

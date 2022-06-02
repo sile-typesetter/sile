@@ -323,7 +323,7 @@ SILE.scratch.tableofcontents = \{ \}
 local moveNodes = function(self)
   local n = SILE.scratch.info.thispage.toc
   for i=1,#n do
-    n[i].pageno = SILE.formatCounter(SILE.scratch.counters.folio)
+    n[i].pageno = class:formatCounter(SILE.scratch.counters.folio)
     table.insert(SILE.scratch.tableofcontents, n[i])
   end
 end

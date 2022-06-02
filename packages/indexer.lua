@@ -12,14 +12,14 @@ SILE.registerCommand("indexentry", function (options, content)
     SILE.typesetter:popState()
   end
   if not options.index then options.index = "main" end
-  SILE.call("info", {category="index", value = { index = options.index, label = options.label }})
+  SILE.call("info", { category="index", value = { index = options.index, label = options.label }})
 end)
 
 SILE.scratch.index = {}
 
-local moveNodes = function (_)
+local moveNodes = function (class)
   local nodes = SILE.scratch.info.thispage.index
-  local thisPage = SILE.formatCounter(SILE.scratch.counters.folio)
+  local thisPage = class:formatCounter(SILE.scratch.counters.folio)
   if not nodes then return end
   for _, node in ipairs(nodes) do
     if not SILE.scratch.index[node.index] then SILE.scratch.index[node.index] = {} end
@@ -35,39 +35,44 @@ end
   --     if not SILE.scratch.index.commands[content[i].label] then
   --       SILE.scratch.index.commands[content[i].label] = {}
   --     end
-  --     SILE.scratch.index.commands[content[i].label][SILE.formatCounter(SILE.scratch.counters.folio)] = 1
+  --     SILE.scratch.index.commands[content[i].label][class:formatCounter(SILE.scratch.counters.folio)] = 1
   --   end
   -- end
 
 
-SILE.registerCommand("printindex", function (options, _)
-  moveNodes()
-  if not options.index then options.index = "main" end
-  local index = SILE.scratch.index[options.index]
-  local sortedIndex = {}
-  for n in pairs(index) do table.insert(sortedIndex, n) end
-  table.sort(sortedIndex)
-  SILE.call("bigskip")
-  for _, k in ipairs(sortedIndex) do
-    local pageno = table.concat(index[k], ", ")
-    SILE.call("index:item", { pageno = pageno }, { k })
-  end
-end)
+local function registerCommands (class)
 
-SILE.registerCommand("index:item", function (options, content)
-  SILE.settings:temporarily(function ()
-    SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
-    SILE.settings:set("current.parindent", SILE.nodefactory.glue())
-    SILE.call("code", {}, content)
-    -- Ideally, leaders
-    SILE.call("hss")
-    SILE.typesetter:typeset(options.pageno)
-    SILE.call("smallskip")
+  SILE.registerCommand("printindex", function (options, _)
+    moveNodes(class)
+    if not options.index then options.index = "main" end
+    local index = SILE.scratch.index[options.index]
+    local sortedIndex = {}
+    for n in pairs(index) do table.insert(sortedIndex, n) end
+    table.sort(sortedIndex)
+    SILE.call("bigskip")
+    for _, k in ipairs(sortedIndex) do
+      local pageno = table.concat(index[k], ", ")
+      SILE.call("index:item", { pageno = pageno }, { k })
+    end
   end)
-end)
+
+  SILE.registerCommand("index:item", function (options, content)
+    SILE.settings:temporarily(function ()
+      SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
+      SILE.settings:set("current.parindent", SILE.nodefactory.glue())
+      SILE.call("code", {}, content)
+      -- Ideally, leaders
+      SILE.call("hss")
+      SILE.typesetter:typeset(options.pageno)
+      SILE.call("smallskip")
+    end)
+  end)
+
+end
 
 return {
   init = function () end,
+  registerCommands = registerCommands,
   exports = {
     buildIndex = moveNodes
   },
