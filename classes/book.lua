@@ -52,14 +52,7 @@ function book:_init (options)
   return self
 end
 
-function book:newPage ()
-  self:switchPage()
-  self:newPageInfo()
-  return plain.newPage(self)
-end
-
 function book:endPage ()
-  self:moveTocNodes()
   if (self:oddPage() and SILE.scratch.headers.right) then
     SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
       SILE.settings:toplevelState()
@@ -86,7 +79,6 @@ end
 
 function book:finish ()
   local ret = plain.finish(self)
-  self:writeToc()
   return ret
 end
 
@@ -109,7 +101,7 @@ book.registerCommands = function (self)
     local number
     if SU.boolean(options.numbering, true) then
       SILE.call("increment-multilevel-counter", { id = "sectioning", level = level })
-      number = SILE.formatMultilevelCounter(self.getMultilevelCounter("sectioning"))
+      number = self:formatMultilevelCounter(self.getMultilevelCounter("sectioning"))
     end
     if SU.boolean(options.toc, true) then
       SILE.call("tocentry", { level = level, number = number }, SU.subContent(content))

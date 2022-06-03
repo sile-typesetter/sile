@@ -266,24 +266,12 @@ The key methods for defining the \em{output routine} are:
 Once again this is done in an object-oriented way,
 with derived classes overriding their superclass’ methods where necessary.
 
-When you are loading packages which affect the output routine,
-the composition of such packages into a class is not completely automatic\footnote{Because the order of events is sometimes significant.};
-in other words, loading the package will not necessarily by itself change the output routines.
-You need to explicitly plug the various features provided by those packages into the output routine yourself.
+Some packages may provide functions that need to be run as part of the class output routines.
+One way packages can accomplish this is registering hook functions that get run an known locations in the provided classes.
+Class authors may also provide their own hook locations for packages, or run any set of registered hooks in their own outputs.
+The other way is to export functions that get added to the class itself and can be run manually from the class.
 
-So, for instance, the \code{twoside} package provides a \code{switchPage} method which needs to be called when creating a new page.
-The \code{book} class adds this call to it's \code{book:newPage()} function.
-If you want to bulid a document class that inherits from \code{plain} instead of \code{book} but want to include the \code{twoside} functionality you will want to add this yourself.
-Note this is in addition to loading and configuring the package in your class's \code{_init()} function.
-
-\begin{verbatim}
-\line
-function myClass:newPage ()
-  self:switchPage()
-  return plain.newPage(self)
-end
-\line
-\end{verbatim}
+For examples check out the \autodoc:package{tableofcontents} package for the hooks it sets, but also the \autodoc:command{\tocentry} command it registeres that gets called manually in the \code{book} class.
 
 Let’s demonstrate roughly how the \code{tableofcontents} package works.
 We’ll be using the \code{infonodes} package to collect the information about which pages contain table of content items.
@@ -323,7 +311,7 @@ SILE.scratch.tableofcontents = \{ \}
 local moveNodes = function(self)
   local n = SILE.scratch.info.thispage.toc
   for i=1,#n do
-    n[i].pageno = SILE.formatCounter(SILE.scratch.counters.folio)
+    n[i].pageno = class:formatCounter(SILE.scratch.counters.folio)
     table.insert(SILE.scratch.tableofcontents, n[i])
   end
 end

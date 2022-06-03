@@ -302,5 +302,4 @@ context of a content frame rather than by messing with the frames themselves.
 If you feel tempted to play with \autodoc:package{frametricks}, there’s almost always
 a better way to achieve what you want without it.
 \end{document}
-]]
-}
+]]}

@@ -2,39 +2,115 @@
 -- Documentation tooling for package designers.
 --
 
-local function init (class, _)
+local theme = {
+  command = "#1d4851", -- oil blue
+  parameter = "#3f5218", -- some sort of dark green
+  setting = "#42280e", -- some kind of dark brown
+  bracketed = "#656565", -- some grey
+  package = "#172557", -- saturated space blue
+}
+
+local colorWrapper = function (ctype, content)
+  local color = SILE.scratch.autodoc.theme[ctype]
+  if color and SILE.settings:get("autodoc.highlighting") and SILE.Commands["color"] then
+    SILE.call("color", { color = color }, content)
+  else
+    SILE.process(content)
+  end
+end
+
+local function optionSorter (o1, o2)
+  -- options are in an associative table and Lua doesn't guarantee a fixed order.
+  -- To ensure we get a consistent and stable output, we make with some wild guesses here
+  -- (Quick'n dirty, could be improved!), and rely on alphabetical order otherwise.
+  if o1 == "src" then return true end
+  if o2 == "src" then return false end
+  if o1 == "name" then return true end
+  if o2 == "name" then return false end
+  return o1 < o2
+end
+
+local function typesetAST (options, content)
+  if not content then return end
+  local seenCommandWithoutArg = false
+  for i = 1, #content do
+    local ast = content[i]
+    if type(ast) == "string" then
+      if seenCommandWithoutArg and ast:sub(1,1) ~= " " and ast:sub(1,1) ~= "{" then
+        -- Touchy:
+        -- There might have been a space or a {} here in the original code. The AST does
+        -- not remember it, we only know we have to separate somehow the string from
+        -- the previous command...
+        SILE.typesetter:typeset(" ")
+        seenCommandWithoutArg = false
+      end
+      if ast:sub(1, 1) == "<" and ast:sub(-1) == ">" then
+        SILE.call("autodoc:internal:bracketed", {}, { ast:sub(2, -2) })
+      else
+        SILE.typesetter:typeset(ast)
+      end
+    elseif ast.command then
+      local cmd = SILE.Commands[ast.command]
+      if not cmd and SU.boolean(options.check, true) then
+        SU.error("Unexpected command '"..ast.command.."'")
+      end
+      SILE.typesetter:typeset("\\")
+      SILE.call("autodoc:code:style", { type = "command" }, { ast.command })
+      local sortedOpts = {}
+      for k, _ in pairs(ast.options) do table.insert(sortedOpts, k) end
+      table.sort(sortedOpts, optionSorter)
+      if #sortedOpts > 0 then
+        SILE.typesetter:typeset("[")
+        for iOpt, option in ipairs(sortedOpts) do
+          SILE.call("autodoc:code:style", { type = "parameter" }, { option })
+          SILE.typesetter:typeset("=")
+          SILE.call("penalty", { penalty = 100 }, nil) -- Quite decent to break here if need be.
+          SILE.call("autodoc:value", {}, { ast.options[option] })
+          if iOpt == #sortedOpts then
+            SILE.typesetter:typeset("]")
+          else
+            SILE.typesetter:typeset(", ")
+          end
+        end
+      end
+      if (#ast >= 1) then
+        SILE.call("penalty", { penalty = 200 }, nil) -- Less than optimal break.
+        SILE.typesetter:typeset("{")
+        typesetAST(options, ast)
+        SILE.typesetter:typeset("}")
+      else
+        seenCommandWithoutArg = true
+      end
+    else
+      SU.error("Unrecognized AST element")
+    end
+  end
+end
+
+local function init (class, args)
 
   class:loadPackage("inputfilter")
 
+  if args then pl.tablex.update(theme, args) end
+
+  if not SILE.scratch.autodoc then
+    SILE.scratch.autodoc = {
+      theme = theme
+    }
+  end
+
+end
+
+local function declareSettings (_)
   SILE.settings:declare({
     parameter = "autodoc.highlighting",
     default = false,
     type = "boolean",
     help = "Whether audodoc enables syntax highlighting"
   })
-
-  SILE.scratch.autodoc = {
-    theme = {
-      command = "#1d4851", -- oil blue
-      parameter = "#3f5218", -- some sort of dark green
-      setting = "#42280e", -- some kind of dark brown
-      bracketed = "#656565", -- some grey
-      package = "#172557", -- saturated space blue
-    }
-  }
-
 end
 
 local function registerCommands (class)
-
-  local colorWrapper = function (ctype, content)
-    local color = SILE.scratch.autodoc.theme[ctype]
-    if color and SILE.settings:get("autodoc.highlighting") and SILE.Commands["color"] then
-      SILE.call("color", { color = color }, content)
-    else
-      SILE.process(content)
-    end
-  end
 
   -- Documenting a setting with good line-breaks
   local settingFilter = function (node, content)
@@ -53,75 +129,6 @@ local function registerCommands (class)
     end
     return result
   end
-
-  local function optionSorter(o1, o2)
-    -- options are in an associative table and Lua doesn't guarantee a fixed order.
-    -- To ensure we get a consistent and stable output, we make with some wild guesses here
-    -- (Quick'n dirty, could be improved!), and rely on alphabetical order otherwise.
-    if o1 == "src" then return true end
-    if o2 == "src" then return false end
-    if o1 == "name" then return true end
-    if o2 == "name" then return false end
-    return o1 < o2
-  end
-
-  local function typesetAST(options, content)
-    if not content then return end
-    local seenCommandWithoutArg = false
-    for i = 1, #content do
-      local ast = content[i]
-      if type(ast) == "string" then
-        if seenCommandWithoutArg and ast:sub(1,1) ~= " " and ast:sub(1,1) ~= "{" then
-          -- Touchy:
-          -- There might have been a space or a {} here in the original code. The AST does
-          -- not remember it, we only know we have to separate somehow the string from
-          -- the previous command...
-          SILE.typesetter:typeset(" ")
-          seenCommandWithoutArg = false
-        end
-        if ast:sub(1, 1) == "<" and ast:sub(-1) == ">" then
-          SILE.call("autodoc:internal:bracketed", {}, { ast:sub(2, -2) })
-        else
-          SILE.typesetter:typeset(ast)
-        end
-      elseif ast.command then
-        local cmd = SILE.Commands[ast.command]
-        if not cmd and SU.boolean(options.check, true) then
-          SU.error("Unexpected command '"..ast.command.."'")
-        end
-        SILE.typesetter:typeset("\\")
-        SILE.call("autodoc:code:style", { type = "command" }, { ast.command })
-        local sortedOpts = {}
-        for k, _ in pairs(ast.options) do table.insert(sortedOpts, k) end
-        table.sort(sortedOpts, optionSorter)
-        if #sortedOpts > 0 then
-          SILE.typesetter:typeset("[")
-          for iOpt, option in ipairs(sortedOpts) do
-            SILE.call("autodoc:code:style", { type = "parameter" }, { option })
-            SILE.typesetter:typeset("=")
-            SILE.call("penalty", { penalty = 100 }, nil) -- Quite decent to break here if need be.
-            SILE.call("autodoc:value", {}, { ast.options[option] })
-            if iOpt == #sortedOpts then
-              SILE.typesetter:typeset("]")
-            else
-              SILE.typesetter:typeset(", ")
-            end
-          end
-        end
-        if (#ast >= 1) then
-          SILE.call("penalty", { penalty = 200 }, nil) -- Less than optimal break.
-          SILE.typesetter:typeset("{")
-          typesetAST(options, ast)
-          SILE.typesetter:typeset("}")
-        else
-          seenCommandWithoutArg = true
-        end
-      else
-        SU.error("Unrecognized AST element")
-      end
-    end
-  end
-
 
   SILE.registerCommand("package-documentation", function (options, _)
     local package = SU.required(options, "src", "src for package documentation")
@@ -274,6 +281,7 @@ end
 return {
   init = init,
   registerCommands = registerCommands,
+  declareSettings = declareSettings,
   documentation = [[\begin{document}
 This package extracts documentation information from other packages. It’s used to
 construct the SILE manual. Keeping package documentation in the package itself

@@ -44,7 +44,6 @@ local ensureStructureNumber = function ( node, pdfnode )
 end
 
 local dumpTree
-
 dumpTree = function (node)
   local k = {}
   local pdfNode = pdf.parse("<< /Type /StructElem /S /"..(node.notetype)..">>")
@@ -74,25 +73,22 @@ dumpTree = function (node)
   return ref
 end
 
-
-SILE.outputters.libtexpdf.finish = function ()
-  pdf.endpage()
-  local catalog = pdf.get_dictionary("Catalog")
-  local structureTree = pdf.parse("<< /Type /StructTreeRoot >>")
-  pdf.add_dict(catalog, pdf.parse("/StructTreeRoot"), pdf.reference(structureTree))
-  structureNumberTree = pdf.parse("<< /Nums [] >>")
-  pdf.add_dict(structureTree, pdf.parse("/ParentTree"), pdf.reference(structureNumberTree))
-
-  pdf.add_dict(structureTree, pdf.parse("/K"), dumpTree(stRoot))
-
-  if structureNumberTree then pdf.release(structureNumberTree) end
-  if structureTree then pdf.release(structureTree) end
-  pdf.finish()
-end
-
 local function init (class, _)
 
   class:loadPackage("pdf")
+
+  SILE.outputters.libtexpdf.finish = function ()
+    pdf.endpage()
+    local catalog = pdf.get_dictionary("Catalog")
+    local structureTree = pdf.parse("<< /Type /StructTreeRoot >>")
+    pdf.add_dict(catalog, pdf.parse("/StructTreeRoot"), pdf.reference(structureTree))
+    structureNumberTree = pdf.parse("<< /Nums [] >>")
+    pdf.add_dict(structureTree, pdf.parse("/ParentTree"), pdf.reference(structureNumberTree))
+    pdf.add_dict(structureTree, pdf.parse("/K"), dumpTree(stRoot))
+    if structureNumberTree then pdf.release(structureNumberTree) end
+    if structureTree then pdf.release(structureTree) end
+    pdf.finish()
+  end
 
 end
 

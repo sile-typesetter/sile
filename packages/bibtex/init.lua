@@ -1,6 +1,8 @@
 local lpeg = require("lpeg")
 local epnf = require("epnf")
 
+local Bibliography
+
 local identifier = (SILE.parserBits.identifier + lpeg.S":-")^1
 
 local balanced = lpeg.C{ "{" * lpeg.P(" ")^0 * lpeg.C(((1 - lpeg.S"{}") + lpeg.V(1))^0) * "}" } / function (...) local t={...}; return t[2] end
@@ -43,11 +45,11 @@ local parseBibtex = function (fn)
   return entries
 end
 
-local function init (class, _)
+local function init (_, _)
 
   SILE.scratch.bibtex = { bib = {}, bibstyle = {} }
 
-  class:loadPackage("bibliography")
+  Bibliography = require("packages.bibtex.bibliography")
 
   SILE.call("bibstyle", {}, "chicago") -- Load some default
 
@@ -55,15 +57,13 @@ end
 
 local function registerCommands (_)
 
-  local Bibliography = require("packages.bibliography")
-
   SILE.registerCommand("loadbibliography", function (options, _)
     local file = SU.required(options, "file", "loadbibliography")
     SILE.scratch.bibtex.bib = parseBibtex(file) -- Later we'll do multiple bibliogs, but not now
   end)
 
   SILE.registerCommand("bibstyle", function (_, content)
-    SILE.scratch.bibtex.bibstyle = require("packages.bibstyles/"..content)
+    SILE.scratch.bibtex.bibstyle = require("packages.bibtex.styles." .. content)
   end)
 
   SILE.registerCommand("cite", function (options, content)
@@ -110,6 +110,6 @@ To produce a full reference, use \autodoc:command{\reference{<key>}}.
 
 Currently, the only supported bibliography style is Chicago referencing,
 but other styles should be easy to implement if there is interest.
-Check out \code{packages/bibstyles/chicago.lua} and adapt as necessary.
+Check out \code{packages/bibtex/styles/chicago.lua} and adapt as necessary.
 \end{document}]]
 }

@@ -364,9 +364,4 @@ function plain:registerCommands ()
 
 end
 
-function plain:endPage ()
-  self:outputFolio()
-  return base.endPage(self)
-end
-
 return plain

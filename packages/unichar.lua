@@ -1,16 +1,22 @@
-SILE.registerCommand("unichar", function(_, content)
-  local cp = content[1]
-  if type(cp) ~= "string" then SU.error("Bad argument to \\unicode") end
-  local hlist = SILE.typesetter.state.nodes
-  local char = SU.utf8charfromcodepoint(cp)
-  if #hlist > 1 and hlist[#hlist].is_unshaped then
-    hlist[#hlist].text = hlist[#hlist].text .. char
-  else
-    SILE.typesetter:typeset(char)
-  end
-end)
+local function registerCommands (_)
 
-return { documentation = [[\begin{document}
+  SILE.registerCommand("unichar", function(_, content)
+    local cp = content[1]
+    if type(cp) ~= "string" then SU.error("Bad argument to \\unicode") end
+    local hlist = SILE.typesetter.state.nodes
+    local char = SU.utf8charfromcodepoint(cp)
+    if #hlist > 1 and hlist[#hlist].is_unshaped then
+      hlist[#hlist].text = hlist[#hlist].text .. char
+    else
+      SILE.typesetter:typeset(char)
+    end
+  end)
+
+end
+
+return {
+  registerCommands = registerCommands,
+  documentation = [[\begin{document}
 \script[src=packages/unichar]
 SILE is Unicode compatible, and expects its input files to be in the UTF-8 encoding.
 (The actual range of Unicode characters supported will depend on the supported ranges

@@ -404,11 +404,4 @@ Bibliography = {
   }
 }
 
-Bibliography.documentation = [[
-\begin{document}
-This package provides backend functions used by the \autodoc:package{bibtex} package;
-see that instead.
-\end{document}
-]]
-
 return Bibliography

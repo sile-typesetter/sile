@@ -1,8 +1,6 @@
-local pdf
-pcall(function() pdf = require("justenoughlibtexpdf") end)
-if pdf then require("packages.pdf") end
-
 local inputfilter = require("packages.inputfilter").exports
+
+local pdf
 
 -- URL escape sequence, URL fragment:
 local preferBreakBefore = "%#"
@@ -64,6 +62,14 @@ end
 local function init (class, _)
 
   class:loadPackage("verbatim")
+
+  pdf = SILE.outputter == SILE.outputters.libtexpdf
+
+  if pdf then class:loadPackage("pdf") end
+
+end
+
+local function declareSettings (_)
 
   SILE.settings:declare({
     parameter = "url.linebreak.primaryPenalty",
@@ -145,8 +151,10 @@ end
 
 return {
   init = init,
+  declareSettings = declareSettings,
   registerCommands = registerCommands,
-  documentation = [[\begin{document}
+  documentation = [[
+\begin{document}
 \script[src=packages/url]
 This package enhances the typesetting of URLs in two ways.
 First, it provides the \autodoc:command{\href[src=<url>]{<content>}} command which
@@ -184,5 +192,5 @@ The breaks are controlled by two penalty settings, \autodoc:setting{url.linebrea
 for preferred breakpoints and, for less acceptable but still tolerable breakpoints,
 \autodoc:setting{url.linebreak.secondaryPenalty} —its value should
 logically be higher than the previous one.
-\end{document}]]
-}
+\end{document}
+]]}

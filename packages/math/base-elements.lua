@@ -93,13 +93,6 @@ local mathScriptConversionTable = {
   }
 }
 
-SILE.settings:declare({parameter = "math.font.family", type = "string", default = "Libertinus Math"})
-SILE.settings:declare({parameter = "math.font.filename", type = "string", default = ""})
-SILE.settings:declare({parameter = "math.font.size", type = "integer", default = 10})
--- Whether to show debug boxes around mboxes
-SILE.settings:declare({parameter = "math.debug.boxes", type = "boolean", default = false})
-SILE.settings:declare({parameter = "math.displayskip", type = "VGlue", default = SILE.nodefactory.vglue("2ex plus 1pt")})
-
 local function retrieveMathTable(options)
   print("options.family = " .. options.family)
   local face = SILE.font.cache(options, SILE.shaper.getFace)

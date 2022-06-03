@@ -9,7 +9,7 @@ local symbols = syms.symbols
 
 -- Grammar to parse TeX-like math
 -- luacheck: push ignore
-local mathGrammar = function(_ENV)
+local mathGrammar = function (_ENV)
   local _ = WS^0
   local eol = S"\r\n"
   local digit = R("09")
@@ -30,14 +30,14 @@ local mathGrammar = function(_ENV)
     + lpeg.R("\240\244") * utf8cont * utf8cont * utf8cont
   -- Identifiers inside \mo and \mi tags
   local sileID = C(SILE.inputs.TeXlike.identifier + P(1)) / 1
-  local mathMLID = (utf8code - S"\\{}%")^1 / function(...)
-    local ret = ""
-    local t = {...}
-    for _,b in ipairs(t) do
-      ret = ret .. b
+  local mathMLID = (utf8code - S"\\{}%")^1 / function (...)
+      local ret = ""
+      local t = {...}
+      for _,b in ipairs(t) do
+        ret = ret .. b
+      end
+      return ret
     end
-    return ret
-  end
   local group = P"{" * V"mathlist" * (P"}" + E("`}` expected"))
   local element_no_infix =
     V"def" +
@@ -55,16 +55,19 @@ local mathGrammar = function(_ENV)
   local quotedString = (P'"' * C((1-P'"')^1) * P'"')
   local value = ( quotedString + (1-S",;]")^1 )
   local pair = Cg(sileID * _ * "=" * _ * C(value)) * sep^-1 / function (...)
-    local t = {...}; return t[1], t[#t] end
+      local t = {...}; return t[1], t[#t]
+    end
   local list = Cf(Ct"" * pair^0, rawset)
   local parameters = (
       P"[" *
       list *
       P"]"
-    )^-1 / function (a) return type(a)=="table" and a or {} end
+    )^-1 / function (a)
+        return type(a)=="table" and a or {}
+      end
 
   local dim2_arg_inner = Ct(V"mathlist" * (P"&" * V"mathlist")^0) /
-    function(t)
+    function (t)
       t.id = "mathlist"
       return t
     end
@@ -73,7 +76,7 @@ local mathGrammar = function(_ENV)
        dim2_arg_inner *
        (P"\\\\" * dim2_arg_inner)^1 *
        (P"}" + E("`}` expected"))
-      ) / function(...)
+      ) / function (...)
         local t = {...}
         -- Remove the last mathlist if empty. This way,
         -- `inner1 \\ inner2 \\` is the same as `inner1 \\ inner2`.
@@ -91,7 +94,7 @@ local mathGrammar = function(_ENV)
   sup = element_no_infix * _ * P"^" * _ * element_no_infix
   sub = element_no_infix * _ * P"_" * _ * element_no_infix
   atom = natural + C(utf8code - S"\\{}%^_&") +
-    (P"\\{" + P"\\}") / function(s) return string.sub(s, -1) end
+    (P"\\{" + P"\\}") / function (s) return string.sub(s, -1) end
   command = (
       P"\\" *
       Cg(ctrl_sequence_name, "command") *
@@ -120,7 +123,7 @@ local objType = {
   str = 2
 }
 
-local function inferArgTypes_aux(acc, typeRequired, body)
+local function inferArgTypes_aux (acc, typeRequired, body)
   if type(body) == "table" then
     if body.id == "argument" then
       local ret = acc
@@ -166,15 +169,15 @@ local function inferArgTypes_aux(acc, typeRequired, body)
   else SU.error("invalid argument to inferArgTypes_aux") end
 end
 
-local inferArgTypes = function(body)
+local inferArgTypes = function (body)
   return inferArgTypes_aux({}, objType.tree, body)
 end
 
-local function registerCommand(name, argTypes, fun)
+local function registerCommand (name, argTypes, fun)
   commands[name] = {argTypes, fun}
 end
 
-local function fold_pairs(fun, init, table)
+local function fold_pairs (fun, init, table)
   local acc = init
   for k,x in pairs(table) do
     acc = fun(acc, k, x)
@@ -182,14 +185,14 @@ local function fold_pairs(fun, init, table)
   return acc
 end
 
-local function forall(pred, list)
+local function forall (pred, list)
   for _,x in ipairs(list) do
     if not pred(x) then return false end
   end
   return true
 end
 
-local compileToStr = function(argEnv, mathlist)
+local compileToStr = function (argEnv, mathlist)
   if #mathlist == 1 and mathlist.id == "atom" then
     -- List is a single atom
     return mathlist[1]
@@ -212,9 +215,9 @@ local compileToStr = function(argEnv, mathlist)
   end
 end
 
-local function compileToMathML(arg_env, tree)
+local function compileToMathML (_, arg_env, tree)
   if type(tree) == "string" then return tree end
-  tree = fold_pairs(function(acc, key, child)
+  tree = fold_pairs(function (acc, key, child)
     if type(key) ~= "number" then
       acc[key] = child
       return acc
@@ -227,7 +230,7 @@ local function compileToMathML(arg_env, tree)
       table.insert(acc, child)
     else
       -- Compile all children.
-      local comp = compileToMathML(arg_env, child)
+      local comp = compileToMathML(nil, arg_env, child)
       if comp then table.insert(acc, comp) end
     end
     return acc
@@ -236,7 +239,7 @@ local function compileToMathML(arg_env, tree)
     tree.command = "math"
     -- If the outermost `mrow` contains only other `mrow`s, remove it
     -- (allowing vertical stacking).
-    if forall(function(c) return c.command == "mrow" end, tree[1]) then
+    if forall(function (c) return c.command == "mrow" end, tree[1]) then
       tree[1].command = "math"
       return tree[1]
     end
@@ -298,8 +301,8 @@ local function compileToMathML(arg_env, tree)
   elseif tree.id == "def" then
     local commandName = tree["command-name"]
     local argTypes = inferArgTypes(tree[1])
-    registerCommand(commandName, argTypes, function(compiledArgs)
-      return compileToMathML(compiledArgs, tree[1])
+    registerCommand(commandName, argTypes, function (compiledArgs)
+      return compileToMathML(nil, compiledArgs, tree[1])
     end)
     return nil
   elseif tree.id == "command" and commands[tree.command] then
@@ -317,7 +320,7 @@ local function compileToMathML(arg_env, tree)
     for i,arg in pairs(applicationTree) do
       if type(i) == "number" then
         if argTypes[i] == objType.tree then
-          table.insert(compiledArgs, compileToMathML(arg_env, arg))
+          table.insert(compiledArgs, compileToMathML(nil, arg_env, arg))
         else
           local x = compileToStr(arg_env, arg)
           table.insert(compiledArgs, x)
@@ -331,7 +334,7 @@ local function compileToMathML(arg_env, tree)
     return cmdFun(compiledArgs)
   elseif tree.id == "command" and symbols[tree.command] then
     local atom = {id = "atom", [1] = symbols[tree.command]}
-    tree = compileToMathML(arg_env, atom)
+    tree = compileToMathML(nil, arg_env, atom)
   elseif tree.id == "argument" then
     if arg_env[tree.index] then
       return arg_env[tree.index]
@@ -344,24 +347,26 @@ local function compileToMathML(arg_env, tree)
   return tree
 end
 
-local function convertTexlike(content)
+local function convertTexlike (_, content)
   local ret = epnf.parsestring(mathParser, content[1])
   SU.debug("texmath", "parsed TeX math:\n" .. tostring(ret))
   return ret
 end
 
-registerCommand("mi", {[1]=objType.str}, function(x) return x end)
-registerCommand("mo", {[1]=objType.str}, function(x) return x end)
-registerCommand("mn", {[1]=objType.str}, function(x) return x end)
+registerCommand("mi", { [1] = objType.str }, function (x) return x end)
+registerCommand("mo", { [1] = objType.str }, function (x) return x end)
+registerCommand("mn", { [1] = objType.str }, function (x) return x end)
 
-compileToMathML({}, convertTexlike({[==[
+compileToMathML(nil, {}, convertTexlike(nil, {[==[
   \def{frac}{\mfrac{#1}{#2}}
   \def{bi}{\mi[mathvariant=bold-italic]{#1}}
   \def{dsi}{\mi[mathvariant=double-struck]{#1}}
 ]==]}))
 
 return {
-  convertTexlike = convertTexlike,
-  compileToMathML = compileToMathML,
-  registerCommand = registerCommand,
+  exports = {
+    convertTexlike = convertTexlike,
+    compileToMathML = compileToMathML,
+    -- registerCommand = registerCommand,
+  }
 }

@@ -1,8 +1,68 @@
-require("packages.math.typesetter")
+local function init (class, _)
+  class:loadPackage("math.typesetter")
+  class:loadPackage("math.texlike")
+end
+
+local function declareSettings (_)
+
+  SILE.settings:declare({
+      parameter = "math.font.family",
+      type = "string",
+      default = "Libertinus Math"
+    })
+  SILE.settings:declare({
+      parameter = "math.font.filename",
+      type = "string",
+      default = ""
+    })
+  SILE.settings:declare({
+      parameter = "math.font.size",
+      type = "integer",
+      default = 10
+    })
+  -- Whether to show debug boxes around mboxes
+  SILE.settings:declare({
+      parameter = "math.debug.boxes",
+      type = "boolean",
+      default = false
+    })
+  SILE.settings:declare({
+      parameter = "math.displayskip",
+      type = "VGlue",
+      default = SILE.nodefactory.vglue("2ex plus 1pt")
+    })
+
+end
+
+local function registerCommands (class)
+
+  SILE.registerCommand("mathml", function (options, content)
+    local mode = (options and options.mode) and options.mode or 'text'
+    local mbox
+    xpcall(function()
+      mbox = class:ConvertMathML(content, mbox)
+    end, function(err) print(err); print(debug.traceback()) end)
+    class:handleMath(mbox, mode)
+  end)
+
+  SILE.registerCommand("math", function (options, content)
+    local mode = (options and options.mode) and options.mode or "text"
+    local mbox
+    xpcall(function()
+      mbox = class:ConvertMathML(class:compileToMathML({}, class:convertTexlike(content)))
+    end, function(err) print(err); print(debug.traceback()) end)
+    class:handleMath(mbox, mode)
+  end)
+
+end
 
 return {
+  init = init,
+  declareSettings = declareSettings,
+  registerCommands = registerCommands,
   documentation = [[
 \begin{document}
+\script[src=packages/math]
 
 \set[parameter=math.font.family, value=Libertinus Math]
 \set[parameter=math.font.size, value=11]

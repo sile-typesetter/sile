@@ -1,24 +1,28 @@
-SILE.registerCommand("alt", function (_, content)
-  SU.warn("Use of \\alt  is deprecated, please use \\alternative.")
-  SILE.call("alternative", {}, content)
-end)
+local function registerCommands (_)
 
-SILE.registerCommand("alternative", function (_, content)
-  local options = {}
-  for _, fragment in ipairs(content) do
-    SILE.call("hbox", {}, { fragment })
-    options[#options + 1] = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
-    SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
-  end
-  local alternative = SILE.nodefactory.alternative({
-    options=options,
-    selected=1
-    })
-  alternative.width=nil
-  SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes+1] = alternative
-end)
+  SILE.registerCommand("alt", function (_, content)
+    SU.deprecated("\\alt", "\\alternative", "0.10.0", "0.14.0")
+    SILE.call("alternative", {}, content)
+  end)
+
+  SILE.registerCommand("alternative", function (_, content)
+    local alts = {}
+    for _, fragment in ipairs(content) do
+      SILE.call("hbox", {}, { fragment })
+      table.insert(alts, table.remove(SILE.typesetter.state.nodes))
+    end
+    local alternative = SILE.nodefactory.alternative({
+      options = alts,
+      selected = 1
+      })
+    alternative.width = nil
+    SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes+1] = alternative
+  end)
+
+end
 
 return {
+  registerCommands = registerCommands,
   documentation = [[
 \begin{document}
 One of the reasons why Johann Gutenberg’s 42 line Bible is considered a
@@ -33,5 +37,4 @@ For instance, issuing the command \autodoc:command{\alternative{\{and\}\{&\}}} w
 either the text \examplefont{and} or an ampersand, depending on what best
 fits the current line.
 \end{document}
-]]
-}
+]]}

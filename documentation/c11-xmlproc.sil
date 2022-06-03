@@ -78,7 +78,7 @@ SILE.registerCommand("example", function(options,content)
   SILE.call("bigskip")
   SILE.call("docbook-line")
   SILE.call("docbook-titling", \{\}, function()
-    SILE.typesetter:typeset("Example".." ".. SILE.formatCounter(SILE.scratch.counters.Example]))
+    SILE.typesetter:typeset("Example".." ".. class:formatCounter(SILE.scratch.counters.Example]))
 \end{verbatim}
 
 \code{\\docbook-line} is a command that we’ve defined in the \code{docbook.sil} macros

@@ -176,37 +176,44 @@ function otFeatures:unloadOptions (options)
   self:loadOptions(options, true)
 end
 
-SILE.registerCommand("add-font-feature", function (options, _)
-  local otfeatures = otFeatures()
-  otfeatures:loadOptions(options)
-  SILE.settings:set("font.features", tostring(otfeatures))
-end)
-
-SILE.registerCommand("remove-font-feature", function(options, _)
-  local otfeatures = otFeatures()
-  otfeatures:unloadOptions(options)
-  SILE.settings:set("font.features", tostring(otfeatures))
-end)
-
 local fontfn = SILE.Commands.font
-SILE.registerCommand("font", function (options, content)
-  local otfeatures = otFeatures()
-  -- It is guaranteed that future releases of SILE will not implement non-OT \font
-  -- features with capital letters.
-  -- Cf. https://github.com/sile-typesetter/sile/issues/992#issuecomment-665575353
-  -- So, we reserve 'em all. ⍩⃝
-  for k, v in pairs(options) do
-    if k:match('^[A-Z]') then
-      otfeatures:loadOption(k, v)
-      options[k] = nil
-    end
-  end
-  SU.debug("features", "Font features parsed as:", otfeatures)
-  options.features = (options.features and options.features .. ";" or "") .. tostring(otfeatures)
-  return fontfn(options, content)
-end, tostring(SILE.Help.font) .. " (overridden)")
 
-return { documentation = [[\begin{document}
+local function registerCommands (_)
+
+  SILE.registerCommand("add-font-feature", function (options, _)
+    local otfeatures = otFeatures()
+    otfeatures:loadOptions(options)
+    SILE.settings:set("font.features", tostring(otfeatures))
+  end)
+
+  SILE.registerCommand("remove-font-feature", function(options, _)
+    local otfeatures = otFeatures()
+    otfeatures:unloadOptions(options)
+    SILE.settings:set("font.features", tostring(otfeatures))
+  end)
+
+  SILE.registerCommand("font", function (options, content)
+    local otfeatures = otFeatures()
+    -- It is guaranteed that future releases of SILE will not implement non-OT \font
+    -- features with capital letters.
+    -- Cf. https://github.com/sile-typesetter/sile/issues/992#issuecomment-665575353
+    -- So, we reserve 'em all. ⍩⃝
+    for k, v in pairs(options) do
+      if k:match('^[A-Z]') then
+        otfeatures:loadOption(k, v)
+        options[k] = nil
+      end
+    end
+    SU.debug("features", "Font features parsed as:", otfeatures)
+    options.features = (options.features and options.features .. ";" or "") .. tostring(otfeatures)
+    return fontfn(options, content)
+  end, tostring(SILE.Help.font) .. " (overridden)")
+
+end
+
+return {
+  registerCommands = registerCommands,
+  documentation = [[\begin{document}
 As mentioned in Chapter 3, SILE automatically applies ligatures defined by the fonts
 that you use. These ligatures are defined by tables of \em{features} within
 the font file. As well as ligatures (multiple glyphs displayed as a single glyph),

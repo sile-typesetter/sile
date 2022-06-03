@@ -26,7 +26,7 @@ local function oddPage ()
   return tp == "odd"
 end
 
-local function switchPage (class)
+local function _switchPage (class)
   if class:oddPage() then
     tp = "even"
     class:switchMaster(class.evenPageMaster)
@@ -43,6 +43,7 @@ local function init (class, args)
   class.oddPageMaster = args.oddPageMaster
   class.evenPageMaster = args.evenPageMaster
   mirrorMaster(nil, args.oddPageMaster, args.evenPageMaster)
+  class:registerHook("newpage", _switchPage)
 end
 
 local function registerCommands (class)
@@ -60,13 +61,25 @@ local function registerCommands (class)
 
 end
 
+local _deprecate  = [[
+Directly calling master swtch handling functions is no longer
+necessary. All the SILE core classes and anything inheriting from them
+will take care of this automatically using hooks. Custom classes that
+override the class:newPage() function may need to
+handle this in other ways. By calling this hook directly you are
+likely causting it to run twice and land on the wrong master.
+]]
+
 return {
   init = init,
   registerCommands = registerCommands,
   exports = {
     oddPage = oddPage,
     mirrorMaster = mirrorMaster,
-    switchPage = switchPage,
+    switchPage = function (class)
+      SU.deprecated("class:switchPage", nil, "0.13.0", "0.14.0", _deprecate)
+      return _switchPage(class)
+    end
   },
   documentation = [[
 \begin{document}

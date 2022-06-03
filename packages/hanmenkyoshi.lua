@@ -98,5 +98,4 @@ command for debugging the grid.
 
 The name \em{hanmenkyoshi} is a terrible pun.
 \end{document}
-  ]]
-}
+]]}
