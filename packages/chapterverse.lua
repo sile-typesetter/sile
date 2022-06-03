@@ -1,7 +1,10 @@
 local function init (class, _)
 
   class:loadPackage("infonode")
-  SILE.scratch.chapterverse = {}
+
+  if not SILE.scratch.chapterverse then
+    SILE.scratch.chapterverse = {}
+  end
 
 end
 

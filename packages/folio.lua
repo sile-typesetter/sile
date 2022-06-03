@@ -1,8 +1,46 @@
--- Folios class
+local function _incrementFolio (_)
+  SILE.scratch.counters.folio.value = SILE.scratch.counters.folio.value + 1
+end
+
+local function _outputFolio (class, frame)
+  if not frame then frame = "folio" end
+  local folio = class:formatCounter(SILE.scratch.counters.folio)
+  io.stderr:write("[" .. folio .. "] ")
+  if SILE.scratch.counters.folio.off then
+    if SILE.scratch.counters.folio.off == 2 then
+      SILE.scratch.counters.folio.off = false
+    end
+  else
+    local folioFrame = SILE.getFrame(frame)
+    if (folioFrame) then
+      SILE.typesetNaturally(folioFrame, function ()
+        SILE.settings:pushState()
+        -- Restore the settings to the top of the queue, which should be the document #986
+        SILE.settings:toplevelState()
+
+        -- Reset settings the document may have but should not be applied to footnotes
+        -- See also same resets in footnote package
+        for _, v in ipairs({
+          "current.hangAfter",
+          "current.hangIndent",
+          "linebreak.hangAfter",
+          "linebreak.hangIndent" }) do
+          SILE.settings:set(v, SILE.settings.defaults[v])
+        end
+
+        SILE.call("foliostyle", {}, { class:formatCounter(SILE.scratch.counters.folio) })
+        SILE.typesetter:leaveHmode()
+        SILE.settings:popState()
+      end)
+    end
+  end
+end
 
 local function init (class, _)
   class:loadPackage("counters")
   SILE.scratch.counters.folio = { value = 1, display = "arabic" }
+  class:registerHook("newpage", _incrementFolio)
+  class:registerHook("endpage", _outputFolio)
 end
 
 local function registerCommands (_)
@@ -30,45 +68,23 @@ local function registerCommands (_)
 
 end
 
+local _deprecate  = [[
+Directly calling tableofcontents handling functions is no longer
+necessary. All the SILE core classes and anything inheriting from them
+will take care of this automatically using hooks. Custom classes that
+override the class:endPage() and class:finish() functions may need to
+handle this in other ways. By calling these hooks directly you are
+likely causting them to run twice and duplicate entries.
+]]
+
 return {
   init = init,
   registerCommands = registerCommands,
   exports = {
-
-    outputFolio = function (_, frame)
-      if not frame then frame = "folio" end
-      local folio = SILE.formatCounter(SILE.scratch.counters.folio)
-      io.stderr:write("[" .. folio .. "] ")
-      if SILE.scratch.counters.folio.off then
-        if SILE.scratch.counters.folio.off == 2 then
-          SILE.scratch.counters.folio.off = false
-        end
-      else
-        local folioFrame = SILE.getFrame(frame)
-        if (folioFrame) then
-          SILE.typesetNaturally(folioFrame, function ()
-            SILE.settings:pushState()
-            -- Restore the settings to the top of the queue, which should be the document #986
-            SILE.settings:toplevelState()
-
-            -- Reset settings the document may have but should not be applied to footnotes
-            -- See also same resets in footnote package
-            for _, v in ipairs({
-              "current.hangAfter",
-              "current.hangIndent",
-              "linebreak.hangAfter",
-              "linebreak.hangIndent" }) do
-              SILE.settings:set(v, SILE.settings.defaults[v])
-            end
-
-            SILE.call("foliostyle", {}, { SILE.formatCounter(SILE.scratch.counters.folio) })
-            SILE.typesetter:leaveHmode()
-            SILE.settings:popState()
-          end)
-        end
-      end
-      SILE.scratch.counters.folio.value = SILE.scratch.counters.folio.value + 1
-    end
+    outputFolio = function (class)
+      SU.deprecated("class:outputFolio", nil, "0.13.0", "0.14.0", _deprecate)
+      return _outputFolio(class)
+    end,
   },
   documentation= [[
 \begin{document}

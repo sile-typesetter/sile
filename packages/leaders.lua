@@ -78,30 +78,35 @@ function leader:outputYourself (typesetter, line)
   typesetter.frame:advanceWritingDirection(outputWidth)
 end
 
-SILE.registerCommand("leaders", function(options, content)
-  local width = options.width and SU.cast("glue", options.width) or SILE.nodefactory.hfillglue()
-  SILE.call("hbox", {}, content)
-  local hbox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
-  SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
-  local l = leader({ width = width, value = hbox })
-  table.insert(SILE.typesetter.state.nodes, l)
-end)
+local function registerCommands (_)
 
-SILE.registerCommand("dotfill", function(_, _)
-  -- Implementation note:
-  -- The "usual" space between dots in "modern days" is 0.5em (cf. "points
-  -- conducteurs" in Frey & Bouchez, 1857), evenly distributed around the dot,
-  -- though in older times it was sometimes up to 1em and could be distributed
-  -- differently. Anyhow, it is also the approach taken by LaTeX, with a
-  -- \@dotsep space of 4.5mu (where 18mu = 1em, so indeed leading to 0.25em).
-  SILE.call("leaders", { width = SILE.nodefactory.hfillglue() }, function()
-    SILE.call("kern", { width = SILE.length("0.25em") })
-    SILE.typesetter:typeset(".")
-    SILE.call("kern", {width = SILE.length("0.25em") })
+  SILE.registerCommand("leaders", function(options, content)
+    local width = options.width and SU.cast("glue", options.width) or SILE.nodefactory.hfillglue()
+    SILE.call("hbox", {}, content)
+    local hbox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
+    SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
+    local l = leader({ width = width, value = hbox })
+    table.insert(SILE.typesetter.state.nodes, l)
   end)
-end)
+
+  SILE.registerCommand("dotfill", function(_, _)
+    -- Implementation note:
+    -- The "usual" space between dots in "modern days" is 0.5em (cf. "points
+    -- conducteurs" in Frey & Bouchez, 1857), evenly distributed around the dot,
+    -- though in older times it was sometimes up to 1em and could be distributed
+    -- differently. Anyhow, it is also the approach taken by LaTeX, with a
+    -- \@dotsep space of 4.5mu (where 18mu = 1em, so indeed leading to 0.25em).
+    SILE.call("leaders", { width = SILE.nodefactory.hfillglue() }, function()
+      SILE.call("kern", { width = SILE.length("0.25em") })
+      SILE.typesetter:typeset(".")
+      SILE.call("kern", {width = SILE.length("0.25em") })
+    end)
+  end)
+
+end
 
 return {
+  registerCommands = registerCommands,
   documentation = [[
 \begin{document}
 The \autodoc:package{leaders} package allows you to create repeating patterns which fill a

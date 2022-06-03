@@ -3,7 +3,11 @@ local localeify = function (lang)
   return lang .. "_" .. string.upper(lang) ..  ".utf-8"
 end
 
-local date = function (options)
+local date = function (class, options)
+  if not options then
+    SU.deprecated("class.date", "class:date", "0.13.0", "0.14.0")
+    options = class
+  end
   options.format = options.format or "%c"
   options.time = options.time or os.time()
   options.locale = options.locale or localeify(SILE.settings:get("document.language"))
@@ -11,11 +15,16 @@ local date = function (options)
   return os.date(options.format, options.time)
 end
 
-SILE.registerCommand("date", function (options, _)
-  SILE.typesetter:typeset(date(options))
-end, "Output a timestamp using the system date function")
+local function registerCommands (class)
+
+  SILE.registerCommand("date", function (options, _)
+    SILE.typesetter:typeset(class:date(options))
+  end, "Output a timestamp using the system date function")
+
+end
 
 return {
+  registerCommands = registerCommands,
   exports = {
     date = date
   },

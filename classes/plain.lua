@@ -364,10 +364,5 @@ function plain:registerCommands ()
 
 end
 
-function plain:endPage ()
-  self:outputFolio()
-  return base.endPage(self)
-end
-
 SILE.classes.plain = plain
 return plain

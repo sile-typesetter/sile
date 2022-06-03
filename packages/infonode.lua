@@ -4,12 +4,6 @@
 -- Check out SILE.scratch.info.thispage in your end-of-page routine and see what nodes
 -- are there.
 
--- Exports
---    newPageInfo (call this in endPage to empty the info node list)
-SILE.scratch.info = {
-  thispage = {}
-}
-
 local _info = pl.class(SILE.nodefactory.hbox)
 
 _info.type ="special"
@@ -30,20 +24,49 @@ function _info:outputYourself ()
   end
 end
 
-SILE.registerCommand("info", function (options, _)
-  SU.required(options, "category", "info node")
-  SU.required(options, "value", "info node")
-  table.insert(SILE.typesetter.state.nodes, _info({
-        category = options.category,
-        value = options.value
-    }))
-end, "Inserts an info node onto the current page")
+local function _newPageInfo (_)
+  SILE.scratch.info = { thispage = {} }
+end
+
+local function init (class, _)
+
+  if not SILE.scratch.info then
+    SILE.scratch.info = { thispage = {} }
+  end
+
+  class:registerHook("newpage", _newPageInfo)
+
+end
+
+local function registerCommands (_)
+
+  SILE.registerCommand("info", function (options, _)
+    SU.required(options, "category", "info node")
+    SU.required(options, "value", "info node")
+    table.insert(SILE.typesetter.state.nodes, _info({
+          category = options.category,
+          value = options.value
+      }))
+  end, "Inserts an info node onto the current page")
+
+end
+
+local _deprecate  = [[
+Directly calling info node handling functions is no longer
+necessary. All the SILE core classes and anything inheriting from them
+will take care of this automatically using hooks. Custom classes that
+override the class:endPage() function may need to
+handle this in other ways. By calling this hook directly you are
+likely causting it to run twice and duplicate entries.
+]]
 
 return {
-  init = function () end,
+  init = init,
+  registerCommands = registerCommands,
   exports = {
-    newPageInfo = function ()
-      SILE.scratch.info = { thispage = {} }
+    newPageInfo = function (class)
+      SU.deprecated("class:newPageInfo", nil, "0.13.0", "0.14.0", _deprecate)
+      return _newPageInfo(class)
     end
   },
   documentation = [[

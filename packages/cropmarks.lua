@@ -59,7 +59,7 @@ end
 local function registerCommands (class)
 
   SILE.registerCommand("crop:header", function (_, _)
-    local info = SILE.masterFilename .. " - " .. class.date("%x %X") .. " -  " .. outcounter
+    local info = SILE.masterFilename .. " - " .. class:date("%x %X") .. " -  " .. outcounter
     SILE.typesetter:typeset(info)
   end)
 

@@ -1,43 +1,5 @@
 local metrics = require("fontmetrics")
 
-SILE.settings:declare({
-  parameter = "linespacing.method",
-  default = "tex",
-  type = "string",
-  help = "How to set the line spacing (tex, fixed, fit-font, fit-glyph, css)"
-})
-
-SILE.settings:declare({
-  parameter = "linespacing.fixed.baselinedistance",
-  default = SILE.length("1.2em"),
-  type = "length",
-  help = "Distance from baseline to baseline in the case of fixed line spacing"
-})
-
-SILE.settings:declare({
-  parameter = "linespacing.minimumfirstlineposition",
-  default = SILE.length(0),
-  type = "length"
-})
-
-SILE.settings:declare({
-  parameter = "linespacing.fit-glyph.extra-space",
-  default = SILE.length(0),
-  type = "length"
-})
-
-SILE.settings:declare({
-  parameter = "linespacing.fit-font.extra-space",
-  default = SILE.length(0),
-  type = "length"
-})
-
-SILE.settings:declare({
-  parameter = "linespacing.css.line-height",
-  default = SILE.length("1.2em"),
-  type = "length"
-})
-
 local metricscache = {}
 
 local getLineMetrics = function (l)
@@ -129,6 +91,52 @@ local function init (_, _)
 
   SILE.typesetter.leadingFor = linespacingLeading
 
+end
+
+local function declareSettings (_)
+
+  SILE.settings:declare({
+    parameter = "linespacing.method",
+    default = "tex",
+    type = "string",
+    help = "How to set the line spacing (tex, fixed, fit-font, fit-glyph, css)"
+  })
+
+  SILE.settings:declare({
+    parameter = "linespacing.fixed.baselinedistance",
+    default = SILE.length("1.2em"),
+    type = "length",
+    help = "Distance from baseline to baseline in the case of fixed line spacing"
+  })
+
+  SILE.settings:declare({
+    parameter = "linespacing.minimumfirstlineposition",
+    default = SILE.length(0),
+    type = "length"
+  })
+
+  SILE.settings:declare({
+    parameter = "linespacing.fit-glyph.extra-space",
+    default = SILE.length(0),
+    type = "length"
+  })
+
+  SILE.settings:declare({
+    parameter = "linespacing.fit-font.extra-space",
+    default = SILE.length(0),
+    type = "length"
+  })
+
+  SILE.settings:declare({
+    parameter = "linespacing.css.line-height",
+    default = SILE.length("1.2em"),
+    type = "length"
+  })
+
+end
+
+local function registerCommands (_)
+
   SILE.registerCommand("linespacing-on", function ()
     SILE.typesetter.leadingFor = linespacingLeading
   end)
@@ -141,6 +149,8 @@ end
 
 return {
   init = init,
+  declareSettings = declareSettings,
+  registerCommands = registerCommands,
   documentation = [[\begin{document}
 \linespacing-on
 

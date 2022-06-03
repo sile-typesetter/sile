@@ -1,5 +1,5 @@
--- TODO: Should be registered as a setting not hidden as a package variable
-local gridSpacing = SILE.measurement()
+-- TODO: consider registering as a setting instead of a frame property
+local gridSpacing
 
 local function makeUp (totals)
   local toadd = (gridSpacing - SILE.measurement(totals.gridCursor)) % gridSpacing
@@ -134,38 +134,50 @@ end
 
 local oldPageBuilder, oldLeadingFor, oldPushVglue, oldPushExplicitVglue
 
-SILE.registerCommand("grid:debug", function (_, _)
-  debugGrid()
-  SILE.typesetter:registerNewFrameHook(debugGrid)
-end)
+local function init (_, _)
 
-SILE.registerCommand("grid", function (options, _)
-  SILE.typesetter.state.grid = true
-  SU.required(options, "spacing", "grid package")
-  gridSpacing = SILE.parseComplexFrameDimension(options.spacing)
-  oldPageBuilder = SILE.pagebuilder
-  SILE.pagebuilder = gridPagebuilder()
-  oldLeadingFor = SILE.typesetter.leadingFor
-  SILE.typesetter.leadingFor = leadingFor
-  oldPushVglue = SILE.typesetter.pushVglue
-  SILE.typesetter.pushVglue = pushVglue
-  oldPushExplicitVglue = SILE.typesetter.pushExplicitVglue
-  SILE.typesetter.pushExplicitVglue = pushExplicitVglue
-  if SILE.typesetter.frame then
-    startGridInFrame(SILE.typesetter)
-  end
-  SILE.typesetter:registerNewFrameHook(startGridInFrame)
-end, "Begins typesetting on a grid spaced at <spacing> intervals.")
+  gridSpacing = SILE.measurement()
 
-SILE.registerCommand("no-grid", function (_, _)
-  SILE.typesetter.state.grid = false
-  SILE.typesetter.leadingFor = oldLeadingFor
-  SILE.typesetter.pushVglue = oldPushVglue
-  SILE.typesetter.pushExplicitVglue = oldPushExplicitVglue
-  SILE.pagebuilder = oldPageBuilder
-end, "Stops grid typesetting.")
+end
+
+local function registerCommands (_)
+
+  SILE.registerCommand("grid:debug", function (_, _)
+    debugGrid()
+    SILE.typesetter:registerNewFrameHook(debugGrid)
+  end)
+
+  SILE.registerCommand("grid", function (options, _)
+    SILE.typesetter.state.grid = true
+    SU.required(options, "spacing", "grid package")
+    gridSpacing = SILE.parseComplexFrameDimension(options.spacing)
+    oldPageBuilder = SILE.pagebuilder
+    SILE.pagebuilder = gridPagebuilder()
+    oldLeadingFor = SILE.typesetter.leadingFor
+    SILE.typesetter.leadingFor = leadingFor
+    oldPushVglue = SILE.typesetter.pushVglue
+    SILE.typesetter.pushVglue = pushVglue
+    oldPushExplicitVglue = SILE.typesetter.pushExplicitVglue
+    SILE.typesetter.pushExplicitVglue = pushExplicitVglue
+    if SILE.typesetter.frame then
+      startGridInFrame(SILE.typesetter)
+    end
+    SILE.typesetter:registerNewFrameHook(startGridInFrame)
+  end, "Begins typesetting on a grid spaced at <spacing> intervals.")
+
+  SILE.registerCommand("no-grid", function (_, _)
+    SILE.typesetter.state.grid = false
+    SILE.typesetter.leadingFor = oldLeadingFor
+    SILE.typesetter.pushVglue = oldPushVglue
+    SILE.typesetter.pushExplicitVglue = oldPushExplicitVglue
+    SILE.pagebuilder = oldPageBuilder
+  end, "Stops grid typesetting.")
+
+end
 
 return {
+  init = init,
+  registerCommands = registerCommands,
   documentation = [[
 \begin{document}
 \grid[spacing=15pt]

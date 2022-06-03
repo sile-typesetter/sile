@@ -57,7 +57,7 @@ local badBeforeClasses = { [1] = true, [12] = true, [28] = true }
 local badAfterClasses = { }
 for _, v in ipairs({ 2, 3, 4, 5, 6, 7, 9, 10, 11, 20, 29 }) do badAfterClasses[v] = true end
 
-local function breakAllowed(before, after)
+local function breakAllowed (before, after)
   local bc = jisClass(before)
   local ac = jisClass(after)
   if badBeforeClasses[bc] then return false end
@@ -71,7 +71,7 @@ local function breakAllowed(before, after)
   return true
 end
 
-local function intercharacterspace(before, after)
+local function intercharacterspace (before, after)
   local bc = jisClass(before)
   local ac = jisClass(after)
   -- This rule is not in jlreq but it stops situations like 1：2 getting munched
@@ -99,7 +99,7 @@ local function intercharacterspace(before, after)
   return 0
 end
 
-local function stretchability(before, after)
+local function stretchability (before, after)
   local bc = jisClass(before)
   local ac = jisClass(after)
   -- somewhat simplified from table 6 of jlreq
@@ -112,7 +112,7 @@ local function stretchability(before, after)
   return "0.25zw" -- somewhat simplified
 end
 
-local function shrinkability(before, after)
+local function shrinkability (before, after)
   local bc = jisClass(before)
   local ac = jisClass(after)
   -- This rule is not in jlreq but it stops situations like 1：2 getting munched
@@ -128,6 +128,7 @@ end
 -- local okbreak = SILE.nodefactory.penalty(0)
 
 SILE.nodeMakers.ja = pl.class(SILE.nodeMakers.base)
+
 function SILE.nodeMakers.ja:iterator (items)
   local options = self.options
   return coroutine.wrap(function ()
@@ -172,15 +173,16 @@ function SILE.nodeMakers.ja:iterator (items)
   end)
 end
 
-SILE.hyphenator.languages.ja = { patterns={} }
-
-SILE.registerCommand("book:chapter:post:ja", function (_, _)
-  SILE.call("fluent", { locale = "ja" }, { "book-chapter-post" })
-  SILE.call("medskip")
-end)
-
 return {
   init = function ()
+
+    SILE.hyphenator.languages.ja = { patterns={} }
+
+    SILE.registerCommand("book:chapter:post:ja", function (_, _)
+      SILE.call("fluent", { locale = "ja" }, { "book-chapter-post" })
+      SILE.call("medskip")
+    end)
+
     -- jlreq measures distances in units of 1em, but also assumes that an em is the
     -- width of a full-width character. In SILE terms it isn't: measuring an "m" in
     -- a 10pt Japanese font gets you 5 points. So we measure a full-width character
@@ -191,5 +193,6 @@ return {
         return v * SILE.shaper:measureChar("あ").width
       end
     }
+
   end
 }

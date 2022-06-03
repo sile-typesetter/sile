@@ -46,18 +46,6 @@ local fallbackQueue = pl.class({
 
 local fontlist = {}
 
-SILE.registerCommand("font:clear-fallbacks", function ()
-  fontlist = {}
-end)
-
-SILE.registerCommand("font:add-fallback", function (options, _)
-  fontlist[#fontlist+1] = options
-end)
-
-SILE.registerCommand("font:remove-fallback", function ()
-  fontlist[#fontlist] = nil
-end, "Pop last added fallback from fallback stack")
-
 SILE.shapers.harfbuzzWithFallback = pl.class(SILE.shapers.harfbuzz)
 
 function SILE.shapers.harfbuzzWithFallback:shapeToken (text, options)
@@ -86,7 +74,7 @@ function SILE.shapers.harfbuzzWithFallback:shapeToken (text, options)
           local start = shapeQueue:currentJob().start
           if startOfNotdefRun > -1 then
             shapeQueue:addJob(start + newItems[startOfNotdefRun].index,
-              start + newItems[i].index - 1)
+            start + newItems[i].index - 1)
             SU.debug("fonts", "adding run " .. tostring(shapeQueue:lastJob()))
             startOfNotdefRun = -1
           end
@@ -106,9 +94,9 @@ function SILE.shapers.harfbuzzWithFallback:shapeToken (text, options)
       end
       if startOfNotdefRun > -1 then
         shapeQueue:addJob(
-          shapeQueue:currentJob().start + newItems[startOfNotdefRun].index,
-          shapeQueue:currentJob().stop
-          )
+        shapeQueue:currentJob().start + newItems[startOfNotdefRun].index,
+        shapeQueue:currentJob().stop
+        )
         SU.warn("Some glyph(s) not available in any fallback font, run with '-d font-fallback' for more detail")
       end
       shapeQueue:shift()
@@ -161,7 +149,26 @@ end
 
 SILE.shaper = SILE.shapers.harfbuzzWithFallback()
 
-return { documentation = [[\begin{document}
+local function registerCommands (_)
+
+  SILE.registerCommand("font:clear-fallbacks", function ()
+    fontlist = {}
+  end)
+
+  SILE.registerCommand("font:add-fallback", function (options, _)
+    fontlist[#fontlist+1] = options
+  end)
+
+  SILE.registerCommand("font:remove-fallback", function ()
+    fontlist[#fontlist] = nil
+  end, "Pop last added fallback from fallback stack")
+
+end
+
+return {
+  registerCommands = registerCommands,
+  documentation = [[
+\begin{document}
 
 What happens when SILE is asked to typeset a character which is not in the
 current font? For instance, we are currently using the “Gentium” font, which
@@ -220,4 +227,5 @@ of fonts to try.
 \autodoc:command{\font:remove-fallback} removes the last added fallback from the
 list of fonts to try.
 
-\end{document} ]]}
+\end{document}
+]]}

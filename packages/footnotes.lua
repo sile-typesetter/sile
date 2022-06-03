@@ -4,7 +4,9 @@ local function init (class, args)
   class:loadPackage("raiselower")
   class:loadPackage("insertions")
 
-  SILE.scratch.counters.footnote = { value= 1, display= "arabic" }
+  if not SILE.scratch.counters.footnotes then
+    SILE.scratch.counters.footnote = { value = 1, display = "arabic" }
+  end
 
   args = args or {}
   class:initInsertionClass("footnote", {
@@ -18,12 +20,11 @@ local function init (class, args)
 end
 
 local function registerCommands (class)
-  if not class then SU.error("NO CLASS ACTION") end
 
   SILE.registerCommand("footnotemark", function (_, _)
     SILE.call("raise", { height = "0.7ex" }, function ()
       SILE.call("font", { size = "1.5ex" }, function ()
-        SILE.typesetter:typeset(SILE.formatCounter(SILE.scratch.counters.footnote))
+        SILE.typesetter:typeset(class:formatCounter(SILE.scratch.counters.footnote))
       end)
     end)
   end)
@@ -96,7 +97,7 @@ local function registerCommands (class)
 
   SILE.registerCommand("footnote:counter", function (_, _)
     SILE.call("noindent")
-    SILE.typesetter:typeset(SILE.formatCounter(SILE.scratch.counters.footnote) .. ".")
+    SILE.typesetter:typeset(class:formatCounter(SILE.scratch.counters.footnote) .. ".")
     SILE.call("qquad")
   end)
 
@@ -113,5 +114,4 @@ This functionality exists in the class because the class loads the \autodoc:pack
 The \code{book} class loads up the \autodoc:package{insertions} package and tells it which frame should recieve the footnotes that are typeset.
 After commands provided by the \autodoc:package{footnotes} package take care of formatting the footnotes.
 \end{document}
-]]
-}
+]]}

@@ -1,15 +1,21 @@
-SILE.registerCommand("color", function (options, content)
-  local color = SILE.colorparser(options.color or "black")
-  SILE.typesetter:pushHbox({
-    outputYourself = function () SILE.outputter:pushColor(color) end
-  })
-  SILE.process(content)
-  SILE.typesetter:pushHbox({
-    outputYourself = function () SILE.outputter:popColor() end
-  })
-end, "Changes the active ink color to the color <color>.")
+local function registerCommands (_)
 
-return { documentation = [[\begin{document}
+  SILE.registerCommand("color", function (options, content)
+    local color = SILE.colorparser(options.color or "black")
+    SILE.typesetter:pushHbox({
+      outputYourself = function () SILE.outputter:pushColor(color) end
+    })
+    SILE.process(content)
+    SILE.typesetter:pushHbox({
+      outputYourself = function () SILE.outputter:popColor() end
+    })
+  end, "Changes the active ink color to the color <color>.")
+
+end
+
+return {
+  registerCommands = registerCommands,
+  documentation = [[\begin{document}
 The \autodoc:package{color} package allows you to temporarily change the color of the
 (virtual) ink that SILE uses to output text and rules. The package provides
 a \autodoc:command{\color} command which takes one parameter,

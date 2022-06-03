@@ -1,4 +1,4 @@
-local function transformContent(content, transformFunction, extraArgs)
+local function transformContent (content, transformFunction, extraArgs)
   local newContent = {}
   for k, v in SU.sortedpairs(content) do
     if type(k) == "number" then
@@ -19,7 +19,7 @@ local function transformContent(content, transformFunction, extraArgs)
   return newContent
 end
 
-local function createCommand(pos, col, line, command, options, content)
+local function createCommand (pos, col, line, command, options, content)
   local result = { content }
   result.col = col
   result.line = line
