@@ -442,10 +442,10 @@ end
 
 function base:endPage ()
   SILE.typesetter.frame:leave(SILE.typesetter)
+  self:runHooks("endpage")
   -- I'm trying to call up a new frame here, don't cause a page break in the current one
   -- SILE.typesetter:leaveHmode()
   -- Any other output-routiney things will be done here by inheritors
-  self:runHooks("endpage")
 end
 
 function base:finish ()
