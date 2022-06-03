@@ -26,7 +26,8 @@ Book
 \open-double-page
 \tableofcontents
 
-\set-counter[id=folio,value=0]
+% The chapter opens a double page spread, we want the right master to be "page 1"
+\set-counter[id=folio,value=-1]
 
 % Users' guide
 \include[src=documentation/c01-whatis.sil]
