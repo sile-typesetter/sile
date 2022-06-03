@@ -1,4 +1,5 @@
 local plain = require("classes.plain")
+
 local docbook = pl.class(plain)
 docbook._name = "docbook"
 

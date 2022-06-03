@@ -1,4 +1,5 @@
 local book = require("classes.book")
+
 local triglot = pl.class(book)
 triglot._name = "triglot"
 

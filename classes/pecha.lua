@@ -1,4 +1,5 @@
 local plain = require("classes.plain")
+
 local pecha = pl.class(plain)
 pecha._name = "pecha"
 
@@ -38,10 +39,12 @@ pecha.defaultFrameset = {
 function pecha:_init(options)
   self._init(self, options)
   self:loadPackage("rotate")
-  SILE.call("language", { main = "bo" })
-  SILE.settings:set("document.lskip", SILE.nodefactory.hfillglue())
-  SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
-  SILE.settings:set("document.parindent", SILE.nodefactory.glue())
+  self:registerPostinit(function ()
+    SILE.call("language", { main = "bo" })
+    SILE.settings:set("document.lskip", SILE.nodefactory.hfillglue())
+    SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
+    SILE.settings:set("document.parindent", SILE.nodefactory.glue())
+  end)
   return self
 end
 

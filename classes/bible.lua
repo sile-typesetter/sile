@@ -286,5 +286,4 @@ bible.registerCommands = function (self)
 
 end
 
-SILE.classes.bible = bible
 return bible

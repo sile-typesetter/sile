@@ -364,5 +364,4 @@ function plain:registerCommands ()
 
 end
 
-SILE.classes.plain = plain
 return plain
