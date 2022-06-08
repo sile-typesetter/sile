@@ -19,14 +19,14 @@
   },
   "homepage": "http://sile-typesetter.org",
   "devDependencies": {
-    "@commitlint/cli": "^16.2.3",
-    "@commitlint/config-conventional": "^16.2.1",
+    "@commitlint/cli": "^17.0.2",
+    "@commitlint/config-conventional": "^17.0.2",
     "@commitlint/prompt": "^17.0.0",
     "commitizen": "^4.2.4",
     "conventional-changelog-cli": "^2.2.2",
-    "husky": "^7.0.4",
-    "standard-version": "^9.3.2",
-    "yaml": "^2.0.1"
+    "husky": "^8.0.1",
+    "standard-version": "^9.5.0",
+    "yaml": "^2.1.1"
   },
   "config": {
     "commitizen": {
