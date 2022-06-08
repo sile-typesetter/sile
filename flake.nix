@@ -96,13 +96,11 @@
           src = gitignoreSource ./.;
         };
         # Add the libtexpdf src instead of the git submodule.
+        # Also pretend to be a tarball release so sile --version will not say `vUNKNOWN`.
         preAutoreconf = ''
           rm -rf ./libtexpdf
           # From some reason without this flag, libtexpdf/ is unwriteable
           cp --no-preserve=mode -r ${libtexpdf-src} ./libtexpdf/
-        '';
-        # Pretend to be a tarball release so sile --version will not say `vUNKNOWN`.
-        postAutoreconf = ''
           echo ${version} > .tarball-version
         '';
         # Don't build the manual as it's time consuming, and it requires fonts
@@ -134,8 +132,10 @@
         };
       });
     in rec {
-      devShell = pkgs.mkShell {
-        inherit (sile) checkInputs nativeBuildInputs buildInputs;
+      devShells = {
+        default = pkgs.mkShell {
+          inherit (sile) checkInputs nativeBuildInputs buildInputs;
+        };
       };
       packages.sile = sile;
       defaultPackage = sile;
