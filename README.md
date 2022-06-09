@@ -129,7 +129,7 @@ $ docker run -it --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" --us
 If you have [flakes support][nix-flakes] enabled, you can run sile with:
 
 ```console
-$ nix run github:sile-typesetter/sile <sile arguments>
+$ nix run github:sile-typesetter/sile#sile <sile arguments>
 ```
 
 ### From Source
