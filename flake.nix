@@ -2,7 +2,7 @@
   description = "Simon’s Improved Layout Engine";
 
   # To make user overrides of the nixpkgs flake not take effect
-  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
   inputs.flake-utils.url = "github:numtide/flake-utils";
   inputs.gitignore = {
     url = "github:hercules-ci/gitignore.nix";
