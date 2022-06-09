@@ -54,7 +54,6 @@
         luasocket
         luautf8
         penlight
-        stdlib
         vstruct
         cldr
         fluent

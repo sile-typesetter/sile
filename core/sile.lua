@@ -17,15 +17,6 @@ pl = require("pl.import_into")()
 -- For developer testing only, usually in CI
 if os.getenv("SILE_COVERAGE") then require("luacov") end
 
--- Include lua-stdlib, but make sure debugging is turned off since newer
--- versions enable it by default and it comes with a huge performance hit.
--- Note we are phasing out stdlib in favor of Penlight. When adding or
--- refactoring code, using the Penlight equivalent features is preferred.
--- luacheck: push ignore _DEBUG std
-_DEBUG = false
-std = require("std")
--- luacheck: pop
-
 -- Lua 5.3+ has a UTF-8 safe string function module but it is somewhat
 -- underwhelming. This module includes more functions and supports older Lua
 -- versions. Docs: https://github.com/starwing/luautf8
