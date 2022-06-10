@@ -42,10 +42,8 @@ SILE.outputters.cairo = {
     _deprecationCheck(self)
   end,
 
-  cursor = function (self)
-    _deprecationCheck(self)
+  cursor = function (_)
     SU.deprecated("SILE.outputter:cursor", "SILE.outputter:getCursor", "0.10.10", "0.11.0")
-    return self:getCursor()
   end,
 
   getCursor = function (self)
@@ -53,10 +51,8 @@ SILE.outputters.cairo = {
     return cursorX, cursorY
   end,
 
-  moveTo = function (self, x, y)
-    _deprecationCheck(self)
+  moveTo = function (_, _, _)
     SU.deprecated("SILE.outputter:moveTo", "SILE.outputter:setCursor", "0.10.10", "0.11.0")
-    return self:setCursor(x, y)
   end,
 
   setCursor = function (self, x, y, relative)
@@ -80,10 +76,8 @@ SILE.outputters.cairo = {
     _deprecationCheck(self)
   end,
 
-  outputHbox = function (self, value, width)
-    _deprecationCheck(self)
+  outputHbox = function (_, _, _)
     SU.deprecated("SILE.outputter:outputHbox", "SILE.outputter:drawHbox", "0.10.10", "0.11.0")
-    return self:drawHbox(value, width)
   end,
 
   drawHbox = function (self, value, _)
@@ -126,10 +120,8 @@ SILE.outputters.cairo = {
     cr:restore()
   end,
 
-  imageSize = function (self, src)
-    _deprecationCheck(self)
+  imageSize = function (_, _)
     SU.deprecated("SILE.outputter:imageSize", "SILE.outputter:getImageSize", "0.10.10", "0.11.0")
-    return self:getImageSize(src)
   end,
 
   getImageSize = function (self, src)
@@ -145,10 +137,8 @@ SILE.outputters.cairo = {
     _deprecationCheck(self)
   end,
 
-  rule = function (self, x, y, width, depth)
-    _deprecationCheck(self)
+  rule = function (_, _, _, _, _)
     SU.deprecated("SILE.outputter:rule", "SILE.outputter:drawRule", "0.10.10", "0.11.0")
-    return self:drawRule(x, y, width, depth)
   end,
 
   drawRule = function (self, x, y, width, depth)
