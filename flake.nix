@@ -36,32 +36,6 @@
       inherit (gitignore.lib) gitignoreSource;
       # https://discourse.nixos.org/t/passing-git-commit-hash-and-tag-to-build-with-flakes/11355/2
       version_rev = if (self ? rev) then (builtins.substring 0 7 self.rev) else "dirty";
-      # Prepare a different luaEnv to be used in the overridden expression,
-      # this is also the place to choose a different lua interpreter, such as
-      # lua5_3 or luajit
-      luaEnv = pkgs.lua5_3.withPackages(ps: with ps; [
-        cassowary
-        cosmo
-        linenoise
-        lpeg
-        lua-zlib
-        lua_cliargs
-        luaepnf
-        luaexpat
-        luafilesystem
-        luarepl
-        luasec
-        luasocket
-        luautf8
-        penlight
-        vstruct
-        cldr
-        fluent
-        loadkit
-        # If we want to test things with lua5.2 or an even older lua, we uncomment these
-        #bit32
-        #compat53
-      ]);
       # Use the expression from Nixpkgs instead of rewriting it here.
       sile = pkgs.sile.overrideAttrs(oldAttr: rec {
         version = "${(pkgs.lib.importJSON ./package.json).version}-${version_rev}-flake";
@@ -109,23 +83,6 @@
         nativeBuildInputs = oldAttr.nativeBuildInputs ++ [
           pkgs.autoreconfHook
         ];
-        buildInputs = [
-          # This adds a different `lua` interpreter to the `buildInputs`.
-          luaEnv
-        ] ++ (
-          # We remove the first buildInput from nixpkgs which is the luaEnv
-          # used there. It's not mandatory to do so, because anyway the first
-          # `lua` interpreter that appears in the final `buildInputs` is the
-          # the `lua` that's used in the `$PATH`, and eventually in the built
-          # `sile`, but we'd like to keep the `buildInputs` clean if possible
-          # never the less.
-          pkgs.lib.lists.drop 1 oldAttr.buildInputs
-        );
-        # This is written in Nixpkgs' expression as well, but we need to write
-        # this here so that the overridden luaEnv will be used instead.
-        passthru = {
-          inherit luaEnv;
-        };
         meta = oldAttr.meta // {
           changelog = "https://github.com/sile-typesetter/sile/raw/master/CHANGELOG.md";
         };

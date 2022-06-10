@@ -21,13 +21,13 @@ dependencies = {
   "lua-zlib == 1.2-1",
   "lua_cliargs == 3.0-2",
   "luaepnf == 0.3-2",
-  "luaexpat == 1.3.3-1",
+  "luaexpat == 1.4.1-1",
   "luafilesystem == 1.8.0-1",
   "luarepl == 0.9-1",
-  "luasec == 1.0-1",
+  "luasec == 1.1.0-1",
   "luasocket == 3.0.0-1",
   "luautf8 == 0.1.3-1",
-  "penlight == 1.12.0-1",
+  "penlight == 1.12.0-2",
   "vstruct == 2.1.1-1"
 }
 build = {
