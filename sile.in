@@ -91,7 +91,7 @@ if SILE.masterFilename then
 
   if SU.debugging("profile") then
     ProFi:stop()
-    ProFi:writeReport('sile-profile.txt')
+    ProFi:writeReport(SILE.masterFilename..'.profile.txt')
   end
 
   if SU.debugging("versions") then
