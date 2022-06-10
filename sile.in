@@ -45,6 +45,11 @@ if not os.getenv 'LUA_REPL_RLWRAP' then
   io.stderr:write(SILE.full_version .. '\n')
 end
 
+local ProFi
+if SU.debugging("profile") then
+  ProFi = require("ProFi")
+end
+
 if SILE.makeDeps then
   SILE.makeDeps:add(executable)
 end
@@ -55,6 +60,10 @@ if SILE.masterFilename then
 
   extendPath(SILE.masterDir)
 
+  if SU.debugging("profile") then
+    ProFi:start()
+  end
+
   for _, preamble in pairs(SILE.preamble) do
     io.stderr:write("Loading "..preamble.."\n")
     local c = SILE.resolveFile(preamble, "classes")
@@ -63,11 +72,6 @@ if SILE.masterFilename then
     else
       SILE.require(preamble, "classes")
     end
-  end
-
-  if SU.debugging("profile") and pcall(require, "ProFi") then
-    ProFi = require 'ProFi'
-    ProFi:start()
   end
 
   local main, err = xpcall(function()
@@ -82,9 +86,10 @@ if SILE.masterFilename then
     end
     os.exit(1)
   end
+
   SILE.finish()
 
-  if SU.debugging("profile") and pcall(require, "ProFi") then
+  if SU.debugging("profile") then
     ProFi:stop()
     ProFi:writeReport('sile-profile.txt')
   end
