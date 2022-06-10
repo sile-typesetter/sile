@@ -117,13 +117,10 @@ local function registerCommands (_)
 
   SILE.registerCommand("pdf:metadata", function (options, _)
     local key = SU.required(options, "key", "pdf:metadata")
-    local value
     if options.val ~= nil then
       SU.deprecated("\\pdf:metadata[…, val=…]", "\\pdf:metadata[…, value=…]", "0.12.0", "0.13.0")
-      value = SU.required(options, "val", "pdf:metadata")
-    else
-      value = SU.required(options, "value", "pdf:metadata")
     end
+    local value = SU.required(options, "value", "pdf:metadata")
 
     if key == "Trapped" then
       SU.warn("Skipping special metadata key \\Trapped")

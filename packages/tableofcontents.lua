@@ -164,7 +164,7 @@ local function registerCommands (_)
   SILE.registerCommand("tableofcontents:title", function (_, _)
     SU.deprecated("\\tableofcontents:title", "\\fluent{toc-title}", "0.13.0", "0.14.0")
     SILE.call("fluent", {}, { "toc-title" })
-  end)
+  end, "Deprecated")
 
 end
 

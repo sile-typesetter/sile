@@ -78,45 +78,9 @@ local function registerCommands (_)
     })
   end, "Underlines some content")
 
-  SILE.registerCommand("boxaround", function (_, content)
-    -- This command was not documented and lacks feature.
-    -- Plan replacement with a better suited package.
+  SILE.registerCommand("boxaround", function (_, _)
     SU.deprecated("\\boxaround (undocumented)", "\\framebox (package)", "0.12.0", "0.13.0")
-
-    local hbox = SILE.call("hbox", {}, content)
-    table.remove(SILE.typesetter.state.nodes) -- steal it back...
-
-    -- Re-wrap the hbox in another hbox responsible for boxing it at output
-    -- time, when we will know the line contribution and can compute the scaled width
-    -- of the box, taking into account possible stretching and shrinking.
-    SILE.typesetter:pushHbox({
-      inner = hbox,
-      width = hbox.width,
-      height = hbox.height,
-      depth = hbox.depth,
-      outputYourself = function(self, typesetter, line)
-        local oldX = typesetter.frame.state.cursorX
-        local Y = typesetter.frame.state.cursorY
-
-        -- Build the original hbox.
-        -- Cursor will be moved by the actual definitive size.
-        self.inner:outputYourself(SILE.typesetter, line)
-        local newX = typesetter.frame.state.cursorX
-
-        -- Output a border
-        -- NOTE: Drawn inside the hbox, so borders overlap with inner content.
-        local w = newX - oldX
-        local h = self.height:tonumber()
-        local d = self.depth:tonumber()
-        local thickness = 0.5
-
-        SILE.outputter:drawRule(oldX, Y + d - thickness, w, thickness)
-        SILE.outputter:drawRule(oldX, Y - h, w, thickness)
-        SILE.outputter:drawRule(oldX, Y - h, thickness, h + d)
-        SILE.outputter:drawRule(oldX + w - thickness, Y - h, thickness, h + d)
-      end
-    })
-  end, "Draws a box around some content")
+  end, "Deprecated")
 
 end
 
