@@ -445,6 +445,16 @@ local function parsePost(s)
   }
 end
 
+local function parseOs2(s)
+  if s:len() <= 0 then return end
+  local fd = vstruct.cursor(s)
+  local header = vstruct.read(">version:u2 xAvgCharWidth:i2 usWeightClass:u2 usWidthClass:u2 fsType:u2 ySubscriptXSize:i2 ySubscriptYSize:i2 ySubscriptXOffset:i2 ySubscriptYOffset:i2 ySuperscriptXSize:i2 ySuperscriptYSize:i2 ySuperscriptXOffset:i2 ySuperscriptYOffset:i2, yStrikeoutSize:i2 yStrikeoutPosition:i2", fd)
+  return {
+    yStrikeoutPosition = header.yStrikeoutPosition,
+    yStrikeoutSize = header.yStrikeoutSize,
+  }
+end
+
 local parseFont = function(face)
   if not face.font then
     local font = {}
@@ -456,6 +466,7 @@ local parseFont = function(face)
     font.svg  = parseSvg(hb.get_table(face.data, face.index, "SVG"))
     font.math = parseMath(hb.get_table(face.data, face.index, "MATH"))
     font.post = parsePost(hb.get_table(face.data, face.index, "post"))
+    font.os2 = parseOs2(hb.get_table(face.data, face.index, "OS/2"))
     face.font = font
   end
   return face.font
