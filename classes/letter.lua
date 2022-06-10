@@ -13,7 +13,6 @@ letter.defaultFrameset = {
 }
 
 function letter:_init (options)
-  if self._legacy and not self._deprecated then return self:_deprecator(letter) end
   plain._init(self, options)
   SILE.scratch.letter = {
     sender = nil,

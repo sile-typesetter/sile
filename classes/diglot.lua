@@ -4,7 +4,6 @@ local diglot = pl.class(plain)
 diglot._name = "diglot"
 
 function diglot:_init (options)
-  if self._legacy and not self._deprecated then return self:_deprecator(diglot) end
   plain._init(self, options)
   self:loadPackage("counters")
   SILE.scratch.counters.folio = { value = 1, display = "arabic" }

@@ -2,8 +2,6 @@ local base = pl.class()
 base._name = "base"
 
 base._initialized = false
-base._legacy = false
-base._deprecated = false
 base.deferredLegacyInit = {}
 base.deferredInit = {}
 base.pageTemplate = { frames = {}, firstContentFrame = nil }
@@ -42,22 +40,7 @@ base.hooks = {
   finish = {},
 }
 
--- Part of stdlib deprecation hack: class constructors in the new model should
--- *never* be called with an id. If it does we know somebody is using the
--- legacy model and setup shims to get them out of trouble. Notable we want to
--- skip the normal init process the first time around (and even walk it back).
--- Normal _init() will be called again later, possibly with legacy init() mixins.
-function base:_create ()
-  if type(self) == "table" and self.id then
-    self._legacy = true
-    self._name = self.id
-    self.id = nil
-  end
-  return self
-end
-
 function base:_init (options)
-  if self._legacy and not self._deprecated then return self:_deprecator(base) end
   if self == options then options = {} end
   self:declareOptions()
   self:registerCommands()
@@ -82,88 +65,12 @@ end
 
 local mt
 
--- Penlight hook, currently only used to help shim stdlib based calls to the
--- new constructors.
-function base:_post_init ()
-  if self._legacy then
-    setmetatable(self, mt)
-  end
-end
-
 function base:start ()
-  if self._legacy then
-    for i, func in ipairs(self.deferredLegacyInit) do
-      func(self)
-      self.deferredLegacyInit[i] = nil
-    end
-  end
   self._initialized = true
   for i, func in ipairs(self.deferredInit) do
     func(self)
     self.deferredInit[i] = nil
   end
-end
-
--- This is essentially of a self destruct mechanism that monkey patches the old
--- stdlib object model definition to return a Penlight class constructor
--- instead of the old std.object model.
-function base:_deprecator (parent)
-  local id = self._name
-  self = pl.class(parent)
-  self._name = id
-  self._legacy = true
-  SU.warn(string.format([[
-    The document class inheritance system for SILE classes has been
-      refactored using a different object model. Your class (%s), has been
-      instantiated with a shim immitating the stdlib based model, but it is
-      *not* fully backwards compatible, *will* cause unexpected errors, and
-      *will* eventually be removed. Please update your code to use the new
-      Penlight based inheritance model.
-
-    ]], self._name))
-  SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0")
-  self.declareOption = function (self_, option, setter)
-    if not getmetatable(self_.options)._opts[option] then
-      if type(setter) ~= "function" then
-        local default = setter
-        setter = function (_, value)
-          local k = "_legacy_option_" .. option
-          if value then self_[k] = value end
-          return function() return self_[k] end
-        end
-        setter(self_, default)
-      end
-      parent.declareOption(self_, option, setter)
-    end
-  end
-  -- Legacy classes from old example code run declareFrame and loadPackage before instantializing,
-  -- stash them in a post init callback instead so we have frames and a typesetter
-  self.declareFrame = function (self_, id_, spec)
-    self_:registerLegacyPostinit(function ()
-      parent.declareFrame(self_, id_, spec)
-    end)
-    return self_
-  end
-  self.loadPackage = function (self_, packname, args)
-    self_:registerLegacyPostinit(function ()
-      parent.loadPackage(self_, packname, args)
-    end)
-    return self_
-  end
-  -- Just in case the legacy class calls this directly, make it a noop
-  parent.init = function (self_) return self_ end
-  self._init = function (self_, options_)
-    if type(self_.init) == "function" then
-      self_:registerLegacyPostinit(self_.init, options_)
-    end
-    parent._init(self_, options_)
-    return self_
-  end
-  self._deprecated = true
-  -- The function we are in (Penlight's constructor) is going to blow away the
-  -- meta table after we return here so stash it and re-apply it on _post_init
-  mt = getmetatable(self)
-  return self
 end
 
 function base:setOptions (options)

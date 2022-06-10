@@ -32,7 +32,6 @@ local skips = {
 }
 
 function plain:_init (options)
-  if self._legacy and not self._deprecated then return self:_deprecator(plain) end
   base._init(self, options)
   self:loadPackage("bidi")
   self:loadPackage("folio")

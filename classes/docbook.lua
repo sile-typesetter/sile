@@ -9,7 +9,6 @@ SILE.scratch.docbook = {
 }
 
 function docbook:_init (options)
-  if self._legacy and not self._deprecated then return self:_deprecator(docbook) end
   plain._init(self, options)
   self:loadPackage("image")
   self:loadPackage("simpletable", {

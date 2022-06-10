@@ -28,7 +28,6 @@ function jplain:_j_common ()
 end
 
 function jplain:_init (options)
-  if self._legacy and not self._deprecated then return self:_deprecator(jplain) end
   plain._init(self, options)
   self:_j_common()
   return self
