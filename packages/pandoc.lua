@@ -235,8 +235,7 @@ local function registerCommands (_)
   end, "Creates a Span inline element")
 
   SILE.registerCommand("Strikeout", function (_, content)
-    -- TODO: cross it out, unicode munging?
-    SILE.process(content)
+    SILE.call("strikethrough", {}, content)
   end, "Creates text which is striked out.")
 
   SILE.registerCommand("Strong", function (_, content)
