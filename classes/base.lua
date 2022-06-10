@@ -65,7 +65,7 @@ end
 
 local mt
 
-function base:start ()
+function base:_post_init ()
   self._initialized = true
   for i, func in ipairs(self.deferredInit) do
     func(self)
