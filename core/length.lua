@@ -58,29 +58,24 @@ return pl.class({
       return self.length:tonumber()
     end,
 
-    new = function (spec)
+    new = function (_)
       SU.deprecated("SILE.length.new", "SILE.length", "0.10.0")
-      return SILE.length(spec)
     end,
 
-    make = function (spec)
+    make = function (_)
       SU.deprecated("SILE.length.make", "SILE.length", "0.10.0")
-      return SILE.length(spec)
     end,
 
-    parse = function (spec)
+    parse = function (_)
       SU.deprecated("SILE.length.parse", "SILE.length", "0.10.0")
-      return SILE.length(spec)
     end,
 
-    fromLengthOrNumber = function (_, spec)
+    fromLengthOrNumber = function (_, _)
       SU.deprecated("SILE.length.fromLengthOrNumber", "SILE.length", "0.10.0")
-      return SILE.length(spec)
     end,
 
-    __index = function (_, key) -- luacheck: ignore
+    __index = function (_, key)
       SU.deprecated("SILE.length." .. key, "SILE.length", "0.10.0")
-      return SILE.length()
     end,
 
     __tostring = function (self)
