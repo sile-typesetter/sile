@@ -87,7 +87,7 @@ utilities.deprecated = function (old, new, warnat, errorat, extra)
   local brackets = old:sub(1,1) == '\\' and "" or "()"
   local _semver = SILE.version and SILE.version:match("v([0-9]*.[0-9]*.[0-9]*)") or warnat
   local _new = new and "Please use " .. (new .. brackets) .. " instead." or "Plase don't use it."
-  local msg = (old .. brackets) .. " was deprecated in SILE v" .. warnat .. ". " .. _new ..  (extra and "\n" .. extra or "")
+  local msg = (old .. brackets) .. " was deprecated in SILE v" .. warnat .. ". " .. _new ..  (extra and "\n" .. extra .. "\n\n" or "")
   if errorat and _semver >= errorat then
     SU.error(msg)
   elseif warnat and _semver >= warnat then

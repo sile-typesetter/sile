@@ -62,12 +62,11 @@ local function registerCommands (class)
 end
 
 local _deprecate  = [[
-Directly calling master swtch handling functions is no longer
-necessary. All the SILE core classes and anything inheriting from them
-will take care of this automatically using hooks. Custom classes that
-override the class:newPage() function may need to
-handle this in other ways. By calling this hook directly you are
-likely causting it to run twice and land on the wrong master.
+  Directly calling master switch handling functions is no longer necessary. All
+  the SILE core classes and anything inheriting from them will take care of this
+  automatically using hooks. Custom classes that override the class:newPage()
+  function may need to handle this in other ways. By calling this hook directly
+  you are likely causing it to run twice and duplicate entries.
 ]]
 
 return {
