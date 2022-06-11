@@ -224,7 +224,7 @@ As a case study, here is how a workflow could be setup in GitHub Actions:
 
 ```yaml
 name: SILE
-on: [push, pull_request]
+on: [ push, pull_request ]
 jobs:
   sile:
     runs-on: ubuntu-latest

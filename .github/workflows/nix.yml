@@ -1,6 +1,6 @@
 name: Run Flake
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
 

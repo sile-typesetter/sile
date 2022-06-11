@@ -319,7 +319,7 @@ As a case study, here is how a work flow could be setup in GitHub Actions:
 \begin{verbatim}
 \line
 name: SILE
-on: [push, pull_request]
+on: [ push, pull_request ]
 jobs:
   sile:
     runs-on: ubuntu-20.04
