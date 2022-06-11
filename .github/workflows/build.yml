@@ -31,10 +31,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install fonts-sil-gentiumplus libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev liblua5.3-dev libpng-dev lua5.3 lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
-      - name: Monkey patch decrepit system packages
-        run: |
-          curl -fsSL https://github.com/luarocks/luarocks/commit/9ff512e35455939f02eaec2318e3acc77782fdeb.patch |
-            sudo patch -d /usr/share/lua/5.1 -p2
       - name: Configure
         run: |
           ./bootstrap.sh
