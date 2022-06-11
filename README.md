@@ -230,8 +230,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - name: The SILE Typesetter
+        uses: actions/checkout@v3
+      - name: Render document with SILE
         uses: sile-typesetter/sile@v0
         with:
           args: my-document.sil
