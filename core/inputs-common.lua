@@ -1,14 +1,17 @@
+local _deprecated = [[
+  You appear to be using a document class '%s' programmed for SILE <= v0.12.5.
+  This system was refactored in v0.13.0 and the shims trying to make it
+  work temporarily withouth refactoring your classes have been removed
+  in v0.14.0. Please see v0.13.0 release notes for help.
+]]
+
 SILE.inputs.common = {
 
   init = function (_, tree)
     local class = tree.options.class or "plain"
     local constructor = SILE.require(class, "classes", true)
     if constructor.id then
-      SU.warn([[You appear to be using a document class for SILE <= v0.12.5.
-        This system was refactored in v0.13.0 and the shims trying to make it
-        work temporarily withouth refactoring your classes have been removed
-        in v0.14.0. Please see v0.13.0 release notes for help.]])
-      SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0")
+      SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0", string.format(_deprecated, constructor.id))
     end
     SILE.documentState.documentClass = constructor(tree.options)
     -- Prepend the dirname of the input file to the Lua search path

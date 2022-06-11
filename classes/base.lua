@@ -63,8 +63,6 @@ function base:_init (options)
   return self
 end
 
-local mt
-
 function base:_post_init ()
   self._initialized = true
   for i, func in ipairs(self.deferredInit) do
