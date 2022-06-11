@@ -139,9 +139,12 @@
       };
       packages.sile = sile;
       defaultPackage = sile;
-      apps.sile = {
-        type = "app";
-        program = "${sile}/bin/sile";
+      apps = rec {
+        default = sile;
+        sile = {
+          type = "app";
+          program = "${self.defaultPackage.${system}}/bin/sile";
+        };
       };
       defaultApp = apps.sile;
     }

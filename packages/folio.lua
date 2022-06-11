@@ -60,7 +60,7 @@ local function registerCommands (_)
   SILE.registerCommand("nofoliosthispage", function (_, _)
     SU.deprecated("nofoliosthispage", "nofoliothispage", "0.12.1", "0.14.0")
     return SILE.Commands["nofoliothispage"]()
-  end)
+  end, "Deprecated")
 
   SILE.registerCommand("foliostyle", function (_, content)
     SILE.call("center", {}, content)

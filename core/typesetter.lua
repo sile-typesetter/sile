@@ -368,9 +368,8 @@ function SILE.defaultTypesetter:boxUpNodes ()
   return vboxes
 end
 
-function SILE.defaultTypesetter:pageTarget ()
-  SU.warn("Method :pageTarget() is deprecated, please use :getTargetLength()")
-  return self:getTargetLength()
+function SILE.defaultTypesetter.pageTarget (_)
+  SU.deprecated("SILE.typesetter:pageTarget", "SILE.typesetter:getTargetLength", "0.13.0", "0.14.0")
 end
 
 function SILE.defaultTypesetter:getTargetLength ()
