@@ -1,12 +1,48 @@
-local function init (class, _)
+local function getUnderlineParameters ()
+  local ot = require("core.opentype-parser")
+  local fontoptions = SILE.font.loadDefaults({})
+  local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
+  local font = ot.parseFont(face)
+  local upem = font.head.unitsPerEm
+  local underlinePosition = font.post.underlinePosition / upem * fontoptions.size
+  local underlineThickness = font.post.underlineThickness / upem * fontoptions.size
+  return underlinePosition, underlineThickness
+end
 
+local function getStrikethroughParameters ()
+  local ot = require("core.opentype-parser")
+  local fontoptions = SILE.font.loadDefaults({})
+  local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
+  local font = ot.parseFont(face)
+  local upem = font.head.unitsPerEm
+  local yStrikeoutPosition = font.os2.yStrikeoutPosition / upem * fontoptions.size
+  local yStrikeoutSize = font.os2.yStrikeoutSize / upem * fontoptions.size
+  return yStrikeoutPosition, yStrikeoutSize
+end
+
+-- \hfill (from the "plain" class) and \leaders (from the "leaders" package) use glues,
+-- so we behave the same for hrulefill.
+local hrulefillglue = pl.class(SILE.nodefactory.hfillglue)
+hrulefillglue.raise = SILE.measurement()
+hrulefillglue.thickness = SILE.measurement("0.2pt")
+
+function hrulefillglue:outputYourself (typesetter, line)
+  local outputWidth = SU.rationWidth(self.width, self.width, line.ratio):tonumber()
+  local oldx = typesetter.frame.state.cursorX
+  typesetter.frame:advancePageDirection(-self.raise)
+  typesetter.frame:advanceWritingDirection(outputWidth)
+  local newx = typesetter.frame.state.cursorX
+  local newy = typesetter.frame.state.cursorY
+  SILE.outputter:drawRule(oldx, newy, newx - oldx, self.thickness)
+  typesetter.frame:advancePageDirection(self.raise)
+end
+
+local function init (class, _)
   class:loadPackage("raiselower")
   class:loadPackage("rebox")
-
 end
 
 local function registerCommands (_)
-
   SILE.registerCommand("hrule", function (options, _)
     local width = SU.cast("length", options.width)
     local height = SU.cast("length", options.height)
@@ -16,7 +52,7 @@ local function registerCommands (_)
       height = height:absolute(),
       depth = depth:absolute(),
       value = options.src,
-      outputYourself= function (self, typesetter, line)
+      outputYourself = function (self, typesetter, line)
         local outputWidth = SU.rationWidth(self.width, self.width, line.ratio)
         typesetter.frame:advancePageDirection(-self.height)
         local oldx = typesetter.frame.state.cursorX
@@ -31,6 +67,35 @@ local function registerCommands (_)
     })
   end, "Draws a blob of ink of width <width>, height <height> and depth <depth>")
 
+  SILE.registerCommand("hrulefill", function (options, _)
+    local raise
+    local thickness
+    if options.position and options.raise then
+      SU.error("hrulefill cannot have both position and raise parameters")
+    end
+    if options.thickness then
+      thickness = SU.cast("measurement", options.thickness)
+    end
+    if options.position == "underline" then
+      local underlinePosition, underlineThickness = getUnderlineParameters()
+      thickness = thickness or underlineThickness
+      raise = underlinePosition
+    elseif options.position == "strikethrough" then
+      local yStrikeoutPosition, yStrikeoutSize = getStrikethroughParameters()
+      thickness = thickness or yStrikeoutSize
+      raise = yStrikeoutPosition + thickness / 2
+    elseif options.position then
+      SU.error("Unknown hrulefill position '"..options.position.."'")
+    else
+      raise = SU.cast("measurement", options.raise or "0")
+    end
+
+    SILE.typesetter:pushExplicitGlue(hrulefillglue({
+      raise = raise,
+      thickness = thickness or SILE.measurement("0.2pt"),
+    }))
+  end, "Add a huge horizontal hrule glue")
+
   SILE.registerCommand("fullrule", function (options, _)
     SILE.call("raise", { height = options.raise or "0.5em" }, function ()
       SILE.call("hrule", {
@@ -41,13 +106,7 @@ local function registerCommands (_)
   end, "Draw a full width hrule centered on the current line")
 
   SILE.registerCommand("underline", function (_, content)
-    local ot = require("core.opentype-parser")
-    local fontoptions = SILE.font.loadDefaults({})
-    local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
-    local font = ot.parseFont(face)
-    local upem = font.head.unitsPerEm
-    local underlinePosition = -font.post.underlinePosition / upem * fontoptions.size
-    local underlineThickness = font.post.underlineThickness / upem * fontoptions.size
+    local underlinePosition, underlineThickness = getUnderlineParameters()
 
     local hbox = SILE.call("hbox", {}, content)
     table.remove(SILE.typesetter.state.nodes) -- steal it back...
@@ -60,7 +119,7 @@ local function registerCommands (_)
       width = hbox.width,
       height = hbox.height,
       depth = hbox.depth,
-      outputYourself = function(self, typesetter, line)
+      outputYourself = function (self, typesetter, line)
         local oldX = typesetter.frame.state.cursorX
         local Y = typesetter.frame.state.cursorY
 
@@ -73,19 +132,14 @@ local function registerCommands (_)
         -- NOTE: According to the OpenType specs, underlinePosition is "the suggested distance of
         -- the top of the underline from the baseline" so it seems implied that the thickness
         -- should expand downwards
-        SILE.outputter:drawRule(oldX, Y + underlinePosition, newX - oldX, underlineThickness)
+        SILE.outputter:drawRule(oldX, Y - underlinePosition, newX - oldX, underlineThickness)
       end
     })
   end, "Underlines some content")
 
   SILE.registerCommand("strikethrough", function (_, content)
-    local ot = SILE.require("core.opentype-parser")
-    local fontoptions = SILE.font.loadDefaults({})
-    local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
-    local font = ot.parseFont(face)
-    local upem = font.head.unitsPerEm
-    local yStrikeoutSize = font.os2.yStrikeoutSize / upem * fontoptions.size
-    local yStrikeoutPosition = font.os2.yStrikeoutPosition / upem * fontoptions.size
+    local yStrikeoutPosition, yStrikeoutSize = getStrikethroughParameters()
+
     local hbox = SILE.call("hbox", {}, content)
     table.remove(SILE.typesetter.state.nodes) -- steal it back...
 
@@ -97,7 +151,7 @@ local function registerCommands (_)
       width = hbox.width,
       height = hbox.height,
       depth = hbox.depth,
-      outputYourself = function(self, typesetter, line)
+      outputYourself = function (self, typesetter, line)
         local oldX = typesetter.frame.state.cursorX
         local Y = typesetter.frame.state.cursorY
         -- Build the original hbox.
@@ -105,7 +159,9 @@ local function registerCommands (_)
         self.inner:outputYourself(SILE.typesetter, line)
         local newX = typesetter.frame.state.cursorX
         -- Output a line.
-        SILE.outputter:drawRule(oldX, Y - yStrikeoutPosition, newX - oldX, yStrikeoutSize)
+        -- NOTE: The OpenType spec is not explicit regarding how the size
+        -- (thickness) affects the position. We opt to distribute evenly
+        SILE.outputter:drawRule(oldX, Y - yStrikeoutPosition - yStrikeoutSize / 2, newX - oldX, yStrikeoutSize)
       end
     })
   end, "Strikes out some content")
@@ -126,7 +182,7 @@ local function registerCommands (_)
       width = hbox.width,
       height = hbox.height,
       depth = hbox.depth,
-      outputYourself = function(self, typesetter, line)
+      outputYourself = function (self, typesetter, line)
         local oldX = typesetter.frame.state.cursorX
         local Y = typesetter.frame.state.cursorY
 
@@ -172,8 +228,25 @@ The \autodoc:command{\strikethrough} command \strikethrough{strikes} its content
 
 \note{
   The position and thickness of the underlines and strikethroughs are based on then
-  current font, honoring the values defined by the type designer.
+  current font metrics, honoring the values defined by the type designer.
 }
+
+The \autodoc:command{\hrulefill} inserts an infinite horizontal rubber, similar
+to an \autodoc:command{\hfill}, but —as its name implies— filled with a rule
+(that is, a solid line). By default, it stands on the baseline and has a
+thickness of 0.2pt, below the baseline.
+It supports optional parameters \autodoc:parameter{raise=<dimension>} and
+\autodoc:parameter{thickness=<dimension>} to adjust the position and thickness
+of the line, respectively. The former accepts a negative measurement, to lower
+the line.
+An alternative is to use the \autodoc:parameter{position} option, which can
+be set to \code{underline} or \code{strikethrough}. In that case, it honors the
+current font metrics and the line is drawn at the appropriate position and,
+by default, with the relevant thickness. You can still set a custom thickness
+with the \autodoc:parameter{thickness} parameter.
+
+For instance, \autodoc:command{\hrulefill[position=underline]} gives:
+\hrulefill[position=underline]
 
 Finally, \autodoc:command{\fullrule} draws a thin line across the width of the current frame.
 \end{document}]] }
