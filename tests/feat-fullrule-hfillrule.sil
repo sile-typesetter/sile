@@ -1,0 +1,56 @@
+\begin[papersize=a6]{document}
+\nofolios
+\neverindent
+\script[src=packages/rules]
+
+Default\hrulefill
+
+A\hrulefill{}B
+
+\hrulefill{}A
+
+\hrulefill
+
+\medskip
+
+Custom\hrulefill[raise=0.5ex, thickness=1pt]
+
+A\hrulefill[raise=0.5ex, thickness=1pt]{}B
+
+\hrulefill[raise=0.5ex, thickness=1pt]{}B
+
+\hrulefill[raise=0.5ex, thickness=1pt]
+
+\medskip
+
+Underline\hrulefill[position=underline]
+
+A\hrulefill[position=underline]{}B
+
+\hrulefill[position=underline]{}B
+
+\hrulefill[position=underline]
+
+\medskip
+
+Strike\hrulefill[position=strikethrough]
+
+A\hrulefill[position=strikethrough]{}B
+
+\hrulefill[position=strikethrough]{}B
+
+\hrulefill[position=strikethrough]
+
+\medskip
+
+Custom strike\hrulefill[position=strikethrough, thickness=1pt]
+
+Custom underline\hrulefill[position=underline, thickness=1pt]
+
+\medskip
+
+\fullrule
+
+\fullrule[raise=0.4em, thickness=1pt]
+
+\end{document}
