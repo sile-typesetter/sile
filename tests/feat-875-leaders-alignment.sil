@@ -11,4 +11,9 @@
 1 2 3\leaders{/}3 2 1\par
 1 2 3 4\leaders{/}4 3 2 1\par
 1 2 3 4 5\leaders{/}5 4 3 2 1\par
+% Additional case: Standalone leaders for bug 1426
+% (added at the end not to change the above expectations)
+% Nb. we had \hboxes{} on the second line above probably because of
+% this issue!
+\leaders{/}\par
 \end{document}
