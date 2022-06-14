@@ -25,10 +25,10 @@ globals = {
   "luautf8",
   "pl",
   "SYSTEM_SILE_PATH",
-  "SHARED_LIB_EXT",
-  "ProFi"
+  "SHARED_LIB_EXT"
 }
 max_line_length = false
 ignore = {
-  "581"
+  "581" -- operator order warning doesn't account for custom table metamethods
 }
+-- vim: ft=lua
