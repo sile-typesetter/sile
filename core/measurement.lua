@@ -186,19 +186,16 @@ local measurement = pl.class({
   })
 
 
-SILE.toPoints = function (factor, unit)
-  SU.deprecated("SILE.toPoints", "SILE.measurement():tonumber", "0.10.0")
-  return measurement(factor, unit):tonumber()
+SILE.toPoints = function (_, _)
+  SU.deprecated("SILE.toPoints", "SILE.measurement():tonumber", "0.10.0", "0.13.1")
 end
 
-SILE.toMeasurement = function (amount, unit)
-  SU.deprecated("SILE.toMeasurement", "SILE.measurement", "0.10.0")
-  return measurement(amount, unit)
+SILE.toMeasurement = function (_, _)
+  SU.deprecated("SILE.toMeasurement", "SILE.measurement", "0.10.0", "0.13.1")
 end
 
-SILE.toAbsoluteMeasurement = function (amount, unit)
-  SU.deprecated("SILE.toAbsoluteMeasurement", "SILE.measurement():absolute", "0.10.0")
-  return measurement(amount, unit):absolute()
+SILE.toAbsoluteMeasurement = function (_, _)
+  SU.deprecated("SILE.toAbsoluteMeasurement", "SILE.measurement():absolute", "0.10.0", "0.13.1")
 end
 
 return measurement

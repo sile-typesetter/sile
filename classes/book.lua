@@ -100,7 +100,7 @@ book.registerCommands = function (self)
     local number
     if SU.boolean(options.numbering, true) then
       SILE.call("increment-multilevel-counter", { id = "sectioning", level = level })
-      number = self:formatMultilevelCounter(self.getMultilevelCounter("sectioning"))
+      number = self:formatMultilevelCounter(self:getMultilevelCounter("sectioning"))
     end
     if SU.boolean(options.toc, true) then
       SILE.call("tocentry", { level = level, number = number }, SU.subContent(content))
@@ -109,20 +109,14 @@ book.registerCommands = function (self)
     if SU.boolean(options.numbering, true) then
       if options.prenumber then
         if SILE.Commands[options.prenumber .. ":"  .. lang] then
-          local nonlocal = options.prenumber
           options.prenumber = options.prenumber .. ":" .. lang
-          SU.warn("Please output appropriate localizations in your \\" .. nonlocal .. " function using Fluent.")
-          SU.deprecated("\\" .. options.prenumber, "\\" .. nonlocal, "0.13.0", "0.14.0")
         end
         SILE.call(options.prenumber)
       end
       SILE.call("show-multilevel-counter", { id = "sectioning" })
       if options.postnumber then
         if SILE.Commands[options.postnumber .. ":" .. lang] then
-          local nonlocal = options.postnumber
           options.postnumber = options.postnumber .. ":" .. lang
-          SU.warn("Please set appropriate localizations in your \\" .. nonlocal .. " function using Fluent.")
-          SU.deprecated("\\" .. options.postnumber, "\\" .. nonlocal, "0.13.0", "0.14.0")
         end
         SILE.call(options.postnumber)
       end
@@ -135,10 +129,6 @@ book.registerCommands = function (self)
 
   SILE.registerCommand("book:chapter:post", function (_, _)
     SILE.call("fluent", {}, { "book-chapter-post" })
-    SILE.call("par")
-  end)
-
-  SILE.registerCommand("book:chapter:post", function (_, _)
     SILE.call("par")
   end)
 

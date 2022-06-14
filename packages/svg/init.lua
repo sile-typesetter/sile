@@ -40,10 +40,9 @@ local function registerCommands (_)
     _drawSVG(svgdata, width, height, density)
   end)
 
-  SILE.registerCommand("include-svg-file", function (options, _)
-    SU.deprecated("include-svg-file", "svg", "0.10.10", "0.11.0")
-    SILE.call("svg", options)
-  end)
+  SILE.registerCommand("include-svg-file", function (_, _)
+    SU.deprecated("\\include-svg-file", "\\svg", "0.10.10", "0.11.0")
+  end, "Deprecated")
 
   SILE.registerCommand("svg-glyph", function(_, content)
     local fontoptions = SILE.font.loadDefaults({})

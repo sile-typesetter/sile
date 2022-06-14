@@ -1,6 +1,8 @@
 #!@LUA@
-SYSTEM_SILE_PATH = "@SILE_PATH@" -- global used in core/packagemanager
-SHARED_LIB_EXT = "@SHARED_LIB_EXT@" -- global used in core/packagemanager
+
+-- globals used only in core/packagemanager, soon to be deprecated
+SYSTEM_SILE_PATH = "@SILE_PATH@"
+SHARED_LIB_EXT = "@SHARED_LIB_EXT@"
 
 local executable = debug.getinfo(1, "S").short_src
 local luaversion = _VERSION:match("%d+%.%d+")
@@ -25,7 +27,7 @@ extendPath("@SILE_LIB_PATH@")
 local pathvar = os.getenv("SILE_PATH")
 if pathvar then
   for path in string.gmatch(pathvar, "[^;]+") do
-	if path:len() >= 1 and path ~= "./" then extendPath(path) end
+    if path:len() >= 1 and path ~= "./" then extendPath(path) end
   end
 end
 
@@ -36,14 +38,32 @@ extendPath(".")
 SILE = require("core.sile")
 
 io.stdout:setvbuf 'no'
+
 SILE.parseArguments()
+
 if not os.getenv 'LUA_REPL_RLWRAP' then
   io.stderr:write(SILE.full_version .. '\n')
 end
-if SILE.makeDeps then SILE.makeDeps:add(executable) end
+
+local ProFi
+if SU.debugging("profile") then
+  ProFi = require("ProFi")
+end
+
+if SILE.makeDeps then
+  SILE.makeDeps:add(executable)
+end
+
 SILE.init()
+
 if SILE.masterFilename then
+
   extendPath(SILE.masterDir)
+
+  if SU.debugging("profile") then
+    ProFi:start()
+  end
+
   for _, preamble in pairs(SILE.preamble) do
     io.stderr:write("Loading "..preamble.."\n")
     local c = SILE.resolveFile(preamble, "classes")
@@ -53,11 +73,11 @@ if SILE.masterFilename then
       SILE.require(preamble, "classes")
     end
   end
-  if SU.debugging("profile") and pcall(require, "ProFi") then
-    ProFi = require 'ProFi'
-    ProFi:start()
-  end
-  local main, err = xpcall(function() return SILE.readFile(SILE.inputFile) end, SILE.errorHandler)
+
+  local main, err = xpcall(function()
+      return SILE.readFile(SILE.inputFile)
+    end, SILE.errorHandler)
+
   if not main then
     if type(err) == "string" and err:match(": interrupted!") then
       SILE.outputter:finish()
@@ -66,13 +86,20 @@ if SILE.masterFilename then
     end
     os.exit(1)
   end
+
   SILE.finish()
-  if SU.debugging("profile") and pcall(require, "ProFi") then
+
+  if SU.debugging("profile") then
     ProFi:stop()
-    ProFi:writeReport( 'sile-profile.txt' )
+    ProFi:writeReport(SILE.masterFilename..'.profile.txt')
   end
-  if SU.debugging("versions") then SILE.shaper.debugVersions() end
+
+  if SU.debugging("versions") then
+    SILE.shaper.debugVersions()
+  end
+
 else
   SILE.repl()
 end
+
 -- vim: ft=lua

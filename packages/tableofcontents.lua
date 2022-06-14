@@ -163,18 +163,17 @@ local function registerCommands (_)
 
   SILE.registerCommand("tableofcontents:title", function (_, _)
     SU.deprecated("\\tableofcontents:title", "\\fluent{toc-title}", "0.13.0", "0.14.0")
-    SILE.call("fluent", {}, { "toc-title" })
-  end)
+  end, "Deprecated")
 
 end
 
 local _deprecate  = [[
-Directly calling tableofcontents handling functions is no longer
-necessary. All the SILE core classes and anything inheriting from them
-will take care of this automatically using hooks. Custom classes that
-override the class:endPage() and class:finish() functions may need to
-handle this in other ways. By calling these hooks directly you are
-likely causting them to run twice and duplicate entries.
+  Directly calling tableofcontents handling functions is no longer necessary.
+  All the SILE core classes and anything inheriting from them will take care of
+  this automatically using hooks. Custom classes that override the
+  class:endPage() and class:finish() functions may need to handle this in other
+  ways. By calling these hooks directly you are likely causing them to run
+  twice and duplicate entries.
 ]]
 
 return {

@@ -91,19 +91,14 @@ SILE.defaultTypesetter.breadcrumbs = SU.breadcrumbs()
 local warned = false
 
 function SILE.defaultTypesetter:init (frame)
-  if not warned then
-    SU.warn([[
-    The typesetter instance inheritance system for instances has been
-      refactored using a different object model. Your instance was created
-      and initialized using the object copy syntax from the stdlib model.
-      It has been shimmed for you using the new Penlight model, but this may
-      lead to unexpected behaviour. Please update your code to use the new
-      Penlight based inheritance model.
-
-      ]])
-    warned = true
-  end
-  SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0")
+  SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0", warned and "" or [[
+  The typesetter instance inheritance system for instances has been
+  refactored using a different object model. Your instance was created
+  and initialized using the object copy syntax from the stdlib model.
+  It has been shimmed for you using the new Penlight model, but this may
+  lead to unexpected behaviour. Please update your code to use the new
+  Penlight based inheritance model.]])
+  warned = true
   self:_init(frame)
 end
 
@@ -368,9 +363,8 @@ function SILE.defaultTypesetter:boxUpNodes ()
   return vboxes
 end
 
-function SILE.defaultTypesetter:pageTarget ()
-  SU.warn("Method :pageTarget() is deprecated, please use :getTargetLength()")
-  return self:getTargetLength()
+function SILE.defaultTypesetter.pageTarget (_)
+  SU.deprecated("SILE.typesetter:pageTarget", "SILE.typesetter:getTargetLength", "0.13.0", "0.14.0")
 end
 
 function SILE.defaultTypesetter:getTargetLength ()

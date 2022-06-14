@@ -68,12 +68,10 @@ require("core.frame")
 -- Class system deprecation shims
 SILE.baseClass = {}
 local _classdeprecation = function ()
-  SU.warn([[
-  The inheritance system for SILE classes has been refactored using a
-    different object model, please update your code as use of the old
-    model will cause unexpected errors and will eventually be removed.
-  ]])
-  SU.deprecated("SILE.baseclass", "SILE.classes.base", "0.13.0", "0.14.0")
+  SU.deprecated("SILE.baseclass", "SILE.classes.base", "0.13.0", "0.14.0", [[
+  The inheritance system for SILE classes has been refactored using a different
+  object model, please update your code as use of the old model will cause
+  unexpected errors and will eventually be removed.]])
 end
 setmetatable(SILE.baseClass, {
     __index = function(_, key)

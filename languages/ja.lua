@@ -179,7 +179,7 @@ return {
     SILE.hyphenator.languages.ja = { patterns={} }
 
     SILE.registerCommand("book:chapter:post:ja", function (_, _)
-      SILE.call("fluent", { locale = "ja" }, { "book-chapter-post" })
+      SILE.call("fluent", {}, { "book-chapter-post" })
       SILE.call("medskip")
     end)
 
