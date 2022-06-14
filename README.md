@@ -224,14 +224,14 @@ As a case study, here is how a workflow could be setup in GitHub Actions:
 
 ```yaml
 name: SILE
-on: [push, pull_request]
+on: [ push, pull_request ]
 jobs:
   sile:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - name: The SILE Typesetter
+        uses: actions/checkout@v3
+      - name: Render document with SILE
         uses: sile-typesetter/sile@v0
         with:
           args: my-document.sil
