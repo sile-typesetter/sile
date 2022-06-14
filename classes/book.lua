@@ -111,8 +111,6 @@ book.registerCommands = function (self)
       if options.prenumber then
         if SILE.Commands[options.prenumber .. ":"  .. lang] then
           options.prenumber = options.prenumber .. ":" .. lang
-          SU.deprecated("\\" .. options.prenumber, "\\" .. options.prenumber, "0.13.0", "0.14.0",
-            string.format([[Please configure appropriate localizations in your %s function using Fluent.]], options.prenumber))
         end
         SILE.call(options.prenumber)
       end
@@ -120,8 +118,6 @@ book.registerCommands = function (self)
       if options.postnumber then
         if SILE.Commands[options.postnumber .. ":" .. lang] then
           options.postnumber = options.postnumber .. ":" .. lang
-          SU.deprecated("\\" .. options.postnumber, "\\" .. options.postnumber, "0.13.0", "0.14.0",
-            string.format([[Please configure appropriate localizations in your %s function using Fluent.]], options.postnumber))
         end
         SILE.call(options.postnumber)
       end
@@ -134,10 +130,6 @@ book.registerCommands = function (self)
 
   SILE.registerCommand("book:chapter:post", function (_, _)
     SILE.call("fluent", {}, { "book-chapter-post" })
-    SILE.call("par")
-  end)
-
-  SILE.registerCommand("book:chapter:post", function (_, _)
     SILE.call("par")
   end)
 
