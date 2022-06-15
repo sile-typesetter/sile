@@ -135,11 +135,11 @@ $ alias sile='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" 
 $ sile input.sil
 ```
 
-One notable issue with using SILE from a Docker container is that it will not have access to your system’s fonts by default.
-You can map a folder of fonts (any tree usable by fontconfig) into the container.
-This could be your system’s default font directory, your user one, a project specific folder, or anything of your choosing.
+One notable issue with using SILE from a Docker container is that by default it will not have access to your system’s fonts.
+To work around this you can map a folder of fonts (in any organization usable by fontconfig) into the container.
+This could be your system’s default font directory, your user one, a folder with project specific resources, or anything of your choosing.
 You can see where fonts are found on your system using `fc-list`.
-The path of your choosing from the host system should be passed as a volume mounted on `/fonts` inside the container like this:
+The path of your choosing from the host system should be mounted as a volume on `/fonts` inside the container like this:
 
 ```console
 $ docker run -it --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest

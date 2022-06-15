@@ -140,17 +140,18 @@ For most shells, a single alias can be created to hide that complexity and make 
 
 \begin{terminal}
 $ alias sile='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest'
+$ sile input.sil
 \end{terminal}
 
 Docker images are tagged to match releases (e.g. \code{v0.10.0}).
 Additionally the latest release will be tagged \code{latest}, and a \code{master} tag is also available with the freshest development build.
 You can substitute \code{latest} in the alias above to run a specific version.
 
-One notable issue with using SILE from a Docker container is that it will not have access to your system’s fonts by default.
-You can map a folder of fonts (any tree usable by fontconfig) into the container.
-This could be your system’s default font directory, your user one, a project specific folder, or anything of your choosing.
+One notable issue with using SILE from a Docker container is that by default it will not have access to your system’s fonts.
+To work around this you can map a folder of fonts (in any organization usable by fontconfig) into the container.
+This could be your system’s default font directory, your user one, a folder with project specific resources, or anything of your choosing.
 You can see where fonts are found on your system using \code{fc-list}.
-The path of your choosing from the host system should be passed as a volume mounted on \code{/fonts} inside the container like this:
+The path of your choosing from the host system should be mounted as a volume on \code{/fonts} inside the container like this:
 
 \begin{terminal}
 $ docker run -it --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest
