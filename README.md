@@ -71,7 +71,8 @@ A VCS package is also available as [sile-git][aur-sile-git] to build from the la
 
 #### Ubuntu
 
-An official [PPA][ppa] is available with precompiled packages for Ubuntu.
+A [PPA][ppa] is available for Ubuntu users with packages of SILE and all the necessary dependencies.
+We introduced support starting with Bionic (18.04) and maintain packages for all Ubuntu release series since for as long as they are supported by Canonical.
 
 ```console
 $ sudo add-apt-repository ppa:sile-typesetter/sile

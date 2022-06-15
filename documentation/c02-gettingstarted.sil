@@ -79,12 +79,13 @@ These may be built and installed like any other AUR\footnote{\url{https://wiki.a
 
 \subsection{Ubuntu}
 
-For Ubuntu an official PPA is available with precompiled packages for all currently supported releases since 18.04 (currently Bionic, Focal, Hirsute):
+A PPA\footnote{\url{https://launchpad.net/~sile-typesetter/+archive/ubuntu/sile}} is available for Ubuntu users with packages of SILE and all the necessary dependencies.
+We introduced support starting with Bionic (18.04) and maintain packages for all Ubuntu release series since for as long as they are supported by Canonical.
 
 \begin{terminal}
-sudo add-apt-repository ppa:sile-typesetter/sile
-sudo apt-get update
-sudo apt-get install sile
+$ sudo add-apt-repository ppa:sile-typesetter/sile
+$ sudo apt-get update
+$ sudo apt-get install sile
 \end{terminal}
 
 \subsection{NetBSD}
