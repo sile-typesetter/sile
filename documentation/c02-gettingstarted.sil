@@ -95,22 +95,30 @@ Use the usual command \code{bmake install} to build and install.
 A binary package can be installed using \code{pkgin}
 
 \begin{terminal}
-pkgin install sile
+$ pkgin install sile
 \end{terminal}
 
 \subsection{NixOS}
 
-Packages are available for NixOS:
-
-\terminal{$ nix-env -i sile}
-
-The Nix package manager is also available on many other Linux distributions, as well as for macOS.
-
-If you have flakes support\footnote{\url{https://nixos.wiki/wiki/Flakes#Installing_flakes}} enabled, you can run sile with:
+Nix packages are available in both the stable and unstable channels.
+Because all packages are first made available in the unstable channel and then eventually make their way into the stable channel, to get the latest stable SILE releases we recommend hitting up the unstable channel first.
+You can use all the usual Nix tricks including launching a new shell with the \code{sile} command available or running it directly from any shell:
 
 \begin{terminal}
-nix run github:sile-typesetter/sile -- <sile arguments>
+$ nix shell nixos-unstable#sile
+$ sile <arguments>
+
+$ nix run nixos-unstable#sile -- <arguments>
 \end{terminal}
+
+The SILE source repository is also a valid Nix Flake\footnote{\url{https://nixos.wiki/wiki/Flakes#Installing_flakes}} which means you can run any specific version or the latest unreleased development code directly:
+
+\begin{terminal}
+$ nix run github:sile-typesetter/sile/v0.30.0 -- <sile arguments>
+$ nix run github:sile-typesetter/sile -- <sile arguments>
+\end{terminal}
+
+Besides of course its use in NixOS, the Nix package manager is also available on most Linux and BSD distributions, macOS, and even for Windows via WSL making it a viable alternative to run SILE on many platforms.
 
 \subsection{Void Linux}
 
