@@ -8,19 +8,30 @@
 \pdf:metadata[key=Title, value=The SILE Book]
 \pdf:metadata[key=Author, value=Simon Cozens]
 
+\begin{center}
 \begin[family=Roboto Condensed,weight=600,size=50pt]{font}
 \begin[parameter=document.baselineskip,value=1.5ex]{set}
-\begin{center}
 The\break
 \img[src=documentation/sile-logo.pdf,height=125pt]\break
 Book
 
 \font[size=12pt]{for SILE version \script{SILE.typesetter:typeset(SILE.version)}}
 \vfill
-\font[size=20pt]{Simon Cozens}
-\end{center}
+\vfill
 \end{set}
 \end{font}
+% Project members with notable docs contributions by order invited to GitHub org
+\begin[size=16pt,family=Gentium Book Basic]{font}
+\begin[parameter=document.baselineskip,value=3ex]{set}
+Simon Cozens\break
+Caleb Maclennan\break
+Olivier Nicole\break
+Didier Willis\break
+\em{& many more contributors...}
+\par
+\end{set}
+\end{font}
+\end{center}
 \set[parameter=document.parskip,value=4pt plus 1pt]
 
 \open-double-page
