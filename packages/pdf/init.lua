@@ -1,4 +1,4 @@
-local pdf = require("justenoughlibtexpdf")
+local pdf
 
 local function borderColor (color)
   if color then
@@ -20,6 +20,8 @@ local function validate_date (date)
 end
 
 local function init (_, _)
+
+  pdf = require("justenoughlibtexpdf")
 
   if SILE.outputter ~= SILE.outputters.libtexpdf then
     SU.error("pdf package requires libtexpdf backend")

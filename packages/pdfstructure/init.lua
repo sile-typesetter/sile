@@ -1,8 +1,12 @@
-local pdf = require("justenoughlibtexpdf")
-
+local pdf
 local stPointer
+local mcid = 0
+local actualtext = {}
+local structureNumberTree
+local numberTreeIndex = 0
 
-local stNode = function (notetype) return {
+local function stNode (notetype)
+  return {
     notetype = notetype,
     lang = SILE.settings:get("document.language"),
     kids = {},
@@ -10,25 +14,12 @@ local stNode = function (notetype) return {
   }
 end
 
-local stRoot = stNode("Document")
-stPointer = stRoot
-local mcid = 0
-
-local addChild = function (node)
+local function addChild (node)
   stPointer.kids[#(stPointer.kids)+1] = node
   node.parent = stPointer
 end
 
-local actualtext = {}
-local _typeset = SILE.typesetter.typeset
-SILE.typesetter.typeset = function (self, text)
-  actualtext[#actualtext] = tostring(actualtext[#actualtext]) .. text
-  _typeset(self, text)
-end
-
-local structureNumberTree
-local numberTreeIndex = 0
-local ensureStructureNumber = function ( node, pdfnode )
+local function ensureStructureNumber (node, pdfnode)
   local p = node.page
   if not pdf.lookup_dictionary(p, "StructParents") then
     pdf.add_dict(p, pdf.parse("/StructParents"), pdf.parse(numberTreeIndex))
@@ -43,8 +34,7 @@ local ensureStructureNumber = function ( node, pdfnode )
   pdf.push_array(r, pdf.reference(pdfnode))
 end
 
-local dumpTree
-dumpTree = function (node)
+local function dumpTree (node)
   local k = {}
   local pdfNode = pdf.parse("<< /Type /StructElem /S /"..(node.notetype)..">>")
   if #(node.kids) > 0 then
@@ -74,6 +64,17 @@ dumpTree = function (node)
 end
 
 local function init (class, _)
+
+  pdf = require("justenoughlibtexpdf")
+
+  local _typeset = SILE.typesetter.typeset
+  SILE.typesetter.typeset = function (self, text)
+    actualtext[#actualtext] = tostring(actualtext[#actualtext]) .. text
+    _typeset(self, text)
+  end
+
+  local stRoot = stNode("Document")
+  stPointer = stRoot
 
   class:loadPackage("pdf")
 
@@ -125,6 +126,7 @@ return {
   registerCommands = registerCommands,
   documentation = [[
 \begin{document}
+\script[src=packages.pdfstructure]
 \pdf:structure[type=P]{%
 For PDF documents to be considered accessible, they must contain a
 description of the PDF’s document structure. This package allows
