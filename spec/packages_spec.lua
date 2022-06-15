@@ -6,7 +6,6 @@ describe("#package", function ()
   for pkg in lfs.dir("packages") do
 
     if pkg ~= ".." and pkg ~= "."
-      and pkg ~= "font-fallback"
       and pkg ~= "pandoc"
       and pkg ~= "pdf"
       and pkg ~= "pdfstructure"
