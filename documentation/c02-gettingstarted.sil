@@ -1,29 +1,32 @@
 \begin{document}
 \chapter{Getting Started}
 
-Now that we understand some of what SILE is about and what it seeks to do,
-let’s dive into SILE itself.
+Now that we understand some of what SILE is about and what it seeks to do, let’s dive into SILE itself.
+
+Before we show you how to use SILE, let’s have a quick look at an example SILE document.
+This is the input that we’re going to feed to SILE, which it is going to process and turn into a PDF file.
+Each of the examples can be saved as a text file and then use them as input to SILE.
+
+\section{Selecting a text editor}
+
+A SILE document is just a \em{plain text} file.
+When you create your own SILE files, you will need to create them in a plain text editor.
+Trying to create these files in a word processor such as Word will not work as they will be saved with the word processor’s formatting codes rather than as plain text.
+
+Lots of good text editors exist (many of them for free) and any of them will work for SILE documents so which one you use is entirely a matter of preference.
+You can get started with even the most basic text editors built into your desktop environment such as Notepad on Windows, TextEdit on macOS, Gedit on Gnome, Kate on KDE, etc.
+However more advanced text editors (sometimes catagorized as code editors) can offer a lot of features that make the editing process more robust.
+Editors are typically either graphical (GUI) or terminal (TUI) oriented and range from relatively simple to extremely complex integrated development environments (IDE).
+Examples of popular cross-platform GUI oriented editors include VS Code, Sublime Text, and Atom\footnote{Still relatively popular, but will be discontinued in October 2022.}.
+Examples of popular terminal based editors include VIM\footnote{VIM & NeoVIM users can benefit from syntax highlighting and other features via the \code{vim-sile} plugin at \url{https://github.com/sile-typesetter/vim-sile}.}, Emacs, and GNU Nano.
+Depending on your operating system there may be platform-specific editors to consider such as Notepad++ on Windows or TextMate on macOS.
+Many more niche options abound: Lapce, Lite XL, Micro, Geany, BBEdit, UltraEdit, Eclipse, JetBrains IDE(s), Netbrains, Bluefish, CudaText, Leafpad, etc.
+
+For comparisons of editors see \url{http://alternativeto.net/category/deevloper-tools/code-editor/} and select your platform.
 
 \section{A Basic SILE Document}
 
-Before we show you how to use SILE, let’s have a look at an example of what
-SILE documents look like. This is the input that we’re going to feed to SILE,
-which it is going to process and turn into a PDF file. Each of the examples can
-be saved as a text file and then use them as input to SILE.
-
-\note{These documents are \em{plain text} files; when you create your own SILE
-files, you will need to create them in a plain text editor. Trying to create
-these files in a word processor such as Word will not work as they will be
-saved with the word processor’s formatting rather than in a plain text format.
-Examples of good text editors include cross platform editors such as Atom and
-Sublime Text which are GUI oriented or Vim and Emacs which are more keyboard
-command oriented. Depending on your operating system there are other good
-choices such as Notepad++ on Windows or TextMate on OS X. You can also get
-started more simply with one of the basic editors built into your desktop
-environment such as Notepad on Windows, TextEdit on OS X, Gedit on Gnome, Kate
-on KDE, etc. For comparisons of text editors see
-\url{http://alternativeto.net/tag/text-editor/} and select your platform.}
-
+Once you have an editor, it’s time to consider a SILE input file.
 To begin with, here’s the most basic SILE file of all:
 
 \begin{verbatim}
