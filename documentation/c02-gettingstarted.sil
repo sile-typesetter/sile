@@ -268,11 +268,17 @@ Now to run SILE from anywhere you just need to supply the full path to the sourc
 
 \subsection{Notes for Windows users}
 
-SILE may be built on Windows using CMake and Visual Studio. There is not an
-installer (yet), but Windows executables are generated using Azure for every
-commit. You may download these executables by selecting the latest build from
-\url{https://simoncozens-github.visualstudio.com/sile/_build} and downloading
-the “sile” artifact from the Artifacts drop down.
+Nobody is currently maintaining Windows compatibility in SILE and we expect the state to be a bit broken.
+At present there is no Windows installer.
+Unless you are experienced building software on Windows it is probably best to use one of the Linux based methods under WSL (Windows Subsystem for Linux).
+
+There are persistent rumors from credible users that say they have gotten it working, but the exact steps they used to make it happen are a bit elusive.
+We would be happy to see better support, but none of the current developers are Windows users or developers.
+If anywone wants to help in this department we'd be happy to facilitate contributions.
+
+According to the rumors, SILE may be built on Windows using CMake and Visual Studio.
+Additionally some Windows executables are supposed to be generated using Azure for every commit.
+You may download these executables by selecting the latest build from \url{https://simoncozens-github.visualstudio.com/sile/_build} and downloading the “sile” artifact from the Artifacts drop down.
 
 \section{Running SILE}
 
