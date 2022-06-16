@@ -308,14 +308,15 @@ And now finally we can end our \code{pagetemplate}.
 \end{verbatim}
 
 Let’s do it.
-\eject\par%
+\eject
+
 \begin[first-content-frame=leftCol]{pagetemplate}
 \frame[id=gutter,width=3%pw]
 \frame[id=leftCol,left=left(content),right=left(gutter),top=top(content),bottom=bottom(content),next=rightCol]
 \frame[id=rightCol,left=right(gutter),right=right(runningHead),top=top(content),bottom=bottom(content),width=width(leftCol)]
 \end{pagetemplate}
-\showframe[id=leftCol]\showframe[id=rightCol]
-
+\showframe[id=leftCol]
+\showframe[id=rightCol]
 So there we have it: a two-column page layout.
 
 In the next chapter we’ll use the knowledge of how to declare frames to
