@@ -57,5 +57,8 @@ test = {
 }
 
 build = {
-  type = "none",
+  type = "module",
+  modules = {
+    sile = "core/init.lua"
+  }
 }
