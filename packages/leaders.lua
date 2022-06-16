@@ -86,7 +86,7 @@ local function registerCommands (_)
     local hbox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
     SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
     local l = leader({ width = width, value = hbox })
-    table.insert(SILE.typesetter.state.nodes, l)
+    SILE.typesetter:pushExplicitGlue(l)
   end)
 
   SILE.registerCommand("dotfill", function(_, _)
