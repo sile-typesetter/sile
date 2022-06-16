@@ -41,7 +41,6 @@ subfiles.mk
 # Build artifacts
 confdefs.h
 config.log
-core/*.so
 build/
 *.debug
 gh-pages
@@ -82,6 +81,8 @@ sile.1
 /.version-prev
 /.tarball-version
 /.built-subdirs
+core/*.so
+core/version.lua
 
 # Nix symlink to builds
 /result
