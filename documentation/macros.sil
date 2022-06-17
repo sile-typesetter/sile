@@ -12,6 +12,7 @@
 \script[src=packages/pdf]
 \script[src=packages/pullquote]
 \script[src=packages/rules]
+\script[src=packages/font-fallback]
 \define[command=notehead]{\noindent\bf{\process}\par\medskip}
 \define[command=line]{\novbreak\skip[height=5pt]\noindent\hrule[width=450pt,height=0.3pt]\par\novbreak\skip[height=5pt]}
 \define[command=note]{\medskip
