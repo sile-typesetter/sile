@@ -89,9 +89,3 @@ SU.formatNumber.eo = {
   string = eo_string,
   nth = eo_nth
 }
---[[
-SU.debug("eo", eo_string(3333300030))
-SU.debug("eo", eo_string(3000003))
-SU.debug("eo", eo_string(1000000))
-SU.debug("eo", eo_string(1000001))
---]]
