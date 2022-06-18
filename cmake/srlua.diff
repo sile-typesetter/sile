@@ -1,0 +1,22 @@
+diff --git a/srlua.c b/srlua.c
+index 2f82064..5523004 100644
+--- a/srlua.c
++++ b/srlua.c
+@@ -185,6 +185,17 @@ int main(int argc, char *argv[])
+ {
+  lua_State *L;
+  argv[0] = getprog();
++
++#ifdef WIN32
++ char file_name[2048];
++ DWORD size = GetModuleFileNameA(NULL, file_name, sizeof(file_name));
++ if (size == sizeof(file_name)) {
++     fprintf(stderr, "The path of the program is too long.\n");
++     return -1;
++ }
++ *(strrchr(file_name, '\\') + 1) = '\0';
++ _putenv_s("SILE_PATH", file_name);
++#endif
+  
+  if (argv[0]==NULL) fatal("srlua","cannot locate this executable");
+  L=luaL_newstate();

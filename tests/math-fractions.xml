@@ -1,0 +1,81 @@
+<sile>
+<script src="packages/math" />
+
+Fractions, text, MathML:
+<mathml>
+  <mrow>
+    <mfrac>
+      <mn>1</mn>
+      <mrow>
+        <mn>1</mn> <mo>+</mo>
+        <mfrac>
+          <mn>1</mn>
+          <mrow>
+            <mn>2</mn> <mo>+</mo>
+            <mfrac>
+              <mn>1</mn>
+              <mrow>
+                <mn>3</mn> <mo>+</mo>
+                <mfrac>
+                  <mn>1</mn>
+                  <mrow> <mn>4</mn> <mo>+</mo> <mo>⋯</mo> </mrow>
+                </mfrac>
+              </mrow>
+            </mfrac>
+          </mrow>
+        </mfrac>
+      </mrow>
+    </mfrac>
+    <mo>+</mo>
+    <mfrac> <mn>1</mn> <mn>2</mn> </mfrac>
+  </mrow>
+</mathml>
+
+Fractions, display, MathML:
+<mathml mode="display">
+  <mrow>
+    <mfrac>
+      <mn>1</mn>
+      <mrow>
+        <mn>1</mn> <mo>+</mo>
+        <mfrac>
+          <mn>1</mn>
+          <mrow>
+            <mn>2</mn> <mo>+</mo>
+            <mfrac>
+              <mn>1</mn>
+              <mrow>
+                <mn>3</mn> <mo>+</mo>
+                <mfrac>
+                  <mn>1</mn>
+                  <mrow> <mn>4</mn> <mo>+</mo> <mo>⋯</mo> </mrow>
+                </mfrac>
+              </mrow>
+            </mfrac>
+          </mrow>
+        </mfrac>
+      </mrow>
+    </mfrac>
+    <mo>+</mo>
+    <mfrac> <mn>1</mn> <mn>2</mn> </mfrac>
+  </mrow>
+</mathml>
+
+Fractions, text, TeX:
+<math>
+  \frac{1}{1+\frac{1}{2+\frac{1}{3+\frac{1}{4+\unicodecdots}}}}
+  + \frac{1}{2}
+</math>
+
+Fractions, display, TeX:
+<math mode="display">
+  \frac{1}{1+\frac{1}{2+\frac{1}{3+\frac{1}{4+\unicodecdots}}}}
+  + \frac{1}{2}
+</math>
+
+<math>
+  \frac{i+1}{}
+  \frac{}{i+1}
+</math>
+
+</sile>

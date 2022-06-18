@@ -1,5 +1,5 @@
 \begin[papersize=a7,class=book]{document}
-\footnote:separator{\skip[height=12pt]}\nofolios
-h\skip[height=200pt plus 10pt]
-laborum.\footnote{Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod.}
+\nofolios
+Footnote\skip[height=170pt plus 50pt]
+marker.\footnote{Same page\hfill\break as marker?}
 \end{document}

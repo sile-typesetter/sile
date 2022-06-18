@@ -1,23 +1,53 @@
 -- Basic! Transitional! In development! Not very good! Don't use it!
-local plain = SILE.require("plain", "classes")
-local jplain = plain { id = "jplain", base = plain }
+local plain = require("classes.plain")
 
-SILE.call("bidi-off")
+local jplain = pl.class(plain)
+jplain._name = "jplain"
 
-jplain:declareOption("layout", "yoko")
+jplain.defaultFrameset.content = {
+  left = "8.3%pw",
+  top = "11.6%ph",
+  gridsize = 10,
+  linegap = 7,
+  linelength = 50,
+  linecount = 30
+}
 
-jplain:loadPackage("hanmenkyoshi")
-function jplain:init()
-  self:declareHanmenFrame( "content", {
-    left = "8.3%pw", top = "11.6%ph",
-    gridsize = 10, linegap = 7, linelength = 50,
-    linecount = 30,
-    tate = self.options.layout() == "tate"
-  })
-  self.pageTemplate.firstContentFrame = self.pageTemplate.frames.content
-  return self.base:init()
+function jplain:_j_common ()
+  self:registerPostinit(function (class)
+      class:bidiDisableTypesetter(SILE.typesetter)
+      class:bidiDisableTypesetter(SILE.defaultTypesetter)
+    end)
+  self:loadPackage("font-fallback")
+  SILE.call("font:add-fallback", { family = "Noto Sans CJK JP" })
+  SILE.languageSupport.loadLanguage("ja")
+  self:loadPackage("hanmenkyoshi")
+  self.defaultFrameset.content.tate = self.options.layout == "tate"
+  self:declareHanmenFrame("content", self.defaultFrameset.content)
+  SILE.settings:set("document.parindent", SILE.nodefactory.glue("10pt"))
 end
 
-SILE.languageSupport.loadLanguage("ja")
-SILE.settings.set("document.parindent",SILE.nodefactory.newGlue("10pt"))
+function jplain:_init (options)
+  if self._legacy and not self._deprecated then return self:_deprecator(jplain) end
+  plain._init(self, options)
+  self:_j_common()
+  return self
+end
+
+function jplain:declareOptions ()
+  plain.declareOptions(self)
+  self:declareOption("layout", function (_, value)
+    if value then
+      self.layout = value
+      if value == "tate" then self:loadPackage("tate") end
+    end
+    return self.layout
+  end)
+end
+
+function jplain:setOptions (options)
+  options.layout = options.layout or "yoko"
+  plain.setOptions(self, options)
+end
+
 return jplain

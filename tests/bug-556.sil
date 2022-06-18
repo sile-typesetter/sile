@@ -1,0 +1,6 @@
+\begin[class=triglot]{document}
+\script[src=packages/pdf]
+\left
+\pdf:bookmark[title=test,dest=test]
+\sync
+\end{document}

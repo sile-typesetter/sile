@@ -1,0 +1,70 @@
+---
+extends:
+  - '@commitlint/config-conventional'
+rules:
+  subject-case: [2, 'always', 'sentence-case']
+  type-enum:
+  - 2
+  - always
+  - - build
+    - chore
+    - ci
+    - docs
+    - feat
+    - fix
+    - perf
+    - refactor
+    - revert
+    - style
+    - test
+  scope-empty: [1, 'never']
+  scope-enum:
+  - 1
+  - 'always'
+  - - actions
+    - azure
+    - backends
+    - build
+    - classes
+    - cirrus
+    - cli
+    - core
+    - debug
+    - docker
+    - deps
+    - fonts
+    - frames
+    - images
+    - inputs
+    - installation
+    - languages
+    - manpage
+    - manual
+    - math
+    - measurements
+    - nodes
+    - package-manager
+    - packages
+    - pdf
+    - readme
+    - settings
+    - release
+    - shaper
+    - tooling
+    - typesetter
+    - utilities
+help: |
+  **Possible types**:
+  `chore`:        Improves existing functions or features
+                      (Not for new features, fixes to bugs in releases, or refactoring)
+  `ci`:           Changes CI configuration files and scripts
+                      (relevanat scopes: build, deps, tooling, cirrus, azure, actions)
+  `docs`:         Adds or alters documentation.
+  `feat`:         Adds a new user facing feature.
+  `fix`:          Solves a user facing bug in previously released code
+                      (Not for use if the bug isn't in a release yet, clutters changelog)
+  `perf`:         Improves performance.
+  `refactor`:     Rewrites code without feature, performance, or bug changes.
+  `revert`:       Changes that reverting other changes
+  `style`:        Improves code formatting, white-space.
+  `test`:         Adds or modifies tests.

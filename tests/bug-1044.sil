@@ -1,0 +1,8 @@
+\begin[papersize=a6]{document}
+\nofolios
+\neverindent
+\font[family=Libertinus Serif]{Ta of}
+% If complex shaping is skipped and glyphAdvance ignored when outputting
+% a series of hboxes, the "Ta" kerning above will cause "of" to be positioned
+% too far forward.
+\end{document}

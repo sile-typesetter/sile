@@ -1,4 +1,6 @@
-\begin[papersize=a5]{document}
-\font[size=18pt]
+\begin[papersize=a6]{document}
+\nofolios
+\noindent
+\font[family=Libertinus Serif,size=16pt]
 Hello SILE! \font[family=Noto Sans Kannada,language=kn]{ನಮಸ್ಕಾರ :)}
 \end{document}

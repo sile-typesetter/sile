@@ -1,15 +1,28 @@
-\begin[papersize=a5]{document}
+\begin[papersize=a6]{document}
+\nofolios
+\set[parameter=document.parindent,value=0pt]
+\font[family=Libertinus Serif]
 \script[src=packages/counters]
-
 \set-counter[id=test,value=1234]
-Standard counter: \show-counter[id=test]
 
-Roman counter: \show-counter[id=test,display=roman]
+Default: \show-counter[id=test]
 
-Greek counter: \show-counter[id=test,display=greklow]
+Alpha: \show-counter[id=test,display=alpha]
 
-Japanese counter: \font[family=Noto Sans CJK JP]{\show-counter[id=test,display=jpan]}
+N'th: \show-counter[id=test,display=nth]
 
-Arabic counter: \font[family=Scheherazade]{\show-counter[id=test,display=arab]}
+Roman: \show-counter[id=test,display=ROMAN]
+
+Greek: \font[language=el]{\show-counter[id=test,display=greklow]}
+
+Japanese: \font[family=Noto Sans CJK JP,language=ja]{\show-counter[id=test,display=jpan]}
+
+Arabic-Indic: \font[family=Noto Naskh Arabic,language=ar]{\show-counter[id=test,display=arabext]}
+
+English String: \show-counter[id=test,display=String]
+
+Turkish String: \font[language=tr]{\show-counter[id=test,display=String]}
+
+Turkish Ordinal: \font[language=tr]{\show-counter[id=test,display=Ordinal]}
 
 \end{document}

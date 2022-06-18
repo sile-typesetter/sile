@@ -1,15 +1,17 @@
-\begin[papersize=a5]{document}
+\begin[papersize=a6]{document}
+\nofolios
 \script[src=packages/lorem]
+\font[family=Libertinus Serif]
 \set[parameter=document.parskip,value=10pt]
 
-\raggedleft{\em{Ragged left} \lorem[words=100]}
+\raggedleft{\em{Ragged left} \lorem[words=40]}
 
-\raggedright{\em{Ragged right} {\lorem[words=100]}}
+\raggedright{\em{Ragged right} {\lorem[words=40]}}
 
 \center{\em{Centered} \lorem[words=40]}
 
-\justified{\em{Justified} \lorem[words=100]}
+\justified{\em{Justified} \lorem[words=40]}
 
-\rightalign{\em{Right aligned} \lorem[words=10]}
+\rightalign{\em{Right aligned} \lorem[words=4]}
 
 \end{document}

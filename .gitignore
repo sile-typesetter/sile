@@ -1,30 +1,25 @@
-*/*.actual
-tests/*.pdf
-examples/*.pdf
-*/*.toc
 # http://www.gnu.org/software/automake
 
+Makefile
 Makefile.in
 
 # http://www.gnu.org/software/autoconf
 
-/autom4te.cache
 /aclocal.m4
-/compile
-/configure
-/depcomp
-/install-sh
-/missing
-/stamp-h1
-/config.guess
-/config.sub
+/autom4te.cache
 /config.status
-
-m4/libtool.m4
-m4/ltoptions.m4
-m4/ltsugar.m4
-m4/ltversion.m4
-m4/lt~obsolete.m4
+/configure
+build-aux/compile
+build-aux/config.guess
+build-aux/config.sub
+build-aux/depcomp
+build-aux/install-sh
+build-aux/libtool.m4
+build-aux/ltoptions.m4
+build-aux/ltsugar.m4
+build-aux/ltversion.m4
+build-aux/lt~obsolete.m4
+build-aux/missing
 
 # Other autojunk
 .deps
@@ -36,16 +31,57 @@ AUTHORS
 COPYING
 INSTALL
 ChangeLog
-Makefile
 NEWS
 README
 THANKS
-
 libtool
 ltmain.sh
 subfiles.mk
 
-sile
+# Build artifacts
 confdefs.h
 config.log
 core/*.so
+build/
+*.debug
+gh-pages
+sile-[0-9\.]*
+*.rockslock
+.dockerignore
+luacov.*.out
+
+# Test artifacts
+tests/*.actual
+tests/*.pdf
+*.toc
+time*.json
+
+benchmark-*
+compare-*
+
+# Vendor stuff
+node_modules
+lua_modules
+lua_modules_dist
+package-lock.json
+yarn.lock
+
+# Editor entrails
+.vscode/
+tags
+
+# Generated resources
+Makefile-distfiles
+documentation/*.pdf
+gource.webm
+.fonts/*
+.sources/*
+/sile
+sile.1
+/.version
+/.version-prev
+/.tarball-version
+/.built-subdirs
+
+# Nix symlink to builds
+/result

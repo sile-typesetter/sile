@@ -1,0 +1,13 @@
+\begin[papersize=a5]{document}
+
+No letterspacing.
+
+\set[parameter=document.letterspaceglue,value=1ex]
+
+Tracking before punctuation?
+
+\set[parameter=document.letterspaceglue,value=-0.2ex]
+
+Negative tracking.
+
+\end{document}

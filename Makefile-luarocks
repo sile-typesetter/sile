@@ -1,0 +1,20 @@
+.PHONY: installrocks
+LUAMODSPEC := sile-dev-1.rockspec
+if !SYSTEM_LUAROCKS
+LUAMODLOCK := sile-dev-1.rockslock
+
+LOCALLUAROCKS := $(LUAROCKS) --tree lua_modules --lua-version $(LUA_VERSION)
+TMPFILE != mktemp
+genrockslock := $(LOCALLUAROCKS) $(LUAROCKSARGS) list --porcelain | $(AWK) '{print $$1 " " $$2}'
+rocksmatch := ( T=$$(mktemp); trap 'rm -f "$$T"' EXIT HUP TERM; $(genrockslock) > "$$T"; $(CMP) -s $(LUAMODLOCK) "$$T" )
+
+installrocks: $(LUAMODLOCK) $(shell $(rocksmatch) || echo lua_modules)
+
+lua_modules: $(LUAMODSPEC) $(shell $(rocksmatch) || echo force)
+	$(LOCALLUAROCKS) $(LUAROCKSARGS) install --only-deps $<
+
+$(LUAMODLOCK): lua_modules $(LUAMODSPEC)
+	$(genrockslock) > $@
+else
+LUAMODLOCK :=
+endif

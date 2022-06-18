@@ -1,0 +1,30 @@
+trigger: none
+  # Disable Windows CI builds until somebody is actually working on fixing them
+  # - master
+  # - devel
+jobs:
+- job: Windows
+  pool:
+    vmImage: 'windows-2019'
+  steps:
+    - checkout: self
+      submodules: true
+    - script: |
+        git config --global user.email "simon@simon-cozens.org"
+        git config --global user.name "Azure Pipeline"
+
+      displayName: Set git user name and email
+
+    - script: cmake -G "Visual Studio 16 2019" -A x64 "-DCMAKE_INSTALL_PREFIX=$(Build.ArtifactStagingDirectory)" -S $(Build.SourcesDirectory) -B $(Build.BinariesDirectory)
+      displayName: Configure solution with CMake script
+
+    - script: cmake --build $(Build.BinariesDirectory) --config Release
+      displayName: Build solution
+
+    - script: cmake --build $(Build.BinariesDirectory) --config Release --target Install
+      displayName: Install solution
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        artifactName: sile

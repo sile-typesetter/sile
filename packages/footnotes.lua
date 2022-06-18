@@ -1,86 +1,117 @@
--- Footnotes class
+local function init (class, args)
 
--- Exports: The \footnote command
---          outputInsertions (call this in endPage)
+  class:loadPackage("counters")
+  class:loadPackage("raiselower")
+  class:loadPackage("insertions")
 
-SILE.require("packages/counters")
-SILE.require("packages/raiselower")
-local insertions = SILE.require("packages/insertions")
-SILE.scratch.counters.footnote = { value= 1, display= "arabic" }
+  if not SILE.scratch.counters.footnotes then
+    SILE.scratch.counters.footnote = { value = 1, display = "arabic" }
+  end
 
-SILE.registerCommand("footnotemark", function(options, content)
-  SILE.Commands["raise"]({height = "0.7ex"}, function()
-    SILE.Commands["font"]({ size = "1.5ex" }, function()
-      SILE.typesetter:typeset(SILE.formatCounter(SILE.scratch.counters.footnote))
+  args = args or {}
+  class:initInsertionClass("footnote", {
+    insertInto = args.insertInto or "footnotes",
+    stealFrom = args.stealFrom or { "content" },
+    maxHeight = SILE.length("75%ph"),
+    topBox = SILE.nodefactory.vglue("2ex"),
+    interInsertionSkip = SILE.length("1ex"),
+  })
+
+end
+
+local function registerCommands (class)
+
+  SILE.registerCommand("footnotemark", function (_, _)
+    SILE.call("raise", { height = "0.7ex" }, function ()
+      SILE.call("font", { size = "1.5ex" }, function ()
+        SILE.typesetter:typeset(class:formatCounter(SILE.scratch.counters.footnote))
+      end)
     end)
   end)
-end)
 
-SILE.registerCommand("footnote:separator", function(options, content)
-  SILE.settings.pushState()
-  local material = SILE.Commands["vbox"]({}, content)
-  SILE.scratch.insertions.classes.footnote.topBox = material
-  SILE.settings.popState()
-end)
+  SILE.registerCommand("footnote:separator", function (_, content)
+    SILE.settings:pushState()
+    local material = SILE.call("vbox", {}, content)
+    SILE.scratch.insertions.classes.footnote.topBox = material
+    SILE.settings:popState()
+  end)
 
-SILE.registerCommand("footnote:options", function(options, content)
-  if options["maxHeight"] then
-    SILE.scratch.insertions.classes.footnote.maxHeight = SILE.length.parse(options["maxHeight"])
-  end
-  if options["interInsertionSkip"] then
-    SILE.scratch.insertions.classes.footnote.interInsertionSkip = SILE.length.parse(options["interInsertionSkip"])
-  end
-end)
+  SILE.registerCommand("footnote:options", function (options, _)
+    if options["maxHeight"] then
+      SILE.scratch.insertions.classes.footnote.maxHeight = SILE.length(options["maxHeight"])
+    end
+    if options["interInsertionSkip"] then
+      SILE.scratch.insertions.classes.footnote.interInsertionSkip = SILE.length(options["interInsertionSkip"])
+    end
+  end)
 
-SILE.registerCommand("footnote", function(options, content)
-  SILE.call("footnotemark")
-  local opts = SILE.scratch.insertions.classes.footnote
-  local f = SILE.getFrame(opts["insertInto"].frame)
-  local oldT = SILE.typesetter
-  SILE.typesetter = SILE.typesetter {}
-  SILE.typesetter:init(f)
-  SILE.typesetter.pageTarget = function () return 0xFFFFFF end
-  SILE.settings.pushState()
-  SILE.settings.reset()
-  local material = SILE.Commands["vbox"]({}, function()
-    SILE.Commands["footnote:font"]({}, function()
-      SILE.call("footnote:atstart", options)
-      SILE.call("footnote:counter", options)
+  SILE.registerCommand("footnote", function (options, content)
+    SILE.call("footnotemark")
+    local opts = SILE.scratch.insertions.classes.footnote or {}
+    local frame = opts.insertInto and SILE.getFrame(opts.insertInto.frame)
+    local oldGetTargetLength = SILE.typesetter.getTargetLength
+    local oldFrame = SILE.typesetter.frame
+    SILE.typesetter.getTargetLength = function () return SILE.length(0xFFFFFF) end
+    SILE.settings:pushState()
+    -- Restore the settings to the top of the queue, which should be the document #986
+    SILE.settings:toplevelState()
+    SILE.typesetter:initFrame(frame)
+
+    -- Reset settings the document may have but should not be applied to footnotes
+    -- See also same resets in folio package
+    for _, v in ipairs({
+      "current.hangAfter",
+      "current.hangIndent",
+      "linebreak.hangAfter",
+      "linebreak.hangIndent" }) do
+      SILE.settings:set(v, SILE.settings.defaults[v])
+    end
+
+    -- Apply the font before boxing, so relative baselineskip applies #1027
+    local material
+    SILE.call("footnote:font", {}, function ()
+        material = SILE.call("vbox", {}, function ()
+        SILE.call("footnote:atstart", options)
+        SILE.call("footnote:counter", options)
+        SILE.process(content)
+      end)
+    end)
+    SILE.settings:popState()
+    SILE.typesetter.getTargetLength = oldGetTargetLength
+    SILE.typesetter.frame = oldFrame
+    class:insert("footnote", material)
+    SILE.scratch.counters.footnote.value = SILE.scratch.counters.footnote.value + 1
+  end)
+
+  SILE.registerCommand("footnote:font", function (_, content)
+    -- The footnote frame has is settings reset to the toplevel state, so if one does
+    -- something relative (as below), it is expected to be the main value from the
+    -- document.
+    SILE.call("font", { size = SILE.settings:get("font.size") * 0.9 }, function ()
       SILE.process(content)
     end)
   end)
-  SILE.settings.popState()
-  SILE.typesetter = oldT
-  insertions.exports:insert("footnote", material)
-  SILE.scratch.counters.footnote.value = SILE.scratch.counters.footnote.value + 1
-end)
 
-SILE.registerCommand("footnote:font", function(options, content)
-  SILE.Commands["font"]({size = "9pt"}, function()
-    SILE.process(content)
+  SILE.registerCommand("footnote:atstart", function (_, _)
   end)
-end)
 
-SILE.registerCommand("footnote:atstart", function(options, content)
-end)
+  SILE.registerCommand("footnote:counter", function (_, _)
+    SILE.call("noindent")
+    SILE.typesetter:typeset(class:formatCounter(SILE.scratch.counters.footnote) .. ".")
+    SILE.call("qquad")
+  end)
 
-SILE.registerCommand("footnote:counter", function(options, content)
-  SILE.call("noindent")
-  SILE.typesetter:typeset(SILE.formatCounter(SILE.scratch.counters.footnote)..".")
-  SILE.call("qquad")
-end)
+end
 
 return {
-  init = function (class, args)
-    insertions.exports:initInsertionClass("footnote", {
-    insertInto = args.insertInto,
-    stealFrom = args.stealFrom,
-    maxHeight = SILE.length.new({length = SILE.toPoints("75", "%ph") }),
-    topBox = SILE.nodefactory.newVglue({height = SILE.length.parse("2ex") }),
-    interInsertionSkip = SILE.length.parse("1ex"),
-  })
-  end,
-  exports = {
-    outputInsertions = insertions.exports.outputInsertions
-  }
-}
+  init = init,
+  registerCommands = registerCommands,
+  exports = {},
+  documentation = [[
+\begin{document}
+We’ve seen that the \code{book} class allows you to add footnotes to text with the \autodoc:command{\footnote} command.
+This functionality exists in the class because the class loads the \autodoc:package{footnotes} package.
+The \code{book} class loads up the \autodoc:package{insertions} package and tells it which frame should recieve the footnotes that are typeset.
+After commands provided by the \autodoc:package{footnotes} package take care of formatting the footnotes.
+\end{document}
+]]}

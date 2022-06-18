@@ -1,0 +1,43 @@
+\begin[class=plain]{document}
+
+\script[src=packages/math]
+
+Number matrix, text, TeX:
+\begin{math}
+  \table{
+    1 & 2 & 7 \\
+    0 & 5 & 3 \\
+    8 & 2 & 1 \\
+  }
+\end{math}
+\par
+
+Number matrix, display, TeX:
+\begin[mode=display]{math}
+  \table{
+    1 & 2 & 7 \\
+    0 & 5 & 3 \\
+    8 & 2 & 1 \\
+  }
+\end{math}
+
+Formulas, text, TeX:
+\begin{math}
+  \table[columnalign=right center left]{
+    u_0 &=& 1 \\
+    u_1 &=& 1 \\
+    u_n &=& u_{n-1} + u_{n-2}, \forall n ⩾ 2 \\
+  }
+\end{math}
+\par
+
+Formulas, text, TeX:
+\begin[mode=display]{math}
+  \table[columnalign=right center left]{
+    u_0 &=& 1 \\
+    u_1 &=& 1 \\
+    u_n &=& u_{n-1} + u_{n-2}, \forall n ⩾ 2 \\
+  }
+\end{math}
+
+\end{document}

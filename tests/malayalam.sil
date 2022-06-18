@@ -1,4 +1,4 @@
-\begin[class=book]{document}%
+\begin[class=book]{document}
 \script[src=packages/frametricks]
 \begin[first-content-frame=column1]{pagetemplate}
   \frame[id=gutter,width=3%]
@@ -11,6 +11,6 @@
 
 % Instead of visible hyphen "-", non-visible hyphen will be used on breaking
 \noindent{}
-സംസാരിച്ചിരിക്കുക 
+സംസാരിച്ചിരിക്കുക
 
 \end{document}

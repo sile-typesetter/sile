@@ -1,6 +1,7 @@
-\begin[papersize=a5]{document}
+\begin[papersize=a6]{document}
+\nofolios
 \script[src=packages/bidi]
-\font[family=Lateef,size=16pt,language=en]
+\font[family=LateefGR,size=16pt,language=en]
 Standard Arabic \font[direction=RTL,language=ar]{ههه};
 Sindi \font[direction=RTL,language=snd]{ههه};
 and Urdu \font[direction=RTL,language=urd]{ههه}.

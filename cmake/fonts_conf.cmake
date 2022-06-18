@@ -1,0 +1,5 @@
+set(FC_DEFAULT_FONTS "WINDOWSFONTDIR")
+set(FC_FONTPATH "<dir>CUSTOMFONTDIR</dir>")
+set(CONFIGDIR "")
+set(FC_CACHEDIR "LOCAL_APPDATA_FONTCONFIG_CACHE")
+configure_file(${CMAKE_BINARY_DIR}/fontconfig-prefix/src/fontconfig/fonts.conf.in ${CMAKE_BINARY_DIR}/fonts.conf)

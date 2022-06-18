@@ -1,6 +1,6 @@
-\begin[papersize=a5,class=book]{document}
-\font[size=11pt,family=Gentium Book Basic]
+\begin[papersize=a6]{document}
+\nofolios
+\font[size=11pt,family=Gentium Plus]
 \noindent{}Now that we understand some of what SILE is about and what it seeks to do, 
 let’s dive into SILE itself.
-
 \end{document}

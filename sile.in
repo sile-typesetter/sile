@@ -1,50 +1,73 @@
 #!@LUA@
-package.path = '?.lua;@SILE_PATH@/?.lua;@SILE_PATH@/lua-libraries/?.lua;@SILE_PATH@/lua-libraries/?/init.lua;lua-libraries/?.lua;lua-libraries/?/init.lua;' .. package.path
+SYSTEM_SILE_PATH = "@SILE_PATH@" -- global used in core/packagemanager
+SHARED_LIB_EXT = "@SHARED_LIB_EXT@" -- global used in core/packagemanager
+
+local executable = debug.getinfo(1, "S").short_src
+local luaversion = _VERSION:match("%d+%.%d+")
+
+local extendPath = function (path)
+  package.cpath = path .. "/core/?.@SHARED_LIB_EXT@;" .. package.cpath
+  package.cpath = path .. "/?.@SHARED_LIB_EXT@;" .. package.cpath
+  if "@SYSTEM_LUAROCKS_FALSE@" == "" then -- see ./configure --with[out]-system-luarocks
+    package.cpath = path .. '/lua_modules/lib/lua/' .. luaversion .. '/?.so;' .. package.cpath
+    package.path  = path .. '/lua_modules/share/lua/' .. luaversion .. '/?/init.lua;' .. package.path
+    package.path  = path .. '/lua_modules/share/lua/' .. luaversion .. '/?.lua;' .. package.path
+  end
+  package.path  = path .. "/lua-libraries/?/init.lua;" .. package.path
+  package.path  = path .. "/lua-libraries/?.lua;" .. package.path
+  package.path  = path .. "/?/init.lua;" .. package.path
+  package.path  = path .. "/?.lua;" .. package.path
+end
+
+extendPath("@SILE_PATH@")
+extendPath("@SILE_LIB_PATH@")
+
 local pathvar = os.getenv("SILE_PATH")
 if pathvar then
-	for path in string.gmatch(pathvar, "[^;]+") do
-		package.path =  path .. "/?.lua;" .. package.path
-	end
+  for path in string.gmatch(pathvar, "[^;]+") do
+	if path:len() >= 1 and path ~= "./" then extendPath(path) end
+  end
 end
-package.cpath = package.cpath .. ";core/?.@SHARED_LIB_EXT@;@SILE_LIB_PATH@/?.@SHARED_LIB_EXT@;"
-SILE = require("core/sile")
+
+local cwd = executable:gsub("(.*/)(.*)", "%1")
+if cwd ~= "./" then extendPath(cwd) end
+extendPath(".")
+
+SILE = require("core.sile")
+
 io.stdout:setvbuf 'no'
 SILE.parseArguments()
 if not os.getenv 'LUA_REPL_RLWRAP' then
-  io.stderr:write('This is SILE '..SILE.version..'\n')
+  io.stderr:write(SILE.full_version .. '\n')
 end
+if SILE.makeDeps then SILE.makeDeps:add(executable) end
 SILE.init()
 if SILE.masterFilename then
-  if SILE.preamble then
-    for _, preamble in pairs(SILE.preamble) do
-      io.stderr:write("Loading "..preamble)
-      local c = SILE.resolveFile("classes/"..preamble)
-      local f = SILE.resolveFile(preamble)
-      if c then
-        SILE.readFile(c)
-      elseif f then
-        SILE.readFile(f)
-      else
-        SILE.require("classes/"..preamble)
-      end
+  extendPath(SILE.masterDir)
+  for _, preamble in pairs(SILE.preamble) do
+    io.stderr:write("Loading "..preamble.."\n")
+    local c = SILE.resolveFile(preamble, "classes")
+    if c then
+      SILE.readFile(c)
+    else
+      SILE.require(preamble, "classes")
     end
   end
-  if SU.debugging("profile") and pcall(function () require("ProFi") end) then
+  if SU.debugging("profile") and pcall(require, "ProFi") then
     ProFi = require 'ProFi'
     ProFi:start()
   end
-  p,e = pcall(function() SILE.readFile(unparsed[1]) end)
-  if not p then
-    if type(e) == "string" and e:match(": interrupted!") then
+  local main, err = xpcall(function() return SILE.readFile(SILE.inputFile) end, SILE.errorHandler)
+  if not main then
+    if type(err) == "string" and err:match(": interrupted!") then
       SILE.outputter:finish()
     else
-      io.stderr:write("\nError detected:\n"..e.."\n")
+      io.stderr:write("\nError detected:\n\t"..err.."\n")
     end
     os.exit(1)
   end
-  if SILE.preamble then SILE.documentState.documentClass:finish() end
-  io.stderr:write("\n")
-  if SU.debugging("profile") and pcall(function () require("ProFi") end) then
+  SILE.finish()
+  if SU.debugging("profile") and pcall(require, "ProFi") then
     ProFi:stop()
     ProFi:writeReport( 'sile-profile.txt' )
   end
@@ -52,3 +75,4 @@ if SILE.masterFilename then
 else
   SILE.repl()
 end
+-- vim: ft=lua

@@ -12,10 +12,10 @@ This is a test\footnote{What happens to frames?}.
 This is a test\footnote{What happens to frames?}.
 This is a test\footnote{What happens to frames?}.
 This is a test\footnote{What happens to frames?}.
-This is a test\footnote{What happens to frames?}. \lorem[words=10]
-This is a test\footnote{What happens to frames?}. \lorem[words=10]
-This is a test\footnote{What happens to frames?}. \lorem[words=10]
-This is a test\footnote{What happens to frames?}. \lorem[words=10]
-This is a test\footnote{What happens to frames?}. \lorem[words=10]
+This is a test\footnote{What happens to frames?}. \lorem[words=10]\par
+This is a test\footnote{What happens to frames?}. \lorem[words=10]\par
+This is a test\footnote{What happens to frames?}. \lorem[words=10]\par
+This is a test\footnote{What happens to frames?}. \lorem[words=10]\par
+This is a test\footnote{What happens to frames?}. \lorem[words=10]\par
 This is a test\footnote{What happens to frames?}. \lorem[words=150]
 \end{document}

@@ -1,0 +1,10 @@
+\begin[papersize=a6]{document}
+\nofolios
+\noindent
+\script[src=packages/unichar]
+\font[family=Symbola]
+\raggedright{
+â\break
+a\unichar{0x302}
+}
+\end{document}

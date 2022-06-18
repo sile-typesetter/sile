@@ -1,0 +1,57 @@
+.TH @TRANSFORMED_PACKAGE_NAME@ 1 "@MAN_DATE@" "version v@VERSION@"
+.SH NAME
+@TRANSFORMED_PACKAGE_NAME@ \- Simon's Improved Layout Engine
+.SH SYNOPSIS
+.B @TRANSFORMED_PACKAGE_NAME@ [
+.I options
+.B ] [
+.I filename.sil
+.B |
+.I filename.xml
+.B ]
+.SH DESCRIPTION
+The SILE typesetter reads a single input file in either SIL or XML format and generates an output in PDF format.
+The output will be written to the same name as the input file with the extension changed to .pdf unless the \fB\-\-output\fR flag is used.
+.SH OPTIONS
+.B @TRANSFORMED_PACKAGE_NAME@
+accepts the following options:
+.TP
+.BR \-h ", " \-\-help
+Print help message and exit.
+.TP
+.BR \-v ", " \-\-version
+Print version information and exit.
+.TP
+.BR \-b ", " \-\-backend= \fIvalue\fR
+Choose an alternative output backend.
+The default backend for producing PDF files is \fIlibtexpdf\fR.
+Other available backends include \fIcairo\fR, \fIdebug\fR, \fItext\fR, and \fIdummy\fR.
+.TP
+.BR \-d ", " \-\-debug= \fIvalue\fR[,\fIvalue\fR]
+Debug SILE's operation.
+Multiple debug flags may be given as a comma separated list.
+While packages may define their own debug flags, the most commonly used ones are \fItypesetter\fR, \fIpagebuilder\fR, \fIvboxes\fR, \fIbreak\fR, \fIframes\fR, \fIprofile\fR, and \fIversions\fR.
+May be specified more than once.
+.TP
+.BR \-e ", " \-\-evaluate= \fIvalue\fR
+Evaluate some Lua code before processing the input file.
+May be specified more than once.
+.TP
+.BR \-f ", " \-\-fontmanager= \fIvalue\fR
+Choose an alternative font manager.
+The font manager is responsible for discovering the locations on font files on the system given a font name.
+The default font manager is \fIfontconfig\fR on non-Mac systems and \fImacfonts\fR on OS X.
+.TP
+.BR \-m ", " \-\-makedeps \fIfile\fR
+Generate a list of dependencies in Makefile format.
+.TP
+.BR \-o ", " \-\-output= \fIfile\fR
+Explicitly set the output file name.
+.TP
+.BR \-I ", " \-\-include= \fIfile\fR
+Include a class or SILE file before processing input.
+This is particularly useful if the input file is in an XML format and requires a SILE class to provide processing expectations for its tags.
+May be specified more than once.
+.TP
+.BR \-t ", " \-\-traceback
+Display detailed location trace on errors and warnings.

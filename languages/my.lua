@@ -33,8 +33,8 @@ end
 
 -- "Syllable Based Dual Weight Algorithm for Line Breaking in Myanmar Unicode"
 -- Keith Stribley, http://thanlwinsoft.github.io/www.thanlwinsoft.org/ThanLwinSoft/MyanmarUnicode/Parsing/my2weightLineBreakAlg1_1.pdf
-local p2 = SILE.nodefactory.newPenalty({ penalty = -25 })
-local p1 = SILE.nodefactory.newPenalty({ penalty = -50 })
+local p2 = SILE.nodefactory.penalty({ penalty = -25 })
+local p1 = SILE.nodefactory.penalty({ penalty = -50 })
 
 local penaltyFor = function (ca, cb)
   if ca == "WJ" or ca == "LQ" then return end
@@ -62,9 +62,6 @@ end
 
 SILE.tokenizers.my = function(string)
   return coroutine.wrap(function()
-    local db
-    local lastcp = -1
-    local lastchar = ""
     local lastclass = ""
     local collection = ""
     for uchar in string.gmatch(string, "([%z\1-\127\194-\244][\128-\191]*)") do
@@ -81,8 +78,6 @@ SILE.tokenizers.my = function(string)
         end
         collection = collection .. uchar
       end
-      lastcp = thiscp
-      lastchar = uchar
       lastclass = thisclass
     end
     coroutine.yield({ string = collection })

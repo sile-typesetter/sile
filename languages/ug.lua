@@ -5,10 +5,15 @@
 
 -- Uyghur is Turkish, right?
 SILE.languageSupport.loadLanguage("tr")
-SILE.hyphenator.languages["ug"] = {}
-SILE.hyphenator.languages["ug"].patterns = SILE.hyphenator.languages["tr"].patterns
 
-require("char-def")
+local chardata = require("char-def")
+
+SILE.settings:declare({
+  parameter = "languages.ug.hyphenoffset",
+  help = "Space added between text and hyphen",
+  type = "glue or nil",
+  default = SILE.nodefactory.glue("1pt")
+})
 
 local transliteration = {
   -- I'm going to pretend that normalisation isn't a problem
@@ -54,68 +59,111 @@ local transliteration = {
   { al = "خ", la = "x"}
 }
 
-arabicToLatin = function(s)
+local arabicToLatin = function(s)
   for i = 1,#transliteration do
     s = s:gsub(transliteration[i].al, transliteration[i].la)
   end
   return s
 end
-latinToArabic = function(s)
+
+local latinToArabic = function(s, useLapa)
   for i = 1,#transliteration do
-    s = s:lower():gsub(transliteration[i].lapa or transliteration[i].la, transliteration[i].al)
+    if useLapa then
+      s = s:lower():gsub(transliteration[i].lapa or transliteration[i].la, transliteration[i].al)
+    elseif not transliteration[i].lapa then
+      s = s:lower():gsub(transliteration[i].la, transliteration[i].al)
+    end
   end
   return s
 end
 
-local zwj = "‍"
+local zwj = SU.utf8charfromcodepoint("U+200D")
+-- local zwnj = SU.utf8charfromcodepoint("U+200C")
 
-SILE.tokenizers.ug = function(text)
-  return coroutine.wrap(function ()
-  local state = SILE.font.loadDefaults({})
-  for token in SILE.tokenizers.unicode(arabicToLatin(text)) do
-    if (token.separator) then
-      coroutine.yield(token)
-    else
-      local nodes = SILE.shaper:subItemize(token.string, state)
-      for i= 1,#nodes do
-        if nodes[i]:isUnshaped() then
-          local s = SILE.hyphenate( nodes[i]:shape() )
-          if #s == 1 then
-          else
-            local last
-            for j = #s,1,-1 do
-              if s[j]:isDiscretionary() then
-                last = j
-                break
-              end
-            end
-            local before = {}
-            local after = {}
-            for j = 1,last-1 do
-              before[j] = s[j].text
-            end
-            for j = last+1,#s do
-              after[#after+1] = s[j].text
-            end
-            local beforetext = latinToArabic(table.concat(before,""))
-            local aftertext = latinToArabic(table.concat(after,""))
-            local normal = SILE.shaper:createNnodes(beforetext..aftertext, state)
-            local bt = SU.splitUtf8(beforetext)
-            local jointype = characters.data[SU.codepoint(bt[#bt])] and characters.data[SU.codepoint(bt[#bt])].arabic
-            local joinable = jointype == "d"
-            local d = SILE.nodefactory.newDiscretionary({
-              replacement = normal,
-              prebreak = SILE.shaper:createNnodes(beforetext..zwj.."-", state),
-              postbreak = SILE.shaper:createNnodes((joinable and zwj or "")..aftertext, state)
-            })
-              coroutine.yield({ node = SILE.nodefactory.zeroHbox })
-              coroutine.yield({ node = d })
-          end
-        else
-          coroutine.yield({ node = nodes[i]})
-        end
-      end
+-- local dropLast = function(t)
+--   local bt = SU.splitUtf8(t)
+--   local n = ""
+--   for i = 1,#bt-1 do n = n..bt[i] end
+--   return n
+-- end
+
+-- local dropFirst = function(t)
+--   local bt = SU.splitUtf8(t)
+--   local n = ""
+--   for i = 2,#bt do n = n..bt[i] end
+--   return n
+-- end
+
+local lastjoinable = function (t)
+  t = SU.splitUtf8(t)
+  local last = t[#t]
+  local jointype = chardata[SU.codepoint(last)] and chardata[SU.codepoint(last)].arabic
+  local joinable = jointype == "d" or jointype == "l"
+  return joinable
+end
+
+-- local firstjoinable = function (t)
+--   local t = SU.splitUtf8(t)
+--   local first = t[1]
+--   local jointype = chardata[SU.codepoint(first)] and chardata[SU.codepoint(first)].arabic
+--   local joinable = jointype == "d" or jointype=="r"
+--   return joinable
+-- end
+
+-- function debugUyghur(word)
+--   SILE.languageSupport.loadLanguage("ug")
+--   print(SILE.showHyphenationPoints(word,"ug"))
+--   local items = SILE._hyphenate(SILE.hyphenators["ug"],word)
+--   print(reorderHyphenations(items,true))
+-- end
+
+SILE.hyphenator.languages.ug = function(n)
+  local latin = arabicToLatin(n.text)
+  if SU.debugging("uyghur") then io.write("Original: ", n.text.." -> "..latin.." -> ") end
+  local state = n.options
+  -- Make "Turkish" nodes
+  local newoptions = pl.tablex.deepcopy(n.options)
+  newoptions.language = "lt"
+  if not SILE.hyphenators.lt then
+    SILE.hyphenate(SILE.shaper:createNnodes(latin, newoptions))
+  end
+  local items = SILE._hyphenate(SILE.hyphenators["lt"], latin)
+  if #items == 1 then
+    if SU.debugging("uyghur") then print(latin .." No hyphenation points") end
+    return {n}
+  end
+  -- Choose 1. Aim to split in middle.
+  if SU.debugging("uyghur") then
+    for i = 1,#items do
+      io.write(items[i].."/")
+    end
+    io.write(" -> ")
+  end
+  local splitpoint = math.ceil(#items/2)
+  local nitems = {"",""}
+  for i=1,#items do
+    if i <= splitpoint then nitems[1] = nitems[1]..items[i]
+    else nitems[2] = nitems[2]..items[i]
     end
   end
-  end)
+  items = nitems
+  if SU.debugging("uyghur") then print(items[1] .."/" ..items[2].." ") end
+  state.language = "ug"
+  items[1] = latinToArabic(items[1])
+  items[2] = latinToArabic(items[2])
+  local hyphen = SILE.settings:get("font.hyphenchar")
+  local prebreak = SILE.shaper:createNnodes(items[1] .. (lastjoinable(items[1]) and zwj or ""), state)
+  if SILE.settings:get("languages.ug.hyphenoffset") then
+    local w = SILE.settings:get("languages.ug.hyphenoffset").width
+    prebreak[#prebreak+1] = SILE.nodefactory.kern({ width = w })
+  end
+  local hnodes = SILE.shaper:createNnodes(hyphen, state)
+  prebreak[#prebreak+1] = hnodes[1]
+  local postbreak = SILE.shaper:createNnodes((lastjoinable(items[1]) and zwj or "")..items[2], state)
+  local d = SILE.nodefactory.discretionary({
+    replacement = {n},
+    prebreak = prebreak,
+    postbreak = postbreak
+  })
+  return { SILE.nodefactory.zerohbox(), d }
 end

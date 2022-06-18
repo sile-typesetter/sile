@@ -1,0 +1,15 @@
+\begin[papersize=6in x 9in]{document}
+\nofolios
+\language[main=fr]
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxx xxxx xxxxx xxx xxxxx x dʼhommes. (02BC)
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxx xxxx xxxxx xxx xxxxx x d’hommes. (2019)
+
+\language[main=ca]
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxx xxxx xxxxx xxx xxxxx x dʼhomes. (02BC)
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxx xxxx xxxxx xxx xxxxx x d’homes. (2019)
+
+\end{document}

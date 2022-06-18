@@ -1,0 +1,14 @@
+\begin[papersize=a5]{document}
+\script[src=packages/leaders]
+\nofolios
+\neverindent
+% Test case: vertical alignement for \leaders with custom pattern
+\font[size=50pt]
+|\leaders{/}|\par
+\hbox{}\leaders{/}\hbox{}\par
+1\leaders{/}1\par
+1 2\leaders{/}2 1\par
+1 2 3\leaders{/}3 2 1\par
+1 2 3 4\leaders{/}4 3 2 1\par
+1 2 3 4 5\leaders{/}5 4 3 2 1\par
+\end{document}

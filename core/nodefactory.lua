@@ -1,419 +1,639 @@
--- Just boxes
-
-_box = std.object {
-  _type = "Box",
-  height= 0,
-  depth= 0,
-  width= 0,
-  misfit = false,
-  type="special",
-  explicit = false,
-  discardable = false,
-  value=nil,
-  __tostring = function (s) return s.type end,
-  __concat = function (x,y) return tostring(x)..tostring(y) end,
-  init = function(self) return self end,
-  lineContribution = function (self)
-    if SILE.typesetter.frame:writingDirection() == "TTB" then
-      return self.misfit and self.width.length or self.height
-    else
-      return self.misfit and self.height or self.width
-    end
-  end
-}
-
-function _box:outputYourself () SU.error(self.type.." with no output routine") end
-function _box:toText ()  return self.type end
-function _box:isBox ()   return self.type=="hbox" or self.type == "alternative" or self.type == "nnode" or self.type=="vbox" end
-function _box:isNnode () return self.type=="nnode" end
-function _box:isGlue ()  return self.type == "glue" end
-function _box:isVglue ()  return self.type == "vglue" end
-function _box:isUnshaped ()  return self.type == "unshaped" end
-function _box:isAlternative ()  return self.type == "alternative" end
-function _box:isVbox ()  return self.type == "vbox" end
-function _box:isMigrating ()  return self.migrating end
-function _box:isPenalty ()  return self.type == "penalty" end
-function _box:isDiscretionary ()  return self.type == "discretionary" end
-
-function _box:isKern ()  return self.type == "kern" end
-
--- Hboxes
-
-local _hbox = _box {
-  type = "hbox",
-  __tostring = function (this)
-    return "H<" .. tostring(this.width) .. ">^" .. tostring(this.height) .. "-" .. tostring(this.depth) .. "v"
-  end,
-  scaledWidth = function (self, line)
-    local scaledWidth = self:lineContribution()
-    if type(scaledWidth) ~= "table" then return scaledWidth end
-    if line.ratio < 0 and self.width.shrink > 0 then
-      scaledWidth = scaledWidth + self.width.shrink * line.ratio
-    elseif line.ratio > 0 and self.width.stretch > 0 then
-      scaledWidth = scaledWidth + self.width.stretch * line.ratio
-    end
-    return scaledWidth.length
-  end,
-  outputYourself = function(self,typesetter, line)
-    if not self.value.glyphString then return end
-    if typesetter.frame:writingDirection() == "RTL" then
-      typesetter.frame:advanceWritingDirection(self:scaledWidth(line))
-    end
-    SILE.outputter.moveTo(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
-    SILE.outputter.setFont(self.value.options)
-    SILE.outputter.outputHbox(self.value, self:scaledWidth(line))
-    if typesetter.frame:writingDirection() ~= "RTL" then
-      typesetter.frame:advanceWritingDirection(self:scaledWidth(line))
-    end
-  end
-}
-
--- Native nodes (clever hboxes)
-
-local _nnode = _hbox {
-  type = "nnode",
-  text = "",
-  language = "",
-  pal = nil,
-  nodes = {},
-  __tostring = function (this)
-    return "N<" .. tostring(this.width) .. ">^" .. this.height .. "-" .. this.depth .. "v(" .. this:toText() .. ")";
-  end,
-  init = function(self)
-    if 0 == self.depth then self.depth = math.max(0,unpack(SU.map(function (n) return n.depth end, self.nodes))) end
-    if 0 == self.height then self.height = math.max(0,unpack(SU.map(function (n) return n.height end, self.nodes))) end
-    if 0 == self.width then self.width = SU.sum(SU.map(function (n) return n.width end, self.nodes)) end
-    return self
-    end,
-  outputYourself = function(self, typesetter, line)
-    if self.parent and not self.parent.hyphenated then
-      if not self.parent.used then
-        self.parent:outputYourself(typesetter,line)
-      end
-      self.parent.used = true
-      return
-    end
-    for i, n in ipairs(self.nodes) do n:outputYourself(typesetter, line) end
-  end,
-  toText = function (self) return self.text end
-}
-
-local _unshaped = _nnode {
-  type = "unshaped",
-  __tostring = function (this)
-    return "U(" .. this:toText() .. ")";
-  end,
-  shape = function(this)
-    local n =  SILE.shaper:createNnodes(this.text, this.options)
-    for i=1,#n do
-      n[i].parent = this.parent
-    end
-    return n
-  end,
-  width = nil,
-  outputYourself = function (this)
-    SU.error("An unshaped node made it to output", 1)
-  end,
-  __index = function(self,k)
-    if k == "width" then SU.error("Can't get width of unshaped node", 1) end
-  end
-}
-
--- Discretionaries
-
-local _disc = _hbox {
-  type = "discretionary",
-  prebreak = {},
-  postbreak = {},
-  replacement = {},
-  used = false,
-  prebw = nil,
-  __tostring = function (this)
-      return "D(" .. SU.concat(this.prebreak,"") .. "|" .. SU.concat(this.postbreak, "") .."|" .. SU.concat(this.replacement, "") .. ")";
-  end,
-  toText = function (self) return self.used and "-" or "_" end,
-  outputYourself = function(self,typesetter, line)
-    if self.used then
-      i = 1
-      while (line.nodes[i]:isGlue() and line.nodes[i].value == "lskip")
-          or line.nodes[i] == SILE.nodefactory.zeroHbox do
-        i = i+1
-      end
-      if (line.nodes[i] == self) then
-        for i, n in ipairs(self.postbreak) do n:outputYourself(typesetter,line) end
-      else
-        for i, n in ipairs(self.prebreak) do n:outputYourself(typesetter,line) end
-      end
-    else
-      for i, n in ipairs(self.replacement) do n:outputYourself(typesetter,line) end
-    end
-  end,
-  prebreakWidth = function(self)
-    if self.prebw then return self.prebw end
-    local l = 0
-    for _,n in pairs(self.prebreak) do l = l + n.width end
-    self.prebw = l
-    return l
-  end,
-  postbreakWidth = function(self)
-    if self.postbw then return self.postbw end
-    local l = 0
-    for _,n in pairs(self.postbreak) do l = l + n.width end
-    self.postbw = l
-    return l
-  end,
-  replacementWidth = function(self)
-    if self.replacew then return self.replacew end
-    local l = 0
-    for _,n in pairs(self.replacement) do l = l + n.width end
-    self.replacew = l
-    return l
-  end,
-  prebreakHeight = function(self)
-    if self.prebh then return self.prebh end
-    local l = 0
-    for _,n in pairs(self.prebreak) do if n.height > l then l = n.height end end
-    self.prebh = l
-    return l
-  end,
-  postbreakHeight = function(self)
-    if self.postbh then return self.postbh end
-    local l = 0
-    for _,n in pairs(self.postbreak) do if n.height > l then l = n.height end end
-    self.postbh = l
-    return l
-  end,
-  replacementHeight = function(self)
-    if self.replaceh then return self.replaceh end
-    local l = 0
-    for _,n in pairs(self.replacement) do if n.height > l then l = n.height end end
-    self.replaceh = l
-    return l
-  end,
-}
-
--- Alternatives
-
-local _alt = _hbox {
-  type = "alternative",
-  options = {},
-  selected = nil,
-  __tostring = function(self)
-    return "A(" .. SU.concat(self.options," / ") .. ")"
-  end,
-  minWidth = function(self)
-    local min = self.options[1].width
-    for i = 2,#self.options do
-      if self.options[i].width < min then min = self.options[i].width end
-    end
-    return min
-  end,
-  deltas = function(self)
-    local minWidth = self:minWidth()
-    local rv = {}
-    for i = 1,#self.options do rv[#rv+1] = self.options[i].width - minWidth end
-    return rv
-  end,
-  outputYourself = function(self,typesetter, line)
-    if self.selected then
-      self.options[self.selected]:outputYourself(typesetter,line)
-    end
-  end,
-}
-
--- Glue
-local _glue = _box {
-  _type = "Glue",
-  type = "glue",
-  discardable = true,
-  __tostring = function (this)
-    return (this.explicit and "E:" or "") .. "G<" .. tostring(this.width) .. ">"
-  end,
-  toText = function () return " " end,
-  outputYourself = function (self,typesetter, line)
-    local scaledWidth = self.width.length
-    if line.ratio and line.ratio < 0 and self.width.shrink > 0 then
-      scaledWidth = scaledWidth + self.width.shrink * line.ratio
-    elseif line.ratio and line.ratio > 0 and self.width.stretch > 0 then
-      scaledWidth = scaledWidth + self.width.stretch * line.ratio
-    end
-    typesetter.frame:advanceWritingDirection(scaledWidth)
-  end
-}
-local _kern = _glue {
-  _type = "Kern",
-  type = "kern",
-  discardable = false,
-  __tostring = function (this)
-    return "K<" .. tostring(this.width) .. ">"
-  end,
-}
-
--- VGlue
-local _vglue = _box {
-  type = "vglue",
-  _type = "VGlue",
-  discardable = true,
-  __tostring = function (this)
-    return (this.explicit and "E:" or "") .. "VG<" .. tostring(this.height) .. ">";
-  end,
-  setGlue = function (self,adjustment)
-    self.height.length = SILE.toAbsoluteMeasurement(self.height.length) + adjustment
-    self.height.stretch = 0
-    self.height.shrink = 0
-  end,
-  outputYourself = function (self,typesetter, line)
-    d = line.depth
-    d = d + SILE.toAbsoluteMeasurement(line.height)
-    if type(d) == "table" then d = d.length end
-    typesetter.frame:advancePageDirection(d)
-  end,
-  unbox = function (self) return { self } end
-}
-
-local _vkern = _vglue {
-  _type = "VKern",
-  type = "vkern",
-  discardable = false,
-  __tostring = function (this)
-    return "VK<" .. tostring(this.height) .. ">"
-  end,
-}
-
-
--- Penalties
-local _penalty = _box {
-  type = "penalty",
-  discardable = true,
-  width = SILE.length.new({}),
-  flagged = 0,
-  penalty = 0,
-  __tostring = function (this)
-    return "P(" .. this.flagged .. "|" .. this.penalty .. ")";
-  end,
-  outputYourself = function() end,
-  toText = function() return "(!)" end,
-  unbox = function(self) return {self} end
-}
-
--- Vbox
-local _vbox = _box {
-  type = "vbox",
-  nodes = {},
-  __tostring = function (this)
-    return "VB<" .. tostring(this.height) .. "|" .. this:toText() .. "v"..tostring(this.depth)..")";
-  end,
-  init = function (self)
-    self.depth = 0
-    self.height = 0
-    for i=1,#(self.nodes) do local n = self.nodes[i]
-      local h = type(n.height) == "table" and n.height.length or n.height
-      local d = type(n.depth) == "table" and n.depth.length or n.depth
-      self.depth = (d > self.depth) and d or self.depth
-      self.height = (h > self.height) and h or self.height
-    end
-    return self
-  end,
-  toText = function (self)
-    return "VB[" .. SU.concat(SU.map(function (n) return n:toText().."" end, self.nodes), "") .. "]"
-  end,
-  outputYourself = function(self, typesetter, line)
-    typesetter.frame:advancePageDirection(self.height)
-    local initial = true
-    for i,node in pairs(self.nodes) do
-      if initial and (node:isGlue() or node:isPenalty()) then
-        -- do nothing
-      else
-        initial = false
-        node:outputYourself(typesetter, line)
-      end
-    end
-    typesetter.frame:advancePageDirection(self.depth)
-    typesetter.frame:newLine()
-  end,
-  unbox = function(self)
-    for i=1,#self.nodes do
-      if self.nodes[i]:isVbox() or self.nodes[i]:isVglue() then return self.nodes end
-    end
-    return {self}
-  end,
-  append = function (self, box)
-    local nodes = box
-    if not box then SU.error("nil box given",1) end
-    if nodes.type then
-      nodes = box:unbox()
-    end
-    local h = self.height + self.depth
-    local lastdepth = 0
-    for i=1,#nodes do
-      table.insert(self.nodes, nodes[i])
-      h = h + nodes[i].height + nodes[i].depth
-      if nodes[i]:isVbox() then lastdepth = nodes[i].depth end
-    end
-    self.ratio = 1
-    self.height = h - lastdepth
-    self.depth = lastdepth
-  end
-}
-
-
-local _migrating = _hbox {
-  material = {},
-  value = {},
-  nodes = {},
-  migrating = true,
-  __tostring = function (this)
-    return "<M: "..this.material .. ">"
-  end
-}
-
-SILE.nodefactory = {}
-
-function SILE.nodefactory.newHbox(spec) return _hbox(spec) end
-function SILE.nodefactory.newNnode(spec) return _nnode(spec):init() end
-function SILE.nodefactory.newUnshaped(spec)
-  local u = _unshaped(spec)
-  u.width = nil
-  return u
-end
-
-function SILE.nodefactory.newDisc(spec) return _disc(spec) end
-function SILE.nodefactory.newAlternative(spec) return _alt(spec) end
-
-function SILE.nodefactory.newGlue(spec)
-  if type(spec) == "table" then return std.tree.clone(_glue(spec)) end
-  if type(spec) == "string" then return _glue({width = SILE.length.parse(spec)}) end
-  SU.error("Unparsable glue spec "..spec)
-end
-function SILE.nodefactory.newKern(spec)
-  if type(spec) == "table" then return std.tree.clone(_kern(spec)) end
-  if type(spec) == "string" then return _kern({width = SILE.length.parse(spec)}) end
-  SU.error("Unparsable kern spec "..spec)
-end
-function SILE.nodefactory.newVglue(spec)
-  if type(spec) == "table" then return std.tree.clone(_vglue(spec)) end
-  if type(spec) == "string" then return _vglue({height = SILE.length.parse(spec)}) end
-  SU.error("Unparsable glue spec "..spec)
-end
-function SILE.nodefactory.newVKern(spec)
-  if type(spec) == "table" then return std.tree.clone(_vkern(spec)) end
-  if type(spec) == "string" then return _vkern({height = SILE.length.parse(spec)}) end
-  SU.error("Unparsable kern spec "..spec)
-end
-function SILE.nodefactory.newPenalty(spec)  return std.tree.clone(_penalty(spec)) end
-function SILE.nodefactory.newDiscretionary(spec)  return _disc(spec) end
-function SILE.nodefactory.newVbox(spec)  return _vbox(spec):init() end
-function SILE.nodefactory.newMigrating(spec)  return _migrating(spec) end
+local nodefactory = {}
 
 -- This infinity needs to be smaller than an actual infinity but bigger than the infinite stretch
--- added by the typesetter. See https://github.com/simoncozens/sile/issues/227
-local inf = 1e13
-SILE.nodefactory.zeroGlue = SILE.nodefactory.newGlue({width = SILE.length.new({length = 0})})
-SILE.nodefactory.hfillGlue = SILE.nodefactory.newGlue({width = SILE.length.new({length = 0, stretch = inf})})
-SILE.nodefactory.vfillGlue = SILE.nodefactory.newVglue({height = SILE.length.new({length = 0, stretch = inf})})
-SILE.nodefactory.hssGlue = SILE.nodefactory.newGlue({width = SILE.length.new({length = 0, stretch = inf, shrink = inf})})
-SILE.nodefactory.vssGlue = SILE.nodefactory.newVglue({height = SILE.length.new({length = 0, stretch = inf, shrink = inf})})
-SILE.nodefactory.zeroHbox = SILE.nodefactory.newHbox({ width = SILE.length.new({length = 0, stretch = 0, shrink = 0}), value = {glyph = 0} });
-SILE.nodefactory.zeroVglue = SILE.nodefactory.newVglue({height = SILE.length.new({length = 0, stretch = 0, shrink = 0}) })
+-- added by the typesetter. See https://github.com/sile-typesetter/sile/issues/227
+local infinity = SILE.measurement(1e13)
 
-return SILE.nodefactory
+local function _maxnode (nodes, dim)
+  local dims = SU.map(function (node)
+    -- TODO there is a bug here because we shouldn't need to cast to lengths,
+    -- somebody is setting a height as a number value (test in Lua 5.1)
+    -- return node[dim]
+    return SU.cast("length", node[dim])
+  end, nodes)
+  return SU.max(SILE.length(0), pl.utils.unpack(dims))
+end
+
+local _dims = pl.Set { "width", "height", "depth" }
+
+nodefactory.box = pl.class({
+    type = "special",
+    height = nil,
+    depth = nil,
+    width = nil,
+    misfit = false,
+    explicit = false,
+    discardable = false,
+    value = nil,
+    _default_length = "width",
+
+    _init = function (self, spec)
+      if type(spec) == "string"
+        or type(spec) == "number"
+        or SU.type(spec) == "measurement"
+        or SU.type(spec) == "length" then
+        self[self._default_length] = SU.cast("length", spec)
+      elseif SU.type(spec) == "table" then
+        if spec._tospec then spec = spec:_tospec() end
+        for k, v in pairs(spec) do
+          self[k] = _dims[k] and SU.cast("length", v) or v
+        end
+      elseif type(spec) ~= "nil" and SU.type(spec) ~= self.type then
+        SU.error("Unimplemented, creating " .. self.type .. " node from " .. SU.type(spec), 1)
+      end
+      for dim in pairs(_dims) do
+        if not self[dim] then self[dim] = SILE.length() end
+      end
+      self["is_"..self.type] = true
+      self.is_box = self.is_hbox or self.is_vbox or self.is_zerohbox or self.is_alternative or self.is_nnode
+      self.is_zero = self.is_zerohbox or self.is_zerovglue
+      if self.is_migrating then self.is_hbox, self.is_box = true, true end
+    end,
+
+    -- De-init instances by shallow copying properties and removing meta table
+    _tospec = function (self)
+      return pl.tablex.copy(self)
+    end,
+
+    tostring = function (self)
+      return  self:__tostring()
+    end,
+
+    __tostring = function (self)
+      return self.type
+    end,
+
+    __concat = function (a, b)
+      return tostring(a) .. tostring(b)
+    end,
+
+    absolute = function (self)
+      local clone = nodefactory[self.type](self:_tospec())
+      for dim in pairs(_dims) do
+        clone[dim] = self[dim]:absolute()
+      end
+      if self.nodes then
+        clone.nodes = pl.tablex.map_named_method("absolute", self.nodes)
+      end
+      return clone
+    end,
+
+    lineContribution = function (self)
+      -- Regardless of the orientations, "width" is always in the
+      -- writingDirection, and "height" is always in the "pageDirection"
+      return self.misfit and self.height or self.width
+    end,
+
+    outputYourself = function (self)
+      SU.error(self.type.." with no output routine")
+    end,
+
+    toText = function (self)
+      return self.type
+    end,
+
+    isBox = function (self)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+      return self.type == "hbox" or self.type == "zerohbox" or self.type == "alternative" or self.type == "nnode" or self.type == "vbox"
+    end,
+
+    isNnode = function (self)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+      return self.type=="nnode"
+    end,
+
+    isGlue = function (self)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+      return self.type == "glue"
+    end,
+
+    isVglue = function (self)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+      return self.type == "vglue"
+    end,
+
+    isZero = function (self)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+      return self.type == "zerohbox" or self.type == "zerovglue"
+    end,
+
+    isUnshaped = function (self)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+      return self.type == "unshaped"
+    end,
+
+    isAlternative = function (self)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+      return self.type == "alternative"
+    end,
+
+    isVbox = function (self)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+      return self.type == "vbox"
+    end,
+
+    isInsertion = function (self)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+      return self.type == "insertion"
+    end,
+
+    isMigrating = function (self)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+      return self.migrating
+    end,
+
+    isPenalty = function (self)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+      return self.type == "penalty"
+    end,
+
+    isDiscretionary = function (self)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+      return self.type == "discretionary"
+    end,
+
+    isKern = function (self)
+      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+      return self.type == "kern"
+    end
+
+  })
+
+nodefactory.hbox = pl.class(nodefactory.box)
+nodefactory.hbox.type = "hbox"
+
+function nodefactory.hbox:__tostring ()
+  return "H<" .. tostring(self.width) .. ">^" .. tostring(self.height) .. "-" .. tostring(self.depth) .. "v"
+end
+
+function nodefactory.hbox:scaledWidth (line)
+  return SU.rationWidth(self:lineContribution(), self.width, line.ratio)
+end
+
+function nodefactory.hbox:outputYourself (typesetter, line)
+  local outputWidth = self:scaledWidth(line)
+  if not self.value.glyphString then return end
+  if typesetter.frame:writingDirection() == "RTL" then
+    typesetter.frame:advanceWritingDirection(outputWidth)
+  end
+  SILE.outputter:setCursor(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
+  SILE.outputter:setFont(self.value.options)
+  SILE.outputter:drawHbox(self.value, outputWidth)
+  if typesetter.frame:writingDirection() ~= "RTL" then
+    typesetter.frame:advanceWritingDirection(outputWidth)
+  end
+end
+
+nodefactory.zerohbox = pl.class(nodefactory.hbox)
+nodefactory.zerohbox.type = "zerohbox"
+nodefactory.zerohbox.value = { glyph = 0 }
+
+nodefactory.nnode = pl.class(nodefactory.hbox)
+nodefactory.nnode.type = "nnode"
+nodefactory.nnode.language = ""
+nodefactory.nnode.pal = nil
+nodefactory.nnode.nodes = {}
+
+function nodefactory.nnode:_init (spec)
+  self:super(spec)
+  if 0 == self.depth:tonumber() then self.depth = _maxnode(self.nodes, "depth")  end
+  if 0 == self.height:tonumber() then self.height = _maxnode(self.nodes, "height") end
+  if 0 == self.width:tonumber() then self.width = SU.sum(SU.map(function (node) return node.width end, self.nodes)) end
+end
+
+function nodefactory.nnode:__tostring ()
+  return "N<" .. tostring(self.width) .. ">^" .. tostring(self.height) .. "-" .. tostring(self.depth) .. "v(" .. self:toText() .. ")"
+end
+
+function nodefactory.nnode:absolute ()
+  return self
+end
+
+function nodefactory.nnode:outputYourself (typesetter, line)
+  if self.parent and not self.parent.hyphenated then
+    if not self.parent.used then
+      self.parent:outputYourself(typesetter, line)
+    end
+    self.parent.used = true
+    return
+  end
+  for _, node in ipairs(self.nodes) do node:outputYourself(typesetter, line) end
+end
+
+function nodefactory.nnode:toText ()
+  return self.text
+end
+
+nodefactory.unshaped = pl.class(nodefactory.nnode)
+nodefactory.unshaped.type = "unshaped"
+
+function nodefactory.unshaped:_init (spec)
+  self:super(spec)
+  self.width = nil
+end
+
+function nodefactory.unshaped:__tostring ()
+  return "U(" .. self:toText() .. ")";
+end
+
+getmetatable(nodefactory.unshaped).__index = function (_, _)
+  -- if k == "width" then SU.error("Can't get width of unshaped node", true) end
+  -- TODO: No idea why porting to proper Penlight classes this ^^^^^^ started
+  -- killing everything. Perhaps becaus this function started working and would
+  -- actually need to return rawget(self, k) or something?
+end
+
+function nodefactory.unshaped:shape ()
+  local node =  SILE.shaper:createNnodes(self.text, self.options)
+  for i=1, #node do
+    node[i].parent = self.parent
+  end
+  return node
+end
+
+function nodefactory.unshaped.outputYourself (_)
+  SU.error("An unshaped node made it to output", true)
+end
+
+nodefactory.discretionary = pl.class(nodefactory.hbox)
+
+nodefactory.discretionary.type = "discretionary"
+nodefactory.discretionary.prebreak = {}
+nodefactory.discretionary.postbreak = {}
+nodefactory.discretionary.replacement = {}
+nodefactory.discretionary.used = false
+nodefactory.discretionary.prebw = nil
+
+function nodefactory.discretionary:__tostring ()
+  return "D(" .. SU.concat(self.prebreak, "") .. "|" .. SU.concat(self.postbreak, "") .."|" .. SU.concat(self.replacement, "") .. ")";
+end
+
+function nodefactory.discretionary:toText ()
+  return self.used and "-" or "_"
+end
+
+function nodefactory.discretionary:outputYourself (typesetter, line)
+  if self.used then
+    local i = 1
+    while (line.nodes[i].is_glue and line.nodes[i].value == "lskip")
+      or line.nodes[i].type == "zerohbox" do
+      i = i + 1
+    end
+    if (line.nodes[i] == self) then
+      for _, node in ipairs(self.postbreak) do node:outputYourself(typesetter, line) end
+    else
+      for _, node in ipairs(self.prebreak) do node:outputYourself(typesetter, line) end
+    end
+  else
+    for _, node in ipairs(self.replacement) do node:outputYourself(typesetter, line) end
+  end
+end
+
+function nodefactory.discretionary:prebreakWidth ()
+  if self.prebw then return self.prebw end
+  self.prebw = SILE.length()
+  for _, node in ipairs(self.prebreak) do self.prebw:___add(node.width) end
+  return self.prebw
+end
+
+function nodefactory.discretionary:postbreakWidth ()
+  if self.postbw then return self.postbw end
+  self.postbw = SILE.length()
+  for _, node in ipairs(self.postbreak) do self.pastbw:___add(node.width) end
+  return self.postbw
+end
+
+function nodefactory.discretionary:replacementWidth ()
+  if self.replacew then return self.replacew end
+  self.replacew = SILE.length()
+  for _, node in ipairs(self.replacement) do self.replacew:___add(node.width) end
+  return self.replacew
+end
+
+function nodefactory.discretionary:prebreakHeight ()
+  if self.prebh then return self.prebh end
+  self.prebh = _maxnode(self.prebreak, "height")
+  return self.prebh
+end
+
+function nodefactory.discretionary:postbreakHeight ()
+  if self.postbh then return self.postbh end
+  self.postbh = _maxnode(self.postbreak, "height")
+  return self.postbh
+end
+
+function nodefactory.discretionary:replacementHeight ()
+  if self.replaceh then return self.replaceh end
+  self.replaceh = _maxnode(self.replacement, "height")
+  return self.replaceh
+end
+
+nodefactory.alternative = pl.class(nodefactory.hbox)
+
+nodefactory.alternative.type = "alternative"
+nodefactory.alternative.options = {}
+nodefactory.alternative.selected = nil
+
+function nodefactory.alternative:__tostring ()
+  return "A(" .. SU.concat(self.options, " / ") .. ")"
+end
+
+function nodefactory.alternative:minWidth ()
+  local minW = function (a, b) return SU.min(a.width, b.width) end
+  return pl.tablex.reduce(minW, self.options)
+end
+
+function nodefactory.alternative:deltas ()
+  local minWidth = self:minWidth()
+  local rv = {}
+  for i = 1, #self.options do rv[#rv+1] = self.options[i].width - minWidth end
+  return rv
+end
+
+function nodefactory.alternative:outputYourself (typesetter, line)
+  if self.selected then
+    self.options[self.selected]:outputYourself(typesetter, line)
+  end
+end
+
+nodefactory.glue = pl.class(nodefactory.box)
+nodefactory.glue.type = "glue"
+nodefactory.glue.discardable = true
+
+function nodefactory.glue:__tostring ()
+  return (self.explicit and "E:" or "") .. "G<" .. tostring(self.width) .. ">"
+end
+
+function nodefactory.glue.toText (_)
+  return " "
+end
+
+function nodefactory.glue:outputYourself (typesetter, line)
+  local outputWidth = SU.rationWidth(self.width:absolute(), self.width:absolute(), line.ratio)
+  typesetter.frame:advanceWritingDirection(outputWidth)
+end
+
+nodefactory.hfillglue = pl.class(nodefactory.glue)
+function nodefactory.hfillglue:_init (spec)
+  self.width = SILE.length(0, infinity)
+  self:super(spec)
+end
+
+-- possible bug, deprecated constructor actually used vglue as base class for this
+nodefactory.hssglue = pl.class(nodefactory.glue)
+function nodefactory.hssglue:_init (spec)
+  self.width = SILE.length(0, infinity, infinity)
+  self:super(spec)
+end
+
+nodefactory.kern = pl.class(nodefactory.glue)
+nodefactory.kern.type = "kern"
+nodefactory.kern.discardable = false
+
+function nodefactory.kern:__tostring ()
+  return "K<" .. tostring(self.width) .. ">"
+end
+
+nodefactory.vglue = pl.class(nodefactory.box)
+nodefactory.vglue.type = "vglue"
+nodefactory.vglue.discardable = true
+nodefactory.vglue._default_length = "height"
+nodefactory.vglue.adjustment = nil
+
+function nodefactory.vglue:_init (spec)
+  self.adjustment = SILE.measurement()
+  self:super(spec)
+end
+
+function nodefactory.vglue:__tostring ()
+  return (self.explicit and "E:" or "") .. "VG<" .. tostring(self.height) .. ">";
+end
+
+function nodefactory.vglue:adjustGlue (adjustment)
+  self.adjustment = adjustment
+end
+
+function nodefactory.vglue:outputYourself (typesetter, line)
+  typesetter.frame:advancePageDirection(line.height:absolute() + line.depth:absolute() + self.adjustment)
+end
+
+function nodefactory.vglue:unbox ()
+  return { self }
+end
+
+nodefactory.vfillglue = pl.class(nodefactory.vglue)
+function nodefactory.vfillglue:_init (spec)
+  self.height = SILE.length(0, infinity)
+  self:super(spec)
+end
+
+nodefactory.vssglue = pl.class(nodefactory.vglue)
+nodefactory.vssglue.height = SILE.length(0, infinity, infinity)
+
+nodefactory.zerovglue = pl.class(nodefactory.vglue)
+
+nodefactory.vkern = pl.class(nodefactory.vglue)
+nodefactory.vkern.discardable = false
+
+function nodefactory.vkern:__tostring ()
+  return "VK<" .. tostring(self.height) .. ">"
+end
+
+nodefactory.penalty = pl.class(nodefactory.box)
+nodefactory.penalty.type = "penalty"
+nodefactory.penalty.discardable = true
+nodefactory.penalty.penalty = 0
+
+function nodefactory.penalty:_init (spec)
+  self:super(spec)
+  if type(spec) ~= "table" then
+    self.penalty = SU.cast("number", spec)
+  end
+end
+
+function nodefactory.penalty:__tostring ()
+  return "P(" .. tostring(self.penalty) .. ")";
+end
+
+function nodefactory.penalty.outputYourself (_)
+end
+
+function nodefactory.penalty.toText (_)
+  return "(!)"
+end
+
+function nodefactory.penalty:unbox ()
+  return { self }
+end
+
+nodefactory.vbox = pl.class(nodefactory.box)
+nodefactory.vbox.type = "vbox"
+nodefactory.vbox.nodes = {}
+nodefactory.vbox._default_length = "height"
+
+function nodefactory.vbox:_init (spec)
+  self.nodes = {}
+  self:super(spec)
+  self.depth = _maxnode(self.nodes, "depth")
+  self.height = _maxnode(self.nodes, "height")
+end
+
+function nodefactory.vbox:__tostring ()
+  return "VB<" .. tostring(self.height) .. "|" .. self:toText() .. "v".. tostring(self.depth) ..")";
+end
+
+function nodefactory.vbox:toText ()
+  return "VB[" .. SU.concat(SU.map(function (node) return node:toText() end, self.nodes), "") .. "]"
+end
+
+function nodefactory.vbox:outputYourself (typesetter, line)
+  typesetter.frame:advancePageDirection(self.height)
+  local initial = true
+  for _, node in ipairs(self.nodes) do
+    if not (initial and (node.is_glue or node.is_penalty)) then
+      initial = false
+      node:outputYourself(typesetter, line)
+    end
+  end
+  typesetter.frame:advancePageDirection(self.depth)
+  typesetter.frame:newLine()
+end
+
+function nodefactory.vbox:unbox ()
+  for i = 1, #self.nodes do
+    if self.nodes[i].is_vbox or self.nodes[i].is_vglue then return self.nodes end
+  end
+  return {self}
+end
+
+function nodefactory.vbox:append (box)
+  local nodes = box
+  if not box then SU.error("nil box given", true) end
+  if nodes.type then
+    nodes = box:unbox()
+  end
+  self.height = self.height:absolute()
+  self.height:___add(self.depth)
+  local lastdepth = SILE.length()
+  for i = 1, #nodes do
+    table.insert(self.nodes, nodes[i])
+    self.height:___add(nodes[i].height)
+    self.height:___add(nodes[i].depth:absolute())
+    if nodes[i].is_vbox then lastdepth = nodes[i].depth end
+  end
+  self.height:___sub(lastdepth)
+  self.ratio = 1
+  self.depth = lastdepth
+end
+
+nodefactory.migrating = pl.class(nodefactory.hbox)
+nodefactory.migrating.type = "migrating"
+nodefactory.migrating.material = {}
+nodefactory.migrating.value = {}
+nodefactory.migrating.nodes = {}
+
+function nodefactory.migrating:__tostring ()
+  return "<M: " .. tostring(self.material) .. ">"
+end
+
+local _deprecated_nodefactory = {}
+
+_deprecated_nodefactory.newHbox = function (spec)
+  return nodefactory.hbox(spec)
+end
+
+_deprecated_nodefactory.newNnode = function (spec)
+  return nodefactory.nnode(spec)
+end
+
+_deprecated_nodefactory.newUnshaped = function (spec)
+  return nodefactory.unshaped(spec)
+end
+
+_deprecated_nodefactory.newDisc = function (spec)
+  return nodefactory.discretionary(spec)
+end
+
+_deprecated_nodefactory.disc = function (spec)
+  return nodefactory.discretionary(spec)
+end
+
+_deprecated_nodefactory.newAlternative = function (spec)
+  return nodefactory.alternative(spec)
+end
+
+_deprecated_nodefactory.newGlue = function (spec)
+  return nodefactory.glue(spec)
+end
+
+_deprecated_nodefactory.newKern = function (spec)
+  return nodefactory.kern(spec)
+end
+
+_deprecated_nodefactory.newVglue = function (spec)
+  return nodefactory.vglue(spec)
+end
+
+_deprecated_nodefactory.newVKern = function (spec)
+  return nodefactory.vkern(spec)
+end
+
+_deprecated_nodefactory.newPenalty = function (spec)
+  return nodefactory.penalty(spec)
+end
+
+_deprecated_nodefactory.newDiscretionary = function (spec)
+  return nodefactory.discretionary(spec)
+end
+
+_deprecated_nodefactory.newVbox = function (spec)
+  return nodefactory.vbox(spec)
+end
+
+_deprecated_nodefactory.newMigrating = function (spec)
+  return nodefactory.migrating(spec)
+end
+
+_deprecated_nodefactory.zeroGlue = function ()
+  return nodefactory.glue()
+end
+
+_deprecated_nodefactory.hfillGlue = function ()
+  return nodefactory.hfillglue()
+end
+
+_deprecated_nodefactory.vfillGlue = function ()
+  return nodefactory.vfillglue()
+end
+
+_deprecated_nodefactory.hssGlue = function ()
+  return nodefactory.hssglue()
+end
+
+_deprecated_nodefactory.vssGlue = function ()
+  return nodefactory.vssglue()
+end
+
+_deprecated_nodefactory.zeroHbox = function ()
+  return nodefactory.zerohbox()
+end
+
+_deprecated_nodefactory.zeroVglue = function ()
+  return nodefactory.zerovglue()
+end
+
+setmetatable(nodefactory, {
+    __index = function (_, prop)
+      if _deprecated_nodefactory[prop] then
+        SU.deprecated("SILE.nodefactory." .. prop, "SILE.nodefactory." .. prop:match("n?e?w?(.*)"):lower(), "0.10.0", "0.14.0")
+        local old_constructor = _deprecated_nodefactory[prop]
+        return string.find(prop, "^new") and old_constructor or old_constructor()
+      elseif type(prop) == "number" then -- luacheck: ignore 542
+        -- Likely at attempt to iterate (or dump) the table, sort of safe to ignore
+      else
+        SU.error("Attempt to access non-existent SILE.nodefactory." .. prop)
+      end
+    end
+  })
+
+return nodefactory

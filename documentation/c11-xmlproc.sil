@@ -1,0 +1,217 @@
+\begin{document}
+\chapter{Advanced Class Files 1: SILE As An XML Processor}
+
+Now we are ready to look at a worked example of writing a class to turn an arbitrary
+XML format into a PDF file. We’ll be looking at the DocBook processor that ships with
+SILE. DocBook is an XML format for structured technical documentation. DocBook itself
+doesn’t encode any presentation information about how its various tags should be rendered
+on a page, and so we shall have to make all the presentation decisions for ourself.
+
+The first thing you should know is that it makes your life significantly easier if you
+consider writing the class file in \em{two} files; the first being a SILE file in TeX
+format, and the second as Lua code. This allows you to dispose of all the easy jobs in a
+convenient format, and then deal with the hard jobs in Lua. When you use the
+\code{-I \em{classname}.sil} command line option to SILE, SILE first looks for \code{\em{classname}.sil}
+and uses that as a wrapper around your file to be processed. If that then begins
+
+\begin{verbatim}
+\line
+\\begin[class=\em{classname}]\{document\}%
+\line
+\end{verbatim}
+
+\noindent{}then SILE will also load up \code{classes/\em{classname}.lua} as normal.
+
+Now we can start defining SILE commands to render XML elements. Most of these are
+fairly straightforward so we will not dwell on them too much. For instance,
+DocBook has a tags like \code{<code>}, \code{<filename>}, \code{<guimenu>} which should
+all be rendered in a monospaced typewriter font. To make it easier to customize the
+class, we abstract out the font change into a single command:
+
+\begin{verbatim}
+\line
+\\define[command=docbook-ttfont]\{\\font[family=Inconsolata,size=2ex]\{\\process\}\}
+\line
+\end{verbatim}
+
+Now we can define our \code{<code>} (etc.) tags:
+
+\begin{verbatim}
+\\define[command=code]\{\\docbook-ttfont\{\\process\}\}
+\\define[command=filename]\{\\docbook-ttfont\{\\process\}\}
+\\define[command=guimenu]\{\\docbook-ttfont\{\\process\}\}
+\\define[command=guilabel]\{\\docbook-ttfont\{\\process\}\}
+\\define[command=guibutton]\{\\docbook-ttfont\{\\process\}\}
+\\define[command=computeroutput]\{\\docbook-ttfont\{\\process\}\}
+\end{verbatim}
+
+If an end user wants things to look different, they can redefine the \code{docbook-ttfont}
+command and get a different font.
+
+\section{Handling Titles}
+
+So much for simple tags.
+Things get interesting when there is a mismatch between the simple format of
+SILE macros and the complexity of DocBook markup.
+
+We have already seen an example of the \code{<link>} tag where we also need to process
+XML attributes, so we will not repeat that here. Let’s look at another area of complexity:
+the apparently-simple \code{<title>} tag. The reason this is complex is that it occurs
+in different contexts, sometimes more than once within a context; it should often be
+rendered differently in different contexts. So for instance \code{<article><title>...}
+will look different to \code{<section><title>...}. Inside an \code{<example>} tag,
+the title will be preferenced by an example number; inside a \code{<bibliomixed>}
+bibliography entry the title should not be set off as a new block but should be
+part of the running text, and so on.
+
+What we will do to deal with this situation is provide a very simple definition of
+\code{<title>}, but when processing the containing elements of \code{<title>}
+(such as \code{<article>}, \code{<example>}), we will process the title ourselves.
+
+For instance, let’s look at \code{<example>}, which has the added complexity of needed
+to keep track of an article number.
+
+\begin{verbatim}
+\line
+SILE.registerCommand("example", function(options,content)
+  SILE.call("increment-counter", \{id="Example"\})
+  SILE.call("bigskip")
+  SILE.call("docbook-line")
+  SILE.call("docbook-titling", \{\}, function()
+    SILE.typesetter:typeset("Example".." ".. class:formatCounter(SILE.scratch.counters.Example]))
+\end{verbatim}
+
+\code{\\docbook-line} is a command that we’ve defined in the \code{docbook.sil} macros
+file to draw a line across the width of the page to set off examples and so on.
+\code{\\docbook-titling} is a command similarly defined in \code{docbook.sil} which sets
+the default font for titling and headers; once again, if people want to customize the
+look of the output we make it easier for them by giving them simple, compartmentalized
+commands to override.
+
+So far so good, but how do we extract the \code{<title>} tag from the \code{content}
+abstract syntax tree? SILE does not provide XPath or CSS-style selectors to locate
+content form within the DOM tree;\footnote{Patches, as they say, are welcome.} instead
+there is a simple one-level function called \code{SILE.findInTree} which looks for
+a particular tag or command name within the immediate children of the current tree:
+
+\begin{verbatim}
+    local t = SILE.findInTree(content, "title")
+    if t then
+      SILE.typesetter:typeset(": ")
+      SILE.process(t)
+\end{verbatim}
+
+We’ve output \examplefont{Example 123} so far, and now we need to say \examplefont{: \em{Title}}.
+But we also need to ensure that the \code{<title>} tag doesn’t get processed again
+when we process the content of the example:
+
+\begin{verbatim}
+      docbook.wipe(t)
+\end{verbatim}
+
+\code{docbook.wipe} is a little helper function which nullifies all the content of a
+Lua table:
+
+\begin{verbatim}
+function docbook.wipe(tbl)
+  while((#tbl) > 0) do tbl[#tbl] = nil end
+end
+\end{verbatim}
+
+Let’s finish off the \code{<example>} example by skipping a bit between the title and
+the content, processing the content and drawing a final line across the page:
+
+\begin{verbatim}
+    end
+  end)
+  SILE.call("smallskip")
+  SILE.process(content)
+  SILE.call("docbook-line")
+  SILE.call("bigskip")
+\line
+\end{verbatim}
+
+Now it happens that the \code{<example>}, \code{<table>} and \code{<figure>} tags
+are pretty equivalent: they produce numbered titles and then go on to process their
+content. So in reality we actually define an abstract \code{countedThing} method
+and define these commands in terms of that.
+
+\section{Sectioning}
+
+DocBook sectioning is a little different to the SILE \code{book} class. \code{<section>}
+tags can be nested; to start a subsection, you place another \code{<section>} tag
+inside the current \code{<section>}. So in order to know what level we are currently on,
+we need a stack; we also need to keep track of what section number we are on at \em{each}
+level. For instance:
+
+\begin{verbatim}
+  <section><title>A</title> : \examplefont{1. A}
+    <section><title>B</title>: \examplefont{1.1 B}
+    </section>
+    <section><title>C</title>: \examplefont{1.2 C}
+      <section><title>D</title>: \examplefont{1.2.1 D}
+      </section>
+    </section>
+    <section><title>E</title>: \examplefont{1.3 E}
+  </section>
+  <section><title>F</title>: \examplefont{2. F}
+\end{verbatim}
+
+So, we will keep two variables: the current level, and the counters for all of the
+levels so far. Each time we enter a \code{section}, we increase the current level counter:
+
+\begin{verbatim}
+\line
+SILE.registerCommand("section", function (options, content)
+  SILE.scratch.docbook.seclevel = SILE.scratch.docbook.seclevel + 1
+\end{verbatim}
+
+We also increment the count at the current level, while at the same time wiping out
+any counts we have for levels above the current level (if we didn’t do that, then
+\examplefont{E} in our example above would be marked \examplefont{1.3.1}):
+
+\begin{verbatim}
+  SILE.scratch.docbook.seccount[SILE.scratch.docbook.seclevel] =
+    (SILE.scratch.docbook.seccount[SILE.scratch.docbook.seclevel] or 0) + 1
+  while #(SILE.scratch.docbook.seccount) > SILE.scratch.docbook.seclevel do
+    SILE.scratch.docbook.seccount[#(SILE.scratch.docbook.seccount)] = nil
+  end
+\end{verbatim}
+
+Now we find the title, and prefix it by the concatenation of all the \code{seccount}s:
+
+\begin{verbatim}
+  local title = SILE.findInTree(content, "title")
+  local number = table.concat(SILE.scratch.docbook.seccount, '.')
+  if title then
+    SILE.call("docbook-section-"..SILE.scratch.docbook.seclevel.."-title",\{\},function()
+      SILE.typesetter:typeset(number.." ")
+      SILE.process(title)
+    end)
+    docbook.wipe(title)
+  end
+\end{verbatim}
+
+Finally we can process the content of the tag, and decrease the level count as we leave the
+\code{</section>} tag:
+
+\begin{verbatim}
+  SILE.process(content)
+  SILE.scratch.docbook.seclevel = SILE.scratch.docbook.seclevel - 1
+end)
+\line
+\end{verbatim}
+
+\section{Other Features}
+
+SILE’s DocBook implementation is a work in progress, and there is more that can be
+done. For instance, there is a basic implementation of lists, which equally need to
+be able to handle nesting; we implement another stack to take care of the type of
+list and list counter at each level of nesting.
+
+How would you handle a tag like \code{<xref>} which renders a cross-reference to
+another part of the document? For instance, \code{<xref linkend="ch02"/>} should
+generate something like \examplefont{Chapter 2, “The Second Chapter”}. This is
+another problem which can be handled using the \code{infonode} package to collect
+and store cross-reference information about chapter numbers and titles.
+\end{document}

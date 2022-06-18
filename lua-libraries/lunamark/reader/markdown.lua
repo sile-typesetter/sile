@@ -11,7 +11,7 @@ local P, R, S, V, C, Cg, Cb, Cmt, Cc, Ct, B, Cs =
   lpeg.Cmt, lpeg.Cc, lpeg.Ct, lpeg.B, lpeg.Cs
 local lpegmatch = lpeg.match
 local expand_tabs_in_line = util.expand_tabs_in_line
-local utf8 = require("utf8")
+local luautf8 = require("lua-utf8")
 
 local M = {}
 
@@ -20,7 +20,7 @@ local rope_to_string = util.rope_to_string
 -- Normalize a markdown reference tag.  (Make lowercase, and collapse
 -- adjacent whitespace characters.)
 local function normalize_tag(tag)
-  return utf8.lower(gsub(rope_to_string(tag), "[ \n\r\t]+", " "))
+  return luautf8.lower(gsub(rope_to_string(tag), "[ \n\r\t]+", " "))
 end
 
 ------------------------------------------------------------------------------

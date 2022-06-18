@@ -4,64 +4,66 @@ use strict;
 use warnings;
 use Getopt::Long;
 use Term::ANSIColor;
-my (@failed, @passed, @knownbad, @missing);
-my $upstream = 0;
-my $coverage = 0;
-
-GetOptions(
-	'upstream' => \$upstream,
-  'coverage' => \$coverage
-);
-
-if ($coverage) { $ENV{SILE_COVERAGE} = 1}
+my (@failed, @passed, @unsupported, @knownbad, @knownbadbutpassing, @missing);
 
 my @specifics = @ARGV;
 
 my $exit = 0;
-for (@specifics ? @specifics : <tests/*.sil>) {
-  my $expectation = $_; $expectation =~ s/\.sil$/\.expected/;
-  my $knownbad;
-  if (-f $expectation) {
-    # Only run regression tests for upstream bugs if specifically asked
-    if ($_ =~ /_upstream\.sil/) {
-      next if !$upstream;
-    # Only test OS specific regressions on their respective OSes
-    } elsif ($_ =~ /_\w+\.sil/) {
-      next if ($_ !~ /_$^O\.sil/) ;
-    }
-    print "### Regression testing $_\n";
-    my $out = $_; $out =~ s/\.sil$/\.actual/;
-    if (!system("grep KNOWNBAD $_ >/dev/null")) {
-      $knownbad = 1;
-    }
-    exit $? >> 8 if system qq!./sile -e 'require("core/debug-output")' $_ > $out!;
-    if (system("diff -".($knownbad?"q":"")."U0 $expectation $out")) {
-      if ($knownbad) { push @knownbad, $_; }
-      else { push @failed, $_; }
+for (@specifics ? @specifics : <tests/*.sil tests/*.xml>) {
+    my $expectation = $_; $expectation =~ s/\.(sil|xml)$/\.expected/;
+    my $actual = $_; $actual =~ s/\.(sil|xml)$/\.actual/;
+    my ($unsupported, $knownbad);
+    if (-f $expectation) {
+        open my $exp, $expectation or die $!;
+        my $firstline = <$exp>;
+        if ($firstline =~ /OS=(?!$^O)/) {
+            push @unsupported, $_;
+            next;
+        }
+        # Run but don't fail on tests that exist but are known to fail
+        if (!system("head -n1 $_ | grep -q KNOWNBAD")) {
+            $knownbad = 1;
+        }
+        if (! -f $actual) {
+            push @failed, $_;
+        } elsif (!system("grep -qx 'UNSUPPORTED' $actual")) {
+            $unsupported = 1;
+        } elsif (!system("diff -".($knownbad?"q":"")."U0 $expectation $actual")) {
+            if ($knownbad) { push @knownbadbutpassing, $_;  }
+            else { push @passed, $_; }
+        } elsif ($knownbad) {
+            push @knownbad, $_;
+        } elsif ($unsupported) {
+            push @unsupported, $_;
+        } else {
+            push @failed, $_;
+        }
     } else {
-      if ($knownbad) { push @knownbad, $_; }
-      else { push @passed, $_; }
+        push @missing, $_;
     }
-  } else {
-    push @missing, $_;
-  }
 }
 if (@passed){
-  print "\n",color("green"), "Passing tests:",color("reset");
-  print "\n • ",join(", ", @passed),"\n";
-}
-if (@failed) {
-  print "\n",color("red"), "Failed tests:\n",color("reset");
-  for (@failed) { print " • ",$_,"\n"}
-}
-if (@knownbad){
-  print "\n",color("yellow"), "Known bad tests:",color("reset");
-  print "\n • ",join(", ", @knownbad),"\n";
+    print "\n", color("green"), "Passing tests:", color("reset"), "\n";
+    for (@passed) { print "✔ ", $_, "\n"}
 }
 if (@missing){
-  print "\n",color("cyan"),"Tests missing expectations:",color("reset");
-  print "\n • ",join(", ", @missing),"\n";
+    print "\n", color("cyan"), "Tests missing expectations:", color("reset"), "\n";
+    for (@missing) { print "• ", $_, "\n"}
+}
+if (@unsupported){
+    print "\n", color("magenta"), "Tests unsupported on this system:", color("reset"), "\n";
+    for (@unsupported) { print "⚠ ", $_, "\n"}
+}
+if (@knownbad){
+    print "\n", color("yellow"), "Known bad tests that fail:", color("reset"), "\n";
+    for (@knownbad) { print "⚠ ", $_, "\n"}
+}
+if (@knownbadbutpassing){
+    print "\n", color("bright_yellow"), "Known bad tests that pass:", color("reset"), "\n";
+    for (@knownbadbutpassing) { print "❓ ", $_, "\n"}
 }
 if (@failed) {
-	exit 1;
+    print "\n", color("red"), "Failed tests:", color("reset"), "\n";
+    for (@failed) { print "❌ ", $_, "\n"}
+    exit 1;
 }

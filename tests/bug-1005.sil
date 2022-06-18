@@ -1,0 +1,6 @@
+\begin[papersize=a6]{document}
+\nofolios
+\neverindent
+\script[src=packages/svg]
+\svg[width=265pt, src=./tests/bug-1005.svg]
+\end{document}

@@ -1,0 +1,13 @@
+\begin[papersize=a5,class=book]{document}
+\show-multilevel-counter[id=foo]
+
+\increment-multilevel-counter[id=foo,level=3]
+\show-multilevel-counter[id=foo,level=3]
+
+\increment-multilevel-counter[id=foo,level=3]
+\show-multilevel-counter[id=foo,level=3]
+
+\increment-multilevel-counter[id=foo,level=2]
+\show-multilevel-counter[id=foo]
+
+\end{document}

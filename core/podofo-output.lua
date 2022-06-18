@@ -2,49 +2,97 @@
 -- example of how to create alternative output backends, in comparison
 -- with the libtexpdf and debug backends.
 local pdf = require("podofo")
-local imagesize = SILE.require("imagesize")
+local imagesize = require("imagesize")
 if (not SILE.outputters) then SILE.outputters = {} end
+
+local cursorX = 0
+local cursorY = 0
 
 local document
 local page
 local painter
 local pagesize
-local font
-local lastfont
+local lastkey
 
 local podofoFaces = {}
 
-local cursorX = 0
-local cursorY = 0
+local _deprecationCheck = function (caller)
+  if type(caller) ~= "table" or type(caller.debugHbox) ~= "function" then
+    SU.deprecated("SILE.outputter.*", "SILE.outputter:*", "0.10.9", "0.10.10")
+  end
+end
+
 SILE.outputters.podofo = {
-  init = function()
+
+  init = function (self)
+    _deprecationCheck(self)
     document = pdf.PdfMemDocument()
     pagesize = pdf.PdfRect()
     pagesize:SetWidth(SILE.documentState.paperSize[1])
     pagesize:SetHeight(SILE.documentState.paperSize[2])
     page = document:CreatePage(pagesize)
-    painter = podofo.PdfPainter()
+    painter = pdf.PdfPainter()
     painter:SetPage(page)
   end,
-  newPage = function()
+
+  newPage = function (self)
+    _deprecationCheck(self)
     painter:FinishPage()
     page = document:CreatePage(pagesize)
     painter:SetPage(page)
   end,
-  finish = function()
+
+  finish = function (self)
+    _deprecationCheck(self)
     painter:FinishPage()
     document:Write(SILE.outputFilename)
   end,
+
+  cursor = function (self)
+    _deprecationCheck(self)
+    SU.deprecated("SILE.outputter:cursor", "SILE.outputter:getCursor", "0.10.10", "0.11.0")
+    return self:getCursor()
+  end,
+
+  getCursor = function (self)
+    _deprecationCheck(self)
+    return cursorX, cursorY
+  end,
+
+  moveTo = function (self, x, y)
+    _deprecationCheck(self)
+    SU.deprecated("SILE.outputter:moveTo", "SILE.outputter:setCursor", "0.10.10", "0.11.0")
+    return self:setCursor(x, y)
+  end,
+
+  setCursor = function (self, x, y, relative)
+    _deprecationCheck(self)
+    local offset = relative and { x = cursorX, y = cursorY } or { x = 0, y = 0 }
+    cursorX = offset.x + x
+    cursorY = offset.y + SILE.documentState.paperSize[2] - y
+  end,
+
   setColor = function (self, color)
+    _deprecationCheck(self)
     painter:SetColor(color.r, color.g, color.b)
   end,
-  outputHbox = function (value)
+
+  outputHbox = function (self, value, width)
+    _deprecationCheck(self)
+    SU.deprecated("SILE.outputter:outputHbox", "SILE.outputter:drawHbox", "0.10.10", "0.11.0")
+    return self:drawHbox(value, width)
+  end,
+
+  drawHbox = function (self, value, _)
+    _deprecationCheck(self)
     if not value.glyphNames then return end
-    for i = 1,#(value.glyphNames) do
-      painter:DrawGlyph(document,cursorX, cursorY, value.glyphNames[i])
+    for i = 1, #(value.glyphNames) do
+      painter:DrawGlyph(document, cursorX, cursorY, value.glyphNames[i])
     end
   end,
-  setFont = function (options)
+
+  setFont = function (self, options)
+    _deprecationCheck(self)
     if SILE.font._key(options) == lastkey then return end
     lastkey = SILE.font._key(options)
     if not podofoFaces[lastkey] then
@@ -57,33 +105,55 @@ SILE.outputters.podofo = {
     -- Podofo trashes the font, so we need to recompute.
     SILE.fontCache[lastkey] = nil
   end,
-  drawPNG = function (src, x,y,w,h)
+
+  drawImage = function (self, _, _, _, _)
+    _deprecationCheck(self)
   end,
-  imageSize = function (src)
-    local box_width,box_height, err = imagesize.imgsize(src)imagesize.imgsize(src)
+
+  imageSize = function (self, src)
+    _deprecationCheck(self)
+    SU.deprecated("SILE.outputter:imageSize", "SILE.outputter:getImageSize", "0.10.10", "0.11.0")
+    return self:getImageSize(src)
+  end,
+
+  getImageSize = function (self, src)
+    _deprecationCheck(self)
+    local box_width, box_height, err = imagesize.imgsize(src)
     if not box_width then
       SU.error(err.." loading image")
     end
     return box_width, box_height
   end,
-  moveTo = function (x,y)
-    cursorX = x
-    cursorY = SILE.documentState.paperSize[2] - y
+
+  drawSVG = function (self, _, _, _, _)
+    _deprecationCheck(self)
   end,
-  rule = function (x,y,w,d)
-    painter:Rectangle(x,SILE.documentState.paperSize[2] - y,w,d)
+
+  rule = function (self, x, y, width, depth)
+    _deprecationCheck(self)
+    SU.deprecated("SILE.outputter:rule", "SILE.outputter:drawRule", "0.10.10", "0.11.0")
+    return self:drawRule(x, y, width, depth)
+  end,
+
+  drawRule = function (self, x, y, width, depth)
+    _deprecationCheck(self)
+    painter:Rectangle(x, SILE.documentState.paperSize[2] - y, width, depth)
     painter:Close()
     painter:Fill()
   end,
-  debugFrame = function (self,f)
+
+  debugFrame = function (self, _)
+    _deprecationCheck(self)
   end,
-  debugHbox = function(typesetter, hbox, scaledWidth)
-    painter:SetColor(0.9,0.9,0.9)
+
+  debugHbox = function (self, typesetter, hbox, scaledWidth)
+    _deprecationCheck(self)
+    painter:SetColor(0.9, 0.9, 0.9)
     painter:SetStrokeWidth(0.5)
     painter:Rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY+(hbox.height), scaledWidth, hbox.height+hbox.depth)
     if (hbox.depth) then painter:Rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY+(hbox.height), scaledWidth, hbox.height); end
     painter:Stroke()
-    painter:SetColor(0,0,0)
+    painter:SetColor(0, 0, 0)
     --cr:move_to(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
   end
 }

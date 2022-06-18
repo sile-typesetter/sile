@@ -1,8 +1,6 @@
 local lfs = require('lfs')
 
-SILE.scratch.converters = {}
-
-local register = function(sourceExt, targetExt, command)
+local register = function (sourceExt, targetExt, command)
   table.insert(SILE.scratch.converters, {
     sourceExt = sourceExt,
     targetExt = targetExt,
@@ -10,7 +8,7 @@ local register = function(sourceExt, targetExt, command)
   })
 end
 
-local applyConverter = function(source, converter)
+local applyConverter = function (source, converter)
   local extLen = string.len(converter.sourceExt)
   local targetFile = string.sub(source, 1, -extLen-1) .. converter.targetExt
 
@@ -27,7 +25,7 @@ local applyConverter = function(source, converter)
     return targetFile -- already converted
   end
 
-  command = string.gsub(converter.command, "%$(%w+)", {
+  local command = string.gsub(converter.command, "%$(%w+)", {
     SOURCE = source,
     TARGET = targetFile
   })
@@ -42,7 +40,7 @@ local applyConverter = function(source, converter)
   end
 end
 
-local checkConverters = function(source)
+local checkConverters = function (source)
   for _, converter in ipairs(SILE.scratch.converters) do
     local extLen = string.len(converter.sourceExt)
     if ((string.len(source) > extLen) and
@@ -53,46 +51,105 @@ local checkConverters = function(source)
   return source -- No conversion needed.
 end
 
-SILE.registerCommand("converters:register", function(o, c)
-  register(o.from, o.to, o.command)
-end)
-
-SILE.registerCommand("converters:check", function(o, c)
-  checkConverters(o.source)
-end)
-
-local function extendCommand(name, f)
+-- TODO Make this a standard utility function
+local function extendCommand(name, func)
   -- Wrap an existing command
   local original = SILE.Commands[name]
-  if(original) then
-    SILE.Commands[name] = function(options, content)
-      f(options, content, original)
+  if original then
+    SILE.Commands[name] = function (options, content)
+      func(options, content, original)
     end
   else
     SU.debug("converters", "Can not extend command "..name)
   end
 end
 
-extendCommand("include", function(o, c, original)
-  local result = checkConverters(o.src)
-  if(result~=nil) then
-    o["src"] = result
-    original(o, c)
-  end
-end)
+local function init (_, _)
 
-extendCommand("img", function(o, c, original)
-  local result = checkConverters(o.src)
-  if(result~=nil) then
-    o["src"] = result
-    original(o, c)
+  if not SILE.scratch.converters then
+    SILE.scratch.converters = {}
   end
-end)
+
+  extendCommand("include", function (options, content, original)
+    local result = checkConverters(options.src)
+    if not result then
+      options["src"] = result
+      original(options, content)
+    end
+  end)
+
+  extendCommand("img", function (options, content, original)
+    local result = checkConverters(options.src)
+    if not result then
+      options["src"] = result
+      original(options, content)
+    end
+  end)
+
+end
+
+local function registerCommands (_)
+
+  SILE.registerCommand("converters:register", function (options, _)
+    register(options.from, options.to, options.command)
+  end)
+
+  SILE.registerCommand("converters:check", function (options, _)
+    checkConverters(options.source)
+  end)
+
+end
+
 
 return {
+  init = init,
+  registerCommands = registerCommands,
   exports = {
-    register= register,
-    check= checkConverters
-  }
+    register = register,
+    check = checkConverters
+  },
+  documentation= [[
+\begin{document}
+The \autodoc:package{converters} package allows you to register additional handlers
+to process included files and images. That sounds a bit abstract, so it’s
+best explained by example. Suppose you have a GIF image that you would
+like to include in your document. You read the documentation for the
+\autodoc:package{image} package and you discover that sadly GIF images are not supported.
+What \autodoc:package{converters} does is allow you to teach SILE how to get the GIF
+format into something that \em{is} supported. We can use the ImageMagick
+toolkit to turn a GIF into a JPG, and JPGs are supported.
+
+We do this by registering a converter with the \autodoc:command{\converters:register}
+command:
+
+\begin{verbatim}
+\line
+\\script[src=packages/converters]
+\\converters:register[from=.gif,to=.jpg,command=convert $SOURCE $TARGET]
+\line
+\end{verbatim}
+
+And now it just magically works:
+
+\begin{verbatim}
+\line
+\\img[src=hello.gif, width=50px]
+\line
+\end{verbatim}
+
+This will execute the command \code{convert hello.gif hello.jpg} and include
+the converted \code{hello.jpg} file.
+
+This trick also works for text file:
+
+\begin{verbatim}
+\line
+\\converters:register[from=.md, to=.sil, command=pandoc -o $TARGET $SOURCE]
+
+\\include[src=document.md]
+\line
+\end{verbatim}
+\end{document}
+]]
 }
 

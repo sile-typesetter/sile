@@ -1,5 +1,7 @@
 \begin[papersize=a7,class=book]{document}
 \script[src=packages/linespacing]
+\nofolios
+\font[family=Gentium Plus,size=9.5pt]
 \set[parameter=linespacing.method,value=fit-font]
 \set[parameter=linespacing.fit-font.extra-space,value=0.6ex plus 0.5pt minus 0.5pt]
 All the paragraphs in this test should be left justified and all the signatures should end up ragged-left.
@@ -8,7 +10,7 @@ All the paragraphs in this test should be left justified and all the signatures 
 
 \hfill John Hancock
 
-\skip[height=11em] % Change this to 12em for two line wrap with no symptoms
+\skip[height=10em]
 
 A line of stuff in a paragraph that wraps on the page following the one it started on.
 
@@ -20,12 +22,11 @@ A line of stuff in a paragraph that wraps on the page following the one it start
 
 The problem with hfills on the next page doesn't repro if you try to do it on this page.
 
-\skip[height=14em] % Change this to 15em for no symptoms
+\skip[height=16em]
 
 A line of stuff in a paragraph that wraps not just one but two lines on the page following the one it started on.
 
 \hfill The undersigned,
 
 \hfill John Hancock
-
 \end{document}

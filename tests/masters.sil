@@ -1,44 +1,44 @@
 \begin{document}
-\script[src=packages/masters]%
-\script[src=packages/lorem]%
-\script[src=packages/frametricks]%
-\define-master-template[id=title,first-content-frame=t]{%
-\frame[id=gutter,width=3%pw]%
-\frame[id=t,next=l,left=5%pw,right=95%pw,top=3%ph,bottom=15%ph,next=l]%
-\frame[id=l,left=5%pw,right=left(gutter),top=bottom(t)+2em,bottom=90%ph,next=r]%
-\frame[id=r,left=right(gutter),right=95%pw,top=top(l),bottom=bottom(l),width=width(l)]%
-}%
-\define-master-template[id=columns,first-content-frame=l]{%
-\frame[id=gutter,width=15%pw]%
-\frame[id=l,left=5%pw,right=left(gutter),top=5%ph,bottom=90%ph,next=r]%
-\frame[id=r,left=right(gutter),right=95%pw,top=top(l),bottom=bottom(l),width=width(l)]%
-}%
-\switch-master[id=title]%
-\lorem[words=50]%
-\nofolios%
-\showframe[id=all]%
-\framebreak%
-\lorem[words=50]%
-\supereject%
-\par%
+\script[src=packages/masters]
+\script[src=packages/lorem]
+\script[src=packages/frametricks]
+\define-master-template[id=title,first-content-frame=t]{
+\frame[id=gutter,width=3%pw]
+\frame[id=t,next=l,left=5%pw,right=95%pw,top=3%ph,bottom=15%ph,next=l]
+\frame[id=l,left=5%pw,right=left(gutter),top=bottom(t)+2em,bottom=90%ph,next=r]
+\frame[id=r,left=right(gutter),right=95%pw,top=top(l),bottom=bottom(l),width=width(l)]
+}
+\define-master-template[id=columns,first-content-frame=l]{
+\frame[id=gutter,width=15%pw]
+\frame[id=l,left=5%pw,right=left(gutter),top=5%ph,bottom=90%ph,next=r]
+\frame[id=r,left=right(gutter),right=95%pw,top=top(l),bottom=bottom(l),width=width(l)]
+}
+\switch-master[id=title]
+\lorem[words=50]\par
+\nofolios
+\showframe[id=all]
+\framebreak
+\lorem[words=50]\par
+\supereject
+\par
 
-\switch-master-one-page[id=columns]%
+\switch-master-one-page[id=columns]
 \font[size=20pt]{Column master\par}
-\lorem[words=50]%
-\showframe[id=all]%
+\lorem[words=50]\par
+\showframe[id=all]
 
-\framebreak%
-\lorem[words=50]%
-\pagebreak%
-\par%
+\framebreak
+\lorem[words=50]\par
+\pagebreak
+\par
 
 \font[size=20pt]{Should return to title master\par}
-\lorem[words=50]%
-\showframe[id=all]%
+\lorem[words=50]\par
+\showframe[id=all]
 
-\framebreak%
-\lorem[words=50]%
-\pagebreak%
-\par%
+\framebreak
+\lorem[words=50]\par
+\pagebreak
+\par
 
 \end{document}

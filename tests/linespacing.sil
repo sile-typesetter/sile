@@ -1,15 +1,18 @@
-\begin[papersize=a5]{document}
+\begin[papersize=a6]{document}
+\script[src=packages/lorem]
+\nofolios
+\font[family=Libertinus Serif,size=12pt]
 Small text
 
 \font[size=15pt]Big text!
 
-\font[size=30pt]{Bigger text} Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui deserunt mollit anim id est laborum.
+\font[size=30pt]{Bigger text} \lorem[words=10]
 
-\font[family=Linux Libertine O,size=11pt]
+\font[family=Libertinus Sans,weight=600,size=12pt]
 Small text
 
 \font[size=15pt]Big text!
 
-\font[size=30pt]{Bigger text} Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui deserunt mollit anim id est laborum.
+\font[size=30pt]{Bigger text} \lorem[words=10]
 
 \end{document}

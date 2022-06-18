@@ -1,12 +1,15 @@
-\begin[papersize=a7,class=book]{document}
+\begin[papersize=a7,class=book]{document} % KNOWNBAD
+\nofolios
 % We are testing that the footnote's top skip (separator) gets retained
 % and that the main content doesn't overflow its frame.
 \script[src=packages/rules]
-\footnote:separator{\hrule[width=20pt]\skip[height=12pt]}
+\footnote:separator{\noindent\hrule[width=20pt]\skip[height=12pt]}
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
 quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
 consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
 cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
 proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\footnote{Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,

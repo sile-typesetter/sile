@@ -1,113 +1,231 @@
-local opentype = { -- Mapping of opentype features to friendly names
+local lpeg = require("lpeg")
+
+local R, S, P, C = lpeg.R, lpeg.S, lpeg.P, lpeg.C
+local Cf, Ct = lpeg.Cf, lpeg.Ct
+
+local otFeatureMap = {
   Ligatures = {
-    Required = "rlig", Common = "liga", Contextual = "clig",
-    Rare = "dlig", Discretionary = "dlig", Historic = "hlig"
+    Required = "rlig",
+    Common = "liga",
+    Contextual = "clig",
+    Rare = "dlig",
+    Discretionary = "dlig",
+    Historic = "hlig"
   },
-  Fractions = { On = "frac", Alternate = "afrc" },
-  StylisticSet = function(i) return string.format("ss%02i", tonumber(i)) end,
+  Fractions = {
+    On = "frac",
+    Alternate = "afrc"
+  },
+  StylisticSet = function (i)
+    return string.format("ss%02i", tonumber(i))
+  end,
+  CharacterVariant = function (i)
+    return string.format("cv%02i", tonumber(i))
+  end,
   Letters = {
-    Uppercase = "case", SmallCaps = "smcp", PetiteCaps = "pcap",
-    UppercaseSmallCaps = "c2sc", UppercasePetiteCaps = "c2pc",
+    Uppercase = "case",
+    SmallCaps = "smcp",
+    PetiteCaps = "pcap",
+    UppercaseSmallCaps = "c2sc",
+    UppercasePetiteCaps = "c2pc",
     Unicase = "unic"
   },
   Numbers = {
-    Uppercase = "lnum", Lining = "lnum", LowerCase = "onum", OldStyle = "onum",
-    Proportional = "pnum", monospaced = "tnum", SlashedZero = "zero", Arabic = "anum"
+    Uppercase = "lnum",
+    Lining = "lnum",
+    LowerCase = "onum",
+    OldStyle = "onum",
+    Proportional = "pnum",
+    monospaced = "tnum",
+    SlashedZero = "zero",
+    Arabic = "anum"
   },
   Contextuals = {
-    Swash = "cswh", Alternate = "calt", WordInitial = "init", WordFinal = "fina",
-    LineFinal = "falt", Inner = "medi"
+    Swash = "cswh",
+    Alternate = "calt",
+    WordInitial = "init",
+    WordFinal = "fina",
+    LineFinal = "falt",
+    Inner = "medi"
   },
   VerticalPosition = {
-    Superior = "sups", Inferior = "subs", Numerator = "numr", Denominator = "dnom",
-    ScientificInferior = "sinf", Ordinal = "ordn"
+    Superior = "sups",
+    Inferior = "subs",
+    Numerator = "numr",
+    Denominator = "dnom",
+    ScientificInferior = "sinf",
+    Ordinal = "ordn"
   },
-  -- XXX Character variant support not implemented yet
   Style = {
-    Alternate = "salt", Italic= "ital",
-    Ruby= "ruby", Swash= "swsh", Historic= "hist", TitlingCaps= "titl",
-    HorizontalKana= "hkna", VerticalKana= "vkna"
+    Alternate = "salt",
+    Italic = "ital",
+    Ruby = "ruby",
+    Swash = "swsh",
+    Historic = "hist",
+    TitlingCaps = "titl",
+    HorizontalKana = "hkna",
+    VerticalKana = "vkna"
   },
-  Diacritics = {MarkToBase = "mark", MarkToMark = "mkmk", AboveBase = "abvm", BelowBase = "blwm" },
-  Kerning = { Uppercase = "cpsp", On = "kern" },
+  Diacritics = {
+    MarkToBase = "mark",
+    MarkToMark = "mkmk",
+    AboveBase = "abvm",
+    BelowBase = "blwm"
+  },
+  Kerning = {
+    Uppercase = "cpsp",
+    On = "kern"
+  },
   CJKShape = {
-    Traditional = "trad", Simplified = "smpl", JIS1978 = "jp78",
-    JIS1983 = "jp83", JIS1990 = "jp90", Expert = "expt", NLC = "nlck",
+    Traditional = "trad",
+    Simplified = "smpl",
+    JIS1978 = "jp78",
+    JIS1983 = "jp83",
+    JIS1990 = "jp90",
+    Expert = "expt",
+    NLC = "nlck"
   },
   CharacterWidth = {
-    Proportional = "pwid", Full = "fwid", Half = "hwid", Third = "twid",
-    Quarter = "qwid", AlternateProportional = "palt", AlternateHalf = "halt",
-  },
+    Proportional = "pwid",
+    Full = "fwid",
+    Half = "hwid",
+    Third = "twid",
+    Quarter = "qwid",
+    AlternateProportional = "palt",
+    AlternateHalf = "halt"
+  }
 }
 
+local function tagpos (pos, k, v)
+  return k, { posneg = pos, value = v }
+end
+
 -- Parser for feature strings
-local lpeg = require("lpeg")
-local featurename = lpeg.C((1-lpeg.S(",;:="))^1)
-local value = lpeg.C(SILE.parserBits.number.integer)
-local tag = lpeg.C(lpeg.S("+-")) * featurename * (lpeg.P("=") * value)^0 * lpeg.S(",;:")^-1 / function(pn,key,value) return key, { posneg = pn, value = value} end
-local featurestring = lpeg.Cf(lpeg.Ct("") * tag^0, rawset)
+local featurename = C((1 - S",;:=")^1)
+local value = C(SILE.parserBits.integer)
+local tag = C(S"+-") * featurename * (P"=" * value)^0 * S",;:"^-1 / tagpos
+local featurestring = Cf(Ct"" * tag^0, rawset)
 
-local featurestring2table = function(s)
-  return featurestring:match(s) or SU.error("Unparsable Opentype feature string '"..s.."'")
+-- Parser for fontspec strings
+-- Refer to fontspec.pdf (see doc), Chapter 3, Table 4 (p. 37)
+local fontspecsafe = R("AZ", "az", "09") + P":"
+local fontspecws = SILE.parserBits.whitespace^0
+local fontspecsep = P"," * fontspecws
+local fontspecname = C(fontspecsafe^1)
+local fontspeclist = fontspecws * P"{" *
+                     Ct(fontspecws * fontspecname *
+                        (fontspecsep * fontspecname * fontspecws)^0) *
+                     P"}" * fontspecws
+
+local otFeatures = pl.class(pl.Map)
+
+function otFeatures:_init ()
+  self:super()
+  local str = SILE.settings:get("font.features")
+  local tbl = featurestring:match(str)
+  if not tbl then
+    SU.error("Unparsable Opentype feature string '"..str.."'")
+  end
+  for feat, flag in pairs(tbl) do
+    self:set(feat, flag.posneg == "+")
+  end
 end
 
-local table2featurestring = function(t)
-  local t2 = {}
-  for k,v in pairs(t) do t2[#t2+1] = v.posneg..k..(v.value and "="..v.value or "") end
-  return table.concat(t2, ";")
+function otFeatures:__tostring ()
+  local ret = {}
+  for _, f in ipairs(self:items()) do
+    ret[#ret+1] = (f[2] and "+" or "-") .. f[1]
+  end
+  return table.concat(ret, ";")
 end
 
-SILE.registerCommand("add-font-feature", function(o,c)
-  local t = featurestring2table(SILE.settings.get("font.features"))
-  for k,v in pairs(o) do
-    if not opentype[k] then SU.warn("Unknown Opentype feature "..k)
-    else
-      local posneg = "+"
-      v = v:gsub("^No", function() posneg= "-"; return "" end)
-      local res
-      if type(opentype[k]) == "function" then res = opentype[k](v) else res = opentype[k][v] end
-      if not res then SU.error("Bad OpenType value "..v.." for feature "..k) end
-      if type(res) == "string" then
-        t[res] = {posneg = posneg}
+function otFeatures:loadOption (name, val, invert)
+  local posneg = not invert
+  local key = otFeatureMap[name]
+  if not key then
+    SU.warn("Unknown OpenType feature " .. name)
+  else
+    local matches = lpeg.match(fontspeclist, val)
+    for _, v in ipairs(matches or { val }) do
+      v = v:gsub("^No", function () posneg = false; return "" end)
+      local feat = type(key) == "function" and key(v) or key[v]
+      if not feat then
+        SU.warn("Bad OpenType value " .. v .. " for feature " .. name)
       else
-        t[res.key] = { posneg = posneg, value = res.value}
+        self:set(feat, posneg)
       end
     end
   end
+end
 
-  SILE.settings.set("font.features", table2featurestring(t))
-end)
-
-SILE.registerCommand("remove-font-feature", function(o,c)
-  local t = featurestring2table(SILE.settings.get("font.features"))
-
-  for k,v in pairs(o) do
-    if not opentype[k] then SU.warn("Unknown Opentype feature "..k)
-    else
-      v = v:gsub("^No", "")
-      local res
-      if type(opentype[k]) == "function" then res = opentype[k](v) else res = opentype[k][v] end
-      if not res then SU.error("Bad OpenType value "..v.." for feature "..k) end
-      if type(res) == "string" then t[res] = nil else t[res.key] = nil end
-    end
+-- Input like {Ligatures = Historic} or {Ligatures = "{Historic, Discretionary}"}
+--
+-- Most real-world use should be single value, but multiple value use is not
+-- that odd.  Junicode, for example, a common font among medievalists, has many
+-- Stylistic Sets and Character Variations, many of which make sense to enable
+-- simultaneously.
+function otFeatures:loadOptions (options, invert)
+  SU.debug("features", "Features was", self)
+  for k, v in pairs(options) do
+    self:loadOption(k, v, invert)
   end
+  SU.debug("features", "Features interpreted as", self)
+end
 
-  SILE.settings.set("font.features", table2featurestring(t))
-end)
+function otFeatures:unloadOptions (options)
+  self:loadOptions(options, true)
+end
 
-return { documentation = [[\begin{document}
+local fontfn = SILE.Commands.font
+
+local function registerCommands (_)
+
+  SILE.registerCommand("add-font-feature", function (options, _)
+    local otfeatures = otFeatures()
+    otfeatures:loadOptions(options)
+    SILE.settings:set("font.features", tostring(otfeatures))
+  end)
+
+  SILE.registerCommand("remove-font-feature", function(options, _)
+    local otfeatures = otFeatures()
+    otfeatures:unloadOptions(options)
+    SILE.settings:set("font.features", tostring(otfeatures))
+  end)
+
+  SILE.registerCommand("font", function (options, content)
+    local otfeatures = otFeatures()
+    -- It is guaranteed that future releases of SILE will not implement non-OT \font
+    -- features with capital letters.
+    -- Cf. https://github.com/sile-typesetter/sile/issues/992#issuecomment-665575353
+    -- So, we reserve 'em all. ⍩⃝
+    for k, v in pairs(options) do
+      if k:match('^[A-Z]') then
+        otfeatures:loadOption(k, v)
+        options[k] = nil
+      end
+    end
+    SU.debug("features", "Font features parsed as:", otfeatures)
+    options.features = (options.features and options.features .. ";" or "") .. tostring(otfeatures)
+    return fontfn(options, content)
+  end, tostring(SILE.Help.font) .. " (overridden)")
+
+end
+
+return {
+  registerCommands = registerCommands,
+  documentation = [[\begin{document}
 As mentioned in Chapter 3, SILE automatically applies ligatures defined by the fonts
 that you use. These ligatures are defined by tables of \em{features} within
 the font file. As well as ligatures (multiple glyphs displayed as a single glyph),
 the features tables also declare other glyph substitutions.
 
-The \code{features} package provides an interface to selecting the features that you
+The \autodoc:package{features} package provides an interface to selecting the features that you
 want SILE to apply to a font. The features available will be specific to the font file;
 some fonts come with documentation explaining their supported features. Discussion
 of OpenType features is beyond the scope of this manual.
 
 These features can be turned on and off by passing ‘raw’ feature names to the
-\code{\\font} command like so:
+\autodoc:command{\font} command like so:
 
 \begin{verbatim}
 \line
@@ -115,13 +233,13 @@ These features can be turned on and off by passing ‘raw’ feature names to th
 \line
 \end{verbatim}
 
-However, this is unwieldy and requires memorizing the feature codes. \code{features}
-provides two commands, \code{\\add-font-feature} and \code{\\remove-font-feature},
+However, this is unwieldy and requires memorizing the feature codes. \autodoc:package{features}
+provides two commands, \autodoc:command{\add-font-feature} and \autodoc:command{\remove-font-feature},
 which make it easier to access OpenType features. The interface is patterned on the
 TeX package \code{fontspec}; for full documentation of the OpenType features supported,
 see the documentation for that package.\footnote{\code{http://texdoc.net/texmf-dist/doc/latex/fontspec/fontspec.pdf}}
 
-Here is how you would turn on discretionary and historic ligatures with the \code{features}
+Here is how you would turn on discretionary and historic ligatures with the \autodoc:package{features}
 package:
 
 \begin{verbatim}

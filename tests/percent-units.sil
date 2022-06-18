@@ -1,8 +1,9 @@
-\begin[papersize=a5]{document}
+\begin[papersize=a7]{document}
 \script[src=packages/rules]
-% If relative units aren’t calculated correctly the hash marks will move
-% around on the page.
-
+\set[parameter=document.parindent,value=0]
+\nofolios
+% If relative units aren’t calculated correctly
+% the hash marks will move around on the page.
 \hrule[width=50%ph,height=10%pw]#
 
 \hrule[width=50%pmax,height=10%pmax]#
@@ -17,7 +18,7 @@
 
 \hrule[width=50%lw,height=10pt]#
 
-\set[parameter=document.lskip,value=5em]
-\set[parameter=document.rskip,value=5em]
-\hrule[width=50%lw,height=10pt]#
+\set[parameter=document.lskip,value=1em]
+\set[parameter=document.rskip,value=1em]
+\noindent\hrule[width=50%lw,height=10pt,depth=2pt]#
 \end{document}

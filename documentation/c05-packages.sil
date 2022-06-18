@@ -1,0 +1,221 @@
+\begin{document}
+\chapter{SILE Packages}
+
+SILE comes with a number of packages which provide additional functionality.
+In fact, the actual “core” of SILE’s functionality is very small and very
+extensible, with most of the interesting features being provided by add-on
+packages. SILE packages are written in the Lua programming language, and can
+define new commands, change the way that the SILE system operates, or indeed
+do anything that it’s possible to do in Lua.
+
+As mentioned above, loading a package is done through the \code{\\script} command,
+which runs Lua code. By convention packages live in the \code{packages/} subdirectory
+of either your input file’s location, your current working directory or SILE’s
+installation directory. For instance, we’ll soon be talking about the
+\code{grid} package, which normally can be found as
+\code{/usr/local/lib/sile/packages/grid.lua}. To load this, we’d say:
+
+\begin{verbatim}
+\line
+\\script[src=packages/grid]
+\line
+\end{verbatim}
+
+\note{\notehead{How SILE locates files} SILE searches for paths in a variety of
+directories: first, in the directory in which your input file is located,
+then the current wording directory; next, if the environment variable
+\code{SILE_PATH} is set, it will look in that directory; then it will look in
+the standard installation directories \code{/usr/lib/sile} and
+\code{/usr/local/lib/sile}. Unlike TeX, it does not descend into subdirectories
+when looking for a file, and so if you have arranged your personal macro, class
+or package files into subdirectories, you will need to provide a full relative
+path to them.}
+
+\section{image}
+\package-documentation[src=packages/image]
+
+\section{folio}
+\package-documentation[src=packages/folio]
+
+\section{rules}
+\package-documentation[src=packages/rules]
+
+\section{color}
+\package-documentation[src=packages/color]
+
+\section{background}
+\package-documentation[src=packages/background]
+
+\section{rotate}
+\package-documentation[src=packages/rotate]
+
+\section{features}
+\package-documentation[src=packages/features]
+
+\section{unichar}
+\package-documentation[src=packages/unichar]
+
+\section{bidi}
+\package-documentation[src=packages/bidi]
+
+\section{pullquote}
+\package-documentation[src=packages/pullquote]
+
+\section{raiselower}
+\package-documentation[src=packages/raiselower]
+
+\section{grid}
+\package-documentation[src=packages/grid]
+
+\section{linespacing}
+\package-documentation[src=packages/linespacing]
+
+\section{verbatim}
+\package-documentation[src=packages/verbatim]
+
+\section{font-fallback}
+\package-documentation[src=packages/font-fallback]
+
+\section{boustrophedon}
+\package-documentation[src=packages/boustrophedon]
+
+\section{chordmode}
+\package-documentation[src=packages/chordmode]
+
+\section{converters}
+\package-documentation[src=packages/converters]
+
+\section{cropmarks}
+\package-documentation[src=packages/cropmarks]
+
+\section{date}
+\package-documentation[src=packages/date]
+
+\section{debug}
+\package-documentation[src=packages/debug]
+
+\section{dropcaps}
+\package-documentation[src=packages/dropcaps]
+
+\section{leaders}
+\package-documentation[src=packages/leaders]
+
+\section{lorem}
+\package-documentation[src=packages/lorem]
+
+\section{specimen}
+\package-documentation[src=packages/specimen]
+
+\section{textcase}
+\package-documentation[src=packages/textcase]
+
+\section{url}
+\package-documentation[src=packages/url]
+
+\section{Packages usually used by other packages}
+
+In addition, there are certain packages that you \em{probably} don’t need
+to use directly, as their main job is to provide more
+basic functionality to other packages and classes. Classes such as the
+\code{book} class compose functionality from different auxiliary packages.
+
+\subsection{footnotes}
+\package-documentation[src=packages/footnotes]
+
+\subsection{color-fonts}
+\package-documentation[src=packages/color-fonts]
+
+\subsection{counters}
+\package-documentation[src=packages/counters]
+
+\subsection{pdf}
+\package-documentation[src=packages/pdf]
+
+\subsection{ifattop}
+\package-documentation[src=packages/ifattop]
+
+\subsection{frametricks}
+\package-documentation[src=packages/frametricks]
+
+\subsection{insertions}
+\package-documentation[src=packages/insertions]
+
+\subsection{twoside}
+\package-documentation[src=packages/twoside]
+
+\subsection{masters}
+\package-documentation[src=packages/masters]
+
+\subsection{infonode}
+\package-documentation[src=packages/infonode]
+
+\subsection{inputfilter}
+\package-documentation[src=packages/inputfilter]
+
+\subsection{break-firstfit}
+\package-documentation[src=packages/break-firstfit]
+
+\subsection{chapterverse}
+\package-documentation[src=packages/chapterverse]
+
+\subsection{parallel}
+\package-documentation[src=packages/parallel]
+
+\subsection{rebox}
+\package-documentation[src=packages/rebox]
+
+\subsection{tableofcontents}
+\package-documentation[src=packages/tableofcontents]
+
+\subsection{xmltricks}
+\package-documentation[src=packages/xmltricks]
+
+\section{Experimental packages}
+
+\subsection{autodoc}
+\package-documentation[src=packages/autodoc]
+
+\subsection{balanced-frames}
+\package-documentation[src=packages/balanced-frames]
+
+\subsection{bibtex}
+\package-documentation[src=packages/bibtex]
+
+\subsection{gutenberg}
+\package-documentation[src=packages/gutenberg]
+
+\subsection{indexer}
+\package-documentation[src=packages/indexer]
+
+\subsection{math}
+\package-documentation[src=packages/math]
+
+\subsection{pdfstructure}
+\package-documentation[src=packages/pdfstructure]
+
+\subsection{svg}
+\package-documentation[src=packages/svg]
+
+\section{The Package Manager}
+
+While your SILE installation will include a comprehensive collection
+of SILE packages, there’s more out there! SILE comes with a simple
+package manager which can help you to download and install new packages.
+The package manager is accessed from the SILE REPL, like so:
+
+\begin{verbatim}
+\line
+ $ sile
+\sileversion
+> installPackage("endnotes")
+Loading catalogue from https://raw.githubusercontent.com/simoncozens/sile-packages/master/packages.lua
+\line
+\end{verbatim}
+
+There will then follow a load of information which should end up with
+the \code{endnotes} package and all its dependencies being installed.
+SILE will also ensure that downloaded packages are added to the package
+search path. There’s currently no way to list or search the available
+packages. We’ll get there.
+
+\end{document}

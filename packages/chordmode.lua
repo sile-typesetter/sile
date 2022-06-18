@@ -1,24 +1,22 @@
-local inputfilter = SILE.require("packages/inputfilter").exports
+local inputfilter = require("packages.inputfilter").exports
 
-SILE.require("packages/raiselower")
-
-local function addChords(text, content)
+local function _addChords (text, content)
   local result = {}
-  local chordName = nil
+  local chordName
   local currentText = ""
-  local process = nil
+  local process
   local processText, processChordName, processChordText
 
   local function insertChord()
     table.insert(result, inputfilter.createCommand(
       content.pos, content.col, content.line,
-      "ch", {name=chordName}, currentText
+      "ch", { name = chordName }, currentText
     ))
     chordName = nil
   end
 
   local function insertText()
-    if (#currentText>0) then table.insert(result, currentText) end
+    if #currentText > 0 then table.insert(result, currentText) end
     currentText = ""
   end
 
@@ -27,14 +25,14 @@ local function addChords(text, content)
   end
 
   processText = {
-    ["<"] = function(separator)
+    ["<"] = function (_)
       insertText()
       process = processChordName
     end
   }
 
   processChordName = {
-    [">"] = function(separator)
+    [">"] = function (_)
       chordName = currentText
       currentText = ""
       process = processChordText
@@ -42,12 +40,12 @@ local function addChords(text, content)
   }
 
   processChordText = {
-    ["<"] = function(separator)
+    ["<"] = function (_)
       insertChord()
       currentText = ""
       process = processChordName
     end,
-    ["\n"] = function(separator)
+    ["\n"] = function (separator)
       insertChord()
       currentText = separator
       process = processText
@@ -71,47 +69,84 @@ local function addChords(text, content)
   return result
 end
 
-SILE.registerCommand("ch", function(options, content)
-  local chordBox = SILE.Commands["hbox"]({}, {options.name})
-  SILE.typesetter.state.nodes[#(SILE.typesetter.state.nodes)] = nil
+local function init (class, _)
 
-  local chordLineHeight = SILE.toPoints("4", "mm", "h")
-  local origWidth = chordBox.width
-  chordBox.width = SILE.length.zero
-  chordBox.height = SILE.settings.get("chordmode.lineheight")
+  class:loadPackage("raiselower")
 
-  SILE.call("raise", {height = SILE.settings.get("chordmode.offset")}, function()
-    SILE.call("chordmode:chordfont", {}, function ()
-      SILE.typesetter:pushHbox(chordBox)
+end
+
+local function declareSettings (_)
+
+  SILE.settings:declare({
+    parameter = "chordmode.offset",
+    type = "length",
+    default = SILE.length("2ex"),
+    help = "Vertical offset between the chord name and the text."
+  })
+
+  SILE.settings:declare({
+    parameter = "chordmode.lineheight",
+    type = "length",
+    default = SILE.length("4mm"),
+    help = "Length of the chord name line."
+  })
+end
+
+local function registerCommands (_)
+
+  SILE.registerCommand("ch", function (options, content)
+    local chordBox = SILE.call("hbox", {}, { options.name })
+    SILE.typesetter.state.nodes[#(SILE.typesetter.state.nodes)] = nil
+    local origWidth = chordBox.width
+    chordBox.width = SILE.length()
+    chordBox.height = SILE.settings:get("chordmode.lineheight")
+    SILE.call("raise", { height = SILE.settings:get("chordmode.offset") }, function ()
+      SILE.call("chordmode:chordfont", {}, function ()
+        SILE.typesetter:pushHbox(chordBox)
+      end)
     end)
-  end)
-  local lyricBox = SILE.Commands["hbox"]({}, content)
-  if lyricBox.width < origWidth then
-    lyricBox.width = origWidth + SILE.toPoints("0.5em")
-  end
+    local lyricBox = SILE.call("hbox", {}, content)
+    if lyricBox.width < origWidth then
+      lyricBox.width = origWidth + SILE.length("0.5em"):absolute()
+    end
+  end, "Insert a chord name above the text")
 
-end, "Insert a a chord name above the text")
+  SILE.registerCommand("chordmode", function (_, content)
+    SILE.process(inputfilter.transformContent(content, _addChords))
+  end, "Transform embedded chords to 'ch' commands")
 
-SILE.registerCommand("chordmode", function(options, content)
-  SILE.process(inputfilter.transformContent(content, addChords))
-end, "Transform embedded chords to 'ch' commands")
+  SILE.registerCommand("chordmode:chordfont", function (_, content)
+    SILE.process(content)
+  end, "Override this command to change chord style.")
 
-SILE.registerCommand("chordmode:chordfont", function(options, content)
-  SILE.process(content)
-end, "Override this command to change chord style.")
+end
 
-SILE.settings.declare({
-  name = "chordmode.offset",
-  type = "string",
-  default = "2ex",
-  help = "Vertical offset between the chord name and the text."
-})
+return {
+  init = init,
+  registerCommands = registerCommands,
+  declareSettings = declareSettings,
+  documentation = [[
+\begin{document}
+\script[src=packages/chordmode]
 
-SILE.settings.declare({
-  name = "chordmode.lineheight",
-  type = "Length",
-  default = SILE.length.parse("4mm"),
-  help = "Length of the chord name line."
-})
+This package provides the \autodoc:environment{chordmode} environment, which transforms
+lines like:
 
+\begin{verbatim}
+  I’ve be<G>en a wild rover for many’s a <C>year
+\end{verbatim}
 
+into:
+
+\begin{chordmode}
+  I’ve be<G>en a wild rover for many’s a <C>year
+\end{chordmode}
+\par
+
+The chords can be styled by redefining the \autodoc:command{\chordmode:chordfont}
+command, and the offset between the chord name and text set with the
+\autodoc:setting{chordmode.offset} setting.
+
+\end{document}
+]]
+}

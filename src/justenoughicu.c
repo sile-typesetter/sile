@@ -12,6 +12,8 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
+#include "silewin32.h"
+
 typedef int32_t (*conversion_function_t)(UChar *dest, int32_t destCapacity, const UChar *src, int32_t srcLength, const char *locale, UErrorCode *pErrorCode);
 
 #define utf8_to_uchar(in, in_l, out, out_l)   { \
@@ -109,10 +111,14 @@ int icu_breakpoints(lua_State *L) {
   UBreakIterator* wordbreaks, *linebreaks;
   int32_t i, previous;
   wordbreaks = ubrk_open(UBRK_WORD, locale, buffer, l, &err);
-  assert(!U_FAILURE(err));
+  if(U_FAILURE(err)) {
+    luaL_error(L, "Word break parser failure: %s", u_errorName(err));
+  }
 
   linebreaks = ubrk_open(UBRK_LINE, locale, buffer, l, &err);
-  assert(!U_FAILURE(err));
+  if(U_FAILURE(err)) {
+    luaL_error(L, "Line break parser failure: %s", u_errorName(err));
+  }
 
   previous = 0;
   i = 0;
@@ -185,7 +191,7 @@ int icu_canonicalize_language(lua_State *L) {
 
 int icu_format_number(lua_State *L) {
   double a = luaL_checknumber(L, 1);
-  /* See http://www.unicode.org/repos/cldr/tags/latest/common/bcp47/number.xml
+  /* See https://github.com/unicode-org/cldr/blob/master/common/bcp47/number.xml
      for valid system names */
   const char* system = luaL_checkstring(L, 2);
   char locale[18]; // "@numbers=12345678";
@@ -230,7 +236,7 @@ int icu_bidi_runs(lua_State *L) {
   }
 
   int count = ubidi_countRuns(bidi,&err);
-  int start, length;
+  int start, length, codepointlength;
 
   lua_checkstack(L,count);
   for (int i=0; i < count; i++) {
@@ -264,10 +270,11 @@ int icu_bidi_runs(lua_State *L) {
     lua_settable(L, -3);
 
     lua_pushstring(L, "length");
+    codepointlength = length;
     for (int j=start; j< start+length; j++) {
-      if (U_IS_TRAIL(*(input_as_uchar+j))) length--;
+      if (U_IS_TRAIL(*(input_as_uchar+j))) codepointlength--;
     }
-    lua_pushinteger(L, length);
+    lua_pushinteger(L, codepointlength);
     lua_settable(L, -3);
 
     lua_pushstring(L, "dir");
@@ -289,11 +296,11 @@ int icu_bidi_runs(lua_State *L) {
 #define luaL_Reg luaL_reg
 #endif
 
-#if !defined LUA_VERSION_NUM || LUA_VERSION_NUM==501
+#if !defined LUA_VERSION_NUM || LUA_VERSION_NUM==501 && !LUAJIT
 /*
 ** Adapted from Lua 5.2.0
 */
-static void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
+void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
   luaL_checkstack(L, nup+1, "too many upvalues");
   for (; l->name != NULL; l++) {  /* fill the table with given functions */
     int i;

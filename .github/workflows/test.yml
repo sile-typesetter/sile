@@ -1,0 +1,81 @@
+name: Test
+
+on: [push, pull_request]
+
+jobs:
+
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        luaVersion:
+          - [ '5.4.2', 'MYCFLAGS=-fPIC' ] # https://github.com/luarocks/luarocks/issues/1302
+          - [ '5.3', 'MYCFLAGS=-fPIC' ]
+          - [ '5.2', 'MYCFLAGS=-fPIC' ]
+          - [ '5.1', 'CFLAGS="-O2 -Wall -DLUA_USE_LINUX -fPIC"']
+          - [ 'luajit', 'XCFLAGS=-fPIC' ]
+          - [ 'luajit-openresty', 'XCFLAGS=-fPIC' ]
+    runs-on: ubuntu-20.04
+    name: Test on Lua ${{ matrix.luaVersion[0] }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Cache test fonts
+        uses: actions/cache@v3
+        with:
+          path: |
+            .fonts
+            .sources
+          key: fonts-${{ hashFiles('Makefile-fonts') }}
+      - name: Cache lua_modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            lua_modules
+          key: luarocks-${{ matrix.luaVersion[0] }}-${{ hashFiles('Makefile-luarocks', 'sile-dev-1.rockspec') }}
+      - name: Fetch tags
+        run: |
+          git fetch --prune --tags ||:
+      - name: Setup ‘lua’
+        uses: leafo/gh-actions-lua@v9
+        with:
+          luaVersion: ${{ matrix.luaVersion[0] }}
+          luaCompileFlags: ${{ matrix.luaVersion[1] }}
+      - name: Setup ‘luarocks’
+        uses: leafo/gh-actions-luarocks@v4
+      - name: Prep system Lua for use
+        run: |
+          luarocks install busted
+          function deepest () { find $1 -type d | awk 'length>m{m=length;r=$0}END{print r}'; }
+          cat << EOF >> $GITHUB_ENV
+          LD_LIBRARY_PATH=$PWD/.lua/lib:$LD_LIBRARY_PATH
+          LIBRARY_PATH=$PWD/.lua/lib:$LIBRARY_PATH
+          LD_RUN_PATH=$PWD/.lua/lib:$LD_RUN_PATH
+          PKG_CONFIG_PATH=$PWD/.lua/lib/pkgconfig:$PKG_CONFIG_PATH
+          LUA_INCLUDE=-I$(deepest $PWD/.lua/include)
+          MAKEFLAGS=-j$(nproc) -Otarget
+          EOF
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libpng-dev poppler-utils
+      - name: Configure
+        run: |
+          ./bootstrap.sh
+          ./configure --without-system-luarocks --with${{ startsWith(matrix.luaVersion[0], '5') && 'out' || '' }}-luajit --without-manual
+      - name: Make
+        run: |
+          make
+      - name: Test Busted
+        run: |
+          make busted
+      - name: Test Regressions
+        run: |
+          make regressions
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-${{ matrix.luaVersion[0] }}-actuals
+          path: tests/*.actual

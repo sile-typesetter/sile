@@ -1,0 +1,10 @@
+SILE = require("core.sile")
+
+describe("The measurement convertor", function()
+  it("should exist", function()
+    assert.is.truthy(SILE.toPoints)
+  end)
+  it("should work for points, units explicit", function () assert.is.equal(20, SILE.measurement(20, "pt"):tonumber()) end)
+  it("should work for points, units implicit", function () assert.is.equal(20, SILE.measurement("20pt"):tonumber()) end)
+  it("should work for inches, units implicit", function () assert.is.equal(14.4, SILE.measurement("0.2in"):tonumber()) end)
+end)

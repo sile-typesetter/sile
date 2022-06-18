@@ -1,11 +1,13 @@
-\begin[papersize=129mm x 198mm]{document}
+\begin[papersize=129mm x 198mm]{document}% KNOWNBAD https://github.com/sile-typesetter/sile/issues/740
 \script[src=packages/frametricks]
 \makecolumns[columns=2]
 \font[size=15pt]
 \set[parameter=document.baselineskip,value=3ex]
+\script{SU.debug("float", "Frame Pre:", SILE.length("100%fw"):absolute())}
 
 \begin{raggedright}
 \float[rightboundary=5pt,bottomboundary=1ex]{\font[size=54pt]{T}}o Sherlock Holmes she is always \em{the woman}. I have seldom heard him mention her under any other name. In his eyes she eclipses and predominates the whole of her sex. It was not that he felt any emotion akin to love for Irene Adler. All emotions, and that one particularly, were abhorrent to his cold, precise but admirably balanced mind. He was, I take it, the most perfect reasoning and observing machine that the world has seen, but as a lover he would have placed himself in a false position.
+\script{SU.debug("float", "Frame Post:", SILE.length("100%fw"):absolute())}
 
 He never spoke of the softer passions, save with a gibe and a sneer. They were admirable things for the observer -- excellent for drawing the veil from men's motives and actions. But for the trained teasoner to admit such intru
 \end{raggedright}

@@ -1,0 +1,15 @@
+\begin[papersize=a6]{document}
+\nofolios
+\neverindent
+\script[src=packages/features]
+\set[parameter=harfbuzz.subshapers,value=ot]
+һ ồ
+
+\begin[CharacterVariant="{75,81}"]{font}
+һ ồ
+
+\font[CharacterVariant=No81]{һ} \font[CharacterVariant=No75]{ồ}
+
+\font[CharacterVariant="{No75, No81}"]{һ ồ}
+\end{font}
+\end{document}

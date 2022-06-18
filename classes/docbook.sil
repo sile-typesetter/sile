@@ -2,8 +2,8 @@
 \script[src=packages/rules]%
 \script[src=packages/verbatim]%
 \define[command=docbook-line]{\medskip\hrule[height=0.5pt,width=50mm]\medskip}%
-\define[command=docbook-sectionsfont]{\font[family=DejaVu Sans,style=Bold Condensed]{\process}}%
-\define[command=docbook-ttfont]{\font[family=Inconsolata,size=2ex]{\process}}%
+\define[command=docbook-sectionsfont]{\font[family=DejaVu Sans,style=Condensed,weight=800]{\process}}%
+\define[command=docbook-ttfont]{\font[family=Hack,size=2ex]{\process}}%
 %%
 \define[command=docbook-article-title]{\center{\docbook-sectionsfont{\font[size=20pt]{\process}}}\bigskip}%
 \define[command=docbook-section-title]{\noindent\bigskip\docbook-sectionsfont{\process}\bigskip}%

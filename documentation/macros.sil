@@ -1,0 +1,44 @@
+\begin{document}
+\script[src=packages/grid]
+\script[src=packages/url]
+\script[src=packages/autodoc]
+\script[src=packages/verbatim]
+\script[src=packages/color]
+\script[src=packages/image]
+\script[src=packages/frametricks]
+\script[src=packages/linespacing]
+\script[src=packages/lorem]
+\script[src=packages/bidi]\bidi-off
+\script[src=packages/pdf]
+\script[src=packages/pullquote]
+\script[src=packages/rules]
+\define[command=notehead]{\noindent\bf{\process}\par\medskip}
+\define[command=line]{\novbreak\skip[height=5pt]\noindent\hrule[width=450pt,height=0.3pt]\par\novbreak\skip[height=5pt]}
+\define[command=note]{\medskip
+\set[parameter=document.lskip,value=24pt]
+\par\goodbreak\noindent\hrule[width=450pt,height=0.75pt]\par\medskip\font[size=10pt,style=italic]{\noindent\process}\par\smallskip\noindent\hrule[width=450pt,height=0.75pt]\par
+\set[parameter=document.lskip,value=0pt]\medskip
+}
+\define[command=sectionsfont]{\font[weight=600,family=Roboto Condensed]{\process}}
+\define[command=tableofcontents:headerfont]{\font[weight=600,size=22pt,family=Roboto Condensed]{\process}}
+\define[command=examplefont]{\font[family=Cormorant Infant,size=1.1em]{\process}}
+\define[command=bf]{\font[weight=800]{\process}}
+\define[command=book:chapterfont]{\sectionsfont{\font[size=22pt]{\process}}}
+\define[command=book:sectionfont]{\sectionsfont{\font[size=15pt]{\process}}}
+\define[command=book:subsectionfont]{\sectionsfont{\font[size=13pt]{\process}}}
+
+\define[command=code]{\font[family=Hack,size=0.8em,language=und,style=roman]{\process}}
+\define[command=verbatim:font]{\font[family=Hack,size=9pt]}
+\define[command=tt]{\code{\process}}
+\define[command=command]{\code{\process}}
+\define[command=terminal]{\verbatim{\set[parameter=document.lskip,value=36pt]\process\smallskip}}
+\define[command=changed]{
+\note{\bf{The material in this section has changed significantly since the previous release of SILE.}}
+}
+\define[command=sup]{\raise[height=0.6ex]{\font[size=0.8em]{\process}}}
+\script{
+-- Well, this is a hack
+local simpletable = SILE.require("packages.simpletable")
+simpletable.init(SILE.documentState.documentClass, {tableTag = "table", trTag = "tr", tdTag = "td"})
+}
+\end{document}

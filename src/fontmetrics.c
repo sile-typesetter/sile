@@ -98,7 +98,7 @@ int glyphwidth (lua_State* L) {
 /*
 ** Adapted from Lua 5.2.0
 */
-static void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
+void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
   luaL_checkstack(L, nup+1, "too many upvalues");
   for (; l->name != NULL; l++) {  /* fill the table with given functions */
     int i;

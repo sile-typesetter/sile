@@ -1,108 +1,291 @@
-[![Build Status](https://travis-ci.org/simoncozens/sile.svg?branch=master)](https://travis-ci.org/simoncozens/sile)
-[![Coverage Status](https://coveralls.io/repos/simoncozens/sile/badge.svg?branch=master&service=github)](https://coveralls.io/github/simoncozens/sile?branch=master) [![Join the chat at https://gitter.im/simoncozens/sile](https://badges.gitter.im/simoncozens/sile.svg)](https://gitter.im/simoncozens/sile?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Actions Build Status](https://img.shields.io/github/workflow/status/sile-typesetter/sile/Build?label=Linux%20Build&logo=Github)](https://github.com/sile-typesetter/sile/actions?workflow=Build)
+[![Cirrus Build Status](https://img.shields.io/cirrus/github/sile-typesetter/sile?label=FreeBSD%20Build&logo=freebsd)](https://cirrus-ci.com/github/sile-typesetter/sile/master)
+[![Docker Build Status](https://img.shields.io/docker/cloud/build/siletypesetter/sile?label=Docker%20Build&logo=Docker)](https://hub.docker.com/repository/docker/siletypesetter/sile/builds)
+[![Azure Build Status](https://img.shields.io/azure-devops/build/sile-typesetter/069c3e31-ee59-4bd6-b395-1f1059acd8db/1?label=Windows%20Build&logo=Azuredevops)](https://dev.azure.com/sile-typesetter/sile/_build/latest?definitionId=1&branchName=master)<br />
+[![Luacheck Lint Status](https://img.shields.io/github/workflow/status/sile-typesetter/sile/Luacheck?label=Luacheck&logo=Lua)](https://github.com/sile-typesetter/sile/actions?workflow=Luacheck)
+[![Coveralls Coverage Status](https://img.shields.io/coveralls/github/sile-typesetter/sile?label=Coverage&logo=Coveralls)](https://coveralls.io/github/sile-typesetter/sile?branch=master)<br />
+[![Chat on Gitter](https://img.shields.io/gitter/room/simoncozens/sile?color=blue&label=Chat&logo=Gitter)](https://gitter.im/simoncozens/sile?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-blue.svg)](https://conventionalcommits.org)
+[![Commitizen Friendly](https://img.shields.io/badge/Commitizen-friendly-blue.svg)](http://commitizen.github.io/cz-cli/)
 
 ## What is SILE?
 
-SILE is a [typesetting][typesetting] system; its job is to produce beautiful printed documents. Conceptually, SILE is similar to [TeX][tex]—from which it borrows some concepts and even syntax and algorithms—but the similarities end there. Rather than being a derivative of the TeX family SILE is a new typesetting and layout engine written from the ground up using modern technologies and borrowing some ideas from graphical systems such as [InDesign][indesign].
+SILE is a [typesetting][typesetting] system; its job is to produce beautiful printed documents.
+Conceptually, SILE is similar to [TeX][tex]—from which it borrows some concepts and even syntax and algorithms—but the similarities end there.
+Rather than being a derivative of the TeX family SILE is a new typesetting and layout engine written from the ground up using modern technologies and borrowing some ideas from graphical systems such as [InDesign][indesign].
+
+## Where does it run?
+
+SILE can be [downloaded & installed](#download-and-installation) to your system or [run remotely as a CI job](#use-as-a-CI-job).
 
 ## What can I do with SILE (that I can’t do with TeX)?
 
-First, have a look at the [show-off file][showoff]. SILE allows you to:
+First, have a look at the [usage examples gallery][examples]. SILE allows you to:
 
 * Produce complex document layouts using frames.
 
-* Easily extend the typesetting system in a high-level programming language (Lua). 
+* Easily extend the typesetting system in a high-level programming language (Lua).
 
 * Directly process XML to PDF without the use of XSL stylesheets.
 
 * Typeset text on a grid.
 
-## Download and installation
+## Download and Installation
 
-### For OS X
+### For macOS
 
-A formula is available for [homebrew][brew] that can install both stable and head versions. Just run `brew install sile` for the latest stable release or `brew install sile --HEAD` to build from the latest git commit.
+A formula is available for [Homebrew][brew] that can install either stable or head versions.
+For the latest prebuilt stable release:
 
-### For Linux (prepackaged distros)
+```console
+$ brew install sile
+```
 
-* **Arch Linux** packages are available in the [AUR][aur] that can be installed using your prefered package manager (e.g. `yaourt -S sile`). Use [sile][aur-rel] for the latest stable release or [sile-git][aur-dev] to build from the latest git commit.
+Or to build and install from the latest git commit:
 
-### From source
+```console
+$ brew install sile --HEAD
+```
 
-SILE can be downloaded from [its home page][sile], or directly from [the release page][releases].
+Note the Homebrew package does not automatically install the [default font](#default-font).
+The easiest way to install Gentium Plus is through the [Homebrew Fonts caskroom][brewfonts]:
 
-SILE is written in the Lua programming language, so you will need a Lua installation. It also relies on external libraries to access fonts and write PDF files. Its preferred combination of libraries is [harfbuzz][] and [libtexpdf][], a PDF creation library extracted from TeX. Harfbuzz should be available from your operating system's package manager. (For Harfbuzz to work you will also need freetype2 and fontconfig installed.) SILE also requires the [ICU][] libraries for correct Unicode handling.
+```console
+$ brew tap homebrew/cask-fonts
+$ brew install --cask font-gentium-plus
+```
 
-You also need to install the following Lua libraries; they can be installed using [luarocks][], if not available from your system's package manager.
+### For Linux
 
-* `lpeg`
-* `luaexpat`
-* `lua-zlib`
-* `luafilesystem`
+#### Arch Linux
+
+Arch Linux has a prebuilt [SILE package][arch-sile] in the official package repository:
+
+```console
+$ pacman -S sile
+```
+
+The official package uses Lua 5.4.
+Alternatively, a package that uses LuaJIT may be built manually from the [Arch User Repository][aur] using [sile-luajit][aur-sile-luajit].
+A VCS package is also available as [sile-git][aur-sile-git] to build from the latest Git commit.
+
+#### Ubuntu
+
+An official [PPA][ppa] is available with precompiled packages for Ubuntu.
+
+```console
+$ sudo add-apt-repository ppa:sile-typesetter/sile
+$ sudo apt-get update
+$ sudo apt-get install sile
+```
+
+#### Void Linux
+
+Void Linux packages are available in the default package manager.
+
+#### Other
+
+Other Linux distros may install via [source](#from-source), via [Linux Brew][linuxbrew], or via [Nix][nix].
+
+### For BSD
+
+Install from OpenBSD [ports][], via [source](#from-source), or optionally via [Nix][nix].
+
+### For Windows
+
+There is no installer yet (track the status in [issue #410](https://github.com/sile-typesetter/sile/issues/410)), but prebuilt Windows binaries generated by the Azure [build pipeline][azure] may be downloaded by selecting a build, opening the Windows job, selecting the artifact link from the final stage, and using the download button next to the sile folder.
+For tips on to how to build it yourself from source using CMake and Visual Studio, see [issue #567](https://github.com/sile-typesetter/sile/pull/567).
+
+Users of WSL (Windows Subsytem for Linux) may use the package manager of their choice depending on the system installed, including the respective [Arch Linux](#arch-linux) or [Ubuntu](#ubuntu) packages, [Linux Brew][linuxbrew], [source](#from-source), or [Nix][nix].
+
+### Multi-Platform & Containers
+
+#### Docker
+
+Docker images are available as [siletypesetter/sile](https://hub.docker.com/repository/docker/siletypesetter/sile).
+Released versions are tagged to match (e.g. `v0.10.0`), the latest release will be tagged `latest`, and a `master` tag is also available with the freshest development build.
+In order to be useful you need to tell the Docker run command a way to reach your source documents (and hence also to give it a place to write the output) as well as tell it who you are on the host machine so the output generated inside the container can be created with the expected ownership properties.
+You may find it easiest to run with an alias like this:
+
+```console
+$ alias sile='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest'
+$ sile input.sil
+```
+
+One notable issue with using SILE from a Docker container is that it will not have access to your system’s fonts by default.
+You can map a folder of fonts (any tree usable by fontconfig) into the container.
+This could be your system’s default font directory, your user one, a project specific folder, or anything of your choosing.
+You can see where fonts are found on your system using `fc-list`.
+The path of your choosing from the host system should be passed as a volume mounted on `/fonts` inside the container like this:
+
+```console
+$ docker run -it --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest
+```
+
+#### Nix
+
+[Nix packages][nix] are available and can be installed on several platforms, including NixOS, other Linux distros, and even macOS.
+
+If you have [flakes support][nix-flakes] enabled, you can run sile with:
+
+```console
+$ nix run github:sile-typesetter/sile#sile <sile arguments>
+```
+
+### From Source
+
+SILE source code can be downloaded from [its website][sile] or directly from [the GitHub releases page][releases].
+
+SILE is written in the Lua programming language, so you will need a working Lua installation on your system (Lua 5.1, 5.2, 5.3, 5.4, and LuaJIT (2.0, 2.1, or OpenResty) are fully supported).
+It also relies on external libraries to access fonts and write PDF files.
+Its preferred combination of libraries is [Harfbuzz][harfbuzz] and [libtexpdf][], a PDF creation library extracted from TeX. Harfbuzz (minimum version 1.1.3) should be available from your operating system's package manager.
+For Harfbuzz to work you will also need fontconfig installed.
+SILE also requires the [ICU][icu] libraries for Unicode handling.
+
+On macOS, ICU can be installed via Homebrew:
+
+```console
+$ brew install icu4c
+```
+
+After that, you might need to set environment variables.
+If you try to `brew link` and you get a series of messages including something like these two lines, you will need to run that export line to correctly set your path:
+
+    For pkg-config to find icu4c you may need to set:
+      export PKG_CONFIG_PATH="/usr/local/opt/icu4c/lib/pkgconfig"
+
+Optionally you may install the Lua libraries listed in the [rockspec][] to your system (using either your system's package manager or [luarocks][] (`luarocks install --deps-only sile-dev-1.rockspec`).
+By default all the required Lua libraries will be downloaded and bundled alongside the SILE the instalation.
+If you downloaded a source tarball these dependencies are included, if you are using a git clone of the source repository the build system will require `luarocks` to fetch them during build.
+Note that OpenSSL development headers will be required for one of the Lua modules to compile¹.
+If your system has all the required packages already you may add `--with-system-luarocks` to the `./configure` command to avoid bundling them.
+
+¹ <sub>OpenSSL development headers are required to build *luasec*, please make sure they are setup _BEFORE_ trying to build SILE!
+If you use your system’s Luarocks packages this will be done for you, otherwise make sure you can compile luasec.
+You can try just this step in isolation before building SILE using `luarocks --tree=/tmp install luasec`.</sub>
 
 If you are building from a a git clone, start by running the script to setup your environment (if you are using the source tarball this is unnecessary):
 
-    $ ./bootstrap.sh
+```console
+$ ./bootstrap.sh
+```
 
 Once your dependencies are installed, run:
 
-    $ ./configure
-    $ make install
+```console
+$ ./configure
+$ make install
+```
 
 This will place the SILE libraries and executable in a sensible location.
 
-### Default font
+On some systems you may also need to run:
 
-As of SILE 0.9.5, the default font is Gentium Plus, available from [here][gentium]. If this font is not installed on your system, you won't be able to use the examples without modification. (Previously we used Original Gentium, but that's getting harder to get hold of.)
+```console
+$ sudo ldconfig
+```
 
-If you are using OS X with Homebrew, the easiest way to install Gentium Plus is through the Homebrew Fonts caskroom:
+… before trying to execute `sile` to make the system aware of the newly installed libraries.
 
-    $ brew tap caskroom/fonts
-    $ brew cask install font-gentium-plus
+### Default Font
+
+Since SILE v0.9.5, the default font has been Gentium Plus which is freely available from [SIL’s site][gentium].
+It is not required that you install it, but if this font is not installed on your system, you won't be able to use the examples without modification.
+(Previously we used Gentium Basic, but that's getting harder to get hold of.)
 
 ### Testing
 
-If all goes well you should be able to compile one of the sample documents like this:
+If all goes well after installation you should be able to compile a sample documents. Try creating a file `test.sil` with this content:
 
-    $ sile examples/test.sil
-    This is SILE 0.9.2
-    <examples/test.sil><examples/macros.sil>[1] [2] [3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20] [21] [22] [23] [24] [25] [26] [27] [28]
+```sil
+\begin{document}
+Hello world!
+\end{document}
+```
 
-You should now have `examples/test.pdf` ready for review.
+And render it to a PDF like this:
 
-## Finding out more
+```console
+$ sile test.sil
+SILE v0.12.5 (Lua 5.4)
+<test.sil>
+[1]
+```
 
-Please read the [full SILE manual][doc] for more information about what SILE is and how it can help you. There are example documents (source and PDF) in the examples/ directory. There's also an [FAQ][faq] available.
+You should now have `test.pdf` ready for review.
+
+### Use as a CI job
+
+There are actually many ways to run SILE remotely as part of a CI work flow.
+Because packages are available for many platforms, one way would be to just use your platforms native package installation system to pull them into whatever CI runner environment you already use.
+Another way is to pull in the prebuilt Docker container and run that.
+
+As a case study, here is how a workflow could be setup in GitHub Actions:
+
+```yaml
+name: SILE
+on: [push, pull_request]
+jobs:
+  sile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: The SILE Typesetter
+        uses: sile-typesetter/sile@v0
+        with:
+          args: my-document.sil
+```
+
+Add to your repository as `.github/workflows/sile.yaml`.
+This work flow assumes your project has a source file `my-document.sil` and will leave behind a `my-document.pdf`.
+Note the comments in [the section about Docker](#docker) regarding version tags.
+
+## Finding Out More
+
+Please read the [full SILE manual][doc] for more information about what SILE is and how it can help you.
+There are example documents (source and PDF) in the examples/ directory.
+There's also an [FAQ][faq] available.
 
 ## Contact
 
-Please report bugs and send patches and pull requests at the [github repository][github]. For questions and discussion, please join the [mailing list][list-en].
+Please report bugs and send patches and pull requests at the [github repository][github].
+For questions and discussion, please join the [mailing list][list-en].
 
 日本語利用者は[メーリングリスト][list-ja]に参加してください。
 
-## License terms
+## License Terms
 
 SILE is distributed under the [MIT licence][license].
 
   [sile]: http://www.sile-typesetter.org/
-  [releases]: https://github.com/simoncozens/sile/releases
-  [doc]: https://raw.githubusercontent.com/simoncozens/sile/master/documentation/sile.pdf
+  [releases]: https://github.com/sile-typesetter/sile/releases
+  [azure]: https://dev.azure.com/sile-typesetter/sile/_build?view=runs
+  [rockspec]: https://github.com/sile-typesetter/sile/blob/master/sile-dev-1.rockspec
+  [doc]: http://sile-typesetter.org/manual/sile-latest.pdf
   [gentium]: http://software.sil.org/gentium/download/
-  [github]: https://github.com/simoncozens/sile
+  [github]: https://github.com/sile-typesetter/sile
   [license]: http://choosealicense.com/licenses/mit/
-  [faq]: https://github.com/simoncozens/sile/wiki/faq
-  [showoff]: https://rawgit.com/simoncozens/sile/b66b979a6dca0c60bd4aa2cbad3da36ae2073672/examples/showoff.pdf
-  [roadmap]: https://github.com/simoncozens/sile/blob/master/ROADMAP
+  [faq]: https://github.com/sile-typesetter/sile/wiki/faq
+  [examples]: http://www.sile-typesetter.org/examples/
+  [linuxbrew]: https://docs.brew.sh/Homebrew-on-Linux
   [luarocks]: http://luarocks.org/en/Download
   [harfbuzz]: http://www.freedesktop.org/wiki/Software/HarfBuzz/
-  [ICU]: http://icu-project.org
-  [libtexpdf]: https://github.com/simoncozens/libtexpdf
+  [icu]: http://icu-project.org
+  [libtexpdf]: https://github.com/sile-typesetter/libtexpdf
+  [arch-sile]: https://archlinux.org/packages/community/x86_64/sile/
   [aur]: https://wiki.archlinux.org/index.php/Arch_User_Repository
-  [aur-rel]: https://aur.archlinux.org/packages/sile/
-  [aur-dev]: https://aur.archlinux.org/packages/sile-git/
+  [aur-sile-luajit]: https://aur.archlinux.org/packages/sile-luajit/
+  [aur-sile-git]: https://aur.archlinux.org/packages/sile-git/
   [typesetting]: https://en.wikipedia.org/wiki/Typesetting
   [tex]: https://en.wikipedia.org/wiki/TeX
   [indesign]: https://en.wikipedia.org/wiki/Adobe_InDesign
-  [brew]: http://brew.sh/
-  [list-en]: https://groups.google.com/forum/#!forum/sile-users
-  [list-ja]: https://groups.google.com/forum/#!forum/sile-users-ja
+  [brew]: http://brew.sh
+  [brewfonts]: https://github.com/Homebrew/homebrew-cask-fonts
+  [list-en]: https://groups.google.com/d/forum/sile-users
+  [list-ja]: https://groups.google.com/d/forum/sile-users-ja
+  [nix]: https://nixos.org/nix
+  [nix-flakes]: https://nixos.wiki/wiki/Flakes#Installing_flakes
+  [ports]: http://ports.su/print/sile
+  [ppa]: https://launchpad.net/~sile-typesetter/+archive/ubuntu/sile
+  [alerque-arch]: https://wiki.archlinux.org/index.php/Unofficial_user_repositories#alerque

@@ -598,7 +598,60 @@ SILE.hyphenator.languages["en"].exceptions = {"as-so-ciate", "as-so-ciates",
 "ref-or-ma-tion", "ret-ri-bu-tion", "ta-ble"}
 
 -- Internationalisation stuff
-SILE.doTexlike([[%
-\define[command=tableofcontents:title]{Table of Contents}%
-\define[command=book:chapter:pre:en]{Chapter }%
-]])
+local en_nth = function (num)
+  local mod100, mod10 = num % 100, num % 10
+  if mod100 > 3 and mod100 < 21 then return "th" end
+  if mod10 == 1 then return "st" end
+  if mod10 == 2 then return "nd" end
+  if mod10 == 3 then return "rd" end
+  return "th"
+end
+
+local en_string = function (num)
+  local words = {"one ", "two ", "three ", "four ", "five ", "six ", "seven ", "eight ", "nine "}
+  local levels = {"thousand ", "million ", "billion ", "trillion ", "quadrillion ", "quintillion ", "sextillion ", "septillion ", "octillion ", [0] = ""}
+  local iwords = {"ten ", "twenty ", "thirty ", "forty ", "fifty ", "sixty ", "seventy ", "eighty ", "ninety "}
+  local twords = {"eleven ", "twelve ", "thirteen ", "fourteen ", "fifteen ", "sixteen ", "seventeen ", "eighteen ", "nineteen "}
+
+  local function digits(n)
+    local i, ret = -1
+    return function()
+      i, ret = i + 1, n % 10
+      if n > 0 then
+        n = math.floor(n / 10)
+        return i, ret
+      end
+    end
+  end
+
+  local level = false
+  local function getname(pos, dig) --stateful, but effective.
+    level = level or pos % 3 == 0
+    if(dig == 0) then return "" end
+    local name = (pos % 3 == 1 and iwords[dig] or words[dig]) .. (pos % 3 == 2 and "hundred " or "")
+    if(level) then name, level = name .. levels[math.floor(pos / 3)], false end
+    return name
+  end
+
+  local vword = ""
+
+  for i, v in digits(num) do
+    vword = getname(i, v) .. vword
+  end
+
+  for i, v in ipairs(words) do
+    vword = vword:gsub("ty " .. v, "ty-" .. v)
+    vword = vword:gsub("ten " .. v, twords[i])
+  end
+
+  return num == 0 and "zero" or vword
+end
+
+SU.formatNumber.en = {
+  string = function (num)
+    return en_string(num)
+  end,
+  nth = function (num)
+    return num .. '’' .. en_nth(num)
+  end
+}

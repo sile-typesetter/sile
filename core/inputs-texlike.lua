@@ -1,26 +1,54 @@
-SILE.inputs.TeXlike = {}
+local lpeg = require("lpeg")
 local epnf = require("epnf")
 
-local ID = lpeg.C( SILE.parserBits.letter * (SILE.parserBits.letter+SILE.parserBits.digit)^0 )
-SILE.inputs.TeXlike.identifier = (ID + lpeg.P"-" + lpeg.P":")^1
+SILE.inputs.TeXlike = {}
 
-SILE.inputs.TeXlike.passthroughTags = { script = true, lilypond = true }
+local ID = lpeg.C(SILE.parserBits.letter * (SILE.parserBits.letter + SILE.parserBits.digit)^0)
+SILE.inputs.TeXlike.identifier = (ID + lpeg.S":-")^1
 
-SILE.inputs.TeXlike.passthroughTag = function (tag)
-    return SILE.inputs.TeXlike.passthroughTags[tag]
-  end
+SILE.inputs.TeXlike.passthroughCommands = {
+  ftl = true,
+  lilypond = true,
+  math = true,
+  script = true
+}
+setmetatable(SILE.inputs.TeXlike.passthroughCommands, {
+    __call = function(self, command)
+      return self[command]
+    end
+  })
 
+-- luacheck: push ignore
 SILE.inputs.TeXlike.parser = function (_ENV)
-  local passthroughTag = function (_, _, tag) return SILE.inputs.TeXlike.passthroughTag(tag) end
-  local notPassthroughTag = function (_, _, tag) return not SILE.inputs.TeXlike.passthroughTag(tag) end
+  local isPassthrough = function (_, _, command)
+    return SILE.inputs.TeXlike.passthroughCommands(command) or false
+  end
+  local isNotPassthrough = function (...)
+    return not isPassthrough(...)
+  end
+  local isMatchingEndEnv = function (a, b, thisCommand, lastCommand)
+    return thisCommand == lastCommand
+  end
   local _ = WS^0
   local sep = S",;" * _
   local eol = S"\r\n"
   local quote = P'"'
-  local quotedString = ( quote * C((1-quote)^1) * quote )
-  local value = ( quotedString + (1-S",;]")^1 )
-  local myID = C(SILE.inputs.TeXlike.identifier + P(1)) / 1
-  local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1 / function (...) local t = {...}; return t[1], t[#t] end
+  local escaped_quote = B(P"\\") * quote
+  local unescapeQuote = function (str) local a = str:gsub('\\"', '"'); return a end
+  local quotedString = quote * C((1 - quote + escaped_quote)^1 / unescapeQuote) * quote
+  local specials = S"{}%\\"
+  local escaped_specials = P"\\" * specials
+  local unescapeSpecials = function (str)
+    return str:gsub('\\([{}%%\\])', '%1')
+  end
+  local value = quotedString + (1-S",;]")^1
+  local myID = C(SILE.inputs.TeXlike.identifier) / 1
+  local unwrapper = function (...)
+    local tbl = {...}
+    return tbl[1], tbl[#tbl]
+  end
+  local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1 / unwrapper
+  local cmdID = myID - P"beign" - P"end"
   local list = Cf(Ct"" * pair^0, rawset)
   local parameters = (
       P"[" *
@@ -39,49 +67,51 @@ SILE.inputs.TeXlike.parser = function (_ENV)
       V"environment" +
       comment +
       V"texlike_text" +
-      V"texlike_bracketed_stuff" +
-      V"command"
+      V"texlike_braced_stuff" +
+      V"texlike_command"
     )^0
   passthrough_stuff = C(Cg(
       V"passthrough_text" +
-      V"passthrough_debracketed_stuff"
+      V"passthrough_debraced_stuff"
     )^0)
   passthrough_env_stuff = Cg(
       V"passthrough_env_text"
     )^0
-  texlike_text = C((1-S("\\{}%"))^1)
+  texlike_text = C((1 - specials + escaped_specials)^1) / unescapeSpecials
   passthrough_text = C((1-S("{}"))^1)
-  passthrough_env_text = C((1-(P"\\end{" * (myID * Cb"tag") * P"}"))^1)
-  texlike_bracketed_stuff = P"{" * V"texlike_stuff" * ( P"}" + E("} expected") )
-  passthrough_bracketed_stuff = P"{" * V"passthrough_stuff" * ( P"}" + E("} expected") )
-  passthrough_debracketed_stuff = C(V"passthrough_bracketed_stuff")
-  command = (
-      ( P"\\"-P"\\begin" ) *
-      Cg(myID, "tag") *
-      Cg(parameters,"attr") *
+  passthrough_env_text = C((1 - (P"\\end{" * Cmt(cmdID * Cb"command", isMatchingEndEnv) * P"}"))^1)
+  texlike_braced_stuff = P"{" * V"texlike_stuff" * ( P"}" + E("} expected") )
+  passthrough_braced_stuff = P"{" * V"passthrough_stuff" * ( P"}" + E("} expected") )
+  passthrough_debraced_stuff = C(V"passthrough_braced_stuff")
+  texlike_command = (
+      P"\\" *
+      Cg(cmdID, "command") *
+      Cg(parameters, "options") *
       (
-        (Cmt(Cb"tag", passthroughTag) * V"passthrough_bracketed_stuff") +
-        (Cmt(Cb"tag", notPassthroughTag) * V"texlike_bracketed_stuff")
+        (Cmt(Cb"command", isPassthrough) * V"passthrough_braced_stuff") +
+        (Cmt(Cb"command", isNotPassthrough) * V"texlike_braced_stuff")
       )^0
-    ) - P("\\end{")
+    )
+  local notpass_end =
+      P"\\end{" *
+      ( Cmt(cmdID * Cb"command", isMatchingEndEnv) + E"Environment mismatch") *
+      ( P"}" * _ ) + E"Environment begun but never ended"
+  local pass_end =
+      P"\\end{" *
+      ( cmdID * Cb"command" ) *
+      ( P"}" * _ ) + E"Environment begun but never ended"
   environment =
     P"\\begin" *
-    Cg(parameters, "attr") *
+    Cg(parameters, "options") *
     P"{" *
-    Cg(myID, "tag") *
+    Cg(cmdID, "command") *
     P"}" *
     (
-      (Cmt(Cb"tag", passthroughTag) * V"passthrough_env_stuff") +
-      (Cmt(Cb"tag", notPassthroughTag) * V"texlike_stuff")
-    ) *
-    (
-      P"\\end{" *
-      (
-        Cmt(myID * Cb"tag", function (_,_,thisTag,lastTag) return thisTag == lastTag end) + E"Environment mismatch"
-      ) *
-      ( P"}" * _ ) + E"Environment begun but never ended"
+      (Cmt(Cb"command", isPassthrough) * V"passthrough_env_stuff" * pass_end) +
+      (Cmt(Cb"command", isNotPassthrough) * V"texlike_stuff" * notpass_end)
     )
 end
+-- luacheck: pop
 
 local linecache = {}
 local lno, col, lastpos
@@ -92,24 +122,24 @@ local function resetCache ()
   linecache = { { lno = 1, pos = 1} }
 end
 
-local function getline (s, p)
-  start = 1
+local function getline (str, pos)
+  local start = 1
   lno = 1
-  if p > lastpos then
+  if pos > lastpos then
     lno = linecache[#linecache].lno
     start = linecache[#linecache].pos + 1
     col = 1
   else
-    for j = 1,#linecache-1 do
-      if linecache[j+1].pos >= p then
+    for j = 1, #linecache-1 do
+      if linecache[j+1].pos >= pos then
         lno = linecache[j].lno
-        col = p - linecache[j].pos
-        return lno,col
+        col = pos - linecache[j].pos
+        return lno, col
       end
     end
   end
-  for i = start, p do
-    if string.sub( s, i, i ) == "\n" then
+  for i = start, pos do
+    if string.sub( str, i, i ) == "\n" then
       lno = lno + 1
       col = 1
       linecache[#linecache+1] = { pos = i, lno = lno }
@@ -124,11 +154,11 @@ local function massage_ast (tree, doc)
   -- Sort out pos
   if type(tree) == "string" then return tree end
   if tree.pos then
-    tree.line, tree.col = getline(doc, tree.pos)
+    tree.lno, tree.col = getline(doc, tree.pos)
   end
   if tree.id == "document"
-      or tree.id == "texlike_bracketed_stuff"
-      or tree.id == "passthrough_bracketed_stuff"
+      or tree.id == "texlike_braced_stuff"
+      or tree.id == "passthrough_braced_stuff"
     then return massage_ast(tree[1], doc) end
   if tree.id == "texlike_text"
       or tree.id == "passthrough_text"
@@ -150,14 +180,13 @@ end
 function SILE.inputs.TeXlike.process (doc)
   local tree = SILE.inputs.TeXlike.docToTree(doc)
   local root = SILE.documentState.documentClass == nil
-  if root then
-    if tree.tag == "document" then
+  if tree.command then
+    if root and tree.command == "document" then
       SILE.inputs.common.init(doc, tree)
-      SILE.process(tree)
-    elseif pcall(function () assert(loadstring(doc))() end) then
-    else
-      SU.error("Input not recognized as Lua or SILE content")
     end
+    SILE.process(tree)
+  elseif not pcall(function () assert(load(doc))() end) then
+    SU.error("Input not recognized as Lua or SILE content")
   end
   if root and not SILE.preamble then
     SILE.documentState.documentClass:finish()

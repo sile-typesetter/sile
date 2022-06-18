@@ -1,5 +1,5 @@
 SILE.hyphenator.languages["da"] = {}
-SILE.hyphenator.languages["en"].patterns =
+SILE.hyphenator.languages["da"].patterns =
 {
 ".ae3",
 ".an3k",

@@ -1,13 +1,14 @@
-\begin[papersize=a5]{document}
+\begin[papersize=a6]{document}
+\nofolios
 \script[src=packages/verbatim]
-\font[family=DejaVu Sans Mono,size=9pt]
-\define[command=verbatim:font]{\font[family=DejaVu Sans Mono,size=9pt]}
+\define[command=verbatim:font]{\font[family=Hack]}
+\font[family=Hack]
 \begin{verbatim}
 #          #
 ##();:,i[]##
 ##MMWWQQGG##
 \end{verbatim}
-\font[family=Gentium Book Basic,size=9pt]
+\font[family=Gentium Plus]
 \begin{verbatim}
 #          #
 ##();:,i[]##

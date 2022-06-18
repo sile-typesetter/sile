@@ -1,0 +1,19 @@
+\begin[papersize=a6]{document}
+\neverindent
+\nofolios
+\script[src=packages/features]
+\set[parameter=harfbuzz.subshapers,value=ot]
+\font[Letters=SmallCaps]{SmallCaps}
+
+\add-font-feature[Letters=SmallCaps]
+SmallCaps
+\remove-font-feature[Letters=SmallCaps]
+
+\font[Ligatures="{ Historic, Discretionary }"]{Ligatures}
+
+\add-font-feature[Ligatures="{ Historic, Discretionary }"]
+Ligatures
+\remove-font-feature[Ligatures="{ Historic, Discretionary }"]
+
+Normal
+\end{document}

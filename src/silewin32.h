@@ -1,4 +1,7 @@
-#ifdef __MINGW32__
+#ifdef WIN32
+#define strcasecmp _stricmp
+#define strncasecmp _strnicmp
+
 static char *strcasestr(const char *haystack, const char *needle)
 {
 int i;

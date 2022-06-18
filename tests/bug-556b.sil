@@ -1,0 +1,6 @@
+\begin[class=triglot]{document}
+\script[src=packages/pdf]
+\left
+\pdf:destination[name=test]
+\sync
+\end{document}

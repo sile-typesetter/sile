@@ -1,46 +1,48 @@
+local bitshim = require("bitshim")
+local luautf8 = require("lua-utf8")
+
 local utilities = {}
 
-local bit32 = require("bit32-compat")
+local epsilon = 1E-12
 
-math.epsilon = 1E-12
+utilities.required = function (options, name, context, required_type)
+  if not options[name] then utilities.error(context.." needs a "..name.." parameter") end
+  if required_type then
+    return utilities.cast(required_type, options[name])
+  end
+  return options[name]
+end
 
-utilities.required = function (t, name, context)
-  if not t[name] then utilities.error(context.." needs a "..name.." parameter") end
-  return t[name]
+local function preferbool ()
+  utilities.warn("Please use boolean values or strings such as 'true' and 'false' instead of 'yes' and 'no'.")
 end
 
 utilities.boolean = function (value, default)
-  if value == "false" then return false end
   if value == false then return false end
-  if value == "true" then return true end
   if value == true then return true end
+  if value == "false" then return false end
+  if value == "true" then return true end
+  if value == "no" then preferbool(); return false end
+  if value == "yes" then preferbool(); return true end
   return default
 end
 
-if not table.maxn then
-  table.maxn = function(t)
-    local max = 0
-    for i,_ in pairs(t) do if i > max then max = i end end
-    return max
-  end
-end
-
-utilities.error = function (message, bug)
-  if(SILE.currentCommand and type(SILE.currentCommand) == "table") then
-    io.stderr:write("\n! "..message.. " at "..SILE.currentlyProcessingFile.." l."..(SILE.currentCommand.line)..", col."..(SILE.currentCommand.col))
-  else
-    io.stderr:write("\n! "..message.. " at "..SILE.currentlyProcessingFile)
-  end
-  if bug then io.stderr:write(debug.traceback()) end
-  io.stderr:write("\n")
+utilities.error = function(message, bug)
+  utilities.warn(message, bug)
+  io.stderr:flush()
   SILE.outputter:finish()
   os.exit(1)
 end
 
-utilities.warn = function (message)
-  io.stderr:write("\n! "..message.."\n")
-  --print(debug.traceback())
-  --os.exit(1)
+utilities.warn = function(message, bug)
+  io.stderr:write("\n! " .. message)
+  if SILE.traceback or bug then
+    io.stderr:write(" at:\n" .. SILE.traceStack:locationTrace())
+    io.stderr:write(debug.traceback(nil, 2) or "\t! debug.traceback() did not identify code location")
+  else
+    io.stderr:write(" at " .. SILE.traceStack:locationHead())
+  end
+  io.stderr:write("\n")
 end
 
 utilities.debugging = function (category)
@@ -48,8 +50,10 @@ utilities.debugging = function (category)
 end
 
 utilities.feq = function (lhs, rhs) -- Float point equal
+  lhs = SU.cast("number", lhs)
+  rhs = SU.cast("number", rhs)
   local abs = math.abs
-  return abs(lhs - rhs) <= math.epsilon * (abs(lhs) + abs(rhs))
+  return abs(lhs - rhs) <= epsilon * (abs(lhs) + abs(rhs))
 end
 
 utilities.gtoke = function (string, pattern)
@@ -74,24 +78,46 @@ utilities.gtoke = function (string, pattern)
   end)
 end
 
+utilities.deprecated = function (old, new, warnat, errorat, extra)
+  -- SILE.version is defined *after* most of SILE loads. It’s available at
+  -- runtime but not useful if we encounter deprecated code in core code. Users
+  -- will never encounter this failure, but as a developer it’s hard to test a
+  -- deprecation when core code refactoring is an all-or-nothing proposition.
+  -- Hence we fake it ‘till we make it, all deprecations internally are warings.
+  local brackets = old:sub(1,1) == '\\' and "" or "()"
+  local _semver = SILE.version and SILE.version:match("v([0-9]*.[0-9]*.[0-9]*)") or warnat
+  local _new = new and "Please use " .. (new .. brackets) .. " instead." or "Plase don't use it."
+  local msg = (old .. brackets) .. " was deprecated in SILE v" .. warnat .. ". " .. _new ..  (extra and "\n" .. extra or "")
+  if errorat and _semver >= errorat then
+    SU.error(msg)
+  elseif warnat and _semver >= warnat then
+    SU.warn(msg)
+  end
+end
+
 utilities.debug = function (category, ...)
-  local arg = { ... } -- Avoid things that Lua stuffs in arg like args to self()
   if utilities.debugging(category) then
-    print("["..category.."]", #arg == 1 and arg[1] or arg)
+    local inputs = table.pack(...)
+    for i, input in ipairs(inputs) do
+      if type(input) == "function" then
+        inputs[i] = input()
+      end
+    end
+    io.stderr:write("\n["..category.."] ", utilities.concat(inputs, " "))
   end
 end
 
 utilities.dump = function (...)
   local arg = { ... } -- Avoid things that Lua stuffs in arg like args to self()
-  require("pl.pretty").dump(#arg == 1 and arg[1] or arg, "/dev/stderr")
+  pl.pretty.dump(#arg == 1 and arg[1] or arg, "/dev/stderr")
 end
 
-utilities.concat = function (array, c)
-  return table.concat(utilities.map(tostring, array), c)
+utilities.concat = function (array, separator)
+  return table.concat(utilities.map(tostring, array), separator)
 end
 
 utilities.inherit = function (orig, spec)
-  local new = std.tree.clone(orig)
+  local new = pl.tablex.deepcopy(orig)
   if spec then
     for k,v in pairs(spec) do new[k] = v end
   end
@@ -108,6 +134,24 @@ utilities.map = function (func, array)
   return new_array
 end
 
+utilities.sortedpairs = function (input)
+  local keys = {}
+  for k, _ in pairs(input) do
+    keys[#keys+1] = k
+  end
+  table.sort(keys, function(a, b)
+    if type(a) == type(b) then return a < b
+    elseif type(a) == "number" then return true
+    else return false
+    end
+  end)
+  return coroutine.wrap(function()
+    for i = 1, #keys do
+      coroutine.yield(keys[i], input[keys[i]])
+    end
+  end)
+end
+
 utilities.splice = function (array, start, stop, replacement)
   local ptr = start
   local room = stop - start + 1
@@ -122,31 +166,54 @@ utilities.splice = function (array, start, stop, replacement)
     ptr = ptr + 1
   end
 
-  for i = 1, room do
+  for _ = 1, room do
       table.remove(array, ptr)
   end
   return array
 end
 
 utilities.sum = function (array)
-  local t = 0
+  local total = 0
   local last = #array
   for i = 1, last do
-    t = t + array[i]
+    total = total + array[i]
   end
-  return t
+  return total
+end
+
+-- Lua <= 5.2 can't handle objects in math functions
+utilities.max = function (...)
+  local input = pl.utils.pack(...)
+  local max = table.remove(input, 1)
+  for _, val in ipairs(input) do
+    if val > max then max = val end
+  end
+  return max
+end
+
+utilities.min = function (...)
+  local input = pl.utils.pack(...)
+  local min = input[1]
+  for _, val in ipairs(input) do
+    if val < min then min = val end
+  end
+  return min
 end
 
 utilities.compress = function (items)
   local rv = {}
-  for i=1,table.maxn(items) do if items[i] then rv[#rv+1] = items[i] end end
+  local max = math.max(table.unpack(pl.tablex.keys(items)))
+  for i = 1, max do if items[i] then rv[#rv+1] = items[i] end end
   return rv
 end
 
-table.append = function (t1, t2)
-  if not t1 or not t2 then SU.error("table.append called with nil table!: "..t1..", "..t2,true) end
-  for i=1,#t2 do
-      t1[#t1+1] = t2[i]
+utilities.flip_in_place = function (tbl)
+  local tmp, j
+  for i = 1, math.floor(#tbl / 2) do
+    tmp = tbl[i]
+    j = #tbl - i + 1
+    tbl[i] = tbl[j]
+    tbl[j] = tmp
   end
 end
 
@@ -167,6 +234,44 @@ utilities.allCombinations = function (options)
   end)
 end
 
+utilities.type = function(value)
+  if type(value) == "number" then
+    return math.floor(value) == value and "integer" or "number"
+  elseif type(value) == "table" and value.prototype then
+    return value:prototype()
+  elseif type(value) == "table" and value.is_a then
+    return value.type
+  else
+    return type(value)
+  end
+end
+
+utilities.cast = function (wantedType, value)
+  local actualType = SU.type(value)
+  wantedType = string.lower(wantedType)
+  if wantedType:match(actualType)     then return value
+  elseif actualType == "nil" and wantedType:match("nil") then return nil
+  elseif wantedType:match("integer") or wantedType:match("number") then
+    if type(value) == "table" and type(value.tonumber) == "function" then
+      return value:tonumber()
+    end
+    return tonumber(value)
+  elseif wantedType:match("length")      then return SILE.length(value)
+  elseif wantedType:match("measurement") then return SILE.measurement(value)
+  elseif wantedType:match("vglue")       then return SILE.nodefactory.vglue(value)
+  elseif wantedType:match("glue")        then return SILE.nodefactory.glue(value)
+  elseif wantedType:match("kern")        then return SILE.nodefactory.kern(value)
+  elseif actualType == "nil" then SU.error("Cannot cast nil to " .. wantedType)
+  elseif wantedType:match("boolean")     then return SU.boolean(value)
+  elseif wantedType:match("string")      then return tostring(value)
+  else SU.error("Cannot cast to unrecognized type " .. wantedType)
+  end
+end
+
+utilities.hasContent = function(content)
+  return type(content) == "function" or type(content) == "table" and #content > 0
+end
+
 -- Flatten content trees into just the string components (allows passing
 -- objects with complex structures to functions that need plain strings)
 utilities.contentToString = function (content)
@@ -182,8 +287,8 @@ end
 -- Strip the top level command off a content object and keep only the child
 -- items — assuming that the current command is taking care of itself
 utilities.subContent = function (content)
-  out = { id="stuff" }
-  for key, val in pairs(content) do
+  local out = { id="stuff" }
+  for key, val in utilities.sortedpairs(content) do
     if type(key) == "number" then
       out[#out+1] = val
     end
@@ -191,17 +296,37 @@ utilities.subContent = function (content)
   return out
 end
 
+-- Call `action` on each content AST node, recursively, including `content` itself.
+-- Not called on leaves, i.e. strings.
+utilities.walkContent = function (content, action)
+  if type(content) ~= "table" then
+    return
+  end
+  action(content)
+  for i = 1, #content do
+    utilities.walkContent(content[i], action)
+  end
+end
+
+utilities.rateBadness = function(inf_bad, shortfall, spring)
+  if spring == 0 then return inf_bad end
+  local bad = math.floor(100 * math.abs(shortfall / spring) ^ 3)
+  return math.min(inf_bad, bad)
+end
+
+utilities.rationWidth = function (target, width, ratio)
+  if ratio < 0 and width.shrink:tonumber() > 0 then
+    target:___add(width.shrink:tonumber() * ratio)
+  elseif ratio > 0 and width.stretch:tonumber() > 0 then
+    target:___add(width.stretch:tonumber() * ratio)
+  end
+  return target
+end
+
 -- Unicode-related utilities
 utilities.utf8char = function (c)
-    if     c < 128 then
-        return string.char(c)
-    elseif c < 2048 then
-        return string.char(math.floor(192 + c/64), 128 + c%64)
-    elseif c < 55296 or 57343 < c and c < 65536 then
-        return  string.char(math.floor(224 + c/4096), math.floor(128 + c/64%64), 128 + c%64)
-    elseif c < 1114112 then
-        return string.char(math.floor(240 + c/262144), math.floor(128 + c/4096%64), math.floor(128 + c/64%64), 128 + c%64)
-    end
+  utilities.deprecated("SU.utf8char", "luautf8.char", "0.11.0", "0.12.0")
+  return luautf8.char(c)
 end
 
 utilities.codepoint = function (uchar)
@@ -214,9 +339,9 @@ utilities.codepoint = function (uchar)
       seq = c < 0x80 and 1 or c < 0xE0 and 2 or c < 0xF0 and 3 or
             c < 0xF8 and 4 or --c < 0xFC and 5 or c < 0xFE and 6 or
           error("invalid UTF-8 character sequence")
-      val = bit32.band(c, 2^(8-seq) - 1)
+      val = bitshim.band(c, 2^(8-seq) - 1)
     else
-      val = bit32.bor(bit32.lshift(val, 6), bit32.band(c, 0x3F))
+      val = bitshim.bor(bitshim.lshift(val, 6), bitshim.band(c, 0x3F))
     end
     seq = seq - 1
   end
@@ -234,131 +359,219 @@ utilities.utf8charfromcodepoint = function (codepoint)
   end
 
   if type(cp) == "number" then
-    val = SU.utf8char(cp)
+    val = luautf8.char(cp)
   end
   return val
 end
 
 utilities.utf8codes = function (ustr)
+  utilities.deprecated("SU.utf8codes", "luautf8.codes", "0.11.0", "0.12.0")
+  return luautf8.codes(ustr)
+end
+
+utilities.utf16codes = function (ustr, endian)
   local pos = 1
   return function()
     if pos > #ustr then
       return nil
     else
-      local c, ucv = 0, 0
-      local nbytes = 0
-      c = string.byte(ustr, pos)
+      local c1, c2, c3, c4, wchar, lowchar
+      c1 = string.byte(ustr, pos, pos+1)
       pos = pos + 1
-      if c < 0x80 then
-        ucv    = c
-        nbytes = 0
-      elseif c >= 0xc0 and c < 0xe0 then -- 110x xxxx
-        ucv    = c - 0xc0
-        nbytes = 1
-      elseif c >= 0xe0 and c < 0xf0 then -- 1110 xxxx
-        ucv    = c - 0xe0
-        nbytes = 2
-      elseif c >= 0xf0 and c < 0xf8 then -- 1111 0xxx
-        ucv    = c - 0xf0
-        nbytes = 3
-      elseif c >= 0xf8 and c < 0xfc then -- 1111 10xx
-        ucv    = c - 0xf8
-        nbytes = 4
-      elseif c >= 0xfc and c < 0xfe then -- 1111 110x
-        ucv    = c - 0xfc
-        nbytes = 5
-      else -- Invalid
-        return nil
+      c2 = string.byte(ustr, pos, pos+1)
+      pos = pos + 1
+      if endian == "be" then
+        wchar = c1 * 256 + c2
+      else
+        wchar = c2 * 256 + c1
       end
-      if pos + nbytes > #ustr + 1 then -- Invalid
-        return nil
+      if not (wchar >= 0xD800 and wchar <= 0xDBFF) then
+        return wchar
       end
-      while nbytes > 0 do
-        nbytes = nbytes - 1
-        c = string.byte(ustr, pos)
-        pos = pos + 1
-        if c < 0x80 or c >= 0xc0 then -- Invalid
-          return nil
-        else
-          ucv = ucv * 64 + (c - 0x80)
-        end
+      c3 = string.byte(ustr, pos, pos+1)
+      pos = pos + 1
+      c4 = string.byte(ustr, pos, pos+1)
+      pos = pos + 1
+      if endian == "be" then
+        lowchar = c3 * 256 + c4
+      else
+        lowchar = c4 * 256 + c3
       end
-      return ucv
+      return 0x10000 + bitshim.lshift(bitshim.band(wchar, 0x03FF), 10) + bitshim.band(lowchar, 0x03FF)
     end
   end
 end
 
-utilities.splitUtf8 = function (s) -- Return an array of UTF8 strings each representing a Unicode char
-  local seq = 0
+utilities.splitUtf8 = function (str) -- Return an array of UTF8 strings each representing a Unicode char
   local rv = {}
-  local val = -1
-  local this = ""
-  for i = 1, #s do
-    local c = string.byte(s, i)
-    if seq == 0 then
-      if val > -1 then
-        rv[1+#rv] = this
-        this = ""
-      end
-      seq = c < 0x80 and 1 or c < 0xE0 and 2 or c < 0xF0 and 3 or
-            c < 0xF8 and 4 or --c < 0xFC and 5 or c < 0xFE and 6 or
-          error("invalid UTF-8 character sequence")
-      val = bit32.band(c, 2^(8-seq) - 1)
-      this = this .. s[i]
-    else
-      val = bit32.bor(bit32.lshift(val, 6), bit32.band(c, 0x3F))
-      this = this .. s[i]
-    end
-    seq = seq - 1
+  for _, cp in luautf8.next, str do
+    table.insert(rv, luautf8.char(cp))
   end
-  rv[1+#rv] = this
   return rv
 end
+
+utilities.lastChar = function (str)
+  local chars = utilities.splitUtf8(str)
+  return chars[#chars]
+end
+
+utilities.firstChar = function (str)
+  local chars = utilities.splitUtf8(str)
+  return chars[1]
+end
+
+local byte, floor, reverse = string.byte, math.floor, string.reverse
 
 utilities.utf8charat = function (str, index)
   return str:sub(index):match("([%z\1-\127\194-\244][\128-\191]*)")
 end
 
-utilities.utf8_to_utf16be_hexencoded = function (str)
-  local ustr = string.format("%04x", 0xfeff) -- BOM
-  for uchr in utilities.utf8codes(str) do
-    if (uchr < 0x10000) then
-      ustr = ustr..string.format("%04x", uchr)
-    else -- Surrogate pair
-      local sur_hi = (uchr - 0x10000) / 0x400 + 0xd800
-      local sur_lo = (uchr - 0x10000) % 0x400 + 0xdc00
-      ustr = ustr..string.format("%04x%04x", sur_hi, sur_lo)
-    end
+local utf16bom = function(endianness)
+  return endianness == "be" and "\254\255" or endianness == "le" and "\255\254" or SU.error("Unrecognized endianness")
+end
+
+utilities.hexencoded = function (str)
+  local ustr = ""
+  for i = 1, #str do
+    ustr = ustr..string.format("%02x", byte(str, i, i+1))
   end
   return ustr
 end
 
-utilities.utf8_to_utf16be = function (str)
+utilities.hexdecoded = function (str)
+  if #str % 2 == 1 then SU.error("Cannot decode hex string with odd len") end
   local ustr = ""
-  for uchr in utilities.utf8codes(str) do
-    if (uchr < 0x10000) then
-      ustr = ustr..string.format("%c%c", uchr / 256, uchr % 256 )
-    else -- Surrogate pair
-      local sur_hi = (uchr - 0x10000) / 0x400 + 0xd800
-      local sur_lo = (uchr - 0x10000) % 0x400 + 0xdc00
-      ustr = ustr..string.format("%c%c%c%c", sur_hi / 256, sur_hi % 256 , sur_lo / 256, sur_lo % 256)
-    end
+  for i = 1, #str, 2 do
+    ustr = ustr..string.char(tonumber(string.sub(str, i, i+1), 16))
   end
   return ustr
 end
 
-utilities.utf8_to_utf16le = function (str)
-  local ustr = ""
-  for uchr in utilities.utf8codes(str) do
-    if (uchr < 0x10000) then
-      ustr = ustr..string.format("%c%c", uchr % 256, uchr / 256 )
-    else -- Surrogate pair
-      local sur_hi = (uchr - 0x10000) / 0x400 + 0xd800
-      local sur_lo = (uchr - 0x10000) % 0x400 + 0xdc00
-      ustr = ustr..string.format("%c%c%c%c", sur_hi % 256, sur_hi / 256 , sur_lo % 256, sur_lo / 256)
-    end
+local uchr_to_surrogate_pair = function(uchr, endianness)
+  local hi, lo = floor((uchr - 0x10000) / 0x400) + 0xd800, (uchr - 0x10000) % 0x400 + 0xdc00
+  local s_hi, s_lo = string.char(floor(hi / 256)) .. string.char(hi % 256), string.char(floor(lo / 256)) .. string.char(lo % 256)
+  return endianness == "le" and (reverse(s_hi) .. reverse(s_lo)) or s_hi .. s_lo
+end
+
+local uchr_to_utf16_double_byte = function(uchr, endianness)
+  local ustr = string.char(floor(uchr / 256)) .. string.char(uchr % 256)
+  return endianness == "le" and reverse(ustr) or ustr
+end
+
+local utf8_to_utf16 = function(str, endianness)
+  local ustr = utf16bom(endianness)
+  for _, uchr in luautf8.codes(str) do
+    ustr = ustr..(uchr < 0x10000 and uchr_to_utf16_double_byte(uchr, endianness)
+                  or uchr_to_surrogate_pair(uchr, endianness))
   end
   return ustr
+end
+
+utilities.utf8_to_utf16be = function (str) return utf8_to_utf16(str, "be") end
+utilities.utf8_to_utf16le = function (str) return utf8_to_utf16(str, "le") end
+utilities.utf8_to_utf16be_hexencoded = function (str) return utilities.hexencoded(utilities.utf8_to_utf16be(str)) end
+utilities.utf8_to_utf16le_hexencoded = function (str) return utilities.hexencoded(utilities.utf8_to_utf16le(str)) end
+
+local utf16_to_utf8 = function (str, endianness)
+  local bom = utf16bom(endianness)
+
+  if str:find(bom) == 1 then str = string.sub(str, 3, #str) end
+  local ustr = ""
+  for uchr in utilities.utf16codes(str, endianness) do
+    ustr = ustr..luautf8.char(uchr)
+  end
+  return ustr
+end
+
+utilities.utf16be_to_utf8 = function (str) return utf16_to_utf8(str, "be") end
+utilities.utf16le_to_utf8 = function (str) return utf16_to_utf8(str, "le") end
+
+local icu = require("justenoughicu")
+
+local icuFormat = function (num, format)
+  local ok, result  = pcall(icu.format_number, num, format)
+  return tostring(ok and result or num)
+end
+
+-- Language specific number formatters add functions to this table,
+-- see e.g. languages/tr.lua
+utilities.formatNumber = {
+  und = {
+
+    alpha = function (num)
+      local out = ""
+      local a = string.byte("a")
+      repeat
+        num = num - 1
+        out = string.char(num % 26 + a) .. out
+        num = (num - num % 26) / 26
+      until num < 1
+      return out
+    end
+
+  }
+}
+
+setmetatable (utilities.formatNumber, {
+    __call = function (self, num, format, case)
+      if math.abs(num) > 9223372036854775807 then
+        SU.warn("Integers larger than 64 bits do not reproduce properly in all formats")
+      end
+      if not case then
+        if format:match("^%l") then
+          case = "lower"
+        elseif format:match("^.%l") then
+          case = "title"
+        else
+          case = "upper"
+        end
+      end
+      local lang = format:match("[Rr][Oo][Mm][Aa][Nn]") and "la" or SILE.settings:get("document.language")
+      format = format:lower()
+      local result
+      if self[lang] and type(self[lang][format]) == "function" then
+        result = self[lang][format](num)
+      elseif type(self["und"][format]) == "function" then
+        result = self.und[format](num)
+      else
+        result = icuFormat(num, format)
+      end
+      return icu.case(result, lang, case)
+    end
+})
+
+utilities.breadcrumbs = function ()
+  local breadcrumbs = {}
+
+  setmetatable (breadcrumbs, {
+      __index = function(_, key)
+        local frame = SILE.traceStack[key]
+        return frame and frame.command or nil
+      end,
+      __len = function(_)
+        return #SILE.traceStack
+      end,
+      __tostring = function (self)
+        return "B»" .. table.concat(self, "»")
+      end
+    })
+
+  function breadcrumbs:dump ()
+    SU.dump(self)
+  end
+
+  function breadcrumbs:parent (count)
+    return self[#self-(count or 1)]
+  end
+
+  function breadcrumbs:contains (needle)
+    for i, command in ipairs(self) do
+      if command == needle then return true, #self - i end
+    end
+    return false, -1
+  end
+
+  return breadcrumbs
 end
 
 return utilities

@@ -1,4 +1,5 @@
 \begin[papersize=a5]{document}% KNOWNBAD
+\script{os.exit(1)} % test causes infinite loop
 \nofolios
 \script[src=packages/lorem]
 \script[src=packages/grid]
@@ -6,7 +7,7 @@
 \set[parameter=document.parskip,value=6pt]
 \script[src=packages/frametricks]
 \script[src=packages/balanced-frames]
-\font[family=Linux Libertine O]
+\font[family=Libertinus Serif]
 \begin[first-content-frame=leftCol1]{pagetemplate}
 \frame[id=gutter,width=3%pw]
 \frame[id=leftCol1,left=left(content),right=left(gutter),top=top(content),bottom=bottom(content),next=rightCol1,balanced=1]
@@ -34,7 +35,7 @@ And no one pours new wine into old wineskins; otherwise, the wine will burst the
 \balancecolumns
 \hbox{}
 \bigskip
-\center{\font[size=18pt,family=Linux Biolinum O,weight=800]{Chapter 3}}
+\center{\font[size=18pt,family=Libertinus Sans,weight=800]{Chapter 3}}
 \vfill\framebreak
 
 Then Jesus entered the synagogue again, and a man was there who had a withered hand. 

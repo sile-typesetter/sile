@@ -1,11 +1,13 @@
-\begin[papersize=a5,class=book]{document}
+\begin[papersize=a6,class=book]{document}
 \script[src=packages/frametricks]
-\set[parameter=document.rskip, value=0mm]
 \begin[first-content-frame=frame1]{pagetemplate}
-\frame[id=frame1, left=left(content), right=right(content), height=0.7cm, top=top(content), next=frame2]
-\frame[id=frame2, left=left(frame1), right=right(frame1), top=bottom(frame1), bottom=bottom(content)]
+\frame[id=frame1,left=left(content),right=right(content),height=18pt,top=top(content),next=frame2]
+\frame[id=frame2,left=left(frame1),right=right(frame1),top=bottom(frame1),bottom=bottom(content)]
 \end{pagetemplate}
-\showframe[id=all]%
+\nofolios
+\set[parameter=document.rskip,value=0mm]
+\font[family=Libertinus Serif,size=12pt]
+\showframe[id=all]
 \font[size=24pt]{First frame}\par
 Second frame first paragraph\par
 Second frame second paragraph\par

@@ -1,0 +1,15 @@
+\begin[papersize=a6]{document}
+\nofolios
+\neverindent
+foo
+\set[parameter=font.family,value=Hack]bar
+\set[parameter=font.family,reset=true]baz
+\set[parameter=font.family,value=Hack,makedefault=true]bar
+\set[parameter=font.family,reset=true]qiz
+
+foo
+\script{SILE.settings:set("font.family", "Cormorant Infant")}bar
+\script{SILE.settings:set("font.family", nil, nil, true)}baz
+\script{SILE.settings:set("font.family", "Cormorant Infant", true)}bar
+\script{SILE.settings:set("font.family", nil, nil, true)}qiz
+\end{document}

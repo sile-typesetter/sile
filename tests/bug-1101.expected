@@ -1,0 +1,20 @@
+Set paper size 	595.275597	841.8897729
+Begin page
+Mx 	539.9079
+My 	97.7650
+Set font 	Noto Sans CJK JP;10;400;;normal;;LTR
+T	52 42 45 38 w=20.2100	(SILE)
+Mx 	542.4079
+My 	122.9750
+Set font 	Noto Sans CJK JP;10;400;;normal;;TTB
+T	65196 w=10.0000	(と)
+Mx 	539.9079
+My 	133.0809
+Set font 	Noto Sans CJK JP;10;400;;normal;;LTR
+T	45 66 85 74 79 w=23.5500	(Latin)
+Mx 	542.4079
+My 	161.6309
+Set font 	Noto Sans CJK JP;10;400;;normal;;TTB
+T	58981 w=10.0000	(。)
+End page
+Finish

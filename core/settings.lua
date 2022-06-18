@@ -1,139 +1,176 @@
-local _type = function(v)
-  if type(v) == "number" then return math.floor(v)==v and "integer" or "number" end
-  if not(type(v) == "table") then return type(v) end
-  return v:prototype()
+local deprecator = function ()
+  SU.deprecated("SILE.settings.*", "SILE.settings:*", "0.13.0", "0.14.0")
+  return SILE.settings
 end
 
-SILE.settings = {
-  state = {},
-  declarations = {},
-  stateQueue = {},
-  defaults = {},
-  pushState = function()
-    table.insert(SILE.settings.stateQueue, SILE.settings.state)
-    SILE.settings.state = std.table.clone(SILE.settings.state)
-  end,
-  popState = function()
-    SILE.settings.state = table.remove(SILE.settings.stateQueue)
-  end,
-  declare = function(t)
-    SILE.settings.declarations[t.name] = t
-    SILE.settings.set(t.name, t.default)
-    SILE.settings.defaults[t.name] = t.default
-  end,
-  reset = function(t)
-    for k,_ in pairs(SILE.settings.state) do
-      SILE.settings.set(k,SILE.settings.defaults[k])
+local settings = pl.class()
+
+function settings:_init()
+
+  self.state = {}
+  self.declarations = {}
+  self.stateQueue = {}
+  self.defaults = {}
+
+  self:declare({
+    parameter = "document.language",
+    type = "string",
+    default = "en",
+    help = "Locale for localized language support"
+  })
+
+  self:declare({
+    parameter = "document.parindent",
+    type = "glue",
+    default = SILE.nodefactory.glue("20pt"),
+    help = "Glue at start of paragraph"
+  })
+
+  self:declare({
+    parameter = "document.baselineskip",
+    type = "vglue",
+    default = SILE.nodefactory.vglue("1.2em plus 1pt"),
+    help = "Leading"
+  })
+
+  self:declare({
+    parameter = "document.lineskip",
+    type = "vglue",
+    default = SILE.nodefactory.vglue("1pt"),
+    help = "Leading"
+  })
+
+  self:declare({
+    parameter = "document.parskip",
+    type = "vglue",
+    default = SILE.nodefactory.vglue("0pt plus 1pt"),
+    help = "Leading"
+  })
+
+  self:declare({
+    parameter = "document.spaceskip",
+    type = "length or nil",
+    default = nil,
+    help = "The length of a space (if nil, then measured from the font)"
+  })
+
+  self:declare({
+    parameter = "document.rskip",
+    type = "glue or nil",
+    default = nil,
+    help = "Skip to be added to right side of line"
+  })
+
+  self:declare({
+    parameter = "document.lskip",
+    type = "glue or nil",
+    default = nil,
+    help = "Skip to be added to left side of line"
+  })
+
+  SILE.registerCommand("set", function(options, content)
+    local parameter = SU.required(options, "parameter", "\\set command")
+    local makedefault = SU.boolean(options.makedefault, false)
+    local reset = SU.boolean(options.reset, false)
+    local value = options.value
+    if content and (type(content) == "function" or content[1]) then
+      if makedefault then
+        SU.warn("Are you sure meant to set default settings *and* pass content to ostensibly apply them to temporarily?")
+      end
+      self:temporarily(function()
+        self:set(parameter, value, makedefault, reset)
+        SILE.process(content)
+      end)
+    else
+      self:set(parameter, value, makedefault, reset)
     end
-  end,
-  get = function(name)
-    if not SILE.settings.declarations[name] then
-      SU.error("Undefined setting '"..name.."'")
-    end
-    return SILE.settings.state[name]
-  end,
-  set = function(name, value)
-    if not SILE.settings.declarations[name] then
-      SU.error("Undefined setting '"..name.."'")
-    end
-    local t = _type(value)
-    local wantedType = SILE.settings.declarations[name].type
-    if not (string.find(wantedType, t) == 1 or string.find(wantedType, "or "..t) ) then
-      SU.error("Setting "..name.." must be of type "..wantedType..", not "..t.." "..value.."\n"..name..": "..SILE.settings.declarations[name].help)
-    end
-    SILE.settings.state[name] = value
-  end,
-  temporarily = function(f)
-    SILE.settings.pushState()
-    f()
-    SILE.settings.popState()
-  end,
-  wrap = function() -- Returns a closure which applies the current state, later
-    local clSettings = std.table.clone(SILE.settings.state)
-    return function(f)
-      table.insert(SILE.settings.stateQueue, SILE.settings.state)
-      SILE.settings.state = clSettings
-      SILE.process(f)
-      SILE.settings.popState()
-    end
-  end,
+  end, "Set a SILE parameter <parameter> to value <value> (restoring the value afterwards if <content> is provided)")
 
-}
-
-SILE.settings.declare({
-  name = "document.parindent",
-  type = "Glue",
-  default = SILE.nodefactory.newGlue("20pt"),
-  help = "Glue at start of paragraph"
-})
-
-SILE.settings.declare({
-  name = "document.baselineskip",
-  type = "VGlue",
-  default = SILE.nodefactory.newVglue("1.2em plus 1pt"),
-  help = "Leading"
-})
-
-SILE.settings.declare({
-  name = "document.lineskip",
-  type = "VGlue",
-  default = SILE.nodefactory.newVglue("1pt"),
-  help = "Leading"
-})
-
-SILE.settings.declare({
-  name = "document.parskip",
-  type = "VGlue",
-  default = SILE.nodefactory.newVglue("0pt plus 1pt"),
-  help = "Leading"
-})
-
-SILE.settings.declare({
-  name = "document.spaceskip",
-  type = "Length or nil",
-  default = nil,
-  help = "The length of a space (if nil, then measured from the font)"
-})
-
-SILE.settings.declare({
-  name = "document.rskip",
-  type = "Glue or nil",
-  default = nil,
-  help = "Skip to be added to right side of line"
-})
-
-SILE.settings.declare({
-  name = "document.lskip",
-  type = "Glue or nil",
-  default = nil,
-  help = "Skip to be added to left side of line"
-})
-
-local function toboolean(v)
-  if type(v) == "boolean" then return v end
-  if type(v) == "string" then return v == "true" end
-  if type(v) == "number" or type(v) == "integer" then return not (v == 0) end
-  return not not v
 end
 
-SILE.registerCommand("set", function(options, content)
-  local p = SU.required(options, "parameter", "\\set command")
-  local v = options.value -- could be nil!
-  local def = SILE.settings.declarations[p]
-  if not def then SU.error("Unknown parameter "..p.." in \\set command") end
-  if     string.match(def.type, "nil") and type(v) == "nil" then -- ok
-  elseif  string.match(def.type, "integer") then v = tonumber(v)
-  elseif  string.match(def.type, "boolean") then v = toboolean(v)
-  elseif  string.match(def.type, "Length") then v = SILE.length.parse(v)
-  elseif string.match(def.type, "VGlue") then v = SILE.nodefactory.newVglue(v)
-  elseif string.match(def.type, "Glue") then v = SILE.nodefactory.newGlue(v)
-  elseif string.match(def.type, "Kern") then v = SILE.nodefactory.newKern(v) end
-  if content and (type(content) == "function" or content[1]) then
-    SILE.settings.temporarily(function()
-      SILE.settings.set(p,v)
-      SILE.process(content)
-    end)
-  else
-    SILE.settings.set(p,v)
+function settings:pushState ()
+  if not self then self = deprecator() end
+  table.insert(self.stateQueue, self.state)
+  self.state = pl.tablex.copy(self.state)
+end
+
+function settings:popState ()
+  if not self then self = deprecator() end
+  self.state = table.remove(self.stateQueue)
+end
+
+function settings:declare (spec)
+  if not spec then self, spec = deprecator(), self end
+  if spec.name then
+    SU.deprecated("'name' argument of SILE.settings:declare", "'parameter' argument of SILE.settings:declare", "0.10.10", "0.11.0")
   end
-end, "Set a SILE parameter <parameter> to value <value> (restoring the value afterwards if <content> is provided)")
+  self.declarations[spec.parameter] = spec
+  self:set(spec.parameter, spec.default, true)
+end
+
+function settings:reset ()
+  if not self then self = deprecator() end
+  for k,_ in pairs(self.state) do
+    self:set(k, self.defaults[k])
+  end
+end
+
+function settings:toplevelState ()
+  if not self then self = deprecator() end
+  if #self.stateQueue ~= 0 then
+    for k,_ in pairs(self.state) do
+      self:set(k, self.stateQueue[1][k])
+    end
+  end
+end
+
+function settings:get (parameter)
+  if not parameter then self, parameter = deprecator(), self end
+  if not self.declarations[parameter] then
+    SU.error("Undefined setting '"..parameter.."'")
+  end
+  if type(self.state[parameter]) ~= "nil" then
+    return self.state[parameter]
+  else
+    return self.defaults[parameter]
+  end
+end
+
+function settings:set (parameter, value, makedefault, reset)
+  if type(self) ~= "table" then self, parameter, value, makedefault, reset = deprecator(), self, parameter, value, makedefault end
+  if not self.declarations[parameter] then
+    SU.error("Undefined setting '"..parameter.."'")
+  end
+  if reset then
+    if makedefault then
+      SU.error("Can't set a new default and revert to and old default setting at the same time!")
+    end
+    value = self.defaults[parameter]
+  else
+    value = SU.cast(self.declarations[parameter].type, value)
+  end
+  self.state[parameter] = value
+  if makedefault then
+    self.defaults[parameter] = value
+  end
+end
+
+function settings:temporarily (func)
+  if not func then self, func = deprecator(), self end
+  self:pushState()
+  func()
+  self:popState()
+end
+
+function settings:wrap () -- Returns a closure which applies the current state, later
+  if not self then self = deprecator() end
+  local clSettings = pl.tablex.copy(self.state)
+  return function(content)
+    table.insert(self.stateQueue, self.state)
+    self.state = clSettings
+    SILE.process(content)
+    self:popState()
+  end
+end
+
+return settings

@@ -1,17 +1,17 @@
 Set paper size 	419.5275636	595.275597
 Begin page
 Push color	0.9137	0.8471	0.7294
-Draw line	0.0000 0.0000 419.5276 595.2756
+Draw line	0.0000	0.0000	419.5276	595.2756
 Pop color
 Push color	0.3529	0.2549	0.1608
-Mx 	20.9764
+Mx 	40.9764
 My 	37.3321
 Set font 	Gentium Plus;10;400;;normal;;LTR
-T	54 72 83 76 68	(Sepia)
-Mx 	45.6329
-T	69 68 69 92	(baby)
-Mx 	65.3107
-T	17	(.)
+T	54 72 83 76 68 w=21.9775	(Sepia)
+Mx 	65.6307
+T	69 68 69 92 w=19.6777	(baby)
+Mx 	85.3085
+T	17 w=2.2900	(.)
 Pop color
 End page
 Finish

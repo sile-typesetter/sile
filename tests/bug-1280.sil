@@ -1,0 +1,57 @@
+\begin[papersize=15cm x 6cm]{document}
+\font[filename=.fonts/NotoSerifCJK-Regular.ttc]
+\nofolios
+\neverindent
+\script{
+  local checks = 0;
+  local function check() SILE.typesetter:typeset("✓"); checks = checks + 1 end
+  function test(teststr)
+  SILE.call("par")
+  SILE.typesetter:typeset(teststr .. " ⇒")
+  local function decbe(s) return SU.utf16be_to_utf8(SU.hexdecoded(s)) end
+  local function decle(s) return SU.utf16le_to_utf8(SU.hexdecoded(s)) end
+
+  SILE.call("par")
+  local be = SU.utf8_to_utf16be_hexencoded(teststr)
+  SILE.typesetter:typeset(be .. " → ")
+  if string.sub(be,1,4) == "feff" then check() end
+  SILE.typesetter:typeset(decbe(be))
+  SILE.call("par")
+  be = string.sub(be, 5, #be)
+  SILE.typesetter:typeset(be .. " → ")
+  if decbe(be) == teststr then check() end
+  SILE.typesetter:typeset(decbe(be))
+
+  SILE.call("par")
+  local le = SU.utf8_to_utf16le_hexencoded(teststr)
+  SILE.typesetter:typeset(le .. " → ")
+  if string.sub(le,1,4) == "fffe" then check() end
+  SILE.typesetter:typeset(decle(le))
+  SILE.call("par")
+  le = string.sub(le, 5, #le)
+  SILE.typesetter:typeset(le .. " → ")
+  if decle(le) == teststr then check() end
+  SILE.typesetter:typeset(decle(le))
+  end
+
+  test("Schrödinger")
+  test("猫𠂤~")
+
+  SILE.call("par")
+  local fchecks = checks
+  if fchecks == 8 then SILE.typesetter:typeset("OK") else SILE.typesetter:typeset("NG") end
+  for i = 1, fchecks do
+    check()
+  end
+  if SILE.backend ~= "debug" then
+    require("packages.pdf")
+  else
+    SILE.registerCommand("pdf:metadata", function (_, _) end)
+  end
+}
+\pdf:metadata[key=Author, value=Erwin Schrödinger]
+\pdf:metadata[key=Title, value=Erwin Schrödinger’s 猫🐈]
+\pdf:metadata[key=CreationDate, value=D:19990209153925 - 08 ' 00 ']
+\pdf:metadata[key=ModDate, value=should fail]
+\pdf:metadata[key=Trapped, value=should be skipped]
+\end{document}

@@ -64,21 +64,45 @@ ipsum dolor sit amet
 
 ]]
 
-local _, nwords = lorem:gsub("%S+","")
-local floor = math.floor
+local _, nwords = lorem:gsub("%S+", "")
 
-SILE.registerCommand("lorem", function(options, content)
-  local words = tonumber(options.words) or 50
-  local times = floor(words/nwords)
-  words = words - times*nwords
-  local i, j = 0, 0
-  for n = 1, words do
-    i, j = lorem:find("%S+", j+1)
-  end
-  local s = string.rep(lorem,times)..lorem:sub(1,j)
-  SILE.settings.temporarily(function()
-    SILE.settings.set("document.language","la")
-    SILE.typesetter:typeset(s)
-    SILE.typesetter:leaveHmode()
+local function registerCommands (_)
+
+  SILE.registerCommand("lorem", function (options, _)
+    local words = tonumber(options.words) or 50
+    local counter = options.counter or false
+    local times = math.floor(words/nwords)
+    words = words - times*nwords
+    local pos = 0
+    for _ = 1, words do
+      _, pos = lorem:find("%S+", pos + 1)
+    end
+    local text = string.rep(lorem, times) .. lorem:sub(1, pos)
+    if counter then
+      local c = 0
+      text = string.gsub(text, "(%s+)", function (_)
+        c = c + 1
+        return " " .. c .. " "
+      end)
+    end
+    SILE.settings:temporarily(function ()
+      SILE.settings:set("document.language", "la")
+      SILE.typesetter:typeset(text)
+    end)
   end)
-end)
+
+end
+
+return {
+  registerCommands = registerCommands,
+  documentation = [[
+\begin{document}
+Sometimes you just need some dummy text. The command \autodoc:command{\lorem}
+produces fifty words of “lorem ipsum”; you can choose a different
+number of words with the \autodoc:parameter{words=<number>} parameter. Here’s
+\autodoc:command{\lorem[words=20]}:
+
+\examplefont{\lorem[words=20]}
+\end{document}
+]]
+}

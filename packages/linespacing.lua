@@ -1,95 +1,60 @@
 local metrics = require("fontmetrics")
 
-SILE.settings.declare({
-  name = "linespacing.method",
-  default = "tex",
-  type = "string",
-  help = "How to set the line spacing (tex, fixed, fit-font, fit-glyph, css)"
-})
-
-SILE.settings.declare({
-  name = "linespacing.fixed.baselinedistance",
-  default = SILE.length.parse("1.2em"),
-  type = "Length",
-  help = "Distance from baseline to baseline in the case of fixed line spacing"
-})
-
-SILE.settings.declare({
-  name = "linespacing.minimumfirstlineposition",
-  default = SILE.length.parse("0"),
-  type = "Length"
-})
-
-SILE.settings.declare({
-  name = "linespacing.fit-glyph.extra-space",
-  default = SILE.length.parse("0"),
-  type = "Length"
-})
-
-SILE.settings.declare({
-  name = "linespacing.fit-font.extra-space",
-  default = SILE.length.parse("0"),
-  type = "Length"
-})
-
-SILE.settings.declare({
-  name = "linespacing.css.line-height",
-  default = SILE.length.parse("1.2em"),
-  type = "Length"
-})
-
 local metricscache = {}
 
 local getLineMetrics = function (l)
-  local linemetrics = {ascender = 0, descender = 0, lineheight = 0}
+  local linemetrics = { ascender = 0, descender = 0, lineheight = SILE.length() }
   if not l or not l.nodes then return linemetrics end
-  for i = 1,#(l.nodes) do n = l.nodes[i]; if n:isNnode() then
-    local m = metricscache[SILE.font._key(n.options)]
-    if not m then
-      local face = SILE.font.cache(n.options, SILE.shaper.getFace)
-      m = metrics.get_typographic_extents(face.data, face.index)
-      m.ascender = m.ascender * n.options.size
-      m.descender = m.descender * n.options.size
-      metricscache[SILE.font._key(n.options)] = m
+  for i = 1, #(l.nodes) do
+    local node = l.nodes[i]
+    if node.is_nnode then
+      local m = metricscache[SILE.font._key(node.options)]
+      if not m then
+        local face = SILE.font.cache(node.options, SILE.shaper.getFace)
+        m = metrics.get_typographic_extents(face.data, face.index)
+        m.ascender = m.ascender * node.options.size
+        m.descender = m.descender * node.options.size
+        metricscache[SILE.font._key(node.options)] = m
+      end
+      SILE.settings:temporarily(function ()
+        SILE.call("font", node.options, {})
+        m.lineheight = SU.cast("length", SILE.settings:get("linespacing.css.line-height")):absolute()
+      end)
+      if m.ascender > linemetrics.ascender then linemetrics.ascender = m.ascender end
+      if m.descender > linemetrics.descender then linemetrics.descender = m.descender end
+      if m.lineheight > linemetrics.lineheight then linemetrics.lineheight = m.lineheight end
     end
-    SILE.settings.temporarily(function()
-      SILE.call("font", n.options, {})
-      m.lineheight = SILE.settings.get("linespacing.css.line-height"):absolute().length
-    end)
-    if m.ascender > linemetrics.ascender then linemetrics.ascender = m.ascender end
-    if m.descender > linemetrics.descender then linemetrics.descender = m.descender end
-    if m.lineheight > linemetrics.lineheight then linemetrics.lineheight = m.lineheight end
-  end end
+  end
   return linemetrics
 end
 
-local linespacingLeading = function (self, v, previous)
-  local method = SILE.settings.get("linespacing.method")
+local linespacingLeading = function (_, vbox, previous)
+  local method = SILE.settings:get("linespacing.method")
 
-  local firstline = SILE.settings.get("linespacing.minimumfirstlineposition"):absolute()
+  local firstline = SILE.settings:get("linespacing.minimumfirstlineposition"):absolute()
   if not previous then
-    if firstline.length > 0 then
-      toAdd = SILE.length.new({ length = firstline.length -v.height })
-      return SILE.nodefactory.newVKern({ height = toAdd })
+    if firstline.length:tonumber() > 0 then
+      local toAdd = SILE.length(firstline.length - vbox.height)
+      return SILE.nodefactory.vkern(toAdd)
     else
       return nil
     end
   end
 
   if method == "tex" then
-    return SILE.defaultTypesetter:leadingFor(v,previous)
+    return SILE.defaultTypesetter:leadingFor(vbox, previous)
   end
 
   if method == "fit-glyph" then
-    local extra = SILE.settings.get("linespacing.fit-glyph.extra-space"):absolute()
-    local toAdd = SILE.length.new(extra)
-    return SILE.nodefactory.newVglue({ height = toAdd })
+    local extra = SILE.settings:get("linespacing.fit-glyph.extra-space"):absolute()
+    local toAdd = SILE.length(extra)
+    return SILE.nodefactory.vglue(toAdd)
   end
 
   if method == "fixed" then
-    local btob = SILE.settings.get("linespacing.fixed.baselinedistance"):absolute()
-    local toAdd = SILE.length.new({ length = btob.length - (v.height + previous.depth), stretch = btob.stretch, shrink = btob.shrink })
-    return SILE.nodefactory.newVglue({ height = toAdd })
+    local btob = SILE.settings:get("linespacing.fixed.baselinedistance"):absolute()
+    local toAdd = SILE.length(btob.length - (vbox.height + previous.depth), btob.stretch, btob.shrink)
+    return SILE.nodefactory.vglue(toAdd)
   end
 
   -- For these methods, we need to read the font metrics
@@ -97,15 +62,15 @@ local linespacingLeading = function (self, v, previous)
     SU.error("'"..method.."' line spacing method requires freetype, which is not available.")
   end
 
-  local thismetrics = getLineMetrics(v)
+  local thismetrics = getLineMetrics(vbox)
   local prevmetrics = getLineMetrics(previous)
   if method == "fit-font" then
     -- Distance to next baseline is max(descender) of fonts on previous +
     -- max(ascender) of fonts on next
-    local extra = SILE.settings.get("linespacing.fit-font.extra-space"):absolute()
+    local extra = SILE.settings:get("linespacing.fit-font.extra-space"):absolute()
     local btob = prevmetrics.descender + thismetrics.ascender + extra
-    local toAdd = btob - (v.height + (previous and previous.depth or 0))
-    return SILE.nodefactory.newVglue({ height = SILE.length.make(toAdd)})
+    local toAdd = btob - (vbox.height + (previous and previous.depth or 0))
+    return SILE.nodefactory.vglue(toAdd)
   end
 
   if method == "css" then
@@ -115,33 +80,87 @@ local linespacingLeading = function (self, v, previous)
       previous.height = previous.height + leading / 2
       previous.depth = previous.depth + leading / 2
     end
-    return SILE.nodefactory.newVglue({ height = SILE.length.new({ length = 0  }) })
+    return SILE.nodefactory.vglue()
 
   end
 
   SU.error("Unknown line spacing method "..method)
 end
 
-SILE.typesetter.leadingFor = linespacingLeading
-SILE.registerCommand("linespacing-on", function ()
+local function init (_, _)
+
   SILE.typesetter.leadingFor = linespacingLeading
-end)
-SILE.registerCommand("linespacing-off", function ()
-  SILE.typesetter.leadingFor = SILE.defaultTypesetter.leadingFor
-end)
 
+end
 
-return { documentation = [[\begin{document}
+local function declareSettings (_)
+
+  SILE.settings:declare({
+    parameter = "linespacing.method",
+    default = "tex",
+    type = "string",
+    help = "How to set the line spacing (tex, fixed, fit-font, fit-glyph, css)"
+  })
+
+  SILE.settings:declare({
+    parameter = "linespacing.fixed.baselinedistance",
+    default = SILE.length("1.2em"),
+    type = "length",
+    help = "Distance from baseline to baseline in the case of fixed line spacing"
+  })
+
+  SILE.settings:declare({
+    parameter = "linespacing.minimumfirstlineposition",
+    default = SILE.length(0),
+    type = "length"
+  })
+
+  SILE.settings:declare({
+    parameter = "linespacing.fit-glyph.extra-space",
+    default = SILE.length(0),
+    type = "length"
+  })
+
+  SILE.settings:declare({
+    parameter = "linespacing.fit-font.extra-space",
+    default = SILE.length(0),
+    type = "length"
+  })
+
+  SILE.settings:declare({
+    parameter = "linespacing.css.line-height",
+    default = SILE.length("1.2em"),
+    type = "length"
+  })
+
+end
+
+local function registerCommands (_)
+
+  SILE.registerCommand("linespacing-on", function ()
+    SILE.typesetter.leadingFor = linespacingLeading
+  end)
+
+  SILE.registerCommand("linespacing-off", function ()
+    SILE.typesetter.leadingFor = SILE.defaultTypesetter.leadingFor
+  end)
+
+end
+
+return {
+  init = init,
+  declareSettings = declareSettings,
+  registerCommands = registerCommands,
+  documentation = [[\begin{document}
 \linespacing-on
 
 SILE’s default method of inserting leading between lines should be familiar to
 users of TeX, but it is not the most friendly system for book designers. The
-\code{linespacing} package provides a better choice of leading systems.
+\autodoc:package{linespacing} package provides a better choice of leading systems.
 
-After loading the package (with \code{\\script[src=packages/linespacing]}),
-you are able to choose the linespacing mode by setting the \code{linespacing.method}
-parameter. The following examples have funny sized words in them so that you can see
-how the different methods interact.
+After loading the package, you are able to choose the linespacing mode by setting
+the \autodoc:setting{linespacing.method} parameter. The following examples have
+funny sized words in them so that you can see how the different methods interact.
 
 By default, this is set to \code{tex}. The other options available are:
 
@@ -149,7 +168,7 @@ By default, this is set to \code{tex}. The other options available are:
 \set[parameter=linespacing.method,value=fixed]
 \set[parameter=linespacing.fixed.baselinedistance,value=1.5em]
 \noindent{}• \code{fixed}. This set the lines at a fixed baseline-to-baseline distance,
-determined by the \code{linespacing.\goodbreak{}fixed.baselinedistance} parameter. You
+determined by the \autodoc:setting{linespacing.fixed.baselinedistance} parameter. You
 can specify this parameter either relative to the type size (e.g. \code{1.2em})
 or as a absolute distance (\code{15pt}). This paragraph is set with a fixed 1.5em
 baseline-to-baseline distance.
@@ -164,7 +183,7 @@ You generally don’t want to use this as is.
 \set[parameter=linespacing.fit-glyph.extra-space,value=5pt]
 
 What you probably want to do is insert a constant (relative or absolute) s\font[size=20pt]{p}ace
-between the lines by setting the \code{linespacing.fit-glyph.extra-space} parameter.
+between the lines by setting the \autodoc:setting{linespacing.fit-glyph.extra-space} parameter.
 \font[size=20pt]{T}his paragraph is set with 5 points of space between the descenders and the ascenders.
 
 \medskip
@@ -179,13 +198,13 @@ boxes, this may not work so well.
 \set[parameter=linespacing.fit-font.extra-space,value=5pt]
 
 As with \code{fit-glyph}, you can insert extra space between the lines with the
-\code{linespacing.fit-font.\goodbreak{}extra-space} parameter.
+\autodoc:setting{linespacing.fit-font.extra-space} parameter.
 
 \medskip
 \set[parameter=linespacing.method,value=css]
 \set[parameter=linespacing.css.line-height,value=2em]
 \noindent{}• \code{css}. This is similar to the method used in browsers; the baseline
-distance is set with the \code{linespacing.\goodbreak{}css.line-height} parameter, and the excess
+distance is set with the \autodoc:setting{linespacing.css.line-height} parameter, and the excess
 \font[size=20pt]{space} between this parameter and the actual height of the line is distributed
 between the top and bottom of the line.
 \medskip

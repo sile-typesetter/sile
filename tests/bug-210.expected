@@ -3,49 +3,49 @@ Begin page
 Mx 	54.8208
 My 	76.6203
 Set font 	Gentium Plus;10;400;;normal;;LTR
-T	49 82 87	(Not)
+T	49 82 87 w=14.9609	(Not)
 Mx 	72.4523
-T	84 88 82 87 72 71	(quoted)
+T	84 88 82 87 72 71 w=28.7402	(quoted)
 Mx 	101.1925
 My 	73.4416
 Set font 	Gentium Plus;6.81152;400;;normal;;LTR
-T	20	(1)
+T	20 w=3.1962	(1)
 Mx 	104.3887
 My 	76.6203
 Set font 	Gentium Plus;10;400;;normal;;LTR
-T	17	(.)
+T	17 w=2.2900	(.)
 Mx 	59.8208
 My 	91.6203
 Set font 	Gentium Plus;8;400;;normal;;LTR
-T	52 88 82 87 72 71	(Quoted)
+T	52 88 82 87 72 71 w=23.6719	(Quoted)
 Mx 	83.4927
-T	17	(.)
+T	17 w=1.8320	(.)
 Mx 	85.3247
 My 	89.0774
 Set font 	Gentium Plus;5.44922;400;;normal;;LTR
-T	21	(2)
+T	21 w=2.5570	(2)
 Mx 	34.8208
 My 	483.1717
 Set font 	Gentium Plus;9;400;;normal;;LTR
-T	20	(1)
+T	20 w=4.2231	(1)
 Mx 	39.0439
-T	17	(.)
+T	17 w=2.0610	(.)
 Mx 	59.1050
-T	49 82 87	(Not)
+T	49 82 87 w=13.4648	(Not)
 Mx 	74.9739
-T	84 88 82 87 72 71	(quoted)
-Mx 	34.8208
+T	84 88 82 87 72 71 w=25.8662	(quoted)
+Mx 	59.8208
 My 	494.5242
-T	21	(2)
-Mx 	39.0439
-T	17	(.)
-Mx 	59.1050
-T	52 88 82 87 72 71	(Quoted)
-Mx 	85.7358
-T	17	(.)
+T	21 w=4.2231	(2)
+Mx 	64.0439
+T	17 w=2.0610	(.)
+Mx 	84.1050
+T	52 88 82 87 72 71 w=26.6309	(Quoted)
+Mx 	110.7358
+T	17 w=2.0610	(.)
 Mx 	195.4611
 My 	519.8019
 Set font 	Gentium Plus;10;400;;normal;;LTR
-T	20	(1)
+T	20 w=4.6924	(1)
 End page
 Finish

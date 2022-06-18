@@ -1,16 +1,10 @@
 \begin[papersize=a5,class=book]{document}
 \script[src=packages/lorem]
 \script[src=packages/rules]
-\script{
- SILE.scratch.insertions.classes.footnote.topSkip = SILE.length.parse("5pt")
- SILE.scratch.insertions.classes.footnote.interInsertionSkip = SILE.length.parse("24pt")
- SILE.typesetter:registerPageEndHook(function()
-    for _,f in pairs(SILE.frames) do
-      --SILE.outputter:debugFrame(f)
-    end
- end)
-}
-
+\begin{script}
+SILE.scratch.insertions.classes.footnote.topSkip = SILE.length("5pt")
+SILE.scratch.insertions.classes.footnote.interInsertionSkip = SILE.length("24pt")
+\end{script}
 \lorem[words=50]\footnote{\hrule[width=2pt, height=19.82421875pt]}
 
 \lorem[words=50]\footnote{\hrule[width=2pt, height=39.82421875pt]}

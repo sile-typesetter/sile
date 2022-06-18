@@ -1,15 +1,15 @@
 \begin[papersize=a6]{document}
 \script[src=packages/frametricks]
 \script{
-SILE.registerCommand("donothing", function(o,c)
-  SILE.settings.pushState()
-SILE.settings.temporarily(function()
-  SILE.settings.set("document.lskip", SILE.nodefactory.newGlue("0pt"))
-  SILE.process(c)
-  SILE.call("par")
-end)
-SILE.settings.popState()
-end)
+  SILE.registerCommand("donothing", function (options, content)
+    SILE.settings:pushState()
+    SILE.settings:temporarily(function ()
+      SILE.settings:set("document.lskip", SILE.nodefactory.glue("0pt"))
+      SILE.process(content)
+      SILE.call("par")
+    end)
+    SILE.settings:popState()
+  end)
 }
 
 \set[parameter=document.spaceskip,value=2.5pt plus 2.5pt minus 1pt]

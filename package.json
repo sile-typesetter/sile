@@ -1,0 +1,86 @@
+{
+  "name": "sile",
+  "version": "0.13.0",
+  "description": "The SILE Typesetter",
+  "main": "sile",
+  "scripts": {
+    "test": "make test",
+    "release": "standard-version",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sile-typesetter/sile.git"
+  },
+  "author": "Simon Cozens",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sile-typesetter/sile/issues"
+  },
+  "homepage": "http://sile-typesetter.org",
+  "devDependencies": {
+    "@commitlint/cli": "^17.0.2",
+    "@commitlint/config-conventional": "^17.0.2",
+    "@commitlint/prompt": "^17.0.0",
+    "commitizen": "^4.2.4",
+    "conventional-changelog-cli": "^2.2.2",
+    "husky": "^8.0.1",
+    "standard-version": "^9.5.0",
+    "yaml": "^2.1.1"
+  },
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/prompt"
+    }
+  },
+  "standard-version": {
+    "bumpFiles": [
+      {
+        "filename": "action.yml",
+        "updater": "build-aux/action-updater.js"
+      },
+      {
+        "filename": "package.json",
+        "type": "json"
+      }
+    ],
+    "infile": "CHANGELOG.md",
+    "types": [
+      {
+        "type": "feat",
+        "section": "New Features"
+      },
+      {
+        "type": "fix",
+        "section": "Bug Fixes"
+      },
+      {
+        "type": "chore",
+        "section": "Behind the Scenes",
+        "hidden": true
+      },
+      {
+        "type": "docs",
+        "hidden": true
+      },
+      {
+        "type": "style",
+        "hidden": true
+      },
+      {
+        "type": "refactor",
+        "section": "Changes",
+        "hidden": true
+      },
+      {
+        "type": "perf",
+        "section": "Optimizations"
+      },
+      {
+        "type": "test",
+        "hidden": true
+      }
+    ],
+    "preset": "conventionalcommits"
+  }
+}

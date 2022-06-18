@@ -5,22 +5,21 @@ SILE.inputs.XML = {
   end,
   process = function (doc)
     local lom = require("lomwithpos")
-    local t, err = lom.parse(doc)
-    if t == nil then
+    local content, err = lom.parse(doc)
+    if content == nil then
       error(err)
     end
     local root = SILE.documentState.documentClass == nil
     if root then
-      if not(t.tag == "sile") then
+      if not(content.command == "sile") then
         SU.error("This isn't a SILE document!")
       end
-      SILE.inputs.common.init(doc, t)
+      SILE.inputs.common.init(doc, content)
     end
-    SILE.currentCommand = t
-    if SILE.Commands[t.tag] then
-      SILE.Commands[t.tag](t.attr,t)
+    if SILE.Commands[content.command] then
+      SILE.call(content.command, content.options, content)
     else
-      SILE.process(t)
+      SILE.process(content)
     end
     if root and not SILE.preamble then
       SILE.documentState.documentClass:finish()

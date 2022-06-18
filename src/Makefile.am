@@ -1,3 +1,5 @@
+ACLOCAL_AMFLAGS = -I ../build-aux
+
 if LINKLUA
 MY_LUA_LIB=$(LUA_LIB)
 UNDEFINED=-no-undefined
@@ -9,7 +11,7 @@ endif
 if SYSTEM_LIBTEXPDF
 LIBTEXPDF_LIB=-ltexpdf
 else
-LIBTEXPDF_LIB=../libtexpdf/.libs/libtexpdf.la
+LIBTEXPDF_LIB=../libtexpdf/libtexpdf.la
 endif
 
 pkglib_LTLIBRARIES = justenoughharfbuzz.la justenoughlibtexpdf.la justenoughfontconfig.la fontmetrics.la svg.la
@@ -29,7 +31,7 @@ if APPKIT
 pkglib_LTLIBRARIES += macfonts.la
 macfonts_la_SOURCES = macfonts.m
 macfonts_la_LDFLAGS = -module -avoid-version -shared $(UNDEFINED)
-macfonts_la_OBJCFLAGS = $(FREETYPE_CFLAGS) $(LUA_INCLUDE)  -fmodules
+macfonts_la_OBJCFLAGS = -U VERSION $(FREETYPE_CFLAGS) $(LUA_INCLUDE)  -fmodules
 macfonts_la_LIBADD = $(FREETYPE_LIBS) $(MY_LUA_LIB)
 to_copy += .libs/macfonts.@SHARED_LIB_EXT@
 endif
