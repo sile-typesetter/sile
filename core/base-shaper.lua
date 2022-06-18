@@ -59,14 +59,21 @@ SILE.shapers.base = pl.class({
       return shapespace(width and width.length or items[1].width)
     end,
 
-    measureChar = function (self, char)
+    measureChar = function (self, char, fallible)
       local options = SILE.font.loadDefaults({})
       options.tracking = SILE.settings:get("shaper.tracking")
       local items = self:shapeToken(char, options)
+      local error_func
+      if fallible == nil or fallible == false then -- default
+        error_func = SU.error
+      else
+        error_func = SU.warn
+      end
       if #items > 0 then
         return { height = items[1].height, width = items[1].width }
       else
-        SU.error("Unable to measure character", char)
+        error_func("Unable to measure character", char)
+        return nil
       end
     end,
 

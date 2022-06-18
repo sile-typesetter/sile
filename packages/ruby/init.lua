@@ -119,7 +119,6 @@ The \autodoc:package{ruby} package provides the
 \autodoc:command[check=false]{\ruby[reading=<ruby text>]{<base text>}} command
 which sets a piece of ruby above or beside the base text. For example:
 
-% Unit zw throws errors if there is not way to shape あ
 \font:add-fallback[family=Noto Sans CJK JP]
 
 \set[parameter=ruby.height,value=12pt]

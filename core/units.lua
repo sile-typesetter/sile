@@ -201,4 +201,24 @@ units["en"] = {
   definition = "0.5em"
 }
 
+-- jlreq measures distances in units of 1em, but also assumes that an em is the
+-- width of a full-width character. In SILE terms it isn't: measuring an "m" in
+-- a 10pt Japanese font gets you 5 points. So we measure a full-width character
+-- and use that as a unit. We call it zw following ptex (zenkaku width)
+units["zw"] = {
+  relative = true,
+  definition = function (v)
+    local zenkaku = SILE.settings:get("document.zenkakuchar")
+    local measure_zenkaku = SILE.shaper:measureChar(zenkaku, true)
+    if measure_zenkaku ~= nil then
+      measure_zenkaku = measure_zenkaku.width
+    else
+      measure_zenkaku = 1
+      SU.warn("Zenkaku width (全角幅) unit zw is falling back to 1em == 1zw as we cannot measure " .. zenkaku ..
+              ". Either change this char to one suitable for your language, or load a font that has it.")
+    end
+    return v * measure_zenkaku
+  end
+}
+
 return units
