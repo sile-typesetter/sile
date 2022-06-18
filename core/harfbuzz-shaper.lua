@@ -16,7 +16,13 @@ require("core.base-shaper")
 local smallTokenSize = 20 -- Small words will be cached
 local shapeCache = {}
 local _key = function (options, text)
-  return table.concat({ text, options.tracking or "1", options.family, options.language, options.script, options.size, ("%d"):format(options.weight), options.style, options.variant, options.features, options.direction, options.filename}, ";")
+  return table.concat({
+    text,
+    options.tracking or "1",
+    options.language,
+    options.script,
+    SILE.font._key(options)
+  }, ";")
 end
 
 local substwarnings = {}
@@ -43,7 +49,7 @@ function SILE.shapers.harfbuzz:shapeToken (text, options)
       options.script,
       options.direction,
       options.language,
-      options.size,
+      ("%g"):format(SILE.measurement(options.size):tonumber()),
       options.features,
       SILE.settings:get("harfbuzz.subshapers") or ""
     ) }
