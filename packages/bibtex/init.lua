@@ -47,11 +47,9 @@ end
 
 local function init (_, _)
 
-  SILE.scratch.bibtex = { bib = {}, bibstyle = {} }
+  SILE.scratch.bibtex = { bib = {} }
 
   Bibliography = require("packages.bibtex.bibliography")
-
-  SILE.call("bibstyle", {}, "chicago") -- Load some default
 
 end
 
@@ -63,12 +61,20 @@ local function registerCommands (_)
   end)
 
   SILE.registerCommand("bibstyle", function (_, content)
-    SILE.scratch.bibtex.bibstyle = require("packages.bibtex.styles." .. content)
+    SU.deprecated("\\bibstyle", 'SILE.settings.set("bibtex.style")', "0.13.2", "0.14.0")
+    if type(content) == "table" then
+      content = content[1]
+    end
+    if type(content) == "string" then
+      SILE.settings:set("bibtex.style", content)
+    end
   end)
 
   SILE.registerCommand("cite", function (options, content)
     if not options.key then options.key = content[1] end
-    local cite = Bibliography.produceCitation(options, SILE.scratch.bibtex.bib, SILE.scratch.bibtex.bibstyle)
+    local style = SILE.settings:get("bibtex.style")
+    local bibstyle = require("packages.bibtex.styles." .. style)
+    local cite = Bibliography.produceCitation(options, SILE.scratch.bibtex.bib, bibstyle)
     if cite == Bibliography.Errors.UNKNOWN_REFERENCE then
       SU.warn("Unknown reference in citation "..options)
       return
@@ -78,7 +84,9 @@ local function registerCommands (_)
 
   SILE.registerCommand("reference", function (options, content)
     if not options.key then options.key = content[1] end
-    local cite = Bibliography.produceReference(options, SILE.scratch.bibtex.bib, SILE.scratch.bibtex.bibstyle)
+    local style = SILE.settings:get("bibtex.style")
+    local bibstyle = require("packages.bibtex.styles." .. style)
+    local cite = Bibliography.produceReference(options, SILE.scratch.bibtex.bib, bibstyle)
     if cite == Bibliography.Errors.UNKNOWN_REFERENCE then
       SU.warn("Unknown reference in citation "..options)
       return
@@ -88,9 +96,21 @@ local function registerCommands (_)
 
 end
 
+local function declareSettings (_)
+
+  SILE.settings:declare({
+    parameter = "bibtex.style",
+    type = "string",
+    default = "chicago",
+    help = "BibTeX style"
+  })
+
+end
+
 return {
   init = init,
   registerCommands = registerCommands,
+  declareSettings = declareSettings,
   documentation = [[\begin{document}
 BibTeX is a citation management system. It was originally designed
 for TeX but has since been integrated into a variety of situations.
