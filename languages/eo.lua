@@ -13,11 +13,6 @@ SILE.hyphenator.languages.eo.patterns = {
 SILE.settings:declare({ parameter = "languages.eo.ordinal.raisedsuffix", type = "boolean", default = false })
 SILE.settings:declare({ parameter = "languages.eo.ordinal.hyphenbefore", type = "boolean", default = false })
 
-SILE.doTexlike([[%
-\define[command=tableofcontents:title:eo]{Enhavoj}%
-\define[command=book:chapter:pre:eo]{Ĉapitro }%
-]])
-
 local function eo_nth(n)
   if n == nil then
     n = ""
