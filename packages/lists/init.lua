@@ -1,11 +1,8 @@
 --
--- (Very) lightweight enumerations and bullet lists for SILE
+-- Enumerations and bullet lists for SILE
 -- Donated to the SILE typesetter - 2021-2022, Didier Willis
 -- This a trimmed-down version of the feature-richer but more experimental
 -- "enumitem" package (https://github.com/Omikhleia/omikhleia-sile-packages).
--- It supports the same settings and has the same default appearance, so
--- it should be able to be replaced if the latter eventually attains a
--- satisfying state.
 -- License: MIT
 --
 -- NOTE: Though not described explicitly in the documentation, the package supports
@@ -36,8 +33,6 @@
 -- But personally, for simple lists, I prefer the first "more readable" one.
 --
 
--- BEGIN "SIMPLIFIED" STYLES
--- They follow the same definition as the "default" styles in "enumitem"
 local styles = {
   enumerate = {
     { display = "arabic", after = "." },
@@ -50,7 +45,6 @@ local styles = {
     { bullet = "–" }, -- en-dash
   }
 }
--- END "SIMPLIFIED" STYLES
 
 local trimLeft = function (str)
   return str:gsub("^%s*", "")
@@ -70,7 +64,7 @@ local enforceListType = function (cmd)
   end
 end
 
-local doItem = function (_, content)
+local doItem = function (class, _, content)
   local enumStyle = content._lists_.style
   local counter = content._lists_.counter
   local indent = content._lists_.indent
@@ -81,7 +75,7 @@ local doItem = function (_, content)
 
   local mark = SILE.call("hbox", {}, function ()
     if enumStyle.display then
-      SILE.typesetter:typeset(SILE.formatCounter({
+      SILE.typesetter:typeset(class:formatCounter({
         value = counter,
         display = enumStyle.display })
       )
@@ -100,7 +94,7 @@ local doItem = function (_, content)
     --  ii. Text
     -- iii. Text.
     -- Other Office software do not do that...
-    local labelIndent = SILE.settings.get("lists.enumerate.labelindent"):absolute()
+    local labelIndent = SILE.settings:get("lists.enumerate.labelindent"):absolute()
     stepback = indent - labelIndent
   else
     -- Center bullets in the indentation space
@@ -118,29 +112,29 @@ local doItem = function (_, content)
   SILE.process(content)
 end
 
-local doNestedList = function (listType, _, content)
+local doNestedList = function (_, listType, _, content)
   -- depth
-  local depth = SILE.settings.get("lists.current."..listType..".depth") + 1
+  local depth = SILE.settings:get("lists.current."..listType..".depth") + 1
 
   -- styling
   local enumStyle = styles[listType][depth]
   if not enumStyle then SU.error("List nesting is too deep") end
 
   -- indent
-  local baseIndent = (depth == 1) and SILE.settings.get("document.parindent").width:absolute() or SILE.measurement("0pt")
-  local listIndent = SILE.settings.get("lists."..listType..".leftmargin"):absolute()
+  local baseIndent = (depth == 1) and SILE.settings:get("document.parindent").width:absolute() or SILE.measurement("0pt")
+  local listIndent = SILE.settings:get("lists."..listType..".leftmargin"):absolute()
 
   -- processing
   if not SILE.typesetter:vmode() then
     SILE.call("par")
   end
-  SILE.settings.temporarily(function ()
-    SILE.settings.set("lists.current."..listType..".depth", depth)
-    SILE.settings.set("current.parindent", SILE.nodefactory.glue())
-    SILE.settings.set("document.parindent", SILE.nodefactory.glue())
-    SILE.settings.set("document.parskip", SILE.settings.get("lists.parskip"))
-    local lskip = SILE.settings.get("document.lskip") or SILE.nodefactory.glue()
-    SILE.settings.set("document.lskip", SILE.nodefactory.glue(lskip.width + (baseIndent + listIndent)))
+  SILE.settings:temporarily(function ()
+    SILE.settings:set("lists.current."..listType..".depth", depth)
+    SILE.settings:set("current.parindent", SILE.nodefactory.glue())
+    SILE.settings:set("document.parindent", SILE.nodefactory.glue())
+    SILE.settings:set("document.parskip", SILE.settings:get("lists.parskip"))
+    local lskip = SILE.settings:get("document.lskip") or SILE.nodefactory.glue()
+    SILE.settings:set("document.lskip", SILE.nodefactory.glue(lskip.width + (baseIndent + listIndent)))
 
     local counter = 0
     for i = 1, #content do
@@ -177,10 +171,10 @@ local doNestedList = function (listType, _, content)
       SILE.call("par")
   else
     SILE.typesetter:leaveHmode()
-    if not((SILE.settings.get("lists.current.itemize.depth")
-        + SILE.settings.get("lists.current.enumerate.depth")) > 0)
+    if not((SILE.settings:get("lists.current.itemize.depth")
+        + SILE.settings:get("lists.current.enumerate.depth")) > 0)
     then
-      local g = SILE.settings.get("document.parskip").height - SILE.settings.get("lists.parskip").height
+      local g = SILE.settings:get("document.parskip").height - SILE.settings:get("lists.parskip").height
       SILE.typesetter:pushVglue(g)
     end
   end
@@ -189,42 +183,42 @@ end
 local function init (class, _)
   class:loadPackage("counters")
 
-  SILE.settings.declare({
+  SILE.settings:declare({
     parameter = "lists.current.enumerate.depth",
     type = "integer",
     default = 0,
     help = "Current enumerate depth (nesting) - internal"
   })
 
-  SILE.settings.declare({
+  SILE.settings:declare({
     parameter = "lists.current.itemize.depth",
     type = "integer",
     default = 0,
     help = "Current itemize depth (nesting) - internal"
   })
 
-  SILE.settings.declare({
+  SILE.settings:declare({
     parameter = "lists.enumerate.leftmargin",
     type = "measurement",
     default = SILE.measurement("2em"),
     help = "Left margin (indentation) for enumerations"
   })
 
-  SILE.settings.declare({
+  SILE.settings:declare({
     parameter = "lists.enumerate.labelindent",
     type = "measurement",
     default = SILE.measurement("0.5em"),
     help = "Label indentation for enumerations"
   })
 
-  SILE.settings.declare({
+  SILE.settings:declare({
     parameter = "lists.itemize.leftmargin",
     type = "measurement",
     default = SILE.measurement("1.5em"),
     help = "Left margin (indentation) for bullet lists (itemize)"
   })
 
-  SILE.settings.declare({
+  SILE.settings:declare({
     parameter = "lists.parskip",
     type = "vglue",
     default = SILE.nodefactory.vglue("0pt plus 1pt"),
@@ -233,21 +227,21 @@ local function init (class, _)
 
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
   SILE.registerCommand("enumerate", function (options, content)
-    doNestedList("enumerate", options, content)
+    doNestedList(class, "enumerate", options, content)
   end)
 
   SILE.registerCommand("itemize", function (options, content)
-    doNestedList("itemize", options, content)
+    doNestedList(class, "itemize", options, content)
   end)
 
   SILE.registerCommand("item", function (options, content)
     if not content._lists_ then
       SU.error("The item command shall not be called outside a list")
     end
-    doItem(options, content)
+    doItem(class, options, content)
   end)
 
 end
