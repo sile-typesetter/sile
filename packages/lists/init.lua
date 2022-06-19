@@ -7,7 +7,7 @@
 --
 -- NOTE: Though not described explicitly in the documentation, the package supports
 -- two nesting techniques:
--- The "simple" one
+-- The "simple" or compact one:
 --    \begin{itemize}
 --       \item{L1.1}
 --       \begin{itemize}
@@ -27,10 +27,12 @@
 --       \item{L1.1
 --         \begin{itemize}
 --            \item{L2.1}
---         \end{itemize}%s
+--         \end{itemize}%
 --         This is still in L1.1}
 --    \end{itemize}
 -- But personally, for simple lists, I prefer the first "more readable" one.
+-- Lists from Mardown, obviously, due to their structure, would need the
+-- second technique.
 --
 
 local styles = {
@@ -38,8 +40,14 @@ local styles = {
     { display = "arabic", after = "." },
     { display = "roman", after = "." },
     { display = "alpha", after = ")" },
+    { display = "arabic", after = ")" },
+    { display = "roman", after = ")" },
+    { display = "alpha", after = "." },
   },
   itemize = {
+    { bullet = "•" }, -- black bullet
+    { bullet = "◦" }, -- circle bullet
+    { bullet = "–" }, -- en-dash
     { bullet = "•" }, -- black bullet
     { bullet = "◦" }, -- circle bullet
     { bullet = "–" }, -- en-dash
@@ -64,7 +72,7 @@ local enforceListType = function (cmd)
   end
 end
 
-local doItem = function (class, _, content)
+local doItem = function (class, options, content)
   local enumStyle = content._lists_.style
   local counter = content._lists_.counter
   local indent = content._lists_.indent
@@ -75,13 +83,15 @@ local doItem = function (class, _, content)
 
   local mark = SILE.call("hbox", {}, function ()
     if enumStyle.display then
+      if enumStyle.before then SILE.typesetter:typeset(enumStyle.before) end
       SILE.typesetter:typeset(class:formatCounter({
         value = counter,
         display = enumStyle.display })
       )
-      SILE.typesetter:typeset(enumStyle.after)
+      if enumStyle.after then SILE.typesetter:typeset(enumStyle.after) end
     else
-      SILE.typesetter:typeset(enumStyle.bullet)
+      local bullet = options.bullet or enumStyle.bullet
+      SILE.typesetter:typeset(bullet)
     end
   end)
   table.remove(SILE.typesetter.state.nodes) -- steal it back
@@ -112,13 +122,25 @@ local doItem = function (class, _, content)
   SILE.process(content)
 end
 
-local doNestedList = function (_, listType, _, content)
+local doNestedList = function (_, listType, options, content)
   -- depth
   local depth = SILE.settings:get("lists.current."..listType..".depth") + 1
 
   -- styling
   local enumStyle = styles[listType][depth]
   if not enumStyle then SU.error("List nesting is too deep") end
+  -- options may override the default styling
+  enumStyle = pl.tablex.copy(enumStyle) -- shallow copy for possible overrides
+  if enumStyle.display then
+    if options.before or options.after then
+      -- for before/after, don't mix default style and options
+      enumStyle.before = options.before or ""
+      enumStyle.after = options.after or ""
+    end
+    if options.display then enumStyle.display = options.display end
+  else
+    enumStyle.bullet = options.bullet or enumStyle.bullet
+  end
 
   -- indent
   local baseIndent = (depth == 1) and SILE.settings:get("document.parindent").width:absolute() or SILE.measurement("0pt")
@@ -136,7 +158,7 @@ local doNestedList = function (_, listType, _, content)
     local lskip = SILE.settings:get("document.lskip") or SILE.nodefactory.glue()
     SILE.settings:set("document.lskip", SILE.nodefactory.glue(lskip.width + (baseIndent + listIndent)))
 
-    local counter = 0
+    local counter = options.start and (SU.cast("integer", options.start) - 1) or 0
     for i = 1, #content do
       if type(content[i]) == "table" then
         if content[i].command == "item" then
@@ -282,6 +304,13 @@ setting (defaults to 1.5em) and the bullet is centered in that margin.
 Note that if your document has a paragraph indent enabled at this point, it
 is also added to the first list level.
 
+The package has a default style for each level, but you can explicitly select a bullet
+symbol of your choice to be used, by specifying the options \autodoc:parameter{bullet=<character>},
+on the \autodoc:environment{itemize} environment.
+
+You can also force a specific bullet character to be used on a specific item with
+\autodoc:command{\item[bullet=<character>]}.
+
 \smallskip
 \em{Enumerations.}
 \novbreak
@@ -290,6 +319,9 @@ The \autodoc:environment{enumerate} environment initiates an enumeration.
 Each item shall, again, be wrapped in an \autodoc:command{\item}
 command. This environment too is regarded as a structure, so the same rules
 as above apply.
+
+The enumeration starts at one, unless you specify the \autodoc:parameter{start=<integer>}
+option (a numeric value, regardless of the display format).
 
 \begin{enumerate}
     \item{Lorem}
@@ -312,6 +344,12 @@ setting specifies the distance between the label and the previous indentation le
 to 0.5em). Tune these settings at your convenience depending on your styles. If there is a more
 general solution to this subtle issue, this author accepts patches.\footnote{TeX typesets
 the enumeration label ragged left. Other Office software do not.}
+
+The package has a default style for each level, but you can explicitly select the display type
+(format) of the values (as “arabic”, “roman”, etc.), and the text prepended or appended
+to them, by specifying the options \autodoc:parameter{display=<display>},
+\autodoc:parameter{before=<string>}, and \autodoc:parameter{after=<string>} to the
+\autodoc:environment{enumerate} environment.
 
 \smallskip
 
