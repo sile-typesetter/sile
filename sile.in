@@ -7,32 +7,50 @@ SHARED_LIB_EXT = "@SHARED_LIB_EXT@"
 local executable = debug.getinfo(1, "S").short_src
 local luaversion = _VERSION:match("%d+%.%d+")
 
-local extendPath = function (path)
+local extendPath = function (path, ours)
   package.cpath = path .. "/core/?.@SHARED_LIB_EXT@;" .. package.cpath
   package.cpath = path .. "/?.@SHARED_LIB_EXT@;" .. package.cpath
-  if "@SYSTEM_LUAROCKS_FALSE@" == "" then -- see ./configure --with[out]-system-luarocks
-    package.cpath = path .. '/lua_modules/lib/lua/' .. luaversion .. '/?.so;' .. package.cpath
-    package.path  = path .. '/lua_modules/share/lua/' .. luaversion .. '/?/init.lua;' .. package.path
-    package.path  = path .. '/lua_modules/share/lua/' .. luaversion .. '/?.lua;' .. package.path
+  if ours then
+    if "@SYSTEM_LUAROCKS_FALSE@" == "" then -- see ./configure --with[out]-system-luarocks
+      package.cpath = path .. '/lua_modules/lib/lua/' .. luaversion .. '/?.@SHARED_LIB_EXT@;' .. package.cpath
+      package.path  = path .. '/lua_modules/share/lua/' .. luaversion .. '/?/init.lua;' .. package.path
+      package.path  = path .. '/lua_modules/share/lua/' .. luaversion .. '/?.lua;' .. package.path
+    end
+    package.path  = path .. "/lua-libraries/?/init.lua;" .. package.path
+    package.path  = path .. "/lua-libraries/?.lua;" .. package.path
+  else
+    package.path  = path .. "/sile/?/init.lua;" .. package.path
+    package.path  = path .. "/sile/?.lua;" .. package.path
   end
-  package.path  = path .. "/lua-libraries/?/init.lua;" .. package.path
-  package.path  = path .. "/lua-libraries/?.lua;" .. package.path
   package.path  = path .. "/?/init.lua;" .. package.path
   package.path  = path .. "/?.lua;" .. package.path
 end
 
-extendPath("@SILE_PATH@")
-extendPath("@SILE_LIB_PATH@")
+-- Facilitate loading SILE classes & packages from system LuaRocks
+-- Also weed out CWD relative paths, we add them in a different order later
+local newpath = {}
+for path in package.path:gmatch("[^;]+") do
+  if not path:match("^./") and path:len() >= 1 then
+    table.insert(newpath, tostring(path:gsub("?", "sile/?")))
+    table.insert(newpath, path)
+  end
+end
+package.path = table.concat(newpath, ";")
+
+extendPath("@SILE_PATH@", true)
+extendPath("@SILE_LIB_PATH@", true)
 
 local pathvar = os.getenv("SILE_PATH")
 if pathvar then
   for path in string.gmatch(pathvar, "[^;]+") do
-    if path:len() >= 1 and path ~= "./" then extendPath(path) end
+    if not path:match("^./") and path:len() >= 1 then
+      extendPath(path)
+    end
   end
 end
 
 local cwd = executable:gsub("(.*/)(.*)", "%1")
-if cwd ~= "./" then extendPath(cwd) end
+if cwd ~= "./" then extendPath(cwd, true) end
 extendPath(".")
 
 SILE = require("core.sile")
