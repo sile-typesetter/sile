@@ -54,8 +54,8 @@ local function fixupPaths()
     paths = paths .. packageHome .. pkg .. '/?.lua;'
     cpaths = cpaths .. packageHome .. pkg .. "/?."..SHARED_LIB_EXT.. ";"
   end
-  package.path = origpath:gsub("?.lua", "?.lua;"..paths, 1)
-  package.cpath = origcpath .. ";" .. cpaths
+  if paths:len() >= 1 then package.path = paths .. ";" .. origpath end
+  if cpaths:len() >= 1 then package.cpath = cpaths .. ";" .. origcpath end
 end
 
 local function saveInstalled()
