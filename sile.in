@@ -35,10 +35,12 @@ for path in package.path:gmatch("[^;]+") do
     table.insert(newpath, path)
   end
 end
-package.path = table.concat(newpath, ";")
+package.path = ""
 
 extendPath("@SILE_PATH@", true)
 extendPath("@SILE_LIB_PATH@", true)
+
+package.path = table.concat(newpath, ";") .. ";" .. package.path
 
 local pathvar = os.getenv("SILE_PATH")
 if pathvar then
