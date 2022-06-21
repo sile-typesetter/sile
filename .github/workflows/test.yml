@@ -64,7 +64,7 @@ jobs:
       - name: Configure
         run: |
           ./bootstrap.sh
-          ./configure --without-system-luarocks --with${{ startsWith(matrix.luaVersion[0], '5') && 'out' || '' }}-luajit --without-manual
+          ./configure --datarootdir=$(cd ..; pwd) --without-system-luarocks --with${{ startsWith(matrix.luaVersion[0], '5') && 'out' || '' }}-luajit --without-manual
       - name: Make
         run: |
           make
