@@ -8,7 +8,6 @@ local executable = debug.getinfo(1, "S").short_src
 local luaversion = _VERSION:match("%d+%.%d+")
 
 local extendPath = function (path, ours)
-  package.cpath = path .. "/core/?.@SHARED_LIB_EXT@;" .. package.cpath
   package.cpath = path .. "/?.@SHARED_LIB_EXT@;" .. package.cpath
   if ours then
     if "@SYSTEM_LUAROCKS_FALSE@" == "" then -- see ./configure --with[out]-system-luarocks
