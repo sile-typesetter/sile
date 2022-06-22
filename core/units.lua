@@ -212,10 +212,10 @@ units["zw"] = {
     local measureable, zenkaku = pcall(SILE.shaper.measureChar, SILE.shaper, zenkakuchar)
     if not measureable then
       SU.warn(string.format([[Zenkaku width (全角幅) unit zw is falling back to 1em == 1zw as we
-    cannot measure %s. Either change this char to one suitable for your
-    language, or load a font that has it.]], zenkakuchar))
+  cannot measure %s. Either change this char to one suitable for your
+  language, or load a font that has it.]], zenkakuchar))
     end
-    local width = measureable and zenkaku.width or 1
+    local width = measureable and zenkaku.width or SILE.settings:get("font.size")
     return v * width
   end
 }
