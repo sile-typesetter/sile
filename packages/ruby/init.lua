@@ -30,6 +30,10 @@ local function init (class, _)
 
   SILE.languageSupport.loadLanguage("ja")
 
+end
+
+local function declareSettings (_)
+
   SILE.settings:declare({
     parameter = "ruby.height",
     type = "measurement",
@@ -108,6 +112,7 @@ end
 return {
   init = init,
   registerCommands = registerCommands,
+  declareSettings = declareSettings,
   documentation = [[
 \begin{document}
 Japanese texts often contain pronunciation hints (called \em{furigana}) for
