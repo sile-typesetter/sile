@@ -208,16 +208,15 @@ units["en"] = {
 units["zw"] = {
   relative = true,
   definition = function (v)
-    local zenkaku = SILE.settings:get("document.zenkakuchar")
-    local measure_zenkaku = SILE.shaper:measureChar(zenkaku, true)
-    if measure_zenkaku ~= nil then
-      measure_zenkaku = measure_zenkaku.width
-    else
-      measure_zenkaku = 1
-      SU.warn("Zenkaku width (全角幅) unit zw is falling back to 1em == 1zw as we cannot measure " .. zenkaku ..
-              ". Either change this char to one suitable for your language, or load a font that has it.")
+    local zenkakuchar = SILE.settings:get("document.zenkakuchar")
+    local measureable, zenkaku = pcall(SILE.shaper.measureChar, SILE.shaper, zenkakuchar)
+    if not measureable then
+      SU.warn(string.format([[Zenkaku width (全角幅) unit zw is falling back to 1em == 1zw as we
+    cannot measure %s. Either change this char to one suitable for your
+    language, or load a font that has it.]], zenkakuchar))
     end
-    return v * measure_zenkaku
+    local width = measureable and zenkaku.width or 1
+    return v * width
   end
 }
 
