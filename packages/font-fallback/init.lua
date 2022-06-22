@@ -101,7 +101,7 @@ local function init (_, _)
           shapeQueue:currentJob().start + newItems[startOfNotdefRun].index,
           shapeQueue:currentJob().stop
           )
-          SU.warn("Some glyph(s) not available in any fallback font, run with '-d font-fallback' for more detail")
+          SU.warn("Some glyph(s) not available in any fallback font,\n  run with '-d font-fallback' for more detail.\n")
         end
         shapeQueue:shift()
       end
