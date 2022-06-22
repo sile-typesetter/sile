@@ -254,21 +254,22 @@ going to stipulate that the gutter width will be 3\% of the page width:
 Declarations of frame dimensions are like ordinary SILE \code{<dimension>}s,
 except with three additional features:
 
-\noindent• You can refer to properties of other frames using the \code{top()},
-\code{bottom()}, \code{left()}, \code{right()}, \code{height()} and \code{width()}
-functions. These functions take a frame ID. SILE magically pre-defines the frame
-\code{page} to allow you to access the dimensions of the whole page.
-
-\noindent• You can use arithmetic functions: plus, minus, divide, multiply, and
-parenthesis have their ordinary arithmetic meaning. To declare that frame \code{b}
-should be half the height of frame \code{a} plus 5 millimeters, you can say
-\code{height=5mm + (height(b) / 2)}. However, as we will see later, it is usually
-better to structure your declarations to let SILE make those kind of computations for
-you.
-
-\noindent• Since book design is often specified in terms of proportion of a page,
-you can use the shortcut \code{width=5\%pw} instead of \code{width=0.05 * width(page)}
-and \code{height=50\%ph} instead of \code{height=0.5 * height(page)}.
+\begin{itemize}
+\item{You can refer to properties of other frames using the \code{top()},
+      \code{bottom()}, \code{left()}, \code{right()}, \code{height()} and
+      \code{width()} functions. These functions take a frame ID. SILE magically
+      pre-defines the frame \code{page} to allow you to access the dimensions
+      of the whole page.}
+\item{You can use arithmetic functions: plus, minus, divide, multiply, and
+      parenthesis have their ordinary arithmetic meaning. To declare that frame
+      \code{b} should be half the height of frame \code{a} plus 5 millimeters,
+      you can say \code{height=5mm + (height(b) / 2)}. However, as we will see
+      later, it is usually better to structure your declarations to let SILE
+      make those kind of computations for you.}
+\item{Since book design is often specified in terms of proportion of a page,
+      you can use the shortcut \code{width=5\%pw} instead of \code{width=0.05 * width(page)}
+      and \code{height=50\%ph} instead of \code{height=0.5 * height(page)}.}
+\end{itemize}
 
 \end{note}
 
@@ -280,13 +281,13 @@ margin of the left column is the left margin of the typeblock; the right margin 
 the right column is the right margin of the typeblock. But we also want
 a few other parameters to ensure that:
 
-\noindent• the gutter is placed between our two columns
-
-\noindent• the two columns have the same width (We don’t know what that width is, but SILE
-will work it out for us.)
-
-\noindent• after the left column is full, typesetting should move to the right
-column.
+\begin{itemize}
+\item{the gutter is placed between our two columns}
+\item{the two columns have the same width (We don’t know what that width is,
+      but SILE will work it out for us.)}
+\item{after the left column is full, typesetting should move to the right
+      column.}
+\end{itemize}
 
 \begin{verbatim}
 \line

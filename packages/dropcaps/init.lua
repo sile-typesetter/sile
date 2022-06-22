@@ -29,7 +29,7 @@ local function registerCommands (class)
     local color = options.color
     options.size = nil -- we need to measure the "would have been" size before using this
 
-    if color then class:loadPackage("packages.color") end
+    if color then class:loadPackage("color") end
 
     -- We want the drop cap to span over N lines, that is N - 1 baselineskip + the height of the first line.
     -- Note this only works for the default linespace mechanism.

@@ -11,9 +11,10 @@ obscure corners as the documentation progresses.
 The most basic command for altering the look of the text is the \code{\\font}
 command; it takes two forms:
 
-\noindent{}• \code{\\font[\em{parameters…}]\{\em{argument}\}}
-
-\noindent{}• \code{\\font[\em{parameters…}]}
+\begin{itemize}
+\item{\code{\\font[\em{parameters…}]\{\em{argument}\}}}
+\item{\code{\\font[\em{parameters…}]}}
+\end{itemize}
 
 The first form sets the given argument text in the specified font; the
 second form changes the font used to typeset text from this point on.
@@ -64,42 +65,36 @@ current page width or height, the current frame width or height, and the line wi
 You can specify lengths in terms of the current paragraph skip (\code{ps}) and
 baseline skip (\code{bs}), which will make sense later on. Additional units are
 available relative to the largest or smallest value of either axis (\code{\%pmax},
-\code{\%pmin}, \code{\%fmax, \code{\%fmin}}).
+\code{\%pmin}, \code{\%fmax}, \code{\%fmin}).
 
 The full list of attributes to the \code{\\font} command are:
 
-\medskip
-
-\noindent{}• \em{size}: as above.
-
-\noindent{}• \em{family}: the name of the font to be selected. SILE should know
-about all the fonts installed on your system, so that fonts can be specified by
-their name.
-
-\noindent{}• \em{filename}: if a filename is supplied, SILE will use the font file provided rather than looking at your system’s font library.
-
-\noindent{}• \em{style}: can be \code{normal} or \code{italic}.
-
-\noindent{}• \em{weight}: a CSS-style numeric weight ranging from \font[weight=100]{100},
-through \font[weight=200]{200},
-\font[weight=300]{300},
-\font[weight=400]{400},
-\font[weight=500]{500},
-\font[weight=600]{600},
-\font[weight=700]{700},
-\font[weight=800]{800} to
-\font[weight=900]{900}. Not all fonts will support all weights (many just have
-two), but SILE will choose the closest.
-
-\noindent{}• \em{variant}: a font variant (\code{normal}, \code{smallcaps})
-
-\noindent{}• \em{language}: The two letter (ISO639-1) language code for the
-text. This will affect both font shaping and hyphenation.
-
-\noindent{}• \em{direction}: The expected text direction. (\code{LTR-TTB} for left to right, top to bottom; \code{RTL-BTT} would set text right to left, bottom to top!)
-
-\noindent{}• \em{script}: The script family in use. (See chapter 7, “Language”, for more on these past three settings.)
-\medskip
+\begin{itemize}
+\item{\autodoc:parameter{size}: as above.}
+\item{\autodoc:parameter{family}: the name of the font to be selected. SILE should know
+      about all the fonts installed on your system, so that fonts can be specified by
+      their name.}
+\item{\autodoc:parameter{filename}: if a filename is supplied, SILE will use the font
+      file provided rather than looking at your system’s font library.}
+\item{\autodoc:parameter{style}: can be \code{normal} or \code{italic}.}
+\item{\autodoc:parameter{weight}: a CSS-style numeric weight ranging from \font[weight=100]{100},
+      through \font[weight=200]{200},
+      \font[weight=300]{300},
+      \font[weight=400]{400},
+      \font[weight=500]{500},
+      \font[weight=600]{600},
+      \font[weight=700]{700},
+      \font[weight=800]{800} to
+      \font[weight=900]{900}. Not all fonts will support all weights (many just have
+      two), but SILE will choose the closest.}
+\item{\autodoc:parameter{variant}: a font variant (\code{normal}, \code{smallcaps})}
+\item{\autodoc:parameter{language}: The two letter (ISO639-1) language code for the
+text. This will affect both font shaping and hyphenation.}
+\item{\autodoc:parameter{direction}: The expected text direction. (\code{LTR-TTB} for
+      left to right, top to bottom; \code{RTL-BTT} would set text right to left, bottom to top!)}
+\item{\autodoc:parameter{script}: The script family in use. (See chapter 7, “Language”, for more
+      on these past three settings.)}
+\end{itemize}
 
 It’s quite fiddly to be always changing font specifications manually; later
 we’ll see some ways to automate the process. SILE provides the \code{\\em\{…\}}
