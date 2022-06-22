@@ -188,8 +188,6 @@ basic functionality to other packages and classes. Classes such as the
 \package-documentation[src=packages/indexer]
 
 \subsection{lists}
-\script[src=packages/font-fallback]
-\font:add-fallback[family=Symbola]% HACK Gentium Plus (SILE default font) lacks the circle bullet :(
 \package-documentation[src=packages/lists]
 
 \subsection{math}

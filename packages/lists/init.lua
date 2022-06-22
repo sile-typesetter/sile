@@ -272,6 +272,7 @@ return {
   init = init,
   registerCommands = registerCommands,
   documentation = [[\begin{document}
+\font:add-fallback[family=Symbola]% HACK Gentium Plus (SILE default font) lacks the circle bullet :(
 The \autodoc:package{lists} package provides enumerations and bullet lists
 (a.k.a. \em{itemization}\kern[width=0.1em]) which can be nested together.
 
@@ -397,5 +398,6 @@ with fancy line-breaking features such as hanged or shaped paragraphs. Please be
 typographer. Also, these lists have not been experimented yet in right-to-left
 or vertical writing direction.
 
+\font:remove-fallback
 \end{document}]]
 }
