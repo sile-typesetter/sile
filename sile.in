@@ -4,55 +4,67 @@
 SYSTEM_SILE_PATH = "@SILE_PATH@"
 SHARED_LIB_EXT = "@SHARED_LIB_EXT@"
 
-local executable = debug.getinfo(1, "S").short_src
+local executable = debug.getinfo(1, "S").source
 local luaversion = _VERSION:match("%d+%.%d+")
 
-local extendPath = function (path, ours)
-  package.cpath = path .. "/?.@SHARED_LIB_EXT@;" .. package.cpath
-  if ours then
-    if "@SYSTEM_LUAROCKS_FALSE@" == "" then -- see ./configure --with[out]-system-luarocks
-      package.cpath = path .. '/lua_modules/lib/lua/' .. luaversion .. '/?.@SHARED_LIB_EXT@;' .. package.cpath
-      package.path  = path .. '/lua_modules/share/lua/' .. luaversion .. '/?/init.lua;' .. package.path
-      package.path  = path .. '/lua_modules/share/lua/' .. luaversion .. '/?.lua;' .. package.path
-    end
-    package.path  = path .. "/lua-libraries/?/init.lua;" .. package.path
-    package.path  = path .. "/lua-libraries/?.lua;" .. package.path
-  else
-    package.path  = path .. "/sile/?/init.lua;" .. package.path
-    package.path  = path .. "/sile/?.lua;" .. package.path
-  end
+local function prependPath (path)
   package.path  = path .. "/?/init.lua;" .. package.path
   package.path  = path .. "/?.lua;" .. package.path
 end
 
--- Facilitate loading SILE classes & packages from system LuaRocks
--- Also weed out CWD relative paths, we add them in a different order later
-local newpath = {}
-for path in package.path:gmatch("[^;]+") do
-  if not path:match("^./") and path:len() >= 1 then
-    table.insert(newpath, tostring(path:gsub("?", "sile/?")))
-    table.insert(newpath, path)
+local function prependCPath (path)
+  package.cpath = path .. "/?.@SHARED_LIB_EXT@;" .. package.cpath
+end
+
+local function extendPaths (path, ours)
+  prependCPath(path)
+  prependPath(path)
+  if ours then
+    prependPath(path .. "/lua-libraries")
+    if "@SYSTEM_LUAROCKS_FALSE@" == "" then -- see ./configure --with[out]-system-luarocks
+      prependCPath(path .. "/lua_modules/lib/lua/" .. luaversion)
+      prependPath(path .. "/lua_modules/share/lua/" .. luaversion)
+    end
+  else
+    prependCPath(path .. "/sile")
+    prependPath(path .. "/sile")
   end
 end
-package.path = ""
 
-extendPath("@SILE_PATH@", true)
-extendPath("@SILE_LIB_PATH@", true)
+-- Facilitate loading SILE classes & packages from system LuaRocks
+-- Also weed out CWD relative paths, we add them in a different order later
+local luapath = {}
+local extpath = {}
+for path in package.path:gmatch("[^;]+") do
+  -- We want to add `./?` back in an earlier slot but leave Nix Fake's "./shared"
+  if not path:match("^./%?") and path:len() >= 1 then
+    table.insert(extpath, tostring(path:gsub("?", "sile/?")))
+    table.insert(luapath, path)
+  end
+end
+package.path = table.concat(luapath, ";")
 
-package.path = table.concat(newpath, ";") .. ";" .. package.path
+extendPaths("@SILE_PATH@", true)
+extendPaths("@SILE_LIB_PATH@", true)
+
+package.path = table.concat(extpath, ";") .. ";" .. package.path
 
 local pathvar = os.getenv("SILE_PATH")
 if pathvar then
   for path in string.gmatch(pathvar, "[^;]+") do
     if not path:match("^./") and path:len() >= 1 then
-      extendPath(path)
+      extendPaths(path)
     end
   end
 end
 
-local cwd = executable:gsub("(.*/)(.*)", "%1")
-if cwd ~= "./" then extendPath(cwd, true) end
-extendPath(".")
+local cwd = executable:gsub("(.*)(/.*)", "%1")
+if cwd:match("^@") then -- Consider "ours" for the sake of Nix Flake
+  extendPaths(".", true)
+else
+  if cwd ~= "./" then extendPaths(cwd) end
+  extendPaths(".")
+end
 
 SILE = require("core.sile")
 
@@ -77,7 +89,7 @@ SILE.init()
 
 if SILE.masterFilename then
 
-  extendPath(SILE.masterDir)
+  extendPaths(SILE.masterDir)
 
   if SU.debugging("profile") then
     ProFi:start()
