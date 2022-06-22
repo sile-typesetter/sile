@@ -190,17 +190,15 @@ or \code{centered} to control which style is used. The default is \code{left}
 
 \subsection{Esperanto}
 
-Esperanto typesetting is quite straight forward, however one feature of the
-language is unique: the requirement that \em{all} adjectives, including
-numerals, have the suffix “ª”, including numbers standing on their own. For
-example, “the 15th of March” is, in Esperanto, “la 15ª de marto”. As there is
-lack of agreement on how to typeset this (Vikipedio prefers “15-a” while most
-professional books and posters prefer “15ª”, while some authors even write
-“15a” as the underlying word is “dekkvina”), you have options:
-\autodoc:setting[check=false]{languages.eo.ordinal.raisedsuffix} when made true
-will use ª (as in “apitro 1ª”) while
-\autodoc:setting[check=false]{languages.eo.ordinal.hyphenbefore} will prepend a
-hyphen (as in “apitro 15-a”).
+\define[command=eo]{\font[language=eo]{\process}}
+
+Esperanto typesetting is quite straight forward, however one feature of the language is unique:
+the requirement that \em{all} adjectives, including numerals, have the suffix “\eo{ª}”.
+This includes numbers standing on their own.
+For example, “the 15th of March” is, in Esperanto, “\eo{la 15ª de marto}”.
+As there is lack of agreement\footnote{Wikipedia prefers “\eo{15-a}” while most professional books and posters prefer “\eo{15ª}”, while some authors even write “\eo{15a}” as the underlying word is “\eo{dekkvina}”.} on how to typeset this, you have options:
+\autodoc:setting[check=false]{languages.eo.ordinal.raisedsuffix} when made true will use \eo{ª} (as in “\eo{apitro 1ª}”) while
+\autodoc:setting[check=false]{languages.eo.ordinal.hyphenbefore} will prepend a hyphen (as in “\eo{apitro 15-a}”).
 
 \subsection{French}
 
