@@ -115,7 +115,6 @@ local font = {
     if not SILE.fontCache[key] then
       SU.debug("fonts", "Looking for "..key)
       local face = callback(options)
-      SILE.font.postLoadHook(face)
       SILE.fontCache[key] = face
     end
     local cached = SILE.fontCache[key]
