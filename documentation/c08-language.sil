@@ -209,11 +209,6 @@ Japanese language. The easiest way to set up the other elements of Japanese
 typesetting such as the \em{hanmen} grid and optional vertical typesetting
 support is by using the \code{jplain} class.
 
-% See https://github.com/sile-typesetter/sile/issues/1245
-\font:add-fallback[family=Noto Sans CJK JP]
-\script[src=packages/ruby]
-\font:remove-fallback
-
 \package-documentation[src=packages/hanmenkyoshi]
 
 \package-documentation[src=packages/tate]
