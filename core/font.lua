@@ -1,5 +1,7 @@
 local icu = require("justenoughicu")
 
+local lastshaper
+
 SILE.registerCommand("font", function (options, content)
   if SU.hasContent(content) then SILE.settings:pushState() end
   if options.filename then SILE.settings:set("font.filename", options.filename) end
@@ -49,6 +51,11 @@ SILE.registerCommand("font", function (options, content)
   if SU.hasContent(content) then
     SILE.process(content)
     SILE.settings:popState()
+    if SILE.shaper._name == "harfbuzzWithColor" and lastshaper then
+      SU.debug("color-fonts", "Switching from color fonts shaper back to previous shaper")
+      SILE.typesetter:leaveHmode(true)
+      lastshaper, SILE.shaper = nil, lastshaper
+    end
   end
 end, "Set current font family, size, weight, style, variant, script, direction and language")
 
@@ -111,7 +118,9 @@ local font = {
       SILE.font.postLoadHook(face)
       SILE.fontCache[key] = face
     end
-    return SILE.fontCache[key]
+    local cached = SILE.fontCache[key]
+    SILE.font.postLoadHook(cached)
+    return cached
   end,
 
   postLoadHook = function(face)
@@ -119,6 +128,11 @@ local font = {
     local font = ot.parseFont(face)
     if font.cpal then
       SILE.require("packages.color-fonts")
+      if SILE.shaper._name ~= "harfbuzzWithColor" then
+        SU.debug("color-fonts", "Switching to color font Shaper")
+        SILE.typesetter:leaveHmode(true)
+        lastshaper, SILE.shaper = SILE.shaper, SILE.shapers.harfbuzzWithColor()
+      end
     end
   end,
 
