@@ -51,15 +51,6 @@ local outputTateChuYoko = function (self, typesetter, line)
 
 end
 
-local function init (class, _)
-
-  -- Japaneese language support defines units which are useful here
-  class:loadPackage("font-fallback")
-  SILE.call("font:add-fallback", { family = "Noto Sans CJK JP" })
-  SILE.languageSupport.loadLanguage("ja")
-
-end
-
 local function registerCommands (class)
 
   SILE.registerCommand("tate-frame", function (options, _)
@@ -150,7 +141,6 @@ local function registerCommands (class)
 end
 
 return {
-  init = init,
   registerCommands = registerCommands,
   documentation = [[
 \begin{document}

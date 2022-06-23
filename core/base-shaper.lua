@@ -35,6 +35,7 @@ local function shapespace (spacewidth)
 end
 
 SILE.shapers.base = pl.class({
+    _name = "base",
 
     -- Return the length of a space character
     -- with a particular set of font options,
