@@ -170,8 +170,8 @@ selection:
 SILE inserts word break opportunities after Ethiopic word spaces and full
 stops. Amharic can be typeset in two styles: with space surrounding
 punctuation or space after punctuation. You can set the setting
-\autodoc:setting[check=false]{languages.am.justification} to either \code{left} or \code{centered}
-to control which style is used. The default is \code{left}
+\autodoc:setting[check=false]{languages.am.justification} to either \code{left}
+or \code{centered} to control which style is used. The default is \code{left}
 
 \begin{verbatim}
 \line
@@ -187,6 +187,18 @@ to control which style is used. The default is \code{left}
 
 \set[parameter=languages.am.justification,value=centered]
 \font[family=Noto Sans Ethiopic,language=am]{ሰላም፡ልዑል}
+
+\subsection{Esperanto}
+
+\define[command=eo]{\font[language=eo]{\process}}
+
+Esperanto typesetting is quite straight forward, however one feature of the language is unique:
+the requirement that \em{all} adjectives, including numerals, have the suffix “\eo{ª}”.
+This includes numbers standing on their own.
+For example, “the 15th of March” is, in Esperanto, “\eo{la 15ª de marto}”.
+As there is lack of agreement\footnote{Wikipedia prefers “\eo{15-a}” while most professional books and posters prefer “\eo{15ª}”, while some authors even write “\eo{15a}” as the underlying word is “\eo{dekkvina}”.} on how to typeset this, you have options:
+\autodoc:setting[check=false]{languages.eo.ordinal.raisedsuffix} when made true will use \eo{ª} (as in “\eo{apitro 1ª}”) while
+\autodoc:setting[check=false]{languages.eo.ordinal.hyphenbefore} will prepend a hyphen (as in “\eo{apitro 15-a}”).
 
 \subsection{French}
 
@@ -208,9 +220,6 @@ shori) and intercharacter spacing is fully supported on selecting the
 Japanese language. The easiest way to set up the other elements of Japanese
 typesetting such as the \em{hanmen} grid and optional vertical typesetting
 support is by using the \code{jplain} class.
-
-% See https://github.com/sile-typesetter/sile/issues/1245
-\script[src=packages/ruby]
 
 \package-documentation[src=packages/hanmenkyoshi]
 

@@ -67,6 +67,13 @@ function settings:_init()
     help = "Skip to be added to left side of line"
   })
 
+  self:declare({
+    parameter = "document.zenkakuchar",
+    default = "あ",
+    type = "string",
+    help = "The character measured to determine the length of a zenkaku width (全角幅)"
+  })
+
   SILE.registerCommand("set", function(options, content)
     local parameter = SU.required(options, "parameter", "\\set command")
     local makedefault = SU.boolean(options.makedefault, false)

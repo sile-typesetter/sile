@@ -7,17 +7,19 @@
 \script[src=packages/image]
 \script[src=packages/frametricks]
 \script[src=packages/linespacing]
+\script[src=packages/lists]
 \script[src=packages/lorem]
 \script[src=packages/bidi]\bidi-off
 \script[src=packages/pdf]
 \script[src=packages/pullquote]
 \script[src=packages/rules]
+\script[src=packages/font-fallback]
 \define[command=notehead]{\noindent\bf{\process}\par\medskip}
 \define[command=line]{\novbreak\skip[height=5pt]\noindent\hrule[width=450pt,height=0.3pt]\par\novbreak\skip[height=5pt]}
 \define[command=note]{\medskip
-\set[parameter=document.lskip,value=24pt]
+\set[parameter=document.lskip,value=24pt]{%
 \par\goodbreak\noindent\hrule[width=450pt,height=0.75pt]\par\medskip\font[size=10pt,style=italic]{\noindent\process}\par\smallskip\noindent\hrule[width=450pt,height=0.75pt]\par
-\set[parameter=document.lskip,value=0pt]\medskip
+\set[parameter=document.lskip,value=0pt]}\medskip
 }
 \define[command=sectionsfont]{\font[weight=600,family=Roboto Condensed]{\process}}
 \define[command=tableofcontents:headerfont]{\font[weight=600,size=22pt,family=Roboto Condensed]{\process}}

@@ -1,0 +1,38 @@
+\begin[papersize=a6, class=book]{document}
+\script[src=packages/lists]
+\font[family=Libertinus Serif]% Default Gentium lacks the white circle.
+\nofolios
+\neverindent
+\set[parameter=document.parskip, value=5pt]%
+\set[parameter=lists.parskip, value=2pt]%
+% Test case: Nested itemize and enumerate with specified skips, alternate nesting method.
+
+Text flow before.
+\begin{enumerate}
+  \item{Level 1 Enum
+    \begin{itemize}
+      \item{Level 2 Item
+        \begin{enumerate}
+          \item{Level 3 Enum}
+        \end{enumerate}}
+    \end{itemize}}
+\end{enumerate}
+Text flow after, just longer to be closer to the last list level.
+
+Text flow before.
+
+\begin{enumerate}
+  \item{Level 1 Enum
+    \begin{itemize}
+      \item{Level 2 Item
+        \begin{enumerate}
+          \item{Level 3 Enum}
+        \end{enumerate}
+      Back to level 2 Item}
+    \end{itemize}
+  Back to level 1 Enum}
+\end{enumerate}
+
+Text flow after, just longer to be closer to the last list level.
+
+\end{document}

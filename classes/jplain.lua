@@ -14,14 +14,13 @@ jplain.defaultFrameset.content = {
 }
 
 function jplain:_j_common ()
+  self:loadPackage("font-fallback")
+  self:loadPackage("hanmenkyoshi")
   self:registerPostinit(function (class)
       class:bidiDisableTypesetter(SILE.typesetter)
       class:bidiDisableTypesetter(SILE.defaultTypesetter)
+      SILE.call("font:add-fallback", { family = "Noto Sans CJK JP" })
     end)
-  self:loadPackage("font-fallback")
-  SILE.call("font:add-fallback", { family = "Noto Sans CJK JP" })
-  SILE.languageSupport.loadLanguage("ja")
-  self:loadPackage("hanmenkyoshi")
   self.defaultFrameset.content.tate = self.options.layout == "tate"
   self:declareHanmenFrame("content", self.defaultFrameset.content)
   SILE.settings:set("document.parindent", SILE.nodefactory.glue("10pt"))

@@ -15,4 +15,4 @@ return pl.tablex.merge(Bibliography.Style, {
       parens(volume), number, optional(":", pages)
   end
   -- luacheck: pop
-})
+}, true)
