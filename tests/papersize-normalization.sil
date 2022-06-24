@@ -1,5 +1,0 @@
-\begin[papersize=A-6]{document}
-% The paper size being capitalized and hyphenated is non-standard but supported.
-% This test makes sure case and hyphen normalization works.
-\nofolios
-\end{document}
