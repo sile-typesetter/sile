@@ -1,4 +1,5 @@
 \begin[class=jplain,papersize=a6]{document}
+\language[main=ja]
 \nofolios
 \set[parameter=document.parindent,value=0pt]
 \script[src=packages/ruby]

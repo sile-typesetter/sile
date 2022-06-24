@@ -1,4 +1,5 @@
 \begin[papersize=a4,class=jplain,layout=tate]{document}
-\font[family=Noto Sans CJK JP,lanaguage=jp]
+\language[main=ja]
+\font[family=Noto Sans CJK JP]
 \latin-in-tate{Hello world.}
 \end{document}

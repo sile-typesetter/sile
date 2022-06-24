@@ -1,4 +1,5 @@
 \begin[class=jplain]{document}
+\language[main=ja]
 \nofolios
 \set[parameter=document.parindent,value=0pt]
 \show-hanmen

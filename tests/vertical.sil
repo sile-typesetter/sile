@@ -1,4 +1,5 @@
 \begin[class=jplain,layout=tate]{document}
+\language[main=ja]
 \nofolios
 % Note: differences between Noto font versions make adding more characters to
 % this test brittle. For examle 日本は昔からruns into trouble when the height
