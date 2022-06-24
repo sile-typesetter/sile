@@ -257,9 +257,14 @@ displaying page numbers, and so on.
 
 The key methods for defining the \em{output routine} are:
 
-\noindent{}• \code{newPar} and \code{endPar} are called at the start and end of each paragraph.
-
-\noindent{}• \code{newPage} and \code{endPage} are called at the start and each of each page.
+\begin{itemize}
+\item{\code{newPar} and \code{endPar} are called at the start and end of
+      each paragraph.}
+\item{\code{newPage} and \code{endPage} are called at the start
+      and each of each page.}
+\item{\code{init} and \code{finish} are called at the start and
+      end of the document.}
+\end{itemize}
 
 \noindent{}• \code{init} and \code{finish} are called at the start and end of the document.
 

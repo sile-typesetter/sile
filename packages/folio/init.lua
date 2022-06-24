@@ -94,13 +94,12 @@ the output of folios—the old-time typesetter word for page numbers.
 
 It provides four commands to users:
 
-\noindent{}• \autodoc:command{\nofolios}: turns page numbers off.
-
-\noindent{}• \autodoc:command{\nofoliothispage}: turns page numbers off for one page, then on again afterward.
-
-\noindent{}• \autodoc:command{\folios}: turns page numbers back on.
-
-\noindent{}• \autodoc:command{\foliostyle}: a command you can override to style the page numbers. By default, they are centered on the page.
+\begin{itemize}
+\item{\autodoc:command{\nofolios}: turns page numbers off.}
+\item{\autodoc:command{\nofoliothispage}: turns page numbers off for one page, then on again afterward.}
+\item{\autodoc:command{\folios}: turns page numbers back on.}
+\item{\autodoc:command{\foliostyle}: a command you can override to style the page numbers. By default, they are centered on the page.}
+\end{itemize}
 
 If, for instance, you want to set page numbers in a different font
 you can redefine the command like so:

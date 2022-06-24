@@ -30,8 +30,8 @@ end
 utilities.error = function(message, bug)
   utilities.warn(message, bug)
   io.stderr:flush()
-  SILE.outputter:finish()
-  os.exit(1)
+  SILE.outputter:finish() -- Only really useful from the REPL but no harm in trying
+  error(nil, 2)
 end
 
 utilities.warn = function(message, bug)

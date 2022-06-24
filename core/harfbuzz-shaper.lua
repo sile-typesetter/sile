@@ -29,6 +29,7 @@ local substwarnings = {}
 local usedfonts = {}
 
 SILE.shapers.harfbuzz = pl.class(SILE.shapers.base)
+SILE.shapers.harfbuzz._name = "harfbuzz"
 
 function SILE.shapers.harfbuzz:shapeToken (text, options)
   local items

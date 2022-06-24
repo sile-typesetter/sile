@@ -1,0 +1,20 @@
+\begin[papersize=a6]{document}
+\nofolios
+\neverindent
+\script[src=packages/color-fonts]
+\script[src=packages/font-fallback]
+\font:add-fallback[family=Noto Serif CJK JP]
+んa
+
+\font[filename=tests/TestCLR-Regular.ttf]{☺a}
+
+んa
+
+\font[filename=tests/TestCLR-Regular.ttf]
+☺a
+
+\font[family=Gentium Plus]
+\font:add-fallback[family=Noto Serif CJK JP]
+
+んa
+\end{document}

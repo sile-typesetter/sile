@@ -21,6 +21,7 @@ local function _shape(text, item)
 end
 
 SILE.shapers.pango = pl.class(SILE.shapers.base)
+SILE.shapers.pango._name = "pango"
 
 -- TODO: refactor so method accepts self
 function SILE.shapers.pango.getFace (options)

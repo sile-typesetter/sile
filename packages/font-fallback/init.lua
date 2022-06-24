@@ -1,3 +1,5 @@
+local lastshaper
+
 local fallbackQueue = pl.class({
 
     _init = function (self, text, fallbacks)
@@ -51,6 +53,7 @@ local function init (_, _)
   require("core.harfbuzz-shaper")
 
   SILE.shapers.harfbuzzWithFallback = pl.class(SILE.shapers.harfbuzz)
+  SILE.shapers.harfbuzzWithFallback._name = "harfbuzzWithFallback"
 
   function SILE.shapers.harfbuzzWithFallback:shapeToken (text, options)
     local items = {}
@@ -101,7 +104,7 @@ local function init (_, _)
           shapeQueue:currentJob().start + newItems[startOfNotdefRun].index,
           shapeQueue:currentJob().stop
           )
-          SU.warn("Some glyph(s) not available in any fallback font, run with '-d font-fallback' for more detail")
+          SU.warn("Some glyph(s) not available in any fallback font,\n  run with '-d font-fallback' for more detail.\n")
         end
         shapeQueue:shift()
       end
@@ -151,22 +154,35 @@ local function init (_, _)
     return nodes
   end
 
-  SILE.shaper = SILE.shapers.harfbuzzWithFallback()
-
 end
 
 local function registerCommands (_)
 
   SILE.registerCommand("font:clear-fallbacks", function ()
     fontlist = {}
+    if SILE.shaper._name == "harfbuzzWithFallback" and lastshaper then
+      SU.debug("font-fallback", "Clearing fallbacks, switching from fallback back to previous shaper")
+      SILE.typesetter:leaveHmode(true)
+      SILE.shaper, lastshaper = lastshaper, nil
+    end
   end)
 
   SILE.registerCommand("font:add-fallback", function (options, _)
+    if SILE.shaper._name ~= "harfbuzzWithFallback" then
+      SU.debug("font-fallback", "Switching to fallback shaper")
+      SILE.typesetter:leaveHmode(true)
+      lastshaper, SILE.shaper = SILE.shaper, SILE.shapers.harfbuzzWithFallback()
+    end
     fontlist[#fontlist+1] = options
   end)
 
   SILE.registerCommand("font:remove-fallback", function ()
     fontlist[#fontlist] = nil
+    if #fontlist == 0 and SILE.shaper._name == "harfbuzzWithFallback" and lastshaper then
+      SU.debug("font-fallback", "Fallback list empty, switching from fallback back to previous shaper")
+      SILE.typesetter:leaveHmode(true)
+      SILE.shaper, lastshaper = lastshaper, nil
+    end
   end, "Pop last added fallback from fallback stack")
 
 end

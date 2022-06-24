@@ -184,12 +184,13 @@ return {
 In normal typesetting, SILE determines the spacing between lines of type
 according to the following two rules:
 
-\noindent• SILE tries to insert space between two successive lines so that their baselines
-are separated by a fixed distance called the \code{baselineskip}.
-
-\noindent• If this first rule would mean that the bottom and the top of the lines are less
-than two points apart, then they are forced to be two points apart. (This distance
-is configurable, and called the \code{lineskip})
+\begin{itemize}
+\item{SILE tries to insert space between two successive lines so that their baselines
+      are separated by a fixed distance called the \code{baselineskip}.}
+\item{If this first rule would mean that the bottom and the top of the lines are less
+      than two points apart, then they are forced to be two points apart. (This
+      distance is configurable, and called the \code{lineskip}).}
+\end{itemize}
 
 The second rule is designed to avoid the situation where the first line has a long
 descender (letters such as g, q, j, p, etc.) which abuts a high ascender on the second

@@ -3,6 +3,7 @@ local function init (_, _)
   require("core.harfbuzz-shaper")
 
   SILE.shapers.harfbuzzWithColor = pl.class(SILE.shapers.harfbuzz)
+  SILE.shapers.harfbuzzWithColor._name = "harfbuzzWithColor"
 
   function SILE.shapers.harfbuzzWithColor:shapeToken (str, options)
     local ot = require("core.opentype-parser")
@@ -87,8 +88,6 @@ local function init (_, _)
     end
     return nodes
   end
-
-  SILE.shaper = SILE.shapers.harfbuzzWithColor()
 
 end
 
