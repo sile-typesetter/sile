@@ -24,13 +24,17 @@ function jplain:_j_common ()
   self:declareHanmenFrame("content", self.defaultFrameset.content)
   SILE.settings:set("document.parindent", SILE.nodefactory.glue("10pt"))
   if SILE.settings:get("document.language") ~= "ja" then
-    SU.deprecated("document.language ≠ \"ja\" & jplain:…", nil, "0.13.2", "0.14.0", "Prior to SILE v0.13.2, `jplain`, despite its name, did not enforce the use of Japanese in its documents. To use a class like `jplain` for other languages, please base a  *new* custom class off of `jplain`; do not use `jplain` itself. To use `jplain` for Japanese, you *must* specify \\language[main=ja]. This will become a hard error in SILE v0.14.")
-    --[[ @alerque — Remove these lines post v0.14.0! ]]
-    self:registerPostinit(function (_)
-      SILE.call("font:add-fallback", { family = "Noto Sans CJK JP" })
-    end)
-    SILE.settings:set("document.language", "ja")
+    SU.deprecated("document.language ≠ \"ja\" & jplain:…", nil, "0.14.0", "0.16.0", [[
+  Prior to SILE v0.14.0, `jplain`, despite its name, enforced the
+  language being set te Japanese. It no longer makes this assumption.
+  To use a class like `jplain` for other languages, please base a
+  *new* custom class inheriting from `jplain` rather than `jplain`
+  directly. To use `jplain` for Japanese, you *must* specify
+  \\language[main=ja]. (Also you'll probably want to set a font!)
+    ]])
     SILE.languageSupport.loadLanguage("ja")
+    SILE.settings:set("document.language", "ja", true)
+    SILE.settings:set("font.family", "Noto Sans CJK JP", true)
   end
 end
 
