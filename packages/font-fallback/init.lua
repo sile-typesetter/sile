@@ -65,24 +65,24 @@ local function init (_, _)
     end
     local shapeQueue = fallbackQueue(text, optionSet)
     while shapeQueue:continuing() do
-      SU.debug("fonts", "Queue: " .. tostring(shapeQueue.q))
+      SU.debug("font-fallback", "Queue: " .. tostring(shapeQueue.q))
       options = shapeQueue:currentFont()
       if not (options.family or options.filename) then return end
-      SU.debug("fonts", shapeQueue:currentJob())
+      SU.debug("font-fallback", shapeQueue:currentJob())
       if shapeQueue:currentJob().popFallbacks then shapeQueue:pop()
       else
         local chunk = shapeQueue:currentText()
-        SU.debug("fonts", "Trying font '"..options.family.."' for '"..chunk.."'")
+        SU.debug("font-fallback", "Trying font '"..options.family.."' for '"..chunk.."'")
         local newItems = self._base.shapeToken(self, chunk, options)
         local startOfNotdefRun = -1
         for i = 1, #newItems do
           if newItems[i].gid > 0 then
-            SU.debug("fonts", "Found glyph '"..newItems[i].text.."'")
+            SU.debug("font-fallback", "Found glyph '"..newItems[i].text.."'")
             local start = shapeQueue:currentJob().start
             if startOfNotdefRun > -1 then
               shapeQueue:addJob(start + newItems[startOfNotdefRun].index,
               start + newItems[i].index - 1)
-              SU.debug("fonts", "adding run " .. tostring(shapeQueue:lastJob()))
+              SU.debug("font-fallback", "adding run " .. tostring(shapeQueue:lastJob()))
               startOfNotdefRun = -1
             end
             newItems[i].fontOptions = options
@@ -121,7 +121,7 @@ local function init (_, _)
         end
       end
     end
-    SU.debug("fonts", nItems)
+    SU.debug("font-fallback", nItems)
     return nItems
   end
 
@@ -145,12 +145,12 @@ local function init (_, _)
     local nodes = {}
     for i=1, #run do
       options = run[i].fontOptions
-      SU.debug("fonts", "Shaping ".. run[i].chunk.. " in ".. options.family)
+      SU.debug("font-fallback", "Shaping ".. run[i].chunk.. " in ".. options.family)
       for node in nodeMaker(options):iterator(run[i].slice, run[i].chunk) do
         nodes[#nodes+1] = node
       end
     end
-    SU.debug("fonts", nodes)
+    SU.debug("font-fallback", nodes)
     return nodes
   end
 
@@ -161,7 +161,7 @@ local function registerCommands (_)
   SILE.registerCommand("font:clear-fallbacks", function ()
     fontlist = {}
     if SILE.shaper._name == "harfbuzzWithFallback" and lastshaper then
-      SU.debug("font-fallback", "Clearing fallbacks, switching from fallback back to previous shaper")
+      SU.debug("font-fallback", "Clearing fallbacks, switching from fallback enabled back to previous shaper")
       SILE.typesetter:leaveHmode(true)
       SILE.shaper, lastshaper = lastshaper, nil
     end
@@ -169,7 +169,7 @@ local function registerCommands (_)
 
   SILE.registerCommand("font:add-fallback", function (options, _)
     if SILE.shaper._name ~= "harfbuzzWithFallback" then
-      SU.debug("font-fallback", "Switching to fallback shaper")
+      SU.debug("font-fallback", "Switching to fallback enabaled shaper")
       SILE.typesetter:leaveHmode(true)
       lastshaper, SILE.shaper = SILE.shaper, SILE.shapers.harfbuzzWithFallback()
     end
@@ -179,7 +179,7 @@ local function registerCommands (_)
   SILE.registerCommand("font:remove-fallback", function ()
     fontlist[#fontlist] = nil
     if #fontlist == 0 and SILE.shaper._name == "harfbuzzWithFallback" and lastshaper then
-      SU.debug("font-fallback", "Fallback list empty, switching from fallback back to previous shaper")
+      SU.debug("font-fallback", "Fallback list empty, switching from fallback enabled back to previous shaper")
       SILE.typesetter:leaveHmode(true)
       SILE.shaper, lastshaper = lastshaper, nil
     end
