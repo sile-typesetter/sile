@@ -228,7 +228,8 @@ local function registerCommands (_)
     if minimize then
       -- The max line width can actually be bigger than our target width,
       -- (i.e. notwithstanding its shrinkeability).
-      width = SU.min(wmax.length, width)
+      local wmaxlen = SILE.length(wmax.length) -- Lua5.1 doesn't like comparing appels and oranges
+      width = SU.min(wmaxlen, width)
       -- We recompute all line ratios based on the new target width.
       for i = 1, #vboxes do
         if vboxes[i].nodes and vboxes[i].ratio then
