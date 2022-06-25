@@ -5,6 +5,6 @@
 % of 昔 is different. If the tate layout mechanism is working, it’s going
 % to work at two characters, if a longer string fails, it’s likely some other
 % mechanism or value that actually changed.
-\font[family=Noto Sans CJK JP,language=ja,size=24pt]
+\font[size=24pt]
 日本
 \end{document}

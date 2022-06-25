@@ -7,11 +7,10 @@ Set font 	Twemoji Mozilla;10;400;;normal;;TTB
 T	7876 a=10.0000	()
 Pop color
 Push color	0.4000	0.2706	0.0000
-Mx 	10.0000
-T	7893 a=10.0000 7894 a=10.0000	(😉)
+T	7893 a=10.0000	()
+T	7894 w=10.0000	(😉)
 Pop color
 Push color	1.0000	0.7961	0.2980
-Mx 	542.4079
 My 	107.6592
 T	9105 a=10.0000	()
 Pop color

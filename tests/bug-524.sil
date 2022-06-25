@@ -1,13 +1,11 @@
 \begin[class=jplain]{document}
 \nofolios
-\set[parameter=document.parindent,value=0pt]
+\neverindent
 \show-hanmen
 \script[src=packages/ruby]
-\font[family=Noto Sans CJK JP,language=ja]
 私は
 
 {}私は
 
 \ruby[reading=W]{私}は
-
 \end{document}
