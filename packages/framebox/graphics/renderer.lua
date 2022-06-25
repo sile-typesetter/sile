@@ -11,7 +11,7 @@
 --   one.
 --
 
-local RoughGenerator = SILE.require("packages/graphics/rough").RoughGenerator
+local RoughGenerator = require("packages.framebox.graphics.rough").RoughGenerator
 
 -- HELPERS
 

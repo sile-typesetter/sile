@@ -5,46 +5,16 @@
 --
 -- KNOWN ISSUE: RTL and BTT writing directions are not officialy supported yet (untested)
 --
-local graphics = SILE.require("packages/graphics/renderer")
+local graphics = require("packages.framebox.graphics.renderer")
 local PathRenderer = graphics.PathRenderer
 local RoughPainter = graphics.RoughPainter
-
--- SETTINGS
-
-SILE.settings:declare({
-  parameter = "framebox.padding",
-  type = "measurement",
-  default = SILE.measurement("2pt"),
-  help = "Padding applied to a framed box."
-})
-
-SILE.settings:declare({
-  parameter = "framebox.borderwidth",
-  type = "measurement",
-  default = SILE.measurement("0.4pt"),
-  help = "Border width applied to a frame box."
-})
-
-SILE.settings:declare({
-  parameter = "framebox.cornersize",
-  type = "measurement",
-  default = SILE.measurement("5pt"),
-  help = "Corner size (arc radius) for rounded boxes."
-})
-
-SILE.settings:declare({
-  parameter = "framebox.shadowsize",
-  type = "measurement",
-  default = SILE.measurement("3pt"),
-  help = "Shadow width applied to a framed box when dropped shadow is enabled."
-})
 
 -- LOW-LEVEL REBOXING HELPERS
 
 -- Rewraps an hbox into in another fake hbox, adding padding all around it.
 -- It assumes the original hbox is NOT in the output queue
 -- (i.e. was stolen back and stored).
-local adjustPaddingHbox = function(hbox, left, right, top, bottom)
+local function adjustPaddingHbox (hbox, left, right, top, bottom)
   return { -- HACK NOTE: Efficient but might be bad to fake an hbox here without all methods.
     inner = hbox,
     width = hbox.width + left + right,
@@ -65,7 +35,7 @@ end
 -- It assumes the initial hbox is NOT in the output queue
 -- (i.e. was stolen back and/or stored earlier).
 -- It pushes the resulting hbox to the output queue
-local frameHbox = function(hbox, shadowsize, pathfunc)
+local function frameHbox (hbox, shadowsize, pathfunc)
   local shadowpadding = shadowsize or 0
   SILE.typesetter:pushHbox({
     inner = hbox,
@@ -101,179 +71,215 @@ local frameHbox = function(hbox, shadowsize, pathfunc)
   })
 end
 
+-- SETTINGS
+
+local function declareSettings (_)
+  SILE.settings:declare({
+    parameter = "framebox.padding",
+    type = "measurement",
+    default = SILE.measurement("2pt"),
+    help = "Padding applied to a framed box."
+  })
+
+  SILE.settings:declare({
+    parameter = "framebox.borderwidth",
+    type = "measurement",
+    default = SILE.measurement("0.4pt"),
+    help = "Border width applied to a frame box."
+  })
+
+  SILE.settings:declare({
+    parameter = "framebox.cornersize",
+    type = "measurement",
+    default = SILE.measurement("5pt"),
+    help = "Corner size (arc radius) for rounded boxes."
+  })
+
+  SILE.settings:declare({
+    parameter = "framebox.shadowsize",
+    type = "measurement",
+    default = SILE.measurement("3pt"),
+    help = "Shadow width applied to a framed box when dropped shadow is enabled."
+  })
+end
+
 -- BASIC BOX-FRAMING COMMANDS
 
-SILE.registerCommand("framebox", function(options, content)
-  local padding = SU.cast("measurement", options.padding or SILE.settings:get("framebox.padding")):tonumber()
-  local borderwidth = SU.cast("measurement", options.borderwidth or SILE.settings:get("framebox.borderwidth")):tonumber()
-  local bordercolor = SILE.colorparser(options.bordercolor or "black")
-  local fillcolor = SILE.colorparser(options.fillcolor or "white")
-  local shadow = SU.boolean(options.shadow, false)
-  local shadowsize = shadow and SU.cast("measurement", options.shadowsize or SILE.settings:get("framebox.shadowsize")):tonumber() or 0
-  local shadowcolor = shadow and SILE.colorparser(options.shadowcolor or "black")
+local function registerCommands (_)
+  SILE.registerCommand("framebox", function(options, content)
+    local padding = SU.cast("measurement", options.padding or SILE.settings:get("framebox.padding")):tonumber()
+    local borderwidth = SU.cast("measurement", options.borderwidth or SILE.settings:get("framebox.borderwidth")):tonumber()
+    local bordercolor = SILE.colorparser(options.bordercolor or "black")
+    local fillcolor = SILE.colorparser(options.fillcolor or "white")
+    local shadow = SU.boolean(options.shadow, false)
+    local shadowsize = shadow and SU.cast("measurement", options.shadowsize or SILE.settings:get("framebox.shadowsize")):tonumber() or 0
+    local shadowcolor = shadow and SILE.colorparser(options.shadowcolor or "black")
 
-  local hbox = SILE.call("hbox", {}, content)
-  table.remove(SILE.typesetter.state.nodes) -- steal it back...
-  hbox = adjustPaddingHbox(hbox, padding, padding + shadowsize, padding, padding + shadowsize)
+    local hbox = SILE.call("hbox", {}, content)
+    table.remove(SILE.typesetter.state.nodes) -- steal it back...
+    hbox = adjustPaddingHbox(hbox, padding, padding + shadowsize, padding, padding + shadowsize)
 
-  frameHbox(hbox, shadowsize, function(w, h, d)
-    local painter = PathRenderer()
-    local shadowpath, path
-    if shadowsize ~= 0 then
-      shadowpath = painter:rectangle(shadowsize, d + shadowsize, w , h + d, {
-        fill = shadowcolor, stroke = 'none'
+    frameHbox(hbox, shadowsize, function(w, h, d)
+      local painter = PathRenderer()
+      local shadowpath, path
+      if shadowsize ~= 0 then
+        shadowpath = painter:rectangle(shadowsize, d + shadowsize, w , h + d, {
+          fill = shadowcolor, stroke = 'none'
+        })
+      end
+      path = painter:rectangle(0, d , w , h + d, {
+        fill = fillcolor, stroke = bordercolor, strokeWidth = borderwidth
       })
-    end
-    path = painter:rectangle(0, d , w , h + d, {
-      fill = fillcolor, stroke = bordercolor, strokeWidth = borderwidth
-    })
-    return shadowpath and shadowpath .. " " .. path or path
-  end)
-end, "Frames content in a square box.")
+      return shadowpath and shadowpath .. " " .. path or path
+    end)
+  end, "Frames content in a square box.")
 
-SILE.registerCommand("roundbox", function(options, content)
-  local padding = SU.cast("measurement", options.padding or SILE.settings:get("framebox.padding")):tonumber()
-  local borderwidth = SU.cast("measurement", options.borderwidth or SILE.settings:get("framebox.borderwidth")):tonumber()
-  local bordercolor = SILE.colorparser(options.bordercolor or "black")
-  local fillcolor = SILE.colorparser(options.fillcolor or "white")
-  local shadow = SU.boolean(options.shadow, false)
-  local shadowsize = shadow and SU.cast("measurement", options.shadowsize or SILE.settings:get("framebox.shadowsize")):tonumber() or 0
-  local shadowcolor = shadow and SILE.colorparser(options.shadowcolor or "black")
+  SILE.registerCommand("roundbox", function(options, content)
+    local padding = SU.cast("measurement", options.padding or SILE.settings:get("framebox.padding")):tonumber()
+    local borderwidth = SU.cast("measurement", options.borderwidth or SILE.settings:get("framebox.borderwidth")):tonumber()
+    local bordercolor = SILE.colorparser(options.bordercolor or "black")
+    local fillcolor = SILE.colorparser(options.fillcolor or "white")
+    local shadow = SU.boolean(options.shadow, false)
+    local shadowsize = shadow and SU.cast("measurement", options.shadowsize or SILE.settings:get("framebox.shadowsize")):tonumber() or 0
+    local shadowcolor = shadow and SILE.colorparser(options.shadowcolor or "black")
 
-  local cornersize = SU.cast("measurement", options.cornersize or SILE.settings:get("framebox.cornersize")):tonumber()
+    local cornersize = SU.cast("measurement", options.cornersize or SILE.settings:get("framebox.cornersize")):tonumber()
 
-  local hbox = SILE.call("hbox", {}, content)
-  table.remove(SILE.typesetter.state.nodes) -- steal it back...
-  hbox = adjustPaddingHbox(hbox, padding, padding + shadowsize, padding, padding + shadowsize)
+    local hbox = SILE.call("hbox", {}, content)
+    table.remove(SILE.typesetter.state.nodes) -- steal it back...
+    hbox = adjustPaddingHbox(hbox, padding, padding + shadowsize, padding, padding + shadowsize)
 
-  frameHbox(hbox, shadowsize, function(w, h, d)
-    local H = h + d
-    local smallest = w < H and w or H
-    cornersize = cornersize < 0.5 * smallest and cornersize or math.floor(0.5 * smallest)
+    frameHbox(hbox, shadowsize, function(w, h, d)
+      local H = h + d
+      local smallest = w < H and w or H
+      cornersize = cornersize < 0.5 * smallest and cornersize or math.floor(0.5 * smallest)
 
-    local painter = PathRenderer()
-    local shadowpath, path
-    if shadowsize ~= 0 then
-      shadowpath = painter:roundedRectangle(shadowsize, d + shadowsize, w , H, cornersize, cornersize, {
-        fill = shadowcolor, stroke = "none"
+      local painter = PathRenderer()
+      local shadowpath, path
+      if shadowsize ~= 0 then
+        shadowpath = painter:roundedRectangle(shadowsize, d + shadowsize, w , H, cornersize, cornersize, {
+          fill = shadowcolor, stroke = "none"
+        })
+      end
+      path = painter:roundedRectangle(0, d , w , H, cornersize, cornersize, {
+        fill = fillcolor, stroke = bordercolor, strokeWidth = borderwidth
       })
+      return shadowpath and shadowpath .. " " .. path or path
+    end)
+  end, "Frames content in a rounded box.")
+
+  SILE.registerCommand("roughbox", function(options, content)
+    local padding = SU.cast("measurement", options.padding or SILE.settings:get("framebox.padding")):tonumber()
+    local borderwidth = SU.cast("measurement", options.borderwidth or SILE.settings:get("framebox.borderwidth")):tonumber()
+    local bordercolor = SILE.colorparser(options.bordercolor or "black")
+    local fillcolor = options.fillcolor and SILE.colorparser(options.fillcolor)
+    local enlarge = SU.boolean(options.enlarge, false)
+
+    local hbox = SILE.call("hbox", {}, content)
+    table.remove(SILE.typesetter.state.nodes) -- steal it back...
+    if enlarge then
+      hbox = adjustPaddingHbox(hbox, padding, padding, padding, padding)
     end
-    path = painter:roundedRectangle(0, d , w , H, cornersize, cornersize, {
-      fill = fillcolor, stroke = bordercolor, strokeWidth = borderwidth
-    })
-    return shadowpath and shadowpath .. " " .. path or path
-  end)
-end, "Frames content in a rounded box.")
 
-SILE.registerCommand("roughbox", function(options, content)
-  local padding = SU.cast("measurement", options.padding or SILE.settings:get("framebox.padding")):tonumber()
-  local borderwidth = SU.cast("measurement", options.borderwidth or SILE.settings:get("framebox.borderwidth")):tonumber()
-  local bordercolor = SILE.colorparser(options.bordercolor or "black")
-  local fillcolor = options.fillcolor and SILE.colorparser(options.fillcolor)
-  local enlarge = SU.boolean(options.enlarge, false)
+    local roughOpts = {}
+    if options.roughness then roughOpts.roughness = SU.cast("number", options.roughness) end
+    if options.bowing then roughOpts.bowing = SU.cast("number", options.bowing) end
+    roughOpts.preserveVertices = SU.boolean(options.preserve, false)
+    roughOpts.disableMultiStroke = SU.boolean(options.singlestroke, false)
+    roughOpts.strokeWidth = borderwidth
+    roughOpts.stroke = bordercolor
+    roughOpts.fill = fillcolor
 
-  local hbox = SILE.call("hbox", {}, content)
-  table.remove(SILE.typesetter.state.nodes) -- steal it back...
-  if enlarge then
-    hbox = adjustPaddingHbox(hbox, padding, padding, padding, padding)
-  end
+    frameHbox(hbox, nil, function(w, h, d)
+      local H = h + d
+      local x = 0
+      local y = d
+      if not enlarge then
+        x = -padding
+        y = d - padding
+        H = H + 2 * padding
+        w = w + 2 * padding
+      end
+      local painter = PathRenderer(RoughPainter())
+      return painter:rectangle(x, y, w, H, roughOpts)
+    end)
+  end, "Frames content in a rough (sketchy) box.")
 
-  local roughOpts = {}
-  if options.roughness then roughOpts.roughness = SU.cast("number", options.roughness) end
-  if options.bowing then roughOpts.bowing = SU.cast("number", options.bowing) end
-  roughOpts.preserveVertices = SU.boolean(options.preserve, false)
-  roughOpts.disableMultiStroke = SU.boolean(options.singlestroke, false)
-  roughOpts.strokeWidth = borderwidth
-  roughOpts.stroke = bordercolor
-  roughOpts.fill = fillcolor
+  SILE.registerCommand("bracebox", function(options, content)
+    local padding = SU.cast("measurement", options.padding or SILE.measurement("0.25em")):tonumber()
+    local strokewidth = SU.cast("measurement", options.strokewidth or SILE.measurement("0.033em")):tonumber()
+    local bracecolor = SILE.colorparser(options.bracecolor or "black")
+    local bracewidth = SU.cast("measurement", options.bracewidth or SILE.measurement("0.25em")):tonumber()
+    local bracethickness = SU.cast("measurement", options.bracethickness or SILE.measurement("0.05em")):tonumber()
+    local curvyness = SU.cast("number", options.curvyness or 0.6)
+    local left, right
+    if options.side == "left" or not options.side then left = true
+    elseif options.side == "right" then right = true
+    elseif options.side == "both" then left, right = true, true
+    else SU.error("Invalid side parameter") end
 
-  frameHbox(hbox, nil, function(w, h, d)
-    local H = h + d
-    local x = 0
-    local y = d
-    if not enlarge then
-      x = -padding
-      y = d - padding
-      H = H + 2 * padding
-      w = w + 2 * padding
-    end
-    local painter = PathRenderer(RoughPainter())
-    return painter:rectangle(x, y, w, H, roughOpts)
-  end)
-end, "Frames content in a rough (sketchy) box.")
+    local hbox = SILE.call("hbox", {}, content)
+    table.remove(SILE.typesetter.state.nodes) -- steal it back...
+    hbox = adjustPaddingHbox(hbox, left and bracewidth + padding or 0, right and bracewidth + padding or 0, 0, 0)
 
-SILE.registerCommand("bracebox", function(options, content)
-  local padding = SU.cast("measurement", options.padding or SILE.measurement("0.25em")):tonumber()
-  local strokewidth = SU.cast("measurement", options.strokewidth or SILE.measurement("0.033em")):tonumber()
-  local bracecolor = SILE.colorparser(options.bracecolor or "black")
-  local bracewidth = SU.cast("measurement", options.bracewidth or SILE.measurement("0.25em")):tonumber()
-  local bracethickness = SU.cast("measurement", options.bracethickness or SILE.measurement("0.05em")):tonumber()
-  local curvyness = SU.cast("number", options.curvyness or 0.6)
-  local left, right
-  if options.side == "left" or not options.side then left = true
-  elseif options.side == "right" then right = true
-  elseif options.side == "both" then left, right = true, true
-  else SU.error("Invalid side parameter") end
+    frameHbox(hbox, nil, function(w, h, d)
+      local painter = PathRenderer()
+      local lb, rb
+      if left then
+        lb = painter:curlyBrace(bracewidth, d, bracewidth, 2*d+h, bracewidth, bracethickness, curvyness, {
+          fill = bracecolor, stroke = bracecolor, strokeWidth = strokewidth
+        })
+      end
+      if right then
+        rb = painter:curlyBrace(w-bracewidth, d, w-bracewidth, 2*d+h, -bracewidth, bracethickness, curvyness, {
+          fill = bracecolor, stroke = bracecolor, strokeWidth = strokewidth
+        })
+      end
+      return lb and (rb and lb .. " " .. rb or lb) or rb
+    end)
+  end, "Frames content in a box with curly brace(s).")
 
-  local hbox = SILE.call("hbox", {}, content)
-  table.remove(SILE.typesetter.state.nodes) -- steal it back...
-  hbox = adjustPaddingHbox(hbox, left and bracewidth + padding or 0, right and bracewidth + padding or 0, 0, 0)
+  -- EXPERIMENTAL (UNDOCUMENTED)
 
-  frameHbox(hbox, nil, function(w, h, d)
-    local painter = PathRenderer()
-    local lb, rb
-    if left then
-      lb = painter:curlyBrace(bracewidth, d, bracewidth, 2*d+h, bracewidth, bracethickness, curvyness, {
-        fill = bracecolor, stroke = bracecolor, strokeWidth = strokewidth
-      })
-    end
-    if right then
-      rb = painter:curlyBrace(w-bracewidth, d, w-bracewidth, 2*d+h, -bracewidth, bracethickness, curvyness, {
-        fill = bracecolor, stroke = bracecolor, strokeWidth = strokewidth
-      })
-    end
-    return lb and (rb and lb .. " " .. rb or lb) or rb
-  end)
-end, "Frames content in a box with curly brace(s).")
+  -- This would need to be reimplemented and checked after multiline effects
+  -- (e.g. multiline links and underline) are possibly added to the
+  -- typetter.
+  SILE.registerCommand("roughunder", function (options, content)
+    -- Begin taken from the original underline command (rules package)
+    local ot = require("core/opentype-parser")
+    local fontoptions = SILE.font.loadDefaults({})
+    local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
+    local font = ot.parseFont(face)
+    local upem = font.head.unitsPerEm
+    local underlinePosition = -font.post.underlinePosition / upem * fontoptions.size
+    local underlineThickness = font.post.underlineThickness / upem * fontoptions.size
+    -- End taken from the original underline command (rules package)
 
--- EXPERIMENTAL (UNDOCUMENTED)
+    local hbox = SILE.call("hbox", {}, content)
+    table.remove(SILE.typesetter.state.nodes) -- steal it back...
 
--- This would need to be reimplemented and checked after multiline effects
--- (e.g. multiline links and underline) are possibly added to the
--- typetter.
-SILE.registerCommand("roughunder", function (options, content)
-  -- Begin taken from the original underline command (rules package)
-  local ot = SILE.require("core/opentype-parser")
-  local fontoptions = SILE.font.loadDefaults({})
-  local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
-  local font = ot.parseFont(face)
-  local upem = font.head.unitsPerEm
-  local underlinePosition = -font.post.underlinePosition / upem * fontoptions.size
-  local underlineThickness = font.post.underlineThickness / upem * fontoptions.size
-  -- End taken from the original underline command (rules package)
+    local roughOpts = {}
+    if options.roughness then roughOpts.roughness = SU.cast("number", options.roughness) end
+    if options.bowing then roughOpts.bowing = SU.cast("number", options.bowing) end
+    roughOpts.preserveVertices = true
+    roughOpts.disableMultiStroke = true
+    roughOpts.strokeWidth = underlineThickness
 
-  local hbox = SILE.call("hbox", {}, content)
-  table.remove(SILE.typesetter.state.nodes) -- steal it back...
-
-  local roughOpts = {}
-  if options.roughness then roughOpts.roughness = SU.cast("number", options.roughness) end
-  if options.bowing then roughOpts.bowing = SU.cast("number", options.bowing) end
-  roughOpts.preserveVertices = true
-  roughOpts.disableMultiStroke = true
-  roughOpts.strokeWidth = underlineThickness
-
-  frameHbox(hbox, nil, function(w, h, d)
-    -- NOTE: Using some arbitrary 1.5 factor, since those sketchy lines are
-    -- probably best a bit more lowered than intended...
-    local y = h + d + 1.5 * underlinePosition
-    local painter = PathRenderer(RoughPainter())
-    return painter:line(0, y, w, y, roughOpts)
-  end)
-end, "Underlines some content (experimental, undocumented)")
+    frameHbox(hbox, nil, function(w, h, d)
+      -- NOTE: Using some arbitrary 1.5 factor, since those sketchy lines are
+      -- probably best a bit more lowered than intended...
+      local y = h + d + 1.5 * underlinePosition
+      local painter = PathRenderer(RoughPainter())
+      return painter:line(0, y, w, y, roughOpts)
+    end)
+  end, "Underlines some content (experimental, undocumented)")
+end
 
 -- EXPORTS
 
 return {
+  registerCommands = registerCommands,
+  declareSettings = declareSettings,
   documentation = [[\begin{document}
 \script[src=packages/parbox]
 

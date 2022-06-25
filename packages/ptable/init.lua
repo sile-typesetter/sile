@@ -4,13 +4,12 @@
 -- 2021-2022 Didier Willis
 -- License: MIT
 --
-SILE.require("packages/parbox")
 
 -- UTILITY FUNCTIONS
 
 -- Parse the cols specification "c1 c2 .. cN" and return
 -- an array of numeric values (we work in absolute points afterwards).
-local parseColumnSpec = function (colspec)
+local function parseColumnSpec (colspec)
   local b = {}
   for token in SU.gtoke(colspec, "[ ]+") do
     if (token.string) then
@@ -26,7 +25,7 @@ end
 
 -- Parse the padding specification as a single measurement or a set of
 -- four (top bottom left right).
-local parsePadding = function (rawspec)
+local function parsePadding (rawspec)
   local spec
   if type(rawspec) == "table" then
     spec = rawspec
@@ -49,7 +48,7 @@ end
 -- Compute a cell width from the column widths,
 -- taking into account the cell spanning,
 -- and memorize already computed values as a micro-optimization
-local computeCellWidth = function (col, span, cols)
+local function computeCellWidth (col, span, cols)
   if cols[col..":"..span] then return cols[col..":"..span] end
   local width = 0
   if col > #cols or col + span - 1 > #cols then
@@ -69,10 +68,10 @@ end
 -- settings to top-level, so we enforce additional settings
 -- on top of that... In a heavy-handed way (this function
 -- might even be called where uneeded, strictly speaking).
-local vglueNoStretch = function (vg)
+local function vglueNoStretch (vg)
   return SILE.nodefactory.vglue(SILE.length(vg.height.length))
 end
-local temporarilyClearFragileSettings = function (callback)
+local function temporarilyClearFragileSettings (callback)
   SILE.settings:pushState()
   -- Kill that small lineskip thing that may move rows a bit.
   SILE.settings:set("document.lineskip", SILE.length())
@@ -88,7 +87,6 @@ end
 -- (i.e. was stolen back and or stored earlier).
 -- It also assumes the box dimensions at this step are numbers,
 -- not lengths (with stretch/shrink).
-SILE.require("packages/color")
 local colorBox = function (hbox, color)
   if not color then
     SILE.typesetter:pushHbox(hbox)
@@ -307,129 +305,136 @@ processTable["row"] = function (content, args, tablespecs)
     return rowNode(cells, color)
   end
 
--- TYPESETTER TWEAKS
+-- COMMANDS
 
--- We modify the typesetter globally to check whether the content on a new
--- frame is a table row, which needs repeating a header row to be inserted.
--- EXPERIMENTAL AND SOMEWHAT HACKY-WHACKY = MIGHT NOT BE ROBUST
-local oldInitNextFrame = SILE.typesetter.initNextFrame
-SILE.typesetter.initNextFrame = function (self)
-  oldInitNextFrame(self)
-  -- Check the top vboxes:
-  -- There could be a leading frame vglue, so we check the two first boxes.
-  for k = 1, 2 do
-    if self.state.outputQueue[k] and self.state.outputQueue[k]._header_ then
-      local header = self.state.outputQueue[k]._header_
-      table.insert(self.state.outputQueue, k, header)
-      break
+local function init (class, _)
+  class:loadPackage("parbox")
+
+  -- TYPESETTER TWEAKS
+  -- We modify the typesetter globally to check whether the content on a new
+  -- frame is a table row, which needs repeating a header row to be inserted.
+  -- EXPERIMENTAL AND SOMEWHAT HACKY-WHACKY = MIGHT NOT BE ROBUST
+  local oldInitNextFrame = SILE.typesetter.initNextFrame
+  SILE.typesetter.initNextFrame = function (self)
+    oldInitNextFrame(self)
+    -- Check the top vboxes:
+    -- There could be a leading frame vglue, so we check the two first boxes.
+    for k = 1, 2 do
+      if self.state.outputQueue[k] and self.state.outputQueue[k]._header_ then
+        local header = self.state.outputQueue[k]._header_
+        table.insert(self.state.outputQueue, k, header)
+        break
+      end
     end
   end
 end
 
--- COMMANDS
+local function registerCommands (_)
+  -- The table building logic works as follows:
+  --  1. Parse the AST
+  --      - Computing widths, spans, etc. on the way
+  --      - Constructing an object hierarchy
+  --      - Each true cell is pre-composed in a middle-aligned parbox that is
+  --        stolen back from the output queue
+  --  2. Adjust each element in the object hierarchy (= re-shaping)
+  --      - All lines and cells have consistent height
+  --      - For cells, apply the alignment (valign)
+  --  3. Shipout the resulting content
+  --      - Building the boxes for rows and celltables
+  --      - Re-using the adjusted boxes for cells.
+  --
+  -- For developers, note that there is only one exposed command, "ptable".
+  -- The "row", "cell", "celltable" are AST nodes without command in the global
+  -- scope, so they only exist within the table.
+  -- All parboxes are constructed middle-aligned, and with "character" strut,
+  -- which sounds correct for easy height adjustement afterwards.
 
--- The table building logic works as follows:
---  1. Parse the AST
---      - Computing widths, spans, etc. on the way
---      - Constructing an object hierarchy
---      - Each true cell is pre-composed in a middle-aligned parbox that is
---        stolen back from the output queue
---  2. Adjust each element in the object hierarchy (= re-shaping)
---      - All lines and cells have consistent height
---      - For cells, apply the alignment (valign)
---  3. Shipout the resulting content
---      - Building the boxes for rows and celltables
---      - Re-using the adjusted boxes for cells.
---
--- For developers, note that there is only one exposed command, "ptable".
--- The "row", "cell", "celltable" are AST nodes without command in the global
--- scope, so they only exist within the table.
--- All parboxes are constructed middle-aligned, and with "character" strut,
--- which sounds correct for easy height adjustement afterwards.
+  SILE.registerCommand("ptable", function (options, content)
+    local cols = parseColumnSpec(SU.required(options, "cols", "ptable"))
+    local cellpadding = options.cellpadding or "4pt"
+    local cellborder = options.cellborder or "0.4pt"
+    local bordercolor = options.bordercolor
 
-SILE.registerCommand("ptable", function (options, content)
-  local cols = parseColumnSpec(SU.required(options, "cols", "ptable"))
-  local cellpadding = options.cellpadding or "4pt"
-  local cellborder = options.cellborder or "0.4pt"
-  local bordercolor = options.bordercolor
+    local totalWidth = SU.sum(cols)
+    local tablespecs = {
+      cols = cols,
+      cellpadding = cellpadding,
+      cellborder = cellborder,
+      bordercolor = bordercolor
+    }
 
-  local totalWidth = SU.sum(cols)
-  local tablespecs = {
-    cols = cols,
-    cellpadding = cellpadding,
-    cellborder = cellborder,
-    bordercolor = bordercolor
-  }
+    SILE.typesetter:leaveHmode()
+    SILE.call("medskip")
 
-  SILE.typesetter:leaveHmode()
-  SILE.call("medskip")
-
-  local headerVbox
-  temporarilyClearFragileSettings(function()
-    SILE.settings:set("document.parindent", SILE.length())
-    local iRow = 1
-    for i = 1, #content do
-      if type(content[i]) == "table" then
-        if content[i].command == "row" then
-          local row = content[i]
-          local node = processTable["row"](row, { width = totalWidth, row = iRow }, tablespecs)
-          node:adjustBy(0)
-          node:shipout()
-          -- begin header row logic (experimental, might not be robust).
-          -- The row shipout didn't ship the queue to the page...
-          if SU.boolean(options.header, false) then
-            local currentVbox
-            -- ... so the last vbox should be our new row, skipping one vglue if present...
-            for b = #SILE.typesetter.state.outputQueue, 2, -1 do
-              if SILE.typesetter.state.outputQueue[b].is_vbox then
-                currentVbox = SILE.typesetter.state.outputQueue[b]
-                break
+    local headerVbox
+    temporarilyClearFragileSettings(function()
+      SILE.settings:set("document.parindent", SILE.length())
+      local iRow = 1
+      for i = 1, #content do
+        if type(content[i]) == "table" then
+          if content[i].command == "row" then
+            local row = content[i]
+            local node = processTable["row"](row, { width = totalWidth, row = iRow }, tablespecs)
+            node:adjustBy(0)
+            node:shipout()
+            -- begin header row logic (experimental, might not be robust).
+            -- The row shipout didn't ship the queue to the page...
+            if SU.boolean(options.header, false) then
+              local currentVbox
+              -- ... so the last vbox should be our new row, skipping one vglue if present...
+              for b = #SILE.typesetter.state.outputQueue, 2, -1 do
+                if SILE.typesetter.state.outputQueue[b].is_vbox then
+                  currentVbox = SILE.typesetter.state.outputQueue[b]
+                  break
+                end
+              end
+              if iRow == 1 and currentVbox then
+                headerVbox = currentVbox
+              elseif currentVbox and headerVbox then
+                -- Hack a link to the header vbox in the current vbox.
+                currentVbox._header_ = headerVbox
               end
             end
-            if iRow == 1 and currentVbox then
-              headerVbox = currentVbox
-            elseif currentVbox and headerVbox then
-              -- Hack a link to the header vbox in the current vbox.
-              currentVbox._header_ = headerVbox
+            -- end header row logic.
+            SILE.typesetter:leaveHmode() -- Now we should be allowed to output to page, if it wants to.
+            if SU.boolean(options.header, false) and iRow == 1 then
+              SILE.call("novbreak") -- We wouldn't a page break just after the initial header only.
             end
+            iRow = iRow + 1
+          else
+              SU.error("Unexpected '"..content[i].command.."' in table")
           end
-          -- end header row logic.
-          SILE.typesetter:leaveHmode() -- Now we should be allowed to output to page, if it wants to.
-          if SU.boolean(options.header, false) and iRow == 1 then
-            SILE.call("novbreak") -- We wouldn't a page break just after the initial header only.
-          end
-          iRow = iRow + 1
-        else
-            SU.error("Unexpected '"..content[i].command.."' in table")
         end
+        -- All text nodes in ignored without warning.
       end
-      -- All text nodes in ignored without warning.
+    end)
+    SILE.typesetter:leaveHmode()
+    SILE.call("novbreak") -- FIXME weak solution to avoid breaks between table and a possible caption.
+    SILE.call("medskip")  -- Also I don't like much hard-coded skips...
+  end)
+
+  -- The default implementation adds an "halign" option for horizontal
+  -- cell alignment, which is handy e.g. for Markdown support.
+  -- Other packages and classes could redefine this hook to support
+  -- their own options (such as cell styles etc.)
+  SILE.registerCommand("ptable:cell:hook", function(options, content)
+    if options.halign == "center" then
+      SILE.call("center", {}, content)
+    elseif options.halign == "left" then
+      SILE.call("noindent")
+      SILE.call("raggedright", {}, content)
+    elseif options.halign == "right" then
+      SILE.call("noindent")
+      SILE.call("raggedleft", {}, content)
+    else
+      SILE.process(content)
     end
   end)
-  SILE.typesetter:leaveHmode()
-  SILE.call("novbreak") -- FIXME weak solution to avoid breaks between table and a possible caption.
-  SILE.call("medskip")  -- Also I don't like much hard-coded skips...
-end)
-
--- The default implementation adds an "halign" option for horizontal
--- cell alignment, which is handy e.g. for Markdown support.
--- Other packages and classes could redefine this hook to support
--- their own options (such as cell styles etc.)
-SILE.registerCommand("ptable:cell:hook", function(options, content)
-  if options.halign == "center" then
-    SILE.call("center", {}, content)
-  elseif options.halign == "left" then
-    SILE.call("noindent")
-    SILE.call("raggedright", {}, content)
-  elseif options.halign == "right" then
-    SILE.call("noindent")
-    SILE.call("raggedleft", {}, content)
-  else
-    SILE.process(content)
-  end
-end)
+end
 
 return {
+  init = init,
+  registerCommands = registerCommands,
   documentation = [[\begin{document}
 The \autodoc:package{ptable} package provides commands to typeset flexible tables.\footnote{The
 name stands for \em{perfect table}… No, just kidding, it stands for \em{parbox-based table},

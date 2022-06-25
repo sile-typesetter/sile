@@ -4,7 +4,7 @@
 -- License: MIT
 --
 
-local PRNG = SILE.require("packages/graphics/prng")
+local PRNG = require("packages.framebox.graphics.prng")
 local prng = PRNG()
 
 -- This is a partial straightforward port of the rough.js JavaScript library.

@@ -7,8 +7,6 @@
 --
 -- Known limitations: LTR-TTB writing direction is assumed.
 --
-SILE.require("packages/rebox")
-SILE.require("packages/struts")
 
 -- PARBOXING FUNCTIONS
 
@@ -17,7 +15,7 @@ SILE.require("packages/struts")
 -- be registered in SILE.documentState.thisPageTemplate.frames since we will
 -- throw it away after boxing.
 local nb_ = 1
-local parboxTempFrame = function (options)
+local function parboxTempFrame (options)
   local id = "parbox_"..nb_
   local newFrame = SILE.newFrame({
     id = id
@@ -32,7 +30,7 @@ end
 
 -- Function for moving migrating content (e.g. footnotes) from
 -- a typesetter to another.
-local moveMigrating = function (fromTypesetter, toTypesetter)
+local function moveMigrating (fromTypesetter, toTypesetter)
   local nodelist = fromTypesetter.state.nodes
 
   local hasStartedMigration = false
@@ -59,7 +57,7 @@ end
 
 -- Main function for parboxing content.
 -- Returns a list of vboxes.
-local parboxFraming = function (options, content)
+local function parboxFraming (options, content)
   local oldTypesetter = SILE.typesetter
   local parboxTypesetter
   local innerVbox
@@ -93,9 +91,7 @@ local parboxFraming = function (options, content)
   return innerVbox
 end
 
--- PARBOXING COMMAND
-
-local drawBorders = function (x, y, w, h, border, bordercolor)
+local function drawBorders (x, y, w, h, border, bordercolor)
   -- The border was initially a debug feature, but it turned out to be neat
   -- for tables (e.g. the ptable package).
   -- There's a little ugly tweak here, the bottom and right borders are drawn
@@ -110,7 +106,7 @@ local drawBorders = function (x, y, w, h, border, bordercolor)
   if bordercolor then SILE.outputter:popColor() end
 end
 
-local getBaselineExtents = function (vboxlist)
+local function getBaselineExtents (vboxlist)
   -- The core assumption here is that first/last vboxes are actual text lines.
   -- This could be wrong...
   -- Anyhow, the function then returns the height of the first line and the
@@ -153,7 +149,7 @@ local parseBorderOrPadding = function (rawspec, opt)
   return spec
 end
 
-local naturalWidth = function (width, slice)
+local function naturalWidth (width, slice)
   -- Since PR #1378, computeLineRatio() also returns the natural width of
   -- the line, in addition to the stretch/shring ratio.
   --
@@ -166,138 +162,149 @@ local naturalWidth = function (width, slice)
   return totalWidth
 end
 
-local recomputeLineRatio = function (targetWidth, originalWidth)
+local function recomputeLineRatio (targetWidth, originalWidth)
   local left = targetWidth:tonumber() - originalWidth:tonumber()
   local ratio = left / originalWidth[left < 0 and "shrink" or "stretch"]:tonumber()
   return math.max(ratio, -1)
 end
 
-SILE.registerCommand("parbox", function (options, content)
-  local width = SU.required(options, "width", "parbox")
-  local strut = options.strut or "none"
-  local border = options.border and parseBorderOrPadding(options.border, "border") or { 0, 0, 0, 0 }
-  local valign = options.valign or "top"
-  local padding = options.padding and parseBorderOrPadding(options.padding, "padding") or { 0, 0, 0, 0 }
-  local bordercolor =  options.bordercolor and SILE.colorparser(options.bordercolor)
-  local minimize = SU.boolean(options.minimize, false)
+-- PARBOXING COMMAND
 
-  width = SILE.length(SU.cast("measurement", width)):absolute()
+local function init (class, _)
+  class:loadPackage("rebox")
+  class:loadPackage("struts")
+end
 
-  local vboxes = parboxFraming({ width = width }, content)
+local function registerCommands (_)
+  SILE.registerCommand("parbox", function (options, content)
+    local width = SU.required(options, "width", "parbox")
+    local strut = options.strut or "none"
+    local border = options.border and parseBorderOrPadding(options.border, "border") or { 0, 0, 0, 0 }
+    local valign = options.valign or "top"
+    local padding = options.padding and parseBorderOrPadding(options.padding, "padding") or { 0, 0, 0, 0 }
+    local bordercolor =  options.bordercolor and SILE.colorparser(options.bordercolor)
+    local minimize = SU.boolean(options.minimize, false)
 
-  local strutDimen
-  if strut == "rule" then
-    strutDimen = SILE.call("strut", { method = "rule" })
-  elseif strut == "character" then
-    strutDimen = SILE.call("strut", { method = "character" })
-  else
-    strutDimen = { height = SILE.length(0), depth = SILE.length(0) }
-  end
+    width = SILE.length(SU.cast("measurement", width)):absolute()
 
-  local baseHeight, baseDepth = getBaselineExtents(vboxes)
+    local vboxes = parboxFraming({ width = width }, content)
 
-  local wmax = SILE.length()
-  local totalHeight = SILE.length()
-  local vboxWidths = {}
-  for i = 1, #vboxes do
-    -- Try to cancel vertical stretching/shrinking
-    if vboxes[i].is_vglue then
-      -- Important: many vglues are just the _same_ node, which will be "adjusted"
-      -- by the page builder. We cannot tweak directly their height or depth as we
-      -- sometimes do with other boxes, as it would have a side effect. So we have
-      -- to re-create a new vglue with the appropriate fixed dimension.
-      vboxes[i] = SILE.nodefactory.vglue(SILE.length(vboxes[i].height.length))
+    local strutDimen
+    if strut == "rule" then
+      strutDimen = SILE.call("strut", { method = "rule" })
+    elseif strut == "character" then
+      strutDimen = SILE.call("strut", { method = "character" })
+    else
+      strutDimen = { height = SILE.length(0), depth = SILE.length(0) }
     end
-    totalHeight = totalHeight + vboxes[i].height:absolute() + vboxes[i].depth:absolute()
+
+    local baseHeight, baseDepth = getBaselineExtents(vboxes)
+
+    local wmax = SILE.length()
+    local totalHeight = SILE.length()
+    local vboxWidths = {}
+    for i = 1, #vboxes do
+      -- Try to cancel vertical stretching/shrinking
+      if vboxes[i].is_vglue then
+        -- Important: many vglues are just the _same_ node, which will be "adjusted"
+        -- by the page builder. We cannot tweak directly their height or depth as we
+        -- sometimes do with other boxes, as it would have a side effect. So we have
+        -- to re-create a new vglue with the appropriate fixed dimension.
+        vboxes[i] = SILE.nodefactory.vglue(SILE.length(vboxes[i].height.length))
+      end
+      totalHeight = totalHeight + vboxes[i].height:absolute() + vboxes[i].depth:absolute()
+
+      if minimize then
+        -- We go through all lines to retrieve their natural line.
+        local w = SILE.length()
+        if vboxes[i].nodes then
+          w = naturalWidth(width, vboxes[i].nodes)
+          if w > wmax then wmax = w end
+        end
+        vboxWidths[i] = w
+      end
+    end
 
     if minimize then
-      -- We go through all lines to retrieve their natural line.
-      local w = SILE.length()
-      if vboxes[i].nodes then
-        w = naturalWidth(width, vboxes[i].nodes)
-        if w > wmax then wmax = w end
-      end
-      vboxWidths[i] = w
-    end
-  end
-
-  if minimize then
-    -- The max line width can actually be bigger than our target width,
-    -- (i.e. notwithstanding its shrinkeability).
-    width = SU.min(wmax.length, width)
-    -- We recompute all line ratios based on the new target width.
-    for i = 1, #vboxes do
-      if vboxes[i].nodes and vboxes[i].ratio then
-        local r = recomputeLineRatio(width, vboxWidths[i])
-        vboxes[i].ratio = r
+      -- The max line width can actually be bigger than our target width,
+      -- (i.e. notwithstanding its shrinkeability).
+      width = SU.min(wmax.length, width)
+      -- We recompute all line ratios based on the new target width.
+      for i = 1, #vboxes do
+        if vboxes[i].nodes and vboxes[i].ratio then
+          local r = recomputeLineRatio(width, vboxWidths[i])
+          vboxes[i].ratio = r
+        end
       end
     end
-  end
 
-  local adjustDepth = SU.max(baseDepth, strutDimen.depth) - baseDepth
-  local adjustHeight = SU.max(baseHeight, strutDimen.height) - baseHeight
-  local z0 = SILE.length(0)
-  local depth, height
-  if valign == "bottom" then
-    depth = z0 + SILE.length(padding[2]) + SU.max(baseDepth, strutDimen.depth)
-    height = totalHeight + SILE.length(padding[1]) - baseDepth + adjustHeight
-  elseif valign == "middle" then
-    local padwidth = SILE.length(padding[2] + padding[1])
-    local half = (totalHeight + adjustHeight + adjustDepth + padwidth) / 2
-    depth = half
-    height = half
-  else -- valign == top
-    depth = totalHeight + SILE.length(padding[2]) - baseHeight + adjustDepth
-    height = z0 + SILE.length(padding[1]) + SU.max(baseHeight, strutDimen.height)
-  end
-
-  return SILE.typesetter:pushHbox({
-    width = width + SILE.length(padding[3] + padding[4]),
-    depth = depth,
-    height = height,
-    inner = vboxes,
-    valign = valign,
-    padding = padding,
-    yAdjust = adjustHeight, -- TTB is assumed
-    offset = SILE.measurement(), -- INTERNAL: See comment below.
-    border = border,
-    bordercolor = bordercolor,
-    outputYourself= function (self, typesetter, _)
-      local saveY = typesetter.frame.state.cursorY
-      local saveX = typesetter.frame.state.cursorX
-
-      typesetter.frame.state.cursorY = saveY - self.height:tonumber()
-      drawBorders(
-        typesetter.frame.state.cursorX:tonumber(),
-        typesetter.frame.state.cursorY:tonumber(),
-        self.width:tonumber(),
-        self.depth:tonumber() + self.height:tonumber(),
-        self.border,
-        self.bordercolor
-      )
-
-      typesetter.frame.state.cursorY = typesetter.frame.state.cursorY + self.yAdjust
-
-      -- Process each vbox
-      typesetter.frame.state.cursorY = typesetter.frame.state.cursorY + self.padding[1] - self.offset:tonumber()
-      for i = 1, #self.inner do
-        typesetter.frame.state.cursorX = saveX + self.padding[3]
-        self.inner[i]:outputYourself(typesetter, self.inner[i])
-      end
-
-      typesetter.frame.state.cursorY = saveY
-      typesetter.frame.state.cursorX = saveX
-      typesetter.frame:advanceWritingDirection(self.width)
+    local adjustDepth = SU.max(baseDepth, strutDimen.depth) - baseDepth
+    local adjustHeight = SU.max(baseHeight, strutDimen.height) - baseHeight
+    local z0 = SILE.length(0)
+    local depth, height
+    if valign == "bottom" then
+      depth = z0 + SILE.length(padding[2]) + SU.max(baseDepth, strutDimen.depth)
+      height = totalHeight + SILE.length(padding[1]) - baseDepth + adjustHeight
+    elseif valign == "middle" then
+      local padwidth = SILE.length(padding[2] + padding[1])
+      local half = (totalHeight + adjustHeight + adjustDepth + padwidth) / 2
+      depth = half
+      height = half
+    else -- valign == top
+      depth = totalHeight + SILE.length(padding[2]) - baseHeight + adjustDepth
+      height = z0 + SILE.length(padding[1]) + SU.max(baseHeight, strutDimen.height)
     end
-  })
-  -- The offset parameter in the pbox above is for INTERNAL use.
-  -- The "ptable" package (parbox-base tables) sets it to tweak and adjust cells.
-  -- Kind of a mixed concern here, but it's an easy trick to avoid re-implementing
-  -- a bunch of things. And after all these parboxes were made with tables in
-  -- mind, though they can be of a more general interest.
-end)
+
+    return SILE.typesetter:pushHbox({
+      width = width + SILE.length(padding[3] + padding[4]),
+      depth = depth,
+      height = height,
+      inner = vboxes,
+      valign = valign,
+      padding = padding,
+      yAdjust = adjustHeight, -- TTB is assumed
+      offset = SILE.measurement(), -- INTERNAL: See comment below.
+      border = border,
+      bordercolor = bordercolor,
+      outputYourself= function (self, typesetter, _)
+        local saveY = typesetter.frame.state.cursorY
+        local saveX = typesetter.frame.state.cursorX
+
+        typesetter.frame.state.cursorY = saveY - self.height:tonumber()
+        drawBorders(
+          typesetter.frame.state.cursorX:tonumber(),
+          typesetter.frame.state.cursorY:tonumber(),
+          self.width:tonumber(),
+          self.depth:tonumber() + self.height:tonumber(),
+          self.border,
+          self.bordercolor
+        )
+
+        typesetter.frame.state.cursorY = typesetter.frame.state.cursorY + self.yAdjust
+
+        -- Process each vbox
+        typesetter.frame.state.cursorY = typesetter.frame.state.cursorY + self.padding[1] - self.offset:tonumber()
+        for i = 1, #self.inner do
+          typesetter.frame.state.cursorX = saveX + self.padding[3]
+          self.inner[i]:outputYourself(typesetter, self.inner[i])
+        end
+
+        typesetter.frame.state.cursorY = saveY
+        typesetter.frame.state.cursorX = saveX
+        typesetter.frame:advanceWritingDirection(self.width)
+      end
+    })
+    -- The offset parameter in the pbox above is for INTERNAL use.
+    -- The "ptable" package (parbox-base tables) sets it to tweak and adjust cells.
+    -- Kind of a mixed concern here, but it's an easy trick to avoid re-implementing
+    -- a bunch of things. And after all these parboxes were made with tables in
+    -- mind, though they can be of a more general interest.
+  end)
+end
 
 return {
+  init = init,
+  registerCommands = registerCommands,
   documentation = [[\begin{document}
 A paragraph box (“parbox”) is an horizontal box (so technically an “hbox”)
 that contains, as its name implies, one or more paragraphs (so the displayed content
