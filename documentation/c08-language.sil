@@ -213,13 +213,11 @@ correct space. The size of these spaces is determined by
 
 \subsection{Japanese / Chinese}
 
-SILE aims to conform with the W3G document “Requirements for Japanese Text
-Layout” (\url{https://www.w3.org/TR/jlreq/}) which describes the typographic
-conventions for Japanese (and also Chinese) text. Breaking rules (kinzoku
-shori) and intercharacter spacing is fully supported on selecting the
-Japanese language. The easiest way to set up the other elements of Japanese
-typesetting such as the \em{hanmen} grid and optional vertical typesetting
-support is by using the \code{jplain} class.
+SILE aims to conform with the W3G document “Requirements for Japanese Text Layout”\footnote{\url{https://www.w3.org/TR/jlreq/}} which describes the typographic conventions for Japanese (and also Chinese) text.
+Breaking rules (kinzoku shori) and intercharacter spacing is fully supported on selecting the Japanese language.
+The easiest way to set up the other elements of Japanese typesetting such as the \em{hanmen} grid and optional vertical typesetting support is by using the \code{jplain} or \code{jbook} classes.
+For other languages with similar layout requriements more generic \code{tplain} and \code{tbook} classes are available that setup the layout elements without also setting the default language and font to Japanese specific values.
+These are also good condidates to use as bases classes and extend for more language specific classes.
 
 \package-documentation[src=packages/hanmenkyoshi]
 
