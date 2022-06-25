@@ -73,14 +73,14 @@ local vglueNoStretch = function (vg)
   return SILE.nodefactory.vglue(SILE.length(vg.height.length))
 end
 local temporarilyClearFragileSettings = function (callback)
-  SILE.settings.pushState()
+  SILE.settings:pushState()
   -- Kill that small lineskip thing that may move rows a bit.
-  SILE.settings.set("document.lineskip", SILE.length())
+  SILE.settings:set("document.lineskip", SILE.length())
   -- Kill stretchability at baseline and paragraph level.
-  SILE.settings.set("document.baselineskip", vglueNoStretch(SILE.settings.get("document.baselineskip")))
-  SILE.settings.set("document.parskip", vglueNoStretch(SILE.settings.get("document.parskip")))
+  SILE.settings:set("document.baselineskip", vglueNoStretch(SILE.settings:get("document.baselineskip")))
+  SILE.settings:set("document.parskip", vglueNoStretch(SILE.settings:get("document.parskip")))
   callback()
-  SILE.settings.popState()
+  SILE.settings:popState()
 end
 
 -- Apply a background color to an hbox.
@@ -287,7 +287,7 @@ processTable["celltable"] = function (content, args, tablespecs)
 processTable["row"] = function (content, args, tablespecs)
     local color = content.options.background and SILE.colorparser(content.options.background)
 
-    SILE.settings.set("document.lineskip", SILE.length())
+    SILE.settings:set("document.lineskip", SILE.length())
     local iCell = args.col and args.col or 1
     local cells = {}
     for i = 1, #content do
@@ -366,7 +366,7 @@ SILE.registerCommand("ptable", function (options, content)
 
   local headerVbox
   temporarilyClearFragileSettings(function()
-    SILE.settings.set("document.parindent", SILE.length())
+    SILE.settings:set("document.parindent", SILE.length())
     local iRow = 1
     for i = 1, #content do
       if type(content[i]) == "table" then

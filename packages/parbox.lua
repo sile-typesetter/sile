@@ -64,9 +64,9 @@ local parboxFraming = function (options, content)
   local parboxTypesetter
   local innerVbox
 
-  SILE.settings.pushState()
-  SILE.settings.toplevelState()
-  parboxTypesetter = SILE.defaultTypesetter {}
+  SILE.settings:pushState()
+  SILE.settings:toplevelState()
+  parboxTypesetter = SILE.defaultTypesetter()
 
   local originalLeaveHmode = parboxTypesetter.leaveHmode
   parboxTypesetter.leaveHmode = function (self, _)
@@ -77,7 +77,7 @@ local parboxFraming = function (options, content)
   end
 
   local parboxFrame = parboxTempFrame(options)
-  parboxTypesetter:init(parboxFrame)
+  parboxTypesetter:initFrame(parboxFrame)
   SILE.typesetter = parboxTypesetter
 
   SILE.process(content)
@@ -85,7 +85,7 @@ local parboxFraming = function (options, content)
   innerVbox = parboxTypesetter.state.outputQueue
 
   SILE.typesetter = oldTypesetter
-  SILE.settings.popState()
+  SILE.settings:popState()
   -- Important, remove the frame from SILE.frames (it was added there by
   -- SILE.newFrame()), now that we no longer need it. Otherwise, the
   -- performances get awful as all our small frames are kept and solved!

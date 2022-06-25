@@ -11,28 +11,28 @@ local RoughPainter = graphics.RoughPainter
 
 -- SETTINGS
 
-SILE.settings.declare({
+SILE.settings:declare({
   parameter = "framebox.padding",
   type = "measurement",
   default = SILE.measurement("2pt"),
   help = "Padding applied to a framed box."
 })
 
-SILE.settings.declare({
+SILE.settings:declare({
   parameter = "framebox.borderwidth",
   type = "measurement",
   default = SILE.measurement("0.4pt"),
   help = "Border width applied to a frame box."
 })
 
-SILE.settings.declare({
+SILE.settings:declare({
   parameter = "framebox.cornersize",
   type = "measurement",
   default = SILE.measurement("5pt"),
   help = "Corner size (arc radius) for rounded boxes."
 })
 
-SILE.settings.declare({
+SILE.settings:declare({
   parameter = "framebox.shadowsize",
   type = "measurement",
   default = SILE.measurement("3pt"),
@@ -104,12 +104,12 @@ end
 -- BASIC BOX-FRAMING COMMANDS
 
 SILE.registerCommand("framebox", function(options, content)
-  local padding = SU.cast("measurement", options.padding or SILE.settings.get("framebox.padding")):tonumber()
-  local borderwidth = SU.cast("measurement", options.borderwidth or SILE.settings.get("framebox.borderwidth")):tonumber()
+  local padding = SU.cast("measurement", options.padding or SILE.settings:get("framebox.padding")):tonumber()
+  local borderwidth = SU.cast("measurement", options.borderwidth or SILE.settings:get("framebox.borderwidth")):tonumber()
   local bordercolor = SILE.colorparser(options.bordercolor or "black")
   local fillcolor = SILE.colorparser(options.fillcolor or "white")
   local shadow = SU.boolean(options.shadow, false)
-  local shadowsize = shadow and SU.cast("measurement", options.shadowsize or SILE.settings.get("framebox.shadowsize")):tonumber() or 0
+  local shadowsize = shadow and SU.cast("measurement", options.shadowsize or SILE.settings:get("framebox.shadowsize")):tonumber() or 0
   local shadowcolor = shadow and SILE.colorparser(options.shadowcolor or "black")
 
   local hbox = SILE.call("hbox", {}, content)
@@ -132,15 +132,15 @@ SILE.registerCommand("framebox", function(options, content)
 end, "Frames content in a square box.")
 
 SILE.registerCommand("roundbox", function(options, content)
-  local padding = SU.cast("measurement", options.padding or SILE.settings.get("framebox.padding")):tonumber()
-  local borderwidth = SU.cast("measurement", options.borderwidth or SILE.settings.get("framebox.borderwidth")):tonumber()
+  local padding = SU.cast("measurement", options.padding or SILE.settings:get("framebox.padding")):tonumber()
+  local borderwidth = SU.cast("measurement", options.borderwidth or SILE.settings:get("framebox.borderwidth")):tonumber()
   local bordercolor = SILE.colorparser(options.bordercolor or "black")
   local fillcolor = SILE.colorparser(options.fillcolor or "white")
   local shadow = SU.boolean(options.shadow, false)
-  local shadowsize = shadow and SU.cast("measurement", options.shadowsize or SILE.settings.get("framebox.shadowsize")):tonumber() or 0
+  local shadowsize = shadow and SU.cast("measurement", options.shadowsize or SILE.settings:get("framebox.shadowsize")):tonumber() or 0
   local shadowcolor = shadow and SILE.colorparser(options.shadowcolor or "black")
 
-  local cornersize = SU.cast("measurement", options.cornersize or SILE.settings.get("framebox.cornersize")):tonumber()
+  local cornersize = SU.cast("measurement", options.cornersize or SILE.settings:get("framebox.cornersize")):tonumber()
 
   local hbox = SILE.call("hbox", {}, content)
   table.remove(SILE.typesetter.state.nodes) -- steal it back...
@@ -166,8 +166,8 @@ SILE.registerCommand("roundbox", function(options, content)
 end, "Frames content in a rounded box.")
 
 SILE.registerCommand("roughbox", function(options, content)
-  local padding = SU.cast("measurement", options.padding or SILE.settings.get("framebox.padding")):tonumber()
-  local borderwidth = SU.cast("measurement", options.borderwidth or SILE.settings.get("framebox.borderwidth")):tonumber()
+  local padding = SU.cast("measurement", options.padding or SILE.settings:get("framebox.padding")):tonumber()
+  local borderwidth = SU.cast("measurement", options.borderwidth or SILE.settings:get("framebox.borderwidth")):tonumber()
   local bordercolor = SILE.colorparser(options.bordercolor or "black")
   local fillcolor = options.fillcolor and SILE.colorparser(options.fillcolor)
   local enlarge = SU.boolean(options.enlarge, false)
@@ -340,7 +340,7 @@ The \autodoc:parameter{side} options may be set to \bracebox[side=right]{\strut{
 \bracebox[side=both]{\strut{}“both”}.
 As for fine-tuning options, \autodoc:parameter{padding} controls the space between the brace and the content
 (defaults to 0.25em),
-\autodoc:parameter{bracewidth} defines the widthof the whole brace (defaults to 0.25em),
+\autodoc:parameter{bracewidth} defines the width of the whole brace (defaults to 0.25em),
 \autodoc:parameter{strokewidth} (defaults to 0.033em) and \autodoc:parameter{bracethickness} (0.05em) define
 the drawing characteristics of the brace.
 Its color, black by default, can be changed with \autodoc:parameter{bracecolor}.
