@@ -34,9 +34,15 @@ local function registerCommands (_)
   -- A strut character (for a given font selection) will be used a lot.
   -- It would be a bit dumb to recompute it each time, so let's cache it.
   local strutCache = {}
+
   local _key = function (options)
-    return table.concat({ options.family, ("%d"):format(options.weight), options.style,
-                          options.variant, options.features, options.filename }, ";")
+    return table.concat({ options.family,
+      ("%g"):format(options.size),
+      ("%d"):format(options.weight),
+      options.style,
+      options.variant,
+      options.features,
+      options.filename }, ";")
   end
   local characterStrut = function ()
     local key = _key(SILE.font.loadDefaults({}))
