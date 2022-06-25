@@ -3,50 +3,77 @@ local lastshaper
 local fallbackQueue = pl.class({
 
     _init = function (self, text, fallbacks)
-      self.q = {}
       self.fallbacks = fallbacks
+      self.runs = {
+        {
+          options = self:currentOptions(),
+          offset = 0,
+          start = 1,
+          -- WARNING: shaper index is in bytes, not UTF8 aware character
+          -- lengths so do *not* use luautf8.len() here
+          stop = text:len()
+        },
+      }
+      self._fallbacks = fallbacks
       self.text = text
-      self.q[1] = { start =1, stop = #text }
-      self.q[#(self.q)+1] = { popFallbacks = true }
+      self.pending = nil
     end,
 
-    pop = function (self)
-      table.remove(self.fallbacks, 1)
-      table.remove(self.q, 1)
-      self.q[#(self.q)+1] = { popFallbacks = true }
+    popFallback = function (self)
+      return table.remove(self.fallbacks, 1)
     end,
 
-    shift       = function (self)
-      return table.remove(self.q, 1)
+    popRun = function (self)
+      self:popFallback()
+      return table.remove(self.runs, 1)
     end,
 
-    continuing  = function (self)
-      return #self.q > 0 and #self.fallbacks > 0
-    end,
-
-    currentFont = function (self)
+    currentOptions = function (self)
       return self.fallbacks[1]
     end,
 
-    currentJob  = function (self)
-      return self.q[1]
+    nextFallback = function (self)
+      return self.fallbacks[2]
     end,
 
-    lastJob     = function (self)
-      return self.q[#(self.q)]
+    currentRun = function (self)
+      return self.runs[1]
     end,
 
     currentText = function (self)
-      return self.text:sub(self.q[1].start, self.q[1].stop)
+      local run = self:currentRun()
+      -- WARNING: shaper index is in bytes, not UTF8 aware character
+      -- lengths so do *not* use luautf8.sub() here
+      return self.text:sub(run.start, run.stop)
     end,
 
-    addJob = function (self, start, stop)
-      self.q[#(self.q)+1] = { start = start, stop = stop }
+    addRun = function (self, offset, start)
+      if not self.pending then
+        SU.debug("font-fallback", ("New run pending for %s starting byte %s insert at %s"):format(self:currentText(), start, offset))
+        local options = self:nextFallback()
+        if not options then return false end
+        options.size = SILE.measurement(options.size):tonumber()
+        self.pending = {
+          options = options,
+          offset = offset,
+          start = start
+        }
+      end
+      return true
+    end,
+
+    pushNextRun = function (self, stop)
+      if self.pending then
+        SU.debug("font-fallback", ("Push pending run for %s ending at %s"):format(self:currentText(), stop))
+        self.pending.stop = stop
+        table.insert(self.runs, self.pending)
+        self.pending = nil
+      end
     end
 
   })
 
-local fontlist = {}
+local activeFallbacks = {}
 
 local function init (_, _)
 
@@ -57,72 +84,55 @@ local function init (_, _)
 
   function SILE.shapers.harfbuzzWithFallback:shapeToken (text, options)
     local items = {}
-    local optionSet = { options }
-    for i = 1, #fontlist do
-      local moreOptions = pl.tablex.deepcopy(options)
-      for k, v in pairs(fontlist[i]) do moreOptions[k] = v end
-      optionSet[#optionSet+1] = moreOptions
+    local fallbackOptions = { options }
+    for _, font in ipairs(activeFallbacks) do
+      table.insert(fallbackOptions, pl.tablex.merge(options, font, true))
     end
-    local shapeQueue = fallbackQueue(text, optionSet)
-    while shapeQueue:continuing() do
-      SU.debug("font-fallback", "Queue: " .. tostring(shapeQueue.q))
-      options = shapeQueue:currentFont()
-      if not (options.family or options.filename) then return end
-      SU.debug("font-fallback", shapeQueue:currentJob())
-      if shapeQueue:currentJob().popFallbacks then shapeQueue:pop()
-      else
-        local chunk = shapeQueue:currentText()
-        SU.debug("font-fallback", "Trying font '"..options.family.."' for '"..chunk.."'")
-        local newItems = self._base.shapeToken(self, chunk, options)
-        local startOfNotdefRun = -1
-        for i = 1, #newItems do
-          if newItems[i].gid > 0 then
-            SU.debug("font-fallback", "Found glyph '"..newItems[i].text.."'")
-            local start = shapeQueue:currentJob().start
-            if startOfNotdefRun > -1 then
-              shapeQueue:addJob(start + newItems[startOfNotdefRun].index,
-              start + newItems[i].index - 1)
-              SU.debug("font-fallback", "adding run " .. tostring(shapeQueue:lastJob()))
-              startOfNotdefRun = -1
-            end
-            newItems[i].fontOptions = options
-            -- There might be multiple glyphs for the same index
-            if not items[start + newItems[i].index] then
-              items[start + newItems[i].index] = newItems[i]
-            else
-              local lastInPlace = items[start + newItems[i].index]
-              while lastInPlace.next do lastInPlace = lastInPlace.next end
-              lastInPlace.next = newItems[i]
-            end
-          else
-            if startOfNotdefRun == -1 then startOfNotdefRun = i end
-            SU.debug("font-fallback", "Glyph " .. newItems[i].text .. " not found in " .. options.family)
+    local shapeQueue = fallbackQueue(text, fallbackOptions)
+    repeat -- iterate fallbacks
+      SU.debug("font-fallback", ("Start fallback iteration for text '%s'"):format(text))
+      local run = shapeQueue:currentRun()
+      local face = run.options.family or run.options.filename
+      local chunk = shapeQueue:currentText()
+      SU.debug("font-fallback", ("Try shaping chunk '%s' with '%s'"):format(chunk, face))
+      local candidate_items = self._base.shapeToken(self, chunk, run.options)
+      for _, item in ipairs(candidate_items) do
+        if item.gid == 0 then
+          SU.debug("font-fallback", ("Glyph %s not found in %s"):format(item.text, face))
+          local newstart = run.start + item.index
+          local pending = shapeQueue:addRun(run.offset, newstart)
+          if not pending then
+            SU.warn(("Glyph(s) '%s' not available in any fallback font,\n  run with '-d font-fallback' for more detail.\n"):format(item.text))
+            run.offset = run.offset + 1
+            item.fontOptions = run.options
+            table.insert(items, run.offset, item) -- output tofu if we're out of fallbacks
           end
+        else
+          SU.debug("font-fallback", ("Found glyph '%s' in '%s'"):format(item.text, face))
+          run.offset = run.offset + 1
+          shapeQueue:pushNextRun(run.start + item.index - 1) -- if notdef run pending, end it
+          item.fontOptions = run.options
+          table.insert(items, run.offset, item)
+          -- TODO: Leaving this bit out of refactoring is likely a regression,
+          -- but at the moment I can't find an actual test case that would
+          -- trigger this behaviour
+          --[[
+          -- There might be multiple glyphs for the same index
+          local pos = start + item.index
+          if not items[pos] then
+            items[pos] = item
+          else
+            local lastInPlace = items[pos]
+            while lastInPlace.next do lastInPlace = lastInPlace.next end
+            lastInPlace.next = item
+          end
+          ]]--
         end
-        if startOfNotdefRun > -1 then
-          shapeQueue:addJob(
-          shapeQueue:currentJob().start + newItems[startOfNotdefRun].index,
-          shapeQueue:currentJob().stop
-          )
-          SU.warn("Some glyph(s) not available in any fallback font,\n  run with '-d font-fallback' for more detail.\n")
-        end
-        shapeQueue:shift()
       end
-    end
-    local nItems = {} -- Remove holes
-    for i = 1, math.max(0, table.unpack(pl.tablex.keys(items))) do
-      if items[i] then
-        nItems[#nItems+1] = items[i]
-        while items[i].next do
-          local nextG = items[i].next
-          items[i].next = nil
-          nItems[#nItems+1] = nextG
-          items[i] = nextG
-        end
-      end
-    end
-    SU.debug("font-fallback", nItems)
-    return nItems
+      shapeQueue:pushNextRun(run.stop) -- if notdef run pending, end it
+      shapeQueue:popRun()
+    until not shapeQueue:currentRun()
+    return items
   end
 
   function SILE.shapers.harfbuzzWithFallback:createNnodes (token, options)
@@ -159,7 +169,7 @@ end
 local function registerCommands (_)
 
   SILE.registerCommand("font:clear-fallbacks", function ()
-    fontlist = {}
+    activeFallbacks = {}
     if SILE.shaper._name == "harfbuzzWithFallback" and lastshaper then
       SU.debug("font-fallback", "Clearing fallbacks, switching from fallback enabled back to previous shaper")
       SILE.typesetter:leaveHmode(true)
@@ -173,12 +183,12 @@ local function registerCommands (_)
       SILE.typesetter:leaveHmode(true)
       lastshaper, SILE.shaper = SILE.shaper, SILE.shapers.harfbuzzWithFallback()
     end
-    fontlist[#fontlist+1] = options
+    table.insert(activeFallbacks, options)
   end)
 
   SILE.registerCommand("font:remove-fallback", function ()
-    fontlist[#fontlist] = nil
-    if #fontlist == 0 and SILE.shaper._name == "harfbuzzWithFallback" and lastshaper then
+    table.remove(activeFallbacks)
+    if #activeFallbacks == 0 and SILE.shaper._name == "harfbuzzWithFallback" and lastshaper then
       SU.debug("font-fallback", "Fallback list empty, switching from fallback enabled back to previous shaper")
       SILE.typesetter:leaveHmode(true)
       SILE.shaper, lastshaper = lastshaper, nil
