@@ -58,6 +58,7 @@ return {
   registerCommands = registerCommands,
   documentation = [[
 \begin{document}
+\script[src=packages.specimen]
 SILE has found itself becoming well used by type designers, who often
 want to create specimen documents to show off their new fonts. This package
 provides a few commands to help create test documents. (The \code{fontproof}

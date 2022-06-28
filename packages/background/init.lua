@@ -32,6 +32,7 @@ return {
   init = init,
   registerCommands = registerCommands,
 documentation = [[\begin{document}
+\script[src=packages.background]
 The \autodoc:package{background} package allows you to set the color of the canvas
 background (by drawing a solid color block the full size of the page on page
 initialization). The package provides a \autodoc:command{\background} command which
