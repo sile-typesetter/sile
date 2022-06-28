@@ -72,21 +72,6 @@ local function init (class, _)
   class:registerHook("endpage", _moveTocNodes)
   class:registerHook("finish", _writeToc)
 
-class:registerPostinit(function ()
-  SILE.doTexlike([[%
-\define[command=tableofcontents:notocmessage]{\tableofcontents:headerfont{\fluent{toc-not-generated}}}%
-\define[command=tableofcontents:headerfont]{\font[size=24pt,weight=800]{\process}}%
-\define[command=tableofcontents:header]{\par\noindent\tableofcontents:headerfont{\fluent{toc-title}}\medskip}%
-\define[command=tableofcontents:footer]{}%
-\define[command=tableofcontents:level1item]{\bigskip\noindent\font[size=14pt,weight=800]{\process}\medskip}%
-\define[command=tableofcontents:level2item]{\noindent\font[size=12pt]{\process}\medskip}%
-\define[command=tableofcontents:level3item]{\indent\font[size=10pt]{\process}\smallskip}%
-\define[command=tableofcontents:level1number]{}%
-\define[command=tableofcontents:level2number]{}%
-\define[command=tableofcontents:level3number]{}%
-]])
-end)
-
 end
 
 local function registerCommands (_)
@@ -164,6 +149,52 @@ local function registerCommands (_)
   SILE.registerCommand("tableofcontents:title", function (_, _)
     SU.deprecated("\\tableofcontents:title", "\\fluent{toc-title}", "0.13.0", "0.14.0")
   end, "Deprecated")
+
+  SILE.registerCommand("tableofcontents:notocmessage", function (_, _)
+    SILE.call("tableofcontents:headerfont", {}, function ()
+      SILE.call("fluent", {}, { "toc-not-generated" })
+    end)
+  end)
+
+  SILE.registerCommand("tableofcontents:headerfont", function (_, content)
+    SILE.call("font", { size = 24, weight = 800 }, content)
+  end)
+
+  SILE.registerCommand("tableofcontents:header", function (_, _)
+    SILE.call("par")
+    SILE.call("noindent")
+    SILE.call("tableofcontents:headerfont", {}, function ()
+      SILE.call("fluent", {}, { "toc-title" })
+    end)
+    SILE.call("medskip")
+  end)
+
+  SILE.registerCommand("tableofcontents:footer", function (_, _) end)
+
+  SILE.registerCommand("tableofcontents:level1item", function (_, content)
+    SILE.call("bigskip")
+    SILE.call("noindent")
+    SILE.call("font", { size = 14, weight = 800 }, content)
+    SILE.call("medskip")
+  end)
+
+  SILE.registerCommand("tableofcontents:level2item", function (_, content)
+    SILE.call("noindent")
+    SILE.call("font", { size = 12 }, content)
+    SILE.call("medskip")
+  end)
+
+  SILE.registerCommand("tableofcontents:level3item", function (_, content)
+    SILE.call("indent")
+    SILE.call("font", { size = 10 }, content)
+    SILE.call("smallskip")
+  end)
+
+  SILE.registerCommand("tableofcontents:level1number", function (_, _) end)
+
+  SILE.registerCommand("tableofcontents:level2number", function (_, _) end)
+
+  SILE.registerCommand("tableofcontents:level3number", function (_, _) end)
 
 end
 
