@@ -1,4 +1,6 @@
-local _tableofcontents = {}
+if not SILE.scratch._tableofcontents then
+  SILE.scratch._tableofcontents = {}
+end
 
 local function _moveTocNodes (class)
   local node = SILE.scratch.info.thispage.toc
@@ -17,7 +19,7 @@ local function _writeToc (_)
   tocfile:write("return " .. tocdata)
   tocfile:close()
 
-  if not pl.tablex.deepcompare(SILE.scratch.tableofcontents, _tableofcontents) then
+  if not pl.tablex.deepcompare(SILE.scratch.tableofcontents, SILE.scratch._tableofcontents) then
     io.stderr:write("\n! Warning: table of contents has changed, please rerun SILE to update it.")
   end
 end
@@ -58,7 +60,9 @@ local function _nodesToText (nodes)
   return string
 end
 
-local dc = 1
+if not SILE.scratch.pdf_destination_counter then
+  SILE.scratch.pdf_destination_counter = 1
+end
 
 local function init (class, _)
 
@@ -99,7 +103,7 @@ local function registerCommands (_)
       end
     end
     SILE.call("tableofcontents:footer")
-    _tableofcontents = toc
+    SILE.scratch._tableofcontents = toc
   end)
 
   SILE.registerCommand("tableofcontents:item", function (options, content)
@@ -126,14 +130,14 @@ local function registerCommands (_)
   SILE.registerCommand("tocentry", function (options, content)
     local dest
     if SILE.Commands["pdf:destination"] then
-      dest = "dest" .. dc
+      dest = "dest" .. tostring(SILE.scratch.pdf_destination_counter)
       SILE.call("pdf:destination", { name = dest })
       SILE.typesetter:pushState()
       SILE.process(content)
       local title = _nodesToText(SILE.typesetter.state.nodes)
       SILE.typesetter:popState()
       SILE.call("pdf:bookmark", { title = title, dest = dest, level = options.level })
-      dc = dc + 1
+      SILE.scratch.pdf_destination_counter = SILE.scratch.pdf_destination_counter + 1
     end
     SILE.call("info", {
       category = "toc",
