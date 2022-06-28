@@ -86,4 +86,5 @@ very minimal, only handling lines, curves, strokes and fills. For a fuller
 implementation, consider using a \autodoc:package{converters} registration to render
 your SVG file to PDF and include it on the fly.
 \end{document}
-]]}
+]]
+}

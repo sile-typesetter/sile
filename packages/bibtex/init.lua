@@ -111,7 +111,8 @@ return {
   init = init,
   registerCommands = registerCommands,
   declareSettings = declareSettings,
-  documentation = [[\begin{document}
+  documentation = [[
+\begin{document}
 BibTeX is a citation management system. It was originally designed
 for TeX but has since been integrated into a variety of situations.
 
@@ -131,5 +132,6 @@ To produce a full reference, use \autodoc:command{\reference{<key>}}.
 Currently, the only supported bibliography style is Chicago referencing,
 but other styles should be easy to implement if there is interest.
 Check out \code{packages/bibtex/styles/chicago.lua} and adapt as necessary.
-\end{document}]]
+\end{document}
+]]
 }
