@@ -96,23 +96,23 @@ end
 return {
   init = init,
   registerCommands = registerCommands,
-documentation = [[\begin{document}
-  When preparing a document for printing, you may be asked by the printer
-  to add crop marks. This means that you need to output the document on
-  a slightly larger page size than your target paper and add printers
-  crop marks to show where the paper should be trimmed down to the correct
-  size. (This is to ensure that pages where the content “bleeds” off
-  the side of the page are correctly cut.)
+documentation = [[
+\begin{document}
+When preparing a document for printing, you may be asked by the printer
+to add crop marks. This means that you need to output the document on
+a slightly larger page size than your target paper and add printers
+crop marks to show where the paper should be trimmed down to the correct
+size. (This is to ensure that pages where the content “bleeds” off
+the side of the page are correctly cut.)
 
-  This package provides the \autodoc:command{\crop:setup} command which should be
-  run early in your document file. It takes one argument, \autodoc:parameter{papersize},
-  which is the true target paper size. It place cropmarks around the
-  true page content.
+This package provides the \autodoc:command{\crop:setup} command which should be
+run early in your document file. It takes one argument, \autodoc:parameter{papersize},
+which is the true target paper size. It place cropmarks around the
+true page content.
 
-  It also adds a header at the top of the page with the filename, date
-  and output sheet number. You can customize this header by redefining
-  \autodoc:command{\crop:header}.
-
-\end{document}]]
+It also adds a header at the top of the page with the filename, date
+and output sheet number. You can customize this header by redefining
+\autodoc:command{\crop:header}.
+\end{document}
+]]
 }
-

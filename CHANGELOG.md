@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.13.2](https://github.com/sile-typesetter/sile/compare/v0.13.1...v0.13.2) (2022-06-29)
+
+
+### Features
+
+* **core:** Add presets for some ANSI paper sizes and ArchE variants ([0f26756](https://github.com/sile-typesetter/sile/commit/0f267563c6f674d61c91485f771e825e83489590))
+* **languages:** Add full Esperanto language support ([b740709](https://github.com/sile-typesetter/sile/commit/b7407090ab4feac9107454db0f328c3d886a0631))
+* **packages:** Add 'lists' package (bullets and enumerations) ([6af3c62](https://github.com/sile-typesetter/sile/commit/6af3c62822ac334c64e2c46d8def11c51a017093))
+* **packages:** Add more options for custom 'lists"' styling ([3167410](https://github.com/sile-typesetter/sile/commit/316741033da7edff44cb933a311f3b5080b763c7))
+* **packages:** Handle font fallback when glyph named null returned on shape falure ([09c0a86](https://github.com/sile-typesetter/sile/commit/09c0a8647105bbddac155f3414cda2bc481a86ca))
+* **packages:** Pass through font-specific options to fallback fonts ([fb29442](https://github.com/sile-typesetter/sile/commit/fb2944233ea13e10729ada47aa8b72db44ea8a30))
+
+
+### Bug Fixes
+
+* **classes:** Clarify the scopes of `tate` and `jplain` ([db83e9e](https://github.com/sile-typesetter/sile/commit/db83e9ede06dedf89112a7d9d76e185df90f6dba))
+* **classes:** Fix circular reference in pecha class ([4501ec0](https://github.com/sile-typesetter/sile/commit/4501ec07cb0ec5183485fb39b965d8267cf176e0))
+* **classes:** Fix diglot and triglot class instantiation ([71af1a9](https://github.com/sile-typesetter/sile/commit/71af1a94b41e3d86715a369092d1ea6ffeeb6a5b))
+* **core:** Make paper size parser case insensitive, e.g. 'a4' or 'A4' ([af441c8](https://github.com/sile-typesetter/sile/commit/af441c8b381cae3ea18169105e951d60fcb5255f))
+* **measurements:** Move the zenkaku width (zw) unit into core ([cfe5060](https://github.com/sile-typesetter/sile/commit/cfe506001387a81f37dd9612444b066e138ba179))
+* **packages:** Correct fall-back font processing ([d3cc59b](https://github.com/sile-typesetter/sile/commit/d3cc59b9f32eefd06780f4984d066007283434dc))
+* **packages:** Correct package load path for colored dropcaps ([41a0c17](https://github.com/sile-typesetter/sile/commit/41a0c17bee08f1e127b3d1cd4f3ee9cc4283aeac))
+* **packages:** Fix coding errors in untested corners of bibtex package ([804b1a5](https://github.com/sile-typesetter/sile/commit/804b1a548615054cf810850d1c5cd01ad20c47fb))
+* **packages:** Fix loading TOC twice resetting pdf links ([97797b8](https://github.com/sile-typesetter/sile/commit/97797b89b7cc195f1011495ec87ad1b94121464e))
+* **shaper:** Handle switching between color & fallback shapers in single document ([04f2d5d](https://github.com/sile-typesetter/sile/commit/04f2d5df94373cc75e02b51f5847d7247a2025e7))
+* **utilities:** Raise Lua error instead of manually aborting if inside pcall() ([6e70a17](https://github.com/sile-typesetter/sile/commit/6e70a17562f298234e85862df30d12dfdc963f48))
+
 ### [0.13.1](https://github.com/sile-typesetter/sile/compare/v0.13.0...v0.13.1) (2022-06-18)
 
 

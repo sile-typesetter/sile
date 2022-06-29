@@ -187,6 +187,9 @@ basic functionality to other packages and classes. Classes such as the
 \subsection{indexer}
 \package-documentation[src=packages/indexer]
 
+\subsection{lists}
+\package-documentation[src=packages/lists]
+
 \subsection{math}
 \package-documentation[src=packages/math]
 

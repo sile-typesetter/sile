@@ -30,6 +30,10 @@ local function init (class, _)
 
   SILE.languageSupport.loadLanguage("ja")
 
+end
+
+local function declareSettings (_)
+
   SILE.settings:declare({
     parameter = "ruby.height",
     type = "measurement",
@@ -108,8 +112,11 @@ end
 return {
   init = init,
   registerCommands = registerCommands,
+  declareSettings = declareSettings,
   documentation = [[
 \begin{document}
+\font:add-fallback[family=Noto Sans CJK JP]
+\script[src=packages.ruby]
 Japanese texts often contain pronunciation hints (called \em{furigana}) for
 difficult kanji or foreign words. These hints are traditionally placed either
 above (in horizontal typesetting) or beside (in vertical typesetting) the word
@@ -118,9 +125,6 @@ that they explain. The typesetting term for these glosses is \em{ruby}.
 The \autodoc:package{ruby} package provides the
 \autodoc:command[check=false]{\ruby[reading=<ruby text>]{<base text>}} command
 which sets a piece of ruby above or beside the base text. For example:
-
-% Unit zw throws errors if there is not way to shape あ
-\font:add-fallback[family=Noto Sans CJK JP]
 
 \set[parameter=ruby.height,value=12pt]
 \define[command=ja]{\font[family=Noto Sans CJK JP,language=ja]{\process}}
