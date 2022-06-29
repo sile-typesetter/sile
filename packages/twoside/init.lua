@@ -76,7 +76,7 @@ return {
     oddPage = oddPage,
     mirrorMaster = mirrorMaster,
     switchPage = function (class)
-      SU.deprecated("class:switchPage", nil, "0.13.0", "0.14.0", _deprecate)
+      SU.deprecated("class:switchPage", nil, "0.13.0", "0.15.0", _deprecate)
       return _switchPage(class)
     end
   },

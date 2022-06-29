@@ -5,7 +5,7 @@ end
 
 local date = function (class, options)
   if not options then
-    SU.deprecated("class.date", "class:date", "0.13.0", "0.14.0")
+    SU.deprecated("class.date", "class:date", "0.13.0", "0.15.0")
     options = class
   end
   options.format = options.format or "%c"

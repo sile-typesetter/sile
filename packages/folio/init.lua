@@ -59,7 +59,6 @@ local function registerCommands (_)
 
   SILE.registerCommand("nofoliosthispage", function (_, _)
     SU.deprecated("nofoliosthispage", "nofoliothispage", "0.12.1", "0.14.0")
-    return SILE.Commands["nofoliothispage"]()
   end, "Deprecated")
 
   SILE.registerCommand("foliostyle", function (_, content)
@@ -82,7 +81,7 @@ return {
   registerCommands = registerCommands,
   exports = {
     outputFolio = function (class)
-      SU.deprecated("class:outputFolio", nil, "0.13.0", "0.14.0", _deprecate)
+      SU.deprecated("class:outputFolio", nil, "0.13.0", "0.15.0", _deprecate)
       return _outputFolio(class)
     end,
   },

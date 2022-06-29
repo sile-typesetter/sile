@@ -217,11 +217,9 @@ return {
   exports = {
     writeToc = function (_)
       SU.deprecated("class:writeToc", nil, "0.13.0", "0.14.0", _deprecate)
-      return _writeToc()
     end,
-    moveTocNodes = function (class)
+    moveTocNodes = function (_)
       SU.deprecated("class:moveTocNodes", nil, "0.13.0", "0.14.0", _deprecate)
-      return _moveTocNodes(class)
     end
   },
   documentation = [[

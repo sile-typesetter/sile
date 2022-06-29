@@ -1,8 +1,7 @@
 local function registerCommands (_)
 
-  SILE.registerCommand("alt", function (_, content)
+  SILE.registerCommand("alt", function (_, _)
     SU.deprecated("\\alt", "\\alternative", "0.10.0", "0.14.0")
-    SILE.call("alternative", {}, content)
   end, "Deprecated")
 
   SILE.registerCommand("alternative", function (_, content)
