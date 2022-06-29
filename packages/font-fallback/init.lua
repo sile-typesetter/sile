@@ -96,7 +96,9 @@ local function init (_, _)
       local chunk = shapeQueue:currentText()
       SU.debug("font-fallback", ("Try shaping chunk '%s' with '%s'"):format(chunk, face))
       local candidate_items = self._base.shapeToken(self, chunk, run.options)
+      local _index
       for _, item in ipairs(candidate_items) do
+        item.fontOptions = run.options
         if item.gid == 0 or item.name == ".null" or item.name == ".notdef" then
           SU.debug("font-fallback", ("Glyph %s not found in %s"):format(item.text, face))
           local newstart = run.start + item.index
@@ -104,29 +106,20 @@ local function init (_, _)
           if not pending then
             SU.warn(("Glyph(s) '%s' not available in any fallback font,\n  run with '-d font-fallback' for more detail.\n"):format(item.text))
             run.offset = run.offset + 1
-            item.fontOptions = run.options
             table.insert(items, run.offset, item) -- output tofu if we're out of fallbacks
           end
         else
           SU.debug("font-fallback", ("Found glyph '%s' in '%s'"):format(item.text, face))
-          run.offset = run.offset + 1
           shapeQueue:pushNextRun(run.start + item.index - 1) -- if notdef run pending, end it
-          item.fontOptions = run.options
-          table.insert(items, run.offset, item)
-          -- TODO: Leaving this bit out of refactoring is likely a regression,
-          -- but at the moment I can't find an actual test case that would
-          -- trigger this behaviour
-          --[[
-          -- There might be multiple glyphs for the same index
-          local pos = start + item.index
-          if not items[pos] then
-            items[pos] = item
+          if item.index == _index then
+            local previous = items[run.offset]
+            while previous.next do previous = previous.next end
+            previous.next = item
           else
-            local lastInPlace = items[pos]
-            while lastInPlace.next do lastInPlace = lastInPlace.next end
-            lastInPlace.next = item
+            _index = run.index
+            run.offset = run.offset + 1
+            table.insert(items, run.offset, item)
           end
-          ]]--
         end
       end
       shapeQueue:pushNextRun(run.stop) -- if notdef run pending, end it
