@@ -39,8 +39,27 @@ luautf8 = require("lua-utf8")
 -- Includes for _this_ scope
 local lfs = require("lfs")
 
+SILE.utilities = require("core.utilities")
+SU = SILE.utilities -- regrettable global alias
+
+-- On demand loader, allows modules to be loaded into a specific scope but
+-- only when/if accessed.
+local core_loader = function (scope)
+  return setmetatable({}, {
+    __index = function (self, key)
+      -- local var = rawget(self, key)
+      local m = require(("%s.%s"):format(scope, key))
+      self[key] = m
+      return m
+    end
+  })
+end
+
 -- Internal data tables
-SILE.inputs = {}
+SILE.inputters = core_loader("inputters")
+SILE.shapers = core_loader("shapers")
+SILE.outputters = core_loader("outputters")
+
 SILE.Commands = {}
 SILE.debugFlags = {}
 SILE.nodeMakers = {}
@@ -49,13 +68,10 @@ SILE.status = {}
 SILE.scratch = {}
 SILE.dolua = {}
 SILE.preamble = {}
-SILE.preamble = {}
 SILE.documentState = {}
 
 -- Internal functions / classes / factories
 SILE.fluent = require("fluent")()
-SILE.utilities = require("core.utilities")
-SU = SILE.utilities -- alias
 SILE.traceStack = require("core.tracestack")()
 SILE.parserBits = require("core.parserbits")
 SILE.units = require("core.units")
@@ -65,9 +81,6 @@ SILE.papersize = require("core.papersize")
 SILE.classes = require("core.classes")
 SILE.nodefactory = require("core.nodefactory")
 SILE.settings = require("core.settings")()
-require("core.inputs-texlike")
-require("core.inputs-xml")
-require("core.inputs-common")
 SILE.colorparser = require("core.colorparser")
 SILE.pagebuilder = require("core.pagebuilder")()
 require("core.typesetter")
@@ -96,28 +109,32 @@ SILE.init = function ()
     if pcall(require, "justenoughharfbuzz") then
       SILE.backend = "libtexpdf"
     else
-      SU.error("libtexpdf backend not available!")
+      SU.error("Default backend libtexpdf not available!")
     end
   end
   if SILE.backend == "libtexpdf" then
-    require("core.harfbuzz-shaper")
-    require("core.libtexpdf-output")
+    SILE.shaper = SILE.shapers.harfbuzz()
+    SILE.outputter = SILE.outputters.libtexpdf()
   elseif SILE.backend == "cairo" then
-    require("core.pango-shaper")
-    require("core.cairo-output")
+    SILE.shaper = SILE.shapers.pango()
+    SILE.outputter = SILE.outputters.cairo()
   elseif SILE.backend == "debug" then
-    require("core.harfbuzz-shaper")
-    require("core.debug-output")
+    SILE.shaper = SILE.shapers.harfbuzz()
+    SILE.outputter = SILE.outputters.debug()
   elseif SILE.backend == "text" then
-    require("core.harfbuzz-shaper")
-    require("core.text-output")
+    SILE.shaper = SILE.shapers.harfbuzz()
+    SILE.outputter = SILE.outputters.text()
   elseif SILE.backend == "dummy" then
-    require("core.harfbuzz-shaper")
-    require("core.dummy-output")
+    SILE.shaper = SILE.shapers.harfbuzz()
+    SILE.outputter = SILE.outputters.dummy()
   end
   for _, func in ipairs(SILE.dolua) do
     local _, err = pcall(func)
     if err then error(err) end
+  end
+  -- Preload default reader types so content detection has something to work with
+  for _, inputter in ipairs({ "sil", "xml" }) do
+    local _ = SILE.inputters[inputter]
   end
 end
 
@@ -149,6 +166,54 @@ SILE.require = function (dependency, pathprefix, deprecation_ack)
     class:initPackage(lib)
   end
   return lib
+end
+
+local debugAST
+debugAST = function (ast, level)
+  if not ast then SU.error("debugAST called with nil", true) end
+  local out = string.rep("  ", 1+level)
+  if level == 0 then SU.debug("ast", "["..SILE.currentlyProcessingFile) end
+  if type(ast) == "function" then SU.debug("ast", out.."(function)") end
+  for i=1, #ast do
+    local content = ast[i]
+    if type(content) == "string" then
+      SU.debug("ast", out.."["..content.."]")
+    elseif SILE.Commands[content.command] then
+      local options = pl.tablex.size(content.options) > 0 and content.options or ""
+      SU.debug("ast", out.."\\"..content.command..options)
+      if (#content>=1) then debugAST(content, level+1) end
+    elseif content.id == "texlike_stuff" or (not content.command and not content.id) then
+      debugAST(content, level+1)
+    else
+      SU.debug("ast", out.."?\\"..(content.command or content.id))
+    end
+  end
+  if level == 0 then SU.debug("ast", "]") end
+end
+
+SILE.process = function (input)
+  if not input then return end
+  if type(input) == "function" then return input() end
+  if SU.debugging("ast") then
+    debugAST(input, 0)
+  end
+  for _, content in ipairs(input) do
+    if type(content) == "string" then
+      SILE.typesetter:typeset(content)
+    elseif type(content) == "function" then
+      content()
+    elseif SILE.Commands[content.command] then
+      SILE.call(content.command, content.options, content)
+    elseif content.id == "texlike_stuff" or (not content.command and not content.id) then
+      local pId = SILE.traceStack:pushContent(content, "texlike_stuff")
+      SILE.process(content)
+      SILE.traceStack:pop(pId)
+    else
+      local pId = SILE.traceStack:pushContent(content)
+      SU.error("Unknown command "..(content.command or content.id))
+      SILE.traceStack:pop(pId)
+    end
+  end
 end
 
 SILE.parseArguments = function ()
@@ -300,15 +365,16 @@ function SILE.readFile(filename)
     doc = file:read("*a")
   end
   local sniff = doc:sub(1, 100):gsub("begin.*", "") or ""
-  local inputsOrder = {}
-  for input in pairs(SILE.inputs) do
-    if SILE.inputs[input].order then table.insert(inputsOrder, input) end
+  local contentDetectionOrder = {}
+  for _, inputter in pairs(SILE.inputters) do
+    if inputter.order then table.insert(contentDetectionOrder, inputter) end
   end
-  table.sort(inputsOrder,function(a,b) return SILE.inputs[a].order < SILE.inputs[b].order end)
-  for i = 1, #inputsOrder do local input = SILE.inputs[inputsOrder[i]]
-    if input.appropriate(filename, sniff) then
+  table.sort(contentDetectionOrder, function (a, b) return a.order < b.order end)
+  for _, inputter in ipairs(contentDetectionOrder) do
+    if inputter.appropriate(filename, sniff) then
+      SILE.inputter = inputter()
       local pId = SILE.traceStack:pushDocument(filename, sniff, doc)
-      input.process(doc)
+      SILE.inputter:process(doc)
       SILE.traceStack:pop(pId)
       return
     end

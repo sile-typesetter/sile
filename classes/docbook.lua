@@ -44,9 +44,9 @@ docbook.registerCommands = function (self)
   plain.registerCommands(self)
 
   SILE.registerCommand("article", function (_, content)
-    local info = SILE.findInTree(content, "info") or SILE.findInTree(content, "articleinfo")
-    local title = SILE.findInTree(content, "title") or (info and SILE.findInTree(info, "title"))
-    local author = SILE.findInTree(content, "author") or (info and SILE.findInTree(info, "author"))
+    local info = SILE.inputter:findInTree(content, "info") or SILE.inputter:findInTree(content, "articleinfo")
+    local title = SILE.inputter:findInTree(content, "title") or (info and SILE.inputter:findInTree(info, "title"))
+    local author = SILE.inputter:findInTree(content, "author") or (info and SILE.inputter:findInTree(info, "author"))
 
     if title then
       SILE.call("docbook-article-title", {}, title)
@@ -75,7 +75,7 @@ docbook.registerCommands = function (self)
     while #(SILE.scratch.docbook.seccount) > SILE.scratch.docbook.seclevel do
       SILE.scratch.docbook.seccount[#(SILE.scratch.docbook.seccount)] = nil
     end
-    local title = SILE.findInTree(content, "title")
+    local title = SILE.inputter:findInTree(content, "title")
     local number = table.concat(SILE.scratch.docbook.seccount, '.')
     if title then
       SILE.call("docbook-section-"..SILE.scratch.docbook.seclevel.."-title", {}, function ()
@@ -94,7 +94,7 @@ docbook.registerCommands = function (self)
     SILE.call("docbook-line")
     SILE.call("docbook-titling", {}, function ()
       SILE.typesetter:typeset(thing.." ".. self:formatCounter(SILE.scratch.counters[thing]))
-      local t = SILE.findInTree(content, "title")
+      local t = SILE.inputter:findInTree(content, "title")
       if t then
         SILE.typesetter:typeset(": ")
         SILE.process(t)

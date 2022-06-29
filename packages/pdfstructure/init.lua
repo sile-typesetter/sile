@@ -100,7 +100,6 @@ local function registerCommands (_)
     local node = stNode(notetype)
     addChild(node)
     node.lang = SILE.settings:get("document.language")
-    SILE.outputter:_init()
     node.page = pdf.get_dictionary("@THISPAGE")
     node.mcid = mcid
     local oldstPointer = stPointer

@@ -77,9 +77,9 @@ local activeFallbacks = {}
 
 local function init (_, _)
 
-  require("core.harfbuzz-shaper")
+  local harfbuzz = require("shapers.harfbuzz")
 
-  SILE.shapers.harfbuzzWithFallback = pl.class(SILE.shapers.harfbuzz)
+  SILE.shapers.harfbuzzWithFallback = pl.class(harfbuzz)
   SILE.shapers.harfbuzzWithFallback._name = "harfbuzzWithFallback"
 
   function SILE.shapers.harfbuzzWithFallback:shapeToken (text, options)
@@ -254,4 +254,5 @@ of fonts to try.
 list of fonts to try.
 
 \end{document}
-]]}
+]]
+}

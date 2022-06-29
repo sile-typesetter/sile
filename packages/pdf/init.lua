@@ -23,7 +23,7 @@ local function init (_, _)
 
   pdf = require("justenoughlibtexpdf")
 
-  if SILE.outputter ~= SILE.outputters.libtexpdf then
+  if SILE.outputter._name ~= "libtexpdf" then
     SU.error("pdf package requires libtexpdf backend")
   end
 
@@ -35,7 +35,6 @@ local function registerCommands (_)
     local name = SU.required(options, "name", "pdf:destination")
     SILE.typesetter:pushHbox({
       outputYourself = function (_, typesetter, line)
-        SILE.outputters.libtexpdf._init()
         local state = typesetter.frame.state
         typesetter.frame:advancePageDirection(-line.height)
         local x, y = state.cursorX, state.cursorY
@@ -63,7 +62,6 @@ local function registerCommands (_)
       depth = SILE.measurement(0),
       outputYourself = function ()
         local d = "<</Title<" .. ustr .. ">/A<</S/GoTo/D(" .. dest .. ")>>>>"
-        SILE.outputters.libtexpdf._init()
         pdf.bookmark(d, level)
       end
     })
@@ -76,7 +74,6 @@ local function registerCommands (_)
       width = SILE.measurement(0),
       depth = SILE.measurement(0),
       outputYourself = function (_, _, _)
-        SILE.outputters.libtexpdf._init()
         pdf.add_content(content[1])
       end
     })
@@ -98,7 +95,6 @@ local function registerCommands (_)
       outputYourself = function (_, typesetter, _)
         llx = typesetter.frame.state.cursorX:tonumber()
         lly = (SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY):tonumber()
-        SILE.outputters.libtexpdf._init()
         pdf.begin_annotation()
       end
     })
@@ -144,7 +140,6 @@ local function registerCommands (_)
       width = SILE.measurement(0),
       depth = SILE.measurement(0),
       outputYourself = function (_, _, _)
-        SILE.outputter:_init()
         pdf.metadata(key, value)
       end
     })

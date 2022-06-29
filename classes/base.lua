@@ -46,7 +46,6 @@ function base:_init (options)
   self:registerCommands()
   self:declareSettings()
   self:setOptions(options)
-  SILE.outputter:init(self)
   self:declareFrames(self.defaultFrameset)
   self:registerPostinit(function (self_)
       if type(self.firstContentFrame) == "string" then

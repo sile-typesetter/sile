@@ -37,7 +37,6 @@ local outputRotatedHbox = function (self, typesetter, line)
 
   local horigin = (typesetter.frame.state.cursorX + origbox.width.length / 2):tonumber()
   local vorigin = -(typesetter.frame.state.cursorY + origbox.height / 2):tonumber()
-  SILE.outputters.libtexpdf._init()
   pdf:gsave()
   pdf.setmatrix(1, 0, 0, 1, horigin, vorigin)
   pdf.setmatrix(math.cos(x), math.sin(x), -math.sin(x), math.cos(x), 0, 0)

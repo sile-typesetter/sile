@@ -1,26 +1,31 @@
 local lpeg = require("lpeg")
 local epnf = require("epnf")
 
-SILE.inputs.TeXlike = {}
+local base = require("inputters.base")
+local sil = pl.class(base)
+sil._name = "sil"
+
+sil.order = 99
+sil.appropriate = function () return true end
 
 local ID = lpeg.C(SILE.parserBits.letter * (SILE.parserBits.letter + SILE.parserBits.digit)^0)
-SILE.inputs.TeXlike.identifier = (ID + lpeg.S":-")^1
+sil.identifier = (ID + lpeg.S":-")^1
 
-SILE.inputs.TeXlike.passthroughCommands = {
+sil.passthroughCommands = {
   ftl = true,
   math = true,
   script = true
 }
-setmetatable(SILE.inputs.TeXlike.passthroughCommands, {
-    __call = function(self, command)
-      return self[command]
-    end
-  })
+
+function sil:_init (tree)
+  self._parser = self:rebuildParser()
+  base._init(self, tree)
+end
 
 -- luacheck: push ignore
-SILE.inputs.TeXlike.parser = function (_ENV)
+function sil.parser (_ENV)
   local isPassthrough = function (_, _, command)
-    return SILE.inputs.TeXlike.passthroughCommands(command) or false
+    return sil.passthroughCommands[command] or false
   end
   local isNotPassthrough = function (...)
     return not isPassthrough(...)
@@ -41,7 +46,7 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     return str:gsub('\\([{}%%\\])', '%1')
   end
   local value = quotedString + (1-S",;]")^1
-  local myID = C(SILE.inputs.TeXlike.identifier) / 1
+  local myID = C(sil.identifier) / 1
   local unwrapper = function (...)
     local tbl = {...}
     return tbl[1], tbl[#tbl]
@@ -176,12 +181,12 @@ local function massage_ast (tree, doc)
   return tree
 end
 
-function SILE.inputs.TeXlike.process (doc)
-  local tree = SILE.inputs.TeXlike.docToTree(doc)
+function sil:process (doc)
+  local tree = self:docToTree(doc)
   local root = SILE.documentState.documentClass == nil
   if tree.command then
     if root and tree.command == "document" then
-      SILE.inputs.common.init(doc, tree)
+      self:classInit(tree)
     end
     SILE.process(tree)
   elseif not pcall(function () assert(load(doc))() end) then
@@ -192,16 +197,12 @@ function SILE.inputs.TeXlike.process (doc)
   end
 end
 
-local _parser
-
-function SILE.inputs.TeXlike.rebuildParser ()
-  _parser = epnf.define(SILE.inputs.TeXlike.parser)
+function sil:rebuildParser ()
+  return epnf.define(self.parser)
 end
 
-SILE.inputs.TeXlike.rebuildParser()
-
-function SILE.inputs.TeXlike.docToTree (doc)
-  local tree = epnf.parsestring(_parser, doc)
+function sil:docToTree (doc)
+  local tree = epnf.parsestring(self._parser, doc)
   -- a document always consists of one texlike_stuff
   tree = tree[1][1]
   if tree.id == "texlike_text" then tree = {tree} end
@@ -211,5 +212,4 @@ function SILE.inputs.TeXlike.docToTree (doc)
   return tree
 end
 
-SILE.inputs.TeXlike.order = 99
-SILE.inputs.TeXlike.appropriate = function () return true end
+return sil

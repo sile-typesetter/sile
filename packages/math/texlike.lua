@@ -29,7 +29,7 @@ local mathGrammar = function (_ENV)
     + lpeg.R("\224\239") * utf8cont * utf8cont
     + lpeg.R("\240\244") * utf8cont * utf8cont * utf8cont
   -- Identifiers inside \mo and \mi tags
-  local sileID = C(SILE.inputs.TeXlike.identifier + P(1)) / 1
+  local sileID = C(SILE.inputters.sil.identifier + P(1)) / 1
   local mathMLID = (utf8code - S"\\{}%")^1 / function (...)
       local ret = ""
       local t = {...}
