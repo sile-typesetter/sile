@@ -16,7 +16,20 @@ SILE.PackageManager = {
   Catalogue = {}
 }
 
+local _deprecated = function ()
+  SU.deprecated("SILE.PackageManager", nil, "0.13.2", "0.15.0", [[
+  The built in SILE package manager has been completely deprecated. In its place
+    SILE can now load classes, packages, and other resources installed via
+    LuaRocks. Any SILE package may be published on LuaRocks.org or any private
+    repository. Rocks may be installed to the host system root filesystem, a user
+    directory, or a custom location. Please see the SILE manual for usage
+    instructions. Package authors especially can review the template repository
+    on GitHub for how to create a package.
+  ]])
+end
+
 local function loadInSandbox(untrusted_code)
+  _deprecated()
   if _ENV then -- simple Lua 5.2 version check
     local env = {}
     local untrusted_function, message = load(untrusted_code, nil, 't', env)
@@ -34,6 +47,7 @@ local function loadInSandbox(untrusted_code)
 end
 
 local function dumpTable(tbl)
+  _deprecated()
   if type(tbl) == 'table' then
     local str = '{ '
     for k, v in pairs(tbl) do
@@ -51,14 +65,16 @@ local function fixupPaths()
   local paths = ""
   local cpaths = ""
   for pkg, _ in pairs(SILE.PackageManager.installed) do
+    _deprecated()
     paths = paths .. packageHome .. pkg .. '/?.lua;'
     cpaths = cpaths .. packageHome .. pkg .. "/?."..SHARED_LIB_EXT.. ";"
   end
-  package.path = origpath:gsub("?.lua", "?.lua;"..paths, 1)
-  package.cpath = origcpath .. ";" .. cpaths
+  if paths:len() >= 1 then package.path = paths .. ";" .. origpath end
+  if cpaths:len() >= 1 then package.cpath = cpaths .. ";" .. origcpath end
 end
 
 local function saveInstalled()
+  _deprecated()
   local dump = dumpTable(SILE.PackageManager.installed)
   local file, err = io.open(installedCatalogue, "w")
   if err then
@@ -123,6 +139,7 @@ end
 -- luacheck: ignore installPackage
 
 function updatePackage(packageName, branch)
+  _deprecated()
   local target = packageHome .. packageName
   -- Are we already there?
   if SILE.PackageManager.installed[packageName] == branch and branch ~= "master" then
@@ -152,6 +169,7 @@ function updatePackage(packageName, branch)
 end
 
 function installPackage(packageName)
+  _deprecated()
   if not recentlyUpdated  then updateCatalogue() end
   if not recentlyReloaded then reloadCatalogue() end
   if not SILE.PackageManager.Catalogue[packageName] then

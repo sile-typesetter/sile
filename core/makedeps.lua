@@ -3,7 +3,7 @@ local makeDeps = {
 
   add = function (self, filename)
     SU.debug("makedeps", "Adding:", filename)
-    local resolvedFile, msg = package.searchpath(filename:gsub("^%./", ""), "?;"..package.path, "/")
+    local resolvedFile, msg = package.searchpath(filename:gsub("^@?%./", ""), "?;"..package.path, "/")
     if not resolvedFile then
       SU.error("Cannot resolve file '" .. filename .. "' as a dependency:" .. msg)
     end

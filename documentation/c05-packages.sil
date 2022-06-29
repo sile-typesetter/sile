@@ -201,24 +201,60 @@ basic functionality to other packages and classes. Classes such as the
 
 \section{The Package Manager}
 
-While your SILE installation will include a comprehensive collection
-of SILE packages, there’s more out there! SILE comes with a simple
-package manager which can help you to download and install new packages.
-The package manager is accessed from the SILE REPL, like so:
+The SILE installation includes a core collection of packages we hope are generally useful.
+But there’s more out there!
+SILE is able to use packages installed via the LuaRocks package manager.
+It can also be configured to read packages from any directory of your choosing.
+
+A SILE compatible LuaRock simply installs the relevant class, package, language, i18n, or similar files in a \code{sile} directory.
+This diroctory could be in your system Lua direcory, in your user directory, or any other location you specify.
+
+By default SILE will look for packages in:
+
+\noindent• The directory where the SILE source file is located
+
+\noindent• The current working directory
+
+\noindent• The default LUA search path
+
+\noindent• The directory where SILE is installed on the system
+
+By default, LuaRocks will install packages to the Lua search path.
 
 \begin{verbatim}
 \line
- $ sile
-\sileversion
-> installPackage("endnotes")
-Loading catalogue from https://raw.githubusercontent.com/simoncozens/sile-packages/master/packages.lua
+$ luarocks install lilypond.sile
+$ sile ...
 \line
 \end{verbatim}
 
-There will then follow a load of information which should end up with
-the \code{endnotes} package and all its dependencies being installed.
-SILE will also ensure that downloaded packages are added to the package
-search path. There’s currently no way to list or search the available
-packages. We’ll get there.
+Depending on your system, this probably requires root permissions.
+If you either don’t have root permisisons or don’t want to polute your system’s root file system, you can also install as a user.
+To use packages installed as a user you will need to have LuaRocks add it’s user tree to your Lua search path before running SILE.
+
+\begin{verbatim}
+\line
+$ luarocks --local install lilypond.sile
+$ eval $(luarocks --local path)
+$ sile ...
+\line
+\end{verbatim}
+
+Of course you can add that eval statement to your shell profile to always include your user’s directory in your Lua path.
+You can also add your own entries to the top of the search path list by setting the \code{SILE_PATH} variable, for example:
+
+\begin{verbatim}
+\line
+$ export SILE_PATH="/path/to/my/library/"
+$ sile ...
+\line
+\end{verbatim}
+
+To write a package and publish to LuaRocks, see the package-template.sile repository.
+
+It's worth noting that packages are not limited to just the package interface.
+They can include classes, languages, i18n resources, or anything else provided by SILE.
+Also because external locations are searched before SILE itself, they can even override any core part of SILE itself.
+As such you should probably make sure you review what a package does before installing it!
 
 \end{document}

@@ -14,9 +14,6 @@ SILE.inputs.common = {
       SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0", string.format(_deprecated, constructor.id))
     end
     SILE.documentState.documentClass = constructor(tree.options)
-    -- Prepend the dirname of the input file to the Lua search path
-    local dirname = SILE.masterFilename:match("(.-)[^%/]+$")
-    package.path = dirname.."?;"..dirname.."?.lua;"..package.path
   end
 }
 
