@@ -92,12 +92,12 @@ local function init (_, _)
     repeat -- iterate fallbacks
       SU.debug("font-fallback", ("Start fallback iteration for text '%s'"):format(text))
       local run = shapeQueue:currentRun()
-      local face = run.options.family or run.options.filename
+      local face = run.options.family:len() > 0 and run.options.family or run.options.filename
       local chunk = shapeQueue:currentText()
       SU.debug("font-fallback", ("Try shaping chunk '%s' with '%s'"):format(chunk, face))
       local candidate_items = self._base.shapeToken(self, chunk, run.options)
       for _, item in ipairs(candidate_items) do
-        if item.gid == 0 then
+        if item.gid == 0 or item.name == ".null" or item.name == ".notdef" then
           SU.debug("font-fallback", ("Glyph %s not found in %s"):format(item.text, face))
           local newstart = run.start + item.index
           local pending = shapeQueue:addRun(run.offset, newstart)
