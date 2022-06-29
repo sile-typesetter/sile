@@ -170,7 +170,6 @@ local _twocolumns
 local _gutterwidth
 
 function bible:_init(options)
-  if self._legacy and not self._deprecated then return self:_deprecator(bible) end
   self:loadPackage("masters")
   plain._init(self, options)
   self:loadPackage("infonode")

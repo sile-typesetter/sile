@@ -17,13 +17,18 @@ pl = require("pl.import_into")()
 -- For developer testing only, usually in CI
 if os.getenv("SILE_COVERAGE") then require("luacov") end
 
--- Include lua-stdlib, but make sure debugging is turned off since newer
--- versions enable it by default and it comes with a huge performance hit.
--- Note we are phasing out stdlib in favor of Penlight. When adding or
--- refactoring code, using the Penlight equivalent features is preferred.
--- luacheck: push ignore _DEBUG std
-_DEBUG = false
-std = require("std")
+local nostd = function ()
+  SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0", [[
+  Lua stdlib (std.*) is no longer provided by SILE, you may use
+      local std = require("std")
+  in your project directly if needed. Note you may need to install the Lua
+  rock as well since it no longer ships as a dependency.]])
+end
+-- luacheck: push ignore std
+std = setmetatable({}, {
+  __call = nostd,
+  __index = nostd
+})
 -- luacheck: pop
 
 -- Lua 5.3+ has a UTF-8 safe string function module but it is somewhat
@@ -74,26 +79,14 @@ SILE.frameParser = require("core.frameparser")
 SILE.linebreak = require("core.break")
 require("core.frame")
 
--- Class system deprecation shims
-SILE.baseClass = {}
-local _classdeprecation = function ()
+local nobaseclass = function ()
   SU.deprecated("SILE.baseclass", "SILE.classes.base", "0.13.0", "0.14.0", [[
   The inheritance system for SILE classes has been refactored using a different
-  object model, please update your code as use of the old model will cause
-  unexpected errors and will eventually be removed.]])
+  object model.]])
 end
-setmetatable(SILE.baseClass, {
-    __index = function(_, key)
-      -- Likely at attempt to iterate (or dump) the table, sort of safe to ignore
-      if type(key) ~= "number" then
-        _classdeprecation()
-      end
-      return SILE.classes.base[key]
-    end,
-    __call = function (_, ...)
-      _classdeprecation()
-      return SILE.classes.base(...)
-    end
+SILE.baseClass = setmetatable({}, {
+    __call = nobaseclass,
+    __index = nobaseclass
   })
 
 SILE.init = function ()
@@ -129,15 +122,13 @@ end
 
 SILE.require = function (dependency, pathprefix, deprecation_ack)
   if pathprefix and not deprecation_ack then
-    SU.warn(string.format([[
-    Please don't use the path prefix mechanism; it was intended to provide
-      alternate paths to override core components but never worked well and is
-      causing portability problems. Just use Lua idiomatic module loading:
-
-      SILE.require("%s", "%s") → SILE.require("%s.%s")
-
-    ]], dependency, pathprefix, pathprefix, dependency))
-    SU.deprecated("SILE.require", "SILE.require", "0.13.0", "0.14.0")
+    local notice = string.format([[
+  Please don't use the path prefix mechanism; it was intended to provide
+  alternate paths to override core components but never worked well and is
+  causing portability problems. Just use Lua idiomatic module loading:
+      SILE.require("%s", "%s") → SILE.require("%s.%s")]],
+      dependency, pathprefix, pathprefix, dependency)
+    SU.deprecated("SILE.require", "SILE.require", "0.13.0", nil, notice)
   end
   dependency = dependency:gsub(".lua$", "")
   local status, lib
@@ -148,13 +139,10 @@ SILE.require = function (dependency, pathprefix, deprecation_ack)
   local class = SILE.documentState.documentClass
   if not class and not deprecation_ack then
     SU.warn(string.format([[
-    Use of SILE.require() is only supported in documents, packages, or class
-      init functions. It cannot be used before the class is instantiated.
-      Please just use the Lua require() function directly.
-
-      SILE.require("%s") → require("%s")
-
-    ]], dependency, dependency))
+  Use of SILE.require() is only supported in documents, packages, or class
+  init functions. It ill not function fully before the class is instantiated.
+  Please just use the Lua require() function directly:
+      SILE.require("%s") → require("%s")]], dependency, dependency))
   end
   if lib and class then
     class:initPackage(lib)

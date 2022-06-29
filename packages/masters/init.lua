@@ -35,7 +35,7 @@ end
 local function switchMasterOnePage (class, id)
   if not id then
     id = class
-    SU.deprecated("class.switchMasterOnePage", "class:switchMasterOnePage", "0.13.0", "0.14.0")
+    SU.deprecated("class.switchMasterOnePage", "class:switchMasterOnePage", "0.13.0", "0.15.0")
   end
   if not SILE.scratch.masters[id] then
     SU.error("Can't find master "..id)
@@ -49,7 +49,7 @@ end
 local function switchMaster (class, id)
   if not id then
     id, class = class, SILE.documentState.documentClass
-    SU.deprecated("class.switchMaster", "class:switchMaster", "0.13.0", "0.14.0")
+    SU.deprecated("class.switchMaster", "class:switchMaster", "0.13.0", "0.15.0")
   end
   _currentMaster = id
   if not SILE.scratch.masters[id] then

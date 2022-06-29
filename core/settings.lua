@@ -1,5 +1,5 @@
 local deprecator = function ()
-  SU.deprecated("SILE.settings.*", "SILE.settings:*", "0.13.0", "0.14.0")
+  SU.deprecated("SILE.settings.*", "SILE.settings:*", "0.13.0", "0.15.0")
   return SILE.settings
 end
 

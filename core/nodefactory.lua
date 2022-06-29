@@ -626,8 +626,6 @@ setmetatable(nodefactory, {
     __index = function (_, prop)
       if _deprecated_nodefactory[prop] then
         SU.deprecated("SILE.nodefactory." .. prop, "SILE.nodefactory." .. prop:match("n?e?w?(.*)"):lower(), "0.10.0", "0.14.0")
-        local old_constructor = _deprecated_nodefactory[prop]
-        return string.find(prop, "^new") and old_constructor or old_constructor()
       elseif type(prop) == "number" then -- luacheck: ignore 542
         -- Likely at attempt to iterate (or dump) the table, sort of safe to ignore
       else

@@ -1,6 +1,6 @@
 local function getCounter (class, id)
   if not id then
-    SU.deprecated("class.getCounter", "class:getCounter", "0.13.0", "0.14.0")
+    SU.deprecated("class.getCounter", "class:getCounter", "0.13.0", "0.15.0")
     class, id = SILE.documentState.documentClass, class
   end
   if not SILE.scratch.counters[id] then
@@ -11,7 +11,7 @@ end
 
 local function getMultilevelCounter (class, id)
   if not id then
-    SU.deprecated("class.getMultilevelCounter", "class:getMultilevelCounter", "0.13.0", "0.14.0")
+    SU.deprecated("class.getMultilevelCounter", "class:getMultilevelCounter", "0.13.0", "0.15.0")
     class, id = SILE.documentState.documentClass, class
   end
   local counter = SILE.scratch.counters[id]
@@ -37,12 +37,12 @@ local function formatMultilevelCounter (_, counter, options)
 end
 
 SILE.formatCounter = function (counter)
-  SU.deprecated("SILE.formatCounter", "class:formatCounter", "0.13.0", "0.14.0")
+  SU.deprecated("SILE.formatCounter", "class:formatCounter", "0.13.0", "0.15.0")
   return formatCounter(nil, counter)
 end
 
 SILE.formatMultilevelCounter = function (counter, options)
-  SU.deprecated("SILE.formatMultilevelCounter", "class:formatMultilevelCounter", "0.13.0", "0.14.0")
+  SU.deprecated("SILE.formatMultilevelCounter", "class:formatMultilevelCounter", "0.13.0", "0.15.0")
   return formatMultilevelCounter(nil, counter, options)
 end
 

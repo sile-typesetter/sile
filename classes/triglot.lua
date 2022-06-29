@@ -4,7 +4,6 @@ local triglot = pl.class(book)
 triglot._name = "triglot"
 
 function triglot:_init (options)
-  if self._legacy and not self._deprecated then return self:_deprecator(triglot) end
   book._init(self, options)
   self:loadPackage("counters")
   self:registerPostinit(function ()
