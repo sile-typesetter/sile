@@ -81,7 +81,7 @@ return {
   registerCommands = registerCommands,
   exports = {
     outputFolio = function (class)
-      SU.deprecated("class:outputFolio", nil, "0.13.0", "0.14.0", _deprecate)
+      SU.deprecated("class:outputFolio", nil, "0.13.0", "0.15.0", _deprecate)
       return _outputFolio(class)
     end,
   },

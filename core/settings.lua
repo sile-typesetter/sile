@@ -1,5 +1,6 @@
 local deprecator = function ()
-  SU.deprecated("SILE.settings.*", "SILE.settings:*", "0.13.0", "0.14.0")
+  SU.deprecated("SILE.settings.*", "SILE.settings:*", "0.13.0", "0.15.0")
+  return SILE.settings
 end
 
 local settings = pl.class()
@@ -95,18 +96,18 @@ function settings:_init()
 end
 
 function settings:pushState ()
-  if not self then deprecator() end
+  if not self then self = deprecator() end
   table.insert(self.stateQueue, self.state)
   self.state = pl.tablex.copy(self.state)
 end
 
 function settings:popState ()
-  if not self then deprecator() end
+  if not self then self = deprecator() end
   self.state = table.remove(self.stateQueue)
 end
 
 function settings:declare (spec)
-  if not spec then deprecator() end
+  if not spec then self, spec = deprecator(), self end
   if spec.name then
     SU.deprecated("'name' argument of SILE.settings:declare", "'parameter' argument of SILE.settings:declare", "0.10.10", "0.11.0")
   end
@@ -115,14 +116,14 @@ function settings:declare (spec)
 end
 
 function settings:reset ()
-  if not self then deprecator() end
+  if not self then self = deprecator() end
   for k,_ in pairs(self.state) do
     self:set(k, self.defaults[k])
   end
 end
 
 function settings:toplevelState ()
-  if not self then deprecator() end
+  if not self then self = deprecator() end
   if #self.stateQueue ~= 0 then
     for k,_ in pairs(self.state) do
       self:set(k, self.stateQueue[1][k])
@@ -131,7 +132,7 @@ function settings:toplevelState ()
 end
 
 function settings:get (parameter)
-  if not parameter then deprecator() end
+  if not parameter then self, parameter = deprecator(), self end
   if not self.declarations[parameter] then
     SU.error("Undefined setting '"..parameter.."'")
   end
@@ -143,7 +144,7 @@ function settings:get (parameter)
 end
 
 function settings:set (parameter, value, makedefault, reset)
-  if type(self) ~= "table" then deprecator() end
+  if type(self) ~= "table" then self, parameter, value, makedefault, reset = deprecator(), self, parameter, value, makedefault end
   if not self.declarations[parameter] then
     SU.error("Undefined setting '"..parameter.."'")
   end
@@ -162,14 +163,14 @@ function settings:set (parameter, value, makedefault, reset)
 end
 
 function settings:temporarily (func)
-  if not func then deprecator() end
+  if not func then self, func = deprecator(), self end
   self:pushState()
   func()
   self:popState()
 end
 
 function settings:wrap () -- Returns a closure which applies the current state, later
-  if not self then deprecator() end
+  if not self then self = deprecator() end
   local clSettings = pl.tablex.copy(self.state)
   return function(content)
     table.insert(self.stateQueue, self.state)
