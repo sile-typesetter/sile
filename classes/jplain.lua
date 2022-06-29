@@ -1,51 +1,15 @@
 -- Basic! Transitional! In development! Not very good! Don't use it!
-local plain = require("classes.plain")
+local tplain = require("classes.tplain")
 
-local jplain = pl.class(plain)
+local jplain = pl.class(tplain)
 jplain._name = "jplain"
 
-jplain.defaultFrameset.content = {
-  left = "8.3%pw",
-  top = "11.6%ph",
-  gridsize = 10,
-  linegap = 7,
-  linelength = 50,
-  linecount = 30
-}
-
-function jplain:_j_common ()
-  self:loadPackage("font-fallback")
-  self:loadPackage("hanmenkyoshi")
-  self:registerPostinit(function (class)
-      class:bidiDisableTypesetter(SILE.typesetter)
-      class:bidiDisableTypesetter(SILE.defaultTypesetter)
-      SILE.call("font:add-fallback", { family = "Noto Sans CJK JP" })
-    end)
-  self.defaultFrameset.content.tate = self.options.layout == "tate"
-  self:declareHanmenFrame("content", self.defaultFrameset.content)
-  SILE.settings:set("document.parindent", SILE.nodefactory.glue("10pt"))
-end
-
 function jplain:_init (options)
-  plain._init(self, options)
-  self:_j_common()
+  tplain._init(self, options)
+  SILE.languageSupport.loadLanguage("ja")
+  SILE.settings:set("document.language", "ja", true)
+  SILE.settings:set("font.family", "Noto Sans CJK JP", true)
   return self
-end
-
-function jplain:declareOptions ()
-  plain.declareOptions(self)
-  self:declareOption("layout", function (_, value)
-    if value then
-      self.layout = value
-      if value == "tate" then self:loadPackage("tate") end
-    end
-    return self.layout
-  end)
-end
-
-function jplain:setOptions (options)
-  options.layout = options.layout or "yoko"
-  plain.setOptions(self, options)
 end
 
 return jplain

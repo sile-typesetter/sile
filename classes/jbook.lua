@@ -1,46 +1,18 @@
-local book = require("classes.book")
-local jplain = require("classes.jplain")
+local tbook = require("classes.tbook")
 
-local jbook = pl.class(book)
+local jbook = pl.class(tbook)
 jbook._name = "jbook"
 
-jbook.defaultFrameset = {
-  runningHead = {
-    left = "left(content) + 9pt",
-    right = "right(content) - 9pt",
-    height = "20pt",
-    bottom = "top(content)-9pt"
-  },
-  content = {
-    left = "8.3%pw",
-    top = "12%ph",
-    gridsize = 10,
-    linegap = 7,
-    linelength = 40,
-    linecount = 35
-  },
-  folio = {
-    left = "left(content)",
-    right = "right(content)",
-    top = "bottom(footnotes)+3%ph",
-    bottom = "bottom(footnotes)+5%ph"
-  },
-  footnotes = {
-    left="left(content)",
-    right = "right(content)",
-    height = "0",
-    bottom="83.3%ph"
-  }
-}
-
 function jbook:_init (options)
-  book._init(self, options)
-  jplain._j_common(self)
+  tbook._init(self, options)
+  SILE.languageSupport.loadLanguage("ja")
+  SILE.settings:set("document.language", "ja", true)
+  SILE.settings:set("font.family", "Noto Sans CJK JP", true)
   return self
 end
 
-jbook.declareOptions = jplain.declareOptions
+jbook.declareOptions = tbook.declareOptions
 
-jbook.setOptions = jplain.setOptions
+jbook.setOptions = tbook.setOptions
 
 return jbook

@@ -95,7 +95,6 @@ classes which handle this kind of content:
       on the page and the last reference on the page respectively. This is helpful
       for running headers.}
 \end{itemize}
-
 \end{document}
-  ]]
+]]
 }

@@ -13,14 +13,11 @@ Hello SILE!
 
 \section{Defining the paper size}
 
-A document starts with a \code{\\begin\{document\}} command and ends with
-\code{\\end\{document\}}. In between, SILE documents are made up of two
-elements: text to be typeset on the page, such as “Hello SILE!” in our example,
-and commands.
+A document starts with a \code{\\begin\{document\}} command and ends with \code{\\end\{document\}}.
+In between, SILE documents are made up of two elements: text to be typeset on the page, such as “Hello SILE!” in our example, and commands.
 
-The default paper size is A4, although each class may override this value. To
-manually change the paper size, an optional argument may be added to the document
-declaration:
+The default paper size is A4, although each class may override this value.
+To manually change the paper size, an optional argument may be added to the document declaration:
 
 \begin{verbatim}
 \line
@@ -28,30 +25,24 @@ declaration:
 \line
 \end{verbatim}
 
-SILE knows about the ISO standard A, B and C series paper sizes using names a4,
-b5, etc. Also available are the traditional sizes letter, note, legal,
-executive, halfletter, halfexecutive, statement, folio, quarto, ledger,
-tabloid, the series archA through archE, as well as DL, Comm10, Monarch, flsa,
-flse, csheet, dsheet, and esheet.
+SILE knows about the ISO standard A, B and C series paper sizes using names a4, b5, etc.
+Also available are presets for some traditional sizes:
+a0, a1, a10, a2, a3, a4, a5, a6, a7, a8, a9, ansia, ansib, ansic, ansid, ansie, archa, archb, archc, archd, arche, arche1, arche2, arche3, b0, b1, b10, b2, b3, b4, b5, b6, b7, b8, b9, c2, c3, c4, c5, c6, c7, c8, comm10, csheet, dl, dsheet, esheet, executive, flsa, flse, folio, halfexecutive, halfletter, ledger, legal, letter, monarch, note, quarto, statement, and tabloid.
 
 If you need a paper size for your document which is not one of the standards,
 then you can specify it by dimensions:
 
-\code{papersize=\em{<basic length> x <basic length>}}.
+\code{papersize=\em{<measurement> x <measurement>}}.
 
-SILE knows a number of ways of specifying lengths. A \code{<basic length>} as
-mentioned above can be specified as a floating-point number followed by
-a dimension abbreviation. Acceptable dimensions are printer’s points
-(\code{pt}), millimeters (\code{mm}), centimeters (\code{cm}) or inches.
-(\code{in}) (You can even use \code{ft} and \code{m} for feet and meters
-if you are typesetting \em{particularly} large documents.) For instance, a
-standard B-format book can be specified by \code{papersize=198mm x 129mm}.
+SILE knows a number of ways of specifying a measurement.
+A \code{<measurement>} as mentioned above can be specified as a floating-point number followed by a unit abbreviation.
+Acceptable units include printer’s points (\code{pt}), millimeters (\code{mm}), centimeters (\code{cm}), or inches (\code{in}).
+(You can even use feet (\code{ft}) or meters (\code{m}) if you are typesetting \em{particularly} large documents or twips (\code{twip}) for \em{particularly} small documents.)
+For instance, a standard B-format book can be specified by \code{papersize=198mm x 129mm}.
 
-Once some of the basic document properties have been setup using these fixed
-size units, other dimensions may be specified relative to them, using \em{relative
-units}. In chapter 4 we will meet some of these relative units, and in chapter 7
-we will meet some other ways of specifying lengths to make them
-stretchable or shrinkable.
+Once some of the basic document properties have been setup using these fixed size units, other dimensions may be specified relative to them, using \em{relative units}.
+For example once the paper size is set, percentage of page width (\code{\%pw}) and height(\code{\%ph}) become valid units.
+In chapter 4 we will meet more of these relative units, and in chapter 7 we will meet some other ways of specifying lengths to make them stretchable or shrinkable.
 
 \section{Ordinary text}
 
