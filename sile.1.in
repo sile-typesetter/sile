@@ -10,8 +10,9 @@
 .I filename.xml
 .B ]
 .SH DESCRIPTION
-The SILE typesetter reads a single input file in either SIL or XML format and generates an output in PDF format.
+The SILE typesetter reads a single input file, by default in either SIL or XML format, and processes it to generate a single output file, by default in PDF format.
 The output will be written to the same name as the input file with the extension changed to .pdf unless the \fB\-\-output\fR flag is used.
+Additional input or output formats can be handled by requiring a module with \fB\-\-require\fR to add support for them first.
 .SH OPTIONS
 .B @TRANSFORMED_PACKAGE_NAME@
 accepts the following options:

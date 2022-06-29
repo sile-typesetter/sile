@@ -160,11 +160,13 @@ SILE.parseArguments = function ()
   cli:set_colsz(0, 120)
   cli:set_name("sile")
   cli:set_description([[
-      The SILE typesetter reads a single input file in either SIL or XML format to
-      generate an output in PDF format. The output will be written to the same name
-      as the input file with the extension changed to .pdf.
+      The SILE typesetter reads a single input file, by default in either SIL or XML format,
+      and processes it to generate a single output file, by default in PDF format. The
+      output file will be written to the same name as the input file with the extension
+      changed to .pdf. Additional input or output formats can be handled by requiring a
+      module that adds support for them first.
     ]])
-  cli:splat("INPUT", "input file, SIL or XML format")
+  cli:splat("INPUT", "input document, by default in SIL or XML format")
   cli:option("-b, --backend=VALUE", "choose an alternative output backend")
   cli:option("-d, --debug=VALUE", "show debug information for tagged aspects of SILE’s operation", {})
   cli:option("-e, --evaluate=VALUE", "evaluate Lua expression before processing input", {})
