@@ -80,8 +80,8 @@ return pl.class({
 
     __tostring = function (self)
       local str = tostring(self.length)
-      if self.stretch.amount ~= 0 then str = str .. " plus " .. self.stretch end
-      if self.shrink.amount  ~= 0 then str = str .. " minus " .. self.shrink end
+      if self.stretch.amount ~= 0 then str = str .. " plus " .. tostring(self.stretch) end
+      if self.shrink.amount  ~= 0 then str = str .. " minus " .. tostring(self.shrink) end
       return str
     end,
 
