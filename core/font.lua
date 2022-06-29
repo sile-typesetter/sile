@@ -75,7 +75,7 @@ SILE.fontCache = {}
 local _key = function (options)
   return table.concat({
       options.family,
-      ("%g"):format(options.size),
+      ("%g"):format(SILE.measurement(options.size):tonumber()),
       ("%d"):format(options.weight or 0),
       options.style,
       options.variant,
