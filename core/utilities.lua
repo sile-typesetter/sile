@@ -107,6 +107,28 @@ utilities.debug = function (category, ...)
   end
 end
 
+utilities.debugAST = function (ast, level)
+  if not ast then SU.error("debugAST called with nil", true) end
+  local out = string.rep("  ", 1+level)
+  if level == 0 then SU.debug("ast", "["..SILE.currentlyProcessingFile) end
+  if type(ast) == "function" then SU.debug("ast", out.."(function)") end
+  for i=1, #ast do
+    local content = ast[i]
+    if type(content) == "string" then
+      SU.debug("ast", out.."["..content.."]")
+    elseif SILE.Commands[content.command] then
+      local options = pl.tablex.size(content.options) > 0 and content.options or ""
+      SU.debug("ast", out.."\\"..content.command..options)
+      if (#content>=1) then utilities.debugAST(content, level+1) end
+    elseif content.id == "texlike_stuff" or (not content.command and not content.id) then
+      utilities.debugAST(content, level+1)
+    else
+      SU.debug("ast", out.."?\\"..(content.command or content.id))
+    end
+  end
+  if level == 0 then SU.debug("ast", "]") end
+end
+
 utilities.dump = function (...)
   local arg = { ... } -- Avoid things that Lua stuffs in arg like args to self()
   pl.pretty.dump(#arg == 1 and arg[1] or arg, "/dev/stderr")

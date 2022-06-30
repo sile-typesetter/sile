@@ -126,7 +126,7 @@ if SILE.masterFilename then
   end
 
   if SU.debugging("versions") then
-    SILE.shaper.debugVersions()
+    SILE.shaper:debugVersions()
   end
 
 else

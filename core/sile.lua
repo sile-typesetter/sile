@@ -168,34 +168,11 @@ SILE.require = function (dependency, pathprefix, deprecation_ack)
   return lib
 end
 
-local debugAST
-debugAST = function (ast, level)
-  if not ast then SU.error("debugAST called with nil", true) end
-  local out = string.rep("  ", 1+level)
-  if level == 0 then SU.debug("ast", "["..SILE.currentlyProcessingFile) end
-  if type(ast) == "function" then SU.debug("ast", out.."(function)") end
-  for i=1, #ast do
-    local content = ast[i]
-    if type(content) == "string" then
-      SU.debug("ast", out.."["..content.."]")
-    elseif SILE.Commands[content.command] then
-      local options = pl.tablex.size(content.options) > 0 and content.options or ""
-      SU.debug("ast", out.."\\"..content.command..options)
-      if (#content>=1) then debugAST(content, level+1) end
-    elseif content.id == "texlike_stuff" or (not content.command and not content.id) then
-      debugAST(content, level+1)
-    else
-      SU.debug("ast", out.."?\\"..(content.command or content.id))
-    end
-  end
-  if level == 0 then SU.debug("ast", "]") end
-end
-
 SILE.process = function (input)
   if not input then return end
   if type(input) == "function" then return input() end
   if SU.debugging("ast") then
-    debugAST(input, 0)
+    SU.debugAST(input, 0)
   end
   for _, content in ipairs(input) do
     if type(content) == "string" then
@@ -272,12 +249,10 @@ SILE.parseArguments = function ()
       SILE.debugFlags[flag] = true
     end
   end
-  if opts.evaluate then
-    for _, statement in ipairs(opts.evaluate) do
-      local func, err = load(statement)
-      if err then SU.error(err) end
-      SILE.dolua[#SILE.dolua+1] = func
-    end
+  for _, statement in ipairs(opts.evaluate) do
+    local func, err = load(statement)
+    if err then SU.error(err) end
+    SILE.dolua[#SILE.dolua+1] = func
   end
   if opts.fontmanager then
     SILE.forceFontManager = opts.fontmanager
@@ -333,12 +308,12 @@ function SILE.initRepl ()
   SILE._repl:loadplugin('rcfile')
 end
 
-function SILE.repl()
+function SILE.repl ()
   if not SILE._repl then SILE.initRepl() end
   SILE._repl:run()
 end
 
-function SILE.readFile(filename)
+function SILE.readFile (filename)
   SILE.currentlyProcessingFile = filename
   local doc
   if filename == "-" then
@@ -383,7 +358,7 @@ function SILE.readFile(filename)
 end
 
 -- Sort through possible places files could be
-function SILE.resolveFile(filename, pathprefix)
+function SILE.resolveFile (filename, pathprefix)
   local candidates = {}
   -- Start with the raw file name as given prefixed with a path if requested
   if pathprefix then candidates[#candidates+1] = pl.path.join(pathprefix, "?") end
@@ -410,7 +385,7 @@ function SILE.resolveFile(filename, pathprefix)
   return resolved
 end
 
-function SILE.call(command, options, content)
+function SILE.call (command, options, content)
   options = options or {}
   content = content or {}
   if SILE.traceback and type(content) == "table" and not content.lno then
