@@ -66,11 +66,13 @@ else
   extendPaths(".")
 end
 
+-- This global is set here and *also* in the core library, since this
+-- effectively passes the same table they are interchangeable (for now).
 SILE = require("core.sile")
 
 io.stdout:setvbuf 'no'
 
-SILE.parseArguments()
+SILE.cli:parseArguments()
 
 if not os.getenv 'LUA_REPL_RLWRAP' then
   io.stderr:write(SILE.full_version .. '\n')
