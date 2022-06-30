@@ -113,10 +113,6 @@ SILE.init = function ()
     local _, err = pcall(func)
     if err then error(err) end
   end
-  -- Preload default reader types so content detection has something to work with
-  for _, inputter in ipairs({ "sil", "xml" }) do
-    local _ = SILE.inputters[inputter]
-  end
 end
 
 SILE.require = function (dependency, pathprefix, deprecation_ack)
@@ -176,6 +172,33 @@ end
 
 local defaultinputters = { "xml", "lua", "sil" }
 
+function SILE.readString (doc, filename)
+  -- Preload default reader types so content detection has something to work with
+  for _, inputter in ipairs(defaultinputters) do
+    local _ = SILE.inputters[inputter]
+  end
+  filename = filename or "<none>"
+  local contentDetectionOrder = {}
+  for _, inputter in pairs(SILE.inputters) do
+    if inputter.order then table.insert(contentDetectionOrder, inputter) end
+  end
+  table.sort(contentDetectionOrder, function (a, b) return a.order < b.order end)
+  for round = 1, 3 do
+    for _, inputter in ipairs(contentDetectionOrder) do
+      SU.debug("inputter", ("Running content type detection round %s with %s"):format(round, inputter._name))
+      if inputter.appropriate(round, filename, doc) then
+        io.stderr:write("Processing " .. inputter._name .. "\n")
+        SILE.inputter = inputter()
+        local pId = SILE.traceStack:pushDocument(filename, doc)
+        SILE.inputter:process(doc)
+        SILE.traceStack:pop(pId)
+        return
+      end
+    end
+  end
+  SU.error(("Unable to pick inputter to process input from '%s'"):format(filename))
+end
+
 function SILE.readFile (filename)
   SILE.currentlyProcessingFile = filename
   local doc
@@ -202,22 +225,7 @@ function SILE.readFile (filename)
     io.stderr:write("<"..filename..">\n")
     doc = file:read("*a")
   end
-  local sniff = doc:sub(1, 100):gsub("begin.*", "") or ""
-  local contentDetectionOrder = {}
-  for _, inputter in pairs(SILE.inputters) do
-    if inputter.order then table.insert(contentDetectionOrder, inputter) end
-  end
-  table.sort(contentDetectionOrder, function (a, b) return a.order < b.order end)
-  for _, inputter in ipairs(contentDetectionOrder) do
-    if inputter.appropriate(filename, sniff) then
-      SILE.inputter = inputter()
-      local pId = SILE.traceStack:pushDocument(filename, sniff, doc)
-      SILE.inputter:process(doc)
-      SILE.traceStack:pop(pId)
-      return
-    end
-  end
-  SU.error("No input processor available for "..filename.." (should never happen)", true)
+  return SILE.readString(doc, filename)
 end
 
 -- Sort through possible places files could be

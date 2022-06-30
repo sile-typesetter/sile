@@ -1,12 +1,25 @@
-local lpeg = require("lpeg")
+local base = require("inputters.base")
+
 local epnf = require("epnf")
 
-local base = require("inputters.base")
 local sil = pl.class(base)
 sil._name = "sil"
 
-sil.order = 99
-sil.appropriate = function () return true end
+sil.order = 50
+
+sil.appropriate = function (round, filename, doc)
+  if round == 1 then
+    return filename:match(".sil$")
+  elseif round == 2 then
+    local sniff = doc:sub(1, 100)
+    local promising = sniff:match("\\begin") or sniff:match("\\document") or sniff:match("\\sile")
+    return promising and sil.appropriate(3, filename, doc)
+  elseif round == 3 then
+    local _parser = epnf.define(sil._grammar)
+    local status, tree = pcall(epnf.parsestring, _parser, doc)
+    return status and tree[1][1].command == "document"
+  end
+end
 
 local bits = SILE.parserBits
 
@@ -23,7 +36,7 @@ function sil:_init (tree)
 end
 
 -- luacheck: push ignore
-function sil.parser (_ENV)
+function sil._grammar (_ENV)
   local isPassthrough = function (_, _, command)
     return sil.passthroughCommands[command] or false
   end
@@ -174,8 +187,6 @@ function sil:process (doc)
       self:classInit(tree)
     end
     SILE.process(tree)
-  elseif not pcall(function () assert(load(doc))() end) then
-    SU.error("Input not recognized as Lua or SILE content")
   end
   if root and not SILE.preamble then
     SILE.documentState.documentClass:finish()
@@ -183,7 +194,7 @@ function sil:process (doc)
 end
 
 function sil:rebuildParser ()
-  return epnf.define(self.parser)
+  return epnf.define(self._grammar)
 end
 
 function sil:docToTree (doc)
