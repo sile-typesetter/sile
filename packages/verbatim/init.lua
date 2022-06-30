@@ -50,9 +50,9 @@ to produce a backslash, you need to write \code{\\\\}.}
 Here is some text set in the \autodoc:environment{verbatim} environment:
 
 \begin{verbatim}
-function SILE.repl()
-  if not SILE._repl then SILE.initRepl() end
-  SILE._repl:run()
+local function init (class, _)
+  class:loadPackage("rebox")
+  class:loadPackage("raiselower")
 end
 \end{verbatim}
 

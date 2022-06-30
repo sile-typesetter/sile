@@ -93,6 +93,7 @@ SILE.frameParser = require("core.frameparser")
 SILE.linebreak = require("core.break")
 require("core.frame")
 SILE.cli = require("core.cli")
+SILE.repl = require("core.repl")
 
 local nobaseclass = function ()
   SU.deprecated("SILE.baseclass", "SILE.classes.base", "0.13.0", "0.14.0", [[
@@ -192,43 +193,6 @@ SILE.process = function (input)
       SILE.traceStack:pop(pId)
     end
   end
-end
-
-function SILE.initRepl ()
-  SILE._repl          = require 'repl.console'
-  local has_linenoise, linenoise = pcall(require, 'linenoise')
-
-  if has_linenoise then
-    SILE._repl:loadplugin('linenoise')
-    linenoise.enableutf8()
-  else
-    -- XXX check that we're not receiving input from a non-tty
-    local has_rlwrap = os.execute('which rlwrap >/dev/null 2>/dev/null') == 0
-
-    if has_rlwrap and not os.getenv 'LUA_REPL_RLWRAP' then
-      local command = 'LUA_REPL_RLWRAP=1 rlwrap'
-      local index = 0
-      while arg[index - 1] do
-        index = index - 1
-      end
-      while arg[index] do
-        command = string.format('%s %q', command, arg[index])
-        index = index + 1
-      end
-      os.execute(command)
-      return
-    end
-  end
-
-  SILE._repl:loadplugin('history')
-  SILE._repl:loadplugin('completion')
-  SILE._repl:loadplugin('autoreturn')
-  SILE._repl:loadplugin('rcfile')
-end
-
-function SILE.repl ()
-  if not SILE._repl then SILE.initRepl() end
-  SILE._repl:run()
 end
 
 function SILE.readFile (filename)
