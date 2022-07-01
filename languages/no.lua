@@ -1,6 +1,4 @@
-SILE.hyphenator.languages["no"] = {}
-SILE.hyphenator.languages["no"].patterns =
-   {
+local patterns = {
 ".a4",
 ".aa4",
 ".ab4ba",
@@ -27449,10 +27447,9 @@ SILE.hyphenator.languages["no"].patterns =
 "åvæ4re.",
 "å1ø8",
 "åøy4",
-   }
+}
 
-SILE.hyphenator.languages["no"].exceptions =
-   {
+local exceptions = {
 "Ant-wer-pen",
 "Arm-strong",
 "Arm-strongs",
@@ -27561,4 +27558,17 @@ SILE.hyphenator.languages["no"].exceptions =
 "ut-ørken",
 "velan",
 "velet",
-   }
+}
+
+return {
+   init = function ()
+      SILE.hyphenator.languages.no = {
+         patterns = patterns,
+         exceptions = exceptions
+      }
+   end,
+   -- For inheritance to nn_NO
+   _no = function ()
+      return patterns, exceptions
+   end
+}
