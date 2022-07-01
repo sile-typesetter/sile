@@ -15,7 +15,8 @@ text._name = "text"
 
 function text:_ensureInit ()
   if not outfile then
-    outfile = io.open(self:getOutputFilename("txt"), "w+")
+    local fname = self:getOutputFilename("text")
+    outfile = fname == "-" and io.stdout or io.open(fname, "w+")
   end
 end
 

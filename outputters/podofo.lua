@@ -38,7 +38,8 @@ end
 
 function podofo:finish ()
   painter:FinishPage()
-  document:Write(self:getOutputFilename("pdf"))
+  local fname = self:getOutputFilename("pdf")
+  document:Write(fname == "-" and "/dev/stdout" or fname)
 end
 
 function podofo.getCursor (_)

@@ -42,7 +42,7 @@ cli.parseArguments = function ()
   end
   if opts.INPUT then
     if opts.INPUT == "STDIO" then
-      opts.INPUT = "/dev/stdin"
+      opts.INPUT = "-"
     end
     -- Turn slashes around in the event we get passed a path from a Windows shell
     SILE.inputFile = opts.INPUT:gsub("\\", "/")
@@ -72,7 +72,7 @@ cli.parseArguments = function ()
   end
   if opts.output then
     if opts.output == "STDIO" then
-      opts.output = "/dev/stdout"
+      opts.output = "-"
     end
     SILE.outputFilename = opts.output
   end

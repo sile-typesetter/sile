@@ -21,7 +21,8 @@ local cairo = pl.class(base)
 cairo._name = "cairo"
 
 function cairo:_init ()
-  local surface = cairolgi.PdfSurface.create(self:getOutputFilename("pdf"), SILE.documentState.paperSize[1], SILE.documentState.paperSize[2])
+  local fname = self:getOutputFilename("pdf")
+  local surface = cairolgi.PdfSurface.create(fname == "-" and "/dev/stdout" or fname, SILE.documentState.paperSize[1], SILE.documentState.paperSize[2])
   cr = cairolgi.Context.create(surface)
   move = cr.move_to
   sgs = cr.show_glyph_string

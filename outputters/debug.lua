@@ -32,7 +32,8 @@ debug._name = "debug"
 function debug:_ensureInit ()
   if not started then
     started = true -- keep this before self:_writeline or it will be a race condition!
-    outfile = io.open(self:getOutputFilename("debug"), "w+")
+    local fname = self:getOutputFilename("debug")
+    outfile = fname == "-" and io.stdout or io.open(fname, "w+")
     self:_writeline("Set paper size ", SILE.documentState.paperSize[1], SILE.documentState.paperSize[2])
     self:_writeline("Begin page")
   end

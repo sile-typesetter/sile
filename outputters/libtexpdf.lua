@@ -28,7 +28,8 @@ libtexpdf._name = "libtexpdf"
 function libtexpdf:_ensureInit ()
   if not started then
     local w, h = SILE.documentState.paperSize[1], SILE.documentState.paperSize[2]
-    pdf.init(self:getOutputFilename("pdf"), w, h, SILE.full_version)
+    local fname = self:getOutputFilename("pdf")
+    pdf.init(fname == "-" and "/dev/stdout" or fname, w, h, SILE.full_version)
     pdf.beginpage()
     started = true
   end
