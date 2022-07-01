@@ -53,15 +53,19 @@ cli.parseArguments = function ()
   if opts.backend then
     SILE.backend = opts.backend
   end
+  if opts.class then
+    SILE.input.class = opts.class
+  end
   for _, flags in ipairs(opts.debug) do
     for _, flag in ipairs(pl.stringx.split(flags, ",")) do
       SILE.debugFlags[flag] = true
     end
   end
-  for _, statement in ipairs(opts.evaluate) do
-    local func, err = load(statement)
-    if err then SU.error(err) end
-    SILE.dolua[#SILE.dolua+1] = func
+  for _, statement in ipairs(opts["evaluate"]) do
+    table.insert(SILE.input.evaluates, statement)
+  end
+  for _, statement in ipairs(opts["evaluate-after"]) do
+    table.insert(SILE.input.evaluateAfters, statement)
   end
   if opts.fontmanager then
     SILE.forceFontManager = opts.fontmanager
@@ -76,8 +80,23 @@ cli.parseArguments = function ()
     end
     SILE.outputFilename = opts.output
   end
-  for _, include in ipairs(opts.include) do
-    SILE.preamble[#SILE.preamble+1] = include
+  for _, option in ipairs(opts.options) do
+    local parameters = SILE.parserBits.parameters
+    local options = parameters:match(option)
+    pl.tablex.merge(SILE.input.options, options, true)
+  end
+  for _, path in ipairs(opts.require) do
+    table.insert(SILE.input.requires, path)
+  end
+  for _, path in ipairs(opts.preamble) do
+    table.insert(SILE.input.preambles, path)
+  end
+  for _, path in ipairs(opts.postamble) do
+    table.insert(SILE.input.postambles, path)
+  end
+  for _, path in ipairs(opts.include) do
+    SU.deprecated("-I/--include", "-r/--require or -p/--preamble", "0.14.0", "0.15.0")
+    table.insert(SILE.input.includes, path)
   end
   -- http://lua-users.org/wiki/VarargTheSecondClassCitizen
   local identity = function (...) return table.unpack({...}, 1, select('#', ...)) end

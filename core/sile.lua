@@ -44,12 +44,6 @@ local core_loader = function (scope)
   })
 end
 
--- Internal data tables
-SILE.inputters = core_loader("inputters")
-SILE.shapers = core_loader("shapers")
-SILE.outputters = core_loader("outputters")
-SILE.classes = core_loader("classes")
-
 SILE.Commands = {}
 SILE.Help = {}
 SILE.debugFlags = {}
@@ -57,32 +51,57 @@ SILE.nodeMakers = {}
 SILE.tokenizers = {}
 SILE.status = {}
 SILE.scratch = {}
-SILE.dolua = {}
-SILE.preamble = {}
 SILE.documentState = {}
 
--- Internal functions / classes / factories
+-- User input values, currently from CLI options, potentially all the inuts
+-- needed for a user to use a SILE-as-a-library verion to produce documents
+-- programatically.
+SILE.input = {
+  evaluates = {},
+  evaluateAfters = {},
+  includes = {},
+  requires = {},
+  options = {},
+  preambles = {},
+  postambles = {},
+}
+
+-- Internal libraries that are idempotent and return classes that need instantiation
+SILE.inputters = core_loader("inputters")
+SILE.shapers = core_loader("shapers")
+SILE.outputters = core_loader("outputters")
+SILE.classes = core_loader("classes")
+
+-- Internal libraries that don't make assumptions on load, only use
 SILE.traceStack = require("core.tracestack")()
 SILE.parserBits = require("core.parserbits")
+SILE.frameParser = require("core.frameparser")
 SILE.units = require("core.units")
+SILE.fontManager = require("core.fontmanager")
+
+-- Internal libraries that assume globals, may be picky about load order
 SILE.measurement = require("core.measurement")
 SILE.length = require("core.length")
 SILE.papersize = require("core.papersize")
 SILE.nodefactory = require("core.nodefactory")
-SILE.settings = require("core.settings")()
-SILE.colorparser = require("core.colorparser")
-SILE.pagebuilder = require("core.pagebuilder")()
-require("core.typesetter")
-require("core.hyphenator-liang")
-require("core.languages")
-SILE.font = require("core.font")
-require("core.packagemanager")
-SILE.fontManager = require("core.fontmanager")
-SILE.frameParser = require("core.frameparser")
-SILE.linebreak = require("core.break")
-require("core.frame")
-SILE.cli = require("core.cli")
-SILE.repl = require("core.repl")
+
+-- NOTE:
+-- See remainaing internal libraries loaded at the end of this file because
+-- they run core SILE functions on load istead of waiting to be called (or
+-- depend on others that do).
+
+local function runEvals (evals, arg)
+  for _, snippet in ipairs(evals) do
+    local pId = SILE.traceStack:pushText(snippet)
+    local status, func = pcall(load, snippet)
+    if status then
+      func()
+    else
+      SU.error(("Error parsing code provided in --%s snippet: %s"):format(arg, func))
+    end
+    SILE.traceStack:pop(pId)
+  end
+end
 
 SILE.init = function ()
   -- Set by def
@@ -109,10 +128,7 @@ SILE.init = function ()
     SILE.shaper = SILE.shapers.harfbuzz()
     SILE.outputter = SILE.outputters.dummy()
   end
-  for _, func in ipairs(SILE.dolua) do
-    local _, err = pcall(func)
-    if err then error(err) end
-  end
+  runEvals(SILE.input.evaluates, "evaluate")
 end
 
 SILE.require = function (dependency, pathprefix, deprecation_ack)
@@ -327,11 +343,24 @@ function SILE.finish ()
   if SILE.makeDeps then
     SILE.makeDeps:write()
   end
-  if SILE.preamble then
-    SILE.documentState.documentClass:finish()
-  end
+  SILE.documentState.documentClass:finish()
+  runEvals(SILE.input.evaluateAfters, "evaluate-after")
   io.stderr:write("\n")
 end
+
+-- Internal libraries that run core SILE functions on load
+SILE.settings = require("core.settings")()
+SILE.colorparser = require("core.colorparser")
+SILE.pagebuilder = require("core.pagebuilder")()
+require("core.typesetter")
+require("core.hyphenator-liang")
+require("core.languages")
+require("core.packagemanager")
+SILE.linebreak = require("core.break")
+require("core.frame")
+SILE.cli = require("core.cli")
+SILE.repl = require("core.repl")
+SILE.font = require("core.font")
 
 -- For warnings and shims scheduled for removal that are easier to keep track
 -- of when they are not spead across so many locations...

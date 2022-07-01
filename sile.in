@@ -97,13 +97,22 @@ if SILE.masterFilename then
     ProFi:start()
   end
 
-  for _, preamble in pairs(SILE.preamble) do
-    io.stderr:write("Loading "..preamble.."\n")
-    local c = SILE.resolveFile(preamble, "classes")
+  for _, path in ipairs(SILE.input.requires) do
+    local module = require(path)
+    if type(module) == "table" and type(module.declareOptions) == "function" then
+      SILE.classes[module._name] = module
+      SILE.sratch.required_class = module
+    end
+  end
+
+  -- Deprecated, notice given in core.cli when argument used
+  for _, path in ipairs(SILE.input.includes) do
+    io.stderr:write("Loading "..path.."\n")
+    local c = SILE.resolveFile(path, "classes")
     if c then
       SILE.readFile(c)
     else
-      SILE.require(preamble, "classes")
+      SILE.require(path, "classes")
     end
   end
 

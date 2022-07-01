@@ -10,12 +10,18 @@ local base = pl.class()
 function base._init (_) end
 
 function base.classInit (_, tree)
-  local class = tree.options.class or "plain"
-  local constructor = SILE.require(class, "classes", true)
+  local options = pl.tablex.merge(tree.options, SILE.input.options, true)
+  local constructor, class
+  if SILE.scratch.required_class then
+    constructor = SILE.scratch.required_class
+    class = constructor._name
+  end
+  class = SILE.input.class or class or options.class or "plain"
+  constructor = constructor or SILE.require(class, "classes", true)
   if constructor.id then
     SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0", string.format(_deprecated, constructor.id))
   end
-  SILE.documentState.documentClass = constructor(tree.options)
+  SILE.documentState.documentClass = constructor(options)
 end
 
 -- Just a simple one-level find. We're not reimplementing XPath here.
@@ -24,6 +30,18 @@ function base.findInTree (_, tree, command)
     if type(tree[i]) == "table" and tree[i].command == command then
       return tree[i]
     end
+  end
+end
+
+function base.preamble (_)
+  for _, path in ipairs(SILE.input.preamble) do
+    SILE.readFile(path)
+  end
+end
+
+function base.postamble (_)
+  for _, path in ipairs(SILE.input.postambles) do
+    SILE.readFile(path)
   end
 end
 
