@@ -27567,7 +27567,7 @@ return {
          exceptions = exceptions
       }
    end,
-   -- For inheritance to nn_NO
+   -- Private API For inheritance to nb_NO and rn_NO
    _no = function ()
       return patterns, exceptions
    end
