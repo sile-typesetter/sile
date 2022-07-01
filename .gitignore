@@ -81,7 +81,7 @@ sile.1
 /.version-prev
 /.tarball-version
 /.built-subdirs
-core/*.so
+*.so
 core/version.lua
 
 # Nix symlink to builds
