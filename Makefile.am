@@ -130,6 +130,7 @@ DEPDIR := .deps
 REGRESSIONSCRIPT := ./tests/regressions.pl
 LOCALTESTFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
 SILEFLAGS ?= -m $(DEPDIR)/$(basename $@).d -d versions -f fontconfig
+BUSTEDFLAGS ?=
 
 TESTPDFS   = $(addsuffix      .pdf,$(basename $(TESTSRCS)))
 EXPECTEDS ?= $(filter $(addsuffix .expected,$(basename $(TESTSRCS))),$(TESTEXPECTS))
@@ -172,7 +173,7 @@ else
 	packagecpath=(./{,core/,lua_modules/lib/lua/$(LUA_VERSION)/}?.$(SHARED_LIB_EXT))
 	packagepath=(./{,lua_modules/share/lua/$(LUA_VERSION)/,lua-libraries/}?{,/init}.lua)
 endif
-	$(LOCALTESTFONTS) busted --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" spec
+	$(LOCALTESTFONTS) busted --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" $(BUSTEDFLAGS) spec
 
 .PHONY: docs
 docs: $(MANUAL)
