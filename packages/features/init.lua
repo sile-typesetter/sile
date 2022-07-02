@@ -109,13 +109,13 @@ local featurestring = Cf(Ct"" * tag^0, rawset)
 -- Parser for fontspec strings
 -- Refer to fontspec.pdf (see doc), Chapter 3, Table 4 (p. 37)
 local fontspecsafe = R("AZ", "az", "09") + P":"
-local fontspecws = SILE.parserBits.whitespace^0
-local fontspecsep = P"," * fontspecws
+local ws = SILE.parserBits.ws
+local fontspecsep = P"," * ws
 local fontspecname = C(fontspecsafe^1)
-local fontspeclist = fontspecws * P"{" *
-                     Ct(fontspecws * fontspecname *
-                        (fontspecsep * fontspecname * fontspecws)^0) *
-                     P"}" * fontspecws
+local fontspeclist = ws * P"{" *
+                     Ct(ws * fontspecname *
+                        (fontspecsep * fontspecname * ws)^0) *
+                     P"}" * ws
 
 local otFeatures = pl.class(pl.Map)
 

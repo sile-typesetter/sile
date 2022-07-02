@@ -1,7 +1,8 @@
+local syms = require("packages.math.unicode-symbols")
+local bits = require("core.parserbits")
+
 local epnf = require("epnf")
 local lpeg = require("lpeg")
-local syms = require("packages.math.unicode-symbols")
-require("core.parserbits")
 
 local atomType = syms.atomType
 local symbolDefaults = syms.symbolDefaults
@@ -29,7 +30,7 @@ local mathGrammar = function (_ENV)
     + lpeg.R("\224\239") * utf8cont * utf8cont
     + lpeg.R("\240\244") * utf8cont * utf8cont * utf8cont
   -- Identifiers inside \mo and \mi tags
-  local sileID = C(SILE.inputters.sil.identifier + P(1)) / 1
+  local sileID = C(bits.identifier + P(1)) / 1
   local mathMLID = (utf8code - S"\\{}%")^1 / function (...)
       local ret = ""
       local t = {...}

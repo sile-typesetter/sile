@@ -8,8 +8,8 @@ sil._name = "sil"
 sil.order = 99
 sil.appropriate = function () return true end
 
-local ID = lpeg.C(SILE.parserBits.letter * (SILE.parserBits.letter + SILE.parserBits.digit)^0)
-sil.identifier = (ID + lpeg.S":-")^1
+local bits = SILE.parserBits
+
 
 sil.passthroughCommands = {
   ftl = true,
@@ -34,31 +34,16 @@ function sil.parser (_ENV)
     return thisCommand == lastCommand
   end
   local _ = WS^0
-  local sep = S",;" * _
   local eol = S"\r\n"
-  local quote = P'"'
-  local escaped_quote = B(P"\\") * quote
-  local unescapeQuote = function (str) local a = str:gsub('\\"', '"'); return a end
-  local quotedString = quote * C((1 - quote + escaped_quote)^1 / unescapeQuote) * quote
   local specials = S"{}%\\"
   local escaped_specials = P"\\" * specials
   local unescapeSpecials = function (str)
     return str:gsub('\\([{}%%\\])', '%1')
   end
-  local value = quotedString + (1-S",;]")^1
-  local myID = C(sil.identifier) / 1
-  local unwrapper = function (...)
-    local tbl = {...}
-    return tbl[1], tbl[#tbl]
-  end
-  local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1 / unwrapper
+  local myID = C(bits.silidentifier) / 1
   local cmdID = myID - P"beign" - P"end"
-  local list = Cf(Ct"" * pair^0, rawset)
-  local parameters = (
-      P"[" *
-      list *
-      P"]"
-    )^-1/function (a) return type(a)=="table" and a or {} end
+  local wrapper = function (a) return type(a)=="table" and a or {} end
+  local parameters = (P"[" * bits.parameters * P"]")^-1 / wrapper
   local comment = (
       P"%" *
       P(1-eol)^0 *
