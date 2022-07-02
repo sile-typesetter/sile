@@ -89,7 +89,13 @@ SILE.outputters.debug = {
 
   pushColor = function (self, color)
     _deprecationCheck(self)
-    writeline("Push color", _round(color.r), _round(color.g), _round(color.b))
+    if color.r then
+      writeline("Push color", _round(color.r), _round(color.g), _round(color.b))
+    elseif color.c then
+      writeline("Push color (CMYK)", _round(color.c), _round(color.m), _round(color.y), _round(color.k))
+    elseif color.l then
+      writeline("Push color (grayscale)", _round(color.l))
+    end
   end,
 
   popColor = function (self)
