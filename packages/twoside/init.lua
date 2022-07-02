@@ -15,10 +15,10 @@ local mirrorMaster = function (_, existing, new)
   for name, frame in pairs(SILE.scratch.masters[existing].frames) do
     local newframe = pl.tablex.deepcopy(frame)
     if frame:isAbsoluteConstraint("right") then
-      newframe.constraints.left = "100%pw-("..frame.constraints.right..")"
+      newframe.constraints.left = "2 * left(page) + 100%pw-("..frame.constraints.right..")"
     end
     if frame:isAbsoluteConstraint("left") then
-      newframe.constraints.right = "100%pw-("..frame.constraints.left..")"
+      newframe.constraints.right = "2 * left(page) + 100%pw-("..frame.constraints.left..")"
     end
     SILE.scratch.masters[new].frames[name] = newframe
     if frame == SILE.scratch.masters[existing].firstContentFrame then

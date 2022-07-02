@@ -50,6 +50,7 @@ function class:_init (options)
   self:registerCommands()
   self:declareSettings()
   self:setOptions(options)
+  self:buildPageFrameLayout()
   self:declareFrames(self.defaultFrameset)
   self:registerPostinit(function (self_)
       if type(self.firstContentFrame) == "string" then
@@ -76,6 +77,7 @@ end
 function class:setOptions (options)
   options = options or {}
   options.papersize = options.papersize or "a4"
+  options.bleed = options.bleed or "0"
   for option, value in pairs(options) do
     self.options[option] = value
   end
@@ -83,6 +85,47 @@ end
 
 function class:declareOption (option, setter)
   self.options[option] = setter
+end
+
+function class.buildPageFrameLayout ()
+  if not SILE.documentState.pageSize then
+    SILE.documentState.pageSize = {
+      SILE.documentState.paperSize[1],
+      SILE.documentState.paperSize[2]
+    }
+  end
+  if SILE.documentState.paperSize[1] < SILE.documentState.pageSize[1]
+      or SILE.documentState.paperSize[2] < SILE.documentState.pageSize[2] then
+    SU.error("Paper size shall not be smaller than the page size")
+  end
+  if SILE.documentState.paperSize[1] < SILE.documentState.pageSize[1] + SILE.documentState.bleed
+     or SILE.documentState.paperSize[2] < SILE.documentState.pageSize[2] + SILE.documentState.bleed then
+      SU.debug("frames", "Paper size augmented to take page bleed into account")
+      SILE.documentState.paperSize = {
+        SILE.documentState.pageSize[1] + SILE.documentState.bleed,
+        SILE.documentState.pageSize[2] + SILE.documentState.bleed,
+    }
+  end
+
+  SILE.documentState.orgPaperSize = SILE.documentState.pageSize -- Compat with old code
+
+  local bleedOffset = SILE.documentState.bleed/2
+  local offsetPageW = (SILE.documentState.paperSize[1] - SILE.documentState.pageSize[1]) / 2
+  local offsetPageH = (SILE.documentState.paperSize[2] - SILE.documentState.pageSize[2]) / 2
+  SILE.newFrame({
+    id = "page",
+    left = offsetPageW,
+    top = offsetPageH,
+    right = offsetPageW + SILE.documentState.pageSize[1],
+    bottom = offsetPageH + SILE.documentState.pageSize[2]
+  })
+  SILE.newFrame({
+    id = "pagebleed",
+    left = "left(page) - "..bleedOffset,
+    top = "top(page) - "..bleedOffset,
+    right = "right(page) + "..bleedOffset,
+    bottom = "bottom(page) +" .. bleedOffset,
+  })
 end
 
 function class:declareOptions ()
@@ -100,16 +143,22 @@ function class:declareOptions ()
     if size then
       self.papersize = size
       SILE.documentState.paperSize = SILE.papersize(size)
-      SILE.documentState.orgPaperSize = SILE.documentState.paperSize
-      SILE.newFrame({
-        id = "page",
-        left = 0,
-        top = 0,
-        right = SILE.documentState.paperSize[1],
-        bottom = SILE.documentState.paperSize[2]
-      })
     end
     return self.papersize
+  end)
+  self:declareOption("pagesize", function (_, size)
+    if size then
+      self.pagesize = size
+      SILE.documentState.pageSize = SILE.papersize(size)
+    end
+    return self.pagesize
+  end)
+  self:declareOption("bleed", function (_, dimen)
+    if dimen then
+      self.bleed = dimen
+      SILE.documentState.bleed = SU.cast("measurement", dimen):tonumber()
+    end
+    return self.bleed
   end)
 end
 
@@ -462,7 +511,10 @@ end
 
 function class:initialFrame ()
   SILE.documentState.thisPageTemplate = pl.tablex.deepcopy(self.pageTemplate)
-  SILE.frames = { page = SILE.frames.page }
+  SILE.frames = {
+    page = SILE.frames.page,
+    pagebleed = SILE.frames.pagebleed,
+  }
   for k, v in pairs(SILE.documentState.thisPageTemplate.frames) do
     SILE.frames[k] = v
   end

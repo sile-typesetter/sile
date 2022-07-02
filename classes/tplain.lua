@@ -5,8 +5,8 @@ local class = pl.class(plain)
 class._name = "tplain"
 
 class.defaultFrameset.content = {
-  left = "8.3%pw",
-  top = "11.6%ph",
+  left = "left(page) + 8.3%pw",
+  top = "top(page) + 11.6%ph",
   gridsize = 10,
   linegap = 7,
   linelength = 50,

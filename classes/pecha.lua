@@ -15,10 +15,10 @@ end
 
 class.defaultFrameset = {
   content = {
-    left = "5%pw",
-    right = "95%pw",
-    top = "5%ph",
-    bottom = "90%ph"
+    left = "left(page) + 5%pw",
+    right = "left(page) + 95%pw",
+    top = "top(page) + 5%ph",
+    bottom = "top(page) + 90%ph"
   },
   folio =   {
     left = "right(content)",

@@ -5,9 +5,9 @@ class._name = "book"
 
 class.defaultFrameset = {
   content = {
-    left = "8.3%pw",
-    right = "86%pw",
-    top = "11.6%ph",
+    left = "left(page) + 8.3%pw",
+    right = "left(page) + 86%pw",
+    top = "top(page) + 11.6%ph",
     bottom = "top(footnotes)"
   },
   folio = {
@@ -26,7 +26,7 @@ class.defaultFrameset = {
     left = "left(content)",
     right = "right(content)",
     height = "0",
-    bottom = "83.3%ph"
+    bottom = "top(page) + 83.3%ph"
   }
 }
 

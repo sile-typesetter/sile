@@ -30,7 +30,10 @@ local function defineMasters (class, list)
 end
 
 local function doswitch (frames)
-  SILE.frames = { page = SILE.frames.page }
+  SILE.frames = {
+    page = SILE.frames.page,
+    pagebleed = SILE.frames.pagebleed,
+  }
   for id, frame in pairs(frames) do
     SILE.frames[id] = frame
     frame:invalidate()
@@ -93,7 +96,10 @@ function package:registerCommands ()
     -- Subvert the <frame> functionality from baseclass
     local spare = SILE.documentState.thisPageTemplate.frames
     local sp2 = SILE.frames
-    SILE.frames = { page = SILE.frames.page }
+    SILE.frames = {
+      page = SILE.frames.page,
+      pagebleed = SILE.frames.pagebleed,
+    }
     SILE.documentState.thisPageTemplate.frames = {}
     SILE.process(content)
     SILE.scratch.masters[options.id] = {}

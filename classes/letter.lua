@@ -5,10 +5,10 @@ class._name = "letter"
 
 class.defaultFrameset = {
   content = {
-      left = "5%pw",
-      right = "95%pw",
-      top = "2in",
-      bottom = "90%ph"
+      left = "left(page) + 5%pw",
+      right = "left(page) + 95%pw",
+      top = "top(page) + 2in",
+      bottom = "top(page) + 90%ph"
     }
 }
 

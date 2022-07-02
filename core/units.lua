@@ -64,9 +64,9 @@ units["ft"] = {
   definition = "12in"
 }
 
-local checkPaperDefined = function ()
-  if not SILE.documentState or not SILE.documentState.orgPaperSize then
-    SU.error("A measurement tried to measure the paper size before the paper was defined", true)
+local checkPageSizeDefined = function ()
+  if not SILE.documentState or not SILE.documentState.pageSize then
+    SU.error("A measurement tried to measure the page size before it was defined", true)
   end
 end
 
@@ -79,32 +79,32 @@ end
 units["%pw"] = {
   relative = true,
   definition = function (value)
-    checkPaperDefined()
-    return value / 100 * SILE.documentState.orgPaperSize[1]
+    checkPageSizeDefined()
+    return value / 100 * SILE.documentState.pageSize[1]
   end
 }
 
 units["%ph"] = {
   relative = true,
   definition = function (value)
-    checkPaperDefined()
-    return value / 100 * SILE.documentState.orgPaperSize[2]
+    checkPageSizeDefined()
+    return value / 100 * SILE.documentState.pageSize[2]
   end
 }
 
 units["%pmin"] = {
   relative = true,
   definition = function (value)
-    checkPaperDefined()
-    return value / 100 * SU.min(SILE.documentState.orgPaperSize[1], SILE.documentState.orgPaperSize[2])
+    checkPageSizeDefined()
+    return value / 100 * SU.min(SILE.documentState.pageSize[1], SILE.documentState.pageSize[2])
   end
 }
 
 units["%pmax"] = {
   relative = true,
   definition = function (value)
-    checkPaperDefined()
-    return value / 100 * SU.max(SILE.documentState.orgPaperSize[1], SILE.documentState.orgPaperSize[2])
+    checkPageSizeDefined()
+    return value / 100 * SU.max(SILE.documentState.pageSize[1], SILE.documentState.pageSize[2])
   end
 }
 

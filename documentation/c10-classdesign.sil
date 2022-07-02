@@ -22,9 +22,9 @@ First, a table is populated with a description of the default frameset.
 
 book.defaultFrameset = \{
   content = \{
-    left = "8.3\%pw",
-    right = "86\%pw",
-    top = "11.6\%ph",
+    left = "top(page) + 8.3\%pw",
+    right = "left(page) + 86\%pw",
+    top = "top(page) + 11.6\%ph",
     bottom = "top(footnotes)"
   \},
   folio = \{
@@ -43,7 +43,7 @@ book.defaultFrameset = \{
     left = "left(content)",
     right = "right(content)",
     height = "0",
-    bottom = "83.3\%ph"
+    bottom = "top(page) + 83.3\%ph"
   \}
 \}
 
@@ -128,9 +128,9 @@ We can define this in SILE terms like so:
 
 bringhurst.defaultFrameset = \{
   content = \{
-    left = "width(page) / 13",
-    top = "width(page) / 8",
-    right = "width(page) * .75",
+    left = "left(page) + width(page) / 13",
+    top = "top(page) + width(page) / 8",
+    right = "left(page) + width(page) * .75",
     bottom = "top(footnotes)"
   \},
   folio = book.defaultFrameset.folio,

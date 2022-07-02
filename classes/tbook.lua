@@ -12,8 +12,8 @@ class.defaultFrameset = {
     bottom = "top(content)-9pt"
   },
   content = {
-    left = "8.3%pw",
-    top = "12%ph",
+    left = "left(page) + 8.3%pw",
+    top = "top(page) + 12%ph",
     gridsize = 10,
     linegap = 7,
     linelength = 40,
@@ -29,7 +29,7 @@ class.defaultFrameset = {
     left="left(content)",
     right = "right(content)",
     height = "0",
-    bottom="83.3%ph"
+    bottom="top(page) + 83.3%ph"
   }
 }
 

@@ -7,9 +7,9 @@ if not SILE.scratch.headers then SILE.scratch.headers = {} end
 
 class.defaultFrameset = {
   content = {
-    left = "8.3%pw",
-    right = "86%pw",
-    top = "11.6%ph",
+    left = "left(page) + 8.3%pw",
+    right = "left(page) + 86%pw",
+    top = "top(page) + 11.6%ph",
     bottom = "top(footnotes)"
   },
   folio = {
@@ -28,7 +28,7 @@ class.defaultFrameset = {
     left = "left(content)",
     right = "right(content)",
     height = "0",
-    bottom = "83.3%ph"
+    bottom = "top(page) + 83.3%ph"
   }
 }
 
@@ -57,12 +57,12 @@ function class:twoColumnMaster()
         title = {
           left = "left(contentA)",
           right = "right(contentB)",
-          top = "11.6%ph",
+          top = "top(page) + 11.6%ph",
           height = "0",
           bottom = "top(contentA)"
         },
         contentA = {
-          left = "8.3%pw",
+          left = "left(page) +8.3%pw",
           right = "left(gutter)",
           top = "bottom(title)",
           bottom = "top(footnotesA)",
@@ -72,7 +72,7 @@ function class:twoColumnMaster()
         contentB = {
           left = "right(gutter)",
           width ="width(contentA)",
-          right = "86%pw",
+          right = "left(page) + 86%pw",
           top = "bottom(title)",
           bottom = "top(footnotesB)",
           balanced = true
@@ -98,13 +98,13 @@ function class:twoColumnMaster()
           left =  "left(contentA)",
           right = "right(contentA)",
           height = "0",
-          bottom = "83.3%ph"
+          bottom = "top(page) + 83.3%ph"
         },
         footnotesB = {
           left = "left(contentB)",
           right = "right(contentB)",
           height = "0",
-          bottom = "83.3%ph"
+          bottom = "top(page) + 83.3%ph"
         },
       }
     })

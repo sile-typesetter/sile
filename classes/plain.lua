@@ -5,22 +5,22 @@ class._name = "plain"
 
 class.defaultFrameset = {
   content = {
-    left = "5%pw",
-    right = "95%pw",
-    top = "5%ph",
+    left = "left(page) + 5%pw",
+    right = "left(page) + 95%pw",
+    top = "top(page) + 5%ph",
     bottom = "top(footnotes)"
   },
   folio = {
     left = "left(content)",
     right = "right(content)",
     top = "bottom(footnotes)+2%ph",
-    bottom = "97%ph"
+    bottom = "top(page) + 97%ph"
   },
   footnotes = {
     left = "left(content)",
     right = "right(content)",
     height = "0",
-    bottom = "90%ph"
+    bottom = "top(page) + 90%ph"
   }
 }
 class.firstContentFrame = "content"
