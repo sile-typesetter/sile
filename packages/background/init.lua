@@ -4,10 +4,10 @@ local package = pl.class(base)
 package._name = "background"
 
 local outputBackground = function (color)
-  local page = SILE.getFrame("page")
+  local bleedarea = SILE.getFrame("pagebleed")
   local backgroundColor = SILE.color(color)
   SILE.outputter:pushColor(backgroundColor)
-  SILE.outputter:drawRule(page:left(), page:top(), page:right(), page:bottom())
+  SILE.outputter:drawRule(bleedarea:left(), bleedarea:top(), bleedarea:width(), bleedarea:height())
   SILE.outputter:popColor()
 end
 
