@@ -28,6 +28,12 @@ Choose an alternative output backend.
 The default backend for producing PDF files is \fIlibtexpdf\fR.
 Other available backends include \fIcairo\fR, \fIdebug\fR, \fItext\fR, and \fIdummy\fR.
 .TP
+.BR \-c ", " \-\-class= \fIvalue\fR
+Set the document class.
+The default for documents that do not specify is \fIplain\fR.
+Can be used to either change the default class or to override the class specified in a document.
+Other default classes include \fIbase\fR, \fIbible\fR, \fIbook\fR, \fIdiglot\fR, \fIdocbook\fR, \fIdocbook.sil \fIjbook\fR, \fIjplain\fR, \fIletter\fR, \fImarkdown\fR, \fIpecha\fR, \fItbook\fR, \fItplain\fR, and \fItriglot\fR.
+.TP
 .BR \-d ", " \-\-debug= \fIvalue\fR[,\fIvalue\fR]
 Debug SILE's operation.
 Multiple debug flags may be given as a comma separated list.
@@ -53,16 +59,22 @@ Generate a list of dependencies in Makefile format.
 .BR \-o ", " \-\-output= \fIfile\fR
 Explicitly set the output file name.
 .TP
+.BR \-O ", " \-\-options= \fIparameter=value\fR[,\fIparameter=value\fR]
+Set document class options.
+Can be used to change default options or override the ones specified in a document.
+For example setting \fB\-\-options papersize=letter\fR would override both the default \fIpapersize\fR of A4 and any specific one set in the document's options.
+May be specified more than once.
+.TP
 .BR \-I ", " \-\-include= \fIfilename\fR
 Deprecated, will be removed.
 Please use \-\-require, \-\-preamble, or \-\-postamble.
 .TP
 .BR \-r ", " \-\-require= \fImodule\fR
-Require a class, package, or other resources to be loaded before processing the main input.
-The value should be a loadable module name (without a file extension) and will be loaded using SILE's module search path.
-This is particularly useful when the input document is not a natively recognized SIL or XML format where SILE needs to be taught how to read and process the input.
-If a class is supplied, it will replace \fIplain\fR as the default class for processing documents.
-Because this executes before loading the document, it may even change the way the parser works or add a parser for new formats.
+Require a class, package, or other resource to be loaded before processing the main input.
+The value should be a loadable module name (without a file extension, using \fI.\fR as a path separator) and will be loaded using SILE's module search path.
+This is particularly useful when the input document is not a natively recognized SIL or XML scheme and SILE needs to be taught new tricks before trying to read the input file.
+If the module is a valid document class, it will replace \fIplain\fR as the default class for processing documents.
+Because this executes before loading the document, it may even change the way the parser works or add an input parser to support new file formats.
 May be specified more than once.
 .TP
 .BR \-p ", " \-\-preamble= \fIfilename\fR
