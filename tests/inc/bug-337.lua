@@ -13,16 +13,16 @@ function package:_init (class)
       firstContentFrame = "content",
       frames = {
         content = {
-          left = "0",
-          right = "100%pw",
-          top = "0",
+          left = "left(page)",
+          right = "left(page) + 100%pw",
+          top = "top(page)",
           bottom = "top(folio)"
         },
         folio = {
           left = "left(content)",
           right = "right(content)",
           height = "10pt",
-          bottom = "100%ph"
+          bottom = "top(page) + 100%ph"
         }
       }
     })
