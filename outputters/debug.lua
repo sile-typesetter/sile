@@ -76,11 +76,23 @@ function debug:setCursor (x, y, relative)
 end
 
 function debug:setColor (color)
-  self:_writeline("Set color", color.r, color.g, color.b)
+  if color.r then
+    self:_writeline("Set color", _round(color.r), _round(color.g), _round(color.b))
+  elseif color.c then
+    self:_writeline("Set color", _round(color.c), _round(color.m), _round(color.y), _round(color.k))
+  elseif color.l then
+    self:_writeline("Set color", _round(color.l))
+  end
 end
 
 function debug:pushColor (color)
-  self:_writeline("Push color", _round(color.r), _round(color.g), _round(color.b))
+  if color.r then
+    self:_writeline("Push color", _round(color.r), _round(color.g), _round(color.b))
+  elseif color.c then
+    self:_writeline("Push color (CMYK)", _round(color.c), _round(color.m), _round(color.y), _round(color.k))
+  elseif color.l then
+    self:_writeline("Push color (grayscale)", _round(color.l))
+  end
 end
 
 function debug:popColor ()
