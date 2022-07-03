@@ -84,7 +84,13 @@ SILE.outputters.debug = {
 
   setColor = function (self, color)
     _deprecationCheck(self)
-    writeline("Set color", color.r, color.g, color.b)
+    if color.r then
+      writeline("Set color", _round(color.r), _round(color.g), _round(color.b))
+    elseif color.c then
+      writeline("Set color (CMYK)", _round(color.c), _round(color.m), _round(color.y), _round(color.k))
+    elseif color.l then
+      writeline("Set color (grayscale)", _round(color.l))
+    end
   end,
 
   pushColor = function (self, color)
