@@ -52,8 +52,8 @@ end
 
 function package:registerCommands ()
 
-  self:registerCommand("cropmarks:header", function (_, _)
-    local info = SILE.masterFilename .. " - " .. self.class:date("%x %X") .. " -  " .. outcounter
+  SILE.registerCommand("cropmarks:header", function (_, _)
+    local info = SILE.masterFilename .. " - " .. self.class:date({ format = "%x %X" }) .. " - " .. outcounter
     SILE.typesetter:typeset(info)
   end)
 
