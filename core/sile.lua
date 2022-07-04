@@ -17,20 +17,6 @@ pl = require("pl.import_into")()
 -- For developer testing only, usually in CI
 if os.getenv("SILE_COVERAGE") then require("luacov") end
 
-local nostd = function ()
-  SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0", [[
-  Lua stdlib (std.*) is no longer provided by SILE, you may use
-      local std = require("std")
-  in your project directly if needed. Note you may need to install the Lua
-  rock as well since it no longer ships as a dependency.]])
-end
--- luacheck: push ignore std
-std = setmetatable({}, {
-  __call = nostd,
-  __index = nostd
-})
--- luacheck: pop
-
 -- Lua 5.3+ has a UTF-8 safe string function module but it is somewhat
 -- underwhelming. This module includes more functions and supports older Lua
 -- versions. Docs: https://github.com/starwing/luautf8
@@ -38,21 +24,6 @@ luautf8 = require("lua-utf8")
 
 -- Localization library, provided as global
 fluent = require("fluent")()
-
-local fluentglobal = function ()
-  SU.deprecated("SILE.fluent", "fluent", "0.14.0", "0.15.0", [[
-  The SILE.fluent object was never more than just an instance of a
-  third party library with no relation the scope of the SILE object.
-  This was even confusing me and marking it awkward to work on
-  SILE-as-a-library. Making it a provided global clarifies whot it
-  is and is not. Maybe someday we'll actually make a wrapper that
-  tracks the state of the document language.]])
-end
-
-SILE.fluent = setmetatable({}, {
-  __call = fluentglobal,
-  __index = fluentglobal,
-})
 
 -- Includes for _this_ scope
 local lfs = require("lfs")
@@ -112,16 +83,6 @@ SILE.linebreak = require("core.break")
 require("core.frame")
 SILE.cli = require("core.cli")
 SILE.repl = require("core.repl")
-
-local nobaseclass = function ()
-  SU.deprecated("SILE.baseclass", "SILE.classes.base", "0.13.0", "0.14.0", [[
-  The inheritance system for SILE classes has been refactored using a different
-  object model.]])
-end
-SILE.baseClass = setmetatable({}, {
-    __call = nobaseclass,
-    __index = nobaseclass
-  })
 
 SILE.init = function ()
   -- Set by def
@@ -363,5 +324,9 @@ function SILE.finish ()
   end
   io.stderr:write("\n")
 end
+
+-- For warnings and shims scheduled for removal that are easier to keep track
+-- of when they are not spead across so many locations...
+require("core/deprecations")
 
 return SILE
