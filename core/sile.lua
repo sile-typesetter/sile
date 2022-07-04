@@ -77,8 +77,10 @@ end
 SILE.inputters = core_loader("inputters")
 SILE.shapers = core_loader("shapers")
 SILE.outputters = core_loader("outputters")
+SILE.classes = core_loader("classes")
 
 SILE.Commands = {}
+SILE.Help = {}
 SILE.debugFlags = {}
 SILE.nodeMakers = {}
 SILE.tokenizers = {}
@@ -95,7 +97,6 @@ SILE.units = require("core.units")
 SILE.measurement = require("core.measurement")
 SILE.length = require("core.length")
 SILE.papersize = require("core.papersize")
-SILE.classes = require("core.classes")
 SILE.nodefactory = require("core.nodefactory")
 SILE.settings = require("core.settings")()
 SILE.colorparser = require("core.colorparser")
@@ -212,6 +213,8 @@ SILE.process = function (input)
   end
 end
 
+local defaultinputters = { "xml", "lua", "sil" }
+
 function SILE.readFile (filename)
   SILE.currentlyProcessingFile = filename
   local doc
@@ -298,6 +301,57 @@ function SILE.call (command, options, content)
   local result = SILE.Commands[command](options, content)
   SILE.traceStack:pop(pId)
   return result
+end
+
+function SILE.registerCommand (name, func, help, pack)
+  SILE.Commands[name] = func
+  if not pack then
+    local where = debug.getinfo(2).source
+    pack = where:match("(%w+).lua")
+  end
+  --if not help and not pack:match(".sil") then SU.error("Could not define command '"..name.."' (in package "..pack..") - no help text" ) end
+  SILE.Help[name] = {
+    description = help,
+    where = pack
+  }
+end
+
+function SILE.setCommandDefaults (command, defaults)
+  local oldCommand = SILE.Commands[command]
+  SILE.Commands[command] = function (options, content)
+    for k, v in pairs(defaults) do
+      options[k] = options[k] or v
+    end
+    return oldCommand(options, content)
+  end
+end
+
+function SILE.registerUnit (unit, spec)
+  -- SU.deprecated("SILE.registerUnit", "SILE.units", "0.10.0", nil, [[
+  -- Add new units via metamethod SILE.units["unit"] = (spec)]])
+  SILE.units[unit] = spec
+end
+
+function SILE.paperSizeParser (size)
+  -- SU.deprecated("SILE.paperSizeParser", "SILE.papersize", "0.10.0", nil)
+  return SILE.papersize(size)
+end
+
+function SILE.doTexlike (doc)
+  -- Setup new "fake" file in which the doc exists
+  local cpf = SILE.currentlyProcessingFile
+  local caller = debug.getinfo(2, "Sl")
+  local temporaryFile = "<"..caller.short_src..":"..caller.currentline..">"
+  SILE.currentlyProcessingFile = temporaryFile
+  -- NOTE: this messes up column numbers on first line, but most places start with newline, so it isn't a problem
+  doc = "\\begin{document}" .. doc .. "\\end{document}"
+  local tree = SILE.inputs.TeXlike.docToTree(doc)
+  -- Since elements of the tree may be used long after currentlyProcessingFile has changed (e.g. through \define)
+  -- supply the file in which the node was found explicitly.
+  SU.walkContent(tree, function (c) c.file = temporaryFile end)
+  SILE.process(tree)
+  -- Revert the processed file
+  SILE.currentlyProcessingFile = cpf
 end
 
 function SILE.finish ()

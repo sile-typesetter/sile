@@ -183,6 +183,63 @@ end
 
 function base:registerCommands ()
 
+  local function replaceProcessBy(replacement, tree)
+    if type(tree) ~= "table" then return tree end
+    local ret = pl.tablex.deepcopy(tree)
+    if tree.command == "process" then
+      return replacement
+    else
+      for i, child in ipairs(tree) do
+        ret[i] = replaceProcessBy(replacement, child)
+      end
+      return ret
+    end
+  end
+
+  SILE.registerCommand("define", function (options, content)
+    SU.required(options, "command", "defining command")
+    if type(content) == "function" then
+      -- A macro defined as a function can take no argument, so we register
+      -- it as-is.
+      SILE.registerCommand(options["command"], content)
+      return
+    elseif options.command == "process" then
+      SU.warn("Did you mean to re-definine the `\\process` macro? That probably won't go well.")
+    end
+    SILE.registerCommand(options["command"], function (_, inner_content)
+      SU.debug("macros", "Processing macro \\" .. options["command"])
+      local macroArg
+      if type(inner_content) == "function" then
+        macroArg = inner_content
+      elseif type(inner_content) == "table" then
+        macroArg = pl.tablex.copy(inner_content)
+        macroArg.command = nil
+        macroArg.id = nil
+      elseif inner_content == nil then
+        macroArg = {}
+      else
+        SU.error("Unhandled content type " .. type(inner_content) .. " passed to macro \\" .. options["command"], true)
+      end
+      -- Replace every occurrence of \process in `content` (the macro
+      -- body) with `macroArg`, then have SILE go through the new `content`.
+      local newContent = replaceProcessBy(macroArg, content)
+      SILE.process(newContent)
+      SU.debug("macros", "Finished processing \\" .. options["command"])
+    end, options.help, SILE.currentlyProcessingFile)
+  end, "Define a new macro. \\define[command=example]{ ... \\process }")
+
+  -- A utility function that allows SILE.call() to be used as a noop wrapper.
+  SILE.registerCommand("noop", function (_, content)
+    SILE.process(content)
+  end)
+
+  SILE.registerCommand("comment", function (_, _)
+  end, "Ignores any text within this command's body.")
+
+  SILE.registerCommand("process", function ()
+    SU.error("Encountered unsubstituted \\process.")
+  end, "Within a macro definition, processes the contents of the macro body.")
+
   SILE.registerCommand("script", function (options, content)
     if (options["src"]) then
       local script, _ = require(options["src"])

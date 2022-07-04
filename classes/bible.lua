@@ -230,7 +230,7 @@ function bible:setOptions (options)
   plain.setOptions(self, options)
 end
 
-bible.registerCommands = function (self)
+function bible:registerCommands ()
 
   plain.registerCommands(self)
 

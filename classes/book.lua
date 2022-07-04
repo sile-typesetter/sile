@@ -81,7 +81,7 @@ function book:finish ()
   return ret
 end
 
-book.registerCommands = function (self)
+function book:registerCommands ()
 
   plain.registerCommands(self)
 
