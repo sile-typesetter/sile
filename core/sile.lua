@@ -36,6 +36,24 @@ std = setmetatable({}, {
 -- versions. Docs: https://github.com/starwing/luautf8
 luautf8 = require("lua-utf8")
 
+-- Localization library, provided as global
+fluent = require("fluent")()
+
+local fluentglobal = function ()
+  SU.deprecated("SILE.fluent", "fluent", "0.14.0", "0.15.0", [[
+  The SILE.fluent object was never more than just an instance of a
+  third party library with no relation the scope of the SILE object.
+  This was even confusing me and marking it awkward to work on
+  SILE-as-a-library. Making it a provided global clarifies whot it
+  is and is not. Maybe someday we'll actually make a wrapper that
+  tracks the state of the document language.]])
+end
+
+SILE.fluent = setmetatable({}, {
+  __call = fluentglobal,
+  __index = fluentglobal,
+})
+
 -- Includes for _this_ scope
 local lfs = require("lfs")
 
@@ -71,7 +89,6 @@ SILE.preamble = {}
 SILE.documentState = {}
 
 -- Internal functions / classes / factories
-SILE.fluent = require("fluent")()
 SILE.traceStack = require("core.tracestack")()
 SILE.parserBits = require("core.parserbits")
 SILE.units = require("core.units")
