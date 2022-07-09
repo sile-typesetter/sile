@@ -41,9 +41,14 @@ function libtexpdf:newPage ()
   pdf.beginpage()
 end
 
+-- pdf stucture package needs a tie in here
+function libtexpdf._endHook (_)
+end
+
 function libtexpdf:finish ()
   self:_ensureInit()
   pdf.endpage()
+  self:_endHook()
   pdf.finish()
   started = false
   lastkey = nil
