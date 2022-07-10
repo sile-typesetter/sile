@@ -47,3 +47,8 @@ end
 SILE.toAbsoluteMeasurement = function (_, _)
   SU.deprecated("SILE.toAbsoluteMeasurement", "SILE.measurement():absolute", "0.10.0", "0.13.1")
 end
+
+SILE.readFile = function (filename)
+  SU.deprecated("SILE.readFile", "SILE.processFile", "0.14.0", "0.16.0")
+  return SILE.processFile(filename)
+end

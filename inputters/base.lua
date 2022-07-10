@@ -35,13 +35,13 @@ end
 
 function base.preamble (_)
   for _, path in ipairs(SILE.input.preamble) do
-    SILE.readFile(path)
+    SILE.processFile(path)
   end
 end
 
 function base.postamble (_)
   for _, path in ipairs(SILE.input.postambles) do
-    SILE.readFile(path)
+    SILE.processFile(path)
   end
 end
 

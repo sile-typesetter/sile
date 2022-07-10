@@ -188,7 +188,7 @@ end
 
 local defaultinputters = { "xml", "lua", "sil" }
 
-function SILE.readString (doc, filename)
+function SILE.processString (doc, filename)
   -- Preload default reader types so content detection has something to work with
   for _, inputter in ipairs(defaultinputters) do
     local _ = SILE.inputters[inputter]
@@ -215,7 +215,7 @@ function SILE.readString (doc, filename)
   SU.error(("Unable to pick inputter to process input from '%s'"):format(filename))
 end
 
-function SILE.readFile (filename)
+function SILE.processFile (filename)
   SILE.currentlyProcessingFile = filename
   local doc
   if filename == "-" then
@@ -241,7 +241,7 @@ function SILE.readFile (filename)
     io.stderr:write("<"..filename..">\n")
     doc = file:read("*a")
   end
-  return SILE.readString(doc, filename)
+  return SILE.processString(doc, filename)
 end
 
 -- Sort through possible places files could be

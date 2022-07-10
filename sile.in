@@ -110,14 +110,14 @@ if SILE.masterFilename then
     io.stderr:write("Loading "..path.."\n")
     local c = SILE.resolveFile(path, "classes")
     if c then
-      SILE.readFile(c)
+      SILE.processFile(c)
     else
       SILE.require(path, "classes")
     end
   end
 
   local main, err = xpcall(function()
-      return SILE.readFile(SILE.inputFile)
+      return SILE.processFile(SILE.inputFile)
     end, SILE.errorHandler)
 
   if not main then

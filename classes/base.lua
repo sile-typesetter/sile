@@ -256,7 +256,7 @@ function base:registerCommands ()
   end, "Runs lua code. The code may be supplied either inline or using the src=... option. (Think HTML.)")
 
   SILE.registerCommand("include", function (options, _)
-      SILE.readFile(options["src"])
+      SILE.processFile(options["src"])
   end, "Includes a SILE file for processing.")
 
   SILE.registerCommand("pagetemplate", function (options, content)

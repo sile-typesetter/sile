@@ -44,7 +44,7 @@ function lua:process (doc)
     if root then
       self:classInit({ options = {} })
     end
-    SILE.readString(result)
+    SILE.processString(result)
   end
 end
 

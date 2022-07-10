@@ -73,7 +73,7 @@ Next we’ll give you a high-level overview of the process flow: what SILE does 
 
 \section{From input to AST}
 
-The typesetting process is then kicked off by a call to \code{SILE.readFile}
+The typesetting process is then kicked off by a call to \code{SILE.processFile}
 in \code{sile.lua}, which chooses the input handler based on the file type.
 \code{SILE.inputs.texlike} and \code{SILE.inputs.XML} both provide a \code{process}
 function which takes a file handle, parses the input into an abstract syntax tree, and
