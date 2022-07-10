@@ -17,8 +17,8 @@ local RoughGenerator = require("packages.framebox.graphics.rough").RoughGenerato
 
 local _r = function(number)
   -- Lua 5.3+ formats floats as 1.0 and integers as 1
-  -- This is annoying.
-  return math.floor(number) == number and math.floor(number) or number
+  -- Also some PDF readers do not like double precision.
+  return math.floor(number) == number and math.floor(number) or tonumber(string.format("%.5f", number))
 end
 
 -- Builds a PDF graphics color (stroke or fill) from a SILE parsed color.
@@ -32,7 +32,7 @@ local makeColorHelper = function(color, stroke)
     colspec = table.concat({ _r(color.c), _r(color.m), _r(color.y), _r(color.k) }, " ")
     colop = stroke and "K" or "k"
   elseif color.l then -- Grayscale
-    colspec = color.l
+    colspec = _r(color.l)
     colop = stroke and "G" or "g"
   else
     SU.error("Invalid color specification")
@@ -44,7 +44,7 @@ end
 -- and a set of relative segments which can be either lines (2 coords)
 -- or bezier curves (6 segments).
 local makePathHelper = function(x, y, segments)
-  local paths = { { x, y, "m" } }
+  local paths = { { _r(x), _r(y), "m" } }
   for i = 1, #segments do
     local s = segments[i]
     if #s == 2 then
