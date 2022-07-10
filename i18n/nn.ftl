@@ -6,10 +6,10 @@ bibliography-et-al = et al.
 
 bibliography-translated-by = Redigert av { $name }
 
-book-chapter-title-pre = Kapittel{" "}
+book-chapter-title = Kapittel { $number }
 
 hello = Hei <em>{ $name }</em>!
 
 tableofcontents-not-generated = Kjør SILE om igjen slik at innholdsfortegnelsen blir behandlet!
 
-tableofcontents-title = Innhold
+tableofcontents-title = Innhald

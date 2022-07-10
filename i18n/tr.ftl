@@ -1,4 +1,4 @@
-book-chapter-title-pre = Bölüm{" "}
+book-chapter-title = Bölüm { $number }
 
 hello = Merhaba <em>{ $name }</em>!
 

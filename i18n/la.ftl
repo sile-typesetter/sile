@@ -6,7 +6,7 @@ bibliography-et-al = et al.
 
 bibliography-translated-by = Interpres fuit { $name }
 
-book-chapter-title-pre = Caput{" "}
+book-chapter-title = Caput { $number }
 
 hello = Salve <em>{ $name }</em>!
 

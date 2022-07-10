@@ -4,9 +4,9 @@ bibliography-edited-by = Redigert av { $name }
 
 bibliography-et-al = et al.
 
-bibliography-translated-by = Redigert av { $name }
+bibliography-translated-by = Oversatt av { $name }
 
-book-chapter-title-pre = Kapittel{" "}
+book-chapter-title = Kapittel { $number }
 
 hello = Hei <em>{ $name }</em>!
 

@@ -6,7 +6,7 @@ bibliography-et-al = kaj aliaj
 
 bibliography-translated-by = Tradukita por { $name }
 
-book-chapter-title-pre = Ĉapitro{" "}
+book-chapter-title = Ĉapitro { $number }
 
 hello = Saluton <em>{ $name }</em>!
 

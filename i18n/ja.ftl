@@ -1,3 +1,3 @@
 book-chapter-post =  章
 
-book-chapter-title-pre = 第 
+tableofcontents-title = 目次
