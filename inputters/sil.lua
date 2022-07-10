@@ -31,6 +31,8 @@ sil.passthroughCommands = {
 }
 
 function sil:_init (tree)
+  -- Save time when parsing strings by only setting up the grammar once per
+  -- instantiation then re-using it on every use.
   self._parser = self:rebuildParser()
   base._init(self, tree)
 end
@@ -179,27 +181,13 @@ local function massage_ast (tree, doc)
   return tree
 end
 
-function sil:process (doc)
-  local tree = self:parse(doc)
-  local root = SILE.documentState.documentClass == nil
-  if tree.command then
-    if root and tree.command == "document" then
-      self:classInit(tree)
-    end
-    SILE.process(tree)
-  end
-  if root and not SILE.preamble then
-    SILE.documentState.documentClass:finish()
-  end
-end
-
 function sil:rebuildParser ()
   return epnf.define(self._grammar)
 end
 
 function sil:parse (doc)
   local tree = epnf.parsestring(self._parser, doc)
-  -- a document always consists of one texlike_stuff
+  -- a valid doc parsed to ast always consists of one texlike_stuff
   tree = tree[1][1]
   if tree.id == "texlike_text" then tree = {tree} end
   if not tree then return end

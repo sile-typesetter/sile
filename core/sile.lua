@@ -188,12 +188,13 @@ end
 
 local defaultinputters = { "xml", "lua", "sil" }
 
-function SILE.processString (doc, filename)
+local function detectFormat (doc, filename)
   -- Preload default reader types so content detection has something to work with
-  for _, inputter in ipairs(defaultinputters) do
-    local _ = SILE.inputters[inputter]
+  if #SILE.inputters == 0 then
+    for _, format in ipairs(defaultinputters) do
+      local _ = SILE.inputters[format]
+    end
   end
-  filename = filename or "<none>"
   local contentDetectionOrder = {}
   for _, inputter in pairs(SILE.inputters) do
     if inputter.order then table.insert(contentDetectionOrder, inputter) end
@@ -203,22 +204,35 @@ function SILE.processString (doc, filename)
     for _, inputter in ipairs(contentDetectionOrder) do
       SU.debug("inputter", ("Running content type detection round %s with %s"):format(round, inputter._name))
       if inputter.appropriate(round, filename, doc) then
-        io.stderr:write("Processing " .. inputter._name .. "\n")
-        SILE.inputter = inputter()
-        local pId = SILE.traceStack:pushDocument(filename, doc)
-        SILE.inputter:process(doc)
-        SILE.traceStack:pop(pId)
-        return
+        return inputter._name
       end
     end
   end
   SU.error(("Unable to pick inputter to process input from '%s'"):format(filename))
 end
 
-function SILE.processFile (filename)
-  SILE.currentlyProcessingFile = filename
+function SILE.processString (doc, format, filename)
+  local cpf
+  if not filename then
+    cpf = SILE.currentlyProcessingFile
+    local caller = debug.getinfo(2, "Sl")
+    local temporaryFile = "<"..caller.short_src..":"..caller.currentline..">"
+    SILE.currentlyProcessingFile = temporaryFile
+  end
+  format = format or detectFormat(doc, filename)
+  filename = filename or "<none>"
+  SILE.inputter = SILE.inputters[format]()
+  io.stderr:write("Processing " .. SILE.inputter._name .. "\n")
+  local pId = SILE.traceStack:pushDocument(SILE.currentlyProcessingFile, doc)
+  SILE.inputter:process(doc)
+  SILE.traceStack:pop(pId)
+  if cpf then SILE.currentlyProcessingFile = cpf end
+end
+
+function SILE.processFile (filename, format)
   local doc
   if filename == "-" then
+    filename = "<STDIN>"
     io.stderr:write("<STDIN>\n")
     doc = io.stdin:read("*a")
   else
@@ -241,7 +255,11 @@ function SILE.processFile (filename)
     io.stderr:write("<"..filename..">\n")
     doc = file:read("*a")
   end
-  return SILE.processString(doc, filename)
+  SILE.currentlyProcessingFile = filename
+  local pId = SILE.traceStack:pushDocument(filename, doc)
+  local ret = SILE.processString(doc, format, filename)
+  SILE.traceStack:pop(pId)
+  return ret
 end
 
 -- Sort through possible places files could be
@@ -267,7 +285,7 @@ function SILE.resolveFile (filename, pathprefix)
   if resolved then
     if SILE.makeDeps then SILE.makeDeps:add(resolved) end
   else
-    SU.warn("Unable to find file " .. filename .. err)
+    SU.warn(("Unable to find file '%s': %s"):format(filename, err))
   end
   return resolved
 end
@@ -320,23 +338,6 @@ end
 function SILE.paperSizeParser (size)
   -- SU.deprecated("SILE.paperSizeParser", "SILE.papersize", "0.10.0", nil)
   return SILE.papersize(size)
-end
-
-function SILE.doTexlike (doc)
-  -- Setup new "fake" file in which the doc exists
-  local cpf = SILE.currentlyProcessingFile
-  local caller = debug.getinfo(2, "Sl")
-  local temporaryFile = "<"..caller.short_src..":"..caller.currentline..">"
-  SILE.currentlyProcessingFile = temporaryFile
-  -- NOTE: this messes up column numbers on first line, but most places start with newline, so it isn't a problem
-  doc = "\\begin{document}" .. doc .. "\\end{document}"
-  local tree = SILE.inputters.sil.parse(_, doc)
-  -- Since elements of the tree may be used long after currentlyProcessingFile has changed (e.g. through \define)
-  -- supply the file in which the node was found explicitly.
-  SU.walkContent(tree, function (c) c.file = temporaryFile end)
-  SILE.process(tree)
-  -- Revert the processed file
-  SILE.currentlyProcessingFile = cpf
 end
 
 function SILE.finish ()

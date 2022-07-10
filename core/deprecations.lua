@@ -52,3 +52,9 @@ SILE.readFile = function (filename)
   SU.deprecated("SILE.readFile", "SILE.processFile", "0.14.0", "0.16.0")
   return SILE.processFile(filename)
 end
+
+function SILE.doTexlike (doc)
+  SU.deprecated("SILE.doTexlike", "SILE.processString", "0.14.0", "0.16.0",
+    [[Add format argument "sil" to skip content detection and assume SIL input]])
+  return SILE.processString(doc, "sil")
+end

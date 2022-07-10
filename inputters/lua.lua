@@ -28,22 +28,13 @@ function lua:process (doc)
   local root = SILE.documentState.documentClass == nil
   local result = load(doc)()
   if type(result) == "table" then
-    if not result.options then
-      result.options = {}
-    end
-    if root then
-      self:classInit(result)
-    end
-    SILE.process(result.content)
+    base.process(self, result)
   elseif type(result) == "function" then
     if root then
       self:classInit({ options = {} })
     end
     result()
   elseif type(result) == "string" then
-    if root then
-      self:classInit({ options = {} })
-    end
     SILE.processString(result)
   end
 end

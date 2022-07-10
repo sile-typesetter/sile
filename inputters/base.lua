@@ -24,6 +24,18 @@ function base.classInit (_, tree)
   SILE.documentState.documentClass = constructor(options)
 end
 
+function base:process (doc)
+  local tree = self:parse(doc)
+  local root = SILE.documentState.documentClass == nil
+  if root then
+    if tree.command ~= "sile" and tree.command ~= "document" then
+      SU.error("This isn't SILE document!")
+    end
+    self:classInit(tree)
+  end
+  return SILE.process(tree)
+end
+
 -- Just a simple one-level find. We're not reimplementing XPath here.
 function base.findInTree (_, tree, command)
   for i=1, #tree do
