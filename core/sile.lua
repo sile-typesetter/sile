@@ -330,7 +330,7 @@ function SILE.doTexlike (doc)
   SILE.currentlyProcessingFile = temporaryFile
   -- NOTE: this messes up column numbers on first line, but most places start with newline, so it isn't a problem
   doc = "\\begin{document}" .. doc .. "\\end{document}"
-  local tree = SILE.inputs.TeXlike.docToTree(doc)
+  local tree = SILE.inputters.sil.parse(_, doc)
   -- Since elements of the tree may be used long after currentlyProcessingFile has changed (e.g. through \define)
   -- supply the file in which the node was found explicitly.
   SU.walkContent(tree, function (c) c.file = temporaryFile end)

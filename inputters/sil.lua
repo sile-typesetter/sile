@@ -180,7 +180,7 @@ local function massage_ast (tree, doc)
 end
 
 function sil:process (doc)
-  local tree = self:docToTree(doc)
+  local tree = self:parse(doc)
   local root = SILE.documentState.documentClass == nil
   if tree.command then
     if root and tree.command == "document" then
@@ -197,7 +197,7 @@ function sil:rebuildParser ()
   return epnf.define(self._grammar)
 end
 
-function sil:docToTree (doc)
+function sil:parse (doc)
   local tree = epnf.parsestring(self._parser, doc)
   -- a document always consists of one texlike_stuff
   tree = tree[1][1]

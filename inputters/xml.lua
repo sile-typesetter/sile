@@ -21,25 +21,30 @@ function xml.appropriate (round, filename, doc)
 end
 
 function xml:process (doc)
-  local content, err = lom.parse(doc)
-  if content == nil then
-    error(err)
-  end
+  local tree = self:parse(doc)
   local root = SILE.documentState.documentClass == nil
   if root then
-    if content.command ~= "sile" then
+    if tree.command ~= "sile" then
       SU.error("This isn't a SILE document!")
     end
-    self:classInit(content)
+    self:classInit(tree)
   end
-  if SILE.Commands[content.command] then
-    SILE.call(content.command, content.options, content)
+  if SILE.Commands[tree.command] then
+    SILE.call(tree.command, tree.options, tree)
   else
-    SILE.process(content)
+    SILE.process(tree)
   end
   if root and not SILE.preamble then
     SILE.documentState.documentClass:finish()
   end
+end
+
+function xml.parse (_, doc)
+  local tree, err = lom.parse(doc)
+  if not tree then
+    SU.error(err)
+  end
+  return tree
 end
 
 return xml
