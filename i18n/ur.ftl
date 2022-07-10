@@ -1,30 +1,30 @@
 # -- Usual book sections
-appendix = Tillegg
-chapter  = Kapittel
-part     = Del
+appendix = ضمیمہ
+chapter  = باب
+part     = حصّہ
 
 # -- Other captions
-figure = Figur
-table  = Tabell
-proof  = Bevis
+figure = شكل
+table  = جدول
+proof  = ثبوت
 
 # -- TOC-like headers
-tableofcontents = Innhald
-index = Register
-listoffigures = Figurar
-listoftables = Tabellar
+tableofcontents = فہرست عنوانات
+index = اشاریہ
+listoffigures = فہرست اشکال
+listoftables = فہرست جداول
 
 # -- Other usual headers
-abstract = Samandrag
-bibliography = Litteratur
-glossary = Ordliste
-preface = Forord
-references = Referansar
+abstract = ملخّص
+bibliography = کتابیات
+glossary = لغت
+preface = دیباچہ
+references = حوالہ جات
 
 # -- Miscellaneous
-page = Side
-see = Sjå
-see-also = Sjå òg
+page = صفحہ
+see = ملاحظہ ہو
+see-also = ایضاً
 toc-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff

@@ -1,30 +1,30 @@
 # -- Usual book sections
-appendix = Tillegg
-chapter  = Kapittel
-part     = Del
+appendix = Pielikums
+chapter  = Nodaļa
+part     = Daļa
 
 # -- Other captions
-figure = Figur
-table  = Tabell
-proof  = Bevis
+figure = Zīm.
+table  = Tabula
+# proof  = 
 
 # -- TOC-like headers
-tableofcontents = Innhald
-index = Register
-listoffigures = Figurar
-listoftables = Tabellar
+tableofcontents = Saturs
+listoffigures = Attēlu rādītājs
+listoftables = Tabulu rādītājs
 
 # -- Other usual headers
-abstract = Samandrag
-bibliography = Litteratur
-glossary = Ordliste
-preface = Forord
-references = Referansar
+abstract = Anotācija
+bibliography = Bibliogrāfija
+# glossary = 
+index = Priekšmetu rādītājs
+preface = Priekšvārds
+references = Literatūra
 
 # -- Miscellaneous
-page = Side
-see = Sjå
-see-also = Sjå òg
+page = lpp.
+see = skat.
+see-also = skat. arī
 toc-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff

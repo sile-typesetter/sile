@@ -1,30 +1,30 @@
 # -- Usual book sections
-appendix = Tillegg
-chapter  = Kapittel
-part     = Del
+appendix = Viðauki
+chapter  = Kafli
+part     = Hluti
 
 # -- Other captions
-figure = Figur
-table  = Tabell
-proof  = Bevis
+figure = Mynd
+table  = Tafla
+proof  = Sönnun
 
 # -- TOC-like headers
-tableofcontents = Innhald
-index = Register
-listoffigures = Figurar
-listoftables = Tabellar
+tableofcontents = Efnisyfirlit
+index = Atriðisorðaskrá
+listoffigures = Myndaskrá
+listoftables = Töfluskrá
 
 # -- Other usual headers
-abstract = Samandrag
-bibliography = Litteratur
-glossary = Ordliste
-preface = Forord
-references = Referansar
+abstract = Útdráttur
+bibliography = Heimildir
+glossary = Orðalisti
+preface = Formáli
+references = Heimildir
 
 # -- Miscellaneous
-page = Side
-see = Sjå
-see-also = Sjå òg
+page = Blaðsíða
+see = Sjá
+see-also = Sjá einnig
 toc-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff

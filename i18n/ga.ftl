@@ -1,30 +1,30 @@
 # -- Usual book sections
-appendix = Tillegg
-chapter  = Kapittel
-part     = Del
+appendix = Aguisín
+chapter  = Caibidil
+part     = Cuid
 
 # -- Other captions
-figure = Figur
-table  = Tabell
-proof  = Bevis
+figure = Léaráid
+table  = Tábla
+proof  = Cruthúnas
 
 # -- TOC-like headers
-tableofcontents = Innhald
-index = Register
-listoffigures = Figurar
-listoftables = Tabellar
+tableofcontents = Clár Ábhair
+index = Innéacs
+listoffigures = Léaráidí
+listoftables = Táblaí
 
 # -- Other usual headers
-abstract = Samandrag
-bibliography = Litteratur
-glossary = Ordliste
-preface = Forord
-references = Referansar
+abstract = Achoimre
+bibliography = Leabharliosta
+glossary = Glossary
+preface = Réamhrá
+references = Tagairtí
 
 # -- Miscellaneous
-page = Side
-see = Sjå
-see-also = Sjå òg
+page = Leathanach
+see = féach
+see-also = féach freisin
 toc-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff

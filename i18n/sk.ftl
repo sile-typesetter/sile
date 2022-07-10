@@ -1,30 +1,30 @@
 # -- Usual book sections
-appendix = Tillegg
-chapter  = Kapittel
-part     = Del
+appendix = Dodatok
+chapter  = Kapitola
+part     = Časť
 
 # -- Other captions
-figure = Figur
-table  = Tabell
-proof  = Bevis
+figure = Obr.
+table  = Tabuľka
+proof  = Dôkaz
 
 # -- TOC-like headers
-tableofcontents = Innhald
+tableofcontents = Obsah
 index = Register
-listoffigures = Figurar
-listoftables = Tabellar
+listoffigures = Zoznam obrázkov
+listoftables = Zoznam tabuliek
 
 # -- Other usual headers
-abstract = Samandrag
-bibliography = Litteratur
-glossary = Ordliste
-preface = Forord
-references = Referansar
+abstract = Abstrakt
+bibliography = Literatúra
+glossary = Slovník
+preface = Predhovor
+references = Literatúra
 
 # -- Miscellaneous
-page = Side
-see = Sjå
-see-also = Sjå òg
+page = Str.
+see = viď
+see-also = viď tiež
 toc-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff

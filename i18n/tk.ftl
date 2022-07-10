@@ -1,30 +1,30 @@
 # -- Usual book sections
-appendix = Tillegg
-chapter  = Kapittel
-part     = Del
+appendix = Goşmaça
+chapter  = Bap
+part     = Bölüm
 
 # -- Other captions
-figure = Figur
-table  = Tabell
-proof  = Bevis
+figure = Surat
+table  = Tablisa
+proof  = Delil
 
 # -- TOC-like headers
-tableofcontents = Innhald
-index = Register
-listoffigures = Figurar
-listoftables = Tabellar
+tableofcontents = Mazmuny
+index = Indeks
+listoffigures = Suratlaryň sanawy
+listoftables = Tablisalaryň sanawy
 
 # -- Other usual headers
-abstract = Samandrag
-bibliography = Litteratur
-glossary = Ordliste
-preface = Forord
-references = Referansar
+abstract = Gysgaça manysy
+bibliography = Çeşmeler
+glossary = Sözlük
+preface = Sözbaşy
+references = Çeşmeler
 
 # -- Miscellaneous
-page = Side
-see = Sjå
-see-also = Sjå òg
+page = Sahypa
+see = ser.
+see-also = şuňa-da ser.
 toc-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff

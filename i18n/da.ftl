@@ -1,30 +1,30 @@
 # -- Usual book sections
-appendix = Tillegg
-chapter  = Kapittel
+appendix = Bilag
+chapter  = Kapitel
 part     = Del
 
 # -- Other captions
 figure = Figur
-table  = Tabell
+table  = Tabel
 proof  = Bevis
 
 # -- TOC-like headers
-tableofcontents = Innhald
-index = Register
-listoffigures = Figurar
-listoftables = Tabellar
+tableofcontents = Indhold
+index = Indeks
+listoffigures = Figurer
+listoftables = Tabeller
 
 # -- Other usual headers
-abstract = Samandrag
+abstract = Resumé
 bibliography = Litteratur
-glossary = Ordliste
+glossary = Gloseliste
 preface = Forord
-references = Referansar
+references = Litteratur
 
 # -- Miscellaneous
 page = Side
-see = Sjå
-see-also = Sjå òg
+see = Se
+see-also = Se også
 toc-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff

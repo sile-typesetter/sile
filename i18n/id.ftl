@@ -1,30 +1,30 @@
 # -- Usual book sections
-appendix = Tillegg
-chapter  = Kapittel
-part     = Del
+appendix = Lampiran
+chapter  = Bab
+part     = Bagian
 
 # -- Other captions
-figure = Figur
-table  = Tabell
-proof  = Bevis
+figure = Gambar
+table  = Tabel
+proof  = Bukti
 
 # -- TOC-like headers
-tableofcontents = Innhald
-index = Register
-listoffigures = Figurar
-listoftables = Tabellar
+tableofcontents = Daftar Isi
+index = Indeks
+listoffigures = Daftar Gambar
+listoftables = Daftar Tabel
 
 # -- Other usual headers
-abstract = Samandrag
-bibliography = Litteratur
-glossary = Ordliste
-preface = Forord
-references = Referansar
+abstract = Ringkasan
+bibliography = Bibliografi
+glossary = Daftar Istilah
+preface = Pendahuluan
+references = Pustaka
 
 # -- Miscellaneous
-page = Side
-see = Sjå
-see-also = Sjå òg
+page = Halaman
+see = lihat
+see-also = lihat juga
 toc-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
