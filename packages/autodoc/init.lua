@@ -138,8 +138,7 @@ local function registerCommands (class)
       SU.error("Undocumented package "..package)
     end
     if type(pkg.registerCommands) == "function" then pkg.registerCommands(SILE.documentState.documentClass) end
-    local inputter = SILE.inputters.sil()
-    SILE.process(inputter:docToTree(pkg.documentation))
+    SILE.readString(pkg.documentation)
   end)
 
   SILE.registerCommand("autodoc:package:style", function (_, content)
