@@ -67,6 +67,7 @@ yarn.lock
 
 # Editor entrails
 .vscode/
+*~
 tags
 
 # Generated resources
