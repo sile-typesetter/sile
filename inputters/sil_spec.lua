@@ -1,25 +1,28 @@
 SILE = require("core.sile")
+SILE.backend = "dummy"
+SILE.init()
+SILE.utilities.error = error
 
 describe("#SIL #input parser", function ()
   local inputter = SILE.inputters.sil()
 
-  describe("should handle", function ()
+  describe("should parse", function ()
 
     it("commands with content", function()
-      local t = inputter:parse([[\foo{bar}]])
+      local t = inputter:parse([[\foo{bar}]])[1]
       assert.is.equal("foo", t.command)
       assert.is.equal("bar", t[1][1])
     end)
 
     it("commands with arg", function()
-      local t = inputter:parse([[\foo[baz=qiz]{bar}]])
+      local t = inputter:parse([[\foo[baz=qiz]{bar}]])[1]
       assert.is.equal("foo", t.command)
       assert.is.equal("qiz", t.options.baz)
       assert.is.equal("bar", t[1][1])
     end)
 
     it("commands with multiple args", function()
-      local t = inputter:parse([[\foo[baz=qiz,qiz=baz]{bar}]])
+      local t = inputter:parse([[\foo[baz=qiz,qiz=baz]{bar}]])[1]
       assert.is.equal("foo", t.command)
       assert.is.equal("qiz", t.options.baz)
       assert.is.equal("baz", t.options.qiz)
@@ -27,14 +30,14 @@ describe("#SIL #input parser", function ()
     end)
 
     it("commands with quoted arg", function()
-      local t = inputter:parse([[\foo[baz="qiz qiz"]{bar}]])
+      local t = inputter:parse([[\foo[baz="qiz qiz"]{bar}]])[1]
       assert.is.equal("foo", t.command)
       assert.is.equal("qiz qiz", t.options.baz)
       assert.is.equal("bar", t[1][1])
     end)
 
     it("commands with multiple quoted args", function()
-      local t = inputter:parse([[\foo[baz="qiz, qiz",qiz="baz, baz"]{bar}]])
+      local t = inputter:parse([[\foo[baz="qiz, qiz",qiz="baz, baz"]{bar}]])[1]
       assert.is.equal("foo", t.command)
       assert.is.equal("qiz, qiz", t.options.baz)
       assert.is.equal("baz, baz", t.options.qiz)
@@ -42,7 +45,7 @@ describe("#SIL #input parser", function ()
     end)
 
     it("commands with quoted arg with escape", function()
-      local t = inputter:parse([[\foo[baz="qiz \"qiz\""]{bar}]])
+      local t = inputter:parse([[\foo[baz="qiz \"qiz\""]{bar}]])[1]
       assert.is.equal("foo", t.command)
       assert.is.equal("qiz \"qiz\"", t.options.baz)
       assert.is.equal("bar", t[1][1])
