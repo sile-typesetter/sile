@@ -164,7 +164,7 @@ luacheck:
 	luacheck -j$(shell nproc) -q .
 
 .PHONY: busted
-busted: $(SILE) $(addprefix .fonts/,$(TESTFONTFILES))
+busted: $(SILE) $(addprefix .fonts/,$(TESTFONTFILES)) $(BUSTEDSPECS)
 	set -f; IFS=';'
 if SYSTEM_LUAROCKS
 	packagecpath=(./{,core/}?.$(SHARED_LIB_EXT))
@@ -173,7 +173,7 @@ else
 	packagecpath=(./{,core/,lua_modules/lib/lua/$(LUA_VERSION)/}?.$(SHARED_LIB_EXT))
 	packagepath=(./{,lua_modules/share/lua/$(LUA_VERSION)/,lua-libraries/}?{,/init}.lua)
 endif
-	$(LOCALTESTFONTS) busted --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" $(BUSTEDFLAGS) spec
+	$(LOCALTESTFONTS) busted --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" $(BUSTEDFLAGS) .
 
 .PHONY: docs
 docs: $(MANUAL)

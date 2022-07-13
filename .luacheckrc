@@ -16,7 +16,7 @@ exclude_files = {
   ".luarocks",
   ".install"
 }
-files["spec"] = {
+files["**/*_spec.lua"] = {
   std = "+busted"
 }
 globals = {
