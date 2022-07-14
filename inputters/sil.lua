@@ -26,8 +26,11 @@ local bits = SILE.parserBits
 
 sil.passthroughCommands = {
   ftl = true,
+  lua = true,
   math = true,
-  script = true
+  script = true,
+  sil = true,
+  xml = true
 }
 
 function sil:_init (tree)

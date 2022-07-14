@@ -200,7 +200,8 @@ local function detectFormat (doc, filename)
     if inputter.order then table.insert(contentDetectionOrder, inputter) end
   end
   table.sort(contentDetectionOrder, function (a, b) return a.order < b.order end)
-  for round = 1, 3 do
+  local initialround = filename and 1 or 2
+  for round = initialround, 3 do
     for _, inputter in ipairs(contentDetectionOrder) do
       SU.debug("inputter", ("Running content type detection round %s with %s"):format(round, inputter._name))
       if inputter.appropriate(round, filename, doc) then
@@ -216,13 +217,11 @@ function SILE.processString (doc, format, filename)
   if not filename then
     cpf = SILE.currentlyProcessingFile
     local caller = debug.getinfo(2, "Sl")
-    local temporaryFile = "<"..caller.short_src..":"..caller.currentline..">"
-    SILE.currentlyProcessingFile = temporaryFile
+    SILE.currentlyProcessingFile = caller.short_src..":"..caller.currentline
   end
   format = format or detectFormat(doc, filename)
-  filename = filename or "<none>"
+  io.stderr:write(("<%s> as %s\n"):format(SILE.currentlyProcessingFile, format))
   SILE.inputter = SILE.inputters[format]()
-  io.stderr:write("Processing " .. SILE.inputter._name .. "\n")
   local pId = SILE.traceStack:pushDocument(SILE.currentlyProcessingFile, doc)
   SILE.inputter:process(doc)
   SILE.traceStack:pop(pId)
@@ -232,8 +231,7 @@ end
 function SILE.processFile (filename, format)
   local doc
   if filename == "-" then
-    filename = "<STDIN>"
-    io.stderr:write("<STDIN>\n")
+    filename = "STDIN"
     doc = io.stdin:read("*a")
   else
     filename = SILE.resolveFile(filename)
@@ -252,7 +250,6 @@ function SILE.processFile (filename, format)
       print("Could not open "..filename..": "..err)
       return
     end
-    io.stderr:write("<"..filename..">\n")
     doc = file:read("*a")
   end
   SILE.currentlyProcessingFile = filename

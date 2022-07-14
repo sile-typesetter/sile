@@ -267,18 +267,45 @@ function base:registerCommands ()
 
   self:registerCommand("script", function (options, content)
     if options.src then
-      local pack, _ = require(options.src)
-      self:initPackage(pack)
+      SILE.require(options.src)
     else
-      local func, err = load(content[1])
-      if not func then SU.error(err) end
-      func()
+      SILE.processString(content[1], options.format or "lua")
     end
-  end, "Runs lua code. The code may be supplied either inline or using the src=... option. (Think HTML.)")
+  end, "Runs lua code. The code may be supplied either inline or using src=...")
 
-  class:registerCommand("include", function (options, _)
-      SILE.processFile(options["src"])
-  end, "Includes a SILE file for processing.")
+  self:registerCommand("include", function (options, content)
+    if options.src then
+      SILE.processFile(options.src, options.format)
+    else
+      SILE.processString(content[1], options.format)
+    end
+  end, "Includes a content file for processing.")
+
+  self:registerCommand("lua", function (options, content)
+    if options.module then
+      SILE.require(options.module)
+    elseif options.src then
+      SILE.processFile(options.src, "lua")
+    else
+      SILE.processString(content[1], "lua")
+    end
+  end, "Run Lua code. The code may be supplied either inline or using src=...")
+
+  self:registerCommand("sil", function (options, content)
+    if options.src then
+      SILE.processFile(options.src, "sil")
+    else
+      SILE.processString(content[1], "sil")
+    end
+  end, "Process sil content. The content may be supplied either inline or using src=...")
+
+  self:registerCommand("xml", function (options, content)
+    if options.src then
+      SILE.processFile(options.src, "xml")
+    else
+      SILE.processString(content[1], "xml")
+    end
+  end, "Run xml content. The content may be supplied either inline or using src=...")
 
   self:registerCommand("pagetemplate", function (options, content)
     SILE.typesetter:pushState()

@@ -25,17 +25,30 @@ function lua.parse (_, doc)
 end
 
 function lua:process (doc)
-  local root = SILE.documentState.documentClass == nil
-  local result = load(doc)()
-  if type(result) == "table" then
-    base.process(self, result)
-  elseif type(result) == "function" then
-    if root then
-      self:classInit({ options = {} })
+  local tree = self:parse(doc)()
+  if type(tree) == "string" then
+    return SILE.processString(tree)
+  elseif type(tree) == "function" then
+    SILE.process(tree)
+  elseif type(tree) == "table" then
+    if not tree.type then
+      tree = { tree }
+      -- hoping tree is an AST
+      self:requireClass(tree)
+      return SILE.process(tree)
+    else
+      load_sile_module(tree)
+      if tree.type == "class" then
+        if SILE.documentState.documentClass then
+          SU.error("Cannot load a class after one is already instantiated")
+        end
+        self._docclass = tree
+      elseif tree.type == "package" then
+        return self:packageInit(tree)
+      end
+      -- other module types like inputters, outputters, shappers, etc. don't
+      -- need instantiation on load, only when they are used
     end
-    result()
-  elseif type(result) == "string" then
-    SILE.processString(result)
   end
 end
 
