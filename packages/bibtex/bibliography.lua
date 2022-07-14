@@ -319,11 +319,12 @@ Bibliography = {
 
   Errors = {
     UNKNOWN_REFERENCE = 1,
+    UNKNOWN_TYPE = 2,
   },
 
   Style = {
     andAuthors = function(item)
-      local authors = namesplit(item.Author)
+      local authors = namesplit(item.author)
       if #authors == 1 then
         return parse_name(authors[1]).ll
       else
@@ -337,7 +338,7 @@ Bibliography = {
 
     andSurnames = function (max)
       return function(item)
-        local authors = namesplit(item.Author)
+        local authors = namesplit(item.author)
         if #authors > max then
           return parse_name(authors[1]).ll .. SILE.fluent:get_message("bibliography-et-al")
         else
@@ -349,11 +350,11 @@ Bibliography = {
 
     transEditor = function(item)
       local r = {}
-      if item.Editor then
-        r[#r+1] = SILE.fluent:get_message("bibliography-edited-by")({ name = item.Editor })
+      if item.editor then
+        r[#r+1] = SILE.fluent:get_message("bibliography-edited-by")({ name = item.editor })
       end
-      if item.Translator then
-        r[#r+1] = SILE.fluent:get_message("bibliography-translated-by")({ name = item.Translator })
+      if item.translator then
+        r[#r+1] = SILE.fluent:get_message("bibliography-translated-by")({ name = item.translator })
       end
       if #r then return table.concat(r, ", ") end
       return nil
