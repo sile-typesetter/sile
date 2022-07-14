@@ -3,7 +3,7 @@ SILE.backend = "dummy"
 SILE.init()
 SILE.utilities.error = error
 
-describe("#SIL #input parser", function ()
+describe("#SIL #inputter", function ()
   local inputter = SILE.inputters.sil()
 
   describe("should parse", function ()
@@ -12,6 +12,14 @@ describe("#SIL #input parser", function ()
       local t = inputter:parse([[\foo{bar}]])[1]
       assert.is.equal("foo", t.command)
       assert.is.equal("bar", t[1][1])
+    end)
+
+    it("commands without content", function()
+      local t = inputter:parse([[\foo{\foo bar}]])[1]
+      assert.is.equal("foo", t.command)
+      assert.is.equal("foo", t[1][1].command)
+      assert.is.equal(" bar", t[1][2])
+      assert.is.equal(nil, t[1][1][1])
     end)
 
     it("commands with arg", function()

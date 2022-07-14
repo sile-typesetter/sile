@@ -17,7 +17,8 @@ sil.appropriate = function (round, filename, doc)
   elseif round == 3 then
     local _parser = epnf.define(sil._grammar)
     local status, tree = pcall(epnf.parsestring, _parser, doc)
-    return status and tree[1][1].command == "document"
+    local cmd = tree[1][1].command
+    return status and (cmd == "document" or cmd == "sile")
   end
 end
 
