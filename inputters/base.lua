@@ -6,6 +6,8 @@ local _deprecated = [[
 ]]
 
 local base = pl.class()
+base.type = "inputter"
+base._name = "base"
 
 function base._init (_) end
 

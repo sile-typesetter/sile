@@ -34,6 +34,7 @@ local function shapespace (spacewidth)
 end
 
 local base = pl.class()
+base.type = "shaper"
 base._name = "base"
 
 -- Return the length of a space character

@@ -1,4 +1,5 @@
 local base = pl.class()
+base.type = "outputter"
 base._name = "base"
 
 function base._init () end

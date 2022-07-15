@@ -1,4 +1,5 @@
 local base = pl.class()
+base.type = "class"
 base._name = "base"
 
 base._initialized = false
