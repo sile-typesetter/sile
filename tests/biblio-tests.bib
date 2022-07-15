@@ -1,0 +1,341 @@
+% -- article
+%
+% An article from a journal or magazine.
+% Required fields: author, title, journal, year.
+% Optional fields: volume, number, pages, month, note.
+
+@article{MinimalArticle,
+  author   = "Doe, John",
+  title    = "My Awesome Article",
+  journal  = "The Journal of Typography",
+  year     = 2022,
+}
+
+% With month remove, as a check for the chigago style
+@article{FullArticle,
+  author   = "Doe, John",
+  title    = "My Complete Article",
+  journal  = "The Journal of Typography",
+  year     = 2022,
+  volume   = "50",
+  number   = "7",
+  pages    = "243--248",
+  x-removed-month = aug,
+  node     = "Illustrated"
+}
+
+% For chicago style...
+@article{NewspaperArticle,
+  author   = "Doe, John",
+  title    = "My Awesome Article",
+  journal  = "The Journal of Typography",
+  month    = aug,
+  year     = 2022,
+  url      = "https://technobabblers.com/2020/123"
+}
+
+% -- book
+%
+% A book with an explicit publisher.
+% Required fields: author or editor, title, publisher, year.
+% Optional fields: volume or number, series, address, edition, month, note.
+
+@book{MinimalBook1,
+  author    = "Doe, John and Smith, Jane",
+  title     = "A Minimal Book Entry",
+  publisher = "SILE organization",
+  year      = 2020,
+}
+
+@book{MinimalBook2,
+  editor    = "Doe, John and Smith, Jane",
+  title     = "Another Minimal Book Entry",
+  publisher = "SILE organization",
+  address   = "London",
+  year      = 2022,
+}
+
+@book{FullBook,
+  author    = "Doe, John and Smith, Jane",
+  title     = "A Complete Book",
+  publisher = "SILE organization",
+  address   = "London",
+  year      = 2022,
+  volume    = 10,
+  series    = "The Collected Templates",
+  address   = "London",
+  edition   = "Second",
+  month     = may,
+  note      = "illustrated",
+}
+
+% -- booklet
+%
+% A work that is printed and bound, but without a named publisher or sponsoring institution.
+% Required field: title.
+% Optional fields: author, howpublished, address, month, year, note.
+
+@booklet{MinimalBooklet,
+  title        = "A Minimal Booklet",
+}
+
+@booklet{FullBooklet,
+  title        = "A Full Booklet",
+  author       = "Doe, John and Smith, Jane",
+  howpublished = "Private communication",
+  address      = "London",
+  month        = jul,
+  year         = 2022,
+  note         = "Accessed: 2022"
+}
+
+% -- conference
+%
+% = Same as "inproceedings"
+
+@conference{FullConference,
+  author    = "Jungle, George",
+  title     = "Back to the Trees",
+  booktitle = "Proceedings of the 6th Forest Symposium",
+  year      = 2010,
+  editor    = "Mac, Donald",
+  volume    = "XIX",
+  number    = "3/4",
+  series    = "The Ultimate Series",
+  pages     = "207--216",
+  organization = "Ministry of Forestry",
+  address   = "London",
+  publisher = "SILE orgnization",
+  month     = apr,
+  note      = "Incl. 5 figures",
+}
+
+% -- inbook
+%
+% A part of a book, which may be a chapter (or section or whatever) and/or a range of pages.
+% Required fields: author or editor, title, chapter and/or pages, publisher, year.
+% Optional fields: volume or number, series, type, address, edition, month, note.
+
+@inbook{MinimalInBook,
+  author    = "Doe, John and Smith, Jane",
+  title     = "The Inbookers",
+  chapter   = 16,
+  pages     = "187--221",
+  publisher = "SILE organization",
+  year      = 2020,
+}
+
+@inbook{FullInBook,
+  editor    = "Doe, John and Smith, Jane",
+  title     = "The New Inbookers",
+  chapter   = 16,
+  pages     = "187--221",
+  publisher = "SILE organization",
+  year      = 2020,
+  volume    = "XX",
+  number    = "3",
+  type      = "Collected essays",
+  address   = "London",
+  edition   = "Fourth",
+  month     = apr,
+  note      = "Revised edition"
+}
+
+% -- incollection
+%
+% A part of a book having its own title.
+% Required fields: author, title, booktitle, publisher, year.
+% Optional fields: editor, volume or number, series, type, chapter, pages, address, edition, month, note.
+
+@incollection{MinimalInCollection,
+  author    = "Doe, John and Smith, Jane",
+  title     = "Our In-Collection Contribution",
+  booktitle = "The Book of Everyting",
+  publisher = "Springer",
+  year      = 2022,
+}
+
+@incollection{FullInCollection,
+  author    = "Doe, John and Smith, Jane",
+  title     = "Our In-Collection Contribution",
+  booktitle = "The Book of Everyting",
+  publisher = "Springer",
+  year      = 2022,
+  publisher = "SILE organization",
+  editor    = "Wills, Donald",
+  volume    = 10,
+  type      = "Guide",
+  chapter   = 12,
+  pages     = "200--221",
+  address   = "Leipzig",
+  edition   = "Third",
+  month     = may,
+  note      = "revised and augmented"
+}
+
+% -- inproceedings
+%
+% An article in a conference proceedings.
+% Required fields: author, title, booktitle, year.
+% Optional fields: editor, volume or number, series, pages, address, month, organization, publisher, note.
+
+@inproceedings{FullInProceedings,
+  author    = "Jungle, George",
+  title     = "Deep in the Forest",
+  booktitle = "Proceedings of the 6th Forest Symposium",
+  year      = 2010,
+  editor    = "Mac, Donald",
+  volume    = "XIX",
+  number    = "3/4",
+  series    = "The Ultimate Series",
+  pages     = "207--216",
+  organization = "Ministry of Forestry",
+  address   = "London",
+  publisher = "SILE orgnization",
+  month     = apr,
+  note      = "Incl. 5 figures",
+}
+
+% -- manual
+%
+% Technical documentation.
+% Required field: title.
+% Optional fields: author, organization, address, edition, month, year, note.
+
+@manual{MinimalManual,
+  title        = "A Minimal Reference Manual",
+}
+
+@manual{FullManual,
+  title        = "The Full Reference Manual",
+  author       = "Doe, John",
+  organization = "SILE organization",
+  address      = "London",
+  edition      = "First",
+  month        = apr,
+  year         = 2018,
+  note         = "unabridged"
+}
+
+% -- mastersthesis
+%
+% A Master’s thesis.
+% Required fields: author, title, school, year.
+% Optional fields: type, address, month, note.
+
+@mastersthesis{MinimalMastersThesis,
+  author  = "Smith, Jane",
+  title   = "Asymptotic limits in open-source typography software",
+  school  = "Institute of Technobabble",
+  year    = 2006,
+}
+
+@mastersthesis{FullMastersThesis,
+  author  = "Smith, Jane",
+  title   = "Asymptotic limits in open-source typography software",
+  school  = "Institute of Technobabble",
+  year    = 2006,
+  type    = "Research note",
+  address = "Lille",
+  month   = sep,
+  note    = "University archives"
+}
+
+% -- misc
+%
+% Use this type when nothing else fits...
+% Required fields: none. WE WILL ASSUME AT LEAST A TITLE!
+% Optional fields: author, title, howpublished, month, year, note.
+
+@misc{FullMisc,
+  author       = "Wilbur, Norbert",
+  title        = "Miscellaneous Things",
+  howpublished = "https://technobabblers.com/2020/234",
+  month        = aug,
+  year         = 2020,
+  note         = "Last accessed: 2020-05-06"
+}
+
+% -- phdthesis
+%
+% A PhD thesis
+% Required fields: author, title, school, year.
+% Optional fields: type, address, month, note.
+% = So basically the same fields as mastersthesis
+
+@phdthesis{FullPhdThesis,
+  author  = "Smith, Jane and Doe, John and Wilbur, Norbert and Mac, Donald",
+  title   = "Non-linear derivations in open-source typography software",
+  school  = "Institute of Technobabble",
+  year    = 2016,
+  type    = "PhD thesis",
+  address = "Louvain",
+  month   = sep,
+  note    = "University archives"
+}
+
+% -- proceedings
+%
+% The proceedings of a conference.
+% Required fields: title, year.
+% Optional fields: editor, volume or number, series, address, month, organization, publisher, note.
+
+@proceedings{FullProceedings,
+  editor    = "Smith, Jane",
+  title     = "Proceedings of the 17th International Conference on Computation and Natural Computation, Fontainebleau, France",
+  series    = "Lecture Notes in Computer Science",
+  volume    = "10867",
+  publisher = "Springer",
+  address   = "Cham, Switzerland",
+  year      = 2018
+}
+
+% -- techreport
+%
+% A report published by a school or other institution, usually numbered within a series.
+% Required fields: author, title, institution, year.
+% Optional fields: type, number, address, month, note.
+
+@techreport{FullTechReport,
+  author      = "Smith, Jane",
+  title       = "Report on advances in Typography",
+  institution = "The Corporation of Technobabblers",
+  year        = 2022,
+  type        = "Annual report",
+  number      = "TEC/AR/2022-001",
+  address     = "Luxembourg",
+  month       = sep,
+  note        = "Technical note"
+}
+
+% -- unpublished
+%
+% A document having an author and title, but not formally published.
+% Required fields: author, title, note.
+% Optional fields: month, year
+
+@unpublished{MinimalUnpublished,
+  author = "Doe, John",
+  title  = "A Few Hitherto Unpublished Studies",
+  note   = "in preparation",
+}
+
+@unpublished{FullUnpublished,
+  author = "Doe, John",
+  title  = "The Complete Unpublished Theories",
+  note   = "Draft. Accessed: 2022",
+  month  = feb,
+  year   = 2023,
+}
+
+@comment{jabref-meta: databaseType:bibtex;}
+
+% -- comment
+%
+% Should not be parsed
+% For test: same "MinimalArticle' key as above, to check this is not used!
+@comment{MinimalArticle,
+  Author    = {Doe, John},
+  Title     = {I SHALL NOT BE VISIBLE},
+  Year      = {2022},
+}
