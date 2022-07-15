@@ -13,16 +13,21 @@ local bibtexparser = epnf.define(function (_ENV)
   local _ = WS^0
   local sep = lpeg.S(",;") * _
   local myID = C(identifier + lpeg.P(1)) / function (t) return t end
+  local myTag = C(identifier + lpeg.P(1)) / function (t) return t:lower() end
   local value = balanced + doubleq + myID
-  local pair = lpeg.Cg(myID * _ * "=" * _ * C(value)) * _ * sep^-1   / function (...) local t= {...}; return t[1], t[#t] end
+  local pair = lpeg.Cg(myTag * _ * "=" * _ * C(value)) * _ * sep^-1   / function (...) local t= {...}; return t[1], t[#t] end
   local list = lpeg.Cf(lpeg.Ct("") * pair^0, rawset)
+  local commentKey = lpeg.Cmt(R("az", "AZ")^1, function(_, _, a)
+    return a:lower() == "comment"
+  end)
 
   START "document"
-  document = (V"entry" + V"comment")^1 * (-1 + E("Unexpected character at end of input"))
+  document = (V"comment" + V"entry")^1 -- order important: @comment must have precedence over @other
+    * (-1 + E("Unexpected character at end of input"))
   comment  = WS +
     ( V"blockcomment" + (P("%") * (1-lpeg.S("\r\n"))^0 * lpeg.S("\r\n")) /function () return "" end) -- Don't bother telling me about comments
-  blockcomment = P("@comment")+ balanced/function () return "" end -- Don't bother telling me about comments
-  entry = Ct( P("@") * Cg(myID, "type") * _ * P("{") * _ * Cg(myID, "label") * _ * sep * list * P("}") * _ )
+  blockcomment = (P("@") * commentKey) + balanced/function () return "" end -- Don't bother telling me about comments
+  entry = Ct( P("@") * Cg(myTag, "type") * _ * P("{") * _ * Cg(myID, "label") * _ * sep * list * P("}") * _ )
 end)
 -- luacheck: pop
 
@@ -76,7 +81,7 @@ local function registerCommands (_)
     local bibstyle = require("packages.bibtex.styles." .. style)
     local cite = Bibliography.produceCitation(options, SILE.scratch.bibtex.bib, bibstyle)
     if cite == Bibliography.Errors.UNKNOWN_REFERENCE then
-      SU.warn("Unknown reference in citation "..options)
+      SU.warn("Unknown reference in citation "..options.key)
       return
     end
     SILE.doTexlike(cite)
@@ -86,9 +91,13 @@ local function registerCommands (_)
     if not options.key then options.key = content[1] end
     local style = SILE.settings:get("bibtex.style")
     local bibstyle = require("packages.bibtex.styles." .. style)
-    local cite = Bibliography.produceReference(options, SILE.scratch.bibtex.bib, bibstyle)
+    local cite, err = Bibliography.produceReference(options, SILE.scratch.bibtex.bib, bibstyle)
     if cite == Bibliography.Errors.UNKNOWN_REFERENCE then
-      SU.warn("Unknown reference in citation "..options)
+      SU.warn("Unknown reference in citation "..options.key)
+      return
+    end
+    if cite == Bibliography.Errors.UNKNOWN_TYPE then
+      SU.warn("Unknown type @"..err.." in citation for reference "..options.key)
       return
     end
     SILE.doTexlike(cite)
