@@ -91,13 +91,13 @@ local function registerCommands (_)
     if not options.key then options.key = content[1] end
     local style = SILE.settings:get("bibtex.style")
     local bibstyle = require("packages.bibtex.styles." .. style)
-    local cite = Bibliography.produceReference(options, SILE.scratch.bibtex.bib, bibstyle)
+    local cite, err = Bibliography.produceReference(options, SILE.scratch.bibtex.bib, bibstyle)
     if cite == Bibliography.Errors.UNKNOWN_REFERENCE then
       SU.warn("Unknown reference in citation "..options.key)
       return
     end
     if cite == Bibliography.Errors.UNKNOWN_TYPE then
-      SU.warn("Unknown type for citation reference "..options.key)
+      SU.warn("Unknown type @"..err.." in citation for reference "..options.key)
       return
     end
     SILE.doTexlike(cite)

@@ -21,6 +21,10 @@ end
 
 local function split(str, pat, find) --- return list of substrings separated by pat
   find = find or string.find -- could be find_outside_braces
+  -- @Omikhelia: I added this check here to avoid breaking on error,
+  -- but probably in could have been done earlier...
+  if not str then return {} end
+
   local len = string.len(str)
   local t = { }
   local insert = table.insert
@@ -285,9 +289,9 @@ Bibliography = {
     if not item then
       return Bibliography.Errors.UNKNOWN_REFERENCE
     end
-    item.type =  (item.type:gsub("^%l", string.upper))
+    item.type = item.type:gsub("^%l", string.upper)
     if not style[item.type] then
-      return Bibliography.Errors.UNKNOWN_TYPE
+      return Bibliography.Errors.UNKNOWN_TYPE, item.type
     end
 
     local t = Bibliography.buildEnv(cite, item.attributes, style)
@@ -299,7 +303,10 @@ Bibliography = {
     local t = pl.tablex.copy(getfenv and getfenv(1) or _ENV)
     t.cite = cite
     t.item = item
-    for k,v in pairs(item) do t[k:lower()] = v end
+    for k,v in pairs(item) do
+      if k:lower() == "type" then k = "bibtype" end -- HACK: don't override the type() function
+      t[k:lower()] = v
+    end
     return pl.tablex.update(t, style)
   end,
 
@@ -340,11 +347,17 @@ Bibliography = {
       return function(item)
         local authors = namesplit(item.author)
         if #authors > max then
-          return parse_name(authors[1]).ll .. SILE.fluent:get_message("bibliography-et-al")
+          return parse_name(authors[1]).ll .. " "..SILE.fluent:get_message("bibliography-et-al")
         else
           for i = 1,#authors do authors[i] = parse_name(authors[i]).ll end
           return Bibliography.Style.commafy(authors)
         end
+      end
+    end,
+
+    pageRange = function(item)
+      if item.pages then
+        return item.pages:gsub("%-%-", "–")
       end
     end,
 
