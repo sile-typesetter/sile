@@ -185,13 +185,9 @@ end
 function base:registerCommands ()
 
   SILE.registerCommand("script", function (options, content)
-    if (options["src"]) then
-      local script, _ = require(options["src"])
-      if type(script) == "table" then
-        if type(script.declareSettings) == "function" then script.declareSettings(self) end
-        if type(script.registerCommands) == "function" then script.registerCommands(self) end
-        if type(script.init) == "function" then script.init(self, options) end
-      end
+    if options.src then
+      local pack, _ = require(options.src)
+      self:initPackage(pack)
     else
       local func, err = load(content[1])
       if not func then SU.error(err) end
