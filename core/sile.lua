@@ -71,6 +71,7 @@ SILE.inputters = core_loader("inputters")
 SILE.shapers = core_loader("shapers")
 SILE.outputters = core_loader("outputters")
 SILE.classes = core_loader("classes")
+-- SILE.typesetters = core_loader("typesetters")
 
 -- Internal libraries that don't make assumptions on load, only use
 SILE.traceStack = require("core.tracestack")()
