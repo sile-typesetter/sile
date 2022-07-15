@@ -15,7 +15,9 @@ SILE.inputs.common = {
     SILE.documentState.documentClass:start()
     -- Prepend the dirname of the input file to the Lua search path
     local dirname = SILE.masterFilename:match("(.-)[^%/]+$")
-    package.path = dirname.."?;"..dirname.."?.lua;"..package.path
+    if dirname:len() > 1 then
+      package.path = dirname.."?;"..dirname.."?.lua;"..package.path
+    end
   end
 }
 
