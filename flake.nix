@@ -82,16 +82,14 @@
             ".editorconfig"
             # CI files
             ".cirrus.yml"
+            ".github"
             "action.yml"
             "azure-pipelines.yml"
             "Dockerfile"
             # Git files
-            ".github"
             ".gitattributes"
-            ".gitignore"
             ".git"
-          ])
-          ;
+          ]);
           src = gitignoreSource ./.;
         };
         # Add the libtexpdf src instead of the git submodule.
