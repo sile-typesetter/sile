@@ -73,6 +73,11 @@ function M.new(options)
     return metadata
   end
 
+  -- Turn list of output into final result.
+  function W.merge(result)
+    return util.rope_to_string(result)
+  end
+
   --- A space (string).
   W.space = " "
 

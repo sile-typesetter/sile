@@ -1386,7 +1386,7 @@ function M.new(writer, options)
         inp = rest
       end
       local result = { writer.start_document(), parse_blocks(inp), writer.stop_document() }
-      return rope_to_string(result), writer.get_metadata()
+      return writer.merge(result), writer.get_metadata()
     end
 
   return parse_markdown
