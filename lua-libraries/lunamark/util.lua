@@ -224,5 +224,62 @@ function M.escaper(char_escapes, string_escapes)
   end
 end
 
+--- Given a Roman number in uppercase, return its decimal value.
+function M.roman_to_number(roman)
+  -- Logic from https://rosettacode.org/wiki/Roman_numerals/Decode#Lua
+  -- Assuming we don't need to go so far.
+  local romans = { ["L"] = 50, ["X"] = 10, ["V"] = 5, ["I"] = 1 }
+  local numeral = 0
+
+  local i = 1
+  local len = string.len(roman)
+  while i < len do
+    local z1, z2 = romans[ string.sub(roman, i, i) ], romans[ string.sub(roman, i+1, i+1) ]
+    if z1 < z2 then
+        numeral = numeral + (z2 - z1)
+        i = i + 2
+    else
+        numeral = numeral + z1
+        i = i + 1
+    end
+  end
+  if i <= len then numeral = numeral + romans[ string.sub(roman,i,i) ] end
+  return numeral
+end
+
+--- Given an ordered list prefix (e.g. "1."", "iv."", "a)", return the
+-- the value converted to decimal, the numbering scheme and the end delimiter.
+-- The two latter are mapped to symbolic names loosely taken from Pandoc.
+function M.order_to_numberstyle(listprefix)
+  local numstr, delimend = listprefix:match("^([A-Za-z0-9]*)([.)]*)")
+  local numdelim
+  if delimend == ")" then
+    numdelim = "OneParen"
+  elseif delimend == "." then
+    numdelim = "Period"
+  else
+    numdelim = "Default"
+  end
+  numstr = numstr or listprefix -- Just for robustness if we got a weird input...
+
+  local num
+  num = numstr:match("^([IVXL]+)")
+  if num then
+    return M.roman_to_number(num), "UpperRoman", numdelim
+  end
+  num = numstr:match("^([ivxl]+)")
+  if num then
+    return M.roman_to_number(string.upper(num)), "LowerRoman", numdelim
+  end
+  num = numstr:match("^([A-Z])") -- One is mad to need more that 26 items here.
+  if num then
+    return string.byte(num) - string.byte("A") + 1, "UpperAlpha", numdelim
+  end
+  num = numstr:match("^([a-z])") -- Idem.
+  if num then
+    return string.byte(num) - string.byte("a") + 1, "LowerAlpha", numdelim
+  end
+  return math.floor(tonumber(numstr) or 1), "Decimal", numdelim
+end
 
 return M

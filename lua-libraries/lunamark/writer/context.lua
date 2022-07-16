@@ -17,7 +17,9 @@ function M.new(options)
 
   -- we don't try to escape utf-8 characters in context
   local escape = util.escaper(ConTeXt.escaped)
+  local escape_citation = util.escaper(ConTeXt.escaped_citation)
   ConTeXt.string = escape
+  ConTeXt.citation = escape_citation
 
   function ConTeXt.singlequoted(s)
     return {"\\quote{",s,"}"}
@@ -31,11 +33,11 @@ function M.new(options)
     return {"\\type{",ConTeXt.string(s),"}"}
   end
 
-  function ConTeXt.link(lab,src,tit)
+  function ConTeXt.link(lab,src)
     return {"\\goto{",lab,"}[url(",ConTeXt.string(src),"]"}
   end
 
-  function ConTeXt.image(lab,src,tit)
+  function ConTeXt.image(_,src)
     return {"\\externalfigure[",ConTeXt.string(src),"]"}
   end
 

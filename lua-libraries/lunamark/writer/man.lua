@@ -21,11 +21,11 @@ function M.new(options)
 
   local endnotes = {}
 
-  function Man.link(lab,src,tit)
+  function Man.link(lab,src)
     return {lab," (",src,")"}
   end
 
-  function Man.image(lab,src,tit)
+  function Man.image(lab)
     return {"[IMAGE (",lab,")]"}
   end
 
@@ -42,7 +42,7 @@ function M.new(options)
     return {".PP\n",contents}
   end
 
-  function Man.bulletlist(items,tight)
+  function Man.bulletlist(items)
     local buffer = {}
     for _,item in ipairs(items) do
       local revitem = item
@@ -53,7 +53,7 @@ function M.new(options)
     return util.intersperse(buffer, Man.containersep)
   end
 
-  function Man.orderedlist(items,tight,startnum)
+  function Man.orderedlist(items,_,startnum)
     local buffer = {}
     local num = startnum or 1
     for _,item in ipairs(items) do

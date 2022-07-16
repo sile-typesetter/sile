@@ -51,13 +51,15 @@ function M.new(options)
     return {"<a href=\"", Html.string(src), "\"", titattr, ">", lab, "</a>"}
   end
 
-  function Html.image(lab,src,tit)
+  function Html.image(lab,src,tit,attr)
     local titattr
     if type(tit) == "string" and #tit > 0
        then titattr = " title=\"" .. Html.string(tit) .. "\""
        else titattr = ""
-       end
-    return {"<img src=\"", Html.string(src), "\" alt=\"", lab, "\"", titattr, " />"}
+    end
+    local w = attr and attr.width and ' width="'..attr.width..'"'
+    local h = attr and attr.height and ' height="'..attr.height..'"'
+    return {"<img src=\"", Html.string(src), "\" alt=\"", lab, "\"", titattr, w, h, " />"}
   end
 
   function Html.paragraph(s)
@@ -68,16 +70,40 @@ function M.new(options)
     return {"<li>", s, "</li>"}
   end
 
-  function Html.bulletlist(items,tight)
+  function Html.bulletlist(items)
     return {"<ul>", containersep, intersperse(map(items, listitem), containersep), containersep, "</ul>"}
   end
 
-  function Html.orderedlist(items,tight,startnum)
+  local listStyle = {
+    -- Decimal = "1", -- That's the default
+    UpperRoman = "I",
+    LowerRoman = "i",
+    UpperAlpha = "A",
+    LowerAlpha = "a",
+  }
+  function Html.orderedlist(items,_,startnum,numstyle,numdelim)
     local start = ""
     if startnum and startnum ~= 1 then
       start = " start=\"" .. startnum .. "\""
     end
-    return {"<ol", start, ">", containersep, intersperse(map(items, listitem), containersep), containersep, "</ol>"}
+    local oltype = numstyle and listStyle[numstyle]
+    local oltypeattr = oltype and (' type="'..oltype..'"') or ""
+    local olmark = numdelim == "OneParen" and ' class="custom-marker-oneparen"' or ""
+    return {
+        "<ol", start, oltypeattr, olmark, ">",
+        containersep, intersperse(map(items, listitem), containersep), containersep,
+        "</ol>"
+    }
+  end
+
+  local function tasklistitem(s)
+    local status = (s[1] == "[X]") and "checked" or "unchecked"
+    local icon = (status == "checked") and "☑" or "☐"
+    return {'<li class="tasklist-item '..status..'"><span>'..icon..' </span>', s[2], "</li>"}
+  end
+
+  function Html.tasklist(items)
+    return {"<ul>", containersep, intersperse(map(items, tasklistitem), containersep), containersep, "</ul>"}
   end
 
   function Html.inline_html(s)
@@ -94,6 +120,37 @@ function M.new(options)
 
   function Html.strong(s)
     return {"<strong>", s, "</strong>"}
+  end
+
+  function Html.strikeout(s)
+    return {"<strike>", s, "</strike>"}
+  end
+
+  function Html.subscript(s)
+    return {"<sub>", s, "</sub>"}
+  end
+
+  function Html.superscript(s)
+    return {"<sup>", s, "</sup>"}
+  end
+
+  function Html.span(s, attr)
+    local class = attr.class and attr.class ~="" and ' class="'..attr.class..'"' or ""
+    local id = attr.id and ' id="'..attr.id..'"' or ""
+    local lang = attr.lang and ' lang="'..attr.lang..'"' or ""
+    local tag = (class and string.match(' ' ..attr.class .. ' ',' underline ')) and "u" or "span"
+    local opentag = "<"..tag..id..class..lang..'>'
+    local closetag = "</"..tag..">"
+    return {opentag, s, closetag}
+  end
+
+  function Html.div(s, attr)
+    local class = attr.class and attr.class ~="" and ' class="'..attr.class..'"' or ""
+    local id = attr.id and ' id="'..attr.id..'"' or ""
+    local lang = attr.lang and ' lang="'..attr.lang..'"' or ""
+    local opentag = '<div'..id..class..lang..'>'
+    local closetag = "</div>"
+    return {opentag, s, closetag}
   end
 
   function Html.blockquote(s)
@@ -113,7 +170,18 @@ function M.new(options)
     end
   end
 
-  function Html.header(s,level)
+  function Html.rawinline(s,format)
+    return format == "html" and s or {}
+  end
+
+  function Html.rawblock(s,format)
+    return format == "html" and s or {}
+  end
+
+  function Html.header(s,level,attr)
+    local class = attr.class and attr.class ~= "" and ' class="'..attr.class..'"' or ""
+    local id = attr.id and ' id="'..attr.id..'"' or ""
+    local lang = attr.lang and ' lang="'..attr.lang..'"' or ""
     local sep = ""
     if options.slides or options.containers then
       local lev = (options.slides and 1) or level
@@ -123,7 +191,7 @@ function M.new(options)
       end
       sep = stop .. Html.start_section(lev) .. Html.containersep
     end
-    return {sep, "<h", level, ">", s, "</h", level, ">"}
+    return {sep, "<h", level, id, class, lang, ">", s, "</h", level, ">"}
   end
 
   Html.hrule = "<hr />"
@@ -171,6 +239,49 @@ function M.new(options)
       buffer[#buffer + 1] = {"<dt>", item.term, "</dt>", containersep, intersperse(defs, containersep)}
     end
     return {"<dl>", containersep, intersperse(buffer, containersep), containersep, "</dl>"}
+  end
+
+  local function tableCellAlign (align)
+    if align == 'l' then
+      return ' style="text-align: left;"'
+    elseif align == 'r' then
+      return ' style="text-align: right;"'
+    elseif align == 'c' then
+      return ' style="text-align: center;"'
+    end
+    return ''
+  end
+
+  function Html.table(rows, caption)
+    -- Mimic Pandoc output for such tables (in terms of carriage returns, class, styles, etc.)
+    local t = {}
+    local aligns = rows[2]
+
+    if caption then
+      t[#t+1] = { "<caption>", caption, "</caption>\n" }
+    end
+
+    local theadrow = { '<tr class="header">\n' }
+    for j, column in ipairs(rows[1]) do
+      local col = { "<th"..tableCellAlign(aligns[j])..">", column, "</th>\n" }
+      theadrow[#theadrow+1] = col
+    end
+    theadrow[#theadrow+1] = "</tr>\n"
+    t[#t+1] = { "<thead>\n", theadrow, "</thead>\n" }
+
+    t[#t+1] = "<tbody>\n"
+    for i = 3, #rows do
+      local tbodyrows = { '<tr class="', (i % 2 == 0) and "even" or "odd",'">\n' }
+      for j, column in ipairs(rows[i]) do
+        local col = { "<td"..tableCellAlign(aligns[j])..">", column, "</td>\n" }
+        tbodyrows[#tbodyrows+1] = col
+      end
+      tbodyrows[#tbodyrows+1]= "</tr>\n"
+      t[#t+1] = tbodyrows
+    end
+    t[#t+1] = "</tbody>\n"
+
+    return { "<table>\n", t, "</table>\n" }
   end
 
   Html.template = [[

@@ -35,8 +35,6 @@ meta.__index =
   end
 setmetatable(W, meta)
 
-local rope_to_string = util.rope_to_string
-
 --- Returns a table with functions defining a generic lunamark writer,
 -- which outputs plain text with no formatting.  `options` is an optional
 -- table with the following fields:
@@ -76,8 +74,8 @@ function M.new(options)
   end
 
   -- Turn list of output into final result.
-  function W.merge(result)
-    return rope_to_string(result)
+  function W.rope_to_output(result)
+    return util.rope_to_string(result)
   end
 
   --- A space (string).
@@ -143,6 +141,11 @@ function M.new(options)
     return s
   end
 
+  --- Citation key, escaped as needed for the output format.
+  function W.citation(s)
+    return s
+  end
+
   --- Inline (verbatim) code.
   function W.code(s)
     return s
@@ -150,13 +153,14 @@ function M.new(options)
 
   --- A link with link text `label`, uri `uri`,
   -- and title `title`.
-  function W.link(label, uri, title)
+  function W.link(label)
     return label
   end
 
   --- An image link with alt text `label`,
-  -- source `src`, and title `title`.
-  function W.image(label, src, title)
+  -- source `src`, and title `title`,
+  -- additional attributes `attr`
+  function W.image(label)
     return label
   end
 
@@ -168,7 +172,7 @@ function M.new(options)
   --- A bullet list with contents `items` (an array).  If
   -- `tight` is true, returns a "tight" list (with
   -- minimal space between items).
-  function W.bulletlist(items,tight)
+  function W.bulletlist(items)
     return util.intersperse(items,W.interblocksep)
   end
 
@@ -177,17 +181,34 @@ function M.new(options)
   -- minimal space between items). If optional
   -- number `startnum` is present, use it as the
   -- number of the first list item.
-  function W.orderedlist(items,tight,startnum)
+  -- `numstyle`, depending on options, may be one of "Decimal", "LowerRoman",
+  -- "UpperRoman", "LowerAlpha", "UpperAlpha"
+  -- `numdelim`, depending on options, may be one of "Default", "OneParen",
+  -- "Period".
+  -- (Those symbolic names are loosely taken from Pandoc.)
+  function W.orderedlist(items, _)
     return util.intersperse(items,W.interblocksep)
   end
 
+  --- A task list with contents `items` (an array of pairs, which first
+  -- element is the normaliszed task checkbox, "[ ]" or "[X]"). If
+  -- `tight` is true, returns a "tight" list (with
+  -- minimal space between items).
+  local function tasklistitem(s)
+    local icon = (s[1] == "[X]") and "☑ " or "☐ "
+    return {icon, s[2]}
+  end
+  function W.tasklist(items,tight)
+    return W.orderedlist(util.map(items, tasklistitem), tight)
+  end
+
   --- Inline HTML.
-  function W.inline_html(s)
+  function W.inline_html()
     return ""
   end
 
   --- Display HTML (HTML block).
-  function W.display_html(s)
+  function W.display_html()
     return ""
   end
 
@@ -198,6 +219,11 @@ function M.new(options)
 
   --- Strongly emphasized text.
   function W.strong(s)
+    return s
+  end
+
+  --- Strikeout text
+  function W.strikeout(s)
     return s
   end
 
@@ -212,12 +238,46 @@ function M.new(options)
   end
 
   --- Fenced code block, with infostring `i`.
-  function W.fenced_code(s, i)
+  -- and optional attributes `attr` (may be nil,
+  -- when valued, `attr.class` is the same as the infostring)
+  function W.fenced_code(s)
     return s
   end
 
-  --- Header level `level`, with text `s`.
-  function W.header(s, level)
+  --- Header with text `s`, level `level` and optional attributes `attr`
+  function W.header(s, _, _)
+    return s
+  end
+
+  -- (Inline) Span with attributes `attr`
+  function W.span(s)
+    return s
+  end
+
+  -- (Block) Div with attributes `attr`
+  function W.div(s)
+    return s
+  end
+
+  --- Inline raw code, with format and
+  -- optional attributes
+  function W.rawinline()
+    return {} -- ignore by default
+  end
+
+  --- Raw block code, with format and
+  -- optional attributes
+  function W.rawblock()
+    return {} -- ignore by default
+  end
+
+  --- Subscript text.
+  function W.subscript(s)
+    return s
+  end
+
+  --- Superscript text.
+  function W.superscript(s)
     return s
   end
 
@@ -272,13 +332,23 @@ function M.new(options)
   -- each of the form `{ term = t, definitions = defs, tight = tight }`,
   -- where `t` is a string and `defs` is an array of strings.
   -- `tight` is a boolean, true if it is a tight list.
-  function W.definitionlist(items, tight)
+  function W.definitionlist(items)
     local buffer = {}
     for _,item in ipairs(items) do
       buffer[#buffer + 1] = item.t
       buffer[#buffer + 1] = util.intersperse(item.definitions, W.interblocksep)
     end
     return util.intersperse(buffer,W.interblocksep)
+  end
+
+  --- A table.
+  -- The two arguments are rows, caption:
+  -- `rows[1]` contains the headers,
+  -- `rows[2]` contains the aligments (r l c d = right, left, centered, default)
+  -- and the other rows follow...
+  -- `caption` is the optional caption,
+  function W.table(_, _)
+    return ""
   end
 
   --- A cosmo template to be used in producing a standalone document.

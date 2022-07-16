@@ -32,11 +32,11 @@ function M.new(options)
     return {"\\texttt{",LaTeX.string(s),"}"}
   end
 
-  function LaTeX.link(lab,src,tit)
+  function LaTeX.link(lab,src)
     return {"\\href{",LaTeX.string(src),"}{",lab,"}"}
   end
 
-  function LaTeX.image(lab,src,tit)
+  function LaTeX.image(_,src)
     return {"\\includegraphics{",LaTeX.string(src),"}"}
   end
 
@@ -126,8 +126,7 @@ function M.new(options)
           buffer[#buffer + 1] = {opened_braces and "}" or "",
             cite.prenote and {i == 1 and "" or " ", cite.prenote, "~"} or
             "", {(i == 1 or cite.prenote) and "" or " ", "\\cite"},
-            cite.postnote and {"[", cite.postnote, "]"} or "", "{", cite.name,
-            cite_postnote and {"~", cite_postnote} or "", "}"}
+            cite.postnote and {"[", cite.postnote, "]"} or "", "{", cite.name, "}"}
           opened_braces = false
         else -- A string of simple citations
           buffer[#buffer + 1] = {opened_braces and ", " or {i == 1 and "" or

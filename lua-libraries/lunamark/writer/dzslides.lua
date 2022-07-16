@@ -97,7 +97,8 @@ $body
 <!-- *********************************************************************** -->
 <!-- *********************************************************************** -->
 
-<!-- This block of code is not supposed to be edited, but if you want to change the behavior of the slides, feel free to hack it ;) -->
+<!-- This block of code is not supposed to be edited, but if you want to change the behavior of the slides,
+     feel free to hack it ;) -->
 
 <!-- Default Style -->
 <style>

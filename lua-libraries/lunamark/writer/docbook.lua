@@ -23,8 +23,8 @@ function M.new(options)
     return {"<literal>",Docbook.string(s),"</literal>"}
   end
 
-  function Docbook.link(lab,src,tit)
-    local titattr
+  function Docbook.link(lab,src)
+    -- local titattr
     -- if tit and string.len(tit) > 0
     --   then titattr = format(" xlink:title=\"%s\"", Docbook.string(tit))
     --   else titattr = ""
@@ -32,14 +32,15 @@ function M.new(options)
     return {"<ulink url=\"",Docbook.string(src),"\">",lab,"</ulink>"}
   end
 
-  function Docbook.image(lab,src,tit)
+  function Docbook.image(_,src,tit)
     local titattr
     if tit and string.len(tit) > 0
        then titattr = string.format("<objectinfo><title>%s%</title></objectinfo>",
                         Docbook.string(tit))
        else titattr = ""
        end
-    return {"<inlinemediaobject><imageobject>",titattr,"<imagedata fileref=\"",Docbook.string(src),"\" /></imageobject></inlinemediaobject>"}
+    return {"<inlinemediaobject><imageobject>",titattr,"<imagedata fileref=\"",Docbook.string(src),
+            "\" /></imageobject></inlinemediaobject>"}
   end
 
   function Docbook.paragraph(s)
@@ -129,7 +130,8 @@ function M.new(options)
         defs[#defs + 1] = {"<listitem>",Docbook.containersep,def,Docbook.containersep,"</listitem>"}
         defs[#defs + 1] = Docbook.containersep
       end
-      buffer[#buffer + 1] = {"<varlistentry>",Docbook.containersep,"<term>",item.term,"</term>",Docbook.containersep,defs,"</varlistentry>"}
+      buffer[#buffer + 1] = {"<varlistentry>",Docbook.containersep,"<term>",item.term,"</term>",
+             Docbook.containersep,defs,"</varlistentry>"}
     end
     local contents = util.intersperse(buffer, Docbook.containersep)
     return {"<variablelist>",Docbook.containersep,contents,Docbook.containersep,"</variablelist>"}

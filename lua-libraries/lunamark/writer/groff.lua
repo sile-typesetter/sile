@@ -57,10 +57,12 @@ function M.new(options)
 
   Groff.string = escape
 
-  function Groff.inline_html(s)
+  Groff.citation = escape
+
+  function Groff.inline_html()
   end
 
-  function Groff.display_html(s)
+  function Groff.display_html()
   end
 
   function Groff.code(s)
