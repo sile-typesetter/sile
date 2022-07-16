@@ -47,7 +47,7 @@ SILE.registerCommand("language", function (options, content)
   else
     SILE.settings:set("document.language", main)
   end
-end)
+end, nil, nil, true)
 
 SILE.registerCommand("fluent", function (options, content)
   local key = content[1]
@@ -67,7 +67,7 @@ SILE.registerCommand("fluent", function (options, content)
     SU.warn(string.format("No localized message for %s found in locale %s", key, locale))
   end
   SILE.process({ message })
-end)
+end, nil, nil, true)
 
 SILE.registerCommand("ftl", function (options, content)
   local locale = options.locale or SILE.settings:get("document.language")
@@ -79,7 +79,7 @@ SILE.registerCommand("ftl", function (options, content)
     local input = content[1]
     fluent:add_messages(input, locale)
   end
-end)
+end, nil, nil, true)
 
 require("languages.unicode")
 

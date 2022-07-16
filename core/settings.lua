@@ -91,7 +91,7 @@ function settings:_init()
     else
       self:set(parameter, value, makedefault, reset)
     end
-  end, "Set a SILE parameter <parameter> to value <value> (restoring the value afterwards if <content> is provided)")
+  end, "Set a SILE parameter <parameter> to value <value> (restoring the value afterwards if <content> is provided)", nil, true)
 
 end
 

@@ -306,17 +306,17 @@ function SILE.call (command, options, content)
   return result
 end
 
-function SILE.registerCommand (name, func, help, pack)
-  SILE.Commands[name] = func
-  if not pack then
-    local where = debug.getinfo(2).source
-    pack = where:match("(%w+).lua")
+function SILE.registerCommand (name, func, help, pack, cheat)
+  if not cheat then
+    SU.deprecated("SILE.registerCommand", "class:registerCommand", "0.14.0", "0.16.0",
+    [[Commands are being scoped to the document classes they are loaded into rather than being globals.]])
+    local class = SILE.documentState.documentClass
+    if not class then SU.error("Can't register command "..name.." before a document class is loaded") end
+    class:registerCommand(name, func, help, pack)
+  else
+    -- Shimming until we have all scope cheating removed from core
+    SILE.classes.base.registerCommand(nil, name, func, help, pack)
   end
-  --if not help and not pack:match(".sil") then SU.error("Could not define command '"..name.."' (in package "..pack..") - no help text" ) end
-  SILE.Help[name] = {
-    description = help,
-    where = pack
-  }
 end
 
 function SILE.setCommandDefaults (command, defaults)

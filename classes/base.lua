@@ -181,6 +181,19 @@ function base:runHooks (category, args)
   end
 end
 
+function base.registerCommand (_, name, func, help, pack)
+  SILE.Commands[name] = func
+  if not pack then
+    local where = debug.getinfo(2).source
+    pack = where:match("(%w+).lua")
+  end
+  --if not help and not pack:match(".sil") then SU.error("Could not define command '"..name.."' (in package "..pack..") - no help text" ) end
+  SILE.Help[name] = {
+    description = help,
+    where = pack
+  }
+end
+
 function base:registerCommands ()
 
   local function replaceProcessBy(replacement, tree)
