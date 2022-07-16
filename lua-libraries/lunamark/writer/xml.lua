@@ -54,6 +54,8 @@ function M.new(options)
 
   Xml.string = escape
 
+  Xml.citation = escape
+
   return Xml
 end
 

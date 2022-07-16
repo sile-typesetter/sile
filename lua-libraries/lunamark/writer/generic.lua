@@ -35,8 +35,6 @@ meta.__index =
   end
 setmetatable(W, meta)
 
-local rope_to_string = util.rope_to_string
-
 --- Returns a table with functions defining a generic lunamark writer,
 -- which outputs plain text with no formatting.  `options` is an optional
 -- table with the following fields:
@@ -73,11 +71,6 @@ function M.new(options)
   --- Return metadata table.
   function W.get_metadata()
     return metadata
-  end
-
-  -- Turn list of output into final result.
-  function W.merge(result)
-    return rope_to_string(result)
   end
 
   --- A space (string).
@@ -140,6 +133,11 @@ function M.new(options)
 
   --- String, escaped as needed for the output format.
   function W.string(s)
+    return s
+  end
+
+  --- Citation key, escaped as needed for the output format.
+  function W.citation(s)
     return s
   end
 

@@ -57,6 +57,8 @@ function M.new(options)
 
   Groff.string = escape
 
+  Groff.citation = escape
+
   function Groff.inline_html(s)
   end
 

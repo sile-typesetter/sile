@@ -57,6 +57,15 @@ function M.new(options)
      ["]"] = "{]}",
    }
 
+  TeX.escaped_citation = {
+     ["{"] = "\\{",
+     ["}"] = "\\}",
+     ["%"] = "\\%",
+     ["#"] = "\\#",
+     ["^"] = "\\^{}",
+     ["\\"] = "\\char92{}",
+   }
+
   local str_escaped = {
      ["\226\128\156"] = "``",
      ["\226\128\157"] = "''",
@@ -68,8 +77,9 @@ function M.new(options)
    }
 
   local escaper = util.escaper(TeX.escaped, str_escaped)
-
+  local escaper_citation = util.escaper(TeX.escaped_citation)
   TeX.string = escaper
+  TeX.citation = escaper_citation
 
   function TeX.inline_html(s)
     return ""
