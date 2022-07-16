@@ -9,32 +9,48 @@ local base = pl.class()
 base.type = "inputter"
 base._name = "base"
 
+base._docclass = nil
+
 function base._init (_) end
 
-function base.classInit (_, tree)
-  local options = pl.tablex.merge(tree.options, SILE.input.options, true)
+function base:classInit (options)
+  options = pl.tablex.merge(options, SILE.input.options, true)
   local constructor, class
   if SILE.scratch.required_class then
     constructor = SILE.scratch.required_class
     class = constructor._name
   end
   class = SILE.input.class or class or options.class or "plain"
-  constructor = constructor or SILE.require(class, "classes", true)
+  constructor = self._docclass or constructor or SILE.require(class, "classes", true)
   if constructor.id then
     SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0", string.format(_deprecated, constructor.id))
   end
   SILE.documentState.documentClass = constructor(options)
 end
 
-function base:process (doc)
-  local tree = self:parse(doc)
+function base:requireClass (tree)
   local root = SILE.documentState.documentClass == nil
   if root then
-    if tree.command ~= "sile" and tree.command ~= "document" then
-      SU.error("This isn't SILE document!")
+    if #tree ~= 1
+      or (tree[1].command ~= "sile" and tree[1].command ~= "document") then
+      SU.error("This isn't a SILE document!")
     end
-    self:classInit(tree)
+    self:classInit(tree[1].options or {})
   end
+end
+
+function base.packageInit (_, pack)
+  local class = SILE.documentState.documentClass
+  if not class then
+    SU.error("Cannot load a package before instantiating a document class")
+  else
+    class:initPackage(pack)
+  end
+end
+
+function base:process (doc)
+  local tree = self:parse(doc)
+  self:requireClass(tree)
   return SILE.process(tree)
 end
 

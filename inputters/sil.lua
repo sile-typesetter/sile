@@ -189,14 +189,13 @@ function sil:rebuildParser ()
 end
 
 function sil:parse (doc)
-  local tree = epnf.parsestring(self._parser, doc)
-  -- a valid doc parsed to ast always consists of one texlike_stuff
-  tree = tree[1][1]
-  if tree.id == "texlike_text" then tree = {tree} end
-  if not tree then return end
+  local tree = epnf.parsestring(self._parser, doc)[1]
+  if not tree then
+    return SU.error("Unable to parse input document to an AST tree")
+  end
   resetCache()
-  tree = massage_ast(tree, doc)
-  return tree
+  local ast = massage_ast(tree, doc)
+  return ast
 end
 
 return sil

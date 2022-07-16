@@ -21,7 +21,12 @@ end
 function lua.parse (_, doc)
   local result, err = load(doc)
   if not result then SU.error(err) end
-  return { result }
+  return result
+end
+
+local load_sile_module = function (module)
+  local name = module._name
+  SILE[name .. "s"][name] = module
 end
 
 function lua:process (doc)

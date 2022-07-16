@@ -25,7 +25,7 @@ function xml.parse (_, doc)
   if not tree then
     SU.error(err)
   end
-  return tree
+  return { tree }
 end
 
 return xml

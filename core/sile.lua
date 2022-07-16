@@ -153,7 +153,7 @@ SILE.require = function (dependency, pathprefix, deprecation_ack)
   if not class and not deprecation_ack then
     SU.warn(string.format([[
   Use of SILE.require() is only supported in documents, packages, or class
-  init functions. It ill not function fully before the class is instantiated.
+  init functions. It will not function fully before the class is instantiated.
   Please just use the Lua require() function directly:
       SILE.require("%s") → require("%s")]], dependency, dependency))
   end
@@ -163,20 +163,21 @@ SILE.require = function (dependency, pathprefix, deprecation_ack)
   return lib
 end
 
-SILE.process = function (input)
-  if not input then return end
-  if type(input) == "function" then return input() end
+SILE.process = function (ast)
+  if not ast then return end
   if SU.debugging("ast") then
-    SU.debugAST(input, 0)
+    SU.debugAST(ast, 0)
   end
-  for _, content in ipairs(input) do
+  if type(ast) == "function" then return ast() end
+  for _, content in ipairs(ast) do
     if type(content) == "string" then
       SILE.typesetter:typeset(content)
     elseif type(content) == "function" then
       content()
     elseif SILE.Commands[content.command] then
       SILE.call(content.command, content.options, content)
-    elseif content.id == "texlike_stuff" or (not content.command and not content.id) then
+    elseif content.id == "texlike_stuff"
+      or (not content.command and not content.id) then
       local pId = SILE.traceStack:pushContent(content, "texlike_stuff")
       SILE.process(content)
       SILE.traceStack:pop(pId)
