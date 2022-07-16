@@ -18,53 +18,18 @@
 
 \chapter{Code Organisation}
 
-This book assumes that you’ve already read the SILE Book, and are now looking
-for further information about how SILE actually works.
+This book assumes that you’ve already read the SILE Book, and are now looking for further information about how SILE actually works.
 
-The main core of SILE is, unsurprisingly, in the directory called \code{core}.
-For the time being, this contents of this directory (and the \code{sile} executable
-) are the only places you need to be looking to understand SILE’s operation. We’ll
-get to the other directories later.
+The SILE cli itself is generated from the \code{sile.in} file and only handles some of the executable lifecycle stuff.
+The main core of SILE including most of the top level API is in \code{core/sile.lua}.
+This is also the file you would require in your own projects to get access to the SILE core as a library.
+It requires a lot of other things on it's own including some other file in \code{core}.
 
-Here is the contents of the core directory, and what the various files do:
-
-\noindent\begin{table}%
-\tr{\td{\code{core/sile.lua}}\td{\relax\qquad SILE startup and file handling}}
-\tr{\td{\code{core/baseclass.lua}}\td{\relax\qquad Base of document classes}}
-\tr{\td{\code{core/frame.lua}}\td{\relax\qquad Base class for frame objects}}
-\tr{\td{\code{core/frameparser.lua}}\td{\relax\qquad Parser for frame definitions}}
-\tr{\td{\code{core/languages.lua}}\td{\relax\qquad Code which loads language support}}
-\tr{\td{\code{core/length.lua}}\td{\relax\qquad Base class for SILE length objects}}
-\tr{\medskip} \tr{\td{\em{Main typesetting algorithms}}} \tr{\medskip}
-\tr{\td{\code{core/nodefactory.lua}}\td{\relax\qquad Prototypes for boxes and glue}}
-\tr{\td{\code{core/typesetter.lua}}\td{\relax\qquad Main typesetting algorithms}}
-\tr{\td{\code{core/break.lua}}\td{\relax\qquad Knuth-Plass line breaking algorithm}}
-\tr{\td{\code{core/hyphenator-liang.lua}}\td{\relax\qquad Liang’s hyphenation algorithm}}
-\tr{\td{\code{core/pagebuilder.lua}}\td{\relax\qquad Page building algorithm}}
-\tr{\medskip} \tr{\td{\em{Font and glyph shaping}}} \tr{\medskip}
-\tr{\td{\code{core/font.lua}}\td{\relax\qquad The \command{\\font} command and font settings}}
-\tr{\td{\code{core/base-shaper.lua}}\td{\relax\qquad Base class for glyph shaping}}
-\tr{\td{\code{core/harfbuzz-shaper.lua}}\td{\relax\qquad Glyph shaping using Harfbuzz}}
-\tr{\td{\code{core/pango-shaper.lua}}\td{\relax\qquad Glyph shaping using Pango}}
-
-\tr{\medskip} \tr{\td{\em{Input subsystems}}} \tr{\medskip}
-\tr{\td{\code{core/inputs-common.lua}}\td{\relax\qquad Shared code for input systems}}
-\tr{\td{\code{core/inputs-texlike.lua}}\td{\relax\qquad Parser for TeX-like input flavour}}
-\tr{\td{\code{core/inputs-xml.lua}}\td{\relax\qquad Handler for XML input flavour}}
-\tr{\medskip} \tr{\td{\em{Output subsystems}}} \tr{\medskip}
-\tr{\td{\code{core/libtexpdf-output.lua}}\td{\relax\qquad Output routine using libtexpdf}}
-\tr{\td{\code{core/podofo-output.lua}}\td{\relax\qquad Output routine using PoDoFo}}
-\tr{\td{\code{core/cairo-output.lua}}\td{\relax\qquad Output routine using Cairo}}
-\tr{\td{\code{core/debug-output.lua}}\td{\relax\qquad Output routine using print statements}}
-
-\tr{\medskip} \tr{\td{\em{Utility and conversion classes}}} \tr{\medskip}
-\tr{\td{\code{core/settings.lua}}\td{\relax\qquad Getters/setters for settings}}
-\tr{\td{\code{core/utilities.lua}}\td{\relax\qquad Various utility Lua functions}}
-\tr{\td{\code{core/parserbits.lua}}\td{\relax\qquad Utility patterns for building parsers}}
-\tr{\td{\code{core/measurements.lua}}\td{\relax\qquad Conversion between length units}}
-\tr{\td{\code{core/papersizes.lua}}\td{\relax\qquad Conversion between paper sizes}}
-\tr{\td{\code{core/colorparser.lua}}\td{\relax\qquad Conversion between color descriptions}}
-\end{table}
+Some of the major components, especially those which have alternatives, are in module directories.
+For example classes are in \code{classes}, inputters in \code{inputters}, etc.
+These are typically loaded on-demand by accessing them at \code{SILE.classes.classname}, \code{SILE.inputters.format}, etc.
+Most documents will use one class, one inputter, one outputter, one shaper, one typesetter, etc.
+However it is certainly possible to mix and match many alternatives in a single project.
 
 \chapter{From Input To PDF}
 Next we’ll give you a high-level overview of the process flow: what SILE does to get you from input to output.
@@ -73,14 +38,14 @@ Next we’ll give you a high-level overview of the process flow: what SILE does 
 
 \section{From input to AST}
 
-The typesetting process is then kicked off by a call to \code{SILE.processFile}
-in \code{sile.lua}, which chooses the input handler based on the file type.
-\code{SILE.inputs.texlike} and \code{SILE.inputs.XML} both provide a \code{process}
-function which takes a file handle, parses the input into an abstract syntax tree, and
-then walks the AST to execute the commands and typeset the text containing in it.
+The typesetting process is then kicked off by a call to \code{SILE.processFile} in \code{sile.lua}, which chooses the input handler based on the file type.
+Inputters such as \code{SILE.inputters.sil} provide \code{:parse()} method which takes raw content and converts it to an abstract syntax tree.
+After coversion to a tree the inputter \code{:process()} method to walk though it, typically by handing it off to \code{SILE.process()}
 
 \section{Typesetting and commands}
 
-\code{SILE.process} (provided in \code{inputs-common.lua})
+\code{SILE.process}
+
+\code{SILE.typesetter}
 
 \end{document}
