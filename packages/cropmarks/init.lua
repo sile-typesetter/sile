@@ -58,12 +58,12 @@ end
 
 local function registerCommands (class)
 
-  SILE.registerCommand("crop:header", function (_, _)
+  class:registerCommand("crop:header", function (_, _)
     local info = SILE.masterFilename .. " - " .. class:date("%x %X") .. " -  " .. outcounter
     SILE.typesetter:typeset(info)
   end)
 
-  SILE.registerCommand("crop:setup", function (options, _)
+  class:registerCommand("crop:setup", function (options, _)
     local papersize = SU.required(options, "papersize", "setting up crop marks")
     local size = SILE.papersize(papersize)
     local oldsize = SILE.documentState.paperSize

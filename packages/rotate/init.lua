@@ -59,9 +59,9 @@ local function init (_, _)
 
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("rotate", function(options, content)
+  class:registerCommand("rotate", function(options, content)
     local angle = SU.required(options, "angle", "rotate command")
     local theta = -math.rad(angle)
     local origbox = SILE.call("hbox", {}, content)

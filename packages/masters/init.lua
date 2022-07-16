@@ -77,7 +77,7 @@ end
 
 local function registerCommands (class)
 
-  SILE.registerCommand("define-master-template", function(options, content)
+  class:registerCommand("define-master-template", function(options, content)
     SU.required(options, "id", "defining a master")
     SU.required(options, "first-content-frame", "defining a master")
     -- Subvert the <frame> functionality from baseclass
@@ -96,13 +96,13 @@ local function registerCommands (class)
     SILE.frames = sp2
   end)
 
-  SILE.registerCommand("switch-master-one-page", function (options, _)
+  class:registerCommand("switch-master-one-page", function (options, _)
     SU.required(options, "id", "switching master")
     switchMasterOnePage(class, options.id)
     SILE.typesetter:leaveHmode()
   end, "Switches the master for the current page")
 
-  SILE.registerCommand("switch-master", function (options, _)
+  class:registerCommand("switch-master", function (options, _)
     SU.required(options, "id", "switching master")
     switchMaster(class, options.id)
   end, "Switches the master for the current page")

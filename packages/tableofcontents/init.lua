@@ -78,9 +78,9 @@ local function init (class, _)
 
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("tableofcontents", function (options, _)
+  class:registerCommand("tableofcontents", function (options, _)
     local depth = SU.cast("integer", options.depth or 3)
     local linking = SU.boolean(options.linking, true)
     local tocfile,_ = io.open(SILE.masterFilename .. '.toc')
@@ -106,7 +106,7 @@ local function registerCommands (_)
     SILE.scratch._tableofcontents = toc
   end)
 
-  SILE.registerCommand("tableofcontents:item", function (options, content)
+  class:registerCommand("tableofcontents:item", function (options, content)
     SILE.settings:temporarily(function ()
       SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
       SILE.call("tableofcontents:level" .. options.level .. "item", {
@@ -127,7 +127,7 @@ local function registerCommands (_)
     end)
   end)
 
-  SILE.registerCommand("tocentry", function (options, content)
+  class:registerCommand("tocentry", function (options, content)
     local dest
     if SILE.Commands["pdf:destination"] then
       dest = "dest" .. tostring(SILE.scratch.pdf_destination_counter)
@@ -150,21 +150,21 @@ local function registerCommands (_)
     })
   end)
 
-  SILE.registerCommand("tableofcontents:title", function (_, _)
+  class:registerCommand("tableofcontents:title", function (_, _)
     SU.deprecated("\\tableofcontents:title", "\\fluent{toc-title}", "0.13.0", "0.14.0")
   end, "Deprecated")
 
-  SILE.registerCommand("tableofcontents:notocmessage", function (_, _)
+  class:registerCommand("tableofcontents:notocmessage", function (_, _)
     SILE.call("tableofcontents:headerfont", {}, function ()
       SILE.call("fluent", {}, { "toc-not-generated" })
     end)
   end)
 
-  SILE.registerCommand("tableofcontents:headerfont", function (_, content)
+  class:registerCommand("tableofcontents:headerfont", function (_, content)
     SILE.call("font", { size = 24, weight = 800 }, content)
   end)
 
-  SILE.registerCommand("tableofcontents:header", function (_, _)
+  class:registerCommand("tableofcontents:header", function (_, _)
     SILE.call("par")
     SILE.call("noindent")
     SILE.call("tableofcontents:headerfont", {}, function ()
@@ -173,32 +173,32 @@ local function registerCommands (_)
     SILE.call("medskip")
   end)
 
-  SILE.registerCommand("tableofcontents:footer", function (_, _) end)
+  class:registerCommand("tableofcontents:footer", function (_, _) end)
 
-  SILE.registerCommand("tableofcontents:level1item", function (_, content)
+  class:registerCommand("tableofcontents:level1item", function (_, content)
     SILE.call("bigskip")
     SILE.call("noindent")
     SILE.call("font", { size = 14, weight = 800 }, content)
     SILE.call("medskip")
   end)
 
-  SILE.registerCommand("tableofcontents:level2item", function (_, content)
+  class:registerCommand("tableofcontents:level2item", function (_, content)
     SILE.call("noindent")
     SILE.call("font", { size = 12 }, content)
     SILE.call("medskip")
   end)
 
-  SILE.registerCommand("tableofcontents:level3item", function (_, content)
+  class:registerCommand("tableofcontents:level3item", function (_, content)
     SILE.call("indent")
     SILE.call("font", { size = 10 }, content)
     SILE.call("smallskip")
   end)
 
-  SILE.registerCommand("tableofcontents:level1number", function (_, _) end)
+  class:registerCommand("tableofcontents:level1number", function (_, _) end)
 
-  SILE.registerCommand("tableofcontents:level2number", function (_, _) end)
+  class:registerCommand("tableofcontents:level2number", function (_, _) end)
 
-  SILE.registerCommand("tableofcontents:level3number", function (_, _) end)
+  class:registerCommand("tableofcontents:level3number", function (_, _) end)
 
 end
 

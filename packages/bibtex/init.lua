@@ -58,15 +58,15 @@ local function init (_, _)
 
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("loadbibliography", function (options, _)
+  class:registerCommand("loadbibliography", function (options, _)
     local file = SU.required(options, "file", "loadbibliography")
     SILE.scratch.bibtex.bib = parseBibtex(file) -- Later we'll do multiple bibliogs, but not now
   end)
 
-  SILE.registerCommand("bibstyle", function (_, content)
-    SU.deprecated("\\bibstyle", 'SILE.settings.set("bibtex.style")', "0.13.2", "0.14.0")
+  class:registerCommand("bibstyle", function (_, content)
+    SU.deprecated("\\bibstyle", '\\set[parameter=bibtex.style]', "0.13.2", "0.14.0")
     if type(content) == "table" then
       content = content[1]
     end
@@ -75,7 +75,7 @@ local function registerCommands (_)
     end
   end)
 
-  SILE.registerCommand("cite", function (options, content)
+  class:registerCommand("cite", function (options, content)
     if not options.key then options.key = content[1] end
     local style = SILE.settings:get("bibtex.style")
     local bibstyle = require("packages.bibtex.styles." .. style)
@@ -87,7 +87,7 @@ local function registerCommands (_)
     SILE.doTexlike(cite)
   end)
 
-  SILE.registerCommand("reference", function (options, content)
+  class:registerCommand("reference", function (options, content)
     if not options.key then options.key = content[1] end
     local style = SILE.settings:get("bibtex.style")
     local bibstyle = require("packages.bibtex.styles." .. style)

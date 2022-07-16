@@ -159,9 +159,9 @@ local function init (_, _)
 
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("font:clear-fallbacks", function ()
+  class:registerCommand("font:clear-fallbacks", function ()
     activeFallbacks = {}
     if SILE.shaper._name == "harfbuzzWithFallback" and lastshaper then
       SU.debug("font-fallback", "Clearing fallbacks, switching from fallback enabled back to previous shaper")
@@ -170,7 +170,7 @@ local function registerCommands (_)
     end
   end)
 
-  SILE.registerCommand("font:add-fallback", function (options, _)
+  class:registerCommand("font:add-fallback", function (options, _)
     if SILE.shaper._name ~= "harfbuzzWithFallback" then
       SU.debug("font-fallback", "Switching to fallback enabaled shaper")
       SILE.typesetter:leaveHmode(true)
@@ -179,7 +179,7 @@ local function registerCommands (_)
     table.insert(activeFallbacks, options)
   end)
 
-  SILE.registerCommand("font:remove-fallback", function ()
+  class:registerCommand("font:remove-fallback", function ()
     table.remove(activeFallbacks)
     if #activeFallbacks == 0 and SILE.shaper._name == "harfbuzzWithFallback" and lastshaper then
       SU.debug("font-fallback", "Fallback list empty, switching from fallback enabled back to previous shaper")

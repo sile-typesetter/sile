@@ -91,9 +91,9 @@ local function init (class, _)
 
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("pdf:structure", function (options, content)
+  class:registerCommand("pdf:structure", function (options, content)
     local notetype = SU.required(options, "type", "pdf structure")
     local node = stNode(notetype)
     addChild(node)

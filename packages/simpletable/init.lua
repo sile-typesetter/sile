@@ -21,13 +21,13 @@ local function init (class, args)
   -- until we've been instantiated.
   class:registerPostinit(function (_)
 
-    SILE.registerCommand(trTag, function(_, content)
+    class:registerCommand(trTag, function(_, content)
       local tbl = SILE.scratch.simpletable.tables[#(SILE.scratch.simpletable.tables)]
       tbl[#tbl+1] = {}
       SILE.process(content)
     end)
 
-    SILE.registerCommand(tdTag, function(_, content)
+    class:registerCommand(tdTag, function(_, content)
       local tbl = SILE.scratch.simpletable.tables[#(SILE.scratch.simpletable.tables)]
       local row = tbl[#tbl]
       row[#row+1] = {
@@ -37,7 +37,7 @@ local function init (class, args)
       SILE.typesetter.state.nodes[#(SILE.typesetter.state.nodes)] = nil
     end)
 
-    SILE.registerCommand(tableTag, function(_, content)
+    class:registerCommand(tableTag, function(_, content)
       local tbl = {}
       table.insert(SILE.scratch.simpletable.tables, tbl)
       SILE.settings:temporarily(function ()

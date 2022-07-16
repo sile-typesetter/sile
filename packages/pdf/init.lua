@@ -29,9 +29,9 @@ local function init (_, _)
 
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("pdf:destination", function (options, _)
+  class:registerCommand("pdf:destination", function (options, _)
     local name = SU.required(options, "name", "pdf:destination")
     SILE.typesetter:pushHbox({
       outputYourself = function (_, typesetter, line)
@@ -45,7 +45,7 @@ local function registerCommands (_)
     })
   end)
 
-  SILE.registerCommand("pdf:bookmark", function (options, _)
+  class:registerCommand("pdf:bookmark", function (options, _)
     local dest = SU.required(options, "dest", "pdf:bookmark")
     local title = SU.required(options, "title", "pdf:bookmark")
     local level = options.level or 1
@@ -67,7 +67,7 @@ local function registerCommands (_)
     })
   end)
 
-  SILE.registerCommand("pdf:literal", function (_, content)
+  class:registerCommand("pdf:literal", function (_, content)
     SILE.typesetter:pushHbox({
       value = nil,
       height = SILE.measurement(0),
@@ -79,7 +79,7 @@ local function registerCommands (_)
     })
   end)
 
-  SILE.registerCommand("pdf:link", function (options, content)
+  class:registerCommand("pdf:link", function (options, content)
     local dest = SU.required(options, "dest", "pdf:link")
     local target = options.external and "/Type/Action/S/URI/URI" or "/S/GoTo/D"
     local borderwidth = options.borderwidth and SU.cast("measurement", options.borderwidth):tonumber() or 0
@@ -113,7 +113,7 @@ local function registerCommands (_)
     })
   end)
 
-  SILE.registerCommand("pdf:metadata", function (options, _)
+  class:registerCommand("pdf:metadata", function (options, _)
     local key = SU.required(options, "key", "pdf:metadata")
     if options.val ~= nil then
       SU.deprecated("\\pdf:metadata[…, val=…]", "\\pdf:metadata[…, value=…]", "0.12.0", "0.13.0")

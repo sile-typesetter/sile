@@ -178,21 +178,21 @@ end
 
 local fontfn = SILE.Commands.font
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("add-font-feature", function (options, _)
+  class:registerCommand("add-font-feature", function (options, _)
     local otfeatures = otFeatures()
     otfeatures:loadOptions(options)
     SILE.settings:set("font.features", tostring(otfeatures))
   end)
 
-  SILE.registerCommand("remove-font-feature", function(options, _)
+  class:registerCommand("remove-font-feature", function(options, _)
     local otfeatures = otFeatures()
     otfeatures:unloadOptions(options)
     SILE.settings:set("font.features", tostring(otfeatures))
   end)
 
-  SILE.registerCommand("font", function (options, content)
+  class:registerCommand("font", function (options, content)
     local otfeatures = otFeatures()
     -- It is guaranteed that future releases of SILE will not implement non-OT \font
     -- features with capital letters.

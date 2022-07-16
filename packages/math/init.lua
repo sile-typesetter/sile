@@ -36,7 +36,7 @@ end
 
 local function registerCommands (class)
 
-  SILE.registerCommand("mathml", function (options, content)
+  class:registerCommand("mathml", function (options, content)
     local mode = (options and options.mode) and options.mode or 'text'
     local mbox
     xpcall(function()
@@ -45,7 +45,7 @@ local function registerCommands (class)
     class:handleMath(mbox, mode)
   end)
 
-  SILE.registerCommand("math", function (options, content)
+  class:registerCommand("math", function (options, content)
     local mode = (options and options.mode) and options.mode or "text"
     local mbox
     xpcall(function()

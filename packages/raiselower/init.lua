@@ -1,6 +1,6 @@
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("raise", function (options, content)
+  class:registerCommand("raise", function (options, content)
     local height = options.height or 0
     height = SILE.parseComplexFrameDimension(height)
     SILE.typesetter:pushHbox({
@@ -19,7 +19,7 @@ local function registerCommands (_)
       })
   end, "Raises the contents of the command by the amount specified in the <height> option")
 
-  SILE.registerCommand("lower", function (options, content)
+  class:registerCommand("lower", function (options, content)
     SILE.call("raise", { height = "-" .. options.height }, content)
   end, "Lowers the contents of the command by the amount specified in the <height> option")
 

@@ -10,9 +10,9 @@ local function init (class, _)
   class:loadPackage("color")
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("background", function (options, _)
+  class:registerCommand("background", function (options, _)
     options.color = options.color or "white"
     options.allpages = options.allpages or true
     outputBackground(options.color)
