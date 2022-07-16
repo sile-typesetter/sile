@@ -234,24 +234,24 @@ function bible:registerCommands ()
 
   plain.registerCommands(self)
 
-  SILE.registerCommand("left-running-head", function (_, content)
+  self:registerCommand("left-running-head", function (_, content)
     local closure = SILE.settings:wrap()
     SILE.scratch.headers.left = function () closure(content) end
   end, "Text to appear on the top of the left page")
 
-  SILE.registerCommand("right-running-head", function (_, content)
+  self:registerCommand("right-running-head", function (_, content)
     local closure = SILE.settings:wrap()
     SILE.scratch.headers.right = function () closure(content) end
   end, "Text to appear on the top of the right page")
 
-  SILE.registerCommand("chapter", function (options, content)
+  self:registerCommand("chapter", function (options, content)
     local ch = options.id:match("%d+")
     SILE.call("bible:chapter-head", options, {"Chapter " .. ch})
     SILE.call("save-chapter-number", options, {options.id})
     SILE.process(content)
   end)
 
-  SILE.registerCommand("verse-number", function (options, content)
+  self:registerCommand("verse-number", function (options, content)
     SILE.call("indent")
     SILE.call("bible:verse-number", options, content)
     SILE.call("save-verse-number", options, content)
