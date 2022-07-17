@@ -21,6 +21,7 @@ printf '\n%s' "TESTSRCS ?="
 finder tests -maxdepth 1 -name '*.sil'
 finder tests -maxdepth 1 -name '*.xml'
 finder tests -maxdepth 1 -name '*.lua'
+finder tests -maxdepth 1 -name '*.nil'
 
 printf '\n%s' "BUSTEDSPECS ?="
 finder tests -maxdepth 1 -name '*_spec.lua'

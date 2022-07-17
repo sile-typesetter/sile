@@ -218,6 +218,9 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(LUAMODLOCK) 
 %.pdf: %.xml $$(patterndeps)
 	$(runsile)
 
+%.pdf: %.nil $$(patterndeps)
+	$(runsile)
+
 .PHONY: coverage
 coverage: export SILE_COVERAGE=1
 coverage: regression_previews busted
@@ -326,6 +329,9 @@ tests/%.expected: tests/%.sil $$(patterndeps)
 tests/%.expected: tests/%.xml $$(patterndeps)
 	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
 
+tests/%.expected: tests/%.nil $$(patterndeps)
+	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
+
 .PHONY: update_actuals
 update_actuals: $(ACTUALS)
 
@@ -337,6 +343,10 @@ tests/%.actual: tests/%.sil $$(patterndeps)
 	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
 
 tests/%.actual: tests/%.xml $$(patterndeps)
+	-$(if $(CLEAN),rm -f $@,:)
+	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
+
+tests/%.actual: tests/%.nil $$(patterndeps)
 	-$(if $(CLEAN),rm -f $@,:)
 	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
 
