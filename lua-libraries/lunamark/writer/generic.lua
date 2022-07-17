@@ -229,6 +229,16 @@ function M.new(options)
     return s
   end
 
+  -- (Inline) Span with attributes `attr`
+  function W.span(s, attr)
+    return s
+  end
+
+  -- (Block) Div with attributes `attr`
+  function W.div(s, attr)
+    return s
+  end
+
   --- Horizontal rule.
   W.hrule = ""
 

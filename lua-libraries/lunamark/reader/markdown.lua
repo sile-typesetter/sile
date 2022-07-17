@@ -6,9 +6,9 @@ local lpeg = require("lpeg")
 local entities = require("lunamark.entities")
 local lower, upper, gsub, format, length =
   string.lower, string.upper, string.gsub, string.format, string.len
-local P, R, S, V, C, Cg, Cb, Cmt, Cc, Ct, B, Cs =
+local P, R, S, V, C, Cg, Cb, Cmt, Cc, Ct, B, Cs, Cf =
   lpeg.P, lpeg.R, lpeg.S, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb,
-  lpeg.Cmt, lpeg.Cc, lpeg.Ct, lpeg.B, lpeg.Cs
+  lpeg.Cmt, lpeg.Cc, lpeg.Ct, lpeg.B, lpeg.Cs, lpeg.Cf
 local lpegmatch = lpeg.match
 local expand_tabs_in_line = util.expand_tabs_in_line
 local utf8_lower do
@@ -147,6 +147,29 @@ parsers.indented_blocks = function(bl)
          * (parsers.blankline^1 * parsers.indent * -parsers.blankline * bl)^0
          *  parsers.blankline^1 )
 end
+
+-- Attributes list as in Pandoc {.class .class-other key=value key2="value 2"}
+parsers.identifier  = parsers.letter
+                      * (parsers.alphanumeric + S("_-"))^0
+parsers.attrvalue   = (parsers.dquote * C((parsers.alphanumeric + S("._- "))^1) * parsers.dquote)
+                      + C((parsers.alphanumeric + S("._-"))^1)
+
+parsers.attrpair    = Cg(C((parsers.identifier)^1)
+                      * parsers.optionalspace * parsers.equal * parsers.optionalspace
+                      * parsers.attrvalue)
+                      * parsers.optionalspace^-1
+parsers.attrlist    = Cf(Ct("") * parsers.attrpair^0, rawset)
+
+parsers.class       = parsers.period * C((parsers.identifier)^1)
+parsers.classes     = (parsers.class * parsers.optionalspace)^0
+
+parsers.attributes  = P("{") * parsers.optionalspace
+                      * Ct(parsers.classes)* Cg(parsers.attrlist)
+                      * parsers.optionalspace * P("}")
+                      / function (classes, attr)
+                          attr.class = table.concat(classes or {}, " ")
+                            return attr
+                          end
 
 -----------------------------------------------------------------------------
 -- Parsers used for markdown lists
@@ -519,6 +542,11 @@ parsers.BacktickFencedCodeBlock
                      * Cs(parsers.fencedline(parsers.backtick)^0)
                      * parsers.fencetail(parsers.backtick)
 
+parsers.ColonFencedDivBlock
+                     = parsers.fencehead(parsers.colon)
+                     * Cs(parsers.fencedline(parsers.colon)^0)
+                     * parsers.fencetail(parsers.colon)
+
 parsers.lineof = function(c)
     return (parsers.leader * (P(c) * parsers.optionalspace)^3
            * parsers.newline * parsers.blankline^1)
@@ -707,6 +735,13 @@ function M.new(writer, options)
     = create_parser("parse_inlines_nbsp",
                     function()
                       return larsers.inlines_nbsp
+                    end)
+
+  local parse_attributes
+    = create_parser("parse_attributes",
+                    function()
+                      -- N.B. This one uses a global parser
+                      return parsers.attributes
                     end)
 
   local parse_markdown
@@ -967,6 +1002,10 @@ function M.new(writer, options)
                                    parsers.doubletildes)
                    ) / writer.strikethrough
 
+  larsers.Span   = ( parsers.between(parsers.Inline, parsers.lbracket,
+                                   parsers.rbracket) ) * ( parsers.attributes )
+                   / writer.span
+
   larsers.AutoLinkUrl   = parsers.less
                         * C(parsers.alphanumeric^1 * P("://") * parsers.urlchar^1)
                         * parsers.more
@@ -1058,6 +1097,13 @@ function M.new(writer, options)
                        / function(infostring, code)
                            return writer.fenced_code(expandtabs(code),
                                                      writer.string(infostring))
+                         end
+
+  larsers.FencedDiv    = (parsers.ColonFencedDivBlock)
+                       / function(infostring, content)
+                           local attrs = parse_attributes(infostring)
+                           local div = parse_blocks(content)
+                           return writer.div(div, attrs)
                          end
 
   -- strip off leading > and indents, and run through blocks
@@ -1265,6 +1311,7 @@ function M.new(writer, options)
       Block                 = V("Blockquote")
                             + V("Verbatim")
                             + V("FencedCodeBlock")
+                            + V("FencedDiv")
                             + V("HorizontalRule")
                             + V("BulletList")
                             + V("OrderedList")
@@ -1277,6 +1324,7 @@ function M.new(writer, options)
       Blockquote            = larsers.Blockquote,
       Verbatim              = larsers.Verbatim,
       FencedCodeBlock       = larsers.FencedCodeBlock,
+      FencedDiv             = larsers.FencedDiv,
       HorizontalRule        = larsers.HorizontalRule,
       BulletList            = larsers.BulletList,
       OrderedList           = larsers.OrderedList,
@@ -1293,6 +1341,7 @@ function M.new(writer, options)
                             + V("Strong")
                             + V("Emph")
                             + V("Strikethrough")
+                            + V("Span")
                             + V("InlineNote")
                             + V("NoteRef")
                             + V("Citations")
@@ -1314,6 +1363,7 @@ function M.new(writer, options)
       Strong                = larsers.Strong,
       Emph                  = larsers.Emph,
       Strikethrough         = larsers.Strikethrough,
+      Span                  = larsers.Span,
       InlineNote            = larsers.InlineNote,
       NoteRef               = larsers.NoteRef,
       Citations             = larsers.Citations,
@@ -1355,6 +1405,8 @@ function M.new(writer, options)
 
   if not options.pandoc_extensions then
     syntax.Strikethrough = parsers.fail
+    syntax.Span = parsers.fail
+    syntax.FencedDiv = parsers.fail
   end
 
   if options.alter_syntax and type(options.alter_syntax) == "function" then
