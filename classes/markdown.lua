@@ -45,9 +45,9 @@ local function lunamarkAST2SILE (options)
     return walk(result)
   end
 
-  AST.genericCommand = function (name)
+  AST.genericCommand = function (name, options)
     return function (s)
-      return createCommand (0, 0, 0, name, {}, s)
+      return createCommand (0, 0, 0, name, options or {}, s)
     end
   end
 
@@ -60,7 +60,7 @@ local function lunamarkAST2SILE (options)
   AST.subscript = AST.genericCommand("textsubscript")
   AST.superscript = AST.genericCommand("textsuperscript")
   AST.blockquote = AST.genericCommand("blockquote")
-  AST.verbatim = AST.genericCommand("em")
+  AST.verbatim = AST.genericCommand("verbatim")
   AST.header = function (s, level)
     if level <= #sections then
       return createCommand(0, 0, 0, sections[level], {}, s)
@@ -73,8 +73,29 @@ local function lunamarkAST2SILE (options)
     for i = 1, #items do node[i] = AST.listitem(items[i]) end
     return node
   end
-  AST.orderedlist = function (items, _, _) -- items, tight, startnum
-    local node = {command = "enumerate"}
+  AST.tasklist = function (items)
+    local node = {command = "itemize"}
+    for i = 1, #items do
+      local bullet = (items[i][1] == "[X]") and "☑" or "☐"
+      node[i] = createCommand(0, 0, 0, "item", { bullet = bullet }, items[i][2])
+     end
+    return node
+  end
+  AST.orderedlist = function (items, _, startnum, numstyle, numdelim) -- items, tight, ...
+    local listStyle = {
+      Decimal = "arabic",
+      UpperRoman = "Roman",
+      LowerRoman = "roman",
+      UpperAlpha = "Alpha",
+      LowerAlpha = "alpha",
+    }
+    local listDelim = {
+      OneParen = ")",
+      Period = ".",
+    }
+    local display = numstyle and listStyle[numstyle]
+    local after = numdelim and listDelim[numdelim]
+    local node = {command = "enumerate", options = { start = startnum, display = display, after = after }}
     for i= 1, #items do node[i] = AST.listitem(items[i]) end
     return node
   end
@@ -117,6 +138,9 @@ local function lunamarkAST2SILE (options)
     end
     return content
   end
+  AST.fenced_code = function(s, infostring, attr)
+    return createCommand(0, 0, 0, "verbatim", {}, s)
+  end
   AST.rawinline = function (content, format, _) -- content, format, attr
     if format == "sile" then
       return createCommand(0, 0, 0, "markdown:internal:rawcontent", {}, content)
@@ -127,6 +151,22 @@ local function lunamarkAST2SILE (options)
   end
   AST.rawblock = function (content, format, attr)
     return AST.rawinline(content, format, attr)
+  end
+  AST.table = function (rows, caption)
+    -- FIXME THIS WILL ALSO NEED A BACKPORT OF WIKITO/lunamark
+    -- (I prepared it, but we have to check the license)
+    -- caption is a text Str
+    -- rows[1] has the headers
+    -- rows[2] has the alignments (wow...)
+    -- other rows follow
+    SU.dump(rows)
+    for i, row in ipairs(rows) do
+      print("  Row ", i)
+      for j, column in ipairs(row) do
+        print("   Col", j, column)
+      end
+    end
+    return "FIXME LATER WITH PTABLE SUPPORT"
   end
 
   return AST
@@ -141,7 +181,18 @@ SILE.inputs.markdown = {
     local lunamark = require("lunamark")
     local reader = lunamark.reader.markdown
     local writer = lunamarkAST2SILE()
-    local parse = reader.new(writer, { smart = true, notes = true, fenced_code_blocks = true, pandoc_extensions = true })
+    local parse = reader.new(writer, {
+      smart = true,
+      notes = true,
+      fenced_code_blocks = true,
+      pandoc_extensions = true,
+      startnum = true,
+      fancy_lists = true,
+      task_list = true,
+      hash_enumerators = true,
+      table_captions = true,
+      pipe_table = true,
+    })
     local t = parse(data)
     t = { [1] = t, id = "document", options = { class = "markdown" }} -- Is this needed?
     SILE.process(t)
