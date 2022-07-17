@@ -1,5 +1,5 @@
 \begin[papersize=a7,class=book]{document}
-\script[src=bug-337]
+\script[src=inc.bug-337]
 \define[command=crop:header]{tests/bug-337.sil}
 \crop:setup[papersize=a6]
 \nofolios
