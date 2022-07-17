@@ -57,6 +57,7 @@ local function lunamarkAST2SILE (options)
   AST.paragraph = AST.genericCommand("paragraph")
   AST.code = AST.genericCommand("code")
   AST.emphasis = AST.genericCommand("em")
+  AST.strikethrough = AST.genericCommand("strikethrough")
   AST.blockquote = AST.genericCommand("blockquote")
   AST.verbatim = AST.genericCommand("em")
   AST.header = function (s, level)
@@ -76,7 +77,7 @@ local function lunamarkAST2SILE (options)
     for i= 1, #items do node[i] = AST.listitem(items[i]) end
     return node
   end
-  AST.link = function(_, uri, _) -- label, uri, title
+  AST.link = function (_, uri, _) -- label, uri, title
     if uri:sub(1,1) == "#" then
       -- local hask link
       local dest = uri:sub(2)
@@ -87,13 +88,32 @@ local function lunamarkAST2SILE (options)
     -- If the URL is not external but a local file, what are we supposed to do?
     return createCommand(0, 0, 0, "href", { src = uri }, { uri })
   end
-  AST.image = function(_, src, _) -- label, src, title
+  AST.image = function (_, src, _) -- label, src, title
     if getFileExtension(src) == "svg" then
       return createCommand(0, 0, 0, "svg", { src = src })
     end
     return createCommand(0, 0, 0, "img", { src = src })
   end
   AST.hrule = AST.genericCommand("fullrule")
+  AST.span = function (content, attr)
+    local out = content
+    if attr["lang"] then
+       out = createCommand(0, 0, 0, "language", { main = attr["lang"] }, out)
+    end
+    if attr.class and string.match(' ' .. attr.class .. ' ',' smallcaps ') then
+      out = createCommand(0, 0, 0, "font", { features = "+smcp" }, out)
+    end
+    if attr.class and string.match(' ' .. attr.class .. ' ',' underline ') then
+      out = createCommand(0, 0, 0, "underline", {}, out)
+    end
+    return out
+  end
+  AST.div = function(content, attr)
+    if attr["lang"] then
+      return createCommand(0, 0, 0, "language", { main = attr["lang"] }, content)
+    end
+    return content
+  end
 
   return AST
 end
@@ -107,7 +127,7 @@ SILE.inputs.markdown = {
     local lunamark = require("lunamark")
     local reader = lunamark.reader.markdown
     local writer = lunamarkAST2SILE()
-    local parse = reader.new(writer, { smart = true, notes = true, fenced_code_blocks = true })
+    local parse = reader.new(writer, { smart = true, notes = true, fenced_code_blocks = true, pandoc_extensions = true })
     local t = parse(data)
     -- t = { [1] = t, id = "document", options = { class = "markdown" }}
     SILE.process(t[1])
