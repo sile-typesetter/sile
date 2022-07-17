@@ -57,6 +57,8 @@ local function lunamarkAST2SILE (options)
   AST.code = AST.genericCommand("code")
   AST.emphasis = AST.genericCommand("em")
   AST.strikethrough = AST.genericCommand("strikethrough")
+  AST.subscript = AST.genericCommand("textsubscript")
+  AST.superscript = AST.genericCommand("textsuperscript")
   AST.blockquote = AST.genericCommand("blockquote")
   AST.verbatim = AST.genericCommand("em")
   AST.header = function (s, level)
@@ -141,8 +143,8 @@ SILE.inputs.markdown = {
     local writer = lunamarkAST2SILE()
     local parse = reader.new(writer, { smart = true, notes = true, fenced_code_blocks = true, pandoc_extensions = true })
     local t = parse(data)
-    -- t = { [1] = t, id = "document", options = { class = "markdown" }}
-    SILE.process(t[1])
+    t = { [1] = t, id = "document", options = { class = "markdown" }} -- Is this needed?
+    SILE.process(t)
   end
 }
 
@@ -153,6 +155,7 @@ function markdown:_init (options)
   self:loadPackage("svg")
   self:loadPackage("rules")
   self:loadPackage("lists")
+  -- self:loadPackage("textsubsuper") -- FIXME later, for now provide fallbacks below...
   return self
 end
 
@@ -185,6 +188,64 @@ function markdown:registerCommands ()
   SILE.registerCommand("markdown:internal:rawcontent", function (_, content)
     SILE.doTexlike(content[1])
   end)
+
+  -- BEGIN Quick and dirty super/subscript rip-off
+  -- Extracted from proposed textsubsuper package and trimmed down.
+  local function getItalicAngle ()
+    local ot = require("core.opentype-parser")
+    local fontoptions = SILE.font.loadDefaults({})
+    local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
+    local font = ot.parseFont(face)
+    return font.post.italicAngle
+  end
+
+  local function getWeightClass ()
+    return SILE.settings:get("font.weight")
+  end
+
+  SILE.registerCommand("textsuperscript", function (_, content)
+    SILE.require("packages/raiselower")
+    local italicAngle = getItalicAngle()
+    local weight = getWeightClass()
+
+    local ratio = 0.66
+    local ySize = ratio * SILE.settings:get("font.size")
+    local yOffset = SILE.measurement("0.70ex")
+    local xOffset = -math.sin(italicAngle * math.pi / 180) * yOffset
+    SILE.call("kern", { width = xOffset:absolute() + SILE.measurement("0.1pt") })
+    SILE.call("raise", { height = yOffset }, function ()
+      -- Some font have +onum enabled by default...
+      -- Some don't even have it (e.g. Brill), but support +lnum for enforcing lining
+      -- figures. We try to ensure we are not using oldstyle numbers...
+      SILE.call("font", {
+        size = ySize,
+        weight = weight == 400 and (weight + 200) or weight,
+        features = "+lnum -onum",
+      }, content)
+    end)
+    SILE.call("kern", { width = -xOffset / 2 })
+  end, "Typeset a fake (raised, scaled) superscript content.")
+
+  SILE.registerCommand("textsubscript", function (_, content)
+    SILE.require("packages/raiselower")
+    local italicAngle = getItalicAngle()
+    local weight = getWeightClass()
+
+    local ratio = 0.66
+    local ySize = ratio * SILE.settings:get("font.size")
+    local yOffset = SILE.measurement("0.25ex")
+    local xOffset = -math.sin(italicAngle * math.pi / 180) * yOffset:absolute()
+    SILE.call("kern", { width = -xOffset })
+    SILE.call("lower", { height = yOffset }, function ()
+      SILE.call("font", {
+        size = ySize,
+        weight = weight == 400 and (weight + 200) or weight,
+        features = "+lnum +onum",
+      }, content)
+    end)
+    SILE.call("kern", { width = xOffset })
+  end, "Typeset a fake (lowered, scaled) subscript content.")
+  -- END Quick and dirty super/subscript rip-off
 end
 
 return markdown
