@@ -158,8 +158,9 @@ function M.new(options)
   end
 
   --- An image link with alt text `label`,
-  -- source `src`, and title `title`.
-  function W.image(label, src, title)
+  -- source `src`, and title `title`,
+  -- additional attributes `attr`
+  function W.image(label, src, title, attr)
     return label
   end
 

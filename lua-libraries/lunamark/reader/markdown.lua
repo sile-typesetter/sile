@@ -1034,14 +1034,27 @@ function M.new(writer, options)
   -- parse a link or image (direct or indirect)
   larsers.Link          = larsers.DirectLink + larsers.IndirectLink
 
-  larsers.DirectImage   = parsers.exclamation
-                        * (parsers.tag / parse_inlines)
-                        * parsers.spnl
-                        * parsers.lparent
-                        * (parsers.url + Cc(""))  -- link can be empty [foo]()
-                        * parsers.optionaltitle
-                        * parsers.rparent
-                        / writer.image
+  if options.pandoc_extensions then
+    -- Support additional attributes
+    larsers.DirectImage   = parsers.exclamation
+                          * (parsers.tag / parse_inlines)
+                          * parsers.spnl
+                          * parsers.lparent
+                          * (parsers.url + Cc(""))  -- link can be empty [foo]()
+                          * parsers.optionaltitle
+                          * parsers.rparent
+                          * (parsers.attributes + Ct(""))
+                          / writer.image
+  else
+    larsers.DirectImage   = parsers.exclamation
+                          * (parsers.tag / parse_inlines)
+                          * parsers.spnl
+                          * parsers.lparent
+                          * (parsers.url + Cc(""))  -- link can be empty [foo]()
+                          * parsers.optionaltitle
+                          * parsers.rparent
+                          / writer.image
+  end
 
   larsers.IndirectImage = parsers.exclamation * parsers.tag
                         * (C(parsers.spnl) * parsers.tag)^-1 / indirect_image
