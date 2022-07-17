@@ -254,6 +254,16 @@ function M.new(options)
     return s
   end
 
+  --- Subscript text.
+  function W.subscript(s)
+    return s
+  end
+
+  --- Superscript text.
+  function W.superscript(s)
+    return s
+  end
+
   --- Horizontal rule.
   W.hrule = ""
 

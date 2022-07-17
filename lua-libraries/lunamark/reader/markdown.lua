@@ -756,9 +756,9 @@ function M.new(writer, options)
   ------------------------------------------------------------------------------
 
   if options.smart then
-    larsers.specialchar       = S("*_~`&[]<!\\'\"-.@^")
+    larsers.specialchar       = S("*_~^`&[]<!\\'\"-.@^")
   else
-    larsers.specialchar       = S("*_~`&[]<!\\-@^")
+    larsers.specialchar       = S("*_~^`&[]<!\\-@^")
   end
 
   larsers.normalchar          = parsers.any - (larsers.specialchar
@@ -1013,6 +1013,12 @@ function M.new(writer, options)
   larsers.Span   = ( parsers.between(parsers.Inline, parsers.lbracket,
                                    parsers.rbracket) ) * ( parsers.attributes )
                    / writer.span
+
+  larsers.Subscript   = ( parsers.between(larsers.Str, parsers.tilde, parsers.tilde) )
+                        / writer.subscript
+
+  larsers.Superscript = ( parsers.between(larsers.Str, parsers.circumflex, parsers.circumflex) )
+                         / writer.superscript
 
   larsers.AutoLinkUrl   = parsers.less
                         * C(parsers.alphanumeric^1 * P("://") * parsers.urlchar^1)
@@ -1374,12 +1380,14 @@ function M.new(writer, options)
                             + V("Emph")
                             + V("Strikethrough")
                             + V("Span")
+                            + V("Subscript")
+                            + V("Superscript")
                             + V("InlineNote")
                             + V("NoteRef")
                             + V("Citations")
                             + V("Link")
                             + V("Image")
-                            + V("RawInLine") -- Precendence over Code
+                            + V("RawInLine") -- Must have precedence over Code
                             + V("Code")
                             + V("AutoLinkUrl")
                             + V("AutoLinkEmail")
@@ -1397,6 +1405,8 @@ function M.new(writer, options)
       Emph                  = larsers.Emph,
       Strikethrough         = larsers.Strikethrough,
       Span                  = larsers.Span,
+      Subscript             = larsers.Subscript,
+      Superscript           = larsers.Superscript,
       InlineNote            = larsers.InlineNote,
       NoteRef               = larsers.NoteRef,
       Citations             = larsers.Citations,
@@ -1442,6 +1452,8 @@ function M.new(writer, options)
     syntax.Span = parsers.fail
     syntax.FencedDiv = parsers.fail
     syntax.RawInLine = parsers.fail
+    syntax.Subscript = parsers.fail
+    syntax.Superscript = parsers.fail
   end
 
   if options.alter_syntax and type(options.alter_syntax) == "function" then
