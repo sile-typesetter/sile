@@ -15,8 +15,7 @@ local sections = {"chapter", "section", "subsection" }
 
 local function lunamarkAST2SILE (options)
   local generic = require("lunamark.writer.generic")
-  local opts = options or {}
-  local AST = generic.new(opts)
+  local AST = generic.new(options or {})
 
   function AST.merge (result)
     local function walk(t)
@@ -88,11 +87,13 @@ local function lunamarkAST2SILE (options)
     -- If the URL is not external but a local file, what are we supposed to do?
     return createCommand(0, 0, 0, "href", { src = uri }, { uri })
   end
-  AST.image = function (_, src, _) -- label, src, title
+  AST.image = function (_, src, _, attr) -- label, src, title, attr
+    local opts = attr or {}-- passthru (classes and key-value pairs)
+    opts.src = src
     if getFileExtension(src) == "svg" then
-      return createCommand(0, 0, 0, "svg", { src = src })
+      return createCommand(0, 0, 0, "svg", opts)
     end
-    return createCommand(0, 0, 0, "img", { src = src })
+    return createCommand(0, 0, 0, "img", opts)
   end
   AST.hrule = AST.genericCommand("fullrule")
   AST.span = function (content, attr)
@@ -149,7 +150,20 @@ function markdown:registerCommands ()
   book.registerCommands(self)
 
   SILE.registerCommand("blockquote", function (_, content)
-    SILE.process(content)
+    -- Quick and dirty blockquote
+    SILE.call("smallskip")
+    SILE.typesetter:leaveHmode()
+    SILE.settings:temporarily(function ()
+      local indent = SILE.measurement("2em"):absolute()
+      local lskip = SILE.settings:get("document.lskip") or SILE.nodefactory.glue()
+      local rskip = SILE.settings:get("document.rskip") or SILE.nodefactory.glue()
+      SILE.settings:set("document.lskip", SILE.nodefactory.glue(lskip.width + indent))
+      SILE.settings:set("document.rskip", SILE.nodefactory.glue(rskip.width + indent))
+      SILE.settings:set("font.size", SILE.settings:get("font.size") * 0.95)
+      SILE.process(content)
+      SILE.typesetter:leaveHmode()
+    end)
+    SILE.call("smallskip")
   end)
 
   SILE.registerCommand("paragraph", function (_, content)
