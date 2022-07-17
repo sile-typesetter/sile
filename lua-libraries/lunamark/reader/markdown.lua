@@ -102,6 +102,7 @@ parsers.internal_punctuation   = S(":;,.?")
 
 parsers.doubleasterisks        = P("**")
 parsers.doubleunderscores      = P("__")
+parsers.doubletildes           = P("~~")
 parsers.fourspaces             = P("    ")
 
 parsers.any                    = P(1)
@@ -715,9 +716,9 @@ function M.new(writer, options)
   ------------------------------------------------------------------------------
 
   if options.smart then
-    larsers.specialchar       = S("*_`&[]<!\\'\"-.@^")
+    larsers.specialchar       = S("*_~`&[]<!\\'\"-.@^")
   else
-    larsers.specialchar       = S("*_`&[]<!\\-@^")
+    larsers.specialchar       = S("*_~`&[]<!\\-@^")
   end
 
   larsers.normalchar          = parsers.any - (larsers.specialchar
@@ -960,6 +961,11 @@ function M.new(writer, options)
                    + parsers.between(parsers.Inline, parsers.underscore,
                                    parsers.underscore)
                    ) / writer.emphasis
+
+  larsers.Strikethrough
+                 = ( parsers.between(parsers.Inline, parsers.doubletildes,
+                                   parsers.doubletildes)
+                   ) / writer.strikethrough
 
   larsers.AutoLinkUrl   = parsers.less
                         * C(parsers.alphanumeric^1 * P("://") * parsers.urlchar^1)
@@ -1286,6 +1292,7 @@ function M.new(writer, options)
                             + V("UlOrStarLine")
                             + V("Strong")
                             + V("Emph")
+                            + V("Strikethrough")
                             + V("InlineNote")
                             + V("NoteRef")
                             + V("Citations")
@@ -1306,6 +1313,7 @@ function M.new(writer, options)
       UlOrStarLine          = larsers.UlOrStarLine,
       Strong                = larsers.Strong,
       Emph                  = larsers.Emph,
+      Strikethrough         = larsers.Strikethrough,
       InlineNote            = larsers.InlineNote,
       NoteRef               = larsers.NoteRef,
       Citations             = larsers.Citations,
@@ -1343,6 +1351,10 @@ function M.new(writer, options)
 
   if not options.smart then
     syntax.Smart = parsers.fail
+  end
+
+  if not options.pandoc_extensions then
+    syntax.Strikethrough = parsers.fail
   end
 
   if options.alter_syntax and type(options.alter_syntax) == "function" then

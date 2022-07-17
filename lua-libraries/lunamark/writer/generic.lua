@@ -204,6 +204,11 @@ function M.new(options)
     return s
   end
 
+  --- Strikethrough text
+  function W.strikethrough(s)
+    return s
+  end
+
   --- Block quotation.
   function W.blockquote(s)
     return s
