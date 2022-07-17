@@ -109,11 +109,22 @@ local function lunamarkAST2SILE (options)
     end
     return out
   end
-  AST.div = function(content, attr)
+  AST.div = function (content, attr)
     if attr["lang"] then
       return createCommand(0, 0, 0, "language", { main = attr["lang"] }, content)
     end
     return content
+  end
+  AST.rawinline = function (content, format, _) -- content, format, attr
+    if format == "sile" then
+      return createCommand(0, 0, 0, "markdown:internal:rawcontent", {}, content)
+    elseif format == "sile-lua" then
+      return createCommand(0, 0, 0, "script", {}, content)
+    end
+    return "" -- ignore unknown
+  end
+  AST.rawblock = function (content, format, attr)
+    return AST.rawinline(content, format, attr)
   end
 
   return AST
@@ -169,6 +180,10 @@ function markdown:registerCommands ()
   SILE.registerCommand("paragraph", function (_, content)
     SILE.process(content)
     SILE.call("par")
+  end)
+
+  SILE.registerCommand("markdown:internal:rawcontent", function (_, content)
+    SILE.doTexlike(content[1])
   end)
 end
 
