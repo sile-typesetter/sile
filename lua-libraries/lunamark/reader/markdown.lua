@@ -164,12 +164,17 @@ parsers.class       = parsers.period * C((parsers.identifier)^1)
 parsers.classes     = (parsers.class * parsers.optionalspace)^0
 
 parsers.attributes  = P("{") * parsers.optionalspace
-                      * Ct(parsers.classes)* Cg(parsers.attrlist)
+                      * Ct(parsers.classes) * Cg(parsers.attrlist)
                       * parsers.optionalspace * P("}")
                       / function (classes, attr)
                           attr.class = table.concat(classes or {}, " ")
                             return attr
                           end
+-- Raw attributes similar to Pandoc (=format key=value key2="value 2")
+parsers.raw              = parsers.equal * C((parsers.identifier)^1) * parsers.optionalspace
+parsers.rawattributes    = P("{") * parsers.optionalspace
+                          * parsers.raw * Cg(parsers.attrlist)
+                          * parsers.optionalspace * P("}")
 
 -----------------------------------------------------------------------------
 -- Parsers used for markdown lists
@@ -932,6 +937,9 @@ function M.new(writer, options)
   larsers.Symbol       = (larsers.specialchar - parsers.tightblocksep)
                        / writer.string
   
+  larsers.RawInLine    = parsers.inticks * parsers.rawattributes
+                       / writer.rawinline
+
   larsers.Code         = parsers.inticks / writer.code
   
   if options.require_blank_before_blockquote then
@@ -1108,6 +1116,17 @@ function M.new(writer, options)
                        = (parsers.TildeFencedCodeBlock
                          + parsers.BacktickFencedCodeBlock)
                        / function(infostring, code)
+                           if options.pandoc_extensions then
+                             local raw, attr = lpeg.match(parsers.rawattributes, infostring)
+                             if raw then
+                              return writer.rawblock(code, raw, attr)
+                             end
+                             local attr = lpeg.match(parsers.attributes, infostring)
+                             if attr then
+                              return writer.fenced_code(expandtabs(code),
+                                  attr.class, attr)
+                             end
+                           end
                            return writer.fenced_code(expandtabs(code),
                                                      writer.string(infostring))
                          end
@@ -1360,6 +1379,7 @@ function M.new(writer, options)
                             + V("Citations")
                             + V("Link")
                             + V("Image")
+                            + V("RawInLine") -- Precendence over Code
                             + V("Code")
                             + V("AutoLinkUrl")
                             + V("AutoLinkEmail")
@@ -1383,6 +1403,7 @@ function M.new(writer, options)
       Link                  = larsers.Link,
       Image                 = larsers.Image,
       Code                  = larsers.Code,
+      RawInLine             = larsers.RawInLine,
       AutoLinkUrl           = larsers.AutoLinkUrl,
       AutoLinkEmail         = larsers.AutoLinkEmail,
       InlineHtml            = larsers.InlineHtml,
@@ -1420,6 +1441,7 @@ function M.new(writer, options)
     syntax.Strikethrough = parsers.fail
     syntax.Span = parsers.fail
     syntax.FencedDiv = parsers.fail
+    syntax.RawInLine = parsers.fail
   end
 
   if options.alter_syntax and type(options.alter_syntax) == "function" then

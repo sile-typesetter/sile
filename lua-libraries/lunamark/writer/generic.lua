@@ -221,7 +221,9 @@ function M.new(options)
   end
 
   --- Fenced code block, with infostring `i`.
-  function W.fenced_code(s, i)
+  -- and optional attributes `attr` (may be nil,
+  -- when valued, `attr.class` is the same as the infostring)
+  function W.fenced_code(s, i, attr)
     return s
   end
 
@@ -237,6 +239,18 @@ function M.new(options)
 
   -- (Block) Div with attributes `attr`
   function W.div(s, attr)
+    return s
+  end
+
+  --- Inline raw code, with format and
+  -- optional attributes
+  function W.rawinline(s, format, attr)
+    return s
+  end
+
+  --- Raw block code, with format and
+  -- optional attributes
+  function W.rawblock(s, format, attr)
     return s
   end
 
