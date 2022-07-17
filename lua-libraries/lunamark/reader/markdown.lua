@@ -775,18 +775,24 @@ function M.new(writer, options)
     larsers.dig = parsers.digit
   end
 
-  larsers.enumerator = C(larsers.dig^3 * parsers.period) * #parsers.spacing
-                     + C(larsers.dig^2 * parsers.period) * #parsers.spacing
+  larsers.numdelim = parsers.period
+  if options.fancy_lists then
+    larsers.dig = larsers.dig + parsers.letter
+    larsers.numdelim = larsers.numdelim + parsers.rparent
+  end
+
+  larsers.enumerator = C(larsers.dig^3 * larsers.numdelim) * #parsers.spacing
+                     + C(larsers.dig^2 * larsers.numdelim) * #parsers.spacing
                                        * (parsers.tab + parsers.space^1)
-                     + C(larsers.dig * parsers.period) * #parsers.spacing
+                     + C(larsers.dig * larsers.numdelim) * #parsers.spacing
                                      * (parsers.tab + parsers.space^-2)
-                     + parsers.space * C(larsers.dig^2 * parsers.period)
+                     + parsers.space * C(larsers.dig^2 * larsers.numdelim)
                                      * #parsers.spacing
-                     + parsers.space * C(larsers.dig * parsers.period)
+                     + parsers.space * C(larsers.dig * larsers.numdelim)
                                      * #parsers.spacing
                                      * (parsers.tab + parsers.space^-1)
                      + parsers.space * parsers.space * C(larsers.dig^1
-                                     * parsers.period) * #parsers.spacing
+                                     * larsers.numdelim) * #parsers.spacing
 
   ------------------------------------------------------------------------------
   -- Parsers used for citations (local)
@@ -1174,7 +1180,17 @@ function M.new(writer, options)
   -- Lists (local)
   ------------------------------------------------------------------------------
 
-  larsers.starter = parsers.bullet + larsers.enumerator
+  larsers.taskbullet  = ( parsers.bullet * parsers.optionalspace
+                        * C(parsers.lbracket * (S("xX ")) * parsers.rbracket) )
+                      / function (_, checked) -- first arg is the bullet
+                          return checked:upper() -- Just normalize it in uppercase
+                        end
+
+  if options.task_list then
+    larsers.starter = larsers.taskbullet + parsers.bullet + larsers.enumerator
+  else
+    larsers.starter = parsers.bullet + larsers.enumerator
+  end
 
   -- we use \001 as a separator between a tight list item and a
   -- nested list under it.
@@ -1212,16 +1228,12 @@ function M.new(writer, options)
                        * parsers.skipblanklines )
                      / writer.bulletlist
 
-  local function ordered_list(s,tight,startnum)
-    if options.startnum then
-      startnum = tonumber(startnum) or 1  -- fallback for '#'
-      if startnum ~= nil then
-        startnum = math.floor(startnum)
-      end
-    else
-      startnum = nil
-    end
-    return writer.orderedlist(s,tight,startnum)
+  local function ordered_list(s,tight,start)
+    local startnum, numstyle, numdelim = util.order2numberstyle(start)
+    return writer.orderedlist(s,tight,
+                              options.startnum and startnum,
+                              options.fancy_lists and numstyle or "Decimal",
+                              options.fancy_lists and numdelim or "Default")
   end
 
   larsers.OrderedList = Cg(larsers.enumerator, "listtype") *
@@ -1232,6 +1244,32 @@ function M.new(writer, options)
                           * larsers.LooseListItem(larsers.enumerator)^0)
                       * Cc(false) * parsers.skipblanklines
                       ) * Cb("listtype") / ordered_list
+
+  local function gather_ticklist_item(checked, blocks)
+    return { checked, parse_blocks(blocks) }
+  end
+
+  -- Note: there could have been some code factorization with bullet lists,
+  -- but this is becoming tricky so let's not risk breaking what works.
+  larsers.TightTaskListItem = function(starter)
+    return -larsers.HorizontalRule
+           * Cs(starter) * Cs(larsers.ListBlock * larsers.NestedList^-1)
+             / gather_ticklist_item
+           * -(parsers.blanklines * parsers.indent)
+  end
+  larsers.LooseTaskListItem = function(starter)
+      return -larsers.HorizontalRule
+            * Cs(starter) * Cs(larsers.ListBlock * Cc("\n")
+              * (larsers.NestedList + larsers.ListContinuationBlock^0)
+              * (parsers.blanklines / "\n\n")
+              ) / gather_ticklist_item
+  end
+
+  larsers.TaskList = ( Ct(larsers.TightTaskListItem(larsers.taskbullet)^1) * Cc(true)
+                        * parsers.skipblanklines * -larsers.taskbullet
+                        + Ct(larsers.LooseTaskListItem(larsers.taskbullet)^1) * Cc(false)
+                        * parsers.skipblanklines
+                      ) / writer.tasklist
 
   local function definition_list_item(term, defs, tight)
     return { term = parse_inlines(term), definitions = defs }
@@ -1351,6 +1389,7 @@ function M.new(writer, options)
                             + V("FencedCodeBlock")
                             + V("FencedDiv")
                             + V("HorizontalRule")
+                            + V("TaskList") -- Must have precedence over BulletList
                             + V("BulletList")
                             + V("OrderedList")
                             + V("Header")
@@ -1364,6 +1403,7 @@ function M.new(writer, options)
       FencedCodeBlock       = larsers.FencedCodeBlock,
       FencedDiv             = larsers.FencedDiv,
       HorizontalRule        = larsers.HorizontalRule,
+      TaskList              = larsers.TaskList,
       BulletList            = larsers.BulletList,
       OrderedList           = larsers.OrderedList,
       Header                = larsers.AtxHeader + larsers.SetextHeader,
@@ -1454,6 +1494,10 @@ function M.new(writer, options)
     syntax.RawInLine = parsers.fail
     syntax.Subscript = parsers.fail
     syntax.Superscript = parsers.fail
+  end
+
+  if not options.task_list then
+    syntax.TaskList = parsers.fail
   end
 
   if options.alter_syntax and type(options.alter_syntax) == "function" then

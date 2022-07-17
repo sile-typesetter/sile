@@ -181,8 +181,25 @@ function M.new(options)
   -- minimal space between items). If optional
   -- number `startnum` is present, use it as the
   -- number of the first list item.
-  function W.orderedlist(items,tight,startnum)
+  -- `numstyle`, depending on options, may be one of "Decimal", "LowerRoman",
+  -- "UpperRoman", "LowerAlpha", "UpperAlpha"
+  -- `numdelim`, depending on options, may be one of "Default", "OneParen",
+  -- "Period".
+  -- (Those symbolic names are loosely taken from Pandoc.)
+  function W.orderedlist(items,tight,startnum,numstyle,numdelim)
     return util.intersperse(items,W.interblocksep)
+  end
+
+  --- A task list with contents `items` (an array of pairs, which first
+  -- element is the normaliszed task checkbox, "[ ]" or "[X]"). If
+  -- `tight` is true, returns a "tight" list (with
+  -- minimal space between items).
+  function W.tasklist(items,tight)
+    local flattened = {}
+    for _, v in ipairs(items) do
+      flattened[#flattened+1] = { v[1], " ", v[2] }
+    end
+    return util.intersperse(flattened,W.interblocksep)
   end
 
   --- Inline HTML.
