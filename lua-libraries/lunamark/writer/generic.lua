@@ -194,12 +194,12 @@ function M.new(options)
   -- element is the normaliszed task checkbox, "[ ]" or "[X]"). If
   -- `tight` is true, returns a "tight" list (with
   -- minimal space between items).
+  local function tasklistitem(s)
+    local icon = (s[1] == "[X]") and "☑ " or "☐ "
+    return {icon, s[2]}
+  end
   function W.tasklist(items,tight)
-    local flattened = {}
-    for _, v in ipairs(items) do
-      flattened[#flattened+1] = { v[1], " ", v[2] }
-    end
-    return util.intersperse(flattened,W.interblocksep)
+    return W.orderedlist(util.map(items, tasklistitem), tight)
   end
 
   --- Inline HTML.
@@ -262,13 +262,13 @@ function M.new(options)
   --- Inline raw code, with format and
   -- optional attributes
   function W.rawinline(s, format, attr)
-    return s
+    return {} -- ignore by default
   end
 
   --- Raw block code, with format and
   -- optional attributes
   function W.rawblock(s, format, attr)
-    return s
+    return {} -- ignore by default
   end
 
   --- Subscript text.

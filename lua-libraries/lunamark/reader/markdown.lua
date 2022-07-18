@@ -675,6 +675,48 @@ end
 --     :   Allow `#` instead of a digit for an ordered list enumerator
 --         (equivalent to `1`).
 --
+--     `task_list`
+--     :   GitHub-Flavored Markdown (GFM) task list extension to standard
+--         bullet lists. Items starting with `[ ]`, `[x]` or `[X]` after the
+--         bullet are processed as first-class structures by the Markdown reader
+--         when this option is enabled, possibly allowing writers to handle
+--         them more efficiently with a finer-grain logic.
+--
+--     `fancy_lists`
+--     :   Allow ordered list items to use a roman number or a letter
+--         as anumerator, instead of a digit, and to use a closing parenthesis
+--         as end delimiter, instead of a period.
+--
+--         Depending on the selected writer, the numbering scheme and delimeter
+--         may be honored or just ignored.
+--
+--         If the `startnum` option is enabled, the starting value is converted
+--         to decimal, when necessary, so that the list at least starts at the
+--         appropriate value.
+--
+--         So in the minimal case, this option allows such lists to be processed,
+--         albeit rendered as regular ordered lists.
+--
+--     `(-) pandoc_extensions`
+--     :   Several Pandoc-like extensions are regrouped under that flag.
+--
+--         It encompasses strikethrough support (`~~text~~`), subscripts
+--         and superscripts (as in `H~2~O,` and `2^10^`), inline spans with
+--         atributes (`[test]{.class key=value}`), colon-fenced blocks
+--         (a.k.a. divs, introduced by `:::` and also accepting an attribute
+--         string).
+--
+--         Attribute strings are also accepted on images and fenced-code blocks
+--         (if the latter are enabled).
+--
+--         On code and fenced-code blocks, the special attribute string
+--         `{=format ...}` marks raw inlines and raw blocks respectively,
+--         which writers may use as pass-through to the target formatter.
+--
+--         How these constructs are honored depends on the writer. In the
+--         minimal case, they are ignored, as if they were stripped from
+--         the input.
+--
 -- *   Returns a converter function that converts a markdown string
 --     using `writer`, returning the parsed document as first result,
 --     and a table containing any extracted metadata as the second
