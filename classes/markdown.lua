@@ -1,6 +1,3 @@
--- You will need my lunamark fork from https://github.com/simoncozens/lunamark
--- for the AST writer.
-
 local book = require("classes.book")
 local markdown = pl.class(book)
 markdown._name = "markdown"
@@ -45,9 +42,9 @@ local function lunamarkAST2SILE (options)
     return walk(result)
   end
 
-  AST.genericCommand = function (name, options)
+  AST.genericCommand = function (name, opts)
     return function (s)
-      return createCommand (0, 0, 0, name, options or {}, s)
+      return createCommand (0, 0, 0, name, opts or {}, s)
     end
   end
 
@@ -130,15 +127,23 @@ local function lunamarkAST2SILE (options)
     if attr.class and string.match(' ' .. attr.class .. ' ',' underline ') then
       out = createCommand(0, 0, 0, "underline", {}, out)
     end
+    if attr["custom-style"] then
+      out = createCommand(0, 0, 0, "markdown:custom-style:hook", { name = attr["custom-style"], scope="inline" }, out)
+    end
     return out
   end
   AST.div = function (content, attr)
+    local out = content
     if attr["lang"] then
-      return createCommand(0, 0, 0, "language", { main = attr["lang"] }, content)
+      out = createCommand(0, 0, 0, "language", { main = attr["lang"] }, out)
     end
-    return content
+    if attr["custom-style"] then
+      out = createCommand(0, 0, 0, "markdown:custom-style:hook", { name = attr["custom-style"], scope="block" }, out)
+    end
+    return out
   end
-  AST.fenced_code = function(s, infostring, attr)
+
+  AST.fenced_code = function(s, _, _) -- s, infostring, attr
     return createCommand(0, 0, 0, "verbatim", {}, s)
   end
   AST.rawinline = function (content, format, _) -- content, format, attr
@@ -152,18 +157,17 @@ local function lunamarkAST2SILE (options)
   AST.rawblock = function (content, format, attr)
     return AST.rawinline(content, format, attr)
   end
-  AST.table = function (rows, caption)
-    -- FIXME THIS WILL ALSO NEED A BACKPORT OF WIKITO/lunamark
-    -- (I prepared it, but we have to check the license)
-    -- caption is a text Str
-    -- rows[1] has the headers
-    -- rows[2] has the alignments (wow...)
-    -- other rows follow
-    SU.dump(rows)
+  AST.table = function (rows, _) -- rows, caption
+    -- FIXME THIS WILL ALSO NEED A BACKPORT PORT (from wikito/lunamark
+    -- (I prepared it, but we have to check the license terms...)
+    --   caption is a text Str
+    --   rows[1] has the headers
+    --   rows[2] has the alignments (wow...)
+    --   other rows follow
     for i, row in ipairs(rows) do
-      print("  Row ", i)
+      -- print("  Row ", i)
       for j, column in ipairs(row) do
-        print("   Col", j, column)
+        -- print("   Col", j, column)
       end
     end
     return "FIXME LATER WITH PTABLE SUPPORT"
@@ -238,6 +242,24 @@ function markdown:registerCommands ()
 
   SILE.registerCommand("markdown:internal:rawcontent", function (_, content)
     SILE.doTexlike(content[1])
+  end)
+
+  SILE.registerCommand("markdown:custom-style:hook", function (options, content)
+    -- Default implementation for the custom-style hook:
+    -- If there is a corresponding command, we invoke it, otherwise, we just
+    -- ignore the style and process the content. It allows us, e.g. to already
+    -- use some interesting features, such as "custom-style=raggedleft".
+    -- Package or class designers MAY override this hook to support any other
+    -- styling mechanism they may have or want.
+    -- The available options are the custom-style "name" and a "scope" which
+    -- can be "inline" (for inline character-level styling) or "block" (for
+    -- block paragraph-level styling).
+    local name = SU.required(options, "name", "markdown custom style hook")
+    if SILE.Commands[name] then
+      SILE.call(name, {}, content)
+    else
+      SILE.process(content)
+    end
   end)
 
   -- BEGIN Quick and dirty super/subscript rip-off
