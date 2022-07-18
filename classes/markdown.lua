@@ -2,19 +2,77 @@ local book = require("classes.book")
 local markdown = pl.class(book)
 markdown._name = "markdown"
 
-local createCommand = require("packages.inputfilter").exports.createCommand
+-- A few SILE AST  utilities
+
+local function createCommand(command, options, content)
+  -- content = a simple content
+  -- So that's basically the same logic as the "inputfilter" package'S
+  -- createComment, with the col, line, pos dropped as we don't get them
+  -- from lunamark's AST.
+  local result = { content }
+  result.col = 0
+  result.line = 0
+  result.pos = 0
+  result.options = options
+  result.command = command
+  result.id = "command"
+  return result
+end
+
+local function createStructuredCommand(command, options, contents)
+  -- contents = a table of an already prepared content list.
+  local result = contents
+  result.col = 0
+  result.line = 0
+  result.pos = 0
+  result.options = options
+  result.command = command
+  result.id = "command"
+  return result
+end
+
+-- Some other utility functions
 
 local function getFileExtension (fname)
   -- extract file name and then extension
   return fname:match("[^/]+$"):match("[^.]+$")
 end
-local sections = {"chapter", "section", "subsection" }
+
+-- A few mappings functions and tables
+
+local sections = { "chapter", "section", "subsection" }
+
+local listStyle = {
+  Decimal = "arabic",
+  UpperRoman = "Roman",
+  LowerRoman = "roman",
+  UpperAlpha = "Alpha",
+  LowerAlpha = "alpha",
+}
+local listDelim = {
+  OneParen = ")",
+  Period = ".",
+}
+
+local function tableCellAlign (align)
+  if align == 'l' then
+    return 'left'
+  elseif align == 'r' then
+    return 'right'
+  elseif align == 'c' then
+    return 'center'
+  else
+    return 'default'
+  end
+end
+
+-- Lunamark writer for SILE = lunamark's AST to SILE's AST, yay!
 
 local function lunamarkAST2SILE (options)
   local generic = require("lunamark.writer.generic")
-  local AST = generic.new(options or {})
+  local writer = generic.new(options or {})
 
-  function AST.merge (result)
+  function writer.merge (result)
     local function walk(t)
       local out = {}
       for i = 1, #t do
@@ -42,138 +100,160 @@ local function lunamarkAST2SILE (options)
     return walk(result)
   end
 
-  AST.genericCommand = function (name, opts)
+  writer.simpleCommand = function (name)
     return function (s)
-      return createCommand (0, 0, 0, name, opts or {}, s)
+      return createCommand (name, {}, s)
     end
   end
 
-  AST.note = AST.genericCommand("footnote")
-  AST.strong = AST.genericCommand("strong")
-  AST.paragraph = AST.genericCommand("paragraph")
-  AST.code = AST.genericCommand("code")
-  AST.emphasis = AST.genericCommand("em")
-  AST.strikethrough = AST.genericCommand("strikethrough")
-  AST.subscript = AST.genericCommand("textsubscript")
-  AST.superscript = AST.genericCommand("textsuperscript")
-  AST.blockquote = AST.genericCommand("blockquote")
-  AST.verbatim = AST.genericCommand("verbatim")
-  AST.header = function (s, level)
+  writer.note = writer.simpleCommand("footnote")
+  writer.strong = writer.simpleCommand("strong")
+  writer.paragraph = writer.simpleCommand("paragraph")
+  writer.code = writer.simpleCommand("code")
+  writer.emphasis = writer.simpleCommand("em")
+  writer.strikethrough = writer.simpleCommand("strikethrough")
+  writer.subscript = writer.simpleCommand("textsubscript")
+  writer.superscript = writer.simpleCommand("textsuperscript")
+  writer.blockquote = writer.simpleCommand("blockquote")
+  writer.verbatim = writer.simpleCommand("verbatim")
+  writer.listitem = writer.simpleCommand("item")
+  writer.hrule = writer.simpleCommand("fullrule")
+
+  writer.header = function (s, level)
     if level <= #sections then
-      return createCommand(0, 0, 0, sections[level], {}, s)
+      return createCommand(sections[level], {}, s)
     end
-    return createCommand(0, 0, 0, "paragraph", {}, s)
+    return createCommand("paragraph", {}, s)
   end
-  AST.listitem = AST.genericCommand("item")
-  AST.bulletlist = function (items)
-    local node = {command = "itemize"}
-    for i = 1, #items do node[i] = AST.listitem(items[i]) end
-    return node
+
+  writer.bulletlist = function (items)
+    local contents = {}
+    for i = 1, #items do contents[i] = writer.listitem(items[i]) end
+    return createStructuredCommand("itemize", {}, contents)
   end
-  AST.tasklist = function (items)
-    local node = {command = "itemize"}
+
+  writer.tasklist = function (items)
+    local contents = {}
     for i = 1, #items do
       local bullet = (items[i][1] == "[X]") and "☑" or "☐"
-      node[i] = createCommand(0, 0, 0, "item", { bullet = bullet }, items[i][2])
+      contents[i] = createCommand("item", { bullet = bullet }, items[i][2])
      end
-    return node
+    return createStructuredCommand("itemize", {}, contents)
   end
-  AST.orderedlist = function (items, _, startnum, numstyle, numdelim) -- items, tight, ...
-    local listStyle = {
-      Decimal = "arabic",
-      UpperRoman = "Roman",
-      LowerRoman = "roman",
-      UpperAlpha = "Alpha",
-      LowerAlpha = "alpha",
-    }
-    local listDelim = {
-      OneParen = ")",
-      Period = ".",
-    }
+
+  writer.orderedlist = function (items, _, startnum, numstyle, numdelim) -- items, tight, ...
     local display = numstyle and listStyle[numstyle]
     local after = numdelim and listDelim[numdelim]
-    local node = {command = "enumerate", options = { start = startnum, display = display, after = after }}
-    for i= 1, #items do node[i] = AST.listitem(items[i]) end
-    return node
+    local contents = {}
+    for i= 1, #items do contents[i] = writer.listitem(items[i]) end
+    return createStructuredCommand("enumerate", { start = startnum or 1, display = display, after = after }, contents)
   end
-  AST.link = function (_, uri, _) -- label, uri, title
+
+  writer.link = function (_, uri, _) -- label, uri, title
     if uri:sub(1,1) == "#" then
       -- local hask link
       local dest = uri:sub(2)
-      return createCommand(0, 0, 0, "pdf:link", { dest = "ref:"..dest }, { dest }) -- FIXME later
-                                                                                   -- We need cross-refs (e.g. labelrefs)
+      return createCommand("pdf:link", { dest = "ref:"..dest }, { dest }) -- FIXME later
+                                                                          -- We need cross-refs (e.g. labelrefs)
     end
-    -- TODO
-    -- If the URL is not external but a local file, what are we supposed to do?
-    return createCommand(0, 0, 0, "href", { src = uri }, { uri })
+    return createCommand("href", { src = uri }, { uri })
   end
-  AST.image = function (_, src, _, attr) -- label, src, title, attr
+
+  writer.image = function (_, src, _, attr) -- label, src, title, attr
     local opts = attr or {}-- passthru (classes and key-value pairs)
     opts.src = src
     if getFileExtension(src) == "svg" then
-      return createCommand(0, 0, 0, "svg", opts)
+      return createCommand("svg", opts)
     end
-    return createCommand(0, 0, 0, "img", opts)
+    return createCommand("img", opts)
   end
-  AST.hrule = AST.genericCommand("fullrule")
-  AST.span = function (content, attr)
+
+  writer.span = function (content, attr)
     local out = content
     if attr["lang"] then
-       out = createCommand(0, 0, 0, "language", { main = attr["lang"] }, out)
+       out = createCommand("language", { main = attr["lang"] }, out)
     end
     if attr.class and string.match(' ' .. attr.class .. ' ',' smallcaps ') then
-      out = createCommand(0, 0, 0, "font", { features = "+smcp" }, out)
+      out = createCommand("font", { features = "+smcp" }, out)
     end
     if attr.class and string.match(' ' .. attr.class .. ' ',' underline ') then
-      out = createCommand(0, 0, 0, "underline", {}, out)
+      out = createCommand("underline", {}, out)
     end
     if attr["custom-style"] then
-      out = createCommand(0, 0, 0, "markdown:custom-style:hook", { name = attr["custom-style"], scope="inline" }, out)
-    end
-    return out
-  end
-  AST.div = function (content, attr)
-    local out = content
-    if attr["lang"] then
-      out = createCommand(0, 0, 0, "language", { main = attr["lang"] }, out)
-    end
-    if attr["custom-style"] then
-      out = createCommand(0, 0, 0, "markdown:custom-style:hook", { name = attr["custom-style"], scope="block" }, out)
+      out = createCommand("markdown:custom-style:hook", { name = attr["custom-style"], scope="inline" }, out)
     end
     return out
   end
 
-  AST.fenced_code = function(s, _, _) -- s, infostring, attr
-    return createCommand(0, 0, 0, "verbatim", {}, s)
+  writer.div = function (content, attr)
+    local out = content
+    if attr["lang"] then
+      out = createCommand("language", { main = attr["lang"] }, out)
+    end
+    if attr["custom-style"] then
+      out = createCommand("markdown:custom-style:hook", { name = attr["custom-style"], scope="block" }, out)
+    end
+    return out
   end
-  AST.rawinline = function (content, format, _) -- content, format, attr
+
+  writer.fenced_code = function(s, _, _) -- s, infostring, attr
+    return createCommand("verbatim", {}, s)
+  end
+
+  writer.rawinline = function (content, format, _) -- content, format, attr
     if format == "sile" then
-      return createCommand(0, 0, 0, "markdown:internal:rawcontent", {}, content)
+      return createCommand("markdown:internal:rawcontent", {}, content)
     elseif format == "sile-lua" then
-      return createCommand(0, 0, 0, "script", {}, content)
+      return createCommand("script", {}, content)
     end
     return "" -- ignore unknown
   end
-  AST.rawblock = function (content, format, attr)
-    return AST.rawinline(content, format, attr)
-  end
-  AST.table = function (rows, _) -- rows, caption
-    -- FIXME THIS WILL ALSO NEED A BACKPORT PORT (from wikito/lunamark
-    -- (I prepared it, but we have to check the license terms...)
-    --   caption is a text Str
-    --   rows[1] has the headers
-    --   rows[2] has the alignments (wow...)
-    --   other rows follow
-    for i, row in ipairs(rows) do
-      -- print("  Row ", i)
-      for j, column in ipairs(row) do
-        -- print("   Col", j, column)
-      end
-    end
-    return "FIXME LATER WITH PTABLE SUPPORT"
+
+  writer.rawblock = function (content, format, attr)
+    return writer.rawinline(content, format, attr)
   end
 
-  return AST
+  writer.table = function (rows, caption) -- rows, caption
+    -- caption is a text Str
+    -- rows[1] has the headers
+    -- rows[2] has the alignments (I know, it's weird...)
+    -- then other rows follow
+    local aligns = rows[2]
+    local numberOfCols = #aligns
+    local ptableRows = {}
+
+    local headerCols = {}
+    for j, column in ipairs(rows[1]) do
+      local col = createStructuredCommand("cell", { valign="middle", halign = tableCellAlign(aligns[j]) }, column)
+      headerCols[#headerCols+1] = col
+    end
+    ptableRows[#ptableRows+1] = createStructuredCommand("row", { background = "#eee" }, headerCols)
+
+    for i = 3, #rows do
+      local row = rows[i]
+      local ptableCols = {}
+      for j, column in ipairs(row) do
+        local col = createStructuredCommand("cell", { valign = "middle", halign = tableCellAlign(aligns[j]) }, column)
+        ptableCols[#ptableCols+1] = col
+      end
+      ptableRows[#ptableRows+1] = createStructuredCommand("row", {}, ptableCols)
+    end
+
+    local cWidth = {}
+    for i = 1, numberOfCols do
+      cWidth[i] = string.format("%.0f%%lw", 100 / numberOfCols)
+    end
+    local ptable = createStructuredCommand("ptable", { cols = table.concat(cWidth, " ") }, ptableRows)
+
+    if not caption then
+      return ptable
+    end
+
+    local captioned = { ptable, createCommand("caption", {}, caption) }
+    return createStructuredCommand("table", {}, captioned)
+  end
+
+  return writer
 end
 
 SILE.inputs.markdown = {
@@ -210,6 +290,7 @@ function markdown:_init (options)
   self:loadPackage("svg")
   self:loadPackage("rules")
   self:loadPackage("lists")
+  self:loadPackage("ptable")
   -- self:loadPackage("textsubsuper") -- FIXME later, for now provide fallbacks below...
   return self
 end
@@ -319,6 +400,29 @@ function markdown:registerCommands ()
     SILE.call("kern", { width = xOffset })
   end, "Typeset a fake (lowered, scaled) subscript content.")
   -- END Quick and dirty super/subscript rip-off
+
+  -- BEGIN Quick and dirty rip-off from omibook without the cool styling...
+  local extractFromTree = function (tree, command)
+    for i=1, #tree do
+      if type(tree[i]) == "table" and tree[i].command == command then
+        return table.remove(tree, i)
+      end
+    end
+  end
+
+  SILE.registerCommand("table", function (_, content)
+    if type(content) ~= "table" then SU.error("Expected a table content in table environment") end
+    local caption = extractFromTree(content, "caption")
+
+    SILE.process(content)
+    if caption then
+      SILE.call("font", { size = SILE.settings:get("font.size") * 0.95}, function ()
+        SILE.call("center", {}, caption)
+      end)
+    end
+    SILE.call("smallskip")
+  end, "Insert a captioned table.")
+  -- END Quick and dirty rip-off from omibook...
 end
 
 return markdown
