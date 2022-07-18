@@ -85,6 +85,7 @@ parsers.equal                  = P("=")
 parsers.colon                  = P(":")
 parsers.semicolon              = P(";")
 parsers.exclamation            = P("!")
+parsers.pipe                   = P("|")
 parsers.tilde                  = P("~")
 parsers.tab                    = P("\t")
 parsers.newline                = P("\n")
@@ -600,6 +601,62 @@ local function strip_atx_end(s)
   return s:gsub("[#%s]*\n$","")
 end
 
+------------------------------------------------------------------------------
+-- PipeTable
+------------------------------------------------------------------------------
+
+local function make_pipe_table_rectangular(rows)
+  local num_columns = #rows[2]
+  local rectangular_rows = {}
+  for i = 1, #rows do
+    local row = rows[i]
+    local rectangular_row = {}
+    for j = 1, num_columns do
+      rectangular_row[j] = row[j] or ""
+    end
+    table.insert(rectangular_rows, rectangular_row)
+  end
+  return rectangular_rows
+end
+
+local function pipe_table_row(allow_empty_first_column
+                              , nonempty_column
+                              , column_separator
+                              , column)
+  local row_beginning
+  if allow_empty_first_column then
+    row_beginning = -- empty first column
+                    #(parsers.spacechar^4
+                      * column_separator)
+                  * parsers.optionalspace
+                  * column
+                  * parsers.optionalspace
+                  -- non-empty first column
+                  + parsers.nonindentspace
+                  * nonempty_column^-1
+                  * parsers.optionalspace
+  else
+    row_beginning = parsers.nonindentspace
+                  * nonempty_column^-1
+                  * parsers.optionalspace
+  end
+
+  return Ct(row_beginning
+            * (-- single column with no leading pipes
+              #(column_separator
+                * parsers.optionalspace
+                * parsers.newline)
+              * column_separator
+              * parsers.optionalspace
+              -- single column with leading pipes or
+              -- more than a single column
+              + (column_separator
+                * parsers.optionalspace
+                * column
+                * parsers.optionalspace)^1
+              * (column_separator
+                * parsers.optionalspace)^-1))
+end
 
 --- Create a new markdown parser.
 --
@@ -1411,6 +1468,61 @@ function M.new(writer, options)
                        / writer.header
 
   ------------------------------------------------------------------------------
+  -- PipeTable
+  ------------------------------------------------------------------------------
+
+  larsers.table_hline_separator = parsers.pipe + parsers.plus
+
+  larsers.table_hline_column = (parsers.dash
+                            - #(parsers.dash
+                                * (parsers.spacechar
+                                  + larsers.table_hline_separator
+                                  + parsers.newline)))^1
+                          * (parsers.colon * Cc("r")
+                            + parsers.dash * Cc("d"))
+                          + parsers.colon
+                          * (parsers.dash
+                            - #(parsers.dash
+                                * (parsers.spacechar
+                                  + larsers.table_hline_separator
+                                  + parsers.newline)))^1
+                          * (parsers.colon * Cc("c")
+                            + parsers.dash * Cc("l"))
+
+  larsers.table_hline = pipe_table_row(false
+                                    , larsers.table_hline_column
+                                    , larsers.table_hline_separator
+                                    , larsers.table_hline_column)
+
+  larsers.table_caption_beginning = parsers.skipblanklines
+                                * parsers.nonindentspace
+                                * (P("Table")^-1 * parsers.colon)
+                                * parsers.optionalspace
+
+  larsers.table_row = pipe_table_row(true
+                                  , (C((parsers.linechar - parsers.pipe)^1)
+                                    / parse_inlines)
+                                  , parsers.pipe
+                                  , (C((parsers.linechar - parsers.pipe)^0)
+                                    / parse_inlines))
+
+  if options.table_captions then
+    larsers.table_caption = #larsers.table_caption_beginning
+                  * larsers.table_caption_beginning
+                  * Ct(parsers.Inline^1) -- N.B. WARNING: It was IndentedInline in witiko/markdown
+                  * parsers.newline
+  else
+    larsers.table_caption = parsers.fail
+  end
+
+  larsers.PipeTable = Ct(larsers.table_row * parsers.newline
+                    * larsers.table_hline
+                    * (parsers.newline * larsers.table_row)^0)
+                  / make_pipe_table_rectangular
+                  * larsers.table_caption^-1
+                  / writer.table
+
+  ------------------------------------------------------------------------------
   -- Syntax specification
   ------------------------------------------------------------------------------
 
@@ -1427,6 +1539,7 @@ function M.new(writer, options)
       Blank                 = larsers.Blank,
 
       Block                 = V("Blockquote")
+                            + V("PipeTable")
                             + V("Verbatim")
                             + V("FencedCodeBlock")
                             + V("FencedDiv")
@@ -1452,6 +1565,7 @@ function M.new(writer, options)
       DefinitionList        = larsers.DefinitionList,
       DisplayHtml           = larsers.DisplayHtml,
       Paragraph             = larsers.Paragraph,
+      PipeTable             = larsers.PipeTable,
       Plain                 = larsers.Plain,
 
       Inline                = V("Str")
@@ -1540,6 +1654,10 @@ function M.new(writer, options)
 
   if not options.task_list then
     syntax.TaskList = parsers.fail
+  end
+
+  if not options.pipe_table then
+    syntax.PipeTable = parsers.fail
   end
 
   if options.alter_syntax and type(options.alter_syntax) == "function" then

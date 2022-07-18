@@ -341,6 +341,14 @@ function M.new(options)
     return util.intersperse(buffer,W.interblocksep)
   end
 
+  --- A table. `caption` is the optional caption,
+  -- `rows[1]` contains the headers,
+  -- `rows[2]` contains the aligments (r l c d = right, left, centered, default)
+  -- and the other rows follow...
+  function W.table(rows, caption)
+    return ""
+  end
+
   --- A cosmo template to be used in producing a standalone document.
   -- `$body` is replaced with the document body, `$title` with the
   -- title, and so on.
