@@ -1,7 +1,7 @@
 \begin[papersize=a6]{document}
 \nofolios
 \neverindent
-\script[src=packages/rules]
+\use{packages.rules}
 
 Default\hrulefill
 

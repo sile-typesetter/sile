@@ -155,7 +155,7 @@ return {
   registerCommands = registerCommands,
   documentation = [[
 \begin{document}
-\script[src=packages/url]
+\use{packages.url}
 This package enhances the typesetting of URLs in two ways.
 First, it provides the \autodoc:command{\href[src=<url>]{<content>}} command which
 inserts PDF hyperlinks,

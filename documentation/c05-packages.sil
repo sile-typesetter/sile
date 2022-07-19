@@ -17,7 +17,7 @@ installation directory. For instance, we’ll soon be talking about the
 
 \begin{verbatim}
 \line
-\\script[src=packages/grid]
+\\use{packages.grid}
 \line
 \end{verbatim}
 

@@ -1,6 +1,6 @@
 \begin[papersize=a7]{document}
 \nofolios
-\script[src=packages/lorem]
+\use{packages.lorem}
 \begin{script}
 
 local testshape = {

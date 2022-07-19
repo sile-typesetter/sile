@@ -1,7 +1,7 @@
 \begin[papersize=a6]{document}
 \nofolios
 \noindent
-\script[src=packages/unichar]
+\use{packages.unichar}
 \font[family=Symbola]
 \raggedright{
 â\break

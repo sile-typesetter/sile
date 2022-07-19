@@ -1,6 +1,6 @@
 \begin[papersize=a5,class=book]{document}
-\script[src=packages/lorem]
-\script[src=packages/rules]
+\use{packages.lorem}
+\use{packages.rules}
 \begin{script}
 SILE.scratch.insertions.classes.footnote.topSkip = SILE.length("5pt")
 SILE.scratch.insertions.classes.footnote.interInsertionSkip = SILE.length("24pt")

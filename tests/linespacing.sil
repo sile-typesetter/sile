@@ -1,5 +1,5 @@
 \begin[papersize=a6]{document}
-\script[src=packages/lorem]
+\use{packages.lorem}
 \nofolios
 \font[family=Libertinus Serif,size=12pt]
 Small text

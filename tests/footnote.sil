@@ -1,6 +1,6 @@
 \begin[papersize=a6,class=book]{document}
 \nofolios
-\script[src=packages/lorem]
+\use{packages.lorem}
 \font[family=Gentium Plus,size=10pt]
 \footnote:separator{\em{Separator}\skip[height=5mm]}
 \footnote:options[interInsertionSkip=3mm]

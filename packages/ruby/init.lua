@@ -116,7 +116,7 @@ return {
   documentation = [[
 \begin{document}
 \font:add-fallback[family=Noto Sans CJK JP]
-\script[src=packages.ruby]
+\use{packages.ruby}
 Japanese texts often contain pronunciation hints (called \em{furigana}) for
 difficult kanji or foreign words. These hints are traditionally placed either
 above (in horizontal typesetting) or beside (in vertical typesetting) the word

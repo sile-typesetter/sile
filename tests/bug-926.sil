@@ -2,7 +2,7 @@
 \nofolios
 \neverindent
 \language[main=en]
-\script[src=packages/ruby]
+\use{packages.ruby}
 \ruby[reading=日本語]{私}\ruby[reading=Latin]{私}
 
 \ruby[reading=Latin]{私}\ruby[reading=日本語]{私}

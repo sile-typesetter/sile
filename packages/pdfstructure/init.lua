@@ -126,7 +126,7 @@ return {
   registerCommands = registerCommands,
   documentation = [[
 \begin{document}
-\script[src=packages.pdfstructure]
+\use{packages.pdfstructure}
 \pdf:structure[type=P]{%
 For PDF documents to be considered accessible, they must contain a
 description of the PDF’s document structure. This package allows

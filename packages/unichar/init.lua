@@ -17,7 +17,7 @@ end
 return {
   registerCommands = registerCommands,
   documentation = [[\begin{document}
-\script[src=packages/unichar]
+\use{packages.unichar}
 SILE is Unicode compatible, and expects its input files to be in the UTF-8 encoding.
 (The actual range of Unicode characters supported will depend on the supported ranges
 of the fonts that SILE is using to typeset.) Some Unicode characters are hard to

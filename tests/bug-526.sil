@@ -1,7 +1,7 @@
 \begin[class=plain,papersize=a6]{document}
 \nofolios
-\script[src=packages/frametricks]
-\script[src=packages/lorem]
+\use{packages.frametricks}
+\use{packages.lorem}
 \begin[first-content-frame=leftCol]{pagetemplate}
   \frame[id=leftCol,left=left(content),right=50%pw,top=top(content),bottom=bottom(content),next=rightCol]
   \frame[id=rightCol,left=right(leftCol),top=top(content),bottom=bottom(content),width=width(leftCol)]

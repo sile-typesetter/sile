@@ -1,6 +1,6 @@
 \begin[class=docbook]{document}%
-\script[src=packages/rules]%
-\script[src=packages/verbatim]%
+\use{packages.rules}%
+\use{packages.verbatim}%
 \define[command=docbook-line]{\medskip\hrule[height=0.5pt,width=50mm]\medskip}%
 \define[command=docbook-sectionsfont]{\font[family=DejaVu Sans,style=Condensed,weight=800]{\process}}%
 \define[command=docbook-ttfont]{\font[family=Hack,size=2ex]{\process}}%

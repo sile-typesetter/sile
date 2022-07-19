@@ -62,7 +62,7 @@ return {
   registerCommands = registerCommands,
   documentation = [[
 \begin{document}
-\script[src=packages/math]
+\use{packages.math}
 
 \set[parameter=math.font.family, value=Libertinus Math]
 \set[parameter=math.font.size, value=11]

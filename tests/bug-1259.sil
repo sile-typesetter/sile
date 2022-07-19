@@ -1,7 +1,7 @@
 \begin[papersize=a5]{document}
 \neverindent
 \nofolios
-\script[src=packages/rules]
+\use{packages.rules}
 
 Have some \underline{underlining} relative to font.
 

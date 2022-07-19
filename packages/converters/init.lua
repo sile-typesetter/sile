@@ -124,7 +124,7 @@ command:
 
 \begin{verbatim}
 \line
-\\script[src=packages/converters]
+\\use{packages.converters}
 \\converters:register[from=.gif,to=.jpg,command=convert $SOURCE $TARGET]
 \line
 \end{verbatim}

@@ -1,6 +1,6 @@
 \begin[papersize=a7,class=book]{document}
-\script[src=packages/lorem]
-\script[src=packages/rebox]
+\use{packages.lorem}
+\use{packages.rebox}
 \footnote:separator{\skip[height=5pt]}
 \define[command=deepbox]{\rebox[depth=60pt,height=10pt]{x}}
 This is a test\footnote{\deepbox}.

@@ -1,5 +1,5 @@
 \begin[papersize=a7,class=book]{document}
-\script[src=packages/linespacing]
+\use{packages.linespacing}
 \nofolios
 \font[family=Gentium Plus,size=9.5pt]
 \set[parameter=linespacing.method,value=fit-font]

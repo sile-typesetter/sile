@@ -1,6 +1,6 @@
 \begin[papersize=a6]{document}
 \nofolios
-\script[src=packages/verbatim]
+\use{packages.verbatim}
 \define[command=verbatim:font]{\set[parameter=font.family,value=Hack]}
 \begin{verbatim}
 pseudocode \{ here \}

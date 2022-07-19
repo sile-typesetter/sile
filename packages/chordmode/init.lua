@@ -127,7 +127,7 @@ return {
   declareSettings = declareSettings,
   documentation = [[
 \begin{document}
-\script[src=packages/chordmode]
+\use{packages.chordmode}
 
 This package provides the \autodoc:environment{chordmode} environment, which transforms
 lines like:

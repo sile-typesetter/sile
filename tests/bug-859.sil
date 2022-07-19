@@ -1,6 +1,6 @@
 \begin[papersize=a6]{document}
 \nofolios
-\script[src=packages/leaders]
+\use{packages.leaders}
 \set[parameter=typesetter.parfillskip,value=0pt]
 \noindent\font[size=20pt]{A\dotfill{}A}\medskip
 \noindent\font[size=10pt]{DEF\dotfill{}10}\medskip

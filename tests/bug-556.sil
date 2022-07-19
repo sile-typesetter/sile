@@ -1,5 +1,5 @@
 \begin[class=triglot]{document}
-\script[src=packages/pdf]
+\use{packages.pdf}
 \left
 \pdf:bookmark[title=test,dest=test]
 \sync

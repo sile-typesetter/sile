@@ -1,6 +1,6 @@
 \begin[papersize=a6]{document}
 \nofolios
-\script[src=packages/bidi]
+\use{packages.bidi}
 \font[family=LateefGR,size=16pt,language=en]
 Standard Arabic \font[direction=RTL,language=ar]{ههه};
 Sindi \font[direction=RTL,language=snd]{ههه};

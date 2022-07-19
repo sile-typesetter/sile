@@ -1,6 +1,6 @@
 \begin[class=plain]{document}
 
-\script[src=packages/math]
+\use{packages.math}
 
 Number matrix, text, TeX:
 \begin{math}

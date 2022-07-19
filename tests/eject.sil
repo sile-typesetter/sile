@@ -1,5 +1,5 @@
 \begin[papersize=a5]{document}
-\script[src=packages/lorem]
+\use{packages.lorem}
 \pagetemplate[first-content-frame=a]{
 \frame[id=a,top=5%ph,bottom=95%ph,next=b,left=5%pw,right=28%pw]
 \frame[id=b,top=5%ph,bottom=95%ph,next=c,left=33%pw,right=62%pw]

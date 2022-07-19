@@ -56,7 +56,7 @@ return {
   init = init,
   registerCommands = registerCommands,
 documentation = [[\begin{document}
-\script[src=packages.boustrophedon]
+\use{packages.boustrophedon}
 Partly designed to show off SILE’s extensibility, and partly designed for
 real use by classicists, the \autodoc:package{boustrophedon} package allows you to typeset
 ancient Greek texts in the ‘ox-turning’ layout—the first line is
