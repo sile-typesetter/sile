@@ -35,10 +35,11 @@ describe("#LUA #inputter", function ()
   describe("should reject", function ()
 
     it("invalid Lua syntax", function()
-      assert.has_error(function () inputter:parse([[a = "b]]) end,
-        [[[string "a = "b"]:1: unfinished string near <eof>]])
-      assert.has_error(function() inputter:parse([[if]]) end,
-        [[[string "if"]:1: unexpected symbol near <eof>]])
+      -- Lua 5.1 vs. others throw slightly different errors, hence partial matches
+      assert.has_error_matches(function () inputter:parse([[a = "b]]) end,
+        [[[string "a = "b"]:1: unfinished string near]], nil, true)
+      assert.has_error_matches(function() inputter:parse([[if]]) end,
+        [[[string "if"]:1: unexpected symbol near]], nil, true)
     end)
 
   end)
