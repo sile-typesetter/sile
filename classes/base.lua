@@ -303,8 +303,8 @@ function base:registerCommands ()
   end, "Includes a content file for processing.")
 
   self:registerCommand("lua", function (options, content)
-    if options.module then
-      SILE.require(options.module)
+    if options.require then
+      SILE.require(options.require)
     elseif options.src then
       SILE.processFile(options.src, "lua")
     else
