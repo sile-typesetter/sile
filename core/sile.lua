@@ -79,6 +79,7 @@ SILE.packages = core_loader("packages")
 SILE.traceStack = require("core.tracestack")()
 SILE.parserBits = require("core.parserbits")
 SILE.frameParser = require("core.frameparser")
+SILE.color = require("core.color")
 SILE.units = require("core.units")
 SILE.fontManager = require("core.fontmanager")
 
@@ -352,7 +353,6 @@ end
 
 -- Internal libraries that run core SILE functions on load
 SILE.settings = require("core.settings")()
-SILE.colorparser = require("core.colorparser")
 SILE.pagebuilder = require("core.pagebuilder")()
 require("core.typesetter")
 require("core.hyphenator-liang")

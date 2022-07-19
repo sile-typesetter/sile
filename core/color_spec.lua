@@ -2,7 +2,7 @@ SILE = require("core.sile")
 SU.warn = function () end
 
 describe("The color parser", function()
-  local parse = SILE.colorparser
+  local parse = SILE.color
   local rebecca = {
     b = 0.6,
     g = 0.2,
