@@ -9,7 +9,7 @@ table  = Taflen
 proof  = Prawf
 
 # -- TOC-like headers
-tableofcontents = Cynnwys
+tableofcontents-title = Cynnwys
 index = Mynegai
 listoffigures = Rhestr Ddarluniau
 listoftables = Rhestr Dablau
@@ -25,7 +25,7 @@ references = Cyfeiriadau
 page = tudalen
 see = gweler
 see-also = gweler hefyd
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Assembling rules
 appendix-template = { appendix } { $number }

@@ -9,7 +9,7 @@ table  = རེའུ་མིག་
 proof  = བདེན་དཔང་།
 
 # -- TOC-like headers
-tableofcontents = དཀར་ཆག།
+tableofcontents-title = དཀར་ཆག།
 index = གསུལ་བྱང་།
 # listoffigures =
 # listoftables =
@@ -25,7 +25,7 @@ preface = དཔེ་དེབ་ཀྱི་གླེང་བརྗོད།
 page = ཤོག་
 # see =
 # see-also =
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

@@ -9,7 +9,7 @@ table  = Tábla
 proof  = Cruthúnas
 
 # -- TOC-like headers
-tableofcontents = Clár Ábhair
+tableofcontents-title = Clár Ábhair
 index = Innéacs
 listoffigures = Léaráidí
 listoftables = Táblaí
@@ -25,7 +25,7 @@ references = Tagairtí
 page = Leathanach
 see = féach
 see-also = féach freisin
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

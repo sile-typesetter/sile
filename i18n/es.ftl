@@ -9,7 +9,7 @@ table  = Cuadro
 proof  = Demostración
 
 # -- TOC-like headers
-tableofcontents = Índice
+tableofcontents-title = Índice
 index = Índice alfabético
 listoffigures = Índice de figuras
 listoftables = Índice de cuadros
@@ -25,7 +25,7 @@ references = Referencias
 page = página
 see = véase
 see-also = véase también
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

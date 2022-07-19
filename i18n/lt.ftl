@@ -9,7 +9,7 @@ table  = lentelė
 proof  = Įrodymas
 
 # -- TOC-like headers
-tableofcontents = Turinys
+tableofcontents-title = Turinys
 listoffigures = Iliustracijų sąrašas
 listoftables = Lentelių sąrašas
 
@@ -25,7 +25,7 @@ references = Literatūra
 page = puslapis
 see = žiūrėk
 see-also = taip pat
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

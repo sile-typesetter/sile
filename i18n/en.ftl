@@ -9,7 +9,7 @@ table  = Table
 proof  = Proof
 
 # -- TOC-like headers
-tableofcontents = Table of Contents
+tableofcontents-title = Table of Contents
 index = Index
 listoffigures = List of Figures
 listoftables = List of Tables
@@ -25,7 +25,7 @@ references = References
 page = Page
 see = see
 see-also = see also
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 # Test (only for en and tr)
 hello = Hello { $name }!
 

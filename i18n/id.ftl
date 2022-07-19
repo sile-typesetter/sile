@@ -9,7 +9,7 @@ table  = Tabel
 proof  = Bukti
 
 # -- TOC-like headers
-tableofcontents = Daftar Isi
+tableofcontents-title = Daftar Isi
 index = Indeks
 listoffigures = Daftar Gambar
 listoftables = Daftar Tabel
@@ -25,7 +25,7 @@ references = Pustaka
 page = Halaman
 see = lihat
 see-also = lihat juga
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

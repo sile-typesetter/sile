@@ -13,7 +13,7 @@ table  = 表
 proof  = 証明
 
 # -- TOC-like headers
-tableofcontents = 目次
+tableofcontents-title = 目次
 index = 索引
 listoffigures = 図目次
 listoftables = 表目次
@@ -29,7 +29,7 @@ references = 参考文献
 # page =
 # see =
 # see-also =
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

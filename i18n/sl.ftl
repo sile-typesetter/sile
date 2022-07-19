@@ -9,7 +9,7 @@ table  = Tabela
 proof  = Dokaz
 
 # -- TOC-like headers
-tableofcontents = Kazalo
+tableofcontents-title = Kazalo
 index = Stvarno kazalo
 listoffigures = Slike
 listoftables = Tabele
@@ -25,7 +25,7 @@ references = Literatura
 page = Stran
 see = glej
 see-also = glej tudi
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

@@ -9,7 +9,7 @@ table  = Tabelo
 proof  = Pruvo
 
 # -- TOC-like headers
-tableofcontents = Enhavoj
+tableofcontents-title = Enhavoj
 index = Indekso
 listoffigures = Listo de figuroj
 listoftables = Listo de tabeloj
@@ -25,7 +25,7 @@ references = Citaĵoj
 page = Paĝo
 see = vidu
 see-also = vidu ankaŭ
-toc-not-generated = Reruli na SILE por trakti la enhavan tabelon!
+tableofcontents-not-generated = Reruli na SILE por trakti la enhavan tabelon!
 
 # -- Bibliography stuff
 bibliography-and = kaj

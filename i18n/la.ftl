@@ -9,7 +9,7 @@ table  = Tabula
 proof  = Demonstratio
 
 # -- TOC-like headers
-tableofcontents = Tabula contentorum
+tableofcontents-title = Tabula contentorum
 index = Index rerum notabilium
 listoffigures = Conspectus descriptionum
 listoftables = Conspectus tabularum
@@ -25,7 +25,7 @@ references = Conspectus librorum
 page = charta
 see = cfr.
 see-also = cfr.
-toc-not-generated = Curre SILE iterum ad mensam contentorum computetur!
+tableofcontents-not-generated = Curre SILE iterum ad mensam contentorum computetur!
 
 # -- Bibliography stuff
 bibliography-and = et

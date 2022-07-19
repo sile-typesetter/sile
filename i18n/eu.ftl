@@ -9,7 +9,7 @@ table  = Taula
 proof  = Frogapena
 
 # -- TOC-like headers
-tableofcontents = Gaien Aurkibidea
+tableofcontents-title = Gaien Aurkibidea
 index = Kontzeptuen Aurkibidea
 listoffigures = Irudien Zerrenda
 listoftables = Taulen Zerrenda
@@ -25,7 +25,7 @@ references = Erreferentziak
 page = Orria
 see = Ikusi
 see-also = Ikusi, halaber
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

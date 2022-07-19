@@ -9,7 +9,7 @@ table  = Tabula
 # proof  = 
 
 # -- TOC-like headers
-tableofcontents = Saturs
+tableofcontents-title = Saturs
 listoffigures = Attēlu rādītājs
 listoftables = Tabulu rādītājs
 
@@ -25,7 +25,7 @@ references = Literatūra
 page = lpp.
 see = skat.
 see-also = skat. arī
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

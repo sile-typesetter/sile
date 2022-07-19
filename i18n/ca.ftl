@@ -9,7 +9,7 @@ table  = Taula
 proof  = Demostració
 
 # -- TOC-like headers
-tableofcontents = Índex
+tableofcontents-title = Índex
 index = Índex alfabètic
 listoffigures = Índex de figures
 listoftables = Índex de taules
@@ -25,7 +25,7 @@ references = Referències
 page = Pàgina
 see = Vegeu
 see-also = Vegeu també
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

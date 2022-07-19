@@ -9,7 +9,7 @@ table  = Tabuľka
 proof  = Dôkaz
 
 # -- TOC-like headers
-tableofcontents = Obsah
+tableofcontents-title = Obsah
 index = Register
 listoffigures = Zoznam obrázkov
 listoftables = Zoznam tabuliek
@@ -25,7 +25,7 @@ references = Literatúra
 page = Str.
 see = viď
 see-also = viď tiež
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

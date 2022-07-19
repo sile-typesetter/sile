@@ -9,7 +9,7 @@ table  = ሰንጠረዥ
 proof  = ማረጋገጫ
 
 # -- TOC-like headers
-tableofcontents = ይዘት
+tableofcontents-title = ይዘት
 index = ምህጻር ቃል
 listoffigures = የሥዕችሎ ማውጫ
 listoftables = የሰንጠዥረ ማውጫ
@@ -25,7 +25,7 @@ references = የነሥ ጹሁፍ ምንጭ
 page = ገጽ
 see = ይመልከቱ
 see-also = ይህምን ይመልከቱ
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

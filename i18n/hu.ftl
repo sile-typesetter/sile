@@ -9,7 +9,7 @@ table  = táblázat
 proof  = Bizonyítás
 
 # -- TOC-like headers
-tableofcontents = Tartalomjegyzék
+tableofcontents-title = Tartalomjegyzék
 index = Tárgymutató
 listoffigures = Ábrák jegyzéke
 listoftables = Táblázatok jegyzéke
@@ -25,7 +25,7 @@ references = Hivatkozások
 page = oldal
 see = lásd
 see-also = lásd még
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

@@ -9,7 +9,7 @@ table  = Tabel
 proof  = Bewĳs
 
 # -- TOC-like headers
-tableofcontents = Inhoudsopgave
+tableofcontents-title = Inhoudsopgave
 index = Index
 listoffigures = Lĳst van figuren
 listoftables = Lĳst van tabellen
@@ -25,7 +25,7 @@ references = Referenties
 page = Pagina
 see = zie
 see-also = zie ook
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

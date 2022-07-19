@@ -9,7 +9,7 @@ table  = Tablisa
 proof  = Delil
 
 # -- TOC-like headers
-tableofcontents = Mazmuny
+tableofcontents-title = Mazmuny
 index = Indeks
 listoffigures = Suratlaryň sanawy
 listoftables = Tablisalaryň sanawy
@@ -25,7 +25,7 @@ references = Çeşmeler
 page = Sahypa
 see = ser.
 see-also = şuňa-da ser.
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

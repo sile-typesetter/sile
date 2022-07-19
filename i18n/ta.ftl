@@ -9,7 +9,7 @@ table  = அட்டவணை
 # proof  = 
 
 # -- TOC-like headers
-tableofcontents = உள்ளே
+tableofcontents-title = உள்ளே
 index = சுட்டி
 listoffigures = படங்களின் பட்டியல்
 listoftables = அட்டவணை பட்டியல்
@@ -25,7 +25,7 @@ abstract = சாராம்சம்
 # page = 
 see = பார்க்க
 # see-also = 
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

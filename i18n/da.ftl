@@ -9,7 +9,7 @@ table  = Tabel
 proof  = Bevis
 
 # -- TOC-like headers
-tableofcontents = Indhold
+tableofcontents-title = Indhold
 index = Indeks
 listoffigures = Figurer
 listoftables = Tabeller
@@ -25,7 +25,7 @@ references = Litteratur
 page = Side
 see = Se
 see-also = Se også
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

@@ -9,7 +9,7 @@ table  = Tablica
 proof  = Dowód
 
 # -- TOC-like headers
-tableofcontents = Spis treści
+tableofcontents-title = Spis treści
 index = Indeks
 listoffigures = Spis rysunków
 listoftables = Spis tablic
@@ -25,7 +25,7 @@ references = Literatura
 page = Strona
 see = Porównaj
 see-also = Porównaj także
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

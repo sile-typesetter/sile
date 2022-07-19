@@ -9,7 +9,7 @@ table  = Աղյուսակ
 proof  = Ապացույց
 
 # -- TOC-like headers
-tableofcontents = Բովանդակություն
+tableofcontents-title = Բովանդակություն
 index = Առարկայական ցանկ
 listoffigures = Նկարների ցանկ
 listoftables = Աղյուսակների ցանկ
@@ -25,7 +25,7 @@ references = Հղումներ
 page = էջ
 see = տե՛ս
 see-also = տե՛ս նաև
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

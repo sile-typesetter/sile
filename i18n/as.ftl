@@ -9,7 +9,7 @@ table  = তালিকা
 proof  = প্ৰমাণ
 
 # -- TOC-like headers
-tableofcontents = সমল
+tableofcontents-title = সমল
 index = বিষয়সূচী
 listoffigures = চিত্ৰসূচী
 listoftables = তালিকাসূচী
@@ -25,7 +25,7 @@ references = প্ৰসংগ
 page = পৃষ্ঠা
 see = চাওক
 see-also = ও
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

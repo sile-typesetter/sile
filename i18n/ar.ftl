@@ -9,7 +9,7 @@ table = جدول
 proof = برهان
 
 # -- TOC-like headers
-tableofcontents = المحتويات
+tableofcontents-title = المحتويات
 index = الفهرس
 listoffigures = قائمة الأشكال
 listoftables = قائمة الجداول
@@ -25,7 +25,7 @@ references = المراجع
 page = صفحة
 see = راجع
 see-also = راجع أيضًا
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

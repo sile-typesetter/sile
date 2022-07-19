@@ -9,7 +9,7 @@ table  = Πίνακας
 proof  = Απόδειξη
 
 # -- TOC-like headers
-tableofcontents = Περιεχόμενα
+tableofcontents-title = Περιεχόμενα
 index = Ευρετήριο
 listoffigures = Κατάλογος Σχημάτων
 listoftables = Κατάλογος Πινάκων
@@ -25,7 +25,7 @@ references = Αναφορές
 page = Σελίδα
 see = βλέπε
 see-also = βλέπε επίσης
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

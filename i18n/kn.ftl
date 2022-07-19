@@ -9,7 +9,7 @@ table  = ಕೋಷ್ಟಕ
 proof  = ಕರಡುಪ್ರತಿ
 
 # -- TOC-like headers
-tableofcontents = ವಿಷಯಗಳು
+tableofcontents-title = ವಿಷಯಗಳು
 index = ಸೂಚಿ
 listoffigures = ಚಿತ್ರಗಳ ಪಟ್ಟಿ
 listoftables = ಕೋಷ್ಟಕಗಳ ಪಟ್ಟಿ
@@ -25,7 +25,7 @@ references = ಉಲ್ಲೇಖಗಳು
 page = ಪುಟ
 see = ನೋಡು
 see-also = ಇದನ್ನೂ ಸಹ ನೋಡು
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

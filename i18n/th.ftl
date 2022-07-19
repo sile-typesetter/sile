@@ -9,7 +9,7 @@ table  = ตารางที่
 proof  = พิสูจน์
 
 # -- TOC-like headers
-tableofcontents = สารบัญ
+tableofcontents-title = สารบัญ
 index = ดรรชนี
 listoffigures = สารบัญรูป
 listoftables = สารบัญตาราง
@@ -25,7 +25,7 @@ references = หนังสืออ้างอิง
 page = หน้า
 see = ดู
 see-also = ดูเพิ่มเติม
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

@@ -9,7 +9,7 @@ table  = कोष्टक
 proof  = सिद्धता
 
 # -- TOC-like headers
-tableofcontents = अनुक्रमणिका
+tableofcontents-title = अनुक्रमणिका
 listoffigures = आकृत्यांची सूची
 listoftables = कोष्टकसूची
 
@@ -25,7 +25,7 @@ references = संदर्भ
 page = पृष्ठ
 see = पाहा
 see-also = हेदेखील पाहा
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

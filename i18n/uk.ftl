@@ -9,7 +9,7 @@ table  = Табл.
 proof  = Доведення
 
 # -- TOC-like headers
-tableofcontents = Зміст
+tableofcontents-title = Зміст
 index = Покажчик
 listoffigures = Перелік ілюстрацій
 listoftables = Перелік таблиць
@@ -25,7 +25,7 @@ references = Література
 page = с.
 see = див.
 see-also = див. також
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

@@ -9,7 +9,7 @@ table  = جەدۋەل
 proof  = ئىسپات
 
 # -- TOC-like headers
-tableofcontents = مۇندەرىجە
+tableofcontents-title = مۇندەرىجە
 index = ئىندېكىس
 listoffigures = رەسىملەر
 listoftables = جەدۋەللەر
@@ -25,7 +25,7 @@ references = پايدىلانما
 page = بەت
 see = قاراڭ
 see-also = ئايرىم قاراڭ
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

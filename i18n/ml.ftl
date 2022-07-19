@@ -9,7 +9,7 @@ table  = പട്ടിക
 # proof  = 
 
 # -- TOC-like headers
-tableofcontents = ഉള്ളടക്കം
+tableofcontents-title = ഉള്ളടക്കം
 listoffigures = ചിത്രസൂചിക
 listoftables = പട്ടികകളുടെ സൂചിക
 
@@ -25,7 +25,7 @@ glossary =
 # page = 
 see = കാണുക
 see-also = ഇതും കാണുക
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

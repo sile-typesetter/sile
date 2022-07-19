@@ -9,7 +9,7 @@ table  = Tabel
 proof  = Tõestus
 
 # -- TOC-like headers
-tableofcontents = Sisukord
+tableofcontents-title = Sisukord
 index = Indeks
 listoffigures = Joonised
 listoftables = Tabelid
@@ -25,7 +25,7 @@ references = Viited
 page = Lk.
 see = vt.
 see-also = vt. ka
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

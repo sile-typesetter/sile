@@ -9,7 +9,7 @@ table  = ცხრ.
 proof  = დამტკიცება
 
 # -- TOC-like headers
-tableofcontents = შინაარსი
+tableofcontents-title = შინაარსი
 index = საძიებელი
 listoffigures = სურათი
 listoftables = ცხრილი
@@ -25,7 +25,7 @@ references = ლიტერატურა
 page = გვ.
 see = იხ.
 see-also = იხ. ასევე
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

@@ -9,7 +9,7 @@
 # proof  =
 
 # -- TOC-like headers
-# tableofcontents =
+# tableofcontents-title =
 # index =
 # listoffigures =
 # listoftables =
@@ -25,7 +25,7 @@
 # page =
 # see =
 # see-also =
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

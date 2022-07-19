@@ -9,7 +9,7 @@ table  = Tabella
 proof  = Demonstraziun
 
 # -- TOC-like headers
-tableofcontents = Tavla dal cuntegn
+tableofcontents-title = Tavla dal cuntegn
 index = Register da materias
 listoffigures = Tavla da las figuras
 listoftables = Tavla da las tabellas
@@ -25,7 +25,7 @@ references = Bibliografia
 page = pagina
 see = vesair
 see-also = vesair era
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

@@ -9,7 +9,7 @@ table  = Tafla
 proof  = Sönnun
 
 # -- TOC-like headers
-tableofcontents = Efnisyfirlit
+tableofcontents-title = Efnisyfirlit
 index = Atriðisorðaskrá
 listoffigures = Myndaskrá
 listoftables = Töfluskrá
@@ -25,7 +25,7 @@ references = Heimildir
 page = Blaðsíða
 see = Sjá
 see-also = Sjá einnig
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

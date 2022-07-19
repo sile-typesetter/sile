@@ -9,7 +9,7 @@ table  = Tabell
 proof  = Bevis
 
 # -- TOC-like headers
-tableofcontents = Innhald
+tableofcontents-title = Innhald
 index = Register
 listoffigures = Figurar
 listoftables = Tabellar
@@ -25,7 +25,7 @@ references = Referansar
 page = Side
 see = Sjå
 see-also = Sjå òg
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

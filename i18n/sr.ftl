@@ -9,7 +9,7 @@ table  = Табела
 proof  = Доказ
 
 # -- TOC-like headers
-tableofcontents = Садржаj
+tableofcontents-title = Садржаj
 index = Индекспоjмова
 listoffigures = Листаслика
 listoftables = Листатабела
@@ -25,7 +25,7 @@ references = Литература
 page = страна
 see = види
 see-also = видитакође
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

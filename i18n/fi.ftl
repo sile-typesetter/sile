@@ -9,7 +9,7 @@ table  = Taulukko
 proof  = Todistus
 
 # -- TOC-like headers
-tableofcontents = Sisällys
+tableofcontents-title = Sisällys
 index = Hakemisto
 listoffigures = Kuvat
 listoftables = Taulukot
@@ -25,7 +25,7 @@ references = Viitteet
 page = Sivu
 see = katso
 see-also = katso myös
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

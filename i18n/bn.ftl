@@ -9,7 +9,7 @@ table  = সারনী
 proof  = প্রমাণ
 
 # -- TOC-like headers
-tableofcontents = সূচীপত্র
+tableofcontents-title = সূচীপত্র
 index = সূচক/নির্দেশক
 listoffigures = ছবি/নকশা সমূহের তালিকা
 listoftables = তালিকাসারণী
@@ -25,7 +25,7 @@ references = তথ্যসুত্রসমূহ
 page = পৃষ্ঠা
 see = দেখুন
 see-also = আরও দেখুন
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

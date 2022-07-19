@@ -9,7 +9,7 @@ table  = Table
 proof  = Démonstration
 
 # -- TOC-like headers
-tableofcontents = Table des matières
+tableofcontents-title = Table des matières
 index = Index
 listoffigures = Table des figures
 listoftables = Liste des tableaux
@@ -25,7 +25,7 @@ references = Références
 page = page
 see = voir
 see-also = voir aussi
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 bibliography-and = et

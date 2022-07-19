@@ -9,7 +9,7 @@ table  = Tablo
 proof  = Kanıt
 
 # -- TOC-like headers
-tableofcontents = İçindekiler
+tableofcontents-title = İçindekiler
 index = Dizin
 listoffigures = Şekil Listesi
 listoftables = Tablo Listesi
@@ -25,7 +25,7 @@ references = Kaynaklar
 page = Sayfa
 see = bkz.
 see-also = ayrıca bkz.
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 # Test (only for en and tr)
 hello = Merhaba { $name }!
 

@@ -9,7 +9,7 @@ table  = Tabela
 proof  = Demonstraţie
 
 # -- TOC-like headers
-tableofcontents = Cuprins
+tableofcontents-title = Cuprins
 index = Index
 listoffigures = Listă de figuri
 listoftables = Listă de tabele
@@ -25,7 +25,7 @@ references = Bibliografie
 page = Pagina
 see = vezi
 see-also = vezi de asemenea
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
 # -- Bibliography stuff
 # bibliography-and =

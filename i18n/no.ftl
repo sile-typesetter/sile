@@ -9,7 +9,7 @@ table  = Tabell
 proof  = Bevis
 
 # -- TOC-like headers
-tableofcontents = Innhold
+tableofcontents-title = Innhold
 index = Register
 listoffigures = Figurer
 listoftables = Tabeller
@@ -25,7 +25,7 @@ references = Referanser
 page = Side
 see = Se
 see-also = Se også
-toc-not-generated = Kjør SILE om igjen slik at innholdsfortegnelsen blir behandlet!
+tableofcontents-not-generated = Kjør SILE om igjen slik at innholdsfortegnelsen blir behandlet!
 
 # -- Bibliography stuff
 bibliography-and = og
