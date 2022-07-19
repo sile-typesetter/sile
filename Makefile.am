@@ -164,7 +164,7 @@ luacheck:
 	luacheck -j$(shell nproc) -q .
 
 .PHONY: busted
-busted: $(SILE) $(addprefix .fonts/,$(TESTFONTFILES))
+busted: $(SILE) $(addprefix .fonts/,$(TESTFONTFILES)) $(BUSTEDSPECS)
 	set -f; IFS=';'
 if SYSTEM_LUAROCKS
 	packagecpath=(./{,core/}?.$(SHARED_LIB_EXT))
@@ -173,7 +173,7 @@ else
 	packagecpath=(./{,core/,lua_modules/lib/lua/$(LUA_VERSION)/}?.$(SHARED_LIB_EXT))
 	packagepath=(./{,lua_modules/share/lua/$(LUA_VERSION)/,lua-libraries/}?{,/init}.lua)
 endif
-	$(LOCALTESTFONTS) busted --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" $(BUSTEDFLAGS) spec
+	$(LOCALTESTFONTS) busted --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" $(BUSTEDFLAGS) .
 
 .PHONY: docs
 docs: $(MANUAL)
@@ -216,6 +216,9 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(LUAMODLOCK) 
 	$(runsile)
 
 %.pdf: %.xml $$(patterndeps)
+	$(runsile)
+
+%.pdf: %.nil $$(patterndeps)
 	$(runsile)
 
 .PHONY: coverage
@@ -326,6 +329,9 @@ tests/%.expected: tests/%.sil $$(patterndeps)
 tests/%.expected: tests/%.xml $$(patterndeps)
 	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
 
+tests/%.expected: tests/%.nil $$(patterndeps)
+	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
+
 .PHONY: update_actuals
 update_actuals: $(ACTUALS)
 
@@ -337,6 +343,10 @@ tests/%.actual: tests/%.sil $$(patterndeps)
 	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
 
 tests/%.actual: tests/%.xml $$(patterndeps)
+	-$(if $(CLEAN),rm -f $@,:)
+	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
+
+tests/%.actual: tests/%.nil $$(patterndeps)
 	-$(if $(CLEAN),rm -f $@,:)
 	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
 

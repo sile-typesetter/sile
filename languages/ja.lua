@@ -180,7 +180,7 @@ return {
 
     SILE.registerCommand("book:chapter:post:ja", function (_, _)
       SILE.call("medskip")
-    end)
+    end, nil, nil, true)
 
   end
 }

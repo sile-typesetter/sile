@@ -92,9 +92,9 @@ local function declareSettings (_)
   })
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("ch", function (options, content)
+  class:registerCommand("ch", function (options, content)
     local chordBox = SILE.call("hbox", {}, { options.name })
     SILE.typesetter.state.nodes[#(SILE.typesetter.state.nodes)] = nil
     local origWidth = chordBox.width
@@ -111,11 +111,11 @@ local function registerCommands (_)
     end
   end, "Insert a chord name above the text")
 
-  SILE.registerCommand("chordmode", function (_, content)
+  class:registerCommand("chordmode", function (_, content)
     SILE.process(inputfilter.transformContent(content, _addChords))
   end, "Transform embedded chords to 'ch' commands")
 
-  SILE.registerCommand("chordmode:chordfont", function (_, content)
+  class:registerCommand("chordmode:chordfont", function (_, content)
     SILE.process(content)
   end, "Override this command to change chord style.")
 

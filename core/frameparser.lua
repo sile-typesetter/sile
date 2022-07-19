@@ -18,7 +18,7 @@ end
 local number = SILE.parserBits.number
 local identifier = SILE.parserBits.identifier
 local measurement = SILE.parserBits.measurement / resolveMeasurement
-local ws = SILE.parserBits.whitespace^0
+local ws = SILE.parserBits.ws
 local dims = P"top" + P"left" + P"bottom" + P"right" + P"width" + P"height"
 local relation = C(dims) * ws * P"(" * ws * C(identifier) * ws * P")" / functionOfFrame
 

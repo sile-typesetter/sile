@@ -24,9 +24,9 @@ local function init (_)
 
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("boustrophedon", function (_, content)
+  class:registerCommand("boustrophedon", function (_, content)
     SILE.typesetter:leaveHmode()
     local saveBoxup = SILE.typesetter.boxUpNodes
     local swaps = 0

@@ -135,13 +135,13 @@ local function declareSettings (_)
 
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("linespacing-on", function ()
+  class:registerCommand("linespacing-on", function ()
     SILE.typesetter.leadingFor = linespacingLeading
   end)
 
-  SILE.registerCommand("linespacing-off", function ()
+  class:registerCommand("linespacing-off", function ()
     SILE.typesetter.leadingFor = SILE.defaultTypesetter.leadingFor
   end)
 

@@ -24,7 +24,7 @@ for (@specifics ? @specifics : <tests/*.sil tests/*.xml>) {
         if (!system("head -n1 $_ | grep -q KNOWNBAD")) {
             $knownbad = 1;
         }
-        if (! -f $actual) {
+        if (! -f $actual and ! $knownbad) {
             push @failed, $_;
         } elsif (!system("grep -qx 'UNSUPPORTED' $actual")) {
             $unsupported = 1;

@@ -243,10 +243,9 @@ end
 We use the usual \code{SILE.typesetter:typeset} and \code{SILE.call}
 functions to output text and call other commands.
 
-\note{If you do need to do something with a dimension, you can use
-\code{SILE.toPoints} to parse a basic length and
-\code{SILE.parseComplexFrameDimension} to parse a frame dimension, and turn
-them into points.}
+\note{If you do need to do something with a dimension, you can use \code{SILE.measurement()} to parse a basic length and
+\code{SILE.parseComplexFrameDimension} to parse a frame dimension,
+and if necessary the \code{:tonumber()} method of dimentions turn them into numbers (in points).}
 
 \section{Output Routines}
 

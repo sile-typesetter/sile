@@ -1,8 +1,8 @@
 local function init (_, _)
 
-  require("core.harfbuzz-shaper")
+  local harfbuzz = require("shapers.harfbuzz")
 
-  SILE.shapers.harfbuzzWithColor = pl.class(SILE.shapers.harfbuzz)
+  SILE.shapers.harfbuzzWithColor = pl.class(harfbuzz)
   SILE.shapers.harfbuzzWithColor._name = "harfbuzzWithColor"
 
   function SILE.shapers.harfbuzzWithColor:shapeToken (str, options)

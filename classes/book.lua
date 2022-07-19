@@ -81,21 +81,21 @@ function book:finish ()
   return ret
 end
 
-book.registerCommands = function (self)
+function book:registerCommands ()
 
   plain.registerCommands(self)
 
-  SILE.registerCommand("left-running-head", function (_, content)
+  self:registerCommand("left-running-head", function (_, content)
     local closure = SILE.settings:wrap()
     SILE.scratch.headers.left = function () closure(content) end
   end, "Text to appear on the top of the left page")
 
-  SILE.registerCommand("right-running-head", function (_, content)
+  self:registerCommand("right-running-head", function (_, content)
     local closure = SILE.settings:wrap()
     SILE.scratch.headers.right = function () closure(content) end
   end, "Text to appear on the top of the right page")
 
-  SILE.registerCommand("book:sectioning", function (options, content)
+  self:registerCommand("book:sectioning", function (options, content)
     local level = SU.required(options, "level", "book:sectioning")
     local number
     if SU.boolean(options.numbering, true) then
@@ -121,27 +121,27 @@ book.registerCommands = function (self)
     end
   end)
 
-  SILE.registerCommand("book:chapter:post", function (_, _)
+  self:registerCommand("book:chapter:post", function (_, _)
     SILE.call("par")
   end)
 
-  SILE.registerCommand("book:section:post", function (_, _)
+  self:registerCommand("book:section:post", function (_, _)
     SILE.process({ " " })
   end)
 
-  SILE.registerCommand("book:subsection:post", function (_, _)
+  self:registerCommand("book:subsection:post", function (_, _)
     SILE.process({ " " })
   end)
 
-  SILE.registerCommand("book:left-running-head-font", function (_, content)
+  self:registerCommand("book:left-running-head-font", function (_, content)
     SILE.call("font", { size = "9pt" }, content)
   end)
 
-  SILE.registerCommand("book:right-running-head-font", function (_, content)
+  self:registerCommand("book:right-running-head-font", function (_, content)
     SILE.call("font", { size = "9pt", style = "Italic" }, content)
   end)
 
-  SILE.registerCommand("chapter", function (options, content)
+  self:registerCommand("chapter", function (options, content)
     SILE.call("open-double-page")
     SILE.call("noindent")
     SILE.scratch.headers.right = nil
@@ -165,7 +165,7 @@ book.registerCommands = function (self)
     SILE.call("nofoliothispage")
   end, "Begin a new chapter")
 
-  SILE.registerCommand("section", function (options, content)
+  self:registerCommand("section", function (options, content)
     SILE.typesetter:leaveHmode()
     SILE.call("goodbreak")
     SILE.call("bigskip")
@@ -200,7 +200,7 @@ book.registerCommands = function (self)
     SILE.typesetter:inhibitLeading()
   end, "Begin a new section")
 
-  SILE.registerCommand("subsection", function (options, content)
+  self:registerCommand("subsection", function (options, content)
     SILE.typesetter:leaveHmode()
     SILE.call("goodbreak")
     SILE.call("noindent")
@@ -221,18 +221,18 @@ book.registerCommands = function (self)
     SILE.typesetter:inhibitLeading()
   end, "Begin a new subsection")
 
-  SILE.registerCommand("book:chapterfont", function (_, content)
+  self:registerCommand("book:chapterfont", function (_, content)
     SILE.settings:temporarily(function ()
       SILE.call("font", { weight = 800, size = "22pt" }, content)
     end)
   end)
-  SILE.registerCommand("book:sectionfont", function (_, content)
+  self:registerCommand("book:sectionfont", function (_, content)
     SILE.settings:temporarily(function ()
       SILE.call("font", { weight = 800, size = "15pt" }, content)
     end)
   end)
 
-  SILE.registerCommand("book:subsectionfont", function (_, content)
+  self:registerCommand("book:subsectionfont", function (_, content)
     SILE.settings:temporarily(function ()
       SILE.call("font", { weight = 800, size = "12pt" }, content)
     end)

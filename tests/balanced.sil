@@ -1,5 +1,4 @@
 \begin[papersize=a5]{document}% KNOWNBAD
-\script{os.exit(1)} % test causes infinite loop
 \nofolios
 \script[src=packages/lorem]
 \script[src=packages/grid]

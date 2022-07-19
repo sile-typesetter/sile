@@ -56,7 +56,7 @@ end
 
 local function registerCommands (class)
 
-  SILE.registerCommand("increment-counter", function (options, _)
+  class:registerCommand("increment-counter", function (options, _)
     local counter = class:getCounter(options.id)
     if (options["set-to"]) then
       counter.value = tonumber(options["set-to"])
@@ -66,20 +66,20 @@ local function registerCommands (class)
     if options.display then counter.display = options.display end
   end, "Increments the counter named by the <id> option")
 
-  SILE.registerCommand("set-counter", function (options, _)
+  class:registerCommand("set-counter", function (options, _)
     local counter = class:getCounter(options.id)
     if options.value then counter.value = tonumber(options.value) end
     if options.display then counter.display = options.display end
   end, "Sets the counter named by the <id> option to <value>; sets its display type (roman/Roman/arabic) to type <display>.")
 
 
-  SILE.registerCommand("show-counter", function (options, _)
+  class:registerCommand("show-counter", function (options, _)
     local counter = class:getCounter(options.id)
     if options.display then counter.display = options.display end
     SILE.typesetter:setpar(class:formatCounter(counter))
   end, "Outputs the value of counter <id>, optionally displaying it with the <display> format.")
 
-  SILE.registerCommand("increment-multilevel-counter", function (options, _)
+  class:registerCommand("increment-multilevel-counter", function (options, _)
     local counter = class:getMultilevelCounter(options.id)
     local currentLevel = #counter.value
     local level = tonumber(options.level) or currentLevel
@@ -102,7 +102,7 @@ local function registerCommands (class)
     if options.display then counter.display[currentLevel] = options.display end
   end)
 
-  SILE.registerCommand("show-multilevel-counter", function (options, _)
+  class:registerCommand("show-multilevel-counter", function (options, _)
     local counter = class:getMultilevelCounter(options.id)
     if options.display then counter.display[#counter.value] = options.display end
 

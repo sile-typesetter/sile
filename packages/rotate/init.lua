@@ -37,7 +37,6 @@ local outputRotatedHbox = function (self, typesetter, line)
 
   local horigin = (typesetter.frame.state.cursorX + origbox.width.length / 2):tonumber()
   local vorigin = -(typesetter.frame.state.cursorY + origbox.height / 2):tonumber()
-  SILE.outputters.libtexpdf._init()
   pdf:gsave()
   pdf.setmatrix(1, 0, 0, 1, horigin, vorigin)
   pdf.setmatrix(math.cos(x), math.sin(x), -math.sin(x), math.cos(x), 0, 0)
@@ -60,9 +59,9 @@ local function init (_, _)
 
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("rotate", function(options, content)
+  class:registerCommand("rotate", function(options, content)
     local angle = SU.required(options, "angle", "rotate command")
     local theta = -math.rad(angle)
     local origbox = SILE.call("hbox", {}, content)

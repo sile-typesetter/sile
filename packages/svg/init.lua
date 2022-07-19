@@ -28,9 +28,25 @@ local _drawSVG = function (svgdata, width, height, density, drop)
     })
 end
 
-local function registerCommands (_)
+local function registerRawHandlers (class)
 
-  SILE.registerCommand("svg", function (options, _)
+  class:registerRawHandler("svg", function(options, content)
+    local svgdata = content[1]
+    local width = options.width and SU.cast("measurement", options.width):absolute() or nil
+    local height = options.height and SU.cast("measurement", options.height):absolute() or nil
+    local density = options.density or 72
+    -- See issue #1375: svg.svg_to_ps() called in _drawSVG has a apparently a side effect
+    -- on the internal representation of the Lua string and corrupts it.
+    -- So as a workaround, for the original string to be able to be reused, we must get a
+    -- copy... So let's force some stupid comment concatenation here.
+    _drawSVG("<!-- copy -->"..svgdata, width, height, density)
+  end)
+
+end
+
+local function registerCommands (class)
+
+  class:registerCommand("svg", function (options, _)
     local fn = SU.required(options, "src", "filename")
     local width = options.width and SU.cast("measurement", options.width):absolute() or nil
     local height = options.height and SU.cast("measurement", options.height):absolute() or nil
@@ -40,11 +56,11 @@ local function registerCommands (_)
     _drawSVG(svgdata, width, height, density)
   end)
 
-  SILE.registerCommand("include-svg-file", function (_, _)
+  class:registerCommand("include-svg-file", function (_, _)
     SU.deprecated("\\include-svg-file", "\\svg", "0.10.10", "0.11.0")
   end, "Deprecated")
 
-  SILE.registerCommand("svg-glyph", function(_, content)
+  class:registerCommand("svg-glyph", function(_, content)
     local fontoptions = SILE.font.loadDefaults({})
     local items = SILE.shaper:shapeToken(content[1], fontoptions)
     local face = SILE.shaper.getFace(fontoptions)
@@ -61,6 +77,7 @@ local function registerCommands (_)
 end
 
 return {
+  registerRawHandlers = registerRawHandlers,
   registerCommands = registerCommands,
   documentation = [[
 \begin{document}

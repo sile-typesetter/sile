@@ -170,10 +170,10 @@ key2 = value2; …]}. If you need to include a comma or semicolon within the
 value to a parameter, you can enclose the value in quotes: \code{[key1
 = "value1, still value 1", key2 = value2; …]}.
 
-The optional argument (of which there can only be at most one) is enclosed in
-curly braces.\footnote{TeX users may forget this and try adding a command
-argument “bare”, without the braces. This won’t work; in SILE, the braces are
-always mandatory.} Because the argument is optional, there is a difference between this: \code{\\command\{args\}} (which is interpreted as a command with argument \code{args}) and \code{\\command \{args\}} (which is interpreted as a command with no arguments, followed by the word \command{args} in a new group).
+The optional argument (of which there can only be at most one) is enclosed in curly braces.
+\footnote{TeX users may forget this and try adding a command argument “bare”, without the braces.
+This won’t work; in SILE, the braces are always mandatory.}
+Because the argument is optional, there is a difference between this: \code{\\command\{args\}} (which is interpreted as a command with argument \code{args}) and \code{\\command \{args\}} (which is interpreted as a command with no arguments, followed by the word \command{args} in a new group).
 
 Here are a few more examples of SILE commands:
 
@@ -190,16 +190,12 @@ Here are a few more examples of SILE commands:
 \end{verbatim}%
 \section{Environments}
 
-Commands like \code{\\chapter} and \code{\\em} (emphasises text by making it
-italic) are normally used to enclose a relatively small piece of text; a few
-lines at most. Where you want to enclose a larger piece of the document, you
-can use an \em{environment}; an environment begins with
-\code{\\begin\{\em{name}\}} and encloses all the text up until the
-corresponding \code{\\end\{\em{name}\}}. We’ve already seen an example, the
-\code{document} environment, which must enclose the \em{entire} document.
+Commands like \code{\\chapter} and \code{\\em} (emphasises text by making it italic) are normally used to enclose a relatively small piece of text; a few lines at most.
+Where you want to enclose a larger piece of the document, you can use an \em{environment}; an environment begins with \code{\\begin\{\em{name}\}} and encloses all the text up until the corresponding \code{\\end\{\em{name}\}}.
+We’ve already seen an example, the \code{document} environment, which must enclose the \em{entire} document.
 
-Here is a secret: there is absolutely no difference between a command and
-an environment. In other words, the following two forms are equivalent:
+Here is a secret: there is absolutely no difference between a command and an environment.
+In other words, the following two forms are equivalent:
 
 \begin{verbatim}
 \line
@@ -211,36 +207,29 @@ Hi there!
 \line
 \end{verbatim}
 
-However, in some cases the environment form of the command will be easier to
-read and will help you to be clearer on where the command begins and ends.
+However, in some cases the environment form of the command will be easier to read and will help you to be clearer on where the command begins and ends.
 
 \section{The XML Flavour}
 
-While we’re on the subject of alternative forms, SILE can actually process its
-input in a completely different file format. What we’ve seen so far has been
-SILE’s “TeX-like flavor”, but if the first character of the input file is an
-angle bracket (\code{<}) then SILE will interpret its input as an XML file. (If
-it isn’t well-formed XML, then SILE will get very upset.)
+While we’re on the subject of alternative forms, SILE can actually process its input in a completely different file format.
+What we’ve seen so far has been SILE’s “TeX-like flavor”, but it can also directly read and process XML files.
+(If it isn’t well-formed XML, then SILE will get very upset.)
 
-Any XML tags within the input file will then be regarded as SILE commands, and
-tag attributes are interpreted as command parameters; from then on, the two
-file formats are exactly equivalent, with one exception: instead of
-a \code{<document>} tag, SILE documents can be enclosed in \em{any} tag.
-(Although \code{<sile>} is conventional for SILE documents.)
+Any XML tags within the input file will then be regarded as SILE commands, and tag attributes are interpreted as command parameters.
+Once read and parsed, processing content from either of the two file formats are exactly equivalent.
 
 In other words, the XML form of the above document would be:
 
 \begin{verbatim}
 \line
-<sile>
+<document>
 Hello SILE!
-</sile>
+</document>
 \line
 \end{verbatim}
 
-Commands without an argument need to be well-formed self-closing XML tags (for
-instance, \code{<break/>}), and commands with parameters should have
-well-formed attributes. The example above, in XML flavor, would look like this:
+Commands without an argument need to be well-formed self-closing XML tags (for instance, \code{<break/>}), and commands with parameters should have well-formed attributes.
+The example above, in XML flavor, would look like this:
 
 \begin{verbatim}
 \line
@@ -248,18 +237,12 @@ well-formed attributes. The example above, in XML flavor, would look like this:
 \line
 \end{verbatim}
 
-We don’t expect humans to write their documents in SILE’s XML flavor—the
-TeX-like flavor is much better for that—but having an XML flavor allows for
-computers to deal with SILE a lot more easily. One could create graphical user
-interfaces to edit SILE documents, or convert other XML formats to SILE.
+We don’t expect humans to write their documents in SILE’s XML flavor—the TeX-like SIL flavor is much better for that—but having an XML flavor allows for computers to deal with SILE a lot more easily.
+One could create graphical user interfaces to edit SILE documents, or convert other XML formats to SILE.
 
-However, there is an even smarter way of processing XML with SILE. For this,
-you need to know that you can define your own SILE commands, which can range
-from very simple formatting to fundamentally changing the way that SILE
-operates. If you have a file in some particular XML format—let’s say it’s
-a DocBook file—and you define SILE commands for each possible DocBook tag, then
-the DocBook file becomes a valid SILE input file, as-is.
+However, there is an even smarter way of processing XML with SILE.
+For this, you need to know that you can define your own SILE commands, which can range from very simple formatting to fundamentally changing the way that SILE operates.
+If you have a file in some particular XML format—let’s say it’s a DocBook file—and you define SILE commands for each possible DocBook tag, then the DocBook file becomes a valid SILE input file, as-is.
 
-In the final two chapters, we’ll provide some examples of defining SILE
-commands and processing XML documents.
+In the final two chapters, we’ll provide some examples of defining SILE commands and processing XML documents.
 \end{document}

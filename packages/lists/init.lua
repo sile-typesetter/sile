@@ -251,15 +251,15 @@ end
 
 local function registerCommands (class)
 
-  SILE.registerCommand("enumerate", function (options, content)
+  class:registerCommand("enumerate", function (options, content)
     doNestedList(class, "enumerate", options, content)
   end)
 
-  SILE.registerCommand("itemize", function (options, content)
+  class:registerCommand("itemize", function (options, content)
     doNestedList(class, "itemize", options, content)
   end)
 
-  SILE.registerCommand("item", function (options, content)
+  class:registerCommand("item", function (options, content)
     if not content._lists_ then
       SU.error("The item command shall not be called outside a list")
     end
