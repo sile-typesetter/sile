@@ -10,9 +10,9 @@ local function init (class, _)
   class:loadPackage("color")
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("background", function (options, _)
+  class:registerCommand("background", function (options, _)
     options.color = options.color or "white"
     options.allpages = options.allpages or true
     outputBackground(options.color)
@@ -32,6 +32,7 @@ return {
   init = init,
   registerCommands = registerCommands,
 documentation = [[\begin{document}
+\script[src=packages.background]
 The \autodoc:package{background} package allows you to set the color of the canvas
 background (by drawing a solid color block the full size of the page on page
 initialization). The package provides a \autodoc:command{\background} command which

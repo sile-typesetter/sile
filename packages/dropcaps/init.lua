@@ -18,7 +18,7 @@ local function registerCommands (class)
 
   -- This implementation relies on the hangafter and hangindent features of Knuth's line-breaking algorithm.
   -- These features in core line breaking algorithm supply the blank space in the paragraph shape but don't fill it with anything.
-  SILE.registerCommand("dropcap", function (options, content)
+  class:registerCommand("dropcap", function (options, content)
     local lines = SU.cast("integer", options.lines or 3)
     local join = SU.boolean(options.join, false)
     local standoff = SU.cast("measurement", options.standoff or "1spc")
@@ -29,7 +29,7 @@ local function registerCommands (class)
     local color = options.color
     options.size = nil -- we need to measure the "would have been" size before using this
 
-    if color then class:loadPackage("packages.color") end
+    if color then class:loadPackage("color") end
 
     -- We want the drop cap to span over N lines, that is N - 1 baselineskip + the height of the first line.
     -- Note this only works for the default linespace mechanism.

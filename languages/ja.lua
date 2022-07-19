@@ -181,18 +181,7 @@ return {
     SILE.registerCommand("book:chapter:post:ja", function (_, _)
       SILE.call("fluent", {}, { "book-chapter-post" })
       SILE.call("medskip")
-    end)
-
-    -- jlreq measures distances in units of 1em, but also assumes that an em is the
-    -- width of a full-width character. In SILE terms it isn't: measuring an "m" in
-    -- a 10pt Japanese font gets you 5 points. So we measure a full-width character
-    -- and use that as a unit. We call it zw following ptex (zenkaku width)
-    SILE.units["zw"] = {
-      relative = true,
-      definition = function (v)
-        return v * SILE.shaper:measureChar("あ").width
-      end
-    }
+    end, nil, nil, true)
 
   end
 }

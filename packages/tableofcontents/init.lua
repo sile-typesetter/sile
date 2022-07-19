@@ -1,4 +1,6 @@
-local _tableofcontents = {}
+if not SILE.scratch._tableofcontents then
+  SILE.scratch._tableofcontents = {}
+end
 
 local function _moveTocNodes (class)
   local node = SILE.scratch.info.thispage.toc
@@ -17,7 +19,7 @@ local function _writeToc (_)
   tocfile:write("return " .. tocdata)
   tocfile:close()
 
-  if not pl.tablex.deepcompare(SILE.scratch.tableofcontents, _tableofcontents) then
+  if not pl.tablex.deepcompare(SILE.scratch.tableofcontents, SILE.scratch._tableofcontents) then
     io.stderr:write("\n! Warning: table of contents has changed, please rerun SILE to update it.")
   end
 end
@@ -58,7 +60,9 @@ local function _nodesToText (nodes)
   return string
 end
 
-local dc = 1
+if not SILE.scratch.pdf_destination_counter then
+  SILE.scratch.pdf_destination_counter = 1
+end
 
 local function init (class, _)
 
@@ -72,26 +76,11 @@ local function init (class, _)
   class:registerHook("endpage", _moveTocNodes)
   class:registerHook("finish", _writeToc)
 
-class:registerPostinit(function ()
-  SILE.doTexlike([[%
-\define[command=tableofcontents:notocmessage]{\tableofcontents:headerfont{\fluent{toc-not-generated}}}%
-\define[command=tableofcontents:headerfont]{\font[size=24pt,weight=800]{\process}}%
-\define[command=tableofcontents:header]{\par\noindent\tableofcontents:headerfont{\fluent{toc-title}}\medskip}%
-\define[command=tableofcontents:footer]{}%
-\define[command=tableofcontents:level1item]{\bigskip\noindent\font[size=14pt,weight=800]{\process}\medskip}%
-\define[command=tableofcontents:level2item]{\noindent\font[size=12pt]{\process}\medskip}%
-\define[command=tableofcontents:level3item]{\indent\font[size=10pt]{\process}\smallskip}%
-\define[command=tableofcontents:level1number]{}%
-\define[command=tableofcontents:level2number]{}%
-\define[command=tableofcontents:level3number]{}%
-]])
-end)
-
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("tableofcontents", function (options, _)
+  class:registerCommand("tableofcontents", function (options, _)
     local depth = SU.cast("integer", options.depth or 3)
     local linking = SU.boolean(options.linking, true)
     local tocfile,_ = io.open(SILE.masterFilename .. '.toc')
@@ -114,10 +103,10 @@ local function registerCommands (_)
       end
     end
     SILE.call("tableofcontents:footer")
-    _tableofcontents = toc
+    SILE.scratch._tableofcontents = toc
   end)
 
-  SILE.registerCommand("tableofcontents:item", function (options, content)
+  class:registerCommand("tableofcontents:item", function (options, content)
     SILE.settings:temporarily(function ()
       SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
       SILE.call("tableofcontents:level" .. options.level .. "item", {
@@ -138,17 +127,17 @@ local function registerCommands (_)
     end)
   end)
 
-  SILE.registerCommand("tocentry", function (options, content)
+  class:registerCommand("tocentry", function (options, content)
     local dest
     if SILE.Commands["pdf:destination"] then
-      dest = "dest" .. dc
+      dest = "dest" .. tostring(SILE.scratch.pdf_destination_counter)
       SILE.call("pdf:destination", { name = dest })
       SILE.typesetter:pushState()
       SILE.process(content)
       local title = _nodesToText(SILE.typesetter.state.nodes)
       SILE.typesetter:popState()
       SILE.call("pdf:bookmark", { title = title, dest = dest, level = options.level })
-      dc = dc + 1
+      SILE.scratch.pdf_destination_counter = SILE.scratch.pdf_destination_counter + 1
     end
     SILE.call("info", {
       category = "toc",
@@ -161,9 +150,55 @@ local function registerCommands (_)
     })
   end)
 
-  SILE.registerCommand("tableofcontents:title", function (_, _)
+  class:registerCommand("tableofcontents:title", function (_, _)
     SU.deprecated("\\tableofcontents:title", "\\fluent{toc-title}", "0.13.0", "0.14.0")
   end, "Deprecated")
+
+  class:registerCommand("tableofcontents:notocmessage", function (_, _)
+    SILE.call("tableofcontents:headerfont", {}, function ()
+      SILE.call("fluent", {}, { "toc-not-generated" })
+    end)
+  end)
+
+  class:registerCommand("tableofcontents:headerfont", function (_, content)
+    SILE.call("font", { size = 24, weight = 800 }, content)
+  end)
+
+  class:registerCommand("tableofcontents:header", function (_, _)
+    SILE.call("par")
+    SILE.call("noindent")
+    SILE.call("tableofcontents:headerfont", {}, function ()
+      SILE.call("fluent", {}, { "toc-title" })
+    end)
+    SILE.call("medskip")
+  end)
+
+  class:registerCommand("tableofcontents:footer", function (_, _) end)
+
+  class:registerCommand("tableofcontents:level1item", function (_, content)
+    SILE.call("bigskip")
+    SILE.call("noindent")
+    SILE.call("font", { size = 14, weight = 800 }, content)
+    SILE.call("medskip")
+  end)
+
+  class:registerCommand("tableofcontents:level2item", function (_, content)
+    SILE.call("noindent")
+    SILE.call("font", { size = 12 }, content)
+    SILE.call("medskip")
+  end)
+
+  class:registerCommand("tableofcontents:level3item", function (_, content)
+    SILE.call("indent")
+    SILE.call("font", { size = 10 }, content)
+    SILE.call("smallskip")
+  end)
+
+  class:registerCommand("tableofcontents:level1number", function (_, _) end)
+
+  class:registerCommand("tableofcontents:level2number", function (_, _) end)
+
+  class:registerCommand("tableofcontents:level3number", function (_, _) end)
 
 end
 
@@ -182,18 +217,18 @@ return {
   exports = {
     writeToc = function (_)
       SU.deprecated("class:writeToc", nil, "0.13.0", "0.14.0", _deprecate)
-      return _writeToc()
     end,
-    moveTocNodes = function (class)
+    moveTocNodes = function (_)
       SU.deprecated("class:moveTocNodes", nil, "0.13.0", "0.14.0", _deprecate)
-      return _moveTocNodes(class)
     end
   },
   documentation = [[
 \begin{document}
-The \autodoc:package{tableofcontents} package provides tools for class authors to create tables of contents.
-When you are writing sectioning commands such as \code{\\chapter} or \code{\\section},
-your classes should call the \autodoc:command{\tocentry[level=<number>, number=<strings>]{<title>}} command to add a table of contents entry.
+The \autodoc:package{tableofcontents} package provides tools for class authors to
+create tables of contents. When you are writing sectioning commands such
+as \code{\\chapter} or \code{\\section}, your classes should call the
+\autodoc:command{\tocentry[level=<number>, number=<strings>]{<title>}}
+command to register a table of contents entry.
 At the end of each page the class will call a hook function (\code{moveTocNodes}) that collates the table of contents entries from that pages and logs which page they’re on.
 At the end of the document another hook function (\code{writeToc}) will write this data to a file.
 The next time the document is built, any use of the \autodoc:command{\tableofcontents} (typically near the beginning of a document) will be able to read that index data and output the TOC.
@@ -202,22 +237,26 @@ the TOC will not render until at least the second pass.
 If by chance rendering the TOC itself changes the document pagination (e.g. the TOC spans more than one page) it might be necessary to run SILE 3 times to get accurate page numbers shown in the TOC.
 
 
-The \autodoc:command{\tableofcontents} command accepts a \autodoc:parameter{depth} option to control the depth of the content added to the table.
+The \autodoc:command{\tableofcontents} command accepts a \autodoc:parameter{depth} option to
+control the depth of the content added to the table.
 
 If the \autodoc:package{pdf} package is loaded before using sectioning commands,
 then a PDF document outline will be generated.
-Moreover, entries in the table of contents will be active links to the relevant sections.
-To disable the latter behavior, pass \autodoc:parameter{linking=false} to the \autodoc:command{\tableofcontents} command.
+Moreover, entries in the table of contents will be active links to the
+relevant sections. To disable the latter behavior, pass \autodoc:parameter{linking=false} to
+the \autodoc:command{\tableofcontents} command.
 
-Class designers can also style the table of contents by overriding the following commands:
+Class designers can also style the table of contents by overriding the
+following commands:
 
-\noindent{}• \autodoc:command{\tableofcontents:headerfont} - the font used for the header.
-
-\noindent{}• \autodoc:command{\tableofcontents:level1item}, \autodoc:command{\tableofcontents:level2item}, etc. - styling
-for entries.
-
-\noindent{}• \autodoc:command{\tableofcontents:level1number}, \autodoc:command{\tableofcontents:level2number}, etc. - deciding what to do with entry section number, if defined: by default, nothing (so they do not show
-up in the table of contents).
+\begin{itemize}
+\item{\autodoc:command{\tableofcontents:headerfont} - the font used for the header.}
+\item{\autodoc:command{\tableofcontents:level1item}, \autodoc:command{\tableofcontents:level2item},
+      etc. - styling for entries.}
+\item{\autodoc:command{\tableofcontents:level1number}, \autodoc:command{\tableofcontents:level2number},
+      etc. - deciding what to do with entry section number, if defined: by default, nothing (so they
+      do not show up in the table of contents).}
+\end{itemize}
 
 \end{document}
 ]]

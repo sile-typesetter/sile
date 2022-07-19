@@ -1,11 +1,10 @@
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("alt", function (_, content)
+  class:registerCommand("alt", function (_, _)
     SU.deprecated("\\alt", "\\alternative", "0.10.0", "0.14.0")
-    SILE.call("alternative", {}, content)
   end, "Deprecated")
 
-  SILE.registerCommand("alternative", function (_, content)
+  class:registerCommand("alternative", function (_, content)
     local alts = {}
     for _, fragment in ipairs(content) do
       SILE.call("hbox", {}, { fragment })
@@ -37,4 +36,5 @@ For instance, issuing the command \autodoc:command{\alternative{\{and\}\{&\}}} w
 either the text \examplefont{and} or an ampersand, depending on what best
 fits the current line.
 \end{document}
-]]}
+]]
+}

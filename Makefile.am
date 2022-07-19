@@ -130,6 +130,7 @@ DEPDIR := .deps
 REGRESSIONSCRIPT := ./tests/regressions.pl
 LOCALTESTFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
 SILEFLAGS ?= -m $(DEPDIR)/$(basename $@).d -d versions -f fontconfig
+BUSTEDFLAGS ?=
 
 TESTPDFS   = $(addsuffix      .pdf,$(basename $(TESTSRCS)))
 EXPECTEDS ?= $(filter $(addsuffix .expected,$(basename $(TESTSRCS))),$(TESTEXPECTS))
@@ -163,7 +164,7 @@ luacheck:
 	luacheck -j$(shell nproc) -q .
 
 .PHONY: busted
-busted: $(SILE) $(addprefix .fonts/,$(TESTFONTFILES))
+busted: $(SILE) $(addprefix .fonts/,$(TESTFONTFILES)) $(BUSTEDSPECS)
 	set -f; IFS=';'
 if SYSTEM_LUAROCKS
 	packagecpath=(./{,core/}?.$(SHARED_LIB_EXT))
@@ -172,7 +173,7 @@ else
 	packagecpath=(./{,core/,lua_modules/lib/lua/$(LUA_VERSION)/}?.$(SHARED_LIB_EXT))
 	packagepath=(./{,lua_modules/share/lua/$(LUA_VERSION)/,lua-libraries/}?{,/init}.lua)
 endif
-	$(LOCALTESTFONTS) busted --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" spec
+	$(LOCALTESTFONTS) busted --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" $(BUSTEDFLAGS) .
 
 .PHONY: docs
 docs: $(MANUAL)
@@ -201,7 +202,7 @@ _DOCS_DEPS = $(and $$(filter documentation/%,$@),$(addprefix .fonts/,$(DOCSFONTF
 # TODO: remove _BUILT_SUBDIRS hack and replace it with something sensible when
 # these subdirs don't do crazy things like copying files outside of their own trees!
 _BUILT_SUBDIRS = .built-subdirs
-_SUBDIR_TELLS = core/justenoughfontconfig.so core/justenoughharfbuzz.so core/justenoughicu.so core/justenoughlibtexpdf.so libtexpdf/.libs/libtexpdf.so.0.0.0
+_SUBDIR_TELLS = justenoughfontconfig.so justenoughharfbuzz.so justenoughicu.so justenoughlibtexpdf.so libtexpdf/.libs/libtexpdf.so.0.0.0
 $(_BUILT_SUBDIRS): $(_SUBDIR_TELLS)
 	touch $@
 
@@ -215,6 +216,9 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(LUAMODLOCK) 
 	$(runsile)
 
 %.pdf: %.xml $$(patterndeps)
+	$(runsile)
+
+%.pdf: %.nil $$(patterndeps)
 	$(runsile)
 
 .PHONY: coverage
@@ -325,6 +329,9 @@ tests/%.expected: tests/%.sil $$(patterndeps)
 tests/%.expected: tests/%.xml $$(patterndeps)
 	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
 
+tests/%.expected: tests/%.nil $$(patterndeps)
+	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
+
 .PHONY: update_actuals
 update_actuals: $(ACTUALS)
 
@@ -336,6 +343,10 @@ tests/%.actual: tests/%.sil $$(patterndeps)
 	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
 
 tests/%.actual: tests/%.xml $$(patterndeps)
+	-$(if $(CLEAN),rm -f $@,:)
+	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
+
+tests/%.actual: tests/%.nil $$(patterndeps)
 	-$(if $(CLEAN),rm -f $@,:)
 	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
 

@@ -1,5 +1,5 @@
 local deprecator = function ()
-  SU.deprecated("SILE.settings.*", "SILE.settings:*", "0.13.0", "0.14.0")
+  SU.deprecated("SILE.settings.*", "SILE.settings:*", "0.13.0", "0.15.0")
   return SILE.settings
 end
 
@@ -68,6 +68,13 @@ function settings:_init()
     help = "Skip to be added to left side of line"
   })
 
+  self:declare({
+    parameter = "document.zenkakuchar",
+    default = "あ",
+    type = "string",
+    help = "The character measured to determine the length of a zenkaku width (全角幅)"
+  })
+
   SILE.registerCommand("set", function(options, content)
     local parameter = SU.required(options, "parameter", "\\set command")
     local makedefault = SU.boolean(options.makedefault, false)
@@ -84,7 +91,7 @@ function settings:_init()
     else
       self:set(parameter, value, makedefault, reset)
     end
-  end, "Set a SILE parameter <parameter> to value <value> (restoring the value afterwards if <content> is provided)")
+  end, "Set a SILE parameter <parameter> to value <value> (restoring the value afterwards if <content> is provided)", nil, true)
 
 end
 

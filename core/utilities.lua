@@ -30,8 +30,8 @@ end
 utilities.error = function(message, bug)
   utilities.warn(message, bug)
   io.stderr:flush()
-  SILE.outputter:finish()
-  os.exit(1)
+  SILE.outputter:finish() -- Only really useful from the REPL but no harm in trying
+  error(nil, 2)
 end
 
 utilities.warn = function(message, bug)
@@ -105,6 +105,32 @@ utilities.debug = function (category, ...)
     end
     io.stderr:write("\n["..category.."] ", utilities.concat(inputs, " "))
   end
+end
+
+utilities.debugAST = function (ast, level)
+  if not ast then
+    SU.error("debugAST called with nil", true)
+  end
+  local out = string.rep("  ", 1+level)
+  if level == 0 then
+    SU.debug("ast", "["..SILE.currentlyProcessingFile)
+  end
+  if type(ast) == "function" then
+    SU.debug("ast", out .. tostring(ast))
+  end
+  for _, content in ipairs(ast) do
+    if type(content) == "string" then
+      SU.debug("ast", out .. "[" .. content .. "]")
+    elseif SILE.Commands[content.command] then
+      SU.debug("ast", out.."\\" .. content.command .. " " .. pl.pretty.write(content.options, ""))
+      if (#content>=1) then utilities.debugAST(content, level+1) end
+    elseif content.id == "texlike_stuff" or (not content.command and not content.id) then
+      utilities.debugAST(content, level+1)
+    else
+      SU.debug("ast", out.."?\\"..(content.command or content.id))
+    end
+  end
+  if level == 0 then SU.debug("ast", "]") end
 end
 
 utilities.dump = function (...)

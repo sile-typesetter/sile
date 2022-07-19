@@ -30,7 +30,6 @@ function tClass:_init ()
 end
 
 SILE.documentState.documentClass = tClass()
-SILE.documentState.documentClass:start()
 
 describe("Overlapping frame definitions", function()
   it("should work", function()

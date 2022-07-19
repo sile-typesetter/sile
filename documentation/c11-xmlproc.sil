@@ -91,11 +91,11 @@ commands to override.
 So far so good, but how do we extract the \code{<title>} tag from the \code{content}
 abstract syntax tree? SILE does not provide XPath or CSS-style selectors to locate
 content form within the DOM tree;\footnote{Patches, as they say, are welcome.} instead
-there is a simple one-level function called \code{SILE.findInTree} which looks for
+there is a simple one-level function called \code{SILE.inputter:findInTree()} which looks for
 a particular tag or command name within the immediate children of the current tree:
 
 \begin{verbatim}
-    local t = SILE.findInTree(content, "title")
+    local t = SILE.inputter:findInTree(content, "title")
     if t then
       SILE.typesetter:typeset(": ")
       SILE.process(t)
@@ -181,7 +181,7 @@ any counts we have for levels above the current level (if we didn’t do that, t
 Now we find the title, and prefix it by the concatenation of all the \code{seccount}s:
 
 \begin{verbatim}
-  local title = SILE.findInTree(content, "title")
+  local title = SILE.inputter:findInTree(content, "title")
   local number = table.concat(SILE.scratch.docbook.seccount, '.')
   if title then
     SILE.call("docbook-section-"..SILE.scratch.docbook.seclevel.."-title",\{\},function()

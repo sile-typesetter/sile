@@ -2,6 +2,68 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.13.3](https://github.com/sile-typesetter/sile/compare/v0.13.2...v0.13.3) (2022-07-15)
+
+
+### Features
+
+* **packages:** Add minimal support for usual BibTeX types (bibtex) ([292a2f2](https://github.com/sile-typesetter/sile/commit/292a2f2b2367a93a97add70fa42191b5b5bb800c))
+
+
+### Bug Fixes
+
+* **build:** Update Flake to work with Nix >= 2.10 ([3d5a18c](https://github.com/sile-typesetter/sile/commit/3d5a18cf8b202060e6c884fa3d73150f0aec9e58))
+* **core:** Avoid duplicate paths blocking directory searches ([7a7209f](https://github.com/sile-typesetter/sile/commit/7a7209fff9fb0b2ca8a59816dae55e201b0c1208))
+* **core:** Avoid error when outputting overflow warnings with specific measurements ([cb51ed5](https://github.com/sile-typesetter/sile/commit/cb51ed525684fab85c99e29474e0ba58806ba1ac)), closes [#945](https://github.com/sile-typesetter/sile/issues/945)
+* **outputter:** Non-RGB colors shall work with the debug outputter ([#1469](https://github.com/sile-typesetter/sile/issues/1469)) ([41fbdf4](https://github.com/sile-typesetter/sile/commit/41fbdf44659385171f813576373be36556023a73))
+* **packages:** BibTeX types/tags are case-insensitive, etc ([61c1fc6](https://github.com/sile-typesetter/sile/commit/61c1fc6209bfbfffa38a05f9d3986bfb50c8a840))
+* **packages:** Make \script command properly initialize packages ([9ded7e1](https://github.com/sile-typesetter/sile/commit/9ded7e1c2aaa03cb4da25ff2ef49c15d40497f9a))
+
+### [0.13.2](https://github.com/sile-typesetter/sile/compare/v0.13.1...v0.13.2) (2022-06-29)
+
+
+### Features
+
+* **core:** Add presets for some ANSI paper sizes and ArchE variants ([0f26756](https://github.com/sile-typesetter/sile/commit/0f267563c6f674d61c91485f771e825e83489590))
+* **languages:** Add full Esperanto language support ([b740709](https://github.com/sile-typesetter/sile/commit/b7407090ab4feac9107454db0f328c3d886a0631))
+* **packages:** Add 'lists' package (bullets and enumerations) ([6af3c62](https://github.com/sile-typesetter/sile/commit/6af3c62822ac334c64e2c46d8def11c51a017093))
+* **packages:** Add more options for custom 'lists"' styling ([3167410](https://github.com/sile-typesetter/sile/commit/316741033da7edff44cb933a311f3b5080b763c7))
+* **packages:** Handle font fallback when glyph named null returned on shape falure ([09c0a86](https://github.com/sile-typesetter/sile/commit/09c0a8647105bbddac155f3414cda2bc481a86ca))
+* **packages:** Pass through font-specific options to fallback fonts ([fb29442](https://github.com/sile-typesetter/sile/commit/fb2944233ea13e10729ada47aa8b72db44ea8a30))
+
+
+### Bug Fixes
+
+* **classes:** Clarify the scopes of `tate` and `jplain` ([db83e9e](https://github.com/sile-typesetter/sile/commit/db83e9ede06dedf89112a7d9d76e185df90f6dba))
+* **classes:** Fix circular reference in pecha class ([4501ec0](https://github.com/sile-typesetter/sile/commit/4501ec07cb0ec5183485fb39b965d8267cf176e0))
+* **classes:** Fix diglot and triglot class instantiation ([71af1a9](https://github.com/sile-typesetter/sile/commit/71af1a94b41e3d86715a369092d1ea6ffeeb6a5b))
+* **core:** Make paper size parser case insensitive, e.g. 'a4' or 'A4' ([af441c8](https://github.com/sile-typesetter/sile/commit/af441c8b381cae3ea18169105e951d60fcb5255f))
+* **measurements:** Move the zenkaku width (zw) unit into core ([cfe5060](https://github.com/sile-typesetter/sile/commit/cfe506001387a81f37dd9612444b066e138ba179))
+* **packages:** Correct fall-back font processing ([d3cc59b](https://github.com/sile-typesetter/sile/commit/d3cc59b9f32eefd06780f4984d066007283434dc))
+* **packages:** Correct package load path for colored dropcaps ([41a0c17](https://github.com/sile-typesetter/sile/commit/41a0c17bee08f1e127b3d1cd4f3ee9cc4283aeac))
+* **packages:** Fix coding errors in untested corners of bibtex package ([804b1a5](https://github.com/sile-typesetter/sile/commit/804b1a548615054cf810850d1c5cd01ad20c47fb))
+* **packages:** Fix loading TOC twice resetting pdf links ([97797b8](https://github.com/sile-typesetter/sile/commit/97797b89b7cc195f1011495ec87ad1b94121464e))
+* **shaper:** Handle switching between color & fallback shapers in single document ([04f2d5d](https://github.com/sile-typesetter/sile/commit/04f2d5df94373cc75e02b51f5847d7247a2025e7))
+* **utilities:** Raise Lua error instead of manually aborting if inside pcall() ([6e70a17](https://github.com/sile-typesetter/sile/commit/6e70a17562f298234e85862df30d12dfdc963f48))
+
+### [0.13.1](https://github.com/sile-typesetter/sile/compare/v0.13.0...v0.13.1) (2022-06-18)
+
+
+### Features
+
+* **build:** Update libtexpdf to support new hardware platforms ([da1182e](https://github.com/sile-typesetter/sile/commit/da1182ec3601d9a4ea5b2529c6d0de4108bbf211))
+* **packages:** Add hrulefill command to the "rules" package ([ccd3371](https://github.com/sile-typesetter/sile/commit/ccd3371aafa4f314c9d2a967106e03c373cf1a35))
+* **packages:** Add strikethrough command to the rules package ([#1422](https://github.com/sile-typesetter/sile/issues/1422)) ([f230a3a](https://github.com/sile-typesetter/sile/commit/f230a3aae72cf84075623165ce6ded0c9aa2bdd0))
+* **packages:** Use new strikethrough when rendering Panndoc's SILE writer ([20d19eb](https://github.com/sile-typesetter/sile/commit/20d19eb849307a1067006a595b2e4f2b92e53112))
+
+
+### Bug Fixes
+
+* **build:** Make sure i18n/ dir is actually distributed ([#1445](https://github.com/sile-typesetter/sile/issues/1445)) ([61ed8e1](https://github.com/sile-typesetter/sile/commit/61ed8e13eee3c2f5f802605a9da5f25ad0040164))
+* **packages:** Add more props to keep CJK from tipping over, per [#1245](https://github.com/sile-typesetter/sile/issues/1245) ([381b9f1](https://github.com/sile-typesetter/sile/commit/381b9f14d10e1bbcf0b117642c4c13e3dcd4c620))
+* **packages:** Leaders shall be an explicit (non-discardable) glue ([631ba21](https://github.com/sile-typesetter/sile/commit/631ba21c182389dd5a68241a36d1eb4fb13c895b))
+* **packages:** The fullrule now extends over a full standalone line ([8fe57c8](https://github.com/sile-typesetter/sile/commit/8fe57c844f2a093d7abe35dfe6c63d5df5ab7115))
+
 ## [0.13.0](https://github.com/sile-typesetter/sile/compare/v0.12.5...v0.13.0) (2022-06-09)
 
 

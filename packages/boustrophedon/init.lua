@@ -24,9 +24,9 @@ local function init (_)
 
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("boustrophedon", function (_, content)
+  class:registerCommand("boustrophedon", function (_, content)
     SILE.typesetter:leaveHmode()
     local saveBoxup = SILE.typesetter.boxUpNodes
     local swaps = 0
@@ -56,7 +56,7 @@ return {
   init = init,
   registerCommands = registerCommands,
 documentation = [[\begin{document}
-
+\script[src=packages.boustrophedon]
 Partly designed to show off SILE’s extensibility, and partly designed for
 real use by classicists, the \autodoc:package{boustrophedon} package allows you to typeset
 ancient Greek texts in the ‘ox-turning’ layout—the first line is

@@ -1,6 +1,6 @@
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("img", function (options, _)
+  class:registerCommand("img", function (options, _)
     SU.required(options, "src", "including image file")
     local width =  SILE.parseComplexFrameDimension(options.width or 0) or 0
     local height = SILE.parseComplexFrameDimension(options.height or 0) or 0

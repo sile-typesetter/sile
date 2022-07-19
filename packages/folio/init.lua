@@ -43,26 +43,25 @@ local function init (class, _)
   class:registerHook("endpage", _outputFolio)
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("folios", function (_, _)
+  class:registerCommand("folios", function (_, _)
     SILE.scratch.counters.folio.off = false
   end)
 
-  SILE.registerCommand("nofolios", function (_, _)
+  class:registerCommand("nofolios", function (_, _)
     SILE.scratch.counters.folio.off = true
   end)
 
-  SILE.registerCommand("nofoliothispage", function (_, _)
+  class:registerCommand("nofoliothispage", function (_, _)
     SILE.scratch.counters.folio.off = 2
   end)
 
-  SILE.registerCommand("nofoliosthispage", function (_, _)
+  class:registerCommand("nofoliosthispage", function (_, _)
     SU.deprecated("nofoliosthispage", "nofoliothispage", "0.12.1", "0.14.0")
-    return SILE.Commands["nofoliothispage"]()
   end, "Deprecated")
 
-  SILE.registerCommand("foliostyle", function (_, content)
+  class:registerCommand("foliostyle", function (_, content)
     SILE.call("center", {}, content)
   end)
 
@@ -82,7 +81,7 @@ return {
   registerCommands = registerCommands,
   exports = {
     outputFolio = function (class)
-      SU.deprecated("class:outputFolio", nil, "0.13.0", "0.14.0", _deprecate)
+      SU.deprecated("class:outputFolio", nil, "0.13.0", "0.15.0", _deprecate)
       return _outputFolio(class)
     end,
   },
@@ -94,13 +93,12 @@ the output of folios—the old-time typesetter word for page numbers.
 
 It provides four commands to users:
 
-\noindent{}• \autodoc:command{\nofolios}: turns page numbers off.
-
-\noindent{}• \autodoc:command{\nofoliothispage}: turns page numbers off for one page, then on again afterward.
-
-\noindent{}• \autodoc:command{\folios}: turns page numbers back on.
-
-\noindent{}• \autodoc:command{\foliostyle}: a command you can override to style the page numbers. By default, they are centered on the page.
+\begin{itemize}
+\item{\autodoc:command{\nofolios}: turns page numbers off.}
+\item{\autodoc:command{\nofoliothispage}: turns page numbers off for one page, then on again afterward.}
+\item{\autodoc:command{\folios}: turns page numbers back on.}
+\item{\autodoc:command{\foliostyle}: a command you can override to style the page numbers. By default, they are centered on the page.}
+\end{itemize}
 
 If, for instance, you want to set page numbers in a different font
 you can redefine the command like so:

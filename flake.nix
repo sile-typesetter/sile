@@ -36,6 +36,32 @@
       inherit (gitignore.lib) gitignoreSource;
       # https://discourse.nixos.org/t/passing-git-commit-hash-and-tag-to-build-with-flakes/11355/2
       version_rev = if (self ? rev) then (builtins.substring 0 7 self.rev) else "dirty";
+      # Prepare a different luaEnv to be used in the overridden expression,
+      # this is also the place to choose a different lua interpreter, such as
+      # lua5_3 or luajit
+      luaEnv = pkgs.lua5_3.withPackages(ps: with ps; [
+        cassowary
+        cldr
+        cosmo
+        fluent
+        linenoise
+        loadkit
+        lpeg
+        lua-zlib
+        lua_cliargs
+        luaepnf
+        luaexpat
+        luafilesystem
+        luarepl
+        luasec
+        luasocket
+        luautf8
+        penlight
+        vstruct
+        # If we want to test things with lua5.2 or an even older lua, we uncomment these
+        #bit32
+        #compat53
+      ]);
       # Use the expression from Nixpkgs instead of rewriting it here.
       sile = pkgs.sile.overrideAttrs(oldAttr: rec {
         version = "${(pkgs.lib.importJSON ./package.json).version}-${version_rev}-flake";
@@ -56,16 +82,14 @@
             ".editorconfig"
             # CI files
             ".cirrus.yml"
+            ".github"
             "action.yml"
             "azure-pipelines.yml"
             "Dockerfile"
             # Git files
-            ".github"
             ".gitattributes"
-            ".gitignore"
             ".git"
-          ])
-          ;
+          ]);
           src = gitignoreSource ./.;
         };
         # Add the libtexpdf src instead of the git submodule.

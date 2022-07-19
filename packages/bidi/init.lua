@@ -255,29 +255,29 @@ end
 
 local function registerCommands (class)
 
-  SILE.registerCommand("thisframeLTR", function (_, _)
+  class:registerCommand("thisframeLTR", function (_, _)
     SILE.typesetter.frame.direction = "LTR"
     SILE.typesetter:leaveHmode()
     SILE.typesetter.frame:newLine()
   end)
 
-  SILE.registerCommand("thisframedirection", function (options, _)
+  class:registerCommand("thisframedirection", function (options, _)
     SILE.typesetter.frame.direction = SU.required(options, "direction", "frame direction")
     SILE.typesetter:leaveHmode()
     SILE.typesetter.frame:init()
   end)
 
-  SILE.registerCommand("thisframeRTL", function (_, _)
+  class:registerCommand("thisframeRTL", function (_, _)
     SILE.typesetter.frame.direction = "RTL"
     SILE.typesetter:leaveHmode()
     SILE.typesetter.frame:newLine()
   end)
 
-  SILE.registerCommand("bidi-on", function (_, _)
+  class:registerCommand("bidi-on", function (_, _)
     bidiEnableTypesetter(class, SILE.typesetter)
   end)
 
-  SILE.registerCommand("bidi-off", function (_, _)
+  class:registerCommand("bidi-off", function (_, _)
     bidiDisableTypesetter(class, SILE.typesetter)
   end)
 

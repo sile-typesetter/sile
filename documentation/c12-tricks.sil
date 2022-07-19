@@ -445,42 +445,39 @@ Running SILE with the \code{--debug \em{facility}} switch will turn on debugging
 % Scan code for currently used flags:
 % rg -I '.*SU.debug(ging)?\("(\w+)".*' -r '$2' | =sort -u
 
-\noindent{}• \code{ast} provides information about how SILE parsed the document into an abstract syntax tree.
-
-\noindent{}• \code{break} provides (copious) information about the line breaking algorithm.
-
-\noindent{}• \code{fonts} shows what font families and attributes were attempted and what font files were used to supply them.
-
-\noindent{}• \code{frames} draws red boxes around the frames on the page.
-
-\noindent{}• \code{hboxes} draws red boxes around all the hboxes on the page.
-
-\noindent{}• \code{pagebuilder} helps to debug problems when determining page breaks.
-
-\noindent{}• \code{macros} notes when new functions are defined from TeXlike macro syntax.
-
-\noindent{}• \code{makedeps} lists resources that were determined to be dependencies (use with \code{-m}).
-
-\noindent{}• \code{profile} turns on Lua profiling,
-which gives a report on where the Lua interpreter is spending its time while processing your document.
-It also makes SILE go really, really slow.
-
-\noindent{}• \code{pushback} notes how already-shaped content that didn’t fit in frames is processed as it migrates to following ones.
-
-\noindent{}• \code{tokenizer} shows how input content gets broken up into segments before shaping.
-
-\noindent{}• \code{typesetter} provides general debugging for the typesetter:
-turning characters into boxes, boxes into lines, lines into paragraphs, and paragraphs into pages.
-
-\noindent{}• \code{vboxes} provides even more information about page break decisions,
-showing you what vboxes were in SILE’s queue when considering the breaking.
-
-\noindent{}• \code{versions} gives a report on the versions of libraries and fonts in use;
-please include this information when reporting bugs in SILE!
-
-\noindent{}• Any package or other area of SILE’s operation may define their own debugging tags;
-the \code{insertions} package does this, as do the Japanese and Uyghur language support systems (\code{--debug uyghur}).
-Often the debug flag is the name of the package or the function.
+\begin{itemize}
+\item{\code{ast} provides information about how SILE parsed the document into
+      an abstract syntax tree.}
+\item{\code{break} provides (copious) information about the line breaking
+      algorithm.}
+\item{\code{fonts} shows what font families and attributes were attempted
+      and what font files were used to supply them.}
+\item{\code{frames} draws red boxes around the frames on the page.}
+\item{\code{hboxes} draws red boxes around all the hboxes on the page.}
+\item{\code{pagebuilder} helps to debug problems when determining page breaks.}
+\item{\code{macros} notes when new functions are defined from TeXlike macro
+      syntax.}
+\item{\code{makedeps} lists resources that were determined to be dependencies
+      (use with \code{-m}).}
+\item{\code{profile} turns on Lua profiling, which gives a report on where the
+      Lua interpreter is spending its time while processing your document.
+      It also makes SILE go really, really slow.}
+\item{\code{pushback} notes how already-shaped content that didn’t fit in
+      frames is processed as it migrates to following ones.}
+\item{\code{tokenizer} shows how input content gets broken up into segments
+      before shaping.}
+\item{\code{typesetter} provides general debugging for the typesetter:
+      turning characters into boxes, boxes into lines, lines into paragraphs,
+      and paragraphs into pages.}
+\item{\code{vboxes} provides even more information about page break decisions,
+      showing you what vboxes were in SILE’s queue when considering the breaking.}
+\item{\code{versions} gives a report on the versions of libraries and fonts in use;
+      please include this information when reporting bugs in SILE!}
+\item{Any package or other area of SILE’s operation may define their own debugging tags;
+      the \code{insertions} package does this, as do the Japanese and Uyghur language
+      support systems (\code{--debug uyghur}).
+      Often the debug flag is the name of the package or the function.}
+\end{itemize}
 
 Multiple facilities can be turned on by adding the flag multiple times or by separating them with commas:
 \code{--debug typesetter,break} will turn on debugging information for the typesetter and line breaker.

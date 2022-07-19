@@ -37,7 +37,7 @@ pecha.defaultFrameset = {
 }
 
 function pecha:_init(options)
-  self._init(self, options)
+  plain._init(self, options)
   self:loadPackage("rotate")
   self:registerPostinit(function ()
     SILE.call("language", { main = "bo" })

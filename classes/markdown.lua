@@ -23,7 +23,6 @@ SILE.inputs.markdown = {
 }
 
 function markdown:_init (options)
-  if self._legacy and not self._deprecated then return self:_deprecator(markdown) end
   book._init(self, options)
   self:loadPackage("url")
   self:loadPackage("image")
@@ -34,36 +33,36 @@ function markdown:registerCommands ()
 
   book.registerCommands(self)
 
-  SILE.registerCommand("sect1", function (options, content)
+  self:registerCommand("sect1", function (options, content)
     SILE.call("chapter", options, content)
   end)
 
-  SILE.registerCommand("sect2", function (options, content)
+  self:registerCommand("sect2", function (options, content)
     SILE.call("section", options, content)
   end)
 
-  SILE.registerCommand("sect3", function (options, content)
+  self:registerCommand("sect3", function (options, content)
     SILE.call("subsection", options, content)
   end)
 
-  SILE.registerCommand("emphasis", function (options, content)
+  self:registerCommand("emphasis", function (options, content)
     SILE.call("em", options, content)
   end)
 
-  SILE.registerCommand("paragraph", function (_, content)
+  self:registerCommand("paragraph", function (_, content)
     SILE.process(content)
     SILE.call("par")
   end)
 
-  SILE.registerCommand("bulletlist", function (_, content)
+  self:registerCommand("bulletlist", function (_, content)
     SILE.process(content)
   end)
 
-  SILE.registerCommand("link", function (_, content)
+  self:registerCommand("link", function (_, content)
       SILE.call("verbatim:font", {}, content)
   end)
 
-  SILE.registerCommand("image", function (_, content)
+  self:registerCommand("image", function (_, content)
     SILE.call("img", {src=content.src})
   end)
 

@@ -1,9 +1,8 @@
 local base = pl.class()
+base.type = "class"
 base._name = "base"
 
 base._initialized = false
-base._legacy = false
-base._deprecated = false
 base.deferredLegacyInit = {}
 base.deferredInit = {}
 base.pageTemplate = { frames = {}, firstContentFrame = nil }
@@ -42,28 +41,13 @@ base.hooks = {
   finish = {},
 }
 
--- Part of stdlib deprecation hack: class constructors in the new model should
--- *never* be called with an id. If it does we know somebody is using the
--- legacy model and setup shims to get them out of trouble. Notable we want to
--- skip the normal init process the first time around (and even walk it back).
--- Normal _init() will be called again later, possibly with legacy init() mixins.
-function base:_create ()
-  if type(self) == "table" and self.id then
-    self._legacy = true
-    self._name = self.id
-    self.id = nil
-  end
-  return self
-end
-
 function base:_init (options)
-  if self._legacy and not self._deprecated then return self:_deprecator(base) end
   if self == options then options = {} end
   self:declareOptions()
+  self:registerRawHandlers()
   self:registerCommands()
   self:declareSettings()
   self:setOptions(options)
-  SILE.outputter:init(self)
   self:declareFrames(self.defaultFrameset)
   self:registerPostinit(function (self_)
       if type(self.firstContentFrame) == "string" then
@@ -80,90 +64,12 @@ function base:_init (options)
   return self
 end
 
-local mt
-
--- Penlight hook, currently only used to help shim stdlib based calls to the
--- new constructors.
 function base:_post_init ()
-  if self._legacy then
-    setmetatable(self, mt)
-  end
-end
-
-function base:start ()
-  if self._legacy then
-    for i, func in ipairs(self.deferredLegacyInit) do
-      func(self)
-      self.deferredLegacyInit[i] = nil
-    end
-  end
   self._initialized = true
   for i, func in ipairs(self.deferredInit) do
     func(self)
     self.deferredInit[i] = nil
   end
-end
-
--- This is essentially of a self destruct mechanism that monkey patches the old
--- stdlib object model definition to return a Penlight class constructor
--- instead of the old std.object model.
-function base:_deprecator (parent)
-  local id = self._name
-  self = pl.class(parent)
-  self._name = id
-  self._legacy = true
-  SU.warn(string.format([[
-    The document class inheritance system for SILE classes has been
-      refactored using a different object model. Your class (%s), has been
-      instantiated with a shim immitating the stdlib based model, but it is
-      *not* fully backwards compatible, *will* cause unexpected errors, and
-      *will* eventually be removed. Please update your code to use the new
-      Penlight based inheritance model.
-
-    ]], self._name))
-  SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0")
-  self.declareOption = function (self_, option, setter)
-    if not getmetatable(self_.options)._opts[option] then
-      if type(setter) ~= "function" then
-        local default = setter
-        setter = function (_, value)
-          local k = "_legacy_option_" .. option
-          if value then self_[k] = value end
-          return function() return self_[k] end
-        end
-        setter(self_, default)
-      end
-      parent.declareOption(self_, option, setter)
-    end
-  end
-  -- Legacy classes from old example code run declareFrame and loadPackage before instantializing,
-  -- stash them in a post init callback instead so we have frames and a typesetter
-  self.declareFrame = function (self_, id_, spec)
-    self_:registerLegacyPostinit(function ()
-      parent.declareFrame(self_, id_, spec)
-    end)
-    return self_
-  end
-  self.loadPackage = function (self_, packname, args)
-    self_:registerLegacyPostinit(function ()
-      parent.loadPackage(self_, packname, args)
-    end)
-    return self_
-  end
-  -- Just in case the legacy class calls this directly, make it a noop
-  parent.init = function (self_) return self_ end
-  self._init = function (self_, options_)
-    if type(self_.init) == "function" then
-      self_:registerLegacyPostinit(self_.init, options_)
-    end
-    parent._init(self_, options_)
-    return self_
-  end
-  self._deprecated = true
-  -- The function we are in (Penlight's constructor) is going to blow away the
-  -- meta table after we return here so stash it and re-apply it on _post_init
-  mt = getmetatable(self)
-  return self
 end
 
 function base:setOptions (options)
@@ -238,6 +144,9 @@ function base:initPackage (pack, args)
     if type(pack.declareSettings) == "function" then
       pack.declareSettings(self)
     end
+    if type(pack.registerRawHandlers) == "function" then
+      pack.registerRawHandlers(self)
+    end
     if type(pack.registerCommands) == "function" then
       pack.registerCommands(self)
     end
@@ -277,28 +186,156 @@ function base:runHooks (category, args)
   end
 end
 
+function base.registerCommand (_, name, func, help, pack)
+  SILE.Commands[name] = func
+  if not pack then
+    local where = debug.getinfo(2).source
+    pack = where:match("(%w+).lua")
+  end
+  --if not help and not pack:match(".sil") then SU.error("Could not define command '"..name.."' (in package "..pack..") - no help text" ) end
+  SILE.Help[name] = {
+    description = help,
+    where = pack
+  }
+end
+
+function base.registerRawHandler (_, format, callback)
+  SILE.rawHandlers[format] = callback
+end
+
+function base:registerRawHandlers ()
+
+  self:registerRawHandler("text", function (_, content)
+    SILE.settings:temporarily(function()
+      SILE.settings:set("typesetter.parseppattern", "\n")
+      SILE.settings:set("typesetter.obeyspaces", true)
+      SILE.typesetter:typeset(content[1])
+    end)
+  end)
+
+end
+
 function base:registerCommands ()
 
-  SILE.registerCommand("script", function (options, content)
-    if (options["src"]) then
-      local script, _ = require(options["src"])
-      if type(script) == "table" then
-        if type(script.declareSettings) == "function" then script.declareSettings(self) end
-        if type(script.registerCommands) == "function" then script.registerCommands(self) end
-        if type(script.init) == "function" then script.init(self, options) end
-      end
+  local function replaceProcessBy(replacement, tree)
+    if type(tree) ~= "table" then return tree end
+    local ret = pl.tablex.deepcopy(tree)
+    if tree.command == "process" then
+      return replacement
     else
-      local func, err = load(content[1])
-      if not func then SU.error(err) end
-      func()
+      for i, child in ipairs(tree) do
+        ret[i] = replaceProcessBy(replacement, child)
+      end
+      return ret
     end
-  end, "Runs lua code. The code may be supplied either inline or using the src=... option. (Think HTML.)")
+  end
 
-  SILE.registerCommand("include", function (options, _)
-      SILE.readFile(options["src"])
-  end, "Includes a SILE file for processing.")
+  self:registerCommand("define", function (options, content)
+    SU.required(options, "command", "defining command")
+    if type(content) == "function" then
+      -- A macro defined as a function can take no argument, so we register
+      -- it as-is.
+      self:registerCommand(options["command"], content)
+      return
+    elseif options.command == "process" then
+      SU.warn("Did you mean to re-definine the `\\process` macro? That probably won't go well.")
+    end
+    self:registerCommand(options["command"], function (_, inner_content)
+      SU.debug("macros", "Processing macro \\" .. options["command"])
+      local macroArg
+      if type(inner_content) == "function" then
+        macroArg = inner_content
+      elseif type(inner_content) == "table" then
+        macroArg = pl.tablex.copy(inner_content)
+        macroArg.command = nil
+        macroArg.id = nil
+      elseif inner_content == nil then
+        macroArg = {}
+      else
+        SU.error("Unhandled content type " .. type(inner_content) .. " passed to macro \\" .. options["command"], true)
+      end
+      -- Replace every occurrence of \process in `content` (the macro
+      -- body) with `macroArg`, then have SILE go through the new `content`.
+      local newContent = replaceProcessBy(macroArg, content)
+      SILE.process(newContent)
+      SU.debug("macros", "Finished processing \\" .. options["command"])
+    end, options.help, SILE.currentlyProcessingFile)
+  end, "Define a new macro. \\define[command=example]{ ... \\process }")
 
-  SILE.registerCommand("pagetemplate", function (options, content)
+  -- A utility function that allows SILE.call() to be used as a noop wrapper.
+  self:registerCommand("noop", function (_, content)
+    SILE.process(content)
+  end)
+
+  -- The document (SIL) or sile (XML) command is always the sigular leaf at the
+  -- top level of our AST. The work you might expect to see happen here is
+  -- actually handled by SILE.inputter:classInit() before we get here, so these
+  -- are just pass through functions. Theoretically, this could be a useful
+  -- point to hook into-especially for included documents.
+  self:registerCommand("document", function (_, content)
+    SILE.process(content)
+  end)
+  self:registerCommand("sile", function (_, content)
+    SILE.process(content)
+  end)
+
+  self:registerCommand("comment", function (_, _)
+  end, "Ignores any text within this command's body.")
+
+  self:registerCommand("process", function ()
+    SU.error("Encountered unsubstituted \\process.")
+  end, "Within a macro definition, processes the contents of the macro body.")
+
+  self:registerCommand("script", function (options, content)
+    if options.src then
+      SILE.require(options.src)
+    else
+      SILE.processString(content[1], options.format or "lua")
+    end
+  end, "Runs lua code. The code may be supplied either inline or using src=...")
+
+  self:registerCommand("include", function (options, content)
+    if options.src then
+      SILE.processFile(options.src, options.format)
+    else
+      SILE.processString(content[1], options.format)
+    end
+  end, "Includes a content file for processing.")
+
+  self:registerCommand("lua", function (options, content)
+    if options.module then
+      SILE.require(options.module)
+    elseif options.src then
+      SILE.processFile(options.src, "lua")
+    else
+      SILE.processString(content[1], "lua")
+    end
+  end, "Run Lua code. The code may be supplied either inline or using src=...")
+
+  self:registerCommand("sil", function (options, content)
+    if options.src then
+      SILE.processFile(options.src, "sil")
+    else
+      SILE.processString(content[1], "sil")
+    end
+  end, "Process sil content. The content may be supplied either inline or using src=...")
+
+  self:registerCommand("xml", function (options, content)
+    if options.src then
+      SILE.processFile(options.src, "xml")
+    else
+      SILE.processString(content[1], "xml")
+    end
+  end, "Run xml content. The content may be supplied either inline or using src=...")
+
+  self:registerCommand("raw", function (options, content)
+    local rawtype = SU.required(options, "type", "raw")
+    local handler = SILE.rawHandlers[rawtype]
+    if not handler then SU.error("No inline handler for '"..rawtype.."'") end
+    handler(options, content)
+  end, "Invoke a raw passthrough handler")
+
+  self:registerCommand("pagetemplate", function (options, content)
     SILE.typesetter:pushState()
     SILE.documentState.thisPageTemplate = { frames = {} }
     SILE.process(content)
@@ -307,11 +344,11 @@ function base:registerCommands ()
     SILE.typesetter:popState()
   end, "Defines a new page template for the current page and sets the typesetter to use it.")
 
-  SILE.registerCommand("frame", function (options, _)
+  self:registerCommand("frame", function (options, _)
     SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newFrame(options)
   end, "Declares (or re-declares) a frame on this page.")
 
-  SILE.registerCommand("penalty", function (options, _)
+  self:registerCommand("penalty", function (options, _)
     if options.vertical and not SILE.typesetter:vmode() then
       SILE.typesetter:leaveHmode()
     end
@@ -322,7 +359,7 @@ function base:registerCommands ()
     end
   end, "Inserts a penalty node. Option is penalty= for the size of the penalty.")
 
-  SILE.registerCommand("discretionary", function (options, _)
+  self:registerCommand("discretionary", function (options, _)
     local discretionary = SILE.nodefactory.discretionary({})
     if options.prebreak then
       SILE.call("hbox", {}, function () SILE.typesetter:typeset(options.prebreak) end)
@@ -342,17 +379,17 @@ function base:registerCommands ()
     table.insert(SILE.typesetter.state.nodes, discretionary)
   end, "Inserts a discretionary node.")
 
-  SILE.registerCommand("glue", function (options, _)
+  self:registerCommand("glue", function (options, _)
     local width = SU.cast("length", options.width):absolute()
     SILE.typesetter:pushGlue(width)
   end, "Inserts a glue node. The width option denotes the glue dimension.")
 
-  SILE.registerCommand("kern", function (options, _)
+  self:registerCommand("kern", function (options, _)
     local width = SU.cast("length", options.width):absolute()
     SILE.typesetter:pushHorizontal(SILE.nodefactory.kern(width))
   end, "Inserts a glue node. The width option denotes the glue dimension.")
 
-  SILE.registerCommand("skip", function (options, _)
+  self:registerCommand("skip", function (options, _)
     options.discardable = options.discardable or false
     options.height = SILE.length(options.height):absolute()
     SILE.typesetter:leaveHmode()
@@ -363,7 +400,7 @@ function base:registerCommands ()
     end
   end, "Inserts vertical skip. The height options denotes the skip dimension.")
 
-  SILE.registerCommand("par", function (_, _)
+  self:registerCommand("par", function (_, _)
     SILE.typesetter:endline()
   end, "Ends the current paragraph.")
 
