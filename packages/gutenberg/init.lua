@@ -1,10 +1,10 @@
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("alt", function (_, _)
+  class:registerCommand("alt", function (_, _)
     SU.deprecated("\\alt", "\\alternative", "0.10.0", "0.14.0")
   end, "Deprecated")
 
-  SILE.registerCommand("alternative", function (_, content)
+  class:registerCommand("alternative", function (_, content)
     local alts = {}
     for _, fragment in ipairs(content) do
       SILE.call("hbox", {}, { fragment })

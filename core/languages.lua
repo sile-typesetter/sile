@@ -4,7 +4,7 @@ local cldr = require("cldr")
 loadkit.register("ftl", function (file)
   local contents = assert(file:read("*a"))
   file:close()
-  return assert(SILE.fluent:add_messages(contents))
+  return assert(fluent:add_messages(contents))
 end)
 
 local loadonce = {}
@@ -24,7 +24,7 @@ SILE.languageSupport = {
     end
     local ftlresource = string.format("i18n.%s", language)
     SU.debug("fluent", "Loading FTL resource", ftlresource, "into locale", language)
-    SILE.fluent:set_locale(language)
+    fluent:set_locale(language)
     local gotftl, ftl = pcall(require, ftlresource)
     if not gotftl then
       SU.warn(("Unable to load localized strings (e.g. table of contents header text) for %s: %s")
@@ -47,7 +47,7 @@ SILE.registerCommand("language", function (options, content)
   else
     SILE.settings:set("document.language", main)
   end
-end)
+end, nil, nil, true)
 
 SILE.registerCommand("fluent", function (options, content)
   local key = content[1]
@@ -55,8 +55,8 @@ SILE.registerCommand("fluent", function (options, content)
   SU.debug("fluent", "Looking for", key, "in", locale)
   local entry
   if key then
-    SILE.fluent:set_locale(locale)
-    entry = SILE.fluent:get_message(key)
+    fluent:set_locale(locale)
+    entry = fluent:get_message(key)
   else
     SU.warn("Fluent localization function called without passing a valid message id")
   end
@@ -67,19 +67,19 @@ SILE.registerCommand("fluent", function (options, content)
     SU.warn(string.format("No localized message for %s found in locale %s", key, locale))
   end
   SILE.process({ message })
-end)
+end, nil, nil, true)
 
 SILE.registerCommand("ftl", function (options, content)
   local locale = options.locale or SILE.settings:get("document.language")
   SU.debug("fluent", "Loading message(s) into locale", locale)
-  SILE.fluent:set_locale(locale)
+  fluent:set_locale(locale)
   if options.src then
-    SILE.fluent:load_file(options.src, locale)
+    fluent:load_file(options.src, locale)
   elseif SU.hasContent(content) then
     local input = content[1]
-    SILE.fluent:add_messages(input, locale)
+    fluent:add_messages(input, locale)
   end
-end)
+end, nil, nil, true)
 
 require("languages.unicode")
 

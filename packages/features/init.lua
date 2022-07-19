@@ -109,13 +109,13 @@ local featurestring = Cf(Ct"" * tag^0, rawset)
 -- Parser for fontspec strings
 -- Refer to fontspec.pdf (see doc), Chapter 3, Table 4 (p. 37)
 local fontspecsafe = R("AZ", "az", "09") + P":"
-local fontspecws = SILE.parserBits.whitespace^0
-local fontspecsep = P"," * fontspecws
+local ws = SILE.parserBits.ws
+local fontspecsep = P"," * ws
 local fontspecname = C(fontspecsafe^1)
-local fontspeclist = fontspecws * P"{" *
-                     Ct(fontspecws * fontspecname *
-                        (fontspecsep * fontspecname * fontspecws)^0) *
-                     P"}" * fontspecws
+local fontspeclist = ws * P"{" *
+                     Ct(ws * fontspecname *
+                        (fontspecsep * fontspecname * ws)^0) *
+                     P"}" * ws
 
 local otFeatures = pl.class(pl.Map)
 
@@ -178,21 +178,21 @@ end
 
 local fontfn = SILE.Commands.font
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("add-font-feature", function (options, _)
+  class:registerCommand("add-font-feature", function (options, _)
     local otfeatures = otFeatures()
     otfeatures:loadOptions(options)
     SILE.settings:set("font.features", tostring(otfeatures))
   end)
 
-  SILE.registerCommand("remove-font-feature", function(options, _)
+  class:registerCommand("remove-font-feature", function(options, _)
     local otfeatures = otFeatures()
     otfeatures:unloadOptions(options)
     SILE.settings:set("font.features", tostring(otfeatures))
   end)
 
-  SILE.registerCommand("font", function (options, content)
+  class:registerCommand("font", function (options, content)
     local otfeatures = otFeatures()
     -- It is guaranteed that future releases of SILE will not implement non-OT \font
     -- features with capital letters.

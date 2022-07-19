@@ -1,13 +1,13 @@
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("ifattop", function (_, content)
+  class:registerCommand("ifattop", function (_, content)
     SILE.typesetter:leaveHmode()
     if #(SILE.typesetter.state.outputQueue) == 0 then
       SILE.process(content)
     end
   end)
 
-  SILE.registerCommand("ifnotattop", function (_, content)
+  class:registerCommand("ifnotattop", function (_, content)
     SILE.typesetter:leaveHmode()
     if #(SILE.typesetter.state.outputQueue) ~= 0 then
       SILE.process(content)

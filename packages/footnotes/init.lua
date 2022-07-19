@@ -21,7 +21,7 @@ end
 
 local function registerCommands (class)
 
-  SILE.registerCommand("footnotemark", function (_, _)
+  class:registerCommand("footnotemark", function (_, _)
     SILE.call("raise", { height = "0.7ex" }, function ()
       SILE.call("font", { size = "1.5ex" }, function ()
         SILE.typesetter:typeset(class:formatCounter(SILE.scratch.counters.footnote))
@@ -29,14 +29,14 @@ local function registerCommands (class)
     end)
   end)
 
-  SILE.registerCommand("footnote:separator", function (_, content)
+  class:registerCommand("footnote:separator", function (_, content)
     SILE.settings:pushState()
     local material = SILE.call("vbox", {}, content)
     SILE.scratch.insertions.classes.footnote.topBox = material
     SILE.settings:popState()
   end)
 
-  SILE.registerCommand("footnote:options", function (options, _)
+  class:registerCommand("footnote:options", function (options, _)
     if options["maxHeight"] then
       SILE.scratch.insertions.classes.footnote.maxHeight = SILE.length(options["maxHeight"])
     end
@@ -45,7 +45,7 @@ local function registerCommands (class)
     end
   end)
 
-  SILE.registerCommand("footnote", function (options, content)
+  class:registerCommand("footnote", function (options, content)
     SILE.call("footnotemark")
     local opts = SILE.scratch.insertions.classes.footnote or {}
     local frame = opts.insertInto and SILE.getFrame(opts.insertInto.frame)
@@ -83,7 +83,7 @@ local function registerCommands (class)
     SILE.scratch.counters.footnote.value = SILE.scratch.counters.footnote.value + 1
   end)
 
-  SILE.registerCommand("footnote:font", function (_, content)
+  class:registerCommand("footnote:font", function (_, content)
     -- The footnote frame has is settings reset to the toplevel state, so if one does
     -- something relative (as below), it is expected to be the main value from the
     -- document.
@@ -92,10 +92,10 @@ local function registerCommands (class)
     end)
   end)
 
-  SILE.registerCommand("footnote:atstart", function (_, _)
+  class:registerCommand("footnote:atstart", function (_, _)
   end)
 
-  SILE.registerCommand("footnote:counter", function (_, _)
+  class:registerCommand("footnote:counter", function (_, _)
     SILE.call("noindent")
     SILE.typesetter:typeset(class:formatCounter(SILE.scratch.counters.footnote) .. ".")
     SILE.call("qquad")

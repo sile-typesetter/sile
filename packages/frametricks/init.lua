@@ -137,13 +137,13 @@ local function init (class, _)
   class:loadPackage("balanced-frames")
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("mergecolumns", function (_, _)
+  class:registerCommand("mergecolumns", function (_, _)
     mergeColumns()
   end, "Merge multiple columns into one")
 
-  SILE.registerCommand("showframe", function (options, _)
+  class:registerCommand("showframe", function (options, _)
     local id = options.id or SILE.typesetter.frame.id
     if id == "all" then
       for _, frame in pairs(SILE.frames) do
@@ -154,26 +154,26 @@ local function registerCommands (_)
     end
   end)
 
-  SILE.registerCommand("shiftframeedge", function (options, _)
+  class:registerCommand("shiftframeedge", function (options, _)
     local cFrame = SILE.typesetter.frame
     shiftframeedge(cFrame, options)
     SILE.typesetter:initFrame(cFrame)
     --SILE.outputter:debugFrame(cFrame)
   end, "Adjusts the edge of the frame horizontally by amounts specified in <left> and <right>")
 
-  SILE.registerCommand("breakframevertical", function (options, _)
+  class:registerCommand("breakframevertical", function (options, _)
     breakFrameVertical(options.offset)
   end, "Breaks the current frame in two vertically at the current location or at a point <offset> below the current location")
 
-  SILE.registerCommand("makecolumns", function (options, _)
+  class:registerCommand("makecolumns", function (options, _)
     makecolumns(options)
   end, "Split the current frame into multiple columns")
 
-  SILE.registerCommand("breakframehorizontal", function (options, _)
+  class:registerCommand("breakframehorizontal", function (options, _)
     breakFrameHorizontalAt(options.offset)
   end, "Breaks the current frame in two horizontally either at the current location or at a point <offset> from the left of the current frame")
 
-  SILE.registerCommand("float", function (options, content)
+  class:registerCommand("float", function (options, content)
     SILE.typesetter:leaveHmode()
     local hbox = SILE.call("hbox", {}, content)
     table.remove(SILE.typesetter.state.nodes) -- steal it back
@@ -198,7 +198,7 @@ local function registerCommands (_)
     --SILE.outputter:debugFrame(SILE.typesetter.frame)
   end, "Sets the given content in its own frame, flowing the remaining content around it")
 
-  SILE.registerCommand("typeset-into", function (options, content)
+  class:registerCommand("typeset-into", function (options, content)
     SU.required(options, "frame", "calling \\typeset-into")
     if not SILE.frames[options.frame] then
       SU.error("Can't find frame "..options.frame.." to typeset into")
@@ -206,7 +206,7 @@ local function registerCommands (_)
     SILE.typesetNaturally(SILE.frames[options.frame], function () SILE.process(content) end)
   end)
 
-  SILE.registerCommand("fit-frame", function (options, _)
+  class:registerCommand("fit-frame", function (options, _)
     SU.required(options, "frame", "calling \\fit-frame")
     if not SILE.frames[options.frame] then
       SU.error("Can't find frame "..options.frame.." to fit")

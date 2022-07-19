@@ -36,11 +36,6 @@ setmetatable(units, {
     end
   })
 
-SILE.registerUnit = function (unit, spec)
-  -- SU.warn("Use of SILE.registerUnit() is deprecated, add via metamethod SILE.units["unit"] = (spec)"
-  units[unit] = spec
-end
-
 units["twip"] = {
   definition = "0.05pt"
 }

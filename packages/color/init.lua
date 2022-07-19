@@ -1,6 +1,6 @@
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("color", function (options, content)
+  class:registerCommand("color", function (options, content)
     local color = SILE.colorparser(options.color or "black")
     SILE.typesetter:pushHbox({
       outputYourself = function () SILE.outputter:pushColor(color) end

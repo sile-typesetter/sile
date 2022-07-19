@@ -164,4 +164,4 @@ SILE.registerCommand("hyphenator:add-exceptions", function (options, content)
       registerException(SILE._hyphenators[language], token.string)
     end
   end
-end)
+end, nil, nil, true)

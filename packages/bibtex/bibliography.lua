@@ -21,6 +21,10 @@ end
 
 local function split(str, pat, find) --- return list of substrings separated by pat
   find = find or string.find -- could be find_outside_braces
+  -- @Omikhelia: I added this check here to avoid breaking on error,
+  -- but probably in could have been done earlier...
+  if not str then return {} end
+
   local len = string.len(str)
   local t = { }
   local insert = table.insert
@@ -285,9 +289,9 @@ Bibliography = {
     if not item then
       return Bibliography.Errors.UNKNOWN_REFERENCE
     end
-    item.type =  (item.type:gsub("^%l", string.upper))
+    item.type = item.type:gsub("^%l", string.upper)
     if not style[item.type] then
-      return Bibliography.Errors.UNKNOWN_TYPE
+      return Bibliography.Errors.UNKNOWN_TYPE, item.type
     end
 
     local t = Bibliography.buildEnv(cite, item.attributes, style)
@@ -299,7 +303,10 @@ Bibliography = {
     local t = pl.tablex.copy(getfenv and getfenv(1) or _ENV)
     t.cite = cite
     t.item = item
-    for k,v in pairs(item) do t[k:lower()] = v end
+    for k,v in pairs(item) do
+      if k:lower() == "type" then k = "bibtype" end -- HACK: don't override the type() function
+      t[k:lower()] = v
+    end
     return pl.tablex.update(t, style)
   end,
 
@@ -319,11 +326,12 @@ Bibliography = {
 
   Errors = {
     UNKNOWN_REFERENCE = 1,
+    UNKNOWN_TYPE = 2,
   },
 
   Style = {
     andAuthors = function(item)
-      local authors = namesplit(item.Author)
+      local authors = namesplit(item.author)
       if #authors == 1 then
         return parse_name(authors[1]).ll
       else
@@ -331,15 +339,15 @@ Bibliography = {
           local author = parse_name(authors[i])
           authors[i] = author.ll.. ", "..author.f.."."
         end
-        return table.concat(authors, " "..SILE.fluent:get_message("bibliography-and") .. " ")
+        return table.concat(authors, " ".. fluent:get_message("bibliography-and") .. " ")
       end
     end,
 
     andSurnames = function (max)
       return function(item)
-        local authors = namesplit(item.Author)
+        local authors = namesplit(item.author)
         if #authors > max then
-          return parse_name(authors[1]).ll .. SILE.fluent:get_message("bibliography-et-al")
+          return parse_name(authors[1]).ll .. " " .. fluent:get_message("bibliography-et-al")
         else
           for i = 1,#authors do authors[i] = parse_name(authors[i]).ll end
           return Bibliography.Style.commafy(authors)
@@ -347,13 +355,19 @@ Bibliography = {
       end
     end,
 
+    pageRange = function(item)
+      if item.pages then
+        return item.pages:gsub("%-%-", "–")
+      end
+    end,
+
     transEditor = function(item)
       local r = {}
-      if item.Editor then
-        r[#r+1] = SILE.fluent:get_message("bibliography-edited-by")({ name = item.Editor })
+      if item.editor then
+        r[#r+1] = fluent:get_message("bibliography-edited-by")({ name = item.editor })
       end
-      if item.Translator then
-        r[#r+1] = SILE.fluent:get_message("bibliography-translated-by")({ name = item.Translator })
+      if item.translator then
+        r[#r+1] = fluent:get_message("bibliography-translated-by")({ name = item.translator })
       end
       if #r then return table.concat(r, ", ") end
       return nil
@@ -388,7 +402,7 @@ Bibliography = {
     end,
 
     commafy = function (t, andword) -- also stolen from nbibtex
-      andword = andword or SILE.fluent:get_message("bibliography-and")
+      andword = andword or fluent:get_message("bibliography-and")
       if #t == 1 then
         return t[1]
       elseif #t == 2 then

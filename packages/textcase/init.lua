@@ -29,15 +29,15 @@ end
 
 local function registerCommands (class)
 
-  SILE.registerCommand("uppercase", function(options, content)
+  class:registerCommand("uppercase", function(options, content)
     SILE.process(class.transformContent(content, uppercase, options))
   end, "Typeset the enclosed text as uppercase")
 
-  SILE.registerCommand("lowercase", function(options, content)
+  class:registerCommand("lowercase", function(options, content)
     SILE.process(class.transformContent(content, lowercase, options))
   end, "Typeset the enclosed text as lowercase")
 
-  SILE.registerCommand("titlecase", function(options, content)
+  class:registerCommand("titlecase", function(options, content)
     SILE.process(class.transformContent(content, titlecase, options))
   end, "Typeset the enclosed text as titlecase")
 
