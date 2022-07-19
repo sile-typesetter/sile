@@ -29,6 +29,7 @@ sil.passthroughCommands = {
   ftl = true,
   lua = true,
   math = true,
+  raw = true,
   script = true,
   sil = true,
   xml = true

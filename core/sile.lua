@@ -52,6 +52,7 @@ SILE.tokenizers = {}
 SILE.status = {}
 SILE.scratch = {}
 SILE.documentState = {}
+SILE.rawHandlers = {}
 
 -- User input values, currently from CLI options, potentially all the inuts
 -- needed for a user to use a SILE-as-a-library verion to produce documents

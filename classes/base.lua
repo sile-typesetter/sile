@@ -44,6 +44,7 @@ base.hooks = {
 function base:_init (options)
   if self == options then options = {} end
   self:declareOptions()
+  self:registerRawHandlers()
   self:registerCommands()
   self:declareSettings()
   self:setOptions(options)
@@ -143,6 +144,9 @@ function base:initPackage (pack, args)
     if type(pack.declareSettings) == "function" then
       pack.declareSettings(self)
     end
+    if type(pack.registerRawHandlers) == "function" then
+      pack.registerRawHandlers(self)
+    end
     if type(pack.registerCommands) == "function" then
       pack.registerCommands(self)
     end
@@ -193,6 +197,22 @@ function base.registerCommand (_, name, func, help, pack)
     description = help,
     where = pack
   }
+end
+
+function base.registerRawHandler (_, format, callback)
+  SILE.rawHandlers[format] = callback
+end
+
+function base:registerRawHandlers ()
+
+  self:registerRawHandler("text", function (_, content)
+    SILE.settings:temporarily(function()
+      SILE.settings:set("typesetter.parseppattern", "\n")
+      SILE.settings:set("typesetter.obeyspaces", true)
+      SILE.typesetter:typeset(content[1])
+    end)
+  end)
+
 end
 
 function base:registerCommands ()
@@ -307,6 +327,13 @@ function base:registerCommands ()
       SILE.processString(content[1], "xml")
     end
   end, "Run xml content. The content may be supplied either inline or using src=...")
+
+  self:registerCommand("raw", function (options, content)
+    local rawtype = SU.required(options, "type", "raw")
+    local handler = SILE.rawHandlers[rawtype]
+    if not handler then SU.error("No inline handler for '"..rawtype.."'") end
+    handler(options, content)
+  end, "Invoke a raw passthrough handler")
 
   self:registerCommand("pagetemplate", function (options, content)
     SILE.typesetter:pushState()
