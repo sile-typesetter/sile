@@ -130,14 +130,16 @@ local function registerCommands (class)
     return result
   end
 
-  class:registerCommand("package-documentation", function (options, _)
-    local package = SU.required(options, "src", "src for package documentation")
-    SU.debug("autodoc", package)
-    local pkg = require(package)
+  class:registerCommand("package-documentation", function (_, content)
+    local packname = content[1]
+    SU.debug("autodoc", packname)
+    local pkg = require("packages."..packname)
     if type(pkg) ~= "table" or not pkg.documentation then
-      SU.error("Undocumented package "..package)
+      SU.error("Undocumented package " .. packname)
     end
-    if type(pkg.registerCommands) == "function" then pkg.registerCommands(SILE.documentState.documentClass) end
+    if type(pkg.registerCommands) == "function" then
+      pkg.registerCommands(SILE.documentState.documentClass)
+    end
     SILE.processString(pkg.documentation)
   end)
 
@@ -284,7 +286,7 @@ construct the SILE manual. Keeping package documentation in the package itself
 keeps the documentation near the implementation, which (in theory) makes it easy
 for documentation and implementation to be in sync.
 
-For that purpose, it provides the \autodoc:command{\package-documentation[src=<package>]}
+For that purpose, it provides the \autodoc:command{\package-documentation{<package>}}
 command.
 
 Properly documented packages should export a \code{documentation} string
