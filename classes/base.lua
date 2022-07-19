@@ -328,6 +328,11 @@ function base:registerCommands ()
     end
   end, "Run xml content. The content may be supplied either inline or using src=...")
 
+  self:registerCommand("use", function (_, content)
+    local packname = content[1]
+    SILE.require(packname)
+  end, "Load a SILE module (can be a package, a shaper, a typesetter, or whatever).")
+
   self:registerCommand("raw", function (options, content)
     local rawtype = SU.required(options, "type", "raw")
     local handler = SILE.rawHandlers[rawtype]
