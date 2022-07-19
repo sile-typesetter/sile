@@ -28,9 +28,9 @@ local _drawSVG = function (svgdata, width, height, density, drop)
     })
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("svg", function (options, _)
+  class:registerCommand("svg", function (options, _)
     local fn = SU.required(options, "src", "filename")
     local width = options.width and SU.cast("measurement", options.width):absolute() or nil
     local height = options.height and SU.cast("measurement", options.height):absolute() or nil
@@ -40,11 +40,11 @@ local function registerCommands (_)
     _drawSVG(svgdata, width, height, density)
   end)
 
-  SILE.registerCommand("include-svg-file", function (_, _)
+  class:registerCommand("include-svg-file", function (_, _)
     SU.deprecated("\\include-svg-file", "\\svg", "0.10.10", "0.11.0")
   end, "Deprecated")
 
-  SILE.registerCommand("svg-glyph", function(_, content)
+  class:registerCommand("svg-glyph", function(_, content)
     local fontoptions = SILE.font.loadDefaults({})
     local items = SILE.shaper:shapeToken(content[1], fontoptions)
     local face = SILE.shaper.getFace(fontoptions)

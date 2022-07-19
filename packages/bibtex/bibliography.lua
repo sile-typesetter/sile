@@ -339,7 +339,7 @@ Bibliography = {
           local author = parse_name(authors[i])
           authors[i] = author.ll.. ", "..author.f.."."
         end
-        return table.concat(authors, " "..SILE.fluent:get_message("bibliography-and") .. " ")
+        return table.concat(authors, " ".. fluent:get_message("bibliography-and") .. " ")
       end
     end,
 
@@ -347,7 +347,7 @@ Bibliography = {
       return function(item)
         local authors = namesplit(item.author)
         if #authors > max then
-          return parse_name(authors[1]).ll .. " "..SILE.fluent:get_message("bibliography-et-al")
+          return parse_name(authors[1]).ll .. " " .. fluent:get_message("bibliography-et-al")
         else
           for i = 1,#authors do authors[i] = parse_name(authors[i]).ll end
           return Bibliography.Style.commafy(authors)
@@ -364,10 +364,10 @@ Bibliography = {
     transEditor = function(item)
       local r = {}
       if item.editor then
-        r[#r+1] = SILE.fluent:get_message("bibliography-edited-by")({ name = item.editor })
+        r[#r+1] = fluent:get_message("bibliography-edited-by")({ name = item.editor })
       end
       if item.translator then
-        r[#r+1] = SILE.fluent:get_message("bibliography-translated-by")({ name = item.translator })
+        r[#r+1] = fluent:get_message("bibliography-translated-by")({ name = item.translator })
       end
       if #r then return table.concat(r, ", ") end
       return nil
@@ -402,7 +402,7 @@ Bibliography = {
     end,
 
     commafy = function (t, andword) -- also stolen from nbibtex
-      andword = andword or SILE.fluent:get_message("bibliography-and")
+      andword = andword or fluent:get_message("bibliography-and")
       if #t == 1 then
         return t[1]
       elseif #t == 2 then

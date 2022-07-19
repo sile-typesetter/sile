@@ -1,4 +1,5 @@
 local base = pl.class()
+base.type = "class"
 base._name = "base"
 
 base._initialized = false
@@ -46,7 +47,6 @@ function base:_init (options)
   self:registerCommands()
   self:declareSettings()
   self:setOptions(options)
-  SILE.outputter:init(self)
   self:declareFrames(self.defaultFrameset)
   self:registerPostinit(function (self_)
       if type(self.firstContentFrame) == "string" then
@@ -182,24 +182,133 @@ function base:runHooks (category, args)
   end
 end
 
+function base.registerCommand (_, name, func, help, pack)
+  SILE.Commands[name] = func
+  if not pack then
+    local where = debug.getinfo(2).source
+    pack = where:match("(%w+).lua")
+  end
+  --if not help and not pack:match(".sil") then SU.error("Could not define command '"..name.."' (in package "..pack..") - no help text" ) end
+  SILE.Help[name] = {
+    description = help,
+    where = pack
+  }
+end
+
 function base:registerCommands ()
 
-  SILE.registerCommand("script", function (options, content)
-    if options.src then
-      local pack, _ = require(options.src)
-      self:initPackage(pack)
+  local function replaceProcessBy(replacement, tree)
+    if type(tree) ~= "table" then return tree end
+    local ret = pl.tablex.deepcopy(tree)
+    if tree.command == "process" then
+      return replacement
     else
-      local func, err = load(content[1])
-      if not func then SU.error(err) end
-      func()
+      for i, child in ipairs(tree) do
+        ret[i] = replaceProcessBy(replacement, child)
+      end
+      return ret
     end
-  end, "Runs lua code. The code may be supplied either inline or using the src=... option. (Think HTML.)")
+  end
 
-  SILE.registerCommand("include", function (options, _)
-      SILE.readFile(options["src"])
-  end, "Includes a SILE file for processing.")
+  self:registerCommand("define", function (options, content)
+    SU.required(options, "command", "defining command")
+    if type(content) == "function" then
+      -- A macro defined as a function can take no argument, so we register
+      -- it as-is.
+      self:registerCommand(options["command"], content)
+      return
+    elseif options.command == "process" then
+      SU.warn("Did you mean to re-definine the `\\process` macro? That probably won't go well.")
+    end
+    self:registerCommand(options["command"], function (_, inner_content)
+      SU.debug("macros", "Processing macro \\" .. options["command"])
+      local macroArg
+      if type(inner_content) == "function" then
+        macroArg = inner_content
+      elseif type(inner_content) == "table" then
+        macroArg = pl.tablex.copy(inner_content)
+        macroArg.command = nil
+        macroArg.id = nil
+      elseif inner_content == nil then
+        macroArg = {}
+      else
+        SU.error("Unhandled content type " .. type(inner_content) .. " passed to macro \\" .. options["command"], true)
+      end
+      -- Replace every occurrence of \process in `content` (the macro
+      -- body) with `macroArg`, then have SILE go through the new `content`.
+      local newContent = replaceProcessBy(macroArg, content)
+      SILE.process(newContent)
+      SU.debug("macros", "Finished processing \\" .. options["command"])
+    end, options.help, SILE.currentlyProcessingFile)
+  end, "Define a new macro. \\define[command=example]{ ... \\process }")
 
-  SILE.registerCommand("pagetemplate", function (options, content)
+  -- A utility function that allows SILE.call() to be used as a noop wrapper.
+  self:registerCommand("noop", function (_, content)
+    SILE.process(content)
+  end)
+
+  -- The document (SIL) or sile (XML) command is always the sigular leaf at the
+  -- top level of our AST. The work you might expect to see happen here is
+  -- actually handled by SILE.inputter:classInit() before we get here, so these
+  -- are just pass through functions. Theoretically, this could be a useful
+  -- point to hook into-especially for included documents.
+  self:registerCommand("document", function (_, content)
+    SILE.process(content)
+  end)
+  self:registerCommand("sile", function (_, content)
+    SILE.process(content)
+  end)
+
+  self:registerCommand("comment", function (_, _)
+  end, "Ignores any text within this command's body.")
+
+  self:registerCommand("process", function ()
+    SU.error("Encountered unsubstituted \\process.")
+  end, "Within a macro definition, processes the contents of the macro body.")
+
+  self:registerCommand("script", function (options, content)
+    if options.src then
+      SILE.require(options.src)
+    else
+      SILE.processString(content[1], options.format or "lua")
+    end
+  end, "Runs lua code. The code may be supplied either inline or using src=...")
+
+  self:registerCommand("include", function (options, content)
+    if options.src then
+      SILE.processFile(options.src, options.format)
+    else
+      SILE.processString(content[1], options.format)
+    end
+  end, "Includes a content file for processing.")
+
+  self:registerCommand("lua", function (options, content)
+    if options.module then
+      SILE.require(options.module)
+    elseif options.src then
+      SILE.processFile(options.src, "lua")
+    else
+      SILE.processString(content[1], "lua")
+    end
+  end, "Run Lua code. The code may be supplied either inline or using src=...")
+
+  self:registerCommand("sil", function (options, content)
+    if options.src then
+      SILE.processFile(options.src, "sil")
+    else
+      SILE.processString(content[1], "sil")
+    end
+  end, "Process sil content. The content may be supplied either inline or using src=...")
+
+  self:registerCommand("xml", function (options, content)
+    if options.src then
+      SILE.processFile(options.src, "xml")
+    else
+      SILE.processString(content[1], "xml")
+    end
+  end, "Run xml content. The content may be supplied either inline or using src=...")
+
+  self:registerCommand("pagetemplate", function (options, content)
     SILE.typesetter:pushState()
     SILE.documentState.thisPageTemplate = { frames = {} }
     SILE.process(content)
@@ -208,11 +317,11 @@ function base:registerCommands ()
     SILE.typesetter:popState()
   end, "Defines a new page template for the current page and sets the typesetter to use it.")
 
-  SILE.registerCommand("frame", function (options, _)
+  self:registerCommand("frame", function (options, _)
     SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newFrame(options)
   end, "Declares (or re-declares) a frame on this page.")
 
-  SILE.registerCommand("penalty", function (options, _)
+  self:registerCommand("penalty", function (options, _)
     if options.vertical and not SILE.typesetter:vmode() then
       SILE.typesetter:leaveHmode()
     end
@@ -223,7 +332,7 @@ function base:registerCommands ()
     end
   end, "Inserts a penalty node. Option is penalty= for the size of the penalty.")
 
-  SILE.registerCommand("discretionary", function (options, _)
+  self:registerCommand("discretionary", function (options, _)
     local discretionary = SILE.nodefactory.discretionary({})
     if options.prebreak then
       SILE.call("hbox", {}, function () SILE.typesetter:typeset(options.prebreak) end)
@@ -243,17 +352,17 @@ function base:registerCommands ()
     table.insert(SILE.typesetter.state.nodes, discretionary)
   end, "Inserts a discretionary node.")
 
-  SILE.registerCommand("glue", function (options, _)
+  self:registerCommand("glue", function (options, _)
     local width = SU.cast("length", options.width):absolute()
     SILE.typesetter:pushGlue(width)
   end, "Inserts a glue node. The width option denotes the glue dimension.")
 
-  SILE.registerCommand("kern", function (options, _)
+  self:registerCommand("kern", function (options, _)
     local width = SU.cast("length", options.width):absolute()
     SILE.typesetter:pushHorizontal(SILE.nodefactory.kern(width))
   end, "Inserts a glue node. The width option denotes the glue dimension.")
 
-  SILE.registerCommand("skip", function (options, _)
+  self:registerCommand("skip", function (options, _)
     options.discardable = options.discardable or false
     options.height = SILE.length(options.height):absolute()
     SILE.typesetter:leaveHmode()
@@ -264,7 +373,7 @@ function base:registerCommands ()
     end
   end, "Inserts vertical skip. The height options denotes the skip dimension.")
 
-  SILE.registerCommand("par", function (_, _)
+  self:registerCommand("par", function (_, _)
     SILE.typesetter:endline()
   end, "Ends the current paragraph.")
 

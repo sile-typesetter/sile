@@ -77,9 +77,9 @@ local function init (_, _)
 
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("balancecolumns", function (_, _)
+  class:registerCommand("balancecolumns", function (_, _)
     SILE.typesetter:leaveHmode()
     SILE.call("penalty", { penalty = BALANCE_PENALTY })
   end)

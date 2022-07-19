@@ -87,9 +87,9 @@ local function declareSettings (_)
 
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("href", function (options, content)
+  class:registerCommand("href", function (options, content)
     if not pdf then return SILE.process(content) end
     if options.src then
       SILE.call("pdf:link", { dest = options.src, external = true,
@@ -111,7 +111,7 @@ local function registerCommands (_)
     end
   end, "Inserts a PDF hyperlink.")
 
-  SILE.registerCommand("url", function (options, content)
+  class:registerCommand("url", function (options, content)
     SILE.settings:temporarily(function ()
       local primaryPenalty = SILE.settings:get("url.linebreak.primaryPenalty")
       local secondaryPenalty = SILE.settings:get("url.linebreak.secondaryPenalty")
@@ -143,7 +143,7 @@ local function registerCommands (_)
     end)
   end, "Inserts penalties in an URL so it can be broken over multiple lines at appropriate places.")
 
-  SILE.registerCommand("code", function (options, content)
+  class:registerCommand("code", function (options, content)
     SILE.call("verbatim:font", options, content)
   end)
 

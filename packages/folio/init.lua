@@ -43,25 +43,25 @@ local function init (class, _)
   class:registerHook("endpage", _outputFolio)
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("folios", function (_, _)
+  class:registerCommand("folios", function (_, _)
     SILE.scratch.counters.folio.off = false
   end)
 
-  SILE.registerCommand("nofolios", function (_, _)
+  class:registerCommand("nofolios", function (_, _)
     SILE.scratch.counters.folio.off = true
   end)
 
-  SILE.registerCommand("nofoliothispage", function (_, _)
+  class:registerCommand("nofoliothispage", function (_, _)
     SILE.scratch.counters.folio.off = 2
   end)
 
-  SILE.registerCommand("nofoliosthispage", function (_, _)
+  class:registerCommand("nofoliosthispage", function (_, _)
     SU.deprecated("nofoliosthispage", "nofoliothispage", "0.12.1", "0.14.0")
   end, "Deprecated")
 
-  SILE.registerCommand("foliostyle", function (_, content)
+  class:registerCommand("foliostyle", function (_, content)
     SILE.call("center", {}, content)
   end)
 

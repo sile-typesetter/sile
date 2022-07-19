@@ -38,9 +38,9 @@ local function init (class, _)
 
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("info", function (options, _)
+  class:registerCommand("info", function (options, _)
     SU.required(options, "category", "info node")
     SU.required(options, "value", "info node")
     table.insert(SILE.typesetter.state.nodes, _info({

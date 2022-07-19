@@ -48,7 +48,7 @@ end
 
 local function registerCommands (class)
 
-  SILE.registerCommand("open-double-page", function()
+  class:registerCommand("open-double-page", function()
     SILE.typesetter:leaveHmode()
     SILE.call("supereject")
     if class:oddPage() then

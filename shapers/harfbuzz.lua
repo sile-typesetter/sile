@@ -2,8 +2,6 @@ local hb = require("justenoughharfbuzz")
 local icu = require("justenoughicu")
 local bitshim = require("bitshim")
 
-if not SILE.shapers then SILE.shapers = { } end
-
 SILE.settings:declare({
   parameter = "harfbuzz.subshapers",
   type = "string or nil",
@@ -11,7 +9,7 @@ SILE.settings:declare({
   help = "Comma-separated shaper list to pass to Harfbuzz"
 })
 
-require("core.base-shaper")
+local base = require("shapers.base")
 
 local smallTokenSize = 20 -- Small words will be cached
 local shapeCache = {}
@@ -28,10 +26,10 @@ end
 local substwarnings = {}
 local usedfonts = {}
 
-SILE.shapers.harfbuzz = pl.class(SILE.shapers.base)
-SILE.shapers.harfbuzz._name = "harfbuzz"
+local harfbuzz = pl.class(base)
+harfbuzz._name = "harfbuzz"
 
-function SILE.shapers.harfbuzz:shapeToken (text, options)
+function harfbuzz:shapeToken (text, options)
   local items
   if #text < smallTokenSize then items = shapeCache[_key(options, text)]; if items then return items end end
   local face = SILE.font.cache(options, self.getFace)
@@ -66,7 +64,7 @@ function SILE.shapers.harfbuzz:shapeToken (text, options)
 end
 
 -- TODO: normalize this method to accept self as first arg
-function SILE.shapers.harfbuzz.getFace (opts)
+function harfbuzz.getFace (opts)
   local face = SILE.fontManager:face(opts)
   SU.debug("fonts", "Resolved font family '" .. tostring(opts.family) .. "' -> " .. tostring(face and face.filename))
   if not face or not face.filename then SU.error("Couldn't find face '"..opts.family.."'") end
@@ -81,7 +79,7 @@ function SILE.shapers.harfbuzz.getFace (opts)
   return face
 end
 
-function SILE.shapers.harfbuzz.preAddNodes (_, items, nnodeValue) -- Check for complex nodes
+function harfbuzz.preAddNodes (_, items, nnodeValue) -- Check for complex nodes
   for i = 1, #items do
     if items[i].y_offset or items[i].x_offset or items[i].width ~= items[i].glyphAdvance then
       nnodeValue.complex = true; break
@@ -89,7 +87,7 @@ function SILE.shapers.harfbuzz.preAddNodes (_, items, nnodeValue) -- Check for c
   end
 end
 
-function SILE.shapers.harfbuzz.addShapedGlyphToNnodeValue (_, nnodevalue, shapedglyph)
+function harfbuzz.addShapedGlyphToNnodeValue (_, nnodevalue, shapedglyph)
   if nnodevalue.complex then
 
     if not nnodevalue.items then nnodevalue.items = {} end
@@ -101,7 +99,7 @@ function SILE.shapers.harfbuzz.addShapedGlyphToNnodeValue (_, nnodevalue, shaped
   table.insert(nnodevalue.glyphNames, shapedglyph.name)
 end
 
-function SILE.shapers.harfbuzz.debugVersions (_)
+function harfbuzz.debugVersions (_)
   local ot = require("core.opentype-parser")
   print("Harfbuzz version: "..hb.version())
   print("Shapers enabled: ".. table.concat({ hb.shapers() }, ", "))
@@ -122,7 +120,7 @@ function SILE.shapers.harfbuzz.debugVersions (_)
   end
 end
 
-function SILE.shapers.harfbuzz.checkHBProblems (_, text, face)
+function harfbuzz.checkHBProblems (_, text, face)
   if hb.version_lessthan(1, 0, 4) and #text < 1 then
     return true
   end
@@ -136,4 +134,4 @@ function SILE.shapers.harfbuzz.checkHBProblems (_, text, face)
   return false
 end
 
-SILE.shaper = SILE.shapers.harfbuzz()
+return harfbuzz

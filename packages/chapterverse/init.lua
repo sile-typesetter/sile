@@ -8,19 +8,19 @@ local function init (class, _)
 
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("save-book-title", function (_, content)
+  class:registerCommand("save-book-title", function (_, content)
     SU.debug("chapterverse", "book: " .. content[1])
     SILE.scratch.chapterverse.book = content[1]
   end)
 
-  SILE.registerCommand("save-chapter-number", function (_, content)
+  class:registerCommand("save-chapter-number", function (_, content)
     SU.debug("chapterverse", "chapter: " .. content[1])
     SILE.scratch.chapterverse.chapter = content[1]
   end)
 
-  SILE.registerCommand("save-verse-number", function (_, content)
+  class:registerCommand("save-verse-number", function (_, content)
     SU.debug("chapterverse", "verse: " .. content[1])
     SILE.scratch.chapterverse.verse = content[1]
     local ref = {
@@ -32,7 +32,7 @@ local function registerCommands (_)
     SILE.call("info", { category = "references", value = ref }, {})
   end)
 
-  SILE.registerCommand("first-reference", function (_, _)
+  class:registerCommand("first-reference", function (_, _)
     local refs = SILE.scratch.info.thispage.references
     SU.debug("chapterverse", "first-reference: " .. tostring(SILE.scratch.info))
     if refs then
@@ -43,7 +43,7 @@ local function registerCommands (_)
     end
   end)
 
-  SILE.registerCommand("last-reference", function (options, _)
+  class:registerCommand("last-reference", function (options, _)
     local refs = SILE.scratch.info.thispage.references
     if refs then
       SU.debug("chapterverse", "last-reference: " .. tostring(refs[#(refs)]))
@@ -53,7 +53,7 @@ local function registerCommands (_)
     end
   end)
 
-  SILE.registerCommand("format-reference", function (options, content)
+  class:registerCommand("format-reference", function (options, content)
     if type(options.showbook) == "nil" then options.showbook = true end
     SU.debug("chapterverse", "formatting: " .. tostring(content))
     local ref

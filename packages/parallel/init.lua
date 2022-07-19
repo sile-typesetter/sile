@@ -67,11 +67,11 @@ local function init (class, options)
     -- Fixed leading here is obviously a bug, but n-way leading calculations
     -- get very complicated...
     -- typesetterPool[frame].leadingFor = function() return SILE.nodefactory.vglue(SILE.settings:get("document.lineskip")) end
-    SILE.registerCommand(frame, function (_, _) -- \left ...
+    class:registerCommand(frame, function (_, _) -- \left ...
       SILE.typesetter = typesetterPool[frame]
       SILE.call(frame..":font")
     end)
-    SILE.registerCommand(frame..":font", function (_, _) end) -- to be overridden
+    class:registerCommand(frame..":font", function (_, _) end) -- to be overridden
   end
   if not options.folios then
     folioOrder = { {} }
@@ -97,9 +97,9 @@ local function init (class, options)
 
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("sync", function (_, _)
+  class:registerCommand("sync", function (_, _)
     local anybreak = false
     local maxheight = SILE.length()
     SU.debug("parallel", "Trying a sync")

@@ -102,7 +102,7 @@ return {
     SILE.registerCommand("book:chapter:post:eo", function()
       SILE.typesetter:typeset(eo_nth())
       SILE.call("medskip", {})
-    end)
+    end, nil, nil, true)
 
   end
 }

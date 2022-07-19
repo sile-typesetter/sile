@@ -1,26 +1,50 @@
-local lpeg = require("lpeg")
+local base = require("inputters.base")
+
 local epnf = require("epnf")
 
-SILE.inputs.TeXlike = {}
+local sil = pl.class(base)
+sil._name = "sil"
 
-local ID = lpeg.C(SILE.parserBits.letter * (SILE.parserBits.letter + SILE.parserBits.digit)^0)
-SILE.inputs.TeXlike.identifier = (ID + lpeg.S":-")^1
+sil.order = 50
 
-SILE.inputs.TeXlike.passthroughCommands = {
+sil.appropriate = function (round, filename, doc)
+  if round == 1 then
+    return filename:match(".sil$")
+  elseif round == 2 then
+    local sniff = doc:sub(1, 100)
+    local promising = sniff:match("\\begin") or sniff:match("\\document") or sniff:match("\\sile")
+    return promising and sil.appropriate(3, filename, doc)
+  elseif round == 3 then
+    local _parser = epnf.define(sil._grammar)
+    local status, tree = pcall(epnf.parsestring, _parser, doc)
+    local cmd = tree[1][1].command
+    return status and (cmd == "document" or cmd == "sile")
+  end
+end
+
+local bits = SILE.parserBits
+
+
+sil.passthroughCommands = {
   ftl = true,
+  lua = true,
   math = true,
-  script = true
+  script = true,
+  sil = true,
+  xml = true
 }
-setmetatable(SILE.inputs.TeXlike.passthroughCommands, {
-    __call = function(self, command)
-      return self[command]
-    end
-  })
+
+function sil:_init (tree)
+  -- Save time when parsing strings by only setting up the grammar once per
+  -- instantiation then re-using it on every use.
+  self._parser = self:rebuildParser()
+  base._init(self, tree)
+end
 
 -- luacheck: push ignore
-SILE.inputs.TeXlike.parser = function (_ENV)
+function sil._grammar (_ENV)
   local isPassthrough = function (_, _, command)
-    return SILE.inputs.TeXlike.passthroughCommands(command) or false
+    return sil.passthroughCommands[command] or false
   end
   local isNotPassthrough = function (...)
     return not isPassthrough(...)
@@ -29,31 +53,16 @@ SILE.inputs.TeXlike.parser = function (_ENV)
     return thisCommand == lastCommand
   end
   local _ = WS^0
-  local sep = S",;" * _
   local eol = S"\r\n"
-  local quote = P'"'
-  local escaped_quote = B(P"\\") * quote
-  local unescapeQuote = function (str) local a = str:gsub('\\"', '"'); return a end
-  local quotedString = quote * C((1 - quote + escaped_quote)^1 / unescapeQuote) * quote
   local specials = S"{}%\\"
   local escaped_specials = P"\\" * specials
   local unescapeSpecials = function (str)
     return str:gsub('\\([{}%%\\])', '%1')
   end
-  local value = quotedString + (1-S",;]")^1
-  local myID = C(SILE.inputs.TeXlike.identifier) / 1
-  local unwrapper = function (...)
-    local tbl = {...}
-    return tbl[1], tbl[#tbl]
-  end
-  local pair = Cg(myID * _ * "=" * _ * C(value)) * sep^-1 / unwrapper
+  local myID = C(bits.silidentifier) / 1
   local cmdID = myID - P"beign" - P"end"
-  local list = Cf(Ct"" * pair^0, rawset)
-  local parameters = (
-      P"[" *
-      list *
-      P"]"
-    )^-1/function (a) return type(a)=="table" and a or {} end
+  local wrapper = function (a) return type(a)=="table" and a or {} end
+  local parameters = (P"[" * bits.parameters * P"]")^-1 / wrapper
   local comment = (
       P"%" *
       P(1-eol)^0 *
@@ -176,40 +185,18 @@ local function massage_ast (tree, doc)
   return tree
 end
 
-function SILE.inputs.TeXlike.process (doc)
-  local tree = SILE.inputs.TeXlike.docToTree(doc)
-  local root = SILE.documentState.documentClass == nil
-  if tree.command then
-    if root and tree.command == "document" then
-      SILE.inputs.common.init(doc, tree)
-    end
-    SILE.process(tree)
-  elseif not pcall(function () assert(load(doc))() end) then
-    SU.error("Input not recognized as Lua or SILE content")
-  end
-  if root and not SILE.preamble then
-    SILE.documentState.documentClass:finish()
-  end
+function sil:rebuildParser ()
+  return epnf.define(self._grammar)
 end
 
-local _parser
-
-function SILE.inputs.TeXlike.rebuildParser ()
-  _parser = epnf.define(SILE.inputs.TeXlike.parser)
-end
-
-SILE.inputs.TeXlike.rebuildParser()
-
-function SILE.inputs.TeXlike.docToTree (doc)
-  local tree = epnf.parsestring(_parser, doc)
-  -- a document always consists of one texlike_stuff
-  tree = tree[1][1]
-  if tree.id == "texlike_text" then tree = {tree} end
-  if not tree then return end
+function sil:parse (doc)
+  local tree = epnf.parsestring(self._parser, doc)[1]
+  if not tree then
+    return SU.error("Unable to parse input document to an AST tree")
+  end
   resetCache()
-  tree = massage_ast(tree, doc)
-  return tree
+  local ast = massage_ast(tree, doc)
+  return ast
 end
 
-SILE.inputs.TeXlike.order = 99
-SILE.inputs.TeXlike.appropriate = function () return true end
+return sil

@@ -50,13 +50,13 @@ local function declareSettings (_)
 
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("ruby:font", function (_, _)
+  class:registerCommand("ruby:font", function (_, _)
     SILE.call("font", { size = "0.6zw", weight = 800 })
   end)
 
-  SILE.registerCommand("ruby", function (options, content)
+  class:registerCommand("ruby", function (options, content)
     local reading = SU.required(options, "reading", "\\ruby")
     SILE.typesetter:setpar("")
 
