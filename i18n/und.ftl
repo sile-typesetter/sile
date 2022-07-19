@@ -1,3 +1,5 @@
+# Tests and examples
+hello = Namárië { $name }!
 
 # -- Usual book sections
 # appendix =

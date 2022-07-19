@@ -1,3 +1,6 @@
+# Tests and examples
+hello = Hei { $name }!
+
 # -- Usual book sections
 appendix = Tillegg
 chapter  = Kapittel

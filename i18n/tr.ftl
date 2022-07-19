@@ -1,3 +1,6 @@
+# Tests and examples
+hello = Merhaba { $name }!
+
 # -- Usual book sections
 appendix = Ek
 chapter  = Bölüm
@@ -26,8 +29,6 @@ page = Sayfa
 see = bkz.
 see-also = ayrıca bkz.
 tableofcontents-not-generated = Rerun SILE to process the table of contents!
-# Test (only for en and tr)
-hello = Merhaba { $name }!
 
 # -- Bibliography stuff
 # bibliography-and =

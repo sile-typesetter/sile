@@ -1,3 +1,6 @@
+# Tests and examples
+hello = Hello { $name }!
+
 # -- Usual book sections
 appendix = Appendix
 chapter  = Chapter
@@ -26,8 +29,6 @@ page = Page
 see = see
 see-also = see also
 tableofcontents-not-generated = Rerun SILE to process the table of contents!
-# Test (only for en and tr)
-hello = Hello { $name }!
 
 # -- Bibliography stuff
 bibliography-and = and

@@ -1,3 +1,6 @@
+# Tests and examples
+hello = Salve { $name }!
+
 # -- Usual book sections
 appendix = Additamentum
 chapter  = Caput

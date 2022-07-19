@@ -16,8 +16,8 @@ describe("Language module", function ()
 
     it("should have localizations", function ()
       fluent:set_locale("no")
-      local msg = SILE.fluent:get_message("chapter-template")({ number = "Busted" })
-      assert.is.equal("Kapittel Busted", msg)
+      local hello = fluent:get_message("hello")({ name = "Busted" })
+      assert.is.equal("Hei Busted!", hello)
     end)
 
     describe("Norwegian Bokmål", function ()
@@ -31,8 +31,8 @@ describe("Language module", function ()
       end)
 
       it("should have localizations", function ()
-        local hello = fluent:get_message("chapter-template")({ number = "Busted" })
-        assert.is.equal("Kapittel Busted", hello)
+        local hello = fluent:get_message("hello")({ name = "Busted" })
+        assert.is.equal("Hei Busted!", hello)
       end)
 
     end)
@@ -48,8 +48,8 @@ describe("Language module", function ()
       end)
 
       it("should have localizations", function ()
-        local hello = fluent:get_message("chapter-template")({ number = "Busted" })
-        assert.is.equal("Kapittel Busted", hello)
+        local hello = fluent:get_message("hello")({ name = "Busted" })
+        assert.is.equal("Hei Busted!", hello)
       end)
 
     end)

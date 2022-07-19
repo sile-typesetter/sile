@@ -1,3 +1,6 @@
+# Tests and examples
+hello = Saluton { $name }!
+
 # -- Usual book sections
 appendix = Apendico
 chapter  = Ĉapitro
