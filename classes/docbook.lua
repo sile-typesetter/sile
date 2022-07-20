@@ -18,6 +18,7 @@ function docbook:_init (options)
     })
   self:loadPackage("rules")
   self:loadPackage("verbatim")
+  self:loadPackage("footnotes")
   return self
 end
 
@@ -44,6 +45,31 @@ end
 docbook.registerCommands = function (self)
 
   plain.registerCommands(self)
+
+  -- Unfinished! commands found in howto.xml example document on docbook.org
+  self:registerCommand("acronym", function (_, content) SILE.process(content) end)
+  self:registerCommand("alt", function (_, content) SILE.process(content) end)
+  self:registerCommand("note", function (_, content) SILE.process(content) end)
+  self:registerCommand("colspec", function (_, content) SILE.process(content) end)
+  self:registerCommand("phrase", function (_, content) SILE.process(content) end)
+  self:registerCommand("literal", function (_, content) SILE.process(content) end)
+  self:registerCommand("docbook-section-3-title", function (_, content) SILE.process(content) end)
+  self:registerCommand("variablelist", function (_, content) SILE.process(content) end)
+  self:registerCommand("varlistentry", function (_, content) SILE.process(content) end)
+  self:registerCommand("term", function (_, content) SILE.process(content) end)
+  self:registerCommand("procedure", function (_, content) SILE.process(content) end)
+  self:registerCommand("step", function (_, content) SILE.process(content) end)
+  self:registerCommand("screen", function (_, content) SILE.process(content) end)
+  self:registerCommand("command", function (_, content) SILE.process(content) end)
+  self:registerCommand("option", function (_, content) SILE.process(content) end)
+  self:registerCommand("package", function (_, content) SILE.process(content) end)
+  self:registerCommand("tip", function (_, content) SILE.process(content) end)
+  self:registerCommand("varname", function (_, content) SILE.process(content) end)
+  self:registerCommand("qandaset", function (_, content) SILE.process(content) end)
+  self:registerCommand("qandadiv", function (_, content) SILE.process(content) end)
+  self:registerCommand("qandaentry", function (_, content) SILE.process(content) end)
+  self:registerCommand("question", function (_, content) SILE.process(content) end)
+  self:registerCommand("answer", function (_, content) SILE.process(content) end)
 
   self:registerCommand("docbook-line", function (_, _)
     SILE.call("medskip")
@@ -367,7 +393,7 @@ docbook.registerCommands = function (self)
     -- elseif ctx and ctx.type == "" then
     --   -- Other types?
     else
-      SU.error("Listitem in outer space")
+      return SU.warn("Listitem in outer space")
     end
     SILE.call("noindent")
     for _=1, #ctx-1 do SILE.call("qquad") end -- Setting lskip better?
