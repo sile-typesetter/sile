@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "leaders"
+
 --
 -- Leaders package
 --
@@ -76,11 +81,12 @@ function leader:outputYourself (typesetter, line)
   typesetter.frame.state.cursorX = ox
   typesetter.frame.state.cursorY = oy
   typesetter.frame:advanceWritingDirection(outputWidth)
+
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
 
-  class:registerCommand("leaders", function(options, content)
+  self.class:registerCommand("leaders", function(options, content)
     local width = options.width and SU.cast("glue", options.width) or SILE.nodefactory.hfillglue()
     SILE.call("hbox", {}, content)
     local hbox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
@@ -89,7 +95,7 @@ local function registerCommands (class)
     SILE.typesetter:pushExplicitGlue(l)
   end)
 
-  class:registerCommand("dotfill", function(_, _)
+  self.class:registerCommand("dotfill", function(_, _)
     -- Implementation note:
     -- The "usual" space between dots in "modern days" is 0.5em (cf. "points
     -- conducteurs" in Frey & Bouchez, 1857), evenly distributed around the dot,
@@ -105,12 +111,10 @@ local function registerCommands (class)
 
 end
 
-return {
-  registerCommands = registerCommands,
-  documentation = [[
+package.documentation = [[
 \begin{document}
-The \autodoc:package{leaders} package allows you to create repeating patterns which fill a
-given space. It provides the \autodoc:command{\dotfill} command, which does this:
+The \autodoc:package{leaders} package allows you to create repeating patterns which fill a given space.
+It provides the \autodoc:command{\dotfill} command, which does this:
 
 \begin{verbatim}
 \line
@@ -122,8 +126,8 @@ A\\dotfill\{\}B
 A\dotfill{}B\par
 \end{examplefont}
 
-It also provides the \autodoc:command{\leaders[width=<dimension>]{<content>}} command which
-allow you to define your own leaders. For example:
+It also provides the \autodoc:command{\leaders[width=<dimension>]{<content>}} command which allow you to define your own leaders.
+For example:
 
 \begin{verbatim}
 \line
@@ -135,15 +139,11 @@ A\\leaders[width=40pt]\{/\\\\\}B
 A\leaders[width=40pt]{/\\}B\par
 \end{examplefont}
 
-If the width is omitted, the leaders extend as much as possible (as a
-\autodoc:command{\dotfill} or \autodoc:command{\hfill}).
+If the width is omitted, the leaders extend as much as possible (as a \autodoc:command{\dotfill} or \autodoc:command{\hfill}).
 
-Leader patterns are always vertically aligned, respectively to the end
-edge of the frame they appear in, for a given font.
-It implies that the number of repeated patterns and their positions do not
-only depend on the available space, but also on the alignment constraint
-and the active font.
-
+Leader patterns are always vertically aligned, respectively to the end edge of the frame they appear in, for a given font.
+It implies that the number of repeated patterns and their positions do not only depend on the available space, but also on the alignment constraint and the active font.
 \end{document}
 ]]
-}
+
+return package
