@@ -7,15 +7,13 @@ base.class = nil
 
 function base:_init (class)
   self.class = class
+  self:declareSettings()
+  self:registerCommands()
   self._initialized = true
 end
 
-function base:unload ()
-  if self._initialized then
-    self._initialized = false
-  end
-end
+function base:declareSettings () end
 
-base.documentation = ""
+function base:registerCommands () end
 
 return base

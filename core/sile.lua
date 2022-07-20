@@ -160,7 +160,11 @@ SILE.require = function (dependency, pathprefix, deprecation_ack)
       SILE.require("%s") → require("%s")]], dependency, dependency))
   end
   if lib and class then
-    class:initPackage(lib)
+    if lib.type == "package" then
+      lib(class)
+    else
+      class:initPackage(lib)
+    end
   end
   return lib
 end
