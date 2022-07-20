@@ -2,6 +2,11 @@
 -- Documentation tooling for package designers.
 --
 
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "autodoc"
+
 local theme = {
   command = "#1d4851", -- oil blue
   parameter = "#3f5218", -- some sort of dark green
@@ -87,11 +92,12 @@ local function typesetAST (options, content)
   end
 end
 
-local function init (class, args)
+function package:_init (class, options)
 
   class:loadPackage("inputfilter")
+  base._init(self, class)
 
-  if args then pl.tablex.update(theme, args) end
+  if options then pl.tablex.update(theme, options) end
 
   if not SILE.scratch.autodoc then
     SILE.scratch.autodoc = {
@@ -101,16 +107,20 @@ local function init (class, args)
 
 end
 
-local function declareSettings (_)
+function package.declareSettings (_)
+
   SILE.settings:declare({
     parameter = "autodoc.highlighting",
     default = false,
     type = "boolean",
     help = "Whether audodoc enables syntax highlighting"
   })
+
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
+
+  local class = self.class
 
   -- Documenting a setting with good line-breaks
   local settingFilter = function (node, content)
@@ -131,13 +141,17 @@ local function registerCommands (class)
   end
 
   class:registerCommand("package-documentation", function (options, _)
-    local package = SU.required(options, "src", "src for package documentation")
-    SU.debug("autodoc", package)
-    local pkg = require(package)
+    local pack = SU.required(options, "src", "src for package documentation")
+    SU.debug("autodoc", pack)
+    local pkg = require(pack)
     if type(pkg) ~= "table" or not pkg.documentation then
-      SU.error("Undocumented package "..package)
+      SU.error("Undocumented package " .. pack)
     end
-    if type(pkg.registerCommands) == "function" then pkg.registerCommands(SILE.documentState.documentClass) end
+    if type(pkg.registerCommands) == "function" then
+      -- faking an uninstantiated package
+      pkg.class = class
+      pkg.registerCommands(pkg)
+    end
     SILE.processString(pkg.documentation)
   end)
 
@@ -274,56 +288,39 @@ local function registerCommands (class)
 
 end
 
-return {
-  init = init,
-  registerCommands = registerCommands,
-  declareSettings = declareSettings,
-  documentation = [[\begin{document}
-This package extracts documentation information from other packages. It’s used to
-construct the SILE manual. Keeping package documentation in the package itself
-keeps the documentation near the implementation, which (in theory) makes it easy
-for documentation and implementation to be in sync.
+package.documentation = [[
+\begin{document}
+This package extracts documentation information from other packages.
+It’s used to construct the SILE manual.
+Keeping package documentation in the package itself keeps the documentation near the implementation, which (in theory) makes it easy for documentation and implementation to be in sync.
 
-For that purpose, it provides the \autodoc:command{\package-documentation[src=<package>]}
-command.
+For that purpose, it provides the \autodoc:command{\package-documentation[src=<package>]} command.
 
-Properly documented packages should export a \code{documentation} string
-containing their documentation, as a SILE document.
+Properly documented packages should export a \code{documentation} string containing their documentation, as a SILE document.
 
-For documenters and package authors, it also provides commands that can be used in their package
-documentation to present various pieces of information in a consistent way.
+For documenters and package authors, it also provides commands that can be used in their package documentation to present various pieces of information in a consistent way.
 
 Setting names can be fairly long (e.g. \em{namespace.area.some-stuff\kern[width=0.1em]}).
-The \autodoc:command{\autodoc:setting} command helps line-breaking them automatically at
-appropriate points, so that package authors do not have care about them
+The \autodoc:command{\autodoc:setting} command helps line-breaking them automatically at appropriate points, so that package authors do not have care about them
 manually.
 
-With the \autodoc:command{\autodoc:command} command, one can pass a simple command, or even
-a full commands (with parameters and arguments), without the need for escaping special
-characters. This relies on SILE’s AST (abstract syntax tree) parsing, so you benefit from
-typing simplicity, syntax check, and even more –such as styling\footnote{If the \autodoc:package{color}
-package is loaded and the \autodoc:setting{autodoc.highlighting} setting is set to true, you get syntax
-highlighting.}.
-Moreover, for text content in parameter values or command arguments, if they are enclosed
-between angle brackets, they will be presented with an distinguishable style.
-Just type the command as it would appear in code, and it will be nicely typeset. It comes with
-a few caveats, though: parameters are not guaranteed to appear in the order you entered them and
-some purely syntactic sequences are just skipped and not reconstructed. Also, it is not adapted
-to math-related commands. So it comes with many benefits, but also at a cost.
+With the \autodoc:command{\autodoc:command} command, one can pass a simple command, or even a full commands (with parameters and arguments), without the need for escaping special characters.
+This relies on SILE’s AST (abstract syntax tree) parsing, so you benefit from typing simplicity, syntax check, and even more –such as styling
+\footnote{If the \autodoc:package{color} package is loaded and the \autodoc:setting{autodoc.highlighting} setting is set to true, you get syntax highlighting.}.
+Moreover, for text content in parameter values or command arguments, if they are enclosed between angle brackets, they will be presented with an distinguishable style.
+Just type the command as it would appear in code, and it will be nicely typeset.
+It comes with a few caveats, though: parameters are not guaranteed to appear in the order you entered them and some purely syntactic sequences are just skipped and not reconstructed.
+Also, it is not adapted to math-related commands.
+So it comes with many benefits, but also at a cost.
 
-The \autodoc:command{\autodoc:environment} command just takes an environment name, so
-basically a command, but just displays it without leading backslash.
+The \autodoc:command{\autodoc:environment} command just takes an environment name, so basically a command, but just displays it without leading backslash.
 
-The \autodoc:command{\autodoc:setting}, \autodoc:command{\autodoc:command} and
-\autodoc:command{\autodoc:environment} commands all check the validity and existence of
-their inputs. Would you want to disable this feature (e.g. to refer to a setting or command
-defined in another package or module that might not be loaded at this point), you can set the
-optional parameter \autodoc:parameter{check} to false.
-Note, however, that for commands, it is applied recursively to the parsed AST
-(so it is a all-or-none trade-off).
+The \autodoc:command{\autodoc:setting}, \autodoc:command{\autodoc:command} and \autodoc:command{\autodoc:environment} commands all check the validity and existence of their inputs.
+Would you want to disable this feature (e.g. to refer to a setting or command defined in another package or module that might not be loaded at this point), you can set the optional parameter \autodoc:parameter{check} to false.
+Note, however, that for commands, it is applied recursively to the parsed AST (so it is a all-or-none trade-off).
 
-The \autodoc:command{\autodoc:parameter} commands takes either a parameter name, possibly
-with a value (which as above, may be bracketed) and typesets it in the same fashion.
+The \autodoc:command{\autodoc:parameter} commands takes either a parameter name, possibly with a value (which as above, may be bracketed) and typesets it in the same fashion.
+\end{document}
+]]
 
-\end{document}]]
-}
+return package
