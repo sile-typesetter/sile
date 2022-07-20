@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "font-fallback"
+
 local lastshaper
 
 local fallbackQueue = pl.class({
@@ -75,14 +80,16 @@ local fallbackQueue = pl.class({
 
 local activeFallbacks = {}
 
-local function init (_, _)
+function package:_init (class)
+
+  base._init(self, class)
 
   local harfbuzz = require("shapers.harfbuzz")
 
   SILE.shapers.harfbuzzWithFallback = pl.class(harfbuzz)
   SILE.shapers.harfbuzzWithFallback._name = "harfbuzzWithFallback"
 
-  function SILE.shapers.harfbuzzWithFallback:shapeToken (text, options)
+  function SILE.shapers.harfbuzzWithFallback.shapeToken (self_, text, options)
     local items = {}
     local fallbackOptions = { options }
     for _, font in ipairs(activeFallbacks) do
@@ -95,7 +102,7 @@ local function init (_, _)
       local face = run.options.family:len() > 0 and run.options.family or run.options.filename
       local chunk = shapeQueue:currentText()
       SU.debug("font-fallback", ("Try shaping chunk '%s' with '%s'"):format(chunk, face))
-      local candidate_items = self._base.shapeToken(self, chunk, run.options)
+      local candidate_items = self_._base.shapeToken(self_, chunk, run.options)
       local _index
       for _, item in ipairs(candidate_items) do
         item.fontOptions = run.options
@@ -128,8 +135,8 @@ local function init (_, _)
     return items
   end
 
-  function SILE.shapers.harfbuzzWithFallback:createNnodes (token, options)
-    local items, _ = self:shapeToken(token, options)
+  function SILE.shapers.harfbuzzWithFallback.createNnodes (self_, token, options)
+    local items, _ = self_:shapeToken(token, options)
     if #items < 1 then return {} end
     local lang = options.language
     SILE.languageSupport.loadLanguage(lang)
@@ -159,7 +166,9 @@ local function init (_, _)
 
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
+
+  local class = self.class
 
   class:registerCommand("font:clear-fallbacks", function ()
     activeFallbacks = {}
@@ -190,38 +199,24 @@ local function registerCommands (class)
 
 end
 
-return {
-  init = init,
-  registerCommands = registerCommands,
-  documentation = [[
+package.documentation = [[
 \begin{document}
+What happens when SILE is asked to typeset a character which is not in the current font?
+For instance, we are currently using the “Gentium” font, which covers a wide range of European scripts; however, it doesn’t contain any Japanese character.
+  So what if I ask SILE to typeset \code{abc \font[family=Noto Sans CJK JP]{あ}}?
 
-What happens when SILE is asked to typeset a character which is not in the
-current font? For instance, we are currently using the “Gentium” font, which
-covers a wide range of European scripts; however, it doesn’t contain any
-Japanese character. So what if I ask SILE to typeset \code{abc
-\font[family=Noto Sans CJK JP]{あ}}?
+Many applications will find another font on the system containing the appropriate character and use that font instead.
+But which font should be chosen?
+SILE is designed for typesetting situations where the document or class author wants complete control over the typographic appearance of the output, so it’s not appropriate for it to make a guess—besides, you asked for Gentium.
+So where the glyph is not defined, SILE will give you the current font’s “glyph not defined” symbol (a glyph called \code{.notdef}) instead.
 
-Many applications will find another font on the system containing the
-appropriate character and use that font instead. But which font should
-be chosen? SILE is designed for typesetting situations where the document
-or class author wants complete control over the typographic appearance
-of the output, so it’s not appropriate for it to make a guess—besides,
-you asked for Gentium. So where the glyph is not defined, SILE will give
-you the current font’s “glyph not defined” symbol (a glyph called \code{.notdef})
-instead.
+But there are times when this is just too strict.
+If you’re typesetting a document in English and Japanese, you should be able to choose your English font and choose your Japanese font, and if the glyph isn’t available in one, SILE should try the other.
+  The \autodoc:package{font-fallback} package gives you a way to specify a list of font specifications, and it will try each one in turn if glyphs cannot be found.
 
-But there are times when this is just too strict. If you’re typesetting
-a document in English and Japanese, you should be able to choose your
-English font and choose your Japanese font, and if the glyph isn’t available
-in one, SILE should try the other. The \autodoc:package{font-fallback} package gives you
-a way to specify a list of font specifications, and it will try each one in
-turn if glyphs cannot be found.
-
-It provides two commands, \autodoc:command{\font:add-fallback} and
-\autodoc:command{\font:clear-fallbacks}.
-The parameters to \autodoc:command{\font:add-fallback} are the same as the
-parameters to \autodoc:command{\font}. So this code:
+It provides two commands, \autodoc:command{\font:add-fallback} and \autodoc:command{\font:clear-fallbacks}.
+The parameters to \autodoc:command{\font:add-fallback} are the same as the parameters to \autodoc:command{\font}.
+So this code:
 
 \begin{verbatim}
 \line
@@ -247,12 +242,10 @@ and SILE will produce:
 \font:remove-fallback
 \font:remove-fallback
 
-\autodoc:command{\font:clear-fallbacks} removes all font fallbacks from the list
-of fonts to try.
+\autodoc:command{\font:clear-fallbacks} removes all font fallbacks from the list of fonts to try.
 
-\autodoc:command{\font:remove-fallback} removes the last added fallback from the
-list of fonts to try.
-
+\autodoc:command{\font:remove-fallback} removes the last added fallback from the list of fonts to try.
 \end{document}
 ]]
-}
+
+return package
