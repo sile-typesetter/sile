@@ -83,7 +83,7 @@ local function registerCommands (class)
     local dest = SU.required(options, "dest", "pdf:link")
     local target = options.external and "/Type/Action/S/URI/URI" or "/S/GoTo/D"
     local borderwidth = options.borderwidth and SU.cast("measurement", options.borderwidth):tonumber() or 0
-    local bordercolor = borderColor(SILE.colorparser(options.bordercolor or "blue"))
+    local bordercolor = borderColor(SILE.color(options.bordercolor or "blue"))
     local borderoffset = SU.cast("measurement", options.borderoffset or "1pt"):tonumber()
     local borderstyle = borderStyle(options.borderstyle, borderwidth)
     local llx, lly
