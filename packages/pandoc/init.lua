@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "pandoc"
+
 -- Process arguments that might not actually have that much to do with their
 -- immediate function but affect the document in other ways, such as setting
 -- bookmarks on anything tagged with an ID attribute.
@@ -40,7 +45,9 @@ local handlePandocArgs = function (options)
   return wrapper, options
 end
 
-local function init (class, _)
+function package:_init (class)
+
+  base._init(self, class)
 
   class:loadPackage("footnotes")
   class:loadPackage("image")
@@ -52,7 +59,9 @@ local function init (class, _)
 
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
+
+  local class = self.class
 
   -- Document level stuff
 
@@ -302,11 +311,12 @@ local function registerCommands (class)
 
 end
 
-return {
-  init = init,
-  registerCommands = registerCommands,
-  documentation = [[\begin{document}
+package.documentation = [[
+\begin{document}
 
 Cover all the possible commands Pandoc's SILE export might throw at us.
 
-\end{document}]] }
+\end{document}
+]]
+
+return package
