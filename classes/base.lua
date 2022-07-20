@@ -486,6 +486,7 @@ function base:endPage ()
 end
 
 function base:finish ()
+  SILE.inputter:postamble()
   SILE.call("vfill")
   while not SILE.typesetter:isQueueEmpty() do
     SILE.call("supereject")
