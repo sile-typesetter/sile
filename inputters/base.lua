@@ -36,6 +36,7 @@ function base:requireClass (tree)
       SU.error("This isn't a SILE document!")
     end
     self:classInit(tree[1].options or {})
+    self:preamble()
   end
 end
 
@@ -64,7 +65,7 @@ function base.findInTree (_, tree, command)
 end
 
 function base.preamble (_)
-  for _, path in ipairs(SILE.input.preamble) do
+  for _, path in ipairs(SILE.input.preambles) do
     SILE.processFile(path)
   end
 end
