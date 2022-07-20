@@ -3,9 +3,10 @@ base.type = "package"
 base._name = "base"
 
 base._initialized = false
+base.class = nil
 
-function base:_init ()
-  SU.dump("prototype package")
+function base:_init (class)
+  self.class = class
   self._initialized = true
 end
 
