@@ -66,11 +66,13 @@ else
   extendPaths(".")
 end
 
+-- This global is set here and *also* in the core library, since this
+-- effectively passes the same table they are interchangeable (for now).
 SILE = require("core.sile")
 
 io.stdout:setvbuf 'no'
 
-SILE.parseArguments()
+SILE.cli:parseArguments()
 
 if not os.getenv 'LUA_REPL_RLWRAP' then
   io.stderr:write(SILE.full_version .. '\n')
@@ -95,18 +97,31 @@ if SILE.masterFilename then
     ProFi:start()
   end
 
-  for _, preamble in pairs(SILE.preamble) do
-    io.stderr:write("Loading "..preamble.."\n")
-    local c = SILE.resolveFile(preamble, "classes")
+  for _, path in ipairs(SILE.input.requires) do
+    local module = require(path)
+    if type(module) == "table" and module._name then
+      if module.type == "class" then
+        SILE.classes[module._name] = module
+        SILE.sratch.required_class = module
+      elseif module.type == "inputter" then
+        SILE.inputters[module._name] = module
+      end
+    end
+  end
+
+  -- Deprecated, notice given in core.cli when argument used
+  for _, path in ipairs(SILE.input.includes) do
+    io.stderr:write("Loading "..path.."\n")
+    local c = SILE.resolveFile(path, "classes")
     if c then
-      SILE.readFile(c)
+      SILE.processFile(c)
     else
-      SILE.require(preamble, "classes")
+      SILE.require(path, "classes")
     end
   end
 
   local main, err = xpcall(function()
-      return SILE.readFile(SILE.inputFile)
+      return SILE.processFile(SILE.inputFile)
     end, SILE.errorHandler)
 
   if not main then
@@ -126,11 +141,11 @@ if SILE.masterFilename then
   end
 
   if SU.debugging("versions") then
-    SILE.shaper.debugVersions()
+    SILE.shaper:debugVersions()
   end
 
 else
-  SILE.repl()
+  SILE.repl:enter()
 end
 
 -- vim: ft=lua

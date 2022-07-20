@@ -30,7 +30,7 @@ end
 
 local function registerCommands (class)
 
-  SILE.registerCommand("indexentry", function (options, content)
+  class:registerCommand("indexentry", function (options, content)
     if not options.label then
       -- Reconstruct the text.
       SILE.typesetter:pushState()
@@ -47,7 +47,7 @@ local function registerCommands (class)
     SILE.call("info", { category ="index", value = { index = options.index, label = options.label }})
   end)
 
-  SILE.registerCommand("printindex", function (options, _)
+  class:registerCommand("printindex", function (options, _)
     moveNodes(class)
     if not options.index then options.index = "main" end
     local index = SILE.scratch.index[options.index]
@@ -61,7 +61,7 @@ local function registerCommands (class)
     end
   end)
 
-  SILE.registerCommand("index:item", function (options, content)
+  class:registerCommand("index:item", function (options, content)
     SILE.settings:temporarily(function ()
       SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
       SILE.settings:set("current.parindent", SILE.nodefactory.glue())

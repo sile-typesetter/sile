@@ -175,8 +175,9 @@ local function init (class, _)
   class:loadPackage("struts")
 end
 
-local function registerCommands (_)
-  SILE.registerCommand("parbox", function (options, content)
+local function registerCommands (class)
+
+  class:registerCommand("parbox", function (options, content)
     local width = SU.required(options, "width", "parbox")
     local strut = options.strut or "none"
     local border = options.border and parseBorderOrPadding(options.border, "border") or { 0, 0, 0, 0 }
@@ -301,6 +302,7 @@ local function registerCommands (_)
     -- a bunch of things. And after all these parboxes were made with tables in
     -- mind, though they can be of a more general interest.
   end)
+
 end
 
 return {

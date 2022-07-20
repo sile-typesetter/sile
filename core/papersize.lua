@@ -80,9 +80,4 @@ setmetatable(papersize, {
     end
   })
 
-SILE.paperSizeParser = function (size)
-  -- SU.warn("SILE.paperSizeParser(...) is deprecated, use SILE.papersize(...) instead")
-  return papersize(size)
-end
-
 return papersize

@@ -38,14 +38,14 @@ traceStack.defaultFrame = pl.class({
 
 traceStack.documentFrame = pl.class(traceStack.defaultFrame)
 
-function traceStack.documentFrame:_init (file, sniff)
+function traceStack.documentFrame:_init (file, snippet)
   self.command = "document"
   self.file = file
-  self.sniff = sniff
+  self.snippet = snippet
 end
 
 function traceStack.documentFrame:__tostring ()
-  return "<file> (" .. self.sniff .. ")"
+  return "<file> (" .. self.snippet .. ")"
 end
 
 traceStack.commandFrame = pl.class(traceStack.defaultFrame)
@@ -89,8 +89,9 @@ local function formatTraceLine (string)
 end
 
 -- Push a document processing run (input method) onto the stack
-function traceStack:pushDocument(file, sniff, _)
-  local frame = traceStack.documentFrame(file, sniff)
+function traceStack:pushDocument(file, doc)
+  local snippet = doc:sub(1, 100)
+  local frame = traceStack.documentFrame(file, snippet)
   return self:pushFrame(frame)
 end
 

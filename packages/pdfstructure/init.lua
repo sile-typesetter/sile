@@ -78,8 +78,7 @@ local function init (class, _)
 
   class:loadPackage("pdf")
 
-  SILE.outputters.libtexpdf.finish = function ()
-    pdf.endpage()
+  function SILE.outputters.libtexpdf._endHook (_)
     local catalog = pdf.get_dictionary("Catalog")
     local structureTree = pdf.parse("<< /Type /StructTreeRoot >>")
     pdf.add_dict(catalog, pdf.parse("/StructTreeRoot"), pdf.reference(structureTree))
@@ -88,19 +87,20 @@ local function init (class, _)
     pdf.add_dict(structureTree, pdf.parse("/K"), dumpTree(stRoot))
     if structureNumberTree then pdf.release(structureNumberTree) end
     if structureTree then pdf.release(structureTree) end
-    pdf.finish()
   end
 
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("pdf:structure", function (options, content)
+  class:registerCommand("pdf:structure", function (options, content)
     local notetype = SU.required(options, "type", "pdf structure")
     local node = stNode(notetype)
     addChild(node)
     node.lang = SILE.settings:get("document.language")
-    SILE.outputter:_init()
+    if type(SILE.outputter._ensureInit) == "function" then
+      SILE.outputter._ensureInit()
+    end
     node.page = pdf.get_dictionary("@THISPAGE")
     node.mcid = mcid
     local oldstPointer = stPointer

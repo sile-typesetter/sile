@@ -4,10 +4,13 @@
 --
 
 local function init (class, _)
+
   class:loadPackage("rebox")
+
 end
 
 local function declareSettings (_)
+
   SILE.settings:declare({
     parameter = "strut.character",
     type = "string",
@@ -28,9 +31,10 @@ local function declareSettings (_)
     default = SILE.measurement("1bs"),
     help = "Strut rule height"
   })
+
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
   -- A strut character (for a given font selection) will be used a lot.
   -- It would be a bit dumb to recompute it each time, so let's cache it.
   local strutCache = {}
@@ -57,7 +61,7 @@ local function registerCommands (_)
     return strutCache[key]
   end
 
-  SILE.registerCommand("strut", function (options, _)
+  class:registerCommand("strut", function (options, _)
     local method = options.method or "character"
     local show = SU.boolean(options.show, true)
     local strut
@@ -78,6 +82,7 @@ local function registerCommands (_)
     end
     return strut
   end, "Formats a strut box, shows it if requested, returns its height and depth dimentions.")
+
 end
 
 return {

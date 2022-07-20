@@ -78,9 +78,9 @@ function leader:outputYourself (typesetter, line)
   typesetter.frame:advanceWritingDirection(outputWidth)
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("leaders", function(options, content)
+  class:registerCommand("leaders", function(options, content)
     local width = options.width and SU.cast("glue", options.width) or SILE.nodefactory.hfillglue()
     SILE.call("hbox", {}, content)
     local hbox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
@@ -89,7 +89,7 @@ local function registerCommands (_)
     SILE.typesetter:pushExplicitGlue(l)
   end)
 
-  SILE.registerCommand("dotfill", function(_, _)
+  class:registerCommand("dotfill", function(_, _)
     -- Implementation note:
     -- The "usual" space between dots in "modern days" is 0.5em (cf. "points
     -- conducteurs" in Frey & Bouchez, 1857), evenly distributed around the dot,

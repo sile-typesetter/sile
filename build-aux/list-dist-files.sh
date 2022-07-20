@@ -7,7 +7,7 @@ finder () {
 }
 
 printf '%s' "SILEDATA ="
-finder core classes languages packages -name '*.lua' -not -name 'version.lua'
+finder classes core inputters languages outputters packages shapers -name '*.lua' -not '*_spec.lua' -not -name 'version.lua'
 finder classes -name '*.sil'
 finder i18n -name '*.ftl'
 
@@ -20,6 +20,11 @@ finder lua_modules -not -name "'*~'"
 printf '\n%s' "TESTSRCS ?="
 finder tests -maxdepth 1 -name '*.sil'
 finder tests -maxdepth 1 -name '*.xml'
+finder tests -maxdepth 1 -name '*.lua'
+finder tests -maxdepth 1 -name '*.nil'
+
+printf '\n%s' "BUSTEDSPECS ?="
+finder tests -maxdepth 1 -name '*_spec.lua'
 
 printf '\n%s' "TESTEXPECTS ?="
 finder tests -maxdepth 1 -name '*.expected'

@@ -88,13 +88,13 @@ local function init (_, _)
 
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("converters:register", function (options, _)
+  class:registerCommand("converters:register", function (options, _)
     register(options.from, options.to, options.command)
   end)
 
-  SILE.registerCommand("converters:check", function (options, _)
+  class:registerCommand("converters:check", function (options, _)
     checkConverters(options.source)
   end)
 

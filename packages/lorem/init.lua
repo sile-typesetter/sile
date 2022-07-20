@@ -66,9 +66,9 @@ ipsum dolor sit amet
 
 local _, nwords = lorem:gsub("%S+", "")
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("lorem", function (options, _)
+  class:registerCommand("lorem", function (options, _)
     local words = tonumber(options.words) or 50
     local counter = options.counter or false
     local times = math.floor(words/nwords)

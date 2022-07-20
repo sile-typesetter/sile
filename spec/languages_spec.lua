@@ -7,7 +7,7 @@ describe("Language module", function ()
     local hyphenate = SILE.showHyphenationPoints
 
     SILE.languageSupport.loadLanguage("no")
-    SILE.fluent:set_locale("no")
+    fluent:set_locale("no")
 
     it("should hyphenate", function ()
       assert.is.equal("Nor-we-gian", hyphenate("Norwegian", "no"))
@@ -15,15 +15,15 @@ describe("Language module", function ()
     end)
 
     it("should have localizations", function ()
-      SILE.fluent:set_locale("no")
-      local hello = SILE.fluent:get_message("hello")({ name = "Busted" })
+      fluent:set_locale("no")
+      local hello = fluent:get_message("hello")({ name = "Busted" })
       assert.is.equal("Hei Busted!", hello)
     end)
 
     describe("Norwegian Bokmål", function ()
 
       SILE.languageSupport.loadLanguage("nb")
-      SILE.fluent:set_locale("nb")
+      fluent:set_locale("nb")
 
       it("should hyphenate", function ()
         assert.is.equal("Nor-we-gian", hyphenate("Norwegian", "nb"))
@@ -31,7 +31,7 @@ describe("Language module", function ()
       end)
 
       it("should have localizations", function ()
-        local hello = SILE.fluent:get_message("hello")({ name = "Busted" })
+        local hello = fluent:get_message("hello")({ name = "Busted" })
         assert.is.equal("Hei Busted!", hello)
       end)
 
@@ -40,7 +40,7 @@ describe("Language module", function ()
     describe("Norwegian Nynorsk", function ()
 
       SILE.languageSupport.loadLanguage("nn")
-      SILE.fluent:set_locale("nn")
+      fluent:set_locale("nn")
 
       it("should hyphenate", function ()
         assert.is.equal("Nor-we-gian", hyphenate("Norwegian", "nn"))
@@ -48,7 +48,7 @@ describe("Language module", function ()
       end)
 
       it("should have localizations", function ()
-        local hello = SILE.fluent:get_message("hello")({ name = "Busted" })
+        local hello = fluent:get_message("hello")({ name = "Busted" })
         assert.is.equal("Hei Busted!", hello)
       end)
 

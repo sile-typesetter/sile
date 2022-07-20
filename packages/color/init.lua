@@ -1,7 +1,7 @@
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("color", function (options, content)
-    local color = SILE.colorparser(options.color or "black")
+  class:registerCommand("color", function (options, content)
+    local color = SILE.color(options.color or "black")
     SILE.typesetter:pushHbox({
       outputYourself = function () SILE.outputter:pushColor(color) end
     })
@@ -20,12 +20,22 @@ The \autodoc:package{color} package allows you to temporarily change the color o
 (virtual) ink that SILE uses to output text and rules. The package provides
 a \autodoc:command{\color} command which takes one parameter,
 \autodoc:parameter{color=<color specification>}, and typesets
-its argument in that color. The color specification is the same as HTML:
-it can be a RGB color value in \code{#xxx} or \code{#xxxxxx} format, where \code{x}
-represents a hexadecimal digit (\code{#000} is black, \code{#fff} is white,
-\code{#f00} is red and so on), or it can be one of the HTML and CSS named colors.
+its argument in that color.
 
-\note{The HTML and CSS named colors can be found at \code{http://dev.w3.org/csswg/css-color/#named-colors}.}
+The color specification is one of the following:
+\begin{itemize}
+\item{A RGB color in \code{#xxx} or \code{#xxxxxx} format, where \code{x}
+     represents a hexadecimal digit, as often seen in HTML/CSS (\code{#000} is
+     black, \code{#fff} is white, \code{#f00} is red and so on);}
+\item{A RGB color as a series of three numeric values between 0 and 255
+    (e.g. \code{0 0 139} is a dark blue) or as three percentages;}
+\item{A CMYK color as a series of four numeric values between 0 and 255
+    or as four percentages;}
+\item{A grayscale color as a numeric value between 0 and 255;}
+\item{A (case-insensitive) named color, as one of the 148 keywords defined
+    in the CSS Color Module Level 4. (Named colors resolve to RGB
+    in the actual output.)}
+\end{itemize}
 
 So, for example, \color[color=red]{this text is typeset with \autodoc:command{\color[color=red]{…}}}.
 

@@ -58,15 +58,15 @@ local function init (_, _)
 
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("loadbibliography", function (options, _)
+  class:registerCommand("loadbibliography", function (options, _)
     local file = SU.required(options, "file", "loadbibliography")
     SILE.scratch.bibtex.bib = parseBibtex(file) -- Later we'll do multiple bibliogs, but not now
   end)
 
-  SILE.registerCommand("bibstyle", function (_, content)
-    SU.deprecated("\\bibstyle", 'SILE.settings.set("bibtex.style")', "0.13.2", "0.14.0")
+  class:registerCommand("bibstyle", function (_, content)
+    SU.deprecated("\\bibstyle", '\\set[parameter=bibtex.style]', "0.13.2", "0.14.0")
     if type(content) == "table" then
       content = content[1]
     end
@@ -75,7 +75,7 @@ local function registerCommands (_)
     end
   end)
 
-  SILE.registerCommand("cite", function (options, content)
+  class:registerCommand("cite", function (options, content)
     if not options.key then options.key = content[1] end
     local style = SILE.settings:get("bibtex.style")
     local bibstyle = require("packages.bibtex.styles." .. style)
@@ -84,23 +84,23 @@ local function registerCommands (_)
       SU.warn("Unknown reference in citation "..options.key)
       return
     end
-    SILE.doTexlike(cite)
+    SILE.processString(cite, "sil")
   end)
 
-  SILE.registerCommand("reference", function (options, content)
-    if not options.key then options.key = content[1] end
+  class:registerCommand("reference", function (options, content)
+    if not options.key then options.key = SU.contentToString(content) end
     local style = SILE.settings:get("bibtex.style")
     local bibstyle = require("packages.bibtex.styles." .. style)
     local cite, err = Bibliography.produceReference(options, SILE.scratch.bibtex.bib, bibstyle)
     if cite == Bibliography.Errors.UNKNOWN_REFERENCE then
-      SU.warn("Unknown reference in citation "..options.key)
+      SU.warn("Unknown reference in citation " .. tostring(options.key))
       return
     end
     if cite == Bibliography.Errors.UNKNOWN_TYPE then
       SU.warn("Unknown type @"..err.." in citation for reference "..options.key)
       return
     end
-    SILE.doTexlike(cite)
+    SILE.processString(cite, "sil")
   end)
 
 end

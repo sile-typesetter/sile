@@ -140,14 +140,14 @@ local function init (_, _)
 
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
 
-  SILE.registerCommand("grid:debug", function (_, _)
+  class:registerCommand("grid:debug", function (_, _)
     debugGrid()
     SILE.typesetter:registerNewFrameHook(debugGrid)
   end)
 
-  SILE.registerCommand("grid", function (options, _)
+  class:registerCommand("grid", function (options, _)
     SILE.typesetter.state.grid = true
     SU.required(options, "spacing", "grid package")
     gridSpacing = SILE.parseComplexFrameDimension(options.spacing)
@@ -165,7 +165,7 @@ local function registerCommands (_)
     SILE.typesetter:registerNewFrameHook(startGridInFrame)
   end, "Begins typesetting on a grid spaced at <spacing> intervals.")
 
-  SILE.registerCommand("no-grid", function (_, _)
+  class:registerCommand("no-grid", function (_, _)
     SILE.typesetter.state.grid = false
     SILE.typesetter.leadingFor = oldLeadingFor
     SILE.typesetter.pushVglue = oldPushVglue

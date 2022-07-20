@@ -329,7 +329,7 @@ local function init (class, _)
   end
 end
 
-local function registerCommands (_)
+local function registerCommands (class)
   -- The table building logic works as follows:
   --  1. Parse the AST
   --      - Computing widths, spans, etc. on the way
@@ -349,7 +349,7 @@ local function registerCommands (_)
   -- All parboxes are constructed middle-aligned, and with "character" strut,
   -- which sounds correct for easy height adjustement afterwards.
 
-  SILE.registerCommand("ptable", function (options, content)
+  class:registerCommand("ptable", function (options, content)
     local cols = parseColumnSpec(SU.required(options, "cols", "ptable"))
     local cellpadding = options.cellpadding or "4pt"
     local cellborder = options.cellborder or "0.4pt"
@@ -417,7 +417,7 @@ local function registerCommands (_)
   -- cell alignment, which is handy e.g. for Markdown support.
   -- Other packages and classes could redefine this hook to support
   -- their own options (such as cell styles etc.)
-  SILE.registerCommand("ptable:cell:hook", function(options, content)
+  class:registerCommand("ptable:cell:hook", function(options, content)
     if options.halign == "center" then
       SILE.call("center", {}, content)
     elseif options.halign == "left" then

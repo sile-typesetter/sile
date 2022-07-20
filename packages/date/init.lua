@@ -17,7 +17,7 @@ end
 
 local function registerCommands (class)
 
-  SILE.registerCommand("date", function (options, _)
+  class:registerCommand("date", function (options, _)
     SILE.typesetter:typeset(class:date(options))
   end, "Output a timestamp using the system date function")
 
