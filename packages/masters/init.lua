@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "masters"
+
 local _currentMaster
 
 local function defineMaster (_, args)
@@ -19,7 +24,7 @@ end
 local function defineMasters (class, list)
   if list then
     for i = 1, #list do
-      class:defineMaster(list[i])
+      defineMaster(class, list[i])
     end
   end
 end
@@ -65,7 +70,9 @@ local function currentMaster (_)
   return _currentMaster
 end
 
-local function init (class, args)
+function package:_init (class, args)
+
+  base._init(self, class)
 
   if not SILE.scratch.masters then
     SILE.scratch.masters = {}
@@ -73,9 +80,18 @@ local function init (class, args)
 
   defineMasters(class, args)
 
+  -- exports
+  class.switchMasterOnePage = switchMasterOnePage
+  class.switchMaster = switchMaster
+  class.defineMaster = defineMaster
+  class.defineMasters = defineMasters
+  class.currentMaster = currentMaster
+
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
+
+  local class = self.class
 
   class:registerCommand("define-master-template", function(options, content)
     SU.required(options, "id", "defining a master")
@@ -109,26 +125,13 @@ local function registerCommands (class)
 
 end
 
-return {
-  init = init,
-  registerCommands = registerCommands,
-  exports = {
-    switchMasterOnePage = switchMasterOnePage,
-    switchMaster = switchMaster,
-    defineMaster = defineMaster,
-    defineMasters = defineMasters,
-    currentMaster = currentMaster,
-  },
-  documentation = [[
+package.documentation = [[
 \begin{document}
-
-The masters functionality is also itself an add-on package. It allows a class to
-define sets of frames and switch between them either temporarily or permanently.
-It defines the commands \autodoc:command{\define-master-template} (which is pattern
-on the \autodoc:command{\pagetemplate} function we will meet in chapter 8),
-\autodoc:command{\switch-master} and \autodoc:command{\switch-master-one-page}.
+The masters functionality is also itself an add-on package.
+It allows a class to define sets of frames and switch between them either temporarily or permanently.
+It defines the commands \autodoc:command{\define-master-template} (which is pattern on the \autodoc:command{\pagetemplate} function we will meet in chapter 8), \autodoc:command{\switch-master} and \autodoc:command{\switch-master-one-page}.
 See \code{tests/masters.sil} for more about this package.
-
 \end{document}
 ]]
-}
+
+return package
