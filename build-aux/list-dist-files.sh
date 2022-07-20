@@ -23,7 +23,7 @@ finder tests -maxdepth 1 -name '*.lua'
 finder tests -maxdepth 1 -name '*.nil'
 
 printf '\n%s' "BUSTEDSPECS ?="
-finder tests -maxdepth 1 -name '*_spec.lua'
+finder . -maxdepth 1 -name '*_spec.lua'
 
 printf '\n%s' "TESTEXPECTS ?="
 finder tests -maxdepth 1 -name '*.expected'
