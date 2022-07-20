@@ -35,11 +35,11 @@ sil.passthroughCommands = {
   xml = true
 }
 
-function sil:_init (tree)
+function sil:_init ()
   -- Save time when parsing strings by only setting up the grammar once per
   -- instantiation then re-using it on every use.
   self._parser = self:rebuildParser()
-  base._init(self, tree)
+  base._init(self)
 end
 
 -- luacheck: push ignore
