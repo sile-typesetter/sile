@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "parallel"
+
 local typesetterPool = {}
 local calculations = {}
 local folioOrder = {}
@@ -55,7 +60,9 @@ local addBalancingGlue = function (height)
   end)
 end
 
-local function init (class, options)
+function package:_init (class, options)
+
+  base._init(self, class)
 
   SILE.typesetter = nulTypesetter(SILE.getFrame("page"))
   for frame, typesetter in pairs(options.frames) do
@@ -81,25 +88,25 @@ local function init (class, options)
   else
     folioOrder = options.folios -- As usual we trust the user knows what they're doing
   end
-  class.newPage = function(self)
+  class.newPage = function(self_)
     allTypesetters(function (frame, _)
       calculations[frame] = { mark = 0 }
     end)
-    class._base.newPage(self)
+    class._base.newPage(self_)
     SILE.call("sync")
   end
   allTypesetters(function (frame, _) calculations[frame] = { mark = 0 } end)
   local oldfinish = class.finish
-  class.finish = function (self)
+  class.finish = function (self_)
     parallelPagebreak()
-    oldfinish(self)
+    oldfinish(self_)
   end
 
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
 
-  class:registerCommand("sync", function (_, _)
+  self.class:registerCommand("sync", function (_, _)
     local anybreak = false
     local maxheight = SILE.length()
     SU.debug("parallel", "Trying a sync")
@@ -134,18 +141,13 @@ local function registerCommands (class)
 
 end
 
-return {
-  init = init,
-  registerCommands = registerCommands,
-  documentation = [[
+package.documentation = [[
 \begin{document}
-The \autodoc:package{parallel} package provides the mechanism for typesetting diglot or other
-parallel documents. When used by a class such as \code{classes/diglot.lua},
-it registers a command for each parallel frame, to allow you to select
-which frame you’re typesetting into. It also defines the \autodoc:command{\sync}
-command, which adds vertical spacing to each frame such that the \em{next}
-set of text is vertically aligned. See \url{https://sile-typesetter.org/examples/parallel.sil}
-and the source of \code{classes/diglot.lua} for examples which makes the operation clear.
+The \autodoc:package{parallel} package provides the mechanism for typesetting diglot or other parallel documents.
+When used by a class such as \code{classes/diglot.lua}, it registers a command for each parallel frame, to allow you to select which frame you’re typesetting into.
+It also defines the \autodoc:command{\sync} command, which adds vertical spacing to each frame such that the \em{next} set of text is vertically aligned.
+See \url{https://sile-typesetter.org/examples/parallel.sil} and the source of \code{classes/diglot.lua} for examples which makes the operation clear.
 \end{document}
 ]]
-}
+
+return package
