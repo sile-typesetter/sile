@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "lists"
+
 --
 -- Enumerations and bullet lists for SILE
 -- Donated to the SILE typesetter - 2021-2022, Didier Willis
@@ -202,8 +207,14 @@ local doNestedList = function (_, listType, options, content)
   end
 end
 
-local function init (class, _)
+function package:_init (class)
+
+  base._init(self, class)
   class:loadPackage("counters")
+
+end
+
+function package.declareSettings (_)
 
   SILE.settings:declare({
     parameter = "lists.current.enumerate.depth",
@@ -249,7 +260,9 @@ local function init (class, _)
 
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
+
+  local class = self.class
 
   class:registerCommand("enumerate", function (options, content)
     doNestedList(class, "enumerate", options, content)
@@ -268,25 +281,20 @@ local function registerCommands (class)
 
 end
 
-return {
-  init = init,
-  registerCommands = registerCommands,
-  documentation = [[\begin{document}
+package.documentation = [[
+\begin{document}
 \font:add-fallback[family=Symbola]% HACK Gentium Plus (SILE default font) lacks the circle bullet :(
-The \autodoc:package{lists} package provides enumerations and bullet lists
-(a.k.a. \em{itemization}\kern[width=0.1em]) which can be nested together.
+The \autodoc:package{lists} package provides enumerations and bullet lists (a.k.a. \em{itemization}\kern[width=0.1em]) which can be nested together.
 
 \smallskip
 \em{Bullet lists.}
 \novbreak
 
 The \autodoc:environment{itemize} environment initiates a bullet list.
-Each item is, as could be guessed, wrapped in an \autodoc:command{\item}
-command.
+Each item is, as could be guessed, wrapped in an \autodoc:command{\item} command.
 
-The environment, as a structure or data model, can only contain item elements
-and other lists. Any other element causes an error to be reported, and any text
-content is ignored with a warning.
+The environment, as a structure or data model, can only contain item elements and other lists.
+Any other element causes an error to be reported, and any text content is ignored with a warning.
 
 \begin{itemize}
     \item{Lorem}
@@ -300,29 +308,22 @@ content is ignored with a warning.
 
 The current implementation supports up to 6 indentation levels.
 
-On each level, the indentation is defined by the \autodoc:setting{lists.itemize.leftmargin}
-setting (defaults to 1.5em) and the bullet is centered in that margin.
-Note that if your document has a paragraph indent enabled at this point, it
-is also added to the first list level.
+On each level, the indentation is defined by the \autodoc:setting{lists.itemize.leftmargin} setting (defaults to 1.5em) and the bullet is centered in that margin.
+Note that if your document has a paragraph indent enabled at this point, it is also added to the first list level.
 
-The package has a default style for each level, but you can explicitly select a bullet
-symbol of your choice to be used, by specifying the options \autodoc:parameter{bullet=<character>},
-on the \autodoc:environment{itemize} environment.
+The package has a default style for each level, but you can explicitly select a bullet symbol of your choice to be used, by specifying the options \autodoc:parameter{bullet=<character>}, on the \autodoc:environment{itemize} environment.
 
-You can also force a specific bullet character to be used on a specific item with
-\autodoc:command{\item[bullet=<character>]}.
+You can also force a specific bullet character to be used on a specific item with \autodoc:command{\item[bullet=<character>]}.
 
 \smallskip
 \em{Enumerations.}
 \novbreak
 
 The \autodoc:environment{enumerate} environment initiates an enumeration.
-Each item shall, again, be wrapped in an \autodoc:command{\item}
-command. This environment too is regarded as a structure, so the same rules
-as above apply.
+Each item shall, again, be wrapped in an \autodoc:command{\item} command.
+This environment too is regarded as a structure, so the same rules as above apply.
 
-The enumeration starts at one, unless you specify the \autodoc:parameter{start=<integer>}
-option (a numeric value, regardless of the display format).
+The enumeration starts at one, unless you specify the \autodoc:parameter{start=<integer>} option (a numeric value, regardless of the display format).
 
 \begin{enumerate}
     \item{Lorem}
@@ -336,29 +337,25 @@ option (a numeric value, regardless of the display format).
 
 The current implementation supports up to 6 indentation levels.
 
-On each level, the indentation is defined by the \autodoc:setting{lists.enumerate.leftmargin}
-setting (defaults to 2em). Note, again, that if your document has a paragraph indent enabled
-at this point, it is also added to the first list level. And… ah, at least something less
-repetitive than a raw list of features. \em{Quite obviously}, we cannot center the label.
-Roman numbers, folks, if any reason is required. The \autodoc:setting{lists.enumerate.labelindent}
-setting specifies the distance between the label and the previous indentation level (defaults
-to 0.5em). Tune these settings at your convenience depending on your styles. If there is a more
-general solution to this subtle issue, this author accepts patches.\footnote{TeX typesets
-the enumeration label ragged left. Other Office software do not.}
+On each level, the indentation is defined by the \autodoc:setting{lists.enumerate.leftmargin} setting (defaults to 2em).
+Note, again, that if your document has a paragraph indent enabled at this point, it is also added to the first list level.
+And… ah, at least something less repetitive than a raw list of features.
+\em{Quite obviously}, we cannot center the label.
+Roman numbers, folks, if any reason is required.
+The \autodoc:setting{lists.enumerate.labelindent} setting specifies the distance between the label and the previous indentation level (defaults to 0.5em).
+Tune these settings at your convenience depending on your styles.
+If there is a more general solution to this subtle issue, this author accepts patches.
+\footnote{TeX typesets the enumeration label ragged left. Other Office software do not.}
 
-The package has a default style for each level, but you can explicitly select the display type
-(format) of the values (as “arabic”, “roman”, etc.), and the text prepended or appended
-to them, by specifying the options \autodoc:parameter{display=<display>},
-\autodoc:parameter{before=<string>}, and \autodoc:parameter{after=<string>} to the
-\autodoc:environment{enumerate} environment.
+The package has a default style for each level, but you can explicitly select the display type (format) of the values (as “arabic”, “roman”, etc.), and the text prepended or appended to them, by specifying the options \autodoc:parameter{display=<display>}, \autodoc:parameter{before=<string>}, and \autodoc:parameter{after=<string>} to the \autodoc:environment{enumerate} environment.
 
 \smallskip
 
 \em{Nesting.}
 \novbreak
 
-Both environment can be nested, \em{of course}. The way they do is best illustrated by
-an example.
+Both environment can be nested, \em{of course}.
+The way they do is best illustrated by an example.
 
 \begin{enumerate}
     \item{Lorem}
@@ -382,22 +379,19 @@ an example.
 \novbreak
 
 The package tries to ensure a paragraph is enforced before and after a list.
-In most cases, this implies paragraph skips to be inserted, with the usual
-\autodoc:setting{document.parskip} glue, whatever value it has at these points
-in the surrounding context of your document.
-Between list items, however, the paragraph skip is switched to the value
-of the \autodoc:setting{lists.parskip} setting.
+In most cases, this implies paragraph skips to be inserted, with the usual \autodoc:setting{document.parskip} glue, whatever value it has at these points in the surrounding context of your document.
+Between list items, however, the paragraph skip is switched to the value of the \autodoc:setting{lists.parskip} setting.
 
 \smallskip
 
 \em{Other considerations.}
 \novbreak
 
-Do not expect these fragile lists to work in any way in centered or ragged-right environments, or
-with fancy line-breaking features such as hanged or shaped paragraphs. Please be a good
-typographer. Also, these lists have not been experimented yet in right-to-left
-or vertical writing direction.
+Do not expect these fragile lists to work in any way in centered or ragged-right environments, or with fancy line-breaking features such as hanged or shaped paragraphs.
+Please be a good typographer. Also, these lists have not been experimented yet in right-to-left or vertical writing direction.
 
 \font:remove-fallback
-\end{document}]]
-}
+\end{document}
+]]
+
+return package
