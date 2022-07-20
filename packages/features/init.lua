@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "features"
+
 local lpeg = require("lpeg")
 
 local R, S, P, C = lpeg.R, lpeg.S, lpeg.P, lpeg.C
@@ -178,7 +183,9 @@ end
 
 local fontfn = SILE.Commands.font
 
-local function registerCommands (class)
+function package:registerCommands ()
+
+  local class = self.class
 
   class:registerCommand("add-font-feature", function (options, _)
     local otfeatures = otFeatures()
@@ -211,22 +218,17 @@ local function registerCommands (class)
 
 end
 
-return {
-  registerCommands = registerCommands,
-  documentation = [[
+package.documentation = [[
 \begin{document}
-As mentioned in Chapter 3, SILE automatically applies ligatures defined by the fonts
-that you use. These ligatures are defined by tables of \em{features} within
-the font file. As well as ligatures (multiple glyphs displayed as a single glyph),
-the features tables also declare other glyph substitutions.
+As mentioned in Chapter 3, SILE automatically applies ligatures defined by the fonts that you use.
+These ligatures are defined by tables of \em{features} within the font file.
+As well as ligatures (multiple glyphs displayed as a single glyph), the features tables also declare other glyph substitutions.
 
-The \autodoc:package{features} package provides an interface to selecting the features that you
-want SILE to apply to a font. The features available will be specific to the font file;
-some fonts come with documentation explaining their supported features. Discussion
-of OpenType features is beyond the scope of this manual.
+The \autodoc:package{features} package provides an interface to selecting the features that you want SILE to apply to a font.
+The features available will be specific to the font file; some fonts come with documentation explaining their supported features.
+Discussion of OpenType features is beyond the scope of this manual.
 
-These features can be turned on and off by passing ‘raw’ feature names to the
-\autodoc:command{\font} command like so:
+These features can be turned on and off by passing ‘raw’ feature names to the \autodoc:command{\font} command like so:
 
 \begin{verbatim}
 \line
@@ -234,14 +236,11 @@ These features can be turned on and off by passing ‘raw’ feature names to th
 \line
 \end{verbatim}
 
-However, this is unwieldy and requires memorizing the feature codes. \autodoc:package{features}
-provides two commands, \autodoc:command{\add-font-feature} and \autodoc:command{\remove-font-feature},
-which make it easier to access OpenType features. The interface is patterned on the
-TeX package \code{fontspec}; for full documentation of the OpenType features supported,
-see the documentation for that package.\footnote{\code{http://texdoc.net/texmf-dist/doc/latex/fontspec/fontspec.pdf}}
+However, this is unwieldy and requires memorizing the feature codes.
+\autodoc:package{features} provides two commands, \autodoc:command{\add-font-feature} and \autodoc:command{\remove-font-feature}, which make it easier to access OpenType features.
+The interface is patterned on the TeX package \code{fontspec}; for full documentation of the OpenType features supported, see the documentation for that package.\footnote{\code{http://texdoc.net/texmf-dist/doc/latex/fontspec/fontspec.pdf}}
 
-Here is how you would turn on discretionary and historic ligatures with the \autodoc:package{features}
-package:
+Here is how you would turn on discretionary and historic ligatures with the \autodoc:package{features} package:
 
 \begin{verbatim}
 \line
@@ -252,4 +251,5 @@ package:
 \end{verbatim}
 \end{document}
 ]]
-}
+
+return package
