@@ -14,6 +14,7 @@
 \script[src=packages/pullquote]
 \script[src=packages/rules]
 \script[src=packages/font-fallback]
+\script[src=packages/simpletable]
 \define[command=notehead]{\noindent\bf{\process}\par\medskip}
 \define[command=line]{\novbreak\skip[height=5pt]\noindent\hrule[width=450pt,height=0.3pt]\par\novbreak\skip[height=5pt]}
 \define[command=note]{\medskip
@@ -38,9 +39,4 @@
 \note{\bf{The material in this section has changed significantly since the previous release of SILE.}}
 }
 \define[command=sup]{\raise[height=0.6ex]{\font[size=0.8em]{\process}}}
-\script{
--- Well, this is a hack
-local simpletable = SILE.require("packages.simpletable")
-simpletable.init(SILE.documentState.documentClass, {tableTag = "table", trTag = "tr", tdTag = "td"})
-}
 \end{document}
