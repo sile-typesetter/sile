@@ -1,4 +1,11 @@
-local function registerCommands (class)
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "verbatim"
+
+function package:registerCommands ()
+
+  local class = self.class
 
   class:registerCommand("verbatim:font", function (options, content)
     options.family = options.family or "Hack"
@@ -33,19 +40,15 @@ local function registerCommands (class)
   end)
 
 end
-return {
-  registerCommands = registerCommands,
-  documentation = [[\begin{document}
 
-The \autodoc:package{verbatim} package is useful when quoting pieces of computer code and
-other text for which formatting is significant. It changes SILE’s settings
-so that text is set ragged right, with no hyphenation, no indentation and
-regular spacing. It tells SILE to honor multiple spaces, and sets a monospaced
-font.
+package.documentation = [[
+\begin{document}
+The \autodoc:package{verbatim} package is useful when quoting pieces of computer code and other text for which formatting is significant.
+It changes SILE’s settings so that text is set ragged right, with no hyphenation, no indentation and regular spacing.
+It tells SILE to honor multiple spaces, and sets a monospaced font.
 
-\note{Despite the name, \autodoc:environment{verbatim} does not alter the way that SILE
-sees special characters. You still need to escape backslashes and braces:
-to produce a backslash, you need to write \code{\\\\}.}
+\note{Despite the name, \autodoc:environment{verbatim} does not alter the way that SILE sees special characters.
+You still need to escape backslashes and braces: to produce a backslash, you need to write \code{\\\\}.}
 
 Here is some text set in the \autodoc:environment{verbatim} environment:
 
@@ -56,13 +59,15 @@ local function init (class, _)
 end
 \end{verbatim}
 
-If you want to specify what font the verbatim environment should use, you
-can redefine the \autodoc:command{\verbatim:font} command. For example you could change
-it from XML like this:
+If you want to specify what font the verbatim environment should use, you can redefine the \autodoc:command{\verbatim:font} command.
+For example you could change it from XML like this:
 
 \begin{verbatim}
 <define command="verbatim:font">
    <font family="DejaVu Sans Mono" size="9pt"/>
 </define>
 \end{verbatim}
-\end{document}]]}
+\end{document}
+]]
+
+return package
