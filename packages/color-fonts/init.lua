@@ -1,16 +1,23 @@
-local function init (_, _)
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "color-fonts"
+
+function package:_init (class)
+
+  base._init(self, class)
 
   local harfbuzz = require("shapers.harfbuzz")
 
   SILE.shapers.harfbuzzWithColor = pl.class(harfbuzz)
   SILE.shapers.harfbuzzWithColor._name = "harfbuzzWithColor"
 
-  function SILE.shapers.harfbuzzWithColor:shapeToken (str, options)
+  function SILE.shapers.harfbuzzWithColor.shapeToken (self_, str, options)
     local ot = require("core.opentype-parser")
     if not options.family then return {} end
     local face = SILE.font.cache(options, SILE.shaper.getFace)
     local font = ot.parseFont(face)
-    local items = self._base.shapeToken(self, str, options)
+    local items = self_._base.shapeToken(self_, str, options)
     if font.colr and font.cpal then
       local newItems = {}
       for i = 1, #items do
@@ -52,8 +59,8 @@ local function init (_, _)
     return items
   end
 
-  function SILE.shapers.harfbuzzWithColor:createNnodes (token, options)
-    local items, _ = self:shapeToken(token, options)
+  function SILE.shapers.harfbuzzWithColor.createNnodes (self_, token, options)
+    local items, _ = self_:shapeToken(token, options)
     if #items < 1 then return {} end
     local lang = options.language
     SILE.languageSupport.loadLanguage(lang)
@@ -91,13 +98,11 @@ local function init (_, _)
 
 end
 
-return {
-  init = init,
-  documentation = [[
+package.documentation = [[
 \begin{document}
-  The \autodoc:package{color-fonts} package adds support for fonts with a \code{COLR}
-  OpenType table. This package is automatically loaded when such a font is
-  detected.
+The \autodoc:package{color-fonts} package adds support for fonts with a \code{COLR} OpenType table.
+This package is automatically loaded when such a font is detected.
 \end{document}
 ]]
-}
+
+return package

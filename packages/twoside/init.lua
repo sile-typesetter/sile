@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "twoside"
+
 local tp = "odd"
 
 local mirrorMaster = function (_, existing, new)
@@ -36,22 +41,45 @@ local function _switchPage (class)
   end
 end
 
-local function init (class, args)
+local _deprecate  = [[
+  Directly calling master switch handling functions is no longer necessary. All
+  the SILE core classes and anything inheriting from them will take care of this
+  automatically using hooks. Custom classes that override the class:newPage()
+  function may need to handle this in other ways. By calling this hook directly
+  you are likely causing it to run twice and duplicate entries.
+]]
+
+function package:_init (class, args)
+
+  base._init(self, class)
+
   if not SILE.scratch.masters then
     SU.error("Cannot load twoside package before masters.")
   end
+
+  -- exports
+  class.oddPage = oddPage
+  class.mirrorMaster = mirrorMaster
+  class.switchPage = function (_)
+    SU.deprecated("class:switchPage", nil, "0.13.0", "0.15.0", _deprecate)
+    return _switchPage(class)
+  end
+
   class.oddPageMaster = args.oddPageMaster
   class.evenPageMaster = args.evenPageMaster
-  mirrorMaster(nil, args.oddPageMaster, args.evenPageMaster)
+  class:registerPostinit(function (self_)
+    self_:mirrorMaster(args.oddPageMaster, args.evenPageMaster)
+  end)
   class:registerHook("newpage", _switchPage)
+
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
 
-  class:registerCommand("open-double-page", function()
+  self.class:registerCommand("open-double-page", function()
     SILE.typesetter:leaveHmode()
     SILE.call("supereject")
-    if class:oddPage() then
+    if self.class:oddPage() then
       SILE.typesetter:typeset("")
       SILE.typesetter:leaveHmode()
       SILE.call("supereject")
@@ -61,31 +89,11 @@ local function registerCommands (class)
 
 end
 
-local _deprecate  = [[
-  Directly calling master switch handling functions is no longer necessary. All
-  the SILE core classes and anything inheriting from them will take care of this
-  automatically using hooks. Custom classes that override the class:newPage()
-  function may need to handle this in other ways. By calling this hook directly
-  you are likely causing it to run twice and duplicate entries.
-]]
-
-return {
-  init = init,
-  registerCommands = registerCommands,
-  exports = {
-    oddPage = oddPage,
-    mirrorMaster = mirrorMaster,
-    switchPage = function (class)
-      SU.deprecated("class:switchPage", nil, "0.13.0", "0.15.0", _deprecate)
-      return _switchPage(class)
-    end
-  },
-  documentation = [[
+package.documentation = [[
 \begin{document}
-The \code{book} class described in chapter 4 sets up left and right mirrored
-page masters; the \autodoc:package{twoside} package is responsible for swapping between
-the two left and right frames, running headers and so on. It has no user-serviceable
-parts.
+The \code{book} class described in chapter 4 sets up left and right mirrored page masters; the \autodoc:package{twoside} package is responsible for swapping between the two left and right frames, running headers and so on.
+It has no user-serviceable parts.
 \end{document}
 ]]
-}
+
+return package

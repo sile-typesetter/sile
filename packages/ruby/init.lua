@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "ruby"
+
 local isLatin = function (char)
   return (char > 0x20 and char <= 0x24F) or (char >= 0x300 and char <= 0x36F)
     or (char >= 0x1DC0 and char <= 0x1EFF) or (char >= 0x2C60 and char <= 0x2c7F)
@@ -22,7 +27,9 @@ local checkIfSpacerNeeded = function (reading)
   SILE.typesetter:pushGlue(SILE.settings:get("ruby.latinspacer"))
 end
 
-local function init (class, _)
+function package:_init (class)
+
+  base._init(self, class)
 
   -- Japaneese language support defines units which are useful here
   class:loadPackage("font-fallback")
@@ -32,7 +39,7 @@ local function init (class, _)
 
 end
 
-local function declareSettings (_)
+function package.declareSettings (_)
 
   SILE.settings:declare({
     parameter = "ruby.height",
@@ -50,13 +57,13 @@ local function declareSettings (_)
 
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
 
-  class:registerCommand("ruby:font", function (_, _)
+  self.class:registerCommand("ruby:font", function (_, _)
     SILE.call("font", { size = "0.6zw", weight = 800 })
   end)
 
-  class:registerCommand("ruby", function (options, content)
+  self.class:registerCommand("ruby", function (options, content)
     local reading = SU.required(options, "reading", "\\ruby")
     SILE.typesetter:setpar("")
 
@@ -70,14 +77,14 @@ local function registerCommands (class)
       end)
     end)
     local rubybox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
-    rubybox.outputYourself = function (self, typesetter, line)
+    rubybox.outputYourself = function (box, typesetter, line)
       local ox = typesetter.frame.state.cursorX
       local oy = typesetter.frame.state.cursorY
       typesetter.frame:advanceWritingDirection(rubybox.width)
       typesetter.frame:advancePageDirection(-SILE.settings:get("ruby.height"))
       SILE.outputter:setCursor(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
-      for i = 1, #(self.value) do
-        local node = self.value[i]
+      for i = 1, #(box.value) do
+        local node = box.value[i]
         node:outputYourself(typesetter, line)
       end
       typesetter.frame.state.cursorX = ox
@@ -109,22 +116,16 @@ local function registerCommands (class)
 
 end
 
-return {
-  init = init,
-  registerCommands = registerCommands,
-  declareSettings = declareSettings,
-  documentation = [[
+package.documentation = [[
 \begin{document}
 \font:add-fallback[family=Noto Sans CJK JP]
 \use{packages.ruby}
-Japanese texts often contain pronunciation hints (called \em{furigana}) for
-difficult kanji or foreign words. These hints are traditionally placed either
-above (in horizontal typesetting) or beside (in vertical typesetting) the word
-that they explain. The typesetting term for these glosses is \em{ruby}.
+Japanese texts often contain pronunciation hints (called \em{furigana}) for difficult kanji or foreign words.
+These hints are traditionally placed either above (in horizontal typesetting) or beside (in vertical typesetting) the word that they explain.
+The typesetting term for these glosses is \em{ruby}.
 
-The \autodoc:package{ruby} package provides the
-\autodoc:command[check=false]{\ruby[reading=<ruby text>]{<base text>}} command
-which sets a piece of ruby above or beside the base text. For example:
+The \autodoc:package{ruby} package provides the \autodoc:command[check=false]{\ruby[reading=<ruby text>]{<base text>}} command which sets a piece of ruby above or beside the base text.
+For example:
 
 \set[parameter=ruby.height,value=12pt]
 \define[command=ja]{\font[family=Noto Sans CJK JP,language=ja]{\process}}
@@ -143,4 +144,4 @@ Produces:
 \end{document}
 ]]
 
-}
+return package

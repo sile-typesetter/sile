@@ -74,6 +74,14 @@ function xml.parse (_, doc)
   if not tree then
     SU.error(err)
   end
+  -- XML documents can have any root element, and it should be up to the class
+  -- to supply handling far whatever that element that is in a specific format.
+  -- Hence we wrap the actual DOM in an extra element of our own if and only if
+  -- it doesn't look like a native SILE one already.
+  local root = tree.command
+  if root ~= "sile" and root ~= "document" then
+    tree = { tree, command = "document" }
+  end
   return { tree }
 end
 

@@ -79,6 +79,7 @@ SILE.packages = core_loader("packages")
 SILE.traceStack = require("core.tracestack")()
 SILE.parserBits = require("core.parserbits")
 SILE.frameParser = require("core.frameparser")
+SILE.color = require("core.color")
 SILE.units = require("core.units")
 SILE.fontManager = require("core.fontmanager")
 
@@ -158,8 +159,12 @@ SILE.require = function (dependency, pathprefix, deprecation_ack)
   Please just use the Lua require() function directly:
       SILE.require("%s") → require("%s")]], dependency, dependency))
   end
-  if lib and class then
-    class:initPackage(lib)
+  if type(lib) == "table" and class then
+    if lib.type == "package" then
+      lib(class)
+    else
+      class:initPackage(lib)
+    end
   end
   return lib
 end
@@ -352,7 +357,6 @@ end
 
 -- Internal libraries that run core SILE functions on load
 SILE.settings = require("core.settings")()
-SILE.colorparser = require("core.colorparser")
 SILE.pagebuilder = require("core.pagebuilder")()
 require("core.typesetter")
 require("core.hyphenator-liang")

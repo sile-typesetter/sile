@@ -1,6 +1,13 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "simpletable"
+
 local tableTag, trTag, tdTag
 
-local function init (class, args)
+function package:_init (class, args)
+
+  base._init(self, class)
 
   if not SILE.scratch.simpletable then
     SILE.scratch.simpletable = { tables = {} }
@@ -83,13 +90,11 @@ local function init (class, args)
 
 end
 
-return {
-  init = init,
-  documentation = [[
+package.documentation = [[
 \begin{document}
-this implements (badly) a very simple table formatting class.
+This implements (badly) a very simple table formatting class.
 
-it should be called as so:
+It should be called as so:
 
 \begin{verbatim}
 myclass:loadpackage("simpletable", \{
@@ -99,10 +104,10 @@ myclass:loadpackage("simpletable", \{
 \})
 \end{verbatim}
 
-this will define commands \code{\\a}, \code{\\b} and \code{\\c} which
-are equivalent to the \code{<table>, \code{<tr>} and \code{<td>} tags.
+This will define commands \code{\\a}, \code{\\b} and \code{\\c} which are equivalent to the \code{<table>, \code{<tr>} and \code{<td>} tags.
 
-this is not a complete table implementation, and should be replaced by
-one which implements the css2.1 two-pass table formatting algorithm.
+This is not a complete table implementation, and should be replaced by one which implements the css2.1 two-pass table formatting algorithm.
 \end{document}
-]]}
+]]
+
+return package

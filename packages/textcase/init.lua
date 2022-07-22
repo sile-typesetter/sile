@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "tetxcase"
+
 local icu = require("justenoughicu")
 
 local uppercase = function (input, extraArgs)
@@ -21,13 +26,22 @@ local titlecase = function (input, extraArgs)
   return icu.case(input, lang, "title")
 end
 
-local function init (class, _)
+function package:_init (class)
+
+  base._init(self, class)
 
   class:loadPackage("inputfilter")
 
+  -- exports
+  class.uppercase = uppercase
+  class.lowercase = lowercase
+  class.titlecase = titlecase
+
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
+
+  local class = self.class
 
   class:registerCommand("uppercase", function(options, content)
     SILE.process(class.transformContent(content, uppercase, options))
@@ -43,26 +57,15 @@ local function registerCommands (class)
 
 end
 
-return {
-  init = init,
-  registerCommands = registerCommands,
-  exports = {
-    uppercase = uppercase,
-    lowercase = lowercase,
-    titlecase = titlecase
-  },
-  documentation = [[
+package.documentation = [[
 \begin{document}
 \use{packages.textcase}
-The \autodoc:package{textcase} package provides commands for language-aware case conversion
-of input text. For example, when language is set to English, then
-\autodoc:command{\uppercase{hij}} will return \examplefont{\uppercase{hij}}. However,
-when language is set to Turkish, it will return
-\examplefont{\font[language=tr]{\uppercase{hij}}}.
+The \autodoc:package{textcase} package provides commands for language-aware case conversion of input text.
+For example, when language is set to English, then \autodoc:command{\uppercase{hij}} will return \examplefont{\uppercase{hij}}.
+However, when language is set to Turkish, it will return \examplefont{\font[language=tr]{\uppercase{hij}}}.
 
-As well as \autodoc:command{\uppercase}, the package provides the commands \autodoc:command{\lowercase}
-and \autodoc:command{\titlecase}.
+As well as \autodoc:command{\uppercase}, the package provides the commands \autodoc:command{\lowercase} and \autodoc:command{\titlecase}.
 \end{document}
 ]]
-}
 
+return package

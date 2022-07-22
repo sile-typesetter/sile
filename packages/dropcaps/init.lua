@@ -1,6 +1,15 @@
-local function init (class, _)
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "dropcaps"
+
+function package:_init (class)
+
   class:loadPackage("rebox")
   class:loadPackage("raiselower")
+
+  base._init(self, class)
+
 end
 
 local shapeHbox = function (options, content)
@@ -14,11 +23,11 @@ local shapeHbox = function (options, content)
   return hbox
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
 
   -- This implementation relies on the hangafter and hangindent features of Knuth's line-breaking algorithm.
   -- These features in core line breaking algorithm supply the blank space in the paragraph shape but don't fill it with anything.
-  class:registerCommand("dropcap", function (options, content)
+  self.class:registerCommand("dropcap", function (options, content)
     local lines = SU.cast("integer", options.lines or 3)
     local join = SU.boolean(options.join, false)
     local standoff = SU.cast("measurement", options.standoff or "1spc")
@@ -29,7 +38,7 @@ local function registerCommands (class)
     local color = options.color
     options.size = nil -- we need to measure the "would have been" size before using this
 
-    if color then class:loadPackage("color") end
+    if color then self.class:loadPackage("color") end
 
     -- We want the drop cap to span over N lines, that is N - 1 baselineskip + the height of the first line.
     -- Note this only works for the default linespace mechanism.
@@ -72,13 +81,9 @@ local function registerCommands (class)
 
 end
 
-return {
-  init = init,
-  registerCommands = registerCommands,
-  documentation = [[
+package.documentation = [[
 \begin{document}
-The \autodoc:package{dropcaps} package allows you to format paragraphs with an 'initial capital' (also commonly
-referred as a 'drop cap'), typically one large capital letter used as a decorative element at the beginning of a paragraph.
+The \autodoc:package{dropcaps} package allows you to format paragraphs with an 'initial capital' (also commonly referred as a 'drop cap'), typically one large capital letter used as a decorative element at the beginning of a paragraph.
 
 It provides the \autodoc:command{\dropcap} command.
 The content passed will be the initial character(s).
@@ -99,4 +104,6 @@ If that doesn't work set the size manually.
 Using \code{SILE.setCommandDefaults()} can be helpful for so you don't have to set the size every time.
 \end{note}
 \end{document}
-]] }
+]]
+
+return package

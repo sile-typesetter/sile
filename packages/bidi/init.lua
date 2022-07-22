@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "bidi"
+
 local icu = require("justenoughicu")
 
 local function reverse_portion(tbl, s, e)
@@ -243,17 +248,25 @@ local bidiDisableTypesetter = function (class, typesetter)
   typesetter.nobidi_boxUpNodes = nil
 end
 
-local function init (class, _)
+function package:_init (class)
+
+  base._init(self, class)
+
+  -- exports
+  class.reorder = reorder
+  class.bidiEnableTypesetter = bidiEnableTypesetter
+  class.bidiDisableTypesetter = bidiDisableTypesetter
 
   if SILE.typesetter then
-    bidiEnableTypesetter(class, SILE.typesetter)
+    class:bidiEnableTypesetter(SILE.typesetter)
   end
 
-  bidiEnableTypesetter(class, SILE.defaultTypesetter)
-
+  class:bidiEnableTypesetter(SILE.defaultTypesetter)
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
+
+  local class = self.class
 
   class:registerCommand("thisframeLTR", function (_, _)
     SILE.typesetter.frame.direction = "LTR"
@@ -274,7 +287,7 @@ local function registerCommands (class)
   end)
 
   class:registerCommand("bidi-on", function (_, _)
-    bidiEnableTypesetter(class, SILE.typesetter)
+    class:bidiEnableTypesetter(SILE.typesetter)
   end)
 
   class:registerCommand("bidi-off", function (_, _)
@@ -283,30 +296,16 @@ local function registerCommands (class)
 
 end
 
-return {
-  init = init,
-  registerCommands = registerCommands,
-  exports = {
-    reorder = reorder,
-    bidiEnableTypesetter = bidiEnableTypesetter,
-    bidiDisableTypesetter = bidiDisableTypesetter
-  },
-  documentation = [[\begin{document}
+package.documentation = [[
+\begin{document}
+Scripts like the Latin alphabet you are currently reading are normally written left to right; however, some scripts, such as Arabic and Hebrew, are written right to left.
+The \autodoc:package{bidi} package, which is loaded by default, provides SILE with the ability to correctly typeset right-to-left text and also documents which mix right-to-left and left-to-right typesetting.
+Because it is loaded by default, you can use both LTR and RTL text within a paragraph and SILE will ensure that the output characters appear in the correct order.
 
-Scripts like the Latin alphabet you are currently reading are normally written left to
-right; however, some scripts, such as Arabic and Hebrew, are written right to left.
-The \autodoc:package{bidi} package, which is loaded by default, provides SILE with the ability to
-correctly typeset right-to-left text and also documents which mix right-to-left and
-left-to-right typesetting. Because it is loaded by default, you can use both
-LTR and RTL text within a paragraph and SILE will ensure that the output
-characters appear in the correct order.
+The \autodoc:package{bidi} package provides two commands, \autodoc:command{\thisframeLTR} and \autodoc:command{\thisframeRTL}, which set the default text direction for the current frame.
+That is, if you tell SILE that a frame is RTL, the text will start in the right margin and proceed leftward.
+It also provides the commands \autodoc:command{\bidi-off} and \autodoc:command{\bidi-on}, which allow you to trade off bidirectional support for a dubious increase in speed.
+\end{document}
+]]
 
-The \autodoc:package{bidi} package provides two commands, \autodoc:command{\thisframeLTR} and
-\autodoc:command{\thisframeRTL}, which set the default text direction for the current frame.
-That is, if you tell SILE that a frame is RTL, the text will start in the right margin
-and proceed leftward. It also provides the commands \autodoc:command{\bidi-off} and
-\autodoc:command{\bidi-on}, which allow you to trade off bidirectional support for a
-dubious increase in speed.
-
-\end{document}]]
-}
+return package

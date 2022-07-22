@@ -99,9 +99,13 @@ if SILE.masterFilename then
 
   for _, path in ipairs(SILE.input.requires) do
     local module = require(path)
-    if type(module) == "table" and type(module.declareOptions) == "function" then
-      SILE.classes[module._name] = module
-      SILE.sratch.required_class = module
+    if type(module) == "table" and module._name then
+      if module.type == "class" then
+        SILE.classes[module._name] = module
+        SILE.sratch.required_class = module
+      elseif module.type == "inputter" then
+        SILE.inputters[module._name] = module
+      end
     end
   end
 

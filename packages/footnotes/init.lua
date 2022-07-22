@@ -1,4 +1,11 @@
-local function init (class, args)
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "footnotes"
+
+function package:_init (class, args)
+
+  base._init(self, class)
 
   class:loadPackage("counters")
   class:loadPackage("raiselower")
@@ -19,7 +26,9 @@ local function init (class, args)
 
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
+
+  local class = self.class
 
   class:registerCommand("footnotemark", function (_, _)
     SILE.call("raise", { height = "0.7ex" }, function ()
@@ -103,15 +112,13 @@ local function registerCommands (class)
 
 end
 
-return {
-  init = init,
-  registerCommands = registerCommands,
-  exports = {},
-  documentation = [[
+package.documentation = [[
 \begin{document}
 We’ve seen that the \code{book} class allows you to add footnotes to text with the \autodoc:command{\footnote} command.
 This functionality exists in the class because the class loads the \autodoc:package{footnotes} package.
 The \code{book} class loads up the \autodoc:package{insertions} package and tells it which frame should recieve the footnotes that are typeset.
 After commands provided by the \autodoc:package{footnotes} package take care of formatting the footnotes.
 \end{document}
-]]}
+]]
+
+return package
