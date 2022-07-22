@@ -27,7 +27,7 @@ dependencies = {
   "luasec == 1.1.0-1",
   "luasocket == 3.0.0-1",
   "luautf8 == 0.1.3-1",
-  "penlight == 1.12.0-2",
+  "penlight == 1.13.0-1",
   "vstruct == 2.1.1-1"
 }
 build = {
