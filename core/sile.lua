@@ -213,7 +213,11 @@ SILE.require = function (dependency, pathprefix, deprecation_ack)
   end
   if type(lib) == "table" and class then
     if lib.type == "package" then
+      SILE.packages[lib._name] = lib
       lib(class)
+    elseif lib.type == "typesetter" then
+      SILE.typesetters[lib._name] = lib
+      SILE.typesetter = lib(class)
     else
       class:initPackage(lib)
     end

@@ -17,12 +17,8 @@ SILE.tateFramePrototype.enterHooks = {
         local len = SILE.length(d.length, bls.height.stretch, bls.height.shrink)
         return SILE.nodefactory.vglue({height = len})
       end
-      -- Hackery alert, this should be implemented as an actual typesetter module
-      -- not a shoe-horned package module, but to keep the PR scope sane I'm
-      -- putting off that refactoring since the typesetter module itself needs
-      -- scope cleanup.
-      SILE.require("packages.break-firstfit", nil, true)
-      typesetter.breakIntoLines = typesetter._breakIntoLines_firstfit
+      local firstfit = SILE.use("packages-break-firstfit")
+      typesetter.breakIntoLines = firstfit.breakIntoLines
     end
   }
 
