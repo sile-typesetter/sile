@@ -13,7 +13,7 @@ which runs Lua code. By convention packages live in the \code{packages/} subdire
 of either your input file’s location, your current working directory or SILE’s
 installation directory. For instance, we’ll soon be talking about the
 \code{grid} package, which normally can be found as
-\code{/usr/local/lib/sile/packages/grid.lua}. To load this, we’d say:
+\code{/usr/local/lib/sile/packages/grid/init.lua}. To load this, we’d say:
 
 \begin{verbatim}
 \line
