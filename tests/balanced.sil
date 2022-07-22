@@ -5,7 +5,7 @@
 \grid[spacing=15pt]
 \set[parameter=document.parskip,value=6pt]
 \use{packages.frametricks}
-\script[src=packages/balanced-frames]
+\use{packages.balanced-frames}
 \font[family=Libertinus Serif]
 \begin[first-content-frame=leftCol1]{pagetemplate}
 \frame[id=gutter,width=3%pw]
@@ -16,20 +16,20 @@
 \frame[id=rightCol2,left=right(gutter),right=right(content),top=top(leftCol2),bottom=bottom(content),width=width(leftCol2),balanced=1]
 \end{pagetemplate}
 
-But so that you may know that the Son of Man has authority on earth to forgive sins,”–he said to the paralytic– 
-“I tell you, stand up, take your stretcher, and go home.” 
+But so that you may know that the Son of Man has authority on earth to forgive sins,”–he said to the paralytic–
+“I tell you, stand up, take your stretcher, and go home.”
 And immediately the man stood up, took his stretcher, and went out in front of them all. They were all amazed and glorified God, saying, “We have never seen anything like this!”
 
-Jesus went out again by the sea. The whole crowd came to him, and he taught them. 
-As he went along, he saw Levi, the son of Alphaeus, sitting at the tax booth. “Follow me,” he said to him. And he got up and followed him. 
-As Jesus was having a meal in Levi’s home, many tax collectors and sinners were eating with Jesus and his disciples, for there were many who followed him. 
-When the experts in the law and the Pharisees saw that he was eating with sinners and tax collectors, they said to his disciples, “Why does he eat with tax collectors and sinners?” 
+Jesus went out again by the sea. The whole crowd came to him, and he taught them.
+As he went along, he saw Levi, the son of Alphaeus, sitting at the tax booth. “Follow me,” he said to him. And he got up and followed him.
+As Jesus was having a meal in Levi’s home, many tax collectors and sinners were eating with Jesus and his disciples, for there were many who followed him.
+When the experts in the law and the Pharisees saw that he was eating with sinners and tax collectors, they said to his disciples, “Why does he eat with tax collectors and sinners?”
 When Jesus heard this he said to them, “Those who are healthy don’t need a physician, but those who are sick do. I have not come to call the righteous, but sinners.”
 
-Now John’s disciples and the Pharisees were fasting. So they came to Jesus and said, “Why do the disciples of John and the disciples of the Pharisees fast, but your disciples don’t fast?” 
-Jesus said to them, “The wedding guests cannot fast while the bridegroom is with them, can they? As long as they have the bridegroom with them they do not fast. 
-But the days are coming when the bridegroom will be taken from them, and at that time they will fast. 
-No one sews a patch of unshrunk cloth on an old garment; otherwise, the patch pulls away from it, the new from the old, and the tear becomes worse. 
+Now John’s disciples and the Pharisees were fasting. So they came to Jesus and said, “Why do the disciples of John and the disciples of the Pharisees fast, but your disciples don’t fast?”
+Jesus said to them, “The wedding guests cannot fast while the bridegroom is with them, can they? As long as they have the bridegroom with them they do not fast.
+But the days are coming when the bridegroom will be taken from them, and at that time they will fast.
+No one sews a patch of unshrunk cloth on an old garment; otherwise, the patch pulls away from it, the new from the old, and the tear becomes worse.
 And no one pours new wine into old wineskins; otherwise, the wine will burst the skins, and both the wine and the skins will be destroyed. Instead new wine is poured into new wineskins.”
 \balancecolumns
 \hbox{}
@@ -37,14 +37,14 @@ And no one pours new wine into old wineskins; otherwise, the wine will burst the
 \center{\font[size=18pt,family=Libertinus Sans,weight=800]{Chapter 3}}
 \vfill\framebreak
 
-Then Jesus entered the synagogue again, and a man was there who had a withered hand. 
-They watched Jesus closely to see if he would heal him on the Sabbath, so that they could accuse him. 
-So he said to the man who had the withered hand, “Stand up among all these people.” 
-Then he said to them, “Is it lawful to do good on the Sabbath, or evil, to save a life or destroy it?” But they were silent. 
-After looking around at them in anger, grieved by the hardness of their hearts, he said to the man, “Stretch out your hand.” He stretched it out, and his hand was restored. 
+Then Jesus entered the synagogue again, and a man was there who had a withered hand.
+They watched Jesus closely to see if he would heal him on the Sabbath, so that they could accuse him.
+So he said to the man who had the withered hand, “Stand up among all these people.”
+Then he said to them, “Is it lawful to do good on the Sabbath, or evil, to save a life or destroy it?” But they were silent.
+After looking around at them in anger, grieved by the hardness of their hearts, he said to the man, “Stretch out your hand.” He stretched it out, and his hand was restored.
 So the Pharisees went out immediately and began plotting with the Herodians, as to how they could assassinate him.
 
-Then Jesus went away with his disciples to the sea, and a great multitude from Galilee followed him. And from Judea, 
-Jerusalem, Idumea, beyond the Jordan River, and around Tyre and Sidon a great multitude came to him when they heard about the things he had done. 
+Then Jesus went away with his disciples to the sea, and a great multitude from Galilee followed him. And from Judea,
+Jerusalem, Idumea, beyond the Jordan River, and around Tyre and Sidon a great multitude came to him when they heard about the things he had done.
 
 \end{document}

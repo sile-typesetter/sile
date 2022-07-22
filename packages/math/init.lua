@@ -75,7 +75,7 @@ package.documentation = [[
 \set[parameter=math.font.size, value=11]
 
 % Default verbatim font (Hack) is missing a few math symbols
-\script[src=packages/font-fallback]
+\use{packages.font-fallback}
 \font:add-fallback[family=Symbola]
 
 This package provides typesetting of formulas directly in a SILE document.

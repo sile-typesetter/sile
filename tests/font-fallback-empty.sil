@@ -1,7 +1,7 @@
 \begin[papersize=a6]{document}
 \nofolios
 \noindent
-\script[src=packages/font-fallback]
+\use{packages.font-fallback}
 \font:add-fallback[family=Noto Serif CJK JP]
 \font:remove-fallback
 ん
