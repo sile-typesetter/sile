@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "lorem"
+
 local lorem = [[
 lorem ipsum dolor sit amet consetetur sadipscing elitr sed diam nonumy
 eirmod tempor invidunt ut labore et dolore magna aliquyam erat sed diam
@@ -66,9 +71,9 @@ ipsum dolor sit amet
 
 local _, nwords = lorem:gsub("%S+", "")
 
-local function registerCommands (class)
+function package:registerCommands ()
 
-  class:registerCommand("lorem", function (options, _)
+  self.class:registerCommand("lorem", function (options, _)
     local words = tonumber(options.words) or 50
     local counter = options.counter or false
     local times = math.floor(words/nwords)
@@ -93,16 +98,14 @@ local function registerCommands (class)
 
 end
 
-return {
-  registerCommands = registerCommands,
-  documentation = [[
+package.documentation = [[
 \begin{document}
-Sometimes you just need some dummy text. The command \autodoc:command{\lorem}
-produces fifty words of “lorem ipsum”; you can choose a different
-number of words with the \autodoc:parameter{words=<number>} parameter. Here’s
-\autodoc:command{\lorem[words=20]}:
+Sometimes you just need some dummy text.
+The command \autodoc:command{\lorem} produces fifty words of “lorem ipsum”; you can choose a different number of words with the \autodoc:parameter{words=<number>} parameter.
+Here’s \autodoc:command{\lorem[words=20]}:
 
 \examplefont{\lorem[words=20]}
 \end{document}
 ]]
-}
+
+return package

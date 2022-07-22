@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "tate"
+
 SILE.tateFramePrototype = pl.class(SILE.framePrototype)
 SILE.tateFramePrototype.direction = "TTB-RTL"
 
@@ -12,7 +17,12 @@ SILE.tateFramePrototype.enterHooks = {
         local len = SILE.length(d.length, bls.height.stretch, bls.height.shrink)
         return SILE.nodefactory.vglue({height = len})
       end
-      typesetter.breakIntoLines = require("packages.break-firstfit").exports.breakIntoLines
+      -- Hackery alert, this should be implemented as an actual typesetter module
+      -- not a shoe-horned package module, but to keep the PR scope sane I'm
+      -- putting off that refactoring since the typesetter module itself needs
+      -- scope cleanup.
+      SILE.require("packages.break-firstfit", nil, true)
+      typesetter.breakIntoLines = typesetter._breakIntoLines_firstfit
     end
   }
 
@@ -51,7 +61,9 @@ local outputTateChuYoko = function (self, typesetter, line)
 
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
+
+  local class = self.class
 
   class:registerCommand("tate-frame", function (options, _)
     SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newTateFrame(options)
@@ -70,11 +82,11 @@ local function registerCommands (class)
     SILE.settings:temporarily(function()
       local latinTypesetter = pl.class(SILE.defaultTypesetter)
       local dummyFrame = pl.class(SILE.framePrototype)
-      dummyFrame.init = function (self)
-        self.state = {}
+      dummyFrame.init = function (f)
+        f.state = {}
       end
-      latinTypesetter.initFrame = function (self, frame)
-        self.frame = frame
+      latinTypesetter.initFrame = function (typesetter, frame)
+        typesetter.frame = frame
       end
       local frame = dummyFrame({}, true)
       SILE.typesetter = latinTypesetter(frame)
@@ -140,16 +152,11 @@ local function registerCommands (class)
 
 end
 
-return {
-  registerCommands = registerCommands,
-  documentation = [[
+package.documentation = [[
 \begin{document}
 The \autodoc:package{tate} package provides support for Japanese vertical typesetting.
-It allows for the definition of vertical-oriented frames, as well
-as for two specific typesetting techniques required in vertical
-documents: \autodoc:command{\latin-in-tate} typesets its content as Latin
-text rotated 90 degrees, and \autodoc:command{\tate-chu-yoko} places (Latin)
-text horizontally within a single grid-square of the vertical \em{hanmen}.
+It allows for the definition of vertical-oriented frames, as well as for two specific typesetting techniques required in vertical documents: \autodoc:command{\latin-in-tate} typesets its content as Latin text rotated 90 degrees, and \autodoc:command{\tate-chu-yoko} places (Latin) text horizontally within a single grid-square of the vertical \em{hanmen}.
 \end{document}
 ]]
-}
+
+return package

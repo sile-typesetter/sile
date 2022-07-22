@@ -1,6 +1,13 @@
-local metrics = require("fontmetrics")
+local base = require("packages.base")
 
-local function registerCommands (class)
+local package = pl.class(base)
+package._name = "specimen"
+
+function package:registerCommands ()
+
+  local class = self.class
+
+  local metrics = require("fontmetrics")
 
   class:registerCommand("repertoire", function(_, _)
     local ot = require("core.opentype-parser")
@@ -54,20 +61,15 @@ local function registerCommands (class)
 
 end
 
-return {
-  registerCommands = registerCommands,
-  documentation = [[
+package.documentation = [[
 \begin{document}
 \script[src=packages.specimen]
-SILE has found itself becoming well used by type designers, who often
-want to create specimen documents to show off their new fonts. This package
-provides a few commands to help create test documents. (The \code{fontproof}
-class, available from the package manager, contains many more tools for creating
-specimens.) The \autodoc:command{\repertoire} command prints out every glyph in the
-font, in a simple table. The \autodoc:command{\pangrams} command prints out a few
-pangrams for the Latin script. Finally, \autodoc:command{\set-to-width[width=<dimension>]{<content>}}
-will process each line of content, changing the font size so that the output
-is a constant width.
+SILE has found itself becoming well used by type designers, who often want to create specimen documents to show off their new fonts.
+This package provides a few commands to help create test documents.
+(The \code{fontproof} class, available from the package manager, contains many more tools for creating specimens.)
+The \autodoc:command{\repertoire} command prints out every glyph in the font, in a simple table.
+The \autodoc:command{\pangrams} command prints out a few pangrams for the Latin script.
+Finally, \autodoc:command{\set-to-width[width=<dimension>]{<content>}} will process each line of content, changing the font size so that the output is a constant width.
 
 \begin{verbatim}
 \line
@@ -90,4 +92,5 @@ ACCENTOR DOWITCHER DOTTEREL
 \end{examplefont}
 \end{document}
 ]]
-}
+
+return package

@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "hanmenkyoshi"
+
 local showHanmenYoko = function (frame)
   local g = frame:top()
   while g < frame:bottom() do
@@ -59,15 +64,19 @@ local declareHanmenFrame = function (self, id, spec)
   return frame
 end
 
-local function init (class, _)
+function package:_init (class)
+
+  base._init(self, class)
 
   class:loadPackage("tate")
 
+  -- exports
+  class.declareHanmenFrame = declareHanmenFrame
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
 
-  class:registerCommand("show-hanmen", function (_, _)
+  self.class:registerCommand("show-hanmen", function (_, _)
     local frame = SILE.typesetter.frame
     if not frame.hanmen then SU.error("show-hanmen called on a frame with no hanmen") end
     SILE.outputter:pushColor({r = 1, g= 0.9, b = 0.9 })
@@ -81,21 +90,15 @@ local function registerCommands (class)
 
 end
 
-return {
-  init = init,
-  registerCommands = registerCommands,
-  exports = {
-    declareHanmenFrame = declareHanmenFrame
-  },
-  documentation = [[
+package.documentation = [[
 \begin{document}
-Japanese documents are traditionally typeset on a grid layout called a
-\code{hanmen}, with each character essentially monospaced inside the
-grid. (It’s like writing on graph paper.) The \autodoc:package{hanmenkyoshi} package
-provides tools to Japanese class designers for creating hanmen frames with
-correctly spaced grids. It also provides the \autodoc:command{\show-hanmen}
-command for debugging the grid.
+Japanese documents are traditionally typeset on a grid layout called a \code{hanmen}, with each character essentially monospaced inside the grid.
+(It’s like writing on graph paper.)
+The \autodoc:package{hanmenkyoshi} package provides tools to Japanese class designers for creating hanmen frames with correctly spaced grids.
+It also provides the \autodoc:command{\show-hanmen} command for debugging the grid.
 
 The name \em{hanmenkyoshi} is a terrible pun.
 \end{document}
-]]}
+]]
+
+return package

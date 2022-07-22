@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "tableofcontents"
+
 if not SILE.scratch._tableofcontents then
   SILE.scratch._tableofcontents = {}
 end
@@ -64,7 +69,19 @@ if not SILE.scratch.pdf_destination_counter then
   SILE.scratch.pdf_destination_counter = 1
 end
 
-local function init (class, _)
+
+local _deprecate  = [[
+  Directly calling tableofcontents handling functions is no longer necessary.
+  All the SILE core classes and anything inheriting from them will take care of
+  this automatically using hooks. Custom classes that override the
+  class:endPage() and class:finish() functions may need to handle this in other
+  ways. By calling these hooks directly you are likely causing them to run
+  twice and duplicate entries.
+]]
+
+function package:_init (class)
+
+  base._init(self, class)
 
   if not SILE.scratch.tableofcontents then
     SILE.scratch.tableofcontents = {}
@@ -76,9 +93,18 @@ local function init (class, _)
   class:registerHook("endpage", _moveTocNodes)
   class:registerHook("finish", _writeToc)
 
+  --exports
+  class.writeToc = function (_)
+    SU.deprecated("class:writeToc", nil, "0.13.0", "0.14.0", _deprecate)
+  end
+  class.moveTocNodes = function (_)
+    SU.deprecated("class:moveTocNodes", nil, "0.13.0", "0.14.0", _deprecate)
+  end
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
+
+  local class = self.class
 
   class:registerCommand("tableofcontents", function (options, _)
     local depth = SU.cast("integer", options.depth or 3)
@@ -202,27 +228,7 @@ local function registerCommands (class)
 
 end
 
-local _deprecate  = [[
-  Directly calling tableofcontents handling functions is no longer necessary.
-  All the SILE core classes and anything inheriting from them will take care of
-  this automatically using hooks. Custom classes that override the
-  class:endPage() and class:finish() functions may need to handle this in other
-  ways. By calling these hooks directly you are likely causing them to run
-  twice and duplicate entries.
-]]
-
-return {
-  init = init,
-  registerCommands = registerCommands,
-  exports = {
-    writeToc = function (_)
-      SU.deprecated("class:writeToc", nil, "0.13.0", "0.14.0", _deprecate)
-    end,
-    moveTocNodes = function (_)
-      SU.deprecated("class:moveTocNodes", nil, "0.13.0", "0.14.0", _deprecate)
-    end
-  },
-  documentation = [[
+package.documentation = [[
 \begin{document}
 The \autodoc:package{tableofcontents} package provides tools for class authors to
 create tables of contents. When you are writing sectioning commands such
@@ -260,4 +266,5 @@ following commands:
 
 \end{document}
 ]]
-}
+
+return package

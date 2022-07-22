@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "insertions"
+
 --[[
  Insertions handling is the most complicated and bug-prone part of
  SILE, and thus deserves to be well documented. If you plan to work
@@ -194,7 +199,29 @@ local debugInsertion = function (ins, insbox, topBox, target, targetFrame, total
   SU.debug("insertions", tostring(totalHeight) .. " worth of content on page so far")
 end
 
-local function init (_, _)
+-- This just puts the insertion vbox into the typesetter's queues.
+local insert = function (_, classname, vbox)
+  local insertion = SILE.scratch.insertions.classes[classname]
+  if not insertion then SU.error("Uninitialized insertion class " .. classname) end
+  SILE.typesetter:pushMigratingMaterial({
+      SILE.nodefactory.penalty(SILE.settings:get("insertion.penalty"))
+    })
+  SILE.typesetter:pushMigratingMaterial({
+      SILE.nodefactory.insertion({
+          class = classname,
+          nodes = vbox.nodes,
+          -- actual height and depth must remain zero for page glue calculations
+          contentHeight = vbox.height,
+          contentDepth = vbox.depth,
+          frame = insertion.insertInto.frame,
+          parent = SILE.typesetter.frame
+        })
+    })
+end
+
+function package:_init (class)
+
+  base._init(self, class)
 
   if not SILE.scratch.insertions then
     SILE.scratch.insertions = { classes = {} }
@@ -390,55 +417,44 @@ local function init (_, _)
     return target
   end
 
-  local typesetter = SILE.typesetter
+  class:registerPostinit(function (_)
 
-  if not typesetter.noinsertion_getTargetLength then
-    typesetter.noinsertion_getTargetLength = typesetter.getTargetLength
-    typesetter.getTargetLength = function (self)
-      initShrinkage(self.frame)
-      return typesetter.noinsertion_getTargetLength(self) - self.frame.state.totals.shrinkage
+    local typesetter = SILE.typesetter
+
+    if not typesetter.noinsertion_getTargetLength then
+      typesetter.noinsertion_getTargetLength = typesetter.getTargetLength
+      typesetter.getTargetLength = function (self_)
+        initShrinkage(self_.frame)
+        return typesetter.noinsertion_getTargetLength(self_) - self_.frame.state.totals.shrinkage
+      end
     end
-  end
 
-  typesetter:registerFrameBreakHook(function (_, nodelist)
-    pl.tablex.foreach(insertionsThisPage, SILE.insertions.commitShrinkage)
-    return nodelist
+    typesetter:registerFrameBreakHook(function (_, nodelist)
+      pl.tablex.foreach(insertionsThisPage, SILE.insertions.commitShrinkage)
+      return nodelist
+    end)
+
+    typesetter:registerPageEndHook(function (_)
+      pl.tablex.foreach(insertionsThisPage, SILE.insertions.increaseInsertionFrame)
+      for insertionclass, insertionlist in pairs(insertionsThisPage) do
+        insertionlist:outputYourself()
+        insertionsThisPage[insertionclass] = nil
+      end
+      if SU.debugging("insertions") then
+        for _, frame in pairs(SILE.frames) do SILE.outputter:debugFrame(frame) end
+      end
+    end)
+
   end)
 
-  typesetter:registerPageEndHook(function (_)
-    pl.tablex.foreach(insertionsThisPage, SILE.insertions.increaseInsertionFrame)
-    for class, insertionlist in pairs(insertionsThisPage) do
-      insertionlist:outputYourself()
-      insertionsThisPage[class] = nil
-    end
-    if SU.debugging("insertions") then
-      for _, frame in pairs(SILE.frames) do SILE.outputter:debugFrame(frame) end
-    end
-  end)
+  -- exports
+  class.initInsertionClass = initInsertionClass
+  class.thisPageInsertionBoxForClass = thisPageInsertionBoxForClass
+  class.insert = insert
 
 end
 
--- This just puts the insertion vbox into the typesetter's queues.
-local insert = function (_, classname, vbox)
-  local insertion = SILE.scratch.insertions.classes[classname]
-  if not insertion then SU.error("Uninitialized insertion class " .. classname) end
-  SILE.typesetter:pushMigratingMaterial({
-      SILE.nodefactory.penalty(SILE.settings:get("insertion.penalty"))
-    })
-  SILE.typesetter:pushMigratingMaterial({
-      SILE.nodefactory.insertion({
-          class = classname,
-          nodes = vbox.nodes,
-          -- actual height and depth must remain zero for page glue calculations
-          contentHeight = vbox.height,
-          contentDepth = vbox.depth,
-          frame = insertion.insertInto.frame,
-          parent = SILE.typesetter.frame
-        })
-    })
-end
-
-local function declareSettings (_)
+function package.declareSettings (_)
 
   SILE.settings:declare({
     parameter = "insertion.penalty",
@@ -449,22 +465,12 @@ local function declareSettings (_)
 
 end
 
-return {
-  init = init,
-  declareSettings = declareSettings,
-  exports = {
-    initInsertionClass = initInsertionClass,
-    thisPageInsertionBoxForClass = thisPageInsertionBoxForClass,
-    insert = insert,
-  },
-  documentation = [[
+package.documentation = [[
 \begin{document}
-The \autodoc:package{footnotes} package works by taking auxiliary material (the
-footnote content), shrinking the current frame and inserting it into the
-footnote frame. This is powered by the \autodoc:package{insertions} package; it doesn’t
-provide any user-visible SILE commands, but provides Lua functionality to
-other packages. TeX wizards may be interested to realise that insertions are
-implemented by an external add-on package, rather than being part of the SILE core.
+The \autodoc:package{footnotes} package works by taking auxiliary material (the footnote content), shrinking the current frame and inserting it into the footnote frame.
+This is powered by the \autodoc:package{insertions} package; it doesn’t provide any user-visible SILE commands, but provides Lua functionality to other packages.
+TeX wizards may be interested to realise that insertions are implemented by an external add-on package, rather than being part of the SILE core.
 \end{document}
 ]]
-}
+
+return package

@@ -159,8 +159,12 @@ SILE.require = function (dependency, pathprefix, deprecation_ack)
   Please just use the Lua require() function directly:
       SILE.require("%s") → require("%s")]], dependency, dependency))
   end
-  if lib and class then
-    class:initPackage(lib)
+  if type(lib) == "table" and class then
+    if lib.type == "package" then
+      lib(class)
+    else
+      class:initPackage(lib)
+    end
   end
   return lib
 end

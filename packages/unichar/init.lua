@@ -1,6 +1,11 @@
-local function registerCommands (class)
+local base = require("packages.base")
 
-  class:registerCommand("unichar", function(_, content)
+local package = pl.class(base)
+package._name = "unichar"
+
+function package:registerCommands ()
+
+  self.class:registerCommand("unichar", function(_, content)
     local cp = content[1]
     if type(cp) ~= "string" then SU.error("Bad argument to \\unicode") end
     local hlist = SILE.typesetter.state.nodes
@@ -14,17 +19,14 @@ local function registerCommands (class)
 
 end
 
-return {
-  registerCommands = registerCommands,
-  documentation = [[\begin{document}
+package.documentation = [[
+\begin{document}
 \script[src=packages/unichar]
 SILE is Unicode compatible, and expects its input files to be in the UTF-8 encoding.
-(The actual range of Unicode characters supported will depend on the supported ranges
-of the fonts that SILE is using to typeset.) Some Unicode characters are hard to
-locate on a standard keyboard, and so are difficult to enter into SILE documents.
-The \autodoc:package{unichar} package helps with this problem by providing a command to enter
-Unicode codepoints. After loading \autodoc:package{unichar}, the \autodoc:command{\unichar} command becomes
-available:
+(The actual range of Unicode characters supported will depend on the supported ranges of the fonts that SILE is using to typeset.)
+Some Unicode characters are hard to locate on a standard keyboard, and so are difficult to enter into SILE documents.
+The \autodoc:package{unichar} package helps with this problem by providing a command to enter Unicode codepoints.
+After loading \autodoc:package{unichar}, the \autodoc:command{\unichar} command becomes available:
 
 \begin{verbatim}
 \line
@@ -32,7 +34,9 @@ available:
 \line
 \end{verbatim}
 
-If the argument to \autodoc:command{\unichar} begins \code{U+}, \code{u+}, \code{0x} or \code{0X},
-then it is assumed to be a hexadecimal value. Otherwise it is assumed to be a
-decimal codepoint.
-\end{document}]] }
+If the argument to \autodoc:command{\unichar} begins \code{U+}, \code{u+}, \code{0x} or \code{0X}, then it is assumed to be a hexadecimal value.
+Otherwise it is assumed to be a decimal codepoint.
+\end{document}
+]]
+
+return package

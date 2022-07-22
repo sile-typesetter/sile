@@ -41,6 +41,8 @@ base.hooks = {
   finish = {},
 }
 
+base.packages = {}
+
 function base:_init (options)
   if self == options then options = {} end
   self:declareOptions()
@@ -135,10 +137,19 @@ end
 
 function base:loadPackage (packname, args)
   local pack = require("packages." .. packname)
-  self:initPackage(pack, args)
+  if pack.type == "package" then -- new package
+    self.packages[pack._name] = pack(self, args)
+  else -- legacay package
+    self:initPackage(pack, args)
+  end
 end
 
 function base:initPackage (pack, args)
+  SU.deprecated("class:initPackage(args)", "package(class, args)", "0.14.0", "0.16.0", [[
+  This package appears to be a legacy format package. It returns a table
+  an expects SILE to guess a bit about what to do. New packages inherit
+  from the base class and have a constructor function (_init) that
+  automatically handles setup.]])
   if type(pack) == "table" then
     if pack.exports then pl.tablex.update(self, pack.exports) end
     if type(pack.declareSettings) == "function" then

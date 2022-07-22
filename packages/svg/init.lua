@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "svg"
+
 local svg = require("svg")
 local otparser = require("core.opentype-parser")
 
@@ -28,9 +33,9 @@ local _drawSVG = function (svgdata, width, height, density, drop)
     })
 end
 
-local function registerRawHandlers (class)
+function package:registerRawHandlers ()
 
-  class:registerRawHandler("svg", function(options, content)
+  self.class:registerRawHandler("svg", function(options, content)
     local svgdata = content[1]
     local width = options.width and SU.cast("measurement", options.width):absolute() or nil
     local height = options.height and SU.cast("measurement", options.height):absolute() or nil
@@ -44,7 +49,9 @@ local function registerRawHandlers (class)
 
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
+
+  local class = self.class
 
   class:registerCommand("svg", function (options, _)
     local fn = SU.required(options, "src", "filename")
@@ -76,32 +83,24 @@ local function registerCommands (class)
 
 end
 
-return {
-  registerRawHandlers = registerRawHandlers,
-  registerCommands = registerCommands,
-  documentation = [[
+package.documentation = [[
 \begin{document}
 This package provides two commands.
 
 The first is \autodoc:command{\svg[src=<file>]}.
-This loads and parses an SVG file and attempts to render it in the current
-document. Optional \autodoc:parameter{width} or \autodoc:parameter{height}
-options will scale the SVG canvas to the given size calculated at a given
-\autodoc:parameter{density} option (which defaults to 72 ppi). For
-example, the command \autodoc:command{\svg[src=packages/svg/smiley.svg,height=12pt]}
-produces the following:
+This loads and parses an SVG file and attempts to render it in the current document.
+Optional \autodoc:parameter{width} or \autodoc:parameter{height} options will scale the SVG canvas to the given size calculated at a given \autodoc:parameter{density} option (which defaults to 72 ppi).
+For example, the command \autodoc:command{\svg[src=packages/svg/smiley.svg,height=12pt]} produces the following:
 
 \svg[src=packages/svg/smiley.svg,height=12pt]
 
-The second is a more experimental \autodoc:command{\svg-glyph}. When the current font is
-set to an SVG font, SILE does not currently render the SVG glyphs
-automatically. This command is intended to be used as a means of eventually
-implementing SVG fonts; it retrieves the SVG glyph provided and renders it.
+The second is a more experimental \autodoc:command{\svg-glyph}.
+When the current font is set to an SVG font, SILE does not currently render the SVG glyphs automatically.
+This command is intended to be used as a means of eventually implementing SVG fonts; it retrieves the SVG glyph provided and renders it.
 
-In both cases the rendering is done with our own SVG drawing library; it is currently
-very minimal, only handling lines, curves, strokes and fills. For a fuller
-implementation, consider using a \autodoc:package{converters} registration to render
-your SVG file to PDF and include it on the fly.
+In both cases the rendering is done with our own SVG drawing library; it is currently very minimal, only handling lines, curves, strokes and fills.
+For a fuller implementation, consider using a \autodoc:package{converters} registration to render your SVG file to PDF and include it on the fly.
 \end{document}
 ]]
-}
+
+return package
