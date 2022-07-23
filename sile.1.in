@@ -12,16 +12,20 @@
 .SH DESCRIPTION
 The SILE typesetter reads a single input file, by default in either SIL or XML format, and processes it to generate a single output file, by default in PDF format.
 The output will be written to the same name as the input file with the extension changed to .pdf unless the \fB\-\-output\fR flag is used.
-Additional input or output formats can be handled by requiring a module with \fB\-\-require\fR to add support for them first.
+Additional input or output formats can be handled by loading a module with \fB\-\-use\fR to add support for them first.
 .SH OPTIONS
-.B @TRANSFORMED_PACKAGE_NAME@
-accepts the following options:
+.B @TRANSFORMED_PACKAGE_NAME@ accepts the following feature flags:
+.TP
+.BR \-t ", " \-\-traceback
+Display detailed location trace on errors and warnings.
 .TP
 .BR \-h ", " \-\-help
 Print help message and exit.
 .TP
 .BR \-v ", " \-\-version
 Print version information and exit.
+.TP
+.B @TRANSFORMED_PACKAGE_NAME@ accepts the following options with values:
 .TP
 .BR \-b ", " \-\-backend= \fIvalue\fR
 Choose an alternative output backend.
@@ -67,15 +71,7 @@ May be specified more than once.
 .TP
 .BR \-I ", " \-\-include= \fIfilename\fR
 Deprecated, will be removed.
-Please use \-\-require, \-\-preamble, or \-\-postamble.
-.TP
-.BR \-r ", " \-\-require= \fImodule\fR
-Require a class, package, or other resource to be loaded before processing the main input.
-The value should be a loadable module name (without a file extension, using \fI.\fR as a path separator) and will be loaded using SILE's module search path.
-This is particularly useful when the input document is not a natively recognized SIL or XML scheme and SILE needs to be taught new tricks before trying to read the input file.
-If the module is a valid document class, it will replace \fIplain\fR as the default class for processing documents.
-Because this executes before loading the document, it may even change the way the parser works or add an input parser to support new file formats.
-May be specified more than once.
+Please use \-\-use, \-\-preamble, or \-\-postamble.
 .TP
 .BR \-p ", " \-\-preamble= \fIfilename\fR
 Include an SIL, XML, or other content resource before the input document.
@@ -87,5 +83,11 @@ Include an SIL, XML, or other content resource after the input document.
 The value should be a full filename with a path relative to PWD or an absolute path.
 May be specified more than once.
 .TP
-.BR \-t ", " \-\-traceback
-Display detailed location trace on errors and warnings.
+.BR \-u ", " \-\-use= \fImodule\fR
+Load and initialize a class, inputter, shaper, or other module before processing the main input.
+The value should be a loadable module name (with no extension, using \fI.\fR as a path separator) and will be loaded using SILE's module search path.
+This is particularly useful when the input document is not SIL or a natively recognized XML scheme and SILE needs to be taught new tricks before even trying to read the input file.
+If the module is a document class, it will replace \fIplain\fR as the default class for processing documents that do not specifically identify one to use.
+Because this executes before loading the document, it may even add an input parser or modify an existing one to support new file formats.
+Package modules will be added to the preamble to be loaded after the class is initialized.
+May be specified more than once.
