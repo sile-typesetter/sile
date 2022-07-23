@@ -1,5 +1,5 @@
 \begin[class=book]{document}
-\use{packages.pdfstructure}
+\use[module=packages.pdfstructure]
 \language[main=en]
 \begin[type=Art,block=1]{pdf:structure}
 \pdf:structure[type=H,lang=en-US]{\section{Hello World}}

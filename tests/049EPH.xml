@@ -2,9 +2,9 @@
 <set parameter="linebreak.tolerance" value="5000"/>
 <set-counter id="footnote" display="alpha"/>
 <font language="en"/>
-<use>packages.xmltricks</use>
-<use>packages.frametricks</use>
-<use>packages.raiselower</use>
+<use module="packages.xmltricks"/>
+<use module="packages.frametricks"/>
+<use module="packages.raiselower"/>
 <define command="bible:chapter-head"><bigskip/><font size="24pt"><process/></font></define>
 <define command="bible:verse-number"><raise height="3pt"><font size="9pt"><process/></font></raise></define>
 <xmltricks:ignore>style-id style-ide style-h style-h1 style-h2 style-h3</xmltricks:ignore>

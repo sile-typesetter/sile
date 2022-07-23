@@ -1,6 +1,6 @@
 \begin[papersize=a6]{document}
 \nofolios
-\use{packages.lorem}
+\use[module=packages.lorem]
 \set[parameter=document.parskip,value=1ex]
 \begin{script}
 

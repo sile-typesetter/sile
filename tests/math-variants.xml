@@ -1,5 +1,5 @@
 <sile>
-<use>packages.math</use>
+<use module="packages.math"/>
 
 Math variants, text, MathML:
 <mathml>

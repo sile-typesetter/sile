@@ -69,13 +69,13 @@ end
 
 package.documentation = [[
 \begin{document}
-\use{packages.math}
+\use[module=packages.math]
 
 \set[parameter=math.font.family, value=Libertinus Math]
 \set[parameter=math.font.size, value=11]
 
 % Default verbatim font (Hack) is missing a few math symbols
-\use{packages.font-fallback}
+\use[module=packages.font-fallback]
 \font:add-fallback[family=Symbola]
 
 This package provides typesetting of formulas directly in a SILE document.

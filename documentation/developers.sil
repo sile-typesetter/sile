@@ -1,6 +1,6 @@
 \begin[papersize=a4,class=book]{document}
-\use{packages.pdf}
-\use{packages.image}
+\use[module=packages.pdf]
+\use[module=packages.image]
 \include[src=documentation/macros.xml]
 \define[command=silehp]{\url{http://www.sile-typesetter.org/}}
 \font[size=11pt,family=Gentium Book Basic]

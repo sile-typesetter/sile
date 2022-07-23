@@ -59,7 +59,7 @@ end
 
 package.documentation = [[
 \begin{document}
-\use{packages.textcase}
+\use[module=packages.textcase]
 The \autodoc:package{textcase} package provides commands for language-aware case conversion of input text.
 For example, when language is set to English, then \autodoc:command{\uppercase{hij}} will return \examplefont{\uppercase{hij}}.
 However, when language is set to Turkish, it will return \examplefont{\font[language=tr]{\uppercase{hij}}}.

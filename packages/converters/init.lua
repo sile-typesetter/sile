@@ -125,7 +125,7 @@ We do this by registering a converter with the \autodoc:command{\converters:regi
 
 \begin{verbatim}
 \line
-\\use{packages.converters}
+\\use[module=packages.converters]
 \\converters:register[from=.gif,to=.jpg,command=convert $SOURCE $TARGET]
 \line
 \end{verbatim}

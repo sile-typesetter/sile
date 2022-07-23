@@ -1,6 +1,5 @@
 <sile>
-
-<use>packages.math</use>
+<use module="packages.math"/>
 
 Number matrix, text, MathML:
 <mathml>

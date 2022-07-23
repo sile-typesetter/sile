@@ -1,6 +1,6 @@
 \begin[papersize=a5,class=book]{document}% KNOWNBAD
-\use{packages.ifattop}
-\use{packages.lorem}
+\use[module=packages.ifattop]
+\use[module=packages.lorem]
 \nofolios
 
 One, two. Buckle my shoe.

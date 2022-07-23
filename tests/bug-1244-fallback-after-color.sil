@@ -1,8 +1,8 @@
 \begin[papersize=a6]{document}
 \nofolios
 \neverindent
-\use{packages.color-fonts}
-\use{packages.font-fallback}
+\use[module=packages.color-fonts]
+\use[module=packages.font-fallback]
 \font:add-fallback[family=Noto Serif CJK JP]
 んa
 

@@ -1,11 +1,11 @@
 \begin[papersize=a5]{document}% KNOWNBAD
 \nofolios
-\use{packages.lorem}
-\use{packages.grid}
+\use[module=packages.lorem]
+\use[module=packages.grid]
 \grid[spacing=15pt]
 \set[parameter=document.parskip,value=6pt]
-\use{packages.frametricks}
-\use{packages.balanced-frames}
+\use[module=packages.frametricks]
+\use[module=packages.balanced-frames]
 \font[family=Libertinus Serif]
 \begin[first-content-frame=leftCol1]{pagetemplate}
 \frame[id=gutter,width=3%pw]

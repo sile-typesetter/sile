@@ -1,7 +1,7 @@
 \begin[papersize=a6]{document}
 \neverindent
 \nofolios
-\use{packages.bibtex}
+\use[module=packages.bibtex]
 \language[main=en]
 \set[parameter=document.parskip, value=4pt]
 

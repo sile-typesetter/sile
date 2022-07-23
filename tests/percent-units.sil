@@ -1,5 +1,5 @@
 \begin[papersize=a7]{document}
-\use{packages.rules}
+\use[module=packages.rules]
 \set[parameter=document.parindent,value=0]
 \nofolios
 % If relative units aren’t calculated correctly

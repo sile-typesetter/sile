@@ -119,7 +119,7 @@ end
 package.documentation = [[
 \begin{document}
 \font:add-fallback[family=Noto Sans CJK JP]
-\use{packages.ruby}
+\use[module=packages.ruby]
 Japanese texts often contain pronunciation hints (called \em{furigana}) for difficult kanji or foreign words.
 These hints are traditionally placed either above (in horizontal typesetting) or beside (in vertical typesetting) the word that they explain.
 The typesetting term for these glosses is \em{ruby}.

@@ -6,8 +6,8 @@
 % The troublesome \makecolumns & \mergecolumns are commented out until
 % this stops killing the rest of our CI runners' work.
 % --------------
-\use{packages.frametricks}
-\use{packages.lorem}
+\use[module=packages.frametricks]
+\use[module=packages.lorem]
 \nofolios
 \font[family=Libertinus Serif,size=10pt]
 \set[parameter=document.baselineskip,value=1.3em]

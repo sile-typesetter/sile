@@ -1,6 +1,6 @@
 \begin[papersize=a5]{document}
 \nofolios
-\use{packages.lorem}
+\use[module=packages.lorem]
 \hbox
 \begin[first-content-frame=a]{pagetemplate}
   \frame[id=a,left=2%pw,right=44%pw,top=2%ph,bottom=98%ph,next=b]

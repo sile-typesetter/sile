@@ -1,6 +1,6 @@
 \begin[papersize=a7,class=book]{document}
-\use{packages.frametricks}
-\use{packages.lorem}
+\use[module=packages.frametricks]
+\use[module=packages.lorem]
 This is a test\footnote{What happens to frames?}.
 This is a test\footnote{What happens to frames?}.
 This is a test\footnote{What happens to frames?}.

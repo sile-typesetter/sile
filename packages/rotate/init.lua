@@ -110,7 +110,7 @@ end
 
 package.documentation = [[
 \begin{document}
-\use{packages.rotate}
+\use[module=packages.rotate]
 The \autodoc:package{rotate} package allows you to rotate things. You can rotate entire
 frames, by adding the \autodoc:parameter{rotate=<angle>} declaration to your frame declaration,
 and you can rotate any content by issuing the command \autodoc:command{\rotate[angle=<angle>]{<content>}},

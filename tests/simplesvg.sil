@@ -1,5 +1,5 @@
 \begin[papersize=a5]{document}
-\use{packages.svg}
+\use[module=packages.svg]
 
 Foo
 

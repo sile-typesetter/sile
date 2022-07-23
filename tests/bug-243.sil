@@ -1,6 +1,6 @@
 \begin[papersize=a5]{document}
 \nofolios
-\use{packages.leaders}
+\use[module=packages.leaders]
 \font[size=50pt]
 \set[parameter=typesetter.parfillskip,value=0pt]
 F\dotfill{}bar\par

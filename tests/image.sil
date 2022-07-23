@@ -1,5 +1,5 @@
 \begin[papersize=a5]{document}
-\use{packages.image}
+\use[module=packages.image]
 One two \img[src=documentation/fig1.png,width=50] three
 
 \bigskip

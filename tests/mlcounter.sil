@@ -1,5 +1,5 @@
 \begin[papersize=a5]{document}
-\use{packages.counters}
+\use[module=packages.counters]
 
 \increment-multilevel-counter[id=test]
 \show-multilevel-counter[id=test] Aa

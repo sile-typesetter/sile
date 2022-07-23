@@ -38,7 +38,7 @@ end
 
 package.documentation = [[
 \begin{document}
-\use{packages.background}
+\use[module=packages.background]
 The \autodoc:package{background} package allows you to set the color of the canvas background (by drawing a solid color block the full size of the page on page initialization).
 The package provides a \autodoc:command{\background} command which requires at least one parameter, \autodoc:parameter{color=<color specification>}, and sets the backgound of the current and all following pages to that color.
 If setting only the current page background different from the default is desired, an extra parameter \autodoc:parameter{allpages=false} can be passed.

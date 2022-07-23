@@ -1,5 +1,5 @@
 \begin[papersize=a6,class=jbook]{document}
-\use{packages.frametricks}
+\use[module=packages.frametricks]
 \noindent
 \nofolios
 よ

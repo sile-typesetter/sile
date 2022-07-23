@@ -1,5 +1,5 @@
 \begin[class=plain]{document}
-\use{packages.math}
+\use[module=packages.math]
 
 \begin[mode=display]{math}
   \def{ndiff}{#1^{(#2)}}

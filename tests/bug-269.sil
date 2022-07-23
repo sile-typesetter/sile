@@ -1,7 +1,7 @@
 \begin[papersize=a6,class=book]{document}
 \nofolios
 \font[family=Gentium Plus,size=10.1pt,language=tr]
-\use{packages.footnotes}
+\use[module=packages.footnotes]
 Müjde, Hristiyan bireylere ve kiliseye verilmiş en büyük hazinedir.
 Müjde, Hristiyan bireylere ve kiliseye verilmiş en büyük hazinedir.
 Müjde, birçok şeyin arasındaki herhangi bir mesaj değildir, her şeyin

@@ -4,7 +4,7 @@
 
 % Note this is not specific to using non-default linespacing methods,
 % this MWE shows the same problem with or without these lines
-\use{packages.linespacing}
+\use[module=packages.linespacing]
 \set[parameter=linespacing.method,value=fit-font]
 \set[parameter=linespacing.fit-font.extra-space,value=6pt]
 

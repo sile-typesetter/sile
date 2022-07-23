@@ -1,5 +1,5 @@
 \begin[papersize=a5]{document}
-\use{packages.leaders}
+\use[module=packages.leaders]
 \nofolios
 \neverindent
 % Test case: \leaders[width=...] with a given fixed width.

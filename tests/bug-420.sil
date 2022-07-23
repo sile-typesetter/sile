@@ -1,6 +1,6 @@
 \begin[papersize=a5,class=book]{document}
-\use{packages.lorem}
-\use{packages.frametricks}
+\use[module=packages.lorem]
+\use[module=packages.frametricks]
 \nofolios
 \font[size=16pt]
 

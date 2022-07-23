@@ -130,7 +130,7 @@ end
 
 package.documentation = [[
 \begin{document}
-\use{packages.pdfstructure}
+\use[module=packages.pdfstructure]
 \pdf:structure[type=P]{%
 For PDF documents to be considered accessible, they must contain a description of the PDF’s document structure.
 This package allows structure trees to be created and saved to the PDF file.

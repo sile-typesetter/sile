@@ -1,6 +1,6 @@
 \begin[papersize=a6]{document}
 \nofolios
-\use{packages.verbatim}
+\use[module=packages.verbatim]
 \define[command=verbatim:font]{\font[family=Hack]}
 \font[family=Hack]
 \begin{verbatim}

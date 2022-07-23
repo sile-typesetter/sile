@@ -158,7 +158,7 @@ end
 
 package.documentation = [[
 \begin{document}
-\use{packages.url}
+\use[module=packages.url]
 This package enhances the typesetting of URLs in two ways.
 First, it provides the \autodoc:command{\href[src=<url>]{<content>}} command which inserts PDF hyperlinks, \href[src=http://www.sile-typesetter.org/]{like this}.
 

@@ -1,6 +1,6 @@
 \begin[papersize=a5]{document}% KNOWNBAD
 % Test leading comment and package lines
-\use{packages.color}
+\use[module=packages.color]
 
 \noindent Note: each sentence below should be in its own paragraph with no
 line breaks or words slammed together. All paragraphs (except this one) should

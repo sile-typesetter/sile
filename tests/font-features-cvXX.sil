@@ -1,7 +1,7 @@
 \begin[papersize=a6]{document}
 \nofolios
 \neverindent
-\use{packages.features}
+\use[module=packages.features]
 \set[parameter=harfbuzz.subshapers,value=ot]
 һ ồ
 

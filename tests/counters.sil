@@ -2,7 +2,7 @@
 \nofolios
 \set[parameter=document.parindent,value=0pt]
 \font[family=Libertinus Serif]
-\use{packages.counters}
+\use[module=packages.counters]
 \set-counter[id=test,value=1234]
 
 Default: \show-counter[id=test]

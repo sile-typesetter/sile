@@ -1,5 +1,5 @@
 \begin[papersize=a5]{document}
-\use{packages.leaders}
+\use[module=packages.leaders]
 \nofolios
 \neverindent
 % Test case: vertical alignement for \leaders with custom pattern

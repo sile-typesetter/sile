@@ -132,7 +132,7 @@ end
 
 package.documentation = [[
 \begin{document}
-\use{packages.chordmode}
+\use[module=packages.chordmode]
 This package provides the \autodoc:environment{chordmode} environment, which transforms lines like:
 
 \begin{verbatim}

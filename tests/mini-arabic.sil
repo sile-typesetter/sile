@@ -1,6 +1,6 @@
 \begin[papersize=a6]{document}
 \nofolios
-\use{packages.bidi}
+\use[module=packages.bidi]
 \thisframeRTL
 \font[family=Amiri,language=urd,script=Arab,size=14pt]
 1955 میں ان کا انتقال ہوا۔

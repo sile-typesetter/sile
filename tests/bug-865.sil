@@ -1,7 +1,7 @@
 \begin[papersize=a6]{document}
 \nofolios
-\use{packages.pullquote}
-\use{packages.lorem}
+\use[module=packages.pullquote]
+\use[module=packages.lorem]
 \lorem[words=12]
 
 \begin[author=Joe Smith]{pullquote}% remove this comment to also test 1020

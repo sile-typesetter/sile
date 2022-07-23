@@ -1,6 +1,6 @@
 \begin[class=book,papersize=a6]{document}
 \nofolios
-\use{packages.frametricks}
+\use[module=packages.frametricks]
 \begin[first-content-frame=column1]{pagetemplate}
   \frame[id=column1,left=left(content),top=top(content),bottom=bottom(content),width=53pt]
 \end{pagetemplate}

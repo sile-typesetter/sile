@@ -1,5 +1,5 @@
 \begin[papersize=a6, class=book]{document}
-\use{packages.lists}
+\use[module=packages.lists]
 \font[family=Libertinus Serif]% Default Gentium lacks the white circle.
 \nofolios
 \neverindent

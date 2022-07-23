@@ -1,5 +1,5 @@
 \begin[papersize=a5]{document}
-\use{packages.ifattop}
+\use[module=packages.ifattop]
 \ifattop{Hello, top of frame.}
 
 \ifnotattop{Hello, middle of frame.}

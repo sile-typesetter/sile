@@ -1,5 +1,5 @@
 <sile>
-<use>packages.math</use>
+<use module="packages.math"/>
 
 Stretchy parentheses, text, MathML:
 <mathml>
