@@ -24,11 +24,6 @@ function lua.parse (_, doc)
   return result
 end
 
-local load_sile_module = function (module)
-  local name = module._name
-  SILE[name .. "s"][name] = module
-end
-
 function lua:process (doc)
   local tree = self:parse(doc)()
   if type(tree) == "string" then
@@ -42,17 +37,7 @@ function lua:process (doc)
       self:requireClass(tree)
       return SILE.process(tree)
     else
-      load_sile_module(tree)
-      if tree.type == "class" then
-        if SILE.documentState.documentClass then
-          SU.error("Cannot load a class after one is already instantiated")
-        end
-        self._docclass = tree
-      elseif tree.type == "package" then
-        return self:packageInit(tree)
-      end
-      -- other module types like inputters, outputters, shappers, etc. don't
-      -- need instantiation on load, only when they are used
+      SILE.use(tree)
     end
   end
 end

@@ -337,12 +337,21 @@ function base:registerCommands ()
     else
       SILE.processString(content[1], "xml")
     end
-  end, "Run xml content. The content may be supplied either inline or using src=...")
+  end, "Process xml content. The content may be supplied either inline or using src=...")
 
-  self:registerCommand("use", function (_, content)
-    local packname = content[1]
-    SILE.require(packname)
-  end, "Load a SILE module (can be a package, a shaper, a typesetter, or whatever).")
+  self:registerCommand("use", function (options, content)
+    if content[1] and string.len(content[1]) > 0 then
+      SILE.processString(content[1], "lua")
+    else
+      if options.src then
+        SU.warn("Use of 'src' with \\use is discouraged because some of it's path handling\n  will eventually be deprecated. Use 'module' instead when possible.")
+        SILE.processFile(options.src, "lua")
+      else
+        local module = SU.required(options, "module", "use")
+        SILE.use(module)
+      end
+    end
+  end, "Load and initialize a SILE module (can be a package, a shaper, a typesetter, or whatever). Use module=... to specif what to load or include module code inline.")
 
   self:registerCommand("raw", function (options, content)
     local rawtype = SU.required(options, "type", "raw")

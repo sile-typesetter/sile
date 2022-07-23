@@ -61,7 +61,7 @@ SILE.input = {
   evaluates = {},
   evaluateAfters = {},
   includes = {},
-  requires = {},
+  uses = {},
   options = {},
   preambles = {},
   postambles = {},
@@ -135,6 +135,46 @@ SILE.init = function ()
   runEvals(SILE.input.evaluates, "evaluate")
 end
 
+SILE.use = function (module)
+  local pack
+  if type(module) == "string" then
+    pack = require(module)
+  elseif type(module) == "table" then
+    pack = module
+  end
+  local name = pack._name
+  local class = SILE.documentState.documentClass
+  if not pack.type then
+    SU.error("Modules must declare their type")
+  elseif pack.type == "class" then
+    SILE.classes[name] = pack
+    if class then
+      SU.error("Cannot load a class after one is already instantiated")
+    end
+    SILE.sratch.class_from_uses = pack
+  elseif pack.type == "inputter" then
+    SILE.inputters[name] = pack
+    -- nothing more to instantiate for inputters because format detection uses
+    -- all available modules, order is designated by the inputter module itself.
+  elseif pack.type == "outputter" then
+    SILE.outputters[name] = pack
+    SILE.outputter = pack()
+  elseif pack.type == "shaper" then
+    SILE.shapers[name] = pack
+    SILE.shaper = pack()
+  elseif pack.type == "typesetter" then
+    SILE.typesetters[name] = pack
+    SILE.typesetter = pack()
+  elseif pack.type == "package" then
+    SILE.packages[name] = pack
+    if class then
+      pack(class)
+    else
+      table.insert(SILE.inputs.preambles, pack)
+    end
+  end
+end
+
 SILE.require = function (dependency, pathprefix, deprecation_ack)
   if pathprefix and not deprecation_ack then
     local notice = string.format([[
@@ -195,12 +235,12 @@ SILE.process = function (ast)
   end
 end
 
-local defaultinputters = { "xml", "lua", "sil" }
+local preloadedinputters = { "xml", "lua", "sil" }
 
 local function detectFormat (doc, filename)
   -- Preload default reader types so content detection has something to work with
   if #SILE.inputters == 0 then
-    for _, format in ipairs(defaultinputters) do
+    for _, format in ipairs(preloadedinputters) do
       local _ = SILE.inputters[format]
     end
   end

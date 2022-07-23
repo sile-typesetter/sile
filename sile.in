@@ -97,16 +97,8 @@ if SILE.masterFilename then
     ProFi:start()
   end
 
-  for _, path in ipairs(SILE.input.requires) do
-    local module = require(path)
-    if type(module) == "table" and module._name then
-      if module.type == "class" then
-        SILE.classes[module._name] = module
-        SILE.sratch.required_class = module
-      elseif module.type == "inputter" then
-        SILE.inputters[module._name] = module
-      end
-    end
+  for _, path in ipairs(SILE.input.uses) do
+    SILE.use(path)
   end
 
   -- Deprecated, notice given in core.cli when argument used

@@ -1,7 +1,7 @@
 local _deprecated = [[
   You appear to be using a document class '%s' programmed for SILE <= v0.12.5.
   This system was refactored in v0.13.0 and the shims trying to make it
-  work temporarily withouth refactoring your classes have been removed
+  work temporarily without refactoring your classes have been removed
   in v0.14.0. Please see v0.13.0 release notes for help.
 ]]
 
@@ -16,8 +16,8 @@ function base._init (_) end
 function base:classInit (options)
   options = pl.tablex.merge(options, SILE.input.options, true)
   local constructor, class
-  if SILE.scratch.required_class then
-    constructor = SILE.scratch.required_class
+  if SILE.scratch.class_from_uses then
+    constructor = SILE.scratch.class_from_uses
     class = constructor._name
   end
   class = SILE.input.class or class or options.class or "plain"
@@ -65,8 +65,14 @@ function base.findInTree (_, tree, command)
 end
 
 function base.preamble (_)
-  for _, path in ipairs(SILE.input.preambles) do
-    SILE.processFile(path)
+  for _, preamble in ipairs(SILE.input.preambles) do
+    if type(preamble) == "string" then
+      SILE.processFile(preamble)
+    elseif type(preamble) == "table" then
+      if preamble.type == "package" then
+        SILE.documentState.documentClass:initPackage(preamble)
+      end
+    end
   end
 end
 

@@ -32,6 +32,7 @@ sil.passthroughCommands = {
   raw = true,
   script = true,
   sil = true,
+  use = true,
   xml = true
 }
 
