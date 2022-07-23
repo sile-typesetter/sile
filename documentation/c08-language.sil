@@ -29,7 +29,7 @@ Language support may include and combination of:
 
 \noindent{}• choice of glyphs within a font,
 
-\noindent{}• localization of programatially inserted strings,
+\noindent{}• localization of programatically inserted strings,
 
 \noindent{}• and more.
 
@@ -120,13 +120,13 @@ The command \code{\\nohyphenation\{…\}} is provided as a shortcut for
 
 The hyphenator uses the same algorithm as TeX and can use TeX hyphenation
 pattern files if they are converted to Lua format. To implement hyphenation
-for a new language, first check to see if TeX hyphenation directionaries
+for a new language, first check to see if TeX hyphenation dictionaries
 are available; if not, work through the resources at
 \url{http://tug.org/docs/liang/}.
 
 \section{Localization}
 
-A small handfull of strings may be programatically added to documents depending on language, context, and options.
+A small handful of strings may be programatically added to documents depending on language, context, and options.
 For example by default in English the \code{book} class will prepend “Chapter ” before chapter numbers output by the \code{\\chapter} command.
 These localized strings are managed internally using the Fluent localization system.
 See Project Fluent (\url{https://projectfluent.org}) for details on the data format and uses.

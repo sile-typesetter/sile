@@ -16,7 +16,7 @@ the setting which changes how the typesetter penalizes orphan (end-of-paragraph)
 lines.
 
 The interface to changing settings from within a SILE document is the
-\code{\\set} commmand. It takes several options, the most basic one being
+\code{\\set} command. It takes several options, the most basic one being
 \em{parameter}, which expresses which setting is being changed. The \em{value}
 option expresses the value to which the setting is being changed. As an
 example:
@@ -69,7 +69,7 @@ SILE.call("set", { parameter = "typesetter.orphanpenalty", value = 250 })
 
 There is nothing wrong with this and it allows you to optionally pass content
 that is wrapped in those settings. However there is also a slightly lower level
-function that is more ideomatic of Lua code than SILE that uses positional
+function that is more idiomatic of Lua code than SILE that uses positional
 arguments instead of named options:
 
 \begin{verbatim}
