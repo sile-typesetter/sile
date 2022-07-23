@@ -15,7 +15,7 @@ Trying to create these files in a word processor such as Word will not work as t
 
 Lots of good text editors exist (many of them for free) and any of them will work for SILE documents so which one you use is entirely a matter of preference.
 You can get started with even the most basic text editors built into your desktop environment such as Notepad on Windows, TextEdit on macOS, Gedit on Gnome, Kate on KDE, etc.
-However more advanced text editors (sometimes catagorized as code editors) can offer a lot of features that make the editing process more robust.
+However more advanced text editors (sometimes categorized as code editors) can offer a lot of features that make the editing process more robust.
 Editors are typically either graphical (GUI) or terminal (TUI) oriented and range from relatively simple to extremely complex integrated development environments (IDE).
 Examples of popular cross-platform GUI oriented editors include VS Code, Sublime Text, and Atom\footnote{Still relatively popular, but will be discontinued in October 2022.}.
 Examples of popular terminal based editors include VIM\footnote{VIM & NeoVIM users can benefit from syntax highlighting and other features via the \code{vim-sile} plugin at \url{https://github.com/sile-typesetter/vim-sile}.}, Emacs, and GNU Nano.

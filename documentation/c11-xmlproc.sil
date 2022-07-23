@@ -14,14 +14,14 @@ The class initalization for DocBoox isn't too fancy, it just loads up a couple p
 
 Now we can start defining SILE commands to render XML elements.
 Most of these are fairly straightforward so we will not dwell on them too much.
-For instance, DocBook has a tags like \code{<code>}, \code{<filename>}, \code{<guimenu>} which should all be rendered in a monospaced typewriter font.
+For instance, DocBook has tags like \code{<code>}, \code{<filename>}, \code{<guimenu>} which should all be rendered in a monospaced typewriter font.
 To make it easier to customize the class, we abstract out the font change into a single command:
 
 \begin{note}
 Much of the example code in this chapter is in SIL format using macros.
 The actual docbook class currently uses Lua functions to specify these commands.
 The functionality is the same, but the Lua syntax is more flexible and recommended for most use cases.
-The SILE define macros show here can still be usen in a preamble file if desired.
+The SILE define macros shown here can still be used in a preamble file if desired.
 \end{note}
 
 \begin{verbatim}
@@ -52,11 +52,11 @@ We have already seen an example of the \code{<link>} tag where we also need to p
 Let’s look at another area of complexity: the apparently-simple \code{<title>} tag.
 The reason this is complex is that it occurs in different contexts, sometimes more than once within a context; it should often be rendered differently in different contexts.
 So for instance \code{<article><title>...} will look different to \code{<section><title>...}.
-Inside an \code{<example>} tag, the title will be preferenced by an example number; inside a \code{<bibliomixed>} bibliography entry the title should not be set off as a new block but should be part of the running text; and so on.
+Inside an \code{<example>} tag, the title will be prefixed by an example number; inside a \code{<bibliomixed>} bibliography entry the title should not be set off as a new block but should be part of the running text; and so on.
 
 What we will do to deal with this situation is provide a very simple definition of \code{<title>}, but when processing the containing elements of \code{<title>} (such as \code{<article>}, \code{<example>}), we will process the title ourselves.
 
-For instance, let’s look at \code{<example>}, which has the added complexity of needed to keep track of an article number.
+For instance, let’s look at \code{<example>}, which has the added complexity of needing to keep track of an article number.
 
 \begin{verbatim}
 \line

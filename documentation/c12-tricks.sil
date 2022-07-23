@@ -427,7 +427,7 @@ After this, all the usual API calls will work: \code{SILE.call},
 SILE.typesetter:typeset(data)
 \end{verbatim}
 
-The only thing to be careful is the need to call the \code{finish} method
+The only thing to be careful of is the need to call the \code{finish} method
 on your document class at the end of processing to finish off the final page:
 
 \begin{verbatim}
