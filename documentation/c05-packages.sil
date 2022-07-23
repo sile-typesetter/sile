@@ -207,7 +207,7 @@ SILE is able to use packages installed via the LuaRocks package manager.
 It can also be configured to read packages from any directory of your choosing.
 
 A SILE compatible LuaRock simply installs the relevant class, package, language, i18n, or similar files in a \code{sile} directory.
-This diroctory could be in your system Lua direcory, in your user directory, or any other location you specify.
+This directory could be in your system Lua directory, in your user directory, or any other location you specify.
 
 By default SILE will look for packages in:
 
@@ -229,7 +229,7 @@ $ sile ...
 \end{verbatim}
 
 Depending on your system, this probably requires root permissions.
-If you either don’t have root permisisons or don’t want to polute your system’s root file system, you can also install as a user.
+If you either don’t have root permissions or don’t want to pollute your system’s root file system, you can also install as a user.
 To use packages installed as a user you will need to have LuaRocks add it’s user tree to your Lua search path before running SILE.
 
 \begin{verbatim}

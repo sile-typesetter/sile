@@ -237,7 +237,7 @@ The example above, in XML flavor, would look like this:
 \line
 \end{verbatim}
 
-We don’t expect humans to write their documents in SILE’s XML flavor—the TeX-like SIL flavor is much better for that—but having an XML flavor allows for computers to deal with SILE a lot more easily.
+We don’t expect humans to write their documents in SILE’s XML flavor—the TeX-like SILE flavor is much better for that—but having an XML flavor allows for computers to deal with SILE a lot more easily.
 One could create graphical user interfaces to edit SILE documents, or convert other XML formats to SILE.
 
 However, there is an even smarter way of processing XML with SILE.
