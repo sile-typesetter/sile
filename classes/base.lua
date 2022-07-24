@@ -314,14 +314,15 @@ function base:registerCommands ()
   end, "Includes a content file for processing.")
 
   self:registerCommand("lua", function (options, content)
-    if options.require then
-      SILE.require(options.require)
-    elseif options.src then
+    if options.src then
       SILE.processFile(options.src, "lua")
+    elseif options.require then
+      local module = SU.required(options, "require", "lua")
+      return require(module)
     else
       SILE.processString(content[1], "lua")
     end
-  end, "Run Lua code. The code may be supplied either inline or using src=...")
+  end, "Run Lua code. The code may be supplied either inline, using require=... for a Lua module, or using src=... for a file path")
 
   self:registerCommand("sil", function (options, content)
     if options.src then
