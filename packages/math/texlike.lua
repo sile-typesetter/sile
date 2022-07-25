@@ -216,7 +216,7 @@ local compileToStr = function (argEnv, mathlist)
   end
 end
 
-local function compileToMathML (_, arg_env, tree)
+local function compileToMathML_aux (_, arg_env, tree)
   if type(tree) == "string" then return tree end
   tree = fold_pairs(function (acc, key, child)
     if type(key) ~= "number" then
@@ -231,7 +231,7 @@ local function compileToMathML (_, arg_env, tree)
       table.insert(acc, child)
     else
       -- Compile all children.
-      local comp = compileToMathML(nil, arg_env, child)
+      local comp = compileToMathML_aux(nil, arg_env, child)
       if comp then table.insert(acc, comp) end
     end
     return acc
@@ -303,7 +303,7 @@ local function compileToMathML (_, arg_env, tree)
     local commandName = tree["command-name"]
     local argTypes = inferArgTypes(tree[1])
     registerCommand(commandName, argTypes, function (compiledArgs)
-      return compileToMathML(nil, compiledArgs, tree[1])
+      return compileToMathML_aux(nil, compiledArgs, tree[1])
     end)
     return nil
   elseif tree.id == "command" and commands[tree.command] then
@@ -321,7 +321,7 @@ local function compileToMathML (_, arg_env, tree)
     for i,arg in pairs(applicationTree) do
       if type(i) == "number" then
         if argTypes[i] == objType.tree then
-          table.insert(compiledArgs, compileToMathML(nil, arg_env, arg))
+          table.insert(compiledArgs, compileToMathML_aux(nil, arg_env, arg))
         else
           local x = compileToStr(arg_env, arg)
           table.insert(compiledArgs, x)
@@ -335,7 +335,7 @@ local function compileToMathML (_, arg_env, tree)
     return cmdFun(compiledArgs)
   elseif tree.id == "command" and symbols[tree.command] then
     local atom = {id = "atom", [1] = symbols[tree.command]}
-    tree = compileToMathML(nil, arg_env, atom)
+    tree = compileToMathML_aux(nil, arg_env, atom)
   elseif tree.id == "argument" then
     if arg_env[tree.index] then
       return arg_env[tree.index]
@@ -344,13 +344,46 @@ local function compileToMathML (_, arg_env, tree)
     end
   end
   tree.id = nil
-  SU.debug("texmath", "Resulting MathML:\n" .. tostring(tree))
   return tree
+end
+
+local function printMathML (tree)
+  if type(tree) == "string" then
+    return tree
+  end
+  local result = "\\" .. tree.command
+  if tree.options then
+    local options = {}
+    for k,v in pairs(tree.options) do
+      table.insert(options, k .. "=" .. v)
+    end
+    if #options > 0 then
+      result = result .. "[" .. table.concat(options, ", ") .. "]"
+    end
+  end
+  if #tree > 0 then
+    result = result .. "{"
+    for _, child in ipairs(tree) do
+      result = result .. printMathML(child)
+    end
+    result = result .. "}"
+  end
+  return result
+end
+
+local function compileToMathML (_, arg_env, tree)
+  local result = compileToMathML_aux(_, arg_env, tree)
+  if SU.debugging("texmath") then
+    SU.debug("texmath", "Resulting MathML: " .. printMathML(result))
+  end
+  return result
 end
 
 local function convertTexlike (_, content)
   local ret = epnf.parsestring(mathParser, content[1])
-  SU.debug("texmath", "parsed TeX math:\n" .. tostring(ret))
+  if SU.debugging("texmath") then
+    SU.debug("texmath", "Parsed TeX math: " .. pl.pretty.write(ret))
+  end
   return ret
 end
 
