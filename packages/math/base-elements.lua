@@ -94,7 +94,7 @@ local mathScriptConversionTable = {
 }
 
 local function retrieveMathTable(options)
-  print("options.family = " .. options.family)
+  SU.debug("math", "Loading math font: " .. options.family)
   local face = SILE.font.cache(options, SILE.shaper.getFace)
   if not face then
     SU.error("Could not find requested font "..options.." or any suitable substitutes")
