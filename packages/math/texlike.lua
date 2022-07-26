@@ -274,16 +274,16 @@ local function compileToMathML_aux (_, arg_env, tree)
   -- Translate TeX-like sub/superscripts to `munderover` or `msubsup`,
   -- depending on whether the base is a big operator
   elseif tree.id == "sup" and tree[1].command == "mo"
-      and tree[1].atomType == atomType.bigOperator then
+      and tree[1].atom == atomType.bigOperator then
     tree.command = "mover"
   elseif tree.id == "sub" and tree[1].command == "mo"
-      and symbolDefaults[tree[1][1]].atomType == atomType.bigOperator then
+      and symbolDefaults[tree[1][1]].atom == atomType.bigOperator then
       tree.command = "munder"
   elseif tree.id == "subsup" and tree[1].command == "mo"
-      and symbolDefaults[tree[1][1]].atomType == atomType.bigOperator then
+      and symbolDefaults[tree[1][1]].atom == atomType.bigOperator then
     tree.command = "munderover"
   elseif tree.id == "supsub" and tree[1].command == "mo"
-      and symbolDefaults[tree[1][1]].atomType == atomType.bigOperator then
+      and symbolDefaults[tree[1][1]].atom == atomType.bigOperator then
     tree.command = "munderover"
     local tmp = tree[2]
     tree[2] = tree[3]

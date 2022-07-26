@@ -789,7 +789,7 @@ elements.text = pl.class({
         self.text = "−"
       end
       if symbolDefaults[self.text] then
-        self.atom = symbolDefaults[self.text].atomType
+        self.atom = symbolDefaults[self.text].atom
         self.stretchy = symbolDefaults[self.text].stretchy
       end
     end
