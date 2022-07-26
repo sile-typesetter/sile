@@ -136,10 +136,10 @@ function base.declareSettings (_)
 end
 
 function base:loadPackage (packname, args)
-  local pack = require("packages." .. packname)
+  local pack = require(("packages.%s"):format(packname))
   if pack.type == "package" then -- new package
     self.packages[pack._name] = pack(self, args)
-  else -- legacay package
+  else -- legacy package
     self:initPackage(pack, args)
   end
 end
@@ -226,6 +226,15 @@ function base:registerRawHandlers ()
 
 end
 
+local function optionsAsArgs (options)
+  local args = pl.tablex.copy(options)
+  args.src = nil
+  args.format = nil
+  args.module = nil
+  args.require = nil
+  return args
+end
+
 function base:registerCommands ()
 
   local function replaceProcessBy(replacement, tree)
@@ -298,68 +307,75 @@ function base:registerCommands ()
   end, "Within a macro definition, processes the contents of the macro body.")
 
   self:registerCommand("script", function (options, content)
+    local args = optionsAsArgs(options)
     if SU.hasContent(content) then
-      SILE.processString(content[1], options.format or "lua")
+      return SILE.processString(content[1], options.format or "lua", nil, args)
     elseif options.src then
-      SILE.require(options.src)
+      return SILE.require(options.src)
     else
-      SU.error("\\script funcion requires inline content or a src file path")
+      SU.error("\\script function requires inline content or a src file path")
+      return SILE.processString(content[1], options.format or "lua", nil, args)
     end
   end, "Runs lua code. The code may be supplied either inline or using src=...")
 
   self:registerCommand("include", function (options, content)
+    local args = optionsAsArgs(options)
     if SU.hasContent(content) then
-      SILE.processString(content[1], options.format)
+      return SILE.processString(content[1], options.format, nil, args)
     elseif options.src then
-      SILE.processFile(options.src, options.format)
+      return SILE.processFile(options.src, options.format, args)
     else
-      SU.error("\\include funcion requires inline content or a src file path")
+      SU.error("\\include function requires inline content or a src file path")
     end
   end, "Includes a content file for processing.")
 
   self:registerCommand("lua", function (options, content)
+    local args = optionsAsArgs(options)
     if SU.hasContent(content) then
-      SILE.processString(content[1], "lua")
+      return SILE.processString(content[1], "lua", nil, args)
     elseif options.src then
-      SILE.processFile(options.src, "lua")
+      return SILE.processFile(options.src, "lua", args)
     elseif options.require then
       local module = SU.required(options, "require", "lua")
       return require(module)
     else
-      SU.error("\\lua funcion requires inline content or a src file path or a require module name")
+      SU.error("\\lua function requires inline content or a src file path or a require module name")
     end
   end, "Run Lua code. The code may be supplied either inline, using require=... for a Lua module, or using src=... for a file path")
 
   self:registerCommand("sil", function (options, content)
+    local args = optionsAsArgs(options)
     if SU.hasContent(content) then
-      SILE.processString(content[1], "sil")
+      return SILE.processString(content[1], "sil")
     elseif options.src then
-      SILE.processFile(options.src, "sil")
+      return SILE.processFile(options.src, "sil", args)
     else
-      SU.error("\\sil funcion requires inline content or a src file path")
+      SU.error("\\sil function requires inline content or a src file path")
     end
   end, "Process sil content. The content may be supplied either inline or using src=...")
 
   self:registerCommand("xml", function (options, content)
+    local args = optionsAsArgs(options)
     if SU.hasContent(content) then
-      SILE.processString(content[1], "xml")
+      return SILE.processString(content[1], "xml", nil, args)
     elseif options.src then
-      SILE.processFile(options.src, "xml")
+      return SILE.processFile(options.src, "xml", args)
     else
-      SU.error("\\xml funcion requires inline content or a src file path")
+      SU.error("\\xml function requires inline content or a src file path")
     end
   end, "Process xml content. The content may be supplied either inline or using src=...")
 
   self:registerCommand("use", function (options, content)
+    local args = optionsAsArgs(options)
     if content[1] and string.len(content[1]) > 0 then
-      SILE.processString(content[1], "lua")
+      SILE.processString(content[1], "lua", nil, args)
     else
       if options.src then
         SU.warn("Use of 'src' with \\use is discouraged because some of it's path handling\n  will eventually be deprecated. Use 'module' instead when possible.")
-        SILE.processFile(options.src, "lua")
+        SILE.processFile(options.src, "lua", args)
       else
         local module = SU.required(options, "module", "use")
-        SILE.use(module)
+        SILE.use(module, args)
       end
     end
   end, "Load and initialize a SILE module (can be a package, a shaper, a typesetter, or whatever). Use module=... to specif what to load or include module code inline.")

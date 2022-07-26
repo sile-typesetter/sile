@@ -135,7 +135,7 @@ SILE.init = function ()
   runEvals(SILE.input.evaluates, "evaluate")
 end
 
-SILE.use = function (module)
+SILE.use = function (module, args)
   local pack
   if type(module) == "string" then
     pack = require(module)
@@ -158,19 +158,19 @@ SILE.use = function (module)
     -- all available modules, order is designated by the inputter module itself.
   elseif pack.type == "outputter" then
     SILE.outputters[name] = pack
-    SILE.outputter = pack()
+    SILE.outputter = pack(args)
   elseif pack.type == "shaper" then
     SILE.shapers[name] = pack
-    SILE.shaper = pack()
+    SILE.shaper = pack(args)
   elseif pack.type == "typesetter" then
     SILE.typesetters[name] = pack
-    SILE.typesetter = pack()
+    SILE.typesetter = pack(args)
   elseif pack.type == "package" then
     SILE.packages[name] = pack
     if class then
-      pack(class)
+      pack(class, args)
     else
-      table.insert(SILE.inputs.preambles, pack)
+      table.insert(SILE.inputs.preambles, { pack = pack, args = args })
     end
   end
 end
@@ -261,7 +261,7 @@ local function detectFormat (doc, filename)
   SU.error(("Unable to pick inputter to process input from '%s'"):format(filename))
 end
 
-function SILE.processString (doc, format, filename)
+function SILE.processString (doc, format, filename, args)
   local cpf
   if not filename then
     cpf = SILE.currentlyProcessingFile
@@ -277,7 +277,7 @@ function SILE.processString (doc, format, filename)
   if cpf then SILE.currentlyProcessingFile = cpf end
 end
 
-function SILE.processFile (filename, format)
+function SILE.processFile (filename, format, args)
   local doc
   if filename == "-" then
     filename = "STDIN"
@@ -303,7 +303,7 @@ function SILE.processFile (filename, format)
   end
   SILE.currentlyProcessingFile = filename
   local pId = SILE.traceStack:pushDocument(filename, doc)
-  local ret = SILE.processString(doc, format, filename)
+  local ret = SILE.processString(doc, format, filename, args)
   SILE.traceStack:pop(pId)
   return ret
 end

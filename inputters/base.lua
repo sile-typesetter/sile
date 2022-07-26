@@ -69,8 +69,10 @@ function base.preamble (_)
     if type(preamble) == "string" then
       SILE.processFile(preamble)
     elseif type(preamble) == "table" then
+      local args = {}
+      if preamble.pack then preamble, args = preamble.pack, preamble.args end
       if preamble.type == "package" then
-        SILE.documentState.documentClass:initPackage(preamble)
+        SILE.documentState.documentClass:initPackage(preamble, args)
       end
     end
   end

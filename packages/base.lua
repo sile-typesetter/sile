@@ -5,7 +5,7 @@ base._name = "base"
 base._initialized = false
 base.class = nil
 
-function base:_init (class)
+function base:_init (class, args)
   self.class = class
   self:declareSettings()
   self:registerRawHandlers()

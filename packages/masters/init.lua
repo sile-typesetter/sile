@@ -78,14 +78,16 @@ function package:_init (class, args)
     SILE.scratch.masters = {}
   end
 
-  defineMasters(class, args)
-
   -- exports
   class.switchMasterOnePage = switchMasterOnePage
   class.switchMaster = switchMaster
   class.defineMaster = defineMaster
   class.defineMasters = defineMasters
   class.currentMaster = currentMaster
+
+  if args then
+    class:defineMasters(args)
+  end
 
 end
 
