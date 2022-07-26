@@ -58,6 +58,7 @@ SILE.rawHandlers = {}
 -- needed for a user to use a SILE-as-a-library verion to produce documents
 -- programatically.
 SILE.input = {
+  filename = "",
   evaluates = {},
   evaluateAfters = {},
   includes = {},
@@ -154,8 +155,7 @@ SILE.use = function (module, args)
     SILE.sratch.class_from_uses = pack
   elseif pack.type == "inputter" then
     SILE.inputters[name] = pack
-    -- nothing more to instantiate for inputters because format detection uses
-    -- all available modules, order is designated by the inputter module itself.
+    SILE.inputter = pack(args)
   elseif pack.type == "outputter" then
     SILE.outputters[name] = pack
     SILE.outputter = pack(args)
@@ -268,11 +268,24 @@ function SILE.processString (doc, format, filename, args)
     local caller = debug.getinfo(2, "Sl")
     SILE.currentlyProcessingFile = caller.short_src..":"..caller.currentline
   end
-  format = format or detectFormat(doc, filename)
-  io.stderr:write(("<%s> as %s\n"):format(SILE.currentlyProcessingFile, format))
-  SILE.inputter = SILE.inputters[format]()
+  -- In the event we're processing the master file *and* the user gave us
+  -- a specific inputter to use, use it at the exclusion of all content type
+  -- detection
+  local inputter
+  if filename and filename:gsub("STDIN", "-") == SILE.input.filename and SILE.inputter then
+    inputter = SILE.inputter
+  else
+    format = format or detectFormat(doc, filename)
+    io.stderr:write(("<%s> as %s\n"):format(SILE.currentlyProcessingFile, format))
+    inputter = SILE.inputters[format]()
+    -- If we did content detection *and* this is the master file, save the
+    -- inputter for posterity and postambles
+    if filename and filename:gsub("STDIN", "-") == SILE.input.filename then
+      SILE.inputter = inputter
+    end
+  end
   local pId = SILE.traceStack:pushDocument(SILE.currentlyProcessingFile, doc)
-  SILE.inputter:process(doc)
+  inputter:process(doc)
   SILE.traceStack:pop(pId)
   if cpf then SILE.currentlyProcessingFile = cpf end
 end

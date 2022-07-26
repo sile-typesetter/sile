@@ -113,8 +113,8 @@ if SILE.masterFilename then
   end
 
   local main, err = xpcall(function()
-      return SILE.processFile(SILE.inputFile)
-    end, SILE.errorHandler)
+    return SILE.processFile(SILE.input.filename)
+  end, SILE.errorHandler)
 
   if not main then
     if type(err) == "string" and err:match(": interrupted!") then
