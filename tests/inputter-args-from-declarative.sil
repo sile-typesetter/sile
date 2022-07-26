@@ -1,0 +1,14 @@
+\begin[papersize=a6]{document}
+\begin[myopt=myval]{lua}
+local base = require("packages.base")
+local foo = pl.class(base)
+foo._name = "foo"
+
+function foo:_init (args)
+	SU.dump(args)
+end
+
+return foo
+\end{lua}
+foo
+\end{document}
