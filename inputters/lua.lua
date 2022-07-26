@@ -27,7 +27,7 @@ end
 function lua:process (doc)
   local tree = self:parse(doc)()
   if type(tree) == "string" then
-    return SILE.processString(tree)
+    return SILE.processString(tree, nil, nil, self.args)
   elseif type(tree) == "function" then
     SILE.process(tree)
   elseif type(tree) == "table" then
@@ -37,7 +37,7 @@ function lua:process (doc)
       self:requireClass(tree)
       return SILE.process(tree)
     else
-      SILE.use(tree)
+      SILE.use(tree, self.args)
     end
   end
 end

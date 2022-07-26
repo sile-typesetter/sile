@@ -11,7 +11,9 @@ base._name = "base"
 
 base._docclass = nil
 
-function base._init (_) end
+function base:_init (args)
+  if args then self.args = args end
+end
 
 function base:classInit (options)
   options = pl.tablex.merge(options, SILE.input.options, true)
