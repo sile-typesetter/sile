@@ -24,9 +24,9 @@ local function validate_date (date)
   return string.match(date, [[^D:%d+%s*-%s*%d%d%s*'%s*%d%d%s*'?$]]) ~= nil
 end
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
   pdf = require("justenoughlibtexpdf")
 

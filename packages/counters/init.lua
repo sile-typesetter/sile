@@ -51,19 +51,19 @@ SILE.formatMultilevelCounter = function (counter, options)
   return formatMultilevelCounter(nil, counter, options)
 end
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
   if not SILE.scratch.counters then
     SILE.scratch.counters = {}
   end
 
   --exports
-  class.formatCounter = formatCounter
-  class.formatMultilevelCounter = formatMultilevelCounter
-  class.getCounter = getCounter
-  class.getMultilevelCounter = getMultilevelCounter
+  self.class.formatCounter = formatCounter
+  self.class.formatMultilevelCounter = formatMultilevelCounter
+  self.class.getCounter = getCounter
+  self.class.getMultilevelCounter = getMultilevelCounter
 
 end
 

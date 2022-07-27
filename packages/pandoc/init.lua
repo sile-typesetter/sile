@@ -45,17 +45,17 @@ local handlePandocArgs = function (options)
   return wrapper, options
 end
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
-  class:loadPackage("footnotes")
-  class:loadPackage("image")
-  class:loadPackage("pdf")
-  class:loadPackage("raiselower")
-  class:loadPackage("rules")
-  class:loadPackage("url")
-  class:loadPackage("verbatim")
+  self.class:loadPackage("footnotes")
+  self.class:loadPackage("image")
+  self.class:loadPackage("pdf")
+  self.class:loadPackage("raiselower")
+  self.class:loadPackage("rules")
+  self.class:loadPackage("url")
+  self.class:loadPackage("verbatim")
 
 end
 

@@ -3,9 +3,9 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "complex-spaces"
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
   if not SILE.languageSupport.languages["x-spaces-are-nodes"] then
     local xsan = pl.class(SILE.nodeMakers.unicode)

@@ -27,12 +27,12 @@ local checkIfSpacerNeeded = function (reading)
   SILE.typesetter:pushGlue(SILE.settings:get("ruby.latinspacer"))
 end
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
   -- Japaneese language support defines units which are useful here
-  class:loadPackage("font-fallback")
+  self.class:loadPackage("font-fallback")
   SILE.call("font:add-fallback", { family = "Noto Sans CJK JP" })
 
   SILE.languageSupport.loadLanguage("ja")

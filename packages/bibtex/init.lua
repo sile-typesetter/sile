@@ -55,9 +55,9 @@ local parseBibtex = function (fn)
   return entries
 end
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
   SILE.scratch.bibtex = { bib = {} }
 

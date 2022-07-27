@@ -79,25 +79,25 @@ local _deprecate  = [[
   twice and duplicate entries.
 ]]
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
   if not SILE.scratch.tableofcontents then
     SILE.scratch.tableofcontents = {}
   end
 
-  class:loadPackage("infonode")
-  class:loadPackage("leaders")
+  self.class:loadPackage("infonode")
+  self.class:loadPackage("leaders")
 
-  class:registerHook("endpage", _moveTocNodes)
-  class:registerHook("finish", _writeToc)
+  self.class:registerHook("endpage", _moveTocNodes)
+  self.class:registerHook("finish", _writeToc)
 
   --exports
-  class.writeToc = function (_)
+  self.class.writeToc = function (_)
     SU.deprecated("class:writeToc", nil, "0.13.0", "0.14.0", _deprecate)
   end
-  class.moveTocNodes = function (_)
+  self.class.moveTocNodes = function (_)
     SU.deprecated("class:moveTocNodes", nil, "0.13.0", "0.14.0", _deprecate)
   end
 end

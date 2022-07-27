@@ -52,9 +52,9 @@ local outputRotatedHbox = function (self, typesetter, line)
   typesetter.frame:advanceWritingDirection(self.width)
 end
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
   if SILE.typesetter.frame then
     enter(SILE.typesetter.frame, SILE.typesetter)

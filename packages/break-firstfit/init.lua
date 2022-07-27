@@ -34,9 +34,9 @@ local firstfit = function (typesetter, nl, breakWidth)
   return typesetter:breakpointsToLines(breaks)
 end
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
   -- exports
   SILE.typesetter._breakIntoLines_firstfit = firstfit

@@ -138,14 +138,18 @@ end
 function class:loadPackage (packname, args)
   local pack = require(("packages.%s"):format(packname))
   if pack.type == "package" then -- new package
-    self.packages[pack._name] = pack(self, args)
+    if SILE.documentState.documentClass then
+      self.packages[pack._name] = pack(args)
+    else
+      table.insert(SILE.input.preambles, { pack = pack, args = args })
+    end
   else -- legacy package
     self:initPackage(pack, args)
   end
 end
 
 function class:initPackage (pack, args)
-  SU.deprecated("class:initPackage(args)", "package(class, args)", "0.14.0", "0.16.0", [[
+  SU.deprecated("class:initPackage(args)", "package(args)", "0.14.0", "0.16.0", [[
   This package appears to be a legacy format package. It returns a table
   an expects SILE to guess a bit about what to do. New packages inherit
   from the base class and have a constructor function (_init) that

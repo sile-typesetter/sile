@@ -92,10 +92,11 @@ local function typesetAST (options, content)
   end
 end
 
-function package:_init (class, options)
+function package:_init (options)
 
-  class:loadPackage("inputfilter")
-  base._init(self, class)
+  base._init(self)
+
+  self.class:loadPackage("inputfilter")
 
   if options then pl.tablex.update(theme, options) end
 

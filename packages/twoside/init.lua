@@ -49,28 +49,28 @@ local _deprecate  = [[
   you are likely causing it to run twice and duplicate entries.
 ]]
 
-function package:_init (class, args)
+function package:_init (args)
 
-  base._init(self, class)
+  base._init(self)
 
   if not SILE.scratch.masters then
     SU.error("Cannot load twoside package before masters.")
   end
 
   -- exports
-  class.oddPage = oddPage
-  class.mirrorMaster = mirrorMaster
-  class.switchPage = function (_)
+  self.class.oddPage = oddPage
+  self.class.mirrorMaster = mirrorMaster
+  self.class.switchPage = function (class)
     SU.deprecated("class:switchPage", nil, "0.13.0", "0.15.0", _deprecate)
     return _switchPage(class)
   end
 
-  class.oddPageMaster = args.oddPageMaster
-  class.evenPageMaster = args.evenPageMaster
-  class:registerPostinit(function (self_)
+  self.class.oddPageMaster = args.oddPageMaster
+  self.class.evenPageMaster = args.evenPageMaster
+  self.class:registerPostinit(function (self_)
     self_:mirrorMaster(args.oddPageMaster, args.evenPageMaster)
   end)
-  class:registerHook("newpage", _switchPage)
+  self.class:registerHook("newpage", _switchPage)
 
 end
 

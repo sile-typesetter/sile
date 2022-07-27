@@ -11,10 +11,11 @@ local outputBackground = function (color)
   SILE.outputter:popColor()
 end
 
-function package:_init (class)
+function package:_init ()
 
-  class:loadPackage("color")
-  base._init(self, class)
+  base._init(self)
+
+  self.class:loadPackage("color")
 
 end
 

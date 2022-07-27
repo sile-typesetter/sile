@@ -35,13 +35,13 @@ local function createCommand (pos, col, line, command, options, content)
   return result
 end
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
   -- exports
-  class.createCommand = createCommand
-  class.transformContent = transformContent
+  self.class.createCommand = createCommand
+  self.class.transformContent = transformContent
 
 end
 

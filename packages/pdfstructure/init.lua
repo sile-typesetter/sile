@@ -68,9 +68,9 @@ local function dumpTree (node)
   return ref
 end
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
   pdf = require("justenoughlibtexpdf")
 
@@ -83,7 +83,7 @@ function package:_init (class)
   local stRoot = stNode("Document")
   stPointer = stRoot
 
-  class:loadPackage("pdf")
+  self.class:loadPackage("pdf")
 
   function SILE.outputters.libtexpdf._endHook (_)
     local catalog = pdf.get_dictionary("Catalog")

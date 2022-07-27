@@ -50,17 +50,17 @@ local _deprecate  = [[
   duplicate entries.
 ]]
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
-  class:loadPackage("counters")
+  self.class:loadPackage("counters")
   SILE.scratch.counters.folio = { value = 1, display = "arabic" }
-  class:registerHook("newpage", _incrementFolio)
-  class:registerHook("endpage", _outputFolio)
+  self.class:registerHook("newpage", _incrementFolio)
+  self.class:registerHook("endpage", _outputFolio)
 
   -- exports
-  class.outputFolio = function (self_)
+  self.class.outputFolio = function (self_)
     SU.deprecated("class:outputFolio", nil, "0.13.0", "0.15.0", _deprecate)
     return _outputFolio(self_)
   end

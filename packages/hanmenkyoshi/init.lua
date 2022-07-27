@@ -64,14 +64,14 @@ local declareHanmenFrame = function (self, id, spec)
   return frame
 end
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
-  class:loadPackage("tate")
+  self.class:loadPackage("tate")
 
   -- exports
-  class.declareHanmenFrame = declareHanmenFrame
+  self.class.declareHanmenFrame = declareHanmenFrame
 end
 
 function package:registerCommands ()

@@ -5,15 +5,15 @@ package._name = "simpletable"
 
 local tableTag, trTag, tdTag
 
-function package:_init (class, args)
+function package:_init (args)
 
-  base._init(self, class)
+  base._init(self, args)
 
   if not SILE.scratch.simpletable then
     SILE.scratch.simpletable = { tables = {} }
   end
 
-  args = args or {
+  args = args and #args >= 3 or {
     tableTag = "table",
     trTag = "tr",
     tdTag = "td"
@@ -26,7 +26,7 @@ function package:_init (class, args)
   -- This is a post init calback instead of the usual early command registration
   -- method using our package loader because we don't know what commands to register
   -- until we've been instantiated.
-  class:registerPostinit(function (_)
+  self.class:registerPostinit(function (class)
 
     class:registerCommand(trTag, function(_, content)
       local tbl = SILE.scratch.simpletable.tables[#(SILE.scratch.simpletable.tables)]

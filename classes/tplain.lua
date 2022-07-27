@@ -16,9 +16,9 @@ class.defaultFrameset.content = {
 function class:_t_common ()
   self:loadPackage("font-fallback")
   self:loadPackage("hanmenkyoshi")
-  self:registerPostinit(function (class)
-    class:bidiDisableTypesetter(SILE.typesetter)
-    class:bidiDisableTypesetter(SILE.defaultTypesetter)
+  self:registerPostinit(function (class_)
+    class_:bidiDisableTypesetter(SILE.typesetter)
+    class_:bidiDisableTypesetter(SILE.defaultTypesetter)
   end)
   self.defaultFrameset.content.tate = self.options.layout == "tate"
   self:declareHanmenFrame("content", self.defaultFrameset.content)

@@ -2,21 +2,20 @@ local base = require("packages.base")
 
 local package = pl.class(base)
 package._name = "footnotes"
+function package:_init (args)
 
-function package:_init (class, args)
+  base._init(self)
 
-  base._init(self, class)
-
-  class:loadPackage("counters")
-  class:loadPackage("raiselower")
-  class:loadPackage("insertions")
+  self.class:loadPackage("counters")
+  self.class:loadPackage("raiselower")
+  self.class:loadPackage("insertions")
 
   if not SILE.scratch.counters.footnotes then
     SILE.scratch.counters.footnote = { value = 1, display = "arabic" }
   end
 
   args = args or {}
-  class:initInsertionClass("footnote", {
+  self.class:initInsertionClass("footnote", {
     insertInto = args.insertInto or "footnotes",
     stealFrom = args.stealFrom or { "content" },
     maxHeight = SILE.length("75%ph"),

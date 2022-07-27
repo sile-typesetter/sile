@@ -168,9 +168,9 @@ SILE.use = function (module, args)
   elseif pack.type == "package" then
     SILE.packages[name] = pack
     if class then
-      pack(class, args)
+      pack(args)
     else
-      table.insert(SILE.inputs.preambles, { pack = pack, args = args })
+      table.insert(SILE.input.preambles, { pack = pack, args = args })
     end
   end
 end

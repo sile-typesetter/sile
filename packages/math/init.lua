@@ -3,12 +3,12 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "math"
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
-  class:loadPackage("math.typesetter")
-  class:loadPackage("math.texlike")
+  self.class:loadPackage("math.typesetter")
+  self.class:loadPackage("math.texlike")
 
 end
 

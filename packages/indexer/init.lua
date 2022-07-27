@@ -25,16 +25,16 @@ end
   --   end
   -- end
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
   if not SILE.scratch.index then
     SILE.scratch.index = {}
   end
 
   -- exports
-  class.buildIndex = moveNodes
+  self.class.buildIndex = moveNodes
 
 end
 

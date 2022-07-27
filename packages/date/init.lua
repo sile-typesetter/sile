@@ -20,12 +20,12 @@ local date = function (class, options)
   return os.date(options.format, options.time)
 end
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
   --exports
-  date = date
+  self.class.date = date
 
 end
 

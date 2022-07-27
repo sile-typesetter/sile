@@ -41,18 +41,18 @@ local _deprecate  = [[
   you are likely causing it to run twice and duplicate entries.
 ]]
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
   if not SILE.scratch.info then
     SILE.scratch.info = { thispage = {} }
   end
 
-  class:registerHook("newpage", _newPageInfo)
+  self.class:registerHook("newpage", _newPageInfo)
 
   -- exports
-  class.newPageInfo = function (self_)
+  self.class.newPageInfo = function (self_)
     SU.deprecated("class:newPageInfo", nil, "0.13.0", "0.15.0", _deprecate)
     return _newPageInfo(self_)
   end

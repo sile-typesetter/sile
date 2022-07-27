@@ -3,12 +3,12 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "chordmode"
 
-function package:_init (class)
+function package:_init ()
 
-  class:loadPackage("raiselower")
-  class:loadPackage("inputfilter")
+  base._init(self)
 
-  base._init(self, class)
+  self.class:loadPackage("raiselower")
+  self.class:loadPackage("inputfilter")
 
 end
 
