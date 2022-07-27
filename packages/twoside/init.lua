@@ -49,7 +49,7 @@ local _deprecate  = [[
   you are likely causing it to run twice and duplicate entries.
 ]]
 
-function package:_init (args)
+function package:_init (options)
 
   base._init(self)
 
@@ -65,10 +65,10 @@ function package:_init (args)
     return _switchPage(class)
   end
 
-  self.class.oddPageMaster = args.oddPageMaster
-  self.class.evenPageMaster = args.evenPageMaster
+  self.class.oddPageMaster = options.oddPageMaster
+  self.class.evenPageMaster = options.evenPageMaster
   self.class:registerPostinit(function (self_)
-    self_:mirrorMaster(args.oddPageMaster, args.evenPageMaster)
+    self_:mirrorMaster(options.oddPageMaster, options.evenPageMaster)
   end)
   self.class:registerHook("newpage", _switchPage)
 

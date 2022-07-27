@@ -136,7 +136,7 @@ SILE.init = function ()
   runEvals(SILE.input.evaluates, "evaluate")
 end
 
-SILE.use = function (module, args)
+SILE.use = function (module, options)
   local pack
   if type(module) == "string" then
     pack = require(module)
@@ -155,22 +155,22 @@ SILE.use = function (module, args)
     SILE.sratch.class_from_uses = pack
   elseif pack.type == "inputter" then
     SILE.inputters[name] = pack
-    SILE.inputter = pack(args)
+    SILE.inputter = pack(options)
   elseif pack.type == "outputter" then
     SILE.outputters[name] = pack
-    SILE.outputter = pack(args)
+    SILE.outputter = pack(options)
   elseif pack.type == "shaper" then
     SILE.shapers[name] = pack
-    SILE.shaper = pack(args)
+    SILE.shaper = pack(options)
   elseif pack.type == "typesetter" then
     SILE.typesetters[name] = pack
-    SILE.typesetter = pack(args)
+    SILE.typesetter = pack(options)
   elseif pack.type == "package" then
     SILE.packages[name] = pack
     if class then
-      pack(args)
+      pack(options)
     else
-      table.insert(SILE.input.preambles, { pack = pack, args = args })
+      table.insert(SILE.input.preambles, { pack = pack, options = options })
     end
   end
 end
@@ -261,7 +261,7 @@ local function detectFormat (doc, filename)
   SU.error(("Unable to pick inputter to process input from '%s'"):format(filename))
 end
 
-function SILE.processString (doc, format, filename, args)
+function SILE.processString (doc, format, filename, options)
   local cpf
   if not filename then
     cpf = SILE.currentlyProcessingFile
@@ -277,7 +277,7 @@ function SILE.processString (doc, format, filename, args)
   else
     format = format or detectFormat(doc, filename)
     io.stderr:write(("<%s> as %s\n"):format(SILE.currentlyProcessingFile, format))
-    inputter = SILE.inputters[format]()
+    inputter = SILE.inputters[format](options)
     -- If we did content detection *and* this is the master file, save the
     -- inputter for posterity and postambles
     if filename and filename:gsub("STDIN", "-") == SILE.input.filename then
@@ -290,7 +290,7 @@ function SILE.processString (doc, format, filename, args)
   if cpf then SILE.currentlyProcessingFile = cpf end
 end
 
-function SILE.processFile (filename, format, args)
+function SILE.processFile (filename, format, options)
   local doc
   if filename == "-" then
     filename = "STDIN"
@@ -316,7 +316,7 @@ function SILE.processFile (filename, format, args)
   end
   SILE.currentlyProcessingFile = filename
   local pId = SILE.traceStack:pushDocument(filename, doc)
-  local ret = SILE.processString(doc, format, filename, args)
+  local ret = SILE.processString(doc, format, filename, options)
   SILE.traceStack:pop(pId)
   return ret
 end

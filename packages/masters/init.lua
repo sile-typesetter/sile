@@ -70,9 +70,9 @@ local function currentMaster (_)
   return _currentMaster
 end
 
-function package:_init (args)
+function package:_init (options)
 
-  base._init(self, args)
+  base._init(self, options)
 
   if not SILE.scratch.masters then
     SILE.scratch.masters = {}
@@ -85,8 +85,8 @@ function package:_init (args)
   self.class.defineMasters = defineMasters
   self.class.currentMaster = currentMaster
 
-  if args then
-    self.class:defineMasters(args)
+  if options then
+    self.class:defineMasters(options)
   end
 
 end

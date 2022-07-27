@@ -11,8 +11,8 @@ inputter._name = "base"
 
 inputter._docclass = nil
 
-function inputter:_init (args)
-  if args then self.args = args end
+function inputter:_init (options)
+  if options then self.options = options end
 end
 
 function inputter:classInit (options)
@@ -71,12 +71,12 @@ function inputter.preamble (_)
     if type(preamble) == "string" then
       SILE.processFile(preamble)
     elseif type(preamble) == "table" then
-      local args = {}
-      if preamble.pack then preamble, args = preamble.pack, preamble.args end
+      local options = {}
+      if preamble.pack then preamble, options = preamble.pack, preamble.options end
       if preamble.type == "package" then
-        preamble(args)
+        preamble(options)
       else
-        SILE.documentState.documentClass:initPackage(preamble, args)
+        SILE.documentState.documentClass:initPackage(preamble, options)
       end
     end
   end

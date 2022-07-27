@@ -62,7 +62,7 @@ end
 
 function package:_init (options)
 
-  base._init(self)
+  base._init(self, options)
 
   SILE.typesetter = nulTypesetter(SILE.getFrame("page"))
   for frame, typesetter in pairs(options.frames) do

@@ -2,7 +2,8 @@ local base = require("packages.base")
 
 local package = pl.class(base)
 package._name = "footnotes"
-function package:_init (args)
+
+function package:_init (options)
 
   base._init(self)
 
@@ -14,10 +15,10 @@ function package:_init (args)
     SILE.scratch.counters.footnote = { value = 1, display = "arabic" }
   end
 
-  args = args or {}
+  options = options or {}
   self.class:initInsertionClass("footnote", {
-    insertInto = args.insertInto or "footnotes",
-    stealFrom = args.stealFrom or { "content" },
+    insertInto = options.insertInto or "footnotes",
+    stealFrom = options.stealFrom or { "content" },
     maxHeight = SILE.length("75%ph"),
     topBox = SILE.nodefactory.vglue("2ex"),
     interInsertionSkip = SILE.length("1ex"),
