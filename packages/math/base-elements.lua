@@ -240,7 +240,7 @@ end
 elements.mbox = pl.class({
   _base = nodefactory.box,
   _type = "Mbox",
-  __tostring = function (s) return s.type end,
+  __tostring = function (s) return s._type end,
   _init = function(self)
     self.options = {}
     self.children = {} -- The child nodes
@@ -497,6 +497,10 @@ elements.stackbox = pl.class({
 elements.subscript = pl.class({
   _base = elements.mbox,
   _type = "Subscript",
+  __tostring = function (self)
+    return (self.sub and "Subscript" or "Superscript") .. "(" ..
+      tostring(self.base) .. ", " .. tostring(self.sub or self.super) .. ")"
+  end,
   _init = function(self, base, sub, sup)
     elements.mbox._init(self)
     self.base = base
@@ -618,6 +622,10 @@ elements.subscript = pl.class({
 elements.underOver = pl.class({
   _base = elements.subscript,
   _type = "UnderOver",
+  __tostring = function (self)
+    return self._type .. "(" .. tostring(self.base) .. ", " ..
+      tostring(self.sub) .. ", " .. tostring(self.sup) .. ")"
+  end,
   _init = function(self, base, sub, sup)
     elements.mbox._init(self)
     self.atom = base.atom
@@ -744,8 +752,10 @@ elements.terminal = pl.class({
 elements.space = pl.class({
   _base = elements.terminal,
   _type = "Space",
-  __tostring = function(self)
-    return "space{w = "..self.width..", h = "..self.height..", d = "..self.depth.."}"
+  __tostring = function (self)
+    return self._type .. "(width=" .. tostring(self.width) ..
+      ", height=" .. tostring(self.height) ..
+      ", depth=" .. tostring(self.depth) .. ")"
   end,
   _init = function(self, width, height, depth)
     elements.terminal._init(self)
@@ -761,7 +771,14 @@ elements.space = pl.class({
 elements.text = pl.class({
   _base = elements.terminal,
   _type = "Text",
-  __tostring = function(self) return "Text("..(self.originalText or self.text)..")" end,
+  __tostring = function (self)
+    return self._type .. "(atom=" .. tostring(self.atom) ..
+        ", kind=" .. tostring(self.kind) ..
+        ", script=" .. tostring(self.script) ..
+        (self.stretchy and ", stretchy" or "") ..
+        (self.largeop and ", largeop" or "") ..
+        ", text=\"" .. (self.originalText or self.text) .. "\")"
+  end,
   _init = function(self, kind, attributes, script, text)
     elements.terminal._init(self)
     if not (kind == "number" or kind == "identifier" or kind == "operator") then
@@ -954,6 +971,10 @@ elements.text = pl.class({
 elements.fraction = pl.class({
   _base = elements.mbox,
   _type = "Fraction",
+  __tostring = function (self)
+    return self._type .. "(" .. tostring(self.numerator) .. ", " ..
+      tostring(self.denominator) .. ")"
+  end,
   _init = function(self, numerator, denominator)
     elements.mbox._init(self)
     self.numerator = numerator
