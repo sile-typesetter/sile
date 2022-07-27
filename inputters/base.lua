@@ -5,17 +5,17 @@ local _deprecated = [[
   in v0.14.0. Please see v0.13.0 release notes for help.
 ]]
 
-local base = pl.class()
-base.type = "inputter"
-base._name = "base"
+local inputter = pl.class()
+inputter.type = "inputter"
+inputter._name = "base"
 
-base._docclass = nil
+inputter._docclass = nil
 
-function base:_init (args)
+function inputter:_init (args)
   if args then self.args = args end
 end
 
-function base:classInit (options)
+function inputter:classInit (options)
   options = pl.tablex.merge(options, SILE.input.options, true)
   local constructor, class
   if SILE.scratch.class_from_uses then
@@ -30,7 +30,7 @@ function base:classInit (options)
   SILE.documentState.documentClass = constructor(options)
 end
 
-function base:requireClass (tree)
+function inputter:requireClass (tree)
   local root = SILE.documentState.documentClass == nil
   if root then
     if #tree ~= 1
@@ -42,7 +42,7 @@ function base:requireClass (tree)
   end
 end
 
-function base.packageInit (_, pack)
+function inputter.packageInit (_, pack)
   local class = SILE.documentState.documentClass
   if not class then
     SU.error("Cannot load a package before instantiating a document class")
@@ -51,14 +51,14 @@ function base.packageInit (_, pack)
   end
 end
 
-function base:process (doc)
+function inputter:process (doc)
   local tree = self:parse(doc)
   self:requireClass(tree)
   return SILE.process(tree)
 end
 
 -- Just a simple one-level find. We're not reimplementing XPath here.
-function base.findInTree (_, tree, command)
+function inputter.findInTree (_, tree, command)
   for i=1, #tree do
     if type(tree[i]) == "table" and tree[i].command == command then
       return tree[i]
@@ -66,7 +66,7 @@ function base.findInTree (_, tree, command)
   end
 end
 
-function base.preamble (_)
+function inputter.preamble (_)
   for _, preamble in ipairs(SILE.input.preambles) do
     if type(preamble) == "string" then
       SILE.processFile(preamble)
@@ -80,10 +80,10 @@ function base.preamble (_)
   end
 end
 
-function base.postamble (_)
+function inputter.postamble (_)
   for _, path in ipairs(SILE.input.postambles) do
     SILE.processFile(path)
   end
 end
 
-return base
+return inputter
