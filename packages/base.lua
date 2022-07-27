@@ -13,6 +13,9 @@ function class:_init (_)
   self:declareSettings()
   self:registerRawHandlers()
   self:registerCommands()
+end
+
+function class:_post_init ()
   self._initialized = true
 end
 

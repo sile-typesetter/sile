@@ -33,7 +33,10 @@ local showHanmenTate = function (frame)
   end
 end
 
-local declareHanmenFrame = function (self, id, spec)
+-- Warning: this function has side affects and if a real frame is
+-- passed as a spec it will be modified in addition to a frame
+-- being instantiated in the class page template.
+local declareHanmenFrame = function (class, id, spec)
   if spec then
     spec.id = id
   else
@@ -59,9 +62,8 @@ local declareHanmenFrame = function (self, id, spec)
   SILE.settings:set("document.parskip", SILE.nodefactory.vglue())
   local frame = SILE.newFrame(spec, spec.tate and SILE.tateFramePrototype or SILE.framePrototype)
   if spec.id then
-    self.pageTemplate.frames[spec.id] = frame
+    class.pageTemplate.frames[spec.id] = frame
   end
-  return frame
 end
 
 function package:_init ()
@@ -78,7 +80,9 @@ function package:registerCommands ()
 
   self.class:registerCommand("show-hanmen", function (_, _)
     local frame = SILE.typesetter.frame
-    if not frame.hanmen then SU.error("show-hanmen called on a frame with no hanmen") end
+    if not frame.hanmen then
+      SU.error("show-hanmen called on a frame with no hanmen")
+    end
     SILE.outputter:pushColor({r = 1, g= 0.9, b = 0.9 })
     if frame:writingDirection() == "TTB" then
       showHanmenTate(frame)

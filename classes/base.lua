@@ -138,11 +138,10 @@ end
 function class:loadPackage (packname, options)
   local pack = require(("packages.%s"):format(packname))
   if pack.type == "package" then -- new package
-    if SILE.documentState.documentClass then
-      self.packages[pack._name] = pack(options)
-    else
-      table.insert(SILE.input.preambles, { pack = pack, options = options })
+    if not self._initialized then
+      SILE.scratch.half_initialized_class = self
     end
+    self.packages[pack._name] = pack(options)
   else -- legacy package
     self:initPackage(pack, options)
   end
