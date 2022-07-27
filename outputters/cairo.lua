@@ -17,10 +17,10 @@ local cr
 local move -- See https://github.com/pavouk/lgi/issues/48
 local sgs
 
-local cairo = pl.class(base)
-cairo._name = "cairo"
+local outputter = pl.class(base)
+outputter._name = "cairo"
 
-function cairo:_init ()
+function outputter:_init ()
   local fname = self:getOutputFilename("pdf")
   local surface = cairolgi.PdfSurface.create(fname == "-" and "/dev/stdout" or fname, SILE.documentState.paperSize[1], SILE.documentState.paperSize[2])
   cr = cairolgi.Context.create(surface)
@@ -28,26 +28,26 @@ function cairo:_init ()
   sgs = cr.show_glyph_string
 end
 
-function cairo.newPage (_)
+function outputter.newPage (_)
   cr:show_page()
 end
 
-function cairo.getCursor (_)
+function outputter.getCursor (_)
   return cursorX, cursorY
 end
 
-function cairo.setCursor (_, x, y, relative)
+function outputter.setCursor (_, x, y, relative)
   local offset = relative and { x = cursorX, y = cursorY } or { x = 0, y = 0 }
   cursorX = offset.x + x
   cursorY = offset.y - y
   move(cr, cursorX, cursorY)
 end
 
-function cairo.setColor (_, color)
+function outputter.setColor (_, color)
   cr:set_source_rgb(color.r, color.g, color.b)
 end
 
-function cairo.drawHbox (_, value, _)
+function outputter.drawHbox (_, value, _)
   if not value then return end
   if value.pgs then
     sgs(cr, value.font, value.pgs)
@@ -56,12 +56,12 @@ function cairo.drawHbox (_, value, _)
   end
 end
 
-function cairo.setFont (_, options)
+function outputter.setFont (_, options)
   cr:select_font_face(options.font, options.style:lower() == "italic" and 1 or 0, options.weight > 100 and 0 or 1)
   cr:set_font_size(options.size)
 end
 
-function cairo.drawImage (_, src, x, y, width, height)
+function outputter.drawImage (_, src, x, y, width, height)
   local image = cairolgi.ImageSurface.create_from_png(src)
   if not image then SU.error("Could not load image "..src) end
   local src_width = image:get_width()
@@ -84,7 +84,7 @@ function cairo.drawImage (_, src, x, y, width, height)
   cr:restore()
 end
 
-function cairo.getImageSize (_, src)
+function outputter.getImageSize (_, src)
   local box_width, box_height, err = imagesize.imgsize(src)
   if not box_width then
     SU.error(err.." loading image")
@@ -92,12 +92,12 @@ function cairo.getImageSize (_, src)
   return box_width, box_height
 end
 
-function cairo.drawRule (_, x, y, width, depth)
+function outputter.drawRule (_, x, y, width, depth)
   cr:rectangle(x, y, width, depth)
   cr:fill()
 end
 
-function cairo.debugFrame (_, frame)
+function outputter.debugFrame (_, frame)
   cr:set_source_rgb(0.8, 0, 0)
   cr:set_line_width(0.5)
   cr:rectangle(frame:left(), frame:top(), frame:width(), frame:height())
@@ -107,7 +107,7 @@ function cairo.debugFrame (_, frame)
   cr:set_source_rgb(0, 0, 0)
 end
 
-function cairo.debugHbox (_, typesetter, hbox, scaledWidth)
+function outputter.debugHbox (_, typesetter, hbox, scaledWidth)
   cr:set_source_rgb(0.9, 0.9, 0.9)
   cr:set_line_width(0.5)
   cr:rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-(hbox.height), scaledWidth, hbox.height+hbox.depth)
@@ -117,4 +117,4 @@ function cairo.debugHbox (_, typesetter, hbox, scaledWidth)
   cr:move_to(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
 end
 
-return cairo
+return outputter
