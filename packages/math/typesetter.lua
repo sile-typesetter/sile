@@ -37,7 +37,6 @@ function ConvertMathML (_, content)
     local attributes = {}
     if syms.symbolDefaults[text] then
       for attribute,value in pairs(syms.symbolDefaults[text]) do
-        SU.debug("math", "attribute = " .. attribute .. ", value = " .. tostring(value))
         attributes[attribute] = value
       end
     end
@@ -111,8 +110,11 @@ local function handleMath (_, mbox, mode)
   else
     SU.error('Unknown math mode '..mode)
   end
-  mbox:styleDescendants()
 
+  if SU.debugging("math") then
+    SU.debug("math", "Resulting mbox: " .. tostring(mbox))
+  end
+  mbox:styleDescendants()
   mbox:shapeTree()
 
   if mode == "display" then

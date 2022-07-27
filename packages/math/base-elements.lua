@@ -811,7 +811,6 @@ elements.text = pl.class({
       end
     end
     for attribute,value in pairs(attributes) do
-      SU.debug("math", "attribute = " .. attribute .. ", value = " .. tostring(value))
       self[attribute] = value
     end
   end,
