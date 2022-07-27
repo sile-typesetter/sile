@@ -57,4 +57,10 @@ Didier Willis\break
 \include[src=documentation/c11-xmlproc.sil]
 \include[src=documentation/c12-tricks.sil]
 
+% Markdown appendix
+%  Ensure the native markdown package and its inputter is active, as we claim
+%  in that appendix to use it.
+\script[src=packages/markdown]
+\include[src=documentation/c13-markdown.md]
+
 \end{document}
