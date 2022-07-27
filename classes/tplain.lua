@@ -26,7 +26,6 @@ function class:_t_common ()
 end
 
 function class:_init (options)
-  if self._legacy and not self._deprecated then return self:_deprecator(class) end
   plain._init(self, options)
   class._t_common(self)
   return self
