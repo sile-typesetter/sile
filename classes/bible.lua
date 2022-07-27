@@ -38,9 +38,14 @@ function class:singleColumnMaster()
     firstContentFrame = self.firstContentFrame,
     frames = self.defaultFrameset
   })
-  self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
-  self:mirrorMaster("right", "left")
-  self:loadPackage("footnotes", { insertInto = "footnotes", stealFrom = { "content" } })
+  self:loadPackage("twoside", {
+    oddPageMaster = "right",
+    evenPageMaster = "left"
+  })
+  self:loadPackage("footnotes", {
+    insertInto = "footnotes",
+    stealFrom = { "content" }
+  })
 end
 
 function class:twoColumnMaster()
@@ -170,8 +175,8 @@ local _twocolumns
 local _gutterwidth
 
 function class:_init(options)
-  self:loadPackage("masters")
   plain._init(self, options)
+  self:loadPackage("masters")
   self:loadPackage("infonode")
   self:loadPackage("chapterverse")
   self:registerPostinit(function (self_)
