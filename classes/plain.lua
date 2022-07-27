@@ -1,9 +1,9 @@
 local base = require("classes.base")
 
-local plain = pl.class(base)
-plain._name = "plain"
+local class = pl.class(base)
+class._name = "plain"
 
-plain.defaultFrameset = {
+class.defaultFrameset = {
   content = {
     left = "5%pw",
     right = "95%pw",
@@ -23,7 +23,7 @@ plain.defaultFrameset = {
     bottom = "90%ph"
   }
 }
-plain.firstContentFrame = "content"
+class.firstContentFrame = "content"
 
 local skips = {
   small = "3pt plus 1pt minus 1pt",
@@ -31,14 +31,14 @@ local skips = {
   big = "12pt plus 4pt minus 4pt"
 }
 
-function plain:_init (options)
+function class:_init (options)
   base._init(self, options)
   self:loadPackage("bidi")
   self:loadPackage("folio")
   return self
 end
 
-function plain:declareOptions ()
+function class:declareOptions ()
   base.declareOptions(self)
   self:declareOption("direction", function (_, value)
     if value then
@@ -53,12 +53,12 @@ function plain:declareOptions ()
   end)
 end
 
-function plain:setOptions (options)
+function class:setOptions (options)
   -- TODO: set a default direction here?
   base.setOptions(self, options)
 end
 
-function plain:declareSettings ()
+function class:declareSettings ()
   base.declareSettings(self)
   for k, v in pairs(skips) do
     SILE.settings:declare({
@@ -70,7 +70,7 @@ function plain:declareSettings ()
   end
 end
 
-function plain:registerCommands ()
+function class:registerCommands ()
 
   SILE.classes.base.registerCommands(self)
 
@@ -363,4 +363,4 @@ function plain:registerCommands ()
 
 end
 
-return plain
+return class

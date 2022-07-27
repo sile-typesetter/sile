@@ -1,19 +1,19 @@
-local base = pl.class()
-base.type = "class"
-base._name = "base"
+local class = pl.class()
+class.type = "class"
+class._name = "base"
 
-base._initialized = false
-base.deferredLegacyInit = {}
-base.deferredInit = {}
-base.pageTemplate = { frames = {}, firstContentFrame = nil }
-base.defaultFrameset = {}
-base.firstContentFrame = "page"
-base.options = setmetatable({}, {
+class._initialized = false
+class.deferredLegacyInit = {}
+class.deferredInit = {}
+class.pageTemplate = { frames = {}, firstContentFrame = nil }
+class.defaultFrameset = {}
+class.firstContentFrame = "page"
+class.options = setmetatable({}, {
     _opts = {},
     __newindex = function (self, key, value)
       local opts = getmetatable(self)._opts
       if type(opts[key]) == "function" then
-        opts[key](base, value)
+        opts[key](class, value)
       elseif type(value) == "function" then
         opts[key] = value
       elseif type(key) == "number" then
@@ -27,7 +27,7 @@ base.options = setmetatable({}, {
       if type(key) == "number" then return nil end
       local opt = getmetatable(self)._opts[key]
       if type(opt) == "function" then
-        return opt(base)
+        return opt(class)
       elseif opt then
         return opt
       else
@@ -35,15 +35,15 @@ base.options = setmetatable({}, {
       end
     end
   })
-base.hooks = {
+class.hooks = {
   newpage = {},
   endpage = {},
   finish = {},
 }
 
-base.packages = {}
+class.packages = {}
 
-function base:_init (options)
+function class:_init (options)
   if self == options then options = {} end
   self:declareOptions()
   self:registerRawHandlers()
@@ -66,7 +66,7 @@ function base:_init (options)
   return self
 end
 
-function base:_post_init ()
+function class:_post_init ()
   self._initialized = true
   for i, func in ipairs(self.deferredInit) do
     func(self)
@@ -74,7 +74,7 @@ function base:_post_init ()
   end
 end
 
-function base:setOptions (options)
+function class:setOptions (options)
   options = options or {}
   options.papersize = options.papersize or "a4"
   for option, value in pairs(options) do
@@ -82,11 +82,11 @@ function base:setOptions (options)
   end
 end
 
-function base:declareOption (option, setter)
+function class:declareOption (option, setter)
   self.options[option] = setter
 end
 
-function base:declareOptions ()
+function class:declareOptions ()
   self:declareOption("class", function (_, name)
     if name then
       if self._legacy then
@@ -114,7 +114,7 @@ function base:declareOptions ()
   end)
 end
 
-function base.declareSettings (_)
+function class.declareSettings (_)
   SILE.settings:declare({
     parameter = "current.parindent",
     type = "glue or nil",
@@ -135,7 +135,7 @@ function base.declareSettings (_)
   })
 end
 
-function base:loadPackage (packname, args)
+function class:loadPackage (packname, args)
   local pack = require(("packages.%s"):format(packname))
   if pack.type == "package" then -- new package
     self.packages[pack._name] = pack(self, args)
@@ -144,7 +144,7 @@ function base:loadPackage (packname, args)
   end
 end
 
-function base:initPackage (pack, args)
+function class:initPackage (pack, args)
   SU.deprecated("class:initPackage(args)", "package(class, args)", "0.14.0", "0.16.0", [[
   This package appears to be a legacy format package. It returns a table
   an expects SILE to guess a bit about what to do. New packages inherit
@@ -167,21 +167,21 @@ function base:initPackage (pack, args)
   end
 end
 
-function base:registerLegacyPostinit (func, args)
+function class:registerLegacyPostinit (func, args)
   if self._initialized then return func(self, args) end
   table.insert(self.deferredLegacyInit, function (_)
       func(self, args)
     end)
 end
 
-function base:registerPostinit (func, args)
+function class:registerPostinit (func, args)
   if self._initialized then return func(self, args) end
   table.insert(self.deferredInit, function (_)
       func(self, args)
     end)
 end
 
-function base:registerHook (category, func)
+function class:registerHook (category, func)
   for _, func_ in ipairs(self.hooks[category]) do
     if func_ == func then
       return SU.warn("Attempted to set the same function hook twice, probably unintended, skipping.")
@@ -190,14 +190,14 @@ function base:registerHook (category, func)
   table.insert(self.hooks[category], func)
 end
 
-function base:runHooks (category, args)
+function class:runHooks (category, args)
   for _, func in ipairs(self.hooks[category]) do
     SU.debug("classhooks", "Running hook from " .. category, args and "with args " .. #args)
     func(self, args)
   end
 end
 
-function base.registerCommand (_, name, func, help, pack)
+function class.registerCommand (_, name, func, help, pack)
   SILE.Commands[name] = func
   if not pack then
     local where = debug.getinfo(2).source
@@ -210,11 +210,11 @@ function base.registerCommand (_, name, func, help, pack)
   }
 end
 
-function base.registerRawHandler (_, format, callback)
+function class.registerRawHandler (_, format, callback)
   SILE.rawHandlers[format] = callback
 end
 
-function base:registerRawHandlers ()
+function class:registerRawHandlers ()
 
   self:registerRawHandler("text", function (_, content)
     SILE.settings:temporarily(function()
@@ -235,7 +235,7 @@ local function optionsAsArgs (options)
   return args
 end
 
-function base:registerCommands ()
+function class:registerCommands ()
 
   local function replaceProcessBy(replacement, tree)
     if type(tree) ~= "table" then return tree end
@@ -458,7 +458,7 @@ function base:registerCommands ()
 
 end
 
-function base:initialFrame ()
+function class:initialFrame ()
   SILE.documentState.thisPageTemplate = pl.tablex.deepcopy(self.pageTemplate)
   SILE.frames = { page = SILE.frames.page }
   for k, v in pairs(SILE.documentState.thisPageTemplate.frames) do
@@ -471,7 +471,7 @@ function base:initialFrame ()
   return SILE.documentState.thisPageTemplate.firstContentFrame
 end
 
-function base:declareFrame (id, spec)
+function class:declareFrame (id, spec)
   spec.id = id
   if spec.solve then
     self.pageTemplate.frames[id] = spec
@@ -489,14 +489,14 @@ function base:declareFrame (id, spec)
   -- })
 end
 
-function base:declareFrames (specs)
+function class:declareFrames (specs)
   if specs then
     for k, v in pairs(specs) do self:declareFrame(k, v) end
   end
 end
 
 -- WARNING: not called as class method
-function base.newPar (typesetter)
+function class.newPar (typesetter)
   typesetter:pushGlue(SILE.settings:get("current.parindent") or SILE.settings:get("document.parindent"))
   SILE.settings:set("current.parindent", nil)
   local hangIndent = SILE.settings:get("current.hangIndent")
@@ -510,7 +510,7 @@ function base.newPar (typesetter)
 end
 
 -- WARNING: not called as class method
-function base.endPar (typesetter)
+function class.endPar (typesetter)
   typesetter:pushVglue(SILE.settings:get("document.parskip"))
   if SILE.settings:get("current.hangIndent") then
     SILE.settings:set("current.hangIndent", nil)
@@ -522,14 +522,14 @@ function base.endPar (typesetter)
   end
 end
 
-function base:newPage ()
+function class:newPage ()
   SILE.outputter:newPage()
   self:runHooks("newpage")
   -- Any other output-routiney things will be done here by inheritors
   return self:initialFrame()
 end
 
-function base:endPage ()
+function class:endPage ()
   SILE.typesetter.frame:leave(SILE.typesetter)
   self:runHooks("endpage")
   -- I'm trying to call up a new frame here, don't cause a page break in the current one
@@ -537,7 +537,7 @@ function base:endPage ()
   -- Any other output-routiney things will be done here by inheritors
 end
 
-function base:finish ()
+function class:finish ()
   SILE.inputter:postamble()
   SILE.call("vfill")
   while not SILE.typesetter:isQueueEmpty() do
@@ -557,4 +557,4 @@ function base:finish ()
   self:runHooks("finish")
 end
 
-return base
+return class

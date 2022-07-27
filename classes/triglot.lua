@@ -1,9 +1,9 @@
 local book = require("classes.book")
 
-local triglot = pl.class(book)
-triglot._name = "triglot"
+local class = pl.class(book)
+class._name = "triglot"
 
-function triglot:_init (options)
+function class:_init (options)
   book._init(self, options)
   self:loadPackage("counters")
   self:registerPostinit(function ()
@@ -19,4 +19,4 @@ function triglot:_init (options)
   return self
 end
 
-return triglot
+return class

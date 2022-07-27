@@ -1,10 +1,10 @@
 local book = require("classes.book")
 local tplain = require("classes.tplain")
 
-local tbook = pl.class(book)
-tbook._name = "tbook"
+local class = pl.class(book)
+class._name = "tbook"
 
-tbook.defaultFrameset = {
+class.defaultFrameset = {
   runningHead = {
     left = "left(content) + 9pt",
     right = "right(content) - 9pt",
@@ -33,15 +33,15 @@ tbook.defaultFrameset = {
   }
 }
 
-function tbook:_init (options)
-  if self._legacy and not self._deprecated then return self:_deprecator(tbook) end
+function class:_init (options)
+  if self._legacy and not self._deprecated then return self:_deprecator(class) end
   book._init(self, options)
   tplain._t_common(self)
   return self
 end
 
-tbook.declareOptions = tplain.declareOptions
+class.declareOptions = tplain.declareOptions
 
-tbook.setOptions = tplain.setOptions
+class.setOptions = tplain.setOptions
 
-return tbook
+return class

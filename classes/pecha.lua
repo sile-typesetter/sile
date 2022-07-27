@@ -1,7 +1,7 @@
 local plain = require("classes.plain")
 
-local pecha = pl.class(plain)
-pecha._name = "pecha"
+local class = pl.class(plain)
+class._name = "pecha"
 
 local tibetanNumber = function (n)
   local out = ""
@@ -13,7 +13,7 @@ local tibetanNumber = function (n)
   return out
 end
 
-pecha.defaultFrameset = {
+class.defaultFrameset = {
   content = {
     left = "5%pw",
     right = "95%pw",
@@ -36,7 +36,7 @@ pecha.defaultFrameset = {
   }
 }
 
-function pecha:_init(options)
+function class:_init(options)
   plain._init(self, options)
   self:loadPackage("rotate")
   self:registerPostinit(function ()
@@ -48,7 +48,7 @@ function pecha:_init(options)
   return self
 end
 
-function pecha:endPage()
+function class:endPage()
   local folioframe = SILE.getFrame("folio")
   SILE.typesetNaturally(folioframe, function ()
     SILE.settings:pushState()
@@ -68,12 +68,12 @@ function pecha:endPage()
   return plain.endPage(self)
 end
 
-function pecha:newPage()
+function class:newPage()
   SILE.outputter:newPage()
   SILE.outputter:debugFrame(SILE.getFrame("content"))
   return self:initialFrame()
 end
 
-return pecha
+return class
 
 -- \right-running-head{\font[size=15pt]{\center{ཤེས་རབ་སྙིང་པོ་ }}}

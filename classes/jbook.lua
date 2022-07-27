@@ -1,9 +1,9 @@
 local tbook = require("classes.tbook")
 
-local jbook = pl.class(tbook)
-jbook._name = "jbook"
+local class = pl.class(tbook)
+class._name = "jbook"
 
-function jbook:_init (options)
+function class:_init (options)
   tbook._init(self, options)
   SILE.languageSupport.loadLanguage("ja")
   SILE.settings:set("document.language", "ja", true)
@@ -11,8 +11,8 @@ function jbook:_init (options)
   return self
 end
 
-jbook.declareOptions = tbook.declareOptions
+class.declareOptions = tbook.declareOptions
 
-jbook.setOptions = tbook.setOptions
+class.setOptions = tbook.setOptions
 
-return jbook
+return class
