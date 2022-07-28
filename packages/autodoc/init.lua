@@ -69,7 +69,7 @@ local function typesetAST (options, content)
         for iOpt, option in ipairs(sortedOpts) do
           SILE.call("autodoc:code:style", { type = "parameter" }, { option })
           SILE.typesetter:typeset("=")
-          SILE.call("penalty", { penalty = 100 }, nil) -- Quite decent to break here if need be.
+          SILE.call("penalty", { penalty = 100 }) -- Quite decent to break here if need be.
           SILE.call("autodoc:value", {}, { ast.options[option] })
           if iOpt == #sortedOpts then
             SILE.typesetter:typeset("]")
@@ -79,7 +79,7 @@ local function typesetAST (options, content)
         end
       end
       if (#ast >= 1) then
-        SILE.call("penalty", { penalty = 200 }, nil) -- Less than optimal break.
+        SILE.call("penalty", { penalty = 200 }) -- Less than optimal break.
         SILE.typesetter:typeset("{")
         typesetAST(options, ast)
         SILE.typesetter:typeset("}")
@@ -139,9 +139,9 @@ function package:registerCommands ()
         result[#result+1] = token.string
       else
         result[#result+1] = token.separator
-        result[#result+1] = class.createCommand(
+        result[#result+1] = class.packages.inputfilter:createCommand(
         content.pos, content.col, content.line,
-        "penalty", { penalty = 100 }, nil
+        "penalty", { penalty = 100 }
         )
       end
     end

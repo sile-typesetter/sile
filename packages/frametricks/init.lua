@@ -3,47 +3,6 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "frametricks"
 
-local breakFrameVertical = function (after)
-  local cFrame = SILE.typesetter.frame
-  local totalHeight
-  if after then
-    totalHeight = after
-  else
-    totalHeight = SILE.length(0)
-    SILE.typesetter:leaveHmode(1)
-    local queue = SILE.typesetter.state.outputQueue
-    for i = 1, #queue do
-      totalHeight = totalHeight + queue[i].height + queue[i].depth
-    end
-    SILE.typesetter:chuck()
-  end
-
-  local newFrame = SILE.newFrame({
-    bottom = cFrame:bottom(),
-    left = cFrame:left(),
-    right = cFrame:right(),
-    next = cFrame.next,
-    previous = cFrame,
-    id = cFrame.id .. "_"
-  })
-  if SILE.scratch.insertions and SILE.scratch.insertions.classes['footnote'] and SILE.scratch.insertions.classes['footnote'].stealFrom then
-    SILE.scratch.insertions.classes['footnote'].stealFrom[newFrame.id] = 1
-  end
-
-  cFrame:relax("bottom")
-  cFrame:constrain("height", totalHeight)
-  cFrame.next = newFrame.id
-  SILE.documentState.thisPageTemplate.frames[newFrame.id] = newFrame
-  newFrame:constrain("top", cFrame:top() + totalHeight)
-  if (after) then
-    SILE.typesetter:initFrame(cFrame)
-  else
-    SILE.typesetter:initFrame(newFrame)
-  end
-  -- SILE.outputter:debugFrame(cFrame)
-  -- SILE.outputter:debugFrame(newFrame)
-end
-
 local breakFrameHorizontalAt = function (offset)
   local cFrame = SILE.typesetter.frame
   if not offset or not (offset > SILE.length(0)) then
@@ -138,14 +97,55 @@ local mergeColumns = function ()
   SILE.typesetter:initNextFrame()
 end
 
+function package.breakFrameVertical (_, after)
+  local cFrame = SILE.typesetter.frame
+  local totalHeight
+  if after then
+    totalHeight = after
+  else
+    totalHeight = SILE.length(0)
+    SILE.typesetter:leaveHmode(1)
+    local queue = SILE.typesetter.state.outputQueue
+    for i = 1, #queue do
+      totalHeight = totalHeight + queue[i].height + queue[i].depth
+    end
+    SILE.typesetter:chuck()
+  end
+
+  local newFrame = SILE.newFrame({
+    bottom = cFrame:bottom(),
+    left = cFrame:left(),
+    right = cFrame:right(),
+    next = cFrame.next,
+    previous = cFrame,
+    id = cFrame.id .. "_"
+  })
+  if SILE.scratch.insertions and SILE.scratch.insertions.classes['footnote'] and SILE.scratch.insertions.classes['footnote'].stealFrom then
+    SILE.scratch.insertions.classes['footnote'].stealFrom[newFrame.id] = 1
+  end
+
+  cFrame:relax("bottom")
+  cFrame:constrain("height", totalHeight)
+  cFrame.next = newFrame.id
+  SILE.documentState.thisPageTemplate.frames[newFrame.id] = newFrame
+  newFrame:constrain("top", cFrame:top() + totalHeight)
+  if (after) then
+    SILE.typesetter:initFrame(cFrame)
+  else
+    SILE.typesetter:initFrame(newFrame)
+  end
+  -- SILE.outputter:debugFrame(cFrame)
+  -- SILE.outputter:debugFrame(newFrame)
+end
+
+
 function package:_init ()
 
   base._init(self)
 
   self.class:loadPackage("balanced-frames")
 
-  -- exports
-  self.class.breakFrameVertical = breakFrameVertical
+  self:export("breakFrameVertical", self.breakFrameVertical)
 
 end
 
@@ -176,7 +176,7 @@ function package:registerCommands ()
   end, "Adjusts the edge of the frame horizontally by amounts specified in <left> and <right>")
 
   class:registerCommand("breakframevertical", function (options, _)
-    breakFrameVertical(options.offset)
+    self:breakFrameVertical(options.offset)
   end, "Breaks the current frame in two vertically at the current location or at a point <offset> below the current location")
 
   class:registerCommand("makecolumns", function (options, _)
@@ -197,7 +197,7 @@ function package:registerCommands ()
       SILE.call("eject")
       SILE.typesetter:leaveHmode()
     end
-    breakFrameVertical()
+    self:breakFrameVertical()
     local boundary = hbox.width + SILE.length(options.rightboundary):absolute()
     breakFrameHorizontalAt(boundary)
     SILE.typesetNaturally(SILE.typesetter.frame.previous, function ()
@@ -207,7 +207,7 @@ function package:registerCommands ()
     -- undoSkip.stretch = hbox.height
     -- SILE.typesetter:pushHbox({ value = {} })
     -- SILE.typesetter:pushVglue({ height = undoSkip })
-    breakFrameVertical(hbox.height + SILE.length(options.bottomboundary):absolute())
+    self:breakFrameVertical(hbox.height + SILE.length(options.bottomboundary):absolute())
     shiftframeedge(SILE.getFrame(SILE.typesetter.frame.next), { left = -boundary })
     --SILE.outputter:debugFrame(SILE.typesetter.frame)
   end, "Sets the given content in its own frame, flowing the remaining content around it")

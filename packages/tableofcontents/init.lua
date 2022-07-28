@@ -11,7 +11,7 @@ local function _moveTocNodes (class)
   local node = SILE.scratch.info.thispage.toc
   if node then
     for i = 1, #node do
-      node[i].pageno = class:formatCounter(SILE.scratch.counters.folio)
+      node[i].pageno = class.packages.counters:formatCounter(SILE.scratch.counters.folio)
       table.insert(SILE.scratch.tableofcontents, node[i])
     end
   end
@@ -69,16 +69,6 @@ if not SILE.scratch.pdf_destination_counter then
   SILE.scratch.pdf_destination_counter = 1
 end
 
-
-local _deprecate  = [[
-  Directly calling tableofcontents handling functions is no longer necessary.
-  All the SILE core classes and anything inheriting from them will take care of
-  this automatically using hooks. Custom classes that override the
-  class:endPage() and class:finish() functions may need to handle this in other
-  ways. By calling these hooks directly you are likely causing them to run
-  twice and duplicate entries.
-]]
-
 function package:_init ()
 
   base._init(self)
@@ -93,13 +83,8 @@ function package:_init ()
   self.class:registerHook("endpage", _moveTocNodes)
   self.class:registerHook("finish", _writeToc)
 
-  --exports
-  self.class.writeToc = function (_)
-    SU.deprecated("class:writeToc", nil, "0.13.0", "0.14.0", _deprecate)
-  end
-  self.class.moveTocNodes = function (_)
-    SU.deprecated("class:moveTocNodes", nil, "0.13.0", "0.14.0", _deprecate)
-  end
+  self:deprecatedExport("writeToc", _writeToc)
+  self:deprecatedExport("moveTocNodes", _moveTocNodes)
 end
 
 function package:registerCommands ()

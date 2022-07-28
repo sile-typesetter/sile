@@ -85,32 +85,32 @@ function package:registerCommands ()
       else
         if string.find(preferBreakBefore, escapeRegExpMinimal(token.separator)) then
           -- Accepts breaking before, and at the extreme worst after.
-          result[#result+1] = class.createCommand(
+          result[#result+1] = class.packages.inputfilter:createCommand(
           content.pos, content.col, content.line,
-          "penalty", { penalty = options.primaryPenalty }, nil
+          "penalty", { penalty = options.primaryPenalty }
           )
           result[#result+1] = token.separator
-          result[#result+1] = class.createCommand(
+          result[#result+1] = class.packages.inputfilter:createCommand(
           content.pos, content.col, content.line,
-          "penalty", { penalty = options.worsePenalty }, nil
+          "penalty", { penalty = options.worsePenalty }
           )
         elseif token.separator == alwaysBreakAfter then
           -- Accept breaking after (only).
           result[#result+1] = token.separator
-          result[#result+1] = class.createCommand(
+          result[#result+1] = class.packages.inputfilter:createCommand(
           content.pos, content.col, content.line,
-          "penalty", { penalty = options.primaryPenalty }, nil
+          "penalty", { penalty = options.primaryPenalty }
           )
         else
           -- Accept breaking after, but tolerate breaking before.
-          result[#result+1] = class.createCommand(
+          result[#result+1] = class.packages.inputfilter:createCommand(
           content.pos, content.col, content.line,
-          "penalty", { penalty = options.secondaryPenalty }, nil
+          "penalty", { penalty = options.secondaryPenalty }
           )
           result[#result+1] = token.separator
-          result[#result+1] = class.createCommand(
+          result[#result+1] = class.packages.inputfilter:createCommand(
           content.pos, content.col, content.line,
-          "penalty", { penalty = options.primaryPenalty }, nil
+          "penalty", { penalty = options.primaryPenalty }
           )
         end
       end

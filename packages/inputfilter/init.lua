@@ -3,7 +3,7 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "inputfilter"
 
-local function transformContent (content, transformFunction, extraArgs)
+function package:transformContent (content, transformFunction, extraArgs)
   local newContent = {}
   for k, v in SU.sortedpairs(content) do
     if type(k) == "number" then
@@ -15,7 +15,7 @@ local function transformContent (content, transformFunction, extraArgs)
           newContent[#newContent+1] = transformed
         end
       else
-        newContent[#newContent+1] = transformContent(v, transformFunction, extraArgs)
+        newContent[#newContent+1] = self:transformContent(v, transformFunction, extraArgs)
       end
     else
       newContent[k] = v
@@ -24,7 +24,7 @@ local function transformContent (content, transformFunction, extraArgs)
   return newContent
 end
 
-local function createCommand (pos, col, line, command, options, content)
+function package.createCommand (_, pos, col, line, command, options, content)
   local result = { content }
   result.col = col
   result.line = line
@@ -39,9 +39,8 @@ function package:_init ()
 
   base._init(self)
 
-  -- exports
-  self.class.createCommand = createCommand
-  self.class.transformContent = transformContent
+  self:deprecatedExport("createCommand", self.createCommand)
+  self:deprecatedExport("transformContent", self.transformContent)
 
 end
 
@@ -55,20 +54,5 @@ Loading \autodoc:package{inputfilter} into your class with \code{class:loadPacka
 See \url{https://sile-typesetter.org/examples/inputfilter.sil} for a simple example, and \url{https://sile-typesetter.org/examples/chordmode.sil} for a more complete one.
 \end{document}
 ]]
-
-local _deprecated = [[
-  Please use the function attatched to the document class rather
-  than the deprecated direct exports table.]]
-
-package.exports = {
-  createCommand = function (pos, col, line, command, options, content)
-    SU.deprecated("require('packages.inputfilter').exports.createCommand", "class.createCommand", "0.14.0", "0.16.0", _deprecated)
-    return createCommand(pos, col, line, command, options, content)
-  end,
-  transformContent = function (content, transformFunction, extraArgs)
-    SU.deprecated("require('packages.inputfilter').exports.transformContent", "class.transformContent", "0.14.0", "0.16.0", _deprecated)
-    return transformContent(content, transformFunction, extraArgs)
-  end,
-}
 
 return package

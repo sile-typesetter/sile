@@ -38,7 +38,6 @@ function package:_init ()
 
   base._init(self)
 
-  -- exports
   SILE.typesetter._breakIntoLines_firstfit = firstfit
 
 end

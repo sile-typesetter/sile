@@ -78,12 +78,11 @@ function package:_init (options)
     SILE.scratch.masters = {}
   end
 
-  -- exports
-  self.class.switchMasterOnePage = switchMasterOnePage
-  self.class.switchMaster = switchMaster
-  self.class.defineMaster = defineMaster
-  self.class.defineMasters = defineMasters
-  self.class.currentMaster = currentMaster
+  self:export("switchMasterOnePage", switchMasterOnePage)
+  self:export("switchMaster", switchMaster)
+  self:export("defineMaster", defineMaster)
+  self:export("defineMasters", defineMasters)
+  self:export("currentMaster", currentMaster)
 
   if options then
     self.class:defineMasters(options)
