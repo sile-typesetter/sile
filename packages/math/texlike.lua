@@ -227,12 +227,21 @@ local function compileToMathML_aux (_, arg_env, tree)
     -- (since evaluating the nodes depends on the macro's signature, it is more
     -- complex and done below)..
     elseif tree.id == "def" or (tree.id == "command" and commands[tree.command]) then
-      -- Conserve unevaluated children.
+      -- Conserve unevaluated child
       table.insert(acc, child)
     else
-      -- Compile all children.
+      -- Compile next child
       local comp = compileToMathML_aux(nil, arg_env, child)
-      if comp then table.insert(acc, comp) end
+      if comp then
+        if comp.id == "wrapper" then
+          -- Insert all children of the wrapper node
+          for _, inner_child in ipairs(comp) do
+            table.insert(acc, inner_child)
+          end
+        else
+          table.insert(acc, comp)
+        end
+      end
     end
     return acc
   end, {}, tree)
@@ -332,7 +341,12 @@ local function compileToMathML_aux (_, arg_env, tree)
         compiledArgs[i] = applicationTree[i]
       end
     end
-    return cmdFun(compiledArgs)
+    local res = cmdFun(compiledArgs)
+    if res.command == "mrow" then
+      -- Mark the outer mrow to be unwrapped in the parent
+      res.id = "wrapper"
+    end
+    return res
   elseif tree.id == "command" and symbols[tree.command] then
     local atom = {id = "atom", [1] = symbols[tree.command]}
     tree = compileToMathML_aux(nil, arg_env, atom)
