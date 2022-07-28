@@ -72,4 +72,10 @@ bits.silidentifier = (ID + S":-")^1
 local pair = Cg(C(bits.silidentifier) * bits.ws * "=" * bits.ws * C(value)) * pairsep^-1 / unwrapper
 bits.parameters = Cf(Ct"" * pair^0, rawset)
 
+local wrapper = function (a) return type(a)=="table" and a or {} end
+local useparams = (P"[" * bits.parameters * P"]")^-1 / wrapper
+local modpart = C((1 - P"." - P"/" - P"[")^1)
+local module = C(modpart * (P"." * modpart)^0)
+bits.cliuse = Ct(Cg(module, "module") * Cg(useparams^-1, "options"))
+
 return bits

@@ -35,13 +35,13 @@ local function createCommand (pos, col, line, command, options, content)
   return result
 end
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
   -- exports
-  class.createCommand = createCommand
-  class.transformContent = transformContent
+  self.class.createCommand = createCommand
+  self.class.transformContent = transformContent
 
 end
 
@@ -52,7 +52,7 @@ It does this by allowing you to rewrite the abstract syntax tree representing th
 
 Loading \autodoc:package{inputfilter} into your class with \code{class:loadPackage("inputfilter")} provides you with two new Lua functions: \code{transformContent} and \code{createCommand}.
 \code{transformContent} takes a content tree and applies a transformation function to the text within it.
-See \url{https://sile-typesetter.org/examples/inputfilter.sil} for a simple example, and \code{packages/chordmode.sil} for a more complete one.
+See \url{https://sile-typesetter.org/examples/inputfilter.sil} for a simple example, and \url{https://sile-typesetter.org/examples/chordmode.sil} for a more complete one.
 \end{document}
 ]]
 

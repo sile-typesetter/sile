@@ -52,9 +52,9 @@ local outputRotatedHbox = function (self, typesetter, line)
   typesetter.frame:advanceWritingDirection(self.width)
 end
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
   if SILE.typesetter.frame then
     enter(SILE.typesetter.frame, SILE.typesetter)
@@ -110,7 +110,7 @@ end
 
 package.documentation = [[
 \begin{document}
-\script[src=packages/rotate]
+\use[module=packages.rotate]
 The \autodoc:package{rotate} package allows you to rotate things. You can rotate entire
 frames, by adding the \autodoc:parameter{rotate=<angle>} declaration to your frame declaration,
 and you can rotate any content by issuing the command \autodoc:command{\rotate[angle=<angle>]{<content>}},

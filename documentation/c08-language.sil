@@ -219,11 +219,11 @@ The easiest way to set up the other elements of Japanese typesetting such as the
 For other languages with similar layout requriements more generic \code{tplain} and \code{tbook} classes are available that setup the layout elements without also setting the default language and font to Japanese specific values.
 These are also good condidates to use as bases classes and extend for more language specific classes.
 
-\package-documentation[src=packages/hanmenkyoshi]
+\package-documentation{hanmenkyoshi}
 
-\package-documentation[src=packages/tate]
+\package-documentation{tate}
 
-\package-documentation[src=packages/ruby]
+\package-documentation{ruby}
 
 \subsection{Syllabic languages}
 

@@ -61,7 +61,7 @@ end
 
 package.documentation = [[
 \begin{document}
-\script[src=packages.boustrophedon]
+\use[module=packages.boustrophedon]
 Partly designed to show off SILE’s extensibility, and partly designed for real use by classicists, the \autodoc:package{boustrophedon} package allows you to typeset ancient Greek texts in the ‘ox-turning’ layout—the first line is written left to right as normal, but the next is set right to left, then left to right, and so on.
 To use it, you will need to set the font’s language to ancient Greek (\code{grc}) and wrap text in a \autodoc:environment{boustrophedon} environment:
 

@@ -1,10 +1,10 @@
 -- Basic! Transitional! In development! Not very good! Don't use it!
 local plain = require("classes.plain")
 
-local tplain = pl.class(plain)
-tplain._name = "tplain"
+local class = pl.class(plain)
+class._name = "tplain"
 
-tplain.defaultFrameset.content = {
+class.defaultFrameset.content = {
   left = "8.3%pw",
   top = "11.6%ph",
   gridsize = 10,
@@ -13,26 +13,26 @@ tplain.defaultFrameset.content = {
   linecount = 30
 }
 
-function tplain:_t_common ()
+-- The classes tplain and tbook inherit from plain and book respectively but also
+-- have this bit in common; this makes it accessable
+function class:_t_common ()
   self:loadPackage("font-fallback")
   self:loadPackage("hanmenkyoshi")
-  self:registerPostinit(function (class)
-    class:bidiDisableTypesetter(SILE.typesetter)
-    class:bidiDisableTypesetter(SILE.defaultTypesetter)
+  self:registerPostinit(function (class_)
+    class_:bidiDisableTypesetter(SILE.typesetter)
+    class_:bidiDisableTypesetter(SILE.defaultTypesetter)
   end)
   self.defaultFrameset.content.tate = self.options.layout == "tate"
   self:declareHanmenFrame("content", self.defaultFrameset.content)
   SILE.settings:set("document.parindent", SILE.nodefactory.glue("10pt"))
 end
 
-function tplain:_init (options)
-  if self._legacy and not self._deprecated then return self:_deprecator(tplain) end
+function class:_init (options)
   plain._init(self, options)
-  tplain._t_common(self)
-  return self
+  class._t_common(self)
 end
 
-function tplain:declareOptions ()
+function class:declareOptions ()
   plain.declareOptions(self)
   self:declareOption("layout", function (_, value)
     if value then
@@ -43,9 +43,9 @@ function tplain:declareOptions ()
   end)
 end
 
-function tplain:setOptions (options)
+function class:setOptions (options)
   options.layout = options.layout or "yoko"
   plain.setOptions(self, options)
 end
 
-return tplain
+return class

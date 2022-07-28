@@ -69,9 +69,9 @@ local function extendCommand (name, func)
   end
 end
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
   if not SILE.scratch.converters then
     SILE.scratch.converters = {}
@@ -94,8 +94,8 @@ function package:_init (class)
   end)
 
   -- exports
-  class.register = register
-  class.check = checkConverters
+  self.class.register = register
+  self.class.check = checkConverters
 
 end
 
@@ -125,7 +125,7 @@ We do this by registering a converter with the \autodoc:command{\converters:regi
 
 \begin{verbatim}
 \line
-\\script[src=packages/converters]
+\\use[module=packages.converters]
 \\converters:register[from=.gif,to=.jpg,command=convert $SOURCE $TARGET]
 \line
 \end{verbatim}

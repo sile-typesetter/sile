@@ -68,9 +68,9 @@ local function dumpTree (node)
   return ref
 end
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
   pdf = require("justenoughlibtexpdf")
 
@@ -83,7 +83,7 @@ function package:_init (class)
   local stRoot = stNode("Document")
   stPointer = stRoot
 
-  class:loadPackage("pdf")
+  self.class:loadPackage("pdf")
 
   function SILE.outputters.libtexpdf._endHook (_)
     local catalog = pdf.get_dictionary("Catalog")
@@ -130,7 +130,7 @@ end
 
 package.documentation = [[
 \begin{document}
-\script[src=packages.pdfstructure]
+\use[module=packages.pdfstructure]
 \pdf:structure[type=P]{%
 For PDF documents to be considered accessible, they must contain a description of the PDF’s document structure.
 This package allows structure trees to be created and saved to the PDF file.

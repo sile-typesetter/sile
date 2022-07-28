@@ -42,12 +42,12 @@ function hrulefillglue:outputYourself (typesetter, line)
   typesetter.frame:advancePageDirection(self.raise)
 end
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
-  class:loadPackage("raiselower")
-  class:loadPackage("rebox")
+  self.class:loadPackage("raiselower")
+  self.class:loadPackage("rebox")
 
 end
 

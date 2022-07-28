@@ -1,6 +1,6 @@
 \begin[papersize=a6]{document}
 \nofolios
-\script[src=packages/bidi]
+\use[module=packages.bidi]
 \thisframeRTL
 \font[family=Amiri,language=urd,direction=RTL,script=Arab]
 \font[size=18pt]

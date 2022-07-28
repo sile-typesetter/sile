@@ -138,13 +138,14 @@ local mergeColumns = function ()
   SILE.typesetter:initNextFrame()
 end
 
-function package:_init (class)
+function package:_init ()
 
-  class:loadPackage("balanced-frames")
-  base._init(self, class)
+  base._init(self)
+
+  self.class:loadPackage("balanced-frames")
 
   -- exports
-  class.breakFrameVertical = breakFrameVertical
+  self.class.breakFrameVertical = breakFrameVertical
 
 end
 

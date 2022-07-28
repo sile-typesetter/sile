@@ -99,10 +99,11 @@ local function typesetAST (options, content)
   end
 end
 
-function package:_init (class, options)
+function package:_init (options)
 
-  class:loadPackage("inputfilter")
-  base._init(self, class)
+  base._init(self)
+
+  self.class:loadPackage("inputfilter")
 
   if options then pl.tablex.update(theme, options) end
 
@@ -147,12 +148,12 @@ function package:registerCommands ()
     return result
   end
 
-  class:registerCommand("package-documentation", function (options, _)
-    local pack = SU.required(options, "src", "src for package documentation")
-    SU.debug("autodoc", pack)
-    local pkg = require(pack)
+  class:registerCommand("package-documentation", function (_, content)
+    local packname = content[1]
+    SU.debug("autodoc", packname)
+    local pkg = require("packages."..packname)
     if type(pkg) ~= "table" or not pkg.documentation then
-      SU.error("Undocumented package " .. pack)
+      SU.error("Undocumented package " .. packname)
     end
     if type(pkg.registerCommands) == "function" then
       -- faking an uninstantiated package
@@ -301,7 +302,7 @@ This package extracts documentation information from other packages.
 It’s used to construct the SILE manual.
 Keeping package documentation in the package itself keeps the documentation near the implementation, which (in theory) makes it easy for documentation and implementation to be in sync.
 
-For that purpose, it provides the \autodoc:command{\package-documentation[src=<package>]} command.
+For that purpose, it provides the \autodoc:command{\package-documentation{<package>}} command.
 
 Properly documented packages should export a \code{documentation} string containing their documentation, as a SILE document.
 

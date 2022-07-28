@@ -3,12 +3,12 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "dropcaps"
 
-function package:_init (class)
+function package:_init ()
 
-  class:loadPackage("rebox")
-  class:loadPackage("raiselower")
+  base._init(self)
 
-  base._init(self, class)
+  self.class:loadPackage("rebox")
+  self.class:loadPackage("raiselower")
 
 end
 

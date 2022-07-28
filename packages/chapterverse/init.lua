@@ -3,11 +3,11 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "chapterverse"
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
-  class:loadPackage("infonode")
+  self.class:loadPackage("infonode")
 
   if not SILE.scratch.chapterverse then
     SILE.scratch.chapterverse = {}

@@ -11,10 +11,11 @@ local outputBackground = function (color)
   SILE.outputter:popColor()
 end
 
-function package:_init (class)
+function package:_init ()
 
-  class:loadPackage("color")
-  base._init(self, class)
+  base._init(self)
+
+  self.class:loadPackage("color")
 
 end
 
@@ -38,10 +39,9 @@ end
 
 package.documentation = [[
 \begin{document}
-\script[src=packages.background]
+\use[module=packages.background]
 The \autodoc:package{background} package allows you to set the color of the canvas background (by drawing a solid color block the full size of the page on page initialization).
-The package provides a \autodoc:command{\background} command which requires at least one parameter,
-\autodoc:parameter{color=<color specification>}, and sets the backgound of the current and all following pages to that color.
+The package provides a \autodoc:command{\background} command which requires at least one parameter, \autodoc:parameter{color=<color specification>}, and sets the backgound of the current and all following pages to that color.
 If setting only the current page background different from the default is desired, an extra parameter \autodoc:parameter{allpages=false} can be passed.
 The color specification in the same as specified in the \autodoc:package{color} package.
 

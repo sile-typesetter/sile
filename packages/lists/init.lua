@@ -207,10 +207,11 @@ local doNestedList = function (_, listType, options, content)
   end
 end
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
-  class:loadPackage("counters")
+  base._init(self)
+
+  self.class:loadPackage("counters")
 
 end
 

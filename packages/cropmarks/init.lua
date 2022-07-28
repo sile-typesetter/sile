@@ -55,11 +55,11 @@ local function reconstrainFrameset (fs)
   end
 end
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
-  class:loadPackage("date")
+  self.class:loadPackage("date")
 
 end
 

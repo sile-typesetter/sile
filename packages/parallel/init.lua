@@ -60,9 +60,9 @@ local addBalancingGlue = function (height)
   end)
 end
 
-function package:_init (class, options)
+function package:_init (options)
 
-  base._init(self, class)
+  base._init(self, options)
 
   SILE.typesetter = nulTypesetter(SILE.getFrame("page"))
   for frame, typesetter in pairs(options.frames) do
@@ -74,11 +74,11 @@ function package:_init (class, options)
     -- Fixed leading here is obviously a bug, but n-way leading calculations
     -- get very complicated...
     -- typesetterPool[frame].leadingFor = function() return SILE.nodefactory.vglue(SILE.settings:get("document.lineskip")) end
-    class:registerCommand(frame, function (_, _) -- \left ...
+    self.class:registerCommand(frame, function (_, _) -- \left ...
       SILE.typesetter = typesetterPool[frame]
       SILE.call(frame..":font")
     end)
-    class:registerCommand(frame..":font", function (_, _) end) -- to be overridden
+    self.class:registerCommand(frame..":font", function (_, _) end) -- to be overridden
   end
   if not options.folios then
     folioOrder = { {} }
@@ -88,16 +88,16 @@ function package:_init (class, options)
   else
     folioOrder = options.folios -- As usual we trust the user knows what they're doing
   end
-  class.newPage = function(self_)
+  self.class.newPage = function(self_)
     allTypesetters(function (frame, _)
       calculations[frame] = { mark = 0 }
     end)
-    class._base.newPage(self_)
+    self.class._base.newPage(self_)
     SILE.call("sync")
   end
   allTypesetters(function (frame, _) calculations[frame] = { mark = 0 } end)
-  local oldfinish = class.finish
-  class.finish = function (self_)
+  local oldfinish = self.class.finish
+  self.class.finish = function (self_)
     parallelPagebreak()
     oldfinish(self_)
   end

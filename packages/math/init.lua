@@ -3,12 +3,12 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "math"
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
-  class:loadPackage("math.typesetter")
-  class:loadPackage("math.texlike")
+  self.class:loadPackage("math.typesetter")
+  self.class:loadPackage("math.texlike")
 
 end
 
@@ -69,13 +69,13 @@ end
 
 package.documentation = [[
 \begin{document}
-\script[src=packages/math]
+\use[module=packages.math]
 
 \set[parameter=math.font.family, value=Libertinus Math]
 \set[parameter=math.font.size, value=11]
 
 % Default verbatim font (Hack) is missing a few math symbols
-\script[src=packages/font-fallback]
+\use[module=packages.font-fallback]
 \font:add-fallback[family=Symbola]
 
 This package provides typesetting of formulas directly in a SILE document.

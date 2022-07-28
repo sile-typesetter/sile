@@ -5,9 +5,9 @@ package._name = "pagebuilder-bestfit"
 
 local MAX_PAGES = 5
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
   SILE.typesetter.buildPage = function (typesetter, independent)
     -- Find last penalty

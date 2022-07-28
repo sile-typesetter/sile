@@ -17,10 +17,10 @@ local lastkey
 
 local podofoFaces = {}
 
-local podofo = pl.class(base)
-podofo._name = "podofo"
+local outputer = pl.class(base)
+outputer._name = "podofo"
 
-function podofo._init (_)
+function outputer._init (_)
   document = pdf.PdfMemDocument()
   pagesize = pdf.PdfRect()
   pagesize:SetWidth(SILE.documentState.paperSize[1])
@@ -30,33 +30,33 @@ function podofo._init (_)
   painter:SetPage(page)
 end
 
-function podofo.newPage (_)
+function outputer.newPage (_)
   painter:FinishPage()
   page = document:CreatePage(pagesize)
   painter:SetPage(page)
 end
 
-function podofo:finish ()
+function outputer:finish ()
   painter:FinishPage()
   local fname = self:getOutputFilename("pdf")
   document:Write(fname == "-" and "/dev/stdout" or fname)
 end
 
-function podofo.getCursor (_)
+function outputer.getCursor (_)
   return cursorX, cursorY
 end
 
-function podofo.setCursor (_, x, y, relative)
+function outputer.setCursor (_, x, y, relative)
   local offset = relative and { x = cursorX, y = cursorY } or { x = 0, y = 0 }
   cursorX = offset.x + x
   cursorY = offset.y + SILE.documentState.paperSize[2] - y
 end
 
-function podofo.setColor (_, color)
+function outputer.setColor (_, color)
   painter:SetColor(color.r, color.g, color.b)
 end
 
-function podofo:drawHbox (value, _)
+function outputer:drawHbox (value, _)
   local x, y = self:getCursor()
   if not value.glyphNames then return end
   for i = 1, #(value.glyphNames) do
@@ -64,7 +64,7 @@ function podofo:drawHbox (value, _)
   end
 end
 
-function podofo.setFont (_, options)
+function outputer.setFont (_, options)
   if SILE.font._key(options) == lastkey then return end
   lastkey = SILE.font._key(options)
   if not podofoFaces[lastkey] then
@@ -78,7 +78,7 @@ function podofo.setFont (_, options)
   SILE.fontCache[lastkey] = nil
 end
 
-function podofo.getImageSize (_, src)
+function outputer.getImageSize (_, src)
   local box_width, box_height, err = imagesize.imgsize(src)
   if not box_width then
     SU.error(err.." loading image")
@@ -86,13 +86,13 @@ function podofo.getImageSize (_, src)
   return box_width, box_height
 end
 
-function podofo.drawRule (_, x, y, width, depth)
+function outputer.drawRule (_, x, y, width, depth)
   painter:Rectangle(x, SILE.documentState.paperSize[2] - y, width, depth)
   painter:Close()
   painter:Fill()
 end
 
-function podofo.debugHbox (_, typesetter, hbox, scaledWidth)
+function outputer.debugHbox (_, typesetter, hbox, scaledWidth)
   painter:SetColor(0.9, 0.9, 0.9)
   painter:SetStrokeWidth(0.5)
   painter:Rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY+(hbox.height), scaledWidth, hbox.height+hbox.depth)
@@ -102,4 +102,4 @@ function podofo.debugHbox (_, typesetter, hbox, scaledWidth)
   --cr:move_to(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
 end
 
-return podofo
+return outputer

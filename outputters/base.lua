@@ -1,43 +1,43 @@
-local base = pl.class()
-base.type = "outputter"
-base._name = "base"
+local outputter = pl.class()
+outputter.type = "outputter"
+outputter._name = "base"
 
-function base._init () end
+function outputter._init () end
 
-function base.newPage () end
+function outputter.newPage () end
 
-function base.finish () end
+function outputter.finish () end
 
-function base.getCursor () end
+function outputter.getCursor () end
 
-function base.setCursor (_, _, _, _) end
+function outputter.setCursor (_, _, _, _) end
 
-function base.setColor () end
+function outputter.setColor () end
 
-function base.pushColor () end
+function outputter.pushColor () end
 
-function base.popColor () end
+function outputter.popColor () end
 
-function base.drawHbox (_, _, _) end
+function outputter.drawHbox (_, _, _) end
 
-function base.setFont (_, _) end
+function outputter.setFont (_, _) end
 
-function base.drawImage (_, _, _, _, _, _) end
+function outputter.drawImage (_, _, _, _, _, _) end
 
-function base.getImageSize (_, _) end
+function outputter.getImageSize (_, _) end
 
-function base.drawSVG () end
+function outputter.drawSVG () end
 
-function base.drawRule (_, _, _, _, _) end
+function outputter.drawRule (_, _, _, _, _) end
 
-function base.debugFrame (_, _, _) end
+function outputter.debugFrame (_, _, _) end
 
-function base.debugHbox (_, _, _, _) end
+function outputter.debugHbox (_, _, _, _) end
 
-function base.getOutputFilename (_, ext)
+function outputter.getOutputFilename (_, ext)
   if SILE.outputFilename then return SILE.outputFilename end
   if SILE.masterFilename then return SILE.masterFilename .. "." .. ext end
   SU.error("Cannot guess output filename without an input name")
 end
 
-return base
+return outputter

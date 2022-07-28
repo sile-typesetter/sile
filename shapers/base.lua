@@ -33,15 +33,15 @@ local function shapespace (spacewidth)
   return SILE.length(length, stretch, shrink)
 end
 
-local base = pl.class()
-base.type = "shaper"
-base._name = "base"
+local shaper = pl.class()
+shaper.type = "shaper"
+shaper._name = "base"
 
 -- Return the length of a space character
 -- with a particular set of font options,
 -- giving preference to document.spaceskip
 -- Caching this has no significant speedup
-function base:measureSpace (options)
+function shaper:measureSpace (options)
   local ss = SILE.settings:get("document.spaceskip")
   if ss then
     SILE.settings:temporarily(function ()
@@ -60,7 +60,7 @@ function base:measureSpace (options)
   return shapespace(width and width.length or items[1].width)
 end
 
-function base:measureChar (char)
+function shaper:measureChar (char)
   local options = SILE.font.loadDefaults({})
   options.tracking = SILE.settings:get("shaper.tracking")
   local items = self:shapeToken(char, options)
@@ -72,24 +72,24 @@ function base:measureChar (char)
 end
 
 -- Given a text and some font options, return a bunch of boxes
-function base.shapeToken (_, _, _)
+function shaper.shapeToken (_, _, _)
   SU.error("Abstract function shapeToken called", true)
 end
 
 -- Given font options, select a font. We will handle
 -- caching here. Returns an arbitrary, implementation-specific
 -- object (ie a PAL for Pango, font number for libtexpdf, ...)
-function base.getFace (_)
+function shaper.getFace (_)
   SU.error("Abstract function getFace called", true)
 end
 
-function base.addShapedGlyphToNnodeValue (_, _, _)
+function shaper.addShapedGlyphToNnodeValue (_, _, _)
   SU.error("Abstract function addShapedGlyphToNnodeValue called", true)
 end
 
-function base.preAddNodes (_, _, _) end
+function shaper.preAddNodes (_, _, _) end
 
-function base:createNnodes (token, options)
+function shaper:createNnodes (token, options)
   options.tracking = SILE.settings:get("shaper.tracking")
   local items, _ = self:shapeToken(token, options)
   if #items < 1 then return {} end
@@ -103,7 +103,7 @@ function base:createNnodes (token, options)
   return nodes
 end
 
-function base:formNnode (contents, token, options)
+function shaper:formNnode (contents, token, options)
   local nnodeContents = {}
   -- local glyphs = {}
   local totalWidth = 0
@@ -146,7 +146,7 @@ function base:formNnode (contents, token, options)
     })
 end
 
-function base.makeSpaceNode (_, options, item)
+function shaper.makeSpaceNode (_, options, item)
   local width
   if SILE.settings:get("shaper.variablespaces") then
     width = shapespace(item.width)
@@ -156,6 +156,6 @@ function base.makeSpaceNode (_, options, item)
   return SILE.nodefactory.glue(width)
 end
 
-function base.debugVersions (_) end
+function shaper.debugVersions (_) end
 
-return base
+return shaper

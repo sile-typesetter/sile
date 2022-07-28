@@ -80,9 +80,9 @@ local fallbackQueue = pl.class({
 
 local activeFallbacks = {}
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
   local harfbuzz = require("shapers.harfbuzz")
 

@@ -20,11 +20,11 @@ local function _shape(text, item)
   return pgs
 end
 
-local pango = pl.class(base)
-pango._name = "pango"
+local shaper = pl.class(base)
+shaper._name = "pango"
 
 -- TODO: refactor so method accepts self
-function pango.getFace (options)
+function shaper.getFace (options)
   local pal
   if options.pal then
     return options.pal
@@ -49,7 +49,7 @@ function pango.getFace (options)
   return pal
 end
 
-function pango:shapeToken (text, options)
+function shaper:shapeToken (text, options)
   local pal = SILE.font.cache(options, self.getFace)
   local rv = {}
   local items = pangolgi.itemize(pango_context, text, 0, string.len(text), pal, nil)
@@ -76,9 +76,9 @@ function pango:shapeToken (text, options)
   return rv, twidth
 end
 
-function pango.addShapedGlyphToNnodeValue (_, nnodevalue, shapedglyph)
+function shaper.addShapedGlyphToNnodeValue (_, nnodevalue, shapedglyph)
   nnodevalue.pgs = shapedglyph.pgs
   nnodevalue.font = shapedglyph.font
 end
 
-return pango
+return shaper

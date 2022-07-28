@@ -1,5 +1,5 @@
 \begin[papersize=a6]{document}
-\script[src=packages/frametricks]
+\use[module=packages.frametricks]
 \script{
 SILE.registerCommand("donothing", function(o,c)
   SILE.settings:pushState()

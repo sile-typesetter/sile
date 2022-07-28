@@ -3,12 +3,12 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "chordmode"
 
-function package:_init (class)
+function package:_init ()
 
-  class:loadPackage("raiselower")
-  class:loadPackage("inputfilter")
+  base._init(self)
 
-  base._init(self, class)
+  self.class:loadPackage("raiselower")
+  self.class:loadPackage("inputfilter")
 
 end
 
@@ -132,7 +132,7 @@ end
 
 package.documentation = [[
 \begin{document}
-\script[src=packages/chordmode]
+\use[module=packages.chordmode]
 This package provides the \autodoc:environment{chordmode} environment, which transforms lines like:
 
 \begin{verbatim}

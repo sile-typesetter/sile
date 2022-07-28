@@ -248,20 +248,20 @@ local bidiDisableTypesetter = function (class, typesetter)
   typesetter.nobidi_boxUpNodes = nil
 end
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
   -- exports
-  class.reorder = reorder
-  class.bidiEnableTypesetter = bidiEnableTypesetter
-  class.bidiDisableTypesetter = bidiDisableTypesetter
+  self.class.reorder = reorder
+  self.class.bidiEnableTypesetter = bidiEnableTypesetter
+  self.class.bidiDisableTypesetter = bidiDisableTypesetter
 
   if SILE.typesetter then
-    class:bidiEnableTypesetter(SILE.typesetter)
+    self.class:bidiEnableTypesetter(SILE.typesetter)
   end
 
-  class:bidiEnableTypesetter(SILE.defaultTypesetter)
+  self.class:bidiEnableTypesetter(SILE.defaultTypesetter)
 end
 
 function package:registerCommands ()

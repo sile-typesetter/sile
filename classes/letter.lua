@@ -1,9 +1,9 @@
 local plain = require("classes.plain")
 
-local letter = pl.class(plain)
-letter._name = "letter"
+local class = pl.class(plain)
+class._name = "letter"
 
-letter.defaultFrameset = {
+class.defaultFrameset = {
   content = {
       left = "5%pw",
       right = "95%pw",
@@ -12,7 +12,7 @@ letter.defaultFrameset = {
     }
 }
 
-function letter:_init (options)
+function class:_init (options)
   plain._init(self, options)
   SILE.scratch.letter = {
     sender = nil,
@@ -20,10 +20,9 @@ function letter:_init (options)
     recipient = "",
     salutation = ""
   }
-  return self
 end
 
-function letter:registerCommands ()
+function class:registerCommands ()
 
   plain.registerCommands(self)
 
@@ -80,4 +79,4 @@ function letter:registerCommands ()
 
 end
 
-return letter
+return class

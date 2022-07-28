@@ -19,16 +19,16 @@ end
 
 local breakPattern = "["..escapeRegExpMinimal(preferBreakBefore..preferBreakAfter..alwaysBreakAfter).."]"
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
-  class:loadPackage("verbatim")
-  class:loadPackage("inputfilter")
+  self.class:loadPackage("verbatim")
+  self.class:loadPackage("inputfilter")
 
   pdf = SILE.outputter == SILE.outputters.libtexpdf
 
-  if pdf then class:loadPackage("pdf") end
+  if pdf then self.class:loadPackage("pdf") end
 
 end
 
@@ -158,7 +158,7 @@ end
 
 package.documentation = [[
 \begin{document}
-\script[src=packages/url]
+\use[module=packages.url]
 This package enhances the typesetting of URLs in two ways.
 First, it provides the \autodoc:command{\href[src=<url>]{<content>}} command which inserts PDF hyperlinks, \href[src=http://www.sile-typesetter.org/]{like this}.
 

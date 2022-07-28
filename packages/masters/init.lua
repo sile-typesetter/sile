@@ -70,22 +70,24 @@ local function currentMaster (_)
   return _currentMaster
 end
 
-function package:_init (class, args)
+function package:_init (options)
 
-  base._init(self, class)
+  base._init(self, options)
 
   if not SILE.scratch.masters then
     SILE.scratch.masters = {}
   end
 
-  defineMasters(class, args)
-
   -- exports
-  class.switchMasterOnePage = switchMasterOnePage
-  class.switchMaster = switchMaster
-  class.defineMaster = defineMaster
-  class.defineMasters = defineMasters
-  class.currentMaster = currentMaster
+  self.class.switchMasterOnePage = switchMasterOnePage
+  self.class.switchMaster = switchMaster
+  self.class.defineMaster = defineMaster
+  self.class.defineMasters = defineMasters
+  self.class.currentMaster = currentMaster
+
+  if options then
+    self.class:defineMasters(options)
+  end
 
 end
 

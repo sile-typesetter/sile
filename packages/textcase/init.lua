@@ -26,16 +26,16 @@ local titlecase = function (input, extraArgs)
   return icu.case(input, lang, "title")
 end
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
-  class:loadPackage("inputfilter")
+  self.class:loadPackage("inputfilter")
 
   -- exports
-  class.uppercase = uppercase
-  class.lowercase = lowercase
-  class.titlecase = titlecase
+  self.class.uppercase = uppercase
+  self.class.lowercase = lowercase
+  self.class.titlecase = titlecase
 
 end
 
@@ -59,7 +59,7 @@ end
 
 package.documentation = [[
 \begin{document}
-\script[src=packages/textcase]
+\use[module=packages.textcase]
 The \autodoc:package{textcase} package provides commands for language-aware case conversion of input text.
 For example, when language is set to English, then \autodoc:command{\uppercase{hij}} will return \examplefont{\uppercase{hij}}.
 However, when language is set to Turkish, it will return \examplefont{\font[language=tr]{\uppercase{hij}}}.

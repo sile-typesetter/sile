@@ -22,14 +22,14 @@ local function _round (input)
   return string.format("%.4f", input)
 end
 
-local debug = pl.class(base)
-debug._name = "debug"
+local outputter = pl.class(base)
+outputter._name = "debug"
 
 -- The outputter init can't actually initialize output (as logical as it might
 -- have seemed) because that requires a page size which we don't know yet.
--- function debug:_init () end
+-- function outputter:_init () end
 
-function debug:_ensureInit ()
+function outputter:_ensureInit ()
   if not started then
     started = true -- keep this before self:_writeline or it will be a race condition!
     local fname = self:getOutputFilename("debug")
@@ -39,7 +39,7 @@ function debug:_ensureInit ()
   end
 end
 
-function debug:_writeline (...)
+function outputter:_writeline (...)
   self:_ensureInit()
 	local args = table.pack(...)
 	for i = 1, #args do
@@ -49,22 +49,22 @@ function debug:_writeline (...)
 	outfile:write("\n")
 end
 
-function debug:newPage ()
+function outputter:newPage ()
   self:_writeline("New page")
 end
 
-function debug:finish ()
+function outputter:finish ()
   if SILE.status.unsupported then self:_writeline("UNSUPPORTED") end
   self:_writeline("End page")
   self:_writeline("Finish")
   outfile:close()
 end
 
-function debug.getCursor (_)
+function outputter.getCursor (_)
   return cursorX, cursorY
 end
 
-function debug:setCursor (x, y, relative)
+function outputter:setCursor (x, y, relative)
   x = SU.cast("number", x)
   y = SU.cast("number", y)
   local oldx, oldy = self:getCursor()
@@ -75,7 +75,7 @@ function debug:setCursor (x, y, relative)
   if _round(oldy) ~= _round(cursorY) then self:_writeline("My ", _round(y)) end
 end
 
-function debug:setColor (color)
+function outputter:setColor (color)
   if color.r then
     self:_writeline("Set color", _round(color.r), _round(color.g), _round(color.b))
   elseif color.c then
@@ -85,7 +85,7 @@ function debug:setColor (color)
   end
 end
 
-function debug:pushColor (color)
+function outputter:pushColor (color)
   if color.r then
     self:_writeline("Push color", _round(color.r), _round(color.g), _round(color.b))
   elseif color.c then
@@ -95,11 +95,11 @@ function debug:pushColor (color)
   end
 end
 
-function debug:popColor ()
+function outputter:popColor ()
   self:_writeline("Pop color")
 end
 
-function debug:drawHbox (value, width)
+function outputter:drawHbox (value, width)
   if not value.glyphString then return end
   width = SU.cast("number", width)
   local buf
@@ -121,7 +121,7 @@ function debug:drawHbox (value, width)
   self:_writeline("T", buf, "(" .. tostring(value.text) .. ")")
 end
 
-function debug:setFont (options)
+function outputter:setFont (options)
   local font = SILE.font._key(options)
   if lastFont ~= font then
     self:_writeline("Set font ", font)
@@ -129,7 +129,7 @@ function debug:setFont (options)
   end
 end
 
-function debug:drawImage (src, x, y, width, height)
+function outputter:drawImage (src, x, y, width, height)
   x = SU.cast("number", x)
   y = SU.cast("number", y)
   width = SU.cast("number", width)
@@ -137,13 +137,13 @@ function debug:drawImage (src, x, y, width, height)
   self:_writeline("Draw image", src, _round(x), _round(y), _round(width), _round(height))
 end
 
-function debug.getImageSize (_, src)
+function outputter.getImageSize (_, src)
   local pdf = require("justenoughlibtexpdf")
   local llx, lly, urx, ury = pdf.imagebbox(src)
   return (urx-llx), (ury-lly)
 end
 
-function debug:drawSVG (figure, _, x, y, width, height, scalefactor)
+function outputter:drawSVG (figure, _, x, y, width, height, scalefactor)
   x = SU.cast("number", x)
   y = SU.cast("number", y)
   width = SU.cast("number", width)
@@ -151,7 +151,7 @@ function debug:drawSVG (figure, _, x, y, width, height, scalefactor)
   self:_writeline("Draw SVG", _round(x), _round(y), _round(width), _round(height), figure, scalefactor)
 end
 
-function debug:drawRule (x, y, width, depth)
+function outputter:drawRule (x, y, width, depth)
   x = SU.cast("number", x)
   y = SU.cast("number", y)
   width = SU.cast("number", width)
@@ -159,4 +159,4 @@ function debug:drawRule (x, y, width, depth)
   self:_writeline("Draw line", _round(x), _round(y), _round(width), _round(depth))
 end
 
-return debug
+return outputter

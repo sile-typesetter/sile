@@ -2,8 +2,8 @@
 -- for the AST writer.
 
 local book = require("classes.book")
-local markdown = pl.class(book)
-markdown._name = "markdown"
+local class = pl.class(book)
+class._name = "markdown"
 
 SILE.inputs.markdown = {
   order = 2,
@@ -22,14 +22,13 @@ SILE.inputs.markdown = {
   end
 }
 
-function markdown:_init (options)
+function class:_init (options)
   book._init(self, options)
   self:loadPackage("url")
   self:loadPackage("image")
-  return self
 end
 
-function markdown:registerCommands ()
+function class:registerCommands ()
 
   book.registerCommands(self)
 
@@ -68,4 +67,4 @@ function markdown:registerCommands ()
 
 end
 
-return markdown
+return class
