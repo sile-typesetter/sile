@@ -2605,6 +2605,8 @@ symbolDefaults['{'] = { atom = atomType.openingSymbol,
             stretchy = true }
 symbolDefaults['}'] = { atom = atomType.closeSymbol,
             stretchy = true}
+symbolDefaults['mod'] = { atom = atomType.binaryOperator }
+symbolDefaults['%'] = { atom = atomType.binaryOperator }
 
 return {
   symbols = symbols,

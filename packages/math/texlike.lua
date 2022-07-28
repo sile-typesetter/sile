@@ -401,6 +401,9 @@ local function convertTexlike (_, content)
   return ret
 end
 
+registerCommand("%", {}, function ()
+  return { "%", command = "mo", options = {} }
+end)
 registerCommand("mi", { [1] = objType.str }, function (x) return x end)
 registerCommand("mo", { [1] = objType.str }, function (x) return x end)
 registerCommand("mn", { [1] = objType.str }, function (x) return x end)
@@ -425,6 +428,10 @@ compileToMathML(nil, {}, convertTexlike(nil, {[==[
   \def{enskip}{\enspace}
   \def{quad}{\mspace[width=1em]}
   \def{qquad}{\mspace[width=2em]}
+
+  % Modulus operator forms
+  \def{bmod}{\mo{mod}}
+  \def{pmod}{\quad(\mo{mod} #1)}
 ]==]}))
 
 return {
