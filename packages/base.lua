@@ -25,4 +25,10 @@ function package.registerRawHandlers (_) end
 
 function package.registerCommands (_) end
 
+-- Using this rather than doing the work directly will give us a way to
+-- un-export them if we ever need to unload modules and revert functions
+function package:export (name, func)
+  self.class[name] = func
+end
+
 return package
