@@ -52,19 +52,14 @@ function package:formatMultilevelCounter (counter, options)
 end
 
 function package:_init ()
-
   base._init(self)
-
   if not SILE.scratch.counters then
     SILE.scratch.counters = {}
   end
-
   self:export("getCounter", getCounter)
   self:export("getMultilevelCounter", getMultilevelCounter)
-
   self:deprecatedExport("formatCounter", self.formatCounter)
   self:deprecatedExport("formatMultilevelCounter", self.formatMultilevelCounter)
-
 end
 
 function package:registerCommands ()

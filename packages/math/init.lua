@@ -4,12 +4,9 @@ local package = pl.class(base)
 package._name = "math"
 
 function package:_init ()
-
   base._init(self)
-
   self.class:loadPackage("math.typesetter")
   self.class:loadPackage("math.texlike")
-
 end
 
 function package.declareSettings (_)

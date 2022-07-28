@@ -43,12 +43,9 @@ function hrulefillglue:outputYourself (typesetter, line)
 end
 
 function package:_init ()
-
   base._init(self)
-
   self.class:loadPackage("raiselower")
   self.class:loadPackage("rebox")
-
 end
 
 function package:registerCommands ()

@@ -12,11 +12,8 @@ local outputBackground = function (color)
 end
 
 function package:_init ()
-
   base._init(self)
-
   self.class:loadPackage("color")
-
 end
 
 function package:registerCommands ()

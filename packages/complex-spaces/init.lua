@@ -4,9 +4,7 @@ local package = pl.class(base)
 package._name = "complex-spaces"
 
 function package:_init ()
-
   base._init(self)
-
   if not SILE.languageSupport.languages["x-spaces-are-nodes"] then
     local xsan = pl.class(SILE.nodeMakers.unicode)
     function xsan.makeGlue (node, item)
@@ -16,7 +14,6 @@ function package:_init ()
     SILE.nodeMakers["x-spaces-are-nodes"] = xsan
     SILE.languageSupport.languages["x-spaces-are-nodes"] = true
   end
-
   if SILE.shaper and not SILE.shaper.noncomplex_SpaceNode then
     SILE.shaper.noncomplex_SpaceNode = SILE.shaper.makeSpaceNode
     SILE.shaper.makeSpaceNode = function (_, options, item)
@@ -29,18 +26,15 @@ function package:_init ()
       return SILE.shaper.noncomplex_SpaceNode(_, options, item)
     end
   end
-
 end
 
 function package.declareSettings (_)
-
   SILE.settings:declare({
     parameter = "shaper.complexspaces",
     default = true,
     type = "boolean",
     help = "Whether the font's space glyph should be emitted, rather than a glue"
   })
-
 end
 
 package.documentation = [[

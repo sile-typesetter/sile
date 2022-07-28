@@ -4,12 +4,9 @@ local package = pl.class(base)
 package._name = "dropcaps"
 
 function package:_init ()
-
   base._init(self)
-
   self.class:loadPackage("rebox")
   self.class:loadPackage("raiselower")
-
 end
 
 local shapeHbox = function (options, content)

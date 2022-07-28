@@ -61,9 +61,7 @@ local addBalancingGlue = function (height)
 end
 
 function package:_init (options)
-
   base._init(self, options)
-
   SILE.typesetter = nulTypesetter(SILE.getFrame("page"))
   for frame, typesetter in pairs(options.frames) do
     typesetterPool[frame] = SILE.defaultTypesetter(SILE.getFrame(typesetter))
@@ -101,7 +99,6 @@ function package:_init (options)
     parallelPagebreak()
     oldfinish(self_)
   end
-
 end
 
 function package:registerCommands ()

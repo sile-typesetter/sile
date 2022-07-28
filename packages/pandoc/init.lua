@@ -46,9 +46,7 @@ local handlePandocArgs = function (options)
 end
 
 function package:_init ()
-
   base._init(self)
-
   self.class:loadPackage("footnotes")
   self.class:loadPackage("image")
   self.class:loadPackage("pdf")
@@ -56,7 +54,6 @@ function package:_init ()
   self.class:loadPackage("rules")
   self.class:loadPackage("url")
   self.class:loadPackage("verbatim")
-
 end
 
 function package:registerCommands ()

@@ -25,15 +25,11 @@ local function validate_date (date)
 end
 
 function package:_init ()
-
   base._init(self)
-
   pdf = require("justenoughlibtexpdf")
-
   if SILE.outputter._name ~= "libtexpdf" then
     SU.error("pdf package requires libtexpdf backend")
   end
-
 end
 
 function package:registerCommands ()

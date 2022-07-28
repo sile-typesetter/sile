@@ -220,13 +220,10 @@ local insert = function (_, classname, vbox)
 end
 
 function package:_init ()
-
   base._init(self)
-
   if not SILE.scratch.insertions then
     SILE.scratch.insertions = { classes = {} }
   end
-
   if not SILE.insertions then
     SILE.insertions = {}
   end

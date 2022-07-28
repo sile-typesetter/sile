@@ -26,15 +26,11 @@ end
   -- end
 
 function package:_init ()
-
   base._init(self)
-
   if not SILE.scratch.index then
     SILE.scratch.index = {}
   end
-
   self:deprecatedExport("buildIndex", buildIndex)
-
 end
 
 function package:registerCommands ()

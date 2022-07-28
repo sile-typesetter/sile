@@ -4,12 +4,9 @@ local package = pl.class(base)
 package._name = "chordmode"
 
 function package:_init ()
-
   base._init(self)
-
   self.class:loadPackage("raiselower")
   self.class:loadPackage("inputfilter")
-
 end
 
 function package.declareSettings (_)

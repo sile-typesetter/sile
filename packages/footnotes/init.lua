@@ -4,17 +4,13 @@ local package = pl.class(base)
 package._name = "footnotes"
 
 function package:_init (options)
-
   base._init(self)
-
   self.class:loadPackage("counters")
   self.class:loadPackage("raiselower")
   self.class:loadPackage("insertions")
-
   if not SILE.scratch.counters.footnotes then
     SILE.scratch.counters.footnote = { value = 1, display = "arabic" }
   end
-
   options = options or {}
   self.class:initInsertionClass("footnote", {
     insertInto = options.insertInto or "footnotes",

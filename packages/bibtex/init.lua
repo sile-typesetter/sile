@@ -56,24 +56,18 @@ local parseBibtex = function (fn)
 end
 
 function package:_init ()
-
   base._init(self)
-
   SILE.scratch.bibtex = { bib = {} }
-
   Bibliography = require("packages.bibtex.bibliography")
-
 end
 
 function package.declareSettings (_)
-
   SILE.settings:declare({
     parameter = "bibtex.style",
     type = "string",
     default = "chicago",
     help = "BibTeX style"
   })
-
 end
 
 function package:registerCommands ()

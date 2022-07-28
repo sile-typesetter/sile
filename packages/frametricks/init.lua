@@ -140,13 +140,9 @@ end
 
 
 function package:_init ()
-
   base._init(self)
-
   self.class:loadPackage("balanced-frames")
-
   self:export("breakFrameVertical", self.breakFrameVertical)
-
 end
 
 function package:registerCommands ()

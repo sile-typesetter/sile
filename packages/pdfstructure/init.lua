@@ -69,22 +69,16 @@ local function dumpTree (node)
 end
 
 function package:_init ()
-
   base._init(self)
-
   pdf = require("justenoughlibtexpdf")
-
   local _typeset = SILE.typesetter.typeset
   SILE.typesetter.typeset = function (node, text)
     actualtext[#actualtext] = tostring(actualtext[#actualtext]) .. text
     _typeset(node, text)
   end
-
   local stRoot = stNode("Document")
   stPointer = stRoot
-
   self.class:loadPackage("pdf")
-
   function SILE.outputters.libtexpdf._endHook (_)
     local catalog = pdf.get_dictionary("Catalog")
     local structureTree = pdf.parse("<< /Type /StructTreeRoot >>")
@@ -95,7 +89,6 @@ function package:_init ()
     if structureNumberTree then pdf.release(structureNumberTree) end
     if structureTree then pdf.release(structureTree) end
   end
-
 end
 
 function package:registerCommands ()

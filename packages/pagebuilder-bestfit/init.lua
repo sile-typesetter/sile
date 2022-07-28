@@ -6,9 +6,7 @@ package._name = "pagebuilder-bestfit"
 local MAX_PAGES = 5
 
 function package:_init ()
-
   base._init(self)
-
   SILE.typesetter.buildPage = function (typesetter, independent)
     -- Find last penalty
     local q = typesetter.state.outputQueue
@@ -38,13 +36,11 @@ function package:_init ()
       typesetter:outputLinesToPage(slice)
       typesetter.state.outputQueue = newslice
       if #(typesetter.state.outputQueue) == 0 then return false end
-
       typesetter:initNextFrame() -- This causes a tail call if there is more stuff waiting
       -- If not, we keep going if we are being asked to ship out a page now now now.
     until lastpenalty > -10000
     return false -- because we have already dealt with initializing the next frame
   end
-
 end
 
 package.documentation = [[

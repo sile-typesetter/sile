@@ -208,11 +208,8 @@ local doNestedList = function (_, listType, options, content)
 end
 
 function package:_init ()
-
   base._init(self)
-
   self.class:loadPackage("counters")
-
 end
 
 function package.declareSettings (_)

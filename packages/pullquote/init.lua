@@ -26,13 +26,10 @@ local typesetMark = function (open, setback, scale, color, mark)
 end
 
 function package:_init ()
-
   base._init(self)
-
   self.class:loadPackage("color")
   self.class:loadPackage("raiselower")
   self.class:loadPackage("rebox")
-
 end
 
 function package:registerCommands ()

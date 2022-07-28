@@ -70,13 +70,10 @@ function package.checkConverters (_, source)
 end
 
 function package:_init ()
-
   base._init(self)
-
   if not SILE.scratch.converters then
     SILE.scratch.converters = {}
   end
-
   extendCommand("include", function (options, content, original)
     local result = self:checkConverters(options.src)
     if not result then
@@ -84,7 +81,6 @@ function package:_init ()
       original(options, content)
     end
   end)
-
   extendCommand("img", function (options, content, original)
     local result = self:checkConverters(options.src)
     if not result then
@@ -92,10 +88,8 @@ function package:_init ()
       original(options, content)
     end
   end)
-
   self:deprecatedExport("register", self.register)
   self:deprecatedExport("checkConverters", self.checkConverters)
-
 end
 
 function package:registerCommands ()

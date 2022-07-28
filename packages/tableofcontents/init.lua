@@ -70,19 +70,14 @@ if not SILE.scratch.pdf_destination_counter then
 end
 
 function package:_init ()
-
   base._init(self)
-
   if not SILE.scratch.tableofcontents then
     SILE.scratch.tableofcontents = {}
   end
-
   self.class:loadPackage("infonode")
   self.class:loadPackage("leaders")
-
   self.class:registerHook("endpage", _moveTocNodes)
   self.class:registerHook("finish", _writeToc)
-
   self:deprecatedExport("writeToc", _writeToc)
   self:deprecatedExport("moveTocNodes", _moveTocNodes)
 end

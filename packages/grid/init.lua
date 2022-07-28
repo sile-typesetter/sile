@@ -140,11 +140,8 @@ end
 local oldPageBuilder, oldLeadingFor, oldPushVglue, oldPushExplicitVglue
 
 function package:_init ()
-
   base._init(self)
-
   gridSpacing = SILE.measurement()
-
 end
 
 function package:registerCommands ()

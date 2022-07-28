@@ -35,11 +35,8 @@ local firstfit = function (typesetter, nl, breakWidth)
 end
 
 function package:_init ()
-
   base._init(self)
-
   SILE.typesetter._breakIntoLines_firstfit = firstfit
-
 end
 
 package.documentation = [[

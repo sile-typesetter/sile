@@ -71,23 +71,18 @@ local function currentMaster (_)
 end
 
 function package:_init (options)
-
   base._init(self, options)
-
   if not SILE.scratch.masters then
     SILE.scratch.masters = {}
   end
-
   self:export("switchMasterOnePage", switchMasterOnePage)
   self:export("switchMaster", switchMaster)
   self:export("defineMaster", defineMaster)
   self:export("defineMasters", defineMasters)
   self:export("currentMaster", currentMaster)
-
   if options then
     self.class:defineMasters(options)
   end
-
 end
 
 function package:registerCommands ()

@@ -93,11 +93,8 @@ local linespacingLeading = function (_, vbox, previous)
 end
 
 function package:_init ()
-
   base._init(self)
-
   SILE.typesetter.leadingFor = linespacingLeading
-
 end
 
 function package.declareSettings (_)

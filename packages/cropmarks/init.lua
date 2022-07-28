@@ -56,11 +56,8 @@ local function reconstrainFrameset (fs)
 end
 
 function package:_init ()
-
   base._init(self)
-
   self.class:loadPackage("date")
-
 end
 
 function package:registerCommands ()

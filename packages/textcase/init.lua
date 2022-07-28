@@ -36,15 +36,11 @@ local titlecase = function (class, input, extraArgs)
 end
 
 function package:_init ()
-
   base._init(self)
-
   self.class:loadPackage("inputfilter")
-
   self:deprecatedExport("uppercase", uppercase)
   self:deprecatedExport("lowercase", lowercase)
   self:deprecatedExport("titlecase", titlecase)
-
 end
 
 function package:registerCommands ()

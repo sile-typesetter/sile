@@ -67,13 +67,9 @@ local declareHanmenFrame = function (class, id, spec)
 end
 
 function package:_init ()
-
   base._init(self)
-
   self.class:loadPackage("tate")
-
   self:export("declareHanmenFrame", declareHanmenFrame)
-
 end
 
 function package:registerCommands ()

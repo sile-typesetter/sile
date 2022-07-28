@@ -53,17 +53,13 @@ local outputRotatedHbox = function (self, typesetter, line)
 end
 
 function package:_init ()
-
   base._init(self)
-
   if SILE.typesetter.frame then
     enter(SILE.typesetter.frame, SILE.typesetter)
     table.insert(SILE.typesetter.frame.leaveHooks, leave)
   end
-
   table.insert(SILE.framePrototype.enterHooks, enter)
   table.insert(SILE.framePrototype.leaveHooks, leave)
-
 end
 
 function package:registerCommands ()

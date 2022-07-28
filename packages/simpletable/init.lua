@@ -6,7 +6,6 @@ package._name = "simpletable"
 local tableTag, trTag, tdTag
 
 function package:_init (options)
-
   base._init(self, options)
 
   if not SILE.scratch.simpletable then

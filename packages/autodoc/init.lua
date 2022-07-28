@@ -100,30 +100,23 @@ local function typesetAST (options, content)
 end
 
 function package:_init (options)
-
   base._init(self)
-
   self.class:loadPackage("inputfilter")
-
   if options then pl.tablex.update(theme, options) end
-
   if not SILE.scratch.autodoc then
     SILE.scratch.autodoc = {
       theme = theme
     }
   end
-
 end
 
 function package.declareSettings (_)
-
   SILE.settings:declare({
     parameter = "autodoc.highlighting",
     default = false,
     type = "boolean",
     help = "Whether audodoc enables syntax highlighting"
   })
-
 end
 
 function package:registerCommands ()

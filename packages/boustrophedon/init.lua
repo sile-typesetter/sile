@@ -6,11 +6,8 @@ package._name = "boustrophedon"
 local _swap
 
 function package:_init (class)
-
   base._init(self, class)
-
   SILE.hyphenator.languages.grc = { patterns={} }
-
   SILE.nodeMakers.grc = pl.class(SILE.nodeMakers.unicode)
   function SILE.nodeMakers.grc.iterator (node, items)
     return coroutine.wrap(function ()
@@ -22,13 +19,11 @@ function package:_init (class)
       end
     end)
   end
-
   _swap = SILE.nodefactory.vbox({})
   _swap.outputYourself = function (_, typesetter, _)
     typesetter.frame.direction = typesetter.frame.direction == "LTR-TTB" and "RTL-TTB" or "LTR-TTB"
     typesetter.frame:newLine()
   end
-
 end
 
 function package:registerCommands ()
