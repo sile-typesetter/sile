@@ -19,7 +19,6 @@ function class:_init (options)
   self:loadPackage("rules")
   self:loadPackage("verbatim")
   self:loadPackage("footnotes")
-  return self
 end
 
 function class.push (t, val)

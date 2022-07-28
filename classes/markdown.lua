@@ -26,7 +26,6 @@ function class:_init (options)
   book._init(self, options)
   self:loadPackage("url")
   self:loadPackage("image")
-  return self
 end
 
 function class:registerCommands ()

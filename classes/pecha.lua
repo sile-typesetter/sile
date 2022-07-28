@@ -45,7 +45,6 @@ function class:_init(options)
     SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
     SILE.settings:set("document.parindent", SILE.nodefactory.glue())
   end)
-  return self
 end
 
 function class:endPage()

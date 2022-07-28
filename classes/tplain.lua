@@ -13,6 +13,8 @@ class.defaultFrameset.content = {
   linecount = 30
 }
 
+-- The classes tplain and tbook inherit from plain and book respectively but also
+-- have this bit in common; this makes it accessable
 function class:_t_common ()
   self:loadPackage("font-fallback")
   self:loadPackage("hanmenkyoshi")
@@ -28,7 +30,6 @@ end
 function class:_init (options)
   plain._init(self, options)
   class._t_common(self)
-  return self
 end
 
 function class:declareOptions ()

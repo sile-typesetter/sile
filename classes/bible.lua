@@ -187,7 +187,6 @@ function class:_init(options)
       self_:singleColumnMaster()
     end
   end)
-  return self
 end
 
 function class:endPage ()

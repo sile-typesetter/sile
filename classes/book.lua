@@ -48,7 +48,6 @@ function class:_init (options)
       stealFrom = { "content" }
     })
   if not SILE.scratch.headers then SILE.scratch.headers = {} end
-  return self
 end
 
 function class:endPage ()

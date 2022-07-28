@@ -63,7 +63,6 @@ function class:_init (options)
         end
       end)
     end)
-  return self
 end
 
 function class:_post_init ()

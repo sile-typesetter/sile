@@ -20,7 +20,6 @@ function class:_init (options)
     recipient = "",
     salutation = ""
   }
-  return self
 end
 
 function class:registerCommands ()

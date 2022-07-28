@@ -35,7 +35,6 @@ function class:_init (options)
   base._init(self, options)
   self:loadPackage("bidi")
   self:loadPackage("folio")
-  return self
 end
 
 function class:declareOptions ()

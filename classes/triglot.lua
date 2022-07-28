@@ -16,7 +16,6 @@ function class:_init (options)
   self:loadPackage("parallel", { frames = { left = "a", middle = "b", right= "c" } })
   SILE.settings:set("linebreak.tolerance", 5000)
   SILE.settings:set("document.parindent", SILE.nodefactory.glue())
-  return self
 end
 
 return class
