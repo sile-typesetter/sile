@@ -1,33 +1,31 @@
 # -- Usual book sections
-appendix = Ek
-chapter  = Bölüm
-part     = Kısım
+appendix = Anhang
+chapter  = Kapitel
+part     = Teil
 
 # -- Other captions
-figure = Şekil
-table  = Tablo
-proof  = Kanıt
+figure = Abbildung
+table  = Tabelle
+proof  = Beweis
 
 # -- TOC-like headers
-tableofcontents-title = İçindekiler
-index = Dizin
-listoffigures = Şekil Listesi
-listoftables = Tablo Listesi
+tableofcontents-title = Inhaltsverzeichnis
+index = Index
+listoffigures = Abbildungsverzeichnis
+listoftables = Tabellenverzeichnis
 
 # -- Other usual headers
-abstract = Özet
-bibliography = Kaynakça
-glossary = Lügatçe
-preface = Önsöz
-references = Kaynaklar
+abstract = Zusammenfassung
+bibliography = Literaturverzeichnis
+glossary = Glossar
+preface = Vorwort
+references = Literatur
 
 # -- Miscellaneous
-page = Sayfa
-see = bkz.
-see-also = ayrıca bkz.
+page = Seite
+see = siehe
+see-also = siehe auch
 tableofcontents-not-generated = Rerun SILE to process the table of contents!
-# Test (only for en and tr)
-hello = Merhaba { $name }!
 
 # -- Bibliography stuff
 # bibliography-and =

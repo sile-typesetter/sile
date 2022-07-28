@@ -106,13 +106,11 @@ function class:registerCommands ()
     end
     local lang = SILE.settings:get("document.language")
     if SU.boolean(options.numbering, true) then
-      if options.prenumber then
-        if SILE.Commands[options.prenumber .. ":"  .. lang] then
-          options.prenumber = options.prenumber .. ":" .. lang
-        end
-        SILE.call(options.prenumber)
+      if options.template then
+        SILE.call("fluent", { number = number }, { options.template })
+      else
+        SILE.call("show-multilevel-counter", { id = "sectioning" })
       end
-      SILE.call("show-multilevel-counter", { id = "sectioning" })
       if options.postnumber then
         if SILE.Commands[options.postnumber .. ":" .. lang] then
           options.postnumber = options.postnumber .. ":" .. lang
@@ -122,12 +120,7 @@ function class:registerCommands ()
     end
   end)
 
-  self:registerCommand("book:chapter:pre", function (_, _)
-    SILE.call("fluent", {}, { "book-chapter-title-pre" })
-  end)
-
   self:registerCommand("book:chapter:post", function (_, _)
-    SILE.call("fluent", {}, { "book-chapter-post" })
     SILE.call("par")
   end)
 
@@ -157,7 +150,7 @@ function class:registerCommands ()
         numbering = options.numbering,
         toc = options.toc,
         level = 1,
-        prenumber = "book:chapter:pre",
+        template = "chapter-template",
         postnumber = "book:chapter:post"
       }, content)
     end)
