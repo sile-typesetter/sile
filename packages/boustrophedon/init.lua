@@ -5,7 +5,7 @@ package._name = "boustrophedon"
 
 local _swap
 
-function package:init (class)
+function package:_init (class)
 
   base._init(self, class)
 
