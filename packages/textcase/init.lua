@@ -5,21 +5,30 @@ package._name = "tetxcase"
 
 local icu = require("justenoughicu")
 
-local uppercase = function (input, extraArgs)
+local uppercase = function (class, input, extraArgs)
+  if type(class) ~= "table" or class.type ~= "class" then
+    input, extraArgs = class, input
+  end
   if not extraArgs then extraArgs = {} end
   if not extraArgs.options then extraArgs.options = {} end
   local lang = extraArgs.options.language or SILE.settings:get("document.language")
   return icu.case(input, lang, "upper")
 end
 
-local lowercase = function (input, extraArgs)
+local lowercase = function (class, input, extraArgs)
+  if type(class) == "table" and class.type ~= "class" then
+    input, extraArgs = class, input
+  end
   if not extraArgs then extraArgs = {} end
   if not extraArgs.options then extraArgs.options = {} end
   local lang = extraArgs.options.language or SILE.settings:get("document.language")
   return icu.case(input, lang, "lower")
 end
 
-local titlecase = function (input, extraArgs)
+local titlecase = function (class, input, extraArgs)
+  if type(class) == "table" and class.type ~= "class" then
+    input, extraArgs = class, input
+  end
   if not extraArgs then extraArgs = {} end
   if not extraArgs.options then extraArgs.options = {} end
   local lang = extraArgs.options.language or SILE.settings:get("document.language")
@@ -32,10 +41,9 @@ function package:_init ()
 
   self.class:loadPackage("inputfilter")
 
-  -- exports
-  self.class.uppercase = uppercase
-  self.class.lowercase = lowercase
-  self.class.titlecase = titlecase
+  self:deprecatedExport("uppercase", uppercase)
+  self:deprecatedExport("lowercase", lowercase)
+  self:deprecatedExport("titlecase", titlecase)
 
 end
 

@@ -3,13 +3,13 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "folio"
 
-local function _incrementFolio (_)
+function package.incrementFolio (_)
   SILE.scratch.counters.folio.value = SILE.scratch.counters.folio.value + 1
 end
 
-local function _outputFolio (class, frame)
+function package:outputFolio (frame)
   if not frame then frame = "folio" end
-  local folio = class:formatCounter(SILE.scratch.counters.folio)
+  local folio = self.class:formatCounter(SILE.scratch.counters.folio)
   io.stderr:write("[" .. folio .. "] ")
   if SILE.scratch.counters.folio.off then
     if SILE.scratch.counters.folio.off == 2 then
@@ -33,7 +33,7 @@ local function _outputFolio (class, frame)
           SILE.settings:set(v, SILE.settings.defaults[v])
         end
 
-        SILE.call("foliostyle", {}, { class:formatCounter(SILE.scratch.counters.folio) })
+        SILE.call("foliostyle", {}, { self.class:formatCounter(SILE.scratch.counters.folio) })
         SILE.typesetter:leaveHmode()
         SILE.settings:popState()
       end)
@@ -41,29 +41,16 @@ local function _outputFolio (class, frame)
   end
 end
 
-local _deprecate  = [[
-  Directly calling folio handling functions is no longer necessary. All the
-  SILE core classes and anything inheriting from them will take care of this
-  automatically using hooks. Custom classes that override the class:endPage()
-  and class:finish() functions may need to handle this in other ways. By
-  calling these hooks directly you are likely causing them to run twice and
-  duplicate entries.
-]]
-
 function package:_init ()
 
   base._init(self)
 
   self.class:loadPackage("counters")
   SILE.scratch.counters.folio = { value = 1, display = "arabic" }
-  self.class:registerHook("newpage", _incrementFolio)
-  self.class:registerHook("endpage", _outputFolio)
+  self.class:registerHook("newpage", function() self:incrementFolio() end)
+  self.class:registerHook("endpage", function () self:outputFolio() end)
 
-  -- exports
-  self.class.outputFolio = function (self_)
-    SU.deprecated("class:outputFolio", nil, "0.13.0", "0.15.0", _deprecate)
-    return _outputFolio(self_)
-  end
+  self:export("outputFolio", self.outputFolio)
 end
 
 function package:registerCommands ()

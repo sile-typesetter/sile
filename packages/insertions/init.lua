@@ -447,10 +447,9 @@ function package:_init ()
 
   end)
 
-  -- exports
-  self.class.initInsertionClass = initInsertionClass
-  self.class.thisPageInsertionBoxForClass = thisPageInsertionBoxForClass
-  self.class.insert = insert
+  self:export("initInsertionClass", initInsertionClass)
+  self:export("thisPageInsertionBoxForClass", thisPageInsertionBoxForClass)
+  self:export("insert", insert)
 
 end
 

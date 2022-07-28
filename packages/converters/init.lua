@@ -5,14 +5,6 @@ package._name = "converters"
 
 local lfs = require('lfs')
 
-local register = function (sourceExt, targetExt, command)
-  table.insert(SILE.scratch.converters, {
-    sourceExt = sourceExt,
-    targetExt = targetExt,
-    command = command
-  })
-end
-
 local applyConverter = function (source, converter)
   local extLen = string.len(converter.sourceExt)
   local targetFile = string.sub(source, 1, -extLen-1) .. converter.targetExt
@@ -45,17 +37,6 @@ local applyConverter = function (source, converter)
   end
 end
 
-local checkConverters = function (source)
-  for _, converter in ipairs(SILE.scratch.converters) do
-    local extLen = string.len(converter.sourceExt)
-    if ((string.len(source) > extLen) and
-        (string.sub(source, -extLen) == converter.sourceExt)) then
-      return applyConverter(source, converter)
-    end
-  end
-  return source -- No conversion needed.
-end
-
 -- TODO Make this a standard utility function
 local function extendCommand (name, func)
   -- Wrap an existing command
@@ -69,6 +50,25 @@ local function extendCommand (name, func)
   end
 end
 
+function package.register (_, sourceExt, targetExt, command)
+  table.insert(SILE.scratch.converters, {
+    sourceExt = sourceExt,
+    targetExt = targetExt,
+    command = command
+  })
+end
+
+function package.checkConverters (_, source)
+  for _, converter in ipairs(SILE.scratch.converters) do
+    local extLen = string.len(converter.sourceExt)
+    if ((string.len(source) > extLen) and
+        (string.sub(source, -extLen) == converter.sourceExt)) then
+      return applyConverter(source, converter)
+    end
+  end
+  return source -- No conversion needed.
+end
+
 function package:_init ()
 
   base._init(self)
@@ -78,7 +78,7 @@ function package:_init ()
   end
 
   extendCommand("include", function (options, content, original)
-    local result = checkConverters(options.src)
+    local result = self:checkConverters(options.src)
     if not result then
       options["src"] = result
       original(options, content)
@@ -86,27 +86,26 @@ function package:_init ()
   end)
 
   extendCommand("img", function (options, content, original)
-    local result = checkConverters(options.src)
+    local result = self:checkConverters(options.src)
     if not result then
       options["src"] = result
       original(options, content)
     end
   end)
 
-  -- exports
-  self.class.register = register
-  self.class.check = checkConverters
+  self:deprecatedExport("register", self.register)
+  self:deprecatedExport("checkConverters", self.checkConverters)
 
 end
 
 function package:registerCommands ()
 
   self.class:registerCommand("converters:register", function (options, _)
-    register(options.from, options.to, options.command)
+    self:register(options.from, options.to, options.command)
   end)
 
   self.class:registerCommand("converters:check", function (options, _)
-    checkConverters(options.source)
+    self:checkConverters(options.source)
   end)
 
 end

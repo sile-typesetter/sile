@@ -3,52 +3,52 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "counters"
 
-local function getCounter (class, id)
-  if not id then
-    SU.deprecated("class.getCounter", "class:getCounter", "0.13.0", "0.15.0")
-    class, id = SILE.documentState.documentClass, class
-  end
+SILE.formatCounter = function (counter)
+  SU.deprecated("SILE.formatCounter", "class:formatCounter", "0.13.0", "0.15.0")
+  return package.formatCounter(nil, counter)
+end
+
+SILE.formatMultilevelCounter = function (counter, options)
+  SU.deprecated("SILE.formatMultilevelCounter", "class:formatMultilevelCounter", "0.13.0", "0.15.0")
+  return package.formatMultilevelCounter(nil, counter, options)
+end
+
+local function getCounter (_, id)
   if not SILE.scratch.counters[id] then
-    SILE.scratch.counters[id] = { value = 0, display = "arabic", format = class.formatCounter }
+    SILE.scratch.counters[id] = {
+      value = 0,
+      display = "arabic",
+      format = package.formatCounter
+    }
   end
   return SILE.scratch.counters[id]
 end
 
-local function getMultilevelCounter (class, id)
-  if not id then
-    SU.deprecated("class.getMultilevelCounter", "class:getMultilevelCounter", "0.13.0", "0.15.0")
-    class, id = SILE.documentState.documentClass, class
-  end
+local function getMultilevelCounter (_, id)
   local counter = SILE.scratch.counters[id]
   if not counter then
-    counter = { value= { 0 }, display= { "arabic" }, format = class.formatMultilevelCounter }
+    counter = {
+      value= { 0 },
+      display= { "arabic" },
+      format = package.formatMultilevelCounter
+    }
     SILE.scratch.counters[id] = counter
   end
   return counter
 end
 
-local function formatCounter (_, counter)
+function package.formatCounter (_, counter)
   return SU.formatNumber(counter.value, counter.display)
 end
 
-local function formatMultilevelCounter (_, counter, options)
+function package:formatMultilevelCounter (counter, options)
   local maxlevel = options and options.level or #counter.value
   local minlevel = options and options.minlevel or 1
   local out = {}
   for x = minlevel, maxlevel do
-    out[x - minlevel + 1] = formatCounter(nil, { display = counter.display[x], value = counter.value[x] })
+    out[x - minlevel + 1] = self:formatCounter({ display = counter.display[x], value = counter.value[x] })
   end
   return table.concat(out, ".")
-end
-
-SILE.formatCounter = function (counter)
-  SU.deprecated("SILE.formatCounter", "class:formatCounter", "0.13.0", "0.15.0")
-  return formatCounter(nil, counter)
-end
-
-SILE.formatMultilevelCounter = function (counter, options)
-  SU.deprecated("SILE.formatMultilevelCounter", "class:formatMultilevelCounter", "0.13.0", "0.15.0")
-  return formatMultilevelCounter(nil, counter, options)
 end
 
 function package:_init ()
@@ -59,11 +59,11 @@ function package:_init ()
     SILE.scratch.counters = {}
   end
 
-  --exports
-  self.class.formatCounter = formatCounter
-  self.class.formatMultilevelCounter = formatMultilevelCounter
-  self.class.getCounter = getCounter
-  self.class.getMultilevelCounter = getMultilevelCounter
+  self:export("getCounter", getCounter)
+  self:export("getMultilevelCounter", getMultilevelCounter)
+
+  self:deprecatedExport("formatCounter", self.formatCounter)
+  self:deprecatedExport("formatMultilevelCounter", self.formatMultilevelCounter)
 
 end
 
@@ -91,7 +91,7 @@ function package:registerCommands ()
   class:registerCommand("show-counter", function (options, _)
     local counter = class:getCounter(options.id)
     if options.display then counter.display = options.display end
-    SILE.typesetter:setpar(class:formatCounter(counter))
+    SILE.typesetter:setpar(self:formatCounter(counter))
   end, "Outputs the value of counter <id>, optionally displaying it with the <display> format.")
 
   class:registerCommand("increment-multilevel-counter", function (options, _)
@@ -121,7 +121,7 @@ function package:registerCommands ()
     local counter = class:getMultilevelCounter(options.id)
     if options.display then counter.display[#counter.value] = options.display end
 
-    SILE.typesetter:typeset(class:formatMultilevelCounter(counter, options))
+    SILE.typesetter:typeset(self:formatMultilevelCounter(counter, options))
   end, "Outputs the value of the multilevel counter <id>, optionally displaying it with the <display> format.")
 
 end

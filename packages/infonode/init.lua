@@ -29,7 +29,7 @@ function _info:outputYourself ()
   end
 end
 
-local function _newPageInfo (_)
+local function newPageInfo (_)
   SILE.scratch.info = { thispage = {} }
 end
 
@@ -49,13 +49,12 @@ function package:_init ()
     SILE.scratch.info = { thispage = {} }
   end
 
-  self.class:registerHook("newpage", _newPageInfo)
+  self.class:registerHook("newpage", newPageInfo)
 
-  -- exports
-  self.class.newPageInfo = function (self_)
+  self:deprecatedExport("newPageInfo", function (class)
     SU.deprecated("class:newPageInfo", nil, "0.13.0", "0.15.0", _deprecate)
-    return _newPageInfo(self_)
-  end
+    return class:newPageInfo()
+  end)
 
 end
 

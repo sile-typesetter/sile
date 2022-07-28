@@ -31,7 +31,7 @@ local function oddPage ()
   return tp == "odd"
 end
 
-local function _switchPage (class)
+local function switchPage (class)
   if class:oddPage() then
     tp = "even"
     class:switchMaster(class.evenPageMaster)
@@ -57,20 +57,19 @@ function package:_init (options)
     SU.error("Cannot load twoside package before masters.")
   end
 
-  -- exports
-  self.class.oddPage = oddPage
-  self.class.mirrorMaster = mirrorMaster
-  self.class.switchPage = function (class)
+  self:export("oddPage", oddPage)
+  self:export("mirrorMaster", mirrorMaster)
+  self:export("switchPage", function (class)
     SU.deprecated("class:switchPage", nil, "0.13.0", "0.15.0", _deprecate)
-    return _switchPage(class)
-  end
+    return class:switchPage()
+  end)
 
   self.class.oddPageMaster = options.oddPageMaster
   self.class.evenPageMaster = options.evenPageMaster
-  self.class:registerPostinit(function (self_)
-    self_:mirrorMaster(options.oddPageMaster, options.evenPageMaster)
+  self.class:registerPostinit(function (class)
+    class:mirrorMaster(options.oddPageMaster, options.evenPageMaster)
   end)
-  self.class:registerHook("newpage", _switchPage)
+  self.class:registerHook("newpage", switchPage)
 
 end
 

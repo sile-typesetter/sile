@@ -72,8 +72,8 @@ function package:_init ()
 
   self.class:loadPackage("tate")
 
-  -- exports
-  self.class.declareHanmenFrame = declareHanmenFrame
+  self:export("declareHanmenFrame", declareHanmenFrame)
+
 end
 
 function package:registerCommands ()
