@@ -58,7 +58,7 @@ function package:registerCommands ()
     local processText, processChordName, processChordText
 
     local function insertChord()
-      table.insert(result, class.createCommand(
+      table.insert(result, class.packages.inputfilter:createCommand(
       content.pos, content.col, content.line,
       "ch", { name = chordName }, currentText
       ))

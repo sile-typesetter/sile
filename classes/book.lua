@@ -99,7 +99,7 @@ function class:registerCommands ()
     local number
     if SU.boolean(options.numbering, true) then
       SILE.call("increment-multilevel-counter", { id = "sectioning", level = level })
-      number = self:formatMultilevelCounter(self:getMultilevelCounter("sectioning"))
+      number = self.packages.counters:formatMultilevelCounter(self:getMultilevelCounter("sectioning"))
     end
     if SU.boolean(options.toc, true) then
       SILE.call("tocentry", { level = level, number = number }, SU.subContent(content))

@@ -9,7 +9,7 @@ end
 
 function package:outputFolio (frame)
   if not frame then frame = "folio" end
-  local folio = self.class:formatCounter(SILE.scratch.counters.folio)
+  local folio = self.class.packages.counters:formatCounter(SILE.scratch.counters.folio)
   io.stderr:write("[" .. folio .. "] ")
   if SILE.scratch.counters.folio.off then
     if SILE.scratch.counters.folio.off == 2 then
@@ -33,7 +33,7 @@ function package:outputFolio (frame)
           SILE.settings:set(v, SILE.settings.defaults[v])
         end
 
-        SILE.call("foliostyle", {}, { self.class:formatCounter(SILE.scratch.counters.folio) })
+        SILE.call("foliostyle", {}, { self.class.packages.counters:formatCounter(SILE.scratch.counters.folio) })
         SILE.typesetter:leaveHmode()
         SILE.settings:popState()
       end)

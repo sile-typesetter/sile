@@ -11,7 +11,7 @@ local function _moveTocNodes (class)
   local node = SILE.scratch.info.thispage.toc
   if node then
     for i = 1, #node do
-      node[i].pageno = class:formatCounter(SILE.scratch.counters.folio)
+      node[i].pageno = class.packages.counters:formatCounter(SILE.scratch.counters.folio)
       table.insert(SILE.scratch.tableofcontents, node[i])
     end
   end
