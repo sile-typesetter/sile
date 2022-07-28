@@ -83,9 +83,10 @@ Include an SIL, XML, or other content resource after the input document.
 The value should be a full filename with a path relative to PWD or an absolute path.
 May be specified more than once.
 .TP
-.BR \-u ", " \-\-use= \fImodule\fR
+.BR \-u ", " \-\-use= \fImodule\fR [[\fIparameter=value[,parameter=value]]]\fR
 Load and initialize a class, inputter, shaper, or other module before processing the main input.
-The value should be a loadable module name (with no extension, using \fI.\fR as a path separator) and will be loaded using SILE's module search path.
+The value should be a loadable module name (with no extension, using \fI'.'\fR as a path separator) and will be loaded using SILE's module search path.
+Options may be passed to the module by enclosing \fIkey=value\fR pairs in square brackets following the module name.
 This is particularly useful when the input document is not SIL or a natively recognized XML scheme and SILE needs to be taught new tricks before even trying to read the input file.
 If the module is a document class, it will replace \fIplain\fR as the default class for processing documents that do not specifically identify one to use.
 Because this executes before loading the document, it may even add an input parser or modify an existing one to support new file formats.
