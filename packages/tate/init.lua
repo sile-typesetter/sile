@@ -63,22 +63,20 @@ end
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("tate-frame", function (options, _)
+  self:registerCommand("tate-frame", function (options, _)
     SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newTateFrame(options)
   end, "Declares (or re-declares) a frame on this page.")
 
   -- Eventually will be automatically called by script detection, but for now
   -- called manually
-  class:registerCommand("latin-in-tate", function (_, content)
+  self:registerCommand("latin-in-tate", function (_, content)
     if SILE.typesetter.frame:writingDirection() ~= "TTB" then
       return SILE.process(content)
     end
     local nodes
     local oldT = SILE.typesetter
     local prevDirection = oldT.frame.direction
-    class:loadPackage("rotate")
+    self.class:loadPackage("rotate")
     SILE.settings:temporarily(function()
       local latinTypesetter = pl.class(SILE.defaultTypesetter)
       local dummyFrame = pl.class(SILE.framePrototype)
@@ -121,7 +119,7 @@ function package:registerCommands ()
     end
   end, "Typeset rotated Western text in vertical Japanese")
 
-  class:registerCommand("tate-chu-yoko", function (_, content)
+  self:registerCommand("tate-chu-yoko", function (_, content)
     if SILE.typesetter.frame:writingDirection() ~= "TTB" then return SILE.process(content) end
     -- SILE.typesetter:pushGlue({
     --   width = SILE.length.new({length = SILE.toPoints("0.5zw"),

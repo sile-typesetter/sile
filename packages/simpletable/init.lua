@@ -6,7 +6,6 @@ package._name = "simpletable"
 local tableTag, trTag, tdTag
 
 function package:_init (options)
-
   base._init(self, options)
 
   if not SILE.scratch.simpletable then
@@ -26,15 +25,15 @@ function package:_init (options)
   -- This is a post init calback instead of the usual early command registration
   -- method using our package loader because we don't know what commands to register
   -- until we've been instantiated.
-  self.class:registerPostinit(function (class)
+  self.class:registerPostinit(function (_)
 
-    class:registerCommand(trTag, function(_, content)
+    self:registerCommand(trTag, function(_, content)
       local tbl = SILE.scratch.simpletable.tables[#(SILE.scratch.simpletable.tables)]
       tbl[#tbl+1] = {}
       SILE.process(content)
     end)
 
-    class:registerCommand(tdTag, function(_, content)
+    self:registerCommand(tdTag, function(_, content)
       local tbl = SILE.scratch.simpletable.tables[#(SILE.scratch.simpletable.tables)]
       local row = tbl[#tbl]
       row[#row+1] = {
@@ -44,7 +43,7 @@ function package:_init (options)
       SILE.typesetter.state.nodes[#(SILE.typesetter.state.nodes)] = nil
     end)
 
-    class:registerCommand(tableTag, function(_, content)
+    self:registerCommand(tableTag, function(_, content)
       local tbl = {}
       table.insert(SILE.scratch.simpletable.tables, tbl)
       SILE.settings:temporarily(function ()

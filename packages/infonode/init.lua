@@ -42,25 +42,20 @@ local _deprecate  = [[
 ]]
 
 function package:_init ()
-
   base._init(self)
-
   if not SILE.scratch.info then
     SILE.scratch.info = { thispage = {} }
   end
-
   self.class:registerHook("newpage", newPageInfo)
-
   self:deprecatedExport("newPageInfo", function (class)
     SU.deprecated("class:newPageInfo", nil, "0.13.0", "0.15.0", _deprecate)
     return class:newPageInfo()
   end)
-
 end
 
 function package:registerCommands ()
 
-  self.class:registerCommand("info", function (options, _)
+  self:registerCommand("info", function (options, _)
     SU.required(options, "category", "info node")
     SU.required(options, "value", "info node")
     table.insert(SILE.typesetter.state.nodes, _info({

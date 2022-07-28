@@ -28,6 +28,12 @@ function package.registerRawHandlers (_) end
 
 function package.registerCommands (_) end
 
+-- This gives us a hook to match commands with the packages that registered
+-- them as opposed to core commands or class-provided commands
+function package:registerCommand (name, func, help, pack)
+  self.class:registerCommand(name, func, help, pack)
+end
+
 -- Using this rather than doing the work directly will give us a way to
 -- un-export them if we ever need to unload modules and revert functions
 function package:export (name, func)

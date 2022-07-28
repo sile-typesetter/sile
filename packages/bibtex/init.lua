@@ -56,36 +56,28 @@ local parseBibtex = function (fn)
 end
 
 function package:_init ()
-
   base._init(self)
-
   SILE.scratch.bibtex = { bib = {} }
-
   Bibliography = require("packages.bibtex.bibliography")
-
 end
 
 function package.declareSettings (_)
-
   SILE.settings:declare({
     parameter = "bibtex.style",
     type = "string",
     default = "chicago",
     help = "BibTeX style"
   })
-
 end
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("loadbibliography", function (options, _)
+  self:registerCommand("loadbibliography", function (options, _)
     local file = SU.required(options, "file", "loadbibliography")
     SILE.scratch.bibtex.bib = parseBibtex(file) -- Later we'll do multiple bibliogs, but not now
   end)
 
-  class:registerCommand("bibstyle", function (_, content)
+  self:registerCommand("bibstyle", function (_, content)
     SU.deprecated("\\bibstyle", '\\set[parameter=bibtex.style]', "0.13.2", "0.14.0")
     if type(content) == "table" then
       content = content[1]
@@ -95,7 +87,7 @@ function package:registerCommands ()
     end
   end)
 
-  class:registerCommand("cite", function (options, content)
+  self:registerCommand("cite", function (options, content)
     if not options.key then options.key = content[1] end
     local style = SILE.settings:get("bibtex.style")
     local bibstyle = require("packages.bibtex.styles." .. style)
@@ -107,7 +99,7 @@ function package:registerCommands ()
     SILE.processString(cite, "sil")
   end)
 
-  class:registerCommand("reference", function (options, content)
+  self:registerCommand("reference", function (options, content)
     if not options.key then options.key = SU.contentToString(content) end
     local style = SILE.settings:get("bibtex.style")
     local bibstyle = require("packages.bibtex.styles." .. style)

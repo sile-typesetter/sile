@@ -71,30 +71,23 @@ local function currentMaster (_)
 end
 
 function package:_init (options)
-
   base._init(self, options)
-
   if not SILE.scratch.masters then
     SILE.scratch.masters = {}
   end
-
   self:export("switchMasterOnePage", switchMasterOnePage)
   self:export("switchMaster", switchMaster)
   self:export("defineMaster", defineMaster)
   self:export("defineMasters", defineMasters)
   self:export("currentMaster", currentMaster)
-
   if options then
     self.class:defineMasters(options)
   end
-
 end
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("define-master-template", function(options, content)
+  self:registerCommand("define-master-template", function(options, content)
     SU.required(options, "id", "defining a master")
     SU.required(options, "first-content-frame", "defining a master")
     -- Subvert the <frame> functionality from baseclass
@@ -113,15 +106,15 @@ function package:registerCommands ()
     SILE.frames = sp2
   end)
 
-  class:registerCommand("switch-master-one-page", function (options, _)
+  self:registerCommand("switch-master-one-page", function (options, _)
     SU.required(options, "id", "switching master")
-    switchMasterOnePage(class, options.id)
+    self.class:switchMasterOnePage(options.id)
     SILE.typesetter:leaveHmode()
   end, "Switches the master for the current page")
 
-  class:registerCommand("switch-master", function (options, _)
+  self:registerCommand("switch-master", function (options, _)
     SU.required(options, "id", "switching master")
-    switchMaster(class, options.id)
+    self.class:switchMaster(options.id)
   end, "Switches the master for the current page")
 
 end

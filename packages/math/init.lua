@@ -4,12 +4,9 @@ local package = pl.class(base)
 package._name = "math"
 
 function package:_init ()
-
   base._init(self)
-
   self.class:loadPackage("math.typesetter")
   self.class:loadPackage("math.texlike")
-
 end
 
 function package.declareSettings (_)
@@ -45,24 +42,22 @@ end
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("mathml", function (options, content)
+  self:registerCommand("mathml", function (options, content)
     local mode = (options and options.mode) and options.mode or 'text'
     local mbox
     xpcall(function()
-      mbox = class:ConvertMathML(content, mbox)
+      mbox = self.class:ConvertMathML(content, mbox)
     end, function(err) print(err); print(debug.traceback()) end)
-    class:handleMath(mbox, mode)
+    self.class:handleMath(mbox, mode)
   end)
 
-  class:registerCommand("math", function (options, content)
+  self:registerCommand("math", function (options, content)
     local mode = (options and options.mode) and options.mode or "text"
     local mbox
     xpcall(function()
-      mbox = class:ConvertMathML(class:compileToMathML({}, class:convertTexlike(content)))
+      mbox = self.class:ConvertMathML(self.class:compileToMathML({}, self.class:convertTexlike(content)))
     end, function(err) print(err); print(debug.traceback()) end)
-    class:handleMath(mbox, mode)
+    self.class:handleMath(mbox, mode)
   end)
 
 end

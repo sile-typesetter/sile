@@ -5,15 +5,13 @@ package._name = "verbatim"
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("verbatim:font", function (options, content)
+  self:registerCommand("verbatim:font", function (options, content)
     options.family = options.family or "Hack"
     options.size = options.size or SILE.settings:get("font.size") - 3
     SILE.call("font", options, content)
   end, "The font chosen for the verbatim environment")
 
-  class:registerCommand("verbatim", function (_, content)
+  self:registerCommand("verbatim", function (_, content)
     SILE.typesetter:pushVglue(6)
     SILE.typesetter:leaveHmode()
     SILE.settings:temporarily(function()
@@ -32,7 +30,7 @@ function package:registerCommands ()
     SILE.typesetter:leaveHmode()
   end, "Typesets its contents in a monospaced font.")
 
-  class:registerCommand("obeylines", function (_, content)
+  self:registerCommand("obeylines", function (_, content)
     SILE.settings:temporarily(function()
       SILE.settings:set("typesetter.parseppattern", "\n")
       SILE.process(content)

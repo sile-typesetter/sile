@@ -4,7 +4,6 @@ local package = pl.class(base)
 package._name = "color-fonts"
 
 function package:_init ()
-
   base._init(self)
 
   local harfbuzz = require("shapers.harfbuzz")

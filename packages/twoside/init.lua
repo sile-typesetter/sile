@@ -50,32 +50,27 @@ local _deprecate  = [[
 ]]
 
 function package:_init (options)
-
   base._init(self)
-
   if not SILE.scratch.masters then
     SU.error("Cannot load twoside package before masters.")
   end
-
   self:export("oddPage", oddPage)
   self:export("mirrorMaster", mirrorMaster)
   self:export("switchPage", function (class)
     SU.deprecated("class:switchPage", nil, "0.13.0", "0.15.0", _deprecate)
     return class:switchPage()
   end)
-
   self.class.oddPageMaster = options.oddPageMaster
   self.class.evenPageMaster = options.evenPageMaster
   self.class:registerPostinit(function (class)
     class:mirrorMaster(options.oddPageMaster, options.evenPageMaster)
   end)
   self.class:registerHook("newpage", switchPage)
-
 end
 
 function package:registerCommands ()
 
-  self.class:registerCommand("open-double-page", function()
+  self:registerCommand("open-double-page", function()
     SILE.typesetter:leaveHmode()
     SILE.call("supereject")
     if self.class:oddPage() then

@@ -249,47 +249,41 @@ function package:bidiDisableTypesetter (typesetter)
 end
 
 function package:_init ()
-
   base._init(self)
-
   self:deprecatedExport("reorder", self.reorder)
   self:deprecatedExport("bidiEnableTypesetter", self.bidiEnableTypesetter)
   self:deprecatedExport("bidiDisableTypesetter", self.bidiDisableTypesetter)
-
   if SILE.typesetter then
     self:bidiEnableTypesetter(SILE.typesetter)
   end
-
   self:bidiEnableTypesetter(SILE.defaultTypesetter)
 end
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("thisframeLTR", function (_, _)
+  self:registerCommand("thisframeLTR", function (_, _)
     SILE.typesetter.frame.direction = "LTR"
     SILE.typesetter:leaveHmode()
     SILE.typesetter.frame:newLine()
   end)
 
-  class:registerCommand("thisframedirection", function (options, _)
+  self:registerCommand("thisframedirection", function (options, _)
     SILE.typesetter.frame.direction = SU.required(options, "direction", "frame direction")
     SILE.typesetter:leaveHmode()
     SILE.typesetter.frame:init()
   end)
 
-  class:registerCommand("thisframeRTL", function (_, _)
+  self:registerCommand("thisframeRTL", function (_, _)
     SILE.typesetter.frame.direction = "RTL"
     SILE.typesetter:leaveHmode()
     SILE.typesetter.frame:newLine()
   end)
 
-  class:registerCommand("bidi-on", function (_, _)
+  self:registerCommand("bidi-on", function (_, _)
     self:bidiEnableTypesetter(SILE.typesetter)
   end)
 
-  class:registerCommand("bidi-off", function (_, _)
+  self:registerCommand("bidi-off", function (_, _)
     self:bidiDisableTypesetter(SILE.typesetter)
   end)
 

@@ -36,31 +36,25 @@ local titlecase = function (class, input, extraArgs)
 end
 
 function package:_init ()
-
   base._init(self)
-
   self.class:loadPackage("inputfilter")
-
   self:deprecatedExport("uppercase", uppercase)
   self:deprecatedExport("lowercase", lowercase)
   self:deprecatedExport("titlecase", titlecase)
-
 end
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("uppercase", function(options, content)
-    SILE.process(class.transformContent(content, uppercase, options))
+  self:registerCommand("uppercase", function(options, content)
+    SILE.process(self.class.packages.inputfilter:transformContent(content, uppercase, options))
   end, "Typeset the enclosed text as uppercase")
 
-  class:registerCommand("lowercase", function(options, content)
-    SILE.process(class.transformContent(content, lowercase, options))
+  self:registerCommand("lowercase", function(options, content)
+    SILE.process(self.class.packages.inputfilter:transformContent(content, lowercase, options))
   end, "Typeset the enclosed text as lowercase")
 
-  class:registerCommand("titlecase", function(options, content)
-    SILE.process(class.transformContent(content, titlecase, options))
+  self:registerCommand("titlecase", function(options, content)
+    SILE.process(self.class.packages.inputfilter:transformContent(content, titlecase, options))
   end, "Typeset the enclosed text as titlecase")
 
 end

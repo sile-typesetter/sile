@@ -5,7 +5,7 @@ package._name = "rebox"
 
 function package:registerCommands ()
 
-  self.class:registerCommand("rebox", function (options, content)
+  self:registerCommand("rebox", function (options, content)
     local hbox = SILE.call("hbox", {}, content)
     table.remove(SILE.typesetter.state.nodes) -- steal it back
     if options.width then hbox.width = SILE.length(options.width) end

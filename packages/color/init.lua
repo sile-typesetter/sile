@@ -5,7 +5,7 @@ package._name = "color"
 
 function package:registerCommands ()
 
-  self.class:registerCommand("color", function (options, content)
+  self:registerCommand("color", function (options, content)
     local color = SILE.color(options.color or "black")
     SILE.typesetter:pushHbox({
       outputYourself = function () SILE.outputter:pushColor(color) end

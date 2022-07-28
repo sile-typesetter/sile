@@ -140,23 +140,18 @@ end
 local oldPageBuilder, oldLeadingFor, oldPushVglue, oldPushExplicitVglue
 
 function package:_init ()
-
   base._init(self)
-
   gridSpacing = SILE.measurement()
-
 end
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("grid:debug", function (_, _)
+  self:registerCommand("grid:debug", function (_, _)
     debugGrid()
     SILE.typesetter:registerNewFrameHook(debugGrid)
   end)
 
-  class:registerCommand("grid", function (options, _)
+  self:registerCommand("grid", function (options, _)
     SILE.typesetter.state.grid = true
     SU.required(options, "spacing", "grid package")
     gridSpacing = SILE.parseComplexFrameDimension(options.spacing)
@@ -174,7 +169,7 @@ function package:registerCommands ()
     SILE.typesetter:registerNewFrameHook(startGridInFrame)
   end, "Begins typesetting on a grid spaced at <spacing> intervals.")
 
-  class:registerCommand("no-grid", function (_, _)
+  self:registerCommand("no-grid", function (_, _)
     SILE.typesetter.state.grid = false
     SILE.typesetter.leadingFor = oldLeadingFor
     SILE.typesetter.pushVglue = oldPushVglue

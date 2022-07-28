@@ -5,7 +5,7 @@ package._name = "raiselower"
 
 function package:registerCommands ()
 
-  self.class:registerCommand("raise", function (options, content)
+  self:registerCommand("raise", function (options, content)
     local height = options.height or 0
     height = SILE.parseComplexFrameDimension(height)
     SILE.typesetter:pushHbox({
@@ -24,7 +24,7 @@ function package:registerCommands ()
       })
   end, "Raises the contents of the command by the amount specified in the <height> option")
 
-  self.class:registerCommand("lower", function (options, content)
+  self:registerCommand("lower", function (options, content)
     SILE.call("raise", { height = "-" .. options.height }, content)
   end, "Lowers the contents of the command by the amount specified in the <height> option")
 

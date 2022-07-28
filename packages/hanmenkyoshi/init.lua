@@ -67,18 +67,14 @@ local declareHanmenFrame = function (class, id, spec)
 end
 
 function package:_init ()
-
   base._init(self)
-
   self.class:loadPackage("tate")
-
   self:export("declareHanmenFrame", declareHanmenFrame)
-
 end
 
 function package:registerCommands ()
 
-  self.class:registerCommand("show-hanmen", function (_, _)
+  self:registerCommand("show-hanmen", function (_, _)
     local frame = SILE.typesetter.frame
     if not frame.hanmen then
       SU.error("show-hanmen called on a frame with no hanmen")

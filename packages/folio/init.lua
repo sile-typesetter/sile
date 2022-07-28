@@ -42,38 +42,33 @@ function package:outputFolio (frame)
 end
 
 function package:_init (options)
-
   base._init(self)
-
   self.class:loadPackage("counters")
   SILE.scratch.counters.folio = { value = 1, display = "arabic" }
   self.class:registerHook("newpage", function() self:incrementFolio() end)
   self.class:registerHook("endpage", function () self:outputFolio(options and options.frame) end)
-
   self:export("outputFolio", self.outputFolio)
 end
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("folios", function (_, _)
+  self:registerCommand("folios", function (_, _)
     SILE.scratch.counters.folio.off = false
   end)
 
-  class:registerCommand("nofolios", function (_, _)
+  self:registerCommand("nofolios", function (_, _)
     SILE.scratch.counters.folio.off = true
   end)
 
-  class:registerCommand("nofoliothispage", function (_, _)
+  self:registerCommand("nofoliothispage", function (_, _)
     SILE.scratch.counters.folio.off = 2
   end)
 
-  class:registerCommand("nofoliosthispage", function (_, _)
+  self:registerCommand("nofoliosthispage", function (_, _)
     SU.deprecated("nofoliosthispage", "nofoliothispage", "0.12.1", "0.14.0")
   end, "Deprecated")
 
-  class:registerCommand("foliostyle", function (_, content)
+  self:registerCommand("foliostyle", function (_, content)
     SILE.call("center", {}, content)
   end)
 

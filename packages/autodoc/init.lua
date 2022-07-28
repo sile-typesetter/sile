@@ -100,35 +100,26 @@ local function typesetAST (options, content)
 end
 
 function package:_init (options)
-
   base._init(self)
-
   self.class:loadPackage("inputfilter")
-
   if options then pl.tablex.update(theme, options) end
-
   if not SILE.scratch.autodoc then
     SILE.scratch.autodoc = {
       theme = theme
     }
   end
-
 end
 
 function package.declareSettings (_)
-
   SILE.settings:declare({
     parameter = "autodoc.highlighting",
     default = false,
     type = "boolean",
     help = "Whether audodoc enables syntax highlighting"
   })
-
 end
 
 function package:registerCommands ()
-
-  local class = self.class
 
   -- Documenting a setting with good line-breaks
   local settingFilter = function (node, content)
@@ -139,7 +130,7 @@ function package:registerCommands ()
         result[#result+1] = token.string
       else
         result[#result+1] = token.separator
-        result[#result+1] = class.packages.inputfilter:createCommand(
+        result[#result+1] = self.class.packages.inputfilter:createCommand(
         content.pos, content.col, content.line,
         "penalty", { penalty = 100 }
         )
@@ -148,7 +139,7 @@ function package:registerCommands ()
     return result
   end
 
-  class:registerCommand("package-documentation", function (_, content)
+  self:registerCommand("package-documentation", function (_, content)
     local packname = content[1]
     SU.debug("autodoc", packname)
     local pkg = require("packages."..packname)
@@ -157,19 +148,19 @@ function package:registerCommands ()
     end
     if type(pkg.registerCommands) == "function" then
       -- faking an uninstantiated package
-      pkg.class = class
+      pkg.class = self.class
       pkg.registerCommands(pkg)
     end
     SILE.processString(pkg.documentation)
   end)
 
-  class:registerCommand("autodoc:package:style", function (_, content)
+  self:registerCommand("autodoc:package:style", function (_, content)
     SILE.call("font", { weight = 700 }, function()
       colorWrapper("package", content)
     end)
   end)
 
-  class:registerCommand("autodoc:code:style", function (options, content)
+  self:registerCommand("autodoc:code:style", function (options, content)
     -- options.type is used to distinguish the type of code element and style
     -- it accordingly: "ast", "setting", "environment" shall select the font
     -- (by default, using \code) and color, the other (lower-level in an AST)
@@ -189,7 +180,7 @@ function package:registerCommands ()
     end
   end)
 
-  class:registerCommand("autodoc:setting", function (options, content)
+  self:registerCommand("autodoc:setting", function (options, content)
     if type(content) ~= "table" then SU.error("Expected a table content") end
     if #content ~= 1 then SU.error("Expected a single element") end
     local name = type(content[1] == "string") and content[1]
@@ -200,19 +191,19 @@ function package:registerCommands ()
       SILE.settings:get(name) -- will issue an error if unknown
     end
     -- Inserts breakpoints after dots
-    local nameWithBreaks = class.transformContent(content, settingFilter)
+    local nameWithBreaks = self.class.transformContent(content, settingFilter)
 
     SILE.call("autodoc:code:style", { type = "setting" }, nameWithBreaks)
   end, "Outputs a settings name in code, ensuring good line breaks and possibly checking their existence.")
 
-  class:registerCommand("autodoc:internal:ast", function (options, content)
+  self:registerCommand("autodoc:internal:ast", function (options, content)
     if type(content) ~= "table" then SU.error("Expected a table content") end
     SILE.call("autodoc:code:style", { type = "ast" }, function ()
       typesetAST(options, content)
     end)
   end, "Outputs a nicely typeset AST (low-level command).")
 
-  class:registerCommand("autodoc:internal:bracketed", function (_, content)
+  self:registerCommand("autodoc:internal:bracketed", function (_, content)
     SILE.typesetter:typeset("⟨")
     SILE.call("autodoc:code:style", { type = "bracketed" }, function()
       SILE.call("em", {}, content)
@@ -221,7 +212,7 @@ function package:registerCommands ()
     SILE.typesetter:typeset("⟩")
   end, "Outputs a nicely formatted user-given value within <brackets>.")
 
-  class:registerCommand("autodoc:value", function (_, content)
+  self:registerCommand("autodoc:value", function (_, content)
     local value = type(content) == "table" and content[1] or content
     if type(value) ~= "string" then SU.error("Expected a string") end
 
@@ -237,7 +228,7 @@ function package:registerCommands ()
 
   -- Documenting a command, benefiting from AST parsing
 
-  class:registerCommand("autodoc:command", function (options, content)
+  self:registerCommand("autodoc:command", function (options, content)
     if type(content) ~= "table" then SU.error("Expected a table content") end
     if type(content[1]) ~= "table" then SU.error("Expected a command, got "..type(content[1]).." '"..content[1].."'") end
 
@@ -246,7 +237,7 @@ function package:registerCommands ()
 
   -- Documenting a parameter
 
-  class:registerCommand("autodoc:parameter", function (_, content)
+  self:registerCommand("autodoc:parameter", function (_, content)
     if type(content) ~= "table" then SU.error("Expected a table content") end
     if #content ~= 1 then SU.error("Expected a single element") end
     local param = type(content[1] == "string") and content[1]
@@ -269,7 +260,7 @@ function package:registerCommands ()
 
   -- Documenting an environment
 
-  class:registerCommand("autodoc:environment", function (options, content)
+  self:registerCommand("autodoc:environment", function (options, content)
     if type(content) ~= "table" then SU.error("Expected a table content") end
     if #content ~= 1 then SU.error("Expected a single element") end
     local name = type(content[1] == "string") and content[1]
@@ -284,7 +275,7 @@ function package:registerCommands ()
 
   -- Documenting a package name
 
-  class:registerCommand("autodoc:package", function (_, content)
+  self:registerCommand("autodoc:package", function (_, content)
     if type(content) ~= "table" then SU.error("Expected a table content") end
     if #content ~= 1 then SU.error("Expected a single element") end
     local name = type(content[1] == "string") and content[1]

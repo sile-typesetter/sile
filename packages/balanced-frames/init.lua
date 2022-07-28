@@ -73,20 +73,17 @@ local function buildPage (typesetter, independent)
 end
 
 function pack:_init (class)
-
   base._init(self, class)
-
   if not unbalanced_buildPage then
     unbalanced_buildPage = SILE.typesetter.buildPage
     SILE.typesetter.buildPage = buildPage
     SILE.defaultTypesetter.buildPage = buildPage
   end
-
 end
 
 function pack:registerCommands ()
 
-  self.class:registerCommand("balancecolumns", function (_, _)
+  self:registerCommand("balancecolumns", function (_, _)
     SILE.typesetter:leaveHmode()
     SILE.call("penalty", { penalty = BALANCE_PENALTY })
   end)

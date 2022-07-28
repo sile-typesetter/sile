@@ -5,17 +5,15 @@ package._name = "xmltricks"
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("xmltricks:ignore", function (_, content)
+  self:registerCommand("xmltricks:ignore", function (_, content)
     for token in SU.gtoke(content[1]) do
       if token.string then SILE.call("define", { command = token.string}, function() end) end
     end
   end)
 
-  class:registerCommand("xmltricks:passthru", function (_, content)
+  self:registerCommand("xmltricks:passthru", function (_, content)
     for token in SU.gtoke(content[1]) do
-      if token.string then class:registerCommand(token.string, function(_, c) SILE.process(c) end) end
+      if token.string then self:registerCommand(token.string, function(_, c) SILE.process(c) end) end
     end
   end)
 

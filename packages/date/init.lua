@@ -17,16 +17,13 @@ function package.date (_, options)
 end
 
 function package:_init ()
-
   base._init(self)
-
   self:deprecatedExport("date", self.date)
-
 end
 
 function package:registerCommands ()
 
-  self.class:registerCommand("date", function (options, _)
+  self:registerCommand("date", function (options, _)
     local datestring = self:date(options)
     SILE.typesetter:typeset(datestring)
   end, "Output a timestamp using the system date function")
