@@ -1,0 +1,88 @@
+\begin[class=plain]{document}
+
+\script[src=packages/math]
+
+Positive space commands:
+
+\begin{math}
+  \mi{thin}\thinspace
+  \mi{med}\medspace
+  \mi{thick}\thickspace
+  \mi{en}\enspace
+  \mi{quad}\quad
+  \mi{qquad}\qquad
+  \mi{end}
+\end{math}
+
+\par
+\medskip
+Positive space commands (aliases):
+
+\begin{math}
+  \mi{thin}\,
+  \mi{med}\>
+  \mi{thick}\;
+  \mi{en}\enskip
+  \mi{end}
+\end{math}
+
+\par
+\medskip
+Positive spaces in subscripts:
+
+\begin{math}
+  x_{
+    \mi{thin}\thinspace
+    \mi{med}\medspace
+    \mi{thick}\thickspace
+    \mi{en}\enspace
+    \mi{quad}\quad
+    \mi{qquad}\qquad
+    \mi{end}_{
+      \mi{thin}\thinspace
+      \mi{med}\medspace
+      \mi{thick}\thickspace
+      \mi{en}\enspace
+      \mi{quad}\quad
+      \mi{qquad}\qquad
+      \mi{end}
+    }
+  }
+\end{math}
+
+\medskip
+Negative space commands:
+
+\begin{math}
+  \mi{nthin}\negthinspace
+  \mi{nmed}\negmedspace
+  \mi{nthick}\negthickspace
+  \mi{end}
+\end{math}
+
+\medskip
+Negative space commands (alias):
+
+\begin{math}
+  \mi{nthin}\!
+  \mi{end}
+\end{math}
+
+\medskip
+Negative spaces in subscripts:
+
+\begin{math}
+  x_{
+    \mi{nthin}\negthinspace
+    \mi{nmed}\negmedspace
+    \mi{nthick}\negthickspace
+    \mi{end}_{
+      \mi{nthin}\negthinspace
+      \mi{nmed}\negmedspace
+      \mi{nthick}\negthickspace
+      \mi{end}
+    }
+  }
+\end{math}
+
+\end{document}

@@ -409,6 +409,22 @@ compileToMathML(nil, {}, convertTexlike(nil, {[==[
   \def{frac}{\mfrac{#1}{#2}}
   \def{bi}{\mi[mathvariant=bold-italic]{#1}}
   \def{dsi}{\mi[mathvariant=double-struck]{#1}}
+
+  % Standard spaces gleaned from plain TeX
+  \def{thinspace}{\mspace[width=0.16667em]}
+  \def{negthinspace}{\mspace[width=-0.16667em]}
+  \def{,}{\thinspace}
+  \def{!}{\negthinspace}
+  \def{medspace}{\mspace[width=0.22222em plus 0.11111em minus 0.22222em]}
+  \def{negmedspace}{\mspace[width=-0.22222em plus 0.11111em minus 0.22222em]}
+  \def{>}{\medspace}
+  \def{thickspace}{\mspace[width=0.27778em plus 0.27778em]}
+  \def{negthickspace}{\mspace[width=-0.27778em plus 0.27778em]}
+  \def{;}{\thickspace}
+  \def{enspace}{\mspace[width=1en]}
+  \def{enskip}{\enspace}
+  \def{quad}{\mspace[width=1em]}
+  \def{qquad}{\mspace[width=2em]}
 ]==]}))
 
 return {

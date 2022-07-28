@@ -763,7 +763,11 @@ elements.space = pl.class({
     self.height = height
     self.depth = depth
   end,
-  shape = function (_) end,
+  shape = function (self)
+    self.width = self.width:absolute() * self:getScaleDown()
+    self.height = self.height:absolute() * self:getScaleDown()
+    self.depth = self.depth:absolute() * self:getScaleDown()
+  end,
   output = function (_) end
 })
 
