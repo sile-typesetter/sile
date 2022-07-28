@@ -260,17 +260,15 @@ end
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("enumerate", function (options, content)
+  self:registerCommand("enumerate", function (options, content)
     self:doNestedList("enumerate", options, content)
   end)
 
-  class:registerCommand("itemize", function (options, content)
+  self:registerCommand("itemize", function (options, content)
     self:doNestedList("itemize", options, content)
   end)
 
-  class:registerCommand("item", function (options, content)
+  self:registerCommand("item", function (options, content)
     if not content._lists_ then
       SU.error("The item command shall not be called outside a list")
     end

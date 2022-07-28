@@ -34,20 +34,18 @@ end
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("pullquote:font", function (_, _)
+  self:registerCommand("pullquote:font", function (_, _)
   end, "The font chosen for the pullquote environment")
 
-  class:registerCommand("pullquote:author-font", function (_, _)
+  self:registerCommand("pullquote:author-font", function (_, _)
     SILE.settings:set("font.style", "italic")
   end, "The font style with which to typeset the author attribution.")
 
-  class:registerCommand("pullquote:mark-font", function (_, _)
+  self:registerCommand("pullquote:mark-font", function (_, _)
     SILE.settings:set("font.family", "Libertinus Serif")
   end, "The font from which to pull the quotation marks.")
 
-  class:registerCommand("pullquote", function (options, content)
+  self:registerCommand("pullquote", function (options, content)
     local author = options.author or nil
     local scale = options.scale or 3
     local color = options.color or "#999999"

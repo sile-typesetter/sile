@@ -64,10 +64,8 @@ end
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("increment-counter", function (options, _)
-    local counter = self.class.packages.counters:getCounter(options.id)
+  self:registerCommand("increment-counter", function (options, _)
+    local counter = self.class:getCounter(options.id)
     if (options["set-to"]) then
       counter.value = tonumber(options["set-to"])
     else
@@ -76,21 +74,21 @@ function package:registerCommands ()
     if options.display then counter.display = options.display end
   end, "Increments the counter named by the <id> option")
 
-  class:registerCommand("set-counter", function (options, _)
-    local counter = self.class.packages.counters:getCounter(options.id)
+  self:registerCommand("set-counter", function (options, _)
+    local counter = self.class:getCounter(options.id)
     if options.value then counter.value = tonumber(options.value) end
     if options.display then counter.display = options.display end
   end, "Sets the counter named by the <id> option to <value>; sets its display type (roman/Roman/arabic) to type <display>.")
 
 
-  class:registerCommand("show-counter", function (options, _)
-    local counter = self.class.packages.counters:getCounter(options.id)
+  self:registerCommand("show-counter", function (options, _)
+    local counter = self.class:getCounter(options.id)
     if options.display then counter.display = options.display end
     SILE.typesetter:setpar(self:formatCounter(counter))
   end, "Outputs the value of counter <id>, optionally displaying it with the <display> format.")
 
-  class:registerCommand("increment-multilevel-counter", function (options, _)
-    local counter = self.class.packages.counters:getMultilevelCounter(options.id)
+  self:registerCommand("increment-multilevel-counter", function (options, _)
+    local counter = self.class:getMultilevelCounter(options.id)
     local currentLevel = #counter.value
     local level = tonumber(options.level) or currentLevel
     if level == currentLevel then
@@ -112,8 +110,8 @@ function package:registerCommands ()
     if options.display then counter.display[currentLevel] = options.display end
   end)
 
-  class:registerCommand("show-multilevel-counter", function (options, _)
-    local counter = self.class.packages.counters:getMultilevelCounter(options.id)
+  self:registerCommand("show-multilevel-counter", function (options, _)
+    local counter = self.class:getMultilevelCounter(options.id)
     if options.display then counter.display[#counter.value] = options.display end
 
     SILE.typesetter:typeset(self:formatMultilevelCounter(counter, options))

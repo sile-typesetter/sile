@@ -28,7 +28,7 @@ end
 
 function package:registerCommands ()
 
-  self.class:registerCommand("boustrophedon", function (_, content)
+  self:registerCommand("boustrophedon", function (_, content)
     SILE.typesetter:leaveHmode()
     local saveBoxup = SILE.typesetter.boxUpNodes
     local swaps = 0

@@ -18,7 +18,7 @@ end
 
 function package:registerCommands ()
 
-  self.class:registerCommand("background", function (options, _)
+  self:registerCommand("background", function (options, _)
     options.color = options.color or "white"
     options.allpages = options.allpages or true
     outputBackground(options.color)

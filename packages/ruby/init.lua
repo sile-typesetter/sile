@@ -55,11 +55,11 @@ end
 
 function package:registerCommands ()
 
-  self.class:registerCommand("ruby:font", function (_, _)
+  self:registerCommand("ruby:font", function (_, _)
     SILE.call("font", { size = "0.6zw", weight = 800 })
   end)
 
-  self.class:registerCommand("ruby", function (options, content)
+  self:registerCommand("ruby", function (options, content)
     local reading = SU.required(options, "reading", "\\ruby")
     SILE.typesetter:setpar("")
 

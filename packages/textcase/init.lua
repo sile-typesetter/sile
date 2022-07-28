@@ -45,9 +45,7 @@ end
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("uppercase", function(options, content)
+  self:registerCommand("uppercase", function(options, content)
     SILE.process(self.class.packages.inputfilter:transformContent(content, uppercase, options))
   end, "Typeset the enclosed text as uppercase")
 
@@ -55,7 +53,7 @@ function package:registerCommands ()
     SILE.process(self.class.packages.inputfilter:transformContent(content, lowercase, options))
   end, "Typeset the enclosed text as lowercase")
 
-  class:registerCommand("titlecase", function(options, content)
+  self:registerCommand("titlecase", function(options, content)
     SILE.process(self.class.packages.inputfilter:transformContent(content, titlecase, options))
   end, "Typeset the enclosed text as titlecase")
 

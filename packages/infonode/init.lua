@@ -55,7 +55,7 @@ end
 
 function package:registerCommands ()
 
-  self.class:registerCommand("info", function (options, _)
+  self:registerCommand("info", function (options, _)
     SU.required(options, "category", "info node")
     SU.required(options, "value", "info node")
     table.insert(SILE.typesetter.state.nodes, _info({

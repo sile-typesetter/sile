@@ -70,7 +70,7 @@ end
 
 function package:registerCommands ()
 
-  self.class:registerCommand("open-double-page", function()
+  self:registerCommand("open-double-page", function()
     SILE.typesetter:leaveHmode()
     SILE.call("supereject")
     if self.class:oddPage() then

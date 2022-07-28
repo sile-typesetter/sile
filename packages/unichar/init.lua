@@ -5,7 +5,7 @@ package._name = "unichar"
 
 function package:registerCommands ()
 
-  self.class:registerCommand("unichar", function(_, content)
+  self:registerCommand("unichar", function(_, content)
     local cp = content[1]
     if type(cp) ~= "string" then SU.error("Bad argument to \\unicode") end
     local hlist = SILE.typesetter.state.nodes

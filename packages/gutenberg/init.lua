@@ -5,11 +5,11 @@ package._name = "gutenberg"
 
 function package:registerCommands ()
 
-  self.class:registerCommand("alt", function (_, _)
+  self:registerCommand("alt", function (_, _)
     SU.deprecated("\\alt", "\\alternative", "0.10.0", "0.14.0")
   end, "Deprecated")
 
-  self.class:registerCommand("alternative", function (_, content)
+  self:registerCommand("alternative", function (_, content)
     local alts = {}
     for _, fragment in ipairs(content) do
       SILE.call("hbox", {}, { fragment })

@@ -93,7 +93,7 @@ end
 
 function package:registerCommands ()
 
-  self.class:registerCommand("pdf:structure", function (options, content)
+  self:registerCommand("pdf:structure", function (options, content)
     local notetype = SU.required(options, "type", "pdf structure")
     local node = stNode(notetype)
     addChild(node)

@@ -50,9 +50,7 @@ end
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("hrule", function (options, _)
+  self:registerCommand("hrule", function (options, _)
     local width = SU.cast("length", options.width)
     local height = SU.cast("length", options.height)
     local depth = SU.cast("length", options.depth)
@@ -76,7 +74,7 @@ function package:registerCommands ()
     })
   end, "Draws a blob of ink of width <width>, height <height> and depth <depth>")
 
-  class:registerCommand("hrulefill", function (options, _)
+  self:registerCommand("hrulefill", function (options, _)
     local raise
     local thickness
     if options.position and options.raise then
@@ -105,7 +103,7 @@ function package:registerCommands ()
     }))
   end, "Add a huge horizontal hrule glue")
 
-  class:registerCommand("fullrule", function (options, _)
+  self:registerCommand("fullrule", function (options, _)
     local thickness = SU.cast("measurement", options.thickness or "0.2pt")
     local raise = SU.cast("measurement", options.raise or "0.5em")
 
@@ -148,7 +146,7 @@ function package:registerCommands ()
     SILE.typesetter:leaveHmode()
   end, "Draw a full width hrule centered on the current line")
 
-  class:registerCommand("underline", function (_, content)
+  self:registerCommand("underline", function (_, content)
     local underlinePosition, underlineThickness = getUnderlineParameters()
 
     local hbox = SILE.call("hbox", {}, content)
@@ -180,7 +178,7 @@ function package:registerCommands ()
     })
   end, "Underlines some content")
 
-  class:registerCommand("strikethrough", function (_, content)
+  self:registerCommand("strikethrough", function (_, content)
     local yStrikeoutPosition, yStrikeoutSize = getStrikethroughParameters()
 
     local hbox = SILE.call("hbox", {}, content)
@@ -209,7 +207,7 @@ function package:registerCommands ()
     })
   end, "Strikes out some content")
 
-  class:registerCommand("boxaround", function (_, content)
+  self:registerCommand("boxaround", function (_, content)
     -- This command was not documented and lacks feature.
     -- Plan replacement with a better suited package.
     SU.deprecated("\\boxaround (undocumented)", "\\framebox (package)", "0.12.0")

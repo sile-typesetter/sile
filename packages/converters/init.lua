@@ -94,11 +94,11 @@ end
 
 function package:registerCommands ()
 
-  self.class:registerCommand("converters:register", function (options, _)
+  self:registerCommand("converters:register", function (options, _)
     self:register(options.from, options.to, options.command)
   end)
 
-  self.class:registerCommand("converters:check", function (options, _)
+  self:registerCommand("converters:check", function (options, _)
     self:checkConverters(options.source)
   end)
 
