@@ -3,9 +3,9 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "indexer"
 
-local buildIndex = function (class)
+function package:buildIndex ()
   local nodes = SILE.scratch.info.thispage.index
-  local thisPage = class:formatCounter(SILE.scratch.counters.folio)
+  local thisPage = self.class.packages.counters:formatCounter(SILE.scratch.counters.folio)
   if not nodes then return end
   for _, node in ipairs(nodes) do
     if not SILE.scratch.index[node.index] then SILE.scratch.index[node.index] = {} end
@@ -30,7 +30,7 @@ function package:_init ()
   if not SILE.scratch.index then
     SILE.scratch.index = {}
   end
-  self:deprecatedExport("buildIndex", buildIndex)
+  self:deprecatedExport("buildIndex", self.buildIndex)
 end
 
 function package:registerCommands ()
@@ -55,7 +55,7 @@ function package:registerCommands ()
   end)
 
   class:registerCommand("printindex", function (options, _)
-    class:buildIndex()
+    self:buildIndex()
     if not options.index then options.index = "main" end
     local index = SILE.scratch.index[options.index]
     local sortedIndex = {}

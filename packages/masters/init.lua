@@ -110,13 +110,13 @@ function package:registerCommands ()
 
   class:registerCommand("switch-master-one-page", function (options, _)
     SU.required(options, "id", "switching master")
-    switchMasterOnePage(class, options.id)
+    self.class:switchMasterOnePage(options.id)
     SILE.typesetter:leaveHmode()
   end, "Switches the master for the current page")
 
   class:registerCommand("switch-master", function (options, _)
     SU.required(options, "id", "switching master")
-    switchMaster(class, options.id)
+    self.class:switchMaster(options.id)
   end, "Switches the master for the current page")
 
 end

@@ -136,7 +136,7 @@ function package:registerCommands ()
         SILE.settings:set("document.language", 'und')
       end
 
-      local result = class.transformContent(content, urlFilter, {
+      local result = self.class.packages.inputfilter:transformContent(content, urlFilter, {
         primaryPenalty = primaryPenalty,
         secondaryPenalty = secondaryPenalty,
         worsePenalty = worsePenalty

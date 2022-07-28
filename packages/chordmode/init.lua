@@ -118,7 +118,7 @@ function package:registerCommands ()
 
 
   class:registerCommand("chordmode", function (_, content)
-    SILE.process(class.transformContent(content, _addChords))
+    SILE.process(self.class.packages.inputfilter:transformContent(content, _addChords))
   end, "Transform embedded chords to 'ch' commands")
 
   class:registerCommand("chordmode:chordfont", function (_, content)

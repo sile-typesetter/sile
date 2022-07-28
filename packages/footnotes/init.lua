@@ -84,7 +84,7 @@ function package:registerCommands ()
     SILE.settings:popState()
     SILE.typesetter.getTargetLength = oldGetTargetLength
     SILE.typesetter.frame = oldFrame
-    class:insert("footnote", material)
+    self.class:insert("footnote", material)
     SILE.scratch.counters.footnote.value = SILE.scratch.counters.footnote.value + 1
   end)
 
@@ -102,7 +102,7 @@ function package:registerCommands ()
 
   class:registerCommand("footnote:counter", function (_, _)
     SILE.call("noindent")
-    SILE.typesetter:typeset(class:formatCounter(SILE.scratch.counters.footnote) .. ".")
+    SILE.typesetter:typeset(self.class.packages.counters:formatCounter(SILE.scratch.counters.footnote) .. ".")
     SILE.call("qquad")
   end)
 
