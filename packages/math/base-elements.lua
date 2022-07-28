@@ -809,10 +809,6 @@ elements.text = pl.class({
       if self.text == "-" then
         self.text = "−"
       end
-      if symbolDefaults[self.text] then
-        self.atom = symbolDefaults[self.text].atom
-        self.stretchy = symbolDefaults[self.text].stretchy
-      end
     end
     for attribute,value in pairs(attributes) do
       self[attribute] = value
