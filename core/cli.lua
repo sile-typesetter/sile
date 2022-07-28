@@ -82,12 +82,12 @@ cli.parseArguments = function ()
     SILE.outputFilename = opts.output
   end
   for _, option in ipairs(opts.options) do
-    local parameters = SILE.parserBits.parameters
-    local options = parameters:match(option)
+    local options = SILE.parserBits.parameters:match(option)
     pl.tablex.merge(SILE.input.options, options, true)
   end
-  for _, path in ipairs(opts.use) do
-    table.insert(SILE.input.uses, path)
+  for _, use in ipairs(opts.use) do
+    local spec = SILE.parserBits.cliuse:match(use)
+    table.insert(SILE.input.uses, spec)
   end
   for _, path in ipairs(opts.preamble) do
     table.insert(SILE.input.preambles, path)
