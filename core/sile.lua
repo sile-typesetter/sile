@@ -227,9 +227,9 @@ SILE.process = function (ast)
       local pId = SILE.traceStack:pushContent(content, "texlike_stuff")
       SILE.process(content)
       SILE.traceStack:pop(pId)
-    else
+    elseif type(content) ~= "nil" then
       local pId = SILE.traceStack:pushContent(content)
-      SU.error("Unknown command "..(content.command or content.id))
+      SU.error("Unknown command "..(tostring(content.command or content.id)))
       SILE.traceStack:pop(pId)
     end
   end
