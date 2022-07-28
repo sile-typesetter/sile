@@ -1,0 +1,30 @@
+\begin[papersize=a5]{document}
+
+\script[src=packages/math]
+
+Custom atom types:
+
+\math[mode=display]{x = <a, b>}
+\math[mode=display]{x = \mo{<}a, b\mo{>}}
+\math[mode=display]{x = \mo[atom=open]{<}a, b\mo[atom=close]{>}}
+\math[mode=display]{
+  \def{tupleleft}{\mo[atom=open]{<}}
+  \def{tupleright}{\mo[atom=open]{>}}
+  x = \tupleleft a, b \tupleright
+}
+\math[mode=display]{x = a op b}
+\math[mode=display]{x = a \mo{op} b}
+\math[mode=display]{x = a \mo[atom=bin]{op} b}
+\math[mode=display]{
+  \def{myop}{\mo[atom=bin]{op}}
+  x = a \myop b
+}
+
+Modulus operator:
+
+\math[mode=display]{42 \bmod 11 = 9}
+\math[mode=display]{42 \% 11 = 9}
+\math[mode=display]{\mi{mod}(42, 11) = 9}
+\math[mode=display]{42 ≡ 9 \pmod{11}}
+
+\end{document}

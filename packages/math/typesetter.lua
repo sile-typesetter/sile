@@ -2,6 +2,23 @@
 local b = require("packages.math.base-elements")
 local syms = require("packages.math.unicode-symbols")
 
+-- Shorthands for atom types, used in the `atom` command option
+local atomTypeShort = {
+  ord = b.atomType.ordinary,
+  big = b.atomType.bigOperator,
+  bin = b.atomType.binaryOperator,
+  rel = b.atomType.relationalOperator,
+  open = b.atomType.openingSymbol,
+  close = b.atomType.closeSymbol,
+  punct = b.atomType.punctuationSymbol,
+  inner = b.atomType.inner,
+  over = b.atomType.overSymbol,
+  under = b.atomType.underSymbol,
+  accent = b.atomType.accentSymbol,
+  radical = b.atomType.radicalSymbol,
+  vcenter = b.atomType.vcenter
+}
+
 local ConvertMathML
 
 local function convertChildren (tree)
@@ -38,6 +55,13 @@ function ConvertMathML (_, content)
     if syms.symbolDefaults[text] then
       for attribute,value in pairs(syms.symbolDefaults[text]) do
         attributes[attribute] = value
+      end
+    end
+    if content.options.atom then
+      if not atomTypeShort[content.options.atom] then
+        SU.error("Unknown atom type " .. content.options.atom)
+      else
+        attributes.atom = atomTypeShort[content.options.atom]
       end
     end
     if type(text) ~= "string" then
