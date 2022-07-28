@@ -414,15 +414,15 @@ compileToMathML(nil, {}, convertTexlike(nil, {[==[
   \def{dsi}{\mi[mathvariant=double-struck]{#1}}
 
   % Standard spaces gleaned from plain TeX
-  \def{thinspace}{\mspace[width=0.16667em]}
-  \def{negthinspace}{\mspace[width=-0.16667em]}
+  \def{thinspace}{\mspace[width=thin]}
+  \def{negthinspace}{\mspace[width=-thin]}
   \def{,}{\thinspace}
   \def{!}{\negthinspace}
-  \def{medspace}{\mspace[width=0.22222em plus 0.11111em minus 0.22222em]}
-  \def{negmedspace}{\mspace[width=-0.22222em plus 0.11111em minus 0.22222em]}
+  \def{medspace}{\mspace[width=med]}
+  \def{negmedspace}{\mspace[width=-med]}
   \def{>}{\medspace}
-  \def{thickspace}{\mspace[width=0.27778em plus 0.27778em]}
-  \def{negthickspace}{\mspace[width=-0.27778em plus 0.27778em]}
+  \def{thickspace}{\mspace[width=thick]}
+  \def{negthickspace}{\mspace[width=-thick]}
   \def{;}{\thickspace}
   \def{enspace}{\mspace[width=1en]}
   \def{enskip}{\enspace}

@@ -81,9 +81,9 @@ function ConvertMathML (_, content)
     return b.text('number', {}, script, text)
   elseif content.command == "mspace" then
     return b.space(
-      SILE.length(content.options.width),
-      SILE.length(content.options.height),
-      SILE.length(content.options.depth))
+      content.options.width,
+      content.options.height,
+      content.options.depth)
   elseif content.command == 'msub' then
     local children = convertChildren(content)
     if #children ~= 2 then SU.error('Wrong number of children in msub') end

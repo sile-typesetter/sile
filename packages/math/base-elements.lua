@@ -46,9 +46,6 @@ local mathVariantToScriptType = function(attr)
     SU.error("Invalid value \""..attr.."\" for option mathvariant")
 end
 
--- Foward declaration
-local newStandardHspace
-
 local function isDisplayMode(mode)
   return mode <= 1
 end
@@ -425,7 +422,7 @@ elements.stackbox = pl.class({
       end
       table.sort(spaceIdx, function(a, b) return a > b end)
       for _, idx in ipairs(spaceIdx) do
-        local hsp = newStandardHspace(self.options.size * self:getScaleDown(), spaces[idx])
+        local hsp = elements.space(spaces[idx], 0, 0)
         table.insert(self.children, idx, hsp)
       end
     end
@@ -759,9 +756,26 @@ elements.space = pl.class({
   end,
   _init = function(self, width, height, depth)
     elements.terminal._init(self)
-    self.width = width
-    self.height = height
-    self.depth = depth
+    self.width = self.getStandardLength(width)
+    self.height = self.getStandardLength(height)
+    self.depth = self.getStandardLength(depth)
+  end,
+  getStandardLength = function (value)
+    if type(value) == "string" then
+      local direction = 1
+      if value:sub(1, 1) == "-" then
+        value = value:sub(2, -1)
+        direction = -1
+      end
+      if value == "thin" then
+        return SILE.length("3mu") * direction
+      elseif value == "med" then
+        return SILE.length("4mu plus 2mu minus 4mu") * direction
+      elseif value == "thick" then
+        return SILE.length("5mu plus 5mu") * direction
+      end
+    end
+    return SILE.length(value)
   end,
   shape = function (self)
     self.width = self.width:absolute() * self:getScaleDown()
@@ -1047,32 +1061,6 @@ local newUnderOver = function(spec)
   return elements.underOver(spec.base, spec.sub, spec.sup)
 end
 
--- not local, because scope defined further up this file
-newStandardHspace = function(fontSize, kind)
-  local mu = fontSize / 18
-  if kind == "thin" then
-    return elements.space(SILE.length({
-      length = 3 * mu,
-      shrink = 0,
-      stretch = 0
-    }), SILE.length(0), SILE.length(0))
-  elseif kind == "med" then
-    return elements.space(SILE.length({
-      length = 4 * mu,
-      shrink = 4 * mu,
-      stretch = 2 * mu
-    }), SILE.length(0), SILE.length(0))
-  elseif kind == "thick" then
-    return elements.space(SILE.length({
-      length = 5 * mu,
-      shrink = 0,
-      stretch = 5 * mu
-    }), SILE.length(0), SILE.length(0))
-  else
-    SU.error("Unknown space type "..kind)
-  end
-end
-
 -- TODO replace with penlight equivalent
 local function mapList(f, l)
   local ret = {}
@@ -1227,6 +1215,5 @@ elements.mathVariantToScriptType = mathVariantToScriptType
 elements.symbolDefaults = symbolDefaults
 elements.newSubscript = newSubscript
 elements.newUnderOver = newUnderOver
-elements.newStandardHspace = newStandardHspace
 
 return elements

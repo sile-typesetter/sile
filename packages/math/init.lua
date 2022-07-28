@@ -10,6 +10,13 @@ function package:_init (class)
   class:loadPackage("math.typesetter")
   class:loadPackage("math.texlike")
 
+  -- Register a new unit that is 1/18th of the current math font size
+  SILE.units["mu"] = {
+    relative = true,
+    definition = function (value)
+      return value * SILE.settings:get("math.font.size") / 18
+    end
+  }
 end
 
 function package.declareSettings (_)

@@ -85,4 +85,52 @@ Negative spaces in subscripts:
   }
 \end{math}
 
+\medskip
+Varying math font size
+\par
+\begin[parameter=math.font.size, value=6]{set}
+  \begin{math}
+    x_{
+      \mi{thin}\thinspace
+      \mi{med}\medspace
+      \mi{thick}\thickspace
+      \mi{en}\enspace
+      \mi{quad}\quad
+      \mi{qquad}\qquad
+      \mi{end}_{
+        \mi{thin}\thinspace
+        \mi{med}\medspace
+        \mi{thick}\thickspace
+        \mi{en}\enspace
+        \mi{quad}\quad
+        \mi{qquad}\qquad
+        \mi{end}
+      }
+    }
+  \end{math}
+\end{set}
+
+\par
+\begin[parameter=math.font.size, value=18]{set}
+  \begin{math}
+    x_{
+      \mi{thin}\thinspace
+      \mi{med}\medspace
+      \mi{thick}\thickspace
+      \mi{en}\enspace
+      \mi{quad}\quad
+      \mi{qquad}\qquad
+      \mi{end}_{
+        \mi{thin}\thinspace
+        \mi{med}\medspace
+        \mi{thick}\thickspace
+        \mi{en}\enspace
+        \mi{quad}\quad
+        \mi{qquad}\qquad
+        \mi{end}
+      }
+    }
+  \end{math}
+\end{set}
+
 \end{document}
