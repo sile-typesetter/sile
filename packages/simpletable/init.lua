@@ -12,11 +12,13 @@ function package:_init (options)
     SILE.scratch.simpletable = { tables = {} }
   end
 
-  options = options and #options >= 3 or {
-    tableTag = "table",
-    trTag = "tr",
-    tdTag = "td"
-  }
+  if type(options) ~= "table" or pl.tablex.size(options) < 3 then
+    options = {
+      tableTag = "table",
+      trTag = "tr",
+      tdTag = "td"
+    }
+  end
 
   tableTag = SU.required(options, "tableTag", "setting up table class")
   trTag = SU.required(options, "trTag", "setting up table class")

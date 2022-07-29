@@ -54,7 +54,7 @@ end
 
 function package:_init ()
   base._init(self)
-  if SILE.typesetter.frame then
+  if SILE.typesetter and SILE.typesetter.frame then
     enter(SILE.typesetter.frame, SILE.typesetter)
     table.insert(SILE.typesetter.frame.leaveHooks, leave)
   end
