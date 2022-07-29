@@ -42,6 +42,7 @@ function class:declareOptions ()
   self:declareOption("direction", function (_, value)
     if value then
       SILE.documentState.direction = value
+      SILE.settings:set("font.direction", value, true)
       for _, frame in pairs(self.defaultFrameset) do
         if not frame.direction then
           frame.direction = value
