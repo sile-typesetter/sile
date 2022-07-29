@@ -262,19 +262,25 @@ end
 function package:registerCommands ()
 
   self:registerCommand("thisframeLTR", function (_, _)
-    SILE.typesetter.frame.direction = "LTR"
+    local direction = "LTR"
+    SILE.typesetter.frame.direction = direction
+    SILE.settings:set("font.direction", direction)
     SILE.typesetter:leaveHmode()
     SILE.typesetter.frame:newLine()
   end)
 
   self:registerCommand("thisframedirection", function (options, _)
-    SILE.typesetter.frame.direction = SU.required(options, "direction", "frame direction")
+    local direction = SU.required(options, "direction", "frame direction")
+    SILE.typesetter.frame.direction = direction
+    SILE.settings:set("font.direction", direction)
     SILE.typesetter:leaveHmode()
     SILE.typesetter.frame:init()
   end)
 
   self:registerCommand("thisframeRTL", function (_, _)
-    SILE.typesetter.frame.direction = "RTL"
+    local direction = "RTL"
+    SILE.typesetter.frame.direction = direction
+    SILE.settings:set("font.direction", direction)
     SILE.typesetter:leaveHmode()
     SILE.typesetter.frame:newLine()
   end)
