@@ -1,0 +1,349 @@
+Set paper size 	297.6377985	419.5275636
+Begin page
+Mx 	14.8819
+My 	28.7889
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	11 w=3.1689	(()
+Mx 	18.0508
+T	39 72 73 68 88 79 87 w=29.6973	(Default)
+Mx 	50.4117
+T	73 82 81 87 w=17.0996	(font)
+Mx 	67.5113
+T	12 w=3.1689	())
+Mx 	73.3439
+T	43 w=6.5381	(H)
+Mx 	79.8820
+My 	29.9241
+Set font 	Gentium Plus;6.6;600;;normal;+lnum +onum;LTR
+T	21 w=3.3387	(2)
+Mx 	83.2207
+My 	28.7889
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	50 w=6.0010	(O)
+Mx 	89.2217
+T	17 w=2.2900	(.)
+Mx 	14.8819
+My 	40.7889
+T	20 25 w=9.3848	(16)
+Mx 	24.3667
+My 	37.6102
+Set font 	Gentium Plus;6.6;600;;normal;+lnum -onum;LTR
+T	87 75 w=6.2777	(th)
+Mx 	33.3054
+My 	40.7889
+Set font 	Gentium Plus;10;400;;normal;;LTR
+Mx 	4.3701
+Mx 	4.6191
+Mx 	5.5176
+Mx 	3.4424
+Mx 	5.2979
+Mx 	3.9600
+Mx 	3.9502
+T	70 a=4.3701 72 a=4.6191 81 a=5.5176 87 a=3.4424 88 a=5.2979 85 a=3.9600 92 a=4.9316	(century)
+T	15 w=2.2900	(,)
+Mx 	69.4137
+Set font 	Gentium Plus;10;400;;normal;+smcp;LTR
+T	4026 4004 3694 w=14.6875	(xvi)
+Mx 	84.2012
+My 	37.6102
+Set font 	Gentium Plus;6.6;600;;normal;+lnum -onum;LTR
+T	72 w=3.1937	(e)
+Mx 	90.0559
+My 	40.7889
+Set font 	Gentium Plus;10;400;;normal;;LTR
+Mx 	3.8623
+Mx 	2.7100
+Mx 	4.6191
+Mx 	4.2188
+Mx 	2.7100
+Mx 	4.6191
+T	86 a=3.8623 76 a=2.7100 113 a=4.6191 70 a=4.3701 79 a=2.7100 72 a=4.6191	(siècle)
+T	17 w=2.2900	(.)
+Mx 	14.8819
+My 	52.7889
+T	54 88 83 72 85 86 70 85 76 83 87 w=47.5781	(Superscript)
+Mx 	62.5600
+My 	49.6102
+Set font 	Gentium Plus;6.6;600;;normal;+lnum -onum;LTR
+T	20 21 22 w=10.0160	(123)
+Mx 	72.5760
+My 	52.7889
+Set font 	Gentium Plus;10;400;;normal;;LTR
+T	17 w=2.2900	(.)
+Mx 	14.8819
+My 	64.7889
+Set font 	Gentium Plus;10;400;italic;normal;;LTR
+T	11 w=2.9492	(()
+Mx 	17.8311
+T	39 72 73 68 88 79 87 w=27.0313	(Default)
+Mx 	47.2825
+T	73 82 81 87 w=14.9609	(font)
+Mx 	64.6635
+T	76 87 68 79 76 70 w=18.7256	(italic)
+Mx 	83.3891
+T	12 w=2.9492	())
+Mx 	88.7584
+T	43 w=6.0303	(H)
+Mx 	94.6297
+My 	65.9315
+Set font 	Gentium Plus;6.6;600;italic;normal;+lnum +onum;LTR
+T	21 w=3.0035	(2)
+Mx 	97.7922
+My 	64.7889
+Set font 	Gentium Plus;10;400;italic;normal;;LTR
+T	50 w=5.4492	(O)
+Mx 	103.2414
+T	17 w=2.0020	(.)
+Mx 	14.8819
+My 	76.7889
+T	20 25 w=8.0371	(16)
+Mx 	23.4642
+My 	73.5897
+Set font 	Gentium Plus;6.6;600;italic;normal;+lnum -onum;LTR
+T	87 75 w=5.7009	(th)
+Mx 	31.3626
+My 	76.7889
+Set font 	Gentium Plus;10;400;italic;normal;;LTR
+Mx 	3.8818
+Mx 	3.9307
+Mx 	4.9414
+Mx 	3.0713
+Mx 	4.9902
+Mx 	3.5498
+Mx 	3.9307
+T	70 a=3.8818 72 a=3.9307 81 a=4.9414 87 a=3.0713 88 a=4.9902 85 a=3.5498 92 a=4.5215	(century)
+T	15 w=2.0020	(,)
+Mx 	64.0806
+Set font 	Gentium Plus;10;400;italic;normal;+smcp;LTR
+T	4026 4004 3694 w=13.5791	(xvi)
+Mx 	78.2049
+My 	73.5897
+Set font 	Gentium Plus;6.6;600;italic;normal;+lnum -onum;LTR
+T	72 w=2.7876	(e)
+Mx 	83.1900
+My 	76.7889
+Set font 	Gentium Plus;10;400;italic;normal;;LTR
+T	86 76 113 70 79 72 w=20.0244	(siècle)
+Mx 	103.2144
+T	17 w=2.0020	(.)
+Mx 	14.8819
+My 	88.7889
+T	54 88 83 72 85 86 70 85 76 83 87 w=42.7197	(Superscript)
+Mx 	58.1469
+My 	85.5897
+Set font 	Gentium Plus;6.6;600;italic;normal;+lnum -onum;LTR
+T	20 21 22 w=9.0105	(123)
+Mx 	66.9348
+My 	88.7889
+Set font 	Gentium Plus;10;400;italic;normal;;LTR
+T	17 w=2.0020	(.)
+Mx 	14.8819
+My 	100.7889
+Set font 	Libertinus Serif;10;400;italic;normal;;LTR
+T	9 w=2.9800	(()
+Mx 	17.8619
+Mx 	5.2800
+Mx 	2.7100
+Mx 	5.0300
+Mx 	4.4700
+Mx 	3.7200
+Mx 	3.1600
+Mx 	2.7100
+Mx 	5.4200
+Mx 	5.3100
+Mx 	3.9000
+T	45 a=5.2800 74 a=2.7100 67 a=4.9300 70 a=4.4700 83 a=3.7200 85 a=3.1600 74 a=2.7100 79 a=5.4200 86 a=5.3100 84 a=3.9000	(Libertinus)
+T	13 w=2.2000	(,)
+Mx 	64.7851
+T	71 80 79 85 w=16.7200	(font)
+Mx 	84.5184
+T	84 86 67 w=14.1400	(sub)
+Mx 	98.6584
+T	16 w=3.2300	(/)
+Mx 	101.8884
+Mx 	3.9000
+Mx 	5.3100
+Mx 	5.2600
+Mx 	4.4700
+Mx 	3.7200
+Mx 	3.9000
+Mx 	4.2800
+Mx 	3.7200
+Mx 	2.7100
+Mx 	5.1900
+Mx 	3.1600
+Mx 	3.9000
+T	84 a=3.9000 86 a=5.3100 81 a=5.1900 70 a=4.4700 83 a=3.7200 84 a=3.9000 68 a=4.2800 83 a=3.7200 74 a=2.7100 81 a=5.1900 85 a=3.1600 84 a=3.9000	(superscripts)
+T	10 w=2.9800	())
+Mx 	157.4017
+T	41 w=7.3000	(H)
+Mx 	164.7017
+Set font 	Libertinus Serif;10;400;italic;normal;+subs;LTR
+T	1813 w=3.0700	(2)
+Mx 	167.7717
+Set font 	Libertinus Serif;10;400;italic;normal;;LTR
+Mx 	6.7300
+T	48 a=7.0200	(O)
+T	15 w=2.2000	(.)
+Mx 	14.8819
+My 	112.7889
+T	18 23 w=9.3000	(16)
+Mx 	24.1819
+Set font 	Libertinus Serif;10;400;italic;normal;+sups;LTR
+T	1225 624 w=5.2300	(th)
+Mx 	32.4330
+Set font 	Libertinus Serif;10;400;italic;normal;;LTR
+Mx 	4.2800
+Mx 	4.4700
+Mx 	5.4200
+Mx 	3.1600
+Mx 	5.3100
+Mx 	3.8700
+Mx 	4.5600
+T	68 a=4.2800 70 a=4.4700 79 a=5.4200 85 a=3.1600 86 a=5.3100 83 a=3.7200 90 a=5.1500	(century)
+T	13 w=2.2000	(,)
+Mx 	68.7242
+Set font 	Libertinus Serif;10;400;italic;normal;+smcp;LTR
+T	2418 2416 2404 w=13.9100	(xvi)
+Mx 	82.6342
+Set font 	Libertinus Serif;10;400;italic;normal;+sups;LTR
+T	1211 w=3.1700	(e)
+Mx 	88.8254
+Set font 	Libertinus Serif;10;400;italic;normal;;LTR
+Mx 	3.9000
+Mx 	2.7100
+Mx 	4.5700
+Mx 	4.2800
+Mx 	2.6400
+Mx 	4.3700
+T	84 a=3.9000 74 a=2.7100 168 a=4.4700 68 a=4.2800 77 a=2.6400 70 a=4.4700	(siècle)
+T	15 w=2.2000	(.)
+Mx 	14.8819
+My 	124.7889
+Mx 	4.8500
+Mx 	5.3100
+Mx 	5.2600
+Mx 	4.4700
+Mx 	3.7200
+Mx 	3.9000
+Mx 	4.2800
+Mx 	3.7200
+Mx 	2.7100
+Mx 	5.1900
+Mx 	3.1600
+T	52 a=4.8500 86 a=5.3100 81 a=5.1900 70 a=4.4700 83 a=3.7200 84 a=3.9000 68 a=4.2800 83 a=3.7200 74 a=2.7100 81 a=5.1900 85 a=3.1600	(Superscript)
+Set font 	Libertinus Serif;10;400;italic;normal;+sups;LTR
+T	121 114 115 w=9.2100	(123)
+Mx 	70.6619
+Set font 	Libertinus Serif;10;400;italic;normal;;LTR
+T	15 w=2.2000	(.)
+Mx 	14.8819
+My 	136.7889
+T	9 w=2.9800	(()
+Mx 	17.8619
+Mx 	5.2800
+Mx 	2.7100
+Mx 	5.0300
+Mx 	4.4700
+Mx 	3.7200
+Mx 	3.1600
+Mx 	2.7100
+Mx 	5.4200
+Mx 	5.3100
+Mx 	3.9000
+T	45 a=5.2800 74 a=2.7100 67 a=4.9300 70 a=4.4700 83 a=3.7200 85 a=3.1600 74 a=2.7100 79 a=5.4200 86 a=5.3100 84 a=3.9000	(Libertinus)
+T	13 w=2.2000	(,)
+Mx 	64.7851
+T	71 66 76 70 w=17.2600	(fake)
+Mx 	85.0583
+T	84 86 67 w=14.1400	(sub)
+Mx 	99.1983
+T	16 w=3.2300	(/)
+Mx 	102.4283
+Mx 	3.9000
+Mx 	5.3100
+Mx 	5.2600
+Mx 	4.4700
+Mx 	3.7200
+Mx 	3.9000
+Mx 	4.2800
+Mx 	3.7200
+Mx 	2.7100
+Mx 	5.1900
+Mx 	3.1600
+Mx 	3.9000
+T	84 a=3.9000 86 a=5.3100 81 a=5.1900 70 a=4.4700 83 a=3.7200 84 a=3.9000 68 a=4.2800 83 a=3.7200 74 a=2.7100 81 a=5.1900 85 a=3.1600 84 a=3.9000	(superscripts)
+T	10 w=2.9800	())
+Mx 	157.9415
+T	41 w=7.3000	(H)
+Mx 	165.2415
+My 	137.8664
+Set font 	Libertinus Serif;6.6;600;italic;normal;+lnum +onum;LTR
+T	19 w=3.0690	(2)
+Mx 	168.3105
+My 	136.7889
+Set font 	Libertinus Serif;10;400;italic;normal;;LTR
+Mx 	6.7300
+T	48 a=7.0200	(O)
+T	15 w=2.2000	(.)
+Mx 	14.8819
+My 	148.7889
+T	18 23 w=9.3000	(16)
+Mx 	24.2819
+My 	145.7719
+Set font 	Libertinus Serif;6.6;600;italic;normal;+lnum -onum;LTR
+T	85 73 w=5.6364	(th)
+Mx 	32.9394
+My 	148.7889
+Set font 	Libertinus Serif;10;400;italic;normal;;LTR
+Mx 	4.2800
+Mx 	4.4700
+Mx 	5.4200
+Mx 	3.1600
+Mx 	5.3100
+Mx 	3.8700
+Mx 	4.5600
+T	68 a=4.2800 70 a=4.4700 79 a=5.4200 85 a=3.1600 86 a=5.3100 83 a=3.7200 90 a=5.1500	(century)
+T	13 w=2.2000	(,)
+Mx 	69.2305
+Set font 	Libertinus Serif;10;400;italic;normal;+smcp;LTR
+T	2418 2416 2404 w=13.9100	(xvi)
+Mx 	83.2405
+My 	145.7719
+Set font 	Libertinus Serif;6.6;600;italic;normal;+lnum -onum;LTR
+T	70 w=2.9502	(e)
+Mx 	89.2118
+My 	148.7889
+Set font 	Libertinus Serif;10;400;italic;normal;;LTR
+Mx 	3.9000
+Mx 	2.7100
+Mx 	4.5700
+Mx 	4.2800
+Mx 	2.6400
+Mx 	4.3700
+T	84 a=3.9000 74 a=2.7100 168 a=4.4700 68 a=4.2800 77 a=2.6400 70 a=4.4700	(siècle)
+T	15 w=2.2000	(.)
+Mx 	14.8819
+My 	160.7889
+Mx 	4.8500
+Mx 	5.3100
+Mx 	5.2600
+Mx 	4.4700
+Mx 	3.7200
+Mx 	3.9000
+Mx 	4.2800
+Mx 	3.7200
+Mx 	2.7100
+Mx 	5.1900
+Mx 	3.1600
+T	52 a=4.8500 86 a=5.3100 81 a=5.1900 70 a=4.4700 83 a=3.7200 84 a=3.9000 68 a=4.2800 83 a=3.7200 74 a=2.7100 81 a=5.1900 85 a=3.1600	(Superscript)
+Mx 	61.5519
+My 	157.7719
+Set font 	Libertinus Serif;6.6;600;italic;normal;+lnum -onum;LTR
+T	18 19 20 w=9.2070	(123)
+Mx 	70.7589
+My 	160.7889
+Set font 	Libertinus Serif;10;400;italic;normal;;LTR
+T	15 w=2.2000	(.)
+End page
+Finish
