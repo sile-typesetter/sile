@@ -728,7 +728,7 @@ function SILE.defaultTypesetter.addmarks (_, slice)
   end
   if endp then
     -- end of content marker
-    table.insert(slice, endp, SILE.nodefactory.hbox({
+    table.insert(slice, endp, SILE.nodefactory.zerohbox({
       outputYourself = function (_, typesetter, line)
         local x = typesetter.frame.state.cursorX
         local y = typesetter.frame.state.cursorY
