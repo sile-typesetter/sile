@@ -6,7 +6,10 @@
 -- in https://github.com/sile-typesetter/sile/issues/1258
 -- License: MIT
 --
-local inputfilter = require("packages/inputfilter").exports
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "textsubsuper"
 
 local textFeatCache = {}
 
@@ -80,48 +83,12 @@ local function getWeightClass ()
   return SILE.settings:get("font.weight")
 end
 
-local function rescaleFilter (node, content, args)
-  if type(node) == "table" then return node end
-  local result = {}
-  local chars = SU.splitUtf8(node)
-  for _, char in ipairs(chars) do
-    if not tonumber(char) then
-      result[#result+1] = inputfilter.createCommand(
-        content.pos, content.col, content.line,
-        "textsubsuper:scale", {
-          xRatio = args.xScale,
-          yRatio = args.yScaleOther
-        }, { char }
-      )
-    else
-      result[#result+1] = inputfilter.createCommand(
-        content.pos, content.col, content.line,
-        "textsubsuper:scale", {
-          xRatio = args.xScale,
-          yRatio = args.yScaleNumber
-        }, { char }
-      )
-    end
-  end
-  return result
+function package:_init ()
+  base._init(self)
+  self.class:loadPackage("inputfilter")
 end
 
-local function rescaleContent(content)
-  local transformed
-  if SILE.outputter ~= SILE.outputters.libtexpdf then
-    -- Not supported
-    transformed = content
-  else
-    transformed = inputfilter.transformContent(content, rescaleFilter, {
-      xScale = 1,
-      yScaleNumber = SILE.settings:get("textsubsuper.vscale.number"),
-      yScaleOther = SILE.settings:get("textsubsuper.vscale.other"),
-    })
-  end
-  SILE.process(transformed)
- end
-
-local function declareSettings (_)
+function package.declareSettings (_)
   SILE.settings:declare({
     parameter = "textsubsuper.scale",
     type = "integer",
@@ -165,10 +132,51 @@ local function declareSettings (_)
   })
 end
 
-local function registerCommands (_)
+function package:registerCommands ()
+  local function rescaleFilter (node, content, args)
+    if type(node) == "table" then return node end
+    local result = {}
+    local chars = SU.splitUtf8(node)
+    for _, char in ipairs(chars) do
+      if not tonumber(char) then
+        result[#result+1] = self.class.packages.inputfilter:createCommand(
+          content.pos, content.col, content.line,
+          "textsubsuper:scale", {
+            xRatio = args.xScale,
+            yRatio = args.yScaleOther
+          }, { char }
+        )
+      else
+        result[#result+1] = self.class.packages.inputfilter:createCommand(
+          content.pos, content.col, content.line,
+          "textsubsuper:scale", {
+            xRatio = args.xScale,
+            yRatio = args.yScaleNumber
+          }, { char }
+        )
+      end
+    end
+    return result
+  end
+
+  local function rescaleContent(content)
+    local transformed
+    if SILE.outputter._name ~= "libtexpdf" then
+      -- Not supported
+      transformed = content
+    else
+      transformed = self.class.packages.inputfilter:transformContent(content, rescaleFilter, {
+        xScale = 1,
+        yScaleNumber = SILE.settings:get("textsubsuper.vscale.number"),
+        yScaleOther = SILE.settings:get("textsubsuper.vscale.other"),
+      })
+    end
+    SILE.process(transformed)
+   end
+
   -- REAL SUPERSCRIPT / SUBSCRIPT WHEN AVAILABLE
 
-  SILE.registerCommand("textsuperscript", function (options, content)
+  self:registerCommand("textsuperscript", function (options, content)
     if type(content) ~= "table" then SU.error("Expected a table content in textsuperscript") end
     if SU.boolean(options.fake, false) then
       SILE.call("textsuperscript:fake", {}, content)
@@ -182,7 +190,7 @@ local function registerCommands (_)
     end
   end, "Typeset a superscript text content.")
 
-  SILE.registerCommand("textsubscript", function (options, content)
+  self:registerCommand("textsubscript", function (options, content)
     if type(content) ~= "table" then SU.error("Expected a table content in textsubscript") end
     if SU.boolean(options.fake, false) then
       SILE.call("textsubscript:fake", {}, content)
@@ -201,7 +209,7 @@ local function registerCommands (_)
 
   -- FAKE (SCALED AND RAISED) SUPERSCRIPT OR SUBSCRIPT
 
-  SILE.registerCommand("textsuperscript:fake", function (_, content)
+  self:registerCommand("textsuperscript:fake", function (_, content)
     SILE.require("packages/raiselower")
     local italicAngle = getItalicAngle()
     local weight = getWeightClass()
@@ -226,7 +234,7 @@ local function registerCommands (_)
     SILE.call("kern", { width = -xOffset / 2 })
   end, "Typeset a fake (raised, scaled) superscript content.")
 
-  SILE.registerCommand("textsubscript:fake", function (_, content)
+  self:registerCommand("textsubscript:fake", function (_, content)
     SILE.require("packages/raiselower")
     local italicAngle = getItalicAngle()
     local weight = getWeightClass()
@@ -250,7 +258,7 @@ local function registerCommands (_)
 
   -- RE-SCALING BY SOME RATIOS
 
-  SILE.registerCommand("textsubsuper:scale", function (options, content)
+  self:registerCommand("textsubsuper:scale", function (options, content)
     -- Here assume the ouputter to be libtexpdf
     -- This is supposed to be checked earlier above.
     local pdf = require("justenoughlibtexpdf")
@@ -263,7 +271,7 @@ local function registerCommands (_)
       width = hbox.width * xRatio,
       height = SILE.length(),
       depth = SILE.length(),
-      outputYourself = function(self, typesetter, line)
+      outputYourself = function(node, typesetter, line)
         local X = typesetter.frame.state.cursorX
         local Y = typesetter.frame.state.cursorY
         local x0 = X:tonumber()
@@ -277,16 +285,14 @@ local function registerCommands (_)
         pdf:grestore()
         typesetter.frame.state.cursorX = X
         typesetter.frame.state.cursorY = Y
-        typesetter.frame:advanceWritingDirection(self.width)
+        typesetter.frame:advanceWritingDirection(node.width)
       end
     })
   end, "Scale content by some horizontal and vertical ratios")
 end
 
-return {
-  declareSettings = declareSettings,
-  registerCommands = registerCommands,
-  documentation = [[\begin{document}
+package.documentation = [[
+\begin{document}
 \script[src=packages/textsubsuper]% SILE 0.13 needs a big big FIXME, it's 0xDEADBEEF
 Superscripts are sometimes needed for numbers (e.g. in footnote calls),
 but also for letters (e.g. in French, century references such as
@@ -362,5 +368,7 @@ Settings \autodoc:setting{textsubsuper.vscale.number} and
 to obtain that effect\footnote{This feature is currently only supported
 with the \code{libtexpdf} backend.}.
 Their default values, again, are obviously empirical.
-\end{document}]]
-}
+\end{document}
+]]
+
+return package
