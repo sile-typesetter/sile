@@ -16,7 +16,6 @@ references = پايدىلانما
 page = بەت
 see = قاراڭ
 see-also = ئايرىم قاراڭ
-tableofcontents-not-generated = Rerun SILE to process the table of contents!
 bibliography-edited-by = { $name }
 bibliography-translated-by = { $name }
 appendix-template = { appendix } { $number }

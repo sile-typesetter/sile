@@ -16,7 +16,6 @@ references = Erreferentziak
 page = Orria
 see = Ikusi
 see-also = Ikusi, halaber
-tableofcontents-not-generated = Rerun SILE to process the table of contents!
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }

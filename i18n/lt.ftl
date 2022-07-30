@@ -16,7 +16,6 @@ references = Literatūra
 page = puslapis
 see = žiūrėk
 see-also = taip pat
-tableofcontents-not-generated = Rerun SILE to process the table of contents!
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }

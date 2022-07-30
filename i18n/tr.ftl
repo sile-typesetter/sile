@@ -17,7 +17,6 @@ references = Kaynaklar
 page = Sayfa
 see = bkz.
 see-also = ayrıca bkz.
-tableofcontents-not-generated = Rerun SILE to process the table of contents!
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }

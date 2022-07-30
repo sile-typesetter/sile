@@ -15,7 +15,6 @@ bibliography = 参考文献
 glossary = 用語集
 preface = 前書き
 references = 参考文献
-tableofcontents-not-generated = Rerun SILE to process the table of contents!
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }

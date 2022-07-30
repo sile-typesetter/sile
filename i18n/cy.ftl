@@ -16,7 +16,6 @@ references = Cyfeiriadau
 page = tudalen
 see = gweler
 see-also = gweler hefyd
-tableofcontents-not-generated = Rerun SILE to process the table of contents!
 appendix-template = { appendix } { $number }
 chapter-template = { chapter } { $number }
 part-template = { part } { $number }

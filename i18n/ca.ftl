@@ -16,7 +16,6 @@ references = Referències
 page = Pàgina
 see = Vegeu
 see-also = Vegeu també
-tableofcontents-not-generated = Rerun SILE to process the table of contents!
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }

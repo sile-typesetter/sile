@@ -9,7 +9,6 @@ listoffigures = படங்களின் பட்டியல்
 listoftables = அட்டவணை பட்டியல்
 abstract = சாராம்சம்
 see = பார்க்க
-tableofcontents-not-generated = Rerun SILE to process the table of contents!
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }

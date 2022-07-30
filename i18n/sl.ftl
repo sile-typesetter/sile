@@ -16,7 +16,6 @@ references = Literatura
 page = Stran
 see = glej
 see-also = glej tudi
-tableofcontents-not-generated = Rerun SILE to process the table of contents!
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }

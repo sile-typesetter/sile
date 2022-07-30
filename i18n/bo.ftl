@@ -11,7 +11,6 @@ bibliography = དཔེ་ཆའི་ཐོ་གཞུང་།
 glossary = མིང་ཚིག་རེའུ་མིག།
 preface = དཔེ་དེབ་ཀྱི་གླེང་བརྗོད།
 page = ཤོག་
-tableofcontents-not-generated = Rerun SILE to process the table of contents!
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }

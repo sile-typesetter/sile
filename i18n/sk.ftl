@@ -16,7 +16,6 @@ references = Literatúra
 page = Str.
 see = viď
 see-also = viď tiež
-tableofcontents-not-generated = Rerun SILE to process the table of contents!
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }

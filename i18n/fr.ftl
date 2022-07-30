@@ -16,7 +16,6 @@ references = Références
 page = page
 see = voir
 see-also = voir aussi
-tableofcontents-not-generated = Rerun SILE to process the table of contents!
 bibliography-and = et
 bibliography-edited-by = Édité par { $name }
 bibliography-et-al = et al.
