@@ -1,6 +1,3 @@
-appendix = ಅನುಬಂಧ
-chapter  = ಅಧ್ಯಾಯ
-part     = ಭಾಗ
 figure = ಚಿತ್ರ
 table  = ಕೋಷ್ಟಕ
 proof  = ಕರಡುಪ್ರತಿ
@@ -18,6 +15,6 @@ see-also = ಇದನ್ನೂ ಸಹ ನೋಡು
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = ಅನುಬಂಧ { $number }
+chapter-template = ಅಧ್ಯಾಯ { $number }
+part-template = ಭಾಗ { $number }

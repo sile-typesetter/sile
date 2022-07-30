@@ -1,6 +1,3 @@
-appendix = Atodiad
-chapter  = Pennod
-part     = Rhan
 figure = Darlun
 table  = Taflen
 proof  = Prawf
@@ -16,6 +13,6 @@ references = Cyfeiriadau
 page = tudalen
 see = gweler
 see-also = gweler hefyd
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = Atodiad { $number }
+chapter-template = Pennod { $number }
+part-template = Rhan { $number }

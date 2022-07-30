@@ -1,6 +1,3 @@
-appendix = Appendix
-chapter  = Chapitel
-part     = Part
 figure = Figura
 table  = Tabella
 proof  = Demonstraziun
@@ -19,6 +16,6 @@ see-also = vesair era
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = Appendix { $number }
+chapter-template = Chapitel { $number }
+part-template = Part { $number }

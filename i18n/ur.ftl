@@ -1,6 +1,3 @@
-appendix = ضمیمہ
-chapter  = باب
-part     = حصّہ
 figure = شكل
 table  = جدول
 proof  = ثبوت
@@ -19,6 +16,6 @@ see-also = ایضاً
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = ضمیمہ { $number }
+chapter-template = باب { $number }
+part-template = حصّہ { $number }

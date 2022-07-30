@@ -1,6 +1,3 @@
-appendix = Eranskina
-chapter  = Kapitulua
-part     = Atala
 figure = Irudia
 table  = Taula
 proof  = Frogapena
@@ -19,6 +16,6 @@ see-also = Ikusi, halaber
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { $number }. { appendix }
-chapter-template = { $number }. { chapter }
-part-template = { $number }. { chapter }
+appendix-template = { $number }. Eranskina
+chapter-template ={ $number }. Kapitulua
+part-template = { $number }. Atala

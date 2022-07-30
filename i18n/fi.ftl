@@ -1,6 +1,3 @@
-appendix = Liite
-chapter  = Luku
-part     = Osa
 figure = Kuva
 table  = Taulukko
 proof  = Todistus
@@ -19,6 +16,6 @@ see-also = katso myös
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = Liite { $number }
+chapter-template = Luku { $number }
+part-template = Osa { $number }

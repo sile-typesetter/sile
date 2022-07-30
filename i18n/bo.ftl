@@ -1,6 +1,3 @@
-appendix = ཞར་བྱུང་།
-chapter  = ལེའུ་
-part     = ཆ་ཤས་
 figure = པར་རིས་
 table  = རེའུ་མིག་
 proof  = བདེན་དཔང་།
@@ -14,6 +11,6 @@ page = ཤོག་
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = ཞར་བྱུང་། { $number }
+chapter-template = ལེའུ་ { $number }
+part-template = ཆ་ཤས་ { $number }

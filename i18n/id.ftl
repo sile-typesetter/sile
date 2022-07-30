@@ -1,6 +1,3 @@
-appendix = Lampiran
-chapter  = Bab
-part     = Bagian
 figure = Gambar
 table  = Tabel
 proof  = Bukti
@@ -19,6 +16,6 @@ see-also = lihat juga
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = Lampiran { $number }
+chapter-template = Bab { $number }
+part-template = Bagian { $number }

@@ -1,6 +1,3 @@
-appendix = መድበል
-chapter  = ክፍል
-part     = ንዑስ ክፍል
 figure = ሥዕል
 table  = ሰንጠረዥ
 proof  = ማረጋገጫ
@@ -18,6 +15,6 @@ see-also = ይህምን ይመልከቱ
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = መድበል { $number }
+chapter-template = ክፍል { $number }
+part-template = ንዑስ ክፍል { $number }

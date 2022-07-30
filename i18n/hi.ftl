@@ -1,6 +1,3 @@
-appendix = परिशिष्ट
-chapter  = अध्याय
-part     = खण्ड
 figure = चित्र
 table  = तालिका
 proof  = प्रमाण
@@ -19,6 +16,6 @@ see-also = और देखिए
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = परिशिष्ट { $number }
+chapter-template = अध्याय { $number }
+part-template = खण्ड { $number }

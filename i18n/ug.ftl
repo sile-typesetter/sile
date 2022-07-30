@@ -1,6 +1,3 @@
-appendix = قوشۇمچە
-chapter  = باب
-part     = قىسىم
 figure = رەسىم
 table  = جەدۋەل
 proof  = ئىسپات
@@ -18,6 +15,6 @@ see = قاراڭ
 see-also = ئايرىم قاراڭ
 bibliography-edited-by = { $name }
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = قوشۇمچە { $number }
+chapter-template = باب { $number }
+part-template = قىسىم { $number }

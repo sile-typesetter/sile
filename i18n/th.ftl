@@ -1,6 +1,3 @@
-appendix = ภาคผนวก
-chapter  = บทที่
-part     = ภาค
 figure = รูปที่
 table  = ตารางที่
 proof  = พิสูจน์
@@ -18,6 +15,6 @@ see-also = ดูเพิ่มเติม
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = ภาคผนวก { $number }
+chapter-template = บทที่ { $number }
+part-template = ภาค { $number }

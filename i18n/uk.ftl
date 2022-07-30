@@ -1,6 +1,3 @@
-appendix = Додаток
-chapter  = Розділ
-part     = Частина
 figure = Рис.
 table  = Табл.
 proof  = Доведення
@@ -19,6 +16,6 @@ see-also = див. також
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = Додаток { $number }
+chapter-template = Розділ { $number }
+part-template = Частина { $number }

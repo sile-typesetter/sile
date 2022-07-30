@@ -1,6 +1,3 @@
-appendix = Lisa
-chapter  = Peatükk
-part     = Osa
 figure = Joonis
 table  = Tabel
 proof  = Tõestus
@@ -19,6 +16,6 @@ see-also = vt. ka
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = Lisa { $number }
+chapter-template = Peatükk { $number }
+part-template = Osa { $number }

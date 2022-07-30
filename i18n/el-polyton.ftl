@@ -1,6 +1,3 @@
-appendix = Παράρτημα
-chapter  = Κεφάλαιο
-part     = Μέρος
 figure = Σχῆμα
 table  = Πίνακας
 proof  = Ἀπόδειξη
@@ -19,6 +16,6 @@ see-also = βλέπε ἐπίσης
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = Παράρτημα { $number }
+chapter-template = Κεφάλαιο { $number }
+part-template = Μέρος { $number }

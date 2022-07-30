@@ -1,6 +1,3 @@
-appendix = Appendice
-chapter  = Capitolo
-part     = Parte
 figure = Figura
 table  = Tabella
 proof  = Dimostrazione
@@ -19,6 +16,6 @@ see-also = vedi anche
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = Appendice { $number }
+chapter-template = Capitolo { $number }
+part-template = Parte { $number }

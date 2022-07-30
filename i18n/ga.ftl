@@ -1,6 +1,3 @@
-appendix = Aguisín
-chapter  = Caibidil
-part     = Cuid
 figure = Léaráid
 table  = Tábla
 proof  = Cruthúnas
@@ -19,6 +16,6 @@ see-also = féach freisin
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = Aguisín { $number }
+chapter-template = Caibidil { $number }
+part-template = Cuid { $number }

@@ -1,7 +1,4 @@
 hello = Salve { $name }!
-appendix = Additamentum
-chapter  = Caput
-part     = Pars
 figure = Descriptio
 table  = Tabula
 proof  = Demonstratio
@@ -22,6 +19,6 @@ bibliography-and = et
 bibliography-edited-by = Conpositor erat { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = Interpres fuit { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = Additamentum { $number }
+chapter-template = Caput { $number }
+part-template = Pars { $number }

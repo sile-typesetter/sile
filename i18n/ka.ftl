@@ -1,6 +1,3 @@
-appendix = დანართი
-chapter  = თავი
-part     = ნაწილი
 figure = სურ.
 table  = ცხრ.
 proof  = დამტკიცება
@@ -19,6 +16,6 @@ see-also = იხ. ასევე
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = დანართი { $number }
+chapter-template = თავი { $number }
+part-template = ნაწილი { $number }

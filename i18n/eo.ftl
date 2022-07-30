@@ -1,7 +1,4 @@
 hello = Saluton { $name }!
-appendix = Apendico
-chapter  = Ĉapitro
-part     = Parto
 figure = Figuro
 table  = Tabelo
 proof  = Pruvo
@@ -25,6 +22,6 @@ bibliography-translated-by = Tradukita por { $name }
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = Apendico { $number }
+chapter-template = Ĉapitro { $number }
+part-template = Parto { $number }

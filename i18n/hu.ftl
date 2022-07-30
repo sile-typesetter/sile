@@ -1,6 +1,3 @@
-appendix = függelék
-chapter  = fejezet
-part     = rész
 figure = ábra
 table  = táblázat
 proof  = Bizonyítás
@@ -19,6 +16,6 @@ see-also = lásd még
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { $number }. { appendix }
-chapter-template = { $number }. { chapter }
-part-template = { $number }. { part }
+appendix-template = { number }. függelék
+chapter-template = { number }. fejezet
+part-template = { number }. rész

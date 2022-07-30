@@ -1,6 +1,3 @@
-appendix = Bilag
-chapter  = Kapitel
-part     = Del
 figure = Figur
 table  = Tabel
 proof  = Bevis
@@ -19,6 +16,6 @@ see-also = Se også
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = Bilag { $number }
+chapter-template = Kapitel { $number }
+part-template = Del { $number }

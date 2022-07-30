@@ -1,6 +1,3 @@
-appendix = Bĳlage
-chapter  = Hoofdstuk
-part     = Deel
 figure = Figuur
 table  = Tabel
 proof  = Bewĳs
@@ -19,6 +16,6 @@ see-also = zie ook
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = Bĳlage { $number }
+chapter-template = Hoofdstuk { $number }
+part-template = Deel { $number }

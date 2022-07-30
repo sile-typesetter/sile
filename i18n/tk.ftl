@@ -1,6 +1,3 @@
-appendix = Goşmaça
-chapter  = Bap
-part     = Bölüm
 figure = Surat
 table  = Tablisa
 proof  = Delil
@@ -19,6 +16,6 @@ see-also = şuňa-da ser.
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = Goşmaça { $number }
+chapter-template = Bap { $number }
+part-template = Bölüm { $number }

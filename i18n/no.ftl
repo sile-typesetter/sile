@@ -1,7 +1,4 @@
 hello = Hei { $name }!
-appendix = Tillegg
-chapter  = Kapittel
-part     = Del
 figure = Figur
 table  = Tabell
 proof  = Bevis
@@ -22,6 +19,6 @@ bibliography-and = og
 bibliography-edited-by = Redigert av { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = Oversatt av { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = Tillegg { $number }
+chapter-template = Kapittel { $number }
+part-template = Del { $number }

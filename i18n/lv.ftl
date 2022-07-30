@@ -1,6 +1,3 @@
-appendix = Pielikums
-chapter  = Nodaļa
-part     = Daļa
 figure = Zīm.
 table  = Tabula
 tableofcontents-title = Saturs
@@ -17,6 +14,6 @@ see-also = skat. arī
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = Pielikums { $number }
+chapter-template = Nodaļa { $number }
+part-template = Daļa { $number }

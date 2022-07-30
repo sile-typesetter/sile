@@ -1,6 +1,3 @@
-appendix = priedas
-chapter  = skyrius
-part     = dalis
 figure = pav.
 table  = lentelė
 proof  = Įrodymas
@@ -19,6 +16,6 @@ see-also = taip pat
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { $number } { appendix }
-chapter-template = { $number } { chapter }
-part-template = { $number } { part }
+appendix-template = { number } priedas
+chapter-template = { number } skyrius
+part-template = { number } dalis

@@ -1,6 +1,3 @@
-appendix = பிற்சேர்க்கை
-chapter  = அத்தியாயம்
-part     = பகுதி
 figure = படம்
 table  = அட்டவணை
 tableofcontents-title = உள்ளே
@@ -12,6 +9,6 @@ see = பார்க்க
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = பிற்சேர்க்கை { $number }
+chapter-template = அத்தியாயம் { $number }
+part-template = பகுதி { $number }

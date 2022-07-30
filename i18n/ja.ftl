@@ -1,4 +1,3 @@
-appendix    = 付録
 prechapter  = 第
 postchapter = 章
 prepart     = 第
@@ -18,6 +17,4 @@ references = 参考文献
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { prechapter } { $number } { postchapter }
-part-template = { prepart } { $number } { postpart }
+appendix-template = 付録 { $number }

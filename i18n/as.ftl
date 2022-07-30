@@ -1,6 +1,3 @@
-appendix = পৰিশিষ্ট
-chapter  = অধ্যায়
-part     = অংশ
 figure = চিত্ৰ
 table  = তালিকা
 proof  = প্ৰমাণ
@@ -19,6 +16,6 @@ see-also = ও
 bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
-appendix-template = { appendix } { $number }
-chapter-template = { chapter } { $number }
-part-template = { part } { $number }
+appendix-template = পৰিশিষ্ট { $number }
+chapter-template = অধ্যায় { $number }
+part-template = অংশ { $number }
