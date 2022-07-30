@@ -1,10 +1,15 @@
-local function _incrementFolio (_)
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "folio"
+
+function package.incrementFolio (_)
   SILE.scratch.counters.folio.value = SILE.scratch.counters.folio.value + 1
 end
 
-local function _outputFolio (class, frame)
+function package:outputFolio (frame)
   if not frame then frame = "folio" end
-  local folio = class:formatCounter(SILE.scratch.counters.folio)
+  local folio = self.class.packages.counters:formatCounter(SILE.scratch.counters.folio)
   io.stderr:write("[" .. folio .. "] ")
   if SILE.scratch.counters.folio.off then
     if SILE.scratch.counters.folio.off == 2 then
@@ -28,7 +33,7 @@ local function _outputFolio (class, frame)
           SILE.settings:set(v, SILE.settings.defaults[v])
         end
 
-        SILE.call("foliostyle", {}, { class:formatCounter(SILE.scratch.counters.folio) })
+        SILE.call("foliostyle", {}, { self.class.packages.counters:formatCounter(SILE.scratch.counters.folio) })
         SILE.typesetter:leaveHmode()
         SILE.settings:popState()
       end)
@@ -36,60 +41,42 @@ local function _outputFolio (class, frame)
   end
 end
 
-local function init (class, _)
-  class:loadPackage("counters")
+function package:_init (options)
+  base._init(self)
+  self.class:loadPackage("counters")
   SILE.scratch.counters.folio = { value = 1, display = "arabic" }
-  class:registerHook("newpage", _incrementFolio)
-  class:registerHook("endpage", _outputFolio)
+  self.class:registerHook("newpage", function() self:incrementFolio() end)
+  self.class:registerHook("endpage", function () self:outputFolio(options and options.frame) end)
+  self:export("outputFolio", self.outputFolio)
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
 
-  class:registerCommand("folios", function (_, _)
+  self:registerCommand("folios", function (_, _)
     SILE.scratch.counters.folio.off = false
   end)
 
-  class:registerCommand("nofolios", function (_, _)
+  self:registerCommand("nofolios", function (_, _)
     SILE.scratch.counters.folio.off = true
   end)
 
-  class:registerCommand("nofoliothispage", function (_, _)
+  self:registerCommand("nofoliothispage", function (_, _)
     SILE.scratch.counters.folio.off = 2
   end)
 
-  class:registerCommand("nofoliosthispage", function (_, _)
+  self:registerCommand("nofoliosthispage", function (_, _)
     SU.deprecated("nofoliosthispage", "nofoliothispage", "0.12.1", "0.14.0")
   end, "Deprecated")
 
-  class:registerCommand("foliostyle", function (_, content)
+  self:registerCommand("foliostyle", function (_, content)
     SILE.call("center", {}, content)
   end)
 
 end
 
-local _deprecate  = [[
-  Directly calling folio handling functions is no longer necessary. All the
-  SILE core classes and anything inheriting from them will take care of this
-  automatically using hooks. Custom classes that override the class:endPage()
-  and class:finish() functions may need to handle this in other ways. By
-  calling these hooks directly you are likely causing them to run twice and
-  duplicate entries.
-]]
-
-return {
-  init = init,
-  registerCommands = registerCommands,
-  exports = {
-    outputFolio = function (class)
-      SU.deprecated("class:outputFolio", nil, "0.13.0", "0.15.0", _deprecate)
-      return _outputFolio(class)
-    end,
-  },
-  documentation= [[
+package.documentation= [[
 \begin{document}
-The \autodoc:package{folio} package (which is automatically loaded by the
-plain class, and therefore by nearly every SILE class) controls
-the output of folios—the old-time typesetter word for page numbers.
+The \autodoc:package{folio} package (which is automatically loaded by the plain class, and therefore by nearly every SILE class) controls the output of folios—the old-time typesetter word for page numbers.
 
 It provides four commands to users:
 
@@ -100,8 +87,7 @@ It provides four commands to users:
 \item{\autodoc:command{\foliostyle}: a command you can override to style the page numbers. By default, they are centered on the page.}
 \end{itemize}
 
-If, for instance, you want to set page numbers in a different font
-you can redefine the command like so:
+If, for instance, you want to set page numbers in a different font you can redefine the command like so:
 
 \begin{verbatim}
 \line
@@ -109,11 +95,10 @@ you can redefine the command like so:
 \line
 \end{verbatim}
 
-If you want to put page numbers on the left side of even pages and the
-right side of odd pages, there are a couple of ways you can do that. The
-complicated way is to define a command in Lua which inspects the page number
-and then sets the number ragged left or ragged right appropriately. The easy
-way is just to put your folio frame where you want it on the master page...
+If you want to put page numbers on the left side of even pages and the right side of odd pages, there are a couple of ways you can do that.
+The complicated way is to define a command in Lua which inspects the page number and then sets the number ragged left or ragged right appropriately.
+The easy way is just to put your folio frame where you want it on the master page...
 \end{document}
 ]]
-}
+
+return package

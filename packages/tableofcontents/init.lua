@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "tableofcontents"
+
 if not SILE.scratch._tableofcontents then
   SILE.scratch._tableofcontents = {}
 end
@@ -6,7 +11,7 @@ local function _moveTocNodes (class)
   local node = SILE.scratch.info.thispage.toc
   if node then
     for i = 1, #node do
-      node[i].pageno = class:formatCounter(SILE.scratch.counters.folio)
+      node[i].pageno = class.packages.counters:formatCounter(SILE.scratch.counters.folio)
       table.insert(SILE.scratch.tableofcontents, node[i])
     end
   end
@@ -64,23 +69,22 @@ if not SILE.scratch.pdf_destination_counter then
   SILE.scratch.pdf_destination_counter = 1
 end
 
-local function init (class, _)
-
+function package:_init ()
+  base._init(self)
   if not SILE.scratch.tableofcontents then
     SILE.scratch.tableofcontents = {}
   end
-
-  class:loadPackage("infonode")
-  class:loadPackage("leaders")
-
-  class:registerHook("endpage", _moveTocNodes)
-  class:registerHook("finish", _writeToc)
-
+  self.class:loadPackage("infonode")
+  self.class:loadPackage("leaders")
+  self.class:registerHook("endpage", _moveTocNodes)
+  self.class:registerHook("finish", _writeToc)
+  self:deprecatedExport("writeToc", _writeToc)
+  self:deprecatedExport("moveTocNodes", _moveTocNodes)
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
 
-  class:registerCommand("tableofcontents", function (options, _)
+  self:registerCommand("tableofcontents", function (options, _)
     local depth = SU.cast("integer", options.depth or 3)
     local linking = SU.boolean(options.linking, true)
     local tocfile,_ = io.open(SILE.masterFilename .. '.toc')
@@ -106,7 +110,7 @@ local function registerCommands (class)
     SILE.scratch._tableofcontents = toc
   end)
 
-  class:registerCommand("tableofcontents:item", function (options, content)
+  self:registerCommand("tableofcontents:item", function (options, content)
     SILE.settings:temporarily(function ()
       SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
       SILE.call("tableofcontents:level" .. options.level .. "item", {
@@ -127,7 +131,7 @@ local function registerCommands (class)
     end)
   end)
 
-  class:registerCommand("tocentry", function (options, content)
+  self:registerCommand("tocentry", function (options, content)
     local dest
     if SILE.Commands["pdf:destination"] then
       dest = "dest" .. tostring(SILE.scratch.pdf_destination_counter)
@@ -150,21 +154,21 @@ local function registerCommands (class)
     })
   end)
 
-  class:registerCommand("tableofcontents:title", function (_, _)
+  self:registerCommand("tableofcontents:title", function (_, _)
     SU.deprecated("\\tableofcontents:title", "\\fluent{tableofcontents-title}", "0.13.0", "0.14.0")
   end, "Deprecated")
 
-  class:registerCommand("tableofcontents:notocmessage", function (_, _)
+  self:registerCommand("tableofcontents:notocmessage", function (_, _)
     SILE.call("tableofcontents:headerfont", {}, function ()
       SILE.call("fluent", {}, { "tableofcontents-not-generated" })
     end)
   end)
 
-  class:registerCommand("tableofcontents:headerfont", function (_, content)
+  self:registerCommand("tableofcontents:headerfont", function (_, content)
     SILE.call("font", { size = 24, weight = 800 }, content)
   end)
 
-  class:registerCommand("tableofcontents:header", function (_, _)
+  self:registerCommand("tableofcontents:header", function (_, _)
     SILE.call("par")
     SILE.call("noindent")
     SILE.call("tableofcontents:headerfont", {}, function ()
@@ -173,56 +177,36 @@ local function registerCommands (class)
     SILE.call("medskip")
   end)
 
-  class:registerCommand("tableofcontents:footer", function (_, _) end)
+  self:registerCommand("tableofcontents:footer", function (_, _) end)
 
-  class:registerCommand("tableofcontents:level1item", function (_, content)
+  self:registerCommand("tableofcontents:level1item", function (_, content)
     SILE.call("bigskip")
     SILE.call("noindent")
     SILE.call("font", { size = 14, weight = 800 }, content)
     SILE.call("medskip")
   end)
 
-  class:registerCommand("tableofcontents:level2item", function (_, content)
+  self:registerCommand("tableofcontents:level2item", function (_, content)
     SILE.call("noindent")
     SILE.call("font", { size = 12 }, content)
     SILE.call("medskip")
   end)
 
-  class:registerCommand("tableofcontents:level3item", function (_, content)
+  self:registerCommand("tableofcontents:level3item", function (_, content)
     SILE.call("indent")
     SILE.call("font", { size = 10 }, content)
     SILE.call("smallskip")
   end)
 
-  class:registerCommand("tableofcontents:level1number", function (_, _) end)
+  self:registerCommand("tableofcontents:level1number", function (_, _) end)
 
-  class:registerCommand("tableofcontents:level2number", function (_, _) end)
+  self:registerCommand("tableofcontents:level2number", function (_, _) end)
 
-  class:registerCommand("tableofcontents:level3number", function (_, _) end)
+  self:registerCommand("tableofcontents:level3number", function (_, _) end)
 
 end
 
-local _deprecate  = [[
-  Directly calling tableofcontents handling functions is no longer necessary.
-  All the SILE core classes and anything inheriting from them will take care of
-  this automatically using hooks. Custom classes that override the
-  class:endPage() and class:finish() functions may need to handle this in other
-  ways. By calling these hooks directly you are likely causing them to run
-  twice and duplicate entries.
-]]
-
-return {
-  init = init,
-  registerCommands = registerCommands,
-  exports = {
-    writeToc = function (_)
-      SU.deprecated("class:writeToc", nil, "0.13.0", "0.14.0", _deprecate)
-    end,
-    moveTocNodes = function (_)
-      SU.deprecated("class:moveTocNodes", nil, "0.13.0", "0.14.0", _deprecate)
-    end
-  },
-  documentation = [[
+package.documentation = [[
 \begin{document}
 The \autodoc:package{tableofcontents} package provides tools for class authors to
 create tables of contents. When you are writing sectioning commands such
@@ -260,4 +244,5 @@ following commands:
 
 \end{document}
 ]]
-}
+
+return package

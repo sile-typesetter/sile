@@ -1,6 +1,11 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "bidi"
+
 local icu = require("justenoughicu")
 
-local function reverse_portion(tbl, s, e)
+local function reverse_portion (tbl, s, e)
   local rv = {}
   for i = 1, s-1 do rv[#rv+1] = tbl[i] end
   for i = e, s, -1 do rv[#rv+1] = tbl[i] end
@@ -8,7 +13,7 @@ local function reverse_portion(tbl, s, e)
   return rv
 end
 
-local function create_matrix(line, base_level)
+local function create_matrix (line, base_level)
   -- L2; create a transformation matrix of elements
   -- such that output[matrix[i]] = input[i]
   -- e.g. No reversions required: [1, 2, 3, 4, 5]
@@ -45,78 +50,13 @@ local function create_matrix(line, base_level)
   return matrix
 end
 
-local reverse_each_node = function (nodelist)
+local function reverse_each_node (nodelist)
   for j = 1, #nodelist do
     if nodelist[j].type =="hbox" then
       if nodelist[j].value.items then SU.flip_in_place(nodelist[j].value.items) end
       SU.flip_in_place(nodelist[j].value.glyphString)
     end
   end
-end
-
-local reorder = function (n, typesetter)
-  local nl = n.nodes
-  -- local newNl = {}
-  -- local matrix = {}
-  local levels = {}
-  local base_level = typesetter.frame:writingDirection() == "RTL" and 1 or 0
-  for i = 1, #nl do
-    if nl[i].options and nl[i].options.bidilevel then
-      levels[i] = { level = nl[i].options.bidilevel }
-    end
-  end
-  for i = 1, #nl do
-    if not levels[i] then
-      -- resolve neutrals
-      local left_level, right_level
-      for left = i - 1, 1, -1 do
-        if nl[left].options and nl[left].options.bidilevel then
-          left_level = nl[left].options.bidilevel
-          break
-        end
-      end
-      for right = i + 1, #nl do
-        if nl[right].options and nl[right].options.bidilevel then
-          right_level = nl[right].options.bidilevel
-          break
-        end
-      end
-      levels[i] = { level = (left_level == right_level and left_level or 0) }
-    end
-  end
-  local matrix = create_matrix(levels, 0)
-  local rv = {}
-  -- for i = 1, #nl do print(i, nl[i], levels[i]) end
-  for i = 1, #nl do
-    if nl[i].is_nnode and levels[i].level %2 ~= base_level then
-      SU.flip_in_place(nl[i].nodes)
-      reverse_each_node(nl[i].nodes)
-    elseif nl[i].is_discretionary and levels[i].level %2 ~= base_level and not nl[i].bidiDone then
-      for j = 1, #(nl[i].replacement) do
-        if nl[i].replacement[j].is_nnode then
-          SU.flip_in_place(nl[i].replacement[j].nodes)
-          reverse_each_node(nl[i].replacement[j].nodes)
-        end
-      end
-      for j = 1, #(nl[i].prebreak) do
-        if nl[i].prebreak[j].is_nnode then
-          SU.flip_in_place(nl[i].prebreak[j].nodes)
-          reverse_each_node(nl[i].prebreak[j].nodes)
-        end
-      end
-      for j = 1, #(nl[i].postbreak) do
-        if nl[i].postbreak[j].is_nnode then
-          SU.flip_in_place(nl[i].postbreak[j].nodes)
-          reverse_each_node(nl[i].postbreak[j].nodes)
-        end
-      end
-
-    end
-    rv[matrix[i]] = nl[i]
-    nl[i].bidiDone = true
-    -- rv[i] = nl[i]
-  end
-  n.nodes = SU.compress(rv)
 end
 
 local nodeListToText = function (nl)
@@ -222,91 +162,143 @@ local bidiBoxupNodes = function (typesetter)
   -- Scan for out-of-direction material
   for i = 1, #vboxlist do
     local v = vboxlist[i]
-    if v.is_vbox then reorder(v, typesetter) end
+    if v.is_vbox then package.reorder(nil, v, typesetter) end
   end
   return vboxlist
 end
 
-local bidiEnableTypesetter = function (class, typesetter)
-  if typesetter.nobidi_boxUpNodes and class._initialized then
+function package.reorder (_, n, typesetter)
+  local nl = n.nodes
+  -- local newNl = {}
+  -- local matrix = {}
+  local levels = {}
+  local base_level = typesetter.frame:writingDirection() == "RTL" and 1 or 0
+  for i = 1, #nl do
+    if nl[i].options and nl[i].options.bidilevel then
+      levels[i] = { level = nl[i].options.bidilevel }
+    end
+  end
+  for i = 1, #nl do
+    if not levels[i] then
+      -- resolve neutrals
+      local left_level, right_level
+      for left = i - 1, 1, -1 do
+        if nl[left].options and nl[left].options.bidilevel then
+          left_level = nl[left].options.bidilevel
+          break
+        end
+      end
+      for right = i + 1, #nl do
+        if nl[right].options and nl[right].options.bidilevel then
+          right_level = nl[right].options.bidilevel
+          break
+        end
+      end
+      levels[i] = { level = (left_level == right_level and left_level or 0) }
+    end
+  end
+  local matrix = create_matrix(levels, 0)
+  local rv = {}
+  -- for i = 1, #nl do print(i, nl[i], levels[i]) end
+  for i = 1, #nl do
+    if nl[i].is_nnode and levels[i].level %2 ~= base_level then
+      SU.flip_in_place(nl[i].nodes)
+      reverse_each_node(nl[i].nodes)
+    elseif nl[i].is_discretionary and levels[i].level %2 ~= base_level and not nl[i].bidiDone then
+      for j = 1, #(nl[i].replacement) do
+        if nl[i].replacement[j].is_nnode then
+          SU.flip_in_place(nl[i].replacement[j].nodes)
+          reverse_each_node(nl[i].replacement[j].nodes)
+        end
+      end
+      for j = 1, #(nl[i].prebreak) do
+        if nl[i].prebreak[j].is_nnode then
+          SU.flip_in_place(nl[i].prebreak[j].nodes)
+          reverse_each_node(nl[i].prebreak[j].nodes)
+        end
+      end
+      for j = 1, #(nl[i].postbreak) do
+        if nl[i].postbreak[j].is_nnode then
+          SU.flip_in_place(nl[i].postbreak[j].nodes)
+          reverse_each_node(nl[i].postbreak[j].nodes)
+        end
+      end
+
+    end
+    rv[matrix[i]] = nl[i]
+    nl[i].bidiDone = true
+    -- rv[i] = nl[i]
+  end
+  n.nodes = SU.compress(rv)
+end
+
+function package:bidiEnableTypesetter (typesetter)
+  if typesetter.nobidi_boxUpNodes and self.class._initialized then
     return SU.warn("BiDi already enabled, nothing to turn on")
   end
   typesetter.nobidi_boxUpNodes = typesetter.boxUpNodes
   typesetter.boxUpNodes = bidiBoxupNodes
 end
 
-local bidiDisableTypesetter = function (class, typesetter)
-  if not typesetter.nobidi_boxUpNodes and class._initialized then
+function package:bidiDisableTypesetter (typesetter)
+  if not typesetter.nobidi_boxUpNodes and self.class._initialized then
     return SU.warn("BiDi not enabled, nothing to turn off")
   end
   typesetter.boxUpNodes = typesetter.nobidi_boxUpNodes
   typesetter.nobidi_boxUpNodes = nil
 end
 
-local function init (class, _)
-
+function package:_init ()
+  base._init(self)
+  self:deprecatedExport("reorder", self.reorder)
+  self:deprecatedExport("bidiEnableTypesetter", self.bidiEnableTypesetter)
+  self:deprecatedExport("bidiDisableTypesetter", self.bidiDisableTypesetter)
   if SILE.typesetter then
-    bidiEnableTypesetter(class, SILE.typesetter)
+    self:bidiEnableTypesetter(SILE.typesetter)
   end
-
-  bidiEnableTypesetter(class, SILE.defaultTypesetter)
-
+  self:bidiEnableTypesetter(SILE.defaultTypesetter)
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
 
-  class:registerCommand("thisframeLTR", function (_, _)
+  self:registerCommand("thisframeLTR", function (_, _)
     SILE.typesetter.frame.direction = "LTR"
     SILE.typesetter:leaveHmode()
     SILE.typesetter.frame:newLine()
   end)
 
-  class:registerCommand("thisframedirection", function (options, _)
+  self:registerCommand("thisframedirection", function (options, _)
     SILE.typesetter.frame.direction = SU.required(options, "direction", "frame direction")
     SILE.typesetter:leaveHmode()
     SILE.typesetter.frame:init()
   end)
 
-  class:registerCommand("thisframeRTL", function (_, _)
+  self:registerCommand("thisframeRTL", function (_, _)
     SILE.typesetter.frame.direction = "RTL"
     SILE.typesetter:leaveHmode()
     SILE.typesetter.frame:newLine()
   end)
 
-  class:registerCommand("bidi-on", function (_, _)
-    bidiEnableTypesetter(class, SILE.typesetter)
+  self:registerCommand("bidi-on", function (_, _)
+    self:bidiEnableTypesetter(SILE.typesetter)
   end)
 
-  class:registerCommand("bidi-off", function (_, _)
-    bidiDisableTypesetter(class, SILE.typesetter)
+  self:registerCommand("bidi-off", function (_, _)
+    self:bidiDisableTypesetter(SILE.typesetter)
   end)
 
 end
 
-return {
-  init = init,
-  registerCommands = registerCommands,
-  exports = {
-    reorder = reorder,
-    bidiEnableTypesetter = bidiEnableTypesetter,
-    bidiDisableTypesetter = bidiDisableTypesetter
-  },
-  documentation = [[\begin{document}
+package.documentation = [[
+\begin{document}
+Scripts like the Latin alphabet you are currently reading are normally written left to right; however, some scripts, such as Arabic and Hebrew, are written right to left.
+The \autodoc:package{bidi} package, which is loaded by default, provides SILE with the ability to correctly typeset right-to-left text and also documents which mix right-to-left and left-to-right typesetting.
+Because it is loaded by default, you can use both LTR and RTL text within a paragraph and SILE will ensure that the output characters appear in the correct order.
 
-Scripts like the Latin alphabet you are currently reading are normally written left to
-right; however, some scripts, such as Arabic and Hebrew, are written right to left.
-The \autodoc:package{bidi} package, which is loaded by default, provides SILE with the ability to
-correctly typeset right-to-left text and also documents which mix right-to-left and
-left-to-right typesetting. Because it is loaded by default, you can use both
-LTR and RTL text within a paragraph and SILE will ensure that the output
-characters appear in the correct order.
+The \autodoc:package{bidi} package provides two commands, \autodoc:command{\thisframeLTR} and \autodoc:command{\thisframeRTL}, which set the default text direction for the current frame.
+That is, if you tell SILE that a frame is RTL, the text will start in the right margin and proceed leftward.
+It also provides the commands \autodoc:command{\bidi-off} and \autodoc:command{\bidi-on}, which allow you to trade off bidirectional support for a dubious increase in speed.
+\end{document}
+]]
 
-The \autodoc:package{bidi} package provides two commands, \autodoc:command{\thisframeLTR} and
-\autodoc:command{\thisframeRTL}, which set the default text direction for the current frame.
-That is, if you tell SILE that a frame is RTL, the text will start in the right margin
-and proceed leftward. It also provides the commands \autodoc:command{\bidi-off} and
-\autodoc:command{\bidi-on}, which allow you to trade off bidirectional support for a
-dubious increase in speed.
-
-\end{document}]]
-}
+return package

@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "grid"
+
 -- TODO: consider registering as a setting instead of a frame property
 local gridSpacing
 
@@ -134,20 +139,19 @@ end
 
 local oldPageBuilder, oldLeadingFor, oldPushVglue, oldPushExplicitVglue
 
-local function init (_, _)
-
+function package:_init ()
+  base._init(self)
   gridSpacing = SILE.measurement()
-
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
 
-  class:registerCommand("grid:debug", function (_, _)
+  self:registerCommand("grid:debug", function (_, _)
     debugGrid()
     SILE.typesetter:registerNewFrameHook(debugGrid)
   end)
 
-  class:registerCommand("grid", function (options, _)
+  self:registerCommand("grid", function (options, _)
     SILE.typesetter.state.grid = true
     SU.required(options, "spacing", "grid package")
     gridSpacing = SILE.parseComplexFrameDimension(options.spacing)
@@ -165,7 +169,7 @@ local function registerCommands (class)
     SILE.typesetter:registerNewFrameHook(startGridInFrame)
   end, "Begins typesetting on a grid spaced at <spacing> intervals.")
 
-  class:registerCommand("no-grid", function (_, _)
+  self:registerCommand("no-grid", function (_, _)
     SILE.typesetter.state.grid = false
     SILE.typesetter.leadingFor = oldLeadingFor
     SILE.typesetter.pushVglue = oldPushVglue
@@ -175,72 +179,52 @@ local function registerCommands (class)
 
 end
 
-return {
-  init = init,
-  registerCommands = registerCommands,
-  documentation = [[
+package.documentation = [[
 \begin{document}
 \grid[spacing=15pt]
-In normal typesetting, SILE determines the spacing between lines of type
-according to the following two rules:
+In normal typesetting, SILE determines the spacing between lines of type according to the following two rules:
 
 \begin{itemize}
-\item{SILE tries to insert space between two successive lines so that their baselines
-      are separated by a fixed distance called the \code{baselineskip}.}
-\item{If this first rule would mean that the bottom and the top of the lines are less
-      than two points apart, then they are forced to be two points apart. (This
-      distance is configurable, and called the \code{lineskip}).}
+\item{SILE tries to insert space between two successive lines so that their baselines are separated by a fixed distance called the \code{baselineskip}.}
+\item{If this first rule would mean that the bottom and the top of the lines are less than two points apart, then they are forced to be two points apart.
+      (This distance is configurable, and called the \code{lineskip}).}
 \end{itemize}
 
-The second rule is designed to avoid the situation where the first line has a long
-descender (letters such as g, q, j, p, etc.) which abuts a high ascender on the second
-line. (k, l, capitals, etc.)
+The second rule is designed to avoid the situation where the first line has a long descender (letters such as g, q, j, p, etc.) which abuts a high ascender on the second line. (k, l, capitals, etc.)
 
-In addition, the \code{baselineskip} contains a certain amount of ‘stretch’, so that
-the lines can expand if this would help with producing a page break at an optimal
-location, and similarly spacing between paragraphs can stretch or shrink.
+In addition, the \code{baselineskip} contains a certain amount of ‘stretch’, so that the lines can expand if this would help with producing a page break at an optimal location, and similarly spacing between paragraphs can stretch or shrink.
 
-The combination of all of these rules means that a line may begin at practically any
-point on the page.
+The combination of all of these rules means that a line may begin at practically any point on the page.
 
-An alternative way of typesetting is to require that lines begin at fixed points on
-a regular grid. Some people prefer the ‘color’ of pages produced by grid typesetting,
-and the method is often used when typesetting on very thin paper as lining up the
-lines of type on both sides of a page ensures that ink does not bleed through from
-the back to the front. Compare the following examples: on the left, the lines are
-guaranteed to fall in the same places on the recto (front) and the verso (back) of
-the paper; on the right, no such guarantee is made.
+An alternative way of typesetting is to require that lines begin at fixed points on a regular grid.
+Some people prefer the ‘color’ of pages produced by grid typesetting, and the method is often used when typesetting on very thin paper as lining up the lines of type on both sides of a page ensures that ink does not bleed through from the back to the front.
+Compare the following examples: on the left, the lines are guaranteed to fall in the same places on the recto (front) and the verso (back) of the paper; on the right, no such guarantee is made.
 
 \img[src=documentation/grid-1.png,height=130]
 \img[src=documentation/grid-2.png,height=130]
 
-The \autodoc:package{grid} package alters the way that the SILE’s typesetter operates so that
-the two rules above do not apply; lines are always aligned on a fixed grid, and
-spaces between paragraphs etc. are adjusted to conform to the grid. Loading the package
-adds two new commands to SILE: \autodoc:command{\grid[spacing=<dimension>]} and \autodoc:command{\no-grid}.
+The \autodoc:package{grid} package alters the way that the SILE’s typesetter operates so that the two rules above do not apply; lines are always aligned on a fixed grid, and spaces between paragraphs etc. are adjusted to conform to the grid.
+Loading the package adds two new commands to SILE: \autodoc:command{\grid[spacing=<dimension>]} and \autodoc:command{\no-grid}.
 The first turns on grid typesetting for the remainder of the document; the second turns it off again.
 
-At the start of this section, we issued the command \autodoc:command{\grid[spacing=15pt]} to
-set up a regular 15-point grid. Here is some text typeset with the grid set up:
+At the start of this section, we issued the command \autodoc:command{\grid[spacing=15pt]} to set up a regular 15-point grid.
+Here is some text typeset with the grid set up:
 
 \smallskip
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 \smallskip
 
 And here is the same text after we issue \autodoc:command{\no-grid}:
 
 \no-grid\smallskip
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 \end{document}
 ]]
-}
+
+return package

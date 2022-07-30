@@ -97,12 +97,8 @@ if SILE.masterFilename then
     ProFi:start()
   end
 
-  for _, path in ipairs(SILE.input.requires) do
-    local module = require(path)
-    if type(module) == "table" and type(module.declareOptions) == "function" then
-      SILE.classes[module._name] = module
-      SILE.sratch.required_class = module
-    end
+  for _, spec in ipairs(SILE.input.uses) do
+    SILE.use(spec.module, spec.options)
   end
 
   -- Deprecated, notice given in core.cli when argument used
@@ -117,14 +113,14 @@ if SILE.masterFilename then
   end
 
   local main, err = xpcall(function()
-      return SILE.processFile(SILE.inputFile)
-    end, SILE.errorHandler)
+    return SILE.processFile(SILE.input.filename)
+  end, SILE.errorHandler)
 
   if not main then
     if type(err) == "string" and err:match(": interrupted!") then
       SILE.outputter:finish()
     else
-      io.stderr:write("\nError detected:\n\t"..err.."\n")
+      io.stderr:write("\nError detected:\n\t" .. tostring(err) .. "\n")
     end
     os.exit(1)
   end

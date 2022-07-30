@@ -60,7 +60,7 @@ end
 
 function traceStack.commandFrame:__tostring ()
   local opts = (pl.tablex.size(self.options) > 0 and tostring(self.options):gsub("^{", "["):gsub("}$", "]") or "")
-  return "\\" .. self.command .. opts
+  return "\\" .. tostring(self.command) .. opts
 end
 
 traceStack.contentFrame = pl.class(traceStack.commandFrame)

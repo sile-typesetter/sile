@@ -6,21 +6,21 @@ local cursorY = 0
 local outfile
 local started = false
 
-local text = pl.class(base)
-text._name = "text"
+local outputter = pl.class(base)
+outputter._name = "text"
 
 -- The outputter init can't actually initialize output (as logical as it might
 -- have seemed) because that requires a page size which we don't know yet.
--- function text:_init () end
+-- function outputter:_init () end
 
-function text:_ensureInit ()
+function outputter:_ensureInit ()
   if not outfile then
     local fname = self:getOutputFilename("text")
     outfile = fname == "-" and io.stdout or io.open(fname, "w+")
   end
 end
 
-function text:_writeline (...)
+function outputter:_writeline (...)
   self:_ensureInit()
   local args = table.pack(...)
   for i=1, #args do
@@ -28,21 +28,21 @@ function text:_writeline (...)
   end
 end
 
-function text:newPage ()
+function outputter:newPage ()
   self:_ensureInit()
   outfile:write("")
 end
 
-function text:finish ()
+function outputter:finish ()
   self:_ensureInit()
   outfile:close()
 end
 
-function text.getCursor (_)
+function outputter.getCursor (_)
   return cursorX, cursorY
 end
 
-function text:setCursor (x, y, relative)
+function outputter:setCursor (x, y, relative)
   self:_ensureInit()
   local bs = SILE.measurement("0.8bs"):tonumber()
   local spc = SILE.measurement("0.8spc"):tonumber()
@@ -69,7 +69,7 @@ function text:setCursor (x, y, relative)
   cursorX = newx
 end
 
-function text:drawHbox (value, width)
+function outputter:drawHbox (value, width)
   self:_ensureInit()
   width = SU.cast("number", width)
   if not value.text then return end
@@ -80,4 +80,4 @@ function text:drawHbox (value, width)
   end
 end
 
-return text
+return outputter

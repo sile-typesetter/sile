@@ -1,14 +1,14 @@
 local plain = require("classes.plain")
 
-local docbook = pl.class(plain)
-docbook._name = "docbook"
+local class = pl.class(plain)
+class._name = "docbook"
 
 SILE.scratch.docbook = {
   seclevel = 0,
   seccount = {}
 }
 
-function docbook:_init (options)
+function class:_init (options)
   plain._init(self, options)
   self:loadPackage("image")
   self:loadPackage("simpletable", {
@@ -16,32 +16,268 @@ function docbook:_init (options)
       trTag = "row",
       tdTag = "entry"
     })
-  return self
+  self:loadPackage("rules")
+  self:loadPackage("verbatim")
+  self:loadPackage("footnotes")
 end
 
-function docbook.push (t, val)
+function class.push (t, val)
   if not SILE.scratch.docbook[t] then SILE.scratch.docbook[t] = {} end
   local q = SILE.scratch.docbook[t]
   q[#q+1] = val
 end
 
-function docbook.pop (t)
+function class.pop (t)
   local q = SILE.scratch.docbook[t]
   q[#q] = nil
 end
 
-function docbook.val (t)
+function class.val (t)
   local q = SILE.scratch.docbook[t]
   return q[#q]
 end
 
-function docbook.wipe (tbl)
+function class.wipe (tbl)
   while((#tbl) > 0) do tbl[#tbl] = nil end
 end
 
-docbook.registerCommands = function (self)
+class.registerCommands = function (self)
 
   plain.registerCommands(self)
+
+  -- Unfinished! commands found in howto.xml example document on docbook.org
+  self:registerCommand("acronym", function (_, content) SILE.process(content) end)
+  self:registerCommand("alt", function (_, content) SILE.process(content) end)
+  self:registerCommand("note", function (_, content) SILE.process(content) end)
+  self:registerCommand("colspec", function (_, content) SILE.process(content) end)
+  self:registerCommand("phrase", function (_, content) SILE.process(content) end)
+  self:registerCommand("literal", function (_, content) SILE.process(content) end)
+  self:registerCommand("docbook-section-3-title", function (_, content) SILE.process(content) end)
+  self:registerCommand("variablelist", function (_, content) SILE.process(content) end)
+  self:registerCommand("varlistentry", function (_, content) SILE.process(content) end)
+  self:registerCommand("term", function (_, content) SILE.process(content) end)
+  self:registerCommand("procedure", function (_, content) SILE.process(content) end)
+  self:registerCommand("step", function (_, content) SILE.process(content) end)
+  self:registerCommand("screen", function (_, content) SILE.process(content) end)
+  self:registerCommand("command", function (_, content) SILE.process(content) end)
+  self:registerCommand("option", function (_, content) SILE.process(content) end)
+  self:registerCommand("package", function (_, content) SILE.process(content) end)
+  self:registerCommand("tip", function (_, content) SILE.process(content) end)
+  self:registerCommand("varname", function (_, content) SILE.process(content) end)
+  self:registerCommand("qandaset", function (_, content) SILE.process(content) end)
+  self:registerCommand("qandadiv", function (_, content) SILE.process(content) end)
+  self:registerCommand("qandaentry", function (_, content) SILE.process(content) end)
+  self:registerCommand("question", function (_, content) SILE.process(content) end)
+  self:registerCommand("answer", function (_, content) SILE.process(content) end)
+
+  self:registerCommand("docbook-line", function (_, _)
+    SILE.call("medskip")
+    SILE.call("hrule", { height = "0.5pt", width = "50mm" })
+    SILE.call("medskip")
+  end)
+
+  self:registerCommand("docbook-sectionsfont", function (_, content)
+    SILE.call("font", { family = "DejaVu Sans", style = "Condensed", weight = 800 }, content)
+  end)
+
+  self:registerCommand("docbook-ttfont", function (_, content)
+    SILE.call("font", { family = "Hack", size = "2ex" }, content)
+  end)
+
+  self:registerCommand("docbook-article-title", function (_, content)
+    SILE.call("center", {}, function ()
+      SILE.call("docbook-sectionsfont", {}, function ()
+        SILE.call("font", { size = "20pt" }, content)
+      end)
+    end)
+    SILE.call("bigskip")
+  end)
+
+  self:registerCommand("docbook-section-title", function (_, content)
+    SILE.call("noindent")
+    SILE.call("bigskip")
+    SILE.call("docbook-sectionsfont", {}, {content})
+    SILE.call("bigskip")
+  end)
+
+  self:registerCommand("docbook-main-author", function (_, content)
+    SILE.call("center", {}, function()
+      SILE.call("docbook-sectionsfont", {}, content)
+    end)
+    SILE.call("bigskip")
+  end)
+
+
+  self:registerCommand("docbook-section-1-title", function (_, content)
+    SILE.call("font", { size = "16pt" }, function()
+      SILE.call("docbook-section-title", {}, content)
+    end)
+  end)
+
+  self:registerCommand("docbook-section-2-title", function (_, content)
+    SILE.call("font", { size = "12pt" }, function()
+      SILE.call("docbook-section-title", {}, content)
+    end)
+  end)
+
+  self:registerCommand("docbook-titling", function (_, content)
+    SILE.call("noindent")
+    SILE.call("docbook-sectionsfont", {}, content)
+  end)
+
+
+  self:registerCommand("para", function (_, content)
+    SILE.process(content)
+    SILE.call("par")
+  end)
+
+  self:registerCommand("emphasis", function (_, content)
+    SILE.call("em", {}, content)
+  end)
+
+  self:registerCommand("replaceable", function (_, content)
+    SILE.call("em", {}, content)
+  end)
+
+  self:registerCommand("abbrev", function (_, content)
+    SILE.call("font", { variant = "smallcaps" }, content)
+  end)
+
+  self:registerCommand("title", function (_, content)
+    SILE.call("em", {}, content)
+  end)
+
+  self:registerCommand("personname", function (_, content)
+    SILE.process(content)
+  end)
+
+  self:registerCommand("email", function (_, content)
+    SILE.process(content)
+  end)
+
+  self:registerCommand("uri", function (_, content)
+    SILE.call("code", {}, content)
+  end)
+
+  self:registerCommand("personblurb", function (_, content)
+    SILE.call("font", { size = "2ex" }, content)
+  end)
+
+  self:registerCommand("affiliation", function (_, content)
+    SILE.process(content)
+  end)
+
+  self:registerCommand("jobtitle", function (_, content)
+    SILE.process(content)
+  end)
+
+  self:registerCommand("orgname", function (_, content)
+    SILE.process(content)
+  end)
+
+  self:registerCommand("application", function (_, content)
+    SILE.call("em", {}, content)
+  end)
+
+  self:registerCommand("menuchoice", function (_, content)
+    SILE.typesetter:typeset("“")
+    SILE.process(content)
+    SILE.typesetter:typeset("”")
+  end)
+
+  self:registerCommand("programlisting", function (_, content)
+    SILE.call("verbatim", {}, content)
+  end)
+
+  self:registerCommand("tag", function (_, content)
+    SILE.call("docbook-ttfont", {}, function ()
+      SILE.typesetter:typeset("<")
+      SILE.process(content)
+      SILE.typesetter:typeset(">")
+    end)
+  end)
+
+  self:registerCommand("code", function (_, content)
+    SILE.call("docbook-ttfont", {}, content)
+  end)
+
+  self:registerCommand("filename", function (_, content)
+    SILE.call("docbook-ttfont", {}, content)
+  end)
+
+  self:registerCommand("guimenu", function (_, content)
+    SILE.call("docbook-ttfont", {}, content)
+  end)
+
+  self:registerCommand("guimenuitem", function (_, content)
+    SILE.typesetter:typeset(" > ")
+    SILE.call("docbook-ttfont", {}, content)
+  end)
+
+  self:registerCommand("guilabel", function (_, content)
+    SILE.call("docbook-ttfont", {}, content)
+  end)
+
+  self:registerCommand("guibutton", function (_, content)
+    SILE.call("docbook-ttfont", {}, content)
+  end)
+
+  self:registerCommand("computeroutput", function (_, content)
+    SILE.call("docbook-ttfont", {}, content)
+  end)
+
+  self:registerCommand("xref", function (_, _)
+    SILE.typesetter:typeset("XXX")
+  end)
+
+  self:registerCommand("citetitle", function (_, content)
+    SILE.call("em", {}, content)
+  end)
+
+  self:registerCommand("quote", function (_, content)
+    SILE.typesetter:typeset("“")
+    SILE.process(content)
+    SILE.typesetter:typeset("”")
+  end)
+
+  self:registerCommand("citation", function (_, content)
+    SILE.typesetter:typeset("[")
+    SILE.process(content)
+    SILE.typesetter:typeset("]")
+  end)
+
+  self:registerCommand("thead", function (_, content)
+    SILE.call("font", { weight = 800 }, content)
+  end)
+
+  self:registerCommand("tbody", function (_, content)
+    SILE.process(content)
+  end)
+
+  self:registerCommand("mediaobject", function (_, content)
+    SILE.process(content)
+  end)
+
+  self:registerCommand("imageobject", function (_, content)
+    SILE.process(content)
+  end)
+
+  self:registerCommand("bibliography", function (_, content)
+    SILE.call("font", { size = "16pt" }, function ()
+      SILE.call("docbook-section-title", { "Bibliography" })
+    end)
+    SILE.call("par")
+    SILE.call("font", { size = "2ex" }, content)
+  end)
+
+  self:registerCommand("bibliomixed", function (_, content)
+    SILE.process(content)
+    SILE.call("smallskip")
+  end)
+
+  self:registerCommand("bibliomisc", function (_, content)
+    SILE.process(content)
+  end)
 
   self:registerCommand("article", function (_, content)
     local info = SILE.inputter:findInTree(content, "info") or SILE.inputter:findInTree(content, "articleinfo")
@@ -156,7 +392,7 @@ docbook.registerCommands = function (self)
     -- elseif ctx and ctx.type == "" then
     --   -- Other types?
     else
-      SU.error("Listitem in outer space")
+      return SU.warn("Listitem in outer space")
     end
     SILE.call("noindent")
     for _=1, #ctx-1 do SILE.call("qquad") end -- Setting lskip better?
@@ -175,4 +411,4 @@ docbook.registerCommands = function (self)
 
 end
 
-return docbook
+return class

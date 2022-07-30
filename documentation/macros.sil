@@ -1,19 +1,20 @@
 \begin{document}
-\script[src=packages/grid]
-\script[src=packages/url]
-\script[src=packages/autodoc]
-\script[src=packages/verbatim]
-\script[src=packages/color]
-\script[src=packages/image]
-\script[src=packages/frametricks]
-\script[src=packages/linespacing]
-\script[src=packages/lists]
-\script[src=packages/lorem]
-\script[src=packages/bidi]\bidi-off
-\script[src=packages/pdf]
-\script[src=packages/pullquote]
-\script[src=packages/rules]
-\script[src=packages/font-fallback]
+\use[module=packages.grid]
+\use[module=packages.url]
+\use[module=packages.autodoc]
+\use[module=packages.verbatim]
+\use[module=packages.color]
+\use[module=packages.image]
+\use[module=packages.frametricks]
+\use[module=packages.linespacing]
+\use[module=packages.lists]
+\use[module=packages.lorem]
+\use[module=packages.bidi]\bidi-off
+\use[module=packages.pdf]
+\use[module=packages.pullquote]
+\use[module=packages.rules]
+\use[module=packages.font-fallback]
+\use[module=packages.simpletable]
 \define[command=notehead]{\noindent\bf{\process}\par\medskip}
 \define[command=line]{\novbreak\skip[height=5pt]\noindent\hrule[width=450pt,height=0.3pt]\par\novbreak\skip[height=5pt]}
 \define[command=note]{\medskip
@@ -38,9 +39,4 @@
 \note{\bf{The material in this section has changed significantly since the previous release of SILE.}}
 }
 \define[command=sup]{\raise[height=0.6ex]{\font[size=0.8em]{\process}}}
-\script{
--- Well, this is a hack
-local simpletable = SILE.require("packages.simpletable")
-simpletable.init(SILE.documentState.documentClass, {tableTag = "table", trTag = "tr", tdTag = "td"})
-}
 \end{document}

@@ -1,10 +1,10 @@
 local base = require("inputters.base")
 local lxp = require("lxp")
 
-local xml = pl.class(base)
-xml._name = "xml"
+local inputter = pl.class(base)
+inputter._name = "xml"
 
-xml.order = 2
+inputter.order = 2
 
 local function startcommand (parser, command, options)
   local stack = parser:getcallbacks().stack
@@ -56,25 +56,33 @@ local function parse (doc)
   return content.stack[1][1]
 end
 
-function xml.appropriate (round, filename, doc)
+function inputter.appropriate (round, filename, doc)
   if round == 1 then
     return filename:match(".xml$")
   elseif round == 2 then
     local sniff = doc:sub(1, 100):gsub("begin.*", "") or ""
     local promising = sniff:match("<")
-    return promising and xml.appropriate(3, filename, doc)
+    return promising and inputter.appropriate(3, filename, doc)
   elseif round == 3 then
     local _, err = parse(doc)
     return not err
   end
 end
 
-function xml.parse (_, doc)
+function inputter.parse (_, doc)
   local tree, err = parse(doc)
   if not tree then
     SU.error(err)
   end
+  -- XML documents can have any root element, and it should be up to the class
+  -- to supply handling far whatever that element that is in a specific format.
+  -- Hence we wrap the actual DOM in an extra element of our own if and only if
+  -- it doesn't look like a native SILE one already.
+  local root = tree.command
+  if root ~= "sile" and root ~= "document" then
+    tree = { tree, command = "document" }
+  end
   return { tree }
 end
 
-return xml
+return inputter

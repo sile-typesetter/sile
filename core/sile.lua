@@ -58,10 +58,11 @@ SILE.rawHandlers = {}
 -- needed for a user to use a SILE-as-a-library verion to produce documents
 -- programatically.
 SILE.input = {
+  filename = "",
   evaluates = {},
   evaluateAfters = {},
   includes = {},
-  requires = {},
+  uses = {},
   options = {},
   preambles = {},
   postambles = {},
@@ -79,6 +80,7 @@ SILE.packages = core_loader("packages")
 SILE.traceStack = require("core.tracestack")()
 SILE.parserBits = require("core.parserbits")
 SILE.frameParser = require("core.frameparser")
+SILE.color = require("core.color")
 SILE.units = require("core.units")
 SILE.fontManager = require("core.fontmanager")
 
@@ -134,6 +136,45 @@ SILE.init = function ()
   runEvals(SILE.input.evaluates, "evaluate")
 end
 
+SILE.use = function (module, options)
+  local pack
+  if type(module) == "string" then
+    pack = require(module)
+  elseif type(module) == "table" then
+    pack = module
+  end
+  local name = pack._name
+  local class = SILE.documentState.documentClass
+  if not pack.type then
+    SU.error("Modules must declare their type")
+  elseif pack.type == "class" then
+    SILE.classes[name] = pack
+    if class then
+      SU.error("Cannot load a class after one is already instantiated")
+    end
+    SILE.sratch.class_from_uses = pack
+  elseif pack.type == "inputter" then
+    SILE.inputters[name] = pack
+    SILE.inputter = pack(options)
+  elseif pack.type == "outputter" then
+    SILE.outputters[name] = pack
+    SILE.outputter = pack(options)
+  elseif pack.type == "shaper" then
+    SILE.shapers[name] = pack
+    SILE.shaper = pack(options)
+  elseif pack.type == "typesetter" then
+    SILE.typesetters[name] = pack
+    SILE.typesetter = pack(options)
+  elseif pack.type == "package" then
+    SILE.packages[name] = pack
+    if class then
+      pack(options)
+    else
+      table.insert(SILE.input.preambles, { pack = pack, options = options })
+    end
+  end
+end
+
 SILE.require = function (dependency, pathprefix, deprecation_ack)
   if pathprefix and not deprecation_ack then
     local notice = string.format([[
@@ -158,8 +199,12 @@ SILE.require = function (dependency, pathprefix, deprecation_ack)
   Please just use the Lua require() function directly:
       SILE.require("%s") → require("%s")]], dependency, dependency))
   end
-  if lib and class then
-    class:initPackage(lib)
+  if type(lib) == "table" and class then
+    if lib.type == "package" then
+      lib(class)
+    else
+      class:initPackage(lib)
+    end
   end
   return lib
 end
@@ -182,20 +227,20 @@ SILE.process = function (ast)
       local pId = SILE.traceStack:pushContent(content, "texlike_stuff")
       SILE.process(content)
       SILE.traceStack:pop(pId)
-    else
+    elseif type(content) ~= "nil" then
       local pId = SILE.traceStack:pushContent(content)
-      SU.error("Unknown command "..(content.command or content.id))
+      SU.error("Unknown command "..(tostring(content.command or content.id)))
       SILE.traceStack:pop(pId)
     end
   end
 end
 
-local defaultinputters = { "xml", "lua", "sil" }
+local preloadedinputters = { "xml", "lua", "sil" }
 
 local function detectFormat (doc, filename)
   -- Preload default reader types so content detection has something to work with
   if #SILE.inputters == 0 then
-    for _, format in ipairs(defaultinputters) do
+    for _, format in ipairs(preloadedinputters) do
       local _ = SILE.inputters[format]
     end
   end
@@ -216,23 +261,36 @@ local function detectFormat (doc, filename)
   SU.error(("Unable to pick inputter to process input from '%s'"):format(filename))
 end
 
-function SILE.processString (doc, format, filename)
+function SILE.processString (doc, format, filename, options)
   local cpf
   if not filename then
     cpf = SILE.currentlyProcessingFile
     local caller = debug.getinfo(2, "Sl")
     SILE.currentlyProcessingFile = caller.short_src..":"..caller.currentline
   end
-  format = format or detectFormat(doc, filename)
-  io.stderr:write(("<%s> as %s\n"):format(SILE.currentlyProcessingFile, format))
-  SILE.inputter = SILE.inputters[format]()
+  -- In the event we're processing the master file *and* the user gave us
+  -- a specific inputter to use, use it at the exclusion of all content type
+  -- detection
+  local inputter
+  if filename and filename:gsub("STDIN", "-") == SILE.input.filename and SILE.inputter then
+    inputter = SILE.inputter
+  else
+    format = format or detectFormat(doc, filename)
+    io.stderr:write(("<%s> as %s\n"):format(SILE.currentlyProcessingFile, format))
+    inputter = SILE.inputters[format](options)
+    -- If we did content detection *and* this is the master file, save the
+    -- inputter for posterity and postambles
+    if filename and filename:gsub("STDIN", "-") == SILE.input.filename then
+      SILE.inputter = inputter
+    end
+  end
   local pId = SILE.traceStack:pushDocument(SILE.currentlyProcessingFile, doc)
-  SILE.inputter:process(doc)
+  inputter:process(doc)
   SILE.traceStack:pop(pId)
   if cpf then SILE.currentlyProcessingFile = cpf end
 end
 
-function SILE.processFile (filename, format)
+function SILE.processFile (filename, format, options)
   local doc
   if filename == "-" then
     filename = "STDIN"
@@ -258,7 +316,7 @@ function SILE.processFile (filename, format)
   end
   SILE.currentlyProcessingFile = filename
   local pId = SILE.traceStack:pushDocument(filename, doc)
-  local ret = SILE.processString(doc, format, filename)
+  local ret = SILE.processString(doc, format, filename, options)
   SILE.traceStack:pop(pId)
   return ret
 end
@@ -352,7 +410,6 @@ end
 
 -- Internal libraries that run core SILE functions on load
 SILE.settings = require("core.settings")()
-SILE.colorparser = require("core.colorparser")
 SILE.pagebuilder = require("core.pagebuilder")()
 require("core.typesetter")
 require("core.hyphenator-liang")

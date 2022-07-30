@@ -1,4 +1,7 @@
-local inputfilter = require("packages.inputfilter").exports
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "url"
 
 local pdf
 
@@ -16,60 +19,15 @@ end
 
 local breakPattern = "["..escapeRegExpMinimal(preferBreakBefore..preferBreakAfter..alwaysBreakAfter).."]"
 
-local urlFilter = function (node, content, options)
-  if type(node) == "table" then return node end
-
-  local result = {}
-  for token in SU.gtoke(node, breakPattern) do
-    if token.string then
-      result[#result+1] = token.string
-    else
-      if string.find(preferBreakBefore, escapeRegExpMinimal(token.separator)) then
-        -- Accepts breaking before, and at the extreme worst after.
-        result[#result+1] = inputfilter.createCommand(
-          content.pos, content.col, content.line,
-          "penalty", { penalty = options.primaryPenalty }, nil
-        )
-        result[#result+1] = token.separator
-        result[#result+1] = inputfilter.createCommand(
-          content.pos, content.col, content.line,
-          "penalty", { penalty = options.worsePenalty }, nil
-        )
-      elseif token.separator == alwaysBreakAfter then
-        -- Accept breaking after (only).
-        result[#result+1] = token.separator
-        result[#result+1] = inputfilter.createCommand(
-          content.pos, content.col, content.line,
-          "penalty", { penalty = options.primaryPenalty }, nil
-        )
-      else
-        -- Accept breaking after, but tolerate breaking before.
-        result[#result+1] = inputfilter.createCommand(
-          content.pos, content.col, content.line,
-          "penalty", { penalty = options.secondaryPenalty }, nil
-        )
-        result[#result+1] = token.separator
-        result[#result+1] = inputfilter.createCommand(
-          content.pos, content.col, content.line,
-          "penalty", { penalty = options.primaryPenalty }, nil
-        )
-      end
-    end
-  end
-  return result
-end
-
-local function init (class, _)
-
-  class:loadPackage("verbatim")
-
+function package:_init ()
+  base._init(self)
+  self.class:loadPackage("verbatim")
+  self.class:loadPackage("inputfilter")
   pdf = SILE.outputter == SILE.outputters.libtexpdf
-
-  if pdf then class:loadPackage("pdf") end
-
+  if pdf then self.class:loadPackage("pdf") end
 end
 
-local function declareSettings (_)
+function package.declareSettings (_)
 
   SILE.settings:declare({
     parameter = "url.linebreak.primaryPenalty",
@@ -87,9 +45,9 @@ local function declareSettings (_)
 
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
 
-  class:registerCommand("href", function (options, content)
+  self:registerCommand("href", function (options, content)
     if not pdf then return SILE.process(content) end
     if options.src then
       SILE.call("pdf:link", { dest = options.src, external = true,
@@ -111,7 +69,49 @@ local function registerCommands (class)
     end
   end, "Inserts a PDF hyperlink.")
 
-  class:registerCommand("url", function (options, content)
+  local urlFilter = function (node, content, options)
+    if type(node) == "table" then return node end
+    local result = {}
+    for token in SU.gtoke(node, breakPattern) do
+      if token.string then
+        result[#result+1] = token.string
+      else
+        if string.find(preferBreakBefore, escapeRegExpMinimal(token.separator)) then
+          -- Accepts breaking before, and at the extreme worst after.
+          result[#result+1] = self.class.packages.inputfilter:createCommand(
+          content.pos, content.col, content.line,
+          "penalty", { penalty = options.primaryPenalty }
+          )
+          result[#result+1] = token.separator
+          result[#result+1] = self.class.packages.inputfilter:createCommand(
+          content.pos, content.col, content.line,
+          "penalty", { penalty = options.worsePenalty }
+          )
+        elseif token.separator == alwaysBreakAfter then
+          -- Accept breaking after (only).
+          result[#result+1] = token.separator
+          result[#result+1] = self.class.packages.inputfilter:createCommand(
+          content.pos, content.col, content.line,
+          "penalty", { penalty = options.primaryPenalty }
+          )
+        else
+          -- Accept breaking after, but tolerate breaking before.
+          result[#result+1] = self.class.packages.inputfilter:createCommand(
+          content.pos, content.col, content.line,
+          "penalty", { penalty = options.secondaryPenalty }
+          )
+          result[#result+1] = token.separator
+          result[#result+1] = self.class.packages.inputfilter:createCommand(
+          content.pos, content.col, content.line,
+          "penalty", { penalty = options.primaryPenalty }
+          )
+        end
+      end
+    end
+    return result
+  end
+
+  self:registerCommand("url", function (options, content)
     SILE.settings:temporarily(function ()
       local primaryPenalty = SILE.settings:get("url.linebreak.primaryPenalty")
       local secondaryPenalty = SILE.settings:get("url.linebreak.secondaryPenalty")
@@ -134,7 +134,7 @@ local function registerCommands (class)
         SILE.settings:set("document.language", 'und')
       end
 
-      local result = inputfilter.transformContent(content, urlFilter, {
+      local result = self.class.packages.inputfilter:transformContent(content, urlFilter, {
         primaryPenalty = primaryPenalty,
         secondaryPenalty = secondaryPenalty,
         worsePenalty = worsePenalty
@@ -143,54 +143,33 @@ local function registerCommands (class)
     end)
   end, "Inserts penalties in an URL so it can be broken over multiple lines at appropriate places.")
 
-  class:registerCommand("code", function (options, content)
+  self:registerCommand("code", function (options, content)
     SILE.call("verbatim:font", options, content)
   end)
 
 end
 
-return {
-  init = init,
-  declareSettings = declareSettings,
-  registerCommands = registerCommands,
-  documentation = [[
+package.documentation = [[
 \begin{document}
-\script[src=packages/url]
+\use[module=packages.url]
 This package enhances the typesetting of URLs in two ways.
-First, it provides the \autodoc:command{\href[src=<url>]{<content>}} command which
-inserts PDF hyperlinks,
-  \href[src=http://www.sile-typesetter.org/]{like this}.
+First, it provides the \autodoc:command{\href[src=<url>]{<content>}} command which inserts PDF hyperlinks, \href[src=http://www.sile-typesetter.org/]{like this}.
 
-The \autodoc:command{\href} command accepts the same \autodoc:parameter{borderwidth},
-\autodoc:parameter{bordercolor}, \autodoc:parameter{borderstyle} and \autodoc:parameter{borderoffset} styling
-options as the \autodoc:command[check=false]{\pdf:link} command from the \autodoc:package{pdf} package,
-for instance
-\href[src=http://www.sile-typesetter.org/, borderwidth=0.4pt,
-  bordercolor=blue, borderstyle=underline]{like this}.
+The \autodoc:command{\href} command accepts the same \autodoc:parameter{borderwidth}, \autodoc:parameter{bordercolor}, \autodoc:parameter{borderstyle} and \autodoc:parameter{borderoffset} styling options as the \autodoc:command[check=false]{\pdf:link} command from the \autodoc:package{pdf} package, for instance \href[src=http://www.sile-typesetter.org/, borderwidth=0.4pt, bordercolor=blue, borderstyle=underline]{like this}.
 
-Nowadays, it is a common practice to have URLs in print articles
-(whether it is a good practice or not is yet \em{another} topic).
-Therefore, the package also provides the \autodoc:command{\url} command, which will
-automatically insert breakpoints into unwieldy
-URLs like \url{https://github.com/sile-typesetter/sile-typesetter.github.io/tree/master/examples}
-so that they can be broken up over multiple lines.
+Nowadays, it is a common practice to have URLs in print articles (whether it is a good practice or not is yet \em{another} topic).
+Therefore, the package also provides the \autodoc:command{\url} command, which will automatically insert breakpoints into unwieldy URLs like \url{https://github.com/sile-typesetter/sile-typesetter.github.io/tree/master/examples} so that they can be broken up over multiple lines.
 
-It allows line breaks after the colon, and before or after appropriate
-segments of an URL (path elements, query parts, fragments, etc.).
-By default, the \autodoc:command{\url} command ignores the current language,
-as one would not want hyphenation to occur in URL segments. If you have no
-other choice, however, you can pass it a \autodoc:parameter{language} option
-to enforce a language to be applied. Note that if French (\code{fr})
-is selected, the special typographic rules applying to punctuations
-in this language are disabled.
+It allows line breaks after the colon, and before or after appropriate segments of an URL (path elements, query parts, fragments, etc.).
+By default, the \autodoc:command{\url} command ignores the current language, as one would not want hyphenation to occur in URL segments.
+If you have no other choice, however, you can pass it a \autodoc:parameter{language} option to enforce a language to be applied.
+Note that if French (\code{fr}) is selected, the special typographic rules applying to punctuations in this language are disabled.
 
-To typeset an URL and at the same type have it as active hyperlink,
-one can use the \autodoc:command{\href} command without the \autodoc:parameter{src} option,
+To typeset an URL and at the same type have it as active hyperlink, one can use the \autodoc:command{\href} command without the \autodoc:parameter{src} option,
 but with the URL passed as argument.
 
-The breaks are controlled by two penalty settings, \autodoc:setting{url.linebreak.primaryPenalty}
-for preferred breakpoints and, for less acceptable but still tolerable breakpoints,
-\autodoc:setting{url.linebreak.secondaryPenalty} —its value should
-logically be higher than the previous one.
+The breaks are controlled by two penalty settings, \autodoc:setting{url.linebreak.primaryPenalty} for preferred breakpoints and, for less acceptable but still tolerable breakpoints, \autodoc:setting{url.linebreak.secondaryPenalty} —its value should logically be higher than the previous one.
 \end{document}
-]]}
+]]
+
+return package

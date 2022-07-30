@@ -1,9 +1,9 @@
 local plain = require("classes.plain")
 
-local book = pl.class(plain)
-book._name = "book"
+local class = pl.class(plain)
+class._name = "book"
 
-book.defaultFrameset = {
+class.defaultFrameset = {
   content = {
     left = "8.3%pw",
     right = "86%pw",
@@ -30,7 +30,7 @@ book.defaultFrameset = {
   }
 }
 
-function book:_init (options)
+function class:_init (options)
   self:loadPackage("counters")
   self:loadPackage("masters", {{
       id = "right",
@@ -48,10 +48,9 @@ function book:_init (options)
       stealFrom = { "content" }
     })
   if not SILE.scratch.headers then SILE.scratch.headers = {} end
-  return self
 end
 
-function book:endPage ()
+function class:endPage ()
   if (self:oddPage() and SILE.scratch.headers.right) then
     SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
       SILE.settings:toplevelState()
@@ -76,12 +75,12 @@ function book:endPage ()
   return plain.endPage(self)
 end
 
-function book:finish ()
+function class:finish ()
   local ret = plain.finish(self)
   return ret
 end
 
-function book:registerCommands ()
+function class:registerCommands ()
 
   plain.registerCommands(self)
 
@@ -100,7 +99,7 @@ function book:registerCommands ()
     local number
     if SU.boolean(options.numbering, true) then
       SILE.call("increment-multilevel-counter", { id = "sectioning", level = level })
-      number = self:formatMultilevelCounter(self:getMultilevelCounter("sectioning"))
+      number = self.packages.counters:formatMultilevelCounter(self:getMultilevelCounter("sectioning"))
     end
     if SU.boolean(options.toc, true) then
       SILE.call("tocentry", { level = level, number = number }, SU.subContent(content))
@@ -240,4 +239,4 @@ function book:registerCommands ()
 
 end
 
-return book
+return class

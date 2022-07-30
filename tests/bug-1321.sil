@@ -1,7 +1,7 @@
 \begin[direction=RTL,papersize=a7]{document}
 \nofolios
 \neverindent
-\script[src=packages/footnotes]
+\use[module=packages.footnotes]
 \font[family=Amiri]
 عَرَبي\footnote{عَرَبي}
 \begin{script}

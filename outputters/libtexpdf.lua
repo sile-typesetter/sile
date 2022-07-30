@@ -18,14 +18,14 @@ local _dl = 0.5
 local _debugfont
 local _font
 
-local libtexpdf = pl.class(base)
-libtexpdf._name = "libtexpdf"
+local outputter = pl.class(base)
+outputter._name = "libtexpdf"
 
 -- The outputter init can't actually initialize output (as logical as it might
 -- have seemed) because that requires a page size which we don't know yet.
--- function libtexpdf:_init () end
+-- function outputter:_init () end
 
-function libtexpdf:_ensureInit ()
+function outputter:_ensureInit ()
   if not started then
     local w, h = SILE.documentState.paperSize[1], SILE.documentState.paperSize[2]
     local fname = self:getOutputFilename("pdf")
@@ -35,17 +35,17 @@ function libtexpdf:_ensureInit ()
   end
 end
 
-function libtexpdf:newPage ()
+function outputter:newPage ()
   self:_ensureInit()
   pdf.endpage()
   pdf.beginpage()
 end
 
 -- pdf stucture package needs a tie in here
-function libtexpdf._endHook (_)
+function outputter._endHook (_)
 end
 
-function libtexpdf:finish ()
+function outputter:finish ()
   self:_ensureInit()
   pdf.endpage()
   self:_endHook()
@@ -54,11 +54,11 @@ function libtexpdf:finish ()
   lastkey = nil
 end
 
-function libtexpdf.getCursor (_)
+function outputter.getCursor (_)
   return cursorX, cursorY
 end
 
-function libtexpdf.setCursor (_, x, y, relative)
+function outputter.setCursor (_, x, y, relative)
   x = SU.cast("number", x)
   y = SU.cast("number", y)
   local offset = relative and { x = cursorX, y = cursorY } or { x = 0, y = 0 }
@@ -66,33 +66,33 @@ function libtexpdf.setCursor (_, x, y, relative)
   cursorY = offset.y + (relative and 0 or SILE.documentState.paperSize[2]) - y
 end
 
-function libtexpdf:setColor (color)
+function outputter:setColor (color)
   self:_ensureInit()
   if color.r then pdf.setcolor_rgb(color.r, color.g, color.b) end
   if color.c then pdf.setcolor_cmyk(color.c, color.m, color.y, color.k) end
   if color.l then pdf.setcolor_gray(color.l) end
 end
 
-function libtexpdf:pushColor (color)
+function outputter:pushColor (color)
   self:_ensureInit()
   if color.r then pdf.colorpush_rgb(color.r, color.g, color.b) end
   if color.c then pdf.colorpush_cmyk(color.c, color.m, color.y, color.k) end
   if color.l then pdf.colorpush_gray(color.l) end
 end
 
-function libtexpdf:popColor ()
+function outputter:popColor ()
   self:_ensureInit()
   pdf.colorpop()
 end
 
-function libtexpdf:_drawString (str, width, x_offset, y_offset)
+function outputter:_drawString (str, width, x_offset, y_offset)
   local x, y = self:getCursor()
   pdf.colorpush_rgb(0,0,0)
   pdf.colorpop()
   pdf.setstring(x+x_offset, y+y_offset, str, string.len(str), _font, width)
 end
 
-function libtexpdf:drawHbox (value, width)
+function outputter:drawHbox (value, width)
   width = SU.cast("number", width)
   self:_ensureInit()
   if not value.glyphString then return end
@@ -121,7 +121,7 @@ function libtexpdf:drawHbox (value, width)
   end
 end
 
-function libtexpdf:_withDebugFont (callback)
+function outputter:_withDebugFont (callback)
   if not _debugfont then
     _debugfont = self:setFont(debugfont)
   end
@@ -131,7 +131,7 @@ function libtexpdf:_withDebugFont (callback)
   _font = oldfont
 end
 
-function libtexpdf:setFont (options)
+function outputter:setFont (options)
   self:_ensureInit()
   local key = SILE.font._key(options)
   if lastkey and key == lastkey then return _font end
@@ -150,7 +150,7 @@ function libtexpdf:setFont (options)
   return _font
 end
 
-function libtexpdf:drawImage (src, x, y, width, height)
+function outputter:drawImage (src, x, y, width, height)
   x = SU.cast("number", x)
   y = SU.cast("number", y)
   width = SU.cast("number", width)
@@ -159,13 +159,13 @@ function libtexpdf:drawImage (src, x, y, width, height)
   pdf.drawimage(src, x, y, width, height)
 end
 
-function libtexpdf:getImageSize (src)
+function outputter:getImageSize (src)
   self:_ensureInit() -- in case it's a PDF file
   local llx, lly, urx, ury = pdf.imagebbox(src)
   return (urx-llx), (ury-lly)
 end
 
-function libtexpdf:drawSVG (figure, x, y, _, height, scalefactor)
+function outputter:drawSVG (figure, x, y, _, height, scalefactor)
   self:_ensureInit()
   x = SU.cast("number", x)
   y = SU.cast("number", y)
@@ -179,7 +179,7 @@ function libtexpdf:drawSVG (figure, x, y, _, height, scalefactor)
   pdf.add_content("Q")
 end
 
-function libtexpdf:drawRule (x, y, width, height)
+function outputter:drawRule (x, y, width, height)
   x = SU.cast("number", x)
   y = SU.cast("number", y)
   width = SU.cast("number", width)
@@ -189,7 +189,7 @@ function libtexpdf:drawRule (x, y, width, height)
   pdf.setrule(x, paperY - y - height, width, height)
 end
 
-function libtexpdf:debugFrame (frame)
+function outputter:debugFrame (frame)
   self:_ensureInit()
   self:pushColor({ r = 0.8, g = 0, b = 0 })
   self:drawRule(frame:left()-_dl/2, frame:top()-_dl/2, frame:width()+_dl, _dl)
@@ -211,7 +211,7 @@ function libtexpdf:debugFrame (frame)
   self:popColor()
 end
 
-function libtexpdf:debugHbox (hbox, scaledWidth)
+function outputter:debugHbox (hbox, scaledWidth)
   self:_ensureInit()
   self:pushColor({ r = 0.8, g = 0.3, b = 0.3 })
   local paperY = SILE.documentState.paperSize[2]
@@ -227,4 +227,4 @@ function libtexpdf:debugHbox (hbox, scaledWidth)
   self:popColor()
 end
 
-return libtexpdf
+return outputter

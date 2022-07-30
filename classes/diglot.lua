@@ -1,9 +1,9 @@
 local plain = require("classes.plain")
 
-local diglot = pl.class(plain)
-diglot._name = "diglot"
+local class = pl.class(plain)
+class._name = "diglot"
 
-function diglot:_init (options)
+function class:_init (options)
   plain._init(self, options)
   self:loadPackage("counters")
   self:registerPostinit(function ()
@@ -13,7 +13,6 @@ function diglot:_init (options)
   self:declareFrame("b",    { left = "52%pw",   right = "100%pw-left(a)", top = "top(a)",         bottom = "bottom(a)"      })
   self:declareFrame("folio",{ left = "left(a)", right = "right(b)",       top = "bottom(a)+3%ph", bottom = "bottom(a)+8%ph" })
   self:loadPackage("parallel", { frames = { left = "a", right = "b" } })
-  return self
 end
 
-return diglot
+return class

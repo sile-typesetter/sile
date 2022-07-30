@@ -1,7 +1,7 @@
 \begin[class=book]{document}
 \include[src=documentation/macros.sil]
 \define[command=silehp]{\url{http://www.sile-typesetter.org/}}
-\define[command=sileversion]{\script{SILE.typesetter:typeset(SILE.full_version)}}
+\define[command=sileversion]{\lua{SILE.typesetter:typeset(SILE.full_version)}}
 \set[parameter=document.baselineskip,value=3ex]
 \font[size=11pt,family=Gentium Book Basic]
 \nofolios
@@ -15,7 +15,7 @@ The\break
 \img[src=documentation/sile-logo.pdf,height=125pt]\break
 Book
 
-\font[size=12pt]{for SILE version \script{SILE.typesetter:typeset(SILE.version)}}
+\font[size=12pt]{for SILE version \lua{SILE.typesetter:typeset(SILE.version)}}
 \vfill
 \vfill
 \end{set}

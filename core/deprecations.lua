@@ -53,6 +53,12 @@ SILE.readFile = function (filename)
   return SILE.processFile(filename)
 end
 
+SILE.colorparser = function (input)
+  SU.deprecated("SILE.colorparser", "SILE.color", "0.14.0", "0.16.0",
+    [[Color results are now color objects, not just tables with relevant values.]])
+  return SILE.color(input)
+end
+
 function SILE.doTexlike (doc)
   SU.deprecated("SILE.doTexlike", "SILE.processString", "0.14.0", "0.16.0",
     [[Add format argument "sil" to skip content detection and assume SIL input]])

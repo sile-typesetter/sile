@@ -1,5 +1,5 @@
 \begin[papersize=a5]{document}
-\script[src=packages/lorem]
+\use[module=packages.lorem]
 
 \ragged[right=true,left=true]{\lorem[words=100]}
 

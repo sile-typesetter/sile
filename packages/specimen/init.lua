@@ -1,8 +1,13 @@
-local metrics = require("fontmetrics")
+local base = require("packages.base")
 
-local function registerCommands (class)
+local package = pl.class(base)
+package._name = "specimen"
 
-  class:registerCommand("repertoire", function(_, _)
+function package:registerCommands ()
+
+  local metrics = require("fontmetrics")
+
+  self:registerCommand("repertoire", function(_, _)
     local ot = require("core.opentype-parser")
     local fontoptions = SILE.font.loadDefaults({})
     local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
@@ -20,7 +25,7 @@ local function registerCommands (class)
     end
   end)
 
-  class:registerCommand("pangrams", function (_, _)
+  self:registerCommand("pangrams", function (_, _)
     local pg = {
       "Sphinx of black quartz, judge my vow!",
       "The five boxing wizards jump quickly.",
@@ -35,7 +40,7 @@ local function registerCommands (class)
     SILE.call("bigskip")
   end)
 
-  class:registerCommand("set-to-width", function(options, content)
+  self:registerCommand("set-to-width", function(options, content)
     local width = SU.required(options, "width", "set to width", "length"):absolute()
     local fontOptions = SILE.font.loadDefaults({})
     for line in SU.gtoke(content[1],"\n+") do
@@ -54,20 +59,15 @@ local function registerCommands (class)
 
 end
 
-return {
-  registerCommands = registerCommands,
-  documentation = [[
+package.documentation = [[
 \begin{document}
-\script[src=packages.specimen]
-SILE has found itself becoming well used by type designers, who often
-want to create specimen documents to show off their new fonts. This package
-provides a few commands to help create test documents. (The \code{fontproof}
-class, available from the package manager, contains many more tools for creating
-specimens.) The \autodoc:command{\repertoire} command prints out every glyph in the
-font, in a simple table. The \autodoc:command{\pangrams} command prints out a few
-pangrams for the Latin script. Finally, \autodoc:command{\set-to-width[width=<dimension>]{<content>}}
-will process each line of content, changing the font size so that the output
-is a constant width.
+\use[module=packages.specimen]
+SILE has found itself becoming well used by type designers, who often want to create specimen documents to show off their new fonts.
+This package provides a few commands to help create test documents.
+(The \code{fontproof} class, available from the package manager, contains many more tools for creating specimens.)
+The \autodoc:command{\repertoire} command prints out every glyph in the font, in a simple table.
+The \autodoc:command{\pangrams} command prints out a few pangrams for the Latin script.
+Finally, \autodoc:command{\set-to-width[width=<dimension>]{<content>}} will process each line of content, changing the font size so that the output is a constant width.
 
 \begin{verbatim}
 \line
@@ -90,4 +90,5 @@ ACCENTOR DOWITCHER DOTTEREL
 \end{examplefont}
 \end{document}
 ]]
-}
+
+return package

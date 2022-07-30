@@ -1,6 +1,11 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "cropmarks"
+
 local outcounter = 1
 
-local outputMarks = function ()
+local function outputMarks ()
   local page = SILE.getFrame("page")
   SILE.outputter:drawRule(page:left() - 10, page:top(), -10, 0.5)
   SILE.outputter:drawRule(page:left(), page:top() - 10, 0.5, -10)
@@ -30,7 +35,7 @@ local outputMarks = function ()
   end
 end
 
-local function reconstrainFrameset(fs)
+local function reconstrainFrameset (fs)
   for n, f in pairs(fs) do
     if n ~= "page" then
       if f:isAbsoluteConstraint("right") then
@@ -50,20 +55,19 @@ local function reconstrainFrameset(fs)
   end
 end
 
-local function init (class, _)
-
-  class:loadPackage("date")
-
+function package:_init ()
+  base._init(self)
+  self.class:loadPackage("date")
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
 
-  class:registerCommand("crop:header", function (_, _)
-    local info = SILE.masterFilename .. " - " .. class:date("%x %X") .. " -  " .. outcounter
+  self:registerCommand("crop:header", function (_, _)
+    local info = SILE.masterFilename .. " - " .. self.class:date("%x %X") .. " -  " .. outcounter
     SILE.typesetter:typeset(info)
   end)
 
-  class:registerCommand("crop:setup", function (options, _)
+  self:registerCommand("crop:setup", function (options, _)
     local papersize = SU.required(options, "papersize", "setting up crop marks")
     local size = SILE.papersize(papersize)
     local oldsize = SILE.documentState.paperSize
@@ -84,35 +88,27 @@ local function registerCommands (class)
     end
     if SILE.typesetter.frame then SILE.typesetter.frame:init() end
     local oldEndPage = SILE.documentState.documentClass.endPage
-    SILE.documentState.documentClass.endPage = function (self)
-      oldEndPage(self)
+    SILE.documentState.documentClass.endPage = function (self_)
+      oldEndPage(self_)
       outputMarks()
     end
   end)
 
 end
 
-
-return {
-  init = init,
-  registerCommands = registerCommands,
-documentation = [[
+package.documentation = [[
 \begin{document}
-When preparing a document for printing, you may be asked by the printer
-to add crop marks. This means that you need to output the document on
-a slightly larger page size than your target paper and add printers
-crop marks to show where the paper should be trimmed down to the correct
-size. (This is to ensure that pages where the content “bleeds” off
-the side of the page are correctly cut.)
+When preparing a document for printing, you may be asked by the printer to add crop marks.
+This means that you need to output the document on a slightly larger page size than your target paper and add printers crop marks to show where the paper should be trimmed down to the correct size.
+(This is to ensure that pages where the content “bleeds” off the side of the page are correctly cut.)
 
-This package provides the \autodoc:command{\crop:setup} command which should be
-run early in your document file. It takes one argument, \autodoc:parameter{papersize},
-which is the true target paper size. It place cropmarks around the
-true page content.
+This package provides the \autodoc:command{\crop:setup} command which should be run early in your document file.
+It takes one argument, \autodoc:parameter{papersize}, which is the true target paper size.
+It place cropmarks around the true page content.
 
-It also adds a header at the top of the page with the filename, date
-and output sheet number. You can customize this header by redefining
-\autodoc:command{\crop:header}.
+It also adds a header at the top of the page with the filename, date and output sheet number.
+You can customize this header by redefining \autodoc:command{\crop:header}.
 \end{document}
 ]]
-}
+
+return package

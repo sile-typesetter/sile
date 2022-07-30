@@ -9,13 +9,13 @@ describe("#XML #inputter", function ()
   describe("should parse", function ()
 
     it("commands with content", function()
-      local t = inputter:parse([[<foo>bar</foo>]])[1]
+      local t = inputter:parse([[<foo>bar</foo>]])[1][1]
       assert.is.equal("foo", t.command)
       assert.is.equal("bar", t[1])
     end)
 
     it("commands without content", function()
-      local t = inputter:parse([[<foo><foo /> bar</foo>]])[1]
+      local t = inputter:parse([[<foo><foo /> bar</foo>]])[1][1]
       assert.is.equal("foo", t.command)
       assert.is.equal("foo", t[1].command)
       assert.is.equal(" bar", t[2])
@@ -23,14 +23,14 @@ describe("#XML #inputter", function ()
     end)
 
     it("commands with arg", function()
-      local t = inputter:parse([[<foo baz="qiz">bar</foo>]])[1]
+      local t = inputter:parse([[<foo baz="qiz">bar</foo>]])[1][1]
       assert.is.equal("foo", t.command)
       assert.is.equal("qiz", t.options.baz)
       assert.is.equal("bar", t[1])
     end)
 
     it("commands with multiple args", function()
-      local t = inputter:parse([[<foo baz="qiz" qiz="baz">bar</foo>]])[1]
+      local t = inputter:parse([[<foo baz="qiz" qiz="baz">bar</foo>]])[1][1]
       assert.is.equal("foo", t.command)
       assert.is.equal("qiz", t.options.baz)
       assert.is.equal("baz", t.options.qiz)

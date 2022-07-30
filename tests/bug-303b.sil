@@ -1,6 +1,6 @@
 \begin[papersize=a5,class=book]{document}
 \nofolios
-\script[src=packages/lorem]
+\use[module=packages.lorem]
 \begin{script}
 SILE.registerCommand("section", function (options, content)
   SILE.typesetter:leaveHmode()

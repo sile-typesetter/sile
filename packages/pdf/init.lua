@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "pdf"
+
 local pdf
 
 local function borderColor (color)
@@ -19,19 +24,17 @@ local function validate_date (date)
   return string.match(date, [[^D:%d+%s*-%s*%d%d%s*'%s*%d%d%s*'?$]]) ~= nil
 end
 
-local function init (_, _)
-
+function package:_init ()
+  base._init(self)
   pdf = require("justenoughlibtexpdf")
-
   if SILE.outputter._name ~= "libtexpdf" then
     SU.error("pdf package requires libtexpdf backend")
   end
-
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
 
-  class:registerCommand("pdf:destination", function (options, _)
+  self:registerCommand("pdf:destination", function (options, _)
     local name = SU.required(options, "name", "pdf:destination")
     SILE.typesetter:pushHbox({
       outputYourself = function (_, typesetter, line)
@@ -45,7 +48,7 @@ local function registerCommands (class)
     })
   end)
 
-  class:registerCommand("pdf:bookmark", function (options, _)
+  self:registerCommand("pdf:bookmark", function (options, _)
     local dest = SU.required(options, "dest", "pdf:bookmark")
     local title = SU.required(options, "title", "pdf:bookmark")
     local level = options.level or 1
@@ -67,7 +70,7 @@ local function registerCommands (class)
     })
   end)
 
-  class:registerCommand("pdf:literal", function (_, content)
+  self:registerCommand("pdf:literal", function (_, content)
     SILE.typesetter:pushHbox({
       value = nil,
       height = SILE.measurement(0),
@@ -79,11 +82,11 @@ local function registerCommands (class)
     })
   end)
 
-  class:registerCommand("pdf:link", function (options, content)
+  self:registerCommand("pdf:link", function (options, content)
     local dest = SU.required(options, "dest", "pdf:link")
     local target = options.external and "/Type/Action/S/URI/URI" or "/S/GoTo/D"
     local borderwidth = options.borderwidth and SU.cast("measurement", options.borderwidth):tonumber() or 0
-    local bordercolor = borderColor(SILE.colorparser(options.bordercolor or "blue"))
+    local bordercolor = borderColor(SILE.color(options.bordercolor or "blue"))
     local borderoffset = SU.cast("measurement", options.borderoffset or "1pt"):tonumber()
     local borderstyle = borderStyle(options.borderstyle, borderwidth)
     local llx, lly
@@ -113,7 +116,7 @@ local function registerCommands (class)
     })
   end)
 
-  class:registerCommand("pdf:metadata", function (options, _)
+  self:registerCommand("pdf:metadata", function (options, _)
     local key = SU.required(options, "key", "pdf:metadata")
     if options.val ~= nil then
       SU.deprecated("\\pdf:metadata[…, val=…]", "\\pdf:metadata[…, value=…]", "0.12.0", "0.13.0")
@@ -147,35 +150,21 @@ local function registerCommands (class)
 
 end
 
-return {
-  init = init,
-  registerCommands = registerCommands,
-  documentation = [[
+package.documentation = [[
 \begin{document}
-The \autodoc:package{pdf} package enables (basic) support for PDF links and table-of-contents
-entries. It provides the four commands \autodoc:command{\pdf:destination}, \autodoc:command{\pdf:link},
-\autodoc:command{\pdf:bookmark}, and \autodoc:command{\pdf:metadata}.
+The \autodoc:package{pdf} package enables (basic) support for PDF links and table-of-contents entries.
+It provides the four commands \autodoc:command{\pdf:destination}, \autodoc:command{\pdf:link}, \autodoc:command{\pdf:bookmark}, and \autodoc:command{\pdf:metadata}.
 
-The \autodoc:command{\pdf:destination} parameter creates a link target; it expects a
-parameter called \autodoc:parameter{name} to uniquely identify the target. To create a link to
-that location in the document, use \autodoc:command{\pdf:link[dest=<name>]{<content>}}.
+The \autodoc:command{\pdf:destination} parameter creates a link target; it expects a parameter called \autodoc:parameter{name} to uniquely identify the target.
+To create a link to that location in the document, use \autodoc:command{\pdf:link[dest=<name>]{<content>}}.
 
-The \autodoc:command{\pdf:link} command accepts several options defining its border style:
-a \autodoc:parameter{borderwidth} length setting the border width (defaults to 0, meaning no border),
-a \autodoc:parameter{borderstyle} string (can be set to “underline” or “dashed”, otherwise a
-solid box),
-a \autodoc:parameter{bordercolor} color specification for this border (defaults to blue),
-and finally a \autodoc:parameter{borderoffset} length for adjusting the border with some vertical space
-above the content and below the baseline (defaults to 1pt). Note that PDF renderers may vary on how
-they honor these border styling features on link annotations.
+The \autodoc:command{\pdf:link} command accepts several options defining its border style: a \autodoc:parameter{borderwidth} length setting the border width (defaults to 0, meaning no border), a \autodoc:parameter{borderstyle} string (can be set to “underline” or “dashed”, otherwise a solid box), a \autodoc:parameter{bordercolor} color specification for this border (defaults to blue), and finally a \autodoc:parameter{borderoffset} length for adjusting the border with some vertical space above the content and below the baseline (defaults to 1pt).
+Note that PDF renderers may vary on how they honor these border styling features on link annotations.
 
-It also has an \autodoc:parameter{external} option for URL links, which is not intended to be used
-directly—refer to the \autodoc:package{url} package for more flexibility typesetting external
-links.
+It also has an \autodoc:parameter{external} option for URL links, which is not intended to be used directly—refer to the \autodoc:package{url} package for more flexibility typesetting external links.
 
-To set arbitrary key-value metadata, use something like \autodoc:command{\pdf:metadata[key=Author,
-value=J. Smith]}. The PDF metadata field names are case-sensitive. Common keys include
-\code{Title}, \code{Author}, \code{Subject}, \code{Keywords}, \code{CreationDate}, and
-\code{ModDate}.
+To set arbitrary key-value metadata, use something like \autodoc:command{\pdf:metadata[key=Author, value=J. Smith]}. The PDF metadata field names are case-sensitive. Common keys include \code{Title}, \code{Author}, \code{Subject}, \code{Keywords}, \code{CreationDate}, and \code{ModDate}.
 \end{document}
-]]}
+]]
+
+return package

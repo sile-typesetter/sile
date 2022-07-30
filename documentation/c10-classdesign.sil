@@ -156,7 +156,7 @@ If all we want to do in our new class is to create a different page shape,
 this is all we need.
 The init function inherited from the book class will take care of setting these frames up with mirrored masters.
 
-If we had wanted to load additionall packages into our class as, say, the \code{bible} class does,
+If we had wanted to load additional packages into our class as, say, the \code{bible} class does,
 we would need to define our own init function and call our parent class’s init function as well.
 For example to load the \code{infonode} package into our class, we could add this init function:
 
@@ -173,7 +173,7 @@ end
 \end{verbatim}
 
 Note that the official SILE classes have some extra tooling to handle legacy class models trying to inherit from them.
-You don't need those deprecation shims if your own classes when following these examples.
+You don't need those deprecation shims in your own classes when following these examples.
 
 \section{Defining Commands}
 
@@ -245,7 +245,7 @@ functions to output text and call other commands.
 
 \note{If you do need to do something with a dimension, you can use \code{SILE.measurement()} to parse a basic length and
 \code{SILE.parseComplexFrameDimension} to parse a frame dimension,
-and if necessary the \code{:tonumber()} method of dimentions turn them into numbers (in points).}
+and if necessary the \code{:tonumber()} method of dimensions turn them into numbers (in points).}
 
 \section{Output Routines}
 
@@ -260,22 +260,20 @@ The key methods for defining the \em{output routine} are:
 \item{\code{newPar} and \code{endPar} are called at the start and end of
       each paragraph.}
 \item{\code{newPage} and \code{endPage} are called at the start
-      and each of each page.}
+      and end of each page.}
 \item{\code{init} and \code{finish} are called at the start and
       end of the document.}
 \end{itemize}
-
-\noindent{}• \code{init} and \code{finish} are called at the start and end of the document.
 
 Once again this is done in an object-oriented way,
 with derived classes overriding their superclass’ methods where necessary.
 
 Some packages may provide functions that need to be run as part of the class output routines.
-One way packages can accomplish this is registering hook functions that get run an known locations in the provided classes.
+One way packages can accomplish this is registering hook functions that get run at known locations in the provided classes.
 Class authors may also provide their own hook locations for packages, or run any set of registered hooks in their own outputs.
 The other way is to export functions that get added to the class itself and can be run manually from the class.
 
-For examples check out the \autodoc:package{tableofcontents} package for the hooks it sets, but also the \autodoc:command{\tocentry} command it registeres that gets called manually in the \code{book} class.
+For examples check out the \autodoc:package{tableofcontents} package for the hooks it sets, but also the \autodoc:command{\tocentry} command it registered that gets called manually in the \code{book} class.
 
 Let’s demonstrate roughly how the \code{tableofcontents} package works.
 We’ll be using the \code{infonodes} package to collect the information about which pages contain table of content items.
@@ -363,7 +361,7 @@ How do we do that?
 
 \section{Exports}
 
-Packages which are primarily used for providing functionality to other classes and packages need a way of supplying these composible bits of functionality to the code which is going to use them.
+Packages which are primarily used for providing functionality to other classes and packages need a way of supplying these composable bits of functionality to the code which is going to use them.
 This is called the \em{export mechanism}.
 
 As well as defining commands, each package may also return a Lua table consisting of two entries,

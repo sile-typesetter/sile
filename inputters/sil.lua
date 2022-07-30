@@ -2,20 +2,20 @@ local base = require("inputters.base")
 
 local epnf = require("epnf")
 
-local sil = pl.class(base)
-sil._name = "sil"
+local inputter = pl.class(base)
+inputter._name = "sil"
 
-sil.order = 50
+inputter.order = 50
 
-sil.appropriate = function (round, filename, doc)
+inputter.appropriate = function (round, filename, doc)
   if round == 1 then
     return filename:match(".sil$")
   elseif round == 2 then
     local sniff = doc:sub(1, 100)
     local promising = sniff:match("\\begin") or sniff:match("\\document") or sniff:match("\\sile")
-    return promising and sil.appropriate(3, filename, doc)
+    return promising and inputter.appropriate(3, filename, doc)
   elseif round == 3 then
-    local _parser = epnf.define(sil._grammar)
+    local _parser = epnf.define(inputter._grammar)
     local status, tree = pcall(epnf.parsestring, _parser, doc)
     local cmd = tree[1][1].command
     return status and (cmd == "document" or cmd == "sile")
@@ -25,27 +25,28 @@ end
 local bits = SILE.parserBits
 
 
-sil.passthroughCommands = {
+inputter.passthroughCommands = {
   ftl = true,
   lua = true,
   math = true,
   raw = true,
   script = true,
   sil = true,
+  use = true,
   xml = true
 }
 
-function sil:_init (tree)
+function inputter:_init ()
   -- Save time when parsing strings by only setting up the grammar once per
   -- instantiation then re-using it on every use.
   self._parser = self:rebuildParser()
-  base._init(self, tree)
+  base._init(self)
 end
 
 -- luacheck: push ignore
-function sil._grammar (_ENV)
+function inputter._grammar (_ENV)
   local isPassthrough = function (_, _, command)
-    return sil.passthroughCommands[command] or false
+    return inputter.passthroughCommands[command] or false
   end
   local isNotPassthrough = function (...)
     return not isPassthrough(...)
@@ -186,11 +187,11 @@ local function massage_ast (tree, doc)
   return tree
 end
 
-function sil:rebuildParser ()
+function inputter:rebuildParser ()
   return epnf.define(self._grammar)
 end
 
-function sil:parse (doc)
+function inputter:parse (doc)
   local tree = epnf.parsestring(self._parser, doc)[1]
   if not tree then
     return SU.error("Unable to parse input document to an AST tree")
@@ -200,4 +201,4 @@ function sil:parse (doc)
   return ast
 end
 
-return sil
+return inputter

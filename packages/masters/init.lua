@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "masters"
+
 local _currentMaster
 
 local function defineMaster (_, args)
@@ -19,7 +24,7 @@ end
 local function defineMasters (class, list)
   if list then
     for i = 1, #list do
-      class:defineMaster(list[i])
+      defineMaster(class, list[i])
     end
   end
 end
@@ -65,19 +70,24 @@ local function currentMaster (_)
   return _currentMaster
 end
 
-local function init (class, args)
-
+function package:_init (options)
+  base._init(self, options)
   if not SILE.scratch.masters then
     SILE.scratch.masters = {}
   end
-
-  defineMasters(class, args)
-
+  self:export("switchMasterOnePage", switchMasterOnePage)
+  self:export("switchMaster", switchMaster)
+  self:export("defineMaster", defineMaster)
+  self:export("defineMasters", defineMasters)
+  self:export("currentMaster", currentMaster)
+  if options then
+    self.class:defineMasters(options)
+  end
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
 
-  class:registerCommand("define-master-template", function(options, content)
+  self:registerCommand("define-master-template", function(options, content)
     SU.required(options, "id", "defining a master")
     SU.required(options, "first-content-frame", "defining a master")
     -- Subvert the <frame> functionality from baseclass
@@ -96,39 +106,26 @@ local function registerCommands (class)
     SILE.frames = sp2
   end)
 
-  class:registerCommand("switch-master-one-page", function (options, _)
+  self:registerCommand("switch-master-one-page", function (options, _)
     SU.required(options, "id", "switching master")
-    switchMasterOnePage(class, options.id)
+    self.class:switchMasterOnePage(options.id)
     SILE.typesetter:leaveHmode()
   end, "Switches the master for the current page")
 
-  class:registerCommand("switch-master", function (options, _)
+  self:registerCommand("switch-master", function (options, _)
     SU.required(options, "id", "switching master")
-    switchMaster(class, options.id)
+    self.class:switchMaster(options.id)
   end, "Switches the master for the current page")
 
 end
 
-return {
-  init = init,
-  registerCommands = registerCommands,
-  exports = {
-    switchMasterOnePage = switchMasterOnePage,
-    switchMaster = switchMaster,
-    defineMaster = defineMaster,
-    defineMasters = defineMasters,
-    currentMaster = currentMaster,
-  },
-  documentation = [[
+package.documentation = [[
 \begin{document}
-
-The masters functionality is also itself an add-on package. It allows a class to
-define sets of frames and switch between them either temporarily or permanently.
-It defines the commands \autodoc:command{\define-master-template} (which is pattern
-on the \autodoc:command{\pagetemplate} function we will meet in chapter 8),
-\autodoc:command{\switch-master} and \autodoc:command{\switch-master-one-page}.
+The masters functionality is also itself an add-on package.
+It allows a class to define sets of frames and switch between them either temporarily or permanently.
+It defines the commands \autodoc:command{\define-master-template} (which is pattern on the \autodoc:command{\pagetemplate} function we will meet in chapter 8), \autodoc:command{\switch-master} and \autodoc:command{\switch-master-one-page}.
 See \code{tests/masters.sil} for more about this package.
-
 \end{document}
 ]]
-}
+
+return package

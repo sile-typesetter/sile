@@ -1,6 +1,11 @@
-local moveNodes = function (class)
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "indexer"
+
+function package:buildIndex ()
   local nodes = SILE.scratch.info.thispage.index
-  local thisPage = class:formatCounter(SILE.scratch.counters.folio)
+  local thisPage = self.class.packages.counters:formatCounter(SILE.scratch.counters.folio)
   if not nodes then return end
   for _, node in ipairs(nodes) do
     if not SILE.scratch.index[node.index] then SILE.scratch.index[node.index] = {} end
@@ -20,17 +25,17 @@ end
   --   end
   -- end
 
-local function init (_, _)
-
+function package:_init ()
+  base._init(self)
   if not SILE.scratch.index then
     SILE.scratch.index = {}
   end
-
+  self:deprecatedExport("buildIndex", self.buildIndex)
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
 
-  class:registerCommand("indexentry", function (options, content)
+  self:registerCommand("indexentry", function (options, content)
     if not options.label then
       -- Reconstruct the text.
       SILE.typesetter:pushState()
@@ -47,8 +52,8 @@ local function registerCommands (class)
     SILE.call("info", { category ="index", value = { index = options.index, label = options.label }})
   end)
 
-  class:registerCommand("printindex", function (options, _)
-    moveNodes(class)
+  self:registerCommand("printindex", function (options, _)
+    self:buildIndex()
     if not options.index then options.index = "main" end
     local index = SILE.scratch.index[options.index]
     local sortedIndex = {}
@@ -61,7 +66,7 @@ local function registerCommands (class)
     end
   end)
 
-  class:registerCommand("index:item", function (options, content)
+  self:registerCommand("index:item", function (options, content)
     SILE.settings:temporarily(function ()
       SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
       SILE.settings:set("current.parindent", SILE.nodefactory.glue())
@@ -75,26 +80,17 @@ local function registerCommands (class)
 
 end
 
-return {
-  init = init,
-  registerCommands = registerCommands,
-  exports = {
-    buildIndex = moveNodes
-  },
-  documentation = [[
+package.documentation = [[
 \begin{document}
 An index is essentially the same thing as a table of contents, but sorted.
-This package provides the \autodoc:command{\indexentry} command, which can be called
-as either \autodoc:command{\indexentry[label=<text>]} or \autodoc:command{\indexentry{<text>}} (so
-that it can be called from a macro). Index entries are collated at the end
-of each page, and the command \autodoc:command{\printindex} will deposit them in a list.
+This package provides the \autodoc:command{\indexentry} command, which can be called as either \autodoc:command{\indexentry[label=<text>]} or \autodoc:command{\indexentry{<text>}} (so that it can be called from a macro).
+Index entries are collated at the end of each page, and the command \autodoc:command{\printindex} will deposit them in a list.
 The entry can be styled using the \autodoc:command{\index:item} command.
 
-Multiple indexes are available and an index can be selected by passing the
-\autodoc:parameter{index=<name>} parameter to \autodoc:command{\indexentry} and \autodoc:command{\printindex}.
+Multiple indexes are available and an index can be selected by passing the \autodoc:parameter{index=<name>} parameter to \autodoc:command{\indexentry} and \autodoc:command{\printindex}.
 
-Classes using the indexer will need to call its exported function \code{buildIndex}
-as part of the end page routine.
+Classes using the indexer will need to call its exported function \code{buildIndex} as part of the end page routine.
 \end{document}
 ]]
-}
+
+return package

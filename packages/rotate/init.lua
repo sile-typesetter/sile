@@ -1,3 +1,8 @@
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "rotate"
+
 local pdf = require("justenoughlibtexpdf")
 
 local enter = function (self, _)
@@ -47,21 +52,19 @@ local outputRotatedHbox = function (self, typesetter, line)
   typesetter.frame:advanceWritingDirection(self.width)
 end
 
-local function init (_, _)
-
-  if SILE.typesetter.frame then
+function package:_init ()
+  base._init(self)
+  if SILE.typesetter and SILE.typesetter.frame then
     enter(SILE.typesetter.frame, SILE.typesetter)
     table.insert(SILE.typesetter.frame.leaveHooks, leave)
   end
-
   table.insert(SILE.framePrototype.enterHooks, enter)
   table.insert(SILE.framePrototype.leaveHooks, leave)
-
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
 
-  class:registerCommand("rotate", function(options, content)
+  self:registerCommand("rotate", function(options, content)
     local angle = SU.required(options, "angle", "rotate command")
     local theta = -math.rad(angle)
     local origbox = SILE.call("hbox", {}, content)
@@ -101,11 +104,9 @@ local function registerCommands (class)
 
 end
 
-return {
-  init = init,
-  registerCommands = registerCommands,
-  documentation = [[\begin{document}
-\script[src=packages/rotate]
+package.documentation = [[
+\begin{document}
+\use[module=packages.rotate]
 The \autodoc:package{rotate} package allows you to rotate things. You can rotate entire
 frames, by adding the \autodoc:parameter{rotate=<angle>} declaration to your frame declaration,
 and you can rotate any content by issuing the command \autodoc:command{\rotate[angle=<angle>]{<content>}},
@@ -125,4 +126,7 @@ here is some text rotated by
 \\rotate[angle=10]\{ten\}, \\rotate[angle=20]\{twenty\} and \\rotate[angle=40]\{forty\} degrees.
 \line
 \end{verbatim}
-\end{document}]] }
+\end{document}
+]]
+
+return package
