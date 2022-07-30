@@ -282,6 +282,9 @@ end
 
 package.documentation = [[
 \begin{document}
+\use[module=packages.parbox]
+\use[module=packages.framebox]
+
 \script[src=packages/parbox]
 
 As its name implies, the \autodoc:package{framebox} package provide several horizontal box framing goodies.
@@ -320,11 +323,12 @@ will be computed instead.)
 For authors thriving for fancyness, there is the \autodoc:command{\roughbox} command that frames its content
 in a \em{sketchy}, hand-drawn-like style\footnote{The implementation is based on a partial port of
 the \em{rough.js} JavaScript library. It uses its own pseudo-random number generator, so that
-rough sketchs in your document all look different but remain the same when the document is rebuilt.}:
+rough sketches in your document all look different but remain the same when the document is rebuilt.}:
 \roughbox[bordercolor=#59b24c]{a rough box.}
 
-As above, the \autodoc:parameter{padding}, \autodoc:parameter{borderwidth} and \autodoc:parameter{bordercolor} options apply,
-as well as \autodoc:parameter{fillcolor}: \roughbox[bordercolor=#b94051,fillcolor=220]{rough \em{hachured} box.}
+As above, the \autodoc:parameter{padding}, \autodoc:parameter{borderwidth} and \autodoc:parameter{bordercolor}
+options all apply, as well as \autodoc:parameter{fillcolor},
+so one can make a \roughbox[bordercolor=#b94051,fillcolor=220]{rough \em{hachured} box.}
 
 Sketching options are \autodoc:parameter{roughness} (numerical value indicating how rough the drawing is; 0 would
 be a perfect  rectangle, the default value is 1 and there is no upper limit to this value but a value

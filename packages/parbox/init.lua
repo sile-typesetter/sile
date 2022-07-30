@@ -309,6 +309,7 @@ function package:registerCommands ()
 end
 
 package.documentation = [[
+\begin{document}
 A paragraph box (“parbox”) is an horizontal box (so technically an “hbox”)
 that contains, as its name implies, one or more paragraphs (so the displayed content
 is actually made of vbox’es and vertical glues). The only mandatory

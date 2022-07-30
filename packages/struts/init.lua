@@ -87,6 +87,7 @@ end
 
 package.documentation = [[
 \begin{document}
+\use[module=packages.struts]
 In professional typesetting, a “strut” is a rule with no width but a certain height
 and depth, to help guaranteeing that an element has a certain minimal height and depth,
 e.g. in tabular environments or in boxes.

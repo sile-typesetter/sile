@@ -439,6 +439,7 @@ end
 
 package.documentation = [[
 \begin{document}
+\use[module=packages.ptable]
 The \autodoc:package{ptable} package provides commands to typeset flexible tables.\footnote{The
 name stands for \em{perfect table}… No, just kidding, it stands for \em{parbox-based table},
 as the so-called “parbox” is the underlying building block. You don’t have to understand it to
