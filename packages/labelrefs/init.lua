@@ -63,10 +63,10 @@ end
 -- These two methods are exported for other (non-sectioning) packages
 -- to enable cross-references on their own numbered content.
 -- Example:
---   local hasRefs = SILE.documentState.documentClass.pushLabelRef
---   if hasRefs then SILE.documentState.documentClass:pushLabelRef(mynumber) end
---   ... do my content stuff ...
---   if hasRefs then SILE.documentState.documentClass:popLabelRef() end
+--   local labelRefs = self.class.packages.labelrefs
+--   if labelRefs then labelRefs:pushLabelRef(mynumber) end
+--     ... do my content stuff ...
+--   if labelRefs then labelRefs:popLabelRef() end
 -- I.e. check the current class supports this package, and if so wrap the
 -- numbered stuff within these calls.
 function package.pushLabelRef (_, number)
