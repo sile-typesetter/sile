@@ -4,6 +4,10 @@
 -- 2021-2022 Didier Willis
 -- License: MIT
 --
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "ptable"
 
 -- UTILITY FUNCTIONS
 
@@ -307,29 +311,30 @@ processTable["row"] = function (content, args, tablespecs)
 
 -- COMMANDS
 
-local function init (class, _)
-  class:loadPackage("parbox")
+function package:_init ()
+  base._init(self)
+  self.class:loadPackage("parbox")
 
   -- TYPESETTER TWEAKS
   -- We modify the typesetter globally to check whether the content on a new
   -- frame is a table row, which needs repeating a header row to be inserted.
   -- EXPERIMENTAL AND SOMEWHAT HACKY-WHACKY = MIGHT NOT BE ROBUST
   local oldInitNextFrame = SILE.typesetter.initNextFrame
-  SILE.typesetter.initNextFrame = function (self)
-    oldInitNextFrame(self)
+  SILE.typesetter.initNextFrame = function (typesetter)
+    oldInitNextFrame(typesetter)
     -- Check the top vboxes:
     -- There could be a leading frame vglue, so we check the two first boxes.
     for k = 1, 2 do
-      if self.state.outputQueue[k] and self.state.outputQueue[k]._header_ then
-        local header = self.state.outputQueue[k]._header_
-        table.insert(self.state.outputQueue, k, header)
+      if typesetter.state.outputQueue[k] and typesetter.state.outputQueue[k]._header_ then
+        local header = typesetter.state.outputQueue[k]._header_
+        table.insert(typesetter.state.outputQueue, k, header)
         break
       end
     end
   end
 end
 
-local function registerCommands (_)
+function package:registerCommands ()
   -- The table building logic works as follows:
   --  1. Parse the AST
   --      - Computing widths, spans, etc. on the way
@@ -349,7 +354,7 @@ local function registerCommands (_)
   -- All parboxes are constructed middle-aligned, and with "character" strut,
   -- which sounds correct for easy height adjustement afterwards.
 
-  SILE.registerCommand("ptable", function (options, content)
+  self:registerCommand("ptable", function (options, content)
     local cols = parseColumnSpec(SU.required(options, "cols", "ptable"))
     local cellpadding = options.cellpadding or "4pt"
     local cellborder = options.cellborder or "0.4pt"
@@ -417,7 +422,7 @@ local function registerCommands (_)
   -- cell alignment, which is handy e.g. for Markdown support.
   -- Other packages and classes could redefine this hook to support
   -- their own options (such as cell styles etc.)
-  SILE.registerCommand("ptable:cell:hook", function(options, content)
+  self:registerCommand("ptable:cell:hook", function(options, content)
     if options.halign == "center" then
       SILE.call("center", {}, content)
     elseif options.halign == "left" then
@@ -432,10 +437,8 @@ local function registerCommands (_)
   end)
 end
 
-return {
-  init = init,
-  registerCommands = registerCommands,
-  documentation = [[\begin{document}
+package.documentation = [[
+\begin{document}
 The \autodoc:package{ptable} package provides commands to typeset flexible tables.\footnote{The
 name stands for \em{perfect table}… No, just kidding, it stands for \em{parbox-based table},
 as the so-called “parbox” is the underlying building block. You don’t have to understand it to
@@ -686,4 +689,5 @@ With tables involving cell splitting, it might be difficult
 to get a good break-point.
 
 \end{document}]]
-}
+
+return package

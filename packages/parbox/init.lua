@@ -7,6 +7,10 @@
 --
 -- Known limitations: LTR-TTB writing direction is assumed.
 --
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "parbox"
 
 -- PARBOXING FUNCTIONS
 
@@ -170,13 +174,14 @@ end
 
 -- PARBOXING COMMAND
 
-local function init (class, _)
-  class:loadPackage("rebox")
-  class:loadPackage("struts")
+function package:_init ()
+  base._init(self)
+  self.class:loadPackage("rebox")
+  self.class:loadPackage("struts")
 end
 
-local function registerCommands (_)
-  SILE.registerCommand("parbox", function (options, content)
+function package:registerCommands ()
+  self:registerCommand("parbox", function (options, content)
     local width = SU.required(options, "width", "parbox")
     local strut = options.strut or "none"
     local border = options.border and parseBorderOrPadding(options.border, "border") or { 0, 0, 0, 0 }
@@ -267,32 +272,32 @@ local function registerCommands (_)
       offset = SILE.measurement(), -- INTERNAL: See comment below.
       border = border,
       bordercolor = bordercolor,
-      outputYourself= function (self, typesetter, _)
+      outputYourself= function (node, typesetter, _)
         local saveY = typesetter.frame.state.cursorY
         local saveX = typesetter.frame.state.cursorX
 
-        typesetter.frame.state.cursorY = saveY - self.height:tonumber()
+        typesetter.frame.state.cursorY = saveY - node.height:tonumber()
         drawBorders(
           typesetter.frame.state.cursorX:tonumber(),
           typesetter.frame.state.cursorY:tonumber(),
-          self.width:tonumber(),
-          self.depth:tonumber() + self.height:tonumber(),
-          self.border,
-          self.bordercolor
+          node.width:tonumber(),
+          node.depth:tonumber() + node.height:tonumber(),
+          node.border,
+          node.bordercolor
         )
 
-        typesetter.frame.state.cursorY = typesetter.frame.state.cursorY + self.yAdjust
+        typesetter.frame.state.cursorY = typesetter.frame.state.cursorY + node.yAdjust
 
         -- Process each vbox
-        typesetter.frame.state.cursorY = typesetter.frame.state.cursorY + self.padding[1] - self.offset:tonumber()
-        for i = 1, #self.inner do
-          typesetter.frame.state.cursorX = saveX + self.padding[3]
-          self.inner[i]:outputYourself(typesetter, self.inner[i])
+        typesetter.frame.state.cursorY = typesetter.frame.state.cursorY + node.padding[1] - node.offset:tonumber()
+        for i = 1, #node.inner do
+          typesetter.frame.state.cursorX = saveX + node.padding[3]
+          node.inner[i]:outputYourself(typesetter, node.inner[i])
         end
 
         typesetter.frame.state.cursorY = saveY
         typesetter.frame.state.cursorX = saveX
-        typesetter.frame:advanceWritingDirection(self.width)
+        typesetter.frame:advanceWritingDirection(node.width)
       end
     })
     -- The offset parameter in the pbox above is for INTERNAL use.
@@ -303,10 +308,7 @@ local function registerCommands (_)
   end)
 end
 
-return {
-  init = init,
-  registerCommands = registerCommands,
-  documentation = [[\begin{document}
+package.documentation = [[
 A paragraph box (“parbox”) is an horizontal box (so technically an “hbox”)
 that contains, as its name implies, one or more paragraphs (so the displayed content
 is actually made of vbox’es and vertical glues). The only mandatory
@@ -522,4 +524,5 @@ But be warned there could be some edge-cases. Also, it is worth noting
 the current implementation has not been experimented yet in right-to-left
 or vertical writing direction.
 \end{document}]]
-}
+
+return package

@@ -5,6 +5,11 @@
 --
 -- KNOWN ISSUE: RTL and BTT writing directions are not officialy supported yet (untested)
 --
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "framebox"
+
 local graphics = require("packages.framebox.graphics.renderer")
 local PathRenderer = graphics.PathRenderer
 local RoughPainter = graphics.RoughPainter
@@ -73,7 +78,7 @@ end
 
 -- SETTINGS
 
-local function declareSettings (_)
+function package.declareSettings (_)
   SILE.settings:declare({
     parameter = "framebox.padding",
     type = "measurement",
@@ -105,8 +110,8 @@ end
 
 -- BASIC BOX-FRAMING COMMANDS
 
-local function registerCommands (_)
-  SILE.registerCommand("framebox", function(options, content)
+function package:registerCommands ()
+  self:registerCommand("framebox", function(options, content)
     local padding = SU.cast("measurement", options.padding or SILE.settings:get("framebox.padding")):tonumber()
     local borderwidth = SU.cast("measurement", options.borderwidth or SILE.settings:get("framebox.borderwidth")):tonumber()
     local bordercolor = SILE.colorparser(options.bordercolor or "black")
@@ -134,7 +139,7 @@ local function registerCommands (_)
     end)
   end, "Frames content in a square box.")
 
-  SILE.registerCommand("roundbox", function(options, content)
+  self:registerCommand("roundbox", function(options, content)
     local padding = SU.cast("measurement", options.padding or SILE.settings:get("framebox.padding")):tonumber()
     local borderwidth = SU.cast("measurement", options.borderwidth or SILE.settings:get("framebox.borderwidth")):tonumber()
     local bordercolor = SILE.colorparser(options.bordercolor or "black")
@@ -168,7 +173,7 @@ local function registerCommands (_)
     end)
   end, "Frames content in a rounded box.")
 
-  SILE.registerCommand("roughbox", function(options, content)
+  self:registerCommand("roughbox", function(options, content)
     local padding = SU.cast("measurement", options.padding or SILE.settings:get("framebox.padding")):tonumber()
     local borderwidth = SU.cast("measurement", options.borderwidth or SILE.settings:get("framebox.borderwidth")):tonumber()
     local bordercolor = SILE.colorparser(options.bordercolor or "black")
@@ -205,7 +210,7 @@ local function registerCommands (_)
     end)
   end, "Frames content in a rough (sketchy) box.")
 
-  SILE.registerCommand("bracebox", function(options, content)
+  self:registerCommand("bracebox", function(options, content)
     local padding = SU.cast("measurement", options.padding or SILE.measurement("0.25em")):tonumber()
     local strokewidth = SU.cast("measurement", options.strokewidth or SILE.measurement("0.033em")):tonumber()
     local bracecolor = SILE.colorparser(options.bracecolor or "black")
@@ -244,7 +249,7 @@ local function registerCommands (_)
   -- This would need to be reimplemented and checked after multiline effects
   -- (e.g. multiline links and underline) are possibly added to the
   -- typetter.
-  SILE.registerCommand("roughunder", function (options, content)
+  self:registerCommand("roughunder", function (options, content)
     -- Begin taken from the original underline command (rules package)
     local ot = require("core/opentype-parser")
     local fontoptions = SILE.font.loadDefaults({})
@@ -275,12 +280,8 @@ local function registerCommands (_)
   end, "Underlines some content (experimental, undocumented)")
 end
 
--- EXPORTS
-
-return {
-  registerCommands = registerCommands,
-  declareSettings = declareSettings,
-  documentation = [[\begin{document}
+package.documentation = [[
+\begin{document}
 \script[src=packages/parbox]
 
 As its name implies, the \autodoc:package{framebox} package provide several horizontal box framing goodies.
@@ -384,4 +385,5 @@ the line to overflow. Also, as can be seen in the examples above, the padding an
 naturally alter the line height.
 
 \end{document}]]
-}
+
+return package

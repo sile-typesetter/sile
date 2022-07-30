@@ -2,12 +2,17 @@
 -- Struts (rules with no width but a certain height) for SILE
 -- License: MIT
 --
+local base = require("packages.base")
 
-local function init (class, _)
-  class:loadPackage("rebox")
+local package = pl.class(base)
+package._name = "struts"
+
+function package:_init ()
+  base._init(self)
+  self.class:loadPackage("rebox")
 end
 
-local function declareSettings (_)
+function package.declareSettings (_)
   SILE.settings:declare({
     parameter = "strut.character",
     type = "string",
@@ -30,7 +35,7 @@ local function declareSettings (_)
   })
 end
 
-local function registerCommands (_)
+function package:registerCommands ()
   -- A strut character (for a given font selection) will be used a lot.
   -- It would be a bit dumb to recompute it each time, so let's cache it.
   local strutCache = {}
@@ -57,7 +62,7 @@ local function registerCommands (_)
     return strutCache[key]
   end
 
-  SILE.registerCommand("strut", function (options, _)
+  self:registerCommand("strut", function (options, _)
     local method = options.method or "character"
     local show = SU.boolean(options.show, true)
     local strut
@@ -80,11 +85,8 @@ local function registerCommands (_)
   end, "Formats a strut box, shows it if requested, returns its height and depth dimentions.")
 end
 
-return {
-  init = init,
-  declareSettings = declareSettings,
-  registerCommands = registerCommands,
-  documentation = [[\begin{document}
+package.documentation = [[
+\begin{document}
 In professional typesetting, a “strut” is a rule with no width but a certain height
 and depth, to help guaranteeing that an element has a certain minimal height and depth,
 e.g. in tabular environments or in boxes.
@@ -105,4 +107,5 @@ point (defaults to true, again this is mostly intended at Lua code, where you co
 the current strut dimensions without adding it to the text flow).
 
 \end{document}]]
-}
+
+return package
