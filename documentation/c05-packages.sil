@@ -112,6 +112,18 @@ path to them.}
 \section{url}
 \package-documentation{url}
 
+\section{struts}
+\package-documentation{struts}
+
+\section{parbox}
+\package-documentation{parbox}
+
+\section{ptable}
+\package-documentation{ptable}
+
+\section{framebox}
+\package-documentation{framebox}
+
 \section{Packages usually used by other packages}
 
 In addition, there are certain packages that you \em{probably} don’t need
