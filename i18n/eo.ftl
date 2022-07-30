@@ -1,8 +1,8 @@
 hello = Saluton { $name }!
 
-toc-not-generated = Reruli na SILE por trakti la enhavan tabelon!
+tableofcontents-not-generated = Reruli na SILE por trakti la enhavan tabelon!
 
-toc-title = Enhavoj
+tableofcontents-title = Enhavoj
 
 book-chapter-title-pre = Ĉapitro{" "}
 

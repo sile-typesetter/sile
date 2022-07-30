@@ -154,7 +154,7 @@ A particularly common string to override might be the table of contents heading:
 
 \begin{verbatim}
 \line
-\\ftl\{toc-heading = Table of Contents\}
+\\ftl\{tableofcontents-title = Table of Contents\}
 \\tableofcontents
 \line
 \end{verbatim}

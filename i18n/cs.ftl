@@ -1,3 +1,3 @@
-toc-title = Obsah
+tableofcontents-title = Obsah
 
 book-chapter-title-pre = Kapitola{" "}

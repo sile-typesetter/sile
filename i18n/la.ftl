@@ -1,8 +1,8 @@
 hello = Salve { $name }!
 
-toc-not-generated = Curre SILE iterum ad mensam contentorum computetur!
+tableofcontents-not-generated = Curre SILE iterum ad mensam contentorum computetur!
 
-toc-title = Tabula contentorum
+tableofcontents-title = Tabula contentorum
 
 book-chapter-title-pre = Caput{" "}
 

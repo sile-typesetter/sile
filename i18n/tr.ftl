@@ -1,5 +1,5 @@
 hello = Merhaba { $name }!
 
-toc-title = İçindekiler
+tableofcontents-title = İçindekiler
 
 book-chapter-title-pre = Bölüm{" "}

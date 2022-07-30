@@ -1,8 +1,8 @@
 hello = Hei { $name }!
 
-toc-not-generated = Kjør SILE om igjen slik at innholdsfortegnelsen blir behandlet!
+tableofcontents-not-generated = Kjør SILE om igjen slik at innholdsfortegnelsen blir behandlet!
 
-toc-title = Innhold
+tableofcontents-title = Innhold
 
 book-chapter-title-pre = Kapittel{" "}
 

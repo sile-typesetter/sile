@@ -1,8 +1,8 @@
 hello = Hello { $name }!
 
-toc-not-generated = Rerun SILE to process the table of contents!
+tableofcontents-not-generated = Rerun SILE to process the table of contents!
 
-toc-title = Table of Contents
+tableofcontents-title = Table of Contents
 
 book-chapter-title-pre = Chapter{" "}
 
