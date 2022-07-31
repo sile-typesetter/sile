@@ -23,7 +23,7 @@ function package:_init ()
   base._init(self)
   self.class:loadPackage("verbatim")
   self.class:loadPackage("inputfilter")
-  pdf = SILE.outputter == SILE.outputters.libtexpdf
+  pdf = SILE.outputter._name == "libtexpdf"
   if pdf then self.class:loadPackage("pdf") end
 end
 
