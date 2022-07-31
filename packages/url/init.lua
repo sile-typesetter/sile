@@ -48,7 +48,15 @@ end
 function package:registerCommands ()
 
   self:registerCommand("href", function (options, content)
-    if not pdf then return SILE.process(content) end
+    if not pdf then
+      if options.src then
+        SILE.process(content)
+      else
+        SILE.call("url", { language = options.language }, content)
+      end
+      return -- DONE.
+    end
+
     if options.src then
       SILE.call("pdf:link", { dest = options.src, external = true,
         borderwidth = options.borderwidth,
