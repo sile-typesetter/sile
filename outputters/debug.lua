@@ -139,8 +139,8 @@ end
 
 function outputter.getImageSize (_, src)
   local pdf = require("justenoughlibtexpdf")
-  local llx, lly, urx, ury = pdf.imagebbox(src)
-  return (urx-llx), (ury-lly)
+  local llx, lly, urx, ury, xresol, yresol = pdf.imagebbox(src)
+  return (urx-llx), (ury-lly), xresol, yresol
 end
 
 function outputter:drawSVG (figure, _, x, y, width, height, scalefactor)

@@ -161,8 +161,8 @@ end
 
 function outputter:getImageSize (src)
   self:_ensureInit() -- in case it's a PDF file
-  local llx, lly, urx, ury = pdf.imagebbox(src)
-  return (urx-llx), (ury-lly)
+  local llx, lly, urx, ury, xresol, yresol = pdf.imagebbox(src)
+  return (urx-llx), (ury-lly), xresol, yresol
 end
 
 function outputter:drawSVG (figure, x, y, _, height, scalefactor)

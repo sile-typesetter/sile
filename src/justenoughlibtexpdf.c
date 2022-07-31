@@ -353,7 +353,7 @@ int pdf_drawimage(lua_State *L) {
   return 0;
 }
 
-extern int get_image_bbox(FILE* f, double* llx, double* lly, double* urx, double* ury);
+extern int get_image_bbox(FILE* f, double* llx, double* lly, double* urx, double* ury, double* xresol, double* yresol);
 
 int pdf_imagebbox(lua_State *L) {
   const char* filename = luaL_checkstring(L, 1);
@@ -361,13 +361,15 @@ int pdf_imagebbox(lua_State *L) {
   double lly = 0;
   double urx = 0;
   double ury = 0;
+  double xresol = 0;
+  double yresol = 0;
 
   FILE* f = MFOPEN(filename, FOPEN_RBIN_MODE);
   if (!f) {
     return luaL_error(L, "Image file not found %s", filename);
   }
 
-  if ( get_image_bbox(f, &llx, &lly, &urx, &ury) < 0 ) {
+  if ( get_image_bbox(f, &llx, &lly, &urx, &ury, &xresol, &yresol) < 0 ) {
     MFCLOSE(f);
     return luaL_error(L, "Invalid image file %s", filename);
   }
@@ -378,7 +380,17 @@ int pdf_imagebbox(lua_State *L) {
   lua_pushnumber(L, lly);
   lua_pushnumber(L, urx);
   lua_pushnumber(L, ury);
-  return 4;
+  if (xresol == 0) {
+    lua_pushnil(L);
+  } else {
+    lua_pushnumber(L, xresol);
+  }
+  if (yresol == 0) {
+    lua_pushnil(L);
+  } else {
+    lua_pushnumber(L, yresol);
+  }
+  return 6;
 }
 
 int pdf_transform(lua_State *L) {
