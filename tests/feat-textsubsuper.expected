@@ -6,21 +6,21 @@ Set font 	Gentium Plus;10;400;;normal;;LTR
 T	11 w=3.1689	(()
 Mx 	18.0508
 T	39 72 73 68 88 79 87 w=29.6973	(Default)
-Mx 	50.4117
+Mx 	50.4118
 T	73 82 81 87 w=17.0996	(font)
-Mx 	67.5113
+Mx 	67.5114
 T	12 w=3.1689	())
-Mx 	73.3439
+Mx 	73.3440
 T	43 w=6.5381	(H)
-Mx 	79.8820
+Mx 	79.8821
 My 	29.9241
 Set font 	Gentium Plus;6.6;600;;normal;+lnum +onum;LTR
-T	21 w=3.3387	(2)
-Mx 	83.2207
+T	21 w=3.0970	(2)
+Mx 	82.9790
 My 	28.7889
 Set font 	Gentium Plus;10;400;;normal;;LTR
 T	50 w=6.0010	(O)
-Mx 	89.2217
+Mx 	88.9800
 T	17 w=2.2900	(.)
 Mx 	14.8819
 My 	40.7889
@@ -28,36 +28,25 @@ T	20 25 w=9.3848	(16)
 Mx 	24.3667
 My 	37.6102
 Set font 	Gentium Plus;6.6;600;;normal;+lnum -onum;LTR
-T	87 75 w=6.2777	(th)
-Mx 	33.3054
+T	87 75 w=5.9136	(th)
+Mx 	32.9412
 My 	40.7889
 Set font 	Gentium Plus;10;400;;normal;;LTR
-Mx 	4.3701
-Mx 	4.6191
-Mx 	5.5176
-Mx 	3.4424
-Mx 	5.2979
-Mx 	3.9600
-Mx 	3.9502
-T	70 a=4.3701 72 a=4.6191 81 a=5.5176 87 a=3.4424 88 a=5.2979 85 a=3.9600 92 a=4.9316	(century)
+T	70 72 81 87 88 85 92 w=32.1387	(century)
+Mx 	65.0799
 T	15 w=2.2900	(,)
-Mx 	69.4137
+Mx 	70.0309
 Set font 	Gentium Plus;10;400;;normal;+smcp;LTR
-T	4026 4004 3694 w=14.6875	(xvi)
-Mx 	84.2012
+T	4100 4080 3783 w=14.6875	(xvi)
+Mx 	84.8184
 My 	37.6102
 Set font 	Gentium Plus;6.6;600;;normal;+lnum -onum;LTR
-T	72 w=3.1937	(e)
-Mx 	90.0559
+T	72 w=3.0486	(e)
+Mx 	90.5280
 My 	40.7889
 Set font 	Gentium Plus;10;400;;normal;;LTR
-Mx 	3.8623
-Mx 	2.7100
-Mx 	4.6191
-Mx 	4.2188
-Mx 	2.7100
-Mx 	4.6191
-T	86 a=3.8623 76 a=2.7100 113 a=4.6191 70 a=4.3701 79 a=2.7100 72 a=4.6191	(siècle)
+T	86 76 113 70 79 72 w=22.8906	(siècle)
+Mx 	113.4186
 T	17 w=2.2900	(.)
 Mx 	14.8819
 My 	52.7889
@@ -65,8 +54,8 @@ T	54 88 83 72 85 86 70 85 76 83 87 w=47.5781	(Superscript)
 Mx 	62.5600
 My 	49.6102
 Set font 	Gentium Plus;6.6;600;;normal;+lnum -onum;LTR
-T	20 21 22 w=10.0160	(123)
-Mx 	72.5760
+T	20 21 22 w=9.2909	(123)
+Mx 	71.8509
 My 	52.7889
 Set font 	Gentium Plus;10;400;;normal;;LTR
 T	17 w=2.2900	(.)
@@ -78,21 +67,21 @@ Mx 	17.8311
 T	39 72 73 68 88 79 87 w=27.0313	(Default)
 Mx 	47.2825
 T	73 82 81 87 w=14.9609	(font)
-Mx 	64.6635
+Mx 	64.6636
 T	76 87 68 79 76 70 w=18.7256	(italic)
-Mx 	83.3891
+Mx 	83.3892
 T	12 w=2.9492	())
-Mx 	88.7584
+Mx 	88.7585
 T	43 w=6.0303	(H)
-Mx 	94.6297
+Mx 	94.6298
 My 	65.9315
 Set font 	Gentium Plus;6.6;600;italic;normal;+lnum +onum;LTR
-T	21 w=3.0035	(2)
-Mx 	97.7922
+T	21 w=2.6522	(2)
+Mx 	97.4411
 My 	64.7889
 Set font 	Gentium Plus;10;400;italic;normal;;LTR
 T	50 w=5.4492	(O)
-Mx 	103.2414
+Mx 	102.8903
 T	17 w=2.0020	(.)
 Mx 	14.8819
 My 	76.7889
@@ -100,31 +89,25 @@ T	20 25 w=8.0371	(16)
 Mx 	23.4642
 My 	73.5897
 Set font 	Gentium Plus;6.6;600;italic;normal;+lnum -onum;LTR
-T	87 75 w=5.7009	(th)
-Mx 	31.3626
+T	87 75 w=5.2884	(th)
+Mx 	30.9501
 My 	76.7889
 Set font 	Gentium Plus;10;400;italic;normal;;LTR
-Mx 	3.8818
-Mx 	3.9307
-Mx 	4.9414
-Mx 	3.0713
-Mx 	4.9902
-Mx 	3.5498
-Mx 	3.9307
-T	70 a=3.8818 72 a=3.9307 81 a=4.9414 87 a=3.0713 88 a=4.9902 85 a=3.5498 92 a=4.5215	(century)
+T	70 72 81 87 88 85 92 w=28.8867	(century)
+Mx 	59.8368
 T	15 w=2.0020	(,)
-Mx 	64.0806
+Mx 	64.2589
 Set font 	Gentium Plus;10;400;italic;normal;+smcp;LTR
-T	4026 4004 3694 w=13.5791	(xvi)
-Mx 	78.2049
+T	4100 4080 3783 w=13.5791	(xvi)
+Mx 	78.3833
 My 	73.5897
 Set font 	Gentium Plus;6.6;600;italic;normal;+lnum -onum;LTR
-T	72 w=2.7876	(e)
-Mx 	83.1900
+T	72 w=2.5942	(e)
+Mx 	83.1750
 My 	76.7889
 Set font 	Gentium Plus;10;400;italic;normal;;LTR
 T	86 76 113 70 79 72 w=20.0244	(siècle)
-Mx 	103.2144
+Mx 	103.1994
 T	17 w=2.0020	(.)
 Mx 	14.8819
 My 	88.7889
@@ -132,8 +115,8 @@ T	54 88 83 72 85 86 70 85 76 83 87 w=42.7197	(Superscript)
 Mx 	58.1469
 My 	85.5897
 Set font 	Gentium Plus;6.6;600;italic;normal;+lnum -onum;LTR
-T	20 21 22 w=9.0105	(123)
-Mx 	66.9348
+T	20 21 22 w=7.9567	(123)
+Mx 	65.8810
 My 	88.7889
 Set font 	Gentium Plus;10;400;italic;normal;;LTR
 T	17 w=2.0020	(.)
