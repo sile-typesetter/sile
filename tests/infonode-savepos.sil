@@ -1,0 +1,38 @@
+\begin[papersize=a8]{document}
+  \use[module=packages/infonode]
+
+  \nofolios
+  \neverindent
+
+  \begin{script}
+    SILE.documentState.documentClass:registerHook("endpage", function ()
+      -- Draw a thin red line linking the info nodes
+      local command = {"0.5 w", "1 0 0 RG"}
+
+      for index, node in ipairs(SILE.scratch.info.thispage.line) do
+        local x = SU.cast("number", node.x)
+        local y = SU.cast("number", node.y)
+        table.insert(command, string.format("%.4f %.4f", x, y))
+
+        if index == 1 then
+          table.insert(command, "m")
+        else
+          table.insert(command, "l")
+        end
+      end
+
+      table.insert(command, "S")
+      SILE.outputter:drawSVG(table.concat(command, " "), 0, 0, 0, 0, 1)
+    end)
+  \end{script}
+
+  first line\info[category="line", savepos=true]
+
+  \info[category="line", savepos=true]second line
+
+  third line\info[category="line", savepos=true]
+
+  \info[category="line", savepos=true]fourth line
+
+  fifth line\info[category="line", savepos=true]
+\end{document}
