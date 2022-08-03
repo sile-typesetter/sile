@@ -1,1 +1,1 @@
-hello = Namárië { $name }!
+hello = Namárië <em>{ $name }</em>!

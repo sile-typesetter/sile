@@ -8,7 +8,7 @@ bibliography-translated-by = Tradukita por { $name }
 
 book-chapter-title-pre = Ĉapitro{" "}
 
-hello = Saluton { $name }!
+hello = Saluton <em>{ $name }</em>!
 
 tableofcontents-not-generated = Reruli na SILE por trakti la enhavan tabelon!
 

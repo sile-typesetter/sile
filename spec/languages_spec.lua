@@ -17,7 +17,7 @@ describe("Language module", function ()
     it("should have localizations", function ()
       fluent:set_locale("no")
       local hello = fluent:get_message("hello")({ name = "Busted" })
-      assert.is.equal("Hei Busted!", hello)
+      assert.is.equal("Hei <em>Busted</em>!", hello)
     end)
 
     describe("Norwegian Bokmål", function ()
@@ -32,7 +32,7 @@ describe("Language module", function ()
 
       it("should have localizations", function ()
         local hello = fluent:get_message("hello")({ name = "Busted" })
-        assert.is.equal("Hei Busted!", hello)
+        assert.is.equal("Hei <em>Busted</em>!", hello)
       end)
 
     end)
@@ -49,7 +49,7 @@ describe("Language module", function ()
 
       it("should have localizations", function ()
         local hello = fluent:get_message("hello")({ name = "Busted" })
-        assert.is.equal("Hei Busted!", hello)
+        assert.is.equal("Hei <em>Busted</em>!", hello)
       end)
 
     end)

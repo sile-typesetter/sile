@@ -8,7 +8,7 @@ bibliography-translated-by = Translated by { $name }
 
 book-chapter-title-pre = Chapter{" "}
 
-hello = Hello { $name }!
+hello = Hello <em>{ $name }</em>!
 
 tableofcontents-not-generated = Rerun SILE to process the table of contents!
 

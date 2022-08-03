@@ -8,7 +8,7 @@ bibliography-translated-by = Interpres fuit { $name }
 
 book-chapter-title-pre = Caput{" "}
 
-hello = Salve { $name }!
+hello = Salve <em>{ $name }</em>!
 
 tableofcontents-not-generated = Curre SILE iterum ad mensam contentorum computetur!
 
