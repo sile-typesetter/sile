@@ -66,7 +66,7 @@ SILE.registerCommand("fluent", function (options, content)
   else
     SU.warn(string.format("No localized message for %s found in locale %s", key, locale))
   end
-  SILE.process({ message })
+  SILE.processString(("<sile>%s</sile>"):format(message), "xml")
 end, nil, nil, true)
 
 SILE.registerCommand("ftl", function (options, content)
