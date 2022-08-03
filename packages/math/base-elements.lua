@@ -46,9 +46,6 @@ local mathVariantToScriptType = function(attr)
     SU.error("Invalid value \""..attr.."\" for option mathvariant")
 end
 
--- Foward declaration
-local newStandardHspace
-
 local function isDisplayMode(mode)
   return mode <= 1
 end
@@ -93,49 +90,41 @@ local mathScriptConversionTable = {
   }
 }
 
-local function retrieveMathTable(options)
-  print("options.family = " .. options.family)
-  local face = SILE.font.cache(options, SILE.shaper.getFace)
-  if not face then
-    SU.error("Could not find requested font "..options.." or any suitable substitutes")
-  end
-  local mathTable = ot.parseMath(hb.get_table(face.data, face.index, "MATH"))
-  local upem = ot.parseHead(hb.get_table(face.data, face.index, "head")).unitsPerEm
-  if mathTable == nil then
-    SU.error("You must use a math font for math rendering.")
-  end
-  local constants = {}
-  for k,v in pairs(mathTable.mathConstants) do
-    if type(v) == "table" then v = v.value end
-    if k:sub(-9) == "ScaleDown" then constants[k] = v / 100
-    else
-      constants[k] = v * options.size / upem
+local mathCache = {}
+
+local function retrieveMathTable(font)
+  local key = SILE.font._key(font)
+  if not mathCache[key] then
+    SU.debug("math", "Loading math font " .. key)
+    local face = SILE.font.cache(font, SILE.shaper.getFace)
+    if not face then
+      SU.error("Could not find requested font ".. font .." or any suitable substitutes")
     end
+    local mathTable = ot.parseMath(hb.get_table(face.data, face.index, "MATH"))
+    local upem = ot.parseHead(hb.get_table(face.data, face.index, "head")).unitsPerEm
+    if mathTable == nil then
+      SU.error("You must use a math font for math rendering.")
+    end
+    local constants = {}
+    for k,v in pairs(mathTable.mathConstants) do
+      if type(v) == "table" then v = v.value end
+      if k:sub(-9) == "ScaleDown" then constants[k] = v / 100
+      else
+        constants[k] = v * font.size / upem
+      end
+    end
+    local italicsCorrection = {}
+    for k, v in pairs(mathTable.mathItalicsCorrection) do
+      italicsCorrection[k] = v.value * font.size / upem
+    end
+    mathCache[key] = {
+      constants = constants,
+      italicsCorrection = italicsCorrection,
+      mathVariants = mathTable.mathVariants,
+      unitsPerEm = upem
+    }
   end
-  local italicsCorrection = {}
-  for k, v in pairs(mathTable.mathItalicsCorrection) do
-    italicsCorrection[k] = v.value * options.size / upem
-  end
-  return {
-    constants = constants,
-    italicsCorrection = italicsCorrection,
-    mathVariants = mathTable.mathVariants,
-    unitsPerEm = upem
-  }
-end
-
-local mathCache
-
-local function getMathMetrics()
-  if mathCache then return mathCache end
-  local options = {
-    family=SILE.settings:get("math.font.family"),
-    size=SILE.settings:get("math.font.size")
-  }
-  local filename = SILE.settings:get("math.font.filename")
-  if filename and filename ~= "" then options.filename = filename end
-  mathCache = retrieveMathTable(options)
-  return mathCache
+  return mathCache[key]
 end
 
 -- Style transition functions for superscript and subscript
@@ -240,22 +229,22 @@ end
 elements.mbox = pl.class({
   _base = nodefactory.box,
   _type = "Mbox",
-  __tostring = function (s) return s.type end,
+  __tostring = function (s) return s._type end,
   _init = function(self)
-    self.options = {}
+    self.font = {}
     self.children = {} -- The child nodes
     self.relX = SILE.length(0) -- x position relative to its parent box
     self.relY = SILE.length(0) -- y position relative to its parent box
     self.value = {}
     self.mode = mathMode.display
     self.atom = atomType.ordinary
-    local options = {
+    local font = {
       family=SILE.settings:get("math.font.family"),
       size=SILE.settings:get("math.font.size")
     }
     local filename = SILE.settings:get("math.font.filename")
-    if filename and filename ~= "" then options.filename = filename end
-    self.options = SILE.font.loadDefaults(options)
+    if filename and filename ~= "" then font.filename = filename end
+    self.font = SILE.font.loadDefaults(font)
   end,
 
   styleChildren = function(_)
@@ -270,8 +259,12 @@ elements.mbox = pl.class({
     SU.error("output is a virtual function that need to be overriden by its child classes")
   end,
 
+  getMathMetrics = function(self)
+    return retrieveMathTable(self.font)
+  end,
+
   getScaleDown = function(self)
-    local constants = getMathMetrics().constants
+    local constants = self:getMathMetrics().constants
     local scaleDown
     if isScriptMode(self.mode) then
       scaleDown = constants.scriptPercentScaleDown
@@ -425,7 +418,7 @@ elements.stackbox = pl.class({
       end
       table.sort(spaceIdx, function(a, b) return a > b end)
       for _, idx in ipairs(spaceIdx) do
-        local hsp = newStandardHspace(self.options.size * self:getScaleDown(), spaces[idx])
+        local hsp = elements.space(spaces[idx], 0, 0)
         table.insert(self.children, idx, hsp)
       end
     end
@@ -497,6 +490,10 @@ elements.stackbox = pl.class({
 elements.subscript = pl.class({
   _base = elements.mbox,
   _type = "Subscript",
+  __tostring = function (self)
+    return (self.sub and "Subscript" or "Superscript") .. "(" ..
+      tostring(self.base) .. ", " .. tostring(self.sub or self.super) .. ")"
+  end,
   _init = function(self, base, sub, sup)
     elements.mbox._init(self)
     self.base = base
@@ -515,7 +512,7 @@ elements.subscript = pl.class({
   calculateItalicsCorrection = function(self)
     local lastGid = getRightMostGlyphId(self.base)
     if lastGid > 0 then
-      local mathMetrics = getMathMetrics()
+      local mathMetrics = self:getMathMetrics()
       if mathMetrics.italicsCorrection[lastGid] then
         return mathMetrics.italicsCorrection[lastGid]
       end
@@ -523,7 +520,7 @@ elements.subscript = pl.class({
     return 0
   end,
   shape = function(self)
-    local mathMetrics = getMathMetrics()
+    local mathMetrics = self:getMathMetrics()
     local constants = mathMetrics.constants
     local scaleDown = self:getScaleDown()
     if self.base then
@@ -618,6 +615,10 @@ elements.subscript = pl.class({
 elements.underOver = pl.class({
   _base = elements.subscript,
   _type = "UnderOver",
+  __tostring = function (self)
+    return self._type .. "(" .. tostring(self.base) .. ", " ..
+      tostring(self.sub) .. ", " .. tostring(self.sup) .. ")"
+  end,
   _init = function(self, base, sub, sup)
     elements.mbox._init(self)
     self.atom = base.atom
@@ -642,7 +643,7 @@ elements.underOver = pl.class({
       elements.subscript.shape(self)
       return
     end
-    local constants = getMathMetrics().constants
+    local constants = self:getMathMetrics().constants
     local scaleDown = self:getScaleDown()
     -- Determine relative Ys
     if self.base then
@@ -716,14 +717,14 @@ elements.underOver = pl.class({
   calculateItalicsCorrection = function(self)
     local lastGid = getRightMostGlyphId(self.base)
     if lastGid > 0 then
-      local mathMetrics = getMathMetrics()
+      local mathMetrics = self:getMathMetrics()
       if mathMetrics.italicsCorrection[lastGid] then
         local c = mathMetrics.italicsCorrection[lastGid]
         -- If this is a big operator, and we are in display style, then the
         -- base glyph may be bigger than the font size. We need to adjust the
         -- italic correction accordingly.
         if self.base.atom == atomType.bigOperator and isDisplayMode(self.mode) then
-          c = c * (self.base and self.base.options.size / self.options.size or 1.0)
+          c = c * (self.base and self.base.font.size / self.font.size or 1.0)
         end
         return c
       end
@@ -744,16 +745,39 @@ elements.terminal = pl.class({
 elements.space = pl.class({
   _base = elements.terminal,
   _type = "Space",
-  __tostring = function(self)
-    return "space{w = "..self.width..", h = "..self.height..", d = "..self.depth.."}"
+  __tostring = function (self)
+    return self._type .. "(width=" .. tostring(self.width) ..
+      ", height=" .. tostring(self.height) ..
+      ", depth=" .. tostring(self.depth) .. ")"
   end,
   _init = function(self, width, height, depth)
     elements.terminal._init(self)
-    self.width = width
-    self.height = height
-    self.depth = depth
+    self.width = self.getStandardLength(width)
+    self.height = self.getStandardLength(height)
+    self.depth = self.getStandardLength(depth)
   end,
-  shape = function (_) end,
+  getStandardLength = function (value)
+    if type(value) == "string" then
+      local direction = 1
+      if value:sub(1, 1) == "-" then
+        value = value:sub(2, -1)
+        direction = -1
+      end
+      if value == "thin" then
+        return SILE.length("3mu") * direction
+      elseif value == "med" then
+        return SILE.length("4mu plus 2mu minus 4mu") * direction
+      elseif value == "thick" then
+        return SILE.length("5mu plus 5mu") * direction
+      end
+    end
+    return SILE.length(value)
+  end,
+  shape = function (self)
+    self.width = self.width:absolute() * self:getScaleDown()
+    self.height = self.height:absolute() * self:getScaleDown()
+    self.depth = self.depth:absolute() * self:getScaleDown()
+  end,
   output = function (_) end
 })
 
@@ -761,7 +785,14 @@ elements.space = pl.class({
 elements.text = pl.class({
   _base = elements.terminal,
   _type = "Text",
-  __tostring = function(self) return "Text("..(self.originalText or self.text)..")" end,
+  __tostring = function (self)
+    return self._type .. "(atom=" .. tostring(self.atom) ..
+        ", kind=" .. tostring(self.kind) ..
+        ", script=" .. tostring(self.script) ..
+        (self.stretchy and ", stretchy" or "") ..
+        (self.largeop and ", largeop" or "") ..
+        ", text=\"" .. (self.originalText or self.text) .. "\")"
+  end,
   _init = function(self, kind, attributes, script, text)
     elements.terminal._init(self)
     if not (kind == "number" or kind == "identifier" or kind == "operator") then
@@ -788,22 +819,17 @@ elements.text = pl.class({
       if self.text == "-" then
         self.text = "−"
       end
-      if symbolDefaults[self.text] then
-        self.atom = symbolDefaults[self.text].atomType
-        self.stretchy = symbolDefaults[self.text].stretchy
-      end
     end
     for attribute,value in pairs(attributes) do
-      SU.debug("math", "attribute = " .. attribute .. ", value = " .. tostring(value))
       self[attribute] = value
     end
   end,
 
   shape = function(self)
-    self.options.size = self.options.size * self:getScaleDown()
-    local face = SILE.font.cache(self.options, SILE.shaper.getFace)
-    local mathMetrics = getMathMetrics()
-    local glyphs = SILE.shaper:shapeToken(self.text, self.options)
+    self.font.size = self.font.size * self:getScaleDown()
+    local face = SILE.font.cache(self.font, SILE.shaper.getFace)
+    local mathMetrics = self:getMathMetrics()
+    local glyphs = SILE.shaper:shapeToken(self.text, self.font)
     -- Use bigger variants for big operators in display style
     if isDisplayMode(self.mode) and self.largeop then
       -- We copy the glyph list to avoid modifying the shaper's cache. Yes.
@@ -825,7 +851,7 @@ elements.text = pl.class({
         if biggest then
           glyphs[1].gid = biggest.variantGlyph
           local dimen = hb.get_glyph_dimensions(face.data,
-            face.index, self.options.size, biggest.variantGlyph)
+            face.index, self.font.size, biggest.variantGlyph)
           glyphs[1].width = dimen.width
           glyphs[1].glyphAdvance = dimen.glyphAdvance
           --[[ I am told (https://github.com/alif-type/xits/issues/90) that,
@@ -876,9 +902,9 @@ elements.text = pl.class({
 
   stretchyReshape = function(self, depth, height)
     -- Required depth+height of stretched glyph, in font units
-    local mathMetrics = getMathMetrics()
+    local mathMetrics = self:getMathMetrics()
     local upem = mathMetrics.unitsPerEm
-    local sz = self.options.size
+    local sz = self.font.size
     local requiredAdvance = (depth + height):tonumber() * upem/sz
     SU.debug("math", "stretch: rA = "..requiredAdvance)
     -- Choose variant of the closest size. The criterion we use is to have
@@ -889,7 +915,7 @@ elements.text = pl.class({
     -- their parts for cases when the biggest variant is not big enough.
     -- We copy the glyph list to avoid modifying the shaper's cache. Yes.
     local glyphs = pl.tablex.deepcopy(self.value.items)
-    local constructions = getMathMetrics().mathVariants
+    local constructions = self:getMathMetrics().mathVariants
       .vertGlyphConstructions[glyphs[1].gid]
     if constructions then
       local variants = constructions.mathGlyphVariantRecord
@@ -915,9 +941,9 @@ elements.text = pl.class({
         -- variants have a different width than the original, because
         -- the shaping phase is already done. Need to do better.
         glyphs[1].gid = closest.variantGlyph
-        local face = SILE.font.cache(self.options, SILE.shaper.getFace)
+        local face = SILE.font.cache(self.font, SILE.shaper.getFace)
         local dimen = hb.get_glyph_dimensions(face.data,
-          face.index, self.options.size, closest.variantGlyph)
+          face.index, self.font.size, closest.variantGlyph)
         glyphs[1].width = dimen.width
         glyphs[1].height = dimen.height
         glyphs[1].depth = dimen.depth
@@ -943,7 +969,7 @@ elements.text = pl.class({
       compensatedY = y
     end
     SILE.outputter:setCursor(scaleWidth(x, line), compensatedY.length)
-    SILE.outputter:setFont(self.options)
+    SILE.outputter:setFont(self.font)
     -- There should be no stretch or shrink on the width of a text
     -- element.
     local width = self.width.length
@@ -954,6 +980,10 @@ elements.text = pl.class({
 elements.fraction = pl.class({
   _base = elements.mbox,
   _type = "Fraction",
+  __tostring = function (self)
+    return self._type .. "(" .. tostring(self.numerator) .. ", " ..
+      tostring(self.denominator) .. ")"
+  end,
   _init = function(self, numerator, denominator)
     elements.mbox._init(self)
     self.numerator = numerator
@@ -978,7 +1008,7 @@ elements.fraction = pl.class({
     self.width = widest.width
 
     -- Determine relative ordinates and height
-    local constants = getMathMetrics().constants
+    local constants = self:getMathMetrics().constants
     local scaleDown = self:getScaleDown()
     self.axisHeight = constants.axisHeight * scaleDown
     self.ruleThickness = constants.fractionRuleThickness * scaleDown
@@ -1027,32 +1057,6 @@ local newUnderOver = function(spec)
   return elements.underOver(spec.base, spec.sub, spec.sup)
 end
 
--- not local, because scope defined further up this file
-newStandardHspace = function(fontSize, kind)
-  local mu = fontSize / 18
-  if kind == "thin" then
-    return elements.space(SILE.length({
-      length = 3 * mu,
-      shrink = 0,
-      stretch = 0
-    }), SILE.length(0), SILE.length(0))
-  elseif kind == "med" then
-    return elements.space(SILE.length({
-      length = 4 * mu,
-      shrink = 4 * mu,
-      stretch = 2 * mu
-    }), SILE.length(0), SILE.length(0))
-  elseif kind == "thick" then
-    return elements.space(SILE.length({
-      length = 5 * mu,
-      shrink = 0,
-      stretch = 5 * mu
-    }), SILE.length(0), SILE.length(0))
-  else
-    SU.error("Unknown space type "..kind)
-  end
-end
-
 -- TODO replace with penlight equivalent
 local function mapList(f, l)
   local ret = {}
@@ -1081,6 +1085,7 @@ elements.table = pl.class({
   _type = "table",
 
   _init = function(self, children, options)
+    elements.mbox._init(self)
     self.children = children
     self.options = options
     self.nrows = #self.children
@@ -1187,7 +1192,7 @@ elements.table = pl.class({
     self.width = thisColRelX
 
     -- Center myself vertically around the axis, and update relative Ys of rows accordingly
-    local axisHeight = getMathMetrics().constants.axisHeight * self:getScaleDown()
+    local axisHeight = self:getMathMetrics().constants.axisHeight * self:getScaleDown()
     self.height = self.vertSize / 2 + axisHeight
     self.depth = self.vertSize / 2 - axisHeight
     for _,row in ipairs(self.children) do
@@ -1207,6 +1212,5 @@ elements.mathVariantToScriptType = mathVariantToScriptType
 elements.symbolDefaults = symbolDefaults
 elements.newSubscript = newSubscript
 elements.newUnderOver = newUnderOver
-elements.newStandardHspace = newStandardHspace
 
 return elements

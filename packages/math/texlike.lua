@@ -216,7 +216,7 @@ local compileToStr = function (argEnv, mathlist)
   end
 end
 
-local function compileToMathML (_, arg_env, tree)
+local function compileToMathML_aux (_, arg_env, tree)
   if type(tree) == "string" then return tree end
   tree = fold_pairs(function (acc, key, child)
     if type(key) ~= "number" then
@@ -227,12 +227,21 @@ local function compileToMathML (_, arg_env, tree)
     -- (since evaluating the nodes depends on the macro's signature, it is more
     -- complex and done below)..
     elseif tree.id == "def" or (tree.id == "command" and commands[tree.command]) then
-      -- Conserve unevaluated children.
+      -- Conserve unevaluated child
       table.insert(acc, child)
     else
-      -- Compile all children.
-      local comp = compileToMathML(nil, arg_env, child)
-      if comp then table.insert(acc, comp) end
+      -- Compile next child
+      local comp = compileToMathML_aux(nil, arg_env, child)
+      if comp then
+        if comp.id == "wrapper" then
+          -- Insert all children of the wrapper node
+          for _, inner_child in ipairs(comp) do
+            table.insert(acc, inner_child)
+          end
+        else
+          table.insert(acc, comp)
+        end
+      end
     end
     return acc
   end, {}, tree)
@@ -274,16 +283,16 @@ local function compileToMathML (_, arg_env, tree)
   -- Translate TeX-like sub/superscripts to `munderover` or `msubsup`,
   -- depending on whether the base is a big operator
   elseif tree.id == "sup" and tree[1].command == "mo"
-      and tree[1].atomType == atomType.bigOperator then
+      and tree[1].atom == atomType.bigOperator then
     tree.command = "mover"
   elseif tree.id == "sub" and tree[1].command == "mo"
-      and symbolDefaults[tree[1][1]].atomType == atomType.bigOperator then
+      and symbolDefaults[tree[1][1]].atom == atomType.bigOperator then
       tree.command = "munder"
   elseif tree.id == "subsup" and tree[1].command == "mo"
-      and symbolDefaults[tree[1][1]].atomType == atomType.bigOperator then
+      and symbolDefaults[tree[1][1]].atom == atomType.bigOperator then
     tree.command = "munderover"
   elseif tree.id == "supsub" and tree[1].command == "mo"
-      and symbolDefaults[tree[1][1]].atomType == atomType.bigOperator then
+      and symbolDefaults[tree[1][1]].atom == atomType.bigOperator then
     tree.command = "munderover"
     local tmp = tree[2]
     tree[2] = tree[3]
@@ -303,7 +312,7 @@ local function compileToMathML (_, arg_env, tree)
     local commandName = tree["command-name"]
     local argTypes = inferArgTypes(tree[1])
     registerCommand(commandName, argTypes, function (compiledArgs)
-      return compileToMathML(nil, compiledArgs, tree[1])
+      return compileToMathML_aux(nil, compiledArgs, tree[1])
     end)
     return nil
   elseif tree.id == "command" and commands[tree.command] then
@@ -321,7 +330,7 @@ local function compileToMathML (_, arg_env, tree)
     for i,arg in pairs(applicationTree) do
       if type(i) == "number" then
         if argTypes[i] == objType.tree then
-          table.insert(compiledArgs, compileToMathML(nil, arg_env, arg))
+          table.insert(compiledArgs, compileToMathML_aux(nil, arg_env, arg))
         else
           local x = compileToStr(arg_env, arg)
           table.insert(compiledArgs, x)
@@ -332,10 +341,15 @@ local function compileToMathML (_, arg_env, tree)
         compiledArgs[i] = applicationTree[i]
       end
     end
-    return cmdFun(compiledArgs)
+    local res = cmdFun(compiledArgs)
+    if res.command == "mrow" then
+      -- Mark the outer mrow to be unwrapped in the parent
+      res.id = "wrapper"
+    end
+    return res
   elseif tree.id == "command" and symbols[tree.command] then
     local atom = {id = "atom", [1] = symbols[tree.command]}
-    tree = compileToMathML(nil, arg_env, atom)
+    tree = compileToMathML_aux(nil, arg_env, atom)
   elseif tree.id == "argument" then
     if arg_env[tree.index] then
       return arg_env[tree.index]
@@ -344,16 +358,52 @@ local function compileToMathML (_, arg_env, tree)
     end
   end
   tree.id = nil
-  SU.debug("texmath", "Resulting MathML:\n" .. tostring(tree))
   return tree
+end
+
+local function printMathML (tree)
+  if type(tree) == "string" then
+    return tree
+  end
+  local result = "\\" .. tree.command
+  if tree.options then
+    local options = {}
+    for k,v in pairs(tree.options) do
+      table.insert(options, k .. "=" .. v)
+    end
+    if #options > 0 then
+      result = result .. "[" .. table.concat(options, ", ") .. "]"
+    end
+  end
+  if #tree > 0 then
+    result = result .. "{"
+    for _, child in ipairs(tree) do
+      result = result .. printMathML(child)
+    end
+    result = result .. "}"
+  end
+  return result
+end
+
+local function compileToMathML (_, arg_env, tree)
+  local result = compileToMathML_aux(_, arg_env, tree)
+  if SU.debugging("texmath") then
+    SU.debug("texmath", "Resulting MathML: " .. printMathML(result))
+  end
+  return result
 end
 
 local function convertTexlike (_, content)
   local ret = epnf.parsestring(mathParser, content[1])
-  SU.debug("texmath", "parsed TeX math:\n" .. tostring(ret))
+  if SU.debugging("texmath") then
+    SU.debug("texmath", "Parsed TeX math: " .. pl.pretty.write(ret))
+  end
   return ret
 end
 
+registerCommand("%", {}, function ()
+  return { "%", command = "mo", options = {} }
+end)
 registerCommand("mi", { [1] = objType.str }, function (x) return x end)
 registerCommand("mo", { [1] = objType.str }, function (x) return x end)
 registerCommand("mn", { [1] = objType.str }, function (x) return x end)
@@ -362,6 +412,26 @@ compileToMathML(nil, {}, convertTexlike(nil, {[==[
   \def{frac}{\mfrac{#1}{#2}}
   \def{bi}{\mi[mathvariant=bold-italic]{#1}}
   \def{dsi}{\mi[mathvariant=double-struck]{#1}}
+
+  % Standard spaces gleaned from plain TeX
+  \def{thinspace}{\mspace[width=thin]}
+  \def{negthinspace}{\mspace[width=-thin]}
+  \def{,}{\thinspace}
+  \def{!}{\negthinspace}
+  \def{medspace}{\mspace[width=med]}
+  \def{negmedspace}{\mspace[width=-med]}
+  \def{>}{\medspace}
+  \def{thickspace}{\mspace[width=thick]}
+  \def{negthickspace}{\mspace[width=-thick]}
+  \def{;}{\thickspace}
+  \def{enspace}{\mspace[width=1en]}
+  \def{enskip}{\enspace}
+  \def{quad}{\mspace[width=1em]}
+  \def{qquad}{\mspace[width=2em]}
+
+  % Modulus operator forms
+  \def{bmod}{\mo{mod}}
+  \def{pmod}{\quad(\mo{mod} #1)}
 ]==]}))
 
 return {
