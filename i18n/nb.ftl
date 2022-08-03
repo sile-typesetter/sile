@@ -19,5 +19,5 @@ bibliography-edited-by = Redigert av { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = Oversatt av { $name }
 appendix-template = Tillegg { $number }
-chapter-template = Kapittel { $number }
+book-chapter-title = Kapittel { $number }
 part-template = Del { $number }

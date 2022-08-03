@@ -17,5 +17,5 @@ bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
 appendix-template = { number }. függelék
-chapter-template = { number }. fejezet
+book-chapter-title = { number }. fejezet
 part-template = { number }. rész

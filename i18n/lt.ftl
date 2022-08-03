@@ -17,5 +17,5 @@ bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
 appendix-template = { number } priedas
-chapter-template = { number } skyrius
+book-chapter-title = { number } skyrius
 part-template = { number } dalis

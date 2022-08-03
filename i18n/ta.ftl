@@ -10,5 +10,5 @@ bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
 appendix-template = பிற்சேர்க்கை { $number }
-chapter-template = அத்தியாயம் { $number }
+book-chapter-title = அத்தியாயம் { $number }
 part-template = பகுதி { $number }

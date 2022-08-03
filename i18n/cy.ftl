@@ -14,5 +14,5 @@ page = tudalen
 see = gweler
 see-also = gweler hefyd
 appendix-template = Atodiad { $number }
-chapter-template = Pennod { $number }
+book-chapter-title = Pennod { $number }
 part-template = Rhan { $number }

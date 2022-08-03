@@ -17,5 +17,5 @@ bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
 appendix-template = დანართი { $number }
-chapter-template = თავი { $number }
+book-chapter-title = თავი { $number }
 part-template = ნაწილი { $number }

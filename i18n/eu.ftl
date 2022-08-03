@@ -17,5 +17,5 @@ bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
 appendix-template = { $number }. Eranskina
-chapter-template ={ $number }. Kapitulua
+book-chapter-title ={ $number }. Kapitulua
 part-template = { $number }. Atala

@@ -17,5 +17,5 @@ bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
 appendix-template = Lisa { $number }
-chapter-template = Peatükk { $number }
+book-chapter-title = Peatükk { $number }
 part-template = Osa { $number }

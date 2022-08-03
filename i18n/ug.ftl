@@ -16,5 +16,5 @@ see-also = ئايرىم قاراڭ
 bibliography-edited-by = { $name }
 bibliography-translated-by = { $name }
 appendix-template = قوشۇمچە { $number }
-chapter-template = باب { $number }
+book-chapter-title = باب { $number }
 part-template = قىسىم { $number }

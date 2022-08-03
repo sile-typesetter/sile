@@ -17,5 +17,5 @@ bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
 appendix-template = Viðauki { $number }
-chapter-template = Kafli { $number }
+book-chapter-title = Kafli { $number }
 part-template = Hluti { $number }

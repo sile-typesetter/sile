@@ -16,5 +16,5 @@ bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
 appendix-template = ภาคผนวก { $number }
-chapter-template = บทที่ { $number }
+book-chapter-title = บทที่ { $number }
 part-template = ภาค { $number }

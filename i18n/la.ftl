@@ -20,5 +20,5 @@ bibliography-edited-by = Conpositor erat { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = Interpres fuit { $name }
 appendix-template = Additamentum { $number }
-chapter-template = Caput { $number }
+book-chapter-title = Caput { $number }
 part-template = Pars { $number }

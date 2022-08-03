@@ -17,5 +17,5 @@ bibliography-edited-by = { $name }
 bibliography-et-al = et al.
 bibliography-translated-by = { $name }
 appendix-template = Հավելված { $number }
-chapter-template = Գլուխ { $number }
+book-chapter-title = Գլուխ { $number }
 part-template = Մաս { $number }
