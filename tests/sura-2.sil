@@ -1,7 +1,7 @@
 \begin[papersize=a6,direction=RTL]{document}% KNOWNBAD
 \nofolios
 \font[family=Amiri Quran,size=20pt]
-\script[src=packages/linespacing]
+\use[module=packages.linespacing]
 \set[parameter=linespacing.method,value=fixed]
 \set[parameter=linespacing.fixed.baselinedistance,value=75pt]
  الۤمۤ ۝١ 

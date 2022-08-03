@@ -22,13 +22,13 @@ cli.parseArguments = function ()
   cliargs:option("-e, --evaluate=VALUE", "evaluate Lua expression before processing input", {})
   cliargs:option("-E, --evaluate-after=VALUE", "evaluate Lua expression after processing input", {})
   cliargs:option("-f, --fontmanager=VALUE", "choose an alternative font manager")
+  cliargs:option("-I, --include=FILE", "deprecated, see --use, --preamble, or --postamble", {})
   cliargs:option("-m, --makedeps=FILE", "generate a list of dependencies in Makefile format")
   cliargs:option("-o, --output=FILE", "explicitly set output file name")
-  cliargs:option("-O, --options=PARAMETER=VALUE", "set document class options", {})
-  cliargs:option("-I, --include=FILE", "deprecated, see --require, --preamble, or --postamble", {})
-  cliargs:option("-r, --require=MODULE", "require a resource to be loaded before processing input", {})
-  cliargs:option("-p, --preamble=FILE", "include an SIL, XML, or other content before the input document", {})
-  cliargs:option("-P, --postamble=FILE", "include an SIL, XML, or other content after the input document", {})
+  cliargs:option("-O, --options=PARAMETER=VALUE[,PARAMETER=VALUE]", "set document class options", {})
+  cliargs:option("-p, --preamble=FILE", "process SIL, XML, or other content before the input document", {})
+  cliargs:option("-P, --postamble=FILE", "process SIL, XML, or other content after the input document", {})
+  cliargs:option("-u, --use=MODULE[[PARAMETER=VALUE][,PARAMETER=VALUE]]", "load and initialize a module before processing input", {})
   cliargs:flag("-t, --traceback", "display detailed location trace on errors and warnings")
   cliargs:flag("-h, --help", "display this help, then exit")
   cliargs:flag("-v, --version", "display version information, then exit", print_version)
@@ -44,10 +44,11 @@ cli.parseArguments = function ()
     if opts.INPUT == "STDIO" then
       opts.INPUT = "-"
     end
+    SILE.input.filename = opts.INPUT
     -- Turn slashes around in the event we get passed a path from a Windows shell
-    SILE.inputFile = opts.INPUT:gsub("\\", "/")
+    local filename = opts.INPUT:gsub("\\", "/")
     -- Strip extension
-    SILE.masterFilename = string.match(SILE.inputFile, "(.+)%..-$") or SILE.inputFile
+    SILE.masterFilename = string.match(filename, "(.+)%..-$") or filename
     SILE.masterDir = SILE.masterFilename:match("(.-)[^%/]+$")
   end
   if opts.backend then
@@ -81,12 +82,12 @@ cli.parseArguments = function ()
     SILE.outputFilename = opts.output
   end
   for _, option in ipairs(opts.options) do
-    local parameters = SILE.parserBits.parameters
-    local options = parameters:match(option)
+    local options = SILE.parserBits.parameters:match(option)
     pl.tablex.merge(SILE.input.options, options, true)
   end
-  for _, path in ipairs(opts.require) do
-    table.insert(SILE.input.requires, path)
+  for _, use in ipairs(opts.use) do
+    local spec = SILE.parserBits.cliuse:match(use)
+    table.insert(SILE.input.uses, spec)
   end
   for _, path in ipairs(opts.preamble) do
     table.insert(SILE.input.preambles, path)
@@ -95,7 +96,7 @@ cli.parseArguments = function ()
     table.insert(SILE.input.postambles, path)
   end
   for _, path in ipairs(opts.include) do
-    SU.deprecated("-I/--include", "-r/--require or -p/--preamble", "0.14.0", "0.15.0")
+    SU.deprecated("-I/--include", "-u/--use or -p/--preamble", "0.14.0", "0.15.0")
     table.insert(SILE.input.includes, path)
   end
   -- http://lua-users.org/wiki/VarargTheSecondClassCitizen

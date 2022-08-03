@@ -1,5 +1,5 @@
 \begin[direction=RTL]{document}
-\script[src=packages/lorem]
+\use[module=packages.lorem]
 
 \lorem
 

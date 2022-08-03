@@ -1,23 +1,25 @@
 local _deprecated = [[
   You appear to be using a document class '%s' programmed for SILE <= v0.12.5.
   This system was refactored in v0.13.0 and the shims trying to make it
-  work temporarily withouth refactoring your classes have been removed
+  work temporarily without refactoring your classes have been removed
   in v0.14.0. Please see v0.13.0 release notes for help.
 ]]
 
-local base = pl.class()
-base.type = "inputter"
-base._name = "base"
+local inputter = pl.class()
+inputter.type = "inputter"
+inputter._name = "base"
 
-base._docclass = nil
+inputter._docclass = nil
 
-function base._init (_) end
+function inputter:_init (options)
+  if options then self.options = options end
+end
 
-function base:classInit (options)
+function inputter:classInit (options)
   options = pl.tablex.merge(options, SILE.input.options, true)
   local constructor, class
-  if SILE.scratch.required_class then
-    constructor = SILE.scratch.required_class
+  if SILE.scratch.class_from_uses then
+    constructor = SILE.scratch.class_from_uses
     class = constructor._name
   end
   class = SILE.input.class or class or options.class or "plain"
@@ -28,7 +30,7 @@ function base:classInit (options)
   SILE.documentState.documentClass = constructor(options)
 end
 
-function base:requireClass (tree)
+function inputter:requireClass (tree)
   local root = SILE.documentState.documentClass == nil
   if root then
     if #tree ~= 1
@@ -40,7 +42,7 @@ function base:requireClass (tree)
   end
 end
 
-function base.packageInit (_, pack)
+function inputter.packageInit (_, pack)
   local class = SILE.documentState.documentClass
   if not class then
     SU.error("Cannot load a package before instantiating a document class")
@@ -49,14 +51,14 @@ function base.packageInit (_, pack)
   end
 end
 
-function base:process (doc)
+function inputter:process (doc)
   local tree = self:parse(doc)
   self:requireClass(tree)
   return SILE.process(tree)
 end
 
 -- Just a simple one-level find. We're not reimplementing XPath here.
-function base.findInTree (_, tree, command)
+function inputter.findInTree (_, tree, command)
   for i=1, #tree do
     if type(tree[i]) == "table" and tree[i].command == command then
       return tree[i]
@@ -64,16 +66,26 @@ function base.findInTree (_, tree, command)
   end
 end
 
-function base.preamble (_)
-  for _, path in ipairs(SILE.input.preambles) do
-    SILE.processFile(path)
+function inputter.preamble (_)
+  for _, preamble in ipairs(SILE.input.preambles) do
+    if type(preamble) == "string" then
+      SILE.processFile(preamble)
+    elseif type(preamble) == "table" then
+      local options = {}
+      if preamble.pack then preamble, options = preamble.pack, preamble.options end
+      if preamble.type == "package" then
+        preamble(options)
+      else
+        SILE.documentState.documentClass:initPackage(preamble, options)
+      end
+    end
   end
 end
 
-function base.postamble (_)
+function inputter.postamble (_)
   for _, path in ipairs(SILE.input.postambles) do
     SILE.processFile(path)
   end
 end
 
-return base
+return inputter

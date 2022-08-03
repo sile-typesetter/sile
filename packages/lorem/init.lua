@@ -73,7 +73,7 @@ local _, nwords = lorem:gsub("%S+", "")
 
 function package:registerCommands ()
 
-  self.class:registerCommand("lorem", function (options, _)
+  self:registerCommand("lorem", function (options, _)
     local words = tonumber(options.words) or 50
     local counter = options.counter or false
     local times = math.floor(words/nwords)

@@ -29,7 +29,7 @@ function _info:outputYourself ()
   end
 end
 
-local function _newPageInfo (_)
+local function newPageInfo (_)
   SILE.scratch.info = { thispage = {} }
 end
 
@@ -41,27 +41,21 @@ local _deprecate  = [[
   you are likely causing it to run twice and duplicate entries.
 ]]
 
-function package:_init (class)
-
-  base._init(self, class)
-
+function package:_init ()
+  base._init(self)
   if not SILE.scratch.info then
     SILE.scratch.info = { thispage = {} }
   end
-
-  class:registerHook("newpage", _newPageInfo)
-
-  -- exports
-  class.newPageInfo = function (self_)
+  self.class:registerHook("newpage", newPageInfo)
+  self:deprecatedExport("newPageInfo", function (class)
     SU.deprecated("class:newPageInfo", nil, "0.13.0", "0.15.0", _deprecate)
-    return _newPageInfo(self_)
-  end
-
+    return class:newPageInfo()
+  end)
 end
 
 function package:registerCommands ()
 
-  self.class:registerCommand("info", function (options, _)
+  self:registerCommand("info", function (options, _)
     SU.required(options, "category", "info node")
     SU.required(options, "value", "info node")
     table.insert(SILE.typesetter.state.nodes, _info({

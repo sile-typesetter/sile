@@ -19,17 +19,12 @@ end
 
 local breakPattern = "["..escapeRegExpMinimal(preferBreakBefore..preferBreakAfter..alwaysBreakAfter).."]"
 
-function package:_init (class)
-
-  base._init(self, class)
-
-  class:loadPackage("verbatim")
-  class:loadPackage("inputfilter")
-
+function package:_init ()
+  base._init(self)
+  self.class:loadPackage("verbatim")
+  self.class:loadPackage("inputfilter")
   pdf = SILE.outputter == SILE.outputters.libtexpdf
-
-  if pdf then class:loadPackage("pdf") end
-
+  if pdf then self.class:loadPackage("pdf") end
 end
 
 function package.declareSettings (_)
@@ -52,9 +47,7 @@ end
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("href", function (options, content)
+  self:registerCommand("href", function (options, content)
     if not pdf then return SILE.process(content) end
     if options.src then
       SILE.call("pdf:link", { dest = options.src, external = true,
@@ -85,32 +78,32 @@ function package:registerCommands ()
       else
         if string.find(preferBreakBefore, escapeRegExpMinimal(token.separator)) then
           -- Accepts breaking before, and at the extreme worst after.
-          result[#result+1] = class.createCommand(
+          result[#result+1] = self.class.packages.inputfilter:createCommand(
           content.pos, content.col, content.line,
-          "penalty", { penalty = options.primaryPenalty }, nil
+          "penalty", { penalty = options.primaryPenalty }
           )
           result[#result+1] = token.separator
-          result[#result+1] = class.createCommand(
+          result[#result+1] = self.class.packages.inputfilter:createCommand(
           content.pos, content.col, content.line,
-          "penalty", { penalty = options.worsePenalty }, nil
+          "penalty", { penalty = options.worsePenalty }
           )
         elseif token.separator == alwaysBreakAfter then
           -- Accept breaking after (only).
           result[#result+1] = token.separator
-          result[#result+1] = class.createCommand(
+          result[#result+1] = self.class.packages.inputfilter:createCommand(
           content.pos, content.col, content.line,
-          "penalty", { penalty = options.primaryPenalty }, nil
+          "penalty", { penalty = options.primaryPenalty }
           )
         else
           -- Accept breaking after, but tolerate breaking before.
-          result[#result+1] = class.createCommand(
+          result[#result+1] = self.class.packages.inputfilter:createCommand(
           content.pos, content.col, content.line,
-          "penalty", { penalty = options.secondaryPenalty }, nil
+          "penalty", { penalty = options.secondaryPenalty }
           )
           result[#result+1] = token.separator
-          result[#result+1] = class.createCommand(
+          result[#result+1] = self.class.packages.inputfilter:createCommand(
           content.pos, content.col, content.line,
-          "penalty", { penalty = options.primaryPenalty }, nil
+          "penalty", { penalty = options.primaryPenalty }
           )
         end
       end
@@ -118,7 +111,7 @@ function package:registerCommands ()
     return result
   end
 
-  class:registerCommand("url", function (options, content)
+  self:registerCommand("url", function (options, content)
     SILE.settings:temporarily(function ()
       local primaryPenalty = SILE.settings:get("url.linebreak.primaryPenalty")
       local secondaryPenalty = SILE.settings:get("url.linebreak.secondaryPenalty")
@@ -141,7 +134,7 @@ function package:registerCommands ()
         SILE.settings:set("document.language", 'und')
       end
 
-      local result = class.transformContent(content, urlFilter, {
+      local result = self.class.packages.inputfilter:transformContent(content, urlFilter, {
         primaryPenalty = primaryPenalty,
         secondaryPenalty = secondaryPenalty,
         worsePenalty = worsePenalty
@@ -150,7 +143,7 @@ function package:registerCommands ()
     end)
   end, "Inserts penalties in an URL so it can be broken over multiple lines at appropriate places.")
 
-  class:registerCommand("code", function (options, content)
+  self:registerCommand("code", function (options, content)
     SILE.call("verbatim:font", options, content)
   end)
 
@@ -158,7 +151,7 @@ end
 
 package.documentation = [[
 \begin{document}
-\script[src=packages/url]
+\use[module=packages.url]
 This package enhances the typesetting of URLs in two ways.
 First, it provides the \autodoc:command{\href[src=<url>]{<content>}} command which inserts PDF hyperlinks, \href[src=http://www.sile-typesetter.org/]{like this}.
 

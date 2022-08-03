@@ -1,7 +1,7 @@
 \begin[papersize=a5,class=book]{document}
-\script[src=packages/lorem]
-\script[src=packages/grid]
-\script[src=packages/frametricks]
+\use[module=packages.lorem]
+\use[module=packages.grid]
+\use[module=packages.frametricks]
 \set[parameter=document.parskip,value=0pt]
 \showframe
 \grid[spacing=20pt]

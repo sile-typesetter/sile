@@ -1,9 +1,9 @@
 local book = require("classes.book")
 
-local triglot = pl.class(book)
-triglot._name = "triglot"
+local class = pl.class(book)
+class._name = "triglot"
 
-function triglot:_init (options)
+function class:_init (options)
   book._init(self, options)
   self:loadPackage("counters")
   self:registerPostinit(function ()
@@ -16,7 +16,6 @@ function triglot:_init (options)
   self:loadPackage("parallel", { frames = { left = "a", middle = "b", right= "c" } })
   SILE.settings:set("linebreak.tolerance", 5000)
   SILE.settings:set("document.parindent", SILE.nodefactory.glue())
-  return self
 end
 
-return triglot
+return class

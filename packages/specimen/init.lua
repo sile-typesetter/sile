@@ -5,11 +5,9 @@ package._name = "specimen"
 
 function package:registerCommands ()
 
-  local class = self.class
-
   local metrics = require("fontmetrics")
 
-  class:registerCommand("repertoire", function(_, _)
+  self:registerCommand("repertoire", function(_, _)
     local ot = require("core.opentype-parser")
     local fontoptions = SILE.font.loadDefaults({})
     local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
@@ -27,7 +25,7 @@ function package:registerCommands ()
     end
   end)
 
-  class:registerCommand("pangrams", function (_, _)
+  self:registerCommand("pangrams", function (_, _)
     local pg = {
       "Sphinx of black quartz, judge my vow!",
       "The five boxing wizards jump quickly.",
@@ -42,7 +40,7 @@ function package:registerCommands ()
     SILE.call("bigskip")
   end)
 
-  class:registerCommand("set-to-width", function(options, content)
+  self:registerCommand("set-to-width", function(options, content)
     local width = SU.required(options, "width", "set to width", "length"):absolute()
     local fontOptions = SILE.font.loadDefaults({})
     for line in SU.gtoke(content[1],"\n+") do
@@ -63,7 +61,7 @@ end
 
 package.documentation = [[
 \begin{document}
-\script[src=packages.specimen]
+\use[module=packages.specimen]
 SILE has found itself becoming well used by type designers, who often want to create specimen documents to show off their new fonts.
 This package provides a few commands to help create test documents.
 (The \code{fontproof} class, available from the package manager, contains many more tools for creating specimens.)

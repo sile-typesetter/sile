@@ -3,47 +3,6 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "frametricks"
 
-local breakFrameVertical = function (after)
-  local cFrame = SILE.typesetter.frame
-  local totalHeight
-  if after then
-    totalHeight = after
-  else
-    totalHeight = SILE.length(0)
-    SILE.typesetter:leaveHmode(1)
-    local queue = SILE.typesetter.state.outputQueue
-    for i = 1, #queue do
-      totalHeight = totalHeight + queue[i].height + queue[i].depth
-    end
-    SILE.typesetter:chuck()
-  end
-
-  local newFrame = SILE.newFrame({
-    bottom = cFrame:bottom(),
-    left = cFrame:left(),
-    right = cFrame:right(),
-    next = cFrame.next,
-    previous = cFrame,
-    id = cFrame.id .. "_"
-  })
-  if SILE.scratch.insertions and SILE.scratch.insertions.classes['footnote'] and SILE.scratch.insertions.classes['footnote'].stealFrom then
-    SILE.scratch.insertions.classes['footnote'].stealFrom[newFrame.id] = 1
-  end
-
-  cFrame:relax("bottom")
-  cFrame:constrain("height", totalHeight)
-  cFrame.next = newFrame.id
-  SILE.documentState.thisPageTemplate.frames[newFrame.id] = newFrame
-  newFrame:constrain("top", cFrame:top() + totalHeight)
-  if (after) then
-    SILE.typesetter:initFrame(cFrame)
-  else
-    SILE.typesetter:initFrame(newFrame)
-  end
-  -- SILE.outputter:debugFrame(cFrame)
-  -- SILE.outputter:debugFrame(newFrame)
-end
-
 local breakFrameHorizontalAt = function (offset)
   local cFrame = SILE.typesetter.frame
   if not offset or not (offset > SILE.length(0)) then
@@ -138,25 +97,61 @@ local mergeColumns = function ()
   SILE.typesetter:initNextFrame()
 end
 
-function package:_init (class)
+function package.breakFrameVertical (_, after)
+  local cFrame = SILE.typesetter.frame
+  local totalHeight
+  if after then
+    totalHeight = after
+  else
+    totalHeight = SILE.length(0)
+    SILE.typesetter:leaveHmode(1)
+    local queue = SILE.typesetter.state.outputQueue
+    for i = 1, #queue do
+      totalHeight = totalHeight + queue[i].height + queue[i].depth
+    end
+    SILE.typesetter:chuck()
+  end
 
-  class:loadPackage("balanced-frames")
-  base._init(self, class)
+  local newFrame = SILE.newFrame({
+    bottom = cFrame:bottom(),
+    left = cFrame:left(),
+    right = cFrame:right(),
+    next = cFrame.next,
+    previous = cFrame,
+    id = cFrame.id .. "_"
+  })
+  if SILE.scratch.insertions and SILE.scratch.insertions.classes['footnote'] and SILE.scratch.insertions.classes['footnote'].stealFrom then
+    SILE.scratch.insertions.classes['footnote'].stealFrom[newFrame.id] = 1
+  end
 
-  -- exports
-  class.breakFrameVertical = breakFrameVertical
+  cFrame:relax("bottom")
+  cFrame:constrain("height", totalHeight)
+  cFrame.next = newFrame.id
+  SILE.documentState.thisPageTemplate.frames[newFrame.id] = newFrame
+  newFrame:constrain("top", cFrame:top() + totalHeight)
+  if (after) then
+    SILE.typesetter:initFrame(cFrame)
+  else
+    SILE.typesetter:initFrame(newFrame)
+  end
+  -- SILE.outputter:debugFrame(cFrame)
+  -- SILE.outputter:debugFrame(newFrame)
+end
 
+
+function package:_init ()
+  base._init(self)
+  self.class:loadPackage("balanced-frames")
+  self:export("breakFrameVertical", self.breakFrameVertical)
 end
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("mergecolumns", function (_, _)
+  self:registerCommand("mergecolumns", function (_, _)
     mergeColumns()
   end, "Merge multiple columns into one")
 
-  class:registerCommand("showframe", function (options, _)
+  self:registerCommand("showframe", function (options, _)
     local id = options.id or SILE.typesetter.frame.id
     if id == "all" then
       for _, frame in pairs(SILE.frames) do
@@ -167,26 +162,26 @@ function package:registerCommands ()
     end
   end)
 
-  class:registerCommand("shiftframeedge", function (options, _)
+  self:registerCommand("shiftframeedge", function (options, _)
     local cFrame = SILE.typesetter.frame
     shiftframeedge(cFrame, options)
     SILE.typesetter:initFrame(cFrame)
     --SILE.outputter:debugFrame(cFrame)
   end, "Adjusts the edge of the frame horizontally by amounts specified in <left> and <right>")
 
-  class:registerCommand("breakframevertical", function (options, _)
-    breakFrameVertical(options.offset)
+  self:registerCommand("breakframevertical", function (options, _)
+    self:breakFrameVertical(options.offset)
   end, "Breaks the current frame in two vertically at the current location or at a point <offset> below the current location")
 
-  class:registerCommand("makecolumns", function (options, _)
+  self:registerCommand("makecolumns", function (options, _)
     makecolumns(options)
   end, "Split the current frame into multiple columns")
 
-  class:registerCommand("breakframehorizontal", function (options, _)
+  self:registerCommand("breakframehorizontal", function (options, _)
     breakFrameHorizontalAt(options.offset)
   end, "Breaks the current frame in two horizontally either at the current location or at a point <offset> from the left of the current frame")
 
-  class:registerCommand("float", function (options, content)
+  self:registerCommand("float", function (options, content)
     SILE.typesetter:leaveHmode()
     local hbox = SILE.call("hbox", {}, content)
     table.remove(SILE.typesetter.state.nodes) -- steal it back
@@ -196,7 +191,7 @@ function package:registerCommands ()
       SILE.call("eject")
       SILE.typesetter:leaveHmode()
     end
-    breakFrameVertical()
+    self:breakFrameVertical()
     local boundary = hbox.width + SILE.length(options.rightboundary):absolute()
     breakFrameHorizontalAt(boundary)
     SILE.typesetNaturally(SILE.typesetter.frame.previous, function ()
@@ -206,12 +201,12 @@ function package:registerCommands ()
     -- undoSkip.stretch = hbox.height
     -- SILE.typesetter:pushHbox({ value = {} })
     -- SILE.typesetter:pushVglue({ height = undoSkip })
-    breakFrameVertical(hbox.height + SILE.length(options.bottomboundary):absolute())
+    self:breakFrameVertical(hbox.height + SILE.length(options.bottomboundary):absolute())
     shiftframeedge(SILE.getFrame(SILE.typesetter.frame.next), { left = -boundary })
     --SILE.outputter:debugFrame(SILE.typesetter.frame)
   end, "Sets the given content in its own frame, flowing the remaining content around it")
 
-  class:registerCommand("typeset-into", function (options, content)
+  self:registerCommand("typeset-into", function (options, content)
     SU.required(options, "frame", "calling \\typeset-into")
     if not SILE.frames[options.frame] then
       SU.error("Can't find frame "..options.frame.." to typeset into")
@@ -219,7 +214,7 @@ function package:registerCommands ()
     SILE.typesetNaturally(SILE.frames[options.frame], function () SILE.process(content) end)
   end)
 
-  class:registerCommand("fit-frame", function (options, _)
+  self:registerCommand("fit-frame", function (options, _)
     SU.required(options, "frame", "calling \\fit-frame")
     if not SILE.frames[options.frame] then
       SU.error("Can't find frame "..options.frame.." to fit")

@@ -92,12 +92,9 @@ local linespacingLeading = function (_, vbox, previous)
   SU.error("Unknown line spacing method "..method)
 end
 
-function package:_init (class)
-
-  base._init(self, class)
-
+function package:_init ()
+  base._init(self)
   SILE.typesetter.leadingFor = linespacingLeading
-
 end
 
 function package.declareSettings (_)
@@ -144,11 +141,11 @@ end
 
 function package:registerCommands ()
 
-  self.class:registerCommand("linespacing-on", function ()
+  self:registerCommand("linespacing-on", function ()
     SILE.typesetter.leadingFor = linespacingLeading
   end)
 
-  self.class:registerCommand("linespacing-off", function ()
+  self:registerCommand("linespacing-off", function ()
     SILE.typesetter.leadingFor = SILE.defaultTypesetter.leadingFor
   end)
 

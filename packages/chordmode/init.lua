@@ -3,13 +3,10 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "chordmode"
 
-function package:_init (class)
-
-  class:loadPackage("raiselower")
-  class:loadPackage("inputfilter")
-
-  base._init(self, class)
-
+function package:_init ()
+  base._init(self)
+  self.class:loadPackage("raiselower")
+  self.class:loadPackage("inputfilter")
 end
 
 function package.declareSettings (_)
@@ -31,9 +28,7 @@ end
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("ch", function (options, content)
+  self:registerCommand("ch", function (options, content)
     local chordBox = SILE.call("hbox", {}, { options.name })
     SILE.typesetter.state.nodes[#(SILE.typesetter.state.nodes)] = nil
     local origWidth = chordBox.width
@@ -58,7 +53,7 @@ function package:registerCommands ()
     local processText, processChordName, processChordText
 
     local function insertChord()
-      table.insert(result, class.createCommand(
+      table.insert(result, self.class.packages.inputfilter:createCommand(
       content.pos, content.col, content.line,
       "ch", { name = chordName }, currentText
       ))
@@ -119,12 +114,11 @@ function package:registerCommands ()
     return result
   end
 
-
-  class:registerCommand("chordmode", function (_, content)
-    SILE.process(class.transformContent(content, _addChords))
+  self:registerCommand("chordmode", function (_, content)
+    SILE.process(self.class.transformContent(content, _addChords))
   end, "Transform embedded chords to 'ch' commands")
 
-  class:registerCommand("chordmode:chordfont", function (_, content)
+  self:registerCommand("chordmode:chordfont", function (_, content)
     SILE.process(content)
   end, "Override this command to change chord style.")
 
@@ -132,7 +126,7 @@ end
 
 package.documentation = [[
 \begin{document}
-\script[src=packages/chordmode]
+\use[module=packages.chordmode]
 This package provides the \autodoc:environment{chordmode} environment, which transforms lines like:
 
 \begin{verbatim}

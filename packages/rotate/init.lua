@@ -52,23 +52,19 @@ local outputRotatedHbox = function (self, typesetter, line)
   typesetter.frame:advanceWritingDirection(self.width)
 end
 
-function package:_init (class)
-
-  base._init(self, class)
-
-  if SILE.typesetter.frame then
+function package:_init ()
+  base._init(self)
+  if SILE.typesetter and SILE.typesetter.frame then
     enter(SILE.typesetter.frame, SILE.typesetter)
     table.insert(SILE.typesetter.frame.leaveHooks, leave)
   end
-
   table.insert(SILE.framePrototype.enterHooks, enter)
   table.insert(SILE.framePrototype.leaveHooks, leave)
-
 end
 
 function package:registerCommands ()
 
-  self.class:registerCommand("rotate", function(options, content)
+  self:registerCommand("rotate", function(options, content)
     local angle = SU.required(options, "angle", "rotate command")
     local theta = -math.rad(angle)
     local origbox = SILE.call("hbox", {}, content)
@@ -110,7 +106,7 @@ end
 
 package.documentation = [[
 \begin{document}
-\script[src=packages/rotate]
+\use[module=packages.rotate]
 The \autodoc:package{rotate} package allows you to rotate things. You can rotate entire
 frames, by adding the \autodoc:parameter{rotate=<angle>} declaration to your frame declaration,
 and you can rotate any content by issuing the command \autodoc:command{\rotate[angle=<angle>]{<content>}},

@@ -219,14 +219,11 @@ local insert = function (_, classname, vbox)
     })
 end
 
-function package:_init (class)
-
-  base._init(self, class)
-
+function package:_init ()
+  base._init(self)
   if not SILE.scratch.insertions then
     SILE.scratch.insertions = { classes = {} }
   end
-
   if not SILE.insertions then
     SILE.insertions = {}
   end
@@ -417,7 +414,7 @@ function package:_init (class)
     return target
   end
 
-  class:registerPostinit(function (_)
+  self.class:registerPostinit(function (_)
 
     local typesetter = SILE.typesetter
 
@@ -447,10 +444,9 @@ function package:_init (class)
 
   end)
 
-  -- exports
-  class.initInsertionClass = initInsertionClass
-  class.thisPageInsertionBoxForClass = thisPageInsertionBoxForClass
-  class.insert = insert
+  self:export("initInsertionClass", initInsertionClass)
+  self:export("thisPageInsertionBoxForClass", thisPageInsertionBoxForClass)
+  self:export("insert", insert)
 
 end
 

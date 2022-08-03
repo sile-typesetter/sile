@@ -27,8 +27,12 @@ utilities.boolean = function (value, default)
   return default
 end
 
+local _skip_traceback_levels = 2
+
 utilities.error = function(message, bug)
+  _skip_traceback_levels = 3
   utilities.warn(message, bug)
+  _skip_traceback_levels = 2
   io.stderr:flush()
   SILE.outputter:finish() -- Only really useful from the REPL but no harm in trying
   error(nil, 2)
@@ -38,7 +42,7 @@ utilities.warn = function(message, bug)
   io.stderr:write("\n! " .. message)
   if SILE.traceback or bug then
     io.stderr:write(" at:\n" .. SILE.traceStack:locationTrace())
-    io.stderr:write(debug.traceback(nil, 2) or "\t! debug.traceback() did not identify code location")
+    io.stderr:write(debug.traceback(nil, _skip_traceback_levels) or "\t! debug.traceback() did not identify code location")
   else
     io.stderr:write(" at " .. SILE.traceStack:locationHead())
   end

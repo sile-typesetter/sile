@@ -31,7 +31,7 @@ local function oddPage ()
   return tp == "odd"
 end
 
-local function _switchPage (class)
+local function switchPage (class)
   if class:oddPage() then
     tp = "even"
     class:switchMaster(class.evenPageMaster)
@@ -49,34 +49,28 @@ local _deprecate  = [[
   you are likely causing it to run twice and duplicate entries.
 ]]
 
-function package:_init (class, args)
-
-  base._init(self, class)
-
+function package:_init (options)
+  base._init(self)
   if not SILE.scratch.masters then
     SU.error("Cannot load twoside package before masters.")
   end
-
-  -- exports
-  class.oddPage = oddPage
-  class.mirrorMaster = mirrorMaster
-  class.switchPage = function (_)
+  self:export("oddPage", oddPage)
+  self:export("mirrorMaster", mirrorMaster)
+  self:export("switchPage", function (class)
     SU.deprecated("class:switchPage", nil, "0.13.0", "0.15.0", _deprecate)
-    return _switchPage(class)
-  end
-
-  class.oddPageMaster = args.oddPageMaster
-  class.evenPageMaster = args.evenPageMaster
-  class:registerPostinit(function (self_)
-    self_:mirrorMaster(args.oddPageMaster, args.evenPageMaster)
+    return class:switchPage()
   end)
-  class:registerHook("newpage", _switchPage)
-
+  self.class.oddPageMaster = options.oddPageMaster
+  self.class.evenPageMaster = options.evenPageMaster
+  self.class:registerPostinit(function (class)
+    class:mirrorMaster(options.oddPageMaster, options.evenPageMaster)
+  end)
+  self.class:registerHook("newpage", switchPage)
 end
 
 function package:registerCommands ()
 
-  self.class:registerCommand("open-double-page", function()
+  self:registerCommand("open-double-page", function()
     SILE.typesetter:leaveHmode()
     SILE.call("supereject")
     if self.class:oddPage() then

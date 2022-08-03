@@ -55,22 +55,19 @@ local function reconstrainFrameset (fs)
   end
 end
 
-function package:_init (class)
-
-  base._init(self, class)
-
-  class:loadPackage("date")
-
+function package:_init ()
+  base._init(self)
+  self.class:loadPackage("date")
 end
 
 function package:registerCommands ()
 
-  self.class:registerCommand("crop:header", function (_, _)
+  self:registerCommand("crop:header", function (_, _)
     local info = SILE.masterFilename .. " - " .. self.class:date("%x %X") .. " -  " .. outcounter
     SILE.typesetter:typeset(info)
   end)
 
-  self.class:registerCommand("crop:setup", function (options, _)
+  self:registerCommand("crop:setup", function (options, _)
     local papersize = SU.required(options, "papersize", "setting up crop marks")
     local size = SILE.papersize(papersize)
     local oldsize = SILE.documentState.paperSize

@@ -1,14 +1,14 @@
 local plain = require("classes.plain")
 
-local docbook = pl.class(plain)
-docbook._name = "docbook"
+local class = pl.class(plain)
+class._name = "docbook"
 
 SILE.scratch.docbook = {
   seclevel = 0,
   seccount = {}
 }
 
-function docbook:_init (options)
+function class:_init (options)
   plain._init(self, options)
   self:loadPackage("image")
   self:loadPackage("simpletable", {
@@ -19,30 +19,29 @@ function docbook:_init (options)
   self:loadPackage("rules")
   self:loadPackage("verbatim")
   self:loadPackage("footnotes")
-  return self
 end
 
-function docbook.push (t, val)
+function class.push (t, val)
   if not SILE.scratch.docbook[t] then SILE.scratch.docbook[t] = {} end
   local q = SILE.scratch.docbook[t]
   q[#q+1] = val
 end
 
-function docbook.pop (t)
+function class.pop (t)
   local q = SILE.scratch.docbook[t]
   q[#q] = nil
 end
 
-function docbook.val (t)
+function class.val (t)
   local q = SILE.scratch.docbook[t]
   return q[#q]
 end
 
-function docbook.wipe (tbl)
+function class.wipe (tbl)
   while((#tbl) > 0) do tbl[#tbl] = nil end
 end
 
-docbook.registerCommands = function (self)
+class.registerCommands = function (self)
 
   plain.registerCommands(self)
 
@@ -412,4 +411,4 @@ docbook.registerCommands = function (self)
 
 end
 
-return docbook
+return class

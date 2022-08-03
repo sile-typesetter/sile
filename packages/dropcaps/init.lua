@@ -3,13 +3,10 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "dropcaps"
 
-function package:_init (class)
-
-  class:loadPackage("rebox")
-  class:loadPackage("raiselower")
-
-  base._init(self, class)
-
+function package:_init ()
+  base._init(self)
+  self.class:loadPackage("rebox")
+  self.class:loadPackage("raiselower")
 end
 
 local shapeHbox = function (options, content)
@@ -27,7 +24,7 @@ function package:registerCommands ()
 
   -- This implementation relies on the hangafter and hangindent features of Knuth's line-breaking algorithm.
   -- These features in core line breaking algorithm supply the blank space in the paragraph shape but don't fill it with anything.
-  self.class:registerCommand("dropcap", function (options, content)
+  self:registerCommand("dropcap", function (options, content)
     local lines = SU.cast("integer", options.lines or 3)
     local join = SU.boolean(options.join, false)
     local standoff = SU.cast("measurement", options.standoff or "1spc")

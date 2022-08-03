@@ -77,7 +77,7 @@ local enforceListType = function (cmd)
   end
 end
 
-local doItem = function (class, options, content)
+function package:doItem (options, content)
   local enumStyle = content._lists_.style
   local counter = content._lists_.counter
   local indent = content._lists_.indent
@@ -89,7 +89,7 @@ local doItem = function (class, options, content)
   local mark = SILE.call("hbox", {}, function ()
     if enumStyle.display then
       if enumStyle.before then SILE.typesetter:typeset(enumStyle.before) end
-      SILE.typesetter:typeset(class:formatCounter({
+      SILE.typesetter:typeset(self.class.packages.counters:formatCounter({
         value = counter,
         display = enumStyle.display })
       )
@@ -127,7 +127,7 @@ local doItem = function (class, options, content)
   SILE.process(content)
 end
 
-local doNestedList = function (_, listType, options, content)
+function package.doNestedList (_, listType, options, content)
   -- depth
   local depth = SILE.settings:get("lists.current."..listType..".depth") + 1
 
@@ -207,11 +207,9 @@ local doNestedList = function (_, listType, options, content)
   end
 end
 
-function package:_init (class)
-
-  base._init(self, class)
-  class:loadPackage("counters")
-
+function package:_init ()
+  base._init(self)
+  self.class:loadPackage("counters")
 end
 
 function package.declareSettings (_)
@@ -262,21 +260,19 @@ end
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("enumerate", function (options, content)
-    doNestedList(class, "enumerate", options, content)
+  self:registerCommand("enumerate", function (options, content)
+    self:doNestedList("enumerate", options, content)
   end)
 
-  class:registerCommand("itemize", function (options, content)
-    doNestedList(class, "itemize", options, content)
+  self:registerCommand("itemize", function (options, content)
+    self:doNestedList("itemize", options, content)
   end)
 
-  class:registerCommand("item", function (options, content)
+  self:registerCommand("item", function (options, content)
     if not content._lists_ then
       SU.error("The item command shall not be called outside a list")
     end
-    doItem(class, options, content)
+    self:doItem(options, content)
   end)
 
 end

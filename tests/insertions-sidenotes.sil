@@ -1,5 +1,5 @@
 \begin[papersize=a7,class=testsidenote]{document}
-\script[src=packages/rules]
+\use[module=packages.rules]
 
 \hrule[width=2pt, height=40pt] \footnote{fn 1}
 \skip[height=90pt]

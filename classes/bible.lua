@@ -1,11 +1,11 @@
 local plain = require("classes.plain")
 
-local bible = pl.class(plain)
-bible._name = "bible"
+local class = pl.class(plain)
+class._name = "bible"
 
 if not SILE.scratch.headers then SILE.scratch.headers = {} end
 
-bible.defaultFrameset = {
+class.defaultFrameset = {
   content = {
     left = "8.3%pw",
     right = "86%pw",
@@ -32,18 +32,23 @@ bible.defaultFrameset = {
   }
 }
 
-function bible:singleColumnMaster()
+function class:singleColumnMaster()
   self:defineMaster({
     id = "right",
     firstContentFrame = self.firstContentFrame,
     frames = self.defaultFrameset
   })
-  self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
-  self:mirrorMaster("right", "left")
-  self:loadPackage("footnotes", { insertInto = "footnotes", stealFrom = { "content" } })
+  self:loadPackage("twoside", {
+    oddPageMaster = "right",
+    evenPageMaster = "left"
+  })
+  self:loadPackage("footnotes", {
+    insertInto = "footnotes",
+    stealFrom = { "content" }
+  })
 end
 
-function bible:twoColumnMaster()
+function class:twoColumnMaster()
   self.firstContentFrame = "contentA"
   self:defineMaster({
       id = "right",
@@ -169,9 +174,9 @@ end
 local _twocolumns
 local _gutterwidth
 
-function bible:_init(options)
-  self:loadPackage("masters")
+function class:_init(options)
   plain._init(self, options)
+  self:loadPackage("masters")
   self:loadPackage("infonode")
   self:loadPackage("chapterverse")
   self:registerPostinit(function (self_)
@@ -182,10 +187,9 @@ function bible:_init(options)
       self_:singleColumnMaster()
     end
   end)
-  return self
 end
 
-function bible:endPage ()
+function class:endPage ()
   if (self:oddPage() and SILE.scratch.headers.right) then
     SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
       SILE.settings:set("current.parindent", SILE.nodefactory.glue())
@@ -208,7 +212,7 @@ function bible:endPage ()
   return plain.endPage(self)
 end
 
-function bible:declareOptions ()
+function class:declareOptions ()
   plain.declareOptions(self)
   self:declareOption("twocolumns", function(_, value)
     if value then
@@ -224,13 +228,13 @@ function bible:declareOptions ()
   end)
 end
 
-function bible:setOptions (options)
+function class:setOptions (options)
   options.twocolumns = options.twocolumns or false
   options.gutter = options.gutter or "3%pw"
   plain.setOptions(self, options)
 end
 
-function bible:registerCommands ()
+function class:registerCommands ()
 
   plain.registerCommands(self)
 
@@ -285,4 +289,4 @@ function bible:registerCommands ()
 
 end
 
-return bible
+return class

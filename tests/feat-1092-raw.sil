@@ -1,7 +1,7 @@
 \begin[papersize=a6]{document}
 \nofolios
 \neverindent
-\script[src=packages/svg]
+\use[module=packages.svg]
 % Test Case 001: Direct use of a raw SVG.
 \raw[type=svg, height=1em]{<?xml version="1.0"?>
 <svg viewBox="0 0 319.99756 192.49629"><path d="M 160.36936,64.6995 287.47181,192.49629 319.99756,160.32293 160.62175,0 0,159.07464 32.273754,191.50079 Z"/></svg>}

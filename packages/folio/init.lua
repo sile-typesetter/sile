@@ -3,13 +3,13 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "folio"
 
-local function _incrementFolio (_)
+function package.incrementFolio (_)
   SILE.scratch.counters.folio.value = SILE.scratch.counters.folio.value + 1
 end
 
-local function _outputFolio (class, frame)
+function package:outputFolio (frame)
   if not frame then frame = "folio" end
-  local folio = class:formatCounter(SILE.scratch.counters.folio)
+  local folio = self.class.packages.counters:formatCounter(SILE.scratch.counters.folio)
   io.stderr:write("[" .. folio .. "] ")
   if SILE.scratch.counters.folio.off then
     if SILE.scratch.counters.folio.off == 2 then
@@ -33,7 +33,7 @@ local function _outputFolio (class, frame)
           SILE.settings:set(v, SILE.settings.defaults[v])
         end
 
-        SILE.call("foliostyle", {}, { class:formatCounter(SILE.scratch.counters.folio) })
+        SILE.call("foliostyle", {}, { self.class.packages.counters:formatCounter(SILE.scratch.counters.folio) })
         SILE.typesetter:leaveHmode()
         SILE.settings:popState()
       end)
@@ -41,52 +41,34 @@ local function _outputFolio (class, frame)
   end
 end
 
-local _deprecate  = [[
-  Directly calling folio handling functions is no longer necessary. All the
-  SILE core classes and anything inheriting from them will take care of this
-  automatically using hooks. Custom classes that override the class:endPage()
-  and class:finish() functions may need to handle this in other ways. By
-  calling these hooks directly you are likely causing them to run twice and
-  duplicate entries.
-]]
-
-function package:_init (class)
-
-  base._init(self, class)
-
-  class:loadPackage("counters")
+function package:_init (options)
+  base._init(self)
+  self.class:loadPackage("counters")
   SILE.scratch.counters.folio = { value = 1, display = "arabic" }
-  class:registerHook("newpage", _incrementFolio)
-  class:registerHook("endpage", _outputFolio)
-
-  -- exports
-  class.outputFolio = function (self_)
-    SU.deprecated("class:outputFolio", nil, "0.13.0", "0.15.0", _deprecate)
-    return _outputFolio(self_)
-  end
+  self.class:registerHook("newpage", function() self:incrementFolio() end)
+  self.class:registerHook("endpage", function () self:outputFolio(options and options.frame) end)
+  self:export("outputFolio", self.outputFolio)
 end
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("folios", function (_, _)
+  self:registerCommand("folios", function (_, _)
     SILE.scratch.counters.folio.off = false
   end)
 
-  class:registerCommand("nofolios", function (_, _)
+  self:registerCommand("nofolios", function (_, _)
     SILE.scratch.counters.folio.off = true
   end)
 
-  class:registerCommand("nofoliothispage", function (_, _)
+  self:registerCommand("nofoliothispage", function (_, _)
     SILE.scratch.counters.folio.off = 2
   end)
 
-  class:registerCommand("nofoliosthispage", function (_, _)
+  self:registerCommand("nofoliosthispage", function (_, _)
     SU.deprecated("nofoliosthispage", "nofoliothispage", "0.12.1", "0.14.0")
   end, "Deprecated")
 
-  class:registerCommand("foliostyle", function (_, content)
+  self:registerCommand("foliostyle", function (_, content)
     SILE.call("center", {}, content)
   end)
 

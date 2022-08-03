@@ -5,12 +5,9 @@ package._name = "boustrophedon"
 
 local _swap
 
-function package:init (class)
-
+function package:_init (class)
   base._init(self, class)
-
   SILE.hyphenator.languages.grc = { patterns={} }
-
   SILE.nodeMakers.grc = pl.class(SILE.nodeMakers.unicode)
   function SILE.nodeMakers.grc.iterator (node, items)
     return coroutine.wrap(function ()
@@ -22,18 +19,16 @@ function package:init (class)
       end
     end)
   end
-
   _swap = SILE.nodefactory.vbox({})
   _swap.outputYourself = function (_, typesetter, _)
     typesetter.frame.direction = typesetter.frame.direction == "LTR-TTB" and "RTL-TTB" or "LTR-TTB"
     typesetter.frame:newLine()
   end
-
 end
 
 function package:registerCommands ()
 
-  self.class:registerCommand("boustrophedon", function (_, content)
+  self:registerCommand("boustrophedon", function (_, content)
     SILE.typesetter:leaveHmode()
     local saveBoxup = SILE.typesetter.boxUpNodes
     local swaps = 0
@@ -61,7 +56,7 @@ end
 
 package.documentation = [[
 \begin{document}
-\script[src=packages.boustrophedon]
+\use[module=packages.boustrophedon]
 Partly designed to show off SILE’s extensibility, and partly designed for real use by classicists, the \autodoc:package{boustrophedon} package allows you to typeset ancient Greek texts in the ‘ox-turning’ layout—the first line is written left to right as normal, but the next is set right to left, then left to right, and so on.
 To use it, you will need to set the font’s language to ancient Greek (\code{grc}) and wrap text in a \autodoc:environment{boustrophedon} environment:
 

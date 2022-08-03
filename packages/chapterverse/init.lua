@@ -3,33 +3,27 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "chapterverse"
 
-function package:_init (class)
-
-  base._init(self, class)
-
-  class:loadPackage("infonode")
-
+function package:_init ()
+  base._init(self)
+  self.class:loadPackage("infonode")
   if not SILE.scratch.chapterverse then
     SILE.scratch.chapterverse = {}
   end
-
 end
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("save-book-title", function (_, content)
+  self:registerCommand("save-book-title", function (_, content)
     SU.debug("chapterverse", "book: " .. content[1])
     SILE.scratch.chapterverse.book = content[1]
   end)
 
-  class:registerCommand("save-chapter-number", function (_, content)
+  self:registerCommand("save-chapter-number", function (_, content)
     SU.debug("chapterverse", "chapter: " .. content[1])
     SILE.scratch.chapterverse.chapter = content[1]
   end)
 
-  class:registerCommand("save-verse-number", function (_, content)
+  self:registerCommand("save-verse-number", function (_, content)
     SU.debug("chapterverse", "verse: " .. content[1])
     SILE.scratch.chapterverse.verse = content[1]
     local ref = {
@@ -41,7 +35,7 @@ function package:registerCommands ()
     SILE.call("info", { category = "references", value = ref }, {})
   end)
 
-  class:registerCommand("first-reference", function (_, _)
+  self:registerCommand("first-reference", function (_, _)
     local refs = SILE.scratch.info.thispage.references
     SU.debug("chapterverse", "first-reference: " .. tostring(SILE.scratch.info))
     if refs then
@@ -52,7 +46,7 @@ function package:registerCommands ()
     end
   end)
 
-  class:registerCommand("last-reference", function (options, _)
+  self:registerCommand("last-reference", function (options, _)
     local refs = SILE.scratch.info.thispage.references
     if refs then
       SU.debug("chapterverse", "last-reference: " .. tostring(refs[#(refs)]))
@@ -62,7 +56,7 @@ function package:registerCommands ()
     end
   end)
 
-  class:registerCommand("format-reference", function (options, content)
+  self:registerCommand("format-reference", function (options, content)
     if type(options.showbook) == "nil" then options.showbook = true end
     SU.debug("chapterverse", "formatting: " .. tostring(content))
     local ref

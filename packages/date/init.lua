@@ -8,11 +8,7 @@ local localeify = function (lang)
   return lang .. "_" .. string.upper(lang) ..  ".utf-8"
 end
 
-local date = function (class, options)
-  if not options then
-    SU.deprecated("class.date", "class:date", "0.13.0", "0.15.0")
-    options = class
-  end
+function package.date (_, options)
   options.format = options.format or "%c"
   options.time = options.time or os.time()
   options.locale = options.locale or localeify(SILE.settings:get("document.language"))
@@ -20,19 +16,15 @@ local date = function (class, options)
   return os.date(options.format, options.time)
 end
 
-function package:_init (class)
-
-  base._init(self, class)
-
-  --exports
-  date = date
-
+function package:_init ()
+  base._init(self)
+  self:deprecatedExport("date", self.date)
 end
 
 function package:registerCommands ()
 
-  self.class:registerCommand("date", function (options, _)
-    local datestring = self.class:date(options)
+  self:registerCommand("date", function (options, _)
+    local datestring = self:date(options)
     SILE.typesetter:typeset(datestring)
   end, "Output a timestamp using the system date function")
 

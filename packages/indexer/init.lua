@@ -3,9 +3,9 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "indexer"
 
-local moveNodes = function (class)
+function package:buildIndex ()
   local nodes = SILE.scratch.info.thispage.index
-  local thisPage = class:formatCounter(SILE.scratch.counters.folio)
+  local thisPage = self.class.packages.counters:formatCounter(SILE.scratch.counters.folio)
   if not nodes then return end
   for _, node in ipairs(nodes) do
     if not SILE.scratch.index[node.index] then SILE.scratch.index[node.index] = {} end
@@ -25,24 +25,17 @@ end
   --   end
   -- end
 
-function package:_init (class)
-
-  base._init(self, class)
-
+function package:_init ()
+  base._init(self)
   if not SILE.scratch.index then
     SILE.scratch.index = {}
   end
-
-  -- exports
-  class.buildIndex = moveNodes
-
+  self:deprecatedExport("buildIndex", self.buildIndex)
 end
 
 function package:registerCommands ()
 
-  local class = self.class
-
-  class:registerCommand("indexentry", function (options, content)
+  self:registerCommand("indexentry", function (options, content)
     if not options.label then
       -- Reconstruct the text.
       SILE.typesetter:pushState()
@@ -59,8 +52,8 @@ function package:registerCommands ()
     SILE.call("info", { category ="index", value = { index = options.index, label = options.label }})
   end)
 
-  class:registerCommand("printindex", function (options, _)
-    moveNodes(class)
+  self:registerCommand("printindex", function (options, _)
+    self:buildIndex()
     if not options.index then options.index = "main" end
     local index = SILE.scratch.index[options.index]
     local sortedIndex = {}
@@ -73,7 +66,7 @@ function package:registerCommands ()
     end
   end)
 
-  class:registerCommand("index:item", function (options, content)
+  self:registerCommand("index:item", function (options, content)
     SILE.settings:temporarily(function ()
       SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
       SILE.settings:set("current.parindent", SILE.nodefactory.glue())

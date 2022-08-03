@@ -5,7 +5,7 @@ package._name = "image"
 
 function package:registerCommands ()
 
-  self.class:registerCommand("img", function (options, _)
+  self:registerCommand("img", function (options, _)
     SU.required(options, "src", "including image file")
     local width =  SILE.parseComplexFrameDimension(options.width or 0) or 0
     local height = SILE.parseComplexFrameDimension(options.height or 0) or 0

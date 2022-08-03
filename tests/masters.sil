@@ -1,7 +1,7 @@
 \begin{document}
-\script[src=packages/masters]
-\script[src=packages/lorem]
-\script[src=packages/frametricks]
+\use[module=packages.masters]
+\use[module=packages.lorem]
+\use[module=packages.frametricks]
 \define-master-template[id=title,first-content-frame=t]{
 \frame[id=gutter,width=3%pw]
 \frame[id=t,next=l,left=5%pw,right=95%pw,top=3%ph,bottom=15%ph,next=l]

@@ -1,7 +1,7 @@
 \begin[papersize=a6]{document}
 \neverindent
 \nofolios
-\script[src=packages/rules]
+\use[module=packages.rules]
 \language[main=und]% Disable hyphenation to have shrinked§stretched lines easily
 
 % Manually forced stretch

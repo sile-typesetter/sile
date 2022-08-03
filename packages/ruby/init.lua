@@ -27,16 +27,12 @@ local checkIfSpacerNeeded = function (reading)
   SILE.typesetter:pushGlue(SILE.settings:get("ruby.latinspacer"))
 end
 
-function package:_init (class)
-
-  base._init(self, class)
-
+function package:_init ()
+  base._init(self)
   -- Japaneese language support defines units which are useful here
-  class:loadPackage("font-fallback")
+  self.class:loadPackage("font-fallback")
   SILE.call("font:add-fallback", { family = "Noto Sans CJK JP" })
-
   SILE.languageSupport.loadLanguage("ja")
-
 end
 
 function package.declareSettings (_)
@@ -59,11 +55,11 @@ end
 
 function package:registerCommands ()
 
-  self.class:registerCommand("ruby:font", function (_, _)
+  self:registerCommand("ruby:font", function (_, _)
     SILE.call("font", { size = "0.6zw", weight = 800 })
   end)
 
-  self.class:registerCommand("ruby", function (options, content)
+  self:registerCommand("ruby", function (options, content)
     local reading = SU.required(options, "reading", "\\ruby")
     SILE.typesetter:setpar("")
 
@@ -119,7 +115,7 @@ end
 package.documentation = [[
 \begin{document}
 \font:add-fallback[family=Noto Sans CJK JP]
-\script[src=packages.ruby]
+\use[module=packages.ruby]
 Japanese texts often contain pronunciation hints (called \em{furigana}) for difficult kanji or foreign words.
 These hints are traditionally placed either above (in horizontal typesetting) or beside (in vertical typesetting) the word that they explain.
 The typesetting term for these glosses is \em{ruby}.

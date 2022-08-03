@@ -17,7 +17,7 @@
 \hrule[width=1em,height=2em]
 \par
 \end{define}
-\script[src=packages/rules]
+\use[module=packages.rules]
 \dots\framebreak
 \dots\framebreak
 \dots\framebreak
