@@ -99,7 +99,7 @@ end
 local function ean13addOn2 (text)
   if type(text) ~= "string" or #text ~= 2 then SU.error("Invalid EAN-13 2-digit add-on '"..text.."'") end
 
-  -- The 4-modulus of the numeric value determines how table A or B are used.
+  -- The 4-modulus of the numeric value determines how table A and B are used.
   local V = tonumber(text)
   local selector = tableAddOn2[V % 4 + 1]
 
@@ -119,9 +119,9 @@ end
 local function ean13addOn5 (text)
   if type(text) ~= "string" or #text ~= 5 then SU.error("Invalid EAN-13 5-digit add-on '"..text.."'") end
 
-  -- The unit's position in V dertermines how table A or B are used.
+  -- The unit's position in V dertermines how table A and B are used.
   -- V being defined as 3 times the sum of odd-position chars + 9 times the sum of even-position chars.
-  local V = (tonumber(text:sub(1,1)) + tonumber(text:sub(3,3)) + tonumber(text:sub(5))) * 3
+  local V = (tonumber(text:sub(1,1)) + tonumber(text:sub(3,3)) + tonumber(text:sub(5,5))) * 3
               + (tonumber(text:sub(2,2)) + tonumber(text:sub(4,4))) * 9
   local VU = V % 10
   local selector = tableAddOn5[VU + 1]
@@ -148,10 +148,10 @@ local function setupHumanReadableFont (family)
     -- at a height of 2.75mm at standard X, i.e. approx. 8.3333X.
     -- The minimum space between the top of the digits and the bottom of the bars
     -- SHALL however be 0.5X. We could therefore make the font height 7.8333X, but
-    -- that could be two wide, and a digit shall not be wider than 7X...
+    -- that could be too wide, and a digit shall not be wider than 7X...
     -- The size of the human readable interpretation is not that important,
     -- according to the standard... So we just compute a decent ratio based on the
-    -- above rules, and checked it looked "correct" with OCR B, FreeMono, and a
+    -- above rules. I just checked it looked "correct" with OCR B, FreeMono, and a
     -- bunch of other monospace fonts.
     local maxHRatio = 7.8333
     local rh = c.height / maxHRatio -- height ratio to 7.8333
@@ -195,7 +195,7 @@ function package:registerCommands ()
 
     local pattern = ean13(code)
 
-    SILE.call("kern", { width = 11 * X }) -- Left Quiet Zone left = minimal 11X
+    SILE.call("kern", { width = 11 * X }) -- Left Quiet Zone = minimal 11X
 
     local hb = SILE.call("hbox", {}, function ()
       for i = 1, #pattern do
@@ -210,7 +210,7 @@ function package:registerCommands ()
           if numline == 1 or numline == 2 or numline == 15 or numline == 16 or numline == 29 or numline == 30 then
             d = 5 -- longer bars are 5X taller (bottom extending) than shorter bars
           end
-          SILE.call("hrule", { height = H * X, depth = d * X, width = sz - offsetcorr }) -- bar
+          SILE.call("hrule", { height = H * X, depth = d * X, width = sz - offsetcorr })
         end
       end
       SILE.call("kern", { width = offsetcorr }) -- Not really requested by the standard but felt preferable,
@@ -267,7 +267,7 @@ function package:registerCommands ()
     if not module then SU.error("Invalid EAN scale (SC0 to SC9): "..scale) end
 
     local X = SILE.length(module.."mm")
-    local H = 66.363636364-- As per the standard, a minimal 21.90mm at standard X
+    local H = 66.363636364 -- As per the standard, a minimal 21.90mm at standard X
     local offsetcorr = corr and SILE.length("0.020mm") or SILE.length()
 
     local pattern
@@ -281,7 +281,7 @@ function package:registerCommands ()
 
     SILE.call("kern", { width = 5 * X }) -- Add-ons Left Quiet Zone = optional 5X
     -- N.B. Optional in the standard, so the spacing between the main part and the
-    -- addon is specified 7-12X (i.e. including the main code 7X Right Quiet Zone).
+    -- addon is specified as 7-12X (i.e. including the main code 7X Right Quiet Zone).
     -- To be safer, we go for the 12X variant. It also looks better, IMHO.
 
     local hb = SILE.call("hbox", {}, function ()
@@ -292,7 +292,7 @@ function package:registerCommands ()
           SILE.call("kern", { width = sz + offsetcorr })
         else
           -- bar
-          SILE.call("hrule", { height = (H - 5) * X, depth = 5 * X, width = sz - offsetcorr }) -- bar
+          SILE.call("hrule", { height = (H - 5) * X, depth = 5 * X, width = sz - offsetcorr })
         end
       end
       SILE.call("kern", { width = offsetcorr }) -- Not really requested by the standard but felt preferable,
@@ -302,10 +302,10 @@ function package:registerCommands ()
         -- N.B. Option showdigits undocumented (just used for testing)
         SILE.call("font", { family = SILE.scratch.ean13.font.family, size = SILE.scratch.ean13.font.size * X }, function ()
           SILE.call("raise", { height = (H - 4) * X }, function () -- 0.5X minimum between character and bars,
-                                                                   -- but it looks much better with a full 1X
+                                                                   -- but it looks much better with a full 1X.
             SILE.call("kern", { width = -9 * #code * X })
             for i = 1, #code do
-              local h = SILE.call("hbox", {}, { code:sub(i,i) }) -- first digit, at the start of the Add-ons Left Quiet Zone
+              local h = SILE.call("hbox", {}, { code:sub(i,i) }) -- Distribute the digits
               h.width = SILE.length()
               SILE.call("kern", { width = 9 * X })
             end
@@ -319,11 +319,11 @@ function package:registerCommands ()
       end
     end)
     -- Barcode height fix (including the number).
-    -- We just ensure here the while box is high enough to take into account the
-    -- add-on human representation.
+    -- We just ensure here the whole box is high enough to take into account the
+    -- add-on's human representation, since that one goes on top.
     hb.height = hb.height + 8.3333 * X
 
-    SILE.call("kern", { width = 5 * X }) -- Add-ons Right Quiet Zone right = minimal 5X
+    SILE.call("kern", { width = 5 * X }) -- Add-ons Right Quiet Zone = minimal 5X
   end, "Typesets an EAN-13 5-digit add-on barcode.")
 
   self:registerCommand("ean13:font", function (options, _)
@@ -336,7 +336,7 @@ end
 package.documentation = [[
 \begin{document}
 \use[module=packages.barcodes.ean13]
-\ean13:font[family=Hack]% To avoid hasardous substitution when OCR B is not installed
+\ean13:font[family=Hack]% Not the best effect, but avoids hasardous substitutions when OCR B is not installed
 The \autodoc:package{barcodes.ean13} package allows to print out an EAN-13 barcode, suitable
 for an ISBN (or ISSN, etc.)
 

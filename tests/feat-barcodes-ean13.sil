@@ -1,0 +1,22 @@
+\begin[papersize=a6]{document}
+\use[module=packages.barcodes.ean13]
+% We use the "undocumented" showdigits option to remove the human readable interpretation,
+% so that not to bother with its font. These tests are focussed on checking the barcode
+% vs. some checked results, so we are just interested in the bars.
+
+% GS1 example (figure 5.2.2.1-2)
+\ean13[scale=SC0, showdigits=false, code=9501101531000]
+
+% GS1 example (figure 5.2.2.5.1-2)
+\ean13[scale=SC0, showdigits=false, code=9771384524017, addon=12]
+
+% GS1 example (figure 5.2.2.5.2-2)
+\ean13[scale=SC0, showdigits=false, code=9780877799306, addon=54321]
+
+% GS1 example (figure 5.2.6.6-1)
+\ean13[scale=SC0, showdigits=false, code=5012345678900]
+
+% GS1 example (figure 5.2.6.6-6)
+\ean13[scale=SC0, showdigits=false, code=1234567891019, addon=45678]
+
+\end{document}
