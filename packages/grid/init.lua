@@ -53,6 +53,7 @@ local function pushExplicitVglue (typesetter, spec)
 end
 
 local function startGridInFrame (typesetter)
+  if not SILE.typesetter.state.grid then return end -- Ensure the frame hook isn't effective when grid is off
   local queue = typesetter.state.outputQueue
   typesetter.frame.state.totals.gridCursor = SILE.measurement(0)
   if #queue == 0 then
