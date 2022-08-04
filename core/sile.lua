@@ -411,7 +411,7 @@ end
 -- Internal libraries that run core SILE functions on load
 SILE.settings = require("core.settings")()
 SILE.pagebuilder = require("core.pagebuilder")()
-require("core.typesetter")
+require("typesetters.base")
 require("core.hyphenator-liang")
 require("core.languages")
 require("core.packagemanager")
