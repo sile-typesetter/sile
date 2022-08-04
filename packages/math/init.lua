@@ -208,6 +208,34 @@ For instance, \code{sin(x)} will be rendered as \math{sin(x)}, because SILE cons
 To avoid that, you can specify that \math{\mi{sin}} is an identifier by writing \code{\\mi\{sin\}(x)} and get: \math{\mi{sin}(x)}.
 If you prefer it in “double struck” style, this is permitted by the \code{mathvariant} attribute: \code{\\mi[mathvariant=double-struck]\{sin\}(x)} renders as \math{\mi[mathvariant=double-struck]{sin}(x)}.
 
+\paragraph{Atom types and spacing}
+Each token automatically gets assigned an atom type from the list below:
+\begin{itemize}
+  \item{\code{ord} — \code{mi} and \code{mn} tokens, as well as unclassified operators;}
+  \item{\code{big} — big operators like ‘\math{\sum}’ or ‘\math{\prod}’;}
+  \item{\code{bin} — binary operators like ‘\math{+}’ or ‘\math{\%}’;}
+  \item{\code{rel} — relation operators like ‘\math{=}’ or ‘\math{<}’;}
+  \item{\code{open} — opening operators like ‘\math{(}’ or ‘\math{[}’;}
+  \item{\code{close} — closing operators like ‘\math{)}’ or ‘\math{]}’;}
+  \item{\code{punct} — punctuation operators like ‘\math{,}’.}
+  % TODO: Those are defined in the 'math' package but appear to be unused
+  %\item{\code{inner}}
+  %\item{\code{over}}
+  %\item{\code{under}}
+  %\item{\code{accent}}
+  %\item{\code{radical}}
+  %\item{\code{vcenter}}
+\end{itemize}
+\noindent The spacing between any two successive tokens is set automatically based on their atom types, and hence may not reflect the actual spacing used in the input.
+To make an operator behave like it has a certain atom type, you can use the \code{atom} attribute: \code{a \\mo[atom=bin]\{div\} b} renders as \math[mode=display]{a \mo[atom=bin]{div} b.}
+
+Spaces in math mode are defined in “math units” (mu), which are 1/18 of an em of the current \em{math} font (and are independent of the current text font size).
+Standard spaces inserted automatically between tokens come in three varieties: thin (3 mu), medium (4 mu) and thick (5 mu).
+If needed, you can insert them manually with the \code{\\thinspace} (or \code{\\,}), \code{\\medspace} (or \code{\\>}), and \code{\\thickspace} (or \code{\\;}) commands.
+Negative space counterparts are available as \code{\\negthinspace} (or \code{\\!}), \code{\\negmedspace}, and \code{\\negthickspace}.
+The \code{\\enspace}, \code{\\quad} and \code{\\qquad} commands from normal text mode are also available, but the spaces they insert scale relative to the text font size.
+Finally, you can add a space of any size using the \code{\\mspace[width=<dimension>]} command.
+
 \paragraph{Macros}
 To save you some typing, the math syntax lets you define macros with the following syntax:
 
