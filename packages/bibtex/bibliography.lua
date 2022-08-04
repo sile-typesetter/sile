@@ -381,7 +381,7 @@ Bibliography = {
     italic = function (...)
       local t = {...}
       return function(item)
-        return Bibliography._process(item, t, "\\em{", "}")
+        return Bibliography._process(item, t, "<em>", "</em>")
       end
     end,
     parens = function (...)

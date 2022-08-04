@@ -10,6 +10,6 @@
 \fluent[name=Dünya]{hello}
 
 % Override the default messages and use the same command
-\ftl{hello = { $name }’ya Selam!}
+\ftl{hello = <em>{ $name }</em>’ya Selam!}
 \fluent[name=Dünya]{hello}
 \end{document}

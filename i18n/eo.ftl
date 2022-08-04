@@ -1,11 +1,3 @@
-hello = Saluton { $name }!
-
-toc-not-generated = Reruli na SILE por trakti la enhavan tabelon!
-
-toc-title = Enhavoj
-
-book-chapter-title-pre = Ĉapitro{" "}
-
 bibliography-and = kaj
 
 bibliography-edited-by = Redaktita por { $name }
@@ -13,3 +5,11 @@ bibliography-edited-by = Redaktita por { $name }
 bibliography-et-al = kaj aliaj
 
 bibliography-translated-by = Tradukita por { $name }
+
+book-chapter-title = Ĉapitro { $number }
+
+hello = Saluton <em>{ $name }</em>!
+
+tableofcontents-not-generated = Reruli na SILE por trakti la enhavan tabelon!
+
+tableofcontents-title = Enhavoj

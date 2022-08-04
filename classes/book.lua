@@ -104,30 +104,16 @@ function class:registerCommands ()
     if SU.boolean(options.toc, true) then
       SILE.call("tocentry", { level = level, number = number }, SU.subContent(content))
     end
-    local lang = SILE.settings:get("document.language")
     if SU.boolean(options.numbering, true) then
-      if options.prenumber then
-        if SILE.Commands[options.prenumber .. ":"  .. lang] then
-          options.prenumber = options.prenumber .. ":" .. lang
-        end
-        SILE.call(options.prenumber)
-      end
-      SILE.call("show-multilevel-counter", { id = "sectioning" })
-      if options.postnumber then
-        if SILE.Commands[options.postnumber .. ":" .. lang] then
-          options.postnumber = options.postnumber .. ":" .. lang
-        end
-        SILE.call(options.postnumber)
+      if options.msg then
+        SILE.call("fluent", { number = number }, { options.msg })
+      else
+        SILE.call("show-multilevel-counter", { id = "sectioning" })
       end
     end
   end)
 
-  self:registerCommand("book:chapter:pre", function (_, _)
-    SILE.call("fluent", {}, { "book-chapter-title-pre" })
-  end)
-
   self:registerCommand("book:chapter:post", function (_, _)
-    SILE.call("fluent", {}, { "book-chapter-post" })
     SILE.call("par")
   end)
 
@@ -157,10 +143,15 @@ function class:registerCommands ()
         numbering = options.numbering,
         toc = options.toc,
         level = 1,
-        prenumber = "book:chapter:pre",
-        postnumber = "book:chapter:post"
+        msg = "book-chapter-title"
       }, content)
     end)
+    local lang = SILE.settings:get("document.language")
+    local postcmd = "book:chapter:post"
+    if SILE.Commands[postcmd .. ":" .. lang] then
+      postcmd = postcmd .. ":" .. lang
+    end
+    SILE.call(postcmd)
     SILE.call("book:chapterfont", {}, content)
     SILE.call("left-running-head", {}, function ()
       SILE.settings:temporarily(function ()
@@ -180,9 +171,14 @@ function class:registerCommands ()
       SILE.call("book:sectioning", {
         numbering = options.numbering,
         toc = options.toc,
-        level = 2,
-        postnumber = "book:section:post"
+        level = 2
       }, content)
+      local lang = SILE.settings:get("document.language")
+      local postcmd = "book:section:post"
+      if SILE.Commands[postcmd .. ":" .. lang] then
+        postcmd = postcmd .. ":" .. lang
+      end
+      SILE.call(postcmd)
       SILE.process(content)
     end)
     if not SILE.scratch.counters.folio.off then
@@ -215,11 +211,16 @@ function class:registerCommands ()
       SILE.call("book:sectioning", {
             numbering = options.numbering,
             toc = options.toc,
-            level = 3,
-            postnumber = "book:subsection:post"
+            level = 3
           }, content)
       SILE.process(content)
     end)
+    local lang = SILE.settings:get("document.language")
+    local postcmd = "book:subsection:post"
+    if SILE.Commands[postcmd .. ":" .. lang] then
+      postcmd = postcmd .. ":" .. lang
+    end
+    SILE.call(postcmd)
     SILE.typesetter:leaveHmode()
     SILE.call("novbreak")
     SILE.call("medskip")

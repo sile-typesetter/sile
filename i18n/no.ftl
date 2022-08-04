@@ -1,15 +1,15 @@
-hello = Hei { $name }!
-
-toc-not-generated = Kjør SILE om igjen slik at innholdsfortegnelsen blir behandlet!
-
-toc-title = Innhold
-
-book-chapter-title-pre = Kapittel{" "}
-
 bibliography-and = og
 
 bibliography-edited-by = Redigert av { $name }
 
-bibliography-et-al = et al.
+bibliography-et-al = <language main="la">et al</language>.
 
-bibliography-translated-by = Redigert av { $name }
+bibliography-translated-by = Oversatt av { $name }
+
+book-chapter-title = Kapittel { $number }
+
+hello = Hei <em>{ $name }</em>!
+
+tableofcontents-not-generated = Kjør SILE om igjen slik at innholdsfortegnelsen blir behandlet!
+
+tableofcontents-title = Innhold

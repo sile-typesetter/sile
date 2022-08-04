@@ -1,4 +1,3 @@
-# End with thin nonbreaking space (U+202F)
-book-chapter-title-pre = 第 
+book-chapter-title = 第 { $number } 章
 
-book-chapter-post =  章
+tableofcontents-title = 目次

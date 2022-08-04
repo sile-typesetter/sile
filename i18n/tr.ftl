@@ -1,5 +1,5 @@
-hello = Merhaba { $name }!
+book-chapter-title = Bölüm { $number }
 
-toc-title = İçindekiler
+hello = Merhaba <em>{ $name }</em>!
 
-book-chapter-title-pre = Bölüm{" "}
+tableofcontents-title = İçindekiler

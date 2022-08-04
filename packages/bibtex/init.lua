@@ -96,7 +96,7 @@ function package:registerCommands ()
       SU.warn("Unknown reference in citation "..options.key)
       return
     end
-    SILE.processString(cite, "sil")
+    SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
   end)
 
   self:registerCommand("reference", function (options, content)
@@ -112,7 +112,7 @@ function package:registerCommands ()
       SU.warn("Unknown type @"..err.." in citation for reference "..options.key)
       return
     end
-    SILE.processString(cite, "sil")
+    SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
   end)
 
 end
