@@ -80,6 +80,8 @@ package.documentation = [[
 \use[module=packages.font-fallback]
 \font:add-fallback[family=Symbola]
 
+\define[command=paragraph]{\smallskip\em{\process.}\novbreak\par}
+
 This package provides typesetting of formulas directly in a SILE document.
 
 \note{Mathematical typesetting in SILE is still in its infancy.
@@ -89,7 +91,9 @@ Feedback and contributions are always welcome.}
 \noindent To typeset mathematics, you will need an OpenType math font installed on your system\footnote{A list of freely available math fonts can be found at \href[src=https://www.ctan.org/pkg/unicode-math]{https://www.ctan.org/pkg/unicode-math}}.
 By default, this package uses Libertinus Math, so it will fail if Libertinus Math can’t be found.
 Another font may be specified via the setting \autodoc:setting{math.font.family}.
+The font size can be set via \autodoc:setting{math.font.size}.
 
+\paragraph{MathML}
 The first way to typeset math formulas is to enter them in the MathML format.
 MathML is a standard for encoding mathematical notation for the Web and for other types of digital documents.
 It is supported by a wide range of tools and represents the most promising format for unifying the encoding of mathematical notation, as well as improving its accessibility (e.g. to blind users).
@@ -140,7 +144,8 @@ To typeset them on their own line, one may use the \autodoc:parameter{mode=displ
     }
 }
 
-As this example code illustrates, MathML is not really intended to be written by humans and quickly becomes very verbose.
+\paragraph{TeX-like syntax}
+As the previous examples illustrate, MathML is not really intended to be written by humans and quickly becomes very verbose.
 That is why this package also provides a \code{math} command, which understands a syntax similar to the math syntax of TeX.
 To typeset the above equation, one only has to type \code{\\math\{a^2 + b^2 = c^2\}}.
 
@@ -197,12 +202,42 @@ To keep parentheses around \math{x+1} small, you should put braces around the ex
 
 \noindent To print a brace in a formula, you need to escape it with a backslash.
 
+\paragraph{Token kinds}
 In the \code{math} syntax, every individual letter is an identifier (MathML tag \code{mi}), every number is a… number (tag \code{mn}) and all other characters are operators (tag \code{mo}).
 If it does not suit you, you can explicitly use the \code{\\mi}, \code{\\mn} or \code{\\mo} tags.
 For instance, \code{sin(x)} will be rendered as \math{sin(x)}, because SILE considers the letters s, i and n to be individual identifiers, and identifiers made of one character are italicized by default.
 To avoid that, you can specify that \math{\mi{sin}} is an identifier by writing \code{\\mi\{sin\}(x)} and get: \math{\mi{sin}(x)}.
 If you prefer it in “double struck” style, this is permitted by the \code{mathvariant} attribute: \code{\\mi[mathvariant=double-struck]\{sin\}(x)} renders as \math{\mi[mathvariant=double-struck]{sin}(x)}.
 
+\paragraph{Atom types and spacing}
+Each token automatically gets assigned an atom type from the list below:
+\begin{itemize}
+  \item{\code{ord} — \code{mi} and \code{mn} tokens, as well as unclassified operators;}
+  \item{\code{big} — big operators like ‘\math{\sum}’ or ‘\math{\prod}’;}
+  \item{\code{bin} — binary operators like ‘\math{+}’ or ‘\math{\%}’;}
+  \item{\code{rel} — relation operators like ‘\math{=}’ or ‘\math{<}’;}
+  \item{\code{open} — opening operators like ‘\math{(}’ or ‘\math{[}’;}
+  \item{\code{close} — closing operators like ‘\math{)}’ or ‘\math{]}’;}
+  \item{\code{punct} — punctuation operators like ‘\math{,}’.}
+  % TODO: Those are defined in the 'math' package but appear to be unused
+  %\item{\code{inner}}
+  %\item{\code{over}}
+  %\item{\code{under}}
+  %\item{\code{accent}}
+  %\item{\code{radical}}
+  %\item{\code{vcenter}}
+\end{itemize}
+\noindent The spacing between any two successive tokens is set automatically based on their atom types, and hence may not reflect the actual spacing used in the input.
+To make an operator behave like it has a certain atom type, you can use the \code{atom} attribute: \code{a \\mo[atom=bin]\{div\} b} renders as \math[mode=display]{a \mo[atom=bin]{div} b.}
+
+Spaces in math mode are defined in “math units” (mu), which are 1/18 of an em of the current \em{math} font (and are independent of the current text font size).
+Standard spaces inserted automatically between tokens come in three varieties: thin (3 mu), medium (4 mu) and thick (5 mu).
+If needed, you can insert them manually with the \code{\\thinspace} (or \code{\\,}), \code{\\medspace} (or \code{\\>}), and \code{\\thickspace} (or \code{\\;}) commands.
+Negative space counterparts are available as \code{\\negthinspace} (or \code{\\!}), \code{\\negmedspace}, and \code{\\negthickspace}.
+The \code{\\enspace}, \code{\\quad} and \code{\\qquad} commands from normal text mode are also available, but the spaces they insert scale relative to the text font size.
+Finally, you can add a space of any size using the \code{\\mspace[width=<dimension>]} command.
+
+\paragraph{Macros}
 To save you some typing, the math syntax lets you define macros with the following syntax:
 
 \begin{verbatim}
@@ -233,7 +268,13 @@ For instance:
   \diff{\bi{p}}{t} = ∑_i \bi{F}_i
 \end{math}
 
-Finally, tabular math can be typeset using the \code{table} command (or equivalently the \code{mtable} MathML tag).
+When macros are not enough, creating new mathematical elements is quite simple: one only needs to create a new class deriving from \code{mbox} (defined in \code{packages/math/base-elements.lua}) and define the \code{shape} and \code{output} methods.
+\code{shape} must define the \code{width}, \code{height} and \code{depth} attributes of the element, while \code{output} must draw the actual output.
+An \code{mbox} may have one or more children (for instance, a fraction has two children — its numerator and denominator).
+The \code{shape} and \code{output} methods of the children are called automatically.
+
+\paragraph{Matrices, aligned equations, and other tables}
+Tabular math can be typeset using the \code{table} command (or equivalently the \code{mtable} MathML tag).
 For instance, to typeset a matrix:
 
 \begin{verbatim}
@@ -315,11 +356,7 @@ Finally, here is a little secret. This notation:
 
 \noindent In other words, the notation using \code{&} and \code{\\\\} is only a syntactic sugar for a two-dimensional array constructed with braces.
 
-When macros are not enough, creating new mathematical elements is quite simple: one only needs to create a new class deriving from \code{mbox} (defined in \code{packages/math/base-elements.lua}) and define the \code{shape} and \code{output} methods.
-\code{shape} must define the \code{width}, \code{height} and \code{depth} attributes of the element, while \code{output} must draw the actual output.
-An \code{mbox} may have one or more children (for instance, a fraction has two children — its numerator and denominator).
-The \code{shape} and \code{output} methods of the children are called automatically.
-
+\paragraph{Missing features}
 This package still lacks support for some mathematical constructs, but hopefully we’ll get there.
 Among unsupported constructs are: decorating symbols with so-called accents, such as arrows or hats, “over” or “under” braces, and line breaking inside a formula.
 
