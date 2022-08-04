@@ -324,7 +324,8 @@ function class:registerCommands ()
   self:registerCommand("include", function (options, content)
     local packopts = packOptions(options)
     if SU.hasContent(content) then
-      return SILE.processString(content[1], options.format, nil, packopts)
+      local doc = SU.contentToString(content)
+      return SILE.processString(doc, options.format, nil, packopts)
     elseif options.src then
       return SILE.processFile(options.src, options.format, packopts)
     else
@@ -335,7 +336,8 @@ function class:registerCommands ()
   self:registerCommand("lua", function (options, content)
     local packopts = packOptions(options)
     if SU.hasContent(content) then
-      return SILE.processString(content[1], "lua", nil, packopts)
+      local doc = SU.contentToString(content)
+      return SILE.processString(doc, "lua", nil, packopts)
     elseif options.src then
       return SILE.processFile(options.src, "lua", packopts)
     elseif options.require then
@@ -349,7 +351,8 @@ function class:registerCommands ()
   self:registerCommand("sil", function (options, content)
     local packopts = packOptions(options)
     if SU.hasContent(content) then
-      return SILE.processString(content[1], "sil")
+      local doc = SU.contentToString(content)
+      return SILE.processString(doc, "sil")
     elseif options.src then
       return SILE.processFile(options.src, "sil", packopts)
     else
@@ -360,7 +363,8 @@ function class:registerCommands ()
   self:registerCommand("xml", function (options, content)
     local packopts = packOptions(options)
     if SU.hasContent(content) then
-      return SILE.processString(content[1], "xml", nil, packopts)
+      local doc = SU.contentToString(content)
+      return SILE.processString(doc, "xml", nil, packopts)
     elseif options.src then
       return SILE.processFile(options.src, "xml", packopts)
     else
@@ -371,7 +375,8 @@ function class:registerCommands ()
   self:registerCommand("use", function (options, content)
     local packopts = packOptions(options)
     if content[1] and string.len(content[1]) > 0 then
-      SILE.processString(content[1], "lua", nil, packopts)
+      local doc = SU.contentToString(content)
+      SILE.processString(doc, "lua", nil, packopts)
     else
       if options.src then
         SU.warn("Use of 'src' with \\use is discouraged because some of it's path handling\n  will eventually be deprecated. Use 'module' instead when possible.")

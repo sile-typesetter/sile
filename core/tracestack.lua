@@ -95,6 +95,7 @@ end
 
 -- Push a document processing run (input method) onto the stack
 function traceStack:pushDocument(file, doc)
+  if type(doc) == "table" then doc = tostring(doc) end
   local snippet = doc:sub(1, 100)
   local frame = traceStack.documentFrame(file, snippet)
   return self:pushFrame(frame)

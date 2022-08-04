@@ -307,7 +307,9 @@ end
 utilities.contentToString = function (content)
   local string = ""
   for i = 1, #content do
-    if type(content[i]) == "string" then
+    if type(content[i]) == "table" and type(content[i][1]) == "string" then
+      string = string .. content[i][1]
+    elseif type(content[i]) == "string" then
       string = string .. content[i]
     end
   end
