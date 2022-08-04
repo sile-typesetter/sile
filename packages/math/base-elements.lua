@@ -226,7 +226,7 @@ end
 --   1. Determine the mode for each mbox according to their parent.
 --   2. Shape the mbox hierarchy from leaf to top. Get the shape and relative position.
 --   3. Convert mbox into _nnode's to put in SILE's typesetting framwork
-elements.mbox = pl.class(nodefactory.box)
+elements.mbox = pl.class(nodefactory.hbox)
 elements.mbox._type = "Mbox"
 
 function elements.mbox:__tostring ()
@@ -234,6 +234,7 @@ function elements.mbox:__tostring ()
 end
 
 function elements.mbox:_init ()
+  nodefactory.hbox._init(self)
   self.font = {}
   self.children = {} -- The child nodes
   self.relX = SILE.length(0) -- x position relative to its parent box
