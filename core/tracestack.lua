@@ -38,6 +38,10 @@ traceStack.defaultFrame = pl.class({
 
 traceStack.documentFrame = pl.class(traceStack.defaultFrame)
 
+local function oneline (str)
+  return str:gsub("\n", "␤"):gsub("\r", "␍"):gsub("\f", "␊"):gsub("\a", "␇"):gsub("\b", "␈"):gsub("\t", "␉"):gsub("\v", "␋")
+end
+
 function traceStack.documentFrame:_init (file, snippet)
   self.command = "document"
   self.file = file
@@ -45,7 +49,7 @@ function traceStack.documentFrame:_init (file, snippet)
 end
 
 function traceStack.documentFrame:__tostring ()
-  return "<file> (" .. self.snippet .. ")"
+  return "<snippet>:\n\t\t[[" .. oneline(self.snippet) .. "]]"
 end
 
 traceStack.commandFrame = pl.class(traceStack.defaultFrame)
@@ -59,7 +63,8 @@ function traceStack.commandFrame:_init (command, content, options)
 end
 
 function traceStack.commandFrame:__tostring ()
-  local opts = (pl.tablex.size(self.options) > 0 and tostring(self.options):gsub("^{", "["):gsub("}$", "]") or "")
+  local opts = pl.tablex.size(self.options) == 0 and "" or
+    pl.pretty.write(self.options, ""):gsub("^{", "["):gsub("}$", "]")
   return "\\" .. tostring(self.command) .. opts
 end
 
@@ -79,7 +84,7 @@ function traceStack.textFrame:__tostring ()
   if self.text:len() > 20 then
     self.text = luautf8.sub(self.text, 1, 18) .. "…"
   end
-  self.text = self.text:gsub("\n", "␤"):gsub("\t", "␉"):gsub("\v", "␋")
+  self.text = oneline(self.text)
   return '"' .. self.text .. '"'
 end
 
@@ -90,6 +95,7 @@ end
 
 -- Push a document processing run (input method) onto the stack
 function traceStack:pushDocument(file, doc)
+  if type(doc) == "table" then doc = tostring(doc) end
   local snippet = doc:sub(1, 100)
   local frame = traceStack.documentFrame(file, snippet)
   return self:pushFrame(frame)
