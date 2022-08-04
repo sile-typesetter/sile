@@ -16,151 +16,154 @@ end
 
 local _dims = pl.Set { "width", "height", "depth" }
 
-nodefactory.box = pl.class({
-    type = "special",
-    height = nil,
-    depth = nil,
-    width = nil,
-    misfit = false,
-    explicit = false,
-    discardable = false,
-    value = nil,
-    _default_length = "width",
+nodefactory.box = pl.class()
+nodefactory.box.type = "special"
 
-    _init = function (self, spec)
-      if type(spec) == "string"
-        or type(spec) == "number"
-        or SU.type(spec) == "measurement"
-        or SU.type(spec) == "length" then
-        self[self._default_length] = SU.cast("length", spec)
-      elseif SU.type(spec) == "table" then
-        if spec._tospec then spec = spec:_tospec() end
-        for k, v in pairs(spec) do
-          self[k] = _dims[k] and SU.cast("length", v) or v
-        end
-      elseif type(spec) ~= "nil" and SU.type(spec) ~= self.type then
-        SU.error("Unimplemented, creating " .. self.type .. " node from " .. SU.type(spec), 1)
-      end
-      for dim in pairs(_dims) do
-        if not self[dim] then self[dim] = SILE.length() end
-      end
-      self["is_"..self.type] = true
-      self.is_box = self.is_hbox or self.is_vbox or self.is_zerohbox or self.is_alternative or self.is_nnode
-      self.is_zero = self.is_zerohbox or self.is_zerovglue
-      if self.is_migrating then self.is_hbox, self.is_box = true, true end
-    end,
+nodefactory.box.height = nil
+nodefactory.box.depth = nil
+nodefactory.box.width = nil
+nodefactory.box.misfit = false
+nodefactory.box.explicit = false
+nodefactory.box.discardable = false
+nodefactory.box.value = nil
+nodefactory.box._default_length = "width"
 
-    -- De-init instances by shallow copying properties and removing meta table
-    _tospec = function (self)
-      return pl.tablex.copy(self)
-    end,
-
-    tostring = function (self)
-      return  self:__tostring()
-    end,
-
-    __tostring = function (self)
-      return self.type
-    end,
-
-    __concat = function (a, b)
-      return tostring(a) .. tostring(b)
-    end,
-
-    absolute = function (self)
-      local clone = nodefactory[self.type](self:_tospec())
-      for dim in pairs(_dims) do
-        clone[dim] = self[dim]:absolute()
-      end
-      if self.nodes then
-        clone.nodes = pl.tablex.map_named_method("absolute", self.nodes)
-      end
-      return clone
-    end,
-
-    lineContribution = function (self)
-      -- Regardless of the orientations, "width" is always in the
-      -- writingDirection, and "height" is always in the "pageDirection"
-      return self.misfit and self.height or self.width
-    end,
-
-    outputYourself = function (self)
-      SU.error(self.type.." with no output routine")
-    end,
-
-    toText = function (self)
-      return self.type
-    end,
-
-    isBox = function (self)
-      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-      return self.type == "hbox" or self.type == "zerohbox" or self.type == "alternative" or self.type == "nnode" or self.type == "vbox"
-    end,
-
-    isNnode = function (self)
-      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-      return self.type=="nnode"
-    end,
-
-    isGlue = function (self)
-      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-      return self.type == "glue"
-    end,
-
-    isVglue = function (self)
-      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-      return self.type == "vglue"
-    end,
-
-    isZero = function (self)
-      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-      return self.type == "zerohbox" or self.type == "zerovglue"
-    end,
-
-    isUnshaped = function (self)
-      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-      return self.type == "unshaped"
-    end,
-
-    isAlternative = function (self)
-      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-      return self.type == "alternative"
-    end,
-
-    isVbox = function (self)
-      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-      return self.type == "vbox"
-    end,
-
-    isInsertion = function (self)
-      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-      return self.type == "insertion"
-    end,
-
-    isMigrating = function (self)
-      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-      return self.migrating
-    end,
-
-    isPenalty = function (self)
-      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-      return self.type == "penalty"
-    end,
-
-    isDiscretionary = function (self)
-      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-      return self.type == "discretionary"
-    end,
-
-    isKern = function (self)
-      SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-      return self.type == "kern"
+function nodefactory.box:_init (spec)
+  if type(spec) == "string"
+    or type(spec) == "number"
+    or SU.type(spec) == "measurement"
+    or SU.type(spec) == "length" then
+    self[self._default_length] = SU.cast("length", spec)
+  elseif SU.type(spec) == "table" then
+    if spec._tospec then spec = spec:_tospec() end
+    for k, v in pairs(spec) do
+      self[k] = _dims[k] and SU.cast("length", v) or v
     end
+  elseif type(spec) ~= "nil" and SU.type(spec) ~= self.type then
+    SU.error("Unimplemented, creating " .. self.type .. " node from " .. SU.type(spec), 1)
+  end
+  for dim in pairs(_dims) do
+    if not self[dim] then self[dim] = SILE.length() end
+  end
+  self["is_"..self.type] = true
+  self.is_box = self.is_hbox or self.is_vbox or self.is_zerohbox or self.is_alternative or self.is_nnode
+  self.is_zero = self.is_zerohbox or self.is_zerovglue
+  if self.is_migrating then self.is_hbox, self.is_box = true, true end
+end
 
-  })
+-- De-init instances by shallow copying properties and removing meta table
+function nodefactory.box:_tospec ()
+  return pl.tablex.copy(self)
+end
+
+function nodefactory.box:tostring ()
+  return  self:__tostring()
+end
+
+function nodefactory.box:__tostring ()
+  return self.type
+end
+
+function nodefactory.box.__concat (a, b)
+  return tostring(a) .. tostring(b)
+end
+
+function nodefactory.box:absolute ()
+  local clone = nodefactory[self.type](self:_tospec())
+  for dim in pairs(_dims) do
+    clone[dim] = self[dim]:absolute()
+  end
+  if self.nodes then
+    clone.nodes = pl.tablex.map_named_method("absolute", self.nodes)
+  end
+  return clone
+end
+
+function nodefactory.box:lineContribution ()
+  -- Regardless of the orientations, "width" is always in the
+  -- writingDirection, and "height" is always in the "pageDirection"
+  return self.misfit and self.height or self.width
+end
+
+function nodefactory.box:outputYourself ()
+  SU.error(self.type.." with no output routine")
+end
+
+function nodefactory.box:toText ()
+  return self.type
+end
+
+function nodefactory.box:isBox ()
+  SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+  return self.type == "hbox" or self.type == "zerohbox" or self.type == "alternative" or self.type == "nnode" or self.type == "vbox"
+end
+
+function nodefactory.box:isNnode ()
+  SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+  return self.type=="nnode"
+end
+
+function nodefactory.box:isGlue ()
+  SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+  return self.type == "glue"
+end
+
+function nodefactory.box:isVglue ()
+  SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+  return self.type == "vglue"
+end
+
+function nodefactory.box:isZero ()
+  SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+  return self.type == "zerohbox" or self.type == "zerovglue"
+end
+
+function nodefactory.box:isUnshaped ()
+  SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+  return self.type == "unshaped"
+end
+
+function nodefactory.box:isAlternative ()
+  SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+  return self.type == "alternative"
+end
+
+function nodefactory.box:isVbox ()
+  SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+  return self.type == "vbox"
+end
+
+function nodefactory.box:isInsertion ()
+  SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+  return self.type == "insertion"
+end
+
+function nodefactory.box:isMigrating ()
+  SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+  return self.migrating
+end
+
+function nodefactory.box:isPenalty ()
+  SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+  return self.type == "penalty"
+end
+
+function nodefactory.box:isDiscretionary ()
+  SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+  return self.type == "discretionary"
+end
+
+function nodefactory.box:isKern ()
+  SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+  return self.type == "kern"
+end
 
 nodefactory.hbox = pl.class(nodefactory.box)
 nodefactory.hbox.type = "hbox"
+
+function nodefactory.hbox:_init (spec)
+  nodefactory.box._init(self, spec)
+end
 
 function nodefactory.hbox:__tostring ()
   return "H<" .. tostring(self.width) .. ">^" .. tostring(self.height) .. "-" .. tostring(self.depth) .. "v"

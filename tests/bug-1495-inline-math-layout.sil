@@ -1,0 +1,11 @@
+\begin[papersize=a6]{document}
+\nofolios
+\neverindent
+\use[module=packages.math]
+Lorem ipsum dolor sit amet, consectetur \math{1 + 1 = 2} elit.
+Morbi laoreet diam odio, faucibus gravida massa \math{e^{i\pi} = \mi{cos}(\pi) = -1} vitae.
+Maecenas venenatis ultrices.
+Phasellus \math{e^{i\theta} = \mi{cos}(\theta) + i\,\mi{sin}(\theta)} elementum quam, eget lobortis ligula bibendum ac.
+Etiam cursus vulputate nisl at convallis.
+Aliquam ipsum purus, maximus a felis quis, vehicula efficitur tortor.
+\end{document}
