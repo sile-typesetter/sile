@@ -65,6 +65,12 @@ SILE.registerCommand("fluent", function (options, content)
     message = entry:format(options)
   else
     SU.warn(string.format("No localized message for %s found in locale %s", key, locale))
+    fluent:set_locale('und')
+    entry = fluent:get_message(key)
+    if entry then
+      message = entry:format(options)
+    end
+    fluent:set_locale(locale)
   end
   SILE.processString(("<sile>%s</sile>"):format(message), "xml")
 end, nil, nil, true)
