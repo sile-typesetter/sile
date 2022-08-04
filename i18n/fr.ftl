@@ -2,7 +2,7 @@ bibliography-and = et
 
 bibliography-edited-by = Édité par { $name }
 
-bibliography-et-al = et al.
+bibliography-et-al = <language main="la">et al</language>.
 
 bibliography-translated-by = Traduit par { $name }
 

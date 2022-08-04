@@ -2,7 +2,7 @@ bibliography-and = og
 
 bibliography-edited-by = Redigert av { $name }
 
-bibliography-et-al = et al.
+bibliography-et-al = <language main="la">et al</language>.
 
 bibliography-translated-by = Oversatt av { $name }
 
