@@ -59,7 +59,8 @@ function traceStack.commandFrame:_init (command, content, options)
 end
 
 function traceStack.commandFrame:__tostring ()
-  local opts = (pl.tablex.size(self.options) > 0 and tostring(self.options):gsub("^{", "["):gsub("}$", "]") or "")
+  local opts = pl.tablex.size(self.options) == 0 and "" or
+    pl.pretty.write(self.options, ""):gsub("^{", "["):gsub("}$", "]")
   return "\\" .. tostring(self.command) .. opts
 end
 
