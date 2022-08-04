@@ -42,15 +42,6 @@ function inputter:requireClass (tree)
   end
 end
 
-function inputter.packageInit (_, pack)
-  local class = SILE.documentState.documentClass
-  if not class then
-    SU.error("Cannot load a package before instantiating a document class")
-  else
-    class:initPackage(pack)
-  end
-end
-
 function inputter:process (doc)
   local tree = self:parse(doc)
   self:requireClass(tree)
