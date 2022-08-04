@@ -100,8 +100,15 @@ cli.parseArguments = function ()
     table.insert(SILE.input.includes, path)
   end
   -- http://lua-users.org/wiki/VarargTheSecondClassCitizen
-  local identity = function (...) return table.unpack({...}, 1, select('#', ...)) end
-  SILE.errorHandler = opts.traceback and debug.traceback or identity
+  local trace = function (...)
+    local contentloc = SILE.traceStack:locationHead()
+    local codeloc = table.unpack({...}, 1, select('#', ...))
+    return ("Processing at: %s\n\tUsing code at: %s"):format(contentloc, codeloc)
+  end
+  local identity = function (...)
+    return trace(...) .. "\n\nRun with --traceback for more detailed trace leading up to errors."
+  end
+  SILE.errorHandler = opts.traceback and trace or identity
   SILE.traceback = opts.traceback
 end
 

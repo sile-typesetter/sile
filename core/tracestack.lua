@@ -38,6 +38,10 @@ traceStack.defaultFrame = pl.class({
 
 traceStack.documentFrame = pl.class(traceStack.defaultFrame)
 
+local function oneline (str)
+  return str:gsub("\n", "␤"):gsub("\r", "␍"):gsub("\f", "␊"):gsub("\a", "␇"):gsub("\b", "␈"):gsub("\t", "␉"):gsub("\v", "␋")
+end
+
 function traceStack.documentFrame:_init (file, snippet)
   self.command = "document"
   self.file = file
@@ -45,7 +49,7 @@ function traceStack.documentFrame:_init (file, snippet)
 end
 
 function traceStack.documentFrame:__tostring ()
-  return "<file> (" .. self.snippet .. ")"
+  return "<snippet>:\n\t\t[[" .. oneline(self.snippet) .. "]]"
 end
 
 traceStack.commandFrame = pl.class(traceStack.defaultFrame)
@@ -80,7 +84,7 @@ function traceStack.textFrame:__tostring ()
   if self.text:len() > 20 then
     self.text = luautf8.sub(self.text, 1, 18) .. "…"
   end
-  self.text = self.text:gsub("\n", "␤"):gsub("\t", "␉"):gsub("\v", "␋")
+  self.text = oneline(self.text)
   return '"' .. self.text .. '"'
 end
 
