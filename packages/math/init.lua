@@ -91,6 +91,7 @@ Feedback and contributions are always welcome.}
 \noindent To typeset mathematics, you will need an OpenType math font installed on your system\footnote{A list of freely available math fonts can be found at \href[src=https://www.ctan.org/pkg/unicode-math]{https://www.ctan.org/pkg/unicode-math}}.
 By default, this package uses Libertinus Math, so it will fail if Libertinus Math can’t be found.
 Another font may be specified via the setting \autodoc:setting{math.font.family}.
+The font size can be set via \autodoc:setting{math.font.size}.
 
 \paragraph{MathML}
 The first way to typeset math formulas is to enter them in the MathML format.
