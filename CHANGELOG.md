@@ -70,49 +70,51 @@ All notable changes to this project will be documented in this file. See [standa
 ### ⚠ BREAKING CHANGES
 
 * **settings:** All the functions under `SILE.settings.*()` should now be
-called using the instance notation `SILE.settings:*()`. Usage should be
-shimmed with a warning for now.
+  called using the instance notation `SILE.settings:*()`. Usage should be
+  shimmed with a warning for now.
 
-Changing this in your code is relatively easy with a search and replace.
-As an example with a project in Git, you could use perl like this:
+  Changing this in your code is relatively easy with a search and replace.
+  As an example with a project in Git, you could use perl like this:
 
-```console
-funcs="pushState|popState|declare|reset|toplevelState|get|set|temporarily|wrap"
-git ls-files | xargs -n1 perl -i -pne "s#(SILE\.settings)\.($funcs)#\1:\2#g"
-```
+  ```console
+  funcs="pushState|popState|declare|reset|toplevelState|get|set|temporarily|wrap"
+  git ls-files | xargs -n1 perl -i -pne "s#(SILE\.settings)\.($funcs)#\1:\2#g"
+  ```
+
 * **typesetter:** Making a new instance of the typesetter should now be
-done by *calling* `SILE.defaultTypesetter()` instead of copying the
-object. It has been changed from a std.object to a Penlight class. As
-such the correct initialization function is also now `_init()` instead
-of `init()`. A shim is in place to catch legacy usage, but this will be
-removed in the future.
+  done by *calling* `SILE.defaultTypesetter()` instead of copying the
+  object. It has been changed from a std.object to a Penlight class. As
+  such the correct initialization function is also now `_init()` instead
+  of `init()`. A shim is in place to catch legacy usage, but this will be
+  removed in the future.
+
 * **deps:** All calls to the Lua default string library have been
-using a version monkey-patched by stdlib. This has created all sorts of
-issues including not being able to properly use some of Lua's default
-features and conflicts with out explicit meta methods. Also we're busy
-dropping dependency stdlib altogether.
+  using a version monkey-patched by stdlib. This has created all sorts of
+  issues including not being able to properly use some of Lua's default
+  features and conflicts with out explicit meta methods. Also we're busy
+  dropping dependency stdlib altogether.
 
-If you were relying on it for any of your string operations, replace
-`string.func()` with `std.string.func()`. For now `std` is being
-provided by SILE, but if you use it in your projects please add it as
-a direct dependency yourself since that will eventually be removed as
-well.
+  If you were relying on it for any of your string operations, replace
+  `string.func()` with `std.string.func()`. For now `std` is being
+  provided by SILE, but if you use it in your projects please add it as
+  a direct dependency yourself since that will eventually be removed as
+  well.
 
-By the way in case anything ever `git bisect`s back to here, one way to
-test if your problem is related to this change or not (especially if you
-have downstream code that might have built on the assumption SILE's Lua
-strings were monkey patched) is to load it manually yourself:
+  By the way in case anything ever `git bisect`s back to here, one way to
+  test if your problem is related to this change or not (especially if you
+  have downstream code that might have built on the assumption SILE's Lua
+  strings were monkey patched) is to load it manually yourself:
 
-```console
-$ sile -e 'require("std.string").monkey_patch()' your_file.sil
-```
+  ```console
+  $ sile -e 'require("std.string").monkey_patch()' your_file.sil
+  ```
 * **classes:** This changes the way classes are represented as Lua
-objects and the mechanism used for inheritance. While shims will be in
-place to catch most cases that use old syntax it is not possible to
-grantee 100% API compatibility. If you have classes that do anything
-remotely fancy (i.e. not just copy/paste from SILE examples) they may or
-may not work at all; and even if they do they should be updated to
-explicitly use the new API.
+  objects and the mechanism used for inheritance. While shims will be in
+  place to catch most cases that use old syntax it is not possible to
+  grantee 100% API compatibility. If you have classes that do anything
+  remotely fancy (i.e. not just copy/paste from SILE examples) they may or
+  may not work at all; and even if they do they should be updated to
+  explicitly use the new API.
 
 ### Features
 
@@ -229,11 +231,11 @@ explicitly use the new API.
 ### ⚠ BREAKING CHANGES
 
 * **packages:** Previous to this release footnote and folio frames took
-their font settings from a new typesetter with default settings. With
-this release the settings are now derived from the typesetter in the
-default frame, hence inheriting font family, size, leading, and other
-settings. Values can still be set using the same functions, but relative
-values such as font sizes are based on a different base.
+  their font settings from a new typesetter with default settings. With
+  this release the settings are now derived from the typesetter in the
+  default frame, hence inheriting font family, size, leading, and other
+  settings. Values can still be set using the same functions, but relative
+  values such as font sizes are based on a different base.
 
 ### Features
 
@@ -305,23 +307,26 @@ values such as font sizes are based on a different base.
 ### ⚠ BREAKING CHANGES
 
 * **packages:** Previous to this release any and all leading between
-paragraphs (as set with document.parskip) –even a 0 height skip– would
-result in the skip of one full empty grid space — as if parskip had been
-set to something approximating a full line height.  This change corrects
-the calculation so if a 0 height skip is added and everything fits, the
-next line or paragraph will continue uninterrupted in the next grid
-slot.  To get the previous layout behavior back, document.parskip must
-be explicitly set to be something larger than 0.  Even a minimal 1pt
-skip will result in paragraph spacing that includes one full grid height
-left blank as before:
+  paragraphs (as set with document.parskip) –even a 0 height skip– would
+  result in the skip of one full empty grid space — as if parskip had been
+  set to something approximating a full line height.  This change corrects
+  the calculation so if a 0 height skip is added and everything fits, the
+  next line or paragraph will continue uninterrupted in the next grid
+  slot.  To get the previous layout behavior back, document.parskip must
+  be explicitly set to be something larger than 0.  Even a minimal 1pt
+  skip will result in paragraph spacing that includes one full grid height
+  left blank as before:
 
-    \set[parameter=document.parskip,value=1lh]
+  ```sile
+  \set[parameter=document.parskip,value=1lh]
+  ```
+
 * **utilities:** Previous return value for breadcrumbs:contains() was
-just an depth index with -1 indicating no match. This made sense when
-I wrote it, but coming back to it for a new project I expected a boolean
-return value. Returning two values seems like the best option, but given
-the function naming it seemed to make sense to return the boolean first,
-hence the API breakage.
+  just an depth index with -1 indicating no match. This made sense when
+  I wrote it, but coming back to it for a new project I expected a boolean
+  return value. Returning two values seems like the best option, but given
+  the function naming it seemed to make sense to return the boolean first,
+  hence the API breakage.
 
 ### Features
 
@@ -639,19 +644,19 @@ hence the API breakage.
 ### ⚠ BREAKING CHANGES
 
 * This removes the auto-guessing file extension
-mechanism that allowed *.sil files to be loaded without specifying the
-full file name with extensions. A command like `sile test` will no
-longer find and build sile.sil, you must run `sile test.sil`. The
-mechanism that was doing this was a hack than only worked in some
-scenarios anyway, and dropping it instead of trying to cover all the
-edge cases will make it that much easier to use and document.
-Importantly it avoids edge cases where both *.xml, *.sil, and/or *.lua
-files all have the same name and the loader really has so idea which one
-you mean.
+  mechanism that allowed *.sil files to be loaded without specifying the
+  full file name with extensions. A command like `sile test` will no
+  longer find and build sile.sil, you must run `sile test.sil`. The
+  mechanism that was doing this was a hack than only worked in some
+  scenarios anyway, and dropping it instead of trying to cover all the
+  edge cases will make it that much easier to use and document.
+  Importantly it avoids edge cases where both *.xml, *.sil, and/or *.lua
+  files all have the same name and the loader really has so idea which one
+  you mean.
 
-Note that _packages_ may still be loaded with no file extension, this
-does not affect the `require()` mechanism that looks for *.lua and
-various other incantations by default.
+  Note that _packages_ may still be loaded with no file extension, this
+  does not affect the `require()` mechanism that looks for *.lua and
+  various other incantations by default.
 
 ### Bug Fixes
 
