@@ -366,16 +366,14 @@ function SILE.call (command, options, content)
 end
 
 function SILE.registerCommand (name, func, help, pack, cheat)
-  if not cheat then
-    SU.deprecated("SILE.registerCommand", "class:registerCommand", "0.14.0", "0.16.0",
-    [[Commands are being scoped to the document classes they are loaded into rather than being globals.]])
-    local class = SILE.documentState.documentClass
-    if not class then SU.error("Can't register command "..name.." before a document class is loaded") end
-    class:registerCommand(name, func, help, pack)
-  else
-    -- Shimming until we have all scope cheating removed from core
-    SILE.classes.base.registerCommand(nil, name, func, help, pack)
+  local class = SILE.documentState.documentClass
+  SU.deprecated("SILE.registerCommand", "class:registerCommand", "0.14.0", "0.16.0",
+  [[Commands are being scoped to the document classes they are loaded into rather than being globals.]])
+  -- Shimming until we have all scope cheating removed from core
+  if not cheat or not class or class.type ~= "class" then
+    return SILE.classes.base.registerCommand(nil, name, func, help, pack)
   end
+  return class:registerCommand(name, func, help, pack)
 end
 
 function SILE.setCommandDefaults (command, defaults)
