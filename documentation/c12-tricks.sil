@@ -186,7 +186,7 @@ One SILE project needed two different kinds of sidenotes, margin notes and gutte
 notes.
 
 \line
-\img[src=documentation/discovery.png,width=width(content)]
+\img[src=documentation/discovery.png,width=100%fw]
 \line
 
 Sidenotes can be seen as a simplified form of
