@@ -154,9 +154,4 @@ local function handleMath (_, mbox, mode)
   end
 end
 
-return {
-  exports = {
-    ConvertMathML = ConvertMathML,
-    handleMath = handleMath
-  }
-}
+return { ConvertMathML, handleMath }
