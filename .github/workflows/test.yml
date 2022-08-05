@@ -14,7 +14,7 @@ jobs:
           - [ '5.2', 'MYCFLAGS=-fPIC' ]
           - [ '5.1', 'CFLAGS="-O2 -Wall -DLUA_USE_LINUX -fPIC"' ]
           - [ 'luajit', 'XCFLAGS=-fPIC' ]
-          - [ 'luajit-openresty', 'XCFLAGS=-fPIC' ]
+          # - [ 'luajit-openresty', 'XCFLAGS=-fPIC' ]
     runs-on: ubuntu-22.04
     name: Test on Lua ${{ matrix.luaVersion[0] }}
     steps:
