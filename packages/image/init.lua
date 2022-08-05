@@ -7,8 +7,8 @@ function package:registerCommands ()
 
   self:registerCommand("img", function (options, _)
     SU.required(options, "src", "including image file")
-    local width =  SILE.parseComplexFrameDimension(options.width or 0) or 0
-    local height = SILE.parseComplexFrameDimension(options.height or 0) or 0
+    local width =  SU.cast("measurement", options.width or 0):tonumber()
+    local height = SU.cast("measurement", options.height or 0):tonumber()
     local pageno = SU.cast("integer", options.page or 1)
     local src = SILE.resolveFile(options.src) or SU.error("Couldn't find file "..options.src)
     local box_width, box_height, _, _ = SILE.outputter:getImageSize(src, pageno)
