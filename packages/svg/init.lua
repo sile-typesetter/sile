@@ -7,20 +7,34 @@ local svg = require("svg")
 local otparser = require("core.opentype-parser")
 
 local _drawSVG = function (svgdata, width, height, density, drop)
+  local scalefactor
+  density = density or 72
+  local ratiodensity =  72 / density
+  print(ratiodensity)
   local svgfigure, svgwidth, svgheight = svg.svg_to_ps(svgdata, density)
   SU.debug("svg", string.format("PS: %s\n", svgfigure))
-  local scalefactor = 1
   if width and height then
     -- local aspect = svgwidth / svgheight
     SU.error("SILE cannot yet change SVG aspect ratios, specify either width or height but not both")
   elseif width then
     scalefactor = width:tonumber() / svgwidth
+    height = SILE.measurement(svgheight * scalefactor)
+    width = width
   elseif height then
     scalefactor = height:tonumber() / svgheight
+    width = SILE.measurement(svgwidth * scalefactor)
+    height = height * scalefactor
+  else
+    scalefactor = 1 * ratiodensity
+    width = SILE.measurement(svgwidth * scalefactor)
+    height = SILE.measurement(svgheight * scalefactor)
   end
-  width = SILE.measurement(svgwidth * scalefactor)
-  height = SILE.measurement(svgheight * scalefactor)
-  scalefactor = scalefactor * density / 72
+  SU.debug("svg", string.format("SVG %s x %s (scaled %s) - %s x %s - density %s\n",
+    tostring(width), tostring(height),
+    tostring(scalefactor),
+    tostring(svgwidth), tostring(svgheight),
+    tostring(density)))
+
   SILE.typesetter:pushHbox({
       value = nil,
       height = height,
@@ -39,7 +53,7 @@ function package:registerRawHandlers ()
     local svgdata = content[1]
     local width = options.width and SU.cast("measurement", options.width):absolute() or nil
     local height = options.height and SU.cast("measurement", options.height):absolute() or nil
-    local density = options.density or 72
+    local density = options.density and SU.cast("integer", options.density)
     -- See issue #1375: svg.svg_to_ps() called in _drawSVG has a apparently a side effect
     -- on the internal representation of the Lua string and corrupts it.
     -- So as a workaround, for the original string to be able to be reused, we must get a
@@ -55,8 +69,12 @@ function package:registerCommands ()
     local fn = SU.required(options, "src", "filename")
     local width = options.width and SU.cast("measurement", options.width):absolute() or nil
     local height = options.height and SU.cast("measurement", options.height):absolute() or nil
-    local density = options.density or 72
-    local svgfile = io.open(fn)
+    local density = options.density and SU.cast("integer", options.density)
+    local svgfile, err = io.open(fn)
+    if not svgfile then
+      SU.error("Could not open SVG "..fn..": "..err)
+      return
+    end
     local svgdata = svgfile:read("*all")
     _drawSVG(svgdata, width, height, density)
   end)
