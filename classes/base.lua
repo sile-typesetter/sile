@@ -137,7 +137,7 @@ end
 
 function class:loadPackage (packname, options)
   local pack = require(("packages.%s"):format(packname))
-  if pack.type == "package" then -- new package
+  if type(pack) == "table" and pack.type == "package" then -- new package
     if not self._initialized then
       SILE.scratch.half_initialized_class = self
     end
