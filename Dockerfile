@@ -7,9 +7,6 @@ FROM docker.io/library/archlinux:base-devel$ARCHTAG AS builder
 ARG RUNTIME_DEPS
 ARG BUILD_DEPS
 
-# Monkey patch glibc to avoid issues with old kernels on hosts
-RUN --mount=type=bind,target=/mp,source=build-aux/docker-glibc-workaround.sh /mp
-
 # Freshen all base system packages
 RUN pacman-key --init
 RUN pacman --needed --noconfirm -Syq archlinux-keyring
@@ -43,9 +40,6 @@ FROM docker.io/library/archlinux:base$ARCHTAG AS final
 ARG RUNTIME_DEPS
 ARG VERSION
 ARG REVISION
-
-# Monkey patch glibc to avoid issues with old kernels on hosts
-RUN --mount=type=bind,target=/mp,source=build-aux/docker-glibc-workaround.sh /mp
 
 # Freshen all base system packages (and cleanup cache)
 RUN pacman-key --init
