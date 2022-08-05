@@ -2,9 +2,8 @@
 #include <stdio.h>
 #include "libtexpdf/libtexpdf.h"
 
-int get_pdf_bbox(FILE* f, double* llx, double* lly, double* urx, double* ury) {
+int get_pdf_bbox(FILE* f, long page_no, double* llx, double* lly, double* urx, double* ury) {
   pdf_obj* page;
-  long page_no = 1;
   long count;
   pdf_rect bbox;
   pdf_file* pf = texpdf_open(NULL, f);
@@ -28,7 +27,7 @@ int get_pdf_bbox(FILE* f, double* llx, double* lly, double* urx, double* ury) {
   return 0;
 }
 
-int get_image_bbox(FILE* f, double* llx, double* lly, double* urx, double* ury, double* xresol, double* yresol) {
+int get_image_bbox(FILE* f, long page_no, double* llx, double* lly, double* urx, double* ury, double* xresol, double* yresol) {
   int width, height;
   uint32_t w2, h2;
   double xdensity, ydensity;
@@ -54,7 +53,7 @@ int get_image_bbox(FILE* f, double* llx, double* lly, double* urx, double* ury, 
   } else if (texpdf_check_for_pdf(f)) {
     *xresol = 0;
     *yresol = 0;
-    return get_pdf_bbox(f, llx, lly, urx, ury);
+    return get_pdf_bbox(f, page_no, llx, lly, urx, ury);
   } else {
     return -1;
   }

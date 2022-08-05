@@ -9,8 +9,9 @@ function package:registerCommands ()
     SU.required(options, "src", "including image file")
     local width =  SILE.parseComplexFrameDimension(options.width or 0) or 0
     local height = SILE.parseComplexFrameDimension(options.height or 0) or 0
+    local pageno = SU.cast("integer", options.page or 1)
     local src = SILE.resolveFile(options.src) or SU.error("Couldn't find file "..options.src)
-    local box_width, box_height = SILE.outputter:getImageSize(src)
+    local box_width, box_height, _, _ = SILE.outputter:getImageSize(src, pageno)
     local sx, sy = 1, 1
     if width > 0 or height > 0 then
       sx = width > 0 and box_width / width
@@ -25,7 +26,7 @@ function package:registerCommands ()
       depth= 0,
       value= src,
       outputYourself = function (node, typesetter, _)
-        SILE.outputter:drawImage(node.value, typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-node.height, node.width, node.height)
+        SILE.outputter:drawImage(node.value, typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-node.height, node.width, node.height, pageno)
         typesetter.frame:advanceWritingDirection(node.width)
     end})
 
@@ -40,6 +41,8 @@ As well as processing text, SILE can also include images.
 Loading the \autodoc:package{image} package gives you the \autodoc:command{\img} command, fashioned after the HTML equivalent.
 It takes the following parameters: \autodoc:parameter{src=<file>} must be the path to an image file; you may also give \autodoc:parameter{height} and/or \autodoc:parameter{width} parameters to specify the output size of the image on the paper.
 If the size parameters are not given, then the image will be output at its ‘natural’ size, honoring its resolution if available.
+The command also supports a \autodoc:parameter{page=<number>} option, to specify the selected page in formats supporting
+several pages (such as PDF).
 
 \begin{note}
 With the libtexpdf backend (the default), the images can be in JPEG, PNG, EPS or PDF formats.

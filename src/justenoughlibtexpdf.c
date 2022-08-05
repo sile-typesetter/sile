@@ -341,7 +341,8 @@ int pdf_drawimage(lua_State *L) {
   double y = luaL_checknumber(L, 3);
   double w = luaL_checknumber(L, 4);
   double h = luaL_checknumber(L, 5);
-  int form_id = texpdf_ximage_findresource(p, filename, 0, NULL);
+  long page_no = (long)luaL_checkinteger(L, 6);
+  int form_id = texpdf_ximage_findresource(p, filename, page_no, NULL);
 
   texpdf_transform_info_clear(&ti);
   ti.width = w;
@@ -353,10 +354,11 @@ int pdf_drawimage(lua_State *L) {
   return 0;
 }
 
-extern int get_image_bbox(FILE* f, double* llx, double* lly, double* urx, double* ury, double* xresol, double* yresol);
+extern int get_image_bbox(FILE* f, long page_no, double* llx, double* lly, double* urx, double* ury, double* xresol, double* yresol);
 
 int pdf_imagebbox(lua_State *L) {
   const char* filename = luaL_checkstring(L, 1);
+  long page_no = (long)luaL_checkinteger(L, 2);
   double llx = 0;
   double lly = 0;
   double urx = 0;
@@ -369,7 +371,7 @@ int pdf_imagebbox(lua_State *L) {
     return luaL_error(L, "Image file not found %s", filename);
   }
 
-  if ( get_image_bbox(f, &llx, &lly, &urx, &ury, &xresol, &yresol) < 0 ) {
+  if ( get_image_bbox(f, page_no, &llx, &lly, &urx, &ury, &xresol, &yresol) < 0 ) {
     MFCLOSE(f);
     return luaL_error(L, "Invalid image file %s", filename);
   }
