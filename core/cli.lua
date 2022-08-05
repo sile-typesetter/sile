@@ -100,13 +100,25 @@ cli.parseArguments = function ()
     table.insert(SILE.input.includes, path)
   end
   -- http://lua-users.org/wiki/VarargTheSecondClassCitizen
-  local trace = function (...)
+  local summary = function (...)
     local contentloc = SILE.traceStack:locationHead()
     local codeloc = table.unpack({...}, 1, select('#', ...))
     return ("Processing at: %s\n\tUsing code at: %s"):format(contentloc, codeloc)
   end
+  local unexpected = function ()
+    if not SILE.scratch.caughterror then
+      io.stderr:write("\n! Unexpected Lua error\n")
+    end
+  end
+  local trace = function (...)
+    unexpected()
+    io.stderr:write(debug.traceback("", 2) or "\t! debug.traceback() did not identify code location")
+    io.stderr:write("\n")
+    return summary(...)
+  end
   local identity = function (...)
-    return trace(...) .. "\n\nRun with --traceback for more detailed trace leading up to errors."
+    unexpected()
+    return summary(...) .. "\n\nRun with --traceback for more detailed trace leading up to errors."
   end
   SILE.errorHandler = opts.traceback and trace or identity
   SILE.traceback = opts.traceback
