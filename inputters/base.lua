@@ -61,6 +61,9 @@ function inputter.preamble (_)
   for _, preamble in ipairs(SILE.input.preambles) do
     if type(preamble) == "string" then
       SILE.processFile(preamble)
+    elseif type(preamble) == "function" then
+      SU.warn("Passing functions as preambles is not officially sactioned and may go away without being marked as a breaking change.")
+      preamble()
     elseif type(preamble) == "table" then
       local options = {}
       if preamble.pack then preamble, options = preamble.pack, preamble.options end

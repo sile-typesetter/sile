@@ -35,6 +35,7 @@ utilities.error = function(message, bug)
   _skip_traceback_levels = 2
   io.stderr:flush()
   SILE.outputter:finish() -- Only really useful from the REPL but no harm in trying
+  SILE.scratch.caughterror = true
   error(message, 2)
 end
 
@@ -42,7 +43,9 @@ utilities.warn = function(message, bug)
   io.stderr:write("\n! " .. message)
   if SILE.traceback or bug then
     io.stderr:write(" at:\n" .. SILE.traceStack:locationTrace())
-    io.stderr:write(debug.traceback("", _skip_traceback_levels) or "\t! debug.traceback() did not identify code location")
+    if _skip_traceback_levels == 2 then
+      io.stderr:write(debug.traceback("", _skip_traceback_levels) or "\t! debug.traceback() did not identify code location")
+    end
   else
     io.stderr:write(" at " .. SILE.traceStack:locationHead())
   end
