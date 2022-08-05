@@ -191,7 +191,7 @@ function package:registerCommands ()
       SILE.settings:get(name) -- will issue an error if unknown
     end
     -- Inserts breakpoints after dots
-    local nameWithBreaks = self.class.transformContent(content, settingFilter)
+    local nameWithBreaks = self.class.packages.inputfilter:transformContent(content, settingFilter)
 
     SILE.call("autodoc:code:style", { type = "setting" }, nameWithBreaks)
   end, "Outputs a settings name in code, ensuring good line breaks and possibly checking their existence.")

@@ -434,10 +434,4 @@ compileToMathML(nil, {}, convertTexlike(nil, {[==[
   \def{pmod}{\quad(\mo{mod} #1)}
 ]==]}))
 
-return {
-  exports = {
-    convertTexlike = convertTexlike,
-    compileToMathML = compileToMathML,
-    -- registerCommand = registerCommand,
-  }
-}
+return { convertTexlike, compileToMathML }

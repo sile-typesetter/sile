@@ -1,7 +1,7 @@
 local base = require("packages.base")
 
-local pack = pl.class(base)
-pack._name = "balanced-frames"
+local package = pl.class(base)
+package._name = "balanced-frames"
 
 local BALANCE_PENALTY = -17777
 
@@ -72,16 +72,18 @@ local function buildPage (typesetter, independent)
   return true
 end
 
-function pack:_init (class)
+function package:_init (class)
   base._init(self, class)
-  if not unbalanced_buildPage then
-    unbalanced_buildPage = SILE.typesetter.buildPage
-    SILE.typesetter.buildPage = buildPage
-    SILE.defaultTypesetter.buildPage = buildPage
-  end
+  self.class:registerPostinit(function(_)
+    if not unbalanced_buildPage then
+      unbalanced_buildPage = SILE.typesetter.buildPage
+      SILE.typesetter.buildPage = buildPage
+      SILE.defaultTypesetter.buildPage = buildPage
+    end
+  end)
 end
 
-function pack:registerCommands ()
+function package:registerCommands ()
 
   self:registerCommand("balancecolumns", function (_, _)
     SILE.typesetter:leaveHmode()
@@ -90,7 +92,7 @@ function pack:registerCommands ()
 
 end
 
-pack.documentation = [[
+package.documentation = [[
 \begin{document}
 This package attempts to ensure that the main content frames on a page are balanced; that is, that they have the same height.
 In your frame definitions for the columns, you will need to ensure that they have the parameter \autodoc:parameter{balanced} set to a true value.
@@ -100,4 +102,4 @@ The current algorithm does not work particularly well, and a better solution to 
 \end{document}
 ]]
 
-return pack
+return package

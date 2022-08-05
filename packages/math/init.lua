@@ -5,8 +5,10 @@ package._name = "math"
 
 function package:_init ()
   base._init(self)
-  self.class:loadPackage("math.typesetter")
-  self.class:loadPackage("math.texlike")
+  local typesetter = require("packages.math.typesetter")
+  self.ConvertMathML, self.handleMath = typesetter[1], typesetter[2]
+  local texlike = require("packages.math.texlike")
+  self.convertTexlike, self.compileToMathML = texlike[1], texlike[2]
   -- Register a new unit that is 1/18th of the current math font size
   SILE.units["mu"] = {
     relative = true,
@@ -53,18 +55,18 @@ function package:registerCommands ()
     local mode = (options and options.mode) and options.mode or 'text'
     local mbox
     xpcall(function()
-      mbox = self.class:ConvertMathML(content, mbox)
+      mbox = self:ConvertMathML(content, mbox)
     end, function(err) print(err); print(debug.traceback()) end)
-    self.class:handleMath(mbox, mode)
+    self:handleMath(mbox, mode)
   end)
 
   self:registerCommand("math", function (options, content)
     local mode = (options and options.mode) and options.mode or "text"
     local mbox
     xpcall(function()
-      mbox = self.class:ConvertMathML(self.class:compileToMathML({}, self.class:convertTexlike(content)))
+      mbox = self:ConvertMathML(self:compileToMathML({}, self:convertTexlike(content)))
     end, function(err) print(err); print(debug.traceback()) end)
-    self.class:handleMath(mbox, mode)
+    self:handleMath(mbox, mode)
   end)
 
 end

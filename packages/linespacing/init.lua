@@ -94,7 +94,9 @@ end
 
 function package:_init ()
   base._init(self)
-  SILE.typesetter.leadingFor = linespacingLeading
+  self.class:registerPostinit(function(_)
+    SILE.typesetter.leadingFor = linespacingLeading
+  end)
 end
 
 function package.declareSettings (_)

@@ -65,7 +65,7 @@ function package:deprecatedExport (name, func, noclass, notable)
         table.insert(inputs, 1, self.class)
       end
       SU.deprecated(("class.%s"):format(name),
-                    ("class.packages[%s]:%s"):format(self._name, name),
+                    ("class.packages.%s:%s"):format(self._name, name),
                     "0.14.0", "0.16.0", _deprecate_class_funcs)
       return func(table.unpack(inputs, 1, select("#", ...) + 1))
     end
@@ -78,7 +78,7 @@ function package:deprecatedExport (name, func, noclass, notable)
         table.insert(inputs, 1, self)
       end
       SU.deprecated(("require('packages.%s').exports.%s"):format(self._name, name),
-                    ("class.packages[%s]:%s"):format(self._name, name),
+                    ("class.packages.%s:%s"):format(self._name, name),
                     "0.14.0", "0.16.0", _deprecate_exports_table)
       return func(table.unpack(inputs, 1, select("#", ...) + 1))
     end

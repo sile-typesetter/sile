@@ -12,7 +12,9 @@ std = setmetatable({}, {
 })
 -- luacheck: pop
 
+local fluent_once = false
 local fluentglobal = function ()
+  if fluent_once then return end
   SU.deprecated("SILE.fluent", "fluent", "0.14.0", "0.15.0", [[
   The SILE.fluent object was never more than just an instance of a
   third party library with no relation the scope of the SILE object.
@@ -20,10 +22,19 @@ local fluentglobal = function ()
   SILE-as-a-library. Making it a provided global clarifies whot it
   is and is not. Maybe someday we'll actually make a wrapper that
   tracks the state of the document language.]])
+  fluent_once = true
 end
 SILE.fluent = setmetatable({}, {
-  __call = fluentglobal,
-  __index = fluentglobal,
+  __call = function (_, ...)
+    fluentglobal()
+    SILE.fluent = fluent
+    return fluent(table.unpack({...}, 1, select("#", ...)))
+  end,
+  __index = function (_, key)
+    fluentglobal()
+    SILE.fluent = fluent
+    return fluent[key]
+  end
 })
 
 local nobaseclass = function ()
