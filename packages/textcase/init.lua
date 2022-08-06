@@ -5,9 +5,9 @@ package._name = "tetxcase"
 
 local icu = require("justenoughicu")
 
-local uppercase = function (class, input, extraArgs)
-  if type(class) ~= "table" or class.type ~= "class" then
-    input, extraArgs = class, input
+function package:uppercase (input, extraArgs)
+  if type(self) ~= "table" or (self.type ~= "class" and self.type ~= "package") then
+    input, extraArgs = self, input
   end
   if not extraArgs then extraArgs = {} end
   if not extraArgs.options then extraArgs.options = {} end
@@ -15,9 +15,9 @@ local uppercase = function (class, input, extraArgs)
   return icu.case(input, lang, "upper")
 end
 
-local lowercase = function (class, input, extraArgs)
-  if type(class) == "table" and class.type ~= "class" then
-    input, extraArgs = class, input
+function package:lowercase (input, extraArgs)
+  if type(self) ~= "table" or (self.type ~= "class" and self.type ~= "package") then
+    input, extraArgs = self, input
   end
   if not extraArgs then extraArgs = {} end
   if not extraArgs.options then extraArgs.options = {} end
@@ -25,9 +25,9 @@ local lowercase = function (class, input, extraArgs)
   return icu.case(input, lang, "lower")
 end
 
-local titlecase = function (class, input, extraArgs)
-  if type(class) == "table" and class.type ~= "class" then
-    input, extraArgs = class, input
+function package:titlecase (input, extraArgs)
+  if type(self) ~= "table" or (self.type ~= "class" and self.type ~= "package") then
+    input, extraArgs = self, input
   end
   if not extraArgs then extraArgs = {} end
   if not extraArgs.options then extraArgs.options = {} end
@@ -38,23 +38,23 @@ end
 function package:_init ()
   base._init(self)
   self.class:loadPackage("inputfilter")
-  self:deprecatedExport("uppercase", uppercase)
-  self:deprecatedExport("lowercase", lowercase)
-  self:deprecatedExport("titlecase", titlecase)
+  self:deprecatedExport("uppercase", self.uppercase)
+  self:deprecatedExport("lowercase", self.lowercase)
+  self:deprecatedExport("titlecase", self.titlecase)
 end
 
 function package:registerCommands ()
 
   self:registerCommand("uppercase", function(options, content)
-    SILE.process(self.class.packages.inputfilter:transformContent(content, uppercase, options))
+    SILE.process(self.class.packages.inputfilter:transformContent(content, self.uppercase, options))
   end, "Typeset the enclosed text as uppercase")
 
   self:registerCommand("lowercase", function(options, content)
-    SILE.process(self.class.packages.inputfilter:transformContent(content, lowercase, options))
+    SILE.process(self.class.packages.inputfilter:transformContent(content, self.lowercase, options))
   end, "Typeset the enclosed text as lowercase")
 
   self:registerCommand("titlecase", function(options, content)
-    SILE.process(self.class.packages.inputfilter:transformContent(content, titlecase, options))
+    SILE.process(self.class.packages.inputfilter:transformContent(content, self.titlecase, options))
   end, "Typeset the enclosed text as titlecase")
 
 end
