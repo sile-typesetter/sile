@@ -97,10 +97,6 @@ if SILE.masterFilename then
     ProFi:start()
   end
 
-  for _, spec in ipairs(SILE.input.uses) do
-    SILE.use(spec.module, spec.options)
-  end
-
   -- Deprecated, notice given in core.cli when argument used
   for _, path in ipairs(SILE.input.includes) do
     io.stderr:write("Loading "..path.."\n")
@@ -110,6 +106,10 @@ if SILE.masterFilename then
     else
       SILE.require(path, "classes")
     end
+  end
+
+  for _, spec in ipairs(SILE.input.uses) do
+    SILE.use(spec.module, spec.options)
   end
 
   local main, err = xpcall(function()
