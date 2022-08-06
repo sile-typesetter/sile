@@ -1,6 +1,6 @@
 --
--- Common commands for Markdown support SILE, when there is no
--- direct mapping to an existing command or package.
+-- Common commands for Markdown support in SILE, when there is no
+-- direct mapping to existing commands or packages.
 --
 -- Split in a standalone package so that it can be reused and
 -- generalized somewhat independently from the undelying parsing code.
@@ -65,7 +65,7 @@ local extractFromTree = function (tree, command)
 end
 
 local function hasClass(options, classname)
-  -- N.B. want a true boolean here
+  -- N.B. we want a true boolean here
   if options.class and string.match(' ' .. options.class .. ' ',' '..classname..' ') then
     return true
   end
@@ -117,7 +117,7 @@ function package:registerCommands ()
       -- reimplemented that part, but here we work with what we have.
       SILE.call("pdf:destination", { name = options.id })
     end
-  end, "Header in Markdown (internal")
+  end, "Header in Markdown (internal)")
 
   self:registerCommand("markdown:internal:term", function (_, content)
     SILE.typesetter:leaveHmode()
@@ -134,7 +134,7 @@ function package:registerCommands ()
       SILE.typesetter:leaveHmode()
     end)
     SILE.call("smallskip")
-  end, "Definition list block in Markdown (internal")
+  end, "Definition list block in Markdown (internal)")
 
   self:registerCommand("markdown:internal:div", function (options, content)
     local cascade = CommandCascade()
@@ -148,7 +148,7 @@ function package:registerCommands ()
       cascade:call("markdown:internal:paragraph")
     end
     cascade:process(content)
-  end, "Div in Markdown (internal")
+  end, "Div in Markdown (internal)")
 
   self:registerCommand("markdown:internal:span", function (options, content)
     local cascade = CommandCascade()
@@ -166,7 +166,7 @@ function package:registerCommands ()
       cascade:call("markdown:custom-style:hook", { name = options["custom-style"], scope = "inline" })
     end
     cascade:process(content)
-  end, "Span in Markdown (internal")
+  end, "Span in Markdown (internal)")
 
   self:registerCommand("markdown:internal:image", function (options, _)
     local uri = SU.required(options, "src", "image")
@@ -175,7 +175,7 @@ function package:registerCommands ()
     else
       SILE.call("img", options)
     end
-  end, "Image in Markdown (internal")
+  end, "Image in Markdown (internal)")
 
   self:registerCommand("markdown:internal:link", function (options, content)
     local uri = SU.required(options, "src", "link")
@@ -186,7 +186,7 @@ function package:registerCommands ()
     else
       return SILE.call("href", { src = uri }, content)
     end
-  end, "Link in Markdown (internal")
+  end, "Link in Markdown (internal)")
 
   self:registerCommand("markdown:internal:footnote", function (_, content)
     if not SILE.Commands["footnote"] then
@@ -198,7 +198,7 @@ function package:registerCommands ()
       self.class:loadPackage("footnotes")
     end
     SILE.call("footnote", {}, content)
-  end, "Footnote in Markdown (internal")
+  end, "Footnote in Markdown (internal)")
 
   self:registerCommand("markdown:internal:rawinline", function (options, content)
     local format = SU.required(options, "format", "rawcontent")
@@ -207,7 +207,7 @@ function package:registerCommands ()
     elseif format == "sile-lua" then
       SILE.processString(content[1], "lua")
     end
-  end, "Raw native inline content in Markdown (internal")
+  end, "Raw native inline content in Markdown (internal)")
 
   self:registerCommand("markdown:internal:rawblock", function (options, content)
     local format = SU.required(options, "format", "rawcontent")
@@ -216,7 +216,7 @@ function package:registerCommands ()
         SILE.call("markdown:internal:rawinline", options, content)
       end)
     end
-  end, "Raw native block in Markdown (internal")
+  end, "Raw native block in Markdown (internal)")
 
   self:registerCommand("markdown:internal:blockquote", function (_, content)
     -- Would be nice NOT having to do this, but SILE's plain class only has a "quote"
@@ -229,7 +229,19 @@ function package:registerCommands ()
     else
       SILE.call("blockquote", {}, content)
     end
-  end, "Block quote in Markdown (internal")
+  end, "Block quote in Markdown (internal)")
+
+  self:registerCommand("markdown:internal:captioned-table", function (_, content)
+    -- Makes it easier for class/packages to provided their own captioned-table
+    -- environment if they want to do so (possibly with more features,
+    -- e.g. managing list of tables, numbering and cross-references etc.),
+    -- while minimally providing a default fallback solution.
+    if not SILE.Commands["captioned-table"] then
+      SILE.call("markdown:fallback:captioned-table", {}, content)
+    else
+      SILE.call("captioned-table", {}, content)
+    end
+  end, "Captioned table in Markdown (internal)")
 
   -- Fallback commands
 
