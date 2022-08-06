@@ -12,6 +12,10 @@ local Pandoc = {
 }
 
 local utils = require("packages.markdown.utils")
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "pandocast"
 
 local function checkAstSemver(version)
   -- We shouldn't care the patch level.
@@ -504,36 +508,43 @@ Pandoc.Span = function (attributes, inlines)
   return utils.createCommand("markdown:internal:span" , options, content)
 end
 
-local function init (class, _)
-  class:loadPackage("markdown.commands")
+-- BEGIN FIXME LATER SPLIT
+local inputterbase = require("inputters.base")
 
-  -- Extend inputters.
-  SILE.inputs.pandocast = {
-    order = 2,
-    appropriate = function (fn, _)
-      return fn:match("pandoc$")
-    end,
-    process = function (data)
-      local has_json, json = pcall(require, "json.decode")
-      if not has_json then
-        SU.error("The pandocast inputter requires LuaJSON's json.decode() to be available.")
-      end
+local inputter = pl.class(inputterbase)
+inputter._name = "pandocast"
+inputter.order = 2
 
-      local ast = json.decode(data)
-
-      local PANDOC_API_VERSION = ast['pandoc-api-version']
-      checkAstSemver(PANDOC_API_VERSION)
-
-      local blocks = pandocAstParse(ast.blocks)
-      local t = { [1] = blocks, id = "document", options = { class = "markdown" }}
-      SILE.process(t)
-    end
-  }
+function inputter.appropriate (_, filename, _)
+  return filename:match("pandoc$")
 end
 
-return {
-  init = init,
-  documentation = [[\begin{document}
+function inputter.parse (_, doc)
+  local has_json, json = pcall(require, "json.decode")
+  if not has_json then
+    SU.error("The pandocast inputter requires LuaJSON's json.decode() to be available.")
+  end
+
+  local ast = json.decode(doc)
+
+  local PANDOC_API_VERSION = ast['pandoc-api-version']
+  checkAstSemver(PANDOC_API_VERSION)
+
+  local blocks = pandocAstParse(ast.blocks)
+  local tree = { [1] = blocks, id = "document", options = { class = "markdown" }}
+  return tree
+end
+-- END FIXME LATER SPLIT
+
+function package:_init (_)
+  base._init(self)
+  self.class:loadPackage("markdown.commands")
+
+  -- Extend inputters.
+  SILE.inputters.pandocast = inputter -- FIXME LATER
+end
+
+package.documentation = [[\begin{document}
 The \autodoc:package{pandocast} package allows you to use Pandoc’s JSON AST as an input format
 for documents.
 Pandoc is a free-software document converter, created by the same John MacFarlane who
@@ -568,4 +579,5 @@ package, e.g. the ability to use custom styles, to pass native content through t
 While it requires an external tool to be invoked, it may be your fallback solution if the
 latter falls short for you and does not support some Markdown extension you would need.
 \end{document}]]
-}
+
+return package
