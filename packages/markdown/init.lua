@@ -3,6 +3,10 @@
 -- Using the lunamark library.
 --
 local utils = require("packages.markdown.utils")
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "markdown"
 
 local function simpleCommandWrapper (name)
   -- Simple wrapper argound a SILE command
@@ -239,56 +243,97 @@ local function SileAstWriter (options)
   return writer
 end
 
-local function init (class, _)
-  class:loadPackage("markdown.commands")
+-- BEGIN FIXME LATER SPLIT
+local inputterbase = require("inputters.base")
 
-  -- Extend inputters.
+local inputter = pl.class(inputterbase)
+inputter._name = "markdown"
+inputter.order = 2
 
-  SILE.inputs.markdown = {
-    order = 2,
-    appropriate = function (fn, _)
-      return fn:match("md$") or fn:match("markdown$")
-    end,
-    process = function (data)
-      local lunamark = require("lunamark")
-      local reader = lunamark.reader.markdown
-      local writer = SileAstWriter({
-        layout = "compact" -- The default layout is to output \n\n as inter-block separator
-                           -- Let's cancel it, and insert our own \par where needed.
-      })
-      local parse = reader.new(writer, {
-        smart = true,
-        strikeout = true,
-        subscript=true,
-        superscript = true,
-        definition_lists = true,
-        notes = true,
-        inline_notes = true,
-        fenced_code_blocks = true,
-        fenced_code_attributes = true,
-        bracketed_spans = true,
-        fenced_divs = true,
-        raw_attribute = true,
-        link_attributes = true,
-        startnum = true,
-        fancy_lists = true,
-        task_list = true,
-        hash_enumerators = true,
-        table_captions = true,
-        pipe_table = true,
-      })
-      local t = parse(data)
-      -- The Markdown parsing returns a string or a table.
-      -- Wrap it in some structure so we can just process it.
-      t = { [1] = t, id = "document", options = { class = "markdown" }}
-      SILE.process(t)
-    end
-  }
+function inputter.appropriate (_, filename, _)
+  return filename:match("md$") or filename:match("markdown$")
 end
 
-return {
-  init = init,
-  documentation = [[\begin{document}
+function inputter.parse (_, doc)
+  local lunamark = require("lunamark")
+  local reader = lunamark.reader.markdown
+  local writer = SileAstWriter({
+    layout = "compact" -- The default layout is to output \n\n as inter-block separator
+                        -- Let's cancel it, and insert our own \par where needed.
+  })
+  local parse = reader.new(writer, {
+    smart = true,
+    strikeout = true,
+    subscript=true,
+    superscript = true,
+    definition_lists = true,
+    notes = true,
+    inline_notes = true,
+    fenced_code_blocks = true,
+    fenced_code_attributes = true,
+    bracketed_spans = true,
+    fenced_divs = true,
+    raw_attribute = true,
+    link_attributes = true,
+    startnum = true,
+    fancy_lists = true,
+    task_list = true,
+    hash_enumerators = true,
+    table_captions = true,
+    pipe_table = true,
+  })
+  local tree = parse(doc)
+  -- The Markdown parsing returns a string or a table.
+  -- Wrap it in some structure so we can just process it.
+  tree = { [1] = tree, id = "document", options = { class = "markdown" }}
+  return tree
+end
+
+-- function inputter.process (_, doc)
+--   local lunamark = require("lunamark")
+--   local reader = lunamark.reader.markdown
+--   local writer = SileAstWriter({
+--     layout = "compact" -- The default layout is to output \n\n as inter-block separator
+--                         -- Let's cancel it, and insert our own \par where needed.
+--   })
+--   local parse = reader.new(writer, {
+--     smart = true,
+--     strikeout = true,
+--     subscript=true,
+--     superscript = true,
+--     definition_lists = true,
+--     notes = true,
+--     inline_notes = true,
+--     fenced_code_blocks = true,
+--     fenced_code_attributes = true,
+--     bracketed_spans = true,
+--     fenced_divs = true,
+--     raw_attribute = true,
+--     link_attributes = true,
+--     startnum = true,
+--     fancy_lists = true,
+--     task_list = true,
+--     hash_enumerators = true,
+--     table_captions = true,
+--     pipe_table = true,
+--   })
+--   local t = parse(doc)
+--   -- The Markdown parsing returns a string or a table.
+--   -- Wrap it in some structure so we can just process it.
+--   t = { [1] = t, id = "document", options = { class = "markdown" }}
+--   SILE.process(t)
+-- end
+-- END FIXME LATER SPLIT
+
+function package:_init (_)
+  base._init(self)
+  self.class:loadPackage("markdown.commands")
+
+  -- Extend inputters.
+  SILE.inputters.markdown = inputter -- FIXME LATER
+end
+
+package.documentation = [[\begin{document}
 The \autodoc:package{markdown} package allows you to use Markdown, with plenty of additional
 features and extensions, as your alternative format of choice for documents —without leaving
 aside hooks to SILE, when felt necessary\footnote{So you get the best of two worlds, for an
@@ -312,4 +357,5 @@ A whole dedicated chapter is dedicated to the topic, including a discussion on a
 in an appendix to the SILE manual. Please refer to it for more details and an exhaustive
 presentation of the capabilities.
 \end{document}]]
-}
+
+return package

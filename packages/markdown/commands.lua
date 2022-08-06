@@ -6,6 +6,10 @@
 -- generalized somewhat independently from the undelying parsing code.
 --
 local utils = require("packages.markdown.utils")
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "markdown.commands"
 
 -- A small utility class that allows wrapping commands applied to a
 -- content, avoiding a callback hell with conditionals where it is
@@ -68,35 +72,36 @@ local function hasClass(options, classname)
   return false
 end
 
-local function init (class, _)
+function package:_init (_)
+  base._init(self)
   -- Only load low-level packages (= utilities)
   -- The claas should be responsible for loading the appropriate higher-level
   -- constructs, see fallback commands further below for more details.
-  class:loadPackage("color")
-  class:loadPackage("image")
-  class:loadPackage("lists")
-  class:loadPackage("ptable")
-  class:loadPackage("rules")
-  class:loadPackage("svg")
+  self.class:loadPackage("color")
+  self.class:loadPackage("image")
+  self.class:loadPackage("lists")
+  self.class:loadPackage("ptable")
+  self.class:loadPackage("rules")
+  self.class:loadPackage("svg")
   -- class:loadPackage("textsubsuper") -- FIXME later, for now provide fallbacks below...
-  class:loadPackage("url")
+  self.class:loadPackage("url")
 end
 
-local function registerCommands (class)
+function package:registerCommands ()
 
   -- Commands (normally) intended to be used by this package only.
 
-  SILE.registerCommand("markdown:internal:paragraph", function (_, content)
+  self:registerCommand("markdown:internal:paragraph", function (_, content)
     SILE.process(content)
     -- See comment on the lunamark writer layout option. With the default layout,
-    -- this\par was not necessary... We switched to "compact" layout, to decide
+    -- this \par was not necessary... We switched to "compact" layout, to decide
     -- how to handle our own paragraphing.
     SILE.call("par")
   end, "Paragraphing in Markdown (internal)")
 
   -- Mappings functions and tables
 
-  SILE.registerCommand("markdown:internal:header", function (options, content)
+  self:registerCommand("markdown:internal:header", function (options, content)
     local level = SU.required(options, "level", "header")
     local command = getSectioningCommand(level)
     local numbering = not hasClass(options, "unnumbered")
@@ -114,12 +119,12 @@ local function registerCommands (class)
     end
   end, "Header in Markdown (internal")
 
-  SILE.registerCommand("markdown:internal:term", function (_, content)
+  self:registerCommand("markdown:internal:term", function (_, content)
     SILE.typesetter:leaveHmode()
     SILE.call("font", { weight = 600 }, content)
   end, "Definition list term in Markdown (internal)")
 
-  SILE.registerCommand("markdown:internal:definition", function (_, content)
+  self:registerCommand("markdown:internal:definition", function (_, content)
     SILE.typesetter:leaveHmode()
     SILE.settings:temporarily(function ()
       local indent = SILE.measurement("2em"):absolute()
@@ -131,21 +136,21 @@ local function registerCommands (class)
     SILE.call("smallskip")
   end, "Definition list block in Markdown (internal")
 
-  SILE.registerCommand("markdown:internal:div", function (options, content)
+  self:registerCommand("markdown:internal:div", function (options, content)
     local cascade = CommandCascade()
     if options.lang then
       cascade:call("language", { main = utils.normalizeLang(options.lang) })
     end
     if options["custom-style"] then
       -- The style (or the hook) is reponsible for paragraphing
-      cascade:call("markdown:custom-style:hook", { name = options["custom-style"], scope="block" })
+      cascade:call("markdown:custom-style:hook", { name = options["custom-style"], scope = "block" })
     else
       cascade:call("markdown:internal:paragraph")
     end
     cascade:process(content)
   end, "Div in Markdown (internal")
 
-  SILE.registerCommand("markdown:internal:span", function (options, content)
+  self:registerCommand("markdown:internal:span", function (options, content)
     local cascade = CommandCascade()
     if options.lang then
       cascade:call("language", { main = utils.normalizeLang(options.lang) })
@@ -158,12 +163,12 @@ local function registerCommands (class)
     end
     if options["custom-style"] then
       -- The style (or the hook) is reponsible for paragraphing
-      cascade:call("markdown:custom-style:hook", { name = options["custom-style"], scope="inline" })
+      cascade:call("markdown:custom-style:hook", { name = options["custom-style"], scope = "inline" })
     end
     cascade:process(content)
   end, "Span in Markdown (internal")
 
-  SILE.registerCommand("markdown:internal:image", function (options, _)
+  self:registerCommand("markdown:internal:image", function (options, _)
     local uri = SU.required(options, "src", "image")
     if utils.getFileExtension(uri) == "svg" then
       SILE.call("svg", options)
@@ -172,7 +177,7 @@ local function registerCommands (class)
     end
   end, "Image in Markdown (internal")
 
-  SILE.registerCommand("markdown:internal:link", function (options, content)
+  self:registerCommand("markdown:internal:link", function (options, content)
     local uri = SU.required(options, "src", "link")
     if uri:sub(1,1) == "#" then
       -- local hask link
@@ -183,28 +188,28 @@ local function registerCommands (class)
     end
   end, "Link in Markdown (internal")
 
-  SILE.registerCommand("markdown:internal:footnote", function (_, content)
+  self:registerCommand("markdown:internal:footnote", function (_, content)
     if not SILE.Commands["footnote"] then
       -- The reasons for NOT loading a package for this high-level structure
       -- is that the class or other packages may provide their own implementation
       -- (e.g. formatted differently, changed to endnotes, etc.).
       -- So we only do it as a fallback if mising, to degrade gracefully.
       SU.warn("Trying to enforce fallback for unavailable \\footnote command")
-      class:loadPackage("footnotes")
+      self.class:loadPackage("footnotes")
     end
     SILE.call("footnote", {}, content)
   end, "Footnote in Markdown (internal")
 
-  SILE.registerCommand("markdown:internal:rawinline", function (options, content)
+  self:registerCommand("markdown:internal:rawinline", function (options, content)
     local format = SU.required(options, "format", "rawcontent")
     if format == "sile" then
-      SILE.doTexlike(content[1])
+      SILE.processString(content[1], "sil")
     elseif format == "sile-lua" then
-      SILE.call("script", {}, content)
+      SILE.processString(content[1], "lua")
     end
   end, "Raw native inline content in Markdown (internal")
 
-  SILE.registerCommand("markdown:internal:rawblock", function (options, content)
+  self:registerCommand("markdown:internal:rawblock", function (options, content)
     local format = SU.required(options, "format", "rawcontent")
     if format == "sile" or format == "sile-lua" then
       SILE.call("markdown:internal:paragraph", {}, function ()
@@ -213,7 +218,7 @@ local function registerCommands (class)
     end
   end, "Raw native block in Markdown (internal")
 
-  SILE.registerCommand("markdown:internal:blockquote", function (_, content)
+  self:registerCommand("markdown:internal:blockquote", function (_, content)
     -- Would be nice NOT having to do this, but SILE's plain class only has a "quote"
     -- environment that doesn't really nest, and hard-codes all its values, skips, etc.
     -- So we might have a better version provided by a user-class or package.
@@ -228,7 +233,7 @@ local function registerCommands (class)
 
   -- Fallback commands
 
-  SILE.registerCommand("markdown:fallback:blockquote", function (_, content)
+  self:registerCommand("markdown:fallback:blockquote", function (_, content)
     SILE.call("smallskip")
     SILE.typesetter:leaveHmode()
     SILE.settings:temporarily(function ()
@@ -244,7 +249,7 @@ local function registerCommands (class)
     SILE.call("smallskip")
   end, "A fallback blockquote environment if 'blockquote' does not exist")
 
-  SILE.registerCommand("markdown:fallback:header", function (_, content)
+  self:registerCommand("markdown:fallback:header", function (_, content)
     SILE.typesetter:leaveHmode(1)
     SILE.call("goodbreak")
     SILE.call("smallskip")
@@ -255,7 +260,7 @@ local function registerCommands (class)
     SILE.call("novbreak")
   end, "A fallback default header if none exists for the requested sectioning label")
 
-  SILE.registerCommand("markdown:fallback:captioned-table", function (_, content)
+  self:registerCommand("markdown:fallback:captioned-table", function (_, content)
     if type(content) ~= "table" then
       SU.error("Expected a table content in table environment")
     end
@@ -274,7 +279,7 @@ local function registerCommands (class)
 
   -- Customizable hooks
 
-  SILE.registerCommand("markdown:custom-style:hook", function (options, content)
+  self:registerCommand("markdown:custom-style:hook", function (options, content)
     -- Default implementation for the custom-style hook:
     -- If there is a corresponding command, we invoke it, otherwise, we just
     -- ignore the style and process the content. It allows us, e.g. to already
@@ -296,7 +301,6 @@ local function registerCommands (class)
   end, "Default hook for custom style support in Markdown")
 
   -- Temporary stuff (expectedly....)
-
   -- BEGIN Quick and dirty super/subscript rip-off
   -- Extracted from proposed textsubsuper package and trimmed down.
   local function getItalicAngle()
@@ -311,7 +315,7 @@ local function registerCommands (class)
     return SILE.settings:get("font.weight")
   end
 
-  SILE.registerCommand("textsuperscript", function (_, content)
+  self:registerCommand("textsuperscript", function (_, content)
     SILE.require("packages/raiselower")
     local italicAngle = getItalicAngle()
     local weight = getWeightClass()
@@ -340,7 +344,7 @@ local function registerCommands (class)
     })
   end, "Typeset a fake (raised, scaled) superscript content.")
 
-  SILE.registerCommand("textsubscript", function (_, content)
+  self:registerCommand("textsubscript", function (_, content)
     SILE.require("packages/raiselower")
     local italicAngle = getItalicAngle()
     local weight = getWeightClass()
@@ -368,12 +372,10 @@ local function registerCommands (class)
   -- END Quick and dirty super/subscript rip-off
 end
 
-return {
-  init = init,
-  registerCommands = registerCommands,
-  documentation = [[\begin{document}
-A base package for Markdown processing, providing hooks and fallback commands.
+package.documentation = [[\begin{document}
+A helper package for Markdown processing, providing common hooks and fallback commands.
 
 It is not intended to be used alone.
 \end{document}]]
-}
+
+return package
