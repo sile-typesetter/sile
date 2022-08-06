@@ -57,29 +57,31 @@ function inputter.findInTree (_, tree, command)
   end
 end
 
-function inputter.preamble (_)
-  for _, preamble in ipairs(SILE.input.preambles) do
-    if type(preamble) == "string" then
-      SILE.processFile(preamble)
-    elseif type(preamble) == "function" then
-      SU.warn("Passing functions as preambles is not officially sactioned and may go away without being marked as a breaking change.")
-      preamble()
-    elseif type(preamble) == "table" then
+local function process_ambles (ambles)
+  for _, amble in ipairs(ambles) do
+    if type(amble) == "string" then
+      SILE.processFile(amble)
+    elseif type(amble) == "function" then
+      SU.warn("Passing functions as pre/postambles is not officially sactioned and may go away without being marked as a breaking change.")
+      amble()
+    elseif type(amble) == "table" then
       local options = {}
-      if preamble.pack then preamble, options = preamble.pack, preamble.options end
-      if preamble.type == "package" then
-        preamble(options)
+      if amble.pack then amble, options = amble.pack, amble.options end
+      if amble.type == "package" then
+        amble(options)
       else
-        SILE.documentState.documentClass:initPackage(preamble, options)
+        SILE.documentState.documentClass:initPackage(amble, options)
       end
     end
   end
 end
 
+function inputter.preamble (_)
+  process_ambles(SILE.input.preambles)
+end
+
 function inputter.postamble (_)
-  for _, path in ipairs(SILE.input.postambles) do
-    SILE.processFile(path)
-  end
+  process_ambles(SILE.input.postambles)
 end
 
 return inputter
