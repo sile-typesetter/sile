@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.14.1](https://github.com/sile-typesetter/sile/compare/v0.14.0...v0.14.1) (2022-08-06)
+
+
+### Features
+
+* **inputters:** Expand postamble functionality for parity with preambles ([#1518](https://github.com/sile-typesetter/sile/issues/1518)) ([eb09eb3](https://github.com/sile-typesetter/sile/commit/eb09eb34581ae68b4153d3725cefb34fa46643c2))
+
+
+### Bug Fixes
+
+* **cli:** Suppress deprecation message for internal shims ([b339e27](https://github.com/sile-typesetter/sile/commit/b339e27ab71dcba57e275e6ec8b8daa799324f36))
+* **cli:** Swap order of new --uses and legacy --include ([ef0087e](https://github.com/sile-typesetter/sile/commit/ef0087e7e1f9b7eef623597e9c82e87ca8f5a3d5))
+* **packages:** Correct (and improve scope of) exported testcase functions ([fd438e9](https://github.com/sile-typesetter/sile/commit/fd438e983afbae2192a4f109eef748d9329abf30))
+* **tooling:** Make sure Git version detection only picks up semver tags ([25d669a](https://github.com/sile-typesetter/sile/commit/25d669a2be5ef1d8a1b4c08b3173ec199e0bedcc))
+
 ## [0.14.0](https://github.com/sile-typesetter/sile/compare/v0.13.3...v0.14.0) (2022-08-05)
 
 
