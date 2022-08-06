@@ -367,8 +367,10 @@ end
 
 function SILE.registerCommand (name, func, help, pack, cheat)
   local class = SILE.documentState.documentClass
-  SU.deprecated("SILE.registerCommand", "class:registerCommand", "0.14.0", "0.16.0",
-  [[Commands are being scoped to the document classes they are loaded into rather than being globals.]])
+  if not cheat then
+    SU.deprecated("SILE.registerCommand", "class:registerCommand", "0.14.0", "0.16.0",
+    [[Commands are being scoped to the document classes they are loaded into rather than being globals.]])
+  end
   -- Shimming until we have all scope cheating removed from core
   if not cheat or not class or class.type ~= "class" then
     return SILE.classes.base.registerCommand(nil, name, func, help, pack)
