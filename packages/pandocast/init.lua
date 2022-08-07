@@ -18,7 +18,7 @@ function package:_init (_)
   self.class:loadPackage("markdown.commands")
 
   -- Extend inputters if needed.
-  -- Chickend and eggs... This just forces the inputter to be loaded!
+  -- Chicken and eggs... This just forces the inputter to be loaded!
   local _ = SILE.inputters.pandocast
 end
 

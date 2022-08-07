@@ -186,8 +186,9 @@ end
 
 -- CodeBlock Attr Text
 -- Code block (literal) with attributes
-Pandoc.CodeBlock = function (_, text) -- (attributes, text)
-  return utils.createCommand("verbatim", {}, text)
+Pandoc.CodeBlock = function (attributes, text)
+  local options = pandocAttributes(attributes)
+  return utils.createCommand("markdown:internal:codeblock", options, text)
 end
 
 -- RawBlock Format Text
