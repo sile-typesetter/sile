@@ -106,8 +106,9 @@ local function SileAstWriter (options)
     return utils.createCommand("markdown:internal:div" , attr, content)
   end
 
-  writer.fenced_code = function (s, _, _) -- s, infostring, attr
-    return utils.createCommand("verbatim", {}, s)
+  writer.fenced_code = function (content, infostring, attr)
+    local opts = attr or { class = infostring }
+    return utils.createCommand("markdown:internal:codeblock", opts, content)
   end
 
   writer.rawinline = function (content, format, _) -- content, format, attr

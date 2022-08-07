@@ -243,6 +243,55 @@ function package:registerCommands ()
     end
   end, "Captioned table in Markdown (internal)")
 
+  -- Default color theme for syntax highlighted Lua code blocks
+  -- Very loosely based on the 'earendel' vim style.
+  local naiveLuaCodeTheme = {
+    comment = { color = "#558817", italic = true },
+    keyword = { color = "#2239a8", bold = true },
+    iden = { color = "#0e7c6b" },
+    number = { color = "#a8660d" },
+    string = { color = "#a8660d" },
+  }
+
+  self:registerCommand("markdown:internal:codeblock", function (options, content)
+    if hasClass(options, "lua") then
+      -- Naive syntax highlighting for Lua, until we have a more general solution
+      SILE.call("verbatim", {}, function ()
+        local toks = pl.lexer.lua(content[1], {})
+        for tag, v in toks do
+          local out = tostring(v)
+          if tag == "string" then
+            -- rebuild string quoting...
+            out = out:match('"') and ("'"..out.."'") or ('"'..out..'"')
+          end
+          if naiveLuaCodeTheme[tag] then
+            local cascade = CommandCascade()
+            if naiveLuaCodeTheme[tag].color then
+              cascade:call("color", { color = naiveLuaCodeTheme[tag].color })
+            end
+            if naiveLuaCodeTheme[tag].bold then
+              cascade:call("strong", {})
+            end
+            if naiveLuaCodeTheme[tag].italic then
+              cascade:call("em", {})
+            end
+            cascade:process({ out })
+          else
+            SILE.typesetter:typeset(SU.utf8charfromcodepoint("U+200B")..out) -- HACK with ZWSP to trick the typesetter respecting standalone linebreaks
+          end
+        end
+        SILE.typesetter:leaveHmode()
+      end)
+    else
+      -- Just raw unstyled verbatim
+      SILE.call("verbatim", {}, function ()
+        SILE.process(content)
+        SILE.typesetter:leaveHmode()
+      end)
+    end
+    SILE.call("smallskip")
+  end, "(Fenced) code block in Markdown (internal)")
+
   -- Fallback commands
 
   self:registerCommand("markdown:fallback:blockquote", function (_, content)
