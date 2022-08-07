@@ -20,9 +20,7 @@ advanced capabilities).
 There is actually more than one solution to achieve great results in that direction:
 
  1. Directly using the native converter provided with SILE itself,
- 1. Using the Pandoc software to generate an ouput suitable for SILE,
-     a) Either with a version of Pandoc that supports a SILE writer,
-     a) Or with a Pandoc custom Lua writer.
+ 1. Using the Pandoc software to generate an ouput suitable for SILE.
 
 Each of them has its advantages, and a few limitations as well.
 
@@ -40,7 +38,7 @@ command-line options) to tell SILE how to process a file in some format --- so w
 to the basics here.
 
 ```
-\script[src=packages/markdown]
+\use[module=packages.markdown]
 \include[src=somefile.md]
 ```
 
@@ -89,7 +87,7 @@ from Pandoc. The starting number is honored, and you have the flexibility to use
 digits, roman numbers or letters (in upper or lower case).
 The end delimiter, besides the standard period, can also be a closing parenthesis.
 
- B. This list use uppercase letters and starts at 2. Er... at "B", that is.
+ b. This list uses lowercase letters and starts at 2. Er... at "b", that is.
      i) Roman number...
      i) ... followed by a right parenthesis rather than a period.
 
@@ -139,7 +137,7 @@ It might not be visible in the PDF output, but hover it and click. It just works
 
 Here is a footnote call[^1].
 
-[^1]: An here is some footnote text. But there were already a few foonotes earlier in this
+[^1]: And here is some footnote text. But there were already a few foonotes earlier in this
 chapter. Let's just add, as you can check in the source for this chapter, that the
 converter supports several syntaxes for footnotes.
 
@@ -173,8 +171,8 @@ Or inline in text: [«Encore du français!»]{lang=fr}
 On the "div" and "span" extended elements, the converter also supports the `{custom-style="..."}`
 attribute.
 This is, as a matter of fact, the same syntax as proposed by Pandoc, for instance, in
-its **docx** writer, to specify a specific, possibly user-defined, custom style (in that case,
-a Word style, obviously). So yes, if you had a Pandoc-Markdown document styled for Word,
+its **docx** writer, to specify a specific, possibly user-defined, custom style name (in that
+case, a Word style, obviously). So yes, if you had a Pandoc-Markdown document styled for Word,
 you might consider switching to SILE is an option!
 
 If such a named style exists, it is applied. Erm. What does it mean? Well, in the default
@@ -191,9 +189,9 @@ And some inline [message]{custom-style="strong"}, marked as "strong". That's a f
 contrived way to obtain a bold text, but you get the underlying idea.
 
 This logic is implemented in the `\autodoc:command{\markdown:custom-style:hook}`{=sile}
-command. Package or class designers may override this hook to support any other
+command. Package or class designers may override this hook to support any
 other styling mechanism they may have or want. But basically, this is one of the
-way to use SILE commands in Markdown. While you could invoke _any_ SILE command with
+ways to use SILE commands in Markdown. While you could invoke _any_ SILE command with
 this feature, we recommend, though, to restrict it to styling. You will see, further below,
 another more powerful way to leverage Markdown with SILE’s full processing capabilities.
 
@@ -287,12 +285,44 @@ so that you can achieve wonderful things, we have no idea of. Surprise us!
 
 ## The Pandoc-based converters
 
+Pandoc is a free-software document converter, created by the same John MacFarlane who
+provided the **lunamark** library which empowers SILE’s native markdown package.
+The latter, though, does not offer as many options and extensions as Pandoc does,
+for advanced typesetting.
+
 In the event where the native solution would fall short for you ---e.g. would you need some extension
 it doesn't yet support--- you may want to use Pandoc directly for converting your document to an
-output suitable for SILE. This way, you could also, if need be, further tweak it manually.
+output suitable for SILE.
 
 The following solutions are still experimental proof-of-concepts, but you may give them a chance,
 and help us fill the gaps.
+
+### Using Pandoc's AST with the pandocast package
+
+The experimental `\autodoc:package{pandocast}`{=sile} package allows you to use Pandoc’s JSON AST
+as an input format for documents.
+You can obtain an AST output from Pandoc for any supported source format. Keeping the focus on
+Markdown here:
+
+```
+pandoc -t json somefile.md -f markdown -o somefile.pandoc
+```
+
+Once the package is loaded, the `\autodoc:command{\include[src=<file>]}`{=sile} command supports
+reading and processing such a Pandoc AST file, assuming the `.pandoc` extension or specifying
+the `format=pandocast` parameter:
+
+```
+\use[module=packages.pandocast]
+\include[src=somefile.pandoc]
+```
+
+This package supports quite the same advanced features as the native markdown package, e.g. the
+ability to use custom styles, to pass native content through to SILE, etc.
+
+There is a small _caveat_, though: one must use a version of Pandoc which generates
+an AST compatible with our parser ("inputter"). While the Pandoc AST is somewhat stable,
+it may change when new features are introduced in the software.
 
 ### Using a Pandoc SILE writer and the pandoc package
 
