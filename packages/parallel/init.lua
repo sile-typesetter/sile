@@ -72,11 +72,14 @@ function package:_init (options)
     -- Fixed leading here is obviously a bug, but n-way leading calculations
     -- get very complicated...
     -- typesetterPool[frame].leadingFor = function() return SILE.nodefactory.vglue(SILE.settings:get("document.lineskip")) end
+    local fontcommand = frame .. ":font"
     self:registerCommand(frame, function (_, _) -- \left ...
       SILE.typesetter = typesetterPool[frame]
-      SILE.call(frame..":font")
+      SILE.call(fontcommand)
     end)
-    self:registerCommand(frame..":font", function (_, _) end) -- to be overridden
+    if not SILE.Commands[fontcommand] then
+      self:registerCommand(fontcommand, function (_, _) end) -- to be overridden
+    end
   end
   if not options.folios then
     folioOrder = { {} }
