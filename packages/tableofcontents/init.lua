@@ -7,17 +7,17 @@ if not SILE.scratch._tableofcontents then
   SILE.scratch._tableofcontents = {}
 end
 
-local function _moveTocNodes (class)
+function package:moveTocNodes ()
   local node = SILE.scratch.info.thispage.toc
   if node then
     for i = 1, #node do
-      node[i].pageno = class.packages.counters:formatCounter(SILE.scratch.counters.folio)
+      node[i].pageno = self.packages.counters:formatCounter(SILE.scratch.counters.folio)
       table.insert(SILE.scratch.tableofcontents, node[i])
     end
   end
 end
 
-local function _writeToc (_)
+function package.writeToc (_)
   local tocdata = pl.pretty.write(SILE.scratch.tableofcontents)
   local tocfile, err = io.open(SILE.masterFilename .. '.toc', "w")
   if not tocfile then return SU.error(err) end
@@ -76,10 +76,10 @@ function package:_init ()
   end
   self.class:loadPackage("infonode")
   self.class:loadPackage("leaders")
-  self.class:registerHook("endpage", _moveTocNodes)
-  self.class:registerHook("finish", _writeToc)
-  self:deprecatedExport("writeToc", _writeToc)
-  self:deprecatedExport("moveTocNodes", _moveTocNodes)
+  self.class:registerHook("endpage", self.moveTocNodes)
+  self.class:registerHook("finish", self.writeToc)
+  self:deprecatedExport("writeToc", self.writeToc)
+  self:deprecatedExport("moveTocNodes", self.moveTocNodes)
 end
 
 function package:registerCommands ()
