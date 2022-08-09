@@ -31,6 +31,7 @@ class.defaultFrameset = {
 }
 
 function class:_init (options)
+  plain._init(self, options)
   self:loadPackage("counters")
   self:loadPackage("masters", {{
       id = "right",
@@ -41,7 +42,6 @@ function class:_init (options)
       oddPageMaster = "right",
       evenPageMaster = "left"
     })
-  plain._init(self, options)
   self:loadPackage("tableofcontents")
   self:loadPackage("footnotes", {
       insertInto = "footnotes",

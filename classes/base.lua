@@ -44,6 +44,7 @@ class.hooks = {
 class.packages = {}
 
 function class:_init (options)
+  SILE.scratch.half_initialized_class = self
   if self == options then options = {} end
   SILE.languageSupport.loadLanguage('und') -- preload for unlocalized fallbacks
   self:declareOptions()
@@ -72,6 +73,7 @@ function class:_post_init ()
     func(self)
     self.deferredInit[i] = nil
   end
+  SILE.scratch.half_initialized_class = nil
 end
 
 function class:setOptions (options)
@@ -138,9 +140,6 @@ end
 function class:loadPackage (packname, options)
   local pack = require(("packages.%s"):format(packname))
   if type(pack) == "table" and pack.type == "package" then -- new package
-    if not self._initialized then
-      SILE.scratch.half_initialized_class = self
-    end
     self.packages[pack._name] = pack(options)
   else -- legacy package
     self:initPackage(pack, options)

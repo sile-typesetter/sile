@@ -9,7 +9,7 @@ package.class = nil
 package.exports = {}
 
 function package:_init (_)
-  self.class = SILE.documentState.documentClass or SILE.scratch.half_initialized_class
+  self.class = SILE.scratch.half_initialized_class or SILE.documentState.documentClass
   if not self.class then
     SU.error("Attempted to initialize package before class, should have been queued in the preamble", true)
   end
