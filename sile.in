@@ -72,11 +72,11 @@ SILE = require("core.sile")
 
 io.stdout:setvbuf 'no'
 
-SILE.cli:parseArguments()
-
 if not os.getenv 'LUA_REPL_RLWRAP' then
   io.stderr:write(SILE.full_version .. '\n')
 end
+
+SILE.cli:parseArguments()
 
 local ProFi
 if SU.debugging("profile") then

@@ -64,8 +64,9 @@ local measurement = pl.class({
         if not parsed then SU.error("Could not parse measurement '"..amount.."'") end
         self.amount, self.unit = parsed.amount, parsed.unit
       end
-      if not SILE.units[self.unit] then SU.error("Unknown unit: " .. unit) end
-      self.relative = SILE.units[self.unit].relative
+      local _su = SILE.units[self.unit]
+      if not _su then SU.error("Unknown unit: " .. unit) end
+      self.relative = _su.relative
       if self.unit == "pt" then self._mutable = true end
     end,
 
@@ -79,7 +80,7 @@ local measurement = pl.class({
 
     tonumber = function (self)
       local def = SILE.units[self.unit]
-      local amount = def.converter and def.converter(self.amount) or self.amount * def.value
+      local amount = def.converter and def.converter(self.amount) or (self.amount * def.value)
       return amount
     end,
 

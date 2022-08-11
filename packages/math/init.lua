@@ -10,12 +10,12 @@ function package:_init ()
   local texlike = require("packages.math.texlike")
   self.convertTexlike, self.compileToMathML = texlike[1], texlike[2]
   -- Register a new unit that is 1/18th of the current math font size
-  SILE.units["mu"] = {
+  SILE.registerUnit("mu", {
     relative = true,
     definition = function (value)
       return value * SILE.settings:get("math.font.size") / 18
     end
-  }
+  })
 end
 
 function package.declareSettings (_)

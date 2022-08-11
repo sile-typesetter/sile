@@ -31,6 +31,7 @@ class.defaultFrameset = {
 }
 
 function class:_init (options)
+  plain._init(self, options)
   self:loadPackage("counters")
   self:loadPackage("masters", {{
       id = "right",
@@ -41,7 +42,6 @@ function class:_init (options)
       oddPageMaster = "right",
       evenPageMaster = "left"
     })
-  plain._init(self, options)
   self:loadPackage("tableofcontents")
   self:loadPackage("footnotes", {
       insertInto = "footnotes",
@@ -213,14 +213,14 @@ function class:registerCommands ()
             toc = options.toc,
             level = 3
           }, content)
+      local lang = SILE.settings:get("document.language")
+      local postcmd = "book:subsection:post"
+      if SILE.Commands[postcmd .. ":" .. lang] then
+        postcmd = postcmd .. ":" .. lang
+      end
+      SILE.call(postcmd)
       SILE.process(content)
     end)
-    local lang = SILE.settings:get("document.language")
-    local postcmd = "book:subsection:post"
-    if SILE.Commands[postcmd .. ":" .. lang] then
-      postcmd = postcmd .. ":" .. lang
-    end
-    SILE.call(postcmd)
     SILE.typesetter:leaveHmode()
     SILE.call("novbreak")
     SILE.call("medskip")
