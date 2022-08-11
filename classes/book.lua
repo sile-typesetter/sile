@@ -213,14 +213,14 @@ function class:registerCommands ()
             toc = options.toc,
             level = 3
           }, content)
+      local lang = SILE.settings:get("document.language")
+      local postcmd = "book:subsection:post"
+      if SILE.Commands[postcmd .. ":" .. lang] then
+        postcmd = postcmd .. ":" .. lang
+      end
+      SILE.call(postcmd)
       SILE.process(content)
     end)
-    local lang = SILE.settings:get("document.language")
-    local postcmd = "book:subsection:post"
-    if SILE.Commands[postcmd .. ":" .. lang] then
-      postcmd = postcmd .. ":" .. lang
-    end
-    SILE.call(postcmd)
     SILE.typesetter:leaveHmode()
     SILE.call("novbreak")
     SILE.call("medskip")
