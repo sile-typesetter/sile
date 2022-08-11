@@ -79,6 +79,7 @@ function class:setOptions (options)
   options.papersize = options.papersize or "a4"
   options.bleed = options.bleed or "0"
   for option, value in pairs(options) do
+    print(option, value)
     self.options[option] = value
   end
 end
@@ -98,13 +99,13 @@ function class.buildPageFrameLayout ()
       or SILE.documentState.paperSize[2] < SILE.documentState.pageSize[2] then
     SU.error("Paper size shall not be smaller than the page size")
   end
-  if SILE.documentState.paperSize[1] < SILE.documentState.pageSize[1] + SILE.documentState.bleed
-     or SILE.documentState.paperSize[2] < SILE.documentState.pageSize[2] + SILE.documentState.bleed then
-      SU.debug("frames", "Paper size augmented to take page bleed into account")
-      SILE.documentState.paperSize = {
-        SILE.documentState.pageSize[1] + SILE.documentState.bleed,
-        SILE.documentState.pageSize[2] + SILE.documentState.bleed,
-    }
+  if SILE.documentState.paperSize[1] < SILE.documentState.pageSize[1] + SILE.documentState.bleed then
+    SU.debug("frames", "Paper size width augmented to take page bleed into account")
+    SILE.documentState.paperSize[1] = SILE.documentState.pageSize[1] + SILE.documentState.bleed
+  end
+  if SILE.documentState.paperSize[2] < SILE.documentState.pageSize[2] + SILE.documentState.bleed then
+    SU.debug("frames", "Paper size height augmented to take page bleed into account")
+    SILE.documentState.paperSize[2] = SILE.documentState.pageSize[2] + SILE.documentState.bleed
   end
 
   SILE.documentState.orgPaperSize = SILE.documentState.pageSize -- Compat with old code
