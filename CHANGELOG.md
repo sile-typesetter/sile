@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.14.2](https://github.com/sile-typesetter/sile/compare/v0.14.1...v0.14.2) (2022-08-11)
+
+
+### Bug Fixes
+
+* **classes:** Allow package option declarations to be reset ([215e83a](https://github.com/sile-typesetter/sile/commit/215e83a31f81a16e18eea8010512a44844f689c8))
+* **classes:** Bring back space after subsection numbering ([70a3304](https://github.com/sile-typesetter/sile/commit/70a330424d17d4dc74ad0443e7b2064ddceaeb2b))
+* **packages:** Check for user supplied commands before setting noops ([54b5071](https://github.com/sile-typesetter/sile/commit/54b5071df907b8c9d35a0ec356c673701a3c6025))
+
 ### [0.14.1](https://github.com/sile-typesetter/sile/compare/v0.14.0...v0.14.1) (2022-08-06)
 
 
