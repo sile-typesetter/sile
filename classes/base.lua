@@ -85,6 +85,7 @@ function class:setOptions (options)
 end
 
 function class:declareOption (option, setter)
+  rawset(getmetatable(self.options)._opts, option, nil)
   self.options[option] = setter
 end
 
