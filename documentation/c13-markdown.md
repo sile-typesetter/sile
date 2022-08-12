@@ -42,7 +42,7 @@ to the basics here.
 \include[src=somefile.md]
 ```
 
-### Basic typesetting
+### Basic typesetting {#basic-typesetting}
 
 As it can be seen here, sectioning obviously works^[With a small caveat. The package maps heading
 levels to `\chapter`, `\section`, `\subsection`, `\subsubsection` and uses a very basic fallback
@@ -134,6 +134,7 @@ own fallback method.
 
 Here is a link to [the SILE website](https://sile-typesetter.org/).
 It might not be visible in the PDF output, but hover it and click. It just works.
+Likewise, here is an internal link to the "[Basic typesetting](#basic-typesetting)" section.
 
 Here is a footnote call[^1].
 
