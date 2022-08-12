@@ -61,8 +61,10 @@ local function SileAstWriter (options)
 
   -- More complex mapping cases
 
-  writer.header = function (s, level)
-    return utils.createCommand("markdown:internal:header", { level = level }, s)
+  writer.header = function (s, level, attr)
+    local opts = attr or {} -- passthru (class and key-value pairs)
+    opts.level = level
+    return utils.createCommand("markdown:internal:header", opts, s)
   end
 
   writer.bulletlist = function (items)
@@ -274,7 +276,8 @@ function inputter.parse (_, doc)
     task_list = true,
     hash_enumerators = true,
     table_captions = true,
-    pipe_table = true,
+    pipe_tables = true,
+    header_attributes = true,
   })
   local tree = parse(doc)
   -- The Markdown parsing returns a string or a SILE AST table.
