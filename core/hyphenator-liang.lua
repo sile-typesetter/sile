@@ -109,23 +109,39 @@ local hyphenateNode = function (node)
     return SILE.hyphenator.languages[node.language](node)
   end
   initHyphenator(node.language)
-  local breaks = SILE._hyphenate(SILE._hyphenators[node.language], node.text)
-  if #breaks > 1 then
+  local segments = SILE._hyphenate(SILE._hyphenators[node.language], node.text)
+  if #segments > 1 then
+    local hyphen = SILE.shaper:createNnodes(SILE.settings:get("font.hyphenchar"), node.options)
     local newnodes = {}
-    for j, brk in ipairs(breaks) do
-      if not(brk == "") then
-        for _, newNode in ipairs(SILE.shaper:createNnodes(brk, node.options)) do
-          if newNode.is_nnode then
-            newNode.parent = node
-            table.insert(newnodes, newNode)
-          end
+    local leadingApostrophe, nextLeadingApostrophe
+    for j, segment in ipairs(segments) do
+      if segment == "" then
+        SU.dump{ j, segments }
+        SU.error("No hyphenation segment should ever be empty", true)
+      end
+      if node.options.language == "tr" then
+        local nextSegment = segments[j+1]
+        leadingApostrophe, nextLeadingApostrophe = nextLeadingApostrophe, nextSegment and luautf8.match(nextSegment, "^['’]")
+        if j < #segments then
+          segments[j+1] = luautf8.gsub(nextSegment, "^['’]", "")
         end
-        if not (j == #breaks) then
-          local discretionary = SILE.nodefactory.discretionary({ prebreak = SILE.shaper:createNnodes(SILE.settings:get("font.hyphenchar"), node.options) })
-          discretionary.parent = node
-          table.insert(newnodes, discretionary)
-         --table.insert(newnodes, SILE.nodefactory.penalty({ value = SILE.settings:get("typesetter.hyphenpenalty") }))
+        if leadingApostrophe then
+          local replacement = SILE.shaper:createNnodes(leadingApostrophe, node.options)
+          local newNode = SILE.nodefactory.discretionary({ prebreak = hyphen, replacement = replacement })
+          newNode.parent = node
+          table.insert(newnodes, newNode)
         end
+      end
+      for _, newNode in ipairs(SILE.shaper:createNnodes(segment, node.options)) do
+        if newNode.is_nnode then
+          newNode.parent = node
+          table.insert(newnodes, newNode)
+        end
+      end
+      if j < #segments and not nextLeadingApostrophe then
+        local newNode = SILE.nodefactory.discretionary({ prebreak = hyphen })
+        newNode.parent = node
+        table.insert(newnodes, newNode)
       end
     end
     node.children = newnodes
