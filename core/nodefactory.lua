@@ -302,7 +302,7 @@ end
 function nodefactory.discretionary:postbreakWidth ()
   if self.postbw then return self.postbw end
   self.postbw = SILE.length()
-  for _, node in ipairs(self.postbreak) do self.pastbw:___add(node.width) end
+  for _, node in ipairs(self.postbreak) do self.postbw:___add(node.width) end
   return self.postbw
 end
 
