@@ -103,7 +103,7 @@ function package:registerCommands ()
 
   self:registerCommand("markdown:internal:header", function (options, content)
     local level = SU.required(options, "level", "header")
-    local command = getSectioningCommand(level)
+    local command = getSectioningCommand(SU.cast("integer", level))
     local numbering = not hasClass(options, "unnumbered")
     SILE.call(command, { numbering = numbering }, content)
     if options.id then

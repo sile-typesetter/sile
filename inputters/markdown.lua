@@ -38,7 +38,7 @@ local function tableCellAlign (align)
 end
 
 -- Lunamark writer for SILE
--- Yay, direct lunamark AST ("ropse") conversion to SILE AST
+-- Yay, direct lunamark AST ("ropes") conversion to SILE AST
 
 local function SileAstWriter (options)
   local generic = require("lunamark.writer.generic")
@@ -57,7 +57,9 @@ local function SileAstWriter (options)
   writer.blockquote = simpleCommandWrapper("markdown:internal:blockquote")
   writer.verbatim = simpleCommandWrapper("verbatim")
   writer.listitem = simpleCommandWrapper("item")
-  writer.hrule = simpleCommandWrapper("fullrule")
+
+  -- Special case for hrule (simple too, but arguments from lunamark has to be ignored)
+  writer.hrule = function () return utils.createCommand("fullrule") end
 
   -- More complex mapping cases
 
@@ -254,8 +256,8 @@ function inputter.parse (_, doc)
   local lunamark = require("lunamark")
   local reader = lunamark.reader.markdown
   local writer = SileAstWriter({
-    layout = "compact" -- The default layout is to output \n\n as inter-block separator
-                       -- Let's cancel it, and insert our own \par where needed.
+    layout = "minimize" -- The default layout is to output \n\n as inter-block separator
+                        -- Let's cancel it completely, and insert our own \par where needed.
   })
   local parse = reader.new(writer, {
     smart = true,
