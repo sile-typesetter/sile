@@ -610,6 +610,10 @@ SILE.hyphenator.languages["tr"].patterns =
 -- a couple of consonant-clusters
 "tu4r4k",
 "m1t4rak",
+-- See https://github.com/sile-typesetter/sile/issues/355
+-- leaving a trailing appostrophe is less bad than having a line-leading one
+"4'3",
+"4’3",
    }
 
 -- Internationalisation stuff
