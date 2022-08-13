@@ -1,0 +1,41 @@
+\begin[papersize=a7]{document}
+\nofolios
+\neverindent
+\set[parameter=document.lskip,value=9.6%pw]
+\set[parameter=document.rskip,value=9.6%pw]
+\language[main=tr]
+
+% Some awkward apostrophes situations. Real words here but not real grammar.
+% Margins chosen to hit as many unique awkward break points as possible
+İstanbul'dan İsa'ya İzmir'de O'nu Müjdesi'nin İsa'nın Afyonkarahisar'danmış Can'a.
+İstanbul'dan İsa'ya İzmir'de O'nu Müjdesi'nin İsa'nın Afyonkarahisar'danmış Can'a.
+İstanbul'dan İsa'ya İzmir'de O'nu Müjdesi'nin İsa'nın Afyonkarahisar'danmış Can'a.
+İstanbul'dan İsa'ya İzmir'de O'nu Müjdesi'nin İsa'nın Afyonkarahisar'danmış Can'a.
+İstanbul'dan İsa'ya İzmir'de O'nu Müjdesi'nin İsa'nın Afyonkarahisar'danmış Can'a.
+İstanbul'dan İsa'ya İzmir'de O'nu Müjdesi'nin İsa'nın Afyonkarahisar'danmış Can'a.
+İstanbul'dan İsa'ya İzmir'de O'nu Müjdesi'nin İsa'nın Afyonkarahisar'danmış Can'a.
+İstanbul'dan İsa'ya İzmir'de O'nu Müjdesi'nin İsa'nın Afyonkarahisar'danmış Can'a.
+
+\pagebreak
+\set[parameter=document.lskip,value=0]
+\set[parameter=document.rskip,value=0]
+
+Müjdesi'nin müjdesi'nin müjdesi'nin müjdesi'nin müjdesi'nin müjdesi'nin müjdesi'nin müjdesi'nin müjdesi'nin müjdesi'nin müjdesi'nin müjdesi'nin müjdesi'nin müjdesi'nin müjdesi'nin müjdesi'nin müjdesi'nin müjdesi'nin müjdesi'nin.
+
+Müjdesi’nin müjdesi’nin müjdesi’nin müjdesi’nin müjdesi’nin müjdesi’nin müjdesi’nin müjdesi’nin müjdesi’nin müjdesi’nin müjdesi’nin müjdesi’nin müjdesi’nin müjdesi’nin müjdesi’nin müjdesi’nin müjdesi’nin müjdesi’nin müjdesi’nin.
+
+% Some real Turkish to test regular hyphenation.
+% No words were harmed in the making of this document.
+Ayyıldızlıkırmızıbayraktaşıyankahramanoğullarındangillersizleştiricileştiriveremeyebileceklerimizdenmişsinizcesinedir.
+Afyonkarahisarlılaştırabildiklerimizdenmişsinizcesine.
+Kuyruksallayangillersizleştiricileştiriveremeyebileceklerimizdenmişsinizcesinedir.
+
+\pagebreak
+
+Kötü amaçların güdüldüğü bir öğretmen okulundayız.
+Yetiştirilen öğretmenlere öğrencileri nasıl muvaffakiyetsizleştirecekleri öğretiliyor.
+Yani öğretmenler birer muvaffakiyetsizleştirici olarak yetiştiriliyorlar.
+Fakat öğretmenlerden biri muvaffakiyetsizleştirici olmayı, yani muvaffakiyetsizleştiricileştirilmeyi reddediyor, bu konuda ileri geri konuşuyor.
+Bütün öğretmenleri kolayca muvaffakiyetsizleştiricileştiriverebileceğini sanan okul müdürü bu duruma sinirleniyor, ve söz konusu öğretmeni makamına çağırıp ona diyor ki:
+“Muvaffakiyetsizleştiricileştiriveremeyebileceklerimizdenmişsinizcesine laflar ediyormuşsunuz ha?”
+\end{document}
