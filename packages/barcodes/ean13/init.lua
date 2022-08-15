@@ -218,17 +218,34 @@ function package:registerCommands ()
                                                 -- the same.
       if SU.boolean(options.showdigits, true) then
         -- N.B. Option showdigits undocumented (just used for testing)
+        local deltaFontWidth = (7 - SILE.scratch.ean13.font.width) * 3 -- 6 digits measuring at most 7X:
+                                                                       -- we'll distribute the extra space evenly.
         SILE.call("font", { family = SILE.scratch.ean13.font.family, size = SILE.scratch.ean13.font.size * X }, function ()
           SILE.call("lower", { height = 8.3333 * X }, function ()
+          -- 106X = 11X LQZ + 3X guard + 6*7X digits + 5X guard + 6*7X digits + 3X guard
+          -- So we get back to the start of the barcode.
             SILE.call("kern", { width = -106 * X })
-            local h = SILE.call("hbox", {}, { code:sub(1,1) }) -- first digit, at the start of the Left Quiet Zone
+            -- First digit, at the start of the Left Quiet Zone
+            local h = SILE.call("hbox", {}, { code:sub(1,1) })
             h.width = SILE.length()
+            -- First 6-digit sequence is at 11X LQZ + 3X guard = 14X
+            -- We add a 0.5X displacement from the normal guard (a bar)
+            -- while the central bar starts with a space).
             SILE.call("kern", { width = 14.5 * X })
+            SILE.call("kern", { width = deltaFontWidth * X })
             h = SILE.call("hbox", {}, { code:sub(2,7) }) -- first sequence
             h.width = SILE.length()
+            -- Second 6-digit sequence is further at 6*7X digits + 5X guard = 47X
+            -- to which we remove the previous 0.5X displacement.
+            -- Substract an additional 0.5X displacement from the central guard
+            -- (a space) so as to end at 0.5X from the ending guard (a bar),
+            -- hence 46X...
             SILE.call("kern", { width = 46 * X })
             h = SILE.call("hbox", {}, { code:sub(8,13) }) -- last sequence
             h.width = SILE.length()
+            SILE.call("kern", { width = -deltaFontWidth * X })
+            -- End marker is at 6*7X + 3X guard + 7X RQZ = 52X
+            -- Corrected by the above displacement, hence 52.5X
             local l = SILE.length((52.5 - SILE.scratch.ean13.font.width) * X)
             SILE.call("kern", { width = l })
             if not addon then
