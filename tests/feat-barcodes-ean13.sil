@@ -1,4 +1,6 @@
 \begin[papersize=a6]{document}
+\neverindent
+\nofolios
 \use[module=packages.barcodes.ean13]
 % We use the "undocumented" showdigits option to remove the human readable interpretation,
 % so that not to bother with its font. These tests are focussed on checking the barcode
