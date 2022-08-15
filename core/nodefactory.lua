@@ -275,6 +275,11 @@ function nodefactory.discretionary:toText ()
 end
 
 function nodefactory.discretionary:outputYourself (typesetter, line)
+  -- TODO this is an indication of a deeper bug. If we were asked to output
+  -- discretionaries but the parent nnode is not hyphenated then we're
+  -- outputting things that were only used for measuring "what if" scenarios in
+  -- break point calculations. These nodes shouldn't exist at this point.
+  if self.parent and not self.parent.hyphenated then return end
   if self.used then
     local i = 1
     while (line.nodes[i].is_glue and line.nodes[i].value == "lskip")
