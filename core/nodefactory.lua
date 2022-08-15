@@ -218,9 +218,9 @@ function nodefactory.nnode:outputYourself (typesetter, line)
       self.parent:outputYourself(typesetter, line)
     end
     self.parent.used = true
-    return
+  else
+    for _, node in ipairs(self.nodes) do node:outputYourself(typesetter, line) end
   end
-  for _, node in ipairs(self.nodes) do node:outputYourself(typesetter, line) end
 end
 
 function nodefactory.nnode:toText ()
@@ -265,7 +265,6 @@ nodefactory.discretionary.prebreak = {}
 nodefactory.discretionary.postbreak = {}
 nodefactory.discretionary.replacement = {}
 nodefactory.discretionary.used = false
-nodefactory.discretionary.prebw = nil
 
 function nodefactory.discretionary:__tostring ()
   return "D(" .. SU.concat(self.prebreak, "") .. "|" .. SU.concat(self.postbreak, "") .."|" .. SU.concat(self.replacement, "") .. ")";

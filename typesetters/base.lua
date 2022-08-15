@@ -649,7 +649,7 @@ function SILE.defaultTypesetter:breakpointsToLines (breakpoints)
 
   for i = 1, #breakpoints do
     local point = breakpoints[i]
-    if not(point.position == 0) then
+    if point.position ~= 0 then
       local slice = {}
       local seenHbox = 0
       -- local toss = 1
