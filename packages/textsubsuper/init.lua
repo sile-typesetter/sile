@@ -293,7 +293,7 @@ end
 
 package.documentation = [[
 \begin{document}
-\script[src=packages/textsubsuper]% SILE 0.13 needs a big big FIXME, it's 0xDEADBEEF
+\use[module=packages.textsubsuper]
 Superscripts are sometimes needed for numbers (e.g. in footnote calls),
 but also for letters (e.g. in French, century references such as
 \font[features=+smcp]{xiv}\textsuperscript{e}, issue numbers such
