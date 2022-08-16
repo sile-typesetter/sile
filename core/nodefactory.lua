@@ -218,9 +218,9 @@ function nodefactory.nnode:outputYourself (typesetter, line)
       self.parent:outputYourself(typesetter, line)
     end
     self.parent.used = true
-    return
+  else
+    for _, node in ipairs(self.nodes) do node:outputYourself(typesetter, line) end
   end
-  for _, node in ipairs(self.nodes) do node:outputYourself(typesetter, line) end
 end
 
 function nodefactory.nnode:toText ()
@@ -265,7 +265,6 @@ nodefactory.discretionary.prebreak = {}
 nodefactory.discretionary.postbreak = {}
 nodefactory.discretionary.replacement = {}
 nodefactory.discretionary.used = false
-nodefactory.discretionary.prebw = nil
 
 function nodefactory.discretionary:__tostring ()
   return "D(" .. SU.concat(self.prebreak, "") .. "|" .. SU.concat(self.postbreak, "") .."|" .. SU.concat(self.replacement, "") .. ")";
@@ -276,6 +275,11 @@ function nodefactory.discretionary:toText ()
 end
 
 function nodefactory.discretionary:outputYourself (typesetter, line)
+  -- TODO this is an indication of a deeper bug. If we were asked to output
+  -- discretionaries but the parent nnode is not hyphenated then we're
+  -- outputting things that were only used for measuring "what if" scenarios in
+  -- break point calculations. These nodes shouldn't exist at this point.
+  if self.parent and not self.parent.hyphenated then return end
   if self.used then
     local i = 1
     while (line.nodes[i].is_glue and line.nodes[i].value == "lskip")
@@ -302,7 +306,7 @@ end
 function nodefactory.discretionary:postbreakWidth ()
   if self.postbw then return self.postbw end
   self.postbw = SILE.length()
-  for _, node in ipairs(self.postbreak) do self.pastbw:___add(node.width) end
+  for _, node in ipairs(self.postbreak) do self.postbw:___add(node.width) end
   return self.postbw
 end
 

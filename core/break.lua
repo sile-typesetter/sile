@@ -437,7 +437,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
     self.prev_prev_r = self.prev_r
     self.prev_r = newDelta
   end
-  if (math.abs(self.adjdemerits) >= awful_bad - self.minimumDemerits) then
+  if math.abs(self.adjdemerits) >= (awful_bad - self.minimumDemerits) then
     self.minimumDemerits = awful_bad - 1
   else
     self.minimumDemerits = self.minimumDemerits + math.abs(self.adjdemerits)
@@ -612,7 +612,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
       self:checkForLegalBreak(self.nodes[self.place])
       self.place = self.place + 1
     end
-    if self.place > #(self.nodes) then
+    if self.place > #self.nodes then
       if self:tryFinalBreak() then break end
     end
     -- (Not doing 891)
