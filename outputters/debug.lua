@@ -137,10 +137,10 @@ function outputter:drawImage (src, x, y, width, height)
   self:_writeline("Draw image", src, _round(x), _round(y), _round(width), _round(height))
 end
 
-function outputter.getImageSize (_, src)
+function outputter.getImageSize (_, src, pageno)
   local pdf = require("justenoughlibtexpdf")
-  local llx, lly, urx, ury = pdf.imagebbox(src)
-  return (urx-llx), (ury-lly)
+  local llx, lly, urx, ury, xresol, yresol = pdf.imagebbox(src, pageno)
+  return (urx-llx), (ury-lly), xresol, yresol
 end
 
 function outputter:drawSVG (figure, _, x, y, width, height, scalefactor)

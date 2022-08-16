@@ -150,19 +150,19 @@ function outputter:setFont (options)
   return _font
 end
 
-function outputter:drawImage (src, x, y, width, height)
+function outputter:drawImage (src, x, y, width, height, pageno)
   x = SU.cast("number", x)
   y = SU.cast("number", y)
   width = SU.cast("number", width)
   height = SU.cast("number", height)
   self:_ensureInit()
-  pdf.drawimage(src, x, y, width, height)
+  pdf.drawimage(src, x, y, width, height, pageno or 1)
 end
 
-function outputter:getImageSize (src)
+function outputter:getImageSize (src, pageno)
   self:_ensureInit() -- in case it's a PDF file
-  local llx, lly, urx, ury = pdf.imagebbox(src)
-  return (urx-llx), (ury-lly)
+  local llx, lly, urx, ury, xresol, yresol = pdf.imagebbox(src, pageno or 1)
+  return (urx-llx), (ury-lly), xresol, yresol
 end
 
 function outputter:drawSVG (figure, x, y, _, height, scalefactor)
