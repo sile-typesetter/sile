@@ -93,28 +93,28 @@ function package.declareSettings (_)
     parameter = "textsubsuper.scale",
     type = "integer",
     default = 0.66,
-    help = "Size scaling ratio of a fake superscript or subsscript"
+    help = "Size scaling ratio of a fake superscript or subscript"
   })
 
   SILE.settings:declare({
     parameter = "textsubsuper.bolder",
     type = "integer",
     default = 200,
-    help = "Weight increase of a fake superscript or subsscript (e.g. 200 for normal to semibold)"
+    help = "Weight increase of a fake superscript or subscript (e.g. 200 for normal to semibold)"
   })
 
   SILE.settings:declare({
     parameter = "textsubsuper.vscale.number",
     type = "number",
     default = 0.90,
-    help = "Vertical ratio applied to numbers in fake superscript or subsscript"
+    help = "Vertical ratio applied to numbers in fake superscript or subscript"
   })
 
   SILE.settings:declare({
     parameter = "textsubsuper.vscale.other",
     type = "number",
     default = 0.95,
-    help = "Vertical ratio applied to numbers in fake superscript or subsscript"
+    help = "Vertical ratio applied to numbers in fake superscript or subscript"
   })
 
   SILE.settings:declare({
@@ -327,7 +327,7 @@ superscripts (or subscripts).
 By nature, this package is \em{not} intended to work with multiple levels of
 superscripts or subscripts. Also note that it tries not to mix up characters
 supporting the features with those not supporting them, as it would be somewhat
-ugly in most cases. Fake superscripts or superscripts will also be used if such
+ugly in most cases. Fake superscripts or subscripts will also be used if such
 a case occurs.
 
 Would you actually prefer this fake variant, the \autodoc:parameter{fake=true}
