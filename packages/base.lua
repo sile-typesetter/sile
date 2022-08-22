@@ -8,11 +8,18 @@ package.class = nil
 -- For shimming packages that used to have legacy exports
 package.exports = {}
 
+local function script_path ()
+  local src = debug.getinfo(3, "S").source:sub(2)
+  local base = src:match("(.*[/\\])")
+  return base
+end
+
 function package:_init (_)
   self.class = SILE.scratch.half_initialized_class or SILE.documentState.documentClass
   if not self.class then
     SU.error("Attempted to initialize package before class, should have been queued in the preamble", true)
   end
+  self.basedir = script_path()
   self:declareSettings()
   self:registerRawHandlers()
   self:registerCommands()
