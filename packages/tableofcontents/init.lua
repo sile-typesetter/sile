@@ -29,6 +29,21 @@ function package.writeToc (_)
   end
 end
 
+function package.readToc (_)
+  if SILE.scratch._tableofcontents and #SILE.scratch._tableofcontents > 0 then
+    -- already loaded
+    return SILE.scratch._tableofcontents
+  end
+  local tocfile, _ = io.open(SILE.masterFilename .. '.toc')
+  if not tocfile then
+    return false -- No TOC yet
+  end
+  local doc = tocfile:read("*all")
+  local toc = assert(load(doc))()
+  SILE.scratch._tableofcontents = toc
+  return SILE.scratch._tableofcontents
+end
+
 local function _linkWrapper (dest, func)
   if dest and SILE.Commands["pdf:link"] then
     return function()
@@ -87,13 +102,11 @@ function package:registerCommands ()
   self:registerCommand("tableofcontents", function (options, _)
     local depth = SU.cast("integer", options.depth or 3)
     local linking = SU.boolean(options.linking, true)
-    local tocfile,_ = io.open(SILE.masterFilename .. '.toc')
-    if not tocfile then
+    local toc = self:readToc()
+    if toc == false then
       SILE.call("tableofcontents:notocmessage")
       return
     end
-    local doc = tocfile:read("*all")
-    local toc = assert(load(doc))()
     SILE.call("tableofcontents:header")
     for i = 1, #toc do
       local item = toc[i]
@@ -107,7 +120,6 @@ function package:registerCommands ()
       end
     end
     SILE.call("tableofcontents:footer")
-    SILE.scratch._tableofcontents = toc
   end)
 
   self:registerCommand("tableofcontents:item", function (options, content)
