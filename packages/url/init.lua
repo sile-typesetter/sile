@@ -46,8 +46,11 @@ function package.declareSettings (_)
 end
 
 function package:registerCommands ()
-
   self:registerCommand("href", function (options, content)
+    if (not content or #content == 0 and not content[1]) and options.src then
+      content = {options.src}
+    end
+
     if not pdf then
       if options.src then
         SILE.process(content)
@@ -147,11 +150,12 @@ function package:registerCommands ()
         secondaryPenalty = secondaryPenalty,
         worsePenalty = worsePenalty
       })
-      SILE.call("code", {}, result)
+
+      SILE.call("urlstyle", {}, result)
     end)
   end, "Inserts penalties in an URL so it can be broken over multiple lines at appropriate places.")
 
-  self:registerCommand("code", function (options, content)
+  self:registerCommand("urlstyle", function (options, content)
     SILE.call("verbatim:font", options, content)
   end)
 
@@ -177,6 +181,8 @@ To typeset an URL and at the same type have it as active hyperlink, one can use 
 but with the URL passed as argument.
 
 The breaks are controlled by two penalty settings, \autodoc:setting{url.linebreak.primaryPenalty} for preferred breakpoints and, for less acceptable but still tolerable breakpoints, \autodoc:setting{url.linebreak.secondaryPenalty} —its value should logically be higher than the previous one.
+
+You can redefine the command \autodoc:command{\urlstyle} to change the style of the URL. By default its definition is \autodoc:command{\verbatim:font{<content>}}.
 \end{document}
 ]]
 
