@@ -331,6 +331,7 @@ int pdf_metadata(lua_State *L) {
   texpdf_add_dict(p->info,
                texpdf_new_name(key),
                texpdf_new_string(value, len));
+  return 0;
 }
 /* Images */
 
