@@ -142,6 +142,48 @@ function package:registerCommands ()
     if options.display then counter.display[currentLevel] = options.display end
   end, "Increments the value of the multilevel counter <id> at the given <level> or the current level.")
 
+  self:registerCommand("set-multilevel-counter", function (options, _)
+    local level = SU.cast("integer", SU.required(options, "level", "set-multilevel-counter"))
+    local id = SU.required(options, "id", "set-multilevel-counter")
+
+    local counter = self.class:getMultilevelCounter(id)
+    local currentLevel = #counter.value
+    if options.value then
+      local value = SU.cast("integer", options.value)
+      if level == currentLevel then
+        -- e.g. set to x the level 3 of 1.2.3 => 1.2.x
+        counter.value[level] = value
+      elseif level > currentLevel then
+        -- Fill all missing levels in-between, assuming same display format.
+        -- e.g. set to x the level 3 of 1 => 1.0.x
+        while level - 1 > currentLevel do
+          currentLevel = currentLevel + 1
+          counter.value[currentLevel] = 0
+          counter.display[currentLevel] = counter.display[currentLevel - 1]
+        end
+        currentLevel = currentLevel + 1
+        counter.value[level] = value
+        counter.display[level] = counter.display[currentLevel - 1]
+      else -- level < currentLevel
+        -- Reset all upper levels
+        -- e.g. set to x the level 2 of 1.2.3 => 1.x
+        counter.value[level] = value
+        while currentLevel > level do
+          counter.value[currentLevel] = nil
+          counter.display[currentLevel] = nil
+          currentLevel = currentLevel - 1
+        end
+      end
+    end
+    if options.display then
+      if level <= #counter.value then
+         counter.display[level] = options.display
+      else
+        SU.warn("Ignoring attempt to set the display of a multilevel counter beyond its level")
+      end
+     end
+  end, "Sets the multilevel counter named by the <id> option to <value> at level <level>; optionally sets its display type at that level to <display>.")
+
   self:registerCommand("show-multilevel-counter", function (options, _)
     local id = SU.required(options, "id", "show-multilevel-counter")
 
