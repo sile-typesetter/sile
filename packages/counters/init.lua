@@ -206,12 +206,11 @@ The counters package allows you to set up, increment and typeset named counters.
 It provides the following commands:
 
 \begin{itemize}
-\item{\autodoc:command{\set-counter[id=<counter-name>, value=<value>]} — sets the counter with the specified name to the given value.}
-\item{\autodoc:command{\increment-counter[id=<counter-name>]} — does the same as \autodoc:command{\set-counter} except that when no \autodoc:parameter{value} parameter is given, the counter is incremented by one.}
-\item{\autodoc:command{\show-counter[id=<counter-name>]} — this typesets the value of the counter according to the counter’s declared display type.}
+\item{\autodoc:command{\set-counter[id=<counter-name>, value=<value>]} — sets the counter with the specified name to the given value. The command takes an optional \autodoc:parameter{display=<display-type>} parameter to set the display type of the counter (see below).}
+\item{\autodoc:command{\increment-counter[id=<counter-name>]} — increments the counter by one. The command creates the counter if it does not exist and also accepts setting the display type.}
+\item{\autodoc:command{\show-counter[id=<counter-name>]} — typesets the value of the counter according to the counter’s declared display type.}
 \end{itemize}
 
-All of the commands in the counters package take an optional \autodoc:parameter{display=<display-type>} parameter to set the \em{display type} of the counter.
 
 The available built-in display types are:
 
@@ -234,8 +233,8 @@ So, for example, the following SILE code:
 \\set-counter[id=mycounter, value=2]
 \\show-counter[id=mycounter]
 
-\\increment-counter[id=mycounter]
-\\show-counter[id=mycounter, display=roman]
+\\increment-counter[id=mycounter, display=roman]
+\\show-counter[id=mycounter]
 \line
 \end{verbatim}
 
@@ -246,6 +245,27 @@ produces:
 
 \noindent{}iii}
 \line
+
+The package also provides multi-level (hierarchical) counters, of the kind used in sectioning
+commands:
+
+\begin{itemize}
+\item{\autodoc:command{\set-multilevel-counter[id=<counter-name>, level=<level>, value=<value>]}
+— sets the multi-level counter with the specified name to the given value at the given level.
+The command also takes an optional \autodoc:parameter{display=<display-type>}, also acting at the given level.}
+\item{\autodoc:command{\increment-multilevel-counter[id=<counter-name>]}
+— increments the counter by one at its current (deepest) level.
+The command creates the counter if it does not exist.
+If given the \autodoc:parameter{level=<level>} parameter, the command increments that level,
+clearing any lower level (and filling previous levels with zeros, if they weren’t proprely set).
+It also accepts setting the display type at the target level.}
+\item{\autodoc:command{\show-multilevel-counter[id=<counter-name>]}
+— typesets the value of the multi-level counter according to the counter’s declared display types
+at each level. By default, all levels are output; option \autodoc:parameter{level=<level>} may be
+used to display the counter up to a given level. Option \autodoc:parameter{noleadingzeros=true}
+skips any leading zero (which may happen if a counter is at some level, without previous levels
+having been set).}
+\end{itemize}
 \end{document}
 ]]
 
