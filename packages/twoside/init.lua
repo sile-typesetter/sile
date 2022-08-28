@@ -3,7 +3,7 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "twoside"
 
-local tp = "odd"
+local _odd = true
 
 local mirrorMaster = function (_, existing, new)
   -- Frames in one master can't "see" frames in another, so we have to get creative
@@ -27,18 +27,14 @@ local mirrorMaster = function (_, existing, new)
   end
 end
 
-local function oddPage ()
-  return tp == "odd"
+function package:oddPage ()
+  return _odd
 end
 
 local function switchPage (class)
-  if class:oddPage() then
-    tp = "even"
-    class:switchMaster(class.evenPageMaster)
-  else
-    tp = "odd"
-    class:switchMaster(class.oddPageMaster)
-  end
+  _odd = not class:oddPage()
+  local nextmaster = _odd and class.oddPageMaster or class.evenPageMaster
+  class:switchMaster(nextmaster)
 end
 
 local _deprecate  = [[
@@ -54,7 +50,7 @@ function package:_init (options)
   if not SILE.scratch.masters then
     SU.error("Cannot load twoside package before masters.")
   end
-  self:export("oddPage", oddPage)
+  self:export("oddPage", self.oddPage)
   self:export("mirrorMaster", mirrorMaster)
   self:export("switchPage", function (class)
     SU.deprecated("class:switchPage", nil, "0.13.0", "0.15.0", _deprecate)
