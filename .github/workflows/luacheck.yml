@@ -10,4 +10,4 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Luacheck
-        uses: lunarmodules/luacheck@v0
+        uses: lunarmodules/luacheck@v1
