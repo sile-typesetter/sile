@@ -184,7 +184,7 @@ If your system has all the required packages already you may add `--with-system-
 If you use your system’s Luarocks packages this will be done for you, otherwise make sure you can compile luasec.
 You can try just this step in isolation before building SILE using `luarocks --tree=/tmp install luasec`.</sub>
 
-If you are building from a a git clone, start by running the script to setup your environment (if you are using the source tarball this is unnecessary):
+If you are building from a git clone, start by running the script to setup your environment (if you are using the source tarball this is unnecessary):
 
 ```console
 $ ./bootstrap.sh
