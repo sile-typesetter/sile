@@ -1,0 +1,10 @@
+\begin{document}
+\nofolios\noindent
+\script[src=packages/url]
+\href[src=https://sile-typesetter.org]{Test.}
+\medskip
+\href{https://sile-typesetter.org}
+\medskip
+\define[command=urlstyle]{<\verbatim:font{\process}>}
+\href{https://sile-typesetter.org}
+\end{document}
