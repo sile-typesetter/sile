@@ -83,7 +83,7 @@ cli.parseArguments = function ()
   end
   for _, option in ipairs(opts.options) do
     local options = SILE.parserBits.parameters:match(option)
-    pl.tablex.merge(SILE.input.options, options, true)
+    SILE.input.options = pl.tablex.merge(SILE.input.options, options, true)
   end
   for _, use in ipairs(opts.use) do
     local spec = SILE.parserBits.cliuse:match(use)
