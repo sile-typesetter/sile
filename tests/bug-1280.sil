@@ -2,7 +2,7 @@
 \font[filename=.fonts/NotoSerifCJK-Regular.ttc]
 \nofolios
 \neverindent
-\script{
+\begin{script}
   local checks = 0;
   local function check() SILE.typesetter:typeset("✓"); checks = checks + 1 end
   function test(teststr)
@@ -44,11 +44,11 @@
     check()
   end
   if SILE.backend ~= "debug" then
-    require("packages.pdf")
+    SILE.use("packages.pdf")
   else
     SILE.registerCommand("pdf:metadata", function (_, _) end)
   end
-}
+\end{script}
 \pdf:metadata[key=Author, value=Erwin Schrödinger]
 \pdf:metadata[key=Title, value=Erwin Schrödinger’s 猫🐈]
 \pdf:metadata[key=CreationDate, value=D:19990209153925 - 08 ' 00 ']
