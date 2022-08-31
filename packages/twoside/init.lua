@@ -93,9 +93,13 @@ function package:registerCommands ()
     end
     spread_counter = 0
     SILE.typesetter:leaveHmode()
-    -- Output a box, then remove it otherwise we can't prove what page new content will land on
-    -- Also if we *did* land on a new page, flush the entire queue so we don't leak vertical space
-    -- before real content
+    -- Output a box, then remove it and see where we are. Without adding
+    -- content we can't prove on which page we would land because the page
+    -- breaker *might* be stuffed almost full but still sitting on the last
+    -- line happy to *maybe* accept more letter (but not a line). If this check
+    -- gets us to the desired page nuke the vertical space so we don't leak it
+    -- into the final content, otherwise just leave it be since we want to be
+    -- forced to the next page anyway.
     SILE.call("hbox")
     SILE.typesetter:leaveHmode()
     table.remove(SILE.typesetter.state.nodes)
@@ -109,7 +113,11 @@ function package:registerCommands ()
       if spread_counter > 0 then
         SILE.call("hbox")
         SILE.typesetter:leaveHmode()
-        if blank then
+        -- Note: before you think you can simplify this, make sure all the
+        -- pages before chapter starts in the manual have headers if they have
+        -- content and not if empty. Combined with the workaround for just
+        -- barely full pages above it's tricky to get right.
+        if blank and not (spread_counter == spread_counter_at_start and not startedattop) then
           SILE.scratch.headers.skipthispage = true
           SILE.call("nofoliothispage")
         end
