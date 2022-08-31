@@ -76,6 +76,10 @@ function package:registerCommands ()
     SILE.call("open-spread", { double = false, odd = true, blank = false })
   end)
 
+  self:registerCommand("open-spread-eject", function()
+    SILE.call("supereject")
+  end)
+
   -- This is upstreamed from CaSILE. Similar to the original open-double-page,
   -- but can disable headers and folios on blank pages and allows opening the
   -- even side (with or without a leading blank).
@@ -110,7 +114,7 @@ function package:registerCommands ()
           SILE.call("nofoliothispage")
         end
       end
-      SILE.call("supereject")
+      SILE.call("open-spread-eject")
       SILE.typesetter:leaveHmode()
     until optionsMet()
   end)
@@ -132,6 +136,9 @@ It can also accept three parameters.
 The \autodoc:parameter{odd=false} parameter can be used to disable the opening page being odd, hence opening an even page spread.
 The \autodoc:parameter{double=false} parameter can be used to always output at least one empty  even page before the starting an odd page.
 The \autodoc:parameter{blank=false} parameter can be used to not suppress headers and folios on otherwise empty pages.
+
+Lastly the \autodoc:command{\open-spread-eject} command can be overridden to customize the output of blank pages.
+By default it just runs \autodoc:command{\supereject}, but you could potentially add decorative content or other features in the otherwise dead space.
 \end{document}
 ]]
 
