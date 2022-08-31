@@ -137,7 +137,7 @@ function class:registerCommands ()
   end)
 
   self:registerCommand("chapter", function (options, content)
-    SILE.call("open-double-page")
+    SILE.call("open-spread", { double = false })
     SILE.call("noindent")
     SILE.scratch.headers.right = nil
     SILE.call("set-counter", { id = "footnote", value = 1 })
