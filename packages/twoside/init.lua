@@ -73,11 +73,29 @@ end
 function package:registerCommands ()
 
   self:registerCommand("open-double-page", function()
+    SILE.call("open-spread", { double = false, odd = true, blank = false })
+  end)
+
+  -- This is upstreamed from CaSILE. Similar to the original open-double-page,
+  -- but can disable headers and folios on blank pages and allows opening the
+  -- even side (with or without a leading blank).
+  self:registerCommand("open-spread", function (options)
+    local odd = SU.boolean(options.odd, true)
+    local double = SU.boolean(options.double, true)
+    local blank = SU.boolean(options.blank, true)
+    local optionsMet = function ()
+      return (not double or spread_counter > 1) and
+             (odd == self.class:oddPage())
+    end
     spread_counter = 0
     SILE.typesetter:leaveHmode()
-    -- Output a box, then nuke it otherwise we can't prove what page new content will land on
-    SILE.call("hbox"); SILE.typesetter:leaveHmode(); table.remove(SILE.typesetter.state.nodes)
-    if spread_counter == 1 and self.class:oddPage() then
+    -- Output a box, then remove it otherwise we can't prove what page new content will land on
+    -- Also if we *did* land on a new page, flush the entire queue so we don't leak vertical space
+    -- before real content
+    SILE.call("hbox")
+    SILE.typesetter:leaveHmode()
+    table.remove(SILE.typesetter.state.nodes)
+    if spread_counter == 1 and optionsMet() then
       SILE.typesetter.state.outputQueue = {}
       return
     end
@@ -87,10 +105,14 @@ function package:registerCommands ()
       if spread_counter > 0 then
         SILE.call("hbox")
         SILE.typesetter:leaveHmode()
+        if blank then
+          SILE.scratch.headers.skipthispage = true
+          SILE.call("nofoliothispage")
+        end
       end
       SILE.call("supereject")
       SILE.typesetter:leaveHmode()
-    until self.class:oddPage()
+    until optionsMet()
   end)
 
 end
