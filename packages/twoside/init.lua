@@ -27,7 +27,7 @@ local mirrorMaster = function (_, existing, new)
   end
 end
 
-function package:oddPage ()
+function package.oddPage (_)
   return _odd
 end
 
@@ -45,6 +45,11 @@ local _deprecate  = [[
   you are likely causing it to run twice and duplicate entries.
 ]]
 
+local spread_counter = 0
+local spreadHook = function ()
+  spread_counter = spread_counter + 1
+end
+
 function package:_init (options)
   base._init(self)
   if not SILE.scratch.masters then
@@ -61,20 +66,31 @@ function package:_init (options)
   self.class:registerPostinit(function (class)
     class:mirrorMaster(options.oddPageMaster, options.evenPageMaster)
   end)
+  self.class:registerHook("newpage", spreadHook)
   self.class:registerHook("newpage", switchPage)
 end
 
 function package:registerCommands ()
 
   self:registerCommand("open-double-page", function()
+    spread_counter = 0
     SILE.typesetter:leaveHmode()
-    SILE.call("supereject")
-    if self.class:oddPage() then
-      SILE.typesetter:typeset("")
-      SILE.typesetter:leaveHmode()
-      SILE.call("supereject")
+    -- Output a box, then nuke it otherwise we can't prove what page new content will land on
+    SILE.call("hbox"); SILE.typesetter:leaveHmode(); table.remove(SILE.typesetter.state.nodes)
+    if spread_counter == 1 and self.class:oddPage() then
+      SILE.typesetter.state.outputQueue = {}
+      return
     end
-    SILE.typesetter:leaveHmode()
+    local startedattop = #SILE.typesetter.state.outputQueue == 2 and #SILE.typesetter.state.nodes == 0
+    local spread_counter_at_start = spread_counter
+    repeat
+      if spread_counter > 0 then
+        SILE.call("hbox")
+        SILE.typesetter:leaveHmode()
+      end
+      SILE.call("supereject")
+      SILE.typesetter:leaveHmode()
+    until self.class:oddPage()
   end)
 
 end
