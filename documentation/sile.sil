@@ -35,7 +35,7 @@ Didier Willis\break
 \set[parameter=document.parskip,value=4pt plus 1pt]
 \set[parameter=lists.parskip,value=2pt plus 1pt]
 
-\open-double-page
+\open-spread[double=false]
 \tableofcontents
 
 % The chapter opens a double page spread, we want the right master to be "page 1"

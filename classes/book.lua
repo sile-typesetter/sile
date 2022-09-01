@@ -51,27 +51,30 @@ function class:_init (options)
 end
 
 function class:endPage ()
-  if (self:oddPage() and SILE.scratch.headers.right) then
-    SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
-      SILE.settings:toplevelState()
-      SILE.settings:set("current.parindent", SILE.nodefactory.glue())
-      SILE.settings:set("document.lskip", SILE.nodefactory.glue())
-      SILE.settings:set("document.rskip", SILE.nodefactory.glue())
-      -- SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
-      SILE.process(SILE.scratch.headers.right)
-      SILE.call("par")
-    end)
-  elseif (not(self:oddPage()) and SILE.scratch.headers.left) then
+  if not SILE.scratch.headers.skipthispage then
+    if self:oddPage() and SILE.scratch.headers.right then
       SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
         SILE.settings:toplevelState()
         SILE.settings:set("current.parindent", SILE.nodefactory.glue())
         SILE.settings:set("document.lskip", SILE.nodefactory.glue())
         SILE.settings:set("document.rskip", SILE.nodefactory.glue())
-          -- SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
+        -- SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
+        SILE.process(SILE.scratch.headers.right)
+        SILE.call("par")
+      end)
+    elseif not self:oddPage() and SILE.scratch.headers.left then
+      SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
+        SILE.settings:toplevelState()
+        SILE.settings:set("current.parindent", SILE.nodefactory.glue())
+        SILE.settings:set("document.lskip", SILE.nodefactory.glue())
+        SILE.settings:set("document.rskip", SILE.nodefactory.glue())
+        -- SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
         SILE.process(SILE.scratch.headers.left)
         SILE.call("par")
       end)
+    end
   end
+  SILE.scratch.headers.skipthispage = false
   return plain.endPage(self)
 end
 
@@ -134,7 +137,7 @@ function class:registerCommands ()
   end)
 
   self:registerCommand("chapter", function (options, content)
-    SILE.call("open-double-page")
+    SILE.call("open-spread", { double = false })
     SILE.call("noindent")
     SILE.scratch.headers.right = nil
     SILE.call("set-counter", { id = "footnote", value = 1 })

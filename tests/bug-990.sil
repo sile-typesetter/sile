@@ -1,6 +1,6 @@
 \begin[papersize=a6,class=book]{document}
 \neverindent
-\define[command="open-double-page"]{}
+\define[command=open-spread]{}
 \nofolios
 \language[main=cs]
 \chapter{Ahoj světe}
