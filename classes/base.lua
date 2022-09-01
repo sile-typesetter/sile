@@ -187,7 +187,14 @@ end
 function class:registerHook (category, func)
   for _, func_ in ipairs(self.hooks[category]) do
     if func_ == func then
+      return
+      --[[ See https://github.com/sile-typesetter/sile/issues/1531
       return SU.warn("Attempted to set the same function hook twice, probably unintended, skipping.")
+      -- If the same function signature is already set a package is probably being
+      -- re-initialized. Ditch the first instance of the hook so that it runs in
+      -- the order of last initialization.
+      self.hooks[category][_] = nil
+      ]]
     end
   end
   table.insert(self.hooks[category], func)
