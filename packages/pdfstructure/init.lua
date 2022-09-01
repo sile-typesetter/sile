@@ -99,7 +99,7 @@ function package:registerCommands ()
     addChild(node)
     node.lang = SILE.settings:get("document.language")
     if type(SILE.outputter._ensureInit) == "function" then
-      SILE.outputter._ensureInit()
+      SILE.outputter:_ensureInit()
     end
     node.page = pdf.get_dictionary("@THISPAGE")
     node.mcid = mcid

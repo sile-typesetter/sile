@@ -36,6 +36,9 @@ function package:registerCommands ()
 
   self:registerCommand("pdf:destination", function (options, _)
     local name = SU.required(options, "name", "pdf:destination")
+    if type(SILE.outputter._ensureInit) == "function" then
+      SILE.outputter:_ensureInit()
+    end
     SILE.typesetter:pushHbox({
       outputYourself = function (_, typesetter, line)
         local state = typesetter.frame.state
@@ -58,6 +61,9 @@ function package:registerCommands ()
     -- As PDFDocEncoding supports only limited character repertoire for
     -- European languages, we use UTF-16BE for internationalization.
     local ustr = SU.utf8_to_utf16be_hexencoded(title)
+    if type(SILE.outputter._ensureInit) == "function" then
+      SILE.outputter:_ensureInit()
+    end
     SILE.typesetter:pushHbox({
       value = nil,
       height = SILE.measurement(0),
@@ -71,6 +77,9 @@ function package:registerCommands ()
   end)
 
   self:registerCommand("pdf:literal", function (_, content)
+    if type(SILE.outputter._ensureInit) == "function" then
+      SILE.outputter:_ensureInit()
+    end
     SILE.typesetter:pushHbox({
       value = nil,
       height = SILE.measurement(0),
@@ -90,6 +99,9 @@ function package:registerCommands ()
     local borderoffset = SU.cast("measurement", options.borderoffset or "1pt"):tonumber()
     local borderstyle = borderStyle(options.borderstyle, borderwidth)
     local llx, lly
+    if type(SILE.outputter._ensureInit) == "function" then
+      SILE.outputter:_ensureInit()
+    end
     SILE.typesetter:pushHbox({
       value = nil,
       height = SILE.measurement(0),
@@ -136,6 +148,9 @@ function package:registerCommands ()
     else
       -- see comment in pdf:bookmark
       value = SU.utf8_to_utf16be(value)
+    end
+    if type(SILE.outputter._ensureInit) == "function" then
+      SILE.outputter:_ensureInit()
     end
     SILE.typesetter:pushHbox({
       value = nil,
