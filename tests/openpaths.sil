@@ -2,5 +2,5 @@
 \nofolios
 \neverindent
 \use[module=packages.svg]
-\svg[width=265pt, src=./tests/openpaths.svg]
+\svg[width=265pt, src=./openpaths.svg]
 \end{document}

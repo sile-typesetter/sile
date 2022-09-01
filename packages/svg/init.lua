@@ -52,11 +52,12 @@ end
 function package:registerCommands ()
 
   self:registerCommand("svg", function (options, _)
-    local fn = SU.required(options, "src", "filename")
+    local src = SU.required(options, "src", "filename")
+    src = SILE.resolveFile(src) or SU.error("Couldn't find file " .. src)
     local width = options.width and SU.cast("measurement", options.width):absolute() or nil
     local height = options.height and SU.cast("measurement", options.height):absolute() or nil
     local density = options.density or 72
-    local svgfile = io.open(fn)
+    local svgfile = io.open(src)
     local svgdata = svgfile:read("*all")
     _drawSVG(svgdata, width, height, density)
   end)
