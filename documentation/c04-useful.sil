@@ -97,10 +97,10 @@ text. This will affect both font shaping and hyphenation.}
 \end{itemize}
 
 It’s quite fiddly to be always changing font specifications manually; later
-we’ll see some ways to automate the process. SILE provides the \code{\\em\{…\}}
-command as a shortcut for \code{\\font[style=italic]\{…\}}.
-There is no shortcut for boldface, because boldface isn’t good typographic
-practice and so we don’t want to make it easy for you to make bad books.
+we’ll see some ways to automate the process.
+SILE’s \em{plain} class notably provides the \autodoc:command{\em{…}} command as a shortcut
+for \autodoc:command{\font[style=italic]{…}}, and the \autodoc:command{\strong{…}}
+command as a a shortcut for \autodoc:command{\font[weight=700]{…}}.
 
 \section{Document Structure}
 
