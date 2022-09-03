@@ -274,7 +274,7 @@ Unless you are experienced building software on Windows it is probably best to u
 
 There are persistent rumors from credible users that say they have gotten it working, but the exact steps they used to make it happen are a bit elusive.
 We would be happy to see better support, but none of the current developers are Windows users or developers.
-If anywone wants to help in this department we'd be happy to facilitate contributions.
+If anywone wants to help in this department we’d be happy to facilitate contributions.
 
 According to the rumors, SILE may be built on Windows using CMake and Visual Studio.
 Additionally some Windows executables are supposed to be generated using Azure for every commit.

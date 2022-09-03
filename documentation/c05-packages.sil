@@ -211,13 +211,12 @@ This directory could be in your system Lua directory, in your user directory, or
 
 By default SILE will look for packages in:
 
-\noindent• The directory where the SILE source file is located
-
-\noindent• The current working directory
-
-\noindent• The default LUA search path
-
-\noindent• The directory where SILE is installed on the system
+\begin{itemize}
+\item{The directory where the SILE source file is located,}
+\item{The current working directory,}
+\item{The default LUA search path,}
+\item{The directory where SILE is installed on the system.}
+\end{itemize}
 
 By default, LuaRocks will install packages to the Lua search path.
 
@@ -252,7 +251,7 @@ $ sile ...
 
 To write a package and publish to LuaRocks, see the package-template.sile repository.
 
-It's worth noting that packages are not limited to just the package interface.
+It’s worth noting that packages are not limited to just the package interface.
 They can include classes, languages, i18n resources, or anything else provided by SILE.
 Also because external locations are searched before SILE itself, they can even override any core part of SILE itself.
 As such you should probably make sure you review what a package does before installing it!
