@@ -6,11 +6,11 @@ We’ll be looking at the DocBook processor that ships with SILE.
 DocBook is an XML format for structured technical documentation.
 DocBook itself doesn’t encode any presentation information about how its various tags should be rendered on a page, and so we shall have to make all the presentation decisions for ourself.
 
-Since DocDook itself doesn't specify anything about presentation such as papersize, you may need to supply values either on the command line or using a preamble.
+Since DocDook itself doesn’t specify anything about presentation such as papersize, you may need to supply values either on the command line or using a preamble.
 When you use the \code{-c docbook} command line option to SILE, SILE will use the \em{docbook} class in spite of any document declaration.
 In addition options such as paper size could be set with, e.g. \code{-O papersize=legal}.
 
-The class initalization for DocBoox isn't too fancy, it just loads up a couple packages that will get used later.
+The class initalization for DocBoox isn’t too fancy, it just loads up a couple packages that will get used later.
 
 Now we can start defining SILE commands to render XML elements.
 Most of these are fairly straightforward so we will not dwell on them too much.

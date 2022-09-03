@@ -23,7 +23,7 @@ This book assumes that you’ve already read the SILE Book, and are now looking 
 The SILE cli itself is generated from the \code{sile.in} file and only handles some of the executable lifecycle stuff.
 The main core of SILE including most of the top level API is in \code{core/sile.lua}.
 This is also the file you would require in your own projects to get access to the SILE core as a library.
-It requires a lot of other things on it's own including some other file in \code{core}.
+It requires a lot of other things on its own, including some other file in \code{core}.
 
 Some of the major components, especially those which have alternatives, are in module directories.
 For example classes are in \code{classes}, inputters in \code{inputters}, etc.

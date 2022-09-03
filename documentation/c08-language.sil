@@ -19,19 +19,15 @@ Selecting a language by either method loads up the \em{language support} file(s)
 These in turn enable various localization and typesetting conventions.
 Language support may include and combination of:
 
-\noindent{}• hyphenation patterns,
-
-\noindent{}• line breaking and justification schemes,
-
-\noindent{}• frame advance and writing direction,
-
-\noindent{}• spacing,
-
-\noindent{}• choice of glyphs within a font,
-
-\noindent{}• localization of programatically inserted strings,
-
-\noindent{}• and more.
+\begin{itemize}
+\item{hyphenation patterns,}
+\item{line breaking and justification schemes,}
+\item{frame advance and writing direction,}
+\item{spacing,}
+\item{choice of glyphs within a font,}
+\item{localization of programatically inserted strings,}
+\item{and more…}
+\end{itemize}
 
 For example, Sindhi and Urdu users will expect the Arabic letter \em{heh} (\font[family=LateefGR]{ه}) to combine with other letters in different ways to standard Arabic shaping.
 In those cases, you should ensure that you select the appropriate language before processing the text:

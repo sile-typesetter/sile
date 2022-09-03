@@ -173,7 +173,7 @@ end
 \end{verbatim}
 
 Note that the official SILE classes have some extra tooling to handle legacy class models trying to inherit from them.
-You don't need those deprecation shims in your own classes when following these examples.
+You don’t need those deprecation shims in your own classes when following these examples.
 
 \section{Defining Commands}
 
