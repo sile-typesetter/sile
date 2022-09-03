@@ -34,8 +34,7 @@ After loading \autodoc:package{unichar}, the \autodoc:command{\unichar} command 
 
 \begin{verbatim}
 \line
-% Note we are directly outputing the unicode to workaround https://github.com/sile-typesetter/sile/issues/991
-\\unichar\{U+263A\} \% produces \font[family=Symbola]{☺}
+\\unichar\{U+263A\} \% produces \font[family=Symbola]{\unichar{U+263A}}
 \line
 \end{verbatim}
 
