@@ -264,7 +264,7 @@ Note the comments in [the section about Docker](#docker) regarding version tags.
 ## Finding Out More
 
 Please read the [full SILE manual][doc] for more information about what SILE is and how it can help you.
-There are example documents (source and PDF) in the examples/ directory.
+There are example documents (source and PDF) [on the SILE website][examples].
 There's also an [FAQ][faq] available.
 
 ## Contact
