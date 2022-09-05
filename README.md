@@ -141,16 +141,16 @@ Because all packages are first made available in the unstable channel and then e
 You can use all the usual Nix tricks including launching a new shell with the `sile` command available or running it directly from any shell:
 
 ```console
-$ nix shell nixos-unstable#sile
+$ nix shell nixpkgs/nixpkgs-unstable#sile
 $ sile <arguments>
 
-$ nix run nixos-unstable#sile -- <arguments>
+$ nix run nixpkgs/nixpkgs-unstable#sile -- <arguments>
 ```
 
 The SILE source repository is also a valid Nix [Flake][nix-flakes] which means you can run any specific version or the latest unreleased development code directly:
 
 ```console
-$ nix run github:sile-typesetter/sile/v0.30.0 -- <sile arguments>
+$ nix run github:sile-typesetter/sile/v0.14.3 -- <arguments>
 $ nix run github:sile-typesetter/sile -- <sile arguments>
 ```
 
