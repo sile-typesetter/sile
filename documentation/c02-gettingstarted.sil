@@ -101,27 +101,25 @@ A binary package can be installed using \code{pkgin}
 $ pkgin install sile
 \end{terminal}
 
-\subsection{NixOS}
+\subsection{NixOS or under Nix on any platform}
 
-Nix packages are available in both the stable and unstable channels.
-Because all packages are first made available in the unstable channel and then eventually make their way into the stable channel, to get the latest stable SILE releases we recommend hitting up the unstable channel first.
-You can use all the usual Nix tricks including launching a new shell with the \code{sile} command available or running it directly from any shell:
+In addition to NixOS, the \code{nix} package manager is available as a standalone package manager on many platforms including most Linux and BSD distributions, macOS, and even for Windows via WSL; and thus presents a viable alternative way to run SILE on most systems.
+The \code{sile} package is available in both the stable and unstable channels; the unstable channel having the latest stable SILE releases and the stable channel being frozen on NixOS releases.
+You can use all the usual Nix tricks including adding SILE into a \code{nix shell} environment or executing it directly with \code{nix run}.
 
 \begin{terminal}
-$ nix shell nixos-unstable#sile
+$ nix shell nippkgs/nixpkgs-unstable#sile
 $ sile <arguments>
 
-$ nix run nixos-unstable#sile -- <arguments>
+$ nix run nixpkgs/nixpkgs-unstable#sile -- <arguments>
 \end{terminal}
 
 The SILE source repository is also a valid Nix Flake\footnote{\url{https://nixos.wiki/wiki/Flakes#Installing_flakes}} which means you can run any specific version or the latest unreleased development code directly:
 
 \begin{terminal}
-$ nix run github:sile-typesetter/sile/v0.30.0 -- <sile arguments>
-$ nix run github:sile-typesetter/sile -- <sile arguments>
+$ nix run github:sile-typesetter/sile/v0.14.3 -- <arguments>
+$ nix run github:sile-typesetter/sile -- <arguments>
 \end{terminal}
-
-Besides of course its use in NixOS, the Nix package manager is also available on most Linux and BSD distributions, macOS, and even for Windows via WSL making it a viable alternative to run SILE on many platforms.
 
 \subsection{Void Linux}
 
