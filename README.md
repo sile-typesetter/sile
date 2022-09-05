@@ -71,25 +71,10 @@ A VCS package is also available as [sile-git][aur-sile-git] to build from the la
 
 #### NixOS
 
-[Nix packages][nix] are available in both the stable and unstable channels.
-Because all packages are first made available in the unstable channel and then eventually make their way into the stable channel, to get the latest stable SILE releases we recommend hitting up the unstable channel first.
-You can use all the usual Nix tricks including launching a new shell with the `sile` command available or running it directly from any shell:
+A [Nix `sile` package][nix] is available in both the stable and unstable channels; the unstable channel having the latest stable SILE releases and the stable channel being frozen on NixOS releases.
+You can use all the usual Nix tricks including adding SILE into a `nix shell` environment or executing it directly with `nix run`.
 
-```console
-$ nix shell nixos-unstable#sile
-$ sile <arguments>
-
-$ nix run nixos-unstable#sile -- <arguments>
-```
-
-The SILE source repository is also a valid Nix [Flake][nix-flakes] which means you can run any specific version or the latest unreleased development code directly:
-
-```console
-$ nix run github:sile-typesetter/sile/v0.30.0 -- <sile arguments>
-$ nix run github:sile-typesetter/sile -- <sile arguments>
-```
-
-Besides of course its use in NixOS, the Nix package manager is also available on most Linux and BSD distributions, macOS, and even for Windows via WSL making it a viable alternative to run SILE on many platforms.
+See additional usage notes in the [Nix section](#nix).
 
 #### Ubuntu
 
@@ -149,8 +134,25 @@ $ docker run -it --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" --us
 
 #### Nix
 
-The `nix` package manager is available as a standalone package manager on many platforms and is a viable way to run SILE.
-See usage in the [NixOS section](#nixos).
+The `nix` package manager is available as a standalone package manager on many platforms other than NixOS including most Linux and BSD distributions, macOS, and even for Windows via WSL; and thus presents a viable alternative way to run SILE on most systems.
+
+[Nix packages][nix] are available in both the stable and unstable channels.
+Because all packages are first made available in the unstable channel and then eventually make their way into the stable channel, to get the latest stable SILE releases we recommend hitting up the unstable channel first.
+You can use all the usual Nix tricks including launching a new shell with the `sile` command available or running it directly from any shell:
+
+```console
+$ nix shell nixpkgs/nixpkgs-unstable#sile
+$ sile <arguments>
+
+$ nix run nixpkgs/nixpkgs-unstable#sile -- <arguments>
+```
+
+The SILE source repository is also a valid Nix [Flake][nix-flakes] which means you can run any specific version or the latest unreleased development code directly:
+
+```console
+$ nix run github:sile-typesetter/sile/v0.14.3 -- <arguments>
+$ nix run github:sile-typesetter/sile -- <sile arguments>
+```
 
 ### From Source
 
@@ -210,12 +212,12 @@ $ sudo ldconfig
 ### Default Font
 
 Since SILE v0.9.5, the default font has been Gentium Plus which is freely available from [SIL’s site][gentium].
-It is not required that you install it, but if this font is not installed on your system, you won't be able to use the examples without modification.
+It is not absolutely required that you install it, but if this font is not installed on your system, you won't be able to use the examples without modification.
 (Previously we used Gentium Basic, but that's getting harder to get hold of.)
 
-### Testing
+### Testing the installation
 
-If all goes well after installation you should be able to compile a sample documents. Try creating a file `test.sil` with this content:
+If all goes well, after installation you should be able to render a sample document. Try creating a file `test.sil` with this content:
 
 ```sil
 \begin{document}
@@ -232,9 +234,9 @@ SILE v0.12.5 (Lua 5.4)
 [1]
 ```
 
-You should now have `test.pdf` ready for review.
+You should now have a PDF file `test.pdf` ready for review.
 
-### Use as a CI job
+## Use as a CI job
 
 There are actually many ways to run SILE remotely as part of a CI work flow.
 Because packages are available for many platforms, one way would be to just use your platforms native package installation system to pull them into whatever CI runner environment you already use.
@@ -264,7 +266,7 @@ Note the comments in [the section about Docker](#docker) regarding version tags.
 ## Finding Out More
 
 Please read the [full SILE manual][doc] for more information about what SILE is and how it can help you.
-There are example documents (source and PDF) in the examples/ directory.
+There are example documents (source and PDF) [on the SILE website][examples].
 There's also an [FAQ][faq] available.
 
 ## Contact
