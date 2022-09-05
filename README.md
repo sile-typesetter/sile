@@ -212,12 +212,12 @@ $ sudo ldconfig
 ### Default Font
 
 Since SILE v0.9.5, the default font has been Gentium Plus which is freely available from [SIL’s site][gentium].
-It is not required that you install it, but if this font is not installed on your system, you won't be able to use the examples without modification.
+It is not absolutely required that you install it, but if this font is not installed on your system, you won't be able to use the examples without modification.
 (Previously we used Gentium Basic, but that's getting harder to get hold of.)
 
-### Testing
+### Testing the installation
 
-If all goes well after installation you should be able to compile a sample documents. Try creating a file `test.sil` with this content:
+If all goes well, after installation you should be able to render a sample document. Try creating a file `test.sil` with this content:
 
 ```sil
 \begin{document}
@@ -234,9 +234,9 @@ SILE v0.12.5 (Lua 5.4)
 [1]
 ```
 
-You should now have `test.pdf` ready for review.
+You should now have a PDF file `test.pdf` ready for review.
 
-### Use as a CI job
+## Use as a CI job
 
 There are actually many ways to run SILE remotely as part of a CI work flow.
 Because packages are available for many platforms, one way would be to just use your platforms native package installation system to pull them into whatever CI runner environment you already use.
