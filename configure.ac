@@ -162,6 +162,10 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
     ], [
         AX_PROGVAR([luarocks])
     ])
+
+    AM_COND_IF([MANUAL], [AX_PROGVAR([curl])])
+    AM_COND_IF([MANUAL], [AX_PROGVAR([bsdtar])])
+
 ])
 AC_SUBST([ICU_CFLAGS])
 AC_SUBST([ICU_LIBS])
