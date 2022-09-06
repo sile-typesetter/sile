@@ -114,7 +114,8 @@
     in rec {
       devShells = {
         default = pkgs.mkShell {
-          inherit (sile) checkInputs nativeBuildInputs buildInputs;
+          inherit (sile) checkInputs nativeBuildInputs;
+          buildInputs = sile.buildInputs ++ [ pkgs.libarchive ];
         };
       };
       packages.sile = sile;
