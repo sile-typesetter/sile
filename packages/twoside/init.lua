@@ -64,7 +64,10 @@ function package:_init (options)
   self.class.oddPageMaster = options.oddPageMaster
   self.class.evenPageMaster = options.evenPageMaster
   self.class:registerPostinit(function (class)
-    class:mirrorMaster(options.oddPageMaster, options.evenPageMaster)
+    -- TODO: Refactor this to make mirroring a separate package / option
+    if not SILE.scratch.masters[options.evenPageMaster] then
+      class:mirrorMaster(options.oddPageMaster, options.evenPageMaster)
+    end
   end)
   self.class:registerHook("newpage", spreadHook)
   self.class:registerHook("newpage", switchPage)
