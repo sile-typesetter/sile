@@ -194,7 +194,7 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(LUAMODLOCK) 
 .PHONY: force
 force: ;
 
-PHONY_DEVELOPER_TARGETS = regressions test lint luarocks-lint luacheck busted coverage benchmark compare update_expecteds update_actuals regression_previews docker docker-dep-check docker-ghcr-to-hub docker-build-push gource.webm
+PHONY_DEVELOPER_TARGETS = regressions test lint luarocks-lint luacheck busted coverage benchmark compare update_expecteds regression_previews docker docker-dep-check docker-ghcr-to-hub docker-build-push gource.webm
 .PHONY: $(PHONY_DEVELOPER_TARGETS)
 
 if DEVELOPER
@@ -245,75 +245,6 @@ clean-deps:
 time-%.json: benchmark-%/time.json
 	cp $< $@
 
-clean-recursive: clean-worktrees
-
-clean-worktrees:
-	if test -e .git; then \
-		$(GIT) worktree list --porcelain | \
-			$(AWK) 'BEGIN { FS = "/" }; /^worktree .*-[0-9a-f]{7}/ { print $$(NF) }' | \
-			while read worktree; do \
-				$(GIT) worktree remove --force $${worktree} ; \
-			done ; \
-	fi
-
-time_action ?= ./$(SILE) documentation/sile.sil -o /dev/null
-make_worktree_rules = $(eval $(foreach SHA,$(_HEADSHA) $(_BASESHA),$(call worktree_sha,$(1),$(shell $(GIT) rev-parse --short=7 $(SHA)))))
-
-define worktree_sha =
-
-.PRECIOUS: $(1)-$(2)
-$(1)-$(2):
-	[ -d $$@ ] || $(GIT) worktree add --detach $$@ $(2)
-	cd $$@
-	[ -d libtexpdf ] && rm -r libtexpdf ||:
-	[ -h libtexpdf ] || ln -s ../libtexpdf
-	[ -h lua_modules ] || ln -s ../lua_modules
-	[ -h node_modules ] || ln -s ../node_modules
-	[ -h .fonts ] || ln -s ../.fonts
-	[ -h .sources ] || ln -s ../.sources
-	./bootstrap.sh
-	cp ../config.status .
-	./configure
-	make
-
-.PRECIOUS: $(1)-$(2)/%
-$(1)-$(2)/%: $(1)-$(2)
-	cd $$<
-	make $$*
-
-.PRECIOUS: $(1)-$(2)/time.json
-$(1)-$(2)/time.json: $(1)-$(2) force
-	cd $$<
-	export TIMEFORMAT=$$$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
-	{ time ($$(time_action) > /dev/null 2>&1) } 2> time.json
-
-endef
-
-$(call make_worktree_rules,benchmark)
-
-benchmark: time-$(_HEADSHA).json time-$(_BASESHA).json
-	head $^
-
-.PRECIOUS: time-%.json
-time-%.json: benchmark-%/time.json
-	cp $< $@
-
-.PRECIOUS: time.json
-time.json: force | $(_BUILT_SUBDIRS)
-	export TIMEFORMAT=$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
-	{ time ($(time_action) > /dev/null 2>&1) } 2> time.json
-
-$(call make_worktree_rules,compare)
-
-onetest = $(firstword $(ACTUALS)),$(firstword $(TESTPDFS))
-compare_prerequisites = $(sort $(shell echo {compare-$(_BASESHA)/,}{$(onetest)}))
-
-runapp ?= nohup $(1) > /dev/null &
-compare: $(call compare_prerequisites)
-	$(call runapp,diff-pdf --view $(filter %.pdf,$^))
-	$(call runapp,zathura $(filter %.pdf,$^))
-	diff -u $(filter %.actual,$^)
-
 update_expecteds: $(EXPECTEDS)
 
 tests/%.expected: tests/%.sil $$(patterndeps)
@@ -324,8 +255,6 @@ tests/%.expected: tests/%.xml $$(patterndeps)
 
 tests/%.expected: tests/%.nil $$(patterndeps)
 	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
-
-update_actuals: $(ACTUALS)
 
 regression_previews: $(TESTPDFS)
 
