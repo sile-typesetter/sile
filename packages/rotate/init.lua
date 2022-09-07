@@ -93,6 +93,7 @@ function package:registerCommands ()
     end
     depth = -depth
     if depth < SILE.length(0) then depth = SILE.length(0) end
+    SILE.outputter:_ensureInit()
     SILE.typesetter:pushHbox({
       value = { orig = origbox, theta = theta},
       height = height,
