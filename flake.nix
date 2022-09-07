@@ -120,6 +120,7 @@
             pkgs.lua53Packages.busted
             pkgs.lua53Packages.luacheck
             pkgs.lua53Packages.luarocks
+            pkgs.perl
           ];
         };
       };
