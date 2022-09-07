@@ -6,8 +6,8 @@
 
 .PHONY: fonttooling
 fonttooling:
-	$(if $(BSDTAR),,$(error Please set BSDTAR with path or ./configure --with-manual))
-	$(if $(CURL),,$(error Please set CURL with path or ./configure --with-manual))
+	$(if $(BSDTAR),,$(error Please set BSDTAR with path or ./configure --with-manual or --enable-developer))
+	$(if $(CURL),,$(error Please set CURL with path or ./configure --with-manual or --enable-developer))
 
 # Don't let make delete things we had to download
 .PRECIOUS: .fonts/% .sources/%
