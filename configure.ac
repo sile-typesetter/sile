@@ -71,6 +71,8 @@ AM_COND_IF([SYSTEM_LIBTEXPDF],
 
 AM_COND_IF([DEPENDENCY_CHECKS], [
 
+    AX_FONT(Gentium Plus)
+
     AC_PATH_PROG([PDFINFO], [pdfinfo])
 
     AC_MSG_CHECKING([for OS X])
