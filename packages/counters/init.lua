@@ -14,25 +14,31 @@ SILE.formatMultilevelCounter = function (counter, options)
 end
 
 local function getCounter (_, id)
-  if not SILE.scratch.counters[id] then
-    SILE.scratch.counters[id] = {
+  local counter = SILE.scratch.counters[id]
+  if not counter then
+    counter = {
       value = 0,
       display = "arabic",
       format = package.formatCounter
     }
+    SILE.scratch.counters[id] = counter
+  elseif type(counter.value) ~= "number" then
+    SU.error("Counter " .. id .. " is not a single-level counter")
   end
-  return SILE.scratch.counters[id]
+  return counter
 end
 
 local function getMultilevelCounter (_, id)
   local counter = SILE.scratch.counters[id]
   if not counter then
     counter = {
-      value= { 0 },
-      display= { "arabic" },
+      value = { 0 },
+      display = { "arabic" },
       format = package.formatMultilevelCounter
     }
     SILE.scratch.counters[id] = counter
+  elseif type(counter.value) ~= "table" then
+    SU.error("Counter " .. id .. " is not a multi-level counter")
   end
   return counter
 end
@@ -42,9 +48,14 @@ function package.formatCounter (_, counter)
 end
 
 function package:formatMultilevelCounter (counter, options)
-  local maxlevel = options and options.level or #counter.value
-  local minlevel = options and options.minlevel or 1
+  options = options or {}
+  local maxlevel = options.level and SU.min(SU.cast("integer", options.level), #counter.value) or #counter.value
+  -- Option minlevel is undocumented and should perhaps be deprecated: is there a real use case for it?
+  local minlevel = options.minlevel and SU.min(SU.cast("integer", options.minlevel, #counter.value)) or 1
   local out = {}
+  if SU.boolean(options.noleadingzeros, false) then
+    while counter.value[minlevel] == 0 do minlevel = minlevel + 1 end -- skip leading zeros
+  end
   for x = minlevel, maxlevel do
     out[x - minlevel + 1] = self:formatCounter({ display = counter.display[x], value = counter.value[x] })
   end
@@ -65,9 +76,13 @@ end
 function package:registerCommands ()
 
   self:registerCommand("increment-counter", function (options, _)
-    local counter = self.class:getCounter(options.id)
+    local id = SU.required(options, "id", "increment-counter")
+
+    local counter = self.class:getCounter(id)
     if (options["set-to"]) then
-      counter.value = tonumber(options["set-to"])
+      SU.deprecated("\\increment-counter[set-to=...]", '\\set-counter[value=...]', "0.14.4", "0.16.0")
+      -- An increment command that does a set is plain weird...
+      counter.value = SU.cast("integer", options["set-to"])
     else
       counter.value = counter.value + 1
     end
@@ -75,47 +90,111 @@ function package:registerCommands ()
   end, "Increments the counter named by the <id> option")
 
   self:registerCommand("set-counter", function (options, _)
-    local counter = self.class:getCounter(options.id)
-    if options.value then counter.value = tonumber(options.value) end
+    local id = SU.required(options, "id", "set-counter")
+
+    local counter = self.class:getCounter(id)
+    if options.value then counter.value = SU.cast("integer", options.value) end
     if options.display then counter.display = options.display end
   end, "Sets the counter named by the <id> option to <value>; sets its display type (roman/Roman/arabic) to type <display>.")
 
 
   self:registerCommand("show-counter", function (options, _)
-    local counter = self.class:getCounter(options.id)
-    if options.display then counter.display = options.display end
-    SILE.typesetter:setpar(self:formatCounter(counter))
+    local id = SU.required(options, "id", "show-counter")
+
+    local counter = self.class:getCounter(id)
+    if options.display then
+      SU.deprecated("\\show-counter[display=...]", '\\set-counter[display=...]', "0.14.4", "0.16.0")
+      counter.display = options.display
+    end
+    SILE.typesetter:typeset(self:formatCounter(counter))
   end, "Outputs the value of counter <id>, optionally displaying it with the <display> format.")
 
   self:registerCommand("increment-multilevel-counter", function (options, _)
-    local counter = self.class:getMultilevelCounter(options.id)
+    local id = SU.required(options, "id", "increment-multilevel-counter")
+
+    local counter = self.class:getMultilevelCounter(id)
     local currentLevel = #counter.value
-    local level = tonumber(options.level) or currentLevel
+    local level = SU.cast("integer", options.level or currentLevel)
+    local reset = SU.boolean(options.reset, true)
+    -- Option reset=false is undocumented and was previously somewhat broken.
+    -- It should perhaps be deprecated: is there a real use case for it?
     if level == currentLevel then
       counter.value[level] = counter.value[level] + 1
     elseif level > currentLevel then
-      while level > currentLevel do
+      while level - 1 > currentLevel do
         currentLevel = currentLevel + 1
-        counter.value[currentLevel] = (options.reset == false) and counter.value[currentLevel -1 ] or 1
+        counter.value[currentLevel] = 0
         counter.display[currentLevel] = counter.display[currentLevel - 1]
       end
+      currentLevel = currentLevel + 1
+      counter.value[level] = 1
+      counter.display[level] = counter.display[currentLevel - 1]
     else -- level < currentLevel
       counter.value[level] = counter.value[level] + 1
       while currentLevel > level do
-        if not (options.reset == false) then counter.value[currentLevel] = nil end
-        counter.display[currentLevel] = nil
+        if reset then
+          counter.value[currentLevel] = nil
+          counter.display[currentLevel] = nil
+        end
         currentLevel = currentLevel - 1
       end
     end
     if options.display then counter.display[currentLevel] = options.display end
-  end)
+  end, "Increments the value of the multilevel counter <id> at the given <level> or the current level.")
+
+  self:registerCommand("set-multilevel-counter", function (options, _)
+    local level = SU.cast("integer", SU.required(options, "level", "set-multilevel-counter"))
+    local id = SU.required(options, "id", "set-multilevel-counter")
+
+    local counter = self.class:getMultilevelCounter(id)
+    local currentLevel = #counter.value
+    if options.value then
+      local value = SU.cast("integer", options.value)
+      if level == currentLevel then
+        -- e.g. set to x the level 3 of 1.2.3 => 1.2.x
+        counter.value[level] = value
+      elseif level > currentLevel then
+        -- Fill all missing levels in-between, assuming same display format.
+        -- e.g. set to x the level 3 of 1 => 1.0.x
+        while level - 1 > currentLevel do
+          currentLevel = currentLevel + 1
+          counter.value[currentLevel] = 0
+          counter.display[currentLevel] = counter.display[currentLevel - 1]
+        end
+        currentLevel = currentLevel + 1
+        counter.value[level] = value
+        counter.display[level] = counter.display[currentLevel - 1]
+      else -- level < currentLevel
+        -- Reset all upper levels
+        -- e.g. set to x the level 2 of 1.2.3 => 1.x
+        counter.value[level] = value
+        while currentLevel > level do
+          counter.value[currentLevel] = nil
+          counter.display[currentLevel] = nil
+          currentLevel = currentLevel - 1
+        end
+      end
+    end
+    if options.display then
+      if level <= #counter.value then
+         counter.display[level] = options.display
+      else
+        SU.warn("Ignoring attempt to set the display of a multilevel counter beyond its level")
+      end
+     end
+  end, "Sets the multilevel counter named by the <id> option to <value> at level <level>; optionally sets its display type at that level to <display>.")
 
   self:registerCommand("show-multilevel-counter", function (options, _)
-    local counter = self.class:getMultilevelCounter(options.id)
-    if options.display then counter.display[#counter.value] = options.display end
+    local id = SU.required(options, "id", "show-multilevel-counter")
+
+    local counter = self.class:getMultilevelCounter(id)
+    if options.display then
+      SU.deprecated("\\show-multilevel-counter[display=...]", '\\set-multilevel-counter[display=...]', "0.14.4", "0.16.0")
+      counter.display[#counter.value] = options.display
+    end
 
     SILE.typesetter:typeset(self:formatMultilevelCounter(counter, options))
-  end, "Outputs the value of the multilevel counter <id>, optionally displaying it with the <display> format.")
+  end, "Outputs the value of the multilevel counter <id>.")
 
 end
 
@@ -127,12 +206,11 @@ The counters package allows you to set up, increment and typeset named counters.
 It provides the following commands:
 
 \begin{itemize}
-\item{\autodoc:command{\set-counter[id=<counter-name>, value=<value>]} — sets the counter with the specified name to the given value.}
-\item{\autodoc:command{\increment-counter[id=<counter-name>]} — does the same as \autodoc:command{\set-counter} except that when no \autodoc:parameter{value} parameter is given, the counter is incremented by one.}
-\item{\autodoc:command{\show-counter[id=<counter-name>]} — this typesets the value of the counter according to the counter’s declared display type.}
+\item{\autodoc:command{\set-counter[id=<counter-name>, value=<value>]} — sets the counter with the specified name to the given value. The command takes an optional \autodoc:parameter{display=<display-type>} parameter to set the display type of the counter (see below).}
+\item{\autodoc:command{\increment-counter[id=<counter-name>]} — increments the counter by one. The command creates the counter if it does not exist and also accepts setting the display type.}
+\item{\autodoc:command{\show-counter[id=<counter-name>]} — typesets the value of the counter according to the counter’s declared display type.}
 \end{itemize}
 
-All of the commands in the counters package take an optional \autodoc:parameter{display=<display-type>} parameter to set the \em{display type} of the counter.
 
 The available built-in display types are:
 
@@ -155,8 +233,8 @@ So, for example, the following SILE code:
 \\set-counter[id=mycounter, value=2]
 \\show-counter[id=mycounter]
 
-\\increment-counter[id=mycounter]
-\\show-counter[id=mycounter, display=roman]
+\\increment-counter[id=mycounter, display=roman]
+\\show-counter[id=mycounter]
 \line
 \end{verbatim}
 
@@ -167,6 +245,27 @@ produces:
 
 \noindent{}iii}
 \line
+
+The package also provides multi-level (hierarchical) counters, of the kind used in sectioning
+commands:
+
+\begin{itemize}
+\item{\autodoc:command{\set-multilevel-counter[id=<counter-name>, level=<level>, value=<value>]}
+— sets the multi-level counter with the specified name to the given value at the given level.
+The command also takes an optional \autodoc:parameter{display=<display-type>}, also acting at the given level.}
+\item{\autodoc:command{\increment-multilevel-counter[id=<counter-name>]}
+— increments the counter by one at its current (deepest) level.
+The command creates the counter if it does not exist.
+If given the \autodoc:parameter{level=<level>} parameter, the command increments that level,
+clearing any lower level (and filling previous levels with zeros, if they weren’t proprely set).
+It also accepts setting the display type at the target level.}
+\item{\autodoc:command{\show-multilevel-counter[id=<counter-name>]}
+— typesets the value of the multi-level counter according to the counter’s declared display types
+at each level. By default, all levels are output; option \autodoc:parameter{level=<level>} may be
+used to display the counter up to a given level. Option \autodoc:parameter{noleadingzeros=true}
+skips any leading zero (which may happen if a counter is at some level, without previous levels
+having been set).}
+\end{itemize}
 \end{document}
 ]]
 
