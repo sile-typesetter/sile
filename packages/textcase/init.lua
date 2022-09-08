@@ -1,7 +1,7 @@
 local base = require("packages.base")
 
 local package = pl.class(base)
-package._name = "tetxcase"
+package._name = "textcase"
 
 local icu = require("justenoughicu")
 
