@@ -152,7 +152,7 @@ SILE.use = function (module, options)
     if class then
       SU.error("Cannot load a class after one is already instantiated")
     end
-    SILE.sratch.class_from_uses = pack
+    SILE.scratch.class_from_uses = pack
   elseif pack.type == "inputter" then
     SILE.inputters[name] = pack
     SILE.inputter = pack(options)
