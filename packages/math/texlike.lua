@@ -178,10 +178,19 @@ local function registerCommand (name, argTypes, fun)
   commands[name] = {argTypes, fun}
 end
 
+-- Computes fun(fun(... fun(init, k1, v1), k2, v2)..., k_n, v_n), i.e. applies
+-- fun on every key-value pair in the table. Keys with numeric indices are
+-- processed in order. This is an important property for MathML compilation
+-- below.
 local function fold_pairs (fun, init, table)
   local acc = init
   for k,x in pairs(table) do
-    acc = fun(acc, k, x)
+    if type(k) ~= "number" then
+      acc = fun(acc, k, x)
+    end
+  end
+  for i,x in ipairs(table) do
+    acc = fun(acc, i, x)
   end
   return acc
 end
