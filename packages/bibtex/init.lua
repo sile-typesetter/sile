@@ -14,6 +14,7 @@ local balanced = lpeg.C{ "{" * lpeg.P(" ")^0 * lpeg.C(((1 - lpeg.S"{}") + lpeg.V
 local doubleq = lpeg.C( lpeg.P '"' * lpeg.C(((1 - lpeg.S '"\r\n\f\\') + (lpeg.P '\\' * 1)) ^ 0) * '"' )
 
 -- luacheck: push ignore
+---@diagnostic disable: undefined-global, unused-local, lowercase-global
 local bibtexparser = epnf.define(function (_ENV)
   local _ = WS^0
   local sep = lpeg.S(",;") * _
@@ -35,6 +36,7 @@ local bibtexparser = epnf.define(function (_ENV)
   entry = Ct( P("@") * Cg(myTag, "type") * _ * P("{") * _ * Cg(myID, "label") * _ * sep * list * P("}") * _ )
 end)
 -- luacheck: pop
+---@diagnostic enable: undefined-global, unused-local, lowercase-global
 
 local parseBibtex = function (fn)
   fn = SILE.resolveFile(fn)

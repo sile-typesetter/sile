@@ -10,6 +10,7 @@ local symbols = syms.symbols
 
 -- Grammar to parse TeX-like math
 -- luacheck: push ignore
+---@diagnostic disable: undefined-global, unused-local, lowercase-global
 local mathGrammar = function (_ENV)
   local _ = WS^0
   local eol = S"\r\n"
@@ -109,6 +110,7 @@ local mathGrammar = function (_ENV)
   argument = P"#" * Cg(pos_natural, "index")
 end
 -- luacheck: pop
+---@diagnostic enable: undefined-global, unused-local, lowercase-global
 
 local mathParser = epnf.define(mathGrammar)
 
