@@ -41,7 +41,7 @@ local outputRotatedHbox = function (self, typesetter, line)
   typesetter.frame.state.cursorX = typesetter.frame.state.cursorX - (origbox.width.length-self.width)/2
 
   local horigin = (typesetter.frame.state.cursorX + origbox.width.length / 2):tonumber()
-  local vorigin = -(typesetter.frame.state.cursorY + origbox.height / 2):tonumber()
+  local vorigin = -(typesetter.frame.state.cursorY - (origbox.height - origbox.depth) / 2):tonumber()
   pdf:gsave()
   pdf.setmatrix(1, 0, 0, 1, horigin, vorigin)
   pdf.setmatrix(math.cos(x), math.sin(x), -math.sin(x), math.cos(x), 0, 0)
@@ -93,6 +93,7 @@ function package:registerCommands ()
     end
     depth = -depth
     if depth < SILE.length(0) then depth = SILE.length(0) end
+    SILE.outputter:_ensureInit()
     SILE.typesetter:pushHbox({
       value = { orig = origbox, theta = theta},
       height = height,
