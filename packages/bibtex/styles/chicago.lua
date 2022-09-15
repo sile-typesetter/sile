@@ -4,6 +4,7 @@ local ChicagoStyles = pl.tablex.merge(Bibliography.Style, {
   CitationStyle = Bibliography.CitationStyles.AuthorYear,
 
   -- luacheck: push ignore
+  ---@diagnostic disable: undefined-global, unused-local
   Article = function(_ENV)
     -- Chicago Citation Style 17th Edition
     --   https://guides.rdpolytech.ca/chicago/citation/article
@@ -57,8 +58,9 @@ local ChicagoStyles = pl.tablex.merge(Bibliography.Style, {
       optional(bibtype, ". "), -- "type" from BibTeX entry
       optional(address, ": "), optional(pub, ", "), optional(year, ".")
   end,
-  -- luacheck: pop
 }, true)
+-- luacheck: pop
+---@diagnostic enable: undefined-global, unused-local
 
 return pl.tablex.merge(ChicagoStyles, {
   -- Add fallback mappings for usual BibTeX keys not defined above.

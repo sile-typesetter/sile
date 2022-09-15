@@ -6,11 +6,13 @@ local nostd = function ()
   rock as well since it no longer ships as a dependency.]])
 end
 -- luacheck: push ignore std
+---@diagnostic disable: lowercase-global
 std = setmetatable({}, {
   __call = nostd,
   __index = nostd
 })
 -- luacheck: pop
+---@diagnostic enable: lowercase-global
 
 local fluent_once = false
 local fluentglobal = function ()
