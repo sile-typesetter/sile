@@ -309,7 +309,7 @@ Turning \code{dockbook.xml} into \code{docbook.pdf} is now as simple as:
 
 \begin{verbatim}
 \line
-$ ./sile --class docbook docbook.xml
+$ sile --class docbook docbook.xml
 \sileversion
 Loading docbook
 <classes/docbook.sil><docbook.xml>[1] [2] [3]
