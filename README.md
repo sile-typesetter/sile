@@ -176,7 +176,7 @@ If you try to `brew link` and you get a series of messages including something l
     For pkg-config to find icu4c you may need to set:
       export PKG_CONFIG_PATH="/usr/local/opt/icu4c/lib/pkgconfig"
 
-Optionally you may install the Lua libraries listed in the [rockspec][] to your system (using either your system's package manager or [luarocks][] (`luarocks install --deps-only sile-dev-1.rockspec`).
+Optionally you may install the Lua libraries listed in the [rockspec][] to your system (using either your system's package manager or [luarocks][] (`luarocks install --only-deps sile-dev-1.rockspec`).
 By default all the required Lua libraries will be downloaded and bundled alongside the SILE the instalation.
 If you downloaded a source tarball these dependencies are included, if you are using a git clone of the source repository the build system will require `luarocks` to fetch them during build.
 Note that OpenSSL development headers will be required for one of the Lua modules to compile¹.
