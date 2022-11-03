@@ -137,6 +137,7 @@ function class:registerCommands ()
   end)
 
   self:registerCommand("chapter", function (options, content)
+    SILE.typesetter:leaveHmode()
     SILE.call("open-spread", { double = false })
     SILE.call("noindent")
     SILE.scratch.headers.right = nil

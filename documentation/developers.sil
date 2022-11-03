@@ -47,5 +47,4 @@ After coversion to a tree the inputter \code{:process()} method to walk though i
 \code{SILE.process}
 
 \code{SILE.typesetter}
-
 \end{document}

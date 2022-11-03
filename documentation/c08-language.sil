@@ -233,5 +233,4 @@ with hyphenation in mind, you may need to tweak some settings to ensure that
 Uyghur is typeset correctly. As well as choosing the \code{hyphenchar} (see
 the hyphenation section above), the setting \autodoc:setting[check=false]{languages.ug.hyphenoffset}
 inserts a space between the text and the hyphen.
-
 \end{document}

@@ -396,5 +396,4 @@ In other words, after:
 
 \noindent{}any class which loads \code{tableofcontents} can call \code{self:writeToc()} and \code{self:moveTocNodes()} (note that we renamed this function when exporting it).
 It is the class’s responsibility for calling these methods at the appropriate point into the output routine.
-
 \end{document}

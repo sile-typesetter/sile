@@ -255,5 +255,4 @@ It’s worth noting that packages are not limited to just the package interface.
 They can include classes, languages, i18n resources, or anything else provided by SILE.
 Also because external locations are searched before SILE itself, they can even override any core part of SILE itself.
 As such you should probably make sure you review what a package does before installing it!
-
 \end{document}
