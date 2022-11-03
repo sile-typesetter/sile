@@ -19,8 +19,8 @@ SILE.registerCommand("font", function (options, content)
   if options.variant then SILE.settings:set("font.variant", options.variant) end
   if options.features then SILE.settings:set("font.features", options.features) end
   if options.direction then SILE.settings:set("font.direction", options.direction) end
-  if (options.language) then
-    if icu and icu.canonicalize_language then
+  if options.language then
+    if options.language ~= "und" and icu and icu.canonicalize_language then
       local newlang = icu.canonicalize_language(options.language)
       -- if newlang ~= options.language then
         -- SU.warn("Language '"..options.language.."' not canonical, '"..newlang.."' will be used instead.")
