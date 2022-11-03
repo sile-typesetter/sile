@@ -85,13 +85,16 @@ get a line break wherever is most appropriate. In the context of this document,
 you’ll get:
 
 \line
-\nohyphenation{\examplefont{Lorem ipsum dolor sit amet, consectetur adipisicing
-elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
-laborum.}}
+\begin[language=la]{font}
+\begin{examplefont}
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+culpa qui officia deserunt mollit anim id est laborum.
+\end{examplefont}
+\end{font}
 \line
 
 In other words, a line break is converted to a space.
@@ -130,8 +133,7 @@ produces ‘\\’, \code{\\\{} produces ‘\{’, \code{\\\}} produces ‘\}’,
 The third clever thing is SILE will automatically hyphenate text at the end of
 a line if it feels this will make the paragraph shape look better. Text is
 hyphenated according to the current language options in place. By default, text
-is assumed to be in English unless SILE is told otherwise. In the Latin text
-above, we turned hyphenation off.
+is assumed to be in English unless SILE is told otherwise.
 
 The final clever thing is that, where fonts declare ligatures (where two or
 more letters are merged into one in order to make them visually more
