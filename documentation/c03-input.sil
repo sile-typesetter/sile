@@ -25,8 +25,8 @@ To manually change the paper size, an optional argument may be added to the docu
 \line
 \end{verbatim}
 
-SILE knows about the ISO standard A, B and C series paper sizes using names like a4 and b5.
-Here is a list of presets for traditional sizes:
+SILE knows about the ISO standard A, B and C series paper sizes using names like a4 and b5 as well as many other traditional sizes.
+Here is a full list of papersize preset names:
 a0, a1, a10, a2, a3, a4, a5, a6, a7, a8, a9, ansia, ansib, ansic, ansid, ansie, archa, archb, archc, archd, arche, arche1, arche2, arche3, b0, b1, b10, b2, b3, b4, b5, b6, b7, b8, b9, c2, c3, c4, c5, c6, c7, c8, comm10, csheet, dl, dsheet, esheet, executive, flsa, flse, folio, halfexecutive, halfletter, ledger, legal, letter, monarch, note, quarto, statement, and tabloid.
 
 If you need a paper size for your document which is not one of the standards,
