@@ -1,0 +1,13 @@
+\begin[class=plain,papersize=a7]{document}
+\neverindent
+\nofolios
+\use[module=packages.masters]
+\use[module=packages.lorem]
+\define-master-template[id=mymaster,first-content-frame=myframe]{
+	\frame[id=myframe,left=5%pw,right=85%pw,top=5%pw,bottom=100%ph-5%pw]
+}
+\switch-master[id=mymaster]
+\hbox{}
+\skip[height=90%fh]
+\lorem[words=20]
+\end{document}
