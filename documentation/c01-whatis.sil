@@ -1,5 +1,9 @@
 \begin{document}
 \chapter{What is SILE?}
+% Our chapters open on double page spreads. We want
+% chapter 1 to lead as "page 1" and we can't run this
+% earlier without messing up folios in the TOC.
+\set-counter[id=folio,value=1,display=arabic]
 
 SILE is a typesetting system. Its job is to produce beautiful printed
 documents from raw content. The best way to understand what SILE is and what it
