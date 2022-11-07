@@ -11,11 +11,6 @@ AM_CONDITIONAL([IS_SDIST], [test ! -e .gitignore])
 AC_PROG_CC
 AC_PROG_OBJC
 
-AC_DEFUN([AX_PROGVAR], [
-          test -n "$m4_toupper($1)" || { AC_PATH_PROG(m4_toupper($1), m4_default($2,$1)) }
-          test -n "$m4_toupper($1)" || AC_MSG_ERROR([m4_default($2,$1) is required])
-         ])
-
 AC_PROG_AWK
 AC_PROG_GREP
 AC_PROG_SED
@@ -25,16 +20,6 @@ AX_PROGVAR([git])
 
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
-
-DATEFMT='%d %B %Y'
-AM_COND_IF([IS_SDIST],
-           [
-            AX_PROGVAR([date])
-            AX_BUILD_DATE_EPOCH(MAN_DATE, "$DATEFMT")
-           ], [
-            MAN_DATE=$($GIT log -1 --format="%cd" --date=format:"$DATEFMT" -- sile.1.in)
-           ])
-AC_SUBST([MAN_DATE])
 
 AC_ARG_ENABLE([dependency-checks],
               AS_HELP_STRING([--disable-dependency-checks], [Disable dependency checks]))
@@ -194,9 +179,7 @@ AC_SUBST([HARFBUZZ_CFLAGS])
 AC_SUBST([HARFBUZZ_LIBS])
 AC_SUBST([shared_ext])
 
-sed_program_transform_name="$(printf "$program_transform_name" | $SED -e 's,$$,$,g')"
-TRANSFORMED_PACKAGE_NAME="$(printf "$PACKAGE_NAME" | $SED -e "$sed_program_transform_name")"
-AC_SUBST([TRANSFORMED_PACKAGE_NAME])
+AX_SUBST_TRANSFORMED_PACKAGE_NAME
 
 adl_RECURSIVE_EVAL(["${datadir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_PATH])
 AC_DEFINE_UNQUOTED([SILE_PATH],["${SILE_PATH}"],[Path for SILE packages and classes])
@@ -206,6 +189,7 @@ adl_RECURSIVE_EVAL(["${libdir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_LIB_PATH])
 AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"],[Path for SILE libraries])
 AC_SUBST([SILE_LIB_PATH])
 
+AX_SUBST_MAN_DATE
 
 AC_CONFIG_FILES([Makefile src/Makefile sile.1 core/version.lua])
 AC_CONFIG_FILES([sile], [chmod +x sile])
