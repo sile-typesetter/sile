@@ -80,6 +80,12 @@ See the note about LuaJIT in the section \em{Installing From Source} for applica
 A VCS package is also available as \code{sile-git} to build from the latest Git commit.
 These may be built and installed like any other AUR\footnote{\url{https://wiki.archlinux.org/title/Arch_User_Repository}} package.
 
+\subsection{OpenSUSE}
+
+OpenSUSE has official packages ready to install the usual way:
+
+\terminal{$ zypper install sile}
+
 \subsection{Ubuntu}
 
 A PPA\footnote{\url{https://launchpad.net/~sile-typesetter/+archive/ubuntu/sile}} is available for Ubuntu users with packages of SILE and all the necessary dependencies.

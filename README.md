@@ -69,6 +69,14 @@ The official package uses Lua 5.4.
 Alternatively, a package that uses LuaJIT may be built manually from the [Arch User Repository][aur] using [sile-luajit][aur-sile-luajit].
 A VCS package is also available as [sile-git][aur-sile-git] to build from the latest Git commit.
 
+#### OpenSUSE
+
+OpenSUSE has official packages ready to install the usual way:
+
+```console
+$ zypper install sile
+```
+
 #### NixOS
 
 A [Nix `sile` package][nix] is available in both the stable and unstable channels; the unstable channel having the latest stable SILE releases and the stable channel being frozen on NixOS releases.
