@@ -455,8 +455,7 @@ Running SILE with the \code{--debug \em{facility}} switch will turn on debugging
 \item{\code{frames} draws red boxes around the frames on the page.}
 \item{\code{hboxes} draws red boxes around all the hboxes on the page.}
 \item{\code{pagebuilder} helps to debug problems when determining page breaks.}
-\item{\code{macros} notes when new functions are defined from TeXlike macro
-      syntax.}
+\item{\code{macros} notes when new functions are defined as macros from declarative markup.}
 \item{\code{makedeps} lists resources that were determined to be dependencies
       (use with \code{-m}).}
 \item{\code{profile} turns on Lua profiling, which gives a report on where the
