@@ -389,8 +389,10 @@ function SILE.setCommandDefaults (command, defaults)
 end
 
 function SILE.registerUnit (unit, spec)
-  -- SU.deprecated("SILE.registerUnit", "SILE.units", "0.10.0", nil, [[
-  -- Add new units via metamethod SILE.units["unit"] = (spec)]])
+  -- If a unit exists already, clear it first so we get fresh meta table entries, see #1607
+  if SILE.units[unit] then
+    SILE.units[unit] = nil
+  end
   SILE.units[unit] = spec
 end
 
