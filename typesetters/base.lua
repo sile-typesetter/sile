@@ -251,7 +251,7 @@ function SILE.defaultTypesetter:typeset (text)
   if text:match("^%\r?\n$") then return end
   local pId = SILE.traceStack:pushText(text)
   for token in SU.gtoke(text, SILE.settings:get("typesetter.parseppattern")) do
-    if (token.separator) then
+    if token.separator then
       self:endline()
     else
       self:setpar(token.string)
