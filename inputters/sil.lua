@@ -170,17 +170,20 @@ local function massage_ast (tree, doc)
   end
   if tree.id == "document"
       or tree.id == "texlike_braced_stuff"
+      or tree.id == "passthrough_stuff"
       or tree.id == "passthrough_braced_stuff"
-    then return massage_ast(tree[1], doc) end
+      or tree.id == "passthrough_env_stuff"
+    then
+      return massage_ast(tree[1], doc)
+  end
   if tree.id == "texlike_text"
-      or tree.id == "passthrough_text"
-      or tree.id == "passthrough_env_text"
-    then return tree[1] end
+    or tree.id == "passthrough_text"
+    or tree.id == "passthrough_env_text"
+    then
+      return tree[1]
+  end
   for key, val in ipairs(tree) do
-    if val.id == "texlike_stuff"
-      or val.id == "passthrough_stuff"
-      or val.id == "passthrough_env_stuff"
-      then
+    if val.id == "texlike_stuff" then
       SU.splice(tree, key, key, massage_ast(val, doc))
     else
       tree[key] = massage_ast(val, doc)
