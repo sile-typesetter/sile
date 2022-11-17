@@ -36,7 +36,7 @@ Other available backends include \fIcairo\fR, \fIdebug\fR, \fItext\fR, and \fIdu
 Set the document class.
 The default for documents that do not specify is \fIplain\fR.
 Can be used to either change the default class or to override the class specified in a document.
-Other default classes include \fIbase\fR, \fIbible\fR, \fIbook\fR, \fIdiglot\fR, \fIdocbook\fR, \fIdocbook.sil \fIjbook\fR, \fIjplain\fR, \fIletter\fR, \fImarkdown\fR, \fIpecha\fR, \fItbook\fR, \fItplain\fR, and \fItriglot\fR.
+Other default classes include \fIbase\fR, \fIbible\fR, \fIbook\fR, \fIdiglot\fR, \fIdocbook\fR, \fIdocbook.sil \fIjbook\fR, \fIjplain\fR, \fIletter\fR, \fIpecha\fR, \fItbook\fR, \fItplain\fR, and \fItriglot\fR.
 .TP
 .BR \-d ", " \-\-debug= \fIvalue\fR[,\fIvalue\fR]
 Debug SILE's operation.
