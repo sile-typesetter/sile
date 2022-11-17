@@ -5,8 +5,8 @@ class._name = "book"
 
 class.defaultFrameset = {
   content = {
-    left = "8.3%pw",
-    right = "86%pw",
+    left = "14%pw",
+    right = "91.7%pw",
     top = "11.6%ph",
     bottom = "top(footnotes)"
   },
