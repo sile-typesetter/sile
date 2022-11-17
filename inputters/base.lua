@@ -33,12 +33,22 @@ end
 
 function inputter:requireClass (tree)
   local root = SILE.documentState.documentClass == nil
+  local document
   if root then
-    if #tree ~= 1
-      or (tree[1].command ~= "sile" and tree[1].command ~= "document") then
+    for _, leaf in ipairs(tree) do
+      if leaf.lno then
+        if document then
+          SU.error("Document has more than one parent node!")
+        end
+        if leaf.command == "sile" or leaf.command == "document" then
+          document = leaf
+        end
+      end
+    end
+    if not document then
       SU.error("This isn't a SILE document!")
     end
-    self:classInit(tree[1].options or {})
+    self:classInit(document.options or {})
     self:preamble()
   end
 end

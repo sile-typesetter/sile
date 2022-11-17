@@ -10,6 +10,7 @@ local symbols = syms.symbols
 
 -- Grammar to parse TeX-like math
 -- luacheck: push ignore
+---@diagnostic disable: undefined-global, unused-local, lowercase-global
 local mathGrammar = function (_ENV)
   local _ = WS^0
   local eol = S"\r\n"
@@ -109,6 +110,7 @@ local mathGrammar = function (_ENV)
   argument = P"#" * Cg(pos_natural, "index")
 end
 -- luacheck: pop
+---@diagnostic enable: undefined-global, unused-local, lowercase-global
 
 local mathParser = epnf.define(mathGrammar)
 
@@ -124,10 +126,10 @@ local objType = {
   str = 2
 }
 
-local function inferArgTypes_aux (acc, typeRequired, body)
+local function inferArgTypes_aux (accumulator, typeRequired, body)
   if type(body) == "table" then
     if body.id == "argument" then
-      local ret = acc
+      local ret = accumulator
       table.insert(ret, body.index, typeRequired)
       return ret
     elseif body.id == "command" then
@@ -139,33 +141,33 @@ local function inferArgTypes_aux (acc, typeRequired, body)
             #cmdArgTypes .. ")")
         else
           for i = 1, #cmdArgTypes do
-            acc = inferArgTypes_aux(acc, cmdArgTypes[i], body[i])
+            accumulator = inferArgTypes_aux(accumulator, cmdArgTypes[i], body[i])
           end
         end
-        return acc
+        return accumulator
       elseif body.command == "mi" or body.command == "mo" or body.command == "mn" then
         if #body ~= 1 then
           SU.error("Wrong number of arguments ("..#body..") for command "..
             body.command.." (should be 1)")
         end
-        acc = inferArgTypes_aux(acc, objType.str, body[1])
-        return acc
+        accumulator = inferArgTypes_aux(accumulator, objType.str, body[1])
+        return accumulator
       else
         -- Not a macro, recurse on children assuming tree type for all
         -- arguments
         for _, child in ipairs(body) do
-          acc = inferArgTypes_aux(acc, objType.tree, child)
+          accumulator = inferArgTypes_aux(accumulator, objType.tree, child)
         end
-        return acc
+        return accumulator
       end
     elseif body.id == "atom" then
-      return acc
+      return accumulator
     else
       -- Simply recurse on children
       for _, child in ipairs(body) do
-        acc = inferArgTypes_aux(acc, typeRequired, child)
+        accumulator = inferArgTypes_aux(accumulator, typeRequired, child)
       end
-      return acc
+      return accumulator
     end
   else SU.error("invalid argument to inferArgTypes_aux") end
 end
@@ -174,16 +176,22 @@ local inferArgTypes = function (body)
   return inferArgTypes_aux({}, objType.tree, body)
 end
 
-local function registerCommand (name, argTypes, fun)
-  commands[name] = {argTypes, fun}
+local function registerCommand (name, argTypes, func)
+  commands[name] = { argTypes, func }
 end
 
-local function fold_pairs (fun, init, table)
-  local acc = init
-  for k,x in pairs(table) do
-    acc = fun(acc, k, x)
+-- Computes func(func(... func(init, k1, v1), k2, v2)..., k_n, v_n), i.e. applies
+-- func on every key-value pair in the table. Keys with numeric indices are
+-- processed in order. This is an important property for MathML compilation below.
+local function fold_pairs (func, table)
+  local accumulator = {}
+  for k, v in pl.utils.kpairs(table) do
+    accumulator = func(v, k, accumulator)
   end
-  return acc
+  for i, v in ipairs(table) do
+    accumulator = func(v, i, accumulator)
+  end
+  return accumulator
 end
 
 local function forall (pred, list)
@@ -218,17 +226,17 @@ end
 
 local function compileToMathML_aux (_, arg_env, tree)
   if type(tree) == "string" then return tree end
-  tree = fold_pairs(function (acc, key, child)
+  local function compile_and_insert (child, key, accumulator)
     if type(key) ~= "number" then
-      acc[key] = child
-      return acc
+      accumulator[key] = child
+      return accumulator
     -- Compile all children, except if this node is a macro definition (no
     -- evaluation "under lambda") or the application of a registered macro
     -- (since evaluating the nodes depends on the macro's signature, it is more
     -- complex and done below)..
     elseif tree.id == "def" or (tree.id == "command" and commands[tree.command]) then
       -- Conserve unevaluated child
-      table.insert(acc, child)
+      table.insert(accumulator, child)
     else
       -- Compile next child
       local comp = compileToMathML_aux(nil, arg_env, child)
@@ -236,15 +244,16 @@ local function compileToMathML_aux (_, arg_env, tree)
         if comp.id == "wrapper" then
           -- Insert all children of the wrapper node
           for _, inner_child in ipairs(comp) do
-            table.insert(acc, inner_child)
+            table.insert(accumulator, inner_child)
           end
         else
-          table.insert(acc, comp)
+          table.insert(accumulator, comp)
         end
       end
     end
-    return acc
-  end, {}, tree)
+    return accumulator
+  end
+  tree = fold_pairs(compile_and_insert, tree)
   if tree.id == "texlike_math" then
     tree.command = "math"
     -- If the outermost `mrow` contains only other `mrow`s, remove it

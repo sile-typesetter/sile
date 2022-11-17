@@ -161,7 +161,7 @@ define runsile =
 	export -n SILE_COVERAGE
 	if $(hastoc); then
 		$${hadtoc} || $(silepass)
-		[ "$${pg}" == "$${pg0}" ] || $(silepass)
+		[ "$${pg}" = "$${pg0}" ] || $(silepass)
 	fi
 endef
 

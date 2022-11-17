@@ -1,1 +1,1 @@
-SILE.hyphenator.languages["und"] = {patterns = {}, exceptions = {}}
+SILE.hyphenator.languages.und = { patterns = {}, exceptions = {} }

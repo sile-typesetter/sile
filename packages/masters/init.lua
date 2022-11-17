@@ -61,7 +61,7 @@ local function switchMaster (class, id)
     SU.error("Can't find master "..id)
   end
   class.pageTemplate = SILE.scratch.masters[id]
-  SILE.documentState.thisPageTemplate = pl.tablex.deepcopy(class.pageTemplate)
+  SILE.documentState.thisPageTemplate = class.pageTemplate
   doswitch(SILE.scratch.masters[id].frames)
   SILE.typesetter:initFrame(SILE.scratch.masters[id].firstContentFrame)
 end

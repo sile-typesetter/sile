@@ -24,7 +24,9 @@ task:
     fingerprint_script: cat sile-dev-1.rockspec
   dependencies_script:
     - pkg install -y autoconf automake fontconfig gentium-plus git gmake harfbuzz libtool pkgconf png
-    - pkg install -y lua54 lua54-lpeg lua54-luaexpat lua54-luafilesystem lua54-luarocks lua54-luasec lua54-luasocket
+    - pkg install -y lua54 lua54-lpeg lua54-luafilesystem lua54-luarocks lua54-luasec lua54-luasocket
+      # lua54-luaexpat exists but seems boken on 13.0, system doesn't have expat 2.4+ so 1.5.x isn't an option either
+    - luarocks54 install luaexpat 1.4.1
     - luarocks54 install cassowary
     - luarocks54 install cldr
     - luarocks54 install compat53

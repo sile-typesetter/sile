@@ -44,6 +44,7 @@ function inputter:_init ()
 end
 
 -- luacheck: push ignore
+---@diagnostic disable: undefined-global, unused-local, lowercase-global
 function inputter._grammar (_ENV)
   local isPassthrough = function (_, _, command)
     return inputter.passthroughCommands[command] or false
@@ -122,6 +123,7 @@ function inputter._grammar (_ENV)
     )
 end
 -- luacheck: pop
+---@diagnostic enable: undefined-global, unused-local, lowercase-global
 
 local linecache = {}
 local lno, col, lastpos

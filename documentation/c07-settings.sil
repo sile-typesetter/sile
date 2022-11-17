@@ -338,7 +338,7 @@ engine in use. To get a list of the subshapers enabled in your build of
 Harfbuzz, run \code{sile --debug=versions} on any file:
 
 \begin{verbatim}
-\% $ ./sile --debug=versions hello.sil
+\% $ sile --debug=versions hello.sil
 ...
 Harfbuzz version: 2.4.0
 Shapers enabled: graphite2, ot, coretext, coretext_aat, fallback

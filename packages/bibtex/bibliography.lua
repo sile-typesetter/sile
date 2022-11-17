@@ -268,10 +268,12 @@ local Bibliography
 Bibliography = {
   CitationStyles = {
     -- luacheck: push ignore
+    ---@diagnostic disable: undefined-global, unused-local
     AuthorYear = function(_ENV)
       return andSurnames(3), " ", year, optional(", ", cite.page)
     end
     -- luacheck: pop
+    ---@diagnostic enable: undefined-global, unused-local
   },
 
   produceCitation = function (cite, bib, style)

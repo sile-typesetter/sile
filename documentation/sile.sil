@@ -36,10 +36,11 @@ Didier Willis\break
 \set[parameter=lists.parskip,value=2pt plus 1pt]
 
 \open-spread[double=false]
+\folios
+\set-counter[id=folio,value=1,display=roman]
 \tableofcontents
 
-% The chapter opens a double page spread, we want the right master to be "page 1"
-\set-counter[id=folio,value=-1]
+% Note we switch folios back to arabic numbering, but we can't do it until after the chapter 1 heading is output so it is in that file now.
 
 % Users' guide
 \include[src=documentation/c01-whatis.sil]
@@ -56,5 +57,4 @@ Didier Willis\break
 \include[src=documentation/c10-classdesign.sil]
 \include[src=documentation/c11-xmlproc.sil]
 \include[src=documentation/c12-tricks.sil]
-
 \end{document}

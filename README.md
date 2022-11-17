@@ -69,6 +69,14 @@ The official package uses Lua 5.4.
 Alternatively, a package that uses LuaJIT may be built manually from the [Arch User Repository][aur] using [sile-luajit][aur-sile-luajit].
 A VCS package is also available as [sile-git][aur-sile-git] to build from the latest Git commit.
 
+#### OpenSUSE
+
+OpenSUSE has official packages ready to install the usual way:
+
+```console
+$ zypper install sile
+```
+
 #### NixOS
 
 A [Nix `sile` package][nix] is available in both the stable and unstable channels; the unstable channel having the latest stable SILE releases and the stable channel being frozen on NixOS releases.
@@ -176,7 +184,7 @@ If you try to `brew link` and you get a series of messages including something l
     For pkg-config to find icu4c you may need to set:
       export PKG_CONFIG_PATH="/usr/local/opt/icu4c/lib/pkgconfig"
 
-Optionally you may install the Lua libraries listed in the [rockspec][] to your system (using either your system's package manager or [luarocks][] (`luarocks install --deps-only sile-dev-1.rockspec`).
+Optionally you may install the Lua libraries listed in the [rockspec][] to your system (using either your system's package manager or [luarocks][] (`luarocks install --only-deps sile-dev-1.rockspec`).
 By default all the required Lua libraries will be downloaded and bundled alongside the SILE the instalation.
 If you downloaded a source tarball these dependencies are included, if you are using a git clone of the source repository the build system will require `luarocks` to fetch them during build.
 Note that OpenSSL development headers will be required for one of the Lua modules to compile¹.
