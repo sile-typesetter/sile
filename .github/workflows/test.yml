@@ -65,7 +65,7 @@ jobs:
         run: |
           ./bootstrap.sh
           ./configure \
-            --enable-developer \
+            --enable-developer LUACHECK=false \
             --without-system-luarocks \
             --with${{ startsWith(matrix.luaVersion[0], '5') && 'out' || '' }}-luajit \
             --without-manual
