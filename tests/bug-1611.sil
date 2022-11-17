@@ -1,0 +1,5 @@
+\begin[papersize=a6,class=plain]{document}
+\nofolios
+\neverindent
+\lua{SILE.typesetter:typeset("foo")}
+\end{document}
