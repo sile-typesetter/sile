@@ -41,7 +41,6 @@ subfiles.mk
 # Build artifacts
 confdefs.h
 config.log
-core/*.so
 build/
 *.debug
 gh-pages
@@ -68,6 +67,7 @@ yarn.lock
 
 # Editor entrails
 .vscode/
+*~
 tags
 
 # Generated resources
@@ -82,6 +82,8 @@ sile.1
 /.version-prev
 /.tarball-version
 /.built-subdirs
+*.so
+core/version.lua
 
 # Nix symlink to builds
 /result

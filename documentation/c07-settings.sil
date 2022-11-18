@@ -16,7 +16,7 @@ the setting which changes how the typesetter penalizes orphan (end-of-paragraph)
 lines.
 
 The interface to changing settings from within a SILE document is the
-\code{\\set} commmand. It takes several options, the most basic one being
+\code{\\set} command. It takes several options, the most basic one being
 \em{parameter}, which expresses which setting is being changed. The \em{value}
 option expresses the value to which the setting is being changed. As an
 example:
@@ -69,12 +69,12 @@ SILE.call("set", { parameter = "typesetter.orphanpenalty", value = 250 })
 
 There is nothing wrong with this and it allows you to optionally pass content
 that is wrapped in those settings. However there is also a slightly lower level
-function that is more ideomatic of Lua code than SILE that uses positional
+function that is more idiomatic of Lua code than SILE that uses positional
 arguments instead of named options:
 
 \begin{verbatim}
 \line
-SILE.settings.set("typesetter.orphanpenalty", 250)
+SILE.settings:set("typesetter.orphanpenalty", 250)
 \line
 \end{verbatim}
 
@@ -169,12 +169,13 @@ As we mentioned in the section on grid typesetting, the rules for spacing betwee
 \em{lines} within a paragraph is determined by two
 rules. Let’s reiterate those rules now in terms of settings:
 
-\noindent• SILE tries to insert space between two successive lines to make their
-baselines exactly \autodoc:setting{document.baselineskip} apart.
-
-\noindent• If this first rule would mean that the bottom and the top of the lines are less
-than \autodoc:setting{document.lineskip} apart, then they are forced to be
-\autodoc:setting{document.lineskip} apart.
+\begin{itemize}
+\item{SILE tries to insert space between two successive lines to make their
+      baselines exactly \autodoc:setting{document.baselineskip} apart.}
+\item{If this first rule would mean that the bottom and the top of the lines are
+      less than \autodoc:setting{document.lineskip} apart, then they are forced
+      to be \autodoc:setting{document.lineskip} apart.}
+\end{itemize}
 
 \note{This linebreaking method is fiddly, and book designers may prefer to
 work with the tools provided by the \code{linespacing} package.}
@@ -288,32 +289,41 @@ been adapted as appropriate. Here is a quick run-down of the settings
 applicable to the line-breaking algorithm. You are expected to know what you
 are doing with these.
 
-\noindent• \autodoc:setting{linebreak.tolerance}: How bad a breakpoint is before it is rejected
-by the algorithm. (Default: 500)
-
-\noindent• \autodoc:setting{linebreak.parShape}: Whether to utilize a callback to \code{SILE.linebreak:parShape()} to get a customized shape for each line in a paragraph. (Default: false)
-
-\noindent• \autodoc:setting{linebreak.pretolerance}: If there are no breakpoints better than
-this, the paragraph is considered for hyphenation. (Default: 100)
-
-\noindent• \autodoc:setting{linebreak.hangIndent}: How far to indent initial line(s) of a paragraph. (Default: 0)
-
-\noindent• \autodoc:setting{linebreak.hangAfter}: An integer count of how many lines should have \autodoc:setting{linebreak.hangIndent} applied. (Default: nil)
-
-\noindent• \autodoc:setting{linebreak.adjdemerits}: Additional demerits which are accumulated in the course of paragraph building when two consecutive lines are visually incompatible. In these cases, one line is built with much space for justification, and the other one with little space. (Default: 10000)
-
-\noindent• \autodoc:setting{linebreak.looseness}: How many lines the current paragraph should
-be made longer than normal. (Default: 0)
-
-\noindent• \autodoc:setting{linebreak.prevGraf}: The number of lines in the paragraph last added to the vertical list.
-
-\noindent• \autodoc:setting{linebreak.emergencyStretch}: Assumed extra stretchability in lines of a paragraph. (Default: 0)
-
-\noindent• \autodoc:setting{linebreak.linePenalty}: Penalty value associated with each line break. (Default: 10)
-
-\noindent• \autodoc:setting{linebreak.hyphenPenalty}: Penalty associated with break at a hyphen. (Default: 50)
-
-\noindent• \autodoc:setting{linebreak.doubleHyphenDemerits}: Penalty for consecutive lines ending with a hyphen. (Default: 10000)
+\begin{itemize}
+\item{\autodoc:setting{linebreak.tolerance}: How bad a breakpoint is before it is
+      rejected by the algorithm.
+      (Default: 500)}
+\item{\autodoc:setting{linebreak.parShape}: Whether to utilize a callback to
+      \code{SILE.linebreak:parShape()} to get a customized shape for each line in a paragraph.
+      (Default: false)}
+\item{\autodoc:setting{linebreak.pretolerance}: If there are no breakpoints better than
+      this, the paragraph is considered for hyphenation.
+      (Default: 100)}
+\item{\autodoc:setting{linebreak.hangIndent}: How far to indent initial line(s) of a paragraph.
+      (Default: 0)}
+\item{\autodoc:setting{linebreak.hangAfter}: An integer count of how many lines should have
+      \autodoc:setting{linebreak.hangIndent} applied.
+      (Default: nil)}
+\item{\autodoc:setting{linebreak.adjdemerits}: Additional demerits which are accumulated in the
+      course of paragraph building when two consecutive lines are visually incompatible. In these
+      cases, one line is built with much space for justification, and the other one with little space.
+      (Default: 10000)}
+\item{\autodoc:setting{linebreak.looseness}: How many lines the current paragraph should
+      be made longer than normal.
+      (Default: 0)}
+\item{\autodoc:setting{linebreak.prevGraf}: The number of lines in the paragraph last added to
+      the vertical list.}
+\item{\autodoc:setting{linebreak.emergencyStretch}: Assumed extra stretchability in lines of a
+      paragraph.
+      (Default: 0)}
+\item{\autodoc:setting{linebreak.linePenalty}: Penalty value associated with each line break.
+      (Default: 10)}
+\item{\autodoc:setting{linebreak.hyphenPenalty}: Penalty associated with break at a hyphen.
+      (Default: 50)}
+\item{\autodoc:setting{linebreak.doubleHyphenDemerits}: Penalty for consecutive lines ending
+      with a hyphen.
+      (Default: 10000)}
+\end{itemize}
 
 \section{Shaper settings}
 
@@ -328,7 +338,7 @@ engine in use. To get a list of the subshapers enabled in your build of
 Harfbuzz, run \code{sile --debug=versions} on any file:
 
 \begin{verbatim}
-\% $ ./sile --debug=versions hello.sil
+\% $ sile --debug=versions hello.sil
 ...
 Harfbuzz version: 2.4.0
 Shapers enabled: graphite2, ot, coretext, coretext_aat, fallback
@@ -356,22 +366,23 @@ Most of the time you will not be fiddling with these settings at the SILE layer,
 because complex layout commands are expected to be implemented in Lua. The
 following SILE functions access the settings system from inside Lua:
 
-\noindent• \code{SILE.settings.set(\em{<parameter>}, \em{value})}: sets a setting.
+\begin{itemize}
+\item{\code{SILE.settings:set(\em{<parameter>}, \em{value})}: sets a setting.
 
 \note{
 You should note that, while in the SILE layer, the \code{\\set} command does its
 best to turn the textual description of a type into the appropriate Lua type
-for the value. \code{SILE.settings.set} does not do that; it expects the value
+for the value. \code{SILE.settings:set} does not do that; it expects the value
 to be of the appropriate type: lengths need to be a \code{SILE.length} object,
-glue must be \code{SILE.nodefactory.glue} and so on.}
+glue must be \code{SILE.nodefactory.glue} and so on.}}
 
-\noindent• \code{SILE.settings.get(\em{<parameter>})}: retrieves the current
-setting of the parameter.
-
-\noindent• \code{SILE.settings.temporarily(\em{function})}: Saves all settings,
-runs the function and then restores all settings afterwards.
-
-\noindent• \code{SILE.settings.declare(\em{<specification>})}: Declares a new
-setting. See the base settings in \code{settings.lua} for examples of how to
-call this. A class or package should namespace its settings with \code{<package>.<setting>}.
+\item{\code{SILE.settings:get(\em{<parameter>})}: retrieves the current
+      setting of the parameter.}
+\item{\code{SILE.settings:temporarily(\em{function})}: Saves all settings,
+      runs the function and then restores all settings afterwards.}
+\item{\code{SILE.settings:declare(\em{<specification>})}: Declares a new
+      setting. See the base settings in \code{settings.lua} for examples of how
+      to call this. A class or package should namespace its settings with
+      \code{<package>.<setting>}.}
+\end{itemize}
 \end{document}

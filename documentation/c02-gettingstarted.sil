@@ -1,29 +1,32 @@
 \begin{document}
 \chapter{Getting Started}
 
-Now that we understand some of what SILE is about and what it seeks to do,
-let’s dive into SILE itself.
+Now that we understand some of what SILE is about and what it seeks to do, let’s dive into SILE itself.
+
+Before we show you how to use SILE, let’s have a quick look at an example SILE document.
+This is the input that we’re going to feed to SILE, which it is going to process and turn into a PDF file.
+Each of the examples can be saved as a text file and then use them as input to SILE.
+
+\section{Selecting a text editor}
+
+A SILE document is just a \em{plain text} file.
+When you create your own SILE files, you will need to create them in a plain text editor.
+Trying to create these files in a word processor such as Word will not work as they will be saved with the word processor’s formatting codes rather than as plain text.
+
+Lots of good text editors exist (many of them for free) and any of them will work for SILE documents so which one you use is entirely a matter of preference.
+You can get started with even the most basic text editors built into your desktop environment such as Notepad on Windows, TextEdit on macOS, Gedit on Gnome, Kate on KDE, etc.
+However more advanced text editors (sometimes categorized as code editors) can offer a lot of features that make the editing process more robust.
+Editors are typically either graphical (GUI) or terminal (TUI) oriented and range from relatively simple to extremely complex integrated development environments (IDE).
+Examples of popular cross-platform GUI oriented editors include VS Code, Sublime Text, and Atom\footnote{Still relatively popular, but will be discontinued in October 2022.}.
+Examples of popular terminal based editors include VIM\footnote{VIM & NeoVIM users can benefit from syntax highlighting and other features via the \code{vim-sile} plugin at \url{https://github.com/sile-typesetter/vim-sile}.}, Emacs, and GNU Nano.
+Depending on your operating system there may be platform-specific editors to consider such as Notepad++ on Windows or TextMate on macOS.
+Many more niche options abound: Lapce, Lite XL, Micro, Geany, BBEdit, UltraEdit, Eclipse, JetBrains IDE(s), Netbrains, Bluefish, CudaText, Leafpad, etc.
+
+For comparisons of editors see \url{http://alternativeto.net/category/deevloper-tools/code-editor/} and select your platform.
 
 \section{A Basic SILE Document}
 
-Before we show you how to use SILE, let’s have a look at an example of what
-SILE documents look like. This is the input that we’re going to feed to SILE,
-which it is going to process and turn into a PDF file. Each of the examples can
-be saved as a text file and then use them as input to SILE.
-
-\note{These documents are \em{plain text} files; when you create your own SILE
-files, you will need to create them in a plain text editor. Trying to create
-these files in a word processor such as Word will not work as they will be
-saved with the word processor’s formatting rather than in a plain text format.
-Examples of good text editors include cross platform editors such as Atom and
-Sublime Text which are GUI oriented or Vim and Emacs which are more keyboard
-command oriented. Depending on your operating system there are other good
-choices such as Notepad++ on Windows or TextMate on OS X. You can also get
-started more simply with one of the basic editors built into your desktop
-environment such as Notepad on Windows, TextEdit on OS X, Gedit on Gnome, Kate
-on KDE, etc. For comparisons of text editors see
-\url{http://alternativeto.net/tag/text-editor/} and select your platform.}
-
+Once you have an editor, it’s time to consider a SILE input file.
 To begin with, here’s the most basic SILE file of all:
 
 \begin{verbatim}
@@ -77,14 +80,21 @@ See the note about LuaJIT in the section \em{Installing From Source} for applica
 A VCS package is also available as \code{sile-git} to build from the latest Git commit.
 These may be built and installed like any other AUR\footnote{\url{https://wiki.archlinux.org/title/Arch_User_Repository}} package.
 
+\subsection{OpenSUSE}
+
+OpenSUSE has official packages ready to install the usual way:
+
+\terminal{$ zypper install sile}
+
 \subsection{Ubuntu}
 
-For Ubuntu an official PPA is available with precompiled packages for all currently supported releases since 18.04 (currently Bionic, Focal, Hirsute):
+A PPA\footnote{\url{https://launchpad.net/~sile-typesetter/+archive/ubuntu/sile}} is available for Ubuntu users with packages of SILE and all the necessary dependencies.
+We introduced support starting with Bionic (18.04) and maintain packages for all Ubuntu release series since for as long as they are supported by Canonical.
 
 \begin{terminal}
-sudo add-apt-repository ppa:sile-typesetter/sile
-sudo apt-get update
-sudo apt-get install sile
+$ sudo add-apt-repository ppa:sile-typesetter/sile
+$ sudo apt-get update
+$ sudo apt-get install sile
 \end{terminal}
 
 \subsection{NetBSD}
@@ -94,21 +104,27 @@ Use the usual command \code{bmake install} to build and install.
 A binary package can be installed using \code{pkgin}
 
 \begin{terminal}
-pkgin install sile
+$ pkgin install sile
 \end{terminal}
 
-\subsection{NixOS}
+\subsection{NixOS or under Nix on any platform}
 
-Packages are available for NixOS:
-
-\terminal{$ nix-env -i sile}
-
-The Nix package manager is also available on many other Linux distributions, as well as for macOS.
-
-If you have flakes support\footnote{\url{https://nixos.wiki/wiki/Flakes#Installing_flakes}} enabled, you can run sile with:
+In addition to NixOS, the \code{nix} package manager is available as a standalone package manager on many platforms including most Linux and BSD distributions, macOS, and even for Windows via WSL; and thus presents a viable alternative way to run SILE on most systems.
+The \code{sile} package is available in both the stable and unstable channels; the unstable channel having the latest stable SILE releases and the stable channel being frozen on NixOS releases.
+You can use all the usual Nix tricks including adding SILE into a \code{nix shell} environment or executing it directly with \code{nix run}.
 
 \begin{terminal}
-nix run github:sile-typesetter/sile <sile arguments>
+$ nix shell nippkgs/nixpkgs-unstable#sile
+$ sile <arguments>
+
+$ nix run nixpkgs/nixpkgs-unstable#sile -- <arguments>
+\end{terminal}
+
+The SILE source repository is also a valid Nix Flake\footnote{\url{https://nixos.wiki/wiki/Flakes#Installing_flakes}} which means you can run any specific version or the latest unreleased development code directly:
+
+\begin{terminal}
+$ nix run github:sile-typesetter/sile/v0.14.3 -- <arguments>
+$ nix run github:sile-typesetter/sile -- <arguments>
 \end{terminal}
 
 \subsection{Void Linux}
@@ -131,17 +147,18 @@ For most shells, a single alias can be created to hide that complexity and make 
 
 \begin{terminal}
 $ alias sile='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest'
+$ sile input.sil
 \end{terminal}
 
 Docker images are tagged to match releases (e.g. \code{v0.10.0}).
 Additionally the latest release will be tagged \code{latest}, and a \code{master} tag is also available with the freshest development build.
 You can substitute \code{latest} in the alias above to run a specific version.
 
-One notable issue with using SILE from a Docker container is that it will not have access to your system’s fonts by default.
-You can map a folder of fonts (any tree usable by fontconfig) into the container.
-This could be your system’s default font directory, your user one, a project specific folder, or anything of your choosing.
+One notable issue with using SILE from a Docker container is that by default it will not have access to your system’s fonts.
+To work around this you can map a folder of fonts (in any organization usable by fontconfig) into the container.
+This could be your system’s default font directory, your user one, a folder with project specific resources, or anything of your choosing.
 You can see where fonts are found on your system using \code{fc-list}.
-The path of your choosing from the host system should be passed as a volume mounted on \code{/fonts} inside the container like this:
+The path of your choosing from the host system should be mounted as a volume on \code{/fonts} inside the container like this:
 
 \begin{terminal}
 $ docker run -it --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest
@@ -188,7 +205,7 @@ combination of your system’s packages and installing them via \code{luarocks
 install}. The easiest way is to let Luarocks figure it out based on the
 included Rockspec:
 
-\terminal{$ luarocks install --deps-only sile-dev-1.rockspec}
+\terminal{$ luarocks install --only-deps sile-dev-1.rockspec}
 
 Note that the \code{luasec} package requires OpenSSL libraries on your system
 in order to compile. On some systems such as macOS you may need to configure
@@ -255,55 +272,60 @@ Now to run SILE from anywhere you just need to supply the full path to the sourc
 
 \subsection{Notes for Windows users}
 
-SILE may be built on Windows using CMake and Visual Studio. There is not an
-installer (yet), but Windows executables are generated using Azure for every
-commit. You may download these executables by selecting the latest build from
-\url{https://simoncozens-github.visualstudio.com/sile/_build} and downloading
-the “sile” artifact from the Artifacts drop down.
+Nobody is currently maintaining Windows compatibility in SILE and we expect the state to be a bit broken.
+At present there is no Windows installer.
+Unless you are experienced building software on Windows it is probably best to use one of the Linux based methods under WSL (Windows Subsystem for Linux).
+
+There are persistent rumors from credible users that say they have gotten it working, but the exact steps they used to make it happen are a bit elusive.
+We would be happy to see better support, but none of the current developers are Windows users or developers.
+If anywone wants to help in this department we’d be happy to facilitate contributions.
+
+According to the rumors, SILE may be built on Windows using CMake and Visual Studio.
+Additionally some Windows executables are supposed to be generated using Azure for every commit.
+You may download these executables by selecting the latest build from \url{https://simoncozens-github.visualstudio.com/sile/_build} and downloading the “sile” artifact from the Artifacts drop down.
 
 \section{Running SILE}
 
-Let’s move to a new directory, and in a text editor, create the file
-\code{hello.sil}. Copy in the content above and save the file. Now at your
-command line run:
+Let’s move to a new directory, and in a text editor, create the file \code{hello.sil}.
+Copy in the content above and save the file.
+Now at your command line run:
 
 \terminal{$ sile hello.sil}
 
 Once again, this should produce an output file \code{hello.pdf}.
 Congratulations—you have just typeset your first document with SILE!
 
-\note{SILE output filenames are generated by filing off the extension from
-the first input filename and adding \code{.pdf}. If you want to write to
-a different filename altogether, use the \code{-o file.pdf} command line
-option to SILE. You can use \code{-o -} to write the PDF to standard output,
-if you wish to use SILE as part of a pipeline.}
+All the available CLI options are documented both in the help output (run \code{sile --help}) and in the man page (run \code{man sile}).
+This manual will only mention a few in passing as they come up in other other topics.
+
+\begin{note}
+SILE output filenames are generated by filing off the extension from the master input filename and adding the proper extension for the outputter.
+For most outputters this will be \code{.pdf} but for example the text backend will append \code{txt} instead.
+If you want to write to a different filename altogether, use the \code{--output file.pdf} command line option.
+You can use \code{--output -} to write the output directly to the system IO stream—useful if you wish to use SILE as part of a pipeline.
+\end{note}
 
 \section{Let’s Do Something Cool}
 
-In \url{https://sile-typesetter.org/examples/docbook.xml}, you will find a typical DocBook 5.0
-article. Normally turning DocBook to print involves a curious dance of XSLT
-processors, format object processors and/or strange LaTeX packages. But SILE
-can read XML files and it also comes with a \code{docbook} class, which tells
-SILE how to render (admittedly, a subset of) the DocBook tags onto a page.
+In \url{https://sile-typesetter.org/examples/docbook.xml}, you will find a typical DocBook 5.0 article.
+Normally turning DocBook to print involves a curious dance of XSLT processors, format object processors and/or strange LaTeX packages.
+But SILE can read XML files and it also comes with a \code{docbook} class, which tells SILE how to render (admittedly, a subset of) the DocBook tags onto a page.
 
 Turning \code{dockbook.xml} into \code{docbook.pdf} is now as simple as:
 
 \begin{verbatim}
 \line
-$ ./sile -I docbook.sil docbook.xml
+$ sile --class docbook docbook.xml
 \sileversion
 Loading docbook
 <classes/docbook.sil><docbook.xml>[1] [2] [3]
 \line
 \end{verbatim}
 
-The \code{-I} flag adds a \em{preamble}, which is to say that it loads up
-a \em{class} before reading the input file; the \code{docbook} preamble
-provides processing expectations for DocBook tags, which means that once this
-is loaded, DocBook files can be processed directly as SILE documents.
+The \code{-c} flag sets the default class; a necessary step because docbook XML files do not come wrapped in a tag that specifies a SILE class.
+The docbook class will provide the commands necessary to process the tags typically found in docbook files.
 
-In Chapter 9, we’ll look at how the \code{docbook} class works, and how you
-can define processing expectations for other XML formats.
+In Chapter 9, we’ll look at how the \code{docbook} class works, and how you can define processing expectations for other XML formats.
 
 \section{Running SILE remotely as a CI job}
 
@@ -319,17 +341,16 @@ As a case study, here is how a work flow could be setup in GitHub Actions:
 \begin{verbatim}
 \line
 name: SILE
-on: [push, pull_request]
+on: [ push, pull_request ]
 jobs:
   sile:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     name: SILE
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - name: SILE
-        id: sile
-        uses: docker://siletypesetter/sile:latest
+        uses: actions/checkout@v3
+      - name: Render document with SILE
+        uses: sile-typesetter/sile@v0
         with:
           args: my-document.sil
 \line

@@ -37,7 +37,7 @@ local symbols = {}
 local function addSymbol(codepoint, command, typ, _)
   local str = luautf8.char(codepoint)
   symbols[command] = str
-  symbolDefaults[str] = { atomType = mkAtomType[typ] }
+  symbolDefaults[str] = { atom = mkAtomType[typ] }
 end
 
 -- Generated from the unicode-math-table.tex in the unicode-math LaTeX package
@@ -2547,38 +2547,38 @@ symbols.Chi = 'Χ'
 symbols.Psi = 'Ψ'
 symbols.Omega = 'Ω'
 
-symbolDefaults['+'] = { atomType = atomType.binaryOperator }
-symbolDefaults['−'] = { atomType = atomType.binaryOperator }
-symbolDefaults['<'] = { atomType = atomType.relationalOperator }
-symbolDefaults['⩽'] = { atomType = atomType.relationalOperator }
-symbolDefaults['>'] = { atomType = atomType.relationalOperator }
-symbolDefaults['⩾'] = { atomType = atomType.relationalOperator }
-symbolDefaults['='] = { atomType = atomType.relationalOperator }
-symbolDefaults['≠'] = { atomType = atomType.relationalOperator }
-symbolDefaults['∈'] = { atomType = atomType.relationalOperator }
-symbolDefaults['⊆'] = { atomType = atomType.relationalOperator }
-symbolDefaults['∑'] = { atomType = atomType.bigOperator,
+symbolDefaults['+'] = { atom = atomType.binaryOperator }
+symbolDefaults['−'] = { atom = atomType.binaryOperator }
+symbolDefaults['<'] = { atom = atomType.relationalOperator }
+symbolDefaults['⩽'] = { atom = atomType.relationalOperator }
+symbolDefaults['>'] = { atom = atomType.relationalOperator }
+symbolDefaults['⩾'] = { atom = atomType.relationalOperator }
+symbolDefaults['='] = { atom = atomType.relationalOperator }
+symbolDefaults['≠'] = { atom = atomType.relationalOperator }
+symbolDefaults['∈'] = { atom = atomType.relationalOperator }
+symbolDefaults['⊆'] = { atom = atomType.relationalOperator }
+symbolDefaults['∑'] = { atom = atomType.bigOperator,
   largeop = true
 }
-symbolDefaults['∏'] = { atomType = atomType.bigOperator,
+symbolDefaults['∏'] = { atom = atomType.bigOperator,
   largeop = true
 }
-symbolDefaults['⋀'] = { atomType = atomType.bigOperator,
+symbolDefaults['⋀'] = { atom = atomType.bigOperator,
   largeop = true
 }
-symbolDefaults['⋁'] = { atomType = atomType.bigOperator,
+symbolDefaults['⋁'] = { atom = atomType.bigOperator,
   largeop = true
 }
-symbolDefaults['⋂'] = { atomType = atomType.bigOperator,
+symbolDefaults['⋂'] = { atom = atomType.bigOperator,
   largeop = true
 }
-symbolDefaults['⋃'] = { atomType = atomType.bigOperator,
+symbolDefaults['⋃'] = { atom = atomType.bigOperator,
   largeop = true
 }
-symbolDefaults['⨅'] = { atomType = atomType.bigOperator,
+symbolDefaults['⨅'] = { atom = atomType.bigOperator,
   largeop = true
 }
-symbolDefaults['⨆'] = { atomType = atomType.bigOperator,
+symbolDefaults['⨆'] = { atom = atomType.bigOperator,
   largeop = true
 }
 symbolDefaults['∫'] = { largeop = true }
@@ -2587,24 +2587,26 @@ symbolDefaults['∭'] = { largeop = true }
 symbolDefaults['∮'] = { largeop = true }
 symbolDefaults['∯'] = { largeop = true }
 symbolDefaults['∰'] = { largeop = true }
-symbolDefaults[','] = { atomType = atomType.punctuationSymbol }
-symbolDefaults['⟹'] = { atomType = atomType.relationalOperator }
-symbolDefaults['/'] = { atomType = atomType.binaryOperator }
-symbolDefaults[':'] = { atomType = atomType.relationalOperator }
-symbolDefaults['⟶'] = { atomType = atomType.relationalOperator }
-symbolDefaults['|'] = { atomType = atomType.relationalOperator }
-symbolDefaults['('] = { atomType = atomType.openingSymbol,
+symbolDefaults[','] = { atom = atomType.punctuationSymbol }
+symbolDefaults['⟹'] = { atom = atomType.relationalOperator }
+symbolDefaults['/'] = { atom = atomType.binaryOperator }
+symbolDefaults[':'] = { atom = atomType.relationalOperator }
+symbolDefaults['⟶'] = { atom = atomType.relationalOperator }
+symbolDefaults['|'] = { atom = atomType.relationalOperator }
+symbolDefaults['('] = { atom = atomType.openingSymbol,
             stretchy = true }
-symbolDefaults[')'] = { atomType = atomType.closeSymbol,
+symbolDefaults[')'] = { atom = atomType.closeSymbol,
             stretchy = true}
-symbolDefaults['['] = { atomType = atomType.openingSymbol,
+symbolDefaults['['] = { atom = atomType.openingSymbol,
             stretchy = true }
-symbolDefaults[']'] = { atomType = atomType.closeSymbol,
+symbolDefaults[']'] = { atom = atomType.closeSymbol,
             stretchy = true}
-symbolDefaults['{'] = { atomType = atomType.openingSymbol,
+symbolDefaults['{'] = { atom = atomType.openingSymbol,
             stretchy = true }
-symbolDefaults['}'] = { atomType = atomType.closeSymbol,
+symbolDefaults['}'] = { atom = atomType.closeSymbol,
             stretchy = true}
+symbolDefaults['mod'] = { atom = atomType.binaryOperator }
+symbolDefaults['%'] = { atom = atomType.binaryOperator }
 
 return {
   symbols = symbols,

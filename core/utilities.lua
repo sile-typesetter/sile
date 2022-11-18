@@ -1,4 +1,6 @@
 local bitshim = require("bitshim")
+local luautf8 = require("lua-utf8")
+
 local utilities = {}
 
 local epsilon = 1E-12
@@ -25,18 +27,25 @@ utilities.boolean = function (value, default)
   return default
 end
 
+local _skip_traceback_levels = 2
+
 utilities.error = function(message, bug)
+  _skip_traceback_levels = 3
   utilities.warn(message, bug)
+  _skip_traceback_levels = 2
   io.stderr:flush()
-  SILE.outputter:finish()
-  os.exit(1)
+  SILE.outputter:finish() -- Only really useful from the REPL but no harm in trying
+  SILE.scratch.caughterror = true
+  error(message, 2)
 end
 
 utilities.warn = function(message, bug)
   io.stderr:write("\n! " .. message)
   if SILE.traceback or bug then
     io.stderr:write(" at:\n" .. SILE.traceStack:locationTrace())
-    io.stderr:write(debug.traceback(nil, 2) or "\t! debug.traceback() did not identify code location")
+    if _skip_traceback_levels == 2 then
+      io.stderr:write(debug.traceback("", _skip_traceback_levels) or "\t! debug.traceback() did not identify code location")
+    end
   else
     io.stderr:write(" at " .. SILE.traceStack:locationHead())
   end
@@ -84,7 +93,8 @@ utilities.deprecated = function (old, new, warnat, errorat, extra)
   -- Hence we fake it ‘till we make it, all deprecations internally are warings.
   local brackets = old:sub(1,1) == '\\' and "" or "()"
   local _semver = SILE.version and SILE.version:match("v([0-9]*.[0-9]*.[0-9]*)") or warnat
-  local msg = (old .. brackets) .. " was deprecated in SILE v" .. warnat .. ". Please use " .. (new .. brackets) .. " instead. " .. (extra or "")
+  local _new = new and "Please use " .. (new .. brackets) .. " instead." or "Plase don't use it."
+  local msg = (old .. brackets) .. " was deprecated in SILE v" .. warnat .. ". " .. _new ..  (extra and "\n" .. extra .. "\n\n" or "")
   if errorat and _semver >= errorat then
     SU.error(msg)
   elseif warnat and _semver >= warnat then
@@ -102,6 +112,32 @@ utilities.debug = function (category, ...)
     end
     io.stderr:write("\n["..category.."] ", utilities.concat(inputs, " "))
   end
+end
+
+utilities.debugAST = function (ast, level)
+  if not ast then
+    SU.error("debugAST called with nil", true)
+  end
+  local out = string.rep("  ", 1+level)
+  if level == 0 then
+    SU.debug("ast", "["..SILE.currentlyProcessingFile)
+  end
+  if type(ast) == "function" then
+    SU.debug("ast", out .. tostring(ast))
+  end
+  for _, content in ipairs(ast) do
+    if type(content) == "string" then
+      SU.debug("ast", out .. "[" .. content .. "]")
+    elseif SILE.Commands[content.command] then
+      SU.debug("ast", out.."\\" .. content.command .. " " .. pl.pretty.write(content.options, ""))
+      if (#content>=1) then utilities.debugAST(content, level+1) end
+    elseif content.id == "texlike_stuff" or (not content.command and not content.id) then
+      utilities.debugAST(content, level+1)
+    else
+      SU.debug("ast", out.."?\\"..(content.command or content.id))
+    end
+  end
+  if level == 0 then SU.debug("ast", "]") end
 end
 
 utilities.dump = function (...)
@@ -274,7 +310,9 @@ end
 utilities.contentToString = function (content)
   local string = ""
   for i = 1, #content do
-    if type(content[i]) == "string" then
+    if type(content[i]) == "table" and type(content[i][1]) == "string" then
+      string = string .. content[i][1]
+    elseif type(content[i]) == "string" then
       string = string .. content[i]
     end
   end
@@ -400,29 +438,10 @@ utilities.utf16codes = function (ustr, endian)
 end
 
 utilities.splitUtf8 = function (str) -- Return an array of UTF8 strings each representing a Unicode char
-  local seq = 0
   local rv = {}
-  local val = -1
-  local this = ""
-  for i = 1, #str do
-    local c = string.byte(str, i)
-    if seq == 0 then
-      if val > -1 then
-        rv[1+#rv] = this
-        this = ""
-      end
-      seq = c < 0x80 and 1 or c < 0xE0 and 2 or c < 0xF0 and 3 or
-            c < 0xF8 and 4 or --c < 0xFC and 5 or c < 0xFE and 6 or
-          error("invalid UTF-8 character sequence")
-      val = bitshim.band(c, 2^(8-seq) - 1)
-      this = this .. str[i]
-    else
-      val = bitshim.bor(bitshim.lshift(val, 6), bitshim.band(c, 0x3F))
-      this = this .. str[i]
-    end
-    seq = seq - 1
+  for _, cp in luautf8.next, str do
+    table.insert(rv, luautf8.char(cp))
   end
-  rv[1+#rv] = this
   return rv
 end
 
@@ -505,7 +524,7 @@ utilities.utf16le_to_utf8 = function (str) return utf16_to_utf8(str, "le") end
 local icu = require("justenoughicu")
 
 local icuFormat = function (num, format)
-  local ok, result  = pcall(function() return icu.format_number(num, format) end)
+  local ok, result  = pcall(icu.format_number, num, format)
   return tostring(ok and result or num)
 end
 
@@ -542,7 +561,7 @@ setmetatable (utilities.formatNumber, {
           case = "upper"
         end
       end
-      local lang = format:match("[Rr][Oo][Mm][Aa][Nn]") and "la" or SILE.settings.get("document.language")
+      local lang = format:match("[Rr][Oo][Mm][Aa][Nn]") and "la" or SILE.settings:get("document.language")
       format = format:lower()
       local result
       if self[lang] and type(self[lang][format]) == "function" then

@@ -7,11 +7,10 @@ FROM docker.io/library/archlinux:base-devel$ARCHTAG AS builder
 ARG RUNTIME_DEPS
 ARG BUILD_DEPS
 
-# Monkey patch glibc to avoid issues with old kernels on hosts
-RUN --mount=type=bind,target=/mp,source=build-aux/docker-glibc-workaround.sh /mp
-
 # Freshen all base system packages
-RUN pacman --needed --noconfirm -Syuq
+RUN pacman-key --init
+RUN pacman --needed --noconfirm -Syq archlinux-keyring
+RUN pacman --needed --noconfirm -Suq
 
 # Install run-time dependecies
 RUN pacman --needed --noconfirm -Sq $RUNTIME_DEPS $BUILD_DEPS
@@ -42,11 +41,10 @@ ARG RUNTIME_DEPS
 ARG VERSION
 ARG REVISION
 
-# Monkey patch glibc to avoid issues with old kernels on hosts
-RUN --mount=type=bind,target=/mp,source=build-aux/docker-glibc-workaround.sh /mp
-
 # Freshen all base system packages (and cleanup cache)
-RUN pacman --needed --noconfirm -Syuq && yes | pacman -Sccq
+RUN pacman-key --init
+RUN pacman --needed --noconfirm -Syq archlinux-keyring && yes | pacman -Sccq
+RUN pacman --needed --noconfirm -Suq && yes | pacman -Sccq
 
 # Install run-time dependecies
 RUN pacman --needed --noconfirm -Sq $RUNTIME_DEPS && yes | pacman -Sccq

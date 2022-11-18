@@ -1,0 +1,25 @@
+name: Run Flake
+
+on: [ push, pull_request ]
+
+jobs:
+
+  nix-flake:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Fetch tags
+        run: |
+          git fetch --prune --tags ||:
+      - name: Install Nix
+        uses: cachix/install-nix-action@v18
+        with:
+          extra_nix_config: |
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+      - name: Build flake
+        run: nix build
+      - name: Test run flake
+        run: nix shell -c sile --version

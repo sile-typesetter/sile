@@ -1,0 +1,31 @@
+\begin[papersize=a8,class=book]{document}
+\neverindent
+% Note folio suppression on some pages are part of test
+\begin[command=stuff]{define}
+% Deliberately push the frame to overflowing but without leaving the frame
+% See issue #454 and PR #1547
+\eject
+\\eject then stuff just past
+\skip[height=11bs]
+\glue[width=38spc]the gills
+\end{define}
+Leading content
+\open-double-page
+\\open-double-page
+\eject
+\\eject
+\open-double-page
+\\open-double-page
+\stuff
+\open-double-page
+\\open-double-page
+\open-spread
+\\open-spread
+\stuff
+\open-spread[odd=false]
+\\open-spread[odd=false]
+\open-spread[double=false]
+\\open-spread[double=false]
+\open-spread
+\\open-spread
+\end{document}

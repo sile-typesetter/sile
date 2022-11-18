@@ -48,10 +48,10 @@ SILE.framePrototype = pl.class({
     end,
 
     -- This gets called by us in typesetter before we start to use the frame
-    init = function (self)
+    init = function (self, typesetter)
       self.state = { totals = { height = SILE.measurement(0), pastTop = false } }
-      self:enter()
-      self:newLine()
+      self:enter(typesetter)
+      self:newLine(typesetter)
       if self:pageAdvanceDirection() == "TTB" then
         self.state.cursorY = self:top()
       elseif self:pageAdvanceDirection() == "LTR" then
@@ -82,7 +82,7 @@ SILE.framePrototype = pl.class({
       constraint = SU.type(constraint) == "measurement"
         and constraint:tonumber()
         or SILE.frameParser:match(constraint)
-      SU.debug("frames", "Adding constraint " .. self.id .. "(" .. method .. ") = " .. constraint)
+      SU.debug("frames", "Adding constraint " .. self.id .. "(" .. method .. ") = " .. tostring(constraint))
       local eq = cassowary.Equation(self.variables[method], constraint)
       solver:addConstraint(eq)
       if stay then solver:addStay(eq) end
@@ -154,7 +154,7 @@ SILE.framePrototype = pl.class({
       end
     end,
 
-    newLine = function(self)
+    newLine = function(self, _)
       if self:writingDirection() == "LTR" then
         self.state.cursorX = self:left()
       elseif self:writingDirection() == "RTL" then
@@ -193,15 +193,15 @@ SILE.framePrototype = pl.class({
       end
     end,
 
-    enter = function (self)
+    enter = function (self, typesetter)
       for i = 1, #self.enterHooks do
-        self.enterHooks[i](self)
+        self.enterHooks[i](self, typesetter)
       end
     end,
 
-    leave = function (self)
+    leave = function (self, typesetter)
       for i = 1, #self.leaveHooks do
-        self.leaveHooks[i](self)
+        self.leaveHooks[i](self, typesetter)
       end
     end,
 
@@ -219,7 +219,8 @@ SILE.framePrototype = pl.class({
     end,
 
     isMainContentFrame = function (self)
-      local frame =  SILE.documentState.thisPageTemplate.firstContentFrame
+      local tpt = SILE.documentState.thisPageTemplate
+      local frame = tpt.firstContentFrame
       while frame do
         if frame == self then return true end
         if frame.next then frame = SILE.getFrame(frame.next) else return false end
@@ -229,9 +230,16 @@ SILE.framePrototype = pl.class({
 
     __tostring = function(self)
       local str = "<Frame: " .. self.id .. ": "
-      str = str .. " next=" .. self.next .. " "
+      str = str .. " next=" .. (self.next or "nil") .. " "
       for method, dimension in pairs(self.constraints) do
         str = str .. method .. "=" .. dimension .. "; "
+      end
+      if self.hanmen then
+        str = str .. "tate=" .. (self.tate and "true" or "false") .. "; "
+        str = str .. "gridsize=" .. self.gridsize .. "; "
+        str = str .. "linegap=" .. self.linegap .. "; "
+        str = str .. "linelength=" .. self.linelength .. "; "
+        str = str .. "linecount=" .. self.linecount .. "; "
       end
       str = str .. ">"
       return str

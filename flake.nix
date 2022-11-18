@@ -2,7 +2,7 @@
   description = "Simon’s Improved Layout Engine";
 
   # To make user overrides of the nixpkgs flake not take effect
-  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
   inputs.flake-utils.url = "github:numtide/flake-utils";
   inputs.gitignore = {
     url = "github:hercules-ci/gitignore.nix";
@@ -36,6 +36,32 @@
       inherit (gitignore.lib) gitignoreSource;
       # https://discourse.nixos.org/t/passing-git-commit-hash-and-tag-to-build-with-flakes/11355/2
       version_rev = if (self ? rev) then (builtins.substring 0 7 self.rev) else "dirty";
+      # Prepare a different luaEnv to be used in the overridden expression,
+      # this is also the place to choose a different lua interpreter, such as
+      # lua5_3 or luajit
+      luaEnv = pkgs.lua5_3.withPackages(ps: with ps; [
+        cassowary
+        cldr
+        cosmo
+        fluent
+        linenoise
+        loadkit
+        lpeg
+        lua-zlib
+        lua_cliargs
+        luaepnf
+        luaexpat
+        luafilesystem
+        luarepl
+        luasec
+        luasocket
+        luautf8
+        penlight
+        vstruct
+        # If we want to test things with lua5.2 or an even older lua, we uncomment these
+        #bit32
+        #compat53
+      ]);
       # Use the expression from Nixpkgs instead of rewriting it here.
       sile = pkgs.sile.overrideAttrs(oldAttr: rec {
         version = "${(pkgs.lib.importJSON ./package.json).version}-${version_rev}-flake";
@@ -56,26 +82,22 @@
             ".editorconfig"
             # CI files
             ".cirrus.yml"
+            ".github"
             "action.yml"
             "azure-pipelines.yml"
             "Dockerfile"
             # Git files
-            ".github"
             ".gitattributes"
-            ".gitignore"
             ".git"
-          ])
-          ;
+          ]);
           src = gitignoreSource ./.;
         };
         # Add the libtexpdf src instead of the git submodule.
+        # Also pretend to be a tarball release so sile --version will not say `vUNKNOWN`.
         preAutoreconf = ''
           rm -rf ./libtexpdf
           # From some reason without this flag, libtexpdf/ is unwriteable
           cp --no-preserve=mode -r ${libtexpdf-src} ./libtexpdf/
-        '';
-        # Pretend to be a tarball release so sile --version will not say `vUNKNOWN`.
-        postAutoreconf = ''
           echo ${version} > .tarball-version
         '';
         # Don't build the manual as it's time consuming, and it requires fonts
@@ -85,22 +107,24 @@
         nativeBuildInputs = oldAttr.nativeBuildInputs ++ [
           pkgs.autoreconfHook
         ];
-        # TODO: This switch between the hooks can be moved to Nixpkgs'
-        postPatch = oldAttr.preConfigure;
-        preConfigure = "";
         meta = oldAttr.meta // {
           changelog = "https://github.com/sile-typesetter/sile/raw/master/CHANGELOG.md";
         };
       });
     in rec {
-      devShell = pkgs.mkShell {
-        inherit (sile) checkInputs nativeBuildInputs buildInputs;
+      devShells = {
+        default = pkgs.mkShell {
+          inherit (sile) checkInputs nativeBuildInputs buildInputs;
+        };
       };
       packages.sile = sile;
       defaultPackage = sile;
-      apps.sile = {
-        type = "app";
-        program = "${sile}/bin/sile";
+      apps = rec {
+        default = sile;
+        sile = {
+          type = "app";
+          program = "${self.defaultPackage.${system}}/bin/sile";
+        };
       };
       defaultApp = apps.sile;
     }

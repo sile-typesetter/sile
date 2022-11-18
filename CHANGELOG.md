@@ -2,6 +2,385 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.14.4](https://github.com/sile-typesetter/sile/compare/v0.14.3...v0.14.4) (2022-11-05)
+
+
+### Features
+
+* **packages:** Add boolean noleadingzeros option to counter formatter ([e4f8133](https://github.com/sile-typesetter/sile/commit/e4f813333e935ce0e42727eba407db2f7273391d))
+* **packages:** Add new command \set-multilevel-counter ([11578a8](https://github.com/sile-typesetter/sile/commit/11578a81b4abde4652baefe969e4e79905ff7639))
+
+
+### Bug Fixes
+
+* **classes:** Always break out of hmode before processing \chapter headings ([0c44d8e](https://github.com/sile-typesetter/sile/commit/0c44d8ea4b39998011bdfd08bb9106dbd993b347))
+* **core:** A typo in a variable prevents using -u with a class ([b8f5c40](https://github.com/sile-typesetter/sile/commit/b8f5c407869bc338117acefe1e4fc5c0f484f803)), closes [#1569](https://github.com/sile-typesetter/sile/issues/1569)
+* **languages:** Make 'und' an exception to language name canonicalization ([52e9b79](https://github.com/sile-typesetter/sile/commit/52e9b79ca89da98947afae82742c2648a52a1cfa))
+* **math:** Fix insertion order of MathML children ([738e9e6](https://github.com/sile-typesetter/sile/commit/738e9e6fb40ea5e21f182c74af4f584d0190313d))
+* **packages:** Account for depth when calculating rotation center ([289dd2a](https://github.com/sile-typesetter/sile/commit/289dd2a4e3c54502d68b06f5126d52f9e3098ca0))
+* **packages:** Avoid forcing mirrored masters in twoside package ([#1562](https://github.com/sile-typesetter/sile/issues/1562)) ([8cdf6ed](https://github.com/sile-typesetter/sile/commit/8cdf6ede2361fae948723fbada7563d44d39901d))
+* **packages:** Combine `\unichar`'ed chars with same font only ([91a8d40](https://github.com/sile-typesetter/sile/commit/91a8d4091cc320bed714f51f2e32824d80b2a2f7))
+* **packages:** Correct rotation origin calculation back to pre v0.10.0 ([3521936](https://github.com/sile-typesetter/sile/commit/35219360e0e5ad54f3363624148181eb619715c7))
+* **packages:** Don't inhibit page breaking after switching masters mid-page ([6b20f73](https://github.com/sile-typesetter/sile/commit/6b20f7310c9c482352a4e401462519c32092a04f))
+* **packages:** Make sure PDF initialized before rotate package directly calls it ([449b2a6](https://github.com/sile-typesetter/sile/commit/449b2a6cf417ab36ceaa95ccc499557bd81a84c1))
+* **packages:** Rework simple and multilevel counters ([1e6e91a](https://github.com/sile-typesetter/sile/commit/1e6e91ad0154c8f8399b9271dcc27c48f2fd1b78))
+* **packages:** Textcase package name typo preventing using methods from code ([7f68766](https://github.com/sile-typesetter/sile/commit/7f68766b8a6aeb7111462a1557b4715b6c9b5855)), closes [#1568](https://github.com/sile-typesetter/sile/issues/1568)
+
+
+### Reverts
+
+* Revert "docs(packages): Fixup unichar documentation, work around known bug (#1549)" ([03d1b11](https://github.com/sile-typesetter/sile/commit/03d1b1168c7d55251fb631286394ade8c46104ae)), closes [#1549](https://github.com/sile-typesetter/sile/issues/1549)
+
+### [0.14.3](https://github.com/sile-typesetter/sile/compare/v0.14.2...v0.14.3) (2022-09-01)
+
+
+### Features
+
+* **languages:** Handle hyphenation of inter-word apostrophes in Turkish ([50ae936](https://github.com/sile-typesetter/sile/commit/50ae9368b29bfcb9f7d2274235c0398500d7665e))
+* **packages:** Add \open-spread function with more features that \open-double-page ([c2ba579](https://github.com/sile-typesetter/sile/commit/c2ba579a56a79fea82e8ec83b95321af438793e4))
+* **packages:** Add ability to select a page in PDF images ([a477d94](https://github.com/sile-typesetter/sile/commit/a477d94f9831bdd31d4925bd44660f1f24d4e290))
+* **packages:** Allow for customized content on otherwise blank filler pages ([5ae97bf](https://github.com/sile-typesetter/sile/commit/5ae97bffba3192df8e1c8bf7c74c459ac137af56))
+* **packages:** Provide base directory to packages ([#1529](https://github.com/sile-typesetter/sile/issues/1529)) ([f9ae994](https://github.com/sile-typesetter/sile/commit/f9ae99499ea8fada36abd849c95e2afd7f1e4030))
+* **utilities:** Return image resolution with libtexpdf backend ([a9c11d3](https://github.com/sile-typesetter/sile/commit/a9c11d319cf83d38b72d09430a65cfb62e013494))
+
+
+### Bug Fixes
+
+* **cli:** Actually apply cli provided class options ([505919e](https://github.com/sile-typesetter/sile/commit/505919e4c07638e7bf6da9ebc4af12e2355a2460))
+* **cli:** Allow CLI option to override document specified class ([5232ce8](https://github.com/sile-typesetter/sile/commit/5232ce8dd42fae9005c36c4e04ad988d4afedb77))
+* **languages:** Make Turkish hyphenation less bad around intraword apostrophes ([008d4c4](https://github.com/sile-typesetter/sile/commit/008d4c436715ba09697690a2b3b34a9e8578f25f))
+* **nodes:** Correct calculating width of postbreak discretionaries ([ea7912c](https://github.com/sile-typesetter/sile/commit/ea7912cf0c1951f68b04b7d2dfef2057115ef77d))
+* **nodes:** Work around discressionaries being output when not wanted ([c7dc439](https://github.com/sile-typesetter/sile/commit/c7dc439456ad741fe644a88e6476596b8ec2a72f))
+* **packages:** Fix over-aggressive eject in \open-double-page ([5620556](https://github.com/sile-typesetter/sile/commit/562055681c1ccf3b47857864d9363fb985ed7fac))
+* **packages:** Homogenize image width and height as measurements ([b91cfbb](https://github.com/sile-typesetter/sile/commit/b91cfbb9e80e4330be5b9dc307d721513bbd462a)), closes [#1506](https://github.com/sile-typesetter/sile/issues/1506)
+* **packages:** Make sure PDF initialized before PDF package does anything ([#1550](https://github.com/sile-typesetter/sile/issues/1550)) ([ebc3748](https://github.com/sile-typesetter/sile/commit/ebc3748e00df700002622a7f3b8ad1e2cd5bfb65))
+* **packages:** Resolve src= relative to document for SVG images ([b55fc98](https://github.com/sile-typesetter/sile/commit/b55fc98e728ee69fc983be58e7331864617547b8)), closes [#1532](https://github.com/sile-typesetter/sile/issues/1532)
+
+
+### Reverts
+
+* Revert "chore(build): Avoid mktemp during build, breaks opensuse packaging (#1542)" ([bca007f](https://github.com/sile-typesetter/sile/commit/bca007fa0dac2a2e2889ac6194de4dfb3f096461)), closes [#1542](https://github.com/sile-typesetter/sile/issues/1542)
+* Revert "chore(cli): Output header before doing anything that might throw warnings" ([58da8ad](https://github.com/sile-typesetter/sile/commit/58da8ad5b824fa9ccc97d0ddfbea44e3a5c39c8e))
+
+### [0.14.2](https://github.com/sile-typesetter/sile/compare/v0.14.1...v0.14.2) (2022-08-11)
+
+
+### Bug Fixes
+
+* **classes:** Allow package option declarations to be reset ([215e83a](https://github.com/sile-typesetter/sile/commit/215e83a31f81a16e18eea8010512a44844f689c8))
+* **classes:** Bring back space after subsection numbering ([70a3304](https://github.com/sile-typesetter/sile/commit/70a330424d17d4dc74ad0443e7b2064ddceaeb2b))
+* **packages:** Check for user supplied commands before setting noops ([54b5071](https://github.com/sile-typesetter/sile/commit/54b5071df907b8c9d35a0ec356c673701a3c6025))
+
+### [0.14.1](https://github.com/sile-typesetter/sile/compare/v0.14.0...v0.14.1) (2022-08-06)
+
+
+### Features
+
+* **inputters:** Expand postamble functionality for parity with preambles ([#1518](https://github.com/sile-typesetter/sile/issues/1518)) ([eb09eb3](https://github.com/sile-typesetter/sile/commit/eb09eb34581ae68b4153d3725cefb34fa46643c2))
+
+
+### Bug Fixes
+
+* **cli:** Suppress deprecation message for internal shims ([b339e27](https://github.com/sile-typesetter/sile/commit/b339e27ab71dcba57e275e6ec8b8daa799324f36))
+* **cli:** Swap order of new --uses and legacy --include ([ef0087e](https://github.com/sile-typesetter/sile/commit/ef0087e7e1f9b7eef623597e9c82e87ca8f5a3d5))
+* **packages:** Correct (and improve scope of) exported testcase functions ([fd438e9](https://github.com/sile-typesetter/sile/commit/fd438e983afbae2192a4f109eef748d9329abf30))
+* **tooling:** Make sure Git version detection only picks up semver tags ([25d669a](https://github.com/sile-typesetter/sile/commit/25d669a2be5ef1d8a1b4c08b3173ec199e0bedcc))
+
+## [0.14.0](https://github.com/sile-typesetter/sile/compare/v0.13.3...v0.14.0) (2022-08-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* **packages:** The primary use was probably internal to SILE, but if
+	by chance you have bibtex databases with formatting commands in SIL
+	markup format rather than just plain text content the markup will cease
+	to function and will need to be converted to XML syntax instead.
+
+	This enables the use of declarative markup in Fluent localizations.
+
+* **classes:** Each SILE package now inherits some interfaces from
+	a common base package. This model allows packages easier access to SILE
+	internals while at the same time tracking what they do so it is easier
+	to enable/disable them. The package knows which document class instance
+	it is attached to, and the document class knows which packages are
+	loaded at any given time. Legacy style packages will continue to work
+	for the time being but will not be tracked in the same way.
+
+* **core:** The role of document commands has always been tightly
+	scoped to classes. For example the *book* class has a `\footnote`
+	command while *plain* does not—unless you manually load the package and setup the
+	frames. In spite of this obvious functional scope, registering commands
+	has been a global operation that stored them in a global registry. In
+	order to allow SILE to be used more programmatically as a library with
+	potentially more than one document and class being processed at at once,
+	these need to be moved out of the global scope. This will also
+	facilitate things like being able *unload* packages and revert to
+	previous functionality for anything they over-rood on load. For now the
+	functionality is shimmed, but code using the `SILE.registerCommand()`
+	function should switch to the method of the same name on the current
+	class, i.e. `class:registerCommand()`.
+
+* **core:** Some internal files and APIs got renamed with more
+	structured name spaces. In particular the inputter, shaper, and
+	outputter libraries all have a common naming scheme now and sensible
+	inheritance chains. No functionality was harmed, but if you are
+	overriding undocumented internal Lua methods you might have to update
+	your name spaces to match.
+
+* **cli:** The `-I` / `--include` option was overloaded for more
+	than one purpose and is now deprecated in favor of more specific
+	replacements: `-r` / `--require` for loading code into SILE before input
+	processing, `-p` / `--preamble` for processing content prior to
+	a document and `-P` / `--postamble` for processing content after
+	a document.
+
+* **packages:** The original package manager POC that used Git to clone
+	packages into the SILE installation directory has been deprecated. It
+	will continue to function for a while, but all new 3rd party packages
+	should use the LuaRocks based installation process. Whether or not they
+	use `luarocks` as a package manager or LuaRocks.org as a distribution
+	channel they should install themselves to any usable the system or user
+	Lua library path under a top level "sile" namespace.
+
+* **classes:** The shims allowing classes designed for SILE releases
+	v0.12.x and prior have now been removed and documents using them will
+	now throw errors when rendering. Only the refactored class system
+	introduced in SILE v0.13.0 is supported going forward.
+
+* **deps:** We previously deprecated all use of stdlib. This
+	release stops providing it entirely. If you use it in your own projects
+	you will now need to provide and require() it directly.
+
+* **build:** The C modules compiled as shared libraries (.so files
+	on Linux, .dll on Windows) are now installed to the project root shared
+	directory instead of it's 'core' subdirectory. Distro packages that
+	split the library into its own package will need to adjust this path.
+	People installing from their distro packages or from source should be
+	unaffected, but this will bring us one step closer to being able to
+	install and use SILE *as* a library.
+
+### Features
+
+* **classes:** Add \use command to help deconflate \script usage ([eb298c3](https://github.com/sile-typesetter/sile/commit/eb298c3f24a48a0b2c63c9681024afb4eb1c5515))
+* **classes:** Track loaded packages per document class ([32bd87b](https://github.com/sile-typesetter/sile/commit/32bd87b39b921ff889cd8e61a910e09f32f7a686))
+* **cli:** Add CLI argument -E for evaluating Lua code after input ([5948aca](https://github.com/sile-typesetter/sile/commit/5948aca990e8d6548fcf753afeb50e5a5d6f7353))
+* **cli:** Add usage hints and cleanup output of errors ([cc58824](https://github.com/sile-typesetter/sile/commit/cc58824a91b2ee042795b16a5c4223b5db85fb36))
+* **cli:** Allow loading custom inputters from `-r` option ([a212e83](https://github.com/sile-typesetter/sile/commit/a212e834a05cf23702934f991e207ebc9e1615ef))
+* **cli:** Allow passing options to any modules specified from --use ([4cdcae7](https://github.com/sile-typesetter/sile/commit/4cdcae756f51b681673d8187c876fac93fc8d2be))
+* **cli:** Change --require to --use to match declarative markup ([2411328](https://github.com/sile-typesetter/sile/commit/2411328c72514a6a9db96fa9a3fd2d69f8fe284e))
+* **core:** Add ability to pass args to modules via \use and other commands that load modules ([9e54bad](https://github.com/sile-typesetter/sile/commit/9e54bad757cbb9cddc725faf3478d2dca1c9c03c))
+* **core:** Add ability to pass args to modules via \use and other commands that load modules ([e64ce0f](https://github.com/sile-typesetter/sile/commit/e64ce0f5c7b4d04a3ef9429f92ce57566c0c66c4))
+* **core:** Add inline-escaping in SIL-language ([f09b135](https://github.com/sile-typesetter/sile/commit/f09b13578db44e87f0bef526b2027e35aac32c12))
+* **core:** Support loading classes/packages installed with `luarocks` ([232e72b](https://github.com/sile-typesetter/sile/commit/232e72b39d1d9e72897ec2d50033d5fe5e5402e4))
+* **i18n:** Add more Russion localizations ([350cf14](https://github.com/sile-typesetter/sile/commit/350cf1459e4143898de32d6e78da7871cf8946da))
+* **i18n:** Add support for as many languages as possible ([da57577](https://github.com/sile-typesetter/sile/commit/da5757771a911555dc6b4adeaaec38041094ded0))
+* **i18n:** Fallback to messages from 'und' language if no localized ([9f47715](https://github.com/sile-typesetter/sile/commit/9f477155dc6f3372477e3dd7859fe71bf41cec18))
+* **i18n:** Parse XML style SILE commands in Fluent messages ([989290b](https://github.com/sile-typesetter/sile/commit/989290b255573c3a656eae3340c3944dd08e0c01))
+* **inputters:** Allow arbitrary root elements from XML input without a preamble ([ad46a92](https://github.com/sile-typesetter/sile/commit/ad46a926494778830416f037bca54fe35a0b3998))
+* **inputters:** Allow CLI to mandate inputter used for master document ([1b9009f](https://github.com/sile-typesetter/sile/commit/1b9009f96555f3127da6b434ba94cd7209f94f3d))
+* **inputters:** Promote Lua to first class input filetype, improve input type detection ([3540943](https://github.com/sile-typesetter/sile/commit/3540943eb20f69a94d1ded638c7996c82cb96e34))
+* **languages:** Add Norwegian localizations ([76b8f84](https://github.com/sile-typesetter/sile/commit/76b8f840b94a16ad65ad244308748c57c2fb1db0))
+* **languages:** Add Norwegian Nynorsk hyphenation exceptions ([520cd3f](https://github.com/sile-typesetter/sile/commit/520cd3f594c843a343e4cea26c4f015f86250655))
+* **languages:** Handle 'nb' code for Norwegian Bokmål, linked to 'no' rules ([373bd17](https://github.com/sile-typesetter/sile/commit/373bd1754ff3ce4459d856b4fddcc601c86eeff5))
+* **math:** Add modulus operator support ([429b162](https://github.com/sile-typesetter/sile/commit/429b162ee6eac141deb0390ab762584d8cd93ee2))
+* **math:** Allow forcing the atom type of an operator ([14d384c](https://github.com/sile-typesetter/sile/commit/14d384cec39446d34cb27db18f94e18920253ef7))
+* **math:** Express lengths in “mu” (math units) ([39c7efc](https://github.com/sile-typesetter/sile/commit/39c7efceccad0a37bb30a70531cd91adb7975e51))
+* **math:** Macros no longer wrap their replacement into <mrow>s ([d1f24b3](https://github.com/sile-typesetter/sile/commit/d1f24b3ab05fa29d567e34cf54f7b9a5c6c8f687))
+* **math:** Print resulting mbox tree to debug log ([f2e7c33](https://github.com/sile-typesetter/sile/commit/f2e7c33ee553f0ff74be17b2e8aab776a762e62f))
+* **math:** Support relative units in spaces and add standard spaces ([4f2bee2](https://github.com/sile-typesetter/sile/commit/4f2bee208be4cf4f1ebfbc35707977f3d19c0bb0))
+* **packages:** Add new method to export package functions to class ([07a28a4](https://github.com/sile-typesetter/sile/commit/07a28a4da4cd392d6a07ac639f4cccf4014e82dc))
+* **packages:** Allow configuring target folio frame from options ([74e3924](https://github.com/sile-typesetter/sile/commit/74e3924a9e0a5b6635e91d28d841d80634f8ec8d))
+* **packages:** Provide API for registering commands linked to packages ([4875972](https://github.com/sile-typesetter/sile/commit/4875972c6942db2901c51fa4955e36df5d850466))
+
+
+### Bug Fixes
+
+* **build:** Update Flake to work with Nix >= 2.10 ([effb0dc](https://github.com/sile-typesetter/sile/commit/effb0dc8c96f8be655ab40c1a7a625b949f48688))
+* **classes:** Reset default font direction if document direction changed ([11bb0f9](https://github.com/sile-typesetter/sile/commit/11bb0f9a8bf714fbd0f44730437c50b32fde437f))
+* **cli:** Avoid throwing extra error on error without message ([0d530a5](https://github.com/sile-typesetter/sile/commit/0d530a5e5b195af8278e592f9ac45a465cb16cfa))
+* **core:** Avoid error when outputting overflow warnings with specific measurements ([49ef650](https://github.com/sile-typesetter/sile/commit/49ef650217615548c65741b1cbe553631d0fa90d)), closes [#945](https://github.com/sile-typesetter/sile/issues/945)
+* **debug:** Flatten content if necessary to process and debug location ([c753bd2](https://github.com/sile-typesetter/sile/commit/c753bd23ee5b15549d5f0f59a2df514d0411b9b4))
+* **debug:** Re-implement option display in trace stacks lost with std ([01d2379](https://github.com/sile-typesetter/sile/commit/01d2379a9c36852eb4c3486e121b64fdd7d154f1))
+* **inputs:** Drop Lua path handling duplicated in core ([8abb0f2](https://github.com/sile-typesetter/sile/commit/8abb0f28f82c5d60d7722b96b7bafeb5b2f8caf2))
+* **math:** Fix caching of getMathMetrics ([3332698](https://github.com/sile-typesetter/sile/commit/333269851d2916687f8b5dedc191e8399a4590e4))
+* **math:** Fix debug logs in TeX-like parsing ([a686f90](https://github.com/sile-typesetter/sile/commit/a686f90ec0650296a8406c17e642675774c5ec5f))
+* **math:** Fix spacing before integral operators ([bc847b3](https://github.com/sile-typesetter/sile/commit/bc847b3856f7b70a71a2288568fabd6dde139288))
+* **math:** Fix tostring functions in mbox subclasses ([7a7c6bc](https://github.com/sile-typesetter/sile/commit/7a7c6bc6318f2a7ef21caeb6586b077b25e5dccd))
+* **math:** Set math elements to inherit hbox node properties ([0279556](https://github.com/sile-typesetter/sile/commit/0279556fa271f5117f04b520bec392d195c0d3db))
+* **math:** Turn font name printing into debug log ([068ec4b](https://github.com/sile-typesetter/sile/commit/068ec4b06701202f3a1e9d05efa632e6e1a81cb5))
+* **outputter:** Non-RGB colors shall work with the debug outputter ([#1469](https://github.com/sile-typesetter/sile/issues/1469)) ([e68dee3](https://github.com/sile-typesetter/sile/commit/e68dee3bb3ac593d03fcd3867c38b4483b3a8a9d))
+* **packages:** Correct URL formatting when backend is not libpdftex ([fc4212d](https://github.com/sile-typesetter/sile/commit/fc4212dd672962bc48ad0cc86245494b6516a742))
+* **packages:** Ensure grid hook is ineffective when grid is off ([b99482b](https://github.com/sile-typesetter/sile/commit/b99482b02c0cc09425a4910bc5b25671fb879a25)), closes [/github.com/sile-typesetter/sile/issues/1174#issuecomment-1173141699](https://github.com/sile-typesetter//github.com/sile-typesetter/sile/issues/1174/issues/issuecomment-1173141699)
+* **packages:** Make \script command properly initialize packages ([#1479](https://github.com/sile-typesetter/sile/issues/1479)) ([9723d0d](https://github.com/sile-typesetter/sile/commit/9723d0dbd147287071cc49777c12ee365b4a5123))
+* **packages:** Parse height argument to `\raise` / `\lower` as measurement ([#1506](https://github.com/sile-typesetter/sile/issues/1506)) ([7196fda](https://github.com/sile-typesetter/sile/commit/7196fdaa2497b92bb47a5a49bd82f732b90f4bcf))
+* **packages:** Stop legacy package manager from adding empty paths ([cf9b9fa](https://github.com/sile-typesetter/sile/commit/cf9b9faa433f230a63cf9a8c1a56cbd256b1c5dd))
+* **packages:** Stricter color parsing and improved color documentation ([f7b919a](https://github.com/sile-typesetter/sile/commit/f7b919ac5e9ad47f4c01531064be7bdae8d5311d))
+* **packages:** The autodoc package could choke on some inputs ([#1491](https://github.com/sile-typesetter/sile/issues/1491)) ([c7db5d5](https://github.com/sile-typesetter/sile/commit/c7db5d5b3c5c6756ffe7e923ea3b938148167b2b))
+* **utilities:** Correct traceback output for SILE.error() to show parent, not itself ([16b8900](https://github.com/sile-typesetter/sile/commit/16b8900546667e671f794a384e88892f94739d40))
+
+
+### Miscellaneous Chores
+
+* **build:** Move C modules to same relative location in source directory as installed ([55ad795](https://github.com/sile-typesetter/sile/commit/55ad79541c6c3908685e6cafedf2c96926d85d37))
+* **classes:** Remove stdlib class shims ([c4210da](https://github.com/sile-typesetter/sile/commit/c4210dac55c5c80b8f169541b57d5f612706f45a))
+* **cli:** Deprecate CLI argument -I in favor of -r, -p, and -P ([d63a484](https://github.com/sile-typesetter/sile/commit/d63a4840f3970b2664743036847d8a7aebf1c623))
+* **deps:** Stop providing Lua stdlib ([8a8c0e9](https://github.com/sile-typesetter/sile/commit/8a8c0e96e62e8288961333de2d468fca3a86e20a))
+* **packages:** Deprecate legacy package manager ([b72653c](https://github.com/sile-typesetter/sile/commit/b72653c274b5779af8261843505049bc89a8d301))
+
+
+### Code Refactoring
+
+* **core:** Move inputters/shapers/outputters to isolated classes ([14329ce](https://github.com/sile-typesetter/sile/commit/14329ced288c40de5d61e01666afd41446511d45))
+* **core:** Move registerCommand() out of global to classes ([bc527ea](https://github.com/sile-typesetter/sile/commit/bc527ea400f16b5970c77b609377ee3321e1bf42))
+* **packages:** Process bibtex content as XML not SIL ([a259b32](https://github.com/sile-typesetter/sile/commit/a259b32490546c0a55bcec1a41dc04f48acb2711))
+
+### [0.13.3](https://github.com/sile-typesetter/sile/compare/v0.13.2...v0.13.3) (2022-07-15)
+
+
+### Features
+
+* **packages:** Add minimal support for usual BibTeX types (bibtex) ([292a2f2](https://github.com/sile-typesetter/sile/commit/292a2f2b2367a93a97add70fa42191b5b5bb800c))
+
+
+### Bug Fixes
+
+* **build:** Update Flake to work with Nix >= 2.10 ([3d5a18c](https://github.com/sile-typesetter/sile/commit/3d5a18cf8b202060e6c884fa3d73150f0aec9e58))
+* **core:** Avoid duplicate paths blocking directory searches ([7a7209f](https://github.com/sile-typesetter/sile/commit/7a7209fff9fb0b2ca8a59816dae55e201b0c1208))
+* **core:** Avoid error when outputting overflow warnings with specific measurements ([cb51ed5](https://github.com/sile-typesetter/sile/commit/cb51ed525684fab85c99e29474e0ba58806ba1ac)), closes [#945](https://github.com/sile-typesetter/sile/issues/945)
+* **outputter:** Non-RGB colors shall work with the debug outputter ([#1469](https://github.com/sile-typesetter/sile/issues/1469)) ([41fbdf4](https://github.com/sile-typesetter/sile/commit/41fbdf44659385171f813576373be36556023a73))
+* **packages:** BibTeX types/tags are case-insensitive, etc ([61c1fc6](https://github.com/sile-typesetter/sile/commit/61c1fc6209bfbfffa38a05f9d3986bfb50c8a840))
+* **packages:** Make \script command properly initialize packages ([9ded7e1](https://github.com/sile-typesetter/sile/commit/9ded7e1c2aaa03cb4da25ff2ef49c15d40497f9a))
+
+### [0.13.2](https://github.com/sile-typesetter/sile/compare/v0.13.1...v0.13.2) (2022-06-29)
+
+
+### Features
+
+* **core:** Add presets for some ANSI paper sizes and ArchE variants ([0f26756](https://github.com/sile-typesetter/sile/commit/0f267563c6f674d61c91485f771e825e83489590))
+* **languages:** Add full Esperanto language support ([b740709](https://github.com/sile-typesetter/sile/commit/b7407090ab4feac9107454db0f328c3d886a0631))
+* **packages:** Add 'lists' package (bullets and enumerations) ([6af3c62](https://github.com/sile-typesetter/sile/commit/6af3c62822ac334c64e2c46d8def11c51a017093))
+* **packages:** Add more options for custom 'lists"' styling ([3167410](https://github.com/sile-typesetter/sile/commit/316741033da7edff44cb933a311f3b5080b763c7))
+* **packages:** Handle font fallback when glyph named null returned on shape falure ([09c0a86](https://github.com/sile-typesetter/sile/commit/09c0a8647105bbddac155f3414cda2bc481a86ca))
+* **packages:** Pass through font-specific options to fallback fonts ([fb29442](https://github.com/sile-typesetter/sile/commit/fb2944233ea13e10729ada47aa8b72db44ea8a30))
+
+
+### Bug Fixes
+
+* **classes:** Clarify the scopes of `tate` and `jplain` ([db83e9e](https://github.com/sile-typesetter/sile/commit/db83e9ede06dedf89112a7d9d76e185df90f6dba))
+* **classes:** Fix circular reference in pecha class ([4501ec0](https://github.com/sile-typesetter/sile/commit/4501ec07cb0ec5183485fb39b965d8267cf176e0))
+* **classes:** Fix diglot and triglot class instantiation ([71af1a9](https://github.com/sile-typesetter/sile/commit/71af1a94b41e3d86715a369092d1ea6ffeeb6a5b))
+* **core:** Make paper size parser case insensitive, e.g. 'a4' or 'A4' ([af441c8](https://github.com/sile-typesetter/sile/commit/af441c8b381cae3ea18169105e951d60fcb5255f))
+* **measurements:** Move the zenkaku width (zw) unit into core ([cfe5060](https://github.com/sile-typesetter/sile/commit/cfe506001387a81f37dd9612444b066e138ba179))
+* **packages:** Correct fall-back font processing ([d3cc59b](https://github.com/sile-typesetter/sile/commit/d3cc59b9f32eefd06780f4984d066007283434dc))
+* **packages:** Correct package load path for colored dropcaps ([41a0c17](https://github.com/sile-typesetter/sile/commit/41a0c17bee08f1e127b3d1cd4f3ee9cc4283aeac))
+* **packages:** Fix coding errors in untested corners of bibtex package ([804b1a5](https://github.com/sile-typesetter/sile/commit/804b1a548615054cf810850d1c5cd01ad20c47fb))
+* **packages:** Fix loading TOC twice resetting pdf links ([97797b8](https://github.com/sile-typesetter/sile/commit/97797b89b7cc195f1011495ec87ad1b94121464e))
+* **shaper:** Handle switching between color & fallback shapers in single document ([04f2d5d](https://github.com/sile-typesetter/sile/commit/04f2d5df94373cc75e02b51f5847d7247a2025e7))
+* **utilities:** Raise Lua error instead of manually aborting if inside pcall() ([6e70a17](https://github.com/sile-typesetter/sile/commit/6e70a17562f298234e85862df30d12dfdc963f48))
+
+### [0.13.1](https://github.com/sile-typesetter/sile/compare/v0.13.0...v0.13.1) (2022-06-18)
+
+
+### Features
+
+* **build:** Update libtexpdf to support new hardware platforms ([da1182e](https://github.com/sile-typesetter/sile/commit/da1182ec3601d9a4ea5b2529c6d0de4108bbf211))
+* **packages:** Add hrulefill command to the "rules" package ([ccd3371](https://github.com/sile-typesetter/sile/commit/ccd3371aafa4f314c9d2a967106e03c373cf1a35))
+* **packages:** Add strikethrough command to the rules package ([#1422](https://github.com/sile-typesetter/sile/issues/1422)) ([f230a3a](https://github.com/sile-typesetter/sile/commit/f230a3aae72cf84075623165ce6ded0c9aa2bdd0))
+* **packages:** Use new strikethrough when rendering Panndoc's SILE writer ([20d19eb](https://github.com/sile-typesetter/sile/commit/20d19eb849307a1067006a595b2e4f2b92e53112))
+
+
+### Bug Fixes
+
+* **build:** Make sure i18n/ dir is actually distributed ([#1445](https://github.com/sile-typesetter/sile/issues/1445)) ([61ed8e1](https://github.com/sile-typesetter/sile/commit/61ed8e13eee3c2f5f802605a9da5f25ad0040164))
+* **packages:** Add more props to keep CJK from tipping over, per [#1245](https://github.com/sile-typesetter/sile/issues/1245) ([381b9f1](https://github.com/sile-typesetter/sile/commit/381b9f14d10e1bbcf0b117642c4c13e3dcd4c620))
+* **packages:** Leaders shall be an explicit (non-discardable) glue ([631ba21](https://github.com/sile-typesetter/sile/commit/631ba21c182389dd5a68241a36d1eb4fb13c895b))
+* **packages:** The fullrule now extends over a full standalone line ([8fe57c8](https://github.com/sile-typesetter/sile/commit/8fe57c844f2a093d7abe35dfe6c63d5df5ab7115))
+
+## [0.13.0](https://github.com/sile-typesetter/sile/compare/v0.12.5...v0.13.0) (2022-06-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* **settings:** All the functions under `SILE.settings.*()` should now be
+  called using the instance notation `SILE.settings:*()`. Usage should be
+  shimmed with a warning for now.
+
+  Changing this in your code is relatively easy with a search and replace.
+  As an example with a project in Git, you could use perl like this:
+
+  ```console
+  funcs="pushState|popState|declare|reset|toplevelState|get|set|temporarily|wrap"
+  git ls-files | xargs -n1 perl -i -pne "s#(SILE\.settings)\.($funcs)#\1:\2#g"
+  ```
+
+* **typesetter:** Making a new instance of the typesetter should now be
+  done by *calling* `SILE.defaultTypesetter()` instead of copying the
+  object. It has been changed from a std.object to a Penlight class. As
+  such the correct initialization function is also now `_init()` instead
+  of `init()`. A shim is in place to catch legacy usage, but this will be
+  removed in the future.
+
+* **deps:** All calls to the Lua default string library have been
+  using a version monkey-patched by stdlib. This has created all sorts of
+  issues including not being able to properly use some of Lua's default
+  features and conflicts with out explicit meta methods. Also we're busy
+  dropping dependency stdlib altogether.
+
+  If you were relying on it for any of your string operations, replace
+  `string.func()` with `std.string.func()`. For now `std` is being
+  provided by SILE, but if you use it in your projects please add it as
+  a direct dependency yourself since that will eventually be removed as
+  well.
+
+  By the way in case anything ever `git bisect`s back to here, one way to
+  test if your problem is related to this change or not (especially if you
+  have downstream code that might have built on the assumption SILE's Lua
+  strings were monkey patched) is to load it manually yourself:
+
+  ```console
+  $ sile -e 'require("std.string").monkey_patch()' your_file.sil
+  ```
+* **classes:** This changes the way classes are represented as Lua
+  objects and the mechanism used for inheritance. While shims will be in
+  place to catch most cases that use old syntax it is not possible to
+  grantee 100% API compatibility. If you have classes that do anything
+  remotely fancy (i.e. not just copy/paste from SILE examples) they may or
+  may not work at all; and even if they do they should be updated to
+  explicitly use the new API.
+
+### Features
+
+* **classes:** Add hook system for more versatile packages ([9287721](https://github.com/sile-typesetter/sile/commit/9287721217970a6262a25f5fe697ac211d1ebaca))
+* **languages:** Add \ftl command to make adding fluent localizations easy ([b331456](https://github.com/sile-typesetter/sile/commit/b3314564afa5d4e38dc5f28277b13aa9dbe8668b))
+* **languages:** Add fluent() command to output translations ([ad87995](https://github.com/sile-typesetter/sile/commit/ad87995ebbbce464b3a7075961db29e681607823))
+* **languages:** Validate languages against CLDR database ([f96a331](https://github.com/sile-typesetter/sile/commit/f96a33133ecefa641e06139f90bc6b1931be5656))
+
+
+### Bug Fixes
+
+* **backends:** Add Pango shaper when selecting Cairo backend ([bbc2817](https://github.com/sile-typesetter/sile/commit/bbc2817c01e20ba04c5fe7d4c40de4c9b5155ffc))
+* **backends:** Always output pdf on finish() even if no content ([3af7a94](https://github.com/sile-typesetter/sile/commit/3af7a94d39b11555cf2159f5f4a9c416259f7fa3))
+* **backends:** Correct image sizing in Cairo and Podofo backends ([f2785ad](https://github.com/sile-typesetter/sile/commit/f2785ade39842caf40519239ee58e3db3e17cc9d))
+* **core:** Avoid throwing deprecation errors when just inspecting SILE's internals ([b303059](https://github.com/sile-typesetter/sile/commit/b303059fe85d323d8a459e8025340464f4bdd0dd))
+* **core:** Justify lines with ligatures (workaround) ([cf2cb3a](https://github.com/sile-typesetter/sile/commit/cf2cb3a34e72132705bda3e9fbe4bb97ac37e1f8))
+* **core:** Patch Penlight 1.9.0 compatibility issue ([092fbd3](https://github.com/sile-typesetter/sile/commit/092fbd38c60677a92029a8504d5baa8c9e25c37b))
+* **languages:** Correct bogus usage of resource loading / error catching ([fb1fd7f](https://github.com/sile-typesetter/sile/commit/fb1fd7f1cb39ee7d36b6d5253da94f906afba8f2))
+* **packages:** An hrule with depth shall not affect current baseline ([c759892](https://github.com/sile-typesetter/sile/commit/c759892d09b9ffa1c3c2d25d69d0324b34884b13))
+* **packages:** Don't destroy frames when defining masters, only when switching to one ([b7de7ca](https://github.com/sile-typesetter/sile/commit/b7de7caadf5b07f819f3e483f0f1712d06d9facc))
+* **packages:** Fix autodoc parsing, typeset string not series of bytes ([14f6126](https://github.com/sile-typesetter/sile/commit/14f61266b6b19835d1019d94015d2e0bfa2612b1))
+
+
+### Miscellaneous Chores
+
+* **deps:** Drop std.string.monkey_patch() ([e8b2bdf](https://github.com/sile-typesetter/sile/commit/e8b2bdf96b50646698c75961fddff2da26ce57ec))
+
+
+### Code Refactoring
+
+* **classes:** Convert class inheritance from stdlib to Penlight ([f7dafe0](https://github.com/sile-typesetter/sile/commit/f7dafe0623a981e9532fbb0108876517786bd1d8))
+* **settings:** Change settings object to be self referential ([dd97d05](https://github.com/sile-typesetter/sile/commit/dd97d05cf02e89213492d1308544177a482de7ea))
+* **typesetter:** Change typesetter instancing to Penlight model ([a9400ad](https://github.com/sile-typesetter/sile/commit/a9400ad0e759b6b8787b4307c10984ce91e354dc))
+
 ### [0.12.5](https://github.com/sile-typesetter/sile/compare/v0.12.4...v0.12.5) (2022-04-18)
 
 
@@ -84,11 +463,11 @@ All notable changes to this project will be documented in this file. See [standa
 ### ⚠ BREAKING CHANGES
 
 * **packages:** Previous to this release footnote and folio frames took
-their font settings from a new typesetter with default settings. With
-this release the settings are now derived from the typesetter in the
-default frame, hence inheriting font family, size, leading, and other
-settings. Values can still be set using the same functions, but relative
-values such as font sizes are based on a different base.
+  their font settings from a new typesetter with default settings. With
+  this release the settings are now derived from the typesetter in the
+  default frame, hence inheriting font family, size, leading, and other
+  settings. Values can still be set using the same functions, but relative
+  values such as font sizes are based on a different base.
 
 ### Features
 
@@ -160,23 +539,26 @@ values such as font sizes are based on a different base.
 ### ⚠ BREAKING CHANGES
 
 * **packages:** Previous to this release any and all leading between
-paragraphs (as set with document.parskip) –even a 0 height skip– would
-result in the skip of one full empty grid space — as if parskip had been
-set to something approximating a full line height.  This change corrects
-the calculation so if a 0 height skip is added and everything fits, the
-next line or paragraph will continue uninterrupted in the next grid
-slot.  To get the previous layout behavior back, document.parskip must
-be explicitly set to be something larger than 0.  Even a minimal 1pt
-skip will result in paragraph spacing that includes one full grid height
-left blank as before:
+  paragraphs (as set with document.parskip) –even a 0 height skip– would
+  result in the skip of one full empty grid space — as if parskip had been
+  set to something approximating a full line height.  This change corrects
+  the calculation so if a 0 height skip is added and everything fits, the
+  next line or paragraph will continue uninterrupted in the next grid
+  slot.  To get the previous layout behavior back, document.parskip must
+  be explicitly set to be something larger than 0.  Even a minimal 1pt
+  skip will result in paragraph spacing that includes one full grid height
+  left blank as before:
 
-    \set[parameter=document.parskip,value=1lh]
+  ```sile
+  \set[parameter=document.parskip,value=1lh]
+  ```
+
 * **utilities:** Previous return value for breadcrumbs:contains() was
-just an depth index with -1 indicating no match. This made sense when
-I wrote it, but coming back to it for a new project I expected a boolean
-return value. Returning two values seems like the best option, but given
-the function naming it seemed to make sense to return the boolean first,
-hence the API breakage.
+  just an depth index with -1 indicating no match. This made sense when
+  I wrote it, but coming back to it for a new project I expected a boolean
+  return value. Returning two values seems like the best option, but given
+  the function naming it seemed to make sense to return the boolean first,
+  hence the API breakage.
 
 ### Features
 
@@ -494,19 +876,19 @@ hence the API breakage.
 ### ⚠ BREAKING CHANGES
 
 * This removes the auto-guessing file extension
-mechanism that allowed *.sil files to be loaded without specifying the
-full file name with extensions. A command like `sile test` will no
-longer find and build sile.sil, you must run `sile test.sil`. The
-mechanism that was doing this was a hack than only worked in some
-scenarios anyway, and dropping it instead of trying to cover all the
-edge cases will make it that much easier to use and document.
-Importantly it avoids edge cases where both *.xml, *.sil, and/or *.lua
-files all have the same name and the loader really has so idea which one
-you mean.
+  mechanism that allowed *.sil files to be loaded without specifying the
+  full file name with extensions. A command like `sile test` will no
+  longer find and build sile.sil, you must run `sile test.sil`. The
+  mechanism that was doing this was a hack than only worked in some
+  scenarios anyway, and dropping it instead of trying to cover all the
+  edge cases will make it that much easier to use and document.
+  Importantly it avoids edge cases where both *.xml, *.sil, and/or *.lua
+  files all have the same name and the loader really has so idea which one
+  you mean.
 
-Note that _packages_ may still be loaded with no file extension, this
-does not affect the `require()` mechanism that looks for *.lua and
-various other incantations by default.
+  Note that _packages_ may still be loaded with no file extension, this
+  does not affect the `require()` mechanism that looks for *.lua and
+  various other incantations by default.
 
 ### Bug Fixes
 

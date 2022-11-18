@@ -1,13 +1,40 @@
-SILE = require("core/sile")
+SILE = require("core.sile")
 
-local tClass = SILE.baseClass {}
-tClass:declareFrame("a", { left = "1pt", right = "12pt", top = "1pt", bottom = "top(b)" })
-tClass:declareFrame("b", { left = "1pt", right = "12pt", bottom = "12pt", height="4pt" })
+SILE.backend = "dummy"
+SILE.init()
 
-SILE.documentState.thisPageTemplate = tClass.pageTemplate
+local base = require("classes.base")
+local tClass = pl.class(base)
+tClass._name = "tClass"
+
+tClass.defaultFrameset = {
+  a = {
+    left = "1pt",
+    right = "12pt",
+    top = "1pt",
+    bottom = "top(b)"
+  },
+  b = {
+    left = "1pt",
+    right = "12pt",
+    bottom = "12pt",
+    height="4pt"
+  }
+}
+
+tClass.firstContentFrame = "a"
+
+function tClass:_init ()
+  base._init(self)
+  return self
+end
+
+SILE.documentState.documentClass = tClass()
 
 describe("Overlapping frame definitions", function()
-  it("should work", function() assert.is.truthy(tClass) end)
+  it("should work", function()
+    assert.is.truthy(SILE.documentState.documentClass._initialized)
+  end)
 
   describe("Frame B", function()
     local b = SILE.getFrame("b")

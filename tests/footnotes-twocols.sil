@@ -1,5 +1,5 @@
-\begin[papersize=a5,class=testtwocol]{document}%KNOWNBAD
-\script[src=packages/lorem]
+\begin[papersize=a5,class=testtwocol]{document}% KNOWNBAD
+\use[module=packages.lorem]
 \set[parameter=document.baselineskip,value=15pt plus 2pt]
 \font[size=13pt]
 ABC \lorem[words=90]

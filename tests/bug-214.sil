@@ -2,7 +2,7 @@
 \nofolios
 % We are testing that the footnote's top skip (separator) gets retained
 % and that the main content doesn't overflow its frame.
-\script[src=packages/rules]
+\use[module=packages.rules]
 \footnote:separator{\noindent\hrule[width=20pt]\skip[height=12pt]}
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,

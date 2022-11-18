@@ -62,4 +62,4 @@ justenoughicu_la_LIBADD = $(ICU_LIBS) $(MY_LUA_LIB)
 to_copy += .libs/justenoughicu.@SHARED_LIB_EXT@
 
 all-local: $(pkglib_LTLIBRARIES)
-	cp $(to_copy) ../core
+	cp $(to_copy) ..

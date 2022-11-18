@@ -1,0 +1,9 @@
+\begin[papersize=a6]{document}
+\neverindent
+\nofolios
+\use[module=packages.unichar]
+\font[size=30pt]
+
+\unichar{U+0061}\unichar{U+0302}\font[size=2em]{\unichar{U+0061}\unichar{U+0302}}
+
+\end{document}

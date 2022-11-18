@@ -1,4 +1,4 @@
-SILE = require("core/sile")
+SILE = require("core.sile")
 local icu = require("justenoughicu")
 
 describe("SILE.linebreak", function()

@@ -23,17 +23,22 @@ Let’s begin \code{diglot.lua} as usual by setting up the class and declaring o
 
 \begin{verbatim}
 \line
-local plain = SILE.require("plain", "classes");
-local diglot = plain \{ id = "diglot" \}
-SILE.require("packages/counters");
-SILE.scratch.counters.folio = \{ value = 1, display = "arabic" \};
-SILE.scratch.diglot = \{\}
-diglot:declareFrame("a",    \{left = "8.3\%pw", right = "48\%pw",
-            top = "11.6\%ph", bottom = "80\%ph" \});
-diglot:declareFrame("b",    \{left = "52\%pw",  right = "100\% - left(a)",
-            top = "top(a)", bottom = "bottom(a)" \});
-diglot:declareFrame("folio",\{left = "left(a)", right = "right(b)",
-            top = "bottom(a)+3\%ph",bottom = "bottom(a)+8\%ph" \});
+local plain = require("classes.plain");
+local diglot = pl.class(plain)
+diglot._name = "diglot"
+
+function diglot:_init (options)
+  plain._init(self, options)
+  self:loadPackage("counters")
+    SILE.scratch.counters.folio = \{ value = 1, display = "arabic" \};
+    diglot:declareFrame("a",    \{left = "8.3\%pw", right = "48\%pw",
+                top = "11.6\%ph", bottom = "80\%ph" \});
+    diglot:declareFrame("b",    \{left = "52\%pw",  right = "100\% - left(a)",
+                top = "top(a)", bottom = "bottom(a)" \});
+    diglot:declareFrame("folio",\{left = "left(a)", right = "right(b)",
+                top = "bottom(a)+3\%ph",bottom = "bottom(a)+8\%ph" \});
+  return self
+end
 \end{verbatim}
 
 Now we create two new typesetters, one for each column, and we tell each one how to find the other:
@@ -69,13 +74,13 @@ as we will be handling the paragraphing manually using the \code{\\sync} command
 
 \begin{verbatim}
 SILE.registerCommand("left", function(options, content)
-  SILE.settings.set("typesetter.parseppattern", -1)
+  SILE.settings:set("typesetter.parseppattern", -1)
   SILE.typesetter = diglot.leftTypesetter;
   SILE.call("font", SILE.scratch.diglot.leftfont, \{\})
 end, "Begin entering text on the left side")
 
 SILE.registerCommand("right", function(options, content)
-  SILE.settings.set("typesetter.parseppattern", -1)
+  SILE.settings:set("typesetter.parseppattern", -1)
   SILE.typesetter = diglot.rightTypesetter;
   SILE.call("font", SILE.scratch.diglot.rightfont, \{\})
 end, "Begin entering text on the right side")
@@ -110,7 +115,7 @@ do not get in the way), and go back to handling paragraphing as normal:
 \begin{verbatim}
   diglot.rightTypesetter:leaveHmode();
   diglot.leftTypesetter:leaveHmode();
-  SILE.settings.set("typesetter.parseppattern", "\\n\\n+")
+  SILE.settings:set("typesetter.parseppattern", "\\n\\n+")
 end)
 \end{verbatim}
 
@@ -119,10 +124,10 @@ we need to ensure, at the start of each document and the start of each page,
 that each typesetter is linked to the appropriate frame:
 
 \begin{verbatim}
-diglot.init = function(self)
-  diglot.leftTypesetter:init(SILE.getFrame("a"))
-  diglot.rightTypesetter:init(SILE.getFrame("b"))
-  return SILE.baseClass.init(self)
+function diglot:_init (options)
+  self.leftTypesetter:init(SILE.getFrame("a"))
+  self.rightTypesetter:init(SILE.getFrame("b"))
+  return plain.init(self)
 end
 \end{verbatim}
 
@@ -181,7 +186,7 @@ One SILE project needed two different kinds of sidenotes, margin notes and gutte
 notes.
 
 \line
-\img[src=documentation/discovery.png,width=width(content)]
+\img[src=documentation/discovery.png,width=100%fw]
 \line
 
 Sidenotes can be seen as a simplified form of
@@ -285,7 +290,7 @@ discovery.init = function()
                  SILE.getFrame("rGutter") or SILE.getFrame("lGutter")
   discovery.innerTypesetter:init(gutter)
   ...
-  return SILE.baseClass:init()
+  return SILE.classes.base:init()
 end
 
 discovery.newPage = function ()
@@ -295,7 +300,7 @@ discovery.newPage = function ()
                  SILE.getFrame("rGutter") or SILE.getFrame("lGutter")
   discovery.innerTypesetter:init(gutter)
   ...
-  return SILE.baseClass.newPage(discovery);
+  return SILE.classes.base.newPage(discovery);
 end
 \line
 \end{verbatim}
@@ -361,8 +366,8 @@ typesetter has gone further down the page than the verse it refers to. Now we
 can output the cross-reference itself.
 
 \begin{verbatim}
-  SILE.settings.temporarily(function()
-    SILE.settings.set("document.baselineskip", SILE.nodefactory.vglue("7pt"))
+  SILE.settings:temporarily(function()
+    SILE.settings:set("document.baselineskip", SILE.nodefactory.vglue("7pt"))
     SILE.call("font", \{size = "6pt", family="Helvetica", weight="800"\}, \{\})
     discovery.innerTypesetter:typeset(SILE.scratch.chapter..":"..SILE.scratch.verse.." ")
     SILE.call("font", \{size = "6pt", family="Helvetica", weight="200"\}, \{\})
@@ -399,7 +404,7 @@ Here’s how to do it.
 
 \begin{verbatim}
 \line
-require("core/sile")
+require("core.sile")
 SILE.outputFilename = "byhand.pdf"
 local plain = require("plain", "classes")
 SILE.documentState.documentClass = plain;
@@ -422,7 +427,7 @@ After this, all the usual API calls will work: \code{SILE.call},
 SILE.typesetter:typeset(data)
 \end{verbatim}
 
-The only thing to be careful is the need to call the \code{finish} method
+The only thing to be careful of is the need to call the \code{finish} method
 on your document class at the end of processing to finish off the final page:
 
 \begin{verbatim}
@@ -440,42 +445,38 @@ Running SILE with the \code{--debug \em{facility}} switch will turn on debugging
 % Scan code for currently used flags:
 % rg -I '.*SU.debug(ging)?\("(\w+)".*' -r '$2' | =sort -u
 
-\noindent{}• \code{ast} provides information about how SILE parsed the document into an abstract syntax tree.
-
-\noindent{}• \code{break} provides (copious) information about the line breaking algorithm.
-
-\noindent{}• \code{fonts} shows what font families and attributes were attempted and what font files were used to supply them.
-
-\noindent{}• \code{frames} draws red boxes around the frames on the page.
-
-\noindent{}• \code{hboxes} draws red boxes around all the hboxes on the page.
-
-\noindent{}• \code{pagebuilder} helps to debug problems when determining page breaks.
-
-\noindent{}• \code{macros} notes when new functions are defined from TeXlike macro syntax.
-
-\noindent{}• \code{makedeps} lists resources that were determined to be dependencies (use with \code{-m}).
-
-\noindent{}• \code{profile} turns on Lua profiling,
-which gives a report on where the Lua interpreter is spending its time while processing your document.
-It also makes SILE go really, really slow.
-
-\noindent{}• \code{pushback} notes how already-shaped content that didn’t fit in frames is processed as it migrates to following ones.
-
-\noindent{}• \code{tokenizer} shows how input content gets broken up into segments before shaping.
-
-\noindent{}• \code{typesetter} provides general debugging for the typesetter:
-turning characters into boxes, boxes into lines, lines into paragraphs, and paragraphs into pages.
-
-\noindent{}• \code{vboxes} provides even more information about page break decisions,
-showing you what vboxes were in SILE’s queue when considering the breaking.
-
-\noindent{}• \code{versions} gives a report on the versions of libraries and fonts in use;
-please include this information when reporting bugs in SILE!
-
-\noindent{}• Any package or other area of SILE’s operation may define their own debugging tags;
-the \code{insertions} package does this, as do the Japanese and Uyghur language support systems (\code{--debug uyghur}).
-Often the debug flag is the name of the package or the function.
+\begin{itemize}
+\item{\code{ast} provides information about how SILE parsed the document into
+      an abstract syntax tree.}
+\item{\code{break} provides (copious) information about the line breaking
+      algorithm.}
+\item{\code{fonts} shows what font families and attributes were attempted
+      and what font files were used to supply them.}
+\item{\code{frames} draws red boxes around the frames on the page.}
+\item{\code{hboxes} draws red boxes around all the hboxes on the page.}
+\item{\code{pagebuilder} helps to debug problems when determining page breaks.}
+\item{\code{macros} notes when new functions are defined as macros from declarative markup.}
+\item{\code{makedeps} lists resources that were determined to be dependencies
+      (use with \code{-m}).}
+\item{\code{profile} turns on Lua profiling, which gives a report on where the
+      Lua interpreter is spending its time while processing your document.
+      It also makes SILE go really, really slow.}
+\item{\code{pushback} notes how already-shaped content that didn’t fit in
+      frames is processed as it migrates to following ones.}
+\item{\code{tokenizer} shows how input content gets broken up into segments
+      before shaping.}
+\item{\code{typesetter} provides general debugging for the typesetter:
+      turning characters into boxes, boxes into lines, lines into paragraphs,
+      and paragraphs into pages.}
+\item{\code{vboxes} provides even more information about page break decisions,
+      showing you what vboxes were in SILE’s queue when considering the breaking.}
+\item{\code{versions} gives a report on the versions of libraries and fonts in use;
+      please include this information when reporting bugs in SILE!}
+\item{Any package or other area of SILE’s operation may define their own debugging tags;
+      the \code{insertions} package does this, as do the Japanese and Uyghur language
+      support systems (\code{--debug uyghur}).
+      Often the debug flag is the name of the package or the function.}
+\end{itemize}
 
 Multiple facilities can be turned on by adding the flag multiple times or by separating them with commas:
 \code{--debug typesetter,break} will turn on debugging information for the typesetter and line breaker.

@@ -3,7 +3,7 @@ local makeDeps = {
 
   add = function (self, filename)
     SU.debug("makedeps", "Adding:", filename)
-    local resolvedFile, msg = package.searchpath(filename:gsub("^%./", ""), "?;"..package.path, "/")
+    local resolvedFile, msg = package.searchpath(filename:gsub("^@?%./", ""), "?;"..package.path, "/")
     if not resolvedFile then
       SU.error("Cannot resolve file '" .. filename .. "' as a dependency:" .. msg)
     end
@@ -29,7 +29,7 @@ local makeDeps = {
     end
     local depfile, err = io.open(self.filename, "w")
     if not depfile then return SU.error(err) end
-    depfile:write(SILE.outputFilename .. ": " .. self._deps .. "\n")
+    depfile:write(SILE.outputFilename .. ": " .. tostring(self._deps) .. "\n")
     depfile:close()
   end
 }

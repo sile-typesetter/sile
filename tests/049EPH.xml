@@ -1,10 +1,10 @@
-<sile papersize="152mm x 229mm" class="bible" twocolumns="true">
+<sile papersize="152mm x 229mm" class="bible" twocolumns="true"> <!-- KNOWNBAD -->
 <set parameter="linebreak.tolerance" value="5000"/>
 <set-counter id="footnote" display="alpha"/>
 <font language="en"/>
-<script src="packages/xmltricks"/>
-<script src="packages/frametricks"/>
-<script src="packages/raiselower"/>
+<use module="packages.xmltricks"/>
+<use module="packages.frametricks"/>
+<use module="packages.raiselower"/>
 <define command="bible:chapter-head"><bigskip/><font size="24pt"><process/></font></define>
 <define command="bible:verse-number"><raise height="3pt"><font size="9pt"><process/></font></raise></define>
 <xmltricks:ignore>style-id style-ide style-h style-h1 style-h2 style-h3</xmltricks:ignore>
@@ -41,7 +41,7 @@ end)
   </style-p>
 <framebreak/>
   <style-p>
-    <verse number="17" style="v" />This I say therefore, and testify in the Lord, that you no longer walk as the rest of the Gentiles also walk, in the futility of their mind, <verse number="18" style="v" />being darkened in their understanding, 
+    <verse number="17" style="v" />This I say therefore, and testify in the Lord, that you no longer walk as the rest of the Gentiles also walk, in the futility of their mind, <verse number="18" style="v" />being darkened in their understanding,
 </style-p>
 <skip height="200pt"/>
 <style-p>

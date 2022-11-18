@@ -72,7 +72,7 @@ local vglue = SILE.nodefactory.vglue(\{ height = l\})
 \end{verbatim}
 
 SILE’s typesetting is organised by the \code{SILE.typesetter} object; it
-maintains two queues of material that it is still working on: the node queue
+maintains two queues of material that it is still working on: the node queue and
 the output queue. Material in these queues is content that has been parsed but
 not yet rendered to the canvas and can still be manipulated. The node queue
 (\code{SILE.typesetter.state.nodes}) contains new horizontal boxes and glue
@@ -81,27 +81,27 @@ that have not yet been broken up into lines. The output queue
 (lines) which have not yet been broken up into pages. Line breaking and page
 breaking happen when the typesetter moves between horizontal and vertical mode.
 
-As new content is parsed is is added to the node queue in as small chunks as
+As new content is parsed it is added to the node queue in as small chunks as
 possible—chunks that must remain together no matter where they end up on
-a line. For example this might individual symbols, sylables, or objects such as
+a line. For example this might include individual symbols, syllables, or objects such as
 images. As soon as new content which requires a vertical break is encountered,
-the node queue is processed to derivce any missing shaping information about
+the node queue is processed to derive any missing shaping information about
 each node, then the sequence of node is broken up into  lines. Once all the
 "horizontal mode" nodes are broken into lines and those lines are added to the
 output queue, the other new vertical content can be processed. At any point you
-can force the current queue of horizantal content (the node queue) to be shaped
+can force the current queue of horizontal content (the node queue) to be shaped
 into lines and added to the vertical output queue by calling the function
 \code{SILE.typesetter:leaveHmode()}. This is a handy move for writing custom
 functions, but it is a fairly low level control (i.e. it is unlikely to be
 useful while writing a document). A related but higher level command,
-\code{\\par}, is more frequently used when writing a document and embeded in
+\code{\\par}, is more frequently used when writing a document and embedded in
 the content. The \code{\\par} command first calls
 \code{SILE.typesetter:leaveHmode()}, then inserts a vertical skip according to
 the \autodoc:setting{document.parskip} setting, then goes on to reset a number of
 settings that are typically paragraph related such as hanging indents.
 
 When writing a custom command, if you want to manually add a vertical space to
-the output first ensure that material in the current paragraph has been all
+the output first ensure that the material in the current paragraph has been all
 properly boxed-up and moved onto the output queue by calling
 \code{SILE.typesetter:leaveHmode()}; then add your desired glue to the output
 queue.
@@ -254,21 +254,22 @@ going to stipulate that the gutter width will be 3\% of the page width:
 Declarations of frame dimensions are like ordinary SILE \code{<dimension>}s,
 except with three additional features:
 
-\noindent• You can refer to properties of other frames using the \code{top()},
-\code{bottom()}, \code{left()}, \code{right()}, \code{height()} and \code{width()}
-functions. These functions take a frame ID. SILE magically pre-defines the frame
-\code{page} to allow you to access the dimensions of the whole page.
-
-\noindent• You can use arithmetic functions: plus, minus, divide, multiply, and
-parenthesis have their ordinary arithmetic meaning. To declare that frame \code{b}
-should be half the height of frame \code{a} plus 5 millimeters, you can say
-\code{height=5mm + (height(b) / 2)}. However, as we will see later, it is usually
-better to structure your declarations to let SILE make those kind of computations for
-you.
-
-\noindent• Since book design is often specified in terms of proportion of a page,
-you can use the shortcut \code{width=5\%pw} instead of \code{width=0.05 * width(page)}
-and \code{height=50\%ph} instead of \code{height=0.5 * height(page)}.
+\begin{itemize}
+\item{You can refer to properties of other frames using the \code{top()},
+      \code{bottom()}, \code{left()}, \code{right()}, \code{height()} and
+      \code{width()} functions. These functions take a frame ID. SILE magically
+      pre-defines the frame \code{page} to allow you to access the dimensions
+      of the whole page.}
+\item{You can use arithmetic functions: plus, minus, divide, multiply, and
+      parenthesis have their ordinary arithmetic meaning. To declare that frame
+      \code{b} should be half the height of frame \code{a} plus 5 millimeters,
+      you can say \code{height=5mm + (height(b) / 2)}. However, as we will see
+      later, it is usually better to structure your declarations to let SILE
+      make those kind of computations for you.}
+\item{Since book design is often specified in terms of proportion of a page,
+      you can use the shortcut \code{width=5\%pw} instead of \code{width=0.05 * width(page)}
+      and \code{height=50\%ph} instead of \code{height=0.5 * height(page)}.}
+\end{itemize}
 
 \end{note}
 
@@ -280,13 +281,13 @@ margin of the left column is the left margin of the typeblock; the right margin 
 the right column is the right margin of the typeblock. But we also want
 a few other parameters to ensure that:
 
-\noindent• the gutter is placed between our two columns
-
-\noindent• the two columns have the same width (We don’t know what that width is, but SILE
-will work it out for us.)
-
-\noindent• after the left column is full, typesetting should move to the right
-column.
+\begin{itemize}
+\item{the gutter is placed between our two columns}
+\item{the two columns have the same width (We don’t know what that width is,
+      but SILE will work it out for us.)}
+\item{after the left column is full, typesetting should move to the right
+      column.}
+\end{itemize}
 
 \begin{verbatim}
 \line
@@ -308,14 +309,15 @@ And now finally we can end our \code{pagetemplate}.
 \end{verbatim}
 
 Let’s do it.
-\eject\par%
+\eject
+
 \begin[first-content-frame=leftCol]{pagetemplate}
 \frame[id=gutter,width=3%pw]
 \frame[id=leftCol,left=left(content),right=left(gutter),top=top(content),bottom=bottom(content),next=rightCol]
 \frame[id=rightCol,left=right(gutter),right=right(runningHead),top=top(content),bottom=bottom(content),width=width(leftCol)]
 \end{pagetemplate}
-\showframe[id=leftCol]\showframe[id=rightCol]
-
+\showframe[id=leftCol]
+\showframe[id=rightCol]
 So there we have it: a two-column page layout.
 
 In the next chapter we’ll use the knowledge of how to declare frames to

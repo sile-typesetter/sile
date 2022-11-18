@@ -1,6 +1,6 @@
 name: Test
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
 
@@ -12,10 +12,10 @@ jobs:
           - [ '5.4.2', 'MYCFLAGS=-fPIC' ] # https://github.com/luarocks/luarocks/issues/1302
           - [ '5.3', 'MYCFLAGS=-fPIC' ]
           - [ '5.2', 'MYCFLAGS=-fPIC' ]
-          - [ '5.1', 'CFLAGS="-O2 -Wall -DLUA_USE_LINUX -fPIC"']
+          - [ '5.1', 'CFLAGS="-O2 -Wall -DLUA_USE_LINUX -fPIC"' ]
           - [ 'luajit', 'XCFLAGS=-fPIC' ]
-          - [ 'luajit-openresty', 'XCFLAGS=-fPIC' ]
-    runs-on: ubuntu-20.04
+          # - [ 'luajit-openresty', 'XCFLAGS=-fPIC' ]
+    runs-on: ubuntu-22.04
     name: Test on Lua ${{ matrix.luaVersion[0] }}
     steps:
       - name: Checkout
@@ -64,7 +64,7 @@ jobs:
       - name: Configure
         run: |
           ./bootstrap.sh
-          ./configure --without-system-luarocks --with${{ startsWith(matrix.luaVersion[0], '5') && 'out' || '' }}-luajit --without-manual
+          ./configure --datarootdir=$(cd ..; pwd) --without-system-luarocks --with${{ startsWith(matrix.luaVersion[0], '5') && 'out' || '' }}-luajit --without-manual
       - name: Make
         run: |
           make

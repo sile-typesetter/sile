@@ -1,11 +1,11 @@
 name: Build
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
 
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -31,14 +31,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install fonts-sil-gentiumplus libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev liblua5.3-dev libpng-dev lua5.3 lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
-      - name: Monkey patch decrepit system packages
-        run: |
-          curl -fsSL https://github.com/luarocks/luarocks/commit/9ff512e35455939f02eaec2318e3acc77782fdeb.patch |
-            sudo patch -d /usr/share/lua/5.1 -p2
       - name: Configure
         run: |
           ./bootstrap.sh
-          ./configure --with-manual
+          ./configure --datarootdir=$(cd ..;pwd) --without-system-luarocks --with-manual
           echo "VERSION=$(./build-aux/git-version-gen .tarball-version)" >> $GITHUB_ENV
           echo "MAKEFLAGS=-j$(nproc) -Otarget" >> $GITHUB_ENV
       - name: Make
