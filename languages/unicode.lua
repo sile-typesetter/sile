@@ -9,8 +9,7 @@ SILE.nodeMakers.base = pl.class({
       self.options = options
       self.token = ""
       self.lastnode = false
-      -- The whole lasttype logic below was wrong and broken, and confusing. See #687 and #1297
-      -- self.lasttype = false
+      self.lasttype = false
     end,
 
     makeToken = function (self)
@@ -34,6 +33,7 @@ SILE.nodeMakers.base = pl.class({
         coroutine.yield(SILE.shaper:makeSpaceNode(self.options, item))
       end
       self.lastnode = "glue"
+      self.lasttype = "sp"
     end,
 
     makePenalty = function (self, p)
@@ -80,8 +80,8 @@ SILE.nodeMakers.unicode.isQuoteType = {} -- quote linebreak category is ambiguou
 
 function SILE.nodeMakers.unicode:dealWith (item)
   local char = item.text
-  -- local cp = SU.codepoint(char)
-  -- local thistype = chardata[cp] and chardata[cp].linebreak
+  local cp = SU.codepoint(char)
+  local thistype = chardata[cp] and chardata[cp].linebreak
   if self:isSpace(item.text) then
     self:makeToken()
     self:makeGlue(item)
@@ -92,15 +92,13 @@ function SILE.nodeMakers.unicode:dealWith (item)
   elseif self:isQuote(item.text) then
     self:addToken(char, item)
     self:makeToken()
-  -- elseif self.lasttype and (thistype and thistype ~= self.lasttype and not self.isWordType[thistype]) then
-  --   self:makeToken()
-  --   self:addToken(char, item)
+  elseif self.lasttype and (thistype and thistype ~= self.lasttype and not self.isWordType[thistype]) then
+    self:addToken(char, item)
   else
     self:letterspace()
     self:addToken(char, item)
   end
-  -- if not self.isWordType[thistype] then self.lasttype = chardata[cp] and chardata[cp].linebreak end
-  -- self.lasttype = thistype
+  self.lasttype = thistype
 end
 
 function SILE.nodeMakers.unicode:handleInitialGlue (items)
@@ -121,6 +119,7 @@ function SILE.nodeMakers.unicode:letterspace ()
     SU.debug("tokenizer", "Letter space glue: " .. tostring(w))
     coroutine.yield(SILE.nodefactory.kern({ width = w }))
     self.lastnode = "glue"
+    self.lasttype = "sp"
   end
 end
 
@@ -170,7 +169,10 @@ function SILE.nodeMakers.unicode:handleLineBreak (item, subtype)
   -- soft and hard breaks.
   self:makeToken()
   self:makePenalty(subtype == "soft" and 0 or -1000)
-  self:addToken(item.text, item)
+  local char = item.text
+  self:addToken(char, item)
+  local cp = SU.codepoint(char)
+  self.lasttype = chardata[cp] and chardata[cp].linebreak
 end
 
 function SILE.nodeMakers.unicode:iterator (items)
