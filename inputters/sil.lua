@@ -13,12 +13,11 @@ inputter.appropriate = function (round, filename, doc)
   elseif round == 2 then
     local sniff = doc:sub(1, 100)
     local promising = sniff:match("\\begin") or sniff:match("\\document") or sniff:match("\\sile")
-    return promising and inputter.appropriate(3, filename, doc)
+    return promising and inputter.appropriate(3, filename, doc) or false
   elseif round == 3 then
     local _parser = epnf.define(inputter._grammar)
-    local status, tree = pcall(epnf.parsestring, _parser, doc)
-    local cmd = tree[1][1].command
-    return status and (cmd == "document" or cmd == "sile")
+    local status, _ = pcall(epnf.parsestring, _parser, doc)
+    return status
   end
 end
 

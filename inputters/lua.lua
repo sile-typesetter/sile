@@ -11,10 +11,10 @@ function inputter.appropriate (round, filename, doc)
   elseif round == 2 then
     local sniff = doc:sub(1, 100)
     local promising = sniff:match("^%-%-") or sniff:match("^local") or sniff:match("^return")
-    return promising and inputter.appropriate(3, filename, doc)
+    return promising and inputter.appropriate(3, filename, doc) or false
   elseif round == 3 then
-    local status, _ = pcall(load, doc)
-    return status
+    local status, _ = load(doc)
+    return status and true or false
   end
 end
 
