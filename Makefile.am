@@ -123,9 +123,6 @@ update_libtexpdf:
 	$(GIT) add -- libtexpdf libtexpdf.git-rev
 	$(GIT) diff-index --quiet --cached HEAD || $(GIT) commit -m "chore(build): Pin latest libtexpdf library submodule"
 
-gh-pages:
-	$(GIT) worktree add -f $@ $@
-
 DEPDIR := .deps
 REGRESSIONSCRIPT := ./tests/regressions.pl
 LOCALTESTFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
