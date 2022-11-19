@@ -16,7 +16,7 @@ the setting which changes how the typesetter penalizes orphan (end-of-paragraph)
 lines.
 
 The interface to changing settings from within a SILE document is the
-\code{\\set} command. It takes several options, the most basic one being
+\autodoc:command{\set} command. It takes several options, the most basic one being
 \em{parameter}, which expresses which setting is being changed. The \em{value}
 option expresses the value to which the setting is being changed. As an
 example:
@@ -46,7 +46,7 @@ or:
 \line
 \end{verbatim}
 
-If the \code{\\set} command is provided with any content, then the change of
+If the \autodoc:command{\set} command is provided with any content, then the change of
 setting is localised to the content of the argument. In other words, this code:
 
 \begin{verbatim}
@@ -110,7 +110,7 @@ ideally by 12 points, but can expand or contract from a minimum of 9 points to a
 of 18 points.
 \end{note}
 
-Let’s think about how the \code{center}ing environment is implemented. First,
+Let’s think about how the \autodoc:environment{center} environment is implemented. First,
 we will add incredibly stretchable glue to the left and right margins, like so:
 
 \begin{verbatim}
@@ -149,14 +149,15 @@ setting \autodoc:setting{document.parindent}; this is a glue parameter, and by d
 set to 20pt with no stretch and shrink. Actually, the amount added to the
 start of the paragraph is \autodoc:setting{current.parindent}. After each paragraph,
 \autodoc:setting{current.parindent} is reset to the value of \autodoc:setting{document.parindent}. The
-\code{\\noindent} command works by setting \autodoc:setting{current.parindent} to zero.
+\autodoc:command{\noindent} command works by setting \autodoc:setting{current.parindent} to zero.
 
 \medskip%
 \set[parameter=current.parindent,value=-20pt]%
 \set[parameter=document.lskip,value=20pt]%
 How would you make a paragraph like this with a ‘hanging’ indentation? We’ve
 set the \autodoc:setting{document.lskip} to 20 points, and the \autodoc:setting{current.parindent} to
-\em{minus} 20 points. (In other words, we called:\break\code{\\set[parameter=document.lskip,value=20pt]} and \code{\\set[parameter=current.parindent,\break{}value=-20pt]}.)
+\em{minus} 20 points. (In other words, we called: \autodoc:command{\set[parameter=document.lskip,value=20pt]}
+and \autodoc:command{\set[parameter=current.parindent,value=-20pt]}.)
 
 \medskip%
 \set[parameter=document.lskip,value=0pt]%
@@ -178,7 +179,7 @@ rules. Let’s reiterate those rules now in terms of settings:
 \end{itemize}
 
 \note{This linebreaking method is fiddly, and book designers may prefer to
-work with the tools provided by the \code{linespacing} package.}
+work with the tools provided by the \autodoc:package{linespacing} package.}
 
 \subsection{Word spacing settings}
 
@@ -198,8 +199,8 @@ to vary based on context (otherwise known as “space kerning”). If you want
 to go back to the default (measuring the space character of the font),
 then you need to turn on \autodoc:setting{shaper.variablespaces} (set it to a
 true value) and also \em{unset} the setting \autodoc:setting{document.spaceskip}. To
-unset it, just call \code{\\set} with no \code{value} parameter:
-\code{\\set[parameter=document.spaceskip]}.
+unset it, just call \autodoc:command{\set} with no \autodoc:parameter{value} parameter:
+\autodoc:command{\set[parameter=document.spaceskip]}.
 
 \subsection{Letter spacing settings}
 
@@ -239,7 +240,7 @@ the \em{penalty} attached to breaking the page at one of these places is 150
 penalty points. This value can be any number up to \code{10000}, which means
 “never break at this point.”
 
-\set[parameter=typesetter.parfillskip,value=0pt]
+\begin[parameter=typesetter.parfillskip,value=0pt]{set}
 SILE automatically inserts a piece of massively stretchable
 glue at the end of each paragraph; without this, the justification algorithm
 would apply justification to the entire paragraph, including the last line,
@@ -247,7 +248,8 @@ and produce a fully justified paragraph. (Normally we want the last line of a ju
 left-aligned.)
 The size of this glue is defined in the setting
 \autodoc:setting{typesetter.parfillskip}. Its default value is \code{0pt plus 10000pt} but
-for this current paragraph, we have unset it.
+for this current paragraph, we have unset it.\par
+\end{set}
 
 Now we can finally complete our implementation of centering:
 
@@ -270,7 +272,7 @@ Now we can finally complete our implementation of centering:
 \set[parameter=current.parindent,value=0pt]%
 \set[parameter=typesetter.parfillskip,value=0pt]
 
-And this is (more or less) how the \code{center} environment is defined in
+And this is (more or less) how the \autodoc:environment{center} environment is defined in
 the plain class: we make the margins able to expand but the spaces not able
 to expand; we turn off indenting at the start of the paragraph, and we turn
 off the filling glue at the end of the paragraph.
@@ -278,8 +280,6 @@ off the filling glue at the end of the paragraph.
 \end{examplefont}
 
 \medskip
-
-\set[parameter=typesetter.parfillskip,value=0pt plus 10000pt]
 
 \section{Linebreaking settings}
 
@@ -370,7 +370,7 @@ following SILE functions access the settings system from inside Lua:
 \item{\code{SILE.settings:set(\em{<parameter>}, \em{value})}: sets a setting.
 
 \note{
-You should note that, while in the SILE layer, the \code{\\set} command does its
+You should note that, while in the SILE layer, the \autodoc:command{\set} command does its
 best to turn the textual description of a type into the appropriate Lua type
 for the value. \code{SILE.settings:set} does not do that; it expects the value
 to be of the appropriate type: lengths need to be a \code{SILE.length} object,
