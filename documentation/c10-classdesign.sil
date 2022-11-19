@@ -17,38 +17,34 @@ standard \code{book} class found in \code{classes/book.lua}.
 Let’s briefly have a look at \code{book.lua} to see how it works.
 First, a table is populated with a description of the default frameset.
 
-\begin{verbatim}
-\line
-
-book.defaultFrameset = \{
-  content = \{
-    left = "8.3\%pw",
-    right = "86\%pw",
-    top = "11.6\%ph",
+\begin[type=autodoc:codeblock]{raw}
+book.defaultFrameset = {
+  content = {
+    left = "8.3%pw",
+    right = "86%pw",
+    top = "11.6%ph",
     bottom = "top(footnotes)"
-  \},
-  folio = \{
+  },
+  folio = {
     left = "left(content)",
     right = "right(content)",
-    top = "bottom(footnotes)+3\%ph",
-    bottom = "bottom(footnotes)+5\%ph"
-  \},
-  runningHead = \{
+    top = "bottom(footnotes)+3%ph",
+    bottom = "bottom(footnotes)+5%ph"
+  },
+  runningHead = {
     left = "left(content)",
     right = "right(content)",
-    top = "top(content)-8\%ph",
-    bottom = "top(content)-3\%ph"
-  \},
-  footnotes = \{
+    top = "top(content)-8%ph",
+    bottom = "top(content)-3%ph"
+  },
+  footnotes = {
     left = "left(content)",
     right = "right(content)",
     height = "0",
-    bottom = "83.3\%ph"
-  \}
-\}
-
-\line
-\end{verbatim}
+    bottom = "83.3%ph"
+  }
+}
+\end{raw}
 
 So there are four frames directly declared.
 The first is the content frame,
@@ -69,34 +65,26 @@ this would be enough to populate the pages’ frameset.
 Instead the \code{book} class includes its own extension to the class with a callback init function.
 We see that it loads the \code{masters} package and generates a master frameset using the above defined default frameset.
 
-\begin{verbatim}
-\line
-
+\begin[type=autodoc:codeblock]{raw}
 function book:_init (options)
   self:loadPackage("masters")
-  self:defineMaster(\{
+  self:defineMaster({
       id = "right",
       firstContentFrame = self.firstContentFrame,
       frames = self.defaultFrameset
-    \})
+    })
   ...
   plain._init(self, options)
   return self
 end
-
-\line
-\end{verbatim}
+\end{raw}
 
 Next, we use the \code{twoside} package to mirror our right-page master into a left-page master:
 
-\begin{verbatim}
-\line
-
-  self:loadPackage("twoside", \{ oddPageMaster = "right", evenPageMaster = "left" \})
+\begin[type=autodoc:codeblock]{raw}
+  self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
   self:mirrorMaster("right", "left")
-
-\line
-\end{verbatim}
+\end{raw}
 
 The book class also loads the table of contents package which sets up commands for sectioning,
 and declares various things that need to be done at the start and end of each page.
@@ -106,15 +94,13 @@ All we need to do is set up our new class,
 and then define what is different about it.
 Here is how we set up the inheritance:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 local book = require("classes.book")
 local bringhurst = pl.class(book)
 bringhurst._name = "bringhurst"
 ...
 return bringhurst
-\line
-\end{verbatim}
+\end{raw}
 
 Now we need to define our frame masters.
 
@@ -123,28 +109,24 @@ a top margin eight-fifths of the spine margin;
 a front margin and bottom margin both sixteen-fifths of the spine margin.
 We can define this in SILE terms like so:
 
-\begin{verbatim}
-\line
-
-bringhurst.defaultFrameset = \{
-  content = \{
+\begin[type=autodoc:codeblock]{raw}
+bringhurst.defaultFrameset = {
+  content = {
     left = "width(page) / 13",
     top = "width(page) / 8",
     right = "width(page) * .75",
     bottom = "top(footnotes)"
-  \},
+  },
   folio = book.defaultFrameset.folio,
-  runningHead = \{
+  runningHead = {
     left = "left(content)",
     right = "right(content)",
     top = "top(content) / 2",
     bottom = "top(content) * .75"
-  \},
+  },
   footnotes = book.defaultFrameset.footnotes
-\}
-
-\line
-\end{verbatim}
+}
+\end{raw}
 
 Note that we’ve deliberately copied the frame definitions for the folio and footnote frames from the book class,
 but if we had tried to reuse the runningHead frame definition it would have been too high
@@ -160,17 +142,13 @@ If we had wanted to load additional packages into our class as, say, the \code{b
 we would need to define our own init function and call our parent class’s init function as well.
 For example to load the \code{infonode} package into our class, we could add this init function:
 
-\begin{verbatim}
-\line
-
+\begin[type=autodoc:codeblock]{raw}
 function bringhurst:_init(options)
   book._init(self, options)
   self:loadPackage("infonode")
   return self
 end
-
-\line
-\end{verbatim}
+\end{raw}
 
 Note that the official SILE classes have some extra tooling to handle legacy class models trying to inherit from them.
 You don’t need those deprecation shims in your own classes when following these examples.
@@ -197,19 +175,18 @@ and the \code{content} is an abstract syntax tree reflecting the input being cur
 So in the case of \code{\\mycommand[size=12pt]\{Hello \\break world\}},
 the first parameter will contain the table \code{\{size = "12pt"\}} and the second parameter will contain the table:
 
-\begin{verbatim}
-\line
-\{
+\begin[type=autodoc:codeblock]{raw}
+{
   "Hello ",
-  \{
-    attr = \{\},
+  {
+    attr = {},
     id = "command",
     pos = 8,
     tag = "break"
-  \},
+  },
   " world"
-\}\line
-\end{verbatim}
+}
+\end{raw}
 
 Most commands will find themselves doing something with the \code{options}
 and/or calling \break\code{SILE.process(content)} to recursively process the
@@ -220,9 +197,7 @@ simple.} We want to render \code{<link xl:href="http://...">\goodbreak{}Hello</l
 as \examplefont{Hello (\code{http://...})}. So, first we need to render
 the content, and then we need to do something with the attribute:
 
-\begin{verbatim}
-\line
-
+\begin[type=autodoc:codeblock]{raw}
 bringhurst.registerCommands = function (self)
 
   book.registerCommands(self)
@@ -230,15 +205,14 @@ bringhurst.registerCommands = function (self)
   SILE.registerCommand("link", function(options, content)
     SILE.process(content)
     if (options["xl:href"]) then
-    	SILE.typesetter:typeset(" (")
-    	SILE.call("code", \{\}, \{options["xl:href"]\})
-    	SILE.typesetter:typeset(")")
+      SILE.typesetter:typeset(" (")
+      SILE.call("code", {}, {options["xl:href"]})
+      SILE.typesetter:typeset(")")
     end
   end)
 
 end
-\line
-\end{verbatim}
+\end{raw}
 
 We use the usual \code{SILE.typesetter:typeset} and \code{SILE.call}
 functions to output text and call other commands.
@@ -281,18 +255,16 @@ We’ll be using the \code{infonodes} package to collect the information about w
 First, we set up our infonodes by creating a command that can be called by sectioning commands.
 In other words, \code{\\chapter}, \code{\\section}, etc. should call \code{\\tocentry} to store the page reference for this section.
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 SILE.registerCommand("tocentry", function (options, content)
-  SILE.call("info", \{
+  SILE.call("info", {
     category = "toc",
-    value = \{
+    value = {
       label = content, level = (options.level or 1)
-    \}
-  \})
+    }
+  })
 end)
-\line
-\end{verbatim}
+\end{raw}
 
 Infonodes work on a per-page basis, so if we want to save them throughout
 the whole document, at the end of each page we need to move them from the
@@ -305,9 +277,8 @@ your class or package.}
 
 So, here is a routine we can call at the end of each page to move the TOC nodes.
 
-\begin{verbatim}
-\line
-SILE.scratch.tableofcontents = \{ \}
+\begin[type=autodoc:codeblock]{raw}
+SILE.scratch.tableofcontents = { }
 
 -- Gather the tocentries into a big document-wide TOC
 local moveNodes = function(self)
@@ -317,8 +288,7 @@ local moveNodes = function(self)
     table.insert(SILE.scratch.tableofcontents, n[i])
   end
 end
-\line
-\end{verbatim}
+\end{raw}
 
 We’re going to take the LaTeX approach of storing these items out as a
 separate file, then loading them back in again when typesetting the TOC.
@@ -326,19 +296,16 @@ So at the end of the document, we serialize the \code{SILE.scratch.tableofconten
 table to disk. Here is a function to be called by the \code{finish} output
 routine.
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 local writeToc = function (self)
   local t = pl.pretty.write(SILE.scratch.tableofcontents)
   saveFile(t, SILE.masterFilename .. '.toc')
 end
-\line
-\end{verbatim}
+\end{raw}
 
 And then the \code{\\tableofcontents} command reads that file if it is present, and typesets the TOC nodes appropriately:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 SILE.registerCommand("tableofcontents", function (options, content)
   local toc = loadFile(SILE.masterFilename .. '.toc')
   if not toc then
@@ -348,11 +315,10 @@ SILE.registerCommand("tableofcontents", function (options, content)
   SILE.call("tableofcontents:header")
   for i = 1,#toc do
     local item = toc[i]
-    SILE.call("tableofcontents:item", \{level = item.level, pageno = item.pageno\}, item.label)
+    SILE.call("tableofcontents:item", {level = item.level, pageno = item.pageno}, item.label)
   end
 end)
-\line
-\end{verbatim}
+\end{raw}
 
 And the job is done.
 Well, nearly.
@@ -374,25 +340,21 @@ the initializer is called with two arguments, \code{class} and \code{args}.
 For instance, the \code{twoside} package receives information about the IDs of the main right and left master frames so that it can set up the code to switch masters on page change.
 In our case, we will want to ensure that the \code{infonode} package is loaded into our caller:
 
-\begin{verbatim}
-\line
-return \{
+\begin[type=autodoc:codeblock]{raw}
+return {
   init = function (class)
     class:loadPackage("infonode")
   end,
-\line
-\end{verbatim}
+\end{raw}
 
 The other entry to be returned from the package is \code{exports},
 which contains names and functions to be mixed into the class namespace.
 In other words, after:
 
-\begin{verbatim}
-\line
-  exports = \{ writeToc = writeToc, moveTocNodes = moveNodes \}
-\}
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+  exports = { writeToc = writeToc, moveTocNodes = moveNodes }
+}
+\end{raw}
 
 \noindent{}any class which loads \code{tableofcontents} can call \code{self:writeToc()} and \code{self:moveTocNodes()} (note that we renamed this function when exporting it).
 It is the class’s responsibility for calling these methods at the appropriate point into the output routine.

@@ -21,23 +21,20 @@ second form changes the font used to typeset text from this point on.
 
 So, for instance:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 Small text
 
-\\font[size=15pt]%
+\font[size=15pt]%
 Big text!
 
-\\font[size=30pt]\{Bigger text\}
+\font[size=30pt]{Bigger text}
 
 Still big text!
-\line
-\end{verbatim}
+\end{raw}
 
 \noindent{}produces
 
 \begin{examplefont}%
-\line%
 Small text
 
 \font[size=15pt]%
@@ -46,7 +43,6 @@ Big text!
 \font[size=30pt]{Bigger text}
 
 {}Still big text!
-\line
 \end{examplefont}
 
 \font[size=11pt]%
@@ -223,18 +219,16 @@ This ability is provided by the \code{\\include} command. It takes one mandatory
 parameter, \code{src=\em{<path>}}, which represents the path to the file. So
 for instance, you may wish to write a thesis like this:
 
-\begin{verbatim}
-\line
-\\begin[class=thesis]\{document\}
-\\include[src=macros.xml]
-\\include[src=chap1.sil]
-\\include[src=chap2.sil]
-\\include[src=chap3.sil]
-…\par
-\\include[src=endmatter.sil]
-\\end\{document\}
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\begin[class=thesis]{document}
+\include[src=macros.xml]
+\include[src=chap1.sil]
+\include[src=chap2.sil]
+\include[src=chap3.sil]
+…
+\include[src=endmatter.sil]
+\end{document}
+\end{raw}
 
 \code{\\include}s may be nested, in that file A can include file B which includes
 file C.
@@ -242,17 +236,15 @@ file C.
 The contents of an included file should be put in a \code{\\sile} tag (or
 \code{<sile>} if the file is in XML flavour), like so:
 
-\begin{verbatim}
-\line
-\\begin\{sile\}
+\begin[type=autodoc:codeblock]{raw}
+\begin{sile}
 
-\\chapter\{A Scandal In Bohemia\}
+\chapter{A Scandal In Bohemia}
 
-To Sherlock Holmes she is always \em\{the woman\}.
+To Sherlock Holmes she is always \em{the woman}.
 
-\\end\{sile\}
-\line
-\end{verbatim}
+\end{sile}
+\end{raw}
 
 This is because every file is required to contain a valid XML tree, which
 wouldn’t be the case without a common root.
@@ -271,22 +263,19 @@ will add text to a page, \code{SILE.call("…")} will call a SILE command,
 and \code{SILE.typesetter:leaveHmode()} ends the current paragraph and outputs the
 text. So, for example:
 
-\begin{verbatim}
-\line
-\\begin\{script\}
+\begin[type=autodoc:codeblock]{raw}
+\begin{script}
   for i=1,10 do
     SILE.typesetter:typeset(i .. " x " .. i .. " = " .. i*i .. ". ")
     SILE.typesetter:leaveHmode()
     SILE.call("smallskip")
   end
-\\end\{script\}
-\line
-\end{verbatim}
+\end{script}
+\end{raw}
 
 produces the following output:
 
 \begin{examplefont}
-\line
 \begin{script}
   SILE.call("indent");SILE.typesetter:leaveHmode()
   for i=1,10 do
@@ -295,7 +284,6 @@ produces the following output:
     SILE.call("smallskip")
   end
 \end{script}
-\line
 \end{examplefont}
 
 There is one notable caveat when embedding Lua code documents written with the

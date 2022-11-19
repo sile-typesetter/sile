@@ -402,16 +402,14 @@ example of a Lua script which produces a PDF from SILE. It’s actually fairly
 simple to use SILE from within Lua; the difficult part is setting things up.
 Here’s how to do it.
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 require("core.sile")
 SILE.outputFilename = "byhand.pdf"
 local plain = require("plain", "classes")
 SILE.documentState.documentClass = plain;
 local firstFrame = plain:init()
 SILE.typesetter:init(firstFrame)
-\line
-\end{verbatim}
+\end{raw}
 
 Loading the SILE core library also loads up all the other parts of SILE. We
 need to set the output file name and load the class that we want to use to
@@ -484,22 +482,18 @@ Multiple facilities can be turned on by adding the flag multiple times or by sep
 From Lua, you can add entries to the \code{SILE.debugFlags} table to turn on debugging for a given facility.
 This can be useful for temporarily debugging a particular operation:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 SILE.debugFlags.typesetter = true
 SILE.typesetter:leaveHmode()
 SILE.debugFlags.typesetter = false
-\line
-\end{verbatim}
+\end{raw}
 
 From a package’s point of view, you can write debugging information by calling the \code{SU.debug} function
 (\code{SU} stands for SILE Utilities, and contains a variety of auxiliary functions used throughout SILE):
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 SU.debug("mypackage", "Doing a thing")
-\line
-\end{verbatim}
+\end{raw}
 
 When an error occurs, for example when writing custom scripts,
 its traceback (\em{stack trace}) can be printed via the \code{--trace}, or \code{-t} switch:

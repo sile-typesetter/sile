@@ -3,13 +3,11 @@
 
 Let’s now go back and reconsider the first SILE file we saw:
 
-\begin{verbatim}
-\line
-\\begin\{document\}
+\begin[type=autodoc:codeblock]{raw}
+\begin{document}
 Hello SILE!
-\\end\{document\}
-\line
-\end{verbatim}
+\end{document}
+\end{raw}
 
 \section{Defining the paper size}
 
@@ -19,11 +17,9 @@ In between, SILE documents are made up of two elements: text to be typeset on th
 The default paper size is A4, although each class may override this value.
 To manually change the paper size, an optional argument may be added to the document declaration:
 
-\begin{verbatim}
-\line
-\\begin[papersize=letter]\{document\}
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\begin[papersize=letter]{document}
+\end{raw}
 
 SILE knows about the ISO standard A, B and C series paper sizes using names like a4 and b5 as well as many other traditional sizes.
 Here is a full list of papersize preset names:
@@ -69,22 +65,19 @@ it won’t affect the output because SILE considers each paragraph at a time and
 computes the appropriate line breaks for the paragraph based on the width of
 the line available. In other words, if your input file says
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
 incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
 nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
 fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
 culpa qui officia deserunt mollit anim id est laborum.
-\line
-\end{verbatim}
+\end{raw}
 
 \noindent{}…you might not necessarily get a line break after ‘tempor’; you’ll
 get a line break wherever is most appropriate. In the context of this document,
 you’ll get:
 
-\line
 \begin[language=la]{font}
 \begin{examplefont}
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
@@ -92,10 +85,9 @@ incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
 nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
 fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum.
+culpa qui officia deserunt mollit anim id est laborum.\par
 \end{examplefont}
 \end{font}
-\line
 
 In other words, a line break is converted to a space.
 
@@ -106,16 +98,14 @@ the end of a line to suppress the additional whitespace.}
 When you want to end a paragraph, you need to input two line breaks in a row,
 like this:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 Paragraph one.
 
 Paragraph two.
 This is not paragraph three.
 
 This is paragraph three.
-\line
-\end{verbatim}
+\end{raw}
 
 The second clever thing that happens around ordinary text is that a few—four,
 in fact—characters have a special meaning to SILE. All of these will be
@@ -158,11 +148,9 @@ is an example of this.\footnote{Strictly speaking \code{\\begin} isn’t actuall
 a command but we’ll pretend that it is for now and get to the details in
 a moment.}
 
-\begin{verbatim}
-\line
-\\begin\{document\}
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\begin{document}
+\end{raw}
 
 The parameters to a command are enclosed in square brackets and take the form
 \code{\em{key}=\em{value}};\break{}multiple parameters are separated by commas
@@ -179,17 +167,15 @@ Because the argument is optional, there is a difference between this: \code{\\co
 
 Here are a few more examples of SILE commands:
 
-\begin{verbatim}
-\line
-\\eject                                   \% A command with no parameters or argument
+\begin[type=autodoc:codeblock]{raw}
+\eject                                   % A command with no parameters or argument
 
-\\font[family=Times,size=10pt]            \% Parameters, but no argument
+\font[family=Times,size=10pt]            % Parameters, but no argument
 
-\\chapter\{Introducing SILE\}               \% Argument but no parameters
+\chapter{Introducing SILE}               % Argument but no parameters
 
-\\font[family=Times,size=10pt]\{Hi there!\} \% Parameters and argument
-\line
-\end{verbatim}%
+\font[family=Times,size=10pt]{Hi there!} % Parameters and argument
+\end{raw}%
 \section{Environments}
 
 Commands like \code{\\chapter} and \code{\\em} (emphasises text by making it italic) are normally used to enclose a relatively small piece of text; a few lines at most.
@@ -199,15 +185,13 @@ We’ve already seen an example, the \code{document} environment, which must enc
 Here is a secret: there is absolutely no difference between a command and an environment.
 In other words, the following two forms are equivalent:
 
-\begin{verbatim}
-\line
-\\font[family=Times,size=10pt]\{Hi there!\}
+\begin[type=autodoc:codeblock]{raw}
+\font[family=Times,size=10pt]{Hi there!}
 
-\\begin[family=Times,size=10pt]\{font\}
+\begin[family=Times,size=10pt]{font}
 Hi there!
-\\end\{font\}
-\line
-\end{verbatim}
+\end{font}
+\end{raw}
 
 However, in some cases the environment form of the command will be easier to read and will help you to be clearer on where the command begins and ends.
 
@@ -222,22 +206,18 @@ Once read and parsed, processing content from either of the two file formats are
 
 In other words, the XML form of the above document would be:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 <document>
 Hello SILE!
 </document>
-\line
-\end{verbatim}
+\end{raw}
 
 Commands without an argument need to be well-formed self-closing XML tags (for instance, \code{<break/>}), and commands with parameters should have well-formed attributes.
 The example above, in XML flavor, would look like this:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 <font family="Times" size="10pt">Hi there!</font>
-\line
-\end{verbatim}
+\end{raw}
 
 We don’t expect humans to write their documents in SILE’s XML flavor—the TeX-like SILE flavor is much better for that—but having an XML flavor allows for computers to deal with SILE a lot more easily.
 One could create graphical user interfaces to edit SILE documents, or convert other XML formats to SILE.

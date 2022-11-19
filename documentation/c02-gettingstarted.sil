@@ -29,13 +29,11 @@ For comparisons of editors see \url{http://alternativeto.net/category/deevloper-
 Once you have an editor, it’s time to consider a SILE input file.
 To begin with, here’s the most basic SILE file of all:
 
-\begin{verbatim}
-\line
-\\begin\{document\}
+\begin[type=autodoc:codeblock]{raw}
+\begin{document}
 Hello SILE!
-\\end\{document\}
-\line
-\end{verbatim}
+\end{document}
+\end{raw}
 
 We’ll pick apart this document in the next chapter, but for now take it on
 trust that this is what a SILE document looks like.
@@ -313,14 +311,12 @@ But SILE can read XML files and it also comes with a \code{docbook} class, which
 
 Turning \code{dockbook.xml} into \code{docbook.pdf} is now as simple as:
 
-\begin{verbatim}
-\line
+\begin{autodoc:codeblock}
 $ sile --class docbook docbook.xml
 \sileversion
 Loading docbook
 <classes/docbook.sil><docbook.xml>[1] [2] [3]
-\line
-\end{verbatim}
+\end{autodoc:codeblock}
 
 The \code{-c} flag sets the default class; a necessary step because docbook XML files do not come wrapped in a tag that specifies a SILE class.
 The docbook class will provide the commands necessary to process the tags typically found in docbook files.
@@ -338,8 +334,7 @@ Another way is to pull in the prebuilt Docker container and run that.
 
 As a case study, here is how a work flow could be setup in GitHub Actions:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 name: SILE
 on: [ push, pull_request ]
 jobs:
@@ -353,8 +348,7 @@ jobs:
         uses: sile-typesetter/sile@v0
         with:
           args: my-document.sil
-\line
-\end{verbatim}
+\end{raw}
 
 Add to your repository as \code{.github/workflows/sile.yaml}.
 This work flow assumes your project has a source file \code{my-document.sil} and will leave behind a \code{my-document.pdf}.
@@ -362,11 +356,9 @@ Note that this Actions work flow explicitly uses a container fetched from Docker
 
 Because this repository is itself a GitHub Action you can also use the standard \code{uses} syntax like this:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
         uses: sile-typesetter/sile@latest
-\line
-\end{verbatim}
+\end{raw}
 
 But be warned that since GitHub rebuilds containers from scratch on every such invocation, this syntax is not recommended for regular use.
 Pulling the prebuilt Docker images is recommended instead.
