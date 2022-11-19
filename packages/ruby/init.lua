@@ -126,11 +126,9 @@ For example:
 \set[parameter=ruby.height,value=12pt]
 \define[command=ja]{\font[family=Noto Sans CJK JP,language=ja]{\process}}
 
-\begin{verbatim}
-\line
+\begin{autodoc:codeblock}
 \\ruby[reading=\ja{れいわ}]\{\ja{令和}\}
-\line
-\end{verbatim}
+\end{autodoc:codeblock}
 
 Produces:
 \medskip

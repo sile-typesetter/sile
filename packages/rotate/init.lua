@@ -121,12 +121,10 @@ The best way to understand this is by example: here is some text rotated by
 
 The previous line was produced by the following code:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 here is some text rotated by
-\\rotate[angle=10]\{ten\}, \\rotate[angle=20]\{twenty\} and \\rotate[angle=40]\{forty\} degrees.
-\line
-\end{verbatim}
+\rotate[angle=10]{ten}, \rotate[angle=20]{twenty} and \rotate[angle=40]{forty} degrees.
+\end{raw}
 \end{document}
 ]]
 

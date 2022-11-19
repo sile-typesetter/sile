@@ -103,24 +103,21 @@ It is supported by a wide range of tools and represents the most promising forma
 To render an equation encoded in MathML, one simply has to put it in a \code{mathml} command.
 For example, the formula \mathml{\mrow{\msup{\mi{a}\mn{2}} \mo{+} \msup{\mi{b}\mn{2}} \mo{=} \msup{\mi{c}\mn{2}}}} was typeset by the following command:
 
-\begin{verbatim}
-\line
-\\mathml\{
-    \\mrow\{
-        \\msup\{\\mi\{a\}\\mn\{2\}\}
-        \\mo\{+\}
-        \\msup\{\\mi\{b\}\\mn\{2\}\}
-        \\mo\{=\}
-        \\msup\{\\mi\{c\}\\mn\{2\}\}
-    \}
-\}
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\mathml{
+    \mrow{
+        \msup{\mi{a}\mn{2}}
+        \mo{+}
+        \msup{\mi{b}\mn{2}}
+        \mo{=}
+        \msup{\mi{c}\mn{2}}
+    }
+}
+\end{raw}
 
 \noindent In an XML document, we would have used the more classical XML syntax:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 <mathml>
     <mrow>
         <msup> <mi>a</mi> <mn>2</mn> </msup>
@@ -130,8 +127,7 @@ For example, the formula \mathml{\mrow{\msup{\mi{a}\mn{2}} \mo{+} \msup{\mi{b}\m
         <msup> <mi>c</mi> <mn>2</mn> </msup>
     </mrow>
 </mathml>
-\line
-\end{verbatim}
+\end{raw}
 
 \noindent By default, formulas are integrated into the flow of text.
 To typeset them on their own line, one may use the \autodoc:parameter{mode=display} option:
@@ -153,13 +149,11 @@ To typeset the above equation, one only has to type \code{\\math\{a^2 + b^2 = c^
 
 Here is a slightly more involved equation:
 
-\begin{verbatim}
-\line
-\\begin[mode=display]\{math\}
-    \\sum_\{n=1\}^\\infty \\frac\{1\}\{n^2\} = \\frac\{\\pi^2\}\{6\}
-\\end\{math\}
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\begin[mode=display]{math}
+    \sum_{n=1}^\infty \frac{1}{n^2} = \frac{\pi^2}{6}
+\end{math}
+\end{raw}
 
 \noindent This renders as:
 
@@ -177,11 +171,9 @@ The symbol shorthands are the same as in the TeX package \href[src=https://www.c
 \code{\{formula\}} is a shorthand for \code{\\mrow\{formula\}}.
 Since parentheses — among other glyphs — stretch vertically to the size of their englobing \code{mrow}, this is useful to typeset parentheses of different sizes on the same line:
 
-\begin{verbatim}
-\line
-\\Gamma (\\frac\{\\zeta\}\{2\}) + x^2(x+1)
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\Gamma (\frac{\zeta}{2}) + x^2(x+1)
+\end{raw}
 
 \noindent renders as
 
@@ -192,11 +184,9 @@ Since parentheses — among other glyphs — stretch vertically to the size of
 \noindent which is ugly.
 To keep parentheses around \math{x+1} small, you should put braces around the expression:
 
-\begin{verbatim}
-\line
-\\Gamma (\\frac\{\\zeta\}\{2\}) + x^2\{(x+1)\}
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\Gamma (\frac{\zeta}{2}) + x^2{(x+1)}
+\end{raw}
 
 \begin[mode=display]{math}
     \Gamma (\frac{\zeta}{2}) + x^2{(x+1)}
@@ -242,25 +232,21 @@ Finally, you can add a space of any size using the \code{\\mspace[width=<dimensi
 \paragraph{Macros}
 To save you some typing, the math syntax lets you define macros with the following syntax:
 
-\begin{verbatim}
-\line
-\\def\{macro-name\}\{macro-body\}
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\def{macro-name}{macro-body}
+\end{raw}
 
 \noindent where in the macro’s body \code{#1}, \code{#2}, etc. will be replaced by the macro’s arguments.
 For instance:
 
-\begin{verbatim}
-\line
-\\begin[mode=display]\{math\}
-    \\def\{diff\}\{\\mfrac\{\\mo\{d\}#1\}\{\\mo\{d\}#2\}\}
-    \\def\{bi\}\{\\mi[mathvariant=bold-italic]\{#1\}\}
+\begin[type=autodoc:codeblock]{raw}
+\begin[mode=display]{math}
+    \def{diff}{\mfrac{\mo{d}#1}{\mo{d}#2}}
+    \def{bi}{\mi[mathvariant=bold-italic]{#1}}
 
-    \\diff\{\\bi\{p\}\}\{t\} = ∑_i \\bi\{F\}_i
-\\end\{math\}
-\line
-\end{verbatim}
+    \diff{\bi{p}}{t} = ∑_i \bi{F}_i
+\end{math}
+\end{raw}
 
 \noindent results in:
 
@@ -279,19 +265,17 @@ The \code{shape} and \code{output} methods of the children are called automatica
 Tabular math can be typeset using the \code{table} command (or equivalently the \code{mtable} MathML tag).
 For instance, to typeset a matrix:
 
-\begin{verbatim}
-\line
-\\begin[mode=display]\{math\}
+\begin[type=autodoc:codeblock]{raw}
+\begin[mode=display]{math}
     (
-    \\table\{
-        1 & 2 & 7 \\\\
-        0 & 5 & 3 \\\\
-        8 & 2 & 1 \\\\
-    \}
+    \table{
+        1 & 2 & 7 \\
+        0 & 5 & 3 \\
+        8 & 2 & 1 \\
+    }
     )
-\\end\{math\}
-\line
-\end{verbatim}
+\end{math}
+\end{raw}
 
 \noindent will yield:
 
@@ -305,18 +289,16 @@ For instance, to typeset a matrix:
 
 \noindent Tables may also be used to control the alignment of formulas:
 
-\begin{verbatim}
-\line
-\\begin[mode=display]\{math\}
-    \\\{
-    \\table[columnalign=right center left]\{
-        u_0 &=& 1 \\\\
-        u_1 &=& 1 \\\\
-        u_n &=& u_\{n−1\} + u_{n−2}, \\forall n ⩾ 2 \\\\
-    \}
-\\end\{math\}
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\begin[mode=display]{math}
+    \{
+    \table[columnalign=right center left]{
+        u_0 &=& 1 \\
+        u_1 &=& 1 \\
+        u_n &=& u_{n−1} + u_{n−2}, \forall n ⩾ 2 \\
+    }
+\end{math}
+\end{raw}
 
 \begin[mode=display]{math}
     \{
@@ -331,30 +313,26 @@ For instance, to typeset a matrix:
 
 Finally, here is a little secret. This notation:
 
-\begin{verbatim}
-\line
-\\table\{
-    1 & 2 & 7 \\\\
-    0 & 5 & 3 \\\\
-    8 & 2 & 1 \\\\
-\}
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\table{
+    1 & 2 & 7 \\
+    0 & 5 & 3 \\
+    8 & 2 & 1 \\
+}
+\end{raw}
 
 \noindent is strictly equivalent to this one:
 
-\begin{verbatim}
-\line
-\\table\{
-        \{1\} \{2\} \{7\}
-    \}\{
-        \{0\} \{5\} \{3\}
-    \}\{
-        \{8\} \{2\} \{1\}
-    \}
-\}
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\table{
+        {1} {2} {7}
+    }{
+        {0} {5} {3}
+    }{
+        {8} {2} {1}
+    }
+}
+\end{raw}
 
 \noindent In other words, the notation using \code{&} and \code{\\\\} is only a syntactic sugar for a two-dimensional array constructed with braces.
 

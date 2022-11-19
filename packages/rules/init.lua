@@ -259,7 +259,7 @@ So, they can appear in the middle of a paragraph, like this:
 \hrule[width=20pt, height=0.5pt]
 (that one was generated with \autodoc:command{\hrule[width=20pt, height=0.5pt]}.)
 
-The \autodoc:command{\underline} command \underline{underlines} its contents.
+The \autodoc:command{\underline} command \underline{underlines} its content.
 
 The \autodoc:command{\strikethrough} command \strikethrough{strikes} its content.
 
