@@ -271,6 +271,45 @@ Add to your repository as `.github/workflows/sile.yaml`.
 This work flow assumes your project has a source file `my-document.sil` and will leave behind a `my-document.pdf`.
 Note the comments in [the section about Docker](#docker) regarding version tags.
 
+## Installing third-party packages
+
+Third-party SILE packages rely on the `luarocks` package manager.
+
+To install the latest version, for the given package, you may often use its provided “rockspec”:
+
+```bash
+# This example uses markdown.sile, a highly useful plugin that converts Markdown documents to SILE `.sil`.
+luarocks install markdown.sile --local
+```
+
+You may remove `--local`, in which case a global installation will be done (on most systems this requires `root`).
+
+If you use a per-system installation of your SILE modules, you will need to then run this before running SILE or will get errors involving missing modules:
+
+```bash
+eval $(luarocks path)
+```
+
+### Finding Lua version in use for running SILE
+
+To get your Lua version which is used for the execution of `sile`:
+
+```bash
+#!/bin/bash
+# This command finds SILE, then reads its shebang line, and calls whatever the
+# interpreter for SILE is to find its version.
+SILE=$(which sile) || >&2 echo "No sile in '$PATH'?" && \
+  [[ $(head -c2 "$SILE") = '#!' ]] && \
+  LUA=$(head -n1 "$SILE" | cut -c 3-) && \
+  [[ -x $LUA ]] && LUAV=$($LUA -v) && echo $LUAV && \
+  export ___LUA_VERSION=`(awk '{print $2}' | cut -c 1-3) <<< "$LUAV"` && \
+  [[ $___LUA_VERSION =~ ^5\.[1-4]$ ]] || \
+  (>&2 printf 'Cannot auto-detect Lua version!? ' && unset ___LUA_VERSION)
+>&2 printf 'Lua binary: %s\n' "$(which lua$___LUA_VERSION)"
+```
+
+If it differs from `luarocks`' default, provide `--lua-version $___LUA_VERSION` to the above commands.
+
 ## Finding Out More
 
 Please read the [full SILE manual][doc] for more information about what SILE is and how it can help you.
