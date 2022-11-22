@@ -273,42 +273,32 @@ Note the comments in [the section about Docker](#docker) regarding version tags.
 
 ## Installing third-party packages
 
-Third-party SILE packages rely on the `luarocks` package manager.
+Third-party SILE packages can be installed using the `luarocks` package manager.
+Packages may be hosted anywhere, ether on the default [luarocks.org](https://luarocks.org/) repository or (as in the example below) listed in a specific server manifest.
+For example, to install [markdown.sile](https://github.com/Omikhleia/markdown.sile) (a plugin that provides a SILE inputter that reads and processes Markdown documents) one could run:
 
-To install the latest version, for the given package, you may often use its provided “rockspec”:
-
-```bash
-# This example uses markdown.sile, a highly useful plugin that converts Markdown documents to SILE `.sil`.
-luarocks install markdown.sile --local
+```console
+$ luarocks install --server=https://luarocks.org/dev markdown.sile
 ```
 
-You may remove `--local`, in which case a global installation will be done (on most systems this requires `root`).
-
-If you use a per-system installation of your SILE modules, you will need to then run this before running SILE or will get errors involving missing modules:
-
-```bash
-eval $(luarocks path)
-```
+By default, this will try to install the package to your system.
+This may not be desired (and usually requires root access), but there are two other ways to install plugins.
+First you make add `--tree ./` to install them in the current directory.
+In this case (and assuming this is the same directory as your document) SILE will automatically find such plugins.
+Additionally you make install them to your user profile by adding `--local` when installing.
+In this case you will also need to modify your user environment to check for plugins in that path since Lua does not do so by default.
+This can be done by running `eval $(luarocks path)` before running SILE (or from your shell's initialization script).
 
 ### Finding Lua version in use for running SILE
 
+Third party packages must be installed for the same version of Lua that SILE uses.
+On systems with more than one Lua version installed, *and* where SILE does not use the default one you may need to specify the version manually.
 To get your Lua version which is used for the execution of `sile`:
 
-```bash
-#!/bin/bash
-# This command finds SILE, then reads its shebang line, and calls whatever the
-# interpreter for SILE is to find its version.
-SILE=$(which sile) || >&2 echo "No sile in '$PATH'?" && \
-  [[ $(head -c2 "$SILE") = '#!' ]] && \
-  LUA=$(head -n1 "$SILE" | cut -c 3-) && \
-  [[ -x $LUA ]] && LUAV=$($LUA -v) && echo $LUAV && \
-  export ___LUA_VERSION=`(awk '{print $2}' | cut -c 1-3) <<< "$LUAV"` && \
-  [[ $___LUA_VERSION =~ ^5\.[1-4]$ ]] || \
-  (>&2 printf 'Cannot auto-detect Lua version!? ' && unset ___LUA_VERSION)
->&2 printf 'Lua binary: %s\n' "$(which lua$___LUA_VERSION)"
+```console
+$ export LUA_VERSION=$(sile -e 'print(SILE.lua_version);os.exit()' 2> /dev/null)
+$ luarocks install --lua-version $LUA_VERSION ...
 ```
-
-If it differs from `luarocks`' default, provide `--lua-version $___LUA_VERSION` to the above commands.
 
 ## Finding Out More
 
