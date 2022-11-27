@@ -521,60 +521,6 @@ end
 utilities.utf16be_to_utf8 = function (str) return utf16_to_utf8(str, "be") end
 utilities.utf16le_to_utf8 = function (str) return utf16_to_utf8(str, "le") end
 
-local icu = require("justenoughicu")
-
-local icuFormat = function (num, format)
-  local ok, result  = pcall(icu.format_number, num, format)
-  return tostring(ok and result or num)
-end
-
--- Language specific number formatters add functions to this table,
--- see e.g. languages/tr.lua
-utilities.formatNumber = {
-  und = {
-
-    alpha = function (num)
-      local out = ""
-      local a = string.byte("a")
-      repeat
-        num = num - 1
-        out = string.char(num % 26 + a) .. out
-        num = (num - num % 26) / 26
-      until num < 1
-      return out
-    end
-
-  }
-}
-
-setmetatable (utilities.formatNumber, {
-    __call = function (self, num, format, case)
-      if math.abs(num) > 9223372036854775807 then
-        SU.warn("Integers larger than 64 bits do not reproduce properly in all formats")
-      end
-      if not case then
-        if format:match("^%l") then
-          case = "lower"
-        elseif format:match("^.%l") then
-          case = "title"
-        else
-          case = "upper"
-        end
-      end
-      local lang = format:match("[Rr][Oo][Mm][Aa][Nn]") and "la" or SILE.settings:get("document.language")
-      format = format:lower()
-      local result
-      if self[lang] and type(self[lang][format]) == "function" then
-        result = self[lang][format](num)
-      elseif type(self["und"][format]) == "function" then
-        result = self.und[format](num)
-      else
-        result = icuFormat(num, format)
-      end
-      return icu.case(result, lang, case)
-    end
-})
-
 utilities.breadcrumbs = function ()
   local breadcrumbs = {}
 
@@ -608,5 +554,7 @@ utilities.breadcrumbs = function ()
 
   return breadcrumbs
 end
+
+utilities.formatNumber = require("core.utilities-numbers")
 
 return utilities

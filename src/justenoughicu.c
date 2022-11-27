@@ -123,7 +123,6 @@ int icu_breakpoints(lua_State *L) {
   previous = 0;
   i = 0;
   while (i <= l) {
-    int32_t out_l;
     int32_t type;
     if (!ubrk_isBoundary(linebreaks, i) && !ubrk_isBoundary(wordbreaks,i)) {
       i++; continue;
@@ -188,26 +187,27 @@ int icu_canonicalize_language(lua_State *L) {
   return 1;
 }
 
+#define MAX_ICU_FORMATTED_NUMBER_STRING 512
 
 int icu_format_number(lua_State *L) {
   double a = luaL_checknumber(L, 1);
-  /* See https://github.com/unicode-org/cldr/blob/master/common/bcp47/number.xml
-     for valid system names */
-  const char* system = luaL_checkstring(L, 2);
-  char locale[18]; // "@numbers=12345678";
-  UChar buf[256];
-  char utf8[256];
+  const char* locale = luaL_checkstring(L, 2);
+  UNumberFormatStyle numFormatStyle = luaL_checkinteger(L, 3);
+
+  UChar buf[MAX_ICU_FORMATTED_NUMBER_STRING];
+  char utf8[MAX_ICU_FORMATTED_NUMBER_STRING];
   int32_t needed;
   UErrorCode status = U_ZERO_ERROR;
 
-  snprintf(locale, 18, "@numbers=%s", system);
-  UNumberFormat* fmt = unum_open(UNUM_DECIMAL, 0, 0, locale, 0, &status);
+  UNumberFormat* fmt = unum_open(numFormatStyle, 0, 0, locale, 0, &status);
   if(U_FAILURE(status)) {
-    luaL_error(L, "Locale %s unavailable: %s", locale, u_errorName(status));
+    return luaL_error(L, "Locale %s unavailable: %s", locale, u_errorName(status));
   }
-  needed = unum_formatDouble(fmt, a, buf, 256, NULL, &status);
-  assert(!U_FAILURE(status));
-  u_austrncpy(utf8, buf, 256);
+  needed = unum_formatDouble(fmt, a, buf, MAX_ICU_FORMATTED_NUMBER_STRING, NULL, &status);
+  if(U_FAILURE(status)) {
+    return luaL_error(L, "Locale %s formatting error: %s", locale, u_errorName(status));
+  }
+  u_austrncpy(utf8, buf, MAX_ICU_FORMATTED_NUMBER_STRING);
   lua_pushstring(L, utf8);
   return 1;
 }

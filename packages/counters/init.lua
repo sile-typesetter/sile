@@ -44,7 +44,7 @@ local function getMultilevelCounter (_, id)
 end
 
 function package.formatCounter (_, counter)
-  return SU.formatNumber(counter.value, counter.display)
+  return SU.formatNumber(counter.value, { system = counter.display })
 end
 
 function package:formatMultilevelCounter (counter, options)
