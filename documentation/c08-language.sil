@@ -193,8 +193,8 @@ the requirement that \em{all} adjectives, including numerals, have the suffix �
 This includes numbers standing on their own.
 For example, “the 15th of March” is, in Esperanto, “\eo{la 15ª de marto}”.
 As there is lack of agreement\footnote{Wikipedia prefers “\eo{15-a}” while most professional books and posters prefer “\eo{15ª}”, while some authors even write “\eo{15a}” as the underlying word is “\eo{dekkvina}”.} on how to typeset this, you have options:
-\autodoc:setting[check=false]{languages.eo.ordinal.raisedsuffix} when made true will use \eo{ª} (as in “\eo{apitro 1ª}”) while
-\autodoc:setting[check=false]{languages.eo.ordinal.hyphenbefore} will prepend a hyphen (as in “\eo{apitro 15-a}”).
+\autodoc:setting[check=false]{languages.eo.ordinal.raisedsuffix} when made true will use \eo{ª} (as in “\eo{Ĉapitro 1ª}”) while
+\autodoc:setting[check=false]{languages.eo.ordinal.hyphenbefore} will prepend a hyphen (as in “\eo{Ĉapitro 15-a}”).
 
 \subsection{French}
 
