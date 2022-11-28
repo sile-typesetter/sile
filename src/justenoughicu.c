@@ -7,6 +7,7 @@
 #include <unicode/unum.h>
 #include <unicode/ubrk.h>
 #include <unicode/ubidi.h>
+#include <unicode/ucol.h>
 #include <unicode/utf16.h>
 #include <lua.h>
 #include <lauxlib.h>
@@ -291,6 +292,204 @@ int icu_bidi_runs(lua_State *L) {
   return count;
 }
 
+int icu_collation_create(lua_State *L) {
+  int nargs = lua_gettop(L);
+  const char* locale = luaL_checkstring(L, 1);
+
+  if (nargs > 2) {
+    return luaL_error(L, "Collation creation takes at most two arguments (locale and options)");
+  }
+
+  // Options https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucol_8h.html#a583fbe7fc4a850e2fcc692e766d2826c
+  // Also a useful reading https://www.mongodb.com/docs/manual/reference/collation/
+  // I took some of the names from this documentation, they are more 'friendly'
+  // (IMHO) than some of the ICU names.
+  // The default ICU values do not aways make sense in usual dictionary sorting
+  // so we may set them a bit more logically.
+  int strength = UCOL_TERTIARY; // N.B.default is UCOL_TERTIARY
+  int alternate = UCOL_SHIFTED; // N.B. default is UCOL_NON_IGNORABLE
+  int numericOrdering = UCOL_ON; // N.B. default is UCOL_OFF
+  int backwards = UCOL_OFF; // So-called 'french collation', default is UCOL_OFF
+  // NOT IMPLEMENTED: maxVariable punct / maxVariable space
+  //     This affects 'alternate handling' with espect to spaces and/or punctuations
+  //     I never used it and I'm lazy - assume default is ok...
+  int caseFirst = UCOL_OFF; // n.B. default is UCOL_OFF
+  int caseLevel = UCOL_OFF; // n.B. default is UCOL_OFF
+
+  if (nargs == 2) {
+    char *err = NULL;
+
+    // Begin options table processing
+    if (!lua_istable(L, 2)) {
+      return luaL_error(L, "Collation options must be a table");
+    }
+
+    lua_pushstring(L, "strength");
+    lua_gettable(L, -2);
+    if (lua_isnumber(L, -1)) { // Lua < 5.3 doesn't have lua_isinteger(L, -1)
+      int i = lua_tointeger(L, -1);
+      // Doh, ICU strength constants (U_PRIMARY...U_QUATERNARY) are 0-based :)
+      if (i > 0 && i <= 4) {
+        strength = i - 1;
+      } else {
+        err = "Collation strength must be between 1 and 4";
+      }
+    }
+    lua_pop(L, 1);
+
+    lua_pushstring(L, "ignorePunctuation");
+    lua_gettable(L, -2);
+    if (lua_isboolean(L, -1)) {
+      alternate = lua_toboolean(L, -1) ? UCOL_SHIFTED : UCOL_NON_IGNORABLE;
+    }
+    lua_pop(L, 1);
+
+    lua_pushstring(L, "numericOrdering");
+    lua_gettable(L, -2);
+    if (lua_isboolean(L, -1)) {
+      numericOrdering = lua_toboolean(L, -1) ? UCOL_ON : UCOL_OFF;
+    }
+    lua_pop(L, 1);
+
+    lua_pushstring(L, "backwards");
+    lua_gettable(L, -2);
+    if (lua_isboolean(L, -1)) {
+      backwards = lua_toboolean(L, -1) ? UCOL_ON : UCOL_OFF;
+    }
+    lua_pop(L, 1);
+
+    lua_pushstring(L, "caseFirst");
+    lua_gettable(L, -2);
+    if (lua_isstring(L, -1)) {
+      const char *casestr = lua_tostring(L, - 1);
+      if (strcmp(casestr, "off") == 0) {
+        caseFirst = UCOL_OFF;
+      } else if (strcmp(casestr, "upper") == 0) {
+        caseFirst = UCOL_UPPER_FIRST;
+      } else if (strcmp(casestr, "lower") == 0) {
+        caseFirst = UCOL_LOWER_FIRST;
+      } else {
+        err = "Collation caseFirst option is not valid (off, upper, lower)";
+      }
+    }
+    lua_pop(L, 1);
+
+    lua_pushstring(L, "caseLevel");
+    lua_gettable(L, -2);
+    if (lua_isboolean(L, -1)) {
+      caseLevel = lua_toboolean(L, -1) ? UCOL_ON : UCOL_OFF;
+    }
+    lua_pop(L, 1);
+
+    if (err) {
+      return luaL_error(L, err);
+    }
+    // End option table processing
+  }
+
+  UErrorCode status = U_ZERO_ERROR;
+  UCollator *collator = ucol_open(locale, &status);
+  if (U_FAILURE(status)) {
+    return luaL_error(L, "Failure to open collator for locale '%s'", locale);
+  }
+
+  // Always enable normalization
+  ucol_setAttribute(collator, UCOL_NORMALIZATION_MODE, UCOL_ON, &status);
+  if (U_FAILURE(status)) {
+    return luaL_error(L, "Failure to set collation normalization for locale '%s'", locale);
+  }
+
+  // strength defines the level of comparison to perform.
+  // Most language would need UCOL_TERTIARY for real sorting
+  // Japanese may need UCOL_QUATERNARY
+  ucol_setAttribute(collator, UCOL_STRENGTH, strength, &status);
+  if (U_FAILURE(status)) {
+    return luaL_error(L, "Failure to set collation strength for locale '%s'", locale);
+  }
+
+  // alternate (= ignorePunctuation) determines whether collation should consider whitespace and
+  // punctuation as base characters for purposes of comparison.
+  // If true, they are NOT considered as base characters and are only distinguished at strength
+  // levels greater than 3.
+  ucol_setAttribute(collator, UCOL_ALTERNATE_HANDLING, alternate, &status);
+  if (U_FAILURE(status)) {
+    return luaL_error(L, "Failure to set collation handling for locale '%s'", locale);
+  }
+
+  // numericOrdering determines whether to compare numeric strings as numbers or as strings.
+  // If true, compare as numbers. For example, "10" is greater than "2".
+  ucol_setAttribute(collator, UCOL_NUMERIC_COLLATION, numericOrdering, &status);
+  if (U_FAILURE(status)) {
+    return luaL_error(L, "Failure to set numeric collation for locale '%s'", locale);
+  }
+
+  // backwards (= 'french collation') determines whether strings with diacritics sort
+  // from back of the string, such as with some French dictionary ordering (esp. Canada)
+  ucol_setAttribute(collator, UCOL_FRENCH_COLLATION, backwards, &status);
+  if (U_FAILURE(status)) {
+    return luaL_error(L, "Failure to set french collation for locale '%s'", locale);
+  }
+
+  // caseFirst determines sort order of case differences during tertiary level comparisons
+  // i.e. controls the ordering of upper and lower case letters.
+  //   off = order upper and lower case letters in accordance to their tertiary weights
+  //   upper = forces upper case letters to sort before lower case letters,
+  //   lower = does the oppposite.
+  ucol_setAttribute(collator, UCOL_CASE_FIRST, caseFirst, &status);
+  if (U_FAILURE(status)) {
+    return luaL_error(L, "Failure to set case-first collation for locale '%s'", locale);
+  }
+
+  // caseLevel controls whether an extra case level (positioned before the third level)
+  // is generated or not.
+  // It determines whether to include case comparison at strength level 1 or 2.
+  ucol_setAttribute(collator, UCOL_CASE_LEVEL, caseLevel, &status);
+  if (U_FAILURE(status)) {
+    return luaL_error(L, "Failure to set case-level collation for locale '%s'", locale);
+  }
+
+  lua_pushlightuserdata(L, collator);
+  return 1;
+}
+
+int icu_collation_destroy(lua_State *L) {
+  UCollator *collator = (UCollator *)lua_touserdata(L, 1);
+  if (!collator) {
+    return luaL_error(L, "Collation cleanup called with invalid input");
+  }
+  ucol_close(collator);
+  return 0;
+}
+
+int icu_compare(lua_State *L) {
+  UCollator *collator = (UCollator *)lua_touserdata(L, 1);
+  if (!collator) {
+    return luaL_error(L, "Comparison called with invalid first argument (collator)");
+  }
+
+  size_t s1_l, s2_l;
+  const char* s1 = luaL_checklstring(L, 2, &s1_l);
+  const char* s2 = luaL_checklstring(L, 3, &s2_l);
+
+  UErrorCode status = U_ZERO_ERROR;
+  UCollationResult result = ucol_strcollUTF8(collator, s1, s1_l, s2, s2_l, &status);
+  if (U_FAILURE(status)) {
+    // Probably badly encoded UTF8 inputs...
+    return luaL_error(L, "Internal failure to perform comparison");
+  }
+
+  lua_pushboolean(L, result == UCOL_LESS);
+  return 1;
+  // IMPLEMENTATION NOTE FOR PORTABILITY
+  // Good news, ucol_strcollUTF8 was introduced in ICU 50.
+  // Otherwise we would probably have needed something such as (untested):
+  // (Using iterators avoid converting the full UTF8 strings to UChars)
+  //     UCharIterator s1iter, s2iter;
+  //     uiter_setUTF8(&s1iter, s1, s1_l);
+  //     uiter_setUTF8(&s2iter, s2, s2_l);
+  //     UCollationResult result = ucol_strcollIter(collation, &s1iter, &s2iter, &status);
+}
+
 #if !defined LUA_VERSION_NUM
 /* Lua 5.0 */
 #define luaL_Reg luaL_reg
@@ -320,6 +519,9 @@ static const struct luaL_Reg lib_table [] = {
   {"bidi_runs", icu_bidi_runs},
   {"canonicalize_language", icu_canonicalize_language},
   {"format_number", icu_format_number},
+  {"collation_create", icu_collation_create},
+  {"collation_destroy", icu_collation_destroy},
+  {"compare", icu_compare},
   {NULL, NULL}
 };
 

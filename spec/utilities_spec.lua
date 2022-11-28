@@ -157,4 +157,59 @@ describe("SILE.utilities", function()
     end)
   end)
 
+  describe("collatedSort", function ()
+
+    SILE.documentState = { documentClass = { state = { } } }
+    SILE.typesetter = SILE.defaultTypesetter(SILE.newFrame({ id = "dummy" }))
+
+    describe ("French", function ()
+      SILE.call("language", { main = "fr" }) -- Really load AND activate the language
+
+      -- Our reference 'unsorted' table.
+      -- Just as table.sort(t), SU.collatedSort(t) has a side-effect on the table, we'll need
+      -- to shallow copy it, for each test to be independent from the others.
+      local original = {
+        "Albert", "Jean2", "Alain", "Jean100", "alain", "alinoé", "Jean-Paul", "Alinéa", "Jean2", "jeanne" }
+
+      it("should have expected default sorting", function ()
+        local sortme = pl.tablex.copy(original)
+        SU.collatedSort(sortme) -- with default options
+        assert.is.same({
+          "alain", "Alain", "Albert","Alinéa", "alinoé", "Jean2", "Jean2", "Jean100", "jeanne", "Jean-Paul" }, sortme)
+      end)
+      it("should have expected sorting when ignorePunctuation is disabled", function ()
+        local sortme = pl.tablex.copy(original)
+        SU.collatedSort(sortme, { ignorePunctuation = false })
+        assert.is.same({
+          -- Jean-Paul is the guinea pig!
+          "alain", "Alain", "Albert", "Alinéa", "alinoé", "Jean-Paul", "Jean2", "Jean2", "Jean100", "jeanne" }, sortme)
+      end)
+      it("should have expected sorting when numericOrdering is disabled", function ()
+        local sortme = pl.tablex.copy(original)
+        SU.collatedSort(sortme, { numericOrdering = false })
+        assert.is.same({
+          -- Jean100 and the Jean2 are the guinea pigs!
+          "alain", "Alain", "Albert", "Alinéa", "alinoé", "Jean100", "Jean2", "Jean2", "jeanne", "Jean-Paul" }, sortme)
+      end)
+      it("should have expected sorting when caseFirst is 'upper'", function ()
+        local sortme = pl.tablex.copy(original)
+        SU.collatedSort(sortme, { caseFirst = "upper" })
+        assert.is.same({
+          -- Alain is the guinea pig!
+          "Alain", "alain", "Albert", "Alinéa", "alinoé", "Jean2", "Jean2", "Jean100", "jeanne", "Jean-Paul" }, sortme)
+      end)
+      it("should have expected sorting when language-specific options are configured", function ()
+        -- WARNING: This is expected to be used for languages where the default options
+        -- are not appropriate. I'm told for example that Japanese may need strength=4.
+        -- I've not idea however, so let's BREAK the default French rules for testing!
+        SU.collatedSort.fr = { caseFirst = "upper", numericOrdering = false }
+        local sortme = pl.tablex.copy(original)
+        SU.collatedSort(sortme) -- with default options as overriden.
+        assert.is.same({
+          -- Alain and the Jean guys are the guinea pigs!
+          "Alain", "alain", "Albert", "Alinéa", "alinoé", "Jean100", "Jean2", "Jean2", "jeanne", "Jean-Paul" }, sortme)
+      end)
+    end)
+  end)
+
 end)

@@ -557,4 +557,6 @@ end
 
 utilities.formatNumber = require("core.utilities-numbers")
 
+utilities.collatedSort = require("core.utilities-sorting")
+
 return utilities
