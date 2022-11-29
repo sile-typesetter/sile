@@ -487,6 +487,12 @@ function SILE.defaultTypesetter:initNextFrame ()
 
   if not SU.feq(oldframe:getLineWidth(), self.frame:getLineWidth()) then
     self:pushBack()
+    -- Some what of a hack below.
+    -- Before calling this method, we were in vertical mode...
+    -- pushback occurred, and it seems it messes up a bit...
+    -- Regardless what it does, at the end, we ought to be in vertical mode
+    -- again:
+    self:leaveHmode()
   else
     -- If I have some things on the vertical list already, they need
     -- proper top-of-frame leading applied.

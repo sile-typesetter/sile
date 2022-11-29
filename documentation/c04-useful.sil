@@ -159,37 +159,12 @@ There are also some commands to increase the horizontal space in a line; from
 the smallest to the largest, \code{\\thinspace} (1/6th of an em), \code{\\enspace}
 (1 en), \code{\\quad} (1 em), and \code{\\qquad} (2em).
 
-\begin{center}
-You can center a paragraph of text by wrapping it in the \code{center} environment.
-(\code{\\begin\{center\} … \\end\{center\}}). This paragraph is centered on the
-page.
-\end{center}
-
 If you want to add a very long stretchy space, you can use the command
 \code{\\hfill}. Doing this in conjunction with a line break will cause the
 line before the break to be flush left, like this.\cr{}The command \code{\\cr}
 is a shortcut for \code{\\hfill\\break}.
 
-\section{Breaks}
-
-SILE automatically determines line and page breaks; in later chapters we will
-introduce some \em{settings} which can be used to tweak this process. However,
-SILE’s plain class also provides some commands to help the process on its way.
-
-Between paragraphs, the \code{\\break} command requests a \em{frame break} at the given location.
-(The commands \code{\\framebreak} and \code{\\eject} are also available as synonyms.) Where there
-are multiple frames on a page—for instance, in a document with multiple columns—the current frame will be ended and typesetting will recommence at the top of the next frame.
-\code{\\pagebreak} (also known as \code{\\supereject}) is a more forceful variant,
-and ensures that a new page is opened even if there are remaining frames on the page.
-A less forceful variant is \code{\\goodbreak}, which suggests to SILE that this is
-a good point to break a frame. The opposite is \code{\\nobreak} which requests that,
-if at all possible, SILE does not break at the given point. A neutral variant is
-\code{\\allowbreak}, which allows SILE to break at a point that it would otherwise
-not consider as suitable for breaking.
-
-\em{Within} a paragraph, these commands have a different meaning. The \code{\\break} command requests a \em{line} break at the given location, and, \em{mutatis mutandis},
-so do \code{\\goodbreak}, \code{\\nobreak} and \code{\\allowbreak}. If you want to be
-absolutely sure that you are inhibiting a \em{page} break, you can say \code{\\novbreak}.
+\section{Text Alignment}
 
 \begin{raggedright}
 SILE normally fully-justifies text—that is, it tries to alter the spacing between
@@ -210,6 +185,64 @@ Similarly, there is a \code{raggedleft} environment, in which the right-hand
 margin of the paragraph is fixed, but the left-hand margin is allowed to vary. This
 paragraph is set ragged left.\par
 \end{raggedleft}
+
+\begin{center}
+You can center a paragraph of text by wrapping it in the \code{center} environment.
+(\code{\\begin\{center\} … \\end\{center\}}). This paragraph is centered on the
+page.
+\end{center}
+
+\section{Line and Page Breaks}
+
+SILE automatically determines line and page breaks; in later chapters we will
+introduce some \em{settings} which can be used to tweak this process. However,
+SILE’s plain class also provides some commands to help the process on its way.
+
+The four following commands can be used to control line breaks (when used \em{within}
+a paragraph), as well as page breaks (when used \em{between} paragraphs).\footnote{The names
+are similar to those used in (La)TeX, but their semantics slightly differs.}
+
+\begin{itemize}
+\item{\autodoc:command{\break}}
+\item{\autodoc:command{\goodbreak}}
+\item{\autodoc:command{\nobreak}}
+\item{\autodoc:command{\allowbreak}}
+\end{itemize}
+
+Within a paragraph, the \autodoc:command{\break} command requests a \em{line} break at the given
+location.\footnote{Note that \autodoc:command{\break} just causes a line break, but might not be what
+you intended, for instance in a justified paragraph. As previously noted, the \autodoc:command{\cr} command
+might do what you actually expected there.}
+A less forceful variant is \autodoc:command{\goodbreak}, which suggests to SILE that this is
+a good point to break a line.
+The opposite is \autodoc:command{\nobreak}, which requests that, if at all possible, SILE does not
+break a line at the given point. A neutral variant is \autodoc:command{\allowbreak}, which allows SILE
+to break at a point that it would otherwise not consider as suitable for line breaking.
+
+Between paragraphs, these commands have a different meaning. The \autodoc:command{\break} command requests
+a \em{frame break} at the given location.
+Where there are multiple frames on a page—for instance, in a document with multiple columns—the current frame
+will be ended and typesetting will recommence at the top of the next frame.
+\em{Mutatis mutandis}, \autodoc:command{\goodbreak}, \autodoc:command{\nobreak} and \autodoc:command{\allowbreak}
+affect frame breaking in a similar way.
+
+The following commands are intended to be used betweeen paragraphs and apply to page breaks only:
+
+\begin{itemize}
+\item{\autodoc:command{\novbreak} inhibits a frame break, and is just a convenience
+over \autodoc:command{\nobreak} (ending a paragraph if need be, to be sure you are indeed inhibiting a \em{frame} break).}
+\item{\autodoc:command{\framebreak} and \autodoc:command{\eject} request a frame break.}
+\item{\autodoc:command{\pagebreak} and \autodoc:command{\supereject} request a non-negotiable page break,
+and are more forceful variants of the previous commands, ensuring that a new page is opened even if there are
+remaining frames on the page.}
+\end{itemize}
+
+With \autodoc:command{\framebreak} and \autodoc:command{\pagebreak}, all vertical strechable elements\footnote{Vertical:
+Here, in this document in latin script. The more advanced topic of writing directions and foreign scripts is tackled
+later in this manual.}
+are expanded to fill up the remaining space as much as possible.
+The \autodoc:command{\eject} and \autodoc:command{\supereject} variants insert an infinite vertical stretch,
+so that all vertical strechable elements on the page stay at their natural size.
 
 \section{Including Other Files and Code}
 
