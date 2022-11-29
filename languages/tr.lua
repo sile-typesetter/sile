@@ -761,8 +761,5 @@ SU.formatNumber.tr = {
   end,
   ['ordinal-string'] = function (num, _)
     return tr_nums(num, true)
-  end,
-  ordinal = function (num, _)
-    return num .. "."
   end
 }

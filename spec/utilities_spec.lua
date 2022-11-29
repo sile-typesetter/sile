@@ -82,7 +82,7 @@ describe("SILE.utilities", function()
       end)
 
       it("should format ordinal numbers", function ()
-        assert.is.equal("1984’th", SU.formatNumber(1984, { style = "ordinal" }))
+        assert.is.equal("1,984th", SU.formatNumber(1984, { style = "ordinal" }))
       end)
     end)
 
