@@ -35,7 +35,7 @@ return pl.class({
       end
       local leastC = self.inf_bad
       SU.debug("pagebuilder", function ()
-        return "Page builder for frame " .. SILE.typesetter.frame.id .. " called with " .. #vboxlist .. " nodes, " .. target
+        return "Page builder for frame " .. SILE.typesetter.frame.id .. " called with " .. #vboxlist .. " nodes, " .. tostring(target)
       end)
       if SU.debugging("vboxes") then
         for j, box in ipairs(vboxlist) do
@@ -66,7 +66,7 @@ return pl.class({
           vbox = vboxlist[i]
         end
         local left = target - totalHeight
-        SU.debug("pagebuilder", function () return "I have " .. left .. " left" end)
+        SU.debug("pagebuilder", function () return "I have " .. tostring(left) .. " left" end)
         -- if left < -20 then SU.error("\nCatastrophic page breaking failure!"); end
         pi = 0
         if vbox.is_penalty then
@@ -76,7 +76,7 @@ return pl.class({
         if vbox.is_penalty and vbox.penalty < self.inf_bad
           or (vbox.is_vglue and i > 1 and not vboxlist[i-1].discardable) then
           local badness
-          SU.debug("pagebuilder", function () return "totalHeight " .. totalHeight .. " with target " .. target end)
+          SU.debug("pagebuilder", function () return "totalHeight " .. tostring(totalHeight) .. " with target " .. tostring(target) end)
           if totalHeight.length.amount < target.length.amount then -- TeX #1039
             -- Account for infinite stretch?
             badness = SU.rateBadness(self.inf_bad, left.length.amount, totalHeight.stretch.amount)

@@ -158,7 +158,7 @@ end
 
 function SILE.defaultTypesetter:debugState ()
   print("\n---\nI am in "..(self:vmode() and "vertical" or "horizontal").." mode")
-  print("Writing into " .. self.frame)
+  print("Writing into " .. tostring(self.frame))
   print("Recent contributions: ")
   for i = 1, #(self.state.nodes) do
     io.stderr:write(self.state.nodes[i].. " ")
