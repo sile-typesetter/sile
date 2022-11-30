@@ -496,7 +496,7 @@ function lineBreak:describeBreakNode(node)
   local after = self.nodes[node.curBreak+1]
   local from = node.prevBreak and node.prevBreak.curBreak or 1
   local to = node.curBreak
-  return "b "..from.."-"..to.." \""..(before and before:toText()).." | "..(after and after:toText()).."\" [".. node.totalDemerits..", "..node.fitness.."]"
+  return ("b %s-%s \"%s | %s\" [%s, %s]"):format(from, to, before and before:toText() or "", after and after:toText() or "", node.totalDemerits, node.fitness)
 end
 
 -- NOTE: this function is called many thousands of times even in single
