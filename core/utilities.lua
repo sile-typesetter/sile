@@ -107,10 +107,12 @@ utilities.debug = function (category, ...)
     local inputs = table.pack(...)
     for i, input in ipairs(inputs) do
       if type(input) == "function" then
-        inputs[i] = input()
+        local status, output = pcall(input)
+        inputs[i] = status and output or SU.warn(("Output of %s debug function was an error: %s"):format(category, output))
       end
     end
-    io.stderr:write("\n["..category.."] ", utilities.concat(inputs, " "))
+    local message = utilities.concat(inputs, " ")
+    if message then io.stderr:write(("\n[%s] %s"):format(category, message)) end
   end
 end
 
