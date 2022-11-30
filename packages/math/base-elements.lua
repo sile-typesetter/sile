@@ -95,7 +95,7 @@ local mathCache = {}
 local function retrieveMathTable(font)
   local key = SILE.font._key(font)
   if not mathCache[key] then
-    SU.debug("math", "Loading math font " .. key)
+    SU.debug("math", "Loading math font", key)
     local face = SILE.font.cache(font, SILE.shaper.getFace)
     if not face then
       SU.error("Could not find requested font ".. font .." or any suitable substitutes")
@@ -926,7 +926,7 @@ function elements.text:stretchyReshape (depth, height)
   local upem = mathMetrics.unitsPerEm
   local sz = self.font.size
   local requiredAdvance = (depth + height):tonumber() * upem/sz
-  SU.debug("math", "stretch: rA = "..requiredAdvance)
+  SU.debug("math", "stretch: rA =", requiredAdvance)
   -- Choose variant of the closest size. The criterion we use is to have
   -- an advance measurement as close as possible as the required one.
   -- The advance measurement is simply the depth+height of the glyph.
@@ -939,21 +939,21 @@ function elements.text:stretchyReshape (depth, height)
     .vertGlyphConstructions[glyphs[1].gid]
   if constructions then
     local variants = constructions.mathGlyphVariantRecord
-    SU.debug("math", "stretch: variants = " .. tostring(variants))
+    SU.debug("math", "stretch: variants =", variants)
     local closest
     local closestI
     local m = requiredAdvance - (self.depth+self.height):tonumber() * upem/sz
-    SU.debug("math", "strech: m = " .. m)
+    SU.debug("math", "strech: m =", m)
     for i,v in ipairs(variants) do
       local diff = math.abs(v.advanceMeasurement - requiredAdvance)
-      SU.debug("math", "stretch: diff = " .. diff)
+      SU.debug("math", "stretch: diff =", diff)
       if diff < m then
         closest = v
         closestI = i
         m = diff
       end
     end
-    SU.debug("math", "stretch: closestI = " .. tostring(closestI))
+    SU.debug("math", "stretch: closestI =", tostring(closestI))
     if closest then
       -- Now we have to re-shape the glyph chain. We will assume there
       -- is only one glyph.
@@ -1112,7 +1112,7 @@ function elements.table:_init (children, options)
   self.nrows = #self.children
   self.ncols = math.max(table.unpack(mapList(function(_, row)
     return #row.children end, self.children)))
-  SU.debug("math", "self.ncols = "..self.ncols)
+  SU.debug("math", "self.ncols =", self.ncols)
   self.rowspacing = self.options.rowspacing and SILE.length(self.options.rowspacing)
     or SILE.length("7pt")
   self.columnspacing = self.options.columnspacing and SILE.length(self.options.columnspacing)
@@ -1121,9 +1121,9 @@ function elements.table:_init (children, options)
   -- right.
   for i,row in ipairs(self.children) do
     for j = 1, (self.ncols - #row.children) do
-      SU.debug("math", "padding i = "..i..", j = "..j)
+      SU.debug("math", "padding i =", i, "j =", j)
       table.insert(row.children, elements.stackbox('H', {}))
-      SU.debug("math", "size "..#row.children)
+      SU.debug("math", "size", #row.children)
     end
   end
   if options.columnalign then

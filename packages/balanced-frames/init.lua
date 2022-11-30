@@ -41,13 +41,13 @@ local function buildPage (typesetter, independent)
   -- Have we been explicitly asked to find a pagebreak at this point?
   -- If not, don't bother
   if mustBalance == 0 and not independent then return false end
-  SU.debug("balancer", "Balancing " .. tostring(totalHeight) .. " of material over " .. colCount .. " frames (total of ".. tostring(target) .. ")")
-  SU.debug("balancer", "Must balance because mustBalance=" .. mustBalance .. " and independent = " .. tostring(independent))
+  SU.debug("balancer", "Balancing", totalHeight, "of material over", colCount, "frames (total of", target, ")")
+  SU.debug("balancer", "Must balance because mustBalance =", mustBalance, "and independent =", independent)
   -- OK. Now we have to balance the frames. We are going to cheat and
   -- adjust the height of each frame to be an appropriate fraction of
   -- the content height
   frame = typesetter.frame
-  SU.debug("balancer", "Each column is now "..(totalHeight.length / colCount))
+  SU.debug("balancer", "Each column is now", totalHeight.length / colCount)
   while frame and frame.balanced == true do
     frame:relax("bottom")
     frame:constrain("height", totalHeight.length / colCount)
@@ -66,7 +66,7 @@ local function buildPage (typesetter, independent)
     end
   end
   SILE.pagebuilder = oldPageBuilder
-  SU.debug("balancer", "Finished this balance, frame id is now " .. tostring(typesetter.frame))
+  SU.debug("balancer", "Finished this balance, frame id is now", typesetter.frame)
   -- SILE.typesetter:debugState()
   -- We're done.
   return true
