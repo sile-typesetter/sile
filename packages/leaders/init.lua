@@ -46,8 +46,7 @@ function leader:outputYourself (typesetter, line)
 
   local repetitions = maxRepetitions - skipRepetitions
   local remainder = fitWidth - maxRepetitions * leaderWidth
-  SU.debug("leaders", "Leader repetitions: "..repetitions
-    ..", skipped: "..skipRepetitions..", remainder: "..remainder.."pt")
+  SU.debug("leaders", "Leader repetitions:", repetitions, "skipped:", skipRepetitions, "remainder:", remainder)
 
   -- Return back to our start position
   typesetter.frame:advanceWritingDirection(-outputWidth)

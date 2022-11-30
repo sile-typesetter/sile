@@ -9,20 +9,20 @@ local gridSpacing
 local function makeUp (totals)
   local toadd = (gridSpacing - SILE.measurement(totals.gridCursor)) % gridSpacing
   totals.gridCursor = totals.gridCursor + toadd
-  SU.debug("typesetter", "Makeup height = " .. toadd)
+  SU.debug("typesetter", "Makeup height =", toadd)
   return SILE.nodefactory.vglue(toadd)
 end
 
 local function leadingFor (typesetter, vbox, previous)
   SU.debug("typesetter", "   Considering leading between two lines (grid mode):")
-  SU.debug("typesetter", "   1) " .. tostring(previous))
-  SU.debug("typesetter", "   2) " .. vbox)
+  SU.debug("typesetter", "   1)", previous)
+  SU.debug("typesetter", "   2)", vbox)
   if not previous then return SILE.nodefactory.vglue() end
-  SU.debug("typesetter", "   Depth of previous line was " .. tostring(previous.depth))
+  SU.debug("typesetter", "   Depth of previous line was", previous.depth)
   local totals = typesetter.frame.state.totals
   local oldCursor = SILE.measurement(totals.gridCursor)
   totals.gridCursor = oldCursor + vbox.height:absolute() + previous.depth
-  SU.debug("typesetter", "   Cursor change = " .. totals.gridCursor - oldCursor)
+  SU.debug("typesetter", "   Cursor change =", totals.gridCursor - oldCursor)
   return makeUp(typesetter.frame.state.totals)
 end
 
@@ -86,7 +86,7 @@ function gridPagebuilder.findBestBreak (_, options)
   local i = 0
   local totalHeight = SILE.length()
   local bestBreak = 0
-  SU.debug("pagebuilder", "Page builder for frame "..SILE.typesetter.frame.id.." called with "..#vboxlist.." nodes, "..target)
+  SU.debug("pagebuilder", "Page builder for frame", SILE.typesetter.frame.id, "called with", #vboxlist, "nodes,", target)
   if SU.debugging("vboxes") then
     for j, box in ipairs(vboxlist) do
       SU.debug("vboxes", (j == i and " >" or "  ") .. j .. ": " .. box)
@@ -102,7 +102,7 @@ function gridPagebuilder.findBestBreak (_, options)
   while i < #vboxlist do
     i = i + 1
     local node = vboxlist[i]
-    SU.debug("pagebuilder", "Dealing with VBox " .. node)
+    SU.debug("pagebuilder", "Dealing with VBox", node)
     if node.is_vbox then
       totalHeight = totalHeight + node.height:absolute() + node.depth:absolute()
     elseif node.is_vglue then
@@ -114,8 +114,8 @@ function gridPagebuilder.findBestBreak (_, options)
     end
     local left = target - totalHeight
     local _left = left:tonumber()
-    SU.debug("pagebuilder", "I have " .. left .. "left")
-    SU.debug("pagebuilder", "totalHeight " .. tostring(totalHeight) .. " with target " .. tostring(target))
+    SU.debug("pagebuilder", "I have", left, "left")
+    SU.debug("pagebuilder", "totalHeight", totalHeight, "with target", target)
     local badness = 0
     if _left < 0 then badness = 1000000 end
     if node.is_penalty then

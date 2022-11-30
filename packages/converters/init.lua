@@ -12,13 +12,13 @@ local applyConverter = function (source, converter)
   local sourceTime = lfs.attributes(source, "modification")
 
   if (sourceTime==nil) then
-    SU.debug("converters", "Source file not found "..source)
+    SU.debug("converters", "Source file not found", source)
     return nil -- source not found
   end
 
   local targetTime = lfs.attributes(targetFile, "modification")
   if((targetTime~=nil) and (targetTime>sourceTime)) then
-    SU.debug("converters", "Source file already converted "..source)
+    SU.debug("converters", "Source file already converted", source)
     return targetFile -- already converted
   end
 
@@ -30,7 +30,7 @@ local applyConverter = function (source, converter)
   local result = os.execute(command)
   if type(result) ~= "boolean" then result = (result == 0) end
   if result then
-    SU.debug("converters", "Converted "..source.." to "..targetFile)
+    SU.debug("converters", "Converted", source, "to", targetFile)
     return targetFile
   else
     return nil
@@ -46,7 +46,7 @@ local function extendCommand (name, func)
       func(options, content, original)
     end
   else
-    SU.debug("converters", "Can not extend command "..name)
+    SU.debug("converters", "Can not extend command", name)
   end
 end
 

@@ -193,10 +193,10 @@ local debugInsertion = function (ins, insbox, topBox, target, targetFrame, total
   SU.debug("insertions", "Top box height", topBox.height)
   SU.debug("insertions", "Insertion", ins, ins.height, ins.depth)
   SU.debug("insertions", "Total incoming height", insertionsHeight)
-  SU.debug("insertions", "Insertions already in this class ", insbox.height, insbox.depth)
-  SU.debug("insertions", "Page target ", target)
-  SU.debug("insertions", "Page frame ", targetFrame)
-  SU.debug("insertions", tostring(totalHeight) .. " worth of content on page so far")
+  SU.debug("insertions", "Insertions already in this class", insbox.height, insbox.depth)
+  SU.debug("insertions", "Page target", target)
+  SU.debug("insertions", "Page frame", targetFrame)
+  SU.debug("insertions", totalHeight, "worth of content on page so far")
 end
 
 -- This just puts the insertion vbox into the typesetter's queues.
@@ -236,7 +236,7 @@ function package:_init ()
       local frame = SILE.getFrame(fName)
       if frame then
         initShrinkage(frame)
-        SU.debug("insertions", "Shrinking " .. fName .. " by " .. tostring(amount * ratio))
+        SU.debug("insertions", "Shrinking", fName, "by", amount * ratio)
         frame.state.totals.shrinkage = frame.state.totals.shrinkage + amount * ratio
       end
     end
@@ -254,7 +254,7 @@ function package:_init ()
         initShrinkage(frame)
         local newHeight = frame:height() - frame.state.totals.shrinkage
         if stealPosition == "bottom" then frame:relax("bottom") else frame:relax("top") end
-        SU.debug("insertions", "Constraining height of " .. fName .. " by " .. frame.state.totals.shrinkage .. " to " .. newHeight)
+        SU.debug("insertions", "Constraining height of", fName, "by", frame.state.totals.shrinkage, "to", newHeight)
         frame:constrain("height", newHeight)
         frame.state.totals.shrinkage = SILE.measurement(0)
       end
@@ -264,14 +264,14 @@ function package:_init ()
   SILE.insertions.increaseInsertionFrame = function (insertionvbox, classname)
     local amount = insertionvbox.height + insertionvbox.depth
     local opts = SILE.scratch.insertions.classes[classname]
-    SU.debug("insertions", "Increasing insertion frame by " .. tostring(amount))
+    SU.debug("insertions", "Increasing insertion frame by", amount)
     local stealPosition = opts["steal-position"] or "bottom"
     local insertionFrame = SILE.getFrame(opts["insertInto"].frame)
     local oldHeight = insertionFrame:height()
     amount = amount * opts["insertInto"].ratio
     insertionFrame:constrain("height", oldHeight + amount)
     if stealPosition == "bottom" then insertionFrame:relax("top") end
-    SU.debug("insertions", "New height is now " .. insertionFrame:height())
+    SU.debug("insertions", "New height is now", insertionFrame:height())
   end
 
   --[[
@@ -355,7 +355,7 @@ function package:_init ()
     local deferredInsertions = ins:split(materialToSplit, maxsize)
 
     if deferredInsertions then
-      SU.debug("insertions", "Split. Remaining insertion is " .. ins)
+      SU.debug("insertions", "Split. Remaining insertion is", ins)
       SILE.insertions.setShrinkage(ins.class, topBox.height:absolute() + deferredInsertions.height:absolute() + deferredInsertions.depth:absolute())
       insbox:append(topBox)
       -- deferredInsertions.contentHeight = deferredInsertions.height

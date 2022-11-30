@@ -26,7 +26,7 @@ local parallelPagebreak = function ()
       local frame = thisPageFrames[j]
       local typesetter = typesetterPool[frame]
       local thispage = {}
-      SU.debug("parallel", "Dumping lines for page on typesetter "..typesetter.id)
+      SU.debug("parallel", "Dumping lines for page on typesetter", typesetter.id)
       if #typesetter.state.outputQueue > 0 and calculations[frame].mark == 0 then
         -- More than one page worth of stuff here.
         -- Just ship out one page and hope for the best.
@@ -53,7 +53,7 @@ local addBalancingGlue = function (height)
   allTypesetters(function (frame, typesetter)
     local glue = height - calculations[frame].heightOfNewMaterial
     if glue.length:tonumber() > 0 then
-      SU.debug("parallel", "Adding " .. tostring(glue) .. " to " .. tostring(frame))
+      SU.debug("parallel", "Adding", glue, "to", frame)
       typesetter:pushVglue({ height = glue })
     end
     calculations[frame].mark = #typesetter.state.outputQueue
@@ -111,7 +111,7 @@ function package:registerCommands ()
     local maxheight = SILE.length()
     SU.debug("parallel", "Trying a sync")
     allTypesetters(function (_, typesetter)
-      SU.debug("parallel", "Leaving hmode on "..typesetter.id)
+      SU.debug("parallel", "Leaving hmode on", typesetter.id)
       typesetter:leaveHmode(true)
       -- Now we have each typesetter's content boxed up onto the output stream
       -- but page breaking has not been run. See if page breaking would cause a
@@ -134,7 +134,7 @@ function package:registerCommands ()
         calculations[frame].heightOfNewMaterial = calculations[frame].heightOfNewMaterial + thisHeight
       end
       if maxheight < calculations[frame].heightOfNewMaterial then maxheight = calculations[frame].heightOfNewMaterial end
-      SU.debug("parallel", frame .. ": pre-sync content=" .. calculations[frame].mark .. ", now " .. #typesetter.state.outputQueue .. ", height of material: " .. tostring(calculations[frame].heightOfNewMaterial))
+      SU.debug("parallel", frame, ": pre-sync content=", calculations[frame].mark, ", now", #typesetter.state.outputQueue, ", height of material:", calculations[frame].heightOfNewMaterial)
     end)
     addBalancingGlue(maxheight)
   end)

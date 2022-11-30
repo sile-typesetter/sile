@@ -54,7 +54,9 @@ local fallbackQueue = pl.class({
 
     addRun = function (self, offset, start)
       if not self.pending then
-        SU.debug("font-fallback", ("New run pending for %s starting byte %s insert at %s"):format(self:currentText(), start, offset))
+        SU.debug("font-fallback", function ()
+          return ("New run pending for %s starting byte %s insert at %s"):format(self:currentText(), start, offset)
+        end)
         local options = self:nextFallback()
         if not options then return false end
         options.size = SILE.measurement(options.size):tonumber()
@@ -69,7 +71,9 @@ local fallbackQueue = pl.class({
 
     pushNextRun = function (self, stop)
       if self.pending then
-        SU.debug("font-fallback", ("Push pending run for %s ending at %s"):format(self:currentText(), stop))
+        SU.debug("font-fallback", function ()
+          return ("Push pending run for %s ending at %s"):format(self:currentText(), stop)
+        end)
         self.pending.stop = stop
         table.insert(self.runs, self.pending)
         self.pending = nil
@@ -96,17 +100,23 @@ function package:_init ()
     end
     local shapeQueue = fallbackQueue(text, fallbackOptions)
     repeat -- iterate fallbacks
-      SU.debug("font-fallback", ("Start fallback iteration for text '%s'"):format(text))
+      SU.debug("font-fallback", function ()
+        return ("Start fallback iteration for text '%s'"):format(text)
+      end)
       local run = shapeQueue:currentRun()
       local face = run.options.family:len() > 0 and run.options.family or run.options.filename
       local chunk = shapeQueue:currentText()
-      SU.debug("font-fallback", ("Try shaping chunk '%s' with '%s'"):format(chunk, face))
+      SU.debug("font-fallback", function ()
+        return ("Try shaping chunk '%s' with '%s'"):format(chunk, face)
+      end)
       local candidate_items = self_._base.shapeToken(self_, chunk, run.options)
       local _index
       for _, item in ipairs(candidate_items) do
         item.fontOptions = run.options
         if item.gid == 0 or item.name == ".null" or item.name == ".notdef" then
-          SU.debug("font-fallback", ("Glyph %s not found in %s"):format(item.text, face))
+          SU.debug("font-fallback", function ()
+            return ("Glyph %s not found in %s"):format(item.text, face)
+          end)
           local newstart = run.start + item.index
           local pending = shapeQueue:addRun(run.offset, newstart)
           if not pending then
@@ -115,7 +125,9 @@ function package:_init ()
             table.insert(items, run.offset, item) -- output tofu if we're out of fallbacks
           end
         else
-          SU.debug("font-fallback", ("Found glyph '%s' in '%s'"):format(item.text, face))
+          SU.debug("font-fallback", function ()
+            return ("Found glyph '%s' in '%s'"):format(item.text, face)
+          end)
           shapeQueue:pushNextRun(run.start + item.index - 1) -- if notdef run pending, end it
           if item.index == _index then
             local previous = items[run.offset]
@@ -154,7 +166,7 @@ function package:_init ()
     local nodes = {}
     for i=1, #run do
       options = run[i].fontOptions
-      SU.debug("font-fallback", "Shaping ".. run[i].chunk.. " in ".. options.family)
+      SU.debug("font-fallback", "Shaping", run[i].chunk, "in", options.family)
       for node in nodeMaker(options):iterator(run[i].slice, run[i].chunk) do
         nodes[#nodes+1] = node
       end

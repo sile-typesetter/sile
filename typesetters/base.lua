@@ -328,7 +328,9 @@ function SILE.defaultTypesetter:boxUpNodes ()
   parfillskip.discardable = false
   self:pushGlue(parfillskip)
   self:pushPenalty(-inf_bad)
-  SU.debug("typesetter", "Boxed up "..(#nodelist > 500 and (#nodelist).." nodes" or SU.contentToString(nodelist)))
+  SU.debug("typesetter", function ()
+    return "Boxed up "..(#nodelist > 500 and (#nodelist).." nodes" or SU.contentToString(nodelist))
+  end)
   local breakWidth = SILE.settings:get("typesetter.breakwidth") or self.frame:getLineWidth()
   local lines = self:breakIntoLines(nodelist, breakWidth)
   local vboxes = {}
@@ -357,7 +359,7 @@ function SILE.defaultTypesetter:boxUpNodes ()
     for i=1, #migrating do vboxes[#vboxes+1] = migrating[i] end
     self.state.previousVbox = vbox
     if pageBreakPenalty > 0 then
-      SU.debug("typesetter", "adding penalty of "..pageBreakPenalty.." after "..vbox)
+      SU.debug("typesetter", "adding penalty of", pageBreakPenalty, "after", vbox)
       vboxes[#vboxes+1] = SILE.nodefactory.penalty(pageBreakPenalty)
     end
   end
@@ -508,27 +510,27 @@ function SILE.defaultTypesetter:initNextFrame ()
 end
 
 function SILE.defaultTypesetter:pushBack ()
-  SU.debug("typesetter", "Pushing back " .. #self.state.outputQueue .. " nodes")
+  SU.debug("typesetter", "Pushing back", #self.state.outputQueue, "nodes")
   local oldqueue = self.state.outputQueue
   self.state.outputQueue = {}
   self.state.previousVbox = nil
   local lastMargins = self:getMargins()
   for _, vbox in ipairs(oldqueue) do
-    SU.debug("pushback", { "process box", vbox })
+    SU.debug("pushback", "process box", vbox)
     if vbox.margins and vbox.margins ~= lastMargins then
-      SU.debug("pushback", { "new margins", lastMargins, vbox.margins })
+      SU.debug("pushback", "new margins", lastMargins, vbox.margins)
       if not self.state.grid then self:endline() end
       self:setMargins(vbox.margins)
     end
     if vbox.explicit then
-      SU.debug("pushback", { "explicit", vbox })
+      SU.debug("pushback", "explicit", vbox)
       self:endline()
       self:pushExplicitVglue(vbox)
     elseif vbox.is_insertion then
-      SU.debug("pushback", { "pushBack", "insertion", vbox })
+      SU.debug("pushback", "pushBack", "insertion", vbox)
       SILE.typesetter:pushMigratingMaterial({ material = { vbox } })
     elseif not vbox.is_vglue and not vbox.is_penalty then
-      SU.debug("pushback", { "not vglue or penalty", vbox.type })
+      SU.debug("pushback", "not vglue or penalty", vbox.type)
       local discardedFistInitLine = false
       if (#self.state.nodes == 0) then
         -- Setup queue but avoid calling newPar
@@ -538,15 +540,15 @@ function SILE.defaultTypesetter:pushBack ()
         if node.is_glue and not node.discardable then
           self:pushHorizontal(node)
         elseif node.is_glue and node.value == "margin" then
-          SU.debug("pushback", { "discard", node.value, node })
+          SU.debug("pushback", "discard", node.value, node)
         elseif node.is_discretionary then
-          SU.debug("pushback", { "re-mark discretionary as unused", node })
+          SU.debug("pushback", "re-mark discretionary as unused", node)
           node.used = false
           if i == 1 then
-            SU.debug("pushback", { "keep first discretionary", node })
+            SU.debug("pushback", "keep first discretionary", node)
             self:pushHorizontal(node)
           else
-            SU.debug("pushback", { "discard all other discretionaries", node })
+            SU.debug("pushback", "discard all other discretionaries", node)
           end
         elseif node.is_zero then
           if discardedFistInitLine then self:pushHorizontal(node) end
@@ -559,7 +561,7 @@ function SILE.defaultTypesetter:pushBack ()
         end
       end
     else
-      SU.debug("pushback", { "discard", vbox.type })
+      SU.debug("pushback", "discard", vbox.type)
     end
     lastMargins = vbox.margins
     -- self:debugState()
@@ -572,7 +574,7 @@ function SILE.defaultTypesetter:pushBack ()
 end
 
 function SILE.defaultTypesetter:outputLinesToPage (lines)
-  SU.debug("pagebuilder", "OUTPUTTING frame "..self.frame.id)
+  SU.debug("pagebuilder", "OUTPUTTING frame", self.frame.id)
   for _, line in ipairs(lines) do
     -- Annoyingly, explicit glue *should* disappear at the top of a page.
     -- if you don't want that, add an empty vbox or something.
@@ -608,14 +610,14 @@ end
 function SILE.defaultTypesetter.leadingFor (_, vbox, previous)
   -- Insert leading
   SU.debug("typesetter", "   Considering leading between two lines:")
-  SU.debug("typesetter", "   1) " .. tostring(previous))
-  SU.debug("typesetter", "   2) " .. tostring(vbox))
+  SU.debug("typesetter", "   1)", previous)
+  SU.debug("typesetter", "   2)", vbox)
   if not previous then return SILE.nodefactory.vglue() end
   local prevDepth = previous.depth
-  SU.debug("typesetter", "   Depth of previous line was " .. tostring(prevDepth))
+  SU.debug("typesetter", "   Depth of previous line was", prevDepth)
   local bls = SILE.settings:get("document.baselineskip")
   local depth = bls.height:absolute() - vbox.height:absolute() - prevDepth:absolute()
-  SU.debug("typesetter", "   Leading height = " .. tostring(bls.height) .. " - " .. tostring(vbox.height) .. " - " .. tostring(prevDepth) .. " = " .. tostring(depth))
+  SU.debug("typesetter", "   Leading height =", bls.height, "-", vbox.height, "-", prevDepth, "=", depth)
 
   -- the lineskip setting is a vglue, but we need a version absolutized at this point, see #526
   local lead = SILE.settings:get("document.lineskip").height:absolute()

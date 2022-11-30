@@ -396,17 +396,17 @@ end
 
 local function compileToMathML (_, arg_env, tree)
   local result = compileToMathML_aux(_, arg_env, tree)
-  if SU.debugging("texmath") then
-    SU.debug("texmath", "Resulting MathML: " .. printMathML(result))
-  end
+  SU.debug("texmath", function ()
+    return "Resulting MathML: " .. printMathML(result)
+  end)
   return result
 end
 
 local function convertTexlike (_, content)
   local ret = epnf.parsestring(mathParser, content[1])
-  if SU.debugging("texmath") then
-    SU.debug("texmath", "Parsed TeX math: " .. pl.pretty.write(ret))
-  end
+  SU.debug("texmath", function ()
+    return "Parsed TeX math: " .. pl.pretty.write(ret)
+  end)
   return ret
 end
 
