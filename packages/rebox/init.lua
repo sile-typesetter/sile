@@ -28,13 +28,11 @@ You can change the \autodoc:parameter{width}, \autodoc:parameter{height}, or \au
 
 For example:
 
-\begin{verbatim}
-\line
-Hello \\rebox[width=0pt]\{world\}overprint.
+\begin[type=autodoc:codeblock]{raw}
+Hello \rebox[width=0pt]{world}overprint.
 
-Look I’m not \\rebox[phantom=true]\{here\}!
-\line
-\end{verbatim}
+Look I’m not \rebox[phantom=true]{here}!
+\end{raw}
 
 \begin{examplefont}
 Hello \rebox[width=0pt]{world}overprint.

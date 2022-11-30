@@ -215,12 +215,10 @@ It provides two commands, \autodoc:command{\font:add-fallback} and \autodoc:comm
 The parameters to \autodoc:command{\font:add-fallback} are the same as the parameters to \autodoc:command{\font}.
 So this code:
 
-\begin{verbatim}
-\line
-\\font:add-fallback[family=Symbola]
-\\font:add-fallback[family=Noto Sans CJK JP]
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\font:add-fallback[family=Symbola]
+\font:add-fallback[family=Noto Sans CJK JP]
+\end{raw}
 
 will add two fonts to try if characters are not found in the current font.
 Now we can say:

@@ -102,6 +102,7 @@ end
 function package:_init (options)
   base._init(self)
   self.class:loadPackage("inputfilter")
+  self.class:loadPackage("rules")
   if options then pl.tablex.update(theme, options) end
   if not SILE.scratch.autodoc then
     SILE.scratch.autodoc = {
@@ -117,6 +118,14 @@ function package.declareSettings (_)
     type = "boolean",
     help = "Whether audodoc enables syntax highlighting"
   })
+end
+
+function package:registerRawHandlers ()
+
+  self.class:registerRawHandler("autodoc:codeblock", function(options, content)
+    SILE.call("autodoc:codeblock", options, { content[1] }) -- Still issues with SU.contentToString() witb raw content
+  end)
+
 end
 
 function package:registerCommands ()
@@ -285,6 +294,29 @@ function package:registerCommands ()
     SILE.call("autodoc:package:style", {}, { name })
   end, "Outputs a package name in code, checking its validity.")
 
+  -- Homogenizing the appearance of blocks of code
+
+  self:registerCommand("autodoc:codeblock", function(_, content)
+    SILE.call("verbatim", {}, function ()
+      SILE.call("autodoc:line")
+      SILE.call("novbreak")
+      SILE.process(content)
+      SILE.call("autodoc:line")
+    end)
+  end, "Outputs its content as a standardized block of code")
+
+  self:registerCommand("autodoc:line", function(_, _)
+    -- Loosely derived from the \line command from the original SILE manual...
+    SILE.call("novbreak")
+    SILE.call("skip", { height = "5pt" })
+    SILE.call("novbreak")
+    SILE.call("noindent")
+    SILE.call("hrule", { width = "100%lw", height = "0.3pt"})
+    SILE.call("par")
+    SILE.call("novbreak")
+    SILE.call("skip", { height = "5pt" })
+  end, "Ouputs a line used for surrounding code blocks")
+
 end
 
 package.documentation = [[
@@ -319,6 +351,12 @@ Would you want to disable this feature (e.g. to refer to a setting or command de
 Note, however, that for commands, it is applied recursively to the parsed AST (so it is a all-or-none trade-off).
 
 The \autodoc:command{\autodoc:parameter} commands takes either a parameter name, possibly with a value (which as above, may be bracketed) and typesets it in the same fashion.
+
+The \autodoc:environment{autodoc:codeblock} environment allows typesetting a block of code in a consistent way.
+This is not a true verbatim environment, and you still have to escape SILE’s special characters within it
+(unless calling commands is what you really intend doing there, obviously).
+For convenience, the package also provides a \code{raw} handler going by the same name, where you do not
+have to escape the special characters (backslashes, braces, percents).
 \end{document}
 ]]
 

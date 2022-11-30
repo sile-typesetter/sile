@@ -32,11 +32,11 @@ Some Unicode characters are hard to locate on a standard keyboard, and so are di
 The \autodoc:package{unichar} package helps with this problem by providing a command to enter Unicode codepoints.
 After loading \autodoc:package{unichar}, the \autodoc:command{\unichar} command becomes available:
 
-\begin{verbatim}
-\line
-\\unichar\{U+263A\} \% produces \font[family=Symbola]{\unichar{U+263A}}
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\unichar{U+263A}
+\end{raw}
+
+This produces: \font[family=Symbola]{\unichar{U+263A}}
 
 If the argument to \autodoc:command{\unichar} begins \code{U+}, \code{u+}, \code{0x} or \code{0X}, then it is assumed to be a hexadecimal value.
 Otherwise it is assumed to be a decimal codepoint.

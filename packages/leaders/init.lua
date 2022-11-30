@@ -116,11 +116,9 @@ package.documentation = [[
 The \autodoc:package{leaders} package allows you to create repeating patterns which fill a given space.
 It provides the \autodoc:command{\dotfill} command, which does this:
 
-\begin{verbatim}
-\line
-A\\dotfill\{\}B
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+A\dotfill{}B
+\end{raw}
 
 \begin{examplefont}
 A\dotfill{}B\par
@@ -129,11 +127,9 @@ A\dotfill{}B\par
 It also provides the \autodoc:command{\leaders[width=<dimension>]{<content>}} command which allow you to define your own leaders.
 For example:
 
-\begin{verbatim}
-\line
-A\\leaders[width=40pt]\{/\\\\\}B
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+A\leaders[width=40pt]{/\\}B
+\end{raw}
 
 \begin{examplefont}
 A\leaders[width=40pt]{/\\}B\par

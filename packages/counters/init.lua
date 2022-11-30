@@ -228,23 +228,21 @@ For example, \autodoc:parameter{display=beng} will format your numbers in Bengal
 
 So, for example, the following SILE code:
 
-\begin{verbatim}
-\line
-\\set-counter[id=mycounter, value=2]
-\\show-counter[id=mycounter]
+\begin[type=autodoc:codeblock]{raw}
+\set-counter[id=mycounter, value=2]
+\show-counter[id=mycounter]
 
-\\increment-counter[id=mycounter, display=roman]
-\\show-counter[id=mycounter]
-\line
-\end{verbatim}
+\increment-counter[id=mycounter, display=roman]
+\show-counter[id=mycounter]
+\end{raw}
 
 produces:
 
-\line
+\fullrule
 \examplefont{2
 
 \noindent{}iii}
-\line
+\fullrule
 
 The package also provides multi-level (hierarchical) counters, of the kind used in sectioning
 commands:

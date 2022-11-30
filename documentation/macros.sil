@@ -16,7 +16,7 @@
 \use[module=packages.font-fallback]
 \use[module=packages.simpletable]
 \define[command=notehead]{\noindent\bf{\process}\par\medskip}
-\define[command=line]{\novbreak\skip[height=5pt]\noindent\hrule[width=450pt,height=0.3pt]\par\novbreak\skip[height=5pt]}
+\define[command=line]{\autodoc:line}
 \define[command=note]{\medskip
 \set[parameter=document.lskip,value=24pt]{%
 \par\goodbreak\noindent\hrule[width=450pt,height=0.75pt]\par\medskip\font[size=10pt,style=italic]{\noindent\process}\par\smallskip\noindent\hrule[width=450pt,height=0.75pt]\par

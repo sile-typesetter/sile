@@ -21,39 +21,31 @@ The interface to changing settings from within a SILE document is the
 option expresses the value to which the setting is being changed. As an
 example:
 
-\begin{verbatim}
-\line
-\\set[parameter=typesetter.orphanpenalty, value=250]
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\set[parameter=typesetter.orphanpenalty, value=250]
+\end{raw}
 
 Two additional options are accepted. The \em{makedefault} option can added so
 that whatever value you set sticks as the new default. The \em{reset} can be
 used without a \em{value} option to reset whatever the current value is back to
 the default Note these two options are mutually exclusive.
 
-\begin{verbatim}
-\line
-\\set[parameter=typesetter.orphanpenalty, value=250, makedefault=true]
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\set[parameter=typesetter.orphanpenalty, value=250, makedefault=true]
+\end{raw}
 
 or:
 
-\begin{verbatim}
-\line
-\\set[parameter=typesetter.orphanpenalty, reset=true]
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\set[parameter=typesetter.orphanpenalty, reset=true]
+\end{raw}
 
 If the \autodoc:command{\set} command is provided with any content, then the change of
 setting is localised to the content of the argument. In other words, this code:
 
-\begin{verbatim}
-\line
-\\set[parameter=typesetter.orphanpenalty, value=250]\{\\lorem\}
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\set[parameter=typesetter.orphanpenalty, value=250]{\lorem}
+\end{raw}
 
 will change the orphan penalty to 250, typeset 50 words of dummy text, and then
 return the orphan penalty to its previous value.
@@ -61,22 +53,18 @@ return the orphan penalty to its previous value.
 If you are working in Lua, you have two choices to work with. As with any
 registered command you can call it using \code{SILE.call()}. For example:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 SILE.call("set", { parameter = "typesetter.orphanpenalty", value = 250 })
-\line
-\end{verbatim}
+\end{raw}
 
 There is nothing wrong with this and it allows you to optionally pass content
 that is wrapped in those settings. However there is also a slightly lower level
 function that is more idiomatic of Lua code than SILE that uses positional
 arguments instead of named options:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 SILE.settings:set("typesetter.orphanpenalty", 250)
-\line
-\end{verbatim}
+\end{raw}
 
 The 3rd and 4th optional arguments are for \em{makedefault} and \em{reset}
 respectively.
@@ -113,12 +101,10 @@ of 18 points.
 Let’s think about how the \autodoc:environment{center} environment is implemented. First,
 we will add incredibly stretchable glue to the left and right margins, like so:
 
-\begin{verbatim}
-\line
-\\set[parameter=document.lskip,value=0pt plus 100000pt]
-\\set[parameter=document.rskip,value=0pt plus 100000pt]
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\set[parameter=document.lskip,value=0pt plus 100000pt]
+\set[parameter=document.rskip,value=0pt plus 100000pt]
+\end{raw}
 
 This produces the following:
 
@@ -253,16 +239,14 @@ for this current paragraph, we have unset it.\par
 
 Now we can finally complete our implementation of centering:
 
-\begin{verbatim}
-\line
-\\set[parameter=document.lskip,value=0pt plus 100000pt]
-\\set[parameter=document.rskip,value=0pt plus 100000pt]
-\\set[parameter=document.spaceskip,value=0.5en]
-\\set[parameter=current.parindent,value=0pt]
-\\set[parameter=document.parindent,value=0pt]
-\\set[parameter=typesetter.parfillskip,value=0pt]
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\set[parameter=document.lskip,value=0pt plus 100000pt]
+\set[parameter=document.rskip,value=0pt plus 100000pt]
+\set[parameter=document.spaceskip,value=0.5en]
+\set[parameter=current.parindent,value=0pt]
+\set[parameter=document.parindent,value=0pt]
+\set[parameter=typesetter.parfillskip,value=0pt]
+\end{raw}
 
 \medskip
 \noindent\begin{examplefont}%
@@ -337,22 +321,20 @@ engines instead of doing the shaping itself. SILE provides an interface
 engine in use. To get a list of the subshapers enabled in your build of
 Harfbuzz, run \code{sile --debug=versions} on any file:
 
-\begin{verbatim}
-\% $ sile --debug=versions hello.sil
+\begin[type=autodoc:codeblock]{raw}
+% $ sile --debug=versions hello.sil
 ...
 Harfbuzz version: 2.4.0
 Shapers enabled: graphite2, ot, coretext, coretext_aat, fallback
 ...
-\end{verbatim}
+\end{raw}
 
 If I wanted to test out the OS X’s CoreText shaper instead of using
 Graphite and Harfbuzz’s own OpenType shaper, I could set:
 
-\begin{verbatim}
-\line
-\\set[parameter=harfbuzz.subshapers,value=coretext]
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\set[parameter=harfbuzz.subshapers,value=coretext]
+\end{raw}
 
 This is one of those situations where for 99\% of people it isn’t useful
 at all but the other 1\% of people will really appreciate it: specifically,
