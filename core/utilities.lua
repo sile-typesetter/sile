@@ -53,7 +53,7 @@ utilities.warn = function(message, bug)
 end
 
 utilities.debugging = function (category)
-  return SILE.debugFlags.all or SILE.debugFlags[category]
+  return SILE.debugFlags.all and category ~= "profile" or SILE.debugFlags[category]
 end
 
 utilities.feq = function (lhs, rhs) -- Float point equal
