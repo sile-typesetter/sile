@@ -80,6 +80,17 @@ See the note about LuaJIT in the section \em{Installing From Source} for applica
 A VCS package is also available as \code{sile-git} to build from the latest Git commit.
 These may be built and installed like any other AUR\footnote{\url{https://wiki.archlinux.org/title/Arch_User_Repository}} package.
 
+\subsection{Fedora}
+
+A COPR repository\footnote{\url{https://copr.fedorainfracloud.org/coprs/jonny/SILE/}} is available for Fedora users with packages of SILE and all the necessary dependencies including fonts.
+Fedora 36 and Fedora 37 are supported.
+There is work in progress to get the packages added to the official Fedora repository.
+
+\begin{terminal}
+$ dnf copr enable jonny/SILE
+$ dnf install sile
+\end{terminal}
+
 \subsection{OpenSUSE}
 
 OpenSUSE has official packages ready to install the usual way:
