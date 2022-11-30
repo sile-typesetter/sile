@@ -359,7 +359,10 @@ function class:registerCommands ()
           typesetter.frame.state.cursorX = ox
           typesetter.frame.state.cursorY = oy
           _post()
-          if SU.debugging("hboxes") then SILE.outputter:debugHbox(self_, self_:scaledWidth(line)) end
+          SU.debug("hboxes", function ()
+            SILE.outputter:debugHbox(self_, self_:scaledWidth(line))
+            return "Drew debug outline around hbox"
+          end)
         end
       })
     table.insert(SILE.typesetter.state.nodes, hbox)
