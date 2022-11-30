@@ -69,16 +69,14 @@ The \autodoc:command{\repertoire} command prints out every glyph in the font, in
 The \autodoc:command{\pangrams} command prints out a few pangrams for the Latin script.
 Finally, \autodoc:command{\set-to-width[width=<dimension>]{<content>}} will process each line of content, changing the font size so that the output is a constant width.
 
-\begin{verbatim}
-\line
-\\begin[width=4cm]\{set-to-width\}
+\begin[type=autodoc:codeblock]{raw}
+\begin[width=4cm]{set-to-width}
 CAPERCAILLIE
 LAMMERGEYER
 CASSOWARY
 ACCENTOR DOWITCHER DOTTEREL
-\\end\{set-to-width\}
-\line
-\end{verbatim}
+\end{set-to-width}
+\end{raw}
 
 \begin{examplefont}
 \begin[width=4cm]{set-to-width}

@@ -158,7 +158,7 @@ end
 
 function SILE.defaultTypesetter:debugState ()
   print("\n---\nI am in "..(self:vmode() and "vertical" or "horizontal").." mode")
-  print("Writing into " .. self.frame)
+  print("Writing into " .. tostring(self.frame))
   print("Recent contributions: ")
   for i = 1, #(self.state.nodes) do
     io.stderr:write(self.state.nodes[i].. " ")
@@ -251,7 +251,7 @@ function SILE.defaultTypesetter:typeset (text)
   if text:match("^%\r?\n$") then return end
   local pId = SILE.traceStack:pushText(text)
   for token in SU.gtoke(text, SILE.settings:get("typesetter.parseppattern")) do
-    if (token.separator) then
+    if token.separator then
       self:endline()
     else
       self:setpar(token.string)
@@ -487,6 +487,12 @@ function SILE.defaultTypesetter:initNextFrame ()
 
   if not SU.feq(oldframe:getLineWidth(), self.frame:getLineWidth()) then
     self:pushBack()
+    -- Some what of a hack below.
+    -- Before calling this method, we were in vertical mode...
+    -- pushback occurred, and it seems it messes up a bit...
+    -- Regardless what it does, at the end, we ought to be in vertical mode
+    -- again:
+    self:leaveHmode()
   else
     -- If I have some things on the vertical list already, they need
     -- proper top-of-frame leading applied.

@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.14.5](https://github.com/sile-typesetter/sile/compare/v0.14.4...v0.14.5) (2022-11-19)
+
+
+### Bug Fixes
+
+* **inputters:** Correct false positive detection of STDIN as Lua content ([d54946b](https://github.com/sile-typesetter/sile/commit/d54946bba643b9cf4fc68f21df4442c82238fedf))
+* **inputters:** Don't duplicate passthrough content in AST ([07c8e87](https://github.com/sile-typesetter/sile/commit/07c8e874550a7ef5924bae2047f98c33fbda6453))
+* **inputters:** Permit content outside of the document note, e.g. comments or blanks ([#1596](https://github.com/sile-typesetter/sile/issues/1596)) ([f1a508a](https://github.com/sile-typesetter/sile/commit/f1a508a6c61d64623f40d5274eee3bdbb6353d28))
+* **inputters:** Relax SIL format sniffing to allow valid syntax ([43fc4bc](https://github.com/sile-typesetter/sile/commit/43fc4bca58da9288dda0dc001b647ed45e5267d5))
+* **languages:** Remove superfluous line ([848b91f](https://github.com/sile-typesetter/sile/commit/848b91f5ab66f90e4c1d5ed2ca8f6e20acb9fcdf))
+* **languages:** Tidy up variable scope in languages/unicode.lua ([78b453d](https://github.com/sile-typesetter/sile/commit/78b453d58a92c2ff34a80bf610d2c1c120eedc38)), closes [#699](https://github.com/sile-typesetter/sile/issues/699)
+* **measurements:** Allow redefinition of existing units ([#1608](https://github.com/sile-typesetter/sile/issues/1608)) ([8d81018](https://github.com/sile-typesetter/sile/commit/8d810182c25799fd134133611f3c29e90a60f7c8))
+* **packages:** Ensure a page switch does not break boustrophedon ([#1615](https://github.com/sile-typesetter/sile/issues/1615)) ([64abaf9](https://github.com/sile-typesetter/sile/commit/64abaf9c2511ea1241efc04722daf9f0ed7589b1))
+
 ## [0.14.4](https://github.com/sile-typesetter/sile/compare/v0.14.3...v0.14.4) (2022-11-05)
 
 

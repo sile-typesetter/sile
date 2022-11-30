@@ -69,6 +69,18 @@ The official package uses Lua 5.4.
 Alternatively, a package that uses LuaJIT may be built manually from the [Arch User Repository][aur] using [sile-luajit][aur-sile-luajit].
 A VCS package is also available as [sile-git][aur-sile-git] to build from the latest Git commit.
 
+#### Fedora
+
+A [COPR][copr] repository is available for Fedora users with packages of SILE
+and all the necessary dependencies including fonts.
+Fedora 36 and Fedora 37 are supported.
+There is work in progress to get the packages added to the official Fedora repository.
+
+```console
+$ dnf copr enable jonny/SILE
+$ dnf install sile
+```
+
 #### OpenSUSE
 
 OpenSUSE has official packages ready to install the usual way:
@@ -318,4 +330,5 @@ SILE is distributed under the [MIT licence][license].
   [nix-flakes]: https://nixos.wiki/wiki/Flakes#Installing_flakes
   [ports]: http://ports.su/print/sile
   [ppa]: https://launchpad.net/~sile-typesetter/+archive/ubuntu/sile
+  [copr]: https://copr.fedorainfracloud.org/coprs/jonny/SILE/
   [alerque-arch]: https://wiki.archlinux.org/index.php/Unofficial_user_repositories#alerque

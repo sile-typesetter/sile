@@ -116,32 +116,26 @@ We can use the ImageMagick toolkit to turn a GIF into a JPG, and JPGs are suppor
 
 We do this by registering a converter with the \autodoc:command{\converters:register} command:
 
-\begin{verbatim}
-\line
-\\use[module=packages.converters]
-\\converters:register[from=.gif,to=.jpg,command=convert $SOURCE $TARGET]
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\use[module=packages.converters]
+\converters:register[from=.gif,to=.jpg,command=convert $SOURCE $TARGET]
+\end{raw}
 
 And now it just magically works:
 
-\begin{verbatim}
-\line
-\\img[src=hello.gif, width=50px]
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\img[src=hello.gif, width=50px]
+\end{raw}
 
 This will execute the command \code{convert hello.gif hello.jpg} and include the converted \code{hello.jpg} file.
 
 This trick also works for text file:
 
-\begin{verbatim}
-\line
-\\converters:register[from=.md, to=.sil, command=pandoc -o $TARGET $SOURCE]
+\begin[type=autodoc:codeblock]{raw}
+\converters:register[from=.md, to=.sil, command=pandoc -o $TARGET $SOURCE]
 
-\\include[src=document.md]
-\line
-\end{verbatim}
+\include[src=document.md]
+\end{raw}
 \end{document}
 ]]
 

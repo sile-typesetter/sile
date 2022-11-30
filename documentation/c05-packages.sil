@@ -15,11 +15,9 @@ installation directory. For instance, we’ll soon be talking about the
 \code{grid} package, which normally can be found as
 \code{/usr/local/lib/sile/packages/grid/init.lua}. To load this, we’d say:
 
-\begin{verbatim}
-\line
-\\use[module=packages.grid]
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\use[module=packages.grid]
+\end{raw}
 
 \note{\notehead{How SILE locates files} SILE searches for paths in a variety of
 directories: first, in the directory in which your input file is located,
@@ -220,34 +218,28 @@ By default SILE will look for packages in:
 
 By default, LuaRocks will install packages to the Lua search path.
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 $ luarocks install lilypond.sile
 $ sile ...
-\line
-\end{verbatim}
+\end{raw}
 
 Depending on your system, this probably requires root permissions.
 If you either don’t have root permissions or don’t want to pollute your system’s root file system, you can also install as a user.
 To use packages installed as a user you will need to have LuaRocks add it’s user tree to your Lua search path before running SILE.
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 $ luarocks --local install lilypond.sile
 $ eval $(luarocks --local path)
 $ sile ...
-\line
-\end{verbatim}
+\end{raw}
 
 Of course you can add that eval statement to your shell profile to always include your user’s directory in your Lua path.
 You can also add your own entries to the top of the search path list by setting the \code{SILE_PATH} variable, for example:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 $ export SILE_PATH="/path/to/my/library/"
 $ sile ...
-\line
-\end{verbatim}
+\end{raw}
 
 To write a package and publish to LuaRocks, see the package-template.sile repository.
 

@@ -246,11 +246,9 @@ It’s possible to define frames such as sidebars which are not connected to the
 We’ll see how to do that in a later chapter, but this raises the obvious question: if they’re not part of the text flow, how do we get stuff into them?
 \autodoc:package{frametricks} provides the \autodoc:command{\typeset-into} command, which allows you to write text into a specified frame:
 
-\begin{verbatim}
-\line
-\\typeset-into[frame=sidebar]\{ ... frame content here ... \}
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\typeset-into[frame=sidebar]{ ... frame content here ... }
+\end{raw}
 
 \autodoc:package{frametricks} also provides a number of commands which, to be perfectly honest, we \em{thought} were going to be useful, but haven’t quite ended up being as useful as all that.
 
@@ -273,10 +271,9 @@ Combining all of these commands, the \autodoc:command{\float} command breaks the
 It takes two optional parameters, \autodoc:parameter{bottomboundary=<dimension>} and/or \autodoc:parameter{rightboundary=<dimension>}, which open up additional space around the frame.
 At the start of this paragraph, I issued the command
 
-\medskip
-\begin{verbatim}
-\\float[bottomboundary=5pt]\{\\font[size=60pt]\{C\}\}.
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\float[bottomboundary=5pt]{\font[size=60pt]{C}}.
+\end{raw}
 
 To reiterate: we started playing around with frames like this in the early days of SILE and they have not really proved a good solution to the things we wanted to do with them.
 They’re great for arranging where content should live on the page, but messing about with them dynamically seems to create more problems than it solves.

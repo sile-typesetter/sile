@@ -228,11 +228,9 @@ Discussion of OpenType features is beyond the scope of this manual.
 
 These features can be turned on and off by passing ‘raw’ feature names to the \autodoc:command{\font} command like so:
 
-\begin{verbatim}
-\line
-\\font[features="+dlig,+hlig"]{...} \% turn on discretionary and historic ligatures
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\font[features="+dlig,+hlig"]{...} % turn on discretionary and historic ligatures
+\end{raw}
 
 However, this is unwieldy and requires memorizing the feature codes.
 \autodoc:package{features} provides two commands, \autodoc:command{\add-font-feature} and \autodoc:command{\remove-font-feature}, which make it easier to access OpenType features.
@@ -240,13 +238,11 @@ The interface is patterned on the TeX package \code{fontspec}; for full document
 
 Here is how you would turn on discretionary and historic ligatures with the \autodoc:package{features} package:
 
-\begin{verbatim}
-\line
-\\add-font-feature[Ligatures=Rare]\\add-font-feature[Ligatures=Discretionary]
+\begin[type=autodoc:codeblock]{raw}
+\add-font-feature[Ligatures=Rare]\add-font-feature[Ligatures=Discretionary]
 ...
-\\remove-font-feature[Ligatures=Rare]\\remove-font-feature[Ligatures=Discretionary]
-\line
-\end{verbatim}
+\remove-font-feature[Ligatures=Rare]\remove-font-feature[Ligatures=Discretionary]
+\end{raw}
 \end{document}
 ]]
 

@@ -1,0 +1,11 @@
+
+% Testing leading blank and comment outside of document tag
+
+\begin[papersize=a6,class=plain]{document}
+\nofolios
+\neverindent
+foo
+\end{document}
+
+% Testing trailing blank and comment outside of document tag
+

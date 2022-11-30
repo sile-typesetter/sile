@@ -3,8 +3,6 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "boustrophedon"
 
-local _swap
-
 function package:_init (class)
   base._init(self, class)
   SILE.hyphenator.languages.grc = { patterns={} }
@@ -19,10 +17,14 @@ function package:_init (class)
       end
     end)
   end
-  _swap = SILE.nodefactory.vbox({})
-  _swap.outputYourself = function (_, typesetter, _)
-    typesetter.frame.direction = typesetter.frame.direction == "LTR-TTB" and "RTL-TTB" or "LTR-TTB"
+end
+
+local function hackVboxDir(v, dir)
+  local output = v.outputYourself
+  v.outputYourself = function (self, typesetter, line)
+    typesetter.frame.direction = dir
     typesetter.frame:newLine()
+    output(self, typesetter, line)
   end
 end
 
@@ -31,27 +33,30 @@ function package:registerCommands ()
   self:registerCommand("boustrophedon", function (_, content)
     SILE.typesetter:leaveHmode()
     local saveBoxup = SILE.typesetter.boxUpNodes
-    local swaps = 0
     SILE.typesetter.boxUpNodes = function (self_)
       local vboxlist = saveBoxup(self_)
-      local nl = {}
+      local startdir = SILE.typesetter.frame.direction
+      local dir = startdir
       for i = 1, #vboxlist do
-        nl[#nl+1] = vboxlist[i]
-        if nl[#nl].is_vbox then
-          nl[#nl+1] = _swap
-          swaps = swaps + 1
+        if vboxlist[i].is_vbox then
+          hackVboxDir(vboxlist[i], dir)
+          dir = dir == "LTR-TTB" and "RTL-TTB" or "LTR-TTB"
         end
       end
-      return nl
+      if startdir == dir then
+        local restore = SILE.nodefactory.vbox({})
+        restore.outputYourself = function (_, typesetter, _)
+          typesetter.frame.direction = startdir
+          typesetter.frame:newLine()
+        end
+        vboxlist[#vboxlist+1] = restore
+      end
+      return vboxlist
     end
     SILE.process(content)
     SILE.typesetter:leaveHmode()
     SILE.typesetter.boxUpNodes = saveBoxup
-    if swaps % 2 == 1 then
-      SILE.typesetter:pushVbox(_swap)
-    end
   end)
-
 end
 
 package.documentation = [[

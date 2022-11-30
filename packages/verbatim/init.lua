@@ -50,21 +50,21 @@ You still need to escape backslashes and braces: to produce a backslash, you nee
 
 Here is some text set in the \autodoc:environment{verbatim} environment:
 
-\begin{verbatim}
+\begin[type=autodoc:codeblock]{raw}
 local function init (class, _)
   class:loadPackage("rebox")
   class:loadPackage("raiselower")
 end
-\end{verbatim}
+\end{raw}
 
 If you want to specify what font the verbatim environment should use, you can redefine the \autodoc:command{\verbatim:font} command.
 For example you could change it from XML like this:
 
-\begin{verbatim}
+\begin[type=autodoc:codeblock]{raw}
 <define command="verbatim:font">
    <font family="DejaVu Sans Mono" size="9pt"/>
 </define>
-\end{verbatim}
+\end{raw}
 \end{document}
 ]]
 

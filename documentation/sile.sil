@@ -3,6 +3,10 @@
 \define[command=silehp]{\url{http://www.sile-typesetter.org/}}
 \define[command=sileversion]{\lua{SILE.typesetter:typeset(SILE.full_version)}}
 \set[parameter=document.baselineskip,value=3ex]
+% Quite drastic value below, but for a fast-changing technical document with snippets of code,
+% and little resources for fine-checking and tuning, we prefer (possibly large) underfull lines
+% to ugly overfull ones:
+\set[parameter=linebreak.emergencyStretch,value=20%lw]
 \font[size=11pt,family=Gentium Book Basic]
 \nofolios
 \pdf:metadata[key=Title, value=The SILE Book]

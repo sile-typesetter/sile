@@ -89,11 +89,9 @@ It provides four commands to users:
 
 If, for instance, you want to set page numbers in a different font you can redefine the command like so:
 
-\begin{verbatim}
-\line
-\\define[command=foliostyle]\{\\center\{\\font[family=Albertus]\{\\process\}\}\}
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\define[command=foliostyle]{\center{\font[family=Albertus]{\process}}}
+\end{raw}
 
 If you want to put page numbers on the left side of even pages and the right side of odd pages, there are a couple of ways you can do that.
 The complicated way is to define a command in Lua which inspects the page number and then sets the number ragged left or ragged right appropriately.

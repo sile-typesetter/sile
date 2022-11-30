@@ -97,13 +97,13 @@ This implements (badly) a very simple table formatting class.
 
 It should be called as so:
 
-\begin{verbatim}
-myclass:loadpackage("simpletable", \{
+\begin[type=autodoc:codeblock]{raw}
+myclass:loadpackage("simpletable", {
  tabletag = "a",
  trtag = "b",
  tdtag = "c"
-\})
-\end{verbatim}
+})
+\end{raw}
 
 This will define commands \code{\\a}, \code{\\b} and \code{\\c} which are equivalent to the \code{<table>, \code{<tr>} and \code{<td>} tags.
 

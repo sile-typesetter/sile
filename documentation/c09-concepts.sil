@@ -56,20 +56,16 @@ should always be specified in terms of \code{SILE.length} objects; these are
 “three-dimensional” lengths, in that they consist of a base length plus stretch and
 shrink. To construct a \code{SILE.length}:
 
-\begin{verbatim}
-\line
-local l = SILE.length(\{ length = x, stretch = y, shrink = z\})
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+local l = SILE.length({ length = x, stretch = y, shrink = z })
+\end{raw}
 
 Now we can construct horizontal and vertical glue:
 
-\begin{verbatim}
-\line
-local glue  = SILE.nodefactory.glue(\{ width =  l\})
-local vglue = SILE.nodefactory.vglue(\{ height = l\})
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+local glue  = SILE.nodefactory.glue({ width =  l })
+local vglue = SILE.nodefactory.vglue({ height = l })
+\end{raw}
 
 SILE’s typesetting is organised by the \code{SILE.typesetter} object; it
 maintains two queues of material that it is still working on: the node queue and
@@ -111,12 +107,10 @@ Adding boxes and glue to the typesetter’s queues is
 such a common operation that the typesetter has some utility methods to construct
 the nodes and add them for you:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 SILE.typesetter:leaveHmode()
-SILE.typesetter:pushVglue(\{ height = l \})
-\line
-\end{verbatim}
+SILE.typesetter:pushVglue({ height = l })
+\end{raw}
 
 Adding boxes yourself is a little more complicated, because boxes need to
 know how to display themselves on the page. To facilitate this, they normally
@@ -125,9 +119,8 @@ the \code{image} package actually does something very simple; it adds a horizont
 box to the node queue which knows the width and height of the image, the source,
 and instructions to the output engine to display the image:
 
-\begin{verbatim}
-\line
-SILE.typesetter:pushHbox(\{
+\begin[type=autodoc:codeblock]{raw}
+SILE.typesetter:pushHbox({
   width= …,
   height= …,
   depth= 0,
@@ -138,9 +131,8 @@ SILE.typesetter:pushHbox(\{
       this.width,this.height
     );
     typesetter.frame:advanceWritingDirection(this.width)
-end\});
-\line
-\end{verbatim}
+end});
+\end{raw}
 
 Adding horizontal and vertical penalties to the typesetter’s queues is similarly
 done with the \code{SILE.typesetter:pushPenalty(\{penalty = x\})} and
@@ -233,22 +225,18 @@ So we start with \code{\\eject\\par} and then we will begin a \code{\\pagetempla
 Within \code{\\pagetemplate} we need to tell SILE which frame to begin typesetting
 onto.
 
-\begin{verbatim}
-\line
-\\eject\\par
-\\begin[first-content-frame=leftCol]\{pagetemplate\}
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\eject\par
+\begin[first-content-frame=leftCol]{pagetemplate}
+\end{raw}
 
 Now we will declare our columns. But we’re actually going to start by declaring
 the gutter first, because that’s something that we know and can define; we’re
 going to stipulate that the gutter width will be 3\% of the page width:
 
-\begin{verbatim}
-\line
-\\frame[id=gutter,width=3\%pw]
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\frame[id=gutter,width=3%pw]
+\end{raw}
 
 \begin{note}%
 Declarations of frame dimensions are like ordinary SILE \code{<dimension>}s,
@@ -289,24 +277,20 @@ a few other parameters to ensure that:
       column.}
 \end{itemize}
 
-\begin{verbatim}
-\line
-\\frame[id=leftCol, left=left(content), right=left(gutter),
+\begin[type=autodoc:codeblock]{raw}
+\frame[id=leftCol, left=left(content), right=left(gutter),
        top=top(content), bottom=bottom(content),
        next=rightCol]
-\\frame[id=rightCol, left=right(gutter), right=right(content),
+\frame[id=rightCol, left=right(gutter), right=right(content),
        top=top(content), bottom=bottom(content),
        width=width(leftCol)]
-\line
-\end{verbatim}
+\end{raw}
 
 And now finally we can end our \code{pagetemplate}.
 
-\begin{verbatim}
-\line
-\\end\{pagetemplate\}
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\end{pagetemplate}
+\end{raw}
 
 Let’s do it.
 \eject
