@@ -156,7 +156,7 @@ function lineBreak:tryBreak() -- 855
   if not node then pi = ejectPenalty; breakType = "hyphenated"
   elseif node.is_discretionary then breakType = "hyphenated"; pi = param("hyphenPenalty")
   else breakType = "unhyphenated"; pi = node.penalty or 0 end
-  if debugging then SU.debug("break", "Trying a "..breakType.." break p="..pi) end
+  if debugging then SU.debug("break", "Trying a ", breakType, "break p =", pi) end
   self.no_break_yet = true -- We have to store all this state crap in the object, or it's global variables all the way
   self.prev_prev_r = nil
   self.prev_r = self.activeListHead
@@ -166,9 +166,9 @@ function lineBreak:tryBreak() -- 855
   while true do
     while true do -- allows "break" to function as "continue"
       self.r = self.prev_r.next
-      if debugging then SU.debug("break", "We have moved the link  forward, ln is now "..(self.r.type == "delta" and "XX" or self.r.lineNumber)) end
+      if debugging then SU.debug("break", "We have moved the link  forward, ln is now", self.r.type == "delta" and "XX" or self.r.lineNumber) end
       if self.r.type == "delta" then -- 858
-        if debugging then SU.debug("break", " Adding delta node width of ".. tostring(self.r.width)) end
+        if debugging then SU.debug("break", " Adding delta node width of", self.r.width) end
         self.curActiveWidth:___add(self.r.width)
         self.prev_prev_r = self.prev_r
         self.prev_r = self.r

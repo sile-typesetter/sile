@@ -145,7 +145,9 @@ local lastPushId = 0
 -- .col = number - column on the line
 -- .toStringHelper = function() that serializes extended information about the frame BESIDES location
 function traceStack:pushFrame(frame)
-  SU.debug("traceStack", string.rep(".", #self) .. "PUSH(" .. frame:location() .. ")")
+  SU.debug("traceStack", function ()
+    return string.rep(".", #self) .. "PUSH(" .. frame:location() .. ")"
+  end)
   self[#self + 1] = frame
   self.afterFrame = nil
   lastPushId = lastPushId + 1
@@ -171,7 +173,9 @@ function traceStack:pop(pushId)
     -- Correctly balanced: pop the frame
     self.afterFrame = popped
     self[#self] = nil
-    SU.debug("traceStack", string.rep(".", #self) .. "POP(" .. popped:location() .. ")")
+    SU.debug("traceStack", function ()
+      return string.rep(".", #self) .. "POP(" .. popped:location() .. ")"
+    end)
   end
 end
 

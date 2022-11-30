@@ -113,7 +113,7 @@ local font = {
   cache = function (options, callback)
     local key = _key(options)
     if not SILE.fontCache[key] then
-      SU.debug("fonts", "Looking for "..key)
+      SU.debug("fonts", "Looking for", key)
       local face = callback(options)
       SILE.fontCache[key] = face
     end
