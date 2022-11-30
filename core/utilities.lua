@@ -122,21 +122,34 @@ utilities.debugAST = function (ast, level)
   end
   local out = string.rep("  ", 1+level)
   if level == 0 then
-    SU.debug("ast", "["..SILE.currentlyProcessingFile)
+    SU.debug("ast", function ()
+      return "[" .. SILE.currentlyProcessingFile
+    end)
   end
   if type(ast) == "function" then
-    SU.debug("ast", out .. tostring(ast))
-  end
-  for _, content in ipairs(ast) do
-    if type(content) == "string" then
-      SU.debug("ast", out .. "[" .. content .. "]")
-    elseif SILE.Commands[content.command] then
-      SU.debug("ast", out.."\\" .. content.command .. " " .. pl.pretty.write(content.options, ""))
-      if (#content>=1) then utilities.debugAST(content, level+1) end
-    elseif content.id == "texlike_stuff" or (not content.command and not content.id) then
-      utilities.debugAST(content, level+1)
-    else
-      SU.debug("ast", out.."?\\"..(content.command or content.id))
+    SU.debug("ast", function ()
+      return out .. tostring(ast)
+    end)
+  elseif type(ast) == "table" then
+    for _, content in ipairs(ast) do
+      if type(content) == "string" then
+        SU.debug("ast", function ()
+          return out .. "[" .. content .. "]"
+        end)
+      elseif type(content) == "table" then
+        if SILE.Commands[content.command] then
+          SU.debug("ast", function ()
+            return out .. "\\" .. content.command .. " " .. pl.pretty.write(content.options, "")
+          end)
+          if (#content>=1) then utilities.debugAST(content, level+1) end
+        elseif content.id == "texlike_stuff" or (not content.command and not content.id) then
+          utilities.debugAST(content, level+1)
+        else
+          SU.debug("ast", function ()
+            return out .. "?\\" .. (content.command or content.id)
+          end)
+        end
+      end
     end
   end
   if level == 0 then SU.debug("ast", "]") end
