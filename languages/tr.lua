@@ -756,13 +756,10 @@ local tr_nums = function (num, ordinal)
 end
 
 SU.formatNumber.tr = {
-  string = function (num)
+  string = function (num, _)
     return tr_nums(num, false)
   end,
-  ordinal = function (num)
+  ['ordinal-string'] = function (num, _)
     return tr_nums(num, true)
-  end,
-  nth = function (num)
-    return num .. "."
   end
 }

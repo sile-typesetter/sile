@@ -598,15 +598,6 @@ SILE.hyphenator.languages["en"].exceptions = {"as-so-ciate", "as-so-ciates",
 "ref-or-ma-tion", "ret-ri-bu-tion", "ta-ble"}
 
 -- Internationalisation stuff
-local en_nth = function (num)
-  local mod100, mod10 = num % 100, num % 10
-  if mod100 > 3 and mod100 < 21 then return "th" end
-  if mod10 == 1 then return "st" end
-  if mod10 == 2 then return "nd" end
-  if mod10 == 3 then return "rd" end
-  return "th"
-end
-
 local en_string = function (num)
   local words = {"one ", "two ", "three ", "four ", "five ", "six ", "seven ", "eight ", "nine "}
   local levels = {"thousand ", "million ", "billion ", "trillion ", "quadrillion ", "quintillion ", "sextillion ", "septillion ", "octillion ", [0] = ""}
@@ -644,14 +635,11 @@ local en_string = function (num)
     vword = vword:gsub("ten " .. v, twords[i])
   end
 
-  return num == 0 and "zero" or vword
+  return num == 0 and "zero" or vword:sub(1, -2)
 end
 
 SU.formatNumber.en = {
-  string = function (num)
+  string = function (num, _)
     return en_string(num)
-  end,
-  nth = function (num)
-    return num .. '’' .. en_nth(num)
   end
 }
