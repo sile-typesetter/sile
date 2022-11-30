@@ -15,7 +15,7 @@ SILE.nodeMakers.base = pl.class({
     makeToken = function (self)
       if #self.contents > 0 then
         coroutine.yield(SILE.shaper:formNnode(self.contents, self.token, self.options))
-        SU.debug("tokenizer", "Token: "..self.token)
+        SU.debug("tokenizer", "Token:", self.token)
         self.contents = {}
         self.token = ""
         self.lastnode = "nnode"
@@ -116,7 +116,7 @@ function SILE.nodeMakers.unicode:letterspace ()
   if self.token then self:makeToken() end
   if self.lastnode and self.lastnode ~= "glue" then
     local w = SILE.settings:get("document.letterspaceglue").width
-    SU.debug("tokenizer", "Letter space glue: " .. tostring(w))
+    SU.debug("tokenizer", "Letter space glue:", w)
     coroutine.yield(SILE.nodefactory.kern({ width = w }))
     self.lastnode = "glue"
     self.lasttype = "sp"
