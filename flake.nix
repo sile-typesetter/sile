@@ -114,7 +114,14 @@
     in rec {
       devShells = {
         default = pkgs.mkShell {
-          inherit (sile) checkInputs nativeBuildInputs buildInputs;
+          inherit (sile) checkInputs nativeBuildInputs;
+          buildInputs = sile.buildInputs ++ [
+            pkgs.libarchive
+            pkgs.lua53Packages.busted
+            pkgs.lua53Packages.luacheck
+            pkgs.lua53Packages.luarocks
+            pkgs.perl
+          ];
         };
       };
       packages.sile = sile;

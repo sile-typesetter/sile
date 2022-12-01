@@ -25,6 +25,10 @@ AC_ARG_ENABLE([dependency-checks],
               AS_HELP_STRING([--disable-dependency-checks], [Disable dependency checks]))
 AM_CONDITIONAL([DEPENDENCY_CHECKS], [test "x$enable_dependency_checks" != "xno"])
 
+AC_ARG_ENABLE([developer],
+            AS_HELP_STRING([--enable-developer], [Check for and enable tooling required only for SILE developers]))
+AM_CONDITIONAL([DEVELOPER], [test "x$enable_developer" = "xyes"])
+
 AC_CANONICAL_HOST
 
 AC_ARG_WITH([system-libtexpdf],
@@ -51,6 +55,8 @@ AM_COND_IF([SYSTEM_LIBTEXPDF],
            [AC_CONFIG_SUBDIRS([libtexpdf])])
 
 AM_COND_IF([DEPENDENCY_CHECKS], [
+
+    AX_FONT(Gentium Plus)
 
     AC_PATH_PROG([PDFINFO], [pdfinfo])
 
@@ -147,6 +153,22 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
     ], [
         AX_PROGVAR([luarocks])
     ])
+
+    # Required for downloading fonts for the manual and for tests
+    AM_COND_IF([MANUAL], [
+        AX_PROGVAR([curl])
+        AX_PROGVAR([bsdtar])
+    ])
+
+    AM_COND_IF([DEVELOPER], [
+        AX_PROGVAR([curl])
+        AX_PROGVAR([bsdtar])
+        AX_PROGVAR([busted])
+        AX_PROGVAR([luacheck])
+        AX_PROGVAR([luarocks])
+        AX_PROGVAR([perl])
+    ])
+
 ])
 AC_SUBST([ICU_CFLAGS])
 AC_SUBST([ICU_LIBS])
@@ -192,7 +214,7 @@ AC_SUBST([SILE_LIB_PATH])
 AX_SUBST_MAN_DATE
 
 AC_CONFIG_FILES([Makefile src/Makefile sile.1 core/version.lua])
-AC_CONFIG_FILES([sile], [chmod +x sile])
+AC_CONFIG_FILES([sile tests/regressions.pl], [chmod +x sile tests/regressions.pl])
 
 AC_ARG_PROGRAM
 

@@ -60,11 +60,15 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libpng-dev poppler-utils
+          sudo apt-get install fonts-sil-gentiumplus libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libpng-dev poppler-utils
       - name: Configure
         run: |
           ./bootstrap.sh
-          ./configure --datarootdir=$(cd ..; pwd) --without-system-luarocks --with${{ startsWith(matrix.luaVersion[0], '5') && 'out' || '' }}-luajit --without-manual
+          ./configure \
+            --enable-developer LUACHECK=false \
+            --without-system-luarocks \
+            --with${{ startsWith(matrix.luaVersion[0], '5') && 'out' || '' }}-luajit \
+            --without-manual
       - name: Make
         run: |
           make

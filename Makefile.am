@@ -123,9 +123,6 @@ update_libtexpdf:
 	$(GIT) add -- libtexpdf libtexpdf.git-rev
 	$(GIT) diff-index --quiet --cached HEAD || $(GIT) commit -m "chore(build): Pin latest libtexpdf library submodule"
 
-gh-pages:
-	$(GIT) worktree add -f $@ $@
-
 DEPDIR := .deps
 REGRESSIONSCRIPT := ./tests/regressions.pl
 LOCALTESTFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
@@ -144,36 +141,6 @@ selfcheck: | $(_BUILT_SUBDIRS)
 	trap 'rm -f $$output' EXIT HUP TERM
 	echo "<sile>foo</sile>" | ./$(SILE) -o $$output -
 	$(PDFINFO) $$output | $(GREP) "SILE v$(VERSION)"
-
-.PHONY: regressions
-regressions: $(TESTSRCS) $(ACTUALS)
-	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
-
-.PHONY: test
-test: regressions busted
-
-.PHONY: lint
-lint: luacheck luarocks-lint
-
-.PHONY: luarocks-lint
-luarocks-lint: $(LUAMODSPEC)
-	luarocks lint $(LUAMODSPEC)
-
-.PHONY: luacheck
-luacheck:
-	luacheck -j$(shell nproc) -q .
-
-.PHONY: busted
-busted: $(SILE) $(addprefix .fonts/,$(TESTFONTFILES)) $(BUSTEDSPECS)
-	set -f; IFS=';'
-if SYSTEM_LUAROCKS
-	packagecpath=(./{,core/}?.$(SHARED_LIB_EXT))
-	packagepath=(./{,lua-libraries/}?{,/init}.lua)
-else
-	packagecpath=(./{,core/,lua_modules/lib/lua/$(LUA_VERSION)/}?.$(SHARED_LIB_EXT))
-	packagepath=(./{,lua_modules/share/lua/$(LUA_VERSION)/,lua-libraries/}?{,/init}.lua)
-endif
-	$(LOCALTESTFONTS) busted --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" $(BUSTEDFLAGS) .
 
 .PHONY: docs
 docs: $(MANUAL)
@@ -221,7 +188,38 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(LUAMODLOCK) 
 %.pdf: %.nil $$(patterndeps)
 	$(runsile)
 
-.PHONY: coverage
+.PHONY: force
+force: ;
+
+PHONY_DEVELOPER_TARGETS = regressions test lint luarocks-lint luacheck busted coverage benchmark compare update_expecteds regression_previews docker docker-dep-check docker-ghcr-to-hub docker-build-push gource.webm
+.PHONY: $(PHONY_DEVELOPER_TARGETS)
+
+if DEVELOPER
+
+regressions: $(TESTSRCS) $(ACTUALS)
+	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
+
+test: regressions busted
+
+lint: luacheck luarocks-lint
+
+luarocks-lint: $(LUAMODSPEC)
+	$(LUAROCKS) lint $(LUAMODSPEC)
+
+luacheck:
+	$(LUACHECK) -j$(shell nproc) -q .
+
+busted: $(SILE) $(addprefix .fonts/,$(TESTFONTFILES)) $(BUSTEDSPECS)
+	set -f; IFS=';'
+if SYSTEM_LUAROCKS
+	packagecpath=(./{,core/}?.$(SHARED_LIB_EXT))
+	packagepath=(./{,lua-libraries/}?{,/init}.lua)
+else
+	packagecpath=(./{,core/,lua_modules/lib/lua/$(LUA_VERSION)/}?.$(SHARED_LIB_EXT))
+	packagepath=(./{,lua_modules/share/lua/$(LUA_VERSION)/,lua-libraries/}?{,/init}.lua)
+endif
+	$(LOCALTESTFONTS) $(BUSTED) --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" $(BUSTEDFLAGS) .
+
 coverage: export SILE_COVERAGE=1
 coverage: regression_previews busted
 
@@ -232,95 +230,18 @@ _BASESHA ?= $(shell test -e .git && $(GIT) rev-parse --short=7 $(BASESHA))
 
 clean-recursive: clean-tests
 
-.PHONY: clean-tests
 clean-tests:
 	rm -rf tests/*.actual
 	rm -rf $(DEPDIR)/tests/*
 
 clean-recursive: clean-deps
 
-.PHONY: clean-deps
 clean-deps:
 	rm -rf $(DEPDIR)
 
 time-%.json: benchmark-%/time.json
 	cp $< $@
 
-clean-recursive: clean-worktrees
-
-.PHONY: clean-worktrees
-clean-worktrees:
-	if test -e .git; then \
-		$(GIT) worktree list --porcelain | \
-			$(AWK) 'BEGIN { FS = "/" }; /^worktree .*-[0-9a-f]{7}/ { print $$(NF) }' | \
-			while read worktree; do \
-				$(GIT) worktree remove --force $${worktree} ; \
-			done ; \
-	fi
-
-time_action ?= ./$(SILE) documentation/sile.sil -o /dev/null
-make_worktree_rules = $(eval $(foreach SHA,$(_HEADSHA) $(_BASESHA),$(call worktree_sha,$(1),$(shell $(GIT) rev-parse --short=7 $(SHA)))))
-
-define worktree_sha =
-
-.PRECIOUS: $(1)-$(2)
-$(1)-$(2):
-	[ -d $$@ ] || $(GIT) worktree add --detach $$@ $(2)
-	cd $$@
-	[ -d libtexpdf ] && rm -r libtexpdf ||:
-	[ -h libtexpdf ] || ln -s ../libtexpdf
-	[ -h lua_modules ] || ln -s ../lua_modules
-	[ -h node_modules ] || ln -s ../node_modules
-	[ -h .fonts ] || ln -s ../.fonts
-	[ -h .sources ] || ln -s ../.sources
-	./bootstrap.sh
-	cp ../config.status .
-	./configure
-	make
-
-.PRECIOUS: $(1)-$(2)/%
-$(1)-$(2)/%: $(1)-$(2)
-	cd $$<
-	make $$*
-
-.PRECIOUS: $(1)-$(2)/time.json
-$(1)-$(2)/time.json: $(1)-$(2) force
-	cd $$<
-	export TIMEFORMAT=$$$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
-	{ time ($$(time_action) > /dev/null 2>&1) } 2> time.json
-
-endef
-
-$(call make_worktree_rules,benchmark)
-
-.PHONY: benchmark
-benchmark: time-$(_HEADSHA).json time-$(_BASESHA).json
-	head $^
-
-.PRECIOUS: time-%.json
-time-%.json: benchmark-%/time.json
-	cp $< $@
-
-.PRECIOUS: time.json
-time.json: force | $(_BUILT_SUBDIRS)
-	export TIMEFORMAT=$$'{ "real": "%R", "user": "%U", "sys": "%S" }'
-	{ time ($(time_action) > /dev/null 2>&1) } 2> time.json
-
-$(call make_worktree_rules,compare)
-
-onetest = $(firstword $(ACTUALS)),$(firstword $(TESTPDFS))
-compare_prerequisites = $(sort $(shell echo {compare-$(_BASESHA)/,}{$(onetest)}))
-
-runapp ?= nohup $(1) > /dev/null &
-compare: $(call compare_prerequisites)
-	$(call runapp,diff-pdf --view $(filter %.pdf,$^))
-	$(call runapp,zathura $(filter %.pdf,$^))
-	diff -u $(filter %.actual,$^)
-
-.PHONY: force
-force: ;
-
-.PHONY: update_expecteds
 update_expecteds: $(EXPECTEDS)
 
 tests/%.expected: tests/%.sil $$(patterndeps)
@@ -332,10 +253,6 @@ tests/%.expected: tests/%.xml $$(patterndeps)
 tests/%.expected: tests/%.nil $$(patterndeps)
 	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
 
-.PHONY: update_actuals
-update_actuals: $(ACTUALS)
-
-.PHONY: regression_previews
 regression_previews: $(TESTPDFS)
 
 tests/%.actual: tests/%.sil $$(patterndeps)
@@ -367,11 +284,9 @@ export DOCKER_REGISTRY ?= docker.io
 export DOCKER_REPO ?= siletypesetter/$(TRANSFORMED_PACKAGE_NAME)
 export DOCKER_TAG ?= HEAD
 
-.PHONY: docker
 docker: Dockerfile hooks/build .version
 	./hooks/build $(VERSION)
 
-.PHONY: docker-dep-check
 docker-dep-check: .docker_deps .aur_deps
 	diff -u $^
 
@@ -401,13 +316,11 @@ define docker_push =
 	fi
 endef
 
-.PHONY: docker-ghcr-to-hub
 docker-ghcr-to-hub:
 	docker pull $(GHCR_REGISTRY)/$(GHCR_REPO):$(DOCKER_TAG)
 	docker tag  $(GHCR_REGISTRY)/$(GHCR_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
 	$(docker_push)
 
-.PHONY: docker-build-push
 docker-build-push: docker
 	docker tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
 	$(docker_push)
@@ -423,3 +336,10 @@ gource.webm:
 		done ;\
 	gource -a 0.2 -s 0.2 -i 0 --logo /tmp/sile-logo.jpg -b 000000 --max-file-lag 5 --hide filenames --date-format '%Y-%m-%d' --user-image-dir /tmp/gravatars --user-filter simoncozens --key -1920x1080 -o - | \
 		ffmpeg -y -r 60 -f image2pipe -vcodec ppm -i - -vcodec libvpx -b 10000K $@
+
+else
+
+$(PHONY_DEVELOPER_TARGETS):
+	@: $(error "Please reconfigure using --enable-developer to use developer tooling")
+
+endif
