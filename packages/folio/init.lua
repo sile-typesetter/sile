@@ -43,7 +43,7 @@ end
 
 function package:_init (options)
   base._init(self)
-  self.class:loadPackage("counters")
+  self:loadPackage("counters")
   SILE.scratch.counters.folio = { value = 1, display = "arabic" }
   self.class:registerHook("newpage", function() self:incrementFolio() end)
   self.class:registerHook("endpage", function () self:outputFolio(options and options.frame) end)

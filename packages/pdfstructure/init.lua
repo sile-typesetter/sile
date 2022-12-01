@@ -78,7 +78,7 @@ function package:_init ()
   end
   local stRoot = stNode("Document")
   stPointer = stRoot
-  self.class:loadPackage("pdf")
+  self:loadPackage("pdf")
   function SILE.outputters.libtexpdf._endHook (_)
     local catalog = pdf.get_dictionary("Catalog")
     local structureTree = pdf.parse("<< /Type /StructTreeRoot >>")

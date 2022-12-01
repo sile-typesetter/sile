@@ -5,8 +5,8 @@ package._name = "chordmode"
 
 function package:_init ()
   base._init(self)
-  self.class:loadPackage("raiselower")
-  self.class:loadPackage("inputfilter")
+  self:loadPackage("raiselower")
+  self:loadPackage("inputfilter")
 end
 
 function package.declareSettings (_)

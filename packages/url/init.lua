@@ -21,10 +21,10 @@ local breakPattern = "["..escapeRegExpMinimal(preferBreakBefore..preferBreakAfte
 
 function package:_init ()
   base._init(self)
-  self.class:loadPackage("verbatim")
-  self.class:loadPackage("inputfilter")
+  self:loadPackage("verbatim")
+  self:loadPackage("inputfilter")
   pdf = SILE.outputter._name == "libtexpdf"
-  if pdf then self.class:loadPackage("pdf") end
+  if pdf then self:loadPackage("pdf") end
 end
 
 function package.declareSettings (_)

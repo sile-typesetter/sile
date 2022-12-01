@@ -33,6 +33,10 @@ function package.declareSettings (_) end
 
 function package.registerRawHandlers (_) end
 
+function package:loadPackage (packname)
+  return self.class:loadPackage(packname)
+end
+
 function package.registerCommands (_) end
 
 -- This gives us a hook to match commands with the packages that registered

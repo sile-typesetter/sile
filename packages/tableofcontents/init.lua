@@ -89,8 +89,8 @@ function package:_init ()
   if not SILE.scratch.tableofcontents then
     SILE.scratch.tableofcontents = {}
   end
-  self.class:loadPackage("infonode")
-  self.class:loadPackage("leaders")
+  self:loadPackage("infonode")
+  self:loadPackage("leaders")
   self.class:registerHook("endpage", self.moveTocNodes)
   self.class:registerHook("finish", self.writeToc)
   self:deprecatedExport("writeToc", self.writeToc)
