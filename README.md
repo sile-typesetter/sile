@@ -102,9 +102,9 @@ A [PPA][ppa] is available for Ubuntu users with packages of SILE and all the nec
 We introduced support starting with Bionic (18.04) and maintain packages for all Ubuntu release series since for as long as they are supported by Canonical.
 
 ```console
-$ sudo add-apt-repository ppa:sile-typesetter/sile
-$ sudo apt-get update
-$ sudo apt-get install sile
+$ add-apt-repository ppa:sile-typesetter/sile
+$ apt-get update
+$ apt-get install sile
 ```
 
 #### Void Linux
@@ -231,7 +231,7 @@ This will place the SILE libraries and executable in a sensible location.
 On some systems you may also need to run:
 
 ```console
-$ sudo ldconfig
+$ ldconfig
 ```
 
 … before trying to execute `sile` to make the system aware of the newly installed libraries.

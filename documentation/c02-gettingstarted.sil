@@ -101,9 +101,9 @@ A PPA\footnote{\url{https://launchpad.net/~sile-typesetter/+archive/ubuntu/sile}
 We introduced support starting with Bionic (18.04) and maintain packages for all Ubuntu release series since for as long as they are supported by Canonical.
 
 \begin{terminal}
-$ sudo add-apt-repository ppa:sile-typesetter/sile
-$ sudo apt-get update
-$ sudo apt-get install sile
+$ add-apt-repository ppa:sile-typesetter/sile
+$ apt-get update
+$ apt-get install sile
 \end{terminal}
 
 \subsection{NetBSD}
