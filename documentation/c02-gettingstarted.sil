@@ -227,7 +227,7 @@ the file that you downloaded from SILE’s home page, change to that directory,%
 \footnote{If you downloaded a copy of the SILE source by cloning the git
 repository rather than downloading one of the release packages, you will also
 need to run \code{./bootstrap.sh} to setup the configure script at this point
-before continuing to the next step.} and configure the build envirenment.
+before continuing to the next step.} and configure the build environment.
 
 If you supplied all the Lua dependencies yourself, run:
 
@@ -259,7 +259,7 @@ vast majority of Lua code will be fine, but there are a few limitations. See
 the documentation for your version of LuaJIT for details.
 \end{note}
 
-If that comand was successful, you can build SILE itself:
+If that command was successful, you can now build SILE itself:
 
 \terminal{$ make}
 
