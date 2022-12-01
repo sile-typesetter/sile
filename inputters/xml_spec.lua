@@ -15,10 +15,10 @@ describe("#XML #inputter", function ()
     end)
 
     it("commands without content", function()
-      local t = inputter:parse([[<foo><foo /> bar</foo>]])[1][1]
+      local t = inputter:parse([[<foo><bar /> baz</foo>]])[1][1]
       assert.is.equal("foo", t.command)
-      assert.is.equal("foo", t[1].command)
-      assert.is.equal(" bar", t[2])
+      assert.is.equal("bar", t[1].command)
+      assert.is.equal(" baz", t[2])
       assert.is.equal(nil, t[1][1])
     end)
 
