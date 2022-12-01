@@ -12,13 +12,13 @@ local applyConverter = function (source, converter)
   local sourceTime = lfs.attributes(source, "modification")
 
   if (sourceTime==nil) then
-    SU.debug("converters", "Source file not found "..source)
+    SU.debug("converters", "Source file not found", source)
     return nil -- source not found
   end
 
   local targetTime = lfs.attributes(targetFile, "modification")
   if((targetTime~=nil) and (targetTime>sourceTime)) then
-    SU.debug("converters", "Source file already converted "..source)
+    SU.debug("converters", "Source file already converted", source)
     return targetFile -- already converted
   end
 
@@ -30,7 +30,7 @@ local applyConverter = function (source, converter)
   local result = os.execute(command)
   if type(result) ~= "boolean" then result = (result == 0) end
   if result then
-    SU.debug("converters", "Converted "..source.." to "..targetFile)
+    SU.debug("converters", "Converted", source, "to", targetFile)
     return targetFile
   else
     return nil
@@ -46,7 +46,7 @@ local function extendCommand (name, func)
       func(options, content, original)
     end
   else
-    SU.debug("converters", "Can not extend command "..name)
+    SU.debug("converters", "Can not extend command", name)
   end
 end
 
@@ -116,32 +116,26 @@ We can use the ImageMagick toolkit to turn a GIF into a JPG, and JPGs are suppor
 
 We do this by registering a converter with the \autodoc:command{\converters:register} command:
 
-\begin{verbatim}
-\line
-\\use[module=packages.converters]
-\\converters:register[from=.gif,to=.jpg,command=convert $SOURCE $TARGET]
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\use[module=packages.converters]
+\converters:register[from=.gif,to=.jpg,command=convert $SOURCE $TARGET]
+\end{raw}
 
 And now it just magically works:
 
-\begin{verbatim}
-\line
-\\img[src=hello.gif, width=50px]
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\img[src=hello.gif, width=50px]
+\end{raw}
 
 This will execute the command \code{convert hello.gif hello.jpg} and include the converted \code{hello.jpg} file.
 
 This trick also works for text file:
 
-\begin{verbatim}
-\line
-\\converters:register[from=.md, to=.sil, command=pandoc -o $TARGET $SOURCE]
+\begin[type=autodoc:codeblock]{raw}
+\converters:register[from=.md, to=.sil, command=pandoc -o $TARGET $SOURCE]
 
-\\include[src=document.md]
-\line
-\end{verbatim}
+\include[src=document.md]
+\end{raw}
 \end{document}
 ]]
 

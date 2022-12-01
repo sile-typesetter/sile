@@ -89,8 +89,8 @@ function package:registerCommands ()
     -- measure the content
     SILE.call("hbox", {}, content)
     local cbox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
-    SU.debug("ruby", "base box is " .. cbox)
-    SU.debug("ruby", "reading is  " .. rubybox)
+    SU.debug("ruby", "base box is", cbox)
+    SU.debug("ruby", "reading is", rubybox)
     if cbox:lineContribution() > rubybox:lineContribution() then
       SU.debug("ruby", "Base is longer, offsetting ruby to fit")
       -- This is actually the offset against the base
@@ -98,7 +98,7 @@ function package:registerCommands ()
     else
       local diff = rubybox:lineContribution() - cbox:lineContribution()
       local to_insert = SILE.length(diff / 2)
-      SU.debug("ruby", "Ruby is longer, inserting " .. tostring(to_insert) .. " either side of base")
+      SU.debug("ruby", "Ruby is longer, inserting", to_insert, "either side of base")
       cbox.width = rubybox:lineContribution()
       rubybox.height = 0
       rubybox.width = 0
@@ -126,11 +126,9 @@ For example:
 \set[parameter=ruby.height,value=12pt]
 \define[command=ja]{\font[family=Noto Sans CJK JP,language=ja]{\process}}
 
-\begin{verbatim}
-\line
+\begin{autodoc:codeblock}
 \\ruby[reading=\ja{れいわ}]\{\ja{令和}\}
-\line
-\end{verbatim}
+\end{autodoc:codeblock}
 
 Produces:
 \medskip

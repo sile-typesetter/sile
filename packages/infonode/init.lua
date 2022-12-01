@@ -81,21 +81,17 @@ Categories are used to group similar sets of node together.
 As an example, when typesetting a Bible, you may wish to display which range of verses are on each page as a running header.
 During the command which starts a new verse, you would insert an information node with the verse reference:
 
-\begin{verbatim}
-\line
-SILE.call("info", \{ category = "references", value = ref \}, \{\})
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+SILE.call("info", { category = "references", value = ref }, {})
+\end{raw}
 
 During the \code{endPage} method which is called at the end of every page, we look at the list of “references” information nodes:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 local refs = SILE.scratch.info.thispage.references
 local runningHead = SILE.shaper.shape(refs[1] .. " - " .. refs[#refs])
 SILE.typesetNaturally(rhFrame, runningHead);
-\line
-\end{verbatim}
+\end{raw}
 \end{document}
 ]]
 

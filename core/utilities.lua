@@ -53,7 +53,7 @@ utilities.warn = function(message, bug)
 end
 
 utilities.debugging = function (category)
-  return SILE.debugFlags.all or SILE.debugFlags[category]
+  return SILE.debugFlags.all and category ~= "profile" or SILE.debugFlags[category]
 end
 
 utilities.feq = function (lhs, rhs) -- Float point equal
@@ -107,10 +107,12 @@ utilities.debug = function (category, ...)
     local inputs = table.pack(...)
     for i, input in ipairs(inputs) do
       if type(input) == "function" then
-        inputs[i] = input()
+        local status, output = pcall(input)
+        inputs[i] = status and output or SU.warn(("Output of %s debug function was an error: %s"):format(category, output))
       end
     end
-    io.stderr:write("\n["..category.."] ", utilities.concat(inputs, " "))
+    local message = utilities.concat(inputs, " ")
+    if message then io.stderr:write(("\n[%s] %s"):format(category, message)) end
   end
 end
 
@@ -120,21 +122,34 @@ utilities.debugAST = function (ast, level)
   end
   local out = string.rep("  ", 1+level)
   if level == 0 then
-    SU.debug("ast", "["..SILE.currentlyProcessingFile)
+    SU.debug("ast", function ()
+      return "[" .. SILE.currentlyProcessingFile
+    end)
   end
   if type(ast) == "function" then
-    SU.debug("ast", out .. tostring(ast))
-  end
-  for _, content in ipairs(ast) do
-    if type(content) == "string" then
-      SU.debug("ast", out .. "[" .. content .. "]")
-    elseif SILE.Commands[content.command] then
-      SU.debug("ast", out.."\\" .. content.command .. " " .. pl.pretty.write(content.options, ""))
-      if (#content>=1) then utilities.debugAST(content, level+1) end
-    elseif content.id == "texlike_stuff" or (not content.command and not content.id) then
-      utilities.debugAST(content, level+1)
-    else
-      SU.debug("ast", out.."?\\"..(content.command or content.id))
+    SU.debug("ast", function ()
+      return out .. tostring(ast)
+    end)
+  elseif type(ast) == "table" then
+    for _, content in ipairs(ast) do
+      if type(content) == "string" then
+        SU.debug("ast", function ()
+          return out .. "[" .. content .. "]"
+        end)
+      elseif type(content) == "table" then
+        if SILE.Commands[content.command] then
+          SU.debug("ast", function ()
+            return out .. "\\" .. content.command .. " " .. pl.pretty.write(content.options, "")
+          end)
+          if (#content>=1) then utilities.debugAST(content, level+1) end
+        elseif content.id == "texlike_stuff" or (not content.command and not content.id) then
+          utilities.debugAST(content, level+1)
+        else
+          SU.debug("ast", function ()
+            return out .. "?\\" .. (content.command or content.id)
+          end)
+        end
+      end
     end
   end
   if level == 0 then SU.debug("ast", "]") end
@@ -521,60 +536,6 @@ end
 utilities.utf16be_to_utf8 = function (str) return utf16_to_utf8(str, "be") end
 utilities.utf16le_to_utf8 = function (str) return utf16_to_utf8(str, "le") end
 
-local icu = require("justenoughicu")
-
-local icuFormat = function (num, format)
-  local ok, result  = pcall(icu.format_number, num, format)
-  return tostring(ok and result or num)
-end
-
--- Language specific number formatters add functions to this table,
--- see e.g. languages/tr.lua
-utilities.formatNumber = {
-  und = {
-
-    alpha = function (num)
-      local out = ""
-      local a = string.byte("a")
-      repeat
-        num = num - 1
-        out = string.char(num % 26 + a) .. out
-        num = (num - num % 26) / 26
-      until num < 1
-      return out
-    end
-
-  }
-}
-
-setmetatable (utilities.formatNumber, {
-    __call = function (self, num, format, case)
-      if math.abs(num) > 9223372036854775807 then
-        SU.warn("Integers larger than 64 bits do not reproduce properly in all formats")
-      end
-      if not case then
-        if format:match("^%l") then
-          case = "lower"
-        elseif format:match("^.%l") then
-          case = "title"
-        else
-          case = "upper"
-        end
-      end
-      local lang = format:match("[Rr][Oo][Mm][Aa][Nn]") and "la" or SILE.settings:get("document.language")
-      format = format:lower()
-      local result
-      if self[lang] and type(self[lang][format]) == "function" then
-        result = self[lang][format](num)
-      elseif type(self["und"][format]) == "function" then
-        result = self.und[format](num)
-      else
-        result = icuFormat(num, format)
-      end
-      return icu.case(result, lang, case)
-    end
-})
-
 utilities.breadcrumbs = function ()
   local breadcrumbs = {}
 
@@ -608,5 +569,9 @@ utilities.breadcrumbs = function ()
 
   return breadcrumbs
 end
+
+utilities.formatNumber = require("core.utilities-numbers")
+
+utilities.collatedSort = require("core.utilities-sorting")
 
 return utilities

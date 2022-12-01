@@ -44,7 +44,7 @@ local function getMultilevelCounter (_, id)
 end
 
 function package.formatCounter (_, counter)
-  return SU.formatNumber(counter.value, counter.display)
+  return SU.formatNumber(counter.value, { system = counter.display })
 end
 
 function package:formatMultilevelCounter (counter, options)
@@ -219,7 +219,7 @@ The available built-in display types are:
 \item{\code{alpha}, for lower-case alphabetic counting;}
 \item{\code{Alpha}, for upper-case alphabetic counting;}
 \item{\code{roman}, for lower-case Roman numerals; and,}
-\item{\code{Roman} for upper-case Roman numerals.}
+\item{\code{ROMAN} for upper-case Roman numerals.}
 \end{itemize}
 
 The ICU library also provides ways of formatting numbers in global (non-Latin) scripts.
@@ -228,23 +228,21 @@ For example, \autodoc:parameter{display=beng} will format your numbers in Bengal
 
 So, for example, the following SILE code:
 
-\begin{verbatim}
-\line
-\\set-counter[id=mycounter, value=2]
-\\show-counter[id=mycounter]
+\begin[type=autodoc:codeblock]{raw}
+\set-counter[id=mycounter, value=2]
+\show-counter[id=mycounter]
 
-\\increment-counter[id=mycounter, display=roman]
-\\show-counter[id=mycounter]
-\line
-\end{verbatim}
+\increment-counter[id=mycounter, display=roman]
+\show-counter[id=mycounter]
+\end{raw}
 
 produces:
 
-\line
+\fullrule
 \examplefont{2
 
 \noindent{}iii}
-\line
+\fullrule
 
 The package also provides multi-level (hierarchical) counters, of the kind used in sectioning
 commands:

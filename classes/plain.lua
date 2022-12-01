@@ -157,51 +157,69 @@ function class:registerCommands ()
 
   self:registerCommand("break", function (_, _)
     SILE.call("penalty", { penalty = -10000 })
-  end)
+  end, "Requests a frame break (if in vertical mode) or a line break (if in horizontal mode)")
 
   self:registerCommand("cr", function (_, _)
     SILE.call("hfill")
     SILE.call("break")
-  end)
+  end, "Fills a line with a stretchable glue and then requests a line break")
+
+  -- Despite their name, in older versions, \framebreak and \pagebreak worked badly in horizontal
+  -- mode. The former was a linebreak, and the latter did nothing. That was surely not intended.
+  -- There are many ways, though to assume what's wrong or what the user's intent ought to be.
+  -- We now warn, and terminate the paragraph, but to all extents this might be a wrong approach to
+  -- reconsider at some point.
 
   self:registerCommand("framebreak", function (_, _)
-    SILE.call("break")
-  end)
+    if not SILE.typesetter:vmode() then
+      SU.warn("framebreak was not intended to work in horizontal mode. Behaviour may change in future versions")
+    end
+    SILE.call("penalty", { penalty = -10000, vertical = true })
+  end, "Requests a frame break (switching to vertical mode if needed)")
 
   self:registerCommand("pagebreak", function (_, _)
-    SILE.call("penalty", { penalty = -20000 })
-  end)
+    if not SILE.typesetter:vmode() then
+      SU.warn("pagebreak was not intended to work in horizontal mode. Behaviour may change in future versions")
+    end
+    SILE.call("penalty", { penalty = -20000, vertical = true })
+  end, "Requests a non-negotiable page break (switching to vertical mode if needed)")
 
   self:registerCommand("nobreak", function (_, _)
     SILE.call("penalty", { penalty = 10000 })
-  end)
+  end, "Inhibits a frame break (if in vertical mode) or a line break (if in horizontal mode)")
 
   self:registerCommand("novbreak", function (_, _)
     SILE.call("penalty", { penalty = 10000, vertical = true })
-  end)
+  end, "Inhibits a frame break (switching to vertical mode if needed)")
 
   self:registerCommand("allowbreak", function (_, _)
     SILE.call("penalty", { penalty = 0 })
-  end)
+  end, "Allows a page break (if in vertical mode) or a line break (if in horizontal mode) at a point would not be considered as suitable for breaking")
 
+  -- THIS SEEMS BROKEN BUT THE COMMAND NOT MENTIONED IN THE SILE MANUAL
+  -- In TeX, "\filbreak" compensates the vertical fill if no break actually occurs
+  -- (\def\filbreak{\par\vfil\penalty-200\vfilneg)
   self:registerCommand("filbreak", function (_, _)
     SILE.call("vfill")
     SILE.call("penalty", { penalty = -200 })
-  end)
+  end, "I HAVE THE SAME NAME AS A TEX COMMAND BUT DON'T SEEM TO BE THE SAME")
 
+  -- NOTE: TeX's "\goodbreak" does a \par first, so always switches to vertical mode.
+  -- SILE differs here, allowing it both within a paragraph (line breaking) and between
+  -- paragraphs (page breaking).
   self:registerCommand("goodbreak", function (_, _)
     SILE.call("penalty", { penalty = -500 })
-  end)
+  end, "Indicates a good potential point to break a frame (if in vertical mode) or a line (if in horizontal mode")
 
   self:registerCommand("eject", function (_, _)
     SILE.call("vfill")
     SILE.call("break")
-  end)
+  end, "Fills the page with stretchable vglue and then request a page break")
 
   self:registerCommand("supereject", function (_, _)
     SILE.call("vfill")
     SILE.call("penalty", { penalty = -20000 })
-  end)
+  end, "Fills the page with stretchable vglue and then requests a non-negotiable page break")
 
   self:registerCommand("justified", function (_, content)
     SILE.settings:set("document.rskip", nil)
@@ -341,7 +359,10 @@ function class:registerCommands ()
           typesetter.frame.state.cursorX = ox
           typesetter.frame.state.cursorY = oy
           _post()
-          if SU.debugging("hboxes") then SILE.outputter:debugHbox(self_, self_:scaledWidth(line)) end
+          SU.debug("hboxes", function ()
+            SILE.outputter:debugHbox(self_, self_:scaledWidth(line))
+            return "Drew debug outline around hbox"
+          end)
         end
       })
     table.insert(SILE.typesetter.state.nodes, hbox)

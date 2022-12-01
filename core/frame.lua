@@ -82,7 +82,9 @@ SILE.framePrototype = pl.class({
       constraint = SU.type(constraint) == "measurement"
         and constraint:tonumber()
         or SILE.frameParser:match(constraint)
-      SU.debug("frames", "Adding constraint " .. self.id .. "(" .. method .. ") = " .. tostring(constraint))
+      SU.debug("frames", "Adding constraint", self.id, function ()
+        return "(" .. method .. ") = " .. tostring(constraint)
+      end)
       local eq = cassowary.Equation(self.variables[method], constraint)
       solver:addConstraint(eq)
       if stay then solver:addStay(eq) end

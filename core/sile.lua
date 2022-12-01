@@ -252,7 +252,7 @@ local function detectFormat (doc, filename)
   local initialround = filename and 1 or 2
   for round = initialround, 3 do
     for _, inputter in ipairs(contentDetectionOrder) do
-      SU.debug("inputter", ("Running content type detection round %s with %s"):format(round, inputter._name))
+      SU.debug("inputter", "Running content type detection round", round, "with", inputter._name)
       if inputter.appropriate(round, filename, doc) then
         return inputter._name
       end

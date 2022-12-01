@@ -29,13 +29,11 @@ For comparisons of editors see \url{http://alternativeto.net/category/deevloper-
 Once you have an editor, it’s time to consider a SILE input file.
 To begin with, here’s the most basic SILE file of all:
 
-\begin{verbatim}
-\line
-\\begin\{document\}
+\begin[type=autodoc:codeblock]{raw}
+\begin{document}
 Hello SILE!
-\\end\{document\}
-\line
-\end{verbatim}
+\end{document}
+\end{raw}
 
 We’ll pick apart this document in the next chapter, but for now take it on
 trust that this is what a SILE document looks like.
@@ -79,6 +77,17 @@ Alternatively, a package that uses LuaJIT may be built manually from the Arch Us
 See the note about LuaJIT in the section \em{Installing From Source} for applicable caveats.
 A VCS package is also available as \code{sile-git} to build from the latest Git commit.
 These may be built and installed like any other AUR\footnote{\url{https://wiki.archlinux.org/title/Arch_User_Repository}} package.
+
+\subsection{Fedora}
+
+A COPR repository\footnote{\url{https://copr.fedorainfracloud.org/coprs/jonny/SILE/}} is available for Fedora users with packages of SILE and all the necessary dependencies including fonts.
+Fedora 36 and Fedora 37 are supported.
+There is work in progress to get the packages added to the official Fedora repository.
+
+\begin{terminal}
+$ dnf copr enable jonny/SILE
+$ dnf install sile
+\end{terminal}
 
 \subsection{OpenSUSE}
 
@@ -313,14 +322,12 @@ But SILE can read XML files and it also comes with a \code{docbook} class, which
 
 Turning \code{dockbook.xml} into \code{docbook.pdf} is now as simple as:
 
-\begin{verbatim}
-\line
+\begin{autodoc:codeblock}
 $ sile --class docbook docbook.xml
 \sileversion
 Loading docbook
 <classes/docbook.sil><docbook.xml>[1] [2] [3]
-\line
-\end{verbatim}
+\end{autodoc:codeblock}
 
 The \code{-c} flag sets the default class; a necessary step because docbook XML files do not come wrapped in a tag that specifies a SILE class.
 The docbook class will provide the commands necessary to process the tags typically found in docbook files.
@@ -338,8 +345,7 @@ Another way is to pull in the prebuilt Docker container and run that.
 
 As a case study, here is how a work flow could be setup in GitHub Actions:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 name: SILE
 on: [ push, pull_request ]
 jobs:
@@ -353,8 +359,7 @@ jobs:
         uses: sile-typesetter/sile@v0
         with:
           args: my-document.sil
-\line
-\end{verbatim}
+\end{raw}
 
 Add to your repository as \code{.github/workflows/sile.yaml}.
 This work flow assumes your project has a source file \code{my-document.sil} and will leave behind a \code{my-document.pdf}.
@@ -362,11 +367,9 @@ Note that this Actions work flow explicitly uses a container fetched from Docker
 
 Because this repository is itself a GitHub Action you can also use the standard \code{uses} syntax like this:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
         uses: sile-typesetter/sile@latest
-\line
-\end{verbatim}
+\end{raw}
 
 But be warned that since GitHub rebuilds containers from scratch on every such invocation, this syntax is not recommended for regular use.
 Pulling the prebuilt Docker images is recommended instead.
@@ -380,11 +383,9 @@ Third-party SILE packages can be installed using the \code{luarocks} package man
 Packages may be hosted anywhere, ether on the default \url{https://luarocks.org} repository or (as in the example below) listed in a specific server manifest.
 For example, to install markdown.sile\footnote{\url{https://github.com/Omikhleia/markdown.sile}} (a plugin that provides a SILE inputter that reads and processes Markdown documents) one could run:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 $ luarocks install --server=https://luarocks.org/dev markdown.sile
-\line
-\end{verbatim}
+\end{raw}
 
 By default, this will try to install the package to your system.
 This may not be desired (and usually requires root access), but there are two other ways to install plugins.
@@ -400,9 +401,7 @@ Third party packages must be installed for the same version of Lua that SILE use
 On systems with more than one Lua version installed, *and* where SILE does not use the default one you may need to specify the version manually.
 To get your Lua version which is used for the execution of SILE:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 $ export LUA_VERSION=$(sile -e 'print(SILE.lua_version);os.exit()' 2> /dev/null)
 $ luarocks install --lua-version $LUA_VERSION ...
-\line
-\end{verbatim}
+\end{raw}

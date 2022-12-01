@@ -135,9 +135,9 @@ local function handleMath (_, mbox, mode)
     SU.error('Unknown math mode '..mode)
   end
 
-  if SU.debugging("math") then
-    SU.debug("math", "Resulting mbox: " .. tostring(mbox))
-  end
+  SU.debug("math", function ()
+    return "Resulting mbox: " .. tostring(mbox)
+  end)
   mbox:styleDescendants()
   mbox:shapeTree()
 

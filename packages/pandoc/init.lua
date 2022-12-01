@@ -13,7 +13,7 @@ local handlePandocArgs = function (options)
     SILE.call("pdf:destination", { name = options.id })
   end
   if options.lang then
-    SU.debug("pandoc", "Set lang in tag: "..options.lang)
+    SU.debug("pandoc", "Set lang in tag:", options.lang)
     local fontfunc = SILE.Commands[SILE.Commands["font:" .. options.lang] and "font:" .. options.lang or "font"]
     local innerWrapper = wrapper
     wrapper = function (content)
@@ -29,7 +29,7 @@ local handlePandocArgs = function (options)
         SU.debug("pandoc", "Convert unnumbered class to legacy heading function option")
         options.numbering = false
       elseif SILE.Commands["class:"..class] then
-        SU.debug("pandoc", "Add inner class wrapper: "..class)
+        SU.debug("pandoc", "Add inner class wrapper:", class)
         local innerWrapper = wrapper
         wrapper = function (content)
           innerWrapper(function ()

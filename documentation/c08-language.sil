@@ -33,23 +33,19 @@ For example, Sindhi and Urdu users will expect the Arabic letter \em{heh} (\font
 In those cases, you should ensure that you select the appropriate language before processing the text:
 
 \bidi-on
-\begin{verbatim}
-\line
+\begin{autodoc:codeblock}
 Standard Arabic:
 \\font[family=LateefGR,language=ar]\{\font[family=LateefGR]{ه{}ه{}ه}\};
 then in Sindi:
 \\font[family=LateefGR,language=snd]\{\font[family=LateefGR]{ه{}ه{}ه}\};
 then in Urdu:
 \\font[family=LateefGR,language=urd]\{\font[family=LateefGR]{ه{}ه{}ه}\}.
-\line
-\end{verbatim}
+\end{autodoc:codeblock}
 
 \begin{examplefont}
-\line
 Standard Arabic: \font[family=LateefGR,language=ar]{ههه};
 then in Sindi: \font[family=LateefGR,language=snd]{ههه};
 then in Urdu: \font[family=LateefGR,language=urd]{ههه}.
-\line
 \end{examplefont}
 \bidi-off
 
@@ -81,14 +77,12 @@ class is to pass the \code{direction=...} parameter to the
 to bottom with text lines moving from the left to the right of the page,
 so to create a Mongolian document, use:
 
-\begin{verbatim}
-\line
-\\begin[direction=TTB-LTR]\{document\}
-\\font[language=mo,family=Noto Sans Mongolian]
+\begin[type=autodoc:codeblock]{raw}
+\begin[direction=TTB-LTR]{document}
+\font[language=mo,family=Noto Sans Mongolian]
 ...
-\\end\{document\}
-\line
-\end{verbatim}
+\end{document}
+\end{raw}
 
 To change the writing direction for a single frame, use
 \code{\\thisframedirection[direction=...]}.
@@ -148,12 +142,10 @@ This time \code{\\fluent[name=Dünyalılar,locale=tr]\{hello\}} will output “\
 
 A particularly common string to override might be the table of contents heading:
 
-\begin{verbatim}
-\line
-\\ftl\{tableofcontents-title = Table of Contents\}
-\\tableofcontents
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\ftl{tableofcontents-title = Table of Contents}
+\tableofcontents
+\end{raw}
 
 \section{Support for specific languages}
 
@@ -169,15 +161,13 @@ punctuation or space after punctuation. You can set the setting
 \autodoc:setting[check=false]{languages.am.justification} to either \code{left}
 or \code{centered} to control which style is used. The default is \code{left}
 
-\begin{verbatim}
-\line
+\begin{autodoc:codeblock}
 \\font[family=Noto Sans Ethiopic,language=am]
 \font[family=Noto Sans Ethiopic]{ሰላም፡ልዑል}
 
 \\set[parameter=languages.am.justification,value=centered]
 \font[family=Noto Sans Ethiopic]{ሰላም፡ልዑል}
-\line
-\end{verbatim}
+\end{autodoc:codeblock}
 
 \font[family=Noto Sans Ethiopic,language=am]{ሰላም፡ልዑል}
 
@@ -193,8 +183,8 @@ the requirement that \em{all} adjectives, including numerals, have the suffix �
 This includes numbers standing on their own.
 For example, “the 15th of March” is, in Esperanto, “\eo{la 15ª de marto}”.
 As there is lack of agreement\footnote{Wikipedia prefers “\eo{15-a}” while most professional books and posters prefer “\eo{15ª}”, while some authors even write “\eo{15a}” as the underlying word is “\eo{dekkvina}”.} on how to typeset this, you have options:
-\autodoc:setting[check=false]{languages.eo.ordinal.raisedsuffix} when made true will use \eo{ª} (as in “\eo{apitro 1ª}”) while
-\autodoc:setting[check=false]{languages.eo.ordinal.hyphenbefore} will prepend a hyphen (as in “\eo{apitro 15-a}”).
+\autodoc:setting[check=false]{languages.eo.ordinal.raisedsuffix} when made true will use \eo{ª} (as in “\eo{Ĉapitro 1ª}”) while
+\autodoc:setting[check=false]{languages.eo.ordinal.hyphenbefore} will prepend a hyphen (as in “\eo{Ĉapitro 15-a}”).
 
 \subsection{French}
 

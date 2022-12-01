@@ -60,9 +60,10 @@ function class:_init (options)
       local frame = self_:initialFrame()
       SILE.typesetter = SILE.defaultTypesetter(frame)
       SILE.typesetter:registerPageEndHook(function ()
-        if SU.debugging("frames") then
+        SU.debug("frames", function ()
           for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
-        end
+          return "Drew debug outlines around frames"
+        end)
       end)
     end)
 end
@@ -202,7 +203,7 @@ end
 
 function class:runHooks (category, options)
   for _, func in ipairs(self.hooks[category]) do
-    SU.debug("classhooks", "Running hook from " .. category, options and "with options " .. #options)
+    SU.debug("classhooks", "Running hook from", category, options and "with options " .. #options)
     func(self, options)
   end
 end
