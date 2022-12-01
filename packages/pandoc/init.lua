@@ -47,13 +47,13 @@ end
 
 function package:_init ()
   base._init(self)
-  self.class:loadPackage("footnotes")
-  self.class:loadPackage("image")
-  self.class:loadPackage("pdf")
-  self.class:loadPackage("raiselower")
-  self.class:loadPackage("rules")
-  self.class:loadPackage("url")
-  self.class:loadPackage("verbatim")
+  self:loadPackage("footnotes")
+  self:loadPackage("image")
+  self:loadPackage("pdf")
+  self:loadPackage("raiselower")
+  self:loadPackage("rules")
+  self:loadPackage("url")
+  self:loadPackage("verbatim")
 end
 
 function package:registerCommands ()

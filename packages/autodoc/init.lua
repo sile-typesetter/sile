@@ -101,8 +101,8 @@ end
 
 function package:_init (options)
   base._init(self)
-  self.class:loadPackage("inputfilter")
-  self.class:loadPackage("rules")
+  self:loadPackage("inputfilter")
+  self:loadPackage("rules")
   if options then pl.tablex.update(theme, options) end
   if not SILE.scratch.autodoc then
     SILE.scratch.autodoc = {

@@ -57,7 +57,7 @@ end
 
 function package:_init ()
   base._init(self)
-  self.class:loadPackage("date")
+  self:loadPackage("date")
 end
 
 function package:registerCommands ()

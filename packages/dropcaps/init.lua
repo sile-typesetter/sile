@@ -5,8 +5,8 @@ package._name = "dropcaps"
 
 function package:_init ()
   base._init(self)
-  self.class:loadPackage("rebox")
-  self.class:loadPackage("raiselower")
+  self:loadPackage("rebox")
+  self:loadPackage("raiselower")
 end
 
 local shapeHbox = function (options, content)
@@ -35,7 +35,7 @@ function package:registerCommands ()
     local color = options.color
     options.size = nil -- we need to measure the "would have been" size before using this
 
-    if color then self.class:loadPackage("color") end
+    if color then self:loadPackage("color") end
 
     -- We want the drop cap to span over N lines, that is N - 1 baselineskip + the height of the first line.
     -- Note this only works for the default linespace mechanism.

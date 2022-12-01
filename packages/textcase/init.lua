@@ -37,7 +37,7 @@ end
 
 function package:_init ()
   base._init(self)
-  self.class:loadPackage("inputfilter")
+  self:loadPackage("inputfilter")
   self:deprecatedExport("uppercase", self.uppercase)
   self:deprecatedExport("lowercase", self.lowercase)
   self:deprecatedExport("titlecase", self.titlecase)

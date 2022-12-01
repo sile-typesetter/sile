@@ -209,7 +209,7 @@ end
 
 function package:_init ()
   base._init(self)
-  self.class:loadPackage("counters")
+  self:loadPackage("counters")
 end
 
 function package.declareSettings (_)

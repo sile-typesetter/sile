@@ -5,7 +5,7 @@ package._name = "chapterverse"
 
 function package:_init ()
   base._init(self)
-  self.class:loadPackage("infonode")
+  self:loadPackage("infonode")
   if not SILE.scratch.chapterverse then
     SILE.scratch.chapterverse = {}
   end

@@ -27,9 +27,9 @@ end
 
 function package:_init ()
   base._init(self)
-  self.class:loadPackage("color")
-  self.class:loadPackage("raiselower")
-  self.class:loadPackage("rebox")
+  self:loadPackage("color")
+  self:loadPackage("raiselower")
+  self:loadPackage("rebox")
 end
 
 function package:registerCommands ()

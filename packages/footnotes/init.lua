@@ -5,9 +5,9 @@ package._name = "footnotes"
 
 function package:_init (options)
   base._init(self)
-  self.class:loadPackage("counters")
-  self.class:loadPackage("raiselower")
-  self.class:loadPackage("insertions")
+  self:loadPackage("counters")
+  self:loadPackage("raiselower")
+  self:loadPackage("insertions")
   if not SILE.scratch.counters.footnotes then
     SILE.scratch.counters.footnote = { value = 1, display = "arabic" }
   end
