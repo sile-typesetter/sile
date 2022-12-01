@@ -290,6 +290,35 @@ Add to your repository as `.github/workflows/sile.yaml`.
 This work flow assumes your project has a source file `my-document.sil` and will leave behind a `my-document.pdf`.
 Note the comments in [the section about Docker](#docker) regarding version tags.
 
+## Installing third-party packages
+
+Third-party SILE packages can be installed using the `luarocks` package manager.
+Packages may be hosted anywhere, ether on the default [luarocks.org](https://luarocks.org/) repository or (as in the example below) listed in a specific server manifest.
+For example, to install [markdown.sile](https://github.com/Omikhleia/markdown.sile) (a plugin that provides a SILE inputter that reads and processes Markdown documents) one could run:
+
+```console
+$ luarocks install --server=https://luarocks.org/dev markdown.sile
+```
+
+By default, this will try to install the package to your system.
+This may not be desired (and usually requires root access), but there are two other ways to install plugins.
+First you make add `--tree ./` to install them in the current directory.
+In this case (and assuming this is the same directory as your document) SILE will automatically find such plugins.
+Additionally you make install them to your user profile by adding `--local` when installing.
+In this case you will also need to modify your user environment to check for plugins in that path since Lua does not do so by default.
+This can be done by running `eval $(luarocks path)` before running SILE (or from your shell's initialization script).
+
+### Finding Lua version in use for running SILE
+
+Third party packages must be installed for the same version of Lua that SILE uses.
+On systems with more than one Lua version installed, *and* where SILE does not use the default one you may need to specify the version manually.
+To get your Lua version which is used for the execution of `sile`:
+
+```console
+$ export LUA_VERSION=$(sile -e 'print(SILE.lua_version);os.exit()' 2> /dev/null)
+$ luarocks install --lua-version $LUA_VERSION ...
+```
+
 ## Finding Out More
 
 Please read the [full SILE manual][doc] for more information about what SILE is and how it can help you.
