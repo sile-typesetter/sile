@@ -256,6 +256,12 @@ function class:registerCommands ()
   end)
 
   self:registerCommand("quote", function (_, content)
+    SU.deprecated("\\quote", "\\pullquote", "0.14.5", "0.16.0", [[
+  The \quote command has *such* bad output it is being completely
+  deprecated as unsuitable for general purpose use. The pullquote
+  package (\use[module=packages.pullquote]) provides one alternative,
+  but you can also copy and adapt the original source from the plain
+  class if you need to maintain exact output past SILE v0.16.0.]])
     SILE.call("smallskip")
     SILE.call("par")
     local margin = SILE.measurement(2.5, "em")
@@ -272,6 +278,11 @@ function class:registerCommands ()
   end)
 
   self:registerCommand("listitem", function (_, content)
+    SU.deprecated("\\listitem", "\\item", "0.14.6", "0.16.0", [[
+  The new list package (\use[module=packages.lists) has much better
+  typography for lists. If you want to maintain the exact output of listitem
+  past SILE v0.16.0 copy the source of \listitem from the plain class into
+  your project.]])
     SILE.call("medskip")
     SILE.typesetter:typeset("• ")
     SILE.process(content)
