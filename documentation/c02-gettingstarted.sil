@@ -238,6 +238,13 @@ Otherwise to go with default of bundling them, just run:
 \terminal{$ ./configure}
 
 \begin{note}
+If you plan on developing SILE itself (whether just to hack on it for your own use or contribute upstream) there are two particularly useful configuration options.
+First you can add \code{--datarootdir=$(cd ..;pwd)} which will enable the compiled binary to run directly from the source directory without being installed at all.
+Second you can add \code{--enable-developer} to also check for tooling we expect SILE developers to have such as tools used for testing.
+Using this options also enables a number of targets that wouldn't normally be needed by end users such as `make regressions`.
+\end{note}
+
+\begin{note}
 SILE can be built to run using LuaJIT under which it runs almost exactly twice
 as fast! Because SILE lets your documents, classes, and packages use Lua code
 from your system –and because the ecosystem for Lua software is more developed

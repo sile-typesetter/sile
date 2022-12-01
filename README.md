@@ -212,10 +212,17 @@ If you are building from a git clone, start by running the script to setup your 
 $ ./bootstrap.sh
 ```
 
-Once your dependencies are installed, run:
+If you just plan on installing and using SILE, the default configure options (plus any Lua related options discussed above) should be fine.
+If you plan on developing SILE itself (whether just to hack on it for your own use or contribute upstream) there are two particularly useful configuration options.
+First you can add `--datarootdir=$(cd ..;pwd)` which will enable the compiled binary to run directly from the source directory without being installed at all.
+Second you can add `--enable-developer` to also check for tooling we expect SILE developers to have such as tools used for testing.
+Using this options also enables a number of targets that wouldn't normally be needed by end users such as `make regressions`.
+
+Once your dependencies are installed and you know what options you want, it is time to configure the sources, then build, then install:
 
 ```console
 $ ./configure
+$ make
 $ make install
 ```
 
