@@ -222,7 +222,7 @@ endif
 
 coverage: export SILE_COVERAGE=1
 coverage: BUSTEDFLAGS = -c
-coverage: regression_previews busted docs
+coverage: regression_previews busted
 
 HEADSHA ?= HEAD
 _HEADSHA ?= $(shell test -e .git && $(GIT) rev-parse --short=7 $(HEADSHA))
