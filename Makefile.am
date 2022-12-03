@@ -254,7 +254,7 @@ tests/%.expected: tests/%.xml $$(patterndeps)
 tests/%.expected: tests/%.nil $$(patterndeps)
 	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
 
-regression_previews: $(TESTPDFS)
+regression_previews: $(TESTPREVIEWS)
 
 tests/%.actual: tests/%.sil $$(patterndeps)
 	-$(if $(CLEAN),rm -f $@,:)
