@@ -58,7 +58,7 @@ BUILT_SOURCES = .version core/version.lua Makefile-distfiles
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(BUILT_SOURCES) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) $(_BUILT_SUBDIRS) .version-prev
 
 Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
-	build-aux/list-dist-files.sh > $@
+	$(SHELL) build-aux/list-dist-files.sh > $@
 
 _BRANCH_REF != $(AWK) '{print ".git/" $$2}' .git/HEAD 2>/dev/null ||:
 
