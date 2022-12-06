@@ -41,12 +41,12 @@ end
 
 function outputter:_writeline (...)
   self:_ensureInit()
-	local args = table.pack(...)
-	for i = 1, #args do
-		outfile:write(args[i])
-		if i < #args then outfile:write("\t") end
-	end
-	outfile:write("\n")
+  local args = table.pack(...)
+  for i = 1, #args do
+    outfile:write(args[i])
+    if i < #args then outfile:write("\t") end
+  end
+  outfile:write("\n")
 end
 
 function outputter:newPage ()
